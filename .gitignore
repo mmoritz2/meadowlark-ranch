@@ -1,0 +1,5 @@
+# Local test artifacts & settings — not part of the game
+.playwright-mcp/
+.claude/
+.DS_Store
+*.log
