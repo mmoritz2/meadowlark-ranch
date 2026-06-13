@@ -8,3 +8,7 @@
 tools/asset-gen/_ref/
 tools/asset-gen/_*.png
 .httpserver.log
+
+# Python caches
+__pycache__/
+*.pyc
