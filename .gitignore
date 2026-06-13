@@ -3,3 +3,8 @@
 .claude/
 .DS_Store
 *.log
+
+# Asset-gen temp artifacts (generated assets in assets/ ARE kept)
+tools/asset-gen/_ref/
+tools/asset-gen/_*.png
+.httpserver.log
