@@ -1688,29 +1688,84 @@ const gltfBirds=[];
   },undefined,()=>{});
  });
 }
-/* === TEST: UniRig-rigged generated horse. It has a skeleton + skin weights but
-   no animation clips, so we drive its bones in code (tick) to prove the rig
-   deforms the mesh in-engine. Placed near spawn as a display. === */
-let riggedHorse=null;
+/* === Generated rigged horse as the player mount ===
+   Hunyuan3D 2.1 mesh auto-rigged by UniRig (31 bones, skin weights) but with no
+   animation clips, so we drive its bones procedurally for walk/run gaits. Bone
+   index map comes from analysing the skeleton of horse_rigged.glb (model frame:
+   +x = forward/head, +y = up, +z = left-right). */
+const RIG={ready:false,scene:null,skin:null,bones:null,attachedTo:null,phase:0,_q:null,
+  legs:[],neck:[],tail:[]};
+const RIG_LEGS=[                       // 4-beat walk phasing (lateral sequence)
+ {n:'HL',top:21,knee:23,front:false,ph:0.00},
+ {n:'FL',top:7, knee:9, front:true, ph:0.25},
+ {n:'HR',top:26,knee:28,front:false,ph:0.50},
+ {n:'FR',top:12,knee:14,front:true, ph:0.75},
+];
+const RIG_NECK=[4,5], RIG_TAIL=[17,18,19];
+function rigCalibrate(){
+ // Compute each driven bone's local axis that corresponds to the model's z
+ // (left-right) axis, so rotating about it swings the limb forward/back. Done in
+ // the model's rest frame (transform reset), independent of placement.
+ const m=RIG.scene, sav={p:m.position.clone(),q:m.quaternion.clone(),s:m.scale.clone()};
+ m.position.set(0,0,0); m.quaternion.identity(); m.scale.set(1,1,1); m.updateWorldMatrix(true,true);
+ const B=RIG.bones, Z=new THREE.Vector3(0,0,1);
+ const axisOf=i=>{const p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
+  B[i].matrixWorld.decompose(p,q,s); return Z.clone().applyQuaternion(q.clone().invert()).normalize();};
+ RIG.legs=RIG_LEGS.map(L=>({...L,axTop:axisOf(L.top),axKnee:axisOf(L.knee),
+  rTop:B[L.top].quaternion.clone(),rKnee:B[L.knee].quaternion.clone()}));
+ RIG.neck=RIG_NECK.map(i=>({i,ax:axisOf(i),r:B[i].quaternion.clone()}));
+ RIG.tail=RIG_TAIL.map(i=>({i,ax:axisOf(i),r:B[i].quaternion.clone()}));
+ m.position.copy(sav.p); m.quaternion.copy(sav.q); m.scale.copy(sav.s); m.updateWorldMatrix(true,true);
+}
+function isDesc(o,anc){while(o){if(o===anc)return true;o=o.parent;}return false;}
+function attachRig(){
+ if(!RIG.ready||!player.mesh||RIG.attachedTo===player.mesh)return;
+ const riderG=player.rider&&player.rider.g, shadow=player.parts&&player.parts.shadowM;
+ // hide the procedural horse body, keep the rider and the blob shadow
+ player.mesh.traverse(o=>{ if(o.isMesh && o!==shadow && !(riderG&&isDesc(o,riderG))) o.visible=false; });
+ RIG.scene.scale.setScalar(1); RIG.scene.position.set(0,0,0); RIG.scene.rotation.set(0,0,0);
+ RIG.scene.updateWorldMatrix(true,true);
+ const bb=new THREE.Box3().setFromObject(RIG.scene), h=bb.max.y-bb.min.y;
+ const s=1.85/h;                                  // match the procedural horse height
+ RIG.scene.scale.setScalar(s);
+ RIG.scene.position.y=-bb.min.y*s;                // hooves to y=0
+ RIG.scene.rotation.y=-Math.PI/2;                 // model +x (forward) -> game +z
+ player.mesh.add(RIG.scene);
+ RIG.attachedTo=player.mesh;
+ // seat the rider on the rigged horse's back (spine bone)
+ if(riderG){ player.mesh.updateWorldMatrix(true,true);
+  const wp=new THREE.Vector3(); RIG.bones[2].getWorldPosition(wp); player.mesh.worldToLocal(wp);
+  riderG.position.set(0, wp.y+0.12, wp.z); }
+}
+function driveRig(sp,grounded,t,dt){
+ if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
+ const B=RIG.bones, TAU=Math.PI*2, q=RIG._q||(RIG._q=new THREE.Quaternion());
+ const moving=sp>0.25&&grounded, run=Math.max(0,Math.min(1,(sp-4)/4));
+ RIG.phase+=dt*(moving?(0.55+sp*0.16):0);
+ const ph=RIG.phase, swingAmp=moving?0.38+run*0.5:0, kneeAmp=moving?0.35+run*0.6:0;
+ for(const L of RIG.legs){
+  const a=swingAmp*Math.sin(TAU*(ph+L.ph));
+  B[L.top].quaternion.copy(L.rTop).multiply(q.setFromAxisAngle(L.axTop,a));
+  const lift=Math.max(0,Math.sin(TAU*(ph+L.ph)+1.0));
+  B[L.knee].quaternion.copy(L.rKnee).multiply(q.setFromAxisAngle(L.axKnee,kneeAmp*lift*(L.front?1:-1)));
+ }
+ const neckA=moving?0.10+run*0.28:0.03*Math.sin(t*1.2);
+ for(const N of RIG.neck)B[N.i].quaternion.copy(N.r).multiply(q.setFromAxisAngle(N.ax,neckA));
+ const tailA=Math.sin(t*(1.6+run*2.5))*(0.05+run*0.16);
+ for(const T of RIG.tail)B[T.i].quaternion.copy(T.r).multiply(q.setFromAxisAngle(T.ax,tailA));
+}
 {
- const gl=new GLTFLoader();
- gl.load('assets/models/horse_rigged.glb',g=>{
-  const mdl=g.scene;
-  const bb=new THREE.Box3().setFromObject(mdl);
-  const sz=bb.getSize(new THREE.Vector3());
-  mdl.scale.setScalar(2.2/sz.y);                 // ~2.2 units tall
-  mdl.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false;
-    o.material=new THREE.MeshStandardMaterial({color:0x8a6a4a,roughness:0.9});}});
-  const px=10,pz=6;
-  mdl.position.set(px,groundH(px,pz),pz);
-  mdl.rotation.y=-Math.PI/2;
-  scene.add(mdl);
-  let skel=null;
-  mdl.traverse(o=>{if(o.isSkinnedMesh&&!skel)skel=o.skeleton;});
-  const bones=skel?skel.bones:[];
-  riggedHorse={mdl,bones,rest:bones.map(b=>b.rotation.clone())};
-  console.log('rigged horse loaded:',bones.length,'bones');
- },undefined,(e)=>{console.warn('rigged horse load failed',e);});
+ new GLTFLoader().load('assets/models/horse_rigged.glb',g=>{
+  RIG.scene=g.scene;
+  g.scene.traverse(o=>{if(o.isSkinnedMesh&&!RIG.skin)RIG.skin=o;});
+  if(!RIG.skin){console.warn('rig: no skinned mesh');return;}
+  RIG.bones=RIG.skin.skeleton.bones;
+  g.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false;
+   o.material=new THREE.MeshStandardMaterial({color:0x6b4a32,roughness:0.85});}});
+  rigCalibrate(); RIG.ready=true;
+  attachRig();
+  console.log('rig ready:',RIG.bones.length,'bones');
+ },undefined,e=>console.warn('rig load failed',e));
 }
 // pond — Mirror Lake earns its name
 const pondTex=waterShimTex.clone();
@@ -2460,6 +2515,7 @@ function rebuildAll(){
  player.mesh.add(player.rider.g);
  player.mesh.scale.setScalar(horseScale(h));
  scene.add(player.mesh);
+ RIG.attachedTo=null; attachRig();   // swap in the generated rigged horse as the mount
  $('nameEl').textContent=h.name+(h.horn?' 🦄':h.wings?' 🪽':'');
  const fb=$('flyBtn');
  if(fb){fb.style.display=h.wings?'inline-block':'none';if(!player.flying)fb.textContent='🪽 Fly';}
@@ -4397,6 +4453,7 @@ function tick(){
  player.amp+=(targetAmp-player.amp)*Math.min(1,dt*6);
  const grounded=player.y<=0;
  animateHorse(player.parts,player.phase,player.amp,gait,grounded,t,0,dt);
+ driveRig(sp,grounded,t,dt);   // gait for the generated rigged mount (if attached)
  const dx=Math.sin(player.heading),dz=Math.cos(player.heading);
  const gy=groundH(player.pos.x,player.pos.z);
  if(grounded&&sp>8){lastDust+=dt;if(lastDust>0.12){lastDust=0;puffDust(player.pos.x-dx*1.05,gy+0.04,player.pos.z-dz*1.05);}}
@@ -4780,15 +4837,6 @@ function tick(){
   gb.a+=dt*gb.sp;
   gb.m.position.set(Math.cos(gb.a)*gb.r,gb.h+Math.sin(gb.a*2.3)*1.6,Math.sin(gb.a)*gb.r);
   gb.m.rotation.y=-gb.a;
- }
- if(riggedHorse){
-  // Code-driven idle: gentle per-bone sway to show the auto-rig deforms the mesh.
-  // Skip bone[0] (root) so the whole model doesn't swing rigidly.
-  const b=riggedHorse.bones,r=riggedHorse.rest;
-  for(let i=1;i<b.length;i++){
-   b[i].rotation.x=r[i].x+Math.sin(t*1.8+i*0.6)*0.08;
-   b[i].rotation.z=r[i].z+Math.sin(t*1.3+i*0.9)*0.05;
-  }
  }
  for(const f of flutters){
   const cc=flowerClumps.length?flowerClumps[f.idx%flowerClumps.length]:[0,0];
