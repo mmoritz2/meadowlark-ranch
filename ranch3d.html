@@ -1717,6 +1717,40 @@ function rigCalibrate(){
  RIG.tail=RIG_TAIL.map(i=>({i,ax:axisOf(i),r:B[i].quaternion.clone()}));
  m.position.copy(sav.p); m.quaternion.copy(sav.q); m.scale.copy(sav.s); m.updateWorldMatrix(true,true);
 }
+// Coat coloring without UVs/textures: classify each vertex by its dominant bone
+// into body / mane-tail / dark-point (lower legs + muzzle), then paint vertex
+// colors from the current horse's breed colors with a top-light shade gradient.
+const RIG_TAILBONES=new Set([17,18,19,20]);
+const RIG_POINTBONES=new Set([10,11,15,16,24,25,29,30,6]);   // lower legs + muzzle
+function rigColorRegions(){
+ const g=RIG.skin.geometry, si=g.attributes.skinIndex, sw=g.attributes.skinWeight, n=si.count;
+ const reg=new Uint8Array(n);
+ for(let v=0;v<n;v++){
+  let bi=si.getX(v),bw=sw.getX(v);
+  const iy=si.getY(v),wy=sw.getY(v); if(wy>bw){bw=wy;bi=iy;}
+  const iz=si.getZ(v),wz=sw.getZ(v); if(wz>bw){bw=wz;bi=iz;}
+  const iw=si.getW(v),ww=sw.getW(v); if(ww>bw){bw=ww;bi=iw;}
+  reg[v]=RIG_TAILBONES.has(bi)?1:(RIG_POINTBONES.has(bi)?2:0);
+ }
+ RIG.region=reg;
+}
+function rigRecolor(){
+ if(!RIG.ready||!RIG.region)return;
+ const h=myHorses[rideIdx]; if(!h||!h.colors)return;
+ const g=RIG.skin.geometry, pos=g.attributes.position, n=pos.count;
+ let col=g.getAttribute('color');
+ if(!col){col=new THREE.BufferAttribute(new Float32Array(n*3),3); g.setAttribute('color',col);}
+ const body=new THREE.Color(h.colors.body), mane=new THREE.Color(h.colors.mane||h.colors.body);
+ const point=body.clone().multiplyScalar(0.32);
+ let ymin=1e9,ymax=-1e9; for(let i=0;i<n;i++){const y=pos.getY(i); if(y<ymin)ymin=y; if(y>ymax)ymax=y;}
+ const inv=1/((ymax-ymin)||1), c=new THREE.Color();
+ for(let i=0;i<n;i++){
+  const r=RIG.region[i]; c.copy(r===1?mane:r===2?point:body);
+  const sh=0.74+0.26*((pos.getY(i)-ymin)*inv);   // belly darker, back lighter
+  col.setXYZ(i,c.r*sh,c.g*sh,c.b*sh);
+ }
+ col.needsUpdate=true;
+}
 function isDesc(o,anc){while(o){if(o===anc)return true;o=o.parent;}return false;}
 function attachRig(){
  if(!RIG.ready||!player.mesh||RIG.attachedTo===player.mesh)return;
@@ -1735,7 +1769,7 @@ function attachRig(){
  // seat the rider on the rigged horse's back (spine bone)
  if(riderG){ player.mesh.updateWorldMatrix(true,true);
   const wp=new THREE.Vector3(); RIG.bones[2].getWorldPosition(wp); player.mesh.worldToLocal(wp);
-  riderG.position.set(0, wp.y+0.12, wp.z); }
+  riderG.position.set(0, wp.y-0.3, wp.z); }   // sit down onto the back (temporary; rider asset TBD)
 }
 function driveRig(sp,grounded,t,dt){
  if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
@@ -1743,13 +1777,19 @@ function driveRig(sp,grounded,t,dt){
  const moving=sp>0.25&&grounded, run=Math.max(0,Math.min(1,(sp-4)/4));
  RIG.phase+=dt*(moving?(0.55+sp*0.16):0);
  const ph=RIG.phase, swingAmp=moving?0.38+run*0.5:0, kneeAmp=moving?0.35+run*0.6:0;
+ // jump: blend legs to a tuck/extend pose as the horse leaves the ground
+ const air=Math.max(0,Math.min(1,(player.y||0)/1.0));
  for(const L of RIG.legs){
-  const a=swingAmp*Math.sin(TAU*(ph+L.ph));
+  let a=swingAmp*Math.sin(TAU*(ph+L.ph));
+  let kb=kneeAmp*Math.max(0,Math.sin(TAU*(ph+L.ph)+1.0))*(L.front?1:-1);
+  if(air>0){
+   const jTop=L.front?0.7:-0.6, jKnee=L.front?1.0:-0.7;   // front legs tuck up, hind legs trail
+   a=a*(1-air)+jTop*air; kb=kb*(1-air)+jKnee*air;
+  }
   B[L.top].quaternion.copy(L.rTop).multiply(q.setFromAxisAngle(L.axTop,a));
-  const lift=Math.max(0,Math.sin(TAU*(ph+L.ph)+1.0));
-  B[L.knee].quaternion.copy(L.rKnee).multiply(q.setFromAxisAngle(L.axKnee,kneeAmp*lift*(L.front?1:-1)));
+  B[L.knee].quaternion.copy(L.rKnee).multiply(q.setFromAxisAngle(L.axKnee,kb));
  }
- const neckA=moving?0.10+run*0.28:0.03*Math.sin(t*1.2);
+ const neckA=(moving?0.10+run*0.28:0.03*Math.sin(t*1.2))+air*0.12;
  for(const N of RIG.neck)B[N.i].quaternion.copy(N.r).multiply(q.setFromAxisAngle(N.ax,neckA));
  const tailA=Math.sin(t*(1.6+run*2.5))*(0.05+run*0.16);
  for(const T of RIG.tail)B[T.i].quaternion.copy(T.r).multiply(q.setFromAxisAngle(T.ax,tailA));
@@ -1761,9 +1801,9 @@ function driveRig(sp,grounded,t,dt){
   if(!RIG.skin){console.warn('rig: no skinned mesh');return;}
   RIG.bones=RIG.skin.skeleton.bones;
   g.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false;
-   o.material=new THREE.MeshStandardMaterial({color:0x6b4a32,roughness:0.85});}});
-  rigCalibrate(); RIG.ready=true;
-  attachRig();
+   o.material=new THREE.MeshStandardMaterial({color:0xffffff,vertexColors:true,roughness:0.82});}});
+  rigCalibrate(); rigColorRegions(); RIG.ready=true;
+  rigRecolor(); attachRig();
   console.log('rig ready:',RIG.bones.length,'bones');
  },undefined,e=>console.warn('rig load failed',e));
 }
@@ -2515,7 +2555,7 @@ function rebuildAll(){
  player.mesh.add(player.rider.g);
  player.mesh.scale.setScalar(horseScale(h));
  scene.add(player.mesh);
- RIG.attachedTo=null; attachRig();   // swap in the generated rigged horse as the mount
+ RIG.attachedTo=null; attachRig(); rigRecolor();   // swap in the rigged mount, recolor to this horse
  $('nameEl').textContent=h.name+(h.horn?' 🦄':h.wings?' 🪽':'');
  const fb=$('flyBtn');
  if(fb){fb.style.display=h.wings?'inline-block':'none';if(!player.flying)fb.textContent='🪽 Fly';}
