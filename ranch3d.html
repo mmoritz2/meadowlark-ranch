@@ -1693,6 +1693,11 @@ const gltfBirds=[];
    animation clips, so we drive its bones procedurally for walk/run gaits. Bone
    index map comes from analysing the skeleton of horse_rigged.glb (model frame:
    +x = forward/head, +y = up, +z = left-right). */
+// Use the AI-generated rigged horse/rider/saddle as the player mount? OFF: the
+// generated meshes are rough/faceless and clash with the cozy stylized look, so
+// the hand-built procedural horse (face, mane, breeds, animations) is the player.
+// The whole generated-mount experiment is preserved behind this flag.
+let USE_GEN_HORSE=false;
 const RIG={ready:false,scene:null,skin:null,bones:null,attachedTo:null,phase:0,_q:null,
   legs:[],neck:[],tail:[]};
 const RIG_LEGS=[                       // 4-beat walk phasing (lateral sequence)
@@ -1753,6 +1758,7 @@ function rigRecolor(){
 }
 function isDesc(o,anc){while(o){if(o===anc)return true;o=o.parent;}return false;}
 function attachRig(){
+ if(!USE_GEN_HORSE)return;
  if(!RIG.ready||!player.mesh||RIG.attachedTo===player.mesh)return;
  const riderG=player.rider&&player.rider.g, shadow=player.parts&&player.parts.shadowM;
  // hide the procedural horse body, keep the rider and the blob shadow
@@ -1836,6 +1842,7 @@ function poseRiderSeated(){
 function _fit(obj,scalar){obj.scale.setScalar(1);obj.position.set(0,0,0);obj.rotation.set(0,0,0);obj.updateWorldMatrix(true,true);
  const bb=new THREE.Box3().setFromObject(obj);obj.userData.bbMinY=bb.min.y;obj.scale.setScalar(scalar);}
 function attachTack(){   // idempotent: places whatever has loaded so far onto the current mount
+ if(!USE_GEN_HORSE)return;
  if(!player.mesh||!(TACK.saddle||TACK.rider))return;
  if(player.rider&&player.rider.g)player.rider.g.visible=false;   // hide procedural rider
  player.mesh.updateWorldMatrix(true,true);
