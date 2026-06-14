@@ -1720,7 +1720,7 @@ const gltfBirds=[];
 // generated meshes are rough/faceless and clash with the cozy stylized look, so
 // the hand-built procedural horse (face, mane, breeds, animations) is the player.
 // The whole generated-mount experiment is preserved behind this flag.
-let USE_GEN_HORSE=true, USE_GEN_TACK=false;   // textured horse on; clean procedural rider for now (generated rider WIP behind this toggle)
+let USE_GEN_HORSE=true, USE_GEN_TACK=true;   // textured horse + generated saddle/rider
 const RIG={ready:false,scene:null,skin:null,bones:null,attachedTo:null,phase:0,_q:null,
   legs:[],neck:[],tail:[]};
 const RIG_LEGS=[                       // 4-beat walk phasing; indices = textured-rigged horse (33 bones)
@@ -1868,8 +1868,8 @@ const RIDER_HIPS=[20,24], RIDER_KNEES=[21,25];
 // Absolute placement in player.mesh local space (horse rig normalizes to ~1.85
 // tall there, so these hold across breeds). Back surface ~1.45, withers ~1.85.
 const SADDLE_SCALE=0.34, SADDLE_Y=1.46, SADDLE_Z=0.0, SADDLE_RY=Math.PI;
-const RIDER_SCALE=0.60, RIDER_Y=1.62, RIDER_Z=0.05, RIDER_RY=Math.PI;
-const RIDER_HIP_ANGLE=0.85, RIDER_KNEE_ANGLE=0.85;   // seated pose (legs forward+down)
+const RIDER_SCALE=0.60, RIDER_Y=1.55, RIDER_Z=0.0, RIDER_RY=0;
+const RIDER_HIP_FLEX=0.30, RIDER_HIP_ABDUCT=0.32, RIDER_KNEE=0.45;   // riding pose: legs forward + parted + knees down
 function _localAxis(bone,axisWorld){
  const p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
  bone.matrixWorld.decompose(p,q,s);
@@ -1877,12 +1877,16 @@ function _localAxis(bone,axisWorld){
 }
 function poseRiderSeated(){
  if(!TACK.riderBones)return;
- const B=TACK.riderBones,m=TACK.rider,X=new THREE.Vector3(1,0,0),q=new THREE.Quaternion();
+ const B=TACK.riderBones,m=TACK.rider,q=new THREE.Quaternion();
+ const X=new THREE.Vector3(1,0,0),Z=new THREE.Vector3(0,0,1);   // X=left-right(flex), Z=forward(abduct)
  const sav={p:m.position.clone(),r:m.quaternion.clone(),s:m.scale.clone()};
  m.position.set(0,0,0);m.quaternion.identity();m.scale.set(1,1,1);m.updateWorldMatrix(true,true);
- for(const i of RIDER_HIPS)B[i].quaternion.multiply(q.setFromAxisAngle(_localAxis(B[i],X),RIDER_HIP_ANGLE));
+ const apply=(i,v,a)=>B[i].quaternion.multiply(q.setFromAxisAngle(_localAxis(B[i],v),a));
+ apply(20,X,RIDER_HIP_FLEX); apply(24,X,RIDER_HIP_FLEX);          // hips flex forward
  m.updateWorldMatrix(true,true);
- for(const i of RIDER_KNEES)B[i].quaternion.multiply(q.setFromAxisAngle(_localAxis(B[i],X),RIDER_KNEE_ANGLE));
+ apply(20,Z,-RIDER_HIP_ABDUCT); apply(24,Z,RIDER_HIP_ABDUCT);    // hips part outward (left/right)
+ m.updateWorldMatrix(true,true);
+ apply(21,X,RIDER_KNEE); apply(25,X,RIDER_KNEE);                 // knees down
  m.position.copy(sav.p);m.quaternion.copy(sav.r);m.scale.copy(sav.s);m.updateWorldMatrix(true,true);
 }
 function _fit(obj,scalar){obj.scale.setScalar(1);obj.position.set(0,0,0);obj.rotation.set(0,0,0);obj.updateWorldMatrix(true,true);
