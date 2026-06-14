@@ -1800,6 +1800,25 @@ function driveRig(sp,grounded,t,dt){
  const tailA=Math.sin(t*(1.6+run*2.5))*(0.05+run*0.16);
  for(const T of RIG.tail)B[T.i].quaternion.copy(T.r).multiply(q.setFromAxisAngle(T.ax,tailA));
 }
+/* Coat color variants: recolored copies of the baked texture, swapped onto the
+   horse's material per the ridden horse's breed color (same mesh/rig/UVs). */
+const COAT_NAMES=['chestnut','black','grey','palomino'], COAT_TEX={};
+{ const tl=new THREE.TextureLoader();
+  for(const n of COAT_NAMES) tl.load('assets/textures/horse_coat_'+n+'.png',t=>{
+    t.flipY=false; t.colorSpace=THREE.SRGBColorSpace; t.needsUpdate=true; COAT_TEX[n]=t; applyCoat();
+  },undefined,()=>{}); }
+const COAT_REF={chestnut:[0.54,0.29,0.16],black:[0.16,0.14,0.12],grey:[0.72,0.74,0.77],palomino:[0.80,0.62,0.30]};
+function pickCoat(){
+ const h=myHorses[rideIdx]; if(!h||!h.colors) return 'chestnut';
+ const c=new THREE.Color(h.colors.body); let best='chestnut',bd=1e9;
+ for(const n in COAT_REF){const r=COAT_REF[n],d=(c.r-r[0])**2+(c.g-r[1])**2+(c.b-r[2])**2; if(d<bd){bd=d;best=n;}}
+ return best;
+}
+function applyCoat(){
+ if(!RIG.ready||!RIG.skin) return;
+ const t=COAT_TEX[pickCoat()];
+ if(t){ RIG.skin.material.map=t; RIG.skin.material.needsUpdate=true; }
+}
 {
  new GLTFLoader().load('assets/models/horse_textured_rigged.glb',g=>{
   RIG.scene=g.scene;
@@ -1809,7 +1828,7 @@ function driveRig(sp,grounded,t,dt){
   g.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false;
    if(o.material){o.material.roughness=0.85;o.material.metalness=0;}}});  // keep the baked texture
   rigCalibrate(); RIG.ready=true;
-  attachRig();
+  attachRig(); applyCoat();
   attachTack();   // (re)place saddle+rider now the horse back is known
   console.log('rig ready:',RIG.bones.length,'bones');
  },undefined,e=>console.warn('rig load failed',e));
@@ -2613,7 +2632,7 @@ function rebuildAll(){
  player.mesh.add(player.rider.g);
  player.mesh.scale.setScalar(horseScale(h));
  scene.add(player.mesh);
- RIG.attachedTo=null; attachRig();   // swap in the textured rigged mount
+ RIG.attachedTo=null; attachRig(); applyCoat();   // swap in the textured rigged mount, coat to this horse
  attachTack();                       // (re)attach saddle + rider
  $('nameEl').textContent=h.name+(h.horn?' 🦄':h.wings?' 🪽':'');
  const fb=$('flyBtn');
