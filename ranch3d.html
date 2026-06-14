@@ -1300,6 +1300,7 @@ function makeBirch(s){
  t.scale.setScalar(s);
  return t;
 }
+const genTrees=[];   // positions for the generated 3D leafy tree (instanced below)
 for(let i=0;i<96;i++){
  let x,z;
  do{
@@ -1307,12 +1308,34 @@ for(let i=0;i<96;i++){
   x=Math.cos(a)*rr;z=Math.sin(a)*rr;
  }while((Math.abs(x)<30&&Math.abs(z)<26)||Math.abs(z-riverZ(x))<8);
  const pick=i%5;
- const t=pick<2?makeLeafy(0.85+Math.random()*0.7):pick<4?makePine(0.9+Math.random()*0.7):makeBirch(0.9+Math.random()*0.6);
+ colliders.push({x,z,r:0.7});
+ if(pick<2){ genTrees.push({x,z,s:0.9+Math.random()*0.6,r:Math.random()*Math.PI*2}); continue; }  // leafy -> generated model
+ const t=pick<4?makePine(0.9+Math.random()*0.7):makeBirch(0.9+Math.random()*0.6);
  t.position.set(x,groundH(x,z),z);
  t.rotation.y=Math.random()*3;
  scene.add(t);
- colliders.push({x,z,r:0.7});
 }
+// Generated 3D tree model, instanced at the leafy-tree positions (falls back to
+// nothing if not served — the pines/birches still dress the scene).
+new GLTFLoader().load('assets/models/tree_textured.glb',g=>{
+ let src=null; g.scene.traverse(o=>{if(o.isMesh&&!src)src=o;});
+ if(!src||!genTrees.length)return;
+ const geo=src.geometry; geo.computeBoundingBox();
+ const minY=geo.boundingBox.min.y, h=(geo.boundingBox.max.y-minY)||1;
+ const mat=src.material; mat.roughness=0.9; mat.metalness=0;
+ const inst=new THREE.InstancedMesh(geo,mat,genTrees.length);
+ inst.castShadow=true; inst.receiveShadow=true; inst.frustumCulled=false;
+ const m=new THREE.Matrix4(),q=new THREE.Quaternion(),p=new THREE.Vector3(),sc=new THREE.Vector3();
+ genTrees.forEach((tp,i)=>{
+  const s=tp.s*3.6/h;                       // ~tp.s*3.6 units tall
+  q.setFromEuler(new THREE.Euler(0,tp.r,0));
+  p.set(tp.x,groundH(tp.x,tp.z)-minY*s,tp.z);  // base on the ground
+  sc.set(s,s,s); m.compose(p,q,sc); inst.setMatrixAt(i,m);
+ });
+ inst.instanceMatrix.needsUpdate=true;
+ scene.add(inst);
+ console.log('placed',genTrees.length,'generated trees');
+},undefined,e=>console.warn('tree load failed',e));
 // pine treeline behind the barn (like an alpine ranch)
 for(let i=0;i<26;i++){
  const x=-75+i*6+(Math.random()-0.5)*4;
@@ -1697,7 +1720,7 @@ const gltfBirds=[];
 // generated meshes are rough/faceless and clash with the cozy stylized look, so
 // the hand-built procedural horse (face, mane, breeds, animations) is the player.
 // The whole generated-mount experiment is preserved behind this flag.
-let USE_GEN_HORSE=true, USE_GEN_TACK=true;   // saddle + rider on
+let USE_GEN_HORSE=true, USE_GEN_TACK=false;   // textured horse on; clean procedural rider for now (generated rider WIP behind this toggle)
 const RIG={ready:false,scene:null,skin:null,bones:null,attachedTo:null,phase:0,_q:null,
   legs:[],neck:[],tail:[]};
 const RIG_LEGS=[                       // 4-beat walk phasing; indices = textured-rigged horse (33 bones)
