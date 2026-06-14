@@ -1697,16 +1697,16 @@ const gltfBirds=[];
 // generated meshes are rough/faceless and clash with the cozy stylized look, so
 // the hand-built procedural horse (face, mane, breeds, animations) is the player.
 // The whole generated-mount experiment is preserved behind this flag.
-let USE_GEN_HORSE=false;
+let USE_GEN_HORSE=true, USE_GEN_TACK=false;   // tack (saddle/rider) off until placement is tuned visually
 const RIG={ready:false,scene:null,skin:null,bones:null,attachedTo:null,phase:0,_q:null,
   legs:[],neck:[],tail:[]};
-const RIG_LEGS=[                       // 4-beat walk phasing (lateral sequence)
- {n:'HL',top:21,knee:23,front:false,ph:0.00},
+const RIG_LEGS=[                       // 4-beat walk phasing; indices = textured-rigged horse (33 bones)
+ {n:'HL',top:23,knee:25,front:false,ph:0.00},
  {n:'FL',top:7, knee:9, front:true, ph:0.25},
- {n:'HR',top:26,knee:28,front:false,ph:0.50},
- {n:'FR',top:12,knee:14,front:true, ph:0.75},
+ {n:'HR',top:28,knee:30,front:false,ph:0.50},
+ {n:'FR',top:13,knee:15,front:true, ph:0.75},
 ];
-const RIG_NECK=[4,5], RIG_TAIL=[17,18,19];
+const RIG_NECK=[4,5], RIG_TAIL=[19,20,21];
 function rigCalibrate(){
  // Compute each driven bone's local axis that corresponds to the model's z
  // (left-right) axis, so rotating about it swings the limb forward/back. Done in
@@ -1801,15 +1801,15 @@ function driveRig(sp,grounded,t,dt){
  for(const T of RIG.tail)B[T.i].quaternion.copy(T.r).multiply(q.setFromAxisAngle(T.ax,tailA));
 }
 {
- new GLTFLoader().load('assets/models/horse_rigged.glb',g=>{
+ new GLTFLoader().load('assets/models/horse_textured_rigged.glb',g=>{
   RIG.scene=g.scene;
   g.scene.traverse(o=>{if(o.isSkinnedMesh&&!RIG.skin)RIG.skin=o;});
   if(!RIG.skin){console.warn('rig: no skinned mesh');return;}
   RIG.bones=RIG.skin.skeleton.bones;
   g.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false;
-   o.material=new THREE.MeshStandardMaterial({color:0xffffff,vertexColors:true,roughness:0.82});}});
-  rigCalibrate(); rigColorRegions(); RIG.ready=true;
-  rigRecolor(); attachRig();
+   if(o.material){o.material.roughness=0.85;o.material.metalness=0;}}});  // keep the baked texture
+  rigCalibrate(); RIG.ready=true;
+  attachRig();
   attachTack();   // (re)place saddle+rider now the horse back is known
   console.log('rig ready:',RIG.bones.length,'bones');
  },undefined,e=>console.warn('rig load failed',e));
@@ -1842,7 +1842,7 @@ function poseRiderSeated(){
 function _fit(obj,scalar){obj.scale.setScalar(1);obj.position.set(0,0,0);obj.rotation.set(0,0,0);obj.updateWorldMatrix(true,true);
  const bb=new THREE.Box3().setFromObject(obj);obj.userData.bbMinY=bb.min.y;obj.scale.setScalar(scalar);}
 function attachTack(){   // idempotent: places whatever has loaded so far onto the current mount
- if(!USE_GEN_HORSE)return;
+ if(!USE_GEN_HORSE||!USE_GEN_TACK)return;
  if(!player.mesh||!(TACK.saddle||TACK.rider))return;
  if(player.rider&&player.rider.g)player.rider.g.visible=false;   // hide procedural rider
  player.mesh.updateWorldMatrix(true,true);
@@ -2615,8 +2615,8 @@ function rebuildAll(){
  player.mesh.add(player.rider.g);
  player.mesh.scale.setScalar(horseScale(h));
  scene.add(player.mesh);
- RIG.attachedTo=null; attachRig(); rigRecolor();   // swap in the rigged mount, recolor to this horse
- attachTack();                                     // (re)attach saddle + rider
+ RIG.attachedTo=null; attachRig();   // swap in the textured rigged mount
+ attachTack();                       // (re)attach saddle + rider
  $('nameEl').textContent=h.name+(h.horn?' 🦄':h.wings?' 🪽':'');
  const fb=$('flyBtn');
  if(fb){fb.style.display=h.wings?'inline-block':'none';if(!player.flying)fb.textContent='🪽 Fly';}
