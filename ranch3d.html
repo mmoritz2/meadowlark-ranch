@@ -1810,8 +1810,10 @@ const COAT_NAMES=['chestnut','black','grey','palomino'], COAT_TEX={};
 const COAT_REF={chestnut:[0.54,0.29,0.16],black:[0.16,0.14,0.12],grey:[0.72,0.74,0.77],palomino:[0.80,0.62,0.30]};
 function pickCoat(){
  const h=myHorses[rideIdx]; if(!h||!h.colors) return 'chestnut';
- const c=new THREE.Color(h.colors.body); let best='chestnut',bd=1e9;
- for(const n in COAT_REF){const r=COAT_REF[n],d=(c.r-r[0])**2+(c.g-r[1])**2+(c.b-r[2])**2; if(d<bd){bd=d;best=n;}}
+ const x=String(h.colors.body).replace('#','');           // sRGB 0..1 (avoid THREE's linear conversion)
+ const cr=parseInt(x.slice(0,2),16)/255, cg=parseInt(x.slice(2,4),16)/255, cb=parseInt(x.slice(4,6),16)/255;
+ let best='chestnut',bd=1e9;
+ for(const n in COAT_REF){const r=COAT_REF[n],d=(cr-r[0])**2+(cg-r[1])**2+(cb-r[2])**2; if(d<bd){bd=d;best=n;}}
  return best;
 }
 function applyCoat(){
@@ -1843,8 +1845,8 @@ const RIDER_HIPS=[20,24], RIDER_KNEES=[21,25];
 // Absolute placement in player.mesh local space (horse rig normalizes to ~1.85
 // tall there, so these hold across breeds). Back surface ~1.45, withers ~1.85.
 const SADDLE_SCALE=0.34, SADDLE_Y=1.46, SADDLE_Z=0.0, SADDLE_RY=Math.PI;
-const RIDER_SCALE=0.68, RIDER_Y=1.58, RIDER_Z=0.05, RIDER_RY=Math.PI;
-const RIDER_HIP_ANGLE=-1.45, RIDER_KNEE_ANGLE=1.55;   // seated pose
+const RIDER_SCALE=0.60, RIDER_Y=1.62, RIDER_Z=0.05, RIDER_RY=Math.PI;
+const RIDER_HIP_ANGLE=0.85, RIDER_KNEE_ANGLE=0.85;   // seated pose (legs forward+down)
 function _localAxis(bone,axisWorld){
  const p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
  bone.matrixWorld.decompose(p,q,s);
@@ -1874,6 +1876,13 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
   TACK.rider.rotation.y=RIDER_RY;
   TACK.rider.position.set(0,RIDER_Y,RIDER_Z);
   player.mesh.add(TACK.rider);}
+}
+function driveRider(sp){   // posting/bob + lean synced to the horse's gait so the rider isn't static
+ if(!TACK.rider)return;
+ const moving=sp>0.25;
+ const post=moving?Math.sin(RIG.phase*Math.PI*2)*Math.min(0.07,sp*0.012):0;
+ TACK.rider.position.y=RIDER_Y+Math.max(0,post);
+ TACK.rider.rotation.x=-Math.min(0.16,sp*0.018);   // lean forward at speed
 }
 {
  const gl=new GLTFLoader();
@@ -4572,6 +4581,7 @@ function tick(){
  const grounded=player.y<=0;
  animateHorse(player.parts,player.phase,player.amp,gait,grounded,t,0,dt);
  driveRig(sp,grounded,t,dt);   // gait for the generated rigged mount (if attached)
+ driveRider(sp);               // posting/lean so the rider isn't rigidly static
  const dx=Math.sin(player.heading),dz=Math.cos(player.heading);
  const gy=groundH(player.pos.x,player.pos.z);
  if(grounded&&sp>8){lastDust+=dt;if(lastDust>0.12){lastDust=0;puffDust(player.pos.x-dx*1.05,gy+0.04,player.pos.z-dz*1.05);}}
