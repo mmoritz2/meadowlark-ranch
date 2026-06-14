@@ -1868,7 +1868,7 @@ const RIDER_HIPS=[20,24], RIDER_KNEES=[21,25];
 // Absolute placement in player.mesh local space (horse rig normalizes to ~1.85
 // tall there, so these hold across breeds). Back surface ~1.45, withers ~1.85.
 const SADDLE_SCALE=0.34, SADDLE_Y=1.46, SADDLE_Z=0.0, SADDLE_RY=Math.PI;
-const RIDER_SCALE=0.60, RIDER_Y=1.55, RIDER_Z=0.0, RIDER_RY=0;
+const RIDER_SCALE=0.60, RIDER_Y=1.55, RIDER_Z=0.0, RIDER_RY=Math.PI;   // face forward (toward horse's head)
 const RIDER_HIP_FLEX=0.30, RIDER_HIP_ABDUCT=0.32, RIDER_KNEE=0.45;   // riding pose: legs forward + parted + knees down
 function _localAxis(bone,axisWorld){
  const p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
