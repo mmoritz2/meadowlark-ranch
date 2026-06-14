@@ -1697,7 +1697,7 @@ const gltfBirds=[];
 // generated meshes are rough/faceless and clash with the cozy stylized look, so
 // the hand-built procedural horse (face, mane, breeds, animations) is the player.
 // The whole generated-mount experiment is preserved behind this flag.
-let USE_GEN_HORSE=true, USE_GEN_TACK=false;   // tack (saddle/rider) off until placement is tuned visually
+let USE_GEN_HORSE=true, USE_GEN_TACK=true;   // saddle + rider on
 const RIG={ready:false,scene:null,skin:null,bones:null,attachedTo:null,phase:0,_q:null,
   legs:[],neck:[],tail:[]};
 const RIG_LEGS=[                       // 4-beat walk phasing; indices = textured-rigged horse (33 bones)
@@ -1821,8 +1821,10 @@ const TACK={saddle:null,rider:null,riderBones:null,attached:false};
 // rider skeleton (from analysis): left leg hip20/knee21, right leg hip24/knee25; left-right = model x
 const RIDER_HIPS=[20,24], RIDER_KNEES=[21,25];
 // --- tunables (adjust to fit) ---
-const SADDLE_SCALE=0.62, SADDLE_DY=0.04, SADDLE_DZ=0.0, SADDLE_RY=Math.PI;
-const RIDER_SCALE=0.95, RIDER_DY=0.10, RIDER_DZ=-0.02, RIDER_RY=Math.PI;
+// Absolute placement in player.mesh local space (horse rig normalizes to ~1.85
+// tall there, so these hold across breeds). Back surface ~1.45, withers ~1.85.
+const SADDLE_SCALE=0.34, SADDLE_Y=1.46, SADDLE_Z=0.0, SADDLE_RY=Math.PI;
+const RIDER_SCALE=0.68, RIDER_Y=1.58, RIDER_Z=0.05, RIDER_RY=Math.PI;
 const RIDER_HIP_ANGLE=-1.45, RIDER_KNEE_ANGLE=1.55;   // seated pose
 function _localAxis(bone,axisWorld){
  const p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
@@ -1845,17 +1847,13 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
  if(!USE_GEN_HORSE||!USE_GEN_TACK)return;
  if(!player.mesh||!(TACK.saddle||TACK.rider))return;
  if(player.rider&&player.rider.g)player.rider.g.visible=false;   // hide procedural rider
- player.mesh.updateWorldMatrix(true,true);
- const back=new THREE.Vector3();
- if(RIG.ready&&RIG.bones)RIG.bones[2].getWorldPosition(back); else back.set(0,1.15,0.1);
- player.mesh.worldToLocal(back);
  if(TACK.saddle){_fit(TACK.saddle,SADDLE_SCALE);
   TACK.saddle.rotation.y=SADDLE_RY;
-  TACK.saddle.position.set(0,back.y+SADDLE_DY,back.z+SADDLE_DZ);
+  TACK.saddle.position.set(0,SADDLE_Y,SADDLE_Z);
   player.mesh.add(TACK.saddle);}
  if(TACK.rider){_fit(TACK.rider,RIDER_SCALE);
   TACK.rider.rotation.y=RIDER_RY;
-  TACK.rider.position.set(0,back.y+RIDER_DY,back.z+RIDER_DZ);
+  TACK.rider.position.set(0,RIDER_Y,RIDER_Z);
   player.mesh.add(TACK.rider);}
 }
 {
