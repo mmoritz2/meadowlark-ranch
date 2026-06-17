@@ -1,13 +1,19 @@
 # Local test artifacts & settings — not part of the game
 .playwright-mcp/
 .claude/
+.deps_tmp/
+output/
 .DS_Store
 *.log
 
 # Asset-gen temp artifacts (generated assets in assets/ ARE kept)
 tools/asset-gen/_ref/
 tools/asset-gen/_*.png
+
+# In-engine capture sink + dev scratch (not part of the game)
+_caps/
 .httpserver.log
+.httpserver_*.err
 
 # Python caches
 __pycache__/
