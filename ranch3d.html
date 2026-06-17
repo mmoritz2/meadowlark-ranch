@@ -1820,13 +1820,22 @@ function attachRig(){
   player.mesh.add(hn); hn.position.set(0,1.72,0.82); hn.rotation.set(-0.4,0,0); hn.scale.setScalar(1.2);}
  // seat the wings at the RIG's withers (procedural withers sit ~0.5 higher than the rig's, so they floated)
  if(player.parts&&player.parts.wings) player.parts.wings.forEach(w=>w.position.set(w.userData.sgn*0.16,1.38,0.34));
- RIG.scene.scale.setScalar(1); RIG.scene.position.set(0,0,0); RIG.scene.rotation.set(0,0,0);
- RIG.scene.updateWorldMatrix(true,true);
- const bb=new THREE.Box3().setFromObject(RIG.scene), h=bb.max.y-bb.min.y;
- const s=1.85/h;                                  // match the procedural horse height
- RIG.scene.scale.setScalar(s);
- RIG.scene.position.y=-bb.min.y*s;                // hooves to y=0
- RIG.scene.rotation.y=-Math.PI/2;                 // model +x (forward) -> game +z
+ // Fit the rig to ~1.85 tall. Compute the scale ONCE and cache it — recomputing the Box3
+ // from the SKINNED mesh on every attach occasionally returned a degenerate bbox (h≈0 ->
+ // s=1.85/0 = NaN/Inf), which made the horse render as NOTHING while the saddle+rider stayed
+ // visible: the "wheelchair" seen intermittently when switching horses. Cached value is
+ // deterministic; a guarded fallback keeps the mount visible even if a bbox is ever bad.
+ if(!RIG.fitScale){
+  RIG.scene.scale.setScalar(1); RIG.scene.position.set(0,0,0); RIG.scene.rotation.set(0,0,0);
+  RIG.scene.updateWorldMatrix(true,true);
+  RIG.scene.traverse(o=>{if(o.geometry&&o.geometry.computeBoundingBox)o.geometry.computeBoundingBox();});
+  const bb=new THREE.Box3().setFromObject(RIG.scene), h=bb.max.y-bb.min.y;
+  if(isFinite(h)&&h>0.1){ RIG.fitScale=1.85/h; RIG.fitY=-bb.min.y*RIG.fitScale; }   // cache only when valid
+ }
+ RIG.scene.scale.setScalar(RIG.fitScale||1.1);    // 1.1 ≈ the true fit; fallback if a bbox wasn't ready yet
+ RIG.scene.position.set(0, RIG.fitScale?RIG.fitY:0, 0);   // hooves to y=0
+ RIG.scene.rotation.set(0,-Math.PI/2,0);          // model +x (forward) -> game +z
+ RIG.scene.visible=true;                           // never leave the mount invisible
  player.mesh.add(RIG.scene);
  RIG.attachedTo=player.mesh;
  // seat the rider on the rigged horse's back (spine bone)
