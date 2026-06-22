@@ -2029,8 +2029,11 @@ const RIDER_ARM={fwd:0.30, inn:0.08, elbow:1.50};   // upper arm at the side, fo
 const SADDLE_SCALE=0.34, SADDLE_Y=1.42, SADDLE_Z=-0.18, SADDLE_RY=Math.PI;   // seated in the back dip, behind the withers
 const RIDER_SCALE=0.60, RIDER_Y=1.50, RIDER_Z=-0.21, RIDER_RY=Math.PI;       // face forward (toward horse's head)
 // two leg poses (rad): REST = legs hang ~straight; RIDE = legs forward, knees up, active. driveRider blends by speed.
-const POSE_REST={flex:0.16, abduct:0.52, knee:0.42};   // legs drape DOWN the sides, splayed clear of the slim flaps (calf ~vertical)
-const POSE_RIDE={flex:0.42, abduct:0.50, knee:0.58};   // legs swing forward, slight knee bend (not folded to horizontal)
+// NOTE: hip flex is NEGATIVE here. The rider's bind pose sits with thighs straight FORWARD,
+// and +flex rotates them UP toward the chest (the "hugging her knees" bug). Negative flex
+// swings the thighs DOWN so the legs drape along the horse's sides.
+const POSE_REST={flex:-1.10, abduct:0.30, knee:0.55};  // halt: thighs drape down-forward, calf hanging, boot by the girth
+const POSE_RIDE={flex:-0.95, abduct:0.32, knee:0.70};  // moving: thigh a touch more forward + more knee bend (active seat)
 function _localAxis(bone,axisWorld){
  const p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
  bone.matrixWorld.decompose(p,q,s);
