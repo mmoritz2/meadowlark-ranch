@@ -2032,8 +2032,8 @@ const RIDER_SCALE=0.60, RIDER_Y=1.50, RIDER_Z=-0.21, RIDER_RY=Math.PI;       // 
 // NOTE: hip flex is NEGATIVE here. The rider's bind pose sits with thighs straight FORWARD,
 // and +flex rotates them UP toward the chest (the "hugging her knees" bug). Negative flex
 // swings the thighs DOWN so the legs drape along the horse's sides.
-const POSE_REST={flex:-1.10, abduct:0.30, knee:0.55};  // halt: thighs drape down-forward, calf hanging, boot by the girth
-const POSE_RIDE={flex:-0.95, abduct:0.32, knee:0.70};  // moving: thigh a touch more forward + more knee bend (active seat)
+const POSE_REST={flex:-0.85, abduct:0.65, knee:0.50};  // halt: thighs splay out & drape OVER the saddle, calf down the horse's side
+const POSE_RIDE={flex:-0.78, abduct:0.66, knee:0.62};  // moving: thigh a touch more forward + more knee bend (active seat)
 function _localAxis(bone,axisWorld){
  const p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
  bone.matrixWorld.decompose(p,q,s);
@@ -2103,7 +2103,7 @@ function buildSaddle(){
  const add=(geo,mat,pos,scl,rot)=>{const m=new THREE.Mesh(geo,mat);m.position.set(pos[0],pos[1],pos[2]);
   if(scl)m.scale.set(scl[0],scl[1],scl[2]); if(rot)m.rotation.set(rot[0],rot[1],rot[2]);
   m.castShadow=true;m.frustumCulled=false;g.add(m);return m;};
- add(BOX,pad,[0,-0.08,-0.02],[0.56,0.07,0.66]);                  // numnah pad — peeks out modestly around the seat
+ add(BOX,pad,[0,-0.10,-0.02],[0.34,0.05,0.62]);                  // numnah pad — slim, tucked UNDER the seat (was a wide flat shelf the rider's leg slid under)
  add(SPH,leather,[0,0.02,0],[0.46,0.17,0.60]);                   // seat (flattened oval, sits above the pad)
  add(SPH,leather,[0,0.035,0.27],[0.28,0.14,0.16]);               // pommel (front rise)
  add(SPH,leather,[0,0.06,-0.27],[0.44,0.18,0.18]);               // cantle (back rise, higher/wider)
