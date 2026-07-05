@@ -107,6 +107,12 @@ It started as a small 2D canvas game, became a 3D Three.js world, and then the
 - **Daily quests**, an **achievements** system, a **login streak**, a
   **Star Pass** with tiered rewards, daily **photo competitions**, mystery
   packages, and a golden turtle.
+- **Daily golden horseshoe hunt:** 10 horseshoes hide in new spots every day
+  (they glint on the minimap when you ride close); find them all for a gem
+  bonus. **Wildlife photography:** snap deer, bunnies, ducks & co. with the
+  camera for coins, daily quests, and an achievement.
+- **Mythic stardust trails:** fantasy-coat horses (fire, galaxy, ice, aurora,
+  shadow) stream matching sparkles when they gallop or fly.
 
 **Events & competition**
 - Show-jumping courses and cross-country flag-gate races that loop out across
@@ -125,6 +131,8 @@ It started as a small 2D canvas game, became a 3D Three.js world, and then the
 - Real-time shared worlds via club codes; see other riders, **chat** with
   emotes and speech bubbles, a friends system, and **viewable player profiles**
   with their club records.
+- **Friend invites:** one button copies an invite link — anyone who opens it
+  rides straight into your club (the `?club=CODE` URL auto-joins).
 - Change your rider name; everyone shows their own name.
 
 **UI polish**

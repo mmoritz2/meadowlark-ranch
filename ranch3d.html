@@ -1761,23 +1761,7 @@ box(1.2,1.2,1.2,hayMat,81,groundH(81,-37)+0.6,-37,scene);
 box(1.1,1.1,1.1,hayMat,80,groundH(80,-35.5)+0.55,-35.5,scene);
 box(1.2,1.2,1.2,hayMat,210,groundH(210,-103)+0.6,-103,scene);
 box(1.1,1.1,1.1,hayMat,212.5,groundH(212.5,-101)+0.55,-101,scene);
-/* hidden golden horseshoes */
-const SHOE_SPOTS=[[10,-18],[-22,8],[36,18],[0,124],[80,150],[150,-30],[52,-46],[12,-58],[-90,-110],[-160,10],[-110,90],[-225,135]];
-const shoes=[];
-{
- const shoeMat=new THREE.MeshStandardMaterial({color:0xffd166,roughness:0.25,metalness:0.8});
- const sv=freshSave();
- const got=(sv&&sv.shoes3d)||{};
- SHOE_SPOTS.forEach((sp,i)=>{
-  if(got[i])return;
-  const m=new THREE.Mesh(new THREE.TorusGeometry(0.32,0.07,8,18,Math.PI*1.45),shoeMat);
-  m.position.set(sp[0],groundH(sp[0],sp[1])+1,sp[1]);
-  m.rotation.z=Math.PI*0.78;
-  m.castShadow=true;
-  scene.add(m);
-  shoes.push({m,i,x:sp[0],z:sp[1]});
- });
-}
+/* hidden golden horseshoes — now a daily hunt; see the 'golden horseshoe hunt' section */
 /* lush dressing: distant forest ring, tree groves & meadow bushes */
 for(let i=0;i<44;i++){
  const a=i/44*Math.PI*2+Math.random()*0.12;
@@ -2555,6 +2539,8 @@ function makeCritter(key){
    body.add(w);
   }
  }
+ const cs=contactShadow(g);
+ cs.scale.set(0.45,0.32,1);
  g.scale.setScalar(D.size);
  return {group:g,body,legs,tail,wings,eyes:eyeGs,def:D,key};
 }
@@ -2673,6 +2659,99 @@ for(let i=0;i<3;i++)spawnCritter('chicken',46,-51,9);
 for(let i=0;i<3;i++)spawnCritter('duck',-30+i*26,0,42);
 for(let i=0;i<2;i++)spawnCritter('bluebird',24,52,40);
 window._critters=critters;   // diagnostics
+
+/* ================= golden horseshoe hunt — 10 fresh hiding spots every day ================= */
+const SHOE_N=10;
+const shoes=[];
+{
+ const ds=new Date().toDateString();
+ let hh=0;for(let i=0;i<ds.length;i++)hh=(hh*31+ds.charCodeAt(i))|0;
+ let kk=Math.abs(hh)||1;
+ const rnd=()=>((kk=(kk*1103515245+12345)%2147483647)/2147483647);
+ const shoeGeo=new THREE.TorusGeometry(0.34,0.095,8,18,Math.PI*1.4);
+ const shoeMat=new THREE.MeshStandardMaterial({color:0xffd166,roughness:0.22,metalness:0.85,emissive:0xa87818,emissiveIntensity:0.6});
+ for(let i=0;i<SHOE_N;i++){
+  let x=0,z=0,tries=0;
+  do{x=(rnd()-0.5)*480;z=(rnd()-0.5)*480;tries++;}
+  while(tries<40&&((Math.abs(x)<30&&Math.abs(z)<26)||Math.abs(z-riverZ(x))<8));
+  const m=new THREE.Mesh(shoeGeo,shoeMat);
+  m.castShadow=true;
+  m.rotation.z=Math.PI*0.8;                    // opening down, like a lucky horseshoe
+  m.position.set(x,groundH(x,z)+0.8,z);
+  scene.add(m);
+  shoes.push({m,x,z,got:false,ph:rnd()*9});
+ }
+ try{                                          // restore today's finds
+  const sv=freshSave();
+  if(sv&&sv.shoes&&sv.shoes.date===ds)sv.shoes.got.forEach(i=>{if(shoes[i]){shoes[i].got=true;shoes[i].m.visible=false;}});
+ }catch(e){}
+}
+function updateShoes(dt,t){
+ for(let i=0;i<shoes.length;i++){
+  const sh=shoes[i];
+  if(sh.got)continue;
+  sh.m.rotation.y=t*1.5+sh.ph;
+  sh.m.position.y=groundH(sh.x,sh.z)+0.8+Math.sin(t*2+sh.ph)*0.12;
+  if(Math.hypot(player.pos.x-sh.x,player.pos.z-sh.z)<2.5){
+   sh.got=true;sh.m.visible=false;
+   let all=false;
+   syncSave(s=>{
+    const ds=new Date().toDateString();
+    if(!s.shoes||s.shoes.date!==ds)s.shoes={date:ds,got:[]};
+    if(!s.shoes.got.includes(i))s.shoes.got.push(i);
+    s.coins+=80;
+    s.stats=s.stats||{};
+    s.stats.shoesFound=(s.stats.shoesFound||0)+1;
+    if(s.shoes.got.length>=SHOE_N){s.gems+=2;all=true;}
+   });
+   refreshWallet();sCoin();
+   const left=shoes.filter(q=>!q.got).length;
+   toast(all?'🥇 ALL '+SHOE_N+' golden horseshoes found today! +80🪙 +2💎':'🍀 Golden horseshoe! +80🪙 — '+left+' more hidden somewhere today…');
+   dailyEvt('shoe',1);
+  }
+ }
+}
+window._shoes=shoes;   // diagnostics
+
+/* ================= mythic stardust trail — fantasy coats sparkle at speed ================= */
+const TRAIL_N=70;
+const TRAIL_COL={galaxy:0x9a6cff,fire:0xff7a2e,ice:0x9fe0ff,aurora:0x5affc8,shadow:0xb08cff};
+const trailMat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.85,blending:THREE.AdditiveBlending,depthWrite:false});
+const trail=new THREE.InstancedMesh(new THREE.SphereGeometry(0.05,6,5),trailMat,TRAIL_N);
+trail.frustumCulled=false;trail.visible=false;
+scene.add(trail);
+const trailP=[];
+for(let i=0;i<TRAIL_N;i++)trailP.push({life:0,x:0,y:-50,z:0,vy:0});
+let trailIdx=0,trailAcc=0;
+function updateTrail(dt){
+ const h=myHorses[rideIdx];
+ const active=!!(h&&h.coat&&(Math.abs(player.speed)>7||player.flying));
+ if(active){
+  trailMat.color.set(TRAIL_COL[h.coat]||0xffffff);
+  trailAcc+=dt*26;
+  while(trailAcc>1){
+   trailAcc-=1;
+   const p=trailP[trailIdx=(trailIdx+1)%TRAIL_N];
+   p.life=0.8;
+   p.x=player.pos.x-Math.sin(player.heading)*1.3+(Math.random()-0.5)*0.55;
+   p.z=player.pos.z-Math.cos(player.heading)*1.3+(Math.random()-0.5)*0.55;
+   p.y=groundH(player.pos.x,player.pos.z)+player.y+0.55+Math.random()*0.85;
+   p.vy=0.4+Math.random()*0.9;
+  }
+ }
+ let any=false;
+ for(let i=0;i<TRAIL_N;i++){
+  const p=trailP[i];
+  if(p.life>0){
+   p.life-=dt;p.y+=p.vy*dt;any=true;
+   _ffV.set(p.x,p.y,p.z);_ffS.setScalar(Math.max(0.001,p.life)*1.5);
+  }else{_ffV.set(0,-50,0);_ffS.setScalar(0.0001);}
+  _ffM4.compose(_ffV,_ffQ,_ffS);
+  trail.setMatrixAt(i,_ffM4);
+ }
+ trail.visible=any;
+ if(any)trail.instanceMatrix.needsUpdate=true;
+}
 
 /* ================= ranch buildings & paddock ================= */
 {
@@ -3347,6 +3426,23 @@ $('photoBtn').onclick=()=>{
  sCoin();
  toast('📷 Photo saved to your downloads!');
  dailyEvt('photo',1);
+ try{   // wildlife in frame? reward the shot
+  const fr=new THREE.Frustum();
+  fr.setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse));
+  const seen=new Set();
+  for(const c of critters){
+   if(!c.p.group.visible)continue;
+   if(Math.hypot(player.pos.x-c.x,player.pos.z-c.z)>30)continue;
+   if(fr.containsPoint(c.p.group.position))seen.add(c.key);
+  }
+  if(seen.size){
+   dailyEvt('wildphoto',seen.size);
+   statBump('wildPhotos',seen.size);
+   syncSave(s=>{s.coins+=seen.size*25;});
+   refreshWallet();
+   toast('🦌 Wildlife shot — '+Array.from(seen).join(', ')+' in frame! +'+(seen.size*25)+'🪙');
+  }
+ }catch(e){}
  const th=todayTheme();
  const s=freshSave();
  const ds=new Date().toDateString();
@@ -3929,9 +4025,9 @@ function drawBigMap(){
  lbl(-160,-205,'🏔️ Witberg');
  lbl(0,134,'🌉 River Crossing');
  const sv=freshSave();
- const n=sv&&sv.shoes3d?Object.keys(sv.shoes3d).length:0;
+ const n=(sv&&sv.shoes&&sv.shoes.date===new Date().toDateString())?sv.shoes.got.length:0;
  mc.font='700 14px "Trebuchet MS",sans-serif';
- lbl(0,310,'🍀 Golden horseshoes: '+n+'/12 — explore to find them!');
+ lbl(0,310,'🍀 Golden horseshoes today: '+n+'/'+SHOE_N+' — new hiding spots every day!');
  const q=W2(player.pos.x,player.pos.z);
  mc.save();
  mc.translate(q[0],q[1]);
@@ -4133,6 +4229,7 @@ function openOnline(){
  +'<div class="crow"><span class="lbl">Name</span><input id="pname" maxlength="14" value="'+(s.playerName||'')+'" placeholder="Your rider name"><button id="pnameSave" title="Change your rider name">💾</button></div>'
  +'<div class="crow"><span class="lbl">Club code</span><input id="pclub" maxlength="24" value="'+(s.club||'evervale')+'" placeholder="evervale"></div>'
  +'<div class="crow"><button id="netGo" style="flex:1">'+(net.client&&net.client.connected?'🔄 Rejoin':'🟢 Connect')+'</button><button id="netOff">Leave</button></div>'
+ +'<button id="netInvite" style="background:#e8f6e0">📨 Invite friends — copy a join link</button>'
  +'<b style="font-size:13px">Riders here now ('+riders.length+')</b>'
  +(riders.length?riders.map(r=>'<div class="evrow">🐴 <b>'+r.name+'</b><span>'+(r.horseName?'riding '+r.horseName:'')+'</span><button data-prof="'+r.name+'">👤 Profile</button><button data-friend="'+r.name+'">'+(isFriend(r.name)?'💚 Friend':'🤍 Befriend')+'</button></div>').join(''):'<span style="font-size:12px;color:#8c7a63">No one yet — share your club code with friends! Anyone who opens the game and joins the same club rides in your world.</span>')
  +(function(){
@@ -4151,6 +4248,13 @@ function openOnline(){
   syncSave(sv=>{sv.playerName=nm;sv.club=cb;});
   netConnect();
   openOnline();openOnline();
+ };
+ $('netInvite').onclick=()=>{
+  const code=($('pclub').value.trim().slice(0,24)||'evervale').toLowerCase().replace(/[^a-z0-9-]/g,'');
+  const url=location.origin+location.pathname+'?club='+encodeURIComponent(code);
+  const done=()=>toast('📨 Invite link copied — send it to a friend and they ride straight into club "'+code+'"!');
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(done,()=>prompt('Copy this invite link:',url));
+  else prompt('Copy this invite link:',url);
  };
  $('pnameSave').onclick=()=>{
   const nm=$('pname').value.trim().slice(0,14);
@@ -4195,6 +4299,17 @@ $('chatIn').addEventListener('keydown',e=>{
 document.querySelectorAll('#chatBar [data-emote]').forEach(b=>{
  b.onclick=()=>netSendChat(b.dataset.emote);
 });
+/* friend invite links: opening ?club=CODE joins that club automatically */
+{
+ const inv=new URLSearchParams(location.search).get('club');
+ if(inv){
+  const code=inv.toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,24);
+  if(code){
+   syncSave(sv=>{sv.club=code;if(!sv.playerName)sv.playerName='Rider'+Math.floor(Math.random()*999);});
+   setTimeout(()=>toast('🎟️ Invite accepted — riding into club "'+code+'"!'),3200);
+  }
+ }
+}
 setTimeout(()=>{const s=freshSave();if(s&&s.playerName)netConnect();},2500);
 
 /* ================= leaderboards & milestone rewards ================= */
@@ -4229,7 +4344,7 @@ const MILES={
 };
 function statVal(s,k){
  if(k==='trophies')return Object.keys(s.trophies||{}).length;
- if(k==='shoes')return Object.keys(s.shoes3d||{}).length;
+ if(k==='shoes')return ((s.stats&&s.stats.shoesFound)||0)+Object.keys(s.shoes3d||{}).length;
  if(k==='horses')return s.horses.length;
  if(k==='bond')return Math.round(s.horses.reduce((m,h)=>Math.max(m,h.bond||0),0));
  return Math.round((s.stats&&s.stats[k])||0);
@@ -4529,6 +4644,8 @@ const DAILYQ=[
  {type:'ft',icon:'🧭',label:'Fast travel somewhere',goal:1,r:{c:50,p:5}},
  {type:'gallop2k',icon:'🌪️',label:'Gallop 2,000 m',goal:2000,r:{c:250,p:30}},
  {type:'feed6',icon:'🧺',label:'Hand out 6 treats',goal:6,r:{c:160,p:20}},
+ {type:'shoe',icon:'🍀',label:'Find 3 golden horseshoes',goal:3,r:{c:220,p:20}},
+ {type:'wildphoto',icon:'📸',label:'Photograph 2 wild animals',goal:2,r:{c:200,p:20}},
 ];
 // long-haul variants share their hooks with the base types
 function dailyTypeAliases(type){return type==='gallop'?['gallop','gallop2k']:type==='feed'?['feed','feed6']:[type];}
@@ -4593,7 +4710,9 @@ const ACHS=[
  {id:'lvl5',icon:'⭐',label:'Rising star',desc:'Train a horse to level 5',v:s=>s.horses.reduce((m,h)=>Math.max(m,h.level||1),1),goal:5,r:{c:200}},
  {id:'dist25k',icon:'🧭',label:'Trail blazer',desc:'Ride 25 km in total',v:s=>(s.stats&&s.stats.dist)||0,goal:25000,r:{g:1}},
  {id:'friend1',icon:'🤝',label:'Club pal',desc:'Add a friend',v:s=>(s.friends||[]).length,goal:1,r:{c:100}},
- {id:'shoe3',icon:'🧲',label:'Lucky shoes',desc:'Find 3 golden horseshoes',v:s=>Object.keys(s.shoes3d||{}).length,goal:3,r:{c:250}},
+ {id:'shoe25',icon:'🍀',label:'Lucky streak',desc:'Find 25 golden horseshoes',v:s=>(s.stats&&s.stats.shoesFound)||0,goal:25,r:{g:2}},
+ {id:'wild10',icon:'📸',label:'Wildlife photographer',desc:'Snap 10 wild animals with the camera',v:s=>(s.stats&&s.stats.wildPhotos)||0,goal:10,r:{g:1}},
+ {id:'shoe3',icon:'🧲',label:'Lucky shoes',desc:'Find 3 golden horseshoes',v:s=>((s.stats&&s.stats.shoesFound)||0)+Object.keys(s.shoes3d||{}).length,goal:3,r:{c:250}},
  {id:'pass2k',icon:'🎟️',label:'Pass devotee',desc:'Earn 2,000 pass points',v:s=>(s.pass&&s.pass.pts)||0,goal:2000,r:{c:300}},
  {id:'peg1',icon:'🪽',label:'Sky rider',desc:'Own a Pegasus',v:s=>s.horses.some(h=>h.wings)?1:0,goal:1,r:{g:2}},
  {id:'herd25',icon:'🐴',label:'Legendary rancher',desc:'Own 25 horses',v:s=>s.horses.length,goal:25,r:{g:3}},
@@ -5534,20 +5653,6 @@ function tick(){
   j.prevSide=Math.abs(across)>0.05?side:j.prevSide;
  }
  for(const wm of windmills)wm.rotation.z+=dt*0.7;
- for(let si=shoes.length-1;si>=0;si--){
-  const sh=shoes[si];
-  sh.m.rotation.y+=dt*1.4;
-  sh.m.position.y=groundH(sh.x,sh.z)+1+Math.sin(t*2+sh.i)*0.12;
-  if(Math.hypot(sh.x-player.pos.x,sh.z-player.pos.z)<2){
-   scene.remove(sh.m);
-   shoes.splice(si,1);
-   let cnt=0;
-   syncSave(s=>{s.shoes3d=s.shoes3d||{};s.shoes3d[sh.i]=true;cnt=Object.keys(s.shoes3d).length;});
-   addGems(1);
-   sGem();
-   toast('🍀 Golden horseshoe! '+cnt+'/12 found (+1💎)');
-  }
- }
  if(Math.random()<dt*0.02)sNeigh();
  for(const tu of turtles){
   tu.a+=dt*0.15;
@@ -5714,6 +5819,8 @@ function tick(){
   fireflies.instanceMatrix.needsUpdate=true;
  }
  updateCritters(dt,t);
+ updateShoes(dt,t);
+ updateTrail(dt);
  if(fwd)camYaw+=(0-camYaw)*Math.min(1,dt*2);
  camDistSm+=(camDist-camDistSm)*Math.min(1,dt*6);
  const k=1-Math.exp(-5*dt);
@@ -5875,6 +5982,14 @@ function tick(){
    rx===-78?mc.moveTo(q[0],q[1]):mc.lineTo(q[0],q[1]);
   }
   mc.stroke();
+  // golden horseshoes sparkle on the map when you ride near them
+  mc.fillStyle='#ffd166';
+  for(const sh of shoes){
+   if(sh.got)continue;
+   if(Math.hypot(sh.x-player.pos.x,sh.z-player.pos.z)>55)continue;
+   const q=W2(sh.x,sh.z);
+   mc.beginPath();mc.arc(q[0],q[1],2.4,0,7);mc.fill();
+  }
   mc.fillStyle='#d9b85c';
   const wq=W2(35,-39);
   mc.fillRect(wq[0]-5,wq[1]-3,10,6);

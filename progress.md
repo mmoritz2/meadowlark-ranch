@@ -14,6 +14,9 @@ Progress:
 - Debug helpers: window._setDay(0..1) to set time of day (0=midnight, 0.5=noon), window._life for ambient-agent state.
 - Added seamless-SDF procedural critters (technique from x.com/TimJayas/status/2073250825858892241): blobBody() shrink-wraps an icosphere onto a smooth-min SDF of JSON-defined primitives (blended vertex colors + SDF-gradient normals); one gait system (walk4/walk2/hop/float/fly); 18 wildlife agents (bunny/deer/sheep/chicken/duck/bluebird) with wander/graze/flee states, blinking, night roosting (deer crepuscular). window._critters for diagnostics.
 
+- Goal pass (better-than-Star-Equestrian): friend invite links (Club panel button copies ?club=CODE URL; opening it auto-joins), daily golden-horseshoe hunt (replaced the old one-time 12-shoe system; legacy finds still count via stats), wildlife photo rewards/quest (frustum check in photoBtn), mythic stardust trails (TRAIL_COL per coat), contact shadows under critters.
+- Testing gotcha: BOTH the Launch preview and occluded Chrome windows suspend rAF entirely (0 fps; setTimeout throttled too). Workaround: patch requestAnimationFrame into a queue, force one native frame via screenshot, then pump frames manually with busy-waits (see session notes). node --check on the extracted gameModule catches syntax errors the custom loader swallows silently.
+
 TODOs:
 - If direct file:// gameplay is required later, the game will need a true bundled non-module build plus a GLB loading strategy that avoids browser file-origin restrictions.
 - Further repo-inspired ideas not yet done: LOD for distant objects, era/time slider UI, autonomous NPC routines beyond looping riders.
