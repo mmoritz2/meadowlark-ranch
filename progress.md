@@ -22,6 +22,9 @@ Progress:
 
 - Real 3D trees: ported SeedThree's Weber-Penn geometry layer (github.com/SkyeShark/SeedThree, MIT) inline — wpSkeleton/wpBranchGeo (parallel-transport frames)/wpLeafGeo (base-anchored phyllotactic leaf cards, dome normals) + species params for oak/birch(beech)/blossom(maple)/pine(ponderosa), 2 variants each, instanced with leaf wind sway (treeWinds) and MeshDepthMaterial alpha shadows; bushes/cacti stay GLB; quality-low trims tree instance counts. SeedThree repo cloned at Desktop\SeedThree for reference.
 
+- Ground de-tiled: gmat's onBeforeCompile now does 4-tap stochastic no-tile sampling (per-block random UV offsets, bilinear-blended) + macro variation — the visible texture grid is gone.
+- Rider rebuilt: the auto-skinned GLB rider (rider_rigged.glb, "mushroom disc" breeches) is RETIRED. makeRider is now a fully articulated segmented figure (torso/neck/head/shoulders/elbows/hips/knees joints, J struct) with a baked riding pose; driveRider animates the player's joints live (leg blend, posting, two-point over jumps, head look-into-turn, breathing, rein hands). NPC/club riders share the same figure. Seat constants RID2_Y/RID2_Z; legacy procedural-mount drive gated behind !USE_GEN_TACK.
+
 TODOs:
 - If direct file:// gameplay is required later, the game will need a true bundled non-module build plus a GLB loading strategy that avoids browser file-origin restrictions.
 - Further repo-inspired ideas not yet done: LOD for distant objects, era/time slider UI, autonomous NPC routines beyond looping riders.

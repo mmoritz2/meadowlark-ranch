@@ -734,13 +734,24 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  groundTex.anisotropy=renderer.capabilities.getMaxAnisotropy();
  const gmat=new THREE.MeshStandardMaterial({map:groundTex,vertexColors:true,roughness:0.97,bumpMap:bumpTexture,bumpScale:0.08});
  gmat.envMapIntensity=0.28;
- gmat.onBeforeCompile=sh=>{   // procedural macro variation (gradient-free) hides tiling + lifts the dark albedo
+ gmat.onBeforeCompile=sh=>{   // stochastic no-tile sampling (per-block random UV offsets, bilinear-blended)
   sh.fragmentShader='float _h21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}\n'
+   +'vec2 _h22(vec2 p){return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);}\n'
    +'float _vn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(_h21(i),_h21(i+vec2(1.,0.)),f.x),mix(_h21(i+vec2(0.,1.)),_h21(i+vec2(1.,1.)),f.x),f.y);}\n'
    +sh.fragmentShader.replace('#include <map_fragment>',
-    `#include <map_fragment>
-     #ifdef USE_MAP
+    `#ifdef USE_MAP
+     vec2 _bp=vMapUv*0.22;
+     vec2 _bi=floor(_bp), _bf=fract(_bp);
+     vec2 _bw=_bf*_bf*(3.0-2.0*_bf);
+     vec4 _acc=vec4(0.0);
+     for(int _dy=0;_dy<=1;_dy++)for(int _dx=0;_dx<=1;_dx++){
+      vec2 _bg=vec2(float(_dx),float(_dy));
+      vec2 _bo=_h22(_bi+_bg)*61.7;
+      float _wt=(_bg.x>0.5?_bw.x:1.0-_bw.x)*(_bg.y>0.5?_bw.y:1.0-_bw.y);
+      _acc+=texture2D(map,vMapUv+_bo)*_wt;
+     }
      float macro=_vn(vMapUv*0.06)*0.62+_vn(vMapUv*0.02+5.0)*0.38;
+     diffuseColor*=_acc;
      diffuseColor.rgb*=(0.88+macro*0.24)*1.40;
      #endif`);
  };
@@ -2311,7 +2322,8 @@ function hideProceduralBody(){
  if(!player.mesh||!player.parts)return;
  const P=player.parts, keep=new Set(), tree=g=>{if(g)g.traverse(o=>keep.add(o));};
  (P.wings||[]).forEach(tree); if(P.horn)keep.add(P.horn);
- tree(TACK.saddle); tree(TACK.rider); tree(TACK.bitL); tree(TACK.bitR);
+ tree(TACK.saddle); tree(TACK.bitL); tree(TACK.bitR);
+ if(player.rider)tree(player.rider.g);   // the articulated rider stays visible on the rigged mount
  const rig=RIG.scene;
  player.mesh.traverse(o=>{ if((o.isMesh||o.isSkinnedMesh) && o!==P.shadowM && !keep.has(o)
    && !(rig&&isDesc(o,rig)) && o.visible) o.visible=false; });
@@ -2524,80 +2536,14 @@ function applyCoat(){
 /* === Generated tack: textured saddle + rigged+textured rider on the mount ===
    Both attach to player.mesh (move with the horse). The rider (UniRig humanoid)
    is posed seated by rotating its hip/knee bones. Transform constants are tunable. */
-const TACK={saddle:null,rider:null,riderBones:null,riderBind:null,riderAxes:null,attached:false};
-// rider skeleton (from analysis): left leg hip20/knee21, right leg hip24/knee25; left-right = model x
-const RIDER_HIPS=[20,24], RIDER_KNEES=[21,25];
-const RIDER_ARM_L={sh:7,el:8,hand:9}, RIDER_ARM_R={sh:14,el:15,hand:16};   // arm bones: shoulder, elbow, hand
-const RIDER_ARM={fwd:0.30, inn:0.08, elbow:1.50};   // upper arm at the side, forearm forward to hold the reins
+const TACK={saddle:null,bitL:null,bitR:null,attached:false};
 // --- tunables (adjust to fit) ---
 // Absolute placement in player.mesh local space (horse rig normalizes to ~1.85
 // tall there, so these hold across breeds). Back surface ~1.45, withers ~1.85.
 const SADDLE_SCALE=0.34, SADDLE_Y=1.39, SADDLE_Z=-0.30, SADDLE_RY=Math.PI;   // aligned under the rider's leg (her hips sit behind her torso)
-const RIDER_SCALE=0.60, RIDER_RY=Math.PI;       // face forward (toward horse's head)
-const RIDER_Y=1.49, RIDER_Z=-0.19;              // seat position
-const RIDER_PITCH=0.30;                         // base torso pitch (+ = lean back; cancels the model's forward hunch so she sits UP)
-// two leg poses (rad): REST = legs hang ~straight; RIDE = legs forward, knees up, active. driveRider blends by speed.
-// NOTE: hip flex is NEGATIVE here. The rider's bind pose sits with thighs straight FORWARD,
-// and +flex rotates them UP toward the chest (the "hugging her knees" bug). Negative flex
-// swings the thighs DOWN so the legs drape along the horse's sides.
-// Moderate angles only — big abduct/flex stretch the auto-skinned breeches into a "fan".
-const POSE_REST={flex:-0.55, abduct:0.42, knee:0.85};  // halt: thigh down-forward over the flap, calf down the horse's side
-const POSE_RIDE={flex:-0.48, abduct:0.43, knee:0.95};  // moving: thigh a touch more forward + more knee bend (active seat)
-function _localAxis(bone,axisWorld){
- const p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
- bone.matrixWorld.decompose(p,q,s);
- return axisWorld.clone().applyQuaternion(q.clone().invert()).normalize();
-}
-// Calibrate once: capture the rider's bind quats + per-bone local axes (computed at
-// the bind pose with the rider at identity) so a pose can be re-applied every frame.
-function calibrateRider(){
- if(!TACK.riderBones)return;
- const B=TACK.riderBones,m=TACK.rider;
- const sav={p:m.position.clone(),r:m.quaternion.clone(),s:m.scale.clone()};
- m.position.set(0,0,0);m.quaternion.identity();m.scale.set(1,1,1);m.updateWorldMatrix(true,true);
- const X=new THREE.Vector3(1,0,0),Y=new THREE.Vector3(0,1,0),Z=new THREE.Vector3(0,0,1);   // X=pitch/flex, Y=turn, Z=sway/abduct
- TACK.riderBind={}; [20,24,21,25,7,8,14,15,3,4,5].forEach(i=>{TACK.riderBind[i]=B[i].quaternion.clone();});
- TACK.riderAxes={f20:_localAxis(B[20],X),f24:_localAxis(B[24],X),
-                 a20:_localAxis(B[20],Z),a24:_localAxis(B[24],Z),
-                 k21:_localAxis(B[21],X),k25:_localAxis(B[25],X),
-                 s7f:_localAxis(B[7],X),s7i:_localAxis(B[7],Z),e8:_localAxis(B[8],X),
-                 s14f:_localAxis(B[14],X),s14i:_localAxis(B[14],Z),e15:_localAxis(B[15],X),
-                 cX3:_localAxis(B[3],X),cZ3:_localAxis(B[3],Z),nX4:_localAxis(B[4],X),
-                 hX5:_localAxis(B[5],X),hY5:_localAxis(B[5],Y)};
- m.position.copy(sav.p);m.quaternion.copy(sav.r);m.scale.copy(sav.s);m.updateWorldMatrix(true,true);
- poseRiderArms();
-}
-// Re-pose legs from the bind pose: hip flex (forward) + abduct (straddle) + knee bend.
-function applyRiderPose(flex,abduct,knee){
- const A=TACK.riderAxes,bnd=TACK.riderBind,B=TACK.riderBones; if(!A)return;
- const q1=new THREE.Quaternion(),q2=new THREE.Quaternion();
- B[20].quaternion.copy(bnd[20]).multiply(q1.setFromAxisAngle(A.f20,flex)).multiply(q2.setFromAxisAngle(A.a20,-abduct));
- B[24].quaternion.copy(bnd[24]).multiply(q1.setFromAxisAngle(A.f24,flex)).multiply(q2.setFromAxisAngle(A.a24, abduct));
- B[21].quaternion.copy(bnd[21]).multiply(q1.setFromAxisAngle(A.k21,knee));
- B[25].quaternion.copy(bnd[25]).multiply(q1.setFromAxisAngle(A.k25,knee));
-}
-// Pose the arms forward + slightly inward so the hands rest near the reins (static — set once).
-function poseRiderArms(){
- const A=TACK.riderAxes,bnd=TACK.riderBind,B=TACK.riderBones; if(!A||!bnd[7])return;
- const q=()=>new THREE.Quaternion();
- B[7].quaternion.copy(bnd[7]).multiply(q().setFromAxisAngle(A.s7f,RIDER_ARM.fwd)).multiply(q().setFromAxisAngle(A.s7i,RIDER_ARM.inn));
- B[14].quaternion.copy(bnd[14]).multiply(q().setFromAxisAngle(A.s14f,RIDER_ARM.fwd)).multiply(q().setFromAxisAngle(A.s14i,-RIDER_ARM.inn));
- B[8].quaternion.copy(bnd[8]).multiply(q().setFromAxisAngle(A.e8,RIDER_ARM.elbow));
- B[15].quaternion.copy(bnd[15]).multiply(q().setFromAxisAngle(A.e15,RIDER_ARM.elbow));
-}
-// Continuous "alive" layer: breathing, head look-around at halt, head bob + torso sway with the gait.
-function animateRiderLife(sp,tm){
- const A=TACK.riderAxes,bnd=TACK.riderBind,B=TACK.riderBones; if(!A||!bnd[5])return;
- const q=new THREE.Quaternion(),q2=new THREE.Quaternion();
- const ph=RIG.phase*Math.PI*2, moving=sp>0.3;
- const breath = moving ? Math.sin(ph)*0.04 : Math.sin(tm*1.4)*0.06;             // chest rise
- const csway  = moving ? Math.sin(ph*0.5)*0.03 : Math.sin(tm*0.6)*0.03;          // weight shift / sway
- B[3].quaternion.copy(bnd[3]).multiply(q.setFromAxisAngle(A.cX3,breath)).multiply(q2.setFromAxisAngle(A.cZ3,csway));
- const nod  = moving ? Math.sin(ph)*0.05 : Math.sin(tm*0.9+0.6)*0.05;            // head bob
- const look = moving ? Math.sin(tm*0.8)*0.06 : Math.sin(tm*1.05)*0.14+Math.sin(tm*0.55+1.0)*0.08; // glance L/R, centered (~6s)
- B[4].quaternion.copy(bnd[4]).multiply(q.setFromAxisAngle(A.nX4,nod*0.5));
- B[5].quaternion.copy(bnd[5]).multiply(q.setFromAxisAngle(A.hX5,nod)).multiply(q2.setFromAxisAngle(A.hY5,look));
-}
+const RID2_Y=1.57, RID2_Z=-0.28;                // articulated rider hip-centre over the saddle seat
+/* the old auto-skinned GLB rider (and its bone-calibration machinery) is retired —
+   the articulated makeRider figure replaced it: rigid parts can't smear. */
 function _fit(obj,scalar){obj.scale.setScalar(1);obj.position.set(0,0,0);obj.rotation.set(0,0,0);obj.updateWorldMatrix(true,true);
  const bb=new THREE.Box3().setFromObject(obj);obj.userData.bbMinY=bb.min.y;obj.scale.setScalar(scalar);}
 // Stylized procedural English saddle (the generated saddle GLB was malformed). Built in
@@ -2634,45 +2580,54 @@ function buildSaddle(){
 }
 function attachTack(){   // idempotent: places whatever has loaded so far onto the current mount
  if(!USE_GEN_HORSE||!USE_GEN_TACK)return;
- if(!player.mesh||!(TACK.saddle||TACK.rider))return;
+ if(!player.mesh||!TACK.saddle)return;
  if(player.rider&&player.rider.g)player.rider.g.visible=false;   // hide procedural rider
  if(TACK.saddle){
   if(TACK.saddle.userData&&TACK.saddle.userData.proc){TACK.saddle.position.set(0,SADDLE_Y,SADDLE_Z);}  // procedural: pre-sized & oriented
   else{_fit(TACK.saddle,SADDLE_SCALE);TACK.saddle.rotation.y=SADDLE_RY;TACK.saddle.position.set(0,SADDLE_Y,SADDLE_Z);}
   TACK.saddle.visible=true; TACK.saddle.traverse(o=>{if(o.isMesh)o.visible=true;});  // attachRig hides player.mesh meshes; re-show tack
   player.mesh.add(TACK.saddle);}
- if(TACK.rider){_fit(TACK.rider,RIDER_SCALE);
-  TACK.rider.rotation.y=RIDER_RY;
-  TACK.rider.position.set(0,RIDER_Y,RIDER_Z);
-  TACK.rider.visible=true; TACK.rider.traverse(o=>{if(o.isMesh)o.visible=true;});
-  player.mesh.add(TACK.rider);
-  if(!TACK.bitL){TACK.bitL=new THREE.Object3D();TACK.bitL.position.set(0.13,1.34,1.0);
-   TACK.bitR=new THREE.Object3D();TACK.bitR.position.set(-0.13,1.34,1.0);}   // rein anchors at the gen horse's mouth corners
-  if(TACK.bitL.parent!==player.mesh){player.mesh.add(TACK.bitL);player.mesh.add(TACK.bitR);}}
+ if(player.rider&&player.rider.g){                       // articulated procedural rider sits the saddle
+  player.rider.g.visible=true;
+  player.rider.g.traverse(o=>{if(o.isMesh)o.visible=true;});
+  player.rider.g.position.set(0,RID2_Y,RID2_Z);
+ }
+ if(!TACK.bitL){TACK.bitL=new THREE.Object3D();TACK.bitL.position.set(0.13,1.34,1.0);
+  TACK.bitR=new THREE.Object3D();TACK.bitR.position.set(-0.13,1.34,1.0);}   // rein anchors at the gen horse's mouth corners
+ if(TACK.bitL.parent!==player.mesh){player.mesh.add(TACK.bitL);player.mesh.add(TACK.bitR);}
 }
-function driveRider(sp,tm){   // blend rest<->ride leg pose by speed; posting rise + lean + breathing + reins
- if(!TACK.rider||!TACK.riderAxes)return;
- const t=Math.max(0,Math.min(1,(sp-0.3)/6));        // 0 at halt, ~1 by canter
- applyRiderPose(POSE_REST.flex+(POSE_RIDE.flex-POSE_REST.flex)*t,
-                POSE_REST.abduct+(POSE_RIDE.abduct-POSE_REST.abduct)*t,
-                POSE_REST.knee+(POSE_RIDE.knee-POSE_REST.knee)*t);
- animateRiderLife(sp,tm||0);                          // breathing, head look/bob, torso sway — keep it alive
+function driveRider(sp,tm){   // live seat: leg blend, posting, lean, breathing, head look, reins
+ if(!USE_GEN_HORSE||!USE_GEN_TACK)return;   // procedural-mount fallback drives the rider itself
+ const R=player.rider;
+ if(!R||!R.J)return;
+ const J=R.J;
+ const t=THREE.MathUtils.clamp((sp-0.3)/6,0,1);      // 0 at halt, ~1 by canter
  const ph=RIG.phase*Math.PI*2, moving=sp>0.3;
- const post=moving?Math.max(0,Math.sin(ph))*(0.04+0.06*Math.min(1,sp/5)):0;   // rise out of the saddle each stride
- const idle=!moving?Math.sin((tm||0)*1.5)*0.006:0;                            // gentle bob at halt
- TACK.rider.position.y=RIDER_Y+post+idle;
- TACK.rider.rotation.x=RIDER_PITCH-(0.20*t)-Math.sin(ph)*0.04*t; // base sit-up pitch + forward lean + stride pitch
- TACK.rider.rotation.z=moving?Math.sin(ph)*0.02:Math.sin((tm||0)*1.3)*0.006;  // subtle sway
- if(TACK.bitL&&TACK.riderBones){updateRein(reinL,TACK.riderBones[9],TACK.bitL);updateRein(reinR,TACK.riderBones[16],TACK.bitR);}
+ const air=(player.y>0.4&&!player.flying)?1:0;       // two-point over jumps
+ const thigh=-0.92-0.10*t-0.22*air, knee=1.18+0.12*t+0.18*air;
+ for(const s of[-1,1]){
+  J.hip[s].rotation.set(thigh,-s*0.06,s*0.24);
+  J.knee[s].rotation.x=knee;
+  J.sh[s].rotation.set(-0.35-0.10*t-0.18*air,0,s*0.10);
+  J.el[s].rotation.x=-0.85-Math.sin(ph)*0.06*t;
+ }
+ const breath=moving?Math.sin(ph)*0.03:Math.sin((tm||0)*1.4)*0.05;
+ J.torso.rotation.x=-0.10-0.22*t-0.30*air+breath;
+ J.torso.rotation.z=moving?Math.sin(ph*0.5)*0.03:Math.sin((tm||0)*0.6)*0.02;
+ // head: look into the turn while riding; glance around at halt; eyes stay up
+ const turn=(keys.KeyA||keys.ArrowLeft||touch.left?1:0)-(keys.KeyD||keys.ArrowRight||touch.right?1:0);
+ R._look=(R._look||0)+((moving?turn*0.42:Math.sin((tm||0)*0.9)*0.22+Math.sin((tm||0)*0.47+1)*0.12)-(R._look||0))*0.08;
+ J.head.rotation.y=R._look;
+ J.head.rotation.x=0.06-(J.torso.rotation.x+0.10)*0.55+(moving?Math.sin(ph)*0.035:0);
+ const post=moving?Math.max(0,Math.sin(ph))*(0.03+0.05*Math.min(1,sp/5)):0;   // rise out of the saddle each stride
+ const idle=!moving?Math.sin((tm||0)*1.5)*0.005:0;
+ R.g.position.y=RID2_Y+post+idle;
+ R.g.position.z=RID2_Z;
+ R.g.rotation.x=-0.02-0.05*t-Math.sin(ph)*0.03*t;
+ R.g.rotation.z=moving?Math.sin(ph)*0.02:0;
+ if(TACK.bitL){updateRein(reinL,R.handL,TACK.bitL);updateRein(reinR,R.handR,TACK.bitR);}
 }
-{
- const gl=new GLTFLoader();
- TACK.saddle=buildSaddle();   // stylized procedural English saddle (generated GLB was malformed); attached later by attachTack() once player exists
- gl.load('assets/models/rider_rigged.glb',g=>{g.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false;}});
-  TACK.rider=g.scene;let sk=null;g.scene.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;});
-  TACK.riderBones=sk?sk.skeleton.bones:null;calibrateRider();applyRiderPose(POSE_REST.flex,POSE_REST.abduct,POSE_REST.knee);attachTack();
-  console.log('rider loaded:',TACK.riderBones?TACK.riderBones.length:0,'bones');},undefined,e=>console.warn('rider load',e));
-}
+TACK.saddle=buildSaddle();   // stylized procedural English saddle; attached by attachTack() once player exists
 // pond — Mirror Lake earns its name
 const pondTex=waterShimTex.clone();
 pondTex.repeat.set(4,4);
@@ -3721,38 +3676,78 @@ function nameSprite(text){
  return sp;
 }
 const horseScale=h=>h.foal?0.65:(h.breed==='chestnut'?0.82:h.breed==='shire'?1.16:h.breed==='clyde'?1.12:h.breed==='pegasus'?1.14:1);
+/* Fully articulated rider: rigid segments on real joints (torso / neck+head /
+   shoulders / elbows / hips / knees) — no skinning, so nothing can smear. */
 function makeRider(custom){
  const r=new THREE.Group();
  const fit=custom||((freshSave()||{}).rider||{});
- const pants=clothMat(fit.pants||'#4a4338'),shirt=clothMat(fit.shirt||'#c98c5a'),skin=fit.skin||'#e3a37d',helm=fit.helmet||'#2e2e38';
- blob(0.13,0.10,0.11,pants,0,0,0,r);
- blob(0.125,0.19,0.10,shirt,0,0.20,0.0,r);
- blob(0.07,0.082,0.072,skin,0,0.42,0.01,r);
- blob(0.08,0.066,0.084,helm,0,0.462,0.0,r);
- const brim=new THREE.Mesh(new THREE.CylinderGeometry(0.088,0.088,0.016,12),smat(helm));
- brim.position.set(0,0.432,0.045);brim.rotation.x=-0.12;brim.castShadow=true;r.add(brim);
+ const pants=clothMat(fit.pants||'#cfc6ae'),shirt=clothMat(fit.shirt||'#3d4a6e'),skin=fit.skin||'#e3a37d',helm=fit.helmet||'#2e2e38';
+ blob(0.125,0.095,0.115,pants,0,0.01,0,r);                        // pelvis / seat
+ const torso=new THREE.Group();
+ torso.position.set(0,0.08,0);
+ r.add(torso);
+ blob(0.115,0.17,0.10,shirt,0,0.13,0.005,torso);                  // chest
+ blob(0.10,0.062,0.09,shirt,0,0.27,0,torso);                      // shoulders / collar
+ const neck=new THREE.Group();
+ neck.position.set(0,0.315,0.01);
+ torso.add(neck);
+ blob(0.028,0.038,0.028,skin,0,0.012,0,neck);
+ const head=new THREE.Group();
+ head.position.set(0,0.05,0);
+ neck.add(head);
+ blob(0.066,0.078,0.068,skin,0,0.045,0.008,head);                 // face
+ blob(0.05,0.052,0.042,fit.hair||'#5a4632',0,0.028,-0.062,head);  // hair bun
+ blob(0.078,0.06,0.082,helm,0,0.092,0,head);                      // helmet shell
+ const brim=new THREE.Mesh(new THREE.CylinderGeometry(0.085,0.085,0.015,12),smat(helm));
+ brim.position.set(0,0.062,0.046);
+ brim.rotation.x=-0.1;
+ brim.castShadow=true;
+ head.add(brim);
+ blob(0.011,0.013,0.011,'#241a14',-0.026,0.052,0.068,head);       // eyes
+ blob(0.011,0.013,0.011,'#241a14',0.026,0.052,0.068,head);
+ const J={torso,neck,head,sh:{},el:{},hip:{},knee:{}};
  const hands={};
  for(const s of[-1,1]){
-  const arm=new THREE.Group();
-  arm.position.set(s*0.115,0.32,0.03);
-  arm.rotation.x=-1.25;arm.rotation.z=s*0.10;
-  r.add(arm);
-  tube(0.034,0.028,0.34,shirt,0,-0.17,0,arm);
-  blob(0.04,0.045,0.04,skin,0,-0.36,0,arm);
-  const hm=new THREE.Object3D();hm.position.set(0,-0.37,0);arm.add(hm);
+  const sh=new THREE.Group();
+  sh.position.set(s*0.125,0.255,0.01);
+  torso.add(sh);
+  blob(0.038,0.042,0.038,shirt,0,-0.01,0,sh);                     // shoulder cap
+  tube(0.032,0.027,0.17,shirt,0,-0.09,0,sh);                      // upper arm
+  const el=new THREE.Group();
+  el.position.set(0,-0.18,0);
+  sh.add(el);
+  tube(0.026,0.022,0.16,shirt,0,-0.08,0,el);                      // forearm
+  blob(0.034,0.042,0.036,skin,0,-0.175,0.005,el);                 // hand
+  const hm=new THREE.Object3D();
+  hm.position.set(0,-0.185,0.015);
+  el.add(hm);
   hands[s]=hm;
-  const thigh=new THREE.Group();
-  thigh.position.set(s*0.16,-0.02,0.0);
-  thigh.rotation.x=-1.05;thigh.rotation.z=s*0.22;
-  r.add(thigh);
-  tube(0.05,0.042,0.34,pants,0,-0.17,0,thigh);
-  const calf=new THREE.Group();calf.position.set(0,-0.34,0);calf.rotation.x=1.35;thigh.add(calf);
-  tube(0.04,0.034,0.36,pants,0,-0.18,0,calf);
-  box(0.07,0.07,0.15,leatherMat('#2e2218'),0,-0.38,0.03,calf);
+  J.sh[s]=sh;J.el[s]=el;
+  const hip=new THREE.Group();
+  hip.position.set(s*0.115,-0.015,0.01);
+  r.add(hip);
+  blob(0.058,0.075,0.065,pants,0,-0.03,0,hip);                    // breech / thigh roundness
+  tube(0.05,0.042,0.30,pants,0,-0.155,0,hip);                     // thigh
+  const knee=new THREE.Group();
+  knee.position.set(0,-0.31,0);
+  hip.add(knee);
+  tube(0.039,0.033,0.30,leatherMat('#241a10'),0,-0.15,0,knee);    // tall boot
+  box(0.062,0.048,0.13,leatherMat('#241a10'),0,-0.315,0.035,knee);// boot foot (heel down)
+  J.hip[s]=hip;J.knee[s]=knee;
  }
+ // bake a natural riding pose (NPCs & club riders use this as-is; the player's
+ // rider is animated live by driveRider on top of the same joints)
+ for(const s of[-1,1]){
+  J.hip[s].rotation.set(-0.92,-s*0.06,s*0.24);
+  J.knee[s].rotation.x=1.18;
+  J.sh[s].rotation.set(-0.35,0,s*0.10);
+  J.el[s].rotation.x=-0.85;
+ }
+ J.torso.rotation.x=-0.10;
+ J.head.rotation.x=0.06;
  r.position.set(0,1.87,0.02);
  r.scale.setScalar(1.18);
- return {g:r,handL:hands[-1],handR:hands[1]};
+ return {g:r,handL:hands[-1],handR:hands[1],J};
 }
 const reinMat=new THREE.MeshStandardMaterial({color:0x241812,roughness:0.7,metalness:0.05});
 function makeRein(){                          // thin tube so the rein reads as a leather strap (a Line is 1px / faint)
@@ -5834,7 +5829,7 @@ function tick(){
   d.sp.scale.multiplyScalar(1+dt*1.6);
   if(d.life<=0)d.sp.visible=false;
  }
- if(player.rider && !(USE_GEN_TACK&&TACK.rider)){   // skip procedural rider drive (incl. its reins) when the generated rider is mounted
+ if(player.rider && !(USE_GEN_HORSE&&USE_GEN_TACK)){   // legacy drive only for the procedural-mount fallback
   const rid=player.rider;
   const air=player.y>0;
   const leanT=air?-0.55:player.landT>0?-0.45:sp>7?-0.35:sp>2.8?-0.1:0;
