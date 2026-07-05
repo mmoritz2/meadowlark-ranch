@@ -501,7 +501,7 @@ for(let i=0;i<FIREFLY_N;i++){
 }
 
 /* ================= graphics quality (Low / Medium / High) ================= */
-let useBloom=true,grassInst=null,cloudList=null;
+let useBloom=true,grassInst=null,cloudList=null,seedTreeInsts=null;
 let quality=(save&&save.quality)||'high';
 const QUAL_LABEL={low:'🎚️ Graphics: Low — smoothest',medium:'🎚️ Graphics: Medium',high:'🎚️ Graphics: High — prettiest'};
 function applyQuality(q){
@@ -520,6 +520,7 @@ function applyQuality(q){
  fireflies.count=q==='low'?44:FIREFLY_N;
  if(grassInst)grassInst.count=q==='low'?6200:9500;
  if(cloudList)cloudList.forEach((c,i)=>{c.visible=q==='low'?i%2===0:true;});
+ if(seedTreeInsts)seedTreeInsts.forEach(m=>{m.count=q==='low'?Math.ceil(m.userData.fullCount*0.55):m.userData.fullCount;});
  const qb=$('qualBtn');
  if(qb)qb.title=QUAL_LABEL[q];
 }
@@ -1391,6 +1392,351 @@ leafMats[3].color.set('#ffd9a0');
 leafMats[4].color.set('#bfe6a8');
 const pineMat=new THREE.MeshStandardMaterial({map:pineTex,alphaTest:0.4,side:THREE.DoubleSide,roughness:1});
 pineMat.envMapIntensity=0.35;
+
+/* ============== real 3D trees: Weber–Penn skeletons generated at boot ==============
+   Geometry pipeline adapted from SeedThree — github.com/SkyeShark/SeedThree
+   (MIT © SkyeShark): parametric stem skeletons (curve/taper/phyllotaxy/pipe-model/
+   tropism) meshed as tapered generalized cylinders, plus base-anchored leaf cards. */
+class WPRng{
+ constructor(seed){
+  const s=String(seed);
+  let h=1779033703^s.length;
+  for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=(h<<13)|(h>>>19);}
+  h=Math.imul(h^(h>>>16),2246822507);
+  h=Math.imul(h^(h>>>13),3266489909);
+  this.s=(h^(h>>>16))>>>0;
+ }
+ next(){
+  let z=(this.s=(this.s+0x9e3779b9)|0);
+  z^=z>>>16;z=Math.imul(z,0x21f0aaad);
+  z^=z>>>15;z=Math.imul(z,0x735a2d97);
+  z^=z>>>15;
+  return (z>>>0)/4294967296;
+ }
+ range(a,b){return a+(b-a)*this.next();}
+ vary(b,s){return b+(this.next()*2-1)*s;}
+}
+const _wpUP=new THREE.Vector3(0,1,0),_wpXA=new THREE.Vector3(1,0,0),_wpYA=new THREE.Vector3(0,1,0);
+function _wpQ(axis,deg){return new THREE.Quaternion().setFromAxisAngle(axis,deg*Math.PI/180);}
+function _wpShape(shape,ratio){
+ switch(shape){
+  case 0:return 0.2+0.8*ratio;
+  case 1:return 0.2+0.8*Math.sin(Math.PI*ratio);
+  case 2:return 0.2+0.8*Math.sin(0.5*Math.PI*ratio);
+  default:return 1;
+ }
+}
+function _wpTropism(o,amount){
+ const fwd=_wpYA.clone().applyQuaternion(o);
+ const axis=new THREE.Vector3().crossVectors(fwd,_wpUP);
+ if(axis.lengthSq()<1e-8)return;
+ axis.normalize();
+ const dec=Math.acos(THREE.MathUtils.clamp(fwd.dot(_wpUP),-1,1));
+ o.premultiply(new THREE.Quaternion().setFromAxisAngle(axis,Math.abs(amount)*dec));
+}
+function wpStem(level,origin,orient,length,radius,p,rng,stems){
+ const res=Math.max(2,p.curveRes[level]|0);
+ const segLen=length/res;
+ const points=[origin.clone()],radii=[radius],orients=[orient.clone()];
+ const o=orient.clone(),pos=origin.clone();
+ const curve=p.curve[level],curveBack=p.curveBack[level],curveV=p.curveV[level];
+ for(let i=1;i<=res;i++){
+  let seg=curveBack===0?curve/res:(i<=res/2?curve:curveBack)/(res/2);
+  seg+=rng.vary(0,curveV/res);
+  o.multiply(_wpQ(_wpXA,seg));
+  if(level>=2&&p.attractionUp)_wpTropism(o,p.attractionUp/res);
+  pos.addScaledVector(_wpYA.clone().applyQuaternion(o).normalize(),segLen);
+  points.push(pos.clone());
+  radii.push(Math.max(radius*(1-i/res),0.002));
+  orients.push(o.clone());
+ }
+ if(level===0&&p.flare)for(let i=0;i<points.length;i++){
+  const z=i/(points.length-1);
+  if(z<0.15)radii[i]*=1+p.flare*(1-z/0.15);
+ }
+ stems.push({level,points,radii,orients,maxLevel:p.levels-1,radialSegments:p.radialSegments[level]||6});
+ const cl=level+1;
+ if(cl>=p.levels)return;
+ const base=p.branches[cl]||0;
+ if(base<=0)return;
+ const nCh=level===0?Math.round(base):Math.max(1,Math.round(base*0.6));
+ const offsetStart=level===0?p.baseSize:0.1;
+ let az=rng.range(0,360);
+ for(let c=0;c<nCh;c++){
+  const frac=offsetStart+(1-offsetStart)*((c+0.5)/nCh);
+  const sg=frac*res,si=Math.min(res-1,Math.floor(sg)),st=sg-si;
+  const cpos=points[si].clone().lerp(points[si+1],st);
+  const cor=orients[si].clone().slerp(orients[si+1],st);
+  const prHere=radii[si]*(1-st)+radii[si+1]*st;
+  az+=p.rotate[cl]+rng.vary(0,p.rotateV[cl]);
+  const cO=cor.clone();
+  cO.multiply(_wpQ(_wpYA,az));
+  cO.multiply(_wpQ(_wpXA,p.downAngle[cl]+rng.vary(0,p.downAngleV[cl])));
+  const lf=p.length[cl]+rng.vary(0,p.lengthV[cl]);
+  const shapeFrac=level===0?_wpShape(p.shape,1-(frac-offsetStart)/(1-offsetStart)):1;
+  const cLen=Math.max(0.05,length*lf*shapeFrac);
+  const cR=Math.min(radius*Math.pow(cLen/length,p.ratioPower),prHere*0.9);
+  wpStem(cl,cpos,cO,cLen,cR,p,rng,stems);
+ }
+}
+function wpSkeleton(p,rng){
+ const stems=[];
+ const trunkLen=p.scale+rng.vary(0,p.scaleV);
+ const nT=1+(p.baseSplits|0);
+ for(let t=0;t<nT;t++){
+  const orient=new THREE.Quaternion();
+  if(nT>1){
+   orient.multiply(_wpQ(_wpYA,(360/nT)*t+rng.vary(0,20)));
+   orient.multiply(_wpQ(_wpXA,rng.vary(p.baseSplitAngle,8)));
+  }
+  wpStem(0,new THREE.Vector3(),orient,trunkLen,trunkLen*p.ratio,p,rng,stems);
+ }
+ return stems;
+}
+/* tapered generalized cylinders with parallel-transport frames (no swirled bark) */
+function wpBranchGeo(stems,radialScale,ringStride){
+ const P=[],N=[],UV=[],idx=[];
+ let vb=0;
+ const radial=new THREE.Vector3(),pos=new THREE.Vector3(),tan=new THREE.Vector3(),nrm=new THREE.Vector3(),bin=new THREE.Vector3();
+ const tangentAt=(pts,i,out)=>{
+  const n=pts.length;
+  if(i===0)out.copy(pts[1]).sub(pts[0]);
+  else if(i===n-1)out.copy(pts[n-1]).sub(pts[n-2]);
+  else out.copy(pts[i+1]).sub(pts[i-1]);
+  if(out.lengthSq()<1e-10)out.set(0,1,0);
+  return out.normalize();
+ };
+ for(const stem of stems){
+  const seg=Math.max(3,Math.round(stem.radialSegments*radialScale));
+  let points=stem.points,radii=stem.radii;
+  if(ringStride>1&&points.length>2){
+   const Pp=[],Rr=[];
+   for(let i=0;i<points.length-1;i+=ringStride){Pp.push(points[i]);Rr.push(radii[i]);}
+   Pp.push(points[points.length-1]);
+   Rr.push(radii[radii.length-1]);
+   points=Pp;radii=Rr;
+  }
+  const rings=points.length,rv=seg+1;
+  const fN=[],fB=[];
+  tangentAt(points,0,tan);
+  nrm.crossVectors(tan,_wpUP);
+  if(nrm.lengthSq()<1e-6)nrm.crossVectors(tan,_wpXA);
+  nrm.normalize();
+  bin.crossVectors(nrm,tan).normalize();
+  fN.push(nrm.clone());fB.push(bin.clone());
+  for(let i=1;i<rings;i++){
+   tangentAt(points,i,tan);
+   nrm.copy(fN[i-1]).addScaledVector(tan,-fN[i-1].dot(tan));
+   if(nrm.lengthSq()<1e-8){
+    nrm.crossVectors(tan,_wpUP);
+    if(nrm.lengthSq()<1e-6)nrm.crossVectors(tan,_wpXA);
+   }
+   nrm.normalize();
+   bin.crossVectors(nrm,tan).normalize();
+   fN.push(nrm.clone());fB.push(bin.clone());
+  }
+  const uWrap=Math.max(1,Math.round(2*Math.PI*radii[0]/1.2));
+  let vAlong=0;
+  for(let i=0;i<rings;i++){
+   if(i>0)vAlong+=points[i].distanceTo(points[i-1]);
+   for(let j=0;j<=seg;j++){
+    const th=(j/seg)*Math.PI*2,cos=Math.cos(th),sin=Math.sin(th);
+    radial.copy(fN[i]).multiplyScalar(cos).addScaledVector(fB[i],sin);
+    pos.copy(points[i]).addScaledVector(radial,radii[i]);
+    P.push(pos.x,pos.y,pos.z);
+    N.push(radial.x,radial.y,radial.z);
+    UV.push((j/seg)*uWrap,vAlong/1.2);
+   }
+  }
+  for(let i=0;i<rings-1;i++)for(let j=0;j<seg;j++){
+   const a=vb+i*rv+j,b=a+1,c2=a+rv,d=c2+1;
+   idx.push(a,c2,b,b,c2,d);
+  }
+  vb+=rings*rv;
+ }
+ const g=new THREE.BufferGeometry();
+ g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(P),3));
+ g.setAttribute('normal',new THREE.BufferAttribute(new Float32Array(N),3));
+ g.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(UV),2));
+ g.setIndex(idx);
+ g.computeBoundingSphere();
+ return g;
+}
+/* leaf cards: base-anchored on terminal twigs, phyllotactic spin, dome normals */
+function wpLeafGeo(stems,cfg,rng){
+ const P=[],N=[],UV=[],W=[],idx=[];
+ const cc=new THREE.Vector3();
+ let cn=0;
+ for(const s of stems)if(s.level===s.maxLevel){cc.add(s.points[s.points.length-1]);cn++;}
+ if(cn)cc.divideScalar(cn);
+ const q=new THREE.Quaternion(),v=new THREE.Vector3(),nq=new THREE.Vector3(),wp=new THREE.Vector3(),mid=new THREE.Vector3();
+ let vb=0;
+ for(const s of stems){
+  if(s.level!==s.maxLevel)continue;
+  let az=rng.range(0,360);
+  for(let k=0;k<cfg.per;k++){
+   const t=0.15+0.85*(k+0.5)/cfg.per;
+   const sg=t*(s.points.length-1),si=Math.min(s.points.length-2,Math.floor(sg)),st=sg-si;
+   v.copy(s.points[si]).lerp(s.points[si+1],st);
+   q.copy(s.orients[si]).slerp(s.orients[si+1],st);
+   az+=137.5+rng.vary(0,18);
+   q.multiply(_wpQ(_wpYA,az));
+   q.multiply(_wpQ(_wpXA,cfg.tilt+rng.vary(0,16)));
+   const S=cfg.size*(0.8+rng.next()*0.5);
+   nq.set(0,0,1).applyQuaternion(q);
+   mid.set(0,S*0.6,0).applyQuaternion(q).add(v);
+   nq.lerp(mid.sub(cc).normalize(),0.6).normalize();
+   const wind=0.35+0.45*t;
+   const corners=[[-S/2,0,0],[S/2,0,0],[S/2,S*1.15,0],[-S/2,S*1.15,0]];
+   for(const c2 of corners){
+    wp.set(c2[0],c2[1],c2[2]).applyQuaternion(q).add(v);
+    P.push(wp.x,wp.y,wp.z);
+    N.push(nq.x,nq.y,nq.z);
+    W.push(wind);
+   }
+   UV.push(0,0,1,0,1,1,0,1);
+   idx.push(vb,vb+1,vb+2,vb,vb+2,vb+3);
+   vb+=4;
+  }
+ }
+ const g=new THREE.BufferGeometry();
+ g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(P),3));
+ g.setAttribute('normal',new THREE.BufferAttribute(new Float32Array(N),3));
+ g.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(UV),2));
+ g.setAttribute('aWind',new THREE.BufferAttribute(new Float32Array(W),1));
+ g.setIndex(idx);
+ g.computeBoundingSphere();
+ return g;
+}
+/* leaf-card textures: light desaturated bases so material.color tints the species */
+const leafCardTex=canvasTex(128,128,(c,w,h)=>{
+ c.clearRect(0,0,w,h);
+ for(let i=0;i<7;i++){
+  const cx=64+(Math.random()-0.5)*54,cy=60+(Math.random()-0.5)*54;
+  const a=Math.random()*Math.PI*2,L=26+Math.random()*16,Wd=13+Math.random()*7;
+  c.save();c.translate(cx,cy);c.rotate(a);
+  const g=c.createLinearGradient(0,-L,0,L);
+  g.addColorStop(0,'#e6f2cf');g.addColorStop(1,'#b9d49a');
+  c.fillStyle=g;
+  c.beginPath();c.moveTo(0,-L);c.quadraticCurveTo(Wd,-L*0.25,0,L);c.quadraticCurveTo(-Wd,-L*0.25,0,-L);c.fill();
+  c.strokeStyle='rgba(90,120,60,0.5)';c.lineWidth=1.2;
+  c.beginPath();c.moveTo(0,-L*0.9);c.lineTo(0,L*0.85);c.stroke();
+  c.restore();
+ }
+});
+const needleCardTex=canvasTex(128,128,(c,w,h)=>{
+ c.clearRect(0,0,w,h);
+ for(let b=0;b<4;b++){
+  const bx=20+Math.random()*88,by=118-Math.random()*30;
+  const ba=-Math.PI/2+(Math.random()-0.5)*0.9;
+  for(let i=-7;i<=7;i++){
+   c.strokeStyle=['#dcebc8','#c8dcae','#b8d09e'][Math.abs(i)%3];
+   c.lineWidth=2.2;
+   c.beginPath();c.moveTo(bx,by);
+   c.lineTo(bx+Math.cos(ba+i*0.16)*(52+Math.random()*24),by+Math.sin(ba+i*0.16)*(52+Math.random()*24));
+   c.stroke();
+  }
+ }
+});
+const blossomCardTex=canvasTex(128,128,(c,w,h)=>{
+ c.clearRect(0,0,w,h);
+ for(let i=0;i<16;i++){
+  const cx=64+(Math.random()-0.5)*70,cy=64+(Math.random()-0.5)*70,r=9+Math.random()*9;
+  c.fillStyle=['#ffd3e2','#ffc2d6','#ffe1eb','#f8b7cc'][i%4];
+  for(let pt=0;pt<5;pt++){
+   const a=pt/5*Math.PI*2+Math.random();
+   c.beginPath();c.arc(cx+Math.cos(a)*r*0.55,cy+Math.sin(a)*r*0.55,r*0.5,0,7);c.fill();
+  }
+  c.fillStyle='#ffe9a8';
+  c.beginPath();c.arc(cx,cy,r*0.22,0,7);c.fill();
+ }
+});
+const treeWinds=[];
+function seedLeafMat(tex,tint){
+ const m=new THREE.MeshStandardMaterial({map:tex,alphaTest:0.45,side:THREE.DoubleSide,roughness:0.95});
+ if(tint)m.color.set(tint);
+ m.envMapIntensity=0.35;
+ m.onBeforeCompile=sh=>{
+  sh.uniforms.uTime={value:0};
+  treeWinds.push(sh);
+  sh.vertexShader='uniform float uTime;\nattribute float aWind;\n'+sh.vertexShader.replace('#include <begin_vertex>',
+`#include <begin_vertex>
+#ifdef USE_INSTANCING
+float twp=instanceMatrix[3][0]*0.7+instanceMatrix[3][2]*0.9;
+#else
+float twp=0.0;
+#endif
+transformed.x+=sin(uTime*1.9+twp+position.y*0.6)*aWind*0.12;
+transformed.z+=cos(uTime*1.5+twp+position.x*0.5)*aWind*0.10;`);
+ };
+ m.userData.depthMat=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:tex,alphaTest:0.45});
+ return m;
+}
+const SEED_TREES={
+ oak:{h:7.4,leaf:{per:9,size:0.95,tilt:42},mat:seedLeafMat(leafCardTex,'#9dc46f'),bark:barkMat,
+  params:{scale:13,scaleV:2,levels:3,ratio:0.035,ratioPower:1.3,baseSize:0.18,shape:1,flare:0.8,
+   attractionUp:0.7,baseSplits:1,baseSplitAngle:18,
+   length:[1,0.5,0.42],lengthV:[0,0.12,0.12],curveRes:[12,7,5],curve:[6,30,35],curveBack:[0,-20,0],
+   curveV:[16,80,80],downAngle:[0,68,55],downAngleV:[0,18,20],rotate:[0,140,140],rotateV:[0,30,30],
+   branches:[0,22,10],radialSegments:[14,9,5]}},
+ birch:{h:7.8,leaf:{per:8,size:0.8,tilt:46},mat:seedLeafMat(leafCardTex,'#b7dc86'),bark:birchMat,
+  params:{scale:16,scaleV:2,levels:3,ratio:0.028,ratioPower:1.3,baseSize:0.22,shape:1,flare:0.5,
+   attractionUp:0.45,baseSplits:0,baseSplitAngle:0,
+   length:[1,0.55,0.18],lengthV:[0,0.16,0.12],curveRes:[12,7,5],curve:[6,24,26],curveBack:[0,-14,0],
+   curveV:[16,62,65],downAngle:[0,70,60],downAngleV:[0,22,24],rotate:[0,140,140],rotateV:[0,32,32],
+   branches:[0,24,14],radialSegments:[12,7,5]}},
+ blossom:{h:6.6,leaf:{per:9,size:0.9,tilt:44},mat:seedLeafMat(blossomCardTex,'#ffffff'),bark:barkMat,
+  params:{scale:12,scaleV:2,levels:3,ratio:0.03,ratioPower:1.3,baseSize:0.18,shape:1,flare:0.45,
+   attractionUp:0.5,baseSplits:1,baseSplitAngle:16,
+   length:[1,0.5,0.18],lengthV:[0,0.1,0.08],curveRes:[10,6,4],curve:[4,18,12],curveBack:[0,0,0],
+   curveV:[8,38,42],downAngle:[0,48,55],downAngleV:[0,12,14],rotate:[0,137,137],rotateV:[0,20,20],
+   branches:[0,26,14],radialSegments:[12,7,5]}},
+ pine:{h:9.2,leaf:{per:8,size:1.0,tilt:64},mat:seedLeafMat(needleCardTex,'#6f9a58'),bark:barkMat,
+  params:{scale:26,scaleV:3,levels:3,ratio:0.02,ratioPower:1.4,baseSize:0.14,shape:0,flare:0.5,
+   attractionUp:0,baseSplits:0,baseSplitAngle:0,
+   length:[1,0.34,0.34],lengthV:[0,0.08,0.1],curveRes:[12,6,4],curve:[2,12,16],curveBack:[0,0,0],
+   curveV:[4,18,24],downAngle:[0,82,80],downAngleV:[0,10,12],rotate:[0,137,137],rotateV:[0,22,22],
+   branches:[0,30,10],radialSegments:[11,6,4]}},
+};
+function placeSeedTrees(){
+ const insts=[];
+ const m4t=new THREE.Matrix4(),qt=new THREE.Quaternion(),vt=new THREE.Vector3(),sct=new THREE.Vector3(),et=new THREE.Euler();
+ for(const name of ['oak','birch','blossom','pine']){
+  const list=FOLIAGE[name];
+  if(!list||!list.length)continue;
+  const cfg=SEED_TREES[name];
+  for(let vI=0;vI<2;vI++){                     // two shape variants per species
+   const sub=list.filter((_,i)=>i%2===vI);
+   if(!sub.length)continue;
+   const rng=new WPRng(name+'_v'+vI);
+   const stems=wpSkeleton(cfg.params,rng);
+   const bg=wpBranchGeo(stems,0.55,2);
+   const lg=wpLeafGeo(stems,cfg.leaf,rng);
+   bg.computeBoundingBox();
+   const minY=bg.boundingBox.min.y,hh=(bg.boundingBox.max.y-minY)||1;
+   const bInst=new THREE.InstancedMesh(bg,cfg.bark,sub.length);
+   const lInst=new THREE.InstancedMesh(lg,cfg.mat,sub.length);
+   bInst.castShadow=true;bInst.receiveShadow=true;bInst.frustumCulled=false;
+   lInst.castShadow=true;lInst.frustumCulled=false;
+   lInst.customDepthMaterial=cfg.mat.userData.depthMat;   // alpha-tested leaf shadows
+   sub.forEach((tp,i)=>{
+    const s=tp.s*cfg.h/hh;
+    et.set(0,tp.r,0);
+    qt.setFromEuler(et);
+    vt.set(tp.x,groundH(tp.x,tp.z)-minY*s,tp.z);
+    sct.set(s,s,s);
+    m4t.compose(vt,qt,sct);
+    bInst.setMatrixAt(i,m4t);
+    lInst.setMatrixAt(i,m4t);
+   });
+   bInst.instanceMatrix.needsUpdate=true;
+   lInst.instanceMatrix.needsUpdate=true;
+   scene.add(bInst);scene.add(lInst);
+   insts.push(bInst,lInst);
+  }
+ }
+ return insts;
+}
 function makePine(s){
  const t=new THREE.Group();
  tube(0.14,0.24,1.5,barkMat,0,0.75,0,t);
@@ -1516,7 +1862,9 @@ function placeFoliage(name){
   console.log('placed',list.length,'generated',name);
  },undefined,e=>console.warn(name+' load failed',e));
 }
-['oak','birch','blossom','pine','bush','flowerbush','cactus','cactus2'].forEach(placeFoliage);
+['bush','flowerbush','cactus','cactus2'].forEach(placeFoliage);   // shrubs & cacti stay GLB
+seedTreeInsts=placeSeedTrees();                                    // trees are Weber–Penn generated
+seedTreeInsts.forEach(m=>{m.userData.fullCount=m.count;if(quality==='low')m.count=Math.ceil(m.userData.fullCount*0.55);});
 // pine treeline behind the barn (like an alpine ranch)
 for(let i=0;i<26;i++){
  const x=-75+i*6+(Math.random()-0.5)*4;
@@ -5766,6 +6114,7 @@ function tick(){
   toast('🎁 Mystery package opened — '+pmsg+' (+30 pass pts)');
  }
  if(windShader)windShader.uniforms.uTime.value=t;
+ for(const tw of treeWinds)tw.uniforms.uTime.value=t;
  for(const r of ripples)r.m.rotation.z+=dt*0.13*r.dir;
  for(const wa of waterAnims){wa.tex.offset.x+=dt*wa.sx;wa.tex.offset.y+=dt*wa.sy*Math.sin(t*0.5);}
  for(const cl of clouds){

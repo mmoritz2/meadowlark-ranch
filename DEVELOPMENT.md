@@ -204,8 +204,11 @@ Game feel is hard, and a lot of this was iterative. The notable battles:
 ## Known limitations & what still needs improving
 
 **Visuals**
-- **Trees** are still fairly low-poly / billboard-ish and are the weakest part
-  of the landscape up close. They deserve fuller, more varied 3D canopies.
+- ~~Trees are low-poly / billboard-ish~~ **Fixed:** oaks, birches, blossoms,
+  and pines are now real branching trees — Weber–Penn parametric skeletons
+  (adapted from [SeedThree](https://github.com/SkyeShark/SeedThree), MIT)
+  meshed as tapered cylinders with individually placed, wind-swaying leaf
+  cards and alpha-tested leaf shadows, generated at boot and instanced.
 - **Grass** blades can read as flat "cardboard" cutouts at some angles, and the
   bright green doesn't always match the more muted ground.
 - **Horses are stylized, not photoreal.** The body is smooth and lacks real
