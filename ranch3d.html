@@ -2403,6 +2403,277 @@ const fishes=[];
 const _ffM4=new THREE.Matrix4(),_ffQ=new THREE.Quaternion(),_ffV=new THREE.Vector3(),_ffS=new THREE.Vector3();
 window._life={fishes,flutters,fireflies};   // diagnostics
 
+/* ================= procedural critters — seamless SDF blob wildlife =================
+   Each species is ~15 lines of JSON. The body primitives are fused into ONE seamless
+   mesh by shrink-wrapping an icosphere onto a smooth-min SDF (no visible seams, blended
+   vertex colours, SDF-gradient normals). A single gait system animates walk4 / walk2 /
+   hop / float / fly. Add a def to CRITTER_DEFS and spawn it — that's a new animal. */
+function blobBody(prims,detail){
+ const P=prims.map(p=>({v:new THREE.Vector3(p.x,p.y,p.z),r:p.r,c:new THREE.Color(p.c),
+  s:new THREE.Vector3(p.sx||1,p.sy||1,p.sz||1)}));
+ const K=0.09;                                   // smooth-min blend radius
+ const q=new THREE.Vector3();
+ const sd=(x,y,z)=>{                             // smooth-min of ellipsoid SDFs
+  let d=1e9;
+  for(const p of P){
+   q.set((x-p.v.x)/p.s.x,(y-p.v.y)/p.s.y,(z-p.v.z)/p.s.z);
+   const di=(q.length()-p.r)*Math.min(p.s.x,Math.min(p.s.y,p.s.z));
+   const h=THREE.MathUtils.clamp(0.5+0.5*(d-di)/K,0,1);
+   d=d*(1-h)+di*h-K*h*(1-h);
+  }
+  return d;
+ };
+ const ctr=new THREE.Vector3();let wsum=0;
+ for(const p of P){ctr.addScaledVector(p.v,p.r);wsum+=p.r;}
+ ctr.divideScalar(wsum);
+ let tMax=0.2;
+ for(const p of P)tMax=Math.max(tMax,p.v.distanceTo(ctr)+p.r*Math.max(p.s.x,p.s.y,p.s.z)+K+0.05);
+ const geo=new THREE.IcosahedronGeometry(1,detail||3);
+ const pos=geo.attributes.position,n=pos.count;
+ const cols=new Float32Array(n*3),dir=new THREE.Vector3(),pt=new THREE.Vector3();
+ for(let i=0;i<n;i++){
+  dir.fromBufferAttribute(pos,i).normalize();
+  let a=0,b=tMax;                                // march out from the centre, then bisect
+  for(let s=1;s<=28;s++){
+   const tt=tMax*s/28;
+   if(sd(ctr.x+dir.x*tt,ctr.y+dir.y*tt,ctr.z+dir.z*tt)>=0){b=tt;a=tMax*(s-1)/28;break;}
+  }
+  for(let s=0;s<7;s++){
+   const m=(a+b)/2;
+   if(sd(ctr.x+dir.x*m,ctr.y+dir.y*m,ctr.z+dir.z*m)<0)a=m;else b=m;
+  }
+  pt.copy(ctr).addScaledVector(dir,(a+b)/2);
+  pos.setXYZ(i,pt.x,pt.y,pt.z);
+  let wr=0,wg=0,wb=0,ws=0;                       // colour = influence-weighted blend
+  for(const p of P){
+   q.set((pt.x-p.v.x)/p.s.x,(pt.y-p.v.y)/p.s.y,(pt.z-p.v.z)/p.s.z);
+   const w=1/Math.pow(Math.max(0.02,q.length()-p.r+K),3);
+   wr+=p.c.r*w;wg+=p.c.g*w;wb+=p.c.b*w;ws+=w;
+  }
+  cols[i*3]=wr/ws;cols[i*3+1]=wg/ws;cols[i*3+2]=wb/ws;
+ }
+ const nrm=geo.attributes.normal,e=0.012;        // normals from the SDF gradient
+ for(let i=0;i<n;i++){
+  pt.fromBufferAttribute(pos,i);
+  dir.set(sd(pt.x+e,pt.y,pt.z)-sd(pt.x-e,pt.y,pt.z),
+          sd(pt.x,pt.y+e,pt.z)-sd(pt.x,pt.y-e,pt.z),
+          sd(pt.x,pt.y,pt.z+e)-sd(pt.x,pt.y,pt.z-e)).normalize();
+  nrm.setXYZ(i,dir.x,dir.y,dir.z);
+ }
+ geo.setAttribute('color',new THREE.BufferAttribute(cols,3));
+ const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:0.78}));
+ mesh.castShadow=true;
+ return mesh;
+}
+const CRITTER_DEFS={
+ bunny:{size:0.62,gait:'hop',speed:2.2,fleeR:6,detail:3,
+  body:[{x:0,y:0.30,z:0,r:0.16,sy:0.85,sz:1.1,c:'#cfc2ae'},{x:0,y:0.31,z:-0.11,r:0.14,c:'#c6b8a2'},
+   {x:-0.10,y:0.26,z:-0.07,r:0.075,c:'#c6b8a2'},{x:0.10,y:0.26,z:-0.07,r:0.075,c:'#c6b8a2'},
+   {x:0,y:0.44,z:0.13,r:0.11,c:'#cfc2ae'},{x:0,y:0.40,z:0.20,r:0.05,c:'#e9e0cf'},
+   {x:-0.05,y:0.62,z:0.09,r:0.042,sy:2.7,c:'#cfc2ae'},{x:0.05,y:0.62,z:0.09,r:0.042,sy:2.7,c:'#cfc2ae'}],
+  eyes:[[-0.062,0.47,0.20],[0.062,0.47,0.20]],eyeR:0.02,
+  tail:{x:0,y:0.30,z:-0.24,r:0.055,c:'#efe8da'},
+  legs:{n:2,len:0.17,r:0.024,c:'#c6b8a2',pts:[[-0.07,0.12],[0.07,0.12]]}},
+ deer:{size:1,gait:'walk4',speed:1.6,fleeR:9,fleeSpeed:8.5,dusky:true,detail:3,
+  body:[{x:0,y:0.62,z:0,r:0.23,sz:1.3,sy:0.92,c:'#a9805a'},{x:0,y:0.63,z:-0.2,r:0.2,c:'#a1794f'},
+   {x:0,y:0.55,z:0,r:0.17,sz:1.25,c:'#c9a87e'},{x:0,y:0.60,z:0.2,r:0.18,c:'#a9805a'},
+   {x:0,y:0.85,z:0.32,r:0.115,sy:1.55,c:'#a9805a'},{x:0,y:1.06,z:0.41,r:0.10,c:'#a9805a'},
+   {x:0,y:1.02,z:0.53,r:0.058,c:'#8a6746'},
+   {x:-0.088,y:1.17,z:0.36,r:0.04,sy:1.8,c:'#a9805a'},{x:0.088,y:1.17,z:0.36,r:0.04,sy:1.8,c:'#a9805a'}],
+  eyes:[[-0.068,1.08,0.47],[0.068,1.08,0.47]],eyeR:0.021,
+  tail:{x:0,y:0.72,z:-0.4,r:0.05,c:'#e9ddc8'},
+  legs:{n:4,len:0.62,r:0.032,c:'#8a6746',pts:[[-0.11,0.17],[0.11,0.17],[-0.11,-0.17],[0.11,-0.17]]}},
+ sheep:{size:0.92,gait:'walk4',speed:1.1,detail:3,
+  body:[{x:0,y:0.55,z:0.16,r:0.19,c:'#ece5d6'},{x:0,y:0.60,z:0,r:0.23,c:'#e6decd'},
+   {x:0,y:0.56,z:-0.17,r:0.20,c:'#ece5d6'},{x:0,y:0.66,z:0.31,r:0.10,c:'#453c33'},
+   {x:-0.085,y:0.70,z:0.28,r:0.034,sx:1.7,c:'#453c33'},{x:0.085,y:0.70,z:0.28,r:0.034,sx:1.7,c:'#453c33'}],
+  eyes:[[-0.05,0.69,0.39],[0.05,0.69,0.39]],eyeR:0.018,
+  legs:{n:4,len:0.4,r:0.03,c:'#453c33',pts:[[-0.1,0.14],[0.1,0.14],[-0.1,-0.14],[0.1,-0.14]]}},
+ chicken:{size:0.5,gait:'walk2',speed:1.3,fleeR:4,detail:2,
+  body:[{x:0,y:0.30,z:0,r:0.16,sz:1.1,c:'#f2ede0'},{x:0,y:0.40,z:-0.15,r:0.085,sy:1.35,sx:0.55,c:'#e6e0d0'},
+   {x:0,y:0.50,z:0.11,r:0.08,c:'#f2ede0'},{x:0,y:0.595,z:0.11,r:0.032,sy:1.6,sx:0.45,c:'#d64545'},
+   {x:0,y:0.44,z:0.175,r:0.022,c:'#d64545'}],
+  eyes:[[-0.05,0.52,0.155],[0.05,0.52,0.155]],eyeR:0.015,
+  beak:{x:0,y:0.49,z:0.2,r:0.028,len:0.07,c:'#e8933a'},
+  legs:{n:2,len:0.17,r:0.014,c:'#d8a13e',pts:[[-0.05,0.01],[0.05,0.01]]}},
+ duck:{size:0.55,gait:'float',speed:0.5,detail:2,
+  body:[{x:0,y:0.16,z:0,r:0.15,sz:1.45,sy:0.85,c:'#f0ead6'},{x:0,y:0.24,z:-0.2,r:0.05,c:'#e8e0cc'},
+   {x:0,y:0.27,z:0.12,r:0.055,sy:1.5,c:'#f0ead6'},{x:0,y:0.37,z:0.13,r:0.075,c:'#f0ead6'}],
+  eyes:[[-0.048,0.39,0.17],[0.048,0.39,0.17]],eyeR:0.014,
+  beak:{x:0,y:0.365,z:0.21,r:0.032,len:0.075,c:'#e8933a'}},
+ bluebird:{size:0.4,gait:'fly',speed:6,detail:2,
+  body:[{x:0,y:0.14,z:0,r:0.10,sz:1.25,c:'#5a8fd4'},{x:0,y:0.25,z:0.07,r:0.07,c:'#5a8fd4'},
+   {x:0,y:0.12,z:0.06,r:0.075,c:'#e8d9b8'},{x:0,y:0.17,z:-0.15,r:0.038,sz:1.9,sy:0.45,c:'#4a76b4'}],
+  eyes:[[-0.042,0.27,0.115],[0.042,0.27,0.115]],eyeR:0.013,
+  beak:{x:0,y:0.25,z:0.13,r:0.02,len:0.05,c:'#3a3430'},
+  wings:{x:0.09,y:0.16,z:-0.01,sx:0.16,sy:0.02,sz:0.09,c:'#4a76b4'}}
+};
+const blobCache={};
+function makeCritter(key){
+ const D=CRITTER_DEFS[key];
+ const g=new THREE.Group();
+ const body=new THREE.Group();
+ g.add(body);
+ if(!blobCache[key])blobCache[key]=blobBody(D.body,D.detail);
+ const bm=new THREE.Mesh(blobCache[key].geometry,blobCache[key].material);
+ bm.castShadow=true;
+ body.add(bm);
+ const eyeGs=[];
+ for(const ep of D.eyes){
+  const e=blob(D.eyeR,D.eyeR,D.eyeR,'#16120f',ep[0],ep[1],ep[2],body);
+  eyeGs.push(e);
+ }
+ if(D.beak){
+  const bk=new THREE.Mesh(new THREE.ConeGeometry(D.beak.r,D.beak.len,6),smat(D.beak.c));
+  bk.rotation.x=Math.PI/2;
+  bk.position.set(D.beak.x,D.beak.y,D.beak.z);
+  bk.castShadow=true;
+  body.add(bk);
+ }
+ let tail=null;
+ if(D.tail){
+  tail=new THREE.Group();
+  tail.position.set(D.tail.x,D.tail.y,D.tail.z);
+  blob(D.tail.r,D.tail.r,D.tail.r,D.tail.c,0,0,0,tail);
+  body.add(tail);
+ }
+ const legs=[];
+ if(D.legs)for(const lp of D.legs.pts){
+  const leg=new THREE.Group();
+  leg.position.set(lp[0],D.legs.len,lp[1]);
+  tube(D.legs.r,D.legs.r*0.85,D.legs.len,D.legs.c,0,-D.legs.len/2,0,leg);
+  g.add(leg);
+  legs.push(leg);
+ }
+ const wings=[];
+ if(D.wings){
+  for(const s of[-1,1]){
+   const w=new THREE.Group();
+   w.position.set(D.wings.x*s,D.wings.y,D.wings.z);
+   const wm=blob(D.wings.sx,D.wings.sy,D.wings.sz,D.wings.c,D.wings.sx*0.8*s,0,0,w);
+   wings.push(w);
+   body.add(w);
+  }
+ }
+ g.scale.setScalar(D.size);
+ return {group:g,body,legs,tail,wings,eyes:eyeGs,def:D,key};
+}
+const critters=[];
+function spawnCritter(key,hx,hz,hr){
+ const p=makeCritter(key);
+ scene.add(p.group);
+ const a=Math.random()*Math.PI*2,rr=Math.random()*hr;
+ const c={p,key,def:p.def,home:{x:hx,z:hz,r:hr},
+  x:hx+Math.cos(a)*rr,z:hz+Math.sin(a)*rr,y:0,heading:Math.random()*6.3,
+  mode:'idle',timer:1+Math.random()*4,tx:0,tz:0,phase:Math.random()*9,
+  blink:2+Math.random()*4,fly:null,speed:0};
+ if(p.def.gait==='float')c.z=riverZ(c.x)+(Math.random()-0.5)*3;  // ducks start on the water
+ critters.push(c);
+}
+function updateCritters(dt,t){
+ for(const c of critters){
+  const D=c.def,P=c.p;
+  // day/night: most wildlife sleeps at night; deer stay out through dusk
+  const awake=D.dusky?nightNow<0.85:nightNow<0.55;
+  P.group.visible=awake;
+  if(!awake)continue;
+  const pd=Math.hypot(player.pos.x-c.x,player.pos.z-c.z);
+  /* -------- behaviour states -------- */
+  if(D.fleeR&&c.mode!=='flee'&&pd<D.fleeR&&Math.abs(player.speed)>3){
+   c.mode='flee';c.timer=2.2+Math.random();
+  }
+  c.timer-=dt;
+  if(c.mode==='flee'){
+   const away=Math.atan2(c.x-player.pos.x,c.z-player.pos.z);
+   c.heading+=(THREE.MathUtils.euclideanModulo(away-c.heading+Math.PI,Math.PI*2)-Math.PI)*Math.min(1,dt*6);
+   c.speed=D.fleeSpeed||D.speed*2.4;
+   if(c.timer<=0){c.mode='idle';c.timer=1+Math.random()*2;}
+  }else if(c.mode==='wander'){
+   const dx=c.tx-c.x,dz=c.tz-c.z,d=Math.hypot(dx,dz);
+   if(d<0.5||c.timer<=0){c.mode=Math.random()<0.55?'graze':'idle';c.timer=2.5+Math.random()*5;c.speed=0;}
+   else{
+    const want=Math.atan2(dx,dz);
+    c.heading+=(THREE.MathUtils.euclideanModulo(want-c.heading+Math.PI,Math.PI*2)-Math.PI)*Math.min(1,dt*3);
+    c.speed=D.speed;
+   }
+  }else{ // idle / graze
+   c.speed=0;
+   if(c.timer<=0){
+    c.mode='wander';c.timer=8+Math.random()*6;
+    const hd=Math.hypot(c.x-c.home.x,c.z-c.home.z);
+    if(hd>c.home.r){c.tx=c.home.x;c.tz=c.home.z;}                 // drift back home
+    else{const a=Math.random()*Math.PI*2,rr=2+Math.random()*c.home.r;
+     c.tx=c.home.x+Math.cos(a)*rr;c.tz=c.home.z+Math.sin(a)*rr;}
+   }
+  }
+  /* -------- locomotion & gait -------- */
+  if(D.gait==='float'){                       // ducks paddle the river
+   c.heading+=Math.sin(t*0.23+c.phase)*dt*0.5;
+   c.x+=Math.sin(c.heading)*D.speed*dt;
+   c.x=THREE.MathUtils.clamp(c.x,c.home.x-c.home.r,c.home.x+c.home.r);
+   const zc=riverZ(c.x);
+   c.z+=(zc+(Math.sin(c.phase)*2)-c.z)*Math.min(1,dt*1.1);
+   c.y=rawH(c.x,zc)+0.55+Math.sin(t*1.3+c.phase)*0.02;
+   P.group.rotation.z=Math.sin(t*1.1+c.phase)*0.05;
+  }else if(D.gait==='fly'){                   // bluebirds hop between perch spots
+   if(!c.fly&&c.mode==='wander'){
+    c.fly={fx:c.x,fz:c.z,fy:groundH(c.x,c.z),t:0,
+     dur:Math.max(1.2,Math.hypot(c.tx-c.x,c.tz-c.z)/D.speed)};
+   }
+   if(c.fly){
+    c.fly.t+=dt;
+    const p01=Math.min(1,c.fly.t/c.fly.dur);
+    c.x=THREE.MathUtils.lerp(c.fly.fx,c.tx,p01);
+    c.z=THREE.MathUtils.lerp(c.fly.fz,c.tz,p01);
+    const gy=groundH(c.x,c.z);
+    c.y=THREE.MathUtils.lerp(c.fly.fy,gy,p01)+Math.sin(Math.PI*p01)*3.2-gy;
+    c.heading=Math.atan2(c.tx-c.fly.fx,c.tz-c.fly.fz);
+    if(p01>=1){c.fly=null;c.mode='graze';c.timer=2.5+Math.random()*4;}
+   }else c.y=0;
+   const flap=c.fly?Math.sin(t*26+c.phase)*0.85:0.12+Math.sin(t*2+c.phase)*0.04;
+   if(P.wings.length){P.wings[0].rotation.z=-flap;P.wings[1].rotation.z=flap;}
+  }else{                                      // ground gaits share the mover
+   c.x+=Math.sin(c.heading)*c.speed*dt;
+   c.z+=Math.cos(c.heading)*c.speed*dt;
+   c.y=0;
+  }
+  c.phase+=dt*(2.4+c.speed*2.6);
+  const moving=c.speed>0.05;
+  if(D.gait==='walk4'&&P.legs.length===4){
+   for(let i=0;i<4;i++)P.legs[i].rotation.x=moving?Math.sin(c.phase+(i===0||i===3?0:Math.PI))*0.55:0;
+   P.body.position.y=moving?Math.abs(Math.sin(c.phase*2))*0.02:0;
+  }else if(D.gait==='walk2'&&P.legs.length===2){
+   P.legs[0].rotation.x=moving?Math.sin(c.phase)*0.7:0;
+   P.legs[1].rotation.x=moving?-Math.sin(c.phase)*0.7:0;
+   P.body.rotation.z=moving?Math.sin(c.phase)*0.07:0;
+   P.body.position.z=moving?Math.abs(Math.sin(c.phase))*0.02:0;
+  }else if(D.gait==='hop'){
+   const h=moving?Math.max(0,Math.sin(c.phase*1.6)):0;
+   c.y+=h*0.22;
+   P.body.scale.y=1-(moving?Math.max(0,Math.sin(c.phase*1.6+Math.PI))*0.12:0);
+   for(const lg of P.legs)lg.rotation.x=moving?-h*0.9:0;
+  }
+  /* -------- shared juice: graze lean, blinking, tail wag -------- */
+  const leanT=(c.mode==='graze'&&!moving)?(D.gait==='walk2'?0.5+Math.sin(t*7+c.phase)*0.12:0.34+Math.sin(t*1.4+c.phase)*0.04):0;
+  P.body.rotation.x+=(leanT-P.body.rotation.x)*Math.min(1,dt*5);
+  c.blink-=dt;
+  if(c.blink<-0.13)c.blink=2.5+Math.random()*4;
+  const es=c.blink<0?0.12:1;
+  for(const e of P.eyes)e.scale.y=P.def.eyeR*es;
+  if(P.tail)P.tail.rotation.y=Math.sin(t*(moving?9:2.2)+c.phase)*(moving?0.5:0.15);
+  P.group.position.set(c.x,(D.gait==='float'?c.y:groundH(c.x,c.z)+c.y),c.z);
+  P.group.rotation.y=c.heading;
+ }
+}
+/* populate Evervale */
+for(let i=0;i<4;i++)spawnCritter('bunny',58,42,26);
+for(let i=0;i<3;i++)spawnCritter('deer',-72,-84,32);
+for(let i=0;i<3;i++)spawnCritter('sheep',-124,-4,13);
+for(let i=0;i<3;i++)spawnCritter('chicken',46,-51,9);
+for(let i=0;i<3;i++)spawnCritter('duck',-30+i*26,0,42);
+for(let i=0;i<2;i++)spawnCritter('bluebird',24,52,40);
+window._critters=critters;   // diagnostics
+
 /* ================= ranch buildings & paddock ================= */
 {
  const b=new THREE.Group();
@@ -5442,6 +5713,7 @@ function tick(){
   }
   fireflies.instanceMatrix.needsUpdate=true;
  }
+ updateCritters(dt,t);
  if(fwd)camYaw+=(0-camYaw)*Math.min(1,dt*2);
  camDistSm+=(camDist-camDistSm)*Math.min(1,dt*6);
  const k=1-Math.exp(-5*dt);

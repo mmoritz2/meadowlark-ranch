@@ -59,6 +59,14 @@ It started as a small 2D canvas game, became a 3D Three.js world, and then the
 - **Living ambient wildlife**: butterflies that actually forage — flying
   flower-clump to flower-clump, stopping to sip — and river fish that leap
   with a splash ring when you ride near the water.
+- **Procedural blob critters** (seamless SDF bodies): bunnies, deer, sheep,
+  chickens, ducks, and bluebirds live across Evervale. Each species is ~15
+  lines of JSON; its primitive shapes are fused into ONE seamless mesh by
+  shrink-wrapping an icosphere onto a smooth-min SDF (blended vertex colours,
+  SDF-gradient normals — no visible seams). One gait system animates
+  4-legged walks, 2-legged waddles, bunny hops, duck floating, and bird
+  flight; they wander, graze, blink, wag tails, flee from galloping riders,
+  and sleep at night (deer stay out through dusk).
 - A fenced **Home Pasture** where your whole herd grazes and wanders (unlimited
   horses).
 

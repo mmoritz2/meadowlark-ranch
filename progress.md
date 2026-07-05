@@ -12,6 +12,7 @@ Progress:
 
 - Applied the 3d-prompt-collection playbook (github.com/petergpt/3d-prompt-collection): true day/night cycle with golden hour, dusk, moon + stars; windows/floodlights that light up at dusk; fireflies at night; butterflies with forage behavior; leaping river fish; and a 🎚️ Low/Med/High graphics-quality button (pixel ratio, shadows, bloom, grass, clouds) persisted to the save.
 - Debug helpers: window._setDay(0..1) to set time of day (0=midnight, 0.5=noon), window._life for ambient-agent state.
+- Added seamless-SDF procedural critters (technique from x.com/TimJayas/status/2073250825858892241): blobBody() shrink-wraps an icosphere onto a smooth-min SDF of JSON-defined primitives (blended vertex colors + SDF-gradient normals); one gait system (walk4/walk2/hop/float/fly); 18 wildlife agents (bunny/deer/sheep/chicken/duck/bluebird) with wander/graze/flee states, blinking, night roosting (deer crepuscular). window._critters for diagnostics.
 
 TODOs:
 - If direct file:// gameplay is required later, the game will need a true bundled non-module build plus a GLB loading strategy that avoids browser file-origin restrictions.
