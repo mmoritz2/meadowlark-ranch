@@ -316,17 +316,28 @@ function vnoise(x,z){
  return a+(b-a)*sx+(c-a)*sz+(a-b-c+d)*sx*sz;
 }
 const riverZ=x=>120+Math.sin(x*0.012)*45;
+/* Willowbrook stream — a tributary that winds down from the southern hills into the river */
+const streamX=z=>118+Math.sin(z*0.03)*14+Math.sin(z*0.011+3)*8;
+const STREAM_JOIN=160;                          // it meets the river around z≈160
 function rawH(x,z){
  const d=Math.hypot(x,z);
  const near=THREE.MathUtils.smoothstep(d,24,58);
  const far=1-THREE.MathUtils.smoothstep(d,380,460);
- const n=vnoise(x*0.018+7,z*0.018+3)*4.5       // medium rolling
-        +vnoise(x*0.055,z*0.055)*1.6           // small bumps
-        +vnoise(x*0.008+19,z*0.008+5)*6.5      // broad hills
-        +vnoise(x*0.0042+50,z*0.0042+22)*6.0;  // very broad ridges & valleys
- let h=near*far*(n-5.0);
+ const n=vnoise(x*0.018+7,z*0.018+3)*7.5       // medium rolling
+        +vnoise(x*0.055,z*0.055)*1.8           // small bumps
+        +vnoise(x*0.008+19,z*0.008+5)*14.0     // broad hills
+        +vnoise(x*0.0042+50,z*0.0042+22)*13.0; // very broad ridges & valleys
+ let h=near*far*(n-9.5);
+ const rg=1-Math.abs(vnoise(x*0.006+83,z*0.006-41)*2-1);   // ridged crests give hills a backbone
+ h+=near*far*rg*rg*6.0;
+ const bl=vnoise(x*0.011-31,z*0.011+44);                    // flat-topped bluffs, steep cliff faces
+ h+=near*far*THREE.MathUtils.smoothstep(bl,0.425,0.445)*9.0;
  const rd=Math.abs(z-riverZ(x));
  h-=near*far*1.7*(1-THREE.MathUtils.smoothstep(rd,0,9));
+ if(z<STREAM_JOIN){
+  const sd=Math.abs(x-streamX(z));
+  h-=near*far*1.15*(1-THREE.MathUtils.smoothstep(sd,0,4.5));
+ }
  return h;
 }
 const colliders=[];
@@ -407,6 +418,16 @@ let dayT=0.22;
 const weather={mode:'clear',timer:90+Math.random()*120};
 window._weather=weather;
 window._setDay=v=>{dayT=((v%1)+1)%1;};   // debug/photo helper: 0=midnight 0.5=noon
+{ // dev/screenshot helper: ?shot=x,y,z,tx,ty,tz[,day] pins the camera for captures
+ const sp=new URLSearchParams(location.search).get('shot');
+ if(sp){
+  const a=sp.split(',').map(Number);
+  if(a.length>=6&&a.every(v=>isFinite(v))){
+   window.__shotCam=a;
+   if(a.length>=7)dayT=((a[6]%1)+1)%1;
+  }
+ }
+}
 const rain=new THREE.InstancedMesh(new THREE.BoxGeometry(0.012,0.55,0.012),
  new THREE.MeshBasicMaterial({color:0xaac8e0,transparent:true,opacity:0.5}),400);
 rain.visible=false;rain.frustumCulled=false;
@@ -670,11 +691,12 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
 
 /* ================= terrain ================= */
 {
- const geo=new THREE.PlaneGeometry(1000,1000,200,200);
+ const geo=new THREE.PlaneGeometry(1000,1000,256,256);
  geo.rotateX(-Math.PI/2);
  const pos=geo.attributes.position;
  const colors=[];
  const col=new THREE.Color();
+ const C_ROCK=new THREE.Color('#8d8478'),C_CREST=new THREE.Color('#cfc394');
  for(let i=0;i<pos.count;i++){
   const x=pos.getX(i),z=pos.getZ(i);
   const y=groundH(x,z);
@@ -683,18 +705,26 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
   const vBig=vnoise(wx*0.011+3,wz*0.011+17);     // big natural patches (~90u)
   const v=vnoise(wx*0.045+40,wz*0.045+9);
   const v2=vnoise(x*0.17+12,z*0.17+71);
-  col.set('#e9eedd').lerp(new THREE.Color('#a8b87e'),vBig*0.5+v*0.32);
-  col.lerp(new THREE.Color('#8fa066'),v2*0.22);   // finer mottle
+  col.set('#eef2df').lerp(new THREE.Color('#b2c084'),vBig*0.5+v*0.32);
+  col.lerp(new THREE.Color('#9cad74'),v2*0.22);   // finer mottle
   if(y>1.4)col.lerp(new THREE.Color('#d8d0a4'),Math.min(0.4,(y-1.4)*0.18));
+  // slope-aware shading: steep faces read as rock, high crests as sun-dried grass
+  const sl=Math.hypot(groundH(x+2,z)-groundH(x-2,z),groundH(x,z+2)-groundH(x,z-2))/4;
+  if(sl>0.3)col.lerp(C_ROCK,Math.min(0.85,(sl-0.3)*1.9));
+  if(y>7)col.lerp(C_CREST,Math.min(0.5,(y-7)*0.055));
   const rd=Math.abs(z-riverZ(x));
   if(rd<7)col.lerp(new THREE.Color('#e6d6a8'),(1-rd/7)*0.55);
+  if(z<STREAM_JOIN){
+   const sd=Math.abs(x-streamX(z));
+   if(sd<4.5)col.lerp(new THREE.Color('#dcc9a0'),(1-sd/4.5)*0.5);   // sandy stream banks
+  }
   const dB=Math.hypot(x+220,z-130);
   if(dB<170)col.lerp(new THREE.Color('#d9a276'),(1-dB/170)*0.55);
   const dA=Math.hypot(x-220,z+110);
   if(dA<150)col.lerp(new THREE.Color('#e8e09a'),(1-dA/150)*0.35);
   const dW=Math.hypot(x+160,z+210);
   if(dW<170)col.lerp(new THREE.Color('#eef2f0'),(1-dW/170)*0.4);
-  const vshade=0.84+0.16*THREE.MathUtils.clamp((y+2.5)/6.5,0,1);
+  const vshade=0.88+0.12*THREE.MathUtils.clamp((y+2.5)/6.5,0,1);
   col.multiplyScalar(vshade);
   colors.push(col.r,col.g,col.b);
  }
@@ -710,7 +740,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
     `#include <map_fragment>
      #ifdef USE_MAP
      float macro=_vn(vMapUv*0.06)*0.62+_vn(vMapUv*0.02+5.0)*0.38;
-     diffuseColor.rgb*=(0.86+macro*0.26)*1.36;
+     diffuseColor.rgb*=(0.88+macro*0.24)*1.40;
      #endif`);
  };
  const ground=new THREE.Mesh(geo,gmat);
@@ -853,6 +883,16 @@ function applyCoatDetail(m){
  if(coatDetailTex){m.bumpMap=coatDetailTex;m.bumpScale=0.06;m.needsUpdate=true;}
  return m;
 }
+/* subtle per-spot sheen variation — coats catch the light like groomed hair, not plastic */
+const coatRoughTex=canvasTex(128,128,(c,w,h)=>{
+ c.fillStyle='#d4d4d4';c.fillRect(0,0,w,h);
+ for(let i=0;i<300;i++){
+  c.fillStyle=Math.random()<0.5?'#c0c0c0':'#e4e4e4';
+  c.globalAlpha=0.5;
+  c.beginPath();c.arc(Math.random()*w,Math.random()*h,2+Math.random()*6,0,7);c.fill();
+ }
+ c.globalAlpha=1;
+});
 function coatMat(hex){
  if(coatCache[hex])return coatCache[hex];
  const tex=canvasTex(256,256,(c,w,h)=>{
@@ -875,13 +915,21 @@ function coatMat(hex){
    const x=Math.random()*w,y=Math.random()*h;
    c.beginPath();c.moveTo(x,y);c.lineTo(x+5+Math.random()*12,y+(Math.random()-0.5)*3);c.stroke();
   }
+  for(let i=0;i<22;i++){   // soft dapple clusters over shoulders & hindquarters
+   const cx=Math.random()*w,cy=h*0.12+Math.random()*h*0.5;
+   c.fillStyle=light;
+   c.globalAlpha=0.09;
+   for(let j=0;j<8;j++){
+    c.beginPath();c.arc(cx+(Math.random()-0.5)*26,cy+(Math.random()-0.5)*18,3+Math.random()*4.5,0,7);c.fill();
+   }
+  }
   const sheen=c.createLinearGradient(0,0,0,h*0.5);
   sheen.addColorStop(0,'rgba(255,250,235,0.16)');
   sheen.addColorStop(1,'rgba(255,250,235,0)');
   c.fillStyle=sheen;c.fillRect(0,0,w,h*0.5);
   c.globalAlpha=1;
  });
- coatCache[hex]=new THREE.MeshStandardMaterial({map:tex,roughness:0.86});
+ coatCache[hex]=new THREE.MeshStandardMaterial({map:tex,roughness:1,roughnessMap:coatRoughTex});
  coatCache[hex].envMapIntensity=0.4;
  applyCoatDetail(coatCache[hex]);
  return coatCache[hex];
@@ -1560,6 +1608,20 @@ const waterAnims=[];
  water.castShadow=false;
  water.receiveShadow=true;
  scene.add(water);
+ // Willowbrook stream — a narrow tributary winding down from the southern hills
+ {
+  const sA=[],sB=[];
+  for(let z=-330;z<=STREAM_JOIN;z+=3){
+   const xc=streamX(z);
+   const y=Math.min(rawH(xc,z),rawH(xc,z+3))+0.42;   // hug the downhill side so slopes don't cut the ribbon
+   sA.push([xc-1.7,y,z]);
+   sB.push([xc+1.7,y,z]);
+  }
+  const brook=stripMesh(sA,sB,waterMat);
+  brook.castShadow=false;
+  brook.receiveShadow=true;
+  scene.add(brook);
+ }
  // wooden bridge
  for(let z=51.3;z<65;z+=1.15){
   const y=BRIDGE_Y+0.55*Math.sin(Math.PI*(z-50.5)/15);
@@ -1587,6 +1649,20 @@ const waterAnims=[];
   reeds.setMatrixAt(i,m4r);
  }
  scene.add(reeds);
+ const brookReeds=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.018,0.03,0.95,5),reedMat,80);
+ for(let i=0;i<80;i++){
+  const z=-320+Math.random()*470;
+  const side=Math.random()<0.5?-1:1;
+  const x=streamX(z)+side*(2.1+Math.random()*1.4);
+  er.set((Math.random()-0.5)*0.2,Math.random()*3,(Math.random()-0.5)*0.2);
+  qr.setFromEuler(er);
+  const s=0.55+Math.random()*0.55;
+  sr.set(s,s,s);
+  vr.set(x,groundH(x,z)+0.4*s,z);
+  m4r.compose(vr,qr,sr);
+  brookReeds.setMatrixAt(i,m4r);
+ }
+ scene.add(brookReeds);
  for(let i=0;i<40;i++){
   const x=-300+Math.random()*600;
   const side=Math.random()<0.5?-1:1;
@@ -5836,6 +5912,11 @@ function tick(){
  if(Math.abs(camera.fov-fovT)>0.1){
   camera.fov+=(fovT-camera.fov)*Math.min(1,dt*2.5);
   camera.updateProjectionMatrix();
+ }
+ if(window.__shotCam){   // ?shot= capture helper pins the camera
+  const sc=window.__shotCam;
+  camera.position.set(sc[0],sc[1],sc[2]);
+  camera.lookAt(sc[3],sc[4],sc[5]);
  }
  /* day cycle & weather — a real day: dawn, noon, golden hour, dusk, moonlit night */
  dayT=(dayT+dt/480)%1;

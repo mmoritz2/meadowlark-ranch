@@ -45,9 +45,13 @@ It started as a small 2D canvas game, became a 3D Three.js world, and then the
 ## Features that made it in
 
 **The world (Evervale)**
-- A large rolling open world (~1000×1000 units) with value-noise hills, a
-  carved river with an arched wooden bridge, wheat fields, lavender, boulders,
-  and forests.
+- A large rolling open world (~1000×1000 units) with real relief: broad
+  ridged hills (~20 units from valley floor to crest), flat-topped bluffs
+  with steep rocky cliff faces, a carved river with an arched wooden bridge,
+  and the winding **Willowbrook stream** that runs down from the southern
+  hills to join it. Ground colour follows the land — rocky greys on steep
+  faces, sun-dried grass on high crests, sandy banks along the water.
+  Wheat fields, lavender, boulders, and forests dress the meadows.
 - Distinct biome zones with their own ground: Bronco Canyon (sand + red mesas),
   Witberg (snow), Agricola (farmland), plus the home meadow.
 - Snow-capped, craggy mountains on the horizon, drifting clouds, weather

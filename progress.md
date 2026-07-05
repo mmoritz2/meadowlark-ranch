@@ -17,6 +17,9 @@ Progress:
 - Goal pass (better-than-Star-Equestrian): friend invite links (Club panel button copies ?club=CODE URL; opening it auto-joins), daily golden-horseshoe hunt (replaced the old one-time 12-shoe system; legacy finds still count via stats), wildlife photo rewards/quest (frustum check in photoBtn), mythic stardust trails (TRAIL_COL per coat), contact shadows under critters.
 - Testing gotcha: BOTH the Launch preview and occluded Chrome windows suspend rAF entirely (0 fps; setTimeout throttled too). Workaround: patch requestAnimationFrame into a queue, force one native frame via screenshot, then pump frames manually with busy-waits (see session notes). node --check on the extracted gameModule catches syntax errors the custom loader swallows silently.
 
+- Terrain realism pass: rawH now has bigger rolling hills, ridged crests, bluff plateaus with cliff faces (bluff band tuned via measured vnoise percentiles — freq 0.011, band 0.425-0.445), and the Willowbrook stream (streamX/STREAM_JOIN) carved + water strip + reeds; ground vertex colors add slope-rock/crest/bank tints; 256-seg mesh. Horse coats: dapples + roughnessMap sheen. New capture helper: ?shot=x,y,z,tx,ty,tz[,day] pins the camera (works with headless Chrome --screenshot).
+- Gotcha: headless Chrome renders the scene much DARKER than real browsers (PMREM env appears black under SwiftShader) — do not tune colors/lighting from headless captures; use them for geometry/layout only.
+
 TODOs:
 - If direct file:// gameplay is required later, the game will need a true bundled non-module build plus a GLB loading strategy that avoids browser file-origin restrictions.
 - Further repo-inspired ideas not yet done: LOD for distant objects, era/time slider UI, autonomous NPC routines beyond looping riders.
