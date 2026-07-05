@@ -104,6 +104,7 @@ button:active{transform:scale(.95)}
  <div class="chip">🪙 <span id="coinEl">0</span></div>
  <div class="chip">💎 <span id="gemEl">0</span></div>
  <button id="photoBtn" title="Save a photo">📷</button>
+ <button id="qualBtn" title="Graphics quality">🎚️</button>
  <button id="muteBtn">🔊</button>
 </div>
 <div id="hint">W/↑ ride · A/D steer · Shift gallop · Space jump — or hold the 🐎 buttons, bottom right!</div>
@@ -365,13 +366,20 @@ sky.scale.setScalar(450000);
 setSky(sky);
 scene.add(sky);
 const pmrem=new THREE.PMREMGenerator(renderer);
+/* PBR ambient comes from a PMREM'd sky — bake one per time-of-day band and swap */
+const envMaps={};let curEnv='day';
 {
  const es=new THREE.Scene();
  const esky=new Sky();
  esky.scale.setScalar(1000);
  setSky(esky);
  es.add(esky);
- scene.environment=pmrem.fromScene(es,0.04).texture;
+ const eu=esky.material.uniforms;
+ for(const[k,e]of[['day',30],['golden',7],['night',-14]]){
+  eu.sunPosition.value.setFromSphericalCoords(1,THREE.MathUtils.degToRad(90-e),THREE.MathUtils.degToRad(120));
+  envMaps[k]=pmrem.fromScene(es,0.04).texture;
+ }
+ scene.environment=envMaps.day;
 }
 const hemi=new THREE.HemisphereLight(0xbcd2ec,0x7e8456,0.65);   // stronger fill -> softer shadows
 scene.add(hemi);
@@ -398,6 +406,7 @@ composer.addPass(new OutputPass());
 let dayT=0.22;
 const weather={mode:'clear',timer:90+Math.random()*120};
 window._weather=weather;
+window._setDay=v=>{dayT=((v%1)+1)%1;};   // debug/photo helper: 0=midnight 0.5=noon
 const rain=new THREE.InstancedMesh(new THREE.BoxGeometry(0.012,0.55,0.012),
  new THREE.MeshBasicMaterial({color:0xaac8e0,transparent:true,opacity:0.5}),400);
 rain.visible=false;rain.frustumCulled=false;
@@ -414,6 +423,93 @@ rainbow.position.set(-40,0,70);
 rainbow.rotation.y=0.9;
 rainbow.visible=false;
 scene.add(rainbow);
+
+/* ================= night sky: stars, moon, fireflies, lit windows ================= */
+const C_SUN_HIGH=new THREE.Color('#fff0d2'),C_SUN_LOW=new THREE.Color('#ff9a4e'),C_MOON=new THREE.Color('#b9cdf2');
+const C_HEMI_DAY=new THREE.Color(0xbcd2ec),C_HEMI_NIGHT=new THREE.Color(0x33436b);
+const C_GROUND_DAY=new THREE.Color(0x7e8456),C_GROUND_NIGHT=new THREE.Color(0x232a1e);
+const C_FOG_DAY=new THREE.Color(0xbccddc),C_FOG_GOLD=new THREE.Color(0xd9bfa4),C_FOG_NIGHT=new THREE.Color(0x141c2e);
+const _fogCol=new THREE.Color(),_moonDir=new THREE.Vector3();
+let nightNow=0;                      // 0 = day, 1 = deep night (read by ambient-life updates)
+const stars=(()=>{
+ const N=1100,pos=new Float32Array(N*3);
+ for(let i=0;i<N;i++){
+  const a=Math.random()*Math.PI*2,y=0.06+Math.random()*0.94,r=Math.sqrt(1-y*y);
+  pos[i*3]=Math.cos(a)*r*2800;pos[i*3+1]=y*2800;pos[i*3+2]=Math.sin(a)*r*2800;
+ }
+ const g=new THREE.BufferGeometry();
+ g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+ const p=new THREE.Points(g,new THREE.PointsMaterial({color:0xe8efff,size:1.8,sizeAttenuation:false,transparent:true,opacity:0,fog:false,depthWrite:false}));
+ p.visible=false;p.frustumCulled=false;
+ scene.add(p);
+ return p;
+})();
+const moonS=(()=>{
+ const cv=document.createElement('canvas');cv.width=cv.height=128;
+ const c=cv.getContext('2d');
+ const g=c.createRadialGradient(64,64,10,64,64,62);
+ g.addColorStop(0,'rgba(255,255,255,1)');
+ g.addColorStop(0.42,'rgba(230,240,255,0.96)');
+ g.addColorStop(0.52,'rgba(200,218,248,0.25)');
+ g.addColorStop(1,'rgba(180,200,240,0)');
+ c.fillStyle=g;c.fillRect(0,0,128,128);
+ c.fillStyle='rgba(168,188,220,0.45)';
+ c.beginPath();c.arc(52,50,7,0,7);c.fill();
+ c.beginPath();c.arc(74,70,5,0,7);c.fill();
+ c.beginPath();c.arc(60,80,4,0,7);c.fill();
+ const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;
+ const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,opacity:0,fog:false,depthWrite:false}));
+ sp.scale.set(150,150,1);sp.visible=false;
+ scene.add(sp);
+ return sp;
+})();
+/* window panes & lamps that switch on at dusk (day colour -> HDR warm glow the bloom picks up) */
+const glowPanes=[];
+/* fireflies: drifting HDR embers over the meadows, only alive at night */
+const FIREFLY_N=80;
+const fireflies=new THREE.InstancedMesh(new THREE.SphereGeometry(0.045,6,5),
+ new THREE.MeshBasicMaterial({color:new THREE.Color(1.35,2.0,0.55)}),FIREFLY_N);
+fireflies.visible=false;fireflies.frustumCulled=false;
+scene.add(fireflies);
+const fireflyPts=[];
+for(let i=0;i<FIREFLY_N;i++){
+ let fx=0,fz=0,tries=0;
+ do{fx=(Math.random()-0.5)*220;fz=(Math.random()-0.5)*220;tries++;}
+ while(tries<20&&(Math.abs(fz-riverZ(fx))<7||(Math.abs(fx)<26&&Math.abs(fz)<21)));
+ fireflyPts.push({x:fx,z:fz,ph:Math.random()*9,sp:0.55+Math.random()*0.8,rr:1.2+Math.random()*2.6});
+}
+
+/* ================= graphics quality (Low / Medium / High) ================= */
+let useBloom=true,grassInst=null,cloudList=null;
+let quality=(save&&save.quality)||'high';
+const QUAL_LABEL={low:'🎚️ Graphics: Low — smoothest',medium:'🎚️ Graphics: Medium',high:'🎚️ Graphics: High — prettiest'};
+function applyQuality(q){
+ quality=q;
+ const pr=q==='high'?Math.min(devicePixelRatio,1.75):q==='medium'?Math.min(devicePixelRatio,1.25):1;
+ renderer.setPixelRatio(pr);
+ composer.setPixelRatio(pr);
+ renderer.setSize(innerWidth,innerHeight);
+ composer.setSize(innerWidth,innerHeight);
+ const sh=q==='high'?4096:q==='medium'?2048:1024;
+ if(sun.shadow.mapSize.x!==sh){
+  sun.shadow.mapSize.set(sh,sh);
+  if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null;}
+ }
+ useBloom=q!=='low';
+ fireflies.count=q==='low'?44:FIREFLY_N;
+ if(grassInst)grassInst.count=q==='low'?6200:9500;
+ if(cloudList)cloudList.forEach((c,i)=>{c.visible=q==='low'?i%2===0:true;});
+ const qb=$('qualBtn');
+ if(qb)qb.title=QUAL_LABEL[q];
+}
+applyQuality(quality);
+$('qualBtn').onclick=()=>{
+ const order=['high','medium','low'];
+ const q=order[(order.indexOf(quality)+1)%order.length];
+ applyQuality(q);
+ syncSave(s=>{s.quality=q;});
+ try{toast(QUAL_LABEL[q]);}catch(e){}
+};
 
 /* ================= procedural textures ================= */
 function canvasTex(w,h,draw,repeat){
@@ -709,6 +805,8 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  }
  if(blades.instanceColor)blades.instanceColor.needsUpdate=true;
  scene.add(blades);
+ grassInst=blades;
+ if(quality==='low')blades.count=6200;
  const flowerGeo=new THREE.IcosahedronGeometry(0.07,0);
  const flowerMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1});
  const flowers=new THREE.InstancedMesh(flowerGeo,flowerMat,220);
@@ -2252,6 +2350,8 @@ for(let i=0;i<14;i++){
  cl.scale.setScalar(1.6+Math.random()*2.2);
  scene.add(cl);clouds.push(cl);
 }
+cloudList=clouds;
+if(quality==='low')clouds.forEach((c,i)=>{c.visible=i%2===0;});
 const birds=[];
 for(let i=0;i<5;i++){
  const b=new THREE.Group();
@@ -2264,18 +2364,44 @@ for(let i=0;i<5;i++){
  scene.add(b);
  birds.push({g:b,wl,wr,a:Math.random()*6,r:35+Math.random()*55,h:17+Math.random()*9,sp:0.1+Math.random()*0.12,fl:Math.random()*6});
 }
+/* butterflies: little agents that pick a flower clump, fly there, sip, then move on */
 const flutters=[];
-for(let i=0;i<6;i++){
+for(let i=0;i<10;i++){
  const b=new THREE.Group();
  const wg=new THREE.PlaneGeometry(0.13,0.11);
  wg.translate(0.065,0,0);
- const wm=new THREE.MeshBasicMaterial({color:['#ff8fab','#ffd166','#b197fc'][i%3],side:THREE.DoubleSide});
+ const wm=new THREE.MeshBasicMaterial({color:['#ff8fab','#ffd166','#b197fc','#74c0fc'][i%4],side:THREE.DoubleSide});
  const wl=new THREE.Mesh(wg,wm),wr=new THREE.Mesh(wg,wm);
  wr.rotation.y=Math.PI;
  b.add(wl);b.add(wr);
  scene.add(b);
- flutters.push({g:b,wl,wr,ph:Math.random()*9,idx:i});
+ flutters.push({g:b,wl,wr,ph:Math.random()*9,mode:'fly',tx:0,tz:0,x:(Math.random()-0.5)*80,z:(Math.random()-0.5)*80,timer:0,picked:false});
 }
+/* river fish: lurk unseen, then leap with a splash when a rider is near the water */
+const fishes=[];
+{
+ const fishMat=new THREE.MeshStandardMaterial({color:0x9db8c8,roughness:0.35,metalness:0.45});
+ for(let i=0;i<6;i++){
+  const g=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.SphereGeometry(0.16,8,6),fishMat);
+  body.scale.set(1.7,0.75,0.6);
+  g.add(body);
+  const tail=new THREE.Mesh(new THREE.ConeGeometry(0.09,0.2,5),fishMat);
+  tail.rotation.z=Math.PI/2;
+  tail.position.x=-0.32;
+  g.add(tail);
+  g.visible=false;
+  scene.add(g);
+  const ring=new THREE.Mesh(new THREE.RingGeometry(0.26,0.36,20),
+   new THREE.MeshBasicMaterial({color:0xd7ecf8,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false}));
+  ring.rotation.x=-Math.PI/2;
+  ring.visible=false;
+  scene.add(ring);
+  fishes.push({g,ring,mode:'wait',timer:2+Math.random()*8,x:0,z:0,wy:0,dir:1,t:0});
+ }
+}
+const _ffM4=new THREE.Matrix4(),_ffQ=new THREE.Quaternion(),_ffV=new THREE.Vector3(),_ffS=new THREE.Vector3();
+window._life={fishes,flutters,fireflies};   // diagnostics
 
 /* ================= ranch buildings & paddock ================= */
 {
@@ -2457,12 +2583,13 @@ for(let i=0;i<6;i++){
   for(let fjj=0;fjj<3;fjj++)
    blob(0.1,0.12,0.1,['#ff8fab','#ffd166','#b197fc'][fjj],x-0.25+fjj*0.25,0.45,z,scene);
  }
- // corner floodlights (they glow at dusk thanks to bloom)
+ // corner floodlights — they switch on at dusk (HDR colour so the bloom catches them)
  for(const cpos of[[-24,-19],[24,-19],[-24,19],[24,19]]){
   tube(0.08,0.11,6.5,'#7d8893',cpos[0],3.25,cpos[1],scene);
   box(0.7,0.4,0.3,'#5a626b',cpos[0],6.7,cpos[1],scene);
-  const pane=new THREE.Mesh(new THREE.PlaneGeometry(0.6,0.3),
-   new THREE.MeshBasicMaterial({color:0xfff2cc}));
+  const paneMat=new THREE.MeshBasicMaterial({color:0x8fa0ac});
+  glowPanes.push({mat:paneMat,day:new THREE.Color(0x8fa0ac),night:new THREE.Color(2.3,2.0,1.25)});
+  const pane=new THREE.Mesh(new THREE.PlaneGeometry(0.6,0.3),paneMat);
   pane.position.set(cpos[0],6.7,cpos[1]+0.17);
   pane.rotation.x=-0.25;
   scene.add(pane);
@@ -4554,8 +4681,9 @@ function cottage(x,z,rot){
  box(1.0,0.12,0.5,'#b8a98a',0,0.06,1.6,b);
  for(const wx of[-1.05,1.05]){
   box(0.74,0.74,0.08,whitePaintMat,wx,1.45,1.42,b);
-  const pane=new THREE.Mesh(new THREE.PlaneGeometry(0.56,0.56),
-   new THREE.MeshBasicMaterial({color:0xffe9b8}));
+  const paneMat=new THREE.MeshBasicMaterial({color:0x9fb4c4});
+  glowPanes.push({mat:paneMat,day:new THREE.Color(0x9fb4c4),night:new THREE.Color(2.1,1.35,0.5)});
+  const pane=new THREE.Mesh(new THREE.PlaneGeometry(0.56,0.56),paneMat);
   pane.position.set(wx,1.45,1.47);
   b.add(pane);
   box(0.8,0.16,0.3,plankBrownMat,wx,1.0,1.5,b);
@@ -5192,7 +5320,10 @@ function tick(){
   cl.position.x+=dt*0.7;
   if(cl.position.x>520)cl.position.x=-520;
  }
+ const dayLife=nightNow<0.55;      // birds & butterflies roost at night; fireflies take over
  for(const b of birds){
+  b.g.visible=dayLife;
+  if(!dayLife)continue;
   b.a+=dt*b.sp;
   b.fl+=dt*11;
   b.g.position.set(Math.cos(b.a)*b.r,b.h+Math.sin(b.a*3)*1.5,Math.sin(b.a)*b.r);
@@ -5223,18 +5354,93 @@ function tick(){
   n.rider.g.position.y=1.87+Math.max(0,Math.sin(n.phase))*0.06;
  }
  for(const gb of gltfBirds){
+  gb.m.visible=dayLife;
+  if(!dayLife)continue;
   gb.mx.update(dt);
   gb.a+=dt*gb.sp;
   gb.m.position.set(Math.cos(gb.a)*gb.r,gb.h+Math.sin(gb.a*2.3)*1.6,Math.sin(gb.a)*gb.r);
   gb.m.rotation.y=-gb.a;
  }
  for(const f of flutters){
-  const cc=flowerClumps.length?flowerClumps[f.idx%flowerClumps.length]:[0,0];
-  const px=cc[0]+Math.sin(t*0.5+f.ph)*2.4,pz=cc[1]+Math.cos(t*0.37+f.ph*2)*2.4;
-  f.g.position.set(px,groundH(px,pz)+0.55+Math.sin(t*1.6+f.ph)*0.25,pz);
-  f.g.rotation.y=t*0.5+f.ph;
-  const fw=0.45+Math.sin(t*16+f.ph)*0.65;
-  f.wl.rotation.z=fw;f.wr.rotation.z=-fw;
+  f.g.visible=dayLife;
+  if(!dayLife)continue;
+  if(f.mode==='fly'){
+   if(!f.picked){
+    // forage locally: hop between the nearest few clumps, not across the whole valley
+    const near=flowerClumps.slice().sort((a,c)=>Math.hypot(a[0]-f.x,a[1]-f.z)-Math.hypot(c[0]-f.x,c[1]-f.z));
+    const cc=near.length?near[Math.floor(Math.random()*Math.min(3,near.length))]:[0,0];
+    f.tx=cc[0]+(Math.random()-0.5)*4;
+    f.tz=cc[1]+(Math.random()-0.5)*4;
+    f.picked=true;
+   }
+   const dx=f.tx-f.x,dz=f.tz-f.z,d=Math.hypot(dx,dz);
+   if(d<0.5){f.mode='sip';f.timer=2+Math.random()*3.5;}
+   else{
+    const spd=Math.min(7,0.9+d*0.12);
+    f.x+=(dx/d*spd+Math.sin(t*2.3+f.ph)*0.5)*dt;
+    f.z+=(dz/d*spd+Math.cos(t*1.9+f.ph)*0.5)*dt;
+    f.g.rotation.y=Math.atan2(dx,dz);
+   }
+   f.g.position.set(f.x,groundH(f.x,f.z)+0.85+Math.sin(t*3+f.ph)*0.3,f.z);
+   const fw=0.45+Math.sin(t*18+f.ph)*0.7;
+   f.wl.rotation.z=fw;f.wr.rotation.z=-fw;
+  }else{
+   f.timer-=dt;
+   f.g.position.set(f.x,groundH(f.x,f.z)+0.34+Math.sin(t*2+f.ph)*0.05,f.z);
+   f.g.rotation.y+=dt*0.4;
+   const fw=0.85+Math.sin(t*3.5+f.ph)*0.55;
+   f.wl.rotation.z=fw;f.wr.rotation.z=-fw;
+   if(f.timer<=0){f.mode='fly';f.picked=false;}
+  }
+ }
+ for(const fs of fishes){
+  if(fs.mode==='wait'){
+   fs.timer-=dt;
+   if(fs.timer<=0){
+    let fx=THREE.MathUtils.clamp(player.pos.x+(Math.random()-0.5)*70,-300,300);
+    const fz=riverZ(fx)+(Math.random()-0.5)*4.5;
+    if(Math.hypot(player.pos.x-fx,player.pos.z-fz)>130){fs.timer=3+Math.random()*6;continue;}
+    fs.x=fx;fs.z=fz;
+    fs.wy=rawH(fx,riverZ(fx))+0.55;
+    fs.dir=Math.random()<0.5?-1:1;
+    fs.mode='leap';fs.t=0;
+    fs.g.visible=true;
+    fs.g.rotation.y=fs.dir>0?0:Math.PI;
+   }
+  }else{
+   fs.t+=dt;
+   const p=fs.t/0.85;
+   if(p>=1){
+    fs.mode='wait';fs.timer=6+Math.random()*14;
+    fs.g.visible=false;
+    fs.ring.visible=true;
+    fs.ring.position.set(fs.x+fs.dir*1.2,fs.wy+0.03,fs.z);
+    fs.ring.scale.setScalar(1);
+    fs.ring.material.opacity=0.55;
+   }else{
+    fs.g.position.set(fs.x+fs.dir*p*1.2,fs.wy+Math.sin(Math.PI*p)*0.85-0.08,fs.z);
+    fs.g.rotation.z=Math.cos(Math.PI*p)*0.9;
+   }
+  }
+  if(fs.ring.visible){
+   fs.ring.material.opacity-=dt*0.7;
+   fs.ring.scale.addScalar(dt*4);
+   if(fs.ring.material.opacity<=0)fs.ring.visible=false;
+  }
+ }
+ fireflies.visible=nightNow>0.04;
+ if(fireflies.visible){
+  for(let i=0;i<fireflies.count;i++){
+   const fp=fireflyPts[i];
+   const fx=fp.x+Math.cos(t*fp.sp+fp.ph)*fp.rr,fz=fp.z+Math.sin(t*fp.sp*0.8+fp.ph*2)*fp.rr;
+   const fy=groundH(fx,fz)+0.55+Math.sin(t*0.9+fp.ph)*0.35;
+   const bl=Math.max(0.001,Math.sin(t*(1.6+fp.ph%1)+fp.ph*5))*nightNow;
+   _ffV.set(fx,fy,fz);
+   _ffS.setScalar(0.2+bl);
+   _ffM4.compose(_ffV,_ffQ,_ffS);
+   fireflies.setMatrixAt(i,_ffM4);
+  }
+  fireflies.instanceMatrix.needsUpdate=true;
  }
  if(fwd)camYaw+=(0-camYaw)*Math.min(1,dt*2);
  camDistSm+=(camDist-camDistSm)*Math.min(1,dt*6);
@@ -5252,18 +5458,39 @@ function tick(){
   camera.fov+=(fovT-camera.fov)*Math.min(1,dt*2.5);
   camera.updateProjectionMatrix();
  }
- /* day cycle & weather */
+ /* day cycle & weather — a real day: dawn, noon, golden hour, dusk, moonlit night */
  dayT=(dayT+dt/480)%1;
- const elev=10+36*(0.5-0.5*Math.cos(dayT*Math.PI*2));
- sunDir.setFromSphericalCoords(1,THREE.MathUtils.degToRad(90-elev),THREE.MathUtils.degToRad(35+dayT*150));
- sunOff.copy(sunDir).multiplyScalar(95);
+ const elev=-12+66*(0.5-0.5*Math.cos(dayT*Math.PI*2));   // noon 54° … midnight -12°
+ sunDir.setFromSphericalCoords(1,THREE.MathUtils.degToRad(90-elev),THREE.MathUtils.degToRad(35+dayT*310));
  sky.material.uniforms.sunPosition.value.copy(sunDir);
- sun.color.setStyle(elev>24?'#fff0d2':'#ffd9a0');
+ const dayF=THREE.MathUtils.clamp(elev/14,0,1);
+ nightNow=THREE.MathUtils.clamp(-elev/9,0,1);
+ const lowSun=THREE.MathUtils.clamp(1-elev/26,0,1);
+ const golden=THREE.MathUtils.clamp(1-Math.abs(elev-7)/16,0,1);
+ _moonDir.copy(sunDir).negate();
+ // one key light: warm sun by day, ember at the horizon, cool moonlight after dark
+ sunOff.copy(elev>-3?sunDir:_moonDir).multiplyScalar(95);
+ if(elev>-3)sun.color.copy(C_SUN_HIGH).lerp(C_SUN_LOW,lowSun);
+ else sun.color.copy(C_MOON);
+ const envKey=elev>14?'day':(elev>-3?'golden':'night');
+ if(envKey!==curEnv){curEnv=envKey;scene.environment=envMaps[envKey];}
+ stars.material.opacity=nightNow*(weather.mode==='rain'?0.25:0.92);
+ stars.visible=stars.material.opacity>0.02;
+ if(stars.visible)stars.rotation.y+=dt*0.004;
+ moonS.material.opacity=Math.min(1,nightNow*1.4);
+ moonS.visible=nightNow>0.02;
+ if(moonS.visible)moonS.position.copy(camera.position).addScaledVector(_moonDir,2600);
+ // windows & lamps come on just before sunset
+ const glowF=THREE.MathUtils.clamp((7-elev)/9,0,1);
+ for(const p of glowPanes)p.mat.color.copy(p.day).lerp(p.night,glowF);
  weather.timer-=dt;
  if(weather.mode==='clear'&&weather.timer<=0){
-  weather.mode='rain';weather.timer=26+Math.random()*22;
-  rain.visible=true;
-  toast('🌧️ A shower rolls in over Evervale…');
+  if(nightNow>0.4){weather.timer=30;}   // showers wait for daylight (rainbows need sun)
+  else{
+   weather.mode='rain';weather.timer=26+Math.random()*22;
+   rain.visible=true;
+   toast('🌧️ A shower rolls in over Evervale…');
+  }
  }else if(weather.mode==='rain'&&weather.timer<=0){
   weather.mode='rainbow';weather.timer=20;
   rain.visible=false;rainbow.visible=true;
@@ -5272,8 +5499,17 @@ function tick(){
   weather.mode='clear';weather.timer=140+Math.random()*160;
   rainbow.visible=false;
  }
- sun.intensity+=((weather.mode==='rain'?1.3:3.0)-sun.intensity)*Math.min(1,dt*1.5);
- hemi.intensity+=((weather.mode==='rain'?0.85:0.65)-hemi.intensity)*Math.min(1,dt*1.5);
+ const keyT=(weather.mode==='rain'?1.3:3.0)*dayF+0.62*nightNow
+  +(weather.mode==='rain'?0.15:0.55)*golden;   // ember punch at the horizon hours
+ sun.intensity+=(keyT-sun.intensity)*Math.min(1,dt*1.5);
+ const hemiT=THREE.MathUtils.lerp(0.34,weather.mode==='rain'?0.85:0.65,dayF);
+ hemi.intensity+=(hemiT-hemi.intensity)*Math.min(1,dt*1.5);
+ hemi.color.copy(C_HEMI_NIGHT).lerp(C_HEMI_DAY,dayF);
+ hemi.groundColor.copy(C_GROUND_NIGHT).lerp(C_GROUND_DAY,dayF);
+ // fog matches the sky: powder blue -> warm gold at the horizon hours -> deep night blue
+ _fogCol.copy(C_FOG_DAY).lerp(C_FOG_GOLD,golden);
+ _fogCol.lerp(C_FOG_NIGHT,nightNow);
+ scene.fog.color.lerp(_fogCol,Math.min(1,dt*1.5));
  scene.fog.near+=((weather.mode==='rain'?320:520)-scene.fog.near)*Math.min(1,dt*0.8);
  scene.fog.far+=((weather.mode==='rain'?1400:2400)-scene.fog.far)*Math.min(1,dt*0.8);
  if(rain.visible){
@@ -5404,7 +5640,8 @@ function tick(){
   mc.restore();
   mc.restore();
  }
- composer.render();
+ if(useBloom)composer.render();
+ else renderer.render(scene,camera);
  hintT+=dt;
  if(hintT>9)$('hint').style.opacity='0';
  const ld=$('load');

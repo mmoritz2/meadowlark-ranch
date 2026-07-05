@@ -24,8 +24,8 @@ It started as a small 2D canvas game, became a 3D Three.js world, and then the
 
 - **One file does almost everything:** `ranch3d.html` (~4,500 lines) contains
   the entire game — HTML, CSS, and the JavaScript game engine.
-- **3D engine:** [Three.js](https://threejs.org) r160, loaded straight from a
-  CDN. No build step, no install — just open the file.
+- **3D engine:** [Three.js](https://threejs.org) r160, vendored under
+  `assets/vendor/three/` so the game can boot without a CDN request.
 - **Everything is procedurally generated.** There are almost no image files.
   The grass, bark, water, horse coats, terrain, clouds — all of it is drawn in
   code onto canvases and turned into textures, or sculpted from math.
@@ -50,8 +50,15 @@ It started as a small 2D canvas game, became a 3D Three.js world, and then the
   and forests.
 - Distinct biome zones with their own ground: Bronco Canyon (sand + red mesas),
   Witberg (snow), Agricola (farmland), plus the home meadow.
-- Snow-capped, craggy mountains on the horizon, drifting clouds, a day sky,
-  weather (rain + rainbows), birds, and ambient sound.
+- Snow-capped, craggy mountains on the horizon, drifting clouds, weather
+  (rain + rainbows), birds, and ambient sound.
+- A **full day/night cycle**: dawn, noon, golden hour, dusk, and a moonlit
+  starry night — with sky-matched fog, a real moon, cottage windows and arena
+  floodlights that switch on at dusk, and **fireflies** that come out after dark
+  (birds and butterflies roost for the night).
+- **Living ambient wildlife**: butterflies that actually forage — flying
+  flower-clump to flower-clump, stopping to sip — and river fish that leap
+  with a splash ring when you ride near the water.
 - A fenced **Home Pasture** where your whole herd grazes and wanders (unlimited
   horses).
 
@@ -208,9 +215,9 @@ Game feel is hard, and a lot of this was iterative. The notable battles:
   for playing with friends, but: anyone could in principle join a club code,
   leaderboards are trust-based (no anti-cheat), and the broker could rate-limit
   or go down. A proper backend would be needed for anything serious.
-- **Performance:** large herds, the 4K shadow map, and bloom can be heavy on
-  low-end devices. There's no quality/settings menu yet, and no level-of-detail
-  system for distant objects.
+- **Performance:** a 🎚️ graphics-quality button (High/Medium/Low) now scales
+  pixel ratio, shadow-map size, bloom, grass density, and cloud count — but
+  there's still no true level-of-detail system for distant objects.
 - **Mobile** has on-screen touch controls but the layout and performance aren't
   specifically tuned for small screens.
 - **Accessibility:** no colorblind options, remappable keys, text scaling, or
