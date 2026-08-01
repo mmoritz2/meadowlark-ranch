@@ -7342,27 +7342,6 @@ function tick(){
  const ld=$('load');
  if(ld)ld.remove();
 }
-if(location.search.includes('realaudit')){ (async()=>{
- const w=ms=>new Promise(r=>setTimeout(r,ms));
- const cap=n=>{composer.render();return fetch('http://127.0.0.1:8765/'+n+'.png',{method:'POST',body:renderer.domElement.toDataURL('image/png')});};
- await w(7000);
- document.querySelectorAll('body > *:not(canvas)').forEach(e=>{if(e.style)e.style.visibility='hidden';});
- const rst=(x,z,hd)=>{player.pos.set(x,0,z);player.heading=hd;player.y=0;
-  if(player.mesh){player.mesh.position.set(x,player.mesh.position.y,z);player.mesh.rotation.y=hd;}};
- const gy=()=>groundH(player.pos.x,player.pos.z);
- rst(0,14,Math.PI); player.speed=0; await w(700);
- window.__shotCam=[3.2,gy()+1.5,13.4, 0,gy()+1.0,14]; await w(250); await cap('ra_horse_idle');
- player.speed=9; await w(900);
- window.__shotCam=[3.4,gy()+1.8,12.6, 0,gy()+1.1,14]; await w(250); await cap('ra_horse_run');
- window.__shotCam=[1.2,gy()+0.35,12.9, 0,gy()+0.25,14]; await w(250); await cap('ra_ground_contact');
- player.speed=0;
- rst(-40,60,2.2); await w(700);
- window.__shotCam=[-40,gy()+2.2,54, -40,gy()+1.2,70]; await w(300); await cap('ra_landscape');
- window.__shotCam=[-40,gy()+0.6,58, -40,gy()+0.35,63]; await w(300); await cap('ra_grass_close');
- rst(0,120,0); await w(700);
- window.__shotCam=[0,gy()+6,110, 0,gy()+2,150]; await w(300); await cap('ra_vista');
- window.__shotCam=null; await cap('ra_done');
-})(); }
 window.render_game_to_text=()=>JSON.stringify({
  mode:course?'course':'free_roam',
  coordinateSystem:'x east/west, z north/south, y up',
