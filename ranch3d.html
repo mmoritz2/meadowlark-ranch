@@ -4474,7 +4474,7 @@ function makeRein(){                          // thin tube so the rein reads as 
  return m;
 }
 const reinL=makeRein(),reinR=makeRein();
-const _v1=new THREE.Vector3(),_v2=new THREE.Vector3(),_vm=new THREE.Vector3();
+const _v1=new THREE.Vector3(),_v2=new THREE.Vector3(),_vm=new THREE.Vector3(),_vb=new THREE.Vector3();
 function updateRein(mesh,handObj,bitObj){
  handObj.getWorldPosition(_v1);
  bitObj.getWorldPosition(_v2);
@@ -6566,6 +6566,21 @@ function tick(){
      its mouth anchors sit about a metre above the rig's real mouth. Reins drawn to those
      ran steeply up from the hands and straight through the rider's eyeline, which in VR
      put a leather strap across your face on every horse. */
+  /* Track the rigged horse's actual muzzle. The anchors were pinned at a fixed
+     (+-0.13, 1.34, 1.0), but the rig carries its head slightly off the mount's centre
+     line (the head bone sits at x=-0.145) and the head moves as the neck animates, so
+     fixed anchors left the reins reaching for a spot beside the muzzle. */
+  if(RIG.attachedTo===player.mesh&&TACK.bitL&&RIG.bones){
+   if(!RIG.headBone){                       // the muzzle bone = the one furthest forward
+    let best=null,bz=-1e9;
+    for(const b of RIG.bones){b.getWorldPosition(_vb);player.mesh.worldToLocal(_vb);
+     if(_vb.z>bz){bz=_vb.z;best=b;}}
+    RIG.headBone=best;
+   }
+   RIG.headBone.getWorldPosition(_vb); player.mesh.worldToLocal(_vb);
+   TACK.bitL.position.set(_vb.x+0.085,_vb.y-0.055,_vb.z+0.05);
+   TACK.bitR.position.set(_vb.x-0.085,_vb.y-0.055,_vb.z+0.05);
+  }
   const bL=(RIG.attachedTo===player.mesh&&TACK.bitL)?TACK.bitL:player.parts.bitL;
   const bR=(RIG.attachedTo===player.mesh&&TACK.bitR)?TACK.bitR:player.parts.bitR;
   updateRein(reinL,rid.handL,bL);
