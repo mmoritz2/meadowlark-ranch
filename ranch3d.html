@@ -418,7 +418,9 @@ function pollVR(){
  if(!s)return;
  let menuBtn=false,trigger=false;
  touch.go=false;touch.left=false;touch.right=false;touch.gal=false;touch.jump=false;
+ touch.turnA=0;touch.goA=0;
  vrStickY=0;
+ let stickX=0,stickY=0,bestMag=0;
  for(const src of s.inputSources){
   const gp=src.gamepad;
   if(!gp||!gp.axes)continue;
@@ -432,11 +434,30 @@ function pollVR(){
    if(Math.abs(y)>Math.abs(vrStickY))vrStickY=y;
    continue;
   }
-  if(y<-0.35)touch.go=true;
-  if(x<-0.40)touch.left=true;
-  if(x>0.40)touch.right=true;
+  /* Only the stick you are actually pushing steers. Reading both controllers and OR-ing
+     them let a resting thumb, or the drift every analog stick has, fight the one you meant. */
+  const mag=Math.hypot(x,y);
+  if(mag>bestMag){bestMag=mag;stickX=x;stickY=y;}
   if(b[0]&&b[0].pressed)touch.gal=true;    // trigger: gallop
   if(b[4]&&b[4].pressed)touch.jump=true;   // A / X: jump
+ }
+ if(!vrMenuOpen){
+  /* Thumbstick -> analog steering and throttle. This used to be a hard threshold at 0.40
+     that produced a full-rate turn the instant you crossed it, so the horse had no gentle
+     steering at all and stick noise around the threshold made it judder. A dead zone kills
+     the noise; the squared curve on yaw gives fine control near centre and full lock only
+     at the rim. Throttle stays linear so speed is predictable. */
+  const DZ=0.18;
+  const shape=(v,curved)=>{const a=Math.abs(v);
+   if(a<DZ)return 0;
+   const n=Math.min(1,(a-DZ)/(1-DZ));      // rescaled so it starts at 0, not at a step
+   return Math.sign(v)*(curved?n*(0.35+0.65*n):n);};
+  touch.turnA=-shape(stickX,true);            // stick left (-x) turns left (+heading)
+  const f=shape(stickY,false);
+  touch.goA=f<0?-f:0;                      // forward only; pulling back does not reverse in VR
+  if(touch.goA>0.05)touch.go=true;         // keep the booleans truthful for the rest of the game
+  if(touch.turnA>0.05)touch.left=true;
+  if(touch.turnA<-0.05)touch.right=true;
  }
  if(menuBtn&&!vrPrevMenuBtn)setVRMenu(!vrMenuOpen);
  if(vrMenuOpen&&trigger&&!vrPrevTrigger&&vrHover)vrMenuClick(vrHover);
@@ -4646,7 +4667,9 @@ addEventListener('keydown',e=>{
  if(e.code==='KeyV')startTrick('flip');
 });
 addEventListener('keyup',e=>{keys[e.code]=false;});
-const touch={left:false,right:false,go:false,gal:false,jump:false};
+// turnA/goA are the analog VR thumbstick (-1..1 steer, 0..1 throttle); the booleans are
+// what the keyboard and the on-screen buttons set, and what most of the game reads.
+const touch={left:false,right:false,go:false,gal:false,jump:false,turnA:0,goA:0};
 window._touch=touch;
 function bindHold(id,key){
  const el=$(id);
@@ -6399,11 +6422,23 @@ function tick(){
   if(fwd)target=gallop?(abil==='swift'?15.5:12.5):(abil==='swift'?5.6:4.8);
   if(back)target=-1.6;
  }
+ const inVR=renderer.xr.isPresenting;
+ if(inVR&&target>0&&touch.goA>0)target*=0.34+0.66*touch.goA;   // ease the stick out of a walk
  const accel=target>player.speed?1.7:2.8;
  player.speed+=(target-player.speed)*Math.min(1,dt*accel);
  if(Math.abs(player.speed)<0.05&&!fwd&&!back)player.speed=0;
- const turn=(left?1:0)-(right?1:0);
- player.heading+=turn*dt*(1.7+Math.min(1.5,Math.abs(player.speed)*0.1));
+ /* Steering. In VR the thumbstick drives this as a continuous value; on the keyboard a key
+    is still all-or-nothing. Either way the input is ramped rather than applied raw, because
+    yaw is the axis that turns stomachs and a stick that snaps to full lock feels wild.
+    VR also turns slower than the flat game for the same reason. */
+ let turn=(left?1:0)-(right?1:0);
+ if(inVR){
+  player.turnSm=(player.turnSm||0)+(touch.turnA-(player.turnSm||0))*(1-Math.exp(-7*dt));
+  if(Math.abs(player.turnSm)<0.002)player.turnSm=0;
+  turn=player.turnSm;
+ }else player.turnSm=turn;   // stay in sync, so putting the headset on doesn't jerk the horse
+ const yawRate=(1.7+Math.min(1.5,Math.abs(player.speed)*0.1))*(inVR?0.62:1);
+ player.heading+=turn*dt*yawRate;
  player.pos.x+=Math.sin(player.heading)*player.speed*dt;
  player.pos.z+=Math.cos(player.heading)*player.speed*dt;
  const rr=Math.hypot(player.pos.x,player.pos.z);
