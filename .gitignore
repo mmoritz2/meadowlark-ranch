@@ -10,10 +10,33 @@ output/
 tools/asset-gen/_ref/
 tools/asset-gen/_*.png
 
+# Intermediate asset-gen output the game never loads: untextured shape-only meshes
+# (the *_textured.glb siblings are what ship) and abandoned seated-rider attempts.
+assets/models/birch.glb
+assets/models/blossom.glb
+assets/models/bush.glb
+assets/models/cactus.glb
+assets/models/cactus2.glb
+assets/models/flowerbush.glb
+assets/models/oak.glb
+assets/models/pine.glb
+assets/models/rider_seated*.glb
+assets/models/rider_seated*/
+assets/models/*/raw_data.npz
+
 # In-engine capture sink + dev scratch (not part of the game)
 _caps/
 .httpserver.log
 .httpserver_*.err
+.vrserver.log
+.vrserver.err
+debug.log
+
+# TLS certs for local HTTPS (WebXR needs a secure origin) — generate your own,
+# never commit keys. See serve-vr.py.
+*.pem
+*.key
+*.crt
 
 # Python caches
 __pycache__/
