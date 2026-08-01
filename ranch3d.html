@@ -361,7 +361,7 @@ renderer.toneMappingExposure=1.05;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 const scene=new THREE.Scene();
-scene.fog=new THREE.FogExp2(0xc9d8e6,0.0016);   // exponential: distance reads as distance
+scene.fog=new THREE.FogExp2(0xbfd3e8,0.0027);   // exponential; tinted to the sky so distance hazes toward it
 const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,5000);
 /* Start where the chase camera will settle (player spawns at 0,0,8 facing -z, so the
    camera belongs behind it at +z). Starting anywhere else makes the first second of the
@@ -1506,6 +1506,12 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
         came out near-black and the meadows looked dead. Normalise the photo up to a
         realistic grass albedo and let the vertex colours go on tinting it. */
      diffuseColor.rgb*=_acc.rgb*2.35*(0.90+macro*0.26);
+     /* The albedo was clipping its red channel to zero over most of the map, which is not a
+        colour any vegetation has — it read as pure display-primary green. Put red back and
+        take the saturation down to something turf actually measures at. */
+     float _lg=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));
+     diffuseColor.rgb=mix(vec3(_lg),diffuseColor.rgb,0.70);
+     diffuseColor.rgb+=vec3(0.055,0.030,0.012)*_lg;
      /* One flat saturated green over the whole map is the loudest "video game" tell there
         is. Real pasture is a patchwork: sun-dried olive on the crowns, damper blue-green in
         the hollows. Two octaves of the same cheap noise, no extra texture fetch. */
@@ -1705,7 +1711,7 @@ function coatMat(hex){
   c.fillStyle=sheen;c.fillRect(0,0,w,h*0.5);
   c.globalAlpha=1;
  });
- coatCache[hex]=new THREE.MeshStandardMaterial({map:tex,roughness:1,roughnessMap:coatRoughTex});
+ coatCache[hex]=new THREE.MeshStandardMaterial({map:tex,roughness:0.74,roughnessMap:coatRoughTex});
  coatCache[hex].envMapIntensity=0.58;
  applyCoatDetail(coatCache[hex]);
  return coatCache[hex];
@@ -1715,21 +1721,21 @@ function blob(sx,sy,sz,c,x,y,z,parent){
  const m=new THREE.Mesh(SPH,smat(c));
  m.scale.set(sx,sy,sz);
  m.position.set(x,y,z);
- m.castShadow=true;
+ m.castShadow=true;m.receiveShadow=true;
  parent.add(m);
  return m;
 }
 function tube(r1,r2,len,c,x,y,z,parent){
  const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,len,12),smat(c));
  m.position.set(x,y,z);
- m.castShadow=true;
+ m.castShadow=true;m.receiveShadow=true;
  parent.add(m);
  return m;
 }
 function box(w,h,d,c,x,y,z,parent){
  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),smat(c));
  m.position.set(x,y,z);
- m.castShadow=true;
+ m.castShadow=true;m.receiveShadow=true;
  parent.add(m);
  return m;
 }
@@ -1763,7 +1769,7 @@ function loftZ(prof,segs,mat){
  geo.setIndex(idx);
  geo.computeVertexNormals();
  const m=new THREE.Mesh(geo,mat);
- m.castShadow=true;
+ m.castShadow=true;m.receiveShadow=true;
  return m;
 }
 function loftY(prof,segs,mat){
@@ -1791,7 +1797,7 @@ function loftY(prof,segs,mat){
  geo.setIndex(idx);
  geo.computeVertexNormals();
  const m=new THREE.Mesh(geo,mat);
- m.castShadow=true;
+ m.castShadow=true;m.receiveShadow=true;
  return m;
 }
 function loftCurve(prof,segs,mat){
@@ -1823,7 +1829,7 @@ function loftCurve(prof,segs,mat){
  geo.setIndex(idx);
  geo.computeVertexNormals();
  const m=new THREE.Mesh(geo,mat);
- m.castShadow=true;
+ m.castShadow=true;m.receiveShadow=true;
  return m;
 }
 const NECK_SWEEP=[
@@ -1968,7 +1974,7 @@ function stripMesh(edgeA,edgeB,mat){
  geo.setIndex(idx);
  geo.computeVertexNormals();
  const m=new THREE.Mesh(geo,mat);
- m.castShadow=true;
+ m.castShadow=true;m.receiveShadow=true;
  return m;
 }
 const maneCache={};
@@ -2075,7 +2081,7 @@ const snowMat=new THREE.MeshStandardMaterial({map:canvasTex(128,128,(c,w,h)=>{
   c.fillRect(Math.random()*w,Math.random()*h,1.5,1.5);
  }
  c.globalAlpha=1;
-},2),roughness:0.55});
+},2),roughness:0.40});
 const clothCache={};
 function clothMat(hex){
  if(clothCache[hex])return clothCache[hex];
@@ -3307,8 +3313,8 @@ function applyCoat(){
   g.scene.traverse(o=>{if(o.isSkinnedMesh&&!RIG.skin)RIG.skin=o;});
   if(!RIG.skin){console.warn('rig: no skinned mesh');return;}
   RIG.bones=RIG.skin.skeleton.bones; RIG.baseMat=RIG.skin.material;
-  g.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.frustumCulled=false;
-   if(o.material){o.material.roughness=0.85;o.material.metalness=0;}}});  // keep the baked texture
+  g.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=false;
+   if(o.material){o.material.roughness=0.62;o.material.metalness=0;}}});  // keep the baked texture
   rigCalibrate(); RIG.ready=true;
   attachRig(); applyCoat();
   attachTack();   // (re)place saddle+rider now the horse back is known
@@ -3332,14 +3338,14 @@ function _fit(obj,scalar){obj.scale.setScalar(1);obj.position.set(0,0,0);obj.rot
 // player.mesh-local frame: origin = seat centre, +z = head/front, +x = right, +y = up.
 function buildSaddle(){
  const g=new THREE.Group();
- const leather=new THREE.MeshStandardMaterial({color:0x6b4423,roughness:0.55,metalness:0.04});
+ const leather=new THREE.MeshStandardMaterial({color:0x6b4423,roughness:0.38,metalness:0.05});
  const dark=new THREE.MeshStandardMaterial({color:0x432813,roughness:0.6,metalness:0.04});
  const iron=new THREE.MeshStandardMaterial({color:0x9a9ea4,roughness:0.42,metalness:0.55});
  const pad=new THREE.MeshStandardMaterial({color:0xe6dcc6,roughness:0.85,metalness:0.0});
  const SPH=new THREE.SphereGeometry(0.5,20,14), BOX=new THREE.BoxGeometry(1,1,1);
  const add=(geo,mat,pos,scl,rot)=>{const m=new THREE.Mesh(geo,mat);m.position.set(pos[0],pos[1],pos[2]);
   if(scl)m.scale.set(scl[0],scl[1],scl[2]); if(rot)m.rotation.set(rot[0],rot[1],rot[2]);
-  m.castShadow=true;m.frustumCulled=false;g.add(m);return m;};
+  m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;g.add(m);return m;};
  add(BOX,pad,[0,-0.10,-0.02],[0.34,0.05,0.62]);                  // numnah pad — slim, tucked UNDER the seat (was a wide flat shelf the rider's leg slid under)
  add(SPH,leather,[0,0.02,0],[0.46,0.17,0.60]);                   // seat (flattened oval, sits above the pad)
  add(SPH,leather,[0,0.035,0.27],[0.28,0.14,0.16]);               // pommel (front rise)
@@ -4299,7 +4305,9 @@ function makeLeg(parent,x,y,z,hind,body,sock,feather){
  blob(0.05,0.06,0.055,body,0,0,0.005,knee);
  tube(0.042,0.036,L,sock?'#e8e3d8':shadeHex(body,-0.08),0,-L/2,0,knee);
  blob(0.044,0.05,0.048,sock?'#e8e3d8':shadeHex(body,-0.12),0,-(L-0.015),0.012,knee);
- const hoof=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.06,0.12,10),smat('#2e2218'));
+ const hoofMat=smat('#2e2218').clone();
+ hoofMat.roughness=0.30;hoofMat.metalness=0.04;hoofMat.envMapIntensity=1.0;   // polished keratin
+ const hoof=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.06,0.12,10),hoofMat);
  hoof.position.set(0,-(L+0.055),0.02);
  hoof.castShadow=true;
  knee.add(hoof);
@@ -7203,7 +7211,7 @@ function tick(){
  _fogCol.copy(C_FOG_DAY).lerp(C_FOG_GOLD,golden);
  _fogCol.lerp(C_FOG_NIGHT,nightNow);
  scene.fog.color.lerp(_fogCol,Math.min(1,dt*1.5));
- const fogD=(weather.mode==='rain'?0.0042:0.0016);
+ const fogD=(weather.mode==='rain'?0.0052:0.0027);
  scene.fog.density+=(fogD-scene.fog.density)*Math.min(1,dt*0.8);
  if(rain.visible){
   const m4w=new THREE.Matrix4();
