@@ -363,7 +363,10 @@ document.body.appendChild(renderer.domElement);
 const scene=new THREE.Scene();
 scene.fog=new THREE.Fog(0xbccddc,520,2400);
 const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,5000);
-camera.position.set(0,4,-8);
+/* Start where the chase camera will settle (player spawns at 0,0,8 facing -z, so the
+   camera belongs behind it at +z). Starting anywhere else makes the first second of the
+   game a swoop through the horse before the smoothing catches up. */
+camera.position.set(0,2.8,14.2);
 
 /* ================= VR (WebXR) =================
    The flat game keeps its chase camera. In VR the camera is re-parented to a rig
