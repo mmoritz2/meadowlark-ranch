@@ -376,7 +376,10 @@ renderer.xr.setReferenceSpaceType('local');   // seated/vehicle space: head sits
 const vrRig=new THREE.Group();
 vrRig.name='vrRig';
 scene.add(vrRig);
-const VR_EYE=2.05;        // rider eye height above the ground, in metres
+const VR_EYE=2.15;        // rider eye height above the ground on a standard horse, in metres
+                          // (scaled by the mount's size at use — a shire carries you 16% higher
+                          //  than a bay, and a foal a third lower; a fixed height sat you down
+                          //  in the withers of the big breeds and floated you above the small)
 let vrSpeedSm=0,vrBloomWas=true;
 renderer.xr.setFramebufferScaleFactor(0.9);   // must be set before a session starts
 
@@ -6558,8 +6561,15 @@ function tick(){
   const rPrev=Number.isFinite(player.riderRy)?player.riderRy:0;
   player.riderRy=rPrev+(ry-rPrev)*Math.min(1,dt*10);
   rid.g.position.y=1.87+player.riderRy;
-  updateRein(reinL,rid.handL,player.parts.bitL);
-  updateRein(reinR,rid.handR,player.parts.bitR);
+  /* Anchor the reins to the mount you can actually SEE. When the rigged horse is the
+     mount, the procedural horse is hidden — and it is a good deal taller than the rig, so
+     its mouth anchors sit about a metre above the rig's real mouth. Reins drawn to those
+     ran steeply up from the hands and straight through the rider's eyeline, which in VR
+     put a leather strap across your face on every horse. */
+  const bL=(RIG.attachedTo===player.mesh&&TACK.bitL)?TACK.bitL:player.parts.bitL;
+  const bR=(RIG.attachedTo===player.mesh&&TACK.bitR)?TACK.bitR:player.parts.bitR;
+  updateRein(reinL,rid.handL,bL);
+  updateRein(reinR,rid.handR,bR);
  }
  for(const a of herd){
   const hh=myHorses[a.idx];
@@ -6966,7 +6976,8 @@ function tick(){
   /* Ride from the saddle. The rig chases the horse through a filter rather than copying
      it, because collision push-out and landings snap player.pos and a head must never be
      snapped. Look direction stays entirely the headset's business. */
-  const tX=player.pos.x,tZ=player.pos.z,tY=gy+player.y+VR_EYE;
+  const mountS=player.mesh?player.mesh.scale.x:1;   // horseScale(): shire 1.16 ... foal 0.65
+  const tX=player.pos.x,tZ=player.pos.z,tY=gy+player.y+VR_EYE*mountS;
   const tYaw=player.heading+Math.PI;
   if(!vrPlaced){vrPos.set(tX,tY,tZ);vrPrevPos.set(tX,tY,tZ);vrVel.set(0,0,0);vrYaw=tYaw;vrPlaced=true;}
   /* How fast the horse is really travelling. A filter chasing a moving target settles
