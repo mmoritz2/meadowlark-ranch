@@ -5216,7 +5216,12 @@ addEventListener('keydown',e=>{
  if(e.code==='KeyM')toggleMap();
 });
 
-/* ================= online multiplayer: clubs, chat & friends ================= */
+/* ================= online multiplayer: clubs, chat & friends =================
+   SOCIAL gates this whole layer — the MQTT connection, chat, remote riders, profiles,
+   friends, invite links and club rankings. With it off the game is purely single player
+   and never contacts the broker; the code stays put so flipping this back to true
+   restores everything. Star Pass and milestone rewards are NOT social and stay on. */
+const SOCIAL=false;
 const net={client:null,id:'p'+Math.random().toString(36).slice(2,8),club:null,lastPub:0};
 const remotes={};
 function netStatus(s){
@@ -5231,6 +5236,7 @@ function chatMsg(name,text){
  setTimeout(()=>{if(d.parentNode)d.style.opacity='0.45';},9000);
 }
 function netSendChat(text){
+ if(!SOCIAL)return;
  if(net.client&&net.club){
   try{net.client.publish('srf1/'+net.club+'/chat',JSON.stringify({id:net.id,n:myName(),t:text}));}catch(e){}
  }
@@ -5269,6 +5275,7 @@ function showBubble(holder,text){
  },4500);
 }
 function netConnect(){
+ if(!SOCIAL)return;
  if(typeof mqtt==='undefined'){toast('🌐 Online mode needs an internet connection');return;}
  if(net.client){try{net.client.end(true);}catch(e){}net.client=null;}
  const s=freshSave();
@@ -5340,6 +5347,7 @@ function remoteUpdate(m){
  if(m.hl)r.horseLv=m.hl;
 }
 function netTick(dt,t){
+ if(!SOCIAL)return;
  if(net.client&&net.club&&t-net.lastPub>0.15){
   net.lastPub=t;
   const s=freshSave();
@@ -5379,6 +5387,7 @@ function netTick(dt,t){
  }
 }
 function openOnline(){
+ if(!SOCIAL)return;
  const p=$('onlinePanel');
  if(p.style.display==='flex'){p.style.display='none';return;}
  hidePanels();
@@ -5441,6 +5450,11 @@ function openOnline(){
   b.onclick=()=>openProfile(b.dataset.prof);
  });
 }
+/* Single player: take the club, chat and speech-bubble UI out of the HUD entirely rather
+   than leaving buttons that open empty panels. 🏅 stays — Star Pass is not a social feature. */
+if(!SOCIAL){
+ ['netBtn','chatBtn','chatFeed','chatBar'].forEach(id=>{const e=$(id);if(e)e.style.display='none';});
+}
 $('netBtn').onclick=openOnline;
 $('chatBtn').onclick=()=>{
  const b=$('chatBar');
@@ -5459,7 +5473,7 @@ document.querySelectorAll('#chatBar [data-emote]').forEach(b=>{
  b.onclick=()=>netSendChat(b.dataset.emote);
 });
 /* friend invite links: opening ?club=CODE joins that club automatically */
-{
+if(SOCIAL){
  const inv=new URLSearchParams(location.search).get('club');
  if(inv){
   const code=inv.toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,24);
@@ -5469,7 +5483,7 @@ document.querySelectorAll('#chatBar [data-emote]').forEach(b=>{
   }
  }
 }
-setTimeout(()=>{const s=freshSave();if(s&&s.playerName)netConnect();},2500);
+if(SOCIAL)setTimeout(()=>{const s=freshSave();if(s&&s.playerName)netConnect();},2500);
 
 /* ================= leaderboards & milestone rewards ================= */
 const lbData={};
@@ -5535,7 +5549,7 @@ function openLB(){
  const s=freshSave();if(!s)return;
  const nm=myName();
  const online=net.client&&net.client.connected;
- let html='<b style="font-size:16px">🏅 Leaderboards & Rewards'+(online?' <span style="color:#1e8449">· club "'+net.club+'"</span>':' <span style="color:#8c7a63">· connect 🌐 for club rankings</span>')+'</b>';
+ let html='<b style="font-size:16px">🏅 Leaderboards & Rewards'+(online?' <span style="color:#1e8449">· club "'+net.club+'"</span>':(SOCIAL?' <span style="color:#8c7a63">· connect 🌐 for club rankings</span>':''))+'</b>';
  const pp=(s.pass&&s.pass.pts)||0;
  const ptier=Math.min(20,Math.floor(pp/200));
  html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🎟️ Star Pass — '+pp+' pts · Tier '+ptier+'/20</b>'
@@ -5868,19 +5882,22 @@ const ACHS=[
  {id:'bond100',icon:'❤️',label:'Soulmates',desc:'Reach 100 bond with a horse',v:s=>Math.round(s.horses.reduce((m,h)=>Math.max(m,h.bond||0),0)),goal:100,r:{g:1}},
  {id:'lvl5',icon:'⭐',label:'Rising star',desc:'Train a horse to level 5',v:s=>s.horses.reduce((m,h)=>Math.max(m,h.level||1),1),goal:5,r:{c:200}},
  {id:'dist25k',icon:'🧭',label:'Trail blazer',desc:'Ride 25 km in total',v:s=>(s.stats&&s.stats.dist)||0,goal:25000,r:{g:1}},
- {id:'friend1',icon:'🤝',label:'Club pal',desc:'Add a friend',v:s=>(s.friends||[]).length,goal:1,r:{c:100}},
+ {id:'friend1',social:true,icon:'🤝',label:'Club pal',desc:'Add a friend',v:s=>(s.friends||[]).length,goal:1,r:{c:100}},
  {id:'shoe25',icon:'🍀',label:'Lucky streak',desc:'Find 25 golden horseshoes',v:s=>(s.stats&&s.stats.shoesFound)||0,goal:25,r:{g:2}},
  {id:'wild10',icon:'📸',label:'Wildlife photographer',desc:'Snap 10 wild animals with the camera',v:s=>(s.stats&&s.stats.wildPhotos)||0,goal:10,r:{g:1}},
  {id:'shoe3',icon:'🧲',label:'Lucky shoes',desc:'Find 3 golden horseshoes',v:s=>((s.stats&&s.stats.shoesFound)||0)+Object.keys(s.shoes3d||{}).length,goal:3,r:{c:250}},
  {id:'pass2k',icon:'🎟️',label:'Pass devotee',desc:'Earn 2,000 pass points',v:s=>(s.pass&&s.pass.pts)||0,goal:2000,r:{c:300}},
  {id:'peg1',icon:'🪽',label:'Sky rider',desc:'Own a Pegasus',v:s=>s.horses.some(h=>h.wings)?1:0,goal:1,r:{g:2}},
  {id:'herd25',icon:'🐴',label:'Legendary rancher',desc:'Own 25 horses',v:s=>s.horses.length,goal:25,r:{g:3}},
- {id:'clubbreed',icon:'💞',label:'Matchmaker',desc:'Breed with a club mate\'s horse',v:s=>(s.stats&&s.stats.clubBreeds)||0,goal:1,r:{c:250}},
+ {id:'clubbreed',social:true,icon:'💞',label:'Matchmaker',desc:'Breed with a club mate\'s horse',v:s=>(s.stats&&s.stats.clubBreeds)||0,goal:1,r:{c:250}},
  {id:'grown1',icon:'🌱',label:'All grown up',desc:'Raise a foal to adulthood',v:s=>(s.stats&&s.stats.grown)||0,goal:1,r:{c:200}},
  {id:'gems30',icon:'💎',label:'Gem collector',desc:'Hold 30 gems at once',v:s=>s.gems||0,goal:30,r:{c:300}},
  {id:'dist50k',icon:'🌍',label:'Around Evervale',desc:'Ride 50 km in total',v:s=>(s.stats&&s.stats.dist)||0,goal:50000,r:{g:2}},
  {id:'sky1',icon:'☁️',label:'Touch the sky',desc:'Soar 20 m above Evervale on a Pegasus',v:s=>(s.stats&&s.stats.skyHigh)||0,goal:1,r:{g:1}},
 ];
+/* Single player: drop the achievements that need other players, so the list stays
+   completable rather than permanently stuck two short. */
+if(!SOCIAL)for(let i=ACHS.length-1;i>=0;i--)if(ACHS[i].social)ACHS.splice(i,1);
 function claimAch(id){
  const a=ACHS.find(a=>a.id===id);if(!a)return;
  let ok=false;
@@ -5972,6 +5989,7 @@ $('ftBar').querySelectorAll('[data-ft]').forEach(b=>{b.onclick=()=>{
 
 /* ---- rider profiles: view, friend, club breeding ---- */
 function openProfile(name){
+ if(!SOCIAL)return;
  const p=$('profilePanel');
  hidePanels();
  const r=Object.values(remotes).find(rr=>rr.name===name);
