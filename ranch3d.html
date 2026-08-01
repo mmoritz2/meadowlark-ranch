@@ -1457,8 +1457,12 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
       _acc+=texture2D(map,vMapUv+_bo)*_wt;
      }
      float macro=_vn(vMapUv*0.06)*0.62+_vn(vMapUv*0.02+5.0)*0.38;
-     diffuseColor*=_acc;
-     diffuseColor.rgb*=(0.88+macro*0.24)*1.40;
+     /* The grass photo was authored far too dark — linear mean luminance ~0.024, an
+        almost-black albedo. The terrain's vertex colours are pale on purpose (they TINT
+        the photo: sand near the river, rock on slopes, snow up north), so the product
+        came out near-black and the meadows looked dead. Normalise the photo up to a
+        realistic grass albedo and let the vertex colours go on tinting it. */
+     diffuseColor.rgb*=_acc.rgb*3.7*(0.94+macro*0.20);
      #endif`);
  };
  const ground=new THREE.Mesh(geo,gmat);
@@ -1481,8 +1485,9 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
   tex.anisotropy=renderer.capabilities.getMaxAnisotropy();
   tex.repeat.set(70,70);
   gmat.map=tex;gmat.needsUpdate=true;
-  const htex=tex.clone();htex.repeat.set(95,95);htex.needsUpdate=true;
-  hdMat.map=htex;hdMat.needsUpdate=true;
+  // The horizon disc has no vertex colours to tint, so the near-black grass photo would
+  // paint a dark ring around the world. It keeps the procedural meadow texture instead —
+  // at that distance it is fog-washed anyway and only the colour reads.
  },undefined,()=>{/* not served — keep procedural ground */});
 }
 // sandy riding arena inside the paddock
