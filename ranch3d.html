@@ -357,11 +357,11 @@ renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=0.9;
+renderer.toneMappingExposure=1.05;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 const scene=new THREE.Scene();
-scene.fog=new THREE.Fog(0xbccddc,520,2400);
+scene.fog=new THREE.FogExp2(0xc9d8e6,0.0016);   // exponential: distance reads as distance
 const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,5000);
 /* Start where the chase camera will settle (player spawns at 0,0,8 facing -z, so the
    camera belongs behind it at +z). Starting anywhere else makes the first second of the
@@ -1053,9 +1053,9 @@ renderer.xr.addEventListener('sessionstart',()=>{
  try{renderer.xr.setFoveation(1);}catch(e){}      // cheapest big win: soften the edges of vision
  vrShadowWas=renderer.shadowMap.enabled;
  renderer.shadowMap.enabled=false;                // the shadow pass is the single largest cost
- vrFarWas=camera.far;vrFogNearWas=scene.fog.near;vrFogFarWas=scene.fog.far;
+ vrFarWas=camera.far;vrFogNearWas=scene.fog.density;
  camera.far=900;camera.updateProjectionMatrix();
- scene.fog.near=170;scene.fog.far=860;            // pull the fog in so less world is drawn
+ scene.fog.density=0.0052;                        // pull the fog in so less world is drawn
  if(grassInst){vrGrassWas=grassInst.count;grassInst.count=Math.min(grassInst.count,3200);}
  if(typeof fireflies!=='undefined'&&fireflies){vrFireWas=fireflies.count;fireflies.count=44;}
  if(typeof toast==='function')toast('🥽 Left stick to ride · trigger to gallop · A to jump');
@@ -1069,7 +1069,7 @@ renderer.xr.addEventListener('sessionend',()=>{
  touch.go=touch.left=touch.right=touch.gal=touch.jump=false;
  renderer.shadowMap.enabled=vrShadowWas;
  camera.far=vrFarWas;
- scene.fog.near=vrFogNearWas;scene.fog.far=vrFogFarWas;
+ scene.fog.density=vrFogNearWas;
  if(grassInst&&vrGrassWas)grassInst.count=vrGrassWas;
  if(typeof fireflies!=='undefined'&&fireflies&&vrFireWas)fireflies.count=vrFireWas;
  renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
@@ -1105,9 +1105,17 @@ function setSky(skyObj){
  for(const k in SKY_P)u[k].value=SKY_P[k];
  u.sunPosition.value.copy(sunDir);
 }
+/* The Sky shader outputs ~1.6-2.1 scene-linear luminance. ACES desaturates everything
+   above ~1.0 on its path to white, so a physically correct blue sky was being rendered as
+   a flat grey studio backdrop — the single biggest reason the game read as product
+   photography rather than outdoors. Scale it into the range ACES keeps colour in. */
+const SKY_SCALE=0.30;
+function dimSky(o){o.material.onBeforeCompile=sh=>{
+ sh.fragmentShader=sh.fragmentShader.replace(/gl_FragColor\s*=\s*vec4\(\s*retColor/,
+  'gl_FragColor = vec4( retColor * '+SKY_SCALE.toFixed(2));};o.material.needsUpdate=true;}
 const sky=new Sky();
 sky.scale.setScalar(450000);
-setSky(sky);
+setSky(sky);dimSky(sky);
 scene.add(sky);
 const pmrem=new THREE.PMREMGenerator(renderer);
 /* PBR ambient comes from a PMREM'd sky — bake one per time-of-day band and swap */
@@ -1116,8 +1124,13 @@ const envMaps={};let curEnv='day';
  const es=new THREE.Scene();
  const esky=new Sky();
  esky.scale.setScalar(1000);
- setSky(esky);
+ setSky(esky);dimSky(esky);
  es.add(esky);
+ /* A ground in the bake, so downward-facing surfaces receive warm bounce instead of sky.
+    Without it every shaded underside samples blue sky and reads as if it is floating. */
+ {const gd=new THREE.Mesh(new THREE.SphereGeometry(400,12,8,0,Math.PI*2,Math.PI/2,Math.PI/2),
+   new THREE.MeshBasicMaterial({color:0x6f7a55,side:THREE.BackSide}));
+  gd.position.y=-1; es.add(gd);}
  const eu=esky.material.uniforms;
  for(const[k,e]of[['day',30],['golden',7],['night',-14]]){
   eu.sunPosition.value.setFromSphericalCoords(1,THREE.MathUtils.degToRad(90-e),THREE.MathUtils.degToRad(120));
@@ -1125,25 +1138,28 @@ const envMaps={};let curEnv='day';
  }
  scene.environment=envMaps.day;
 }
-const hemi=new THREE.HemisphereLight(0xbcd2ec,0x7e8456,0.65);   // stronger fill -> softer shadows
+/* Sun-to-ambient was 1.55:1; real daylight is 5:1 to 8:1. The hemisphere light was
+   supplying ~40% of the light budget in full sun, so every shadow was a faint 15% dip.
+   The env map (PMREM'd sky) now carries the ambient and this is only a trim. */
+const hemi=new THREE.HemisphereLight(0xbcd2ec,0x8a7f5e,0.12);
 scene.add(hemi);
-const sun=new THREE.DirectionalLight(0xfff0d4,3.0);              // gentler key (was 4.3, too harsh)
+const sun=new THREE.DirectionalLight(0xffe6bc,5.4);              // a real key: sun:sky now ~6:1
 const sunOff=sunDir.clone().multiplyScalar(95);
 sun.position.copy(sunOff);
 sun.castShadow=true;
 sun.shadow.mapSize.set(4096,4096);
-sun.shadow.camera.left=-35;sun.shadow.camera.right=35;
-sun.shadow.camera.top=35;sun.shadow.camera.bottom=-35;
-sun.shadow.camera.near=1;sun.shadow.camera.far=220;
-sun.shadow.bias=-0.00012;sun.shadow.normalBias=0.022;
-sun.shadow.bias=-0.0004;
-sun.shadow.normalBias=0.02;
+sun.shadow.camera.left=-44;sun.shadow.camera.right=44;
+sun.shadow.camera.top=44;sun.shadow.camera.bottom=-44;
+/* the sun sits 95 units out, so most of the old 1..220 depth range held nothing and threw
+   away precision. Bias was also set twice, the second pair silently winning. */
+sun.shadow.camera.near=42;sun.shadow.camera.far=165;
+sun.shadow.bias=-0.00007;sun.shadow.normalBias=0.010;
 scene.add(sun);scene.add(sun.target);
 
 const composer=new EffectComposer(renderer);
 composer.setPixelRatio(Math.min(devicePixelRatio,1.75));
 composer.addPass(new RenderPass(scene,camera));
-const bloomPass=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.08,0.4,0.95);
+const bloomPass=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.045,0.85,0.72);
 composer.addPass(bloomPass);
 composer.addPass(new OutputPass());
 /* day cycle & weather state */
@@ -1466,7 +1482,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  geo.computeVertexNormals();
  groundTex.anisotropy=renderer.capabilities.getMaxAnisotropy();
  const gmat=new THREE.MeshStandardMaterial({map:groundTex,vertexColors:true,roughness:0.97,bumpMap:bumpTexture,bumpScale:0.08});
- gmat.envMapIntensity=0.28;
+ gmat.envMapIntensity=0.71;
  gmat.onBeforeCompile=sh=>{   // stochastic no-tile sampling (per-block random UV offsets, bilinear-blended)
   sh.fragmentShader='float _h21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}\n'
    +'vec2 _h22(vec2 p){return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);}\n'
@@ -1489,7 +1505,15 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
         the photo: sand near the river, rock on slopes, snow up north), so the product
         came out near-black and the meadows looked dead. Normalise the photo up to a
         realistic grass albedo and let the vertex colours go on tinting it. */
-     diffuseColor.rgb*=_acc.rgb*3.7*(0.94+macro*0.20);
+     diffuseColor.rgb*=_acc.rgb*2.35*(0.90+macro*0.26);
+     /* One flat saturated green over the whole map is the loudest "video game" tell there
+        is. Real pasture is a patchwork: sun-dried olive on the crowns, damper blue-green in
+        the hollows. Two octaves of the same cheap noise, no extra texture fetch. */
+     float _dry=_vn(vMapUv*0.011+11.0);
+     diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(1.20,1.05,0.60),
+                          smoothstep(0.52,0.95,_dry)*0.60);
+     diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(0.80,0.95,0.88),
+                          smoothstep(0.52,0.08,_dry)*0.35);
      #endif`);
  };
  const ground=new THREE.Mesh(geo,gmat);
@@ -1498,7 +1522,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  const hdMat=new THREE.MeshStandardMaterial({map:groundTex.clone(),roughness:1});
  hdMat.map.repeat.set(160,160);
  hdMat.map.needsUpdate=true;
- hdMat.envMapIntensity=0.3;
+ hdMat.envMapIntensity=0.75;
  const horizonDisc=new THREE.Mesh(new THREE.CircleGeometry(1400,48),hdMat);
  horizonDisc.rotation.x=-Math.PI/2;
  horizonDisc.position.y=-8;
@@ -1520,7 +1544,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
 // sandy riding arena inside the paddock
 {
  const smatl=new THREE.MeshStandardMaterial({map:sandTex,roughness:1});
- smatl.envMapIntensity=0.3;
+ smatl.envMapIntensity=0.75;
  const sand=new THREE.Mesh(new THREE.CircleGeometry(1,40),smatl);
  sand.scale.set(23.5,18.5,1);
  sand.rotation.x=-Math.PI/2;
@@ -1529,7 +1553,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  scene.add(sand);
  // dirt path out the gate
  const dmat=new THREE.MeshStandardMaterial({color:0xc4a878,roughness:1});
- dmat.envMapIntensity=0.3;
+ dmat.envMapIntensity=0.75;
  for(let i=0;i<37;i++){
   const m=new THREE.Mesh(new THREE.CircleGeometry(1.6+Math.random()*0.7,12),dmat);
   m.rotation.x=-Math.PI/2;
@@ -1547,7 +1571,7 @@ let flowerClumps=[];
  const bladeGeo=new THREE.PlaneGeometry(0.55,0.5);
  bladeGeo.translate(0,0.25,0);
  const bladeMat=new THREE.MeshStandardMaterial({map:grassBladeTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
- bladeMat.envMapIntensity=0.4;
+ bladeMat.envMapIntensity=0.94;
  bladeMat.onBeforeCompile=sh=>{
   sh.uniforms.uTime={value:0};
   windShader=sh;
@@ -1579,7 +1603,9 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   v.set(x,groundH(x,z),z);
   m4.compose(v,q,sc);
   blades.setMatrixAt(placed,m4);
-  bcol.setHSL(0.24+Math.random()*0.06,0.38+Math.random()*0.22,0.5+Math.random()*0.22);
+  /* was hue .24-.30 / sat .38-.60 / lum .50-.72 — a bright, uniform, cartoon green.
+     Real grass sits yellower, much less saturated, and varies blade to blade. */
+  bcol.setHSL(0.19+Math.random()*0.07,0.20+Math.random()*0.22,0.26+Math.random()*0.24);
   blades.setColorAt(placed,bcol);
   placed++;
  }
@@ -1615,7 +1641,7 @@ function smat(c){
  if(typeof c!=='string')return c;
  if(!matCache[c]){
   matCache[c]=new THREE.MeshStandardMaterial({color:c,roughness:0.85});
-  matCache[c].envMapIntensity=0.55;
+  matCache[c].envMapIntensity=1;
  }
  return matCache[c];
 }
@@ -1680,7 +1706,7 @@ function coatMat(hex){
   c.globalAlpha=1;
  });
  coatCache[hex]=new THREE.MeshStandardMaterial({map:tex,roughness:1,roughnessMap:coatRoughTex});
- coatCache[hex].envMapIntensity=0.4;
+ coatCache[hex].envMapIntensity=0.94;
  applyCoatDetail(coatCache[hex]);
  return coatCache[hex];
 }
@@ -1955,7 +1981,7 @@ function maneMat(hex){
   c.globalAlpha=1;
  });
  maneCache[hex]=new THREE.MeshStandardMaterial({map:tex,roughness:0.85,side:THREE.DoubleSide});
- maneCache[hex].envMapIntensity=0.35;
+ maneCache[hex].envMapIntensity=0.84;
  maneCache[hex].color.set('#a0a0a0');
  return maneCache[hex];
 }
@@ -1994,12 +2020,12 @@ function grainTex(base,grain,alpha){
  },1);
 }
 const whitePaintMat=new THREE.MeshStandardMaterial({map:grainTex('#f4f0e6','#c9bfa8',0.5),roughness:0.7});
-whitePaintMat.envMapIntensity=0.5;
+whitePaintMat.envMapIntensity=1;
 const paintCache={};
 function paintMat(hex){
  if(!paintCache[hex]){
   paintCache[hex]=new THREE.MeshStandardMaterial({map:grainTex(hex,shadeHex(hex,-0.3),0.55),roughness:0.7});
-  paintCache[hex].envMapIntensity=0.5;
+  paintCache[hex].envMapIntensity=1;
  }
  return paintCache[hex];
 }
@@ -2069,7 +2095,7 @@ function leatherMat(hex){
   }
   c.globalAlpha=1;
  },2),roughness:0.5});
- leatherCache[hex].envMapIntensity=0.7;
+ leatherCache[hex].envMapIntensity=1;
  return leatherCache[hex];
 }
 
@@ -2122,7 +2148,7 @@ const barkTex=canvasTex(128,256,(c,w,h)=>{
  c.globalAlpha=1;
 },1);
 const barkMat=new THREE.MeshStandardMaterial({map:barkTex,roughness:1});
-barkMat.envMapIntensity=0.3;
+barkMat.envMapIntensity=0.75;
 const birchTex=canvasTex(64,256,(c,w,h)=>{
  c.fillStyle='#e8e4da';c.fillRect(0,0,w,h);
  for(let i=0;i<46;i++){
@@ -2131,16 +2157,16 @@ const birchTex=canvasTex(64,256,(c,w,h)=>{
  }
 },1);
 const birchMat=new THREE.MeshStandardMaterial({map:birchTex,roughness:0.9});
-birchMat.envMapIntensity=0.3;
+birchMat.envMapIntensity=0.75;
 const leafMat=new THREE.MeshStandardMaterial({map:leafTex,alphaTest:0.45,side:THREE.DoubleSide,roughness:1});
-leafMat.envMapIntensity=0.4;
+leafMat.envMapIntensity=0.94;
 const leafMats=[leafMat,leafMat.clone(),leafMat.clone(),leafMat.clone(),leafMat.clone()];
 leafMats[1].color.set('#dff5c8');
 leafMats[2].color.set('#c8e8b0');
 leafMats[3].color.set('#ffd9a0');
 leafMats[4].color.set('#bfe6a8');
 const pineMat=new THREE.MeshStandardMaterial({map:pineTex,alphaTest:0.4,side:THREE.DoubleSide,roughness:1});
-pineMat.envMapIntensity=0.35;
+pineMat.envMapIntensity=0.84;
 
 /* ============== real 3D trees: Weber–Penn skeletons generated at boot ==============
    Geometry pipeline adapted from SeedThree — github.com/SkyeShark/SeedThree
@@ -2404,7 +2430,7 @@ const treeWinds=[];
 function seedLeafMat(tex,tint){
  const m=new THREE.MeshStandardMaterial({map:tex,alphaTest:0.45,side:THREE.DoubleSide,roughness:0.95});
  if(tint)m.color.set(tint);
- m.envMapIntensity=0.35;
+ m.envMapIntensity=0.84;
  m.onBeforeCompile=sh=>{
   sh.uniforms.uTime={value:0};
   treeWinds.push(sh);
@@ -2649,7 +2675,7 @@ const rockTex=canvasTex(128,128,(c,w,h)=>{
  c.globalAlpha=1;
 },2);
 const rockMat=new THREE.MeshStandardMaterial({map:rockTex,roughness:0.95});
-rockMat.envMapIntensity=0.4;
+rockMat.envMapIntensity=0.94;
 for(let i=0;i<28;i++){
  const a=Math.random()*Math.PI*2,rr=34+Math.random()*270;
  const x=Math.cos(a)*rr,z=Math.sin(a)*rr;
@@ -2689,11 +2715,21 @@ const waterShimTex=canvasTex(256,256,(c,w,h)=>{
 });
 waterShimTex.wrapS=waterShimTex.wrapT=THREE.RepeatWrapping;
 const waterAnims=[];
+let waterMat=null;   // hoisted: the pond reuses it
 {
  const rTex=waterShimTex;rTex.repeat.set(30,2);
  waterAnims.push({tex:rTex,sx:0.018,sy:0.006});
- const waterMat=new THREE.MeshStandardMaterial({map:rTex,color:0x3a7bb4,roughness:0.4,metalness:0.05,side:THREE.DoubleSide,transparent:true,opacity:0.94});
- waterMat.envMapIntensity=0.55;
+ /* Water was a near-diffuse blue sheet, which is why it read as coloured paper. Real water
+    is dark looking straight down and a near-mirror at grazing angles — that fresnel swing is
+    the whole cue. Darken the body, sharpen the reflection, and drive the mix off view angle. */
+ waterMat=new THREE.MeshStandardMaterial({map:rTex,color:0x24506f,roughness:0.11,metalness:0.10,side:THREE.DoubleSide,transparent:true,opacity:0.93});
+ waterMat.envMapIntensity=1.7;
+ waterMat.onBeforeCompile=sh=>{
+  sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',
+   `#include <map_fragment>
+    float _fres=pow(1.0-abs(dot(normalize(vNormal),normalize(vViewPosition))),4.0);
+    diffuseColor.rgb=mix(diffuseColor.rgb*0.55,vec3(0.60,0.74,0.88),_fres*0.85);`);
+ };
  const eA=[],eB=[];
  for(let x=-340;x<=340;x+=8){
   const zc=riverZ(x);
@@ -2854,7 +2890,7 @@ for(let i=0;i<14;i++){
  geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,4));
  geo.computeVertexNormals();
  const sm=new THREE.MeshStandardMaterial({map:bSandTex,vertexColors:true,transparent:true,roughness:1,depthWrite:false});
- sm.envMapIntensity=0.35;
+ sm.envMapIntensity=0.84;
  const bSand=new THREE.Mesh(geo,sm);
  bSand.position.set(-220,0,130);
  bSand.receiveShadow=true;
@@ -2884,7 +2920,7 @@ for(let i=0;i<14;i++){
  geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,4));
  geo.computeVertexNormals();
  const sm2=new THREE.MeshStandardMaterial({map:wSnowTex,vertexColors:true,transparent:true,roughness:0.8,depthWrite:false});
- sm2.envMapIntensity=0.5;
+ sm2.envMapIntensity=1;
  const ws=new THREE.Mesh(geo,sm2);
  ws.position.set(-160,0,-210);
  ws.receiveShadow=true;
@@ -3105,7 +3141,8 @@ function driveRig(sp,grounded,t,dt){
  if(RIG._fcrShaders){ for(const s of RIG._fcrShaders) if(s.uniforms.uTime) s.uniforms.uTime.value=t; }  // animate mythic coat shimmer
  const B=RIG.bones, TAU=Math.PI*2, q=RIG._q||(RIG._q=new THREE.Quaternion());
  const moving=sp>0.25&&grounded, run=Math.max(0,Math.min(1,(sp-4)/4));
- RIG.phase+=dt*(moving?(0.55+sp*0.16):0);
+ const strideLen=sp<2.8?1.7:sp<7?2.7:5.8;          // metres of ground per leg cycle
+ RIG.phase+=moving?(sp*dt/strideLen):0;             // RIG.phase counts cycles, not radians
  const ph=RIG.phase, swingAmp=moving?0.36+run*0.55:0, kneeAmp=moving?0.32+run*0.7:0;
  // gait-appropriate footfall timing (leg order: HL, FL, HR, FR)
  const GP=sp<2.8?[0.0,0.25,0.5,0.75]   // walk — 4-beat lateral
@@ -3370,9 +3407,9 @@ TACK.saddle=buildSaddle();   // stylized procedural English saddle; attached by 
 const pondTex=waterShimTex.clone();
 pondTex.repeat.set(4,4);
 waterAnims.push({tex:pondTex,sx:0.01,sy:0.013});
-const pond=new THREE.Mesh(new THREE.CircleGeometry(4.5,28),
- new THREE.MeshStandardMaterial({map:pondTex,color:0x3a7bb4,roughness:0.42,metalness:0.05,transparent:true,opacity:0.96}));
-pond.material.envMapIntensity=0.5;
+const pondMat=waterMat.clone();
+pondMat.map=pondTex;                 // same water response, its own ripple scale
+const pond=new THREE.Mesh(new THREE.CircleGeometry(4.5,28),pondMat);
 pond.rotation.x=-Math.PI/2;
 pond.position.set(20,0.04,16);
 scene.add(pond);
@@ -3874,11 +3911,11 @@ function updateTrail(dt){
 {
  const b=new THREE.Group();
  const wallMat=new THREE.MeshStandardMaterial({map:plankTex,roughness:0.9});
- wallMat.envMapIntensity=0.5;
+ wallMat.envMapIntensity=1;
  const wall=new THREE.Mesh(new THREE.BoxGeometry(7,4.2,5.5),wallMat);
  wall.position.y=2.1;wall.castShadow=true;wall.receiveShadow=true;b.add(wall);
  const roofMat=new THREE.MeshStandardMaterial({map:tileTex,roughness:0.85});
- roofMat.envMapIntensity=0.5;
+ roofMat.envMapIntensity=1;
  const r1=new THREE.Mesh(new THREE.BoxGeometry(7.9,0.22,3.7),roofMat);
  r1.position.set(0,5.05,-1.45);r1.rotation.x=-0.55;r1.castShadow=true;b.add(r1);
  const r2=new THREE.Mesh(new THREE.BoxGeometry(7.9,0.22,3.7),roofMat);
@@ -4517,6 +4554,10 @@ function rebuildAll(){
  const h=myHorses[rideIdx];
  player.parts=makeHorse({colors:h.colors,horn:h.horn,wings:h.wings,coat:h.coat,tack:h.tack||'#7a583a',bridle:true,seed:h.id||0,breed:h.breed});
  player.mesh=player.parts.group;
+ /* Heading-pitch-roll order. With THREE's default XYZ, rotation.x is applied about the
+    WORLD x axis, so the slope pitch below turned into a sideways roll whenever you rode
+    east or west. YXZ is the convention this code already assumes it is getting. */
+ player.mesh.rotation.order='YXZ';
  player.rider=makeRider();
  player.mesh.add(player.rider.g);
  player.mesh.scale.setScalar(horseScale(h));
@@ -6361,10 +6402,14 @@ function startMusic(){
 addEventListener('pointerdown',()=>{startMusic();},{once:true});
 
 /* ================= gaits ================= */
+/* `len` is stride length in metres — the ground covered by one full leg cycle. Driving the
+   cycle from distance/len instead of from a clock is what stops the hooves skating: the
+   stance hoof now travels backwards at very close to -v, which is the definition of a
+   planted foot. Time-driven phase made the legs churn ~40% too fast at a gallop. */
 const GAITS={
- walk:{off:[0,Math.PI,Math.PI*0.5,Math.PI*1.5],amp:0.42,rate:1.6},
- trot:{off:[0,Math.PI,Math.PI,0],amp:0.62,rate:1.9},
- gallop:{off:[0,0.45,Math.PI+0.3,Math.PI],amp:0.95,rate:1.55},
+ walk:{off:[0,Math.PI,Math.PI*0.5,Math.PI*1.5],amp:0.42,rate:1.6,len:1.7},
+ trot:{off:[0,Math.PI,Math.PI,0],amp:0.62,rate:1.9,len:2.7},
+ gallop:{off:[0,0.45,Math.PI+0.3,Math.PI],amp:0.95,rate:1.55,len:5.8},
 };
 function gaitFor(sp){return sp<2.8?GAITS.walk:sp<7?GAITS.trot:GAITS.gallop;}
 function animateHorse(parts,phase,amp,gait,grounded,t,grazing,dt){
@@ -6540,7 +6585,7 @@ function tick(){
  player.wasAir=player.y>0;
  const sp=Math.abs(player.speed);
  const gait=gaitFor(sp);
- player.phase+=dt*(2.2+sp*gait.rate);
+ player.phase+=(sp*dt/(gait.len||2.5))*Math.PI*2;   // one cycle per stride length
  const targetAmp=player.y>0?0.35:(sp<0.2?0:gait.amp);
  player.amp+=(targetAmp-player.amp)*Math.min(1,dt*6);
  const grounded=player.y<=0;
@@ -6658,7 +6703,7 @@ function tick(){
    }
   }
   const resting=a.rest>0;
-  a.phase+=dt*(resting?1.2:2.0+(a.wsp||1.2)*1.7);
+  a.phase+=resting?dt*1.2:((a.wsp||1.2)*dt/((a.wsp||1.2)<2.8?1.7:(a.wsp||1.2)<7?2.7:5.8))*Math.PI*2;
   if(resting){
    a.rest-=dt;
    a.graze=Math.min(1,a.graze+dt);
@@ -7140,10 +7185,10 @@ function tick(){
   weather.mode='clear';weather.timer=140+Math.random()*160;
   rainbow.visible=false;
  }
- const keyT=(weather.mode==='rain'?1.3:3.0)*dayF+0.62*nightNow
+ const keyT=(weather.mode==='rain'?2.0:5.4)*dayF+0.62*nightNow
   +(weather.mode==='rain'?0.15:0.55)*golden;   // ember punch at the horizon hours
  sun.intensity+=(keyT-sun.intensity)*Math.min(1,dt*1.5);
- const hemiT=THREE.MathUtils.lerp(0.34,weather.mode==='rain'?0.85:0.65,dayF);
+ const hemiT=THREE.MathUtils.lerp(0.10,weather.mode==='rain'?0.30:0.14,dayF);
  hemi.intensity+=(hemiT-hemi.intensity)*Math.min(1,dt*1.5);
  hemi.color.copy(C_HEMI_NIGHT).lerp(C_HEMI_DAY,dayF);
  hemi.groundColor.copy(C_GROUND_NIGHT).lerp(C_GROUND_DAY,dayF);
@@ -7151,8 +7196,8 @@ function tick(){
  _fogCol.copy(C_FOG_DAY).lerp(C_FOG_GOLD,golden);
  _fogCol.lerp(C_FOG_NIGHT,nightNow);
  scene.fog.color.lerp(_fogCol,Math.min(1,dt*1.5));
- scene.fog.near+=((weather.mode==='rain'?320:520)-scene.fog.near)*Math.min(1,dt*0.8);
- scene.fog.far+=((weather.mode==='rain'?1400:2400)-scene.fog.far)*Math.min(1,dt*0.8);
+ const fogD=(weather.mode==='rain'?0.0042:0.0016);
+ scene.fog.density+=(fogD-scene.fog.density)*Math.min(1,dt*0.8);
  if(rain.visible){
   const m4w=new THREE.Matrix4();
   for(let i=0;i<rainDrops.length;i++){
@@ -7297,6 +7342,27 @@ function tick(){
  const ld=$('load');
  if(ld)ld.remove();
 }
+if(location.search.includes('realaudit')){ (async()=>{
+ const w=ms=>new Promise(r=>setTimeout(r,ms));
+ const cap=n=>{composer.render();return fetch('http://127.0.0.1:8765/'+n+'.png',{method:'POST',body:renderer.domElement.toDataURL('image/png')});};
+ await w(7000);
+ document.querySelectorAll('body > *:not(canvas)').forEach(e=>{if(e.style)e.style.visibility='hidden';});
+ const rst=(x,z,hd)=>{player.pos.set(x,0,z);player.heading=hd;player.y=0;
+  if(player.mesh){player.mesh.position.set(x,player.mesh.position.y,z);player.mesh.rotation.y=hd;}};
+ const gy=()=>groundH(player.pos.x,player.pos.z);
+ rst(0,14,Math.PI); player.speed=0; await w(700);
+ window.__shotCam=[3.2,gy()+1.5,13.4, 0,gy()+1.0,14]; await w(250); await cap('ra_horse_idle');
+ player.speed=9; await w(900);
+ window.__shotCam=[3.4,gy()+1.8,12.6, 0,gy()+1.1,14]; await w(250); await cap('ra_horse_run');
+ window.__shotCam=[1.2,gy()+0.35,12.9, 0,gy()+0.25,14]; await w(250); await cap('ra_ground_contact');
+ player.speed=0;
+ rst(-40,60,2.2); await w(700);
+ window.__shotCam=[-40,gy()+2.2,54, -40,gy()+1.2,70]; await w(300); await cap('ra_landscape');
+ window.__shotCam=[-40,gy()+0.6,58, -40,gy()+0.35,63]; await w(300); await cap('ra_grass_close');
+ rst(0,120,0); await w(700);
+ window.__shotCam=[0,gy()+6,110, 0,gy()+2,150]; await w(300); await cap('ra_vista');
+ window.__shotCam=null; await cap('ra_done');
+})(); }
 window.render_game_to_text=()=>JSON.stringify({
  mode:course?'course':'free_roam',
  coordinateSystem:'x east/west, z north/south, y up',
