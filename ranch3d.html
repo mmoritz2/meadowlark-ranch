@@ -365,6 +365,712 @@ scene.fog=new THREE.Fog(0xbccddc,520,2400);
 const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,5000);
 camera.position.set(0,4,-8);
 
+/* ================= VR (WebXR) =================
+   The flat game keeps its chase camera. In VR the camera is re-parented to a rig
+   that rides the saddle, and the headset owns where you look. */
+renderer.xr.enabled=true;
+renderer.xr.setReferenceSpaceType('local');   // seated/vehicle space: head sits at the rig origin
+const vrRig=new THREE.Group();
+vrRig.name='vrRig';
+scene.add(vrRig);
+const VR_EYE=2.05;        // rider eye height above the ground, in metres
+let vrSpeedSm=0,vrBloomWas=true;
+renderer.xr.setFramebufferScaleFactor(0.9);   // must be set before a session starts
+
+/* The horse's position is snapped by collision push-out and by landing. Wiring a head
+   straight to it puts every one of those jolts through the player's neck, so the rig
+   chases the horse through a filter instead of copying it. Horizontal is quick enough
+   to still feel like riding; vertical is slower, because bumps are what actually hurt. */
+const VR_KH=14,VR_KV=5.5,VR_KY=9;   // chase rates, per second
+const vrPos=new THREE.Vector3(),vrVel=new THREE.Vector3(),vrPrevPos=new THREE.Vector3();
+let vrYaw=0,vrPlaced=false,vrTurnSm=0;
+/* saved so leaving VR restores the flat game exactly */
+let vrShadowWas=true,vrFarWas=5000,vrFogNearWas=520,vrFogFarWas=2400,vrGrassWas=0,vrFireWas=0;
+
+/* Comfort vignette: an inverted sphere on the head that closes in as you speed up,
+   so peripheral optical flow stops arguing with the inner ear. */
+const vrVignette=new THREE.Mesh(
+ new THREE.SphereGeometry(1.2,24,16),
+ new THREE.ShaderMaterial({
+  side:THREE.BackSide,transparent:true,depthWrite:false,depthTest:false,
+  uniforms:{uAmt:{value:0}},
+  vertexShader:'varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+  fragmentShader:'varying vec3 vP;uniform float uAmt;void main(){float d=dot(normalize(vP),vec3(0.0,0.0,-1.0));float a=smoothstep(0.74,0.16,d)*uAmt;gl_FragColor=vec4(0.0,0.0,0.0,a);}'
+ })
+);
+vrVignette.renderOrder=999;
+vrVignette.frustumCulled=false;
+vrVignette.visible=false;
+camera.add(vrVignette);
+
+/* Thumbstick -> the same touch flags the on-screen buttons already set,
+   so no gameplay code needs to know VR exists. */
+let vrMenuOpen=false,vrPrevMenuBtn=false,vrPrevTrigger=false,vrHit=null,vrHover='';
+
+function pollVR(){
+ const s=renderer.xr.getSession();
+ if(!s)return;
+ let menuBtn=false,trigger=false;
+ touch.go=false;touch.left=false;touch.right=false;touch.gal=false;touch.jump=false;
+ vrStickY=0;
+ for(const src of s.inputSources){
+  const gp=src.gamepad;
+  if(!gp||!gp.axes)continue;
+  const b=gp.buttons||[];
+  if(b[5]&&b[5].pressed)menuBtn=true;      // B / Y toggles the menu
+  if(b[0]&&b[0].pressed)trigger=true;
+  const ax=gp.axes;
+  const x=ax.length>2?ax[2]:ax[0];
+  const y=ax.length>3?ax[3]:ax[1];
+  if(vrMenuOpen){                          // menu open: the horse waits, the stick scrolls
+   if(Math.abs(y)>Math.abs(vrStickY))vrStickY=y;
+   continue;
+  }
+  if(y<-0.35)touch.go=true;
+  if(x<-0.40)touch.left=true;
+  if(x>0.40)touch.right=true;
+  if(b[0]&&b[0].pressed)touch.gal=true;    // trigger: gallop
+  if(b[4]&&b[4].pressed)touch.jump=true;   // A / X: jump
+ }
+ if(menuBtn&&!vrPrevMenuBtn)setVRMenu(!vrMenuOpen);
+ if(vrMenuOpen&&trigger&&!vrPrevTrigger&&vrHover)vrMenuClick(vrHover);
+ vrPrevMenuBtn=menuBtn;
+ vrPrevTrigger=trigger;
+}
+
+/* ================= in-world VR menu =================
+   DOM does not exist inside an immersive session, so the HUD is redrawn onto a canvas,
+   hung on a plane in front of the saddle, and pointed at with a laser. Buttons call the
+   same functions the flat HUD calls, so there is one implementation of the game. */
+const VRM_W=1024,VRM_H=704;
+const vrMenuCv=document.createElement('canvas');
+vrMenuCv.width=VRM_W;vrMenuCv.height=VRM_H;
+const vrMenuCtx=vrMenuCv.getContext('2d');
+const c0=vrMenuCtx;                      // the page builders draw straight onto it
+let vrStickY=0;
+const vrMenuTex=new THREE.CanvasTexture(vrMenuCv);
+vrMenuTex.colorSpace=THREE.SRGBColorSpace;
+vrMenuTex.anisotropy=4;
+const vrMenu=new THREE.Mesh(
+ new THREE.PlaneGeometry(0.92,0.92*VRM_H/VRM_W),
+ new THREE.MeshBasicMaterial({map:vrMenuTex,transparent:true,fog:false,toneMapped:false})
+);
+vrMenu.rotation.order='YXZ';
+vrMenu.renderOrder=900;
+vrMenu.visible=false;
+vrRig.add(vrMenu);
+
+/* laser + the dot where it lands */
+const vrRayGeo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(0,0,-1)]);
+const vrCtrls=[],vrRays=[];
+for(let i=0;i<2;i++){
+ const c=renderer.xr.getController(i);
+ const line=new THREE.Line(vrRayGeo,new THREE.LineBasicMaterial({color:0xffe6a8,transparent:true,opacity:0.75,fog:false}));
+ line.scale.z=2.2;line.visible=false;
+ c.add(line);
+ vrRig.add(c);
+ vrCtrls.push(c);vrRays.push(line);
+}
+const vrDot=new THREE.Mesh(
+ new THREE.SphereGeometry(0.009,10,8),
+ new THREE.MeshBasicMaterial({color:0xff9a4e,fog:false,toneMapped:false})
+);
+vrDot.visible=false;
+vrRig.add(vrDot);
+
+const vrRayc=new THREE.Raycaster();
+const _vrM4=new THREE.Matrix4();
+let vrPage='status',vrShopTab='horses',vrQuestTab='daily',vrBtns=[];
+const vrScroll={};                       // per-page scroll offset, in canvas pixels
+let vrClip=null,vrContentH=0,vrListTop=0,vrListH=0;
+const VRM_ROW=74,VRM_GAP=8,VRM_STEP=82;
+
+function setVRMenu(open){
+ vrMenuOpen=open;
+ vrMenu.visible=open;
+ vrDot.visible=false;
+ vrRays.forEach(r=>r.visible=open);
+ if(!open){vrHover='';return;}
+ vrPage='status';
+ /* Drop the panel where the rider is already looking, so it never opens behind them.
+    Yaw only — tipping the panel to match head roll or pitch is disorienting. */
+ const f=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
+ f.y=0;
+ if(f.lengthSq()<1e-6)f.set(0,0,-1);
+ f.normalize();
+ vrMenu.position.set(camera.position.x+f.x*0.82,camera.position.y-0.16,camera.position.z+f.z*0.82);
+ vrMenu.rotation.set(-0.20,Math.atan2(-f.x,-f.z),0);
+ drawVRMenu();
+}
+
+function vrRR(c,x,y,w,h,r){
+ c.beginPath();
+ c.moveTo(x+r,y);
+ c.arcTo(x+w,y,x+w,y+h,r);
+ c.arcTo(x+w,y+h,x,y+h,r);
+ c.arcTo(x,y+h,x,y,r);
+ c.arcTo(x,y,x+w,y,r);
+ c.closePath();
+}
+function vrButton(c,id,label,x,y,w,h,tone,fs){
+ const hot=vrHover===id;
+ c.save();
+ vrRR(c,x,y,w,h,16);
+ const g=c.createLinearGradient(0,y,0,y+h);
+ if(tone==='dark'){g.addColorStop(0,hot?'#5c4630':'#4a3526');g.addColorStop(1,hot?'#4a3526':'#3a2a1d');}
+ else{g.addColorStop(0,hot?'#ffffff':'#fff8ea');g.addColorStop(1,hot?'#fff3d8':'#f5e3c2');}
+ c.fillStyle=g;c.fill();
+ c.lineWidth=hot?5:3;
+ c.strokeStyle=hot?'#c98a2e':'#d9b97f';
+ c.stroke();
+ c.fillStyle=tone==='dark'?'#fff8ea':'#4a3526';
+ c.font='700 '+(fs||30)+'px "Trebuchet MS",sans-serif';
+ c.textAlign='center';c.textBaseline='middle';
+ c.fillText(label,x+w/2,y+h/2+1);
+ c.restore();
+ /* A button scrolled out of the list is drawn (the clip hides it) but must not be
+    clickable, or the laser would hit things the rider cannot see. */
+ if(!vrClip||(y+h>vrClip.y&&y<vrClip.y+vrClip.h))vrBtns.push({id,x,y,w,h});
+}
+
+/* one row of a scrolling list */
+function vrListRow(c,y,icon,title,sub,dim){
+ vrRR(c,36,y,952,VRM_ROW,14);
+ c.fillStyle=dim?'#f6efe1':'#fffaf0';c.fill();
+ c.lineWidth=2;c.strokeStyle='#efe3c8';c.stroke();
+ c.textAlign='left';c.textBaseline='middle';
+ c.font='34px "Trebuchet MS",sans-serif';
+ c.fillStyle='#4a3526';
+ c.fillText(icon,52,y+VRM_ROW/2);
+ c.font='700 27px "Trebuchet MS",sans-serif';
+ c.fillStyle=dim?'#9b8a74':'#4a3526';
+ c.fillText(String(title).slice(0,32),102,y+26);
+ c.font='600 20px "Trebuchet MS",sans-serif';
+ c.fillStyle='#8c7a63';
+ c.fillText(String(sub).slice(0,52),102,y+53);
+}
+/* a slim progress bar inside a row, for quests */
+function vrRowBar(c,x,y,w,pct){
+ vrRR(c,x,y,w,10,5);c.fillStyle='#e9dcc0';c.fill();
+ const p=Math.max(0,Math.min(100,pct));
+ if(p>0.5){c.save();vrRR(c,x,y,w,10,5);c.clip();c.fillStyle='#6bc46d';c.fillRect(x,y,w*p/100,10);c.restore();}
+}
+/* a round colour chip you can shoot at */
+function vrSwatch(c,id,col,cx,cy,r,on){
+ c.save();
+ c.beginPath();c.arc(cx,cy,r,0,Math.PI*2);
+ c.fillStyle=col;c.fill();
+ c.lineWidth=on?6:3;
+ c.strokeStyle=on?'#4a3526':'#ffffff';
+ c.stroke();
+ if(on){
+  c.beginPath();c.arc(cx,cy,r+6,0,Math.PI*2);
+  c.lineWidth=3;c.strokeStyle='#c98a2e';c.stroke();
+ }
+ c.restore();
+ const x=cx-r,y=cy-r,w=r*2,h=r*2;
+ if(!vrClip||(y+h>vrClip.y&&y<vrClip.y+vrClip.h))vrBtns.push({id,x,y,w,h});
+}
+
+/* Outfit choices, straight from the flat shop so the two can't disagree */
+const VR_OUTFIT=[
+ ['shirt','👕 Shirt',['#c98c5a','#b34a4a','#4a7ab3','#5a9a5a','#8a5ab3','#e8d9b8']],
+ ['pants','👖 Pants',['#4a4338','#2e3a52','#6b4a2e','#3a3a3a']],
+ ['helmet','⛑️ Helmet',['#2e2e38','#7d3c98','#b3622f','#e8e8e8','#2e86c1']],
+ ['skin','🖐️ Skin',['#f0c8a8','#e3a37d','#c98a62','#a06a48']]
+];
+let vrMateA=null,vrMateB=null;
+
+/* breed3() reads two <select>s that only exist while the flat shop is open. Rather than
+   copy the genetics, hand it the elements it expects and take them away afterwards. */
+function vrBreed(ia,ib){
+ const mk=(id,v)=>{
+  const old=document.getElementById(id);
+  if(old&&old.parentNode)old.parentNode.removeChild(old);   // must be the only one, or $() finds theirs
+  const e=document.createElement('input');
+  e.type='hidden';e.id=id;e.value=String(v);
+  document.body.appendChild(e);
+  return e;
+ };
+ const a=mk('mateA3',ia),b=mk('mateB3',ib);
+ try{breed3();}
+ finally{
+  if(a.parentNode)a.parentNode.removeChild(a);
+  if(b.parentNode)b.parentNode.removeChild(b);
+ }
+}
+function vrBar(c,label,pct,color,x,y,w,h){
+ c.save();
+ c.fillStyle='#4a3526';
+ c.font='700 26px "Trebuchet MS",sans-serif';
+ c.textAlign='left';c.textBaseline='middle';
+ c.fillText(label,x,y+h/2);
+ const bx=x+168,bw=w-168;
+ vrRR(c,bx,y,bw,h,h/2);
+ c.fillStyle='#e9dcc0';c.fill();
+ const p=Math.max(0,Math.min(100,pct));
+ if(p>0.5){
+  c.save();
+  vrRR(c,bx,y,bw,h,h/2);
+  c.clip();
+  c.fillStyle=color;
+  c.fillRect(bx,y,bw*p/100,h);
+  c.restore();
+ }
+ c.lineWidth=2;c.strokeStyle='#d9b97f';
+ vrRR(c,bx,y,bw,h,h/2);c.stroke();
+ c.fillStyle='#6d5b45';
+ c.font='700 22px "Trebuchet MS",sans-serif';
+ c.textAlign='right';
+ c.fillText(Math.round(p)+'%',bx+bw-14,y+h/2);
+ c.restore();
+}
+const vrPct=id=>{const e=$(id);if(!e)return 0;const w=parseFloat(e.style.width);return isFinite(w)?w:0;};
+const vrTxt=(id,d)=>{const e=$(id);return e&&e.textContent?e.textContent:d;};
+
+function drawVRMenu(){
+ const c=vrMenuCtx;
+ vrBtns=[];vrClip=null;vrContentH=0;
+ c.clearRect(0,0,VRM_W,VRM_H);
+ vrRR(c,6,6,VRM_W-12,VRM_H-12,30);
+ c.fillStyle='rgba(255,253,247,0.97)';c.fill();
+ c.lineWidth=6;c.strokeStyle='#e3cf9f';c.stroke();
+
+ c.fillStyle='#4a3526';
+ c.font='800 32px "Trebuchet MS",sans-serif';
+ c.textAlign='left';c.textBaseline='middle';
+ c.fillText(vrTxt('scName','Your horse').slice(0,24),36,48);
+ c.font='700 28px "Trebuchet MS",sans-serif';
+ c.textAlign='right';
+ c.fillText('🪙 '+vrTxt('coinEl','0')+'   💎 '+vrTxt('gemEl','0'),VRM_W-36,48);
+
+ const TABS=[['status','Status'],['map','Map'],['shop','Shop'],['stable','Stable'],['quests','Quests'],['events','Events']];
+ TABS.forEach(([k,lbl],i)=>vrButton(c,'tab:'+k,lbl,30+i*138,80,128,50,vrPage===k?'dark':'',22));
+ vrButton(c,'exit','Leave',30+6*138,80,128,50,'',22);
+
+ const hasSub=(vrPage==='shop'||vrPage==='quests');
+ if(vrPage==='shop'){
+  [['horses','🐴 Horses'],['pets','🐾 Pets'],['food','🧺 Food'],['tack','🐎 Tack'],['breed','💞 Breed'],['outfit','🧢 Outfit']]
+   .forEach(([k,lbl],i)=>vrButton(c,'shoptab:'+k,lbl,36+i*158,144,150,44,vrShopTab===k?'dark':'',20));
+ }else if(vrPage==='quests'){
+  [['daily','📋 Daily'],['ach','🏅 Achievements']]
+   .forEach(([k,lbl],i)=>vrButton(c,'questtab:'+k,lbl,36+i*250,144,240,44,vrQuestTab===k?'dark':'',21));
+ }
+ vrListTop=hasSub?204:150;
+ vrListH=662-vrListTop;
+
+ if(vrPage==='status'){
+  vrBar(c,'🥕 Food',vrPct('scbH'),'#e8943a',36,186,952,36);
+  vrBar(c,'💧 Water',vrPct('scbT'),'#4fa8e0',36,238,952,36);
+  vrBar(c,'🧼 Clean',vrPct('scbC'),'#9b8cf0',36,290,952,36);
+  vrBar(c,'💗 Happy',vrPct('scbY'),'#6bc46d',36,342,952,36);
+  vrBar(c,'⭐ XP',vrPct('scbX'),'#e6b422',36,394,952,28);
+  c.fillStyle='#8c7a63';
+  c.font='700 24px "Trebuchet MS",sans-serif';
+  c.textAlign='left';
+  c.fillText('Look after your horse',36,456);
+  vrButton(c,'care:carrot','🥕 Feed',36,472,232,86,'');
+  vrButton(c,'care:water','💧 Water',276,472,232,86,'');
+  vrButton(c,'care:groom','🧼 Groom',516,472,232,86,'');
+  vrButton(c,'care:pet','💗 Pet',756,472,232,86,'');
+  vrButton(c,'act:trick','🌀 Trick',36,574,232,68,'');
+  vrButton(c,'act:fly','🪽 Fly',276,574,232,68,'');
+  vrButton(c,'act:photo','📷 Photo',516,574,232,68,'');
+  vrButton(c,'act:mute',vrTxt('muteBtn','🔊')+' Sound',756,574,232,68,'');
+ }else if(vrPage==='map'){
+  const mini=$('mini');
+  const S=440,MX=(VRM_W-S)/2,MY=176;
+  c.save();
+  c.beginPath();c.arc(MX+S/2,MY+S/2,S/2,0,Math.PI*2);
+  c.fillStyle='#e9dcc0';c.fill();c.clip();
+  if(mini)c.drawImage(mini,MX,MY,S,S);
+  c.restore();
+  c.lineWidth=6;c.strokeStyle='#e3cf9f';
+  c.beginPath();c.arc(MX+S/2,MY+S/2,S/2,0,Math.PI*2);c.stroke();
+  c.fillStyle='#8c7a63';
+  c.font='700 24px "Trebuchet MS",sans-serif';
+  c.textAlign='center';
+  c.fillText('The white arrow is you.',VRM_W/2,MY+S+40);
+ }else{
+  drawVRList(c);
+ }
+
+ c.fillStyle='#8c7a63';
+ c.font='600 21px "Trebuchet MS",sans-serif';
+ c.textAlign='center';
+ c.fillText(vrContentH>vrListH
+  ?'B or Y closes · trigger presses · push the stick up and down to scroll'
+  :'B or Y closes this · trigger to press a button',VRM_W/2,VRM_H-18);
+ vrMenuTex.needsUpdate=true;
+}
+
+/* Every scrolling page shares this: build a list of row-drawing closures, then draw the
+   slice that fits. Rows scrolled out are clipped away and vrButton drops their hitboxes. */
+function drawVRList(c){
+ const rows=[];
+ let note='';
+ try{
+  const sv=freshSave()||{};
+  if(vrPage==='shop')note=buildVRShop(rows,sv);
+  else if(vrPage==='stable')note=buildVRStable(rows,sv);
+  else if(vrPage==='quests')note=buildVRQuests(rows,sv);
+  else if(vrPage==='events')note=buildVREvents(rows,sv);
+ }catch(e){
+  rows.length=0;
+  note='Could not read your save just now — try again in a moment.';
+ }
+ vrContentH=rows.length*VRM_STEP;
+ const max=Math.max(0,vrContentH-vrListH);
+ let sc=vrScroll[vrPage]||0;
+ sc=Math.max(0,Math.min(max,sc));
+ vrScroll[vrPage]=sc;
+
+ if(!rows.length){
+  c.fillStyle='#8c7a63';
+  c.font='600 24px "Trebuchet MS",sans-serif';
+  c.textAlign='center';c.textBaseline='middle';
+  String(note||'Nothing here yet.').split('\n')
+   .forEach((ln,i)=>c.fillText(ln,VRM_W/2,vrListTop+110+i*38));
+  return;
+ }
+
+ c.save();
+ c.beginPath();c.rect(24,vrListTop,VRM_W-48,vrListH);c.clip();
+ vrClip={y:vrListTop,h:vrListH};
+ for(let i=0;i<rows.length;i++){
+  const y=vrListTop-sc+i*VRM_STEP;
+  if(y+VRM_ROW<vrListTop-4||y>vrListTop+vrListH+4)continue;
+  rows[i](y);
+ }
+ vrClip=null;
+ c.restore();
+
+ if(max>0){
+  const tx=998,th=Math.max(40,vrListH*vrListH/vrContentH);
+  const ty=vrListTop+(vrListH-th)*(sc/max);
+  vrRR(c,tx,vrListTop,8,vrListH,4);c.fillStyle='#efe3c8';c.fill();
+  vrRR(c,tx,ty,8,th,4);c.fillStyle='#d9b97f';c.fill();
+ }
+}
+
+function buildVRShop(rows,sv){
+ if(vrShopTab==='horses'){
+  BREEDS3.forEach((b,i)=>{
+   const owned=(sv.horses||[]).filter(h=>h.breed===b[0]).length;
+   const ico=b[7].horn?'🦄':b[7].wings?'🪽':(b[7].coat||b[7].glow)?'✨':'🐴';
+   const price=b[3]?b[3]+' 🪙':b[4]+' 💎';
+   const afford=(sv.coins||0)>=b[3]&&(sv.gems||0)>=b[4];
+   rows.push(y=>{
+    vrListRow(c0,y,ico,b[1],b[2]+(owned?'  ·  you own '+owned:''),!afford);
+    vrButton(c0,'buy:h:'+i,price,760,y+13,228,48,afford?'':'',24);
+   });
+  });
+  return 'No horses for sale.';
+ }
+ if(vrShopTab==='pets'){
+  const own=sv.petList||[];
+  PETS3.forEach(P=>{
+   const have=own.includes(P.key),active=activePet===P.key;
+   rows.push(y=>{
+    vrListRow(c0,y,P.emoji,P.name,have?(active?'following you ✓':'at the ranch'):'a loyal little friend');
+    vrButton(c0,have?'petfollow:'+P.key:'buy:pet:'+P.key,have?(active?'Following':'Follow'):P.price+' 🪙',760,y+13,228,48,active?'dark':'',24);
+   });
+  });
+  return 'No pets available.';
+ }
+ if(vrShopTab==='food'){
+  Object.keys(FOODS3).forEach(k=>{
+   const f=FOODS3[k];
+   rows.push(y=>{
+    vrListRow(c0,y,f.emoji,f.label,f.price+' 🪙 each  ·  you have '+((sv.items&&sv.items[k])||0));
+    vrButton(c0,'buy:food:'+k+':1','+1',652,y+13,110,48,'',24);
+    vrButton(c0,'buy:food:'+k+':5','+5',772,y+13,110,48,'',24);
+    vrButton(c0,'buy:food:'+k+':10','+10',892,y+13,96,48,'',22);
+   });
+  });
+  rows.push(y=>{
+   vrListRow(c0,y,'🎁','Food Hamper','15 carrots + 8 apples + 8 hay  ·  saves 36 🪙');
+   vrButton(c0,'buy:bundle:hamper','99 🪙',760,y+13,228,48,'',24);
+  });
+  return 'No food available.';
+ }
+ if(vrShopTab==='tack'){
+  const hn=(sv.horses&&sv.horses[rideIdx])?sv.horses[rideIdx].name:'your horse';
+  TACKS3.forEach(tk=>{
+   rows.push(y=>{
+    vrListRow(c0,y,'🐎',tk[1]+' Saddle','for '+hn);
+    c0.save();
+    c0.beginPath();c0.arc(700,y+VRM_ROW/2,17,0,Math.PI*2);
+    c0.fillStyle=tk[0];c0.fill();
+    c0.lineWidth=3;c0.strokeStyle='#fff';c0.stroke();
+    c0.restore();
+    vrButton(c0,'buy:tack:'+tk[0],'150 🪙',760,y+13,228,48,'',24);
+   });
+  });
+  return 'No saddles available.';
+ }
+
+ if(vrShopTab==='breed'){
+  const elig=(sv.horses||[]).map((h,i)=>({h,i})).filter(e=>!e.h.foal&&(e.h.bond||0)>=60);
+  if(elig.length<2)
+   return 'Breeding needs two grown horses with 60+ bond 💕.  You have '+elig.length+'.\nFeed, groom and ride them to build it up.';
+  const ok=elig.map(e=>e.i);
+  if(vrMateA===null||!ok.includes(vrMateA))vrMateA=ok[0];
+  if(vrMateB===null||!ok.includes(vrMateB)||vrMateB===vrMateA)vrMateB=ok.find(i=>i!==vrMateA);
+  const free=!!sv.breedVoucher;
+  const afford=free||(sv.coins||0)>=400;
+  const parent=(idx,slot,label)=>{
+   const h=sv.horses[idx];
+   rows.push(y=>{
+    vrListRow(c0,y,h.horn?'🦄':h.wings?'🪽':'🐴',label+': '+h.name,'❤️ bond '+Math.round(h.bond||0)+'  ·  Lv '+(h.level||1));
+    vrButton(c0,'mate:'+slot,'Swap',760,y+13,228,48,'',24);
+   });
+  };
+  parent(vrMateA,'a','Parent 1');
+  parent(vrMateB,'b','Parent 2');
+  rows.push(y=>{
+   vrListRow(c0,y,'💞','Breed these two',free?'you have a free breeding voucher 🎀':'costs 400 🪙  ·  the foal blends both coats',!afford);
+   vrButton(c0,afford?'breed':'noop',free?'FREE':'400 🪙',760,y+13,228,48,afford?'dark':'',24);
+  });
+  return '';
+ }
+
+ /* outfit */
+ const worn=sv.rider||{};
+ VR_OUTFIT.forEach(([part,label,cols])=>{
+  rows.push(y=>{
+   vrListRow(c0,y,'',label,'');
+   cols.forEach((col,i)=>vrSwatch(c0,'outfit:'+part+':'+col,col,404+i*74,y+VRM_ROW/2,26,worn[part]===col));
+  });
+ });
+ return 'Nothing to wear.';
+}
+
+function buildVRStable(rows,sv){
+ (sv.horses||[]).forEach((h,i)=>{
+  const hearts=Math.max(0,Math.min(5,Math.round((h.bond||0)/20)));
+  const low=h.needs&&Object.values(h.needs).some(v=>v<35);
+  const ico=h.horn?'🦄':h.wings?'🪽':h.coat?'✨':h.foal?'🐎':'🐴';
+  const riding=(i===rideIdx);
+  rows.push(y=>{
+   vrListRow(c0,y,ico,h.name+(low?'  ⚠️':''),'Lv '+(h.level||1)+'  ·  '+'❤️'.repeat(hearts)+(h.foal?'  ·  foal':''));
+   if(riding)vrButton(c0,'noop','Riding',760,y+13,228,48,'dark',24);
+   else vrButton(c0,'stable:ride:'+i,'🏇 Ride',760,y+13,228,48,'',24);
+  });
+ });
+ return 'Your stable is empty.';
+}
+
+function buildVRQuests(rows,sv){
+ if(vrQuestTab==='daily'){
+  try{if(typeof ensureDq==='function')ensureDq(sv);}catch(e){}
+  const dq=sv.dq||{prog:{},claimed:{}};
+  todayDaily().forEach(q=>{
+   const prog=Math.min(q.goal,(dq.prog&&dq.prog[q.type])||0);
+   const done=prog>=q.goal,cl=!!(dq.claimed&&dq.claimed[q.type]);
+   rows.push(y=>{
+    vrListRow(c0,y,cl?'✅':q.icon,q.label,Math.floor(prog)+' / '+q.goal+'   ·   '+(q.r.c||0)+' 🪙',cl);
+    vrRowBar(c0,102,y+60,540,100*prog/q.goal);
+    if(!cl&&done)vrButton(c0,'quest:cd:'+q.type,'Claim',760,y+13,228,48,'dark',24);
+   });
+  });
+  return 'No quests today — check back tomorrow.';
+ }
+ const claims=sv.achClaims||{};
+ const list=ACHS.map(a=>{let v=0;try{v=Math.min(a.goal,a.v(sv));}catch(e){}return {a,v,cl:!!claims[a.id]};});
+ list.sort((x,y)=>(x.cl?1:0)-(y.cl?1:0)||(y.v/y.a.goal)-(x.v/x.a.goal));
+ list.forEach(({a,v,cl})=>{
+  const done=v>=a.goal;
+  rows.push(y=>{
+   vrListRow(c0,y,cl?'✅':a.icon,a.label,a.desc,cl);
+   vrRowBar(c0,102,y+60,540,100*v/a.goal);
+   if(!cl&&done)vrButton(c0,'quest:ca:'+a.id,'Claim',760,y+13,228,48,'dark',24);
+  });
+ });
+ return 'No achievements yet.';
+}
+
+function buildVREvents(rows,sv){
+ const tr=sv.trophies||{};
+ const lvl=(myHorses[rideIdx]&&myHorses[rideIdx].level)||1;
+ EVENTS3.forEach((ev,i)=>{
+  const won=!!tr[ev.id],ok=lvl>=ev.lvl;
+  const detail=ev.town+'  ·  '+(ev.race?'🏁 race':ev.n+' jumps')+'  ·  needs Lv '+ev.lvl;
+  rows.push(y=>{
+   vrListRow(c0,y,won?'🏆':'▫️',ev.name,detail,!ok);
+   if(ok)vrButton(c0,'event:'+i,won?'Again':'Enter · '+ev.reward+'🪙',744,y+13,244,48,'',23);
+   else vrButton(c0,'noop','🔒 Lv '+ev.lvl,744,y+13,244,48,'',23);
+  });
+ });
+ return 'No events available.';
+}
+
+function vrMenuClick(id){
+ if(id==='noop')return;
+ if(id==='exit'){const s=renderer.xr.getSession();if(s)s.end();return;}
+ if(id.startsWith('tab:')){vrPage=id.slice(4);drawVRMenu();return;}
+ if(id.startsWith('shoptab:')){vrShopTab=id.slice(8);vrScroll.shop=0;drawVRMenu();return;}
+ if(id.startsWith('questtab:')){vrQuestTab=id.slice(9);vrScroll.quests=0;drawVRMenu();return;}
+ if(id.startsWith('care:')){try{careAct(id.slice(5));}catch(e){}drawVRMenu();return;}
+ if(id==='act:trick'){
+  try{window._tkN=((window._tkN||0)+1)%3;startTrick(['roll','spin','flip'][window._tkN]);}catch(e){}
+  setVRMenu(false);return;
+ }
+ if(id==='act:fly'){const b=$('flyBtn');if(b)b.click();setVRMenu(false);return;}
+ if(id==='act:photo'){const b=$('photoBtn');if(b)b.click();return;}
+ if(id==='act:mute'){const b=$('muteBtn');if(b)b.click();drawVRMenu();return;}
+
+ /* Everything below reuses the flat game's own handlers, then hides the DOM panels those
+    handlers pop open — invisible in VR, but they would be sitting there on the way out. */
+ const done=()=>{try{hidePanels();}catch(e){}try{refreshWallet();}catch(e){}drawVRMenu();};
+ const p=id.split(':');
+ try{
+  if(p[0]==='buy'){
+   if(p[1]==='h')buyHorse3(+p[2]);
+   else if(p[1]==='pet')buyPet(p[2]);
+   else if(p[1]==='food')buyFood3(p[2],+p[3]);
+   else if(p[1]==='tack')buyTack3(p.slice(2).join(':'));
+   else if(p[1]==='bundle')buyBundle3(p[2]);
+  }
+  else if(p[0]==='petfollow')setActivePet(p[1]);
+  else if(p[0]==='outfit'){
+   const part=p[1],col=p.slice(2).join(':');   // the colour carries its own '#'
+   syncSave(sv=>{sv.rider=sv.rider||{};sv.rider[part]=col;});
+   reloadHorses();
+   toast('Looking sharp! 🧢');
+  }
+  else if(p[0]==='mate'){
+   /* no dropdowns in VR — tapping Swap steps to the next eligible horse, skipping
+      whoever is already standing in the other slot */
+   const sv=freshSave()||{};
+   const ok=(sv.horses||[]).map((h,i)=>({h,i})).filter(e=>!e.h.foal&&(e.h.bond||0)>=60).map(e=>e.i);
+   if(ok.length>=2){
+    const cur=(p[1]==='a')?vrMateA:vrMateB,other=(p[1]==='a')?vrMateB:vrMateA;
+    let k=Math.max(0,ok.indexOf(cur));
+    for(let n=0;n<ok.length;n++){k=(k+1)%ok.length;if(ok[k]!==other)break;}
+    if(p[1]==='a')vrMateA=ok[k];else vrMateB=ok[k];
+   }
+  }
+  else if(p[0]==='breed'){
+   if(vrMateA!==null&&vrMateB!==null&&vrMateA!==vrMateB)vrBreed(vrMateA,vrMateB);
+  }
+  else if(p[0]==='stable'&&p[1]==='ride'){
+   const i=+p[2];
+   rideIdx=i;
+   if(typeof sel!=='undefined'&&sel)sel.value=String(i);
+   rebuildAll();
+   try{sNeigh();}catch(e){}
+   toast('🏇 Now riding '+myHorses[i].name+'!');
+  }
+  else if(p[0]==='quest'){
+   if(p[1]==='cd')claimDaily(p[2]);
+   else if(p[1]==='ca')claimAch(p[2]);
+  }
+  else if(p[0]==='event'){
+   startCourse(EVENTS3[+p[1]]);
+   setVRMenu(false);
+   try{hidePanels();}catch(e){}
+   return;
+  }
+ }catch(e){
+  try{toast('That did not work — try it on the flat screen.');}catch(e2){}
+ }
+ done();
+}
+
+let vrMenuT=0;
+function updateVRMenu(dt){
+ if(!vrMenuOpen)return;
+ /* point at it */
+ let best=null;
+ for(const c of vrCtrls){
+  _vrM4.identity().extractRotation(c.matrixWorld);
+  vrRayc.ray.origin.setFromMatrixPosition(c.matrixWorld);
+  vrRayc.ray.direction.set(0,0,-1).applyMatrix4(_vrM4).normalize();
+  const hit=vrRayc.intersectObject(vrMenu,false)[0];
+  if(hit&&(!best||hit.distance<best.distance))best=hit;
+ }
+ let hover='';
+ if(best&&best.uv){
+  const px=best.uv.x*VRM_W,py=(1-best.uv.y)*VRM_H;
+  for(const b of vrBtns){
+   if(px>=b.x&&px<=b.x+b.w&&py>=b.y&&py<=b.y+b.h){hover=b.id;break;}
+  }
+  vrDot.visible=true;
+  vrRig.worldToLocal(vrDot.position.copy(best.point));
+ }else{
+  vrDot.visible=false;
+ }
+ let redraw=(hover!==vrHover);
+ vrHover=hover;
+ /* stick scrolls the list; drawVRList clamps the value on the way through */
+ if(Math.abs(vrStickY)>0.2&&vrContentH>vrListH){
+  vrScroll[vrPage]=(vrScroll[vrPage]||0)+vrStickY*950*dt;
+  redraw=true;
+ }
+ /* the live bars and the minimap need refreshing, but not at 90Hz */
+ vrMenuT+=dt;
+ if(vrMenuT>0.25){vrMenuT=0;redraw=true;}
+ if(redraw)drawVRMenu();
+}
+
+renderer.xr.addEventListener('sessionstart',()=>{
+ vrRig.add(camera);
+ vrVignette.visible=true;
+ vrPlaced=false;                       // drop the rig straight onto the horse, don't glide in
+ setVRMenu(false);
+ vrBloomWas=useBloom;
+ useBloom=false;                       // EffectComposer can't drive the XR framebuffer
+ renderer.setPixelRatio(1);
+ /* The Quest draws this scene twice per frame at 72-90Hz. Everything below buys that back. */
+ try{renderer.xr.setFoveation(1);}catch(e){}      // cheapest big win: soften the edges of vision
+ vrShadowWas=renderer.shadowMap.enabled;
+ renderer.shadowMap.enabled=false;                // the shadow pass is the single largest cost
+ vrFarWas=camera.far;vrFogNearWas=scene.fog.near;vrFogFarWas=scene.fog.far;
+ camera.far=900;camera.updateProjectionMatrix();
+ scene.fog.near=170;scene.fog.far=860;            // pull the fog in so less world is drawn
+ if(grassInst){vrGrassWas=grassInst.count;grassInst.count=Math.min(grassInst.count,3200);}
+ if(typeof fireflies!=='undefined'&&fireflies){vrFireWas=fireflies.count;fireflies.count=44;}
+ if(typeof toast==='function')toast('🥽 Left stick to ride · trigger to gallop · A to jump');
+});
+renderer.xr.addEventListener('sessionend',()=>{
+ vrRig.remove(camera);
+ vrVignette.visible=false;
+ setVRMenu(false);
+ if(player.rider&&player.rider.g)player.rider.g.visible=true;   // she comes back for the flat game
+ useBloom=vrBloomWas;
+ touch.go=touch.left=touch.right=touch.gal=touch.jump=false;
+ renderer.shadowMap.enabled=vrShadowWas;
+ camera.far=vrFarWas;
+ scene.fog.near=vrFogNearWas;scene.fog.far=vrFogFarWas;
+ if(grassInst&&vrGrassWas)grassInst.count=vrGrassWas;
+ if(typeof fireflies!=='undefined'&&fireflies&&vrFireWas)fireflies.count=vrFireWas;
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
+ camera.aspect=innerWidth/innerHeight;
+ camera.updateProjectionMatrix();
+ renderer.setSize(innerWidth,innerHeight);
+});
+
+if(navigator.xr&&navigator.xr.isSessionSupported){
+ navigator.xr.isSessionSupported('immersive-vr').then(ok=>{
+  if(!ok)return;
+  const b=document.createElement('button');
+  b.id='vrBtn';
+  b.textContent='🥽 Ride in VR';
+  b.style.cssText='position:fixed;top:52px;right:10px;z-index:12;';
+  b.onclick=async()=>{
+   if(renderer.xr.isPresenting){renderer.xr.getSession().end();return;}
+   try{
+    const s=await navigator.xr.requestSession('immersive-vr',{optionalFeatures:['local-floor','hand-tracking']});
+    await renderer.xr.setSession(s);
+   }catch(err){
+    if(typeof toast==='function')toast('VR could not start: '+err.message);
+   }
+  };
+  document.body.appendChild(b);
+ }).catch(()=>{});
+}
+
 const SKY_P={turbidity:2.3,rayleigh:3.5,mieCoefficient:0.003,mieDirectionalG:0.78};
 const sunDir=new THREE.Vector3().setFromSphericalCoords(1,THREE.MathUtils.degToRad(90-26),THREE.MathUtils.degToRad(35));
 function setSky(skyObj){
@@ -5664,9 +6370,9 @@ function startTrick(type){
 }
 let hintT=0;
 function tick(){
- requestAnimationFrame(tick);
  const dt=Math.min(0.05,clock.getDelta());
  const t=clock.elapsedTime;
+ if(renderer.xr.isPresenting)pollVR();
  const fwd=keys.KeyW||keys.ArrowUp||touch.go;
  const back=keys.KeyS||keys.ArrowDown;
  const left=keys.KeyA||keys.ArrowLeft||touch.left;
@@ -6248,14 +6954,58 @@ function tick(){
  const hd=camDistSm*Math.cos(camPitch);
  const camX=player.pos.x+Math.sin(ang)*hd,camZ=player.pos.z+Math.cos(ang)*hd;
  const camY=Math.max(gy+player.y+0.7+camDistSm*Math.sin(camPitch),groundH(camX,camZ)+1.2);
- camera.position.lerp(new THREE.Vector3(camX,camY,camZ),k);
- const shake=sp>7&&grounded?0.011:0;
- camLook.lerp(new THREE.Vector3(player.pos.x,gy+player.y+1.7,player.pos.z),1-Math.exp(-8*dt));
- camera.lookAt(camLook.x+Math.sin(t*23)*shake,camLook.y+Math.sin(t*31)*shake,camLook.z+Math.cos(t*27)*shake);
- const fovT=sp>7?67:60;
- if(Math.abs(camera.fov-fovT)>0.1){
-  camera.fov+=(fovT-camera.fov)*Math.min(1,dt*2.5);
-  camera.updateProjectionMatrix();
+ if(renderer.xr.isPresenting){
+  /* Ride from the saddle. The rig chases the horse through a filter rather than copying
+     it, because collision push-out and landings snap player.pos and a head must never be
+     snapped. Look direction stays entirely the headset's business. */
+  const tX=player.pos.x,tZ=player.pos.z,tY=gy+player.y+VR_EYE;
+  const tYaw=player.heading+Math.PI;
+  if(!vrPlaced){vrPos.set(tX,tY,tZ);vrPrevPos.set(tX,tY,tZ);vrVel.set(0,0,0);vrYaw=tYaw;vrPlaced=true;}
+  /* How fast the horse is really travelling. A filter chasing a moving target settles
+     v/k behind it, which at a gallop parks the camera most of a metre back and puts the
+     rider in front of your face. Measuring the speed lets the target lead by exactly
+     that much, cancelling the lag while the filter still eats collision snaps. */
+  const idt=1/Math.max(dt,1e-4);
+  let mvx=(tX-vrPrevPos.x)*idt,mvz=(tZ-vrPrevPos.z)*idt;
+  const mvL=Math.hypot(mvx,mvz);
+  if(mvL>18){mvx*=18/mvL;mvz*=18/mvL;}   // a collision teleport is not real speed
+  const kVel=1-Math.exp(-8*dt);
+  vrVel.x+=(mvx-vrVel.x)*kVel;
+  vrVel.z+=(mvz-vrVel.z)*kVel;
+  vrPrevPos.set(tX,tY,tZ);
+  const kH=1-Math.exp(-VR_KH*dt);   // horizontal: quick, so riding still feels direct
+  const kV=1-Math.exp(-VR_KV*dt);   // vertical: slow, because bumps are what turn stomachs
+  vrPos.x+=((tX+vrVel.x/VR_KH)-vrPos.x)*kH;
+  vrPos.z+=((tZ+vrVel.z/VR_KH)-vrPos.z)*kH;
+  vrPos.y+=(tY-vrPos.y)*kV;
+  vrRig.position.copy(vrPos);
+  /* You are the rider. Seeing her from behind, or from inside her head, is worse. */
+  if(player.rider&&player.rider.g&&player.rider.g.visible)player.rider.g.visible=false;
+  /* shortest way round, so crossing the back of the compass doesn't spin the world */
+  let dYaw=tYaw-vrYaw;
+  dYaw=Math.atan2(Math.sin(dYaw),Math.cos(dYaw));
+  const kY=1-Math.exp(-VR_KY*dt);
+  vrYaw+=dYaw*kY;
+  vrRig.rotation.y=vrYaw;
+  /* Vignette answers to both speed and turn rate — spinning is worse for the inner ear
+     than going fast in a straight line. */
+  vrSpeedSm+=(sp-vrSpeedSm)*Math.min(1,dt*3);
+  const turnRate=Math.abs(dYaw)/Math.max(dt,0.001);
+  vrTurnSm+=(turnRate-vrTurnSm)*Math.min(1,dt*4);
+  const vAmt=THREE.MathUtils.clamp((vrSpeedSm-2.2)/9,0,0.62)
+            +THREE.MathUtils.clamp((vrTurnSm-0.35)/1.6,0,0.30);
+  vrVignette.material.uniforms.uAmt.value=THREE.MathUtils.clamp(vAmt,0,0.84);
+  updateVRMenu(dt);
+ }else{
+  camera.position.lerp(new THREE.Vector3(camX,camY,camZ),k);
+  const shake=sp>7&&grounded?0.011:0;
+  camLook.lerp(new THREE.Vector3(player.pos.x,gy+player.y+1.7,player.pos.z),1-Math.exp(-8*dt));
+  camera.lookAt(camLook.x+Math.sin(t*23)*shake,camLook.y+Math.sin(t*31)*shake,camLook.z+Math.cos(t*27)*shake);
+  const fovT=sp>7?67:60;
+  if(Math.abs(camera.fov-fovT)>0.1){
+   camera.fov+=(fovT-camera.fov)*Math.min(1,dt*2.5);
+   camera.updateProjectionMatrix();
+  }
  }
  if(window.__shotCam){   // ?shot= capture helper pins the camera
   const sc=window.__shotCam;
@@ -6452,7 +7202,8 @@ function tick(){
   mc.restore();
   mc.restore();
  }
- if(useBloom)composer.render();
+ if(renderer.xr.isPresenting)renderer.render(scene,camera);
+ else if(useBloom)composer.render();
  else renderer.render(scene,camera);
  hintT+=dt;
  if(hintT>9)$('hint').style.opacity='0';
@@ -6486,8 +7237,9 @@ window.render_game_to_text=()=>JSON.stringify({
  wallet:{coins,gems},
  weather:weather.mode
 });
-tick();
+renderer.setAnimationLoop(tick);   // drives rAF when flat, the XR frame loop when presenting
 addEventListener('resize',()=>{
+ if(renderer.xr.isPresenting)return;   // the headset owns the framebuffer while presenting
  camera.aspect=innerWidth/innerHeight;
  camera.updateProjectionMatrix();
  renderer.setSize(innerWidth,innerHeight);
