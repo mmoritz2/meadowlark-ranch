@@ -1129,7 +1129,7 @@ const envMaps={};let curEnv='day';
  /* A ground in the bake, so downward-facing surfaces receive warm bounce instead of sky.
     Without it every shaded underside samples blue sky and reads as if it is floating. */
  {const gd=new THREE.Mesh(new THREE.SphereGeometry(400,12,8,0,Math.PI*2,Math.PI/2,Math.PI/2),
-   new THREE.MeshBasicMaterial({color:0x6f7a55,side:THREE.BackSide}));
+   new THREE.MeshBasicMaterial({color:0x4a5340,side:THREE.BackSide}));
   gd.position.y=-1; es.add(gd);}
  const eu=esky.material.uniforms;
  for(const[k,e]of[['day',30],['golden',7],['night',-14]]){
@@ -1141,7 +1141,7 @@ const envMaps={};let curEnv='day';
 /* Sun-to-ambient was 1.55:1; real daylight is 5:1 to 8:1. The hemisphere light was
    supplying ~40% of the light budget in full sun, so every shadow was a faint 15% dip.
    The env map (PMREM'd sky) now carries the ambient and this is only a trim. */
-const hemi=new THREE.HemisphereLight(0xbcd2ec,0x8a7f5e,0.12);
+const hemi=new THREE.HemisphereLight(0xa8c6e8,0x6a6a5c,0.12);
 scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xffe6bc,5.4);              // a real key: sun:sky now ~6:1
 const sunOff=sunDir.clone().multiplyScalar(95);
@@ -1482,7 +1482,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  geo.computeVertexNormals();
  groundTex.anisotropy=renderer.capabilities.getMaxAnisotropy();
  const gmat=new THREE.MeshStandardMaterial({map:groundTex,vertexColors:true,roughness:0.97,bumpMap:bumpTexture,bumpScale:0.08});
- gmat.envMapIntensity=0.71;
+ gmat.envMapIntensity=0.44;
  gmat.onBeforeCompile=sh=>{   // stochastic no-tile sampling (per-block random UV offsets, bilinear-blended)
   sh.fragmentShader='float _h21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}\n'
    +'vec2 _h22(vec2 p){return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);}\n'
@@ -1522,7 +1522,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  const hdMat=new THREE.MeshStandardMaterial({map:groundTex.clone(),roughness:1});
  hdMat.map.repeat.set(160,160);
  hdMat.map.needsUpdate=true;
- hdMat.envMapIntensity=0.75;
+ hdMat.envMapIntensity=0.46;
  const horizonDisc=new THREE.Mesh(new THREE.CircleGeometry(1400,48),hdMat);
  horizonDisc.rotation.x=-Math.PI/2;
  horizonDisc.position.y=-8;
@@ -1544,7 +1544,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
 // sandy riding arena inside the paddock
 {
  const smatl=new THREE.MeshStandardMaterial({map:sandTex,roughness:1});
- smatl.envMapIntensity=0.75;
+ smatl.envMapIntensity=0.46;
  const sand=new THREE.Mesh(new THREE.CircleGeometry(1,40),smatl);
  sand.scale.set(23.5,18.5,1);
  sand.rotation.x=-Math.PI/2;
@@ -1553,7 +1553,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  scene.add(sand);
  // dirt path out the gate
  const dmat=new THREE.MeshStandardMaterial({color:0xc4a878,roughness:1});
- dmat.envMapIntensity=0.75;
+ dmat.envMapIntensity=0.46;
  for(let i=0;i<37;i++){
   const m=new THREE.Mesh(new THREE.CircleGeometry(1.6+Math.random()*0.7,12),dmat);
   m.rotation.x=-Math.PI/2;
@@ -1571,7 +1571,7 @@ let flowerClumps=[];
  const bladeGeo=new THREE.PlaneGeometry(0.55,0.5);
  bladeGeo.translate(0,0.25,0);
  const bladeMat=new THREE.MeshStandardMaterial({map:grassBladeTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
- bladeMat.envMapIntensity=0.94;
+ bladeMat.envMapIntensity=0.58;
  bladeMat.onBeforeCompile=sh=>{
   sh.uniforms.uTime={value:0};
   windShader=sh;
@@ -1641,7 +1641,7 @@ function smat(c){
  if(typeof c!=='string')return c;
  if(!matCache[c]){
   matCache[c]=new THREE.MeshStandardMaterial({color:c,roughness:0.85});
-  matCache[c].envMapIntensity=1;
+  matCache[c].envMapIntensity=0.62;
  }
  return matCache[c];
 }
@@ -1706,7 +1706,7 @@ function coatMat(hex){
   c.globalAlpha=1;
  });
  coatCache[hex]=new THREE.MeshStandardMaterial({map:tex,roughness:1,roughnessMap:coatRoughTex});
- coatCache[hex].envMapIntensity=0.94;
+ coatCache[hex].envMapIntensity=0.58;
  applyCoatDetail(coatCache[hex]);
  return coatCache[hex];
 }
@@ -1927,17 +1927,24 @@ function fantasyCoat(type,ds){
  m.needsUpdate=true;
  coatCache[key]=m; return m;
 }
+/* Ambient occlusion under the body, not a painted smudge. This has to MULTIPLY the ground
+   it sits on (white = untouched, dark = occluded) — alpha-blending a dark disc reads as a
+   decal and washes out over bright sand, which is why the horse measured as floating. */
 const contactTex=canvasTex(128,128,(c,w,h)=>{
- const g=c.createRadialGradient(64,64,8,64,64,62);
- g.addColorStop(0,'rgba(25,35,15,0.4)');
- g.addColorStop(1,'rgba(25,35,15,0)');
+ c.fillStyle='#ffffff';c.fillRect(0,0,w,h);
+ const g=c.createRadialGradient(64,64,4,64,64,63);
+ g.addColorStop(0,'#77736a');
+ g.addColorStop(0.40,'#adaa9f');
+ g.addColorStop(0.75,'#e6e4dd');
+ g.addColorStop(1,'#ffffff');
  c.fillStyle=g;c.fillRect(0,0,w,h);
 });
 function contactShadow(parent){
  const m=new THREE.Mesh(new THREE.CircleGeometry(1,20),
-  new THREE.MeshBasicMaterial({map:contactTex,transparent:true,depthWrite:false}));
+  new THREE.MeshBasicMaterial({map:contactTex,transparent:true,depthWrite:false,
+   blending:THREE.MultiplyBlending}));
  m.rotation.x=-Math.PI/2;
- m.scale.set(1.05,0.62,1);
+ m.scale.set(1.12,0.70,1);        // sits under the barrel, where the sky is occluded
  m.position.y=0.02;
  parent.add(m);
  return m;
@@ -1981,7 +1988,7 @@ function maneMat(hex){
   c.globalAlpha=1;
  });
  maneCache[hex]=new THREE.MeshStandardMaterial({map:tex,roughness:0.85,side:THREE.DoubleSide});
- maneCache[hex].envMapIntensity=0.84;
+ maneCache[hex].envMapIntensity=0.52;
  maneCache[hex].color.set('#a0a0a0');
  return maneCache[hex];
 }
@@ -2020,12 +2027,12 @@ function grainTex(base,grain,alpha){
  },1);
 }
 const whitePaintMat=new THREE.MeshStandardMaterial({map:grainTex('#f4f0e6','#c9bfa8',0.5),roughness:0.7});
-whitePaintMat.envMapIntensity=1;
+whitePaintMat.envMapIntensity=0.62;
 const paintCache={};
 function paintMat(hex){
  if(!paintCache[hex]){
   paintCache[hex]=new THREE.MeshStandardMaterial({map:grainTex(hex,shadeHex(hex,-0.3),0.55),roughness:0.7});
-  paintCache[hex].envMapIntensity=1;
+  paintCache[hex].envMapIntensity=0.62;
  }
  return paintCache[hex];
 }
@@ -2095,7 +2102,7 @@ function leatherMat(hex){
   }
   c.globalAlpha=1;
  },2),roughness:0.5});
- leatherCache[hex].envMapIntensity=1;
+ leatherCache[hex].envMapIntensity=0.62;
  return leatherCache[hex];
 }
 
@@ -2148,7 +2155,7 @@ const barkTex=canvasTex(128,256,(c,w,h)=>{
  c.globalAlpha=1;
 },1);
 const barkMat=new THREE.MeshStandardMaterial({map:barkTex,roughness:1});
-barkMat.envMapIntensity=0.75;
+barkMat.envMapIntensity=0.46;
 const birchTex=canvasTex(64,256,(c,w,h)=>{
  c.fillStyle='#e8e4da';c.fillRect(0,0,w,h);
  for(let i=0;i<46;i++){
@@ -2157,16 +2164,16 @@ const birchTex=canvasTex(64,256,(c,w,h)=>{
  }
 },1);
 const birchMat=new THREE.MeshStandardMaterial({map:birchTex,roughness:0.9});
-birchMat.envMapIntensity=0.75;
+birchMat.envMapIntensity=0.46;
 const leafMat=new THREE.MeshStandardMaterial({map:leafTex,alphaTest:0.45,side:THREE.DoubleSide,roughness:1});
-leafMat.envMapIntensity=0.94;
+leafMat.envMapIntensity=0.58;
 const leafMats=[leafMat,leafMat.clone(),leafMat.clone(),leafMat.clone(),leafMat.clone()];
 leafMats[1].color.set('#dff5c8');
 leafMats[2].color.set('#c8e8b0');
 leafMats[3].color.set('#ffd9a0');
 leafMats[4].color.set('#bfe6a8');
 const pineMat=new THREE.MeshStandardMaterial({map:pineTex,alphaTest:0.4,side:THREE.DoubleSide,roughness:1});
-pineMat.envMapIntensity=0.84;
+pineMat.envMapIntensity=0.52;
 
 /* ============== real 3D trees: Weber–Penn skeletons generated at boot ==============
    Geometry pipeline adapted from SeedThree — github.com/SkyeShark/SeedThree
@@ -2430,7 +2437,7 @@ const treeWinds=[];
 function seedLeafMat(tex,tint){
  const m=new THREE.MeshStandardMaterial({map:tex,alphaTest:0.45,side:THREE.DoubleSide,roughness:0.95});
  if(tint)m.color.set(tint);
- m.envMapIntensity=0.84;
+ m.envMapIntensity=0.52;
  m.onBeforeCompile=sh=>{
   sh.uniforms.uTime={value:0};
   treeWinds.push(sh);
@@ -2675,7 +2682,7 @@ const rockTex=canvasTex(128,128,(c,w,h)=>{
  c.globalAlpha=1;
 },2);
 const rockMat=new THREE.MeshStandardMaterial({map:rockTex,roughness:0.95});
-rockMat.envMapIntensity=0.94;
+rockMat.envMapIntensity=0.58;
 for(let i=0;i<28;i++){
  const a=Math.random()*Math.PI*2,rr=34+Math.random()*270;
  const x=Math.cos(a)*rr,z=Math.sin(a)*rr;
@@ -2890,7 +2897,7 @@ for(let i=0;i<14;i++){
  geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,4));
  geo.computeVertexNormals();
  const sm=new THREE.MeshStandardMaterial({map:bSandTex,vertexColors:true,transparent:true,roughness:1,depthWrite:false});
- sm.envMapIntensity=0.84;
+ sm.envMapIntensity=0.52;
  const bSand=new THREE.Mesh(geo,sm);
  bSand.position.set(-220,0,130);
  bSand.receiveShadow=true;
@@ -2920,7 +2927,7 @@ for(let i=0;i<14;i++){
  geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,4));
  geo.computeVertexNormals();
  const sm2=new THREE.MeshStandardMaterial({map:wSnowTex,vertexColors:true,transparent:true,roughness:0.8,depthWrite:false});
- sm2.envMapIntensity=1;
+ sm2.envMapIntensity=0.62;
  const ws=new THREE.Mesh(geo,sm2);
  ws.position.set(-160,0,-210);
  ws.receiveShadow=true;
@@ -3911,11 +3918,11 @@ function updateTrail(dt){
 {
  const b=new THREE.Group();
  const wallMat=new THREE.MeshStandardMaterial({map:plankTex,roughness:0.9});
- wallMat.envMapIntensity=1;
+ wallMat.envMapIntensity=0.62;
  const wall=new THREE.Mesh(new THREE.BoxGeometry(7,4.2,5.5),wallMat);
  wall.position.y=2.1;wall.castShadow=true;wall.receiveShadow=true;b.add(wall);
  const roofMat=new THREE.MeshStandardMaterial({map:tileTex,roughness:0.85});
- roofMat.envMapIntensity=1;
+ roofMat.envMapIntensity=0.62;
  const r1=new THREE.Mesh(new THREE.BoxGeometry(7.9,0.22,3.7),roofMat);
  r1.position.set(0,5.05,-1.45);r1.rotation.x=-0.55;r1.castShadow=true;b.add(r1);
  const r2=new THREE.Mesh(new THREE.BoxGeometry(7.9,0.22,3.7),roofMat);
