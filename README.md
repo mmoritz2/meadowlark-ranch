@@ -7,6 +7,8 @@ ride the same world in VR.
 Built from scratch in **one HTML file, no build step, no CDN**: clone it, serve the
 folder, and it runs.
 
+**▶️ [Play it in your browser](https://mmoritz2.github.io/star-ranch-fable/)**
+
 ![Riding in the arena at Star Ranch](docs/screenshots/gameplay.png)
 
 ## Run it
@@ -86,6 +88,11 @@ auto-rigging for the animated ones. `tools/asset-gen/` holds the scripts that dr
 
 Original code and generated art. Three.js and MQTT.js are vendored under their own
 licenses in `assets/vendor/`. Built as a personal project by
-[@mmoritz2](https://github.com/mmoritz2) — a love letter to the horse-game genre.
+[@mmoritz2](https://github.com/mmoritz2).
+
+Inspired by **Star Equestrian** and **Horse Riding Tales** (Foxie Ventures) — the games
+that got me interested in how a cozy horse world holds a player's attention. This is an
+independent from-scratch project, not affiliated with or derived from them; any
+resemblance is genre admiration, and all code and assets here are my own.
 
 `DEVELOPMENT.md` is the full build log, including what didn't work the first time.
