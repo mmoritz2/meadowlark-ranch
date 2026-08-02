@@ -1300,7 +1300,15 @@ renderer.xr.addEventListener('sessionend',()=>{
     const s=await navigator.xr.requestSession('immersive-vr',{optionalFeatures:['local-floor','hand-tracking']});
     await renderer.xr.setSession(s);
    }catch(err){
-    if(typeof toast==='function')toast('VR could not start: '+err.message);
+    /* Reaching here means the browser said immersive-vr was supported and then
+       refused to start one. Overwhelmingly that is an OpenXR runtime installed
+       with no headset actually on — a PC with SteamVR sitting idle answers "yes"
+       to isSessionSupported — so lead with that rather than the raw DOMException,
+       and keep the real message on the end for anything genuinely unusual. */
+    const why=(err&&err.name==='NotSupportedError')||(err&&err.name==='InvalidStateError')
+     ? 'Could not start VR — is your headset connected and turned on?'
+     : 'Could not start VR — is your headset connected and turned on? ('+((err&&err.message)||err)+')';
+    if(typeof toast==='function')toast(why);
    }
   };
  };
