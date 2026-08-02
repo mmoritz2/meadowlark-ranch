@@ -1136,6 +1136,7 @@ renderer.xr.addEventListener('sessionstart',()=>{
  renderer.setPixelRatio(1);
  /* The Quest draws this scene twice per frame at 72-90Hz. Everything below buys that back. */
  try{renderer.xr.setFoveation(1);}catch(e){}      // cheapest big win: soften the edges of vision
+ try{renderer.xr.setFramebufferScaleFactor(0.85);}catch(e){}   // ~28% fewer pixels per eye
  vrShadowWas=renderer.shadowMap.enabled;
  renderer.shadowMap.enabled=false;                // the shadow pass is the single largest cost
  vrFarWas=camera.far;vrFogNearWas=scene.fog.density;
@@ -1143,6 +1144,11 @@ renderer.xr.addEventListener('sessionstart',()=>{
  scene.fog.density=0.0052;                        // pull the fog in so less world is drawn
  if(grassInst){vrGrassWas=grassInst.count;grassInst.count=Math.min(grassInst.count,3200);}
  if(typeof fireflies!=='undefined'&&fireflies){vrFireWas=fireflies.count;fireflies.count=44;}
+ /* The ground covers most of both eyes, and its shader was doing four texture samples plus
+    three noise evaluations per pixel to hide texture tiling. That is a luxury at 90Hz in
+    stereo — swap to a single sample while presenting. */
+ if(groundMat){groundMat.defines=groundMat.defines||{};groundMat.defines.CHEAP_GROUND='';groundMat.needsUpdate=true;}
+ if(seedTreeInsts)seedTreeInsts.forEach(m=>{m.userData.vrWas=m.count;m.count=Math.ceil((m.userData.fullCount||m.count)*0.45);});
  if(typeof toast==='function')toast('🥽 Left stick to ride · trigger to gallop · A to jump');
 });
 renderer.xr.addEventListener('sessionend',()=>{
@@ -1157,6 +1163,8 @@ renderer.xr.addEventListener('sessionend',()=>{
  camera.far=vrFarWas;
  scene.fog.density=vrFogNearWas;
  if(grassInst&&vrGrassWas)grassInst.count=vrGrassWas;
+ if(groundMat&&groundMat.defines){delete groundMat.defines.CHEAP_GROUND;groundMat.needsUpdate=true;}
+ if(seedTreeInsts)seedTreeInsts.forEach(m=>{if(m.userData.vrWas)m.count=m.userData.vrWas;});
  if(typeof fireflies!=='undefined'&&fireflies&&vrFireWas)fireflies.count=vrFireWas;
  renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
  camera.aspect=innerWidth/innerHeight;
@@ -1338,6 +1346,7 @@ for(let i=0;i<FIREFLY_N;i++){
 
 /* ================= graphics quality (Low / Medium / High) ================= */
 let useBloom=true,grassInst=null,cloudList=null,seedTreeInsts=null;
+let groundMat=null,biomeOverlays=[];   // reached by the VR quality path
 let quality=(save&&save.quality)||'high';
 const QUAL_LABEL={low:'🎚️ Graphics: Low — smoothest',medium:'🎚️ Graphics: Medium',high:'🎚️ Graphics: High — prettiest'};
 function applyQuality(q){
@@ -1577,6 +1586,10 @@ __mark('terrain');
    +'float _vn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(_h21(i),_h21(i+vec2(1.,0.)),f.x),mix(_h21(i+vec2(0.,1.)),_h21(i+vec2(1.,1.)),f.x),f.y);}\n'
    +sh.fragmentShader.replace('#include <map_fragment>',
     `#ifdef USE_MAP
+     #ifdef CHEAP_GROUND
+     vec4 _acc=texture2D(map,vMapUv);          // one sample; the tile break-up is a luxury in VR
+     float macro=0.5, _dry=0.5;
+     #else
      vec2 _bp=vMapUv*0.22;
      vec2 _bi=floor(_bp), _bf=fract(_bp);
      vec2 _bw=_bf*_bf*(3.0-2.0*_bf);
@@ -1588,6 +1601,7 @@ __mark('terrain');
       _acc+=texture2D(map,vMapUv+_bo)*_wt;
      }
      float macro=_vn(vMapUv*0.06)*0.62+_vn(vMapUv*0.02+5.0)*0.38;
+     #endif
      /* The grass photo was authored far too dark — linear mean luminance ~0.024, an
         almost-black albedo. The terrain's vertex colours are pale on purpose (they TINT
         the photo: sand near the river, rock on slopes, snow up north), so the product
@@ -1603,13 +1617,16 @@ __mark('terrain');
      /* One flat saturated green over the whole map is the loudest "video game" tell there
         is. Real pasture is a patchwork: sun-dried olive on the crowns, damper blue-green in
         the hollows. Two octaves of the same cheap noise, no extra texture fetch. */
+     #ifndef CHEAP_GROUND
      float _dry=_vn(vMapUv*0.011+11.0);
+     #endif
      diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(1.20,1.05,0.60),
                           smoothstep(0.52,0.95,_dry)*0.60);
      diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(0.80,0.95,0.88),
                           smoothstep(0.52,0.08,_dry)*0.35);
      #endif`);
  };
+ groundMat=gmat;
  const ground=new THREE.Mesh(geo,gmat);
  ground.receiveShadow=true;
  scene.add(ground);
@@ -3034,6 +3051,7 @@ for(let i=0;i<14;i++){
  const bSand=new THREE.Mesh(geo,sm);
  bSand.position.set(-220,0,130);
  bSand.receiveShadow=true;
+ biomeOverlays.push(bSand);
  scene.add(bSand);
 }
 /* Hollowpeak snow blanket — same terrain-hugging treatment */
@@ -3067,6 +3085,7 @@ for(let i=0;i<14;i++){
  const ws=new THREE.Mesh(geo,sm2);
  ws.position.set(-160,0,-210);
  ws.receiveShadow=true;
+ biomeOverlays.push(ws);
  scene.add(ws);
 }
 for(let i=0;i<16;i++){
