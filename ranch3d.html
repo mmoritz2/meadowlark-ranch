@@ -7429,13 +7429,21 @@ function tick(){
   if(Math.abs(mvy)>25)mvy=Math.sign(mvy)*25;   // fast travel is not climbing
   vrVel.x+=(mvx-vrVel.x)*kVel;
   vrVel.z+=(mvz-vrVel.z)*kVel;
-  vrVel.y+=(mvy-vrVel.y)*kVel;
+  /* Vertical velocity is spiky where horizontal is steady — a jump or a crest swings it
+     hard in a fraction of a second. Smoothed at the same rate as the horizontal axes the
+     lead below chased those spikes and threw the rider well above and below the saddle, so
+     this one is filtered much more slowly and only a sustained climb survives it. */
+  vrVel.y+=(mvy-vrVel.y)*(1-Math.exp(-2.2*dt));
   vrPrevPos.set(tX,tY,tZ);
   const kH=1-Math.exp(-VR_KH*dt);   // horizontal: quick, so riding still feels direct
   const kV=1-Math.exp(-VR_KV*dt);   // vertical: slow, because bumps are what turn stomachs
   vrPos.x+=((tX+vrVel.x/VR_KH)-vrPos.x)*kH;
   vrPos.z+=((tZ+vrVel.z/VR_KH)-vrPos.z)*kH;
-  vrPos.y+=((tY+vrVel.y/VR_KV)-vrPos.y)*kV;
+  /* And the lead only applies in flight. Climbing is the one place the lag was visible;
+     over ordinary ground the slow filter IS the feature — it is what keeps your head steady
+     while the horse bobs underneath you. */
+  const vLead=player.flying?THREE.MathUtils.clamp(vrVel.y/VR_KV,-0.5,0.5):0;
+  vrPos.y+=((tY+vLead)-vrPos.y)*kV;
   /* A leash, so no filter, trick, jump or teleport can ever visibly part you from the horse.
      Smoothing away a bump is worth it; drifting off the saddle never is. */
   const dy=tY-vrPos.y;
