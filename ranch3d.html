@@ -1305,7 +1305,7 @@ renderer.xr.addEventListener('sessionend',()=>{
   };
  };
  const explain=why=>{
-  b.textContent='🥽 VR mode';
+  b.textContent='🥽 Ride in VR';   // same label either way: it advertises the mode, and the dimming says it needs a headset
   b.style.cssText+='opacity:0.55;border-style:dashed;';
   b.title=why;
   b.onclick=()=>{ if(typeof toast==='function')toast(why); };
