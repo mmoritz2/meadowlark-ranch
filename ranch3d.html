@@ -1530,10 +1530,10 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
   if(sl>0.3)col.lerp(C_ROCK,Math.min(0.85,(sl-0.3)*1.9));
   if(y>7)col.lerp(C_CREST,Math.min(0.5,(y-7)*0.055));
   const rd=Math.abs(z-riverZ(x));
-  if(rd<7)col.lerp(new THREE.Color('#e6d6a8'),(1-rd/7)*0.55);
+  if(rd<9)col.lerp(new THREE.Color('#e6d6a8'),(1-THREE.MathUtils.smoothstep(rd,0,9))*0.55);
   if(z<STREAM_JOIN){
    const sd=Math.abs(x-streamX(z));
-   if(sd<4.5)col.lerp(new THREE.Color('#dcc9a0'),(1-sd/4.5)*0.5);   // sandy stream banks
+   if(sd<6)col.lerp(new THREE.Color('#dcc9a0'),(1-THREE.MathUtils.smoothstep(sd,0,6))*0.5);   // sandy stream banks
   }
   const dB=Math.hypot(x+220,z-130);
   if(dB<170)col.lerp(new THREE.Color('#d9a276'),(1-dB/170)*0.55);
@@ -2804,14 +2804,24 @@ let waterMat=null;   // hoisted: the pond reuses it
     the whole cue. Darken the body, sharpen the reflection, and drive the mix off view angle. */
  waterMat=new THREE.MeshStandardMaterial({map:rTex,color:0x24506f,roughness:0.11,metalness:0.10,side:THREE.DoubleSide,transparent:true,opacity:0.93});
  waterMat.envMapIntensity=1.7;
- waterMat.onBeforeCompile=sh=>{
+ /* fadeEdges is for the river ribbon only: its v runs 0..2 across the width (repeat.y=2),
+    so the banks are at v=0 and v=2. Feathering alpha there stops the shoreline reading as
+    a cut polygon edge against the grass. The pond is a disc with different UVs and gets
+    the fresnel without the fade. */
+ const waterShader=fadeEdges=>sh=>{
   sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',
    `#include <map_fragment>
     float _fres=pow(1.0-abs(dot(normalize(vNormal),normalize(vViewPosition))),4.0);
     diffuseColor.rgb=mix(diffuseColor.rgb*0.55,vec3(0.60,0.74,0.88),_fres*0.85);`);
+  if(fadeEdges)sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>',
+   `#include <alphatest_fragment>
+    float _bank=smoothstep(0.0,0.30,vMapUv.y)*smoothstep(2.0,1.70,vMapUv.y);
+    diffuseColor.a*=_bank;`);
  };
+ waterMat.onBeforeCompile=waterShader(true);
+ waterMat.userData.plainShader=waterShader(false);
  const eA=[],eB=[];
- for(let x=-340;x<=340;x+=8){
+ for(let x=-340;x<=340;x+=3){
   const zc=riverZ(x);
   const y=rawH(x,zc)+0.55;
   eA.push([x,y,zc-4.6]);
@@ -2824,7 +2834,7 @@ let waterMat=null;   // hoisted: the pond reuses it
  // Sparrow Creek stream — a narrow tributary winding down from the southern hills
  {
   const sA=[],sB=[];
-  for(let z=-330;z<=STREAM_JOIN;z+=3){
+  for(let z=-330;z<=STREAM_JOIN;z+=1.5){
    const xc=streamX(z);
    const y=Math.min(rawH(xc,z),rawH(xc,z+3))+0.42;   // hug the downhill side so slopes don't cut the ribbon
    sA.push([xc-1.7,y,z]);
@@ -2957,7 +2967,7 @@ for(let i=0;i<14;i++){
   }
   c.globalAlpha=1;
  },30);
- const geo=new THREE.PlaneGeometry(360,360,64,64);
+ const geo=new THREE.PlaneGeometry(360,360,144,144);   // 2.5/vertex — finer than the terrain it hugs
  geo.rotateX(-Math.PI/2);
  const pos=geo.attributes.position;
  const cols=[];
@@ -2965,7 +2975,7 @@ for(let i=0;i<14;i++){
   const lx=pos.getX(i),lz=pos.getZ(i);
   pos.setY(i,rawH(-220+lx,130+lz)+0.12);
   const r=Math.hypot(lx,lz);
-  cols.push(1,1,1,1-THREE.MathUtils.smoothstep(r,115,172));
+  cols.push(1,1,1,1-THREE.MathUtils.smoothstep(r,96,176));   // wider, softer feather into the grass
  }
  geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,4));
  geo.computeVertexNormals();
@@ -2987,7 +2997,7 @@ for(let i=0;i<14;i++){
   }
   c.globalAlpha=1;
  },26);
- const geo=new THREE.PlaneGeometry(330,330,60,60);
+ const geo=new THREE.PlaneGeometry(330,330,132,132);   // 2.5/vertex, matching the sand
  geo.rotateX(-Math.PI/2);
  const pos=geo.attributes.position;
  const cols=[];
@@ -2995,7 +3005,7 @@ for(let i=0;i<14;i++){
   const lx=pos.getX(i),lz=pos.getZ(i);
   pos.setY(i,rawH(-160+lx,-210+lz)+0.12);
   const r=Math.hypot(lx,lz);
-  cols.push(1,1,1,1-THREE.MathUtils.smoothstep(r,100,158));
+  cols.push(1,1,1,1-THREE.MathUtils.smoothstep(r,84,162));
  }
  geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,4));
  geo.computeVertexNormals();
@@ -3489,6 +3499,8 @@ pondTex.repeat.set(4,4);
 waterAnims.push({tex:pondTex,sx:0.01,sy:0.013});
 const pondMat=waterMat.clone();
 pondMat.map=pondTex;                 // same water response, its own ripple scale
+pondMat.onBeforeCompile=waterMat.userData.plainShader;   // no ribbon-edge fade on a disc
+pondMat.needsUpdate=true;
 const pond=new THREE.Mesh(new THREE.CircleGeometry(4.5,28),pondMat);
 pond.rotation.x=-Math.PI/2;
 pond.position.set(20,0.04,16);
