@@ -1537,11 +1537,11 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
    if(sd<6)col.lerp(new THREE.Color('#dcc9a0'),(1-THREE.MathUtils.smoothstep(sd,0,6))*0.5);   // sandy stream banks
   }
   const dB=Math.hypot(x+220,z-130);
-  if(dB<170)col.lerp(new THREE.Color('#d9a276'),(1-dB/170)*0.55);
+  if(dB<176)col.lerp(new THREE.Color('#d9a276'),0.96*(1-THREE.MathUtils.smoothstep(dB,96,176)));
   const dA=Math.hypot(x-220,z+110);
   if(dA<150)col.lerp(new THREE.Color('#e8e09a'),(1-dA/150)*0.35);
   const dW=Math.hypot(x+160,z+210);
-  if(dW<170)col.lerp(new THREE.Color('#eef2f0'),(1-dW/170)*0.4);
+  if(dW<162)col.lerp(new THREE.Color('#eef2f0'),0.96*(1-THREE.MathUtils.smoothstep(dW,84,162)));
   const vshade=0.88+0.12*THREE.MathUtils.clamp((y+2.5)/6.5,0,1);
   col.multiplyScalar(vshade);
   colors.push(col.r,col.g,col.b);
@@ -2547,6 +2547,12 @@ const SEED_TREES={
    length:[1,0.5,0.18],lengthV:[0,0.1,0.08],curveRes:[10,6,4],curve:[4,18,12],curveBack:[0,0,0],
    curveV:[8,38,42],downAngle:[0,48,55],downAngleV:[0,12,14],rotate:[0,137,137],rotateV:[0,20,20],
    branches:[0,26,14],radialSegments:[12,7,5]}},
+ snowpine:{h:8.6,leaf:{per:8,size:1.0,tilt:64},mat:seedLeafMat(needleCardTex,'#cfe0e4'),bark:barkMat,
+  params:{scale:24,scaleV:3,levels:3,ratio:0.02,ratioPower:1.4,baseSize:0.14,shape:0,flare:0.5,
+   attractionUp:0,baseSplits:0,baseSplitAngle:0,
+   length:[1,0.34,0.34],lengthV:[0,0.08,0.1],curveRes:[12,6,4],curve:[2,12,16],curveBack:[0,0,0],
+   curveV:[4,18,24],downAngle:[0,86,84],downAngleV:[0,10,12],rotate:[0,137,137],rotateV:[0,22,22],
+   branches:[0,30,10],radialSegments:[11,6,4]}},
  pine:{h:9.2,leaf:{per:8,size:1.0,tilt:64},mat:seedLeafMat(needleCardTex,'#6f9a58'),bark:barkMat,
   params:{scale:26,scaleV:3,levels:3,ratio:0.02,ratioPower:1.4,baseSize:0.14,shape:0,flare:0.5,
    attractionUp:0,baseSplits:0,baseSplitAngle:0,
@@ -2557,7 +2563,7 @@ const SEED_TREES={
 function placeSeedTrees(){
  const insts=[];
  const m4t=new THREE.Matrix4(),qt=new THREE.Quaternion(),vt=new THREE.Vector3(),sct=new THREE.Vector3(),et=new THREE.Euler();
- for(const name of ['oak','birch','blossom','pine']){
+ for(const name of ['oak','birch','blossom','pine','snowpine']){
   const list=FOLIAGE[name];
   if(!list||!list.length)continue;
   const cfg=SEED_TREES[name];
@@ -2667,10 +2673,12 @@ function makeBirch(s){
 }
 /* Generated 3D foliage — assign each scatter position a species and instance each
    textured model. The procedural treeline / forest-ring / meadow remain as backdrop. */
-const FOLIAGE={oak:[],birch:[],blossom:[],pine:[],bush:[],flowerbush:[],cactus:[],cactus2:[]};
+const FOLIAGE={oak:[],birch:[],blossom:[],pine:[],snowpine:[],bush:[],flowerbush:[],cactus:[],cactus2:[]};
 const TREE_MIX=['oak','oak','oak','birch','blossom','pine','pine'];   // broadleaf-heavy mix
 const CANYON={x:-220,z:130,r:140};                          // desert region — cacti only, no leafy trees
 const inCoyote=(x,z)=>Math.hypot(x-CANYON.x,z-CANYON.z)<CANYON.r;
+const SNOWF={x:-160,z:-210,r:150};                          // Hollowpeak — evergreens only
+const inSnow=(x,z)=>Math.hypot(x-SNOWF.x,z-SNOWF.z)<SNOWF.r;
 for(let i=0;i<300;i++){                                      // dense forest scatter
  let x,z;
  do{
@@ -2678,15 +2686,15 @@ for(let i=0;i<300;i++){                                      // dense forest sca
   x=Math.cos(a)*rr;z=Math.sin(a)*rr;
  }while((Math.abs(x)<30&&Math.abs(z)<26)||Math.abs(z-riverZ(x))<8||inCoyote(x,z));
  colliders.push({x,z,r:0.8});
- const sp=TREE_MIX[(Math.random()*TREE_MIX.length)|0];
- FOLIAGE[sp].push({x,z,s:1.0+Math.random()*1.0,r:Math.random()*Math.PI*2});   // bigger + more size variety
+ const sp=inSnow(x,z)?'snowpine':TREE_MIX[(Math.random()*TREE_MIX.length)|0];
+ (FOLIAGE[sp]||(FOLIAGE[sp]=[])).push({x,z,s:1.0+Math.random()*1.0,r:Math.random()*Math.PI*2});   // bigger + more size variety
 }
 for(let i=0;i<150;i++){                                      // lots of bushes (no collider — brush past)
  let x,z;
  do{
   const a=Math.random()*Math.PI*2,rr=30+Math.random()*280;
   x=Math.cos(a)*rr;z=Math.sin(a)*rr;
- }while((Math.abs(x)<29&&Math.abs(z)<25)||Math.abs(z-riverZ(x))<7||inCoyote(x,z));
+ }while((Math.abs(x)<29&&Math.abs(z)<25)||Math.abs(z-riverZ(x))<7||inCoyote(x,z)||inSnow(x,z));
  (Math.random()<0.7?FOLIAGE.bush:FOLIAGE.flowerbush).push({x,z,s:0.9+Math.random()*0.9,r:Math.random()*Math.PI*2});
 }
 for(let i=0;i<90;i++){                                       // cacti across Coyote Canyon desert
@@ -2696,7 +2704,7 @@ for(let i=0;i<90;i++){                                       // cacti across Coy
  colliders.push({x,z,r:0.6});
  (Math.random()<0.6?FOLIAGE.cactus:FOLIAGE.cactus2).push({x,z,s:0.9+Math.random()*1.0,r:Math.random()*Math.PI*2});
 }
-const FOLIAGE_H={oak:6.2,birch:6.6,blossom:6.2,pine:7.4,bush:1.9,flowerbush:1.8,cactus:4.4,cactus2:2.4};   // ~units tall (bigger)
+const FOLIAGE_H={snowpine:7.2,oak:6.2,birch:6.6,blossom:6.2,pine:7.4,bush:1.9,flowerbush:1.8,cactus:4.4,cactus2:2.4};   // ~units tall (bigger)
 function placeFoliage(name){
  const list=FOLIAGE[name]; if(!list.length)return;
  new GLTFLoader().load('assets/models/'+name+'_textured.glb',g=>{
@@ -2974,7 +2982,7 @@ for(let i=0;i<14;i++){
  const cols=[];
  for(let i=0;i<pos.count;i++){
   const lx=pos.getX(i),lz=pos.getZ(i);
-  pos.setY(i,rawH(-220+lx,130+lz)+0.12);
+  pos.setY(i,rawH(-220+lx,130+lz)+0.22);
   const r=Math.hypot(lx,lz);
   cols.push(1,1,1,1-THREE.MathUtils.smoothstep(r,96,176));   // wider, softer feather into the grass
  }
@@ -3004,7 +3012,7 @@ for(let i=0;i<14;i++){
  const cols=[];
  for(let i=0;i<pos.count;i++){
   const lx=pos.getX(i),lz=pos.getZ(i);
-  pos.setY(i,rawH(-160+lx,-210+lz)+0.12);
+  pos.setY(i,rawH(-160+lx,-210+lz)+0.22);
   const r=Math.hypot(lx,lz);
   cols.push(1,1,1,1-THREE.MathUtils.smoothstep(r,84,162));
  }
@@ -3094,7 +3102,7 @@ for(let g=0;g<8;g++){
  if(Math.abs(gz-riverZ(gx))<14)continue;
  for(let k=0;k<6;k++){
   const x=gx+(Math.random()-0.5)*22,z=gz+(Math.random()-0.5)*22;
-  if((Math.abs(x)<30&&Math.abs(z)<26)||inCoyote(x,z))continue;
+  if((Math.abs(x)<30&&Math.abs(z)<26)||inCoyote(x,z)||inSnow(x,z))continue;
   if(Math.abs(z-riverZ(x))<10)continue;
   cheapTree(x,z,0.9+Math.random()*0.8);
  }
@@ -3102,7 +3110,7 @@ for(let g=0;g<8;g++){
 for(let i=0;i<24;i++){
  const a=Math.random()*Math.PI*2,rr=30+Math.random()*250;
  const x=Math.cos(a)*rr,z=Math.sin(a)*rr;
- if((Math.abs(x)<28&&Math.abs(z)<23)||Math.abs(z-riverZ(x))<8||inCoyote(x,z))continue;
+ if((Math.abs(x)<28&&Math.abs(z)<23)||Math.abs(z-riverZ(x))<8||inCoyote(x,z)||inSnow(x,z))continue;
  const b=new THREE.Group();
  blob(0.7,0.5,0.7,'#4f8a3f',0,0.4,0,b);
  blob(0.5,0.4,0.5,'#5d9e4f',0.4,0.45,0.2,b);
