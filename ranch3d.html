@@ -449,6 +449,39 @@ camera.add(vrVignette);
    so no gameplay code needs to know VR exists. */
 let vrMenuOpen=false,vrPrevMenuBtn=false,vrPrevTrigger=false,vrHit=null,vrHover='';
 
+const _rhL=new THREE.Vector3(),_rhR=new THREE.Vector3();
+let reinNeutral=0.30,reinCal=0;   // where this rider's hands naturally sit
+/* Reads the two controllers as a pair of reins. Everything is measured against the head so
+   it works whatever height you are, and there is no calibration step to get wrong. */
+function pollReins(){
+ const a=vrCtrls[0],b=vrCtrls[1];
+ if(!a||!b||a.visible===false||b.visible===false)return null;
+ _rhL.copy(a.position);_rhR.copy(b.position);
+ if(_rhL.x>_rhR.x){const t=_rhL.x,y=_rhL.y,z=_rhL.z;   // keep left = the horse's left (-x)
+  _rhL.set(_rhR.x,_rhR.y,_rhR.z);_rhR.set(t,y,z);}
+ const head=camera.position;
+ const fwdL=head.z-_rhL.z, fwdR=head.z-_rhR.z;         // +ve = that hand is out in front
+ const ext=(fwdL+fwdR)*0.5;
+ if(ext<-0.15||ext>1.2)return null;                    // hands somewhere implausible: ignore
+ /* Wherever you naturally hold your hands is "neutral", so nobody has to find an invisible
+    sweet spot. Averaged over the first moment in the headset and clamped to a sane reach,
+    because a fixed threshold had the horse walking off while your hands just rested. */
+ if(reinCal<1){reinCal+=0.02;reinNeutral=reinNeutral*0.9+ext*0.1;return {turn:0,go:0,brake:false};}
+ const n=THREE.MathUtils.clamp(reinNeutral,0.20,0.42);
+ /* Throttle reads the LEADING hand, not the average: drawing one rein back to steer would
+    otherwise halve your speed and pull the horse up mid-turn. Both hands back still halts,
+    because then there is no leading hand left. */
+ const lead=Math.max(fwdL,fwdR);
+ const go=THREE.MathUtils.clamp((lead-(n+0.03))/0.17,0,1);
+ const brake=lead<n-0.10;                              // both reins drawn into your chest
+ // steering: draw one rein back, or carry both hands across
+ const diff=(fwdR-fwdL)/0.16;                          // left hand back -> turn left
+ const lat=((_rhL.x+_rhR.x)*0.5-head.x)/0.20;          // hands carried right -> turn right
+ let turn=diff*0.75-lat*0.55;
+ const t=Math.abs(turn);
+ turn=t<0.12?0:Math.sign(turn)*Math.min(1,(t-0.12)/0.88);
+ return {turn,go,brake};
+}
 function pollVR(){
  const s=renderer.xr.getSession();
  if(!s)return;
@@ -491,10 +524,21 @@ function pollVR(){
   touch.turnA=-shape(stickX,true);            // stick left (-x) turns left (+heading)
   const f=shape(stickY,false);
   touch.goA=f<0?-f:0;                      // forward only; pulling back does not reverse in VR
+  /* Reins. Both controllers are children of the rig, so their positions are already in the
+     horse's frame: rig -Z is the way it faces, +X is its right. Hold your hands out as if
+     you had reins in them — give rein (hands forward) to move off, draw them back to halt,
+     and take one hand back or carry both to a side to turn. Whichever you are actually
+     using — stick or reins — wins, so neither can fight the other. */
+  const rein=pollReins();
+  if(rein){
+   if(Math.abs(rein.turn)>Math.abs(touch.turnA))touch.turnA=rein.turn;
+   if(rein.go>touch.goA)touch.goA=rein.go;
+   touch.brake=rein.brake;
+  }else touch.brake=false;
   if(touch.goA>0.05)touch.go=true;         // keep the booleans truthful for the rest of the game
   if(touch.turnA>0.05)touch.left=true;
   if(touch.turnA<-0.05)touch.right=true;
- }
+ }else touch.brake=false;
  if(menuBtn&&!vrPrevMenuBtn)setVRMenu(!vrMenuOpen);
  if(vrMenuOpen&&trigger&&!vrPrevTrigger&&vrHover)vrMenuClick(vrHover);
  vrPrevMenuBtn=menuBtn;
@@ -1130,6 +1174,7 @@ renderer.xr.addEventListener('sessionstart',()=>{
  vrRig.add(camera);
  vrVignette.visible=true;
  vrPlaced=false;                       // drop the rig straight onto the horse, don't glide in
+ reinCal=0;reinNeutral=0.30;           // re-learn where the reins rest for this session
  setVRMenu(false);
  vrBloomWas=useBloom;
  useBloom=false;                       // EffectComposer can't drive the XR framebuffer
@@ -1149,7 +1194,7 @@ renderer.xr.addEventListener('sessionstart',()=>{
     stereo — swap to a single sample while presenting. */
  if(groundMat){groundMat.defines=groundMat.defines||{};groundMat.defines.CHEAP_GROUND='';groundMat.needsUpdate=true;}
  if(seedTreeInsts)seedTreeInsts.forEach(m=>{m.userData.vrWas=m.count;m.count=Math.ceil((m.userData.fullCount||m.count)*0.45);});
- if(typeof toast==='function')toast('🥽 Left stick to ride · trigger to gallop · A to jump');
+ if(typeof toast==='function')toast('🥽 Hold the reins! Hands forward to ride, back to halt, one hand back to turn · trigger gallops · A jumps');
 });
 renderer.xr.addEventListener('sessionend',()=>{
  vrRig.remove(camera);
@@ -4874,7 +4919,7 @@ addEventListener('keydown',e=>{
 addEventListener('keyup',e=>{keys[e.code]=false;});
 // turnA/goA are the analog VR thumbstick (-1..1 steer, 0..1 throttle); the booleans are
 // what the keyboard and the on-screen buttons set, and what most of the game reads.
-const touch={left:false,right:false,go:false,gal:false,jump:false,turnA:0,goA:0};
+const touch={left:false,right:false,go:false,gal:false,jump:false,turnA:0,goA:0,brake:false};
 window._touch=touch;
 function bindHold(id,key){
  const el=$(id);
@@ -6665,7 +6710,8 @@ function tick(){
  }
  const inVR=renderer.xr.isPresenting;
  if(inVR&&target>0&&touch.goA>0)target*=0.34+0.66*touch.goA;   // ease the stick out of a walk
- const accel=target>player.speed?1.7:2.8;
+ if(touch.brake){target=0;}                       // reins drawn back into your chest = whoa
+ const accel=target>player.speed?1.7:(touch.brake?5.2:2.8);
  player.speed+=(target-player.speed)*Math.min(1,dt*accel);
  if(Math.abs(player.speed)<0.05&&!fwd&&!back)player.speed=0;
  /* Steering. In VR the thumbstick drives this as a continuous value; on the keyboard a key
@@ -6859,8 +6905,17 @@ function tick(){
   }
   const bL=(RIG.attachedTo===player.mesh&&TACK.bitL)?TACK.bitL:player.parts.bitL;
   const bR=(RIG.attachedTo===player.mesh&&TACK.bitR)?TACK.bitR:player.parts.bitR;
-  updateRein(reinL,rid.handL,bL);
-  updateRein(reinR,rid.handR,bR);
+  /* In VR the rider is hidden, so hang the reins off your real hands instead of hers. It is
+     the difference between steering by magic and holding the reins. bitL sits on +x, so pair
+     it with whichever controller is further right. */
+  let hL=rid.handL,hR=rid.handR;
+  if(renderer.xr.isPresenting&&vrCtrls[0]&&vrCtrls[1]&&vrCtrls[0].visible!==false&&vrCtrls[1].visible!==false){
+   const rightIsZero=vrCtrls[0].position.x>vrCtrls[1].position.x;
+   hL=rightIsZero?vrCtrls[0]:vrCtrls[1];      // -> bitL (+x side)
+   hR=rightIsZero?vrCtrls[1]:vrCtrls[0];
+  }
+  updateRein(reinL,hL,bL);
+  updateRein(reinR,hR,bR);
  }
  for(const a of herd){
   const hh=myHorses[a.idx];
