@@ -449,14 +449,18 @@ camera.add(vrVignette);
    so no gameplay code needs to know VR exists. */
 let vrMenuOpen=false,vrPrevMenuBtn=false,vrPrevTrigger=false,vrHit=null,vrHover='';
 
-const _rhL=new THREE.Vector3(),_rhR=new THREE.Vector3();
+const _rhL=new THREE.Vector3(),_rhR=new THREE.Vector3(),_rsL=new THREE.Vector3(),_rsR=new THREE.Vector3();
 let reinNeutral=0.30,reinCal=0;   // where this rider's hands naturally sit
 /* Reads the two controllers as a pair of reins. Everything is measured against the head so
    it works whatever height you are, and there is no calibration step to get wrong. */
 function pollReins(){
  const a=vrCtrls[0],b=vrCtrls[1];
  if(!a||!b||a.visible===false||b.visible===false)return null;
- _rhL.copy(a.position);_rhR.copy(b.position);
+ /* Low-pass the hand poses. Controller tracking is noisy at the millimetre level and the
+    steering term is a DIFFERENCE between two hands, which doubles that noise — raw, it read
+    as twitch. */
+ _rsL.lerp(a.position,0.25);_rsR.lerp(b.position,0.25);
+ _rhL.copy(_rsL);_rhR.copy(_rsR);
  if(_rhL.x>_rhR.x){const t=_rhL.x,y=_rhL.y,z=_rhL.z;   // keep left = the horse's left (-x)
   _rhL.set(_rhR.x,_rhR.y,_rhR.z);_rhR.set(t,y,z);}
  const head=camera.position;
@@ -472,14 +476,14 @@ function pollReins(){
     otherwise halve your speed and pull the horse up mid-turn. Both hands back still halts,
     because then there is no leading hand left. */
  const lead=Math.max(fwdL,fwdR);
- const go=THREE.MathUtils.clamp((lead-(n+0.03))/0.17,0,1);
+ const go=THREE.MathUtils.clamp((lead-(n+0.05))/0.24,0,1);
  const brake=lead<n-0.10;                              // both reins drawn into your chest
  // steering: draw one rein back, or carry both hands across
- const diff=(fwdR-fwdL)/0.16;                          // left hand back -> turn left
- const lat=((_rhL.x+_rhR.x)*0.5-head.x)/0.20;          // hands carried right -> turn right
- let turn=diff*0.75-lat*0.55;
+ const diff=(fwdR-fwdL)/0.28;                          // left hand back -> turn left
+ const lat=((_rhL.x+_rhR.x)*0.5-head.x)/0.34;          // hands carried right -> turn right
+ let turn=diff*0.70-lat*0.40;
  const t=Math.abs(turn);
- turn=t<0.12?0:Math.sign(turn)*Math.min(1,(t-0.12)/0.88);
+ turn=t<0.16?0:Math.sign(turn)*Math.min(1,(t-0.16)/0.84);   // dead zone eats tracking noise
  return {turn,go,brake};
 }
 function pollVR(){
@@ -1181,19 +1185,19 @@ renderer.xr.addEventListener('sessionstart',()=>{
  renderer.setPixelRatio(1);
  /* The Quest draws this scene twice per frame at 72-90Hz. Everything below buys that back. */
  try{renderer.xr.setFoveation(1);}catch(e){}      // cheapest big win: soften the edges of vision
- try{renderer.xr.setFramebufferScaleFactor(0.85);}catch(e){}   // ~28% fewer pixels per eye
+ try{renderer.xr.setFramebufferScaleFactor(0.72);}catch(e){}   // ~48% fewer pixels per eye
  vrShadowWas=renderer.shadowMap.enabled;
  renderer.shadowMap.enabled=false;                // the shadow pass is the single largest cost
  vrFarWas=camera.far;vrFogNearWas=scene.fog.density;
- camera.far=900;camera.updateProjectionMatrix();
- scene.fog.density=0.0052;                        // pull the fog in so less world is drawn
- if(grassInst){vrGrassWas=grassInst.count;grassInst.count=Math.min(grassInst.count,3200);}
+ camera.far=460;camera.updateProjectionMatrix();
+ scene.fog.density=0.0075;                        // pull the fog in so less world is drawn
+ if(grassInst){vrGrassWas=grassInst.count;grassInst.count=Math.min(grassInst.count,1200);}
  if(typeof fireflies!=='undefined'&&fireflies){vrFireWas=fireflies.count;fireflies.count=44;}
  /* The ground covers most of both eyes, and its shader was doing four texture samples plus
     three noise evaluations per pixel to hide texture tiling. That is a luxury at 90Hz in
     stereo — swap to a single sample while presenting. */
  if(groundMat){groundMat.defines=groundMat.defines||{};groundMat.defines.CHEAP_GROUND='';groundMat.needsUpdate=true;}
- if(seedTreeInsts)seedTreeInsts.forEach(m=>{m.userData.vrWas=m.count;m.count=Math.ceil((m.userData.fullCount||m.count)*0.45);});
+ if(seedTreeInsts)seedTreeInsts.forEach(m=>{m.userData.vrWas=m.count;m.count=Math.ceil((m.userData.fullCount||m.count)*0.26);});
  if(typeof toast==='function')toast('🥽 Hold the reins! Hands forward to ride, back to halt, one hand back to turn · trigger gallops · A jumps');
 });
 renderer.xr.addEventListener('sessionend',()=>{
@@ -4733,21 +4737,62 @@ function makeRider(custom){
  return {g:r,handL:hands[-1],handR:hands[1],J};
 }
 const reinMat=new THREE.MeshStandardMaterial({color:0x241812,roughness:0.7,metalness:0.05});
-function makeRein(){                          // thin tube so the rein reads as a leather strap (a Line is 1px / faint)
- const m=new THREE.Mesh(new THREE.BufferGeometry(),reinMat);
+/* A rein is a fixed-topology tube built ONCE and rewritten in place. It used to dispose and
+   allocate a fresh TubeGeometry every frame, twice — about 144 geometry allocations and GPU
+   uploads a second in VR, which is a stutter you can feel, and it got worse once the reins
+   were hung off the controllers and moved constantly. */
+const REIN_SEG=8, REIN_RAD=5;
+function makeRein(){
+ const g=new THREE.BufferGeometry();
+ const nv=(REIN_SEG+1)*(REIN_RAD+1);
+ g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(nv*3),3));
+ g.setAttribute('normal',new THREE.BufferAttribute(new Float32Array(nv*3),3));
+ g.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(nv*2),2));
+ const idx=[];
+ for(let i=0;i<REIN_SEG;i++)for(let j=0;j<REIN_RAD;j++){
+  const a=i*(REIN_RAD+1)+j, b=a+REIN_RAD+1;
+  idx.push(a,b,a+1, b,b+1,a+1);
+ }
+ g.setIndex(idx);
+ g.boundingSphere=new THREE.Sphere(new THREE.Vector3(),1e4);   // never culled, never recomputed
+ const m=new THREE.Mesh(g,reinMat);
  m.frustumCulled=false; m.visible=false; m.castShadow=false;
  scene.add(m);
  return m;
 }
 const reinL=makeRein(),reinR=makeRein();
 const _v1=new THREE.Vector3(),_v2=new THREE.Vector3(),_vm=new THREE.Vector3(),_vb=new THREE.Vector3();
+const _rp=new THREE.Vector3(),_rt=new THREE.Vector3(),_rr=new THREE.Vector3(),_ru=new THREE.Vector3();
+const _RUP=new THREE.Vector3(0,1,0);
 function updateRein(mesh,handObj,bitObj){
  handObj.getWorldPosition(_v1);
  bitObj.getWorldPosition(_v2);
  _vm.lerpVectors(_v1,_v2,0.5);_vm.y-=0.05;                 // slight drape
- const curve=new THREE.QuadraticBezierCurve3(_v1.clone(),_vm.clone(),_v2.clone());
- if(mesh.geometry)mesh.geometry.dispose();
- mesh.geometry=new THREE.TubeGeometry(curve,10,0.013,6,false);
+ const pos=mesh.geometry.attributes.position, nrm=mesh.geometry.attributes.normal;
+ const R=0.013;
+ for(let i=0;i<=REIN_SEG;i++){
+  const t=i/REIN_SEG, mt=1-t;
+  // quadratic bezier point and tangent, written straight into the existing buffers
+  _rp.set(mt*mt*_v1.x+2*mt*t*_vm.x+t*t*_v2.x,
+          mt*mt*_v1.y+2*mt*t*_vm.y+t*t*_v2.y,
+          mt*mt*_v1.z+2*mt*t*_vm.z+t*t*_v2.z);
+  _rt.set(2*(mt*(_vm.x-_v1.x)+t*(_v2.x-_vm.x)),
+          2*(mt*(_vm.y-_v1.y)+t*(_v2.y-_vm.y)),
+          2*(mt*(_vm.z-_v1.z)+t*(_v2.z-_vm.z)));
+  if(_rt.lengthSq()<1e-9)_rt.set(0,0,1);
+  _rt.normalize();
+  _rr.crossVectors(_rt,_RUP);
+  if(_rr.lengthSq()<1e-6)_rr.set(1,0,0); else _rr.normalize();
+  _ru.crossVectors(_rr,_rt).normalize();
+  for(let j=0;j<=REIN_RAD;j++){
+   const a=j/REIN_RAD*Math.PI*2, ca=Math.cos(a), sa=Math.sin(a);
+   const nx=_rr.x*ca+_ru.x*sa, ny=_rr.y*ca+_ru.y*sa, nz=_rr.z*ca+_ru.z*sa;
+   const k=i*(REIN_RAD+1)+j;
+   pos.setXYZ(k,_rp.x+nx*R,_rp.y+ny*R,_rp.z+nz*R);
+   nrm.setXYZ(k,nx,ny,nz);
+  }
+ }
+ pos.needsUpdate=true; nrm.needsUpdate=true;
  mesh.visible=true;
 }
 
@@ -6720,11 +6765,11 @@ function tick(){
     VR also turns slower than the flat game for the same reason. */
  let turn=(left?1:0)-(right?1:0);
  if(inVR){
-  player.turnSm=(player.turnSm||0)+(touch.turnA-(player.turnSm||0))*(1-Math.exp(-7*dt));
+  player.turnSm=(player.turnSm||0)+(touch.turnA-(player.turnSm||0))*(1-Math.exp(-5*dt));
   if(Math.abs(player.turnSm)<0.002)player.turnSm=0;
   turn=player.turnSm;
  }else player.turnSm=turn;   // stay in sync, so putting the headset on doesn't jerk the horse
- const yawRate=(1.7+Math.min(1.5,Math.abs(player.speed)*0.1))*(inVR?0.62:1);
+ const yawRate=(1.7+Math.min(1.5,Math.abs(player.speed)*0.1))*(inVR?0.45:1);
  player.heading+=turn*dt*yawRate;
  player.pos.x+=Math.sin(player.heading)*player.speed*dt;
  player.pos.z+=Math.cos(player.heading)*player.speed*dt;
