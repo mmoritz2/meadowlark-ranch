@@ -60,8 +60,19 @@ becomes neutral.
 
 The reins are drawn from the controllers themselves, so you watch them move as you
 ride. Throttle reads the *leading* hand rather than the average, so drawing one rein
-back to steer does not also pull the horse up. The thumbstick still works — whichever
-input you are actually using wins, so neither can fight the other.
+back to steer does not also pull the horse up.
+
+The thumbstick works too. **Status → the last button on the bottom row** cycles which
+input the horse listens to, and remembers it:
+
+| | |
+|---|---|
+| 🎮 Either | reins or stick, whichever you are actually using wins (default) |
+| 🎗️ Reins | stick ignored — nothing but your hands moves the horse |
+| 🕹️ Stick | reins are along for the ride but do not steer |
+
+"Either" is the nicest way to play, but it does mean a resting hand can nudge the
+horse when you meant to ride on the stick alone, so each can be picked outright.
 
 ## What's in it
 
@@ -108,7 +119,11 @@ at startup). The interesting parts are the systems written on top of it:
   flow from arguing with the inner ear.
 - **Performance.** Instanced foliage and critters, a graphics-quality selector, and a
   separate VR budget: foveation, a reduced eye buffer, thinned foliage, and a cheaper
-  single-sample ground shader, since the ground fills most of both eyes.
+  single-sample ground shader, since the ground fills most of both eyes. Props that come
+  out of image-to-3D arrive at a flat 40k triangles each whatever they are, which is a
+  silly price for a shrub you gallop past — they are decimated to a budget and given
+  smooth normals, because the source meshes ship without any and flat shading is what
+  actually makes a low-poly mesh read as low-poly.
 
 ### The art pipeline
 

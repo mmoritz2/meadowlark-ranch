@@ -395,7 +395,6 @@ renderer.toneMapping=THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure=1.05;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
-const __T0=performance.now();const __M=[];const __mark=n=>__M.push([n,Math.round(performance.now()-__T0)]);
 const scene=new THREE.Scene();
 scene.fog=new THREE.FogExp2(0xbfd3e8,0.0027);   // exponential; tinted to the sky so distance hazes toward it
 const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,5000);
@@ -452,6 +451,13 @@ let vrMenuOpen=false,vrPrevMenuBtn=false,vrPrevTrigger=false,vrHit=null,vrHover=
 
 const _rhL=new THREE.Vector3(),_rhR=new THREE.Vector3(),_rsL=new THREE.Vector3(),_rsR=new THREE.Vector3();
 let reinNeutral=0.30,reinCal=0;   // where this rider's hands naturally sit
+
+/* Which VR input actually drives the horse. 'either' reads both and lets whichever you are
+   using win, which is the nicest default but means a resting hand can still nudge the horse
+   if you meant to ride on the stick alone — so both can be picked outright. */
+const VRCTRL=['either','reins','stick'];
+const VRCTRL_LBL={either:'🎮 Either',reins:'🎗️ Reins',stick:'🕹️ Stick'};
+let vrCtrlMode=(()=>{try{const v=localStorage.getItem('mlrVRCtrl');return VRCTRL.includes(v)?v:'either';}catch(e){return 'either';}})();
 /* Reads the two controllers as a pair of reins. Everything is measured against the head so
    it works whatever height you are, and there is no calibration step to get wrong. */
 function pollReins(){
@@ -526,15 +532,17 @@ function pollVR(){
    if(a<DZ)return 0;
    const n=Math.min(1,(a-DZ)/(1-DZ));      // rescaled so it starts at 0, not at a step
    return Math.sign(v)*(curved?n*(0.35+0.65*n):n);};
-  touch.turnA=-shape(stickX,true);            // stick left (-x) turns left (+heading)
-  const f=shape(stickY,false);
-  touch.goA=f<0?-f:0;                      // forward only; pulling back does not reverse in VR
+  if(vrCtrlMode!=='reins'){
+   touch.turnA=-shape(stickX,true);           // stick left (-x) turns left (+heading)
+   const f=shape(stickY,false);
+   touch.goA=f<0?-f:0;                     // forward only; pulling back does not reverse in VR
+  }
   /* Reins. Both controllers are children of the rig, so their positions are already in the
      horse's frame: rig -Z is the way it faces, +X is its right. Hold your hands out as if
      you had reins in them — give rein (hands forward) to move off, draw them back to halt,
      and take one hand back or carry both to a side to turn. Whichever you are actually
      using — stick or reins — wins, so neither can fight the other. */
-  const rein=pollReins();
+  const rein=vrCtrlMode==='stick'?null:pollReins();
   if(rein){
    if(Math.abs(rein.turn)>Math.abs(touch.turnA))touch.turnA=rein.turn;
    if(rein.go>touch.goA)touch.goA=rein.go;
@@ -836,10 +844,13 @@ function drawVRMenu(){
   vrButton(c,'care:water','💧 Water',276,472,232,86,'');
   vrButton(c,'care:groom','🧼 Groom',516,472,232,86,'');
   vrButton(c,'care:pet','💗 Pet',756,472,232,86,'');
-  vrButton(c,'act:trick','🌀 Trick',36,574,232,68,'');
-  vrButton(c,'act:fly','🪽 Fly',276,574,232,68,'');
-  vrButton(c,'act:photo','📷 Photo',516,574,232,68,'');
-  vrButton(c,'act:mute',vrTxt('muteBtn','🔊')+' Sound',756,574,232,68,'');
+  vrButton(c,'act:trick','🌀 Trick',36,574,182,68,'',24);
+  vrButton(c,'act:fly','🪽 Fly',226,574,182,68,'',24);
+  vrButton(c,'act:photo','📷 Photo',416,574,182,68,'',24);
+  vrButton(c,'act:mute',vrTxt('muteBtn','🔊')+' Sound',606,574,182,68,'',24);
+  /* How you steer. Cycles either / reins only / stick only — the label is the mode that
+     is live now, so there is nothing to read to find out what you are on. */
+  vrButton(c,'act:ctrl',VRCTRL_LBL[vrCtrlMode],796,574,182,68,'',24);
  }else if(vrPage==='map'){
   const mini=$('mini');
   const S=440,MX=(VRM_W-S)/2,MY=176;
@@ -1113,6 +1124,15 @@ function vrMenuClick(id){
    toast(PASS_REWARDS[i].tack?'✨ Golden saddle unlocked — it is in the Tack shop!':'🎟️ Pass reward claimed!');}
   drawVRMenu();return;
  }
+ if(id==='act:ctrl'){
+  vrCtrlMode=VRCTRL[(VRCTRL.indexOf(vrCtrlMode)+1)%VRCTRL.length];
+  try{localStorage.setItem('mlrVRCtrl',vrCtrlMode);}catch(e){}
+  reinCal=0;                               // re-learn where your hands rest for the new mode
+  toast(vrCtrlMode==='reins'?'🎗️ Reins only — the thumbstick is off.'
+       :vrCtrlMode==='stick'?'🕹️ Thumbstick only — the reins are just for show.'
+       :'🎮 Either — reins or stick, whichever you use.');
+  drawVRMenu();return;
+ }
  if(id==='act:trick'){
   try{window._tkN=((window._tkN||0)+1)%3;startTrick(['roll','spin','flip'][window._tkN]);}catch(e){}
   setVRMenu(false);return;
@@ -1301,7 +1321,6 @@ const sky=new Sky();
 sky.scale.setScalar(450000);
 setSky(sky);dimSky(sky);
 scene.add(sky);
-__mark('pmrem');
 const pmrem=new THREE.PMREMGenerator(renderer);
 /* PBR ambient comes from a PMREM'd sky — bake one per time-of-day band and swap */
 const envMaps={};let curEnv='day';
@@ -1352,16 +1371,6 @@ let dayT=0.22;
 const weather={mode:'clear',timer:90+Math.random()*120};
 window._weather=weather;
 window._setDay=v=>{dayT=((v%1)+1)%1;};   // debug/photo helper: 0=midnight 0.5=noon
-{ // dev/screenshot helper: ?shot=x,y,z,tx,ty,tz[,day] pins the camera for captures
- const sp=new URLSearchParams(location.search).get('shot');
- if(sp){
-  const a=sp.split(',').map(Number);
-  if(a.length>=6&&a.every(v=>isFinite(v))){
-   window.__shotCam=a;
-   if(a.length>=7)dayT=((a[6]%1)+1)%1;
-  }
- }
-}
 const rain=new THREE.InstancedMesh(new THREE.BoxGeometry(0.012,0.55,0.012),
  new THREE.MeshBasicMaterial({color:0xaac8e0,transparent:true,opacity:0.5}),400);
 rain.visible=false;rain.frustumCulled=false;
@@ -1625,7 +1634,6 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  c.fillStyle=g;c.fillRect(0,0,w,h);
 });
 
-__mark('terrain');
 /* ================= terrain ================= */
 {
  const geo=new THREE.PlaneGeometry(1000,1000,256,256);
@@ -2305,7 +2313,6 @@ function leatherMat(hex){
 }
 
 /* ================= scenery ================= */
-__mark('mountains');
 // distant mountains
 /* Was a smooth cone with a SECOND snow cone floating inside it, whose intersection showed
    as a hard crease against the sky, and the rock was so pale it rendered brighter than the
@@ -2845,6 +2852,7 @@ function placeFoliage(name){
   const minY=geo.boundingBox.min.y, h=(geo.boundingBox.max.y-minY)||1;
   const mat=src.material; mat.roughness=0.9; mat.metalness=0;
   const inst=new THREE.InstancedMesh(geo,mat,list.length);
+  inst.name='foliage_'+name;
   inst.castShadow=true; inst.receiveShadow=true; inst.frustumCulled=false;
   const m=new THREE.Matrix4(),q=new THREE.Quaternion(),p=new THREE.Vector3(),sc=new THREE.Vector3();
   list.forEach((tp,i)=>{
@@ -2867,7 +2875,6 @@ function placeFoliage(name){
  const pollRig=setInterval(()=>{ if(RIG.ready){clearInterval(pollRig);startFoliage();} },200);
  setTimeout(()=>{clearInterval(pollRig);startFoliage();},7000);
 }
-__mark('seedtrees');
 seedTreeInsts=placeSeedTrees();                                    // trees are Weber–Penn generated
 seedTreeInsts.forEach(m=>{m.userData.fullCount=m.count;if(quality==='low')m.count=Math.ceil(m.userData.fullCount*0.55);});
 // pine treeline behind the barn (like an alpine ranch)
@@ -4841,7 +4848,6 @@ function updateRein(mesh,handObj,bitObj){
 const player={mesh:null,parts:null,rider:null,pos:new THREE.Vector3(0,0,8),heading:Math.PI,speed:0,vy:0,y:0,phase:0,amp:0,lastStep:0,alt:false,earT:2,earA:0};
 let nearMount=-1,mountHintT=0,lowNeedT=0;
 let herd=[];
-__mark('rebuildAll-def');
 function rebuildAll(){
  if(player.mesh)scene.remove(player.mesh);
  for(const a of herd)scene.remove(a.parts.group);
@@ -7052,6 +7058,13 @@ function tick(){
   if(a.earA>0){a.earA-=dt;a.parts.ears[1].rotation.x=Math.sin(a.earA*28)*0.35;}
   a.parts.group.position.set(a.pos.x,groundH(a.pos.x,a.pos.z),a.pos.z);
   a.parts.group.rotation.y=a.heading;
+  /* Each procedural horse is about 80 separate meshes, so a full pasture is well over a
+     thousand draw calls — which is what actually costs frames in a headset, far more than
+     pixels do. Hide the ones too far away to read. In VR the fog closes at ~130 units, so a
+     horse past that contributes nothing you can see; on a monitor the range is generous
+     enough that the pasture still looks populated from the ranch. */
+  const hdd=Math.hypot(a.pos.x-player.pos.x,a.pos.z-player.pos.z);
+  a.parts.group.visible=hdd<(renderer.xr.isPresenting?95:260);
  }
  updatePet(dt,t);
  nearMount=-1;
@@ -7462,11 +7475,6 @@ function tick(){
    camera.updateProjectionMatrix();
   }
  }
- if(window.__shotCam){   // ?shot= capture helper pins the camera
-  const sc=window.__shotCam;
-  camera.position.set(sc[0],sc[1],sc[2]);
-  camera.lookAt(sc[3],sc[4],sc[5]);
- }
  /* day cycle & weather — a real day: dawn, noon, golden hour, dusk, moonlit night */
  dayT=(dayT+dt/480)%1;
  const elev=-12+66*(0.5-0.5*Math.cos(dayT*Math.PI*2));   // noon 54° … midnight -12°
@@ -7671,15 +7679,6 @@ function tick(){
   if(!USE_GEN_HORSE||loadWaitT>12||(RIG.ready&&RIG.attachedTo===player.mesh))ld.remove();
  }
 }
-if(location.search.includes('phases')){ (async()=>{
- const w=ms=>new Promise(r=>setTimeout(r,ms));
- __mark('module-end');
- for(let i=0;i<400;i++){ if(RIG.ready&&RIG.attachedTo===player.mesh)break; await w(25); }
- __mark('horse-ready');
- for(let i=0;i<400;i++){ if(!document.getElementById('load'))break; await w(25); }
- __mark('curtain-down');
- await fetch('http://127.0.0.1:8765/phases.png',{method:'POST',body:btoa(JSON.stringify(__M))});
-})(); }
 window.render_game_to_text=()=>JSON.stringify({
  mode:course?'course':'free_roam',
  coordinateSystem:'x east/west, z north/south, y up',
