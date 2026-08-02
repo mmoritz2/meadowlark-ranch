@@ -804,9 +804,11 @@ function drawVRMenu(){
  c.textAlign='right';
  c.fillText('🪙 '+vrTxt('coinEl','0')+'   💎 '+vrTxt('gemEl','0'),VRM_W-36,48);
 
- const TABS=[['status','Status'],['map','Map'],['shop','Shop'],['stable','Stable'],['quests','Quests'],['events','Events']];
- TABS.forEach(([k,lbl],i)=>vrButton(c,'tab:'+k,lbl,30+i*138,80,128,50,vrPage===k?'dark':'',22));
- vrButton(c,'exit','Leave',30+6*138,80,128,50,'',22);
+ const TABS=[['status','Status'],['map','Map'],['shop','Shop'],['stable','Stable'],['quests','Quests'],['events','Events'],['pass','Pass']];
+ /* Seven tabs plus Leave will not fit at the old 138px pitch on a 1024-wide panel, so the
+    row is tightened rather than letting Leave run off the edge. */
+ TABS.forEach(([k,lbl],i)=>vrButton(c,'tab:'+k,lbl,18+i*125,80,118,50,vrPage===k?'dark':'',21));
+ vrButton(c,'exit','Leave',18+7*125,80,118,50,'',21);
 
  const hasSub=(vrPage==='shop'||vrPage==='quests');
  if(vrPage==='shop'){
@@ -875,6 +877,7 @@ function drawVRList(c){
   else if(vrPage==='stable')note=buildVRStable(rows,sv);
   else if(vrPage==='quests')note=buildVRQuests(rows,sv);
   else if(vrPage==='events')note=buildVREvents(rows,sv);
+  else if(vrPage==='pass')note=buildVRPass(rows,sv);
  }catch(e){
   rows.length=0;
   note='Could not read your save just now — try again in a moment.';
@@ -1021,6 +1024,26 @@ function buildVRStable(rows,sv){
  return 'Your stable is empty.';
 }
 
+/* The Trail Pass had no VR page at all — the 🏅 panel only exists in the flat HUD, so in a
+   headset you could earn pass points and never see or claim them. */
+function buildVRPass(rows,sv){
+ const pts=(sv.pass&&sv.pass.pts)||0;
+ const tier=Math.min(PASS_REWARDS.length,Math.floor(pts/200));
+ const claims=sv.lbClaims||{};
+ rows.push(y=>{
+  vrListRow(c0,y,'🎟️','Trail Pass — tier '+tier+' / '+PASS_REWARDS.length,pts+' points   ·   '+(200-(pts%200))+' to the next tier',false);
+  vrRowBar(c0,102,y+60,540,(pts%200)/2);
+ });
+ PASS_REWARDS.forEach((r,i)=>{
+  const key='p'+i, cl=!!claims[key], unlocked=tier>=i+1;
+  const rw=r.c?r.c+' coins':r.g?(r.g+' gem'+(r.g>1?'s':'')):'Golden saddle';
+  rows.push(y=>{
+   vrListRow(c0,y,cl?'✅':(unlocked?'🎁':'🔒'),'Tier '+(i+1),rw,cl||!unlocked);
+   if(!cl&&unlocked)vrButton(c0,'pass:'+i,'Claim',760,y+13,228,48,'dark',24);
+  });
+ });
+ return 'Earn pass points from events, jumps, carrots, care and daily gifts.';
+}
 function buildVRQuests(rows,sv){
  if(vrQuestTab==='daily'){
   try{if(typeof ensureDq==='function')ensureDq(sv);}catch(e){}
@@ -1072,6 +1095,23 @@ function vrMenuClick(id){
  if(id.startsWith('shoptab:')){vrShopTab=id.slice(8);vrScroll.shop=0;drawVRMenu();return;}
  if(id.startsWith('questtab:')){vrQuestTab=id.slice(9);vrScroll.quests=0;drawVRMenu();return;}
  if(id.startsWith('care:')){try{careAct(id.slice(5));}catch(e){}drawVRMenu();return;}
+ if(id.startsWith('pass:')){
+  const i=+id.slice(5);let ok=false;
+  syncSave(sv=>{
+   sv.lbClaims=sv.lbClaims||{};
+   const key='p'+i, tp=Math.floor(((sv.pass&&sv.pass.pts)||0)/200);
+   if(sv.lbClaims[key]||tp<i+1)return;
+   sv.lbClaims[key]=true;
+   const r=PASS_REWARDS[i];
+   if(r.c)sv.coins+=r.c;
+   if(r.g)sv.gems+=r.g;
+   if(r.tack)sv.goldTack=true;
+   ok=true;
+  });
+  if(ok){refreshWallet();sGem();
+   toast(PASS_REWARDS[i].tack?'✨ Golden saddle unlocked — it is in the Tack shop!':'🎟️ Pass reward claimed!');}
+  drawVRMenu();return;
+ }
  if(id==='act:trick'){
   try{window._tkN=((window._tkN||0)+1)%3;startTrick(['roll','spin','flip'][window._tkN]);}catch(e){}
   setVRMenu(false);return;
