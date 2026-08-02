@@ -306,7 +306,7 @@ function addXp3D(n){
    const st=['speed','stamina','jump'][Math.floor(Math.random()*3)];
    h.stats[st]=Math.min(10,h.stats[st]+1);
   }
-  if(h.foal&&h.level>=3){h.foal=false;grew=true;}
+  if(h.foal&&h.level>=3){h.foal=false;grew=true;s.stats=s.stats||{};s.stats.grown=(s.stats.grown||0)+1;}
  });
  if(leveled){
   myHorses[rideIdx].level=lvl;
@@ -4303,7 +4303,7 @@ const jumps=[];
 /* The five practice fences live in the arena permanently. A course drops its own numbered
    fences in the same space, so during an event both sets were standing and you could not
    tell which one you were meant to take next. */
-function setPracticeJumps(on){for(const j of jumps)if(j.g)j.g.visible=on;}
+function setPracticeJumps(on){for(const j of jumps){if(j.g)j.g.visible=on;j.prevSide=0;}}
 function makeJump(x,z,rotY){
  const g=new THREE.Group();
  box(0.17,1.1,0.17,paintMat('#b03a2a'),-1.5,0.55,0,g);
@@ -4921,7 +4921,16 @@ function startCourse(ev){
 }
 function cancelCourse(){
  if(!course)return;
- for(const j of course.jumps)scene.remove(j.g);
+ /* Course fences are built fresh per event and were only unparented, so every event
+    entered, quit or replayed leaked its geometries and its numbered-sign canvas texture.
+    Materials from smat()/paintMat() are shared caches — leave those alone. */
+ for(const j of course.jumps){
+  scene.remove(j.g);
+  j.g.traverse(o=>{
+   if(o.isMesh&&o.geometry)o.geometry.dispose();
+   if(o.isSprite&&o.material){if(o.material.map)o.material.map.dispose();o.material.dispose();}
+  });
+ }
  setPracticeJumps(true);
  course=null;
  arrow.visible=false;
@@ -4933,11 +4942,11 @@ function finishCourse(){
  const par=c.par||ev.n*9;
  const stars=c.t<par?'⭐⭐⭐':c.t<par*1.4?'⭐⭐':'⭐';
  let first=false;
- try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));first=!!(s&&s.trophies&&!s.trophies[ev.id]);}catch(e){}
+ try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));first=!!(s&&!(s.trophies&&s.trophies[ev.id]));}catch(e){}
  addCoins(ev.reward);
  addXp3D(Math.round(ev.reward/8));
  passAdd(50);
- if(first){addGems(1);syncSave(s=>{s.trophies[ev.id]=true;});}
+ if(first){addGems(1);syncSave(s=>{s.trophies=s.trophies||{};s.trophies[ev.id]=true;});}
  sChime();sGem();
  toast('🏆 '+ev.name+' — '+stars+' in '+c.t.toFixed(1)+'s! +'+ev.reward+'🪙'+(first?' +1💎':''));
  if(net.client&&net.client.connected)netSendChat('🏆 finished '+ev.name+' in '+c.t.toFixed(1)+'s '+stars);
@@ -5039,9 +5048,9 @@ function careAct(k){
   }
   renderCare();return;
  }
- let msg='',ok=true;
+ let msg='',ok=false;
  syncSave(s=>{
-  const h=s.horses[rideIdx];if(!h){ok=false;return;}
+  const h=s.horses[rideIdx];if(!h)return;
   const N=h.needs;
   if(FOODS3[k]){
    if(s.items[k]<=0){msg='None left — stock up in the 🛍️ Shop!';ok=false;return;}
@@ -5051,22 +5060,23 @@ function careAct(k){
    N.hunger=Math.min(100,N.hunger+f.hunger);
    N.happy=Math.min(100,N.happy+f.happy);
    h.bond=Math.min(100,h.bond+f.bond);
-   msg=h.name+' munches happily! +'+f.bond+' bond';
+   msg=h.name+' munches happily! +'+f.bond+' bond';ok=true;
   }else if(k==='water'){
    if(N.thirst>=98){msg=h.name+" isn't thirsty right now!";ok=false;return;}
    N.thirst=Math.min(100,N.thirst+50);
    h.bond=Math.min(100,h.bond+1);
-   msg=h.name+' drinks deep 💧';
+   msg=h.name+' drinks deep 💧';ok=true;
   }else if(k==='groom'){
    if(N.clean>=98){msg='Already sparkling ✨';ok=false;return;}
    N.clean=Math.min(100,N.clean+50);
    N.happy=Math.min(100,N.happy+5);
    h.bond=Math.min(100,h.bond+3);
-   msg=h.name+' is shiny and clean! +3 bond';
+   msg=h.name+' is shiny and clean! +3 bond';ok=true;
   }else if(k==='pet'){
+   if(N.happy>=98&&h.bond>=100){msg=h.name+' is already blissful!';return;}
    N.happy=Math.min(100,N.happy+12);
    h.bond=Math.min(100,h.bond+2);
-   msg=h.name+' nuzzles you 💕';
+   msg=h.name+' nuzzles you 💕';ok=true;
   }
  });
  toast(msg);
@@ -5225,9 +5235,11 @@ function buyBundle3(k){
 function buyTack3(col){
  let ok=false,nm='';
  syncSave(s=>{
-  if(s.coins<150)return;
+  const free=(col==='#ffd166'&&s.goldTack);        // already earned on the Trail Pass
+  if(!free&&s.coins<150)return;
   const h=s.horses[rideIdx];if(!h)return;
-  s.coins-=150;h.tack=col;nm=h.name;
+  if(!free)s.coins-=150;
+  h.tack=col;nm=h.name;
   ok=true;
  });
  if(ok){
@@ -6006,7 +6018,7 @@ const ACHS=[
  {id:'earn20k',icon:'🪙',label:'Ranch tycoon',desc:'Earn 20,000 coins',v:s=>(s.stats&&s.stats.earned)||0,goal:20000,r:{g:3}},
  {id:'troph1',icon:'🏆',label:'First rosette',desc:'Win 1 event trophy',v:s=>Object.keys(s.trophies||{}).length,goal:1,r:{c:100}},
  {id:'troph5',icon:'🏆',label:'Shelf of silver',desc:'Win 5 event trophies',v:s=>Object.keys(s.trophies||{}).length,goal:5,r:{g:1}},
- {id:'troph11',icon:'🏆',label:'Champion of Evervale',desc:'Win all 11 event trophies',v:s=>Object.keys(s.trophies||{}).length,goal:11,r:{g:3}},
+ {id:'troph11',icon:'🏆',label:'Champion of Evervale',desc:'Win every event trophy',v:s=>Object.keys(s.trophies||{}).length,goal:EVENTS3.length,r:{g:3}},
  {id:'story8',icon:'📜',label:"Grandpa Wren's pride",desc:'Finish the story missions',v:s=>(s.story&&s.story.idx)||0,goal:8,r:{c:400}},
  {id:'bond100',icon:'❤️',label:'Soulmates',desc:'Reach 100 bond with a horse',v:s=>Math.round(s.horses.reduce((m,h)=>Math.max(m,h.bond||0),0)),goal:100,r:{g:1}},
  {id:'lvl5',icon:'⭐',label:'Rising star',desc:'Train a horse to level 5',v:s=>s.horses.reduce((m,h)=>Math.max(m,h.level||1),1),goal:5,r:{c:200}},
@@ -6216,7 +6228,7 @@ function saveStory(){syncSave(s=>{s.story={idx:storyIdx,prog:storyProg};});}
 function missionDone(){const m=STORY[storyIdx];return m&&storyProg>=m.goal;}
 function questEvt(type,val){
  const m=STORY[storyIdx];
- if(!m||m.type!==type)return;
+ if(!m||m.type!==type||storyProg>=m.goal)return;
  if(type==='event'){if(val===m.ev)storyProg=m.goal;}
  else storyProg=Math.min(m.goal,storyProg+val);
  saveStory();
@@ -6553,7 +6565,7 @@ function startTrick(type){
  try{sJump();}catch(e){}
  toast(type==='roll'?'🌀 Barrel roll!':type==='spin'?'💫 Spin!':'🔄 Flip!');
 }
-let hintT=0;
+let hintT=0,loadWaitT=0;
 function tick(){
  const dt=Math.min(0.05,clock.getDelta());
  const t=clock.elapsedTime;
@@ -7429,7 +7441,13 @@ function tick(){
  hintT+=dt;
  if(hintT>9)$('hint').style.opacity='0';
  const ld=$('load');
- if(ld)ld.remove();
+ if(ld){
+  /* Hold the curtain until the detailed rigged horse is actually attached. Dropping it on
+     the first frame meant the player's very first look was the low-detail stand-in the rig
+     replaces. Times out so a slow or failed download still lets them ride. */
+  loadWaitT+=dt;
+  if(!USE_GEN_HORSE||loadWaitT>12||(RIG.ready&&RIG.attachedTo===player.mesh))ld.remove();
+ }
 }
 window.render_game_to_text=()=>JSON.stringify({
  mode:course?'course':'free_roam',
