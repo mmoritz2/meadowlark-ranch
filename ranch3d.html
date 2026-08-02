@@ -6252,7 +6252,7 @@ function openDlg(){
    if(m.reward.g)addGems(m.reward.g);
    sGem();
    storyIdx++;storyProg=0;saveStory();
-   toast('📜 Mission complete! '+(STORY[storyIdx]?'New mission from Joe!':'Story complete! 🏆'));
+   toast('📜 Mission complete! '+(STORY[storyIdx]?'New mission from Wren!':'Story complete! 🏆'));
   }
   d.style.display='none';
  };
@@ -6270,7 +6270,7 @@ function makeNPC(){
  hat.position.set(0,1.51,0);hat.castShadow=true;r.add(hat);
  const top=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.10,0.11,12),smat('#d9b97f'));
  top.position.set(0,1.58,0);r.add(top);
- const tag=nameSprite('❗ Joe');
+ const tag=nameSprite('❗ Wren');
  tag.position.y=2.05;
  r.add(tag);
  return r;
@@ -6866,7 +6866,7 @@ function tick(){
  $('ctx').style.display=nearNPC?'block':'none';
  if(nearNPC)$('ctx').textContent='💬 Talk to Grandpa Wren (E)';
  $('questTrack').textContent=m?
-  ('📜 '+m.label+(missionDone()?' ✅ → tell Joe!':(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':''))):
+  ('📜 '+m.label+(missionDone()?' ✅ → tell Wren!':(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':''))):
   '📜 Story complete! 🏆';
  if(m&&m.type==='visit'&&storyProg<m.goal&&Math.hypot(player.pos.x-m.x,player.pos.z-m.z)<m.r){
   storyProg=m.goal;saveStory();
