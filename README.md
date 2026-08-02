@@ -19,14 +19,49 @@ python -m http.server 8431
 
 Then open <http://127.0.0.1:8431/>. Your ranch auto-saves to `localStorage`.
 
-**Ride** with `W`/`↑`, steer with `A`/`D`, `Shift` to gallop, `Space` to jump —
-or use the on-screen controls on a phone. Drag to orbit, scroll to zoom.
-
 For VR, serve over HTTPS (WebXR requires a secure origin) and press **Ride in VR**:
 
 ```bash
 python serve-vr.py
 ```
+
+## Controls
+
+**On a screen**
+
+| | |
+|---|---|
+| `W` / `↑` | ride |
+| `A` / `D` | steer |
+| `Shift` | gallop |
+| `Space` | jump |
+| `E` | mount a horse you are standing next to |
+| drag / scroll | orbit and zoom |
+
+On a phone, use the on-screen buttons.
+
+**In VR you hold the reins**
+
+This is the part worth trying, and the reason the VR mode exists. Rather than
+steering with a thumbstick, both controllers are read as a pair of reins. Their
+positions are measured against your head, so it works at any height and in any
+chair with no calibration step — wherever your hands are resting when you arrive
+becomes neutral.
+
+| | |
+|---|---|
+| push both hands forward | move off, and further forward asks for more |
+| draw both hands back | slow down; into your chest is a halt |
+| draw one rein back | turn that way |
+| carry both hands to one side | neck-rein that way |
+| trigger | gallop |
+| `A` | jump |
+| `B` / `Y` | open the world-space menu |
+
+The reins are drawn from the controllers themselves, so you watch them move as you
+ride. Throttle reads the *leading* hand rather than the average, so drawing one rein
+back to steer does not also pull the horse up. The thumbstick still works — whichever
+input you are actually using wins, so neither can fight the other.
 
 ## What's in it
 
@@ -36,8 +71,8 @@ python serve-vr.py
 | **Horses** | 19 breeds from ponies to winged mythics; care, bonding, XP and levels; breeding that blends both parents' coats; foals that grow up over real time |
 | **Riding** | Speed-dependent gaits, jumping, show-jumping courses and cross-country flag races with timing, faults and trophies |
 | **Living world** | Day/night with dusk window lights and fireflies, weather with rain and rainbows, wild horses to tame, NPC riders, and procedural wildlife |
-| **VR** | Full WebXR mode — ride from the saddle, with a world-space UI you operate with the controllers |
-| **Multiplayer** | Share a club code over MQTT to ride the same world, chat, and compare leaderboards |
+| **VR** | Full WebXR mode — ride from the saddle holding the reins in your hands, with a world-space UI you operate with the controllers |
+| **Multiplayer** | Club codes over MQTT to share a world, chat and compare boards — present in the code but **switched off** behind a `SOCIAL` flag, so the shipped build is single-player and contacts no server |
 
 <p align="center">
   <img src="docs/screenshots/arena.png" width="49%" alt="The ranch arena">
@@ -62,13 +97,18 @@ at startup). The interesting parts are the systems written on top of it:
 - **Skeletal animation on a generated mesh.** The player's mount is a rigged GLB
   driven bone-by-bone: gait-correct footfall timing for walk, trot and gallop, plus
   a jump tuck, all posed as quaternions about calibrated local axes.
-- **VR built for comfort, not just for support.** The camera rig chases the horse
-  through a critically-damped filter — fast horizontally, slow vertically — so
-  collision push-out and landing jolts never reach the player's head, and a shader
-  vignette closes in with speed to keep peripheral optical flow from arguing with
-  the inner ear.
-- **Performance.** Instanced foliage and critters, a graphics-quality selector, and
-  foveated rendering in VR.
+- **Reins as an input device.** Both controllers are read as a pair of reins in the
+  horse's own frame, with the hand poses low-passed because the steering term is a
+  *difference* between two hands and so carries double the tracking noise.
+- **VR built for comfort, not just for support.** The rig copies the horse exactly and
+  eases only across genuine discontinuities — collision push-out, landings, fast travel
+  — detected as a frame step larger than anything legitimate can produce. Filtering
+  ordinary motion instead was what used to leave the rider hanging beside or inside
+  their own horse. A shader vignette closes in with speed to keep peripheral optical
+  flow from arguing with the inner ear.
+- **Performance.** Instanced foliage and critters, a graphics-quality selector, and a
+  separate VR budget: foveation, a reduced eye buffer, thinned foliage, and a cheaper
+  single-sample ground shader, since the ground fills most of both eyes.
 
 ### The art pipeline
 
@@ -79,7 +119,8 @@ auto-rigging for the animated ones. `tools/asset-gen/` holds the scripts that dr
 ## Honest limitations
 
 - The rider is a stylised procedural figure, not a production character rig.
-- Multiplayer uses a public MQTT broker — fine for a demo, not a game service.
+- Multiplayer, when enabled, uses a public MQTT broker — fine for a demo, not a game
+  service. It ships switched off.
 - `ranch3d.html` is deliberately one large file. It is organised in sections, but it
   is a single-author codebase, not a module structure a team would share.
 - Terrain collision is height-field based, so very steep cliffs can be climbed.
