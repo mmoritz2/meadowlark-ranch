@@ -7492,6 +7492,17 @@ function tick(){
   if(!USE_GEN_HORSE||loadWaitT>12||(RIG.ready&&RIG.attachedTo===player.mesh))ld.remove();
  }
 }
+if(location.search.includes('livetime')){ (async()=>{
+ const w=ms=>new Promise(r=>setTimeout(r,ms));
+ const t0=performance.timing?performance.timing.navigationStart:0;
+ for(let i=0;i<600;i++){ if(!document.getElementById('load'))break; await w(50); }
+ const playable=Math.round(performance.now());
+ await w(3000);
+ const res=performance.getEntriesByType('resource');
+ const tot=res.reduce((a,r)=>a+(r.transferSize||r.encodedBodySize||0),0);
+ await fetch('http://127.0.0.1:8765/live.png',{method:'POST',
+  body:btoa(JSON.stringify({msUntilPlayable:playable,totalKB:Math.round(tot/1024),requests:res.length}))});
+})(); }
 window.render_game_to_text=()=>JSON.stringify({
  mode:course?'course':'free_roam',
  coordinateSystem:'x east/west, z north/south, y up',
