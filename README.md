@@ -1,4 +1,4 @@
-# Star Ranch Fable 🐴
+# Meadowlark Ranch 🐴
 
 A cozy open-world horse game that runs in a browser tab. Ride across a 1000×1000
 open world, care for and breed your horses, jump courses, and — on a headset —
@@ -7,9 +7,9 @@ ride the same world in VR.
 Built from scratch in **one HTML file, no build step, no CDN**: clone it, serve the
 folder, and it runs.
 
-**▶️ [Play it in your browser](https://mmoritz2.github.io/star-ranch-fable/)**
+**▶️ [Play it in your browser](https://mmoritz2.github.io/meadowlark-ranch/)**
 
-![Riding in the arena at Star Ranch](docs/screenshots/gameplay.png)
+![Riding in the arena at Meadowlark Ranch](docs/screenshots/gameplay.png)
 
 ## Run it
 

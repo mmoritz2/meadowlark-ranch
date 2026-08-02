@@ -1,4 +1,4 @@
-# Star Ranch Fable — Development Log 🐴✨
+# Meadowlark Ranch — Development Log 🐴✨
 
 A behind-the-scenes summary of how this game was built: what's in it, what
 worked, what fought back, and what still needs love. Written to be readable
@@ -44,7 +44,7 @@ It started as a small 2D canvas game, became a 3D Three.js world, and then the
 
 ## Features that made it in
 
-**The world (Evervale)**
+**The world (Kestrel Basin)**
 - A large rolling open world (~1000×1000 units) with real relief: broad
   ridged hills (~20 units from valley floor to crest), flat-topped bluffs
   with steep rocky cliff faces, a carved river with an arched wooden bridge,
@@ -52,8 +52,8 @@ It started as a small 2D canvas game, became a 3D Three.js world, and then the
   hills to join it. Ground colour follows the land — rocky greys on steep
   faces, sun-dried grass on high crests, sandy banks along the water.
   Wheat fields, lavender, boulders, and forests dress the meadows.
-- Distinct biome zones with their own ground: Bronco Canyon (sand + red mesas),
-  Witberg (snow), Agricola (farmland), plus the home meadow.
+- Distinct biome zones with their own ground: Coyote Canyon (sand + red mesas),
+  Hollowpeak (snow), Barleyfold (farmland), plus the home meadow.
 - Snow-capped, craggy mountains on the horizon, drifting clouds, weather
   (rain + rainbows), birds, and ambient sound.
 - A **full day/night cycle**: dawn, noon, golden hour, dusk, and a moonlit
@@ -64,7 +64,7 @@ It started as a small 2D canvas game, became a 3D Three.js world, and then the
   flower-clump to flower-clump, stopping to sip — and river fish that leap
   with a splash ring when you ride near the water.
 - **Procedural blob critters** (seamless SDF bodies): bunnies, deer, sheep,
-  chickens, ducks, and bluebirds live across Evervale. Each species is ~15
+  chickens, ducks, and bluebirds live across Kestrel Basin. Each species is ~15
   lines of JSON; its primitive shapes are fused into ONE seamless mesh by
   shrink-wrapping an icosphere onto a smooth-min SDF (blended vertex colours,
   SDF-gradient normals — no visible seams). One gait system animates
@@ -109,7 +109,7 @@ It started as a small 2D canvas game, became a 3D Three.js world, and then the
 - **Stable** panel to view, rename, switch which horse you ride, and pick which
   foal/pet follows you.
 - **Daily quests**, an **achievements** system, a **login streak**, a
-  **Star Pass** with tiered rewards, daily **photo competitions**, mystery
+  **Trail Pass** with tiered rewards, daily **photo competitions**, mystery
   packages, and a golden turtle.
 - **Daily golden horseshoe hunt:** 10 horseshoes hide in new spots every day
   (they glint on the minimap when you ride close); find them all for a gem
