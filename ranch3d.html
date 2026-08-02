@@ -7425,29 +7425,31 @@ function tick(){
      rider more than a metre under their own horse — which is why it showed up on the pegasus
      and almost nowhere else. The velocity is smoothed first, so a hoofbeat (which oscillates
      and averages out) still gets filtered while a sustained climb gets compensated. */
-  let mvy=(tY-vrPrevPos.y)*idt;
-  if(Math.abs(mvy)>25)mvy=Math.sign(mvy)*25;   // fast travel is not climbing
   vrVel.x+=(mvx-vrVel.x)*kVel;
   vrVel.z+=(mvz-vrVel.z)*kVel;
-  /* Vertical velocity is spiky where horizontal is steady — a jump or a crest swings it
-     hard in a fraction of a second. Smoothed at the same rate as the horizontal axes the
-     lead below chased those spikes and threw the rider well above and below the saddle, so
-     this one is filtered much more slowly and only a sustained climb survives it. */
-  vrVel.y+=(mvy-vrVel.y)*(1-Math.exp(-2.2*dt));
   vrPrevPos.set(tX,tY,tZ);
   const kH=1-Math.exp(-VR_KH*dt);   // horizontal: quick, so riding still feels direct
   const kV=1-Math.exp(-VR_KV*dt);   // vertical: slow, because bumps are what turn stomachs
   vrPos.x+=((tX+vrVel.x/VR_KH)-vrPos.x)*kH;
   vrPos.z+=((tZ+vrVel.z/VR_KH)-vrPos.z)*kH;
-  /* And the lead only applies in flight. Climbing is the one place the lag was visible;
-     over ordinary ground the slow filter IS the feature — it is what keeps your head steady
-     while the horse bobs underneath you. */
-  const vLead=player.flying?THREE.MathUtils.clamp(vrVel.y/VR_KV,-0.5,0.5):0;
-  vrPos.y+=((tY+vLead)-vrPos.y)*kV;
+  /* The slow vertical filter exists to absorb hoofbeat bumps — and there are no hoofbeats in
+     the air. Leaving it on through a climb meant the rider simply trailed the horse: sunk
+     into it going up, left hanging above it coming down. Trying to cancel that with a
+     velocity lead was treating the symptom. Once the hooves leave the ground there is
+     nothing to filter, so track the horse tightly and drop the lead entirely. */
+  const airborne=player.flying||(player.y||0)>0.05;
+  /* Any filter trails a sustained climb by velocity/rate, so merely making it "faster" just
+     moves the separation around — at 13 m/s even a rate of 15 still leaves most of a metre.
+     Airborne the correct rate is effectively infinite, because the horse's vertical motion
+     IS the motion the rider should have. Ramped over about a fifth of a second so leaving
+     the ground does not pop, since the grounded filter is legitimately behind by then. */
+  player.vrAir=airborne?Math.min(1,(player.vrAir||0)+dt*5):Math.max(0,(player.vrAir||0)-dt*5);
+  const kRate=VR_KV+(200-VR_KV)*player.vrAir;
+  vrPos.y+=(tY-vrPos.y)*(1-Math.exp(-kRate*dt));
   /* A leash, so no filter, trick, jump or teleport can ever visibly part you from the horse.
      Smoothing away a bump is worth it; drifting off the saddle never is. */
   const dy=tY-vrPos.y;
-  if(Math.abs(dy)>0.5)vrPos.y=tY-Math.sign(dy)*0.5;
+  if(Math.abs(dy)>0.22)vrPos.y=tY-Math.sign(dy)*0.22;
   const dxz=Math.hypot(tX-vrPos.x,tZ-vrPos.z);
   if(dxz>0.7){const k=0.7/dxz;vrPos.x=tX-(tX-vrPos.x)*k;vrPos.z=tZ-(tZ-vrPos.z)*k;}
   vrRig.position.copy(vrPos);
