@@ -1129,7 +1129,7 @@ const envMaps={};let curEnv='day';
  /* A ground in the bake, so downward-facing surfaces receive warm bounce instead of sky.
     Without it every shaded underside samples blue sky and reads as if it is floating. */
  {const gd=new THREE.Mesh(new THREE.SphereGeometry(400,12,8,0,Math.PI*2,Math.PI/2,Math.PI/2),
-   new THREE.MeshBasicMaterial({color:0x4a5340,side:THREE.BackSide}));
+   new THREE.MeshBasicMaterial({color:0x30352c,side:THREE.BackSide}));
   gd.position.y=-1; es.add(gd);}
  const eu=esky.material.uniforms;
  for(const[k,e]of[['day',30],['golden',7],['night',-14]]){
@@ -1141,7 +1141,7 @@ const envMaps={};let curEnv='day';
 /* Sun-to-ambient was 1.55:1; real daylight is 5:1 to 8:1. The hemisphere light was
    supplying ~40% of the light budget in full sun, so every shadow was a faint 15% dip.
    The env map (PMREM'd sky) now carries the ambient and this is only a trim. */
-const hemi=new THREE.HemisphereLight(0xa8c6e8,0x6a6a5c,0.12);
+const hemi=new THREE.HemisphereLight(0x9fc0e8,0x45483f,0.16);   // sky term must beat the bounce
 scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xffe6bc,5.4);              // a real key: sun:sky now ~6:1
 const sunOff=sunDir.clone().multiplyScalar(95);
@@ -1153,7 +1153,7 @@ sun.shadow.camera.top=44;sun.shadow.camera.bottom=-44;
 /* the sun sits 95 units out, so most of the old 1..220 depth range held nothing and threw
    away precision. Bias was also set twice, the second pair silently winning. */
 sun.shadow.camera.near=42;sun.shadow.camera.far=165;
-sun.shadow.bias=-0.00007;sun.shadow.normalBias=0.010;
+sun.shadow.bias=-0.00006;sun.shadow.normalBias=0.005;
 scene.add(sun);scene.add(sun.target);
 
 const composer=new EffectComposer(renderer);
@@ -1510,8 +1510,8 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
         colour any vegetation has — it read as pure display-primary green. Put red back and
         take the saturation down to something turf actually measures at. */
      float _lg=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));
-     diffuseColor.rgb=mix(vec3(_lg),diffuseColor.rgb,0.70);
-     diffuseColor.rgb+=vec3(0.055,0.030,0.012)*_lg;
+     diffuseColor.rgb=mix(vec3(_lg),diffuseColor.rgb,0.84);
+     diffuseColor.rgb+=vec3(0.042,0.030,0.010)*_lg;
      /* One flat saturated green over the whole map is the loudest "video game" tell there
         is. Real pasture is a patchwork: sun-dried olive on the crowns, damper blue-green in
         the hollows. Two octaves of the same cheap noise, no extra texture fetch. */
@@ -1939,9 +1939,9 @@ function fantasyCoat(type,ds){
 const contactTex=canvasTex(128,128,(c,w,h)=>{
  c.fillStyle='#ffffff';c.fillRect(0,0,w,h);
  const g=c.createRadialGradient(64,64,4,64,64,63);
- g.addColorStop(0,'#77736a');
- g.addColorStop(0.40,'#adaa9f');
- g.addColorStop(0.75,'#e6e4dd');
+ g.addColorStop(0,'#9d9a90');
+ g.addColorStop(0.38,'#c2bfb5');
+ g.addColorStop(0.72,'#ecebe5');
  g.addColorStop(1,'#ffffff');
  c.fillStyle=g;c.fillRect(0,0,w,h);
 });
