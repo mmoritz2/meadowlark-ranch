@@ -1282,13 +1282,18 @@ renderer.xr.addEventListener('sessionend',()=>{
  renderer.setSize(innerWidth,innerHeight);
 });
 
-if(navigator.xr&&navigator.xr.isSessionSupported){
- navigator.xr.isSessionSupported('immersive-vr').then(ok=>{
-  if(!ok)return;
-  const b=document.createElement('button');
-  b.id='vrBtn';
+/* The VR button is always drawn, even where VR cannot run. Hiding it on an
+   unsupported browser is technically correct and tells a first-time visitor on a
+   laptop that the headset mode does not exist — which is the opposite of true, and
+   VR is the part of this worth showing. So: live button where WebXR is available,
+   and everywhere else a muted one that says what it needs. */
+{
+ const b=document.createElement('button');
+ b.id='vrBtn';
+ b.style.cssText='position:fixed;top:52px;right:10px;z-index:12;';
+ const enable=()=>{
   b.textContent='🥽 Ride in VR';
-  b.style.cssText='position:fixed;top:52px;right:10px;z-index:12;';
+  b.title='Ride from the saddle, holding the reins in your hands';
   b.onclick=async()=>{
    if(renderer.xr.isPresenting){renderer.xr.getSession().end();return;}
    try{
@@ -1298,8 +1303,24 @@ if(navigator.xr&&navigator.xr.isSessionSupported){
     if(typeof toast==='function')toast('VR could not start: '+err.message);
    }
   };
-  document.body.appendChild(b);
- }).catch(()=>{});
+ };
+ const explain=why=>{
+  b.textContent='🥽 VR mode';
+  b.style.cssText+='opacity:0.55;border-style:dashed;';
+  b.title=why;
+  b.onclick=()=>{ if(typeof toast==='function')toast(why); };
+ };
+ if(!navigator.xr||!navigator.xr.isSessionSupported){
+  /* No WebXR at all: every desktop Safari, and Chrome/Firefox with no runtime. */
+  explain(isSecureContext
+   ? 'Open this link in a VR headset — on a Quest, use its own browser — to ride holding the reins.'
+   : 'VR needs a secure (https) page. Open the published link rather than a plain http one.');
+ }else{
+  navigator.xr.isSessionSupported('immersive-vr')
+   .then(ok=>ok?enable():explain('No headset detected. Open this link in a VR headset — on a Quest, use its own browser — to ride holding the reins.'))
+   .catch(()=>explain('Could not check for a headset. Open this link in a VR headset’s own browser to ride holding the reins.'));
+ }
+ document.body.appendChild(b);
 }
 
 const SKY_P={turbidity:2.3,rayleigh:3.5,mieCoefficient:0.003,mieDirectionalG:0.78};
