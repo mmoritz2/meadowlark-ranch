@@ -162,7 +162,9 @@ button:active{transform:scale(.95)}
  <button id="tL">◀</button><button id="tGo">🐎</button><button id="tR">▶</button>
  <button id="tGal">💨</button><button id="tJump">⤴</button><button id="tTrick">🌀</button>
 </div>
-<script src="assets/vendor/mqtt/mqtt.min.js"></script>
+<!-- The multiplayer client is only fetched if the social layer is switched on (see SOCIAL
+     in the module). With it off this was 322 KB downloaded on every load for nothing. -->
+<script>if(!/[?&]social=1/.test(location.search)){}else{document.write('<script src="assets\/vendor\/mqtt\/mqtt.min.js"><\/script>');}</script>
 <script type="importmap">
 {
  "imports":{
@@ -1613,9 +1615,9 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  horizonDisc.position.y=-8;
  scene.add(horizonDisc);
  // Optional upgrade: swap in a generated seamless PBR grass texture if it's being
- // served alongside the game (assets/textures/grass_albedo.png). Silently keeps the
+ // served alongside the game (assets/textures/grass_albedo.jpg). Silently keeps the
  // procedural texture when opened via file:// or when the file is absent.
- new THREE.TextureLoader().load('assets/textures/grass_albedo.png',tex=>{
+ new THREE.TextureLoader().load('assets/textures/grass_albedo.jpg',tex=>{
   tex.colorSpace=THREE.SRGBColorSpace;
   tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
   tex.anisotropy=renderer.capabilities.getMaxAnisotropy();
@@ -1955,7 +1957,7 @@ function coatMatDS(hex){
 // Load the generated fur detail once and apply it as a bumpMap to every coat
 // material (existing and future). Progressive enhancement: if the asset isn't
 // served (file://), coats simply stay as before.
-new THREE.TextureLoader().load('assets/textures/horse_fur.png',tex=>{
+new THREE.TextureLoader().load('assets/textures/horse_fur.jpg',tex=>{
  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
  tex.repeat.set(3,3);
  coatDetailTex=tex;
@@ -2740,7 +2742,16 @@ function placeFoliage(name){
   console.log('placed',list.length,'generated',name);
  },undefined,e=>console.warn(name+' load failed',e));
 }
-['bush','flowerbush','cactus','cactus2'].forEach(placeFoliage);   // shrubs & cacti stay GLB
+/* Deferred on purpose: these used to be fetched at boot, so several MB of shrubs competed
+   for bandwidth with the horse the loading screen is waiting on. Start them once the mount
+   is up — or after a few seconds if it never arrives — and let them pop in behind you. */
+{
+ let foliageStarted=false;
+ const startFoliage=()=>{ if(foliageStarted)return; foliageStarted=true;
+  ['bush','flowerbush','cactus','cactus2'].forEach(placeFoliage); };
+ const pollRig=setInterval(()=>{ if(RIG.ready){clearInterval(pollRig);startFoliage();} },200);
+ setTimeout(()=>{clearInterval(pollRig);startFoliage();},7000);
+}
 seedTreeInsts=placeSeedTrees();                                    // trees are Weber–Penn generated
 seedTreeInsts.forEach(m=>{m.userData.fullCount=m.count;if(quality==='low')m.count=Math.ceil(m.userData.fullCount*0.55);});
 // pine treeline behind the barn (like an alpine ranch)
@@ -3289,22 +3300,9 @@ function driveRig(sp,grounded,t,dt){
  const tailA=Math.sin(t*(1.6+run*2.5))*(0.05+run*0.16);
  for(const T of RIG.tail)B[T.i].quaternion.copy(T.r).multiply(q.setFromAxisAngle(T.ax,tailA));
 }
-/* Coat color variants: recolored copies of the baked texture, swapped onto the
-   horse's material per the ridden horse's breed color (same mesh/rig/UVs). */
-const COAT_NAMES=['chestnut','black','grey','palomino'], COAT_TEX={};
-{ const tl=new THREE.TextureLoader();
-  for(const n of COAT_NAMES) tl.load('assets/textures/horse_coat_'+n+'.png',t=>{
-    t.flipY=false; t.colorSpace=THREE.SRGBColorSpace; t.needsUpdate=true; COAT_TEX[n]=t; applyCoat();
-  },undefined,()=>{}); }
-const COAT_REF={chestnut:[0.54,0.29,0.16],black:[0.16,0.14,0.12],grey:[0.72,0.74,0.77],palomino:[0.80,0.62,0.30]};
-function pickCoat(){
- const h=myHorses[rideIdx]; if(!h||!h.colors) return 'chestnut';
- const x=String(h.colors.body).replace('#','');           // sRGB 0..1 (avoid THREE's linear conversion)
- const cr=parseInt(x.slice(0,2),16)/255, cg=parseInt(x.slice(2,4),16)/255, cb=parseInt(x.slice(4,6),16)/255;
- let best='chestnut',bd=1e9;
- for(const n in COAT_REF){const r=COAT_REF[n],d=(cr-r[0])**2+(cg-r[1])**2+(cb-r[2])**2; if(d<bd){bd=d;best=n;}}
- return best;
-}
+/* Breed colour is done in the shader now (see fantasyCoatRig / ensureCoatMat), which
+   recolours the baked texture by luminance. The four pre-recoloured horse_coat_*.png
+   variants this used to download were 8.9 MB of dead weight on every single load. */
 function ensureCoatMat(){
  if(RIG.coatMat||!RIG.baseMat) return;
  const m=RIG.baseMat.clone(); m.color.set(0xffffff);
