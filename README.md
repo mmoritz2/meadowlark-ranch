@@ -68,7 +68,7 @@ input the horse listens to, and remembers it:
 | | |
 |---|---|
 | 🎮 Either | reins or stick, whichever you are actually using wins (default) |
-| 🎗️ Reins | stick ignored — nothing but your hands moves the horse |
+| 🪢 Reins | stick ignored — nothing but your hands moves the horse |
 | 🕹️ Stick | reins are along for the ride but do not steer |
 
 "Either" is the nicest way to play, but it does mean a resting hand can nudge the

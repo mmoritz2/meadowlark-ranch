@@ -456,7 +456,7 @@ let reinNeutral=0.30,reinCal=0;   // where this rider's hands naturally sit
    using win, which is the nicest default but means a resting hand can still nudge the horse
    if you meant to ride on the stick alone — so both can be picked outright. */
 const VRCTRL=['either','reins','stick'];
-const VRCTRL_LBL={either:'🎮 Either',reins:'🎗️ Reins',stick:'🕹️ Stick'};
+const VRCTRL_LBL={either:'🎮 Either',reins:'🪢 Reins',stick:'🕹️ Stick'};
 let vrCtrlMode=(()=>{try{const v=localStorage.getItem('mlrVRCtrl');return VRCTRL.includes(v)?v:'either';}catch(e){return 'either';}})();
 /* Reads the two controllers as a pair of reins. Everything is measured against the head so
    it works whatever height you are, and there is no calibration step to get wrong. */
