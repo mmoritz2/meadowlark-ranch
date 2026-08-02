@@ -170,6 +170,19 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
 /* ================= save sync with the 2D game ================= */
 const SAVE_KEY='starRanchFable_v1';   // NOT renamed with the game: changing this orphans every existing save
+/* Progress is per-browser, so a new visitor always starts fresh. This is for checking what
+   that first run actually looks like on a machine that has already been played: open the
+   game with ?newgame. It confirms first if there is anything to lose, then drops you back
+   on a clean URL so a stray refresh cannot wipe a second time. */
+if(location.search.includes('newgame')){
+ try{
+  const had=localStorage.getItem(SAVE_KEY);
+  if(!had||confirm('Start a brand-new ranch? This erases the progress saved in THIS browser.')){
+   localStorage.removeItem(SAVE_KEY);
+   location.replace(location.pathname);
+  }
+ }catch(e){}
+}
 let save=null;
 try{save=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){}
 if(!save||!save.horses||!save.horses.length){
