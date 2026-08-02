@@ -32,7 +32,10 @@ a.btn{text-decoration:none;font-weight:700;color:#4a3526;background:linear-gradi
 .toast{background:rgba(60,45,25,0.92);color:#fff8ea;padding:8px 16px;border-radius:999px;font-size:14px;font-weight:600;animation:pop .3s ease}
 .toast.out{opacity:0;transition:opacity .4s}
 @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
-#load{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#a9cfe8;color:#34526b;font-size:22px;font-weight:800;z-index:30;text-align:center}
+#loadbar{width:190px;height:7px;margin:14px auto 0;background:rgba(255,255,255,0.28);border-radius:99px;overflow:hidden}
+#loadbar i{display:block;height:100%;width:0%;background:#ffe6a8;border-radius:99px;transition:width .25s ease}
+#loadpct{margin-top:6px;font-size:13px;opacity:0.75}
+#load{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#a9cfe8;color:#34526b;font-size:22px;font-weight:800;z-index:30;text-align:center}
 #touch{position:fixed;bottom:16px;right:16px;z-index:6;display:grid;grid-template-columns:repeat(3,56px);gap:8px;user-select:none;-webkit-user-select:none}
 #touch button{width:56px;height:56px;border-radius:50%;font-size:20px;opacity:0.9;touch-action:none}
 #mini{position:fixed;bottom:16px;left:16px;z-index:6;border:3px solid rgba(255,255,253,0.7);border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,0.25);cursor:pointer}
@@ -99,7 +102,7 @@ button:active{transform:scale(.95)}
 </style>
 </head>
 <body>
-<div id="load">Saddling up… 🐴</div>
+<div id="load">Saddling up… 🐴<div id="loadbar"><i></i></div><div id="loadpct">0%</div></div>
 <div id="hud">
  <div class="chip">🐴 <span id="nameEl">Clover</span> <span id="gaitEl">🧍</span></div>
  <select id="horseSel" title="Choose your horse"></select>
@@ -165,6 +168,7 @@ button:active{transform:scale(.95)}
 <!-- The multiplayer client is only fetched if the social layer is switched on (see SOCIAL
      in the module). With it off this was 322 KB downloaded on every load for nothing. -->
 <script>if(!/[?&]social=1/.test(location.search)){}else{document.write('<script src="assets\/vendor\/mqtt\/mqtt.min.js"><\/script>');}</script>
+<link rel="preload" href="assets/models/horse_textured_rigged.glb" as="fetch">
 <script type="importmap">
 {
  "imports":{
@@ -391,6 +395,7 @@ renderer.toneMapping=THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure=1.05;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
+const __T0=performance.now();const __M=[];const __mark=n=>__M.push([n,Math.round(performance.now()-__T0)]);
 const scene=new THREE.Scene();
 scene.fog=new THREE.FogExp2(0xbfd3e8,0.0027);   // exponential; tinted to the sky so distance hazes toward it
 const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,5000);
@@ -1198,6 +1203,7 @@ const sky=new Sky();
 sky.scale.setScalar(450000);
 setSky(sky);dimSky(sky);
 scene.add(sky);
+__mark('pmrem');
 const pmrem=new THREE.PMREMGenerator(renderer);
 /* PBR ambient comes from a PMREM'd sky — bake one per time-of-day band and swap */
 const envMaps={};let curEnv='day';
@@ -1520,6 +1526,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  c.fillStyle=g;c.fillRect(0,0,w,h);
 });
 
+__mark('terrain');
 /* ================= terrain ================= */
 {
  const geo=new THREE.PlaneGeometry(1000,1000,256,256);
@@ -2191,6 +2198,7 @@ function leatherMat(hex){
 }
 
 /* ================= scenery ================= */
+__mark('mountains');
 // distant mountains
 /* Was a smooth cone with a SECOND snow cone floating inside it, whose intersection showed
    as a hard crease against the sky, and the rock was so pale it rendered brighter than the
@@ -2752,6 +2760,7 @@ function placeFoliage(name){
  const pollRig=setInterval(()=>{ if(RIG.ready){clearInterval(pollRig);startFoliage();} },200);
  setTimeout(()=>{clearInterval(pollRig);startFoliage();},7000);
 }
+__mark('seedtrees');
 seedTreeInsts=placeSeedTrees();                                    // trees are Weber–Penn generated
 seedTreeInsts.forEach(m=>{m.userData.fullCount=m.count;if(quality==='low')m.count=Math.ceil(m.userData.fullCount*0.55);});
 // pine treeline behind the barn (like an alpine ranch)
@@ -3416,7 +3425,11 @@ function applyCoat(){
  RIG.skin.material=RIG.coatMat;
 }
 {
+ const setLoad=(f,label)=>{const b=document.querySelector('#loadbar i'),t=document.getElementById('loadpct');
+  if(b)b.style.width=Math.round(f*100)+'%'; if(t)t.textContent=label||Math.round(f*100)+'%';};
+ window.__setLoad=setLoad; setLoad(0.05,'reading the map…');
  new GLTFLoader().load('assets/models/horse_textured_rigged.glb',g=>{
+  setLoad(0.92,'saddling up…');
   RIG.scene=g.scene;
   g.scene.traverse(o=>{if(o.isSkinnedMesh&&!RIG.skin)RIG.skin=o;});
   if(!RIG.skin){console.warn('rig: no skinned mesh');return;}
@@ -3427,7 +3440,9 @@ function applyCoat(){
   attachRig(); applyCoat();
   attachTack();   // (re)place saddle+rider now the horse back is known
   console.log('rig ready:',RIG.bones.length,'bones');
- },undefined,e=>console.warn('rig load failed',e));
+  setLoad(1,'ready!');
+ },ev=>{ if(ev&&ev.total)setLoad(0.05+0.8*(ev.loaded/ev.total),'bringing your horse…'); },
+   e=>{console.warn('rig load failed',e);setLoad(1,'ready!');});
 }
 /* === Generated tack: textured saddle + rigged+textured rider on the mount ===
    Both attach to player.mesh (move with the horse). The rider (UniRig humanoid)
@@ -4676,6 +4691,7 @@ function updateRein(mesh,handObj,bitObj){
 const player={mesh:null,parts:null,rider:null,pos:new THREE.Vector3(0,0,8),heading:Math.PI,speed:0,vy:0,y:0,phase:0,amp:0,lastStep:0,alt:false,earT:2,earA:0};
 let nearMount=-1,mountHintT=0,lowNeedT=0;
 let herd=[];
+__mark('rebuildAll-def');
 function rebuildAll(){
  if(player.mesh)scene.remove(player.mesh);
  for(const a of herd)scene.remove(a.parts.group);
@@ -7492,16 +7508,14 @@ function tick(){
   if(!USE_GEN_HORSE||loadWaitT>12||(RIG.ready&&RIG.attachedTo===player.mesh))ld.remove();
  }
 }
-if(location.search.includes('livetime')){ (async()=>{
+if(location.search.includes('phases')){ (async()=>{
  const w=ms=>new Promise(r=>setTimeout(r,ms));
- const t0=performance.timing?performance.timing.navigationStart:0;
- for(let i=0;i<600;i++){ if(!document.getElementById('load'))break; await w(50); }
- const playable=Math.round(performance.now());
- await w(3000);
- const res=performance.getEntriesByType('resource');
- const tot=res.reduce((a,r)=>a+(r.transferSize||r.encodedBodySize||0),0);
- await fetch('http://127.0.0.1:8765/live.png',{method:'POST',
-  body:btoa(JSON.stringify({msUntilPlayable:playable,totalKB:Math.round(tot/1024),requests:res.length}))});
+ __mark('module-end');
+ for(let i=0;i<400;i++){ if(RIG.ready&&RIG.attachedTo===player.mesh)break; await w(25); }
+ __mark('horse-ready');
+ for(let i=0;i<400;i++){ if(!document.getElementById('load'))break; await w(25); }
+ __mark('curtain-down');
+ await fetch('http://127.0.0.1:8765/phases.png',{method:'POST',body:btoa(JSON.stringify(__M))});
 })(); }
 window.render_game_to_text=()=>JSON.stringify({
  mode:course?'course':'free_roam',
