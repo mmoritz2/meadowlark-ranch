@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<title>Star Ranch Fable 3D 🐴✨</title>
+<title>Meadowlark Ranch 🐴✨</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐴</text></svg>">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -89,7 +89,7 @@ button:active{transform:scale(.95)}
 <body>
 <div id="load">Saddling up… 🐴</div>
 <div id="hud">
- <div class="chip">🐴 <span id="nameEl">Star</span> <span id="gaitEl">🧍</span></div>
+ <div class="chip">🐴 <span id="nameEl">Clover</span> <span id="gaitEl">🧍</span></div>
  <select id="horseSel" title="Choose your horse"></select>
  <button id="netBtn">🌐 Club</button>
  <button id="lbBtn">🏅</button>
@@ -130,7 +130,7 @@ button:active{transform:scale(.95)}
 <div id="statusCard">
  <div id="scPortrait">🐴</div>
  <div id="scInfo">
-  <div id="scName">Star</div>
+  <div id="scName">Clover</div>
   <div class="scbars">
    <div class="scb" title="Food"><i id="scbH" style="background:#e8943a"></i></div>
    <div class="scb" title="Water"><i id="scbT" style="background:#4fa8e0"></i></div>
@@ -169,12 +169,12 @@ import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
 /* ================= save sync with the 2D game ================= */
-const SAVE_KEY='starRanchFable_v1';
+const SAVE_KEY='starRanchFable_v1';   // NOT renamed with the game: changing this orphans every existing save
 let save=null;
 try{save=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){}
 if(!save||!save.horses||!save.horses.length){
- save=save&&save.horses?save:{v:2,ranchName:'Star Ranch',founded:Date.now(),coins:150,gems:3,items:{carrot:10,apple:2,hay:3},nextId:1,horses:[],decor:[],projects:{},trophies:{},wild:null,wildTrust:0,muted:false,lastSeen:Date.now(),lastDaily:'',questDate:'',quests:[],totalRaces:0,started:true};
- save.horses.push({id:save.nextId++,name:'Star',breed:'bay',colors:{body:'#8a5a2b',mane:'#332214'},horn:false,rainbow:false,stats:{speed:3,stamina:3,jump:3},level:1,xp:0,bond:25,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
+ save=save&&save.horses?save:{v:2,ranchName:'Meadowlark Ranch',founded:Date.now(),coins:150,gems:3,items:{carrot:10,apple:2,hay:3},nextId:1,horses:[],decor:[],projects:{},trophies:{},wild:null,wildTrust:0,muted:false,lastSeen:Date.now(),lastDaily:'',questDate:'',quests:[],totalRaces:0,started:true};
+ save.horses.push({id:save.nextId++,name:'Clover',breed:'bay',colors:{body:'#8a5a2b',mane:'#332214'},horn:false,rainbow:false,stats:{speed:3,stamina:3,jump:3},level:1,xp:0,bond:25,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
  save.started=true;
  try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}
 }
@@ -249,6 +249,10 @@ function toast(msg){
  const t=document.createElement('div');t.className='toast';t.textContent=msg;
  $('toasts').appendChild(t);
  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),400);},2200);
+ /* In a headset the DOM is not on screen at all, so every one of these — found a gem,
+    clean jump, quest complete, a horse getting hungry — was silently lost. Mirror it onto
+    a panel in the world. Defined later; guarded so early boot toasts do not throw. */
+ try{if(typeof vrToast==='function')vrToast(msg);}catch(e){}
 }
 
 /* ================= tiny sounds ================= */
@@ -486,6 +490,55 @@ vrMenu.rotation.order='YXZ';
 vrMenu.renderOrder=900;
 vrMenu.visible=false;
 vrRig.add(vrMenu);
+
+/* ---- VR notifications ---------------------------------------------------------------
+   Same trick as the menu: a canvas paint onto a plane carried by the rig. It hangs low and
+   slightly right so it never sits over the horse's head, holds a short queue so a burst of
+   events does not overwrite itself, and fades rather than popping out. */
+const VRT_W=768,VRT_H=192;
+const vrToastCv=document.createElement('canvas');
+vrToastCv.width=VRT_W;vrToastCv.height=VRT_H;
+const vrToastCtx=vrToastCv.getContext('2d');
+const vrToastTex=new THREE.CanvasTexture(vrToastCv);
+vrToastTex.colorSpace=THREE.SRGBColorSpace;
+const vrToastMesh=new THREE.Mesh(
+ new THREE.PlaneGeometry(0.62,0.62*VRT_H/VRT_W),
+ new THREE.MeshBasicMaterial({map:vrToastTex,transparent:true,fog:false,toneMapped:false,depthTest:false})
+);
+vrToastMesh.renderOrder=910;
+vrToastMesh.visible=false;
+vrToastMesh.position.set(0.16,-0.30,-1.05);
+vrRig.add(vrToastMesh);
+const vrToastQ=[];let vrToastT=0;
+function vrToastPaint(msg){
+ const c=vrToastCtx;
+ c.clearRect(0,0,VRT_W,VRT_H);
+ c.fillStyle='rgba(38,28,14,0.90)';
+ const r=44,w=VRT_W-16,h=VRT_H-16,x=8,y=8;
+ c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);
+ c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();c.fill();
+ c.strokeStyle='rgba(255,226,160,0.55)';c.lineWidth=4;c.stroke();
+ c.fillStyle='#fff6e2';c.textAlign='center';c.textBaseline='middle';
+ let size=46;c.font='700 '+size+'px system-ui,sans-serif';
+ while(c.measureText(msg).width>w-56&&size>22){size-=2;c.font='700 '+size+'px system-ui,sans-serif';}
+ c.fillText(msg,VRT_W/2,VRT_H/2);
+ vrToastTex.needsUpdate=true;
+}
+function vrToast(msg){
+ if(!renderer.xr.isPresenting)return;
+ vrToastQ.push(String(msg));
+ if(vrToastQ.length>4)vrToastQ.shift();
+ if(!vrToastMesh.visible){vrToastPaint(vrToastQ.shift());vrToastT=2.6;vrToastMesh.visible=true;}
+}
+function tickVRToast(dt){
+ if(!vrToastMesh.visible)return;
+ vrToastT-=dt;
+ if(vrToastT<=0){
+  if(vrToastQ.length){vrToastPaint(vrToastQ.shift());vrToastT=2.6;}
+  else{vrToastMesh.visible=false;vrToastMesh.material.opacity=1;return;}
+ }
+ vrToastMesh.material.opacity=Math.min(1,vrToastT/0.45);   // fade out, do not pop
+}
 
 /* laser + the dot where it lands */
 const vrRayGeo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(0,0,-1)]);
@@ -1063,6 +1116,7 @@ renderer.xr.addEventListener('sessionstart',()=>{
 renderer.xr.addEventListener('sessionend',()=>{
  vrRig.remove(camera);
  vrVignette.visible=false;
+ vrToastMesh.visible=false;vrToastQ.length=0;
  setVRMenu(false);
  if(player.rider&&player.rider.g)player.rider.g.visible=true;   // she comes back for the flat game
  useBloom=vrBloomWas;
@@ -4020,7 +4074,7 @@ function updateTrail(dt){
  tube(0.09,0.11,3.4,whitePaintMat,-3,1.7,20,scene);
  tube(0.09,0.11,3.4,whitePaintMat,3,1.7,20,scene);
  box(6.6,0.18,0.18,whitePaintMat,0,3.45,20,scene);
- const archSign=nameSprite('⭐ STAR RANCH ARENA');
+ const archSign=nameSprite('⭐ MEADOWLARK ARENA');
  archSign.scale.set(4.6,1.0,1);
  archSign.position.set(0,4.05,20);
  scene.add(archSign);
@@ -4233,6 +4287,10 @@ colliders.push(
  .forEach(s=>walls.push({x1:s[0],z1:s[1],x2:s[2],z2:s[3]}));
 walls.push({x1:-2.1,z1:BR_A,x2:-2.1,z2:BR_B},{x1:2.1,z1:BR_A,x2:2.1,z2:BR_B});
 const jumps=[];
+/* The five practice fences live in the arena permanently. A course drops its own numbered
+   fences in the same space, so during an event both sets were standing and you could not
+   tell which one you were meant to take next. */
+function setPracticeJumps(on){for(const j of jumps)if(j.g)j.g.visible=on;}
 function makeJump(x,z,rotY){
  const g=new THREE.Group();
  box(0.17,1.1,0.17,paintMat('#b03a2a'),-1.5,0.55,0,g);
@@ -4253,7 +4311,7 @@ function makeJump(x,z,rotY){
  g.position.set(x,0,z);
  g.rotation.y=rotY;
  scene.add(g);
- jumps.push({x,z,rotY,prevSide:0});
+ jumps.push({x,z,rotY,prevSide:0,g});
 }
 makeJump(-10,0,0.3);
 makeJump(8,-8,-0.5);
@@ -4612,9 +4670,9 @@ rebuildAll();
 const npcs=[];
 {
  const defs=[
-  {name:'Maya',body:'#9c4f23',mane:'#6e3617',tack:'#2e86c1',off:1,shirt:'#5a9a5a',pants:'#5a4632',
+  {name:'Juniper',body:'#9c4f23',mane:'#6e3617',tack:'#2e86c1',off:1,shirt:'#5a9a5a',pants:'#5a4632',
    route:[[0,66],[0,121],[55,170],[110,130],[70,60],[10,20]]},
-  {name:'Finn',body:'#26262e',mane:'#101015',tack:'#c0392b',off:5,shirt:'#b34a4a',pants:'#2e3a52',
+  {name:'Rowan',body:'#26262e',mane:'#101015',tack:'#c0392b',off:5,shirt:'#b34a4a',pants:'#2e3a52',
    route:[[0,66],[0,121],[60,185],[150,105],[140,-20],[105,-115],[0,-140],[-90,-100],[-130,0],[-80,80],[-15,60],[0,14]]},
  ];
  for(const d of defs){
@@ -4750,7 +4808,7 @@ addEventListener('pointermove',e=>{
 addEventListener('pointerup',()=>{camDrag=null;});
 addEventListener('wheel',e=>{camDist=THREE.MathUtils.clamp(camDist+e.deltaY*0.01,3.5,13);},{passive:true});
 
-/* ================= show jumping courses (Star Championship in 3D) ================= */
+/* ================= show jumping courses (Evervale Championship in 3D) ================= */
 const EVENTS3=[
  {id:'h1',town:'Heartside',name:'Heartside Welcome Jump',lvl:1,n:5,reward:150},
  {id:'h2',town:'Heartside',name:'Heartside Meadow Dash',lvl:2,n:6,reward:220},
@@ -4759,11 +4817,11 @@ const EVENTS3=[
  {id:'b1',town:'Bronco',name:'Bronco Canyon Jump-Off',lvl:5,n:9,reward:560},
  {id:'b2',town:'Bronco',name:'Bronco Wilds Run',lvl:6,n:10,reward:700},
  {id:'w1',town:'Witberg',name:'Witberg Alpine Trial',lvl:8,n:11,reward:900},
- {id:'w2',town:'Witberg',name:'Star Championship Final',lvl:10,n:12,reward:1500},
+ {id:'w2',town:'Witberg',name:'Evervale Championship Final',lvl:10,n:12,reward:1500},
  {id:'rr',town:'Evervale',name:'River Run',lvl:1,race:true,route:'rr',reward:250},
  {id:'r1',town:'Evervale',name:'Evervale Grand Loop',lvl:3,race:true,route:'r1',reward:500},
  {id:'r2',town:'Evervale',name:'Grand Loop Reversed',lvl:6,race:true,route:'r1',rev:true,reward:700},
- {id:'pp',town:'Star Ranch',name:'Pasture Pony Dash',lvl:1,race:true,route:'pp',reward:180},
+ {id:'pp',town:'Meadowlark Ranch',name:'Pasture Pony Dash',lvl:1,race:true,route:'pp',reward:180},
  {id:'bd',town:'Bronco',name:'Bronco Desert Derby',lvl:4,race:true,route:'bd',reward:650},
  {id:'wt',town:'Witberg',name:'Witberg Snow Trail',lvl:7,race:true,route:'wt',reward:850},
  {id:'tc',town:'Evervale',name:'Twilight Cup',lvl:9,n:10,reward:1200},
@@ -4842,6 +4900,7 @@ function startCourse(ev){
   par=N*9;
  }
  course={ev,jumps:jumps3,idx:0,t:0,cd:3.6,started:false,faults:0,race:!!ev.race,par};
+ setPracticeJumps(false);        // clear the arena so only the numbered course is standing
  $('eventsPanel').style.display='none';
  $('courseHud').style.display='flex';
  $('courseHudTxt').textContent='🏆 '+ev.name+' — get ready!';
@@ -4850,6 +4909,7 @@ function startCourse(ev){
 function cancelCourse(){
  if(!course)return;
  for(const j of course.jumps)scene.remove(j.g);
+ setPracticeJumps(true);
  course=null;
  arrow.visible=false;
  $('courseHud').style.display='none';
@@ -4886,7 +4946,7 @@ function openEvents(){
  let tr={};
  try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(s&&s.trophies)tr=s.trophies;}catch(e){}
  const lvl=(myHorses[rideIdx].level||1);
- p.innerHTML='<b style="font-size:16px">🏆 Star Championship — ride the course before the clock!</b>'+
+ p.innerHTML='<b style="font-size:16px">🏆 Evervale Championship — ride the course before the clock!</b>'+
  EVENTS3.map((ev,i)=>{
   const won=tr[ev.id],ok=lvl>=ev.lvl;
   return '<div class="evrow">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b><span>'+ev.town+' · '+(ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps')+' · Lv '+ev.lvl+'</span>'+
@@ -5068,7 +5128,7 @@ function openShop(tab){
  }else if(shopTab3==='tack'){
   html+='<span style="font-size:12px;color:#8c7a63">A new saddle for <b>'+(s.horses[rideIdx]?s.horses[rideIdx].name:'your horse')+'</b> — 150 🪙</span>'
   +TACKS3.map(tk=>'<div class="evrow"><span style="flex:none;width:18px;height:18px;border-radius:50%;background:'+tk[0]+'"></span> <b>'+tk[1]+' Saddle</b><span></span><button data-buyt="'+tk[0]+'">150 🪙</button></div>').join('')
-  +(s.goldTack?'<div class="evrow"><span style="flex:none;width:18px;height:18px;border-radius:50%;background:#ffd166"></span> <b>✨ GOLDEN Saddle</b><span>Star Pass exclusive!</span><button data-buyt="#ffd166">Equip</button></div>':'');
+  +(s.goldTack?'<div class="evrow"><span style="flex:none;width:18px;height:18px;border-radius:50%;background:#ffd166"></span> <b>✨ GOLDEN Saddle</b><span>Trail Pass exclusive!</span><button data-buyt="#ffd166">Equip</button></div>':'');
  }else if(shopTab3==='breed'){
   const elig=s.horses.map((h,i)=>({h,i})).filter(e=>!e.h.foal&&e.h.bond>=60);
   if(elig.length<2){
@@ -5233,7 +5293,7 @@ function drawBigMap(){
   mc.strokeStyle='rgba(40,30,15,0.75)';mc.lineWidth=4;mc.strokeText(s,q[0],q[1]);
   mc.fillStyle='#fff';mc.fillText(s,q[0],q[1]);
  };
- lbl(0,-14,'⭐ Star Ranch');
+ lbl(0,-14,'⭐ Meadowlark Ranch');
  lbl(47,-64,'🏘️ Heartside');
  lbl(215,-100,'🌾 Agricola');
  lbl(-220,125,'🏜️ Bronco Canyon');
@@ -5276,7 +5336,7 @@ addEventListener('keydown',e=>{
    SOCIAL gates this whole layer — the MQTT connection, chat, remote riders, profiles,
    friends, invite links and club rankings. With it off the game is purely single player
    and never contacts the broker; the code stays put so flipping this back to true
-   restores everything. Star Pass and milestone rewards are NOT social and stay on. */
+   restores everything. Trail Pass and milestone rewards are NOT social and stay on. */
 const SOCIAL=false;
 const net={client:null,id:'p'+Math.random().toString(36).slice(2,8),club:null,lastPub:0};
 const remotes={};
@@ -5507,7 +5567,7 @@ function openOnline(){
  });
 }
 /* Single player: take the club, chat and speech-bubble UI out of the HUD entirely rather
-   than leaving buttons that open empty panels. 🏅 stays — Star Pass is not a social feature. */
+   than leaving buttons that open empty panels. 🏅 stays — Trail Pass is not a social feature. */
 if(!SOCIAL){
  ['netBtn','chatBtn','chatFeed','chatBar'].forEach(id=>{const e=$(id);if(e)e.style.display='none';});
 }
@@ -5543,7 +5603,7 @@ if(SOCIAL)setTimeout(()=>{const s=freshSave();if(s&&s.playerName)netConnect();},
 
 /* ================= leaderboards & milestone rewards ================= */
 const lbData={};
-/* 📸 daily photo competitions & 🎟️ Star Pass */
+/* 📸 daily photo competitions & 🎟️ Trail Pass */
 const PHOTO_THEMES=[
  {id:'turtle',label:'a turtle 🐢',ok:()=>turtles.some(tu=>Math.hypot(tu.g.position.x-player.pos.x,tu.g.position.z-player.pos.z)<7)},
  {id:'rainbow',label:'a rainbow 🌈',ok:()=>rainbow.visible},
@@ -5608,7 +5668,7 @@ function openLB(){
  let html='<b style="font-size:16px">🏅 Leaderboards & Rewards'+(online?' <span style="color:#1e8449">· club "'+net.club+'"</span>':(SOCIAL?' <span style="color:#8c7a63">· connect 🌐 for club rankings</span>':''))+'</b>';
  const pp=(s.pass&&s.pass.pts)||0;
  const ptier=Math.min(20,Math.floor(pp/200));
- html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🎟️ Star Pass — '+pp+' pts · Tier '+ptier+'/20</b>'
+ html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🎟️ Trail Pass — '+pp+' pts · Tier '+ptier+'/20</b>'
  +'<div class="cbar" style="width:100%"><div class="cfill" style="width:'+Math.min(100,(pp%200)/2)+'%;background:#b18cf0"></div></div>'
  +'<span style="width:100%;display:flex;gap:5px;flex-wrap:wrap">'+PASS_REWARDS.map((r,i)=>{
   const key='p'+i;
@@ -5923,7 +5983,7 @@ function claimDaily(type){
 
 /* ---- achievements ---- */
 const ACHS=[
- {id:'herd2',icon:'🐴',label:'A friend for Star',desc:'Own 2 horses',v:s=>s.horses.length,goal:2,r:{c:100}},
+ {id:'herd2',icon:'🐴',label:'A friend for Clover',desc:'Own 2 horses',v:s=>s.horses.length,goal:2,r:{c:100}},
  {id:'herd5',icon:'🐴',label:'Growing herd',desc:'Own 5 horses',v:s=>s.horses.length,goal:5,r:{g:1}},
  {id:'herd10',icon:'🐴',label:'Big family',desc:'Own 10 horses',v:s=>s.horses.length,goal:10,r:{g:2}},
  {id:'herd16',icon:'🐴',label:'Mega herd',desc:'Own 16 horses',v:s=>s.horses.length,goal:16,r:{c:500}},
@@ -5934,7 +5994,7 @@ const ACHS=[
  {id:'troph1',icon:'🏆',label:'First rosette',desc:'Win 1 event trophy',v:s=>Object.keys(s.trophies||{}).length,goal:1,r:{c:100}},
  {id:'troph5',icon:'🏆',label:'Shelf of silver',desc:'Win 5 event trophies',v:s=>Object.keys(s.trophies||{}).length,goal:5,r:{g:1}},
  {id:'troph11',icon:'🏆',label:'Champion of Evervale',desc:'Win all 11 event trophies',v:s=>Object.keys(s.trophies||{}).length,goal:11,r:{g:3}},
- {id:'story8',icon:'📜',label:"Grandpa Joe's pride",desc:'Finish the story missions',v:s=>(s.story&&s.story.idx)||0,goal:8,r:{c:400}},
+ {id:'story8',icon:'📜',label:"Grandpa Wren's pride",desc:'Finish the story missions',v:s=>(s.story&&s.story.idx)||0,goal:8,r:{c:400}},
  {id:'bond100',icon:'❤️',label:'Soulmates',desc:'Reach 100 bond with a horse',v:s=>Math.round(s.horses.reduce((m,h)=>Math.max(m,h.bond||0),0)),goal:100,r:{g:1}},
  {id:'lvl5',icon:'⭐',label:'Rising star',desc:'Train a horse to level 5',v:s=>s.horses.reduce((m,h)=>Math.max(m,h.level||1),1),goal:5,r:{c:200}},
  {id:'dist25k',icon:'🧭',label:'Trail blazer',desc:'Ride 25 km in total',v:s=>(s.stats&&s.stats.dist)||0,goal:25000,r:{g:1}},
@@ -6135,7 +6195,7 @@ const STORY=[
  {label:'Win Heartside Welcome Jump',text:'Heartside is calling! Enter the Welcome Jump from the 🏆 Events board and bring home a clean win.',type:'event',ev:'h1',goal:1,reward:{c:250,g:1}},
  {label:'Visit Heartside Village',text:'Ride north past the pine treeline — the cottages of Heartside Village are just beyond.',type:'visit',x:47,z:-50,r:14,goal:1,reward:{c:200}},
  {label:'Tame a wild horse',text:'Wild horses roam the far meadows. Walk up slowly — no galloping! — and stay close until it trusts you.',type:'tame',goal:1,reward:{c:300,g:1}},
- {label:'Win the Championship Final',text:'You are ready, champion. Take the Star Championship Final in Witberg!',type:'event',ev:'w2',goal:1,reward:{c:1000,g:3}},
+ {label:'Win the Championship Final',text:'You are ready, champion. Take the Evervale Championship Final in Witberg!',type:'event',ev:'w2',goal:1,reward:{c:1000,g:3}},
 ];
 let storyIdx=0,storyProg=0,nearNPC=false;
 try{if(save&&save.story){storyIdx=save.story.idx||0;storyProg=save.story.prog||0;}}catch(e){}
@@ -6147,18 +6207,18 @@ function questEvt(type,val){
  if(type==='event'){if(val===m.ev)storyProg=m.goal;}
  else storyProg=Math.min(m.goal,storyProg+val);
  saveStory();
- if(storyProg>=m.goal)toast('📜 Done! Ride back and tell Grandpa Joe');
+ if(storyProg>=m.goal)toast('📜 Done! Ride back and tell Grandpa Wren');
 }
 function openDlg(){
  const m=STORY[storyIdx];
  const d=$('dlg');
  if(!m){
-  d.innerHTML='<b>👴 Grandpa Joe</b><p>You have done everything I dreamed of, champion. This ranch shines again because of you. Ride free! 🏆</p><button id="dlgBtn">🐴</button>';
+  d.innerHTML='<b>👴 Grandpa Wren</b><p>You have done everything I dreamed of, champion. This ranch shines again because of you. Ride free! 🏆</p><button id="dlgBtn">🐴</button>';
  }else if(missionDone()){
   const r=m.reward;
-  d.innerHTML='<b>👴 Grandpa Joe</b><p>Wonderful work! Here — you earned it: <b>'+(r.c||0)+'🪙'+(r.g?' +'+r.g+'💎':'')+'</b></p><button id="dlgBtn">Claim ✨</button>';
+  d.innerHTML='<b>👴 Grandpa Wren</b><p>Wonderful work! Here — you earned it: <b>'+(r.c||0)+'🪙'+(r.g?' +'+r.g+'💎':'')+'</b></p><button id="dlgBtn">Claim ✨</button>';
  }else{
-  d.innerHTML='<b>👴 Grandpa Joe</b><p>'+m.text+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':'')+'</span><br><br><button id="dlgBtn">On it!</button>';
+  d.innerHTML='<b>👴 Grandpa Wren</b><p>'+m.text+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':'')+'</span><br><br><button id="dlgBtn">On it!</button>';
  }
  d.style.display='block';
  $('dlgBtn').onclick=()=>{
@@ -6337,7 +6397,7 @@ const REGIONS=[
  {name:'🌊 Mirror Lake',x:20,z:16,r:9},
  {name:'🏘️ Heartside Village',x:47,z:-50,r:15},
  {name:'🌲 Witberg Pines',x:-30,z:-58,r:26},
- {name:'🏡 Star Ranch',x:0,z:0,r:32},
+ {name:'🏡 Meadowlark Ranch',x:0,z:0,r:32},
  {name:'🌾 Evervale Meadows',x:0,z:0,r:999},
 ];
 let lastRegion='';
@@ -6779,13 +6839,13 @@ function tick(){
  const nd=Math.hypot(player.pos.x-npc.position.x,player.pos.z-npc.position.z);
  nearNPC=nd<3.5;
  $('ctx').style.display=nearNPC?'block':'none';
- if(nearNPC)$('ctx').textContent='💬 Talk to Grandpa Joe (E)';
+ if(nearNPC)$('ctx').textContent='💬 Talk to Grandpa Wren (E)';
  $('questTrack').textContent=m?
   ('📜 '+m.label+(missionDone()?' ✅ → tell Joe!':(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':''))):
   '📜 Story complete! 🏆';
  if(m&&m.type==='visit'&&storyProg<m.goal&&Math.hypot(player.pos.x-m.x,player.pos.z-m.z)<m.r){
   storyProg=m.goal;saveStory();
-  toast('📜 Spot visited — tell Grandpa Joe!');
+  toast('📜 Spot visited — tell Grandpa Wren!');
  }
  if(m&&m.type==='gallop'&&sp>7&&grounded)questEvt('gallop',sp*dt);
  if(sp>7&&grounded)dailyEvt('gallop',sp*dt);
@@ -6907,7 +6967,7 @@ function tick(){
    toast('💎 You found a gem!');
   }
  }
- for(const j of jumps){
+ for(const j of (course?[]:jumps)){
   const lx=player.pos.x-j.x,lz=player.pos.z-j.z;
   const along=lx*Math.cos(j.rotY)-lz*Math.sin(j.rotY);
   const across=lx*Math.sin(j.rotY)+lz*Math.cos(j.rotY);
@@ -7143,6 +7203,7 @@ function tick(){
             +THREE.MathUtils.clamp((vrTurnSm-0.35)/1.6,0,0.30);
   vrVignette.material.uniforms.uAmt.value=THREE.MathUtils.clamp(vAmt,0,0.84);
   updateVRMenu(dt);
+  tickVRToast(dt);
  }else{
   camera.position.lerp(new THREE.Vector3(camX,camY,camZ),k);
   const shake=sp>7&&grounded?0.011:0;
