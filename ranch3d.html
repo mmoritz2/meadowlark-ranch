@@ -7380,14 +7380,28 @@ function tick(){
   const mvL=Math.hypot(mvx,mvz);
   if(mvL>18){mvx*=18/mvL;mvz*=18/mvL;}   // a collision teleport is not real speed
   const kVel=1-Math.exp(-8*dt);
+  /* Vertical needs the same lead the horizontal axes get. An exponential filter trails a
+     sustained velocity by about v/k, so climbing at 6 m/s on the slow vertical rate left the
+     rider more than a metre under their own horse — which is why it showed up on the pegasus
+     and almost nowhere else. The velocity is smoothed first, so a hoofbeat (which oscillates
+     and averages out) still gets filtered while a sustained climb gets compensated. */
+  let mvy=(tY-vrPrevPos.y)*idt;
+  if(Math.abs(mvy)>25)mvy=Math.sign(mvy)*25;   // fast travel is not climbing
   vrVel.x+=(mvx-vrVel.x)*kVel;
   vrVel.z+=(mvz-vrVel.z)*kVel;
+  vrVel.y+=(mvy-vrVel.y)*kVel;
   vrPrevPos.set(tX,tY,tZ);
   const kH=1-Math.exp(-VR_KH*dt);   // horizontal: quick, so riding still feels direct
   const kV=1-Math.exp(-VR_KV*dt);   // vertical: slow, because bumps are what turn stomachs
   vrPos.x+=((tX+vrVel.x/VR_KH)-vrPos.x)*kH;
   vrPos.z+=((tZ+vrVel.z/VR_KH)-vrPos.z)*kH;
-  vrPos.y+=(tY-vrPos.y)*kV;
+  vrPos.y+=((tY+vrVel.y/VR_KV)-vrPos.y)*kV;
+  /* A leash, so no filter, trick, jump or teleport can ever visibly part you from the horse.
+     Smoothing away a bump is worth it; drifting off the saddle never is. */
+  const dy=tY-vrPos.y;
+  if(Math.abs(dy)>0.5)vrPos.y=tY-Math.sign(dy)*0.5;
+  const dxz=Math.hypot(tX-vrPos.x,tZ-vrPos.z);
+  if(dxz>0.7){const k=0.7/dxz;vrPos.x=tX-(tX-vrPos.x)*k;vrPos.z=tZ-(tZ-vrPos.z)*k;}
   vrRig.position.copy(vrPos);
   /* You are the rider. Seeing her from behind, or from inside her head, is worse. */
   if(player.rider&&player.rider.g&&player.rider.g.visible)player.rider.g.visible=false;
