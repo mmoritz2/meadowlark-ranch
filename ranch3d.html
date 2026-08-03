@@ -3099,13 +3099,52 @@ let waterMat=null;   // hoisted: the pond reuses it
  scene.add(wheat);
 }
 /* ================= the four zones of Kestrel Basin ================= */
-const redRockMat=new THREE.MeshStandardMaterial({map:grainTex('#c4795a','#9a5a40',0.7),roughness:1});
-redRockMat.map.repeat.set(4,3);
+/* Mesas were using grainTex, which draws VERTICAL streaks — it is the plank/wood-grain
+   texture. On a cylinder that reads as a moulded plastic drum, because the one thing
+   that says "mesa" is horizontal sedimentary banding: layers laid down over time and
+   then cut through. So: horizontal strata in muted desert ochres, with faint vertical
+   weathering streaks over the top where rain has run down the face. */
+function strataTex(){
+ /* Keep the band tones CLOSE together. Wide tonal jumps turn a butte into a stack of
+    pancakes — the banding should be something you notice on second look, not stripes. */
+ const BANDS=['#b07a5c','#a97052','#b98764','#a06849','#b3805f','#a5744f','#bc8b6a'];
+ return canvasTex(128,256,(c,w,h)=>{
+  c.fillStyle='#ac7455';c.fillRect(0,0,w,h);
+  for(let y=0;y<h;){
+   const bh=1+Math.random()*9;             // thinner beds, so no one band dominates
+   c.fillStyle=BANDS[(Math.random()*BANDS.length)|0];
+   c.globalAlpha=0.18+Math.random()*0.30;  // was up to 0.95 — far too opaque
+   c.fillRect(0,y,w,bh);
+   if(Math.random()<0.18){                 // occasional harder bed, still subtle
+    c.globalAlpha=0.10;c.fillStyle='#7d4a33';
+    c.fillRect(0,y,w,1);
+   }
+   y+=bh;
+  }
+  c.globalAlpha=0.07;
+  for(let i=0;i<34;i++){                   // rain-run weathering down the face
+   c.strokeStyle='#5d3320';
+   c.lineWidth=1+Math.random()*3;
+   const x=Math.random()*w;
+   c.beginPath();c.moveTo(x,0);
+   c.quadraticCurveTo(x+(Math.random()-0.5)*5,h/2,x+(Math.random()-0.5)*4,h);
+   c.stroke();
+  }
+  c.globalAlpha=0.05;                      // break up the flat bands with grit
+  for(let i=0;i<2200;i++){
+   c.fillStyle=Math.random()<0.5?'#6b3f2a':'#d3a482';
+   c.fillRect(Math.random()*w,Math.random()*h,1,1);
+  }
+  c.globalAlpha=1;
+ },1);
+}
+const redRockMat=new THREE.MeshStandardMaterial({map:strataTex(),roughness:1});
+redRockMat.map.repeat.set(3,1);   // bands run once up the face; wrap 3x around it
 for(let i=0;i<8;i++){
  const x=-160-Math.random()*130,z=80+Math.random()*110;
  if(Math.abs(z-riverZ(x))<11)continue;
  const hgt=9+Math.random()*13,rad=5+Math.random()*7;
- const geo=new THREE.CylinderGeometry(rad*0.82,rad,hgt,9,3);
+ const geo=new THREE.CylinderGeometry(rad*0.82,rad,hgt,16,3);   // 9 sides read as a faceted drum
  const p=geo.attributes.position;
  for(let j=0;j<p.count;j++){
   const key=Math.round((p.getX(j)+9)*17)*31+Math.round((p.getY(j)+9)*17)*7+Math.round((p.getZ(j)+9)*17);
@@ -3117,8 +3156,17 @@ for(let i=0;i<8;i++){
  m.position.set(x,groundH(x,z)+hgt*0.36,z);
  m.castShadow=true;m.receiveShadow=true;
  scene.add(m);
- const top=new THREE.Mesh(new THREE.CylinderGeometry(rad*0.88,rad*0.8,0.8,9),smat('#8a9a5a'));
+ /* A talus fan. Without one the cylinder looks pushed into flat sand like a peg into a
+    board; real buttes shed debris and sit in a skirt of their own rubble, and that skirt
+    is what actually sells the join. */
+ const skirt=new THREE.Mesh(new THREE.ConeGeometry(rad*1.34,hgt*0.20,16,1,true),
+  new THREE.MeshStandardMaterial({color:0xc59a74,roughness:1}));   // rubble, half-way to sand
+ skirt.position.set(x,groundH(x,z)+hgt*0.085,z);
+ skirt.receiveShadow=true;
+ scene.add(skirt);
+ const top=new THREE.Mesh(new THREE.CylinderGeometry(rad*0.88,rad*0.8,0.8,16),smat('#938a5c'));
  top.position.set(x,groundH(x,z)+hgt*0.84,z);
+ top.castShadow=true;top.receiveShadow=true;   // an unlit lid is what made it look pasted on
  scene.add(top);
  colliders.push({x,z,r:rad*0.95});
 }
@@ -3767,7 +3815,10 @@ for(let i=0;i<14;i++){
   puff.scale.y=0.45;
   cl.add(puff);
  }
- cl.position.set((Math.random()-0.5)*700,40+Math.random()*25,(Math.random()-0.5)*700);
+ /* Terrain tops out near 40 units, so clouds spawned at 40 were level with the hills and
+    from any high vantage they read as white lozenges lying ON the landscape rather than
+    over it. Put the whole deck above the highest ground. */
+ cl.position.set((Math.random()-0.5)*700,78+Math.random()*40,(Math.random()-0.5)*700);
  cl.scale.setScalar(1.6+Math.random()*2.2);
  scene.add(cl);clouds.push(cl);
 }
