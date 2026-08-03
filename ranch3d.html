@@ -1419,10 +1419,13 @@ scene.add(rainbow);
 
 /* ================= night sky: stars, moon, fireflies, lit windows ================= */
 const C_SUN_HIGH=new THREE.Color('#fff0d2'),C_SUN_LOW=new THREE.Color('#ff9a4e'),C_MOON=new THREE.Color('#b9cdf2');
-const C_HEMI_DAY=new THREE.Color(0xbcd2ec),C_HEMI_NIGHT=new THREE.Color(0x33436b);
-const C_GROUND_DAY=new THREE.Color(0x7e8456),C_GROUND_NIGHT=new THREE.Color(0x232a1e);
+const C_HEMI_DAY=new THREE.Color(0xbcd2ec),C_HEMI_NIGHT=new THREE.Color(0x3d5080);
+const C_GROUND_DAY=new THREE.Color(0x7e8456),C_GROUND_NIGHT=new THREE.Color(0x2f3a30);
 const C_FOG_DAY=new THREE.Color(0xbccddc),C_FOG_GOLD=new THREE.Color(0xd9bfa4),C_FOG_NIGHT=new THREE.Color(0x141c2e);
 const _fogCol=new THREE.Color(),_moonDir=new THREE.Vector3();
+/* Declared up here, not beside nameSprite(): the function is hoisted and called long
+   before its own line runs, so a const declared next to it is still in the dead zone. */
+const nameSprites=[];
 let nightNow=0;                      // 0 = day, 1 = deep night (read by ambient-life updates)
 const stars=(()=>{
  const N=1100,pos=new Float32Array(N*3);
@@ -2752,7 +2755,9 @@ function placeSeedTrees(){
     const s=tp.s*cfg.h/hh;
     et.set(0,tp.r,0);
     qt.setFromEuler(et);
-    vt.set(tp.x,groundH(tp.x,tp.z)-minY*s,tp.z);
+    // sink slightly: the drawn triangle dips below analytic groundH on a crest, and a
+    // trunk that hovers even a few centimetres is the first thing an artist notices
+    vt.set(tp.x,groundH(tp.x,tp.z)-minY*s-0.06*cfg.h*tp.s,tp.z);
     sct.set(s,s,s);
     m4t.compose(vt,qt,sct);
     bInst.setMatrixAt(i,m4t);
@@ -2887,7 +2892,7 @@ function placeFoliage(name){
   list.forEach((tp,i)=>{
    const s=tp.s*FOLIAGE_H[name]/h;
    q.setFromEuler(new THREE.Euler(0,tp.r,0));
-   p.set(tp.x,groundH(tp.x,tp.z)-minY*s,tp.z);   // base on the ground
+   p.set(tp.x,groundH(tp.x,tp.z)-minY*s-0.06*FOLIAGE_H[name]*tp.s,tp.z);   // sunk into the ground, not resting on the analytic curve
    sc.set(s,s,s); m.compose(p,q,sc); inst.setMatrixAt(i,m);
   });
   inst.instanceMatrix.needsUpdate=true; scene.add(inst);
@@ -4323,7 +4328,7 @@ function updateTrail(dt){
   const th=i/40*Math.PI*2;
   const x=Math.cos(th)*23.2,z=Math.sin(th)*18.2;
   if(Math.abs(x)<3.4&&z>15)continue; // leave the gate open
-  const kb=box(2.6,0.32,0.09,whitePaintMat,x,0.16,z,scene);
+  const kb=box(3.35,0.32,0.09,whitePaintMat,x,0.16,z,scene);   // 2.6 on a 3.26 pitch left the ring dashed
   kb.rotation.y=Math.atan2(-23.2*Math.sin(th),18.2*Math.cos(th))+Math.PI/2;
  }
  // dressage letters
@@ -4343,7 +4348,7 @@ function updateTrail(dt){
  box(6.6,0.18,0.18,whitePaintMat,0,3.45,20,scene);
  const archSign=nameSprite('⭐ MEADOWLARK ARENA');
  archSign.scale.set(4.6,1.0,1);
- archSign.position.set(0,4.05,20);
+ archSign.position.set(0,3.92,20);   // was hovering a tenth of a unit over the crossbeam
  scene.add(archSign);
  // bleachers with spectators & striped canopy (west side)
  {
@@ -4779,15 +4784,28 @@ function makeHorse(cfg){
  return {group:g,legs,neck,tail,head,ears:[earL,earR],bitL,bitR,shadowM,wings,horn};
 }
 function nameSprite(text){
- const cv=document.createElement('canvas');cv.width=256;cv.height=64;
+ /* Was 256x64 with mipmaps on: past ~20px on screen the glyphs mipped away and the sign
+    became a blank white pill, which is why distant signage read as floating paper. Four
+    times the resolution, and no mipmaps so the text stays text. slice(0,12) was also
+    quietly cutting "MEADOWLARK ARENA" down to "MEADOWLARK". */
+ const cv=document.createElement('canvas');cv.width=512;cv.height=128;
  const c=cv.getContext('2d');
  c.fillStyle='rgba(255,255,253,0.88)';
- c.beginPath();c.roundRect(28,6,200,52,22);c.fill();
- c.font='700 30px "Trebuchet MS",sans-serif';
+ c.beginPath();c.roundRect(56,12,400,104,44);c.fill();
  c.textAlign='center';c.fillStyle='#4a3526';
- c.fillText(text.slice(0,12),128,43);
- const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true}));
+ /* Shrink to fit rather than clip. A fixed size overflowed the plate for anything as long
+    as "MEADOWLARK ARENA", and the canvas edge cut it mid-word. */
+ const label=text.slice(0,22);
+ let fs=56;
+ c.font='700 '+fs+'px "Trebuchet MS",sans-serif';
+ while(c.measureText(label).width>384&&fs>24){fs-=2;c.font='700 '+fs+'px "Trebuchet MS",sans-serif';}
+ c.fillText(label,256,68+fs*0.34);
+ const tx=new THREE.CanvasTexture(cv);
+ tx.minFilter=THREE.LinearFilter;tx.generateMipmaps=false;
+ tx.anisotropy=renderer.capabilities.getMaxAnisotropy();
+ const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true}));
  sp.scale.set(2.4,0.6,1);
+ nameSprites.push(sp);
  return sp;
 }
 const horseScale=h=>h.foal?0.65:(h.breed==='chestnut'?0.82:h.breed==='shire'?1.16:h.breed==='clyde'?1.12:h.breed==='pegasus'?1.14:1);
@@ -6703,8 +6721,10 @@ cottage(42,-50,0.4);cottage(48,-56,-0.3);cottage(54,-48,0.9);cottage(45,-43,2.6)
 {
  const sp2=new THREE.Group();
  tube(0.06,0.07,2.0,barkMat,0,1.0,0,sp2);
- const s1=nameSprite('Cottonwood ↗');s1.position.set(0,1.85,0);sp2.add(s1);
- const s2=nameSprite('Loon Lake →');s2.position.set(0,1.45,0);sp2.add(s2);
+ /* Sprites are camera-facing, so nudging them sideways only clears the pole from one
+    angle — they have to go above its top (y=2.0) to read from every direction. */
+ const s1=nameSprite('Cottonwood ↗');s1.position.set(0,2.85,0);sp2.add(s1);
+ const s2=nameSprite('Loon Lake →');s2.position.set(0,2.35,0);sp2.add(s2);
  sp2.position.set(2.5,0,23);
  scene.add(sp2);
 }
@@ -7599,13 +7619,19 @@ function tick(){
  const keyT=(weather.mode==='rain'?2.0:5.4)*dayF+0.62*nightNow
   +(weather.mode==='rain'?0.15:0.55)*golden;   // ember punch at the horizon hours
  sun.intensity+=(keyT-sun.intensity)*Math.min(1,dt*1.5);
- const hemiT=THREE.MathUtils.lerp(0.10,weather.mode==='rain'?0.30:0.14,dayF);
+ const hemiT=THREE.MathUtils.lerp(0.24,weather.mode==='rain'?0.30:0.14,dayF);   // 0.10 left the ground unreadable at night
  hemi.intensity+=(hemiT-hemi.intensity)*Math.min(1,dt*1.5);
  hemi.color.copy(C_HEMI_NIGHT).lerp(C_HEMI_DAY,dayF);
  hemi.groundColor.copy(C_GROUND_NIGHT).lerp(C_GROUND_DAY,dayF);
+ // sprites ignore lighting entirely; dim them by hand or they glow like UI after dark
+ for(const s of nameSprites)s.material.color.setScalar(0.30+0.70*dayF);
  // fog matches the sky: powder blue -> warm gold at the horizon hours -> deep night blue
  _fogCol.copy(C_FOG_DAY).lerp(C_FOG_GOLD,golden);
  _fogCol.lerp(C_FOG_NIGHT,nightNow);
+ /* Dead band at sunrise: elev~0 makes dayF and nightNow BOTH zero, so neither the day
+    ramp nor the night blend applies and the fog stays at noon brightness while the sky
+    is still dark. Distant mountains are ~90% fog at that range, so they flared white. */
+ _fogCol.multiplyScalar(0.16+0.84*THREE.MathUtils.smoothstep(dayF,0.0,0.5));
  scene.fog.color.lerp(_fogCol,Math.min(1,dt*1.5));
  const fogD=(weather.mode==='rain'?0.0052:0.0027);
  scene.fog.density+=(fogD-scene.fog.density)*Math.min(1,dt*0.8);
