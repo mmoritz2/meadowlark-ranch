@@ -15,6 +15,12 @@
 <meta name="twitter:image" content="https://mmoritz2.github.io/meadowlark-ranch/preview.png">
 <meta name="description" content="Ride, care for and breed horses across an open 3D ranch world. Runs in your browser — and in VR.">
 <meta name="theme-color" content="#8fbf6a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Meadowlark">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Meadowlark Ranch 🐴✨</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐴</text></svg>">
 <style>
@@ -7844,5 +7850,41 @@ setTimeout(()=>{
  if(ld)ld.innerHTML='Hmm, the 3D engine could not load.<br>Check that the local game assets are present and try refreshing.';
 },9000);
 </script>
+<script>
+/* Installable-app plumbing. Kept out of the game module on purpose: if any of
+   this throws it must not take the game down with it. */
+(function(){
+ if('serviceWorker' in navigator&&location.protocol==='https:'){
+  addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+ }
+ /* Chrome fires beforeinstallprompt only when the page actually qualifies to be
+    installed, so the button appears if and only if pressing it will work — no
+    dead "Install" that does nothing. iOS never fires it; there you use Share ->
+    Add to Home Screen, which is why the hint below exists. */
+ let deferred=null;
+ addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferred=e;
+  const b=document.getElementById('installBtn');
+  if(b)b.style.display='block';
+ });
+ addEventListener('DOMContentLoaded',()=>{
+  const b=document.getElementById('installBtn');
+  if(!b)return;
+  b.onclick=async()=>{
+   if(!deferred)return;
+   b.style.display='none';
+   deferred.prompt();
+   try{await deferred.userChoice;}catch(e){}
+   deferred=null;
+  };
+  // already installed and launched from the home screen: nothing to offer
+  if(matchMedia('(display-mode: standalone)').matches||navigator.standalone)b.remove();
+ });
+ addEventListener('appinstalled',()=>{
+  const b=document.getElementById('installBtn');if(b)b.remove();
+ });
+})();
+</script>
+<button id="installBtn" style="display:none;position:fixed;top:94px;right:10px;z-index:12">📲 Install</button>
 </body>
 </html>
