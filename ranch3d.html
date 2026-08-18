@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Meadowlark Ranch">
@@ -25,7 +25,8 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐴</text></svg>">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;overflow:hidden;font-family:"Trebuchet MS","Comic Sans MS",sans-serif}
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;-webkit-touch-callout:none;
+ font-family:"Trebuchet MS","Comic Sans MS",sans-serif}
 canvas{display:block}
 .chip{background:rgba(255,255,253,0.88);border:2px solid #e8d9b8;border-radius:999px;padding:6px 14px;font-weight:700;color:#4a3526;box-shadow:0 2px 6px rgba(60,40,10,0.12);white-space:nowrap}
 #hud{position:fixed;top:10px;left:10px;right:10px;display:flex;gap:8px;align-items:center;z-index:5;pointer-events:none}
@@ -42,8 +43,30 @@ a.btn{text-decoration:none;font-weight:700;color:#4a3526;background:linear-gradi
 #loadbar i{display:block;height:100%;width:0%;background:#ffe6a8;border-radius:99px;transition:width .25s ease}
 #loadpct{margin-top:6px;font-size:13px;opacity:0.75}
 #load{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#a9cfe8;color:#34526b;font-size:22px;font-weight:800;z-index:30;text-align:center}
-#touch{position:fixed;bottom:16px;right:16px;z-index:6;display:grid;grid-template-columns:repeat(3,56px);gap:8px;user-select:none;-webkit-user-select:none}
-#touch button{width:56px;height:56px;border-radius:50%;font-size:20px;opacity:0.9;touch-action:none}
+/* Touch controls. Sized and placed for thumbs, not for a mouse: the reachable
+   arc of a thumb on a held phone is the bottom corners, so steering lives in the
+   left one and actions in the right. Everything sits inside the safe area so a
+   notch or a home indicator cannot cover it. */
+#touch{position:fixed;z-index:6;user-select:none;-webkit-user-select:none;display:none;
+ right:calc(14px + env(safe-area-inset-right));bottom:calc(14px + env(safe-area-inset-bottom));
+ display:grid;grid-template-columns:repeat(3,var(--tb));gap:10px;touch-action:none}
+:root{--tb:64px}
+#touch button{width:var(--tb);height:var(--tb);border-radius:50%;font-size:23px;opacity:0.92;
+ touch-action:none;padding:0;border-width:3px;box-shadow:0 3px 10px rgba(40,25,5,.28)}
+#touch button:active{transform:scale(.92);filter:brightness(1.12)}
+/* The steering zone is the whole lower-left quadrant, not a small pad: the stick
+   appears wherever the thumb lands, so it never has to be aimed for. */
+#stickZone{position:fixed;left:0;bottom:0;width:46vw;height:56vh;z-index:6;display:none;
+ touch-action:none;-webkit-user-select:none;user-select:none}
+#stickBase{position:absolute;width:132px;height:132px;margin:-66px 0 0 -66px;border-radius:50%;
+ border:3px solid rgba(255,248,234,.55);background:rgba(74,53,38,.22);
+ opacity:0;transition:opacity .12s;pointer-events:none}
+#stickKnob{position:absolute;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;
+ background:radial-gradient(circle at 35% 32%,#fff8ea,#e3cf9f);border:3px solid #d9b97f;
+ box-shadow:0 4px 12px rgba(40,25,5,.35);opacity:0;transition:opacity .12s;pointer-events:none}
+#stickZone.on #stickBase,#stickZone.on #stickKnob{opacity:.95}
+body.touch #touch,body.touch #stickZone{display:grid}
+body.touch #stickZone{display:block}
 #mini{position:fixed;bottom:16px;left:16px;z-index:6;border:3px solid rgba(255,255,253,0.7);border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,0.25);cursor:pointer}
 #bigmapWrap{position:fixed;inset:0;background:rgba(30,40,25,0.6);z-index:25;display:none;align-items:center;justify-content:center}
 #bigmap{border:4px solid #e3cf9f;border-radius:20px;box-shadow:0 16px 50px rgba(0,0,0,0.4);max-width:92vw;max-height:86vh}
@@ -167,9 +190,9 @@ button:active{transform:scale(.95)}
   <button data-qc="pet" title="Pet">💗</button>
  </div>
 </div>
+<div id="stickZone"><div id="stickBase"></div><div id="stickKnob"></div></div>
 <div id="touch">
- <button id="tL">◀</button><button id="tGo">🐎</button><button id="tR">▶</button>
- <button id="tGal">💨</button><button id="tJump">⤴</button><button id="tTrick">🌀</button>
+ <button id="tGal">💨</button><button id="tTrick">🌀</button><button id="tJump">⤴</button>
 </div>
 <!-- The multiplayer client is only fetched if the social layer is switched on (see SOCIAL
      in the module). With it off this was 322 KB downloaded on every load for nothing. -->
@@ -5115,29 +5138,111 @@ addEventListener('keydown',e=>{
 addEventListener('keyup',e=>{keys[e.code]=false;});
 // turnA/goA are the analog VR thumbstick (-1..1 steer, 0..1 throttle); the booleans are
 // what the keyboard and the on-screen buttons set, and what most of the game reads.
-const touch={left:false,right:false,go:false,gal:false,jump:false,turnA:0,goA:0,brake:false};
+const touch={left:false,right:false,go:false,gal:false,jump:false,turnA:0,goA:0,brake:false,analog:false};
 window._touch=touch;
 function bindHold(id,key){
  const el=$(id);
- el.addEventListener('pointerdown',e=>{e.preventDefault();touch[key]=true;});
+ if(!el)return;
+ el.addEventListener('pointerdown',e=>{e.preventDefault();try{el.setPointerCapture(e.pointerId);}catch(err){}touch[key]=true;});
  el.addEventListener('pointerup',()=>{touch[key]=false;});
+ el.addEventListener('pointercancel',()=>{touch[key]=false;});
  el.addEventListener('pointerleave',()=>{touch[key]=false;});
 }
-bindHold('tL','left');bindHold('tR','right');bindHold('tGo','go');bindHold('tJump','jump');
+bindHold('tJump','jump');
+
+/* Show the touch layer only where there is actually a touch screen. It used to be
+   on permanently, so a desktop player had six dead buttons over the world. */
+function enableTouchUI(){ document.body.classList.add('touch'); }
+if(matchMedia('(pointer: coarse)').matches||navigator.maxTouchPoints>0||'ontouchstart' in window)enableTouchUI();
+/* Belt and braces: the media query is wrong often enough to matter — some tablets
+   and hybrid laptops report a fine pointer — and since the on-screen stick is now
+   the ONLY way to steer without a keyboard, guessing wrong would leave a player
+   with nothing at all. A real touch anywhere turns the controls on regardless. */
+addEventListener('touchstart',enableTouchUI,{once:true,passive:true});
+
+/* A floating analog stick. Steering a horse with separate left/right buttons is
+   all-or-nothing, which is why turning felt like a light switch on a phone — the
+   game already carries analog turn and throttle for VR, so the stick simply feeds
+   the same two values and the flat game reads them the same way.
+
+   Floating, not fixed: the stick centres itself wherever the thumb first lands
+   anywhere in the lower-left, so it never has to be looked at or aimed for. */
+{
+ const zone=$('stickZone'),base=$('stickBase'),knob=$('stickKnob');
+ const R=58, DEAD=0.14;
+ let id=null,cx=0,cy=0;
+ const place=(el,x,y)=>{el.style.left=x+'px';el.style.top=y+'px';};
+ const release=()=>{
+  id=null;zone.classList.remove('on');
+  touch.turnA=0;touch.goA=0;touch.analog=false;
+  touch.go=touch.left=touch.right=false;
+ };
+ if(zone){
+  zone.addEventListener('pointerdown',e=>{
+   if(id!==null)return;
+   e.preventDefault();
+   id=e.pointerId;
+   try{zone.setPointerCapture(id);}catch(err){}   // capture is an optimisation, not a requirement
+   const r=zone.getBoundingClientRect();
+   cx=e.clientX-r.left;cy=e.clientY-r.top;
+   place(base,cx,cy);place(knob,cx,cy);
+   zone.classList.add('on');
+   touch.analog=true;
+  });
+  zone.addEventListener('pointermove',e=>{
+   if(e.pointerId!==id)return;
+   e.preventDefault();
+   const r=zone.getBoundingClientRect();
+   let dx=(e.clientX-r.left)-cx, dy=(e.clientY-r.top)-cy;
+   const d=Math.hypot(dx,dy);
+   if(d>R){dx*=R/d;dy*=R/d;}
+   place(knob,cx+dx,cy+dy);
+   let nx=dx/R, ny=dy/R;
+   const mag=Math.hypot(nx,ny);
+   if(mag<DEAD){nx=ny=0;}
+   else{ const k=((mag-DEAD)/(1-DEAD))/mag; nx*=k;ny*=k; }
+   // squared curve on yaw: fine control near centre, full lock only at the rim
+   touch.turnA=-Math.sign(nx)*nx*nx;
+   touch.goA=Math.max(0,-ny);            // push up to go; pulling back does not reverse
+   touch.go=touch.goA>0.06;
+   touch.left=touch.turnA>0.06;
+   touch.right=touch.turnA<-0.06;
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(ev=>
+   zone.addEventListener(ev,e=>{ if(e.pointerId===id)release(); }));
+ }
+}
 {const tt=$('tTrick');if(tt)tt.addEventListener('click',()=>{window._tkN=((window._tkN||0)+1)%3;startTrick(['roll','spin','flip'][window._tkN]);});}
 $('tGal').addEventListener('click',()=>{touch.gal=!touch.gal;$('tGal').style.opacity=touch.gal?'1':'0.6';});
 $('tGal').style.opacity='0.6';
 // drag to orbit the camera, scroll to zoom — like a real third-person game
 let camYaw=0,camPitch=0.33,camDist=6.5,camDistSm=6.5,camDrag=null;
 const camLook=new THREE.Vector3(0,1.7,8);
-renderer.domElement.addEventListener('pointerdown',e=>{camDrag={x:e.clientX,y:e.clientY};});
+/* Camera drag tracks ONE pointer id. Without that, a second finger arriving —
+   which on a phone is the normal case, thumb on the stick and thumb on the view —
+   kept overwriting the drag origin and the camera lurched every time either
+   finger moved. The stick lives in its own element and captures its own pointer,
+   so it never reaches this handler at all. */
+renderer.domElement.addEventListener('pointerdown',e=>{
+ if(camDrag)return;                       // already dragging with another finger
+ camDrag={id:e.pointerId,x:e.clientX,y:e.clientY};
+});
 addEventListener('pointermove',e=>{
- if(!camDrag)return;
+ if(!camDrag||e.pointerId!==camDrag.id)return;
  camYaw-=(e.clientX-camDrag.x)*0.006;
  camPitch=THREE.MathUtils.clamp(camPitch+(e.clientY-camDrag.y)*0.004,0.06,1.0);
- camDrag={x:e.clientX,y:e.clientY};
+ camDrag.x=e.clientX;camDrag.y=e.clientY;
 });
-addEventListener('pointerup',()=>{camDrag=null;});
+const endDrag=e=>{ if(camDrag&&(!e||e.pointerId===camDrag.id))camDrag=null; };
+addEventListener('pointerup',endDrag);
+addEventListener('pointercancel',endDrag);
+
+/* iOS ignores user-scalable=no, so pinch and double-tap still zoom the whole page
+   mid-ride unless the gestures are refused explicitly. */
+['gesturestart','gesturechange','gestureend'].forEach(g=>
+ addEventListener(g,e=>e.preventDefault(),{passive:false}));
+addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
+document.addEventListener('touchmove',e=>{ if(e.touches.length>1)e.preventDefault(); },{passive:false});
 addEventListener('wheel',e=>{camDist=THREE.MathUtils.clamp(camDist+e.deltaY*0.01,3.5,13);},{passive:true});
 
 /* ================= show jumping courses (Basin Championship in 3D) ================= */
@@ -6907,7 +7012,7 @@ function tick(){
   if(back)target=-1.6;
  }
  const inVR=renderer.xr.isPresenting;
- if(inVR&&target>0&&touch.goA>0)target*=0.34+0.66*touch.goA;   // ease the stick out of a walk
+ if((inVR||touch.analog)&&target>0&&touch.goA>0)target*=0.34+0.66*touch.goA;   // stick or reins: ease out of a walk
  if(touch.brake){target=0;}                       // reins drawn back into your chest = whoa
  const accel=target>player.speed?1.7:(touch.brake?5.2:2.8);
  player.speed+=(target-player.speed)*Math.min(1,dt*accel);
@@ -6917,8 +7022,10 @@ function tick(){
     yaw is the axis that turns stomachs and a stick that snaps to full lock feels wild.
     VR also turns slower than the flat game for the same reason. */
  let turn=(left?1:0)-(right?1:0);
- if(inVR){
-  player.turnSm=(player.turnSm||0)+(touch.turnA-(player.turnSm||0))*(1-Math.exp(-5*dt));
+ if(inVR||touch.analog){
+  // the touch stick can respond faster than VR: no inner ear to upset on a phone
+  const rate=inVR?5:11;
+  player.turnSm=(player.turnSm||0)+(touch.turnA-(player.turnSm||0))*(1-Math.exp(-rate*dt));
   if(Math.abs(player.turnSm)<0.002)player.turnSm=0;
   turn=player.turnSm;
  }else player.turnSm=turn;   // stay in sync, so putting the headset on doesn't jerk the horse
