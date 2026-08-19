@@ -214,6 +214,7 @@ import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
 
 /* ================= save sync with the 2D game ================= */
 const SAVE_KEY='starRanchFable_v1';   // NOT renamed with the game: changing this orphans every existing save
@@ -3505,6 +3506,43 @@ function attachRig(){
   const wp=new THREE.Vector3(); RIG.bones[2].getWorldPosition(wp); player.mesh.worldToLocal(wp);
   riderG.position.set(0, wp.y-0.3, wp.z); }   // sit down onto the back (temporary; rider asset TBD)
 }
+/* The gait, separated from the player's rig so a remote rider's CLONED skeleton can
+   run exactly the same motion. Everything it needs is the bone array plus the
+   calibration, and the calibration is identical for every clone because they all
+   share bone indices — only the bone objects differ. Remote riders used to be the
+   low-detail procedural horse while you rode the good one, which looked like a
+   different game on the other side of the screen. */
+const _rigQ=new THREE.Quaternion();
+function poseRigBones(B,phase,sp,grounded,air,t,dt){
+ const TAU=Math.PI*2, q=_rigQ;
+ const moving=sp>0.25&&grounded, run=Math.max(0,Math.min(1,(sp-4)/4));
+ const strideLen=sp<2.8?1.7:sp<7?2.7:5.8;          // metres of ground per leg cycle
+ const ph=phase, swingAmp=moving?0.36+run*0.55:0, kneeAmp=moving?0.32+run*0.7:0;
+ const GP=sp<2.8?[0.0,0.25,0.5,0.75]   // walk — 4-beat lateral
+        :sp<7 ?[0.0,0.5,0.5,0.0]       // trot — diagonal pairs move together
+              :[0.0,0.55,0.15,0.7];     // gallop — transverse, with suspension
+ RIG.legs.forEach((L,i)=>{
+  const p=GP[i];
+  let a=swingAmp*Math.sin(TAU*(ph+p));
+  let kb=kneeAmp*Math.max(0,Math.cos(TAU*(ph+p)))*(L.front?1:-1);
+  if(air>0){
+   const jTop=L.front?0.7:-0.6, jKnee=L.front?1.0:-0.7;
+   a=a*(1-air)+jTop*air; kb=kb*(1-air)+jKnee*air;
+  }
+  B[L.top].quaternion.copy(L.rTop).multiply(q.setFromAxisAngle(L.axTop,a));
+  B[L.knee].quaternion.copy(L.rKnee).multiply(q.setFromAxisAngle(L.axKnee,kb));
+ });
+ const neckA=(moving?0.10+run*0.28:0.03*Math.sin(t*1.2))+air*0.12;
+ for(const N of RIG.neck)B[N.i].quaternion.copy(N.r).multiply(q.setFromAxisAngle(N.ax,neckA));
+ const tailA=Math.sin(t*(1.6+run*2.5))*(0.05+run*0.16);
+ for(const T of RIG.tail)B[T.i].quaternion.copy(T.r).multiply(q.setFromAxisAngle(T.ax,tailA));
+}
+/* How far the phase advances this frame, in CYCLES. Shared so a remote rider's legs
+   turn over at the same rate as yours for the same speed. */
+function rigPhaseStep(sp,grounded,dt){
+ if(!(sp>0.25&&grounded))return 0;
+ return sp*dt/(sp<2.8?1.7:sp<7?2.7:5.8);
+}
 function driveRig(sp,grounded,t,dt){
  if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
  if(RIG._hideFor!==player.mesh){ hideProceduralBody(); RIG._hideFor=player.mesh; }  // enforce hide once per mount (race-proof)
@@ -5820,7 +5858,10 @@ function loadMQTT(){
 }
 const remotes={};
 function netStatus(s){
- $('netBtn').textContent=(s==='online'?'🟢 Club':'🌐 Club');
+ // Show WHO you are on the button itself. The rename field was buried inside the
+ // panel, so people rode around as "Rider417" without realising it could change.
+ const nm=(freshSave()||{}).playerName;
+ $('netBtn').textContent=(s==='online'?'🟢 ':'🌐 ')+(nm?nm:'Club');
 }
 function chatMsg(name,text){
  const d=document.createElement('div');
@@ -5871,6 +5912,17 @@ function showBubble(holder,text){
 }
 async function netConnect(){
  if(!SOCIAL)return;
+ /* Ask once, up front. Other riders see this name over your horse and against your
+    chat, so being handed "Rider203" without being asked is the wrong default. */
+ if(!(freshSave()||{}).playerName){
+  const suggested='Rider'+Math.floor(Math.random()*999);
+  let nm=null;
+  try{ nm=prompt('What should other riders call you?',suggested); }catch(e){}
+  if(nm===null&&!(freshSave()||{}).playerName)nm=suggested;   // dismissed: ride as the suggestion
+  nm=String(nm||suggested).trim().slice(0,14)||suggested;
+  syncSave(sv=>{sv.playerName=nm;});
+  toast('🪪 You ride as '+nm+' — change it any time in 🌐 Club.');
+ }
  if(typeof mqtt==='undefined'){
   toast('🌐 Connecting…');
   const ok=await loadMQTT();
@@ -5917,6 +5969,29 @@ function isFriend(name){
  const s=freshSave();
  return !!(s&&s.friends&&s.friends[name]);
 }
+/* Give a remote rider the same rigged horse the player rides. SkeletonUtils.clone is
+   what makes this possible: a plain .clone() on a SkinnedMesh shares the ORIGINAL
+   skeleton, so every remote rider would pose identically to you and to each other.
+   Capped, because each clone is a 26k-vertex skinned mesh with its own 33-bone
+   skeleton to update every frame — past a handful that cost is real, and the
+   procedural horse is a perfectly good stand-in for a distant dot. */
+const REMOTE_RIG_MAX=6;
+let remoteRigCount=0;
+function makeRemoteRig(){
+ if(!RIG.ready||!RIG.scene||!RIG.fitScale)return null;
+ if(remoteRigCount>=REMOTE_RIG_MAX||quality==='low')return null;
+ let sc;
+ try{ sc=skeletonClone(RIG.scene); }catch(e){ return null; }
+ let skin=null;
+ sc.traverse(o=>{ if(o.isSkinnedMesh&&!skin)skin=o; });
+ if(!skin)return null;
+ sc.scale.setScalar(RIG.fitScale);
+ sc.position.set(0,RIG.fitY,0);
+ sc.rotation.set(0,-Math.PI/2,0);     // same model->game orientation as the player's
+ sc.visible=true;
+ remoteRigCount++;
+ return {scene:sc,bones:skin.skeleton.bones,phase:Math.random()};
+}
 function remoteUpdate(m){
  if(typeof m.x!=='number'||typeof m.z!=='number')return;
  let r=remotes[m.id];
@@ -5925,12 +6000,22 @@ function remoteUpdate(m){
   const parts=makeHorse({colors:(m.c&&m.c.body)?m.c:{body:'#8a5a2b',mane:'#332214'},tack:m.k||'#7a583a',bridle:true,seed:5,wings:!!m.wg,coat:m.ct||null});
   const rider=makeRider({shirt:m.s||'#c98c5a',pants:m.p||'#4a4338'});
   parts.group.add(rider.g);
+  /* Swap in the good horse. The procedural body is hidden rather than skipped so the
+     tack, wings and rider it carries stay exactly where they were. */
+  const rrig=makeRemoteRig();
+  if(rrig){
+   const keep=new Set();
+   if(parts.wings)parts.wings.forEach(w=>w.traverse(o=>keep.add(o)));
+   rider.g.traverse(o=>keep.add(o));
+   parts.group.traverse(o=>{ if(o.isMesh&&!keep.has(o))o.visible=false; });
+   parts.group.add(rrig.scene);
+  }
   const nm=String(m.n||'Rider').slice(0,14);
   const tag=nameSprite((isFriend(nm)?'💚':'🌐')+nm);
   tag.position.y=3.15;
   parts.group.add(tag);
   scene.add(parts.group);
-  r=remotes[m.id]={parts,rider,name:nm,x:m.x,z:m.z,tx:m.x,tz:m.z,heading:m.h||0,sp:0,phase:Math.random()*6,lastSeen:0};
+  r=remotes[m.id]={parts,rider,rig:rrig,name:nm,x:m.x,z:m.z,tx:m.x,tz:m.z,heading:m.h||0,sp:0,phase:Math.random()*6,lastSeen:0};
   chatMsg('🌐',nm+' is riding nearby!');
  }
  r.tx=m.x;r.tz=m.z;
@@ -5965,6 +6050,7 @@ function netTick(dt,t){
   r.lastSeen+=dt;
   if(r.lastSeen>7){
    scene.remove(r.parts.group);
+   if(r.rig)remoteRigCount=Math.max(0,remoteRigCount-1);   // free the slot for the next rider
    delete remotes[id];
    continue;
   }
@@ -5975,6 +6061,11 @@ function netTick(dt,t){
    while(dh>Math.PI)dh-=Math.PI*2;
    while(dh<-Math.PI)dh+=Math.PI*2;
    r.heading+=dh*Math.min(1,dt*6);
+  }
+  if(r.rig){
+   // the good horse: same gait code the player's mount runs
+   r.rig.phase+=rigPhaseStep(r.sp,true,dt);
+   poseRigBones(r.rig.bones,r.rig.phase,r.sp,true,0,t,dt);
   }
   r.phase+=dt*(2.2+r.sp*1.9);
   const g3=gaitFor(r.sp);
@@ -5992,7 +6083,8 @@ function openOnline(){
  const s=freshSave()||{};
  const riders=Object.values(remotes);
  p.innerHTML='<b style="font-size:16px">🌐 Riding Club '+(net.client&&net.client.connected?'<span style="color:#1e8449">· online</span>':'<span style="color:#8c7a63">· offline</span>')+'</b>'
- +'<div class="crow"><span class="lbl">Name</span><input id="pname" maxlength="14" value="'+(s.playerName||'')+'" placeholder="Your rider name"><button id="pnameSave" title="Change your rider name">💾</button></div>'
+ +'<div class="crow"><span class="lbl">Your name</span><input id="pname" maxlength="14" value="'+(s.playerName||'')+'" placeholder="Type a new name"><button id="pnameSave" title="Save this name">💾 Save</button></div>'
+ +'<span style="font-size:11px;color:#8c7a63">This is what other riders see over your horse and in chat.</span>'
  +'<div class="crow"><span class="lbl">Club code</span><input id="pclub" maxlength="24" value="'+myClub()+'" placeholder="your private code"></div>'
  +'<span style="font-size:11px;color:#8c7a63">This code is your room, and it is yours alone until you share it. Anyone who has it can ride in your world and read the chat, so treat it like a password — send it to friends, not to strangers.</span>'
  +'<div class="crow"><button id="netGo" style="flex:1">'+(net.client&&net.client.connected?'🔄 Rejoin':'🟢 Connect')+'</button><button id="netOff">Leave</button></div>'
@@ -6028,6 +6120,7 @@ function openOnline(){
   if(!nm){toast('Type a name first!');return;}
   syncSave(sv=>{sv.playerName=nm;});
   publishMyBoards();
+  netStatus(net.client&&net.client.connected?'online':'offline');   // button carries the name
   toast('🪪 You ride as '+nm+' now!');
   openOnline();openOnline();
  };

@@ -83,7 +83,7 @@ horse when you meant to ride on the stick alone, so each can be picked outright.
 | **Riding** | Speed-dependent gaits, jumping, show-jumping courses and cross-country flag races with timing, faults and trophies |
 | **Living world** | Day/night with dusk window lights and fireflies, weather with rain and rainbows, wild horses to tame, NPC riders, and procedural wildlife |
 | **VR** | Full WebXR mode — ride from the saddle holding the reins in your hands, with a world-space UI you operate with the controllers |
-| **Multiplayer** | Ride the same world as your friends: club codes over MQTT, live remote riders, chat with emotes and speech bubbles, shared races and club leaderboards. Every player gets a private code — you meet the people you send your invite link to, not strangers |
+| **Multiplayer** | Ride the same world as your friends: club codes over MQTT, live remote riders on the *same* rigged horse you ride, chat with emotes and speech bubbles, shared races and club leaderboards. Every player gets a private code — you meet the people you send your invite link to, not strangers |
 
 <p align="center">
   <img src="docs/screenshots/arena.png" width="49%" alt="The ranch arena">
