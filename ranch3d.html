@@ -194,9 +194,9 @@ button:active{transform:scale(.95)}
 <div id="touch">
  <button id="tGal">💨</button><button id="tTrick">🌀</button><button id="tJump">⤴</button>
 </div>
-<!-- The multiplayer client is only fetched if the social layer is switched on (see SOCIAL
-     in the module). With it off this was 322 KB downloaded on every load for nothing. -->
-<script>if(!/[?&]social=1/.test(location.search)){}else{document.write('<script src="assets\/vendor\/mqtt\/mqtt.min.js"><\/script>');}</script>
+<!-- The multiplayer client (322 KB) is fetched lazily, the first time someone actually
+     goes online — see loadMQTT() in the module. Loading it up front would put it on the
+     critical path of every single-player launch, which is most of them. -->
 <link rel="preload" href="assets/models/horse_textured_rigged.glb" as="fetch">
 <script type="importmap">
 {
@@ -5786,8 +5786,38 @@ addEventListener('keydown',e=>{
    friends, invite links and club rankings. With it off the game is purely single player
    and never contacts the broker; the code stays put so flipping this back to true
    restores everything. Trail Pass and milestone rewards are NOT social and stay on. */
-const SOCIAL=false;
+const SOCIAL=true;
 const net={client:null,id:'p'+Math.random().toString(36).slice(2,8),club:null,lastPub:0};
+
+/* Your club code is your room. It used to default to "kestrel" for everybody, which
+   meant anyone who pressed Connect landed in ONE shared room with open chat and
+   whoever else happened to be there. The broker is public and unauthenticated, so
+   that is a room full of strangers by default.
+   Now every player gets their own random code the first time they look, and you ride
+   with people you sent the invite link to. Treat the code like a password: anyone who
+   has it can join and read the chat. */
+function myClub(){
+ const s=freshSave()||{};
+ if(s.club)return s.club;
+ const code='mr-'+Math.random().toString(36).slice(2,8);
+ syncSave(sv=>{ if(!sv.club)sv.club=code; });
+ return (freshSave()||{}).club||code;
+}
+
+/* The mqtt client is only pulled down when it is first needed. */
+let _mqttLoad=null;
+function loadMQTT(){
+ if(typeof mqtt!=='undefined')return Promise.resolve(true);
+ if(_mqttLoad)return _mqttLoad;
+ _mqttLoad=new Promise(res=>{
+  const el=document.createElement('script');
+  el.src='assets/vendor/mqtt/mqtt.min.js';
+  el.onload=()=>res(typeof mqtt!=='undefined');
+  el.onerror=()=>res(false);
+  document.head.appendChild(el);
+ });
+ return _mqttLoad;
+}
 const remotes={};
 function netStatus(s){
  $('netBtn').textContent=(s==='online'?'🟢 Club':'🌐 Club');
@@ -5839,12 +5869,15 @@ function showBubble(holder,text){
   if(holder.bub&&holder.bubParent){holder.bubParent.remove(holder.bub);holder.bub=null;}
  },4500);
 }
-function netConnect(){
+async function netConnect(){
  if(!SOCIAL)return;
- if(typeof mqtt==='undefined'){toast('🌐 Online mode needs an internet connection');return;}
+ if(typeof mqtt==='undefined'){
+  toast('🌐 Connecting…');
+  const ok=await loadMQTT();
+  if(!ok){toast('🌐 Online mode needs an internet connection');return;}
+ }
  if(net.client){try{net.client.end(true);}catch(e){}net.client=null;}
- const s=freshSave();
- const club=((s&&s.club)||'kestrel').toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,24)||'kestrel';
+ const club=myClub().toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,24)||myClub();
  net.club=club;
  try{
   net.client=mqtt.connect('wss://broker.emqx.io:8084/mqtt',{clientId:'srf_'+net.id,clean:true,connectTimeout:9000,reconnectPeriod:5000});
@@ -5960,7 +5993,8 @@ function openOnline(){
  const riders=Object.values(remotes);
  p.innerHTML='<b style="font-size:16px">🌐 Riding Club '+(net.client&&net.client.connected?'<span style="color:#1e8449">· online</span>':'<span style="color:#8c7a63">· offline</span>')+'</b>'
  +'<div class="crow"><span class="lbl">Name</span><input id="pname" maxlength="14" value="'+(s.playerName||'')+'" placeholder="Your rider name"><button id="pnameSave" title="Change your rider name">💾</button></div>'
- +'<div class="crow"><span class="lbl">Club code</span><input id="pclub" maxlength="24" value="'+(s.club||'kestrel')+'" placeholder="kestrel"></div>'
+ +'<div class="crow"><span class="lbl">Club code</span><input id="pclub" maxlength="24" value="'+myClub()+'" placeholder="your private code"></div>'
+ +'<span style="font-size:11px;color:#8c7a63">This code is your room, and it is yours alone until you share it. Anyone who has it can ride in your world and read the chat, so treat it like a password — send it to friends, not to strangers.</span>'
  +'<div class="crow"><button id="netGo" style="flex:1">'+(net.client&&net.client.connected?'🔄 Rejoin':'🟢 Connect')+'</button><button id="netOff">Leave</button></div>'
  +'<button id="netInvite" style="background:#e8f6e0">📨 Invite friends — copy a join link</button>'
  +'<b style="font-size:13px">Riders here now ('+riders.length+')</b>'
@@ -5977,13 +6011,13 @@ function openOnline(){
  p.style.display='flex';
  $('netGo').onclick=()=>{
   const nm=$('pname').value.trim().slice(0,14)||('Rider'+Math.floor(Math.random()*99));
-  const cb=$('pclub').value.trim().slice(0,24)||'kestrel';
+  const cb=$('pclub').value.trim().slice(0,24)||myClub();
   syncSave(sv=>{sv.playerName=nm;sv.club=cb;});
   netConnect();
   openOnline();openOnline();
  };
  $('netInvite').onclick=()=>{
-  const code=($('pclub').value.trim().slice(0,24)||'kestrel').toLowerCase().replace(/[^a-z0-9-]/g,'');
+  const code=($('pclub').value.trim().slice(0,24)||myClub()).toLowerCase().replace(/[^a-z0-9-]/g,'');
   const url=location.origin+location.pathname+'?club='+encodeURIComponent(code);
   const done=()=>toast('📨 Invite link copied — send it to a friend and they ride straight into club "'+code+'"!');
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(done,()=>prompt('Copy this invite link:',url));

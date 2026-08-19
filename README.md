@@ -83,7 +83,7 @@ horse when you meant to ride on the stick alone, so each can be picked outright.
 | **Riding** | Speed-dependent gaits, jumping, show-jumping courses and cross-country flag races with timing, faults and trophies |
 | **Living world** | Day/night with dusk window lights and fireflies, weather with rain and rainbows, wild horses to tame, NPC riders, and procedural wildlife |
 | **VR** | Full WebXR mode — ride from the saddle holding the reins in your hands, with a world-space UI you operate with the controllers |
-| **Multiplayer** | Club codes over MQTT to share a world, chat and compare boards — present in the code but **switched off** behind a `SOCIAL` flag, so the shipped build is single-player and contacts no server |
+| **Multiplayer** | Ride the same world as your friends: club codes over MQTT, live remote riders, chat with emotes and speech bubbles, shared races and club leaderboards. Every player gets a private code — you meet the people you send your invite link to, not strangers |
 
 <p align="center">
   <img src="docs/screenshots/arena.png" width="49%" alt="The ranch arena">
@@ -134,8 +134,10 @@ auto-rigging for the animated ones. `tools/asset-gen/` holds the scripts that dr
 ## Honest limitations
 
 - The rider is a stylised procedural figure, not a production character rig.
-- Multiplayer, when enabled, uses a public MQTT broker — fine for a demo, not a game
-  service. It ships switched off.
+- Multiplayer runs over a **public, unauthenticated** MQTT broker. That is fine for
+  riding with friends and wrong for anything else: anyone holding a club code can join
+  that room and read its chat, so a code is a password, not a username. There is no
+  account system, no moderation and no server of my own — it is a demo, not a service.
 - `ranch3d.html` is deliberately one large file. It is organised in sections, but it
   is a single-author codebase, not a module structure a team would share.
 - Terrain collision is height-field based, so very steep cliffs can be climbed.
