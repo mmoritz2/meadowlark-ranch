@@ -5975,6 +5975,21 @@ function isFriend(name){
    Capped, because each clone is a 26k-vertex skinned mesh with its own 33-bone
    skeleton to update every frame — past a handful that cost is real, and the
    procedural horse is a perfectly good stand-in for a distant dot. */
+/* A bridle for the rigged horse. The procedural one is parented to the procedural
+   head, so it cannot simply be kept — the rig's muzzle is somewhere else entirely.
+   These are the same mouth-corner coordinates attachTack uses for the rein anchors. */
+function remoteBridle(){
+ const g=new THREE.Group();
+ const strap=smat('#4a3526');
+ const nose=new THREE.Mesh(new THREE.TorusGeometry(0.115,0.017,6,14),strap);
+ nose.position.set(0,1.33,0.94); nose.rotation.x=0.12; g.add(nose);
+ const brow=new THREE.Mesh(new THREE.TorusGeometry(0.15,0.016,6,14),strap);
+ brow.position.set(0,1.50,0.68); brow.rotation.x=Math.PI/2; g.add(brow);
+ const cheek=(x)=>{const b=box(0.018,0.30,0.018,'#4a3526',x,1.42,0.80,g);b.rotation.x=0.5;return b;};
+ cheek(-0.125); cheek(0.125);
+ g.traverse(o=>{if(o.isMesh){o.castShadow=true;}});
+ return g;
+}
 const REMOTE_RIG_MAX=6;
 let remoteRigCount=0;
 function makeRemoteRig(){
@@ -6000,8 +6015,12 @@ function remoteUpdate(m){
   const parts=makeHorse({colors:(m.c&&m.c.body)?m.c:{body:'#8a5a2b',mane:'#332214'},tack:m.k||'#7a583a',bridle:true,seed:5,wings:!!m.wg,coat:m.ct||null});
   const rider=makeRider({shirt:m.s||'#c98c5a',pants:m.p||'#4a4338'});
   parts.group.add(rider.g);
-  /* Swap in the good horse. The procedural body is hidden rather than skipped so the
-     tack, wings and rider it carries stay exactly where they were. */
+  /* Swap in the good horse. The procedural body goes, and so does its tack — the
+     procedural saddle sits at y≈1.75 and its bridle hangs off the procedural head,
+     both shaped for a horse that is no longer there. Hiding the body but keeping
+     that tack left a saddle floating in mid-air; keeping neither left the rider
+     perched on nothing. So the rigged remote gets the SAME saddle, bridle position
+     and rider seat the player's own rigged mount uses. */
   const rrig=makeRemoteRig();
   if(rrig){
    const keep=new Set();
@@ -6009,6 +6028,14 @@ function remoteUpdate(m){
    rider.g.traverse(o=>keep.add(o));
    parts.group.traverse(o=>{ if(o.isMesh&&!keep.has(o))o.visible=false; });
    parts.group.add(rrig.scene);
+
+   const sd=buildSaddle();                       // same builder the player's mount uses
+   sd.position.set(0,SADDLE_Y,SADDLE_Z);
+   parts.group.add(sd);
+   parts.group.add(remoteBridle());
+   // The rider was still sitting where the PROCEDURAL horse's back was, which is
+   // higher and further forward than the rig's — that is the "floating up high".
+   rider.g.position.set(0,RID2_Y,RID2_Z);
   }
   const nm=String(m.n||'Rider').slice(0,14);
   const tag=nameSprite((isFriend(nm)?'💚':'🌐')+nm);
