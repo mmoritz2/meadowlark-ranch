@@ -41,3 +41,10 @@ debug.log
 # Python caches
 __pycache__/
 *.pyc
+
+# Untextured shape-only intermediates for the generated ranch props (the *_textured.glb ship)
+assets/models/haybale.glb
+assets/models/trough.glb
+assets/models/barrel.glb
+assets/models/boulder.glb
+assets/models/stump.glb

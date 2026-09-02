@@ -17,45 +17,54 @@ from pathlib import Path
 
 import comfy
 
-# The all-in-one FLUX dev fp8 checkpoint (bundles model + CLIP + VAE).
-FLUX_CKPT = "flux1-dev-fp8.safetensors"
+# FLUX.2 dev, split into its three files. The old all-in-one FLUX.1 checkpoint this
+# script was written for is no longer on disk; these are what the server has now.
+FLUX_CKPT = "flux2_dev_fp8mixed.safetensors"          # kept for gen_model's import
+FLUX2_UNET = "flux2_dev_fp8mixed.safetensors"
+FLUX2_CLIP = "mistral_3_small_flux2_fp8.safetensors"
+FLUX2_VAE = "flux2-vae.safetensors"
 
 
 def flux_graph(prompt, width, height, steps, guidance, seed, batch,
                ckpt=FLUX_CKPT, prefix="srf_assetgen", seamless=False):
-    """Build an API-format FLUX text-to-image prompt graph.
+    """Build an API-format FLUX.2 text-to-image graph.
 
-    When seamless=True, MODEL and VAE are routed through the local SRFSeamless*
-    nodes (circular conv padding) so the output tiles perfectly.
+    FLUX.2 does not go through KSampler: it wants its own scheduler and latent
+    node, and the guider/noise/sampler split of SamplerCustomAdvanced. Wiring
+    taken from ComfyUI's own image_flux2 template. When seamless=True the model
+    and VAE are routed through the local SRFSeamless* nodes as before.
     """
-    model_ref, vae_ref = ["1", 0], ["1", 2]
+    model_ref, vae_ref = ["1", 0], ["3", 0]
     g = {
-        "1": {"class_type": "CheckpointLoaderSimple",
-              "inputs": {"ckpt_name": ckpt}},
-        "2": {"class_type": "CLIPTextEncode",
-              "inputs": {"text": prompt, "clip": ["1", 1]}},
-        "3": {"class_type": "CLIPTextEncode",
-              "inputs": {"text": "", "clip": ["1", 1]}},
-        "4": {"class_type": "FluxGuidance",
-              "inputs": {"conditioning": ["2", 0], "guidance": guidance}},
-        "5": {"class_type": "EmptySD3LatentImage",
-              "inputs": {"width": width, "height": height, "batch_size": batch}},
+        "1": {"class_type": "UNETLoader",
+              "inputs": {"unet_name": FLUX2_UNET, "weight_dtype": "default"}},
+        "2": {"class_type": "CLIPLoader",
+              "inputs": {"clip_name": FLUX2_CLIP, "type": "flux2"}},
+        "3": {"class_type": "VAELoader", "inputs": {"vae_name": FLUX2_VAE}},
+        "4": {"class_type": "CLIPTextEncode", "inputs": {"text": prompt, "clip": ["2", 0]}},
+        "5": {"class_type": "FluxGuidance",
+              "inputs": {"conditioning": ["4", 0], "guidance": guidance}},
+        "7": {"class_type": "RandomNoise", "inputs": {"noise_seed": seed}},
+        "8": {"class_type": "KSamplerSelect", "inputs": {"sampler_name": "euler"}},
+        "9": {"class_type": "Flux2Scheduler",
+              "inputs": {"steps": steps, "width": width, "height": height}},
+        "10": {"class_type": "EmptyFlux2LatentImage",
+               "inputs": {"width": width, "height": height, "batch_size": batch}},
     }
     if seamless:
-        g["10"] = {"class_type": "SRFSeamlessModel",
+        g["20"] = {"class_type": "SRFSeamlessModel",
                    "inputs": {"model": ["1", 0], "tiling": "enable"}}
-        g["11"] = {"class_type": "SRFSeamlessVAE",
-                   "inputs": {"vae": ["1", 2], "tiling": "enable"}}
-        model_ref, vae_ref = ["10", 0], ["11", 0]
-    g["6"] = {"class_type": "KSampler",
-              "inputs": {"model": model_ref, "positive": ["4", 0], "negative": ["3", 0],
-                         "latent_image": ["5", 0], "seed": seed, "steps": steps,
-                         "cfg": 1.0, "sampler_name": "euler", "scheduler": "simple",
-                         "denoise": 1.0}}
-    g["7"] = {"class_type": "VAEDecode",
-              "inputs": {"samples": ["6", 0], "vae": vae_ref}}
-    g["8"] = {"class_type": "SaveImage",
-              "inputs": {"images": ["7", 0], "filename_prefix": prefix}}
+        g["21"] = {"class_type": "SRFSeamlessVAE",
+                   "inputs": {"vae": ["3", 0], "tiling": "enable"}}
+        model_ref, vae_ref = ["20", 0], ["21", 0]
+    g["6"] = {"class_type": "BasicGuider",
+              "inputs": {"model": model_ref, "conditioning": ["5", 0]}}
+    g["11"] = {"class_type": "SamplerCustomAdvanced",
+               "inputs": {"noise": ["7", 0], "guider": ["6", 0], "sampler": ["8", 0],
+                          "sigmas": ["9", 0], "latent_image": ["10", 0]}}
+    g["12"] = {"class_type": "VAEDecode", "inputs": {"samples": ["11", 0], "vae": vae_ref}}
+    g["13"] = {"class_type": "SaveImage",
+               "inputs": {"images": ["12", 0], "filename_prefix": prefix}}
     return g
 
 

@@ -32,7 +32,7 @@ C:\Users\msmor\Documents\ComfyUI\.venv\Scripts\python.exe main.py ^
 > to CPU under pressure (leaner, slower switches).
 
 ## Images / textures — `gen_image.py`
-Uses **FLUX dev (fp8)** (`flux1-dev-fp8.safetensors`, all-in-one checkpoint).
+Uses **FLUX.2 dev (fp8)** (`flux1-dev-fp8.safetensors`, all-in-one checkpoint).
 
 ```
 # Seamless (tileable) ground texture saved into the game's assets:
@@ -62,7 +62,9 @@ GLB into `../../assets/models/`.
 
 ```
 # From a text prompt (FLUX makes the reference image automatically):
-python gen_model.py --prompt "a mossy granite boulder, game prop" --name boulder
+python gen_model.py --prompt "a mossy granite boulder, three-quarter view, white background, game prop" --name boulder --max-faces 6000
+# Three-quarter view matters: a straight-on reference reconstructs as a flat disc.
+# --max-faces 6000 at generation time means no decimation step afterwards.
 
 # Use Hunyuan3D 2.0 instead, or an existing image in ComfyUI/input:
 python gen_model.py --image rock.png --name rock2 --ver 2.0
@@ -74,7 +76,8 @@ loads the shape model (2.1 ≈ 6.9 GB, 2.0 ≈ 4.6 GB). Typical mesh: ~20k verts
 does its own background removal and needs no separate VAE-decode step.
 
 ### Status & limits
-- **Shape works; texture baking does NOT (yet).** The texture-paint stage needs a
+- **Shape works, and texture baking works too** — via the isolated torch-2.7 env at `Desktop\hy3d-paint` (`texture_props.py NAME ...`). The note below is historical:
+- ~~Shape works; texture baking does NOT (yet).~~ The texture-paint stage needs a
   compiled `custom_rasterizer`. All four prebuilt wheels shipped with the wrapper
   fail to import on this machine's **torch 2.8 / cu129** with a C++ ABI mismatch
   (`DLL load failed ... procedure could not be found`); there is no torch-2.8
