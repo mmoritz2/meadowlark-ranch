@@ -151,7 +151,7 @@ button:active{transform:scale(.95)}
  <button id="qualBtn" title="Graphics quality">🎚️</button>
  <button id="muteBtn">🔊</button>
 </div>
-<div id="hint">W/↑ ride · A/D steer · Shift gallop · Space jump — or hold the 🐎 buttons, bottom right!</div>
+<div id="hint">W/↑ ride · A/D steer · Shift gallop · Space jump · drag to look around</div>
 <div id="toasts"></div>
 <canvas id="mini" width="140" height="140" title="Open the world map (M)"></canvas>
 <div id="bigmapWrap"><div style="display:flex;flex-direction:column;align-items:center"><canvas id="bigmap" width="560" height="560"></canvas><div id="ftBar"></div></div></div>
@@ -3052,6 +3052,44 @@ let waterMat=null;   // hoisted: the pond reuses it
  water.castShadow=false;
  water.receiveShadow=true;
  scene.add(water);
+ /* Banks. The water is a flat ribbon over a channel carved into terrain that renders as
+    3.9-unit triangles, so grass ran at full strength straight up to a hard, polygonal
+    waterline — the river sat ON the meadow. A strip of damp sand each side, solid at the
+    water and fading to nothing in the grass, is what makes it sit IN the meadow. The
+    inner edge starts under the water surface (the visible waterline is ~3.3 out from
+    the centre) so the sand emerges from the water rather than beside it. It is a decal:
+    depth-write off, no collider, so nothing the horse stands on changes. */
+ {
+  const mudTex=canvasTex(128,128,(c,w,h)=>{
+   c.fillStyle='#8c6f4f';c.fillRect(0,0,w,h);
+   for(let i=0;i<1500;i++){
+    c.fillStyle=['#7a5f42','#9f8360','#6c5238','#ad956f'][i%4];c.globalAlpha=0.45;
+    c.fillRect(Math.random()*w,Math.random()*h,1.5,1.5);
+   }
+   c.globalAlpha=0.22;
+   for(let i=0;i<40;i++){c.fillStyle=i%2?'#5e4630':'#c0a880';c.beginPath();
+    c.ellipse(Math.random()*w,Math.random()*h,2+Math.random()*4,1+Math.random()*2,Math.random()*3,0,7);c.fill();}
+   c.globalAlpha=1;
+  },1);
+  mudTex.repeat.set(170,1);                 // the strip's u runs 0..1 over 680 units
+  const bankMat=new THREE.MeshStandardMaterial({map:mudTex,vertexColors:true,transparent:true,roughness:1,depthWrite:false});
+  bankMat.envMapIntensity=0.45;
+  const mkBank=sgn=>{
+   const A=[],B=[];
+   for(let x=-340;x<=340;x+=3){
+    const zc=riverZ(x), zi=zc+sgn*2.4, zo=zc+sgn*7.6;
+    A.push([x,rawH(x,zi)+0.22,zi]);
+    B.push([x,rawH(x,zo)+0.22,zo]);
+   }
+   const m=stripMesh(A,B,bankMat);
+   const cols=[];
+   for(let i=0;i<A.length;i++)cols.push(1,1,1,0.95, 1,1,1,0);   // A = waterside, B = grass side
+   m.geometry.setAttribute('color',new THREE.Float32BufferAttribute(cols,4));
+   m.castShadow=false; m.receiveShadow=true; m.renderOrder=-1;   // under the water's own tint
+   return m;
+  };
+  scene.add(mkBank(-1)); scene.add(mkBank(1));
+ }
  // Sparrow Creek stream — a narrow tributary winding down from the southern hills
  {
   const sA=[],sB=[];
@@ -7146,6 +7184,31 @@ function startTrick(type){
  toast(type==='roll'?'🌀 Barrel roll!':type==='spin'?'💫 Spin!':'🔄 Flip!');
 }
 let hintT=0,loadWaitT=0;
+/* First-run hints. This used to be one fixed line, and it still told touch players to
+   "hold the 🐎 buttons" after that button had become a stick. Now it knows what it is
+   running on, and a brand-new visitor gets a short tour instead of one sentence — a
+   studio opening the link cold has no other way to learn that the arena is one corner
+   of a 1000-unit world, or that VR and multiplayer exist. Returning players get the
+   single control line and it fades as before. */
+const HINTS_KEYS=[
+ 'W/↑ ride · A/D steer · Shift gallop · Space jump · drag to look around',
+ 'This arena is one corner of a big world — ride out through the gate and explore · M for the map',
+ 'The fences in here are a show-jumping course · 🏅 tracks your progress',
+ '🌐 Club lets friends ride in your world · 🥽 Ride in VR on a headset'];
+const HINTS_TOUCH=[
+ 'Drag anywhere bottom-left to ride · drag the right side to look around',
+ 'This arena is one corner of a big world — ride out through the gate and explore',
+ '💨 gallop · ⤴ jump · the fences in here are a show-jumping course',
+ '🌐 Club lets friends ride in your world · 🥽 Ride in VR on a headset'];
+let hintSeq=null,hintIdx=0,hintNext=0,hintStarted=false;
+function startHints(){
+ let first=true;
+ try{ first=!localStorage.getItem('mlrHinted'); localStorage.setItem('mlrHinted','1'); }catch(e){}
+ const all=document.body.classList.contains('touch')?HINTS_TOUCH:HINTS_KEYS;
+ hintSeq=first?all.slice():[all[0]];
+ hintIdx=0; hintNext=hintT+(first?7:9);
+ $('hint').textContent=hintSeq[0];
+}
 function tick(){
  const dt=Math.min(0.05,clock.getDelta());
  const t=clock.elapsedTime;
@@ -8042,7 +8105,12 @@ function tick(){
  else if(useBloom)composer.render();
  else renderer.render(scene,camera);
  hintT+=dt;
- if(hintT>9)$('hint').style.opacity='0';
+ if(!hintStarted&&hintT>1.2){hintStarted=true;startHints();}   // after the touch class is settled
+ if(hintSeq&&hintT>hintNext){
+  hintIdx++;
+  if(hintIdx<hintSeq.length){$('hint').textContent=hintSeq[hintIdx];hintNext=hintT+7;}
+  else{$('hint').style.opacity='0';hintSeq=null;}
+ }
  const ld=$('load');
  if(ld){
   /* Hold the curtain until the detailed rigged horse is actually attached. Dropping it on
