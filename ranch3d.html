@@ -1568,18 +1568,11 @@ bumpTexture.repeat.set(130,130);
    and colour-matched to the exact green the canvas was, so the palette is unchanged and
    only the detail is new. Same repeat and wrap as before — the no-tile shader above it
    is untouched. */
-const grassLoad=(rep)=>{const t=new THREE.TextureLoader().load('assets/textures/ground_grass.jpg');
+const texLoad=(path,rep)=>{const t=new THREE.TextureLoader().load(path);
  t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rep,rep);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;};
+const grassLoad=rep=>texLoad('assets/textures/ground_grass.jpg',rep);
 const groundTex=grassLoad(110);
-const sandTex=canvasTex(256,256,(c,w,h)=>{
- c.fillStyle='#d9c49a';c.fillRect(0,0,w,h);
- for(let i=0;i<2400;i++){
-  c.fillStyle=['#cdb588','#e3d0a8','#c2ab7d','#d2bd92'][i%4];
-  c.globalAlpha=0.4;
-  c.fillRect(Math.random()*w,Math.random()*h,1.4,1.4);
- }
- c.globalAlpha=1;
-},10);
+const sandTex=texLoad('assets/textures/ground_sand_arena.jpg',10);   // generated tile, same repeat and wrap as the canvas it replaces
 const grassBladeTex=canvasTex(128,128,(c,w,h)=>{
  c.clearRect(0,0,w,h);
  for(let i=0;i<9;i++){
@@ -1796,7 +1789,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  sand.receiveShadow=true;
  scene.add(sand);
  // dirt path out the gate
- const dmat=new THREE.MeshStandardMaterial({color:0xc4a878,roughness:1});
+ const dmat=new THREE.MeshStandardMaterial({map:texLoad('assets/textures/ground_dirt.jpg',1.5),roughness:1});   // tile is already matched to the old #c4a878, so no tint on top
  dmat.envMapIntensity=0.46;
  for(let i=0;i<37;i++){
   const m=new THREE.Mesh(new THREE.CircleGeometry(1.6+Math.random()*0.7,12),dmat);
@@ -3255,22 +3248,7 @@ for(let i=0;i<14;i++){
 }
 /* Coyote Canyon desert floor — terrain-hugging sand that fades into the grass */
 {
- const bSandTex=canvasTex(256,256,(c,w,h)=>{
-  c.fillStyle='#d9b288';c.fillRect(0,0,w,h);
-  for(let i=0;i<2600;i++){
-   c.fillStyle=['#c89a6e','#e3c49a','#b8845a','#d2a87c'][i%4];
-   c.globalAlpha=0.4;
-   c.fillRect(Math.random()*w,Math.random()*h,1.6,1.6);
-  }
-  c.globalAlpha=0.25;
-  for(let i=0;i<120;i++){
-   c.fillStyle=i%2?'#a87a50':'#e8d0a8';
-   c.beginPath();
-   c.ellipse(Math.random()*w,Math.random()*h,2+Math.random()*5,1.5+Math.random()*3,Math.random()*3,0,7);
-   c.fill();
-  }
-  c.globalAlpha=1;
- },30);
+ const bSandTex=texLoad('assets/textures/ground_sand.jpg',30);   // generated tile, same repeat and wrap as the canvas it replaces
  const geo=new THREE.PlaneGeometry(360,360,144,144);   // 2.5/vertex — finer than the terrain it hugs
  geo.rotateX(-Math.PI/2);
  const pos=geo.attributes.position;
@@ -3300,15 +3278,7 @@ for(let i=0;i<14;i++){
 }
 /* Hollowpeak snow blanket — same terrain-hugging treatment */
 {
- const wSnowTex=canvasTex(256,256,(c,w,h)=>{
-  c.fillStyle='#e8edf2';c.fillRect(0,0,w,h);
-  for(let i=0;i<1800;i++){
-   c.fillStyle=['#dde6ee','#f4f8fb','#cdd8e2'][i%3];
-   c.globalAlpha=0.4;
-   c.fillRect(Math.random()*w,Math.random()*h,1.8,1.8);
-  }
-  c.globalAlpha=1;
- },26);
+ const wSnowTex=texLoad('assets/textures/ground_snow.jpg',26);   // generated tile, same repeat and wrap as the canvas it replaces
  const geo=new THREE.PlaneGeometry(330,330,132,132);   // 2.5/vertex, matching the sand
  geo.rotateX(-Math.PI/2);
  const pos=geo.attributes.position;
