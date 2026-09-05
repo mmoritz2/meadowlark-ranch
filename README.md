@@ -112,7 +112,12 @@ at startup). The interesting parts are the systems written on top of it:
   kill the repeating-texture grid across the whole world.
 - **Skeletal animation on a generated mesh.** The player's mount is a rigged GLB
   driven bone-by-bone: gait-correct footfall timing for walk, trot and gallop, plus
-  a jump tuck, all posed as quaternions about calibrated local axes.
+  a jump tuck, all posed as quaternions about calibrated local axes. Every other
+  horse in the world is a clone of the same rig in its own coat.
+- **Hair that is hair.** The mane and tail are strips of alpha-cut strands skinned to
+  the same skeleton, so they nod with the head and swing with the tail; a shader sways
+  them and streams them back at the gallop. The coat is a physical material with a
+  clearcoat sheen, the eyes are glossy, and both saddles are generated meshes.
 - **Reins as an input device.** Both controllers are read as a pair of reins in the
   horse's own frame, with the hand poses low-passed because the steering term is a
   *difference* between two hands and so carries double the tracking noise.
