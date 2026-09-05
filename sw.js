@@ -10,7 +10,7 @@
    only when the network is actually unavailable. Result — the live version is
    always what you see, and the game still runs on a plane. */
 
-const CACHE = 'meadowlark-v1';
+const CACHE = 'meadowlark-v2';
 
 self.addEventListener('install', e => {
   self.skipWaiting();                       // a new build takes over immediately
@@ -32,7 +32,13 @@ self.addEventListener('fetch', e => {
 
   e.respondWith((async () => {
     try {
-      const fresh = await fetch(req);
+      /* The page itself, the worker and the manifest are always revalidated with the
+         server: GitHub Pages marks them cacheable for ten minutes, and fetching through
+         that cache meant a refresh could show a build that was already replaced. Assets
+         keep the default, since they are large and change by name. */
+      const path = url.pathname;
+      const revalidate = /\.(html|webmanifest)$/.test(path) || path.endsWith('/') || path.endsWith('sw.js');
+      const fresh = await fetch(revalidate ? new Request(req, { cache: 'no-cache' }) : req);
       if (fresh && fresh.status === 200 && fresh.type === 'basic') {
         const copy = fresh.clone();
         caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
