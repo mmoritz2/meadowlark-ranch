@@ -233,14 +233,33 @@ if(location.search.includes('newgame')){
  }catch(e){}
 }
 let save=null;
+/* Five stats, each levelled on its own. Speed, stamina and jump were always there; acceleration
+   and agility are new, and for the first time all five change how the horse rides: speed sets
+   the gallop, acceleration how fast you get there, agility how tight you turn, jump how high.
+   A stat rises from stat XP, which comes from food: every food feeds one stat (carrots speed,
+   apples stamina, lettuce agility, pumpkins and oranges acceleration, truffles jump). A stat
+   is capped by the horse's level, so a young horse cannot be force-fed to greatness, and by a
+   ceiling the breed's tier sets. Levelling up still nudges a random stat, as it always did. */
+const STAT_KEYS=['speed','stamina','jump','accel','agility'];
+const STAT_LBL={speed:'💨 Speed',stamina:'🫀 Stamina',jump:'⤴️ Jump',accel:'🚀 Acceleration',agility:'🌀 Agility'};
+function statCap(h){return Math.min(10,4+(h.level||1));}                       // the horse's level gates every stat: a starter has room to train, a level-six horse can max out
+function statCeil(h){const b=(typeof BREEDS3!=='undefined')&&BREEDS3.find(x=>x[0]===h.breed);const base=b?TIER_BASE[b[2]]:4;return Math.min(10,base+5);}
+function statNeed(v){return 20+10*v;}                                          // stat XP to go from v to v+1
+function ensureStats(h){
+ h.stats=h.stats||{};
+ for(const k of STAT_KEYS)if(typeof h.stats[k]!=='number')h.stats[k]=(k==='accel'||k==='agility')?Math.max(1,Math.round(((h.stats.speed||3)+(h.stats.stamina||3))/2)):3;
+ h.sxp=h.sxp||{}; for(const k of STAT_KEYS)h.sxp[k]=h.sxp[k]||0;
+ return h;
+}
 try{save=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){}
 if(!save||!save.horses||!save.horses.length){
  save=save&&save.horses?save:{v:2,ranchName:'Meadowlark Ranch',founded:Date.now(),coins:150,gems:3,items:{carrot:10,apple:2,hay:3},nextId:1,horses:[],decor:[],projects:{},trophies:{},wild:null,wildTrust:0,muted:false,lastSeen:Date.now(),lastDaily:'',questDate:'',quests:[],totalRaces:0,started:true};
- save.horses.push({id:save.nextId++,name:'Clover',breed:'bay',colors:{body:'#8a5a2b',mane:'#332214'},horn:false,rainbow:false,stats:{speed:3,stamina:3,jump:3},level:1,xp:0,bond:25,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
+ save.horses.push({id:save.nextId++,name:'Clover',breed:'bay',colors:{body:'#8a5a2b',mane:'#332214'},horn:false,rainbow:false,stats:{speed:3,stamina:3,jump:3,accel:3,agility:3},sxp:{},level:1,xp:0,bond:25,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
  save.started=true;
  try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}
 }
 const myHorses=save.horses;
+if(myHorses.some(h=>!h.sxp)){myHorses.forEach(ensureStats);try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}   // older saves: five stats from day one
 let rideIdx=0;
 // the 3D world now owns the ranch: needs decay (even while away) & the daily gift
 const DECAY3={hunger:100/(8*3600),thirst:100/(6*3600),clean:100/(12*3600),happy:100/(16*3600)};
@@ -352,7 +371,8 @@ function addXp3D(n){
    h.xp-=50+h.level*50;
    h.level++;
    leveled=true;lvl=h.level;
-   const st=['speed','stamina','jump'][Math.floor(Math.random()*3)];
+   ensureStats(h);
+   const st=STAT_KEYS[Math.floor(Math.random()*STAT_KEYS.length)];
    h.stats[st]=Math.min(10,h.stats[st]+1);
   }
   if(h.foal&&h.level>=3){h.foal=false;grew=true;s.stats=s.stats||{};s.stats.grown=(s.stats.grown||0)+1;}
@@ -4972,6 +4992,38 @@ for(let i=0;i<18;i++){
  scene.add(g);
  carrots.push({g,t:0});
 }
+/* Forage. Carrots were the only thing to pick; now the stat foods grow where they belong:
+   lettuce in the home meadow, pumpkins round Barleyfold, oranges in the canyon, truffles
+   under the pines. Picking one puts it in the basket rather than paying coins, so the way to
+   train a stat is to ride to where its food grows. Each patch respawns a while after. */
+const forage=[];
+{
+ const mk={
+  lettuce:()=>{const g=new THREE.Group();blob(0.24,0.17,0.24,'#7cc26a',0,0.15,0,g);blob(0.16,0.14,0.16,'#a9dc8a',0,0.22,0,g);return g;},
+  pumpkin:()=>{const g=new THREE.Group();blob(0.3,0.21,0.3,'#e8862a',0,0.2,0,g);blob(0.3,0.21,0.3,'#d4741f',0.02,0.19,0.02,g).scale.set(0.98,1,0.98);tube(0.03,0.04,0.12,'#5a7a3a',0,0.44,0,g);return g;},
+  orange:()=>{const g=new THREE.Group();blob(0.34,0.3,0.34,'#3f7d3a',0,0.3,0,g);[[0.16,0.42,0.1],[-0.14,0.36,0.14],[0.02,0.5,-0.14]].forEach(q=>blob(0.09,0.09,0.09,'#f5931e',q[0],q[1],q[2],g));return g;},
+  truffle:()=>{const g=new THREE.Group();blob(0.17,0.12,0.16,'#4a3320',0,0.1,0,g);blob(0.12,0.09,0.13,'#5e4630',0.06,0.13,0.03,g);return g;},
+ };
+ const spots={lettuce:[0,0,25,150,10],pumpkin:[215,-105,6,70,8],orange:[-220,130,12,90,7],truffle:[-30,-58,4,26,6]};
+ for(const item in spots){
+  const [cx,cz,r0,r1,count]=spots[item];
+  for(let i=0;i<count;i++){
+   const g=mk[item](); g.traverse(o=>{if(o.isMesh)o.castShadow=true;});
+   const f={g,t:0,item,cx,cz,r0,r1};
+   forageRespawn(f); scene.add(g); forage.push(f);
+  }
+ }
+}
+function forageRespawn(f){
+ for(let k=0;k<20;k++){
+  const a=Math.random()*Math.PI*2,rr=f.r0+Math.random()*(f.r1-f.r0);
+  const x=f.cx+Math.cos(a)*rr,z=f.cz+Math.sin(a)*rr;
+  if(Math.abs(x)<25&&Math.abs(z)<20)continue;                // not in the arena
+  if(Math.abs(z-riverZ(x))<7)continue;                        // not in the river
+  f.g.position.set(x,groundH(x,z),z); f.g.visible=true; return;
+ }
+ f.g.visible=false; f.t=5;
+}
 const gemPickups=[];
 for(let i=0;i<2;i++){
  const m=new THREE.Mesh(new THREE.OctahedronGeometry(0.35,0),
@@ -5765,9 +5817,14 @@ function reloadHorses(){
  rebuildAll();
 }
 function hidePanels(){['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','stablePanel','questPanel','profilePanel'].forEach(id=>{$(id).style.display='none';});}
-const FOODS3={carrot:{hunger:25,bond:2,happy:2,xp:6,price:5,emoji:'🥕',label:'Carrot'},
- apple:{hunger:12,bond:6,happy:10,xp:8,price:12,emoji:'🍎',label:'Apple'},
- hay:{hunger:50,bond:1,happy:0,xp:4,price:8,emoji:'🌾',label:'Hay Bale'}};
+const FOODS3={carrot:{hunger:25,bond:2,happy:2,xp:6,price:5,emoji:'🥕',label:'Carrot',stat:'speed',sxp:6},
+ apple:{hunger:12,bond:6,happy:10,xp:8,price:12,emoji:'🍎',label:'Apple',stat:'stamina',sxp:7},
+ hay:{hunger:50,bond:1,happy:0,xp:4,price:8,emoji:'🌾',label:'Hay Bale'},
+ lettuce:{hunger:10,bond:2,happy:4,xp:5,price:9,emoji:'🥬',label:'Lettuce',stat:'agility',sxp:8,where:'the meadow'},
+ pumpkin:{hunger:30,bond:3,happy:6,xp:7,price:14,emoji:'🎃',label:'Pumpkin',stat:'accel',sxp:9,where:'Barleyfold'},
+ orange:{hunger:8,bond:3,happy:8,xp:6,price:11,emoji:'🍊',label:'Orange',stat:'accel',sxp:7,where:'Coyote Canyon'},
+ truffle:{hunger:6,bond:4,happy:6,xp:9,price:22,emoji:'🍄',label:'Truffle',stat:'jump',sxp:12,where:'under the pines'},
+ oats:{hunger:35,bond:2,happy:4,xp:8,price:18,emoji:'🥣',label:'Oat Mash',stat:'speed',sxp:12}};   // the stat foods grow in the world; oats and truffles are also on the shop shelf
 function openCare(){
  const p=$('carePanel');
  if(p.style.display==='flex'){p.style.display='none';return;}
@@ -5783,16 +5840,18 @@ function renderCare(){
  $('carePanel').innerHTML='<b style="font-size:16px">🐴 '+h.name+' · Lv '+h.level+' · '+'❤️'.repeat(hearts)+'🤍'.repeat(5-hearts)+'</b>'
  +bars.map(b=>'<div class="crow"><span class="lbl">'+b[0]+'</span><div class="cbar"><div class="cfill" style="width:'+Math.round(h.needs[b[1]])+'%;background:'+b[2]+'"></div></div></div>').join('')
  +'<div class="crow"><span class="lbl">✨ XP</span><div class="cbar"><div class="cfill" style="width:'+Math.round(100*h.xp/(50+h.level*50))+'%;background:#f3b73d"></div></div></div>'
+ +(()=>{ensureStats(h);const cap=Math.min(statCap(h),statCeil(h));
+   return '<div style="font-size:11px;color:#8c7a63;margin-top:4px">Stats · cap '+cap+' at Lv '+h.level+' · feed to train</div>'
+   +STAT_KEYS.map(k=>{const v=h.stats[k],need=statNeed(v),px=v>=cap?100:Math.round(100*Math.min(1,(h.sxp[k]||0)/need));
+     return '<div class="crow"><span class="lbl">'+STAT_LBL[k]+'</span><div class="cbar" title="'+(v>=cap?'at cap':(h.sxp[k]||0)+' / '+need+' XP to '+(v+1))+'"><div class="cfill" style="width:'+px+'%;background:'+(v>=cap?'#c9b27a':'#7fb0e0')+'"></div></div><b style="width:22px;text-align:right">'+v+'</b></div>';}).join('');})()
  +'<div class="crow" style="gap:6px;flex-wrap:wrap">'
- +'<button data-care="carrot">🥕 '+s.items.carrot+'</button>'
- +'<button data-care="apple">🍎 '+s.items.apple+'</button>'
- +'<button data-care="hay">🌾 '+s.items.hay+'</button>'
+ +Object.keys(FOODS3).filter(k=>(s.items[k]||0)>0||['carrot','apple','hay'].includes(k)).map(k=>'<button data-care="'+k+'" title="'+FOODS3[k].label+(FOODS3[k].stat?' · trains '+STAT_LBL[FOODS3[k].stat]:'')+'">'+FOODS3[k].emoji+' '+(s.items[k]||0)+'</button>').join('')
  +'<button data-care="water">💧</button>'
  +'<button data-care="groom">🧼</button>'
  +'<button data-care="pet">💗</button>'
  +'<button data-care="rename">✏️</button>'
  +'<button data-care="close">✖</button></div>'
- +'<span style="font-size:11px;color:#8c7a63">Care builds bond ❤️ and XP — a happy horse runs faster and longer.</span>';
+ +'<span style="font-size:11px;color:#8c7a63">Care builds bond ❤️ and XP. Each food trains one stat: 🥕 speed · 🍎 stamina · 🥬 agility · 🎃🍊 acceleration · 🍄 jump. Forage grows all over the Basin.</span>';
  $('carePanel').querySelectorAll('[data-care]').forEach(b=>{b.onclick=()=>careAct(b.dataset.care);});
 }
 function careAct(k){
@@ -5809,12 +5868,12 @@ function careAct(k){
   }
   renderCare();return;
  }
- let msg='',ok=false;
+ let msg='',ok=false,statUp=null;
  syncSave(s=>{
   const h=s.horses[rideIdx];if(!h)return;
   const N=h.needs;
   if(FOODS3[k]){
-   if(s.items[k]<=0){msg='None left — stock up in the 🛍️ Shop!';ok=false;return;}
+   if((s.items[k]||0)<=0){msg='None left — stock up in the 🛍️ Shop!';ok=false;return;}
    if(N.hunger>=98){msg=h.name+' is full!';ok=false;return;}
    s.items[k]--;
    const f=FOODS3[k];
@@ -5822,6 +5881,17 @@ function careAct(k){
    N.happy=Math.min(100,N.happy+f.happy);
    h.bond=Math.min(100,h.bond+f.bond);
    msg=h.name+' munches happily! +'+f.bond+' bond';ok=true;
+   if(f.stat){                                            // stat food: XP into one stat, capped by level and breed
+    ensureStats(h);
+    const sk=f.stat, cap=Math.min(statCap(h),statCeil(h)), short=STAT_LBL[sk].slice(STAT_LBL[sk].indexOf(' ')+1);
+    if(h.stats[sk]>=cap){msg+=' · '+short+' is maxed for Lv '+h.level;}
+    else{
+     h.sxp[sk]=(h.sxp[sk]||0)+f.sxp; let up=false;
+     while(h.stats[sk]<cap&&h.sxp[sk]>=statNeed(h.stats[sk])){h.sxp[sk]-=statNeed(h.stats[sk]);h.stats[sk]++;up=true;}
+     msg+=up?' · '+STAT_LBL[sk]+' → '+h.stats[sk]+'!':' · +'+f.sxp+' '+short+' XP';
+     if(up)statUp=sk;
+    }
+   }
   }else if(k==='water'){
    if(N.thirst>=98){msg=h.name+" isn't thirsty right now!";ok=false;return;}
    N.thirst=Math.min(100,N.thirst+50);
@@ -5843,6 +5913,8 @@ function careAct(k){
  toast(msg);
  if(!ok&&msg&&msg.indexOf('stock up')>=0)openShop('food');
  if(ok){
+  {const fs=freshSave();if(fs&&fs.horses[rideIdx]&&myHorses[rideIdx]){myHorses[rideIdx].stats=fs.horses[rideIdx].stats;myHorses[rideIdx].sxp=fs.horses[rideIdx].sxp;}}   // the ride reads the live copy
+  if(statUp)sGem();
   sChime();
   const xp={carrot:6,apple:8,hay:4,water:3,groom:5,pet:2}[k]||0;
   if(xp)addXp3D(xp);
@@ -5905,7 +5977,7 @@ function openShop(tab){
  }else if(shopTab3==='food'){
   html+=Object.keys(FOODS3).map(k=>{
    const f=FOODS3[k];
-   return '<div class="evrow">'+f.emoji+' <b>'+f.label+'</b><span>'+f.price+' 🪙 each · you have '+s.items[k]+'</span><button data-buyf="'+k+':1">+1</button><button data-buyf="'+k+':5">+5</button></div>';
+   return '<div class="evrow">'+f.emoji+' <b>'+f.label+'</b><span>'+f.price+' 🪙 each · you have '+(s.items[k]||0)+(f.stat?' · trains '+STAT_LBL[f.stat]:'')+(f.where?' · grows in '+f.where:'')+'</span><button data-buyf="'+k+':1">+1</button><button data-buyf="'+k+':5">+5</button></div>';
   }).join('')
   +'<div class="evrow">🎁 <b>Food Hamper</b><span>15🥕 + 8🍎 + 8🌾 (save 36🪙)</span><button data-bundle="hamper">99 🪙</button></div>'
   +'<div class="evrow">🎀 <b>Breeder\'s Package</b><span>one FREE breeding + 10🍎</span><button data-bundle="breeder">350 🪙</button></div>';
@@ -5954,7 +6026,7 @@ function buyHorse3(i){
   s.coins-=b[3];s.gems-=b[4];
   const base=TIER_BASE[b[2]];
   const st=()=>Math.max(1,Math.min(10,base+Math.floor(Math.random()*3)-1));
-  s.horses.push({id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:b[0],colors:{body:b[5],mane:b[6]},horn:!!b[7].horn,rainbow:!!b[7].rainbow,wings:!!b[7].wings,coat:b[7].coat||null,ability:b[7].ability||null,glow:!!b[7].glow,stats:{speed:st(),stamina:st(),jump:st()},level:1,xp:0,bond:10,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
+  s.horses.push({id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:b[0],colors:{body:b[5],mane:b[6]},horn:!!b[7].horn,rainbow:!!b[7].rainbow,wings:!!b[7].wings,coat:b[7].coat||null,ability:b[7].ability||null,glow:!!b[7].glow,stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},sxp:{},level:1,xp:0,bond:10,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
   msg='Welcome to the ranch, '+s.horses[s.horses.length-1].name+' the '+b[1]+'! 🎉';
   ok=true;
  });
@@ -5967,7 +6039,7 @@ function buyFood3(k,n){
  syncSave(s=>{
   if(s.coins<f.price*n)return;
   s.coins-=f.price*n;
-  s.items[k]+=n;
+  s.items[k]=(s.items[k]||0)+n;
   ok=true;
  });
  if(ok){sCoin();refreshWallet();openShop('food');}
@@ -6020,10 +6092,11 @@ function breed3(){
   if(!a||!b)return;
   if(freeBreed)s.breedVoucher=false;
   else s.coins-=400;
+  ensureStats(a);ensureStats(b);
   const avg=k=>Math.max(1,Math.min(10,Math.round((a.stats[k]+b.stats[k])/2)+Math.floor(Math.random()*2)));
   const wingChild=!!(a.wings||b.wings);          // 🪽 wings pass down every generation
   const childCoat=a.coat||b.coat||null;
-  s.horses.push({id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:wingChild?(a.wings?a.breed:b.breed):(Math.random()<0.5?a.breed:b.breed),colors:{body:blendHex(a.colors.body,b.colors.body),mane:blendHex(a.colors.mane,b.colors.mane)},horn:(a.horn||b.horn)&&Math.random()<0.6,rainbow:(a.rainbow||b.rainbow)&&Math.random()<0.5,wings:wingChild,coat:childCoat,ability:a.ability||b.ability||(wingChild?'fly':null),glow:!!(a.glow||b.glow),stats:{speed:avg('speed'),stamina:avg('stamina'),jump:avg('jump')},level:1,xp:0,bond:30,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null});
+  s.horses.push({id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:wingChild?(a.wings?a.breed:b.breed):(Math.random()<0.5?a.breed:b.breed),colors:{body:blendHex(a.colors.body,b.colors.body),mane:blendHex(a.colors.mane,b.colors.mane)},horn:(a.horn||b.horn)&&Math.random()<0.6,rainbow:(a.rainbow||b.rainbow)&&Math.random()<0.5,wings:wingChild,coat:childCoat,ability:a.ability||b.ability||(wingChild?'fly':null),glow:!!(a.glow||b.glow),stats:{speed:avg('speed'),stamina:avg('stamina'),jump:avg('jump'),accel:avg('accel'),agility:avg('agility')},sxp:{},level:1,xp:0,bond:30,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null});
   msg='A foal was born: '+s.horses[s.horses.length-1].name+'! 🍼'+(wingChild?' It has its parent\'s wings! 🪽':'')+' Watch it grow in the pasture!';
   ok=true;
  });
@@ -7055,7 +7128,7 @@ function breedWithRider(name){
    colors:{body:blendHex(mine.colors.body,r.colors.body),mane:blendHex(mine.colors.mane,r.colors.mane)},
    horn:mine.horn&&Math.random()<0.4,rainbow:false,wings:wingChild,
    coat:childCoat,ability:mine.ability||(wingChild?'fly':null),glow:!!mine.glow||!!childCoat,
-   stats:{speed:st(),stamina:st(),jump:st()},level:1,xp:0,bond:30,
+   stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},sxp:{},level:1,xp:0,bond:30,
    needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null};
   s.horses.push(foal);
   s.stats=s.stats||{};
@@ -7203,7 +7276,7 @@ function tameWild3(){
   const ri2=(a,b)=>Math.floor(a+Math.random()*(b-a+1));
   const h={id:s.nextId++,name,breed:w.wb.breed,colors:{body:w.wb.body,mane:w.wb.mane},
    horn:false,rainbow:false,spots:null,dapples:null,patches:null,
-   stats:{speed:cl(base+ri2(-1,1),1,10),stamina:cl(base+ri2(-1,1),1,10),jump:cl(base+ri2(-1,1),1,10)},
+   stats:{speed:cl(base+ri2(-1,1),1,10),stamina:cl(base+ri2(-1,1),1,10),jump:cl(base+ri2(-1,1),1,10),accel:cl(base+ri2(-1,1),1,10),agility:cl(base+ri2(-1,1),1,10)},sxp:{},
    level:1,xp:0,bond:20,needs:{hunger:80,thirst:80,clean:60,happy:90},foal:false,
    rx:Math.random(),ry:Math.random(),tx:0.5,ty:0.5,rest:2,phase:0,dir:1,moving:false};
   s.horses.push(h);
@@ -7330,8 +7403,8 @@ function trainXp(n){
    h.xp-=50+h.level*50;
    h.level++;
    s.coins+=50;
-   const ks=['speed','stamina','jump'];
-   const k=ks[Math.floor(Math.random()*3)];
+   ensureStats(h);
+   const k=STAT_KEYS[Math.floor(Math.random()*STAT_KEYS.length)];
    h.stats[k]=Math.min(10,h.stats[k]+1);
    lev=true;
   }
@@ -7483,19 +7556,21 @@ function tick(){
  const right=keys.KeyD||keys.ArrowRight||touch.right;
  const gallop=keys.ShiftLeft||keys.ShiftRight||touch.gal;
  const abil=(myHorses[rideIdx]||{}).ability;
+ const HS=(myHorses[rideIdx]||{}).stats||{};                  // the five stats, felt in the hands
+ const spMul=0.82+0.036*(HS.speed||3), acMul=0.75+0.06*(HS.accel||3), agMul=0.80+0.05*(HS.agility||3), jpMul=0.92+0.016*(HS.jump||3);
  let target=0;
  if(course&&!course.started){target=0;}
  else if(player.flying){
-  if(fwd)target=gallop?(abil==='swift'?16:13):9.5;
+  if(fwd)target=gallop?(abil==='swift'?16:13)*spMul:9.5;
   else if(back)target=-3;
  }else{
-  if(fwd)target=gallop?(abil==='swift'?15.5:12.5):(abil==='swift'?5.6:4.8);
+  if(fwd)target=gallop?(abil==='swift'?15.5:12.5)*spMul:(abil==='swift'?5.6:4.8);
   if(back)target=-1.6;
  }
  const inVR=renderer.xr.isPresenting;
  if((inVR||touch.analog)&&target>0&&touch.goA>0)target*=0.34+0.66*touch.goA;   // stick or reins: ease out of a walk
  if(touch.brake){target=0;}                       // reins drawn back into your chest = whoa
- const accel=target>player.speed?1.7:(touch.brake?5.2:2.8);
+ const accel=target>player.speed?1.7*acMul:(touch.brake?5.2:2.8);
  player.speed+=(target-player.speed)*Math.min(1,dt*accel);
  if(Math.abs(player.speed)<0.05&&!fwd&&!back)player.speed=0;
  /* Steering. In VR the thumbstick drives this as a continuous value; on the keyboard a key
@@ -7511,7 +7586,7 @@ function tick(){
   turn=player.turnSm;
  }else player.turnSm=turn;   // stay in sync, so putting the headset on doesn't jerk the horse
  const yawRate=(1.7+Math.min(1.5,Math.abs(player.speed)*0.1))*(inVR?0.45:1);
- player.heading+=turn*dt*yawRate;
+ player.heading+=turn*dt*yawRate*agMul;
  player.pos.x+=Math.sin(player.heading)*player.speed*dt;
  player.pos.z+=Math.cos(player.heading)*player.speed*dt;
  const rr=Math.hypot(player.pos.x,player.pos.z);
@@ -7573,7 +7648,7 @@ function tick(){
  }else{
   if((keys.Space||touch.jump)&&player.y<=0){
    if(winged){setFlying(true);}
-   else{player.vy=abil==='leap'?11.7:9.2;player.speed=Math.min(13.5,player.speed+0.8);sJump();}
+   else{player.vy=(abil==='leap'?11.7:9.2)*jpMul;player.speed=Math.min(13.5,player.speed+0.8);sJump();}
   }
   if(player.y>0||player.vy!==0){
    player.vy-=(player.vy>0?36:(winged?15:48))*dt;
@@ -7903,6 +7978,16 @@ function tick(){
    addCoins(3);sCoin();statBump('carrots',1);passAdd(2);
    questEvt('carrots',1);
    dailyEvt('carrots',1);
+  }
+ }
+ for(const f of forage){
+  if(!f.g.visible){ f.t-=dt; if(f.t<=0)forageRespawn(f); continue; }
+  const d=Math.hypot(f.g.position.x-player.pos.x,f.g.position.z-player.pos.z);
+  if(d<1.5&&player.y<1.2){
+   f.g.visible=false; f.t=40+Math.random()*30;
+   syncSave(s=>{s.items=s.items||{};s.items[f.item]=(s.items[f.item]||0)+1;});
+   sCoin(); passAdd(2); dailyEvt('carrots',1);
+   const fd=FOODS3[f.item]; toast(fd.emoji+' '+fd.label+' — trains '+STAT_LBL[fd.stat]);
   }
  }
  for(const gp of gemPickups){
@@ -8356,6 +8441,7 @@ function tick(){
   }
   mc.fillStyle='#e8762a';
   for(const c of carrots)if(c.g.visible){const q=W2(c.g.position.x,c.g.position.z);mc.fillRect(q[0]-1,q[1]-1,2,2);}
+  for(const f of forage)if(f.g.visible){const q=W2(f.g.position.x,f.g.position.z);mc.fillRect(q[0]-1,q[1]-1,2,2);}
   mc.fillStyle='#ddd';
   for(const a of herd){const q=W2(a.pos.x,a.pos.z);mc.beginPath();mc.arc(q[0],q[1],2,0,7);mc.fill();}
   mc.fillStyle='#ffb4a2';
