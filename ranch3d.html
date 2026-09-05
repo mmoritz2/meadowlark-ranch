@@ -1234,7 +1234,7 @@ function buildVREvents(rows,sv){
  const lvl=(myHorses[rideIdx]&&myHorses[rideIdx].level)||1;
  EVENTS3.forEach((ev,i)=>{
   const won=!!tr[ev.id],ok=lvl>=ev.lvl;
-  const detail=ev.town+'  ·  '+(ev.race?'🏁 race':ev.n+' jumps')+'  ·  needs Lv '+ev.lvl;
+  const detail=ev.town+'  ·  '+(ev.dressage?'🎽 dressage':ev.race?'🏁 race':ev.n+' jumps')+'  ·  needs Lv '+ev.lvl;
   rows.push(y=>{
    vrListRow(c0,y,won?'🏆':'▫️',ev.name,detail,!ok);
    if(ok)vrButton(c0,'event:'+i,won?'Again':'Enter · '+ev.reward+'🪙',744,y+13,244,48,'',23);
@@ -4100,8 +4100,9 @@ function _fit(obj,scalar){obj.scale.setScalar(1);obj.position.set(0,0,0);obj.rot
  const bb=new THREE.Box3().setFromObject(obj);obj.userData.bbMinY=bb.min.y;obj.scale.setScalar(scalar);}
 // Stylized procedural English saddle (the generated saddle GLB was malformed). Built in
 // player.mesh-local frame: origin = seat centre, +z = head/front, +x = right, +y = up.
-function buildSaddle(){
- const g=new THREE.Group();
+function buildSaddle(style){
+ const W=style==='western';
+ const g=new THREE.Group(); g.userData.style=W?'western':'english';
  const leather=new THREE.MeshStandardMaterial({color:0x6b4423,roughness:0.38,metalness:0.05});
  const dark=new THREE.MeshStandardMaterial({color:0x432813,roughness:0.6,metalness:0.04});
  const iron=new THREE.MeshStandardMaterial({color:0x9a9ea4,roughness:0.42,metalness:0.55});
@@ -4116,10 +4117,13 @@ function buildSaddle(){
  add(SPH,leather,[0,0.06,-0.27],[0.44,0.18,0.18]);               // cantle (back rise, higher/wider)
  add(BOX,dark,[0.165,-0.13,0.03],[0.02,0.22,0.34]);             // slim side flaps (sit inside the rider's leg)
  add(BOX,dark,[-0.165,-0.13,0.03],[0.02,0.22,0.34]);
- add(SPH,dark,[0.17,-0.09,0.17],[0.03,0.11,0.06]);              // small knee rolls
- add(SPH,dark,[-0.17,-0.09,0.17],[0.03,0.11,0.06]);
+ if(!W){add(SPH,dark,[0.17,-0.09,0.17],[0.03,0.11,0.06]);              // small knee rolls
+ add(SPH,dark,[-0.17,-0.09,0.17],[0.03,0.11,0.06]);}
+ if(W){ add(BOX,leather,[0,-0.07,-0.02],[0.66,0.03,0.80]);            // Western: a broad skirt under the seat
+  add(new THREE.CylinderGeometry(0.03,0.045,0.15,10),dark,[0,0.13,0.30]); add(SPH,dark,[0,0.215,0.30],[0.10,0.06,0.10]);   // the horn
+  add(SPH,leather,[0,0.05,-0.30],[0.46,0.12,0.14]); }               // a lower, wider cantle
  [-1,1].forEach(s=>{
-  add(BOX,leather,[s*0.24,-0.22,0.26],[0.03,0.30,0.05]);         // stirrup leathers — short enough that the irons meet the rider's boots
+  add(BOX,leather,[s*0.24,-0.22,0.26],[0.03,0.30,W?0.17:0.05]);   // stirrup leathers, or Western fenders — short enough that the irons meet the rider's boots
   // stirrup iron: a SQUASHED vertical loop (tall & narrow) + a flat foot-tread — a proper
   // stirrup, not a wheel. (Symmetric silver rings here made the rider look wheelchair-bound.)
   add(new THREE.TorusGeometry(0.055,0.016,8,14),iron,[s*0.24,-0.385,0.27],[0.6,1.05,1],[0,Math.PI/2,0]);
@@ -4180,6 +4184,7 @@ function buildBridle(){
 function attachTack(){   // idempotent: places whatever has loaded so far onto the current mount
  if(!USE_GEN_HORSE||!USE_GEN_TACK)return;
  if(!player.mesh||!TACK.saddle)return;
+ {const want=(myHorses[rideIdx]&&myHorses[rideIdx].saddleStyle)||'english'; if(TACK.saddle.userData.style!==want){ if(TACK.saddle.parent)TACK.saddle.parent.remove(TACK.saddle); TACK.saddle=buildSaddle(want); }}   // the saddle this horse wears
  if(player.rider&&player.rider.g)player.rider.g.visible=false;   // hide procedural rider
  if(TACK.saddle){
   if(TACK.saddle.userData&&TACK.saddle.userData.proc){TACK.saddle.position.set(0,SADDLE_Y,SADDLE_Z);}  // procedural: pre-sized & oriented
@@ -5789,6 +5794,8 @@ const EVENTS3=[
  {id:'bd',town:'Coyote',name:'Coyote Desert Derby',lvl:4,race:true,route:'bd',reward:650},
  {id:'wt',town:'Hollowpeak',name:'Hollowpeak Snow Trail',lvl:7,race:true,route:'wt',reward:850},
  {id:'tc',town:'Kestrel Basin',name:'Twilight Cup',lvl:9,n:10,reward:1200},
+ {id:'d1',town:'Cottonwood',name:'Cottonwood Preliminary Test',lvl:2,dressage:true,par:60,reward:300},
+ {id:'d2',town:'Kestrel Basin',name:'Basin Freestyle',lvl:6,dressage:true,par:90,reward:700},
 ];
 const RACE_ROUTES={
  rr:[[0,66],[0,121],[55,170],[110,130],[70,60],[10,20]],
@@ -5822,6 +5829,7 @@ arrow.visible=false;
 scene.add(arrow);
 function startCourse(ev){
  cancelCourse();
+ if(ev.dressage){startDressage(ev);return;}
  player.stam=1; player.blown=false; player.boostT=0;
  const jumps3=[];
  let par;
@@ -5879,6 +5887,7 @@ function startCourse(ev){
 }
 function cancelCourse(){
  if(course&&course.items){for(const it of course.items)scene.remove(it.m);}
+ if(course&&course.letters){for(const g of course.letters)scene.remove(g);}
  if(!course)return;
  /* Course fences are built fresh per event and were only unparented, so every event
     entered, quit or replayed leaked its geometries and its numbered-sign canvas texture.
@@ -5912,7 +5921,7 @@ function ensureWeek(s){
 function addSP(s,n,why){ensureWeek(s); s.sp.pts+=n; s.sp.why=why;}
 function weeklyFeatured(){
  const wk=weekKey(); let h=0; for(const ch of wk)h=(h*31+ch.charCodeAt(0))>>>0;
- const jumps=EVENTS3.filter(e=>!e.race), races=EVENTS3.filter(e=>e.race);
+ const jumps=EVENTS3.filter(e=>!e.race&&!e.dressage), races=EVENTS3.filter(e=>e.race);
  const pick=(arr,seed,k)=>{const out=[],a=arr.slice(); let x=seed; while(out.length<k&&a.length){x=(x*1103515245+12345)>>>0; out.push(a.splice(x%a.length,1)[0]);} return out;};
  return pick(jumps,h+1,2).concat(pick(races,h+7,2));
 }
@@ -5941,6 +5950,71 @@ function judgeJump(j,y){
  return {insp,offline,dt:(insp?-0.8:0)+(offline?1.0:0)};
 }
 const RACE_ITEMS={boost:{col:0xff9a3a,label:'🥕 Boost!',fx:()=>{player.boostT=3;player.stam=Math.min(1,player.stam+0.3);}},time:{col:0x6fd0ff,label:'⏱️ −1.5 s',fx:()=>{if(course)course.t=Math.max(0,course.t-1.5);}},clover:{col:0x7fe08a,label:'🍀 Second wind',fx:()=>{player.stam=1;player.blown=false;}}};
+/* Dressage. The arena wears its letters, and a test is a list of figures: enter at A at a
+   walk, halt at X, trot to C, canter a circle at B. Each figure is scored by how much of it
+   was ridden in the gait it asked for, out of ten; a circle has to be swept most of the way
+   round its marker, a halt held for its count. The test's mark is the average, and it pays
+   coins, ribbons and a trophy the way a course does. Ctrl collects the horse to a walk. */
+const ARENA_LETTERS={A:[2,-15],C:[2,17],E:[-16,1],B:[20,1],K:[-13,-11],F:[17,-11],H:[-13,13],M:[17,13],X:[2,1]};   // a step in from the rails, so a circle at B or E fits inside the arena
+const DRESSAGE_TESTS={
+ d1:[{at:'A',gait:'walk',text:'Enter at A at a walk'},{at:'X',gait:'halt',hold:2,text:'Halt at X and salute'},{at:'C',gait:'trot',text:'Trot on to C'},{at:'E',gait:'trot',text:'Track left to E at a trot'},{at:'B',gait:'canter',circle:true,text:'Canter a circle at B'},{at:'A',gait:'walk',text:'Walk back to A'}],
+ d2:[{at:'A',gait:'trot',text:'Enter at A at a trot'},{at:'X',gait:'halt',hold:3,text:'Halt at X, three seconds'},{at:'K',gait:'trot',text:'Trot to K'},{at:'E',gait:'canter',circle:true,text:'Canter a circle at E'},{at:'M',gait:'canter',text:'Canter across to M'},{at:'B',gait:'canter',circle:true,text:'Canter a circle at B'},{at:'H',gait:'trot',text:'Come back to a trot to H'},{at:'C',gait:'walk',text:'Walk to C'},{at:'X',gait:'halt',hold:2,text:'Halt at X and salute'}],
+};
+function gaitName(sp){return sp<0.3?'halt':sp<2.8?'walk':sp<7?'trot':'canter';}
+const GAIT_ICON={halt:'🧍',walk:'🚶',trot:'🏇',canter:'💨'};
+function startDressage(ev){
+ const letters=[];
+ for(const L in ARENA_LETTERS){ const [x,z]=ARENA_LETTERS[L]; const g=new THREE.Group();
+  box(0.16,1.0,0.16,'#f4f0e6',0,0.5,0,g); const sp=nameSprite(L); sp.position.y=1.35; sp.scale.set(0.9,0.36,1); g.add(sp);
+  g.position.set(x,groundH(x,z),z); scene.add(g); letters.push(g); }
+ const figs=DRESSAGE_TESTS[ev.id].map(f=>Object.assign({good:0,total:0,sweep:0,lastAng:null,holdT:0,score:null},f));
+ course={items:[],ev,jumps:[],idx:0,t:0,cd:3.6,started:false,faults:0,race:false,par:ev.par||60,dressage:true,figs,fi:0,letters};
+ $('courseHud').style.display='flex'; $('courseHudTxt').textContent='🎽 '+ev.name+' — '+figs[0].text;
+ player.stam=1; player.blown=false; player.boostT=0;
+ toast('🎽 '+ev.name+': '+figs.length+' figures. Ctrl walks, Shift canters.');
+}
+function tickDressage(dt){
+ const c=course, f=c.figs[c.fi]; if(!f||c.done)return;
+ const [mx,mz]=ARENA_LETTERS[f.at]; const d=Math.hypot(player.pos.x-mx,player.pos.z-mz);
+ const sp=Math.abs(player.speed), g=gaitName(sp);
+ arrow.visible=true; arrow.position.set(mx,groundH(mx,mz)+2.4+Math.sin(c.t*4)*0.18,mz);
+ let done=false;
+ if(f.gait==='halt'){
+  if(d<3.5&&sp<0.3){f.holdT+=dt; f.good+=dt; f.total+=dt; if(f.holdT>=f.hold)done=true;} else if(d<6){f.total+=dt;}
+ }else{
+  f.total+=dt; if(g===f.gait)f.good+=dt;
+  if(f.circle){
+   if(d<12&&d>2.5){ const a=Math.atan2(player.pos.z-mz,player.pos.x-mx); if(f.lastAng!=null){let da=a-f.lastAng; if(da>Math.PI)da-=2*Math.PI; if(da<-Math.PI)da+=2*Math.PI; if(g===f.gait)f.sweep+=Math.abs(da);} f.lastAng=a; }
+   else f.lastAng=null;
+   if(f.sweep>=Math.PI*1.8)done=true;
+  }else if(d<3.5)done=true;
+ }
+ const pct=f.total>0.2?f.good/f.total:1;
+ if(done){
+  f.score=Math.max(f.gait==='halt'?6:3,Math.round(10*pct)); c.fi++; sChime();
+  const nf=c.figs[c.fi];
+  if(nf){toast('🎽 '+f.text+' — '+f.score+'/10 · next: '+nf.text);}
+  else finishDressage();
+  return;
+ }
+ const sofar=c.figs.slice(0,c.fi).reduce((a,x)=>a+x.score,0), nDone=c.fi;
+ $('courseHudTxt').textContent='🎽 '+f.text+' · '+GAIT_ICON[g]+' '+(g===f.gait||(f.gait==='halt'&&d>=3.5)?'✓':'want '+GAIT_ICON[f.gait])+(f.circle?' · circle '+Math.round(100*Math.min(1,f.sweep/(Math.PI*1.8)))+'%':'')+(f.gait==='halt'&&d<3.5?' · hold '+f.holdT.toFixed(1)+'/'+f.hold+'s':'')+(nDone?' · '+Math.round(100*sofar/(10*nDone))+'%':'');
+}
+function finishDressage(){
+ const c=course, ev=c.ev; const total=c.figs.reduce((a,f)=>a+(f.score||0),0), pct=total/(10*c.figs.length);
+ let first=false; try{const s=freshSave(); first=!!(s&&!(s.trophies&&s.trophies[ev.id]));}catch(e){}
+ const par=ev.par||60, tEq=par*(pct>=0.9?0.5:pct>=0.75?0.9:pct>=0.6?1.2:1.6);
+ const RB=awardRibbons(ev,tEq,pct>=0.75?0:1);
+ const pay=Math.round(ev.reward*Math.max(0.3,pct)*(RB.featured?1.5:1));
+ addCoins(pay); addXp3D(Math.round(ev.reward/8)); passAdd(50);
+ if(first&&pct>=0.6){addGems(1);syncSave(s=>{s.trophies=s.trophies||{};s.trophies[ev.id]=true;});}
+ syncSave(s=>{s.bestScore=s.bestScore||{}; if(!s.bestScore[ev.id]||pct>s.bestScore[ev.id])s.bestScore[ev.id]=+pct.toFixed(2);});
+ sChime(); sGem();
+ toast('🎽 '+ev.name+' — '+Math.round(pct*100)+'%! +'+pay+'🪙'+(first&&pct>=0.6?' +1💎':'')+' · '+RB.msg);
+ if(net.client&&net.client.connected)netSendChat('🎽 rode '+ev.name+' for '+Math.round(pct*100)+'%');
+ questEvt('event',ev.id); dailyEvt('event',1);
+ c.done=true; setTimeout(cancelCourse,0);   // the frame loop is mid-course-tick: clear it on the next turn
+}
 function finishCourse(){
  const c=course,ev=c.ev;
  const par=c.par||ev.n*9;
@@ -5984,7 +6058,7 @@ function openEvents(){
     return cl?'<span style="font-size:11px;color:#8c7a63">✅ '+t[0]+'</span>':wkRib>=t[0]?'<button data-wk="'+i+'" style="font-size:11px;padding:3px 8px">Claim '+rw+' ('+t[0]+'🎀)</button>':'<span style="font-size:11px;color:#b8a98a">🔒 '+t[0]+'🎀 → '+rw+'</span>';}).join('')+'</span></div>';
  html+=EVENTS3.map((ev,i)=>{
   const won=tr[ev.id],ok=lvl>=ev.lvl, isF=featIds.has(ev.id), r=rb[ev.id]||0, wr=wk.rib[ev.id]||0;
-  return '<div class="evrow'+(isF?' done':'')+'">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b>'+(isF?' <span class="badge">FEATURED</span>':'')+'<span>'+ev.town+' · '+(ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps')+' · Lv '+ev.lvl+(r?' · '+'🎀'.repeat(r):'')+(isF&&wr<4?' · '+wr+'/4 this week':'')+'</span>'+
+  return '<div class="evrow'+(isF?' done':'')+'">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b>'+(isF?' <span class="badge">FEATURED</span>':'')+'<span>'+ev.town+' · '+(ev.dressage?'🎽 dressage · '+DRESSAGE_TESTS[ev.id].length+' figures'+(sw.bestScore&&sw.bestScore[ev.id]?' · best '+Math.round(sw.bestScore[ev.id]*100)+'%':''):ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps')+' · Lv '+ev.lvl+(r?' · '+'🎀'.repeat(r):'')+(isF&&wr<4?' · '+wr+'/4 this week':'')+'</span>'+
    (ok?'<button data-ev="'+i+'">'+(won?'Again':'Enter · '+(isF?Math.round(ev.reward*1.5):ev.reward)+'🪙')+'</button>':'<span style="flex:none">🔒</span>')+'</div>';
  }).join('')+'<div class="evrow"><span>Jump every numbered fence in order — follow the golden arrow! Ribbons: finish · two stars · three stars · a clean round.</span><button id="evClose">Close</button></div>';
  p.innerHTML=html;
@@ -6564,6 +6638,7 @@ function tackLockerHtml(s){
  const spare=inv.filter(it=>!(h&&h.gear&&h.gear[it.slot]===it.id));
  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">Locker · '+spare.length+' spare piece'+(spare.length===1?'':'s')+'</div>';
  html+=spare.length?spare.sort((a,b)=>RARITIES.indexOf(b.rarity)-RARITIES.indexOf(a.rarity)).map(it=>gearRow(it,h,false)).join(''):'<div style="font-size:11px;color:#b8a888">Open a chest or order a plain piece, then put it on.</div>';
+ html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🐎 Saddle style</div><div class="crow" style="gap:6px"><button data-tk="style:english" '+((h&&h.saddleStyle)!=='western'?'class="claimBtn"':'')+'>🏇 English</button><button data-tk="style:western" '+((h&&h.saddleStyle)==='western'?'class="claimBtn"':'')+'>🤠 Western</button></div>';
  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🎨 Saddle paint · 150🪙</div><div class="crow" style="gap:6px;flex-wrap:wrap">'
   +TACKS3.map(tk=>'<button data-buyt="'+tk[0]+'" title="'+tk[1]+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+tk[0]+';vertical-align:middle"></span> '+tk[1]+'</button>').join('')
   +(s.goldTack?'<button data-buyt="#ffd166">✨ Golden</button>':'')+'</div>';
@@ -6584,9 +6659,12 @@ function tackAct(cmd){
    const fodder=s.tack.filter(t=>t.id!==it.id&&t.slot===it.slot&&!worn.has(t.id)&&RARITIES.indexOf(t.rarity)<=RARITIES.indexOf(it.rarity)).sort((a,b)=>RARITIES.indexOf(a.rarity)-RARITIES.indexOf(b.rarity))[0];
    if(!fodder){msg='Nothing to merge: you need a spare '+GEAR_NOUN[it.slot].toLowerCase()+' of the same or lower rarity.';return;}
    s.tack=s.tack.filter(t=>t.id!==fodder.id); it.lvl=(it.lvl||1)+1; msg='Merged the '+fodder.name+' in: '+it.name+' is Lv '+it.lvl+'.'; ok=true; }
+  else if(op==='style'){ if(!h)return; h.saddleStyle=arg; msg=arg==='western'?'🤠 A Western saddle for '+h.name+'.':'🏇 An English saddle for '+h.name+'.'; ok=true; }
   else if(op==='sell'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; const worn=s.horses.some(x=>Object.values(x.gear||{}).includes(it.id)); if(worn){msg='Take it off first.';return;} s.tack=s.tack.filter(t=>t.id!==it.id); s.coins+=RAR_SELL[it.rarity]; msg='Sold for '+RAR_SELL[it.rarity]+' coins.'; ok=true; }
  });
- refreshTack(); refreshWallet(); dressSaddle();
+ refreshTack(); refreshWallet();
+ if(op==='style'&&ok){const fs=freshSave();if(fs&&fs.horses[rideIdx]&&myHorses[rideIdx])myHorses[rideIdx].saddleStyle=fs.horses[rideIdx].saddleStyle; attachTack();}
+ dressSaddle();
  toast(msg); if(ok){ if(got&&RARITIES.indexOf(got.rarity)>=2)sGem(); else sChime(); }
  openShop('tack');
 }
@@ -7475,7 +7553,7 @@ const DAILYQ=[
  {type:'ft',icon:'🧭',label:'Fast travel somewhere',goal:1,r:{c:50,p:5}},
  {type:'gallop2k',icon:'🌪️',label:'Gallop 2,000 m',goal:2000,r:{c:250,p:30}},
  {type:'fish',icon:'🎣',label:'Catch 2 fish at Loon Lake',goal:2,r:{c:150,p:15}},
- {type:'trail',icon:'🥾',label:'Finish a trailRide ride',goal:1,r:{c:150,p:20}},
+ {type:'trail',icon:'🥾',label:'Finish a trail ride',goal:1,r:{c:150,p:20}},
  {type:'feed6',icon:'🧺',label:'Hand out 6 treats',goal:6,r:{c:160,p:20}},
  {type:'shoe',icon:'🍀',label:'Find 3 golden horseshoes',goal:3,r:{c:220,p:20}},
  {type:'wildphoto',icon:'📸',label:'Photograph 2 wild animals',goal:2,r:{c:200,p:20}},
@@ -7551,7 +7629,8 @@ const ACHS=[
  {id:'chest12',icon:'🎁',label:'Treasure hunter',desc:'Find all 12 chests',v:s=>CHESTS.filter(c=>s.chests&&s.chests[c.id]).length,goal:12,r:{g:3,k:2}},
  {id:'sets4',icon:'🗺️',label:'Collector of the Basin',desc:'Complete all four collectible sets',v:s=>Object.keys(s.setsDone||{}).length,goal:4,r:{g:5}},
  {id:'fish10',icon:'🎣',label:'Angler',desc:'Catch 10 fish',v:s=>(s.fish&&s.fish.n)||0,goal:10,r:{c:300,k:1}},
- {id:'trail5',icon:'🥾',label:'Trail boss',desc:'Finish 5 trailRide rides',v:s=>(s.stats&&s.stats.trails)||0,goal:5,r:{g:2,k:1}},
+ {id:'trail5',icon:'🥾',label:'Trail boss',desc:'Finish 5 trail rides',v:s=>(s.stats&&s.stats.trails)||0,goal:5,r:{g:2,k:1}},
+ {id:'dress80',icon:'🎽',label:'Poise',desc:'Score 80% in a dressage test',v:s=>Math.round(100*Math.max(0,...Object.values(s.bestScore||{0:0}))),goal:80,r:{c:400,k:1}},
  {id:'party1',icon:'🎉',label:'Life of the party',desc:'Throw or join a ranch party',v:s=>((s.stats&&s.stats.parties)||0)+((s.stats&&s.stats.partied)||0),goal:1,r:{c:200}},
  {id:'roundup3',icon:'🤠',label:'Roundup rider',desc:'Bring three runaways home in one weekend',v:s=>(s.roundup&&s.roundup.delivered)||0,goal:3,r:{g:3,k:2}},
  {id:'rib60',icon:'🎀',label:'Ribbon hall',desc:'Earn 60 ribbons',v:s=>s.ribbonTotal||0,goal:60,r:{g:3,k:2}},
@@ -8316,6 +8395,7 @@ function tick(){
  const inVR=renderer.xr.isPresenting;
  if((inVR||touch.analog)&&target>0&&touch.goA>0)target*=0.34+0.66*touch.goA;   // stick or reins: ease out of a walk
  if(touch.brake){target=0;}                       // reins drawn back into your chest = whoa
+ if((keys.ControlLeft||keys.ControlRight)&&target>0)target=Math.min(target,2.2);   // Ctrl: collect to a walk
  /* Stamina. A gallop spends it, at a rate the stamina stat sets: a stamina-3 horse holds a
     full gallop about twenty seconds, a stamina-10 horse nearly forty. A walk brings it back,
     a halt faster. Blown, the horse will not gallop until it has some back. Race pickups and
@@ -9109,6 +9189,7 @@ function tick(){
    }
   }else{
    course.t+=dt;
+   if(course.dressage)tickDressage(dt);
    const j=course.jumps[course.idx];
    if(course.race&&course.items){
     for(const it of course.items){ if(!it.m.visible)continue; it.m.rotation.y+=dt*3; if(Math.hypot(player.pos.x-it.x,player.pos.z-it.z)<2.4){ it.m.visible=false; RACE_ITEMS[it.type].fx(); sCoin(); toast(RACE_ITEMS[it.type].label); } }
