@@ -3874,6 +3874,102 @@ function hideProceduralBody(){
  player.mesh.traverse(o=>{ if((o.isMesh||o.isSkinnedMesh) && o!==P.shadowM && !keep.has(o)
    && !(rig&&isDesc(o,rig)) && o.visible) o.visible=false; });
 }
+/* ===== Hair =====
+   The generated horse's mane and tail are baked into the mesh as solid shapes, which is
+   the one thing that makes it read as a model rather than a horse. This hangs real hair
+   over them: strips of alpha-cut strands from a drawn texture, each card a short bendable
+   ribbon, laid along the crest from the poll to the withers (falling to the horse's right,
+   with a forelock over the brow) and fanned from the dock for the tail. Every vertex is
+   skinned to the nearest neck or tail bones, so the hair is a SkinnedMesh sharing the
+   horse's skeleton: it nods with the head and swings with the tail for free. A little sway
+   in the vertex shader, more at the gallop, does the rest. Coloured from the coat's mane
+   colour, or the mastery tail colour. */
+const hairTex=(()=>{
+ const cv=document.createElement('canvas'); cv.width=256; cv.height=512; const c=cv.getContext('2d');
+ c.clearRect(0,0,256,512);
+ /* Hair is not stripes: strands of different brightness lying over each other, thick at
+    the root and thinning to nothing, ending at different lengths. Dark strands first, then
+    the mid tones, then a few bright ones on top, each drawn in tapering segments. */
+ const strand=(x0,drift,w0,tip,l)=>{ const segs=6; let px=x0,py=0; for(let k=1;k<=segs;k++){ const t=k/segs, nx=x0+drift*(t*t*0.6+t*0.4), ny=tip*t; c.strokeStyle='rgb('+l+','+l+','+l+')'; c.lineWidth=Math.max(0.6,w0*(1-t*0.85)); c.lineCap='round'; c.beginPath(); c.moveTo(px,py); c.lineTo(nx,ny); c.stroke(); px=nx; py=ny; } };
+ for(let i=0;i<60;i++)strand(4+Math.random()*248,(Math.random()-0.5)*80,2.5+Math.random()*3,300+Math.random()*200,110+Math.floor(Math.random()*50));
+ for(let i=0;i<110;i++)strand(4+Math.random()*248,(Math.random()-0.5)*70,1.8+Math.random()*2.6,330+Math.random()*180,175+Math.floor(Math.random()*55));
+ for(let i=0;i<40;i++)strand(4+Math.random()*248,(Math.random()-0.5)*60,1.2+Math.random()*1.6,360+Math.random()*150,235+Math.floor(Math.random()*20));
+ const t=new THREE.CanvasTexture(cv); t.colorSpace=THREE.SRGBColorSpace; t.wrapS=THREE.RepeatWrapping; t.anisotropy=8; return t;
+})();
+function hairMaterial(){
+ const m=new THREE.MeshStandardMaterial({map:hairTex,alphaTest:0.3,side:THREE.DoubleSide,roughness:0.66,metalness:0,color:0xf4e6c5,vertexColors:true});
+ m.envMapIntensity=0.5;
+ const u={uTime:{value:0},uWind:{value:0}}; m.userData.u=u;
+ m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,u);
+  sh.vertexShader='uniform float uTime,uWind;\n'+sh.vertexShader.replace('#include <begin_vertex>',
+`#include <begin_vertex>
+ { float tip=uv.y;                                   // 0 at the root, 1 at the tip
+   float ph=position.x*4.0+position.z*3.0;
+   transformed.x+=(sin(uTime*2.3+ph)*0.018+sin(uTime*4.1+ph*1.7)*0.008)*tip*(1.0+uWind*1.5);
+   transformed.y-=uWind*0.10*tip*tip;               // at a gallop the hair streams back
+   transformed.z+=sin(uTime*1.7+ph)*0.012*tip; }`);};
+ return m;
+}
+const hairU=[];
+function buildHair(){
+ if(RIG.hairBuilt||!RIG.skin||!RIG.bones||!RIG.fitScale)return;
+ player.mesh.updateWorldMatrix(true,true); RIG.scene.updateWorldMatrix(true,true);
+ const bones=RIG.bones, skin=RIG.skin;
+ const bpos=bones.map(b=>{const v=new THREE.Vector3(); b.getWorldPosition(v); player.mesh.worldToLocal(v); return v;});   // bind pose, mount space
+ // the crest: the topmost skin vertex at each station along the neck, in mount space
+ const pos=skin.geometry.attributes.position, vtmp=new THREE.Vector3(), pts=[];
+ for(let k=0;k<pos.count;k++){ vtmp.fromBufferAttribute(pos,k); skin.localToWorld(vtmp); player.mesh.worldToLocal(vtmp); pts.push([vtmp.x,vtmp.y,vtmp.z]); }
+ const crest=[]; for(let z=0.62;z>=-0.02;z-=0.045){ let best=null; for(const q of pts){ if(Math.abs(q[2]-z)<0.03&&(!best||q[1]>best[1]))best=q; } if(best)crest.push([best[0],best[1]-0.01,z]); }
+ const toSkin=v=>{const w=player.mesh.localToWorld(v.clone()); return skin.worldToLocal(w);};
+ const weightsFor=(v,cands)=>{ const d=cands.map(i=>[i,1/Math.max(0.02,bpos[i].distanceTo(v))**2]).sort((a,b)=>b[1]-a[1]).slice(0,2); const s=d.reduce((a,x)=>a+x[1],0); const idx=[d[0][0],d[1]?d[1][0]:d[0][0],0,0], w=[d[0][1]/s,d[1]?d[1][1]/s:0,0,0]; return [idx,w]; };
+ const mk=(cards,cands)=>{ // cards: [{top:[x,y,z], dir:[dx,dy,dz], len, width, bend}]
+  const P=[],U=[],I=[],SI=[],SW=[],C=[]; const rows=5;
+  cards.forEach(cd=>{ const base=P.length/3; const tp=new THREE.Vector3(...cd.top), dr=new THREE.Vector3(...cd.dir).normalize();
+   dr.applyAxisAngle(new THREE.Vector3(0,1,0),(Math.random()-0.5)*0.5);                  // each clump leans its own way
+   const len=cd.len*(0.8+Math.random()*0.35), shade=0.82+Math.random()*0.22, u0=Math.random()*0.6;   // and has its own length, shade and strands
+   const side=new THREE.Vector3().crossVectors(dr,new THREE.Vector3(0,1,0)); if(side.lengthSq()<1e-4)side.set(1,0,0); side.normalize();
+   for(let r=0;r<rows;r++){ const t=r/(rows-1); const along=tp.clone().addScaledVector(dr,len*t); along.y-=cd.bend*t*t;   // gravity bend
+    const hw=cd.width/2*(1-0.55*t);                                                   // clumps narrow to the tip
+    for(const sgn of[-1,1]){ const v=along.clone().addScaledVector(side,sgn*hw); const vs=toSkin(v); P.push(vs.x,vs.y,vs.z); U.push(u0+(sgn<0?0:0.4),t); const [idx,w]=weightsFor(v,cands); SI.push(...idx); SW.push(...w); C.push(shade,shade,shade); } }
+   for(let r=0;r<rows-1;r++){ const a=base+r*2; I.push(a,a+1,a+2, a+1,a+3,a+2); } });
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(P,3)); g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2)); g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));
+  g.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(SI,4)); g.setAttribute('skinWeight',new THREE.Float32BufferAttribute(SW,4));
+  g.setIndex(I); g.computeVertexNormals();
+  const m=new THREE.SkinnedMesh(g,hairMaterial()); m.castShadow=true; m.frustumCulled=false;
+  m.position.copy(skin.position); m.quaternion.copy(skin.quaternion); m.scale.copy(skin.scale);
+  skin.parent.add(m); m.bind(skin.skeleton,skin.bindMatrix); hairU.push(m.material.userData.u); return m; };
+ // mane: two layers along the crest, falling to the horse's right (-x), longest mid-neck
+ const mane=[];
+ crest.forEach((c,i)=>{ const t=i/Math.max(1,crest.length-1); const len=0.24+0.24*Math.sin(Math.PI*Math.min(1,t*1.1));
+  mane.push({top:[c[0]-0.02,c[1],c[2]],dir:[-0.55,-1,0.05],len,width:0.1,bend:0.06});
+  mane.push({top:[c[0]+0.01,c[1]+0.01,c[2]+0.022],dir:[-0.35,-1,0.0],len:len*0.85,width:0.09,bend:0.05});
+  mane.push({top:[c[0]-0.03,c[1]-0.01,c[2]-0.015],dir:[-0.7,-1,0.08],len:len*0.7,width:0.08,bend:0.05}); });
+ // forelock: over the brow between the ears, falling forward
+ const poll=crest[0]||[ -0.06,1.7,0.62 ];
+ for(let k=0;k<3;k++)mane.push({top:[poll[0]-0.05+k*0.05,poll[1]+0.02,poll[2]+0.06],dir:[(k-1)*0.25,-0.75,0.6],len:0.24,width:0.07,bend:0.03});
+ RIG.hairMane=mk(mane,[3,4,5,6]);
+ // tail: fanned from the dock, hanging down and back, bound along the tail bones
+ const dock=bpos[RIG_TAIL[0]], tip=bpos[RIG_TAIL[RIG_TAIL.length-1]];
+ const tail=[]; for(let k=0;k<16;k++){ const a=(k/15-0.5)*0.7, ring=k%2?0.02:0.045; tail.push({top:[dock.x+Math.sin(a)*ring,dock.y+0.03-k%2*0.03,dock.z-0.01-k%3*0.02],dir:[Math.sin(a)*0.3,-1,-0.32-Math.cos(a)*0.1],len:0.62+Math.random()*0.18,width:0.1,bend:0.1}); }
+ RIG.hairTail=mk(tail,RIG_TAIL.concat([RIG_TAIL[0]-1]));
+ RIG.hairBuilt=true;
+ hairColour();
+}
+function hairColour(){
+ /* The baked texture keeps a flaxen mane until the coat is recoloured, and then its mane
+    goes the coat's way, lightened by its own luminance. The hair follows the same rule, so
+    strands and baked hair read as one. Mythic coats use their stored mane colour. */
+ const h=myHorses[rideIdx]; if(!h)return;
+ let mane;
+ if(h.coat){ mane=new THREE.Color((h.colors&&h.colors.mane)||'#f4e6c5'); }
+ else{ const flax=new THREE.Color('#f4e6c5'), bc=new THREE.Color((h.colors&&h.colors.body)||'#9c4f23'), ch=new THREE.Color('#9c4f23');
+  const blend=Math.min(1,Math.hypot(bc.r-ch.r,bc.g-ch.g,bc.b-ch.b)/0.32);
+  const lit=bc.clone().multiplyScalar(1.6); lit.r=Math.min(1,lit.r);lit.g=Math.min(1,lit.g);lit.b=Math.min(1,lit.b);
+  mane=flax.lerp(lit,blend); }
+ if(RIG.hairMane)RIG.hairMane.material.color.copy(mane);
+ if(RIG.hairTail){ if(h.tailCol)RIG.hairTail.material.color.set(h.tailCol); else RIG.hairTail.material.color.copy(mane); }
+}
 function attachRig(){
  if(!USE_GEN_HORSE)return;
  if(!RIG.ready||!player.mesh||RIG.attachedTo===player.mesh)return;
@@ -3901,6 +3997,7 @@ function attachRig(){
  RIG.scene.rotation.set(0,-Math.PI/2,0);          // model +x (forward) -> game +z
  RIG.scene.visible=true;                           // never leave the mount invisible
  player.mesh.add(RIG.scene);
+ try{buildHair();}catch(e){console.warn('hair',e);}
  RIG.attachedTo=player.mesh;
  // seat the rider on the rigged horse's back (spine bone)
  if(riderG){ player.mesh.updateWorldMatrix(true,true);
@@ -3968,6 +4065,7 @@ function rigPhaseStep(sp,grounded,dt){
 function driveRig(sp,grounded,t,dt){
  if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
  if(RIG.emote){RIG.emote.t+=dt;if(RIG.emote.t>=RIG.emote.dur)RIG.emote=null;}
+ for(const u of hairU){u.uTime.value=t;u.uWind.value+=(Math.max(0,Math.min(1,(sp-4)/9))-u.uWind.value)*Math.min(1,dt*3);}
  const em=RIG.emote, E=em&&EMOTES[em.type], ee=em?emEnv(em):0;   // the player's own pose copy below folds the legs the same way
  {const hp=myHorses[rideIdx]&&PERS[myHorses[rideIdx].pers]; RIG.persNeck=hp&&hp.neck?hp.neck*(0.7+0.3*Math.sin(t*(hp.neck>0?2.3:0.8))):0;}
  if(RIG._hideFor!==player.mesh){ hideProceduralBody(); RIG._hideFor=player.mesh; }  // enforce hide once per mount (race-proof)
@@ -4108,7 +4206,7 @@ function tintWings(type){   // player's rigged mount
 function applyCoat(){
  if(!RIG.ready||!RIG.skin||!RIG.baseMat) return;
  const h=myHorses[rideIdx];
- if(h&&h.coat){ RIG.skin.material=fantasyCoatRig(h.coat); tintWings(h.coat); return; }   // mythic glowing coats + themed wings
+ if(h&&h.coat){ RIG.skin.material=fantasyCoatRig(h.coat); tintWings(h.coat); hairColour(); return; }   // mythic glowing coats + themed wings
  // Original baked texture (flaxen mane+tail, white socks, blaze) for chestnut breeds; luminance-recolour
  // toward the breed colour for distinct breeds (grey/black/palomino) so the mane/socks pattern survives.
  ensureCoatMat();
@@ -4120,6 +4218,7 @@ function applyCoat(){
  RIG.coatMat.userData.tail.set((h&&h.tailCol)||'#000000'); RIG.coatMat.userData.tailBlend=(h&&h.tailCol)?1:0;
  if(RIG.coatMat.userData.shader){RIG.coatMat.userData.shader.uniforms.uTail.value.copy(RIG.coatMat.userData.tail);RIG.coatMat.userData.shader.uniforms.uTailBlend.value=RIG.coatMat.userData.tailBlend;}
  RIG.skin.material=RIG.coatMat;
+ hairColour();
 }
 {
  const setLoad=(f,label)=>{const b=document.querySelector('#loadbar i'),t=document.getElementById('loadpct');
