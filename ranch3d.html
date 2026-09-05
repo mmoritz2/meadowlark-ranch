@@ -5480,7 +5480,7 @@ $('photoBtn').onclick=()=>{
  a.click();
  sCoin();
  toast('📷 Photo saved to your downloads!');
- dailyEvt('photo',1);
+ dailyEvt('photo',1); questEvt('photo',1);
  try{   // wildlife in frame? reward the shot
   const fr=new THREE.Frustum();
   fr.setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse));
@@ -5955,7 +5955,7 @@ function careAct(k){
  if(!ok&&msg&&msg.indexOf('stock up')>=0)openShop('food');
  if(ok){
   {const fs=freshSave();if(fs&&fs.horses[rideIdx]&&myHorses[rideIdx]){myHorses[rideIdx].stats=fs.horses[rideIdx].stats;myHorses[rideIdx].sxp=fs.horses[rideIdx].sxp;}}   // the ride reads the live copy
-  if(statUp)sGem();
+  if(statUp){sGem();questEvt('train',1);}
   sChime();
   const xp={carrot:6,apple:8,hay:4,water:3,groom:5,pet:2}[k]||0;
   if(xp)addXp3D(xp);
@@ -5982,6 +5982,7 @@ const BREEDS3=[
  ['aurora','Aurora Pegasus','Mythic',0,32,'#143038','#7df0c4',{wings:true,coat:'aurora',glow:true,ability:'fly'}],
  ['phoenix','Phoenix Steed','Mythic',0,36,'#3a1208','#ff9a4a',{wings:true,coat:'fire',glow:true,ability:'fly'}],
  ['shadowmare','Shadow Mare','Mythic',0,30,'#241830','#a07ce0',{coat:'shadow',glow:true,ability:'swift'}],
+ ['kestrel','Silver Kestrel','Legendary',0,0,'#c9ced6','#eef2f7',{story:true}],   // book two's reward: not for sale
  ['shire','Shire','Draft',90,0,'#3a3530','#1d1a17',{}],
  ['clyde','Clydesdale','Draft',90,0,'#7a4526','#2e2018',{}],
 ];
@@ -6001,6 +6002,7 @@ function openShop(tab){
  +'<button data-shoptab="close" style="margin-left:auto">✖</button></div>';
  if(shopTab3==='horses'){
   html+=BREEDS3.map((b,i)=>{
+   if(b[7]&&b[7].story)return '';
    const owned=s.horses.filter(h=>h.breed===b[0]).length;
    const badge=b[2]==='Mythic'?' <span style="background:linear-gradient(90deg,#9d6bff,#ff7ad0);color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">✨ MYTHIC</span>':b[2]==='Draft'?' <span style="background:#e8b84b;color:#5a3d12;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">NEW</span>':'';
    const ico=b[7].horn?'🦄':b[7].wings?'🪽':(b[7].coat||b[7].glow)?'✨':'🐴';
@@ -7049,6 +7051,11 @@ function dailyEvt(type,val){
   if(crossed)toast('📋 Daily quest done: '+q.label+' — claim it in 📜 Quests!');
  }
 }
+function claimUmbrella(){
+ let ok=false;
+ syncSave(s=>{ensureDq(s); if(s.dq.umbrella||Object.keys(s.dq.claimed).length<3)return; s.dq.umbrella=true; s.keys=(s.keys||0)+1; s.gems=(s.gems||0)+1; ok=true;});
+ if(ok){refreshWallet();sGem();toast('🌂 Umbrella: +1🗝️ +1💎');renderQuests();}
+}
 function claimDaily(type){
  const q=todayDaily().find(q=>q.type===type);if(!q)return;
  let ok=false;
@@ -7079,6 +7086,7 @@ const ACHS=[
  {id:'troph5',icon:'🏆',label:'Shelf of silver',desc:'Win 5 event trophies',v:s=>Object.keys(s.trophies||{}).length,goal:5,r:{g:1}},
  {id:'troph11',icon:'🏆',label:'Champion of the Basin',desc:'Win every event trophy',v:s=>Object.keys(s.trophies||{}).length,goal:EVENTS3.length,r:{g:3}},
  {id:'story8',icon:'📜',label:"Grandpa Wren's pride",desc:'Finish the story missions',v:s=>(s.story&&s.story.idx)||0,goal:8,r:{c:400}},
+ {id:'book2',icon:'🪶',label:'The Silver Kestrel',desc:'Finish book two of the story',v:s=>(s.story&&s.story.idx)||0,goal:29,r:{g:5,k:2}},
  {id:'bond100',icon:'❤️',label:'Soulmates',desc:'Reach 100 bond with a horse',v:s=>Math.round(s.horses.reduce((m,h)=>Math.max(m,h.bond||0),0)),goal:100,r:{g:1}},
  {id:'lvl5',icon:'⭐',label:'Rising star',desc:'Train a horse to level 5',v:s=>s.horses.reduce((m,h)=>Math.max(m,h.level||1),1),goal:5,r:{c:200}},
  {id:'dist25k',icon:'🧭',label:'Trail blazer',desc:'Ride 25 km in total',v:s=>(s.stats&&s.stats.dist)||0,goal:25000,r:{g:1}},
@@ -7133,9 +7141,12 @@ function renderQuests(){
    return '<div class="qrow'+(done?' done':'')+(cl?' claimed':'')+'"><span class="qico">'+q.icon+'</span>'
    +'<span class="qmain">'+q.label+'<span class="qbar"><span class="qfill" style="width:'+Math.round(100*prog/q.goal)+'%"></span></span></span>'
    +'<span style="font-size:11px;color:#8c7a63">'+Math.floor(prog)+'/'+q.goal+'</span>'
-   +(cl?'<span>✅</span>':done?'<button class="claimBtn" data-q="cd:'+q.type+'">Claim '+(q.r.c||0)+'🪙</button>':'<span style="font-size:11px;color:#b8a888">'+(q.r.c||0)+'🪙'+(q.r.p?'+'+q.r.p+'🎟️':'')+'</span>')
+   +(cl?'<span>✅</span>':done?'<button class="claimBtn" data-q="cd:'+q.type+'">Claim '+(q.r.c||0)+'🪙</button>':'<span style="font-size:11px;color:#b8a888">'+(q.r.c||0)+'🪙'+(q.r.k?'+'+q.r.k+'🗝️':'')+(q.r.p?'+'+q.r.p+'🎟️':'')+'</span>')
    +'</div>';
   }).join('');
+  const un=Math.min(3,Object.keys(s.dq.claimed).length), udone=un>=3, ucl=!!s.dq.umbrella;
+  html+='<div class="qrow'+(udone&&!ucl?' done':'')+(ucl?' claimed':'')+'"><span class="qico">🌂</span><span class="qmain">Umbrella: claim all three<span class="qbar"><span class="qfill" style="width:'+Math.round(100*un/3)+'%"></span></span></span><span style="font-size:11px;color:#8c7a63">'+un+'/3</span>'
+   +(ucl?'<span>✅</span>':udone?'<button class="claimBtn" data-q="um:x">Claim 🗝️+💎</button>':'<span style="font-size:11px;color:#b8a888">🗝️+💎</span>')+'</div>';
  }else{
   s.achClaims=s.achClaims||{};
   const rows=ACHS.map(a=>({a,v:Math.min(a.goal,a.v(s)),cl:!!s.achClaims[a.id]}));
@@ -7155,6 +7166,7 @@ function renderQuests(){
   if(act==='close')p.style.display='none';
   else if(act==='tab'){questTab=arg;renderQuests();}
   else if(act==='cd')claimDaily(arg);
+  else if(act==='um')claimUmbrella();
   else if(act==='ca')claimAch(arg);
  };});
 }
@@ -7281,6 +7293,30 @@ const STORY=[
  {label:'Visit Cottonwood Village',text:'Ride north past the pine treeline — the cottages of Cottonwood Village are just beyond.',type:'visit',x:47,z:-50,r:14,goal:1,reward:{c:200}},
  {label:'Tame a wild horse',text:'Wild horses roam the far meadows. Walk up slowly — no galloping! — and stay close until it trusts you.',type:'tame',goal:1,reward:{c:300,g:1}},
  {label:'Win the Championship Final',text:'You are ready, champion. Take the Basin Championship Final in Hollowpeak!',type:'event',ev:'w2',goal:1,reward:{c:1000,g:3}},
+ /* ===== Book two: The Silver Kestrel =====
+    A grey horse nobody owns, glimpsed at dusk, followed region by region. Each chapter is
+    given by the person who lives there; the clues are in what they say. */
+ {ch:'Hoofprints at Dawn',label:'Visit Loon Lake',text:'Kiddo — at dusk last night I saw a grey horse drinking at Loon Lake, silver as the moon. Nobody\'s horse. Your grandmother used to tell of one like it. Ride down and look for her.',type:'visit',x:20,z:16,r:10,goal:1,reward:{c:150}},
+ {ch:'Hoofprints at Dawn',label:'Gather 3 lettuces from the meadow',text:'Hoofprints in the mud, and the meadow lettuce grazed to the ground. She has a taste for it. Gather three heads — we may need them to win her over.',type:'forage',item:'lettuce',goal:3,reward:{c:150}},
+ {ch:'Hoofprints at Dawn',label:'Gallop 800 m on her trail',text:'The prints lead off north, fast. Whatever she is, she can run. Open up and follow the trail — 800 metres at a full gallop.',type:'gallop',goal:800,reward:{c:200}},
+ {ch:'Hoofprints at Dawn',label:'Ask Ada in Cottonwood',text:'The trail runs toward Cottonwood. Ada keeps the village garden; if a strange horse came through, she will know. Ride north past the pines and talk to her.',type:'talk',talk:'ada',npc:'ada',goal:1,reward:{c:150}},
+ {ch:'The Cottonwood Ribbon',npc:'ada',label:'Win the Cottonwood Meadow Dash',text:'A grey horse? Oh yes — she came through at a flat gallop and left a torn silver ribbon on my gate. If you mean to keep up with her, show me you can: win the Meadow Dash.',type:'event',ev:'h2',goal:1,reward:{c:250,k:1}},
+ {ch:'The Cottonwood Ribbon',npc:'ada',label:'Train a stat with food',text:'She turns like a swallow. Your horse will need to be nimble: feed lettuce, or whatever you have, until one of its stats goes up a level.',type:'train',goal:1,reward:{c:200}},
+ {ch:'The Cottonwood Ribbon',npc:'ada',label:'Who trampled the flowerbed?',text:'Before you go — someone trampled my flowerbed last night, and I want to know who.',clue:'The prints are small and unshod, and there is a grey hair caught on the fence.',options:['Mia\'s Comet (a shod chestnut)','Theo\'s Pepper (a black pony)','The grey horse herself'],answer:2,wrong:'Look at the clues again: what colour was the hair? Were the hooves shod?',type:'guess',goal:1,reward:{c:250,g:1}},
+ {ch:'The Cottonwood Ribbon',npc:'ada',label:'Ask Farmer Otto in Barleyfold',text:'So she was here. She went east, toward the wheat. Otto at Barleyfold sees everything that crosses his fields — go and ask him.',type:'talk',talk:'otto',npc:'otto',goal:1,reward:{c:150}},
+ {ch:'Barleyfold Whispers',npc:'otto',label:'Collect 5 pumpkins',text:'The silver mare! She ran my fence line for two nights and took one of my own mares with her. Help me bring the harvest in first — five pumpkins — and I will tell you where they went.',type:'forage',item:'pumpkin',goal:5,reward:{c:250}},
+ {ch:'Barleyfold Whispers',npc:'otto',label:'Win the Barleyfold Farm Derby',text:'Good. Now, a horse that can catch her needs speed on the flat. The Farm Derby is this week — win it.',type:'event',ev:'a1',goal:1,reward:{c:320,k:1}},
+ {ch:'Barleyfold Whispers',npc:'otto',label:'Tame a wild horse',text:'My mare is out there somewhere, running wild. Wild horses roam the far meadows: walk up slowly, stay close until it trusts you, and bring one home. Whichever it is, it will be a good horse.',type:'tame',goal:1,reward:{c:300,g:1}},
+ {ch:'Barleyfold Whispers',npc:'otto',label:'Ask Sheriff Bea in Coyote Canyon',text:'They headed west into the canyon. Sheriff Bea patrols that country; she will have seen the tracks.',type:'talk',talk:'bea',npc:'bea',goal:1,reward:{c:150}},
+ {ch:'Canyon Tracks',npc:'bea',label:'Collect 4 oranges',text:'Tracks? Partner, that mare has been raiding the orange grove every night. Pick four oranges before she gets the lot, and I will show you where she waters.',type:'forage',item:'orange',goal:4,reward:{c:250}},
+ {ch:'Canyon Tracks',npc:'bea',label:'Win the Coyote Desert Derby',text:'Out here the sand slows a horse. Win the Desert Derby and I will believe yours can follow her over the dunes.',type:'event',ev:'bd',goal:1,reward:{c:400,k:1}},
+ {ch:'Canyon Tracks',npc:'bea',label:'Take a photo in the canyon',text:'Nobody in town believes me about her. Take a photograph out here — the mesas at least — so they know you were on the trail.',type:'photo',goal:1,reward:{c:200}},
+ {ch:'Canyon Tracks',npc:'bea',label:'Who raided the grove?',text:'One more thing. Something else has been at the oranges, and it was not her.',clue:'The prints are big and shod, the fence is smeared with orange, and there is a red hair on the post.',options:['Mia\'s Comet (a chestnut with a sweet tooth)','The grey mare','A coyote'],answer:0,wrong:'Coyotes do not wear shoes, and the grey mare is grey. Think about the red hair.',type:'guess',goal:1,reward:{c:250,g:1}},
+ {ch:'Canyon Tracks',npc:'bea',label:'Ask Ilse at Hollowpeak',text:'Her tracks climb north, into the snow. Ilse lives up at Hollowpeak and reads snow like a book. Wrap up warm.',type:'talk',talk:'ilse',npc:'ilse',goal:1,reward:{c:150}},
+ {ch:'The Silver Kestrel',npc:'ilse',label:'Win the Hollowpeak Snow Trail',text:'So you are the one following her. Up here we call her the Silver Kestrel — she has wintered on this mountain for years. Snow is heavy going; win the Snow Trail and I will know you can ride it.',type:'event',ev:'wt',goal:1,reward:{c:500,k:1}},
+ {ch:'The Silver Kestrel',npc:'ilse',label:'Land 6 clean jumps',text:'She jumps the drifts like they are nothing. Show me six clean jumps — any white-railed fence will do.',type:'cleanjump',goal:6,reward:{c:300}},
+ {ch:'The Silver Kestrel',npc:'ilse',label:'Find and tame the Silver Kestrel',text:'She is on the snowfield now. Walk up slowly — no galloping — and stay near her. If she trusts you, she is yours. If she does not, she never will be.',type:'kestrel',goal:1,reward:{c:800,g:3}},
+ {ch:'The Silver Kestrel',npc:'ilse',label:'Tell Grandpa Wren',text:'You did it. Ride her home and tell your grandfather — he has waited longer than you know.',type:'talk',talk:'wren',npc:'wren',goal:1,reward:{c:1500,g:5,gear:'Legendary'}},
 ];
 let storyIdx=0,storyProg=0,nearNPC=false;
 try{if(save&&save.story){storyIdx=save.story.idx||0;storyProg=save.story.prog||0;}}catch(e){}
@@ -7290,57 +7326,84 @@ function questEvt(type,val){
  const m=STORY[storyIdx];
  if(!m||m.type!==type||storyProg>=m.goal)return;
  if(type==='event'){if(val===m.ev)storyProg=m.goal;}
+ else if(type==='forage'){if(val===m.item)storyProg=Math.min(m.goal,storyProg+1);}
  else storyProg=Math.min(m.goal,storyProg+val);
  saveStory();
- if(storyProg>=m.goal)toast('📜 Done! Ride back and tell Grandpa Wren');
+ if(storyProg>=m.goal){const g=NPC_DEFS.find(x=>x.id===(m.npc||'wren'))||NPC_DEFS[0];toast('📜 Done! Ride back and tell '+g.name);}
 }
+function npcShort(def){return def.name.replace('Grandpa ','').replace('Farmer ','').replace('Sheriff ','');}
 function openDlg(){
- const m=STORY[storyIdx];
- const d=$('dlg');
+ const q=nearNPC||npcList[0], def=q.def, m=STORY[storyIdx], d=$('dlg');
+ const head='<b>'+def.icon+' '+def.name+'</b>';
+ const giver=m?(m.npc||'wren'):null, mine=m&&giver===def.id;
+ if(m&&m.type==='talk'&&m.talk===def.id&&storyProg<m.goal){storyProg=m.goal;saveStory();}   // the conversation is the mission
+ if(m&&m.type==='guess'&&mine&&storyProg<m.goal){                                              // a clue and three suspects
+  d.innerHTML=head+'<p>'+m.text+'</p><p style="font-size:13px;color:#5a4a3a">🔍 '+m.clue+'</p>'
+   +m.options.map((o,i)=>'<button data-g="'+i+'" style="display:block;margin:4px 0">'+o+'</button>').join('')+'<button id="dlgBtn" style="margin-top:6px">Let me think…</button>';
+  d.style.display='block';
+  d.querySelectorAll('[data-g]').forEach(b=>{b.onclick=()=>{ if(+b.dataset.g===m.answer){storyProg=m.goal;saveStory();sGem();toast('🔍 Solved!');openDlg();} else toast(m.wrong||'Hmm — look at the clues again.'); };});
+  $('dlgBtn').onclick=()=>{d.style.display='none';};
+  return;
+ }
  if(!m){
-  d.innerHTML='<b>👴 Grandpa Wren</b><p>You have done everything I dreamed of, champion. This ranch shines again because of you. Ride free! 🏆</p><button id="dlgBtn">🐴</button>';
- }else if(missionDone()){
+  d.innerHTML=head+'<p>'+(def.id==='wren'?'You brought the Silver Kestrel home, champion. Your grandmother would have loved to see it. Ride free! 🏆':def.idle)+'</p><button id="dlgBtn">🐴</button>';
+ }else if(mine&&missionDone()){
   const r=m.reward;
-  d.innerHTML='<b>👴 Grandpa Wren</b><p>Wonderful work! Here — you earned it: <b>'+(r.c||0)+'🪙'+(r.g?' +'+r.g+'💎':'')+'</b></p><button id="dlgBtn">Claim ✨</button>';
+  d.innerHTML=head+'<p>Wonderful work! Here — you earned it: <b>'+(r.c||0)+'🪙'+(r.g?' +'+r.g+'💎':'')+(r.k?' +'+r.k+'🗝️':'')+(r.gear?' + a Legendary piece of tack':'')+'</b></p><button id="dlgBtn">Claim ✨</button>';
+ }else if(mine){
+  d.innerHTML=head+(m.ch?'<div style="font-size:11px;color:#8c7a63;letter-spacing:.04em">📖 '+m.ch+'</div>':'')+'<p>'+m.text+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':'')+'</span><br><br><button id="dlgBtn">On it!</button>';
  }else{
-  d.innerHTML='<b>👴 Grandpa Wren</b><p>'+m.text+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':'')+'</span><br><br><button id="dlgBtn">On it!</button>';
+  const g=NPC_DEFS.find(x=>x.id===giver)||NPC_DEFS[0];
+  d.innerHTML=head+'<p>'+def.idle+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+' — '+(missionDone()?'tell '+npcShort(g):'ask '+npcShort(g)+' about it')+'</span><br><br><button id="dlgBtn">🐴</button>';
  }
  d.style.display='block';
  $('dlgBtn').onclick=()=>{
-  if(m&&missionDone()){
+  if(m&&mine&&missionDone()){
    addCoins(m.reward.c||0);
    if(m.reward.g)addGems(m.reward.g);
+   if(m.reward.k){syncSave(s=>{s.keys=(s.keys||0)+m.reward.k;});refreshWallet();}
+   if(m.reward.gear){syncSave(s=>{s.tack=s.tack||[];s.tack.push(genGear(m.reward.gear));});refreshTack();toast('🐎 A Legendary piece is in your tack locker!');}
    sGem();
    storyIdx++;storyProg=0;saveStory();
-   toast('📜 Mission complete! '+(STORY[storyIdx]?'New mission from Wren!':'Story complete! 🏆'));
+   const nm=STORY[storyIdx];
+   toast('📜 Mission complete! '+(nm?(nm.ch&&nm.ch!==m.ch?'New chapter: '+nm.ch:'New mission from '+npcShort(NPC_DEFS.find(x=>x.id===(nm.npc||'wren'))||NPC_DEFS[0])):'Story complete! 🏆'));
   }
   d.style.display='none';
  };
 }
-function makeNPC(){
+function makeNPC(def){
+ def=def||{name:'Wren',hat:'#d9b97f',shirt:'#8a6745'};
  const r=new THREE.Group();
- const pants='#5a6b8a',shirt='#8a6745',skin='#e3a37d';
+ const pants='#5a6b8a',shirt=def.shirt||'#8a6745',skin='#e3a37d';
  tube(0.06,0.05,0.85,pants,-0.1,0.45,0,r);
  tube(0.06,0.05,0.85,pants,0.1,0.45,0,r);
  blob(0.16,0.24,0.12,shirt,0,1.08,0,r);
  const aL=tube(0.045,0.04,0.55,shirt,-0.2,1.05,0,r);aL.rotation.z=0.25;
  const aR=tube(0.045,0.04,0.55,shirt,0.2,1.05,0,r);aR.rotation.z=-0.25;
  blob(0.09,0.10,0.09,skin,0,1.43,0,r);
- const hat=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.19,0.04,12),smat('#d9b97f'));
+ const hat=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.19,0.04,12),smat(def.hat||'#d9b97f'));
  hat.position.set(0,1.51,0);hat.castShadow=true;r.add(hat);
- const top=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.10,0.11,12),smat('#d9b97f'));
+ const top=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.10,0.11,12),smat(def.hat||'#d9b97f'));
  top.position.set(0,1.58,0);r.add(top);
- const tag=nameSprite('❗ Wren');
+ const tag=nameSprite('💬 '+(def.name||'Wren').replace('Grandpa ','').replace('Farmer ','').replace('Sheriff ',''));
  tag.position.y=2.05;
  r.add(tag);
  return r;
 }
-const npc=makeNPC();
-npc.position.set(-11,0,-15.8);
-npc.rotation.y=2.4;
-scene.add(npc);
+/* People to talk to. Grandpa Wren was the only one; book two puts someone in every region,
+   each with their own lines, a part of the story to give, and a clue to share. */
+const NPC_DEFS=[
+ {id:'wren',name:'Grandpa Wren',icon:'👴',x:-11,z:-15.8,hat:'#d9b97f',shirt:'#8a6745',idle:'Fine day for a ride, kiddo. The pasture looks better every week.'},
+ {id:'ada',name:'Ada',icon:'👩‍🌾',x:39,z:-39,hat:'#c94f7c',shirt:'#5b7fbf',idle:'Welcome to Cottonwood! Mind the blossom trees — the petals get everywhere.'},
+ {id:'otto',name:'Farmer Otto',icon:'🧑‍🌾',x:210,z:-98,hat:'#7a5a3a',shirt:'#8a9a5a',idle:'Pumpkins are coming in early this year. Take one for the horse, go on.'},
+ {id:'bea',name:'Sheriff Bea',icon:'🤠',x:-208,z:122,hat:'#3a2a1a',shirt:'#b06a3a',idle:'Quiet out here. Too quiet. Keep your horse off the mesa edges, partner.'},
+ {id:'ilse',name:'Ilse',icon:'🧣',x:-148,z:-198,hat:'#e8eef4',shirt:'#6a5a8a',idle:'Up here you learn to read the snow. Every track tells you who passed and when.'},
+];
+const npcList=NPC_DEFS.map(def=>{const g=makeNPC(def);g.position.set(def.x,groundH(def.x,def.z),def.z);g.rotation.y=Math.atan2(-def.x,-def.z);scene.add(g);return {def,g};});
+const npc=npcList[0].g;
 $('ctx').onclick=()=>{if(nearNPC)openDlg();};
 /* wild horses (tame them in the open world) */
+const KESTREL_WB={breed:'kestrel',body:'#c9ced6',mane:'#eef2f7',base:7,kestrel:true};
 const WILD_BREEDS=[
  {breed:'bay',body:'#8a5a2b',mane:'#332214',base:3},
  {breed:'palomino',body:'#d9a85c',mane:'#f4e6c5',base:4},
@@ -7369,16 +7432,27 @@ function spawnWild3(){
  wildTrust=0;
  toast('✨ A wild horse roams the meadow — walk up slowly!');
 }
+function spawnKestrel(){
+ if(wild3)return;
+ const wb=KESTREL_WB;
+ const parts=makeHorse({colors:{body:wb.body,mane:wb.mane},seed:7});
+ const tag=nameSprite('✨ Silver Kestrel'); tag.position.y=2.7; parts.group.add(tag);
+ const a=Math.random()*Math.PI*2, px=player.pos.x+Math.cos(a)*38, pz=player.pos.z+Math.sin(a)*38;
+ parts.group.position.set(px,groundH(px,pz),pz); scene.add(parts.group);
+ wild3={parts,wb,pos:new THREE.Vector3(px,0,pz),heading:Math.random()*6,tx:px,tz:pz,rest:2,phase:0,flee:0};
+ wildTrust=0;
+ toast('✨ The Silver Kestrel! Walk up slowly — no galloping.');
+}
 setTimeout(spawnWild3,40000);
 setInterval(()=>{if(Math.random()<0.4)spawnWild3();},60000);
 function tameWild3(){
  const w=wild3;
  const names=['Comet','Misty','River','Blaze','Willow','Storm','Maple','Echo'];
- const name=names[Math.floor(Math.random()*names.length)];
+ const name=w.wb.kestrel?'Kestrel':names[Math.floor(Math.random()*names.length)];
  const base=w.wb.base;
  let added=false;
  syncSave(s=>{
-  if(s.horses.length>=12)return;
+  if(s.horses.length>=12&&!w.wb.kestrel)return;   // the Kestrel always finds a stall
   const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
   const ri2=(a,b)=>Math.floor(a+Math.random()*(b-a+1));
   const h={id:s.nextId++,name,breed:w.wb.breed,colors:{body:w.wb.body,mane:w.wb.mane},
@@ -7401,7 +7475,7 @@ function tameWild3(){
   o.textContent='🐴 '+name;
   sel.appendChild(o);
   rebuildAll();
-  questEvt('tame',1);
+  if(w.wb.kestrel){questEvt('kestrel',1);toast('🪶 The Silver Kestrel is yours. Tell Ilse!');}else questEvt('tame',1);
   dailyEvt('tame',1);
  }else{
   toast('It trots away — your ranch is full!');
@@ -7970,17 +8044,19 @@ function tick(){
  }
  /* story missions & NPC */
  const m=STORY[storyIdx];
- const nd=Math.hypot(player.pos.x-npc.position.x,player.pos.z-npc.position.z);
- nearNPC=nd<3.5;
+ nearNPC=null; let ndb=3.5;
+ for(const q of npcList){const nd=Math.hypot(player.pos.x-q.g.position.x,player.pos.z-q.g.position.z);if(nd<ndb){ndb=nd;nearNPC=q;}}
  $('ctx').style.display=nearNPC?'block':'none';
- if(nearNPC)$('ctx').textContent='💬 Talk to Grandpa Wren (E)';
+ if(nearNPC)$('ctx').textContent='💬 Talk to '+nearNPC.def.name+' (E)';
+ const giver=m?(NPC_DEFS.find(x=>x.id===(m.npc||'wren'))||NPC_DEFS[0]):null;
  $('questTrack').textContent=m?
-  ('📜 '+m.label+(missionDone()?' ✅ → tell Wren!':(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':''))):
+  ('📜 '+(m.ch?m.ch+' · ':'')+m.label+(missionDone()?' ✅ → tell '+giver.name.replace('Grandpa ','').replace('Farmer ','').replace('Sheriff ','')+'!':(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':''))):
   '📜 Story complete! 🏆';
  if(m&&m.type==='visit'&&storyProg<m.goal&&Math.hypot(player.pos.x-m.x,player.pos.z-m.z)<m.r){
   storyProg=m.goal;saveStory();
-  toast('📜 Spot visited — tell Grandpa Wren!');
+  toast('📜 Spot visited — tell '+giver.name+'!');
  }
+ if(m&&m.type==='kestrel'&&!wild3&&Math.hypot(player.pos.x+160,player.pos.z+210)<150)spawnKestrel();
  if(m&&m.type==='gallop'&&sp>7&&grounded)questEvt('gallop',sp*dt);
  if(sp>7&&grounded)dailyEvt('gallop',sp*dt);
  /* training XP from riding */
@@ -8093,7 +8169,7 @@ function tick(){
   if(d<1.5&&player.y<1.2){
    f.g.visible=false; f.t=40+Math.random()*30;
    syncSave(s=>{s.items=s.items||{};s.items[f.item]=(s.items[f.item]||0)+1;});
-   sCoin(); passAdd(2); dailyEvt('carrots',1);
+   sCoin(); passAdd(2); dailyEvt('carrots',1); questEvt('forage',f.item);
    const fd=FOODS3[f.item]; toast(fd.emoji+' '+fd.label+' — trains '+STAT_LBL[fd.stat]);
   }
  }
