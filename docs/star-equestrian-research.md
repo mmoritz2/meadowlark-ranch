@@ -91,6 +91,7 @@ trail-rides commit); what is left of the study is in the round-two list at the e
 
 ## Round two
 
-Still on the table from the study: a dressage test (figures and gaits at the arena letters), a
-Western saddle, rider customisation beyond coat and breeches colours, spectating, and coat
-markings that inherit. Dressage and the Western saddle are next.
+Shipped the same day: two dressage tests at the arena letters with a walk key, a Western
+saddle per horse, and rider customisation (skin, hair, helmet) that club riders see too.
+Left from the study, deliberately: spectating from grandstands, and coat markings that
+inherit; both are small against what the game now has.

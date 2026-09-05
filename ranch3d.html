@@ -5388,7 +5388,8 @@ function riderMaterial(base,fit){
  const same=(a,b)=>String(a||'').toLowerCase()===b;
  const u={uLean:{value:0},uSide:{value:0},uHead:{value:0},uSpread:{value:RIDER_FIT.spread},
   uShirt:{value:new THREE.Color(fit.shirt||RIDER_DEF_SHIRT)},uPants:{value:new THREE.Color(fit.pants||RIDER_DEF_PANTS)},
-  uShirtW:{value:fit.shirt&&!same(fit.shirt,RIDER_DEF_SHIRT)?1:0},uPantsW:{value:fit.pants&&!same(fit.pants,RIDER_DEF_PANTS)?1:0}};
+  uShirtW:{value:fit.shirt&&!same(fit.shirt,RIDER_DEF_SHIRT)?1:0},uPantsW:{value:fit.pants&&!same(fit.pants,RIDER_DEF_PANTS)?1:0},
+  uSkin:{value:new THREE.Color(fit.skin||'#f0c8a8')},uSkinW:{value:fit.skin?1:0},uHair:{value:new THREE.Color(fit.hair||'#4a2e1c')},uHairW:{value:fit.hair?1:0},uHelm:{value:new THREE.Color(fit.helmet||'#2e2e38')},uHelmW:{value:fit.helmet&&!same(fit.helmet,'#2e2e38')?1:0}};
  m.userData.u=u;
  m.onBeforeCompile=sh=>{
   Object.assign(sh.uniforms,u);
@@ -5410,13 +5411,23 @@ mat3 rRZ(float a){float c=cos(a),s=sin(a);return mat3(c,s,0., -s,c,0., 0.,0.,1.)
    vec3 rnk=rRT*(rNECK-rHIP)+rHIP;
    transformed=rRH*(transformed-rnk)+rnk; }`);
   sh.fragmentShader=sh.fragmentShader
-   .replace('#include <common>','#include <common>\nuniform vec3 uShirt,uPants; uniform float uShirtW,uPantsW; varying vec3 vRP;')
+   .replace('#include <common>','#include <common>\nuniform vec3 uShirt,uPants,uSkin,uHair,uHelm; uniform float uShirtW,uPantsW,uSkinW,uHairW,uHelmW; varying vec3 vRP;\nfloat rBand(float y,float a,float b){return smoothstep(a-0.02,a+0.02,y)*(1.0-smoothstep(b-0.02,b+0.02,y));}')
    .replace('#include <map_fragment>',`#include <map_fragment>
  { float ry=vRP.y, rl=dot(diffuseColor.rgb,vec3(.3,.59,.11));
    float rwS=uShirtW*smoothstep(-0.30,-0.24,ry)*(1.-smoothstep(0.52,0.60,ry))*(1.-smoothstep(0.28,0.36,vRP.z));
    float rwP=uPantsW*smoothstep(-0.64,-0.56,ry)*(1.-smoothstep(-0.30,-0.24,ry));
    diffuseColor.rgb=mix(diffuseColor.rgb,uShirt*(0.45+1.4*rl),rwS);
-   diffuseColor.rgb=mix(diffuseColor.rgb,uPants*(0.25+0.95*rl),rwP); }`);
+   diffuseColor.rgb=mix(diffuseColor.rgb,uPants*(0.25+0.95*rl),rwP);
+   /* Skin, hair and helmet are told apart by where they are and what the baked pixel looks like:
+      skin is light and warm on the face and the hands, hair is dark and warm behind the head,
+      the helmet is dark above the brim. The navy coat is cool, so it is never mistaken for hair. */
+   float rwarm=diffuseColor.r-diffuseColor.b, rz=vRP.z;
+   float rwSk=uSkinW*step(0.06,rwarm)*smoothstep(0.40,0.52,rl)*clamp(rBand(ry,0.55,0.80)+rBand(ry,0.10,0.25)*step(0.30,rz),0.0,1.0);
+   float rwH=uHairW*step(0.02,rwarm)*(1.0-smoothstep(0.28,0.40,rl))*rBand(ry,0.30,0.79)*(1.0-smoothstep(0.0,0.06,rz));
+   float rwHm=uHelmW*(1.0-smoothstep(0.20,0.30,rl))*smoothstep(0.80,0.84,ry);
+   diffuseColor.rgb=mix(diffuseColor.rgb,uSkin*clamp(rl/0.62,0.55,1.3),rwSk);
+   diffuseColor.rgb=mix(diffuseColor.rgb,uHair*clamp(rl/0.22,0.4,1.6),rwH);
+   diffuseColor.rgb=mix(diffuseColor.rgb,uHelm*clamp(rl/0.15,0.5,1.5),rwHm); }`);
  };
  return m;
 }
@@ -6543,7 +6554,8 @@ function openShop(tab){
   +'<div class="crow"><span class="lbl">👕 Shirt</span>'+['#c98c5a','#b34a4a','#4a7ab3','#5a9a5a','#8a5ab3','#e8d9b8'].map(cc=>'<button data-outfit="shirt:'+cc+'" style="width:26px;height:26px;border-radius:50%;padding:0;background:'+cc+'"></button>').join('')+'</div>'
   +'<div class="crow"><span class="lbl">👖 Pants</span>'+['#4a4338','#2e3a52','#6b4a2e','#3a3a3a'].map(cc=>'<button data-outfit="pants:'+cc+'" style="width:26px;height:26px;border-radius:50%;padding:0;background:'+cc+'"></button>').join('')+'</div>'
   +'<div class="crow"><span class="lbl">⛑️ Helmet</span>'+['#2e2e38','#7d3c98','#b3622f','#e8e8e8','#2e86c1'].map(cc=>'<button data-outfit="helmet:'+cc+'" style="width:26px;height:26px;border-radius:50%;padding:0;background:'+cc+'"></button>').join('')+'</div>'
-  +'<div class="crow"><span class="lbl">🖐️ Skin</span>'+['#f0c8a8','#e3a37d','#c98a62','#a06a48'].map(cc=>'<button data-outfit="skin:'+cc+'" style="width:26px;height:26px;border-radius:50%;padding:0;background:'+cc+'"></button>').join('')+'</div>';
+  +'<div class="crow"><span class="lbl">🖐️ Skin</span>'+['#f0c8a8','#e3a37d','#c98a62','#a06a48','#6b4530'].map(cc=>'<button data-outfit="skin:'+cc+'" style="width:26px;height:26px;border-radius:50%;padding:0;background:'+cc+'"></button>').join('')+'</div>'
+  +'<div class="crow"><span class="lbl">💇 Hair</span>'+['#1e140e','#4a2e1c','#8a4a25','#d9a85c','#b3402a','#c8c8d0','#e8a0c8','#6a8fd0'].map(cc=>'<button data-outfit="hair:'+cc+'" style="width:26px;height:26px;border-radius:50%;padding:0;background:'+cc+'"></button>').join('')+'</div>';
  }
  p.innerHTML=html;
  p.style.display='flex';
@@ -7005,7 +7017,7 @@ function remoteUpdate(m){
  if(!r){
   if(Object.keys(remotes).length>=12)return;
   const parts=makeHorse({colors:(m.c&&m.c.body)?m.c:{body:'#8a5a2b',mane:'#332214'},tack:m.k||'#7a583a',bridle:true,seed:5,wings:!!m.wg,coat:m.ct||null});
-  const rider=makeRider({shirt:m.s||RIDER_DEF_SHIRT,pants:m.p||RIDER_DEF_PANTS});
+  const rider=makeRider({shirt:m.s||RIDER_DEF_SHIRT,pants:m.p||RIDER_DEF_PANTS,hair:m.hr||null,skin:m.sk||null,helmet:m.hm||null});
   parts.group.add(rider.g);
   /* Swap in the good horse. The procedural body goes, and so does its tack — the
      procedural saddle sits at y≈1.75 and its bridle hangs off the procedural head,
@@ -7060,7 +7072,7 @@ function netTick(dt,t){
     id:net.id,n:myName(),x:+player.pos.x.toFixed(1),z:+player.pos.z.toFixed(1),
     h:+player.heading.toFixed(2),sp:+Math.abs(player.speed).toFixed(1),
     c:h?h.colors:null,k:h?(h.tack||'#7a583a'):null,
-    s:(s.rider&&s.rider.shirt)||RIDER_DEF_SHIRT,p:(s.rider&&s.rider.pants)||RIDER_DEF_PANTS,
+    s:(s.rider&&s.rider.shirt)||RIDER_DEF_SHIRT,p:(s.rider&&s.rider.pants)||RIDER_DEF_PANTS,hr:(s.rider&&s.rider.hair)||null,sk:(s.rider&&s.rider.skin)||null,hm:(s.rider&&s.rider.helmet)||null,
     hn:h?String(h.name).slice(0,14):null,b:h?(h.breed||null):null,hl:h?(h.level||1):1,wg:!!(h&&h.wings),ct:h?(h.coat||null):null,
    }));
   }catch(e){}
