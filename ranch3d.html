@@ -4104,7 +4104,11 @@ function driveRig(sp,grounded,t,dt){
    variants this used to download were 8.9 MB of dead weight on every single load. */
 function ensureCoatMat(){
  if(RIG.coatMat||!RIG.baseMat) return;
- const m=RIG.baseMat.clone(); m.color.set(0xffffff);
+ /* A groomed coat has a sheen: the same albedo and normal map, on a physical material with a
+    light clearcoat, so highlights slide over the muscle as the horse moves. */
+ const b=RIG.baseMat, m=new THREE.MeshPhysicalMaterial({map:b.map,normalMap:b.normalMap||null,side:b.side}); m.color.set(0xffffff);   // built by hand: Material.copy across types reaches for maps the source lacks
+ m.roughness=0.62; m.metalness=0; m.clearcoat=0.28; m.clearcoatRoughness=0.42; m.envMapIntensity=0.85;
+ if(m.normalMap)m.normalScale.set(0.7,0.7);
  m.userData.col=new THREE.Color('#9c4f23'); m.userData.blend=0;
  m.userData.tail=new THREE.Color('#000000'); m.userData.tailBlend=0;
  m.onBeforeCompile=sh=>{                       // recolour by the texture's luminance (keeps mane/socks/shading pattern)
@@ -4314,6 +4318,9 @@ function buildBridle(){
  const ring=(R,tube,arc)=>new THREE.TorusGeometry(R,tube,6,18,arc||Math.PI*2);
  // noseband: a ring square to the steep face line (its normal is the muzzle->poll direction)
  const nose=put(new THREE.Mesh(ring(0.10,0.013),strap),-0.145,1.425,0.965); nose.rotation.x=0.69; nose.scale.set(0.82,1,1);
+ // eyes: glossy dark spheres just proud of the socket, so the face catches the light
+ const eyeMat=new THREE.MeshPhysicalMaterial({color:0x1a1410,roughness:0.08,metalness:0,clearcoat:1,clearcoatRoughness:0.05,envMapIntensity:1.2});
+ for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.031,14,12),eyeMat),-0.115+sg*0.118,1.62,0.845); e.castShadow=false; }
  // bit rings at the corners of the mouth, standing in the plane of the cheek
  for(const sg of[-1,1]){const r=put(new THREE.Mesh(ring(0.03,0.007),iron),-0.16+sg*0.078,1.35,1.02); r.rotation.y=Math.PI/2;}
  // browband: a half-ring bowed forward across the forehead just under the ears, with five gold studs
