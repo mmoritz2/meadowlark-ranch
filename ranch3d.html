@@ -3473,7 +3473,7 @@ function hideProceduralBody(){
  if(!player.mesh||!player.parts)return;
  const P=player.parts, keep=new Set(), tree=g=>{if(g)g.traverse(o=>keep.add(o));};
  (P.wings||[]).forEach(tree); if(P.horn)keep.add(P.horn);
- tree(TACK.saddle); tree(TACK.bitL); tree(TACK.bitR);
+ tree(TACK.saddle); tree(TACK.bridle); tree(TACK.bitL); tree(TACK.bitR);
  if(player.rider)tree(player.rider.g);   // the articulated rider stays visible on the rigged mount
  const rig=RIG.scene;
  player.mesh.traverse(o=>{ if((o.isMesh||o.isSkinnedMesh) && o!==P.shadowM && !keep.has(o)
@@ -3705,6 +3705,7 @@ function applyCoat(){
   g.scene.traverse(o=>{if(o.isSkinnedMesh&&!RIG.skin)RIG.skin=o;});
   if(!RIG.skin){console.warn('rig: no skinned mesh');return;}
   RIG.bones=RIG.skin.skeleton.bones; RIG.baseMat=RIG.skin.material;
+  RIG.restQ=RIG.bones.map(b=>b.quaternion.clone());   // bind pose, for tack that rides on a bone
   { const nm=new THREE.TextureLoader().load('assets/textures/horse_normal.jpg');
     nm.flipY=false;                              // glTF UVs: same convention as the albedo it came from
     RIG.baseMat.normalMap=nm; RIG.baseMat.normalScale=new THREE.Vector2(0.55,0.55);
@@ -3764,6 +3765,52 @@ function buildSaddle(){
  g.userData.proc=true;
  return g;
 }
+/* Bridle for the rigged mount, measured against the rig's own head: muzzle tip at z=1.09,
+   forehead at y=1.70, ear tips at 1.85, and the whole head carried a little off the centre
+   line at x=-0.145. Built in mount space at rest, then parented to the muzzle bone's motion:
+   each frame it takes that bone's rotation-from-bind-pose (walking the chain up to the rig
+   root so the neck's nod is included) and the bone's current position, so it moves with
+   every nod and toss rather than hanging in the air where the head used to be. */
+const BRIDLE_HEAD0=[-0.145,1.424,0.995];   // head bone at rest, mount space
+function buildBridle(){
+ const g=new THREE.Group();
+ const strap=new THREE.MeshStandardMaterial({color:0x3a2616,roughness:0.55,metalness:0.05});
+ const iron=new THREE.MeshStandardMaterial({color:0xb8bcc2,roughness:0.35,metalness:0.7});
+ const gold=new THREE.MeshStandardMaterial({color:0xd8b24a,roughness:0.3,metalness:0.8});
+ const H0=new THREE.Vector3(...BRIDLE_HEAD0);
+ const put=(m,x,y,z)=>{m.position.set(x-H0.x,y-H0.y,z-H0.z);m.castShadow=true;g.add(m);return m;};
+ const ring=(R,tube,arc)=>new THREE.TorusGeometry(R,tube,6,18,arc||Math.PI*2);
+ // noseband: a ring square to the steep face line (its normal is the muzzle->poll direction)
+ const nose=put(new THREE.Mesh(ring(0.10,0.013),strap),-0.145,1.425,0.965); nose.rotation.x=0.69; nose.scale.set(0.82,1,1);
+ // bit rings at the corners of the mouth, standing in the plane of the cheek
+ for(const sg of[-1,1]){const r=put(new THREE.Mesh(ring(0.03,0.007),iron),-0.16+sg*0.078,1.35,1.02); r.rotation.y=Math.PI/2;}
+ // browband: a half-ring bowed forward across the forehead just under the ears, with five gold studs
+ const brow=put(new THREE.Mesh(ring(0.118,0.012,Math.PI),strap),-0.115,1.70,0.82); brow.rotation.x=Math.PI/2;
+ for(let k=0;k<5;k++){const a=Math.PI*(0.22+0.14*k); put(new THREE.Mesh(new THREE.SphereGeometry(0.012,8,6),gold),-0.115+Math.cos(a)*0.118,1.70,0.82+Math.sin(a)*0.118);}
+ // crownpiece + throatlatch: one ring round the head behind the ears, leaning forward at the top
+ const crown=put(new THREE.Mesh(ring(0.20,0.011),strap),-0.06,1.45,0.62); crown.rotation.x=0.35; crown.scale.set(0.75,1.15,1);
+ // cheekpieces: from the crown ring, below the eye, down to each bit ring
+ const strapBetween=(a,b,w)=>{const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),d=B.clone().sub(A),L=d.length();
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,L,w*0.45),strap); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());
+  const c=A.clone().add(B).multiplyScalar(0.5); put(m,c.x,c.y,c.z);};
+ strapBetween([-0.205,1.58,0.66],[-0.238,1.39,1.01],0.016);
+ strapBetween([0.085,1.58,0.66],[-0.082,1.39,1.01],0.016);
+ const _bp=new THREE.Vector3(), _cur=new THREE.Quaternion(), _rest=new THREE.Quaternion(), _qs=new THREE.Quaternion(), chain=[];
+ /* hb: the head bone; bones/restQ: the skeleton it belongs to and its bind pose; root: that rig's
+    scene node (a child of the mount, carrying the model->game turn); mount: the horse group. */
+ g.userData.follow=(hb,bones,restQ,root,mount)=>{
+  if(!hb||!root)return;
+  hb.getWorldPosition(_bp); mount.worldToLocal(_bp);
+  chain.length=0; let b=hb; while(b&&b!==root){chain.push(b);b=b.parent;}
+  _cur.identity(); _rest.identity();
+  for(let i=chain.length-1;i>=0;i--){const bn=chain[i]; _cur.multiply(bn.quaternion); const k=bones.indexOf(bn); _rest.multiply(k>=0?restQ[k]:bn.quaternion);}
+  _cur.multiply(_rest.invert());                       // rotation from rest, in the rig root's frame
+  _qs.copy(root.quaternion); _cur.premultiply(_qs).multiply(_qs.invert());   // ...in the mount's frame
+  g.quaternion.copy(_cur); g.position.copy(_bp);
+ };
+ g.position.copy(H0);
+ return g;
+}
 function attachTack(){   // idempotent: places whatever has loaded so far onto the current mount
  if(!USE_GEN_HORSE||!USE_GEN_TACK)return;
  if(!player.mesh||!TACK.saddle)return;
@@ -3773,6 +3820,9 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
   else{_fit(TACK.saddle,SADDLE_SCALE);TACK.saddle.rotation.y=SADDLE_RY;TACK.saddle.position.set(0,SADDLE_Y,SADDLE_Z);}
   TACK.saddle.visible=true; TACK.saddle.traverse(o=>{if(o.isMesh)o.visible=true;});  // attachRig hides player.mesh meshes; re-show tack
   player.mesh.add(TACK.saddle);}
+ if(!TACK.bridle)TACK.bridle=buildBridle();
+ TACK.bridle.visible=true; TACK.bridle.traverse(o=>{if(o.isMesh)o.visible=true;});
+ if(TACK.bridle.parent!==player.mesh)player.mesh.add(TACK.bridle);
  if(player.rider&&player.rider.g){                       // articulated procedural rider sits the saddle
   player.rider.g.visible=true;
   player.rider.g.traverse(o=>{if(o.isMesh)o.visible=true;});
@@ -3804,7 +3854,32 @@ function driveRider(sp,tm){   // live seat: lean, posting, breathing, head look,
  R.g.position.z=RID2_Z;
  R.g.rotation.x=-0.02-0.05*t-Math.sin(ph)*0.03*t;
  R.g.rotation.z=moving?Math.sin(ph)*0.02:0;
- if(TACK.bitL){updateRein(reinL,R.handL,TACK.bitL);updateRein(reinR,R.handR,TACK.bitR);}
+ trackHead();
+ /* In VR the rider is hidden, so the reins hang from your real hands instead of hers. bitL
+    sits on the +x side, so pair it with whichever controller is further right. (This lived
+    in the procedural-mount drive, which never runs for this mount.) */
+ let hL=R.handL,hR=R.handR;
+ if(renderer.xr.isPresenting&&vrCtrls[0]&&vrCtrls[1]&&vrCtrls[0].visible!==false&&vrCtrls[1].visible!==false){
+  const rightIsZero=vrCtrls[0].position.x>vrCtrls[1].position.x;
+  hL=rightIsZero?vrCtrls[0]:vrCtrls[1]; hR=rightIsZero?vrCtrls[1]:vrCtrls[0];
+ }
+ if(TACK.bitL){updateRein(reinL,hL,TACK.bitL);updateRein(reinR,hR,TACK.bitR);}
+}
+const _hv=new THREE.Vector3();
+/* The rigged mount's head moves with the neck every stride, and it sits a little off the
+   centre line. Anything that lives on the head (the rein anchors at the bit, the bridle)
+   follows the muzzle bone rather than a fixed point in front of the horse. This used to be
+   done inside the procedural-mount drive, which never runs for this mount. */
+function trackHead(){
+ if(RIG.attachedTo!==player.mesh||!RIG.bones)return;
+ if(!RIG.headBone){                                  // the muzzle bone = the one furthest forward
+  let best=null,bz=-1e9;
+  for(const b of RIG.bones){b.getWorldPosition(_hv);player.mesh.worldToLocal(_hv); if(_hv.z>bz){bz=_hv.z;best=b;}}
+  RIG.headBone=best; RIG.headIdx=RIG.bones.indexOf(best);
+ }
+ RIG.headBone.getWorldPosition(_hv); player.mesh.worldToLocal(_hv);
+ if(TACK.bridle)TACK.bridle.userData.follow(RIG.headBone,RIG.bones,RIG.restQ,RIG.scene,player.mesh);
+ if(TACK.bitL){TACK.bitL.position.set(_hv.x+0.085,_hv.y-0.055,_hv.z+0.05);TACK.bitR.position.set(_hv.x-0.085,_hv.y-0.055,_hv.z+0.05);}
 }
 TACK.saddle=buildSaddle();   // stylized procedural English saddle; attached by attachTack() once player exists
 // pond — Loon Lake earns its name
@@ -6032,6 +6107,7 @@ function remoteUpdate(m){
      perched on nothing. So the rigged remote gets the SAME saddle, bridle position
      and rider seat the player's own rigged mount uses. */
   const rrig=makeRemoteRig();
+  let r_bridle=null;
   if(rrig){
    const keep=new Set();
    if(parts.wings)parts.wings.forEach(w=>w.traverse(o=>keep.add(o)));
@@ -6042,7 +6118,7 @@ function remoteUpdate(m){
    const sd=buildSaddle();                       // same builder the player's mount uses
    sd.position.set(0,SADDLE_Y,SADDLE_Z);
    parts.group.add(sd);
-   parts.group.add(remoteBridle());
+   const br=buildBridle(); parts.group.add(br); r_bridle=br;
    // The rider was still sitting where the PROCEDURAL horse's back was, which is
    // higher and further forward than the rig's — that is the "floating up high".
    rider.g.position.set(0,RID2_Y,RID2_Z);
@@ -6052,7 +6128,7 @@ function remoteUpdate(m){
   tag.position.y=3.15;
   parts.group.add(tag);
   scene.add(parts.group);
-  r=remotes[m.id]={parts,rider,rig:rrig,name:nm,x:m.x,z:m.z,tx:m.x,tz:m.z,heading:m.h||0,sp:0,phase:Math.random()*6,lastSeen:0};
+  r=remotes[m.id]={parts,rider,rig:rrig,bridle:r_bridle,name:nm,x:m.x,z:m.z,tx:m.x,tz:m.z,heading:m.h||0,sp:0,phase:Math.random()*6,lastSeen:0};
   chatMsg('🌐',nm+' is riding nearby!');
  }
  r.tx=m.x;r.tz=m.z;
@@ -6103,6 +6179,7 @@ function netTick(dt,t){
    // the good horse: same gait code the player's mount runs
    r.rig.phase+=rigPhaseStep(r.sp,true,dt);
    poseRigBones(r.rig.bones,r.rig.phase,r.sp,true,0,t,dt);
+   if(r.bridle)r.bridle.userData.follow(r.rig.bones[RIG.headIdx==null?6:RIG.headIdx],r.rig.bones,RIG.restQ,r.rig.scene,r.parts.group);
   }
   r.phase+=dt*(2.2+r.sp*1.9);
   const g3=gaitFor(r.sp);
@@ -7392,9 +7469,10 @@ function tick(){
     let best=null,bz=-1e9;
     for(const b of RIG.bones){b.getWorldPosition(_vb);player.mesh.worldToLocal(_vb);
      if(_vb.z>bz){bz=_vb.z;best=b;}}
-    RIG.headBone=best;
+    RIG.headBone=best; RIG.headIdx=RIG.bones.indexOf(best);
    }
    RIG.headBone.getWorldPosition(_vb); player.mesh.worldToLocal(_vb);
+   if(TACK.bridle)TACK.bridle.userData.follow(RIG.headBone,RIG.bones,RIG.restQ,RIG.scene,player.mesh);
    TACK.bitL.position.set(_vb.x+0.085,_vb.y-0.055,_vb.z+0.05);
    TACK.bitR.position.set(_vb.x-0.085,_vb.y-0.055,_vb.z+0.05);
   }
