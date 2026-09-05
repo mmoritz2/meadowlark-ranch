@@ -1563,40 +1563,14 @@ function noiseCanvas(size,scale,off){
 const bumpTexture=new THREE.CanvasTexture(noiseCanvas(256,0.07,11));
 bumpTexture.wrapS=bumpTexture.wrapT=THREE.RepeatWrapping;
 bumpTexture.repeat.set(130,130);
-const groundTex=canvasTex(1024,1024,(c,w,h)=>{
- c.fillStyle='#6e8f54';c.fillRect(0,0,w,h);
- for(let i=0;i<34;i++){
-  const x=Math.random()*w,y=Math.random()*h,r=60+Math.random()*180;
-  const g=c.createRadialGradient(x,y,8,x,y,r);
-  const cc=['#728f55','#5f7e48','#7d9a60','#566f42','#83996a'][i%5];
-  g.addColorStop(0,cc);
-  g.addColorStop(1,'rgba(0,0,0,0)');
-  c.globalAlpha=0.5;
-  c.fillStyle=g;
-  c.fillRect(x-r,y-r,r*2,r*2);
- }
- c.globalAlpha=1;
- const greens=['#5b8146','#6f9655','#7a9d60','#5e864a','#6d9152','#54793f'];
- for(let i=0;i<14000;i++){
-  c.fillStyle=greens[i%greens.length];
-  c.globalAlpha=0.25+Math.random()*0.45;
-  const s=1+Math.random()*4;
-  c.fillRect(Math.random()*w,Math.random()*h,s,s*(0.6+Math.random()));
- }
- c.globalAlpha=0.18;
- for(let i=0;i<420;i++){
-  c.fillStyle=Math.random()<0.5?'#8a7a4f':'#9aa86a';
-  c.beginPath();
-  c.ellipse(Math.random()*w,Math.random()*h,3+Math.random()*9,2+Math.random()*5,Math.random()*3,0,7);
-  c.fill();
- }
- c.globalAlpha=1;
- c.globalCompositeOperation='overlay';
- c.globalAlpha=0.45;
- c.drawImage(noiseCanvas(256,0.05,3),0,0,w,h);
- c.globalCompositeOperation='source-over';
- c.globalAlpha=1;
-},110);
+/* The ground used to be a painted canvas: a flat green with random darker blotches.
+   This is a generated photographic turf (FLUX.2, seamless), flattened of its vignette
+   and colour-matched to the exact green the canvas was, so the palette is unchanged and
+   only the detail is new. Same repeat and wrap as before — the no-tile shader above it
+   is untouched. */
+const grassLoad=(rep)=>{const t=new THREE.TextureLoader().load('assets/textures/ground_grass.jpg');
+ t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rep,rep);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;};
+const groundTex=grassLoad(110);
 const sandTex=canvasTex(256,256,(c,w,h)=>{
  c.fillStyle='#d9c49a';c.fillRect(0,0,w,h);
  for(let i=0;i<2400;i++){
@@ -1790,8 +1764,7 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  const ground=new THREE.Mesh(geo,gmat);
  ground.receiveShadow=true;
  scene.add(ground);
- const hdMat=new THREE.MeshStandardMaterial({map:groundTex.clone(),roughness:1});
- hdMat.map.repeat.set(160,160);
+ const hdMat=new THREE.MeshStandardMaterial({map:grassLoad(160),roughness:1});   // its own load: a clone taken before the image arrives never gets it
  hdMat.map.needsUpdate=true;
  hdMat.envMapIntensity=0.46;
  const horizonDisc=new THREE.Mesh(new THREE.CircleGeometry(1400,48),hdMat);
@@ -3761,6 +3734,10 @@ function applyCoat(){
   g.scene.traverse(o=>{if(o.isSkinnedMesh&&!RIG.skin)RIG.skin=o;});
   if(!RIG.skin){console.warn('rig: no skinned mesh');return;}
   RIG.bones=RIG.skin.skeleton.bones; RIG.baseMat=RIG.skin.material;
+  { const nm=new THREE.TextureLoader().load('assets/textures/horse_normal.jpg');
+    nm.flipY=false;                              // glTF UVs: same convention as the albedo it came from
+    RIG.baseMat.normalMap=nm; RIG.baseMat.normalScale=new THREE.Vector2(0.55,0.55);
+    RIG.baseMat.needsUpdate=true; }
   g.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=false;
    if(o.material){o.material.roughness=0.62;o.material.metalness=0;}}});  // keep the baked texture
   rigCalibrate(); RIG.ready=true;

@@ -11,7 +11,10 @@ import urllib.request
 import urllib.error
 from pathlib import Path
 
-HOST = "http://127.0.0.1:8188"
+# COMFY_HOST lets a run target another instance — e.g. one already holding the weights —
+# instead of starting a second server that would not fit alongside it in VRAM.
+import os as _os
+HOST = _os.environ.get("COMFY_HOST", "http://127.0.0.1:8188")
 
 
 def http_get(path, host=HOST):
