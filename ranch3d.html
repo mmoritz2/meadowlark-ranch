@@ -247,6 +247,30 @@ let save=null;
    apples stamina, lettuce agility, pumpkins and oranges acceleration, truffles jump). A stat
    is capped by the horse's level, so a young horse cannot be force-fed to greatness, and by a
    ceiling the breed's tier sets. Levelling up still nudges a random stat, as it always did. */
+/* Personalities. Six temperaments, one per horse for life, that show in how it rides and
+   how it bonds: an energetic horse is quick off the mark and eats like a horse, a social one
+   bonds over petting, an aloof one is slow to trust and then runs its heart out, a
+   challenging one is awkward until the bond is there. Mastery is per breed: each horse of
+   a breed you have ever owned raises it, to ten, and the levels unlock things to wear and
+   do: tail colours, browband studs, a sparkle trail at the gallop, a stable badge,
+   bareback riding, and a little more XP. */
+const PERS={
+ energetic:{emoji:'⚡',label:'Energetic',desc:'quick off the mark, and eats like a horse',ac:1.08,decay:1.15,neck:0.03},
+ relaxed:{emoji:'😌',label:'Relaxed',desc:'calm and steady; frets less, loves a grooming',decay:0.88,groom:2,neck:-0.06},
+ social:{emoji:'💞',label:'Social',desc:'bonds fast over petting and treats',pet:2,feed:1.5},
+ alert:{emoji:'👀',label:'Alert',desc:'notices everything and turns a shade sharper',ag:1.06,neck:0.06},
+ aloof:{emoji:'🌫️',label:'Aloof',desc:'slow to trust, but a bonded aloof horse runs its heart out',bondLow:0.6,spBond:1.06},
+ challenging:{emoji:'🔥',label:'Challenging',desc:'tests the rider: awkward until the bond is there, then brilliant',agLow:0.9,agHigh:1.12},
+};
+const PERS_KEYS=Object.keys(PERS);
+function persMul(h){const p=h&&PERS[h.pers]; if(!p)return {sp:1,ac:1,ag:1};
+ return {sp:(p.spBond&&(h.bond||0)>=80?p.spBond:1), ac:p.ac||1, ag:(p.ag||1)*(p.agLow&&(h.bond||0)<50?p.agLow:1)*(p.agHigh&&(h.bond||0)>=80?p.agHigh:1)};}
+function persDecay(h){const p=h&&PERS[h.pers];return p&&p.decay?p.decay:1;}
+function bondGain(h,x,kind){const p=h&&PERS[h.pers]; let m=1; if(p&&p[kind])m*=p[kind]; if(p&&p.bondLow&&(h.bond||0)<60)m*=p.bondLow; return Math.max(0,Math.round(x*m));}
+const MASTERY_UNLOCKS={2:'Tail colours',4:'Browband stud colours',6:'Sparkle trail at the gallop',8:'Stable badge 🎖️',9:'Bareback riding',10:'+10% XP for this breed'};
+const TAIL_COLS=[['#f4e6c5','Flaxen'],['#151515','Black'],['#d8dde3','Silver'],['#8a4a25','Chestnut'],['#e8b4c8','Rose'],['#3b6fd6','Lake blue']];
+const STUD_COLS=[['#d8b24a','Gold'],['#d9dde3','Silver'],['#e8a0b8','Rose'],['#7fd0e8','Ice']];
+function masteryOf(s,breed){s.mastery=s.mastery||{};const cnt=s.horses.filter(h=>h.breed===breed).length;s.mastery[breed]=Math.max(s.mastery[breed]||0,cnt);return Math.min(10,s.mastery[breed]);}
 const STAT_KEYS=['speed','stamina','jump','accel','agility'];
 const STAT_LBL={speed:'💨 Speed',stamina:'🫀 Stamina',jump:'⤴️ Jump',accel:'🚀 Acceleration',agility:'🌀 Agility'};
 function statCap(h){return Math.min(10,4+(h.level||1));}                       // the horse's level gates every stat: a starter has room to train, a level-six horse can max out
@@ -257,6 +281,7 @@ function ensureStats(h){
  for(const k of STAT_KEYS)if(typeof h.stats[k]!=='number')h.stats[k]=(k==='accel'||k==='agility')?Math.max(1,Math.round(((h.stats.speed||3)+(h.stats.stamina||3))/2)):3;
  h.sxp=h.sxp||{}; for(const k of STAT_KEYS)h.sxp[k]=h.sxp[k]||0;
  h.gear=h.gear||{};
+ if(!h.pers)h.pers=PERS_KEYS[((h.id||0)*7+3)%PERS_KEYS.length];   // one temperament for life, the same on every device
  return h;
 }
 /* Tack as gear. A horse wears four pieces: saddle, saddle pad, bridle, horseshoes. Each piece
@@ -311,7 +336,7 @@ const DECAY3={hunger:100/(8*3600),thirst:100/(6*3600),clean:100/(12*3600),happy:
  const sec=Math.min(24*3600,(Date.now()-(save.lastSeen||Date.now()))/1000);
  if(sec>60){
   for(const h of save.horses)
-   for(const k in DECAY3)h.needs[k]=Math.max(15,h.needs[k]-DECAY3[k]*sec*ranchMul('decay'));
+   for(const k in DECAY3)h.needs[k]=Math.max(15,h.needs[k]-DECAY3[k]*sec*ranchMul('decay')*persDecay(h));
  }
  const ds=new Date().toDateString();
  if(save.lastDaily!==ds){
@@ -330,7 +355,7 @@ setInterval(()=>{
  try{
   const s=JSON.parse(localStorage.getItem(SAVE_KEY));
   for(const h of s.horses)
-   for(const k in DECAY3)h.needs[k]=Math.max(0,h.needs[k]-DECAY3[k]*30*ranchMul('decay'));
+   for(const k in DECAY3)h.needs[k]=Math.max(0,h.needs[k]-DECAY3[k]*30*ranchMul('decay')*persDecay(h));
   // foals grow up: 24 real hours, or sooner if trained to level 3
   for(const h of s.horses){
    if(!h.foal)continue;
@@ -411,7 +436,7 @@ function addXp3D(n){
  syncSave(s=>{
   const h=s.horses[rideIdx];
   if(!h)return;
-  h.xp=(h.xp||0)+n;
+  h.xp=(h.xp||0)+Math.round(n*(masteryOf(s,h.breed)>=10?1.1:1));
   while(h.xp>=50+h.level*50){
    h.xp-=50+h.level*50;
    h.level++;
@@ -3802,8 +3827,27 @@ function attachRig(){
    low-detail procedural horse while you rode the good one, which looked like a
    different game on the other side of the screen. */
 const _rigQ=new THREE.Quaternion();
+const EMOTES={
+ rear:{dur:2.2,fa:0.9,fk:1.2,ha:-0.15,hk:-0.2,neck:0.35,pitch:-0.55,lift:0.35,lean:-0.45,label:'🦄 Rear'},
+ bow:{dur:2.4,fa:-0.15,fk:1.15,ha:0,hk:0,neck:-0.45,pitch:0.22,lift:-0.28,lean:0.25,label:'🙇 Bow'},
+ liedown:{dur:5.5,fa:0.9,fk:1.45,ha:-0.85,hk:-1.25,neck:-0.12,pitch:0.02,lift:-0.78,lean:0.1,label:'😴 Lie down'},
+ nuzzle:{dur:1.8,fa:0,fk:0,ha:0,hk:0,neck:-0.55,pitch:0.04,lift:-0.05,lean:0.15,label:'💕 Nuzzle'},
+ toss:{dur:1.1,fa:0,fk:0,ha:0,hk:0,neck:0,osc:0.38,pitch:0,lift:0,lean:0,label:'🌀 Head toss'},
+};
+function emEnv(em){const p=Math.min(1,em.t/em.dur);const e=p<0.22?p/0.22:p>0.78?(1-p)/0.22:1;return e*e*(3-2*e);}
+function horseEmote(type){
+ const E=EMOTES[type]; if(!E)return false;
+ if(RIG.emote||!RIG.ready||RIG.attachedTo!==player.mesh)return false;
+ if(Math.abs(player.speed)>0.6||player.y>0||player.flying){toast('Come to a halt first.');return false;}
+ RIG.emote={type,t:0,dur:E.dur};
+ if(type==='rear')sNeigh(); else sHoof(true);
+ if(type==='nuzzle'){const now=Date.now(); if(!horseEmote._nz||now-horseEmote._nz>60000){horseEmote._nz=now; syncSave(s=>{const h=s.horses[rideIdx];if(h)h.bond=Math.min(100,(h.bond||0)+1);}); toast('💕 +1 bond');}}
+ dailyEvt('pet',0);
+ return true;
+}
 function poseRigBones(B,phase,sp,grounded,air,t,dt){
  const TAU=Math.PI*2, q=_rigQ;
+ const em=(B===RIG.bones)?RIG.emote:null, E=em&&EMOTES[em.type], ee=em?emEnv(em):0;
  const moving=sp>0.25&&grounded, run=Math.max(0,Math.min(1,(sp-4)/4));
  const strideLen=sp<2.8?1.7:sp<7?2.7:5.8;          // metres of ground per leg cycle
  const ph=phase, swingAmp=moving?0.36+run*0.55:0, kneeAmp=moving?0.32+run*0.7:0;
@@ -3818,10 +3862,12 @@ function poseRigBones(B,phase,sp,grounded,air,t,dt){
    const jTop=L.front?0.7:-0.6, jKnee=L.front?1.0:-0.7;
    a=a*(1-air)+jTop*air; kb=kb*(1-air)+jKnee*air;
   }
+  if(E){ a=a*(1-ee)+(L.front?E.fa:E.ha)*ee; kb=kb*(1-ee)+(L.front?E.fk:E.hk)*ee; }
   B[L.top].quaternion.copy(L.rTop).multiply(q.setFromAxisAngle(L.axTop,a));
   B[L.knee].quaternion.copy(L.rKnee).multiply(q.setFromAxisAngle(L.axKnee,kb));
  });
- const neckA=(moving?0.10+run*0.28:0.03*Math.sin(t*1.2))+air*0.12;
+ const persN=(B===RIG.bones&&!moving)?(RIG.persNeck||0):0;
+ const neckA=(moving?0.10+run*0.28:0.03*Math.sin(t*1.2))+air*0.12+persN+(E?E.neck*ee+(E.osc?Math.sin(em.t*9.5)*E.osc*ee:0):0);
  for(const N of RIG.neck)B[N.i].quaternion.copy(N.r).multiply(q.setFromAxisAngle(N.ax,neckA));
  const tailA=Math.sin(t*(1.6+run*2.5))*(0.05+run*0.16);
  for(const T of RIG.tail)B[T.i].quaternion.copy(T.r).multiply(q.setFromAxisAngle(T.ax,tailA));
@@ -3834,6 +3880,9 @@ function rigPhaseStep(sp,grounded,dt){
 }
 function driveRig(sp,grounded,t,dt){
  if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
+ if(RIG.emote){RIG.emote.t+=dt;if(RIG.emote.t>=RIG.emote.dur)RIG.emote=null;}
+ const em=RIG.emote, E=em&&EMOTES[em.type], ee=em?emEnv(em):0;   // the player's own pose copy below folds the legs the same way
+ {const hp=myHorses[rideIdx]&&PERS[myHorses[rideIdx].pers]; RIG.persNeck=hp&&hp.neck?hp.neck*(0.7+0.3*Math.sin(t*(hp.neck>0?2.3:0.8))):0;}
  if(RIG._hideFor!==player.mesh){ hideProceduralBody(); RIG._hideFor=player.mesh; }  // enforce hide once per mount (race-proof)
  if(RIG._fcrShaders){ for(const s of RIG._fcrShaders) if(s.uniforms.uTime) s.uniforms.uTime.value=t; }  // animate mythic coat shimmer
  const B=RIG.bones, TAU=Math.PI*2, q=RIG._q||(RIG._q=new THREE.Quaternion());
@@ -3855,10 +3904,12 @@ function driveRig(sp,grounded,t,dt){
    const jTop=L.front?0.7:-0.6, jKnee=L.front?1.0:-0.7;   // front legs tuck up, hind legs trail
    a=a*(1-air)+jTop*air; kb=kb*(1-air)+jKnee*air;
   }
+  if(E){ a=a*(1-ee)+(L.front?E.fa:E.ha)*ee; kb=kb*(1-ee)+(L.front?E.fk:E.hk)*ee; }
   B[L.top].quaternion.copy(L.rTop).multiply(q.setFromAxisAngle(L.axTop,a));
   B[L.knee].quaternion.copy(L.rKnee).multiply(q.setFromAxisAngle(L.axKnee,kb));
  });
- const neckA=(moving?0.10+run*0.28:0.03*Math.sin(t*1.2))+air*0.12;
+ const persN=(B===RIG.bones&&!moving)?(RIG.persNeck||0):0;
+ const neckA=(moving?0.10+run*0.28:0.03*Math.sin(t*1.2))+air*0.12+persN+(E?E.neck*ee+(E.osc?Math.sin(em.t*9.5)*E.osc*ee:0):0);
  for(const N of RIG.neck)B[N.i].quaternion.copy(N.r).multiply(q.setFromAxisAngle(N.ax,neckA));
  const tailA=Math.sin(t*(1.6+run*2.5))*(0.05+run*0.16);
  for(const T of RIG.tail)B[T.i].quaternion.copy(T.r).multiply(q.setFromAxisAngle(T.ax,tailA));
@@ -3870,12 +3921,15 @@ function ensureCoatMat(){
  if(RIG.coatMat||!RIG.baseMat) return;
  const m=RIG.baseMat.clone(); m.color.set(0xffffff);
  m.userData.col=new THREE.Color('#9c4f23'); m.userData.blend=0;
+ m.userData.tail=new THREE.Color('#000000'); m.userData.tailBlend=0;
  m.onBeforeCompile=sh=>{                       // recolour by the texture's luminance (keeps mane/socks/shading pattern)
-  sh.uniforms.uCoat={value:m.userData.col}; sh.uniforms.uBlend={value:m.userData.blend}; m.userData.shader=sh;
-  sh.fragmentShader='uniform vec3 uCoat;uniform float uBlend;\n'+sh.fragmentShader.replace('#include <map_fragment>',
+  sh.uniforms.uCoat={value:m.userData.col}; sh.uniforms.uBlend={value:m.userData.blend}; sh.uniforms.uTail={value:m.userData.tail}; sh.uniforms.uTailBlend={value:m.userData.tailBlend}; m.userData.shader=sh;
+  sh.vertexShader='attribute float aRegion; varying float vRegion;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n vRegion=aRegion;');
+  sh.fragmentShader='uniform vec3 uCoat;uniform float uBlend;uniform vec3 uTail;uniform float uTailBlend;varying float vRegion;\n'+sh.fragmentShader.replace('#include <map_fragment>',
    `#include <map_fragment>
     float _l=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));
-    diffuseColor.rgb=mix(diffuseColor.rgb, uCoat*clamp(_l/0.42,0.0,1.7), uBlend);`);
+    diffuseColor.rgb=mix(diffuseColor.rgb, uCoat*clamp(_l/0.42,0.0,1.7), uBlend);
+    if(vRegion>0.5) diffuseColor.rgb=mix(diffuseColor.rgb, uTail*clamp(_l/0.5,0.0,1.6), uTailBlend);`);
  };
  RIG.coatMat=m;
 }
@@ -3976,6 +4030,8 @@ function applyCoat(){
  const blend=Math.min(1,Math.hypot(bc.r-ch.r,bc.g-ch.g,bc.b-ch.b)/0.32);
  RIG.coatMat.userData.col.copy(bc); RIG.coatMat.userData.blend=blend;
  if(RIG.coatMat.userData.shader){RIG.coatMat.userData.shader.uniforms.uCoat.value.copy(bc);RIG.coatMat.userData.shader.uniforms.uBlend.value=blend;}
+ RIG.coatMat.userData.tail.set((h&&h.tailCol)||'#000000'); RIG.coatMat.userData.tailBlend=(h&&h.tailCol)?1:0;
+ if(RIG.coatMat.userData.shader){RIG.coatMat.userData.shader.uniforms.uTail.value.copy(RIG.coatMat.userData.tail);RIG.coatMat.userData.shader.uniforms.uTailBlend.value=RIG.coatMat.userData.tailBlend;}
  RIG.skin.material=RIG.coatMat;
 }
 {
@@ -3988,6 +4044,9 @@ function applyCoat(){
   g.scene.traverse(o=>{if(o.isSkinnedMesh&&!RIG.skin)RIG.skin=o;});
   if(!RIG.skin){console.warn('rig: no skinned mesh');return;}
   RIG.bones=RIG.skin.skeleton.bones; RIG.baseMat=RIG.skin.material;
+  {const g=RIG.skin.geometry, si=g.attributes.skinIndex, sw=g.attributes.skinWeight, N=si.count, reg=new Float32Array(N), TB=new Set(RIG_TAIL.slice(1));   // the first tail bone is the dock and carries the rump; the tail proper is the rest
+   for(let v=0;v<N;v++){let bi=si.getX(v),bw=sw.getX(v);const iy=si.getY(v),wy=sw.getY(v);if(wy>bw){bw=wy;bi=iy;}const iz=si.getZ(v),wz=sw.getZ(v);if(wz>bw){bw=wz;bi=iz;}const iw=si.getW(v),ww=sw.getW(v);if(ww>bw){bw=ww;bi=iw;}reg[v]=TB.has(bi)?1:0;}
+   g.setAttribute('aRegion',new THREE.BufferAttribute(reg,1));}   // 1 on the tail, so mastery can colour it on its own
   RIG.restQ=RIG.bones.map(b=>b.quaternion.clone());   // bind pose, for tack that rides on a bone
   { const nm=new THREE.TextureLoader().load('assets/textures/horse_normal.jpg');
     nm.flipY=false;                              // glTF UVs: same convention as the albedo it came from
@@ -4070,6 +4129,7 @@ function buildBridle(){
  // browband: a half-ring bowed forward across the forehead just under the ears, with five gold studs
  const brow=put(new THREE.Mesh(ring(0.118,0.012,Math.PI),strap),-0.115,1.70,0.82); brow.rotation.x=Math.PI/2;
  for(let k=0;k<5;k++){const a=Math.PI*(0.22+0.14*k); put(new THREE.Mesh(new THREE.SphereGeometry(0.012,8,6),gold),-0.115+Math.cos(a)*0.118,1.70,0.82+Math.sin(a)*0.118);}
+ g.userData.gold=gold;
  // crownpiece + throatlatch: one ring round the head behind the ears, leaning forward at the top
  const crown=put(new THREE.Mesh(ring(0.20,0.011),strap),-0.06,1.45,0.62); crown.rotation.x=0.35; crown.scale.set(0.75,1.15,1);
  // cheekpieces: from the crown ring, below the eye, down to each bit ring
@@ -4128,7 +4188,7 @@ function driveRider(sp,tm){   // live seat: lean, posting, breathing, head look,
  const turn=(keys.KeyA||keys.ArrowLeft||touch.left?1:0)-(keys.KeyD||keys.ArrowRight||touch.right?1:0);
  R._look=(R._look||0)+((moving?turn*0.42:Math.sin((tm||0)*0.9)*0.22+Math.sin((tm||0)*0.47+1)*0.12)-(R._look||0))*0.08;
  if(R.u){
-  R.u.uLean.value=0.04+0.24*t+0.32*air+breath;                       // forward into speed, two-point over a fence
+  R.u.uLean.value=0.04+0.24*t+0.32*air+breath+(RIG.emote?EMOTES[RIG.emote.type].lean*emEnv(RIG.emote):0);   // forward into speed, two-point over a fence; back in a rear
   R.u.uSide.value=moving?Math.sin(ph*0.5)*0.03:Math.sin((tm||0)*0.6)*0.02;
   R.u.uHead.value=R._look;
  }
@@ -4647,9 +4707,9 @@ for(let i=0;i<TRAIL_N;i++)trailP.push({life:0,x:0,y:-50,z:0,vy:0});
 let trailIdx=0,trailAcc=0;
 function updateTrail(dt){
  const h=myHorses[rideIdx];
- const active=!!(h&&h.coat&&(Math.abs(player.speed)>7||player.flying));
+ const active=!!(h&&(h.coat||h.trail)&&(Math.abs(player.speed)>7||player.flying));
  if(active){
-  trailMat.color.set(TRAIL_COL[h.coat]||0xffffff);
+  trailMat.color.set(h.coat?(TRAIL_COL[h.coat]||0xffffff):h.trail);
   trailAcc+=dt*26;
   while(trailAcc>1){
    trailAcc-=1;
@@ -5550,6 +5610,7 @@ const keys={};
 window._k=keys;window._player=player;window._herd=()=>herd;
 window._mh=cfg=>{const p=makeHorse(cfg||{colors:{body:'#f2f5fb',mane:'#dfe7f4'},wings:true,seed:9});scene.add(p.group);return p;};
 addEventListener('keydown',e=>{
+ if(/^Digit[1-5]$/.test(e.code||'')&&!e.repeat&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){horseEmote(['rear','bow','liedown','nuzzle','toss'][+e.code[5]-1]);}
  if(build.type||build.remove){ if(e.code==='Escape'){endBuild();return;} if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} if(e.code==='KeyQ'){build.rot-=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} }
  if(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='SELECT'))return;
  keys[e.code]=true;
@@ -6035,11 +6096,27 @@ function renderCare(){
  +'<button data-care="pet">💗</button>'
  +'<button data-care="rename">✏️</button>'
  +'<button data-care="close">✖</button></div>'
+ +(()=>{const P=PERS[h.pers]||PERS.relaxed; const M=masteryOf(s,h.breed); const nextU=Object.keys(MASTERY_UNLOCKS).map(Number).find(k=>k>M);
+   let x='<div style="font-size:12px;margin-top:6px">'+P.emoji+' <b>'+P.label+'</b> — '+P.desc+'</div>';
+   x+='<div class="crow" style="gap:4px;flex-wrap:wrap;margin-top:4px"><span class="lbl" style="font-size:11px">Tricks (keys 1–5 at a halt)</span>'+Object.keys(EMOTES).map(k=>'<button data-care="em:'+k+'">'+EMOTES[k].label+'</button>').join('')+'</div>';
+   x+='<div style="font-size:12px;margin-top:6px">🎖️ <b>'+breedLabel(h.breed)+' mastery '+M+'/10</b>'+(nextU?' · next at '+nextU+': '+MASTERY_UNLOCKS[nextU]:' · complete')+' <span style="color:#8c7a63">(own more '+breedLabel(h.breed)+'s to raise it)</span></div>';
+   if(M>=2)x+='<div class="crow" style="gap:4px;flex-wrap:wrap"><span class="lbl" style="font-size:11px">Tail</span>'+TAIL_COLS.map(c=>'<button data-care="tail:'+c[0]+'" title="'+c[1]+'" style="'+(h.tailCol===c[0]?'outline:2px solid #4a3526;':'')+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+c[0]+';vertical-align:middle"></span></button>').join('')+'<button data-care="tail:none">natural</button></div>';
+   if(M>=4)x+='<div class="crow" style="gap:4px;flex-wrap:wrap"><span class="lbl" style="font-size:11px">Studs</span>'+STUD_COLS.map(c=>'<button data-care="stud:'+c[0]+'" title="'+c[1]+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+c[0]+';vertical-align:middle"></span> '+c[1]+'</button>').join('')+'</div>';
+   if(M>=6)x+='<div class="crow" style="gap:4px"><span class="lbl" style="font-size:11px">Trail</span><button data-care="trail:'+(h.trail?'off':'on')+'">'+(h.trail?'✨ Sparkle trail on':'Sparkle trail off')+'</button></div>';
+   if(M>=9)x+='<div class="crow" style="gap:4px"><span class="lbl" style="font-size:11px">Saddle</span><button data-care="bare:'+(h.bareback?'off':'on')+'">'+(h.bareback?'🐎 Bareback':'Saddled')+'</button></div>';
+   return x;})()
  +'<span style="font-size:11px;color:#8c7a63">Care builds bond ❤️ and XP. Each food trains one stat: 🥕 speed · 🍎 stamina · 🥬 agility · 🎃🍊 acceleration · 🍄 jump. Forage grows all over the Basin.</span>';
  $('carePanel').querySelectorAll('[data-care]').forEach(b=>{b.onclick=()=>careAct(b.dataset.care);});
 }
 function careAct(k){
  if(k==='close'){$('carePanel').style.display='none';return;}
+ if(k.startsWith('em:')){$('carePanel').style.display='none';horseEmote(k.slice(3));return;}
+ if(k.startsWith('tail:')||k.startsWith('stud:')||k.startsWith('trail:')||k.startsWith('bare:')){
+  const [what,val]=k.split(':');
+  syncSave(s=>{const h=s.horses[rideIdx];if(!h)return; if(what==='tail')h.tailCol=val==='none'?null:val; if(what==='stud')h.studCol=val; if(what==='trail')h.trail=val==='on'?'#ffe28a':null; if(what==='bare')h.bareback=val==='on';});
+  {const fs=freshSave();const hh=fs&&fs.horses[rideIdx];if(hh&&myHorses[rideIdx]){myHorses[rideIdx].tailCol=hh.tailCol;myHorses[rideIdx].studCol=hh.studCol;myHorses[rideIdx].trail=hh.trail;myHorses[rideIdx].bareback=hh.bareback;}}
+  applyCoat(); dressSaddle(); sChime(); renderCare(); return;
+ }
  if(k==='rename'){
   const h=myHorses[rideIdx];
   const n=prompt('New name for '+h.name+':',h.name);
@@ -6063,8 +6140,7 @@ function careAct(k){
    const f=FOODS3[k];
    N.hunger=Math.min(100,N.hunger+f.hunger);
    N.happy=Math.min(100,N.happy+f.happy);
-   h.bond=Math.min(100,h.bond+f.bond);
-   msg=h.name+' munches happily! +'+f.bond+' bond';ok=true;
+   {const bg=bondGain(h,f.bond,'feed'); h.bond=Math.min(100,h.bond+bg); msg=h.name+' munches happily! +'+bg+' bond';} ok=true;
    if(f.stat){                                            // stat food: XP into one stat, capped by level and breed
     ensureStats(h);
     const sk=f.stat, cap=Math.min(statCap(h),statCeil(h)), short=STAT_LBL[sk].slice(STAT_LBL[sk].indexOf(' ')+1);
@@ -6079,19 +6155,17 @@ function careAct(k){
   }else if(k==='water'){
    if(N.thirst>=98){msg=h.name+" isn't thirsty right now!";ok=false;return;}
    N.thirst=Math.min(100,N.thirst+50);
-   h.bond=Math.min(100,h.bond+1);
+   h.bond=Math.min(100,h.bond+bondGain(h,1,'water'));
    msg=h.name+' drinks deep 💧';ok=true;
   }else if(k==='groom'){
    if(N.clean>=98){msg='Already sparkling ✨';ok=false;return;}
    N.clean=Math.min(100,N.clean+50);
    N.happy=Math.min(100,N.happy+5);
-   h.bond=Math.min(100,h.bond+3);
-   msg=h.name+' is shiny and clean! +3 bond';ok=true;
+   {const bg=bondGain(h,3,'groom'); h.bond=Math.min(100,h.bond+bg); msg=h.name+' is shiny and clean! +'+bg+' bond';} ok=true;
   }else if(k==='pet'){
    if(N.happy>=98&&h.bond>=100){msg=h.name+' is already blissful!';return;}
    N.happy=Math.min(100,N.happy+12);
-   h.bond=Math.min(100,h.bond+2);
-   msg=h.name+' nuzzles you 💕';ok=true;
+   {const bg=bondGain(h,2,'pet'); h.bond=Math.min(100,h.bond+bg); msg=h.name+' nuzzles you 💕 +'+bg+' bond';} ok=true;
   }
  });
  toast(msg);
@@ -6312,6 +6386,8 @@ function dressSaddle(){
  const padIt=h.gear&&tackInv.find(t=>t.id===h.gear.pad);
  sd.userData.mats.pad.color.set(padIt?RAR_COL[padIt.rarity]:0xe6dcc6);
  sd.userData.mats.leather.color.set(h.tack||0x6b4423);
+ sd.visible=!h.bareback;                                                     // mastery 9: ride bareback
+ if(TACK.bridle&&TACK.bridle.userData.gold)TACK.bridle.userData.gold.color.set(h.studCol||'#d8b24a');
 }
 function buyTack3(col){
  let ok=false,nm='';
@@ -7102,7 +7178,7 @@ function renderStable(){
   const low=h.needs&&Object.values(h.needs).some(v=>v<35);
   return '<div class="evrow'+(i===rideIdx?' qrow done':'')+'">'
   +'<span style="width:30px;height:30px;border-radius:50%;background:'+(h.colors&&h.colors.body||'#8a5a2b')+';display:inline-flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);flex:none">'+(h.horn?'🦄':h.wings?'🪽':h.coat?'✨':h.foal?'🐎':'🐴')+'</span>'
-  +'<b>'+h.name+'</b>'+(low?' ⚠️':'')+(i===rideIdx?' <span class="badge">RIDING</span>':'')
+  +'<b>'+h.name+'</b>'+(h.pers&&PERS[h.pers]?' '+PERS[h.pers].emoji:'')+(masteryOf(s,h.breed)>=8?' 🎖️':'')+(low?' ⚠️':'')+(i===rideIdx?' <span class="badge">RIDING</span>':'')
   +'<span>'+breedLabel(h.breed)+(h.foal?' foal 🌱 grows up in '+Math.max(1,Math.ceil((86400000-(Date.now()-(h.born||Date.now())))/3600000))+'h':'')+' · Lv '+(h.level||1)+' · '+'❤️'.repeat(hearts)+'</span>'
   +(h.foal?'<button data-st="eq:'+i+'" '+(h.id===companionId?'class="claimBtn"':'')+' title="A foal companion trots along behind you">'+(h.id===companionId?'🍼 Following ✓':'🍼 Equip')+'</button>':'')
   +(i===rideIdx?'':'<button data-st="ride:'+i+'">🏇 Ride</button>')
@@ -7883,7 +7959,8 @@ function tick(){
  const gallop=keys.ShiftLeft||keys.ShiftRight||touch.gal;
  const abil=(myHorses[rideIdx]||{}).ability;
  const HS=effStats(myHorses[rideIdx]);                       // the five stats plus tack bonuses, felt in the hands
- const spMul=0.82+0.036*(HS.speed||3), acMul=0.75+0.06*(HS.accel||3), agMul=0.80+0.05*(HS.agility||3), jpMul=0.92+0.016*(HS.jump||3);
+ const PM=persMul(myHorses[rideIdx]);
+ const spMul=(0.82+0.036*(HS.speed||3))*PM.sp, acMul=(0.75+0.06*(HS.accel||3))*PM.ac, agMul=(0.80+0.05*(HS.agility||3))*PM.ag, jpMul=0.92+0.016*(HS.jump||3);
  let target=0;
  if(course&&!course.started){target=0;}
  else if(player.flying){
@@ -8009,7 +8086,7 @@ function tick(){
  const bob=Math.pow(Math.sin(player.phase),2)*0.075*Math.min(1,sp/4);
  player.landT=Math.max(0,(player.landT||0)-dt);
  const landDip=player.landT>0?Math.sin((player.landT/0.22)*Math.PI)*0.07:0;
- player.mesh.position.set(player.pos.x,gy+player.y+bob-landDip,player.pos.z);
+ player.mesh.position.set(player.pos.x,gy+player.y+bob-landDip+(RIG.emote?EMOTES[RIG.emote.type].lift*emEnv(RIG.emote):0),player.pos.z);
  player.mesh.rotation.y=player.heading;
  if(player.parts&&player.parts.shadowM)player.parts.shadowM.material.opacity=Math.max(0.06,1-player.y/9);
  const ahead=groundH(player.pos.x+dx*1.4,player.pos.z+dz*1.4);
@@ -8020,7 +8097,7 @@ function tick(){
  const pPrev=Number.isFinite(player.pitchSm)?player.pitchSm:0;
  const pitchTgt=player.flying?jumpPitch:(slope*0.7+jumpPitch);
  player.pitchSm=pPrev+(pitchTgt-pPrev)*Math.min(1,dt*6);
- player.mesh.rotation.x=player.pitchSm+rock;
+ player.mesh.rotation.x=player.pitchSm+rock+(RIG.emote?EMOTES[RIG.emote.type].pitch*emEnv(RIG.emote):0);
  const tPrev=Number.isFinite(player.turnSm)?player.turnSm:0;
  player.turnSm=tPrev+(turn-tPrev)*Math.min(1,dt*5);
  player.mesh.rotation.z=-player.turnSm*(player.flying?0.4:Math.min(1,sp/8)*0.16);
