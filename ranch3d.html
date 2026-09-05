@@ -73,7 +73,10 @@ body.touch #stickZone{display:block}
 #courseHud{position:fixed;top:54px;left:50%;transform:translateX(-50%);z-index:7;background:rgba(60,45,25,0.9);color:#fff8ea;padding:9px 14px;border-radius:999px;font-weight:700;font-size:15px;display:flex;gap:10px;align-items:center}
 #courseHud button{padding:2px 9px;border-radius:10px;font-size:13px}
 #countdown{position:fixed;top:38%;left:50%;transform:translate(-50%,-50%);z-index:8;font-size:84px;font-weight:900;color:#fff8ea;text-shadow:0 4px 18px rgba(40,25,5,0.6);display:none}
-#eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9;background:#fffdf7;border:3px solid #e3cf9f;border-radius:18px;padding:14px;display:none;flex-direction:column;gap:7px;max-height:70vh;overflow:auto;width:min(440px,92vw);color:#4a3526}
+#eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel,#buildPanel{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9;background:#fffdf7;border:3px solid #e3cf9f;border-radius:18px;padding:14px;display:none;flex-direction:column;gap:7px;max-height:70vh;overflow:auto;width:min(440px,92vw);color:#4a3526}
+#buildHud{display:none;position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:9;background:rgba(255,253,247,0.94);border:2px solid #e3cf9f;border-radius:14px;padding:8px 12px;color:#4a3526;font-weight:600;font-size:13px;box-shadow:0 8px 24px rgba(60,40,10,0.22);max-width:94vw;text-align:center}
+#buildHud button{margin-left:6px}
+#buildHud.bad{border-color:#d9534f;color:#a33}
 #chatFeed{position:fixed;left:16px;bottom:170px;z-index:7;display:flex;flex-direction:column;gap:4px;max-width:min(340px,70vw);pointer-events:none}
 #chatFeed div{background:rgba(60,45,25,0.78);color:#fff8ea;padding:5px 11px;border-radius:12px;font-size:13px;font-weight:600;overflow-wrap:break-word}
 #chatBar{position:fixed;left:16px;bottom:130px;z-index:8;display:none;gap:6px;width:min(340px,70vw)}
@@ -95,7 +98,7 @@ body.touch #stickZone{display:block}
 select,button,a.btn{transition:transform .12s,box-shadow .15s,filter .15s;box-shadow:0 2px 5px rgba(60,40,10,0.14)}
 button:hover,a.btn:hover,select:hover{transform:translateY(-1px);filter:brightness(1.05);box-shadow:0 4px 10px rgba(60,40,10,0.2)}
 button:active{transform:scale(.95)}
-#eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel,#stablePanel,#questPanel,#profilePanel{border-radius:22px;box-shadow:0 22px 60px rgba(40,25,5,0.35);animation:panelIn .22s ease;border-width:2px;scrollbar-width:thin;scrollbar-color:#d9b97f #fff7e6}
+#eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel,#stablePanel,#questPanel,#profilePanel,#buildPanel{border-radius:22px;box-shadow:0 22px 60px rgba(40,25,5,0.35);animation:panelIn .22s ease;border-width:2px;scrollbar-width:thin;scrollbar-color:#d9b97f #fff7e6}
 #stablePanel,#questPanel,#profilePanel{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:10;background:#fffdf7;border:2px solid #e3cf9f;padding:14px;display:none;flex-direction:column;gap:7px;max-height:72vh;overflow:auto;width:min(460px,94vw);color:#4a3526}
 @keyframes panelIn{from{opacity:0;transform:translateX(-50%) translateY(-12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 #eventsPanel::-webkit-scrollbar,#shopPanel::-webkit-scrollbar,#stablePanel::-webkit-scrollbar,#questPanel::-webkit-scrollbar,#lbPanel::-webkit-scrollbar{width:9px}
@@ -142,6 +145,7 @@ button:active{transform:scale(.95)}
  <button id="shopBtn">🛍️ Shop</button>
  <button id="eventsBtn">🏆 Events</button>
  <button id="stableBtn">🐎 Stable</button>
+ <button id="buildBtn" title="Build your ranch">🏗️ Build</button>
  <button id="questBtn">📜 Quests</button>
  <button id="flyBtn" style="display:none">🪽 Fly</button>
  <div class="spacer"></div>
@@ -161,6 +165,8 @@ button:active{transform:scale(.95)}
 <div id="eventsPanel"></div>
 <div id="carePanel"></div>
 <div id="shopPanel"></div>
+<div id="buildPanel"></div>
+<div id="buildHud"></div>
 <div id="onlinePanel"></div>
 <div id="lbPanel"></div>
 <div id="chatFeed"></div>
@@ -305,7 +311,7 @@ const DECAY3={hunger:100/(8*3600),thirst:100/(6*3600),clean:100/(12*3600),happy:
  const sec=Math.min(24*3600,(Date.now()-(save.lastSeen||Date.now()))/1000);
  if(sec>60){
   for(const h of save.horses)
-   for(const k in DECAY3)h.needs[k]=Math.max(15,h.needs[k]-DECAY3[k]*sec);
+   for(const k in DECAY3)h.needs[k]=Math.max(15,h.needs[k]-DECAY3[k]*sec*ranchMul('decay'));
  }
  const ds=new Date().toDateString();
  if(save.lastDaily!==ds){
@@ -324,7 +330,7 @@ setInterval(()=>{
  try{
   const s=JSON.parse(localStorage.getItem(SAVE_KEY));
   for(const h of s.horses)
-   for(const k in DECAY3)h.needs[k]=Math.max(0,h.needs[k]-DECAY3[k]*30);
+   for(const k in DECAY3)h.needs[k]=Math.max(0,h.needs[k]-DECAY3[k]*30*ranchMul('decay'));
   // foals grow up: 24 real hours, or sooner if trained to level 3
   for(const h of s.horses){
    if(!h.foal)continue;
@@ -400,6 +406,7 @@ const sHoof=alt=>beep(alt?95:75,alt?70:55,0.05,'triangle',0.05);
 const sNeigh=()=>{beep(700,250,0.35,'sawtooth',0.05);beep(900,300,0.3,'sawtooth',0.035,0.05);};
 $('muteBtn').onclick=()=>{muted=!muted;$('muteBtn').textContent=muted?'🔇':'🔊';syncSave(s=>{s.muted=muted;});};
 function addXp3D(n){
+ n=Math.round(n*ranchMul('xp'));
  let leveled=false,lvl=0,grew=false;
  syncSave(s=>{
   const h=s.horses[rideIdx];
@@ -3171,6 +3178,7 @@ for(let i=0;i<24;i++){                                       // stumps: where tr
  while((Math.abs(x)<32&&Math.abs(z)<28)||Math.abs(z-riverZ(x))<8||inCoyote(x,z)||inSnow(x,z));
  FOLIAGE.stump.push({x,z,s:0.8+Math.random()*0.6,r:Math.random()*Math.PI*2});
 }
+const PROP_SRC={};
 function placeFoliage(name){
  const list=FOLIAGE[name]; if(!list.length)return;
  new GLTFLoader().load('assets/models/'+name+'_textured.glb',g=>{
@@ -3179,6 +3187,7 @@ function placeFoliage(name){
   const geo=src.geometry; geo.computeBoundingBox();
   const minY=geo.boundingBox.min.y, h=(geo.boundingBox.max.y-minY)||1;
   const mat=src.material; mat.roughness=0.9; mat.metalness=0;
+  PROP_SRC[name]={geo,mat,minY,h};
   const inst=new THREE.InstancedMesh(geo,mat,list.length);
   inst.name='foliage_'+name;
   inst.castShadow=true; inst.receiveShadow=true; inst.frustumCulled=false;
@@ -3191,6 +3200,7 @@ function placeFoliage(name){
   });
   inst.instanceMatrix.needsUpdate=true; scene.add(inst);
   console.log('placed',list.length,'generated',name);
+  if(typeof rebuildDecor==='function')rebuildDecor();   // decor made of this prop can appear now
  },undefined,e=>console.warn(name+' load failed',e));
 }
 /* Deferred on purpose: these used to be fetched at boot, so several MB of shrubs competed
@@ -5540,6 +5550,7 @@ const keys={};
 window._k=keys;window._player=player;window._herd=()=>herd;
 window._mh=cfg=>{const p=makeHorse(cfg||{colors:{body:'#f2f5fb',mane:'#dfe7f4'},wings:true,seed:9});scene.add(p.group);return p;};
 addEventListener('keydown',e=>{
+ if(build.type||build.remove){ if(e.code==='Escape'){endBuild();return;} if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} if(e.code==='KeyQ'){build.rot-=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} }
  if(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='SELECT'))return;
  keys[e.code]=true;
  if(['Space','ArrowUp','ArrowDown'].includes(e.code))e.preventDefault();
@@ -5857,7 +5868,139 @@ function reloadHorses(){
  sel.value=rideIdx;
  rebuildAll();
 }
-function hidePanels(){['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','stablePanel','questPanel','profilePanel'].forEach(id=>{$(id).style.display='none';});}
+function hidePanels(){['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','stablePanel','questPanel','profilePanel','buildPanel'].forEach(id=>{$(id).style.display='none';});}
+/* ===== Ranch building =====
+   The ranch is yours to furnish: pick a piece from the catalogue, a ghost of it follows the
+   pointer across the ground, turn it with R or Q, click to set it down. Five of the pieces
+   are the generated props already in the world (hay bales, troughs, barrels, boulders,
+   stumps) reused from their loaded geometry; the rest are built here. What you place is
+   solid to the horses, saved, and rebuilt when you come back. Every piece is worth builder
+   points, and points raise the ranch level, which does real things: horses get hungry more
+   slowly, XP comes faster, forage grows back sooner. Nothing here costs anything but coins. */
+const DECOR_CAT={
+ haybale:{label:'Hay bale',emoji:'🌾',price:40,pts:4,prop:'haybale',r:0.7},
+ trough:{label:'Water trough',emoji:'💧',price:120,pts:10,prop:'trough',r:0.8},
+ barrel:{label:'Barrel',emoji:'🛢️',price:60,pts:5,prop:'barrel',r:0.5},
+ boulder:{label:'Boulder',emoji:'🪨',price:80,pts:6,prop:'boulder',r:1.0},
+ stump:{label:'Stump seat',emoji:'🪵',price:50,pts:4,prop:'stump',r:0.5},
+ fence:{label:'Fence section',emoji:'🚧',price:35,pts:3,r:0.5,len:3},
+ post:{label:'Hitching post',emoji:'🐎',price:70,pts:6,r:0.3},
+ planter:{label:'Flower planter',emoji:'🌸',price:90,pts:9,r:0.6},
+ lantern:{label:'Lantern post',emoji:'🏮',price:110,pts:10,r:0.25},
+ bench:{label:'Bench',emoji:'🪑',price:85,pts:7,r:0.7},
+ stand:{label:'Saddle stand',emoji:'🐴',price:95,pts:8,r:0.4},
+ sapling:{label:'Sapling',emoji:'🌳',price:65,pts:6,r:0.3},
+ sign:{label:'Ranch sign',emoji:'🪧',price:75,pts:6,r:0.3},
+ stall:{label:'Stable stall',emoji:'🏠',price:450,pts:40,r:2.2},
+};
+const RANCH_LEVELS=[0,60,160,320,560,900];
+const RANCH_PERKS={2:'Horses get hungry and thirsty 15% slower',3:'Horses earn 10% more XP',4:'Forage grows back 30% sooner',5:'Horses get hungry and thirsty 30% slower',6:'Horses earn 25% more XP'};
+function ranchPts(s){return (s.decor||[]).reduce((a,d)=>a+((DECOR_CAT[d.t]||{}).pts||0),0);}
+function ranchLevel(s){const p=ranchPts(s);let l=1;for(let i=1;i<RANCH_LEVELS.length;i++)if(p>=RANCH_LEVELS[i])l=i+1;return l;}
+let _ranchLvlCache=1;
+function ranchMul(k){const L=_ranchLvlCache; if(k==='decay')return L>=5?0.7:L>=2?0.85:1; if(k==='xp')return L>=6?1.25:L>=3?1.10:1; if(k==='forage')return L>=4?0.7:1; return 1;}
+const decorObjs=[];   // {d, g, coll}
+function buildDecorMesh(t,forGhost){
+ const c=DECOR_CAT[t]; const g=new THREE.Group();
+ if(c.prop){
+  const src=PROP_SRC[c.prop]; if(!src)return null;
+  const s=FOLIAGE_H[c.prop]/src.h; const m=new THREE.Mesh(src.geo,src.mat); m.scale.setScalar(s); m.position.y=-src.minY*s-0.05*FOLIAGE_H[c.prop]; m.castShadow=true; m.receiveShadow=true; g.add(m);
+ }else if(t==='fence'){
+  const L=c.len; for(const x of[-L/2,L/2])box(0.14,1.1,0.14,'#f4f0e6',x,0.55,0,g); box(L,0.09,0.06,'#f4f0e6',0,0.95,0,g); box(L,0.09,0.06,'#f4f0e6',0,0.55,0,g);
+ }else if(t==='post'){ tube(0.07,0.08,1.3,'#5a3d22',0,0.65,0,g); box(0.9,0.08,0.08,'#5a3d22',0,1.22,0,g); blob(0.09,0.09,0.09,'#8a6a45',0,1.34,0,g); }
+ else if(t==='planter'){ box(1.3,0.45,0.55,'#7a5236',0,0.22,0,g); box(1.2,0.08,0.45,'#4a3320',0,0.46,0,g); [['#ff8fab',-0.4],['#ffd166',0],['#b197fc',0.4]].forEach(([col,x])=>{blob(0.16,0.14,0.16,'#5a9a4a',x,0.58,0,g);blob(0.12,0.12,0.12,col,x,0.72,0,g);}); }
+ else if(t==='lantern'){ tube(0.05,0.06,2.2,'#3a2e24',0,1.1,0,g); box(0.3,0.3,0.3,'#3a2e24',0,2.3,0,g); const lm=new THREE.Mesh(new THREE.SphereGeometry(0.11,10,8),new THREE.MeshStandardMaterial({color:0xffd27a,emissive:0xffb347,emissiveIntensity:1.6,roughness:0.6})); lm.position.set(0,2.3,0); g.add(lm); }
+ else if(t==='bench'){ box(1.5,0.08,0.45,'#8a6745',0,0.5,0,g); box(1.5,0.4,0.08,'#8a6745',0,0.78,-0.2,g); for(const x of[-0.6,0.6]){box(0.08,0.5,0.4,'#5a3d22',x,0.25,0,g);} }
+ else if(t==='stand'){ for(const sg of[-1,1]){const a=box(0.08,1.0,0.08,'#8a6745',sg*0.25,0.5,0,g);a.rotation.z=-sg*0.25;} box(0.5,0.08,0.7,'#8a6745',0,0.98,0,g); blob(0.28,0.12,0.36,'#6b4423',0,1.06,0,g); }
+ else if(t==='sapling'){ tube(0.06,0.08,1.4,'#6b4a2e',0,0.7,0,g); blob(0.55,0.5,0.55,'#5d9e4f',0,1.55,0,g); blob(0.4,0.38,0.4,'#7bbb60',0.2,1.8,0.1,g); }
+ else if(t==='sign'){ for(const x of[-0.55,0.55])box(0.1,1.6,0.1,'#5a3d22',x,0.8,0,g); box(1.6,0.6,0.08,'#f4f0e6',0,1.35,0,g); if(!forGhost){const sp=nameSprite((freshSave()||{}).ranchName||'Meadowlark Ranch'); sp.position.set(0,1.36,0.08); sp.scale.set(1.5,0.38,1); g.add(sp);} }
+ else if(t==='stall'){ box(4.2,0.12,3.6,'#a88a5a',0,0.06,0,g); box(4.2,2.4,0.14,'#e9dcc0',0,1.2,-1.75,g); for(const x of[-2.05,2.05])box(0.14,2.4,3.6,'#e9dcc0',x,1.2,0,g); box(4.4,0.14,3.9,'#b5633a',0,2.5,0,g); box(1.9,1.1,0.08,'#8a6745',-1.05,0.55,1.75,g); blob(0.7,0.35,0.5,'#d9b56a',1.0,0.35,-0.9,g); }
+ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+ if(forGhost)g.traverse(o=>{if(o.isMesh){o.material=o.material.clone();o.material.transparent=true;o.material.opacity=0.55;o.castShadow=false;}});
+ return g;
+}
+function decorOk(t,x,z,skip){
+ if(Math.hypot(x,z)>75)return 'Too far from the ranch';
+ if(Math.abs(x)<27&&Math.abs(z)<22)return 'Not in the arena';
+ if(Math.abs(z-riverZ(x))<8)return 'Not in the river';
+ const r=DECOR_CAT[t].r;
+ for(const o of decorObjs){ if(o===skip)continue; const rr=DECOR_CAT[o.d.t].r; if(Math.hypot(o.d.x-x,o.d.z-z)<(r+rr)*0.85)return 'Overlaps another piece'; }
+ for(const c of colliders){ if(c.decor)continue; if(Math.hypot(c.x-x,c.z-z)<c.r+r*0.6)return 'Something is in the way'; }
+ return null;
+}
+function spawnDecor(d){
+ const g=buildDecorMesh(d.t,false); if(!g)return null;
+ g.position.set(d.x,groundH(d.x,d.z),d.z); g.rotation.y=d.ry||0; scene.add(g);
+ const coll={x:d.x,z:d.z,r:DECOR_CAT[d.t].r,decor:true}; if(DECOR_CAT[d.t].r>0.35)colliders.push(coll);
+ const o={d,g,coll}; decorObjs.push(o); return o;
+}
+function rebuildDecor(){
+ const sv=freshSave(); if(!sv)return; sv.decor=sv.decor||[];
+ _ranchLvlCache=ranchLevel(sv);
+ for(const d of sv.decor){ if(decorObjs.some(o=>o.d.id===d.id))continue; if(!d.id)d.id=Math.random().toString(36).slice(2,8); const o=spawnDecor(d); }
+}
+const build={type:null,ghost:null,rot:0,remove:false,down:null,lastPt:null};
+const _bray=new THREE.Raycaster(),_bndc=new THREE.Vector2(),_bpt=new THREE.Vector3();
+function groundPoint(cx,cy){
+ _bndc.set((cx/innerWidth)*2-1,-(cy/innerHeight)*2+1); _bray.setFromCamera(_bndc,camera);
+ let y=groundH(player.pos.x,player.pos.z);
+ for(let k=0;k<3;k++){ const t=(y-_bray.ray.origin.y)/_bray.ray.direction.y; if(!(t>0))return null; _bpt.copy(_bray.ray.origin).addScaledVector(_bray.ray.direction,t); y=groundH(_bpt.x,_bpt.z); }
+ return _bpt;
+}
+function buildHud(msg,bad){const h=$('buildHud'); h.style.display=msg?'block':'none'; h.classList.toggle('bad',!!bad); if(msg)h.innerHTML=msg;}
+function startPlace(t){
+ endBuild(); const c=DECOR_CAT[t]; if(!c)return;
+ const g=buildDecorMesh(t,true); if(!g){toast('That piece is still loading — try again in a moment.');return;}
+ build.type=t; build.ghost=g; build.rot=0; g.visible=false; scene.add(g); hidePanels();
+ buildHud(c.emoji+' Placing <b>'+c.label+'</b> · '+c.price+'🪙 · click the ground to set it down · R / Q turn · Esc done<button data-bh="rot">↻</button><button data-bh="done">Done</button>');
+ $('buildHud').querySelectorAll('[data-bh]').forEach(b=>{b.onclick=e=>{e.stopPropagation(); if(b.dataset.bh==='rot')build.rot+=Math.PI/4; else endBuild();};});
+}
+function startRemove(){ endBuild(); build.remove=true; hidePanels(); buildHud('🧹 Click a piece to remove it (half its price back) · Esc done<button data-bh="done">Done</button>'); $('buildHud').querySelector('[data-bh]').onclick=e=>{e.stopPropagation();endBuild();}; }
+function endBuild(){ if(build.ghost){scene.remove(build.ghost);build.ghost=null;} build.type=null; build.remove=false; buildHud(null); }
+function placeAt(x,z){
+ const t=build.type; if(!t)return false; const c=DECOR_CAT[t];
+ const why=decorOk(t,x,z); if(why){toast('🚫 '+why);return false;}
+ let ok=false,d=null;
+ syncSave(sv=>{ sv.decor=sv.decor||[]; if(sv.decor.length>=80){toast('The ranch is full — remove something first.');return;} if(sv.coins<c.price){toast('Not enough coins — '+c.price+'🪙');return;}
+  sv.coins-=c.price; d={id:Math.random().toString(36).slice(2,8),t,x:+x.toFixed(2),z:+z.toFixed(2),ry:+build.rot.toFixed(3)}; sv.decor.push(d); ok=true; });
+ if(!ok)return false;
+ spawnDecor(d); refreshWallet(); sCoin();
+ const sv=freshSave(); const L=ranchLevel(sv); if(L>_ranchLvlCache){_ranchLvlCache=L;sGem();toast('🏗️ Ranch level '+L+'! '+(RANCH_PERKS[L]||''));} else toast(c.emoji+' '+c.label+' placed · '+ranchPts(sv)+' builder points');
+ passAdd(2); statBump('built',1);
+ return true;
+}
+function removeAt(cx,cy){
+ _bndc.set((cx/innerWidth)*2-1,-(cy/innerHeight)*2+1); _bray.setFromCamera(_bndc,camera);
+ const hits=_bray.intersectObjects(decorObjs.map(o=>o.g),true); if(!hits.length)return false;
+ let o=null; for(const cand of decorObjs){ let p=hits[0].object; while(p){ if(p===cand.g){o=cand;break;} p=p.parent; } if(o)break; }
+ if(!o)return false;
+ removeDecor(o); return true;
+}
+function removeDecor(o){
+ const c=DECOR_CAT[o.d.t]; scene.remove(o.g); const ci=colliders.indexOf(o.coll); if(ci>=0)colliders.splice(ci,1);
+ decorObjs.splice(decorObjs.indexOf(o),1);
+ syncSave(sv=>{ sv.decor=(sv.decor||[]).filter(d=>d.id!==o.d.id); sv.coins+=Math.floor(c.price/2); });
+ refreshWallet(); _ranchLvlCache=ranchLevel(freshSave()); toast('🧹 Removed · +'+Math.floor(c.price/2)+'🪙 back');
+}
+function openBuild(){
+ const p=$('buildPanel'); if(p.style.display==='flex'){p.style.display='none';return;}
+ hidePanels(); const sv=freshSave(); if(!sv)return; sv.decor=sv.decor||[];
+ const pts=ranchPts(sv), L=ranchLevel(sv), next=RANCH_LEVELS[L];
+ let html='<div class="ph">🏗️ Build your ranch <span class="chip" style="font-size:12px;padding:3px 10px">Lv '+L+' · '+pts+' pts'+(next?' · next at '+next:' · max')+'</span><button data-b="close" style="margin-left:auto">✖</button></div>';
+ html+='<span style="font-size:12px;color:#8c7a63">Pick a piece, walk your horse to where it should go, click the ground. Pieces are solid to horses and worth builder points; levels give perks.</span>';
+ html+='<div style="font-size:12px;margin:2px 0">'+Object.keys(RANCH_PERKS).map(k=>'<div style="color:'+(L>=+k?'#3a7a3a':'#b8a888')+'">'+(L>=+k?'✅':'🔒')+' Lv '+k+' · '+RANCH_PERKS[k]+'</div>').join('')+'</div>';
+ html+=Object.keys(DECOR_CAT).map(t=>{const c=DECOR_CAT[t];const have=sv.decor.filter(d=>d.t===t).length;return '<div class="evrow">'+c.emoji+' <b>'+c.label+'</b><span style="font-size:11px">'+c.price+'🪙 · '+c.pts+' pts'+(have?' · placed ×'+have:'')+'</span><button data-b="place:'+t+'">Place</button></div>';}).join('');
+ html+='<div class="crow" style="gap:6px;margin-top:6px"><button data-b="remove">🧹 Remove a piece</button><span style="font-size:11px;color:#8c7a63">'+sv.decor.length+' / 80 pieces on the ranch</span></div>';
+ p.innerHTML=html; p.style.display='flex';
+ p.querySelectorAll('[data-b]').forEach(b=>{b.onclick=()=>{const [a,arg]=b.dataset.b.split(':'); if(a==='close')p.style.display='none'; else if(a==='place')startPlace(arg); else if(a==='remove')startRemove();};});
+}
+renderer.domElement.addEventListener('pointermove',e=>{ if(!build.ghost)return; const pt=groundPoint(e.clientX,e.clientY); if(!pt)return; build.ghost.visible=true; build.ghost.position.set(pt.x,pt.y,pt.z); build.ghost.rotation.y=build.rot; build.lastPt=[pt.x,pt.z]; const why=decorOk(build.type,pt.x,pt.z); $('buildHud').classList.toggle('bad',!!why); });
+renderer.domElement.addEventListener('pointerdown',e=>{ if(build.type||build.remove)build.down={x:e.clientX,y:e.clientY,id:e.pointerId}; });
+addEventListener('pointerup',e=>{ const dn=build.down; build.down=null; if(!dn||e.pointerId!==dn.id)return; if(Math.hypot(e.clientX-dn.x,e.clientY-dn.y)>7)return;
+ if(build.remove){removeAt(e.clientX,e.clientY);return;}
+ if(build.type){ const pt=groundPoint(e.clientX,e.clientY); if(pt)placeAt(pt.x,pt.z); } });
+$('buildBtn').onclick=openBuild;
+setTimeout(rebuildDecor,4000);
 const FOODS3={carrot:{hunger:25,bond:2,happy:2,xp:6,price:5,emoji:'🥕',label:'Carrot',stat:'speed',sxp:6},
  apple:{hunger:12,bond:6,happy:10,xp:8,price:12,emoji:'🍎',label:'Apple',stat:'stamina',sxp:7},
  hay:{hunger:50,bond:1,happy:0,xp:4,price:8,emoji:'🌾',label:'Hay Bale'},
@@ -7087,6 +7230,8 @@ const ACHS=[
  {id:'troph11',icon:'🏆',label:'Champion of the Basin',desc:'Win every event trophy',v:s=>Object.keys(s.trophies||{}).length,goal:EVENTS3.length,r:{g:3}},
  {id:'story8',icon:'📜',label:"Grandpa Wren's pride",desc:'Finish the story missions',v:s=>(s.story&&s.story.idx)||0,goal:8,r:{c:400}},
  {id:'book2',icon:'🪶',label:'The Silver Kestrel',desc:'Finish book two of the story',v:s=>(s.story&&s.story.idx)||0,goal:29,r:{g:5,k:2}},
+ {id:'build3',icon:'🏗️',label:'Home improvements',desc:'Reach ranch level 3',v:s=>ranchLevel(s),goal:3,r:{c:300,k:1}},
+ {id:'build6',icon:'🏡',label:'Dream ranch',desc:'Reach ranch level 6',v:s=>ranchLevel(s),goal:6,r:{g:4,k:2}},
  {id:'bond100',icon:'❤️',label:'Soulmates',desc:'Reach 100 bond with a horse',v:s=>Math.round(s.horses.reduce((m,h)=>Math.max(m,h.bond||0),0)),goal:100,r:{g:1}},
  {id:'lvl5',icon:'⭐',label:'Rising star',desc:'Train a horse to level 5',v:s=>s.horses.reduce((m,h)=>Math.max(m,h.level||1),1),goal:5,r:{c:200}},
  {id:'dist25k',icon:'🧭',label:'Trail blazer',desc:'Ride 25 km in total',v:s=>(s.stats&&s.stats.dist)||0,goal:25000,r:{g:1}},
@@ -8167,7 +8312,7 @@ function tick(){
   if(!f.g.visible){ f.t-=dt; if(f.t<=0)forageRespawn(f); continue; }
   const d=Math.hypot(f.g.position.x-player.pos.x,f.g.position.z-player.pos.z);
   if(d<1.5&&player.y<1.2){
-   f.g.visible=false; f.t=40+Math.random()*30;
+   f.g.visible=false; f.t=(40+Math.random()*30)*ranchMul('forage');
    syncSave(s=>{s.items=s.items||{};s.items[f.item]=(s.items[f.item]||0)+1;});
    sCoin(); passAdd(2); dailyEvt('carrots',1); questEvt('forage',f.item);
    const fd=FOODS3[f.item]; toast(fd.emoji+' '+fd.label+' — trains '+STAT_LBL[fd.stat]);
