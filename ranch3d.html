@@ -338,6 +338,32 @@ const PERS_KEYS=Object.keys(PERS);
 function persMul(h){const p=h&&PERS[h.pers]; if(!p)return {sp:1,ac:1,ag:1};
  return {sp:(p.spBond&&(h.bond||0)>=80?p.spBond:1), ac:p.ac||1, ag:(p.ag||1)*(p.agLow&&(h.bond||0)<50?p.agLow:1)*(p.agHigh&&(h.bond||0)>=80?p.agHigh:1)};}
 function persDecay(h){const p=h&&PERS[h.pers];return p&&p.decay?p.decay:1;}
+/* The ranch catalogue and level live up here, not with the build UI: the offline-decay
+   pass below runs while the module is still evaluating and reads the ranch level, and a
+   let declared six thousand lines later is a ReferenceError at that point (a returning
+   player saw the engine fail to load). */
+const DECOR_CAT={
+ haybale:{label:'Hay bale',emoji:'🌾',price:40,pts:4,prop:'haybale',r:0.7},
+ trough:{label:'Water trough',emoji:'💧',price:120,pts:10,prop:'trough',r:0.8},
+ barrel:{label:'Barrel',emoji:'🛢️',price:60,pts:5,prop:'barrel',r:0.5},
+ boulder:{label:'Boulder',emoji:'🪨',price:80,pts:6,prop:'boulder',r:1.0},
+ stump:{label:'Stump seat',emoji:'🪵',price:50,pts:4,prop:'stump',r:0.5},
+ fence:{label:'Fence section',emoji:'🚧',price:35,pts:3,r:0.5,len:3},
+ post:{label:'Hitching post',emoji:'🐎',price:70,pts:6,r:0.3},
+ planter:{label:'Flower planter',emoji:'🌸',price:90,pts:9,r:0.6},
+ lantern:{label:'Lantern post',emoji:'🏮',price:110,pts:10,r:0.25},
+ bench:{label:'Bench',emoji:'🪑',price:85,pts:7,r:0.7},
+ stand:{label:'Saddle stand',emoji:'🐴',price:95,pts:8,r:0.4},
+ sapling:{label:'Sapling',emoji:'🌳',price:65,pts:6,r:0.3},
+ sign:{label:'Ranch sign',emoji:'🪧',price:75,pts:6,r:0.3},
+ stall:{label:'Stable stall',emoji:'🏠',price:450,pts:40,r:2.2},
+};
+const RANCH_LEVELS=[0,60,160,320,560,900];
+const RANCH_PERKS={2:'Horses get hungry and thirsty 15% slower',3:'Horses earn 10% more XP',4:'Forage grows back 30% sooner',5:'Horses get hungry and thirsty 30% slower',6:'Horses earn 25% more XP'};
+function ranchPts(s){return (s.decor||[]).reduce((a,d)=>a+((DECOR_CAT[d.t]||{}).pts||0),0);}
+function ranchLevel(s){const p=ranchPts(s);let l=1;for(let i=1;i<RANCH_LEVELS.length;i++)if(p>=RANCH_LEVELS[i])l=i+1;return l;}
+let _ranchLvlCache=1;
+function ranchMul(k){const L=_ranchLvlCache; if(k==='decay')return L>=5?0.7:L>=2?0.85:1; if(k==='xp')return L>=6?1.25:L>=3?1.10:1; if(k==='forage')return L>=4?0.7:1; return 1;}
 function bondGain(h,x,kind){const p=h&&PERS[h.pers]; let m=1; if(p&&p[kind])m*=p[kind]; if(p&&p.bondLow&&(h.bond||0)<60)m*=p.bondLow; return Math.max(0,Math.round(x*m));}
 const MASTERY_UNLOCKS={2:'Tail colours',4:'Browband stud colours',6:'Sparkle trail at the gallop',8:'Stable badge 🎖️',9:'Bareback riding',10:'+10% XP for this breed'};
 const TAIL_COLS=[['#f4e6c5','Flaxen'],['#151515','Black'],['#d8dde3','Silver'],['#8a4a25','Chestnut'],['#e8b4c8','Rose'],['#3b6fd6','Lake blue']];
@@ -413,6 +439,7 @@ if(!save||!save.horses||!save.horses.length){
  try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}
 }
 const myHorses=save.horses;
+_ranchLvlCache=ranchLevel(save);   // the real level, so being away decays at the ranch's own rate
 if(myHorses.some(h=>!h.sxp||!h.gear)||!save.tack||save.keys==null){myHorses.forEach(ensureStats);save.tack=save.tack||[];if(save.keys==null)save.keys=1;try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}   // older saves: five stats, a tack locker and a welcome key
 tackInv=save.tack||[];
 let rideIdx=0;
@@ -6352,28 +6379,6 @@ function hidePanels(){['eventsPanel','carePanel','shopPanel','onlinePanel','lbPa
    solid to the horses, saved, and rebuilt when you come back. Every piece is worth builder
    points, and points raise the ranch level, which does real things: horses get hungry more
    slowly, XP comes faster, forage grows back sooner. Nothing here costs anything but coins. */
-const DECOR_CAT={
- haybale:{label:'Hay bale',emoji:'🌾',price:40,pts:4,prop:'haybale',r:0.7},
- trough:{label:'Water trough',emoji:'💧',price:120,pts:10,prop:'trough',r:0.8},
- barrel:{label:'Barrel',emoji:'🛢️',price:60,pts:5,prop:'barrel',r:0.5},
- boulder:{label:'Boulder',emoji:'🪨',price:80,pts:6,prop:'boulder',r:1.0},
- stump:{label:'Stump seat',emoji:'🪵',price:50,pts:4,prop:'stump',r:0.5},
- fence:{label:'Fence section',emoji:'🚧',price:35,pts:3,r:0.5,len:3},
- post:{label:'Hitching post',emoji:'🐎',price:70,pts:6,r:0.3},
- planter:{label:'Flower planter',emoji:'🌸',price:90,pts:9,r:0.6},
- lantern:{label:'Lantern post',emoji:'🏮',price:110,pts:10,r:0.25},
- bench:{label:'Bench',emoji:'🪑',price:85,pts:7,r:0.7},
- stand:{label:'Saddle stand',emoji:'🐴',price:95,pts:8,r:0.4},
- sapling:{label:'Sapling',emoji:'🌳',price:65,pts:6,r:0.3},
- sign:{label:'Ranch sign',emoji:'🪧',price:75,pts:6,r:0.3},
- stall:{label:'Stable stall',emoji:'🏠',price:450,pts:40,r:2.2},
-};
-const RANCH_LEVELS=[0,60,160,320,560,900];
-const RANCH_PERKS={2:'Horses get hungry and thirsty 15% slower',3:'Horses earn 10% more XP',4:'Forage grows back 30% sooner',5:'Horses get hungry and thirsty 30% slower',6:'Horses earn 25% more XP'};
-function ranchPts(s){return (s.decor||[]).reduce((a,d)=>a+((DECOR_CAT[d.t]||{}).pts||0),0);}
-function ranchLevel(s){const p=ranchPts(s);let l=1;for(let i=1;i<RANCH_LEVELS.length;i++)if(p>=RANCH_LEVELS[i])l=i+1;return l;}
-let _ranchLvlCache=1;
-function ranchMul(k){const L=_ranchLvlCache; if(k==='decay')return L>=5?0.7:L>=2?0.85:1; if(k==='xp')return L>=6?1.25:L>=3?1.10:1; if(k==='forage')return L>=4?0.7:1; return 1;}
 const decorObjs=[];   // {d, g, coll}
 function buildDecorMesh(t,forGhost){
  const c=DECOR_CAT[t]; const g=new THREE.Group();
