@@ -441,6 +441,7 @@ function addXp3D(n){
    h.xp-=50+h.level*50;
    h.level++;
    leveled=true;lvl=h.level;
+   addSP(s,2*h.level,'level');
    ensureStats(h);
    const st=STAT_KEYS[Math.floor(Math.random()*STAT_KEYS.length)];
    h.stats[st]=Math.min(10,h.stats[st]+1);
@@ -5862,18 +5863,57 @@ function cancelCourse(){
  $('courseHud').style.display='none';
  $('countdown').style.display='none';
 }
+/* Ribbons and the week. Every finish earns one to four ribbons: one for finishing, one for
+   two stars, one for three, one for a clean round. Four events are featured each week, two
+   over fences and two races, chosen from the calendar by the week number, and pay half as
+   much again; ribbons earned on them count toward four weekly prize tiers. Star Points are
+   the week's score for you and your club: a point a ribbon, two a level per level-up, the
+   new value of a stat when it rises, half the builder points of anything placed. They sit
+   on the club board beside the other milestones and reset on Monday like everything else. */
+function ensureWeek(s){
+ const wk=weekKey();
+ if(!s.weekly||s.weekly.week!==wk)s.weekly={week:wk,rib:{},claimed:{}};
+ if(!s.sp||s.sp.week!==wk){s.sp={week:wk,pts:0}; if(s.lbClaims)for(const k of Object.keys(s.lbClaims))if(k.startsWith('sp_'))delete s.lbClaims[k];}
+ s.ribbons=s.ribbons||{};
+}
+function addSP(s,n,why){ensureWeek(s); s.sp.pts+=n; s.sp.why=why;}
+function weeklyFeatured(){
+ const wk=weekKey(); let h=0; for(const ch of wk)h=(h*31+ch.charCodeAt(0))>>>0;
+ const jumps=EVENTS3.filter(e=>!e.race), races=EVENTS3.filter(e=>e.race);
+ const pick=(arr,seed,k)=>{const out=[],a=arr.slice(); let x=seed; while(out.length<k&&a.length){x=(x*1103515245+12345)>>>0; out.push(a.splice(x%a.length,1)[0]);} return out;};
+ return pick(jumps,h+1,2).concat(pick(races,h+7,2));
+}
+const WEEK_TIERS=[[4,{k:1,c:200}],[8,{k:2,g:2}],[12,{g:3,gear:'Rare'}],[16,{g:5,k:2,gear:'Epic'}]];
+function awardRibbons(ev,t,faults){
+ const par=ev.par||ev.n*9||40;
+ const stars=t<par?3:t<par*1.4?2:1;
+ const rib=1+(stars>=2?1:0)+(stars>=3?1:0)+((faults||0)===0?1:0);
+ let msg='',featured=false,newWeekly=0;
+ syncSave(s=>{
+  ensureWeek(s);
+  const prev=s.ribbons[ev.id]||0; s.ribbons[ev.id]=Math.max(prev,rib); s.ribbonTotal=(s.ribbonTotal||0)+rib;
+  featured=weeklyFeatured().some(f=>f.id===ev.id);
+  if(featured){const pw=s.weekly.rib[ev.id]||0; if(rib>pw){newWeekly=rib-pw; s.weekly.rib[ev.id]=rib;}}
+  addSP(s,rib,'ribbons');
+  if(featured&&newWeekly)addSP(s,newWeekly,'featured');
+  msg='🎀'.repeat(rib)+(rib>prev&&prev?' new best!':'')+(featured?' · featured this week':'');
+ });
+ return {rib,stars,featured,msg};
+}
 function finishCourse(){
  const c=course,ev=c.ev;
  const par=c.par||ev.n*9;
  const stars=c.t<par?'⭐⭐⭐':c.t<par*1.4?'⭐⭐':'⭐';
  let first=false;
  try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));first=!!(s&&!(s.trophies&&s.trophies[ev.id]));}catch(e){}
- addCoins(ev.reward);
+ const RB=awardRibbons(ev,c.t,c.faults||0);
+ const pay=RB.featured?Math.round(ev.reward*1.5):ev.reward;
+ addCoins(pay);
  addXp3D(Math.round(ev.reward/8));
  passAdd(50);
  if(first){addGems(1);syncSave(s=>{s.trophies=s.trophies||{};s.trophies[ev.id]=true;});}
  sChime();sGem();
- toast('🏆 '+ev.name+' — '+stars+' in '+c.t.toFixed(1)+'s! +'+ev.reward+'🪙'+(first?' +1💎':''));
+ toast('🏆 '+ev.name+' — '+stars+' in '+c.t.toFixed(1)+'s! +'+pay+'🪙'+(first?' +1💎':'')+' · '+RB.msg);
  if(net.client&&net.client.connected)netSendChat('🏆 finished '+ev.name+' in '+c.t.toFixed(1)+'s '+stars);
  let newBest=false;
  syncSave(s=>{
@@ -5893,15 +5933,29 @@ function openEvents(){
  let tr={};
  try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(s&&s.trophies)tr=s.trophies;}catch(e){}
  const lvl=(myHorses[rideIdx].level||1);
- p.innerHTML='<b style="font-size:16px">🏆 Basin Championship — ride the course before the clock!</b>'+
- EVENTS3.map((ev,i)=>{
-  const won=tr[ev.id],ok=lvl>=ev.lvl;
-  return '<div class="evrow">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b><span>'+ev.town+' · '+(ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps')+' · Lv '+ev.lvl+'</span>'+
-   (ok?'<button data-ev="'+i+'">'+(won?'Again':'Enter · '+ev.reward+'🪙')+'</button>':'<span style="flex:none">🔒</span>')+'</div>';
- }).join('')+'<div class="evrow"><span>Jump every numbered fence in order — follow the golden arrow!</span><button id="evClose">Close</button></div>';
+ const sv=freshSave()||{}; syncSave(x=>ensureWeek(x)); const sw=freshSave(); const wk=sw.weekly, rb=sw.ribbons||{}, feat=weeklyFeatured(), featIds=new Set(feat.map(f=>f.id));
+ const wkRib=Object.values(wk.rib).reduce((a,b)=>a+b,0);
+ let html='<b style="font-size:16px">🏆 Basin Championship — ride the course before the clock!</b>';
+ html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">📅 This week · '+wkRib+'/16 ribbons · ⭐ '+((sw.sp&&sw.sp.pts)||0)+' Star Points</b>'
+  +'<span style="width:100%;font-size:11px;color:#8c7a63">Four featured events, half as much again in coins. Ribbons on them fill the tiers; everything resets Monday.</span>'
+  +'<span style="width:100%;display:flex;gap:5px;flex-wrap:wrap">'+WEEK_TIERS.map((t,i)=>{const cl=wk.claimed[i]; const rw=(t[1].k?t[1].k+'🗝️ ':'')+(t[1].c?t[1].c+'🪙 ':'')+(t[1].g?t[1].g+'💎 ':'')+(t[1].gear?t[1].gear+' tack':'');
+    return cl?'<span style="font-size:11px;color:#8c7a63">✅ '+t[0]+'</span>':wkRib>=t[0]?'<button data-wk="'+i+'" style="font-size:11px;padding:3px 8px">Claim '+rw+' ('+t[0]+'🎀)</button>':'<span style="font-size:11px;color:#b8a98a">🔒 '+t[0]+'🎀 → '+rw+'</span>';}).join('')+'</span></div>';
+ html+=EVENTS3.map((ev,i)=>{
+  const won=tr[ev.id],ok=lvl>=ev.lvl, isF=featIds.has(ev.id), r=rb[ev.id]||0, wr=wk.rib[ev.id]||0;
+  return '<div class="evrow'+(isF?' done':'')+'">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b>'+(isF?' <span class="badge">FEATURED</span>':'')+'<span>'+ev.town+' · '+(ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps')+' · Lv '+ev.lvl+(r?' · '+'🎀'.repeat(r):'')+(isF&&wr<4?' · '+wr+'/4 this week':'')+'</span>'+
+   (ok?'<button data-ev="'+i+'">'+(won?'Again':'Enter · '+(isF?Math.round(ev.reward*1.5):ev.reward)+'🪙')+'</button>':'<span style="flex:none">🔒</span>')+'</div>';
+ }).join('')+'<div class="evrow"><span>Jump every numbered fence in order — follow the golden arrow! Ribbons: finish · two stars · three stars · a clean round.</span><button id="evClose">Close</button></div>';
+ p.innerHTML=html;
  p.style.display='flex';
  p.querySelectorAll('button[data-ev]').forEach(b=>{b.onclick=()=>startCourse(EVENTS3[+b.dataset.ev]);});
+ p.querySelectorAll('button[data-wk]').forEach(b=>{b.onclick=()=>claimWeekly(+b.dataset.wk);});
  $('evClose').onclick=()=>{p.style.display='none';};
+}
+function claimWeekly(i){
+ const t=WEEK_TIERS[i]; if(!t)return; let ok=false;
+ syncSave(s=>{ ensureWeek(s); const have=Object.values(s.weekly.rib).reduce((a,b)=>a+b,0); if(s.weekly.claimed[i]||have<t[0])return; s.weekly.claimed[i]=true;
+  const r=t[1]; if(r.c)s.coins+=r.c; if(r.g)s.gems+=r.g; if(r.k)s.keys=(s.keys||0)+r.k; if(r.gear){s.tack=s.tack||[];s.tack.push(genGear(r.gear));} ok=true; });
+ if(ok){refreshWallet();refreshTack();sGem();toast('📅 Weekly tier '+(i+1)+' claimed!');openEvents();openEvents();}
 }
 $('eventsBtn').onclick=openEvents;
 $('courseQuit').onclick=()=>cancelCourse();
@@ -6023,7 +6077,7 @@ function placeAt(x,z){
  const why=decorOk(t,x,z); if(why){toast('🚫 '+why);return false;}
  let ok=false,d=null;
  syncSave(sv=>{ sv.decor=sv.decor||[]; if(sv.decor.length>=80){toast('The ranch is full — remove something first.');return;} if(sv.coins<c.price){toast('Not enough coins — '+c.price+'🪙');return;}
-  sv.coins-=c.price; d={id:Math.random().toString(36).slice(2,8),t,x:+x.toFixed(2),z:+z.toFixed(2),ry:+build.rot.toFixed(3)}; sv.decor.push(d); ok=true; });
+  sv.coins-=c.price; d={id:Math.random().toString(36).slice(2,8),t,x:+x.toFixed(2),z:+z.toFixed(2),ry:+build.rot.toFixed(3)}; sv.decor.push(d); addSP(sv,Math.ceil(c.pts/2),'build'); ok=true; });
  if(!ok)return false;
  spawnDecor(d); refreshWallet(); sCoin();
  const sv=freshSave(); const L=ranchLevel(sv); if(L>_ranchLvlCache){_ranchLvlCache=L;sGem();toast('🏗️ Ranch level '+L+'! '+(RANCH_PERKS[L]||''));} else toast(c.emoji+' '+c.label+' placed · '+ranchPts(sv)+' builder points');
@@ -6149,7 +6203,7 @@ function careAct(k){
      h.sxp[sk]=(h.sxp[sk]||0)+f.sxp; let up=false;
      while(h.stats[sk]<cap&&h.sxp[sk]>=statNeed(h.stats[sk])){h.sxp[sk]-=statNeed(h.stats[sk]);h.stats[sk]++;up=true;}
      msg+=up?' · '+STAT_LBL[sk]+' → '+h.stats[sk]+'!':' · +'+f.sxp+' '+short+' XP';
-     if(up)statUp=sk;
+     if(up){statUp=sk;addSP(s,h.stats[sk],'stat');}
     }
    }
   }else if(k==='water'){
@@ -6932,8 +6986,11 @@ const MILES={
  shoes:{label:'🍀 Horseshoes',tiers:[[6,{c:200}],[12,{g:3}]]},
  horses:{label:'🐴 Herd size',tiers:[[3,{c:150}],[6,{g:2}],[10,{g:4}]]},
  bond:{label:'❤️ Best bond',tiers:[[60,{c:100}],[100,{g:2}]]},
+ sp:{label:'⭐ Star Points this week',tiers:[[100,{c:200,k:1}],[250,{g:2,k:1}],[500,{g:4,k:2,gear:'Rare'}]]},
 };
 function statVal(s,k){
+ if(k==='sp')return (s.sp&&s.sp.week===weekKey())?(s.sp.pts||0):0;
+ if(k==='ribbons')return s.ribbonTotal||0;
  if(k==='trophies')return Object.keys(s.trophies||{}).length;
  if(k==='shoes')return ((s.stats&&s.stats.shoesFound)||0)+Object.keys(s.shoes3d||{}).length;
  if(k==='horses')return s.horses.length;
@@ -6990,7 +7047,7 @@ function openLB(){
   html+='<span style="width:100%;display:flex;gap:5px;flex-wrap:wrap">'+MILES[k].tiers.map((t,i)=>{
    const key=k+'_'+i;
    const claimed=s.lbClaims&&s.lbClaims[key];
-   const rwd=t[1].c?t[1].c+'🪙':t[1].g+'💎';
+   const rwd=(t[1].c?t[1].c+'🪙':'')+(t[1].g?t[1].g+'💎':'')+(t[1].k?t[1].k+'🗝️':'')+(t[1].gear?t[1].gear+' tack':'');
    if(claimed)return '<span style="font-size:11px;color:#8c7a63">✅'+t[0]+'</span>';
    if(me>=t[0])return '<button data-claim="'+key+'" style="font-size:11px;padding:3px 8px">Claim '+rwd+' ('+t[0]+')</button>';
    return '<span style="font-size:11px;color:#b8a98a">🔒'+t[0]+' → '+rwd+'</span>';
@@ -7021,6 +7078,7 @@ function openLB(){
     if(r.c)sv.coins+=r.c;
     if(r.g)sv.gems+=r.g;
     if(r.k)sv.keys=(sv.keys||0)+r.k;
+    if(r.gear){sv.tack=sv.tack||[];sv.tack.push(genGear(r.gear));}
     ok=true;
    });
    if(ok){
@@ -7307,6 +7365,8 @@ const ACHS=[
  {id:'story8',icon:'📜',label:"Grandpa Wren's pride",desc:'Finish the story missions',v:s=>(s.story&&s.story.idx)||0,goal:8,r:{c:400}},
  {id:'book2',icon:'🪶',label:'The Silver Kestrel',desc:'Finish book two of the story',v:s=>(s.story&&s.story.idx)||0,goal:29,r:{g:5,k:2}},
  {id:'build3',icon:'🏗️',label:'Home improvements',desc:'Reach ranch level 3',v:s=>ranchLevel(s),goal:3,r:{c:300,k:1}},
+ {id:'rib20',icon:'🎀',label:'Ribbon wall',desc:'Earn 20 ribbons',v:s=>s.ribbonTotal||0,goal:20,r:{c:400,k:1}},
+ {id:'rib60',icon:'🎀',label:'Ribbon hall',desc:'Earn 60 ribbons',v:s=>s.ribbonTotal||0,goal:60,r:{g:3,k:2}},
  {id:'build6',icon:'🏡',label:'Dream ranch',desc:'Reach ranch level 6',v:s=>ranchLevel(s),goal:6,r:{g:4,k:2}},
  {id:'bond100',icon:'❤️',label:'Soulmates',desc:'Reach 100 bond with a horse',v:s=>Math.round(s.horses.reduce((m,h)=>Math.max(m,h.bond||0),0)),goal:100,r:{g:1}},
  {id:'lvl5',icon:'⭐',label:'Rising star',desc:'Train a horse to level 5',v:s=>s.horses.reduce((m,h)=>Math.max(m,h.level||1),1),goal:5,r:{c:200}},
@@ -7808,6 +7868,7 @@ function trainXp(n){
    ensureStats(h);
    const k=STAT_KEYS[Math.floor(Math.random()*STAT_KEYS.length)];
    h.stats[k]=Math.min(10,h.stats[k]+1);
+   addSP(s,2*h.level,'level');
    lev=true;
   }
   if(local){local.level=h.level;local.xp=h.xp;}
