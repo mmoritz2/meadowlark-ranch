@@ -72,6 +72,9 @@ body.touch #stickZone{display:block}
 #bigmap{border:4px solid #e3cf9f;border-radius:20px;box-shadow:0 16px 50px rgba(0,0,0,0.4);max-width:92vw;max-height:86vh}
 #courseHud{position:fixed;top:54px;left:50%;transform:translateX(-50%);z-index:7;background:rgba(60,45,25,0.9);color:#fff8ea;padding:9px 14px;border-radius:999px;font-weight:700;font-size:15px;display:flex;gap:10px;align-items:center}
 #courseHud button{padding:2px 9px;border-radius:10px;font-size:13px}
+#stamWrap{position:fixed;top:98px;left:50%;transform:translateX(-50%);z-index:7;width:150px;height:9px;border-radius:6px;background:rgba(60,45,25,0.55);border:1.5px solid rgba(255,248,234,0.7);display:none;overflow:hidden}
+#stamFill{height:100%;width:100%;background:#7fd07a;border-radius:6px;transition:width .12s linear}
+#stamWrap.blown #stamFill{background:#e06a5a}
 #countdown{position:fixed;top:38%;left:50%;transform:translate(-50%,-50%);z-index:8;font-size:84px;font-weight:900;color:#fff8ea;text-shadow:0 4px 18px rgba(40,25,5,0.6);display:none}
 #eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel,#buildPanel{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9;background:#fffdf7;border:3px solid #e3cf9f;border-radius:18px;padding:14px;display:none;flex-direction:column;gap:7px;max-height:70vh;overflow:auto;width:min(440px,92vw);color:#4a3526}
 #buildHud{display:none;position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:9;background:rgba(255,253,247,0.94);border:2px solid #e3cf9f;border-radius:14px;padding:8px 12px;color:#4a3526;font-weight:600;font-size:13px;box-shadow:0 8px 24px rgba(60,40,10,0.22);max-width:94vw;text-align:center}
@@ -161,6 +164,7 @@ button:active{transform:scale(.95)}
 <canvas id="mini" width="140" height="140" title="Open the world map (M)"></canvas>
 <div id="bigmapWrap"><div style="display:flex;flex-direction:column;align-items:center"><canvas id="bigmap" width="560" height="560"></canvas><div id="ftBar"></div></div></div>
 <div id="courseHud" style="display:none"><span id="courseHudTxt"></span><button id="courseQuit">✖</button></div>
+<div id="stamWrap" title="Stamina — a gallop uses it, a walk or a halt brings it back"><div id="stamFill"></div></div>
 <div id="countdown"></div>
 <div id="eventsPanel"></div>
 <div id="carePanel"></div>
@@ -5797,6 +5801,7 @@ arrow.visible=false;
 scene.add(arrow);
 function startCourse(ev){
  cancelCourse();
+ player.stam=1; player.blown=false; player.boostT=0;
  const jumps3=[];
  let par;
  if(ev.race){
@@ -5815,6 +5820,12 @@ function startCourse(ev){
    jumps3.push({x:p[0],z:p[1],rotY,g:made.g,ring:made.ring,prevSide:0});
   });
   par=len/7.2;
+  /* Pickups along each leg: a boost, time back, or a second wind, in turn. */
+  var raceItems=[]; const kinds=Object.keys(RACE_ITEMS);
+  pts.forEach((p,i)=>{ const nx=pts[(i+1)%pts.length];
+   [0.42,0.72].forEach((f,k)=>{ const x=p[0]+(nx[0]-p[0])*f, z=p[1]+(nx[1]-p[1])*f, type=kinds[(i*2+k)%kinds.length];
+    const m=new THREE.Mesh(new THREE.OctahedronGeometry(0.42,0),new THREE.MeshStandardMaterial({color:RACE_ITEMS[type].col,emissive:RACE_ITEMS[type].col,emissiveIntensity:0.7,roughness:0.3,flatShading:true}));
+    m.position.set(x,groundH(x,z)+1.2,z); scene.add(m); raceItems.push({x,z,type,m}); }); });
  }else{
   const N=ev.n;
   const cx=2,cz=1,A=Math.min(17,11+N*0.6),B=Math.min(13,8+N*0.5);
@@ -5838,7 +5849,7 @@ function startCourse(ev){
   }
   par=N*9;
  }
- course={ev,jumps:jumps3,idx:0,t:0,cd:3.6,started:false,faults:0,race:!!ev.race,par};
+ course={items:(typeof raceItems!=='undefined'&&raceItems)||[],ev,jumps:jumps3,idx:0,t:0,cd:3.6,started:false,faults:0,race:!!ev.race,par};
  setPracticeJumps(false);        // clear the arena so only the numbered course is standing
  $('eventsPanel').style.display='none';
  $('courseHud').style.display='flex';
@@ -5846,6 +5857,7 @@ function startCourse(ev){
  if(net.client&&net.client.connected)netSendChat('🏁 started '+ev.name+' — join from 🏆 Events and race me!');
 }
 function cancelCourse(){
+ if(course&&course.items){for(const it of course.items)scene.remove(it.m);}
  if(!course)return;
  /* Course fences are built fresh per event and were only unparented, so every event
     entered, quit or replayed leaked its geometries and its numbered-sign canvas texture.
@@ -5900,6 +5912,14 @@ function awardRibbons(ev,t,faults){
  });
  return {rib,stars,featured,msg};
 }
+/* Judging a fence. An inspiring jump is one met near the top of the arc, and it gives time
+   back; a fence taken without lining up through the approach box in front of it is off the
+   line and costs a second. Both are decided here so the course code stays a crossing test. */
+function judgeJump(j,y){
+ const insp=y>0.85&&y<1.7, offline=!j.approached;
+ return {insp,offline,dt:(insp?-0.8:0)+(offline?1.0:0)};
+}
+const RACE_ITEMS={boost:{col:0xff9a3a,label:'🥕 Boost!',fx:()=>{player.boostT=3;player.stam=Math.min(1,player.stam+0.3);}},time:{col:0x6fd0ff,label:'⏱️ −1.5 s',fx:()=>{if(course)course.t=Math.max(0,course.t-1.5);}},clover:{col:0x7fe08a,label:'🍀 Second wind',fx:()=>{player.stam=1;player.blown=false;}}};
 function finishCourse(){
  const c=course,ev=c.ev;
  const par=c.par||ev.n*9;
@@ -5913,7 +5933,8 @@ function finishCourse(){
  passAdd(50);
  if(first){addGems(1);syncSave(s=>{s.trophies=s.trophies||{};s.trophies[ev.id]=true;});}
  sChime();sGem();
- toast('🏆 '+ev.name+' — '+stars+' in '+c.t.toFixed(1)+'s! +'+pay+'🪙'+(first?' +1💎':'')+' · '+RB.msg);
+ toast('🏆 '+ev.name+' — '+stars+' in '+c.t.toFixed(1)+'s! +'+pay+'🪙'+(first?' +1💎':'')+' · '+RB.msg+(c.insp?' · ✨×'+c.insp:'')+(c.off?' · ↪️×'+c.off:''));
+ if(c.insp)syncSave(s=>addSP(s,c.insp,'inspiring'));
  if(net.client&&net.client.connected)netSendChat('🏆 finished '+ev.name+' in '+c.t.toFixed(1)+'s '+stars);
  let newBest=false;
  syncSave(s=>{
@@ -8034,6 +8055,17 @@ function tick(){
  const inVR=renderer.xr.isPresenting;
  if((inVR||touch.analog)&&target>0&&touch.goA>0)target*=0.34+0.66*touch.goA;   // stick or reins: ease out of a walk
  if(touch.brake){target=0;}                       // reins drawn back into your chest = whoa
+ /* Stamina. A gallop spends it, at a rate the stamina stat sets: a stamina-3 horse holds a
+    full gallop about twenty seconds, a stamina-10 horse nearly forty. A walk brings it back,
+    a halt faster. Blown, the horse will not gallop until it has some back. Race pickups and
+    a good horse's stat are the two ways to keep it. */
+ if(player.stam==null)player.stam=1;
+ if(gallop&&fwd&&!player.flying&&Math.abs(player.speed)>6.5)player.stam=Math.max(0,player.stam-dt*0.045*(1-0.06*((HS.stamina||3)-3)));
+ else player.stam=Math.min(1,player.stam+dt*(Math.abs(player.speed)<0.5?0.12:Math.abs(player.speed)<3?0.07:0.035));
+ if(player.stam<=0.12)player.blown=true; if(player.blown&&player.stam>0.35)player.blown=false;
+ if(player.blown&&target>5.5)target=5.5;
+ if(player.boostT>0){player.boostT-=dt;target*=1.22;}
+ {const sw=$('stamWrap'); if(sw){const show=(course&&course.started)||player.stam<0.98||player.blown; sw.style.display=show?'block':'none'; if(show){$('stamFill').style.width=Math.round(player.stam*100)+'%'; sw.classList.toggle('blown',!!player.blown);}}}
  const accel=target>player.speed?1.7*acMul:(touch.brake?5.2:2.8);
  player.speed+=(target-player.speed)*Math.min(1,dt*accel);
  if(Math.abs(player.speed)<0.05&&!fwd&&!back)player.speed=0;
@@ -8812,6 +8844,9 @@ function tick(){
   }else{
    course.t+=dt;
    const j=course.jumps[course.idx];
+   if(course.race&&course.items){
+    for(const it of course.items){ if(!it.m.visible)continue; it.m.rotation.y+=dt*3; if(Math.hypot(player.pos.x-it.x,player.pos.z-it.z)<2.4){ it.m.visible=false; RACE_ITEMS[it.type].fx(); sCoin(); toast(RACE_ITEMS[it.type].label); } }
+   }
    if(j&&course.race){
     if(Math.hypot(player.pos.x-j.x,player.pos.z-j.z)<4.6){
      j.ring.material.color.set(0x69db7c);
@@ -8824,8 +8859,12 @@ function tick(){
     const along=lx*Math.cos(j.rotY)-lz*Math.sin(j.rotY);
     const across=lx*Math.sin(j.rotY)+lz*Math.cos(j.rotY);
     const side=across>0?1:-1;
+    if(Math.abs(across)>2&&Math.abs(across)<9&&Math.abs(along)<2.6)j.approached=true;   // lined up in front of the fence: riders cross along the across axis, the rails run along the along axis
     if(j.prevSide!==0&&side!==j.prevSide&&Math.abs(along)<1.8&&Math.abs(across)<1.3){
      if(player.y>0.4){
+      const JJ=judgeJump(j,player.y); course.t=Math.max(0,course.t+JJ.dt);
+      if(JJ.insp){course.insp=(course.insp||0)+1;passAdd(2);toast('✨ Inspiring jump! −0.8 s');}
+      if(JJ.offline){course.off=(course.off||0)+1;toast('↪️ Off the line — +1 s');}
       course.idx++;
       sChime();
       statBump('jumps',1);
