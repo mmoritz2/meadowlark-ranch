@@ -295,6 +295,7 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
 /* ================= save sync with the 2D game ================= */
 const SAVE_KEY='starRanchFable_v1';   // NOT renamed with the game: changing this orphans every existing save
@@ -1735,15 +1736,34 @@ function applyQuality(q){
  if(grassInst)grassInst.count=q==='low'?6200:9500;
  if(cloudList)cloudList.forEach((c,i)=>{c.visible=q==='low'?i%2===0:true;});
  if(seedTreeInsts)seedTreeInsts.forEach(m=>{m.count=q==='low'?Math.ceil(m.userData.fullCount*0.55):m.userData.fullCount;});
+ scene.traverse(o=>{if(o.isInstancedMesh&&o.name&&o.name.startsWith('foliage_'))o.castShadow=q==='high';});
  const qb=$('qualBtn');
  if(qb)qb.title=QUAL_LABEL[q];
 }
 applyQuality(quality);
+/* Frame-time watchdog. A machine that cannot hold the tier it started on gets stepped down
+   one tier at a time, with a toast, and the choice sticks for next time. Judged on real
+   frame intervals over two-second windows, so a display that simply refreshes slowly
+   (Remote Desktop at 32 Hz, a 30 Hz TV) never trips it; only frames past 45 ms do. A tier
+   the player picked by hand is left alone. */
+let fwLast=0,fwAcc=0,fwN=0,fwBad=0,fwNext=14;
+function frameWatch(t){
+ const now=performance.now(); const raw=fwLast?now-fwLast:0; fwLast=now;
+ if(t<fwNext||!raw||raw>500||renderer.xr.isPresenting||document.hidden)return;
+ fwAcc+=raw; fwN++; if(fwAcc<2000)return;
+ const avg=fwAcc/fwN; fwAcc=0; fwN=0;
+ fwBad=avg>45?fwBad+1:0; if(fwBad<2)return;
+ fwBad=0; fwNext=t+20;
+ const sv=freshSave(); if(sv&&sv.qualityLocked)return;
+ const next=quality==='high'?'medium':quality==='medium'?'low':null; if(!next)return;
+ applyQuality(next); syncSave(x=>{x.quality=next;});
+ try{toast('🎚️ Graphics set to '+(next==='medium'?'Medium':'Low')+' for a smoother ride · tap 🎚️ to change');}catch(e){}
+}
 $('qualBtn').onclick=()=>{
  const order=['high','medium','low'];
  const q=order[(order.indexOf(quality)+1)%order.length];
  applyQuality(q);
- syncSave(s=>{s.quality=q;});
+ syncSave(s=>{s.quality=q;s.qualityLocked=true;});
  try{toast(QUAL_LABEL[q]);}catch(e){}
 };
 
@@ -2266,6 +2286,33 @@ function coatMat(hex){
  coatCache[hex].envMapIntensity=0.58;
  applyCoatDetail(coatCache[hex]);
  return coatCache[hex];
+}
+/* Static merging. The cheap trees, the bushes and the lavender are built from many small
+   meshes that never move, and every one of them was its own draw call, twice a frame once
+   the shadow pass is counted. Groups registered here are baked into one mesh per material
+   after the world is built, which turns a few hundred draw calls into a dozen. */
+const STATIC_MERGE=[];
+function mergeStatics(){
+ const byMat=new Map(); let meshes=0;
+ for(const g of STATIC_MERGE){
+  g.updateMatrixWorld(true);
+  g.traverse(o=>{
+   if(!o.isMesh||o.isSkinnedMesh||o.isInstancedMesh||Array.isArray(o.material))return;
+   const geo=o.geometry; if(!geo.index||!geo.attributes.normal||!geo.attributes.uv)return;
+   const c=geo.clone().applyMatrix4(o.matrixWorld);
+   for(const k of Object.keys(c.attributes))if(k!=='position'&&k!=='normal'&&k!=='uv')c.deleteAttribute(k);
+   const e=byMat.get(o.material)||{list:[],cast:false,recv:false};
+   e.list.push(c); e.cast=e.cast||o.castShadow; e.recv=e.recv||o.receiveShadow; byMat.set(o.material,e); meshes++;
+  });
+ }
+ let draws=0;
+ for(const [mat,e] of byMat){
+  const merged=mergeGeometries(e.list,false); e.list.forEach(c=>c.dispose()); if(!merged)continue;
+  const m=new THREE.Mesh(merged,mat); m.name='static_merged'; m.castShadow=e.cast; m.receiveShadow=e.recv; scene.add(m); draws++;
+ }
+ for(const g of STATIC_MERGE)if(g.parent)g.parent.remove(g);
+ STATIC_MERGE.length=0;
+ return {meshes,draws};
 }
 const SPH=new THREE.SphereGeometry(1,18,14);
 function blob(sx,sy,sz,c,x,y,z,parent){
@@ -3329,7 +3376,7 @@ function placeFoliage(name){
   PROP_SRC[name]={geo,mat,minY,h};
   const inst=new THREE.InstancedMesh(geo,mat,list.length);
   inst.name='foliage_'+name;
-  inst.castShadow=true; inst.receiveShadow=true; inst.frustumCulled=false;
+  inst.castShadow=quality==='high'; inst.receiveShadow=true; inst.frustumCulled=false;   // prop shadows are a High-only cost: 2.5M triangles a frame
   const m=new THREE.Matrix4(),q=new THREE.Quaternion(),p=new THREE.Vector3(),sc=new THREE.Vector3();
   list.forEach((tp,i)=>{
    const s=tp.s*FOLIAGE_H[name]/h;
@@ -3374,7 +3421,7 @@ function lavender(x,z){
   blob(0.07,0.16,0.07,'#8a6fd1',Math.cos(a)*0.3,0.85,Math.sin(a)*0.3,b);
  }
  b.position.set(x,groundH(x,z),z);
- scene.add(b);
+ scene.add(b); STATIC_MERGE.push(b);
 }
 for(let i=0;i<6;i++)lavender(-19+i*7.5,21.4);
 lavender(-12,-17.5);lavender(-20.5,-17.5);
@@ -3793,7 +3840,7 @@ function cheapTree(x,z,s){
  }
  t.position.set(x,groundH(x,z),z);
  t.scale.setScalar(s);
- scene.add(t);
+ scene.add(t); STATIC_MERGE.push(t);
  colliders.push({x,z,r:0.55});
 }
 for(let g=0;g<8;g++){
@@ -3816,7 +3863,7 @@ for(let i=0;i<24;i++){
  blob(0.5,0.4,0.5,'#5d9e4f',0.4,0.45,0.2,b);
  blob(0.4,0.35,0.4,'#447a36',-0.4,0.4,-0.2,b);
  b.position.set(x,groundH(x,z),z);
- scene.add(b);
+ scene.add(b); STATIC_MERGE.push(b);
 }
 const gltfBirds=[];
 /* === Generated rigged horse as the player mount ===
@@ -8626,6 +8673,7 @@ function startHints(){
 function tick(){
  const dt=Math.min(0.05,clock.getDelta());
  const t=clock.elapsedTime;
+ frameWatch(t);
  if(renderer.xr.isPresenting)pollVR();
  const fwd=keys.KeyW||keys.ArrowUp||touch.go;
  const back=keys.KeyS||keys.ArrowDown;
@@ -9612,6 +9660,7 @@ window.render_game_to_text=()=>JSON.stringify({
  wallet:{coins,gems},
  weather:weather.mode
 });
+const MERGE_STATS=mergeStatics();
 renderer.setAnimationLoop(tick);   // drives rAF when flat, the XR frame loop when presenting
 addEventListener('resize',()=>{
  if(renderer.xr.isPresenting)return;   // the headset owns the framebuffer while presenting
