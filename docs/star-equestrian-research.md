@@ -54,7 +54,8 @@ you can actually use, and whose horses feel different from each other.
 ## The backlog, in build order
 
 Each item ships on its own commit, verified in a headless capture and a console check
-before it goes live.
+before it goes live. **All nine shipped on 4 September 2026** (commits `70e4218` through the
+trail-rides commit); what is left of the study is in the round-two list at the end.
 
 1. **Five-stat horses and stat food.** Acceleration and agility join speed, stamina and
    jump. Each stat levels on its own from food, capped by horse level; breed sets the
@@ -87,3 +88,9 @@ before it goes live.
 - The Mane Quest, developer interview: https://www.themanequest.com/blog/2023/3/29/we-wanted-to-build-a-horse-game-that-people-could-be-passionate-about-the-inspirations-research-and-future-plans-behind-star-equestrian
 - The Mane Quest, PC release recap: https://www.themanequest.com/blog/2024/2/16/horse-game-updates-recap-star-equestrian-on-pc-new-breeds-in-rival-stars-and-dlcs-for-horse-tales-emerald-valley-ranch
 - Star Equestrian Wiki (Fandom): Horse Stats, Horse Feed, Feeding XP, Tack, Legendary, Mastery, Horse Personalities, Ranches, Family Ranch, Club Leaderboards, Leaderboard, Market, Royal Stable, Friesian Pegasus, Fish, collectibles pages. https://star-equestrian.fandom.com/
+
+## Round two
+
+Still on the table from the study: a dressage test (figures and gaits at the arena letters), a
+Western saddle, rider customisation beyond coat and breeches colours, spectating, and coat
+markings that inherit. Dressage and the Western saddle are next.

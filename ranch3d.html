@@ -72,6 +72,9 @@ body.touch #stickZone{display:block}
 #bigmap{border:4px solid #e3cf9f;border-radius:20px;box-shadow:0 16px 50px rgba(0,0,0,0.4);max-width:92vw;max-height:86vh}
 #courseHud{position:fixed;top:54px;left:50%;transform:translateX(-50%);z-index:7;background:rgba(60,45,25,0.9);color:#fff8ea;padding:9px 14px;border-radius:999px;font-weight:700;font-size:15px;display:flex;gap:10px;align-items:center}
 #courseHud button{padding:2px 9px;border-radius:10px;font-size:13px}
+body.freecam #hud,body.freecam #hint,body.freecam #questTrack,body.freecam #mini,body.freecam #ctx,body.freecam #statusCard,body.freecam #stamWrap,body.freecam #touch,body.freecam #stickZone,body.freecam #chatFeed,body.freecam #tameHud{display:none!important}
+#fcHint{display:none;position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:9;background:rgba(60,45,25,0.72);color:#fff8ea;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600}
+body.freecam #fcHint{display:block}
 #stamWrap{position:fixed;top:98px;left:50%;transform:translateX(-50%);z-index:7;width:150px;height:9px;border-radius:6px;background:rgba(60,45,25,0.55);border:1.5px solid rgba(255,248,234,0.7);display:none;overflow:hidden}
 #stamFill{height:100%;width:100%;background:#7fd07a;border-radius:6px;transition:width .12s linear}
 #stamWrap.blown #stamFill{background:#e06a5a}
@@ -165,6 +168,7 @@ button:active{transform:scale(.95)}
 <div id="bigmapWrap"><div style="display:flex;flex-direction:column;align-items:center"><canvas id="bigmap" width="560" height="560"></canvas><div id="ftBar"></div></div></div>
 <div id="courseHud" style="display:none"><span id="courseHudTxt"></span><button id="courseQuit">✖</button></div>
 <div id="stamWrap" title="Stamina — a gallop uses it, a walk or a halt brings it back"><div id="stamFill"></div></div>
+<div id="fcHint">📷 Free camera · W A S D move · Q E down/up · Shift fast · drag to look · P photo · C back to the saddle</div>
 <div id="countdown"></div>
 <div id="eventsPanel"></div>
 <div id="carePanel"></div>
@@ -5629,7 +5633,9 @@ const keys={};
 window._k=keys;window._player=player;window._herd=()=>herd;
 window._mh=cfg=>{const p=makeHorse(cfg||{colors:{body:'#f2f5fb',mane:'#dfe7f4'},wings:true,seed:9});scene.add(p.group);return p;};
 addEventListener('keydown',e=>{
- if(/^Digit[1-5]$/.test(e.code||'')&&!e.repeat&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){horseEmote(['rear','bow','liedown','nuzzle','toss'][+e.code[5]-1]);}
+ if(e.code==='KeyC'&&!e.repeat&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){toggleFreeCam();}
+ if(freeCam&&e.code==='Escape'){toggleFreeCam();}
+ if(/^Digit[1-5]$/.test(e.code||'')&&!e.repeat&&!freeCam&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){horseEmote(['rear','bow','liedown','nuzzle','toss'][+e.code[5]-1]);}
  if(build.type||build.remove){ if(e.code==='Escape'){endBuild();return;} if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} if(e.code==='KeyQ'){build.rot-=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} }
  if(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='SELECT'))return;
  keys[e.code]=true;
@@ -5749,6 +5755,7 @@ renderer.domElement.addEventListener('pointerdown',e=>{
 });
 addEventListener('pointermove',e=>{
  if(!camDrag||e.pointerId!==camDrag.id)return;
+ if(freeCam){freeCam.yaw-=(e.clientX-camDrag.x)*0.004;freeCam.pitch=THREE.MathUtils.clamp(freeCam.pitch-(e.clientY-camDrag.y)*0.004,-1.4,1.4);camDrag.x=e.clientX;camDrag.y=e.clientY;return;}
  camYaw-=(e.clientX-camDrag.x)*0.006;
  camPitch=THREE.MathUtils.clamp(camPitch+(e.clientY-camDrag.y)*0.004,0.06,1.0);
  camDrag.x=e.clientX;camDrag.y=e.clientY;
@@ -6151,6 +6158,122 @@ addEventListener('pointerup',e=>{ const dn=build.down; build.down=null; if(!dn||
  if(build.type){ const pt=groundPoint(e.clientX,e.clientY); if(pt)placeAt(pt.x,pt.z); } });
 $('buildBtn').onclick=openBuild;
 setTimeout(rebuildDecor,4000);
+/* ===== Riding together, and a camera of your own =====
+   A free camera for photographs: the ride stops, the HUD goes, and the camera is yours to
+   fly. Trail rides: a route of named stops, ridden stop to stop behind the golden arrow,
+   announced to the club so friends can ride the same one. Ranch parties: a banner, confetti
+   for a minute and a half, and a gift for everyone who rides over while it lasts. And on
+   weekends the Runaway Roundup: three of Otto's horses loose in the Basin, calmed by
+   standing quietly beside them and led home to the pasture. */
+let freeCam=null;
+function toggleFreeCam(){
+ if(renderer.xr.isPresenting)return;
+ if(freeCam){freeCam=null;document.body.classList.remove('freecam');return;}
+ const d=new THREE.Vector3(); camera.getWorldDirection(d);
+ freeCam={pos:camera.position.clone(),yaw:Math.atan2(d.x,d.z),pitch:Math.asin(THREE.MathUtils.clamp(d.y,-1,1))};
+ document.body.classList.add('freecam'); toast('📷 Free camera — C to come back');
+}
+function tickFreeCam(dt){
+ if(!freeCam)return;
+ const f=freeCam, spd=(keys.ShiftLeft||keys.ShiftRight?24:9)*dt;
+ const dir=new THREE.Vector3(Math.cos(f.pitch)*Math.sin(f.yaw),Math.sin(f.pitch),Math.cos(f.pitch)*Math.cos(f.yaw));
+ const right=new THREE.Vector3(Math.cos(f.yaw),0,-Math.sin(f.yaw));
+ const mv=((keys.KeyW||keys.ArrowUp)?1:0)-((keys.KeyS||keys.ArrowDown)?1:0), st=((keys.KeyD||keys.ArrowRight)?1:0)-((keys.KeyA||keys.ArrowLeft)?1:0), up=(keys.KeyE?1:0)-(keys.KeyQ?1:0);
+ f.pos.addScaledVector(dir,mv*spd).addScaledVector(right,st*spd); f.pos.y+=up*spd;
+ f.pos.y=Math.max(groundH(f.pos.x,f.pos.z)+0.4,f.pos.y);
+ camera.position.copy(f.pos); camera.lookAt(f.pos.x+dir.x,f.pos.y+dir.y,f.pos.z+dir.z);
+}
+const TRAIL_STOPS=[['🏠 Ranch',0,5],['🌊 Loon Lake',20,16],['🐴 Pasture',-70,-10],['🌲 Pines',-30,-58],['🏘️ Cottonwood',47,-50],['🌉 River bridge',0,118],['🌾 Barleyfold',220,-110],['🤠 Coyote Canyon',-220,130],['🏔️ Hollowpeak',-160,-210]];
+let trailRide=null, trailDraft=[], trailOffer=null;
+function startTrail(pts,by){
+ if(!pts||pts.length<2)return false;
+ trailRide={pts:pts.map(p=>p.slice()),idx:0,by:by||myName(),t:0}; trailOffer=null;
+ toast('🥾 Trail ride: '+pts.map(p=>p[0]).join(' → ')+' — follow the golden arrow'); sChime(); return true;
+}
+function announceTrail(pts){
+ if(net.client&&net.club){try{net.client.publish('srf1/'+net.club+'/chat',JSON.stringify({id:net.id,n:myName(),t:'🥾 started a trail ride: '+pts.map(p=>p[0]).join(' → '),tr:pts}));}catch(e){}}
+}
+function tickTrail(dt){
+ if(!trailRide||course)return;
+ const p=trailRide.pts[trailRide.idx]; trailRide.t+=dt;
+ arrow.visible=true; arrow.position.set(p[1],groundH(p[1],p[2])+3.2+Math.sin(trailRide.t*4)*0.18,p[2]);
+ if(Math.hypot(player.pos.x-p[1],player.pos.z-p[2])<12){
+  trailRide.idx++; sCoin();
+  if(trailRide.idx>=trailRide.pts.length){
+   const stops=trailRide.pts.length, pay=40*stops;
+   addCoins(pay); passAdd(30); syncSave(sv=>{addSP(sv,3,'trail'); sv.stats=sv.stats||{}; sv.stats.trails=(sv.stats.trails||0)+1;});
+   toast('🥾 Trail ride done! '+stops+' stops · +'+pay+'🪙 +30🎟️'); sGem(); dailyEvt('trail',1);
+   trailRide=null; arrow.visible=false;
+  }else toast('🥾 '+p[0]+' ✓ · next: '+trailRide.pts[trailRide.idx][0]);
+ }
+}
+let party=null, partyFX=null, partyBanner=null;
+function startParty(host,remote){
+ party={t:90,host:host||myName(),got:false,x:0,z:5};
+ if(!partyFX){
+  partyFX=new THREE.InstancedMesh(new THREE.BoxGeometry(0.18,0.04,0.12),new THREE.MeshBasicMaterial({vertexColors:false}),160);
+  partyFX.userData.p=[]; const m4=new THREE.Matrix4(), col=new THREE.Color();
+  for(let i=0;i<160;i++){ partyFX.userData.p.push({x:(Math.random()-0.5)*34,y:2+Math.random()*9,z:5+(Math.random()-0.5)*30,vy:-(0.6+Math.random()*0.8),r:Math.random()*6}); partyFX.setColorAt(i,col.setHSL(Math.random(),0.85,0.6)); }
+  partyFX.instanceColor.needsUpdate=true; partyFX.frustumCulled=false; scene.add(partyFX);
+  partyBanner=nameSprite('🎉 Party!'); partyBanner.scale.set(4.2,1.05,1); scene.add(partyBanner);
+ }
+ partyFX.visible=true; partyBanner.visible=true; partyBanner.position.set(0,groundH(0,5)+5.5,5);
+ if(!remote){ if(net.client&&net.club){try{net.client.publish('srf1/'+net.club+'/chat',JSON.stringify({id:net.id,n:myName(),t:'🎉 is throwing a ranch party — ride to the ranch!',party:1}));}catch(e){}} syncSave(sv=>{sv.stats=sv.stats||{};sv.stats.parties=(sv.stats.parties||0)+1;}); }
+ toast('🎉 '+(remote?host+' is throwing a ranch party — ride to the ranch!':'Ranch party! Everyone at the ranch in the next minute and a half gets a gift.'));
+}
+function tickParty(dt){
+ if(!party)return;
+ party.t-=dt;
+ if(partyFX){const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),v=new THREE.Vector3(),sc=new THREE.Vector3(1,1,1),e=new THREE.Euler();
+  partyFX.userData.p.forEach((c,i)=>{ c.y+=c.vy*dt; c.r+=dt*3; if(c.y<groundH(c.x,c.z)+0.05){c.y=groundH(c.x,c.z)+9+Math.random()*3;} e.set(c.r,c.r*0.7,0); q.setFromEuler(e); v.set(c.x,c.y,c.z); m4.compose(v,q,sc); partyFX.setMatrixAt(i,m4); });
+  partyFX.instanceMatrix.needsUpdate=true; }
+ if(!party.got&&Math.hypot(player.pos.x-party.x,player.pos.z-party.z)<25){ party.got=true; addCoins(100); addGems(1); sGem(); toast('🎁 Party gift: +100🪙 +1💎'); syncSave(sv=>{sv.stats=sv.stats||{};sv.stats.partied=(sv.stats.partied||0)+1;}); }
+ if(party.t<=0){ party=null; if(partyFX){partyFX.visible=false;partyBanner.visible=false;} toast('🎉 The party winds down.'); }
+}
+const RUNAWAY_SPOTS=[[120,-60],[-95,95],[70,150]];
+const SANCTUARY={x:-70,z:-10,r:20};
+let runaways=[];
+function roundupActive(){const d=new Date().getDay(); return d===0||d===6||location.search.includes('roundup');}
+function spawnRunaways(){
+ if(!roundupActive()||runaways.length)return;
+ const sv=freshSave(); if(!sv)return; sv.roundup=sv.roundup||{}; if(sv.roundup.week===weekKey()&&(sv.roundup.delivered||0)>=3)return;
+ const cols=[['#9c4f23','#6e3617'],['#b9bec6','#787f8a'],['#3a3530','#1d1a17']];
+ RUNAWAY_SPOTS.forEach((sp,i)=>{
+  const parts=makeHorse({colors:{body:cols[i][0],mane:cols[i][1]},seed:20+i});
+  const tag=nameSprite('🐎 Runaway'); tag.position.y=2.7; parts.group.add(tag);
+  parts.group.position.set(sp[0],groundH(sp[0],sp[1]),sp[1]); scene.add(parts.group);
+  runaways.push({parts,tag,x:sp[0],z:sp[1],heading:Math.random()*6,calm:0,caught:false,phase:Math.random()*6,wander:0});
+ });
+ toast('🤠 Runaway Roundup! Three of Otto\'s horses are loose — stand quietly beside one to calm it, then lead it to the pasture.'); sNeigh();
+}
+function tickRunaways(dt,t){
+ for(const r of runaways){
+  const d=Math.hypot(player.pos.x-r.x,player.pos.z-r.z);
+  let sp=0;
+  if(!r.caught){
+   if(d<4.5&&Math.abs(player.speed)<3){ r.calm=Math.min(1,r.calm+dt/4); r.tag.material.opacity=1; if(r.calm>=1){r.caught=true; toast('🐎 Calmed! It will follow you — lead it to the pasture.'); sChime();} }
+   else if(d<4.5&&Math.abs(player.speed)>=3){ r.calm=Math.max(0,r.calm-dt); }
+   r.wander-=dt; if(r.wander<=0){r.wander=3+Math.random()*4; r.heading=Math.random()*Math.PI*2;}
+   if(d>6&&r.wander>2){ sp=1.2; r.x+=Math.sin(r.heading)*sp*dt; r.z+=Math.cos(r.heading)*sp*dt; }
+  }else{
+   const tx=player.pos.x-Math.sin(player.heading)*5, tz=player.pos.z-Math.cos(player.heading)*5;
+   const dd=Math.hypot(tx-r.x,tz-r.z);
+   if(dd>45){ r.x=player.pos.x-Math.sin(player.heading)*20; r.z=player.pos.z-Math.cos(player.heading)*20; }   // fell far behind: it catches up out of sight
+   if(dd>1.5){ sp=Math.min(15,dd*1.8); r.heading=Math.atan2(tx-r.x,tz-r.z); r.x+=Math.sin(r.heading)*sp*dt; r.z+=Math.cos(r.heading)*sp*dt; }
+   if(Math.hypot(r.x-SANCTUARY.x,r.z-SANCTUARY.z)<SANCTUARY.r){
+    scene.remove(r.parts.group); r.done=true;
+    addCoins(200); syncSave(sv=>{sv.keys=(sv.keys||0)+1; sv.roundup={week:weekKey(),delivered:(sv.roundup&&sv.roundup.week===weekKey()?sv.roundup.delivered||0:0)+1}; addSP(sv,5,'roundup');}); refreshWallet(); sGem();
+    toast('🤠 Home safe! +200🪙 +1🗝️');
+   }
+  }
+  r.phase+=dt*(2.2+sp*1.9);
+  const g3=gaitFor(sp); animateHorse(r.parts,r.phase,sp<0.2?0:g3.amp,g3,true,t,0,dt);
+  r.parts.group.position.set(r.x,groundH(r.x,r.z),r.z); r.parts.group.rotation.y=r.heading;
+ }
+ runaways=runaways.filter(r=>!r.done);
+}
+function runawayLabel(){ const r=runaways.find(r=>!r.caught&&Math.hypot(player.pos.x-r.x,player.pos.z-r.z)<4.5); return r?'🐎 Calming the runaway… '+Math.round(r.calm*100)+'% (stand still)':null; }
+setTimeout(spawnRunaways,25000);
 const FOODS3={carrot:{hunger:25,bond:2,happy:2,xp:6,price:5,emoji:'🥕',label:'Carrot',stat:'speed',sxp:6},
  apple:{hunger:12,bond:6,happy:10,xp:8,price:12,emoji:'🍎',label:'Apple',stat:'stamina',sxp:7},
  hay:{hunger:50,bond:1,happy:0,xp:4,price:8,emoji:'🌾',label:'Hay Bale'},
@@ -6739,6 +6862,8 @@ async function netConnect(){
   if(topic.endsWith('/pos'))remoteUpdate(m);
   else if(topic.endsWith('/chat')&&typeof m.t==='string'){
    const nm2=String(m.n||'Rider').slice(0,14);
+   if(m.id!==net.id&&Array.isArray(m.tr)&&m.tr.length>=2&&m.tr.length<=9){trailOffer={pts:m.tr.slice(0,9).map(p=>[String(p[0]).slice(0,20),+p[1]||0,+p[2]||0]),by:nm2};toast('🥾 '+nm2+' started a trail ride — open 🌐 Club to join');}
+   if(m.id!==net.id&&m.party)startParty(nm2,true);
    chatMsg(nm2,m.t.slice(0,90));
    const rm=Object.values(remotes).find(r=>r.name===nm2);
    if(rm)showBubble(rm,m.t);
@@ -6908,6 +7033,14 @@ function openOnline(){
  +'<span style="font-size:11px;color:#8c7a63">This code is your room, and it is yours alone until you share it. Anyone who has it can ride in your world and read the chat, so treat it like a password — send it to friends, not to strangers.</span>'
  +'<div class="crow"><button id="netGo" style="flex:1">'+(net.client&&net.client.connected?'🔄 Rejoin':'🟢 Connect')+'</button><button id="netOff">Leave</button></div>'
  +'<button id="netInvite" style="background:#e8f6e0">📨 Invite friends — copy a join link</button>'
+ +'<b style="font-size:13px;margin-top:6px">🥾 Trail rides</b>'
+ +(trailRide?'<div class="evrow">🥾 <b>Riding: '+trailRide.pts.map(p=>p[0]).join(' → ')+'</b><span>next: '+trailRide.pts[trailRide.idx][0]+'</span><button data-tr="stop">Stop</button></div>':'')
+ +(trailOffer&&!trailRide?'<div class="evrow">🥾 <b>'+trailOffer.by+'\'s ride:</b><span>'+trailOffer.pts.map(p=>p[0]).join(' → ')+'</span><button data-tr="join" class="claimBtn">Join</button></div>':'')
+ +'<span style="font-size:11px;color:#8c7a63">Build a route from the stops, then start it — your club sees it and can ride along.</span>'
+ +'<div class="crow" style="gap:4px;flex-wrap:wrap">'+TRAIL_STOPS.map((st,i)=>'<button data-tr="add:'+i+'" style="font-size:11px;padding:3px 7px">'+st[0]+'</button>').join('')+'</div>'
+ +'<div class="crow" style="gap:6px"><span style="font-size:12px;flex:1">'+(trailDraft.length?trailDraft.map(p=>p[0]).join(' → '):'no stops yet')+'</span><button data-tr="clear">Clear</button><button data-tr="start" '+(trailDraft.length>=2?'class="claimBtn"':'disabled')+'>Start ride</button></div>'
+ +'<b style="font-size:13px;margin-top:6px">🎉 Ranch party</b>'
+ +'<div class="crow" style="gap:6px"><span style="font-size:12px;flex:1">'+(party?'Party on at '+party.host+'\'s ranch — '+Math.ceil(party.t)+'s left':'Confetti, a banner, and a gift for everyone who rides to the ranch within a minute and a half.')+'</span><button data-tr="party" '+(party?'disabled':'')+'>🎉 Throw a party</button></div>'
  +'<b style="font-size:13px">Riders here now ('+riders.length+')</b>'
  +(riders.length?riders.map(r=>'<div class="evrow">🐴 <b>'+r.name+'</b><span>'+(r.horseName?'riding '+r.horseName:'')+'</span><button data-prof="'+r.name+'">👤 Profile</button><button data-friend="'+r.name+'">'+(isFriend(r.name)?'💚 Friend':'🤍 Befriend')+'</button></div>').join(''):'<span style="font-size:12px;color:#8c7a63">No one yet — share your club code with friends! Anyone who opens the game and joins the same club rides in your world.</span>')
  +(function(){
@@ -6920,6 +7053,14 @@ function openOnline(){
  })()
  +'<span style="font-size:11px;color:#8c7a63">Same club code = same world. Chat with 💬 (now with emotes & speech bubbles). Start a race and club mates can join the same event to race you live!</span>';
  p.style.display='flex';
+ p.querySelectorAll('[data-tr]').forEach(b=>{b.onclick=()=>{const [a,arg]=b.dataset.tr.split(':');
+  if(a==='add'){ if(trailDraft.length<9)trailDraft.push(TRAIL_STOPS[+arg].slice()); }
+  else if(a==='clear')trailDraft=[];
+  else if(a==='start'){ if(startTrail(trailDraft)){announceTrail(trailDraft);trailDraft=[];} }
+  else if(a==='join'){ if(trailOffer)startTrail(trailOffer.pts,trailOffer.by); }
+  else if(a==='stop'){ trailRide=null; arrow.visible=false; }
+  else if(a==='party'){ startParty(); }
+  openOnline(); openOnline(); };});
  $('netGo').onclick=()=>{
   const nm=$('pname').value.trim().slice(0,14)||('Rider'+Math.floor(Math.random()*99));
   const cb=$('pclub').value.trim().slice(0,24)||myClub();
@@ -7334,6 +7475,7 @@ const DAILYQ=[
  {type:'ft',icon:'🧭',label:'Fast travel somewhere',goal:1,r:{c:50,p:5}},
  {type:'gallop2k',icon:'🌪️',label:'Gallop 2,000 m',goal:2000,r:{c:250,p:30}},
  {type:'fish',icon:'🎣',label:'Catch 2 fish at Loon Lake',goal:2,r:{c:150,p:15}},
+ {type:'trail',icon:'🥾',label:'Finish a trailRide ride',goal:1,r:{c:150,p:20}},
  {type:'feed6',icon:'🧺',label:'Hand out 6 treats',goal:6,r:{c:160,p:20}},
  {type:'shoe',icon:'🍀',label:'Find 3 golden horseshoes',goal:3,r:{c:220,p:20}},
  {type:'wildphoto',icon:'📸',label:'Photograph 2 wild animals',goal:2,r:{c:200,p:20}},
@@ -7409,6 +7551,9 @@ const ACHS=[
  {id:'chest12',icon:'🎁',label:'Treasure hunter',desc:'Find all 12 chests',v:s=>CHESTS.filter(c=>s.chests&&s.chests[c.id]).length,goal:12,r:{g:3,k:2}},
  {id:'sets4',icon:'🗺️',label:'Collector of the Basin',desc:'Complete all four collectible sets',v:s=>Object.keys(s.setsDone||{}).length,goal:4,r:{g:5}},
  {id:'fish10',icon:'🎣',label:'Angler',desc:'Catch 10 fish',v:s=>(s.fish&&s.fish.n)||0,goal:10,r:{c:300,k:1}},
+ {id:'trail5',icon:'🥾',label:'Trail boss',desc:'Finish 5 trailRide rides',v:s=>(s.stats&&s.stats.trails)||0,goal:5,r:{g:2,k:1}},
+ {id:'party1',icon:'🎉',label:'Life of the party',desc:'Throw or join a ranch party',v:s=>((s.stats&&s.stats.parties)||0)+((s.stats&&s.stats.partied)||0),goal:1,r:{c:200}},
+ {id:'roundup3',icon:'🤠',label:'Roundup rider',desc:'Bring three runaways home in one weekend',v:s=>(s.roundup&&s.roundup.delivered)||0,goal:3,r:{g:3,k:2}},
  {id:'rib60',icon:'🎀',label:'Ribbon hall',desc:'Earn 60 ribbons',v:s=>s.ribbonTotal||0,goal:60,r:{g:3,k:2}},
  {id:'build6',icon:'🏡',label:'Dream ranch',desc:'Reach ranch level 6',v:s=>ranchLevel(s),goal:6,r:{g:4,k:2}},
  {id:'bond100',icon:'❤️',label:'Soulmates',desc:'Reach 100 bond with a horse',v:s=>Math.round(s.horses.reduce((m,h)=>Math.max(m,h.bond||0),0)),goal:100,r:{g:1}},
@@ -8160,6 +8305,7 @@ function tick(){
  const spMul=(0.82+0.036*(HS.speed||3))*PM.sp, acMul=(0.75+0.06*(HS.accel||3))*PM.ac, agMul=(0.80+0.05*(HS.agility||3))*PM.ag, jpMul=0.92+0.016*(HS.jump||3);
  let target=0;
  if(course&&!course.started){target=0;}
+ else if(freeCam){target=0;}
  else if(player.flying){
   if(fwd)target=gallop?(abil==='swift'?16:13)*spMul:9.5;
   else if(back)target=-3;
@@ -8196,6 +8342,7 @@ function tick(){
   if(Math.abs(player.turnSm)<0.002)player.turnSm=0;
   turn=player.turnSm;
  }else player.turnSm=turn;   // stay in sync, so putting the headset on doesn't jerk the horse
+ if(freeCam)turn=0;
  const yawRate=(1.7+Math.min(1.5,Math.abs(player.speed)*0.1))*(inVR?0.45:1);
  player.heading+=turn*dt*yawRate*agMul;
  player.pos.x+=Math.sin(player.heading)*player.speed*dt;
@@ -8476,9 +8623,10 @@ function tick(){
  const m=STORY[storyIdx];
  nearNPC=null; let ndb=3.5;
  for(const q of npcList){const nd=Math.hypot(player.pos.x-q.g.position.x,player.pos.z-q.g.position.z);if(nd<ndb){ndb=nd;nearNPC=q;}}
- tickThings(dt);
- $('ctx').style.display=(nearNPC||nearThing)?'block':'none';
- if(nearNPC)$('ctx').textContent='💬 Talk to '+nearNPC.def.name+' (E)'; else if(nearThing)$('ctx').textContent=thingLabel(nearThing);
+ tickThings(dt); tickTrail(dt); tickParty(dt); tickRunaways(dt,t);
+ const rl=runawayLabel();
+ $('ctx').style.display=(nearNPC||nearThing||rl)?'block':'none';
+ if(nearNPC)$('ctx').textContent='💬 Talk to '+nearNPC.def.name+' (E)'; else if(nearThing)$('ctx').textContent=thingLabel(nearThing); else if(rl)$('ctx').textContent=rl;
  const giver=m?(NPC_DEFS.find(x=>x.id===(m.npc||'wren'))||NPC_DEFS[0]):null;
  $('questTrack').textContent=m?
   ('📜 '+(m.ch?m.ch+' · ':'')+m.label+(missionDone()?' ✅ → tell '+giver.name.replace('Grandpa ','').replace('Farmer ','').replace('Sheriff ','')+'!':(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':''))):
@@ -8861,6 +9009,8 @@ function tick(){
   vrVignette.material.uniforms.uAmt.value=THREE.MathUtils.clamp(vAmt,0,0.84);
   updateVRMenu(dt);
   tickVRToast(dt);
+ }else if(freeCam){
+  tickFreeCam(dt);
  }else{
   camera.position.lerp(new THREE.Vector3(camX,camY,camZ),k);
   const shake=sp>7&&grounded?0.011:0;

@@ -79,11 +79,16 @@ horse when you meant to ride on the stick alone, so each can be picked outright.
 | | |
 |---|---|
 | **World** | ~1000×1000 units of ridged hills, cliffs, a carved river with a bridge, a stream, wheat fields, desert canyon, and a snowline — one continuous mesh, coloured by slope and altitude |
-| **Horses** | 19 breeds from ponies to winged mythics; care, bonding, XP and levels; breeding that blends both parents' coats; foals that grow up over real time |
-| **Riding** | Speed-dependent gaits, jumping, show-jumping courses and cross-country flag races with timing, faults and trophies |
+| **Horses** | 20 breeds from ponies to winged mythics; five stats you can feel in the ride, trained by forage that grows by region; six temperaments; breed mastery that unlocks tail colours, browband studs, a sparkle trail and bareback riding; tricks at a halt; care, bonding, XP and levels; breeding; foals that grow up over real time |
+| **Tack** | Saddle, pad, bridle and horseshoes as gear with rarity, bonuses, upgrades and merges; Silver Keys open tack chests and Grandma's locked tack room; nothing costs money |
+| **Story** | Two books: Grandpa Wren's ranch, then the Silver Kestrel, a grey horse followed region by region through people to talk to, clue puzzles, and a tameable reward |
+| **Ranch** | Build it: fourteen pieces placed on the ground, builder points, six ranch levels with real perks |
+| **Riding** | Speed-dependent gaits, stamina, jumping judged for inspiring jumps and line riding, show-jumping courses and cross-country races with pickups, ribbons, a featured week with prize tiers, and trophies |
+| **Treasure** | A treasure map: twelve chests, four collectible sets, fishing at Loon Lake, and a free camera for the photograph |
 | **Living world** | Day/night with dusk window lights and fireflies, weather with rain and rainbows, wild horses to tame, NPC riders, and procedural wildlife |
 | **VR** | Full WebXR mode — ride from the saddle holding the reins in your hands, with a world-space UI you operate with the controllers |
-| **Multiplayer** | Ride the same world as your friends: club codes over MQTT, live remote riders on the *same* rigged horse you ride, chat with emotes and speech bubbles, shared races and club leaderboards. Every player gets a private code — you meet the people you send your invite link to, not strangers |
+| **Multiplayer** | Ride the same world as your friends: club codes over MQTT, live remote riders on the *same* rigged horse you ride, chat with emotes and speech bubbles, trail rides you build and announce, ranch parties with confetti and a gift, shared races, Star Points and club leaderboards. Every player gets a private code — you meet the people you send your invite link to, not strangers |
+| **Seasons** | On weekends the Runaway Roundup: three loose horses to calm and lead home |
 
 <p align="center">
   <img src="docs/screenshots/arena.png" width="49%" alt="The ranch arena">
