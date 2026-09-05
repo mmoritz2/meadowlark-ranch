@@ -427,7 +427,7 @@ renderer.toneMappingExposure=1.05;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 const scene=new THREE.Scene();
-scene.fog=new THREE.FogExp2(0xbfd3e8,0.0027);   // exponential; tinted to the sky so distance hazes toward it
+scene.fog=new THREE.FogExp2(0xbfd3e8,0.0021);   // exponential; tinted to the sky so distance hazes toward it
 const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,5000);
 /* Start where the chase camera will settle (player spawns at 0,0,8 facing -z, so the
    camera belongs behind it at +z). Starting anywhere else makes the first second of the
@@ -2462,30 +2462,45 @@ function leatherMat(hex){
    sky behind it. Now one mesh with the snowline painted into its vertex colours on a ragged
    noise boundary, and rock dark enough to sit under the sky rather than punch through it. */
 {
- const C_ROCKLO=new THREE.Color('#6d7787'),C_ROCKHI=new THREE.Color('#8d97a6'),C_SNOW=new THREE.Color('#eef4fa');
+ const C_ROCKLO=new THREE.Color('#5b6270'),C_ROCKHI=new THREE.Color('#8a8f98'),C_SNOW=new THREE.Color('#eef4fa'),C_SCREE=new THREE.Color('#7d7060'),C_ALP=new THREE.Color('#6f7f58');
  const mtnMat=new THREE.MeshStandardMaterial({map:mountainTexM,vertexColors:true,roughness:1});
  mtnMat.envMapIntensity=0.5;
  const cc=new THREE.Color();
  for(let i=0;i<11;i++){
   const a=i/11*Math.PI*2+Math.random()*0.3;
   const hgt=110+Math.random()*90,rad=80+Math.random()*60;
-  const geo=new THREE.ConeGeometry(rad,hgt,26,14);
+  const geo=new THREE.ConeGeometry(rad,hgt,48,22);
   const p=geo.attributes.position;
+  /* Ridges from coherent noise over (angle, height) rather than a hash per vertex: a hash
+     makes gravel, noise makes gullies and spurs that run down the face. Two octaves of
+     ridged value noise, strongest mid-slope, fading at the peak and the skirt. */
   for(let j=0;j<p.count;j++){
-   const fy=Math.min(1,((hgt*0.5-p.getY(j))/hgt)*1.7);
-   if(fy<=0.02)continue;
-   p.setX(j,p.getX(j)+(ihash(i*91+j,3)-0.5)*rad*0.26*fy);
-   p.setZ(j,p.getZ(j)+(ihash(j,i*57)-0.5)*rad*0.26*fy);
-   p.setY(j,p.getY(j)+(ihash(j*7+1,i*13)-0.5)*hgt*0.07*fy);
+   const x0=p.getX(j),z0=p.getZ(j),y0=p.getY(j);
+   const fh=(y0+hgt*0.5)/hgt;                                       // 0 base -> 1 peak
+   const ang=Math.atan2(z0,x0), r0=Math.hypot(x0,z0);
+   if(r0<1e-3)continue;
+   const u=ang*3.2+i*7.1, w=fh*6.0+i*3.3;
+   const r1=1-Math.abs(vnoise(u+0.5,w)*2-1), r2=1-Math.abs(vnoise(u*2.3+9,w*2.3+4)*2-1);
+   const ridge=(r1*0.7+r2*0.3);                                     // 0..1, sharp crests
+   const amp=rad*0.40*Math.sin(Math.PI*Math.min(1,fh*1.15))*(0.55+0.45*(1-fh));
+   const massif=(vnoise(ang*1.3+i*5.7,fh*2.0+i)-0.5)*rad*0.34*(1-fh*0.6);   // one steep side, one shoulder: no two silhouettes the same triangle
+   const rr=r0+(ridge-0.55)*amp+(vnoise(u*0.7+3,w*0.7)-0.5)*rad*0.10+massif;
+   p.setX(j,Math.cos(ang)*rr); p.setZ(j,Math.sin(ang)*rr);
+   p.setY(j,y0+(vnoise(u*1.7+1,w*1.7+8)-0.5)*hgt*0.05*(1-fh));
   }
   geo.computeVertexNormals();
   // snowline: height fraction with a noisy edge, so it runs ragged down the gullies
-  const cols=[];
+  const cols=[]; const nrm=geo.attributes.normal;
   for(let j=0;j<p.count;j++){
    const fh=(p.getY(j)+hgt*0.5)/hgt;                       // 0 base -> 1 peak
-   const jag=(ihash(j*13+i,j*3+7)-0.5)*0.13;
-   const snow=THREE.MathUtils.smoothstep(fh+jag,0.52,0.72);
-   cc.copy(C_ROCKLO).lerp(C_ROCKHI,THREE.MathUtils.clamp(fh*1.3,0,1)).lerp(C_SNOW,snow);
+   const ang=Math.atan2(p.getZ(j),p.getX(j));
+   const jag=(vnoise(ang*4+i*3,fh*9)-0.5)*0.22;
+   const steep=1-Math.abs(nrm.getY(j));                     // 0 flat -> 1 cliff
+   const snow=THREE.MathUtils.smoothstep(fh+jag,0.58,0.74)*(1-THREE.MathUtils.smoothstep(steep,0.55,0.85));   // snow slides off cliffs
+   const band=vnoise(ang*2.5+i,fh*5+2);
+   cc.copy(C_ROCKLO).lerp(C_ROCKHI,THREE.MathUtils.clamp(fh*1.2,0,1)).lerp(C_SCREE,band*0.5*(1-steep));
+   cc.lerp(C_ALP,(1-THREE.MathUtils.smoothstep(fh,0.08,0.34))*0.7*(1-steep));   // green foothills below the rock
+   cc.lerp(C_SNOW,snow);
    cols.push(cc.r,cc.g,cc.b);
   }
   geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));
@@ -2495,6 +2510,91 @@ function leatherMat(hex){
   m.rotation.y=Math.random()*3;
   scene.add(m);
  }
+}
+/* Far forest. The distant hills were bare green: the real trees thin out with distance and
+   the terrain colour is flat, so every ridge read as a smooth dome. This is a field of
+   tree-cluster billboards (two crossed quads each) sown on the far hills, wherever the ground
+   is meadow, tinted per instance, swaying a little, and scaled away within a hundred units of
+   the rider so they are never seen up close: near the rider the real trees do the work. */
+const farTreeTex=canvasTex(256,256,(c,w,h)=>{
+ c.clearRect(0,0,w,h);
+ const tr=[[70,150,58],[128,120,72],[186,150,56],[100,190,46],[160,196,44]];
+ for(const [x,y,r] of tr){
+  c.fillStyle='#4a3520';c.fillRect(x-5,y,10,h-y);
+  const g=c.createRadialGradient(x-r*0.3,y-r*0.3,r*0.15,x,y,r);
+  g.addColorStop(0,'#7fb35a');g.addColorStop(0.6,'#4f8a3c');g.addColorStop(1,'#2f5a28');
+  c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();
+ }
+});
+const farPineTex=canvasTex(256,256,(c,w,h)=>{
+ c.clearRect(0,0,w,h);
+ const tr=[[60,236,52,150],[128,244,64,210],[196,236,50,160],[96,248,40,120],[164,250,44,130]];
+ for(const [x,base,hw,ht] of tr){
+  c.fillStyle='#3a2a18';c.fillRect(x-4,base-ht*0.25,8,ht*0.25+6);
+  const g=c.createLinearGradient(x-hw,0,x+hw,0);
+  g.addColorStop(0,'#1f4a26');g.addColorStop(0.45,'#3f7a3a');g.addColorStop(1,'#1d3d22');
+  c.fillStyle=g;
+  for(let t=0;t<3;t++){const y0=base-ht*(0.25+t*0.25), yh=ht*0.42, ww=hw*(1-t*0.28);
+   c.beginPath();c.moveTo(x-ww,y0);c.lineTo(x,y0-yh);c.lineTo(x+ww,y0);c.closePath();c.fill();}
+ }
+});
+let farForest=null;
+{
+ const N=quality==='low'?1400:2600;
+ const geo=(()=>{const g=new THREE.BufferGeometry(),P=[],U=[],Nn=[],I=[];
+  const add=rot=>{const c=Math.cos(rot),sn=Math.sin(rot),b=P.length/3;
+   [[-0.5,0],[0.5,0],[0.5,1],[-0.5,1]].forEach(([x,y])=>{P.push(x*c,y,x*sn);U.push(x+0.5,y);Nn.push(-sn,0,c);});
+   I.push(b,b+1,b+2,b,b+2,b+3);};
+  add(0);add(Math.PI/2);
+  g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));
+  g.setAttribute('normal',new THREE.Float32BufferAttribute(Nn,3));g.setIndex(I);return g;})();
+ const U={uTime:{value:0},uPlayer:{value:new THREE.Vector3()}};
+ const mkMat=tex=>{const mat=new THREE.MeshStandardMaterial({map:tex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
+  mat.envMapIntensity=0.5;
+  mat.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);
+   sh.vertexShader='uniform float uTime; uniform vec3 uPlayer;\n'+sh.vertexShader.replace('#include <begin_vertex>',
+`#include <begin_vertex>
+#ifdef USE_INSTANCING
+ vec3 ip=vec3(instanceMatrix[3][0],instanceMatrix[3][1],instanceMatrix[3][2]);
+ float near=smoothstep(95.0,150.0,distance(ip.xz,uPlayer.xz));
+ transformed.y*=near; transformed.xz*=near;
+ transformed.x+=sin(uTime*0.9+ip.x*0.3+ip.z*0.2)*transformed.y*0.02;
+#endif`);};
+  return mat;};
+ const leafy=new THREE.InstancedMesh(geo,mkMat(farTreeTex),N), pines=new THREE.InstancedMesh(geo,mkMat(farPineTex),Math.ceil(N*0.6));
+ for(const im of[leafy,pines]){im.frustumCulled=false;im.castShadow=false;im.receiveShadow=false;scene.add(im);}
+ const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler(),v=new THREE.Vector3(),sc=new THREE.Vector3(),col=new THREE.Color();
+ let kl=0,kp=0,guard=0;
+ while((kl<leafy.count||kp<pines.count)&&guard<90000){
+  guard++;
+  const a=Math.random()*Math.PI*2, r=120+Math.pow(Math.random(),0.6)*350;
+  const x=Math.cos(a)*r, z=Math.sin(a)*r;
+  if(Math.abs(x)>480||Math.abs(z)>480)continue;
+  if(Math.abs(z-riverZ(x))<10)continue;
+  if(Math.hypot(x+220,z-130)<165)continue;                 // Coyote sand
+  const dSnow=Math.hypot(x+160,z+210);
+  if(dSnow<128)continue;                                   // the snowfield itself stays open
+  if(Math.hypot(x-220,z+110)<120)continue;                 // Barleyfold fields
+  const y=groundH(x,z);
+  const sl=Math.hypot(groundH(x+2,z)-groundH(x-2,z),groundH(x,z+2)-groundH(x,z-2))/4;
+  if(sl>0.55)continue;                                     // not on cliffs
+  const dens=vnoise(x*0.012+7,z*0.012+3);                  // forest comes in stands
+  if(dens<0.42&&Math.random()>0.18)continue;
+  const cold=dSnow<230||y>9;                                // pines ring the snow and take the high ground
+  const wantPine=cold?Math.random()<0.85:Math.random()<0.12;
+  const im=wantPine?pines:leafy; const k=wantPine?kp:kl;
+  if(k>=im.count)continue;
+  const sz=wantPine?8+Math.random()*10:5+Math.random()*9;   // tall pines, mixed leafy heights: no hedge line
+  e.set(0,Math.random()*Math.PI,0); q.setFromEuler(e); sc.set(sz*(wantPine?0.55:0.9)*(0.85+Math.random()*0.4),sz,sz*(wantPine?0.55:0.9)*(0.85+Math.random()*0.4));
+  v.set(x,y-0.3,z); m4.compose(v,q,sc); im.setMatrixAt(k,m4);
+  if(wantPine)col.setHSL(0.30+Math.random()*0.06,0.28+Math.random()*0.2,0.22+Math.random()*0.14);
+  else col.setHSL(0.22+Math.random()*0.10,0.30+Math.random()*0.25,0.26+Math.random()*0.20);
+  im.setColorAt(k,col);
+  if(wantPine)kp++; else kl++;
+ }
+ leafy.count=kl; pines.count=kp;
+ for(const im of[leafy,pines])if(im.instanceColor)im.instanceColor.needsUpdate=true;
+ farForest={leafy,pines,tick:(t,px,pz)=>{U.uTime.value=t;U.uPlayer.value.set(px,0,pz);}};
 }
 // trees: leafy (billboard canopies) + pines, with a dense pine treeline to the north
 const barkTex=canvasTex(128,256,(c,w,h)=>{
@@ -7874,6 +7974,7 @@ function tick(){
  }
  if(windShader)windShader.uniforms.uTime.value=t;
  if(nearGrass)nearGrass.tick(t,player.pos.x,player.pos.z);
+ if(farForest)farForest.tick(t,player.pos.x,player.pos.z);
  for(const tw of treeWinds)tw.uniforms.uTime.value=t;
  for(const r of ripples)r.m.rotation.z+=dt*0.13*r.dir;
  for(const wa of waterAnims){wa.tex.offset.x+=dt*wa.sx;wa.tex.offset.y+=dt*wa.sy*Math.sin(t*0.5);}
@@ -8130,7 +8231,7 @@ function tick(){
     is still dark. Distant mountains are ~90% fog at that range, so they flared white. */
  _fogCol.multiplyScalar(0.16+0.84*THREE.MathUtils.smoothstep(dayF,0.0,0.5));
  scene.fog.color.lerp(_fogCol,Math.min(1,dt*1.5));
- const fogD=(weather.mode==='rain'?0.0052:0.0027);
+ const fogD=(weather.mode==='rain'?0.0052:0.0021);   // clear-day density matches the scene fog: 0.0027 left the mountains 93% fog at their range
  scene.fog.density+=(fogD-scene.fog.density)*Math.min(1,dt*0.8);
  if(rain.visible){
   const m4w=new THREE.Matrix4();
