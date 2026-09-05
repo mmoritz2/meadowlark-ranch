@@ -4267,8 +4267,31 @@ function _fit(obj,scalar){obj.scale.setScalar(1);obj.position.set(0,0,0);obj.rot
  const bb=new THREE.Box3().setFromObject(obj);obj.userData.bbMinY=bb.min.y;obj.scale.setScalar(scalar);}
 // Stylized procedural English saddle (the generated saddle GLB was malformed). Built in
 // player.mesh-local frame: origin = seat centre, +z = head/front, +x = right, +y = up.
+/* Generated saddles. Each is a Hunyuan3D mesh from a FLUX.2 reference, textured and
+   smoothed like the rider: real fenders, stirrups and straps instead of boxes. The file
+   is fitted here so the group's origin is the seat, which is what everything else
+   (placement, bareback, the rider's seat) already assumes. Until a file is in, the
+   procedural saddle stands in; when it arrives the mount re-dresses itself. */
+const SADDLE_GLB={files:{western:'assets/models/saddle2_textured.glb',english:'assets/models/saddle_en_textured.glb'},fit:{western:{s:0.46,sy:0.36,ry:Math.PI/2,y:-0.18,z:0.0},english:{s:0.46,sy:0.40,ry:Math.PI/2,y:-0.20,z:0.0}}};
+for(const st in SADDLE_GLB.files){
+ new GLTFLoader().load(SADDLE_GLB.files[st],g=>{
+  let m=null; g.scene.traverse(o=>{if(o.isMesh&&!m)m=o;}); if(!m)return;
+  const src=m.material, mat=new THREE.MeshPhysicalMaterial({map:src.map||null,roughness:0.52,metalness:0,clearcoat:0.3,clearcoatRoughness:0.4,envMapIntensity:0.8}); mat.color.setScalar(1.25);   // the bake is dark mahogany; lift it under the game's light
+  if(mat.map)mat.map.anisotropy=8;
+  SADDLE_GLB[st]={geo:m.geometry,mat};
+  if(typeof attachTack==='function'&&player.mesh)attachTack();   // the ridden horse re-dresses if it wears this style
+ },undefined,()=>{});                                             // a missing file just means the procedural saddle stays
+}
 function buildSaddle(style){
  const W=style==='western';
+ if(SADDLE_GLB[W?'western':'english']){
+  const src=SADDLE_GLB[W?'western':'english'], f=SADDLE_GLB.fit[W?'western':'english'];
+  const g=new THREE.Group(); const m=new THREE.Mesh(src.geo,src.mat);
+  m.scale.set(f.s,f.sy||f.s,f.s); m.rotation.y=f.ry; m.position.set(0,f.y,f.z);   // a little shorter than wide: the fenders would otherwise hang below the boots
+  m.castShadow=true; m.receiveShadow=true; m.frustumCulled=false; g.add(m);
+  g.userData.proc=true; g.userData.glb=true; g.userData.style=W?'western':'english';
+  return g;
+ }
  const g=new THREE.Group(); g.userData.style=W?'western':'english';
  const leather=new THREE.MeshStandardMaterial({color:0x6b4423,roughness:0.38,metalness:0.05});
  const dark=new THREE.MeshStandardMaterial({color:0x432813,roughness:0.6,metalness:0.04});
@@ -4354,7 +4377,7 @@ function buildBridle(){
 function attachTack(){   // idempotent: places whatever has loaded so far onto the current mount
  if(!USE_GEN_HORSE||!USE_GEN_TACK)return;
  if(!player.mesh||!TACK.saddle)return;
- {const want=(myHorses[rideIdx]&&myHorses[rideIdx].saddleStyle)||'english'; if(TACK.saddle.userData.style!==want){ if(TACK.saddle.parent)TACK.saddle.parent.remove(TACK.saddle); TACK.saddle=buildSaddle(want); }}   // the saddle this horse wears
+ {const want=(myHorses[rideIdx]&&myHorses[rideIdx].saddleStyle)||'english'; if(TACK.saddle.userData.style!==want||(!TACK.saddle.userData.glb&&SADDLE_GLB[want])){ if(TACK.saddle.parent)TACK.saddle.parent.remove(TACK.saddle); TACK.saddle=buildSaddle(want); }}   // the saddle this horse wears, generated when its file is in
  if(player.rider&&player.rider.g)player.rider.g.visible=false;   // hide procedural rider
  if(TACK.saddle){
   if(TACK.saddle.userData&&TACK.saddle.userData.proc){TACK.saddle.position.set(0,SADDLE_Y,SADDLE_Z);}  // procedural: pre-sized & oriented
@@ -6853,8 +6876,9 @@ function tackAct(cmd){
 /* The saddle you see is the saddle you wear: the pad takes the rarity's colour and the
    leather the paint you chose. */
 function dressSaddle(){
- const sd=TACK.saddle; if(!sd||!sd.userData.mats)return;
+ const sd=TACK.saddle; if(!sd)return;
  const h=myHorses[rideIdx]; if(!h)return;
+ if(!sd.userData.mats){ sd.visible=!h.bareback; if(TACK.bridle&&TACK.bridle.userData.gold)TACK.bridle.userData.gold.color.set(h.studCol||'#d8b24a'); return; }
  const padIt=h.gear&&tackInv.find(t=>t.id===h.gear.pad);
  sd.userData.mats.pad.color.set(padIt?RAR_COL[padIt.rarity]:0xe6dcc6);
  sd.userData.mats.leather.color.set(h.tack||0x6b4423);
