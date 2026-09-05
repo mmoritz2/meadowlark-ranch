@@ -147,6 +147,7 @@ button:active{transform:scale(.95)}
  <div class="spacer"></div>
  <div class="chip">🪙 <span id="coinEl">0</span></div>
  <div class="chip">💎 <span id="gemEl">0</span></div>
+ <div class="chip" title="Silver Keys open tack chests">🗝️ <span id="keyEl">0</span></div>
  <button id="photoBtn" title="Save a photo">📷</button>
  <button id="qualBtn" title="Graphics quality">🎚️</button>
  <button id="muteBtn">🔊</button>
@@ -249,8 +250,44 @@ function ensureStats(h){
  h.stats=h.stats||{};
  for(const k of STAT_KEYS)if(typeof h.stats[k]!=='number')h.stats[k]=(k==='accel'||k==='agility')?Math.max(1,Math.round(((h.stats.speed||3)+(h.stats.stamina||3))/2)):3;
  h.sxp=h.sxp||{}; for(const k of STAT_KEYS)h.sxp[k]=h.sxp[k]||0;
+ h.gear=h.gear||{};
  return h;
 }
+/* Tack as gear. A horse wears four pieces: saddle, saddle pad, bridle, horseshoes. Each piece
+   has a rarity, and a rarity means up to three stat bonuses; the bonuses sit on top of the
+   trained stats and are felt in the ride the same way. Pieces level up to five with coins, or
+   by merging a spare of the same slot into them. Silver Keys open a tack chest (rarity rolled
+   on the weights below); keys come from daily quests, the Trail Pass, achievements and one free
+   key a week, never from money. A plain piece of any slot can also just be ordered for coins. */
+const GEAR_SLOTS=['saddle','pad','bridle','shoes'];
+const GEAR_SLOT_LBL={saddle:'🐎 Saddle',pad:'🟦 Saddle Pad',bridle:'🪢 Bridle',shoes:'🍀 Horseshoes'};
+const RARITIES=['Common','Uncommon','Rare','Epic','Legendary'];
+const RAR_COL={Common:'#b8a888',Uncommon:'#5cb85c',Rare:'#3b8bd6',Epic:'#9b59b6',Legendary:'#f0b429'};
+const RAR_W={Common:52,Uncommon:28,Rare:13,Epic:5.5,Legendary:1.5};
+const RAR_SELL={Common:40,Uncommon:90,Rare:200,Epic:450,Legendary:1000};
+const GEAR_ADJ={Common:['Plain','Sturdy','Everyday','Oiled'],Uncommon:['Fine','Tooled','Meadow','Riverside'],Rare:['Silver-stitched','Cottonwood','Twilight','Basin'],Epic:['Starlit','Storm','Canyon','Hollowpeak'],Legendary:['Kestrel','Aurora','Meadowlark','Champion']};
+const GEAR_NOUN={saddle:'Saddle',pad:'Pad',bridle:'Bridle',shoes:'Shoes'};
+function rollRarity(){let t=0;for(const r of RARITIES)t+=RAR_W[r];let x=Math.random()*t;for(const r of RARITIES){x-=RAR_W[r];if(x<=0)return r;}return 'Common';}
+function genGear(rarity,slot){
+ rarity=rarity||rollRarity(); slot=slot||GEAR_SLOTS[Math.floor(Math.random()*GEAR_SLOTS.length)];
+ const ri=RARITIES.indexOf(rarity);
+ const nStats=ri<=0?1:ri===1?(Math.random()<0.5?1:2):ri===2?2:ri===3?(Math.random()<0.5?2:3):3;
+ const pool=STAT_KEYS.slice().sort(()=>Math.random()-0.5).slice(0,nStats);
+ const bonus={}; for(const k of pool)bonus[k]=ri<=1?1:ri===2?(Math.random()<0.5?1:2):ri===3?2:(Math.random()<0.5?2:3);
+ const adj=GEAR_ADJ[rarity][Math.floor(Math.random()*GEAR_ADJ[rarity].length)];
+ return {id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),slot,rarity,name:adj+' '+GEAR_NOUN[slot],bonus,lvl:1};
+}
+function gearBonus(item){const m=1+0.25*((item.lvl||1)-1);const o={};for(const k in item.bonus)o[k]=Math.round(item.bonus[k]*m);return o;}
+function gearUpgradeCost(item){return Math.round(120*(item.lvl||1)*(1+RARITIES.indexOf(item.rarity)*0.6));}
+let tackInv=[];                                                                 // live mirror of the save's tack inventory
+function effStats(h){                                                           // trained stats plus what the horse is wearing
+ const o={}; if(!h)return o; ensureStats(h);
+ for(const k of STAT_KEYS)o[k]=h.stats[k];
+ const g=h.gear||{};
+ for(const sl of GEAR_SLOTS){const it=g[sl]&&tackInv.find(t=>t.id===g[sl]); if(!it)continue; const b=gearBonus(it); for(const k in b)o[k]=(o[k]||0)+b[k];}
+ return o;
+}
+function refreshTack(){const fs=freshSave();if(!fs)return;tackInv=fs.tack||[];fs.horses.forEach((h,i)=>{if(myHorses[i])myHorses[i].gear=h.gear||{};});}
 try{save=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){}
 if(!save||!save.horses||!save.horses.length){
  save=save&&save.horses?save:{v:2,ranchName:'Meadowlark Ranch',founded:Date.now(),coins:150,gems:3,items:{carrot:10,apple:2,hay:3},nextId:1,horses:[],decor:[],projects:{},trophies:{},wild:null,wildTrust:0,muted:false,lastSeen:Date.now(),lastDaily:'',questDate:'',quests:[],totalRaces:0,started:true};
@@ -259,7 +296,8 @@ if(!save||!save.horses||!save.horses.length){
  try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}
 }
 const myHorses=save.horses;
-if(myHorses.some(h=>!h.sxp)){myHorses.forEach(ensureStats);try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}   // older saves: five stats from day one
+if(myHorses.some(h=>!h.sxp||!h.gear)||!save.tack||save.keys==null){myHorses.forEach(ensureStats);save.tack=save.tack||[];if(save.keys==null)save.keys=1;try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}   // older saves: five stats, a tack locker and a welcome key
+tackInv=save.tack||[];
 let rideIdx=0;
 // the 3D world now owns the ranch: needs decay (even while away) & the daily gift
 const DECAY3={hunger:100/(8*3600),thirst:100/(6*3600),clean:100/(12*3600),happy:100/(16*3600)};
@@ -1168,6 +1206,7 @@ function vrMenuClick(id){
    const r=PASS_REWARDS[i];
    if(r.c)sv.coins+=r.c;
    if(r.g)sv.gems+=r.g;
+   if(r.k)sv.keys=(sv.keys||0)+r.k;
    if(r.tack)sv.goldTack=true;
    ok=true;
   });
@@ -3996,7 +4035,7 @@ function buildSaddle(){
  });
  add(BOX,dark,[0.15,-0.40,-0.02],[0.035,0.42,0.10]);            // slim girth straps
  add(BOX,dark,[-0.15,-0.40,-0.02],[0.035,0.42,0.10]);
- g.userData.proc=true;
+ g.userData.proc=true; g.userData.mats={leather,pad,dark};
  return g;
 }
 /* Bridle for the rigged mount, measured against the rig's own head: muzzle tip at z=1.09,
@@ -4054,6 +4093,7 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
   else{_fit(TACK.saddle,SADDLE_SCALE);TACK.saddle.rotation.y=SADDLE_RY;TACK.saddle.position.set(0,SADDLE_Y,SADDLE_Z);}
   TACK.saddle.visible=true; TACK.saddle.traverse(o=>{if(o.isMesh)o.visible=true;});  // attachRig hides player.mesh meshes; re-show tack
   player.mesh.add(TACK.saddle);}
+ dressSaddle();
  if(!TACK.bridle)TACK.bridle=buildBridle();
  TACK.bridle.visible=true; TACK.bridle.traverse(o=>{if(o.isMesh)o.visible=true;});
  if(TACK.bridle.parent!==player.mesh)player.mesh.add(TACK.bridle);
@@ -5801,6 +5841,7 @@ function refreshWallet(){
  coins=Math.floor(s.coins);gems=s.gems;
  $('coinEl').textContent=coins;
  $('gemEl').textContent=gems;
+ const ke=$('keyEl');if(ke)ke.textContent=s.keys||0;
 }
 function reloadHorses(){
  const s=freshSave();if(!s)return;
@@ -5982,9 +6023,7 @@ function openShop(tab){
   +'<div class="evrow">🎁 <b>Food Hamper</b><span>15🥕 + 8🍎 + 8🌾 (save 36🪙)</span><button data-bundle="hamper">99 🪙</button></div>'
   +'<div class="evrow">🎀 <b>Breeder\'s Package</b><span>one FREE breeding + 10🍎</span><button data-bundle="breeder">350 🪙</button></div>';
  }else if(shopTab3==='tack'){
-  html+='<span style="font-size:12px;color:#8c7a63">A new saddle for <b>'+(s.horses[rideIdx]?s.horses[rideIdx].name:'your horse')+'</b> — 150 🪙</span>'
-  +TACKS3.map(tk=>'<div class="evrow"><span style="flex:none;width:18px;height:18px;border-radius:50%;background:'+tk[0]+'"></span> <b>'+tk[1]+' Saddle</b><span></span><button data-buyt="'+tk[0]+'">150 🪙</button></div>').join('')
-  +(s.goldTack?'<div class="evrow"><span style="flex:none;width:18px;height:18px;border-radius:50%;background:#ffd166"></span> <b>✨ GOLDEN Saddle</b><span>Trail Pass exclusive!</span><button data-buyt="#ffd166">Equip</button></div>':'');
+  html+=tackLockerHtml(s);
  }else if(shopTab3==='breed'){
   const elig=s.horses.map((h,i)=>({h,i})).filter(e=>!e.h.foal&&e.h.bond>=60);
   if(elig.length<2){
@@ -6009,6 +6048,7 @@ function openShop(tab){
  p.querySelectorAll('[data-petfollow]').forEach(b=>{b.onclick=()=>{setActivePet(b.dataset.petfollow);openShop('pets');};});
  p.querySelectorAll('[data-buyf]').forEach(b=>{b.onclick=()=>{const[k,n]=b.dataset.buyf.split(':');buyFood3(k,+n);};});
  p.querySelectorAll('[data-buyt]').forEach(b=>{b.onclick=()=>buyTack3(b.dataset.buyt);});
+ p.querySelectorAll('[data-tk]').forEach(b=>{b.onclick=()=>tackAct(b.dataset.tk);});
  p.querySelectorAll('[data-bundle]').forEach(b=>{b.onclick=()=>buyBundle3(b.dataset.bundle);});
  p.querySelectorAll('[data-breed]').forEach(b=>{b.onclick=()=>breed3();});
  p.querySelectorAll('[data-outfit]').forEach(b=>{b.onclick=()=>{
@@ -6064,6 +6104,69 @@ function buyBundle3(k){
  });
  toast(msg);
  if(ok){sCoin();refreshWallet();openShop('food');}
+}
+function weekKey(){const d=new Date();const o=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-'+Math.floor((d-o)/864e5/7);}
+function gearRow(it,h,equippedHere){
+ const b=gearBonus(it), bt=Object.keys(b).map(k=>'+'+b[k]+' '+STAT_LBL[k].slice(STAT_LBL[k].indexOf(' ')+1)).join(', ');
+ const dot='<span style="flex:none;width:14px;height:14px;border-radius:50%;background:'+RAR_COL[it.rarity]+'"></span>';
+ const worn=h&&h.gear&&h.gear[it.slot]===it.id;
+ let btns='';
+ if(worn)btns+='<button data-tk="off:'+it.slot+'">Take off</button>';
+ else btns+='<button data-tk="on:'+it.id+'">Put on</button>';
+ if((it.lvl||1)<5)btns+='<button data-tk="up:'+it.id+'" title="Upgrade with coins">⬆ '+gearUpgradeCost(it)+'🪙</button>';
+ if((it.lvl||1)<5)btns+='<button data-tk="merge:'+it.id+'" title="Merge a spare of the same slot for a free level">🔀</button>';
+ if(!worn)btns+='<button data-tk="sell:'+it.id+'" title="Sell">'+RAR_SELL[it.rarity]+'🪙</button>';
+ return '<div class="evrow">'+dot+' <b>'+it.name+'</b><span style="font-size:11px">'+it.rarity+' · Lv '+(it.lvl||1)+' · '+bt+(worn?' · <b>worn</b>':'')+'</span><span style="flex:none;display:flex;gap:4px;flex-wrap:wrap">'+btns+'</span></div>';
+}
+function tackLockerHtml(s){
+ const h=s.horses[rideIdx]; if(h)ensureStats(h);
+ const inv=s.tack||[]; const keys=s.keys||0;
+ const freeKey=(s.keyWeek!==weekKey());
+ let html='<div class="evrow">🗝️ <b>Silver Keys: '+keys+'</b><span style="font-size:11px">A key opens a tack chest: one piece, rarity rolled. Keys come from events, taming, breeding, the Trail Pass and trophies.</span>'
+  +'<span style="flex:none;display:flex;gap:4px"><button data-tk="chest" '+(keys>0?'':'disabled')+'>Open chest 🗝️</button>'+(freeKey?'<button data-tk="freekey">🎁 Weekly key</button>':'')+'</span></div>';
+ if(h){
+  const eff=effStats(h);
+  html+='<div style="font-size:12px;color:#8c7a63;margin:6px 0 2px"><b>'+h.name+'</b> is wearing · '+STAT_KEYS.map(k=>STAT_LBL[k].split(' ')[0]+' '+eff[k]+(eff[k]>h.stats[k]?'<small style="color:#3b8bd6">(+'+(eff[k]-h.stats[k])+')</small>':'')).join(' ')+'</div>';
+  html+=GEAR_SLOTS.map(sl=>{const it=h.gear&&inv.find(t=>t.id===h.gear[sl]);
+   return it?gearRow(it,h,true):'<div class="evrow"><span style="flex:none;width:14px;height:14px;border-radius:50%;border:1px dashed #b8a888"></span> <b>'+GEAR_SLOT_LBL[sl]+'</b><span style="font-size:11px;color:#b8a888">nothing yet</span><span style="flex:none"><button data-tk="order:'+sl+'">Order plain · 150🪙</button></span></div>';}).join('');
+ }
+ const spare=inv.filter(it=>!(h&&h.gear&&h.gear[it.slot]===it.id));
+ html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">Locker · '+spare.length+' spare piece'+(spare.length===1?'':'s')+'</div>';
+ html+=spare.length?spare.sort((a,b)=>RARITIES.indexOf(b.rarity)-RARITIES.indexOf(a.rarity)).map(it=>gearRow(it,h,false)).join(''):'<div style="font-size:11px;color:#b8a888">Open a chest or order a plain piece, then put it on.</div>';
+ html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🎨 Saddle paint · 150🪙</div><div class="crow" style="gap:6px;flex-wrap:wrap">'
+  +TACKS3.map(tk=>'<button data-buyt="'+tk[0]+'" title="'+tk[1]+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+tk[0]+';vertical-align:middle"></span> '+tk[1]+'</button>').join('')
+  +(s.goldTack?'<button data-buyt="#ffd166">✨ Golden</button>':'')+'</div>';
+ return html;
+}
+function tackAct(cmd){
+ const [op,arg]=cmd.split(':'); let msg='',ok=false,got=null;
+ syncSave(s=>{
+  s.tack=s.tack||[]; const h=s.horses[rideIdx]; if(h)ensureStats(h);
+  if(op==='chest'){ if((s.keys||0)<1){msg='No keys — finish an event or a daily.';return;} s.keys--; got=genGear(); s.tack.push(got); msg='🗝️ '+got.rarity+'! '+got.name; ok=true; }
+  else if(op==='freekey'){ if(s.keyWeek===weekKey()){msg='Already claimed this week.';return;} s.keyWeek=weekKey(); s.keys=(s.keys||0)+1; msg='🎁 A Silver Key — see you next week!'; ok=true; }
+  else if(op==='order'){ if(s.coins<150){msg='Not enough coins!';return;} s.coins-=150; got=genGear('Common',arg); s.tack.push(got); if(h)h.gear[arg]=got.id; msg='Ordered a '+got.name+' and put it on.'; ok=true; }
+  else if(op==='on'){ const it=s.tack.find(t=>t.id===arg); if(!it||!h)return; h.gear[it.slot]=it.id; msg=h.name+' wears the '+it.name+'.'; ok=true; }
+  else if(op==='off'){ if(!h)return; delete h.gear[arg]; msg='Taken off.'; ok=true; }
+  else if(op==='up'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; const c=gearUpgradeCost(it); if(s.coins<c){msg='Upgrade costs '+c+' coins.';return;} if((it.lvl||1)>=5){msg='Already at Lv 5.';return;} s.coins-=c; it.lvl=(it.lvl||1)+1; msg=it.name+' is now Lv '+it.lvl+'!'; ok=true; }
+  else if(op==='merge'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; if((it.lvl||1)>=5){msg='Already at Lv 5.';return;}
+   const worn=new Set(s.horses.flatMap(x=>Object.values(x.gear||{})));
+   const fodder=s.tack.filter(t=>t.id!==it.id&&t.slot===it.slot&&!worn.has(t.id)&&RARITIES.indexOf(t.rarity)<=RARITIES.indexOf(it.rarity)).sort((a,b)=>RARITIES.indexOf(a.rarity)-RARITIES.indexOf(b.rarity))[0];
+   if(!fodder){msg='Nothing to merge: you need a spare '+GEAR_NOUN[it.slot].toLowerCase()+' of the same or lower rarity.';return;}
+   s.tack=s.tack.filter(t=>t.id!==fodder.id); it.lvl=(it.lvl||1)+1; msg='Merged the '+fodder.name+' in: '+it.name+' is Lv '+it.lvl+'.'; ok=true; }
+  else if(op==='sell'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; const worn=s.horses.some(x=>Object.values(x.gear||{}).includes(it.id)); if(worn){msg='Take it off first.';return;} s.tack=s.tack.filter(t=>t.id!==it.id); s.coins+=RAR_SELL[it.rarity]; msg='Sold for '+RAR_SELL[it.rarity]+' coins.'; ok=true; }
+ });
+ refreshTack(); refreshWallet(); dressSaddle();
+ toast(msg); if(ok){ if(got&&RARITIES.indexOf(got.rarity)>=2)sGem(); else sChime(); }
+ openShop('tack');
+}
+/* The saddle you see is the saddle you wear: the pad takes the rarity's colour and the
+   leather the paint you chose. */
+function dressSaddle(){
+ const sd=TACK.saddle; if(!sd||!sd.userData.mats)return;
+ const h=myHorses[rideIdx]; if(!h)return;
+ const padIt=h.gear&&tackInv.find(t=>t.id===h.gear.pad);
+ sd.userData.mats.pad.color.set(padIt?RAR_COL[padIt.rarity]:0xe6dcc6);
+ sd.userData.mats.leather.color.set(h.tack||0x6b4423);
 }
 function buyTack3(col){
  let ok=false,nm='';
@@ -6597,14 +6700,14 @@ function todayTheme(){
  for(const ch of ds)h=(h*31+ch.charCodeAt(0))|0;
  return PHOTO_THEMES[Math.abs(h)%PHOTO_THEMES.length];
 }
-const PASS_REWARDS=[{c:150},{g:1},{c:200},{c:250},{g:1},{c:300},{g:2},{c:350},{c:400},{g:2},{c:450},{g:2},{c:500},{c:550},{g:3},{c:600},{g:3},{c:700},{g:4},{tack:'#ffd166'}];
+const PASS_REWARDS=[{c:150},{g:1},{c:200},{k:1},{g:1},{c:300},{g:2},{k:1},{c:400},{g:2},{k:2},{g:2},{c:500},{k:2},{g:3},{c:600},{g:3},{k:3},{g:4},{tack:'#ffd166'}];
 function passAdd(n){syncSave(s=>{s.pass=s.pass||{pts:0};s.pass.pts+=n;});}
 const MILES={
  dist:{label:'🏇 Distance ridden',tiers:[[1000,{c:80}],[5000,{c:250}],[20000,{g:2}],[50000,{g:5}]]},
  jumps:{label:'✨ Clean jumps',tiers:[[25,{c:100}],[100,{c:300}],[400,{g:3}]]},
  carrots:{label:'🥕 Carrots munched',tiers:[[50,{c:120}],[200,{c:400}],[500,{g:3}]]},
  earned:{label:'🪙 Lifetime coins',tiers:[[2000,{c:150}],[10000,{g:2}],[40000,{g:6}]]},
- trophies:{label:'🏆 Trophies',tiers:[[3,{c:200}],[6,{g:2}],[11,{g:5}]]},
+ trophies:{label:'🏆 Trophies',tiers:[[3,{c:200,k:1}],[6,{g:2,k:2}],[11,{g:5,k:3}]]},
  shoes:{label:'🍀 Horseshoes',tiers:[[6,{c:200}],[12,{g:3}]]},
  horses:{label:'🐴 Herd size',tiers:[[3,{c:150}],[6,{g:2}],[10,{g:4}]]},
  bond:{label:'❤️ Best bond',tiers:[[60,{c:100}],[100,{g:2}]]},
@@ -6696,6 +6799,7 @@ function openLB(){
     const r=MILES[k].tiers[i][1];
     if(r.c)sv.coins+=r.c;
     if(r.g)sv.gems+=r.g;
+    if(r.k)sv.keys=(sv.keys||0)+r.k;
     ok=true;
    });
    if(ok){
@@ -6720,6 +6824,7 @@ function openLB(){
     const r=PASS_REWARDS[i];
     if(r.c)sv.coins+=r.c;
     if(r.g)sv.gems+=r.g;
+    if(r.k)sv.keys=(sv.keys||0)+r.k;
     if(r.tack)sv.goldTack=true;
     ok=true;
    });
@@ -6901,13 +7006,13 @@ const DAILYQ=[
  {type:'feed',icon:'🥕',label:'Feed 3 treats',goal:3,r:{c:80,p:10}},
  {type:'groom',icon:'🧼',label:'Groom twice',goal:2,r:{c:80,p:10}},
  {type:'cleanjump',icon:'⤴️',label:'Land 5 clean jumps',goal:5,r:{c:140,p:15}},
- {type:'event',icon:'🏆',label:'Finish any event',goal:1,r:{c:150,p:20}},
+ {type:'event',icon:'🏆',label:'Finish any event',goal:1,r:{c:150,p:20,k:1}},
  {type:'pet',icon:'💗',label:'Pet horses 3 times',goal:3,r:{c:60,p:10}},
  {type:'photo',icon:'📷',label:'Take a photo',goal:1,r:{c:60,p:10}},
  {type:'carrots',icon:'🌼',label:'Collect 5 meadow carrots',goal:5,r:{c:100,p:10}},
  {type:'water',icon:'💧',label:'Water a horse twice',goal:2,r:{c:60,p:10}},
- {type:'tame',icon:'🦄',label:'Tame a wild horse',goal:1,r:{c:200,p:25}},
- {type:'breed',icon:'💞',label:'Breed a new foal',goal:1,r:{c:200,p:25}},
+ {type:'tame',icon:'🦄',label:'Tame a wild horse',goal:1,r:{c:200,p:25,k:1}},
+ {type:'breed',icon:'💞',label:'Breed a new foal',goal:1,r:{c:200,p:25,k:1}},
  {type:'ft',icon:'🧭',label:'Fast travel somewhere',goal:1,r:{c:50,p:5}},
  {type:'gallop2k',icon:'🌪️',label:'Gallop 2,000 m',goal:2000,r:{c:250,p:30}},
  {type:'feed6',icon:'🧺',label:'Hand out 6 treats',goal:6,r:{c:160,p:20}},
@@ -6953,10 +7058,11 @@ function claimDaily(type){
   s.dq.claimed[type]=true;
   if(q.r.c)s.coins+=q.r.c;
   if(q.r.g)s.gems+=q.r.g;
+  if(q.r.k)s.keys=(s.keys||0)+q.r.k;
   if(q.r.p){s.pass=s.pass||{pts:0};s.pass.pts+=q.r.p;}
   ok=true;
  });
- if(ok){refreshWallet();sChime();toast('📋 +'+(q.r.c||0)+'🪙'+(q.r.g?' +'+q.r.g+'💎':'')+(q.r.p?' +'+q.r.p+'🎟️':''));renderQuests();}
+ if(ok){refreshWallet();sChime();toast('📋 +'+(q.r.c||0)+'🪙'+(q.r.g?' +'+q.r.g+'💎':'')+(q.r.k?' +'+q.r.k+'🗝️':'')+(q.r.p?' +'+q.r.p+'🎟️':''));renderQuests();}
 }
 
 /* ---- achievements ---- */
@@ -6969,7 +7075,7 @@ const ACHS=[
  {id:'uni1',icon:'🦄',label:'Believer',desc:'Own a Unicorn',v:s=>s.horses.some(h=>h.horn)?1:0,goal:1,r:{c:300}},
  {id:'earn5k',icon:'🪙',label:'Pocket money',desc:'Earn 5,000 coins',v:s=>(s.stats&&s.stats.earned)||0,goal:5000,r:{g:1}},
  {id:'earn20k',icon:'🪙',label:'Ranch tycoon',desc:'Earn 20,000 coins',v:s=>(s.stats&&s.stats.earned)||0,goal:20000,r:{g:3}},
- {id:'troph1',icon:'🏆',label:'First rosette',desc:'Win 1 event trophy',v:s=>Object.keys(s.trophies||{}).length,goal:1,r:{c:100}},
+ {id:'troph1',icon:'🏆',label:'First rosette',desc:'Win 1 event trophy',v:s=>Object.keys(s.trophies||{}).length,goal:1,r:{c:100,k:1}},
  {id:'troph5',icon:'🏆',label:'Shelf of silver',desc:'Win 5 event trophies',v:s=>Object.keys(s.trophies||{}).length,goal:5,r:{g:1}},
  {id:'troph11',icon:'🏆',label:'Champion of the Basin',desc:'Win every event trophy',v:s=>Object.keys(s.trophies||{}).length,goal:EVENTS3.length,r:{g:3}},
  {id:'story8',icon:'📜',label:"Grandpa Wren's pride",desc:'Finish the story missions',v:s=>(s.story&&s.story.idx)||0,goal:8,r:{c:400}},
@@ -7001,6 +7107,7 @@ function claimAch(id){
   s.achClaims[id]=true;
   if(a.r.c)s.coins+=a.r.c;
   if(a.r.g)s.gems+=a.r.g;
+  if(a.r.k)s.keys=(s.keys||0)+a.r.k;
   ok=true;
  });
  if(ok){refreshWallet();sChime();toast('🏅 Achievement: '+a.label+'! +'+(a.r.c||0)+'🪙'+(a.r.g?' +'+a.r.g+'💎':''));renderQuests();}
@@ -7556,7 +7663,7 @@ function tick(){
  const right=keys.KeyD||keys.ArrowRight||touch.right;
  const gallop=keys.ShiftLeft||keys.ShiftRight||touch.gal;
  const abil=(myHorses[rideIdx]||{}).ability;
- const HS=(myHorses[rideIdx]||{}).stats||{};                  // the five stats, felt in the hands
+ const HS=effStats(myHorses[rideIdx]);                       // the five stats plus tack bonuses, felt in the hands
  const spMul=0.82+0.036*(HS.speed||3), acMul=0.75+0.06*(HS.accel||3), agMul=0.80+0.05*(HS.agility||3), jpMul=0.92+0.016*(HS.jump||3);
  let target=0;
  if(course&&!course.started){target=0;}
