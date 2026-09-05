@@ -198,6 +198,7 @@ button:active{transform:scale(.95)}
      goes online — see loadMQTT() in the module. Loading it up front would put it on the
      critical path of every single-player launch, which is most of them. -->
 <link rel="preload" href="assets/models/horse_textured_rigged.glb" as="fetch">
+<link rel="preload" href="assets/models/rider_seat_textured.glb" as="fetch">
 <script type="importmap">
 {
  "imports":{
@@ -3752,11 +3753,11 @@ function buildSaddle(){
  add(SPH,dark,[0.17,-0.09,0.17],[0.03,0.11,0.06]);              // small knee rolls
  add(SPH,dark,[-0.17,-0.09,0.17],[0.03,0.11,0.06]);
  [-1,1].forEach(s=>{
-  add(BOX,leather,[s*0.225,-0.32,0.06],[0.03,0.36,0.05]);        // stirrup leathers
+  add(BOX,leather,[s*0.24,-0.22,0.26],[0.03,0.30,0.05]);         // stirrup leathers — short enough that the irons meet the rider's boots
   // stirrup iron: a SQUASHED vertical loop (tall & narrow) + a flat foot-tread — a proper
   // stirrup, not a wheel. (Symmetric silver rings here made the rider look wheelchair-bound.)
-  add(new THREE.TorusGeometry(0.055,0.016,8,14),iron,[s*0.225,-0.52,0.06],[0.6,1.05,1],[0,Math.PI/2,0]);
-  add(BOX,iron,[s*0.225,-0.575,0.06],[0.018,0.02,0.085]);        // flat foot tread at the loop bottom
+  add(new THREE.TorusGeometry(0.055,0.016,8,14),iron,[s*0.24,-0.385,0.27],[0.6,1.05,1],[0,Math.PI/2,0]);
+  add(BOX,iron,[s*0.24,-0.44,0.27],[0.018,0.02,0.085]);          // flat foot tread at the loop bottom
  });
  add(BOX,dark,[0.15,-0.40,-0.02],[0.035,0.42,0.10]);            // slim girth straps
  add(BOX,dark,[-0.15,-0.40,-0.02],[0.035,0.42,0.10]);
@@ -3781,29 +3782,22 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
   TACK.bitR=new THREE.Object3D();TACK.bitR.position.set(-0.13,1.34,1.0);}   // rein anchors at the gen horse's mouth corners
  if(TACK.bitL.parent!==player.mesh){player.mesh.add(TACK.bitL);player.mesh.add(TACK.bitR);}
 }
-function driveRider(sp,tm){   // live seat: leg blend, posting, lean, breathing, head look, reins
+function driveRider(sp,tm){   // live seat: lean, posting, breathing, head look, reins
  if(!USE_GEN_HORSE||!USE_GEN_TACK)return;   // procedural-mount fallback drives the rider itself
  const R=player.rider;
- if(!R||!R.J)return;
- const J=R.J;
+ if(!R||!R.g)return;
  const t=THREE.MathUtils.clamp((sp-0.3)/6,0,1);      // 0 at halt, ~1 by canter
  const ph=RIG.phase*Math.PI*2, moving=sp>0.3;
  const air=(player.y>0.4&&!player.flying)?1:0;       // two-point over jumps
- const thigh=-0.92-0.10*t-0.22*air, knee=1.18+0.12*t+0.18*air;
- for(const s of[-1,1]){
-  J.hip[s].rotation.set(thigh,-s*0.06,s*0.24);
-  J.knee[s].rotation.x=knee;
-  J.sh[s].rotation.set(-0.35-0.10*t-0.18*air,0,s*0.10);
-  J.el[s].rotation.x=-0.85-Math.sin(ph)*0.06*t;
- }
- const breath=moving?Math.sin(ph)*0.03:Math.sin((tm||0)*1.4)*0.05;
- J.torso.rotation.x=-0.10-0.22*t-0.30*air+breath;
- J.torso.rotation.z=moving?Math.sin(ph*0.5)*0.03:Math.sin((tm||0)*0.6)*0.02;
- // head: look into the turn while riding; glance around at halt; eyes stay up
+ const breath=moving?Math.sin(ph)*0.03:Math.sin((tm||0)*1.4)*0.04;
+ // head: look into the turn while riding; glance around at halt
  const turn=(keys.KeyA||keys.ArrowLeft||touch.left?1:0)-(keys.KeyD||keys.ArrowRight||touch.right?1:0);
  R._look=(R._look||0)+((moving?turn*0.42:Math.sin((tm||0)*0.9)*0.22+Math.sin((tm||0)*0.47+1)*0.12)-(R._look||0))*0.08;
- J.head.rotation.y=R._look;
- J.head.rotation.x=0.06-(J.torso.rotation.x+0.10)*0.55+(moving?Math.sin(ph)*0.035:0);
+ if(R.u){
+  R.u.uLean.value=0.04+0.24*t+0.32*air+breath;                       // forward into speed, two-point over a fence
+  R.u.uSide.value=moving?Math.sin(ph*0.5)*0.03:Math.sin((tm||0)*0.6)*0.02;
+  R.u.uHead.value=R._look;
+ }
  const post=moving?Math.max(0,Math.sin(ph))*(0.03+0.05*Math.min(1,sp/5)):0;   // rise out of the saddle each stride
  const idle=!moving?Math.sin((tm||0)*1.5)*0.005:0;
  R.g.position.y=RID2_Y+post+idle;
@@ -4850,11 +4844,12 @@ function makeHorse(cfg){
  ];
  if(cfg.tack){
   const ltL=leatherMat(shadeHex(cfg.tack,0.18)),lt=leatherMat(cfg.tack);
-  box(0.5,0.035,0.42,ltL,0,1.745,0.10,g);
-  box(0.045,0.22,0.36,ltL,-0.245,1.66,0.10,g);
-  box(0.045,0.22,0.36,ltL,0.245,1.66,0.10,g);
-  blob(0.145,0.085,0.23,lt,0,1.79,0.09,g);
-  blob(0.055,0.07,0.055,lt,0,1.83,0.27,g);
+  // sits back on the barrel, not up at the withers: the mesh rider's legs hang straight, so a forward saddle read as riding the neck
+  box(0.5,0.035,0.42,ltL,0,1.745,-0.06,g);
+  box(0.045,0.22,0.36,ltL,-0.245,1.66,-0.06,g);
+  box(0.045,0.22,0.36,ltL,0.245,1.66,-0.06,g);
+  blob(0.145,0.085,0.23,lt,0,1.79,-0.07,g);
+  blob(0.055,0.07,0.055,lt,0,1.83,0.11,g);
  }
  const shadowM=contactShadow(g);
  return {group:g,legs,neck,tail,head,ears:[earL,earR],bitL,bitR,shadowM,wings,horn};
@@ -4887,76 +4882,82 @@ function nameSprite(text){
 const horseScale=h=>h.foal?0.65:(h.breed==='chestnut'?0.82:h.breed==='shire'?1.16:h.breed==='clyde'?1.12:h.breed==='pegasus'?1.14:1);
 /* Fully articulated rider: rigid segments on real joints (torso / neck+head /
    shoulders / elbows / hips / knees) — no skinning, so nothing can smear. */
+/* The rider is a generated, textured mesh — a girl in show kit, seated, reins in hand —
+   made the same way as the horse: a FLUX.2 reference, Hunyuan3D for the shape, a baked
+   texture, smooth normals. She has no skeleton, so the life in her comes from a vertex
+   shader instead: everything above the hip leans and breathes as a rotation about the
+   hip, the head turns about the neck, and the whole figure posts with the gait from the
+   group, exactly as the old blob figure did. The boots stay where they are, which is what
+   a good seat does anyway. Custom shirt and breeches colours are recoloured by height
+   band, so the defaults (navy coat, cream breeches) show the baked texture untouched.
+   Group origin = hip centre, +z = the way she faces, same frame the blob rider used, so
+   every seat in the game (player, club riders, NPCs) keeps its numbers. */
+const RIDER_MESH={geo:null,mat:null,pending:[],riders:[]};
+const RIDER_FIT={s:0.74, dz:-0.10, spread:0.16, hip:[0,-0.18,-0.30], handL:[-0.07,0.17,0.42], handR:[0.07,0.17,0.42]};   // mesh units -> seat: scale, seat shift, and where her hip and hands are in the mesh
+const RIDER_DEF_SHIRT='#3d4a6e', RIDER_DEF_PANTS='#cfc6ae';
+function riderRefit(){for(const R of RIDER_MESH.riders)R._fit();}
+new GLTFLoader().load('assets/models/rider_seat_textured.glb',g=>{
+ let mesh=null; g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});
+ if(!mesh)return;
+ mesh.geometry.computeBoundingSphere();
+ if(mesh.material.map)mesh.material.map.anisotropy=8;
+ RIDER_MESH.geo=mesh.geometry; RIDER_MESH.mat=mesh.material;
+ RIDER_MESH.pending.forEach(f=>f()); RIDER_MESH.pending.length=0;
+},undefined,e=>console.warn('rider mesh failed to load',e));
+function riderMaterial(base,fit){
+ const m=base.clone(); m.roughness=0.72; m.metalness=0;
+ const same=(a,b)=>String(a||'').toLowerCase()===b;
+ const u={uLean:{value:0},uSide:{value:0},uHead:{value:0},uSpread:{value:RIDER_FIT.spread},
+  uShirt:{value:new THREE.Color(fit.shirt||RIDER_DEF_SHIRT)},uPants:{value:new THREE.Color(fit.pants||RIDER_DEF_PANTS)},
+  uShirtW:{value:fit.shirt&&!same(fit.shirt,RIDER_DEF_SHIRT)?1:0},uPantsW:{value:fit.pants&&!same(fit.pants,RIDER_DEF_PANTS)?1:0}};
+ m.userData.u=u;
+ m.onBeforeCompile=sh=>{
+  Object.assign(sh.uniforms,u);
+  sh.vertexShader=sh.vertexShader
+   .replace('#include <common>',`#include <common>
+uniform float uLean,uSide,uHead,uSpread; varying vec3 vRP;
+mat3 rRX(float a){float c=cos(a),s=sin(a);return mat3(1.,0.,0., 0.,c,s, 0.,-s,c);}
+mat3 rRY(float a){float c=cos(a),s=sin(a);return mat3(c,0.,-s, 0.,1.,0., s,0.,c);}
+mat3 rRZ(float a){float c=cos(a),s=sin(a);return mat3(c,s,0., -s,c,0., 0.,0.,1.);}`)
+   .replace('#include <beginnormal_vertex>',`#include <beginnormal_vertex>
+ vRP=position;
+ float rwT=smoothstep(-0.15,0.30,position.y), rwH=smoothstep(0.50,0.66,position.y), rwL=smoothstep(-0.20,-0.45,position.y);
+ mat3 rRT=rRZ(uSide*rwT)*rRX(uLean*rwT), rRH=rRY(uHead*rwH);
+ objectNormal=rRH*(rRT*objectNormal);`)
+   .replace('#include <begin_vertex>',`#include <begin_vertex>
+ { vec3 rHIP=vec3(0.,-0.18,-0.30), rNECK=vec3(0.,0.55,-0.22);
+   transformed.x+=sign(position.x)*uSpread*rwL;   // straddle: the reference sat on nothing, the horse has a barrel
+   transformed=rRT*(transformed-rHIP)+rHIP;
+   vec3 rnk=rRT*(rNECK-rHIP)+rHIP;
+   transformed=rRH*(transformed-rnk)+rnk; }`);
+  sh.fragmentShader=sh.fragmentShader
+   .replace('#include <common>','#include <common>\nuniform vec3 uShirt,uPants; uniform float uShirtW,uPantsW; varying vec3 vRP;')
+   .replace('#include <map_fragment>',`#include <map_fragment>
+ { float ry=vRP.y, rl=dot(diffuseColor.rgb,vec3(.3,.59,.11));
+   float rwS=uShirtW*smoothstep(-0.30,-0.24,ry)*(1.-smoothstep(0.52,0.60,ry))*(1.-smoothstep(0.28,0.36,vRP.z));
+   float rwP=uPantsW*smoothstep(-0.64,-0.56,ry)*(1.-smoothstep(-0.30,-0.24,ry));
+   diffuseColor.rgb=mix(diffuseColor.rgb,uShirt*(0.45+1.4*rl),rwS);
+   diffuseColor.rgb=mix(diffuseColor.rgb,uPants*(0.25+0.95*rl),rwP); }`);
+ };
+ return m;
+}
 function makeRider(custom){
  const r=new THREE.Group();
  const fit=custom||((freshSave()||{}).rider||{});
- const pants=clothMat(fit.pants||'#cfc6ae'),shirt=clothMat(fit.shirt||'#3d4a6e'),skin=fit.skin||'#e3a37d',helm=fit.helmet||'#2e2e38';
- blob(0.125,0.095,0.115,pants,0,0.01,0,r);                        // pelvis / seat
- const torso=new THREE.Group();
- torso.position.set(0,0.08,0);
- r.add(torso);
- blob(0.115,0.17,0.10,shirt,0,0.13,0.005,torso);                  // chest
- blob(0.10,0.062,0.09,shirt,0,0.27,0,torso);                      // shoulders / collar
- const neck=new THREE.Group();
- neck.position.set(0,0.315,0.01);
- torso.add(neck);
- blob(0.028,0.038,0.028,skin,0,0.012,0,neck);
- const head=new THREE.Group();
- head.position.set(0,0.05,0);
- neck.add(head);
- blob(0.066,0.078,0.068,skin,0,0.045,0.008,head);                 // face
- blob(0.05,0.052,0.042,fit.hair||'#5a4632',0,0.028,-0.062,head);  // hair bun
- blob(0.078,0.06,0.082,helm,0,0.092,0,head);                      // helmet shell
- const brim=new THREE.Mesh(new THREE.CylinderGeometry(0.085,0.085,0.015,12),smat(helm));
- brim.position.set(0,0.062,0.046);
- brim.rotation.x=-0.1;
- brim.castShadow=true;
- head.add(brim);
- blob(0.011,0.013,0.011,'#241a14',-0.026,0.052,0.068,head);       // eyes
- blob(0.011,0.013,0.011,'#241a14',0.026,0.052,0.068,head);
- const J={torso,neck,head,sh:{},el:{},hip:{},knee:{}};
- const hands={};
- for(const s of[-1,1]){
-  const sh=new THREE.Group();
-  sh.position.set(s*0.125,0.255,0.01);
-  torso.add(sh);
-  blob(0.038,0.042,0.038,shirt,0,-0.01,0,sh);                     // shoulder cap
-  tube(0.032,0.027,0.17,shirt,0,-0.09,0,sh);                      // upper arm
-  const el=new THREE.Group();
-  el.position.set(0,-0.18,0);
-  sh.add(el);
-  tube(0.026,0.022,0.16,shirt,0,-0.08,0,el);                      // forearm
-  blob(0.034,0.042,0.036,skin,0,-0.175,0.005,el);                 // hand
-  const hm=new THREE.Object3D();
-  hm.position.set(0,-0.185,0.015);
-  el.add(hm);
-  hands[s]=hm;
-  J.sh[s]=sh;J.el[s]=el;
-  const hip=new THREE.Group();
-  hip.position.set(s*0.115,-0.015,0.01);
-  r.add(hip);
-  blob(0.058,0.075,0.065,pants,0,-0.03,0,hip);                    // breech / thigh roundness
-  tube(0.05,0.042,0.30,pants,0,-0.155,0,hip);                     // thigh
-  const knee=new THREE.Group();
-  knee.position.set(0,-0.31,0);
-  hip.add(knee);
-  tube(0.039,0.033,0.30,leatherMat('#241a10'),0,-0.15,0,knee);    // tall boot
-  box(0.062,0.048,0.13,leatherMat('#241a10'),0,-0.315,0.035,knee);// boot foot (heel down)
-  J.hip[s]=hip;J.knee[s]=knee;
- }
- // bake a natural riding pose (NPCs & club riders use this as-is; the player's
- // rider is animated live by driveRider on top of the same joints)
- for(const s of[-1,1]){
-  J.hip[s].rotation.set(-0.92,-s*0.06,s*0.24);
-  J.knee[s].rotation.x=1.18;
-  J.sh[s].rotation.set(-0.35,0,s*0.10);
-  J.el[s].rotation.x=-0.85;
- }
- J.torso.rotation.x=-0.10;
- J.head.rotation.x=0.06;
- r.position.set(0,1.87,0.02);
- r.scale.setScalar(1.18);
- return {g:r,handL:hands[-1],handR:hands[1],J};
+ const R={g:r,handL:new THREE.Object3D(),handR:new THREE.Object3D(),u:null,mesh:null};
+ r.add(R.handL); r.add(R.handR);
+ R._fit=()=>{ const F=RIDER_FIT, s=F.s, H=F.hip;
+  if(R.mesh){R.mesh.scale.setScalar(s); R.mesh.position.set(-H[0]*s,-H[1]*s,-H[2]*s+F.dz);}
+  if(R.u)R.u.uSpread.value=F.spread;
+  R.handL.position.set((F.handL[0]-H[0])*s,(F.handL[1]-H[1])*s,(F.handL[2]-H[2])*s+F.dz);
+  R.handR.position.set((F.handR[0]-H[0])*s,(F.handR[1]-H[1])*s,(F.handR[2]-H[2])*s+F.dz); };
+ const attach=()=>{ const m=new THREE.Mesh(RIDER_MESH.geo,riderMaterial(RIDER_MESH.mat,fit));
+  m.castShadow=true; R.mesh=m; R.u=m.material.userData.u; r.add(m); R._fit(); };
+ if(RIDER_MESH.geo)attach(); else RIDER_MESH.pending.push(attach);
+ R._fit();
+ r.position.set(0,1.86,-0.14);   // the procedural horse's seat; the rigged mount re-seats her at RID2_Y/RID2_Z
+ RIDER_MESH.riders.push(R);
+ return R;
 }
 const reinMat=new THREE.MeshStandardMaterial({color:0x241812,roughness:0.7,metalness:0.05});
 /* A rein is a fixed-topology tube built ONCE and rewritten in place. It used to dispose and
@@ -6022,7 +6023,7 @@ function remoteUpdate(m){
  if(!r){
   if(Object.keys(remotes).length>=12)return;
   const parts=makeHorse({colors:(m.c&&m.c.body)?m.c:{body:'#8a5a2b',mane:'#332214'},tack:m.k||'#7a583a',bridle:true,seed:5,wings:!!m.wg,coat:m.ct||null});
-  const rider=makeRider({shirt:m.s||'#c98c5a',pants:m.p||'#4a4338'});
+  const rider=makeRider({shirt:m.s||RIDER_DEF_SHIRT,pants:m.p||RIDER_DEF_PANTS});
   parts.group.add(rider.g);
   /* Swap in the good horse. The procedural body goes, and so does its tack — the
      procedural saddle sits at y≈1.75 and its bridle hangs off the procedural head,
@@ -6076,7 +6077,7 @@ function netTick(dt,t){
     id:net.id,n:myName(),x:+player.pos.x.toFixed(1),z:+player.pos.z.toFixed(1),
     h:+player.heading.toFixed(2),sp:+Math.abs(player.speed).toFixed(1),
     c:h?h.colors:null,k:h?(h.tack||'#7a583a'):null,
-    s:(s.rider&&s.rider.shirt)||'#c98c5a',p:(s.rider&&s.rider.pants)||'#4a4338',
+    s:(s.rider&&s.rider.shirt)||RIDER_DEF_SHIRT,p:(s.rider&&s.rider.pants)||RIDER_DEF_PANTS,
     hn:h?String(h.name).slice(0,14):null,b:h?(h.breed||null):null,hl:h?(h.level||1):1,wg:!!(h&&h.wings),ct:h?(h.coat||null):null,
    }));
   }catch(e){}
@@ -6108,7 +6109,8 @@ function netTick(dt,t){
   animateHorse(r.parts,r.phase,r.sp<0.2?0:g3.amp,g3,true,t,0,dt);
   r.parts.group.position.set(r.x,groundH(r.x,r.z),r.z);
   r.parts.group.rotation.y=r.heading;
-  r.rider.g.rotation.x=-0.1;
+  r.rider.g.rotation.x=0;
+  if(r.rider.u)r.rider.u.uLean.value=0.06+0.2*Math.min(1,r.sp/6)+Math.sin(r.phase)*0.03;
  }
 }
 function openOnline(){
@@ -7716,7 +7718,8 @@ function tick(){
   animateHorse(n.parts,n.phase,g3.amp,g3,true,t,0,dt);
   n.parts.group.position.set(n.pos.x,groundH(n.pos.x,n.pos.z),n.pos.z);
   n.parts.group.rotation.y=n.heading;
-  n.rider.g.rotation.x=-0.12;
+  n.rider.g.rotation.x=0;
+  if(n.rider.u)n.rider.u.uLean.value=0.06+0.2*Math.min(1,n.speed/6)+Math.sin(n.phase)*0.03;
   n.rider.g.position.y=1.87+Math.max(0,Math.sin(n.phase))*0.06;
  }
  for(const gb of gltfBirds){

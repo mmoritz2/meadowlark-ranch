@@ -127,13 +127,14 @@ at startup). The interesting parts are the systems written on top of it:
 
 ### The art pipeline
 
-The horse, foliage and props under `assets/models/` were generated locally rather
+The horse, the rider, foliage and props under `assets/models/` were generated locally rather
 than bought: a reference image per asset, then image-to-3D, then texture baking, then
 auto-rigging for the animated ones. `tools/asset-gen/` holds the scripts that drive it.
 
 ## Honest limitations
 
-- The rider is a stylised procedural figure, not a production character rig.
+- The rider is a generated mesh with no skeleton. Her lean, breathing and head turn are a
+  vertex shader, not a character rig, so she can sit a horse beautifully and do nothing else.
 - Multiplayer runs over a **public, unauthenticated** MQTT broker. That is fine for
   riding with friends and wrong for anything else: anyone holding a club code can join
   that room and read its chat, so a code is a password, not a username. There is no
