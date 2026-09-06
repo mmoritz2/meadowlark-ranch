@@ -4137,6 +4137,53 @@ function horseEmote(type){
  dailyEvt('pet',0);
  return true;
 }
+/* Legs off the ground. A horse whose legs freeze in one tuck the whole time it is in the
+   air looks stuffed, so the air pose is four poses blended by what it is actually doing: a
+   jump keeps the old tuck, the push-off into flight drives the hind legs straight out behind
+   and folds the front ones under the chest, cruising is a slow paddle timed to the wingbeat
+   (which turns over into a gallop-through-the-air the faster it flies), and on the way down
+   the front legs reach for the ground the way a landing bird's do. Shared, because the rig
+   is posed in two places and they must agree. */
+const AIRP={                        // [front hip, front knee, hind hip, hind knee]
+ tuck  :[ 0.70, 1.00,-0.60,-0.70],  // the jump tuck, unchanged
+ launch:[ 1.06, 1.40,-1.18,-0.16],  // the push-off
+ cruise:[ 0.54, 0.88,-0.46,-0.54],  // gathered, but looser than a tuck
+ land  :[-0.52, 0.16,-0.10,-0.50],  // reaching for the ground
+};
+const _alp=[0,0];
+function airLegPose(L,i,a,kb,air,t,pl){
+ const flying=pl&&!!player.flying;
+ if(flying)air=Math.max(air,0.82);            // in flight the legs stay in the air pose at any height
+ if(air<=0){
+  if(pl&&(player.landT||0)>0){                // the moment after touching down, they take the weight
+   const w=Math.min(1,player.landT/0.22);
+   a+=(L.front?-0.10:0.12)*w; kb+=(L.front?0.20:-0.16)*w;
+  }
+  _alp[0]=a; _alp[1]=kb; return _alp;
+ }
+ const F=L.front?0:2;
+ let launch=0,land=0,beat=t*0.55;
+ if(flying){
+  launch=Math.max(0,1-(player.flyT||9)/1.0);
+  land=Math.max(0,Math.min(1,(2.9-(player.y||0))/2.4));
+  const wg=player.parts&&player.parts.wings&&player.parts.wings[0];
+  if(wg)beat=wg.userData.beat||0;
+ }else if(pl){
+  land=(player.vy||0)<0?Math.max(0,Math.min(1,(1.7-(player.y||0))/1.7))*0.75:0;
+ }
+ const base=flying?AIRP.cruise:AIRP.tuck;
+ let ta=base[F],tk=base[F+1];
+ if(launch>0){ ta=ta*(1-launch)+AIRP.launch[F]*launch; tk=tk*(1-launch)+AIRP.launch[F+1]*launch; }
+ if(land>0){ ta=ta*(1-land)+AIRP.land[F]*land; tk=tk*(1-land)+AIRP.land[F+1]*land; }
+ if(flying){
+  const calm=(1-launch)*(1-land*0.7);
+  const sw=Math.sin((beat+i*0.27)*Math.PI*2);                       // one paddle per wingbeat
+  ta+=sw*(L.front?0.11:0.15)*calm; tk+=sw*(L.front?0.15:0.11)*calm;
+  const gal=Math.max(0,Math.min(1,((Math.abs(player.speed)||0)-5)/9))*calm;
+  if(gal>0){ const g=Math.sin((beat*2+i*0.5)*Math.PI*2); ta+=g*0.30*gal; tk+=g*0.20*gal*(L.front?1:-1); }
+ }
+ _alp[0]=a*(1-air)+ta*air; _alp[1]=kb*(1-air)+tk*air; return _alp;
+}
 function poseRigBones(B,phase,sp,grounded,air,t,dt,graze){
  const TAU=Math.PI*2, q=_rigQ;
  const em=(B===RIG.bones)?RIG.emote:null, E=em&&EMOTES[em.type], ee=em?emEnv(em):0;
@@ -4150,10 +4197,7 @@ function poseRigBones(B,phase,sp,grounded,air,t,dt,graze){
   const p=GP[i];
   let a=swingAmp*Math.sin(TAU*(ph+p));
   let kb=kneeAmp*Math.max(0,Math.cos(TAU*(ph+p)))*(L.front?1:-1);
-  if(air>0){
-   const jTop=L.front?0.7:-0.6, jKnee=L.front?1.0:-0.7;
-   a=a*(1-air)+jTop*air; kb=kb*(1-air)+jKnee*air;
-  }
+  {const r=airLegPose(L,i,a,kb,air,t,false); a=r[0]; kb=r[1];}
   if(E){ a=a*(1-ee)+(L.front?E.fa:E.ha)*ee; kb=kb*(1-ee)+(L.front?E.fk:E.hk)*ee; }
   B[L.top].quaternion.copy(L.rTop).multiply(q.setFromAxisAngle(L.axTop,a));
   B[L.knee].quaternion.copy(L.rKnee).multiply(q.setFromAxisAngle(L.axKnee,kb));
@@ -4193,10 +4237,7 @@ function driveRig(sp,grounded,t,dt){
   const p=GP[i];
   let a=swingAmp*Math.sin(TAU*(ph+p));                            // hip swing fore/aft
   let kb=kneeAmp*Math.max(0,Math.cos(TAU*(ph+p)))*(L.front?1:-1); // knee flexes mid-swing -> foot lifts
-  if(air>0){
-   const jTop=L.front?0.7:-0.6, jKnee=L.front?1.0:-0.7;   // front legs tuck up, hind legs trail
-   a=a*(1-air)+jTop*air; kb=kb*(1-air)+jKnee*air;
-  }
+  {const r=airLegPose(L,i,a,kb,air,t,true); a=r[0]; kb=r[1];}   // tuck, push off, paddle or reach
   if(E){ a=a*(1-ee)+(L.front?E.fa:E.ha)*ee; kb=kb*(1-ee)+(L.front?E.fk:E.hk)*ee; }
   B[L.top].quaternion.copy(L.rTop).multiply(q.setFromAxisAngle(L.axTop,a));
   B[L.knee].quaternion.copy(L.rKnee).multiply(q.setFromAxisAngle(L.axKnee,kb));
@@ -8766,6 +8807,7 @@ function setFlying(on){
  if(on&&!winged){toast('🪽 Only a Pegasus can fly! Get one in the 🛍️ Shop.');return;}
  player.flying=!!on;
  if(on){
+  player.flyT=0;                                   // the push-off is timed from here
   player.flyAlt=Math.max(player.y||0,6);
   try{sJump();}catch(e){}
   if(!window._flyTut){window._flyTut=1;toast('🪽 Flying! Space climb · Shift dive · W cruise · Q roll · R spin · 🛬 land');}
@@ -8917,6 +8959,7 @@ function tick(){
   player.flyAlt=THREE.MathUtils.clamp(faPrev+climb*16*dt,0,42);
   player.y+=(player.flyAlt-player.y)*Math.min(1,dt*2.4);
   player.vy=climb*4;
+  player.flyT=(player.flyT||0)+dt;
   if(player.parts){player.parts.wingPow=THREE.MathUtils.clamp((player.parts.wingPow||0.4)+(climb>0?dt*3:(climb<0?-dt*2:dt*0.5)),0.32,1); player.parts.wingFly=true;}
   if(player.y>20&&!player.skyHi){player.skyHi=true;statBump('skyHigh',1);toast('☁️ Soaring above Kestrel Basin!');}
   if(player.flyAlt<0.35&&player.y<0.5){
