@@ -4069,7 +4069,7 @@ function dressWithRig(ent,parts,colors,opts){
  parts.group.traverse(o=>{ if(o.isMesh&&!keep.has(o))o.visible=false; });
  parts.group.add(sc);
  if(parts.horn){parts.group.add(parts.horn);parts.horn.position.set(0,1.72,0.82);parts.horn.rotation.set(-0.4,0,0);parts.horn.scale.setScalar(1.2);parts.horn.visible=true;}
- if(parts.wings)parts.wings.forEach(w=>w.position.set(w.userData.sgn*0.16,1.38,0.34));
+ if(parts.wings)parts.wings.forEach(w=>w.position.set(w.userData.sgn*0.21,1.49,0.18));
  const mat=makeCoatMat(); setCoatUniforms(mat,colors&&colors.body,opts.tailCol||null); skin.material=mat; skin.castShadow=true;
  let hair=null;
  try{ hair=buildHairFor(skin,skin.skeleton.bones,parts.group); const hc=hairColourFor(colors,null,opts.tailCol||null); hair.mane.material.color.copy(hc.mane); hair.tail.material.color.copy(hc.tail); }catch(e){console.warn('hair (world)',e);}
@@ -4087,7 +4087,7 @@ function attachRig(){
  if(player.parts&&player.parts.horn){const hn=player.parts.horn;
   player.mesh.add(hn); hn.position.set(0,1.72,0.82); hn.rotation.set(-0.4,0,0); hn.scale.setScalar(1.2);}
  // seat the wings at the RIG's withers (procedural withers sit ~0.5 higher than the rig's, so they floated)
- if(player.parts&&player.parts.wings) player.parts.wings.forEach(w=>w.position.set(w.userData.sgn*0.16,1.38,0.34));
+ if(player.parts&&player.parts.wings) player.parts.wings.forEach(w=>w.position.set(w.userData.sgn*0.21,1.49,0.18));
  // Fit the rig to ~1.85 tall. Compute the scale ONCE and cache it — recomputing the Box3
  // from the SKINNED mesh on every attach occasionally returned a degenerate bbox (h≈0 ->
  // s=1.85/0 = NaN/Inf), which made the horse render as NOTHING while the saddle+rider stayed
@@ -5518,36 +5518,173 @@ function makeLeg(parent,x,y,z,hind,body,sock,feather){
  }
  return {hip,knee};
 }
-/* Stylized pegasus wing — layered geometric feathers (primaries + coverts) fanning
-   back from the withers. Pivot flaps via rotation.z (driven in animateHorse). */
-function buildPegasusWing(sgn){
- const piv=new THREE.Group();
- piv.position.set(sgn*0.18,1.22,0.15);
- const wing=new THREE.Group();          // built +X-out, fanning back; mirrored by sgn
- const FG=new THREE.SphereGeometry(0.5,8,5);
- const mW=new THREE.MeshStandardMaterial({color:0xf8fbff,roughness:0.55,metalness:0,side:THREE.DoubleSide});
- const mB=new THREE.MeshStandardMaterial({color:0xdfe7f4,roughness:0.66,metalness:0,side:THREE.DoubleSide});
- // feather: length L, width W, fan-angle a (deg, 0=out +X -> 90=back -Z), row lift dy, depth dz.
- // Rows are stacked in y AND pushed back in z so they OVERLAP (depth), not coplanar.
- const mk=(L,W,mat,aDeg,dy,dz)=>{const m=new THREE.Mesh(FG,mat);m.scale.set(L,0.05,W);
-  const a=aDeg*Math.PI/180;
-  m.position.set(Math.cos(a)*L*0.5, dy||0, -Math.sin(a)*L*0.5+(dz||0));
-  m.rotation.y=a; m.castShadow=true; wing.add(m);};
- // primaries — long, low/back row (the main fan)
- [[1.22,6],[1.48,20],[1.68,34],[1.76,48],[1.68,62],[1.48,76],[1.24,90],[0.98,104]].forEach(([L,a],i)=>mk(L,0.21,i%2?mB:mW,a,0,0));
- // secondaries — mid row, lifted + set back (creates thickness/overlap)
- [[0.94,12],[1.06,28],[0.98,46],[0.82,64],[0.62,82]].forEach(([L,a],i)=>mk(L,0.20,i%2?mW:mB,a,0.13,0.06));
- // coverts — short top row, more lift + forward (the leading shoulder mass)
- [[0.62,18],[0.70,38],[0.58,58],[0.46,78]].forEach(([L,a],i)=>mk(L,0.18,i%2?mB:mW,a,0.26,0.12));
- // scapular tuft — fills the wing root so it doesn't sprout from a single point
- [[0.42,34],[0.36,56]].forEach(([L,a],i)=>mk(L,0.17,mW,a,0.34,0.18));
- wing.scale.set(sgn,1,1);
- wing.rotation.x=-0.34;          // tilt the fan plane so the wing ARCS up-and-back (not a flat horizontal fan)
- piv.add(wing);
- piv.userData.sgn=sgn;
- piv.userData.mats=[mW,mB];      // exposed so mythic coats can tint the wings (see tintWings)
- piv.rotation.z=sgn*0.42;
- return piv;
+/* ===== Pegasus wing =====
+   A bird's wing rather than a fan of blades. Three segments that fold — arm, forearm and
+   hand — carry the feathers in the rows a real wing wears: primaries on the hand,
+   secondaries on the forearm, tertials at the body, three rows of coverts lapping over
+   their roots, and an alula at the wrist. Every feather is one instance of a single
+   cambered, alpha-cut card, so a whole wing costs four draw calls however many feathers it
+   wears, and each feather's place is recomputed from the joints every frame. That is what
+   lets the wing fold along the barrel at a halt, half-open at a gallop, and beat with a
+   real downstroke — quick down, slower recovery, the primaries trailing behind the hand. */
+const featherTex=(()=>{
+ const cv=document.createElement('canvas'); cv.width=128; cv.height=256; const c=cv.getContext('2d');
+ const hw=t=>60*(0.24+0.78*Math.sin(Math.PI*Math.pow(t,0.55)));   // narrow quill, full belly, fine tip
+ const X=(t,sd)=>64+sd*hw(t), Y=t=>254-t*252;
+ c.clearRect(0,0,128,256);
+ c.beginPath(); c.moveTo(X(0,-1),Y(0));
+ for(let i=1;i<=48;i++){const t=i/48; c.lineTo(X(t,-1),Y(t));}
+ for(let i=48;i>=0;i--){const t=i/48; c.lineTo(X(t,1),Y(t));}
+ c.closePath();
+ const g=c.createLinearGradient(0,254,0,2);
+ g.addColorStop(0,'#cbd6e6'); g.addColorStop(0.4,'#eef4fc'); g.addColorStop(1,'#ffffff');
+ c.fillStyle=g; c.fill();
+ c.lineWidth=1; c.lineCap='round';                                 // barbs, leaving the shaft toward the tip
+ for(let i=0;i<170;i++){
+  const t=0.02+Math.random()*0.95, w=hw(t), sd=Math.random()<0.5?-1:1;
+  c.strokeStyle=Math.random()<0.42?'rgba(146,161,184,0.45)':'rgba(255,255,255,0.7)';
+  c.beginPath(); c.moveTo(64+sd*w*0.05,Y(t));
+  c.lineTo(64+sd*w*(0.7+Math.random()*0.34),Y(Math.min(1,t+0.05+Math.random()*0.05))); c.stroke();
+ }
+ c.strokeStyle='rgba(255,255,255,0.92)'; c.lineWidth=3.0;          // the shaft
+ c.beginPath(); c.moveTo(64,Y(0)); c.lineTo(64,Y(0.96)); c.stroke();
+ c.strokeStyle='rgba(118,132,156,0.30)'; c.lineWidth=1.1;
+ c.beginPath(); c.moveTo(65.4,Y(0)); c.lineTo(64.9,Y(0.94)); c.stroke();
+ c.globalCompositeOperation='destination-out'; c.lineWidth=2.4; c.strokeStyle='#000';
+ for(let i=0;i<6;i++){                                             // the splits a real vane opens
+  const t=0.5+Math.random()*0.45, sd=Math.random()<0.5?-1:1, w=hw(t);
+  c.beginPath(); c.moveTo(64+sd*w*0.42,Y(t)); c.lineTo(64+sd*w*1.04,Y(Math.min(1,t+0.04))); c.stroke();
+ }
+ c.globalCompositeOperation='source-over';
+ const tx=new THREE.CanvasTexture(cv); tx.colorSpace=THREE.SRGBColorSpace; tx.anisotropy=8; return tx;
+})();
+/* One feather: a card that runs 0->1 along +X, cambered along its length and cupped across
+   it, so it catches the light from every angle instead of reading as a flat blade. */
+const FEATHER_GEO=(()=>{
+ const SEG=5, pos=[],uvs=[],idx=[];
+ const hw=t=>0.5*(0.24+0.78*Math.sin(Math.PI*Math.pow(t,0.55)));
+ for(let i=0;i<=SEG;i++){
+  const t=i/SEG, w=hw(t), droop=-0.15*t*t, cup=0.22*w;
+  pos.push(t,droop,-w,  t,droop+cup,0,  t,droop,w);
+  uvs.push(0,t, 0.5,t, 1,t);
+ }
+ for(let i=0;i<SEG;i++){const q=i*3,r=q+3;
+  idx.push(q,r,q+1, q+1,r,r+1, q+1,r+1,q+2, q+2,r+1,r+2);}
+ const g=new THREE.BufferGeometry();
+ g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+ g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
+ g.setIndex(idx); g.computeVertexNormals();
+ return g;
+})();
+const WING={S:{arm:0.50,fore:0.55,hand:0.38},rows:[],nF:0,nC:0};
+(()=>{
+ const D=Math.PI/180;
+ // name, segment, count, t along the segment, sweep back from its axis (deg), length, width,
+ // lift off the wing plane, shift forward, how much the feather trails the beat, material
+ const RAW=[
+  ['prim','hand',11, 0.02,1.00,  78,30, 0.70,1.10, 0.230, 0.000, 0.000, 1.00, 0],
+  ['sec' ,'fore',10, 0.04,1.00,  88,80, 0.90,0.70, 0.220, 0.010,-0.012, 0.62, 0],
+  ['tert','arm' , 5, 0.18,1.00,  98,90, 0.44,0.78, 0.205, 0.018,-0.024, 0.40, 0],
+  ['gcov','fore',10, 0.02,0.97,  84,76, 0.48,0.37, 0.175, 0.052, 0.024, 0.30, 1],
+  ['mcov','fore', 9, 0.02,0.93,  78,70, 0.33,0.25, 0.150, 0.095, 0.048, 0.18, 1],
+  ['lcov','fore', 8, 0.04,0.88,  72,62, 0.22,0.17, 0.125, 0.130, 0.070, 0.10, 1],
+  ['scov','arm' , 8, 0.02,0.96, 104,92, 0.40,0.27, 0.185, 0.046, 0.000, 0.16, 1],
+  ['alu' ,'hand', 3, 0.00,0.13,  34,20, 0.25,0.19, 0.140, 0.072, 0.034, 0.28, 1],
+ ];
+ let k=0;
+ for(const R of RAW){
+  const [name,seg,cnt,t0,t1,s0,s1,l0,l1,wid,lift,fwd,flex,mat]=R;
+  for(let i=0;i<cnt;i++){
+   const u=cnt===1?0:i/(cnt-1);
+   const jit=((k*2654435761)%997)/997-0.5;                    // a little scatter, the same every load
+   WING.rows.push({seg,t:t0+(t1-t0)*u,sweep:(s0+(s1-s0)*u)*D,len:l0+(l1-l0)*u,
+    wid,lift,fwd,flex,mat,jit});
+   if(mat)WING.nC++; else WING.nF++;
+   k++;
+  }
+ }
+})();
+const _wA=new THREE.Matrix4(),_wB=new THREE.Matrix4(),_wC=new THREE.Matrix4(),
+      _wT=new THREE.Matrix4(),_wM=new THREE.Matrix4();
+/* Pose one horse's pair of wings. open: 0 folded along the barrel, 1 spread. beat: the
+   phase of the wingbeat, 0..1. Both wings of a pair share one set of instance matrices —
+   the pivots are mirrored, so a wing does the same thing in its own frame. */
+function poseWings(pair,open,beat,t){
+ if(!pair||!pair.length||!pair[0].userData.inst)return;
+ const S=WING.S, o=Math.max(0,Math.min(1,open)), L=(a,b)=>a+(b-a)*o;
+ const ph=(beat||0)*Math.PI*2;
+ const f=Math.sin(ph+0.42*Math.sin(ph));      // +1 at the top of the beat, -1 at the bottom
+ const fv=Math.cos(ph+0.42*Math.sin(ph));     // how fast it is moving, for the feathers' trail
+ const A=o*o;                                 // only an opened wing beats
+ /* Both ends of `open` were solved for rather than guessed, against what the feathers
+    themselves end up doing: at rest every feather has to trail backward along the flank and
+    miss the rider's leg, and the tips have to land near the croup; open, the wing reaches
+    2.15 m from the withers with nothing dipping below the barrel. Everything between is the
+    two interpolated, which stays smooth because no joint travels the long way round. */
+ const up=Math.max(0,f)*A;                    // the recovery stroke half-folds the wing again
+ const sx=L(-0.050,-0.375)-f*0.13*A;          // roll
+ const sy=L( 0.950,-0.350);                   // shoulder sweep: back at rest, a shade forward when open
+ const sz=L(-0.180, 0.450)+f*0.50*A;          // the beat itself
+ const ey=L(-0.550, 0.400)-up*0.35, ez=-0.277;
+ const wy=L( 0.950, 0.465)+up*0.30, wz= 0.300;
+ const trail=-fv*0.50*A;
+ /* A folded wing is a much smaller shape than an open one, so it closes down as well as in;
+    the feathers keep their own angles throughout, which is what stops the secondaries from
+    swinging forward over the shoulder as the wing shuts. */
+ const k=L(0.72,1.0)-up*0.05;
+ for(const pv of pair)pv.scale.set(pv.userData.sgn*k,k,k);
+ _wA.makeRotationY(sy); _wT.makeRotationZ(sz); _wA.multiply(_wT); _wT.makeRotationX(sx); _wA.multiply(_wT);
+ _wB.copy(_wA); _wT.makeTranslation(S.arm,0,0); _wB.multiply(_wT);
+ _wT.makeRotationY(ey); _wB.multiply(_wT); _wT.makeRotationZ(ez); _wB.multiply(_wT);
+ _wC.copy(_wB); _wT.makeTranslation(S.fore,0,0); _wC.multiply(_wT);
+ _wT.makeRotationY(wy); _wC.multiply(_wT); _wT.makeRotationZ(wz); _wC.multiply(_wT);
+ const segM={arm:_wA,fore:_wB,hand:_wC}, segL={arm:S.arm,fore:S.fore,hand:S.hand};
+ const inst=pair[0].userData.inst, aF=inst[0], aC=inst[1];
+ let iF=0,iC=0;
+ for(const r of WING.rows){
+  _wM.copy(segM[r.seg]);
+  _wT.makeTranslation(r.t*segL[r.seg], r.lift*(0.35+0.65*o), r.fwd*o);
+  _wM.multiply(_wT);
+  _wT.makeRotationY(r.sweep); _wM.multiply(_wT);
+  _wT.makeRotationZ(-0.05+trail*r.flex+r.jit*0.06); _wM.multiply(_wT);
+  _wT.makeScale(r.len*(0.94+r.jit*0.10), r.len, r.wid);
+  _wM.multiply(_wT);
+  if(r.mat){_wM.toArray(aC.array,(iC++)*16);} else {_wM.toArray(aF.array,(iF++)*16);}
+ }
+ aF.needsUpdate=true; aC.needsUpdate=true;
+}
+function buildPegasusWings(){
+ const aF=new THREE.InstancedBufferAttribute(new Float32Array(WING.nF*16),16).setUsage(THREE.DynamicDrawUsage);
+ const aC=new THREE.InstancedBufferAttribute(new Float32Array(WING.nC*16),16).setUsage(THREE.DynamicDrawUsage);
+ const mF=new THREE.MeshStandardMaterial({map:featherTex,alphaTest:0.34,side:THREE.DoubleSide,
+  roughness:0.50,metalness:0,color:0xffffff,emissive:0x000000});
+ const mC=new THREE.MeshStandardMaterial({map:featherTex,alphaTest:0.34,side:THREE.DoubleSide,
+  roughness:0.62,metalness:0,color:0xdae3f0,emissive:0x000000});
+ mF.envMapIntensity=0.8; mC.envMapIntensity=0.7;
+ const cF=new THREE.InstancedBufferAttribute(new Float32Array(WING.nF*3),3);
+ const cC=new THREE.InstancedBufferAttribute(new Float32Array(WING.nC*3),3);
+ {let iF=0,iC=0; const col=new THREE.Color();
+  for(const r of WING.rows){
+   const v=0.90+Math.abs(r.jit)*0.20;                       // no two feathers exactly alike
+   col.setRGB(v,v*0.995,v*0.985+0.012);
+   if(r.mat)col.toArray(cC.array,(iC++)*3); else col.toArray(cF.array,(iF++)*3);
+  }}
+ const mk=sgn=>{
+  const piv=new THREE.Group();
+  piv.scale.set(sgn*0.72,0.72,0.72);                         // the left wing is the right one mirrored
+  const iF=new THREE.InstancedMesh(FEATHER_GEO,mF,WING.nF);
+  const iC=new THREE.InstancedMesh(FEATHER_GEO,mC,WING.nC);
+  iF.instanceMatrix=aF; iC.instanceMatrix=aC;
+  iF.instanceColor=cF; iC.instanceColor=cC;
+  iF.frustumCulled=false; iC.frustumCulled=false;
+  iF.castShadow=true; iC.castShadow=true;
+  piv.add(iF,iC);
+  piv.userData={sgn,mats:[mF,mC],inst:[aF,aC],open:0.05,beat:0};
+  return piv;
+ };
+ const pair=[mk(-1),mk(1)];
+ poseWings(pair,0.03,0,0);
+ return pair;
 }
 function makeHorse(cfg){
  const g=new THREE.Group();
@@ -5619,7 +5756,7 @@ function makeHorse(cfg){
  tail.add(loftY(TAILP,12,maneMat(mane)));
  tail.rotation.x=0.42;
  let wings=null;
- if(cfg.wings){ wings=[buildPegasusWing(-1),buildPegasusWing(1)]; wings.forEach(w=>{g.add(w); if(cfg.coat)tintWingMats(w,cfg.coat);}); }
+ if(cfg.wings){ wings=buildPegasusWings(); wings.forEach(w=>{g.add(w); w.position.set(w.userData.sgn*0.19,1.46,0.24); if(cfg.coat)tintWingMats(w,cfg.coat);}); }
  const feathered=cfg.breed==='clyde'||cfg.breed==='shire';
  const sox=n=>!cfg.coat&&(feathered||(seed+n)%5<2);   // mythic coats: no white socks (they broke the themed legs)
  const legs=[
@@ -8603,16 +8740,16 @@ function animateHorse(parts,phase,amp,gait,grounded,t,grazing,dt){
  }
  parts.tail.rotation.x=0.5+Math.sin(phase*0.55)*0.16;
  parts.tail.rotation.z=Math.sin(phase*0.4+1)*0.12;
- if(parts.wings){
-  const pow=parts.wingPow||0;
-  for(const w of parts.wings){
-   const sgn=w.userData.sgn;
-   const flap=grounded
-    ?Math.sin(t*2.1)*0.06+Math.sin(phase)*0.05*amp
-    :Math.sin(t*(6.5+pow*4.5))*(0.38+0.4*pow);
-   w.rotation.z=sgn*(0.54+(grounded?flap:0.1+0.12*(1-pow)+flap));   // higher dihedral -> wings arc up, clear the rider
-   w.rotation.x=grounded?0:-(0.12+0.12*pow);
-  }
+ if(parts.wings&&parts.wings.length){
+  /* Folded at a halt, lifting as the horse runs, wide open the moment its feet leave the
+     ground, and beating properly in flight. The opening eases rather than snapping. */
+  const u=parts.wings[0].userData, pow=parts.wingPow||0, flying=!!parts.wingFly;
+  const run=Math.min(1,amp/0.9);
+  const want=flying?1:(grounded?(grazing>0?0.02:0.04+run*0.34):0.82);
+  const kk=dt?Math.min(1,dt*3.4):1;
+  u.open+=(want-u.open)*kk;
+  u.beat=(u.beat+(dt||0.016)*(flying?(1.05+pow*0.85):(grounded?0.13:0.55)))%1;
+  poseWings(parts.wings,u.open,u.beat,t);
  }
  if(grazing>0){
   parts.neck.rotation.x+=(0.55-parts.neck.rotation.x)*0.06;
@@ -8780,7 +8917,7 @@ function tick(){
   player.flyAlt=THREE.MathUtils.clamp(faPrev+climb*16*dt,0,42);
   player.y+=(player.flyAlt-player.y)*Math.min(1,dt*2.4);
   player.vy=climb*4;
-  if(player.parts)player.parts.wingPow=THREE.MathUtils.clamp((player.parts.wingPow||0.4)+(climb>0?dt*3:(climb<0?-dt*2:dt*0.5)),0.32,1);
+  if(player.parts){player.parts.wingPow=THREE.MathUtils.clamp((player.parts.wingPow||0.4)+(climb>0?dt*3:(climb<0?-dt*2:dt*0.5)),0.32,1); player.parts.wingFly=true;}
   if(player.y>20&&!player.skyHi){player.skyHi=true;statBump('skyHigh',1);toast('☁️ Soaring above Kestrel Basin!');}
   if(player.flyAlt<0.35&&player.y<0.5){
    player.flying=false;player.y=0;player.vy=0;player.skyHi=false;
@@ -8790,6 +8927,7 @@ function tick(){
    for(let pd=0;pd<4;pd++)puffDust(player.pos.x+(Math.random()-0.5)*0.9,gyl,player.pos.z+(Math.random()-0.5)*0.9);
   }
  }else{
+  if(player.parts)player.parts.wingFly=false;
   if((keys.Space||touch.jump)&&player.y<=0){
    if(winged){setFlying(true);}
    else{player.vy=(abil==='leap'?11.7:9.2)*jpMul;player.speed=Math.min(13.5,player.speed+0.8);sJump();}

@@ -118,6 +118,11 @@ at startup). The interesting parts are the systems written on top of it:
   the same skeleton, so they nod with the head and swing with the tail; a shader sways
   them and streams them back at the gallop. The coat is a physical material with a
   clearcoat sheen, the eyes are glossy, and both saddles are generated meshes.
+- **A pegasus with a real wing.** Three folding segments — arm, forearm and hand — carry
+  primaries, secondaries, tertials, three rows of coverts and an alula. Every feather is an
+  instance of one cambered, alpha-cut card, so a whole wing is four draw calls; the joints
+  are solved each frame, which is what lets it lie swept along the flank at a halt, lift at
+  a gallop, flare over a jump and beat with a quick downstroke and a half-folded recovery.
 - **Reins as an input device.** Both controllers are read as a pair of reins in the
   horse's own frame, with the hand poses low-passed because the steering term is a
   *difference* between two hands and so carries double the tracking noise.
