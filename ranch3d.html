@@ -379,10 +379,10 @@ const CHESTS=[
 ];
 const CHEST_REOPEN=72*3600*1000;
 const COLL_SETS={
- shells:{label:'🐚 Loon Lake shells',col:'#f2c9d6',pts:[[14,10],[26,11],[27,23],[15,24],[20,26]],reward:{g:2,k:1}},
- feathers:{label:'🪶 Kestrel feathers',col:'#eef2f7',pts:[[-140,-190],[-170,-215],[-150,-235],[-185,-195],[-125,-220]],reward:{g:2,k:1}},
- crystals:{label:'💎 Canyon crystals',col:'#8fe0ff',pts:[[-200,110],[-235,145],[-260,120],[-215,175],[-185,150]],reward:{g:2,k:1}},
- jars:{label:'🫙 Barleyfold seed jars',col:'#e8b04a',pts:[[195,-90],[230,-120],[250,-95],[215,-135],[240,-70]],reward:{g:2,k:1}},
+ shells:{label:'🐚 Loon Lake shells',col:'#f2c9d6',pts:[[14,10],[26,11],[27,23],[15,24],[20,26]],reward:{g:5,k:1}},
+ feathers:{label:'🪶 Kestrel feathers',col:'#eef2f7',pts:[[-140,-190],[-170,-215],[-150,-235],[-185,-195],[-125,-220]],reward:{g:5,k:1}},
+ crystals:{label:'💎 Canyon crystals',col:'#8fe0ff',pts:[[-200,110],[-235,145],[-260,120],[-215,175],[-185,150]],reward:{g:5,k:1}},
+ jars:{label:'🫙 Barleyfold seed jars',col:'#e8b04a',pts:[[195,-90],[230,-120],[250,-95],[215,-135],[240,-70]],reward:{g:5,k:1}},
 };
 const TACK_ROOM={x:-24,z:-26};
 const STAT_KEYS=['speed','stamina','jump','accel','agility'];
@@ -456,10 +456,10 @@ const DECAY3={hunger:100/(8*3600),thirst:100/(6*3600),clean:100/(12*3600),happy:
  const ds=new Date().toDateString();
  if(save.lastDaily!==ds){
   save.lastDaily=ds;
-  save.coins+=100;save.gems+=1;
+  save.coins+=100;save.gems+=3;
   save.pass=save.pass||{pts:0};
   save.pass.pts+=30;
-  setTimeout(()=>{try{toast('🎁 Daily gift: +100🪙 +1💎 +30 🎟️ pass points');}catch(e){}},1500);
+  setTimeout(()=>{try{toast('🎁 Daily gift: +100🪙 +3💎 +30 🎟️ pass points');}catch(e){}},1500);
  }
  save.lastSeen=Date.now();
  try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}
@@ -5087,7 +5087,7 @@ function updateShoes(dt,t){
     s.coins+=80;
     s.stats=s.stats||{};
     s.stats.shoesFound=(s.stats.shoesFound||0)+1;
-    if(s.shoes.got.length>=SHOE_N){s.gems+=2;all=true;}
+    if(s.shoes.got.length>=SHOE_N){s.gems+=6;all=true;}
    });
    refreshWallet();sCoin();
    const left=shoes.filter(q=>!q.got).length;
@@ -6747,7 +6747,7 @@ function weeklyFeatured(){
  const pick=(arr,seed,k)=>{const out=[],a=arr.slice(); let x=seed; while(out.length<k&&a.length){x=(x*1103515245+12345)>>>0; out.push(a.splice(x%a.length,1)[0]);} return out;};
  return pick(jumps,h+1,2).concat(pick(races,h+7,2));
 }
-const WEEK_TIERS=[[4,{k:1,c:200}],[8,{k:2,g:2}],[12,{g:3,gear:'Rare'}],[16,{g:5,k:2,gear:'Epic'}]];
+const WEEK_TIERS=[[4,{k:1,c:200,g:2}],[8,{k:2,g:4}],[12,{g:6,gear:'Rare'}],[16,{g:10,k:2,gear:'Epic'}]];
 function awardRibbons(ev,t,faults){
  const par=ev.par||ev.n*9||40;
  const stars=t<par?3:t<par*1.4?2:1;
@@ -6829,10 +6829,12 @@ function finishDressage(){
  const RB=awardRibbons(ev,tEq,pct>=0.75?0:1);
  const pay=Math.round(ev.reward*Math.max(0.3,pct)*(RB.featured?1.5:1));
  addCoins(pay); addXp3D(Math.round(ev.reward/8)); passAdd(50);
- if(first&&pct>=0.6){addGems(1);syncSave(s=>{s.trophies=s.trophies||{};s.trophies[ev.id]=true;});}
+ const dgem=(first&&pct>=0.6?3:0)+(pct>=0.75?2:1);
+ addGems(dgem);
+ if(first&&pct>=0.6)syncSave(s=>{s.trophies=s.trophies||{};s.trophies[ev.id]=true;});
  syncSave(s=>{s.bestScore=s.bestScore||{}; if(!s.bestScore[ev.id]||pct>s.bestScore[ev.id])s.bestScore[ev.id]=+pct.toFixed(2);});
  sChime(); sGem();
- toast('🎽 '+ev.name+' — '+Math.round(pct*100)+'%! +'+pay+'🪙'+(first&&pct>=0.6?' +1💎':'')+' · '+RB.msg);
+ toast('🎽 '+ev.name+' — '+Math.round(pct*100)+'%! +'+pay+'🪙 +'+dgem+'💎 · '+RB.msg);
  if(net.client&&net.client.connected)netSendChat('🎽 rode '+ev.name+' for '+Math.round(pct*100)+'%');
  questEvt('event',ev.id); dailyEvt('event',1);
  c.done=true; setTimeout(cancelCourse,0);   // the frame loop is mid-course-tick: clear it on the next turn
@@ -6848,9 +6850,13 @@ function finishCourse(){
  addCoins(pay);
  addXp3D(Math.round(ev.reward/8));
  passAdd(50);
- if(first){addGems(1);syncSave(s=>{s.trophies=s.trophies||{};s.trophies[ev.id]=true;});}
+ /* Every clean round is worth a gem now, and the first time you win an event is worth
+    three. Gems were a trickle you could only really get by waiting for tomorrow. */
+ const gem=(first?3:0)+(stars==='⭐⭐⭐'?2:1);
+ addGems(gem);
+ if(first)syncSave(s=>{s.trophies=s.trophies||{};s.trophies[ev.id]=true;});
  sChime();sGem();
- toast('🏆 '+ev.name+' — '+stars+' in '+c.t.toFixed(1)+'s! +'+pay+'🪙'+(first?' +1💎':'')+' · '+RB.msg+(c.insp?' · ✨×'+c.insp:'')+(c.off?' · ↪️×'+c.off:''));
+ toast('🏆 '+ev.name+' — '+stars+' in '+c.t.toFixed(1)+'s! +'+pay+'🪙 +'+gem+'💎'+' · '+RB.msg+(c.insp?' · ✨×'+c.insp:'')+(c.off?' · ↪️×'+c.off:''));
  if(c.insp)syncSave(s=>addSP(s,c.insp,'inspiring'));
  if(net.client&&net.client.connected)netSendChat('🏆 finished '+ev.name+' in '+c.t.toFixed(1)+'s '+stars);
  let newBest=false;
@@ -8047,18 +8053,18 @@ function todayTheme(){
  for(const ch of ds)h=(h*31+ch.charCodeAt(0))|0;
  return PHOTO_THEMES[Math.abs(h)%PHOTO_THEMES.length];
 }
-const PASS_REWARDS=[{c:150},{g:1},{c:200},{k:1},{g:1},{c:300},{g:2},{k:1},{c:400},{g:2},{k:2},{g:2},{c:500},{k:2},{g:3},{c:600},{g:3},{k:3},{g:4},{tack:'#ffd166'}];
+const PASS_REWARDS=[{c:150},{g:2},{c:200},{k:1},{g:2},{c:300},{g:4},{k:1},{c:400},{g:4},{k:2},{g:4},{c:500},{k:2},{g:6},{c:600},{g:6},{k:3},{g:8},{tack:'#ffd166'}];
 function passAdd(n){syncSave(s=>{s.pass=s.pass||{pts:0};s.pass.pts+=n;});}
 const MILES={
- dist:{label:'🏇 Distance ridden',tiers:[[1000,{c:80}],[5000,{c:250}],[20000,{g:2}],[50000,{g:5}]]},
- jumps:{label:'✨ Clean jumps',tiers:[[25,{c:100}],[100,{c:300}],[400,{g:3}]]},
- carrots:{label:'🥕 Carrots munched',tiers:[[50,{c:120}],[200,{c:400}],[500,{g:3}]]},
- earned:{label:'🪙 Lifetime coins',tiers:[[2000,{c:150}],[10000,{g:2}],[40000,{g:6}]]},
- trophies:{label:'🏆 Trophies',tiers:[[3,{c:200,k:1}],[6,{g:2,k:2}],[11,{g:5,k:3}]]},
- shoes:{label:'🍀 Horseshoes',tiers:[[6,{c:200}],[12,{g:3}]]},
- horses:{label:'🐴 Herd size',tiers:[[3,{c:150}],[6,{g:2}],[10,{g:4}]]},
- bond:{label:'❤️ Best bond',tiers:[[60,{c:100}],[100,{g:2}]]},
- sp:{label:'⭐ Star Points this week',tiers:[[100,{c:200,k:1}],[250,{g:2,k:1}],[500,{g:4,k:2,gear:'Rare'}]]},
+ dist:{label:'🏇 Distance ridden',tiers:[[1000,{c:80}],[5000,{c:250}],[20000,{g:4}],[50000,{g:10}]]},
+ jumps:{label:'✨ Clean jumps',tiers:[[25,{c:100}],[100,{c:300}],[400,{g:6}]]},
+ carrots:{label:'🥕 Carrots munched',tiers:[[50,{c:120}],[200,{c:400}],[500,{g:6}]]},
+ earned:{label:'🪙 Lifetime coins',tiers:[[2000,{c:150}],[10000,{g:4}],[40000,{g:12}]]},
+ trophies:{label:'🏆 Trophies',tiers:[[3,{c:200,k:1}],[6,{g:4,k:2}],[11,{g:10,k:3}]]},
+ shoes:{label:'🍀 Horseshoes',tiers:[[6,{c:200}],[12,{g:6}]]},
+ horses:{label:'🐴 Herd size',tiers:[[3,{c:150}],[6,{g:4}],[10,{g:8}]]},
+ bond:{label:'❤️ Best bond',tiers:[[60,{c:100}],[100,{g:4}]]},
+ sp:{label:'⭐ Star Points this week',tiers:[[100,{c:200,k:1}],[250,{g:4,k:1}],[500,{g:8,k:2,gear:'Rare'}]]},
 };
 function statVal(s,k){
  if(k==='sp')return (s.sp&&s.sp.week===weekKey())?(s.sp.pts||0):0;
@@ -8353,24 +8359,24 @@ $('stableBtn').onclick=openStable;
 
 /* ---- daily quests ---- */
 const DAILYQ=[
- {type:'gallop',icon:'💨',label:'Gallop 800 m',goal:800,r:{c:120,p:15}},
- {type:'feed',icon:'🥕',label:'Feed 3 treats',goal:3,r:{c:80,p:10}},
- {type:'groom',icon:'🧼',label:'Groom twice',goal:2,r:{c:80,p:10}},
- {type:'cleanjump',icon:'⤴️',label:'Land 5 clean jumps',goal:5,r:{c:140,p:15}},
- {type:'event',icon:'🏆',label:'Finish any event',goal:1,r:{c:150,p:20,k:1}},
- {type:'pet',icon:'💗',label:'Pet horses 3 times',goal:3,r:{c:60,p:10}},
- {type:'photo',icon:'📷',label:'Take a photo',goal:1,r:{c:60,p:10}},
- {type:'carrots',icon:'🌼',label:'Collect 5 meadow carrots',goal:5,r:{c:100,p:10}},
- {type:'water',icon:'💧',label:'Water a horse twice',goal:2,r:{c:60,p:10}},
- {type:'tame',icon:'🦄',label:'Tame a wild horse',goal:1,r:{c:200,p:25,k:1}},
- {type:'breed',icon:'💞',label:'Breed a new foal',goal:1,r:{c:200,p:25,k:1}},
- {type:'ft',icon:'🧭',label:'Fast travel somewhere',goal:1,r:{c:50,p:5}},
- {type:'gallop2k',icon:'🌪️',label:'Gallop 2,000 m',goal:2000,r:{c:250,p:30}},
- {type:'fish',icon:'🎣',label:'Catch 2 fish at Loon Lake',goal:2,r:{c:150,p:15}},
- {type:'trail',icon:'🥾',label:'Finish a trail ride',goal:1,r:{c:150,p:20}},
- {type:'feed6',icon:'🧺',label:'Hand out 6 treats',goal:6,r:{c:160,p:20}},
- {type:'shoe',icon:'🍀',label:'Find 3 golden horseshoes',goal:3,r:{c:220,p:20}},
- {type:'wildphoto',icon:'📸',label:'Photograph 2 wild animals',goal:2,r:{c:200,p:20}},
+ {type:'gallop',icon:'💨',label:'Gallop 800 m',goal:800,r:{c:120,g:2,p:15}},
+ {type:'feed',icon:'🥕',label:'Feed 3 treats',goal:3,r:{c:80,g:1,p:10}},
+ {type:'groom',icon:'🧼',label:'Groom twice',goal:2,r:{c:80,g:1,p:10}},
+ {type:'cleanjump',icon:'⤴️',label:'Land 5 clean jumps',goal:5,r:{c:140,g:2,p:15}},
+ {type:'event',icon:'🏆',label:'Finish any event',goal:1,r:{c:150,g:3,p:20,k:1}},
+ {type:'pet',icon:'💗',label:'Pet horses 3 times',goal:3,r:{c:60,g:1,p:10}},
+ {type:'photo',icon:'📷',label:'Take a photo',goal:1,r:{c:60,g:1,p:10}},
+ {type:'carrots',icon:'🌼',label:'Collect 5 meadow carrots',goal:5,r:{c:100,g:1,p:10}},
+ {type:'water',icon:'💧',label:'Water a horse twice',goal:2,r:{c:60,g:1,p:10}},
+ {type:'tame',icon:'🦄',label:'Tame a wild horse',goal:1,r:{c:200,g:3,p:25,k:1}},
+ {type:'breed',icon:'💞',label:'Breed a new foal',goal:1,r:{c:200,g:3,p:25,k:1}},
+ {type:'ft',icon:'🧭',label:'Fast travel somewhere',goal:1,r:{c:50,g:1,p:5}},
+ {type:'gallop2k',icon:'🌪️',label:'Gallop 2,000 m',goal:2000,r:{c:250,g:3,p:30}},
+ {type:'fish',icon:'🎣',label:'Catch 2 fish at Loon Lake',goal:2,r:{c:150,g:2,p:15}},
+ {type:'trail',icon:'🥾',label:'Finish a trail ride',goal:1,r:{c:150,g:2,p:20}},
+ {type:'feed6',icon:'🧺',label:'Hand out 6 treats',goal:6,r:{c:160,g:2,p:20}},
+ {type:'shoe',icon:'🍀',label:'Find 3 golden horseshoes',goal:3,r:{c:220,g:3,p:20}},
+ {type:'wildphoto',icon:'📸',label:'Photograph 2 wild animals',goal:2,r:{c:200,g:2,p:20}},
 ];
 // long-haul variants share their hooks with the base types
 function dailyTypeAliases(type){return type==='gallop'?['gallop','gallop2k']:type==='feed'?['feed','feed6']:[type];}
@@ -8553,8 +8559,8 @@ $('questBtn').onclick=openQuests;
   s.streakLast=ds;
   const c=50+Math.min(7,s.streakN)*25;
   s.coins+=c;
-  if(s.streakN%5===0)s.gems+=1;
-  msg='🔥 Day '+s.streakN+' login streak! +'+c+'🪙'+(s.streakN%5===0?' +1💎':'');
+  const sg=s.streakN%2===0?2:1; s.gems+=sg;                 // a gem or two for coming back, every day
+  msg='🔥 Day '+s.streakN+' login streak! +'+c+'🪙 +'+sg+'💎';
  });
  if(msg){refreshWallet();setTimeout(()=>{try{toast(msg);}catch(e){}},2600);}
 })();
@@ -8820,7 +8826,7 @@ function useThing(){
   let got=null;
   syncSave(sv=>{ sv.chests=sv.chests||{}; const at=sv.chests[t.id]; if(at&&Date.now()-at<CHEST_REOPEN)return;
    sv.chests[t.id]=Date.now(); const r={c:t.tier===1?80+Math.floor(Math.random()*80):t.tier===2?200:300};
-   if(t.tier>=2)r.k=1; if(t.tier===3){r.g=2;r.gear='Rare';} if(t.tier===1){const fk=['carrot','apple','lettuce','pumpkin'][Math.floor(Math.random()*4)];sv.items[fk]=(sv.items[fk]||0)+3;r.food=fk;}
+   if(t.tier>=2)r.k=1; r.g=t.tier===3?4:t.tier===2?2:1; if(t.tier===3){r.gear='Rare';} if(t.tier===1){const fk=['carrot','apple','lettuce','pumpkin'][Math.floor(Math.random()*4)];sv.items[fk]=(sv.items[fk]||0)+3;r.food=fk;}
    sv.coins+=r.c; if(r.k)sv.keys=(sv.keys||0)+r.k; if(r.g)sv.gems+=r.g; if(r.gear){sv.tack=sv.tack||[];sv.tack.push(genGear(r.gear));} sv.stats=sv.stats||{}; sv.stats.chests=(sv.stats.chests||0)+1; got=r; });
   if(!got){toast('The chest is empty — it refills in a few days.');return;}
   t.lid.rotation.x=-1.2; refreshWallet(); refreshTack(); sGem(); passAdd(5);
