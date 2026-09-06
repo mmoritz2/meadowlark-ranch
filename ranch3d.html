@@ -4060,11 +4060,16 @@ function hairColour(){
    A mythic coat is no longer a reason to stay procedural — the rig has its own glowing
    material, the same one the player's mount uses. */
 const WORLD_RIG_MAX=quality==='low'?0:quality==='medium'?16:32;
+function rigBudget(){return quality==='low'?8:quality==='medium'?16:32;}   // read live: the tier can change mid-game
 let worldRigCount=0;
 function dressWithRig(ent,parts,colors,opts){
  opts=opts||{};
- if(ent.rig||ent.rigTried)return; if(!RIG.ready||!RIG.scene||!RIG.fitScale||!RIG.baseMat)return; ent.rigTried=true;
- if(worldRigCount>=WORLD_RIG_MAX&&!opts.mine)return;   // your own horses jump the queue
+ if(ent.rig||ent.rigTried)return; if(!RIG.ready||!RIG.scene||!RIG.fitScale||!RIG.baseMat)return;
+ /* Ask again next time rather than latching. A horse refused because the budget was full
+    (or because the graphics tier was Low when it was born) used to be stuck on the old
+    procedural body for the rest of the session, which is why a few of them never changed. */
+ if(worldRigCount>=rigBudget()&&!opts.mine)return;      // your own horses jump the queue, always
+ ent.rigTried=true;
  let sc; try{sc=skeletonClone(RIG.scene);}catch(e){return;}
  let skin=null; sc.traverse(o=>{if(o.isSkinnedMesh&&!skin)skin=o;}); if(!skin)return;
  sc.scale.setScalar(RIG.fitScale); sc.position.set(0,RIG.fitY,0); sc.rotation.set(0,-Math.PI/2,0); sc.visible=true;
@@ -5629,14 +5634,14 @@ const WING={S:{arm:0.50,fore:0.55,hand:0.38},rows:[],nF:0,nC:0};
  // name, segment, count, t along the segment, sweep back from its axis (deg), length, width,
  // lift off the wing plane, shift forward, how much the feather trails the beat, material
  const RAW=[
-  ['prim','hand',11, 0.02,1.00,  78,30, 0.70,1.10, 0.230, 0.000, 0.000, 1.00, 0],
-  ['sec' ,'fore',10, 0.04,1.00,  88,80, 0.90,0.70, 0.220, 0.010,-0.012, 0.62, 0],
-  ['tert','arm' , 5, 0.18,1.00,  98,90, 0.44,0.78, 0.205, 0.018,-0.024, 0.40, 0],
-  ['gcov','fore',10, 0.02,0.97,  84,76, 0.48,0.37, 0.175, 0.052, 0.024, 0.30, 1],
-  ['mcov','fore', 9, 0.02,0.93,  78,70, 0.33,0.25, 0.150, 0.095, 0.048, 0.18, 1],
-  ['lcov','fore', 8, 0.04,0.88,  72,62, 0.22,0.17, 0.125, 0.130, 0.070, 0.10, 1],
-  ['scov','arm' , 8, 0.02,0.96, 104,92, 0.40,0.27, 0.185, 0.046, 0.000, 0.16, 1],
-  ['alu' ,'hand', 3, 0.00,0.13,  34,20, 0.25,0.19, 0.140, 0.072, 0.034, 0.28, 1],
+  ['prim','hand',13, 0.02,1.00,  78,30, 0.70,1.12, 0.235, 0.000, 0.000, 1.00, 0],
+  ['sec' ,'fore',13, 0.04,1.00,  88,80, 0.92,0.70, 0.225, 0.010,-0.012, 0.62, 0],
+  ['tert','arm' , 6, 0.16,1.00,  98,90, 0.44,0.80, 0.210, 0.018,-0.024, 0.40, 0],
+  ['gcov','fore',13, 0.02,0.97,  84,76, 0.50,0.38, 0.180, 0.052, 0.024, 0.30, 1],
+  ['mcov','fore',12, 0.02,0.93,  78,70, 0.34,0.26, 0.155, 0.095, 0.048, 0.18, 1],
+  ['lcov','fore',10, 0.04,0.88,  72,62, 0.23,0.17, 0.128, 0.130, 0.070, 0.10, 1],
+  ['scov','arm' ,10, 0.02,0.96, 104,92, 0.42,0.28, 0.190, 0.046, 0.000, 0.16, 1],
+  ['alu' ,'hand', 4, 0.00,0.13,  34,20, 0.26,0.19, 0.145, 0.072, 0.034, 0.28, 1],
  ];
  let k=0;
  for(const R of RAW){
@@ -5645,7 +5650,9 @@ const WING={S:{arm:0.50,fore:0.55,hand:0.38},rows:[],nF:0,nC:0};
    const u=cnt===1?0:i/(cnt-1);
    const jit=((k*2654435761)%997)/997-0.5;                    // a little scatter, the same every load
    WING.rows.push({seg,t:t0+(t1-t0)*u,sweep:(s0+(s1-s0)*u)*D,len:l0+(l1-l0)*u,
-    wid,lift,fwd,flex,mat,jit});
+    wid,lift,fwd,flex,mat,jit,
+    slot:name==='prim'?Math.max(0,(u-0.35)/0.65):0,      // the outer primaries are the ones that open
+    shade:name==='prim'||name==='sec'||name==='tert'?1:0.80-0.10*(name==='mcov')-0.16*(name==='lcov')});
    if(mat)WING.nC++; else WING.nF++;
    k++;
   }
@@ -5653,6 +5660,24 @@ const WING={S:{arm:0.50,fore:0.55,hand:0.38},rows:[],nF:0,nC:0};
 })();
 const _wA=new THREE.Matrix4(),_wB=new THREE.Matrix4(),_wC=new THREE.Matrix4(),
       _wT=new THREE.Matrix4(),_wM=new THREE.Matrix4();
+/* A feather held up to the sun lights up: the sun behind the wing shines through the vane,
+   which is most of what makes real feathers look like feathers rather than white card. The
+   term is a straight back-light — how much the surface faces away from the sun — fed the
+   sun's direction in view space, which poseWings refreshes each frame. */
+function featherGlow(m,strength){
+ const u={uSunV:{value:new THREE.Vector3(0,0,1)},uGlow:{value:strength}};
+ m.userData.u=u; m.userData.glowBase=strength;   // scaled by how strong the sun actually is
+ m.onBeforeCompile=sh=>{
+  Object.assign(sh.uniforms,u);
+  sh.fragmentShader='uniform vec3 uSunV;uniform float uGlow;\n'+sh.fragmentShader.replace(
+   '#include <opaque_fragment>',
+   `{ float bl=clamp(-dot(normalize(vNormal),uSunV),0.0,1.0);
+      outgoingLight+=diffuseColor.rgb*pow(bl,2.2)*uGlow; }
+    #include <opaque_fragment>`);
+ };
+ m.customProgramCacheKey=()=>'featherGlow'+strength;
+}
+const _sunW=new THREE.Vector3(),_sunV=new THREE.Vector3();
 /* Pose one horse's pair of wings. open: 0 folded along the barrel, 1 spread. beat: the
    phase of the wingbeat, 0..1. Both wings of a pair share one set of instance matrices —
    the pivots are mirrored, so a wing does the same thing in its own frame. */
@@ -5670,7 +5695,9 @@ function poseWings(pair,open,beat,t){
     two interpolated, which stays smooth because no joint travels the long way round. */
  const up=Math.max(0,f)*A;                    // the recovery stroke half-folds the wing again
  const sx=L(-0.050,-0.375)-f*0.13*A;          // roll
- const sy=L( 0.950,-0.350);                   // shoulder sweep: back at rest, a shade forward when open
+ /* The tip traces an ellipse, not a line: the wing sweeps forward as it comes down and
+    back as it lifts, a quarter of a cycle out of step with the flap. */
+ const sy=L( 0.950,-0.350)+fv*0.22*A;         // shoulder sweep: back at rest, a shade forward when open
  const sz=L(-0.180, 0.420)+f*0.66*A;          // the beat itself, swung wide enough to read at a distance
  const ey=L(-0.550, 0.400)-up*0.46, ez=-0.277;
  const wy=L( 0.950, 0.465)+up*0.40, wz= 0.300;
@@ -5686,6 +5713,10 @@ function poseWings(pair,open,beat,t){
  _wC.copy(_wB); _wT.makeTranslation(S.fore,0,0); _wC.multiply(_wT);
  _wT.makeRotationY(wy); _wC.multiply(_wT); _wT.makeRotationZ(wz); _wC.multiply(_wT);
  const segM={arm:_wA,fore:_wB,hand:_wC}, segL={arm:S.arm,fore:S.fore,hand:S.hand};
+ {const mt=pair[0].userData.mats;                 // the sun, in the space the shader works in
+  _sunW.copy(sun.position).normalize(); _sunV.copy(_sunW).transformDirection(camera.matrixWorldInverse);
+  const lit=Math.max(0,Math.min(1,(sun.intensity-0.6)/4.0));   // nothing shines through a wing at midnight
+  for(const m of mt) if(m.userData.u){ m.userData.u.uSunV.value.copy(_sunV); m.userData.u.uGlow.value=m.userData.glowBase*lit; }}
  const inst=pair[0].userData.inst, aF=inst[0], aC=inst[1];
  let iF=0,iC=0;
  for(const r of WING.rows){
@@ -5693,7 +5724,9 @@ function poseWings(pair,open,beat,t){
   _wT.makeTranslation(r.t*segL[r.seg], r.lift*(0.35+0.65*o), r.fwd*o);
   _wM.multiply(_wT);
   _wT.makeRotationY(r.sweep); _wM.multiply(_wT);
-  _wT.makeRotationZ(-0.05+trail*r.flex+r.jit*0.06); _wM.multiply(_wT);
+  const flut=Math.sin(t*19.0+r.jit*41.0)*0.028*Math.abs(fv)*A*r.flex;   // the tips shiver in the fast part of the beat
+  _wT.makeRotationZ(-0.05+trail*r.flex+r.jit*0.06+flut); _wM.multiply(_wT);
+  if(r.slot){ _wT.makeRotationX(up*r.slot*0.95); _wM.multiply(_wT); }    // the primaries open like fingers on the way up
   _wT.makeScale(r.len*(0.94+r.jit*0.10), r.len, r.wid);
   _wM.multiply(_wT);
   if(r.mat){_wM.toArray(aC.array,(iC++)*16);} else {_wM.toArray(aF.array,(iF++)*16);}
@@ -5708,11 +5741,12 @@ function buildPegasusWings(){
  const mC=new THREE.MeshStandardMaterial({map:featherTex,alphaTest:0.34,side:THREE.DoubleSide,
   roughness:0.62,metalness:0,color:0xdae3f0,emissive:0x000000});
  mF.envMapIntensity=0.8; mC.envMapIntensity=0.7;
+ [mF,mC].forEach((m,k)=>featherGlow(m,k?0.5:0.85));
  const cF=new THREE.InstancedBufferAttribute(new Float32Array(WING.nF*3),3);
  const cC=new THREE.InstancedBufferAttribute(new Float32Array(WING.nC*3),3);
  {let iF=0,iC=0; const col=new THREE.Color();
   for(const r of WING.rows){
-   const v=0.90+Math.abs(r.jit)*0.20;                       // no two feathers exactly alike
+   const v=(0.90+Math.abs(r.jit)*0.20)*r.shade;             // no two alike, and the under-rows sit in shade
    col.setRGB(v,v*0.995,v*0.985+0.012);
    if(r.mat)col.toArray(cC.array,(iC++)*3); else col.toArray(cF.array,(iF++)*3);
   }}
