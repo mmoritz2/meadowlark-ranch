@@ -2138,13 +2138,67 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  transformed.x+=(sin(uTime*1.7+wph)*${sway}+sin(uTime*3.1+wph*2.3)*0.07)*transformed.y;
  transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.16;
 #endif`);};};
+ /* ===== ground cover =====
+    Grass alone is a lawn. What makes ground read as country is the litter on it: ferns and
+    scrub in the meadow, dry brush and spinifex in the canyon, snow-crusted tufts up at
+    Hollowpeak, bulrushes wherever there is water, and small stones everywhere. They ride the
+    same travelling window of cells as the grass, so a cell always comes back the same, and
+    they go where grass is not allowed — which is how the desert and the snowfield stopped
+    being bare ground with props standing on it. */
+ /* A clump of leaves, drawn as filled blades rather than hairlines: at a stride's distance
+    thin strokes aliased down into black scribbles in the grass. */
+ const fernTex=canvasTex(128,128,(c,w,h)=>{
+  c.clearRect(0,0,w,h);
+  const blade=(x0,ang,len,wid,col)=>{
+   const tx=x0+Math.sin(ang)*len, ty=h-Math.cos(ang)*len;
+   const nx=Math.cos(ang), ny=Math.sin(ang);
+   c.fillStyle=col; c.beginPath();
+   c.moveTo(x0-nx*wid*0.45,h);
+   c.quadraticCurveTo(x0+Math.sin(ang)*len*0.45-nx*wid, h-Math.cos(ang)*len*0.55-ny*wid, tx,ty);
+   c.quadraticCurveTo(x0+Math.sin(ang)*len*0.45+nx*wid*0.8, h-Math.cos(ang)*len*0.55+ny*wid*0.8, x0+nx*wid*0.45,h);
+   c.closePath(); c.fill();
+   c.strokeStyle='rgba(255,255,255,0.22)'; c.lineWidth=1.1;      // a highlight down the midrib
+   c.beginPath(); c.moveTo(x0,h); c.quadraticCurveTo(x0+Math.sin(ang)*len*0.45,h-Math.cos(ang)*len*0.55,tx,ty); c.stroke();
+  };
+  const back=['#6e6e6e','#7d7d7d'], front=['#a8a8a8','#c2c2c2','#dcdcdc'];
+  for(let i=0;i<7;i++){ const a=(i/6-0.5)*1.45;
+   blade(64+(Math.random()-0.5)*26,a,66+Math.random()*44,13+Math.random()*7,back[i%2]); }
+  for(let i=0;i<9;i++){ const a=(i/8-0.5)*1.7;
+   blade(64+(Math.random()-0.5)*30,a,44+Math.random()*52,10+Math.random()*8,front[i%3]); }
+ });
+ const reedTex=canvasTex(96,128,(c,w,h)=>{
+  c.clearRect(0,0,w,h);
+  for(let i=0;i<14;i++){
+   const x=8+Math.random()*80, lean=(Math.random()-0.5)*16, top=6+Math.random()*40;
+   c.strokeStyle=['#8f8f8f','#b4b4b4','#767676'][i%3]; c.lineWidth=4.2; c.lineCap='round';
+   c.beginPath(); c.moveTo(x,h); c.quadraticCurveTo(x+lean*0.4,(h+top)/2,x+lean,top); c.stroke();
+   if(i%3===0){ c.fillStyle='#5a5a5a'; c.beginPath();     // a bulrush head on some of them
+    c.ellipse(x+lean,top+13,4.6,12,lean*0.02,0,7); c.fill(); }
+  }
+ });
+ const rockGeo=(()=>{                                     // one lumpy stone, reused everywhere
+  const g=new THREE.IcosahedronGeometry(0.5,0), pa=g.attributes.position;
+  for(let i=0;i<pa.count;i++){ const f=0.62+((Math.sin(i*12.9898)*43758.5453)%1+1)%1*0.6;
+   pa.setXYZ(i,pa.getX(i)*f,pa.getY(i)*f*0.72,pa.getZ(i)*f); }
+  g.computeVertexNormals(); return g;
+ })();
  const nearMat=new THREE.MeshStandardMaterial({map:grassBladeTex2,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
  nearMat.envMapIntensity=0.58; windy(nearMat,0.32);
  const flMat=new THREE.MeshStandardMaterial({map:flowerTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
  flMat.envMapIntensity=0.6; windy(flMat,0.18);
+ const fernMat=new THREE.MeshStandardMaterial({map:fernTex,alphaTest:0.42,side:THREE.DoubleSide,roughness:0.94});
+ fernMat.envMapIntensity=0.55; windy(fernMat,0.13);
+ const reedMat=new THREE.MeshStandardMaterial({map:reedTex,alphaTest:0.42,side:THREE.DoubleSide,roughness:0.92});
+ reedMat.envMapIntensity=0.5; windy(reedMat,0.26);
+ const rockMat=new THREE.MeshStandardMaterial({roughness:0.95,metalness:0});
+ const NG_FR=quality==='low'?2:4, NG_RK=quality==='low'?2:3, NG_RD=2;
  const near=new THREE.InstancedMesh(crossGeo(0.31,0.55),nearMat,NG_W*NG_W*NG_K);
  const flow=new THREE.InstancedMesh(crossGeo(0.24,0.40),flMat,NG_W*NG_W*NG_F);
- for(const im of[near,flow]){im.frustumCulled=false;im.receiveShadow=true;im.castShadow=false;scene.add(im);}
+ const fern=new THREE.InstancedMesh(crossGeo(0.46,0.62),fernMat,NG_W*NG_W*NG_FR);
+ const reed=new THREE.InstancedMesh(crossGeo(0.30,1.15),reedMat,NG_W*NG_W*NG_RD);
+ const rock=new THREE.InstancedMesh(rockGeo,rockMat,NG_W*NG_W*NG_RK);
+ for(const im of[near,flow,fern,reed,rock]){im.frustumCulled=false;im.receiveShadow=true;im.castShadow=false;scene.add(im);}
+ rock.castShadow=quality==='high';
  const okGrass=(x,z)=>{
   if(Math.abs(x)>470||Math.abs(z)>470)return false;
   if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // the arena stays sandy
@@ -2154,6 +2208,26 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.hypot(x+160,z+210)<140)return false;             // Hollowpeak snow
   if(Math.hypot(x-20,z-16)<5.4)return false;               // Loon Lake
   return true;};
+ /* Which country you are standing in, and therefore what grows here. */
+ const biomeAt=(x,z)=>{
+  if(Math.hypot(x+220,z-130)<150)return 'desert';
+  if(Math.hypot(x+160,z+210)<140)return 'snow';
+  if(Math.abs(z-riverZ(x))<11||Math.hypot(x-20,z-16)<9.5)return 'water';
+  return 'meadow';
+ };
+ const okClutter=(x,z)=>{
+  if(Math.abs(x)>470||Math.abs(z)>470)return false;
+  if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // never in the arena
+  if(Math.abs(z-riverZ(x))<5.2)return false;               // not standing in the river
+  if(Math.hypot(x-20,z-16)<5.6)return false;               // not in the lake
+  if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
+  return true;};
+ const CLUT={
+  meadow:{fern:'#66b04e',rock:'#8c8a82',p:0.85,sz:0.95},
+  desert:{fern:'#d8bb72',rock:'#a8794a',p:0.80,sz:1.35},   // dry scrub, and plenty of it
+  snow  :{fern:'#a4b0a2',rock:'#8e969d',p:0.62,sz:1.05},   // dead tufts showing through the crust
+  water :{fern:'#79b855',rock:'#7e8a86',p:0.90,sz:1.0},
+ };
  const FLC=[new THREE.Color('#ffffff'),new THREE.Color('#fff1a8'),new THREE.Color('#f7b7d2'),new THREE.Color('#cdb8f2'),new THREE.Color('#ffffff')];
  let cx0=1e9,cz0=1e9;
  const fillCell=(ci,cj,slot)=>{
@@ -2175,6 +2249,36 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    v.set(x,groundH(x,z)-0.01,z); m4.compose(v,q,sc); flow.setMatrixAt(id,m4);
    flow.setColorAt(id,FLC[Math.floor(h1*FLC.length)%FLC.length]);
   }
+  const hide=(im,id)=>{sc.set(0,0,0);m4.compose(v.set(0,-40,0),q.identity(),sc);im.setMatrixAt(id,m4);};
+  for(let k=0;k<NG_FR;k++){                                  // ferns, scrub, dry brush, snow tufts
+   const id=slot*NG_FR+k, h1=gh(ci*53+k*13,cj*89+k*17), h2=gh(ci*23+k*37,cj*71+k*19), h3=gh(k*47+ci*3,cj*29+k*11);
+   const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
+   const B=biomeAt(x,z), C=CLUT[B];
+   if(!okClutter(x,z)||h3>C.p||(B==='water'&&h3>0.35)){hide(fern,id);continue;}
+   const sz=C.sz*(0.7+h3*0.8);
+   e.set(0,h1*Math.PI*2,(h2-0.5)*0.13); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.4),sz);
+   v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc); fern.setMatrixAt(id,m4);
+   bcol.set(C.fern).offsetHSL(0,(h1-0.5)*0.06,(h3-0.5)*0.10); fern.setColorAt(id,bcol);
+  }
+  for(let k=0;k<NG_RD;k++){                                  // bulrushes, only at the water's edge
+   const id=slot*NG_RD+k, h1=gh(ci*97+k*7,cj*43+k*23), h2=gh(ci*31+k*41,cj*13+k*29), h3=gh(k*19+cj*7,ci*11+k*3);
+   const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
+   const d=Math.min(Math.abs(z-riverZ(x)),Math.hypot(x-20,z-16));
+   if(!okClutter(x,z)||d<5.3||d>8.6||h3>0.62){hide(reed,id);continue;}
+   const sz=0.8+h3*0.7; e.set(0,h2*Math.PI*2,(h1-0.5)*0.10); q.setFromEuler(e); sc.set(sz,sz*(0.8+h1*0.6),sz);
+   v.set(x,groundH(x,z)-0.05,z); m4.compose(v,q,sc); reed.setMatrixAt(id,m4);
+   bcol.set('#7fae55').offsetHSL(0,(h2-0.5)*0.08,(h3-0.5)*0.12); reed.setColorAt(id,bcol);
+  }
+  for(let k=0;k<NG_RK;k++){                                  // stones, everywhere, in the local rock colour
+   const id=slot*NG_RK+k, h1=gh(ci*67+k*31,cj*17+k*43), h2=gh(ci*13+k*53,cj*83+k*7), h3=gh(k*23+ci*19,cj*3+k*61);
+   const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
+   const B=biomeAt(x,z);
+   if(!okClutter(x,z)||h3>(B==='desert'?0.78:B==='snow'?0.5:0.34)){hide(rock,id);continue;}
+   const sz=(0.18+h3*0.46)*(B==='desert'?2.1:B==='snow'?1.4:1);
+   e.set(h1*0.6,h2*Math.PI*2,h3*0.5); q.setFromEuler(e); sc.set(sz,sz*(0.6+h1*0.5),sz*(0.8+h2*0.4));
+   v.set(x,groundH(x,z)+sz*0.16,z); m4.compose(v,q,sc); rock.setMatrixAt(id,m4);
+   bcol.set(CLUT[B].rock).offsetHSL(0,(h2-0.5)*0.05,(h1-0.5)*0.16); rock.setColorAt(id,bcol);
+  }
  };
  const update=(px,pz)=>{
   const ci0=Math.floor(px/NG_CELL)-NG_W/2, cj0=Math.floor(pz/NG_CELL)-NG_W/2;
@@ -2185,10 +2289,9 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    fillCell(ci,cj,((ci%NG_W)+NG_W)%NG_W+NG_W*(((cj%NG_W)+NG_W)%NG_W));
   }
   cx0=ci0;cz0=cj0;
-  near.instanceMatrix.needsUpdate=true; if(near.instanceColor)near.instanceColor.needsUpdate=true;
-  flow.instanceMatrix.needsUpdate=true; if(flow.instanceColor)flow.instanceColor.needsUpdate=true;
+  for(const im of[near,flow,fern,reed,rock]){im.instanceMatrix.needsUpdate=true; if(im.instanceColor)im.instanceColor.needsUpdate=true;}
  };
- nearGrass={near,flow,tick:(t,px,pz)=>{nearU.uTime.value=t;nearU.uPlayer.value.set(px,0,pz);update(px,pz);},
+ nearGrass={near,flow,fern,reed,rock,tick:(t,px,pz)=>{nearU.uTime.value=t;nearU.uPlayer.value.set(px,0,pz);update(px,pz);},
   setVR:on=>{near.count=on?Math.floor(NG_W*NG_W*NG_K*0.5):NG_W*NG_W*NG_K;}};
  update(0,0);
  const flowerGeo=new THREE.IcosahedronGeometry(0.07,0);
