@@ -5812,13 +5812,16 @@ function buildDragonWings(){
   color:0x2c3444,emissive:0x000000});
  mMem.envMapIntensity=0.9; featherGlow(mMem,1.35);          // a membrane is thin: the sun blazes through it
  featherGlow(mBone,0.18);
+ /* Both wings of a pair SHARE these two geometries, the way the pegasus's two wings share
+    one set of instance matrices: the pivot's negative x-scale mirrors the right into the
+    left, so one rebuild a frame dresses both. Cloning them per wing left the second wing
+    with the empty buffers it was born with — a dragon with one wing. */
  const mk=sgn=>{
   const piv=new THREE.Group(); piv.scale.set(sgn*0.72,0.72,0.72);
-  const gm=mem.clone(), gb=bones.clone();
-  const mm=new THREE.Mesh(gm,mMem), bm=new THREE.Mesh(gb,mBone);
+  const mm=new THREE.Mesh(mem,mMem), bm=new THREE.Mesh(bones,mBone);
   mm.frustumCulled=false; bm.frustumCulled=false; mm.castShadow=true; bm.castShadow=true;
   piv.add(mm,bm);
-  piv.userData={sgn,kind:'dragon',mats:[mMem,mBone],mem:gm,bone:gb,open:0.05,beat:0};
+  piv.userData={sgn,kind:'dragon',mats:[mMem,mBone],mem,bone:bones,open:0.05,beat:0};
   return piv;
  };
  const pair=[mk(-1),mk(1)];
