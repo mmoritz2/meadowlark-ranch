@@ -8746,7 +8746,11 @@ function tick(){
    }
   }
  }
- if(player.y<1.0){
+ /* A fence's top rail stands at 0.95 m and the horse's barrel rides about a metre above
+    this height, so it is over the rail well before the top of its arc. Blocking up to 1.0 m
+    asked for the exact apex of a perfect jump and refused everything else. At 0.62 m a
+    canter or a gallop clears the rails and a walk still cannot. */
+ if(player.y<0.62){
   for(const w of walls){
    const abx=w.x2-w.x1,abz=w.z2-w.z1;
    const tt=THREE.MathUtils.clamp(((player.pos.x-w.x1)*abx+(player.pos.z-w.z1)*abz)/(abx*abx+abz*abz),0,1);
@@ -8791,10 +8795,17 @@ function tick(){
    else{player.vy=(abil==='leap'?11.7:9.2)*jpMul;player.speed=Math.min(13.5,player.speed+0.8);sJump();}
   }
   if(player.y>0||player.vy!==0){
-   player.vy-=(player.vy>0?36:(winged?15:48))*dt;
+   /* Integrate the arc exactly, not one step behind. Taking the whole step at the new
+      velocity threw away half a step of height, so the jump got lower as the frame rate
+      dropped: 1.10 m at 144 Hz, 0.96 m at the 32 Hz a Remote Desktop session runs at, which
+      is why the ranch fence could not be cleared on some machines and could on others. The
+      average velocity over the step is exact for constant gravity, so the arc is now the
+      same height everywhere. */
+   const gAcc=(player.vy>0?36:(winged?15:48));
+   player.y+=(player.vy-0.5*gAcc*dt)*dt;
+   player.vy-=gAcc*dt;
    if(winged&&player.vy<-4)player.vy=-4;            // wings cushion the descent
    if(player.parts)player.parts.wingPow=winged?THREE.MathUtils.clamp((player.parts.wingPow||0)-dt*1.6,0.2,1):Math.max(0,(player.parts.wingPow||0)-dt*2.5);
-   player.y+=player.vy*dt;
    if(player.y<=0){
     player.y=0;player.vy=0;player.skyHi=false;
     if(player.wasAir){
