@@ -122,6 +122,8 @@ at startup). The interesting parts are the systems written on top of it:
   pegasus: four fingers fan from the wrist, the skin is stretched between them and rebuilt
   from the joints every frame, so it sags at rest and billows on the downstroke. Horns, a
   spined crest, and the sun blazing through the wing skin at golden hour.
+  Each breathes its own element — fire, ice, water, arcane or shadow — from one shared pool
+  of billboards, and the ones grazing in the pasture do it unprompted.
 - **A pegasus with a real wing.** Three folding segments — arm, forearm and hand — carry
   primaries, secondaries, tertials, three rows of coverts and an alula. Every feather is an
   instance of one cambered, alpha-cut card, so a whole wing is four draw calls; the joints

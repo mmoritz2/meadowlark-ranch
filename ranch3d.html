@@ -220,6 +220,7 @@ body.touch #stickZone{display:block}
  <button id="lbBtn" title="Leaderboards &amp; rewards">🏅</button>
  <button id="chatBtn" title="Club chat">💬</button>
  <button id="flyBtn" style="display:none">🪽 Fly</button>
+ <button id="breathBtn" style="display:none" title="Breathe (B)">🔥 Breathe</button>
 </nav>
 <div id="hint">W/↑ ride · A/D steer · Shift gallop · Space jump · drag to look around</div>
 <div id="toasts"></div>
@@ -5886,6 +5887,107 @@ function dragonWingGeo(pair,mA,mB,mC,f,up,t){
  for(let i=0;i<F;i++)rib(_dwri,_dtip[i],0.040,0.008);
  bp.needsUpdate=true; bg.computeVertexNormals();
 }
+/* ===== Dragon breath =====
+   One pool of billboards for every dragon in the world. A breath is a cone of particles
+   thrown from the muzzle along whatever the horse is actually facing — including its pitch
+   in flight — that cool from a white core through the element's colour as they age. Fire
+   rises and fattens, ice drifts almost straight and stays small, water falls. Additive, so
+   the bloom pass does the rest. */
+const BREATH_EL={
+ fire:  {a:'#fff3c0',b:'#ff5e0a',c:'#5e1301',sp:10.5,spread:0.17,life:0.72,size:0.26,grow:2.1,rise: 1.5,rate:130,snd:[240, 70]},
+ ice:   {a:'#eaffff',b:'#6fd2ff',c:'#14538f',sp:12.5,spread:0.11,life:0.78,size:0.19,grow:1.4,rise: 0.1,rate:140,snd:[980,340]},
+ water: {a:'#dffbff',b:'#26a9dc',c:'#0b3f66',sp:10.0,spread:0.18,life:0.74,size:0.21,grow:1.6,rise:-2.4,rate:150,snd:[520,170]},
+ arcane:{a:'#eddcff',b:'#9a5cff',c:'#2e1470',sp:9.5,spread:0.21,life:0.90,size:0.24,grow:1.9,rise: 1.0,rate:115,snd:[760,250]},
+ shadow:{a:'#b79bff',b:'#5726c0',c:'#0b0518',sp:8.5,spread:0.24,life:0.98,size:0.29,grow:2.3,rise: 0.7,rate:110,snd:[170, 55]},
+};
+const ELEM_OF={fire:'fire',ice:'ice',aurora:'water',galaxy:'arcane',shadow:'shadow'};
+function dragonElement(h){ return (h&&h.dragon)?(ELEM_OF[h.coat]||'fire'):null; }
+const BREATH_N=300;
+const breathTex=(()=>{
+ const cv=document.createElement('canvas'); cv.width=cv.height=64; const c=cv.getContext('2d');
+ const g=c.createRadialGradient(32,32,0,32,32,32);
+ g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(0.35,'rgba(255,255,255,0.55)');
+ g.addColorStop(0.72,'rgba(255,255,255,0.14)'); g.addColorStop(1,'rgba(255,255,255,0)');
+ c.fillStyle=g; c.fillRect(0,0,64,64);
+ const tx=new THREE.CanvasTexture(cv); tx.colorSpace=THREE.SRGBColorSpace; return tx;
+})();
+const breathMesh=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),
+ new THREE.MeshBasicMaterial({map:breathTex,transparent:true,opacity:0.95,depthWrite:false,
+  blending:THREE.AdditiveBlending,side:THREE.DoubleSide,opacity:0.82}),BREATH_N);
+breathMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+breathMesh.instanceColor=new THREE.InstancedBufferAttribute(new Float32Array(BREATH_N*3),3);
+breathMesh.frustumCulled=false; breathMesh.renderOrder=6; scene.add(breathMesh);
+const _bP=new Float32Array(BREATH_N*3), _bV=new Float32Array(BREATH_N*3),
+      _bL=new Float32Array(BREATH_N), _bT=new Float32Array(BREATH_N), _bS=new Float32Array(BREATH_N);
+const _bEl=new Array(BREATH_N).fill('fire');
+let _bNext=0, _bLive=0, _bAcc=0;
+const _bm=new THREE.Matrix4(),_bv=new THREE.Vector3(),_bd=new THREE.Vector3(),_bc=new THREE.Color(),
+      _bc2=new THREE.Color(),_bs=new THREE.Vector3(),_bqt=new THREE.Quaternion();
+/* Emit along dir from origin. Call it every frame the horse is breathing; it meters itself. */
+function breathe(origin,dir,elem,dt){
+ const E=BREATH_EL[elem]||BREATH_EL.fire;
+ _bAcc+=E.rate*dt;
+ let k=Math.min(24,Math.floor(_bAcc)); _bAcc-=k;
+ while(k-->0){
+  const i=_bNext++%BREATH_N, i3=i*3;
+  _bd.copy(dir).normalize();
+  _bd.x+=(Math.random()-0.5)*E.spread; _bd.y+=(Math.random()-0.5)*E.spread; _bd.z+=(Math.random()-0.5)*E.spread;
+  /* A third of them barely leave the mouth: without that dense root the stream started a
+     couple of metres out and looked detached from the horse. */
+  const slow=Math.random()<0.34;
+  _bd.normalize().multiplyScalar(E.sp*(slow?0.12+Math.random()*0.22:0.72+Math.random()*0.5));
+  _bP[i3]=origin.x+_bd.x*0.03; _bP[i3+1]=origin.y+_bd.y*0.03; _bP[i3+2]=origin.z+_bd.z*0.03;
+  _bV[i3]=_bd.x; _bV[i3+1]=_bd.y; _bV[i3+2]=_bd.z;
+  _bT[i]=_bL[i]=E.life*(slow?0.34+Math.random()*0.3:0.65+Math.random()*0.6);
+  _bS[i]=E.size*(slow?1.0+Math.random()*0.5:0.6+Math.random()*0.8);
+  _bEl[i]=elem;
+ }
+}
+function tickBreath(dt){
+ let live=0;
+ _bqt.copy(camera.quaternion);                       // the puffs face the camera
+ for(let i=0;i<BREATH_N;i++){
+  if(_bL[i]<=0){ _bs.set(0,0,0); _bm.compose(_bv.set(0,-999,0),_bqt,_bs); breathMesh.setMatrixAt(i,_bm); continue; }
+  const E=BREATH_EL[_bEl[i]]||BREATH_EL.fire, i3=i*3;
+  _bL[i]-=dt; const age=1-Math.max(0,_bL[i])/_bT[i];
+  const drag=1-Math.min(0.9,dt*2.6);
+  _bV[i3]*=drag; _bV[i3+2]*=drag; _bV[i3+1]=_bV[i3+1]*drag+E.rise*dt*2.2;
+  _bP[i3]+=_bV[i3]*dt; _bP[i3+1]+=_bV[i3+1]*dt; _bP[i3+2]+=_bV[i3+2]*dt;
+  const sz=_bS[i]*(0.55+age*E.grow)*(1-age*age*0.5);
+  _bs.set(sz,sz,sz);
+  _bm.compose(_bv.set(_bP[i3],_bP[i3+1],_bP[i3+2]),_bqt,_bs);
+  breathMesh.setMatrixAt(i,_bm);
+  /* White only at the very mouth, then the element's own colour almost at once, and down
+     into its dark tone as it dies — a white ramp that lasted read as steam, not fire. */
+  _bc.set(E.a).lerp(_bc2.set(E.b),Math.min(1,age*8.0)).lerp(_bc2.set(E.c),Math.max(0,age*1.9-0.72));
+  const fade=(1-age)*(1-age);
+  breathMesh.setColorAt(i,_bc.multiplyScalar(0.34+0.95*fade));
+  live++;
+ }
+ breathMesh.instanceMatrix.needsUpdate=true; if(breathMesh.instanceColor)breathMesh.instanceColor.needsUpdate=true;
+ breathMesh.visible=live>0; _bLive=live;
+}
+const _bo=new THREE.Vector3(),_bf=new THREE.Vector3();
+/* The muzzle, and where it points, for any horse wearing the rigged body. */
+function breathFrom(group,elem,dt){
+ if(!group)return;
+ _bo.set(0,1.60,1.06).applyMatrix4(group.matrixWorld);
+ _bf.set(0,-0.06,1).transformDirection(group.matrixWorld);
+ breathe(_bo,_bf,elem,dt);
+}
+let breathSndT=0;
+function playerBreath(dt,t){
+ const h=myHorses[rideIdx], el=dragonElement(h);
+ const btn=$('breathBtn');
+ if(btn){ const want=el?'inline-block':'none'; if(btn.style.display!==want)btn.style.display=want; }
+ if(!el){ player.breathing=false; return; }
+ const on=!!(keys.KeyB||player.breathHold);
+ player.breathing=on;
+ if(!on)return;
+ breathFrom(player.mesh,el,dt);
+ if(t>breathSndT){ breathSndT=t+0.34; const E=BREATH_EL[el];
+  try{ beep(E.snd[0],E.snd[1],0.42,el==='ice'||el==='water'?'triangle':'sawtooth',0.05); }catch(e){} }
+}
 function buildPegasusWings(){
  const aF=new THREE.InstancedBufferAttribute(new Float32Array(WING.nF*16),16).setUsage(THREE.DynamicDrawUsage);
  const aC=new THREE.InstancedBufferAttribute(new Float32Array(WING.nC*16),16).setUsage(THREE.DynamicDrawUsage);
@@ -6237,6 +6339,10 @@ function rebuildAll(){
  $('nameEl').textContent=h.name+(h.horn?' 🦄':h.wings?' 🪽':'');
  const fb=$('flyBtn');
  if(fb){fb.style.display=h.wings?'inline-block':'none';if(!player.flying)fb.textContent='🪽 Fly';}
+ {const bb=$('breathBtn'), el=dragonElement(h);
+  if(bb){ bb.style.display=el?'inline-block':'none';
+   bb.textContent=({fire:'🔥',ice:'❄️',water:'💧',arcane:'🔮',shadow:'🌑'}[el]||'🔥')+' Breathe'; }
+  if(el&&!window._breathHint){window._breathHint=1;setTimeout(()=>{try{toast('🔥 Hold B (or the Breathe button) to breathe '+el+'!');}catch(e){}},1400);}}
  if(!h.wings&&player.flying)player.flying=false;
  if(h.wings&&!window._flyHint){window._flyHint=1;setTimeout(()=>{try{toast('🪽 Tap 🪽 Fly (or Space) to take off!');}catch(e){}},800);}
  let n=0;
@@ -6377,6 +6483,7 @@ addEventListener('keydown',e=>{
   if(best)openProfile(best.name);
  }
  if(e.code==='KeyF')setFlying(!player.flying);
+ if(e.code==='KeyB'&&!e.repeat)keys.KeyB=true;
  if(e.code==='KeyQ')startTrick('roll');
  if(e.code==='KeyR')startTrick('spin');
  if(e.code==='KeyV')startTrick('flip');
@@ -9043,6 +9150,10 @@ function setFlying(on){
  const fb=$('flyBtn');if(fb)fb.textContent=player.flying?'🛬 Land':'🪽 Fly';
 }
 $('flyBtn').onclick=()=>setFlying(!player.flying);
+{const bb=$('breathBtn');                                   // hold the button, or hold B
+ const on=e=>{player.breathHold=true; e.preventDefault();}, off=()=>{player.breathHold=false;};
+ bb.addEventListener('pointerdown',on); addEventListener('pointerup',off); addEventListener('pointercancel',off);
+ bb.addEventListener('touchstart',on,{passive:false}); addEventListener('touchend',off);}
 // aerial tricks (barrel roll / spin / flip) — only while flying or airborne
 function startTrick(type){
  if(player.trick) return;
@@ -9379,7 +9490,11 @@ function tick(){
    }
   }
   animateHorse(a.parts,a.phase,resting?0.05:((a.wsp||1.2)>3.5?0.72:0.42),(a.wsp||1.2)>3.5?GAITS.gallop:GAITS.walk,true,t,a.graze,dt);
-  {const hh=myHorses[a.idx]; dressWithRig(a,a.parts,hh&&hh.colors,{tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,mine:true}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);}
+  {const hh=myHorses[a.idx]; dressWithRig(a,a.parts,hh&&hh.colors,{tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,mine:true}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
+   const el=dragonElement(hh);                       // a dragon in the pasture breathes now and then
+   if(el){ a.brT=(a.brT==null?3+Math.random()*9:a.brT)-dt;
+    if(a.brT<0){ a.brOn=0.85; a.brT=7+Math.random()*11; }
+    if(a.brOn>0){ a.brOn-=dt; breathFrom(a.parts.group,el,dt); } }}
   if(a.graze<=0){
    const nt=-0.58+Math.sin(a.phase)*0.04;
    a.parts.neck.rotation.x+=(nt-a.parts.neck.rotation.x)*0.08;
@@ -9762,6 +9877,7 @@ function tick(){
  updateCritters(dt,t);
  updateShoes(dt,t);
  updateTrail(dt);
+ playerBreath(dt,t); tickBreath(dt);   // a dragon breathing its element
  if(fwd)camYaw+=(0-camYaw)*Math.min(1,dt*2);
  camDistSm+=(camDist-camDistSm)*Math.min(1,dt*6);
  const k=1-Math.exp(-5*dt);
