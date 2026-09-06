@@ -4055,13 +4055,16 @@ function hairColour(){
    any of them with a clone of the rig: the procedural meshes are hidden (wings, horns, tags
    and riders kept), the clone gets its own coat material in that horse's colours and the same
    hair, and each frame it is posed from its own speed, with a head-down for grazing. There is
-   a budget by quality level; horses past it stay procedural, mythic coats stay procedural too. */
-const WORLD_RIG_MAX=quality==='low'?0:quality==='medium'?6:12;
+   a budget by quality level. Your own horses come first and are never refused: the pasture
+   beside the stable is where you look at them, so that is where the good model has to be.
+   A mythic coat is no longer a reason to stay procedural — the rig has its own glowing
+   material, the same one the player's mount uses. */
+const WORLD_RIG_MAX=quality==='low'?0:quality==='medium'?16:32;
 let worldRigCount=0;
 function dressWithRig(ent,parts,colors,opts){
  opts=opts||{};
  if(ent.rig||ent.rigTried)return; if(!RIG.ready||!RIG.scene||!RIG.fitScale||!RIG.baseMat)return; ent.rigTried=true;
- if(opts.coat||worldRigCount>=WORLD_RIG_MAX)return;
+ if(worldRigCount>=WORLD_RIG_MAX&&!opts.mine)return;   // your own horses jump the queue
  let sc; try{sc=skeletonClone(RIG.scene);}catch(e){return;}
  let skin=null; sc.traverse(o=>{if(o.isSkinnedMesh&&!skin)skin=o;}); if(!skin)return;
  sc.scale.setScalar(RIG.fitScale); sc.position.set(0,RIG.fitY,0); sc.rotation.set(0,-Math.PI/2,0); sc.visible=true;
@@ -4070,9 +4073,12 @@ function dressWithRig(ent,parts,colors,opts){
  parts.group.add(sc);
  if(parts.horn){parts.group.add(parts.horn);parts.horn.position.set(0,1.72,0.82);parts.horn.rotation.set(-0.4,0,0);parts.horn.scale.setScalar(1.2);parts.horn.visible=true;}
  if(parts.wings)parts.wings.forEach(w=>w.position.set(w.userData.sgn*0.21,1.49,0.18));
- const mat=makeCoatMat(); setCoatUniforms(mat,colors&&colors.body,opts.tailCol||null); skin.material=mat; skin.castShadow=true;
+ let mat;
+ if(opts.coat){ mat=fantasyCoatRig(opts.coat); }        // mythic: the glowing coat, not a recoloured hide
+ else { mat=makeCoatMat(); setCoatUniforms(mat,colors&&colors.body,opts.tailCol||null); }
+ skin.material=mat; skin.castShadow=true;
  let hair=null;
- try{ hair=buildHairFor(skin,skin.skeleton.bones,parts.group); const hc=hairColourFor(colors,null,opts.tailCol||null); hair.mane.material.color.copy(hc.mane); hair.tail.material.color.copy(hc.tail); }catch(e){console.warn('hair (world)',e);}
+ try{ hair=buildHairFor(skin,skin.skeleton.bones,parts.group); const hc=hairColourFor(colors,opts.coat||null,opts.tailCol||null); hair.mane.material.color.copy(hc.mane); hair.tail.material.color.copy(hc.tail); }catch(e){console.warn('hair (world)',e);}
  if(opts.saddle){ const sd=buildSaddle(); sd.position.set(0,SADDLE_Y,SADDLE_Z); parts.group.add(sd); parts.group.add(buildBridle()); }
  worldRigCount++;
  ent.rig={scene:sc,bones:skin.skeleton.bones,phase:Math.random()*6,hair};
@@ -4146,9 +4152,9 @@ function horseEmote(type){
    is posed in two places and they must agree. */
 const AIRP={                        // [front hip, front knee, hind hip, hind knee]
  tuck  :[ 0.70, 1.00,-0.60,-0.70],  // the jump tuck, unchanged
- launch:[ 1.06, 1.40,-1.18,-0.16],  // the push-off
- cruise:[ 0.54, 0.88,-0.46,-0.54],  // gathered, but looser than a tuck
- land  :[-0.52, 0.16,-0.10,-0.50],  // reaching for the ground
+ launch:[ 1.34, 1.68,-1.52,-0.06],  // the push-off: knees to the chest, hind legs straight out
+ cruise:[ 0.50, 0.90,-0.44,-0.56],  // gathered, but looser than a tuck
+ land  :[-0.86, 0.06, 0.22,-0.34],  // reaching well out in front, hind legs swung under
 };
 const _alp=[0,0];
 function airLegPose(L,i,a,kb,air,t,pl){
@@ -4157,14 +4163,14 @@ function airLegPose(L,i,a,kb,air,t,pl){
  if(air<=0){
   if(pl&&(player.landT||0)>0){                // the moment after touching down, they take the weight
    const w=Math.min(1,player.landT/0.22);
-   a+=(L.front?-0.10:0.12)*w; kb+=(L.front?0.20:-0.16)*w;
+   a+=(L.front?-0.20:0.24)*w; kb+=(L.front?0.38:-0.30)*w;
   }
   _alp[0]=a; _alp[1]=kb; return _alp;
  }
  const F=L.front?0:2;
  let launch=0,land=0,beat=t*0.55;
  if(flying){
-  launch=Math.max(0,1-(player.flyT||9)/1.0);
+  launch=Math.max(0,1-(player.flyT||9)/1.35);   // the push-off is worth seeing, so it lasts
   land=Math.max(0,Math.min(1,(2.9-(player.y||0))/2.4));
   const wg=player.parts&&player.parts.wings&&player.parts.wings[0];
   if(wg)beat=wg.userData.beat||0;
@@ -4178,9 +4184,9 @@ function airLegPose(L,i,a,kb,air,t,pl){
  if(flying){
   const calm=(1-launch)*(1-land*0.7);
   const sw=Math.sin((beat+i*0.27)*Math.PI*2);                       // one paddle per wingbeat
-  ta+=sw*(L.front?0.11:0.15)*calm; tk+=sw*(L.front?0.15:0.11)*calm;
-  const gal=Math.max(0,Math.min(1,((Math.abs(player.speed)||0)-5)/9))*calm;
-  if(gal>0){ const g=Math.sin((beat*2+i*0.5)*Math.PI*2); ta+=g*0.30*gal; tk+=g*0.20*gal*(L.front?1:-1); }
+  ta+=sw*(L.front?0.26:0.34)*calm; tk+=sw*(L.front?0.34:0.26)*calm;
+  const gal=Math.max(0,Math.min(1,((Math.abs(player.speed)||0)-3)/7))*calm;
+  if(gal>0){ const g=Math.sin((beat*2+i*0.5)*Math.PI*2); ta+=g*0.62*gal; tk+=g*0.44*gal*(L.front?1:-1); }
  }
  _alp[0]=a*(1-air)+ta*air; _alp[1]=kb*(1-air)+tk*air; return _alp;
 }
@@ -5665,10 +5671,10 @@ function poseWings(pair,open,beat,t){
  const up=Math.max(0,f)*A;                    // the recovery stroke half-folds the wing again
  const sx=L(-0.050,-0.375)-f*0.13*A;          // roll
  const sy=L( 0.950,-0.350);                   // shoulder sweep: back at rest, a shade forward when open
- const sz=L(-0.180, 0.450)+f*0.50*A;          // the beat itself
- const ey=L(-0.550, 0.400)-up*0.35, ez=-0.277;
- const wy=L( 0.950, 0.465)+up*0.30, wz= 0.300;
- const trail=-fv*0.50*A;
+ const sz=L(-0.180, 0.420)+f*0.66*A;          // the beat itself, swung wide enough to read at a distance
+ const ey=L(-0.550, 0.400)-up*0.46, ez=-0.277;
+ const wy=L( 0.950, 0.465)+up*0.40, wz= 0.300;
+ const trail=-fv*0.62*A;
  /* A folded wing is a much smaller shape than an open one, so it closes down as well as in;
     the feathers keep their own angles throughout, which is what stops the secondaries from
     swinging forward over the shoulder as the wing shuts. */
@@ -6625,7 +6631,7 @@ function buildDecorMesh(t,forGhost){
  return g;
 }
 function decorOk(t,x,z,skip){
- if(Math.hypot(x,z)>75)return 'Too far from the ranch';
+ if(Math.hypot(x,z)>290)return 'Past the edge of the valley';   // the whole valley is yours to build in
  if(Math.abs(x)<27&&Math.abs(z)<22)return 'Not in the arena';
  if(Math.abs(z-riverZ(x))<8)return 'Not in the river';
  const r=DECOR_CAT[t].r;
@@ -6666,7 +6672,7 @@ function placeAt(x,z){
  const t=build.type; if(!t)return false; const c=DECOR_CAT[t];
  const why=decorOk(t,x,z); if(why){toast('🚫 '+why);return false;}
  let ok=false,d=null;
- syncSave(sv=>{ sv.decor=sv.decor||[]; if(sv.decor.length>=80){toast('The ranch is full — remove something first.');return;} if(sv.coins<c.price){toast('Not enough coins — '+c.price+'🪙');return;}
+ syncSave(sv=>{ sv.decor=sv.decor||[]; if(sv.decor.length>=2000){toast('That is two thousand pieces — even this valley has to stop somewhere!');return;} if(sv.coins<c.price){toast('Not enough coins — '+c.price+'🪙');return;}
   sv.coins-=c.price; d={id:Math.random().toString(36).slice(2,8),t,x:+x.toFixed(2),z:+z.toFixed(2),ry:+build.rot.toFixed(3)}; sv.decor.push(d); addSP(sv,Math.ceil(c.pts/2),'build'); ok=true; });
  if(!ok)return false;
  spawnDecor(d); refreshWallet(); sCoin();
@@ -6692,10 +6698,10 @@ function openBuild(){
  hidePanels(); const sv=freshSave(); if(!sv)return; sv.decor=sv.decor||[];
  const pts=ranchPts(sv), L=ranchLevel(sv), next=RANCH_LEVELS[L];
  let html='<div class="ph">🏗️ Build your ranch <span class="chip" style="font-size:12px;padding:3px 10px">Lv '+L+' · '+pts+' pts'+(next?' · next at '+next:' · max')+'</span><button data-b="close" style="margin-left:auto">✖</button></div>';
- html+='<span style="font-size:12px;color:#8c7a63">Pick a piece, walk your horse to where it should go, click the ground. Pieces are solid to horses and worth builder points; levels give perks.</span>';
+ html+='<span style="font-size:12px;color:#8c7a63">Pick a piece, walk your horse anywhere in the valley, click the ground. Pieces are solid to horses and worth builder points; levels give perks.</span>';
  html+='<div style="font-size:12px;margin:2px 0">'+Object.keys(RANCH_PERKS).map(k=>'<div style="color:'+(L>=+k?'#3a7a3a':'#b8a888')+'">'+(L>=+k?'✅':'🔒')+' Lv '+k+' · '+RANCH_PERKS[k]+'</div>').join('')+'</div>';
  html+=Object.keys(DECOR_CAT).map(t=>{const c=DECOR_CAT[t];const have=sv.decor.filter(d=>d.t===t).length;return '<div class="evrow">'+c.emoji+' <b>'+c.label+'</b><span style="font-size:11px">'+c.price+'🪙 · '+c.pts+' pts'+(have?' · placed ×'+have:'')+'</span><button data-b="place:'+t+'">Place</button></div>';}).join('');
- html+='<div class="crow" style="gap:6px;margin-top:6px"><button data-b="remove">🧹 Remove a piece</button><span style="font-size:11px;color:#8c7a63">'+sv.decor.length+' / 80 pieces on the ranch</span></div>';
+ html+='<div class="crow" style="gap:6px;margin-top:6px"><button data-b="remove">🧹 Remove a piece</button><span style="font-size:11px;color:#8c7a63">'+sv.decor.length+' pieces placed · build anywhere in the valley</span></div>';
  p.innerHTML=html; p.style.display='flex';
  p.querySelectorAll('[data-b]').forEach(b=>{b.onclick=()=>{const [a,arg]=b.dataset.b.split(':'); if(a==='close')p.style.display='none'; else if(a==='place')startPlace(arg); else if(a==='remove')startRemove();};});
 }
@@ -6942,27 +6948,29 @@ function careAct(k){
  }
  renderCare();
 }
+/* Prices: about half what they were. Saving up should be a weekend, not a term — the
+   horses are the point of the game, and a stable full of them is the fun part. */
 const BREEDS3=[
- ['bay','Quarter Horse','Common',120,0,'#8a5a2b','#332214',{}],
- ['chestnut','Shetland Pony','Common',140,0,'#9c4f23','#6e3617',{}],
- ['palomino','Palomino Mustang','Uncommon',280,0,'#d9a85c','#f4e6c5',{}],
- ['haflinger','Haflinger','Uncommon',320,0,'#c98643','#f7ecd4',{}],
- ['grey','Dapple Grey Andalusian','Uncommon',300,0,'#b9bec6','#787f8a',{}],
- ['black','Friesian','Rare',550,0,'#26262e','#101015',{}],
- ['pinto','Paint Horse','Rare',580,0,'#7d4f24','#3a2a1a',{}],
- ['appaloosa','Appaloosa','Rare',680,0,'#e8e2d6','#5a5048',{}],
- ['sunset','Sunset Arabian','Epic',1100,0,'#c96a4f','#ffd166',{}],
- ['unicorn','Unicorn','Legendary',0,18,'#f6f3ff','#cdb4f9',{horn:true,rainbow:true}],
- ['pegasus','Pegasus','Legendary',0,18,'#f2f5fb','#dfe7f4',{wings:true,ability:'fly'}],
- ['celestial','Celestial Unicorn','Mythic',0,30,'#2a2350','#b79dff',{horn:true,coat:'galaxy',glow:true,ability:'glow'}],
- ['ember','Ember Runner','Mythic',0,26,'#3a1410','#ff8a3a',{coat:'fire',glow:true,ability:'swift'}],
- ['frost','Frost Stallion','Mythic',0,26,'#cfe9f6','#8fd0ec',{coat:'ice',ability:'leap'}],
- ['aurora','Aurora Pegasus','Mythic',0,32,'#143038','#7df0c4',{wings:true,coat:'aurora',glow:true,ability:'fly'}],
- ['phoenix','Phoenix Steed','Mythic',0,36,'#3a1208','#ff9a4a',{wings:true,coat:'fire',glow:true,ability:'fly'}],
- ['shadowmare','Shadow Mare','Mythic',0,30,'#241830','#a07ce0',{coat:'shadow',glow:true,ability:'swift'}],
+ ['bay','Quarter Horse','Common',55,0,'#8a5a2b','#332214',{}],
+ ['chestnut','Shetland Pony','Common',65,0,'#9c4f23','#6e3617',{}],
+ ['palomino','Palomino Mustang','Uncommon',130,0,'#d9a85c','#f4e6c5',{}],
+ ['haflinger','Haflinger','Uncommon',150,0,'#c98643','#f7ecd4',{}],
+ ['grey','Dapple Grey Andalusian','Uncommon',140,0,'#b9bec6','#787f8a',{}],
+ ['black','Friesian','Rare',250,0,'#26262e','#101015',{}],
+ ['pinto','Paint Horse','Rare',265,0,'#7d4f24','#3a2a1a',{}],
+ ['appaloosa','Appaloosa','Rare',310,0,'#e8e2d6','#5a5048',{}],
+ ['sunset','Sunset Arabian','Epic',480,0,'#c96a4f','#ffd166',{}],
+ ['unicorn','Unicorn','Legendary',0,8,'#f6f3ff','#cdb4f9',{horn:true,rainbow:true}],
+ ['pegasus','Pegasus','Legendary',0,8,'#f2f5fb','#dfe7f4',{wings:true,ability:'fly'}],
+ ['celestial','Celestial Unicorn','Mythic',0,14,'#2a2350','#b79dff',{horn:true,coat:'galaxy',glow:true,ability:'glow'}],
+ ['ember','Ember Runner','Mythic',0,12,'#3a1410','#ff8a3a',{coat:'fire',glow:true,ability:'swift'}],
+ ['frost','Frost Stallion','Mythic',0,12,'#cfe9f6','#8fd0ec',{coat:'ice',ability:'leap'}],
+ ['aurora','Aurora Pegasus','Mythic',0,15,'#143038','#7df0c4',{wings:true,coat:'aurora',glow:true,ability:'fly'}],
+ ['phoenix','Phoenix Steed','Mythic',0,17,'#3a1208','#ff9a4a',{wings:true,coat:'fire',glow:true,ability:'fly'}],
+ ['shadowmare','Shadow Mare','Mythic',0,14,'#241830','#a07ce0',{coat:'shadow',glow:true,ability:'swift'}],
  ['kestrel','Silver Kestrel','Legendary',0,0,'#c9ced6','#eef2f7',{story:true}],   // book two's reward: not for sale
- ['shire','Shire','Draft',90,0,'#3a3530','#1d1a17',{}],
- ['clyde','Clydesdale','Draft',90,0,'#7a4526','#2e2018',{}],
+ ['shire','Shire','Draft',45,0,'#3a3530','#1d1a17',{}],
+ ['clyde','Clydesdale','Draft',45,0,'#7a4526','#2e2018',{}],
 ];
 const TIER_BASE={Common:3,Uncommon:4,Rare:5,Epic:6,Legendary:7,Draft:4,Mythic:8};
 const NAMES3=['Luna','Comet','Willow','Maple','Storm','Honey','Pepper','Clover','Biscuit','River','Aspen','Mocha','Daisy','Blaze','Echo','Juniper','Ginger','Onyx','Pearl','Sage'];
@@ -9151,7 +9159,7 @@ function tick(){
    }
   }
   animateHorse(a.parts,a.phase,resting?0.05:((a.wsp||1.2)>3.5?0.72:0.42),(a.wsp||1.2)>3.5?GAITS.gallop:GAITS.walk,true,t,a.graze,dt);
-  {const hh=myHorses[a.idx]; dressWithRig(a,a.parts,hh&&hh.colors,{tailCol:hh&&hh.tailCol,coat:hh&&hh.coat}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);}
+  {const hh=myHorses[a.idx]; dressWithRig(a,a.parts,hh&&hh.colors,{tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,mine:true}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);}
   if(a.graze<=0){
    const nt=-0.58+Math.sin(a.phase)*0.04;
    a.parts.neck.rotation.x+=(nt-a.parts.neck.rotation.x)*0.08;
