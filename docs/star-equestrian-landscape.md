@@ -36,7 +36,8 @@ Their world reads richer at ground level and has more landmark spectacle. Backlo
 
 1. **Ground cover by biome** — ferns and scrub in the meadow, dry brush in the canyon, dead
    tufts through the snow, bulrushes at the water, stones everywhere. *(shipped)*
-2. **A waterfall** off Hollowpeak into a plunge pool, with mist and a rainbow in it.
+2. **A waterfall** off Hollowpeak into a plunge pool, with mist. *(shipped — Hollowpeak
+   Falls, its own fast-travel stop)*
 3. **Winding dirt paths** joining the ranch, the village and the farms.
 4. **Mesas and hoodoos** in Coyote Canyon so it reads as their Bronco does.
 5. **Valley mist at dawn** and god rays through the trees.
