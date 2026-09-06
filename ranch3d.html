@@ -4287,7 +4287,7 @@ function dressWithRig(ent,parts,colors,opts){
  if(parts.horn){parts.group.add(parts.horn);parts.horn.position.set(0,1.72,0.82);parts.horn.rotation.set(-0.4,0,0);parts.horn.scale.setScalar(1.2);parts.horn.visible=true;}
  if(parts.wings)parts.wings.forEach(w=>w.position.set(w.userData.sgn*0.21,1.49,0.18));
  let mat;
- if(opts.coat){ mat=fantasyCoatRig(opts.coat); }        // mythic: the glowing coat, not a recoloured hide
+ if(opts.coat){ mat=fantasyCoatRig(opts.coat,!!opts.dragon); }   // mythic: the glowing coat, scaled if it is a dragon
  else { mat=makeCoatMat(); setCoatUniforms(mat,colors&&colors.body,opts.tailCol||null); }
  skin.material=mat; skin.castShadow=true;
  let hair=null;
@@ -4532,8 +4532,8 @@ const FANTASY_FX={
    _ramp+=vec3(0.5,0.3,0.95)*_fres*0.8;
    _emis=_ramp*uGlow*(0.1+0.6*_l)+vec3(0.5,0.3,0.95)*_fres*0.9;`,
 };
-function fantasyCoatRig(type){
- const key='fcr_'+type; RIG._fcr=RIG._fcr||{};
+function fantasyCoatRig(type,scaly){
+ const key='fcr_'+type+(scaly?'_s':''); RIG._fcr=RIG._fcr||{};
  if(RIG._fcr[key]) return RIG._fcr[key];
  if(!RIG.baseMat) return fantasyCoat(type,false);
  const cfg=FANTASY_CFG[type]||FANTASY_CFG.galaxy;
@@ -4554,7 +4554,18 @@ function fantasyCoatRig(type){
      float _fres = pow(1.0-abs(dot(normalize(vNormal),normalize(vViewPosition))),2.5);
      vec3 _emis = _ramp*uGlow*(0.14+_l);
      ${fx}
-     diffuseColor.rgb=_ramp;`)
+     diffuseColor.rgb=_ramp;
+     ${scaly?`
+     /* Overlapping plates, rows offset by half a scale, dark in the seams and catching a
+        highlight along the top edge of each one. This is most of what separates a dragon
+        from a horse painted an odd colour. */
+     {vec2 _s=vMapUv*vec2(52.0,34.0); float _row=floor(_s.y); _s.x+=mod(_row,2.0)*0.5;
+      vec2 _f=fract(_s)-0.5; float _d=length(vec2(_f.x,_f.y*1.28));
+      float _seam=smoothstep(0.30,0.47,_d);
+      float _lip=1.0-smoothstep(0.0,0.30,length(vec2(_f.x,(_f.y+0.20)*1.5)));
+      diffuseColor.rgb*=mix(1.16,0.52,_seam);
+      diffuseColor.rgb+=_lip*0.16*(0.4+_l);
+      _emis*=mix(1.1,0.55,_seam);}`:''}`)
    .replace('#include <emissivemap_fragment>',
     `#include <emissivemap_fragment>
      totalEmissiveRadiance=_emis;`);
@@ -4567,16 +4578,17 @@ function fantasyCoatRig(type){
    directional light still shades the feathers (a uniform high glow flattened them to a fan). */
 /* Dragon colourways: membrane, bone and the light that comes through the skin. */
 const DRAGON_TINT={
- ice:   {web:'#5fa8c8',bone:'#183848',glow:'#bff0ff'},
- fire:  {web:'#a8441f',bone:'#2a0e05',glow:'#ffb04a'},
- galaxy:{web:'#5c449c',bone:'#1a1230',glow:'#c6a8ff'},
- shadow:{web:'#3c3060',bone:'#0e0a18',glow:'#8a5ae0'},
- aurora:{web:'#2f8f74',bone:'#0c2a22',glow:'#9cffd8'},
- _:     {web:'#6b7994',bone:'#222836',glow:'#cfe0ff'},
+ ice:   {web:'#8fe4ff',root:'#1d4f6e',bone:'#183848',glow:'#bff0ff',head:'#3f86ad',ridge:'#cdeeff'},
+ fire:  {web:'#ff8a3a',root:'#5e1a06',bone:'#2a0e05',glow:'#ffb04a',head:'#8e2a08',ridge:'#ffd24a'},
+ galaxy:{web:'#a678ff',root:'#241a52',bone:'#1a1230',glow:'#c6a8ff',head:'#3a2a72',ridge:'#c6a8ff'},
+ shadow:{web:'#6a4ad0',root:'#140e26',bone:'#0e0a18',glow:'#8a5ae0',head:'#241a3e',ridge:'#8a5ae0'},
+ aurora:{web:'#4fd8b0',root:'#0e3a2e',bone:'#0c2a22',glow:'#9cffd8',head:'#1f7a62',ridge:'#9cffd8'},
+ _:     {web:'#9fb4d8',root:'#2b3546',bone:'#222836',glow:'#cfe0ff',head:'#5a6478',ridge:'#cfe0ff'},
 };
 function tintDragonWing(piv,type){
  const th=DRAGON_TINT[type]||DRAGON_TINT._, mt=piv.userData.mats; if(!mt)return;
- mt[0].color.set(th.web); mt[0].emissive.set(th.glow); mt[0].emissiveIntensity=0.10;
+ piv.userData.wroot.set(th.root||th.bone); piv.userData.wweb.set(th.web);
+ mt[0].color.set('#ffffff'); mt[0].emissive.set(th.glow); mt[0].emissiveIntensity=0.10;
  mt[1].color.set(th.bone); mt[1].emissive.set(th.glow); mt[1].emissiveIntensity=0.06;
 }
 const WING_TINT={
@@ -4607,7 +4619,7 @@ function applyCoat(){
   if(RIG.hairMane)RIG.hairMane.visible=!want;
   if(RIG.hairTail)RIG.hairTail.visible=!want;
  }
- if(h&&h.coat){ RIG.skin.material=fantasyCoatRig(h.coat); tintWings(h.coat); hairColour(); return; }   // mythic glowing coats + themed wings
+ if(h&&h.coat){ RIG.skin.material=fantasyCoatRig(h.coat,!!h.dragon); tintWings(h.coat); hairColour(); return; }   // mythic glowing coats + themed wings
  // Original baked texture (flaxen mane+tail, white socks, blaze) for chestnut breeds; luminance-recolour
  // toward the breed colour for distinct breeds (grey/black/palomino) so the mane/socks pattern survives.
  ensureCoatMat();
@@ -4740,7 +4752,7 @@ function buildBridle(dragon){
  const nose=put(new THREE.Mesh(ring(0.10,0.013),strap),-0.145,1.425,0.965); nose.rotation.x=0.69; nose.scale.set(0.82,1,1);
  // eyes: glossy dark spheres just proud of the socket, so the face catches the light
  const eyeMat=new THREE.MeshPhysicalMaterial({color:0x1a1410,roughness:0.08,metalness:0,clearcoat:1,clearcoatRoughness:0.05,envMapIntensity:1.2});
- for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.031,14,12),eyeMat),-0.115+sg*0.118,1.62,0.845); e.castShadow=false; }
+ if(!dragon)for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.031,14,12),eyeMat),-0.115+sg*0.118,1.62,0.845); e.castShadow=false; }
  // bit rings at the corners of the mouth, standing in the plane of the cheek
  for(const sg of[-1,1]){const r=put(new THREE.Mesh(ring(0.03,0.007),iron),-0.16+sg*0.078,1.35,1.02); r.rotation.y=Math.PI/2;}
  // browband: a half-ring bowed forward across the forehead just under the ears, with five gold studs
@@ -4749,27 +4761,38 @@ function buildBridle(dragon){
  g.userData.gold=gold;
  g.userData.dragon=!!dragon;
  if(dragon){
-  /* A dragon's head: a pair of horns swept back off the poll, a smaller pair under them,
-     a ridge of spines down the muzzle, a spine at each cheek, and an eye that burns. */
-  const th=dragon, bone=new THREE.MeshStandardMaterial({color:new THREE.Color(th.bone).lerp(new THREE.Color('#ffffff'),0.35),
-   roughness:0.4,metalness:0.25,emissive:new THREE.Color(th.glow),emissiveIntensity:0.10,flatShading:true});
+  /* The head is the horse's own, but the coat shader plates it in scales, so what it needs
+     is not a mask over the top — a geometric snout shell only ever read as a plank — but
+     the hardware a dragon wears: horns, a ridge over each eye, spines down the muzzle, a
+     fin behind the jaw, nostrils, and an eye that burns in the element's colour. */
+  /* the rest of the head: horns off the back of the skull, brows, nostrils, cheek frills */
+  const th=dragon, bone=new THREE.MeshStandardMaterial({color:new THREE.Color(th.bone).lerp(new THREE.Color('#c9bda8'),0.55),
+   roughness:0.52,metalness:0.12,flatShading:true});
   const horn=(x,y,z,len,rad,rx,rz)=>{ const h=put(new THREE.Mesh(new THREE.ConeGeometry(rad,len,6),bone),x,y,z);
    h.rotation.set(rx,0,rz); return h; };
   for(const sg of[-1,1]){
-   horn(-0.115+sg*0.080,1.82,0.68,0.66,0.058,-1.22,sg*0.40);      // the main pair, swept back over the neck
-   horn(-0.115+sg*0.130,1.73,0.73,0.30,0.032,-0.80,sg*0.92);      // a smaller pair below
-   horn(-0.13 +sg*0.118,1.55,0.79,0.19,0.026,-0.15,sg*1.30);      // a cheek spine
-   horn(-0.15 +sg*0.075,1.36,1.06,0.09,0.014, 0.9, sg*0.5);       // a barbel at the jaw
+   horn(-0.085+sg*0.085,1.80,0.63,0.40,0.038,-1.30,sg*0.34);      // the main pair, swept back over the neck
+   horn(-0.090+sg*0.128,1.73,0.67,0.19,0.024,-0.90,sg*0.95);      // a smaller pair below
+   horn(-0.115+sg*0.142,1.62,0.76,0.13,0.020,-0.10,sg*1.34);      // a cheek spine
+   horn(-0.16 +sg*0.085,1.36,1.05,0.10,0.015, 1.0, sg*0.5);       // a barbel at the jaw
+   const brow=put(new THREE.Mesh(new THREE.ConeGeometry(0.030,0.13,4),bone),-0.108+sg*0.115,1.685,0.808);
+   brow.rotation.set(-1.35,0,sg*0.30);                            // a ridge over each eye
+   const nos=put(new THREE.Mesh(new THREE.SphereGeometry(0.016,7,6),bone),-0.170+sg*0.030,1.360,1.095);
+   nos.scale.set(1,0.7,1.3);                                      // nostrils at the tip
   }
-  for(let k=0;k<4;k++){                                            // the ridge down the muzzle
-   const t=k/3, m=put(new THREE.Mesh(new THREE.ConeGeometry(0.017-0.004*t,0.075-0.02*t,5),bone),
-    -0.125-t*0.03,1.66-t*0.10,0.86+t*0.12);
-   m.rotation.x=-0.5+t*0.5;
+  for(let k=0;k<5;k++){                                            // the ridge down the muzzle
+   const t=k/4, m=put(new THREE.Mesh(new THREE.ConeGeometry(0.018-0.005*t,0.070-0.022*t,5),bone),
+    -0.118-t*0.052,1.695-t*0.145,0.795+t*0.20);
+   m.rotation.x=-0.62+t*0.55;
+  }
+  for(const sg of[-1,1]){                                          // one small fin behind each jaw
+   const f=put(new THREE.Mesh(new THREE.ConeGeometry(0.016,0.12,4),bone),-0.075+sg*0.128,1.66,0.60);
+   f.rotation.set(-0.35,0,sg*1.15);
   }
   const eyeGlow=new THREE.MeshStandardMaterial({color:new THREE.Color(th.glow),roughness:0.25,
    emissive:new THREE.Color(th.glow),emissiveIntensity:1.5});
-  for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.036,14,12),eyeGlow),-0.115+sg*0.118,1.62,0.845);
-   e.castShadow=false; e.scale.set(1,0.72,1); }
+  for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.040,14,12),eyeGlow),-0.108+sg*0.140,1.640,0.815);
+   e.castShadow=false; e.scale.set(1,0.66,1.05); }
  }
  // crownpiece + throatlatch: one ring round the head behind the ears, leaning forward at the top
  const crown=put(new THREE.Mesh(ring(0.20,0.011),strap),-0.06,1.45,0.62); crown.rotation.x=0.35; crown.scale.set(0.75,1.15,1);
@@ -6027,6 +6050,7 @@ function buildDragonWings(){
  mem.setAttribute('position',new THREE.BufferAttribute(new Float32Array(memN*3),3));
  mem.setAttribute('normal',new THREE.BufferAttribute(new Float32Array(memN*3),3));
  mem.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(memN*2),2));
+ mem.setAttribute('color',new THREE.BufferAttribute(new Float32Array(memN*3),3));
  const idx=[]; let base=0;
  for(let pnl=0;pnl<F;pnl++){                                // membrane panels, wrist-rooted fans
   for(let w=0;w<DWING.W;w++)for(let t=0;t<DWING.U;t++){
@@ -6049,7 +6073,7 @@ function buildDragonWings(){
   for(let t=0;t<DWING.U;t++){ const a=o+t*2; bidx.push(a,a+1,a+2, a+1,a+3,a+2); } }
  bones.setIndex(bidx);
  const mMem=new THREE.MeshStandardMaterial({map:dragonWebTex,side:THREE.DoubleSide,roughness:0.54,
-  metalness:0.05,color:0x8fa6c8,emissive:0x000000});
+  metalness:0.05,color:0xffffff,vertexColors:true,emissive:0x000000});
  const mBone=new THREE.MeshStandardMaterial({side:THREE.DoubleSide,roughness:0.62,metalness:0.15,
   color:0x2c3444,emissive:0x000000});
  mMem.envMapIntensity=0.9; featherGlow(mMem,1.35);          // a membrane is thin: the sun blazes through it
@@ -6063,7 +6087,8 @@ function buildDragonWings(){
   const mm=new THREE.Mesh(mem,mMem), bm=new THREE.Mesh(bones,mBone);
   mm.frustumCulled=false; bm.frustumCulled=false; mm.castShadow=true; bm.castShadow=true;
   piv.add(mm,bm);
-  piv.userData={sgn,kind:'dragon',mats:[mMem,mBone],mem,bone:bones,open:0.05,beat:0};
+  piv.userData={sgn,kind:'dragon',mats:[mMem,mBone],mem,bone:bones,open:0.05,beat:0,
+   wroot:new THREE.Color('#2b3546'),wweb:new THREE.Color('#9fb4d8')};
   return piv;
  };
  const pair=[mk(-1),mk(1)];
@@ -6085,10 +6110,13 @@ function dragonWingGeo(pair,mA,mB,mC,f,up,t){
   _ddir[i].set(1,0,0).applyAxisAngle(_dY,DWING.fing[i][0]).transformDirection(mC);
   _dtip[i].copy(_dwri).addScaledVector(_ddir[i],DWING.fing[i][1]);
  }
- const geo=pair[0].userData.mem, pos=geo.attributes.position, uv=geo.attributes.uv;
+ const geo=pair[0].userData.mem, pos=geo.attributes.position, uv=geo.attributes.uv, vcol=geo.attributes.color;
+ const wr=pair[0].userData.wroot, wb=pair[0].userData.wweb;
  const billow=-0.14-f*0.30;                                  // the sheet bellies out on the downstroke
  let k=0;
- const put=(p,u0,v0)=>{ pos.setXYZ(k,p.x,p.y,p.z); uv.setXY(k,u0,v0); k++; };
+ const _wc=new THREE.Color();
+ const put=(p,u0,v0,mix)=>{ pos.setXYZ(k,p.x,p.y,p.z); uv.setXY(k,u0,v0);
+  _wc.copy(wr).lerp(wb,Math.min(1,mix===undefined?1:mix)); vcol.setXYZ(k,_wc.r,_wc.g,_wc.b); k++; };
  for(let pnl=0;pnl<F;pnl++){
   const e0=_dtip[pnl], e1=(pnl<F-1)?_dtip[pnl+1]:_danc;
   for(let w=0;w<=W;w++){ const fw=w/W;
@@ -6096,7 +6124,7 @@ function dragonWingGeo(pair,mA,mB,mC,f,up,t){
    for(let u=0;u<=U;u++){ const fu=u/U;
     _dv.copy(_dwri).lerp(_dq,fu);
     _dv.addScaledVector(_dn,Math.sin(Math.PI*fw)*fu*billow*(pnl===F-1?1.35:1.0));
-    put(_dv,fu*2.4,((pnl+fw)/F)*1.7);
+    put(_dv,fu*2.4,((pnl+fw)/F)*1.7,0.16+fu*0.95);
    }
   }
  }
@@ -6106,10 +6134,10 @@ function dragonWingGeo(pair,mA,mB,mC,f,up,t){
   _dp.copy(_dlead[seg]).lerp(_dlead[seg+1],ft);
   for(let w=0;w<=W;w++){ const fw=w/W;
    _dv.copy(_dp).lerp(_danc,fw).addScaledVector(_dn,Math.sin(Math.PI*fw)*billow*0.5);
-   put(_dv,fw*1.7,fj*2.4);
+   put(_dv,fw*1.7,fj*2.4,0.10+fw*0.75);
   }
  }
- pos.needsUpdate=true; uv.needsUpdate=true; geo.computeVertexNormals();
+ pos.needsUpdate=true; uv.needsUpdate=true; vcol.needsUpdate=true; geo.computeVertexNormals();
  /* The bones: the arm, the forearm and the four fingers, as ribbons that taper to a claw.
     Each one gets its own vectors — sharing scratch with the joints quietly ate the elbow. */
  const bg=pair[0].userData.bone, bp=bg.attributes.position; let m=0;
@@ -6123,9 +6151,9 @@ function dragonWingGeo(pair,mA,mB,mC,f,up,t){
   }
  };
  _dp.set(0,0,0);
- rib(_dp,_delb,0.070,0.052);
- rib(_delb,_dwri,0.052,0.040);
- for(let i=0;i<F;i++)rib(_dwri,_dtip[i],0.040,0.008);
+ rib(_dp,_delb,0.048,0.034);
+ rib(_delb,_dwri,0.034,0.024);
+ for(let i=0;i<F;i++)rib(_dwri,_dtip[i],0.024,0.005);
  bp.needsUpdate=true; bg.computeVertexNormals();
 }
 /* ===== Dragon breath =====
