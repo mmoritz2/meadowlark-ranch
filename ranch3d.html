@@ -4135,6 +4135,110 @@ function buildHairFor(skin,bones,mount){
  const tail_=mk(tail,RIG_TAIL.concat([RIG_TAIL[0]-1]));
  return {mane:mane_,tail:tail_};
 }
+/* ===== What makes a dragon a dragon =====
+   The wings were only half the job: underneath them sat a horse. These are the rest —
+   a crest of spines running the whole spine from poll to dock with skin webbed between
+   them, and a scaled tail that tapers to a spade, both skinned to the same bones the
+   horse uses, so they bend with the neck and swing with the tail for nothing. One mesh,
+   one draw call. The head furniture rides in the bridle group, which already tracks the
+   head bone. */
+function buildDragonBody(skin,bones,mount,theme){
+ const th=theme||DRAGON_TINT._;
+ const bpos=bones.map(b=>{const v=new THREE.Vector3(); b.getWorldPosition(v); mount.worldToLocal(v); return v;});
+ const toSkin=v=>{const w=mount.localToWorld(v.clone()); return skin.worldToLocal(w);};
+ const P=[],C=[],SI=[],SW=[],I=[];
+ const cBone=new THREE.Color(th.bone), cWeb=new THREE.Color(th.web), cGlow=new THREE.Color(th.glow);
+ const cSpike=cBone.clone().lerp(new THREE.Color('#ffffff'),0.42);
+ const NECK=[4,5,6], SPINE=[0,1,2,3,4], TAILB=RIG_TAIL.concat([RIG_TAIL[0]-1]);
+ const near=(v,cands)=>{let bi=cands[0],bd=1e9; for(const i of cands){const b=bpos[i]; if(!b)continue; const d=b.distanceToSquared(v); if(d<bd){bd=d;bi=i;}} return bi;};
+ const vert=(v,col,cands)=>{const b=near(v,cands),vs=toSkin(v);
+  P.push(vs.x,vs.y,vs.z); C.push(col.r,col.g,col.b); SI.push(b,0,0,0); SW.push(1,0,0,0); return P.length/3-1;};
+ const tri=(a,b,c)=>{I.push(a,b,c);};
+ const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+ /* a four-sided spine, standing off a base point along dir */
+ const spine=(base,dir,len,r,cands)=>{
+  const d=dir.clone().normalize();
+  const up=Math.abs(d.y)>0.9?V(1,0,0):V(0,1,0);
+  const s1=new THREE.Vector3().crossVectors(d,up).normalize();
+  const s2=new THREE.Vector3().crossVectors(d,s1).normalize();
+  const tip=vert(base.clone().addScaledVector(d,len),cSpike,cands), ring=[];
+  for(let k=0;k<5;k++){const a=k/5*Math.PI*2;
+   ring.push(vert(base.clone().addScaledVector(s1,Math.cos(a)*r).addScaledVector(s2,Math.sin(a)*r),cBone,cands));}
+  for(let k=0;k<5;k++)tri(ring[k],ring[(k+1)%5],tip);
+ };
+ /* webbing stretched between the roots of a run of spines */
+ const web=(pts,hs,cands)=>{ let pb=null,pt=null;
+  for(let k=0;k<pts.length;k++){
+   const b=vert(pts[k],cBone,cands), t=vert(pts[k].clone().add(V(0,hs[k],0)),cWeb,cands);
+   if(pb!==null){tri(pb,b,pt); tri(b,t,pt);} pb=b; pt=t; }
+ };
+ /* a tapering tube of rings along a polyline */
+ const tube=(pts,rs,cands,cA,cB)=>{
+  const SIDES=7; let prev=null;
+  for(let k=0;k<pts.length;k++){
+   const dir=(k<pts.length-1?pts[k+1].clone().sub(pts[k]):pts[k].clone().sub(pts[k-1])).normalize();
+   const up=Math.abs(dir.y)>0.9?V(1,0,0):V(0,1,0);
+   const s1=new THREE.Vector3().crossVectors(dir,up).normalize();
+   const s2=new THREE.Vector3().crossVectors(dir,s1).normalize();
+   const ring=[], col=cA.clone().lerp(cB,k/(pts.length-1));
+   for(let j=0;j<SIDES;j++){const a=j/SIDES*Math.PI*2;
+    ring.push(vert(pts[k].clone().addScaledVector(s1,Math.cos(a)*rs[k]).addScaledVector(s2,Math.sin(a)*rs[k]),col,cands));}
+   if(prev)for(let j=0;j<SIDES;j++){const j2=(j+1)%SIDES; tri(prev[j],ring[j],prev[j2]); tri(ring[j],ring[j2],prev[j2]);}
+   prev=ring;
+  }
+  return prev;
+ };
+ // ---- the crest: poll to withers, then withers to dock, spines with skin between them
+ const dock=bpos[RIG_TAIL[0]]||V(0,1.5,-0.95);
+ const crestPts=[],crestH=[];
+ for(let k=0;k<=9;k++){ const t=k/9;                            // the neck, arching over
+  crestPts.push(V(-0.02, 1.72-0.16*t*t, 0.63-0.60*t));
+  crestH.push((k%2?0.10:0.185)*(0.55+0.85*Math.sin(Math.PI*Math.min(1,t*1.15))));
+ }
+ web(crestPts,crestH,NECK);
+ crestPts.forEach((p,k)=>{ if(k%2===0)spine(p,V(0,1,-0.22),crestH[k]*1.7,0.026,NECK); });
+ const backPts=[],backH=[];
+ for(let k=0;k<=8;k++){ const t=k/8;
+  backPts.push(V(0, 1.56+(dock.y-1.56)*t, 0.03+(dock.z-0.03)*t));
+  backH.push(0.145*(1-t*0.58));
+ }
+ web(backPts,backH,SPINE);
+ backPts.forEach((p,k)=>{ if(k%2===0)spine(p,V(0,1,-0.12),backH[k]*1.6,0.021,SPINE); });
+ // ---- the tail: a scaled tube out along the tail bones, past the last one, to a spade
+ const tp=[],tr=[];
+ const tb=RIG_TAIL.map(i=>bpos[i]).filter(Boolean);
+ if(tb.length>=2){
+  const last=tb[tb.length-1], prev=tb[tb.length-2];
+  const ext=last.clone().add(last.clone().sub(prev).multiplyScalar(1.35));
+  const all=tb.concat([ext]);
+  for(let k=0;k<all.length;k++){ tp.push(all[k].clone()); tr.push(0.085*(1-k/all.length*0.82)+0.012); }
+  const endRing=tube(tp,tr,TAILB,cBone,cBone.clone().lerp(cGlow,0.25));
+  // the spade: a flat leaf standing on the end of the tail
+  const dir=tp[tp.length-1].clone().sub(tp[tp.length-2]).normalize();
+  const side=new THREE.Vector3().crossVectors(dir,V(0,1,0)).normalize();
+  const base=tp[tp.length-1].clone();
+  const a=vert(base.clone().addScaledVector(side, 0.02),cBone,TAILB);
+  const b=vert(base.clone().addScaledVector(side,-0.02),cBone,TAILB);
+  const w1=vert(base.clone().addScaledVector(dir,0.10).addScaledVector(side, 0.135).add(V(0,0.05,0)),cWeb,TAILB);
+  const w2=vert(base.clone().addScaledVector(dir,0.10).addScaledVector(side,-0.135).add(V(0,0.05,0)),cWeb,TAILB);
+  const tip=vert(base.clone().addScaledVector(dir,0.30).add(V(0,0.02,0)),cWeb,TAILB);
+  tri(a,w1,tip); tri(b,tip,w2); tri(a,tip,b);
+  // spines down the length of the tail
+  for(let k=1;k<tp.length-1;k++)spine(tp[k],V(0,1,-0.3),0.10*(1-k/tp.length*0.55),0.019,TAILB);
+ }
+ const g=new THREE.BufferGeometry();
+ g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
+ g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));
+ g.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(SI,4));
+ g.setAttribute('skinWeight',new THREE.Float32BufferAttribute(SW,4));
+ g.setIndex(I); g.computeVertexNormals();
+ const m=new THREE.SkinnedMesh(g,new THREE.MeshStandardMaterial({vertexColors:true,roughness:0.42,
+  metalness:0.18,side:THREE.DoubleSide,flatShading:true,emissive:new THREE.Color(th.glow),emissiveIntensity:0.10}));
+ m.castShadow=true; m.frustumCulled=false;
+ m.position.copy(skin.position); m.quaternion.copy(skin.quaternion); m.scale.copy(skin.scale);
+ skin.parent.add(m); m.bind(skin.skeleton,skin.bindMatrix);
+ return m;
+}
 function hairColourFor(colors,coat,tailCol){
  /* The baked texture keeps a flaxen mane until the coat is recoloured, and then its mane
     goes the coat's way, lightened by its own luminance. The hair follows the same rule, so
@@ -4187,8 +4291,9 @@ function dressWithRig(ent,parts,colors,opts){
  else { mat=makeCoatMat(); setCoatUniforms(mat,colors&&colors.body,opts.tailCol||null); }
  skin.material=mat; skin.castShadow=true;
  let hair=null;
- try{ hair=buildHairFor(skin,skin.skeleton.bones,parts.group); const hc=hairColourFor(colors,opts.coat||null,opts.tailCol||null); hair.mane.material.color.copy(hc.mane); hair.tail.material.color.copy(hc.tail); }catch(e){console.warn('hair (world)',e);}
- if(opts.saddle){ const sd=buildSaddle(); sd.position.set(0,SADDLE_Y,SADDLE_Z); parts.group.add(sd); parts.group.add(buildBridle()); }
+ if(opts.dragon){ try{ ent.drg=buildDragonBody(skin,skin.skeleton.bones,parts.group,DRAGON_TINT[opts.coat]||DRAGON_TINT._); }catch(e){} }
+ try{ hair=buildHairFor(skin,skin.skeleton.bones,parts.group); if(opts.dragon){hair.mane.visible=false;hair.tail.visible=false;} const hc=hairColourFor(colors,opts.coat||null,opts.tailCol||null); hair.mane.material.color.copy(hc.mane); hair.tail.material.color.copy(hc.tail); }catch(e){console.warn('hair (world)',e);}
+ if(opts.saddle){ const sd=buildSaddle(); sd.position.set(0,SADDLE_Y,SADDLE_Z); parts.group.add(sd); parts.group.add(buildBridle(opts.dragon?(DRAGON_TINT[opts.coat]||DRAGON_TINT._):null)); }
  worldRigCount++;
  ent.rig={scene:sc,bones:skin.skeleton.bones,phase:Math.random()*6,hair};
 }
@@ -4495,6 +4600,13 @@ function tintWings(type){   // player's rigged mount
 function applyCoat(){
  if(!RIG.ready||!RIG.skin||!RIG.baseMat) return;
  const h=myHorses[rideIdx];
+ {/* A dragon wears a crest and a scaled tail instead of a mane and tail hair. */
+  const want=!!(h&&h.dragon), th=want?(DRAGON_TINT[h.coat]||DRAGON_TINT._):null;
+  if(RIG.drg&&(!want||RIG.drgTheme!==(h&&h.coat))){ if(RIG.drg.parent)RIG.drg.parent.remove(RIG.drg); RIG.drg=null; }
+  if(want&&!RIG.drg&&RIG.skin){ try{ RIG.drg=buildDragonBody(RIG.skin,RIG.bones,player.mesh,th); RIG.drgTheme=h.coat; }catch(e){} }
+  if(RIG.hairMane)RIG.hairMane.visible=!want;
+  if(RIG.hairTail)RIG.hairTail.visible=!want;
+ }
  if(h&&h.coat){ RIG.skin.material=fantasyCoatRig(h.coat); tintWings(h.coat); hairColour(); return; }   // mythic glowing coats + themed wings
  // Original baked texture (flaxen mane+tail, white socks, blaze) for chestnut breeds; luminance-recolour
  // toward the breed colour for distinct breeds (grey/black/palomino) so the mane/socks pattern survives.
@@ -4616,7 +4728,7 @@ function buildSaddle(style){
    root so the neck's nod is included) and the bone's current position, so it moves with
    every nod and toss rather than hanging in the air where the head used to be. */
 const BRIDLE_HEAD0=[-0.145,1.424,0.995];   // head bone at rest, mount space
-function buildBridle(){
+function buildBridle(dragon){
  const g=new THREE.Group();
  const strap=new THREE.MeshStandardMaterial({color:0x3a2616,roughness:0.55,metalness:0.05});
  const iron=new THREE.MeshStandardMaterial({color:0xb8bcc2,roughness:0.35,metalness:0.7});
@@ -4635,6 +4747,30 @@ function buildBridle(){
  const brow=put(new THREE.Mesh(ring(0.118,0.012,Math.PI),strap),-0.115,1.70,0.82); brow.rotation.x=Math.PI/2;
  for(let k=0;k<5;k++){const a=Math.PI*(0.22+0.14*k); put(new THREE.Mesh(new THREE.SphereGeometry(0.012,8,6),gold),-0.115+Math.cos(a)*0.118,1.70,0.82+Math.sin(a)*0.118);}
  g.userData.gold=gold;
+ g.userData.dragon=!!dragon;
+ if(dragon){
+  /* A dragon's head: a pair of horns swept back off the poll, a smaller pair under them,
+     a ridge of spines down the muzzle, a spine at each cheek, and an eye that burns. */
+  const th=dragon, bone=new THREE.MeshStandardMaterial({color:new THREE.Color(th.bone).lerp(new THREE.Color('#ffffff'),0.35),
+   roughness:0.4,metalness:0.25,emissive:new THREE.Color(th.glow),emissiveIntensity:0.10,flatShading:true});
+  const horn=(x,y,z,len,rad,rx,rz)=>{ const h=put(new THREE.Mesh(new THREE.ConeGeometry(rad,len,6),bone),x,y,z);
+   h.rotation.set(rx,0,rz); return h; };
+  for(const sg of[-1,1]){
+   horn(-0.115+sg*0.080,1.82,0.68,0.66,0.058,-1.22,sg*0.40);      // the main pair, swept back over the neck
+   horn(-0.115+sg*0.130,1.73,0.73,0.30,0.032,-0.80,sg*0.92);      // a smaller pair below
+   horn(-0.13 +sg*0.118,1.55,0.79,0.19,0.026,-0.15,sg*1.30);      // a cheek spine
+   horn(-0.15 +sg*0.075,1.36,1.06,0.09,0.014, 0.9, sg*0.5);       // a barbel at the jaw
+  }
+  for(let k=0;k<4;k++){                                            // the ridge down the muzzle
+   const t=k/3, m=put(new THREE.Mesh(new THREE.ConeGeometry(0.017-0.004*t,0.075-0.02*t,5),bone),
+    -0.125-t*0.03,1.66-t*0.10,0.86+t*0.12);
+   m.rotation.x=-0.5+t*0.5;
+  }
+  const eyeGlow=new THREE.MeshStandardMaterial({color:new THREE.Color(th.glow),roughness:0.25,
+   emissive:new THREE.Color(th.glow),emissiveIntensity:1.5});
+  for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.036,14,12),eyeGlow),-0.115+sg*0.118,1.62,0.845);
+   e.castShadow=false; e.scale.set(1,0.72,1); }
+ }
  // crownpiece + throatlatch: one ring round the head behind the ears, leaning forward at the top
  const crown=put(new THREE.Mesh(ring(0.20,0.011),strap),-0.06,1.45,0.62); crown.rotation.x=0.35; crown.scale.set(0.75,1.15,1);
  // cheekpieces: from the crown ring, below the eye, down to each bit ring
@@ -4670,7 +4806,9 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
   TACK.saddle.visible=true; TACK.saddle.traverse(o=>{if(o.isMesh)o.visible=true;});  // attachRig hides player.mesh meshes; re-show tack
   player.mesh.add(TACK.saddle);}
  dressSaddle();
- if(!TACK.bridle)TACK.bridle=buildBridle();
+ {const hh=myHorses[rideIdx], want=hh&&hh.dragon?(DRAGON_TINT[hh.coat]||DRAGON_TINT._):null;
+  if(TACK.bridle&&!!TACK.bridle.userData.dragon!==!!want){ if(TACK.bridle.parent)TACK.bridle.parent.remove(TACK.bridle); TACK.bridle=null; }
+  if(!TACK.bridle)TACK.bridle=buildBridle(want);}
  TACK.bridle.visible=true; TACK.bridle.traverse(o=>{if(o.isMesh)o.visible=true;});
  if(TACK.bridle.parent!==player.mesh)player.mesh.add(TACK.bridle);
  if(player.rider&&player.rider.g){                       // articulated procedural rider sits the saddle
@@ -9599,7 +9737,7 @@ function tick(){
    }
   }
   animateHorse(a.parts,a.phase,resting?0.05:((a.wsp||1.2)>3.5?0.72:0.42),(a.wsp||1.2)>3.5?GAITS.gallop:GAITS.walk,true,t,a.graze,dt);
-  {const hh=myHorses[a.idx]; dressWithRig(a,a.parts,hh&&hh.colors,{tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,mine:true}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
+  {const hh=myHorses[a.idx]; dressWithRig(a,a.parts,hh&&hh.colors,{tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,dragon:hh&&hh.dragon,mine:true}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
    const el=dragonElement(hh);                       // a dragon in the pasture breathes now and then
    if(el){ a.brT=(a.brT==null?3+Math.random()*9:a.brT)-dt;
     if(a.brT<0){ a.brOn=0.85; a.brT=7+Math.random()*11; }
