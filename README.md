@@ -118,6 +118,10 @@ at startup). The interesting parts are the systems written on top of it:
   the same skeleton, so they nod with the head and swing with the tail; a shader sways
   them and streams them back at the gallop. The coat is a physical material with a
   clearcoat sheen, the eyes are glossy, and both saddles are generated meshes.
+- **Dragon horses.** Five of them, with membrane wings on the same folding skeleton as the
+  pegasus: four fingers fan from the wrist, the skin is stretched between them and rebuilt
+  from the joints every frame, so it sags at rest and billows on the downstroke. Horns, a
+  spined crest, and the sun blazing through the wing skin at golden hour.
 - **A pegasus with a real wing.** Three folding segments — arm, forearm and hand — carry
   primaries, secondaries, tertials, three rows of coverts and an alula. Every feather is an
   instance of one cambered, alpha-cut card, so a whole wing is four draw calls; the joints

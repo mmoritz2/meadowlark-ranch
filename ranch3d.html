@@ -406,7 +406,7 @@ function ensureStats(h){
 const GEAR_SLOTS=['saddle','pad','bridle','shoes'];
 const GEAR_SLOT_LBL={saddle:'🐎 Saddle',pad:'🟦 Saddle Pad',bridle:'🪢 Bridle',shoes:'🍀 Horseshoes'};
 const RARITIES=['Common','Uncommon','Rare','Epic','Legendary'];
-const RAR_COL={Common:'#b8a888',Uncommon:'#5cb85c',Rare:'#3b8bd6',Epic:'#9b59b6',Legendary:'#f0b429'};
+const RAR_COL={Common:'#b8a888',Uncommon:'#5cb85c',Rare:'#3b8bd6',Epic:'#9b59b6',Legendary:'#f0b429',Mythic:'#9d6bff',Dragon:'#e2703a',Draft:'#e8b84b'};
 const RAR_W={Common:52,Uncommon:28,Rare:13,Epic:5.5,Legendary:1.5};
 const RAR_SELL={Common:40,Uncommon:90,Rare:200,Epic:450,Legendary:1000};
 const GEAR_ADJ={Common:['Plain','Sturdy','Everyday','Oiled'],Uncommon:['Fine','Tooled','Meadow','Riverside'],Rare:['Silver-stitched','Cottonwood','Twilight','Basin'],Epic:['Starlit','Storm','Canyon','Hollowpeak'],Legendary:['Kestrel','Aurora','Meadowlark','Champion']};
@@ -1168,7 +1168,7 @@ function buildVRShop(rows,sv){
  if(vrShopTab==='horses'){
   BREEDS3.forEach((b,i)=>{
    const owned=(sv.horses||[]).filter(h=>h.breed===b[0]).length;
-   const ico=b[7].horn?'🦄':b[7].wings?'🪽':(b[7].coat||b[7].glow)?'✨':'🐴';
+   const ico=b[7].dragon?'🐉':b[7].horn?'🦄':b[7].wings?'🪽':(b[7].coat||b[7].glow)?'✨':'🐴';
    const price=b[3]?b[3]+' 🪙':b[4]+' 💎';
    const afford=(sv.coins||0)>=b[3]&&(sv.gems||0)>=b[4];
    rows.push(y=>{
@@ -1233,7 +1233,7 @@ function buildVRShop(rows,sv){
   const parent=(idx,slot,label)=>{
    const h=sv.horses[idx];
    rows.push(y=>{
-    vrListRow(c0,y,h.horn?'🦄':h.wings?'🪽':'🐴',label+': '+h.name,'❤️ bond '+Math.round(h.bond||0)+'  ·  Lv '+(h.level||1));
+    vrListRow(c0,y,h.dragon?'🐉':h.horn?'🦄':h.wings?'🪽':'🐴',label+': '+h.name,'❤️ bond '+Math.round(h.bond||0)+'  ·  Lv '+(h.level||1));
     vrButton(c0,'mate:'+slot,'Swap',760,y+13,228,48,'',24);
    });
   };
@@ -3941,7 +3941,7 @@ function isDesc(o,anc){while(o){if(o===anc)return true;o=o.parent;}return false;
 function hideProceduralBody(){
  if(!player.mesh||!player.parts)return;
  const P=player.parts, keep=new Set(), tree=g=>{if(g)g.traverse(o=>keep.add(o));};
- (P.wings||[]).forEach(tree); if(P.horn)keep.add(P.horn);
+ (P.wings||[]).forEach(tree); if(P.horn)keep.add(P.horn); tree(P.crest);
  tree(TACK.saddle); tree(TACK.bridle); tree(TACK.bitL); tree(TACK.bitR);
  if(player.rider)tree(player.rider.g);   // the articulated rider stays visible on the rigged mount
  const rig=RIG.scene;
@@ -4073,7 +4073,7 @@ function dressWithRig(ent,parts,colors,opts){
  let sc; try{sc=skeletonClone(RIG.scene);}catch(e){return;}
  let skin=null; sc.traverse(o=>{if(o.isSkinnedMesh&&!skin)skin=o;}); if(!skin)return;
  sc.scale.setScalar(RIG.fitScale); sc.position.set(0,RIG.fitY,0); sc.rotation.set(0,-Math.PI/2,0); sc.visible=true;
- const keep=new Set(); if(parts.wings)parts.wings.forEach(w=>w.traverse(o=>keep.add(o))); (opts.keep||[]).forEach(g=>{if(g)g.traverse(o=>keep.add(o));});
+ const keep=new Set(); if(parts.wings)parts.wings.forEach(w=>w.traverse(o=>keep.add(o))); if(parts.crest)parts.crest.traverse(o=>keep.add(o)); (opts.keep||[]).forEach(g=>{if(g)g.traverse(o=>keep.add(o));});
  parts.group.traverse(o=>{ if(o.isMesh&&!keep.has(o))o.visible=false; });
  parts.group.add(sc);
  if(parts.horn){parts.group.add(parts.horn);parts.horn.position.set(0,1.72,0.82);parts.horn.rotation.set(-0.4,0,0);parts.horn.scale.setScalar(1.2);parts.horn.visible=true;}
@@ -4356,6 +4356,20 @@ function fantasyCoatRig(type){
    a = bright (alternate feathers / tips), b = dark (alternate feathers / roots): the
    strong a/b CONTRAST is what keeps each feather readable. Keep emissive MODERATE so the
    directional light still shades the feathers (a uniform high glow flattened them to a fan). */
+/* Dragon colourways: membrane, bone and the light that comes through the skin. */
+const DRAGON_TINT={
+ ice:   {web:'#5fa8c8',bone:'#183848',glow:'#bff0ff'},
+ fire:  {web:'#a8441f',bone:'#2a0e05',glow:'#ffb04a'},
+ galaxy:{web:'#5c449c',bone:'#1a1230',glow:'#c6a8ff'},
+ shadow:{web:'#3c3060',bone:'#0e0a18',glow:'#8a5ae0'},
+ aurora:{web:'#2f8f74',bone:'#0c2a22',glow:'#9cffd8'},
+ _:     {web:'#6b7994',bone:'#222836',glow:'#cfe0ff'},
+};
+function tintDragonWing(piv,type){
+ const th=DRAGON_TINT[type]||DRAGON_TINT._, mt=piv.userData.mats; if(!mt)return;
+ mt[0].color.set(th.web); mt[0].emissive.set(th.glow); mt[0].emissiveIntensity=0.10;
+ mt[1].color.set(th.bone); mt[1].emissive.set(th.glow); mt[1].emissiveIntensity=0.06;
+}
 const WING_TINT={
  fire:  {a:'#ffc24a',b:'#c2330c',e:'#ff5a1e',ei:0.42},
  galaxy:{a:'#c4a6ff',b:'#3a2780',e:'#7a4ad8',ei:0.40},
@@ -4364,6 +4378,7 @@ const WING_TINT={
  aurora:{a:'#7dffc0',b:'#2a8fc8',e:'#3ce0a0',ei:0.48},
 };
 function tintWingMats(piv,type){   // tint one wing's two feather materials to a mythic theme
+ if(piv&&piv.userData.kind==='dragon'){ tintDragonWing(piv,type); return; }
  const t=WING_TINT[type]; if(!t||!piv) return; const mt=piv.userData.mats; if(!mt) return;
  const ca=new THREE.Color(t.a),cb=new THREE.Color(t.b),ce=new THREE.Color(t.e);
  mt[0].color.copy(ca); mt[0].emissive.copy(ce); mt[0].emissiveIntensity=t.ei;     mt[0].roughness=0.62; mt[0].needsUpdate=true;
@@ -5682,7 +5697,7 @@ const _sunW=new THREE.Vector3(),_sunV=new THREE.Vector3();
    phase of the wingbeat, 0..1. Both wings of a pair share one set of instance matrices —
    the pivots are mirrored, so a wing does the same thing in its own frame. */
 function poseWings(pair,open,beat,t){
- if(!pair||!pair.length||!pair[0].userData.inst)return;
+ if(!pair||!pair.length||!(pair[0].userData.inst||pair[0].userData.mem))return;
  const S=WING.S, o=Math.max(0,Math.min(1,open)), L=(a,b)=>a+(b-a)*o;
  const ph=(beat||0)*Math.PI*2;
  const f=Math.sin(ph+0.42*Math.sin(ph));      // +1 at the top of the beat, -1 at the bottom
@@ -5717,6 +5732,7 @@ function poseWings(pair,open,beat,t){
   _sunW.copy(sun.position).normalize(); _sunV.copy(_sunW).transformDirection(camera.matrixWorldInverse);
   const lit=Math.max(0,Math.min(1,(sun.intensity-0.6)/4.0));   // nothing shines through a wing at midnight
   for(const m of mt) if(m.userData.u){ m.userData.u.uSunV.value.copy(_sunV); m.userData.u.uGlow.value=m.userData.glowBase*lit; }}
+ if(pair[0].userData.kind==='dragon'){ dragonWingGeo(pair,_wA,_wB,_wC,f,up,t); return; }
  const inst=pair[0].userData.inst, aF=inst[0], aC=inst[1];
  let iF=0,iC=0;
  for(const r of WING.rows){
@@ -5732,6 +5748,140 @@ function poseWings(pair,open,beat,t){
   if(r.mat){_wM.toArray(aC.array,(iC++)*16);} else {_wM.toArray(aF.array,(iF++)*16);}
  }
  aF.needsUpdate=true; aC.needsUpdate=true;
+}
+/* ===== Dragon wing =====
+   The same three folding segments as the pegasus, but skin instead of feathers: four long
+   fingers fan from the wrist, a membrane is stretched between them and back to an anchor at
+   the flank, and the whole sheet is rebuilt from the joints every frame — which is why it
+   sags between the fingers at rest and billows on the downstroke. Two draw calls a wing: the
+   membrane and the bones. */
+const dragonWebTex=(()=>{
+ const cv=document.createElement('canvas'); cv.width=256; cv.height=256; const c=cv.getContext('2d');
+ c.fillStyle='#ffffff'; c.fillRect(0,0,256,256);
+ const vein=(x0,y0,a,len,w,d)=>{                       // branching veins, thinning as they go
+  if(w<0.35||d>4)return;
+  const x1=x0+Math.cos(a)*len, y1=y0+Math.sin(a)*len;
+  c.strokeStyle='rgba(120,110,130,'+(0.10+w*0.07)+')'; c.lineWidth=w; c.lineCap='round';
+  c.beginPath(); c.moveTo(x0,y0); c.lineTo(x1,y1); c.stroke();
+  vein(x1,y1,a+0.42+Math.random()*0.3,len*0.72,w*0.62,d+1);
+  vein(x1,y1,a-0.38-Math.random()*0.3,len*0.68,w*0.58,d+1);
+ };
+ for(let i=0;i<7;i++)vein(6,20+i*36,0.05+Math.random()*0.25,60+Math.random()*30,3.4,0);
+ const g=c.createLinearGradient(0,0,256,0);            // thinner, paler skin toward the trailing edge
+ g.addColorStop(0,'rgba(255,255,255,0)'); g.addColorStop(1,'rgba(255,255,255,0.55)');
+ c.fillStyle=g; c.fillRect(0,0,256,256);
+ const tx=new THREE.CanvasTexture(cv); tx.colorSpace=THREE.SRGBColorSpace; tx.anisotropy=8; return tx;
+})();
+const DWING={
+ fing:[[0.11,1.86],[0.42,1.76],[0.79,1.50],[1.18,1.16]],   // [sweep from the hand's axis, length]
+ anchor:new THREE.Vector3(0.05,-0.16,-0.86),               // where the trailing edge meets the flank
+ U:6, W:4,                                                 // samples along a finger, across a panel
+};
+function buildDragonWings(){
+ const F=DWING.fing.length;
+ const nQuad=(F-1+1)*DWING.W*DWING.U;                       // panels between fingers + finger->anchor
+ const memN=((F-1+1)*(DWING.W+1)*(DWING.U+1))+((3+1)*(DWING.W+1));   // + the inner arm sheet
+ const mem=new THREE.BufferGeometry();
+ mem.setAttribute('position',new THREE.BufferAttribute(new Float32Array(memN*3),3));
+ mem.setAttribute('normal',new THREE.BufferAttribute(new Float32Array(memN*3),3));
+ mem.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(memN*2),2));
+ const idx=[]; let base=0;
+ for(let pnl=0;pnl<F;pnl++){                                // membrane panels, wrist-rooted fans
+  for(let w=0;w<DWING.W;w++)for(let t=0;t<DWING.U;t++){
+   const a=base+w*(DWING.U+1)+t, b=a+DWING.U+1;
+   idx.push(a,b,a+1, a+1,b,b+1);
+  }
+  base+=(DWING.W+1)*(DWING.U+1);
+ }
+ for(let j=0;j<3;j++)for(let w=0;w<DWING.W;w++){            // the inner sheet, shoulder to the anchor
+  const a=base+j*(DWING.W+1)+w, b=a+DWING.W+1;
+  idx.push(a,b,a+1, a+1,b,b+1);
+ }
+ mem.setIndex(idx);
+ const bones=new THREE.BufferGeometry();                    // the finger bones and the arm, as ribbons
+ const bN=(F+2)*(DWING.U+1)*2;
+ bones.setAttribute('position',new THREE.BufferAttribute(new Float32Array(bN*3),3));
+ bones.setAttribute('normal',new THREE.BufferAttribute(new Float32Array(bN*3),3));
+ const bidx=[];
+ for(let f=0;f<F+2;f++){ const o=f*(DWING.U+1)*2;
+  for(let t=0;t<DWING.U;t++){ const a=o+t*2; bidx.push(a,a+1,a+2, a+1,a+3,a+2); } }
+ bones.setIndex(bidx);
+ const mMem=new THREE.MeshStandardMaterial({map:dragonWebTex,side:THREE.DoubleSide,roughness:0.54,
+  metalness:0.05,color:0x8fa6c8,emissive:0x000000});
+ const mBone=new THREE.MeshStandardMaterial({side:THREE.DoubleSide,roughness:0.62,metalness:0.15,
+  color:0x2c3444,emissive:0x000000});
+ mMem.envMapIntensity=0.9; featherGlow(mMem,1.35);          // a membrane is thin: the sun blazes through it
+ featherGlow(mBone,0.18);
+ const mk=sgn=>{
+  const piv=new THREE.Group(); piv.scale.set(sgn*0.72,0.72,0.72);
+  const gm=mem.clone(), gb=bones.clone();
+  const mm=new THREE.Mesh(gm,mMem), bm=new THREE.Mesh(gb,mBone);
+  mm.frustumCulled=false; bm.frustumCulled=false; mm.castShadow=true; bm.castShadow=true;
+  piv.add(mm,bm);
+  piv.userData={sgn,kind:'dragon',mats:[mMem,mBone],mem:gm,bone:gb,open:0.05,beat:0};
+  return piv;
+ };
+ const pair=[mk(-1),mk(1)];
+ poseWings(pair,0.05,0,0);
+ return pair;
+}
+const _dv=new THREE.Vector3(),_dw=new THREE.Vector3(),_dn=new THREE.Vector3(),
+      _delb=new THREE.Vector3(),_dwri=new THREE.Vector3(),_danc=new THREE.Vector3(),
+      _dp=new THREE.Vector3(),_dq=new THREE.Vector3(),_dr=new THREE.Vector3(),_ds=new THREE.Vector3(),
+      _dtip=[0,1,2,3].map(()=>new THREE.Vector3()),_ddir=[0,1,2,3].map(()=>new THREE.Vector3()),
+      _dlead=[0,1,2].map(()=>new THREE.Vector3()),_dY=new THREE.Vector3(0,1,0);
+function dragonWingGeo(pair,mA,mB,mC,f,up,t){
+ const F=DWING.fing.length, U=DWING.U, W=DWING.W;
+ _delb.set(WING.S.arm,0,0).applyMatrix4(mA);
+ _dwri.set(WING.S.fore,0,0).applyMatrix4(mB);
+ _dn.set(0,1,0).transformDirection(mC);
+ _danc.copy(DWING.anchor);
+ for(let i=0;i<F;i++){
+  _ddir[i].set(1,0,0).applyAxisAngle(_dY,DWING.fing[i][0]).transformDirection(mC);
+  _dtip[i].copy(_dwri).addScaledVector(_ddir[i],DWING.fing[i][1]);
+ }
+ const geo=pair[0].userData.mem, pos=geo.attributes.position, uv=geo.attributes.uv;
+ const billow=-0.14-f*0.30;                                  // the sheet bellies out on the downstroke
+ let k=0;
+ const put=(p,u0,v0)=>{ pos.setXYZ(k,p.x,p.y,p.z); uv.setXY(k,u0,v0); k++; };
+ for(let pnl=0;pnl<F;pnl++){
+  const e0=_dtip[pnl], e1=(pnl<F-1)?_dtip[pnl+1]:_danc;
+  for(let w=0;w<=W;w++){ const fw=w/W;
+   _dq.copy(e0).lerp(e1,fw).lerp(_dwri,Math.sin(Math.PI*fw)*0.13);   // the trailing edge scallops in
+   for(let u=0;u<=U;u++){ const fu=u/U;
+    _dv.copy(_dwri).lerp(_dq,fu);
+    _dv.addScaledVector(_dn,Math.sin(Math.PI*fw)*fu*billow*(pnl===F-1?1.35:1.0));
+    put(_dv,fu*2.4,((pnl+fw)/F)*1.7);
+   }
+  }
+ }
+ _dlead[0].set(0,0,0); _dlead[1].copy(_delb); _dlead[2].copy(_dwri);
+ for(let j=0;j<=3;j++){
+  const fj=j/3, seg=fj<0.5?0:1, ft=fj<0.5?fj*2:(fj-0.5)*2;
+  _dp.copy(_dlead[seg]).lerp(_dlead[seg+1],ft);
+  for(let w=0;w<=W;w++){ const fw=w/W;
+   _dv.copy(_dp).lerp(_danc,fw).addScaledVector(_dn,Math.sin(Math.PI*fw)*billow*0.5);
+   put(_dv,fw*1.7,fj*2.4);
+  }
+ }
+ pos.needsUpdate=true; uv.needsUpdate=true; geo.computeVertexNormals();
+ /* The bones: the arm, the forearm and the four fingers, as ribbons that taper to a claw.
+    Each one gets its own vectors — sharing scratch with the joints quietly ate the elbow. */
+ const bg=pair[0].userData.bone, bp=bg.attributes.position; let m=0;
+ const rib=(p0,p1,w0,w1)=>{
+  _ds.copy(p1).sub(p0); if(_ds.lengthSq()<1e-9)_ds.set(1,0,0); _ds.normalize();
+  _dr.crossVectors(_ds,_dn); if(_dr.lengthSq()<1e-9)_dr.set(0,0,1); _dr.normalize();
+  for(let u=0;u<=U;u++){ const fu=u/U, ww=w0+(w1-w0)*fu;
+   _dv.copy(p0).lerp(p1,fu).addScaledVector(_dn,0.016);
+   bp.setXYZ(m++,_dv.x+_dr.x*ww,_dv.y+_dr.y*ww,_dv.z+_dr.z*ww);
+   bp.setXYZ(m++,_dv.x-_dr.x*ww,_dv.y-_dr.y*ww,_dv.z-_dr.z*ww);
+  }
+ };
+ _dp.set(0,0,0);
+ rib(_dp,_delb,0.070,0.052);
+ rib(_delb,_dwri,0.052,0.040);
+ for(let i=0;i<F;i++)rib(_dwri,_dtip[i],0.040,0.008);
+ bp.needsUpdate=true; bg.computeVertexNormals();
 }
 function buildPegasusWings(){
  const aF=new THREE.InstancedBufferAttribute(new Float32Array(WING.nF*16),16).setUsage(THREE.DynamicDrawUsage);
@@ -5836,8 +5986,34 @@ function makeHorse(cfg){
  const tail=new THREE.Group();tail.position.set(0,1.52,-1.02);g.add(tail);
  tail.add(loftY(TAILP,12,maneMat(mane)));
  tail.rotation.x=0.42;
+ /* A dragon horse wears its own hardware: a pair of swept horns and a crest of spines down
+    the spine. Built in the rigged horse's own coordinates, because that is the body every
+    horse in the world now wears. */
+ let crest=null;
+ if(cfg.dragon){
+  crest=new THREE.Group();
+  const th=DRAGON_TINT[cfg.coat]||DRAGON_TINT._;
+  const hm=new THREE.MeshStandardMaterial({color:th.bone,roughness:0.42,metalness:0.28,
+   emissive:new THREE.Color(th.glow),emissiveIntensity:0.18});
+  for(const sg of[-1,1]){                                   // horns, swept back from the poll
+   const hn=new THREE.Mesh(new THREE.ConeGeometry(0.036,0.40,7),hm);
+   hn.position.set(sg*0.072,1.78,0.70); hn.rotation.set(-1.15,0,sg*0.34);
+   hn.castShadow=true; crest.add(hn);
+   const hb=new THREE.Mesh(new THREE.ConeGeometry(0.022,0.17,6),hm);
+   hb.position.set(sg*0.105,1.70,0.76); hb.rotation.set(-0.85,0,sg*0.6);
+   crest.add(hb);
+  }
+  const SP=[[0.62,0.075],[0.44,0.10],[0.24,0.115],[0.03,0.12],[-0.19,0.115],
+            [-0.40,0.10],[-0.60,0.082],[-0.78,0.062],[-0.93,0.045]];
+  SP.forEach(([z,h],i)=>{                                   // the crest, tallest over the withers
+   const sp=new THREE.Mesh(new THREE.ConeGeometry(h*0.34,h*2.1,5),hm);
+   sp.position.set(0,1.63-Math.abs(z)*0.045,z); sp.rotation.x=-0.30-i*0.02;
+   sp.castShadow=true; crest.add(sp);
+  });
+  g.add(crest);
+ }
  let wings=null;
- if(cfg.wings){ wings=buildPegasusWings(); wings.forEach(w=>{g.add(w); w.position.set(w.userData.sgn*0.19,1.46,0.24); if(cfg.coat)tintWingMats(w,cfg.coat);}); }
+ if(cfg.wings){ wings=cfg.dragon?buildDragonWings():buildPegasusWings(); wings.forEach(w=>{g.add(w); w.position.set(w.userData.sgn*0.19,1.46,0.24); if(cfg.dragon)tintDragonWing(w,cfg.coat); else if(cfg.coat)tintWingMats(w,cfg.coat);}); }
  const feathered=cfg.breed==='clyde'||cfg.breed==='shire';
  const sox=n=>!cfg.coat&&(feathered||(seed+n)%5<2);   // mythic coats: no white socks (they broke the themed legs)
  const legs=[
@@ -5856,7 +6032,7 @@ function makeHorse(cfg){
   blob(0.055,0.07,0.055,lt,0,1.83,0.11,g);
  }
  const shadowM=contactShadow(g);
- return {group:g,legs,neck,tail,head,ears:[earL,earR],bitL,bitR,shadowM,wings,horn};
+ return {group:g,legs,neck,tail,head,ears:[earL,earR],bitL,bitR,shadowM,wings,horn,crest};
 }
 function nameSprite(text){
  /* Was 256x64 with mipmaps on: past ~20px on screen the glyphs mipped away and the sign
@@ -6043,7 +6219,7 @@ function rebuildAll(){
  for(const a of herd)scene.remove(a.parts.group);
  herd=[];
  const h=myHorses[rideIdx];
- player.parts=makeHorse({colors:h.colors,horn:h.horn,wings:h.wings,coat:h.coat,tack:h.tack||'#7a583a',bridle:true,seed:h.id||0,breed:h.breed});
+ player.parts=makeHorse({colors:h.colors,horn:h.horn,wings:h.wings,dragon:h.dragon,coat:h.coat,tack:h.tack||'#7a583a',bridle:true,seed:h.id||0,breed:h.breed});
  player.mesh=player.parts.group;
  /* Heading-pitch-roll order. With THREE's default XYZ, rotation.x is applied about the
     WORLD x axis, so the slope pitch below turned into a sideways roll whenever you rode
@@ -6064,7 +6240,7 @@ function rebuildAll(){
  for(let i=0;i<myHorses.length&&n<24;i++){
   if(i===rideIdx)continue;
   const hh=myHorses[i];
-  const parts=makeHorse({colors:hh.colors,horn:hh.horn,wings:hh.wings,coat:hh.coat,tack:hh.tack||null,seed:hh.id||(i+2),breed:hh.breed});
+  const parts=makeHorse({colors:hh.colors,horn:hh.horn,wings:hh.wings,dragon:hh.dragon,coat:hh.coat,tack:hh.tack||null,seed:hh.id||(i+2),breed:hh.breed});
   parts.group.scale.setScalar(horseScale(hh));
   const sp=nameSprite(hh.name);
   sp.position.y=3.0;
@@ -7001,12 +7177,18 @@ const BREEDS3=[
  ['frost','Frost Stallion','Mythic',0,12,'#cfe9f6','#8fd0ec',{coat:'ice',ability:'leap'}],
  ['aurora','Aurora Pegasus','Mythic',0,15,'#143038','#7df0c4',{wings:true,coat:'aurora',glow:true,ability:'fly'}],
  ['phoenix','Phoenix Steed','Mythic',0,17,'#3a1208','#ff9a4a',{wings:true,coat:'fire',glow:true,ability:'fly'}],
+ /* Dragon horses: the same flight, but membrane wings, horns and a spined crest. */
+ ['frostdrake','Frostwing Dragon','Dragon',0,16,'#cfe9f6','#8fd0ec',{wings:true,dragon:true,coat:'ice',glow:true,ability:'fly'}],
+ ['emberdrake','Emberflight Dragon','Dragon',0,18,'#3a1410','#ff8a3a',{wings:true,dragon:true,coat:'fire',glow:true,ability:'fly'}],
+ ['amethyst','Amethyst Dragon','Dragon',0,18,'#2a2350','#b79dff',{wings:true,dragon:true,coat:'galaxy',glow:true,ability:'fly'}],
+ ['stormdrake','Storm Dragon','Dragon',0,20,'#241830','#a07ce0',{wings:true,dragon:true,coat:'shadow',glow:true,ability:'fly'}],
+ ['verdant','Verdant Dragon','Dragon',0,20,'#143038','#7df0c4',{wings:true,dragon:true,coat:'aurora',glow:true,ability:'fly'}],
  ['shadowmare','Shadow Mare','Mythic',0,14,'#241830','#a07ce0',{coat:'shadow',glow:true,ability:'swift'}],
  ['kestrel','Silver Kestrel','Legendary',0,0,'#c9ced6','#eef2f7',{story:true}],   // book two's reward: not for sale
  ['shire','Shire','Draft',45,0,'#3a3530','#1d1a17',{}],
  ['clyde','Clydesdale','Draft',45,0,'#7a4526','#2e2018',{}],
 ];
-const TIER_BASE={Common:3,Uncommon:4,Rare:5,Epic:6,Legendary:7,Draft:4,Mythic:8};
+const TIER_BASE={Common:3,Uncommon:4,Rare:5,Epic:6,Legendary:7,Draft:4,Mythic:8,Dragon:9};
 const NAMES3=['Luna','Comet','Willow','Maple','Storm','Honey','Pepper','Clover','Biscuit','River','Aspen','Mocha','Daisy','Blaze','Echo','Juniper','Ginger','Onyx','Pearl','Sage'];
 const TACKS3=[['#c0392b','Scarlet'],['#2e86c1','Lake Blue'],['#7d3c98','Royal Plum'],['#1e8449','Meadow Green'],['#f39c12','Sunshine']];
 function blendHex(a,b){const c=new THREE.Color(a);c.lerp(new THREE.Color(b),0.5);return '#'+c.getHexString();}
@@ -7024,8 +7206,8 @@ function openShop(tab){
   html+=BREEDS3.map((b,i)=>{
    if(b[7]&&b[7].story)return '';
    const owned=s.horses.filter(h=>h.breed===b[0]).length;
-   const badge=b[2]==='Mythic'?' <span style="background:linear-gradient(90deg,#9d6bff,#ff7ad0);color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">✨ MYTHIC</span>':b[2]==='Draft'?' <span style="background:#e8b84b;color:#5a3d12;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">NEW</span>':'';
-   const ico=b[7].horn?'🦄':b[7].wings?'🪽':(b[7].coat||b[7].glow)?'✨':'🐴';
+   const badge=b[2]==='Dragon'?' <span style="background:linear-gradient(90deg,#e2703a,#8f4bd0);color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">🐉 DRAGON</span>':b[2]==='Mythic'?' <span style="background:linear-gradient(90deg,#9d6bff,#ff7ad0);color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">✨ MYTHIC</span>':b[2]==='Draft'?' <span style="background:#e8b84b;color:#5a3d12;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">NEW</span>':'';
+   const ico=b[7].dragon?'🐉':b[7].horn?'🦄':b[7].wings?'🪽':(b[7].coat||b[7].glow)?'✨':'🐴';
    const ab=b[7].ability?{swift:' · 💨 Swift',leap:' · ⤴️ Leap',fly:' · 🪽 Flight',glow:' · ✨ Glow'}[b[7].ability]:'';
    return '<div class="evrow">'+ico+' <b>'+b[1]+'</b>'+badge+'<span>'+b[2]+ab+(owned?' · owned ×'+owned:'')+'</span><button data-buyh="'+i+'">'+(b[3]?b[3]+' 🪙':b[4]+' 💎')+'</button></div>';
   }).join('')+'<span style="font-size:11px;color:#8c7a63">'+s.horses.length+' horses and counting · no limits — new friends graze in the Home Pasture</span>';
@@ -7089,7 +7271,7 @@ function buyHorse3(i){
   s.coins-=b[3];s.gems-=b[4];
   const base=TIER_BASE[b[2]];
   const st=()=>Math.max(1,Math.min(10,base+Math.floor(Math.random()*3)-1));
-  s.horses.push({id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:b[0],colors:{body:b[5],mane:b[6]},horn:!!b[7].horn,rainbow:!!b[7].rainbow,wings:!!b[7].wings,coat:b[7].coat||null,ability:b[7].ability||null,glow:!!b[7].glow,stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},sxp:{},level:1,xp:0,bond:10,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
+  s.horses.push({id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:b[0],colors:{body:b[5],mane:b[6]},horn:!!b[7].horn,rainbow:!!b[7].rainbow,wings:!!b[7].wings,dragon:!!b[7].dragon,coat:b[7].coat||null,ability:b[7].ability||null,glow:!!b[7].glow,stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},sxp:{},level:1,xp:0,bond:10,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
   msg='Welcome to the ranch, '+s.horses[s.horses.length-1].name+' the '+b[1]+'! 🎉';
   ok=true;
  });
@@ -7228,8 +7410,9 @@ function breed3(){
   ensureStats(a);ensureStats(b);
   const avg=k=>Math.max(1,Math.min(10,Math.round((a.stats[k]+b.stats[k])/2)+Math.floor(Math.random()*2)));
   const wingChild=!!(a.wings||b.wings);          // 🪽 wings pass down every generation
+ const dragChild=wingChild&&!!(a.dragon||b.dragon);   // and a dragon's are dragon's wings
   const childCoat=a.coat||b.coat||null;
-  s.horses.push({id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:wingChild?(a.wings?a.breed:b.breed):(Math.random()<0.5?a.breed:b.breed),colors:{body:blendHex(a.colors.body,b.colors.body),mane:blendHex(a.colors.mane,b.colors.mane)},horn:(a.horn||b.horn)&&Math.random()<0.6,rainbow:(a.rainbow||b.rainbow)&&Math.random()<0.5,wings:wingChild,coat:childCoat,ability:a.ability||b.ability||(wingChild?'fly':null),glow:!!(a.glow||b.glow),stats:{speed:avg('speed'),stamina:avg('stamina'),jump:avg('jump'),accel:avg('accel'),agility:avg('agility')},sxp:{},level:1,xp:0,bond:30,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null});
+  s.horses.push({id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:wingChild?(a.wings?a.breed:b.breed):(Math.random()<0.5?a.breed:b.breed),colors:{body:blendHex(a.colors.body,b.colors.body),mane:blendHex(a.colors.mane,b.colors.mane)},horn:(a.horn||b.horn)&&Math.random()<0.6,rainbow:(a.rainbow||b.rainbow)&&Math.random()<0.5,wings:wingChild,dragon:dragChild,coat:childCoat,ability:a.ability||b.ability||(wingChild?'fly':null),glow:!!(a.glow||b.glow),stats:{speed:avg('speed'),stamina:avg('stamina'),jump:avg('jump'),accel:avg('accel'),agility:avg('agility')},sxp:{},level:1,xp:0,bond:30,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null});
   msg='A foal was born: '+s.horses[s.horses.length-1].name+'! 🍼'+(wingChild?' It has its parent\'s wings! 🪽':'')+' Watch it grow in the pasture!';
   ok=true;
  });
@@ -8322,7 +8505,7 @@ function breedWithRider(name){
   const foal={id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],
    breed:wingChild?(mine.wings?mine.breed:(r.breed||mine.breed)):((Math.random()<0.5&&r.breed)?r.breed:mine.breed),
    colors:{body:blendHex(mine.colors.body,r.colors.body),mane:blendHex(mine.colors.mane,r.colors.mane)},
-   horn:mine.horn&&Math.random()<0.4,rainbow:false,wings:wingChild,
+   horn:mine.horn&&Math.random()<0.4,rainbow:false,wings:wingChild,dragon:wingChild&&!!mine.dragon,
    coat:childCoat,ability:mine.ability||(wingChild?'fly':null),glow:!!mine.glow||!!childCoat,
    stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},sxp:{},level:1,xp:0,bond:30,
    needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null};
