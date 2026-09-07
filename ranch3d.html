@@ -612,6 +612,40 @@ function rawH(x,z){
  }
  return h;
 }
+/* ===== Roads =====
+   A valley with towns in it and no roads between them reads as scenery rather than a place
+   people live. These are the lines the traffic would have worn: the ranch to the village,
+   the ranch to the pasture, the ranch down to the river bridge, and the long haul from the
+   village out to Barleyfold. Grass and ground cover keep off them, which is what actually
+   makes a track look walked rather than painted on. */
+const PATHS=[
+ [[0,10],[13,-11],[28,-30],[44,-46],[50,-53]],                       // ranch -> Cottonwood
+ [[-7,3],[-26,7],[-46,2],[-63,-6],[-71,-10]],                        // ranch -> Home Pasture
+ [[2,15],[7,44],[4,72],[1,98],[0,112]],                              // ranch -> the river bridge
+ [[53,-57],[96,-70],[140,-84],[184,-97],[214,-105]],                 // Cottonwood -> Barleyfold
+ [[-30,-20],[-33,-38],[-31,-52],[-30,-58]],                          // pasture road -> Hollowpeak Pines
+];
+const PATH_W=2.9;
+const _PSEG=(()=>{                                                   // flattened into segments once
+ const out=[];
+ for(const pl of PATHS)for(let i=0;i<pl.length-1;i++){
+  const a=pl[i],b=pl[i+1];
+  out.push({ax:a[0],az:a[1],dx:b[0]-a[0],dz:b[1]-a[1],
+   len2:(b[0]-a[0])*(b[0]-a[0])+(b[1]-a[1])*(b[1]-a[1]),
+   lo:Math.min(a[0],b[0])-8,hi:Math.max(a[0],b[0])+8,zlo:Math.min(a[1],b[1])-8,zhi:Math.max(a[1],b[1])+8});
+ }
+ return out;
+})();
+function pathDist(x,z){
+ let best=1e9;
+ for(const s of _PSEG){
+  if(x<s.lo||x>s.hi||z<s.zlo||z>s.zhi)continue;                      // cheap reject first
+  let t=((x-s.ax)*s.dx+(z-s.az)*s.dz)/s.len2; t=t<0?0:t>1?1:t;
+  const px=s.ax+s.dx*t-x, pz=s.az+s.dz*t-z;
+  const d=px*px+pz*pz; if(d<best)best=d;
+ }
+ return Math.sqrt(best);
+}
 const colliders=[];
 const walls=[];
 const BR_A=riverZ(0)-7.5,BR_B=riverZ(0)+7.5;
@@ -2207,6 +2241,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.hypot(x+220,z-130)<150)return false;             // Coyote sand
   if(Math.hypot(x+160,z+210)<140)return false;             // Hollowpeak snow
   if(Math.hypot(x-20,z-16)<5.4)return false;               // Loon Lake
+  if(pathDist(x,z)<PATH_W*0.62)return false;               // the road is worn bare
   return true;};
  /* Which country you are standing in, and therefore what grows here. */
  const biomeAt=(x,z)=>{
@@ -2221,6 +2256,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.abs(z-riverZ(x))<5.2)return false;               // not standing in the river
   if(Math.hypot(x-20,z-16)<5.6)return false;               // not in the lake
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
+  if(pathDist(x,z)<PATH_W*0.55)return false;               // nor on the road
   return true;};
  const CLUT={
   meadow:{fern:'#66b04e',rock:'#8c8a82',p:0.85,sz:0.95},
@@ -3823,6 +3859,63 @@ let waterMat=null;   // hoisted: the pond reuses it
    FALLS.st=new Float32Array(MN*4);                                // x, y, z, life
    for(let i=0;i<MN;i++)FALLS.st[i*4+3]=Math.random();
   }
+ }
+ /* the roads, laid over the ground as ribbons that follow it */
+ {
+  const roadTex=canvasTex(128,128,(c,w,h)=>{
+   c.clearRect(0,0,w,h);
+   const grad=c.createLinearGradient(0,0,0,h);            // soft at both edges, solid down the middle
+   grad.addColorStop(0,'rgba(150,124,92,0)'); grad.addColorStop(0.22,'rgba(150,124,92,0.95)');
+   grad.addColorStop(0.5,'rgba(163,136,101,1)'); grad.addColorStop(0.78,'rgba(150,124,92,0.95)');
+   grad.addColorStop(1,'rgba(150,124,92,0)');
+   c.fillStyle=grad; c.fillRect(0,0,w,h);
+   for(let i=0;i<900;i++){                                 // grit and stones
+    const y=8+Math.random()*(h-16);
+    c.fillStyle=['#8f7350','#b39a72','#7a6242','#c4ae86'][i&3];
+    c.globalAlpha=0.35*(1-Math.abs(y/h-0.5)*1.6);
+    c.fillRect(Math.random()*w,y,1+Math.random()*3,1+Math.random()*2);
+   }
+   c.globalAlpha=0.14;                                     // two wheel ruts
+   for(const ry of [h*0.34,h*0.66]){ c.fillStyle='#6b563a'; c.fillRect(0,ry-2.5,w,5); }
+   c.globalAlpha=1;
+  });
+  roadTex.wrapS=THREE.RepeatWrapping; roadTex.anisotropy=8;
+  const roadMat=new THREE.MeshStandardMaterial({map:roadTex,transparent:true,roughness:1,metalness:0,
+   depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3});
+  const rp=[],ru=[],ri=[];
+  const cr=(p0,p1,p2,p3,t)=>{                              // catmull-rom, so corners round off
+   const t2=t*t,t3=t2*t;
+   return 0.5*((2*p1)+(-p0+p2)*t+(2*p0-5*p1+4*p2-p3)*t2+(-p0+3*p1-3*p2+p3)*t3);
+  };
+  for(const pl of PATHS){
+   const pts=[];
+   for(let i=0;i<pl.length-1;i++){
+    const p0=pl[Math.max(0,i-1)],p1=pl[i],p2=pl[i+1],p3=pl[Math.min(pl.length-1,i+2)];
+    const segLen=Math.hypot(p2[0]-p1[0],p2[1]-p1[1]), steps=Math.max(3,Math.round(segLen/1.6));
+    for(let k=0;k<steps;k++){const t=k/steps;
+     pts.push([cr(p0[0],p1[0],p2[0],p3[0],t),cr(p0[1],p1[1],p2[1],p3[1],t)]);}
+   }
+   pts.push(pl[pl.length-1]);
+   let run=0;
+   const base=rp.length/3;
+   for(let i=0;i<pts.length;i++){
+    const a=pts[Math.max(0,i-1)], b=pts[Math.min(pts.length-1,i+1)];
+    let dx=b[0]-a[0], dz=b[1]-a[1]; const L=Math.hypot(dx,dz)||1; dx/=L; dz/=L;
+    if(i>0)run+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);
+    const wob=PATH_W*(0.86+0.22*Math.sin(i*0.7)+0.10*Math.sin(i*1.9));   // never a ruled line
+    for(const sg of[-1,1]){
+     const x=pts[i][0]-dz*sg*wob, z=pts[i][1]+dx*sg*wob;
+     rp.push(x,groundH(x,z)+0.055,z);
+     ru.push(run/6,sg<0?0:1);
+    }
+   }
+   for(let i=0;i<pts.length-1;i++){const a=base+i*2; ri.push(a,a+1,a+2, a+1,a+3,a+2);}
+  }
+  const rg=new THREE.BufferGeometry();
+  rg.setAttribute('position',new THREE.Float32BufferAttribute(rp,3));
+  rg.setAttribute('uv',new THREE.Float32BufferAttribute(ru,2));
+  rg.setIndex(ri); rg.computeVertexNormals();
+  const road=new THREE.Mesh(rg,roadMat); road.receiveShadow=true; road.renderOrder=1; scene.add(road);
  }
  // golden wheat field by Cottonwood Village
  const wheat=new THREE.InstancedMesh(new THREE.ConeGeometry(0.05,0.9,5),new THREE.MeshStandardMaterial({color:0xd9b85c,roughness:1}),520);
