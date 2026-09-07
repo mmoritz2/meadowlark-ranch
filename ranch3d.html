@@ -6380,15 +6380,17 @@ function poseWings(pair,open,beat,t){
     2.15 m from the withers with nothing dipping below the barrel. Everything between is the
     two interpolated, which stays smooth because no joint travels the long way round. */
  const up=Math.max(0,f)*A;                    // the recovery stroke half-folds the wing again
- /* A dragon stows its wings differently from a bird: rolled hard over so the closed skin
-    lies flat along the barrel, and dropped down the flank rather than carried up on the
-    back. The open end of both is the same. */
+ /* A dragon stows its wings differently from a bird. The membrane hangs in the wing's own
+    plane, so a shut wing has to be rolled a full quarter turn — anything less and the sheet
+    stays half flat, which from the camera you actually ride behind reads as two paddles
+    sticking out sideways. Rolled upright it presents its edge, and swept well back it lies
+    down the ribs where it belongs. */
  const DR=pair[0].userData.kind==='dragon';
- const sx=L(DR?-0.90:-0.050,-0.375)-f*0.13*A;  // roll
+ const sx=L(DR?-1.52:-0.050,-0.375)-f*0.13*A;  // roll: a shut dragon wing stands on edge
  /* The tip traces an ellipse, not a line: the wing sweeps forward as it comes down and
     back as it lifts, a quarter of a cycle out of step with the flap. */
- const sy=L(DR?1.16:0.950,-0.350)+fv*0.22*A;   // shoulder sweep: back at rest, a shade forward when open
- const sz=L(DR?-0.46:-0.180, 0.420)+f*0.66*A;  // the beat itself, swung wide enough to read at a distance
+ const sy=L(DR?1.34:0.950,-0.350)+fv*0.22*A;   // shoulder sweep: back at rest, a shade forward when open
+ const sz=L(DR?-0.26:-0.180, 0.420)+f*0.66*A;  // the beat itself, swung wide enough to read at a distance
  const ey=L(-0.550, 0.400)-up*0.46, ez=-0.277;
  const wy=L( 0.950, 0.465)+up*0.40, wz= 0.300;
  const trail=-fv*0.62*A;
@@ -6518,10 +6520,11 @@ function dragonWingGeo(pair,mA,mB,mC,f,up,t,open){
  /* Closing the wing is not just folding the arm: the fingers have to come together and
     draw in, the way a fan shuts, or the skin between them stays a flat sheet standing out
     from the horse's side. */
- const o=Math.max(0,Math.min(1,open===undefined?1:open));
+ const o0=Math.max(0,Math.min(1,open===undefined?1:open));
+ const o=o0*o0*(3-2*o0);                                     // shut stays shut until it means it
  _danc.copy(DWING.anchor).multiplyScalar(0.52+0.48*o);
  for(let i=0;i<F;i++){
-  const sw=DWING.fing[i][0]*(0.34+0.66*o), ln=DWING.fing[i][1]*(0.62+0.38*o);
+  const sw=DWING.fing[i][0]*(0.22+0.78*o), ln=DWING.fing[i][1]*(0.58+0.42*o);
   _ddir[i].set(1,0,0).applyAxisAngle(_dY,sw).transformDirection(mC);
   _dtip[i].copy(_dwri).addScaledVector(_ddir[i],ln);
  }
@@ -6530,7 +6533,7 @@ function dragonWingGeo(pair,mA,mB,mC,f,up,t,open){
  const billow=(-0.14-f*0.30)*(0.55+0.45*o);                  // the sheet bellies out on the downstroke
  let k=0;
  const _wc=new THREE.Color();
- const outw=(1-o)*0.085;                     // a shut wing lies on the flank, not inside it
+ const outw=(1-o)*0.055;                     // a shut wing lies on the flank, not inside it
  const put=(p,u0,v0,mix)=>{ pos.setXYZ(k,p.x+outw,p.y,p.z); uv.setXY(k,u0,v0);
   _wc.copy(wr).lerp(wb,Math.min(1,mix===undefined?1:mix)); vcol.setXYZ(k,_wc.r,_wc.g,_wc.b); k++; };
  for(let pnl=0;pnl<F;pnl++){
@@ -9902,7 +9905,11 @@ function animateHorse(parts,phase,amp,gait,grounded,t,grazing,dt){
      ground, and beating properly in flight. The opening eases rather than snapping. */
   const u=parts.wings[0].userData, pow=parts.wingPow||0, flying=!!parts.wingFly;
   const run=Math.min(1,amp/0.9);
-  const want=flying?1:(grounded?(grazing>0?0.02:0.04+run*0.34):0.82);
+  /* A dragon walks with its wings shut. Feathers can ride half-lifted at a gallop and look
+     fine; a membrane cannot — any daylight between the fingers turns the wing into a paddle
+     from directly behind, which is the angle the rider actually sees. */
+  const DRG=u.kind==='dragon';
+  const want=flying?1:(grounded?(grazing>0?0.01:(DRG?0.02+run*0.08:0.04+run*0.34)):(DRG?0.55:0.82));
   const kk=dt?Math.min(1,dt*3.4):1;
   u.open+=(want-u.open)*kk;
   u.beat=(u.beat+(dt||0.016)*(flying?(1.05+pow*0.85):(grounded?0.13:0.55)))%1;
