@@ -3015,6 +3015,9 @@ birchMat.envMapIntensity=0.46;
 const leafMat=new THREE.MeshStandardMaterial({map:leafTex,alphaTest:0.45,side:THREE.DoubleSide,roughness:1});
 leafMat.envMapIntensity=0.58;
 const leafMats=[leafMat,leafMat.clone(),leafMat.clone(),leafMat.clone(),leafMat.clone()];
+/* Two of the five are autumn trees, so a scatter of gold and rust runs through the woods
+   even where the good trees have not turned. */
+leafMats[1].color.set('#d99b34'); leafMats[3].color.set('#c25a2c');
 leafMats[1].color.set('#dff5c8');
 leafMats[2].color.set('#c8e8b0');
 leafMats[3].color.set('#ffd9a0');
@@ -3354,12 +3357,23 @@ function placeSeedTrees(){
    bInst.castShadow=true;bInst.receiveShadow=true;bInst.frustumCulled=false;
    lInst.castShadow=true;lInst.frustumCulled=false;
    lInst.customDepthMaterial=cfg.mat.userData.depthMat;   // alpha-tested leaf shadows
+   /* Colour comes in stands, not tree by tree: a slow noise over the map decides where the
+      wood has turned, so a hillside goes gold together and the next one stays green — which
+      is how a real autumn looks from a distance. */
+   const _lc=new THREE.Color();
+   const AUT=[new THREE.Color('#e2a52f'),new THREE.Color('#d2762c'),new THREE.Color('#c04a2c'),
+              new THREE.Color('#e8c352')];
    sub.forEach((tp,i)=>{
     const s=tp.s*cfg.h/hh;
     et.set(0,tp.r,0);
     qt.setFromEuler(et);
     // sink slightly: the drawn triangle dips below analytic groundH on a crest, and a
     // trunk that hovers even a few centimetres is the first thing an artist notices
+    {const band=0.5+0.5*Math.sin(tp.x*0.0125+1.7)*Math.cos(tp.z*0.0104-0.6);   // where the stand has turned
+     const turn=Math.max(0,Math.min(1,(band-0.40)*2.3));
+     const jit=((Math.imul((tp.x*7|0)^(tp.z*13|0),2654435761)>>>8)%1000)/1000;
+     _lc.set(0xffffff).lerp(AUT[Math.floor(jit*AUT.length)%AUT.length],turn*(0.68+jit*0.42));
+     lInst.setColorAt(i,_lc);}
     vt.set(tp.x,groundH(tp.x,tp.z)-minY*s-0.06*cfg.h*tp.s,tp.z);
     sct.set(s,s,s);
     m4t.compose(vt,qt,sct);
@@ -3368,6 +3382,7 @@ function placeSeedTrees(){
    });
    bInst.instanceMatrix.needsUpdate=true;
    lInst.instanceMatrix.needsUpdate=true;
+   if(lInst.instanceColor)lInst.instanceColor.needsUpdate=true;
    scene.add(bInst);scene.add(lInst);
    insts.push(bInst,lInst);
   }
@@ -3984,6 +3999,66 @@ let waterMat=null;   // hoisted: the pond reuses it
   AIRFX.op=new Float32Array(MOTE_N*4);                        // x, y, z, phase — around the rider
   AIRFX.lastX=1e9; AIRFX.lastZ=1e9;
   for(let i=0;i<MOTE_N;i++){ AIRFX.op[i*4+3]=Math.random()*6.28; }
+ }
+ /* ===== The water's edge =====
+    Foam where the river runs against its banks and around the lake shore, and lily pads with
+    a few flowers on the still water — the difference between a blue shape and a pond. */
+ {
+  const foamT=canvasTex(256,64,(c,w,h)=>{
+   c.clearRect(0,0,w,h);
+   for(let i=0;i<220;i++){                                    // bubbles crowding the waterline
+    const x=Math.random()*w, y=h*0.5+(Math.random()-0.5)*h*0.85;
+    const r2=1.5+Math.random()*6.5;
+    c.fillStyle='rgba(255,255,255,'+(0.10+Math.random()*0.5)+')';
+    c.beginPath(); c.arc(x,y,r2,0,7); c.fill();
+   }
+   c.globalCompositeOperation='destination-out';
+   const fm=c.createLinearGradient(0,0,0,h);
+   fm.addColorStop(0,'rgba(0,0,0,1)'); fm.addColorStop(0.4,'rgba(0,0,0,0)');
+   fm.addColorStop(0.6,'rgba(0,0,0,0)'); fm.addColorStop(1,'rgba(0,0,0,1)');
+   c.fillStyle=fm; c.fillRect(0,0,w,h);
+   c.globalCompositeOperation='source-over';
+  });
+  foamT.wrapS=THREE.RepeatWrapping; foamT.repeat.set(90,1);
+  waterAnims.push({tex:foamT,sx:0.02,sy:0});
+  const foamMat=new THREE.MeshBasicMaterial({map:foamT,transparent:true,opacity:0.5,depthWrite:false,
+   side:THREE.DoubleSide});
+  {const fa=[],fb=[];                                          // both banks of the river
+   for(const sgn of[-1,1]){
+    fa.length=0; fb.length=0;
+    for(let x=-340;x<=340;x+=3){
+     const zc=riverZ(x), y=rawH(x,zc)+0.60;
+     fa.push([x,y,zc+sgn*4.05]); fb.push([x,y,zc+sgn*5.05]);
+    }
+    const m=stripMesh(fa,fb,foamMat); m.castShadow=false; m.renderOrder=2; scene.add(m);
+   }}
+  {const pondFoam=new THREE.Mesh(new THREE.RingGeometry(5.05,6.15,40),foamMat);
+   pondFoam.rotation.x=-Math.PI/2; pondFoam.position.set(20,groundH(20,16)+0.62,16);
+   pondFoam.renderOrder=2; scene.add(pondFoam);}
+  /* lily pads: discs with a notch, a few carrying a flower */
+  {const padGeo=new THREE.CircleGeometry(0.42,12,0.42,Math.PI*2-0.84);
+   const padMat=new THREE.MeshStandardMaterial({color:0x3f7a3a,roughness:0.72,metalness:0,
+    side:THREE.DoubleSide});
+   const PADS=54, pads=new THREE.InstancedMesh(padGeo,padMat,PADS);
+   const flMatL=new THREE.MeshStandardMaterial({color:0xffd9ea,roughness:0.6,emissive:0x6b2740,emissiveIntensity:0.06});
+   const flG=new THREE.SphereGeometry(0.1,7,6);
+   const flowers=new THREE.InstancedMesh(flG,flMatL,14);
+   const mp=new THREE.Matrix4(),vp2=new THREE.Vector3(),qp=new THREE.Quaternion(),sp2=new THREE.Vector3(),ep=new THREE.Euler();
+   const pc=new THREE.Color(); let fi=0;
+   for(let i=0;i<PADS;i++){
+    const a=Math.random()*Math.PI*2, rr=1.2+Math.random()*3.5;
+    const x=20+Math.cos(a)*rr, z=16+Math.sin(a)*rr;
+    const y=groundH(20,16)+0.60, sc2=0.7+Math.random()*0.8;
+    ep.set(-Math.PI/2,0,Math.random()*Math.PI*2); qp.setFromEuler(ep); sp2.set(sc2,sc2,sc2);
+    mp.compose(vp2.set(x,y,z),qp,sp2); pads.setMatrixAt(i,mp);
+    pc.setHSL(0.28+Math.random()*0.05,0.42,0.26+Math.random()*0.14); pads.setColorAt(i,pc);
+    if(i%4===0&&fi<14){ sp2.set(1,0.8,1); qp.identity();
+     mp.compose(vp2.set(x,y+0.06,z),qp,sp2); flowers.setMatrixAt(fi++,mp); }
+   }
+   pads.instanceMatrix.needsUpdate=true; if(pads.instanceColor)pads.instanceColor.needsUpdate=true;
+   flowers.count=fi; flowers.instanceMatrix.needsUpdate=true;
+   pads.receiveShadow=true; scene.add(pads); flowers.castShadow=true; scene.add(flowers);
+  }
  }
  /* the roads, laid over the ground as ribbons that follow it */
  {

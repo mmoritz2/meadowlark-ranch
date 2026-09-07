@@ -32,6 +32,9 @@ travelling meadow of grass — none of which their screenshots show.
 
 ## The gap, and the plan
 
+All seven shipped between 2026-09-06 and the same evening. What follows is the list as it
+stood, with what each one turned out to need.
+
 Their world reads richer at ground level and has more landmark spectacle. Backlog:
 
 1. **Ground cover by biome** — ferns and scrub in the meadow, dry brush in the canyon, dead
@@ -41,8 +44,8 @@ Their world reads richer at ground level and has more landmark spectacle. Backlo
 3. **Winding dirt paths** joining the ranch, the village and the farms. *(shipped)*
 4. **Mesas and hoodoos** in Coyote Canyon so it reads as their Bronco does. *(shipped)*
 5. **Valley mist at dawn** and dust drifting in low sun. *(shipped)*
-6. **Seasonal colour** — a band of gold and red trees, not only green and blossom.
-7. **A shoreline that reads**: foam at the waterline, lily pads, wet sand.
+6. **Seasonal colour** — stands of gold and rust running through the woods. *(shipped)*
+7. **A shoreline that reads**: foam at the waterline, lily pads. *(shipped)*
 
 ## Sources
 
