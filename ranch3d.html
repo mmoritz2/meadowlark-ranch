@@ -4685,7 +4685,8 @@ function dressWithRig(ent,parts,colors,opts){
  parts.group.traverse(o=>{ if(o.isMesh&&!keep.has(o))o.visible=false; });
  parts.group.add(sc);
  if(parts.horn){parts.group.add(parts.horn);parts.horn.position.set(0,1.72,0.82);parts.horn.rotation.set(-0.4,0,0);parts.horn.scale.setScalar(1.2);parts.horn.visible=true;}
- if(parts.wings)parts.wings.forEach(w=>w.position.set(w.userData.sgn*0.21,1.49,0.18));
+ if(parts.wings)parts.wings.forEach(w=>{const D=w.userData.kind==='dragon';
+  w.position.set(w.userData.sgn*(D?0.19:0.21),D?1.60:1.49,D?0.02:0.18);});
  let mat;
  if(opts.coat){ mat=fantasyCoatRig(opts.coat,!!opts.dragon); }   // mythic: the glowing coat, scaled if it is a dragon
  else { mat=makeCoatMat(); setCoatUniforms(mat,colors&&colors.body,opts.tailCol||null); }
@@ -4707,7 +4708,8 @@ function attachRig(){
  if(player.parts&&player.parts.horn){const hn=player.parts.horn;
   player.mesh.add(hn); hn.position.set(0,1.72,0.82); hn.rotation.set(-0.4,0,0); hn.scale.setScalar(1.2);}
  // seat the wings at the RIG's withers (procedural withers sit ~0.5 higher than the rig's, so they floated)
- if(player.parts&&player.parts.wings) player.parts.wings.forEach(w=>w.position.set(w.userData.sgn*0.21,1.49,0.18));
+ if(player.parts&&player.parts.wings) player.parts.wings.forEach(w=>{const D=w.userData.kind==='dragon';
+  w.position.set(w.userData.sgn*(D?0.19:0.21),D?1.60:1.49,D?0.02:0.18);});
  // Fit the rig to ~1.85 tall. Compute the scale ONCE and cache it — recomputing the Box3
  // from the SKINNED mesh on every attach occasionally returned a degenerate bbox (h≈0 ->
  // s=1.85/0 = NaN/Inf), which made the horse render as NOTHING while the saddle+rider stayed
@@ -6374,18 +6376,22 @@ function poseWings(pair,open,beat,t){
     2.15 m from the withers with nothing dipping below the barrel. Everything between is the
     two interpolated, which stays smooth because no joint travels the long way round. */
  const up=Math.max(0,f)*A;                    // the recovery stroke half-folds the wing again
- const sx=L(-0.050,-0.375)-f*0.13*A;          // roll
+ /* A dragon stows its wings differently from a bird: rolled hard over so the closed skin
+    lies flat along the barrel, and dropped down the flank rather than carried up on the
+    back. The open end of both is the same. */
+ const DR=pair[0].userData.kind==='dragon';
+ const sx=L(DR?-0.90:-0.050,-0.375)-f*0.13*A;  // roll
  /* The tip traces an ellipse, not a line: the wing sweeps forward as it comes down and
     back as it lifts, a quarter of a cycle out of step with the flap. */
- const sy=L( 0.950,-0.350)+fv*0.22*A;         // shoulder sweep: back at rest, a shade forward when open
- const sz=L(-0.180, 0.420)+f*0.66*A;          // the beat itself, swung wide enough to read at a distance
+ const sy=L(DR?1.16:0.950,-0.350)+fv*0.22*A;   // shoulder sweep: back at rest, a shade forward when open
+ const sz=L(DR?-0.46:-0.180, 0.420)+f*0.66*A;  // the beat itself, swung wide enough to read at a distance
  const ey=L(-0.550, 0.400)-up*0.46, ez=-0.277;
  const wy=L( 0.950, 0.465)+up*0.40, wz= 0.300;
  const trail=-fv*0.62*A;
  /* A folded wing is a much smaller shape than an open one, so it closes down as well as in;
     the feathers keep their own angles throughout, which is what stops the secondaries from
     swinging forward over the shoulder as the wing shuts. */
- const k=L(0.72,1.0)-up*0.05;
+ const k=L(DR?0.80:0.72,1.0)-up*0.05;
  for(const pv of pair)pv.scale.set(pv.userData.sgn*k,k,k);
  _wA.makeRotationY(sy); _wT.makeRotationZ(sz); _wA.multiply(_wT); _wT.makeRotationX(sx); _wA.multiply(_wT);
  _wB.copy(_wA); _wT.makeTranslation(S.arm,0,0); _wB.multiply(_wT);
@@ -6397,7 +6403,7 @@ function poseWings(pair,open,beat,t){
   _sunW.copy(sun.position).normalize(); _sunV.copy(_sunW).transformDirection(camera.matrixWorldInverse);
   const lit=Math.max(0,Math.min(1,(sun.intensity-0.6)/4.0));   // nothing shines through a wing at midnight
   for(const m of mt) if(m.userData.u){ m.userData.u.uSunV.value.copy(_sunV); m.userData.u.uGlow.value=m.userData.glowBase*lit; }}
- if(pair[0].userData.kind==='dragon'){ dragonWingGeo(pair,_wA,_wB,_wC,f,up,t); return; }
+ if(pair[0].userData.kind==='dragon'){ dragonWingGeo(pair,_wA,_wB,_wC,f,up,t,o); return; }
  const inst=pair[0].userData.inst, aF=inst[0], aC=inst[1];
  let iF=0,iC=0;
  for(const r of WING.rows){
@@ -6500,19 +6506,24 @@ const _dv=new THREE.Vector3(),_dw=new THREE.Vector3(),_dn=new THREE.Vector3(),
       _dp=new THREE.Vector3(),_dq=new THREE.Vector3(),_dr=new THREE.Vector3(),_ds=new THREE.Vector3(),
       _dtip=[0,1,2,3].map(()=>new THREE.Vector3()),_ddir=[0,1,2,3].map(()=>new THREE.Vector3()),
       _dlead=[0,1,2].map(()=>new THREE.Vector3()),_dY=new THREE.Vector3(0,1,0);
-function dragonWingGeo(pair,mA,mB,mC,f,up,t){
+function dragonWingGeo(pair,mA,mB,mC,f,up,t,open){
  const F=DWING.fing.length, U=DWING.U, W=DWING.W;
  _delb.set(WING.S.arm,0,0).applyMatrix4(mA);
  _dwri.set(WING.S.fore,0,0).applyMatrix4(mB);
  _dn.set(0,1,0).transformDirection(mC);
- _danc.copy(DWING.anchor);
+ /* Closing the wing is not just folding the arm: the fingers have to come together and
+    draw in, the way a fan shuts, or the skin between them stays a flat sheet standing out
+    from the horse's side. */
+ const o=Math.max(0,Math.min(1,open===undefined?1:open));
+ _danc.copy(DWING.anchor).multiplyScalar(0.30+0.70*o);
  for(let i=0;i<F;i++){
-  _ddir[i].set(1,0,0).applyAxisAngle(_dY,DWING.fing[i][0]).transformDirection(mC);
-  _dtip[i].copy(_dwri).addScaledVector(_ddir[i],DWING.fing[i][1]);
+  const sw=DWING.fing[i][0]*(0.18+0.82*o), ln=DWING.fing[i][1]*(0.46+0.54*o);
+  _ddir[i].set(1,0,0).applyAxisAngle(_dY,sw).transformDirection(mC);
+  _dtip[i].copy(_dwri).addScaledVector(_ddir[i],ln);
  }
  const geo=pair[0].userData.mem, pos=geo.attributes.position, uv=geo.attributes.uv, vcol=geo.attributes.color;
  const wr=pair[0].userData.wroot, wb=pair[0].userData.wweb;
- const billow=-0.14-f*0.30;                                  // the sheet bellies out on the downstroke
+ const billow=(-0.14-f*0.30)*(0.25+0.75*o);                  // the sheet bellies out on the downstroke
  let k=0;
  const _wc=new THREE.Color();
  const put=(p,u0,v0,mix)=>{ pos.setXYZ(k,p.x,p.y,p.z); uv.setXY(k,u0,v0);
