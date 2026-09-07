@@ -5163,38 +5163,42 @@ function buildBridle(dragon){
  g.userData.gold=gold;
  g.userData.dragon=!!dragon;
  if(dragon){
-  /* The head is the horse's own, but the coat shader plates it in scales, so what it needs
-     is not a mask over the top — a geometric snout shell only ever read as a plank — but
-     the hardware a dragon wears: horns, a ridge over each eye, spines down the muzzle, a
-     fin behind the jaw, nostrils, and an eye that burns in the element's colour. */
-  /* the rest of the head: horns off the back of the skull, brows, nostrils, cheek frills */
+  /* Placed against the head that is actually there, not by eye. Slicing the rigged mesh in
+     z gives the centre line and the half width at every station down the face:
+
+        z    centre x   half width   top y
+       0.60   -0.069     0.093       1.762
+       0.70   -0.081     0.092       1.778
+       0.80   -0.115     0.115       1.842   (the ears)
+       0.90   -0.108     0.101       1.733
+       1.00   -0.156     0.062       1.530
+       1.05   -0.161     0.056       1.461
+
+     The head is narrow — a hand's width — and it drifts left as it goes forward. Everything
+     used to be spread symmetrically about a guessed centre with a spread wider than the head
+     itself, which is why horns, eyes and spines floated in the air beside the face. Fewer
+     pieces now, each one sitting on the surface. */
   const th=dragon, bone=new THREE.MeshStandardMaterial({color:new THREE.Color(th.bone).lerp(new THREE.Color('#c9bda8'),0.55),
    roughness:0.52,metalness:0.12,flatShading:true});
   const horn=(x,y,z,len,rad,rx,rz)=>{ const h=put(new THREE.Mesh(new THREE.ConeGeometry(rad,len,6),bone),x,y,z);
    h.rotation.set(rx,0,rz); return h; };
   for(const sg of[-1,1]){
-   horn(-0.085+sg*0.085,1.80,0.63,0.40,0.038,-1.30,sg*0.34);      // the main pair, swept back over the neck
-   horn(-0.090+sg*0.128,1.73,0.67,0.19,0.024,-0.90,sg*0.95);      // a smaller pair below
-   horn(-0.115+sg*0.142,1.62,0.76,0.13,0.020,-0.10,sg*1.34);      // a cheek spine
-   horn(-0.16 +sg*0.085,1.36,1.05,0.10,0.015, 1.0, sg*0.5);       // a barbel at the jaw
-   const brow=put(new THREE.Mesh(new THREE.ConeGeometry(0.030,0.13,4),bone),-0.108+sg*0.115,1.685,0.808);
-   brow.rotation.set(-1.35,0,sg*0.30);                            // a ridge over each eye
-   const nos=put(new THREE.Mesh(new THREE.SphereGeometry(0.016,7,6),bone),-0.170+sg*0.030,1.360,1.095);
-   nos.scale.set(1,0.7,1.3);                                      // nostrils at the tip
+   horn(-0.085+sg*0.052,1.755,0.715,0.40,0.036,-1.30,sg*0.30);     // the pair, off the top of the skull
+   horn(-0.112+sg*0.092,1.560,0.880,0.13,0.019,-0.15,sg*1.30);     // a spine on each cheek
+   const brow=put(new THREE.Mesh(new THREE.ConeGeometry(0.026,0.11,4),bone),-0.115+sg*0.082,1.712,0.808);
+   brow.rotation.set(-1.35,0,sg*0.28);                             // a ridge over each eye
+   const nos=put(new THREE.Mesh(new THREE.SphereGeometry(0.014,7,6),bone),-0.156+sg*0.026,1.372,1.068);
+   nos.scale.set(1,0.7,1.3);                                       // nostrils, at the tip
   }
-  for(let k=0;k<5;k++){                                            // the ridge down the muzzle
-   const t=k/4, m=put(new THREE.Mesh(new THREE.ConeGeometry(0.018-0.005*t,0.070-0.022*t,5),bone),
-    -0.118-t*0.052,1.695-t*0.145,0.795+t*0.20);
-   m.rotation.x=-0.62+t*0.55;
-  }
-  for(const sg of[-1,1]){                                          // one small fin behind each jaw
-   const f=put(new THREE.Mesh(new THREE.ConeGeometry(0.016,0.12,4),bone),-0.075+sg*0.128,1.66,0.60);
-   f.rotation.set(-0.35,0,sg*1.15);
+  for(let k=0;k<5;k++){                                            // a ridge following the face down
+   const t=k/4, m=put(new THREE.Mesh(new THREE.ConeGeometry(0.017-0.005*t,0.062-0.018*t,5),bone),
+    -0.110-t*0.050, 1.740-t*0.235, 0.880+t*0.150);
+   m.rotation.x=-0.55+t*0.75;
   }
   const eyeGlow=new THREE.MeshStandardMaterial({color:new THREE.Color(th.glow),roughness:0.25,
    emissive:new THREE.Color(th.glow),emissiveIntensity:1.5});
-  for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.040,14,12),eyeGlow),-0.108+sg*0.140,1.640,0.815);
-   e.castShadow=false; e.scale.set(1,0.66,1.05); }
+  for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.034,14,12),eyeGlow),-0.113+sg*0.098,1.628,0.845);
+   e.castShadow=false; e.scale.set(1,0.70,1.05); }
  }
  // crownpiece + throatlatch: one ring round the head behind the ears, leaning forward at the top
  const crown=put(new THREE.Mesh(ring(0.20,0.011),strap),-0.06,1.45,0.62); crown.rotation.x=0.35; crown.scale.set(0.75,1.15,1);
@@ -6391,7 +6395,7 @@ function poseWings(pair,open,beat,t){
  /* A folded wing is a much smaller shape than an open one, so it closes down as well as in;
     the feathers keep their own angles throughout, which is what stops the secondaries from
     swinging forward over the shoulder as the wing shuts. */
- const k=L(DR?0.80:0.72,1.0)-up*0.05;
+ const k=L(DR?0.92:0.72,1.0)-up*0.05;
  for(const pv of pair)pv.scale.set(pv.userData.sgn*k,k,k);
  _wA.makeRotationY(sy); _wT.makeRotationZ(sz); _wA.multiply(_wT); _wT.makeRotationX(sx); _wA.multiply(_wT);
  _wB.copy(_wA); _wT.makeTranslation(S.arm,0,0); _wB.multiply(_wT);
@@ -6515,18 +6519,19 @@ function dragonWingGeo(pair,mA,mB,mC,f,up,t,open){
     draw in, the way a fan shuts, or the skin between them stays a flat sheet standing out
     from the horse's side. */
  const o=Math.max(0,Math.min(1,open===undefined?1:open));
- _danc.copy(DWING.anchor).multiplyScalar(0.30+0.70*o);
+ _danc.copy(DWING.anchor).multiplyScalar(0.52+0.48*o);
  for(let i=0;i<F;i++){
-  const sw=DWING.fing[i][0]*(0.18+0.82*o), ln=DWING.fing[i][1]*(0.46+0.54*o);
+  const sw=DWING.fing[i][0]*(0.34+0.66*o), ln=DWING.fing[i][1]*(0.62+0.38*o);
   _ddir[i].set(1,0,0).applyAxisAngle(_dY,sw).transformDirection(mC);
   _dtip[i].copy(_dwri).addScaledVector(_ddir[i],ln);
  }
  const geo=pair[0].userData.mem, pos=geo.attributes.position, uv=geo.attributes.uv, vcol=geo.attributes.color;
  const wr=pair[0].userData.wroot, wb=pair[0].userData.wweb;
- const billow=(-0.14-f*0.30)*(0.25+0.75*o);                  // the sheet bellies out on the downstroke
+ const billow=(-0.14-f*0.30)*(0.55+0.45*o);                  // the sheet bellies out on the downstroke
  let k=0;
  const _wc=new THREE.Color();
- const put=(p,u0,v0,mix)=>{ pos.setXYZ(k,p.x,p.y,p.z); uv.setXY(k,u0,v0);
+ const outw=(1-o)*0.085;                     // a shut wing lies on the flank, not inside it
+ const put=(p,u0,v0,mix)=>{ pos.setXYZ(k,p.x+outw,p.y,p.z); uv.setXY(k,u0,v0);
   _wc.copy(wr).lerp(wb,Math.min(1,mix===undefined?1:mix)); vcol.setXYZ(k,_wc.r,_wc.g,_wc.b); k++; };
  for(let pnl=0;pnl<F;pnl++){
   const e0=_dtip[pnl], e1=(pnl<F-1)?_dtip[pnl+1]:_danc;
@@ -6557,8 +6562,8 @@ function dragonWingGeo(pair,mA,mB,mC,f,up,t,open){
   _dr.crossVectors(_ds,_dn); if(_dr.lengthSq()<1e-9)_dr.set(0,0,1); _dr.normalize();
   for(let u=0;u<=U;u++){ const fu=u/U, ww=w0+(w1-w0)*fu;
    _dv.copy(p0).lerp(p1,fu).addScaledVector(_dn,0.016);
-   bp.setXYZ(m++,_dv.x+_dr.x*ww,_dv.y+_dr.y*ww,_dv.z+_dr.z*ww);
-   bp.setXYZ(m++,_dv.x-_dr.x*ww,_dv.y-_dr.y*ww,_dv.z-_dr.z*ww);
+   bp.setXYZ(m++,_dv.x+_dr.x*ww+outw,_dv.y+_dr.y*ww,_dv.z+_dr.z*ww);
+   bp.setXYZ(m++,_dv.x-_dr.x*ww+outw,_dv.y-_dr.y*ww,_dv.z-_dr.z*ww);
   }
  };
  _dp.set(0,0,0);
