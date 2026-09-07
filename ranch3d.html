@@ -3860,6 +3860,79 @@ let waterMat=null;   // hoisted: the pond reuses it
    for(let i=0;i<MN;i++)FALLS.st[i*4+3]=Math.random();
   }
  }
+ /* ===== Coyote Canyon's rocks =====
+    Star Equestrian's Bronco is "rocky canyons, desert foliage and a few oases"; ours was
+    sand with cacti on it. These are the formations that make a desert read as one: mesas
+    with flat tops and layered strata, and hoodoos — thin spires wearing a caprock, which is
+    what happens when a hard layer protects the soft rock under it. Every one is built into
+    a single merged mesh, so the whole skyline of the canyon is one draw call. */
+ {
+  const CX=CANYON.x, CZ=CANYON.z;
+  let sd=20260906;
+  const rnd=()=>{ sd=(Math.imul(sd^(sd>>>15),2246822507)^Math.imul(sd^(sd>>>13),3266489909))>>>0; return sd/4294967295; };
+  const P=[],C=[],I=[];
+  const BANDS=[new THREE.Color('#a8563a'),new THREE.Color('#c87d4e'),new THREE.Color('#8f4530'),
+               new THREE.Color('#dda877'),new THREE.Color('#b56744')];
+  const bandAt=y=>BANDS[Math.floor(Math.abs(y)*0.55+0.5)%BANDS.length];
+  /* a stack of rings: radii and heights come in, a closed solid goes out */
+  const stack=(cx,cz,base,rings)=>{
+   const SIDES=9; let prev=null;
+   for(const [ry,rr,rough] of rings){
+    const ring=[];
+    for(let j=0;j<SIDES;j++){
+     const a=j/SIDES*Math.PI*2;
+     const w=rr*(1+(rnd()-0.5)*rough);
+     const x=cx+Math.cos(a)*w, z=cz+Math.sin(a)*w, y=base+ry;
+     P.push(x,y,z);
+     const col=bandAt(ry).clone().offsetHSL(0,0,(rnd()-0.5)*0.06);
+     C.push(col.r,col.g,col.b);
+     ring.push(P.length/3-1);
+    }
+    if(prev)for(let j=0;j<SIDES;j++){const k=(j+1)%SIDES; I.push(prev[j],ring[j],prev[k], ring[j],ring[k],prev[k]);}
+    prev=ring;
+   }
+   const top=rings[rings.length-1];                                  // cap it
+   P.push(cx,base+top[0],cz); const cap=bandAt(top[0]);
+   C.push(cap.r*1.08,cap.g*1.08,cap.b*1.08);
+   const ci=P.length/3-1;
+   for(let j=0;j<9;j++)I.push(prev[j],prev[(j+1)%9],ci);
+  };
+  const okRock=(x,z)=>{
+   if(Math.hypot(x-CX,z-CZ)>CANYON.r*0.92)return false;
+   if(Math.hypot(x-CX,z-CZ)<16)return false;                         // leave the arrival point clear
+   if(pathDist(x,z)<9)return false;
+   return true;
+  };
+  let mesas=0,hoodoos=0;
+  for(let i=0;i<160&&mesas<13;i++){                                  // mesas: flat-topped, banded
+   const a=rnd()*Math.PI*2, rr=24+rnd()*108;
+   const x=CX+Math.cos(a)*rr, z=CZ+Math.sin(a)*rr;
+   if(!okRock(x,z))continue;
+   const h=11+rnd()*17, rad=7+rnd()*9, base=groundH(x,z)-1.5;
+   stack(x,z,base,[[0,rad*1.12,0.16],[h*0.16,rad,0.13],[h*0.42,rad*0.93,0.11],
+                   [h*0.72,rad*0.86,0.10],[h*0.93,rad*0.82,0.07],[h,rad*0.79,0.04]]);
+   colliders.push({x,z,r:rad*0.95});
+   mesas++;
+  }
+  for(let i=0;i<300&&hoodoos<26;i++){                                // hoodoos: a spire under a caprock
+   const a=rnd()*Math.PI*2, rr=20+rnd()*115;
+   const x=CX+Math.cos(a)*rr, z=CZ+Math.sin(a)*rr;
+   if(!okRock(x,z))continue;
+   const h=4.5+rnd()*8.5, rad=0.9+rnd()*1.5, base=groundH(x,z)-0.8;
+   stack(x,z,base,[[0,rad*1.25,0.2],[h*0.28,rad*0.72,0.2],[h*0.55,rad*0.58,0.22],
+                   [h*0.78,rad*0.66,0.2],[h*0.9,rad*1.35,0.12],[h,rad*1.12,0.1]]);
+   colliders.push({x,z,r:rad*1.3});
+   hoodoos++;
+  }
+  const rg2=new THREE.BufferGeometry();
+  rg2.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
+  rg2.setAttribute('color',new THREE.Float32BufferAttribute(C,3));
+  rg2.setIndex(I); rg2.computeVertexNormals();
+  const rocks=new THREE.Mesh(rg2,new THREE.MeshStandardMaterial({vertexColors:true,roughness:0.97,
+   metalness:0,flatShading:true}));
+  rocks.castShadow=true; rocks.receiveShadow=true; scene.add(rocks);
+  console.log('canyon:',mesas,'mesas,',hoodoos,'hoodoos,',Math.round(I.length/3),'tris');
+ }
  /* the roads, laid over the ground as ribbons that follow it */
  {
   const roadTex=canvasTex(128,128,(c,w,h)=>{

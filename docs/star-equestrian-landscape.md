@@ -39,7 +39,7 @@ Their world reads richer at ground level and has more landmark spectacle. Backlo
 2. **A waterfall** off Hollowpeak into a plunge pool, with mist. *(shipped — Hollowpeak
    Falls, its own fast-travel stop)*
 3. **Winding dirt paths** joining the ranch, the village and the farms. *(shipped)*
-4. **Mesas and hoodoos** in Coyote Canyon so it reads as their Bronco does.
+4. **Mesas and hoodoos** in Coyote Canyon so it reads as their Bronco does. *(shipped)*
 5. **Valley mist at dawn** and god rays through the trees.
 6. **Seasonal colour** — a band of gold and red trees, not only green and blossom.
 7. **A shoreline that reads**: foam at the waterline, lily pads, wet sand.
