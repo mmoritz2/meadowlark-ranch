@@ -2627,13 +2627,14 @@ const FANTASY_COAT={
  ice:{emissive:0x6fc7e8,ei:0.3,rough:0.28},
  aurora:{emissive:0x3ce0a0,ei:0.6,rough:0.5},
  shadow:{emissive:0x6a3ad0,ei:0.45,rough:0.45},
+ eclipse:{emissive:0xffb44a,ei:0.5,rough:0.5},
 };
 // Base solid colour for each mythic coat — used for procedural horses' legs/ears AND as the
 // coatMat base so the body is top-lit (no directional banding) instead of a stretched gradient.
-const COAT_BASE={fire:'#bc3a10',galaxy:'#3a2a72',shadow:'#181030',ice:'#8fd0ea',aurora:'#1f9e78'};
+const COAT_BASE={fire:'#bc3a10',galaxy:'#3a2a72',shadow:'#181030',ice:'#8fd0ea',aurora:'#1f9e78',eclipse:'#0d0a12'};
 function fantasyCoatTex(type){
  return canvasTex(256,256,(c,w,h)=>{
-  if(type==='galaxy'||type==='shadow'){
+  if(type==='galaxy'||type==='shadow'||type==='eclipse'){
    const g=c.createLinearGradient(0,0,0,h);
    g.addColorStop(0, type==='shadow'?'#241830':'#3a2a66');g.addColorStop(0.5,'#201838');g.addColorStop(1,'#0d0a1a');
    c.fillStyle=g;c.fillRect(0,0,w,h);
@@ -5007,6 +5008,9 @@ const FANTASY_CFG={
  shadow:{ramp:['#060409','#170f2a','#5a3aa0'], glow:0.55, rough:0.84},   // darker -> reads "shadow", not bright purple
  ice:   {ramp:['#2a6f92','#9fdcf2','#f2ffff'], glow:0.6,  rough:0.62},
  aurora:{ramp:['#0c2230','#1f9e78','#a8ffe0'], glow:0.7,  rough:0.70},
+ /* An actual eclipse: the body goes almost black and all the light is in the corona that
+    burns around the silhouette. Shadow is violet all over; this is only lit at its edge. */
+ eclipse:{ramp:['#040308','#0f0b16','#c98a2a'], glow:0.75, rough:0.80},
 };
 const FANTASY_FX={
  fire:`float em=_hash(floor(vMapUv*vec2(44.0,30.0))+floor(uTime*4.0)*7.0);
@@ -5030,6 +5034,13 @@ const FANTASY_FX={
  shadow:`_ramp=mix(_ramp,vec3(0.02,0.01,0.05),0.35);
    _ramp+=vec3(0.5,0.3,0.95)*_fres*0.8;
    _emis=_ramp*uGlow*(0.1+0.6*_l)+vec3(0.5,0.3,0.95)*_fres*0.9;`,
+ /* A much tighter rim than _fres gives, so the corona sits on the outline itself and the
+    rest of the horse stays dark, with a slow flare crawling around it. */
+ eclipse:`float _cor=pow(1.0-abs(dot(normalize(vNormal),normalize(vViewPosition))),4.5);
+   float _fl=0.62+0.38*sin(uTime*1.9+vMapUv.y*16.0+vMapUv.x*5.0);
+   _ramp=mix(_ramp*0.30,vec3(1.0,0.72,0.30),clamp(_cor*_fl*1.15,0.0,1.0));
+   _ramp+=vec3(1.0,0.86,0.55)*pow(_cor,2.2)*0.6;
+   _emis=_ramp*uGlow*(0.06+0.35*_l)+vec3(1.0,0.66,0.24)*_cor*_fl*2.1;`,
 };
 function fantasyCoatRig(type,scaly){
  const key='fcr_'+type+(scaly?'_s':''); RIG._fcr=RIG._fcr||{};
@@ -8191,6 +8202,16 @@ const BREEDS3=[
  ['sport','Friesian Sporthorse','Epic',520,0,'#2a2a30','#14141a',{mark:'sooty',size:1.06}],
  ['akhal','Akhal-Teke','Epic',560,0,'#c9a24a','#e8d79a',{mark:'metal',markCol:'#fff2c0',size:1.02}],
  ['percheron','Percheron','Draft',50,0,'#a8adb4','#6a6f78',{mark:'dapple',size:1.14}],
+ /* Star Equestrian's signature line is a real breed wearing a mythic coat — their Aesir
+    Friesian, Sahar Arabian, Paradise Quarter Horse, Maelstrom Clydesdale. These are ours,
+    under our own names: the same idea, but each keeps its breed's true build, so a mythic
+    Percheron still stands a head above a mythic Arabian. */
+ ['aether','Aether Friesian','Mythic',0,15,'#1a1a2e','#b79dff',{coat:'galaxy',glow:true,ability:'swift',size:1.06}],
+ ['sunspear','Sunspear Arabian','Mythic',0,14,'#3a1410','#ffb04a',{coat:'fire',glow:true,ability:'swift',size:0.98}],
+ ['meadowlight','Meadowlight Quarter Horse','Mythic',0,13,'#143038','#7df0c4',{coat:'aurora',glow:true,ability:'leap',size:1.00}],
+ ['tempest','Tempest Clydesdale','Mythic',0,16,'#241830','#a07ce0',{coat:'shadow',glow:true,ability:'leap',size:1.12}],
+ ['eclipse','Eclipse Thoroughbred','Mythic',0,16,'#0c0b12','#ffb44a',{coat:'eclipse',glow:true,ability:'swift',size:1.05}],
+ ['glacier','Glacier Percheron','Mythic',0,14,'#cfe9f6','#8fd0ec',{coat:'ice',glow:true,ability:'leap',size:1.14}],
  ['unicorn','Unicorn','Legendary',0,8,'#f6f3ff','#cdb4f9',{horn:true,rainbow:true}],
  ['pegasus','Pegasus','Legendary',0,8,'#f2f5fb','#dfe7f4',{wings:true,ability:'fly',size:1.14}],
  ['celestial','Celestial Unicorn','Mythic',0,14,'#2a2350','#b79dff',{horn:true,coat:'galaxy',glow:true,ability:'glow'}],
