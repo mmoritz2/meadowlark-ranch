@@ -141,6 +141,8 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 .vipCard{border:1px solid #e8cf8a;border-radius:14px;padding:11px 12px;background:linear-gradient(180deg,#fff8e2,#ffeec0)}
 .vipCard .perks{font-size:11.5px;color:#4a3526;line-height:1.5;margin:4px 0 7px}
 .vipCard .plans{display:flex;gap:6px;flex-wrap:wrap}
+.lbTabs{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 4px}
+.lbTabs .pip{display:inline-block;min-width:15px;height:15px;line-height:15px;border-radius:9px;background:#e05a3c;color:#fff;font-size:10px;font-weight:800;margin-left:4px;padding:0 3px}
 .evrow.done{border-color:#bfe0a4;background:linear-gradient(180deg,#fff,#f4fbea)}
 .crow{display:flex;align-items:center;gap:8px;font-size:13px}
 .crow .lbl{min-width:68px;max-width:150px;font-weight:700;color:var(--ink-2);font-size:12px;line-height:1.2}
@@ -9156,10 +9158,17 @@ function lbTop(board,asc){
  rows.sort((a,b)=>asc?a.v-b.v:b.v-a.v);
  return rows.slice(0,3);
 }
+let lbTab='boards';
 function openLB(){
  const p=$('lbPanel');
  if(p.style.display==='flex'){p.style.display='none';return;}
  hidePanels();
+ renderLB();
+}
+/* Split out from openLB so a tab can redraw the panel in place — openLB itself toggles, so
+   calling it to refresh just shuts the panel. */
+function renderLB(){
+ const p=$('lbPanel');
  const s=freshSave();if(!s)return;
  const nm=myName();
  const online=net.client&&net.client.connected;
@@ -9169,6 +9178,19 @@ function openLB(){
  const sn=seasonNow();
  const vip=isVIP(s);
  const claims=(s.pass&&s.pass.claims)||{}, golds=(s.pass&&s.pass.gold)||{};
+ /* Three tabs. The season pass and the VIP card together run to nearly 600px, which pushed
+    every leaderboard off the bottom of a 533px panel — you opened "Leaderboards" and saw
+    no leaderboard. Boards first, and the pass tab carries a count of what is waiting. */
+ let ready=0;
+ for(let i=0;i<PASS_TIERS;i++){
+  if(ptier>=i+1&&!claims[i])ready++;
+  if(vip&&ptier>=i+1&&!golds[i])ready++;
+ }
+ html+='<div class="lbTabs">'+[['boards','🏅 Boards'],['pass','🎟️ Season Pass'],['vip','👑 VIP']].map(([k,l])=>
+  '<button data-lbtab="'+k+'"'+(lbTab===k?' class="claimBtn"':'')+'>'+l
+  +(k==='pass'&&ready?'<span class="pip">'+ready+'</span>':'')
+  +(k==='vip'&&vip?'<span class="pip" style="background:#1e8449">'+vipDays(s)+'d</span>':'')+'</button>').join('')+'</div>';
+ if(lbTab==='pass'){
  /* The season pass. Two rows of tiers, free on top and gold underneath, so you can see at
     a glance what riding without VIP still gets you. */
  /* The season pass. One card per tier, free reward over gold, scrolled sideways so
@@ -9191,6 +9213,8 @@ function openLB(){
  +'<div class="sub" style="margin:2px 0 0">Top row free · bottom row 👑 gold'+(vip?'':' (needs VIP)')+'. Points come from events, jumps, carrots, care, trails, breeding, fishing, daily gifts &amp; photo quests — everything resets when the season turns.</div>'
  +'<div class="sub" style="margin:3px 0 0;color:#4a3526"><b>📸 Today\'s Photo Quest: '+todayTheme().label+'</b> — snap it with 📷 for +120🪙 +1💎 +40 pts!</div>'
  +'</div>';
+ }
+ if(lbTab==='vip'){
  /* VIP. Bought with gems you earn by riding — this game never asks for real money. */
  html+='<div class="vipCard">'
  +'<div class="ph"><b>👑 VIP</b><span style="font-size:11px;color:#6b4e12">'+(vip?vipDays(s)+' day'+(vipDays(s)===1?'':'s')+' left':'not active')+'</span></div>'
@@ -9199,6 +9223,8 @@ function openLB(){
    '<button data-vip="'+i+'"'+((s.gems||0)<pl.g?' disabled':'')+'>'+pl.label+' · '+pl.g+'💎</button>').join('')+'</div>'
  +'<div class="sub" style="margin:6px 0 0">Paid for in gems you earn by playing — there is no real money in this game. Buying again adds to the days you already have.</div>'
  +'</div>';
+ }
+ if(lbTab==='boards'){
  for(const k of Object.keys(MILES)){
   const me=statVal(s,k);
   const top=lbTop(k,false);
@@ -9220,6 +9246,7 @@ function openLB(){
   const top=lbTop('ev_'+ev.id,true);
   return '<div class="evrow"><b>'+ev.name+'</b><span>you: '+mine+(top.length?' · 👑 '+top[0].n+' '+top[0].v+'s':'')+'</span></div>';
  }).join('');
+ }
  p.innerHTML=html;
  p.style.display='flex';
  /* Land the strip on the first tier you can actually collect, falling back to the one you
@@ -9236,6 +9263,9 @@ function openLB(){
    if(card)strip.scrollLeft=Math.max(0,card.offsetLeft-strip.clientWidth/2+card.offsetWidth/2);
   };
   requestAnimationFrame(land);}
+ p.querySelectorAll('[data-lbtab]').forEach(b=>{
+  b.onclick=()=>{ lbTab=b.dataset.lbtab; renderLB(); };
+ });
  p.querySelectorAll('[data-claim]').forEach(b=>{
   b.onclick=()=>{
    const key=b.dataset.claim;
@@ -9260,7 +9290,7 @@ function openLB(){
     sGem();
     toast('🏅 Milestone reward claimed!');
     publishMyBoards();
-    openLB();openLB();
+    renderLB();
    }
   };
  });
@@ -9283,7 +9313,7 @@ function claimPassTier(i,gold){
  toast(got.tint?('✨ '+seasonNow().def.name+' tack unlocked — paint a saddle with it!')
    :got.tack?'✨ GOLDEN TACK unlocked — check the Tack shop!'
    :('🎟️ Tier '+(i+1)+': '+passRewardLabel(got)));
- openLB();openLB();
+ renderLB();
 }
 $('lbBtn').onclick=openLB;
 
