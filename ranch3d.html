@@ -8170,6 +8170,85 @@ const NAMES3=['Luna','Comet','Willow','Maple','Storm','Honey','Pepper','Clover',
 const TACKS3=[['#c0392b','Scarlet'],['#2e86c1','Lake Blue'],['#7d3c98','Royal Plum'],['#1e8449','Meadow Green'],['#f39c12','Sunshine']];
 function blendHex(a,b){const c=new THREE.Color(a);c.lerp(new THREE.Color(b),0.5);return '#'+c.getHexString();}
 let shopTab3='horses';
+/* ===== The Market ==========================================================
+   Star Equestrian has a market; this game had no way to let a horse go at all. That was
+   survivable while horses only arrived by being bought on purpose — but the Summoning
+   Stall hands you whatever it likes, the stable holds twelve, and a duplicate Shetland you
+   did not choose should not be a dead end.
+
+   So: sell a horse for a fair share of what it is worth, and a board of four horses that
+   changes with the day. The board is seeded off the date, so it is the same four all day
+   however many times you open it, and different tomorrow — no rerolling by reopening. */
+function horseValue(h){
+ if(!h)return 0;
+ const br=BREEDS3.find(b=>b[0]===h.breed);
+ const base={Common:130,Draft:170,Uncommon:240,Rare:430,Epic:820,Mythic:1500,Legendary:1400,Dragon:1900}[br?br[2]:'Common']||130;
+ const st=h.stats?Object.keys(h.stats).reduce((a,k)=>a+(h.stats[k]||0),0):0;
+ const o=br&&br[7]||{};
+ const extra=(o.wings?260:0)+(o.horn?220:0)+(o.dragon?420:0)+(o.coat?180:0);
+ return Math.round(base+extra+st*15+((h.level||1)-1)*70+(h.bond||0)*3);
+}
+const MARKET_CUT=0.6;                       // what the market keeps; the rest is yours
+function marketOffer(h){return Math.round(horseValue(h)*MARKET_CUT);}
+function marketDay(){return new Date().toDateString();}
+function marketStock(){
+ const ds=marketDay(); let x=0;
+ for(const c of ds)x=(Math.imul(x,31)+c.charCodeAt(0))>>>0;
+ const rnd=()=>{x=(Math.imul(x,1664525)+1013904223)>>>0; return x/4294967296;};
+ const pool=BREEDS3.filter(b=>!(b[7]&&b[7].story)&&b[2]!=='Dragon'&&b[2]!=='Mythic'&&b[2]!=='Legendary');
+ const out=[], used=[];
+ for(let i=0;i<4;i++){
+  const b=pool[Math.floor(rnd()*pool.length)]||BREEDS3[0];
+  const st=()=>3+Math.floor(rnd()*6);
+  const stats={speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()};
+  const level=1+Math.floor(rnd()*4);
+  const price=Math.round(horseValue({breed:b[0],stats,level,bond:0})*1.12);
+  /* four horses on one board should not share a name */
+  let name=NAMES3[Math.floor(rnd()*NAMES3.length)], guard=0;
+  while(used.indexOf(name)>=0&&guard++<40)name=NAMES3[Math.floor(rnd()*NAMES3.length)];
+  used.push(name);
+  out.push({i,b,stats,level,price,name});
+ }
+ return out;
+}
+function marketSold(s){ return (s.market&&s.market.day===marketDay()&&s.market.sold)||[]; }
+function sellHorse3(idx){
+ let msg='',ok=false,got=0;
+ syncSave(sv=>{
+  const h=sv.horses[idx]; if(!h){msg='No such horse.';return;}
+  if(sv.horses.length<=1){msg='You cannot sell your only horse.';return;}
+  if(idx===rideIdx){msg='Get off first — you are riding '+h.name+'.';return;}
+  if(h.foal){msg=h.name+' is still a foal.';return;}
+  got=marketOffer(h);
+  sv.horses.splice(idx,1);
+  sv.coins+=got; sv.stats=sv.stats||{}; sv.stats.earned=(sv.stats.earned||0)+got; logEarn(sv,got);
+  if(rideIdx>idx)rideIdx--;
+  msg='Sold for '+got+'🪙.'; ok=true;
+ });
+ if(ok){refreshWallet();reloadHorses();sCoin();}
+ toast(ok?'🤝 '+msg:msg);
+ if(ok)openShop('market');
+}
+function buyMarket(i){
+ const stock=marketStock(), row=stock[i]; if(!row)return;
+ let msg='',ok=false;
+ syncSave(sv=>{
+  sv.market=(sv.market&&sv.market.day===marketDay())?sv.market:{day:marketDay(),sold:[]};
+  if(sv.market.sold.indexOf(i)>=0){msg='That one is already sold.';return;}
+  if(sv.horses.length>=stableCap(sv)){msg='Your stable is full.';return;}
+  if(sv.coins<row.price){msg='Not enough coins.';return;}
+  sv.coins-=row.price; sv.market.sold.push(i);
+  const o=row.b[7]||{};
+  sv.horses.push({id:sv.nextId++,name:row.name,breed:row.b[0],colors:{body:row.b[5],mane:row.b[6]},
+   horn:!!o.horn,rainbow:!!o.rainbow,wings:!!o.wings,dragon:!!o.dragon,coat:o.coat||null,
+   ability:o.ability||null,glow:!!o.glow,stats:Object.assign({},row.stats),sxp:{},level:row.level,
+   xp:0,bond:15,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
+  ok=true; msg='🤝 '+row.name+' the '+row.b[1]+' is yours.';
+ });
+ if(ok){refreshWallet();reloadHorses();sChime();passAdd(8);}
+ toast(msg);
+ openShop('market');
+}
 function openShop(tab){
  if(tab)shopTab3=tab;
  const p=$('shopPanel');
@@ -8177,9 +8256,32 @@ function openShop(tab){
  hidePanels();
  const s=freshSave();if(!s)return;
  let html='<div class="crow" style="gap:6px">'
- +['horses','pets','food','tack','breed','outfit'].map(tb=>'<button class="tabbtn '+(shopTab3===tb?'on':'')+'" data-shoptab="'+tb+'">'+({horses:'🐴 Horses',pets:'🐾 Pets',food:'🧺 Food',tack:'🐎 Tack',breed:'💞 Breed',outfit:'🧢 Outfit'})[tb]+'</button>').join('')
+ +['horses','market','pets','food','tack','breed','outfit'].map(tb=>'<button class="tabbtn '+(shopTab3===tb?'on':'')+'" data-shoptab="'+tb+'">'+({horses:'🐴 Horses',market:'🤝 Market',pets:'🐾 Pets',food:'🧺 Food',tack:'🐎 Tack',breed:'💞 Breed',outfit:'🧢 Outfit'})[tb]+'</button>').join('')
  +'<button data-shoptab="close" style="margin-left:auto">✖</button></div>';
- if(shopTab3==='horses'){
+ if(shopTab3==='market'){
+  const stock=marketStock(), sold=marketSold(s);
+  html+='<div style="font-size:12px;color:#8c7a63;margin:6px 0 2px">🤝 For sale today · a new four tomorrow</div>';
+  html+=stock.map(r=>{
+   const gone=sold.indexOf(r.i)>=0;
+   const st=Object.keys(r.stats).map(k=>STAT_LBL[k].split(' ')[0]+r.stats[k]).join(' ');
+   return '<div class="evrow"'+(gone?' style="opacity:.45"':'')+'>🐴 <b>'+r.name+'</b>'
+    +'<span>'+r.b[1]+' · Lv '+r.level+' · '+st+'</span>'
+    +(gone?'<span style="font-size:11px;color:#8c7a63">sold</span>'
+          :'<button data-mktbuy="'+r.i+'"'+(s.coins<r.price?' disabled':'')+'>'+r.price+' 🪙</button>')+'</div>';
+  }).join('');
+  html+='<div style="font-size:12px;color:#8c7a63;margin:10px 0 2px">💰 Sell a horse · the market keeps '+Math.round((1-MARKET_CUT)*100)+'%</div>';
+  const sellable=s.horses.map((h,i)=>({h,i})).filter(x=>!x.h.foal&&x.i!==rideIdx);
+  html+=sellable.length?sellable.map(({h,i})=>{
+   const br=BREEDS3.find(b=>b[0]===h.breed);
+   return '<div class="evrow">🐴 <b>'+h.name+'</b><span>'+(br?br[1]:h.breed)+' · Lv '+(h.level||1)+' · worth '+horseValue(h)+'🪙</span>'
+    +'<button data-mktsell="'+i+'">Sell · '+marketOffer(h)+'🪙</button></div>';
+  }).join('')
+  :'<div style="font-size:11px;color:#b8a888">Nothing to sell — you cannot sell a foal, or the horse you are sitting on.</div>';
+  html+='<div style="font-size:11px;color:#8c7a63;margin-top:8px">A horse is worth more the better its stats, the higher its level and the more it has bonded with you.</div>';
+ }
+ /* part of the chain, not a separate if: the chain ends in an else that draws the outfit
+    tab, so a standalone if left the rider's wardrobe hanging under the market */
+ else if(shopTab3==='horses'){
   html+=BREEDS3.map((b,i)=>{
    if(b[7]&&b[7].story)return '';
    const owned=s.horses.filter(h=>h.breed===b[0]).length;
@@ -8226,6 +8328,8 @@ function openShop(tab){
  p.style.display='flex';
  p.querySelectorAll('[data-shoptab]').forEach(b=>{b.onclick=()=>{b.dataset.shoptab==='close'?p.style.display='none':openShop(b.dataset.shoptab);};});
  p.querySelectorAll('[data-buyh]').forEach(b=>{b.onclick=()=>buyHorse3(+b.dataset.buyh);});
+ p.querySelectorAll('[data-mktbuy]').forEach(b=>{b.onclick=()=>buyMarket(+b.dataset.mktbuy);});
+ p.querySelectorAll('[data-mktsell]').forEach(b=>{b.onclick=()=>sellHorse3(+b.dataset.mktsell);});
  p.querySelectorAll('[data-buypet]').forEach(b=>{b.onclick=()=>{buyPet(b.dataset.buypet);openShop('pets');};});
  p.querySelectorAll('[data-petfollow]').forEach(b=>{b.onclick=()=>{setActivePet(b.dataset.petfollow);openShop('pets');};});
  p.querySelectorAll('[data-buyf]').forEach(b=>{b.onclick=()=>{const[k,n]=b.dataset.buyf.split(':');buyFood3(k,+n);};});
