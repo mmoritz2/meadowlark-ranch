@@ -120,6 +120,27 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 .evrow:hover{transform:translateX(2px);box-shadow:0 4px 12px rgba(50,32,10,.12)}
 .evrow span{color:var(--ink-2);font-size:12px;flex:1;font-weight:600}
 .evrow b{font-weight:800}
+/* The season pass: a strip of tier cards you scroll sideways, free reward stacked over
+   gold. Deliberately NOT an .evrow — that rule above sets flex:1 on every span, which
+   collapses a wrapped list of thirty tiers into two squashed columns. */
+.passCard{border:1px solid var(--line);border-radius:14px;padding:11px 12px;background:#fff;box-shadow:0 1px 2px rgba(50,32,10,.05)}
+.passCard .ph{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.passCard .sub{font-size:11px;color:var(--ink-2);margin:2px 0 6px}
+.passStrip{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+.passStrip::-webkit-scrollbar{height:7px}
+.passStrip::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:8px}
+.tierCard{flex:none;width:76px;border:1px solid var(--line);border-radius:10px;padding:4px;text-align:center;background:#fdfaf2}
+.tierCard.now{border-color:#e0a93c;background:#fff8e8;box-shadow:0 0 0 2px rgba(224,169,60,.28)}
+.tierNo{font-size:10px;font-weight:800;color:#8c7a63}
+.tslot{margin-top:3px;font-size:10px;font-weight:700;border-radius:7px;padding:4px 2px;min-height:24px;display:flex;align-items:center;justify-content:center;line-height:1.15}
+.tslot.free{background:#eef4e4;color:#4a3526}
+.tslot.gold{background:#fff0c8;color:#6b4e12}
+.tslot.lock{opacity:.42}
+.tslot.done{background:#e2efd6;color:#5b7a44}
+.tslot button{font-size:10px;padding:2px 4px;width:100%}
+.vipCard{border:1px solid #e8cf8a;border-radius:14px;padding:11px 12px;background:linear-gradient(180deg,#fff8e2,#ffeec0)}
+.vipCard .perks{font-size:11.5px;color:#4a3526;line-height:1.5;margin:4px 0 7px}
+.vipCard .plans{display:flex;gap:6px;flex-wrap:wrap}
 .evrow.done{border-color:#bfe0a4;background:linear-gradient(180deg,#fff,#f4fbea)}
 .crow{display:flex;align-items:center;gap:8px;font-size:13px}
 .crow .lbl{min-width:68px;max-width:150px;font-weight:700;color:var(--ink-2);font-size:12px;line-height:1.2}
@@ -201,6 +222,7 @@ body.touch #stickZone{display:block}
  <div id="wallet" class="glass">
   <span class="w" title="Coins"><i>🪙</i><b id="coinEl">0</b></span>
   <span class="w" title="Gems"><i>💎</i><b id="gemEl">0</b></span>
+  <span class="w" id="vipEl" title="VIP" style="display:none">👑<b id="vipDaysEl"></b></span>
   <span class="w" title="Silver Keys open tack chests"><i>🗝️</i><b id="keyEl">0</b></span>
  </div>
  <div id="sysBtns">
@@ -340,6 +362,93 @@ const PERS_KEYS=Object.keys(PERS);
 function persMul(h){const p=h&&PERS[h.pers]; if(!p)return {sp:1,ac:1,ag:1};
  return {sp:(p.spBond&&(h.bond||0)>=80?p.spBond:1), ac:p.ac||1, ag:(p.ag||1)*(p.agLow&&(h.bond||0)<50?p.agLow:1)*(p.agHigh&&(h.bond||0)>=80?p.agHigh:1)};}
 function persDecay(h){const p=h&&PERS[h.pers];return p&&p.decay?p.decay:1;}
+/* ---- seasons, the pass, and VIP ------------------------------------------------------
+   All of this lives up here for the same reason the ranch block below does: the offline
+   decay and daily-gift pass runs while the module is still evaluating and reads every one
+   of these. A const declared further down is a ReferenceError at that point.
+
+   VIP and the gold pass track are bought with GEMS, which you earn by playing. There is no
+   real money anywhere in this game and there is not going to be. */
+const SEASON_EPOCH=Date.UTC(2026,0,5);           // a Monday, so seasons turn over on Mondays
+const SEASON_DAYS=28;
+const SEASONS=[
+ {id:'bloom',name:'Season of Bloom',emoji:'🌸',tint:'#f2a0c8',
+  desc:'Blossom on the orchard, foals in the low field, and the light getting longer.'},
+ {id:'sun',name:'Season of the Long Sun',emoji:'☀️',tint:'#ffd166',
+  desc:'Dust on the trail, shade under the cottonwoods, and evenings that never end.'},
+ {id:'ember',name:'Season of Embers',emoji:'🍂',tint:'#e07a3c',
+  desc:'The woods turn, the air sharpens, and the horses come in with frost on their backs.'},
+ {id:'frost',name:'Season of Frost',emoji:'❄️',tint:'#9fd8f2',
+  desc:'Hollowpeak under snow, breath on the air, and the barn lamps lit by four.'},
+];
+function seasonNow(t){
+ const now=t||Date.now();
+ const k=Math.max(0,Math.floor((now-SEASON_EPOCH)/(SEASON_DAYS*864e5)));
+ const start=SEASON_EPOCH+k*SEASON_DAYS*864e5, end=start+SEASON_DAYS*864e5;
+ return {n:k,key:'S'+k,def:SEASONS[k%SEASONS.length],start:start,end:end,
+  day:Math.min(SEASON_DAYS,Math.floor((now-start)/864e5)+1),
+  daysLeft:Math.max(0,Math.ceil((end-now)/864e5))};
+}
+const PASS_STEP=150, PASS_TIERS=30;
+function passTier(pts){return Math.max(0,Math.min(PASS_TIERS,Math.floor((pts||0)/PASS_STEP)));}
+/* Two tracks up the same ladder: the free one everybody rides and the gold one for VIP.
+   Every free tier still pays, so a player without VIP is never staring at a row of locks. */
+const PASS_FREE=[
+ {c:150},{g:1},{c:180},{k:1},{c:200},{g:2},{c:220},{k:1},{c:250},{g:2},
+ {c:280},{k:1},{c:300},{g:3},{c:320},{k:1},{c:350},{g:3},{c:380},{k:2},
+ {c:400},{g:4},{c:450},{k:2},{c:500},{g:4},{c:550},{k:2},{c:600},{g:6,tack:true},
+];
+const PASS_GOLD=[
+ {c:250},{g:2},{c:300},{k:1},{g:3},{c:350},{k:2},{g:3},{c:400},{k:2},
+ {g:4},{c:450},{k:2},{g:4},{c:500},{k:3},{g:5},{c:600},{k:3},{g:6},
+ {c:700},{k:3},{g:8},{c:800},{k:4},{g:8},{c:900},{k:4},{g:10},{tint:true,g:20},
+];
+const VIP_PLANS=[{d:7,g:10,label:'A week'},{d:30,g:32,label:'A month'},{d:90,g:80,label:'Three months'}];
+function vipLeft(s){const u=(s&&s.vip&&s.vip.until)||0;return Math.max(0,u-Date.now());}
+function isVIP(s){return vipLeft(s)>0;}
+function vipDays(s){return Math.ceil(vipLeft(s)/864e5);}
+const VIP_COIN=1.25, VIP_PASS=1.5;
+let VIPON=false;                                  // cached: addCoins runs on every carrot
+function stableCap(s){return isVIP(s)?16:12;}
+/* A season is a fresh board: points and claims are per season. The first time an old save
+   meets this code it keeps everything it had, rather than being wiped by the changeover. */
+function seasonRoll(s){
+ if(!s)return null;
+ const k=seasonNow().key;
+ s.pass=s.pass||{pts:0};
+ if(!s.pass.key){
+  s.pass.key=k; s.pass.claims=s.pass.claims||{}; s.pass.gold=s.pass.gold||{};
+  const old=s.lbClaims||{};
+  for(let i=0;i<PASS_TIERS;i++) if(old['p'+i]) s.pass.claims[i]=1;
+  return null;
+ }
+ if(s.pass.key===k)return null;
+ const had={key:s.pass.key,pts:s.pass.pts||0,tier:passTier(s.pass.pts)};
+ s.seasonLog=(s.seasonLog||[]).concat([had]).slice(-8);
+ s.pass={pts:0,key:k,claims:{},gold:{},prev:had};
+ return had;
+}
+/* One claim path, used by the flat panel and the headset menu alike, so the two cannot
+   drift apart on what a tier is worth or on who is allowed to take it. */
+function passClaim(sv,i,gold){
+ sv.pass=sv.pass||{pts:0}; sv.pass.claims=sv.pass.claims||{}; sv.pass.gold=sv.pass.gold||{};
+ const done=gold?sv.pass.gold:sv.pass.claims;
+ if(done[i]||passTier(sv.pass.pts)<i+1)return null;
+ if(gold&&!isVIP(sv))return null;
+ const r=(gold?PASS_GOLD:PASS_FREE)[i]; if(!r)return null;
+ done[i]=1;
+ if(r.c)sv.coins+=r.c;
+ if(r.g)sv.gems+=r.g;
+ if(r.k)sv.keys=(sv.keys||0)+r.k;
+ if(r.tack)sv.goldTack=true;
+ if(r.tint){sv.seasonTack=sv.seasonTack||{};sv.seasonTack[seasonNow().def.id]=1;}
+ return r;
+}
+function passRewardLabel(r){
+ if(!r)return '';
+ if(r.tint)return seasonNow().def.emoji+' season tack';
+ return (r.c?r.c+'🪙':'')+(r.g?r.g+'💎':'')+(r.k?r.k+'🗝️':'')+(r.tack?' ✨golden':'');
+}
 /* The ranch catalogue and level live up here, not with the build UI: the offline-decay
    pass below runs while the module is still evaluating and reads the ranch level, and a
    let declared six thousand lines later is a ReferenceError at that point (a returning
@@ -453,13 +562,20 @@ const DECAY3={hunger:100/(8*3600),thirst:100/(6*3600),clean:100/(12*3600),happy:
   for(const h of save.horses)
    for(const k in DECAY3)h.needs[k]=Math.max(15,h.needs[k]-DECAY3[k]*sec*ranchMul('decay')*persDecay(h));
  }
+ const rolled=seasonRoll(save);
+ VIPON=isVIP(save);
+ if(rolled)setTimeout(()=>{try{const sn=seasonNow();
+  toast('🎟️ '+sn.def.emoji+' '+sn.def.name+' has begun — last season you reached tier '+rolled.tier+'.');}catch(e){}},2200);
  const ds=new Date().toDateString();
  if(save.lastDaily!==ds){
   save.lastDaily=ds;
-  save.coins+=100;save.gems+=3;
+  const vip=VIPON;
+  save.coins+=vip?200:100; save.gems+=vip?6:3;
+  if(vip)save.keys=(save.keys||0)+1;
   save.pass=save.pass||{pts:0};
-  save.pass.pts+=30;
-  setTimeout(()=>{try{toast('🎁 Daily gift: +100🪙 +3💎 +30 🎟️ pass points');}catch(e){}},1500);
+  save.pass.pts+=vip?45:30;
+  setTimeout(()=>{try{toast(vip?'👑 VIP daily gift: +200🪙 +6💎 +1🗝️ +45 🎟️ pass points'
+   :'🎁 Daily gift: +100🪙 +3💎 +30 🎟️ pass points');}catch(e){}},1500);
  }
  save.lastSeen=Date.now();
  try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}
@@ -507,7 +623,7 @@ function syncSave(fn){
   localStorage.setItem(SAVE_KEY,JSON.stringify(s));
  }catch(e){}
 }
-function addCoins(n){coins+=n;$('coinEl').textContent=coins;syncSave(s=>{s.coins+=n;s.stats=s.stats||{};s.stats.earned=(s.stats.earned||0)+n;});}
+function addCoins(n){if(VIPON)n=Math.round(n*VIP_COIN);coins+=n;$('coinEl').textContent=coins;syncSave(s=>{s.coins+=n;s.stats=s.stats||{};s.stats.earned=(s.stats.earned||0)+n;});}
 function statBump(k,n){syncSave(s=>{s.stats=s.stats||{};s.stats[k]=(s.stats[k]||0)+n;});}
 function addGems(n){gems+=n;$('gemEl').textContent=gems;syncSave(s=>{s.gems+=n;});}
 function toast(msg){
@@ -1311,21 +1427,33 @@ function buildVRStable(rows,sv){
    headset you could earn pass points and never see or claim them. */
 function buildVRPass(rows,sv){
  const pts=(sv.pass&&sv.pass.pts)||0;
- const tier=Math.min(PASS_REWARDS.length,Math.floor(pts/200));
- const claims=sv.lbClaims||{};
+ const tier=passTier(pts);
+ const sn=seasonNow(), vip=isVIP(sv);
+ const claims=(sv.pass&&sv.pass.claims)||{}, golds=(sv.pass&&sv.pass.gold)||{};
  rows.push(y=>{
-  vrListRow(c0,y,'🎟️','Trail Pass — tier '+tier+' / '+PASS_REWARDS.length,pts+' points   ·   '+(200-(pts%200))+' to the next tier',false);
-  vrRowBar(c0,102,y+60,540,(pts%200)/2);
+  vrListRow(c0,y,sn.def.emoji,sn.def.name+' — day '+sn.day+' of '+SEASON_DAYS,sn.daysLeft+' days left in the season',false);
  });
- PASS_REWARDS.forEach((r,i)=>{
-  const key='p'+i, cl=!!claims[key], unlocked=tier>=i+1;
-  const rw=r.c?r.c+' coins':r.g?(r.g+' gem'+(r.g>1?'s':'')):'Golden saddle';
+ rows.push(y=>{
+  vrListRow(c0,y,'🎟️','Season Pass — tier '+tier+' / '+PASS_TIERS,pts+' points   ·   '+(PASS_STEP-(pts%PASS_STEP))+' to the next tier',false);
+  vrRowBar(c0,102,y+60,540,(pts%PASS_STEP)/PASS_STEP*100);
+ });
+ rows.push(y=>{
+  vrListRow(c0,y,'👑',vip?'VIP — '+vipDays(sv)+' days left':'VIP — not active',
+   vip?'Gold track unlocked, +25% coins, +50% points':'Buy it with gems on the 🏅 panel',!vip);
+ });
+ PASS_FREE.forEach((r,i)=>{
+  const cl=!!claims[i], unlocked=tier>=i+1;
   rows.push(y=>{
-   vrListRow(c0,y,cl?'✅':(unlocked?'🎁':'🔒'),'Tier '+(i+1),rw,cl||!unlocked);
+   vrListRow(c0,y,cl?'✅':(unlocked?'🎁':'🔒'),'Tier '+(i+1),passRewardLabel(r),cl||!unlocked);
    if(!cl&&unlocked)vrButton(c0,'pass:'+i,'Claim',760,y+13,228,48,'dark',24);
   });
+  const gr=PASS_GOLD[i], gcl=!!golds[i], gun=vip&&tier>=i+1;
+  rows.push(y=>{
+   vrListRow(c0,y,gcl?'✅':(gun?'👑':'🔒'),'Tier '+(i+1)+' · gold',passRewardLabel(gr),gcl||!gun);
+   if(!gcl&&gun)vrButton(c0,'gpass:'+i,'Claim',760,y+13,228,48,'dark',24);
+  });
  });
- return 'Earn pass points from events, jumps, carrots, care and daily gifts.';
+ return 'Points come from events, jumps, carrots, care and daily gifts. The season resets in '+sn.daysLeft+' days.';
 }
 function buildVRQuests(rows,sv){
  if(vrQuestTab==='daily'){
@@ -1378,22 +1506,14 @@ function vrMenuClick(id){
  if(id.startsWith('shoptab:')){vrShopTab=id.slice(8);vrScroll.shop=0;drawVRMenu();return;}
  if(id.startsWith('questtab:')){vrQuestTab=id.slice(9);vrScroll.quests=0;drawVRMenu();return;}
  if(id.startsWith('care:')){try{careAct(id.slice(5));}catch(e){}drawVRMenu();return;}
- if(id.startsWith('pass:')){
-  const i=+id.slice(5);let ok=false;
-  syncSave(sv=>{
-   sv.lbClaims=sv.lbClaims||{};
-   const key='p'+i, tp=Math.floor(((sv.pass&&sv.pass.pts)||0)/200);
-   if(sv.lbClaims[key]||tp<i+1)return;
-   sv.lbClaims[key]=true;
-   const r=PASS_REWARDS[i];
-   if(r.c)sv.coins+=r.c;
-   if(r.g)sv.gems+=r.g;
-   if(r.k)sv.keys=(sv.keys||0)+r.k;
-   if(r.tack)sv.goldTack=true;
-   ok=true;
-  });
-  if(ok){refreshWallet();sGem();
-   toast(PASS_REWARDS[i].tack?'✨ Golden saddle unlocked — it is in the Tack shop!':'🎟️ Pass reward claimed!');}
+ if(id.startsWith('pass:')||id.startsWith('gpass:')){
+  const gold=id.startsWith('gpass:'), i=+id.slice(gold?6:5);
+  let got=null;
+  syncSave(sv=>{ got=passClaim(sv,i,gold); });
+  if(got){refreshWallet();sGem();
+   toast(got.tint?('✨ '+seasonNow().def.name+' tack unlocked!')
+    :got.tack?'✨ Golden saddle unlocked — it is in the Tack shop!'
+    :('🎟️ Tier '+(i+1)+': '+passRewardLabel(got)));}
   drawVRMenu();return;
  }
  if(id==='act:ctrl'){
@@ -7812,6 +7932,9 @@ function refreshWallet(){
  $('coinEl').textContent=coins;
  $('gemEl').textContent=gems;
  const ke=$('keyEl');if(ke)ke.textContent=s.keys||0;
+ VIPON=isVIP(s);
+ const ve=$('vipEl');
+ if(ve){ve.style.display=VIPON?'':'none'; const vd=$('vipDaysEl'); if(vd)vd.textContent=VIPON?vipDays(s)+'d':''; }
 }
 function reloadHorses(){
  const s=freshSave();if(!s)return;
@@ -8383,7 +8506,10 @@ function tackLockerHtml(s){
  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🐎 Saddle style</div><div class="crow" style="gap:6px"><button data-tk="style:english" '+((h&&h.saddleStyle)!=='western'?'class="claimBtn"':'')+'>🏇 English</button><button data-tk="style:western" '+((h&&h.saddleStyle)==='western'?'class="claimBtn"':'')+'>🤠 Western</button></div>';
  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🎨 Saddle paint · 150🪙</div><div class="crow" style="gap:6px;flex-wrap:wrap">'
   +TACKS3.map(tk=>'<button data-buyt="'+tk[0]+'" title="'+tk[1]+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+tk[0]+';vertical-align:middle"></span> '+tk[1]+'</button>').join('')
-  +(s.goldTack?'<button data-buyt="#ffd166">✨ Golden</button>':'')+'</div>';
+  +(s.goldTack?'<button data-buyt="#ffd166">✨ Golden</button>':'')
+  +Object.keys(s.seasonTack||{}).map(id=>{const sd=SEASONS.find(x=>x.id===id); return sd?
+    '<button data-buyt="'+sd.tint+'" title="'+sd.name+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+sd.tint+';vertical-align:middle"></span> '+sd.emoji+' '+sd.name.replace('Season of ','')+'</button>':'';}).join('')
+  +'</div>';
  return html;
 }
 function tackAct(cmd){
@@ -8425,7 +8551,8 @@ function dressSaddle(){
 function buyTack3(col){
  let ok=false,nm='';
  syncSave(s=>{
-  const free=(col==='#ffd166'&&s.goldTack);        // already earned on the Trail Pass
+  /* Anything earned on the pass is already yours — do not charge for it twice. */
+  const free=(col==='#ffd166'&&s.goldTack)||SEASONS.some(sd=>sd.tint===col&&(s.seasonTack||{})[sd.id]);
   if(!free&&s.coins<150)return;
   const h=s.horses[rideIdx];if(!h)return;
   if(!free)s.coins-=150;
@@ -8979,8 +9106,16 @@ function todayTheme(){
  for(const ch of ds)h=(h*31+ch.charCodeAt(0))|0;
  return PHOTO_THEMES[Math.abs(h)%PHOTO_THEMES.length];
 }
-const PASS_REWARDS=[{c:150},{g:2},{c:200},{k:1},{g:2},{c:300},{g:4},{k:1},{c:400},{g:4},{k:2},{g:4},{c:500},{k:2},{g:6},{c:600},{g:6},{k:3},{g:8},{tack:'#ffd166'}];
-function passAdd(n){syncSave(s=>{s.pass=s.pass||{pts:0};s.pass.pts+=n;});}
+function passAdd(n){if(VIPON)n=Math.round(n*VIP_PASS);syncSave(s=>{s.pass=s.pass||{pts:0};s.pass.pts+=n;});}
+function buyVIP(i){
+ const pl=VIP_PLANS[i]; if(!pl)return false; let ok=false;
+ syncSave(s=>{ if((s.gems||0)<pl.g)return; s.gems-=pl.g;
+  s.vip=s.vip||{}; s.vip.until=Math.max(Date.now(),s.vip.until||0)+pl.d*864e5;
+  s.vip.bought=(s.vip.bought||0)+1; ok=true; });
+ if(ok){const fs=freshSave(); VIPON=isVIP(fs); refreshWallet(); sGem();
+  toast('👑 VIP for '+vipDays(fs)+' more days — +25% coins, +50% pass points, the gold track and a bigger stable.');}
+ return ok;
+}
 const MILES={
  dist:{label:'🏇 Distance ridden',tiers:[[1000,{c:80}],[5000,{c:250}],[20000,{g:4}],[50000,{g:10}]]},
  jumps:{label:'✨ Clean jumps',tiers:[[25,{c:100}],[100,{c:300}],[400,{g:6}]]},
@@ -9030,19 +9165,40 @@ function openLB(){
  const online=net.client&&net.client.connected;
  let html='<b style="font-size:16px">🏅 Leaderboards & Rewards'+(online?' <span style="color:#1e8449">· club "'+net.club+'"</span>':(SOCIAL?' <span style="color:#8c7a63">· connect 🌐 for club rankings</span>':''))+'</b>';
  const pp=(s.pass&&s.pass.pts)||0;
- const ptier=Math.min(20,Math.floor(pp/200));
- html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🎟️ Trail Pass — '+pp+' pts · Tier '+ptier+'/20</b>'
- +'<div class="cbar" style="width:100%"><div class="cfill" style="width:'+Math.min(100,(pp%200)/2)+'%;background:#b18cf0"></div></div>'
- +'<span style="width:100%;display:flex;gap:5px;flex-wrap:wrap">'+PASS_REWARDS.map((r,i)=>{
-  const key='p'+i;
-  const claimed=s.lbClaims&&s.lbClaims[key];
-  const rw=r.c?r.c+'🪙':r.g?r.g+'💎':'✨GoldTack';
-  if(claimed)return '<span style="font-size:11px;color:#8c7a63">✅'+(i+1)+'</span>';
-  if(ptier>=i+1)return '<button data-pass="'+i+'" style="font-size:11px;padding:3px 8px">T'+(i+1)+': '+rw+'</button>';
-  return '<span style="font-size:11px;color:#b8a98a">T'+(i+1)+' '+rw+'</span>';
- }).join('')+'</span>'
- +'<span style="width:100%;font-size:11px;color:#8c7a63">Earn pass points from events, jumps, carrots, care, daily gifts & photo quests.</span>'
- +'<span style="width:100%;font-size:11px;color:#4a3526"><b>📸 Today\'s Photo Quest: '+todayTheme().label+'</b> — snap it with 📷 for +120🪙 +1💎 +40 pts!</span></div>';
+ const ptier=passTier(pp);
+ const sn=seasonNow();
+ const vip=isVIP(s);
+ const claims=(s.pass&&s.pass.claims)||{}, golds=(s.pass&&s.pass.gold)||{};
+ /* The season pass. Two rows of tiers, free on top and gold underneath, so you can see at
+    a glance what riding without VIP still gets you. */
+ /* The season pass. One card per tier, free reward over gold, scrolled sideways so
+    thirty tiers stay legible instead of wrapping into a wall of chips. */
+ html+='<div class="passCard">'
+ +'<div class="ph"><b>'+sn.def.emoji+' '+sn.def.name+'</b><span style="font-size:11px;color:#8c7a63">day '+sn.day+' of '+SEASON_DAYS+' · '+sn.daysLeft+' day'+(sn.daysLeft===1?'':'s')+' left</span></div>'
+ +'<div class="sub">'+sn.def.desc+'</div>'
+ +'<div class="ph"><b>🎟️ Season Pass — tier '+ptier+'/'+PASS_TIERS+'</b><span style="font-size:11px;color:#8c7a63">'+pp+' pts · '+(PASS_STEP-(pp%PASS_STEP))+' to tier '+Math.min(PASS_TIERS,ptier+1)+'</span></div>'
+ +'<div class="cbar" style="margin:5px 0 2px"><div class="cfill" style="width:'+Math.min(100,(pp%PASS_STEP)/PASS_STEP*100)+'%;background:'+sn.def.tint+'"></div></div>'
+ +'<div class="passStrip">'+PASS_FREE.map((r,i)=>{
+   const gr=PASS_GOLD[i], unlocked=ptier>=i+1;
+   const fslot=claims[i]?'<div class="tslot done">✅</div>'
+     :unlocked?'<div class="tslot free"><button data-pass="'+i+'">'+passRewardLabel(r)+'</button></div>'
+     :'<div class="tslot free lock">'+passRewardLabel(r)+'</div>';
+   const gslot=golds[i]?'<div class="tslot done">✅</div>'
+     :(vip&&unlocked)?'<div class="tslot gold"><button data-gold="'+i+'">'+passRewardLabel(gr)+'</button></div>'
+     :'<div class="tslot gold lock">'+(vip?'':'🔒')+passRewardLabel(gr)+'</div>';
+   return '<div class="tierCard'+(i===ptier?' now':'')+'"><div class="tierNo">TIER '+(i+1)+'</div>'+fslot+gslot+'</div>';
+  }).join('')+'</div>'
+ +'<div class="sub" style="margin:2px 0 0">Top row free · bottom row 👑 gold'+(vip?'':' (needs VIP)')+'. Points come from events, jumps, carrots, care, trails, breeding, fishing, daily gifts &amp; photo quests — everything resets when the season turns.</div>'
+ +'<div class="sub" style="margin:3px 0 0;color:#4a3526"><b>📸 Today\'s Photo Quest: '+todayTheme().label+'</b> — snap it with 📷 for +120🪙 +1💎 +40 pts!</div>'
+ +'</div>';
+ /* VIP. Bought with gems you earn by riding — this game never asks for real money. */
+ html+='<div class="vipCard">'
+ +'<div class="ph"><b>👑 VIP</b><span style="font-size:11px;color:#6b4e12">'+(vip?vipDays(s)+' day'+(vipDays(s)===1?'':'s')+' left':'not active')+'</span></div>'
+ +'<div class="perks">+25% coins on everything · +50% pass points · double daily gift with a 🗝️ key · the gold pass track · stable room for 16 horses instead of 12 · a 👑 by your name on the boards.</div>'
+ +'<div class="plans">'+VIP_PLANS.map((pl,i)=>
+   '<button data-vip="'+i+'"'+((s.gems||0)<pl.g?' disabled':'')+'>'+pl.label+' · '+pl.g+'💎</button>').join('')+'</div>'
+ +'<div class="sub" style="margin:6px 0 0">Paid for in gems you earn by playing — there is no real money in this game. Buying again adds to the days you already have.</div>'
+ +'</div>';
  for(const k of Object.keys(MILES)){
   const me=statVal(s,k);
   const top=lbTop(k,false);
@@ -9066,6 +9222,20 @@ function openLB(){
  }).join('');
  p.innerHTML=html;
  p.style.display='flex';
+ /* Land the strip on the first tier you can actually collect, falling back to the one you
+    are working toward. Measured in a frame callback: the panel animates in, so read at
+    innerHTML time and clientWidth is still 4px and the scroll lands nowhere near. */
+ {let tries=0;
+  const land=()=>{
+   const strip=p.querySelector('.passStrip'); if(!strip)return;
+   /* the panel animates in, and for the first frame or two the strip measures 4px wide,
+      which throws the centring off by a screenful — wait for a real width */
+   if(strip.clientWidth<60&&tries++<15){requestAnimationFrame(land);return;}
+   const btn=strip.querySelector('[data-pass],[data-gold]');
+   const card=(btn&&btn.closest('.tierCard'))||strip.querySelector('.tierCard.now');
+   if(card)strip.scrollLeft=Math.max(0,card.offsetLeft-strip.clientWidth/2+card.offsetWidth/2);
+  };
+  requestAnimationFrame(land);}
  p.querySelectorAll('[data-claim]').forEach(b=>{
   b.onclick=()=>{
    const key=b.dataset.claim;
@@ -9095,31 +9265,25 @@ function openLB(){
   };
  });
  p.querySelectorAll('[data-pass]').forEach(b=>{
-  b.onclick=()=>{
-   const i=+b.dataset.pass;
-   let ok=false;
-   syncSave(sv=>{
-    sv.lbClaims=sv.lbClaims||{};
-    const key='p'+i;
-    const tp=Math.floor(((sv.pass&&sv.pass.pts)||0)/200);
-    if(sv.lbClaims[key]||tp<i+1)return;
-    sv.lbClaims[key]=true;
-    const r=PASS_REWARDS[i];
-    if(r.c)sv.coins+=r.c;
-    if(r.g)sv.gems+=r.g;
-    if(r.k)sv.keys=(sv.keys||0)+r.k;
-    if(r.tack)sv.goldTack=true;
-    ok=true;
-   });
-   if(ok){
-    refreshWallet();
-    sGem();
-    toast(PASS_REWARDS[i].tack?'✨ GOLDEN TACK unlocked — check the Tack shop!':'🎟️ Pass reward claimed!');
-    openLB();openLB();
-   }
-  };
+  b.onclick=()=>{ claimPassTier(+b.dataset.pass,false); };
+ });
+ p.querySelectorAll('[data-gold]').forEach(b=>{
+  b.onclick=()=>{ claimPassTier(+b.dataset.gold,true); };
+ });
+ p.querySelectorAll('[data-vip]').forEach(b=>{
+  b.onclick=()=>{ if(buyVIP(+b.dataset.vip)){openLB();openLB();} else toast('Not enough gems yet — ride events and trails to earn them.'); };
  });
  publishMyBoards();
+}
+function claimPassTier(i,gold){
+ let got=null;
+ syncSave(sv=>{ got=passClaim(sv,i,gold); });
+ if(!got){toast(gold&&!isVIP(freshSave())?'👑 The gold track needs VIP.':'Not ready yet.');return;}
+ refreshWallet(); sGem();
+ toast(got.tint?('✨ '+seasonNow().def.name+' tack unlocked — paint a saddle with it!')
+   :got.tack?'✨ GOLDEN TACK unlocked — check the Tack shop!'
+   :('🎟️ Tier '+(i+1)+': '+passRewardLabel(got)));
+ openLB();openLB();
 }
 $('lbBtn').onclick=openLB;
 
@@ -9804,7 +9968,7 @@ function spawnWild3(){
  if(wild3||!save)return;
  try{
   const s=JSON.parse(localStorage.getItem(SAVE_KEY));
-  if(!s||s.horses.length>=12)return;
+  if(!s||s.horses.length>=stableCap(s))return;
  }catch(e){return;}
  const wb=WILD_BREEDS[Math.floor(Math.random()*WILD_BREEDS.length)];
  const parts=makeHorse({colors:{body:wb.body,mane:wb.mane},seed:Math.floor(Math.random()*9)});
@@ -9839,7 +10003,7 @@ function tameWild3(){
  const base=w.wb.base;
  let added=false;
  syncSave(s=>{
-  if(s.horses.length>=12&&!w.wb.kestrel)return;   // the Kestrel always finds a stall
+  if(s.horses.length>=stableCap(s)&&!w.wb.kestrel)return;   // the Kestrel always finds a stall
   const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
   const ri2=(a,b)=>Math.floor(a+Math.random()*(b-a+1));
   const h={id:s.nextId++,name,breed:w.wb.breed,colors:{body:w.wb.body,mane:w.wb.mane},
