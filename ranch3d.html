@@ -110,7 +110,7 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 #loadbar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffe6a8);border-radius:99px;transition:width .25s ease}
 #loadpct{margin-top:8px;font-family:var(--font);font-size:13px;font-weight:700;opacity:.7}
 /* ---- panels ---- */
-#eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel,#buildPanel,#stablePanel,#questPanel,#profilePanel{position:fixed;top:calc(64px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:10;background:linear-gradient(180deg,#fffdf7,#fbf3e3);border:1px solid rgba(255,255,255,.8);border-radius:var(--r-l);padding:16px 16px 18px;display:none;flex-direction:column;gap:8px;max-height:min(74vh,760px);overflow:auto;width:min(470px,94vw);color:var(--ink);box-shadow:var(--sh-3),inset 0 1px 0 #fff;animation:panelIn .22s ease;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+#eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel,#moneyPanel,#buildPanel,#stablePanel,#questPanel,#profilePanel{position:fixed;top:calc(64px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:10;background:linear-gradient(180deg,#fffdf7,#fbf3e3);border:1px solid rgba(255,255,255,.8);border-radius:var(--r-l);padding:16px 16px 18px;display:none;flex-direction:column;gap:8px;max-height:min(74vh,760px);overflow:auto;width:min(470px,94vw);color:var(--ink);box-shadow:var(--sh-3),inset 0 1px 0 #fff;animation:panelIn .22s ease;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
 @keyframes panelIn{from{transform:translateX(-50%) translateY(-14px) scale(.985)}to{transform:translateX(-50%) translateY(0) scale(1)}}   /* transform only: an entrance must never leave a panel invisible if the timeline stalls */
 #eventsPanel::-webkit-scrollbar,#shopPanel::-webkit-scrollbar,#stablePanel::-webkit-scrollbar,#questPanel::-webkit-scrollbar,#lbPanel::-webkit-scrollbar,#carePanel::-webkit-scrollbar,#buildPanel::-webkit-scrollbar,#onlinePanel::-webkit-scrollbar{width:8px}
 #eventsPanel::-webkit-scrollbar-thumb,#shopPanel::-webkit-scrollbar-thumb,#stablePanel::-webkit-scrollbar-thumb,#questPanel::-webkit-scrollbar-thumb,#lbPanel::-webkit-scrollbar-thumb,#carePanel::-webkit-scrollbar-thumb,#buildPanel::-webkit-scrollbar-thumb,#onlinePanel::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:8px}
@@ -269,6 +269,7 @@ body.touch #stickZone{display:block}
 <div id="buildHud"></div>
 <div id="onlinePanel"></div>
 <div id="lbPanel"></div>
+<div id="moneyPanel"></div>
 <div id="chatFeed"></div>
 <div id="chatBar"><input id="chatIn" maxlength="80" placeholder="Say something to your club…"><button data-emote="👋">👋</button><button data-emote="❤️">❤️</button><button data-emote="😂">😂</button><button data-emote="🎉">🎉</button><button id="chatSend">➤</button></div>
 <div id="questTrack"></div>
@@ -485,6 +486,39 @@ function ranchPts(s){return (s.decor||[]).reduce((a,d)=>a+((DECOR_CAT[d.t]||{}).
 function ranchLevel(s){const p=ranchPts(s);let l=1;for(let i=1;i<RANCH_LEVELS.length;i++)if(p>=RANCH_LEVELS[i])l=i+1;return l;}
 let _ranchLvlCache=1;
 function ranchMul(k){const L=_ranchLvlCache; if(k==='decay')return L>=5?0.7:L>=2?0.85:1; if(k==='xp')return L>=6?1.25:L>=3?1.10:1; if(k==='forage')return L>=4?0.7:1; return 1;}
+/* ---- the ranch as a business ---------------------------------------------------------
+   Everything you earned until now came from you doing something. A ranch should also earn
+   while you are not there: riders from the valley board their horses in your spare stalls,
+   and pay for the privilege. How many stalls you can offer comes off what you have built,
+   which finally gives the Build screen a reason to exist beyond looking nice. */
+function boardStalls(s){return Math.min(8,Math.floor(ranchPts(s)/70));}
+function boardRate(s){                                   // coins per hour
+ const st=boardStalls(s); if(!st)return 0;
+ return Math.round(st*8*(1+0.12*(ranchLevel(s)-1))*(isVIP(s)?VIP_COIN:1));
+}
+const BOARD_CAP_H=24;                                    // the stalls fill up after a day
+function boardTick(s){
+ if(!s)return 0;
+ s.board=s.board||{pending:0,last:Date.now(),lifetime:0};
+ const rate=boardRate(s);
+ const h=Math.min(BOARD_CAP_H,Math.max(0,(Date.now()-(s.board.last||Date.now()))/36e5));
+ s.board.last=Date.now();
+ if(rate<=0||h<=0)return 0;
+ const got=Math.floor(rate*h);
+ s.board.pending=Math.min(rate*BOARD_CAP_H,(s.board.pending||0)+got);
+ return got;
+}
+/* A running record of what you earn, so the money screen can show you where you are at
+   rather than a single number that only ever goes up. */
+function logEarn(s,amount){
+ const d=new Date().toDateString();
+ s.earn=s.earn||{d:'',t:0,hist:[]};
+ if(s.earn.d!==d){
+  if(s.earn.d)s.earn.hist=(s.earn.hist||[]).concat([{d:s.earn.d,t:s.earn.t}]).slice(-7);
+  s.earn.d=d; s.earn.t=0;
+ }
+ s.earn.t+=amount;
+}
 function bondGain(h,x,kind){const p=h&&PERS[h.pers]; let m=1; if(p&&p[kind])m*=p[kind]; if(p&&p.bondLow&&(h.bond||0)<60)m*=p.bondLow; return Math.max(0,Math.round(x*m));}
 const MASTERY_UNLOCKS={2:'Tail colours',4:'Browband stud colours',6:'Sparkle trail at the gallop',8:'Stable badge 🎖️',9:'Bareback riding',10:'+10% XP for this breed'};
 const TAIL_COLS=[['#f4e6c5','Flaxen'],['#151515','Black'],['#d8dde3','Silver'],['#8a4a25','Chestnut'],['#e8b4c8','Rose'],['#3b6fd6','Lake blue']];
@@ -574,6 +608,7 @@ const DECAY3={hunger:100/(8*3600),thirst:100/(6*3600),clean:100/(12*3600),happy:
  }
  const rolled=seasonRoll(save);
  VIPON=isVIP(save);
+ boardTick(save);                                   // the stalls earned while you were gone
  if(rolled)setTimeout(()=>{try{const sn=seasonNow();
   toast('🎟️ '+sn.def.emoji+' '+sn.def.name+' has begun — last season you reached tier '+rolled.tier+'.');}catch(e){}},2200);
  const ds=new Date().toDateString();
@@ -633,7 +668,7 @@ function syncSave(fn){
   localStorage.setItem(SAVE_KEY,JSON.stringify(s));
  }catch(e){}
 }
-function addCoins(n){if(VIPON)n=Math.round(n*VIP_COIN);coins+=n;$('coinEl').textContent=coins;syncSave(s=>{s.coins+=n;s.stats=s.stats||{};s.stats.earned=(s.stats.earned||0)+n;});}
+function addCoins(n){if(VIPON)n=Math.round(n*VIP_COIN);coins+=n;$('coinEl').textContent=coins;syncSave(s=>{s.coins+=n;s.stats=s.stats||{};s.stats.earned=(s.stats.earned||0)+n;logEarn(s,n);});}
 function statBump(k,n){syncSave(s=>{s.stats=s.stats||{};s.stats[k]=(s.stats[k]||0)+n;});}
 function addGems(n){gems+=n;$('gemEl').textContent=gems;syncSave(s=>{s.gems+=n;});}
 function toast(msg){
@@ -7960,7 +7995,7 @@ function reloadHorses(){
  sel.value=rideIdx;
  rebuildAll();
 }
-function hidePanels(){['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','stablePanel','questPanel','profilePanel','buildPanel'].forEach(id=>{$(id).style.display='none';});}
+function hidePanels(){['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','moneyPanel','stablePanel','questPanel','profilePanel','buildPanel'].forEach(id=>{$(id).style.display='none';});}
 /* ===== Ranch building =====
    The ranch is yours to furnish: pick a piece from the catalogue, a ghost of it follows the
    pointer across the ground, turn it with R or Q, click to set it down. Five of the pieces
@@ -9418,6 +9453,75 @@ function renderLB(){
  });
  publishMyBoards();
 }
+/* The money screen. Reached by clicking the coins in the corner, which is where anyone
+   would look for it. */
+function openMoney(){
+ const p=$('moneyPanel');
+ if(p.style.display==='flex'){p.style.display='none';return;}
+ hidePanels();
+ renderMoney();
+}
+function renderMoney(){
+ const p=$('moneyPanel');
+ let s=freshSave(); if(!s)return;
+ syncSave(sv=>{boardTick(sv);});                    // catch up before showing a number
+ s=freshSave();
+ const vip=isVIP(s), st=boardStalls(s), rate=boardRate(s), pend=Math.floor((s.board&&s.board.pending)||0);
+ const pts=ranchPts(s), lvl=ranchLevel(s);
+ const nextAt=(st<8)?((st+1)*70):null;
+ const today=(s.earn&&s.earn.d===new Date().toDateString())?(s.earn.t||0):0;
+ const hist=((s.earn&&s.earn.hist)||[]).slice().reverse();
+ const week=hist.reduce((a,r)=>a+r.t,0)+today;
+ let html='<b style="font-size:16px">🪙 Money</b>';
+ html+='<div class="evrow"><b>Wallet</b><span>'+Math.floor(s.coins)+'🪙 · '+(s.gems||0)+'💎 · '+(s.keys||0)+'🗝️'+(vip?' · 👑 VIP '+vipDays(s)+'d':'')+'</span></div>';
+ /* boarding */
+ html+='<div class="passCard" style="margin-top:4px"><div class="ph"><b>🏡 Livery stalls</b><span style="font-size:11px;color:#8c7a63">'+st+' of 8 open</span></div>';
+ if(!st){
+  html+='<div class="sub">Riders from the valley will board their horses here once the ranch has somewhere to put them. Build up to 70 ranch points and your first stall opens.<br>You have '+pts+'.</div>';
+ }else{
+  html+='<div class="sub">Riders from the valley board their horses in your spare stalls and pay by the hour. The stalls fill up after a day, so empty them when you come back.</div>'
+   +'<div class="ph"><b>'+rate+'🪙 an hour</b><span style="font-size:11px;color:#8c7a63">ranch level '+lvl+(vip?' · +25% VIP':'')+'</span></div>'
+   +'<div class="cbar" style="margin:5px 0 6px"><div class="cfill" style="width:'+Math.min(100,pend/(rate*BOARD_CAP_H)*100)+'%;background:#7fb069"></div></div>'
+   +(pend>0?'<button data-money="collect" class="claimBtn">Collect '+pend+'🪙</button>'
+           :'<div class="sub" style="margin:0">Nothing waiting yet — come back later.</div>')
+   +(nextAt?'<div class="sub" style="margin:6px 0 0">Next stall at '+nextAt+' ranch points (you have '+pts+') — build more in 🔨 Build.</div>':'<div class="sub" style="margin:6px 0 0">Every stall is open. That is the lot.</div>')
+   +(s.board&&s.board.lifetime?'<div class="sub" style="margin:3px 0 0">The stalls have paid you '+Math.floor(s.board.lifetime)+'🪙 all told.</div>':'');
+ }
+ html+='</div>';
+ /* earnings */
+ html+='<div class="passCard" style="margin-top:6px"><div class="ph"><b>📈 Earnings</b><span style="font-size:11px;color:#8c7a63">'+week+'🪙 this week</span></div>'
+  +'<div class="evrow" style="margin-top:4px"><b>Today</b><span>'+today+'🪙</span></div>';
+ if(hist.length){
+  const top=Math.max(today,...hist.map(r=>r.t),1);
+  html+=hist.map(r=>'<div class="evrow"><b style="font-weight:700;font-size:12px">'+r.d.slice(0,10)+'</b>'
+   +'<span style="display:flex;align-items:center;gap:6px"><span class="cbar" style="width:90px"><span class="cfill" style="display:block;width:'+Math.round(r.t/top*100)+'%;background:#e0a93c"></span></span>'+r.t+'🪙</span></div>').join('');
+ }else{
+  html+='<div class="sub">Come back tomorrow and this fills in day by day.</div>';
+ }
+ html+='<div class="sub" style="margin:5px 0 0">Lifetime: '+Math.floor((s.stats&&s.stats.earned)||0)+'🪙 earned.</div></div>';
+ /* where it comes from */
+ html+='<div class="passCard" style="margin-top:6px"><b>💡 Where money comes from</b>'
+  +'<div class="sub" style="margin-top:4px">'
+  +'🏆 Events pay 150–1500🪙, the harder the more<br>'
+  +'🥾 Trail rides pay by the length of the ride<br>'
+  +'✨ A clean jump is 10🪙 · 🥕 a foraged carrot is 3🪙<br>'
+  +'🎣 Fishing, 📸 the daily photo quest, 🧰 chests and 🍀 horseshoes all pay<br>'
+  +'🏡 Livery stalls pay by the hour whether you are here or not<br>'
+  +'🎟️ The season pass pays at every tier'
+  +(vip?'<br>👑 VIP is adding 25% to all of it':'')
+  +'</div></div>';
+ p.innerHTML=html;
+ p.style.display='flex';
+ const cb=p.querySelector('[data-money="collect"]');
+ if(cb)cb.onclick=()=>{
+  let got=0;
+  syncSave(sv=>{ boardTick(sv); got=Math.floor(sv.board.pending||0); if(got<=0)return;
+   sv.board.pending=0; sv.board.lifetime=(sv.board.lifetime||0)+got;
+   sv.coins+=got; sv.stats=sv.stats||{}; sv.stats.earned=(sv.stats.earned||0)+got; logEarn(sv,got); });
+  if(got>0){refreshWallet();sCoin();toast('🏡 Livery: +'+got+'🪙 from the boarders.');}
+  renderMoney();
+ };
+}
 function claimPassTier(i,gold){
  let got=null;
  syncSave(sv=>{ got=passClaim(sv,i,gold); });
@@ -9429,6 +9533,7 @@ function claimPassTier(i,gold){
  renderLB();
 }
 $('lbBtn').onclick=openLB;
+['coinEl','gemEl','keyEl'].forEach(id=>{const e=$(id);if(e&&e.parentElement){e.parentElement.style.cursor='pointer';e.parentElement.title='Money';e.parentElement.onclick=openMoney;}});
 
 /* ================= UI 2.0 — stable, daily quests, achievements, streak, fast travel ================= */
 let companionId=(freshSave()||{}).companion||null;
