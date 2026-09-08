@@ -8,7 +8,7 @@ export function createPastoralSky(THREE) {
     uniforms: {
       sunPosition: {value: new THREE.Vector3(0.4, 0.7, 0.3)},
       day: {value: 1}, golden: {value: 0}, night: {value: 0}, rain: {value: 0}, time: {value: 0},
-      zenith: {value: color('#0879c2')}, horizon: {value: color('#80c5e7')},
+      zenith: {value: color('#377ead')}, horizon: {value: color('#b4d0de')},
       dusk: {value: color('#edb18a')}, darkTop: {value: color('#09162e')},
       darkHorizon: {value: color('#253857')}
     },
@@ -25,16 +25,17 @@ export function createPastoralSky(THREE) {
       float cloudNoise(vec2 p){return noise2(p)*0.56+noise2(p*2.03+5.2)*0.27+noise2(p*4.11)*0.12+noise2(p*8.2)*0.05;}
       void main(){
         vec3 d=normalize(vDirection);
-        float h=pow(max(d.y,0.0),0.32);
-        vec3 sky=mix(horizon,zenith,smoothstep(0.0,0.65,h));
+        float h=pow(max(d.y,0.0),0.62);
+        vec3 sky=mix(horizon,zenith,smoothstep(0.0,0.80,h));
         sky=mix(sky,dusk,golden*pow(1.0-h,3.0)*0.72);
         float daylight=smoothstep(0.0,0.55,day);
         sky=mix(mix(darkHorizon,darkTop,h),sky,daylight);
         // Soft cloud banks, continuous in direction instead of solid floating puffs.
         vec2 cloudUV=d.xz/max(d.y+0.19,0.08)*1.8+vec2(time*0.014,time*0.004);
-        float cn=cloudNoise(cloudUV);
-        float cloud=smoothstep(0.56,0.73,cn)*smoothstep(0.015,0.13,d.y);
-        vec3 cloudColor=mix(vec3(0.58,0.69,0.76),vec3(0.95,0.97,0.94),smoothstep(0.54,0.76,cn));
+        float cn=cloudNoise(cloudUV)*.88+noise2(cloudUV*16.4)*.08+noise2(cloudUV*32.7)*.04;
+        float cloud=smoothstep(0.54,0.70,cn)*smoothstep(0.015,0.13,d.y);
+        float thickness=cloudNoise(cloudUV+vec2(.17,.26));
+        vec3 cloudColor=mix(vec3(0.55,0.64,0.70),vec3(0.96,0.97,0.95),smoothstep(.39,.67,thickness));
         cloudColor=mix(cloudColor,vec3(0.95,0.66,0.42),golden*0.45);
         cloudColor=mix(vec3(0.035,0.047,0.075),cloudColor,daylight);
         sky=mix(sky,cloudColor,cloud*(1.0-rain*0.3));

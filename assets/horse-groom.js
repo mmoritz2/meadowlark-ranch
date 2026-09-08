@@ -138,19 +138,41 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
   }
 
   const maneLengthAt = t => ((wavy ? .34 : heavy ? .31 : .215) + (wavy ? .14 : .10) * Math.sin(t * Math.PI)) * length * stature;
+  // Project the inner groom just outside this breed's own neck surface. A fixed
+  // side offset buried fine strands in the wider Shire neck and left bald gaps.
+  const surfaceCell = .024 * stature, sideGrid = new Map(), skinPosition = skin.geometry.attributes.position;
+  const gridKey = (x, y) => `${x},${y}`;
+  const minCrestX = Math.min(...crest.map(p => p.x)) - .15 * stature, maxCrestX = Math.max(...crest.map(p => p.x)) + .045 * stature;
+  for (let i = 0; i < skinPosition.count; i++) {
+    const x = skinPosition.getX(i), y = skinPosition.getY(i), z = skinPosition.getZ(i);
+    if (x < minCrestX || x > maxCrestX || y < rest[4].y - .40 * stature) continue;
+    const key = gridKey(Math.floor(x / surfaceCell), Math.floor(y / surfaceCell));
+    if (!sideGrid.has(key) || z > sideGrid.get(key)) sideGrid.set(key, z);
+  }
+  const surfaceZ = p => {
+    const gx = p.x / surfaceCell - .5, gy = p.y / surfaceCell - .5, bx = Math.floor(gx), by = Math.floor(gy);
+    let total = 0, weight = 0, envelope = -Infinity;
+    for (let dx = -1; dx <= 2; dx++) for (let dy = -1; dy <= 2; dy++) {
+      const z = sideGrid.get(gridKey(bx + dx, by + dy)); if (z === undefined) continue;
+      const w = 1 / (.30 + (gx - bx - dx) ** 2 + (gy - by - dy) ** 2);
+      total += z * w; weight += w; envelope = Math.max(envelope, z);
+    }
+    return weight ? Math.max(total / weight, envelope - .006 * stature) : -Infinity;
+  };
   function flowPoint(t, u, l, side = 1, phase = 0) {
     const p = crestCurve.getPoint(clamp(t, 0, 1));
     const wave = (wavy ? .014 : .004) * Math.sin(u * Math.PI * 2.4 + t * 7 + phase) * Math.sin(u * Math.PI);
     p.x += -l * .10 * u + wave;
     p.y -= l * u + .006 * stature;
     p.z += side * stature * (.123 * Math.sin(u * Math.PI * .5) + .018 * Math.sin(u * Math.PI)) + wave * .35;
+    if (side > 0) p.z = Math.max(p.z, surfaceZ(p) + .021 * stature);
     return p;
   }
   if (!upright) {
     // A thin, CLOSED organic volume gives the mane its continuous mass. Its
     // curved surface follows the neck; shorter, uneven hems remain beneath the
     // longer individual wisps. It is neither a flat sheet nor an alpha curtain.
-    const cols = 30, rows = 8, start = maneData.p.length / 3;
+    const cols = 30, rows = 12, start = maneData.p.length / 3;
     for (let face = 0; face < 2; face++) for (let c = 0; c <= cols; c++) {
       const t = c / cols, l = maneLengthAt(t) * (.77 + .035 * Math.sin(t * 31) + .022 * Math.sin(t * 73));
       const wt = nearestWeights(crestCurve.getPoint(t), [3, 4, 5]);
@@ -167,17 +189,17 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
     const plane = (cols + 1) * (rows + 1), ix = (face, c, r) => start + face * plane + c * (rows + 1) + r;
     for (let c = 0; c < cols; c++) for (let r = 0; r < rows; r++) {
       const a = ix(0, c, r), b = ix(0, c + 1, r), d = a + 1, e = b + 1;
-      maneData.index.push(a, d, b, d, e, b);
+      maneData.index.push(a, b, d, d, b, e);
       const a2 = a + plane, b2 = b + plane, d2 = d + plane, e2 = e + plane;
-      maneData.index.push(a2, b2, d2, d2, b2, e2);
+      maneData.index.push(a2, d2, b2, d2, e2, b2);
     }
     for (let c = 0; c < cols; c++) for (const r of [0, rows]) {
       const a = ix(0, c, r), b = ix(0, c + 1, r), d = ix(1, c, r), e = ix(1, c + 1, r);
-      if (!r) maneData.index.push(a, b, d, b, e, d); else maneData.index.push(a, d, b, b, d, e);
+      if (!r) maneData.index.push(a, d, b, b, d, e); else maneData.index.push(a, b, d, b, e, d);
     }
     for (let r = 0; r < rows; r++) for (const c of [0, cols]) {
       const a = ix(0, c, r), b = a + 1, d = ix(1, c, r), e = d + 1;
-      if (!c) maneData.index.push(a, d, b, b, d, e); else maneData.index.push(a, b, d, b, e, d);
+      if (!c) maneData.index.push(a, b, d, b, e, d); else maneData.index.push(a, d, b, b, d, e);
     }
     maneData.locks++;
   }
@@ -201,7 +223,7 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
         points.push(p);
       }
       lock(maneData, points, (fine ? .007 + rng() * .004 : .018 + rng() * .009) * volume * stature,
-        { rows: 6, sides: 4, flat: .14 + rng() * .12, shade, weights: wt, twist: (rng() - .5) * .25, wideAxis: V(1, 0, 0) });
+        { rows: 5, sides: 4, flat: .14 + rng() * .12, shade, weights: wt, twist: (rng() - .5) * .25, wideAxis: V(1, 0, 0) });
     }
   }
 
@@ -228,7 +250,7 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
     lock(tailData, points, (.101 - j * .013) * volume * stature,
       { rows: 12, sides: 7, flat: .70, shade: .92 + j * .015, weights: tailWeights, full: true });
   }
-  const nTail = wavy ? 72 : heavy ? 68 : 64;
+  const nTail = wavy ? 71 : heavy ? 68 : 64;
   for (let i = 0; i < nTail; i++) {
     const angle = i * Math.PI * (3 - Math.sqrt(5)) + (rng() - .5) * .5, layer = .76 + rng() * .28;
     const reach = (.80 + rng() * .22) * tailLength, points = [], phase = rng() * Math.PI * 2;

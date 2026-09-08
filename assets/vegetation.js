@@ -1,7 +1,7 @@
 /* Botanical replacement meshes for the old sphere shrubs and solid cone pines.
    Shared prototypes keep repeated plants inexpensive. Each plant is two meshes:
    bark and alpha-tested leaves. Shapes and texture artwork are original. */
-import { getFoliageTexture, tuneFoliage } from './world-art.js';
+import { getFoliageTexture, tuneFoliage, onFoliageAtlasReady } from './world-art.js';
 
 const TAU = Math.PI * 2;
 const prototypes = new Map(), materials = new Map();
@@ -110,7 +110,7 @@ function buildPrototype(THREE,type,species,variant) {
         for(let k=1;k<=4;k++){
           const f=k/4,p=start.clone().lerp(tip,f);p.y+=(rng()-.5)*.26;
           const n=V(Math.cos(a)*.7,.32+rng()*.5,Math.sin(a)*.7).normalize();
-          const size=(.58+rng()*.18)*(1-t*.65);
+          const size=(.45+rng()*.15)*(1-t*.65);
           leaves.card(p,n,size*1.4,size,a+(rng()-.5)*.5,.64+.26*f+.1*t);
           if(k>1){const side=V(-Math.sin(a),.2,Math.cos(a));
             const twig=p.clone().addScaledVector(side,(k%2?-1:1)*size*.3);
@@ -203,4 +203,80 @@ export function plantNaturalShrubs({THREE,scene,placements,groundH,flowering=fal
     for(const mesh of [wood,leaf]){mesh.castShadow=true;mesh.receiveShadow=true;mesh.instanceMatrix.needsUpdate=true;scene.add(mesh);made.push(mesh);}
   }
   return made;
+}
+
+const impostors = new WeakMap();
+export function createForestImpostor({THREE,renderer,species='oak'}) {
+  // Bake the same botanical models used beside the trail into a distant forest
+  // card. Thousands of distant trees still cost only the caller's instanced draw.
+  if(!impostors.has(renderer))impostors.set(renderer,new Map());
+  const cache=impostors.get(renderer);
+  if(cache.has(species))return cache.get(species);
+  const pine=species==='pine'||species==='snowpine';
+  const scene=new THREE.Scene(),cluster=new THREE.Group();scene.add(cluster);
+  const placements=pine?[[-1.0,0,-.2,.76],[.86,0,-.5,.85],[0,0,.3,1]]:
+    [[-1.15,0,-.3,.77],[1.08,0,-.4,.83],[0,0,.3,1]];
+  placements.forEach(([x,y,z,scale],i)=>{
+    const tree=(pine?makeNaturalPine:makeNaturalTree)({THREE,species,scale,seed:i+1});
+    tree.position.set(x,y,z);tree.rotation.y=i*1.77;
+    tree.traverse(object=>{if(object.isMesh){object.castShadow=false;object.receiveShadow=false;}});
+    cluster.add(tree);
+  });
+  scene.add(new THREE.HemisphereLight('#e6f0f7','#a3aa88',1.75));
+  const sun=new THREE.DirectionalLight('#fff5e8',1.7);sun.position.set(-4,9,7);scene.add(sun);
+  cluster.updateMatrixWorld(true);
+  const bounds=new THREE.Box3().setFromObject(cluster),size=bounds.getSize(new THREE.Vector3());
+  const center=bounds.getCenter(new THREE.Vector3()),span=Math.max(size.x,size.y)*1.10;
+  const camera=new THREE.OrthographicCamera(-span/2,span/2,span/2,-span/2,.1,60);
+  camera.position.set(center.x,center.y,24);camera.lookAt(center.x,center.y,0);
+  const target=new THREE.WebGLRenderTarget(512,512,{
+    format:THREE.RGBAFormat,type:THREE.UnsignedByteType,
+    minFilter:THREE.LinearMipmapLinearFilter,magFilter:THREE.LinearFilter,
+    generateMipmaps:true,depthBuffer:true,stencilBuffer:false,samples:4
+  });
+  const texture=target.texture;
+  texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;
+  texture.name=`Botanical ${species} forest silhouette`;
+  texture.userData.impostorAspect=size.x/size.y;
+  cache.set(species,texture);
+  let disposed=false,timer;
+  const bake=()=>{
+    if(disposed)return;
+    const state={target:renderer.getRenderTarget(),
+      cubeFace:renderer.getActiveCubeFace(),mipLevel:renderer.getActiveMipmapLevel(),
+      clearColor:renderer.getClearColor(new THREE.Color()),clearAlpha:renderer.getClearAlpha(),
+      viewport:renderer.getViewport(new THREE.Vector4()),scissor:renderer.getScissor(new THREE.Vector4()),
+      scissorTest:renderer.getScissorTest(),autoClear:renderer.autoClear,
+      toneMapping:renderer.toneMapping,exposure:renderer.toneMappingExposure,
+      outputColorSpace:renderer.outputColorSpace,shadows:renderer.shadowMap.enabled,xr:renderer.xr.enabled,
+      info:{...renderer.info.render}};
+    try{
+      renderer.xr.enabled=false;renderer.shadowMap.enabled=false;renderer.autoClear=true;
+      renderer.toneMapping=THREE.NoToneMapping;renderer.toneMappingExposure=1;
+      renderer.setRenderTarget(target);renderer.setScissorTest(false);
+      renderer.setViewport(0,0,512,512);renderer.setClearColor(0x000000,0);
+      renderer.clear(true,true,true);renderer.render(scene,camera);
+      texture.userData.bakeCount=(texture.userData.bakeCount||0)+1;
+    }finally{
+      renderer.setRenderTarget(state.target,state.cubeFace,state.mipLevel);
+      renderer.setClearColor(state.clearColor,state.clearAlpha);renderer.autoClear=state.autoClear;
+      renderer.toneMapping=state.toneMapping;renderer.toneMappingExposure=state.exposure;
+      renderer.outputColorSpace=state.outputColorSpace;
+      renderer.shadowMap.enabled=state.shadows;renderer.xr.enabled=state.xr;
+      renderer.setViewport(state.viewport);renderer.setScissor(state.scissor);
+      renderer.setScissorTest(state.scissorTest);
+      Object.assign(renderer.info.render,state.info);
+    }
+  };
+  bake();
+  const unsubscribe=onFoliageAtlasReady(targets=>{
+    if(targets.includes(species)){clearTimeout(timer);bake();}
+  });
+  timer=setTimeout(bake,3000);
+  texture.userData.disposeImpostor=()=>{
+    disposed=true;clearTimeout(timer);unsubscribe();cache.delete(species);target.dispose();
+    // Prototypes and leaf materials are shared with the live forest.
+    cluster.clear();scene.clear();
+  };
+  return texture;
 }

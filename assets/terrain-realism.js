@@ -13,6 +13,9 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   const forest = new THREE.CanvasTexture(canvas);
   forest.colorSpace = THREE.NoColorSpace;
   const uniforms = {terrainRock:{value:load('rock')}, terrainForest:{value:load('forest_floor')}, forestMask:{value:forest}};
+  for(const [key,path] of [['terrainSoil','./assets/textures/ground_sand.jpg'],['terrainSnow','./assets/textures/ground_snow.jpg']]){
+    const t=loader.load(path);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;uniforms[key]={value:t};
+  }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
   material.customProgramCacheKey = () => 'terrain-biomes-v2';
@@ -24,6 +27,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       terrainNormal = normalize(mat3(modelMatrix) * normal);`);
     sh.fragmentShader = `varying vec3 terrainPosition; varying vec3 terrainNormal;
       uniform sampler2D terrainRock; uniform sampler2D terrainForest; uniform sampler2D forestMask;
+      uniform sampler2D terrainSoil; uniform sampler2D terrainSnow;
       float tHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
       vec2 tHash2(vec2 p){return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);}
       float tNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(tHash(i),tHash(i+vec2(1,0)),f.x),mix(tHash(i+vec2(0,1)),tHash(i+vec2(1,1)),f.x),f.y);}
@@ -67,10 +71,13 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       #endif
       surface=mix(surface,rock,stone);
       float canyon=1.0-smoothstep(96.0,176.0,length(p-vec2(-220.0,130.0)));
-      surface=mix(surface,rock*vec3(1.19,.82,.58),canyon*.94);
+      vec2 soilUV=mat2(.819,-.574,.574,.819)*p/3.7;
+      vec3 sand=texture2D(terrainSoil,soilUV+tHash2(floor(p/21.0))*.014).rgb*vec3(.74,.79,.79);
+      surface=mix(surface,mix(sand,rock*vec3(1.07,.94,.82),stone),canyon*.96);
       float snowRegion=1.0-smoothstep(84.0,162.0,length(p-vec2(-160.0,-210.0)));
       float snow=snowRegion*(1.0-smoothstep(.25,.58,slope));
-      surface=mix(surface,vec3(.73,.78,.80)*(0.93+macro*.10),snow*.98);
+      vec3 snowColor=texture2D(terrainSnow,p/7.1).rgb*vec3(.86,.91,.94)*(0.94+macro*.09);
+      surface=mix(surface,snowColor,snow*.98);
       diffuseColor.rgb*=surface;
     `);
   };
