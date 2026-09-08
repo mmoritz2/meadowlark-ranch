@@ -335,9 +335,15 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
+import {createBreedLibrary} from './assets/breed-models.js';
+import {createBreedGroom} from './assets/horse-groom.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js';
-import {installBackdrop,tuneFoliage} from './assets/world-art.js';
+import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js';
+import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs,createForestImpostor} from './assets/vegetation.js';
+import {createGrassTuftGeometry} from './assets/meadow-cover.js';
+import {createGeology} from './assets/geology.js';
+import {installRiparian} from './assets/riparian.js';
 import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js';
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
 
@@ -836,7 +842,7 @@ function rawH(x,z){
   const sd=Math.abs(x-streamX(z));
   const creekBed=streamLevel(Math.min(z,STREAM_JOIN))-.60+THREE.MathUtils.smoothstep(sd,0,3.5)*1.05;
   const creekInfluence=(1-THREE.MathUtils.smoothstep(sd,3.8,10))*(1-THREE.MathUtils.smoothstep(z,156,163));
-  h=THREE.MathUtils.lerp(h,Math.min(h,creekBed),creekInfluence);
+  h=THREE.MathUtils.lerp(h,creekBed,creekInfluence);
  }
 
  return h;
@@ -848,6 +854,7 @@ function rawH(x,z){
    village out to Barleyfold. Grass and ground cover keep off them, which is what actually
    makes a track look walked rather than painted on. */
 const PATHS=[
+ [[0,128],[0,138],[18,150],[47,171],[83,184]],                         // river crossing -> north meadow
  [[0,10],[13,-11],[28,-30],[44,-46],[50,-53]],                       // ranch -> Cottonwood
  [[-7,3],[-26,7],[-46,2],[-63,-6],[-71,-10]],                        // ranch -> Home Pasture
  [[2,15],[7,44],[4,72],[1,98],[0,112]],                              // ranch -> the river bridge
@@ -876,7 +883,7 @@ function pathDist(x,z){
  return Math.sqrt(best);
 }
 // Sample the collision surface from the same triangles used by the visible terrain.
-const TERRAIN_SEGMENTS=384, TERRAIN_STEP=1000/TERRAIN_SEGMENTS;
+const TERRAIN_SEGMENTS=512, TERRAIN_STEP=1000/TERRAIN_SEGMENTS;
 const TERRAIN_HEIGHTS=new Float32Array((TERRAIN_SEGMENTS+1)**2);
 for(let iz=0;iz<=TERRAIN_SEGMENTS;iz++)for(let ix=0;ix<=TERRAIN_SEGMENTS;ix++)
  TERRAIN_HEIGHTS[iz*(TERRAIN_SEGMENTS+1)+ix]=rawH(ix*TERRAIN_STEP-500,iz*TERRAIN_STEP-500);
@@ -1985,6 +1992,7 @@ const moonS=(()=>{
 /* window panes & lamps that switch on at dusk (day colour -> HDR warm glow the bloom picks up) */
 const glowPanes=[];
 const ranchArchitecture=createRanchArchitecture({THREE,glowPanes});
+const geology=createGeology({THREE,scene,groundH:terrainH});
 /* fireflies: drifting HDR embers over the meadows, only alive at night */
 const FIREFLY_N=80;
 const fireflies=new THREE.InstancedMesh(new THREE.SphereGeometry(0.045,6,5),
@@ -2205,6 +2213,7 @@ const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:b
  const gmat=terrainSurface.material;
  groundMat=gmat;
  const ground=new THREE.Mesh(geo,gmat);
+ ground.name='Pasture terrain';
  ground.receiveShadow=true;
  scene.add(ground);
  const hdMat=new THREE.MeshStandardMaterial({map:grassLoad(160),roughness:1});   // its own load: a clone taken before the image arrives never gets it
@@ -2258,7 +2267,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   const a=Math.random()*Math.PI*2,rr=3+Math.pow(Math.random(),0.7)*310;
   const x=Math.cos(a)*rr,z=Math.sin(a)*rr;
   if(Math.abs(x)<25&&Math.abs(z)<20)continue; // keep the arena sandy
-  if(Math.abs(z-riverZ(x))<6)continue;        // not in the river
+  if(Math.abs(z-riverZ(x))<6||pathDist(x,z)<PATH_W*.9)continue; // keep water and tracks clear
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)continue; // not on the bridge
   if(Math.hypot(x+220,z-130)<150)continue;    // no grass on Coyote sand
   if(Math.hypot(x+160,z+210)<140)continue;    // no grass on Hollowpeak snow
@@ -2287,7 +2296,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
     for the cells that enter the window as you move (a toroidal slot mapping means the cells
     leaving are exactly the ones whose slots the arrivals take). A distance fade in the shader
     lays the outer blades flat before the window edge could show. Flowers share the cells. */
- const NG_CELL=6, NG_W=12, NG_K=quality==='low'?55:110, NG_F=4, NG_R=NG_CELL*NG_W*0.5;
+ const NG_CELL=6, NG_W=18, NG_K=quality==='low'?65:150, NG_F=4, NG_R=NG_CELL*NG_W*0.5;
  /* ihash multiplies as doubles and loses the low bits for big products, so its output bunches;
     positions from it landed in clumps on the cell grid. This one stays in 32-bit integers. */
  const gh=(ix,iz)=>{let h=(Math.imul(ix|0,374761393)+Math.imul(iz|0,668265263))|0; h=Math.imul(h^(h>>>13),1274126177); return ((h^(h>>>16))>>>0)/4294967295;};
@@ -2354,17 +2363,17 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    pa.setXYZ(i,pa.getX(i)*f,pa.getY(i)*f*0.72,pa.getZ(i)*f); }
   g.computeVertexNormals(); return g;
  })();
- const nearMat=new THREE.MeshStandardMaterial({map:grassBladeTex2,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
+ const nearMat=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:1});
  nearMat.envMapIntensity=0.7;nearMat.alphaToCoverage=true; windy(nearMat,0.32);
  const flMat=new THREE.MeshStandardMaterial({map:flowerTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
  flMat.envMapIntensity=0.6; windy(flMat,0.18);
- const fernMat=new THREE.MeshStandardMaterial({map:fernTex,alphaTest:0.42,side:THREE.DoubleSide,roughness:0.94});
+ const fernMat=new THREE.MeshStandardMaterial({map:texLoad('assets/textures/realism/foliage_branch_rgba.png',1),alphaTest:0.42,side:THREE.DoubleSide,roughness:0.94});
  fernMat.envMapIntensity=0.55; windy(fernMat,0.13);
  const reedMat=new THREE.MeshStandardMaterial({map:reedTex,alphaTest:0.42,side:THREE.DoubleSide,roughness:0.92});
  reedMat.envMapIntensity=0.5; windy(reedMat,0.26);
  const rockMat=new THREE.MeshStandardMaterial({roughness:0.95,metalness:0});
  const NG_FR=quality==='low'?2:4, NG_RK=quality==='low'?2:3, NG_RD=2;
- const near=new THREE.InstancedMesh(crossGeo(0.31,0.55),nearMat,NG_W*NG_W*NG_K);
+ const near=new THREE.InstancedMesh(createGrassTuftGeometry(THREE),nearMat,NG_W*NG_W*NG_K);
  const flow=new THREE.InstancedMesh(crossGeo(0.24,0.40),flMat,NG_W*NG_W*NG_F);
  const fern=new THREE.InstancedMesh(crossGeo(0.46,0.62),fernMat,NG_W*NG_W*NG_FR);
  const reed=new THREE.InstancedMesh(crossGeo(0.30,1.15),reedMat,NG_W*NG_W*NG_RD);
@@ -2397,10 +2406,10 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(pathDist(x,z)<PATH_W*0.55)return false;               // nor on the road
   return true;};
  const CLUT={
-  meadow:{fern:'#66b04e',rock:'#8c8a82',p:0.85,sz:0.95},
+  meadow:{fern:'#b0bca0',rock:'#8c8a82',p:0.85,sz:0.95},
   desert:{fern:'#d8bb72',rock:'#a8794a',p:0.80,sz:1.35},   // dry scrub, and plenty of it
   snow  :{fern:'#a4b0a2',rock:'#8e969d',p:0.62,sz:1.05},   // dead tufts showing through the crust
-  water :{fern:'#79b855',rock:'#7e8a86',p:0.90,sz:1.0},
+  water :{fern:'#a4b392',rock:'#7e8a86',p:0.90,sz:1.0},
  };
  const FLC=[new THREE.Color('#ffffff'),new THREE.Color('#fff1a8'),new THREE.Color('#f7b7d2'),new THREE.Color('#cdb8f2'),new THREE.Color('#ffffff')];
  let cx0=1e9,cz0=1e9;
@@ -2412,7 +2421,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    if(!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);near.setMatrixAt(id,m4);continue;}
    const sz=0.7+h3*0.75; e.set(0,h4*Math.PI,(h3-0.5)*0.12); q.setFromEuler(e); sc.set(sz,sz*(0.8+h1*0.5),sz);
    v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc); near.setMatrixAt(id,m4);
-   bcol.setHSL(0.19+h2*0.04,0.16+h3*0.14,0.70+h4*0.16); near.setColorAt(id,bcol);
+   bcol.setHSL(0.21+h2*0.035,0.42+h3*0.12,0.085+h4*0.065); near.setColorAt(id,bcol);
   }
   for(let k=0;k<NG_F;k++){
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
@@ -2578,7 +2587,7 @@ function mergeStatics(){
    if(!o.isMesh||o.isSkinnedMesh||o.isInstancedMesh||Array.isArray(o.material))return;
    const geo=o.geometry; if(!geo.index||!geo.attributes.normal||!geo.attributes.uv)return;
    const c=geo.clone().applyMatrix4(o.matrixWorld);
-   for(const k of Object.keys(c.attributes))if(k!=='position'&&k!=='normal'&&k!=='uv')c.deleteAttribute(k);
+   for(const k of Object.keys(c.attributes))if(k!=='position'&&k!=='normal'&&k!=='uv'&&!(k==='color'&&o.material.vertexColors))c.deleteAttribute(k);
    const e=byMat.get(o.material)||{list:[],cast:false,recv:false};
    e.list.push(c); e.cast=e.cast||o.castShadow; e.recv=e.recv||o.receiveShadow; byMat.set(o.material,e); meshes++;
   });
@@ -2989,33 +2998,15 @@ function leatherMat(hex){
 /* ================= scenery ================= */
 // Original continuous ridges, beyond the playable valley.
 installBackdrop({THREE,scene});
+loadFoliageAtlas({THREE,url:'assets/textures/realism/foliage_branch_rgba.png'});
+loadFoliageAtlas({THREE,url:'assets/textures/realism/foliage_needle_rgba.png',species:['pine','snowpine']});
 /* Far forest. The distant hills were bare green: the real trees thin out with distance and
    the terrain colour is flat, so every ridge read as a smooth dome. This is a field of
    tree-cluster billboards (two crossed quads each) sown on the far hills, wherever the ground
    is meadow, tinted per instance, swaying a little, and scaled away within a hundred units of
    the rider so they are never seen up close: near the rider the real trees do the work. */
-const farTreeTex=canvasTex(256,256,(c,w,h)=>{
- c.clearRect(0,0,w,h);
- const tr=[[70,150,58],[128,120,72],[186,150,56],[100,190,46],[160,196,44]];
- for(const [x,y,r] of tr){
-  c.fillStyle='#4a3520';c.fillRect(x-5,y,10,h-y);
-  const g=c.createRadialGradient(x-r*0.3,y-r*0.3,r*0.15,x,y,r);
-  g.addColorStop(0,'#7fb35a');g.addColorStop(0.6,'#4f8a3c');g.addColorStop(1,'#2f5a28');
-  c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();
- }
-});
-const farPineTex=canvasTex(256,256,(c,w,h)=>{
- c.clearRect(0,0,w,h);
- const tr=[[60,236,52,150],[128,244,64,210],[196,236,50,160],[96,248,40,120],[164,250,44,130]];
- for(const [x,base,hw,ht] of tr){
-  c.fillStyle='#3a2a18';c.fillRect(x-4,base-ht*0.25,8,ht*0.25+6);
-  const g=c.createLinearGradient(x-hw,0,x+hw,0);
-  g.addColorStop(0,'#1f4a26');g.addColorStop(0.45,'#3f7a3a');g.addColorStop(1,'#1d3d22');
-  c.fillStyle=g;
-  for(let t=0;t<3;t++){const y0=base-ht*(0.25+t*0.25), yh=ht*0.42, ww=hw*(1-t*0.28);
-   c.beginPath();c.moveTo(x-ww,y0);c.lineTo(x,y0-yh);c.lineTo(x+ww,y0);c.closePath();c.fill();}
- }
-});
+const farTreeTex=createForestImpostor({THREE,renderer,species:'oak'});
+const farPineTex=createForestImpostor({THREE,renderer,species:'pine'});
 let farForest=null;
 {
  const N=quality==='low'?1400:2600;
@@ -3063,10 +3054,9 @@ let farForest=null;
   const im=wantPine?pines:leafy; const k=wantPine?kp:kl;
   if(k>=im.count)continue;
   const sz=wantPine?8+Math.random()*10:5+Math.random()*9;   // tall pines, mixed leafy heights: no hedge line
-  e.set(0,Math.random()*Math.PI,0); q.setFromEuler(e); sc.set(sz*(wantPine?0.55:0.9)*(0.85+Math.random()*0.4),sz,sz*(wantPine?0.55:0.9)*(0.85+Math.random()*0.4));
+  e.set(0,Math.random()*Math.PI,0); q.setFromEuler(e); sc.set(sz*.9*(0.85+Math.random()*0.4),sz,sz*.9*(0.85+Math.random()*0.4));
   v.set(x,y-0.3,z); m4.compose(v,q,sc); im.setMatrixAt(k,m4);
-  if(wantPine)col.setHSL(0.30+Math.random()*0.06,0.28+Math.random()*0.2,0.22+Math.random()*0.14);
-  else col.setHSL(0.22+Math.random()*0.10,0.30+Math.random()*0.25,0.26+Math.random()*0.20);
+  col.setHSL(.22+Math.random()*.03,.03+Math.random()*.07,.79+Math.random()*.14);
   im.setColorAt(k,col);
   if(wantPine)kp++; else kl++;
  }
@@ -3477,76 +3467,13 @@ function placeSeedTrees(){
  return insts;
 }
 function makePine(s){
- const t=new THREE.Group();
- tube(0.14,0.24,1.5,barkMat,0,0.75,0,t);
- const core=new THREE.Mesh(new THREE.ConeGeometry(0.85,3.4,8),smat('#3a7034'));
- core.position.y=2.9;core.castShadow=true;t.add(core);
- const frond=new THREE.PlaneGeometry(1.5,1.1);
- for(let tier=0;tier<3;tier++){
-  const ty=1.7+tier*1.0,tr=1.5-tier*0.36;
-  for(let j=0;j<4;j++){
-   const a=j/4*Math.PI*2+tier*0.8;
-   const pl=new THREE.Mesh(frond,pineMat);
-   pl.position.set(Math.cos(a)*tr*0.55,ty,Math.sin(a)*tr*0.55);
-   pl.rotation.y=-a+Math.PI/2;
-   pl.rotation.x=0.5;
-   pl.scale.setScalar(tr/1.5);
-   t.add(pl);
-  }
- }
- t.scale.setScalar(s);
- return t;
+ return makeNaturalPine({THREE,scale:s,seed:(Math.random()*65536)|0});
 }
 function makeLeafy(s){
- const t=new THREE.Group();
- const trunk=tube(0.16,0.32,1.9,barkMat,0,0.95,0,t);
- trunk.rotation.z=(Math.random()-0.5)*0.15;
- for(let b=0;b<3;b++){
-  const br=tube(0.05,0.09,1.1,barkMat,0,0,0,t);
-  br.position.set((Math.random()-0.5)*0.3,1.95,(Math.random()-0.5)*0.3);
-  br.rotation.z=(b-1)*0.7+(Math.random()-0.5)*0.2;
-  br.rotation.y=b*2.1;
- }
- const lm=leafMats[Math.floor(Math.random()*leafMats.length)];
- blob(1.05,0.85,1.05,'#4f8a3f',0,2.75,0,t);
- blob(0.7,0.6,0.7,'#447a36',0.5,2.4,0.3,t);
- const cardGeo=new THREE.PlaneGeometry(1.7,1.5);
- for(let j=0;j<9;j++){
-  const th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);
-  const px=Math.sin(ph)*Math.cos(th)*1.25;
-  const py=2.75+Math.cos(ph)*1.0;
-  const pz=Math.sin(ph)*Math.sin(th)*1.25;
-  const pl=new THREE.Mesh(cardGeo,lm);
-  pl.position.set(px,py,pz);
-  pl.lookAt(px*2,py+(py-2.75)*1.5,pz*2);
-  pl.rotateZ(Math.random()*Math.PI);
-  if(j<4)pl.castShadow=true;
-  t.add(pl);
- }
- t.scale.setScalar(s);
- return t;
+ return makeNaturalTree({THREE,scale:s,seed:(Math.random()*65536)|0,species:'oak'});
 }
 function makeBirch(s){
- const t=new THREE.Group();
- const trunk=tube(0.09,0.13,2.6,birchMat,0,1.3,0,t);
- trunk.rotation.z=(Math.random()-0.5)*0.12;
- const lm=leafMats[Math.floor(Math.random()*leafMats.length)];
- blob(0.8,0.65,0.8,'#6cae5d',0,3.1,0,t);
- const cardG=new THREE.PlaneGeometry(1.4,1.2);
- for(let j=0;j<7;j++){
-  const th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);
-  const px=Math.sin(ph)*Math.cos(th)*0.95;
-  const py=3.1+Math.cos(ph)*0.75;
-  const pz=Math.sin(ph)*Math.sin(th)*0.95;
-  const pl=new THREE.Mesh(cardG,lm);
-  pl.position.set(px,py,pz);
-  pl.lookAt(px*2,py+(py-3.1)*1.5,pz*2);
-  pl.rotateZ(Math.random()*3);
-  if(j<3)pl.castShadow=true;
-  t.add(pl);
- }
- t.scale.setScalar(s);
- return t;
+ return makeNaturalTree({THREE,scale:s,seed:(Math.random()*65536)|0,species:'birch'});
 }
 /* Generated 3D foliage — assign each scatter position a species and instance each
    textured model. The procedural treeline / forest-ring / meadow remain as backdrop. */
@@ -3626,7 +3553,7 @@ function placeFoliage(name){
    p.set(tp.x,groundH(tp.x,tp.z)-minY*s-0.06*FOLIAGE_H[name]*tp.s,tp.z);   // sunk into the ground, not resting on the analytic curve
    sc.set(s,s,s); m.compose(p,q,sc); inst.setMatrixAt(i,m);
   });
-  inst.instanceMatrix.needsUpdate=true; scene.add(inst);
+  inst.instanceMatrix.needsUpdate=true; if(name!=='bush'&&name!=='flowerbush'&&name!=='boulder')scene.add(inst);
   console.log('placed',list.length,'generated',name);
   if(typeof rebuildDecor==='function')rebuildDecor();   // decor made of this prop can appear now
  },undefined,e=>console.warn(name+' load failed',e));
@@ -3641,6 +3568,12 @@ function placeFoliage(name){
  const pollRig=setInterval(()=>{ if(RIG.ready){clearInterval(pollRig);startFoliage();} },200);
  setTimeout(()=>{clearInterval(pollRig);startFoliage();},7000);
 }
+FOLIAGE.boulder.forEach((p,i)=>{
+ const rock=geology.makeBoulder(p.s*.9,i+2501);rock.position.set(p.x,terrainH(p.x,p.z)-.06,p.z);
+ rock.rotation.y=p.r;scene.add(rock);
+});
+plantNaturalShrubs({THREE,scene,placements:FOLIAGE.bush,groundH});
+plantNaturalShrubs({THREE,scene,placements:FOLIAGE.flowerbush,groundH,flowering:true});
 terrainSurface.setTrees([].concat(FOLIAGE.oak,FOLIAGE.birch,FOLIAGE.blossom,FOLIAGE.pine,FOLIAGE.snowpine));
 seedTreeInsts=placeSeedTrees();                                    // trees are Weber–Penn generated
 seedTreeInsts.forEach(m=>{m.userData.fullCount=m.count;if(quality==='low')m.count=Math.ceil(m.userData.fullCount*0.55);});
@@ -3655,16 +3588,8 @@ for(let i=0;i<26;i++){
 }
 // lavender bushes along the fence
 function lavender(x,z){
- const b=new THREE.Group();
- blob(0.5,0.32,0.5,'#4f7a3f',0,0.25,0,b);
- for(let i=0;i<7;i++){
-  const a=i/7*Math.PI*2;
-  const sp=tube(0.025,0.04,0.5,'#6f5fb5',Math.cos(a)*0.28,0.6,Math.sin(a)*0.28,b);
-  sp.rotation.z=(Math.random()-0.5)*0.3;
-  blob(0.07,0.16,0.07,'#8a6fd1',Math.cos(a)*0.3,0.85,Math.sin(a)*0.3,b);
- }
- b.position.set(x,groundH(x,z),z);
- scene.add(b); STATIC_MERGE.push(b);
+ const b=makeNaturalShrub({THREE,scale:.48,seed:Math.abs((x*17+z*3)|0),flowering:true});
+ b.position.set(x,groundH(x,z),z);scene.add(b);STATIC_MERGE.push(b);
 }
 for(let i=0;i<6;i++)lavender(-19+i*7.5,21.4);
 lavender(-12,-17.5);lavender(-20.5,-17.5);
@@ -3775,21 +3700,8 @@ let waterMat=null;   // hoisted: the pond reuses it
 
  // reeds along the banks
  const reedMat=new THREE.MeshStandardMaterial({color:0x8aa84e,roughness:1});
- const reeds=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.018,0.03,0.95,5),reedMat,220);
  const m4r=new THREE.Matrix4(),er=new THREE.Euler(),qr=new THREE.Quaternion(),vr=new THREE.Vector3(),sr=new THREE.Vector3();
- for(let i=0;i<220;i++){
-  const x=-320+Math.random()*640;
-  const side=Math.random()<0.5?-1:1;
-  const z=riverZ(x)+side*(4.8+Math.random()*2.4);
-  er.set((Math.random()-0.5)*0.2,Math.random()*3,(Math.random()-0.5)*0.2);
-  qr.setFromEuler(er);
-  const s=0.7+Math.random()*0.7;
-  sr.set(s,s,s);
-  vr.set(x,groundH(x,z)+0.4*s,z);
-  m4r.compose(vr,qr,sr);
-  reeds.setMatrixAt(i,m4r);
- }
- scene.add(reeds);
+ installRiparian({THREE,scene,terrainH,riverZ,riverLevel,pathDist});
  const brookReeds=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.018,0.03,0.95,5),reedMat,80);
  for(let i=0;i<80;i++){
   const z=-320+Math.random()*470;
@@ -3804,14 +3716,6 @@ let waterMat=null;   // hoisted: the pond reuses it
   brookReeds.setMatrixAt(i,m4r);
  }
  scene.add(brookReeds);
- for(let i=0;i<40;i++){
-  const x=-300+Math.random()*600;
-  const side=Math.random()<0.5?-1:1;
-  const z=riverZ(x)+side*(4.9+Math.random()*2);
-  const tip=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.045,0.22,6),smat('#6b4a2e'));
-  tip.position.set(x,groundH(x,z)+0.95,z);
-  scene.add(tip);
- }
  /* ===== Hollowpeak Falls =====
     Every landscape needs one thing you ride out to see. A curved rock amphitheatre stands
     in the snowfield with a notch cut in its lip; water pours through the notch, falls
@@ -3821,42 +3725,8 @@ let waterMat=null;   // hoisted: the pond reuses it
  {
   const FX=-150, FZ=-240, WID=17, HGT=15, SEG=26, ROWS=8;
   const lip=groundH(FX,FZ)+HGT, foot=groundH(FX,FZ+11);
-  const rockTex=canvasTex(256,256,(c,w,h)=>{
-   c.fillStyle='#6d7480'; c.fillRect(0,0,w,h);
-   for(let i=0;i<420;i++){ c.fillStyle=['#5c626d','#7d8592','#525862','#8b93a0'][i&3]; c.globalAlpha=0.5;
-    const bw=6+Math.random()*30, bh=4+Math.random()*14;
-    c.fillRect(Math.random()*w,Math.random()*h,bw,bh); }
-   c.globalAlpha=0.35;                                            // strata, running across
-   for(let i=0;i<26;i++){ c.fillStyle=i%2?'#474d57':'#98a1ae'; c.fillRect(0,Math.random()*h,w,1+Math.random()*3); }
-   c.globalAlpha=1;
-  },1);
-  rockTex.wrapS=rockTex.wrapT=THREE.RepeatWrapping; rockTex.repeat.set(3,2.4);
-  const rockMatF=new THREE.MeshStandardMaterial({map:rockTex,roughness:0.95,metalness:0,flatShading:true,
-   vertexColors:true,side:THREE.DoubleSide});
-  const boulderMat=new THREE.MeshStandardMaterial({map:rockTex,roughness:0.95,metalness:0,flatShading:true,color:0xc6cedb});
-  /* the cliff: a concave sweep with a notch in the middle of its lip */
-  const cp=[],cc=[],ci=[]; const snow=new THREE.Color('#f4faff'), stone=new THREE.Color('#d3dae6');
-  const notch=u=>Math.max(0,1-Math.pow(Math.abs(u)/0.20,2))*2.0;
-  for(let r=0;r<=ROWS;r++){ const v=r/ROWS;
-   for(let j=0;j<=SEG;j++){ const u=j/SEG*2-1;
-    const bulge=Math.pow(Math.abs(u),2.1)*6.4;                    // wings sweep toward the viewer
-    const jag=Math.sin(u*17+r)*0.35+Math.sin(u*41)*0.16;
-    const x=FX+u*WID, z=FZ+bulge+jag*0.5;
-    const y=foot-1.2+(lip-foot+1.2)*v - notch(u)*v*v + jag*v;
-    cp.push(x,y,z);
-    const cl=stone.clone().lerp(snow,v>0.80?(v-0.80)/0.20*0.95:0).lerp(new THREE.Color('#6b7embed'.slice(0,7)),(1-v)*0.22);
-    cc.push(cl.r,cl.g,cl.b);
-   }}
-  for(let r=0;r<ROWS;r++)for(let j=0;j<SEG;j++){
-   const a=r*(SEG+1)+j, b=a+SEG+1;
-   ci.push(a,b,a+1, a+1,b,b+1);
-  }
-  const cg=new THREE.BufferGeometry();
-  cg.setAttribute('position',new THREE.Float32BufferAttribute(cp,3));
-  cg.setAttribute('color',new THREE.Float32BufferAttribute(cc,3));
-  cg.setAttribute('uv',new THREE.Float32BufferAttribute((()=>{const u=[];for(let r=0;r<=ROWS;r++)for(let j=0;j<=SEG;j++)u.push(j/SEG*3,r/ROWS*2.4);return u;})(),2));
-  cg.setIndex(ci); cg.computeVertexNormals();
-  const cliff=new THREE.Mesh(cg,rockMatF); cliff.castShadow=true; cliff.receiveShadow=true; scene.add(cliff);
+  const cliff=geology.makeWaterfallCliff({width:WID*2,lip,foot,seed:9031});
+  cliff.position.set(FX,foot,FZ);scene.add(cliff);
   for(let j=0;j<=SEG;j+=2){ const u=j/SEG*2-1;                    // solid to ride into
    colliders.push({x:FX+u*WID,z:FZ+Math.pow(Math.abs(u),2.1)*6.4,r:1.6}); }
   /* the falling water: a sheet through the notch, its texture scrolling down */
@@ -3865,23 +3735,61 @@ let waterMat=null;   // hoisted: the pond reuses it
   const fallMat=new THREE.MeshStandardMaterial({map:fallTex,color:0xdff2ff,roughness:0.16,metalness:0.05,
    transparent:true,opacity:0.9,side:THREE.DoubleSide,emissive:0x8fc4e8,emissiveIntensity:0.22});
   waterAnims.push({tex:fallTex,sx:0.0,sy:-1.35});
-  {const fp=[],fi=[],fu=[], FS=11, FW=2.9;
-   for(let r=0;r<=FS;r++){ const v=r/FS;
-    for(let j=0;j<=4;j++){ const u=j/4*2-1;
-     const spread=1+v*0.40;
-     fp.push(FX+u*FW*spread, lip-0.7-(lip-foot-0.5)*v, FZ+0.45+v*v*2.4);
-     fu.push(j/4,v);
+  /* The water was one flat sheet five vertices wide — a pane of glass leaning on the cliff,
+     which from any angle but dead ahead is exactly what it looked like. Falling water has
+     a front and a back: it leaves the lip as a rounded tongue, thins and widens as it
+     drops, and breaks up before it lands. This is a closed volume with a real cross
+     section, so it has an edge you can see from the side. */
+  {const FS=16, FJ=9, FW=2.9;
+   const fp=[],fi=[],fu=[];
+   /* half a rounded cross-section at each height: how far the water stands off the rock */
+   const ring=(v)=>{
+    const spread=1+v*0.52;                       // widens as it falls
+    const thick=(0.62-0.34*v)*(1+0.5*Math.sin(v*7.0));   // and thins, unevenly
+    return {w:FW*spread, t:Math.max(0.10,thick)};
+   };
+   for(let r=0;r<=FS;r++){ const v=r/FS, R=ring(v);
+    const y=lip-0.55-(lip-foot-0.35)*Math.pow(v,1.06);
+    const z0=FZ+0.40+v*v*2.6;                    // the arc away from the cliff face
+    for(let j=0;j<=FJ;j++){
+     /* all the way round: the front face bulges out, the back hugs the rock */
+     const a=j/FJ*Math.PI*2, cu=Math.cos(a), su=Math.sin(a);
+     const wob=1+0.10*Math.sin(a*3+v*9.0);
+     fp.push(FX+cu*R.w*wob, y+su*R.t*0.30, z0+su*R.t);
+     fu.push(j/FJ*1.6, v*2.4);
     }}
-   for(let r=0;r<FS;r++)for(let j=0;j<4;j++){const a=r*5+j,b=a+5; fi.push(a,b,a+1,a+1,b,b+1);}
+   for(let r=0;r<FS;r++)for(let j=0;j<FJ;j++){
+    const a=r*(FJ+1)+j, b=a+FJ+1;
+    fi.push(a,b,a+1, a+1,b,b+1);
+   }
    const fg=new THREE.BufferGeometry();
    fg.setAttribute('position',new THREE.Float32BufferAttribute(fp,3));
    fg.setAttribute('uv',new THREE.Float32BufferAttribute(fu,2));
    fg.setIndex(fi); fg.computeVertexNormals();
-   const fall=new THREE.Mesh(fg,fallMat); fall.renderOrder=2; scene.add(fall);
+   const fall=new THREE.Mesh(fg,fallMat); fall.renderOrder=2; fall.frustumCulled=false; scene.add(fall);
+   /* the tongue over the lip: a rounded roll of water, not a cylinder stuck on the edge */
    const lipMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.3,transparent:true,opacity:0.85,
     emissive:0xcfe8ff,emissiveIntensity:0.3,side:THREE.DoubleSide});
-   const crest=new THREE.Mesh(new THREE.CylinderGeometry(0.42,0.42,FW*2.05,10,1,true,0,Math.PI),lipMat);
-   crest.rotation.set(0,0,Math.PI/2); crest.position.set(FX,lip-0.45,FZ+0.42); scene.add(crest);}
+   const crest=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.46,FW*2.05,14,1,true),lipMat);
+   crest.rotation.set(0,0,Math.PI/2); crest.position.set(FX,lip-0.42,FZ+0.50); scene.add(crest);
+   /* Falling water throws water. These are the strands that break off the sheet: thin
+      cards that fall, fade and start again, so the drop reads as moving volume rather
+      than a scrolling texture on a plane. */
+   const DN=90;
+   const dropTex=canvasTex(32,64,(c,w,h)=>{ c.clearRect(0,0,w,h);
+    const g3=c.createLinearGradient(0,0,0,h);
+    g3.addColorStop(0,'rgba(255,255,255,0)'); g3.addColorStop(0.35,'rgba(233,248,255,0.85)');
+    g3.addColorStop(0.75,'rgba(210,240,255,0.55)'); g3.addColorStop(1,'rgba(255,255,255,0)');
+    c.fillStyle=g3; c.fillRect(w*0.30,0,w*0.40,h); });
+   const drops=new THREE.InstancedMesh(new THREE.PlaneGeometry(0.16,1.5),
+    new THREE.MeshBasicMaterial({map:dropTex,transparent:true,opacity:0.62,depthWrite:false,
+     side:THREE.DoubleSide,blending:THREE.AdditiveBlending}),DN);
+   drops.frustumCulled=false; drops.renderOrder=3; scene.add(drops);
+   FALLS.drops=drops; FALLS.dn=DN; FALLS.dst=new Float32Array(DN*3);   // x offset, life, speed
+   for(let i=0;i<DN;i++){ FALLS.dst[i*3]=(Math.random()*2-1)*FW*1.15;
+    FALLS.dst[i*3+1]=Math.random(); FALLS.dst[i*3+2]=0.55+Math.random()*0.75; }
+   FALLS.fw=FW;
+  }
   /* the plunge pool, and a ring of foam where the water lands */
   {const poolTex=waterShimTex.clone(); poolTex.needsUpdate=true;
    poolTex.wrapS=poolTex.wrapT=THREE.RepeatWrapping; poolTex.repeat.set(3,3);
@@ -3901,8 +3809,8 @@ let waterMat=null;   // hoisted: the pond reuses it
    for(let i=0;i<16;i++){                                          // boulders round the pool
     const a=Math.random()*Math.PI*2, rr=6.4+Math.random()*3.2;
     const bx=FX+Math.cos(a)*rr, bz=FZ+7.6+Math.sin(a)*rr*0.8, sz=0.5+Math.random()*1.5;
-    const b=new THREE.Mesh(new THREE.IcosahedronGeometry(sz,0),boulderMat);
-    b.position.set(bx,groundH(bx,bz)+sz*0.3,bz); b.rotation.set(Math.random()*3,Math.random()*3,Math.random()*3);
+    const b=geology.makeBoulder(sz,i+9431);
+    b.position.set(bx,groundH(bx,bz)-.06,bz); b.rotation.y=Math.random()*Math.PI*2;
     b.castShadow=true; scene.add(b); if(sz>1)colliders.push({x:bx,z:bz,r:sz*0.8});
    }}
   /* mist, drifting up the face */
@@ -3918,78 +3826,22 @@ let waterMat=null;   // hoisted: the pond reuses it
    for(let i=0;i<MN;i++)FALLS.st[i*4+3]=Math.random();
   }
  }
- /* ===== Coyote Canyon's rocks =====
-    Star Equestrian's Bronco is "rocky canyons, desert foliage and a few oases"; ours was
-    sand with cacti on it. These are the formations that make a desert read as one: mesas
-    with flat tops and layered strata, and hoodoos — thin spires wearing a caprock, which is
-    what happens when a hard layer protects the soft rock under it. Every one is built into
-    a single merged mesh, so the whole skyline of the canyon is one draw call. */
+ /* Sedimentary mesas and weathered spires with grounded talus skirts. */
  {
-  const CX=CANYON.x, CZ=CANYON.z;
-  let sd=20260906;
-  const rnd=()=>{ sd=(Math.imul(sd^(sd>>>15),2246822507)^Math.imul(sd^(sd>>>13),3266489909))>>>0; return sd/4294967295; };
-  const P=[],C=[],I=[];
-  const BANDS=[new THREE.Color('#a8563a'),new THREE.Color('#c87d4e'),new THREE.Color('#8f4530'),
-               new THREE.Color('#dda877'),new THREE.Color('#b56744')];
-  const bandAt=y=>BANDS[Math.floor(Math.abs(y)*0.55+0.5)%BANDS.length];
-  /* a stack of rings: radii and heights come in, a closed solid goes out */
-  const stack=(cx,cz,base,rings)=>{
-   const SIDES=9; let prev=null;
-   for(const [ry,rr,rough] of rings){
-    const ring=[];
-    for(let j=0;j<SIDES;j++){
-     const a=j/SIDES*Math.PI*2;
-     const w=rr*(1+(rnd()-0.5)*rough);
-     const x=cx+Math.cos(a)*w, z=cz+Math.sin(a)*w, y=base+ry;
-     P.push(x,y,z);
-     const col=bandAt(ry).clone().offsetHSL(0,0,(rnd()-0.5)*0.06);
-     C.push(col.r,col.g,col.b);
-     ring.push(P.length/3-1);
-    }
-    if(prev)for(let j=0;j<SIDES;j++){const k=(j+1)%SIDES; I.push(prev[j],ring[j],prev[k], ring[j],ring[k],prev[k]);}
-    prev=ring;
+  let seed=20260906;
+  const rnd=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+  for(const kind of ['mesa','hoodoo']){
+   let placed=0;const count=kind==='mesa'?13:26;
+   for(let i=0;i<320&&placed<count;i++){
+    const a=rnd()*Math.PI*2,rr=24+rnd()*108,x=CANYON.x+Math.cos(a)*rr,z=CANYON.z+Math.sin(a)*rr;
+    const radius=kind==='mesa'?7+rnd()*9:.9+rnd()*1.5;
+    if(Math.hypot(x-CANYON.x,z-CANYON.z)<18||pathDist(x,z)<radius+4||Math.abs(z-riverZ(x))<radius*1.3+9)continue;
+    const height=kind==='mesa'?11+rnd()*17:4.5+rnd()*8.5;
+    if(kind==='mesa')geology.placeMesa(x,z,radius,height,i+1107);
+    else geology.placeHoodoo(x,z,radius,height,i+3527);
+    colliders.push({x,z,r:radius*.95});placed++;
    }
-   const top=rings[rings.length-1];                                  // cap it
-   P.push(cx,base+top[0],cz); const cap=bandAt(top[0]);
-   C.push(cap.r*1.08,cap.g*1.08,cap.b*1.08);
-   const ci=P.length/3-1;
-   for(let j=0;j<9;j++)I.push(prev[j],prev[(j+1)%9],ci);
-  };
-  const okRock=(x,z)=>{
-   if(Math.hypot(x-CX,z-CZ)>CANYON.r*0.92)return false;
-   if(Math.hypot(x-CX,z-CZ)<16)return false;                         // leave the arrival point clear
-   if(pathDist(x,z)<9)return false;
-   return true;
-  };
-  let mesas=0,hoodoos=0;
-  for(let i=0;i<160&&mesas<13;i++){                                  // mesas: flat-topped, banded
-   const a=rnd()*Math.PI*2, rr=24+rnd()*108;
-   const x=CX+Math.cos(a)*rr, z=CZ+Math.sin(a)*rr;
-   if(!okRock(x,z))continue;
-   const h=11+rnd()*17, rad=7+rnd()*9, base=groundH(x,z)-1.5;
-   stack(x,z,base,[[0,rad*1.12,0.16],[h*0.16,rad,0.13],[h*0.42,rad*0.93,0.11],
-                   [h*0.72,rad*0.86,0.10],[h*0.93,rad*0.82,0.07],[h,rad*0.79,0.04]]);
-   colliders.push({x,z,r:rad*0.95});
-   mesas++;
   }
-  for(let i=0;i<300&&hoodoos<26;i++){                                // hoodoos: a spire under a caprock
-   const a=rnd()*Math.PI*2, rr=20+rnd()*115;
-   const x=CX+Math.cos(a)*rr, z=CZ+Math.sin(a)*rr;
-   if(!okRock(x,z))continue;
-   const h=4.5+rnd()*8.5, rad=0.9+rnd()*1.5, base=groundH(x,z)-0.8;
-   stack(x,z,base,[[0,rad*1.25,0.2],[h*0.28,rad*0.72,0.2],[h*0.55,rad*0.58,0.22],
-                   [h*0.78,rad*0.66,0.2],[h*0.9,rad*1.35,0.12],[h,rad*1.12,0.1]]);
-   colliders.push({x,z,r:rad*1.3});
-   hoodoos++;
-  }
-  const rg2=new THREE.BufferGeometry();
-  rg2.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
-  rg2.setAttribute('color',new THREE.Float32BufferAttribute(C,3));
-  rg2.setIndex(I); rg2.computeVertexNormals();
-  const rocks=new THREE.Mesh(rg2,new THREE.MeshStandardMaterial({vertexColors:true,roughness:0.97,
-   metalness:0,flatShading:true}));
-  rocks.castShadow=true; rocks.receiveShadow=true; scene.add(rocks);
-  console.log('canyon:',mesas,'mesas,',hoodoos,'hoodoos,',Math.round(I.length/3),'tris');
  }
  /* ===== Dawn mist, and dust in the light =====
     Two cheap things that do more for a landscape than any amount of geometry. Mist gathers
@@ -4063,14 +3915,14 @@ let waterMat=null;   // hoisted: the pond reuses it
   });
   foamT.wrapS=THREE.RepeatWrapping; foamT.repeat.set(90,1);
   waterAnims.push({tex:foamT,sx:0.02,sy:0});
-  const foamMat=new THREE.MeshBasicMaterial({map:foamT,transparent:true,opacity:0.5,depthWrite:false,
+  const foamMat=new THREE.MeshBasicMaterial({map:foamT,transparent:true,opacity:0.12,depthWrite:false,
    side:THREE.DoubleSide});
   {const fa=[],fb=[];                                          // both banks of the river
    for(const sgn of[-1,1]){
     fa.length=0; fb.length=0;
     for(let x=-340;x<=340;x+=3){
-     const zc=riverZ(x), y=rawH(x,zc)+0.60;
-     fa.push([x,y,zc+sgn*4.05]); fb.push([x,y,zc+sgn*5.05]);
+     const zc=riverZ(x), y=riverLevel(x)+0.012;
+     fa.push([x,y,zc+sgn*3.95]); fb.push([x,y,zc+sgn*4.25]);
     }
     const m=stripMesh(fa,fb,foamMat); m.castShadow=false; m.renderOrder=2; scene.add(m);
    }}
@@ -4078,12 +3930,12 @@ let waterMat=null;   // hoisted: the pond reuses it
    pondFoam.rotation.x=-Math.PI/2; pondFoam.position.set(20,groundH(20,16)+0.62,16);
    pondFoam.renderOrder=2; scene.add(pondFoam);}
   /* lily pads: discs with a notch, a few carrying a flower */
-  {const padGeo=new THREE.CircleGeometry(0.42,12,0.42,Math.PI*2-0.84);
+  {const padGeo=new THREE.CircleGeometry(0.19,24,0.18,Math.PI*2-0.36);
    const padMat=new THREE.MeshStandardMaterial({color:0x3f7a3a,roughness:0.72,metalness:0,
     side:THREE.DoubleSide});
    const PADS=54, pads=new THREE.InstancedMesh(padGeo,padMat,PADS);
    const flMatL=new THREE.MeshStandardMaterial({color:0xffd9ea,roughness:0.6,emissive:0x6b2740,emissiveIntensity:0.06});
-   const flG=new THREE.SphereGeometry(0.1,7,6);
+   const flG=new THREE.SphereGeometry(0.055,8,6);
    const flowers=new THREE.InstancedMesh(flG,flMatL,14);
    const mp=new THREE.Matrix4(),vp2=new THREE.Vector3(),qp=new THREE.Quaternion(),sp2=new THREE.Vector3(),ep=new THREE.Euler();
    const pc=new THREE.Color(); let fi=0;
@@ -4165,76 +4017,12 @@ let waterMat=null;   // hoisted: the pond reuses it
  scene.add(wheat);
 }
 /* ================= the four zones of Kestrel Basin ================= */
-/* Mesas were using grainTex, which draws VERTICAL streaks — it is the plank/wood-grain
-   texture. On a cylinder that reads as a moulded plastic drum, because the one thing
-   that says "mesa" is horizontal sedimentary banding: layers laid down over time and
-   then cut through. So: horizontal strata in muted desert ochres, with faint vertical
-   weathering streaks over the top where rain has run down the face. */
-function strataTex(){
- /* Keep the band tones CLOSE together. Wide tonal jumps turn a butte into a stack of
-    pancakes — the banding should be something you notice on second look, not stripes. */
- const BANDS=['#b07a5c','#a97052','#b98764','#a06849','#b3805f','#a5744f','#bc8b6a'];
- return canvasTex(128,256,(c,w,h)=>{
-  c.fillStyle='#ac7455';c.fillRect(0,0,w,h);
-  for(let y=0;y<h;){
-   const bh=1+Math.random()*9;             // thinner beds, so no one band dominates
-   c.fillStyle=BANDS[(Math.random()*BANDS.length)|0];
-   c.globalAlpha=0.18+Math.random()*0.30;  // was up to 0.95 — far too opaque
-   c.fillRect(0,y,w,bh);
-   if(Math.random()<0.18){                 // occasional harder bed, still subtle
-    c.globalAlpha=0.10;c.fillStyle='#7d4a33';
-    c.fillRect(0,y,w,1);
-   }
-   y+=bh;
-  }
-  c.globalAlpha=0.07;
-  for(let i=0;i<34;i++){                   // rain-run weathering down the face
-   c.strokeStyle='#5d3320';
-   c.lineWidth=1+Math.random()*3;
-   const x=Math.random()*w;
-   c.beginPath();c.moveTo(x,0);
-   c.quadraticCurveTo(x+(Math.random()-0.5)*5,h/2,x+(Math.random()-0.5)*4,h);
-   c.stroke();
-  }
-  c.globalAlpha=0.05;                      // break up the flat bands with grit
-  for(let i=0;i<2200;i++){
-   c.fillStyle=Math.random()<0.5?'#6b3f2a':'#d3a482';
-   c.fillRect(Math.random()*w,Math.random()*h,1,1);
-  }
-  c.globalAlpha=1;
- },1);
-}
-const redRockMat=new THREE.MeshStandardMaterial({map:strataTex(),roughness:1});
-redRockMat.map.repeat.set(3,1);   // bands run once up the face; wrap 3x around it
 for(let i=0;i<8;i++){
  const x=-160-Math.random()*130,z=80+Math.random()*110;
- if(Math.abs(z-riverZ(x))<11)continue;
  const hgt=9+Math.random()*13,rad=5+Math.random()*7;
- const geo=new THREE.CylinderGeometry(rad*0.82,rad,hgt,16,3);   // 9 sides read as a faceted drum
- const p=geo.attributes.position;
- for(let j=0;j<p.count;j++){
-  const key=Math.round((p.getX(j)+9)*17)*31+Math.round((p.getY(j)+9)*17)*7+Math.round((p.getZ(j)+9)*17);
-  const f=1+(ihash(key,i*31)-0.5)*0.22;
-  p.setX(j,p.getX(j)*f);p.setZ(j,p.getZ(j)*f);
- }
- geo.computeVertexNormals();
- const m=new THREE.Mesh(geo,redRockMat);
- m.position.set(x,groundH(x,z)+hgt*0.36,z);
- m.castShadow=true;m.receiveShadow=true;
- scene.add(m);
- /* A talus fan. Without one the cylinder looks pushed into flat sand like a peg into a
-    board; real buttes shed debris and sit in a skirt of their own rubble, and that skirt
-    is what actually sells the join. */
- const skirt=new THREE.Mesh(new THREE.ConeGeometry(rad*1.34,hgt*0.20,16,1,true),
-  new THREE.MeshStandardMaterial({color:0xc59a74,roughness:1}));   // rubble, half-way to sand
- skirt.position.set(x,groundH(x,z)+hgt*0.085,z);
- skirt.receiveShadow=true;
- scene.add(skirt);
- const top=new THREE.Mesh(new THREE.CylinderGeometry(rad*0.88,rad*0.8,0.8,16),smat('#938a5c'));
- top.position.set(x,groundH(x,z)+hgt*0.84,z);
- top.castShadow=true;top.receiveShadow=true;   // an unlit lid is what made it look pasted on
- scene.add(top);
- colliders.push({x,z,r:rad*0.95});
+ if(Math.abs(z-riverZ(x))<rad*1.3+9||pathDist(x,z)<rad+3)continue;
+ geology.placeMesa(x,z,rad,hgt,i+8234);
+ colliders.push({x,z,r:rad*.95});
 }
 for(let i=0;i<14;i++){
  const x=-150-Math.random()*130,z=70+Math.random()*120;
@@ -4248,69 +4036,6 @@ for(let i=0;i<14;i++){
  cact.position.set(x,groundH(x,z),z);
  scene.add(cact);
  colliders.push({x,z,r:0.5});
-}
-/* Coyote Canyon desert floor — terrain-hugging sand that fades into the grass */
-{
- const bSandTex=texLoad('assets/textures/ground_sand.jpg',30);   // generated tile, same repeat and wrap as the canvas it replaces
- const geo=new THREE.PlaneGeometry(360,360,144,144);   // 2.5/vertex — finer than the terrain it hugs
- geo.rotateX(-Math.PI/2);
- const pos=geo.attributes.position;
- const cols=[];
- for(let i=0;i<pos.count;i++){
-  const lx=pos.getX(i),lz=pos.getZ(i);
-  const wx=-220+lx,wz=130+lz;
-  /* A vertical offset cannot separate two surfaces that are themselves near-vertical, so on
-     the bluff faces this plane kept slicing through the terrain and the ground showed out as
-     green sawteeth. Sand does not cling to a cliff anyway: fade it out as the ground steepens,
-     which removes the intersection instead of trying to out-run it. */
-  const sl=Math.hypot(rawH(wx+2,wz)-rawH(wx-2,wz),rawH(wx,wz+2)-rawH(wx,wz-2))/4;
-  const steep=THREE.MathUtils.smoothstep(sl,0.20,0.52);
-  pos.setY(i,rawH(wx,wz)+0.22+steep*0.9);
-  const r=Math.hypot(lx,lz);
-  cols.push(1,1,1,(1-THREE.MathUtils.smoothstep(r,96,176))*(1-steep));
- }
- geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,4));
- geo.computeVertexNormals();
- const sm=new THREE.MeshStandardMaterial({map:bSandTex,vertexColors:true,transparent:true,roughness:1,depthWrite:false});
- sm.envMapIntensity=0.52;
- const bSand=new THREE.Mesh(geo,sm);
- bSand.position.set(-220,0,130);
- bSand.receiveShadow=true;
- biomeOverlays.push(bSand);
- scene.add(bSand);
-}
-/* Hollowpeak snow blanket — same terrain-hugging treatment */
-{
- const wSnowTex=texLoad('assets/textures/ground_snow.jpg',26);   // generated tile, same repeat and wrap as the canvas it replaces
- const geo=new THREE.PlaneGeometry(330,330,132,132);   // 2.5/vertex, matching the sand
- geo.rotateX(-Math.PI/2);
- const pos=geo.attributes.position;
- const cols=[];
- for(let i=0;i<pos.count;i++){
-  const lx=pos.getX(i),lz=pos.getZ(i);
-  const wx=-160+lx,wz=-210+lz;
-  const sl=Math.hypot(rawH(wx+2,wz)-rawH(wx-2,wz),rawH(wx,wz+2)-rawH(wx,wz-2))/4;
-  const steep=THREE.MathUtils.smoothstep(sl,0.26,0.62);   // snow holds a steeper slope than sand
-  pos.setY(i,rawH(wx,wz)+0.22+steep*0.9);
-  const r=Math.hypot(lx,lz);
-  cols.push(1,1,1,(1-THREE.MathUtils.smoothstep(r,84,162))*(1-steep*0.85));
- }
- geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,4));
- geo.computeVertexNormals();
- const sm2=new THREE.MeshStandardMaterial({map:wSnowTex,vertexColors:true,transparent:true,roughness:0.8,depthWrite:false});
- sm2.envMapIntensity=0.62;
- const ws=new THREE.Mesh(geo,sm2);
- ws.position.set(-160,0,-210);
- ws.receiveShadow=true;
- biomeOverlays.push(ws);
- scene.add(ws);
-}
-for(let i=0;i<16;i++){
- const x=-100-Math.random()*130,z=-110-Math.random()*150;
- const m=new THREE.Mesh(new THREE.CircleGeometry(2.5+Math.random()*4,14),snowMat);
- m.rotation.x=-Math.PI/2;
- m.position.set(x,groundH(x,z)+0.04,z);
- scene.add(m);
 }
 for(let i=0;i<18;i++){
  const x=-95-Math.random()*130,z=-105-Math.random()*145;
@@ -4351,30 +4076,11 @@ box(1.2,1.2,1.2,hayMat,210,groundH(210,-103)+0.6,-103,scene);
 box(1.1,1.1,1.1,hayMat,212.5,groundH(212.5,-101)+0.55,-101,scene);
 /* hidden golden horseshoes — now a daily hunt; see the 'golden horseshoe hunt' section */
 /* lush dressing: distant forest ring, tree groves & meadow bushes */
-for(let i=0;i<44;i++){
- const a=i/44*Math.PI*2+Math.random()*0.12;
- const rr=360+Math.random()*120;
- const x=Math.cos(a)*rr,z=Math.sin(a)*rr;
- const m=new THREE.Mesh(SPH,smat(i%2?'#3f6e38':'#48803f'));
- m.scale.set(18+Math.random()*16,7+Math.random()*5,12+Math.random()*8);
- m.position.set(x,groundH(x,z)+2,z);
- scene.add(m);
-}
 function cheapTree(x,z,s){
- const t=new THREE.Group();
- tube(0.12,0.22,1.6,barkMat,0,0.8,0,t);
- blob(0.85,0.7,0.85,'#4f8a3f',0,2.3,0,t);
- const lm=leafMats[Math.floor(Math.random()*leafMats.length)];
- for(let j=0;j<2;j++){
-  const pl=new THREE.Mesh(new THREE.PlaneGeometry(1.9,1.6),lm);
-  pl.position.set(0,2.4,0);
-  pl.rotation.y=j*1.57+Math.random()*0.5;
-  t.add(pl);
- }
+ const t=makeNaturalTree({THREE,scale:s*.7,seed:Math.abs((x*19+z*31)|0)});
  t.position.set(x,groundH(x,z),z);
- t.scale.setScalar(s);
  scene.add(t); STATIC_MERGE.push(t);
- colliders.push({x,z,r:0.55});
+ colliders.push({x,z,r:.55});
 }
 for(let g=0;g<8;g++){
  const ga=Math.random()*Math.PI*2,grr=60+Math.random()*220;
@@ -4391,10 +4097,7 @@ for(let i=0;i<24;i++){
  const a=Math.random()*Math.PI*2,rr=30+Math.random()*250;
  const x=Math.cos(a)*rr,z=Math.sin(a)*rr;
  if((Math.abs(x)<28&&Math.abs(z)<23)||Math.abs(z-riverZ(x))<8||inCoyote(x,z)||inSnow(x,z))continue;
- const b=new THREE.Group();
- blob(0.7,0.5,0.7,'#4f8a3f',0,0.4,0,b);
- blob(0.5,0.4,0.5,'#5d9e4f',0.4,0.45,0.2,b);
- blob(0.4,0.35,0.4,'#447a36',-0.4,0.4,-0.2,b);
+ const b=makeNaturalShrub({THREE,scale:.8+Math.random()*.3,seed:i*17});
  b.position.set(x,groundH(x,z),z);
  scene.add(b); STATIC_MERGE.push(b);
 }
@@ -4409,6 +4112,7 @@ const gltfBirds=[];
 // the hand-built procedural horse (face, mane, breeds, animations) is the player.
 // The whole generated-mount experiment is preserved behind this flag.
 let USE_GEN_HORSE=true, USE_GEN_TACK=true;   // textured horse + generated saddle/rider
+const BREED_MODELS=createBreedLibrary({THREE,GLTFLoader,clone:skeletonClone});
 const RIG={ready:false,scene:null,skin:null,bones:null,attachedTo:null,phase:0,_q:null,
   legs:[],neck:[],tail:[]};
 const RIG_LEGS=[                       // 4-beat walk phasing; indices = textured-rigged horse (33 bones)
@@ -4519,9 +4223,13 @@ function hairMaterial(){
  return m;
 }
 const hairU=[];
+function breedHair(skin,bones,mount,profile,colors,tailCol,seed){
+ if(!profile||!profile.anchors)return buildHairFor(skin,bones,mount);
+ return createBreedGroom({THREE,skin,bones,mount,profile,maneColor:colors?.mane||'#332214',tailColor:tailCol||colors?.mane||'#332214',featherColor:colors?.body||'#8a5a2b',seed:seed||0});
+}
 function buildHair(){
  if(RIG.hairBuilt||!RIG.skin||!RIG.bones||!RIG.fitScale)return;
- const h=buildHairFor(RIG.skin,RIG.bones,player.mesh); RIG.hairMane=h.mane; RIG.hairTail=h.tail; RIG.hairBuilt=true; hairColour();
+ const horse=myHorses[rideIdx]; const h=breedHair(RIG.skin,RIG.bones,player.mesh,RIG.profile,horse?.colors,horse?.tailCol,horse?.id); RIG.groom=h; RIG.hairMane=h.mane; RIG.hairTail=h.tail; RIG.hairBuilt=true; hairColour();
 }
 function buildHairFor(skin,bones,mount){
  mount.updateWorldMatrix(true,true);
@@ -4719,20 +4427,13 @@ function buildDragonBody(skin,bones,mount,theme){
  return m;
 }
 function hairColourFor(colors,coat,tailCol){
- /* The baked texture keeps a flaxen mane until the coat is recoloured, and then its mane
-    goes the coat's way, lightened by its own luminance. The hair follows the same rule, so
-    strands and baked hair read as one. Mythic coats use their stored mane colour. */
- let mane;
- if(coat){ mane=new THREE.Color((colors&&colors.mane)||'#f4e6c5'); }
- else{ const flax=new THREE.Color('#f4e6c5'), bc=new THREE.Color((colors&&colors.body)||'#9c4f23'), ch=new THREE.Color('#9c4f23');
-  const blend=Math.min(1,Math.hypot(bc.r-ch.r,bc.g-ch.g,bc.b-ch.b)/0.32);
-  const lit=bc.clone().multiplyScalar(1.6); lit.r=Math.min(1,lit.r);lit.g=Math.min(1,lit.g);lit.b=Math.min(1,lit.b);
-  mane=flax.lerp(lit,blend); }
- return {mane, tail:tailCol?new THREE.Color(tailCol):mane.clone()};
+ const mane=new THREE.Color(colors?.mane||'#332214');
+ return {mane,tail:tailCol?new THREE.Color(tailCol):mane.clone()};
 }
 function hairColour(){
  const h=myHorses[rideIdx]; if(!h)return;
  const hc=hairColourFor(h.colors,h.coat,h.tailCol);
+ if(RIG.groom?.setColors){RIG.groom.setColors({maneColor:hc.mane,tailColor:hc.tail,featherColor:h.colors?.body});return;}
  if(RIG.hairMane)RIG.hairMane.material.color.copy(hc.mane);
  if(RIG.hairTail)RIG.hairTail.material.color.copy(hc.tail);
 }
@@ -4751,35 +4452,41 @@ function rigBudget(){return quality==='low'?8:quality==='medium'?16:32;}   // re
 let worldRigCount=0;
 function dressWithRig(ent,parts,colors,opts){
  opts=opts||{};
- if(ent.rig||ent.rigTried)return; if(!RIG.ready||!RIG.scene||!RIG.fitScale||!RIG.baseMat)return;
- /* Ask again next time rather than latching. A horse refused because the budget was full
-    (or because the graphics tier was Low when it was born) used to be stuck on the old
-    procedural body for the rest of the session, which is why a few of them never changed. */
- if(worldRigCount>=rigBudget()&&!opts.mine)return;      // your own horses jump the queue, always
+ if(ent.rig||ent.rigPending||ent.rigTried||!RIG.ready)return;
+ if(worldRigCount>=rigBudget()&&!opts.mine)return;
+ const breed=opts.breed||parts.group.userData.breed||'bay';
+ const asset=BREED_MODELS.get(breed);
+ if(!asset){
+  ent.rigPending=true;
+  BREED_MODELS.load(breed).then(()=>{ent.rigPending=false;if(parts.group.parent)dressWithRig(ent,parts,colors,opts);})
+   .catch(e=>{ent.rigPending=false;ent.rigTried=true;console.warn('Breed model unavailable',breed,e);});
+  return;
+ }
  ent.rigTried=true;
- let sc; try{sc=skeletonClone(RIG.scene);}catch(e){return;}
- let skin=null; sc.traverse(o=>{if(o.isSkinnedMesh&&!skin)skin=o;}); if(!skin)return;
- sc.scale.setScalar(RIG.fitScale); sc.position.set(0,RIG.fitY,0); sc.rotation.set(0,-Math.PI/2,0); sc.visible=true;
+ const inst=BREED_MODELS.instantiate(asset),sc=inst.scene,skin=inst.skin;
  const keep=new Set(); if(parts.wings)parts.wings.forEach(w=>w.traverse(o=>keep.add(o))); if(parts.crest)parts.crest.traverse(o=>keep.add(o)); (opts.keep||[]).forEach(g=>{if(g)g.traverse(o=>keep.add(o));});
- parts.group.traverse(o=>{ if(o.isMesh&&!keep.has(o))o.visible=false; });
+ parts.group.traverse(o=>{if(o.isMesh&&!keep.has(o))o.visible=false;});
  parts.group.add(sc);
+ if(inst.profile.withersM)parts.group.scale.setScalar(inst.profile.withersM/1.52*(opts.foal?.65:1));
  if(parts.horn){parts.group.add(parts.horn);parts.horn.position.set(0,1.72,0.82);parts.horn.rotation.set(-0.4,0,0);parts.horn.scale.setScalar(1.2);parts.horn.visible=true;}
- if(parts.wings)parts.wings.forEach(w=>{const D=w.userData.kind==='dragon';
-  w.position.set(w.userData.sgn*(D?0.19:0.21),D?1.60:1.49,D?0.02:0.18);});
+ if(parts.wings)parts.wings.forEach(w=>{const D=w.userData.kind==='dragon';w.position.set(w.userData.sgn*(D?0.19:0.21),D?1.60:1.49,D?0.02:0.18);});
+ const br=BREEDS3.find(b=>b[0]===breed);
  let mat;
- if(opts.coat){ mat=fantasyCoatRig(opts.coat,!!opts.dragon); }   // mythic: the glowing coat, scaled if it is a dragon
- else { mat=makeCoatMat(); setCoatUniforms(mat,colors&&colors.body,opts.tailCol||null,opts.mark,opts.markCol,opts.seed); }
- skin.material=mat; skin.castShadow=true;
+ if(opts.coat)mat=fantasyCoatRig(opts.coat,!!opts.dragon);
+ else {mat=makeCoatMat(skin,inst.baseMat);setCoatUniforms(mat,colors?.body,opts.tailCol,opts.mark||br?.[7]?.mark,opts.markCol||br?.[7]?.markCol,opts.seed);}
+ skin.material=mat;
+ if(opts.dragon){try{ent.drg=buildDragonBody(skin,inst.bones,parts.group,DRAGON_TINT[opts.coat]||DRAGON_TINT._);}catch(e){}}
  let hair=null;
- if(opts.dragon){ try{ ent.drg=buildDragonBody(skin,skin.skeleton.bones,parts.group,DRAGON_TINT[opts.coat]||DRAGON_TINT._); }catch(e){} }
- try{ hair=buildHairFor(skin,skin.skeleton.bones,parts.group); if(opts.dragon){hair.mane.visible=false;hair.tail.visible=false;} const hc=hairColourFor(colors,opts.coat||null,opts.tailCol||null); hair.mane.material.color.copy(hc.mane); hair.tail.material.color.copy(hc.tail); }catch(e){console.warn('hair (world)',e);}
- if(opts.saddle){ const sd=buildSaddle(); sd.position.set(0,SADDLE_Y,SADDLE_Z); parts.group.add(sd); parts.group.add(buildBridle(opts.dragon?(DRAGON_TINT[opts.coat]||DRAGON_TINT._):null)); }
+ try{hair=breedHair(skin,inst.bones,parts.group,inst.profile,colors,opts.tailCol,opts.seed);if(opts.dragon){hair.mane.visible=false;hair.tail.visible=false;}if(!hair.setColors){const hc=hairColourFor(colors,opts.coat,opts.tailCol);hair.mane.material.color.copy(hc.mane);hair.tail.material.color.copy(hc.tail);}}catch(e){console.warn('horse groom',breed,e);}
+ if(opts.saddle){const sd=buildSaddle();const seat=breedSeat(inst);sd.position.copy(seat);parts.group.add(sd);parts.group.add(buildBridle(opts.dragon?(DRAGON_TINT[opts.coat]||DRAGON_TINT._):null,inst));}
  worldRigCount++;
- ent.rig={scene:sc,bones:skin.skeleton.bones,phase:Math.random()*6,hair};
+ ent.rig={...inst,phase:Math.random()*6,hair,restQ:inst.bones.map(b=>b.quaternion.clone())};
 }
-function tickRig(ent,sp,dt,t,graze){ const r=ent.rig; if(!r)return; r.phase+=rigPhaseStep(sp,true,dt); poseRigBones(r.bones,r.phase,sp,true,0,t,dt,graze||0); }
+function tickRig(ent,sp,dt,t,graze){ const r=ent.rig; if(!r)return; r.phase+=rigPhaseStep(sp,true,dt); poseRigBones(r.bones,r.phase,sp,true,0,t,dt,graze||0); r.hair?.update?.(t,sp); }
 function attachRig(){
  if(!USE_GEN_HORSE)return;
+ const selected=myHorses[rideIdx]?.breed||'bay';
+ if(RIG.requestedBreed!==selected)requestPlayerBreed(selected);
  if(!RIG.ready||!player.mesh||RIG.attachedTo===player.mesh)return;
  const riderG=player.rider&&player.rider.g;
  hideProceduralBody();   // hide the procedural horse body (keeps rig, wings, horn, tack, shadow)
@@ -4919,6 +4626,7 @@ function driveRig(sp,grounded,t,dt){
  if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
  if(RIG.emote){RIG.emote.t+=dt;if(RIG.emote.t>=RIG.emote.dur)RIG.emote=null;}
  for(const u of hairU){u.uTime.value=t;u.uWind.value+=(Math.max(0,Math.min(1,(sp-4)/9))-u.uWind.value)*Math.min(1,dt*3);}
+ RIG.groom?.update?.(t,sp);
  const em=RIG.emote, E=em&&EMOTES[em.type], ee=em?emEnv(em):0;   // the player's own pose copy below folds the legs the same way
  {const hp=myHorses[rideIdx]&&PERS[myHorses[rideIdx].pers]; RIG.persNeck=hp&&hp.neck?hp.neck*(0.7+0.3*Math.sin(t*(hp.neck>0?2.3:0.8))):0;}
  if(RIG._hideFor!==player.mesh){ hideProceduralBody(); RIG._hideFor=player.mesh; }  // enforce hide once per mount (race-proof)
@@ -4960,7 +4668,7 @@ function setCoatUniforms(m,bodyHex,tailHex,mark,markHex,seed){
  m.userData.mark=MARKS[mark]||0; m.userData.markCol.set(markHex||'#f2ece0'); m.userData.seed=(seed||0)%97;
  if(m.userData.shader){const u2=m.userData.shader.uniforms;
   u2.uMark.value=m.userData.mark; u2.uMarkCol.value.copy(m.userData.markCol); u2.uSeed.value=m.userData.seed;
-  const B=measureBody(); if(B.ready){u2.uBBMin.value.copy(B.min);u2.uBBSize.value.copy(B.size);
+  const B=m.userData.bodyAxes||measureBody(); if(B.ready){u2.uBBMin.value.copy(B.min);u2.uBBSize.value.copy(B.size);
    u2.uAxis.value.set(B.L,B.H,B.W); u2.uFlip.value=B.headHi;}}
  if(m.userData.shader){const u=m.userData.shader.uniforms;u.uCoat.value.copy(bc);u.uBlend.value=blend;u.uTail.value.copy(m.userData.tail);u.uTailBlend.value=m.userData.tailBlend;}
 }
@@ -4973,40 +4681,36 @@ function setCoatUniforms(m,bodyHex,tailHex,mark,markHex,seed){
    pixel is — so the body axes are measured off the model's own bind pose and its own bones,
    never guessed at. */
 const BODYAX={ready:false};
-function measureBody(){
- if(BODYAX.ready||!RIG.skin||!RIG.bones)return BODYAX;
- const g=RIG.skin.geometry; if(!g.boundingBox)g.computeBoundingBox();
- const bb=g.boundingBox, size=new THREE.Vector3(); bb.getSize(size);
- /* longest axis is the length of the horse, next is its height, the last is its width */
+function measureBody(skin=RIG.skin){
+ if(!skin)return {ready:false};
+ const g=skin.geometry;
+ if(g.userData.bodyAxes)return g.userData.bodyAxes;
+ if(!g.boundingBox)g.computeBoundingBox();
+ const bb=g.boundingBox,size=bb.getSize(new THREE.Vector3());
  const ax=[{i:0,v:size.x},{i:1,v:size.y},{i:2,v:size.z}].sort((a,b)=>b.v-a.v);
- const L=ax[0].i, H=ax[1].i, W=ax[2].i;
- /* which end of the length axis is the head: ask the muzzle bone and the dock */
- const local=b=>{const v=new THREE.Vector3(); b.getWorldPosition(v); RIG.skin.worldToLocal(v); return v;};
- const head=local(RIG.bones[RIG.headIdx==null?6:RIG.headIdx]);
- const dock=local(RIG.bones[RIG_TAIL[0]]);
+ const [L,H,W]=ax.map(x=>x.i);
+ const local=b=>{const v=new THREE.Vector3();b.getWorldPosition(v);return skin.worldToLocal(v);};
+ skin.updateWorldMatrix(true,true);
+ const head=local(skin.skeleton.bones[6]),dock=local(skin.skeleton.bones[19]);
  const headHi=head.getComponent(L)>dock.getComponent(L);
- const upHi=head.getComponent(H)>bb.min.getComponent(H)+size.getComponent(H)*0.5;   // head is high on a horse
- BODYAX.min=bb.min.clone(); BODYAX.size=size.clone();
- BODYAX.L=L; BODYAX.H=H; BODYAX.W=W;
- BODYAX.headHi=headHi?1:0; BODYAX.upHi=upHi?1:0;
- BODYAX.ready=true;
- BODYAX.report={size:size.toArray().map(v=>+v.toFixed(2)),L,H,W,
-  head:head.toArray().map(v=>+v.toFixed(2)),dock:dock.toArray().map(v=>+v.toFixed(2)),headHi};
- return BODYAX;
+ return g.userData.bodyAxes={ready:true,min:bb.min.clone(),size,L,H,W,headHi:headHi?1:0,
+  upHi:head.getComponent(H)>bb.min.getComponent(H)+size.getComponent(H)*.5?1:0,
+  report:{size:size.toArray(),L,H,W,head:head.toArray(),dock:dock.toArray(),headHi}};
 }
 const MARKS={none:0,dapple:1,appaloosa:2,pinto:3,roan:4,points:5,leopard:6,sooty:7,dun:8,metal:9};
-function makeCoatMat(){
+function makeCoatMat(skin=RIG.skin,baseMat=RIG.baseMat){
  /* A groomed coat has a sheen: the same albedo and normal map, on a physical material with a
     light clearcoat, so highlights slide over the muscle as the horse moves. */
- const b=RIG.baseMat, m=new THREE.MeshPhysicalMaterial({map:b.map,normalMap:b.normalMap||null,side:b.side}); m.color.set(0xffffff);   // built by hand: Material.copy across types reaches for maps the source lacks
+ const b=baseMat, m=new THREE.MeshPhysicalMaterial({map:b.map,normalMap:b.normalMap||null,side:b.side}); m.color.set(0xffffff);   // built by hand: Material.copy across types reaches for maps the source lacks
  m.roughness=0.64; m.metalness=0; m.clearcoat=0.08; m.clearcoatRoughness=0.6; m.envMapIntensity=0.75;
  if(m.normalMap)m.normalScale.set(0.45,0.45);
+ m.userData.bodyAxes=measureBody(skin);
  m.userData.col=new THREE.Color('#9c4f23'); m.userData.blend=0;
  m.userData.tail=new THREE.Color('#000000'); m.userData.tailBlend=0;
  m.userData.mark=0; m.userData.markCol=new THREE.Color('#ffffff'); m.userData.seed=0;
  m.onBeforeCompile=sh=>{                       // recolour by the texture's luminance (keeps mane/socks/shading pattern)
   sh.uniforms.uCoat={value:m.userData.col}; sh.uniforms.uBlend={value:m.userData.blend}; sh.uniforms.uTail={value:m.userData.tail}; sh.uniforms.uTailBlend={value:m.userData.tailBlend};
-  const B=measureBody();
+  const B=m.userData.bodyAxes;
   sh.uniforms.uMark={value:m.userData.mark}; sh.uniforms.uMarkCol={value:m.userData.markCol}; sh.uniforms.uSeed={value:m.userData.seed};
   sh.uniforms.uBBMin={value:B.ready?B.min.clone():new THREE.Vector3()};
   sh.uniforms.uBBSize={value:B.ready?B.size.clone():new THREE.Vector3(1,1,1)};
@@ -5221,6 +4925,7 @@ function tintWings(type){   // player's rigged mount
  player.parts.wings.forEach(w=>tintWingMats(w,type));
 }
 function applyCoat(){
+ const selected=myHorses[rideIdx]?.breed||'bay';if(RIG.requestedBreed!==selected)requestPlayerBreed(selected);
  if(!RIG.ready||!RIG.skin||!RIG.baseMat) return;
  const h=myHorses[rideIdx];
  {/* A dragon wears a crest and a scaled tail instead of a mane and tail hair. */
@@ -5253,34 +4958,34 @@ function applyCoat(){
  RIG.skin.material=RIG.coatMat;
  hairColour();
 }
+/* Load the selected breed asynchronously. Sequence IDs prevent a slow prior selection
+   from replacing the horse currently selected in the stable. */
+let breedRequest=0;
+function breedSeat(rig=RIG){
+ return BREED_MODELS.mountPoint(rig,rig.profile?.anchors?.saddle)||new THREE.Vector3(0,1.39,-.30);
+}
+function riderSeat(){const seat=breedSeat();return {y:seat.y+.18,z:seat.z+.02};}
+async function requestPlayerBreed(breed){
+ const ticket=++breedRequest;RIG.requestedBreed=breed;RIG.loadingBreed=true;
+ let asset;
+ try{asset=await BREED_MODELS.load(breed);}
+ catch(e){console.warn('Using fallback horse for',breed,e);try{asset=await BREED_MODELS.load('legacy');}catch(err){console.warn('Horse model unavailable',err);RIG.loadingBreed=false;window.__setLoad?.(1,'ready');return;}}
+ if(ticket!==breedRequest)return;
+ const inst=BREED_MODELS.instantiate(asset);
+ if(RIG.scene?.parent)RIG.scene.parent.remove(RIG.scene);
+ RIG.groom?.dispose?.();
+ if(RIG.coatMat)RIG.coatMat.dispose();
+ Object.assign(RIG,inst,{modelKey:asset.key,ready:true,loadingBreed:false,attachedTo:null,
+  hairBuilt:false,hairMane:null,hairTail:null,groom:null,coatMat:null,headBone:null,headIdx:6,drg:null,emote:null,_hideFor:null});
+ RIG.restQ=RIG.bones.map(b=>b.quaternion.clone());rigCalibrate();
+ if(player.mesh){player.mesh.scale.setScalar(horseScale(myHorses[rideIdx]));attachRig();applyCoat();attachTack();}
+ window.__setLoad?.(1,'ready!');
+}
 {
- const setLoad=(f,label)=>{const b=document.querySelector('#loadbar i'),t=document.getElementById('loadpct');
-  if(b)b.style.width=Math.round(f*100)+'%'; if(t)t.textContent=label||Math.round(f*100)+'%';};
- window.__setLoad=setLoad; setLoad(0.05,'reading the map…');
- new GLTFLoader().load('assets/models/horse_showcase_rigged.glb',g=>{
-  setLoad(0.92,'saddling up…');
-  RIG.scene=g.scene;
-  g.scene.traverse(o=>{if(o.isSkinnedMesh&&!RIG.skin)RIG.skin=o;});
-  if(!RIG.skin){console.warn('rig: no skinned mesh');return;}
-  RIG.bones=RIG.skin.skeleton.bones; RIG.baseMat=RIG.skin.material;
-  RIG.baseMat.vertexColors=false; // Blender authoring masks are not display colours.
-  {const g=RIG.skin.geometry, si=g.attributes.skinIndex, sw=g.attributes.skinWeight, N=si.count, reg=new Float32Array(N), TB=new Set(RIG_TAIL.slice(1));   // the first tail bone is the dock and carries the rump; the tail proper is the rest
-   for(let v=0;v<N;v++){let bi=si.getX(v),bw=sw.getX(v);const iy=si.getY(v),wy=sw.getY(v);if(wy>bw){bw=wy;bi=iy;}const iz=si.getZ(v),wz=sw.getZ(v);if(wz>bw){bw=wz;bi=iz;}const iw=si.getW(v),ww=sw.getW(v);if(ww>bw){bw=ww;bi=iw;}reg[v]=TB.has(bi)?1:0;}
-   g.setAttribute('aRegion',new THREE.BufferAttribute(reg,1));}   // 1 on the tail, so mastery can colour it on its own
-  RIG.restQ=RIG.bones.map(b=>b.quaternion.clone());   // bind pose, for tack that rides on a bone
-  { const nm=new THREE.TextureLoader().load('assets/textures/horse_natural_normal.png');
-    nm.flipY=false;                              // glTF UVs: same convention as the albedo it came from
-    RIG.baseMat.normalMap=nm; RIG.baseMat.normalScale=new THREE.Vector2(0.55,0.55);
-    RIG.baseMat.needsUpdate=true; }
-  g.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=false;
-   if(o.material){o.material.roughness=0.62;o.material.metalness=0;}}});  // keep the baked texture
-  rigCalibrate(); RIG.ready=true;
-  attachRig(); applyCoat();
-  attachTack();   // (re)place saddle+rider now the horse back is known
-  console.log('rig ready:',RIG.bones.length,'bones');
-  setLoad(1,'ready!');
- },ev=>{ if(ev&&ev.total)setLoad(0.05+0.8*(ev.loaded/ev.total),'bringing your horse…'); },
-   e=>{console.warn('rig load failed',e);setLoad(1,'ready!');});
+ const setLoad=(f,label)=>{const b=document.querySelector('#loadbar i'),t=document.getElementById('loadpct');if(b)b.style.width=Math.round(f*100)+'%';if(t)t.textContent=label||Math.round(f*100)+'%';};
+ window.__setLoad=setLoad;setLoad(.05,'reading the map…');
+ // The synchronous module finishes constructing the saved stable before this runs.
+ Promise.resolve().then(()=>requestPlayerBreed(myHorses[rideIdx]?.breed||'bay'));
 }
 /* === Generated tack: textured saddle + rigged+textured rider on the mount ===
    Both attach to player.mesh (move with the horse). The rider (UniRig humanoid)
@@ -5361,7 +5066,7 @@ function buildSaddle(style){
    root so the neck's nod is included) and the bone's current position, so it moves with
    every nod and toss rather than hanging in the air where the head used to be. */
 const BRIDLE_HEAD0=[-0.145,1.424,0.995];   // head bone at rest, mount space
-function buildBridle(dragon){
+function buildBridle(dragon,rig=RIG){
  const g=new THREE.Group();
  const strap=new THREE.MeshStandardMaterial({color:0x3a2616,roughness:0.55,metalness:0.05});
  const iron=new THREE.MeshStandardMaterial({color:0xb8bcc2,roughness:0.35,metalness:0.7});
@@ -5373,7 +5078,7 @@ function buildBridle(dragon){
  const nose=put(new THREE.Mesh(ring(0.10,0.013),strap),-0.145,1.425,0.965); nose.rotation.x=0.69; nose.scale.set(0.82,1,1);
  // eyes: glossy dark spheres just proud of the socket, so the face catches the light
  const eyeMat=new THREE.MeshPhysicalMaterial({color:0x1a1410,roughness:0.08,metalness:0,clearcoat:1,clearcoatRoughness:0.05,envMapIntensity:1.2});
- if(!dragon)for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.031,14,12),eyeMat),-0.115+sg*0.118,1.62,0.845); e.castShadow=false; }
+ if(!dragon&&!rig.profile?.anchors)for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.031,14,12),eyeMat),-0.115+sg*0.118,1.62,0.845); e.castShadow=false; }
  // bit rings at the corners of the mouth, standing in the plane of the cheek
  for(const sg of[-1,1]){const r=put(new THREE.Mesh(ring(0.03,0.007),iron),-0.16+sg*0.078,1.35,1.02); r.rotation.y=Math.PI/2;}
  // browband: a half-ring bowed forward across the forehead just under the ears, with five gold studs
@@ -5415,7 +5120,8 @@ function buildBridle(dragon){
   _qs.copy(root.quaternion); _cur.premultiply(_qs).multiply(_qs.invert());   // ...in the mount's frame
   g.quaternion.copy(_cur); g.position.copy(_bp);
  };
- g.position.copy(H0);
+ const head=BREED_MODELS.mountPoint(rig,rig.profile?.anchors?.head);
+ g.position.copy(head||H0);g.userData.modelKey=rig.key||rig.modelKey;
  return g;
 }
 function attachTack(){   // idempotent: places whatever has loaded so far onto the current mount
@@ -5426,18 +5132,19 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
  if(TACK.saddle){
   if(TACK.saddle.userData&&TACK.saddle.userData.proc){TACK.saddle.position.set(0,SADDLE_Y,SADDLE_Z);}  // procedural: pre-sized & oriented
   else{_fit(TACK.saddle,SADDLE_SCALE);TACK.saddle.rotation.y=SADDLE_RY;TACK.saddle.position.set(0,SADDLE_Y,SADDLE_Z);}
+  TACK.saddle.position.copy(breedSeat());
   TACK.saddle.visible=true; TACK.saddle.traverse(o=>{if(o.isMesh)o.visible=true;});  // attachRig hides player.mesh meshes; re-show tack
   player.mesh.add(TACK.saddle);}
  dressSaddle();
  {const hh=myHorses[rideIdx], want=hh&&hh.dragon?(DRAGON_TINT[hh.coat]||DRAGON_TINT._):null;
-  if(TACK.bridle&&!!TACK.bridle.userData.dragon!==!!want){ if(TACK.bridle.parent)TACK.bridle.parent.remove(TACK.bridle); TACK.bridle=null; }
+  if(TACK.bridle&&(!!TACK.bridle.userData.dragon!==!!want||TACK.bridle.userData.modelKey!==(RIG.key||RIG.modelKey))){ if(TACK.bridle.parent)TACK.bridle.parent.remove(TACK.bridle); TACK.bridle=null; }
   if(!TACK.bridle)TACK.bridle=buildBridle(want);}
  TACK.bridle.visible=true; TACK.bridle.traverse(o=>{if(o.isMesh)o.visible=true;});
  if(TACK.bridle.parent!==player.mesh)player.mesh.add(TACK.bridle);
  if(player.rider&&player.rider.g){                       // articulated procedural rider sits the saddle
   player.rider.g.visible=true;
   player.rider.g.traverse(o=>{if(o.isMesh)o.visible=true;});
-  player.rider.g.position.set(0,RID2_Y,RID2_Z);
+  const seat=riderSeat();player.rider.g.position.set(0,seat.y,seat.z);
  }
  if(!TACK.bitL){TACK.bitL=new THREE.Object3D();TACK.bitL.position.set(0.13,1.34,1.0);
   TACK.bitR=new THREE.Object3D();TACK.bitR.position.set(-0.13,1.34,1.0);}   // rein anchors at the gen horse's mouth corners
@@ -5461,8 +5168,8 @@ function driveRider(sp,tm){   // live seat: lean, posting, breathing, head look,
  }
  const post=moving?Math.max(0,Math.sin(ph))*(0.03+0.05*Math.min(1,sp/5)):0;   // rise out of the saddle each stride
  const idle=!moving?Math.sin((tm||0)*1.5)*0.005:0;
- R.g.position.y=RID2_Y+post+idle;
- R.g.position.z=RID2_Z;
+ const seat=riderSeat();R.g.position.y=seat.y+post+idle;
+ R.g.position.z=seat.z;
  R.g.rotation.x=-0.02-0.05*t-Math.sin(ph)*0.03*t;
  R.g.rotation.z=moving?Math.sin(ph)*0.02:0;
  trackHead();
@@ -6857,6 +6564,23 @@ function tickAir(dt,t,golden,dayF,night){
  }
 }
 function tickFalls(dt,t){
+ /* the strands breaking off the sheet */
+ if(FALLS.drops&&FALLS.dst){
+  const m=new THREE.Matrix4(), q=new THREE.Quaternion(), sc=new THREE.Vector3(1,1,1), pv=new THREE.Vector3();
+  const top=FALLS.lip-0.6, bot=FALLS.foot+0.25, drop=Math.max(1,top-bot);
+  for(let i=0;i<FALLS.dn;i++){
+   let life=FALLS.dst[i*3+1]+dt*FALLS.dst[i*3+2]*0.55;
+   if(life>1)life-=1;
+   FALLS.dst[i*3+1]=life;
+   const ox=FALLS.dst[i*3];
+   const v=life, y=top-drop*v*v*0.92;                       // accelerating
+   pv.set(FALLS.x+ox*(1+v*0.42), y, FALLS.z+0.42+v*v*2.6+0.10);
+   sc.set(1,0.7+v*1.5,1);                                   // stretches as it speeds up
+   m.compose(pv,q,sc);
+   FALLS.drops.setMatrixAt(i,m);
+  }
+  FALLS.drops.instanceMatrix.needsUpdate=true;
+ }
  if(!FALLS.mist)return;
  const near=Math.hypot(player.pos.x-FALLS.x,player.pos.z-FALLS.z)<110;
  FALLS.mist.visible=near;
@@ -6964,7 +6688,7 @@ function buildPegasusWings(){
  return pair;
 }
 function makeHorse(cfg){
- const g=new THREE.Group();
+ const g=new THREE.Group();g.userData.breed=cfg.breed||'bay';
  // mythic horses: solid body-coloured parts (legs/ears/muzzle) follow the coat base colour
  // (COAT_BASE, defined near FANTASY_COAT) so they don't clash with the themed torso.
  const body=cfg.coat?(COAT_BASE[cfg.coat]||cfg.colors.body):cfg.colors.body, mane=cfg.colors.mane;
@@ -7108,6 +6832,7 @@ function nameSprite(text){
 /* Build comes off the breed table now. A Shetland should not be the size of a Shire, and
    with two dozen breeds a chain of special cases was never going to hold. */
 const horseScale=h=>{
+ const profile=BREED_MODELS.profile(h.breed);if(profile?.withersM)return profile.withersM/1.52*(h.foal?.65:1);
  if(h.foal)return 0.65;
  try{ const b=BREEDS3.find(x=>x[0]===h.breed); return (b&&b[7]&&b[7].size)||1; }
  catch(e){ return 1; }        // called before the breed table exists: full size will do
@@ -7268,7 +6993,7 @@ let nearMount=-1,mountHintT=0,lowNeedT=0;
 let herd=[];
 function rebuildAll(){
  if(player.mesh)scene.remove(player.mesh);
- for(const a of herd)scene.remove(a.parts.group);
+ for(const a of herd){scene.remove(a.parts.group);if(a.rig){a.rig.hair?.dispose?.();a.rig.skin?.material?.dispose();worldRigCount=Math.max(0,worldRigCount-1);}}
  herd=[];
  const h=myHorses[rideIdx];
  player.parts=makeHorse({colors:h.colors,horn:h.horn,wings:h.wings,dragon:h.dragon,coat:h.coat,tack:h.tack||'#7a583a',bridle:true,seed:h.id||0,breed:h.breed});
@@ -8809,24 +8534,23 @@ function remoteBridle(){
 }
 const REMOTE_RIG_MAX=6;
 let remoteRigCount=0;
-function makeRemoteRig(){
- if(!RIG.ready||!RIG.scene||!RIG.fitScale)return null;
- if(remoteRigCount>=REMOTE_RIG_MAX||quality==='low')return null;
- let sc;
- try{ sc=skeletonClone(RIG.scene); }catch(e){ return null; }
- let skin=null;
- sc.traverse(o=>{ if(o.isSkinnedMesh&&!skin)skin=o; });
- if(!skin)return null;
- sc.scale.setScalar(RIG.fitScale);
- sc.position.set(0,RIG.fitY,0);
- sc.rotation.set(0,-Math.PI/2,0);     // same model->game orientation as the player's
- sc.visible=true;
- remoteRigCount++;
- return {scene:sc,bones:skin.skeleton.bones,phase:Math.random()};
+function makeRemoteRig(breed){
+ if(!RIG.ready||remoteRigCount>=REMOTE_RIG_MAX||quality==='low')return null;
+ const asset=BREED_MODELS.get(breed);if(!asset)return null;
+ const inst=BREED_MODELS.instantiate(asset);remoteRigCount++;
+ return {...inst,phase:Math.random(),restQ:inst.bones.map(b=>b.quaternion.clone())};
 }
+const remoteBreedPending=new Map();
 function remoteUpdate(m){
  if(typeof m.x!=='number'||typeof m.z!=='number')return;
  let r=remotes[m.id];
+ const breed=m.b||'bay';
+ if(r&&r.breed!==breed){scene.remove(r.parts.group);if(r.rig){r.rig.hair?.dispose?.();r.rig.skin?.material?.dispose();remoteRigCount=Math.max(0,remoteRigCount-1);}delete remotes[m.id];r=null;}
+ if(!r&&!BREED_MODELS.get(breed)&&quality!=='low'){
+  if(remoteBreedPending.has(m.id)){remoteBreedPending.set(m.id,m);return;}
+  remoteBreedPending.set(m.id,m);
+  BREED_MODELS.load(breed).then(()=>{const latest=remoteBreedPending.get(m.id);remoteBreedPending.delete(m.id);if(latest)remoteUpdate(latest);}).catch(e=>{remoteBreedPending.delete(m.id);console.warn('Remote breed unavailable',breed,e);});return;
+ }
  if(!r){
   if(Object.keys(remotes).length>=12)return;
   const parts=makeHorse({colors:(m.c&&m.c.body)?m.c:{body:'#8a5a2b',mane:'#332214'},tack:m.k||'#7a583a',bridle:true,seed:5,wings:!!m.wg,coat:m.ct||null});
@@ -8838,7 +8562,7 @@ function remoteUpdate(m){
      that tack left a saddle floating in mid-air; keeping neither left the rider
      perched on nothing. So the rigged remote gets the SAME saddle, bridle position
      and rider seat the player's own rigged mount uses. */
-  const rrig=makeRemoteRig();
+  const rrig=makeRemoteRig(breed);
   let r_bridle=null;
   if(rrig){
    const keep=new Set();
@@ -8846,23 +8570,23 @@ function remoteUpdate(m){
    rider.g.traverse(o=>keep.add(o));
    parts.group.traverse(o=>{ if(o.isMesh&&!keep.has(o))o.visible=false; });
    parts.group.add(rrig.scene);
-   {let sk=null; rrig.scene.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;}); if(sk&&RIG.baseMat&&!m.ct){const cm=makeCoatMat(); setCoatUniforms(cm,(m.c&&m.c.body)||'#8a5a2b',null); sk.material=cm; rrig.skin=sk;}}
+   {let sk=null; rrig.scene.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;}); if(sk&&RIG.baseMat&&!m.ct){const cm=makeCoatMat(sk,rrig.baseMat); setCoatUniforms(cm,(m.c&&m.c.body)||'#8a5a2b',null); sk.material=cm; rrig.skin=sk;}}
 
    const sd=buildSaddle();                       // same builder the player's mount uses
-   sd.position.set(0,SADDLE_Y,SADDLE_Z);
+   sd.position.copy(breedSeat(rrig));
    parts.group.add(sd);
-   const br=buildBridle(); parts.group.add(br); r_bridle=br;
+   const br=buildBridle(null,rrig); parts.group.add(br); r_bridle=br;
    // The rider was still sitting where the PROCEDURAL horse's back was, which is
    // higher and further forward than the rig's — that is the "floating up high".
-   rider.g.position.set(0,RID2_Y,RID2_Z);
+   const seat=breedSeat(rrig);rider.g.position.set(0,seat.y+.18,seat.z+.02);parts.group.scale.setScalar(rrig.profile.withersM?rrig.profile.withersM/1.52:1);
   }
   const nm=String(m.n||'Rider').slice(0,14);
   const tag=nameSprite((isFriend(nm)?'💚':'🌐')+nm);
   tag.position.y=3.15;
   parts.group.add(tag);
   scene.add(parts.group);
-  if(rrig&&rrig.skin){try{const hr=buildHairFor(rrig.skin,rrig.bones,parts.group); const hc=hairColourFor((m.c&&m.c.body)?m.c:{body:'#8a5a2b',mane:'#332214'},null,null); hr.mane.material.color.copy(hc.mane); hr.tail.material.color.copy(hc.tail);}catch(e){}}
-  r=remotes[m.id]={parts,rider,rig:rrig,bridle:r_bridle,name:nm,x:m.x,z:m.z,tx:m.x,tz:m.z,heading:m.h||0,sp:0,phase:Math.random()*6,lastSeen:0};
+  if(rrig&&rrig.skin){try{rrig.hair=breedHair(rrig.skin,rrig.bones,parts.group,rrig.profile,m.c,null,5);}catch(e){console.warn('Remote groom',e);}}
+  r=remotes[m.id]={parts,rider,breed,rig:rrig,bridle:r_bridle,name:nm,x:m.x,z:m.z,tx:m.x,tz:m.z,heading:m.h||0,sp:0,phase:Math.random()*6,lastSeen:0};
   chatMsg('🌐',nm+' is riding nearby!');
  }
  r.tx=m.x;r.tz=m.z;
@@ -8897,7 +8621,7 @@ function netTick(dt,t){
   r.lastSeen+=dt;
   if(r.lastSeen>7){
    scene.remove(r.parts.group);
-   if(r.rig)remoteRigCount=Math.max(0,remoteRigCount-1);   // free the slot for the next rider
+   if(r.rig){r.rig.hair?.dispose?.();r.rig.skin?.material?.dispose();remoteRigCount=Math.max(0,remoteRigCount-1);}   // free the slot for the next rider
    delete remotes[id];
    continue;
   }
@@ -10847,7 +10571,7 @@ function tick(stepSeconds){
   }
   animateHorse(a.parts,a.phase,resting?0.05:((a.wsp||1.2)>3.5?0.72:0.42),(a.wsp||1.2)>3.5?GAITS.gallop:GAITS.walk,true,t,a.graze,dt);
   {const hh=myHorses[a.idx]; const bd=hh&&BREEDS3.find(b=>b[0]===hh.breed);
-   dressWithRig(a,a.parts,hh&&hh.colors,{tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,dragon:hh&&hh.dragon,mine:true,
+   dressWithRig(a,a.parts,hh&&hh.colors,{breed:hh?.breed,foal:hh?.foal,tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,dragon:hh&&hh.dragon,mine:true,
     mark:bd&&bd[7]&&bd[7].mark, markCol:bd&&bd[7]&&bd[7].markCol, seed:(hh&&hh.id)||0}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
    const el=dragonElement(hh);                       // a dragon in the pasture breathes now and then
    if(el){ a.brT=(a.brT==null?3+Math.random()*9:a.brT)-dt;
@@ -10948,7 +10672,7 @@ function tick(stepSeconds){
    wildTrust=Math.max(0,wildTrust-dt*12);
    w.phase+=dt*9;
    animateHorse(w.parts,w.phase,0.9,GAITS.gallop,true,t,0);
-   dressWithRig(w,w.parts,{body:w.wb.body,mane:w.wb.mane},{}); tickRig(w,9,dt,t,0);
+   dressWithRig(w,w.parts,{body:w.wb.body,mane:w.wb.mane},{breed:w.wb.breed}); tickRig(w,9,dt,t,0);
   }else{
    w.phase+=dt*(w.rest>0?1.2:4);
    if(w.rest>0)w.rest-=dt;
@@ -10972,7 +10696,7 @@ function tick(stepSeconds){
     }
    }
    animateHorse(w.parts,w.phase,w.rest>0?0.05:0.4,GAITS.walk,true,t,w.rest>0?1:0);
-   dressWithRig(w,w.parts,{body:w.wb.body,mane:w.wb.mane},{}); tickRig(w,w.rest>0?0:1.4,dt,t,w.rest>0?1:0);
+   dressWithRig(w,w.parts,{body:w.wb.body,mane:w.wb.mane},{breed:w.wb.breed}); tickRig(w,w.rest>0?0:1.4,dt,t,w.rest>0?1:0);
    if(wd<5.5&&sp<2){
     wildTrust=Math.min(100,wildTrust+dt*9);
     trustShown=true;
@@ -11355,7 +11079,7 @@ function tick(stepSeconds){
  const keyT=(weather.mode==='rain'?1.3:3.15)*dayF+0.88*nightNow
   +(weather.mode==='rain'?0.15:0.55)*golden;   // ember punch at the horizon hours
  sun.intensity+=(keyT-sun.intensity)*Math.min(1,dt*1.5);
- const hemiT=THREE.MathUtils.lerp(0.82,weather.mode==='rain'?0.88:1.05,dayF);
+ const hemiT=THREE.MathUtils.lerp(0.82,weather.mode==='rain'?0.82:0.86,dayF);
  hemi.intensity+=(hemiT-hemi.intensity)*Math.min(1,dt*1.5);
  hemi.color.copy(C_HEMI_NIGHT).lerp(C_HEMI_DAY,dayF);
  hemi.groundColor.copy(C_GROUND_NIGHT).lerp(C_GROUND_DAY,dayF);
@@ -11570,11 +11294,14 @@ window.render_game_to_text=()=>JSON.stringify({
  }:null,
  wallet:{coins,gems},
  weather:weather.mode,
- graphics:{quality,horseReady:RIG.ready,horseAttached:RIG.attachedTo===player.mesh,day:Number(dayT.toFixed(3)),triangles:renderer.info.render.triangles,drawCalls:renderer.info.render.calls},
+ graphics:{quality,horseModel:RIG.modelKey,horseBreed:RIG.requestedBreed,horseLoading:!!RIG.loadingBreed,horseReady:RIG.ready,horseAttached:RIG.attachedTo===player.mesh,day:Number(dayT.toFixed(3)),triangles:renderer.info.render.triangles,drawCalls:renderer.info.render.calls},
  camera:{x:Number(camera.position.x.toFixed(2)),y:Number(camera.position.y.toFixed(2)),z:Number(camera.position.z.toFixed(2)),fov:Number(camera.fov.toFixed(1)),free:!!freeCam},
  jumping:player.y>0&&!player.flying,
  stamina:Number((player.stam||0).toFixed(3))
 });
+const forestPoints=[].concat(FOLIAGE.oak,FOLIAGE.birch,FOLIAGE.blossom,FOLIAGE.pine,FOLIAGE.snowpine);
+scene.traverse(o=>{if(o.name.startsWith('Natural ')&&!o.name.endsWith('shrub')){const p=o.getWorldPosition(new THREE.Vector3());forestPoints.push({x:p.x,z:p.z,s:o.scale.x});}});
+terrainSurface.setTrees(forestPoints);
 const MERGE_STATS=mergeStatics();
 renderer.setAnimationLoop(tick);   // drives rAF when flat, the XR frame loop when presenting
 addEventListener('resize',()=>{
