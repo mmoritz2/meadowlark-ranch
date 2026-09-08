@@ -79,7 +79,7 @@ horse when you meant to ride on the stick alone, so each can be picked outright.
 | | |
 |---|---|
 | **World** | ~1000×1000 units of ridged hills, cliffs, a carved river with a bridge, a stream, wheat fields, desert canyon, and a snowline — one continuous mesh, coloured by slope and altitude |
-| **Horses** | 20 breeds from ponies to winged mythics; five stats you can feel in the ride, trained by forage that grows by region; six temperaments; breed mastery that unlocks tail colours, browband studs, a sparkle trail and bareback riding; tricks at a halt; care, bonding, XP and levels; breeding; foals that grow up over real time |
+| **Horses** | 44 breeds from ponies to winged mythics and dragons, each with its own build and its own coat markings (dapple, appaloosa, pinto, roan, points, leopard, sooty, dun, metallic) drawn in the shader from the body's own axes; five stats you can feel in the ride, trained by forage that grows by region; six temperaments; breed mastery that unlocks tail colours, browband studs, a sparkle trail and bareback riding; tricks at a halt; care, bonding, XP and levels; breeding; foals that grow up over real time |
 | **Tack** | Saddle, pad, bridle and horseshoes as gear with rarity, bonuses, upgrades and merges; Silver Keys open tack chests and Grandma's locked tack room; nothing costs money |
 | **Story** | Two books: Grandpa Wren's ranch, then the Silver Kestrel, a grey horse followed region by region through people to talk to, clue puzzles, and a tameable reward |
 | **Ranch** | Build it: fourteen pieces placed on the ground, builder points, six ranch levels with real perks |
