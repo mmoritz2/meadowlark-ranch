@@ -28,3 +28,8 @@ Progress:
 TODOs:
 - If direct file:// gameplay is required later, the game will need a true bundled non-module build plus a GLB loading strategy that avoids browser file-origin restrictions.
 - Further repo-inspired ideas not yet done: LOD for distant objects, era/time slider UI, autonomous NPC routines beyond looping riders.
+Original direction for 2026-09-08: Bring the game closer to Star Equestrian with improved graphics and horses, using Blender and ComfyUI.
+- Audited actual reference screenshots and current game captures; found dark overriding terrain albedo, extreme baked horse lighting, grey sky, missing postprocess MSAA, and excessive sun/fill contrast.
+- Parallel asset work: isolated Blender horse material/mesh export and ComfyUI FLUX terrain assets. Existing assets preserved.
+- Added explicit advanceTime/resumeGame for reproducible gameplay verification. Expanded text diagnostics.
+- Added original display-space pastoral sky, balanced daylight fill, postprocess MSAA and tighter riding camera.

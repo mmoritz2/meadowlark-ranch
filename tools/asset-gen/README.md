@@ -32,7 +32,9 @@ C:\Users\msmor\Documents\ComfyUI\.venv\Scripts\python.exe main.py ^
 > to CPU under pressure (leaner, slower switches).
 
 ## Images / textures — `gen_image.py`
-Uses **FLUX.2 dev (fp8)** (`flux1-dev-fp8.safetensors`, all-in-one checkpoint).
+Uses **FLUX.2 dev (fp8mixed)** with the locally installed split model files:
+`flux2_dev_fp8mixed.safetensors`, `mistral_3_small_flux2_fp8.safetensors`, and
+`flux2-vae.safetensors`. The old FLUX.1 all-in-one checkpoint is no longer used.
 
 ```
 # Seamless (tileable) ground texture saved into the game's assets:
@@ -44,15 +46,45 @@ python gen_image.py "weathered barn wood planks" --name barnwood --count 4
 ```
 
 Key flags: `--size`, `--steps`, `--guidance`, `--seed`, `--count`, `--seamless`,
-`--out`. First run loads the 17 GB checkpoint (~2 min); later runs ~15-25 s.
+`--out`. The first run loads the model and text encoder; warmed 1024px, 24-step
+terrain jobs took approximately 25 seconds on this machine in the September 2026 pass.
 
 ### Seamless tiling
 `--seamless` routes the UNet and VAE through the local custom nodes in
 `custom_nodes/srf_seamless.py` (`SRFSeamlessModel` / `SRFSeamlessVAE`), which set
 every Conv2d layer to `circular` padding so output tiles perfectly. This is far
-better than post-processing a non-tiling image. Restart the server after changing
-that node file. Tip: prompt for "top-down orthographic, flat even/overcast
-lighting, no shadows, no vignette" to minimize tile-boundary brightness steps.
+useful at the VAE boundary, but a transformer diffusion model can still leave
+an edge mismatch. Inspect a 2x2 tile preview before using a generated material.
+Restart the server after changing that node file. Tip: prompt for "top-down
+orthographic, flat even/overcast lighting, no shadows, no vignette" to minimize
+tile-boundary brightness steps.
+
+### Pastoral terrain materials — September 2026
+
+`gen_pastoral_materials.py` reproduces three original FLUX.2 albedos for the
+game's spring countryside art direction. It saves exact prompts, seeds, API
+graphs, server histories, and unmodified generated PNGs. It checks that the
+ComfyUI queue is empty and runs the jobs sequentially.
+
+```powershell
+& 'C:\Users\msmor\Documents\ComfyUI\.venv\Scripts\python.exe' tools/asset-gen/gen_pastoral_materials.py meadow bridleway arena
+& 'C:\Users\msmor\Documents\ComfyUI\.venv\Scripts\python.exe' tools/asset-gen/finish_pastoral_materials.py
+```
+
+The second script balances the palette, removes residual low-frequency edge
+mismatch using a periodic Poisson correction, and exports 1024px JPEG materials.
+It also creates conservative detail normal and roughness estimates from the
+generated albedo; these are artist-useful derived maps, not measured PBR scans.
+
+- Runtime materials and a contact sheet: `assets/textures/pastoral/`
+- Untouched ComfyUI PNGs: `assets/textures/pastoral/source/`
+- Prompts, seeds, source hashes, and measured seam statistics:
+  `assets/textures/pastoral/manifest.json`
+- Reproducible ComfyUI API graphs and completed histories:
+  `tools/asset-gen/workflows/pastoral/`
+- Integration notes: `assets/textures/pastoral/README.md`
+
+No existing ground textures are overwritten by these scripts.
 
 ## 3D models — `gen_model.py`
 Image → 3D via **Hunyuan3D 2.1 (shape only)** through kijai's ComfyUI wrapper

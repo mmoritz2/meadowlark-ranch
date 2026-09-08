@@ -1,0 +1,220 @@
+{
+  "prompt": [
+    15,
+    "c9ce6783-7cc2-4e5a-88c2-58b7cbb1bb28",
+    {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "flux2_dev_fp8mixed.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "mistral_3_small_flux2_fp8.safetensors",
+          "type": "flux2"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "flux2-vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "CLIPTextEncode",
+        "inputs": {
+          "text": "Seamless tileable PBR base color albedo material texture of professionally maintained fine equestrian riding arena footing. Perfectly vertical top-down orthographic view of fine cream and warm ivory silica sand with subtle tiny fiber inclusions, softly groomed gentle irregular small scale raking texture. Soft warm pale beige and buff sand colors. Premium semi-realistic pastoral horse riding adventure game material with cohesive painterly realism, believable granular fine detail, low contrast, even coverage. Approximately a two meter square of sand. No hoof prints, no footprints, no circles, no straight grid lines, no large ridges, no pebbles, no rocks, no grass, no objects, no perspective. Uniform flat diffuse overcast illumination, no directional shadow, no ambient occlusion, no vignette, no dark corners, no text or watermark.",
+          "clip": [
+            "2",
+            0
+          ]
+        }
+      },
+      "5": {
+        "class_type": "FluxGuidance",
+        "inputs": {
+          "conditioning": [
+            "4",
+            0
+          ],
+          "guidance": 3.5
+        }
+      },
+      "7": {
+        "class_type": "RandomNoise",
+        "inputs": {
+          "noise_seed": 829176
+        }
+      },
+      "8": {
+        "class_type": "KSamplerSelect",
+        "inputs": {
+          "sampler_name": "euler"
+        }
+      },
+      "9": {
+        "class_type": "Flux2Scheduler",
+        "inputs": {
+          "steps": 24,
+          "width": 1024,
+          "height": 1024
+        }
+      },
+      "10": {
+        "class_type": "EmptyFlux2LatentImage",
+        "inputs": {
+          "width": 1024,
+          "height": 1024,
+          "batch_size": 1
+        }
+      },
+      "20": {
+        "class_type": "SRFSeamlessModel",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "tiling": "enable"
+        }
+      },
+      "21": {
+        "class_type": "SRFSeamlessVAE",
+        "inputs": {
+          "vae": [
+            "3",
+            0
+          ],
+          "tiling": "enable"
+        }
+      },
+      "6": {
+        "class_type": "BasicGuider",
+        "inputs": {
+          "model": [
+            "20",
+            0
+          ],
+          "conditioning": [
+            "5",
+            0
+          ]
+        }
+      },
+      "11": {
+        "class_type": "SamplerCustomAdvanced",
+        "inputs": {
+          "noise": [
+            "7",
+            0
+          ],
+          "guider": [
+            "6",
+            0
+          ],
+          "sampler": [
+            "8",
+            0
+          ],
+          "sigmas": [
+            "9",
+            0
+          ],
+          "latent_image": [
+            "10",
+            0
+          ]
+        }
+      },
+      "12": {
+        "class_type": "VAEDecode",
+        "inputs": {
+          "samples": [
+            "11",
+            0
+          ],
+          "vae": [
+            "21",
+            0
+          ]
+        }
+      },
+      "13": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "12",
+            0
+          ],
+          "filename_prefix": "srf_pastoral_arena"
+        }
+      }
+    },
+    {
+      "client_id": "6b8200d3-e90b-4fb8-95ad-e33fe8b94cb2",
+      "create_time": 1788895945261
+    },
+    [
+      "13"
+    ]
+  ],
+  "outputs": {
+    "13": {
+      "images": [
+        {
+          "filename": "srf_pastoral_arena_00001_.png",
+          "subfolder": "",
+          "type": "output"
+        }
+      ]
+    }
+  },
+  "status": {
+    "status_str": "success",
+    "completed": true,
+    "messages": [
+      [
+        "execution_start",
+        {
+          "prompt_id": "c9ce6783-7cc2-4e5a-88c2-58b7cbb1bb28",
+          "timestamp": 1788895945262
+        }
+      ],
+      [
+        "execution_cached",
+        {
+          "nodes": [
+            "1",
+            "2",
+            "3",
+            "8",
+            "9",
+            "10",
+            "20",
+            "21"
+          ],
+          "prompt_id": "c9ce6783-7cc2-4e5a-88c2-58b7cbb1bb28",
+          "timestamp": 1788895945263
+        }
+      ],
+      [
+        "execution_success",
+        {
+          "prompt_id": "c9ce6783-7cc2-4e5a-88c2-58b7cbb1bb28",
+          "timestamp": 1788895968406
+        }
+      ]
+    ]
+  },
+  "meta": {
+    "13": {
+      "node_id": "13",
+      "display_node": "13",
+      "parent_node": null,
+      "real_node_id": "13"
+    }
+  }
+}

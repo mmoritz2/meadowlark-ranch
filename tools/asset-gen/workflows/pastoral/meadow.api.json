@@ -1,0 +1,151 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "flux2_dev_fp8mixed.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "mistral_3_small_flux2_fp8.safetensors",
+      "type": "flux2"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "flux2-vae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "Seamless tileable ground material, PBR base color albedo texture of a lush rural horse pasture, perfectly vertical top-down orthographic view. The entire square is covered evenly with fine short soft green meadow grass, tiny clover leaves and a few straw-colored fine grass blades. Natural spring colors, muted sage green and warm fresh yellow green. Premium semi-realistic pastoral equestrian adventure game material with softly simplified believable natural detail, subtle color variation, cohesive painterly realism. Approximately a two meter square of turf seen directly from above, no perspective, no horizon, no objects, no flowers, no broad dirt patches. Uniform flat diffuse overcast lighting, no directional illumination, no shadows, no ambient occlusion, no dark corners, no vignette. Even brightness from edge to edge. Medium value greens, gentle contrast, no neon colors, no text or watermark.",
+      "clip": [
+        "2",
+        0
+      ]
+    }
+  },
+  "5": {
+    "class_type": "FluxGuidance",
+    "inputs": {
+      "conditioning": [
+        "4",
+        0
+      ],
+      "guidance": 3.5
+    }
+  },
+  "7": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 829174
+    }
+  },
+  "8": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "9": {
+    "class_type": "Flux2Scheduler",
+    "inputs": {
+      "steps": 24,
+      "width": 1024,
+      "height": 1024
+    }
+  },
+  "10": {
+    "class_type": "EmptyFlux2LatentImage",
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    }
+  },
+  "20": {
+    "class_type": "SRFSeamlessModel",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "tiling": "enable"
+    }
+  },
+  "21": {
+    "class_type": "SRFSeamlessVAE",
+    "inputs": {
+      "vae": [
+        "3",
+        0
+      ],
+      "tiling": "enable"
+    }
+  },
+  "6": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "20",
+        0
+      ],
+      "conditioning": [
+        "5",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "7",
+        0
+      ],
+      "guider": [
+        "6",
+        0
+      ],
+      "sampler": [
+        "8",
+        0
+      ],
+      "sigmas": [
+        "9",
+        0
+      ],
+      "latent_image": [
+        "10",
+        0
+      ]
+    }
+  },
+  "12": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "11",
+        0
+      ],
+      "vae": [
+        "21",
+        0
+      ]
+    }
+  },
+  "13": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "12",
+        0
+      ],
+      "filename_prefix": "srf_pastoral_meadow"
+    }
+  }
+}

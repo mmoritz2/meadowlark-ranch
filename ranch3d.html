@@ -330,6 +330,7 @@ import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {createPastoralSky} from './assets/pastoral-sky.js';
 
 /* ================= save sync with the 2D game ================= */
 const SAVE_KEY='starRanchFable_v1';   // NOT renamed with the game: changing this orphans every existing save
@@ -829,7 +830,7 @@ renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 const scene=new THREE.Scene();
 scene.fog=new THREE.FogExp2(0xbfd3e8,0.0021);   // exponential; tinted to the sky so distance hazes toward it
-const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,5000);
+const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,5000);
 /* Start where the chase camera will settle (player spawns at 0,0,8 facing -z, so the
    camera belongs behind it at +z). Starting anywhere else makes the first second of the
    game a swoop through the horse before the smoothing catches up. */
@@ -1788,6 +1789,8 @@ function dimSky(o){o.material.onBeforeCompile=sh=>{
 const sky=new Sky();
 sky.scale.setScalar(450000);
 setSky(sky);dimSky(sky);
+sky.material.dispose();
+sky.material=createPastoralSky(THREE);
 scene.add(sky);
 const pmrem=new THREE.PMREMGenerator(renderer);
 /* PBR ambient comes from a PMREM'd sky — bake one per time-of-day band and swap */
@@ -1813,9 +1816,9 @@ const envMaps={};let curEnv='day';
 /* Sun-to-ambient was 1.55:1; real daylight is 5:1 to 8:1. The hemisphere light was
    supplying ~40% of the light budget in full sun, so every shadow was a faint 15% dip.
    The env map (PMREM'd sky) now carries the ambient and this is only a trim. */
-const hemi=new THREE.HemisphereLight(0x9fc0e8,0x45483f,0.16);   // sky term must beat the bounce
+const hemi=new THREE.HemisphereLight(0xc6d9ed,0x898467,1.05);
 scene.add(hemi);
-const sun=new THREE.DirectionalLight(0xffe6bc,5.4);              // a real key: sun:sky now ~6:1
+const sun=new THREE.DirectionalLight(0xffedda,3.15);
 const sunOff=sunDir.clone().multiplyScalar(95);
 sun.position.copy(sunOff);
 sun.castShadow=true;
@@ -1829,13 +1832,15 @@ sun.shadow.bias=-0.00006;sun.shadow.normalBias=0.005;
 scene.add(sun);scene.add(sun.target);
 
 const composer=new EffectComposer(renderer);
+// The postprocess targets need their own MSAA; canvas antialiasing cannot cover them.
+for(const rt of [composer.renderTarget1,composer.renderTarget2])rt.samples=Math.min(4,renderer.capabilities.maxSamples);
 composer.setPixelRatio(Math.min(devicePixelRatio,1.75));
 composer.addPass(new RenderPass(scene,camera));
 const bloomPass=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.045,0.85,0.72);
 composer.addPass(bloomPass);
 composer.addPass(new OutputPass());
 /* day cycle & weather state */
-let dayT=0.22;
+let dayT=0.34;
 const weather={mode:'clear',timer:90+Math.random()*120};
 window._weather=weather;
 window._setDay=v=>{dayT=((v%1)+1)%1;};   // debug/photo helper: 0=midnight 0.5=noon
@@ -1858,9 +1863,9 @@ scene.add(rainbow);
 
 /* ================= night sky: stars, moon, fireflies, lit windows ================= */
 const C_SUN_HIGH=new THREE.Color('#fff0d2'),C_SUN_LOW=new THREE.Color('#ff9a4e'),C_MOON=new THREE.Color('#b9cdf2');
-const C_HEMI_DAY=new THREE.Color(0xbcd2ec),C_HEMI_NIGHT=new THREE.Color(0x3d5080);
-const C_GROUND_DAY=new THREE.Color(0x7e8456),C_GROUND_NIGHT=new THREE.Color(0x2f3a30);
-const C_FOG_DAY=new THREE.Color(0xbccddc),C_FOG_GOLD=new THREE.Color(0xd9bfa4),C_FOG_NIGHT=new THREE.Color(0x141c2e);
+const C_HEMI_DAY=new THREE.Color(0xc6d9ed),C_HEMI_NIGHT=new THREE.Color(0x65789c);
+const C_GROUND_DAY=new THREE.Color(0x898467),C_GROUND_NIGHT=new THREE.Color(0x39443e);
+const C_FOG_DAY=new THREE.Color(0xc2dce9),C_FOG_GOLD=new THREE.Color(0xd9bfa4),C_FOG_NIGHT=new THREE.Color(0x141c2e);
 const _fogCol=new THREE.Color(),_moonDir=new THREE.Vector3();
 /* Declared up here, not beside nameSprite(): the function is hoisted and called long
    before its own line runs, so a const declared next to it is still in the dead zone. */
@@ -3538,7 +3543,7 @@ function placeSeedTrees(){
     {const band=0.5+0.5*Math.sin(tp.x*0.0125+1.7)*Math.cos(tp.z*0.0104-0.6);   // where the stand has turned
      const turn=Math.max(0,Math.min(1,(band-0.40)*2.3));
      const jit=((Math.imul((tp.x*7|0)^(tp.z*13|0),2654435761)>>>8)%1000)/1000;
-     _lc.set(0xffffff).lerp(AUT[Math.floor(jit*AUT.length)%AUT.length],turn*(0.68+jit*0.42));
+     _lc.set(0xffffff).lerp(AUT[Math.floor(jit*AUT.length)%AUT.length],turn*(0.16+jit*0.16));
      lInst.setColorAt(i,_lc);}
     vt.set(tp.x,groundH(tp.x,tp.z)-minY*s-0.06*cfg.h*tp.s,tp.z);
     sct.set(s,s,s);
@@ -4228,26 +4233,13 @@ let waterMat=null;   // hoisted: the pond reuses it
  }
  /* the roads, laid over the ground as ribbons that follow it */
  {
-  const roadTex=canvasTex(128,128,(c,w,h)=>{
-   c.clearRect(0,0,w,h);
-   const grad=c.createLinearGradient(0,0,0,h);            // soft at both edges, solid down the middle
-   grad.addColorStop(0,'rgba(150,124,92,0)'); grad.addColorStop(0.22,'rgba(150,124,92,0.95)');
-   grad.addColorStop(0.5,'rgba(163,136,101,1)'); grad.addColorStop(0.78,'rgba(150,124,92,0.95)');
-   grad.addColorStop(1,'rgba(150,124,92,0)');
-   c.fillStyle=grad; c.fillRect(0,0,w,h);
-   for(let i=0;i<900;i++){                                 // grit and stones
-    const y=8+Math.random()*(h-16);
-    c.fillStyle=['#8f7350','#b39a72','#7a6242','#c4ae86'][i&3];
-    c.globalAlpha=0.35*(1-Math.abs(y/h-0.5)*1.6);
-    c.fillRect(Math.random()*w,y,1+Math.random()*3,1+Math.random()*2);
-   }
-   c.globalAlpha=0.14;                                     // two wheel ruts
-   for(const ry of [h*0.34,h*0.66]){ c.fillStyle='#6b563a'; c.fillRect(0,ry-2.5,w,5); }
-   c.globalAlpha=1;
-  });
-  roadTex.wrapS=THREE.RepeatWrapping; roadTex.anisotropy=8;
+  const roadTex=texLoad('assets/textures/pastoral/bridleway_albedo.jpg',1);
   const roadMat=new THREE.MeshStandardMaterial({map:roadTex,transparent:true,roughness:1,metalness:0,
+   normalMap:texData('assets/textures/pastoral/bridleway_normal.jpg',1),normalScale:new THREE.Vector2(0.28,0.28),
+   roughnessMap:texData('assets/textures/pastoral/bridleway_roughness.jpg',1),
    depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3});
+  roadMat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',
+   '#include <map_fragment>\n diffuseColor.a *= smoothstep(0.0,0.14,vMapUv.y)*(1.0-smoothstep(0.86,1.0,vMapUv.y));');};
   const rp=[],ru=[],ri=[];
   const cr=(p0,p1,p2,p3,t)=>{                              // catmull-rom, so corners round off
    const t2=t*t,t3=t2*t;
@@ -4272,7 +4264,7 @@ let waterMat=null;   // hoisted: the pond reuses it
     for(const sg of[-1,1]){
      const x=pts[i][0]-dz*sg*wob, z=pts[i][1]+dx*sg*wob;
      rp.push(x,groundH(x,z)+0.055,z);
-     ru.push(run/6,sg<0?0:1);
+     ru.push(run/3,sg<0?0:1);
     }
    }
    for(let i=0;i<pts.length-1;i++){const a=base+i*2; ri.push(a,a+1,a+2, a+1,a+3,a+2);}
@@ -4724,110 +4716,123 @@ function buildHairFor(skin,bones,mount){
    one draw call. The head furniture rides in the bridle group, which already tracks the
    head bone. */
 function buildDragonBody(skin,bones,mount,theme){
+ /* ONE mesh, built along ONE curve.
+
+    The old dragon was a collection: a crest strip, a separate row of spine cones, a back
+    web, a tail tube, a spade, and fifteen more cones scattered over the head. Every piece
+    was positioned near the horse but joined to nothing, so the whole thing read as bits
+    floating around an animal rather than as an animal. This builds a single centreline
+    from the poll to the tip of the tail, measured off the mesh and the tail bones, and
+    then hangs everything off that one line: the tail is a tube on it, the ridge is one
+    unbroken membrane along it, and the spikes are the membrane's own upper edge rather
+    than cones sitting near it. Nothing is placed by eye and nothing floats. */
  const th=theme||DRAGON_TINT._;
  const bpos=bones.map(b=>{const v=new THREE.Vector3(); b.getWorldPosition(v); mount.worldToLocal(v); return v;});
  const toSkin=v=>{const w=mount.localToWorld(v.clone()); return skin.worldToLocal(w);};
  const P=[],C=[],SI=[],SW=[],I=[];
- const cBone=new THREE.Color(th.bone), cWeb=new THREE.Color(th.web), cGlow=new THREE.Color(th.glow);
- const cSpike=cBone.clone().lerp(new THREE.Color('#ffffff'),0.42);
+ const cBone=new THREE.Color(th.bone), cWeb=new THREE.Color(th.web);
+ const cGlow=new THREE.Color(th.glow), cSpike=new THREE.Color(th.ridge||th.web);
+ const V=(x,y,z)=>new THREE.Vector3(x,y,z);
  const NECK=[4,5,6], SPINE=[0,1,2,3,4], TAILB=RIG_TAIL.concat([RIG_TAIL[0]-1]);
- const near=(v,cands)=>{let bi=cands[0],bd=1e9; for(const i of cands){const b=bpos[i]; if(!b)continue; const d=b.distanceToSquared(v); if(d<bd){bd=d;bi=i;}} return bi;};
+ const near=(v,cands)=>{let bi=cands[0],bd=1e9; for(const i of cands){const b=bpos[i]; if(!b)continue;
+  const d=b.distanceToSquared(v); if(d<bd){bd=d;bi=i;}} return bi;};
  const vert=(v,col,cands)=>{const b=near(v,cands),vs=toSkin(v);
   P.push(vs.x,vs.y,vs.z); C.push(col.r,col.g,col.b); SI.push(b,0,0,0); SW.push(1,0,0,0); return P.length/3-1;};
  const tri=(a,b,c)=>{I.push(a,b,c);};
- const V=(x,y,z)=>new THREE.Vector3(x,y,z);
- /* a four-sided spine, standing off a base point along dir */
- const spine=(base,dir,len,r,cands)=>{
-  const d=dir.clone().normalize();
-  const up=Math.abs(d.y)>0.9?V(1,0,0):V(0,1,0);
-  const s1=new THREE.Vector3().crossVectors(d,up).normalize();
-  const s2=new THREE.Vector3().crossVectors(d,s1).normalize();
-  const tip=vert(base.clone().addScaledVector(d,len),cSpike,cands), ring=[];
-  for(let k=0;k<5;k++){const a=k/5*Math.PI*2;
-   ring.push(vert(base.clone().addScaledVector(s1,Math.cos(a)*r).addScaledVector(s2,Math.sin(a)*r),cBone,cands));}
-  for(let k=0;k<5;k++)tri(ring[k],ring[(k+1)%5],tip);
- };
- /* webbing stretched between the roots of a run of spines */
- const web=(pts,hs,cands)=>{ let pb=null,pt=null;
-  for(let k=0;k<pts.length;k++){
-   const b=vert(pts[k],cBone,cands), t=vert(pts[k].clone().add(V(0,hs[k],0)),cWeb,cands);
-   if(pb!==null){tri(pb,b,pt); tri(b,t,pt);} pb=b; pt=t; }
- };
- /* a tapering tube of rings along a polyline */
- const tube=(pts,rs,cands,cA,cB)=>{
-  const SIDES=7; let prev=null;
-  for(let k=0;k<pts.length;k++){
-   const dir=(k<pts.length-1?pts[k+1].clone().sub(pts[k]):pts[k].clone().sub(pts[k-1])).normalize();
-   const up=Math.abs(dir.y)>0.9?V(1,0,0):V(0,1,0);
-   const s1=new THREE.Vector3().crossVectors(dir,up).normalize();
-   const s2=new THREE.Vector3().crossVectors(dir,s1).normalize();
-   const ring=[], col=cA.clone().lerp(cB,k/(pts.length-1));
-   for(let j=0;j<SIDES;j++){const a=j/SIDES*Math.PI*2;
-    ring.push(vert(pts[k].clone().addScaledVector(s1,Math.cos(a)*rs[k]).addScaledVector(s2,Math.sin(a)*rs[k]),col,cands));}
-   if(prev)for(let j=0;j<SIDES;j++){const j2=(j+1)%SIDES; tri(prev[j],ring[j],prev[j2]); tri(ring[j],ring[j2],prev[j2]);}
-   prev=ring;
-  }
-  return prev;
- };
- // ---- the crest: poll to withers, then withers to dock, spines with skin between them
+
+ // ---- measure the animal: the top of the back, straight down the middle ----------------
+ const sp=skin.geometry.attributes.position, _v=new THREE.Vector3(), tops=[];
+ for(let k=0;k<sp.count;k++){ _v.fromBufferAttribute(sp,k); skin.localToWorld(_v); mount.worldToLocal(_v);
+  if(Math.abs(_v.x)<0.18)tops.push([_v.y,_v.z]); }
+ const topAt=z=>{let b=null; for(const q of tops)if(Math.abs(q[1]-z)<0.05&&(b===null||q[0]>b))b=q[0]; return b;};
+
+ // ---- the one centreline: poll -> croup measured off the back, then out along the tail --
  const dock=bpos[RIG_TAIL[0]]||V(0,1.5,-0.95);
- const crestPts=[],crestH=[];
- for(let k=0;k<=9;k++){ const t=k/9;                            // the neck, arching over
-  crestPts.push(V(-0.02, 1.72-0.16*t*t, 0.63-0.60*t));
-  crestH.push((k%2?0.10:0.185)*(0.55+0.85*Math.sin(Math.PI*Math.min(1,t*1.15))));
+ const line=[];
+ {
+  let lastY=1.70;
+  const zA=0.78, zB=Math.max(dock.z,-0.90), N=20;
+  for(let k=0;k<=N;k++){ const t=k/N, z=zA+(zB-zA)*t;
+   const y=topAt(z); if(y!==null)lastY=y;
+   line.push({p:V(0,lastY-0.008,z), cands:(t<0.45?NECK:SPINE), tube:0});
+  }
+  const tb=RIG_TAIL.map(i=>bpos[i]).filter(Boolean);
+  if(tb.length>=2){
+   const last=tb[tb.length-1], prev=tb[tb.length-2];
+   const all=tb.concat([last.clone().add(last.clone().sub(prev).multiplyScalar(1.10))]);
+   all.forEach((q,j)=>{ line.push({p:q.clone(),cands:TAILB,tube:0.078*(1-j/all.length*0.78)+0.011}); });
+  }
  }
- web(crestPts,crestH,NECK);
- crestPts.forEach((p,k)=>{ if(k%2===0)spine(p,V(0,1,-0.22),crestH[k]*1.7,0.026,NECK); });
- /* The back ridge used to interpolate straight from the withers to the TAIL DOCK, which
-    sits low and well behind the rump — so the "ridge" dived down the back of the horse and
-    the webbing between its stations piled up into a solid brown sheet hanging over the
-    hindquarters. It follows the animal's actual topline now, measured off the mesh the same
-    way the mane's crest is, and stops at the croup where a real ridge would. */
- const _sp=skin.geometry.attributes.position, _sv=new THREE.Vector3(), _tops=[];
- for(let k=0;k<_sp.count;k++){ _sv.fromBufferAttribute(_sp,k); skin.localToWorld(_sv); mount.worldToLocal(_sv);
-  if(Math.abs(_sv.x)<0.17)_tops.push([_sv.y,_sv.z]); }
- const topAt=z=>{ let best=null; for(const q of _tops){ if(Math.abs(q[1]-z)<0.05&&(!best||q[0]>best[0]))best=q[0]; } return best; };
- const backPts=[],backH=[];
- {let lastY=1.56;
-  const zEnd=Math.max(dock.z,-0.92);
-  for(let k=0;k<=8;k++){ const t=k/8, z=0.03+(zEnd-0.03)*t;
-   const y=topAt(z); if(y!==null&&y!==undefined)lastY=y;      // carry the last good height back
-   backPts.push(V(0,lastY-0.012,z));
-   backH.push(0.145*(1-t*0.58));
-  }}
- web(backPts,backH,SPINE);
- backPts.forEach((p,k)=>{ if(k%2===0)spine(p,V(0,1,-0.12),backH[k]*1.6,0.021,SPINE); });
- // ---- the tail: a scaled tube out along the tail bones, past the last one, to a spade
- const tp=[],tr=[];
- const tb=RIG_TAIL.map(i=>bpos[i]).filter(Boolean);
- if(tb.length>=2){
-  const last=tb[tb.length-1], prev=tb[tb.length-2];
-  const ext=last.clone().add(last.clone().sub(prev).multiplyScalar(1.35));
-  const all=tb.concat([ext]);
-  for(let k=0;k<all.length;k++){ tp.push(all[k].clone()); tr.push(0.085*(1-k/all.length*0.82)+0.012); }
-  const endRing=tube(tp,tr,TAILB,cBone,cBone.clone().lerp(cGlow,0.25));
-  /* The spade. This used to take cross(dir, up) with no guard — and a horse's tail hangs
-     straight down, so dir IS up and that cross product collapses to nothing. The tube and
-     spine helpers directly above both guard for it; this did not, and the result was a
-     flat brown wedge hanging to the ground between the hind legs.
-     It is a vertical fin now, the way a dragon's tail actually ends, with a spine up the
-     middle so it reads as a fin from behind rather than as a sheet of paper. */
-  const dir=tp[tp.length-1].clone().sub(tp[tp.length-2]).normalize();
-  const gup=Math.abs(dir.y)>0.9?V(0,0,1):V(0,1,0);          // the guard the spade was missing
-  const side=new THREE.Vector3().crossVectors(dir,gup).normalize();
-  const fin=new THREE.Vector3().crossVectors(dir,side).normalize();   // the fin stands in this plane
-  const base=tp[tp.length-1].clone();
-  const cFin=cBone.clone().lerp(cWeb,0.55);
-  const a=vert(base.clone().addScaledVector(side, 0.016),cBone,TAILB);
-  const b=vert(base.clone().addScaledVector(side,-0.016),cBone,TAILB);
-  const w1=vert(base.clone().addScaledVector(dir,0.09).addScaledVector(fin, 0.115),cFin,TAILB);
-  const w2=vert(base.clone().addScaledVector(dir,0.09).addScaledVector(fin,-0.115),cFin,TAILB);
-  const tip=vert(base.clone().addScaledVector(dir,0.26),cWeb,TAILB);
-  tri(a,w1,tip); tri(a,tip,w2); tri(b,tip,w1); tri(b,w2,tip);
-  spine(base.clone().addScaledVector(dir,0.05),fin.clone(),0.09,0.014,TAILB);
-  // spines down the length of the tail
-  for(let k=1;k<tp.length-1;k++)spine(tp[k],V(0,1,-0.3),0.10*(1-k/tp.length*0.55),0.019,TAILB);
+ const N1=line.length-1;
+ /* A frame at every station. dir is along the line; side is across it; up is the fin's own
+    direction. The guard matters: over the back dir is horizontal and up comes out vertical,
+    but a tail hangs straight DOWN, and there cross(dir, worldUp) collapses — which is the
+    bug that used to throw the tail fin across the paddock. */
+ for(let k=0;k<=N1;k++){
+  const a=line[Math.max(0,k-1)].p, b=line[Math.min(N1,k+1)].p;
+  const dir=b.clone().sub(a); if(dir.lengthSq()<1e-8)dir.set(0,0,-1); dir.normalize();
+  const ref=Math.abs(dir.y)>0.88?V(0,0,1):V(0,1,0);
+  const side=new THREE.Vector3().crossVectors(dir,ref).normalize();
+  const up=new THREE.Vector3().crossVectors(side,dir).normalize();
+  if(up.y<0&&Math.abs(dir.y)<=0.88)up.negate();
+  line[k].dir=dir; line[k].side=side; line[k].up=up;
  }
+
+ // ---- the tail: a tapering tube on the same line, ring welded to ring ------------------
+ const SIDES=7;
+ let prevRing=null;
+ for(let k=0;k<=N1;k++){
+  const L=line[k]; if(!L.tube)continue;
+  const ring=[], col=cBone.clone().lerp(cGlow,0.18+0.5*(k/N1));
+  for(let j=0;j<SIDES;j++){ const a=j/SIDES*Math.PI*2;
+   ring.push(vert(L.p.clone().addScaledVector(L.side,Math.cos(a)*L.tube).addScaledVector(L.up,Math.sin(a)*L.tube),col,L.cands)); }
+  if(prevRing)for(let j=0;j<SIDES;j++){const j2=(j+1)%SIDES;
+   tri(prevRing[j],ring[j],prevRing[j2]); tri(ring[j],ring[j2],prevRing[j2]); }
+  prevRing=ring;
+ }
+
+ /* ---- the ridge: one unbroken membrane from the poll to the tip of the tail ------------
+    Its upper edge is a sawtooth, so the spikes ARE the membrane and cannot come adrift
+    from it. Height follows the animal: a tall crest on the neck, lower over the saddle so
+    it does not foul the rider, and rising again into a fin at the end of the tail. */
+ const hAt=k=>{
+  const t=k/N1;
+  let h;
+  if(t<0.30)      h=0.085+0.135*Math.sin(Math.PI*(t/0.30));      // the neck crest
+  else if(t<0.46) h=0.060;                                        // low across the saddle
+  else if(t<0.62) h=0.070+0.070*((t-0.46)/0.16);                  // rising off the croup
+  else            h=0.085+0.150*Math.pow(Math.sin(Math.PI*Math.min(1,(t-0.62)/0.38)),1.5); // the tail fin
+  return h;
+ };
+ let pb=null,pt=null;
+ for(let k=0;k<=N1;k++){
+  const L=line[k];
+  const root=L.tube?L.p.clone().addScaledVector(L.up,L.tube*0.92):L.p.clone();
+  const spike=(k%2===0);
+  const h=hAt(k)*(spike?1.0:0.44);
+  const tipP=root.clone().addScaledVector(L.up,h).addScaledVector(L.dir,-h*0.34);  // leaning back
+  const b=vert(root,cBone,L.cands);
+  const t2=vert(tipP,spike?cSpike:cWeb,L.cands);
+  if(pb!==null){ tri(pb,b,pt); tri(b,t2,pt); }
+  pb=b; pt=t2;
+ }
+
+ /* ---- horns: the only thing on the head, and they grow out of the ridge's first station
+    rather than being parked near the skull. Two, swept back along the neck. */
+ {
+  const L=line[0];
+  for(const sg of[-1,1]){
+   const base=L.p.clone().addScaledVector(L.side,sg*0.052).addScaledVector(L.dir,0.02);
+   const dirH=L.up.clone().multiplyScalar(0.82).addScaledVector(L.dir,-0.62).addScaledVector(L.side,sg*0.34).normalize();
+   const s1=new THREE.Vector3().crossVectors(dirH,L.side).normalize();
+   const s2=new THREE.Vector3().crossVectors(dirH,s1).normalize();
+   const tipH=vert(base.clone().addScaledVector(dirH,0.34),cSpike,NECK), ring=[];
+   for(let j=0;j<5;j++){ const a=j/5*Math.PI*2;
+    ring.push(vert(base.clone().addScaledVector(s1,Math.cos(a)*0.034).addScaledVector(s2,Math.sin(a)*0.034),cBone,NECK)); }
+   for(let j=0;j<5;j++)tri(ring[j],ring[(j+1)%5],tipH);
+  }
+ }
+
  const g=new THREE.BufferGeometry();
  g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
  g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));
@@ -5167,7 +5172,10 @@ function makeCoatMat(){
    sh.fragmentShader.replace('#include <map_fragment>',
    `#include <map_fragment>
     float _l=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));
-    diffuseColor.rgb=mix(diffuseColor.rgb, uCoat*clamp(_l/0.42,0.0,1.7), uBlend);
+    // The new unlit coat averages .14 in linear space. Keep white markings and
+    // dark eyes/hooves separate while recolouring the natural body pigment.
+    float _pigment=smoothstep(0.045,0.09,_l)*(1.0-smoothstep(0.38,0.54,_l));
+    diffuseColor.rgb=mix(diffuseColor.rgb,uCoat*clamp(_l/0.14,0.55,1.5),uBlend*_pigment);
     if(uMark>0.5){
      /* fl 0 at the tail, 1 at the nose; fh 0 under the belly, 1 along the back */
      vec3 _rel=(vBody-uBBMin)/max(uBBSize,vec3(0.001));
@@ -5501,38 +5509,13 @@ function buildBridle(dragon){
  g.userData.gold=gold;
  g.userData.dragon=!!dragon;
  if(dragon){
-  /* Placed against the head that is actually there, not by eye. Slicing the rigged mesh in
-     z gives the centre line and the half width at every station down the face:
-
-        z    centre x   half width   top y
-       0.60   -0.069     0.093       1.762
-       0.70   -0.081     0.092       1.778
-       0.80   -0.115     0.115       1.842   (the ears)
-       0.90   -0.108     0.101       1.733
-       1.00   -0.156     0.062       1.530
-       1.05   -0.161     0.056       1.461
-
-     The head is narrow — a hand's width — and it drifts left as it goes forward. Everything
-     used to be spread symmetrically about a guessed centre with a spread wider than the head
-     itself, which is why horns, eyes and spines floated in the air beside the face. Fewer
-     pieces now, each one sitting on the surface. */
-  const th=dragon, bone=new THREE.MeshStandardMaterial({color:new THREE.Color(th.bone).lerp(new THREE.Color('#c9bda8'),0.55),
-   roughness:0.52,metalness:0.12,flatShading:true});
-  const horn=(x,y,z,len,rad,rx,rz)=>{ const h=put(new THREE.Mesh(new THREE.ConeGeometry(rad,len,6),bone),x,y,z);
-   h.rotation.set(rx,0,rz); return h; };
-  for(const sg of[-1,1]){
-   horn(-0.085+sg*0.052,1.755,0.715,0.40,0.036,-1.30,sg*0.30);     // the pair, off the top of the skull
-   horn(-0.112+sg*0.092,1.560,0.880,0.13,0.019,-0.15,sg*1.30);     // a spine on each cheek
-   const brow=put(new THREE.Mesh(new THREE.ConeGeometry(0.026,0.11,4),bone),-0.115+sg*0.082,1.712,0.808);
-   brow.rotation.set(-1.35,0,sg*0.28);                             // a ridge over each eye
-   const nos=put(new THREE.Mesh(new THREE.SphereGeometry(0.014,7,6),bone),-0.156+sg*0.026,1.372,1.068);
-   nos.scale.set(1,0.7,1.3);                                       // nostrils, at the tip
-  }
-  for(let k=0;k<5;k++){                                            // a ridge following the face down
-   const t=k/4, m=put(new THREE.Mesh(new THREE.ConeGeometry(0.017-0.005*t,0.062-0.018*t,5),bone),
-    -0.110-t*0.050, 1.740-t*0.235, 0.880+t*0.150);
-   m.rotation.x=-0.55+t*0.75;
-  }
+  /* The head used to carry fifteen separate cones and spheres — a pair of horns, a spine on
+     each cheek, a brow ridge over each eye, nostrils, and a row of five down the face. Even
+     placed against real measurements they were a scatter of loose pieces stuck near a horse's
+     head, which is exactly what "random things everywhere" looks like. The horns are part of
+     the one dragon mesh now, growing out of the neck ridge. All that is left here is the eyes,
+     which sit in the sockets the horse already has. */
+  const th=dragon;
   const eyeGlow=new THREE.MeshStandardMaterial({color:new THREE.Color(th.glow),roughness:0.25,
    emissive:new THREE.Color(th.glow),emissiveIntensity:1.5});
   for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.034,14,12),eyeGlow),-0.113+sg*0.098,1.628,0.845);
@@ -7690,7 +7673,7 @@ addEventListener('touchstart',enableTouchUI,{once:true,passive:true});
 $('tGal').addEventListener('click',()=>{touch.gal=!touch.gal;$('tGal').style.opacity=touch.gal?'1':'0.6';});
 $('tGal').style.opacity='0.6';
 // drag to orbit the camera, scroll to zoom — like a real third-person game
-let camYaw=0,camPitch=0.33,camDist=6.5,camDistSm=6.5,camDrag=null;
+let camYaw=0.24,camPitch=0.27,camDist=6.2,camDistSm=6.2,camDrag=null;
 const camLook=new THREE.Vector3(0,1.7,8);
 /* Camera drag tracks ONE pointer id. Without that, a second finger arriving —
    which on a phone is the normal case, thumb on the stick and thumb on the view —
@@ -10596,8 +10579,10 @@ function startHints(){
  hintIdx=0; hintNext=hintT+(first?7:9);
  $('hint').textContent=hintSeq[0];
 }
-function tick(){
- const dt=Math.min(0.05,clock.getDelta());
+function tick(stepSeconds){
+ // The animation loop supplies a timestamp; explicit test steps use a separate flag.
+ const dt=manualStepping?stepSeconds:Math.min(0.05,clock.getDelta());
+ if(manualStepping)clock.elapsedTime+=dt;
  const t=clock.elapsedTime;
  frameWatch(t);
  if(renderer.xr.isPresenting)pollVR();
@@ -11348,9 +11333,9 @@ function tick(){
  }else{
   camera.position.lerp(new THREE.Vector3(camX,camY,camZ),k);
   const shake=sp>7&&grounded?0.011:0;
-  camLook.lerp(new THREE.Vector3(player.pos.x,gy+player.y+1.7,player.pos.z),1-Math.exp(-8*dt));
+  camLook.lerp(new THREE.Vector3(player.pos.x,gy+player.y+1.35,player.pos.z),1-Math.exp(-8*dt));
   camera.lookAt(camLook.x+Math.sin(t*23)*shake,camLook.y+Math.sin(t*31)*shake,camLook.z+Math.cos(t*27)*shake);
-  const fovT=sp>7?67:60;
+  const fovT=sp>7?57:52;
   if(Math.abs(camera.fov-fovT)>0.1){
    camera.fov+=(fovT-camera.fov)*Math.min(1,dt*2.5);
    camera.updateProjectionMatrix();
@@ -11365,6 +11350,10 @@ function tick(){
  nightNow=THREE.MathUtils.clamp(-elev/9,0,1);
  const lowSun=THREE.MathUtils.clamp(1-elev/26,0,1);
  const golden=THREE.MathUtils.clamp(1-Math.abs(elev-7)/16,0,1);
+ sky.material.uniforms.day.value=dayF;
+ sky.material.uniforms.golden.value=golden;
+ sky.material.uniforms.night.value=nightNow;
+ sky.material.uniforms.rain.value=weather.mode==='rain'?1:0;
  tickAir(dt,t,golden,dayF,nightNow);
  _moonDir.copy(sunDir).negate();
  // one key light: warm sun by day, ember at the horizon, cool moonlight after dark
@@ -11398,10 +11387,10 @@ function tick(){
   weather.mode='clear';weather.timer=140+Math.random()*160;
   rainbow.visible=false;
  }
- const keyT=(weather.mode==='rain'?2.0:5.4)*dayF+0.62*nightNow
+ const keyT=(weather.mode==='rain'?1.3:3.15)*dayF+0.62*nightNow
   +(weather.mode==='rain'?0.15:0.55)*golden;   // ember punch at the horizon hours
  sun.intensity+=(keyT-sun.intensity)*Math.min(1,dt*1.5);
- const hemiT=THREE.MathUtils.lerp(0.24,weather.mode==='rain'?0.30:0.14,dayF);   // 0.10 left the ground unreadable at night
+ const hemiT=THREE.MathUtils.lerp(0.38,weather.mode==='rain'?0.88:1.05,dayF);
  hemi.intensity+=(hemiT-hemi.intensity)*Math.min(1,dt*1.5);
  hemi.color.copy(C_HEMI_NIGHT).lerp(C_HEMI_DAY,dayF);
  hemi.groundColor.copy(C_GROUND_NIGHT).lerp(C_GROUND_DAY,dayF);
@@ -11581,6 +11570,14 @@ function tick(){
   if(!USE_GEN_HORSE||loadWaitT>12||(RIG.ready&&RIG.attachedTo===player.mesh))ld.remove();
  }
 }
+let manualStepping=false;
+window.advanceTime=ms=>{
+ renderer.setAnimationLoop(null);
+ manualStepping=true;
+ const steps=Math.max(1,Math.ceil(ms/(1000/60)));
+ for(let i=0;i<steps;i++)tick(ms/1000/steps);
+};
+window.resumeGame=()=>{manualStepping=false;clock.getDelta();renderer.setAnimationLoop(tick);};
 window.render_game_to_text=()=>JSON.stringify({
  mode:course?'course':'free_roam',
  coordinateSystem:'x east/west, z north/south, y up',
@@ -11606,7 +11603,11 @@ window.render_game_to_text=()=>JSON.stringify({
   faults:course.faults||0
  }:null,
  wallet:{coins,gems},
- weather:weather.mode
+ weather:weather.mode,
+ graphics:{quality,horseReady:RIG.ready,horseAttached:RIG.attachedTo===player.mesh,day:Number(dayT.toFixed(3)),triangles:renderer.info.render.triangles,drawCalls:renderer.info.render.calls},
+ camera:{x:Number(camera.position.x.toFixed(2)),y:Number(camera.position.y.toFixed(2)),z:Number(camera.position.z.toFixed(2)),fov:Number(camera.fov.toFixed(1)),free:!!freeCam},
+ jumping:player.y>0&&!player.flying,
+ stamina:Number((player.stam||0).toFixed(3))
 });
 const MERGE_STATS=mergeStatics();
 renderer.setAnimationLoop(tick);   // drives rAF when flat, the XR frame loop when presenting

@@ -1,0 +1,220 @@
+{
+  "prompt": [
+    14,
+    "b691015f-c3cf-404f-b768-b966869cf88c",
+    {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "flux2_dev_fp8mixed.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "mistral_3_small_flux2_fp8.safetensors",
+          "type": "flux2"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "flux2-vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "CLIPTextEncode",
+        "inputs": {
+          "text": "Seamless tileable PBR base color albedo texture of a warm pale earthen bridleway in an idyllic countryside horse ranch, perfectly vertical top-down orthographic view. Fine softly compacted sandy clay, tiny rounded gravel grains sparsely scattered through the earth, subtle natural worn surface variation. Warm light taupe, sand and muted honey beige. Premium semi-realistic pastoral equestrian adventure game material, softly simplified believable natural detail, cohesive painterly realism. Approximately a two meter square of ground, completely uniform coverage across the frame. No path edges, no grass, no grass border, no wheel tracks, no footprints, no large stones, no rocks, no perspective. Perfectly flat diffuse overcast illumination, no directional shadows, no ambient occlusion, no vignette, no dark corners, no text or watermark. Low contrast.",
+          "clip": [
+            "2",
+            0
+          ]
+        }
+      },
+      "5": {
+        "class_type": "FluxGuidance",
+        "inputs": {
+          "conditioning": [
+            "4",
+            0
+          ],
+          "guidance": 3.5
+        }
+      },
+      "7": {
+        "class_type": "RandomNoise",
+        "inputs": {
+          "noise_seed": 829175
+        }
+      },
+      "8": {
+        "class_type": "KSamplerSelect",
+        "inputs": {
+          "sampler_name": "euler"
+        }
+      },
+      "9": {
+        "class_type": "Flux2Scheduler",
+        "inputs": {
+          "steps": 24,
+          "width": 1024,
+          "height": 1024
+        }
+      },
+      "10": {
+        "class_type": "EmptyFlux2LatentImage",
+        "inputs": {
+          "width": 1024,
+          "height": 1024,
+          "batch_size": 1
+        }
+      },
+      "20": {
+        "class_type": "SRFSeamlessModel",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "tiling": "enable"
+        }
+      },
+      "21": {
+        "class_type": "SRFSeamlessVAE",
+        "inputs": {
+          "vae": [
+            "3",
+            0
+          ],
+          "tiling": "enable"
+        }
+      },
+      "6": {
+        "class_type": "BasicGuider",
+        "inputs": {
+          "model": [
+            "20",
+            0
+          ],
+          "conditioning": [
+            "5",
+            0
+          ]
+        }
+      },
+      "11": {
+        "class_type": "SamplerCustomAdvanced",
+        "inputs": {
+          "noise": [
+            "7",
+            0
+          ],
+          "guider": [
+            "6",
+            0
+          ],
+          "sampler": [
+            "8",
+            0
+          ],
+          "sigmas": [
+            "9",
+            0
+          ],
+          "latent_image": [
+            "10",
+            0
+          ]
+        }
+      },
+      "12": {
+        "class_type": "VAEDecode",
+        "inputs": {
+          "samples": [
+            "11",
+            0
+          ],
+          "vae": [
+            "21",
+            0
+          ]
+        }
+      },
+      "13": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "12",
+            0
+          ],
+          "filename_prefix": "srf_pastoral_bridleway"
+        }
+      }
+    },
+    {
+      "client_id": "16c7633c-5021-4a33-aae2-90e2c5c8f499",
+      "create_time": 1788895921083
+    },
+    [
+      "13"
+    ]
+  ],
+  "outputs": {
+    "13": {
+      "images": [
+        {
+          "filename": "srf_pastoral_bridleway_00001_.png",
+          "subfolder": "",
+          "type": "output"
+        }
+      ]
+    }
+  },
+  "status": {
+    "status_str": "success",
+    "completed": true,
+    "messages": [
+      [
+        "execution_start",
+        {
+          "prompt_id": "b691015f-c3cf-404f-b768-b966869cf88c",
+          "timestamp": 1788895921084
+        }
+      ],
+      [
+        "execution_cached",
+        {
+          "nodes": [
+            "1",
+            "2",
+            "3",
+            "8",
+            "9",
+            "10",
+            "20",
+            "21"
+          ],
+          "prompt_id": "b691015f-c3cf-404f-b768-b966869cf88c",
+          "timestamp": 1788895921085
+        }
+      ],
+      [
+        "execution_success",
+        {
+          "prompt_id": "b691015f-c3cf-404f-b768-b966869cf88c",
+          "timestamp": 1788895943942
+        }
+      ]
+    ]
+  },
+  "meta": {
+    "13": {
+      "node_id": "13",
+      "display_node": "13",
+      "parent_node": null,
+      "real_node_id": "13"
+    }
+  }
+}
