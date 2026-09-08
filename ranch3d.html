@@ -4689,7 +4689,7 @@ function dressWithRig(ent,parts,colors,opts){
   w.position.set(w.userData.sgn*(D?0.19:0.21),D?1.60:1.49,D?0.02:0.18);});
  let mat;
  if(opts.coat){ mat=fantasyCoatRig(opts.coat,!!opts.dragon); }   // mythic: the glowing coat, scaled if it is a dragon
- else { mat=makeCoatMat(); setCoatUniforms(mat,colors&&colors.body,opts.tailCol||null); }
+ else { mat=makeCoatMat(); setCoatUniforms(mat,colors&&colors.body,opts.tailCol||null,opts.mark,opts.markCol,opts.seed); }
  skin.material=mat; skin.castShadow=true;
  let hair=null;
  if(opts.dragon){ try{ ent.drg=buildDragonBody(skin,skin.skeleton.bones,parts.group,DRAGON_TINT[opts.coat]||DRAGON_TINT._); }catch(e){} }
@@ -4874,12 +4874,48 @@ function driveRig(sp,grounded,t,dt){
    recolours the baked texture by luminance. The four pre-recoloured horse_coat_*.png
    variants this used to download were 8.9 MB of dead weight on every single load. */
 function ensureCoatMat(){ if(RIG.coatMat||!RIG.baseMat)return; RIG.coatMat=makeCoatMat(); }
-function setCoatUniforms(m,bodyHex,tailHex){
+function setCoatUniforms(m,bodyHex,tailHex,mark,markHex,seed){
  const bc=new THREE.Color(bodyHex||'#9c4f23'), ch=new THREE.Color('#9c4f23');
  const blend=Math.min(1,Math.hypot(bc.r-ch.r,bc.g-ch.g,bc.b-ch.b)/0.32);
  m.userData.col.copy(bc); m.userData.blend=blend; m.userData.tail.set(tailHex||'#000000'); m.userData.tailBlend=tailHex?1:0;
+ m.userData.mark=MARKS[mark]||0; m.userData.markCol.set(markHex||'#f2ece0'); m.userData.seed=(seed||0)%97;
+ if(m.userData.shader){const u2=m.userData.shader.uniforms;
+  u2.uMark.value=m.userData.mark; u2.uMarkCol.value.copy(m.userData.markCol); u2.uSeed.value=m.userData.seed;
+  const B=measureBody(); if(B.ready){u2.uBBMin.value.copy(B.min);u2.uBBSize.value.copy(B.size);
+   u2.uAxis.value.set(B.L,B.H,B.W); u2.uFlip.value=B.headHi;}}
  if(m.userData.shader){const u=m.userData.shader.uniforms;u.uCoat.value.copy(bc);u.uBlend.value=blend;u.uTail.value.copy(m.userData.tail);u.uTailBlend.value=m.userData.tailBlend;}
 }
+/* ===== Markings =====
+   Every horse in the game differed from every other by two colours, which is why a stable of
+   them read as one horse repainted. Real breeds differ by pattern: a grey is dappled, an
+   Appaloosa wears a white blanket over its rump with dark spots in it, a Paint is broken into
+   big patches, a roan is ticked white all over with a dark head and legs, a bay has black
+   points. All of that is one shader on the coat, and it needs to know where on the horse each
+   pixel is — so the body axes are measured off the model's own bind pose and its own bones,
+   never guessed at. */
+const BODYAX={ready:false};
+function measureBody(){
+ if(BODYAX.ready||!RIG.skin||!RIG.bones)return BODYAX;
+ const g=RIG.skin.geometry; if(!g.boundingBox)g.computeBoundingBox();
+ const bb=g.boundingBox, size=new THREE.Vector3(); bb.getSize(size);
+ /* longest axis is the length of the horse, next is its height, the last is its width */
+ const ax=[{i:0,v:size.x},{i:1,v:size.y},{i:2,v:size.z}].sort((a,b)=>b.v-a.v);
+ const L=ax[0].i, H=ax[1].i, W=ax[2].i;
+ /* which end of the length axis is the head: ask the muzzle bone and the dock */
+ const local=b=>{const v=new THREE.Vector3(); b.getWorldPosition(v); RIG.skin.worldToLocal(v); return v;};
+ const head=local(RIG.bones[RIG.headIdx==null?6:RIG.headIdx]);
+ const dock=local(RIG.bones[RIG_TAIL[0]]);
+ const headHi=head.getComponent(L)>dock.getComponent(L);
+ const upHi=head.getComponent(H)>bb.min.getComponent(H)+size.getComponent(H)*0.5;   // head is high on a horse
+ BODYAX.min=bb.min.clone(); BODYAX.size=size.clone();
+ BODYAX.L=L; BODYAX.H=H; BODYAX.W=W;
+ BODYAX.headHi=headHi?1:0; BODYAX.upHi=upHi?1:0;
+ BODYAX.ready=true;
+ BODYAX.report={size:size.toArray().map(v=>+v.toFixed(2)),L,H,W,
+  head:head.toArray().map(v=>+v.toFixed(2)),dock:dock.toArray().map(v=>+v.toFixed(2)),headHi};
+ return BODYAX;
+}
+const MARKS={none:0,dapple:1,appaloosa:2,pinto:3,roan:4,points:5,leopard:6,sooty:7};
 function makeCoatMat(){
  /* A groomed coat has a sheen: the same albedo and normal map, on a physical material with a
     light clearcoat, so highlights slide over the muscle as the horse moves. */
@@ -4888,13 +4924,65 @@ function makeCoatMat(){
  if(m.normalMap)m.normalScale.set(0.7,0.7);
  m.userData.col=new THREE.Color('#9c4f23'); m.userData.blend=0;
  m.userData.tail=new THREE.Color('#000000'); m.userData.tailBlend=0;
+ m.userData.mark=0; m.userData.markCol=new THREE.Color('#ffffff'); m.userData.seed=0;
  m.onBeforeCompile=sh=>{                       // recolour by the texture's luminance (keeps mane/socks/shading pattern)
-  sh.uniforms.uCoat={value:m.userData.col}; sh.uniforms.uBlend={value:m.userData.blend}; sh.uniforms.uTail={value:m.userData.tail}; sh.uniforms.uTailBlend={value:m.userData.tailBlend}; m.userData.shader=sh;
-  sh.vertexShader='attribute float aRegion; varying float vRegion;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n vRegion=aRegion;');
-  sh.fragmentShader='uniform vec3 uCoat;uniform float uBlend;uniform vec3 uTail;uniform float uTailBlend;varying float vRegion;\n'+sh.fragmentShader.replace('#include <map_fragment>',
+  sh.uniforms.uCoat={value:m.userData.col}; sh.uniforms.uBlend={value:m.userData.blend}; sh.uniforms.uTail={value:m.userData.tail}; sh.uniforms.uTailBlend={value:m.userData.tailBlend};
+  const B=measureBody();
+  sh.uniforms.uMark={value:m.userData.mark}; sh.uniforms.uMarkCol={value:m.userData.markCol}; sh.uniforms.uSeed={value:m.userData.seed};
+  sh.uniforms.uBBMin={value:B.ready?B.min.clone():new THREE.Vector3()};
+  sh.uniforms.uBBSize={value:B.ready?B.size.clone():new THREE.Vector3(1,1,1)};
+  sh.uniforms.uAxis={value:new THREE.Vector3(B.ready?B.L:0,B.ready?B.H:1,B.ready?B.W:2)};
+  sh.uniforms.uFlip={value:B.ready?B.headHi:1}; m.userData.shader=sh;
+  sh.vertexShader='attribute float aRegion; varying float vRegion; varying vec3 vBody;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n vRegion=aRegion; vBody=position;');
+  sh.fragmentShader=
+   'uniform vec3 uCoat;uniform float uBlend;uniform vec3 uTail;uniform float uTailBlend;\n'+
+   'uniform float uMark;uniform vec3 uMarkCol;uniform float uSeed;\n'+
+   'uniform vec3 uBBMin;uniform vec3 uBBSize;uniform vec3 uAxis;uniform float uFlip;\n'+
+   'varying float vRegion; varying vec3 vBody;\n'+
+   'float _mh(vec2 v){v=fract(v*vec2(127.1,311.7)+uSeed);v+=dot(v,v+34.7);return fract(v.x*v.y*95.43);}\n'+
+   'float _mn(vec2 v){vec2 i=floor(v),f=fract(v);f=f*f*(3.0-2.0*f);\n'+
+   ' return mix(mix(_mh(i),_mh(i+vec2(1,0)),f.x),mix(_mh(i+vec2(0,1)),_mh(i+vec2(1,1)),f.x),f.y);}\n'+
+   'float _mf(vec2 v){return _mn(v)*0.6+_mn(v*2.3)*0.27+_mn(v*4.7)*0.13;}\n'+
+   'float _pick(vec3 p,float i){return i<0.5?p.x:(i<1.5?p.y:p.z);}\n'+
+   sh.fragmentShader.replace('#include <map_fragment>',
    `#include <map_fragment>
     float _l=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));
     diffuseColor.rgb=mix(diffuseColor.rgb, uCoat*clamp(_l/0.42,0.0,1.7), uBlend);
+    if(uMark>0.5){
+     /* fl 0 at the tail, 1 at the nose; fh 0 under the belly, 1 along the back */
+     vec3 _rel=(vBody-uBBMin)/max(uBBSize,vec3(0.001));
+     float fl=_pick(_rel,uAxis.x); if(uFlip<0.5)fl=1.0-fl;
+     float fh=_pick(_rel,uAxis.y);
+     vec3 _base=diffuseColor.rgb;
+     if(uMark<1.5){                                    // dapple: pale rings over the barrel
+      float d=_mf(vMapUv*22.0);
+      float ring=smoothstep(0.46,0.54,d)*(1.0-smoothstep(0.60,0.72,d));
+      diffuseColor.rgb=mix(_base,_base*1.30+0.05,ring*0.75);
+     } else if(uMark<2.5){                             // appaloosa: a blanket over the rump, spotted
+      float bl=smoothstep(0.52,0.20,fl)*smoothstep(0.10,0.42,fh);
+      float sp=step(0.63,_mh(floor(vMapUv*30.0)));
+      vec3 blanket=mix(uMarkCol,_base*0.55,sp*0.85);
+      diffuseColor.rgb=mix(_base,blanket,bl*0.92);
+     } else if(uMark<3.5){                             // paint: big irregular patches
+      float d=_mf(vMapUv*5.5);
+      float _pt=smoothstep(0.50,0.57,d);
+      diffuseColor.rgb=mix(_base,uMarkCol,_pt*0.95);
+     } else if(uMark<4.5){                             // roan: ticked white, dark head and legs
+      float tick=step(0.55,_mh(floor(vMapUv*150.0)));
+      diffuseColor.rgb=mix(_base,uMarkCol,tick*0.42);
+      float pts=smoothstep(0.30,0.10,fh)+smoothstep(0.72,0.92,fl);
+      diffuseColor.rgb=mix(diffuseColor.rgb,_base*0.55,clamp(pts,0.0,1.0)*0.7);
+     } else if(uMark<5.5){                             // points: black legs, muzzle and topline
+      float pts=smoothstep(0.26,0.06,fh)+smoothstep(0.86,0.99,fl);
+      diffuseColor.rgb=mix(diffuseColor.rgb,uMarkCol,clamp(pts,0.0,1.0)*0.85);
+     } else if(uMark<6.5){                             // leopard: spots all over, on white
+      float sp=step(0.70,_mf(vMapUv*17.0));
+      diffuseColor.rgb=mix(uMarkCol,_base*0.5,sp);
+     } else {                                          // sooty: shaded dark along the back
+      float so=smoothstep(0.45,0.95,fh)*(0.55+0.45*_mf(vMapUv*8.0));
+      diffuseColor.rgb=mix(_base,_base*0.5,so*0.8);
+     }
+    }
     if(vRegion>0.5) diffuseColor.rgb=mix(diffuseColor.rgb, uTail*clamp(_l/0.5,0.0,1.6), uTailBlend);`);
  };
  return m;
@@ -5031,6 +5119,15 @@ function applyCoat(){
  RIG.coatMat.userData.col.copy(bc); RIG.coatMat.userData.blend=blend;
  if(RIG.coatMat.userData.shader){RIG.coatMat.userData.shader.uniforms.uCoat.value.copy(bc);RIG.coatMat.userData.shader.uniforms.uBlend.value=blend;}
  RIG.coatMat.userData.tail.set((h&&h.tailCol)||'#000000'); RIG.coatMat.userData.tailBlend=(h&&h.tailCol)?1:0;
+ {const br=BREEDS3.find(b=>b[0]===(h&&h.breed)), mk=br&&br[7]&&br[7].mark;
+  RIG.coatMat.userData.mark=MARKS[mk]||0;
+  RIG.coatMat.userData.markCol.set((br&&br[7]&&br[7].markCol)||'#f2ece0');
+  RIG.coatMat.userData.seed=((h&&h.id)||0)%97;
+  if(RIG.coatMat.userData.shader){const u3=RIG.coatMat.userData.shader.uniforms;
+   u3.uMark.value=RIG.coatMat.userData.mark; u3.uMarkCol.value.copy(RIG.coatMat.userData.markCol);
+   u3.uSeed.value=RIG.coatMat.userData.seed;
+   const B=measureBody(); if(B.ready){u3.uBBMin.value.copy(B.min);u3.uBBSize.value.copy(B.size);
+    u3.uAxis.value.set(B.L,B.H,B.W); u3.uFlip.value=B.headHi;}}}
  if(RIG.coatMat.userData.shader){RIG.coatMat.userData.shader.uniforms.uTail.value.copy(RIG.coatMat.userData.tail);RIG.coatMat.userData.shader.uniforms.uTailBlend.value=RIG.coatMat.userData.tailBlend;}
  RIG.skin.material=RIG.coatMat;
  hairColour();
@@ -8054,15 +8151,15 @@ function careAct(k){
 /* Prices: about half what they were. Saving up should be a weekend, not a term — the
    horses are the point of the game, and a stable full of them is the fun part. */
 const BREEDS3=[
- ['bay','Quarter Horse','Common',55,0,'#8a5a2b','#332214',{}],
- ['chestnut','Shetland Pony','Common',65,0,'#9c4f23','#6e3617',{}],
- ['palomino','Palomino Mustang','Uncommon',130,0,'#d9a85c','#f4e6c5',{}],
- ['haflinger','Haflinger','Uncommon',150,0,'#c98643','#f7ecd4',{}],
- ['grey','Dapple Grey Andalusian','Uncommon',140,0,'#b9bec6','#787f8a',{}],
- ['black','Friesian','Rare',250,0,'#26262e','#101015',{}],
- ['pinto','Paint Horse','Rare',265,0,'#7d4f24','#3a2a1a',{}],
- ['appaloosa','Appaloosa','Rare',310,0,'#e8e2d6','#5a5048',{}],
- ['sunset','Sunset Arabian','Epic',480,0,'#c96a4f','#ffd166',{}],
+ ['bay','Quarter Horse','Common',55,0,'#8a5a2b','#332214',{mark:'points',markCol:'#241a12'}],
+ ['chestnut','Shetland Pony','Common',65,0,'#9c4f23','#6e3617',{mark:'roan',markCol:'#e8dcc8'}],
+ ['palomino','Palomino Mustang','Uncommon',130,0,'#d9a85c','#f4e6c5',{mark:'sooty'}],
+ ['haflinger','Haflinger','Uncommon',150,0,'#c98643','#f7ecd4',{mark:'dapple'}],
+ ['grey','Dapple Grey Andalusian','Uncommon',140,0,'#b9bec6','#787f8a',{mark:'dapple'}],
+ ['black','Friesian','Rare',250,0,'#26262e','#101015',{mark:'sooty'}],
+ ['pinto','Paint Horse','Rare',265,0,'#7d4f24','#3a2a1a',{mark:'pinto',markCol:'#f4efe4'}],
+ ['appaloosa','Appaloosa','Rare',310,0,'#8a6a4a','#4a3a2a',{mark:'appaloosa',markCol:'#f2ece0'}],
+ ['sunset','Sunset Arabian','Epic',480,0,'#c96a4f','#ffd166',{mark:'dapple'}],
  ['unicorn','Unicorn','Legendary',0,8,'#f6f3ff','#cdb4f9',{horn:true,rainbow:true}],
  ['pegasus','Pegasus','Legendary',0,8,'#f2f5fb','#dfe7f4',{wings:true,ability:'fly'}],
  ['celestial','Celestial Unicorn','Mythic',0,14,'#2a2350','#b79dff',{horn:true,coat:'galaxy',glow:true,ability:'glow'}],
@@ -8078,8 +8175,8 @@ const BREEDS3=[
  ['verdant','Verdant Dragon','Dragon',0,20,'#143038','#7df0c4',{wings:true,dragon:true,coat:'aurora',glow:true,ability:'fly'}],
  ['shadowmare','Shadow Mare','Mythic',0,14,'#241830','#a07ce0',{coat:'shadow',glow:true,ability:'swift'}],
  ['kestrel','Silver Kestrel','Legendary',0,0,'#c9ced6','#eef2f7',{story:true}],   // book two's reward: not for sale
- ['shire','Shire','Draft',45,0,'#3a3530','#1d1a17',{}],
- ['clyde','Clydesdale','Draft',45,0,'#7a4526','#2e2018',{}],
+ ['shire','Shire','Draft',45,0,'#3a3530','#1d1a17',{mark:'roan',markCol:'#ded4c4'}],
+ ['clyde','Clydesdale','Draft',45,0,'#7a4526','#2e2018',{mark:'pinto',markCol:'#f0e8d8'}],
 ];
 const TIER_BASE={Common:3,Uncommon:4,Rare:5,Epic:6,Legendary:7,Draft:4,Mythic:8,Dragon:9};
 const NAMES3=['Luna','Comet','Willow','Maple','Storm','Honey','Pepper','Clover','Biscuit','River','Aspen','Mocha','Daisy','Blaze','Echo','Juniper','Ginger','Onyx','Pearl','Sage'];
@@ -10278,7 +10375,9 @@ function tick(){
    }
   }
   animateHorse(a.parts,a.phase,resting?0.05:((a.wsp||1.2)>3.5?0.72:0.42),(a.wsp||1.2)>3.5?GAITS.gallop:GAITS.walk,true,t,a.graze,dt);
-  {const hh=myHorses[a.idx]; dressWithRig(a,a.parts,hh&&hh.colors,{tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,dragon:hh&&hh.dragon,mine:true}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
+  {const hh=myHorses[a.idx]; const bd=hh&&BREEDS3.find(b=>b[0]===hh.breed);
+   dressWithRig(a,a.parts,hh&&hh.colors,{tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,dragon:hh&&hh.dragon,mine:true,
+    mark:bd&&bd[7]&&bd[7].mark, markCol:bd&&bd[7]&&bd[7].markCol, seed:(hh&&hh.id)||0}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
    const el=dragonElement(hh);                       // a dragon in the pasture breathes now and then
    if(el){ a.brT=(a.brT==null?3+Math.random()*9:a.brT)-dt;
     if(a.brT<0){ a.brOn=0.85; a.brT=7+Math.random()*11; }
