@@ -141,6 +141,12 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 .vipCard{border:1px solid #e8cf8a;border-radius:14px;padding:11px 12px;background:linear-gradient(180deg,#fff8e2,#ffeec0)}
 .vipCard .perks{font-size:11.5px;color:#4a3526;line-height:1.5;margin:4px 0 7px}
 .vipCard .plans{display:flex;gap:6px;flex-wrap:wrap}
+.shotRow{display:flex;gap:6px;overflow-x:auto;padding:5px 2px 7px}
+.shot{position:relative;flex:none;width:118px;border:2px solid var(--line);border-radius:9px;overflow:hidden;cursor:pointer;background:#000;line-height:0}
+.shot.pick{border-color:#e0a93c;box-shadow:0 0 0 2px rgba(224,169,60,.3)}
+.shot img{width:100%;display:block}
+.shot .sc{position:absolute;top:3px;right:3px;background:rgba(20,16,10,.72);color:#fff;font-size:10px;font-weight:800;border-radius:6px;padding:1px 5px;line-height:1.4}
+.shot .ent{position:absolute;bottom:3px;left:3px;background:#e0a93c;color:#3a2a10;font-size:9px;font-weight:800;border-radius:6px;padding:1px 5px;line-height:1.5}
 .lbTabs{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 4px}
 .bGroup{font-size:12px;font-weight:800;color:#8c7a63;margin:8px 0 3px}
 .bRow{border:1px solid var(--line);border-radius:12px;padding:7px 10px;background:#fff;margin-bottom:5px}
@@ -332,6 +338,8 @@ import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js';
 import {installBackdrop,tuneFoliage} from './assets/world-art.js';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js';
+import {createRanchArchitecture} from './assets/ranch-architecture.js';
 
 /* ================= save sync with the 2D game ================= */
 const SAVE_KEY='starRanchFable_v1';   // NOT renamed with the game: changing this orphans every existing save
@@ -456,6 +464,55 @@ function passClaim(sv,i,gold){
  if(r.tack)sv.goldTack=true;
  if(r.tint){sv.seasonTack=sv.seasonTack||{};sv.seasonTack[seasonNow().def.id]=1;}
  return r;
+}
+/* ---- the end of the week --------------------------------------------------------------
+   Everything in the game paid out the moment you did it. A week deserves its own ending:
+   the ranch settles up on Monday for what you actually did over the seven days, and you
+   collect it yourself rather than finding it silently in your pocket.
+
+   weekKey and ensureWeek are function declarations further down the file, so they are
+   hoisted and safe to call from the start-up pass above. Nothing here touches a const
+   declared below it — that is the mistake that has broken this game twice. */
+const WAGE_TIERS=[
+ {sp:0,   c:200,  g:0, k:0, label:'A quiet week'},
+ {sp:60,  c:450,  g:1, k:0, label:'A steady week'},
+ {sp:150, c:800,  g:2, k:1, label:'A good week'},
+ {sp:300, c:1400, g:4, k:1, label:'A brilliant week'},
+ {sp:550, c:2200, g:7, k:2, label:'A champion week'},
+];
+function weekTier(sp){let t=WAGE_TIERS[0]; for(const x of WAGE_TIERS)if((sp||0)>=x.sp)t=x; return t;}
+/* What the week is worth: the tier for the star points earned, plus a bonus for where the
+   photo competition put you, plus a little for turning up on more days. */
+function weekPayout(w){
+ const t=weekTier(w.sp), place=w.place||0;
+ const pb=place===1?{c:600,g:3,k:1}:place===2?{c:400,g:2,k:0}:place===3?{c:250,g:1,k:0}:{c:0,g:0,k:0};
+ const days=Math.min(7,w.days||0);
+ return {label:t.label, tier:t,
+  c:t.c+pb.c+days*40, g:t.g+pb.g+(days>=6?1:0), k:t.k+pb.k,
+  place:place, days:days, sp:w.sp||0, photos:w.photos||0, events:w.events||0};
+}
+/* Called on start-up. If the week has turned, last week's tally is put aside to be claimed
+   and a fresh one started. Returns the closed week, or null on an ordinary day. */
+function weekRoll(s){
+ if(!s)return null;
+ const wk=weekKey();
+ s.wk=s.wk||{week:wk,sp:0,photos:0,events:0,days:0,lastDay:''};
+ if(s.wk.week===wk)return null;
+ const closed=Object.assign({},s.wk);
+ s.wkLast=Object.assign({},closed,{claimed:false});
+ s.wk={week:wk,sp:0,photos:0,events:0,days:0,lastDay:''};
+ return closed;
+}
+/* The running tally for the week in progress. */
+function weekBump(k,n2){
+ syncSave(s=>{
+  const wk=weekKey();
+  s.wk=s.wk||{week:wk,sp:0,photos:0,events:0,days:0,lastDay:''};
+  if(s.wk.week!==wk)s.wk={week:wk,sp:0,photos:0,events:0,days:0,lastDay:''};
+  s.wk[k]=(s.wk[k]||0)+(n2||1);
+  const ds=new Date().toDateString();
+  if(s.wk.lastDay!==ds){s.wk.lastDay=ds;s.wk.days=(s.wk.days||0)+1;}
+ });
 }
 function passRewardLabel(r){
  if(!r)return '';
@@ -609,6 +666,8 @@ const DECAY3={hunger:100/(8*3600),thirst:100/(6*3600),clean:100/(12*3600),happy:
    for(const k in DECAY3)h.needs[k]=Math.max(15,h.needs[k]-DECAY3[k]*sec*ranchMul('decay')*persDecay(h));
  }
  const rolled=seasonRoll(save);
+ const wkClosed=weekRoll(save);
+ if(wkClosed)setTimeout(()=>{try{toast('📅 Your week is in — collect your wages in the 🏅 panel.');}catch(e){}},3200);
  VIPON=isVIP(save);
  boardTick(save);                                   // the stalls earned while you were gone
  if(rolled)setTimeout(()=>{try{const sn=seasonNow();
@@ -754,6 +813,8 @@ const riverZ=x=>120+Math.sin(x*0.012)*45;
 /* Sparrow Creek stream — a tributary that winds down from the southern hills into the river */
 const streamX=z=>118+Math.sin(z*0.03)*14+Math.sin(z*0.011+3)*8;
 const STREAM_JOIN=160;                          // it meets the river around z≈160
+const riverLevel=x=>0.50-x*0.009;
+const streamLevel=z=>THREE.MathUtils.lerp(12.5,riverLevel(streamX(STREAM_JOIN)),THREE.MathUtils.smoothstep(z,-330,STREAM_JOIN));
 function rawH(x,z){
  const d=Math.hypot(x,z);
  const near=THREE.MathUtils.smoothstep(d,24,58);
@@ -766,13 +827,18 @@ function rawH(x,z){
  const rg=1-Math.abs(vnoise(x*0.006+83,z*0.006-41)*2-1);   // ridged crests give hills a backbone
  h+=near*far*rg*rg*6.0;
  const bl=vnoise(x*0.011-31,z*0.011+44);                    // flat-topped bluffs, steep cliff faces
- h+=near*far*THREE.MathUtils.smoothstep(bl,0.425,0.445)*9.0;
+ h+=near*far*THREE.MathUtils.smoothstep(bl,0.35,0.60)*9.0;
+ // A continuous graded channel: the water elevation is independent of the hills.
  const rd=Math.abs(z-riverZ(x));
- h-=near*far*1.7*(1-THREE.MathUtils.smoothstep(rd,0,9));
- if(z<STREAM_JOIN){
+ const riverBed=riverLevel(x)-0.85+THREE.MathUtils.smoothstep(rd,0,7)*1.30;
+ h=THREE.MathUtils.lerp(riverBed,h,THREE.MathUtils.smoothstep(rd,7.5,19));
+ if(z<STREAM_JOIN+3){
   const sd=Math.abs(x-streamX(z));
-  h-=near*far*1.15*(1-THREE.MathUtils.smoothstep(sd,0,4.5));
+  const creekBed=streamLevel(Math.min(z,STREAM_JOIN))-.60+THREE.MathUtils.smoothstep(sd,0,3.5)*1.05;
+  const creekInfluence=(1-THREE.MathUtils.smoothstep(sd,3.8,10))*(1-THREE.MathUtils.smoothstep(z,156,163));
+  h=THREE.MathUtils.lerp(h,Math.min(h,creekBed),creekInfluence);
  }
+
  return h;
 }
 /* ===== Roads =====
@@ -809,12 +875,24 @@ function pathDist(x,z){
  }
  return Math.sqrt(best);
 }
+// Sample the collision surface from the same triangles used by the visible terrain.
+const TERRAIN_SEGMENTS=384, TERRAIN_STEP=1000/TERRAIN_SEGMENTS;
+const TERRAIN_HEIGHTS=new Float32Array((TERRAIN_SEGMENTS+1)**2);
+for(let iz=0;iz<=TERRAIN_SEGMENTS;iz++)for(let ix=0;ix<=TERRAIN_SEGMENTS;ix++)
+ TERRAIN_HEIGHTS[iz*(TERRAIN_SEGMENTS+1)+ix]=rawH(ix*TERRAIN_STEP-500,iz*TERRAIN_STEP-500);
+function terrainH(x,z){
+ if(x<=-500||x>=500||z<=-500||z>=500)return rawH(x,z);
+ const gx=(x+500)/TERRAIN_STEP,gz=(z+500)/TERRAIN_STEP,ix=Math.floor(gx),iz=Math.floor(gz);
+ const fx=gx-ix,fz=gz-iz,i=iz*(TERRAIN_SEGMENTS+1)+ix,n=TERRAIN_SEGMENTS+1;
+ const a=TERRAIN_HEIGHTS[i],b=TERRAIN_HEIGHTS[i+n],c=TERRAIN_HEIGHTS[i+n+1],d=TERRAIN_HEIGHTS[i+1];
+ return fx+fz<=1?a+(d-a)*fx+(b-a)*fz:c+(b-c)*(1-fx)+(d-c)*(1-fz);
+}
 const colliders=[];
 const walls=[];
 const BR_A=riverZ(0)-7.5,BR_B=riverZ(0)+7.5;
-const BRIDGE_Y=Math.max(rawH(0,BR_A),rawH(0,BR_B))+0.22;
+const BRIDGE_Y=Math.max(terrainH(0,BR_A),terrainH(0,BR_B))+0.18;
 function groundH(x,z){
- let h=rawH(x,z);
+ let h=terrainH(x,z);
  if(Math.abs(x)<2.3&&z>BR_A&&z<BR_B)h=Math.max(h,BRIDGE_Y+0.55*Math.sin(Math.PI*(z-BR_A)/15));
  return h;
 }
@@ -833,8 +911,8 @@ document.body.appendChild(renderer.domElement);
 const scene=new THREE.Scene();
 scene.fog=new THREE.FogExp2(0xb8d8e9,0.00125);   // exponential; tinted to the sky so distance hazes toward it
 const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,5000);
-/* Start where the chase camera will settle (player spawns at 0,0,8 facing -z, so the
-   camera belongs behind it at +z). Starting anywhere else makes the first second of the
+/* Start where the chase camera will settle (player spawns beside the arena's clear
+   riding line facing -z, with the camera behind at +z). Starting elsewhere makes the first second of the
    game a swoop through the horse before the smoothing catches up. */
 camera.position.set(-5.5,2.4,16.0);
 
@@ -1815,9 +1893,8 @@ const envMaps={};let curEnv='day';
  }
  scene.environment=envMaps.day;
 }
-/* Sun-to-ambient was 1.55:1; real daylight is 5:1 to 8:1. The hemisphere light was
-   supplying ~40% of the light budget in full sun, so every shadow was a faint 15% dip.
-   The env map (PMREM'd sky) now carries the ambient and this is only a trim. */
+/* Warm directional light defines the horse; sky and ground fill keep coats readable
+   under trees. The sky environment supplies the remaining broad reflections. */
 const hemi=new THREE.HemisphereLight(0xc6d9ed,0x898467,1.05);
 scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xffedda,3.15);
@@ -1907,6 +1984,7 @@ const moonS=(()=>{
 })();
 /* window panes & lamps that switch on at dusk (day colour -> HDR warm glow the bloom picks up) */
 const glowPanes=[];
+const ranchArchitecture=createRanchArchitecture({THREE,glowPanes});
 /* fireflies: drifting HDR embers over the meadows, only alive at night */
 const FIREFLY_N=80;
 const fireflies=new THREE.InstancedMesh(new THREE.SphereGeometry(0.045,6,5),
@@ -2000,11 +2078,8 @@ function noiseCanvas(size,scale,off){
 const bumpTexture=new THREE.CanvasTexture(noiseCanvas(256,0.07,11));
 bumpTexture.wrapS=bumpTexture.wrapT=THREE.RepeatWrapping;
 bumpTexture.repeat.set(130,130);
-/* The ground used to be a painted canvas: a flat green with random darker blotches.
-   This is a generated photographic turf (FLUX.2, seamless), flattened of its vignette
-   and colour-matched to the exact green the canvas was, so the palette is unchanged and
-   only the detail is new. Same repeat and wrap as before — the no-tile shader above it
-   is untouched. */
+/* Original ComfyUI materials, calibrated as albedos. Data maps remain linear and the
+   meadow's stochastic sampling breaks repetition over the large terrain. */
 const texLoad=(path,rep)=>{const t=new THREE.TextureLoader().load(path);
  t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rep,rep);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;};
 const texData=(path,rep)=>{const t=texLoad(path,rep);t.colorSpace=THREE.NoColorSpace;return t;};
@@ -2110,92 +2185,24 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  c.fillStyle=g;c.fillRect(0,0,w,h);
 });
 
+const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:bumpTexture});
 /* ================= terrain ================= */
 {
- const geo=new THREE.PlaneGeometry(1000,1000,256,256);
+ const geo=new THREE.PlaneGeometry(1000,1000,TERRAIN_SEGMENTS,TERRAIN_SEGMENTS);
  geo.rotateX(-Math.PI/2);
  const pos=geo.attributes.position;
  const colors=[];
  const col=new THREE.Color();
- const C_ROCK=new THREE.Color('#8d8478'),C_CREST=new THREE.Color('#cfc394');
  for(let i=0;i<pos.count;i++){
   const x=pos.getX(i),z=pos.getZ(i);
-  const y=groundH(x,z);
-  pos.setY(i,y);
-  const wx=x+vnoise(x*0.01+5,z*0.01+9)*14, wz=z+vnoise(x*0.013+31,z*0.013+2)*14;   // domain warp breaks the axis grid
-  const vBig=vnoise(wx*0.011+3,wz*0.011+17);     // big natural patches (~90u)
-  const v=vnoise(wx*0.045+40,wz*0.045+9);
-  const v2=vnoise(x*0.17+12,z*0.17+71);
-  col.set('#eef2df').lerp(new THREE.Color('#b2c084'),vBig*0.5+v*0.32);
-  col.lerp(new THREE.Color('#9cad74'),v2*0.22);   // finer mottle
-  if(y>1.4)col.lerp(new THREE.Color('#d8d0a4'),Math.min(0.4,(y-1.4)*0.18));
-  // slope-aware shading: steep faces read as rock, high crests as sun-dried grass
-  const sl=Math.hypot(groundH(x+2,z)-groundH(x-2,z),groundH(x,z+2)-groundH(x,z-2))/4;
-  if(sl>0.3)col.lerp(C_ROCK,Math.min(0.85,(sl-0.3)*1.9));
-  if(y>7)col.lerp(C_CREST,Math.min(0.5,(y-7)*0.055));
-  const rd=Math.abs(z-riverZ(x));
-  if(rd<9)col.lerp(new THREE.Color('#e6d6a8'),(1-THREE.MathUtils.smoothstep(rd,0,9))*0.55);
-  if(z<STREAM_JOIN){
-   const sd=Math.abs(x-streamX(z));
-   if(sd<6)col.lerp(new THREE.Color('#dcc9a0'),(1-THREE.MathUtils.smoothstep(sd,0,6))*0.5);   // sandy stream banks
-  }
-  const dB=Math.hypot(x+220,z-130);
-  if(dB<176)col.lerp(new THREE.Color('#d9a276'),0.96*(1-THREE.MathUtils.smoothstep(dB,96,176)));
-  const dA=Math.hypot(x-220,z+110);
-  if(dA<150)col.lerp(new THREE.Color('#e8e09a'),(1-dA/150)*0.35);
-  const dW=Math.hypot(x+160,z+210);
-  if(dW<162)col.lerp(new THREE.Color('#eef2f0'),0.96*(1-THREE.MathUtils.smoothstep(dW,84,162)));
-  const vshade=0.88+0.12*THREE.MathUtils.clamp((y+2.5)/6.5,0,1);
-  col.multiplyScalar(vshade);
+  pos.setY(i,terrainH(x,z));
+  col.setScalar(.91+vnoise(x*.032,z*.032)*.09);
   colors.push(col.r,col.g,col.b);
  }
  geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
  geo.computeVertexNormals();
  groundTex.anisotropy=renderer.capabilities.getMaxAnisotropy();
- const gmat=new THREE.MeshStandardMaterial({map:groundTex,vertexColors:true,roughness:0.97,bumpMap:bumpTexture,bumpScale:0.08});
- gmat.envMapIntensity=0.44;
- gmat.onBeforeCompile=sh=>{   // stochastic no-tile sampling (per-block random UV offsets, bilinear-blended)
-  sh.fragmentShader='float _h21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}\n'
-   +'vec2 _h22(vec2 p){return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);}\n'
-   +'float _vn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(_h21(i),_h21(i+vec2(1.,0.)),f.x),mix(_h21(i+vec2(0.,1.)),_h21(i+vec2(1.,1.)),f.x),f.y);}\n'
-   +sh.fragmentShader.replace('#include <map_fragment>',
-    `#ifdef USE_MAP
-     #ifdef CHEAP_GROUND
-     vec4 _acc=texture2D(map,vMapUv);          // one sample; the tile break-up is a luxury in VR
-     float macro=0.5, _dry=0.5;
-     #else
-     vec2 _bp=vMapUv*0.22;
-     vec2 _bi=floor(_bp), _bf=fract(_bp);
-     vec2 _bw=_bf*_bf*(3.0-2.0*_bf);
-     vec4 _acc=vec4(0.0);
-     for(int _dy=0;_dy<=1;_dy++)for(int _dx=0;_dx<=1;_dx++){
-      vec2 _bg=vec2(float(_dx),float(_dy));
-      vec2 _bo=_h22(_bi+_bg)*61.7;
-      float _wt=(_bg.x>0.5?_bw.x:1.0-_bw.x)*(_bg.y>0.5?_bw.y:1.0-_bw.y);
-      _acc+=texture2D(map,vMapUv+_bo)*_wt;
-     }
-     float macro=_vn(vMapUv*0.06)*0.62+_vn(vMapUv*0.02+5.0)*0.38;
-     #endif
-     // Calibrated albedo: real-time lighting supplies the shading.
-     diffuseColor.rgb*=_acc.rgb*(0.94+macro*0.12);
-     /* The albedo was clipping its red channel to zero over most of the map, which is not a
-        colour any vegetation has — it read as pure display-primary green. Put red back and
-        take the saturation down to something turf actually measures at. */
-     float _lg=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));
-     diffuseColor.rgb=mix(vec3(_lg),diffuseColor.rgb,0.84);
-     diffuseColor.rgb+=vec3(0.042,0.030,0.010)*_lg;
-     /* One flat saturated green over the whole map is the loudest "video game" tell there
-        is. Real pasture is a patchwork: sun-dried olive on the crowns, damper blue-green in
-        the hollows. Two octaves of the same cheap noise, no extra texture fetch. */
-     #ifndef CHEAP_GROUND
-     float _dry=_vn(vMapUv*0.011+11.0);
-     #endif
-     diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(1.20,1.05,0.60),
-                          smoothstep(0.52,0.95,_dry)*0.60);
-     diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(0.80,0.95,0.88),
-                          smoothstep(0.52,0.08,_dry)*0.35);
-     #endif`);
- };
+ const gmat=terrainSurface.material;
  groundMat=gmat;
  const ground=new THREE.Mesh(geo,gmat);
  ground.receiveShadow=true;
@@ -3634,6 +3641,7 @@ function placeFoliage(name){
  const pollRig=setInterval(()=>{ if(RIG.ready){clearInterval(pollRig);startFoliage();} },200);
  setTimeout(()=>{clearInterval(pollRig);startFoliage();},7000);
 }
+terrainSurface.setTrees([].concat(FOLIAGE.oak,FOLIAGE.birch,FOLIAGE.blossom,FOLIAGE.pine,FOLIAGE.snowpine));
 seedTreeInsts=placeSeedTrees();                                    // trees are Weber–Penn generated
 seedTreeInsts.forEach(m=>{m.userData.fullCount=m.count;if(quality==='low')m.count=Math.ceil(m.userData.fullCount*0.55);});
 // pine treeline behind the barn (like an alpine ranch)
@@ -3717,82 +3725,24 @@ let waterMat=null;   // hoisted: the pond reuses it
 {
  const rTex=waterShimTex;rTex.repeat.set(30,2);
  waterAnims.push({tex:rTex,sx:0.018,sy:0.006});
- /* Water was a near-diffuse blue sheet, which is why it read as coloured paper. Real water
-    is dark looking straight down and a near-mirror at grazing angles — that fresnel swing is
-    the whole cue. Darken the body, sharpen the reflection, and drive the mix off view angle. */
- waterMat=new THREE.MeshStandardMaterial({map:rTex,color:0x24506f,roughness:0.11,metalness:0.10,side:THREE.DoubleSide,transparent:true,opacity:0.93});
- waterMat.envMapIntensity=1.7;
- /* fadeEdges is for the river ribbon only: its v runs 0..2 across the width (repeat.y=2),
-    so the banks are at v=0 and v=2. Feathering alpha there stops the shoreline reading as
-    a cut polygon edge against the grass. The pond is a disc with different UVs and gets
-    the fresnel without the fade. */
- const waterShader=fadeEdges=>sh=>{
-  sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',
-   `#include <map_fragment>
-    float _fres=pow(1.0-abs(dot(normalize(vNormal),normalize(vViewPosition))),4.0);
-    diffuseColor.rgb=mix(diffuseColor.rgb*0.55,vec3(0.60,0.74,0.88),_fres*0.85);`);
-  if(fadeEdges)sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>',
-   `#include <alphatest_fragment>
-    float _bank=smoothstep(0.0,0.30,vMapUv.y)*smoothstep(2.0,1.70,vMapUv.y);
-    diffuseColor.a*=_bank;`);
- };
- waterMat.onBeforeCompile=waterShader(true);
- waterMat.userData.plainShader=waterShader(false);
+ waterMat=createRiverMaterial({THREE,map:rTex});
  const eA=[],eB=[];
- for(let x=-340;x<=340;x+=3){
+ for(let x=-500;x<=500;x+=2){
   const zc=riverZ(x);
-  const y=rawH(x,zc)+0.55;
-  eA.push([x,y,zc-4.6]);
-  eB.push([x,y,zc+4.6]);
+  const y=riverLevel(x);
+  eA.push([x,y,zc-5.1]);
+  eB.push([x,y,zc+5.1]);
  }
  const water=stripMesh(eA,eB,waterMat);
  water.castShadow=false;
  water.receiveShadow=true;
  scene.add(water);
- /* Banks. The water is a flat ribbon over a channel carved into terrain that renders as
-    3.9-unit triangles, so grass ran at full strength straight up to a hard, polygonal
-    waterline — the river sat ON the meadow. A strip of damp sand each side, solid at the
-    water and fading to nothing in the grass, is what makes it sit IN the meadow. The
-    inner edge starts under the water surface (the visible waterline is ~3.3 out from
-    the centre) so the sand emerges from the water rather than beside it. It is a decal:
-    depth-write off, no collider, so nothing the horse stands on changes. */
- {
-  const mudTex=canvasTex(128,128,(c,w,h)=>{
-   c.fillStyle='#8c6f4f';c.fillRect(0,0,w,h);
-   for(let i=0;i<1500;i++){
-    c.fillStyle=['#7a5f42','#9f8360','#6c5238','#ad956f'][i%4];c.globalAlpha=0.45;
-    c.fillRect(Math.random()*w,Math.random()*h,1.5,1.5);
-   }
-   c.globalAlpha=0.22;
-   for(let i=0;i<40;i++){c.fillStyle=i%2?'#5e4630':'#c0a880';c.beginPath();
-    c.ellipse(Math.random()*w,Math.random()*h,2+Math.random()*4,1+Math.random()*2,Math.random()*3,0,7);c.fill();}
-   c.globalAlpha=1;
-  },1);
-  mudTex.repeat.set(170,1);                 // the strip's u runs 0..1 over 680 units
-  const bankMat=new THREE.MeshStandardMaterial({map:mudTex,vertexColors:true,transparent:true,roughness:1,depthWrite:false});
-  bankMat.envMapIntensity=0.45;
-  const mkBank=sgn=>{
-   const A=[],B=[];
-   for(let x=-340;x<=340;x+=3){
-    const zc=riverZ(x), zi=zc+sgn*2.4, zo=zc+sgn*7.6;
-    A.push([x,rawH(x,zi)+0.22,zi]);
-    B.push([x,rawH(x,zo)+0.22,zo]);
-   }
-   const m=stripMesh(A,B,bankMat);
-   const cols=[];
-   for(let i=0;i<A.length;i++)cols.push(1,1,1,0.95, 1,1,1,0);   // A = waterside, B = grass side
-   m.geometry.setAttribute('color',new THREE.Float32BufferAttribute(cols,4));
-   m.castShadow=false; m.receiveShadow=true; m.renderOrder=-1;   // under the water's own tint
-   return m;
-  };
-  scene.add(mkBank(-1)); scene.add(mkBank(1));
- }
  // Sparrow Creek stream — a narrow tributary winding down from the southern hills
  {
   const sA=[],sB=[];
   for(let z=-330;z<=STREAM_JOIN;z+=1.5){
    const xc=streamX(z);
-   const y=Math.min(rawH(xc,z),rawH(xc,z+3))+0.42;   // hug the downhill side so slopes don't cut the ribbon
+   const y=streamLevel(z);
    sA.push([xc-1.7,y,z]);
    sB.push([xc+1.7,y,z]);
   }
@@ -3801,16 +3751,28 @@ let waterMat=null;   // hoisted: the pond reuses it
   brook.receiveShadow=true;
   scene.add(brook);
  }
- // wooden bridge
- for(let z=51.3;z<65;z+=1.15){
-  const y=BRIDGE_Y+0.55*Math.sin(Math.PI*(z-50.5)/15);
-  box(4.5,0.13,1.0,plankBrownMat,0,y,z,scene).receiveShadow=true;
+ // Arched timber bridge, aligned to the channel and the rideable deck surface.
+ const deckY=z=>BRIDGE_Y+.55*Math.sin(Math.PI*(z-BR_A)/(BR_B-BR_A));
+ for(let z=BR_A+.23;z<BR_B;z+=.46){
+  const plank=box(4.5,.15,.445,plankBrownMat,0,deckY(z)-.075,z,scene);
+  plank.rotation.x=Math.atan(-.55*Math.PI/(BR_B-BR_A)*Math.cos(Math.PI*(z-BR_A)/(BR_B-BR_A)));
+  plank.receiveShadow=true;
  }
- for(const s of[-1,1]){
-  box(0.12,1.0,0.12,'#7a583a',s*2.1,BRIDGE_Y+0.6,51.5,scene);
-  box(0.12,1.0,0.12,'#7a583a',s*2.1,BRIDGE_Y+0.6,64.5,scene);
-  const rail=box(0.1,0.12,13.4,'#7a583a',s*2.1,BRIDGE_Y+1.05,58,scene);
+ for(const side of [-1,1]){
+  for(let z=BR_A;z<=BR_B+.01;z+=2.5){
+   const base=deckY(z);
+   box(.17,1.18,.17,plankBrownMat,side*2.18,base+.52,z,scene);
+   box(.22,.07,.22,plankBrownMat,side*2.18,base+1.14,z,scene);
+   if(z<BR_B){
+    const yy=deckY(z+2.5),slope=(yy-base)/2.5;
+    for(const railY of [.50,1.02]){
+     const beam=box(.10,.12,Math.hypot(2.5,yy-base),plankBrownMat,side*2.18,(base+yy)/2+railY,z+1.25,scene);
+     beam.rotation.x=-Math.atan(slope);
+    }
+   }
+  }
  }
+
  // reeds along the banks
  const reedMat=new THREE.MeshStandardMaterial({color:0x8aa84e,roughness:1});
  const reeds=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.018,0.03,0.95,5),reedMat,220);
@@ -6026,22 +5988,7 @@ function updateTrail(dt){
 
 /* ================= ranch buildings & paddock ================= */
 {
- const b=new THREE.Group();
- const wallMat=new THREE.MeshStandardMaterial({map:plankTex,roughness:0.9});
- wallMat.envMapIntensity=0.62;
- const wall=new THREE.Mesh(new THREE.BoxGeometry(7,4.2,5.5),wallMat);
- wall.position.y=2.1;wall.castShadow=true;wall.receiveShadow=true;b.add(wall);
- const roofMat=new THREE.MeshStandardMaterial({map:tileTex,roughness:0.85});
- roofMat.envMapIntensity=0.62;
- const r1=new THREE.Mesh(new THREE.BoxGeometry(7.9,0.22,3.7),roofMat);
- r1.position.set(0,5.05,-1.45);r1.rotation.x=-0.55;r1.castShadow=true;b.add(r1);
- const r2=new THREE.Mesh(new THREE.BoxGeometry(7.9,0.22,3.7),roofMat);
- r2.position.set(0,5.05,1.45);r2.rotation.x=0.55;r2.castShadow=true;b.add(r2);
- box(8.1,0.18,0.4,'#8c5a3a',0,6.05,0,b);
- box(1.9,2.7,0.2,'#9a7448',0,1.35,2.78,b);
- box(2.2,0.16,0.26,'#fdfaf2',0,2.78,2.8,b);
- box(0.16,2.7,0.26,'#fdfaf2',-1.0,1.35,2.8,b);
- box(0.16,2.7,0.26,'#fdfaf2',1.0,1.35,2.8,b);
+ const b=ranchArchitecture.buildBarn();
  b.position.set(-16,0,-14);
  scene.add(b);
  box(1.2,1.2,1.2,hayMat,-11.5,0.6,-12,scene);
@@ -6283,6 +6230,7 @@ const PAST={x1:-110,x2:-33,z1:-45,z2:25};
   roof.rotation.x=-0.18;
   roof.castShadow=true;sh.add(roof);
   box(0.6,1.2,0.6,hayMat,1.6,0.6,-0.6,sh);
+  ranchArchitecture.detailRunIn(sh);
   sh.position.set(-59,groundH(-59,-19),-19);
   sh.rotation.y=2.2;
   scene.add(sh);
@@ -7416,6 +7364,26 @@ $('photoBtn').onclick=()=>{
    toast('🦌 Wildlife shot — '+Array.from(seen).join(', ')+' in frame! +'+(seen.size*25)+'🪙');
   }
  }catch(e){}
+ /* keep the shot: it is this week's competition entry material */
+ try{
+  const wth=weekTheme();
+  const ph=loadPhotos();
+  let wild=0;
+  try{ const fr2=new THREE.Frustum();
+   fr2.setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse));
+   for(const c of critters){ if(!c.p.group.visible)continue;
+    if(Math.hypot(player.pos.x-c.x,player.pos.z-c.z)>30)continue;
+    if(fr2.containsPoint(c.p.group.position))wild++; }
+  }catch(e){}
+  const shot={id:'p'+Date.now().toString(36),t:Date.now(),thumb:shrinkShot(240),
+   m:{theme:!!wth.ok(),wild:wild,day:+dayT.toFixed(3),spd:+Math.abs(player.speed).toFixed(1),wx:weather.mode}};
+  ph.shots.unshift(shot);
+  while(ph.shots.length>PHOTO_MAX)ph.shots.pop();
+  /* the first shot of the week enters itself, so there is always something in the running */
+  if(!ph.entry||!ph.shots.some(x=>x.id===ph.entry))ph.entry=shot.id;
+  savePhotos(ph);
+  weekBump('photos',1);
+ }catch(e){}
  const th=todayTheme();
  const s=freshSave();
  const ds=new Date().toDateString();
@@ -7569,7 +7537,7 @@ $('tGal').addEventListener('click',()=>{touch.gal=!touch.gal;$('tGal').style.opa
 $('tGal').style.opacity='0.6';
 // drag to orbit the camera, scroll to zoom — like a real third-person game
 let camYaw=0.24,camPitch=0.27,camDist=6.2,camDistSm=6.2,camDrag=null;
-const camLook=new THREE.Vector3(0,1.7,8);
+const camLook=new THREE.Vector3(-7,1.35,10);
 /* Camera drag tracks ONE pointer id. Without that, a second finger arriving —
    which on a phone is the normal case, thumb on the stick and thumb on the view —
    kept overwriting the drag origin and the camera lurched every time either
@@ -7739,7 +7707,14 @@ function ensureWeek(s){
  if(!s.sp||s.sp.week!==wk){s.sp={week:wk,pts:0}; if(s.lbClaims)for(const k of Object.keys(s.lbClaims))if(k.startsWith('sp_'))delete s.lbClaims[k];}
  s.ribbons=s.ribbons||{};
 }
-function addSP(s,n,why){ensureWeek(s); s.sp.pts+=n; s.sp.why=why;}
+function addSP(s,n,why){ensureWeek(s);
+ s.sp.pts+=n; s.sp.why=why;
+ const wk=weekKey();                                   // the week's own tally, for its wages
+ if(!s.wk||s.wk.week!==wk)s.wk={week:wk,sp:0,photos:0,events:0,days:0,lastDay:''};
+ s.wk.sp=(s.wk.sp||0)+n;
+ const ds=new Date().toDateString();
+ if(s.wk.lastDay!==ds){s.wk.lastDay=ds;s.wk.days=(s.wk.days||0)+1;}
+}
 function weeklyFeatured(){
  const wk=weekKey(); let h=0; for(const ch of wk)h=(h*31+ch.charCodeAt(0))>>>0;
  const jumps=EVENTS3.filter(e=>!e.race&&!e.dressage), races=EVENTS3.filter(e=>e.race);
@@ -7827,7 +7802,7 @@ function finishDressage(){
  const par=ev.par||60, tEq=par*(pct>=0.9?0.5:pct>=0.75?0.9:pct>=0.6?1.2:1.6);
  const RB=awardRibbons(ev,tEq,pct>=0.75?0:1);
  const pay=Math.round(ev.reward*Math.max(0.3,pct)*(RB.featured?1.5:1));
- addCoins(pay); addXp3D(Math.round(ev.reward/8)); passAdd(50);
+ addCoins(pay); addXp3D(Math.round(ev.reward/8)); passAdd(50); weekBump('events',1);
  const dgem=(first&&pct>=0.6?3:0)+(pct>=0.75?2:1);
  addGems(dgem);
  if(first&&pct>=0.6)syncSave(s=>{s.trophies=s.trophies||{};s.trophies[ev.id]=true;});
@@ -9079,6 +9054,66 @@ const PHOTO_THEMES=[
  {id:'snow',label:'the Hollowpeak snow ❄️',ok:()=>Math.hypot(player.pos.x+160,player.pos.z+210)<120},
  {id:'desert',label:'Coyote Canyon 🏜️',ok:()=>Math.hypot(player.pos.x+220,player.pos.z-130)<130},
 ];
+/* ---- the weekly photo competition -----------------------------------------------------
+   The daily photo quest was a one-line reward: point the camera at the right thing, collect
+   coins, done. This keeps the shots. Every photo you take this week goes into a gallery,
+   you pick which one to enter, and it is judged on things the game can actually see — the
+   theme, what wildlife was in frame, the light, the speed, the weather.
+
+   The photos live under their own localStorage key, NOT in the save. The save is parsed and
+   rewritten on every single carrot, and putting a dozen JPEGs through that would drag the
+   whole game down. */
+const PHOTO_KEY='starRanchFable_photos_v1', PHOTO_MAX=12;
+function loadPhotos(){
+ try{ const o=JSON.parse(localStorage.getItem(PHOTO_KEY));
+  if(o&&o.week===weekKey())return o;
+ }catch(e){}
+ return {week:weekKey(),shots:[],entry:null};
+}
+function savePhotos(o){ try{ localStorage.setItem(PHOTO_KEY,JSON.stringify(o)); }catch(e){} }
+function weekTheme(){
+ const wk=weekKey(); let h=0; for(const ch of wk)h=(h*31+ch.charCodeAt(0))|0;
+ return PHOTO_THEMES[Math.abs(h)%PHOTO_THEMES.length];
+}
+/* A thumbnail off the canvas that was just rendered. preserveDrawingBuffer is already on
+   for the download button, which is the only reason this can read the frame at all. */
+function shrinkShot(W){
+ const src=renderer.domElement; W=W||240;
+ const cv=document.createElement('canvas');
+ cv.width=W; cv.height=Math.max(1,Math.round(W*src.height/src.width));
+ cv.getContext('2d').drawImage(src,0,0,cv.width,cv.height);
+ return cv.toDataURL('image/jpeg',0.7);
+}
+/* Judged on what the game can measure, and the breakdown is shown to you — no mystery
+   number. Out of about 96. */
+function shotScore(m){
+ const golden=Math.max(0,1-Math.min(Math.abs((m.day||0)-0.26),Math.abs((m.day||0)-0.74))/0.10);
+ const parts=[
+  ['📷 The shot',   6],                                  // any photo is worth something
+  ['📸 On theme',   m.theme?34:0],
+  ['🦌 Wildlife',   Math.min(21,(m.wild||0)*7)],
+  ['🌅 Golden hour',Math.round(golden*18)],
+  ['💨 Action',     Math.min(14,Math.round((m.spd||0)*1.2))],
+  ['🌦️ Weather',    (m.wx&&m.wx!=='clear')?9:3],
+ ];
+ return {parts,total:parts.reduce((a,x)=>a+x[1],0)};
+}
+/* The valley ranches enter too. Their scores come from the week and their own name, so they
+   are steady all week rather than shuffling every time you open the panel. */
+function valleyEntries(){
+ const wk=weekKey();
+ /* Pitched so a snapshot from the yard loses and a deliberate photo wins: on theme alone
+    beats about half the valley, and on theme in good light beats all of it. */
+ return NEIGHBOURS.map(([nm,str])=>({n:nm,v:Math.round(17+43*bhash('photo'+wk+nm)*Math.min(1.15,str))}));
+}
+function photoStandings(){
+ const ph=loadPhotos();
+ const mine=ph.shots.find(x=>x.id===ph.entry);
+ const rows=valleyEntries();
+ rows.push({n:'You',v:mine?shotScore(mine.m).total:0,me:true,entered:!!mine});
+ rows.sort((a,b)=>b.v-a.v);
+ return rows;
+}
 function todayTheme(){
  const ds=new Date().toDateString();
  let h=0;
@@ -9243,10 +9278,11 @@ function renderLB(){
   if(ptier>=i+1&&!claims[i])ready++;
   if(vip&&ptier>=i+1&&!golds[i])ready++;
  }
- html+='<div class="lbTabs">'+[['boards','🏅 Boards'],['pass','🎟️ Season Pass'],['vip','👑 VIP']].map(([k,l])=>
+ html+='<div class="lbTabs">'+[['boards','🏅 Boards'],['photos','📸 Photos'],['week','📅 Week'],['pass','🎟️ Season Pass'],['vip','👑 VIP']].map(([k,l])=>
   '<button data-lbtab="'+k+'"'+(lbTab===k?' class="claimBtn"':'')+'>'+l
   +(k==='pass'&&ready?'<span class="pip">'+ready+'</span>':'')
-  +(k==='vip'&&vip?'<span class="pip" style="background:#1e8449">'+vipDays(s)+'d</span>':'')+'</button>').join('')+'</div>';
+  +(k==='vip'&&vip?'<span class="pip" style="background:#1e8449">'+vipDays(s)+'d</span>':'')
+  +(k==='week'&&s.wkLast&&!s.wkLast.claimed?'<span class="pip">!</span>':'')+'</button>').join('')+'</div>';
  if(lbTab==='pass'){
  /* The season pass. Two rows of tiers, free on top and gold underneath, so you can see at
     a glance what riding without VIP still gets you. */
@@ -9280,6 +9316,54 @@ function renderLB(){
    '<button data-vip="'+i+'"'+((s.gems||0)<pl.g?' disabled':'')+'>'+pl.label+' · '+pl.g+'💎</button>').join('')+'</div>'
  +'<div class="sub" style="margin:6px 0 0">Paid for in gems you earn by playing — there is no real money in this game. Buying again adds to the days you already have.</div>'
  +'</div>';
+ }
+ if(lbTab==='photos'){
+  const wth=weekTheme(), ph=loadPhotos(), stand=photoStandings();
+  const mine=ph.shots.find(x=>x.id===ph.entry);
+  const mi=stand.findIndex(r=>r.me);
+  html+='<div class="passCard"><div class="ph"><b>📸 Photo competition</b><span style="font-size:11px;color:#8c7a63">'+stand.length+' ranches entered</span></div>'
+   +'<div class="sub">This week: <b>'+wth.label+'</b>. Every photo you take with 📷 lands here — pick the one you want to enter, and it is judged on what the game can see.</div>';
+  if(!ph.shots.length){
+   html+='<div class="sub" style="margin:6px 0 0">No photos yet this week. Press 📷 (or P) while you are riding.</div>';
+  }else{
+   html+='<div class="shotRow">'+ph.shots.map(x=>{
+    const sc=shotScore(x.m).total;
+    return '<div class="shot'+(x.id===ph.entry?' pick':'')+'" data-photo="'+x.id+'">'
+     +'<img src="'+x.thumb+'" alt="photo">'
+     +'<span class="sc">'+sc+'</span>'+(x.id===ph.entry?'<span class="ent">entered</span>':'')+'</div>';
+   }).join('')+'</div>'
+   +'<div class="sub" style="margin:5px 0 0">Tap a photo to enter it instead.</div>';
+   if(mine){
+    const sc=shotScore(mine.m);
+    html+='<div class="ph" style="margin-top:7px"><b>Your entry — '+sc.total+' points</b><span style="font-size:11px;color:#8c7a63">'+(mi>=0?'placed #'+(mi+1)+' of '+stand.length:'')+'</span></div>'
+     +'<div class="bList">'+sc.parts.map(pp=>'<span class="bE'+(pp[1]>0?' me':'')+'">'+pp[0]+' '+pp[1]+'</span>').join('')+'</div>';
+   }
+  }
+  html+='<div class="bGroup" style="margin-top:8px">This week\'s standings</div>'
+   +stand.slice(0,6).map((r,i)=>'<div class="evrow"><b>'+(i===0?'👑':i===1?'🥈':i===2?'🥉':'#'+(i+1))+' '+r.n+'</b><span>'+r.v+' pts</span></div>').join('');
+  if(mi>5)html+='<div class="evrow"><b>#'+(mi+1)+' You</b><span>'+stand[mi].v+' pts</span></div>';
+  html+='<div class="sub" style="margin:6px 0 0">Placing in the top three pays a bonus with your week\'s wages on Monday. The other ranches are the valley\'s own families, not other players — voting on real people\'s photos needs a club, and that is coming.</div></div>';
+ }
+ if(lbTab==='week'){
+  const L=s.wkLast, W=s.wk||{};
+  if(L&&!L.claimed){
+   const pay=weekPayout(L);
+   html+='<div class="passCard" style="background:linear-gradient(180deg,#f4fbea,#e6f3d6)"><div class="ph"><b>📅 Last week is settled</b><span style="font-size:11px;color:#4a3526">'+pay.label+'</span></div>'
+    +'<div class="bList" style="margin:5px 0">'
+    +'<span class="bE">⭐ '+pay.sp+' star points</span><span class="bE">📸 '+pay.photos+' photos</span>'
+    +'<span class="bE">🏆 '+pay.events+' events</span><span class="bE">📆 '+pay.days+' days</span>'
+    +(pay.place?'<span class="bE me">📸 photo comp #'+pay.place+'</span>':'')+'</div>'
+    +'<button data-week="claim" class="claimBtn">Collect '+pay.c+'🪙'+(pay.g?' + '+pay.g+'💎':'')+(pay.k?' + '+pay.k+'🗝️':'')+'</button></div>';
+  }
+  const proj=weekPayout(Object.assign({},W,{place:0}));
+  html+='<div class="passCard" style="margin-top:6px"><div class="ph"><b>📅 This week so far</b><span style="font-size:11px;color:#8c7a63">'+proj.label+'</span></div>'
+   +'<div class="bList" style="margin:5px 0">'
+   +'<span class="bE">⭐ '+(W.sp||0)+' star points</span><span class="bE">📸 '+(W.photos||0)+' photos</span>'
+   +'<span class="bE">🏆 '+(W.events||0)+' events</span><span class="bE">📆 '+(W.days||0)+' days ridden</span></div>'
+   +'<div class="sub">On this pace Monday pays about '+proj.c+'🪙'+(proj.g?' and '+proj.g+'💎':'')+'.</div>'
+   +'<div class="bGroup" style="margin-top:6px">The tiers</div>'
+   +WAGE_TIERS.map(t=>'<div class="evrow"><b'+((W.sp||0)>=t.sp?' style="color:#3f5f2c"':'')+'>'+((W.sp||0)>=t.sp?'✅ ':'')+t.label+'</b><span>'+t.sp+'⭐ → '+t.c+'🪙'+(t.g?' '+t.g+'💎':'')+(t.k?' '+t.k+'🗝️':'')+'</span></div>').join('')
+   +'<div class="sub" style="margin:6px 0 0">Star points come from events, trails, building and looking after your horses. Riding on more days pays more.</div></div>';
  }
  if(lbTab==='boards'){
  html+='<div class="lbTabs">'+[['ranks','📊 Ranks'],['miles','🎯 Milestones'],['times','⏱️ Times']].map(([k,l])=>
@@ -9347,6 +9431,23 @@ function renderLB(){
  });
  p.querySelectorAll('[data-lbsub]').forEach(b=>{
   b.onclick=()=>{ lbSub=b.dataset.lbsub; renderLB(); };
+ });
+ p.querySelectorAll('[data-photo]').forEach(b=>{
+  b.onclick=()=>{ const ph=loadPhotos(); ph.entry=b.dataset.photo; savePhotos(ph);
+   const st=photoStandings(), mi=st.findIndex(r=>r.me);
+   syncSave(sv=>{ sv.wk=sv.wk||{week:weekKey()}; sv.wk.place=(mi>=0&&mi<3)?mi+1:0; });
+   sChime(); renderLB(); };
+ });
+ p.querySelectorAll('[data-week]').forEach(b=>{
+  b.onclick=()=>{
+   let pay=null;
+   syncSave(sv=>{ if(!sv.wkLast||sv.wkLast.claimed)return;
+    pay=weekPayout(sv.wkLast); sv.wkLast.claimed=true;
+    sv.coins+=pay.c; sv.gems+=pay.g; if(pay.k)sv.keys=(sv.keys||0)+pay.k;
+    sv.stats=sv.stats||{}; sv.stats.earned=(sv.stats.earned||0)+pay.c; logEarn(sv,pay.c); });
+   if(pay){ refreshWallet(); sGem(); toast('📅 '+pay.label+': +'+pay.c+'🪙'+(pay.g?' +'+pay.g+'💎':'')+(pay.k?' +'+pay.k+'🗝️':'')); }
+   renderLB();
+  };
  });
  p.querySelectorAll('[data-claim]').forEach(b=>{
   b.onclick=()=>{
@@ -10236,40 +10337,7 @@ const visitors=[];
 }
 /* Cottonwood village, signpost & named regions */
 function cottage(x,z,rot){
- const b=new THREE.Group();
- const wallMat=new THREE.MeshStandardMaterial({map:plankTex,roughness:0.9});
- wallMat.color.set(['#f2e6cc','#e8dcc2','#f5ead6','#eadfc4'][Math.floor(Math.random()*4)]);
- const wall=new THREE.Mesh(new THREE.BoxGeometry(3.4,2.4,2.8),wallMat);
- wall.position.y=1.2;wall.castShadow=true;wall.receiveShadow=true;b.add(wall);
- box(3.6,0.25,3.0,'#b8a98a',0,0.12,0,b);
- const roofMat=new THREE.MeshStandardMaterial({map:tileTex,roughness:0.85});
- const r1=new THREE.Mesh(new THREE.BoxGeometry(3.9,0.16,2.1),roofMat);
- r1.position.set(0,2.78,-0.82);
- r1.rotation.x=-0.62;
- r1.castShadow=true;b.add(r1);
- const r2=new THREE.Mesh(new THREE.BoxGeometry(3.9,0.16,2.1),roofMat);
- r2.position.set(0,2.78,0.82);
- r2.rotation.x=0.62;
- r2.castShadow=true;b.add(r2);
- box(3.95,0.14,0.3,'#8c5a3a',0,3.42,0,b);
- box(0.5,1.0,0.5,'#9aa3ad',1.1,3.25,-0.5,b);
- box(0.62,0.12,0.62,'#7d8893',1.1,3.8,-0.5,b);
- box(0.95,1.5,0.1,whitePaintMat,0,0.78,1.43,b);
- box(0.8,1.4,0.12,'#9a7448',0,0.72,1.45,b);
- box(1.0,0.12,0.5,'#b8a98a',0,0.06,1.6,b);
- for(const wx of[-1.05,1.05]){
-  box(0.74,0.74,0.08,whitePaintMat,wx,1.45,1.42,b);
-  const paneMat=new THREE.MeshBasicMaterial({color:0x9fb4c4});
-  glowPanes.push({mat:paneMat,day:new THREE.Color(0x9fb4c4),night:new THREE.Color(2.1,1.35,0.5)});
-  const pane=new THREE.Mesh(new THREE.PlaneGeometry(0.56,0.56),paneMat);
-  pane.position.set(wx,1.45,1.47);
-  b.add(pane);
-  box(0.8,0.16,0.3,plankBrownMat,wx,1.0,1.5,b);
-  for(let fj=0;fj<3;fj++)
-   blob(0.08,0.1,0.08,['#ff8fab','#ffd166','#b197fc'][fj],wx-0.2+fj*0.2,1.16,1.55,b);
- }
- for(const sxx of[-1.72,1.72])
-  box(0.08,0.6,0.6,whitePaintMat,sxx,1.4,-0.3,b);
+ const b=ranchArchitecture.buildCottage({variant:Math.abs(Math.round(x+z))%4});
  b.position.set(x,groundH(x,z),z);
  b.rotation.y=rot;
  scene.add(b);
@@ -11035,6 +11103,7 @@ function tick(stepSeconds){
  if(farForest)farForest.tick(t,player.pos.x,player.pos.z);
  for(const tw of treeWinds)tw.uniforms.uTime.value=t;
  for(const r of ripples)r.m.rotation.z+=dt*0.13*r.dir;
+ if(waterMat?.userData.waterTime)waterMat.userData.waterTime.value=t;
  for(const wa of waterAnims){wa.tex.offset.x+=dt*wa.sx;wa.tex.offset.y+=dt*(wa.sy<-0.5?wa.sy:wa.sy*Math.sin(t*0.5));}
  tickFalls(dt,t);
  for(const cl of clouds){
