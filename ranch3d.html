@@ -450,7 +450,29 @@ function isVIP(s){return vipLeft(s)>0;}
 function vipDays(s){return Math.ceil(vipLeft(s)/864e5);}
 const VIP_COIN=1.25, VIP_PASS=1.5;
 let VIPON=false;                                  // cached: addCoins runs on every carrot
-function stableCap(s){return isVIP(s)?16:12;}
+/* Keep every horse you ever get. The cap existed to stop the pasture filling up with
+   animals the machine has to draw — but that is a question about the PASTURE, not about
+   how many horses you are allowed to own, and it was answered in the wrong place. Owning
+   is unlimited now; what is limited is how many are turned out at once, which you choose. */
+function stableCap(s){return Infinity;}
+const PASTURE_BASE=8;
+function pastureMax(s){return isVIP(s)?12:PASTURE_BASE;}   // VIP turns out a bigger string
+/* Which horses are in the field. An older save has none of these flags, so the first
+   few become the ones out to grass and everybody else waits in the barn. */
+/* Gives a turnout flag to any horse that has not got one — which covers both a save made
+   before the barn existed and a horse that arrived a second ago. A newcomer goes straight
+   out to grass if there is room and waits inside if there is not, so it is visible when it
+   can be without quietly shoving somebody else indoors. */
+function ensureTurnout(s){
+ if(!s||!s.horses)return false;
+ const cap=pastureMax(s);
+ let out=s.horses.filter(h=>h.out===true).length, touched=false;
+ for(const h of s.horses){
+  if(h.out===undefined){ h.out=out<cap; if(h.out)out++; touched=true; }
+ }
+ return touched;
+}
+function turnedOut(s){return (s.horses||[]).filter(h=>h.out).length;}
 /* A season is a fresh board: points and claims are per season. The first time an old save
    meets this code it keeps everything it had, rather than being wiped by the changeover. */
 function seasonRoll(s){
@@ -7151,9 +7173,11 @@ function rebuildAll(){
  if(!h.wings&&player.flying)player.flying=false;
  if(h.wings&&!window._flyHint){window._flyHint=1;setTimeout(()=>{try{toast('🪽 Tap 🪽 Fly (or Space) to take off!');}catch(e){}},800);}
  let n=0;
- for(let i=0;i<myHorses.length&&n<24;i++){
+ const _sv=freshSave(); const _pm=_sv?pastureMax(_sv):PASTURE_BASE;
+ for(let i=0;i<myHorses.length&&n<_pm;i++){
   if(i===rideIdx)continue;
   const hh=myHorses[i];
+  if(!hh.out)continue;                       // in the barn, not in the field
   const parts=makeHorse({colors:hh.colors,horn:hh.horn,wings:hh.wings,dragon:hh.dragon,coat:hh.coat,tack:hh.tack||null,seed:hh.id||(i+2),breed:hh.breed});
   parts.group.scale.setScalar(horseScale(hh));
   const sp=nameSprite(hh.name);
@@ -7750,6 +7774,7 @@ function refreshWallet(){
 }
 function reloadHorses(){
  const s=freshSave();if(!s)return;
+ if(ensureTurnout(s))syncSave(sv=>{ensureTurnout(sv);});   // a new arrival gets a stall and a field
  myHorses.length=0;
  for(const h of s.horses)myHorses.push(h);
  if(rideIdx>=myHorses.length)rideIdx=0;
@@ -9284,7 +9309,7 @@ function renderLB(){
  /* VIP. Bought with gems you earn by riding — this game never asks for real money. */
  html+='<div class="vipCard">'
  +'<div class="ph"><b>👑 VIP</b><span style="font-size:11px;color:#6b4e12">'+(vip?vipDays(s)+' day'+(vipDays(s)===1?'':'s')+' left':'not active')+'</span></div>'
- +'<div class="perks">+25% coins on everything · +50% pass points · double daily gift with a 🗝️ key · the gold pass track · stable room for 16 horses instead of 12 · a 👑 by your name on the boards.</div>'
+ +'<div class="perks">+25% coins on everything · +50% pass points · double daily gift with a 🗝️ key · the gold pass track · twelve horses out in the pasture instead of eight · a 👑 by your name on the boards.</div>'
  +'<div class="plans">'+VIP_PLANS.map((pl,i)=>
    '<button data-vip="'+i+'"'+((s.gems||0)<pl.g?' disabled':'')+'>'+pl.label+' · '+pl.g+'💎</button>').join('')+'</div>'
  +'<div class="sub" style="margin:6px 0 0">Paid for in gems you earn by playing — there is no real money in this game. Buying again adds to the days you already have.</div>'
@@ -9784,7 +9809,10 @@ function openStable(){
 function renderStable(){
  const s=freshSave();if(!s)return;
  const p=$('stablePanel');
- p.innerHTML='<div class="ph">🐎 Your Stable <span style="color:#8c7a63;font-size:13px;font-weight:600">'+s.horses.length+' horses</span><button data-st="close" style="margin-left:auto">✖</button></div>'
+ if(ensureTurnout(s))syncSave(sv=>{ensureTurnout(sv);});
+ const _out=turnedOut(s), _max=pastureMax(s);
+ p.innerHTML='<div class="ph">🐎 Your Stable <span style="color:#8c7a63;font-size:13px;font-weight:600">'+s.horses.length+' horses · no limit</span><button data-st="close" style="margin-left:auto">✖</button></div>'
+ +'<div style="font-size:11.5px;color:#8c7a63;padding:0 2px">🌿 <b>'+_out+' of '+_max+'</b> out in the pasture'+(isVIP(s)?' (VIP)':'')+'. The rest are in the barn — keep as many horses as you like, and rotate who goes out to grass.</div>'
  +'<div style="padding:10px 18px"><a href="breeds.html" target="_blank" rel="noopener" style="color:#45654e;font-weight:700">Explore all breed models ↗</a></div>'
  +s.horses.map((h,i)=>{
   const hearts=Math.max(0,Math.min(5,Math.round((h.bond||0)/20)));
@@ -9794,6 +9822,7 @@ function renderStable(){
   +'<b>'+h.name+'</b>'+(h.pers&&PERS[h.pers]?' '+PERS[h.pers].emoji:'')+(masteryOf(s,h.breed)>=8?' 🎖️':'')+(low?' ⚠️':'')+(i===rideIdx?' <span class="badge">RIDING</span>':'')
   +'<span>'+breedLabel(h.breed)+(h.foal?' foal 🌱 grows up in '+Math.max(1,Math.ceil((86400000-(Date.now()-(h.born||Date.now())))/3600000))+'h':'')+' · Lv '+(h.level||1)+' · '+'❤️'.repeat(hearts)+'</span>'
   +(h.foal?'<button data-st="eq:'+i+'" '+(h.id===companionId?'class="claimBtn"':'')+' title="A foal companion trots along behind you">'+(h.id===companionId?'🍼 Following ✓':'🍼 Equip')+'</button>':'')
+  +(i===rideIdx?'':'<button data-st="out:'+i+'"'+(h.out?' class="claimBtn"':'')+' title="'+(h.out?'Out in the pasture':'Waiting in the barn')+'">'+(h.out?'🌿 Pasture':'🏠 Barn')+'</button>')
   +(i===rideIdx?'':'<button data-st="ride:'+i+'">🏇 Ride</button>')
   +'<button data-st="rn:'+i+'" title="Rename">✏️</button></div>';
  }).join('')
@@ -9815,6 +9844,19 @@ function renderStable(){
    syncSave(s=>{s.companion=companionId;});
    toast(companionId?'🍼 '+h.name+' is following you now!':'🍼 '+h.name+' stays in the pasture.');
    renderStable();
+  }
+  if(act==='out'){
+   const sv0=freshSave(); let msg='';
+   if(!myHorses[i].out&&turnedOut(sv0)>=pastureMax(sv0)){
+    msg='🌿 The pasture is full at '+pastureMax(sv0)+'. Bring one in first.';
+   }else{
+    const now=!myHorses[i].out;
+    myHorses[i].out=now;
+    syncSave(sv=>{ if(sv.horses[i])sv.horses[i].out=now; });
+    msg=now?'🌿 '+myHorses[i].name+' is out in the pasture.':'🏠 '+myHorses[i].name+' is in the barn.';
+    rebuildAll();
+   }
+   toast(msg); renderStable();
   }
   if(act==='rn')renameHorse(i);
  };});
