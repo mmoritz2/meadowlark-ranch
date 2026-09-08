@@ -1,0 +1,18 @@
+{
+  "generator": "Local ComfyUI FLUX.2 dev fp8mixed",
+  "prompt": "Photoreal botanical cutout texture for an oak and beech countryside tree foliage card. One natural broad spreading slender branching leafy twig spray, about thirty-five to forty-five distinct mature small lobed oak leaves mixed with a few pointed oval beech leaves on three fine branching brown-green twig stems. Real leaf anatomy, gently irregular lobes, fine natural veins, crisp delicate edges, slight leaf-to-leaf size and angle variation. Many small open gaps between leaves, irregular wide branching silhouette, not a round bush, not a solid blob. Muted natural medium sage green and olive green foliage with subtle pale new leaves, soft brown-green twigs, no black stems. The whole twig spray fits within the central 88 percent of the square image, a clear pure white margin on all sides; no leaf touches or crosses the image boundary. Isolated on perfectly pure white background. Front-facing orthographic overhead botanical specimen photography, leaves approximately parallel to the image plane, cross-polarized diffuse soft white light, no directional sunlight, no cast shadow, no ground, no vase, no depth of field, no vignette. PBR diffuse albedo asset, scientifically believable plants, sharp natural detail, no illustration, no painting, no decorative frame, no text or watermark.",
+  "seed": 9082410,
+  "steps": 28,
+  "guidance": 3.5,
+  "size": 1024,
+  "seamless": false,
+  "source_sha256": "8390be4717a0fabb0a31f88255393dee6ef6274a75e269fc32482ce6b53b5768",
+  "alpha_method": "White-distance and chroma matte suppressing neutral specimen shadows; tiny-hole closing, one-pixel feather, nearest opaque color bleed across gutter and partial edge.",
+  "foreground_coverage": 0.3047,
+  "opaque_mean_srgb": [
+    121,
+    130,
+    72
+  ],
+  "output": "foliage_branch_rgba.png"
+}

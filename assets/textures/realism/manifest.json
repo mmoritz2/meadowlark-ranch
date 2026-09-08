@@ -1,0 +1,158 @@
+{
+  "generator": "Local ComfyUI FLUX.2 dev fp8mixed",
+  "steps": 28,
+  "size": 1024,
+  "guidance": 3.5,
+  "models": [
+    "flux2_dev_fp8mixed.safetensors",
+    "mistral_3_small_flux2_fp8.safetensors",
+    "flux2-vae.safetensors"
+  ],
+  "processing": "Periodic boundary correction, restrained color balance; conservative albedo-derived detail normals and matte roughness.",
+  "materials": {
+    "siding": {
+      "seed": 9082401,
+      "patch_metres": [
+        2.4,
+        2.4
+      ],
+      "mean": [
+        192,
+        188,
+        174
+      ],
+      "contrast": 0.9,
+      "roughness": 0.86,
+      "normal": 1.55,
+      "normal_scale": 0.48,
+      "prompt": "A square seamless repeating surface texture of maintained weathered off-white painted vertical timber siding on a traditional upscale rural horse stable. About eleven narrow straight parallel wooden boards running vertically from the top edge to the bottom edge, each about twenty-two centimeters wide, recessed thin straight board seams. Warm chalky ivory paint covering most of the old wood, fine grey wood grain barely visible through the thin paint, a few small worn paint flakes revealing muted grey-tan wood, tiny knots and minor weathering. Clean cared-for mature architecture, not abandoned or distressed. All boards continue through both top and bottom edges; no horizontal board ends, no trim, no nails, no door, no window, no structural elements. A 2.4 metre square wall patch. Photoreal physically based rendering diffuse base color texture, seamless tileable square, orthographic straight-on material scan without perspective or lens distortion. Cross-polarized soft flat lighting, uniform exposure across the image, no specular highlight, no directional illumination, no baked shadows, no ambient occlusion, no vignette, no dark corners. Natural restrained detail and subtle wear, realistic scale, no stylization, no painting, no illustration, no dramatic cracks or exaggerated grunge, no text, no watermark, no border.",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "source_sha256": "a2787ec0b111e95319dfe012dd51051170513c3bbdeba34212757d9e8cc2e145",
+      "base_color_srgb_mean": [
+        192.025,
+        188.098,
+        174.087
+      ],
+      "linear_luminance_mean": 0.51526,
+      "edge_step_mean": 2.66,
+      "interior_step_mean": 5.2,
+      "edge_to_interior_ratio": 0.512,
+      "files": {
+        "albedo": "siding_albedo.jpg",
+        "normal": "siding_normal.jpg",
+        "roughness": "siding_roughness.jpg"
+      }
+    },
+    "roof": {
+      "seed": 9082402,
+      "patch_metres": [
+        1.8,
+        1.8
+      ],
+      "mean": [
+        92,
+        87,
+        75
+      ],
+      "contrast": 0.88,
+      "roughness": 0.92,
+      "normal": 1.5,
+      "normal_scale": 0.52,
+      "prompt": "A square seamless repeating material texture of aged dark cedar shake roof shingles on a traditional countryside horse stable, five horizontal courses of rectangular wooden shingles with staggered vertical joints, shingles of modestly varied widths, straight subtly irregular bottom edges and fine vertical natural wood grain. Weathered charcoal brown and muted driftwood taupe grey colors, calm natural board-to-board variation, restrained realistic fine texture, intact maintained roof. Only the continuous roof covering viewed straight-on perpendicular to the surface, no house, no roof ridge, no roof outline, no sky, no gutter, no moss, no grass, no broken tiles, no deep black gaps. A 1.8 metre square surface patch; broad modestly overlapping shingles, no deep relief. Photoreal physically based rendering diffuse base color texture, seamless tileable square, orthographic straight-on material scan without perspective or lens distortion. Cross-polarized soft flat lighting, uniform exposure across the image, no specular highlight, no directional illumination, no baked shadows, no ambient occlusion, no vignette, no dark corners. Natural restrained detail and subtle wear, realistic scale, no stylization, no painting, no illustration, no dramatic cracks or exaggerated grunge, no text, no watermark, no border.",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "source_sha256": "0b672b2ba30152c4ff082df80306232ef5b208a32649deee0504a6bd5b6ef4c7",
+      "base_color_srgb_mean": [
+        92.039,
+        87.069,
+        74.936
+      ],
+      "linear_luminance_mean": 0.10452,
+      "edge_step_mean": 4.628,
+      "interior_step_mean": 9.508,
+      "edge_to_interior_ratio": 0.487,
+      "files": {
+        "albedo": "roof_albedo.jpg",
+        "normal": "roof_normal.jpg",
+        "roughness": "roof_roughness.jpg"
+      }
+    },
+    "rock": {
+      "seed": 9082403,
+      "patch_metres": [
+        3.2,
+        3.2
+      ],
+      "mean": [
+        135,
+        132,
+        119
+      ],
+      "contrast": 0.89,
+      "roughness": 0.94,
+      "normal": 1.75,
+      "normal_scale": 0.7,
+      "prompt": "A square seamless repeating texture of an exposed weathered grey-brown sedimentary limestone cliff face in temperate countryside. A 3.2 metre square patch of one continuous solid rock surface, irregular fine horizontal bedding layers and subtle weathered shallow ledges, small naturally rounded mineral grains and restrained tiny fissures. Warm stone grey, muted taupe and dusty pale buff colors, gently mottled mineral variation. Natural plausible geology, no rectangular masonry, no bricks, no tiled stones, no huge cracks, no black crevasses, no moss, no plants, no sky, no separate boulders, no rock silhouette. Photoreal physically based rendering diffuse base color texture, seamless tileable square, orthographic straight-on material scan without perspective or lens distortion. Cross-polarized soft flat lighting, uniform exposure across the image, no specular highlight, no directional illumination, no baked shadows, no ambient occlusion, no vignette, no dark corners. Natural restrained detail and subtle wear, realistic scale, no stylization, no painting, no illustration, no dramatic cracks or exaggerated grunge, no text, no watermark, no border.",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "source_sha256": "22daf69b6887182b35959db2b257eb88496afb5ea452ef9cb073e7f9110cf318",
+      "base_color_srgb_mean": [
+        134.983,
+        132.061,
+        118.914
+      ],
+      "linear_luminance_mean": 0.24439,
+      "edge_step_mean": 8.243,
+      "interior_step_mean": 16.101,
+      "edge_to_interior_ratio": 0.512,
+      "files": {
+        "albedo": "rock_albedo.jpg",
+        "normal": "rock_normal.jpg",
+        "roughness": "rock_roughness.jpg"
+      }
+    },
+    "forest_floor": {
+      "seed": 9082404,
+      "patch_metres": [
+        2.0,
+        2.0
+      ],
+      "mean": [
+        108,
+        96,
+        70
+      ],
+      "contrast": 0.88,
+      "roughness": 0.97,
+      "normal": 1.3,
+      "normal_scale": 0.42,
+      "prompt": "A square seamless repeating texture of quiet temperate woodland forest floor, perfectly overhead, showing a two metre square patch of softly compacted dark brown earth scattered with many small decomposing oak and beech leaf fragments, tiny dry twigs, minute tan leaf veins, fine organic litter, and very sparse small desaturated olive moss flecks. Natural irregular leaf litter, leaves mostly broken and partly incorporated into the earth, no giant whole leaves, no recognisable central objects. Muted umber, warm grey-brown, tobacco tan and dull olive, neutral soft forest colors without orange saturation. No grass lawn, no stones, no roots, no sticks larger than a pencil, no mushrooms, no flowers, no trunk, no puddles. Full even coverage. Photoreal physically based rendering diffuse base color texture, seamless tileable square, orthographic straight-on material scan without perspective or lens distortion. Cross-polarized soft flat lighting, uniform exposure across the image, no specular highlight, no directional illumination, no baked shadows, no ambient occlusion, no vignette, no dark corners. Natural restrained detail and subtle wear, realistic scale, no stylization, no painting, no illustration, no dramatic cracks or exaggerated grunge, no text, no watermark, no border.",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "source_sha256": "6d4ea17a5fe76808c13e4ea3b3a5346a9241934302ffa257eeec658f31e413e0",
+      "base_color_srgb_mean": [
+        108.0,
+        96.007,
+        69.874
+      ],
+      "linear_luminance_mean": 0.12597,
+      "edge_step_mean": 8.104,
+      "interior_step_mean": 14.01,
+      "edge_to_interior_ratio": 0.578,
+      "files": {
+        "albedo": "forest_floor_albedo.jpg",
+        "normal": "forest_floor_normal.jpg",
+        "roughness": "forest_floor_roughness.jpg"
+      }
+    }
+  }
+}
