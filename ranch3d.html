@@ -310,7 +310,7 @@ body.touch #stickZone{display:block}
 <!-- The multiplayer client (322 KB) is fetched lazily, the first time someone actually
      goes online — see loadMQTT() in the module. Loading it up front would put it on the
      critical path of every single-player launch, which is most of them. -->
-<link rel="preload" href="assets/models/horse_textured_rigged.glb" as="fetch">
+<link rel="preload" href="assets/models/horse_showcase_rigged.glb" as="fetch">
 <link rel="preload" href="assets/models/rider_seat_textured.glb" as="fetch">
 <script type="importmap">
 {
@@ -331,6 +331,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js';
+import {installBackdrop,tuneFoliage} from './assets/world-art.js';
 
 /* ================= save sync with the 2D game ================= */
 const SAVE_KEY='starRanchFable_v1';   // NOT renamed with the game: changing this orphans every existing save
@@ -827,14 +828,15 @@ renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure=1.05;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.info.autoReset=false;
 document.body.appendChild(renderer.domElement);
 const scene=new THREE.Scene();
-scene.fog=new THREE.FogExp2(0xbfd3e8,0.0021);   // exponential; tinted to the sky so distance hazes toward it
+scene.fog=new THREE.FogExp2(0xb8d8e9,0.00125);   // exponential; tinted to the sky so distance hazes toward it
 const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,5000);
 /* Start where the chase camera will settle (player spawns at 0,0,8 facing -z, so the
    camera belongs behind it at +z). Starting anywhere else makes the first second of the
    game a swoop through the horse before the smoothing catches up. */
-camera.position.set(0,2.8,14.2);
+camera.position.set(-5.5,2.4,16.0);
 
 /* ================= VR (WebXR) =================
    The flat game keeps its chase camera. In VR the camera is re-parented to a rig
@@ -1828,7 +1830,7 @@ sun.shadow.camera.top=44;sun.shadow.camera.bottom=-44;
 /* the sun sits 95 units out, so most of the old 1..220 depth range held nothing and threw
    away precision. Bias was also set twice, the second pair silently winning. */
 sun.shadow.camera.near=42;sun.shadow.camera.far=165;
-sun.shadow.bias=-0.00006;sun.shadow.normalBias=0.005;
+sun.shadow.bias=-0.00006;sun.shadow.normalBias=0.018;
 scene.add(sun);scene.add(sun.target);
 
 const composer=new EffectComposer(renderer);
@@ -1926,6 +1928,8 @@ let quality=(save&&save.quality)||'high';
 const QUAL_LABEL={low:'🎚️ Graphics: Low — smoothest',medium:'🎚️ Graphics: Medium',high:'🎚️ Graphics: High — prettiest'};
 function applyQuality(q){
  quality=q;
+ const samples=q==='high'?Math.min(4,renderer.capabilities.maxSamples):q==='medium'?Math.min(2,renderer.capabilities.maxSamples):0;
+ for(const rt of [composer.renderTarget1,composer.renderTarget2])if(rt.samples!==samples){rt.samples=samples;rt.dispose();}
  const pr=q==='high'?Math.min(devicePixelRatio,1.75):q==='medium'?Math.min(devicePixelRatio,1.25):1;
  renderer.setPixelRatio(pr);
  composer.setPixelRatio(pr);
@@ -2003,46 +2007,28 @@ bumpTexture.repeat.set(130,130);
    is untouched. */
 const texLoad=(path,rep)=>{const t=new THREE.TextureLoader().load(path);
  t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rep,rep);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;};
-const grassLoad=rep=>texLoad('assets/textures/ground_grass.jpg',rep);
-const groundTex=grassLoad(110);
-const sandTex=texLoad('assets/textures/ground_sand_arena.jpg',10);   // generated tile, same repeat and wrap as the canvas it replaces
-const grassBladeTex=canvasTex(128,128,(c,w,h)=>{
+const texData=(path,rep)=>{const t=texLoad(path,rep);t.colorSpace=THREE.NoColorSpace;return t;};
+const grassLoad=rep=>texLoad('assets/textures/pastoral/meadow_albedo.jpg',rep);
+const groundTex=grassLoad(240);
+const sandTex=texLoad('assets/textures/pastoral/arena_albedo.jpg',10);   // generated tile, same repeat and wrap as the canvas it replaces
+// Tapered blades with curved tips; silhouettes stay soft at riding distance.
+function meadowBladeTexture(size,count){return canvasTex(size,size,(c,w,h)=>{
  c.clearRect(0,0,w,h);
- for(let i=0;i<9;i++){
-  const x=10+Math.random()*(w-20);
-  const tall=h*(0.45+Math.random()*0.5);
-  const lean=(Math.random()-0.5)*26;
-  const g=c.createLinearGradient(0,h,0,h-tall);
-  g.addColorStop(0,'#3e7a35');
-  g.addColorStop(1,Math.random()<0.4?'#8fc46b':'#6aab4e');
-  c.strokeStyle=g;
-  c.lineWidth=3.5+Math.random()*3;
-  c.lineCap='round';
-  c.beginPath();
-  c.moveTo(x,h);
-  c.quadraticCurveTo(x+lean*0.4,h-tall*0.6,x+lean,h-tall);
-  c.stroke();
+ for(let i=0;i<count;i++){
+  const x=w*(0.12+Math.random()*0.76),tall=h*(0.38+Math.random()*0.60);
+  const lean=(Math.random()-0.5)*w*0.46,bw=w*(0.012+Math.random()*0.013);
+  const tipX=x+lean,tipY=h-tall;
+  const g=c.createLinearGradient(0,h,0,tipY);
+  g.addColorStop(0,'#315b28');g.addColorStop(0.50,'#699342');
+  g.addColorStop(1,i%4===0?'#bdc980':'#9ab962');
+  c.fillStyle=g;c.beginPath();c.moveTo(x-bw,h);
+  c.bezierCurveTo(x-bw*0.6,h-tall*0.35,tipX-lean*0.3,tipY+tall*0.22,tipX,tipY);
+  c.bezierCurveTo(tipX-lean*0.13,tipY+tall*0.30,x+bw,h-tall*0.32,x+bw,h);
+  c.closePath();c.fill();
  }
-});
-const grassBladeTex2=canvasTex(256,256,(c,w,h)=>{   // near-field blades: more of them, lit tips
- c.clearRect(0,0,w,h);
- for(let i=0;i<16;i++){
-  const x=14+Math.random()*(w-28);
-  const tall=h*(0.5+Math.random()*0.48);
-  const lean=(Math.random()-0.5)*40;
-  const g=c.createLinearGradient(0,h,0,h-tall);
-  g.addColorStop(0,'#3f7a30');
-  g.addColorStop(0.55,Math.random()<0.5?'#6db24e':'#5fa245');
-  g.addColorStop(1,Math.random()<0.5?'#b9e08a':'#9ad46f');
-  c.strokeStyle=g;
-  c.lineWidth=5+Math.random()*5;
-  c.lineCap='round';
-  c.beginPath();
-  c.moveTo(x,h);
-  c.quadraticCurveTo(x+lean*0.35,h-tall*0.55,x+lean,h-tall);
-  c.stroke();
- }
-});
+});}
+const grassBladeTex=meadowBladeTexture(256,9);
+const grassBladeTex2=meadowBladeTexture(256,12);
 const flowerTex=canvasTex(128,128,(c,w,h)=>{   // a small cluster: three heads on stems, tinted per instance
  c.clearRect(0,0,w,h);
  const heads=[[34,44],[64,30],[92,50]];
@@ -2190,12 +2176,8 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
      }
      float macro=_vn(vMapUv*0.06)*0.62+_vn(vMapUv*0.02+5.0)*0.38;
      #endif
-     /* The grass photo was authored far too dark — linear mean luminance ~0.024, an
-        almost-black albedo. The terrain's vertex colours are pale on purpose (they TINT
-        the photo: sand near the river, rock on slopes, snow up north), so the product
-        came out near-black and the meadows looked dead. Normalise the photo up to a
-        realistic grass albedo and let the vertex colours go on tinting it. */
-     diffuseColor.rgb*=_acc.rgb*2.35*(0.90+macro*0.26);
+     // Calibrated albedo: real-time lighting supplies the shading.
+     diffuseColor.rgb*=_acc.rgb*(0.94+macro*0.12);
      /* The albedo was clipping its red channel to zero over most of the map, which is not a
         colour any vegetation has — it read as pure display-primary green. Put red back and
         take the saturation down to something turf actually measures at. */
@@ -2225,23 +2207,11 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  horizonDisc.rotation.x=-Math.PI/2;
  horizonDisc.position.y=-8;
  scene.add(horizonDisc);
- // Optional upgrade: swap in a generated seamless PBR grass texture if it's being
- // served alongside the game (assets/textures/grass_albedo.jpg). Silently keeps the
- // procedural texture when opened via file:// or when the file is absent.
- new THREE.TextureLoader().load('assets/textures/grass_albedo.jpg',tex=>{
-  tex.colorSpace=THREE.SRGBColorSpace;
-  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
-  tex.anisotropy=renderer.capabilities.getMaxAnisotropy();
-  tex.repeat.set(70,70);
-  gmat.map=tex;gmat.needsUpdate=true;
-  // The horizon disc has no vertex colours to tint, so the near-black grass photo would
-  // paint a dark ring around the world. It keeps the procedural meadow texture instead —
-  // at that distance it is fog-washed anyway and only the colour reads.
- },undefined,()=>{/* not served — keep procedural ground */});
+
 }
 // sandy riding arena inside the paddock
 {
- const smatl=new THREE.MeshStandardMaterial({map:sandTex,roughness:1});
+ const smatl=new THREE.MeshStandardMaterial({map:sandTex,roughness:1,normalMap:texData('assets/textures/pastoral/arena_normal.jpg',10),normalScale:new THREE.Vector2(0.20,0.20),roughnessMap:texData('assets/textures/pastoral/arena_roughness.jpg',10)});
  smatl.envMapIntensity=0.46;
  const sand=new THREE.Mesh(new THREE.CircleGeometry(1,40),smatl);
  sand.scale.set(23.5,18.5,1);
@@ -2249,17 +2219,8 @@ const dustTex=canvasTex(64,64,(c,w,h)=>{
  sand.position.set(0,0.012,0);
  sand.receiveShadow=true;
  scene.add(sand);
- // dirt path out the gate
- const dmat=new THREE.MeshStandardMaterial({map:texLoad('assets/textures/ground_dirt.jpg',1.5),roughness:1});   // tile is already matched to the old #c4a878, so no tint on top
- dmat.envMapIntensity=0.46;
- for(let i=0;i<37;i++){
-  const m=new THREE.Mesh(new THREE.CircleGeometry(1.6+Math.random()*0.7,12),dmat);
-  m.rotation.x=-Math.PI/2;
-  m.scale.y=0.7;
-  const pz=21+i*2.5;
-  m.position.set((Math.random()-0.5)*1.4,groundH(0,pz)+0.014,pz);
-  scene.add(m);
- }
+ // The continuous bridleway ribbons below carry the gate trail.
+
 }
 
 /* ================= grass & flowers ================= */
@@ -2269,7 +2230,7 @@ let flowerClumps=[];
  const bladeGeo=new THREE.PlaneGeometry(0.55,0.5);
  bladeGeo.translate(0,0.25,0);
  const bladeMat=new THREE.MeshStandardMaterial({map:grassBladeTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
- bladeMat.envMapIntensity=0.58;
+ bladeMat.envMapIntensity=0.7;bladeMat.alphaToCoverage=true;
  bladeMat.onBeforeCompile=sh=>{
   sh.uniforms.uTime={value:0};
   windShader=sh;
@@ -2303,7 +2264,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   blades.setMatrixAt(placed,m4);
   /* was hue .24-.30 / sat .38-.60 / lum .50-.72 — a bright, uniform, cartoon green.
      Real grass sits yellower, much less saturated, and varies blade to blade. */
-  bcol.setHSL(0.21+Math.random()*0.06,0.30+Math.random()*0.20,0.40+Math.random()*0.20);
+  bcol.setHSL(0.19+Math.random()*0.04,0.16+Math.random()*0.14,0.72+Math.random()*0.13);
   blades.setColorAt(placed,bcol);
   placed++;
  }
@@ -2325,7 +2286,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const gh=(ix,iz)=>{let h=(Math.imul(ix|0,374761393)+Math.imul(iz|0,668265263))|0; h=Math.imul(h^(h>>>13),1274126177); return ((h^(h>>>16))>>>0)/4294967295;};
  const crossGeo=(hw,ht)=>{const g=new THREE.BufferGeometry(),P=[],U=[],N=[],I=[];
   const add=rot=>{const c=Math.cos(rot),sn=Math.sin(rot),b=P.length/3;
-   [[-hw,0],[hw,0],[hw,ht],[-hw,ht]].forEach(([x,y])=>{P.push(x*c,y,x*sn);U.push(x/hw*0.5+0.5,y/ht);N.push(-sn,0,c);});
+   [[-hw,0],[hw,0],[hw,ht],[-hw,ht]].forEach(([x,y])=>{P.push(x*c,y,x*sn);U.push(x/hw*0.5+0.5,y/ht);N.push(-sn*0.35,0.94,c*0.35);});
    I.push(b,b+1,b+2,b,b+2,b+3);};
   add(0);add(Math.PI/2);
   g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));
@@ -2387,7 +2348,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   g.computeVertexNormals(); return g;
  })();
  const nearMat=new THREE.MeshStandardMaterial({map:grassBladeTex2,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
- nearMat.envMapIntensity=0.58; windy(nearMat,0.32);
+ nearMat.envMapIntensity=0.7;nearMat.alphaToCoverage=true; windy(nearMat,0.32);
  const flMat=new THREE.MeshStandardMaterial({map:flowerTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
  flMat.envMapIntensity=0.6; windy(flMat,0.18);
  const fernMat=new THREE.MeshStandardMaterial({map:fernTex,alphaTest:0.42,side:THREE.DoubleSide,roughness:0.94});
@@ -2444,7 +2405,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    if(!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);near.setMatrixAt(id,m4);continue;}
    const sz=0.7+h3*0.75; e.set(0,h4*Math.PI,(h3-0.5)*0.12); q.setFromEuler(e); sc.set(sz,sz*(0.8+h1*0.5),sz);
    v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc); near.setMatrixAt(id,m4);
-   bcol.setHSL(0.21+h2*0.06,0.28+h3*0.18,0.36+h4*0.18); near.setColorAt(id,bcol);
+   bcol.setHSL(0.19+h2*0.04,0.16+h3*0.14,0.70+h4*0.16); near.setColorAt(id,bcol);
   }
   for(let k=0;k<NG_F;k++){
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
@@ -3019,61 +2980,8 @@ function leatherMat(hex){
 }
 
 /* ================= scenery ================= */
-// distant mountains
-/* Was a smooth cone with a SECOND snow cone floating inside it, whose intersection showed
-   as a hard crease against the sky, and the rock was so pale it rendered brighter than the
-   sky behind it. Now one mesh with the snowline painted into its vertex colours on a ragged
-   noise boundary, and rock dark enough to sit under the sky rather than punch through it. */
-{
- const C_ROCKLO=new THREE.Color('#5b6270'),C_ROCKHI=new THREE.Color('#8a8f98'),C_SNOW=new THREE.Color('#eef4fa'),C_SCREE=new THREE.Color('#7d7060'),C_ALP=new THREE.Color('#6f7f58');
- const mtnMat=new THREE.MeshStandardMaterial({map:mountainTexM,vertexColors:true,roughness:1});
- mtnMat.envMapIntensity=0.5;
- const cc=new THREE.Color();
- for(let i=0;i<11;i++){
-  const a=i/11*Math.PI*2+Math.random()*0.3;
-  const hgt=110+Math.random()*90,rad=80+Math.random()*60;
-  const geo=new THREE.ConeGeometry(rad,hgt,48,22);
-  const p=geo.attributes.position;
-  /* Ridges from coherent noise over (angle, height) rather than a hash per vertex: a hash
-     makes gravel, noise makes gullies and spurs that run down the face. Two octaves of
-     ridged value noise, strongest mid-slope, fading at the peak and the skirt. */
-  for(let j=0;j<p.count;j++){
-   const x0=p.getX(j),z0=p.getZ(j),y0=p.getY(j);
-   const fh=(y0+hgt*0.5)/hgt;                                       // 0 base -> 1 peak
-   const ang=Math.atan2(z0,x0), r0=Math.hypot(x0,z0);
-   if(r0<1e-3)continue;
-   const u=ang*3.2+i*7.1, w=fh*6.0+i*3.3;
-   const r1=1-Math.abs(vnoise(u+0.5,w)*2-1), r2=1-Math.abs(vnoise(u*2.3+9,w*2.3+4)*2-1);
-   const ridge=(r1*0.7+r2*0.3);                                     // 0..1, sharp crests
-   const amp=rad*0.40*Math.sin(Math.PI*Math.min(1,fh*1.15))*(0.55+0.45*(1-fh));
-   const massif=(vnoise(ang*1.3+i*5.7,fh*2.0+i)-0.5)*rad*0.34*(1-fh*0.6);   // one steep side, one shoulder: no two silhouettes the same triangle
-   const rr=r0+(ridge-0.55)*amp+(vnoise(u*0.7+3,w*0.7)-0.5)*rad*0.10+massif;
-   p.setX(j,Math.cos(ang)*rr); p.setZ(j,Math.sin(ang)*rr);
-   p.setY(j,y0+(vnoise(u*1.7+1,w*1.7+8)-0.5)*hgt*0.05*(1-fh));
-  }
-  geo.computeVertexNormals();
-  // snowline: height fraction with a noisy edge, so it runs ragged down the gullies
-  const cols=[]; const nrm=geo.attributes.normal;
-  for(let j=0;j<p.count;j++){
-   const fh=(p.getY(j)+hgt*0.5)/hgt;                       // 0 base -> 1 peak
-   const ang=Math.atan2(p.getZ(j),p.getX(j));
-   const jag=(vnoise(ang*4+i*3,fh*9)-0.5)*0.22;
-   const steep=1-Math.abs(nrm.getY(j));                     // 0 flat -> 1 cliff
-   const snow=THREE.MathUtils.smoothstep(fh+jag,0.58,0.74)*(1-THREE.MathUtils.smoothstep(steep,0.55,0.85));   // snow slides off cliffs
-   const band=vnoise(ang*2.5+i,fh*5+2);
-   cc.copy(C_ROCKLO).lerp(C_ROCKHI,THREE.MathUtils.clamp(fh*1.2,0,1)).lerp(C_SCREE,band*0.5*(1-steep));
-   cc.lerp(C_ALP,(1-THREE.MathUtils.smoothstep(fh,0.08,0.34))*0.7*(1-steep));   // green foothills below the rock
-   cc.lerp(C_SNOW,snow);
-   cols.push(cc.r,cc.g,cc.b);
-  }
-  geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));
-  const m=new THREE.Mesh(geo,mtnMat);
-  const px=Math.cos(a)*(560+Math.random()*80),pz=Math.sin(a)*(560+Math.random()*80);
-  m.position.set(px,hgt*0.32,pz);
-  m.rotation.y=Math.random()*3;
-  scene.add(m);
- }
-}
+// Original continuous ridges, beyond the playable valley.
+installBackdrop({THREE,scene});
 /* Far forest. The distant hills were bare green: the real trees thin out with distance and
    the terrain colour is flat, so every ridge read as a smooth dome. This is a field of
    tree-cluster billboards (two crossed quads each) sown on the far hills, wherever the ground
@@ -3521,12 +3429,13 @@ function placeSeedTrees(){
    const stems=wpSkeleton(cfg.params,rng);
    const bg=wpBranchGeo(stems,0.55,2);
    const lg=wpLeafGeo(stems,cfg.leaf,rng);
+   tuneFoliage({THREE,material:cfg.mat,geometry:lg,species:name});
    bg.computeBoundingBox();
    const minY=bg.boundingBox.min.y,hh=(bg.boundingBox.max.y-minY)||1;
    const bInst=new THREE.InstancedMesh(bg,cfg.bark,sub.length);
    const lInst=new THREE.InstancedMesh(lg,cfg.mat,sub.length);
    bInst.castShadow=true;bInst.receiveShadow=true;bInst.frustumCulled=false;
-   lInst.castShadow=true;lInst.frustumCulled=false;
+   lInst.castShadow=true;lInst.receiveShadow=true;lInst.frustumCulled=false;
    lInst.customDepthMaterial=cfg.mat.userData.depthMat;   // alpha-tested leaf shadows
    /* Colour comes in stands, not tree by tree: a slow noise over the map decides where the
       wood has turned, so a hillside goes gold together and the next one stays green — which
@@ -4630,10 +4539,11 @@ const hairTex=(()=>{
  for(let i=0;i<60;i++)strand(4+Math.random()*248,(Math.random()-0.5)*80,2.5+Math.random()*3,300+Math.random()*200,110+Math.floor(Math.random()*50));
  for(let i=0;i<110;i++)strand(4+Math.random()*248,(Math.random()-0.5)*70,1.8+Math.random()*2.6,330+Math.random()*180,175+Math.floor(Math.random()*55));
  for(let i=0;i<40;i++)strand(4+Math.random()*248,(Math.random()-0.5)*60,1.2+Math.random()*1.6,360+Math.random()*150,235+Math.floor(Math.random()*20));
- const t=new THREE.CanvasTexture(cv); t.colorSpace=THREE.SRGBColorSpace; t.wrapS=THREE.RepeatWrapping; t.anisotropy=8; return t;
+ const t=new THREE.CanvasTexture(cv); t.colorSpace=THREE.SRGBColorSpace; t.flipY=false; t.wrapS=THREE.RepeatWrapping; t.anisotropy=8; return t;
 })();
 function hairMaterial(){
  const m=new THREE.MeshStandardMaterial({map:hairTex,alphaTest:0.3,side:THREE.DoubleSide,roughness:0.66,metalness:0,color:0xf4e6c5,vertexColors:true});
+ m.alphaToCoverage=true;
  m.envMapIntensity=0.5;
  const u={uTime:{value:0},uWind:{value:0}}; m.userData.u=u;
  m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,u);
@@ -4680,9 +4590,9 @@ function buildHairFor(skin,bones,mount){
  // mane: two layers along the crest, falling to the horse's right (-x), longest mid-neck
  const mane=[];
  crest.forEach((c,i)=>{ const t=i/Math.max(1,crest.length-1); const len=0.24+0.24*Math.sin(Math.PI*Math.min(1,t*1.1));
-  mane.push({top:[c[0]-0.02,c[1],c[2]],dir:[-0.55,-1,0.05],len,width:0.1,bend:0.06});
-  mane.push({top:[c[0]+0.01,c[1]+0.01,c[2]+0.022],dir:[-0.35,-1,0.0],len:len*0.85,width:0.09,bend:0.05});
-  mane.push({top:[c[0]-0.03,c[1]-0.01,c[2]-0.015],dir:[-0.7,-1,0.08],len:len*0.7,width:0.08,bend:0.05}); });
+  mane.push({top:[c[0]-0.02,c[1],c[2]],dir:[-0.55,-1,0.05],len,width:0.045,bend:0.06});
+  mane.push({top:[c[0]+0.01,c[1]+0.01,c[2]+0.022],dir:[-0.35,-1,0.0],len:len*0.85,width:0.040,bend:0.05});
+  mane.push({top:[c[0]-0.03,c[1]-0.01,c[2]-0.015],dir:[-0.7,-1,0.08],len:len*0.7,width:0.035,bend:0.05}); });
  // forelock: over the brow between the ears, falling forward
  const poll=crest[0]||[ -0.06,1.7,0.62 ];
  for(let k=0;k<3;k++)mane.push({top:[poll[0]-0.05+k*0.05,poll[1]+0.02,poll[2]+0.06],dir:[(k-1)*0.25,-0.75,0.6],len:0.24,width:0.07,bend:0.03});
@@ -5127,8 +5037,8 @@ function makeCoatMat(){
  /* A groomed coat has a sheen: the same albedo and normal map, on a physical material with a
     light clearcoat, so highlights slide over the muscle as the horse moves. */
  const b=RIG.baseMat, m=new THREE.MeshPhysicalMaterial({map:b.map,normalMap:b.normalMap||null,side:b.side}); m.color.set(0xffffff);   // built by hand: Material.copy across types reaches for maps the source lacks
- m.roughness=0.62; m.metalness=0; m.clearcoat=0.28; m.clearcoatRoughness=0.42; m.envMapIntensity=0.85;
- if(m.normalMap)m.normalScale.set(0.7,0.7);
+ m.roughness=0.64; m.metalness=0; m.clearcoat=0.08; m.clearcoatRoughness=0.6; m.envMapIntensity=0.75;
+ if(m.normalMap)m.normalScale.set(0.45,0.45);
  m.userData.col=new THREE.Color('#9c4f23'); m.userData.blend=0;
  m.userData.tail=new THREE.Color('#000000'); m.userData.tailBlend=0;
  m.userData.mark=0; m.userData.markCol=new THREE.Color('#ffffff'); m.userData.seed=0;
@@ -5385,17 +5295,18 @@ function applyCoat(){
  const setLoad=(f,label)=>{const b=document.querySelector('#loadbar i'),t=document.getElementById('loadpct');
   if(b)b.style.width=Math.round(f*100)+'%'; if(t)t.textContent=label||Math.round(f*100)+'%';};
  window.__setLoad=setLoad; setLoad(0.05,'reading the map…');
- new GLTFLoader().load('assets/models/horse_textured_rigged.glb',g=>{
+ new GLTFLoader().load('assets/models/horse_showcase_rigged.glb',g=>{
   setLoad(0.92,'saddling up…');
   RIG.scene=g.scene;
   g.scene.traverse(o=>{if(o.isSkinnedMesh&&!RIG.skin)RIG.skin=o;});
   if(!RIG.skin){console.warn('rig: no skinned mesh');return;}
   RIG.bones=RIG.skin.skeleton.bones; RIG.baseMat=RIG.skin.material;
+  RIG.baseMat.vertexColors=false; // Blender authoring masks are not display colours.
   {const g=RIG.skin.geometry, si=g.attributes.skinIndex, sw=g.attributes.skinWeight, N=si.count, reg=new Float32Array(N), TB=new Set(RIG_TAIL.slice(1));   // the first tail bone is the dock and carries the rump; the tail proper is the rest
    for(let v=0;v<N;v++){let bi=si.getX(v),bw=sw.getX(v);const iy=si.getY(v),wy=sw.getY(v);if(wy>bw){bw=wy;bi=iy;}const iz=si.getZ(v),wz=sw.getZ(v);if(wz>bw){bw=wz;bi=iz;}const iw=si.getW(v),ww=sw.getW(v);if(ww>bw){bw=ww;bi=iw;}reg[v]=TB.has(bi)?1:0;}
    g.setAttribute('aRegion',new THREE.BufferAttribute(reg,1));}   // 1 on the tail, so mastery can colour it on its own
   RIG.restQ=RIG.bones.map(b=>b.quaternion.clone());   // bind pose, for tack that rides on a bone
-  { const nm=new THREE.TextureLoader().load('assets/textures/horse_normal.jpg');
+  { const nm=new THREE.TextureLoader().load('assets/textures/horse_natural_normal.png');
     nm.flipY=false;                              // glTF UVs: same convention as the albedo it came from
     RIG.baseMat.normalMap=nm; RIG.baseMat.normalScale=new THREE.Vector2(0.55,0.55);
     RIG.baseMat.needsUpdate=true; }
@@ -5694,22 +5605,6 @@ const ripples=[];
 });
 // clouds & birds
 const clouds=[];
-for(let i=0;i<14;i++){
- const cl=new THREE.Group();
- for(let j=0;j<5;j++){
-  const puff=new THREE.Mesh(new THREE.SphereGeometry(1.6+Math.random()*2,10,7),
-   new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,transparent:true,opacity:0.92}));
-  puff.position.set(j*2.2-4.4+Math.random(),Math.random()*0.8,Math.random()*2);
-  puff.scale.y=0.45;
-  cl.add(puff);
- }
- /* Terrain tops out near 40 units, so clouds spawned at 40 were level with the hills and
-    from any high vantage they read as white lozenges lying ON the landscape rather than
-    over it. Put the whole deck above the highest ground. */
- cl.position.set((Math.random()-0.5)*700,78+Math.random()*40,(Math.random()-0.5)*700);
- cl.scale.setScalar(1.6+Math.random()*2.2);
- scene.add(cl);clouds.push(cl);
-}
 cloudList=clouds;
 if(quality==='low')clouds.forEach((c,i)=>{c.visible=i%2===0;});
 const birds=[];
@@ -7420,7 +7315,7 @@ function updateRein(mesh,handObj,bitObj){
 }
 
 /* ================= player & herd ================= */
-const player={mesh:null,parts:null,rider:null,pos:new THREE.Vector3(0,0,8),heading:Math.PI,speed:0,vy:0,y:0,phase:0,amp:0,lastStep:0,alt:false,earT:2,earA:0};
+const player={mesh:null,parts:null,rider:null,pos:new THREE.Vector3(-7,0,10),heading:Math.PI,speed:0,vy:0,y:0,phase:0,amp:0,lastStep:0,alt:false,earT:2,earA:0};
 let nearMount=-1,mountHintT=0,lowNeedT=0;
 let herd=[];
 function rebuildAll(){
@@ -11350,6 +11245,7 @@ function tick(stepSeconds){
  nightNow=THREE.MathUtils.clamp(-elev/9,0,1);
  const lowSun=THREE.MathUtils.clamp(1-elev/26,0,1);
  const golden=THREE.MathUtils.clamp(1-Math.abs(elev-7)/16,0,1);
+ sky.material.uniforms.time.value=t;
  sky.material.uniforms.day.value=dayF;
  sky.material.uniforms.golden.value=golden;
  sky.material.uniforms.night.value=nightNow;
@@ -11387,10 +11283,10 @@ function tick(stepSeconds){
   weather.mode='clear';weather.timer=140+Math.random()*160;
   rainbow.visible=false;
  }
- const keyT=(weather.mode==='rain'?1.3:3.15)*dayF+0.62*nightNow
+ const keyT=(weather.mode==='rain'?1.3:3.15)*dayF+0.88*nightNow
   +(weather.mode==='rain'?0.15:0.55)*golden;   // ember punch at the horizon hours
  sun.intensity+=(keyT-sun.intensity)*Math.min(1,dt*1.5);
- const hemiT=THREE.MathUtils.lerp(0.38,weather.mode==='rain'?0.88:1.05,dayF);
+ const hemiT=THREE.MathUtils.lerp(0.82,weather.mode==='rain'?0.88:1.05,dayF);
  hemi.intensity+=(hemiT-hemi.intensity)*Math.min(1,dt*1.5);
  hemi.color.copy(C_HEMI_NIGHT).lerp(C_HEMI_DAY,dayF);
  hemi.groundColor.copy(C_GROUND_NIGHT).lerp(C_GROUND_DAY,dayF);
@@ -11404,7 +11300,7 @@ function tick(stepSeconds){
     is still dark. Distant mountains are ~90% fog at that range, so they flared white. */
  _fogCol.multiplyScalar(0.16+0.84*THREE.MathUtils.smoothstep(dayF,0.0,0.5));
  scene.fog.color.lerp(_fogCol,Math.min(1,dt*1.5));
- const fogD=(weather.mode==='rain'?0.0052:0.0021);   // clear-day density matches the scene fog: 0.0027 left the mountains 93% fog at their range
+ const fogD=(weather.mode==='rain'?0.0052:0.00125);   // clear-day density matches the scene fog: 0.0027 left the mountains 93% fog at their range
  scene.fog.density+=(fogD-scene.fog.density)*Math.min(1,dt*0.8);
  if(rain.visible){
   const m4w=new THREE.Matrix4();
@@ -11551,6 +11447,7 @@ function tick(stepSeconds){
   mc.restore();
   mc.restore();
  }
+ renderer.info.reset();
  if(renderer.xr.isPresenting)renderer.render(scene,camera);
  else if(useBloom)composer.render();
  else renderer.render(scene,camera);
