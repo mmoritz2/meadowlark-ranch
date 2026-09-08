@@ -110,7 +110,7 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 #loadbar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffe6a8);border-radius:99px;transition:width .25s ease}
 #loadpct{margin-top:8px;font-family:var(--font);font-size:13px;font-weight:700;opacity:.7}
 /* ---- panels ---- */
-#eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel,#moneyPanel,#buildPanel,#stablePanel,#questPanel,#profilePanel{position:fixed;top:calc(64px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:10;background:linear-gradient(180deg,#fffdf7,#fbf3e3);border:1px solid rgba(255,255,255,.8);border-radius:var(--r-l);padding:16px 16px 18px;display:none;flex-direction:column;gap:8px;max-height:min(74vh,760px);overflow:auto;width:min(470px,94vw);color:var(--ink);box-shadow:var(--sh-3),inset 0 1px 0 #fff;animation:panelIn .22s ease;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+#eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel,#moneyPanel,#summonPanel,#buildPanel,#stablePanel,#questPanel,#profilePanel{position:fixed;top:calc(64px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:10;background:linear-gradient(180deg,#fffdf7,#fbf3e3);border:1px solid rgba(255,255,255,.8);border-radius:var(--r-l);padding:16px 16px 18px;display:none;flex-direction:column;gap:8px;max-height:min(74vh,760px);overflow:auto;width:min(470px,94vw);color:var(--ink);box-shadow:var(--sh-3),inset 0 1px 0 #fff;animation:panelIn .22s ease;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
 @keyframes panelIn{from{transform:translateX(-50%) translateY(-14px) scale(.985)}to{transform:translateX(-50%) translateY(0) scale(1)}}   /* transform only: an entrance must never leave a panel invisible if the timeline stalls */
 #eventsPanel::-webkit-scrollbar,#shopPanel::-webkit-scrollbar,#stablePanel::-webkit-scrollbar,#questPanel::-webkit-scrollbar,#lbPanel::-webkit-scrollbar,#carePanel::-webkit-scrollbar,#buildPanel::-webkit-scrollbar,#onlinePanel::-webkit-scrollbar{width:8px}
 #eventsPanel::-webkit-scrollbar-thumb,#shopPanel::-webkit-scrollbar-thumb,#stablePanel::-webkit-scrollbar-thumb,#questPanel::-webkit-scrollbar-thumb,#lbPanel::-webkit-scrollbar-thumb,#carePanel::-webkit-scrollbar-thumb,#buildPanel::-webkit-scrollbar-thumb,#onlinePanel::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:8px}
@@ -147,6 +147,18 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 .shot img{width:100%;display:block}
 .shot .sc{position:absolute;top:3px;right:3px;background:rgba(20,16,10,.72);color:#fff;font-size:10px;font-weight:800;border-radius:6px;padding:1px 5px;line-height:1.4}
 .shot .ent{position:absolute;bottom:3px;left:3px;background:#e0a93c;color:#3a2a10;font-size:9px;font-weight:800;border-radius:6px;padding:1px 5px;line-height:1.5}
+/* the reveal card: nothing but the horse and its name, over a hidden HUD */
+#summonFx{position:fixed;inset:0;z-index:60;display:none;pointer-events:none;text-align:center}
+body.summoning #hud,body.summoning #dock,body.summoning #questTrack,body.summoning #mini,body.summoning #ctx,
+body.summoning #statusCard,body.summoning #stamWrap,body.summoning #touch,body.summoning #stickZone,
+body.summoning #chatFeed,body.summoning #hint{display:none!important}
+body.summoning #summonFx{display:block}
+#sfxRar{position:absolute;left:0;right:0;top:12%;font-size:15px;font-weight:800;letter-spacing:.32em;text-transform:uppercase;opacity:0;transition:opacity .5s}
+#sfxName{position:absolute;left:0;right:0;top:16.5%;font-size:44px;font-weight:800;color:#fff;opacity:0;transition:opacity .6s;text-shadow:0 3px 22px rgba(0,0,0,.65)}
+#sfxBreed{position:absolute;left:0;right:0;top:25%;font-size:16px;font-weight:700;color:#fff;opacity:0;transition:opacity .6s;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.sumTier{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:#fff;margin-bottom:7px}
+.sumTier .odds{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.sumOdd{font-size:11px;font-weight:800;border-radius:7px;padding:2px 7px;color:#fff}
 .lbTabs{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 4px}
 .bGroup{font-size:12px;font-weight:800;color:#8c7a63;margin:8px 0 3px}
 .bRow{border:1px solid var(--line);border-radius:12px;padding:7px 10px;background:#fff;margin-bottom:5px}
@@ -276,6 +288,8 @@ body.touch #stickZone{display:block}
 <div id="onlinePanel"></div>
 <div id="lbPanel"></div>
 <div id="moneyPanel"></div>
+<div id="summonPanel"></div>
+<div id="summonFx"><div id="sfxRar"></div><div id="sfxName"></div><div id="sfxBreed"></div></div>
 <div id="chatFeed"></div>
 <div id="chatBar"><input id="chatIn" maxlength="80" placeholder="Say something to your club…"><button data-emote="👋">👋</button><button data-emote="❤️">❤️</button><button data-emote="😂">😂</button><button data-emote="🎉">🎉</button><button id="chatSend">➤</button></div>
 <div id="questTrack"></div>
@@ -7748,7 +7762,7 @@ function reloadHorses(){
  sel.value=rideIdx;
  rebuildAll();
 }
-function hidePanels(){['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','moneyPanel','stablePanel','questPanel','profilePanel','buildPanel'].forEach(id=>{$(id).style.display='none';});}
+function hidePanels(){['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','moneyPanel','summonPanel','stablePanel','questPanel','profilePanel','buildPanel'].forEach(id=>{$(id).style.display='none';});}
 /* ===== Ranch building =====
    The ranch is yours to furnish: pick a piece from the catalogue, a ghost of it follows the
    pointer across the ground, turn it with R or Q, click to set it down. Five of the pieces
@@ -9412,6 +9426,136 @@ function renderMoney(){
   renderMoney();
  };
 }
+/* Pick a call. The odds are printed, every one of them, because a reveal is only exciting
+   if you know what you were hoping for. */
+function openSummon(){
+ const p=$('summonPanel');
+ if(p.style.display==='flex'){p.style.display='none';return;}
+ hidePanels();
+ const s=freshSave(); if(!s)return;
+ let html='<b style="font-size:16px">✨ The Summoning Stall</b>'
+  +'<div style="font-size:11.5px;color:#8c7a63;margin:2px 0 6px">Call a horse out of the stall. The light under the door tells you what is coming — if you can bear to watch it climb.</div>';
+ for(const t of SUMMON_TIERS){
+  const can=(s.gems||0)>=t.gems && s.horses.length<stableCap(s);
+  html+='<div class="sumTier"><div class="ph"><b>'+t.emoji+' '+t.label+'</b><span style="font-size:11px;color:#8c7a63">'+t.gems+'💎</span></div>'
+   +'<div style="font-size:11.5px;color:#4a3526">'+t.blurb+'</div>'
+   +'<div class="odds">'+SUMMON_ORDER.filter(k=>t.odds[k]>0).map(k=>
+     '<span class="sumOdd" style="background:'+SUMMON_COL[k]+(k==='Common'?';color:#4a3526':'')+'">'+k+' '+t.odds[k]+'%</span>').join('')+'</div>'
+   +'<div style="margin-top:7px"><button data-summon="'+t.id+'"'+(can?' class="claimBtn"':' disabled')+'>'
+   +(s.horses.length>=stableCap(s)?'Stable is full':'Call · '+t.gems+'💎')+'</button></div></div>';
+ }
+ html+='<div style="font-size:11px;color:#8c7a63">Gems come from riding — events, daily gifts, chests, the pass. Nothing here costs real money.</div>';
+ p.innerHTML=html; p.style.display='flex';
+ p.querySelectorAll('[data-summon]').forEach(b=>{ b.onclick=()=>{
+  const t=SUMMON_TIERS.find(x=>x.id===b.dataset.summon); if(!t)return;
+  p.style.display='none'; startSummon(t);
+ };});
+}
+/* The ceremony. Everything below is timed against SUMMON.t in seconds. */
+function startSummon(tier){
+ if(SUMMON.on)return;
+ const s=freshSave(); if(!s)return;
+ if((s.gems||0)<tier.gems){toast('Not enough gems yet.');return;}
+ if(s.horses.length>=stableCap(s)){toast('Your stable is full.');return;}
+ const rar=summonRoll(tier), br=summonBreed(rar);
+ let newId=null;
+ syncSave(sv=>{
+  sv.gems-=tier.gems;
+  const o=br[7]||{}, st=()=>3+Math.floor(Math.random()*4);
+  newId=sv.nextId++;
+  sv.horses.push({id:newId,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:br[0],
+   colors:{body:br[5],mane:br[6]},horn:!!o.horn,rainbow:!!o.rainbow,wings:!!o.wings,dragon:!!o.dragon,
+   coat:o.coat||null,ability:o.ability||null,glow:!!o.glow,
+   stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},sxp:{},level:1,xp:0,bond:10,
+   needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
+  sv.stats=sv.stats||{}; sv.stats.summons=(sv.stats.summons||0)+1;
+ });
+ refreshWallet();
+ SUMMON.on=true; SUMMON.t=0; SUMMON.tier=tier; SUMMON.rar=rar; SUMMON.breed=br;
+ SUMMON.horseId=newId; SUMMON.step=-1; SUMMON.shown='Common'; SUMMON.cam=true; SUMMON.done=false;
+ SUMMON.home={x:player.pos.x,z:player.pos.z,h:player.heading,ride:rideIdx};
+ document.body.classList.add('summoning');
+ $('sfxRar').style.opacity=0; $('sfxName').style.opacity=0; $('sfxBreed').style.opacity=0;
+ /* stand the rider at the stall mouth, facing out, so the horse walks toward the camera */
+ const g=SUMMON.grp;
+ SUMMON.face=new THREE.Vector3(0,0,1).applyQuaternion(g.quaternion).normalize();
+ SUMMON.door=new THREE.Vector3(SUMMON_STALL.x,0,SUMMON_STALL.z).addScaledVector(SUMMON.face,1.9);
+ player.speed=0; player.y=0;
+ /* Out of sight until the doors go. The stall is a solid building, so the horse cannot
+    actually stand inside it — it is simply not drawn until the moment of the reveal, which
+    is what makes the shot of the glowing doors a held breath instead of a horse waiting. */
+ if(player.mesh)player.mesh.visible=false;
+ player.pos.set(SUMMON.door.x,0,SUMMON.door.z);
+ player.heading=Math.atan2(SUMMON.face.x,SUMMON.face.z);
+ if(player.mesh){player.mesh.rotation.y=player.heading;
+  player.mesh.position.set(player.pos.x,groundH(player.pos.x,player.pos.z),player.pos.z);}
+ sNeigh();
+}
+/* The suspense: the glow climbs one rarity at a time and holds. It never climbs past what
+   you actually rolled, so the moment it stops IS the answer — which is why it is allowed
+   to take its time getting there. */
+const SUM_STEPS=[{at:1.5},{at:2.7},{at:3.9},{at:5.1},{at:6.3}];
+function tickSummon(dt){
+ if(!SUMMON.on)return;
+ SUMMON.t+=dt;
+ const T=SUMMON.t, rarIdx=SUMMON_ORDER.indexOf(SUMMON.rar);
+ /* how far the light has climbed */
+ let step=-1;
+ for(let i=0;i<SUM_STEPS.length;i++) if(T>=SUM_STEPS[i].at&&i<=rarIdx) step=i;
+ if(step!==SUMMON.step&&step>=0){ SUMMON.step=step; SUMMON.shown=SUMMON_ORDER[step]; sGem(); }
+ const col=new THREE.Color(SUMMON_COL[SUMMON.shown]||'#ffffff');
+ const climbing=T<SUM_STEPS[Math.min(rarIdx,SUM_STEPS.length-1)].at+1.15;
+ const open=Math.max(0,Math.min(1,(T-(SUM_STEPS[Math.min(rarIdx,4)].at+1.15))/0.75));
+ /* the glow, pulsing harder the higher it has climbed */
+ const lit=Math.max(0,step);            // step is -1 before the first rung: never light it negatively
+ if(SUMMON.glow){
+  const pulse=0.55+0.45*Math.sin(T*(5+lit*2.2));
+  const amp=Math.max(0,Math.min(1,0.10+lit*0.20));
+  SUMMON.glow.material.color.copy(col);
+  SUMMON.glow.material.opacity=climbing?amp*pulse:(1-open)*0.9+open*0.15;
+ }
+ if(SUMMON.light){ SUMMON.light.color.copy(col);
+  SUMMON.light.intensity=Math.max(0,climbing?(1.2+lit*3.4)*(0.6+0.4*Math.sin(T*7)):26*(1-open)+3); }
+ /* the doors */
+ if(SUMMON.doorL){ const a=open*1.42;
+  SUMMON.doorL.rotation.y=a; SUMMON.doorR.rotation.y=-a; }
+ /* the horse walks out, then rears */
+ const OPEN_AT=SUM_STEPS[Math.min(rarIdx,4)].at+1.15;
+ if(T>OPEN_AT+0.35&&!SUMMON.mounted){
+  SUMMON.mounted=true;
+  if(player.mesh)player.mesh.visible=true;                  // there it is
+  const sv=freshSave();
+  const idx=sv.horses.findIndex(h=>h.id===SUMMON.horseId);
+  if(idx>=0){ rideIdx=idx; try{reloadHorses();}catch(e){} try{applyCoat();}catch(e){} }
+  const rr=$('sfxRar'), nm=$('sfxName'), bd=$('sfxBreed');
+  rr.textContent=SUMMON.rar; rr.style.color=SUMMON_COL[SUMMON.rar]; rr.style.opacity=1;
+  nm.textContent=(sv.horses[idx]&&sv.horses[idx].name)||'';
+  bd.textContent=SUMMON.breed[1];
+ }
+ if(T>OPEN_AT+0.55&&T<OPEN_AT+2.0){                       // out through the doors
+  const w=(T-(OPEN_AT+0.55))/1.45;
+  const px=SUMMON.door.x+SUMMON.face.x*w*2.6, pz=SUMMON.door.z+SUMMON.face.z*w*2.6;
+  player.pos.set(px,0,pz); player.y=0; player.speed=0;
+  if(player.mesh)player.mesh.position.set(px,groundH(px,pz),pz);
+ }
+ if(T>OPEN_AT+1.6&&!SUMMON.reared){                        // and up
+  SUMMON.reared=true;
+  try{ RIG.emote={type:'rear',t:0,dur:EMOTES.rear.dur}; sNeigh(); }catch(e){}
+  $('sfxName').style.opacity=1; $('sfxBreed').style.opacity=1;
+ }
+ if(T>OPEN_AT+4.6&&!SUMMON.done){
+  SUMMON.done=true;
+  if(player.mesh)player.mesh.visible=true;
+  document.body.classList.remove('summoning');
+  SUMMON.on=false; SUMMON.cam=false; SUMMON.mounted=false; SUMMON.reared=false;
+  if(SUMMON.glow)SUMMON.glow.material.opacity=0;
+  if(SUMMON.light)SUMMON.light.intensity=0;
+  if(SUMMON.doorL){SUMMON.doorL.rotation.y=0;SUMMON.doorR.rotation.y=0;}
+  const sv=freshSave(); const h=sv.horses.find(x=>x.id===SUMMON.horseId);
+  toast('✨ '+SUMMON.rar+'! '+(h?h.name:'')+' the '+SUMMON.breed[1]+' is yours.');
+  passAdd(20); weekBump('events',0); refreshWallet();
+ }
+}
 function claimPassTier(i,gold){
  let got=null;
  syncSave(sv=>{ got=passClaim(sv,i,gold); });
@@ -10032,6 +10176,73 @@ function mkCollectible(set,i,pt){
  m.position.y=0.5; m.castShadow=true; g.add(m);
  g.position.set(pt[0],groundH(pt[0],pt[1]),pt[1]); scene.add(g); return {kind:'coll',set,i,id:set+'_'+i,g,m,x:pt[0],z:pt[1]};
 }
+/* ===== The Summoning Stall =====================================================
+   Star Equestrian calls a horse out of a stall with a whole ceremony around it, and the
+   ceremony IS the feature — paying gems and having a horse appear in your list is not the
+   same experience at all. Three calls at three prices, and the reveal is a held breath:
+   the light under the door climbs through the rarity colours one step at a time, pausing
+   on each, and where it stops is what you got. Then the doors go and the horse comes out
+   and rears.
+
+   The rear is the emote the game already has (digit 1 while halted), so the summon is not
+   inventing an animation, it is staging one. */
+const SUMMON_STALL={x:-27.5,z:-4.5};
+const SUMMON_TIERS=[
+ {id:'meadow',label:'Meadow Call',emoji:'🌾',gems:4,
+  odds:{Common:58,Uncommon:29,Rare:11,Epic:2,Legendary:0},
+  blurb:'A neighbour\'s horse looking for a home.'},
+ {id:'basin',label:'Basin Call',emoji:'🏔️',gems:11,
+  odds:{Common:20,Uncommon:36,Rare:29,Epic:12,Legendary:3},
+  blurb:'Word goes out across the whole basin.'},
+ {id:'starfall',label:'Starfall Call',emoji:'✨',gems:24,
+  odds:{Common:0,Uncommon:12,Rare:36,Epic:36,Legendary:16},
+  blurb:'Something answers that should not exist.'},
+];
+const SUMMON_ORDER=['Common','Uncommon','Rare','Epic','Legendary'];
+const SUMMON_COL={Common:'#cfd6df',Uncommon:'#5cb85c',Rare:'#3b8bd6',Epic:'#9b59b6',Legendary:'#f0b429'};
+const SUMMON_POOL={Common:['Common','Draft'],Uncommon:['Uncommon'],Rare:['Rare'],Epic:['Epic'],
+                   Legendary:['Mythic','Legendary','Dragon']};
+function summonRoll(tier){
+ let t=0; for(const k of SUMMON_ORDER)t+=tier.odds[k]||0;
+ let x=Math.random()*t;
+ for(const k of SUMMON_ORDER){ x-=(tier.odds[k]||0); if(x<=0&&(tier.odds[k]||0)>0)return k; }
+ return 'Common';
+}
+function summonBreed(rar){
+ const want=SUMMON_POOL[rar]||['Common'];
+ const pool=BREEDS3.filter(b=>want.indexOf(b[2])>=0);
+ return pool.length?pool[Math.floor(Math.random()*pool.length)]:BREEDS3[0];
+}
+const SUMMON={on:false,t:0,phase:'',tier:null,rar:null,breed:null,step:0,shown:'Common',
+              light:null,glow:null,doorL:null,doorR:null,cam:false,horseId:null};
+function mkSummonStall(){
+ const g=new THREE.Group(); const x=SUMMON_STALL.x, z=SUMMON_STALL.z;
+ box(4.6,3.4,3.2,'#e4d6b6',0,1.7,0,g);
+ box(5.0,0.18,3.6,'#8d5a34',0,3.5,0,g);                      // roof
+ box(0.34,3.6,0.34,'#6b4423',-2.2,1.8,1.6,g); box(0.34,3.6,0.34,'#6b4423',2.2,1.8,1.6,g);
+ /* two doors on their own pivots, so they can swing apart */
+ const mkDoor=(sgn)=>{
+  const piv=new THREE.Group(); piv.position.set(sgn*1.15,0,1.62); g.add(piv);
+  const d=box(1.14,2.5,0.10,'#7a4a24',-sgn*0.57,1.25,0,piv);
+  box(1.02,0.10,0.12,'#d8b24a',-sgn*0.57,2.05,0.03,piv);
+  box(1.02,0.10,0.12,'#d8b24a',-sgn*0.57,0.55,0.03,piv);
+  return piv;
+ };
+ const doorL=mkDoor(-1), doorR=mkDoor(1);
+ /* the light that leaks out from under them while the call builds */
+ const glow=new THREE.Mesh(new THREE.PlaneGeometry(2.3,2.5),
+  new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,depthWrite:false,
+   blending:THREE.AdditiveBlending,side:THREE.DoubleSide}));
+ glow.position.set(0,1.25,1.55); g.add(glow);
+ const light=new THREE.PointLight(0xffffff,0,14,2); light.position.set(0,1.5,2.0); g.add(light);
+ g.position.set(x,groundH(x,z),z); g.rotation.y=Math.PI;      // doors face out into the yard
+ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+ scene.add(g);
+ colliders.push({x,z,r:2.7});
+ const sp=nameSprite('✨ The Summoning Stall'); sp.position.y=4.2; g.add(sp);
+ SUMMON.light=light; SUMMON.glow=glow; SUMMON.doorL=doorL; SUMMON.doorR=doorR; SUMMON.grp=g;
+ return {kind:'summon',id:'summon',g,x,z};
+}
 function mkTackRoom(){
  const g=new THREE.Group(); const x=TACK_ROOM.x,z=TACK_ROOM.z;
  box(3.2,2.4,2.6,'#e9dcc0',0,1.2,0,g); box(3.5,0.16,2.9,'#b5633a',0,2.5,0,g); const door=box(0.9,1.7,0.08,'#6b4423',0,0.85,1.31,g); box(0.14,0.14,0.06,'#d8b24a',0.3,0.9,1.36,g);
@@ -10044,6 +10255,7 @@ function mkTackRoom(){
  for(const c of CHESTS)things.push(mkChest(c));
  for(const set in COLL_SETS)COLL_SETS[set].pts.forEach((pt,i)=>things.push(mkCollectible(set,i,pt)));
  things.push(mkTackRoom());
+ things.push(mkSummonStall());
  things.push({kind:'fish',id:'lake',x:20,z:16,g:null});
  setTimeout(()=>{const sv=freshSave(); if(!sv)return; for(const t of things){ if(t.kind==='coll'&&sv.sets&&sv.sets[t.set]&&sv.sets[t.set].includes(t.i))t.g.visible=false; if(t.kind==='chest'&&sv.chests&&sv.chests[t.id]&&Date.now()-sv.chests[t.id]<CHEST_REOPEN)t.lid.rotation.x=-1.2; }},1500);
 }
@@ -10051,6 +10263,7 @@ let nearThing=null, fishing=null;
 function thingLabel(t){
  if(t.kind==='chest'){const sv=freshSave(); const at=sv&&sv.chests&&sv.chests[t.id]; const open=at&&Date.now()-at<CHEST_REOPEN; return open?'🎁 Chest (refills in '+Math.ceil((CHEST_REOPEN-(Date.now()-at))/3600000)+'h)':'🎁 Open the chest (E)';}
  if(t.kind==='room'){const sv=freshSave(); const used=sv&&sv.tackRoom===weekKey(); return used?'🔐 Tack room (opens again next week)':'🔐 Unlock with a Silver Key (E)';}
+ if(t.kind==='summon')return SUMMON.on?'✨ …something is coming':'✨ Call a horse (E)';
  if(t.kind==='fish')return fishing?(fishing.bit?'❗ BITE — reel in (E)!':'🎣 Waiting for a bite…'):'🎣 Fish (E)';
  return '';
 }
@@ -10070,6 +10283,8 @@ function useThing(){
   syncSave(sv=>{ if(sv.tackRoom===weekKey())return; if((sv.keys||0)<1)return; sv.keys--; sv.tackRoom=weekKey(); const r=Math.random(); piece=genGear(r<0.05?'Legendary':r<0.3?'Epic':'Rare'); sv.tack=sv.tack||[]; sv.tack.push(piece); sv.coins+=100; ok=true; });
   if(!ok){const sv=freshSave(); toast(sv&&sv.tackRoom===weekKey()?'Grandma\'s tack room opens once a week.':'You need a Silver Key.');return;}
   t.door.rotation.y=-1.3; refreshWallet(); refreshTack(); sGem(); toast('🔐 '+piece.rarity+'! '+piece.name+' — and 100🪙 in the tin');
+ }else if(t.kind==='summon'){
+  openSummon();
  }else if(t.kind==='fish'){
   if(!fishing){ fishing={t:2+Math.random()*4,bit:false,win:0}; toast('🎣 Cast… keep still and wait for the bite'); return; }
   if(fishing.bit){ const r=Math.random(); const c=r<0.05?{n:'a bottle with a note',c:60,k:1,bottle:true}:r<0.15?{n:'a Golden Loon Perch',c:150,g:1}:r<0.45?{n:'a Trout',c:70}:{n:'a Bass',c:40};
@@ -10964,6 +11179,7 @@ function tick(stepSeconds){
  if(waterMat?.userData.waterTime)waterMat.userData.waterTime.value=t;
  for(const wa of waterAnims){wa.tex.offset.x+=dt*wa.sx;wa.tex.offset.y+=dt*(wa.sy<-0.5?wa.sy:wa.sy*Math.sin(t*0.5));}
  tickFalls(dt,t);
+ tickSummon(dt);
  for(const cl of clouds){
   cl.position.x+=dt*0.7;
   if(cl.position.x>520)cl.position.x=-520;
@@ -11150,6 +11366,18 @@ function tick(stepSeconds){
   vrVignette.material.uniforms.uAmt.value=THREE.MathUtils.clamp(vAmt,0,0.84);
   updateVRMenu(dt);
   tickVRToast(dt);
+ }else if(SUMMON.cam){
+  /* A held shot straight down the doors, drifting slowly in — the one time this game
+     takes the camera off the rider's shoulder on purpose. */
+  const f=SUMMON.face||new THREE.Vector3(0,0,1);
+  const drift=Math.min(1,SUMMON.t/7);
+  const cx=SUMMON.door.x+f.x*(7.2-drift*2.1), cz=SUMMON.door.z+f.z*(7.2-drift*2.1);
+  const cy=groundH(cx,cz)+2.05+drift*0.25;
+  camera.position.lerp(new THREE.Vector3(cx,cy,cz),1-Math.exp(-3.2*dt));
+  const lx=SUMMON_STALL.x+f.x*0.6, lz=SUMMON_STALL.z+f.z*0.6;
+  camLook.lerp(new THREE.Vector3(lx,groundH(lx,lz)+1.65,lz),1-Math.exp(-3.2*dt));
+  const rumble=SUMMON.reared?0:0.006+0.010*Math.min(1,SUMMON.t/5);
+  camera.lookAt(camLook.x+Math.sin(t*47)*rumble,camLook.y+Math.sin(t*53)*rumble,camLook.z);
  }else if(freeCam){
   tickFreeCam(dt);
  }else{
