@@ -8066,14 +8066,51 @@ function tickRunaways(dt,t){
 }
 function runawayLabel(){ const r=runaways.find(r=>!r.caught&&Math.hypot(player.pos.x-r.x,player.pos.z-r.z)<4.5); return r?'🐎 Calming the runaway… '+Math.round(r.calm*100)+'% (stand still)':null; }
 setTimeout(spawnRunaways,25000);
-const FOODS3={carrot:{hunger:25,bond:2,happy:2,xp:6,price:5,emoji:'🥕',label:'Carrot',stat:'speed',sxp:6},
- apple:{hunger:12,bond:6,happy:10,xp:8,price:12,emoji:'🍎',label:'Apple',stat:'stamina',sxp:7},
- hay:{hunger:50,bond:1,happy:0,xp:4,price:8,emoji:'🌾',label:'Hay Bale'},
- lettuce:{hunger:10,bond:2,happy:4,xp:5,price:9,emoji:'🥬',label:'Lettuce',stat:'agility',sxp:8,where:'the meadow'},
- pumpkin:{hunger:30,bond:3,happy:6,xp:7,price:14,emoji:'🎃',label:'Pumpkin',stat:'accel',sxp:9,where:'Barleyfold'},
- orange:{hunger:8,bond:3,happy:8,xp:6,price:11,emoji:'🍊',label:'Orange',stat:'accel',sxp:7,where:'Coyote Canyon'},
- truffle:{hunger:6,bond:4,happy:6,xp:9,price:22,emoji:'🍄',label:'Truffle',stat:'jump',sxp:12,where:'under the pines'},
- oats:{hunger:35,bond:2,happy:4,xp:8,price:18,emoji:'🥣',label:'Oat Mash',stat:'speed',sxp:12}};   // the stat foods grow in the world; oats and truffles are also on the shop shelf
+/* Feed comes in tiers, the way Star Equestrian's does: the everyday stuff, what you forage
+   out in the regions, and the good feed. The tier is what the sxp numbers were already
+   saying quietly — it is written down and shown on the shelf now, so it is possible to tell
+   at a glance which bag is worth buying. */
+const FOODS3={carrot:{hunger:25,bond:2,happy:2,xp:6,price:5,emoji:'🥕',label:'Carrot',stat:'speed',sxp:6,tier:1},
+ apple:{hunger:12,bond:6,happy:10,xp:8,price:12,emoji:'🍎',label:'Apple',stat:'stamina',sxp:7,tier:1},
+ hay:{hunger:50,bond:1,happy:0,xp:4,price:8,emoji:'🌾',label:'Hay Bale',tier:1},
+ lettuce:{hunger:10,bond:2,happy:4,xp:5,price:9,emoji:'🥬',label:'Lettuce',stat:'agility',sxp:8,where:'the meadow',tier:2},
+ pumpkin:{hunger:30,bond:3,happy:6,xp:7,price:14,emoji:'🎃',label:'Pumpkin',stat:'accel',sxp:9,where:'Barleyfold',tier:2},
+ orange:{hunger:8,bond:3,happy:8,xp:6,price:11,emoji:'🍊',label:'Orange',stat:'accel',sxp:7,where:'Coyote Canyon',tier:2},
+ truffle:{hunger:6,bond:4,happy:6,xp:9,price:22,emoji:'🍄',label:'Truffle',stat:'jump',sxp:12,where:'under the pines',tier:3},
+ oats:{hunger:35,bond:2,happy:4,xp:8,price:18,emoji:'🥣',label:'Oat Mash',stat:'speed',sxp:12,tier:3}};   // the stat foods grow in the world; oats and truffles are also on the shop shelf
+const FEED_TIER_LBL={1:'🧺 Everyday feed',2:'🌾 Foraged — grows out in the regions',3:'✨ Good feed'};
+/* Supplements: a proper coin sink, and the only way to push one stat on purpose rather
+   than feeding whatever happens to be in the bag. One per stat, straight onto the horse
+   you are sitting on, and it refuses when that stat is already at its ceiling. */
+const SUPPS={
+ speed:  {label:'Sprint Tonic',    emoji:'💨',price:300,sxp:45},
+ stamina:{label:'Endurance Mash',  emoji:'🫀',price:300,sxp:45},
+ jump:   {label:'Spring Salts',    emoji:'⤴️',price:300,sxp:45},
+ accel:  {label:'Quickening Drench',emoji:'🚀',price:300,sxp:45},
+ agility:{label:'Suppling Oil',    emoji:'🌀',price:300,sxp:45},
+};
+function buySupp(k){
+ const S=SUPPS[k]; if(!S)return;
+ let msg='',ok=false,lvl=null;
+ syncSave(sv=>{
+  const h=sv.horses[rideIdx];
+  if(!h){msg='No horse to feed.';return;}
+  if(sv.coins<S.price){msg='That costs '+S.price+'🪙.';return;}
+  ensureStats(h);
+  const cap=Math.min(statCap(h),statCeil(h));
+  const short=STAT_LBL[k].slice(STAT_LBL[k].indexOf(' ')+1);
+  if(h.stats[k]>=cap){msg=h.name+"'s "+short+' is already at its ceiling for Lv '+(h.level||1)+'.';return;}
+  sv.coins-=S.price;
+  h.sxp[k]=(h.sxp[k]||0)+S.sxp;
+  let up=false;
+  while(h.stats[k]<cap&&h.sxp[k]>=statNeed(h.stats[k])){h.sxp[k]-=statNeed(h.stats[k]);h.stats[k]++;up=true;}
+  if(up){lvl=h.stats[k];addSP(sv,h.stats[k],'stat');}
+  msg=h.name+' takes the '+S.label+(up?' · '+STAT_LBL[k]+' → '+h.stats[k]+'!':' · +'+S.sxp+' '+short+' XP');
+  ok=true;
+ });
+ if(ok){sCoin();refreshWallet();reloadHorses();if(lvl)sChime();openShop('food');}
+ toast((ok?'💊 ':'')+msg);
+}
 function openCare(){
  const p=$('carePanel');
  if(p.style.display==='flex'){p.style.display='none';return;}
@@ -8375,10 +8412,25 @@ function openShop(tab){
    +(have?'<button data-petfollow="'+P.key+'"'+(active?' class="claimBtn"':'')+'>'+(active?'🐾 Following':'🐾 Follow')+'</button>':'<button data-buypet="'+P.key+'">'+P.price+' 🪙</button>')+'</div>';
   }).join('');
  }else if(shopTab3==='food'){
-  html+=Object.keys(FOODS3).map(k=>{
-   const f=FOODS3[k];
-   return '<div class="evrow">'+f.emoji+' <b>'+f.label+'</b><span>'+f.price+' 🪙 each · you have '+(s.items[k]||0)+(f.stat?' · trains '+STAT_LBL[f.stat]:'')+(f.where?' · grows in '+f.where:'')+'</span><button data-buyf="'+k+':1">+1</button><button data-buyf="'+k+':5">+5</button></div>';
-  }).join('')
+  html+=[1,2,3].map(tr=>
+   '<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">'+FEED_TIER_LBL[tr]+'</div>'
+   +Object.keys(FOODS3).filter(k=>(FOODS3[k].tier||1)===tr).map(k=>{
+    const f=FOODS3[k];
+    return '<div class="evrow">'+f.emoji+' <b>'+f.label+'</b><span>'+f.price+' 🪙 each · you have '+(s.items[k]||0)+(f.stat?' · trains '+STAT_LBL[f.stat]+' +'+f.sxp+' XP':'')+(f.where?' · grows in '+f.where:'')+'</span><button data-buyf="'+k+':1">+1</button><button data-buyf="'+k+':5">+5</button></div>';
+   }).join('')).join('')
+  +(function(){
+    const h=s.horses[rideIdx];
+    const cap=h?Math.min(statCap(h),statCeil(h)):10;
+    return '<div style="font-size:12px;color:#8c7a63;margin:10px 0 2px">💊 Supplements · straight onto '+(h?h.name:'your horse')+'</div>'
+     +Object.keys(SUPPS).map(k=>{
+      const S=SUPPS[k], at=h&&h.stats?h.stats[k]:0, maxed=at>=cap;
+      return '<div class="evrow"'+(maxed?' style="opacity:.5"':'')+'>'+S.emoji+' <b>'+S.label+'</b>'
+       +'<span>+'+S.sxp+' '+STAT_LBL[k].slice(STAT_LBL[k].indexOf(' ')+1)+' XP · now '+at+'/'+cap+'</span>'
+       +(maxed?'<span style="font-size:11px;color:#8c7a63">at its ceiling</span>'
+              :'<button data-supp="'+k+'"'+(s.coins<S.price?' disabled':'')+'>'+S.price+' 🪙</button>')+'</div>';
+     }).join('')
+     +'<div style="font-size:11px;color:#8c7a63">A stat cannot go past its ceiling — level the horse up to raise it.</div>';
+   })()
   +'<div class="evrow">🎁 <b>Food Hamper</b><span>15🥕 + 8🍎 + 8🌾 (save 36🪙)</span><button data-bundle="hamper">99 🪙</button></div>'
   +'<div class="evrow">🎀 <b>Breeder\'s Package</b><span>one FREE breeding + 10🍎</span><button data-bundle="breeder">350 🪙</button></div>';
  }else if(shopTab3==='tack'){
@@ -8409,6 +8461,7 @@ function openShop(tab){
  p.querySelectorAll('[data-buypet]').forEach(b=>{b.onclick=()=>{buyPet(b.dataset.buypet);openShop('pets');};});
  p.querySelectorAll('[data-petfollow]').forEach(b=>{b.onclick=()=>{setActivePet(b.dataset.petfollow);openShop('pets');};});
  p.querySelectorAll('[data-buyf]').forEach(b=>{b.onclick=()=>{const[k,n]=b.dataset.buyf.split(':');buyFood3(k,+n);};});
+ p.querySelectorAll('[data-supp]').forEach(b=>{b.onclick=()=>buySupp(b.dataset.supp);});
  p.querySelectorAll('[data-buyt]').forEach(b=>{b.onclick=()=>buyTack3(b.dataset.buyt);});
  p.querySelectorAll('[data-tk]').forEach(b=>{b.onclick=()=>tackAct(b.dataset.tk);});
  p.querySelectorAll('[data-bundle]').forEach(b=>{b.onclick=()=>buyBundle3(b.dataset.bundle);});
