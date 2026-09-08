@@ -99,6 +99,7 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 #hint{position:fixed;bottom:calc(74px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:5;background:var(--dark);color:#fff8ea;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;transition:opacity 1s;pointer-events:none;border:1px solid rgba(255,248,234,.15)}
 #ctx{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:7;background:var(--dark);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff8ea;padding:10px 18px;border-radius:14px;font-weight:700;font-size:14px;cursor:pointer;display:none;border:1px solid rgba(255,248,234,.22);box-shadow:var(--sh-2);animation:rise .18s ease}
 #tameHud{position:fixed;top:calc(100px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;background:var(--dark);color:#fff8ea;padding:8px 16px;border-radius:999px;font-weight:700;display:none}
+#roundHud{position:fixed;top:calc(100px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;background:#3d5a2a;color:#f2ffe6;padding:8px 18px;border-radius:999px;font-weight:800;display:none;box-shadow:var(--sh-2)}
 #toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(104px + env(safe-area-inset-top));z-index:20;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
 .toast{background:var(--dark);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff8ea;padding:9px 16px 9px 14px;border-radius:14px;font-size:14px;font-weight:600;border-left:4px solid var(--gold);box-shadow:var(--sh-2);animation:rise .22s ease;max-width:min(560px,92vw)}
 .toast.out{opacity:0;transition:opacity .4s}
@@ -304,6 +305,7 @@ body.touch #stickZone{display:block}
 <div id="questTrack"></div>
 <div id="ctx"></div>
 <div id="tameHud"></div>
+<div id="roundHud"></div>
 <div id="dlg"></div>
 <div id="stablePanel"></div>
 <div id="questPanel"></div>
@@ -7776,6 +7778,128 @@ function finishCourse(){
  dailyEvt('event',1);
  cancelCourse();
 }
+/* ===== The Runaway Roundup ==================================================
+   Star Equestrian runs a bronco bounty: loose horses out on the range, and you bring them
+   in. This is that, in our pasture, and it is the first thing in the game where riding
+   POSITION is the skill rather than riding fast — a loose horse runs from whatever is
+   nearest, so you have to get on the far side of one and push it toward the gate. Charging
+   straight at it just sends it further out.
+
+   Five horses, two and a half minutes, and a pen at the east end. */
+const ROUND_N=5, ROUND_TIME=150, ROUND_COOL=1800000;      // half an hour between roundups
+const ROUND_PEN={x:-44,z:-8,r:7.5};
+const ROUND={on:false,t:0,horses:[],penned:0,grp:null,ring:null};
+function roundupReady(s){ return !s||!s.roundAt||Date.now()-s.roundAt>ROUND_COOL; }
+function roundupWaitMin(s){ return Math.max(0,Math.ceil((ROUND_COOL-(Date.now()-(s.roundAt||0)))/60000)); }
+function buildPen(){
+ if(ROUND.grp)return ROUND.grp;
+ const g=new THREE.Group();
+ const R=ROUND_PEN.r;
+ /* posts round three quarters of a circle, with the mouth facing back into the field */
+ for(let k=0;k<16;k++){
+  const a=-Math.PI*0.62+ (k/15)*Math.PI*1.72;
+  const x=Math.cos(a)*R, z=Math.sin(a)*R;
+  box(0.18,1.25,0.18,'#c9b083',x,0.62,z,g);
+  if(k){const px=Math.cos(-Math.PI*0.62+((k-1)/15)*Math.PI*1.72)*R, pz=Math.sin(-Math.PI*0.62+((k-1)/15)*Math.PI*1.72)*R;
+   const mx=(x+px)/2, mz=(z+pz)/2, len=Math.hypot(x-px,z-pz);
+   const rail=box(len,0.10,0.07,'#e2d3ae',mx,0.95,mz,g); rail.rotation.y=Math.atan2(x-px,z-pz)+Math.PI/2;}
+ }
+ const ring=new THREE.Mesh(new THREE.CircleGeometry(R,30),
+  new THREE.MeshBasicMaterial({color:0x8fd070,transparent:true,opacity:0.20,depthWrite:false}));
+ ring.rotation.x=-Math.PI/2; ring.position.y=0.05; g.add(ring);
+ const sp=nameSprite('🚩 The pen'); sp.position.y=2.4; g.add(sp);
+ g.position.set(ROUND_PEN.x,groundH(ROUND_PEN.x,ROUND_PEN.z),ROUND_PEN.z);
+ g.visible=false; scene.add(g);
+ ROUND.grp=g; ROUND.ring=ring;
+ return g;
+}
+function startRoundup(){
+ if(ROUND.on)return;
+ const s=freshSave();
+ if(!roundupReady(s)){toast('🐎 The next roundup is in about '+roundupWaitMin(s)+' minutes.');return;}
+ buildPen(); ROUND.grp.visible=true;
+ ROUND.horses=[];
+ for(let i=0;i<ROUND_N;i++){
+  const wb=WILD_BREEDS[Math.floor(Math.random()*WILD_BREEDS.length)];
+  const parts=makeHorse({colors:{body:wb.body,mane:wb.mane},seed:Math.floor(Math.random()*9)});
+  const tag=nameSprite('🐴 runaway'); tag.position.y=2.7; parts.group.add(tag);
+  /* scattered across the west of the pasture, well away from the pen */
+  const x=PAST.x1+8+Math.random()*(ROUND_PEN.x-PAST.x1-22);
+  const z=PAST.z1+8+Math.random()*(PAST.z2-PAST.z1-16);
+  parts.group.position.set(x,groundH(x,z),z);
+  scene.add(parts.group);
+  ROUND.horses.push({parts,pos:new THREE.Vector3(x,0,z),heading:Math.random()*6,phase:Math.random()*6,
+                     penned:false,rest:Math.random()*2});
+ }
+ ROUND.on=true; ROUND.t=ROUND_TIME; ROUND.penned=0;
+ $('roundHud').style.display='block';
+ sNeigh();
+ toast('🐎 Five runaways in the pasture! Get BEHIND one and push it to the 🚩 pen.');
+}
+function endRoundup(quit){
+ if(!ROUND.on)return;
+ const got=ROUND.penned;
+ for(const h of ROUND.horses){ try{scene.remove(h.parts.group);}catch(e){} }
+ ROUND.horses=[]; ROUND.on=false;
+ if(ROUND.grp)ROUND.grp.visible=false;
+ $('roundHud').style.display='none';
+ if(quit){toast('🐎 Roundup abandoned.');return;}
+ const coins=got*130, bonus=(got===ROUND_N);
+ syncSave(sv=>{
+  sv.roundAt=Date.now();
+  sv.coins+=coins+(bonus?250:0);
+  if(bonus){sv.gems=(sv.gems||0)+2; sv.keys=(sv.keys||0)+1;}
+  sv.stats=sv.stats||{}; sv.stats.rounded=(sv.stats.rounded||0)+got;
+  logEarn(sv,coins+(bonus?250:0));
+  addSP(sv,got*4,'roundup');
+ });
+ refreshWallet(); passAdd(got*6); weekBump('events',1);
+ if(got)sChime();
+ toast(bonus?('🐎 ALL FIVE IN! +'+(coins+250)+'🪙 +2💎 +1🗝️')
+            :('🐎 '+got+' of '+ROUND_N+' penned · +'+coins+'🪙'));
+}
+function tickRoundup(dt,t){
+ if(!ROUND.on)return;
+ ROUND.t-=dt;
+ const px=player.pos.x, pz=player.pos.z;
+ for(const h of ROUND.horses){
+  if(h.penned)continue;
+  const dx=h.pos.x-px, dz=h.pos.z-pz, d=Math.hypot(dx,dz);
+  if(d<15){
+   /* it runs from whoever is nearest — which is what makes position the game */
+   const away=Math.atan2(dx,dz);
+   let dh=away-h.heading;
+   while(dh>Math.PI)dh-=Math.PI*2; while(dh<-Math.PI)dh+=Math.PI*2;
+   h.heading+=dh*Math.min(1,dt*3.2);
+   const spd=d<7?7.2:5.4;
+   h.pos.x+=Math.sin(h.heading)*spd*dt;
+   h.pos.z+=Math.cos(h.heading)*spd*dt;
+   h.phase+=dt*8; h.rest=0.6;
+  }else{
+   h.rest-=dt;
+   if(h.rest<=0){ h.heading+=(Math.random()-0.5)*0.9; h.rest=1.5+Math.random()*2.5; }
+   h.pos.x+=Math.sin(h.heading)*1.0*dt;
+   h.pos.z+=Math.cos(h.heading)*1.0*dt;
+   h.phase+=dt*1.6;
+  }
+  /* keep them in the field */
+  h.pos.x=Math.max(PAST.x1+2,Math.min(PAST.x2-2,h.pos.x));
+  h.pos.z=Math.max(PAST.z1+2,Math.min(PAST.z2-2,h.pos.z));
+  h.parts.group.position.set(h.pos.x,groundH(h.pos.x,h.pos.z),h.pos.z);
+  h.parts.group.rotation.y=h.heading;
+  animateHorse(h.parts,h.phase,d<15?0.9:0.25,d<15?GAITS.gallop:GAITS.walk,true,t,0);
+  if(Math.hypot(h.pos.x-ROUND_PEN.x,h.pos.z-ROUND_PEN.z)<ROUND_PEN.r){
+   h.penned=true; ROUND.penned++;
+   try{scene.remove(h.parts.group);}catch(e){}
+   sChime();
+   toast('🚩 In the pen — '+ROUND.penned+' of '+ROUND_N+'!');
+  }
+ }
+ const hud=$('roundHud');
+ if(hud)hud.textContent='🐎 Roundup · '+ROUND.penned+'/'+ROUND_N+' penned · '+Math.max(0,Math.ceil(ROUND.t))+'s';
+ if(ROUND.ring)ROUND.ring.material.opacity=0.16+0.10*Math.sin(t*3);
+ if(ROUND.t<=0||ROUND.penned>=ROUND_N)endRoundup(false);
+}
 function openEvents(){
  const p=$('eventsPanel');
  if(p.style.display==='flex'){p.style.display='none';return;}
@@ -7791,6 +7915,13 @@ function openEvents(){
   +'<span style="width:100%;font-size:11px;color:#8c7a63">Four featured events, half as much again in coins. Ribbons on them fill the tiers; everything resets Monday.</span>'
   +'<span style="width:100%;display:flex;gap:5px;flex-wrap:wrap">'+WEEK_TIERS.map((t,i)=>{const cl=wk.claimed[i]; const rw=(t[1].k?t[1].k+'🗝️ ':'')+(t[1].c?t[1].c+'🪙 ':'')+(t[1].g?t[1].g+'💎 ':'')+(t[1].gear?t[1].gear+' tack':'');
     return cl?'<span style="font-size:11px;color:#8c7a63">✅ '+t[0]+'</span>':wkRib>=t[0]?'<button data-wk="'+i+'" style="font-size:11px;padding:3px 8px">Claim '+rw+' ('+t[0]+'🎀)</button>':'<span style="font-size:11px;color:#b8a98a">🔒 '+t[0]+'🎀 → '+rw+'</span>';}).join('')+'</span></div>';
+ {const rr=roundupReady(sw);
+  html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🐎 The Runaway Roundup</b>'
+   +'<span style="width:100%;font-size:11px;color:#8c7a63">Five loose horses in the pasture and two and a half minutes to pen them. They run from whoever is closest — get on the far side and push. 130🪙 each, and a bonus for all five.</span>'
+   +(ROUND.on?'<span style="font-size:12px">running now…</span>'
+     :rr?'<button data-round="go">Start the roundup</button>'
+        :'<span style="font-size:12px;color:#8c7a63">Next one in about '+roundupWaitMin(sw)+' min</span>')
+   +'</div>';}
  html+=EVENTS3.map((ev,i)=>{
   const won=tr[ev.id],ok=lvl>=ev.lvl, isF=featIds.has(ev.id), r=rb[ev.id]||0, wr=wk.rib[ev.id]||0;
   return '<div class="evrow'+(isF?' done':'')+'">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b>'+(isF?' <span class="badge">FEATURED</span>':'')+'<span>'+ev.town+' · '+(ev.dressage?'🎽 dressage · '+DRESSAGE_TESTS[ev.id].length+' figures'+(sw.bestScore&&sw.bestScore[ev.id]?' · best '+Math.round(sw.bestScore[ev.id]*100)+'%':''):ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps')+' · Lv '+ev.lvl+(r?' · '+'🎀'.repeat(r):'')+(isF&&wr<4?' · '+wr+'/4 this week':'')+'</span>'+
@@ -7798,6 +7929,7 @@ function openEvents(){
  }).join('')+'<div class="evrow"><span>Jump every numbered fence in order — follow the golden arrow! Ribbons: finish · two stars · three stars · a clean round.</span><button id="evClose">Close</button></div>';
  p.innerHTML=html;
  p.style.display='flex';
+ p.querySelectorAll('button[data-round]').forEach(b=>{b.onclick=()=>{p.style.display='none';startRoundup();};});
  p.querySelectorAll('button[data-ev]').forEach(b=>{b.onclick=()=>startCourse(EVENTS3[+b.dataset.ev]);});
  p.querySelectorAll('button[data-wk]').forEach(b=>{b.onclick=()=>claimWeekly(+b.dataset.wk);});
  $('evClose').onclick=()=>{p.style.display='none';};
@@ -11487,6 +11619,7 @@ function tick(stepSeconds){
  for(const wa of waterAnims){wa.tex.offset.x+=dt*wa.sx;wa.tex.offset.y+=dt*(wa.sy<-0.5?wa.sy:wa.sy*Math.sin(t*0.5));}
  tickFalls(dt,t);
  tickSummon(dt);
+ tickRoundup(dt,t);
  for(const cl of clouds){
   cl.position.x+=dt*0.7;
   if(cl.position.x>520)cl.position.x=-520;
