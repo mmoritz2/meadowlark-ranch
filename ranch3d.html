@@ -5110,6 +5110,24 @@ function makeCoatMat(){
    ' return mix(mix(_mh(i),_mh(i+vec2(1,0)),f.x),mix(_mh(i+vec2(0,1)),_mh(i+vec2(1,1)),f.x),f.y);}\n'+
    'float _mf(vec2 v){return _mn(v)*0.6+_mn(v*2.3)*0.27+_mn(v*4.7)*0.13;}\n'+
    'float _pick(vec3 p,float i){return i<0.5?p.x:(i<1.5?p.y:p.z);}\n'+
+   /* Round spots on a jittered grid. Thresholding a per-cell hash — step(k,_mh(floor(uv*n)))
+      — turns the whole cell on or off, so an Appaloosa came out as a wall of hard-edged
+      squares. This measures the distance to a spot centre inside each cell instead, jitters
+      the centre and the radius, and softens the rim, so a spot is actually a spot. */
+   'float _spots(vec2 uv,float n,float dens,float lo,float hi){\n'+
+   ' vec2 g=uv*n, c=floor(g), f=fract(g)-0.5;\n'+
+   ' float best=1.0;\n'+
+   ' for(int j=-1;j<=1;j++)for(int i=-1;i<=1;i++){\n'+
+   '  vec2 o=vec2(float(i),float(j)), cc=c+o;\n'+
+   '  float r1=_mh(cc), r2=_mh(cc+37.7);\n'+
+   '  if(r1>dens){\n'+
+   '   vec2 ctr=o+vec2(r2,_mh(cc+91.3))*0.7-0.35;\n'+
+   '   float rad=mix(lo,hi,r1);\n'+
+   '   best=min(best,length(f-ctr)-rad);\n'+
+   '  }\n'+
+   ' }\n'+
+   ' return 1.0-smoothstep(-0.035,0.035,best);\n'+
+   '}\n'+
    sh.fragmentShader.replace('#include <map_fragment>',
    `#include <map_fragment>
     float _l=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));
@@ -5126,25 +5144,27 @@ function makeCoatMat(){
       float ring=smoothstep(0.46,0.54,d)*(1.0-smoothstep(0.60,0.72,d));
       diffuseColor.rgb=mix(_base,_base*1.30+0.05,ring*0.75);
      } else if(uMark<2.5){                             // appaloosa: a blanket over the rump, spotted
-      float bl=smoothstep(0.52,0.20,fl)*smoothstep(0.10,0.42,fh);
-      float sp=step(0.63,_mh(floor(vMapUv*30.0)));
-      vec3 blanket=mix(uMarkCol,_base*0.55,sp*0.85);
+      float bl=smoothstep(0.54,0.24,fl)*smoothstep(0.06,0.40,fh);
+      float sp=_spots(vMapUv,16.0,0.42,0.10,0.22);
+      vec3 blanket=mix(uMarkCol,_base*0.50,sp*0.88);
       diffuseColor.rgb=mix(_base,blanket,bl*0.92);
      } else if(uMark<3.5){                             // paint: big irregular patches
       float d=_mf(vMapUv*5.5);
       float _pt=smoothstep(0.50,0.57,d);
       diffuseColor.rgb=mix(_base,uMarkCol,_pt*0.95);
      } else if(uMark<4.5){                             // roan: ticked white, dark head and legs
-      float tick=step(0.55,_mh(floor(vMapUv*150.0)));
-      diffuseColor.rgb=mix(_base,uMarkCol,tick*0.42);
+      /* fine hairs of white, not a grid of tiny squares: smooth noise at two scales, and a
+         soft threshold so the edges do not crawl when the horse moves */
+      float tick=smoothstep(0.44,0.62,_mf(vMapUv*46.0))*0.75+smoothstep(0.50,0.70,_mf(vMapUv*95.0))*0.35;
+      diffuseColor.rgb=mix(_base,uMarkCol,clamp(tick,0.0,1.0)*0.45);
       float pts=smoothstep(0.30,0.10,fh)+smoothstep(0.72,0.92,fl);
       diffuseColor.rgb=mix(diffuseColor.rgb,_base*0.55,clamp(pts,0.0,1.0)*0.7);
      } else if(uMark<5.5){                             // points: black legs, muzzle and topline
       float pts=smoothstep(0.26,0.06,fh)+smoothstep(0.86,0.99,fl);
       diffuseColor.rgb=mix(diffuseColor.rgb,uMarkCol,clamp(pts,0.0,1.0)*0.85);
-     } else if(uMark<6.5){                             // leopard: spots all over, on white
-      float sp=step(0.70,_mf(vMapUv*17.0));
-      diffuseColor.rgb=mix(uMarkCol,_base*0.5,sp);
+     } else if(uMark<6.5){                             // leopard: spots all over, round, on white
+      float sp=_spots(vMapUv,13.0,0.34,0.13,0.26);
+      diffuseColor.rgb=mix(uMarkCol,_base*0.45,sp*0.95);
      } else if(uMark<7.5){                             // sooty: shaded dark along the back
       float so=smoothstep(0.45,0.95,fh)*(0.55+0.45*_mf(vMapUv*8.0));
       diffuseColor.rgb=mix(_base,_base*0.5,so*0.8);
