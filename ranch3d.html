@@ -168,6 +168,15 @@ body.summoning #summonFx{display:block}
 .bE{font-size:11px;font-weight:700;background:#f7f2e6;border-radius:7px;padding:2px 6px;color:#6b5a44}
 .bE.me{background:#dceccb;color:#3f5f2c}
 .bE.club{background:#dbeaf7;color:#24506e}
+.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:6px 0 2px}
+.calDay{border:1px solid var(--line);border-radius:9px;padding:4px 2px;text-align:center;background:#fdfaf2;min-height:46px;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.calDay .dn{font-size:9px;font-weight:800;color:#b8a888}
+.calDay .rw{font-size:9.5px;font-weight:700;color:#8c7a63;line-height:1.15}
+.calDay.big{background:#fff4dc;border-color:#e8cf8a}
+.calDay.open{background:#eaf5dc;border-color:#8fbf6a;cursor:pointer}
+.calDay.open .rw{color:#3f5f2c}
+.calDay.done{background:#e2efd6;border-color:#bfe0a4}
+.calDay.done .rw{color:#5b7a44}
 .lbTabs .pip{display:inline-block;min-width:15px;height:15px;line-height:15px;border-radius:9px;background:#e05a3c;color:#fff;font-size:10px;font-weight:800;margin-left:4px;padding:0 3px}
 .evrow.done{border-color:#bfe0a4;background:linear-gradient(180deg,#fff,#f4fbea)}
 .crow{display:flex;align-items:center;gap:8px;font-size:13px}
@@ -515,6 +524,48 @@ function passClaim(sv,i,gold){
    weekKey and ensureWeek are function declarations further down the file, so they are
    hoisted and safe to call from the start-up pass above. Nothing here touches a const
    declared below it — that is the mistake that has broken this game twice. */
+/* ---- the month's calendar ---------------------------------------------------------------
+   Twenty-eight days of rewards that you unlock by turning up. A day is unlocked by PLAYING
+   that day, not by playing every day in a row — miss a Tuesday and Wednesday still opens
+   the next square, because a calendar you can permanently ruin by having a life is a
+   calendar that stops being fun the first time you miss one. The streak beside it is where
+   the reward for consecutive days lives; this is just for showing up.
+
+   Every seventh square is a big one, and day 28 is the best thing in it. */
+const CALENDAR=[
+ {c:150},{c:200},{g:2},{c:250},{k:1},{c:300},{g:5,k:1},
+ {c:350},{g:2},{c:400},{k:1},{c:450},{g:3},{g:6,k:1,gear:'Rare'},
+ {c:500},{g:3},{c:550},{k:2},{c:600},{g:4},{g:8,k:2},
+ {c:700},{g:4},{c:800},{k:2},{c:900},{g:6},{g:15,k:3,gear:'Epic'},
+];
+function calMonth(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1);}
+function calState(s){
+ s.cal=(s.cal&&s.cal.m===calMonth())?s.cal:{m:calMonth(),i:0,claimed:{}};
+ s.cal.claimed=s.cal.claimed||{};
+ return s.cal;
+}
+/* Called once on the first play of each day. */
+function calAdvance(s){
+ const c=calState(s);
+ if(c.day===new Date().toDateString())return false;
+ c.day=new Date().toDateString();
+ if(c.i<CALENDAR.length){c.i++; return true;}
+ return false;
+}
+function calReward(r){
+ return (r.c?r.c+'🪙':'')+(r.g?' '+r.g+'💎':'')+(r.k?' '+r.k+'🗝️':'')+(r.gear?' '+r.gear+' tack':'');
+}
+function calClaim(sv,i){
+ const c=calState(sv);
+ if(i>=c.i||c.claimed[i])return null;
+ const r=CALENDAR[i]; if(!r)return null;
+ c.claimed[i]=1;
+ if(r.c)sv.coins+=r.c;
+ if(r.g)sv.gems+=r.g;
+ if(r.k)sv.keys=(sv.keys||0)+r.k;
+ if(r.gear){sv.tack=sv.tack||[];sv.tack.push(genGear(r.gear));}
+ return r;
+}
 const WAGE_TIERS=[
  {sp:0,   c:200,  g:0, k:0, label:'A quiet week'},
  {sp:60,  c:450,  g:1, k:0, label:'A steady week'},
@@ -9280,7 +9331,11 @@ function renderLB(){
   '<button data-lbtab="'+k+'"'+(lbTab===k?' class="claimBtn"':'')+'>'+l
   +(k==='pass'&&ready?'<span class="pip">'+ready+'</span>':'')
   +(k==='vip'&&vip?'<span class="pip" style="background:#1e8449">'+vipDays(s)+'d</span>':'')
-  +(k==='week'&&s.wkLast&&!s.wkLast.claimed?'<span class="pip">!</span>':'')+'</button>').join('')+'</div>';
+  +(k==='week'&&(function(){
+     if(s.wkLast&&!s.wkLast.claimed)return true;
+     const c=(s.cal&&s.cal.m===calMonth())?s.cal:null;
+     return !!(c&&CALENDAR.some((r,i)=>i<c.i&&!(c.claimed||{})[i]));
+    })()?'<span class="pip">!</span>':'')+'</button>').join('')+'</div>';
  if(lbTab==='pass'){
  /* The season pass. Two rows of tiers, free on top and gold underneath, so you can see at
     a glance what riding without VIP still gets you. */
@@ -9344,6 +9399,18 @@ function renderLB(){
  }
  if(lbTab==='week'){
   const L=s.wkLast, W=s.wk||{};
+  /* the month's calendar */
+  {const c=(s.cal&&s.cal.m===calMonth())?s.cal:{m:calMonth(),i:0,claimed:{}};
+   const ready=CALENDAR.reduce((a,r,i)=>a+((i<c.i&&!c.claimed[i])?1:0),0);
+   html+='<div class="passCard"><div class="ph"><b>📅 '+new Date().toLocaleString(undefined,{month:'long'})+'</b>'
+    +'<span style="font-size:11px;color:#8c7a63">day '+c.i+' of 28'+(ready?' · '+ready+' to collect':'')+'</span></div>'
+    +'<div class="sub">A square opens for every day you play — not every day in a row, so missing one costs you nothing here.</div>'
+    +'<div class="calGrid">'+CALENDAR.map((r,i)=>{
+      const done=!!c.claimed[i], open=i<c.i&&!done, big=(i+1)%7===0;
+      return '<div class="calDay'+(done?' done':open?' open':'')+(big&&!done&&!open?' big':'')+'"'
+       +(open?' data-cal="'+i+'"':'')+'><span class="dn">'+(i+1)+'</span>'
+       +'<span class="rw">'+(done?'✅':calReward(r))+'</span></div>';
+     }).join('')+'</div></div>';}
   if(L&&!L.claimed){
    const pay=weekPayout(L);
    html+='<div class="passCard" style="background:linear-gradient(180deg,#f4fbea,#e6f3d6)"><div class="ph"><b>📅 Last week is settled</b><span style="font-size:11px;color:#4a3526">'+pay.label+'</span></div>'
@@ -9435,6 +9502,14 @@ function renderLB(){
    const st=photoStandings(), mi=st.findIndex(r=>r.me);
    syncSave(sv=>{ sv.wk=sv.wk||{week:weekKey()}; sv.wk.place=(mi>=0&&mi<3)?mi+1:0; });
    sChime(); renderLB(); };
+ });
+ p.querySelectorAll('[data-cal]').forEach(b=>{
+  b.onclick=()=>{
+   let got=null;
+   syncSave(sv=>{ got=calClaim(sv,+b.dataset.cal); });
+   if(got){refreshWallet();refreshTack();sGem();toast('📅 Day '+(+b.dataset.cal+1)+': '+calReward(got));}
+   renderLB();
+  };
  });
  p.querySelectorAll('[data-week]').forEach(b=>{
   b.onclick=()=>{
@@ -10074,7 +10149,7 @@ $('questBtn').onclick=openQuests;
 (function(){
  const ds=new Date().toDateString();
  const yd=new Date(Date.now()-86400000).toDateString();
- let msg=null;
+ let msg=null,msg2=null;
  syncSave(s=>{
   if(s.streakLast===ds)return;
   s.streakN=(s.streakLast===yd)?(s.streakN||0)+1:1;
@@ -10082,9 +10157,11 @@ $('questBtn').onclick=openQuests;
   const c=50+Math.min(7,s.streakN)*25;
   s.coins+=c;
   const sg=s.streakN%2===0?2:1; s.gems+=sg;                 // a gem or two for coming back, every day
+  if(calAdvance(s))msg2='📅 Day '+s.cal.i+' of the month is open — collect it in 🏅 → Week.';
   msg='🔥 Day '+s.streakN+' login streak! +'+c+'🪙 +'+sg+'💎';
  });
  if(msg){refreshWallet();setTimeout(()=>{try{toast(msg);}catch(e){}},2600);}
+ if(msg2)setTimeout(()=>{try{toast(msg2);}catch(e){}},4200);
 })();
 
 /* ---- fast travel from the big map ---- */
