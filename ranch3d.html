@@ -4915,7 +4915,7 @@ function measureBody(){
   head:head.toArray().map(v=>+v.toFixed(2)),dock:dock.toArray().map(v=>+v.toFixed(2)),headHi};
  return BODYAX;
 }
-const MARKS={none:0,dapple:1,appaloosa:2,pinto:3,roan:4,points:5,leopard:6,sooty:7};
+const MARKS={none:0,dapple:1,appaloosa:2,pinto:3,roan:4,points:5,leopard:6,sooty:7,dun:8,metal:9};
 function makeCoatMat(){
  /* A groomed coat has a sheen: the same albedo and normal map, on a physical material with a
     light clearcoat, so highlights slide over the muscle as the horse moves. */
@@ -4953,6 +4953,7 @@ function makeCoatMat(){
      vec3 _rel=(vBody-uBBMin)/max(uBBSize,vec3(0.001));
      float fl=_pick(_rel,uAxis.x); if(uFlip<0.5)fl=1.0-fl;
      float fh=_pick(_rel,uAxis.y);
+     float fw=abs(_pick(_rel,uAxis.z)-0.5)*2.0;      // 0 on the spine, 1 at the flank
      vec3 _base=diffuseColor.rgb;
      if(uMark<1.5){                                    // dapple: pale rings over the barrel
       float d=_mf(vMapUv*22.0);
@@ -4978,9 +4979,17 @@ function makeCoatMat(){
      } else if(uMark<6.5){                             // leopard: spots all over, on white
       float sp=step(0.70,_mf(vMapUv*17.0));
       diffuseColor.rgb=mix(uMarkCol,_base*0.5,sp);
-     } else {                                          // sooty: shaded dark along the back
+     } else if(uMark<7.5){                             // sooty: shaded dark along the back
       float so=smoothstep(0.45,0.95,fh)*(0.55+0.45*_mf(vMapUv*8.0));
       diffuseColor.rgb=mix(_base,_base*0.5,so*0.8);
+     } else if(uMark<8.5){                             // dun: an eel stripe down the spine, barred legs
+      float eel=smoothstep(0.30,0.06,fw)*smoothstep(0.55,0.85,fh);
+      float bars=smoothstep(0.22,0.05,fh)*step(0.5,fract(fh*26.0));
+      diffuseColor.rgb=mix(diffuseColor.rgb,uMarkCol,clamp(eel+bars*0.7,0.0,1.0)*0.8);
+     } else {                                          // metal: an Akhal-Teke's coat catches the light
+      float fr=pow(1.0-abs(dot(normalize(vNormal),normalize(vViewPosition))),2.0);
+      diffuseColor.rgb=mix(diffuseColor.rgb,uMarkCol,fr*0.55);
+      diffuseColor.rgb*=1.0+0.22*_mf(vMapUv*11.0);
      }
     }
     if(vRegion>0.5) diffuseColor.rgb=mix(diffuseColor.rgb, uTail*clamp(_l/0.5,0.0,1.6), uTailBlend);`);
@@ -7038,7 +7047,13 @@ function nameSprite(text){
  nameSprites.push(sp);
  return sp;
 }
-const horseScale=h=>h.foal?0.65:(h.breed==='chestnut'?0.82:h.breed==='shire'?1.16:h.breed==='clyde'?1.12:h.breed==='pegasus'?1.14:1);
+/* Build comes off the breed table now. A Shetland should not be the size of a Shire, and
+   with two dozen breeds a chain of special cases was never going to hold. */
+const horseScale=h=>{
+ if(h.foal)return 0.65;
+ try{ const b=BREEDS3.find(x=>x[0]===h.breed); return (b&&b[7]&&b[7].size)||1; }
+ catch(e){ return 1; }        // called before the breed table exists: full size will do
+};
 /* Fully articulated rider: rigid segments on real joints (torso / neck+head /
    shoulders / elbows / hips / knees) — no skinning, so nothing can smear. */
 /* The rider is a generated, textured mesh — a girl in show kit, seated, reins in hand —
@@ -8152,16 +8167,32 @@ function careAct(k){
    horses are the point of the game, and a stable full of them is the fun part. */
 const BREEDS3=[
  ['bay','Quarter Horse','Common',55,0,'#8a5a2b','#332214',{mark:'points',markCol:'#241a12'}],
- ['chestnut','Shetland Pony','Common',65,0,'#9c4f23','#6e3617',{mark:'roan',markCol:'#e8dcc8'}],
+ ['chestnut','Shetland Pony','Common',65,0,'#9c4f23','#6e3617',{mark:'roan',markCol:'#e8dcc8',size:0.82}],
  ['palomino','Palomino Mustang','Uncommon',130,0,'#d9a85c','#f4e6c5',{mark:'sooty'}],
  ['haflinger','Haflinger','Uncommon',150,0,'#c98643','#f7ecd4',{mark:'dapple'}],
  ['grey','Dapple Grey Andalusian','Uncommon',140,0,'#b9bec6','#787f8a',{mark:'dapple'}],
  ['black','Friesian','Rare',250,0,'#26262e','#101015',{mark:'sooty'}],
  ['pinto','Paint Horse','Rare',265,0,'#7d4f24','#3a2a1a',{mark:'pinto',markCol:'#f4efe4'}],
  ['appaloosa','Appaloosa','Rare',310,0,'#8a6a4a','#4a3a2a',{mark:'appaloosa',markCol:'#f2ece0'}],
- ['sunset','Sunset Arabian','Epic',480,0,'#c96a4f','#ffd166',{mark:'dapple'}],
+ ['sunset','Sunset Arabian','Epic',480,0,'#c96a4f','#ffd166',{mark:'dapple',size:0.98}],
+ /* The rest of the stable. Star Equestrian's roster is about fourteen real breeds with
+    fantasy re-skins over them; this is twenty-three, each with its own build and its own
+    markings rather than its own pair of colours. */
+ ['iceland','Icelandic Horse','Common',70,0,'#6a4a32','#d8c49a',{mark:'roan',markCol:'#e6d8c0',size:0.84}],
+ ['welsh','Welsh Mountain Pony','Common',75,0,'#8d6742','#efe3c8',{mark:'dapple',size:0.86}],
+ ['stock','Australian Stock Horse','Uncommon',160,0,'#9a6a3a','#4a3020',{mark:'roan',markCol:'#e2d6c2',size:1.00}],
+ ['fjord','Norwegian Fjord','Uncommon',145,0,'#c2a06a','#3a3428',{mark:'dun',markCol:'#3a3024',size:0.92}],
+ ['morgan','Morgan','Uncommon',135,0,'#5a3a24','#2a1a12',{mark:'sooty',size:0.98}],
+ ['thoro','Thoroughbred','Rare',290,0,'#7a4a28','#2a1c12',{mark:'points',markCol:'#20160f',size:1.05}],
+ ['knab','Knabstrupper','Rare',300,0,'#8a7a68','#5a5048',{mark:'leopard',markCol:'#f2ede2',size:1.00}],
+ ['vanner','Gypsy Vanner','Rare',280,0,'#4a3a30','#f0e6d2',{mark:'pinto',markCol:'#f4efe2',size:1.03}],
+ ['marwari','Marwari','Rare',320,0,'#8a5a3a','#3a2418',{mark:'pinto',markCol:'#efe6d6',size:1.00}],
+ ['lipiz','Lipizzaner','Epic',500,0,'#efece4','#e0ddd4',{mark:'dapple',size:1.02}],
+ ['sport','Friesian Sporthorse','Epic',520,0,'#2a2a30','#14141a',{mark:'sooty',size:1.06}],
+ ['akhal','Akhal-Teke','Epic',560,0,'#c9a24a','#e8d79a',{mark:'metal',markCol:'#fff2c0',size:1.02}],
+ ['percheron','Percheron','Draft',50,0,'#a8adb4','#6a6f78',{mark:'dapple',size:1.14}],
  ['unicorn','Unicorn','Legendary',0,8,'#f6f3ff','#cdb4f9',{horn:true,rainbow:true}],
- ['pegasus','Pegasus','Legendary',0,8,'#f2f5fb','#dfe7f4',{wings:true,ability:'fly'}],
+ ['pegasus','Pegasus','Legendary',0,8,'#f2f5fb','#dfe7f4',{wings:true,ability:'fly',size:1.14}],
  ['celestial','Celestial Unicorn','Mythic',0,14,'#2a2350','#b79dff',{horn:true,coat:'galaxy',glow:true,ability:'glow'}],
  ['ember','Ember Runner','Mythic',0,12,'#3a1410','#ff8a3a',{coat:'fire',glow:true,ability:'swift'}],
  ['frost','Frost Stallion','Mythic',0,12,'#cfe9f6','#8fd0ec',{coat:'ice',ability:'leap'}],
@@ -8175,8 +8206,8 @@ const BREEDS3=[
  ['verdant','Verdant Dragon','Dragon',0,20,'#143038','#7df0c4',{wings:true,dragon:true,coat:'aurora',glow:true,ability:'fly'}],
  ['shadowmare','Shadow Mare','Mythic',0,14,'#241830','#a07ce0',{coat:'shadow',glow:true,ability:'swift'}],
  ['kestrel','Silver Kestrel','Legendary',0,0,'#c9ced6','#eef2f7',{story:true}],   // book two's reward: not for sale
- ['shire','Shire','Draft',45,0,'#3a3530','#1d1a17',{mark:'roan',markCol:'#ded4c4'}],
- ['clyde','Clydesdale','Draft',45,0,'#7a4526','#2e2018',{mark:'pinto',markCol:'#f0e8d8'}],
+ ['shire','Shire','Draft',45,0,'#3a3530','#1d1a17',{mark:'roan',markCol:'#ded4c4',size:1.16}],
+ ['clyde','Clydesdale','Draft',45,0,'#7a4526','#2e2018',{mark:'pinto',markCol:'#f0e8d8',size:1.12}],
 ];
 const TIER_BASE={Common:3,Uncommon:4,Rare:5,Epic:6,Legendary:7,Draft:4,Mythic:8,Dragon:9};
 const NAMES3=['Luna','Comet','Willow','Maple','Storm','Honey','Pepper','Clover','Biscuit','River','Aspen','Mocha','Daisy','Blaze','Echo','Juniper','Ginger','Onyx','Pearl','Sage'];
