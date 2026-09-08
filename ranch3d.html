@@ -316,7 +316,7 @@ body.touch #stickZone{display:block}
 <!-- The multiplayer client (322 KB) is fetched lazily, the first time someone actually
      goes online — see loadMQTT() in the module. Loading it up front would put it on the
      critical path of every single-player launch, which is most of them. -->
-<link rel="preload" href="assets/models/horse_showcase_rigged.glb" as="fetch">
+
 <link rel="preload" href="assets/models/rider_seat_textured.glb" as="fetch">
 <script type="importmap">
 {
@@ -631,6 +631,48 @@ const RAR_SELL={Common:40,Uncommon:90,Rare:200,Epic:450,Legendary:1000};
 const GEAR_ADJ={Common:['Plain','Sturdy','Everyday','Oiled'],Uncommon:['Fine','Tooled','Meadow','Riverside'],Rare:['Silver-stitched','Cottonwood','Twilight','Basin'],Epic:['Starlit','Storm','Canyon','Hollowpeak'],Legendary:['Kestrel','Aurora','Meadowlark','Champion']};
 const GEAR_NOUN={saddle:'Saddle',pad:'Pad',bridle:'Bridle',shoes:'Shoes'};
 function rollRarity(){let t=0;for(const r of RARITIES)t+=RAR_W[r];let x=Math.random()*t;for(const r of RARITIES){x-=RAR_W[r];if(x<=0)return r;}return 'Common';}
+/* ---- tack sets ------------------------------------------------------------------------
+   Star Equestrian's tack has legendary SETS: matching pieces that pay a bonus on top of
+   their own stats once you have two, and again at all four. The adjectives on Epic and
+   Legendary tack were already themed — Starlit, Storm, Canyon, Hollowpeak, Kestrel,
+   Aurora, Meadowlark, Champion — so those names become the sets, and every piece you have
+   already earned falls into one without anything being regenerated. */
+const TACK_SETS={
+ Starlit:   {two:{agility:2},           four:{agility:3,jump:2},   blurb:'quick over a course'},
+ Storm:     {two:{accel:2},             four:{accel:3,speed:2},    blurb:'off the mark like thunder'},
+ Canyon:    {two:{stamina:2},           four:{stamina:4},          blurb:'goes all day'},
+ Hollowpeak:{two:{jump:2},              four:{jump:4},             blurb:'built for height'},
+ Kestrel:   {two:{speed:3},             four:{speed:4,accel:3},    blurb:'the fastest tack in the basin'},
+ Aurora:    {two:{jump:2,agility:2},    four:{jump:3,agility:3,stamina:2}, blurb:'light as a rider can wish'},
+ Meadowlark:{two:{stamina:2,bond:0},    four:{stamina:3,speed:3},  blurb:'home ground advantage'},
+ Champion:  {two:{speed:2,jump:2},      four:{speed:3,jump:3,accel:3},     blurb:'what a winner wears'},
+};
+/* The set is read off the name, so nothing had to be stored on old items. */
+function gearSet(item){
+ if(!item)return null;
+ if(item.set)return TACK_SETS[item.set]?item.set:null;
+ const first=String(item.name||'').split(' ')[0].replace('-stitched','');
+ return TACK_SETS[first]?first:null;
+}
+/* What the worn pieces add beyond their own stats. */
+function setBonus(h){
+ const out={}, count={};
+ if(!h)return out;
+ const g=h.gear||{};
+ for(const sl of GEAR_SLOTS){
+  const it=g[sl]&&tackInv.find(t=>t.id===g[sl]); if(!it)continue;
+  const st=gearSet(it); if(!st)continue;
+  count[st]=(count[st]||0)+1;
+ }
+ for(const st in count){
+  const def=TACK_SETS[st]; if(!def)continue;
+  const add=count[st]>=4?def.four:count[st]>=2?def.two:null;
+  if(!add)continue;
+  for(const k in add)if(add[k])out[k]=(out[k]||0)+add[k];
+ }
+ out._counts=count;
+ return out;
+}
 function genGear(rarity,slot){
  rarity=rarity||rollRarity(); slot=slot||GEAR_SLOTS[Math.floor(Math.random()*GEAR_SLOTS.length)];
  const ri=RARITIES.indexOf(rarity);
@@ -648,6 +690,8 @@ function effStats(h){                                                           
  for(const k of STAT_KEYS)o[k]=h.stats[k];
  const g=h.gear||{};
  for(const sl of GEAR_SLOTS){const it=g[sl]&&tackInv.find(t=>t.id===g[sl]); if(!it)continue; const b=gearBonus(it); for(const k in b)o[k]=(o[k]||0)+b[k];}
+ const sb=setBonus(h);                               // matching tack pays on top
+ for(const k in sb)if(k[0]!=='_'&&o[k]!==undefined)o[k]+=sb[k];
  return o;
 }
 function refreshTack(){const fs=freshSave();if(!fs)return;tackInv=fs.tack||[];fs.horses.forEach((h,i)=>{if(myHorses[i])myHorses[i].gear=h.gear||{};});}
@@ -4225,7 +4269,7 @@ function hairMaterial(){
 const hairU=[];
 function breedHair(skin,bones,mount,profile,colors,tailCol,seed){
  if(!profile||!profile.anchors)return buildHairFor(skin,bones,mount);
- return createBreedGroom({THREE,skin,bones,mount,profile,maneColor:colors?.mane||'#332214',tailColor:tailCol||colors?.mane||'#332214',featherColor:colors?.body||'#8a5a2b',seed:seed||0});
+ return createBreedGroom({THREE,skin,bones,mount,profile,maneColor:colors?.mane||'#332214',tailColor:tailCol||colors?.mane||'#332214',seed:seed||0});
 }
 function buildHair(){
  if(RIG.hairBuilt||!RIG.skin||!RIG.bones||!RIG.fitScale)return;
@@ -4433,7 +4477,7 @@ function hairColourFor(colors,coat,tailCol){
 function hairColour(){
  const h=myHorses[rideIdx]; if(!h)return;
  const hc=hairColourFor(h.colors,h.coat,h.tailCol);
- if(RIG.groom?.setColors){RIG.groom.setColors({maneColor:hc.mane,tailColor:hc.tail,featherColor:h.colors?.body});return;}
+ if(RIG.groom?.setColors){RIG.groom.setColors({maneColor:hc.mane,tailColor:hc.tail});return;}
  if(RIG.hairMane)RIG.hairMane.material.color.copy(hc.mane);
  if(RIG.hairTail)RIG.hairTail.material.color.copy(hc.tail);
 }
@@ -4467,13 +4511,13 @@ function dressWithRig(ent,parts,colors,opts){
  const keep=new Set(); if(parts.wings)parts.wings.forEach(w=>w.traverse(o=>keep.add(o))); if(parts.crest)parts.crest.traverse(o=>keep.add(o)); (opts.keep||[]).forEach(g=>{if(g)g.traverse(o=>keep.add(o));});
  parts.group.traverse(o=>{if(o.isMesh&&!keep.has(o))o.visible=false;});
  parts.group.add(sc);
- if(inst.profile.withersM)parts.group.scale.setScalar(inst.profile.withersM/1.52*(opts.foal?.65:1));
+ if(inst.profile.withersM)parts.group.scale.setScalar(inst.profile.withersM/1.45*(opts.foal?.65:1));
  if(parts.horn){parts.group.add(parts.horn);parts.horn.position.set(0,1.72,0.82);parts.horn.rotation.set(-0.4,0,0);parts.horn.scale.setScalar(1.2);parts.horn.visible=true;}
  if(parts.wings)parts.wings.forEach(w=>{const D=w.userData.kind==='dragon';w.position.set(w.userData.sgn*(D?0.19:0.21),D?1.60:1.49,D?0.02:0.18);});
  const br=BREEDS3.find(b=>b[0]===breed);
  let mat;
  if(opts.coat)mat=fantasyCoatRig(opts.coat,!!opts.dragon);
- else {mat=makeCoatMat(skin,inst.baseMat);setCoatUniforms(mat,colors?.body,opts.tailCol,opts.mark||br?.[7]?.mark,opts.markCol||br?.[7]?.markCol,opts.seed);}
+ else {mat=makeCoatMat(skin,inst.baseMat);setCoatUniforms(mat,colors?.body,opts.tailCol,opts.mark!==undefined&&opts.mark!==null?opts.mark:br?.[7]?.mark,opts.markCol||br?.[7]?.markCol,opts.seed);}
  skin.material=mat;
  if(opts.dragon){try{ent.drg=buildDragonBody(skin,inst.bones,parts.group,DRAGON_TINT[opts.coat]||DRAGON_TINT._);}catch(e){}}
  let hair=null;
@@ -4482,7 +4526,7 @@ function dressWithRig(ent,parts,colors,opts){
  worldRigCount++;
  ent.rig={...inst,phase:Math.random()*6,hair,restQ:inst.bones.map(b=>b.quaternion.clone())};
 }
-function tickRig(ent,sp,dt,t,graze){ const r=ent.rig; if(!r)return; r.phase+=rigPhaseStep(sp,true,dt); poseRigBones(r.bones,r.phase,sp,true,0,t,dt,graze||0); r.hair?.update?.(t,sp); }
+function tickRig(ent,sp,dt,t,graze){ const r=ent.rig; if(!r)return; r.phase+=rigPhaseStep(sp,true,dt,ent.parts?.group.scale.x||1); poseRigBones(r.bones,r.phase,sp,true,0,t,dt,graze||0); r.hair?.update?.(t,sp); }
 function attachRig(){
  if(!USE_GEN_HORSE)return;
  const selected=myHorses[rideIdx]?.breed||'bay';
@@ -4596,7 +4640,7 @@ function poseRigBones(B,phase,sp,grounded,air,t,dt,graze){
  const TAU=Math.PI*2, q=_rigQ;
  const em=(B===RIG.bones)?RIG.emote:null, E=em&&EMOTES[em.type], ee=em?emEnv(em):0;
  const moving=sp>0.25&&grounded, run=Math.max(0,Math.min(1,(sp-4)/4));
- const strideLen=sp<2.8?1.7:sp<7?2.7:5.8;          // metres of ground per leg cycle
+ const strideLen=(sp<2.8?1.7:sp<7?2.7:5.8)*Math.max(.45,player.mesh.scale.x);          // metres of ground per leg cycle
  const ph=phase, swingAmp=moving?0.36+run*0.55:0, kneeAmp=moving?0.32+run*0.7:0;
  const GP=sp<2.8?[0.0,0.25,0.5,0.75]   // walk — 4-beat lateral
         :sp<7 ?[0.0,0.5,0.5,0.0]       // trot — diagonal pairs move together
@@ -4618,9 +4662,9 @@ function poseRigBones(B,phase,sp,grounded,air,t,dt,graze){
 }
 /* How far the phase advances this frame, in CYCLES. Shared so a remote rider's legs
    turn over at the same rate as yours for the same speed. */
-function rigPhaseStep(sp,grounded,dt){
+function rigPhaseStep(sp,grounded,dt,scale=1){
  if(!(sp>0.25&&grounded))return 0;
- return sp*dt/(sp<2.8?1.7:sp<7?2.7:5.8);
+ return sp*dt/((sp<2.8?1.7:sp<7?2.7:5.8)*Math.max(.45,scale));
 }
 function driveRig(sp,grounded,t,dt){
  if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
@@ -4633,7 +4677,7 @@ function driveRig(sp,grounded,t,dt){
  if(RIG._fcrShaders){ for(const s of RIG._fcrShaders) if(s.uniforms.uTime) s.uniforms.uTime.value=t; }  // animate mythic coat shimmer
  const B=RIG.bones, TAU=Math.PI*2, q=RIG._q||(RIG._q=new THREE.Quaternion());
  const moving=sp>0.25&&grounded, run=Math.max(0,Math.min(1,(sp-4)/4));
- const strideLen=sp<2.8?1.7:sp<7?2.7:5.8;          // metres of ground per leg cycle
+ const strideLen=(sp<2.8?1.7:sp<7?2.7:5.8)*Math.max(.45,player.mesh.scale.x);          // metres of ground per leg cycle
  RIG.phase+=moving?(sp*dt/strideLen):0;             // RIG.phase counts cycles, not radians
  const ph=RIG.phase, swingAmp=moving?0.36+run*0.55:0, kneeAmp=moving?0.32+run*0.7:0;
  // gait-appropriate footfall timing (leg order: HL, FL, HR, FR)
@@ -4698,12 +4742,49 @@ function measureBody(skin=RIG.skin){
   report:{size:size.toArray(),L,H,W,head:head.toArray(),dock:dock.toArray(),headHi}};
 }
 const MARKS={none:0,dapple:1,appaloosa:2,pinto:3,roan:4,points:5,leopard:6,sooty:7,dun:8,metal:9};
+/* ---- markings are inherited ------------------------------------------------------------
+   A foal used to take its parents' colours but always its BREED's pattern, so breeding a
+   Knabstrupper to a Paint could never give you a spotted Paint. Patterns run in families:
+   some are dominant and show whenever one parent carries them, some are recessive and only
+   appear when both do. Roughly how horse coat genetics actually works, and it means a foal
+   can be something neither parent looked like. */
+const MARK_DOMINANT=['pinto','roan','appaloosa','leopard'];      // one parent is enough
+const MARK_RECESSIVE=['sooty','dun','metal','dapple'];           // needs it from both sides
+function markOf(h){
+ if(!h)return null;
+ if(h.mark!==undefined&&h.mark!==null)return h.mark;             // bred, or set by hand
+ const br=BREEDS3.find(b=>b[0]===h.breed);
+ return (br&&br[7]&&br[7].mark)||null;
+}
+function markColOf(h){
+ if(h&&h.markCol)return h.markCol;
+ const br=BREEDS3.find(b=>b[0]===(h&&h.breed));
+ return (br&&br[7]&&br[7].markCol)||'#f2ece0';
+}
+function inheritMark(a,b){
+ const ma=markOf(a), mb=markOf(b);
+ const dom=[ma,mb].filter(m=>m&&MARK_DOMINANT.indexOf(m)>=0);
+ if(dom.length){                                                 // a dominant pattern shows
+  if(dom.length===2&&ma!==mb&&Math.random()<0.5)return {mark:dom[1],col:(Math.random()<0.5?a:b).markCol};
+  return {mark:dom[0],col:(dom[0]===ma?a:b).markCol};
+ }
+ if(ma&&ma===mb)return {mark:ma,col:a.markCol||b.markCol};        // both sides the same
+ /* A recessive from ONE parent is carried, not shown — that is what recessive means. It
+    surfaces rarely, the way an unexpected colour turns up a generation later. */
+ const rec=[ma,mb].filter(m=>m&&MARK_RECESSIVE.indexOf(m)>=0);
+ if(rec.length===1&&Math.random()<0.08)return {mark:rec[0],col:(rec[0]===ma?a:b).markCol};
+ if(rec.length===1)return {mark:'none',col:null};
+ /* anything left is a plain pattern on one side: it shows about half the time */
+ if(ma||mb){const pick=ma&&mb?(Math.random()<0.5?ma:mb):(ma||mb);
+  if(Math.random()<0.45)return {mark:pick,col:(pick===ma?a:b).markCol};}
+ return {mark:'none',col:null};
+}
 function makeCoatMat(skin=RIG.skin,baseMat=RIG.baseMat){
  /* A groomed coat has a sheen: the same albedo and normal map, on a physical material with a
     light clearcoat, so highlights slide over the muscle as the horse moves. */
  const b=baseMat, m=new THREE.MeshPhysicalMaterial({map:b.map,normalMap:b.normalMap||null,side:b.side}); m.color.set(0xffffff);   // built by hand: Material.copy across types reaches for maps the source lacks
  m.roughness=0.64; m.metalness=0; m.clearcoat=0.08; m.clearcoatRoughness=0.6; m.envMapIntensity=0.75;
- if(m.normalMap)m.normalScale.set(0.45,0.45);
+ if(m.normalMap)m.normalScale.set(0.18,0.18);
  m.userData.bodyAxes=measureBody(skin);
  m.userData.col=new THREE.Color('#9c4f23'); m.userData.blend=0;
  m.userData.tail=new THREE.Color('#000000'); m.userData.tailBlend=0;
@@ -4775,8 +4856,9 @@ function makeCoatMat(skin=RIG.skin,baseMat=RIG.baseMat){
      } else if(uMark<4.5){                             // roan: ticked white, dark head and legs
       /* fine hairs of white, not a grid of tiny squares: smooth noise at two scales, and a
          soft threshold so the edges do not crawl when the horse moves */
-      float tick=smoothstep(0.44,0.62,_mf(vMapUv*46.0))*0.75+smoothstep(0.50,0.70,_mf(vMapUv*95.0))*0.35;
-      diffuseColor.rgb=mix(_base,uMarkCol,clamp(tick,0.0,1.0)*0.45);
+      float tick=smoothstep(0.61,0.83,_mn(vMapUv*1100.0));
+      float roanBody=smoothstep(.20,.45,fh)*(1.0-smoothstep(.70,.92,fl));
+      diffuseColor.rgb=mix(_base,uMarkCol,(.12+tick*.16)*roanBody);
       float pts=smoothstep(0.30,0.10,fh)+smoothstep(0.72,0.92,fl);
       diffuseColor.rgb=mix(diffuseColor.rgb,_base*0.55,clamp(pts,0.0,1.0)*0.7);
      } else if(uMark<5.5){                             // points: black legs, muzzle and topline
@@ -4945,9 +5027,9 @@ function applyCoat(){
  RIG.coatMat.userData.col.copy(bc); RIG.coatMat.userData.blend=blend;
  if(RIG.coatMat.userData.shader){RIG.coatMat.userData.shader.uniforms.uCoat.value.copy(bc);RIG.coatMat.userData.shader.uniforms.uBlend.value=blend;}
  RIG.coatMat.userData.tail.set((h&&h.tailCol)||'#000000'); RIG.coatMat.userData.tailBlend=(h&&h.tailCol)?1:0;
- {const br=BREEDS3.find(b=>b[0]===(h&&h.breed)), mk=br&&br[7]&&br[7].mark;
+ {const mk=markOf(h);                                 // the horse's own pattern, which a foal inherits
   RIG.coatMat.userData.mark=MARKS[mk]||0;
-  RIG.coatMat.userData.markCol.set((br&&br[7]&&br[7].markCol)||'#f2ece0');
+  RIG.coatMat.userData.markCol.set(markColOf(h));
   RIG.coatMat.userData.seed=((h&&h.id)||0)%97;
   if(RIG.coatMat.userData.shader){const u3=RIG.coatMat.userData.shader.uniforms;
    u3.uMark.value=RIG.coatMat.userData.mark; u3.uMarkCol.value.copy(RIG.coatMat.userData.markCol);
@@ -4964,7 +5046,7 @@ let breedRequest=0;
 function breedSeat(rig=RIG){
  return BREED_MODELS.mountPoint(rig,rig.profile?.anchors?.saddle)||new THREE.Vector3(0,1.39,-.30);
 }
-function riderSeat(){const seat=breedSeat();return {y:seat.y+.18,z:seat.z+.02};}
+function riderSeat(){const seat=breedSeat(),scale=player.mesh?.scale.x||1;return {y:seat.y+.18/scale,z:seat.z+.02/scale};}
 async function requestPlayerBreed(breed){
  const ticket=++breedRequest;RIG.requestedBreed=breed;RIG.loadingBreed=true;
  let asset;
@@ -5065,8 +5147,45 @@ function buildSaddle(style){
    each frame it takes that bone's rotation-from-bind-pose (walking the chain up to the rig
    root so the neck's nod is included) and the bone's current position, so it moves with
    every nod and toss rather than hanging in the air where the head used to be. */
+// Fit leather to each sculpt's actual poll and muzzle. Every point is relative
+// to its head bone, so the complete bridle follows the neck and head animation.
+function buildBreedBridle(rig){
+ const A=rig.profile.anchors,point=name=>BREED_MODELS.mountPoint(rig,A[name]);
+ const head=point('head'),muzzle=point('muzzle'),poll=point('poll');
+ const eyes=(A.eyes||[]).map(p=>BREED_MODELS.mountPoint(rig,p));
+ const nostrils=(A.nostrils||[]).map(p=>BREED_MODELS.mountPoint(rig,p));
+ const right=eyes.length===2?eyes[0].clone().sub(eyes[1]).normalize():new THREE.Vector3(1,0,0);
+ const face=poll.clone().sub(muzzle).normalize(),front=new THREE.Vector3().crossVectors(right,face).normalize();
+ const width=eyes.length===2?eyes[0].distanceTo(eyes[1]):.2;
+ const noseWidth=nostrils.length===2?nostrils[0].distanceTo(nostrils[1]):width*.7;
+ const g=new THREE.Group(),leather=new THREE.MeshStandardMaterial({color:0x38271c,roughness:.7});
+ const iron=new THREE.MeshStandardMaterial({color:0xb8bcc2,metalness:.75,roughness:.3});
+ const gold=new THREE.MeshStandardMaterial({color:0xd8b24a,metalness:.7,roughness:.35});
+ const addCurve=(pts,r,mat,closed=false)=>{const curve=new THREE.CatmullRomCurve3(pts.map(v=>v.clone().sub(head)),closed);const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,closed?36:12,r,5,closed),mat);mesh.castShadow=true;g.add(mesh);};
+ const nose=muzzle.clone().lerp(poll,.19),crown=poll.clone().lerp(muzzle,.15);
+ const ring=(center,w,d)=>Array.from({length:32},(_,i)=>center.clone().addScaledVector(right,Math.cos(i/32*Math.PI*2)*w).addScaledVector(front,Math.sin(i/32*Math.PI*2)*d));
+ addCurve(ring(nose,noseWidth*.65,.07*rig.fitScale),.009,leather,true);
+ addCurve(ring(crown,width*.57,.09*rig.fitScale),.009,leather,true);
+ const bitPoints=[];
+ for(const sign of[-1,1]){
+  const bit=nose.clone().addScaledVector(right,sign*noseWidth*.7).addScaledVector(face,-.055);
+  bitPoints.push(bit);
+  const cheek=crown.clone().addScaledVector(right,sign*width*.57);
+  addCurve([cheek,cheek.clone().lerp(bit,.5).addScaledVector(front,.025),bit],.009,leather);
+  const r=new THREE.Mesh(new THREE.TorusGeometry(.025,.005,6,18),iron);r.position.copy(bit).sub(head);r.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),right);g.add(r);
+ }
+ g.position.copy(head);g.userData.gold=gold;g.userData.modelKey=rig.key||rig.modelKey;g.userData.bitOffsets=bitPoints.map(p=>p.sub(head));
+ const q=new THREE.Quaternion(),rest=new THREE.Quaternion(),rootQ=new THREE.Quaternion(),position=new THREE.Vector3(),chain=[];
+ g.userData.follow=(hb,bones,restQ,root,mount)=>{
+  hb.getWorldPosition(position);mount.worldToLocal(position);chain.length=0;let b=hb;while(b&&b!==root){chain.push(b);b=b.parent;}
+  q.identity();rest.identity();for(let i=chain.length-1;i>=0;i--){const bone=chain[i],k=bones.indexOf(bone);q.multiply(bone.quaternion);rest.multiply(k>=0?restQ[k]:bone.quaternion);}
+  q.multiply(rest.invert());rootQ.copy(root.quaternion);q.premultiply(rootQ).multiply(rootQ.invert());g.position.copy(position);g.quaternion.copy(q);
+ };
+ return g;
+}
 const BRIDLE_HEAD0=[-0.145,1.424,0.995];   // head bone at rest, mount space
 function buildBridle(dragon,rig=RIG){
+ if(!dragon&&rig.profile?.anchors?.muzzle)return buildBreedBridle(rig);
  const g=new THREE.Group();
  const strap=new THREE.MeshStandardMaterial({color:0x3a2616,roughness:0.55,metalness:0.05});
  const iron=new THREE.MeshStandardMaterial({color:0xb8bcc2,roughness:0.35,metalness:0.7});
@@ -5144,7 +5263,7 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
  if(player.rider&&player.rider.g){                       // articulated procedural rider sits the saddle
   player.rider.g.visible=true;
   player.rider.g.traverse(o=>{if(o.isMesh)o.visible=true;});
-  const seat=riderSeat();player.rider.g.position.set(0,seat.y,seat.z);
+  const seat=riderSeat();player.rider.g.position.set(0,seat.y,seat.z);player.rider.g.scale.setScalar(1/player.mesh.scale.x);
  }
  if(!TACK.bitL){TACK.bitL=new THREE.Object3D();TACK.bitL.position.set(0.13,1.34,1.0);
   TACK.bitR=new THREE.Object3D();TACK.bitR.position.set(-0.13,1.34,1.0);}   // rein anchors at the gen horse's mouth corners
@@ -5197,7 +5316,7 @@ function trackHead(){
  }
  RIG.headBone.getWorldPosition(_hv); player.mesh.worldToLocal(_hv);
  if(TACK.bridle)TACK.bridle.userData.follow(RIG.headBone,RIG.bones,RIG.restQ,RIG.scene,player.mesh);
- if(TACK.bitL){TACK.bitL.position.set(_hv.x+0.085,_hv.y-0.055,_hv.z+0.05);TACK.bitR.position.set(_hv.x-0.085,_hv.y-0.055,_hv.z+0.05);}
+ if(TACK.bitL){const offsets=TACK.bridle?.userData.bitOffsets;if(offsets){TACK.bitL.position.copy(offsets[0]).applyQuaternion(TACK.bridle.quaternion).add(_hv);TACK.bitR.position.copy(offsets[1]).applyQuaternion(TACK.bridle.quaternion).add(_hv);}else{TACK.bitL.position.set(_hv.x+0.085,_hv.y-0.055,_hv.z+0.05);TACK.bitR.position.set(_hv.x-0.085,_hv.y-0.055,_hv.z+0.05);}}
 }
 TACK.saddle=buildSaddle();   // stylized procedural English saddle; attached by attachTack() once player exists
 // pond — Loon Lake earns its name
@@ -6832,7 +6951,7 @@ function nameSprite(text){
 /* Build comes off the breed table now. A Shetland should not be the size of a Shire, and
    with two dozen breeds a chain of special cases was never going to hold. */
 const horseScale=h=>{
- const profile=BREED_MODELS.profile(h.breed);if(profile?.withersM)return profile.withersM/1.52*(h.foal?.65:1);
+ const profile=BREED_MODELS.profile(h.breed);if(profile?.withersM)return profile.withersM/1.45*(h.foal?.65:1);
  if(h.foal)return 0.65;
  try{ const b=BREEDS3.find(x=>x[0]===h.breed); return (b&&b[7]&&b[7].size)||1; }
  catch(e){ return 1; }        // called before the breed table exists: full size will do
@@ -8157,6 +8276,7 @@ function buyBundle3(k){
 function weekKey(){const d=new Date();const o=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-'+Math.floor((d-o)/864e5/7);}
 function gearRow(it,h,equippedHere){
  const b=gearBonus(it), bt=Object.keys(b).map(k=>'+'+b[k]+' '+STAT_LBL[k].slice(STAT_LBL[k].indexOf(' ')+1)).join(', ');
+ const _set=gearSet(it);
  const dot='<span style="flex:none;width:14px;height:14px;border-radius:50%;background:'+RAR_COL[it.rarity]+'"></span>';
  const worn=h&&h.gear&&h.gear[it.slot]===it.id;
  let btns='';
@@ -8182,6 +8302,15 @@ function tackLockerHtml(s){
  const spare=inv.filter(it=>!(h&&h.gear&&h.gear[it.slot]===it.id));
  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">Locker · '+spare.length+' spare piece'+(spare.length===1?'':'s')+'</div>';
  html+=spare.length?spare.sort((a,b)=>RARITIES.indexOf(b.rarity)-RARITIES.indexOf(a.rarity)).map(it=>gearRow(it,h,false)).join(''):'<div style="font-size:11px;color:#b8a888">Open a chest or order a plain piece, then put it on.</div>';
+ /* what the matching pieces are doing for this horse */
+ {const sb=setBonus(h), counts=(sb&&sb._counts)||{};
+  const rows=Object.keys(counts).map(st=>{
+   const c=counts[st], def=TACK_SETS[st], on=c>=4?'four':c>=2?'two':null;
+   const gain=on?Object.keys(def[on]).filter(k=>def[on][k]).map(k=>'+'+def[on][k]+' '+STAT_LBL[k].slice(STAT_LBL[k].indexOf(' ')+1)).join(', '):'';
+   return '<div class="evrow"><b>'+st+' set '+c+'/4</b><span>'+(on?gain+' — '+def.blurb:'wear 2 for a bonus')+'</span></div>';
+  });
+  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">✨ Tack sets</div>'
+   +(rows.length?rows.join(''):'<div style="font-size:11px;color:#b8a888">Matching Epic and Legendary pieces — Starlit, Storm, Canyon, Hollowpeak, Kestrel, Aurora, Meadowlark, Champion — pay a bonus at 2 and again at 4.</div>');}
  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🐎 Saddle style</div><div class="crow" style="gap:6px"><button data-tk="style:english" '+((h&&h.saddleStyle)!=='western'?'class="claimBtn"':'')+'>🏇 English</button><button data-tk="style:western" '+((h&&h.saddleStyle)==='western'?'class="claimBtn"':'')+'>🤠 Western</button></div>';
  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🎨 Saddle paint · 150🪙</div><div class="crow" style="gap:6px;flex-wrap:wrap">'
   +TACKS3.map(tk=>'<button data-buyt="'+tk[0]+'" title="'+tk[1]+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+tk[0]+';vertical-align:middle"></span> '+tk[1]+'</button>').join('')
@@ -8260,7 +8389,9 @@ function breed3(){
   const wingChild=!!(a.wings||b.wings);          // 🪽 wings pass down every generation
  const dragChild=wingChild&&!!(a.dragon||b.dragon);   // and a dragon's are dragon's wings
   const childCoat=a.coat||b.coat||null;
-  s.horses.push({id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:wingChild?(a.wings?a.breed:b.breed):(Math.random()<0.5?a.breed:b.breed),colors:{body:blendHex(a.colors.body,b.colors.body),mane:blendHex(a.colors.mane,b.colors.mane)},horn:(a.horn||b.horn)&&Math.random()<0.6,rainbow:(a.rainbow||b.rainbow)&&Math.random()<0.5,wings:wingChild,dragon:dragChild,coat:childCoat,ability:a.ability||b.ability||(wingChild?'fly':null),glow:!!(a.glow||b.glow),stats:{speed:avg('speed'),stamina:avg('stamina'),jump:avg('jump'),accel:avg('accel'),agility:avg('agility')},sxp:{},level:1,xp:0,bond:30,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null});
+  const childMark=inheritMark(a,b);                  // patterns run in families now
+  s.horses.push({mark:childMark.mark,markCol:childMark.col||undefined,
+   id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:wingChild?(a.wings?a.breed:b.breed):(Math.random()<0.5?a.breed:b.breed),colors:{body:blendHex(a.colors.body,b.colors.body),mane:blendHex(a.colors.mane,b.colors.mane)},horn:(a.horn||b.horn)&&Math.random()<0.6,rainbow:(a.rainbow||b.rainbow)&&Math.random()<0.5,wings:wingChild,dragon:dragChild,coat:childCoat,ability:a.ability||b.ability||(wingChild?'fly':null),glow:!!(a.glow||b.glow),stats:{speed:avg('speed'),stamina:avg('stamina'),jump:avg('jump'),accel:avg('accel'),agility:avg('agility')},sxp:{},level:1,xp:0,bond:30,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null});
   msg='A foal was born: '+s.horses[s.horses.length-1].name+'! 🍼'+(wingChild?' It has its parent\'s wings! 🪽':'')+' Watch it grow in the pasture!';
   ok=true;
  });
@@ -8578,7 +8709,7 @@ function remoteUpdate(m){
    const br=buildBridle(null,rrig); parts.group.add(br); r_bridle=br;
    // The rider was still sitting where the PROCEDURAL horse's back was, which is
    // higher and further forward than the rig's — that is the "floating up high".
-   const seat=breedSeat(rrig);rider.g.position.set(0,seat.y+.18,seat.z+.02);parts.group.scale.setScalar(rrig.profile.withersM?rrig.profile.withersM/1.52:1);
+   const seat=breedSeat(rrig);rider.g.position.set(0,seat.y+.18,seat.z+.02);parts.group.scale.setScalar(rrig.profile.withersM?rrig.profile.withersM/1.45:1);
   }
   const nm=String(m.n||'Rider').slice(0,14);
   const tag=nameSprite((isFriend(nm)?'💚':'🌐')+nm);
@@ -8635,8 +8766,8 @@ function netTick(dt,t){
   }
   if(r.rig){
    // the good horse: same gait code the player's mount runs
-   r.rig.phase+=rigPhaseStep(r.sp,true,dt);
-   poseRigBones(r.rig.bones,r.rig.phase,r.sp,true,0,t,dt);
+   r.rig.phase+=rigPhaseStep(r.sp,true,dt,r.parts.group.scale.x);
+   poseRigBones(r.rig.bones,r.rig.phase,r.sp,true,0,t,dt);r.rig.hair?.update?.(t,r.sp);
    if(r.bridle)r.bridle.userData.follow(r.rig.bones[RIG.headIdx==null?6:RIG.headIdx],r.rig.bones,RIG.restQ,r.rig.scene,r.parts.group);
   }
   r.phase+=dt*(2.2+r.sp*1.9);
@@ -9406,6 +9537,7 @@ function renderStable(){
  const s=freshSave();if(!s)return;
  const p=$('stablePanel');
  p.innerHTML='<div class="ph">🐎 Your Stable <span style="color:#8c7a63;font-size:13px;font-weight:600">'+s.horses.length+' horses</span><button data-st="close" style="margin-left:auto">✖</button></div>'
+ +'<div style="padding:10px 18px"><a href="breeds.html" target="_blank" rel="noopener" style="color:#45654e;font-weight:700">Explore all breed models ↗</a></div>'
  +s.horses.map((h,i)=>{
   const hearts=Math.max(0,Math.min(5,Math.round((h.bond||0)/20)));
   const low=h.needs&&Object.values(h.needs).some(v=>v<35);
@@ -9718,11 +9850,13 @@ function breedWithRider(name){
   const st=()=>2+Math.floor(Math.random()*3);
   const wingChild=!!(mine.wings||r.wings);   // 🪽 wings carry across clubs & generations
   const childCoat=mine.coat||r.coat||null;
+  const childMark=inheritMark(mine,r);
   const foal={id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],
    breed:wingChild?(mine.wings?mine.breed:(r.breed||mine.breed)):((Math.random()<0.5&&r.breed)?r.breed:mine.breed),
    colors:{body:blendHex(mine.colors.body,r.colors.body),mane:blendHex(mine.colors.mane,r.colors.mane)},
    horn:mine.horn&&Math.random()<0.4,rainbow:false,wings:wingChild,dragon:wingChild&&!!mine.dragon,
-   coat:childCoat,ability:mine.ability||(wingChild?'fly':null),glow:!!mine.glow||!!childCoat,
+   coat:childCoat,mark:childMark.mark,markCol:childMark.col||undefined,
+   ability:mine.ability||(wingChild?'fly':null),glow:!!mine.glow||!!childCoat,
    stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},sxp:{},level:1,xp:0,bond:30,
    needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null};
   s.horses.push(foal);
@@ -10572,7 +10706,7 @@ function tick(stepSeconds){
   animateHorse(a.parts,a.phase,resting?0.05:((a.wsp||1.2)>3.5?0.72:0.42),(a.wsp||1.2)>3.5?GAITS.gallop:GAITS.walk,true,t,a.graze,dt);
   {const hh=myHorses[a.idx]; const bd=hh&&BREEDS3.find(b=>b[0]===hh.breed);
    dressWithRig(a,a.parts,hh&&hh.colors,{breed:hh?.breed,foal:hh?.foal,tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,dragon:hh&&hh.dragon,mine:true,
-    mark:bd&&bd[7]&&bd[7].mark, markCol:bd&&bd[7]&&bd[7].markCol, seed:(hh&&hh.id)||0}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
+    mark:markOf(hh), markCol:markColOf(hh), seed:(hh&&hh.id)||0}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
    const el=dragonElement(hh);                       // a dragon in the pasture breathes now and then
    if(el){ a.brT=(a.brT==null?3+Math.random()*9:a.brT)-dt;
     if(a.brT<0){ a.brOn=0.85; a.brT=7+Math.random()*11; }
@@ -10726,7 +10860,7 @@ function tick(stepSeconds){
   }
   v.phase+=dt*7.5;
   animateHorse(v.parts,v.phase,0.55,GAITS.trot,true,t,0);
-  dressWithRig(v,v.parts,v.colors,{saddle:true,keep:[v.rider&&v.rider.g]}); tickRig(v,3.4,dt,t,0); if(v.rig&&v.rider)v.rider.g.position.set(0,RID2_Y+Math.max(0,Math.sin(v.phase))*0.04,RID2_Z);
+  dressWithRig(v,v.parts,v.colors,{saddle:true,keep:[v.rider&&v.rider.g]}); tickRig(v,3.4,dt,t,0); if(v.rig&&v.rider){const seat=breedSeat(v.rig);v.rider.g.position.set(0,seat.y+.18+Math.max(0,Math.sin(v.phase))*.04,seat.z+.02);}
   v.parts.group.position.set(v.pos.x,groundH(v.pos.x,v.pos.z),v.pos.z);
   v.parts.group.rotation.y=v.heading;
  }
@@ -10867,7 +11001,7 @@ function tick(stepSeconds){
   n.parts.group.rotation.y=n.heading;
   n.rider.g.rotation.x=0;
   if(n.rider.u)n.rider.u.uLean.value=0.06+0.2*Math.min(1,n.speed/6)+Math.sin(n.phase)*0.03;
-  if(n.rig)n.rider.g.position.set(0,RID2_Y+Math.max(0,Math.sin(n.phase))*0.05,RID2_Z); else n.rider.g.position.y=1.87+Math.max(0,Math.sin(n.phase))*0.06;
+  if(n.rig){const seat=breedSeat(n.rig);n.rider.g.position.set(0,seat.y+.18+Math.max(0,Math.sin(n.phase))*.05,seat.z+.02);} else n.rider.g.position.y=1.87+Math.max(0,Math.sin(n.phase))*0.06;
  }
  for(const gb of gltfBirds){
   gb.m.visible=dayLife;
