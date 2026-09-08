@@ -10469,24 +10469,47 @@ const WILD_BREEDS=[
  {breed:'black',body:'#26262e',mane:'#101015',base:5},
 ];
 let wild3=null,wildTrust=0;
+const COMPASS8=['north','north-east','east','south-east','south','south-west','west','north-west'];
+function compassTo(dx,dz){
+ /* -z is north in this world, the way the camera starts out facing */
+ const a=Math.atan2(dx,-dz), i=Math.round(((a+Math.PI*2)%(Math.PI*2))/(Math.PI/4))%8;
+ return COMPASS8[i];
+}
 function spawnWild3(){
  if(wild3||!save)return;
- try{
-  const s=JSON.parse(localStorage.getItem(SAVE_KEY));
-  if(!s||s.horses.length>=stableCap(s))return;
- }catch(e){return;}
+ /* It used to appear on a ring seventy metres from the WORLD ORIGIN, wherever you happened
+    to be — so it could turn up across the valley on ground you never ride. And wild3 was
+    only ever cleared by taming it, so that one unmet horse blocked every future spawn for
+    the rest of the session. Between them: you would see one wild horse, once, if you were
+    lucky, and then never another. It comes to you now, and it wanders off if you do not
+    come to it. */
+ let px=0,pz=0,ok=false;
+ for(let k=0;k<12;k++){
+  const a=Math.random()*Math.PI*2, r=28+Math.random()*17;
+  const x=player.pos.x+Math.cos(a)*r, z=player.pos.z+Math.sin(a)*r;
+  const gy=groundH(x,z);
+  if(gy>0.35&&Math.hypot(x-20,z-16)>22){px=x;pz=z;ok=true;break;}   // dry land, not in the lake
+ }
+ if(!ok)return;                                    // nowhere sensible right here; try again later
  const wb=WILD_BREEDS[Math.floor(Math.random()*WILD_BREEDS.length)];
  const parts=makeHorse({colors:{body:wb.body,mane:wb.mane},seed:Math.floor(Math.random()*9)});
  const tag=nameSprite('✨ wild');
  tag.position.y=2.7;
  parts.group.add(tag);
- const a=Math.random()*Math.PI*2;
- const px=Math.cos(a)*70,pz=Math.sin(a)*70;
  parts.group.position.set(px,groundH(px,pz),pz);
  scene.add(parts.group);
- wild3={parts,wb,pos:new THREE.Vector3(px,0,pz),heading:Math.random()*6,tx:px,tz:pz,rest:2,phase:0,flee:0};
+ wild3={parts,wb,pos:new THREE.Vector3(px,0,pz),heading:Math.random()*6,tx:px,tz:pz,rest:2,phase:0,flee:0,
+        born:performance.now()};
  wildTrust=0;
- toast('✨ A wild horse roams the meadow — walk up slowly!');
+ toast('✨ A wild horse to the '+compassTo(px-player.pos.x,pz-player.pos.z)+' — walk up slowly!');
+}
+/* Send it home so another can come. */
+function despawnWild(quiet){
+ if(!wild3)return;
+ try{ scene.remove(wild3.parts.group); }catch(e){}
+ wild3=null; wildTrust=0;
+ const hud=$('tameHud'); if(hud)hud.style.display='none';
+ if(!quiet)toast('✨ The wild horse melted back into the trees.');
 }
 function spawnKestrel(){
  if(wild3)return;
@@ -10499,8 +10522,8 @@ function spawnKestrel(){
  wildTrust=0;
  toast('✨ The Silver Kestrel! Walk up slowly — no galloping.');
 }
-setTimeout(spawnWild3,40000);
-setInterval(()=>{if(Math.random()<0.4)spawnWild3();},60000);
+setTimeout(spawnWild3,18000);                       // the first one turns up sooner
+setInterval(()=>{if(Math.random()<0.6)spawnWild3();},45000);
 function tameWild3(){
  const w=wild3;
  const names=['Comet','Misty','River','Blaze','Willow','Storm','Maple','Echo'];
@@ -11156,14 +11179,21 @@ function tick(stepSeconds){
  if(wild3){
   const w=wild3;
   const wd=Math.hypot(player.pos.x-w.pos.x,player.pos.z-w.pos.z);
+  /* Ride away and leave it, or ignore it for five minutes, and it drifts off — which frees
+     the slot so the next one can find you. Without this a single unmet horse blocked them
+     all for good. */
+  if(wd>165||(performance.now()-(w.born||0)>300000&&wd>55)){ despawnWild(wd>165); }
+  else{
   if(wd<14&&sp>4.5)w.flee=2.5;
   if(w.flee>0){
    w.flee-=dt;
    w.heading=Math.atan2(w.pos.x-player.pos.x,w.pos.z-player.pos.z);
    w.pos.x+=Math.sin(w.heading)*7*dt;
    w.pos.z+=Math.cos(w.heading)*7*dt;
-   const wr=Math.hypot(w.pos.x,w.pos.z);
-   if(wr>125){w.pos.x*=125/wr;w.pos.z*=125/wr;}
+   /* it used to be reeled back to a 125 m circle round the ranch, which is a fraction of
+      this valley; let it run, and let the despawn above deal with a stray */
+   const fx=w.pos.x-player.pos.x, fz=w.pos.z-player.pos.z, fr=Math.hypot(fx,fz);
+   if(fr>95){w.pos.x=player.pos.x+fx*95/fr; w.pos.z=player.pos.z+fz*95/fr;}
    wildTrust=Math.max(0,wildTrust-dt*12);
    w.phase+=dt*9;
    animateHorse(w.parts,w.phase,0.9,GAITS.gallop,true,t,0);
@@ -11197,6 +11227,7 @@ function tick(stepSeconds){
     trustShown=true;
     if(wildTrust>=100)tameWild3();
    }
+  }
   }
   if(wild3){
    wild3.parts.group.position.set(wild3.pos.x,groundH(wild3.pos.x,wild3.pos.z),wild3.pos.z);
