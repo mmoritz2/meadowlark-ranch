@@ -100,6 +100,7 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 #ctx{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:7;background:var(--dark);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff8ea;padding:10px 18px;border-radius:14px;font-weight:700;font-size:14px;cursor:pointer;display:none;border:1px solid rgba(255,248,234,.22);box-shadow:var(--sh-2);animation:rise .18s ease}
 #tameHud{position:fixed;top:calc(100px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;background:var(--dark);color:#fff8ea;padding:8px 16px;border-radius:999px;font-weight:700;display:none}
 #roundHud{position:fixed;top:calc(100px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;background:#3d5a2a;color:#f2ffe6;padding:8px 18px;border-radius:999px;font-weight:800;display:none;box-shadow:var(--sh-2)}
+#drillHud{position:fixed;top:calc(100px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;background:#6b3f18;color:#fff3e0;padding:8px 18px;border-radius:999px;font-weight:800;display:none;box-shadow:var(--sh-2)}
 #toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(104px + env(safe-area-inset-top));z-index:20;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
 .toast{background:var(--dark);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff8ea;padding:9px 16px 9px 14px;border-radius:14px;font-size:14px;font-weight:600;border-left:4px solid var(--gold);box-shadow:var(--sh-2);animation:rise .22s ease;max-width:min(560px,92vw)}
 .toast.out{opacity:0;transition:opacity .4s}
@@ -306,6 +307,7 @@ body.touch #stickZone{display:block}
 <div id="ctx"></div>
 <div id="tameHud"></div>
 <div id="roundHud"></div>
+<div id="drillHud"></div>
 <div id="dlg"></div>
 <div id="stablePanel"></div>
 <div id="questPanel"></div>
@@ -7971,6 +7973,99 @@ function tickRoundup(dt,t){
  if(ROUND.ring)ROUND.ring.material.opacity=0.16+0.10*Math.sin(t*3);
  if(ROUND.t<=0||ROUND.penned>=ROUND_N)endRoundup(false);
 }
+/* ===== Training drills ======================================================
+   Supplements let you buy a stat. This lets you earn one: eight cones in a slalom across
+   the arena, taken in order, against a clock. Riding it well is worth about as much as a
+   300 coin supplement; riding it badly is worth a third of that. It costs nothing but the
+   time, which is the point — there should be a way to train a horse that does not go
+   through the shop.
+
+   The cones have to be taken IN ORDER, so it is steering, not speed. */
+const DRILL_N=8, DRILL_TIME=55, DRILL_R=3.6;
+const DRILL={on:false,t:0,idx:0,stat:null,cones:[],grp:null,best:0};
+function drillPoints(){
+ const pts=[];
+ for(let k=0;k<DRILL_N;k++)pts.push([-9.5+k*3.1, 1+(k%2?4.6:-4.6)]);
+ return pts;
+}
+function startDrill(stat){
+ if(DRILL.on||course)return;
+ if(!STAT_LBL[stat])return;
+ const h=myHorses[rideIdx];
+ if(!h){toast('No horse to train.');return;}
+ ensureStats(h);
+ const cap=Math.min(statCap(h),statCeil(h));
+ if(h.stats[stat]>=cap){
+  toast(h.name+"'s "+STAT_LBL[stat].slice(STAT_LBL[stat].indexOf(' ')+1)+' is already at its ceiling for Lv '+(h.level||1)+'.');
+  return;
+ }
+ const g=new THREE.Group();
+ DRILL.cones=[];
+ drillPoints().forEach((pt,i)=>{
+  const cone=new THREE.Mesh(new THREE.ConeGeometry(0.42,1.1,10),
+   new THREE.MeshStandardMaterial({color:0xe8863c,emissive:0xe8863c,emissiveIntensity:0.25,roughness:0.5}));
+  cone.position.set(pt[0],groundH(pt[0],pt[1])+0.55,pt[1]);
+  cone.castShadow=true; g.add(cone);
+  const num=nameSprite(String(i+1)); num.position.set(pt[0],groundH(pt[0],pt[1])+1.9,pt[1]);
+  num.scale.set(0.85,0.3,1); g.add(num);
+  DRILL.cones.push({x:pt[0],z:pt[1],m:cone,num});
+ });
+ scene.add(g);
+ DRILL.grp=g; DRILL.on=true; DRILL.t=DRILL_TIME; DRILL.idx=0; DRILL.stat=stat;
+ $('drillHud').style.display='block';
+ arrow.visible=true;
+ sChime();
+ toast('🎯 '+STAT_LBL[stat]+' drill — the cones in order, 1 to '+DRILL_N+'!');
+}
+function endDrill(done){
+ if(!DRILL.on)return;
+ const cleared=DRILL.idx, left=Math.max(0,DRILL.t);
+ if(DRILL.grp){try{scene.remove(DRILL.grp);}catch(e){}}
+ DRILL.grp=null; DRILL.on=false; DRILL.cones=[];
+ $('drillHud').style.display='none';
+ if(!course)arrow.visible=false;
+ if(!done&&!cleared){toast('🎯 Drill over.');return;}
+ /* every cone is worth something; finishing with time to spare is worth a lot more */
+ const xp=Math.round(cleared*3 + (done?18+left*0.42:0));
+ const st=DRILL.stat, short=STAT_LBL[st].slice(STAT_LBL[st].indexOf(' ')+1);
+ let msg='', lvl=null;
+ syncSave(sv=>{
+  const h=sv.horses[rideIdx]; if(!h)return;
+  ensureStats(h);
+  const cap=Math.min(statCap(h),statCeil(h));
+  h.sxp[st]=(h.sxp[st]||0)+xp;
+  let up=false;
+  while(h.stats[st]<cap&&h.sxp[st]>=statNeed(h.stats[st])){h.sxp[st]-=statNeed(h.stats[st]);h.stats[st]++;up=true;}
+  if(h.stats[st]>=cap)h.sxp[st]=0;
+  if(up){lvl=h.stats[st];addSP(sv,h.stats[st],'drill');}
+  sv.coins+=cleared*8;
+  sv.stats=sv.stats||{}; sv.stats.drills=(sv.stats.drills||0)+(done?1:0);
+  logEarn(sv,cleared*8);
+  msg=(done?'🎯 Clear round! ':'🎯 '+cleared+'/'+DRILL_N+' · ')+'+'+xp+' '+short+' XP'+(up?' · '+STAT_LBL[st]+' → '+h.stats[st]+'!':'');
+ });
+ refreshWallet(); reloadHorses(); passAdd(done?12:4);
+ if(lvl)sChime(); else sCoin();
+ toast(msg);
+}
+function tickDrill(dt,t){
+ if(!DRILL.on)return;
+ if(course){endDrill(false);return;}                      // an event takes priority
+ DRILL.t-=dt;
+ const c=DRILL.cones[DRILL.idx];
+ if(c){
+  arrow.visible=true;
+  arrow.position.set(c.x,groundH(c.x,c.z)+2.9+Math.sin(t*4)*0.16,c.z);
+  c.m.material.emissiveIntensity=0.35+0.35*Math.sin(t*6);
+  if(Math.hypot(player.pos.x-c.x,player.pos.z-c.z)<DRILL_R){
+   DRILL.idx++; sCoin();
+   c.m.material.color.set(0x7fbf5a); c.m.material.emissive.set(0x7fbf5a);
+   if(DRILL.idx>=DRILL_N){endDrill(true);return;}
+  }
+ }
+ const hud=$('drillHud');
+ if(hud)hud.textContent='🎯 '+STAT_LBL[DRILL.stat]+' · cone '+Math.min(DRILL_N,DRILL.idx+1)+'/'+DRILL_N+' · '+Math.max(0,Math.ceil(DRILL.t))+'s';
+ if(DRILL.t<=0)endDrill(false);
+}
 function openEvents(){
  const p=$('eventsPanel');
  if(p.style.display==='flex'){p.style.display='none';return;}
@@ -7993,6 +8088,15 @@ function openEvents(){
      :rr?'<button data-round="go">Start the roundup</button>'
         :'<span style="font-size:12px;color:#8c7a63">Next one in about '+roundupWaitMin(sw)+' min</span>')
    +'</div>';}
+ {const h=myHorses[rideIdx];
+  const cap=h?Math.min(statCap(h),statCeil(h)):10;
+  html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🎯 Training drills</b>'
+   +'<span style="width:100%;font-size:11px;color:#8c7a63">Eight cones in a slalom, in order, against the clock. A clear round is worth about what a 300🪙 supplement is — but it costs nothing except riding it well. Pick what to train'+(h?' on '+h.name:'')+':</span>'
+   +'<span style="width:100%;display:flex;gap:5px;flex-wrap:wrap">'+STAT_KEYS.map(k=>{
+     const at=h&&h.stats?h.stats[k]:0, maxed=at>=cap;
+     return maxed?'<span style="font-size:11px;color:#b8a98a">'+STAT_LBL[k]+' maxed</span>'
+      :'<button data-drill="'+k+'" style="font-size:11px;padding:3px 8px">'+STAT_LBL[k]+' '+at+'/'+cap+'</button>';
+    }).join('')+'</span></div>';}
  html+=EVENTS3.map((ev,i)=>{
   const won=tr[ev.id],ok=lvl>=ev.lvl, isF=featIds.has(ev.id), r=rb[ev.id]||0, wr=wk.rib[ev.id]||0;
   return '<div class="evrow'+(isF?' done':'')+'">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b>'+(isF?' <span class="badge">FEATURED</span>':'')+'<span>'+ev.town+' · '+(ev.dressage?'🎽 dressage · '+DRESSAGE_TESTS[ev.id].length+' figures'+(sw.bestScore&&sw.bestScore[ev.id]?' · best '+Math.round(sw.bestScore[ev.id]*100)+'%':''):ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps')+' · Lv '+ev.lvl+(r?' · '+'🎀'.repeat(r):'')+(isF&&wr<4?' · '+wr+'/4 this week':'')+'</span>'+
@@ -8001,6 +8105,7 @@ function openEvents(){
  p.innerHTML=html;
  p.style.display='flex';
  p.querySelectorAll('button[data-round]').forEach(b=>{b.onclick=()=>{p.style.display='none';startRoundup();};});
+ p.querySelectorAll('button[data-drill]').forEach(b=>{b.onclick=()=>{p.style.display='none';startDrill(b.dataset.drill);};});
  p.querySelectorAll('button[data-ev]').forEach(b=>{b.onclick=()=>startCourse(EVENTS3[+b.dataset.ev]);});
  p.querySelectorAll('button[data-wk]').forEach(b=>{b.onclick=()=>claimWeekly(+b.dataset.wk);});
  $('evClose').onclick=()=>{p.style.display='none';};
@@ -11692,6 +11797,7 @@ function tick(stepSeconds){
  tickSummon(dt);
  tickRoundup(dt,t);
  tickBarn(dt,t);
+ tickDrill(dt,t);
  for(const cl of clouds){
   cl.position.x+=dt*0.7;
   if(cl.position.x>520)cl.position.x=-520;
