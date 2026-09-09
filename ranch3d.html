@@ -7199,6 +7199,76 @@ function updateRein(mesh,handObj,bitObj){
 const player={mesh:null,parts:null,rider:null,pos:new THREE.Vector3(-7,0,10),heading:Math.PI,speed:0,vy:0,y:0,phase:0,amp:0,lastStep:0,alt:false,earT:2,earA:0};
 let nearMount=-1,mountHintT=0,lowNeedT=0;
 let herd=[];
+/* ===== The barn row =========================================================
+   Turning a horse out to the pasture made it appear in the field; bringing it IN made it
+   vanish. "In the barn" was a word in a panel and nothing else, which is a poor answer to
+   "I want to see each horse".
+
+   So there is a barn row along the east fence: open stalls with a nameplate over each, and
+   the horses that are not out to grass are standing in them. Six of them are drawn — the
+   pasture already draws eight, and this game runs on a machine watching over Remote
+   Desktop, so sixteen animated horses is not a trade worth making. Anything past six is
+   listed in the Stable panel and is genuinely just out of sight down the row. */
+const BARN_ROW={x:-30.5,z0:-31.5,step:3.3,n:6};
+let barnHorses=[], barnBuilt=null, barnPlates=[];
+function buildBarnRow(){
+ if(barnBuilt)return barnBuilt;
+ const g=new THREE.Group();
+ for(let k=0;k<BARN_ROW.n;k++){
+  const z=BARN_ROW.z0+k*BARN_ROW.step;
+  /* a back wall, two dividers and a little roof: an open-fronted stall facing the field */
+  box(0.16,2.3,3.2,'#e2d3ae',0.9,1.15,z,g);                 // back
+  box(1.9,0.14,0.16,'#9a6a3a',0,2.25,z-1.6,g);              // divider rails
+  box(1.9,0.14,0.16,'#9a6a3a',0,2.25,z+1.6,g);
+  box(0.16,1.5,0.16,'#9a6a3a',-0.9,0.75,z-1.6,g);
+  box(0.16,1.5,0.16,'#9a6a3a',-0.9,0.75,z+1.6,g);
+  const roof=box(2.6,0.14,3.5,'#a8623a',0.1,2.55,z,g); roof.rotation.z=-0.12;
+  barnBuilt=barnBuilt||{g,plates:[]};
+ }
+ g.position.set(BARN_ROW.x,groundH(BARN_ROW.x,BARN_ROW.z0),0);
+ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+ scene.add(g);
+ barnBuilt.g=g;
+ const sign=nameSprite('🏠 The barn'); sign.position.set(0,3.4,BARN_ROW.z0+BARN_ROW.step*2.5); g.add(sign);
+ return barnBuilt;
+}
+/* Put the horses that are NOT out to grass into the stalls. */
+function refreshBarn(){
+ for(const b of barnHorses){ try{scene.remove(b.parts.group);}catch(e){} }
+ for(const pl of barnPlates){ try{pl.parent&&pl.parent.remove(pl);}catch(e){} }
+ barnHorses=[]; barnPlates=[];
+ buildBarnRow();
+ const inside=[];
+ for(let i=0;i<myHorses.length;i++){
+  if(i===rideIdx)continue;
+  if(myHorses[i].out)continue;
+  inside.push(i);
+ }
+ for(let k=0;k<BARN_ROW.n;k++){
+  const idx=inside[k];
+  if(idx===undefined)continue;
+  const hh=myHorses[idx];
+  const z=BARN_ROW.z0+k*BARN_ROW.step;
+  /* the plate is text baked into a texture, so a new name means a new sprite */
+  const plate=nameSprite(hh.name);
+  plate.position.set(-0.2,2.05,z); plate.scale.set(1.6,0.45,1);
+  barnBuilt.g.add(plate); barnPlates.push(plate);
+  const parts=makeHorse({colors:hh.colors,horn:hh.horn,wings:hh.wings,dragon:hh.dragon,
+   coat:hh.coat,tack:null,seed:hh.id||(k+3),breed:hh.breed});
+  parts.group.scale.setScalar(horseScale(hh));
+  parts.group.position.set(BARN_ROW.x-0.1,groundH(BARN_ROW.x,z),z);
+  parts.group.rotation.y=-Math.PI/2;                        // looking out of the stall
+  scene.add(parts.group);
+  barnHorses.push({parts,idx,phase:Math.random()*6,z});
+ }
+ if(barnBuilt&&barnBuilt.g)barnBuilt.g.visible=true;
+}
+function tickBarn(dt,t){
+ for(const b of barnHorses){
+  b.phase+=dt*0.9;
+  animateHorse(b.parts,b.phase,0.05,GAITS.walk,true,t,1);   // standing, head down now and then
+ }
+}
 function rebuildAll(){
  if(player.mesh)scene.remove(player.mesh);
  for(const a of herd){scene.remove(a.parts.group);if(a.rig){a.rig.hair?.dispose?.();a.rig.skin?.material?.dispose();worldRigCount=Math.max(0,worldRigCount-1);}}
@@ -7226,6 +7296,7 @@ function rebuildAll(){
  if(!h.wings&&player.flying)player.flying=false;
  if(h.wings&&!window._flyHint){window._flyHint=1;setTimeout(()=>{try{toast('🪽 Tap 🪽 Fly (or Space) to take off!');}catch(e){}},800);}
  let n=0;
+ try{refreshBarn();}catch(e){}                 // whoever is not out to grass is in a stall
  const _sv=freshSave(); const _pm=_sv?pastureMax(_sv):PASTURE_BASE;
  for(let i=0;i<myHorses.length&&n<_pm;i++){
   if(i===rideIdx)continue;
@@ -11620,6 +11691,7 @@ function tick(stepSeconds){
  tickFalls(dt,t);
  tickSummon(dt);
  tickRoundup(dt,t);
+ tickBarn(dt,t);
  for(const cl of clouds){
   cl.position.x+=dt*0.7;
   if(cl.position.x>520)cl.position.x=-520;
