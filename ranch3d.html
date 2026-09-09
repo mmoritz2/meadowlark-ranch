@@ -8690,6 +8690,44 @@ function buyMarket(i){
  toast(msg);
  openShop('market');
 }
+/* ===== The Grooming Parlour =================================================
+   A horse's colours were decided the moment you got it and could never be touched again.
+   Tack could be painted, a tail could be dyed once breed mastery reached two — but the
+   horse itself was fixed, which is a strange thing in a game that is mostly about horses
+   being yours.
+
+   Four palettes: coat, mane, tail and the colour its markings are drawn in. 120 coins a
+   change, on the horse you are sitting on, and it takes effect the moment you pick. */
+const DYE_BODY=[['#8a5a2b','Bay'],['#5a3a24','Liver'],['#26262e','Black'],['#c9a24a','Palomino'],
+ ['#d8cdbb','Grey'],['#9c4f23','Chestnut'],['#c2a06a','Buckskin'],['#efece4','Cream'],
+ ['#6a4a32','Seal'],['#a8adb4','Steel']];
+const DYE_HAIR=[['#332214','Black'],['#f4e6c5','Flaxen'],['#d8dde3','Silver'],['#8a4a25','Chestnut'],
+ ['#e8b4c8','Rose'],['#3b6fd6','Lake blue'],['#5a3a24','Liver'],['#efe6d2','Cream']];
+const DYE_MARK=[['#f2ece0','White'],['#efe0c0','Cream'],['#d9dde3','Silver'],['#ffd9a0','Gold'],
+ ['#f0c8d4','Rose'],['#3a2a1e','Dark']];
+const DYE_COST=120;
+function dyeHorse(what,val){
+ let ok=false,msg='';
+ syncSave(sv=>{
+  const h=sv.horses[rideIdx];
+  if(!h){msg='No horse to groom.';return;}
+  if(sv.coins<DYE_COST){msg='A change costs '+DYE_COST+'🪙.';return;}
+  sv.coins-=DYE_COST;
+  h.colors=h.colors||{};
+  if(what==='body')h.colors.body=val;
+  else if(what==='mane')h.colors.mane=val;
+  else if(what==='tail')h.tailCol=(val==='match')?null:val;
+  else if(what==='mark')h.markCol=val;
+  ok=true; msg=h.name+' looks lovely.';
+ });
+ if(ok){
+  refreshWallet(); reloadHorses();
+  try{applyCoat();}catch(e){}
+  try{hairColour();}catch(e){}
+  sChime(); openShop('style');
+ }
+ toast((ok?'🎨 ':'')+msg);
+}
 function openShop(tab){
  if(tab)shopTab3=tab;
  const p=$('shopPanel');
@@ -8697,9 +8735,24 @@ function openShop(tab){
  hidePanels();
  const s=freshSave();if(!s)return;
  let html='<div class="crow" style="gap:6px">'
- +['horses','market','pets','food','tack','breed','outfit'].map(tb=>'<button class="tabbtn '+(shopTab3===tb?'on':'')+'" data-shoptab="'+tb+'">'+({horses:'🐴 Horses',market:'🤝 Market',pets:'🐾 Pets',food:'🧺 Food',tack:'🐎 Tack',breed:'💞 Breed',outfit:'🧢 Outfit'})[tb]+'</button>').join('')
+ +['horses','market','pets','food','tack','style','breed','outfit'].map(tb=>'<button class="tabbtn '+(shopTab3===tb?'on':'')+'" data-shoptab="'+tb+'">'+({horses:'🐴 Horses',market:'🤝 Market',pets:'🐾 Pets',food:'🧺 Food',tack:'🐎 Tack',style:'🎨 Style',breed:'💞 Breed',outfit:'🧢 Outfit'})[tb]+'</button>').join('')
  +'<button data-shoptab="close" style="margin-left:auto">✖</button></div>';
- if(shopTab3==='market'){
+ if(shopTab3==='style'){
+  const h=s.horses[rideIdx];
+  const sw=(what,list,cur)=>'<div class="crow" style="gap:5px;flex-wrap:wrap"><span class="lbl">'+({body:'🐴 Coat',mane:'💇 Mane',tail:'🎀 Tail',mark:'✨ Markings'})[what]+'</span>'
+   +list.map(([c,nm])=>'<button data-dye="'+what+':'+c+'" title="'+nm+'"'+(cur===c?' class="claimBtn"':'')
+     +' style="width:26px;height:26px;border-radius:50%;padding:0;background:'+c+'"></button>').join('')
+   +(what==='tail'?'<button data-dye="tail:match" title="Match the mane"'+(h&&!h.tailCol?' class="claimBtn"':'')+' style="font-size:11px;padding:3px 8px">match</button>':'')
+   +'</div>';
+  html+='<div style="font-size:12px;color:#8c7a63;margin:6px 0 2px">🎨 Grooming '+(h?h.name:'your horse')+' · '+DYE_COST+'🪙 a change</div>'
+   +(h?sw('body',DYE_BODY,h.colors&&h.colors.body)
+       +sw('mane',DYE_HAIR,h.colors&&h.colors.mane)
+       +sw('tail',DYE_HAIR,h.tailCol)
+       +sw('mark',DYE_MARK,markColOf(h))
+     :'<span style="font-size:12px;color:#8c7a63">No horse to groom.</span>')
+   +'<div style="font-size:11px;color:#8c7a63;margin-top:6px">The markings colour is the white of a pinto, the spots of an Appaloosa, the ticking of a roan — whatever pattern your horse\'s breed wears.</div>';
+ }
+ else if(shopTab3==='market'){
   const stock=marketStock(), sold=marketSold(s);
   html+='<div style="font-size:12px;color:#8c7a63;margin:6px 0 2px">🤝 For sale today · a new four tomorrow</div>';
   html+=stock.map(r=>{
@@ -8786,6 +8839,7 @@ function openShop(tab){
  p.querySelectorAll('[data-buyh]').forEach(b=>{b.onclick=()=>buyHorse3(+b.dataset.buyh);});
  p.querySelectorAll('[data-mktbuy]').forEach(b=>{b.onclick=()=>buyMarket(+b.dataset.mktbuy);});
  p.querySelectorAll('[data-mktsell]').forEach(b=>{b.onclick=()=>sellHorse3(+b.dataset.mktsell);});
+ p.querySelectorAll('[data-dye]').forEach(b=>{b.onclick=()=>{const [w,v]=b.dataset.dye.split(':');dyeHorse(w,v);};});
  p.querySelectorAll('[data-buypet]').forEach(b=>{b.onclick=()=>{buyPet(b.dataset.buypet);openShop('pets');};});
  p.querySelectorAll('[data-petfollow]').forEach(b=>{b.onclick=()=>{setActivePet(b.dataset.petfollow);openShop('pets');};});
  p.querySelectorAll('[data-buyf]').forEach(b=>{b.onclick=()=>{const[k,n]=b.dataset.buyf.split(':');buyFood3(k,+n);};});
