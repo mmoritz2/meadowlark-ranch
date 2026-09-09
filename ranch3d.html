@@ -101,6 +101,13 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 #tameHud{position:fixed;top:calc(100px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;background:var(--dark);color:#fff8ea;padding:8px 16px;border-radius:999px;font-weight:700;display:none}
 #roundHud{position:fixed;top:calc(100px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;background:#3d5a2a;color:#f2ffe6;padding:8px 18px;border-radius:999px;font-weight:800;display:none;box-shadow:var(--sh-2)}
 #drillHud{position:fixed;top:calc(100px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:7;background:#6b3f18;color:#fff3e0;padding:8px 18px;border-radius:999px;font-weight:800;display:none;box-shadow:var(--sh-2)}
+/* photo mode: the pose bar sits where the dock was, because the dock is hidden */
+#poseBar{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:12;display:none;gap:6px;align-items:center;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.75);border-radius:999px;padding:7px 12px;box-shadow:var(--sh-2);flex-wrap:wrap;max-width:94vw}
+#poseBar .pl{font-size:12px;font-weight:800;color:var(--ink-2);padding:0 4px}
+body.posing #poseBar{display:flex}
+body.posing #dock,body.posing #questTrack,body.posing #statusCard,body.posing #mini,body.posing #hint,body.posing #ctx{display:none!important}
+#shotCount{position:fixed;inset:0;z-index:13;display:none;align-items:center;justify-content:center;pointer-events:none;font-size:150px;font-weight:800;color:#fff;text-shadow:0 6px 40px rgba(0,0,0,.55)}
+#shotCount.on{display:flex}
 #toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(104px + env(safe-area-inset-top));z-index:20;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
 .toast{background:var(--dark);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff8ea;padding:9px 16px 9px 14px;border-radius:14px;font-size:14px;font-weight:600;border-left:4px solid var(--gold);box-shadow:var(--sh-2);animation:rise .22s ease;max-width:min(560px,92vw)}
 .toast.out{opacity:0;transition:opacity .4s}
@@ -266,6 +273,7 @@ body.touch #stickZone{display:block}
  </div>
  <div id="sysBtns">
   <button id="photoBtn" class="ico" title="Save a photo (P)">📷</button>
+  <button id="poseBtn" class="ico" title="Photo mode — pose and self-timer">🎬</button>
   <button id="qualBtn" class="ico" title="Graphics quality">🎚️</button>
   <button id="muteBtn" class="ico" title="Sound">🔊</button>
  </div>
@@ -308,6 +316,17 @@ body.touch #stickZone{display:block}
 <div id="tameHud"></div>
 <div id="roundHud"></div>
 <div id="drillHud"></div>
+<div id="poseBar">
+ <span class="pl">Pose</span>
+ <button data-pose="rear">🦄 Rear</button>
+ <button data-pose="bow">🙇 Bow</button>
+ <button data-pose="liedown">😴 Lie down</button>
+ <button data-pose="nuzzle">💕 Nuzzle</button>
+ <button data-pose="toss">🌀 Toss</button>
+ <button id="shotTimer" class="claimBtn">📸 3…2…1</button>
+ <button id="poseClose">✖</button>
+</div>
+<div id="shotCount"></div>
 <div id="dlg"></div>
 <div id="stablePanel"></div>
 <div id="questPanel"></div>
@@ -7346,7 +7365,8 @@ const npcs=[];
   npcs.push({parts,rider,route,colors:{body:d.body,mane:d.mane},wp:(d.off+1)%route.length,pos:new THREE.Vector3(start[0],0,start[1]),heading:0,phase:Math.random()*6,speed:0});
  }
 }
-$('photoBtn').onclick=()=>{
+/* The shutter, pulled out of the button so the self-timer can pull it too. */
+function takePhoto(){
  composer.render();
  const a=document.createElement('a');
  a.href=renderer.domElement.toDataURL('image/png');
@@ -10131,6 +10151,40 @@ function claimPassTier(i,gold){
    :('🎟️ Tier '+(i+1)+': '+passRewardLabel(got)));
  renderLB();
 }
+/* ===== Photo mode ===========================================================
+   The camera already took a clean picture — the HUD is DOM, and the shot is the WebGL
+   canvas, so it was never in frame. What was missing is everything that makes a photo
+   worth taking: posing the horse, and being able to get out of the saddle-cam long enough
+   to line one up.
+
+   The poses are the emotes the game already has on the number keys. The self-timer runs
+   the same shutter the button does. */
+let posing=false, shotT=null;
+$('photoBtn').onclick=takePhoto;          // rebound: its handler is a named function now
+function setPosing(on){
+ posing=!!on;
+ document.body.classList.toggle('posing',posing);
+ if(!posing&&shotT){clearInterval(shotT);shotT=null;$('shotCount').classList.remove('on');}
+ if(posing)toast('🎬 Photo mode — pose, then 📸 for a three second timer. ✖ to come back.');
+}
+$('poseBtn').onclick=()=>setPosing(!posing);
+$('poseClose').onclick=()=>setPosing(false);
+$('poseBar').querySelectorAll('[data-pose]').forEach(b=>{
+ b.onclick=()=>{ if(!horseEmote(b.dataset.pose))return; };
+});
+$('shotTimer').onclick=()=>{
+ if(shotT)return;
+ let k=3;
+ const el=$('shotCount');
+ el.textContent=String(k); el.classList.add('on');
+ shotT=setInterval(()=>{
+  k--;
+  if(k>0){ el.textContent=String(k); sCoin(); return; }
+  clearInterval(shotT); shotT=null;
+  el.classList.remove('on');
+  takePhoto();
+ },1000);
+};
 $('lbBtn').onclick=openLB;
 ['coinEl','gemEl','keyEl'].forEach(id=>{const e=$(id);if(e&&e.parentElement){e.parentElement.style.cursor='pointer';e.parentElement.title='Money';e.parentElement.onclick=openMoney;}});
 
