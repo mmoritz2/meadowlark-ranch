@@ -1,0 +1,129 @@
+{
+  "id": "percheron",
+  "name": "Percheron",
+  "label": "Percheron",
+  "file": "percheron.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.73,
+  "heightM": 2.1210904121398926,
+  "fitScale": 0.838150289017341,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.6679884548187256,
+        -0.09511391818523407
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.73,
+        0.1343489830692609
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.8235783500769003,
+        1.05863621301308
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.974025521273882,
+        0.9541889033610869
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.6485425053934457,
+        1.2551037286415427
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.9144529977520606,
+        0.6153307763890119
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.412272255149376,
+        -1.1062352329571448
+      ]
+    ],
+    "eyes": [
+      [
+        -0.10649513654877077,
+        1.878023246294135,
+        1.030303505680977
+      ],
+      [
+        0.10649513654877077,
+        1.878023246294135,
+        1.030303505680977
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.07844605322841051,
+        1.6921156500304741,
+        1.2500959286198452
+      ],
+      [
+        0.07844605322841051,
+        1.6921156500304741,
+        1.2500959286198452
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Deep powerful draft frame and broad muscular quarters",
+  "morphology": {
+    "build": "Deep powerful draft frame and broad muscular quarters",
+    "neck": "Thick strong moderately arched neck",
+    "head_face": "Relatively refined broad straight/slight convex head",
+    "ears": "Medium attentive ears",
+    "limbs": "Massive but defined clean bone and joints",
+    "hooves": "Large wide feet",
+    "mane_tail": "Substantial mane and full tail, less than Vanner",
+    "feathering": "None to very slight pastern hair"
+  },
+  "coat": "Steel dapple grey",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "dd990c09640665dad9f390f9fb0426cdb058d919fdf73e66bfa785a3d3b1d463",
+  "bodyGeometrySha256": "a3c685d9b43c34b3aa381cfb9c5f0552af9b9bfecd3f4a8aee59a6832193e56d",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1.25,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.7300000190734863,
+    "groundY": 0.0
+  }
+}

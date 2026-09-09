@@ -357,8 +357,18 @@ export function tuneFoliage({ THREE, material, geometry, species = 'oak' }) {
   const previousCompile = material.onBeforeCompile;
   const previousKey = material.customProgramCacheKey.bind(material);
   const key = previousKey();
+  const albedoMean = new THREE.Color(pine ? '#5b7048' : '#89975e');
   material.onBeforeCompile = function (shader, renderer) {
     previousCompile.call(this, shader, renderer);
+    // The source atlas already has bright veins/needle edges baked into its
+    // colour. Repeating those highlights across a crown makes every twig look
+    // outlined, even at roughness 1. Compress only this texture contrast; retain
+    // the alpha silhouette, canopy vertex shading, and the scene's lighting.
+    shader.uniforms.uFoliageAlbedoMean = {value:albedoMean};
+    shader.fragmentShader = 'uniform vec3 uFoliageAlbedoMean;\n' + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>',
+      THREE.ShaderChunk.map_fragment.replace('diffuseColor *= sampledDiffuseColor;',
+        `float foliageCoverage = smoothstep(0.30, 0.92, sampledDiffuseColor.a);\n sampledDiffuseColor.rgb = mix(uFoliageAlbedoMean, sampledDiffuseColor.rgb, ${pine ? '0.48' : '0.72'} * foliageCoverage);\n diffuseColor *= sampledDiffuseColor;`));
     // Three flips DoubleSide normals away from the light on rear-facing cards.
     // Keep the authored canopy normals on both sides to model diffuse light
     // through thin leaves; this avoids black checkerboarding without emissive foliage.
@@ -373,6 +383,6 @@ export function tuneFoliage({ THREE, material, geometry, species = 'oak' }) {
       'diffuseColor.a *= smoothstep(0.5, 2.6, length(vViewPosition));\n#include <alphatest_fragment>'
     );
   };
-  material.customProgramCacheKey = () => key + '|botanical-foliage-v4';
+  material.customProgramCacheKey = () => key + '|botanical-foliage-v5-' + (pine ? 'needle' : 'leaf');
   material.needsUpdate = true;
 }

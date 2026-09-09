@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Horse study · Star Ranch Fable</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#d8d9d2;color:#22352d;font:14px/1.5 system-ui,sans-serif}canvas{display:block;width:100vw;height:100dvh;touch-action:none}
+    header{position:absolute;top:30px;left:36px;pointer-events:none}header a{pointer-events:auto;color:inherit;text-decoration:none;font-size:13px}.eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-top:28px}h1{font:42px/1.15 Georgia,serif;font-weight:400;margin:7px 0}header p{margin:0;color:#59665c;max-width:390px}
+    .controls{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:6px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:calc(100% - 24px);padding:8px;background:#f2f1e9ee;border:1px solid #ffffff70;box-shadow:0 6px 24px #24392b12;border-radius:15px}
+    button,select{font:inherit;color:inherit;border:1px solid #384c331f;background:transparent;border-radius:8px;padding:9px 13px;cursor:pointer}button:hover{background:#dce3d5}button[aria-pressed=true]{background:#2a4436;color:#f2f2e8;border-color:#2a4436}button:focus-visible,select:focus-visible{outline:2px solid #8c692e;outline-offset:2px}button:disabled{opacity:.45;cursor:default}
+    #status{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);padding:12px 18px;background:#f2f1e9;border-radius:10px}#status:empty{display:none}.hint{position:absolute;right:28px;bottom:103px;font-size:12px;color:#506253}
+    @media(max-width:650px){header{top:18px;left:20px}.eyebrow{margin-top:18px}h1{font-size:30px}header p{font-size:12px;max-width:300px}.controls{bottom:14px;gap:4px}button,select{font-size:12px;padding:8px 10px}.hint{display:none}}
+  </style>
+  <script type="importmap">{"imports":{"three":"./assets/vendor/three/build/three.module.js","three/addons/":"./assets/vendor/three/examples/jsm/"}}</script>
+</head>
+<body>
+  <header><a href="breeds.html?review=studio-20260909&horse=hero">← Breed studio</a><div class="eyebrow">Horse study</div><h1 id="name">Bay sporthorse</h1><p id="description">Explore the gaits, change leads, or slow down a stride.</p></header>
+  <div id="status" role="status">Loading the study…</div><div class="hint">Drag to orbit · Scroll or pinch to zoom</div>
+  <nav class="controls" aria-label="Model inspection">
+    <button id="candidate" aria-pressed="true">New model</button><button id="previous" aria-pressed="false">Previous model</button>
+    <select id="surface" aria-label="Surface"><option value="coat">Natural coat</option><option value="clay">Sculpture</option></select>
+    <select id="motion" aria-label="Movement" hidden><option value="stand">Idle</option><option value="walk">Walk</option><option value="trot">Trot</option><option value="canter">Canter</option><option value="gallop">Gallop</option><option value="jump">Jump</option></select>
+    <select id="lead" aria-label="Canter and gallop lead"><option value="left">Left lead</option><option value="right">Right lead</option></select>
+    <select id="playback" aria-label="Playback speed"><option value="1">Normal speed</option><option value="0.5">Half speed</option><option value="0.25">Quarter speed</option></select>
+    <button id="pause" aria-pressed="false">Pause</button><button id="jump">Jump</button>
+    <button id="side">Side</button><button id="front">Front</button><button id="head">Head</button><button id="turn" aria-pressed="false">Turntable</button>
+  </nav>
+  <script type="module">
+    import * as THREE from 'three';
+    import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+    import {clone} from 'three/addons/utils/SkeletonUtils.js';
+    import {createBreedLibrary} from './assets/breed-models.js?v=equine-v2';
+    import {createBreedGroom} from './assets/horse-groom.js?v=equine-v2';
+    import {createHeroHorseGroom} from './assets/hero-horse-groom.js?v=hero-motion-4';
+    import {finishHeroCoat} from './assets/hero-horse-coat.js?v=hero-review-3';
+    import {createHeroMotion} from './assets/hero-horse-motion.js?v=hero-motion-4';
+    const $=id=>document.getElementById(id);
+    const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);document.body.prepend(renderer.domElement);
+    renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+    renderer.domElement.setAttribute('aria-label','Interactive horse model. Drag to orbit, scroll to zoom.');
+    const scene=new THREE.Scene();scene.background=new THREE.Color('#d8d9d2');scene.fog=new THREE.Fog('#d8d9d2',12,45);
+    const camera=new THREE.PerspectiveCamera(32,innerWidth/innerHeight,.025,70);
+    const target=new THREE.Vector3(0,1,0);let distance=5.8,theta=-.95,phi=1.38,turn=false,view='quarter',selected='candidate',loading=true,ticket=0,model=null,groom=null,manifest=null;
+    const materials=new Map(),clay=new THREE.MeshStandardMaterial({color:0xaaa69b,roughness:.9});let bounds=new THREE.Box3(),headCenter=new THREE.Vector3(0,1.6,.9),height=2,motion=null;
+    scene.add(new THREE.HemisphereLight(0xf4f6ff,0x8b8977,2.2));
+    const sun=new THREE.DirectionalLight(0xfff1df,2.4);sun.position.set(-3,7,5);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-4,right:4,top:4,bottom:-4,near:.5,far:15});sun.shadow.normalBias=.025;sun.shadow.bias=-.00015;scene.add(sun);
+    const fill=new THREE.DirectionalLight(0xe8f0ff,1.15);fill.position.set(4,3,-2);scene.add(fill);
+    // A broad, low-contrast environment keeps the coat from reading as metal.
+    const w=128,h=64,pixels=new Uint8Array(w*h*4);
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){const sky=Math.max(0,Math.cos(y/(h-1)*Math.PI)),box=Math.exp(-((x/w-.2)**2/.025+(y/h-.32)**2/.06)),i=(y*w+x)*4;pixels[i]=Math.min(255,130+sky*65+box*35);pixels[i+1]=Math.min(255,132+sky*65+box*35);pixels[i+2]=Math.min(255,128+sky*70+box*35);pixels[i+3]=255;}
+    const env=new THREE.DataTexture(pixels,w,h);env.colorSpace=THREE.SRGBColorSpace;env.mapping=THREE.EquirectangularReflectionMapping;env.needsUpdate=true;
+    const pmrem=new THREE.PMREMGenerator(renderer),envRT=pmrem.fromEquirectangular(env);scene.environment=envRT.texture;env.dispose();pmrem.dispose();
+    const floor=new THREE.Mesh(new THREE.PlaneGeometry(120,120),new THREE.MeshStandardMaterial({color:0xb4b8aa,roughness:1}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;floor.position.y=-.005;scene.add(floor);
+    const lib=createBreedLibrary({THREE,GLTFLoader,clone});
+    function cameraUpdate(){const lift=Math.max(0,motion?.state.bodyLiftM||0),look=target.clone();look.y+=lift*(view==='head'?1:.52);camera.position.copy(look).add(new THREE.Vector3().setFromSphericalCoords(distance+(view==='head'?0:lift*1.3),phi,theta));camera.lookAt(look);}
+    function frame(kind='quarter'){
+      view=kind;turn=false;$('turn').setAttribute('aria-pressed','false');const portrait=Math.max(1,1.2/camera.aspect);
+      if(kind==='head'){target.copy(headCenter);target.y+=height*.06;distance=height*1.05*portrait;theta=-.78;phi=1.43;}
+      else{target.copy(bounds.getCenter(new THREE.Vector3()));target.y=height*.5;distance=height*2.7*portrait;theta=kind==='front'?0:kind==='side'?-Math.PI/2:-.95;phi=1.44;}
+      cameraUpdate();
+    }
+    function surface(){const sculpture=$('surface').value==='clay';const hair=new Set(groom?.meshes||[]);model?.traverse(o=>{if(!o.isMesh)return;if(hair.has(o)){o.visible=!sculpture;return;}o.material=sculpture?clay:materials.get(o);});}
+    function captureMaterials(){materials.clear();model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=false;materials.set(o,o.material);}});}
+    function releaseModel(){groom?.dispose();if(!model)return;scene.remove(model);if(model.userData.ownsAssets){const geometries=new Set(),ownedMaterials=new Set(),textures=new Set();model.traverse(o=>{if(o.isMesh){geometries.add(o.geometry);const saved=materials.get(o);for(const m of Array.isArray(saved)?saved:[saved])if(m)ownedMaterials.add(m);}});for(const m of ownedMaterials){for(const value of Object.values(m))if(value?.isTexture)textures.add(value);m.dispose();}for(const t of textures)t.dispose();for(const g of geometries)g.dispose();}}
+    async function select(which){
+      const request=++ticket;loading=true;$('status').textContent='Loading the study…';
+      try{
+        let next,nextGroom=null,nextHead,nextMotion=null;
+        if(which==='previous'){
+          const asset=await lib.load('bay');if(request!==ticket)return;const inst=lib.instantiate(asset);next=new THREE.Group();next.add(inst.scene);next.scale.setScalar(inst.profile.withersM/1.45);next.updateMatrixWorld(true);
+          nextGroom=createBreedGroom({THREE,skin:inst.skin,bones:inst.bones,mount:next,profile:{id:'bay',...inst.profile},maneColor:'#241a12',tailColor:'#241a12',seed:'bay'});
+          nextHead=lib.mountPoint(inst,inst.profile.anchors.poll).lerp(lib.mountPoint(inst,inst.profile.anchors.muzzle),.5).multiplyScalar(inst.profile.withersM/1.45);
+        }else{
+          const base=new URL('./assets/models/hero-horse/',location.href),response=await fetch(new URL('manifest.json',base),{cache:'no-store'});if(!response.ok)throw new Error('New horse is still being prepared.');
+          const spec=await response.json();manifest=spec;const manager=new THREE.LoadingManager();manager.setURLModifier(value=>{if(!value.startsWith(base.href))return value;const versioned=new URL(value);versioned.searchParams.set('build',spec.revision||'hero-v1');return versioned.href;});const url=new URL(spec.file||'hero.glb',base);const loaded=await new GLTFLoader(manager).loadAsync(url.href);if(request!==ticket)return;
+          finishHeroCoat({THREE,scene:loaded.scene});next=new THREE.Group();next.add(loaded.scene);if(spec.heroGroom&&spec.anchors){let skin=null,sourceSurface=null;loaded.scene.traverse(o=>{if(o.isMesh&&(!sourceSurface||o.geometry.attributes.position.count>sourceSurface.geometry.attributes.position.count))sourceSurface=o;if(o.isSkinnedMesh&&(!skin||o.geometry.attributes.position.count>skin.geometry.attributes.position.count))skin=o;});nextGroom=await createHeroHorseGroom({THREE,skin,mount:loaded.scene,surfaceMesh:sourceSurface,profile:spec,anchors:spec.anchors,maneColor:spec.maneColor||'#221b16',tailColor:spec.tailColor||'#221b16'});}if(spec.rotation)loaded.scene.rotation.fromArray(spec.rotation);loaded.scene.updateMatrixWorld(true);
+          if(spec.rigged){let skin=null;loaded.scene.traverse(o=>{if(o.isSkinnedMesh&&(!skin||o.geometry.attributes.position.count>skin.geometry.attributes.position.count))skin=o;});const rotation=loaded.scene.quaternion.clone();loaded.scene.quaternion.identity();nextMotion=createHeroMotion({THREE,root:loaded.scene,skin});loaded.scene.quaternion.copy(rotation);loaded.scene.updateMatrixWorld(true);}const box=new THREE.Box3().setFromObject(loaded.scene),size=box.getSize(new THREE.Vector3()),scale=spec.scale||((spec.heightM||2.12)/size.y);loaded.scene.scale.multiplyScalar(scale);loaded.scene.updateMatrixWorld(true);
+          const fitted=new THREE.Box3().setFromObject(loaded.scene),center=fitted.getCenter(new THREE.Vector3());loaded.scene.position.add(new THREE.Vector3(-center.x,-fitted.min.y,-center.z));next.updateMatrixWorld(true);
+          const b=new THREE.Box3().setFromObject(next),s=b.getSize(new THREE.Vector3());nextHead=spec.headCenter?new THREE.Vector3(...spec.headCenter):new THREE.Vector3(0,s.y*.80,b.max.z-s.z*.13);
+        }
+        if(request!==ticket)return;releaseModel();model=next;model.userData.ownsAssets=which==='candidate';groom=nextGroom;motion=nextMotion;$('motion').hidden=!motion;$('motion').value='stand';scene.add(model);model.updateMatrixWorld(true);captureMaterials();bounds.setFromObject(model);height=bounds.max.y;headCenter.copy(nextHead);selected=which;
+        $('candidate').setAttribute('aria-pressed',String(which==='candidate'));$('previous').setAttribute('aria-pressed',String(which==='previous'));$('name').textContent=which==='candidate'?(manifest.name||'Bay sporthorse'):'Previous Quarter Horse';$('description').textContent=which==='candidate'?'Explore the gaits, change leads, or slow down a stride.':'The previous model, shown under the same lighting.';
+        for(const id of ['lead','playback','pause','jump'])$(id).hidden=!motion;
+        surface();frame(view);loading=false;$('status').textContent='';
+      }catch(error){if(request!==ticket)return;loading=false;$('status').textContent=error.message;console.error(error);}
+    }
+    const pointers=new Map();renderer.domElement.addEventListener('pointerdown',e=>{pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});renderer.domElement.setPointerCapture(e.pointerId);});
+    renderer.domElement.addEventListener('pointermove',e=>{const old=pointers.get(e.pointerId);if(!old)return;if(pointers.size===1){theta-=(e.clientX-old.x)*.007;phi=THREE.MathUtils.clamp(phi+(e.clientY-old.y)*.005,.15,Math.PI*.495);}else{const other=[...pointers.entries()].find(([id])=>id!==e.pointerId)?.[1];if(other){const before=Math.hypot(old.x-other.x,old.y-other.y),after=Math.hypot(e.clientX-other.x,e.clientY-other.y);if(after>1)distance=THREE.MathUtils.clamp(distance*before/after,.45,18);}}pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});cameraUpdate();});
+    for(const type of ['pointerup','pointercancel','lostpointercapture'])renderer.domElement.addEventListener(type,e=>pointers.delete(e.pointerId));
+    renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();distance=THREE.MathUtils.clamp(distance*Math.exp(Math.max(-150,Math.min(150,e.deltaY))*.0015),.45,18);cameraUpdate();},{passive:false});
+    $('candidate').onclick=()=>select('candidate');$('previous').onclick=()=>select('previous');$('surface').onchange=surface;
+    $('motion').onchange=()=>motion?.set($('motion').value,{lead:$('lead').value});$('lead').onchange=()=>motion?.set(motion.mode,{lead:$('lead').value});$('jump').onclick=()=>motion?.set('jump');
+    let userPaused=false,qaPaused=false; $('pause').onclick=()=>{userPaused=!userPaused;$('pause').textContent=userPaused?'Play':'Pause';$('pause').setAttribute('aria-pressed',String(userPaused));};
+    for(const kind of ['side','front','head'])$(kind).onclick=()=>frame(kind);$('turn').onclick=()=>{turn=!turn;$('turn').setAttribute('aria-pressed',String(turn));};
+    addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);if(model)frame(view);});
+    // Ground marks travel underneath the camera-following horse, making stance
+    // contact visible without moving the model out of its inspection frame.
+    const groundMarks=new THREE.Group();scene.add(groundMarks);const markGeo=new THREE.PlaneGeometry(.022,.11),markMat=new THREE.MeshBasicMaterial({color:0x879184,transparent:true,opacity:.24,depthWrite:false});
+    for(let row=0;row<13;row++)for(const side of [-1,1]){const mark=new THREE.Mesh(markGeo,markMat);mark.rotation.x=-Math.PI/2;mark.position.set(side*.64,.001,row*.45-2.7);mark.userData.baseZ=mark.position.z;groundMarks.add(mark);}
+    let last=performance.now();
+    function simulate(dt){if(turn&&!pointers.size)theta+=dt*.13;motion?.update(dt);if(motion){const state=motion.state;groom?.update?.(dt,state);for(const mark of groundMarks.children)mark.position.z=((mark.userData.baseZ-state.distanceM+2.925)%5.85+5.85)%5.85-2.925;$('motion').value=motion.mode;$('lead').value=state.lead;$('lead').disabled=!['canter','gallop'].includes(motion.mode);}}
+    function draw(){groundMarks.visible=!!motion;cameraUpdate();renderer.render(scene,camera);}
+    renderer.setAnimationLoop(now=>{const dt=Math.min(.1,(now-last)/1000);if(!qaPaused&&!userPaused)simulate(dt*Number($('playback').value));draw();last=now;});
+    window.advanceTime=ms=>{for(let remaining=ms;remaining>1e-7;remaining-=1000/120)simulate(Math.min(remaining,1000/120)/1000);draw();};
+    window.heroMotionQA={set:(gait,options)=>motion?.set(gait,options),reset:()=>{motion?.reset();groom?.reset?.();draw();},pauseRealtime:value=>{qaPaused=!!value;},snapshot:()=>motion?.snapshot()};
+    window.render_game_to_text=()=>JSON.stringify({mode:'horse study',selected,loading,name:$('name').textContent,view,surface:$('surface').value,motion:motion?.mode||'unrigged',paused:userPaused,playback:Number($('playback').value),lead:$('lead').value,turntable:turn,modelReady:!!model,camera:camera.position.toArray(),target:target.toArray(),bounds:model?[bounds.min.toArray(),bounds.max.toArray()]:null,triangles:renderer.info.render.triangles,status:$('status').textContent});
+    const initial=new URLSearchParams(location.search);select(initial.get('model')==='previous'?'previous':'candidate').then(()=>{if(initial.get('gait'))motion?.set(initial.get('gait'),{lead:initial.get('lead')||'left'});});
+  </script>
+</body></html>

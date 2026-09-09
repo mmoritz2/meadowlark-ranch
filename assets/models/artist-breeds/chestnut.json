@@ -1,0 +1,129 @@
+{
+  "id": "chestnut",
+  "name": "Shetland Pony",
+  "label": "Shetland Pony",
+  "file": "chestnut.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.02,
+  "heightM": 1.2043808698654175,
+  "fitScale": 1.4215686274509802,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        0.9804858918190003,
+        -0.07399560511112213
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.02,
+        0.08067745094497998
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.0527863293960036,
+        0.6254014961785206
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.1332372274897349,
+        0.5742288439362428
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        0.9567530822286148,
+        0.7287483220910874
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.0884211055753,
+        0.380018270247365
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        0.7988526923842824,
+        -0.7555577537382431
+      ]
+    ],
+    "eyes": [
+      [
+        -0.07821590326555587,
+        1.081912015394248,
+        0.6117208384496156
+      ],
+      [
+        0.07821590326555587,
+        1.081912015394248,
+        0.6117208384496156
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.05748319220734606,
+        0.9820713624694011,
+        0.7232285137218136
+      ],
+      [
+        0.05748319220734606,
+        0.9820713624694011,
+        0.7232285137218136
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Deep compact pony, rounded ribs",
+  "morphology": {
+    "build": "Deep compact pony, rounded ribs",
+    "neck": "Short strong neck merging smoothly into shoulder",
+    "head_face": "Short broad face, large muzzle, prominent eyes",
+    "ears": "Very small, broad-set, upright",
+    "limbs": "Very short cannons, substantial joints",
+    "hooves": "Small but stout round feet",
+    "mane_tail": "Profuse long forelock, thick mane and tail",
+    "feathering": "Light fetlock hair; no draft boots"
+  },
+  "coat": "Chestnut with flaxen mane",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "609eb4b968c2cb47ee71782291bd194a2d526082ff52cac23d31277a0b995acd",
+  "bodyGeometrySha256": "22350e7cdd77c5988d8469357aac8382832923f53bd28949bc21965727b16b10",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1.7,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.0199999809265137,
+    "groundY": 0.0
+  }
+}

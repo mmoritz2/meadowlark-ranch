@@ -1,0 +1,129 @@
+{
+  "id": "haflinger",
+  "name": "Haflinger",
+  "label": "Haflinger",
+  "file": "haflinger.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.45,
+  "heightM": 1.7817579507827759,
+  "fitScale": 1.0,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.3996298666000366,
+        -0.09042416512966156
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.45,
+        0.1095956469575564
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.548094585108805,
+        0.8921628970252836
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.6711916235519375,
+        0.8126449076860576
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.4027985653657093,
+        1.056282979882316
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.5914060440324465,
+        0.5242589073286636
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.1822485562741372,
+        -0.9718053892411253
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09035210105634746,
+        1.5934856368292887,
+        0.8713672085704512
+      ],
+      [
+        0.09035210105634746,
+        1.5934856368292887,
+        0.8713672085704512
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.0665256689245551,
+        1.4385957162721983,
+        1.0492318593992687
+      ],
+      [
+        0.0665256689245551,
+        1.4385957162721983,
+        1.0492318593992687
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Small athletic muscular horse, harmonious rounded barrel",
+  "morphology": {
+    "build": "Small athletic muscular horse, harmonious rounded barrel",
+    "neck": "Strong well-shaped neck, moderate crest",
+    "head_face": "Refined expressive head, broad forehead, gentle taper",
+    "ears": "Small neat forward ears",
+    "limbs": "Defined joints with sturdy clean bone",
+    "hooves": "Round supporting feet",
+    "mane_tail": "Abundant flaxen falling mane and full tail",
+    "feathering": "Little; do not create draft boots"
+  },
+  "coat": "Copper chestnut with flaxen mane and blaze",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "3f6e059ef27cc0695d90c735e29dacb3f52d395319446e62960dde6043823232",
+  "bodyGeometrySha256": "178843524318ed6bd85734908ffcae1d4d978864b20f0af2313afbd7cac414e8",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1.6,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.4500000476837158,
+    "groundY": 0.0
+  }
+}

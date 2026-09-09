@@ -1,0 +1,220 @@
+{
+  "prompt": [
+    21,
+    "bc36756e-b6e0-4c22-b77e-f53f8de1df99",
+    {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "flux2_dev_fp8mixed.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "mistral_3_small_flux2_fp8.safetensors",
+          "type": "flux2"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "flux2-vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "CLIPTextEncode",
+        "inputs": {
+          "text": "Photoreal botanical cutout texture of a dense healthy evergreen balsam fir and spruce branch spray for a realistic three dimensional foliage card. One broad irregular spreading evergreen bough with six overlapping branching flat sprays, many hundreds of short thick flattened needles packed densely around fine brown-green twigs, naturally irregular needle lengths and orientations. Dense overlapping foliage fills approximately forty-five percent of the full square image, open small gaps between neighboring sprays but thick opaque foliage along the central branchlets. Short blunt-pointed needles, real natural fir anatomy, not long thin pine hairs, not geometric zigzag rows. Rich muted medium-dark olive sage green with natural lighter new needles and warm brown slender twigs. Front orthographic view of a thirty-five centimeter wide evergreen botanical specimen, slight natural curvature and depth but diffuse albedo lighting. Entire branch remains inside the central eighty-eight percent of a square with a generous pure-white border on all sides. Isolated on completely white background, cross-polarized flat soft diffuse illumination, no cast shadows, no grey background, no directional sunlight, no specular shine, no dramatic contrast, no depth of field, no text, no watermark, no illustration or painting. Realistic fine botanical detail, full natural dense foliage, organic asymmetrical broad silhouette.",
+          "clip": [
+            "2",
+            0
+          ]
+        }
+      },
+      "5": {
+        "class_type": "FluxGuidance",
+        "inputs": {
+          "conditioning": [
+            "4",
+            0
+          ],
+          "guidance": 3.5
+        }
+      },
+      "7": {
+        "class_type": "RandomNoise",
+        "inputs": {
+          "noise_seed": 9082420
+        }
+      },
+      "8": {
+        "class_type": "KSamplerSelect",
+        "inputs": {
+          "sampler_name": "euler"
+        }
+      },
+      "9": {
+        "class_type": "Flux2Scheduler",
+        "inputs": {
+          "steps": 28,
+          "width": 1024,
+          "height": 1024
+        }
+      },
+      "10": {
+        "class_type": "EmptyFlux2LatentImage",
+        "inputs": {
+          "width": 1024,
+          "height": 1024,
+          "batch_size": 1
+        }
+      },
+      "6": {
+        "class_type": "BasicGuider",
+        "inputs": {
+          "model": [
+            "20",
+            0
+          ],
+          "conditioning": [
+            "5",
+            0
+          ]
+        }
+      },
+      "11": {
+        "class_type": "SamplerCustomAdvanced",
+        "inputs": {
+          "noise": [
+            "7",
+            0
+          ],
+          "guider": [
+            "6",
+            0
+          ],
+          "sampler": [
+            "8",
+            0
+          ],
+          "sigmas": [
+            "9",
+            0
+          ],
+          "latent_image": [
+            "10",
+            0
+          ]
+        }
+      },
+      "12": {
+        "class_type": "VAEDecode",
+        "inputs": {
+          "samples": [
+            "11",
+            0
+          ],
+          "vae": [
+            "21",
+            0
+          ]
+        }
+      },
+      "13": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "12",
+            0
+          ],
+          "filename_prefix": "srf_realism_foliage"
+        }
+      },
+      "20": {
+        "class_type": "SRFSeamlessModel",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "tiling": "disable"
+        }
+      },
+      "21": {
+        "class_type": "SRFSeamlessVAE",
+        "inputs": {
+          "vae": [
+            "3",
+            0
+          ],
+          "tiling": "disable"
+        }
+      }
+    },
+    {
+      "client_id": "2f578f63-d360-4b7f-b232-95fe87b72503",
+      "create_time": 1788897630825
+    },
+    [
+      "13"
+    ]
+  ],
+  "outputs": {
+    "13": {
+      "images": [
+        {
+          "filename": "srf_realism_foliage_00002_.png",
+          "subfolder": "",
+          "type": "output"
+        }
+      ]
+    }
+  },
+  "status": {
+    "status_str": "success",
+    "completed": true,
+    "messages": [
+      [
+        "execution_start",
+        {
+          "prompt_id": "bc36756e-b6e0-4c22-b77e-f53f8de1df99",
+          "timestamp": 1788897630826
+        }
+      ],
+      [
+        "execution_cached",
+        {
+          "nodes": [
+            "1",
+            "2",
+            "3",
+            "8",
+            "9",
+            "10",
+            "20",
+            "21"
+          ],
+          "prompt_id": "bc36756e-b6e0-4c22-b77e-f53f8de1df99",
+          "timestamp": 1788897630827
+        }
+      ],
+      [
+        "execution_success",
+        {
+          "prompt_id": "bc36756e-b6e0-4c22-b77e-f53f8de1df99",
+          "timestamp": 1788897659101
+        }
+      ]
+    ]
+  },
+  "meta": {
+    "13": {
+      "node_id": "13",
+      "display_node": "13",
+      "parent_node": null,
+      "real_node_id": "13"
+    }
+  }
+}

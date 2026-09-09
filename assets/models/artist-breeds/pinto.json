@@ -1,0 +1,129 @@
+{
+  "id": "pinto",
+  "name": "Paint Horse",
+  "label": "Paint Horse",
+  "file": "pinto.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.55,
+  "heightM": 1.9436310529708862,
+  "fitScale": 0.9354838709677419,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.500696575164795,
+        -0.09150665998458862
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.55,
+        0.1167920599381129
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.6735319894740588,
+        0.9580711270212721
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.808951325611617,
+        0.865912150542555
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.5153565076337587,
+        1.1384498425937628
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.7135194243558372,
+        0.5556271629335269
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.2868275436468788,
+        -1.0093686555493673
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09406468152567592,
+        1.7239339172447927,
+        0.9334908765320968
+      ],
+      [
+        0.09406468152567592,
+        1.7239339172447927,
+        0.9334908765320968
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.06916520700417347,
+        1.5524568758397763,
+        1.1328444403147597
+      ],
+      [
+        0.06916520700417347,
+        1.5524568758397763,
+        1.1328444403147597
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Chosen slightly taller stock individual, broad athletic quarters",
+  "morphology": {
+    "build": "Chosen slightly taller stock individual, broad athletic quarters",
+    "neck": "Medium sloping neck, clean throat",
+    "head_face": "Broad straight face, slightly longer than bay exemplar",
+    "ears": "Small-medium alert",
+    "limbs": "Strong clean legs",
+    "hooves": "Round supporting hooves",
+    "mane_tail": "Moderate soft mane and full tail",
+    "feathering": "None"
+  },
+  "coat": "Bay tobiano with broad white patches",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "b25a1d953cc7048a679adea7c7baa0405c358a3a5017ed7d7014f01fe8a2404d",
+  "bodyGeometrySha256": "9f134f981d9f862da5ebb73bd14267ee33a2b8e812c224dfab8dcb168465963e",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.5499999523162842,
+    "groundY": 0.0
+  }
+}

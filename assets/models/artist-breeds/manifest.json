@@ -1,0 +1,5871 @@
+{
+  "version": 3,
+  "coordinates": "+Z forward, +Y up",
+  "canonicalWithers": 1.45,
+  "source": "../horse-candidates/b2przemo/rig-study/horse-rig-study.glb",
+  "sourceSha256": "8e3004247f3010df216a3a19ae825fd91f6650f83c853016a0df9280a967e629",
+  "author": "b2przemo",
+  "license": "CC BY 3.0",
+  "bodyMesh": "HorseBody",
+  "breeds": {
+    "bay": {
+      "id": "bay",
+      "name": "Quarter Horse",
+      "label": "Quarter Horse",
+      "file": "bay.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.52,
+      "heightM": 1.8603322505950928,
+      "fitScale": 0.9539473684210525,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.4698359127044678,
+            -0.09883079677820206
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.52,
+            0.10205737501382828
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6240952643546518,
+            0.8752507013919738
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.7474520374741196,
+            0.7967042686887821
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.478623956479269,
+            1.0354783613019451
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.6524586862493924,
+            0.5136126698172941
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.2531329927771817,
+            -0.98403842131604
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09627566203301988,
+            1.6700603926763729,
+            0.8545798103898367
+          ],
+          [
+            0.09627566203301988,
+            1.6700603926763729,
+            0.8545798103898367
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07073482949423789,
+            1.513480690606027,
+            1.0286916646147022
+          ],
+          [
+            0.07073482949423789,
+            1.513480690606027,
+            1.0286916646147022
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Compact athletic stock build; broad rounded haunches",
+      "morphology": {
+        "build": "Compact athletic stock build; broad rounded haunches",
+        "neck": "Medium, comparatively low carriage, trim throat",
+        "head_face": "Short broad forehead, straight face, broad jaw",
+        "ears": "Small alert ears",
+        "limbs": "Strong forearm, short clean cannon",
+        "hooves": "Rounded proportional feet",
+        "mane_tail": "Moderate falling mane and full tail",
+        "feathering": "None"
+      },
+      "coat": "Rich bay with black points",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "cf35355f76508b9471d7c8af8f4750cd7d975a33f4258379b908d74185cb413e",
+      "bodyGeometrySha256": "5e96047c803b1b1e5885c34c416d94aa983fb68f30ec4ededab83a67cb1c3ad0",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5199999809265137,
+        "groundY": 0.0
+      }
+    },
+    "chestnut": {
+      "id": "chestnut",
+      "name": "Shetland Pony",
+      "label": "Shetland Pony",
+      "file": "chestnut.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.02,
+      "heightM": 1.2043808698654175,
+      "fitScale": 1.4215686274509802,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            0.9804858918190003,
+            -0.07399560511112213
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.02,
+            0.08067745094497998
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.0527863293960036,
+            0.6254014961785206
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.1332372274897349,
+            0.5742288439362428
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            0.9567530822286148,
+            0.7287483220910874
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.0884211055753,
+            0.380018270247365
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            0.7988526923842824,
+            -0.7555577537382431
+          ]
+        ],
+        "eyes": [
+          [
+            -0.07821590326555587,
+            1.081912015394248,
+            0.6117208384496156
+          ],
+          [
+            0.07821590326555587,
+            1.081912015394248,
+            0.6117208384496156
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.05748319220734606,
+            0.9820713624694011,
+            0.7232285137218136
+          ],
+          [
+            0.05748319220734606,
+            0.9820713624694011,
+            0.7232285137218136
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Deep compact pony, rounded ribs",
+      "morphology": {
+        "build": "Deep compact pony, rounded ribs",
+        "neck": "Short strong neck merging smoothly into shoulder",
+        "head_face": "Short broad face, large muzzle, prominent eyes",
+        "ears": "Very small, broad-set, upright",
+        "limbs": "Very short cannons, substantial joints",
+        "hooves": "Small but stout round feet",
+        "mane_tail": "Profuse long forelock, thick mane and tail",
+        "feathering": "Light fetlock hair; no draft boots"
+      },
+      "coat": "Chestnut with flaxen mane",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "609eb4b968c2cb47ee71782291bd194a2d526082ff52cac23d31277a0b995acd",
+      "bodyGeometrySha256": "22350e7cdd77c5988d8469357aac8382832923f53bd28949bc21965727b16b10",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.7,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.0199999809265137,
+        "groundY": 0.0
+      }
+    },
+    "palomino": {
+      "id": "palomino",
+      "name": "Palomino Mustang",
+      "label": "Palomino Mustang",
+      "file": "palomino.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.45,
+      "heightM": 1.808201789855957,
+      "fitScale": 1.0,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.4024012441635132,
+            -0.0906418114900589
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.45,
+            0.10985943774382273
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.548717304813216,
+            0.8944824890451103
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.6747553034286051,
+            0.80503483772222
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.401302520998543,
+            1.0597374957281578
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.5744495655825181,
+            0.521037984430341
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.1941459563747656,
+            -0.9741444778396515
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09232820670497938,
+            1.5962176240423882,
+            0.8700580708632006
+          ],
+          [
+            0.09232820670497938,
+            1.5962176240423882,
+            0.8700580708632006
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06781597300330446,
+            1.4348803328674409,
+            1.0561086838820415
+          ],
+          [
+            0.06781597300330446,
+            1.4348803328674409,
+            1.0561086838820415
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Selected hardy ranch individual, moderate substance",
+      "morphology": {
+        "build": "Selected hardy ranch individual, moderate substance",
+        "neck": "Medium muscular neck, relaxed carriage",
+        "head_face": "Straight to faintly convex, practical muzzle",
+        "ears": "Medium forward ears",
+        "limbs": "Compact strong lower limbs",
+        "hooves": "Well-rounded compact hooves",
+        "mane_tail": "Natural medium-long slightly irregular mane",
+        "feathering": "Minimal"
+      },
+      "coat": "Golden palomino with ivory mane",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "1a5097aa8466b7e7b5d576ebe63c95b560ec8f12fa8bae29d7a03683027dae10",
+      "bodyGeometrySha256": "dff286dc1d1b23fcc148d6c6106b6449e18688c2dbf9fc10b8594f5f5d240af3",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.4500000476837158,
+        "groundY": 0.0
+      }
+    },
+    "haflinger": {
+      "id": "haflinger",
+      "name": "Haflinger",
+      "label": "Haflinger",
+      "file": "haflinger.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.45,
+      "heightM": 1.7817579507827759,
+      "fitScale": 1.0,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.3996298666000366,
+            -0.09042416512966156
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.45,
+            0.1095956469575564
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.548094585108805,
+            0.8921628970252836
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.6711916235519375,
+            0.8126449076860576
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.4027985653657093,
+            1.056282979882316
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.5914060440324465,
+            0.5242589073286636
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.1822485562741372,
+            -0.9718053892411253
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09035210105634746,
+            1.5934856368292887,
+            0.8713672085704512
+          ],
+          [
+            0.09035210105634746,
+            1.5934856368292887,
+            0.8713672085704512
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.0665256689245551,
+            1.4385957162721983,
+            1.0492318593992687
+          ],
+          [
+            0.0665256689245551,
+            1.4385957162721983,
+            1.0492318593992687
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Small athletic muscular horse, harmonious rounded barrel",
+      "morphology": {
+        "build": "Small athletic muscular horse, harmonious rounded barrel",
+        "neck": "Strong well-shaped neck, moderate crest",
+        "head_face": "Refined expressive head, broad forehead, gentle taper",
+        "ears": "Small neat forward ears",
+        "limbs": "Defined joints with sturdy clean bone",
+        "hooves": "Round supporting feet",
+        "mane_tail": "Abundant flaxen falling mane and full tail",
+        "feathering": "Little; do not create draft boots"
+      },
+      "coat": "Copper chestnut with flaxen mane and blaze",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "3f6e059ef27cc0695d90c735e29dacb3f52d395319446e62960dde6043823232",
+      "bodyGeometrySha256": "178843524318ed6bd85734908ffcae1d4d978864b20f0af2313afbd7cac414e8",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.6,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.4500000476837158,
+        "groundY": 0.0
+      }
+    },
+    "grey": {
+      "id": "grey",
+      "name": "Dapple Grey Andalusian",
+      "label": "Dapple Grey Andalusian",
+      "file": "grey.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.6,
+      "heightM": 2.034392833709717,
+      "fitScale": 0.9062499999999999,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.547805106163025,
+            -0.09847582131624222
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.6,
+            0.11325226972500484
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.731311947683124,
+            0.996532547509815
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.8848410930424315,
+            0.8870091311337008
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5571877028395902,
+            1.1808112327621476
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.8325376116222156,
+            0.5640464992080032
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3244150192521795,
+            -1.0314492307818994
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09379319028238722,
+            1.7862453318740046,
+            0.9654921472368473
+          ],
+          [
+            0.09379319028238722,
+            1.7862453318740046,
+            0.9654921472368473
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06919730544245298,
+            1.5990716413464727,
+            1.1789449444219153
+          ],
+          [
+            0.06919730544245298,
+            1.5990716413464727,
+            1.1789449444219153
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Baroque riding horse, rounded muscular quarters",
+      "morphology": {
+        "build": "Baroque riding horse, rounded muscular quarters",
+        "neck": "Elevated arch and smooth thick crest",
+        "head_face": "Medium-long lean head, mildly convex face",
+        "ears": "Medium parallel forward ears",
+        "limbs": "Clean balanced limbs, strong joints",
+        "hooves": "Proportional rounded feet",
+        "mane_tail": "Long subtly wavy mane and tail",
+        "feathering": "None"
+      },
+      "coat": "Dapple grey with charcoal points",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "0fe86a268b6b6efac90a0c8c1e114f81dcc43395d5c2c149ed8eadc153289bbb",
+      "bodyGeometrySha256": "d830f6c8cbb24a1826d0b2225cfd936981c4edf1c8239eaa45dab8afe256d96e",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.45,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.600000023841858,
+        "groundY": 0.0
+      }
+    },
+    "black": {
+      "id": "black",
+      "name": "Friesian",
+      "label": "Friesian",
+      "file": "black.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.64,
+      "heightM": 2.1324243545532227,
+      "fitScale": 0.8841463414634146,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.585880910873413,
+            -0.09138405323028564
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.64,
+            0.12908052951097487
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8011192627071997,
+            1.0803337748066628
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.9627071155029505,
+            0.977811864334481
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6186017753000754,
+            1.2890556165598255
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.9269487653043467,
+            0.6175213454992238
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3561541799219914,
+            -1.0628545483115552
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09387060691642449,
+            1.8576993108760407,
+            1.053441779485905
+          ],
+          [
+            0.09387060691642449,
+            1.8576993108760407,
+            1.053441779485905
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06933172590838976,
+            1.6644010675497476,
+            1.281218231513565
+          ],
+          [
+            0.06933172590838976,
+            1.6644010675497476,
+            1.281218231513565
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Substantial elegant rectangular riding/driving build",
+      "morphology": {
+        "build": "Substantial elegant rectangular riding/driving build",
+        "neck": "Long high-set arch; defined throat",
+        "head_face": "Relatively short refined head, straight or slightly hollow face",
+        "ears": "Small, tips gently inward",
+        "limbs": "Long forearm, strong clean joints",
+        "hooves": "Broad sound feet",
+        "mane_tail": "Long abundant wavy mane, forelock, full tail",
+        "feathering": "Distinct long fetlock/cannon fringe"
+      },
+      "coat": "Soft black with warm highlights",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "09be85a04fe487ae2d77e2e6a8a8007a5fa908a03c89214e96a5eba9434a125c",
+      "bodyGeometrySha256": "6befbda79dec8263cc8cdbe4c244dbe20113c7f3b703688d3b314da599077a9a",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840,
+        "HorseFeather": 28032
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 2.15,
+        "feathering": 0.45
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.6399999856948853,
+        "groundY": 0.0
+      }
+    },
+    "pinto": {
+      "id": "pinto",
+      "name": "Paint Horse",
+      "label": "Paint Horse",
+      "file": "pinto.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.55,
+      "heightM": 1.9436310529708862,
+      "fitScale": 0.9354838709677419,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.500696575164795,
+            -0.09150665998458862
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.55,
+            0.1167920599381129
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6735319894740588,
+            0.9580711270212721
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.808951325611617,
+            0.865912150542555
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5153565076337587,
+            1.1384498425937628
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.7135194243558372,
+            0.5556271629335269
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.2868275436468788,
+            -1.0093686555493673
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09406468152567592,
+            1.7239339172447927,
+            0.9334908765320968
+          ],
+          [
+            0.09406468152567592,
+            1.7239339172447927,
+            0.9334908765320968
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06916520700417347,
+            1.5524568758397763,
+            1.1328444403147597
+          ],
+          [
+            0.06916520700417347,
+            1.5524568758397763,
+            1.1328444403147597
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Chosen slightly taller stock individual, broad athletic quarters",
+      "morphology": {
+        "build": "Chosen slightly taller stock individual, broad athletic quarters",
+        "neck": "Medium sloping neck, clean throat",
+        "head_face": "Broad straight face, slightly longer than bay exemplar",
+        "ears": "Small-medium alert",
+        "limbs": "Strong clean legs",
+        "hooves": "Round supporting hooves",
+        "mane_tail": "Moderate soft mane and full tail",
+        "feathering": "None"
+      },
+      "coat": "Bay tobiano with broad white patches",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "b25a1d953cc7048a679adea7c7baa0405c358a3a5017ed7d7014f01fe8a2404d",
+      "bodyGeometrySha256": "9f134f981d9f862da5ebb73bd14267ee33a2b8e812c224dfab8dcb168465963e",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5499999523162842,
+        "groundY": 0.0
+      }
+    },
+    "appaloosa": {
+      "id": "appaloosa",
+      "name": "Appaloosa",
+      "label": "Appaloosa",
+      "file": "appaloosa.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.54,
+      "heightM": 1.9365499019622803,
+      "fitScale": 0.9415584415584415,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.4893247241973877,
+            -0.0934876948595047
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.54,
+            0.1133086974422137
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6520246235612468,
+            0.945157252338862
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.7897647403344865,
+            0.8517633930200199
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.4926833704679932,
+            1.1265966336650834
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.6866376060000339,
+            0.5466441004119778
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.2709386420443738,
+            -1.0047297226179812
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09069241743985318,
+            1.7035948217133206,
+            0.9202612946102748
+          ],
+          [
+            0.09069241743985318,
+            1.7035948217133206,
+            0.9202612946102748
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06668560105871557,
+            1.5285479997521578,
+            1.121940033866785
+          ],
+          [
+            0.06668560105871557,
+            1.5285479997521578,
+            1.121940033866785
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Smooth athletic stock build, deep chest, strong loin",
+      "morphology": {
+        "build": "Smooth athletic stock build, deep chest, strong loin",
+        "neck": "Clean medium neck",
+        "head_face": "Straight lean head with prominent eye",
+        "ears": "Medium pointed ears",
+        "limbs": "Long forearm, flat cannon and broad joints",
+        "hooves": "Rounded feet; optional vertical striping",
+        "mane_tail": "Chosen shorter moderate-density mane, never assume every Appaloosa is sparse",
+        "feathering": "None"
+      },
+      "coat": "Bay blanket with dark leopard spots",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "b61ef0cb8c6c47f84aa00ad1e6d12d6d6f446c0f5c3b214a6154a5b33e711c99",
+      "bodyGeometrySha256": "fcfb7f4151eec995cc30dc514892092b7beeccbdb660826bbec7f809c2943840",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5399999618530273,
+        "groundY": 0.0
+      }
+    },
+    "sunset": {
+      "id": "sunset",
+      "name": "Sunset Arabian",
+      "label": "Sunset Arabian",
+      "file": "sunset.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.5,
+      "heightM": 1.9139854907989502,
+      "fitScale": 0.9666666666666667,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.4532654638290405,
+            -0.1012454405426979
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.5,
+            0.08820773884654046
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6680538376051441,
+            0.883731254862285
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.8081280154163595,
+            0.814817281873171
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5143179994217382,
+            1.0626873141872073
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.7235581959054564,
+            0.5074613368494844
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.247855746351191,
+            -0.9360651230614975
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09192537331453773,
+            1.717812085490898,
+            0.8679204078740252
+          ],
+          [
+            0.09192537331453773,
+            1.717812085490898,
+            0.8679204078740252
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.0673192178161752,
+            1.548916751331203,
+            1.0505518668127067
+          ],
+          [
+            0.0673192178161752,
+            1.548916751331203,
+            1.0505518668127067
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Refined compact athlete, short back, near-level croup",
+      "morphology": {
+        "build": "Refined compact athlete, short back, near-level croup",
+        "neck": "Long fine high-set arch with open throat",
+        "head_face": "Mild dish below eyes, short muzzle, broad forehead",
+        "ears": "Small fine ears with gently inward tips",
+        "limbs": "Fine-looking but sound joints and dense bone",
+        "hooves": "Compact round sound hooves",
+        "mane_tail": "Fine mane and lifted flowing tail",
+        "feathering": "None"
+      },
+      "coat": "Copper chestnut with fine dark red mane",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "1f6c3497b1114f5c9c454d9a521d06c527893cfeff7380fe4471e713e568d01d",
+      "bodyGeometrySha256": "009d2368fd6abc7af5c2cdd2556c06725f2b8080e86ed761e65bb21bf99dd161",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5,
+        "groundY": 0.0
+      }
+    },
+    "iceland": {
+      "id": "iceland",
+      "name": "Icelandic Horse",
+      "label": "Icelandic Horse",
+      "file": "iceland.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.38,
+      "heightM": 1.7098819017410278,
+      "fitScale": 1.0507246376811594,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.3336825723648071,
+            -0.08294886350631714
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.38,
+            0.11716576913992564
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.470052280935658,
+            0.8906522002122962
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.5924106762790615,
+            0.8064487282732609
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.327898811226621,
+            1.0550494549504128
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.520232642826046,
+            0.5257704884764764
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.1296463799916412,
+            -0.9647479141110304
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09031824787746526,
+            1.5151111626458922,
+            0.8681979410285534
+          ],
+          [
+            0.09031824787746526,
+            1.5151111626458922,
+            0.8681979410285534
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06642801877047645,
+            1.3616914009366086,
+            1.050237827982468
+          ],
+          [
+            0.06642801877047645,
+            1.3616914009366086,
+            1.050237827982468
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Robust small riding horse, strong broad back and loin",
+      "morphology": {
+        "build": "Robust small riding horse, strong broad back and loin",
+        "neck": "Well-carried muscular medium neck",
+        "head_face": "Straight practical head, broad forehead",
+        "ears": "Neat medium upright ears",
+        "limbs": "Sturdy joints, strong lower legs",
+        "hooves": "Round hard supporting hooves",
+        "mane_tail": "Very thick long mane, forelock and tail",
+        "feathering": "Small pastern tufts"
+      },
+      "coat": "Mouse dun with dark dorsal stripe",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "5fc737d48a1e17dc33834fc0ca8034c93bbe2d896ae5f7836e02b61b5fa106f5",
+      "bodyGeometrySha256": "8d7c6cf99ea7aca91f1eb6c0c060dca6a913b85c9a95642399c7e2e9b4bab14e",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.8,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.3799999952316284,
+        "groundY": 0.0
+      }
+    },
+    "welsh": {
+      "id": "welsh",
+      "name": "Welsh Mountain Pony",
+      "label": "Welsh Mountain Pony",
+      "file": "welsh.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.19,
+      "heightM": 1.4919013977050781,
+      "fitScale": 1.2184873949579833,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.1506330127716065,
+            -0.08229982107877731
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.19,
+            0.08040559788544972
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.303746762314204,
+            0.7389551902298177
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.4098823753633904,
+            0.6776278349700808
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.1820744534279648,
+            0.8759818530672574
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.3349764039154248,
+            0.4287768123333953
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            0.9694844852623202,
+            -0.7992563014399523
+          ]
+        ],
+        "eyes": [
+          [
+            -0.07655895972764534,
+            1.3422084213131102,
+            0.7234125668943331
+          ],
+          [
+            0.07655895972764534,
+            1.3422084213131102,
+            0.7234125668943331
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.05620153445683343,
+            1.2111976046906392,
+            0.8677061326200886
+          ],
+          [
+            0.05620153445683343,
+            1.2111976046906392,
+            0.8677061326200886
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Refined compact pony, deep ribs, strong coupling",
+      "morphology": {
+        "build": "Refined compact pony, deep ribs, strong coupling",
+        "neck": "Longer well-carried neck than Shetland",
+        "head_face": "Small tapering face, slight concavity chosen for this individual",
+        "ears": "Small pointed fairly close ears",
+        "limbs": "Long forearm relative to short cannon",
+        "hooves": "Dense round hooves",
+        "mane_tail": "Natural full mane, jaunty tail",
+        "feathering": "Minimal"
+      },
+      "coat": "Warm grey with dapples",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "87f1a0d8f77124011af99042fb3eec6756050aba9ef99295bdd9cbbe38534863",
+      "bodyGeometrySha256": "1130d260867f699abcf270b31f99d8cbcf914ca6d2928fe1d87964206bd9b845",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.190000057220459,
+        "groundY": 0.0
+      }
+    },
+    "stock": {
+      "id": "stock",
+      "name": "Australian Stock Horse",
+      "label": "Australian Stock Horse",
+      "file": "stock.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.55,
+      "heightM": 1.971153974533081,
+      "fitScale": 0.9354838709677419,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.5015737171173096,
+            -0.09109027683734894
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.55,
+            0.11626061747471492
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6870133384849184,
+            0.9736605603891738
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.826302148968448,
+            0.878196719578613
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5259985273811012,
+            1.1600423448288404
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.7139167073429846,
+            0.5599839168767435
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.2905934502923813,
+            -1.004775681873892
+          ]
+        ],
+        "eyes": [
+          [
+            -0.0891348926957969,
+            1.7392337806703346,
+            0.9482035361730244
+          ],
+          [
+            0.0891348926957969,
+            1.7392337806703346,
+            0.9482035361730244
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06550328894008414,
+            1.5620341436101797,
+            1.1545872682110943
+          ],
+          [
+            0.06550328894008414,
+            1.5620341436101797,
+            1.1545872682110943
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Balanced all-purpose athletic working build",
+      "morphology": {
+        "build": "Balanced all-purpose athletic working build",
+        "neck": "Medium-long trim neck",
+        "head_face": "Refined straight head and open throat",
+        "ears": "Medium alert ears",
+        "limbs": "Strong but unbulky limbs",
+        "hooves": "Proportional round feet",
+        "mane_tail": "Neat practical mane and tail",
+        "feathering": "None"
+      },
+      "coat": "Deep mahogany bay",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "448410b6420174e0e7460936541d8500f22de815f822ed56a4320e2ed2b3701a",
+      "bodyGeometrySha256": "ac7eb17abf45e3ba6b694ad72b6985cc7a7080caa110c908f30fcdbcbfb76bab",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.84,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5499999523162842,
+        "groundY": 0.0
+      }
+    },
+    "fjord": {
+      "id": "fjord",
+      "name": "Norwegian Fjord",
+      "label": "Norwegian Fjord",
+      "file": "fjord.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.42,
+      "heightM": 1.7411456108093262,
+      "fitScale": 1.0211267605633803,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.3695942516326904,
+            -0.0921076089143753
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.42,
+            0.10042497664690017
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.491836787672004,
+            0.8256164861959212
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.6111045832064226,
+            0.7511941355546192
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.3537171890964732,
+            0.973057223584403
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.5788289282544066,
+            0.488409507180767
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.1520956880730684,
+            -0.9404966193273364
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09649931183038885,
+            1.533970765911673,
+            0.8057489808190766
+          ],
+          [
+            0.09649931183038885,
+            1.533970765911673,
+            0.8057489808190766
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07104407056630649,
+            1.3896689521901666,
+            0.9671890182604209
+          ],
+          [
+            0.07104407056630649,
+            1.3896689521901666,
+            0.9671890182604209
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Broad powerful compact small horse",
+      "morphology": {
+        "build": "Broad powerful compact small horse",
+        "neck": "Muscular natural arch",
+        "head_face": "Broad forehead, short straight face, generous muzzle",
+        "ears": "Medium ears with dark edges",
+        "limbs": "Substantial flat bone and muscular gaskin",
+        "hooves": "Large dense round feet",
+        "mane_tail": "Upright clipped mane, pale guards around darker center; full natural tail",
+        "feathering": "Some, never profuse"
+      },
+      "coat": "Brown dun with two-tone upright mane",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "b3988e632f7f8b363a4aed64e09458d55d3ccbcd18ccac323d81515f3e87bc44",
+      "bodyGeometrySha256": "c6c6a6b1b99c123a53a3b91eeac6601d05067a8a949a68a93ebf80c416d99053",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.4199999570846558,
+        "groundY": 0.0
+      }
+    },
+    "morgan": {
+      "id": "morgan",
+      "name": "Morgan",
+      "label": "Morgan",
+      "file": "morgan.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.52,
+      "heightM": 1.9087425470352173,
+      "fitScale": 0.9539473684210525,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.471116816520691,
+            -0.10289143025875092
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.52,
+            0.0896417737007141
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6555427081401344,
+            0.867520520542486
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.7901888743202887,
+            0.7915359451384549
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5016536618378193,
+            1.032700086599932
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.729054268404955,
+            0.49968345794920604
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.2586316498079047,
+            -0.9512831710904692
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09521638257572815,
+            1.703556000574732,
+            0.8481093082886743
+          ],
+          [
+            0.09521638257572815,
+            1.703556000574732,
+            0.8481093082886743
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07003053975956787,
+            1.539685823293157,
+            1.0242337855576686
+          ],
+          [
+            0.07003053975956787,
+            1.539685823293157,
+            1.0242337855576686
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Compact strong short-backed horse",
+      "morphology": {
+        "build": "Compact strong short-backed horse",
+        "neck": "Neck rises over withers with proud smooth crest",
+        "head_face": "Short straight/slightly dished face, rounded jaw",
+        "ears": "Small shapely upright ears",
+        "limbs": "Strong clean legs and short coupling",
+        "hooves": "Round feet open at heels",
+        "mane_tail": "Full groomed mane and tail",
+        "feathering": "None"
+      },
+      "coat": "Seal bay with black points",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "daebc7c832aaaa3a62559a5619861f08743c7100a22795895d7691e0803d197c",
+      "bodyGeometrySha256": "f6bd17d0d3cf835411f75d2df6b8581dfcf897b999cd5d9c89afb06e7385160e",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5199999809265137,
+        "groundY": 0.0
+      }
+    },
+    "thoro": {
+      "id": "thoro",
+      "name": "Thoroughbred",
+      "label": "Thoroughbred",
+      "file": "thoro.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.66,
+      "heightM": 2.1557741165161133,
+      "fitScale": 0.8734939759036144,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.6103737707138062,
+            -0.08763670176267624
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.66,
+            0.13011301557223
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8246704516155168,
+            1.0803626271566342
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.9809271907846022,
+            0.9687383758198544
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6460040752086431,
+            1.2960150780726778
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.8341886642584357,
+            0.6123345212831786
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3954421367848502,
+            -1.0471442445701162
+          ]
+        ],
+        "eyes": [
+          [
+            -0.08631378109472383,
+            1.8841934721201388,
+            1.0506191214477307
+          ],
+          [
+            0.08631378109472383,
+            1.8841934721201388,
+            1.0506191214477307
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06335258688736019,
+            1.6830017378240545,
+            1.2913582314379632
+          ],
+          [
+            0.06335258688736019,
+            1.6830017378240545,
+            1.2913582314379632
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Tall lean speed athlete, prominent withers, sloping shoulder",
+      "morphology": {
+        "build": "Tall lean speed athlete, prominent withers, sloping shoulder",
+        "neck": "Long lean neck with open throat",
+        "head_face": "Long dry straight head",
+        "ears": "Medium fine ears",
+        "limbs": "Long forearm/gaskin, clean dry tendons and joints",
+        "hooves": "Refined but properly sized feet",
+        "mane_tail": "Shorter neat mane, moderate tail",
+        "feathering": "None"
+      },
+      "coat": "Dark bay with a small star",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "d543fca52100c465e64074c429aff3edc343310b3446f76a2c69b08ec97f7902",
+      "bodyGeometrySha256": "af91f579076c48262474c4421e65b179c734f6ed86d64399c89eb205496b7b6d",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.72,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.659999966621399,
+        "groundY": 0.0
+      }
+    },
+    "knab": {
+      "id": "knab",
+      "name": "Knabstrupper",
+      "label": "Knabstrupper",
+      "file": "knab.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.64,
+      "heightM": 2.0811688899993896,
+      "fitScale": 0.8841463414634146,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.5884821767807007,
+            -0.08596533536911011
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.64,
+            0.1340900366504987
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.7726338863846176,
+            1.0570357115859028
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.9228815025744193,
+            0.9483018472114663
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6001534935119333,
+            1.2604876924715902
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.8206993780033744,
+            0.6071577433133161
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3673214005693466,
+            -1.055632674816785
+          ]
+        ],
+        "eyes": [
+          [
+            -0.0937499133486456,
+            1.828555835850371,
+            1.0276067622409437
+          ],
+          [
+            0.0937499133486456,
+            1.828555835850371,
+            1.0276067622409437
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06891483682229015,
+            1.6387873765901895,
+            1.2565566889520483
+          ],
+          [
+            0.06891483682229015,
+            1.6387873765901895,
+            1.2565566889520483
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Chosen large-framed leggy riding type with depth",
+      "morphology": {
+        "build": "Chosen large-framed leggy riding type with depth",
+        "neck": "Medium well-set neck and flexible poll",
+        "head_face": "Proportional expressive head",
+        "ears": "Medium alert ears",
+        "limbs": "Strong clean legs, short flat cannon",
+        "hooves": "Well-shaped sound horn",
+        "mane_tail": "Full mane/tail; avoid rat-tail stereotype",
+        "feathering": "None"
+      },
+      "coat": "Ivory leopard with irregular dark spots",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "e9125fde996b5a76a171f1b5f9c30b796724138f4c26889b30ef90a4e93ce965",
+      "bodyGeometrySha256": "12d5b2b3a669510272344108167026d661138a03c220da9ba51784923713710e",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.6399999856948853,
+        "groundY": 0.0
+      }
+    },
+    "vanner": {
+      "id": "vanner",
+      "name": "Gypsy Vanner",
+      "label": "Gypsy Vanner",
+      "file": "vanner.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.5,
+      "heightM": 1.8400901556015015,
+      "fitScale": 0.9666666666666667,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.4445833320617676,
+            -0.09769654273986816
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.5,
+            0.10088608960310617
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.578872947008028,
+            0.8811690806709703
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.7103125454170365,
+            0.7936944104321513
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.4268322497943027,
+            1.0395922148354215
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.6645912048753895,
+            0.510006681996126
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.2105836895914261,
+            -0.9727448813840506
+          ]
+        ],
+        "eyes": [
+          [
+            -0.10145559227972643,
+            1.6258421505829561,
+            0.8569466662629678
+          ],
+          [
+            0.10145559227972643,
+            1.6258421505829561,
+            0.8569466662629678
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.074636669968615,
+            1.4652928921137283,
+            1.0353491258797152
+          ],
+          [
+            0.074636669968615,
+            1.4652928921137283,
+            1.0353491258797152
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Small draft body, wide deep ribs and powerful rounded quarters",
+      "morphology": {
+        "build": "Small draft body, wide deep ribs and powerful rounded quarters",
+        "neck": "Upward-forward arch, muscular taper, no bulky underside",
+        "head_face": "Broad flat forehead, straight to mild convex face",
+        "ears": "Proportional broad-middle ears",
+        "limbs": "Heavy defined bone under hair",
+        "hooves": "Wide substantial hooves",
+        "mane_tail": "Very abundant long mane, forelock and tail",
+        "feathering": "Profuse from knee/hock over hoof"
+      },
+      "coat": "Piebald with abundant white feather",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "5508e3b6525a5d2c734f9203968040c558a033b598b8dfd473c2882b7c06a1c9",
+      "bodyGeometrySha256": "d32590dd3713b805a015f537d9ff1dedf69af6c37d620487ed0f77e00882d9b8",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840,
+        "HorseFeather": 62400
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 2.5,
+        "feathering": 1.0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5,
+        "groundY": 0.0
+      }
+    },
+    "marwari": {
+      "id": "marwari",
+      "name": "Marwari",
+      "label": "Marwari",
+      "file": "marwari.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.58,
+      "heightM": 2.0826096534729004,
+      "fitScale": 0.9177215189873417,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.5316665525436401,
+            -0.09012535214424133
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.58,
+            0.12104773124059041
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.7422137852831687,
+            1.0480059876158363
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.9003632451732673,
+            0.9307324751396441
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.565930757610304,
+            1.2474581610221767
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.8042968849103354,
+            0.586790990833162
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.32099185436349,
+            -1.0206531403053756
+          ]
+        ],
+        "eyes": [
+          [
+            -0.08807205799913995,
+            1.8000383343798347,
+            1.014966589093787
+          ],
+          [
+            0.08807205799913995,
+            1.8000383343798347,
+            1.014966589093787
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06472147961392226,
+            1.6041479538087808,
+            1.245689621738818
+          ],
+          [
+            0.06472147961392226,
+            1.6041479538087808,
+            1.245689621738818
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Elegant dry riding horse",
+      "morphology": {
+        "build": "Elegant dry riding horse",
+        "neck": "Upright graceful long neck",
+        "head_face": "Long lean aquiline face",
+        "ears": "Long inward-curving lyre ears; tips nearly meet",
+        "limbs": "Long clean limbs, defined joints",
+        "hooves": "Moderate compact feet",
+        "mane_tail": "Fine medium mane and tail",
+        "feathering": "None"
+      },
+      "coat": "Dun bay with dark points and narrow blaze",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "42caa59f026b5f868cc41c1392cc5443c5a31244b69643319efa5a5fcd13b44f",
+      "bodyGeometrySha256": "3ba929b313b95601e048e55521e907068c176d5f13e3d11a6244e65210d637a5",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5800000429153442,
+        "groundY": 0.0
+      }
+    },
+    "lipiz": {
+      "id": "lipiz",
+      "name": "Lipizzaner",
+      "label": "Lipizzaner",
+      "file": "lipiz.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.56,
+      "heightM": 1.9772095680236816,
+      "fitScale": 0.9294871794871794,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.5062659139633179,
+            -0.10154885798692703
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.56,
+            0.10486417214075724
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6747999976139174,
+            0.9512575446799254
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.8249101271246306,
+            0.848015467945387
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.504675898609012,
+            1.1262572176216359
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.7896024220765914,
+            0.5396323619736073
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.2778069798785014,
+            -1.011101599215045
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09799021018544143,
+            1.7278665913651368,
+            0.9220495355965086
+          ],
+          [
+            0.09799021018544143,
+            1.7278665913651368,
+            0.9220495355965086
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07226297657008732,
+            1.5467431703503067,
+            1.1240720697143278
+          ],
+          [
+            0.07226297657008732,
+            1.5467431703503067,
+            1.1240720697143278
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Compact baroque muscular riding build",
+      "morphology": {
+        "build": "Compact baroque muscular riding build",
+        "neck": "Strong arched crest and substantial base",
+        "head_face": "Straight to mild convex face, broad forehead",
+        "ears": "Small-medium alert ears",
+        "limbs": "Relatively short strong dry legs",
+        "hooves": "Strong rounded hooves",
+        "mane_tail": "Full softly waved mane and tail",
+        "feathering": "None"
+      },
+      "coat": "Mature pale grey with darker muzzle",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "defc0beaf2b4191af8c185077445f55410b28a96652ed6d2025723beff3bc01c",
+      "bodyGeometrySha256": "385417ccd2c9b59cf0682574c171bd673a5a81a58515c7fd9960253ec50dd402",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.3,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.559999942779541,
+        "groundY": 0.0
+      }
+    },
+    "sport": {
+      "id": "sport",
+      "name": "Friesian Sporthorse",
+      "label": "Friesian Sporthorse",
+      "file": "sport.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.68,
+      "heightM": 2.1653056144714355,
+      "fitScale": 0.8630952380952381,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.6279725189208984,
+            -0.08835427463054657
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.68,
+            0.13781632830699284
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8448626539812454,
+            1.1143729861460512
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            2.0076890185528367,
+            1.0025066465689998
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6611210072911662,
+            1.3318401977011534
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.924211550506661,
+            0.6360701158405219
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.4051333426808965,
+            -1.0849681722585487
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09352120020031433,
+            1.903950122517392,
+            1.0845514111168364
+          ],
+          [
+            0.09352120020031433,
+            1.903950122517392,
+            1.0845514111168364
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06884338379570376,
+            1.7031970955539837,
+            1.326156328372222
+          ],
+          [
+            0.06884338379570376,
+            1.7031970955539837,
+            1.326156328372222
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Chosen taller athletic cross with less bulk",
+      "morphology": {
+        "build": "Chosen taller athletic cross with less bulk",
+        "neck": "Long arched but lighter neck than Friesian",
+        "head_face": "Refined straight head with open throat",
+        "ears": "Medium neat ears",
+        "limbs": "Long clean athletic limbs",
+        "hooves": "Proportional sports feet",
+        "mane_tail": "Long but reduced-density mane/tail",
+        "feathering": "Light fetlock fringe"
+      },
+      "coat": "Black-brown athletic coat",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "3891f916e4e61369c6a8d77e752da266a3c08cae1ddee67ef7fbbd3bc9db5f41",
+      "bodyGeometrySha256": "e51486df18201512d68acd5e003b5d862c5ffd14e4645a75095898d456893208",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.96,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.6799999475479126,
+        "groundY": 0.0
+      }
+    },
+    "akhal": {
+      "id": "akhal",
+      "name": "Akhal-Teke",
+      "label": "Akhal-Teke",
+      "file": "akhal.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.59,
+      "heightM": 2.1457598209381104,
+      "fitScale": 0.9119496855345911,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.543248688697815,
+            -0.07499973475933075
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.59,
+            0.1490042621890704
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.7812598750750646,
+            1.1698492524025728
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.9479668050999046,
+            1.046522540480477
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5955407986394703,
+            1.4070809424945625
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.7968598372394613,
+            0.6598296509322497
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3377836035819857,
+            -1.0620665692420632
+          ]
+        ],
+        "eyes": [
+          [
+            -0.07948425651755524,
+            1.8442308789166884,
+            1.136997861076965
+          ],
+          [
+            0.07948425651755524,
+            1.8442308789166884,
+            1.136997861076965
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.058278823508096426,
+            1.6319185708386201,
+            1.4027129426020342
+          ],
+          [
+            0.058278823508096426,
+            1.6319185708386201,
+            1.4027129426020342
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Lithe long-lined body, narrow chest with deep girth",
+      "morphology": {
+        "build": "Lithe long-lined body, narrow chest with deep girth",
+        "neck": "Very long slim high neck and refined throat",
+        "head_face": "Long narrow dry face, length below eye, hooded eyes",
+        "ears": "Long slim forward-set ears",
+        "limbs": "Long forearm/gaskin, short cannon, defined joints",
+        "hooves": "Small round hard hooves",
+        "mane_tail": "Sparse fine mane/tail; very little forelock",
+        "feathering": "None"
+      },
+      "coat": "Metallic golden buckskin",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "55a677cfb58db4d126c4b8941fb50427335d921c5584aabdbe6434300c5006cb",
+      "bodyGeometrySha256": "c2eb4dc247273317c74b4cb68957309d03550593c89e70b4d0645a31632f6860",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.48,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.590000033378601,
+        "groundY": 0.0
+      }
+    },
+    "percheron": {
+      "id": "percheron",
+      "name": "Percheron",
+      "label": "Percheron",
+      "file": "percheron.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.73,
+      "heightM": 2.1210904121398926,
+      "fitScale": 0.838150289017341,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.6679884548187256,
+            -0.09511391818523407
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.73,
+            0.1343489830692609
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8235783500769003,
+            1.05863621301308
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.974025521273882,
+            0.9541889033610869
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6485425053934457,
+            1.2551037286415427
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.9144529977520606,
+            0.6153307763890119
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.412272255149376,
+            -1.1062352329571448
+          ]
+        ],
+        "eyes": [
+          [
+            -0.10649513654877077,
+            1.878023246294135,
+            1.030303505680977
+          ],
+          [
+            0.10649513654877077,
+            1.878023246294135,
+            1.030303505680977
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07844605322841051,
+            1.6921156500304741,
+            1.2500959286198452
+          ],
+          [
+            0.07844605322841051,
+            1.6921156500304741,
+            1.2500959286198452
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Deep powerful draft frame and broad muscular quarters",
+      "morphology": {
+        "build": "Deep powerful draft frame and broad muscular quarters",
+        "neck": "Thick strong moderately arched neck",
+        "head_face": "Relatively refined broad straight/slight convex head",
+        "ears": "Medium attentive ears",
+        "limbs": "Massive but defined clean bone and joints",
+        "hooves": "Large wide feet",
+        "mane_tail": "Substantial mane and full tail, less than Vanner",
+        "feathering": "None to very slight pastern hair"
+      },
+      "coat": "Steel dapple grey",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "dd990c09640665dad9f390f9fb0426cdb058d919fdf73e66bfa785a3d3b1d463",
+      "bodyGeometrySha256": "a3c685d9b43c34b3aa381cfb9c5f0552af9b9bfecd3f4a8aee59a6832193e56d",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.25,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.7300000190734863,
+        "groundY": 0.0
+      }
+    },
+    "shire": {
+      "id": "shire",
+      "name": "Shire",
+      "label": "Shire",
+      "file": "shire.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.82,
+      "heightM": 2.330836296081543,
+      "fitScale": 0.7967032967032966,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.754907166481018,
+            -0.09354425966739655
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.82,
+            0.14591175417105356
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.9416608074392858,
+            1.1946167074580316
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            2.125740327797326,
+            1.0570868370281128
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.732053264882231,
+            1.427639805916478
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            2.0697021768354826,
+            0.6708839129633165
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.4890445925549438,
+            -1.1486999474371897
+          ]
+        ],
+        "eyes": [
+          [
+            -0.10801603603045741,
+            2.008200097608375,
+            1.156026268484221
+          ],
+          [
+            0.10801603603045741,
+            2.008200097608375,
+            1.156026268484221
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.0796294688274641,
+            1.7816929802290877,
+            1.4274649407346147
+          ],
+          [
+            0.0796294688274641,
+            1.7816929802290877,
+            1.4274649407346147
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Largest substantial draft exemplar, deep ribs and long quarters",
+      "morphology": {
+        "build": "Largest substantial draft exemplar, deep ribs and long quarters",
+        "neck": "Long commanding arch over broad shoulders",
+        "head_face": "Long lean head, mild Roman nose; avoid block jaw",
+        "ears": "Long alert ears",
+        "limbs": "Substantial flat bone and high hocks",
+        "hooves": "Very broad deep feet",
+        "mane_tail": "Long full mane and tail",
+        "feathering": "Fine silky rear-cannon and pastern fringe; avoid solid front boots"
+      },
+      "coat": "Black with white stockings and blaze",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "63f082a5caa5121683539e837ed2a5d1984751349f2529c7807fb42c38266d6f",
+      "bodyGeometrySha256": "482f94d83941243fbf9454864b8c0758e1ae43b88ad2d24e86fc1366219edb03",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840,
+        "HorseFeather": 52992
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.75,
+        "feathering": 0.85
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.8200000524520874,
+        "groundY": 0.0
+      }
+    },
+    "clyde": {
+      "id": "clyde",
+      "name": "Clydesdale",
+      "label": "Clydesdale",
+      "file": "clyde.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.78,
+      "heightM": 2.3185529708862305,
+      "fitScale": 0.8146067415730337,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.721486961364746,
+            -0.09022729843854904
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.78,
+            0.14073790311813356
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.9326790530380071,
+            1.1658967960032316
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            2.1136639438850398,
+            1.0416017785791283
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.7268948624670528,
+            1.4042552460837605
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            2.0420375625321965,
+            0.6569311819134817
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.477291255613099,
+            -1.107968441709824
+          ]
+        ],
+        "eyes": [
+          [
+            -0.10418591851366131,
+            1.998504578896312,
+            1.1327948792641416
+          ],
+          [
+            0.10418591851366131,
+            1.998504578896312,
+            1.1327948792641416
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07670659877496823,
+            1.7746822047041377,
+            1.4004084789795548
+          ],
+          [
+            0.07670659877496823,
+            1.7746822047041377,
+            1.4004084789795548
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Tall energetic draft with less squat silhouette",
+      "morphology": {
+        "build": "Tall energetic draft with less squat silhouette",
+        "neck": "Long well-arched neck and high withers",
+        "head_face": "Broad forehead, flat profile, wide muzzle",
+        "ears": "Large ears",
+        "limbs": "Lengthy lower hind limb with flat quality bone",
+        "hooves": "Large open substantial feet",
+        "mane_tail": "Full mane and tail",
+        "feathering": "Plentiful silky feather"
+      },
+      "coat": "Bright bay with wide blaze and stockings",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "d0d2f96c47bafa10543616d829238737fc7ab835d74448b2d602eac04bc6aae6",
+      "bodyGeometrySha256": "2c54151bcd5d55eab8481d91091f64d3c6ad191642b852d368753c5c9dc6d6d3",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840,
+        "HorseFeather": 56160
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.45,
+        "feathering": 0.9
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.7799999713897705,
+        "groundY": 0.0
+      }
+    },
+    "bay-sporthorse": {
+      "id": "bay-sporthorse",
+      "name": "Bay Sporthorse",
+      "label": "Bay Sporthorse",
+      "file": "bay-sporthorse.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.64,
+      "heightM": 2.0788042545318604,
+      "fitScale": 0.8841463414634146,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.5885894651412964,
+            -0.095633365213871
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.64,
+            0.1252218837539355
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.7794264751524616,
+            1.0250179452360229
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.9239941229854294,
+            0.9253111226338284
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6110264932768343,
+            1.2196836465069736
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.8099939936469425,
+            0.5929550472931808
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3677820750120393,
+            -1.0688253294100574
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09542665639618879,
+            1.8336886915346082,
+            0.9984294592087709
+          ],
+          [
+            0.09542665639618879,
+            1.8336886915346082,
+            0.9984294592087709
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.0701666591148447,
+            1.6493842669262828,
+            1.2139861137868484
+          ],
+          [
+            0.0701666591148447,
+            1.6493842669262828,
+            1.2139861137868484
+          ]
+        ]
+      },
+      "family": "breed",
+      "conformation": "Chosen taller athletic cross with less bulk",
+      "morphology": {
+        "build": "Chosen taller athletic cross with less bulk",
+        "neck": "Long arched but lighter neck than Friesian",
+        "head_face": "Refined straight head with open throat",
+        "ears": "Medium neat ears",
+        "limbs": "Long clean athletic limbs",
+        "hooves": "Proportional sports feet",
+        "mane_tail": "Long but reduced-density mane/tail",
+        "feathering": "Light fetlock fringe"
+      },
+      "coat": "Warm bay with black points",
+      "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+      "sha256": "6b4a0f51c0738db9fbedc168bf49ef021a5d6bd1fda1dcb8a5c3a4130c3957fc",
+      "bodyGeometrySha256": "32816d6a25a37701dab31dab22f54150386333c726bf5a624f13c4b770d37b91",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.6399999856948853,
+        "groundY": 0.0
+      }
+    },
+    "aether": {
+      "id": "aether",
+      "name": "Aether Friesian",
+      "label": "Aether Friesian",
+      "file": "black.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.64,
+      "heightM": 2.1324243545532227,
+      "fitScale": 0.8841463414634146,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.585880910873413,
+            -0.09138405323028564
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.64,
+            0.12908052951097487
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8011192627071997,
+            1.0803337748066628
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.9627071155029505,
+            0.977811864334481
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6186017753000754,
+            1.2890556165598255
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.9269487653043467,
+            0.6175213454992238
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3561541799219914,
+            -1.0628545483115552
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09387060691642449,
+            1.8576993108760407,
+            1.053441779485905
+          ],
+          [
+            0.09387060691642449,
+            1.8576993108760407,
+            1.053441779485905
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06933172590838976,
+            1.6644010675497476,
+            1.281218231513565
+          ],
+          [
+            0.06933172590838976,
+            1.6644010675497476,
+            1.281218231513565
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Substantial elegant rectangular riding/driving build",
+      "morphology": {
+        "build": "Substantial elegant rectangular riding/driving build",
+        "neck": "Long high-set arch; defined throat",
+        "head_face": "Relatively short refined head, straight or slightly hollow face",
+        "ears": "Small, tips gently inward",
+        "limbs": "Long forearm, strong clean joints",
+        "hooves": "Broad sound feet",
+        "mane_tail": "Long abundant wavy mane, forelock, full tail",
+        "feathering": "Distinct long fetlock/cannon fringe"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Explicit breed in roster name; preserve its anatomy. Approved authored Friesian body.",
+      "sha256": "09be85a04fe487ae2d77e2e6a8a8007a5fa908a03c89214e96a5eba9434a125c",
+      "bodyGeometrySha256": "6befbda79dec8263cc8cdbe4c244dbe20113c7f3b703688d3b314da599077a9a",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840,
+        "HorseFeather": 28032
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 2.15,
+        "feathering": 0.45
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.6399999856948853,
+        "groundY": 0.0
+      },
+      "foundation": "black"
+    },
+    "sunspear": {
+      "id": "sunspear",
+      "name": "Sunspear Arabian",
+      "label": "Sunspear Arabian",
+      "file": "sunset.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.5,
+      "heightM": 1.9139854907989502,
+      "fitScale": 0.9666666666666667,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.4532654638290405,
+            -0.1012454405426979
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.5,
+            0.08820773884654046
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6680538376051441,
+            0.883731254862285
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.8081280154163595,
+            0.814817281873171
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5143179994217382,
+            1.0626873141872073
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.7235581959054564,
+            0.5074613368494844
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.247855746351191,
+            -0.9360651230614975
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09192537331453773,
+            1.717812085490898,
+            0.8679204078740252
+          ],
+          [
+            0.09192537331453773,
+            1.717812085490898,
+            0.8679204078740252
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.0673192178161752,
+            1.548916751331203,
+            1.0505518668127067
+          ],
+          [
+            0.0673192178161752,
+            1.548916751331203,
+            1.0505518668127067
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Refined compact athlete, short back, near-level croup",
+      "morphology": {
+        "build": "Refined compact athlete, short back, near-level croup",
+        "neck": "Long fine high-set arch with open throat",
+        "head_face": "Mild dish below eyes, short muzzle, broad forehead",
+        "ears": "Small fine ears with gently inward tips",
+        "limbs": "Fine-looking but sound joints and dense bone",
+        "hooves": "Compact round sound hooves",
+        "mane_tail": "Fine mane and lifted flowing tail",
+        "feathering": "None"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Explicit breed in roster name; preserve its anatomy. Approved authored Sunset Arabian body.",
+      "sha256": "1f6c3497b1114f5c9c454d9a521d06c527893cfeff7380fe4471e713e568d01d",
+      "bodyGeometrySha256": "009d2368fd6abc7af5c2cdd2556c06725f2b8080e86ed761e65bb21bf99dd161",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5,
+        "groundY": 0.0
+      },
+      "foundation": "sunset"
+    },
+    "meadowlight": {
+      "id": "meadowlight",
+      "name": "Meadowlight Quarter Horse",
+      "label": "Meadowlight Quarter Horse",
+      "file": "bay.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.52,
+      "heightM": 1.8603322505950928,
+      "fitScale": 0.9539473684210525,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.4698359127044678,
+            -0.09883079677820206
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.52,
+            0.10205737501382828
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6240952643546518,
+            0.8752507013919738
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.7474520374741196,
+            0.7967042686887821
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.478623956479269,
+            1.0354783613019451
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.6524586862493924,
+            0.5136126698172941
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.2531329927771817,
+            -0.98403842131604
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09627566203301988,
+            1.6700603926763729,
+            0.8545798103898367
+          ],
+          [
+            0.09627566203301988,
+            1.6700603926763729,
+            0.8545798103898367
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07073482949423789,
+            1.513480690606027,
+            1.0286916646147022
+          ],
+          [
+            0.07073482949423789,
+            1.513480690606027,
+            1.0286916646147022
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Compact athletic stock build; broad rounded haunches",
+      "morphology": {
+        "build": "Compact athletic stock build; broad rounded haunches",
+        "neck": "Medium, comparatively low carriage, trim throat",
+        "head_face": "Short broad forehead, straight face, broad jaw",
+        "ears": "Small alert ears",
+        "limbs": "Strong forearm, short clean cannon",
+        "hooves": "Rounded proportional feet",
+        "mane_tail": "Moderate falling mane and full tail",
+        "feathering": "None"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Explicit breed in roster name; preserve its anatomy. Approved authored Quarter Horse body.",
+      "sha256": "cf35355f76508b9471d7c8af8f4750cd7d975a33f4258379b908d74185cb413e",
+      "bodyGeometrySha256": "5e96047c803b1b1e5885c34c416d94aa983fb68f30ec4ededab83a67cb1c3ad0",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5199999809265137,
+        "groundY": 0.0
+      },
+      "foundation": "bay"
+    },
+    "tempest": {
+      "id": "tempest",
+      "name": "Tempest Clydesdale",
+      "label": "Tempest Clydesdale",
+      "file": "clyde.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.78,
+      "heightM": 2.3185529708862305,
+      "fitScale": 0.8146067415730337,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.721486961364746,
+            -0.09022729843854904
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.78,
+            0.14073790311813356
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.9326790530380071,
+            1.1658967960032316
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            2.1136639438850398,
+            1.0416017785791283
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.7268948624670528,
+            1.4042552460837605
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            2.0420375625321965,
+            0.6569311819134817
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.477291255613099,
+            -1.107968441709824
+          ]
+        ],
+        "eyes": [
+          [
+            -0.10418591851366131,
+            1.998504578896312,
+            1.1327948792641416
+          ],
+          [
+            0.10418591851366131,
+            1.998504578896312,
+            1.1327948792641416
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07670659877496823,
+            1.7746822047041377,
+            1.4004084789795548
+          ],
+          [
+            0.07670659877496823,
+            1.7746822047041377,
+            1.4004084789795548
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Tall energetic draft with less squat silhouette",
+      "morphology": {
+        "build": "Tall energetic draft with less squat silhouette",
+        "neck": "Long well-arched neck and high withers",
+        "head_face": "Broad forehead, flat profile, wide muzzle",
+        "ears": "Large ears",
+        "limbs": "Lengthy lower hind limb with flat quality bone",
+        "hooves": "Large open substantial feet",
+        "mane_tail": "Full mane and tail",
+        "feathering": "Plentiful silky feather"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Explicit breed in roster name; preserve its anatomy. Approved authored Clydesdale body.",
+      "sha256": "d0d2f96c47bafa10543616d829238737fc7ab835d74448b2d602eac04bc6aae6",
+      "bodyGeometrySha256": "2c54151bcd5d55eab8481d91091f64d3c6ad191642b852d368753c5c9dc6d6d3",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840,
+        "HorseFeather": 56160
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.45,
+        "feathering": 0.9
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.7799999713897705,
+        "groundY": 0.0
+      },
+      "foundation": "clyde"
+    },
+    "eclipse": {
+      "id": "eclipse",
+      "name": "Eclipse Thoroughbred",
+      "label": "Eclipse Thoroughbred",
+      "file": "thoro.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.66,
+      "heightM": 2.1557741165161133,
+      "fitScale": 0.8734939759036144,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.6103737707138062,
+            -0.08763670176267624
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.66,
+            0.13011301557223
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8246704516155168,
+            1.0803626271566342
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.9809271907846022,
+            0.9687383758198544
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6460040752086431,
+            1.2960150780726778
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.8341886642584357,
+            0.6123345212831786
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3954421367848502,
+            -1.0471442445701162
+          ]
+        ],
+        "eyes": [
+          [
+            -0.08631378109472383,
+            1.8841934721201388,
+            1.0506191214477307
+          ],
+          [
+            0.08631378109472383,
+            1.8841934721201388,
+            1.0506191214477307
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06335258688736019,
+            1.6830017378240545,
+            1.2913582314379632
+          ],
+          [
+            0.06335258688736019,
+            1.6830017378240545,
+            1.2913582314379632
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Tall lean speed athlete, prominent withers, sloping shoulder",
+      "morphology": {
+        "build": "Tall lean speed athlete, prominent withers, sloping shoulder",
+        "neck": "Long lean neck with open throat",
+        "head_face": "Long dry straight head",
+        "ears": "Medium fine ears",
+        "limbs": "Long forearm/gaskin, clean dry tendons and joints",
+        "hooves": "Refined but properly sized feet",
+        "mane_tail": "Shorter neat mane, moderate tail",
+        "feathering": "None"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Explicit breed in roster name; preserve its anatomy. Approved authored Thoroughbred body.",
+      "sha256": "d543fca52100c465e64074c429aff3edc343310b3446f76a2c69b08ec97f7902",
+      "bodyGeometrySha256": "af91f579076c48262474c4421e65b179c734f6ed86d64399c89eb205496b7b6d",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.72,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.659999966621399,
+        "groundY": 0.0
+      },
+      "foundation": "thoro"
+    },
+    "glacier": {
+      "id": "glacier",
+      "name": "Glacier Percheron",
+      "label": "Glacier Percheron",
+      "file": "percheron.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.73,
+      "heightM": 2.1210904121398926,
+      "fitScale": 0.838150289017341,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.6679884548187256,
+            -0.09511391818523407
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.73,
+            0.1343489830692609
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8235783500769003,
+            1.05863621301308
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.974025521273882,
+            0.9541889033610869
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6485425053934457,
+            1.2551037286415427
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.9144529977520606,
+            0.6153307763890119
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.412272255149376,
+            -1.1062352329571448
+          ]
+        ],
+        "eyes": [
+          [
+            -0.10649513654877077,
+            1.878023246294135,
+            1.030303505680977
+          ],
+          [
+            0.10649513654877077,
+            1.878023246294135,
+            1.030303505680977
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07844605322841051,
+            1.6921156500304741,
+            1.2500959286198452
+          ],
+          [
+            0.07844605322841051,
+            1.6921156500304741,
+            1.2500959286198452
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Deep powerful draft frame and broad muscular quarters",
+      "morphology": {
+        "build": "Deep powerful draft frame and broad muscular quarters",
+        "neck": "Thick strong moderately arched neck",
+        "head_face": "Relatively refined broad straight/slight convex head",
+        "ears": "Medium attentive ears",
+        "limbs": "Massive but defined clean bone and joints",
+        "hooves": "Large wide feet",
+        "mane_tail": "Substantial mane and full tail, less than Vanner",
+        "feathering": "None to very slight pastern hair"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Explicit breed in roster name; preserve its anatomy. Approved authored Percheron body.",
+      "sha256": "dd990c09640665dad9f390f9fb0426cdb058d919fdf73e66bfa785a3d3b1d463",
+      "bodyGeometrySha256": "a3c685d9b43c34b3aa381cfb9c5f0552af9b9bfecd3f4a8aee59a6832193e56d",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.25,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.7300000190734863,
+        "groundY": 0.0
+      },
+      "foundation": "percheron"
+    },
+    "unicorn": {
+      "id": "unicorn",
+      "name": "Unicorn",
+      "label": "Unicorn",
+      "file": "grey.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.6,
+      "heightM": 2.034392833709717,
+      "fitScale": 0.9062499999999999,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.547805106163025,
+            -0.09847582131624222
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.6,
+            0.11325226972500484
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.731311947683124,
+            0.996532547509815
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.8848410930424315,
+            0.8870091311337008
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5571877028395902,
+            1.1808112327621476
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.8325376116222156,
+            0.5640464992080032
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3244150192521795,
+            -1.0314492307818994
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09379319028238722,
+            1.7862453318740046,
+            0.9654921472368473
+          ],
+          [
+            0.09379319028238722,
+            1.7862453318740046,
+            0.9654921472368473
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06919730544245298,
+            1.5990716413464727,
+            1.1789449444219153
+          ],
+          [
+            0.06919730544245298,
+            1.5990716413464727,
+            1.1789449444219153
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Baroque riding horse, rounded muscular quarters",
+      "morphology": {
+        "build": "Baroque riding horse, rounded muscular quarters",
+        "neck": "Elevated arch and smooth thick crest",
+        "head_face": "Medium-long lean head, mildly convex face",
+        "ears": "Medium parallel forward ears",
+        "limbs": "Clean balanced limbs, strong joints",
+        "hooves": "Proportional rounded feet",
+        "mane_tail": "Long subtly wavy mane and tail",
+        "feathering": "None"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Dapple Grey Andalusian body.",
+      "sha256": "0fe86a268b6b6efac90a0c8c1e114f81dcc43395d5c2c149ed8eadc153289bbb",
+      "bodyGeometrySha256": "d830f6c8cbb24a1826d0b2225cfd936981c4edf1c8239eaa45dab8afe256d96e",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.45,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.600000023841858,
+        "groundY": 0.0
+      },
+      "foundation": "grey"
+    },
+    "pegasus": {
+      "id": "pegasus",
+      "name": "Pegasus",
+      "label": "Pegasus",
+      "file": "sport.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.68,
+      "heightM": 2.1653056144714355,
+      "fitScale": 0.8630952380952381,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.6279725189208984,
+            -0.08835427463054657
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.68,
+            0.13781632830699284
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8448626539812454,
+            1.1143729861460512
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            2.0076890185528367,
+            1.0025066465689998
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6611210072911662,
+            1.3318401977011534
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.924211550506661,
+            0.6360701158405219
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.4051333426808965,
+            -1.0849681722585487
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09352120020031433,
+            1.903950122517392,
+            1.0845514111168364
+          ],
+          [
+            0.09352120020031433,
+            1.903950122517392,
+            1.0845514111168364
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06884338379570376,
+            1.7031970955539837,
+            1.326156328372222
+          ],
+          [
+            0.06884338379570376,
+            1.7031970955539837,
+            1.326156328372222
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Chosen taller athletic cross with less bulk",
+      "morphology": {
+        "build": "Chosen taller athletic cross with less bulk",
+        "neck": "Long arched but lighter neck than Friesian",
+        "head_face": "Refined straight head with open throat",
+        "ears": "Medium neat ears",
+        "limbs": "Long clean athletic limbs",
+        "hooves": "Proportional sports feet",
+        "mane_tail": "Long but reduced-density mane/tail",
+        "feathering": "Light fetlock fringe"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Friesian Sporthorse body.",
+      "sha256": "3891f916e4e61369c6a8d77e752da266a3c08cae1ddee67ef7fbbd3bc9db5f41",
+      "bodyGeometrySha256": "e51486df18201512d68acd5e003b5d862c5ffd14e4645a75095898d456893208",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.96,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.6799999475479126,
+        "groundY": 0.0
+      },
+      "foundation": "sport"
+    },
+    "celestial": {
+      "id": "celestial",
+      "name": "Celestial Unicorn",
+      "label": "Celestial Unicorn",
+      "file": "grey.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.6,
+      "heightM": 2.034392833709717,
+      "fitScale": 0.9062499999999999,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.547805106163025,
+            -0.09847582131624222
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.6,
+            0.11325226972500484
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.731311947683124,
+            0.996532547509815
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.8848410930424315,
+            0.8870091311337008
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5571877028395902,
+            1.1808112327621476
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.8325376116222156,
+            0.5640464992080032
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3244150192521795,
+            -1.0314492307818994
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09379319028238722,
+            1.7862453318740046,
+            0.9654921472368473
+          ],
+          [
+            0.09379319028238722,
+            1.7862453318740046,
+            0.9654921472368473
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06919730544245298,
+            1.5990716413464727,
+            1.1789449444219153
+          ],
+          [
+            0.06919730544245298,
+            1.5990716413464727,
+            1.1789449444219153
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Baroque riding horse, rounded muscular quarters",
+      "morphology": {
+        "build": "Baroque riding horse, rounded muscular quarters",
+        "neck": "Elevated arch and smooth thick crest",
+        "head_face": "Medium-long lean head, mildly convex face",
+        "ears": "Medium parallel forward ears",
+        "limbs": "Clean balanced limbs, strong joints",
+        "hooves": "Proportional rounded feet",
+        "mane_tail": "Long subtly wavy mane and tail",
+        "feathering": "None"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Dapple Grey Andalusian body.",
+      "sha256": "0fe86a268b6b6efac90a0c8c1e114f81dcc43395d5c2c149ed8eadc153289bbb",
+      "bodyGeometrySha256": "d830f6c8cbb24a1826d0b2225cfd936981c4edf1c8239eaa45dab8afe256d96e",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.45,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.600000023841858,
+        "groundY": 0.0
+      },
+      "foundation": "grey"
+    },
+    "ember": {
+      "id": "ember",
+      "name": "Ember Runner",
+      "label": "Ember Runner",
+      "file": "sunset.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.5,
+      "heightM": 1.9139854907989502,
+      "fitScale": 0.9666666666666667,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.4532654638290405,
+            -0.1012454405426979
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.5,
+            0.08820773884654046
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6680538376051441,
+            0.883731254862285
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.8081280154163595,
+            0.814817281873171
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5143179994217382,
+            1.0626873141872073
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.7235581959054564,
+            0.5074613368494844
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.247855746351191,
+            -0.9360651230614975
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09192537331453773,
+            1.717812085490898,
+            0.8679204078740252
+          ],
+          [
+            0.09192537331453773,
+            1.717812085490898,
+            0.8679204078740252
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.0673192178161752,
+            1.548916751331203,
+            1.0505518668127067
+          ],
+          [
+            0.0673192178161752,
+            1.548916751331203,
+            1.0505518668127067
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Refined compact athlete, short back, near-level croup",
+      "morphology": {
+        "build": "Refined compact athlete, short back, near-level croup",
+        "neck": "Long fine high-set arch with open throat",
+        "head_face": "Mild dish below eyes, short muzzle, broad forehead",
+        "ears": "Small fine ears with gently inward tips",
+        "limbs": "Fine-looking but sound joints and dense bone",
+        "hooves": "Compact round sound hooves",
+        "mane_tail": "Fine mane and lifted flowing tail",
+        "feathering": "None"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Sunset Arabian body.",
+      "sha256": "1f6c3497b1114f5c9c454d9a521d06c527893cfeff7380fe4471e713e568d01d",
+      "bodyGeometrySha256": "009d2368fd6abc7af5c2cdd2556c06725f2b8080e86ed761e65bb21bf99dd161",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5,
+        "groundY": 0.0
+      },
+      "foundation": "sunset"
+    },
+    "frost": {
+      "id": "frost",
+      "name": "Frost Stallion",
+      "label": "Frost Stallion",
+      "file": "lipiz.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.56,
+      "heightM": 1.9772095680236816,
+      "fitScale": 0.9294871794871794,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.5062659139633179,
+            -0.10154885798692703
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.56,
+            0.10486417214075724
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6747999976139174,
+            0.9512575446799254
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.8249101271246306,
+            0.848015467945387
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.504675898609012,
+            1.1262572176216359
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.7896024220765914,
+            0.5396323619736073
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.2778069798785014,
+            -1.011101599215045
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09799021018544143,
+            1.7278665913651368,
+            0.9220495355965086
+          ],
+          [
+            0.09799021018544143,
+            1.7278665913651368,
+            0.9220495355965086
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07226297657008732,
+            1.5467431703503067,
+            1.1240720697143278
+          ],
+          [
+            0.07226297657008732,
+            1.5467431703503067,
+            1.1240720697143278
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Compact baroque muscular riding build",
+      "morphology": {
+        "build": "Compact baroque muscular riding build",
+        "neck": "Strong arched crest and substantial base",
+        "head_face": "Straight to mild convex face, broad forehead",
+        "ears": "Small-medium alert ears",
+        "limbs": "Relatively short strong dry legs",
+        "hooves": "Strong rounded hooves",
+        "mane_tail": "Full softly waved mane and tail",
+        "feathering": "None"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Lipizzaner body.",
+      "sha256": "defc0beaf2b4191af8c185077445f55410b28a96652ed6d2025723beff3bc01c",
+      "bodyGeometrySha256": "385417ccd2c9b59cf0682574c171bd673a5a81a58515c7fd9960253ec50dd402",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.3,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.559999942779541,
+        "groundY": 0.0
+      },
+      "foundation": "lipiz"
+    },
+    "aurora": {
+      "id": "aurora",
+      "name": "Aurora Pegasus",
+      "label": "Aurora Pegasus",
+      "file": "sport.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.68,
+      "heightM": 2.1653056144714355,
+      "fitScale": 0.8630952380952381,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.6279725189208984,
+            -0.08835427463054657
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.68,
+            0.13781632830699284
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8448626539812454,
+            1.1143729861460512
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            2.0076890185528367,
+            1.0025066465689998
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6611210072911662,
+            1.3318401977011534
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.924211550506661,
+            0.6360701158405219
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.4051333426808965,
+            -1.0849681722585487
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09352120020031433,
+            1.903950122517392,
+            1.0845514111168364
+          ],
+          [
+            0.09352120020031433,
+            1.903950122517392,
+            1.0845514111168364
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06884338379570376,
+            1.7031970955539837,
+            1.326156328372222
+          ],
+          [
+            0.06884338379570376,
+            1.7031970955539837,
+            1.326156328372222
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Chosen taller athletic cross with less bulk",
+      "morphology": {
+        "build": "Chosen taller athletic cross with less bulk",
+        "neck": "Long arched but lighter neck than Friesian",
+        "head_face": "Refined straight head with open throat",
+        "ears": "Medium neat ears",
+        "limbs": "Long clean athletic limbs",
+        "hooves": "Proportional sports feet",
+        "mane_tail": "Long but reduced-density mane/tail",
+        "feathering": "Light fetlock fringe"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Friesian Sporthorse body.",
+      "sha256": "3891f916e4e61369c6a8d77e752da266a3c08cae1ddee67ef7fbbd3bc9db5f41",
+      "bodyGeometrySha256": "e51486df18201512d68acd5e003b5d862c5ffd14e4645a75095898d456893208",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.96,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.6799999475479126,
+        "groundY": 0.0
+      },
+      "foundation": "sport"
+    },
+    "phoenix": {
+      "id": "phoenix",
+      "name": "Phoenix Steed",
+      "label": "Phoenix Steed",
+      "file": "sunset.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.5,
+      "heightM": 1.9139854907989502,
+      "fitScale": 0.9666666666666667,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.4532654638290405,
+            -0.1012454405426979
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.5,
+            0.08820773884654046
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6680538376051441,
+            0.883731254862285
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.8081280154163595,
+            0.814817281873171
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5143179994217382,
+            1.0626873141872073
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.7235581959054564,
+            0.5074613368494844
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.247855746351191,
+            -0.9360651230614975
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09192537331453773,
+            1.717812085490898,
+            0.8679204078740252
+          ],
+          [
+            0.09192537331453773,
+            1.717812085490898,
+            0.8679204078740252
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.0673192178161752,
+            1.548916751331203,
+            1.0505518668127067
+          ],
+          [
+            0.0673192178161752,
+            1.548916751331203,
+            1.0505518668127067
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Refined compact athlete, short back, near-level croup",
+      "morphology": {
+        "build": "Refined compact athlete, short back, near-level croup",
+        "neck": "Long fine high-set arch with open throat",
+        "head_face": "Mild dish below eyes, short muzzle, broad forehead",
+        "ears": "Small fine ears with gently inward tips",
+        "limbs": "Fine-looking but sound joints and dense bone",
+        "hooves": "Compact round sound hooves",
+        "mane_tail": "Fine mane and lifted flowing tail",
+        "feathering": "None"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Sunset Arabian body.",
+      "sha256": "1f6c3497b1114f5c9c454d9a521d06c527893cfeff7380fe4471e713e568d01d",
+      "bodyGeometrySha256": "009d2368fd6abc7af5c2cdd2556c06725f2b8080e86ed761e65bb21bf99dd161",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5,
+        "groundY": 0.0
+      },
+      "foundation": "sunset"
+    },
+    "frostdrake": {
+      "id": "frostdrake",
+      "name": "Frostwing Dragon",
+      "label": "Frostwing Dragon",
+      "file": "percheron.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.73,
+      "heightM": 2.1210904121398926,
+      "fitScale": 0.838150289017341,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.6679884548187256,
+            -0.09511391818523407
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.73,
+            0.1343489830692609
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8235783500769003,
+            1.05863621301308
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.974025521273882,
+            0.9541889033610869
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6485425053934457,
+            1.2551037286415427
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.9144529977520606,
+            0.6153307763890119
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.412272255149376,
+            -1.1062352329571448
+          ]
+        ],
+        "eyes": [
+          [
+            -0.10649513654877077,
+            1.878023246294135,
+            1.030303505680977
+          ],
+          [
+            0.10649513654877077,
+            1.878023246294135,
+            1.030303505680977
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07844605322841051,
+            1.6921156500304741,
+            1.2500959286198452
+          ],
+          [
+            0.07844605322841051,
+            1.6921156500304741,
+            1.2500959286198452
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Deep powerful draft frame and broad muscular quarters",
+      "morphology": {
+        "build": "Deep powerful draft frame and broad muscular quarters",
+        "neck": "Thick strong moderately arched neck",
+        "head_face": "Relatively refined broad straight/slight convex head",
+        "ears": "Medium attentive ears",
+        "limbs": "Massive but defined clean bone and joints",
+        "hooves": "Large wide feet",
+        "mane_tail": "Substantial mane and full tail, less than Vanner",
+        "feathering": "None to very slight pastern hair"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Percheron body.",
+      "sha256": "dd990c09640665dad9f390f9fb0426cdb058d919fdf73e66bfa785a3d3b1d463",
+      "bodyGeometrySha256": "a3c685d9b43c34b3aa381cfb9c5f0552af9b9bfecd3f4a8aee59a6832193e56d",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.25,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.7300000190734863,
+        "groundY": 0.0
+      },
+      "foundation": "percheron"
+    },
+    "emberdrake": {
+      "id": "emberdrake",
+      "name": "Emberflight Dragon",
+      "label": "Emberflight Dragon",
+      "file": "thoro.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.66,
+      "heightM": 2.1557741165161133,
+      "fitScale": 0.8734939759036144,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.6103737707138062,
+            -0.08763670176267624
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.66,
+            0.13011301557223
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8246704516155168,
+            1.0803626271566342
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.9809271907846022,
+            0.9687383758198544
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6460040752086431,
+            1.2960150780726778
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.8341886642584357,
+            0.6123345212831786
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3954421367848502,
+            -1.0471442445701162
+          ]
+        ],
+        "eyes": [
+          [
+            -0.08631378109472383,
+            1.8841934721201388,
+            1.0506191214477307
+          ],
+          [
+            0.08631378109472383,
+            1.8841934721201388,
+            1.0506191214477307
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06335258688736019,
+            1.6830017378240545,
+            1.2913582314379632
+          ],
+          [
+            0.06335258688736019,
+            1.6830017378240545,
+            1.2913582314379632
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Tall lean speed athlete, prominent withers, sloping shoulder",
+      "morphology": {
+        "build": "Tall lean speed athlete, prominent withers, sloping shoulder",
+        "neck": "Long lean neck with open throat",
+        "head_face": "Long dry straight head",
+        "ears": "Medium fine ears",
+        "limbs": "Long forearm/gaskin, clean dry tendons and joints",
+        "hooves": "Refined but properly sized feet",
+        "mane_tail": "Shorter neat mane, moderate tail",
+        "feathering": "None"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Thoroughbred body.",
+      "sha256": "d543fca52100c465e64074c429aff3edc343310b3446f76a2c69b08ec97f7902",
+      "bodyGeometrySha256": "af91f579076c48262474c4421e65b179c734f6ed86d64399c89eb205496b7b6d",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.72,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.659999966621399,
+        "groundY": 0.0
+      },
+      "foundation": "thoro"
+    },
+    "amethyst": {
+      "id": "amethyst",
+      "name": "Amethyst Dragon",
+      "label": "Amethyst Dragon",
+      "file": "black.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.64,
+      "heightM": 2.1324243545532227,
+      "fitScale": 0.8841463414634146,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.585880910873413,
+            -0.09138405323028564
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.64,
+            0.12908052951097487
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8011192627071997,
+            1.0803337748066628
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.9627071155029505,
+            0.977811864334481
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6186017753000754,
+            1.2890556165598255
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.9269487653043467,
+            0.6175213454992238
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3561541799219914,
+            -1.0628545483115552
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09387060691642449,
+            1.8576993108760407,
+            1.053441779485905
+          ],
+          [
+            0.09387060691642449,
+            1.8576993108760407,
+            1.053441779485905
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06933172590838976,
+            1.6644010675497476,
+            1.281218231513565
+          ],
+          [
+            0.06933172590838976,
+            1.6644010675497476,
+            1.281218231513565
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Substantial elegant rectangular riding/driving build",
+      "morphology": {
+        "build": "Substantial elegant rectangular riding/driving build",
+        "neck": "Long high-set arch; defined throat",
+        "head_face": "Relatively short refined head, straight or slightly hollow face",
+        "ears": "Small, tips gently inward",
+        "limbs": "Long forearm, strong clean joints",
+        "hooves": "Broad sound feet",
+        "mane_tail": "Long abundant wavy mane, forelock, full tail",
+        "feathering": "Distinct long fetlock/cannon fringe"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Friesian body.",
+      "sha256": "09be85a04fe487ae2d77e2e6a8a8007a5fa908a03c89214e96a5eba9434a125c",
+      "bodyGeometrySha256": "6befbda79dec8263cc8cdbe4c244dbe20113c7f3b703688d3b314da599077a9a",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840,
+        "HorseFeather": 28032
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 2.15,
+        "feathering": 0.45
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.6399999856948853,
+        "groundY": 0.0
+      },
+      "foundation": "black"
+    },
+    "stormdrake": {
+      "id": "stormdrake",
+      "name": "Storm Dragon",
+      "label": "Storm Dragon",
+      "file": "clyde.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.78,
+      "heightM": 2.3185529708862305,
+      "fitScale": 0.8146067415730337,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.721486961364746,
+            -0.09022729843854904
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.78,
+            0.14073790311813356
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.9326790530380071,
+            1.1658967960032316
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            2.1136639438850398,
+            1.0416017785791283
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.7268948624670528,
+            1.4042552460837605
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            2.0420375625321965,
+            0.6569311819134817
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.477291255613099,
+            -1.107968441709824
+          ]
+        ],
+        "eyes": [
+          [
+            -0.10418591851366131,
+            1.998504578896312,
+            1.1327948792641416
+          ],
+          [
+            0.10418591851366131,
+            1.998504578896312,
+            1.1327948792641416
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07670659877496823,
+            1.7746822047041377,
+            1.4004084789795548
+          ],
+          [
+            0.07670659877496823,
+            1.7746822047041377,
+            1.4004084789795548
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Tall energetic draft with less squat silhouette",
+      "morphology": {
+        "build": "Tall energetic draft with less squat silhouette",
+        "neck": "Long well-arched neck and high withers",
+        "head_face": "Broad forehead, flat profile, wide muzzle",
+        "ears": "Large ears",
+        "limbs": "Lengthy lower hind limb with flat quality bone",
+        "hooves": "Large open substantial feet",
+        "mane_tail": "Full mane and tail",
+        "feathering": "Plentiful silky feather"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Clydesdale body.",
+      "sha256": "d0d2f96c47bafa10543616d829238737fc7ab835d74448b2d602eac04bc6aae6",
+      "bodyGeometrySha256": "2c54151bcd5d55eab8481d91091f64d3c6ad191642b852d368753c5c9dc6d6d3",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840,
+        "HorseFeather": 56160
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.45,
+        "feathering": 0.9
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.7799999713897705,
+        "groundY": 0.0
+      },
+      "foundation": "clyde"
+    },
+    "verdant": {
+      "id": "verdant",
+      "name": "Verdant Dragon",
+      "label": "Verdant Dragon",
+      "file": "stock.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.55,
+      "heightM": 1.971153974533081,
+      "fitScale": 0.9354838709677419,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.5015737171173096,
+            -0.09109027683734894
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.55,
+            0.11626061747471492
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6870133384849184,
+            0.9736605603891738
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.826302148968448,
+            0.878196719578613
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5259985273811012,
+            1.1600423448288404
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.7139167073429846,
+            0.5599839168767435
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.2905934502923813,
+            -1.004775681873892
+          ]
+        ],
+        "eyes": [
+          [
+            -0.0891348926957969,
+            1.7392337806703346,
+            0.9482035361730244
+          ],
+          [
+            0.0891348926957969,
+            1.7392337806703346,
+            0.9482035361730244
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06550328894008414,
+            1.5620341436101797,
+            1.1545872682110943
+          ],
+          [
+            0.06550328894008414,
+            1.5620341436101797,
+            1.1545872682110943
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Balanced all-purpose athletic working build",
+      "morphology": {
+        "build": "Balanced all-purpose athletic working build",
+        "neck": "Medium-long trim neck",
+        "head_face": "Refined straight head and open throat",
+        "ears": "Medium alert ears",
+        "limbs": "Strong but unbulky limbs",
+        "hooves": "Proportional round feet",
+        "mane_tail": "Neat practical mane and tail",
+        "feathering": "None"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Australian Stock Horse body.",
+      "sha256": "448410b6420174e0e7460936541d8500f22de815f822ed56a4320e2ed2b3701a",
+      "bodyGeometrySha256": "ac7eb17abf45e3ba6b694ad72b6985cc7a7080caa110c908f30fcdbcbfb76bab",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.84,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5499999523162842,
+        "groundY": 0.0
+      },
+      "foundation": "stock"
+    },
+    "shadowmare": {
+      "id": "shadowmare",
+      "name": "Shadow Mare",
+      "label": "Shadow Mare",
+      "file": "black.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.64,
+      "heightM": 2.1324243545532227,
+      "fitScale": 0.8841463414634146,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.585880910873413,
+            -0.09138405323028564
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.64,
+            0.12908052951097487
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.8011192627071997,
+            1.0803337748066628
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.9627071155029505,
+            0.977811864334481
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.6186017753000754,
+            1.2890556165598255
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.9269487653043467,
+            0.6175213454992238
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.3561541799219914,
+            -1.0628545483115552
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09387060691642449,
+            1.8576993108760407,
+            1.053441779485905
+          ],
+          [
+            0.09387060691642449,
+            1.8576993108760407,
+            1.053441779485905
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.06933172590838976,
+            1.6644010675497476,
+            1.281218231513565
+          ],
+          [
+            0.06933172590838976,
+            1.6644010675497476,
+            1.281218231513565
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Substantial elegant rectangular riding/driving build",
+      "morphology": {
+        "build": "Substantial elegant rectangular riding/driving build",
+        "neck": "Long high-set arch; defined throat",
+        "head_face": "Relatively short refined head, straight or slightly hollow face",
+        "ears": "Small, tips gently inward",
+        "limbs": "Long forearm, strong clean joints",
+        "hooves": "Broad sound feet",
+        "mane_tail": "Long abundant wavy mane, forelock, full tail",
+        "feathering": "Distinct long fetlock/cannon fringe"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Friesian body.",
+      "sha256": "09be85a04fe487ae2d77e2e6a8a8007a5fa908a03c89214e96a5eba9434a125c",
+      "bodyGeometrySha256": "6befbda79dec8263cc8cdbe4c244dbe20113c7f3b703688d3b314da599077a9a",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840,
+        "HorseFeather": 28032
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 2.15,
+        "feathering": 0.45
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.6399999856948853,
+        "groundY": 0.0
+      },
+      "foundation": "black"
+    },
+    "kestrel": {
+      "id": "kestrel",
+      "name": "Silver Kestrel",
+      "label": "Silver Kestrel",
+      "file": "morgan.glb",
+      "artistBreed": true,
+      "bodyMesh": "HorseBody",
+      "hairMesh": "HorseGroom",
+      "withersM": 1.52,
+      "heightM": 1.9087425470352173,
+      "fitScale": 0.9539473684210525,
+      "fitY": 0,
+      "anchors": {
+        "saddle": [
+          [
+            0.0,
+            1.471116816520691,
+            -0.10289143025875092
+          ]
+        ],
+        "withers": [
+          [
+            0,
+            1.52,
+            0.0896417737007141
+          ]
+        ],
+        "head": [
+          [
+            0.0,
+            1.6555427081401344,
+            0.867520520542486
+          ]
+        ],
+        "poll": [
+          [
+            0.0,
+            1.7901888743202887,
+            0.7915359451384549
+          ]
+        ],
+        "muzzle": [
+          [
+            0.0,
+            1.5016536618378193,
+            1.032700086599932
+          ]
+        ],
+        "crest": [
+          [
+            0.0,
+            1.729054268404955,
+            0.49968345794920604
+          ]
+        ],
+        "tail": [
+          [
+            0.0,
+            1.2586316498079047,
+            -0.9512831710904692
+          ]
+        ],
+        "eyes": [
+          [
+            -0.09521638257572815,
+            1.703556000574732,
+            0.8481093082886743
+          ],
+          [
+            0.09521638257572815,
+            1.703556000574732,
+            0.8481093082886743
+          ]
+        ],
+        "nostrils": [
+          [
+            -0.07003053975956787,
+            1.539685823293157,
+            1.0242337855576686
+          ],
+          [
+            0.07003053975956787,
+            1.539685823293157,
+            1.0242337855576686
+          ]
+        ]
+      },
+      "family": "fantasy",
+      "conformation": "Compact strong short-backed horse",
+      "morphology": {
+        "build": "Compact strong short-backed horse",
+        "neck": "Neck rises over withers with proud smooth crest",
+        "head_face": "Short straight/slightly dished face, rounded jaw",
+        "ears": "Small shapely upright ears",
+        "limbs": "Strong clean legs and short coupling",
+        "hooves": "Round feet open at heels",
+        "mane_tail": "Full groomed mane and tail",
+        "feathering": "None"
+      },
+      "coat": "Fantasy coat applied by the ranch renderer",
+      "sourceBasis": "Artist foundation choice for fantasy identity; no real breed claim. Approved authored Morgan body.",
+      "sha256": "daebc7c832aaaa3a62559a5619861f08743c7100a22795895d7691e0803d197c",
+      "bodyGeometrySha256": "f6bd17d0d3cf835411f75d2df6b8581dfcf897b999cd5d9c89afb06e7385160e",
+      "triangles": {
+        "HorseBody": 40780,
+        "Seated left eye": 1840,
+        "Horizontal pupil -1": 960,
+        "Seated right eye": 1840,
+        "Horizontal pupil 1": 960,
+        "HorseGroom": 120840
+      },
+      "jointCount": 40,
+      "clips": [
+        "Rest",
+        "Idle"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "feathering": 0
+      },
+      "validation": {
+        "bodyVertices": 20392,
+        "finite": true,
+        "maxWeightError": 1.2026430340483785e-07,
+        "maxInfluences": 4,
+        "actualWithersM": 1.5199999809265137,
+        "groundY": 0.0
+      },
+      "foundation": "morgan"
+    }
+  },
+  "aliases": {
+    "aether": "black",
+    "sunspear": "sunset",
+    "meadowlight": "bay",
+    "tempest": "clyde",
+    "eclipse": "thoro",
+    "glacier": "percheron",
+    "unicorn": "grey",
+    "pegasus": "sport",
+    "celestial": "grey",
+    "ember": "sunset",
+    "frost": "lipiz",
+    "aurora": "sport",
+    "phoenix": "sunset",
+    "frostdrake": "percheron",
+    "emberdrake": "thoro",
+    "amethyst": "black",
+    "stormdrake": "clyde",
+    "verdant": "stock",
+    "shadowmare": "black",
+    "kestrel": "morgan"
+  },
+  "foundationCount": 24,
+  "rosterCount": 45,
+  "physicalModelCount": 25
+}

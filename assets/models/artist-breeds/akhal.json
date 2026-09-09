@@ -1,0 +1,129 @@
+{
+  "id": "akhal",
+  "name": "Akhal-Teke",
+  "label": "Akhal-Teke",
+  "file": "akhal.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.59,
+  "heightM": 2.1457598209381104,
+  "fitScale": 0.9119496855345911,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.543248688697815,
+        -0.07499973475933075
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.59,
+        0.1490042621890704
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.7812598750750646,
+        1.1698492524025728
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.9479668050999046,
+        1.046522540480477
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.5955407986394703,
+        1.4070809424945625
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.7968598372394613,
+        0.6598296509322497
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.3377836035819857,
+        -1.0620665692420632
+      ]
+    ],
+    "eyes": [
+      [
+        -0.07948425651755524,
+        1.8442308789166884,
+        1.136997861076965
+      ],
+      [
+        0.07948425651755524,
+        1.8442308789166884,
+        1.136997861076965
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.058278823508096426,
+        1.6319185708386201,
+        1.4027129426020342
+      ],
+      [
+        0.058278823508096426,
+        1.6319185708386201,
+        1.4027129426020342
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Lithe long-lined body, narrow chest with deep girth",
+  "morphology": {
+    "build": "Lithe long-lined body, narrow chest with deep girth",
+    "neck": "Very long slim high neck and refined throat",
+    "head_face": "Long narrow dry face, length below eye, hooded eyes",
+    "ears": "Long slim forward-set ears",
+    "limbs": "Long forearm/gaskin, short cannon, defined joints",
+    "hooves": "Small round hard hooves",
+    "mane_tail": "Sparse fine mane/tail; very little forelock",
+    "feathering": "None"
+  },
+  "coat": "Metallic golden buckskin",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "55a677cfb58db4d126c4b8941fb50427335d921c5584aabdbe6434300c5006cb",
+  "bodyGeometrySha256": "c2eb4dc247273317c74b4cb68957309d03550593c89e70b4d0645a31632f6860",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 0.48,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.590000033378601,
+    "groundY": 0.0
+  }
+}

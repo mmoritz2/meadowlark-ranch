@@ -1,0 +1,130 @@
+{
+  "id": "black",
+  "name": "Friesian",
+  "label": "Friesian",
+  "file": "black.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.64,
+  "heightM": 2.1324243545532227,
+  "fitScale": 0.8841463414634146,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.585880910873413,
+        -0.09138405323028564
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.64,
+        0.12908052951097487
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.8011192627071997,
+        1.0803337748066628
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.9627071155029505,
+        0.977811864334481
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.6186017753000754,
+        1.2890556165598255
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.9269487653043467,
+        0.6175213454992238
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.3561541799219914,
+        -1.0628545483115552
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09387060691642449,
+        1.8576993108760407,
+        1.053441779485905
+      ],
+      [
+        0.09387060691642449,
+        1.8576993108760407,
+        1.053441779485905
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.06933172590838976,
+        1.6644010675497476,
+        1.281218231513565
+      ],
+      [
+        0.06933172590838976,
+        1.6644010675497476,
+        1.281218231513565
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Substantial elegant rectangular riding/driving build",
+  "morphology": {
+    "build": "Substantial elegant rectangular riding/driving build",
+    "neck": "Long high-set arch; defined throat",
+    "head_face": "Relatively short refined head, straight or slightly hollow face",
+    "ears": "Small, tips gently inward",
+    "limbs": "Long forearm, strong clean joints",
+    "hooves": "Broad sound feet",
+    "mane_tail": "Long abundant wavy mane, forelock, full tail",
+    "feathering": "Distinct long fetlock/cannon fringe"
+  },
+  "coat": "Soft black with warm highlights",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "09be85a04fe487ae2d77e2e6a8a8007a5fa908a03c89214e96a5eba9434a125c",
+  "bodyGeometrySha256": "6befbda79dec8263cc8cdbe4c244dbe20113c7f3b703688d3b314da599077a9a",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840,
+    "HorseFeather": 28032
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 2.15,
+    "feathering": 0.45
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.6399999856948853,
+    "groundY": 0.0
+  }
+}

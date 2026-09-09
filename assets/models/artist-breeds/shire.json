@@ -1,0 +1,130 @@
+{
+  "id": "shire",
+  "name": "Shire",
+  "label": "Shire",
+  "file": "shire.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.82,
+  "heightM": 2.330836296081543,
+  "fitScale": 0.7967032967032966,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.754907166481018,
+        -0.09354425966739655
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.82,
+        0.14591175417105356
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.9416608074392858,
+        1.1946167074580316
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        2.125740327797326,
+        1.0570868370281128
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.732053264882231,
+        1.427639805916478
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        2.0697021768354826,
+        0.6708839129633165
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.4890445925549438,
+        -1.1486999474371897
+      ]
+    ],
+    "eyes": [
+      [
+        -0.10801603603045741,
+        2.008200097608375,
+        1.156026268484221
+      ],
+      [
+        0.10801603603045741,
+        2.008200097608375,
+        1.156026268484221
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.0796294688274641,
+        1.7816929802290877,
+        1.4274649407346147
+      ],
+      [
+        0.0796294688274641,
+        1.7816929802290877,
+        1.4274649407346147
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Largest substantial draft exemplar, deep ribs and long quarters",
+  "morphology": {
+    "build": "Largest substantial draft exemplar, deep ribs and long quarters",
+    "neck": "Long commanding arch over broad shoulders",
+    "head_face": "Long lean head, mild Roman nose; avoid block jaw",
+    "ears": "Long alert ears",
+    "limbs": "Substantial flat bone and high hocks",
+    "hooves": "Very broad deep feet",
+    "mane_tail": "Long full mane and tail",
+    "feathering": "Fine silky rear-cannon and pastern fringe; avoid solid front boots"
+  },
+  "coat": "Black with white stockings and blaze",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "63f082a5caa5121683539e837ed2a5d1984751349f2529c7807fb42c38266d6f",
+  "bodyGeometrySha256": "482f94d83941243fbf9454864b8c0758e1ae43b88ad2d24e86fc1366219edb03",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840,
+    "HorseFeather": 52992
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1.75,
+    "feathering": 0.85
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.8200000524520874,
+    "groundY": 0.0
+  }
+}

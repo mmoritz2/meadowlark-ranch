@@ -1,0 +1,129 @@
+{
+  "id": "sport",
+  "name": "Friesian Sporthorse",
+  "label": "Friesian Sporthorse",
+  "file": "sport.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.68,
+  "heightM": 2.1653056144714355,
+  "fitScale": 0.8630952380952381,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.6279725189208984,
+        -0.08835427463054657
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.68,
+        0.13781632830699284
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.8448626539812454,
+        1.1143729861460512
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        2.0076890185528367,
+        1.0025066465689998
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.6611210072911662,
+        1.3318401977011534
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.924211550506661,
+        0.6360701158405219
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.4051333426808965,
+        -1.0849681722585487
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09352120020031433,
+        1.903950122517392,
+        1.0845514111168364
+      ],
+      [
+        0.09352120020031433,
+        1.903950122517392,
+        1.0845514111168364
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.06884338379570376,
+        1.7031970955539837,
+        1.326156328372222
+      ],
+      [
+        0.06884338379570376,
+        1.7031970955539837,
+        1.326156328372222
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Chosen taller athletic cross with less bulk",
+  "morphology": {
+    "build": "Chosen taller athletic cross with less bulk",
+    "neck": "Long arched but lighter neck than Friesian",
+    "head_face": "Refined straight head with open throat",
+    "ears": "Medium neat ears",
+    "limbs": "Long clean athletic limbs",
+    "hooves": "Proportional sports feet",
+    "mane_tail": "Long but reduced-density mane/tail",
+    "feathering": "Light fetlock fringe"
+  },
+  "coat": "Black-brown athletic coat",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "3891f916e4e61369c6a8d77e752da266a3c08cae1ddee67ef7fbbd3bc9db5f41",
+  "bodyGeometrySha256": "e51486df18201512d68acd5e003b5d862c5ffd14e4645a75095898d456893208",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 0.96,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.6799999475479126,
+    "groundY": 0.0
+  }
+}

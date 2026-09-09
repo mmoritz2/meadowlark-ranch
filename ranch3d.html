@@ -62,7 +62,7 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 #wallet .w{display:flex;align-items:center;gap:6px;font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.01em}
 #wallet .w i{font-style:normal;font-size:15px}
 #sysBtns{display:flex;gap:6px}
-#vrBtn{top:calc(58px + env(safe-area-inset-top))!important;right:calc(12px + env(safe-area-inset-right))!important;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-color:rgba(255,255,255,.7);border-radius:999px;font-size:13px}
+#vrBtn{top:calc(58px + env(safe-area-inset-top))!important;right:calc(12px + env(safe-area-inset-right))!important;z-index:5!important;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-color:rgba(255,255,255,.7);border-radius:999px;font-size:13px}
 #sysBtns button{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-color:rgba(255,255,255,.7)}
 /* ---- HUD: the horse card (top-left) ---- */
 #statusCard{position:fixed;top:calc(12px + env(safe-area-inset-top));left:calc(12px + env(safe-area-inset-left));z-index:6;display:flex;flex-direction:column;gap:8px;padding:10px 12px;border-radius:20px;width:250px;color:var(--ink)}
@@ -108,8 +108,8 @@ body.posing #poseBar{display:flex}
 body.posing #dock,body.posing #questTrack,body.posing #statusCard,body.posing #mini,body.posing #hint,body.posing #ctx{display:none!important}
 #shotCount{position:fixed;inset:0;z-index:13;display:none;align-items:center;justify-content:center;pointer-events:none;font-size:150px;font-weight:800;color:#fff;text-shadow:0 6px 40px rgba(0,0,0,.55)}
 #shotCount.on{display:flex}
-#toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(104px + env(safe-area-inset-top));z-index:20;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
-.toast{background:var(--dark);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff8ea;padding:9px 16px 9px 14px;border-radius:14px;font-size:14px;font-weight:600;border-left:4px solid var(--gold);box-shadow:var(--sh-2);animation:rise .22s ease;max-width:min(560px,92vw)}
+#toasts{position:fixed;right:calc(16px + env(safe-area-inset-right));bottom:calc(116px + env(safe-area-inset-bottom));z-index:9;display:flex;flex-direction:column;align-items:flex-end;width:min(350px,calc(100vw - 32px));pointer-events:none}
+.toast{background:var(--dark);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff8ea;padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.4;font-weight:600;border-left:3px solid var(--gold);box-shadow:var(--sh-1);animation:rise .22s ease;width:100%;overflow-wrap:anywhere}
 .toast.out{opacity:0;transition:opacity .4s}
 @keyframes rise{from{transform:translateY(8px) scale(.96)}to{transform:translateY(0) scale(1)}}
 @keyframes pop{from{transform:scale(.8)}to{transform:scale(1)}}
@@ -125,6 +125,9 @@ body.posing #dock,body.posing #questTrack,body.posing #statusCard,body.posing #m
 #eventsPanel::-webkit-scrollbar-thumb,#shopPanel::-webkit-scrollbar-thumb,#stablePanel::-webkit-scrollbar-thumb,#questPanel::-webkit-scrollbar-thumb,#lbPanel::-webkit-scrollbar-thumb,#carePanel::-webkit-scrollbar-thumb,#buildPanel::-webkit-scrollbar-thumb,#onlinePanel::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:8px}
 .ph,#eventsPanel>b:first-child,#lbPanel>b:first-child,#onlinePanel>b:first-child,#carePanel>b:first-child{font-family:var(--display);font-size:20px;font-weight:600;display:flex;align-items:center;gap:8px;padding-bottom:6px;letter-spacing:.01em;color:var(--ink)}
 .ph .chip{font-family:var(--font);font-size:12px}
+.panelHeader{position:sticky;top:-16px;z-index:2;margin:-16px -16px 2px;padding:12px 16px;background:#fffdf7;border-bottom:1px solid var(--line);flex-shrink:0}
+.panelHeader b{flex:1;min-width:0;font-size:18px}
+.panelClose{flex:none;min-height:40px;padding:8px 11px;font-size:12px;white-space:nowrap}
 .evrow{display:flex;align-items:center;gap:9px;font-size:14px;border:1px solid var(--line);border-radius:14px;padding:9px 12px;background:#fff;box-shadow:0 1px 2px rgba(50,32,10,.05);transition:transform .12s,box-shadow .15s}
 .evrow:hover{transform:translateX(2px);box-shadow:0 4px 12px rgba(50,32,10,.12)}
 .evrow span{color:var(--ink-2);font-size:12px;flex:1;font-weight:600}
@@ -237,26 +240,38 @@ body.freecam #fcHint{display:block}
 body.touch #touch{display:grid}
 body.touch #stickZone{display:block}
 /* ---- small screens ---- */
+@media(min-width:721px) and (max-width:1100px){
+ #questTrack{top:calc(104px + env(safe-area-inset-top));left:auto;right:12px;transform:none;max-width:calc(100vw - 290px)}
+ #courseHud{top:calc(154px + env(safe-area-inset-top));max-width:calc(100vw - 32px);font-size:14px}
+ #stamWrap{top:calc(194px + env(safe-area-inset-top))}
+ #dock{left:176px;right:12px;transform:none;max-width:none}
+ #hint{max-width:calc(100vw - 210px);left:auto;right:12px;transform:none;font-size:12px;text-align:center}
+}
 @media(max-width:720px){
- #statusCard{width:186px;padding:8px 10px}
- #scPortrait{width:44px;height:44px;font-size:22px}
+ #statusCard{width:calc(50vw - 18px);max-width:218px;padding:8px}
+ #scTop{gap:7px}
+ #scPortrait{width:38px;height:38px;font-size:21px}
  #gaitEl{left:30px;top:28px;width:20px;height:20px;font-size:10px}
  #scName{font-size:14px}
  #scBtns{display:none}
- #hud{flex-direction:column;align-items:flex-end;gap:6px}
- #wallet{gap:9px;padding:5px 11px}
+ #hud{flex-direction:column;align-items:flex-end;gap:6px;width:calc(50vw - 18px)}
+ #wallet{gap:7px;padding:5px 7px;max-width:100%;flex-wrap:wrap;justify-content:flex-end}
  #wallet .w{font-size:13px}
  #wallet .w i{font-size:13px}
  #sysBtns button{width:32px;height:32px;font-size:14px}
- #vrBtn{top:calc(94px + env(safe-area-inset-top))!important;font-size:12px;padding:6px 11px}
- #questTrack{top:calc(118px + env(safe-area-inset-top));left:12px;transform:none;max-width:62vw;font-size:12px}
+ #vrBtn{top:calc(110px + env(safe-area-inset-top))!important;font-size:12px;padding:6px 11px}
+ #questTrack{top:calc(110px + env(safe-area-inset-top));left:12px;transform:none;max-width:calc(100vw - 154px);font-size:12px}
  #dock{top:calc(158px + env(safe-area-inset-top));bottom:auto;left:12px;right:12px;transform:none;max-width:none;justify-content:flex-start;padding:4px}
  #dock button{padding:7px 10px;font-size:12.5px}
- #hint{bottom:auto;top:calc(206px + env(safe-area-inset-top));font-size:12px;max-width:86vw;white-space:normal;text-align:center}
+ #hint{display:none}
  #ctx{bottom:calc(96px + env(safe-area-inset-bottom))}
- #courseHud{top:calc(64px + env(safe-area-inset-top));left:12px;transform:none;font-size:14px;max-width:60vw}
- #stamWrap{top:calc(104px + env(safe-area-inset-top));left:12px;transform:none;width:140px}
- #toasts{top:calc(150px + env(safe-area-inset-top))}
+ #courseHud{top:calc(206px + env(safe-area-inset-top));left:12px;transform:none;font-size:13px;max-width:calc(100vw - 24px)}
+ #stamWrap{top:calc(249px + env(safe-area-inset-top));left:12px;transform:none;width:140px}
+ #toasts{bottom:calc(128px + env(safe-area-inset-bottom));right:12px;width:calc(100vw - 24px)}
+ #mini{width:96px;height:96px;left:12px;z-index:7}
+ #eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel,#moneyPanel,#summonPanel,#buildPanel,#stablePanel,#questPanel,#profilePanel{top:calc(12px + env(safe-area-inset-top));max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));width:calc(100vw - 24px)}
+ .evrow{flex-wrap:wrap;gap:7px}
+ .evrow>b{max-width:100%;overflow-wrap:anywhere}
  #countdown{font-size:76px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -283,6 +298,7 @@ body.touch #stickZone{display:block}
  <button id="shopBtn">🛍️ Shop</button>
  <button id="eventsBtn">🏆 Events</button>
  <button id="stableBtn">🐎 Stable</button>
+ <button id="breedStudioBtn" title="View the replacement horse study and existing breed models">Breed Studio ↗</button>
  <button id="buildBtn" title="Build your ranch">🏗️ Build</button>
  <button id="questBtn">📜 Quests</button>
  <button id="netBtn">🌐 Club</button>
@@ -292,7 +308,7 @@ body.touch #stickZone{display:block}
  <button id="breathBtn" style="display:none" title="Breathe (B)">🔥 Breathe</button>
 </nav>
 <div id="hint">W/↑ ride · A/D steer · Shift gallop · Space jump · drag to look around</div>
-<div id="toasts"></div>
+<div id="toasts" role="status" aria-live="polite" aria-atomic="true"></div>
 <canvas id="mini" width="140" height="140" title="Open the world map (M)"></canvas>
 <div id="bigmapWrap"><div style="display:flex;flex-direction:column;align-items:center"><canvas id="bigmap" width="560" height="560"></canvas><div id="ftBar"></div></div></div>
 <div id="courseHud" style="display:none"><span id="courseHudTxt"></span><button id="courseQuit">✖</button></div>
@@ -307,7 +323,7 @@ body.touch #stickZone{display:block}
 <div id="onlinePanel"></div>
 <div id="lbPanel"></div>
 <div id="moneyPanel"></div>
-<div id="summonPanel"></div>
+<div id="summonPanel" role="dialog" aria-labelledby="summonTitle"></div>
 <div id="summonFx"><div id="sfxRar"></div><div id="sfxName"></div><div id="sfxBreed"></div></div>
 <div id="chatFeed"></div>
 <div id="chatBar"><input id="chatIn" maxlength="80" placeholder="Say something to your club…"><button data-emote="👋">👋</button><button data-emote="❤️">❤️</button><button data-emote="😂">😂</button><button data-emote="🎉">🎉</button><button id="chatSend">➤</button></div>
@@ -381,8 +397,12 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from './assets/breed-models.js';
+import {createBreedLibrary} from './assets/breed-models.js?v=artist-breeds-1';
 import {createBreedGroom} from './assets/horse-groom.js';
+import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
+import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
+import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig} from './assets/game-hero-horse.js?v=artist-breeds-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js';
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js';
@@ -392,6 +412,8 @@ import {createGeology} from './assets/geology.js';
 import {installRiparian} from './assets/riparian.js';
 import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js';
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
+import {createFollowCamera} from './assets/follow-camera.js';
+import {createArrivalArt} from './assets/ranch-arrival-art.js';
 
 /* ================= save sync with the 2D game ================= */
 const SAVE_KEY='starRanchFable_v1';   // NOT renamed with the game: changing this orphans every existing save
@@ -808,7 +830,7 @@ function refreshTack(){const fs=freshSave();if(!fs)return;tackInv=fs.tack||[];fs
 try{save=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){}
 if(!save||!save.horses||!save.horses.length){
  save=save&&save.horses?save:{v:2,ranchName:'Meadowlark Ranch',founded:Date.now(),coins:150,gems:3,items:{carrot:10,apple:2,hay:3},nextId:1,horses:[],decor:[],projects:{},trophies:{},wild:null,wildTrust:0,muted:false,lastSeen:Date.now(),lastDaily:'',questDate:'',quests:[],totalRaces:0,started:true};
- save.horses.push({id:save.nextId++,name:'Clover',breed:'bay',colors:{body:'#8a5a2b',mane:'#332214'},horn:false,rainbow:false,stats:{speed:3,stamina:3,jump:3,accel:3,agility:3},sxp:{},level:1,xp:0,bond:25,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
+ save.horses.push({id:save.nextId++,name:'Clover',breed:'bay-sporthorse',colors:{body:'#765035',mane:'#221b16'},horn:false,rainbow:false,stats:{speed:3,stamina:3,jump:3,accel:3,agility:3},sxp:{},level:1,xp:0,bond:25,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
  save.started=true;
  try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}
 }
@@ -816,7 +838,7 @@ const myHorses=save.horses;
 _ranchLvlCache=ranchLevel(save);   // the real level, so being away decays at the ranch's own rate
 if(myHorses.some(h=>!h.sxp||!h.gear)||!save.tack||save.keys==null){myHorses.forEach(ensureStats);save.tack=save.tack||[];if(save.keys==null)save.keys=1;try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}   // older saves: five stats, a tack locker and a welcome key
 tackInv=save.tack||[];
-let rideIdx=0;
+let rideIdx=Math.max(0,myHorses.findIndex(h=>h.id===save.ridingHorseId));
 // the 3D world now owns the ranch: needs decay (even while away) & the daily gift
 const DECAY3={hunger:100/(8*3600),thirst:100/(6*3600),clean:100/(12*3600),happy:100/(16*3600)};
 {
@@ -892,10 +914,18 @@ function syncSave(fn){
 function addCoins(n){if(VIPON)n=Math.round(n*VIP_COIN);coins+=n;$('coinEl').textContent=coins;syncSave(s=>{s.coins+=n;s.stats=s.stats||{};s.stats.earned=(s.stats.earned||0)+n;logEarn(s,n);});}
 function statBump(k,n){syncSave(s=>{s.stats=s.stats||{};s.stats[k]=(s.stats[k]||0)+n;});}
 function addGems(n){gems+=n;$('gemEl').textContent=gems;syncSave(s=>{s.gems+=n;});}
+const toastQueue=[];
+let activeToast=null;
+function showNextToast(){
+ if(activeToast!==null||!toastQueue.length)return;
+ const msg=toastQueue.shift(),t=document.createElement('div');
+ activeToast=msg;t.className='toast';t.textContent=msg;$('toasts').replaceChildren(t);
+ setTimeout(()=>{t.classList.add('out');setTimeout(()=>{t.remove();activeToast=null;showNextToast();},400);},Math.min(4800,1800+msg.length*20));
+}
 function toast(msg){
- const t=document.createElement('div');t.className='toast';t.textContent=msg;
- $('toasts').appendChild(t);
- setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),400);},2200);
+ msg=String(msg);
+ // Rewards are credited by their callers immediately; only their notices wait.
+ if(msg!==activeToast&&!toastQueue.includes(msg)){toastQueue.push(msg);showNextToast();}
  /* In a headset the DOM is not on screen at all, so every one of these — found a gem,
     clean jump, quest complete, a horse getting hungry — was silently lost. Mirror it onto
     a panel in the world. Defined later; guarded so early boot toasts do not throw. */
@@ -1057,6 +1087,7 @@ function groundH(x,z){
  if(Math.abs(x)<2.3&&z>BR_A&&z<BR_B)h=Math.max(h,BRIDGE_Y+0.55*Math.sin(Math.PI*(z-BR_A)/15));
  return h;
 }
+const followCamera=createFollowCamera({THREE,groundHeight:groundH});
 
 /* ================= renderer / scene / sky / light ================= */
 const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
@@ -2146,6 +2177,7 @@ const moonS=(()=>{
 /* window panes & lamps that switch on at dusk (day colour -> HDR warm glow the bloom picks up) */
 const glowPanes=[];
 const ranchArchitecture=createRanchArchitecture({THREE,glowPanes});
+const arrivalArt=createArrivalArt({THREE,anisotropy:renderer.capabilities.getMaxAnisotropy()});
 const geology=createGeology({THREE,scene,groundH:terrainH});
 /* fireflies: drifting HDR embers over the meadows, only alive at night */
 const FIREFLY_N=80;
@@ -2383,6 +2415,7 @@ const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:b
 {
  const smatl=new THREE.MeshStandardMaterial({map:sandTex,roughness:1,normalMap:texData('assets/textures/pastoral/arena_normal.jpg',10),normalScale:new THREE.Vector2(0.20,0.20),roughnessMap:texData('assets/textures/pastoral/arena_roughness.jpg',10)});
  smatl.envMapIntensity=0.46;
+ arrivalArt.enhanceArenaMaterial(smatl);
  const sand=new THREE.Mesh(new THREE.CircleGeometry(1,40),smatl);
  sand.scale.set(23.5,18.5,1);
  sand.rotation.x=-Math.PI/2;
@@ -4276,19 +4309,25 @@ const RIG_LEGS=[                       // 4-beat walk phasing; indices = texture
  {n:'FR',top:13,knee:15,front:true, ph:0.75},
 ];
 const RIG_NECK=[4,5], RIG_TAIL=[19,20,21];
-function rigCalibrate(){
+function instantiateArtistBreed(asset){
+ const inst=BREED_MODELS.instantiate(asset);
+ inst.fantasyAppearance=applyEquineFantasyAppearance(THREE,inst,inst.key);
+ return inst;
+}
+function rigCalibrate(rig=RIG){
+ if(rig.profile?.artistBreed){rig.legs=[];rig.neck=[];rig.tail=[];rig.headBone=rig.bones.find(b=>b.name==='head');rig.headIdx=rig.bones.indexOf(rig.headBone);return;}
  // Compute each driven bone's local axis that corresponds to the model's z
  // (left-right) axis, so rotating about it swings the limb forward/back. Done in
  // the model's rest frame (transform reset), independent of placement.
- const m=RIG.scene, sav={p:m.position.clone(),q:m.quaternion.clone(),s:m.scale.clone()};
+ const m=rig.scene, sav={p:m.position.clone(),q:m.quaternion.clone(),s:m.scale.clone()};
  m.position.set(0,0,0); m.quaternion.identity(); m.scale.set(1,1,1); m.updateWorldMatrix(true,true);
- const B=RIG.bones, Z=new THREE.Vector3(0,0,1);
+ const B=rig.bones, Z=new THREE.Vector3(0,0,1).applyQuaternion(m.getWorldQuaternion(new THREE.Quaternion()));
  const axisOf=i=>{const p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();
   B[i].matrixWorld.decompose(p,q,s); return Z.clone().applyQuaternion(q.clone().invert()).normalize();};
- RIG.legs=RIG_LEGS.map(L=>({...L,axTop:axisOf(L.top),axKnee:axisOf(L.knee),
+ rig.legs=RIG_LEGS.map(L=>({...L,axTop:axisOf(L.top),axKnee:axisOf(L.knee),
   rTop:B[L.top].quaternion.clone(),rKnee:B[L.knee].quaternion.clone()}));
- RIG.neck=RIG_NECK.map(i=>({i,ax:axisOf(i),r:B[i].quaternion.clone()}));
- RIG.tail=RIG_TAIL.map(i=>({i,ax:axisOf(i),r:B[i].quaternion.clone()}));
+ rig.neck=RIG_NECK.map(i=>({i,ax:axisOf(i),r:B[i].quaternion.clone()}));
+ rig.tail=RIG_TAIL.map(i=>({i,ax:axisOf(i),r:B[i].quaternion.clone()}));
  m.position.copy(sav.p); m.quaternion.copy(sav.q); m.scale.copy(sav.s); m.updateWorldMatrix(true,true);
 }
 // Coat coloring without UVs/textures: classify each vertex by its dominant bone
@@ -4378,6 +4417,8 @@ function hairMaterial(){
 }
 const hairU=[];
 function breedHair(skin,bones,mount,profile,colors,tailCol,seed){
+ if(profile?.artistBreed)return artistGroomFacade({THREE,skin,mount});
+ if(profile?.hero)return heroGroomFacade({THREE,skin,bones,mount,profile});
  if(!profile||!profile.anchors)return buildHairFor(skin,bones,mount);
  return createBreedGroom({THREE,skin,bones,mount,profile,maneColor:colors?.mane||'#332214',tailColor:tailCol||colors?.mane||'#332214',seed:seed||0});
 }
@@ -4450,6 +4491,7 @@ function buildHairFor(skin,bones,mount){
    one draw call. The head furniture rides in the bridle group, which already tracks the
    head bone. */
 function buildDragonBody(skin,bones,mount,theme){
+ if(bones.some(b=>b.name.replace('.','')==='FLhoof'))return buildArtistDragonBody({THREE,skin,bones,mount,theme});
  /* ONE mesh, built along ONE curve.
 
     The old dragon was a collection: a crest strip, a separate row of spine cones, a back
@@ -4586,6 +4628,7 @@ function hairColourFor(colors,coat,tailCol){
 }
 function hairColour(){
  const h=myHorses[rideIdx]; if(!h)return;
+ if(RIG.profile?.artistBreed){configureArtistCustomization(RIG,h);return;}
  const hc=hairColourFor(h.colors,h.coat,h.tailCol);
  if(RIG.groom?.setColors){RIG.groom.setColors({maneColor:hc.mane,tailColor:hc.tail});return;}
  if(RIG.hairMane)RIG.hairMane.material.color.copy(hc.mane);
@@ -4607,7 +4650,7 @@ let worldRigCount=0;
 function dressWithRig(ent,parts,colors,opts){
  opts=opts||{};
  if(ent.rig||ent.rigPending||ent.rigTried||!RIG.ready)return;
- if(worldRigCount>=rigBudget()&&!opts.mine)return;
+ // All visible horses use the approved body; budget affects animation, never anatomy.
  const breed=opts.breed||parts.group.userData.breed||'bay';
  const asset=BREED_MODELS.get(breed);
  if(!asset){
@@ -4617,7 +4660,7 @@ function dressWithRig(ent,parts,colors,opts){
   return;
  }
  ent.rigTried=true;
- const inst=BREED_MODELS.instantiate(asset),sc=inst.scene,skin=inst.skin;
+ const inst=instantiateArtistBreed(asset),sc=inst.scene,skin=inst.skin;
  const keep=new Set(); if(parts.wings)parts.wings.forEach(w=>w.traverse(o=>keep.add(o))); if(parts.crest)parts.crest.traverse(o=>keep.add(o)); (opts.keep||[]).forEach(g=>{if(g)g.traverse(o=>keep.add(o));});
  parts.group.traverse(o=>{if(o.isMesh&&!keep.has(o))o.visible=false;});
  parts.group.add(sc);
@@ -4626,17 +4669,31 @@ function dressWithRig(ent,parts,colors,opts){
  if(parts.wings)parts.wings.forEach(w=>{const D=w.userData.kind==='dragon';w.position.set(w.userData.sgn*(D?0.19:0.21),D?1.60:1.49,D?0.02:0.18);});
  const br=BREEDS3.find(b=>b[0]===breed);
  let mat;
- if(opts.coat)mat=fantasyCoatRig(opts.coat,!!opts.dragon);
+ if(inst.profile.artistBreed)mat=opts.coat&&opts.coat!==inst.fantasyAppearance?.theme?createEquineFantasyCoat(THREE,inst.baseMat,opts.coat,!!opts.dragon):skin.material;
+ else if(inst.profile.hero)mat=skin.material;
+ else if(opts.coat)mat=fantasyCoatRig(opts.coat,!!opts.dragon);
  else {mat=makeCoatMat(skin,inst.baseMat);setCoatUniforms(mat,colors?.body,opts.tailCol,opts.mark!==undefined&&opts.mark!==null?opts.mark:br?.[7]?.mark,opts.markCol||br?.[7]?.markCol,opts.seed);}
  skin.material=mat;
  if(opts.dragon){try{ent.drg=buildDragonBody(skin,inst.bones,parts.group,DRAGON_TINT[opts.coat]||DRAGON_TINT._);}catch(e){}}
  let hair=null;
  try{hair=breedHair(skin,inst.bones,parts.group,inst.profile,colors,opts.tailCol,opts.seed);if(opts.dragon){hair.mane.visible=false;hair.tail.visible=false;}if(!hair.setColors){const hc=hairColourFor(colors,opts.coat,opts.tailCol);hair.mane.material.color.copy(hc.mane);hair.tail.material.color.copy(hc.tail);}}catch(e){console.warn('horse groom',breed,e);}
- if(opts.saddle){const sd=buildSaddle();const seat=breedSeat(inst);sd.position.copy(seat);parts.group.add(sd);parts.group.add(buildBridle(opts.dragon?(DRAGON_TINT[opts.coat]||DRAGON_TINT._):null,inst));}
+ let saddle=null,bridle=null;
+ if(opts.saddle){const sd=buildSaddle(undefined,inst);const seat=breedSeat(inst);sd.position.copy(seat);parts.group.add(sd);bridle=buildBridle(opts.dragon?(DRAGON_TINT[opts.coat]||DRAGON_TINT._):null,inst);parts.group.add(bridle);saddle=sd;}
  worldRigCount++;
- ent.rig={...inst,phase:Math.random()*6,hair,restQ:inst.bones.map(b=>b.quaternion.clone())};
+ ent.rig={...inst,phase:Math.random()*6,hair,saddle,bridle,parts,fantasyMaterial:opts.coat?mat:null,restQ:inst.bones.map(b=>b.quaternion.clone())};
+ rigCalibrate(ent.rig);initGameHero(THREE,ent.rig);fitArtistFeatures(ent.rig,parts);configureArtistCustomization(ent.rig,myHorses.find(h=>h.id===opts.seed&&h.breed===breed)||{breed,colors,tailCol:opts.tailCol,mark:opts.mark,markCol:opts.markCol,id:opts.seed});
 }
-function tickRig(ent,sp,dt,t,graze){ const r=ent.rig; if(!r)return; r.phase+=rigPhaseStep(sp,true,dt,ent.parts?.group.scale.x||1); poseRigBones(r.bones,r.phase,sp,true,0,t,dt,graze||0); r.hair?.update?.(t,sp); }
+function tickRig(ent,sp,dt,t,graze){ const r=ent.rig; if(!r)return; if(r.heroMotion){tickGameHero(r,sp,dt);if(r.saddle)r.saddle.position.copy(breedSeat(r));if(r.bridle)r.bridle.userData.follow(r.headBone||r.bones[6],r.bones,r.restQ,r.scene,r.scene.parent);fitArtistFeatures(r,r.parts,true);return;} r.phase+=rigPhaseStep(sp,true,dt,ent.parts?.group.scale.x||1); poseRigBones(r.bones,r.phase,sp,true,0,t,dt,graze||0,r); r.hair?.update?.(t,sp); }
+function fitArtistFeatures(rig,parts,animated=false){
+ if(!rig.profile?.artistBreed||!parts)return;
+ const A=rig.profile.anchors,mount=parts.group;
+ if(parts.horn&&A.poll&&A.muzzle){
+  const p=new THREE.Vector3(...A.poll[0]).lerp(new THREE.Vector3(...A.muzzle[0]),.20);p.y+=.015;
+  if(animated){const bone=rig.bones.find(b=>b.name==='head'),i=rig.bones.indexOf(bone);rig.scene.updateWorldMatrix(true,true);p.applyMatrix4(rig.skin.bindMatrix).applyMatrix4(rig.skin.skeleton.boneInverses[i]).applyMatrix4(bone.matrixWorld);mount.worldToLocal(p);}
+  else p.copy(BREED_MODELS.mountPoint(rig,p.toArray()));parts.horn.position.copy(p);parts.horn.rotation.set(-.4,0,0);
+ }
+ if(!animated&&parts.wings){const withers=BREED_MODELS.mountPoint(rig,A.withers)||new THREE.Vector3(0,1.45,.2);for(const wing of parts.wings)wing.position.set(wing.userData.sgn*.20,withers.y-.05,withers.z-.12);}
+}
 function attachRig(){
  if(!USE_GEN_HORSE)return;
  const selected=myHorses[rideIdx]?.breed||'bay';
@@ -4664,14 +4721,14 @@ function attachRig(){
  }
  RIG.scene.scale.setScalar(RIG.fitScale||1.1);    // 1.1 ≈ the true fit; fallback if a bbox wasn't ready yet
  RIG.scene.position.set(0, RIG.fitScale?RIG.fitY:0, 0);   // hooves to y=0
- RIG.scene.rotation.set(0,-Math.PI/2,0);          // model +x (forward) -> game +z
+ RIG.scene.rotation.set(0,RIG.profile?.artistBreed?0:-Math.PI/2,0);          // model +x (forward) -> game +z
  RIG.scene.visible=true;                           // never leave the mount invisible
  player.mesh.add(RIG.scene);
  try{buildHair();}catch(e){console.warn('hair',e);}
- RIG.attachedTo=player.mesh;
+ RIG.attachedTo=player.mesh;fitArtistFeatures(RIG,player.parts);
  // seat the rider on the rigged horse's back (spine bone)
  if(riderG){ player.mesh.updateWorldMatrix(true,true);
-  const wp=new THREE.Vector3(); RIG.bones[2].getWorldPosition(wp); player.mesh.worldToLocal(wp);
+  const wp=new THREE.Vector3(); (RIG.profile?.artistBreed?RIG.bones.find(b=>b.name==='spine'):RIG.bones[2]).getWorldPosition(wp); player.mesh.worldToLocal(wp);
   riderG.position.set(0, wp.y-0.3, wp.z); }   // sit down onto the back (temporary; rider asset TBD)
 }
 /* The gait, separated from the player's rig so a remote rider's CLONED skeleton can
@@ -4691,6 +4748,7 @@ const EMOTES={
 function emEnv(em){const p=Math.min(1,em.t/em.dur);const e=p<0.22?p/0.22:p>0.78?(1-p)/0.22:1;return e*e*(3-2*e);}
 function horseEmote(type){
  const E=EMOTES[type]; if(!E)return false;
+ if(RIG.heroMotion){toast('That pose is not available for this horse yet.');return false;}
  if(RIG.emote||!RIG.ready||RIG.attachedTo!==player.mesh)return false;
  if(Math.abs(player.speed)>0.6||player.y>0||player.flying){toast('Come to a halt first.');return false;}
  RIG.emote={type,t:0,dur:E.dur};
@@ -4746,7 +4804,7 @@ function airLegPose(L,i,a,kb,air,t,pl){
  }
  _alp[0]=a*(1-air)+ta*air; _alp[1]=kb*(1-air)+tk*air; return _alp;
 }
-function poseRigBones(B,phase,sp,grounded,air,t,dt,graze){
+function poseRigBones(B,phase,sp,grounded,air,t,dt,graze,cal=RIG){
  const TAU=Math.PI*2, q=_rigQ;
  const em=(B===RIG.bones)?RIG.emote:null, E=em&&EMOTES[em.type], ee=em?emEnv(em):0;
  const moving=sp>0.25&&grounded, run=Math.max(0,Math.min(1,(sp-4)/4));
@@ -4755,7 +4813,7 @@ function poseRigBones(B,phase,sp,grounded,air,t,dt,graze){
  const GP=sp<2.8?[0.0,0.25,0.5,0.75]   // walk — 4-beat lateral
         :sp<7 ?[0.0,0.5,0.5,0.0]       // trot — diagonal pairs move together
               :[0.0,0.55,0.15,0.7];     // gallop — transverse, with suspension
- RIG.legs.forEach((L,i)=>{
+ cal.legs.forEach((L,i)=>{
   const p=GP[i];
   let a=swingAmp*Math.sin(TAU*(ph+p));
   let kb=kneeAmp*Math.max(0,Math.cos(TAU*(ph+p)))*(L.front?1:-1);
@@ -4766,9 +4824,9 @@ function poseRigBones(B,phase,sp,grounded,air,t,dt,graze){
  });
  const persN=(B===RIG.bones&&!moving)?(RIG.persNeck||0):0;
  const neckA=(moving?0.10+run*0.28:0.03*Math.sin(t*1.2))+air*0.12+persN-(graze||0)*0.55+(E?E.neck*ee+(E.osc?Math.sin(em.t*9.5)*E.osc*ee:0):0);
- for(const N of RIG.neck)B[N.i].quaternion.copy(N.r).multiply(q.setFromAxisAngle(N.ax,neckA));
+ for(const N of cal.neck)B[N.i].quaternion.copy(N.r).multiply(q.setFromAxisAngle(N.ax,neckA));
  const tailA=Math.sin(t*(1.6+run*2.5))*(0.05+run*0.16);
- for(const T of RIG.tail)B[T.i].quaternion.copy(T.r).multiply(q.setFromAxisAngle(T.ax,tailA));
+ for(const T of cal.tail)B[T.i].quaternion.copy(T.r).multiply(q.setFromAxisAngle(T.ax,tailA));
 }
 /* How far the phase advances this frame, in CYCLES. Shared so a remote rider's legs
    turn over at the same rate as yours for the same speed. */
@@ -4778,6 +4836,13 @@ function rigPhaseStep(sp,grounded,dt,scale=1){
 }
 function driveRig(sp,grounded,t,dt){
  if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
+ if(RIG.heroMotion){
+  const state=tickGameHero(RIG,sp,dt,player.turnSm||0);
+  if(!player.flying){if(RIG.heroJumpAge!==null){player.y=Math.max(0,state.bodyLiftM+RIG.heroJumpExtra);player.vy=0;}else{player.y=0;player.vy=0;}}
+  if(RIG._hideFor!==player.mesh){hideProceduralBody();RIG._hideFor=player.mesh;}
+  if(TACK.saddle)TACK.saddle.position.copy(breedSeat());
+  return;
+ }
  if(RIG.emote){RIG.emote.t+=dt;if(RIG.emote.t>=RIG.emote.dur)RIG.emote=null;}
  for(const u of hairU){u.uTime.value=t;u.uWind.value+=(Math.max(0,Math.min(1,(sp-4)/9))-u.uWind.value)*Math.min(1,dt*3);}
  RIG.groom?.update?.(t,sp);
@@ -4814,6 +4879,23 @@ function driveRig(sp,grounded,t,dt){
 /* Breed colour is done in the shader now (see fantasyCoatRig / ensureCoatMat), which
    recolours the baked texture by luminance. The four pre-recoloured horse_coat_*.png
    variants this used to download were 8.9 MB of dead weight on every single load. */
+let artistNeutralMap=null;
+function configureArtistCustomization(rig,h){
+ if(!rig.profile?.artistBreed||!h)return;
+ const def=BREEDS3.find(b=>b[0]===h.breed),opts=def?.[7]||{};
+ const same=(a,b)=>new THREE.Color(a||'#332214').equals(new THREE.Color(b||'#332214'));
+ const customBody=h.colors?.body&&!same(h.colors.body,def?.[5]),customMarkColor=h.markCol&&!same(h.markCol,opts.markCol||'#f2ece0');
+ const keepFantasyNone=h.mark==='none'&&!!(h.coat||rig.fantasyAppearance||rig.fantasyMaterial)&&!customBody&&!customMarkColor;
+ const customMark=h.mark!=null&&!keepFantasyNone;
+ if(rig.coatMat){rig.coatMat.dispose();rig.coatMat=null;}rig.skin.material=rig.fantasyMaterial||rig.fantasyAppearance?.material||rig.baseMat;
+ if(customBody||customMark||customMarkColor){
+  let base=rig.baseMat;if(customMark){if(!artistNeutralMap){artistNeutralMap=new THREE.TextureLoader().load('./assets/models/horse-candidates/b2przemo/bay-study-albedo.png');artistNeutralMap.colorSpace=THREE.SRGBColorSpace;artistNeutralMap.flipY=false;}base={...rig.baseMat,map:artistNeutralMap};}
+  const mat=makeCoatMat(rig.skin,base),u=mat.userData;u.col.set(h.colors?.body||def?.[5]||'#9c4f23');u.blend=customBody||customMark?1:0;u.mark=customMark?MARKS[markOf(h)]||0:0;u.markCol.set(markColOf(h));u.markTint=customMarkColor&&!customMark?1:0;u.seed=Number.isFinite(Number(h.id))?Number(h.id)%97:Array.from(String(h.id||'')).reduce((n,c)=>(n*31+c.charCodeAt(0))%97,0);
+  const c=new THREE.Color(def?.[5]||'#9c4f23');u.baseLum=customMark?.14:Math.max(.008,c.r*.299+c.g*.587+c.b*.114);mat.customProgramCacheKey=()=> 'artist-custom-coat-v1';rig.coatMat=mat;rig.skin.material=mat;
+ }
+ const maneOverride=!!h.colors?.mane&&!same(h.colors.mane,def?.[6]),tailOverride=!!h.tailCol||maneOverride;
+ (rig.groom||rig.hair)?.setColors?.({maneColor:h.colors?.mane||def?.[6],tailColor:h.tailCol||h.colors?.mane||def?.[6],maneOverride,tailOverride});
+}
 function ensureCoatMat(){ if(RIG.coatMat||!RIG.baseMat)return; RIG.coatMat=makeCoatMat(); }
 function setCoatUniforms(m,bodyHex,tailHex,mark,markHex,seed){
  const bc=new THREE.Color(bodyHex||'#9c4f23'), ch=new THREE.Color('#9c4f23');
@@ -4842,10 +4924,11 @@ function measureBody(skin=RIG.skin){
  if(!g.boundingBox)g.computeBoundingBox();
  const bb=g.boundingBox,size=bb.getSize(new THREE.Vector3());
  const ax=[{i:0,v:size.x},{i:1,v:size.y},{i:2,v:size.z}].sort((a,b)=>b.v-a.v);
- const [L,H,W]=ax.map(x=>x.i);
+ const nativeArtist=skin.skeleton.bones.some(b=>b.name.replace('.','')==='FLhoof');const [L,H,W]=nativeArtist?[2,1,0]:ax.map(x=>x.i);
  const local=b=>{const v=new THREE.Vector3();b.getWorldPosition(v);return skin.worldToLocal(v);};
  skin.updateWorldMatrix(true,true);
- const head=local(skin.skeleton.bones[6]),dock=local(skin.skeleton.bones[19]);
+ const artist=skin.skeleton.bones.some(b=>b.name.replace('.','')==='FLhoof');
+ const head=local(artist?skin.skeleton.bones.find(b=>b.name==='head'):skin.skeleton.bones[6]),dock=local(artist?skin.skeleton.bones.find(b=>b.name.replace('.','')==='tail1'):skin.skeleton.bones[19]);
  const headHi=head.getComponent(L)>dock.getComponent(L);
  return g.userData.bodyAxes={ready:true,min:bb.min.clone(),size,L,H,W,headHi:headHi?1:0,
   upHi:head.getComponent(H)>bb.min.getComponent(H)+size.getComponent(H)*.5?1:0,
@@ -4892,16 +4975,19 @@ function inheritMark(a,b){
 function makeCoatMat(skin=RIG.skin,baseMat=RIG.baseMat){
  /* A groomed coat has a sheen: the same albedo and normal map, on a physical material with a
     light clearcoat, so highlights slide over the muscle as the horse moves. */
+ const artist=skin.skeleton.bones.some(b=>b.name.replace('.','')==='FLhoof');
+ if(artist&&!skin.geometry.attributes.aRegion)skin.geometry.setAttribute('aRegion',new THREE.BufferAttribute(new Float32Array(skin.geometry.attributes.position.count),1));
  const b=baseMat, m=new THREE.MeshPhysicalMaterial({map:b.map,normalMap:b.normalMap||null,side:b.side}); m.color.set(0xffffff);   // built by hand: Material.copy across types reaches for maps the source lacks
  m.roughness=0.64; m.metalness=0; m.clearcoat=0.08; m.clearcoatRoughness=0.6; m.envMapIntensity=0.75;
  if(m.normalMap)m.normalScale.set(0.18,0.18);
  m.userData.bodyAxes=measureBody(skin);
  m.userData.col=new THREE.Color('#9c4f23'); m.userData.blend=0;
  m.userData.tail=new THREE.Color('#000000'); m.userData.tailBlend=0;
- m.userData.mark=0; m.userData.markCol=new THREE.Color('#ffffff'); m.userData.seed=0;
+ m.userData.mark=0; m.userData.markCol=new THREE.Color('#ffffff'); m.userData.seed=0;m.userData.baseLum=.14;m.userData.markTint=0;m.userData.artist=artist;
  m.onBeforeCompile=sh=>{                       // recolour by the texture's luminance (keeps mane/socks/shading pattern)
   sh.uniforms.uCoat={value:m.userData.col}; sh.uniforms.uBlend={value:m.userData.blend}; sh.uniforms.uTail={value:m.userData.tail}; sh.uniforms.uTailBlend={value:m.userData.tailBlend};
   const B=m.userData.bodyAxes;
+  sh.uniforms.uArtistBaseLum={value:m.userData.baseLum};sh.uniforms.uArtistMarkTint={value:m.userData.markTint};
   sh.uniforms.uMark={value:m.userData.mark}; sh.uniforms.uMarkCol={value:m.userData.markCol}; sh.uniforms.uSeed={value:m.userData.seed};
   sh.uniforms.uBBMin={value:B.ready?B.min.clone():new THREE.Vector3()};
   sh.uniforms.uBBSize={value:B.ready?B.size.clone():new THREE.Vector3(1,1,1)};
@@ -4909,7 +4995,7 @@ function makeCoatMat(skin=RIG.skin,baseMat=RIG.baseMat){
   sh.uniforms.uFlip={value:B.ready?B.headHi:1}; m.userData.shader=sh;
   sh.vertexShader='attribute float aRegion; varying float vRegion; varying vec3 vBody;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n vRegion=aRegion; vBody=position;');
   sh.fragmentShader=
-   'uniform vec3 uCoat;uniform float uBlend;uniform vec3 uTail;uniform float uTailBlend;\n'+
+   'uniform float uArtistBaseLum;uniform float uArtistMarkTint;uniform vec3 uCoat;uniform float uBlend;uniform vec3 uTail;uniform float uTailBlend;\n'+
    'uniform float uMark;uniform vec3 uMarkCol;uniform float uSeed;\n'+
    'uniform vec3 uBBMin;uniform vec3 uBBSize;uniform vec3 uAxis;uniform float uFlip;\n'+
    'varying float vRegion; varying vec3 vBody;\n'+
@@ -4941,8 +5027,12 @@ function makeCoatMat(skin=RIG.skin,baseMat=RIG.baseMat){
     float _l=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));
     // The new unlit coat averages .14 in linear space. Keep white markings and
     // dark eyes/hooves separate while recolouring the natural body pigment.
-    float _pigment=smoothstep(0.045,0.09,_l)*(1.0-smoothstep(0.38,0.54,_l));
-    diffuseColor.rgb=mix(diffuseColor.rgb,uCoat*clamp(_l/0.14,0.55,1.5),uBlend*_pigment);
+    ${artist?`vec3 artistRel=(vBody-uBBMin)/max(uBBSize,vec3(.001));
+    float artistHoof=smoothstep(.04,.12,artistRel.y),artistWhite=smoothstep(.38,.60,_l);
+    float artistTone=clamp(_l/max(.008,uArtistBaseLum),.16,1.4);
+    diffuseColor.rgb=mix(diffuseColor.rgb,uCoat*artistTone,uBlend*artistHoof*(1.0-artistWhite));
+    diffuseColor.rgb=mix(diffuseColor.rgb,uMarkCol*clamp(_l/.65,.7,1.15),artistWhite*uArtistMarkTint);`:`float _pigment=smoothstep(0.045,0.09,_l)*(1.0-smoothstep(0.38,0.54,_l));
+    diffuseColor.rgb=mix(diffuseColor.rgb,uCoat*clamp(_l/0.14,0.55,1.5),uBlend*_pigment);`}
     if(uMark>0.5){
      /* fl 0 at the tail, 1 at the nose; fh 0 under the belly, 1 along the back */
      vec3 _rel=(vBody-uBBMin)/max(uBBSize,vec3(0.001));
@@ -5120,6 +5210,15 @@ function applyCoat(){
  const selected=myHorses[rideIdx]?.breed||'bay';if(RIG.requestedBreed!==selected)requestPlayerBreed(selected);
  if(!RIG.ready||!RIG.skin||!RIG.baseMat) return;
  const h=myHorses[rideIdx];
+ if(RIG.profile?.hero){hairColour();return;}
+ if(RIG.profile?.artistBreed){
+  const want=!!h?.dragon;if(RIG.drg){RIG.drg.parent?.remove(RIG.drg);RIG.drg.geometry.dispose();RIG.drg.material.dispose();RIG.drg=null;}
+  if(want)RIG.drg=buildDragonBody(RIG.skin,RIG.bones,player.mesh,DRAGON_TINT[h.coat]||DRAGON_TINT._);
+  if(RIG.hairMane)RIG.hairMane.visible=!want;if(RIG.hairTail)RIG.hairTail.visible=!want;
+  if(RIG.fantasyMaterial&&RIG.fantasyMaterial!==RIG.fantasyAppearance?.material)RIG.fantasyMaterial.dispose();
+  RIG.fantasyMaterial=h?.coat&&h.coat!==RIG.fantasyAppearance?.theme?createEquineFantasyCoat(THREE,RIG.baseMat,h.coat,want):RIG.fantasyAppearance?.material||null;RIG.skin.material=RIG.fantasyMaterial||RIG.baseMat;
+  if(h?.coat)tintWings(h.coat);configureArtistCustomization(RIG,h);return;
+ }
  {/* A dragon wears a crest and a scaled tail instead of a mane and tail hair. */
   const want=!!(h&&h.dragon), th=want?(DRAGON_TINT[h.coat]||DRAGON_TINT._):null;
   if(RIG.drg&&(!want||RIG.drgTheme!==(h&&h.coat))){ if(RIG.drg.parent)RIG.drg.parent.remove(RIG.drg); RIG.drg=null; }
@@ -5154,22 +5253,24 @@ function applyCoat(){
    from replacing the horse currently selected in the stable. */
 let breedRequest=0;
 function breedSeat(rig=RIG){
+ const live=gameHeroSeat(rig,rig.scene?.parent);if(live)return live.clone();
  return BREED_MODELS.mountPoint(rig,rig.profile?.anchors?.saddle)||new THREE.Vector3(0,1.39,-.30);
 }
-function riderSeat(){const seat=breedSeat(),scale=player.mesh?.scale.x||1;return {y:seat.y+.18/scale,z:seat.z+.02/scale};}
+function riderSeat(){const seat=breedSeat(),scale=player.mesh?.scale.x||1;return {y:seat.y+((RIG.profile?.hero||RIG.profile?.artistBreed)?.14:.18)/scale,z:seat.z+.02/scale};}
 async function requestPlayerBreed(breed){
  const ticket=++breedRequest;RIG.requestedBreed=breed;RIG.loadingBreed=true;
  let asset;
  try{asset=await BREED_MODELS.load(breed);}
- catch(e){console.warn('Using fallback horse for',breed,e);try{asset=await BREED_MODELS.load('legacy');}catch(err){console.warn('Horse model unavailable',err);RIG.loadingBreed=false;window.__setLoad?.(1,'ready');return;}}
+ catch(e){console.error('Approved horse model unavailable',breed,e);RIG.loadingBreed=false;RIG.requestedBreed=null;window.__setLoad?.(1,'Horse model unavailable — reload to retry');return;}
  if(ticket!==breedRequest)return;
- const inst=BREED_MODELS.instantiate(asset);
+ const inst=instantiateArtistBreed(asset);
  if(RIG.scene?.parent)RIG.scene.parent.remove(RIG.scene);
- RIG.groom?.dispose?.();
+ disposeMountedRig(RIG);
  if(RIG.coatMat)RIG.coatMat.dispose();
  Object.assign(RIG,inst,{modelKey:asset.key,ready:true,loadingBreed:false,attachedTo:null,
-  hairBuilt:false,hairMane:null,hairTail:null,groom:null,coatMat:null,headBone:null,headIdx:6,drg:null,emote:null,_hideFor:null});
+  hairBuilt:false,hairMane:null,hairTail:null,groom:null,coatMat:null,headBone:null,headIdx:6,drg:null,emote:null,_hideFor:null,heroMotion:null,heroMaterial:null,fantasyMaterial:null,heroJumpAge:null,heroJumpExtra:0});
  RIG.restQ=RIG.bones.map(b=>b.quaternion.clone());rigCalibrate();
+ initGameHero(THREE,RIG);
  if(player.mesh){player.mesh.scale.setScalar(horseScale(myHorses[rideIdx]));attachRig();applyCoat();attachTack();}
  window.__setLoad?.(1,'ready!');
 }
@@ -5209,7 +5310,50 @@ for(const st in SADDLE_GLB.files){
   if(typeof attachTack==='function'&&player.mesh)attachTack();   // the ridden horse re-dresses if it wears this style
  },undefined,()=>{});                                             // a missing file just means the procedural saddle stays
 }
-function buildSaddle(style){
+/* Where the tread of each iron sits, in the saddle's own frame. The rider's feet are
+   pulled onto these every frame, so a saddle that forgets to say leaves her legs where
+   the sculpt left them rather than anywhere wrong. */
+function saddleStirrups(g,x,y,z){
+ g.userData.stir={};
+ for(const s of[-1,1]){const o=new THREE.Object3D();o.position.set(s*x,y,z);g.add(o);g.userData.stir[s>0?'R':'L']=o;}
+ return g;
+}
+function buildHeroSaddle(rig,style){
+ const g=new THREE.Group();g.userData={proc:true,hero:true,artistBreed:!!rig.profile?.artistBreed,modelKey:rig.key||rig.modelKey,style:style||'english'};
+ const leather=new THREE.MeshStandardMaterial({color:0x30221b,roughness:.64}),edge=new THREE.MeshStandardMaterial({color:0x453229,roughness:.72});
+ const pad=new THREE.MeshStandardMaterial({color:0x686454,roughness:.95}),metal=new THREE.MeshStandardMaterial({color:0x8e9595,metalness:.75,roughness:.34});
+ const put=(geo,mat)=>{const m=new THREE.Mesh(geo,mat);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;};
+ const seat=BREED_MODELS.mountPoint(rig,rig.profile.anchors.saddle),source=rig.skin.geometry.attributes.position,stations=[];
+ // Fit each longitudinal station to the real upper barrel. The pad drapes over it.
+ for(let j=0;j<=24;j++){const z=(j/24-.5)*.8,points=[];for(let i=0;i<source.count;i++){const pz=(rig.profile?.artistBreed?source.getZ(i):source.getX(i))*rig.fitScale-seat.z;if(Math.abs(pz-z)<.024)points.push([(rig.profile?.artistBreed?source.getX(i):-source.getZ(i))*rig.fitScale,source.getY(i)*rig.fitScale+rig.fitY-seat.y]);}
+  let top=-.02,bottom=-.65,rx=.30;if(points.length){top=Math.max(...points.map(p=>p[1]));const upper=points.filter(p=>p[1]>top-.65);bottom=Math.min(...upper.map(p=>p[1]));rx=Math.max(...upper.map(p=>Math.abs(p[0])));}stations.push({top,cy:(top+bottom)/2,rx,ry:(top-bottom)/2,points});}
+ const section=z=>{const t=THREE.MathUtils.clamp((z/.8+.5)*24,0,24),i=Math.min(23,Math.floor(t)),a=stations[i],b=stations[i+1],f=t-i;return {top:a.top+(b.top-a.top)*f,cy:a.cy+(b.cy-a.cy)*f,rx:a.rx+(b.rx-a.rx)*f,ry:a.ry+(b.ry-a.ry)*f};};
+ const outside=(z,t)=>{const q=section(z),j=THREE.MathUtils.clamp(Math.round((z/.8+.5)*24),0,24);let r=0;for(let n=Math.max(0,j-1);n<=Math.min(24,j+1);n++)for(const p of stations[n].points){const dx=p[0],dy=p[1]-q.cy,L=Math.hypot(dx,dy);if((dx*Math.sin(t)+dy*Math.cos(t))/L>.990)r=Math.max(r,L);}return {q,r:Math.max(r,1/Math.sqrt(Math.pow(Math.sin(t)/q.rx,2)+Math.pow(Math.cos(t)/q.ry,2)))+.024};};
+ const surf=(z,y,s,clearance=.02)=>{const q=section(z),h=THREE.MathUtils.clamp((y-q.cy)/q.ry,-.97,.97);return s*(q.rx*Math.sqrt(1-h*h)+clearance);};
+ const patch=(N,M,point,mat,thickness=.01)=>{const p=[],ix=[];for(let side=0;side<2;side++)for(let j=0;j<=M;j++)for(let i=0;i<=N;i++){const v=point(i/N,j/M);p.push(v[0],v[1]-side*thickness,v[2]);}const K=(N+1)*(M+1);for(let j=0;j<M;j++)for(let i=0;i<N;i++){const a=j*(N+1)+i,b=a+N+1;ix.push(a,b,a+1,b,b+1,a+1,a+K,a+1+K,b+K,b+K,a+1+K,b+1+K);}const join=(a,b)=>ix.push(a,b,a+K,b,b+K,a+K);for(let i=0;i<N;i++){join(i+1,i);join(M*(N+1)+i,M*(N+1)+i+1);}for(let j=0;j<M;j++){join(j*(N+1),(j+1)*(N+1));join((j+1)*(N+1)+N,j*(N+1)+N);}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(p,3));geo.setIndex(ix);geo.computeVertexNormals();return put(geo,mat);};
+ patch(28,28,(u,v)=>{const a=(u*2-1)*1.30,z=(v*2-1)*.315*(1-.13*Math.pow(Math.abs(u*2-1),8)),{q,r}=outside(z,a);return [Math.sin(a)*r,q.cy+Math.cos(a)*r,z];},pad,.012);
+ // A rounded, shallow seat and curved leather flaps tuck under the rider's thigh.
+ patch(24,28,(u,v)=>{const x=(u*2-1)*.18,z=(v*2-1)*.25*Math.sqrt(1-.40*Math.pow(u*2-1,8));return [x,.026-.028*Math.pow(x/.18,2)+.055*Math.pow(Math.max(0,-z/.25),3)+.023*Math.pow(Math.max(0,z/.25),3),z];},leather,.025);
+ const tube=(points,r,mat)=>put(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p))),40,r,6,false),mat);
+ for(const s of[-1,1]){
+  const geo=new THREE.SphereGeometry(1,36,24),gp=geo.attributes.position;
+  for(let i=0;i<gp.count;i++){const px=gp.getX(i),y=-.17+gp.getY(i)*.182,z=.065+gp.getZ(i)*.158+.10*gp.getY(i),q=section(z),angle=Math.acos(THREE.MathUtils.clamp((y-q.cy)/q.ry,-.99,.99))*s,{r}=outside(z,angle);const x=s*Math.sqrt(Math.max(0,r*r-(y-q.cy)*(y-q.cy)))+s*.014+px*.010;gp.setXYZ(i,x,y,z);}geo.computeVertexNormals();put(geo,leather);
+  /* A stirrup leather hangs plumb from a bar just behind the pommel — it does not slant
+     forward down the shoulder. The irons used to hang at z=.32, out over the point of the
+     horse's shoulder and short enough to shut the knee to ninety degrees, which is why the
+     rider rode with her leg stuck out in front of her like a deckchair. Back to the girth,
+     and long enough for a proper leg. */
+  tube([[s*.226,-.020,.170],[s*.258,-.240,.192],[s*.270,-.440,.200]],.008,edge);
+  const iron=put(new THREE.TorusGeometry(.060,.008,7,22),metal);iron.scale.set(.82,1,1);iron.rotation.y=Math.PI/2;iron.position.set(s*.270,-.455,.200);
+  const tread=put(new THREE.BoxGeometry(.018,.012,.100),metal);tread.position.set(s*.270,-.512,.200);
+ }
+ saddleStirrups(g,.270,-.512,.200);
+ const q=section(.06),gp=[];for(let k=0;k<=48;k++){const t=.6+(Math.PI*2-1.2)*k/48;gp.push([Math.sin(t)*(q.rx+.008),q.cy+Math.cos(t)*(q.ry+.008),.06]);}
+ const path=new THREE.CatmullRomCurve3(gp.map(p=>new THREE.Vector3(...p))),sh=new THREE.Shape();sh.moveTo(-.024,-.005);sh.lineTo(.024,-.005);sh.lineTo(.024,.005);sh.lineTo(-.024,.005);sh.closePath();put(new THREE.ExtrudeGeometry(sh,{steps:64,bevelEnabled:false,extrudePath:path}),leather);
+ g.userData.mats={leather,pad,dark:edge};return g;
+}
+function buildSaddle(style,rig=RIG){
+ if(rig.profile?.hero||rig.profile?.artistBreed)return buildHeroSaddle(rig,style);
  const W=style==='western';
  if(SADDLE_GLB[W?'western':'english']){
   const src=SADDLE_GLB[W?'western':'english'], f=SADDLE_GLB.fit[W?'western':'english'];
@@ -5217,7 +5361,7 @@ function buildSaddle(style){
   m.scale.set(f.s,f.sy||f.s,f.s); m.rotation.y=f.ry; m.position.set(0,f.y,f.z);   // a little shorter than wide: the fenders would otherwise hang below the boots
   m.castShadow=true; m.receiveShadow=true; m.frustumCulled=false; g.add(m);
   g.userData.proc=true; g.userData.glb=true; g.userData.style=W?'western':'english';
-  return g;
+  return saddleStirrups(g,0.25,-0.42,0.28);
  }
  const g=new THREE.Group(); g.userData.style=W?'western':'english';
  const leather=new THREE.MeshStandardMaterial({color:0x6b4423,roughness:0.38,metalness:0.05});
@@ -5249,7 +5393,7 @@ function buildSaddle(style){
  add(BOX,dark,[0.15,-0.40,-0.02],[0.035,0.42,0.10]);            // slim girth straps
  add(BOX,dark,[-0.15,-0.40,-0.02],[0.035,0.42,0.10]);
  g.userData.proc=true; g.userData.mats={leather,pad,dark};
- return g;
+ return saddleStirrups(g,0.24,-0.445,0.27);
 }
 /* Bridle for the rigged mount, measured against the rig's own head: muzzle tip at z=1.09,
    forehead at y=1.70, ear tips at 1.85, and the whole head carried a little off the centre
@@ -5271,18 +5415,32 @@ function buildBreedBridle(rig){
  const g=new THREE.Group(),leather=new THREE.MeshStandardMaterial({color:0x38271c,roughness:.7});
  const iron=new THREE.MeshStandardMaterial({color:0xb8bcc2,metalness:.75,roughness:.3});
  const gold=new THREE.MeshStandardMaterial({color:0xd8b24a,metalness:.7,roughness:.35});
- const addCurve=(pts,r,mat,closed=false)=>{const curve=new THREE.CatmullRomCurve3(pts.map(v=>v.clone().sub(head)),closed);const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,closed?36:12,r,5,closed),mat);mesh.castShadow=true;g.add(mesh);};
+ const addCurve=(pts,r,mat,closed=false)=>{const curve=new THREE.CatmullRomCurve3(pts.map(v=>v.clone().sub(head)),closed);let geo;if(rig.profile.hero&&mat===leather){const sh=new THREE.Shape();sh.moveTo(-r,-.002);sh.lineTo(r,-.002);sh.lineTo(r,.002);sh.lineTo(-r,.002);sh.closePath();geo=new THREE.ExtrudeGeometry(sh,{steps:closed?64:32,bevelEnabled:false,extrudePath:curve});}else geo=new THREE.TubeGeometry(curve,closed?36:12,r,5,closed);const mesh=new THREE.Mesh(geo,mat);mesh.castShadow=true;g.add(mesh);};
+ const bitPoints=[];
+ if(rig.profile.hero){
+  const src=rig.skin.geometry.attributes.position,rawPoll=new THREE.Vector3(...A.poll[0]),rawMuzzle=new THREE.Vector3(...A.muzzle[0]),axis=rawPoll.clone().sub(rawMuzzle).normalize();
+  const side=new THREE.Vector3(...A.eyes[0]).sub(new THREE.Vector3(...A.eyes[1])).normalize(),dorsal=new THREE.Vector3().crossVectors(side,axis).normalize();if(dorsal.y<0)dorsal.negate();
+  const section=f=>{const center=rawMuzzle.clone().lerp(rawPoll,f),pts=[],v=new THREE.Vector3();let u0=Infinity,u1=-Infinity,v0=Infinity,v1=-Infinity;
+   for(let i=0;i<src.count;i++){v.fromBufferAttribute(src,i);if(v.x<.64||v.y>.74)continue;v.sub(center);if(Math.abs(v.dot(axis))>.015)continue;const u=v.dot(side),h=v.dot(dorsal);pts.push([u,h]);u0=Math.min(u0,u);u1=Math.max(u1,u);v0=Math.min(v0,h);v1=Math.max(v1,h);}
+   const uc=pts.length?(u0+u1)/2:0,vc=pts.length?(v0+v1)/2:-.05;center.addScaledVector(side,uc).addScaledVector(dorsal,vc);
+   const ring=[];for(let k=0;k<48;k++){const t=k/48*Math.PI*2,dx=Math.cos(t),dy=Math.sin(t),radii=[];for(const p of pts){const x=p[0]-uc,y=p[1]-vc,r=Math.hypot(x,y);if((x*dx+y*dy)/Math.max(.0001,r)>.96)radii.push(r);}radii.sort((a,b)=>a-b);const radius=(radii.length?radii[Math.floor((radii.length-1)*.72)]:Math.hypot((u1-u0)*.5*dx,(v1-v0)*.5*dy))+.006;const p=center.clone().addScaledVector(side,dx*radius).addScaledVector(dorsal,dy*radius);ring.push(BREED_MODELS.mountPoint(rig,p.toArray()));}return {ring,center};};
+  const nose=section(.33),crown=section(.88),brow=section(.71),mouth=section(.07);
+  addCurve(nose.ring,.007,leather,true);addCurve(crown.ring.slice(0,25),.006,leather);addCurve(brow.ring.slice(0,25),.006,leather);
+  const lateral=(x,y,sg)=>{const near=[];for(let i=0;i<src.count;i++){const px=src.getX(i),py=src.getY(i);if(px<.64||py>.745)continue;const d=(px-x)*(px-x)+(py-y)*(py-y);if(d<.003)near.push([d,src.getZ(i)]);}near.sort((a,b)=>a[0]-b[0]);const zs=near.slice(0,26).map(p=>p[1]).sort((a,b)=>a-b);return (zs[Math.floor((zs.length-1)*(sg>0?.95:.05))]||0)+sg*.008;};
+  for(const [index,sg]of [[0,1],[24,-1]]){const xy=sg>0?[[.710,.705],[.746,.605],[.838,.500],[.932,.373]]:[[.747,.712],[.770,.625],[.852,.500],[.945,.373]],guide=new THREE.CatmullRomCurve3(xy.map(p=>new THREE.Vector3(p[0],p[1],0))),pts=[];for(let k=0;k<=30;k++){const p=guide.getPoint(k/30);p.z=lateral(p.x,p.y,sg);pts.push(BREED_MODELS.mountPoint(rig,p.toArray()));}const bit=pts[pts.length-1];bitPoints.push(bit);addCurve(pts,.0055,leather);const ring=new THREE.Mesh(new THREE.TorusGeometry(.020,.0038,7,22),iron);ring.position.copy(bit).sub(head);ring.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),right);g.add(ring);}
+
+ }else{
  const nose=muzzle.clone().lerp(poll,.19),crown=poll.clone().lerp(muzzle,.15);
  const ring=(center,w,d)=>Array.from({length:32},(_,i)=>center.clone().addScaledVector(right,Math.cos(i/32*Math.PI*2)*w).addScaledVector(front,Math.sin(i/32*Math.PI*2)*d));
  addCurve(ring(nose,noseWidth*.65,.07*rig.fitScale),.009,leather,true);
  addCurve(ring(crown,width*.57,.09*rig.fitScale),.009,leather,true);
- const bitPoints=[];
  for(const sign of[-1,1]){
   const bit=nose.clone().addScaledVector(right,sign*noseWidth*.7).addScaledVector(face,-.055);
   bitPoints.push(bit);
   const cheek=crown.clone().addScaledVector(right,sign*width*.57);
   addCurve([cheek,cheek.clone().lerp(bit,.5).addScaledVector(front,.025),bit],.009,leather);
   const r=new THREE.Mesh(new THREE.TorusGeometry(.025,.005,6,18),iron);r.position.copy(bit).sub(head);r.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),right);g.add(r);
+ }
  }
  g.position.copy(head);g.userData.gold=gold;g.userData.modelKey=rig.key||rig.modelKey;g.userData.bitOffsets=bitPoints.map(p=>p.sub(head));
  const q=new THREE.Quaternion(),rest=new THREE.Quaternion(),rootQ=new THREE.Quaternion(),position=new THREE.Vector3(),chain=[];
@@ -5295,7 +5453,8 @@ function buildBreedBridle(rig){
 }
 const BRIDLE_HEAD0=[-0.145,1.424,0.995];   // head bone at rest, mount space
 function buildBridle(dragon,rig=RIG){
- if(!dragon&&rig.profile?.anchors?.muzzle)return buildBreedBridle(rig);
+ if(rig.profile?.artistBreed){const bridle=createArtistBridle(THREE,rig);bridle.userData.dragon=!!dragon;return bridle;}
+ if((!dragon||rig.profile?.artistBreed)&&rig.profile?.anchors?.muzzle){const bridle=buildBreedBridle(rig);bridle.userData.dragon=!!dragon;return bridle;}
  const g=new THREE.Group();
  const strap=new THREE.MeshStandardMaterial({color:0x3a2616,roughness:0.55,metalness:0.05});
  const iron=new THREE.MeshStandardMaterial({color:0xb8bcc2,roughness:0.35,metalness:0.7});
@@ -5356,7 +5515,7 @@ function buildBridle(dragon,rig=RIG){
 function attachTack(){   // idempotent: places whatever has loaded so far onto the current mount
  if(!USE_GEN_HORSE||!USE_GEN_TACK)return;
  if(!player.mesh||!TACK.saddle)return;
- {const want=(myHorses[rideIdx]&&myHorses[rideIdx].saddleStyle)||'english'; if(TACK.saddle.userData.style!==want||(!TACK.saddle.userData.glb&&SADDLE_GLB[want])){ if(TACK.saddle.parent)TACK.saddle.parent.remove(TACK.saddle); TACK.saddle=buildSaddle(want); }}   // the saddle this horse wears, generated when its file is in
+ {const want=(myHorses[rideIdx]&&myHorses[rideIdx].saddleStyle)||'english'; if(TACK.saddle.userData.style!==want||!!TACK.saddle.userData.hero!==!!(RIG.profile?.hero||RIG.profile?.artistBreed)||(RIG.profile?.artistBreed&&TACK.saddle.userData.modelKey!==(RIG.key||RIG.modelKey))||(!RIG.profile?.hero&&!RIG.profile?.artistBreed&&!TACK.saddle.userData.glb&&SADDLE_GLB[want])){ if(TACK.saddle.parent)TACK.saddle.parent.remove(TACK.saddle); TACK.saddle=buildSaddle(want); }}   // the saddle this horse wears, generated when its file is in
  if(player.rider&&player.rider.g)player.rider.g.visible=false;   // hide procedural rider
  if(TACK.saddle){
   if(TACK.saddle.userData&&TACK.saddle.userData.proc){TACK.saddle.position.set(0,SADDLE_Y,SADDLE_Z);}  // procedural: pre-sized & oriented
@@ -5371,37 +5530,129 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
  TACK.bridle.visible=true; TACK.bridle.traverse(o=>{if(o.isMesh)o.visible=true;});
  if(TACK.bridle.parent!==player.mesh)player.mesh.add(TACK.bridle);
  if(player.rider&&player.rider.g){                       // articulated procedural rider sits the saddle
+  player.rider._setHero?.(!!(RIG.profile?.hero||RIG.profile?.artistBreed));
   player.rider.g.visible=true;
   player.rider.g.traverse(o=>{if(o.isMesh)o.visible=true;});
   const seat=riderSeat();player.rider.g.position.set(0,seat.y,seat.z);player.rider.g.scale.setScalar(1/player.mesh.scale.x);
+  player.rider._handHome=null;   // a different horse means a different place to hold the reins
  }
  if(!TACK.bitL){TACK.bitL=new THREE.Object3D();TACK.bitL.position.set(0.13,1.34,1.0);
   TACK.bitR=new THREE.Object3D();TACK.bitR.position.set(-0.13,1.34,1.0);}   // rein anchors at the gen horse's mouth corners
  if(TACK.bitL.parent!==player.mesh){player.mesh.add(TACK.bitL);player.mesh.add(TACK.bitR);}
 }
-function driveRider(sp,tm){   // live seat: lean, posting, breathing, head look, reins
+/* ===== The seat ==============================================================
+   Everything the instructor shouts, in one place: heels down, leg on the girth, hands low
+   and still, look where you are going, and FOLD over a fence rather than perch.
+
+   The order matters. She is posed from the seat outwards — the fold at the hip, the rise
+   out of the saddle, the head — and only then are her feet pulled back down into the irons
+   and her hands back to the horse's mouth. That inversion is the whole trick: rising to
+   the trot, her hips go up and her knees close to let them, because her feet never left
+   the stirrups. It is the difference between posting and bouncing. */
+const _rdA=new THREE.Vector3(),_rdB=new THREE.Vector3(),_rdC=new THREE.Vector3(),_rdD=new THREE.Vector3(),
+      _rdE=new THREE.Vector3(),_rdF=new THREE.Vector3(),_rdU=new THREE.Vector3(),_rdR=new THREE.Vector3(),
+      _rdT=new THREE.Vector3(),_rdQ=new THREE.Quaternion();
+/* feet into the irons, heels down */
+function riderLegs(R,F,U,Rt){
+ const st=TACK.saddle&&TACK.saddle.userData&&TACK.saddle.userData.stir, B=R.sk.by;
+ if(!st){ R._seat(R.pose.lean,R.pose.side,R.pose.head,R.pose.rise,R.pose.spread); R.fitG.updateMatrixWorld(true); return; }
+ for(const s of [1,-1]){ const S=s>0?'R':'L', anc=s>0?st.R:st.L;
+  if(!anc)continue;
+  anc.getWorldPosition(_rdA);                    // the tread
+  /* the ball of the foot rests on the tread, so the ankle wants to be above it and behind */
+  _rdB.copy(_rdA).addScaledVector(U,0.096).addScaledVector(F,-0.206).addScaledVector(Rt,s*0.014);
+  const thigh=B['thigh'+S]; thigh.getWorldPosition(_rdC);
+  /* the knee leads — forward, a shade up, and out around the barrel */
+  _rdD.copy(_rdC).addScaledVector(F,0.52).addScaledVector(U,0.06).addScaledVector(Rt,s*0.36);
+  ikChain(thigh,B['shin'+S],B['foot'+S],RIDER_HINGE['knee'+S],_rdB,_rdD);
+  const foot=B['foot'+S];
+  _rdE.set((RJ.toe[0]-RJ.ankle[0])*s,RJ.toe[1]-RJ.ankle[1],RJ.toe[2]-RJ.ankle[2]).applyMatrix4(foot.matrixWorld);
+  _rdT.setFromMatrixPosition(foot.matrixWorld);
+  _rdE.sub(_rdT);                                // where the toe points now
+  _rdT.copy(F).multiplyScalar(Math.cos(0.22)).addScaledVector(U,Math.sin(0.22)).addScaledVector(Rt,s*0.115);
+  boneAim(foot,_rdE,_rdT);                       // toe up a few degrees and turned a little out
+ }
+}
+/* hands to the horse's mouth */
+function riderHands(R,F,U,Rt,tm,pat){
+ const B=R.sk.by;
+ /* Her hands belong to the horse, not to her body: a low, quiet pair just ahead of the
+    withers that the rest of her moves around. Where exactly is read once off the sculpt's
+    own rest pose in the horse's frame, so every mount, big or small, gets its own. */
+ if(!R._handHome){
+  R._rest(); R._seat(0.06,0,0,0,0); R.fitG.updateMatrixWorld(true);
+  R._handHome=[new THREE.Vector3(),new THREE.Vector3()];
+  B.handR.getWorldPosition(R._handHome[0]); player.mesh.worldToLocal(R._handHome[0]);
+  B.handL.getWorldPosition(R._handHome[1]); player.mesh.worldToLocal(R._handHome[1]);
+  R._bitRest=new THREE.Vector3();
+  if(TACK.bitL&&TACK.bitR)R._bitRest.copy(TACK.bitL.position).add(TACK.bitR.position).multiplyScalar(0.5);
+  R._rest(); R._seat(R.pose.lean,R.pose.side,R.pose.head,R.pose.rise,0); R.fitG.updateMatrixWorld(true);
+ }
+ const rel=R._air*0.32;                          // crest release: hands up the neck over a fence
+ _rdA.set(0,0,0);
+ if(TACK.bitL&&TACK.bitR&&R._bitRest)            // and a soft following of the head, through the rein
+  _rdA.copy(TACK.bitL.position).add(TACK.bitR.position).multiplyScalar(0.5).sub(R._bitRest).multiplyScalar(0.17);
+ for(const s of [1,-1]){ const S=s>0?'R':'L', i=s>0?0:1;
+  _rdB.copy(R._handHome[i]).add(_rdA);
+  _rdB.z+=rel; _rdB.y+=-rel*0.30+Math.sin((tm||0)*1.1+i)*0.004;
+  _rdB.x+=-R._turn*0.024;                        // the inside hand opens a little in a turn
+  if(pat>0.002&&s>0&&TACK.bitL&&TACK.bitR){      // a pat on the neck when she makes a fuss of him
+   _rdC.copy(TACK.bitL.position).add(TACK.bitR.position).multiplyScalar(0.5).lerp(R._handHome[0],0.38);
+   _rdC.y-=0.15; _rdB.lerp(_rdC,pat*0.92);
+  }
+  player.mesh.localToWorld(_rdB);
+  const arm=B['arm'+S]; arm.getWorldPosition(_rdD);
+  _rdE.copy(_rdD).addScaledVector(U,-0.36).addScaledVector(F,-0.28).addScaledVector(Rt,s*0.10);
+  ikChain(arm,B['fore'+S],B['hand'+S],RIDER_HINGE['elbow'+S],_rdB,_rdE);
+ }
+}
+function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the irons, reins
  if(!USE_GEN_HORSE||!USE_GEN_TACK)return;   // procedural-mount fallback drives the rider itself
  const R=player.rider;
  if(!R||!R.g)return;
- const t=THREE.MathUtils.clamp((sp-0.3)/6,0,1);      // 0 at halt, ~1 by canter
- const ph=RIG.phase*Math.PI*2, moving=sp>0.3;
- const air=(player.y>0.4&&!player.flying)?1:0;       // two-point over jumps
- const breath=moving?Math.sin(ph)*0.03:Math.sin((tm||0)*1.4)*0.04;
- // head: look into the turn while riding; glance around at halt
- const turn=(keys.KeyA||keys.ArrowLeft||touch.left?1:0)-(keys.KeyD||keys.ArrowRight||touch.right?1:0);
- R._look=(R._look||0)+((moving?turn*0.42:Math.sin((tm||0)*0.9)*0.22+Math.sin((tm||0)*0.47+1)*0.12)-(R._look||0))*0.08;
- if(R.u){
-  R.u.uLean.value=0.04+0.24*t+0.32*air+breath+(RIG.emote?EMOTES[RIG.emote.type].lean*emEnv(RIG.emote):0);   // forward into speed, two-point over a fence; back in a rear
-  R.u.uSide.value=moving?Math.sin(ph*0.5)*0.03:Math.sin((tm||0)*0.6)*0.02;
-  R.u.uHead.value=R._look;
- }
- const post=moving?Math.max(0,Math.sin(ph))*(0.03+0.05*Math.min(1,sp/5)):0;   // rise out of the saddle each stride
- const idle=!moving?Math.sin((tm||0)*1.5)*0.005:0;
- const seat=riderSeat();R.g.position.y=seat.y+post+idle;
- R.g.position.z=seat.z;
- R.g.rotation.x=-0.02-0.05*t-Math.sin(ph)*0.03*t;
- R.g.rotation.z=moving?Math.sin(ph)*0.02:0;
- trackHead();
+ const seat=riderSeat(); R.g.position.set(0,seat.y,seat.z); R.g.rotation.set(0,0,0);
+ if(R.sk){
+  const k=Math.min(1,(dt||0.016)*6);
+  const t=THREE.MathUtils.clamp((sp-0.3)/6,0,1);    // 0 at halt, ~1 by canter
+  const ph=RIG.phase*Math.PI*2, moving=sp>0.3;
+  const turn=(keys.KeyA||keys.ArrowLeft||touch.left?1:0)-(keys.KeyD||keys.ArrowRight||touch.right?1:0);
+  R._look=(R._look||0)+((moving?turn*0.45:Math.sin((tm||0)*0.9)*0.22+Math.sin((tm||0)*0.47+1)*0.12)-(R._look||0))*k*0.9;
+  R._turn=(R._turn||0)+(turn-(R._turn||0))*k*0.7;
+  /* The baked hero gait carries its own lift and leaves player.y alone, so a jump on that
+     mount never crossed a height test. Ask whether the jump is running instead. */
+  const airborne=((RIG.heroJumpAge!==null&&RIG.heroJumpAge!==undefined)||(player.y>0.25))&&!player.flying;
+  R._air =(R._air ||0)+((airborne?1:0)-(R._air||0))*k*1.7;
+  /* posting is a trot thing — she sits the walk, and sits deep at the canter */
+  R._post=(R._post||0)+(((moving&&sp>2.1&&sp<6.6)?1:0)-(R._post||0))*k*0.6;
+  const beat=Math.max(0,Math.sin(ph));
+  const breath=moving?Math.sin(ph)*0.018:Math.sin((tm||0)*1.4)*0.030;
+  const em=RIG.emote?EMOTES[RIG.emote.type].lean*emEnv(RIG.emote):0;
+  /* Standing about, she reaches down and pats him — every twenty seconds or so, three
+     quick pats on the crest. It costs nothing and it is the difference between a rider
+     and a mannequin strapped to a horse. */
+  const dtq=dt||0.016;
+  if(R._patT===undefined)R._patT=6+Math.random()*8;
+  if(!moving&&!RIG.emote&&player.y<=0){ R._patT-=dtq; if(R._patT<=0){R._patT=17+Math.random()*16;R._patRun=1.9;} }
+  else R._patT=Math.max(R._patT,4);
+  R._patRun=Math.max(0,(R._patRun||0)-dtq);
+  const patP=R._patRun>0?1-R._patRun/1.9:0;
+  const patIdle=patP>0?Math.sin(patP*Math.PI)*(0.72+0.28*Math.sin(patP*Math.PI*7)):0;
+  const pat=Math.max(patIdle,(RIG.emote&&RIG.emote.type==='nuzzle')?emEnv(RIG.emote):0);
+  R.pose.rise=R._post*beat*0.115+R._air*0.20+(moving?0:Math.sin((tm||0)*1.5)*0.006);
+  R.pose.lean=0.05+0.17*t+0.62*R._air+R._post*beat*0.16+breath+em+pat*0.13;
+  R.pose.side=R._turn*0.13+(moving?Math.sin(ph*0.5)*0.018:Math.sin((tm||0)*0.6)*0.012);
+  R.pose.head=R._look*(1-pat*0.6);   // patting, she is looking at him, not down the arena
+  R._ik=true;
+  R._rest(); R._seat(R.pose.lean,R.pose.side,R.pose.head,R.pose.rise,0);
+  if(pat>0.002){ const B=R.sk.by; B.neck.rotation.x+=pat*0.34; B.head.rotation.x+=pat*0.26; }
+  R.fitG.updateMatrixWorld(true);
+  trackHead();                                     // the bit moves with the head; her hands follow it
+  /* the horse's own axes, so "forward" means forward for the horse and not for the world */
+  player.mesh.getWorldQuaternion(_rdQ);
+  _rdF.set(0,0,1).applyQuaternion(_rdQ); _rdU.set(0,1,0).applyQuaternion(_rdQ); _rdR.set(1,0,0).applyQuaternion(_rdQ);
+  riderLegs(R,_rdF,_rdU,_rdR);
+  riderHands(R,_rdF,_rdU,_rdR,tm,pat);
+ } else trackHead();
  /* In VR the rider is hidden, so the reins hang from your real hands instead of hers. bitL
     sits on the +x side, so pair it with whichever controller is further right. (This lived
     in the procedural-mount drive, which never runs for this mount.) */
@@ -5419,14 +5670,15 @@ const _hv=new THREE.Vector3();
    done inside the procedural-mount drive, which never runs for this mount. */
 function trackHead(){
  if(RIG.attachedTo!==player.mesh||!RIG.bones)return;
+ if(RIG.profile?.artistBreed)RIG.headBone=RIG.bones.find(b=>b.name==='head');else if(RIG.profile?.hero)RIG.headBone=RIG.bones[6];
  if(!RIG.headBone){                                  // the muzzle bone = the one furthest forward
   let best=null,bz=-1e9;
   for(const b of RIG.bones){b.getWorldPosition(_hv);player.mesh.worldToLocal(_hv); if(_hv.z>bz){bz=_hv.z;best=b;}}
   RIG.headBone=best; RIG.headIdx=RIG.bones.indexOf(best);
  }
- RIG.headBone.getWorldPosition(_hv); player.mesh.worldToLocal(_hv);
+ RIG.headBone.getWorldPosition(_hv); player.mesh.worldToLocal(_hv);fitArtistFeatures(RIG,player.parts,true);
  if(TACK.bridle)TACK.bridle.userData.follow(RIG.headBone,RIG.bones,RIG.restQ,RIG.scene,player.mesh);
- if(TACK.bitL){const offsets=TACK.bridle?.userData.bitOffsets;if(offsets){TACK.bitL.position.copy(offsets[0]).applyQuaternion(TACK.bridle.quaternion).add(_hv);TACK.bitR.position.copy(offsets[1]).applyQuaternion(TACK.bridle.quaternion).add(_hv);}else{TACK.bitL.position.set(_hv.x+0.085,_hv.y-0.055,_hv.z+0.05);TACK.bitR.position.set(_hv.x-0.085,_hv.y-0.055,_hv.z+0.05);}}
+ if(TACK.bitL){const offsets=TACK.bridle?.userData.bitOffsets;if(offsets){TACK.bridle.updateMatrix();TACK.bitL.position.copy(offsets[0]).applyMatrix4(TACK.bridle.matrix);TACK.bitR.position.copy(offsets[1]).applyMatrix4(TACK.bridle.matrix);}else{TACK.bitL.position.set(_hv.x+0.085,_hv.y-0.055,_hv.z+0.05);TACK.bitR.position.set(_hv.x-0.085,_hv.y-0.055,_hv.z+0.05);}}
 }
 TACK.saddle=buildSaddle();   // stylized procedural English saddle; attached by attachTack() once player exists
 // pond — Loon Lake earns its name
@@ -5927,8 +6179,10 @@ function updateTrail(dt){
  const b=ranchArchitecture.buildBarn();
  b.position.set(-16,0,-14);
  scene.add(b);
- box(1.2,1.2,1.2,hayMat,-11.5,0.6,-12,scene);
- box(1.1,1.1,1.1,hayMat,-11,0.55,-10.6,scene);
+ followCamera.register(b);
+ for(const [x,z,angle]of[[-11.5,-12,.13],[-11,-10.6,-.18]]){
+  const hay=arrivalArt.buildHayStack();hay.position.set(x,0,z);hay.rotation.y=angle;scene.add(hay);
+ }
  box(2.2,0.5,0.9,plankBrownMat,-6,0.25,-18,scene);
  const water=new THREE.Mesh(new THREE.BoxGeometry(2,0.05,0.7),
   new THREE.MeshStandardMaterial({color:0x5aa3da,roughness:0.1,metalness:0.3}));
@@ -5976,14 +6230,6 @@ function updateTrail(dt){
  lane.scale.set(23.5,18.5,1);
  lane.position.y=0.016;
  scene.add(lane);
- [0.25,0.45,0.65].forEach(r=>{
-  const ring=new THREE.Mesh(new THREE.RingGeometry(r,r+0.014,56),
-   new THREE.MeshBasicMaterial({color:0xb89a6a,transparent:true,opacity:0.18,depthWrite:false}));
-  ring.rotation.x=-Math.PI/2;
-  ring.scale.set(23.5,18.5,1);
-  ring.position.y=0.015;
-  scene.add(ring);
- });
  // white kickboard ring around the footing
  for(let i=0;i<40;i++){
   const th=i/40*Math.PI*2;
@@ -6004,12 +6250,11 @@ function updateTrail(dt){
   scene.add(sp);
  });
  // entrance arch with the ranch sign
- tube(0.09,0.11,3.4,whitePaintMat,-3,1.7,20,scene);
- tube(0.09,0.11,3.4,whitePaintMat,3,1.7,20,scene);
+ followCamera.register(tube(0.09,0.11,3.4,whitePaintMat,-3,1.7,20,scene));
+ followCamera.register(tube(0.09,0.11,3.4,whitePaintMat,3,1.7,20,scene));
  box(6.6,0.18,0.18,whitePaintMat,0,3.45,20,scene);
- const archSign=nameSprite('⭐ MEADOWLARK ARENA');
- archSign.scale.set(4.6,1.0,1);
- archSign.position.set(0,3.92,20);   // was hovering a tenth of a unit over the crossbeam
+ const archSign=arrivalArt.buildSign({text:'MEADOWLARK ARENA',width:4.6,height:.52});
+ archSign.position.set(0,3.82,20);
  scene.add(archSign);
  // bleachers with spectators & striped canopy (west side)
  {
@@ -6044,6 +6289,7 @@ function updateTrail(dt){
   bl.add(canopy);
   bl.position.set(-28.5,0,0);
   scene.add(bl);
+  followCamera.register(bl);
  }
  // judge's tower (northeast corner)
  {
@@ -6065,6 +6311,7 @@ function updateTrail(dt){
   blob(0.1,0.11,0.1,'#e3a37d',0,3.0,0,jt);
   jt.position.set(24,0,-17);
   scene.add(jt);
+  followCamera.register(jt);
  }
  // pennant bunting along the long rails
  const FLAGCOLS=[0xe8533f,0xffd166,0x4dabf7,0x69db7c,0xb197fc];
@@ -6083,9 +6330,8 @@ function updateTrail(dt){
   const th=0.4+i/8*Math.PI*2;
   const x=Math.cos(th)*24.2,z=Math.sin(th)*19.2;
   if(Math.abs(x)>24.5||Math.abs(z)>19.5)continue;
-  box(0.9,0.34,0.4,whitePaintMat,x,0.17,z,scene);
-  for(let fjj=0;fjj<3;fjj++)
-   blob(0.1,0.12,0.1,['#ff8fab','#ffd166','#b197fc'][fjj],x-0.25+fjj*0.25,0.45,z,scene);
+  const planter=arrivalArt.buildPlanter({width:.9,depth:.4,height:.34,seed:i+41});
+  planter.position.set(x,0,z);planter.rotation.y=-th;scene.add(planter);
  }
  // corner floodlights — they switch on at dusk (HDR colour so the bloom catches them)
  for(const cpos of[[-24,-19],[24,-19],[-24,19],[24,19]]){
@@ -6170,6 +6416,7 @@ const PAST={x1:-110,x2:-33,z1:-45,z2:25};
   sh.position.set(-59,groundH(-59,-19),-19);
   sh.rotation.y=2.2;
   scene.add(sh);
+  followCamera.register(sh);
  }
  // trough, hay, shade tree & gate sign
  box(2.2,0.5,0.9,plankBrownMat,-36.5,groundH(-36.5,-9.5)+0.25,-9.5,scene);
@@ -6195,10 +6442,11 @@ const PAST={x1:-110,x2:-33,z1:-45,z2:25};
   new THREE.MeshStandardMaterial({color:0x5aa3da,roughness:0.1}));
  wtr2.position.set(-100,groundH(-100,-10)+0.48,-10);
  scene.add(wtr2);
- const psign=nameSprite('🐴 HOME PASTURE');
- psign.scale.set(3.4,0.85,1);
+ const psign=arrivalArt.buildSign({text:'HOME PASTURE',width:2.8,height:.43});
+ psign.rotation.y=Math.PI/2;
  psign.position.set(-33,groundH(-33,-9)+2.6,-9);
  scene.add(psign);
+ for(const z of[-10.5,-7.5])tube(.065,.075,2.82,plankBrownMat,-33,groundH(-33,z)+1.41,z,scene);
 }
 /* static building & prop colliders + jumpable fence walls */
 colliders.push(
@@ -6226,16 +6474,9 @@ const jumps=[];
    tell which one you were meant to take next. */
 function setPracticeJumps(on){for(const j of jumps){if(j.g)j.g.visible=on;j.prevSide=0;}}
 function makeJump(x,z,rotY){
- const g=new THREE.Group();
- box(0.17,1.1,0.17,paintMat('#b03a2a'),-1.5,0.55,0,g);
- box(0.17,1.1,0.17,paintMat('#b03a2a'),1.5,0.55,0,g);
- box(3,0.13,0.1,whitePaintMat,0,0.55,0,g);
- box(3,0.13,0.1,whitePaintMat,0,0.9,0,g);
- box(0.08,0.85,0.7,whitePaintMat,-1.62,0.42,0,g);
- box(0.08,0.85,0.7,whitePaintMat,1.62,0.42,0,g);
- box(0.8,0.26,0.3,plankBrownMat,0,0.13,0.22,g);
- for(let fj=0;fj<3;fj++)
-  blob(0.09,0.11,0.09,['#ff8fab','#ffd166','#b197fc'][fj],-0.22+fj*0.22,0.32,0.22,g);
+ const g=arrivalArt.buildPracticeJump();
+ const flowers=arrivalArt.buildPlanter({width:.8,depth:.3,height:.26,seed:x*11+z});
+ flowers.position.z=.22;g.add(flowers);
  if(Math.random()<0.34){
   const tray=new THREE.Mesh(new THREE.BoxGeometry(2.6,0.06,1.1),
    new THREE.MeshStandardMaterial({color:0x3f88c4,roughness:0.15,metalness:0.2}));
@@ -7087,36 +7328,26 @@ new GLTFLoader().load('assets/models/rider_seat_textured.glb',g=>{
  if(!mesh)return;
  mesh.geometry.computeBoundingSphere();
  if(mesh.material.map)mesh.material.map.anisotropy=8;
- RIDER_MESH.geo=mesh.geometry; RIDER_MESH.mat=mesh.material;
+ RIDER_MESH.geo=riderSkinAttrs(riderCullProp(mesh.geometry)); RIDER_MESH.mat=mesh.material;
  RIDER_MESH.pending.forEach(f=>f()); RIDER_MESH.pending.length=0;
 },undefined,e=>console.warn('rider mesh failed to load',e));
 function riderMaterial(base,fit){
  const m=base.clone(); m.roughness=0.72; m.metalness=0;
+ m.side=THREE.DoubleSide;   // the sculpt has a few torn faces at the hip: close them from behind
  const same=(a,b)=>String(a||'').toLowerCase()===b;
- const u={uLean:{value:0},uSide:{value:0},uHead:{value:0},uSpread:{value:RIDER_FIT.spread},
+ const u={
   uShirt:{value:new THREE.Color(fit.shirt||RIDER_DEF_SHIRT)},uPants:{value:new THREE.Color(fit.pants||RIDER_DEF_PANTS)},
   uShirtW:{value:fit.shirt&&!same(fit.shirt,RIDER_DEF_SHIRT)?1:0},uPantsW:{value:fit.pants&&!same(fit.pants,RIDER_DEF_PANTS)?1:0},
   uSkin:{value:new THREE.Color(fit.skin||'#f0c8a8')},uSkinW:{value:fit.skin?1:0},uHair:{value:new THREE.Color(fit.hair||'#4a2e1c')},uHairW:{value:fit.hair?1:0},uHelm:{value:new THREE.Color(fit.helmet||'#2e2e38')},uHelmW:{value:fit.helmet&&!same(fit.helmet,'#2e2e38')?1:0}};
  m.userData.u=u;
  m.onBeforeCompile=sh=>{
   Object.assign(sh.uniforms,u);
+  /* The pose used to live here — a rotation about the hip baked into every vertex. Real
+     bones do that job now; all the shader still owes us is the rest position, which the
+     recolour reads to tell a sleeve from a boot. */
   sh.vertexShader=sh.vertexShader
-   .replace('#include <common>',`#include <common>
-uniform float uLean,uSide,uHead,uSpread; varying vec3 vRP;
-mat3 rRX(float a){float c=cos(a),s=sin(a);return mat3(1.,0.,0., 0.,c,s, 0.,-s,c);}
-mat3 rRY(float a){float c=cos(a),s=sin(a);return mat3(c,0.,-s, 0.,1.,0., s,0.,c);}
-mat3 rRZ(float a){float c=cos(a),s=sin(a);return mat3(c,s,0., -s,c,0., 0.,0.,1.);}`)
-   .replace('#include <beginnormal_vertex>',`#include <beginnormal_vertex>
- vRP=position;
- float rwT=smoothstep(-0.15,0.30,position.y), rwH=smoothstep(0.50,0.66,position.y), rwL=smoothstep(-0.20,-0.45,position.y);
- mat3 rRT=rRZ(uSide*rwT)*rRX(uLean*rwT), rRH=rRY(uHead*rwH);
- objectNormal=rRH*(rRT*objectNormal);`)
-   .replace('#include <begin_vertex>',`#include <begin_vertex>
- { vec3 rHIP=vec3(0.,-0.18,-0.30), rNECK=vec3(0.,0.55,-0.22);
-   transformed.x+=sign(position.x)*uSpread*rwL;   // straddle: the reference sat on nothing, the horse has a barrel
-   transformed=rRT*(transformed-rHIP)+rHIP;
-   vec3 rnk=rRT*(rNECK-rHIP)+rHIP;
-   transformed=rRH*(transformed-rnk)+rnk; }`);
+   .replace('#include <common>','#include <common>\nvarying vec3 vRP;')
+   .replace('#include <beginnormal_vertex>','#include <beginnormal_vertex>\n vRP=position;');
   sh.fragmentShader=sh.fragmentShader
    .replace('#include <common>','#include <common>\nuniform vec3 uShirt,uPants,uSkin,uHair,uHelm; uniform float uShirtW,uPantsW,uSkinW,uHairW,uHelmW; varying vec3 vRP;\nfloat rBand(float y,float a,float b){return smoothstep(a-0.02,a+0.02,y)*(1.0-smoothstep(b-0.02,b+0.02,y));}')
    .replace('#include <map_fragment>',`#include <map_fragment>
@@ -7138,21 +7369,243 @@ mat3 rRZ(float a){float c=cos(a),s=sin(a);return mat3(c,s,0., -s,c,0., 0.,0.,1.)
  };
  return m;
 }
+/* ===== The rider gets a skeleton ===========================================
+   She arrived as one sculpture: a girl in show kit, seated, modelled mid-ride, and the only
+   life in her was a vertex shader that leaned everything above the hip as one piece. From
+   the far side of the arena that reads. Up close it falls apart — her boot hangs a hand's
+   width behind an empty stirrup, her leg never moves however fast the horse goes, and over
+   a fence she sits bolt upright as though the ground had not left.
+
+   A generated mesh has no bones, so we make some. Every joint below was measured off the
+   sculpt itself (trace the medial axis of each limb band by band and read where it turns),
+   and each vertex is weighted to the nearest few bone segments the way a rigger's bone-heat
+   does — an inverse-cube falloff, best four, normalised. It takes one pass at load.
+
+   After that she is a real figure. Her feet find the irons and stay in them; her heels
+   drop; she rises to the trot and the knee angle closes to let her; she folds into
+   two-point over a jump instead of perching; and her hands hold still against the horse's
+   mouth while the rest of her moves, which is the whole of a good seat. */
+const RJ={   // joint centres in the sculpt's own units — x right, y up, z forward
+ hips:[0,-0.235,-0.250], spine:[0,-0.020,-0.230], chest:[0,0.245,-0.200],
+ neck:[0,0.470,-0.190],  head:[0,0.560,-0.165],   headEnd:[0,0.930,-0.150],
+ shoulder:[0.185,0.435,-0.170], elbow:[0.212,0.135,-0.020], wrist:[0.140,0.132,0.300], hand:[0.108,0.140,0.392],
+ legTop:[0.115,-0.250,-0.245],  knee:[0.216,-0.358,0.312],  ankle:[0.168,-0.855,0.172],
+ ball:[0.192,-0.972,0.330],     toe:[0.190,-0.980,0.452]
+};
+const rjm=(q,s)=>[q[0]*s,q[1],q[2]];   // the same joint on the other side
+/* Order matters: a bone's index in this list IS the index its skin weights point at. */
+const RIDER_BONES=(()=>{ const L=[];
+ L.push({n:'hips', p:null,   h:RJ.hips, t:RJ.spine});
+ L.push({n:'spine',p:'hips', h:RJ.spine,t:RJ.chest});
+ L.push({n:'chest',p:'spine',h:RJ.chest,t:RJ.neck});
+ L.push({n:'neck', p:'chest',h:RJ.neck, t:RJ.head});
+ L.push({n:'head', p:'neck', h:RJ.head, t:RJ.headEnd});
+ for(const s of [1,-1]){ const S=s>0?'R':'L';
+  /* She sits with her elbows tucked against her waist and her forearms lying over her
+     thighs, and the sculpt has them all but touching. Distance alone therefore gives a
+     patch of her coat's front hem to the FOREARM, which tore it open the moment she folded
+     over a fence. lo/hi fade a limb's claim out before it reaches somewhere it has no
+     business: no arm below the waist, no leg above it. */
+  L.push({n:'arm'+S,  p:'chest',   h:rjm(RJ.shoulder,s),t:rjm(RJ.elbow,s), side:s, lo:[0.03,0.15]});
+  L.push({n:'fore'+S, p:'arm'+S,   h:rjm(RJ.elbow,s),   t:rjm(RJ.wrist,s), side:s, lo:[0.03,0.15]});
+  L.push({n:'hand'+S, p:'fore'+S,  h:rjm(RJ.wrist,s),   t:rjm(RJ.hand,s),  side:s, lo:[0.03,0.15]});
+  L.push({n:'thigh'+S,p:'hips',    h:rjm(RJ.legTop,s),  t:rjm(RJ.knee,s),  side:s, hi:[-0.24,-0.10]});
+  L.push({n:'shin'+S, p:'thigh'+S, h:rjm(RJ.knee,s),    t:rjm(RJ.ankle,s), side:s, hi:[-0.24,-0.10]});
+  L.push({n:'foot'+S, p:'shin'+S,  h:rjm(RJ.ankle,s),   t:rjm(RJ.toe,s),   side:s, hi:[-0.24,-0.10]});
+ } return L; })();
+/* Which way a knee and an elbow are allowed to fold. Taken from the sculpt: it is already
+   sitting with both bent the right way, so the cross product of the two bones names the
+   hinge and we never have to guess a sign. */
+const rjv=q=>new THREE.Vector3(q[0],q[1],q[2]);
+function riderHinge(a,b,c){return new THREE.Vector3().crossVectors(rjv(c).sub(rjv(b)),rjv(a).sub(rjv(b))).normalize();}
+const RIDER_HINGE={};
+for(const s of [1,-1]){ const S=s>0?'R':'L';
+ RIDER_HINGE['knee'+S] =riderHinge(rjm(RJ.legTop,s),rjm(RJ.knee,s),rjm(RJ.ankle,s));
+ RIDER_HINGE['elbow'+S]=riderHinge(rjm(RJ.shoulder,s),rjm(RJ.elbow,s),rjm(RJ.wrist,s));
+}
+/* The sculpt came holding a loop of rein of its own — a slab of geometry hanging between
+   her fists and her thigh that reads as a smear of mud from every angle. The game hangs
+   real reins off her hands, so the sculpted one was only ever in the way. */
+function riderCullProp(src){
+ const q=src.attributes.position,idx=src.index; if(!idx)return src;
+ /* The strip hangs off both fists and joins below them: forward of z=0.30, between the
+    fists' lower edge and the top of the knees, and nothing else of hers is in there. */
+ const junk=i=>{const x=q.getX(i),y=q.getY(i),z=q.getZ(i);return z>0.300&&y<0.080&&y>-0.170&&Math.abs(x)<0.210;};
+ const keep=[];
+ for(let i=0;i<idx.count;i+=3){const a=idx.getX(i),b=idx.getX(i+1),c=idx.getX(i+2);
+  if(junk(a)&&junk(b)&&junk(c))continue; keep.push(a,b,c);}
+ if(keep.length===idx.count)return src;
+ const g=src.clone(); g.setIndex(keep); g.computeBoundingSphere(); return g;
+}
+/* Bone-heat by hand: distance to each bone's own segment, inverse cube, best four. The
+   side gate is what stops a right elbow claiming the left sleeve across the gap. */
+const ss=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};
+function riderSkinAttrs(geo){
+ if(geo.attributes.skinIndex)return geo;
+ const q=geo.attributes.position,N=q.count,B=RIDER_BONES.length;
+ const HA=RIDER_BONES.map(b=>rjv(b.h)),TA=RIDER_BONES.map(b=>rjv(b.t));
+ const SI=new Uint16Array(N*4),SW=new Float32Array(N*4);
+ const P=new THREE.Vector3(),AB=new THREE.Vector3(),AP=new THREE.Vector3();
+ const bi=[0,0,0,0],bw=[0,0,0,0];
+ for(let k=0;k<N;k++){
+  P.set(q.getX(k),q.getY(k),q.getZ(k));
+  bi[0]=bi[1]=bi[2]=bi[3]=0; bw[0]=bw[1]=bw[2]=bw[3]=0;
+  for(let j=0;j<B;j++){
+   const B0=RIDER_BONES[j], sd=B0.side; if(sd&&P.x*sd<-0.025)continue;
+   AB.copy(TA[j]).sub(HA[j]); AP.copy(P).sub(HA[j]);
+   const u=Math.max(0,Math.min(1,AP.dot(AB)/Math.max(1e-6,AB.lengthSq())));
+   const d=AP.addScaledVector(AB,-u).length();
+   let w=1/(d*d*d+2e-5);
+   if(B0.lo)w*=ss(B0.lo[0],B0.lo[1],P.y);
+   if(B0.hi)w*=1-ss(B0.hi[0],B0.hi[1],P.y);
+   if(w<=0)continue;
+   for(let r=0;r<4;r++){ if(w>bw[r]){ for(let z=3;z>r;z--){bw[z]=bw[z-1];bi[z]=bi[z-1];} bw[r]=w;bi[r]=j; break; } }
+  }
+  const tot=(bw[0]+bw[1]+bw[2]+bw[3])||1;
+  for(let r=0;r<4;r++){SI[k*4+r]=bi[r];SW[k*4+r]=bw[r]/tot;}
+ }
+ geo.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(SI,4));
+ geo.setAttribute('skinWeight',new THREE.Float32BufferAttribute(SW,4));
+ return geo;
+}
+function riderSkeleton(){
+ const by={},list=[];
+ for(const d of RIDER_BONES){
+  const b=new THREE.Bone(); b.name=d.n;
+  const ph=d.p?by[d.p].userData.h:[0,0,0];
+  b.position.set(d.h[0]-ph[0],d.h[1]-ph[1],d.h[2]-ph[2]);
+  b.userData.h=d.h; b.userData.rest=b.position.clone();
+  if(d.p)by[d.p].add(b);
+  by[d.n]=b; list.push(b);
+ }
+ return {root:list[0],by,list};
+}
+/* ---- two-bone IK, world space -------------------------------------------------------- */
+const _ik1=new THREE.Vector3(),_ik2=new THREE.Vector3(),_ik3=new THREE.Vector3(),_ik4=new THREE.Vector3(),
+      _ik5=new THREE.Vector3(),_ikQ=new THREE.Quaternion(),_ikP=new THREE.Quaternion(),_ikW=new THREE.Quaternion();
+/* Turn a bone so that a direction fixed in it points somewhere else, and leave the rest of
+   the chain hanging off it. Both vectors are world; the maths goes home through the parent. */
+function boneAim(bone,fromW,toW){
+ if(fromW.lengthSq()<1e-10||toW.lengthSq()<1e-10)return;
+ _ikQ.setFromUnitVectors(_ik4.copy(fromW).normalize(),_ik5.copy(toW).normalize());
+ bone.getWorldQuaternion(_ikW); _ikW.premultiply(_ikQ);
+ bone.parent.getWorldQuaternion(_ikP);
+ bone.quaternion.copy(_ikP.invert().multiply(_ikW));
+ bone.updateMatrixWorld(true);
+}
+/* bA -> bB -> bEnd reaches `target`; the joint at bB folds about its own hinge and is
+   rolled round until it points at `pole`. Everything upstream must already be up to date. */
+function ikChain(bA,bB,bEnd,hinge,target,pole){
+ bA.updateMatrixWorld(true);
+ _ik1.setFromMatrixPosition(bA.matrixWorld);
+ _ik2.setFromMatrixPosition(bB.matrixWorld);
+ _ik3.setFromMatrixPosition(bEnd.matrixWorld);
+ const L1=_ik1.distanceTo(_ik2), L2=_ik2.distanceTo(_ik3);
+ if(L1<1e-5||L2<1e-5)return;
+ let D=_ik4.copy(target).sub(_ik1).length();
+ D=Math.max(Math.abs(L1-L2)+1e-4,Math.min(D,(L1+L2)*0.998));
+ const cl=v=>Math.max(-1,Math.min(1,v));
+ const now =Math.acos(cl((L1*L1+L2*L2-_ik1.distanceToSquared(_ik3))/(2*L1*L2)));
+ const want=Math.acos(cl((L1*L1+L2*L2-D*D)/(2*L1*L2)));
+ bB.rotateOnAxis(hinge,now-want);          // positive about the hinge closes the joint
+ bA.updateMatrixWorld(true);
+ _ik3.setFromMatrixPosition(bEnd.matrixWorld);
+ boneAim(bA,_ik4.copy(_ik3).sub(_ik1),_ik5.copy(target).sub(_ik1));
+ /* roll the whole chain about the reach so the knee (or the elbow) faces the pole */
+ _ik2.setFromMatrixPosition(bB.matrixWorld);
+ const ax=_ik3.copy(target).sub(_ik1); if(ax.lengthSq()<1e-10)return; ax.normalize();
+ const cur=_ik4.copy(_ik2).sub(_ik1);  cur.addScaledVector(ax,-cur.dot(ax));
+ const pol=_ik5.copy(pole).sub(_ik1);  pol.addScaledVector(ax,-pol.dot(ax));
+ if(cur.lengthSq()<1e-8||pol.lengthSq()<1e-8)return;
+ _ikQ.setFromUnitVectors(cur.normalize(),pol.normalize());
+ bA.getWorldQuaternion(_ikW); _ikW.premultiply(_ikQ);
+ bA.parent.getWorldQuaternion(_ikP);
+ bA.quaternion.copy(_ikP.invert().multiply(_ikW));
+ bA.updateMatrixWorld(true);
+}
+const HERO_RIDER_GEOMETRIES=new WeakMap();
+function heroRiderGeometry(source){
+ if(HERO_RIDER_GEOMETRIES.has(source))return HERO_RIDER_GEOMETRIES.get(source);
+ const geo=source.clone(),p=geo.attributes.position,index=geo.index,keep=[];
+ for(let i=0;i<index.count;i+=3){const a=index.getX(i),b=index.getX(i+1),c=index.getX(i+2);
+  // The source's flat support below the boot soles is not part of the rider.
+  // Keep all clothing, hands and embedded rein geometry intact.
+  if(Math.max(p.getY(a),p.getY(b),p.getY(c))<-.974)continue;keep.push(a,b,c);
+ }
+ geo.setIndex(keep);geo.computeBoundingSphere();HERO_RIDER_GEOMETRIES.set(source,geo);return geo;
+}
 function makeRider(custom){
  const r=new THREE.Group();
  const fit=custom||((freshSave()||{}).rider||{});
- const R={g:r,handL:new THREE.Object3D(),handR:new THREE.Object3D(),u:null,mesh:null};
- r.add(R.handL); r.add(R.handR);
- R._fit=()=>{ const F=RIDER_FIT, s=F.s, H=F.hip;
-  if(R.mesh){R.mesh.scale.setScalar(s); R.mesh.position.set(-H[0]*s,-H[1]*s,-H[2]*s+F.dz);}
-  if(R.u)R.u.uSpread.value=F.spread;
-  R.handL.position.set((F.handL[0]-H[0])*s,(F.handL[1]-H[1])*s,(F.handL[2]-H[2])*s+F.dz);
-  R.handR.position.set((F.handR[0]-H[0])*s,(F.handR[1]-H[1])*s,(F.handR[2]-H[2])*s+F.dz); };
- const attach=()=>{ const m=new THREE.Mesh(RIDER_MESH.geo,riderMaterial(RIDER_MESH.mat,fit));
-  m.castShadow=true; R.mesh=m; R.u=m.material.userData.u; r.add(m); R._fit(); };
+ /* fitG carries the sculpt-units-to-metres fit, and BOTH the mesh and the bones ride inside
+    it, so re-fitting for a bigger horse moves the whole rig together and the bind survives. */
+ const R={g:r,fitG:new THREE.Group(),handL:new THREE.Object3D(),handR:new THREE.Object3D(),u:null,mesh:null,sk:null};
+ r.add(R.fitG);
+ /* The reins hang off these two. Until the sculpt lands they sit where her fists will be;
+    after it they move onto the hand bones themselves and are exact. */
+ R.fitG.add(R.handR); R.fitG.add(R.handL);
+ R.handR.position.set(RJ.hand[0],RJ.hand[1],RJ.hand[2]);
+ R.handL.position.set(-RJ.hand[0],RJ.hand[1],RJ.hand[2]);
+ R.pose={lean:0,side:0,head:0,rise:0,spread:RIDER_FIT.spread};
+ R._fit=()=>{ const F=RIDER_FIT,s=F.s,H=F.hip;
+  R.fitG.scale.setScalar(s);
+  R.fitG.position.set(-H[0]*s,-H[1]*s,-H[2]*s+F.dz);
+  R.pose.spread=R._hero?0.22:F.spread; R._apply(); };
+ /* every bone home, before anything is asked of it */
+ R._rest=()=>{ if(!R.sk)return; const L=R.sk.list;
+  for(let i=0;i<L.length;i++){L[i].quaternion.set(0,0,0,1);L[i].position.copy(L[i].userData.rest);} };
+ /* the seat itself: fold at the hip and let the spine take the rest of it, keep the eyes
+    up as she folds, and turn the head on the neck rather than swivelling the whole girl */
+ R._seat=(lean,side,look,rise,spread)=>{ if(!R.sk)return; const B=R.sk.by;
+  B.hips.rotation.set(lean*0.50,0,side*0.45);
+  B.spine.rotation.set(lean*0.30,0,side*0.30);
+  B.chest.rotation.set(lean*0.16,0,side*0.20);
+  /* The sculpt has her chin tucked, studying her own hands. Lift the gaze off the neck —
+     a rider looks at the fence, not at the reins — and let the fold lift it further. */
+  B.neck.rotation.set(-0.105-lean*0.40,-look*0.35,-side*0.30);
+  B.head.rotation.set(-0.065-lean*0.22,-look*0.55,-side*0.25);
+  B.hips.position.y=B.hips.userData.rest.y+(rise||0);
+  /* The riders nobody is looking at — the club, the lanes, the paddock — do not get the
+     IK; there is nothing to be gained from solving a stirrup you cannot see. What they do
+     get is the same leg, once, statically: the sculpt sits with an eighty-four degree knee
+     and its thigh nearly level, which is a deckchair rather than a seat. Drop the thigh,
+     open the knee to something a person could ride in, and put the toe up. */
+  if(spread){const a=spread*1.7;
+   B.thighR.rotation.set(0.60,a,0);  B.thighL.rotation.set(0.60,-a,0);
+   B.shinR.rotation.set(-0.70,0,0);  B.shinL.rotation.set(-0.70,0,0);
+   B.footR.rotation.set(-0.52,0,0);  B.footL.rotation.set(-0.52,0,0);
+  }
+ };
+ R._apply=()=>{ if(!R.sk||R._ik)return; R._rest(); R._seat(R.pose.lean,R.pose.side,R.pose.head,R.pose.rise,R.pose.spread); };
+ /* The old figure was posed through five shader uniforms and half the game still speaks
+    that language — club riders, the NPCs on the lanes, the flat-game fallback. Keep the
+    shape of it and let each write land on a bone. */
+ const dial=k=>({get value(){return R.pose[k];},set value(v){R.pose[k]=v;R._apply();}});
+ R.u={uLean:dial('lean'),uSide:dial('side'),uHead:dial('head'),uRise:dial('rise'),uSpread:dial('spread')};
+ R._setHero=hero=>{R._hero=hero;if(R.mesh)R.mesh.geometry=hero?heroRiderGeometry(RIDER_MESH.geo):RIDER_MESH.geo;R._fit();};
+ const attach=()=>{
+  const geo=R._hero?heroRiderGeometry(RIDER_MESH.geo):RIDER_MESH.geo;
+  const m=new THREE.SkinnedMesh(geo,riderMaterial(RIDER_MESH.mat,fit));
+  m.castShadow=true; m.frustumCulled=false;
+  R.sk=riderSkeleton();
+  R.fitG.add(R.sk.root); R.fitG.add(m);
+  R.fitG.updateMatrixWorld(true);
+  m.bind(new THREE.Skeleton(R.sk.list));
+  R.mesh=m;
+  /* the reins come off her fists, so hang their anchors on the hand bones themselves */
+  R.sk.by.handR.add(R.handR); R.sk.by.handL.add(R.handL);
+  const gx=RJ.hand[0]-RJ.wrist[0],gy=RJ.hand[1]-RJ.wrist[1]+0.012,gz=RJ.hand[2]-RJ.wrist[2]+0.045;
+  R.handR.position.set(gx,gy,gz); R.handL.position.set(-gx,gy,gz);
+  R._fit();
+ };
  if(RIDER_MESH.geo)attach(); else RIDER_MESH.pending.push(attach);
  R._fit();
- r.position.set(0,1.86,-0.14);   // the procedural horse's seat; the rigged mount re-seats her at RID2_Y/RID2_Z
+ r.position.set(0,1.86,-0.14);   // the procedural horse's seat; the rigged mount re-seats her
+ /* Rebuilding the mount makes a new rider, and the old one was kept on this list for ever
+    — harmless when a rider was one mesh, wasteful now that each carries a skeleton. Drop
+    anyone who is no longer hanging off the scene. */
+ {const live=o=>{let q=o;while(q){if(q===scene)return true;q=q.parent;}return false;};
+  RIDER_MESH.riders=RIDER_MESH.riders.filter(X=>X.g&&live(X.g));}
  RIDER_MESH.riders.push(R);
  return R;
 }
@@ -7183,13 +7636,24 @@ function makeRein(){
 const reinL=makeRein(),reinR=makeRein();
 const _v1=new THREE.Vector3(),_v2=new THREE.Vector3(),_vm=new THREE.Vector3(),_vb=new THREE.Vector3();
 const _rp=new THREE.Vector3(),_rt=new THREE.Vector3(),_rr=new THREE.Vector3(),_ru=new THREE.Vector3();
+const _reinHand=new THREE.Vector3(),_reinBit=new THREE.Vector3();
 const _RUP=new THREE.Vector3(0,1,0);
 function updateRein(mesh,handObj,bitObj){
  handObj.getWorldPosition(_v1);
  bitObj.getWorldPosition(_v2);
  _vm.lerpVectors(_v1,_v2,0.5);_vm.y-=0.05;                 // slight drape
+ if(RIG.profile?.artistBreed&&player.mesh){
+  if(RIG.reinGuide?.key!==RIG.modelKey){
+   const p=RIG.skin.geometry.attributes.position,A=RIG.profile.anchors;let half=.08;
+   for(let i=0;i<p.count;i++)if(p.getY(i)>RIG.profile.withersM*.93&&p.getZ(i)>A.saddle[0][2]+.2&&p.getZ(i)<A.poll[0][2])half=Math.max(half,Math.abs(p.getX(i)));
+   RIG.reinGuide={key:RIG.modelKey,half:half*RIG.fitScale+.025};
+  }
+  player.mesh.worldToLocal(_reinHand.copy(_v1));player.mesh.worldToLocal(_reinBit.copy(_v2));player.mesh.worldToLocal(_vm);
+  const side=Math.sign(_reinBit.x)||1,control=2*RIG.reinGuide.half-(Math.abs(_reinHand.x)+Math.abs(_reinBit.x))*.5;
+  _vm.x=side*Math.max(Math.abs(_vm.x),control);player.mesh.localToWorld(_vm);
+ }
  const pos=mesh.geometry.attributes.position, nrm=mesh.geometry.attributes.normal;
- const R=0.013;
+ const R=(RIG.profile?.hero||RIG.profile?.artistBreed)?.0045:.013;
  for(let i=0;i<=REIN_SEG;i++){
   const t=i/REIN_SEG, mt=1-t;
   // quadratic bezier point and tangent, written straight into the existing buffers
@@ -7237,25 +7701,21 @@ function buildBarnRow(){
  const g=new THREE.Group();
  for(let k=0;k<BARN_ROW.n;k++){
   const z=BARN_ROW.z0+k*BARN_ROW.step;
-  /* a back wall, two dividers and a little roof: an open-fronted stall facing the field */
-  box(0.16,2.3,3.2,'#e2d3ae',0.9,1.15,z,g);                 // back
-  box(1.9,0.14,0.16,'#9a6a3a',0,2.25,z-1.6,g);              // divider rails
-  box(1.9,0.14,0.16,'#9a6a3a',0,2.25,z+1.6,g);
-  box(0.16,1.5,0.16,'#9a6a3a',-0.9,0.75,z-1.6,g);
-  box(0.16,1.5,0.16,'#9a6a3a',-0.9,0.75,z+1.6,g);
-  const roof=box(2.6,0.14,3.5,'#a8623a',0.1,2.55,z,g); roof.rotation.z=-0.12;
+  const stall=ranchArchitecture.buildOpenStall();
+  stall.position.set(0,groundH(BARN_ROW.x,z)-groundH(BARN_ROW.x,BARN_ROW.z0),z);g.add(stall);
   barnBuilt=barnBuilt||{g,plates:[]};
  }
  g.position.set(BARN_ROW.x,groundH(BARN_ROW.x,BARN_ROW.z0),0);
  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
  scene.add(g);
  barnBuilt.g=g;
+ followCamera.register(g);
  const sign=nameSprite('🏠 The barn'); sign.position.set(0,3.4,BARN_ROW.z0+BARN_ROW.step*2.5); g.add(sign);
  return barnBuilt;
 }
 /* Put the horses that are NOT out to grass into the stalls. */
 function refreshBarn(){
- for(const b of barnHorses){ try{scene.remove(b.parts.group);}catch(e){} }
+ for(const b of barnHorses){ try{scene.remove(b.parts.group);if(b.rig){disposeMountedRig(b.rig);b.rig.skin.material.dispose();worldRigCount=Math.max(0,worldRigCount-1);}}catch(e){} }
  for(const pl of barnPlates){ try{pl.parent&&pl.parent.remove(pl);}catch(e){} }
  barnHorses=[]; barnPlates=[];
  buildBarnRow();
@@ -7272,7 +7732,7 @@ function refreshBarn(){
   const z=BARN_ROW.z0+k*BARN_ROW.step;
   /* the plate is text baked into a texture, so a new name means a new sprite */
   const plate=nameSprite(hh.name);
-  plate.position.set(-0.2,2.05,z); plate.scale.set(1.6,0.45,1);
+  plate.position.set(-0.2,2.05+groundH(BARN_ROW.x,z)-groundH(BARN_ROW.x,BARN_ROW.z0),z); plate.scale.set(1.6,0.45,1);
   barnBuilt.g.add(plate); barnPlates.push(plate);
   const parts=makeHorse({colors:hh.colors,horn:hh.horn,wings:hh.wings,dragon:hh.dragon,
    coat:hh.coat,tack:null,seed:hh.id||(k+3),breed:hh.breed});
@@ -7286,13 +7746,16 @@ function refreshBarn(){
 }
 function tickBarn(dt,t){
  for(const b of barnHorses){
+  const horse=myHorses[b.idx];
+  if(horse){dressWithRig(b,b.parts,horse.colors,{breed:horse.breed,mine:true,foal:horse.foal,coat:horse.coat,dragon:horse.dragon,tailCol:horse.tailCol,mark:horse.mark,markCol:horse.markCol,seed:horse.id});tickRig(b,0,dt,t,0);}
   b.phase+=dt*0.9;
   animateHorse(b.parts,b.phase,0.05,GAITS.walk,true,t,1);   // standing, head down now and then
  }
 }
 function rebuildAll(){
+ if(myHorses[rideIdx])syncSave(s=>{s.ridingHorseId=myHorses[rideIdx].id;});
  if(player.mesh)scene.remove(player.mesh);
- for(const a of herd){scene.remove(a.parts.group);if(a.rig){a.rig.hair?.dispose?.();a.rig.skin?.material?.dispose();worldRigCount=Math.max(0,worldRigCount-1);}}
+ for(const a of herd){scene.remove(a.parts.group);if(a.rig){disposeMountedRig(a.rig);a.rig.skin?.material?.dispose();worldRigCount=Math.max(0,worldRigCount-1);}}
  herd=[];
  const h=myHorses[rideIdx];
  player.parts=makeHorse({colors:h.colors,horn:h.horn,wings:h.wings,dragon:h.dragon,coat:h.coat,tack:h.tack||'#7a583a',bridle:true,seed:h.id||0,breed:h.breed});
@@ -7341,7 +7804,8 @@ myHorses.forEach((h,i)=>{
  o.value=i;o.textContent='🐴 '+h.name;
  sel.appendChild(o);
 });
-sel.onchange=()=>{rideIdx=+sel.value;rebuildAll();sNeigh();};
+sel.value=String(rideIdx);
+sel.onchange=()=>{rideIdx=+sel.value;player.y=0;player.vy=0;rebuildAll();sNeigh();};
 rebuildAll();
 /* riding companions — friends on the trails */
 const npcs=[];
@@ -7454,8 +7918,15 @@ const keys={};
 window._k=keys;window._player=player;window._herd=()=>herd;
 window._mh=cfg=>{const p=makeHorse(cfg||{colors:{body:'#f2f5fb',mane:'#dfe7f4'},wings:true,seed:9});scene.add(p.group);return p;};
 addEventListener('keydown',e=>{
+ if(e.code==='Escape'){
+  if(freeCam)toggleFreeCam();
+  if(build.type||build.remove)endBuild();
+  if($('bigmapWrap').style.display==='flex')toggleMap();
+  if(document.body.classList.contains('posing'))setPosing(false);
+  hidePanels();$('dlg').style.display='none';$('chatBar').style.display='none';
+  document.activeElement?.blur();e.preventDefault();return;
+ }
  if(e.code==='KeyC'&&!e.repeat&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){toggleFreeCam();}
- if(freeCam&&e.code==='Escape'){toggleFreeCam();}
  if(/^Digit[1-5]$/.test(e.code||'')&&!e.repeat&&!freeCam&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){horseEmote(['rear','bow','liedown','nuzzle','toss'][+e.code[5]-1]);}
  if(build.type||build.remove){ if(e.code==='Escape'){endBuild();return;} if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} if(e.code==='KeyQ'){build.rot-=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} }
  if(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='SELECT'))return;
@@ -7566,6 +8037,7 @@ $('tGal').style.opacity='0.6';
 // drag to orbit the camera, scroll to zoom — like a real third-person game
 let camYaw=0.24,camPitch=0.27,camDist=6.2,camDistSm=6.2,camDrag=null;
 const camLook=new THREE.Vector3(-7,1.35,10);
+const camDesired=new THREE.Vector3(),camSafe=new THREE.Vector3();
 /* Camera drag tracks ONE pointer id. Without that, a second finger arriving —
    which on a phone is the normal case, thumb on the stick and thumb on the view —
    kept overwriting the drag origin and the camera lurched every time either
@@ -7921,7 +8393,7 @@ function startRoundup(){
   const z=PAST.z1+8+Math.random()*(PAST.z2-PAST.z1-16);
   parts.group.position.set(x,groundH(x,z),z);
   scene.add(parts.group);
-  ROUND.horses.push({parts,pos:new THREE.Vector3(x,0,z),heading:Math.random()*6,phase:Math.random()*6,
+  ROUND.horses.push({parts,wb,pos:new THREE.Vector3(x,0,z),heading:Math.random()*6,phase:Math.random()*6,
                      penned:false,rest:Math.random()*2});
  }
  ROUND.on=true; ROUND.t=ROUND_TIME; ROUND.penned=0;
@@ -7981,6 +8453,7 @@ function tickRoundup(dt,t){
   h.parts.group.position.set(h.pos.x,groundH(h.pos.x,h.pos.z),h.pos.z);
   h.parts.group.rotation.y=h.heading;
   animateHorse(h.parts,h.phase,d<15?0.9:0.25,d<15?GAITS.gallop:GAITS.walk,true,t,0);
+  dressWithRig(h,h.parts,{body:h.wb.body,mane:h.wb.mane},{breed:h.wb.breed});tickRig(h,d<15?7.5:1,dt,t,0);
   if(Math.hypot(h.pos.x-ROUND_PEN.x,h.pos.z-ROUND_PEN.z)<ROUND_PEN.r){
    h.penned=true; ROUND.penned++;
    try{scene.remove(h.parts.group);}catch(e){}
@@ -8553,6 +9026,7 @@ function careAct(k){
 /* Prices: about half what they were. Saving up should be a weekend, not a term — the
    horses are the point of the game, and a stable full of them is the fun part. */
 const BREEDS3=[
+ ['bay-sporthorse','Bay sporthorse','Common',0,0,'#765035','#221b16',{hero:true,size:1.159}],
  ['bay','Quarter Horse','Common',55,0,'#8a5a2b','#332214',{mark:'points',markCol:'#241a12'}],
  ['chestnut','Shetland Pony','Common',65,0,'#9c4f23','#6e3617',{mark:'roan',markCol:'#e8dcc8',size:0.82}],
  ['palomino','Palomino Mustang','Uncommon',130,0,'#d9a85c','#f4e6c5',{mark:'sooty'}],
@@ -8711,6 +9185,7 @@ function dyeHorse(what,val){
  syncSave(sv=>{
   const h=sv.horses[rideIdx];
   if(!h){msg='No horse to groom.';return;}
+  if(h.breed==='bay-sporthorse'){msg='This horse keeps its natural bay coat.';return;}
   if(sv.coins<DYE_COST){msg='A change costs '+DYE_COST+'🪙.';return;}
   sv.coins-=DYE_COST;
   h.colors=h.colors||{};
@@ -8782,7 +9257,7 @@ function openShop(tab){
    const badge=b[2]==='Dragon'?' <span style="background:linear-gradient(90deg,#e2703a,#8f4bd0);color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">🐉 DRAGON</span>':b[2]==='Mythic'?' <span style="background:linear-gradient(90deg,#9d6bff,#ff7ad0);color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">✨ MYTHIC</span>':b[2]==='Draft'?' <span style="background:#e8b84b;color:#5a3d12;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">NEW</span>':'';
    const ico=b[7].dragon?'🐉':b[7].horn?'🦄':b[7].wings?'🪽':(b[7].coat||b[7].glow)?'✨':'🐴';
    const ab=b[7].ability?{swift:' · 💨 Swift',leap:' · ⤴️ Leap',fly:' · 🪽 Flight',glow:' · ✨ Glow'}[b[7].ability]:'';
-   return '<div class="evrow">'+ico+' <b>'+b[1]+'</b>'+badge+'<span>'+b[2]+ab+(owned?' · owned ×'+owned:'')+'</span><button data-buyh="'+i+'">'+(b[3]?b[3]+' 🪙':b[4]+' 💎')+'</button></div>';
+   return '<div class="evrow">'+ico+' <b>'+b[1]+'</b>'+badge+'<span>'+b[2]+ab+(owned?' · owned ×'+owned:'')+'</span><button data-buyh="'+i+'">'+(b[7].hero?'Adopt & ride · Free':b[3]?b[3]+' 🪙':b[4]+' 💎')+'</button></div>';
   }).join('')+'<span style="font-size:11px;color:#8c7a63">'+s.horses.length+' horses and counting · no limits — new friends graze in the Home Pasture</span>';
  }else if(shopTab3==='pets'){
   const owned=s.petList||[];
@@ -8857,6 +9332,7 @@ function openShop(tab){
 }
 function buyHorse3(i){
  const b=BREEDS3[i];
+ if(b[0]==='bay-sporthorse'){adoptBaySporthorse();return;}
  let msg='',ok=false;
  syncSave(s=>{
   if(s.coins<b[3]||s.gems<b[4]){msg='Not enough — ride events to earn more!';return;}
@@ -8980,8 +9456,8 @@ function dressSaddle(){
  const h=myHorses[rideIdx]; if(!h)return;
  if(!sd.userData.mats){ sd.visible=!h.bareback; if(TACK.bridle&&TACK.bridle.userData.gold)TACK.bridle.userData.gold.color.set(h.studCol||'#d8b24a'); return; }
  const padIt=h.gear&&tackInv.find(t=>t.id===h.gear.pad);
- sd.userData.mats.pad.color.set(padIt?RAR_COL[padIt.rarity]:0xe6dcc6);
- sd.userData.mats.leather.color.set(h.tack||0x6b4423);
+ sd.userData.mats.pad.color.set(padIt?RAR_COL[padIt.rarity]:sd.userData.hero?0x686454:0xe6dcc6);
+ sd.userData.mats.leather.color.set(h.tack||(sd.userData.hero?0x30221b:0x6b4423));
  sd.visible=!h.bareback;                                                     // mastery 9: ride bareback
  if(TACK.bridle&&TACK.bridle.userData.gold)TACK.bridle.userData.gold.color.set(h.studCol||'#d8b24a');
 }
@@ -9295,25 +9771,25 @@ function remoteBridle(){
 const REMOTE_RIG_MAX=6;
 let remoteRigCount=0;
 function makeRemoteRig(breed){
- if(!RIG.ready||remoteRigCount>=REMOTE_RIG_MAX||quality==='low')return null;
+ if(!RIG.ready)return null;
  const asset=BREED_MODELS.get(breed);if(!asset)return null;
- const inst=BREED_MODELS.instantiate(asset);remoteRigCount++;
- return {...inst,phase:Math.random(),restQ:inst.bones.map(b=>b.quaternion.clone())};
+ const inst=instantiateArtistBreed(asset);remoteRigCount++;
+ const rig={...inst,phase:Math.random(),restQ:inst.bones.map(b=>b.quaternion.clone())};rigCalibrate(rig);initGameHero(THREE,rig);return rig;
 }
 const remoteBreedPending=new Map();
 function remoteUpdate(m){
  if(typeof m.x!=='number'||typeof m.z!=='number')return;
  let r=remotes[m.id];
  const breed=m.b||'bay';
- if(r&&r.breed!==breed){scene.remove(r.parts.group);if(r.rig){r.rig.hair?.dispose?.();r.rig.skin?.material?.dispose();remoteRigCount=Math.max(0,remoteRigCount-1);}delete remotes[m.id];r=null;}
- if(!r&&!BREED_MODELS.get(breed)&&quality!=='low'){
+ if(r&&r.breed!==breed){scene.remove(r.parts.group);if(r.rig){disposeMountedRig(r.rig);r.rig.skin?.material?.dispose();remoteRigCount=Math.max(0,remoteRigCount-1);}delete remotes[m.id];r=null;}
+ if(!r&&!BREED_MODELS.get(breed)){
   if(remoteBreedPending.has(m.id)){remoteBreedPending.set(m.id,m);return;}
   remoteBreedPending.set(m.id,m);
   BREED_MODELS.load(breed).then(()=>{const latest=remoteBreedPending.get(m.id);remoteBreedPending.delete(m.id);if(latest)remoteUpdate(latest);}).catch(e=>{remoteBreedPending.delete(m.id);console.warn('Remote breed unavailable',breed,e);});return;
  }
  if(!r){
   if(Object.keys(remotes).length>=12)return;
-  const parts=makeHorse({colors:(m.c&&m.c.body)?m.c:{body:'#8a5a2b',mane:'#332214'},tack:m.k||'#7a583a',bridle:true,seed:5,wings:!!m.wg,coat:m.ct||null});
+  const parts=makeHorse({colors:(m.c&&m.c.body)?m.c:{body:'#8a5a2b',mane:'#332214'},tack:m.k||'#7a583a',bridle:true,seed:5,breed,wings:!!m.wg,coat:m.ct||null,horn:!!BREEDS3.find(b=>b[0]===breed)?.[7]?.horn,dragon:!!BREEDS3.find(b=>b[0]===breed)?.[7]?.dragon});
   const rider=makeRider({shirt:m.s||RIDER_DEF_SHIRT,pants:m.p||RIDER_DEF_PANTS,hair:m.hr||null,skin:m.sk||null,helmet:m.hm||null});
   parts.group.add(rider.g);
   /* Swap in the good horse. The procedural body goes, and so does its tack — the
@@ -9330,11 +9806,14 @@ function remoteUpdate(m){
    rider.g.traverse(o=>keep.add(o));
    parts.group.traverse(o=>{ if(o.isMesh&&!keep.has(o))o.visible=false; });
    parts.group.add(rrig.scene);
-   {let sk=null; rrig.scene.traverse(o=>{if(o.isSkinnedMesh&&!sk)sk=o;}); if(sk&&RIG.baseMat&&!m.ct){const cm=makeCoatMat(sk,rrig.baseMat); setCoatUniforms(cm,(m.c&&m.c.body)||'#8a5a2b',null); sk.material=cm; rrig.skin=sk;}}
+   if(rrig.profile.artistBreed&&m.ct&&m.ct!==rrig.fantasyAppearance?.theme){rrig.fantasyMaterial=createEquineFantasyCoat(THREE,rrig.baseMat,m.ct,!!rrig.fantasyAppearance?.dragon);rrig.skin.material=rrig.fantasyMaterial;}
+   if(rrig.fantasyAppearance?.dragon)rrig.drg=buildDragonBody(rrig.skin,rrig.bones,parts.group,DRAGON_TINT[m.ct||rrig.fantasyAppearance.theme]||DRAGON_TINT._);
+   fitArtistFeatures(rrig,parts);
+   {let sk=rrig.skin; if(sk&&RIG.baseMat&&!m.ct&&!rrig.profile.hero&&!rrig.profile.artistBreed){const cm=makeCoatMat(sk,rrig.baseMat); setCoatUniforms(cm,(m.c&&m.c.body)||'#8a5a2b',null); sk.material=cm;}}
 
-   const sd=buildSaddle();                       // same builder the player's mount uses
+   const sd=buildSaddle(undefined,rrig);           // same builder the player's mount uses
    sd.position.copy(breedSeat(rrig));
-   parts.group.add(sd);
+   parts.group.add(sd);rrig.saddle=sd;
    const br=buildBridle(null,rrig); parts.group.add(br); r_bridle=br;
    // The rider was still sitting where the PROCEDURAL horse's back was, which is
    // higher and further forward than the rig's — that is the "floating up high".
@@ -9345,7 +9824,7 @@ function remoteUpdate(m){
   tag.position.y=3.15;
   parts.group.add(tag);
   scene.add(parts.group);
-  if(rrig&&rrig.skin){try{rrig.hair=breedHair(rrig.skin,rrig.bones,parts.group,rrig.profile,m.c,null,5);}catch(e){console.warn('Remote groom',e);}}
+  if(rrig&&rrig.skin){try{rrig.hair=breedHair(rrig.skin,rrig.bones,parts.group,rrig.profile,m.c,null,5);if(rrig.fantasyAppearance?.dragon){rrig.hair.mane.visible=false;rrig.hair.tail.visible=false;}configureArtistCustomization(rrig,{breed,colors:m.c,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,id:m.id});}catch(e){console.warn('Remote groom',e);}}
   r=remotes[m.id]={parts,rider,breed,rig:rrig,bridle:r_bridle,name:nm,x:m.x,z:m.z,tx:m.x,tz:m.z,heading:m.h||0,sp:0,phase:Math.random()*6,lastSeen:0};
   chatMsg('🌐',nm+' is riding nearby!');
  }
@@ -9359,6 +9838,7 @@ function remoteUpdate(m){
  r.wings=!!m.wg;
  if(m.ct)r.coat=m.ct;
  if(m.hl)r.horseLv=m.hl;
+ if(r.rig?.profile.artistBreed){const look=JSON.stringify([m.c,m.tailCol,m.mark,m.markCol,m.ct]);if(look!==r.artistLook){r.artistLook=look;configureArtistCustomization(r.rig,{breed,colors:m.c,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,id:m.id});}}
 }
 function netTick(dt,t){
  if(!SOCIAL)return;
@@ -9370,7 +9850,7 @@ function netTick(dt,t){
    net.client.publish('srf1/'+net.club+'/pos',JSON.stringify({
     id:net.id,n:myName(),x:+player.pos.x.toFixed(1),z:+player.pos.z.toFixed(1),
     h:+player.heading.toFixed(2),sp:+Math.abs(player.speed).toFixed(1),
-    c:h?h.colors:null,k:h?(h.tack||'#7a583a'):null,
+    c:h?h.colors:null,k:h?(h.tack||'#7a583a'):null,tailCol:h?.tailCol||null,mark:h?.mark??null,markCol:h?.markCol??null,
     s:(s.rider&&s.rider.shirt)||RIDER_DEF_SHIRT,p:(s.rider&&s.rider.pants)||RIDER_DEF_PANTS,hr:(s.rider&&s.rider.hair)||null,sk:(s.rider&&s.rider.skin)||null,hm:(s.rider&&s.rider.helmet)||null,
     hn:h?String(h.name).slice(0,14):null,b:h?(h.breed||null):null,hl:h?(h.level||1):1,wg:!!(h&&h.wings),ct:h?(h.coat||null):null,
    }));
@@ -9381,7 +9861,7 @@ function netTick(dt,t){
   r.lastSeen+=dt;
   if(r.lastSeen>7){
    scene.remove(r.parts.group);
-   if(r.rig){r.rig.hair?.dispose?.();r.rig.skin?.material?.dispose();remoteRigCount=Math.max(0,remoteRigCount-1);}   // free the slot for the next rider
+   if(r.rig){disposeMountedRig(r.rig);r.rig.skin?.material?.dispose();remoteRigCount=Math.max(0,remoteRigCount-1);}   // free the slot for the next rider
    delete remotes[id];
    continue;
   }
@@ -9395,9 +9875,9 @@ function netTick(dt,t){
   }
   if(r.rig){
    // the good horse: same gait code the player's mount runs
-   r.rig.phase+=rigPhaseStep(r.sp,true,dt,r.parts.group.scale.x);
-   poseRigBones(r.rig.bones,r.rig.phase,r.sp,true,0,t,dt);r.rig.hair?.update?.(t,r.sp);
-   if(r.bridle)r.bridle.userData.follow(r.rig.bones[RIG.headIdx==null?6:RIG.headIdx],r.rig.bones,RIG.restQ,r.rig.scene,r.parts.group);
+   if(r.rig.heroMotion){tickGameHero(r.rig,r.sp,dt);if(r.rig.saddle)r.rig.saddle.position.copy(breedSeat(r.rig));fitArtistFeatures(r.rig,r.parts,true);}
+   else{r.rig.phase+=rigPhaseStep(r.sp,true,dt,r.parts.group.scale.x);poseRigBones(r.rig.bones,r.rig.phase,r.sp,true,0,t,dt,0,r.rig);r.rig.hair?.update?.(t,r.sp);}
+   if(r.bridle)r.bridle.userData.follow(r.rig.headBone||r.rig.bones[6],r.rig.bones,r.rig.restQ,r.rig.scene,r.parts.group);
   }
   r.phase+=dt*(2.2+r.sp*1.9);
   const g3=gaitFor(r.sp);
@@ -10072,7 +10552,7 @@ function openSummon(){
  if(p.style.display==='flex'){p.style.display='none';return;}
  hidePanels();
  const s=freshSave(); if(!s)return;
- let html='<b style="font-size:16px">✨ The Summoning Stall</b>'
+ let html='<div class="ph panelHeader"><b id="summonTitle">✨ The Summoning Stall</b><button class="panelClose" id="summonClose" aria-label="Close summoning stall">Close ×</button></div>'
   +'<div style="font-size:11.5px;color:#8c7a63;margin:2px 0 6px">Call a horse out of the stall. The light under the door tells you what is coming — if you can bear to watch it climb.</div>';
  for(const t of SUMMON_TIERS){
   const can=(s.gems||0)>=t.gems && s.horses.length<stableCap(s);
@@ -10085,6 +10565,7 @@ function openSummon(){
  }
  html+='<div style="font-size:11px;color:#8c7a63">Gems come from riding — events, daily gifts, chests, the pass. Nothing here costs real money.</div>';
  p.innerHTML=html; p.style.display='flex';
+ $('summonClose').onclick=()=>{p.style.display='none';};
  p.querySelectorAll('[data-summon]').forEach(b=>{ b.onclick=()=>{
   const t=SUMMON_TIERS.find(x=>x.id===b.dataset.summon); if(!t)return;
   p.style.display='none'; startSummon(t);
@@ -10350,6 +10831,16 @@ function openStable(){
  if(p.style.display==='flex'){p.style.display='none';return;}
  hidePanels();renderStable();p.style.display='flex';
 }
+function adoptBaySporthorse(){
+ let selectedId;
+ syncSave(s=>{
+  let h=s.horses.find(h=>h.breed==='bay-sporthorse'&&!h.foal);
+  if(!h){h={id:s.nextId++,name:'Rowan',breed:'bay-sporthorse',colors:{body:'#765035',mane:'#221b16'},horn:false,wings:false,dragon:false,coat:null,stats:{speed:4,stamina:4,jump:4,accel:4,agility:4},sxp:{},level:1,xp:0,bond:25,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null};s.horses.push(h);}
+  selectedId=h.id;s.ridingHorseId=h.id;
+ });
+ reloadHorses();rideIdx=myHorses.findIndex(h=>h.id===selectedId);sel.value=String(rideIdx);
+ player.speed=0;player.y=0;player.vy=0;rebuildAll();hidePanels();toast('Now riding your Bay sporthorse.');
+}
 function renderStable(){
  const s=freshSave();if(!s)return;
  const p=$('stablePanel');
@@ -10357,7 +10848,8 @@ function renderStable(){
  const _out=turnedOut(s), _max=pastureMax(s);
  p.innerHTML='<div class="ph">🐎 Your Stable <span style="color:#8c7a63;font-size:13px;font-weight:600">'+s.horses.length+' horses · no limit</span><button data-st="close" style="margin-left:auto">✖</button></div>'
  +'<div style="font-size:11.5px;color:#8c7a63;padding:0 2px">🌿 <b>'+_out+' of '+_max+'</b> out in the pasture'+(isVIP(s)?' (VIP)':'')+'. The rest are in the barn — keep as many horses as you like, and rotate who goes out to grass.</div>'
- +'<div style="padding:10px 18px"><a href="breeds.html" target="_blank" rel="noopener" style="color:#45654e;font-weight:700">Explore all breed models ↗</a></div>'
+ +'<div class="evrow"><b>Bay sporthorse</b><span>A new arrival · ready to ride</span><button data-st="hero" class="claimBtn">'+(s.horses.some(h=>h.breed==='bay-sporthorse'&&!h.foal)?'Ride Bay sporthorse':'Adopt & ride · Free')+'</button></div>'
+ +'<div style="padding:10px 18px"><a href="breeds.html?v=artist-study-1" target="_blank" rel="noopener" style="color:#45654e;font-weight:700">Open Breed Studio ↗</a></div>'
  +s.horses.map((h,i)=>{
   const hearts=Math.max(0,Math.min(5,Math.round((h.bond||0)/20)));
   const low=h.needs&&Object.values(h.needs).some(v=>v<35);
@@ -10381,6 +10873,7 @@ function renderStable(){
  p.querySelectorAll('[data-st]').forEach(b=>{b.onclick=()=>{
   const [act,iS]=b.dataset.st.split(':'),i=+iS;
   if(act==='close'){p.style.display='none';return;}
+  if(act==='hero'){adoptBaySporthorse();return;}
   if(act==='ride'){rideIdx=i;sel.value=String(i);rebuildAll();sNeigh();renderStable();toast('🏇 Now riding '+myHorses[i].name+'!');}
   if(act==='eq'){
    const h=myHorses[i];
@@ -10419,6 +10912,31 @@ function renameHorse(i){
  }
 }
 $('stableBtn').onclick=openStable;
+$('breedStudioBtn').onclick=()=>window.open('breeds.html?v=artist-study-1','_blank','noopener');
+if(new URLSearchParams(location.search).get('adopt')==='bay-sporthorse'){
+ adoptBaySporthorse();
+ const clean=new URL(location.href);clean.searchParams.delete('adopt');history.replaceState(null,'',clean);
+}
+// Studio links select an owned adult or show its existing shop entry. Viewing
+// a model never buys it, grants it, or changes the price of a story reward.
+function inspectBreedAtRanch(key){
+ const catalogIndex=BREEDS3.findIndex(b=>b[0]===key);if(catalogIndex<0)return;
+ const owned=myHorses.findIndex(h=>h.breed===key&&!h.foal);
+ if(owned>=0){player.speed=0;sel.value=String(owned);sel.onchange();hidePanels();toast('Now riding '+myHorses[owned].name+'.');return;}
+ const breed=BREEDS3[catalogIndex];
+ if(breed[7]?.story){
+  hidePanels();renderStable();$('stablePanel').style.display='flex';
+  const note=document.createElement('p');note.textContent=breed[1]+' is earned as a story reward.';note.setAttribute('role','status');$('stablePanel').prepend(note);return;
+ }
+ openShop('horses');
+ const button=$('shopPanel').querySelector('[data-buyh="'+catalogIndex+'"]'),row=button?.closest('.evrow');
+ if(row){row.style.outline='2px solid #77905b';row.style.outlineOffset='2px';row.dataset.studioBreed=key;requestAnimationFrame(()=>row.scrollIntoView({block:'center'}));}
+}
+{
+ const studioURL=new URL(location.href),adopt=studioURL.searchParams.get('adopt');
+ const requested=studioURL.searchParams.get('inspect-breed')||(adopt!=='bay-sporthorse'?adopt:null);
+ if(requested){studioURL.searchParams.delete('inspect-breed');studioURL.searchParams.delete('adopt');history.replaceState(null,'',studioURL);Promise.resolve().then(()=>inspectBreedAtRanch(requested));}
+}
 
 /* ---- daily quests ---- */
 const DAILYQ=[
@@ -10909,15 +11427,18 @@ const SUMMON={on:false,t:0,phase:'',tier:null,rar:null,breed:null,step:0,shown:'
               light:null,glow:null,doorL:null,doorR:null,cam:false,horseId:null};
 function mkSummonStall(){
  const g=new THREE.Group(); const x=SUMMON_STALL.x, z=SUMMON_STALL.z;
- box(4.6,3.4,3.2,'#e4d6b6',0,1.7,0,g);
- box(5.0,0.18,3.6,'#8d5a34',0,3.5,0,g);                      // roof
- box(0.34,3.6,0.34,'#6b4423',-2.2,1.8,1.6,g); box(0.34,3.6,0.34,'#6b4423',2.2,1.8,1.6,g);
+ const shell=ranchArchitecture.buildOutbuilding({width:4.6,depth:3.2,height:3.4,animatedDoorOpening:{width:2.3,height:2.5}});
+ g.add(shell);
  /* two doors on their own pivots, so they can swing apart */
  const mkDoor=(sgn)=>{
   const piv=new THREE.Group(); piv.position.set(sgn*1.15,0,1.62); g.add(piv);
-  const d=box(1.14,2.5,0.10,'#7a4a24',-sgn*0.57,1.25,0,piv);
-  box(1.02,0.10,0.12,'#d8b24a',-sgn*0.57,2.05,0.03,piv);
-  box(1.02,0.10,0.12,'#d8b24a',-sgn*0.57,0.55,0.03,piv);
+  const d=box(1.14,2.5,0.10,plankBrownMat,-sgn*0.57,1.25,0,piv);
+  for(const y of [.55,2.05]){
+   box(1.02,.10,.12,plankBrownMat,-sgn*.57,y,.03,piv);
+   box(.28,.035,.028,'#393c35',-sgn*.16,y,.105,piv);
+  }
+  for(let i=1;i<6;i++)box(.012,2.44,.018,'#554738',-sgn*i*.19,1.25,.061,piv);
+  box(.042,.18,.042,'#393c35',-sgn*1.02,1.2,.09,piv);
   return piv;
  };
  const doorL=mkDoor(-1), doorR=mkDoor(1);
@@ -10931,16 +11452,21 @@ function mkSummonStall(){
  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
  scene.add(g);
  colliders.push({x,z,r:2.7});
- const sp=nameSprite('✨ The Summoning Stall'); sp.position.y=4.2; g.add(sp);
+ const sp=nameSprite('✨ The Summoning Stall'); sp.position.y=shell.userData.architecture.suggestedLabelY; g.add(sp);
  SUMMON.light=light; SUMMON.glow=glow; SUMMON.doorL=doorL; SUMMON.doorR=doorR; SUMMON.grp=g;
+ followCamera.register(g);
  return {kind:'summon',id:'summon',g,x,z};
 }
 function mkTackRoom(){
  const g=new THREE.Group(); const x=TACK_ROOM.x,z=TACK_ROOM.z;
- box(3.2,2.4,2.6,'#e9dcc0',0,1.2,0,g); box(3.5,0.16,2.9,'#b5633a',0,2.5,0,g); const door=box(0.9,1.7,0.08,'#6b4423',0,0.85,1.31,g); box(0.14,0.14,0.06,'#d8b24a',0.3,0.9,1.36,g);
+ const shell=ranchArchitecture.buildOutbuilding({width:3.2,depth:2.6,height:2.4,animatedDoorOpening:{width:.9,height:1.7}});g.add(shell);
+ const door=box(.9,1.7,.08,plankBrownMat,0,.85,1.31,g);
+ for(const y of [.4,1.3])box(.8,.085,.04,plankBrownMat,0,y,1.37,g);
+ box(.05,.15,.06,'#393c35',.3,.9,1.38,g);
  g.position.set(x,groundH(x,z),z); g.rotation.y=Math.atan2(-x,-z)+Math.PI; g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}}); scene.add(g);
  colliders.push({x,z,r:2.0});
- const sp=nameSprite("🔐 Grandma's tack room"); sp.position.y=3.1; g.add(sp);
+ const sp=nameSprite("🔐 Grandma's tack room"); sp.position.y=shell.userData.architecture.suggestedLabelY; g.add(sp);
+ followCamera.register(g);
  return {kind:'room',id:'tackroom',g,door,x,z};
 }
 {
@@ -11129,15 +11655,14 @@ function cottage(x,z,rot){
  b.position.set(x,groundH(x,z),z);
  b.rotation.y=rot;
  scene.add(b);
+ followCamera.register(b);
 }
 cottage(42,-50,0.4);cottage(48,-56,-0.3);cottage(54,-48,0.9);cottage(45,-43,2.6);
 {
  const sp2=new THREE.Group();
- tube(0.06,0.07,2.0,barkMat,0,1.0,0,sp2);
- /* Sprites are camera-facing, so nudging them sideways only clears the pole from one
-    angle — they have to go above its top (y=2.0) to read from every direction. */
- const s1=nameSprite('Cottonwood ↗');s1.position.set(0,2.85,0);sp2.add(s1);
- const s2=nameSprite('Loon Lake →');s2.position.set(0,2.35,0);sp2.add(s2);
+ tube(0.06,0.07,2.6,barkMat,0,1.3,0,sp2);
+ const s1=arrivalArt.buildSign({text:'Cottonwood ↗',width:1.75,height:.34});s1.position.set(0,2.35,0);sp2.add(s1);
+ const s2=arrivalArt.buildSign({text:'Loon Lake →',width:1.75,height:.34});s2.position.set(0,1.91,0);sp2.add(s2);
  sp2.position.set(2.5,0,23);
  scene.add(sp2);
 }
@@ -11454,11 +11979,15 @@ function tick(stepSeconds){
   }
  }else{
   if(player.parts)player.parts.wingFly=false;
-  if((keys.Space||touch.jump)&&player.y<=0){
+  if(RIG.heroMotion){
+   if((keys.Space||touch.jump)&&RIG.heroJumpAge===null&&!RIG.heroJumpHeld){if(winged)setFlying(true);else{startGameHeroJump(RIG);sJump();}}
+   RIG.heroJumpHeld=!!(keys.Space||touch.jump);
+  }
+  if(!RIG.heroMotion&&(keys.Space||touch.jump)&&player.y<=0){
    if(winged){setFlying(true);}
    else{player.vy=(abil==='leap'?11.7:9.2)*jpMul;player.speed=Math.min(13.5,player.speed+0.8);sJump();}
   }
-  if(player.y>0||player.vy!==0){
+  if(!RIG.heroMotion&&(player.y>0||player.vy!==0)){
    /* Integrate the arc exactly, not one step behind. Taking the whole step at the new
       velocity threw away half a step of height, so the jump got lower as the frame rate
       dropped: 1.10 m at 144 Hz, 0.96 m at the 32 Hz a Remote Desktop session runs at, which
@@ -11491,20 +12020,20 @@ function tick(stepSeconds){
  const grounded=player.y<=0;
  animateHorse(player.parts,player.phase,player.amp,gait,grounded,t,0,dt);
  driveRig(sp,grounded,t,dt);   // gait for the generated rigged mount (if attached)
- driveRider(sp,t);             // rest<->ride pose, posting, breathing, reins
+ driveRider(sp,t,dt);          // rest<->ride pose, posting, breathing, reins
  const dx=Math.sin(player.heading),dz=Math.cos(player.heading);
  const gy=groundH(player.pos.x,player.pos.z);
  if(grounded&&sp>8){lastDust+=dt;if(lastDust>0.12){lastDust=0;puffDust(player.pos.x-dx*1.05,gy+0.04,player.pos.z-dz*1.05);}}
- const bob=Math.pow(Math.sin(player.phase),2)*0.075*Math.min(1,sp/4);
+ const bob=RIG.heroMotion?0:Math.pow(Math.sin(player.phase),2)*0.075*Math.min(1,sp/4);
  player.landT=Math.max(0,(player.landT||0)-dt);
- const landDip=player.landT>0?Math.sin((player.landT/0.22)*Math.PI)*0.07:0;
- player.mesh.position.set(player.pos.x,gy+player.y+bob-landDip+(RIG.emote?EMOTES[RIG.emote.type].lift*emEnv(RIG.emote):0),player.pos.z);
+ const landDip=!RIG.heroMotion&&player.landT>0?Math.sin((player.landT/0.22)*Math.PI)*0.07:0;
+ player.mesh.position.set(player.pos.x,gy+(RIG.heroMotion&&!player.flying?RIG.heroJumpExtra:player.y)+bob-landDip+(RIG.emote?EMOTES[RIG.emote.type].lift*emEnv(RIG.emote):0),player.pos.z);
  player.mesh.rotation.y=player.heading;
  if(player.parts&&player.parts.shadowM)player.parts.shadowM.material.opacity=Math.max(0.06,1-player.y/9);
  const ahead=groundH(player.pos.x+dx*1.4,player.pos.z+dz*1.4);
  const behind=groundH(player.pos.x-dx*1.4,player.pos.z-dz*1.4);
  const slope=-Math.atan2(ahead-behind,2.8);
- const rock=sp>7&&grounded?Math.sin(player.phase)*0.045:0;
+ const rock=!RIG.heroMotion&&sp>7&&grounded?Math.sin(player.phase)*0.045:0;
  const jumpPitch=player.flying?(player.climbInput||0)*-0.2:(player.y>0?THREE.MathUtils.clamp(-player.vy*0.026,-0.24,0.26):0);
  const pPrev=Number.isFinite(player.pitchSm)?player.pitchSm:0;
  const pitchTgt=player.flying?jumpPitch:(slope*0.7+jumpPitch);
@@ -11636,7 +12165,7 @@ function tick(stepSeconds){
   animateHorse(a.parts,a.phase,resting?0.05:((a.wsp||1.2)>3.5?0.72:0.42),(a.wsp||1.2)>3.5?GAITS.gallop:GAITS.walk,true,t,a.graze,dt);
   {const hh=myHorses[a.idx]; const bd=hh&&BREEDS3.find(b=>b[0]===hh.breed);
    dressWithRig(a,a.parts,hh&&hh.colors,{breed:hh?.breed,foal:hh?.foal,tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,dragon:hh&&hh.dragon,mine:true,
-    mark:markOf(hh), markCol:markColOf(hh), seed:(hh&&hh.id)||0}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
+    mark:hh?.mark, markCol:hh?.markCol, seed:(hh&&hh.id)||0}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
    const el=dragonElement(hh);                       // a dragon in the pasture breathes now and then
    if(el){ a.brT=(a.brT==null?3+Math.random()*9:a.brT)-dt;
     if(a.brT<0){ a.brOn=0.85; a.brT=7+Math.random()*11; }
@@ -11846,7 +12375,9 @@ function tick(stepSeconds){
   const along=lx*Math.cos(j.rotY)-lz*Math.sin(j.rotY);
   const across=lx*Math.sin(j.rotY)+lz*Math.cos(j.rotY);
   const side=across>0?1:-1;
-  if(j.prevSide!==0&&side!==j.prevSide&&Math.abs(along)<1.7&&Math.abs(across)<1.2){
+  // Wait until the hoof line clears the same dead band used to record its side.
+  // Otherwise several frames inside that band award the same jump repeatedly.
+  if(j.prevSide!==0&&side!==j.prevSide&&Math.abs(along)<1.7&&Math.abs(across)>.05&&Math.abs(across)<1.2){
    if(player.y>0.45){
     addCoins(10);addXp3D(3);sChime();statBump('jumps',1);passAdd(5);toast('✨ Clean jump! +10 🪙 +3 XP');
     questEvt('cleanjump',1);
@@ -12107,9 +12638,14 @@ function tick(stepSeconds){
  }else if(freeCam){
   tickFreeCam(dt);
  }else{
-  camera.position.lerp(new THREE.Vector3(camX,camY,camZ),k);
   const shake=sp>7&&grounded?0.011:0;
-  camLook.lerp(new THREE.Vector3(player.pos.x,gy+player.y+1.35,player.pos.z),1-Math.exp(-8*dt));
+  camLook.lerp(new THREE.Vector3(player.pos.x,gy+player.y+1.6,player.pos.z),1-Math.exp(-8*dt));
+  camDesired.set(camX,camY+.2,camZ);
+  followCamera.frame(camLook,camDesired,camSafe,dt);
+  camera.position.lerp(camSafe,k);
+  // Recheck the interpolated position: orbiting around a corner otherwise
+  // sends the smoothing path through the wall even when both ends are clear.
+  followCamera.resolve(camLook,camera.position,camera.position);
   camera.lookAt(camLook.x+Math.sin(t*23)*shake,camLook.y+Math.sin(t*31)*shake,camLook.z+Math.cos(t*27)*shake);
   const fovT=sp>7?57:52;
   if(Math.abs(camera.fov-fovT)>0.1){
@@ -12164,10 +12700,10 @@ function tick(stepSeconds){
   weather.mode='clear';weather.timer=140+Math.random()*160;
   rainbow.visible=false;
  }
- const keyT=(weather.mode==='rain'?1.3:3.15)*dayF+0.88*nightNow
+ const keyT=(weather.mode==='rain'?1.3:2.65)*dayF+0.88*nightNow
   +(weather.mode==='rain'?0.15:0.55)*golden;   // ember punch at the horizon hours
  sun.intensity+=(keyT-sun.intensity)*Math.min(1,dt*1.5);
- const hemiT=THREE.MathUtils.lerp(0.82,weather.mode==='rain'?0.82:0.86,dayF);
+ const hemiT=THREE.MathUtils.lerp(0.82,weather.mode==='rain'?1.05:1.24,dayF);
  hemi.intensity+=(hemiT-hemi.intensity)*Math.min(1,dt*1.5);
  hemi.color.copy(C_HEMI_NIGHT).lerp(C_HEMI_DAY,dayF);
  hemi.groundColor.copy(C_GROUND_NIGHT).lerp(C_GROUND_DAY,dayF);
@@ -12382,7 +12918,7 @@ window.render_game_to_text=()=>JSON.stringify({
  }:null,
  wallet:{coins,gems},
  weather:weather.mode,
- graphics:{quality,horseModel:RIG.modelKey,horseBreed:RIG.requestedBreed,horseLoading:!!RIG.loadingBreed,horseReady:RIG.ready,horseAttached:RIG.attachedTo===player.mesh,day:Number(dayT.toFixed(3)),triangles:renderer.info.render.triangles,drawCalls:renderer.info.render.calls},
+ graphics:{quality,bridleFitted:!!TACK.bridle?.userData.artistBridle,horseModel:RIG.modelKey,artistRig:!!RIG.profile?.artistBreed,joints:RIG.bones?.length||0,motion:RIG.heroMotion?.mode||null,horseBreed:RIG.requestedBreed,horseLoading:!!RIG.loadingBreed,horseReady:RIG.ready,horseAttached:RIG.attachedTo===player.mesh,day:Number(dayT.toFixed(3)),triangles:renderer.info.render.triangles,drawCalls:renderer.info.render.calls},
  camera:{x:Number(camera.position.x.toFixed(2)),y:Number(camera.position.y.toFixed(2)),z:Number(camera.position.z.toFixed(2)),fov:Number(camera.fov.toFixed(1)),free:!!freeCam},
  jumping:player.y>0&&!player.flying,
  stamina:Number((player.stam||0).toFixed(3))

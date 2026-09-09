@@ -1,0 +1,129 @@
+{
+  "id": "morgan",
+  "name": "Morgan",
+  "label": "Morgan",
+  "file": "morgan.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.52,
+  "heightM": 1.9087425470352173,
+  "fitScale": 0.9539473684210525,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.471116816520691,
+        -0.10289143025875092
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.52,
+        0.0896417737007141
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.6555427081401344,
+        0.867520520542486
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.7901888743202887,
+        0.7915359451384549
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.5016536618378193,
+        1.032700086599932
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.729054268404955,
+        0.49968345794920604
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.2586316498079047,
+        -0.9512831710904692
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09521638257572815,
+        1.703556000574732,
+        0.8481093082886743
+      ],
+      [
+        0.09521638257572815,
+        1.703556000574732,
+        0.8481093082886743
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.07003053975956787,
+        1.539685823293157,
+        1.0242337855576686
+      ],
+      [
+        0.07003053975956787,
+        1.539685823293157,
+        1.0242337855576686
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Compact strong short-backed horse",
+  "morphology": {
+    "build": "Compact strong short-backed horse",
+    "neck": "Neck rises over withers with proud smooth crest",
+    "head_face": "Short straight/slightly dished face, rounded jaw",
+    "ears": "Small shapely upright ears",
+    "limbs": "Strong clean legs and short coupling",
+    "hooves": "Round feet open at heels",
+    "mane_tail": "Full groomed mane and tail",
+    "feathering": "None"
+  },
+  "coat": "Seal bay with black points",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "daebc7c832aaaa3a62559a5619861f08743c7100a22795895d7691e0803d197c",
+  "bodyGeometrySha256": "f6bd17d0d3cf835411f75d2df6b8581dfcf897b999cd5d9c89afb06e7385160e",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.5199999809265137,
+    "groundY": 0.0
+  }
+}

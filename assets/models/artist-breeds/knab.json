@@ -1,0 +1,129 @@
+{
+  "id": "knab",
+  "name": "Knabstrupper",
+  "label": "Knabstrupper",
+  "file": "knab.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.64,
+  "heightM": 2.0811688899993896,
+  "fitScale": 0.8841463414634146,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.5884821767807007,
+        -0.08596533536911011
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.64,
+        0.1340900366504987
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.7726338863846176,
+        1.0570357115859028
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.9228815025744193,
+        0.9483018472114663
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.6001534935119333,
+        1.2604876924715902
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.8206993780033744,
+        0.6071577433133161
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.3673214005693466,
+        -1.055632674816785
+      ]
+    ],
+    "eyes": [
+      [
+        -0.0937499133486456,
+        1.828555835850371,
+        1.0276067622409437
+      ],
+      [
+        0.0937499133486456,
+        1.828555835850371,
+        1.0276067622409437
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.06891483682229015,
+        1.6387873765901895,
+        1.2565566889520483
+      ],
+      [
+        0.06891483682229015,
+        1.6387873765901895,
+        1.2565566889520483
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Chosen large-framed leggy riding type with depth",
+  "morphology": {
+    "build": "Chosen large-framed leggy riding type with depth",
+    "neck": "Medium well-set neck and flexible poll",
+    "head_face": "Proportional expressive head",
+    "ears": "Medium alert ears",
+    "limbs": "Strong clean legs, short flat cannon",
+    "hooves": "Well-shaped sound horn",
+    "mane_tail": "Full mane/tail; avoid rat-tail stereotype",
+    "feathering": "None"
+  },
+  "coat": "Ivory leopard with irregular dark spots",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "e9125fde996b5a76a171f1b5f9c30b796724138f4c26889b30ef90a4e93ce965",
+  "bodyGeometrySha256": "12d5b2b3a669510272344108167026d661138a03c220da9ba51784923713710e",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.6399999856948853,
+    "groundY": 0.0
+  }
+}

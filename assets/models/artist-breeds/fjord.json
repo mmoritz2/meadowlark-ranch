@@ -1,0 +1,129 @@
+{
+  "id": "fjord",
+  "name": "Norwegian Fjord",
+  "label": "Norwegian Fjord",
+  "file": "fjord.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.42,
+  "heightM": 1.7411456108093262,
+  "fitScale": 1.0211267605633803,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.3695942516326904,
+        -0.0921076089143753
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.42,
+        0.10042497664690017
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.491836787672004,
+        0.8256164861959212
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.6111045832064226,
+        0.7511941355546192
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.3537171890964732,
+        0.973057223584403
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.5788289282544066,
+        0.488409507180767
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.1520956880730684,
+        -0.9404966193273364
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09649931183038885,
+        1.533970765911673,
+        0.8057489808190766
+      ],
+      [
+        0.09649931183038885,
+        1.533970765911673,
+        0.8057489808190766
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.07104407056630649,
+        1.3896689521901666,
+        0.9671890182604209
+      ],
+      [
+        0.07104407056630649,
+        1.3896689521901666,
+        0.9671890182604209
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Broad powerful compact small horse",
+  "morphology": {
+    "build": "Broad powerful compact small horse",
+    "neck": "Muscular natural arch",
+    "head_face": "Broad forehead, short straight face, generous muzzle",
+    "ears": "Medium ears with dark edges",
+    "limbs": "Substantial flat bone and muscular gaskin",
+    "hooves": "Large dense round feet",
+    "mane_tail": "Upright clipped mane, pale guards around darker center; full natural tail",
+    "feathering": "Some, never profuse"
+  },
+  "coat": "Brown dun with two-tone upright mane",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "b3988e632f7f8b363a4aed64e09458d55d3ccbcd18ccac323d81515f3e87bc44",
+  "bodyGeometrySha256": "c6c6a6b1b99c123a53a3b91eeac6601d05067a8a949a68a93ebf80c416d99053",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.4199999570846558,
+    "groundY": 0.0
+  }
+}

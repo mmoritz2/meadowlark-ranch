@@ -52,3 +52,17 @@ assets/models/stump.glb
 assets/models/rider_seat.glb
 assets/models/saddle2.glb
 assets/models/saddle_en.glb
+
+# Blender source for the artist breeds and the hero horse: 170 MB the browser never
+# opens. The *.glb beside each one is what the game loads and what ships.
+*.blend
+*.blend1
+# Sculpt/bake working directories for the same reason — none of these are fetched at
+# runtime; assets/models/artist-breeds/*.glb is the shipping set.
+assets/models/breeds/
+assets/models/hero-horse/
+assets/models/horse-candidates/
+!assets/models/horse-candidates/b2przemo/
+!assets/models/horse-candidates/b2przemo/bay-study-albedo.png
+# Full-resolution sources for the tiling materials; the tiles themselves are tracked.
+assets/textures/realism/source/

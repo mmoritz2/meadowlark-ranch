@@ -1,0 +1,129 @@
+{
+  "id": "iceland",
+  "name": "Icelandic Horse",
+  "label": "Icelandic Horse",
+  "file": "iceland.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.38,
+  "heightM": 1.7098819017410278,
+  "fitScale": 1.0507246376811594,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.3336825723648071,
+        -0.08294886350631714
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.38,
+        0.11716576913992564
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.470052280935658,
+        0.8906522002122962
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.5924106762790615,
+        0.8064487282732609
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.327898811226621,
+        1.0550494549504128
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.520232642826046,
+        0.5257704884764764
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.1296463799916412,
+        -0.9647479141110304
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09031824787746526,
+        1.5151111626458922,
+        0.8681979410285534
+      ],
+      [
+        0.09031824787746526,
+        1.5151111626458922,
+        0.8681979410285534
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.06642801877047645,
+        1.3616914009366086,
+        1.050237827982468
+      ],
+      [
+        0.06642801877047645,
+        1.3616914009366086,
+        1.050237827982468
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Robust small riding horse, strong broad back and loin",
+  "morphology": {
+    "build": "Robust small riding horse, strong broad back and loin",
+    "neck": "Well-carried muscular medium neck",
+    "head_face": "Straight practical head, broad forehead",
+    "ears": "Neat medium upright ears",
+    "limbs": "Sturdy joints, strong lower legs",
+    "hooves": "Round hard supporting hooves",
+    "mane_tail": "Very thick long mane, forelock and tail",
+    "feathering": "Small pastern tufts"
+  },
+  "coat": "Mouse dun with dark dorsal stripe",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "5fc737d48a1e17dc33834fc0ca8034c93bbe2d896ae5f7836e02b61b5fa106f5",
+  "bodyGeometrySha256": "8d7c6cf99ea7aca91f1eb6c0c060dca6a913b85c9a95642399c7e2e9b4bab14e",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1.8,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.3799999952316284,
+    "groundY": 0.0
+  }
+}

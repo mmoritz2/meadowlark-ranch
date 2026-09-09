@@ -1,0 +1,129 @@
+{
+  "id": "sunset",
+  "name": "Sunset Arabian",
+  "label": "Sunset Arabian",
+  "file": "sunset.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.5,
+  "heightM": 1.9139854907989502,
+  "fitScale": 0.9666666666666667,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.4532654638290405,
+        -0.1012454405426979
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.5,
+        0.08820773884654046
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.6680538376051441,
+        0.883731254862285
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.8081280154163595,
+        0.814817281873171
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.5143179994217382,
+        1.0626873141872073
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.7235581959054564,
+        0.5074613368494844
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.247855746351191,
+        -0.9360651230614975
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09192537331453773,
+        1.717812085490898,
+        0.8679204078740252
+      ],
+      [
+        0.09192537331453773,
+        1.717812085490898,
+        0.8679204078740252
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.0673192178161752,
+        1.548916751331203,
+        1.0505518668127067
+      ],
+      [
+        0.0673192178161752,
+        1.548916751331203,
+        1.0505518668127067
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Refined compact athlete, short back, near-level croup",
+  "morphology": {
+    "build": "Refined compact athlete, short back, near-level croup",
+    "neck": "Long fine high-set arch with open throat",
+    "head_face": "Mild dish below eyes, short muzzle, broad forehead",
+    "ears": "Small fine ears with gently inward tips",
+    "limbs": "Fine-looking but sound joints and dense bone",
+    "hooves": "Compact round sound hooves",
+    "mane_tail": "Fine mane and lifted flowing tail",
+    "feathering": "None"
+  },
+  "coat": "Copper chestnut with fine dark red mane",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "1f6c3497b1114f5c9c454d9a521d06c527893cfeff7380fe4471e713e568d01d",
+  "bodyGeometrySha256": "009d2368fd6abc7af5c2cdd2556c06725f2b8080e86ed761e65bb21bf99dd161",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.5,
+    "groundY": 0.0
+  }
+}

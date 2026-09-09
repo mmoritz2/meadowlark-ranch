@@ -1,0 +1,129 @@
+{
+  "id": "bay",
+  "name": "Quarter Horse",
+  "label": "Quarter Horse",
+  "file": "bay.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.52,
+  "heightM": 1.8603322505950928,
+  "fitScale": 0.9539473684210525,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.4698359127044678,
+        -0.09883079677820206
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.52,
+        0.10205737501382828
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.6240952643546518,
+        0.8752507013919738
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.7474520374741196,
+        0.7967042686887821
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.478623956479269,
+        1.0354783613019451
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.6524586862493924,
+        0.5136126698172941
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.2531329927771817,
+        -0.98403842131604
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09627566203301988,
+        1.6700603926763729,
+        0.8545798103898367
+      ],
+      [
+        0.09627566203301988,
+        1.6700603926763729,
+        0.8545798103898367
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.07073482949423789,
+        1.513480690606027,
+        1.0286916646147022
+      ],
+      [
+        0.07073482949423789,
+        1.513480690606027,
+        1.0286916646147022
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Compact athletic stock build; broad rounded haunches",
+  "morphology": {
+    "build": "Compact athletic stock build; broad rounded haunches",
+    "neck": "Medium, comparatively low carriage, trim throat",
+    "head_face": "Short broad forehead, straight face, broad jaw",
+    "ears": "Small alert ears",
+    "limbs": "Strong forearm, short clean cannon",
+    "hooves": "Rounded proportional feet",
+    "mane_tail": "Moderate falling mane and full tail",
+    "feathering": "None"
+  },
+  "coat": "Rich bay with black points",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "cf35355f76508b9471d7c8af8f4750cd7d975a33f4258379b908d74185cb413e",
+  "bodyGeometrySha256": "5e96047c803b1b1e5885c34c416d94aa983fb68f30ec4ededab83a67cb1c3ad0",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.5199999809265137,
+    "groundY": 0.0
+  }
+}

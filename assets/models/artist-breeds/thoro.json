@@ -1,0 +1,129 @@
+{
+  "id": "thoro",
+  "name": "Thoroughbred",
+  "label": "Thoroughbred",
+  "file": "thoro.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.66,
+  "heightM": 2.1557741165161133,
+  "fitScale": 0.8734939759036144,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.6103737707138062,
+        -0.08763670176267624
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.66,
+        0.13011301557223
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.8246704516155168,
+        1.0803626271566342
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.9809271907846022,
+        0.9687383758198544
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.6460040752086431,
+        1.2960150780726778
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.8341886642584357,
+        0.6123345212831786
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.3954421367848502,
+        -1.0471442445701162
+      ]
+    ],
+    "eyes": [
+      [
+        -0.08631378109472383,
+        1.8841934721201388,
+        1.0506191214477307
+      ],
+      [
+        0.08631378109472383,
+        1.8841934721201388,
+        1.0506191214477307
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.06335258688736019,
+        1.6830017378240545,
+        1.2913582314379632
+      ],
+      [
+        0.06335258688736019,
+        1.6830017378240545,
+        1.2913582314379632
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Tall lean speed athlete, prominent withers, sloping shoulder",
+  "morphology": {
+    "build": "Tall lean speed athlete, prominent withers, sloping shoulder",
+    "neck": "Long lean neck with open throat",
+    "head_face": "Long dry straight head",
+    "ears": "Medium fine ears",
+    "limbs": "Long forearm/gaskin, clean dry tendons and joints",
+    "hooves": "Refined but properly sized feet",
+    "mane_tail": "Shorter neat mane, moderate tail",
+    "feathering": "None"
+  },
+  "coat": "Dark bay with a small star",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "d543fca52100c465e64074c429aff3edc343310b3446f76a2c69b08ec97f7902",
+  "bodyGeometrySha256": "af91f579076c48262474c4421e65b179c734f6ed86d64399c89eb205496b7b6d",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 0.72,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.659999966621399,
+    "groundY": 0.0
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "flux2_dev_fp8mixed.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "mistral_3_small_flux2_fp8.safetensors",
+      "type": "flux2"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "flux2-vae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "A square seamless repeating material texture of aged dark cedar shake roof shingles on a traditional countryside horse stable, five horizontal courses of rectangular wooden shingles with staggered vertical joints, shingles of modestly varied widths, straight subtly irregular bottom edges and fine vertical natural wood grain. Weathered charcoal brown and muted driftwood taupe grey colors, calm natural board-to-board variation, restrained realistic fine texture, intact maintained roof. Only the continuous roof covering viewed straight-on perpendicular to the surface, no house, no roof ridge, no roof outline, no sky, no gutter, no moss, no grass, no broken tiles, no deep black gaps. A 1.8 metre square surface patch; broad modestly overlapping shingles, no deep relief. Photoreal physically based rendering diffuse base color texture, seamless tileable square, orthographic straight-on material scan without perspective or lens distortion. Cross-polarized soft flat lighting, uniform exposure across the image, no specular highlight, no directional illumination, no baked shadows, no ambient occlusion, no vignette, no dark corners. Natural restrained detail and subtle wear, realistic scale, no stylization, no painting, no illustration, no dramatic cracks or exaggerated grunge, no text, no watermark, no border.",
+      "clip": [
+        "2",
+        0
+      ]
+    }
+  },
+  "5": {
+    "class_type": "FluxGuidance",
+    "inputs": {
+      "conditioning": [
+        "4",
+        0
+      ],
+      "guidance": 3.5
+    }
+  },
+  "7": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 9082402
+    }
+  },
+  "8": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler"
+    }
+  },
+  "9": {
+    "class_type": "Flux2Scheduler",
+    "inputs": {
+      "steps": 28,
+      "width": 1024,
+      "height": 1024
+    }
+  },
+  "10": {
+    "class_type": "EmptyFlux2LatentImage",
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    }
+  },
+  "20": {
+    "class_type": "SRFSeamlessModel",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "tiling": "enable"
+    }
+  },
+  "21": {
+    "class_type": "SRFSeamlessVAE",
+    "inputs": {
+      "vae": [
+        "3",
+        0
+      ],
+      "tiling": "enable"
+    }
+  },
+  "6": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "20",
+        0
+      ],
+      "conditioning": [
+        "5",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "7",
+        0
+      ],
+      "guider": [
+        "6",
+        0
+      ],
+      "sampler": [
+        "8",
+        0
+      ],
+      "sigmas": [
+        "9",
+        0
+      ],
+      "latent_image": [
+        "10",
+        0
+      ]
+    }
+  },
+  "12": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "11",
+        0
+      ],
+      "vae": [
+        "21",
+        0
+      ]
+    }
+  },
+  "13": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "12",
+        0
+      ],
+      "filename_prefix": "srf_realism_roof"
+    }
+  }
+}

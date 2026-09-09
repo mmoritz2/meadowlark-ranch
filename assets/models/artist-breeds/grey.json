@@ -1,0 +1,129 @@
+{
+  "id": "grey",
+  "name": "Dapple Grey Andalusian",
+  "label": "Dapple Grey Andalusian",
+  "file": "grey.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.6,
+  "heightM": 2.034392833709717,
+  "fitScale": 0.9062499999999999,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.547805106163025,
+        -0.09847582131624222
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.6,
+        0.11325226972500484
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.731311947683124,
+        0.996532547509815
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.8848410930424315,
+        0.8870091311337008
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.5571877028395902,
+        1.1808112327621476
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.8325376116222156,
+        0.5640464992080032
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.3244150192521795,
+        -1.0314492307818994
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09379319028238722,
+        1.7862453318740046,
+        0.9654921472368473
+      ],
+      [
+        0.09379319028238722,
+        1.7862453318740046,
+        0.9654921472368473
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.06919730544245298,
+        1.5990716413464727,
+        1.1789449444219153
+      ],
+      [
+        0.06919730544245298,
+        1.5990716413464727,
+        1.1789449444219153
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Baroque riding horse, rounded muscular quarters",
+  "morphology": {
+    "build": "Baroque riding horse, rounded muscular quarters",
+    "neck": "Elevated arch and smooth thick crest",
+    "head_face": "Medium-long lean head, mildly convex face",
+    "ears": "Medium parallel forward ears",
+    "limbs": "Clean balanced limbs, strong joints",
+    "hooves": "Proportional rounded feet",
+    "mane_tail": "Long subtly wavy mane and tail",
+    "feathering": "None"
+  },
+  "coat": "Dapple grey with charcoal points",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "0fe86a268b6b6efac90a0c8c1e114f81dcc43395d5c2c149ed8eadc153289bbb",
+  "bodyGeometrySha256": "d830f6c8cbb24a1826d0b2225cfd936981c4edf1c8239eaa45dab8afe256d96e",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1.45,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.600000023841858,
+    "groundY": 0.0
+  }
+}

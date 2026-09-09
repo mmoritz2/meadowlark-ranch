@@ -133,7 +133,11 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       for(const o of cuts){panel(bottom,o.y-o.h/2);bottom=o.y+o.h/2;}
       panel(bottom,height);
     }
-    for(const o of openings)if(o.type==='door')door(b,o,frame);else window(b,o,frame);
+    for(const o of openings) {
+      if(o.type==='door')door(b,o,frame);
+      else if(o.type==='open-door')doorFrame(b,o,frame);
+      else window(b,o,frame);
+    }
   }
   function window(b,o,f) {
     const {x,y,w,h}=o;
@@ -167,6 +171,12 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       b.beam([cx-lw*.42,y-h*.33,.10],[cx+lw*.42,y+h*.33,.10],.078,.035,wood,f);
       b.box(.045,.17,.045,metal,cx+(o.double?(k===0?1:-1):1)*lw*.32,y+.02,.122,null,f);
     }
+    doorFrame(b,o,f);
+  }
+  function doorFrame(b,o,f) {
+    // A separate frame allows gameplay to retain its own moving door leaves.
+    // There is deliberately no recess/backing panel across an open doorway.
+    const {x,y,w,h}=o;
     for(const s of[-1,1])b.box(.135,h+.13,.19,trim,x+s*(w/2+.055),y+.025,.10,null,f);
     b.box(w+.35,.15,.21,trim,x,y+h/2+.06,.11,null,f);
     b.box(w+.3,.095,.50,stoneLight,x,.06,.20,null,f);
@@ -265,6 +275,107 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     lantern(b,.65,1.91,d/2+.18);
     return b.finish({kind:'cottage',variant,width:w,depth:d,wallHeight:h,ridgeHeight:ridge,windows:5});
   }
+  function buildOutbuilding({width=4.6,depth=3.2,height=3.4,
+    animatedDoorOpening={width:2.3,height:2.5},name='Meadowlark stable outbuilding'}={}) {
+    const w=width,d=depth,h=height;
+    if(![w,d,h].every(v=>Number.isFinite(v)&&v>1))
+      throw new RangeError('Outbuilding dimensions must be finite and greater than one metre');
+    const spec=animatedDoorOpening===true?{}:(animatedDoorOpening||{});
+    const dw=spec.width??spec.w??Math.min(2.3,w*.5);
+    const dh=spec.height??spec.h??Math.min(2.5,h-.55);
+    const dx=spec.x??0;
+    if(![dw,dh,dx].every(Number.isFinite)||dw<=0||dh<=0||
+      dw+Math.abs(dx)*2>w-.42||dh>h-.27)
+      throw new RangeError('The outbuilding doorway must fit inside its front wall');
+    const b=new Builder(name),ridge=h+Math.min(1.15,d*.31);
+    const opening={type:'open-door',x:dx,y:dh/2,w:dw,h:dh};
+    foundation(b,w,d);
+
+    // Low inset floor and roof trusses make the open entrance read as a room.
+    // Neither can occupy the door aperture used by the game's animated leaves.
+    b.box(w-.23,.026,d-.23,wood,0,.205,0);
+    for(const x of[-w*.28,w*.28]) {
+      b.box(.11,.15,d-.2,wood,x,h-.15,0);
+      for(const s of[-1,1])b.beam([x,h-.15,s*(d/2-.12)],
+        [x,ridge-.14,0],.095,.10,wood);
+    }
+
+    const frontWindows=[];
+    for(const s of[-1,1]) {
+      const inner=dx+s*dw/2,outer=s*w/2;
+      const clear=Math.abs(outer-inner);
+      if(clear>.86)frontWindows.push({x:(inner+outer)/2,
+        y:Math.min(h-.60,dh*.69+.16),w:Math.min(.68,clear-.48),
+        h:Math.min(.90,h*.34)});
+    }
+    shellWall(b,w,h,face(0,d/2,0),[opening,...frontWindows]);
+
+    // Rear faces are prominent from the arrival arena; give them the same
+    // recessed casements, sills, cladding and rainwater detailing as the front.
+    const backWindows=(w>4?[-w*.24,w*.24]:[0]).map(x=>({x,
+      y:Math.min(h-.75,h*.58),w:Math.min(1.02,w*.25),h:Math.min(1.02,h*.36)}));
+    shellWall(b,w,h,face(0,-d/2,Math.PI),backWindows);
+    for(const s of[-1,1]) {
+      const f=face(s*w/2,0,s*Math.PI/2);
+      shellWall(b,d,h,f,[{x:0,y:Math.min(h-.75,h*.58),
+        w:Math.min(.90,d*.32),h:Math.min(1.0,h*.36)}]);
+      gable(b,d,h,ridge,f);
+    }
+    cornerPosts(b,w,d,h);roofAssembly(b,w,d,h,ridge,true);
+    lantern(b,dx,Math.min(h-.30,dh+.36),d/2+.18);
+    return b.finish({kind:'outbuilding',width:w,depth:d,wallHeight:h,
+      ridgeHeight:ridge,windows:frontWindows.length+backWindows.length+2,
+      animatedDoorOpening:{x:dx,width:dw,height:dh,bottomY:0,frontZ:d/2},
+      suggestedLabelY:ridge+.28});
+  }
+  function buildOpenStall() {
+    // The barn row faces -X. Its clear horse entrance, 1.9 x 3.2 footprint
+    // and sloping roof match the original placement and turnout animation.
+    const b=new Builder('Meadowlark open timber stall');
+    const backX=.9,frontX=-.9,halfZ=1.6,wallHeight=2.3;
+    shellWall(b,3.2,wallHeight,face(backX,0,Math.PI/2),[
+      {x:0,y:1.42,w:1.06,h:.85}]);
+    b.box(.24,.15,3.23,stone,backX,.075,0);
+
+    for(const s of[-1,1]) {
+      const z=s*halfZ;
+      // Low boarded dividers and spaced upper rails keep the side partitions
+      // readable without closing the stalls into opaque boxes.
+      b.box(1.81,.52,.085,siding,0,.46,z);
+      for(const y of[.79,1.48,2.26])b.box(1.9,.105,.12,wood,0,y,z);
+      for(let x=-.70;x<=.71;x+=.28)b.box(.046,.61,.055,trim,x,1.12,z);
+      for(const x of[frontX,backX]) {
+        const top=x<0?2.58:2.38;
+        b.box(.145,top,.145,wood,x,top/2,z);
+        b.box(.19,.17,.19,stoneLight,x,.085,z);
+      }
+      // Small braces connect the high front posts to the roof supports.
+      b.beam([frontX,2.12,z],[frontX+.35,2.54,z],.075,.075,wood);
+      b.beam([frontX,2.12,z],[frontX,2.52,z-s*.38],.075,.075,wood);
+    }
+    b.box(.13,.16,3.26,wood,frontX,2.50,0);
+    b.box(.12,.13,3.24,wood,backX,2.33,0);
+
+    const roofW=2.6,roofD=3.5,roofX=.1,roofY=2.55,angle=-.12;
+    const slope=new THREE.Euler(0,0,angle),roofHalfX=Math.cos(angle)*roofW/2;
+    b.box(roofW,.14,roofD,roof,roofX,roofY,0,slope);
+    for(const s of[-1,1]) {
+      b.box(roofW+.04,.14,.10,trim,roofX,roofY-.025,s*(roofD/2+.012),slope);
+      const x=roofX+s*roofHalfX,y=roofY+s*Math.sin(angle)*roofW/2;
+      b.box(.105,.17,roofD+.12,trim,x,y-.035,0);
+    }
+    // Rainwater drains at the low rear roof edge, away from the entrance.
+    const gutterX=roofX+roofHalfX+.07,gutterY=roofY+Math.sin(angle)*roofW/2-.145;
+    b.box(.13,.023,roofD+.07,metal,gutterX,gutterY,0);
+    for(const s of[-1,1])b.box(.018,.066,roofD+.07,metal,gutterX+s*.059,gutterY+.028,0);
+    const drainZ=-halfZ+.14;
+    b.pipe([gutterX,gutterY,drainZ],[gutterX,gutterY-.19,drainZ],.029,metal);
+    b.pipe([gutterX,gutterY-.19,drainZ],[backX+.13,gutterY-.38,drainZ],.029,metal);
+    b.pipe([backX+.13,gutterY-.38,drainZ],[backX+.13,.16,drainZ],.029,metal);
+    return b.finish({kind:'open-stall',width:1.9,depth:3.2,wallHeight,
+      roofCenter:[roofX,roofY,0],roofRotationZ:angle,openFrontX:frontX,
+      backWallX:backX,windows:1,maximumHeight:2.78});
+  }
   function detailRunIn(group,{width=6,depth=3.2,height=2.6,
     roofCenterY=2.95,roofAngle=-.18,roofDepth=4.2}={}) {
     // Additive only. Existing open entrance, shelter walls and placement remain.
@@ -282,6 +393,6 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     const g=b.finish({kind:'run-in-details',width,depth});group.add(g);
     group.userData.ranchDetails=g;return g;
   }
-  return {buildBarn,buildCottage,detailRunIn,materials,maps,
+  return {buildBarn,buildCottage,buildOutbuilding,buildOpenStall,detailRunIn,materials,maps,
     sidingMaterial:siding,roofMaterial:roof};
 }

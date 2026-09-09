@@ -1,0 +1,129 @@
+{
+  "id": "lipiz",
+  "name": "Lipizzaner",
+  "label": "Lipizzaner",
+  "file": "lipiz.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.56,
+  "heightM": 1.9772095680236816,
+  "fitScale": 0.9294871794871794,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.5062659139633179,
+        -0.10154885798692703
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.56,
+        0.10486417214075724
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.6747999976139174,
+        0.9512575446799254
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.8249101271246306,
+        0.848015467945387
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.504675898609012,
+        1.1262572176216359
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.7896024220765914,
+        0.5396323619736073
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.2778069798785014,
+        -1.011101599215045
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09799021018544143,
+        1.7278665913651368,
+        0.9220495355965086
+      ],
+      [
+        0.09799021018544143,
+        1.7278665913651368,
+        0.9220495355965086
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.07226297657008732,
+        1.5467431703503067,
+        1.1240720697143278
+      ],
+      [
+        0.07226297657008732,
+        1.5467431703503067,
+        1.1240720697143278
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Compact baroque muscular riding build",
+  "morphology": {
+    "build": "Compact baroque muscular riding build",
+    "neck": "Strong arched crest and substantial base",
+    "head_face": "Straight to mild convex face, broad forehead",
+    "ears": "Small-medium alert ears",
+    "limbs": "Relatively short strong dry legs",
+    "hooves": "Strong rounded hooves",
+    "mane_tail": "Full softly waved mane and tail",
+    "feathering": "None"
+  },
+  "coat": "Mature pale grey with darker muzzle",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "defc0beaf2b4191af8c185077445f55410b28a96652ed6d2025723beff3bc01c",
+  "bodyGeometrySha256": "385417ccd2c9b59cf0682574c171bd673a5a81a58515c7fd9960253ec50dd402",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1.3,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.559999942779541,
+    "groundY": 0.0
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "id": "appaloosa",
+  "name": "Appaloosa",
+  "label": "Appaloosa",
+  "file": "appaloosa.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.54,
+  "heightM": 1.9365499019622803,
+  "fitScale": 0.9415584415584415,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.4893247241973877,
+        -0.0934876948595047
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.54,
+        0.1133086974422137
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.6520246235612468,
+        0.945157252338862
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.7897647403344865,
+        0.8517633930200199
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.4926833704679932,
+        1.1265966336650834
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.6866376060000339,
+        0.5466441004119778
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.2709386420443738,
+        -1.0047297226179812
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09069241743985318,
+        1.7035948217133206,
+        0.9202612946102748
+      ],
+      [
+        0.09069241743985318,
+        1.7035948217133206,
+        0.9202612946102748
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.06668560105871557,
+        1.5285479997521578,
+        1.121940033866785
+      ],
+      [
+        0.06668560105871557,
+        1.5285479997521578,
+        1.121940033866785
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Smooth athletic stock build, deep chest, strong loin",
+  "morphology": {
+    "build": "Smooth athletic stock build, deep chest, strong loin",
+    "neck": "Clean medium neck",
+    "head_face": "Straight lean head with prominent eye",
+    "ears": "Medium pointed ears",
+    "limbs": "Long forearm, flat cannon and broad joints",
+    "hooves": "Rounded feet; optional vertical striping",
+    "mane_tail": "Chosen shorter moderate-density mane, never assume every Appaloosa is sparse",
+    "feathering": "None"
+  },
+  "coat": "Bay blanket with dark leopard spots",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "b61ef0cb8c6c47f84aa00ad1e6d12d6d6f446c0f5c3b214a6154a5b33e711c99",
+  "bodyGeometrySha256": "fcfb7f4151eec995cc30dc514892092b7beeccbdb660826bbec7f809c2943840",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.5399999618530273,
+    "groundY": 0.0
+  }
+}

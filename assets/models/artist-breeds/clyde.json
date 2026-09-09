@@ -1,0 +1,130 @@
+{
+  "id": "clyde",
+  "name": "Clydesdale",
+  "label": "Clydesdale",
+  "file": "clyde.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.78,
+  "heightM": 2.3185529708862305,
+  "fitScale": 0.8146067415730337,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.721486961364746,
+        -0.09022729843854904
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.78,
+        0.14073790311813356
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.9326790530380071,
+        1.1658967960032316
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        2.1136639438850398,
+        1.0416017785791283
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.7268948624670528,
+        1.4042552460837605
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        2.0420375625321965,
+        0.6569311819134817
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.477291255613099,
+        -1.107968441709824
+      ]
+    ],
+    "eyes": [
+      [
+        -0.10418591851366131,
+        1.998504578896312,
+        1.1327948792641416
+      ],
+      [
+        0.10418591851366131,
+        1.998504578896312,
+        1.1327948792641416
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.07670659877496823,
+        1.7746822047041377,
+        1.4004084789795548
+      ],
+      [
+        0.07670659877496823,
+        1.7746822047041377,
+        1.4004084789795548
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Tall energetic draft with less squat silhouette",
+  "morphology": {
+    "build": "Tall energetic draft with less squat silhouette",
+    "neck": "Long well-arched neck and high withers",
+    "head_face": "Broad forehead, flat profile, wide muzzle",
+    "ears": "Large ears",
+    "limbs": "Lengthy lower hind limb with flat quality bone",
+    "hooves": "Large open substantial feet",
+    "mane_tail": "Full mane and tail",
+    "feathering": "Plentiful silky feather"
+  },
+  "coat": "Bright bay with wide blaze and stockings",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "d0d2f96c47bafa10543616d829238737fc7ab835d74448b2d602eac04bc6aae6",
+  "bodyGeometrySha256": "2c54151bcd5d55eab8481d91091f64d3c6ad191642b852d368753c5c9dc6d6d3",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840,
+    "HorseFeather": 56160
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1.45,
+    "feathering": 0.9
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.7799999713897705,
+    "groundY": 0.0
+  }
+}

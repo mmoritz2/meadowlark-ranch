@@ -1,0 +1,220 @@
+{
+  "prompt": [
+    19,
+    "db2f7c4b-495f-4134-9304-01397cb3928a",
+    {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "flux2_dev_fp8mixed.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "mistral_3_small_flux2_fp8.safetensors",
+          "type": "flux2"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "flux2-vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "CLIPTextEncode",
+        "inputs": {
+          "text": "A square seamless repeating texture of quiet temperate woodland forest floor, perfectly overhead, showing a two metre square patch of softly compacted dark brown earth scattered with many small decomposing oak and beech leaf fragments, tiny dry twigs, minute tan leaf veins, fine organic litter, and very sparse small desaturated olive moss flecks. Natural irregular leaf litter, leaves mostly broken and partly incorporated into the earth, no giant whole leaves, no recognisable central objects. Muted umber, warm grey-brown, tobacco tan and dull olive, neutral soft forest colors without orange saturation. No grass lawn, no stones, no roots, no sticks larger than a pencil, no mushrooms, no flowers, no trunk, no puddles. Full even coverage. Photoreal physically based rendering diffuse base color texture, seamless tileable square, orthographic straight-on material scan without perspective or lens distortion. Cross-polarized soft flat lighting, uniform exposure across the image, no specular highlight, no directional illumination, no baked shadows, no ambient occlusion, no vignette, no dark corners. Natural restrained detail and subtle wear, realistic scale, no stylization, no painting, no illustration, no dramatic cracks or exaggerated grunge, no text, no watermark, no border.",
+          "clip": [
+            "2",
+            0
+          ]
+        }
+      },
+      "5": {
+        "class_type": "FluxGuidance",
+        "inputs": {
+          "conditioning": [
+            "4",
+            0
+          ],
+          "guidance": 3.5
+        }
+      },
+      "7": {
+        "class_type": "RandomNoise",
+        "inputs": {
+          "noise_seed": 9082404
+        }
+      },
+      "8": {
+        "class_type": "KSamplerSelect",
+        "inputs": {
+          "sampler_name": "euler"
+        }
+      },
+      "9": {
+        "class_type": "Flux2Scheduler",
+        "inputs": {
+          "steps": 28,
+          "width": 1024,
+          "height": 1024
+        }
+      },
+      "10": {
+        "class_type": "EmptyFlux2LatentImage",
+        "inputs": {
+          "width": 1024,
+          "height": 1024,
+          "batch_size": 1
+        }
+      },
+      "20": {
+        "class_type": "SRFSeamlessModel",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "tiling": "enable"
+        }
+      },
+      "21": {
+        "class_type": "SRFSeamlessVAE",
+        "inputs": {
+          "vae": [
+            "3",
+            0
+          ],
+          "tiling": "enable"
+        }
+      },
+      "6": {
+        "class_type": "BasicGuider",
+        "inputs": {
+          "model": [
+            "20",
+            0
+          ],
+          "conditioning": [
+            "5",
+            0
+          ]
+        }
+      },
+      "11": {
+        "class_type": "SamplerCustomAdvanced",
+        "inputs": {
+          "noise": [
+            "7",
+            0
+          ],
+          "guider": [
+            "6",
+            0
+          ],
+          "sampler": [
+            "8",
+            0
+          ],
+          "sigmas": [
+            "9",
+            0
+          ],
+          "latent_image": [
+            "10",
+            0
+          ]
+        }
+      },
+      "12": {
+        "class_type": "VAEDecode",
+        "inputs": {
+          "samples": [
+            "11",
+            0
+          ],
+          "vae": [
+            "21",
+            0
+          ]
+        }
+      },
+      "13": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "12",
+            0
+          ],
+          "filename_prefix": "srf_realism_forest_floor"
+        }
+      }
+    },
+    {
+      "client_id": "ee915a4e-96ed-4caa-a5e3-8f9f54339290",
+      "create_time": 1788896957494
+    },
+    [
+      "13"
+    ]
+  ],
+  "outputs": {
+    "13": {
+      "images": [
+        {
+          "filename": "srf_realism_forest_floor_00001_.png",
+          "subfolder": "",
+          "type": "output"
+        }
+      ]
+    }
+  },
+  "status": {
+    "status_str": "success",
+    "completed": true,
+    "messages": [
+      [
+        "execution_start",
+        {
+          "prompt_id": "db2f7c4b-495f-4134-9304-01397cb3928a",
+          "timestamp": 1788896957495
+        }
+      ],
+      [
+        "execution_cached",
+        {
+          "nodes": [
+            "1",
+            "2",
+            "3",
+            "8",
+            "9",
+            "10",
+            "20",
+            "21"
+          ],
+          "prompt_id": "db2f7c4b-495f-4134-9304-01397cb3928a",
+          "timestamp": 1788896957496
+        }
+      ],
+      [
+        "execution_success",
+        {
+          "prompt_id": "db2f7c4b-495f-4134-9304-01397cb3928a",
+          "timestamp": 1788896986987
+        }
+      ]
+    ]
+  },
+  "meta": {
+    "13": {
+      "node_id": "13",
+      "display_node": "13",
+      "parent_node": null,
+      "real_node_id": "13"
+    }
+  }
+}

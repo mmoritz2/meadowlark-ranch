@@ -68,6 +68,44 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
   if (crest.length < 2) crest = [rest[5].clone().add(V(0, .11, 0)), rest[4].clone().add(V(-.1, .13, 0))];
   // Every anchor must run poll -> withers, even when a caller supplied the reverse.
   if (crest[0].x < crest[crest.length - 1].x) crest.reverse();
+  const restPosition = skin.geometry.attributes.position;
+  // Exact upward-facing triangle intersections keep roots on the surface.
+  // A compact X/Z grid avoids ray-testing the entire horse for every lock.
+  const topCell=.03*stature, topGrid=new Map(), skinIndex=skin.geometry.index;
+  const minTopX=Math.min(...crest.map(p=>p.x))-.06*stature;
+  const maxTopX=Math.max(...crest.map(p=>p.x))+.38*stature;
+  const minTopY=Math.min(...crest.map(p=>p.y))-.18*stature;
+  const minTopZ=Math.min(...crest.map(p=>p.z))-.12*stature;
+  const maxTopZ=Math.max(...crest.map(p=>p.z))+.12*stature;
+  const topKey=(x,z)=>`${x},${z}`, nTop=skinIndex?skinIndex.count:restPosition.count;
+  for(let k=0;k<nTop;k+=3){
+    const ids=[0,1,2].map(j=>skinIndex?skinIndex.getX(k+j):k+j);
+    const xs=ids.map(i=>restPosition.getX(i)),ys=ids.map(i=>restPosition.getY(i)),zs=ids.map(i=>restPosition.getZ(i));
+    if(Math.max(...xs)<minTopX||Math.min(...xs)>maxTopX||Math.max(...ys)<minTopY||Math.max(...zs)<minTopZ||Math.min(...zs)>maxTopZ)continue;
+    const dx=xs[1]-xs[0],dz=zs[1]-zs[0],ex=xs[2]-xs[0],ez=zs[2]-zs[0],det=dx*ez-ex*dz;
+    if(Math.abs(det)<1e-10)continue;
+    const tri=[xs[0],zs[0],dx,dz,ex,ez,ys[0],ys[1]-ys[0],ys[2]-ys[0],1/det];
+    const x0=Math.floor(Math.max(minTopX,Math.min(...xs))/topCell),x1=Math.floor(Math.min(maxTopX,Math.max(...xs))/topCell);
+    const z0=Math.floor(Math.max(minTopZ,Math.min(...zs))/topCell),z1=Math.floor(Math.min(maxTopZ,Math.max(...zs))/topCell);
+    for(let x=x0;x<=x1;x++)for(let z=z0;z<=z1;z++){const key=topKey(x,z);if(!topGrid.has(key))topGrid.set(key,[]);topGrid.get(key).push(tri);}
+  }
+  const meshTop=(p,ceiling=Infinity)=>{
+    let top=-Infinity;
+    for(const t of topGrid.get(topKey(Math.floor(p.x/topCell),Math.floor(p.z/topCell)))||[]){
+      const x=p.x-t[0],z=p.z-t[1],u=(x*t[5]-t[4]*z)*t[9],v=(t[2]*z-x*t[3])*t[9];
+      if(u<-.0001||v<-.0001||u+v>1.0001)continue;
+      const y=t[6]+u*t[7]+v*t[8];
+      if(y<ceiling&&Math.abs(y-p.y)<.22*stature)top=Math.max(top,y);
+    }
+    return Number.isFinite(top)?top:p.y;
+  };
+  // Enough samples to follow a newly sculpted crest between authored landmarks.
+  const authoredCrest = new THREE.CatmullRomCurve3(crest, false, 'centripetal');
+  crest = Array.from({length:25},(_,i)=>authoredCrest.getPoint(i/24));
+  for (let i=0;i<crest.length;i++) {
+    const c=crest[i];
+    c.y = meshTop(c,i<3?c.y+.012*stature:Infinity) + .003 * stature;
+  }
   const crestCurve = new THREE.CatmullRomCurve3(crest, false, 'centripetal');
   let tailAnchors = anchorArray('tail');
   if (tailAnchors.length < 2) {
@@ -76,6 +114,10 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
     tailAnchors.push(last.clone().add(last.clone().sub(before).multiplyScalar(.91)));
   }
   const tailCurve = new THREE.CatmullRomCurve3(tailAnchors, false, 'centripetal');
+  // Bury the first hair rings slightly inside the anatomical dock. The offset
+  // fades immediately, so the exit closes without inflating the visible tail.
+  const dockInset=tailAnchors[0].clone().sub(tailAnchors[1]).normalize()
+    .multiplyScalar(clamp(settings.dockInset??.024,0,.05)*stature);
   const buffers = () => ({ p: [], uv: [], color: [], pale: [], si: [], sw: [], index: [], seams: [], locks: 0 });
   const maneData = buffers(), tailData = buffers(), featherData = buffers();
 
@@ -96,7 +138,7 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
     return result;
   };
 
-  function lock(out, points, width, { sides = 5, rows = 10, flat = .36, shade = .9, pale = 0, weights, twist = 0, wideAxis, full = false } = {}) {
+  function lock(out, points, width, { sides = 5, rows = 10, flat = .36, shade = .9, pale = 0, weights, twist = 0, wideAxis, full = false, rootShade = 1 } = {}) {
     const curve = new THREE.CatmullRomCurve3(points, false, 'centripetal');
     const frames = curve.computeFrenetFrames(rows, false), start = out.p.length / 3;
     const phase = rng() * Math.PI * 2;
@@ -109,7 +151,10 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
       }
       // Narrow roots disappear into the surface, mid-lock volume overlaps its
       // neighbours, and the last two rings end in a fine irregular hair tip.
-      const taper = full ? (.90 - .18 * t) * Math.pow(1 - t, .24) + .012
+      const endFade = 1 - THREE.MathUtils.smoothstep(t, .72, 1);
+      const taper = full === 'soft' ? (.76 + .22 * Math.sin(t * Math.PI)) * Math.pow(1 - t, .22) * endFade + .008
+        : full === 'plume' ? (.28 + .78 * Math.sin(Math.PI * Math.pow(t, .76))) * (1 - THREE.MathUtils.smoothstep(t, .83, 1)) + .012
+        : full === 'trimmed' ? .88 - .25 * t : full ? (.90 - .18 * t) * Math.pow(1 - t, .24) + .012
         : Math.pow(1 - t, .64) * (.68 + .48 * Math.sin(Math.PI * Math.min(1, t * 2))) + .018;
       const half = width * .5 * taper;
       const wt = typeof weights === 'function' ? weights(c, t) : weights;
@@ -119,7 +164,7 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
         const p = c.clone().addScaledVector(f, Math.cos(theta) * half * ripple)
           .addScaledVector(b, Math.sin(theta) * half * flat * ripple);
         out.p.push(p.x, p.y, p.z); out.uv.push(s / sides, t * (1.1 + phase * .07));
-        const value = shade * (.94 + .06 * Math.sin(theta + .6)) * (1 - .075 * t);
+        const value = shade * (.96 + .04 * Math.sin(theta + .6)) * (1 - .025 * t) * THREE.MathUtils.lerp(rootShade, 1, THREE.MathUtils.smoothstep(t, 0, .38));
         out.color.push(value, value, value); out.pale.push(pale);
         out.si.push(...wt.indices); out.sw.push(...wt.weights);
       }
@@ -137,7 +182,7 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
     out.locks++;
   }
 
-  const maneLengthAt = t => ((wavy ? .34 : heavy ? .31 : .215) + (wavy ? .14 : .10) * Math.sin(t * Math.PI)) * length * stature;
+  const maneLengthAt = t => ((wavy ? .29 : heavy ? .27 : .185) + (wavy ? .17 : .10) * Math.sin(t * Math.PI)) * length * stature;
   // Project the inner groom just outside this breed's own neck surface. A fixed
   // side offset buried fine strands in the wider Shire neck and left bald gaps.
   const surfaceCell = .024 * stature, sideGrid = new Map(), skinPosition = skin.geometry.attributes.position;
@@ -161,11 +206,11 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
   };
   function flowPoint(t, u, l, side = 1, phase = 0) {
     const p = crestCurve.getPoint(clamp(t, 0, 1));
-    const wave = (wavy ? .014 : .004) * Math.sin(u * Math.PI * 2.4 + t * 7 + phase) * Math.sin(u * Math.PI);
-    p.x += -l * .10 * u + wave;
+    const wave = (wavy ? .038 : .018) * Math.sin(u * Math.PI * 2.1 + t * 5.2 + phase) * Math.sin(u * Math.PI);
+    p.x += -l * .24 * u + wave;
     p.y -= l * u + .006 * stature;
-    p.z += side * stature * (.123 * Math.sin(u * Math.PI * .5) + .018 * Math.sin(u * Math.PI)) + wave * .35;
-    if (side > 0) p.z = Math.max(p.z, surfaceZ(p) + .021 * stature);
+    p.z += side * stature * (.12 * Math.sin(u * Math.PI * .5) + .026 * Math.sin(u * Math.PI)) + wave * .46;
+    if (side > 0 && u > .001) p.z = Math.max(p.z, surfaceZ(p) + .021 * stature);
     return p;
   }
   if (!upright) {
@@ -174,7 +219,7 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
     // longer individual wisps. It is neither a flat sheet nor an alpha curtain.
     const cols = 30, rows = 12, start = maneData.p.length / 3;
     for (let face = 0; face < 2; face++) for (let c = 0; c <= cols; c++) {
-      const t = c / cols, l = maneLengthAt(t) * (.77 + .035 * Math.sin(t * 31) + .022 * Math.sin(t * 73));
+      const t = c / cols, l = maneLengthAt(t) * (.43 + .085 * Math.sin(t * 21) + .035 * Math.sin(t * 47));
       const wt = nearestWeights(crestCurve.getPoint(t), [3, 4, 5]);
       for (let r = 0; r <= rows; r++) {
         const u = r / rows, p = flowPoint(t, u, l);
@@ -203,37 +248,42 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
     }
     maneData.locks++;
   }
-  const nMane = upright ? 68 : wavy ? 88 : heavy ? 82 : 80;
+  const nMane = upright ? 84 : wavy ? 96 : heavy ? 90 : 84;
   for (let i = 0; i < nMane; i++) {
-    const t = clamp((i + (rng() - .5) * .95) / (nMane - 1), 0, 1), root = crestCurve.getPoint(t);
+    const t = upright ? clamp(((i % 28)+(rng()-.5)*.64)/27,0,1) : clamp((i + (rng() - .5) * .95) / (nMane - 1), 0, 1), root = crestCurve.getPoint(t);
     const wt = nearestWeights(root, [3, 4, 5]), side = upright && i % 2 ? -1 : 1;
     root.y -= .007 * stature; root.z += (rng() - .5) * .014 * stature;
     const shade = .89 + rng() * .10;
     if (upright) {
-      const h = (.065 + .068 * Math.sin(t * Math.PI)) * length * stature;
-      const edge = i % 3 !== 0; root.z += edge ? (i % 2 ? 1 : -1) * .019 : 0;
-      lock(maneData, [root, root.clone().add(V(-.008, h * .65, side * .014)), root.clone().add(V(-.017, h, side * .013))],
-        (.023 + rng() * .008) * volume * stature, { rows: 4, sides: 4, flat: .35, shade, pale: edge ? 1 : 0, weights: wt, wideAxis: V(1, 0, 0) });
+      const layer = Math.floor(i / 28), edge = layer !== 1;
+      const h = (.063 + .067 * Math.sin(t * Math.PI)) * length * stature * (edge ? .77 : 1);
+      root.z += (layer - 1) * .018 * stature;
+      lock(maneData, [root, root.clone().add(V(-.008, h * .65, 0)), root.clone().add(V(-.017, h, 0))],
+        (.040+rng()*.014) * volume * stature, { rows: 4, sides: 4, flat: .38, shade, pale: edge ? 1 : 0, weights: wt, wideAxis: V(1, 0, 0), full: 'trimmed' });
     } else {
-      const fine = i % 5 === 0, l = maneLengthAt(t) * (.84 + rng() * .27), phase = rng() * Math.PI * 2;
-      const drift = (rng() - .5) * .028 * stature, surfaceOffset = (.003 + rng() * .016) * stature, points = [];
-      for (let k = 0; k <= 5; k++) {
-        const u = k / 5, p = flowPoint(t, u, l, 1, phase);
-        p.x += drift * u; p.z += surfaceOffset * Math.sin(u * Math.PI * .8);
+      const fine = i % 6 === 0, l = maneLengthAt(t) * (.57 + rng() * .60), phase = Math.floor(i / 7) * .55 + (rng() - .5) * .35;
+      const drift = (rng() - .5) * .064 * stature, surfaceOffset = (.012 + rng() * .022) * stature, points = [];
+      for (let k = 0; k <= 7; k++) {
+        const u = k / 7, p = flowPoint(t, u, l, 1, phase);
+        p.x += drift * u * u; p.z += surfaceOffset * Math.sin(u * Math.PI * .8);
         points.push(p);
       }
-      lock(maneData, points, (fine ? .007 + rng() * .004 : .018 + rng() * .009) * volume * stature,
-        { rows: 5, sides: 4, flat: .14 + rng() * .12, shade, weights: wt, twist: (rng() - .5) * .25, wideAxis: V(1, 0, 0) });
+      lock(maneData, points, (fine ? .010 + rng() * .006 : .029 + rng() * .019) * volume * stature,
+        { rows: 8, sides: 4, flat: .24 + rng() * .15, shade, weights: wt, twist: (rng() - .5) * .65, wideAxis: V(1, 0, 0), full: fine ? false : 'soft', rootShade: .88 });
     }
   }
 
   // A narrow layered forelock follows the poll and forehead, staying clear of eyes.
-  const poll = crestCurve.getPoint(0);
-  for (let i = 0; i < (upright ? 9 : 17); i++) {
-    const z = (i - (upright ? 4 : 8)) * .005 * stature, root = poll.clone().add(V(.016, -.005, z));
-    const l = (upright ? .13 : wavy ? .25 : .19) * stature * (.80 + rng() * .27);
-    lock(maneData, [root, root.clone().add(V(l * .30, .009, z * .1)), root.clone().add(V(l * .7, -l * .40, z * .40)), root.clone().add(V(l * .93, -l * .88, z * .55))],
-      .015 * volume * stature, { rows: 5, sides: 4, flat: .20, shade: .9 + rng() * .09, pale: upright && i % 3 !== 0 ? 1 : 0, weights: nearestWeights(root, [5, 6]), wideAxis: V(0, 0, 1) });
+  const poll = anchorArray('poll')[0] || crestCurve.getPoint(0), eyes = anchorArray('eyes');
+  const eyeCentre = eyes.length ? eyes.reduce((p,q)=>p.add(q),V()).multiplyScalar(1/eyes.length) : poll.clone().add(V(.18,-.16,0));
+  const brow = eyeCentre.clone(); brow.x += .012 * stature; brow.y += .048 * stature;
+  const foreheadY = p => meshTop(p,poll.y+.002*stature)+.003*stature;
+  for (let i = 0; i < (upright ? 9 : 26); i++) {
+    const across=(rng()-.5)*.080*stature, root=poll.clone().add(V(-.007,0,across*.55)), points=[];
+    const reach=(upright?.58:.76)+rng()*(upright?.22:.34), lean=(rng()-.5)*.04*stature;
+    for(let k=0;k<=5;k++){const u=k/5,p=root.clone().lerp(brow,u*reach);p.z+=across*u+lean*Math.sin(u*Math.PI);p.y=foreheadY(p)+Math.sin(u*Math.PI)*.002*stature;points.push(p);}
+    lock(maneData,points,(.015+rng()*.012)*volume*stature,
+      {rows:6,sides:4,flat:.28,shade:.9+rng()*.09,pale:upright&&Math.abs(across)>.018*stature?1:0,weights:nearestWeights(root,[5,6]),wideAxis:V(0,0,1),full:'soft',rootShade:.85});
   }
 
   // Tail locks share the articulated dock, following the actual rest tail curve.
@@ -244,45 +294,52 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
     const points = [];
     for (let k = 0; k <= 6; k++) {
       const u = k / 6, p = tailCurve.getPoint(Math.min(1, u * tailLength * (.88 + j * .028)));
-      p.z += (j - 1) * .021 * stature + Math.sin(u * 4.6 + j) * .009 * u;
-      p.x -= .011 * j * u + .025 * u * u; points.push(p);
+      p.addScaledVector(dockInset,Math.exp(-u*10));
+      p.z += (j - 1) * .035 * stature * Math.sin(u*Math.PI*.85) + Math.sin(u * 4.6 + j) * .015 * u;
+      p.x -= .013 * j * u + .043 * u * u; points.push(p);
     }
-    lock(tailData, points, (.101 - j * .013) * volume * stature,
-      { rows: 12, sides: 7, flat: .70, shade: .92 + j * .015, weights: tailWeights, full: true });
+    lock(tailData, points, (.205 - j * .024) * volume * stature,
+      { rows: 12, sides: 7, flat: .70, shade: .91 + j * .015, weights: tailWeights, full: 'plume' });
   }
-  const nTail = wavy ? 71 : heavy ? 68 : 64;
+  const nTail = wavy || heavy ? 84 : 76;
   for (let i = 0; i < nTail; i++) {
     const angle = i * Math.PI * (3 - Math.sqrt(5)) + (rng() - .5) * .5, layer = .76 + rng() * .28;
-    const reach = (.80 + rng() * .22) * tailLength, points = [], phase = rng() * Math.PI * 2;
-    const fine = i % 5 === 0, lean = (rng() - .5) * .034 * stature;
-    for (let k = 0; k <= 6; k++) {
-      const t = k / 6, onCurve = tailCurve.getPoint(Math.min(1, t * reach));
+    const reach = (.69 + rng() * .35) * tailLength, points = [], phase = Math.floor(i/8)*.45+(rng()-.5)*.4;
+    const fine = i % 6 === 0, lean = (rng() - .5) * .065 * stature;
+    for (let k = 0; k <= 8; k++) {
+      const t = k / 8, onCurve = tailCurve.getPoint(Math.min(1, t * reach));
+      onCurve.addScaledVector(dockInset,Math.exp(-t*10));
       if (t * reach > 1) onCurve.y -= (t * reach - 1) * .8 * stature;
-      const radius = (.024 + .034 * Math.sin(t * Math.PI * .83)) * layer * volume * stature;
-      const wave = Math.sin(t * Math.PI * (wavy ? 3.1 : 1.8) + phase) * (wavy ? .017 : .009) * t;
+      const radius = (.026 + .080 * Math.sin(t * Math.PI * .88)) * layer * volume * stature;
+      const wave = Math.sin(t * Math.PI * (wavy ? 2.8 : 1.7) + phase) * (wavy ? .026 : .018) * t;
       onCurve.z += Math.cos(angle + .12 * Math.sin(t * 3 + phase)) * radius + wave + lean * t * t;
-      onCurve.x += Math.sin(angle) * radius * .78 - t * t * .025 * stature + wave * .35;
-      if (k === 0) onCurve.y += (rng() - .5) * .02 * stature;
+      onCurve.x += Math.sin(angle) * radius * .78 - t * t * .045 * stature + wave * .65;
+      // Root caps share one recessed exit; irregularity begins below the dock.
+      if(k===0)rng(); // Keep the existing deterministic strand/feather sequence.
       points.push(onCurve);
     }
-    lock(tailData, points, (fine ? .005 + rng() * .004 : .013 + rng() * .009) * volume * stature,
-      { rows: 8, sides: 4, flat: .26, shade: .90 + rng() * .09, weights: tailWeights, twist: (rng() - .5) * .45 });
+    lock(tailData, points, (fine ? .009 + rng() * .006 : .026 + rng() * .017) * volume * stature,
+      { rows: 10, sides: 4, flat: .32, shade: .87 + rng() * .12, weights: tailWeights, twist: (rng() - .5) * .7,full:fine?false:'soft',rootShade:.85 });
   }
 
   if (feathering > .02) {
-    const nFeather = Math.round(9 + feathering * 13);
+    const nFeather = Math.round(32 + feathering * 48), innerCount=Math.round(4+6*feathering);
     for (const [bone, before, hoof] of [[11, 10, 12], [17, 16, 18], [26, 25, 27], [31, 30, 32]]) {
       if (!rest[bone] || !rest[hoof]) continue;
       const centre = rest[bone], hoofPoint = rest[hoof], wt = { indices: [bone, before, 0, 0], weights: [.82, .18, 0, 0] };
       const hoofWidth = (.036 + .038 * feathering) * stature;
       for (let i = 0; i < nFeather; i++) {
-        const a = i / nFeather * Math.PI * 2 + rng() * .23, drop = (.085 + feathering * .13) * stature * (.78 + rng() * .29);
+        const dense=i<innerCount;let a=i<nFeather*.76 ? Math.PI+(rng()-.5)*Math.PI*(dense?.92:1.02) : rng()*Math.PI*2;
+        if(Math.cos(a)>.15&&rng()<.6)a=Math.PI-a;
+        const back=(1-Math.cos(a))*.5, drop = (.065+feathering*.115)*(.34+back*.82)*stature*(.64+rng()*.46)*(dense?.76:1);
         const radial = V(Math.cos(a), 0, Math.sin(a));
-        const root = centre.clone().addScaledVector(radial, hoofWidth * .65).add(V(0, (.04 + feathering * .035 + rng() * .028) * stature, 0));
-        const end = root.clone().addScaledVector(radial, hoofWidth * (.70 + rng() * .4));
-        end.x += .02 * stature; end.y = Math.max(hoofPoint.y - .045 * stature, root.y - drop);
-        lock(featherData, [root, root.clone().addScaledVector(radial, hoofWidth * .34).add(V(0, -drop * .43, 0)), end],
-          (.029 + .022 * feathering) * stature, { rows: 4, sides: 4, flat: .42, shade: .78 + rng() * .20, weights: wt, wideAxis: V(-Math.sin(a), 0, Math.cos(a)) });
+        const root = centre.clone().addScaledVector(radial, hoofWidth*(.55+rng()*.18)).add(V(0,(-.013+back*.024+Math.pow(rng(),1.6)*(.036+back*.065))*stature,0));
+        const end = root.clone().addScaledVector(radial, hoofWidth*(.25+rng()*.42));
+        end.x += (.024-back*.04)*stature; end.y = Math.max(hoofPoint.y-.012*stature,root.y-drop);
+        const m1=root.clone().addScaledVector(radial,hoofWidth*.32).add(V(-.008*back,-drop*.32,0));
+        const m2=root.clone().lerp(end,.74).addScaledVector(radial,hoofWidth*.18).add(V(.007,-.008,0));
+        lock(featherData,[root,m1,m2,end],(dense?.030+rng()*.010:.007+rng()*.007)*stature,
+          {rows:dense?5:3,sides:dense?5:3,flat:dense?.32:.28,shade:(dense?.78:.87)+rng()*.11,weights:wt,wideAxis:V(-Math.sin(a),0,Math.cos(a)),full:'soft',rootShade:.65});
       }
     }
   }
@@ -290,8 +347,8 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
   const paleColor = new THREE.Color(settings.paleColor || '#dfd4b6');
   function material(color, name) {
     const m = new THREE.MeshPhysicalMaterial({ color, roughness: .72, metalness: 0, vertexColors: true,
-      normalMap: grooveTexture(THREE), normalScale: new THREE.Vector2(.24, .12),
-      anisotropy: .42, anisotropyRotation: Math.PI * .5, specularIntensity: .35, sheen: .12, sheenRoughness: .8 });
+      normalMap: grooveTexture(THREE), normalScale: new THREE.Vector2(.18, .09),
+      anisotropy: .64, anisotropyRotation: Math.PI * .5, specularIntensity: .38, sheen: .18, sheenRoughness: .72 });
     m.name = name; m.userData.paleColor = paleColor;
     m.onBeforeCompile = shader => {
       shader.uniforms.groomPaleColor = { value: paleColor };
@@ -328,7 +385,7 @@ export function createBreedGroom({ THREE, skin, bones = skin?.skeleton?.bones, m
   }
   const mane = make(maneData, maneColor, `${breed || style} sculpted mane and forelock`);
   const tail = make(tailData, tailColor, `${breed || style} articulated flowing tail`);
-  const feathers = make(featherData, featherColor ?? (/friesian/.test(breed) ? maneColor : '#e2d7c6'), `${breed || style} pastern feathering`);
+  const feathers = make(featherData, featherColor ?? (/friesian/.test(breed) ? maneColor : '#c9bfad'), `${breed || style} pastern feathering`);
   const stats = { style, locks: maneData.locks + tailData.locks + featherData.locks,
     triangles: (maneData.index.length + tailData.index.length + featherData.index.length) / 3,
     drawCalls: meshes.length, feathering, coordinateSpace: 'skin-local rest, X nose / Y up / Z across' };

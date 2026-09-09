@@ -1,0 +1,218 @@
+{
+  "prompt": [
+    20,
+    "adba3fac-28b4-449d-aa9f-f0a995be1ae3",
+    {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "flux2_dev_fp8mixed.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "mistral_3_small_flux2_fp8.safetensors",
+          "type": "flux2"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "flux2-vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "CLIPTextEncode",
+        "inputs": {
+          "text": "Photoreal botanical cutout texture for an oak and beech countryside tree foliage card. One natural broad spreading slender branching leafy twig spray, about thirty-five to forty-five distinct mature small lobed oak leaves mixed with a few pointed oval beech leaves on three fine branching brown-green twig stems. Real leaf anatomy, gently irregular lobes, fine natural veins, crisp delicate edges, slight leaf-to-leaf size and angle variation. Many small open gaps between leaves, irregular wide branching silhouette, not a round bush, not a solid blob. Muted natural medium sage green and olive green foliage with subtle pale new leaves, soft brown-green twigs, no black stems. The whole twig spray fits within the central 88 percent of the square image, a clear pure white margin on all sides; no leaf touches or crosses the image boundary. Isolated on perfectly pure white background. Front-facing orthographic overhead botanical specimen photography, leaves approximately parallel to the image plane, cross-polarized diffuse soft white light, no directional sunlight, no cast shadow, no ground, no vase, no depth of field, no vignette. PBR diffuse albedo asset, scientifically believable plants, sharp natural detail, no illustration, no painting, no decorative frame, no text or watermark.",
+          "clip": [
+            "2",
+            0
+          ]
+        }
+      },
+      "5": {
+        "class_type": "FluxGuidance",
+        "inputs": {
+          "conditioning": [
+            "4",
+            0
+          ],
+          "guidance": 3.5
+        }
+      },
+      "7": {
+        "class_type": "RandomNoise",
+        "inputs": {
+          "noise_seed": 9082410
+        }
+      },
+      "8": {
+        "class_type": "KSamplerSelect",
+        "inputs": {
+          "sampler_name": "euler"
+        }
+      },
+      "9": {
+        "class_type": "Flux2Scheduler",
+        "inputs": {
+          "steps": 28,
+          "width": 1024,
+          "height": 1024
+        }
+      },
+      "10": {
+        "class_type": "EmptyFlux2LatentImage",
+        "inputs": {
+          "width": 1024,
+          "height": 1024,
+          "batch_size": 1
+        }
+      },
+      "6": {
+        "class_type": "BasicGuider",
+        "inputs": {
+          "model": [
+            "20",
+            0
+          ],
+          "conditioning": [
+            "5",
+            0
+          ]
+        }
+      },
+      "11": {
+        "class_type": "SamplerCustomAdvanced",
+        "inputs": {
+          "noise": [
+            "7",
+            0
+          ],
+          "guider": [
+            "6",
+            0
+          ],
+          "sampler": [
+            "8",
+            0
+          ],
+          "sigmas": [
+            "9",
+            0
+          ],
+          "latent_image": [
+            "10",
+            0
+          ]
+        }
+      },
+      "12": {
+        "class_type": "VAEDecode",
+        "inputs": {
+          "samples": [
+            "11",
+            0
+          ],
+          "vae": [
+            "21",
+            0
+          ]
+        }
+      },
+      "13": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "12",
+            0
+          ],
+          "filename_prefix": "srf_realism_foliage"
+        }
+      },
+      "20": {
+        "class_type": "SRFSeamlessModel",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "tiling": "disable"
+        }
+      },
+      "21": {
+        "class_type": "SRFSeamlessVAE",
+        "inputs": {
+          "vae": [
+            "3",
+            0
+          ],
+          "tiling": "disable"
+        }
+      }
+    },
+    {
+      "client_id": "ceae4149-8345-4a29-ba19-a12619222cfb",
+      "create_time": 1788897002844
+    },
+    [
+      "13"
+    ]
+  ],
+  "outputs": {
+    "13": {
+      "images": [
+        {
+          "filename": "srf_realism_foliage_00001_.png",
+          "subfolder": "",
+          "type": "output"
+        }
+      ]
+    }
+  },
+  "status": {
+    "status_str": "success",
+    "completed": true,
+    "messages": [
+      [
+        "execution_start",
+        {
+          "prompt_id": "adba3fac-28b4-449d-aa9f-f0a995be1ae3",
+          "timestamp": 1788897002845
+        }
+      ],
+      [
+        "execution_cached",
+        {
+          "nodes": [
+            "1",
+            "2",
+            "3",
+            "8",
+            "9",
+            "10"
+          ],
+          "prompt_id": "adba3fac-28b4-449d-aa9f-f0a995be1ae3",
+          "timestamp": 1788897002847
+        }
+      ],
+      [
+        "execution_success",
+        {
+          "prompt_id": "adba3fac-28b4-449d-aa9f-f0a995be1ae3",
+          "timestamp": 1788897032576
+        }
+      ]
+    ]
+  },
+  "meta": {
+    "13": {
+      "node_id": "13",
+      "display_node": "13",
+      "parent_node": null,
+      "real_node_id": "13"
+    }
+  }
+}

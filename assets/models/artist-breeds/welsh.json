@@ -1,0 +1,129 @@
+{
+  "id": "welsh",
+  "name": "Welsh Mountain Pony",
+  "label": "Welsh Mountain Pony",
+  "file": "welsh.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.19,
+  "heightM": 1.4919013977050781,
+  "fitScale": 1.2184873949579833,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.1506330127716065,
+        -0.08229982107877731
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.19,
+        0.08040559788544972
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.303746762314204,
+        0.7389551902298177
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.4098823753633904,
+        0.6776278349700808
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.1820744534279648,
+        0.8759818530672574
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.3349764039154248,
+        0.4287768123333953
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        0.9694844852623202,
+        -0.7992563014399523
+      ]
+    ],
+    "eyes": [
+      [
+        -0.07655895972764534,
+        1.3422084213131102,
+        0.7234125668943331
+      ],
+      [
+        0.07655895972764534,
+        1.3422084213131102,
+        0.7234125668943331
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.05620153445683343,
+        1.2111976046906392,
+        0.8677061326200886
+      ],
+      [
+        0.05620153445683343,
+        1.2111976046906392,
+        0.8677061326200886
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Refined compact pony, deep ribs, strong coupling",
+  "morphology": {
+    "build": "Refined compact pony, deep ribs, strong coupling",
+    "neck": "Longer well-carried neck than Shetland",
+    "head_face": "Small tapering face, slight concavity chosen for this individual",
+    "ears": "Small pointed fairly close ears",
+    "limbs": "Long forearm relative to short cannon",
+    "hooves": "Dense round hooves",
+    "mane_tail": "Natural full mane, jaunty tail",
+    "feathering": "Minimal"
+  },
+  "coat": "Warm grey with dapples",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "87f1a0d8f77124011af99042fb3eec6756050aba9ef99295bdd9cbbe38534863",
+  "bodyGeometrySha256": "1130d260867f699abcf270b31f99d8cbcf914ca6d2928fe1d87964206bd9b845",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.190000057220459,
+    "groundY": 0.0
+  }
+}

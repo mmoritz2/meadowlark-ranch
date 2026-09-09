@@ -1,0 +1,129 @@
+{
+  "id": "marwari",
+  "name": "Marwari",
+  "label": "Marwari",
+  "file": "marwari.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.58,
+  "heightM": 2.0826096534729004,
+  "fitScale": 0.9177215189873417,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.5316665525436401,
+        -0.09012535214424133
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.58,
+        0.12104773124059041
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.7422137852831687,
+        1.0480059876158363
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.9003632451732673,
+        0.9307324751396441
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.565930757610304,
+        1.2474581610221767
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.8042968849103354,
+        0.586790990833162
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.32099185436349,
+        -1.0206531403053756
+      ]
+    ],
+    "eyes": [
+      [
+        -0.08807205799913995,
+        1.8000383343798347,
+        1.014966589093787
+      ],
+      [
+        0.08807205799913995,
+        1.8000383343798347,
+        1.014966589093787
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.06472147961392226,
+        1.6041479538087808,
+        1.245689621738818
+      ],
+      [
+        0.06472147961392226,
+        1.6041479538087808,
+        1.245689621738818
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Elegant dry riding horse",
+  "morphology": {
+    "build": "Elegant dry riding horse",
+    "neck": "Upright graceful long neck",
+    "head_face": "Long lean aquiline face",
+    "ears": "Long inward-curving lyre ears; tips nearly meet",
+    "limbs": "Long clean limbs, defined joints",
+    "hooves": "Moderate compact feet",
+    "mane_tail": "Fine medium mane and tail",
+    "feathering": "None"
+  },
+  "coat": "Dun bay with dark points and narrow blaze",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "42caa59f026b5f868cc41c1392cc5443c5a31244b69643319efa5a5fcd13b44f",
+  "bodyGeometrySha256": "3ba929b313b95601e048e55521e907068c176d5f13e3d11a6244e65210d637a5",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.5800000429153442,
+    "groundY": 0.0
+  }
+}

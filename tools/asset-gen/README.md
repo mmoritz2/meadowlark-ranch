@@ -86,6 +86,27 @@ generated albedo; these are artist-useful derived maps, not measured PBR scans.
 
 No existing ground textures are overwritten by these scripts.
 
+### Realistic environment materials and foliage
+
+`gen_realism_materials.py` generates and finishes four additional original
+1024px sets: warm off-white vertical stable siding, aged dark cedar roof shakes,
+grey-taupe sedimentary limestone, and woodland soil with fine leaf litter.
+Each set contains albedo and conservative detail normal/roughness estimates.
+
+```powershell
+& 'C:\Users\msmor\Documents\ComfyUI\.venv\Scripts\python.exe' tools/asset-gen/gen_realism_materials.py siding roof rock forest_floor
+& 'C:\Users\msmor\Documents\ComfyUI\.venv\Scripts\python.exe' tools/asset-gen/gen_foliage_branch.py
+```
+
+Both scripts support `--finish-only` to rebuild runtime exports from the retained
+source PNGs without GPU work. `gen_foliage_branch.py` uses a non-tiling generation,
+extracts a feathered alpha channel from the white background, and bleeds nearby
+leaf colors into the gutter to prevent mip fringing.
+
+The output is `assets/textures/realism/`; its README records UV scale, color-space
+settings and recommended normal strength. Full source metadata, exact API
+graphs and successful histories are retained as with the pastoral materials.
+
 ## 3D models — `gen_model.py`
 Image → 3D via **Hunyuan3D 2.1 (shape only)** through kijai's ComfyUI wrapper
 (`--ver 2.0` falls back to the older path). Pipeline: FLUX makes a reference
@@ -131,3 +152,33 @@ does its own background removal and needs no separate VAE-decode step.
 - `comfy.py` — minimal ComfyUI API client (submit / monitor / download)
 - `gen_image.py` — FLUX texture & image generator
 - `workflows/` — saved API graphs (optional)
+
+## Current horse breed models
+
+`build-artist-breeds.py` builds the current horses from the accepted b2przemo
+Blender rig study. It preserves the artist's topology and UVs, applies a breed
+conformation cage to the body, eyes, groom and rest joints together, and exports
+25 models covering all 45 roster entries to `assets/models/artist-breeds/`.
+The accepted original is read only. Earlier procedural horse generators are
+retained as history and are not the active breed pipeline.
+
+```powershell
+& 'C:/Program Files/Blender Foundation/Blender 5.2/blender.exe' --background --disable-autoexec --python tools/asset-gen/build-artist-breeds.py
+python tools/validate-artist-breeds.py
+node tools/qa-artist-breed-studio.cjs output/artist-breed-verified
+node tools/qa-artist-ranch.cjs output/artist-ranch-final
+```
+
+The GLBs contain neutral Rest and Idle clips. Runtime locomotion is fitted to the
+named anatomical joints by `assets/artist-horse-motion.js`, in +Y up / +Z forward
+coordinates. Inspect side, frontal and moving browser views after a rebuild;
+numerical bind and foot-contact checks do not replace visual review.
+
+The runtime bridle is fitted by `assets/artist-horse-bridle.js`. Its leather paths
+use actual head contours and shared strap junctions. Geometry is expressed in
+the named head joint's bind-local space; the profile's `head` landmark is a face
+center, not a skeleton pivot. Reins use the resulting bit transforms including
+model and parent scale. After changing the head or rig, run
+`node tools/qa-artist-bridle.cjs` and `node tools/qa-artist-bridle-ranch.cjs`, then
+inspect the head closeups. `qa-artist-bridle-native.cjs` and its companion Blender
+script provide a separate native visual check without changing the horse files.

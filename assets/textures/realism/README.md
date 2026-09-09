@@ -44,6 +44,16 @@ Use sRGB, `ClampToEdgeWrapping`, `DoubleSide`, and an alpha-test material; start
 with `alphaTest: 0.40` and use the same map for the depth/shadow material.
 `foliage_branch_preview.jpg` shows the card against a checkerboard.
 
+`foliage_needle_rgba.png` is the corresponding dense conifer spray for pine and
+spruce foliage. It has 45% foreground coverage to retain density through mipmaps,
+and a calibrated mean opaque sRGB of approximately 88, 108, 66. A bright neutral
+pixel veto runs after mask cleanup, and a separate trusted needle-color mask
+supplies every gutter and contaminated edge color to avoid white rims. Use the same alpha-test, shadow
+map, color-space and gutter conventions. `foliage_needle_preview.jpg` and
+`foliage_needle.manifest.json` record the finished card and its generation;
+`foliage_needle_dark_preview.jpg` checks the silhouette against a dark background.
+Reproduce it with `tools/asset-gen/gen_foliage_needle.py` (or `--finish-only`).
+
 ## Reproduction
 
 From the project root, with the local ComfyUI server idle on port 8188:

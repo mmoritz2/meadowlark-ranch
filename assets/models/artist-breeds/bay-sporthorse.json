@@ -1,0 +1,129 @@
+{
+  "id": "bay-sporthorse",
+  "name": "Bay Sporthorse",
+  "label": "Bay Sporthorse",
+  "file": "bay-sporthorse.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.64,
+  "heightM": 2.0788042545318604,
+  "fitScale": 0.8841463414634146,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.5885894651412964,
+        -0.095633365213871
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.64,
+        0.1252218837539355
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.7794264751524616,
+        1.0250179452360229
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.9239941229854294,
+        0.9253111226338284
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.6110264932768343,
+        1.2196836465069736
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.8099939936469425,
+        0.5929550472931808
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.3677820750120393,
+        -1.0688253294100574
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09542665639618879,
+        1.8336886915346082,
+        0.9984294592087709
+      ],
+      [
+        0.09542665639618879,
+        1.8336886915346082,
+        0.9984294592087709
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.0701666591148447,
+        1.6493842669262828,
+        1.2139861137868484
+      ],
+      [
+        0.0701666591148447,
+        1.6493842669262828,
+        1.2139861137868484
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Chosen taller athletic cross with less bulk",
+  "morphology": {
+    "build": "Chosen taller athletic cross with less bulk",
+    "neck": "Long arched but lighter neck than Friesian",
+    "head_face": "Refined straight head with open throat",
+    "ears": "Medium neat ears",
+    "limbs": "Long clean athletic limbs",
+    "hooves": "Proportional sports feet",
+    "mane_tail": "Long but reduced-density mane/tail",
+    "feathering": "Light fetlock fringe"
+  },
+  "coat": "Warm bay with black points",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "6b4a0f51c0738db9fbedc168bf49ef021a5d6bd1fda1dcb8a5c3a4130c3957fc",
+  "bodyGeometrySha256": "32816d6a25a37701dab31dab22f54150386333c726bf5a624f13c4b770d37b91",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.6399999856948853,
+    "groundY": 0.0
+  }
+}

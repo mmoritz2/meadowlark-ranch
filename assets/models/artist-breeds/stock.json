@@ -1,0 +1,129 @@
+{
+  "id": "stock",
+  "name": "Australian Stock Horse",
+  "label": "Australian Stock Horse",
+  "file": "stock.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.55,
+  "heightM": 1.971153974533081,
+  "fitScale": 0.9354838709677419,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.5015737171173096,
+        -0.09109027683734894
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.55,
+        0.11626061747471492
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.6870133384849184,
+        0.9736605603891738
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.826302148968448,
+        0.878196719578613
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.5259985273811012,
+        1.1600423448288404
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.7139167073429846,
+        0.5599839168767435
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.2905934502923813,
+        -1.004775681873892
+      ]
+    ],
+    "eyes": [
+      [
+        -0.0891348926957969,
+        1.7392337806703346,
+        0.9482035361730244
+      ],
+      [
+        0.0891348926957969,
+        1.7392337806703346,
+        0.9482035361730244
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.06550328894008414,
+        1.5620341436101797,
+        1.1545872682110943
+      ],
+      [
+        0.06550328894008414,
+        1.5620341436101797,
+        1.1545872682110943
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Balanced all-purpose athletic working build",
+  "morphology": {
+    "build": "Balanced all-purpose athletic working build",
+    "neck": "Medium-long trim neck",
+    "head_face": "Refined straight head and open throat",
+    "ears": "Medium alert ears",
+    "limbs": "Strong but unbulky limbs",
+    "hooves": "Proportional round feet",
+    "mane_tail": "Neat practical mane and tail",
+    "feathering": "None"
+  },
+  "coat": "Deep mahogany bay",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "448410b6420174e0e7460936541d8500f22de815f822ed56a4320e2ed2b3701a",
+  "bodyGeometrySha256": "ac7eb17abf45e3ba6b694ad72b6985cc7a7080caa110c908f30fcdbcbfb76bab",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 0.84,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.5499999523162842,
+    "groundY": 0.0
+  }
+}

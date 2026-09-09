@@ -1,0 +1,1403 @@
+{
+  "schema_version": 1,
+  "audited_on": "2026-09-08",
+  "roster_source": "ranch3d.html BREEDS3",
+  "roster_count": 44,
+  "foundation_count": 24,
+  "measurement_convention": "Metres from level ground to withers, never ear tips. Hands are base-4 inches: 15.2 hh = 62 in, not 15.2 decimal hands.",
+  "design_scope": "Conformation directions are informed by cited primary standards; numeric sculpt multipliers and model targets are original game art choices, not measured breed averages or registration criteria. Coat color is separate from mesh identity.",
+  "sculpt_convention": {
+    "reference": "A corrected neutral riding-horse mesh normalized to common withers height. Apply regional deformation and update rest skeleton, then set final height exactly once.",
+    "multipliers": "First eleven sculpt values are ratios of regional dimensions to neutral normalized reference; global scaling alone is insufficient. Adjust landmarks and attachments together.",
+    "face_profile": "Signed displacement normal to straight nasal profile, fraction of withers height; negative = mild dish, positive = mild convexity. Preserve airway volume and muzzle alignment.",
+    "neck_arch": "Crest bow above straight neck centerline, fraction of withers height; carriage must also be set through neck base/poll landmarks.",
+    "rider": "Existing BREEDS3 size multipliers are legacy. Do not multiply calibrated absolute mesh height again. Rider/tack/camera anchors must follow actual saddle, poll and back landmarks."
+  },
+  "roster": {
+    "bay": {
+      "label": "Quarter Horse",
+      "conformation_id": "bay",
+      "own_distinct_rest_mesh": true
+    },
+    "chestnut": {
+      "label": "Shetland Pony",
+      "conformation_id": "chestnut",
+      "own_distinct_rest_mesh": true
+    },
+    "palomino": {
+      "label": "Palomino Mustang",
+      "conformation_id": "palomino",
+      "own_distinct_rest_mesh": true
+    },
+    "haflinger": {
+      "label": "Haflinger",
+      "conformation_id": "haflinger",
+      "own_distinct_rest_mesh": true
+    },
+    "grey": {
+      "label": "Dapple Grey Andalusian",
+      "conformation_id": "grey",
+      "own_distinct_rest_mesh": true
+    },
+    "black": {
+      "label": "Friesian",
+      "conformation_id": "black",
+      "own_distinct_rest_mesh": true
+    },
+    "pinto": {
+      "label": "Paint Horse",
+      "conformation_id": "pinto",
+      "own_distinct_rest_mesh": true
+    },
+    "appaloosa": {
+      "label": "Appaloosa",
+      "conformation_id": "appaloosa",
+      "own_distinct_rest_mesh": true
+    },
+    "sunset": {
+      "label": "Sunset Arabian",
+      "conformation_id": "sunset",
+      "own_distinct_rest_mesh": true
+    },
+    "iceland": {
+      "label": "Icelandic Horse",
+      "conformation_id": "iceland",
+      "own_distinct_rest_mesh": true
+    },
+    "welsh": {
+      "label": "Welsh Mountain Pony",
+      "conformation_id": "welsh",
+      "own_distinct_rest_mesh": true
+    },
+    "stock": {
+      "label": "Australian Stock Horse",
+      "conformation_id": "stock",
+      "own_distinct_rest_mesh": true
+    },
+    "fjord": {
+      "label": "Norwegian Fjord",
+      "conformation_id": "fjord",
+      "own_distinct_rest_mesh": true
+    },
+    "morgan": {
+      "label": "Morgan",
+      "conformation_id": "morgan",
+      "own_distinct_rest_mesh": true
+    },
+    "thoro": {
+      "label": "Thoroughbred",
+      "conformation_id": "thoro",
+      "own_distinct_rest_mesh": true
+    },
+    "knab": {
+      "label": "Knabstrupper",
+      "conformation_id": "knab",
+      "own_distinct_rest_mesh": true
+    },
+    "vanner": {
+      "label": "Gypsy Vanner",
+      "conformation_id": "vanner",
+      "own_distinct_rest_mesh": true
+    },
+    "marwari": {
+      "label": "Marwari",
+      "conformation_id": "marwari",
+      "own_distinct_rest_mesh": true
+    },
+    "lipiz": {
+      "label": "Lipizzaner",
+      "conformation_id": "lipiz",
+      "own_distinct_rest_mesh": true
+    },
+    "sport": {
+      "label": "Friesian Sporthorse",
+      "conformation_id": "sport",
+      "own_distinct_rest_mesh": true
+    },
+    "akhal": {
+      "label": "Akhal-Teke",
+      "conformation_id": "akhal",
+      "own_distinct_rest_mesh": true
+    },
+    "percheron": {
+      "label": "Percheron",
+      "conformation_id": "percheron",
+      "own_distinct_rest_mesh": true
+    },
+    "shire": {
+      "label": "Shire",
+      "conformation_id": "shire",
+      "own_distinct_rest_mesh": true
+    },
+    "clyde": {
+      "label": "Clydesdale",
+      "conformation_id": "clyde",
+      "own_distinct_rest_mesh": true
+    },
+    "aether": {
+      "label": "Aether Friesian",
+      "conformation_id": "black",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Explicit breed in roster name; preserve its anatomy.",
+      "inherit_height": true
+    },
+    "sunspear": {
+      "label": "Sunspear Arabian",
+      "conformation_id": "sunset",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Explicit breed in roster name; preserve its anatomy.",
+      "inherit_height": true
+    },
+    "meadowlight": {
+      "label": "Meadowlight Quarter Horse",
+      "conformation_id": "bay",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Explicit breed in roster name; preserve its anatomy.",
+      "inherit_height": true
+    },
+    "tempest": {
+      "label": "Tempest Clydesdale",
+      "conformation_id": "clyde",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Explicit breed in roster name; preserve its anatomy.",
+      "inherit_height": true
+    },
+    "eclipse": {
+      "label": "Eclipse Thoroughbred",
+      "conformation_id": "thoro",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Explicit breed in roster name; preserve its anatomy.",
+      "inherit_height": true
+    },
+    "glacier": {
+      "label": "Glacier Percheron",
+      "conformation_id": "percheron",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Explicit breed in roster name; preserve its anatomy.",
+      "inherit_height": true
+    },
+    "unicorn": {
+      "label": "Unicorn",
+      "conformation_id": "grey",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "pegasus": {
+      "label": "Pegasus",
+      "conformation_id": "sport",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "celestial": {
+      "label": "Celestial Unicorn",
+      "conformation_id": "grey",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "ember": {
+      "label": "Ember Runner",
+      "conformation_id": "sunset",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "frost": {
+      "label": "Frost Stallion",
+      "conformation_id": "lipiz",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "aurora": {
+      "label": "Aurora Pegasus",
+      "conformation_id": "sport",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "phoenix": {
+      "label": "Phoenix Steed",
+      "conformation_id": "sunset",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "frostdrake": {
+      "label": "Frostwing Dragon",
+      "conformation_id": "percheron",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "emberdrake": {
+      "label": "Emberflight Dragon",
+      "conformation_id": "thoro",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "amethyst": {
+      "label": "Amethyst Dragon",
+      "conformation_id": "black",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "stormdrake": {
+      "label": "Storm Dragon",
+      "conformation_id": "clyde",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "verdant": {
+      "label": "Verdant Dragon",
+      "conformation_id": "stock",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "shadowmare": {
+      "label": "Shadow Mare",
+      "conformation_id": "black",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    },
+    "kestrel": {
+      "label": "Silver Kestrel",
+      "conformation_id": "morgan",
+      "own_distinct_rest_mesh": false,
+      "mapping_basis": "Artist foundation choice for fantasy identity; no real breed claim.",
+      "inherit_height": true
+    }
+  },
+  "conformations": {
+    "bay": {
+      "game_id": "bay",
+      "canonical_breed": "Quarter Horse",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.52,
+        "reference_range_m": [
+          1.42,
+          1.63
+        ],
+        "range_basis": "Authoring envelope, not an AQHA height restriction."
+      },
+      "morphology": {
+        "build": "Compact athletic stock build; broad rounded haunches",
+        "neck": "Medium, comparatively low carriage, trim throat",
+        "head_face": "Short broad forehead, straight face, broad jaw",
+        "ears": "Small alert ears",
+        "limbs": "Strong forearm, short clean cannon",
+        "hooves": "Rounded proportional feet",
+        "mane_tail": "Moderate falling mane and full tail",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 0.97,
+        "barrel_width": 1.09,
+        "body_depth": 1.03,
+        "neck_length": 0.94,
+        "neck_thickness": 1.03,
+        "head_length": 0.95,
+        "head_width": 1.06,
+        "ear_length": 0.87,
+        "limb_length": 0.97,
+        "hoof_width": 1.02,
+        "hindquarter_width": 1.16,
+        "face_profile_depth_per_withers": -0.002,
+        "neck_arch_rise_per_withers": 0.02
+      },
+      "silhouette_acceptance": "Broader rump than thoro, clean limbs; short broad face",
+      "source_ids": [
+        "aqha"
+      ]
+    },
+    "chestnut": {
+      "game_id": "chestnut",
+      "canonical_breed": "Shetland Pony",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.02,
+        "reference_range_m": [
+          0.864,
+          1.07
+        ],
+        "range_basis": "Standard-size UK Shetland envelope; upper limit 1.07 m; miniatures may be smaller."
+      },
+      "morphology": {
+        "build": "Deep compact pony, rounded ribs",
+        "neck": "Short strong neck merging smoothly into shoulder",
+        "head_face": "Short broad face, large muzzle, prominent eyes",
+        "ears": "Very small, broad-set, upright",
+        "limbs": "Very short cannons, substantial joints",
+        "hooves": "Small but stout round feet",
+        "mane_tail": "Profuse long forelock, thick mane and tail",
+        "feathering": "Light fetlock hair; no draft boots"
+      },
+      "sculpt_targets": {
+        "body_length": 0.98,
+        "barrel_width": 1.18,
+        "body_depth": 1.12,
+        "neck_length": 0.84,
+        "neck_thickness": 1.11,
+        "head_length": 0.9,
+        "head_width": 1.13,
+        "ear_length": 0.78,
+        "limb_length": 0.76,
+        "hoof_width": 1.12,
+        "hindquarter_width": 1.07,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.025
+      },
+      "silhouette_acceptance": "Much shorter than welsh; pony body and short legs remain after normalizing height",
+      "source_ids": [
+        "shetland"
+      ]
+    },
+    "palomino": {
+      "game_id": "palomino",
+      "canonical_breed": "Mustang",
+      "classification": "diverse_feral_population",
+      "height": {
+        "target_m": 1.45,
+        "reference_range_m": [
+          1.321,
+          1.524
+        ],
+        "range_basis": "BLM educational size range 13–15 hands; diverse population, not a closed breed standard."
+      },
+      "morphology": {
+        "build": "Selected hardy ranch individual, moderate substance",
+        "neck": "Medium muscular neck, relaxed carriage",
+        "head_face": "Straight to faintly convex, practical muzzle",
+        "ears": "Medium forward ears",
+        "limbs": "Compact strong lower limbs",
+        "hooves": "Well-rounded compact hooves",
+        "mane_tail": "Natural medium-long slightly irregular mane",
+        "feathering": "Minimal"
+      },
+      "sculpt_targets": {
+        "body_length": 1,
+        "barrel_width": 1.01,
+        "body_depth": 1.02,
+        "neck_length": 0.94,
+        "neck_thickness": 1.01,
+        "head_length": 1.01,
+        "head_width": 1.05,
+        "ear_length": 0.98,
+        "limb_length": 0.95,
+        "hoof_width": 1.02,
+        "hindquarter_width": 1.02,
+        "face_profile_depth_per_withers": 0.004,
+        "neck_arch_rise_per_withers": 0.018
+      },
+      "silhouette_acceptance": "Less massive rump than bay, slightly longer face; no claim these distinguish all mustangs",
+      "source_ids": [
+        "mustang"
+      ]
+    },
+    "haflinger": {
+      "game_id": "haflinger",
+      "canonical_breed": "Haflinger",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.45,
+        "reference_range_m": [
+          1.372,
+          1.524
+        ],
+        "range_basis": "AHR desired 54–60 inches; excellent taller animals can be accepted."
+      },
+      "morphology": {
+        "build": "Small athletic muscular horse, harmonious rounded barrel",
+        "neck": "Strong well-shaped neck, moderate crest",
+        "head_face": "Refined expressive head, broad forehead, gentle taper",
+        "ears": "Small neat forward ears",
+        "limbs": "Defined joints with sturdy clean bone",
+        "hooves": "Round supporting feet",
+        "mane_tail": "Abundant flaxen falling mane and full tail",
+        "feathering": "Little; do not create draft boots"
+      },
+      "sculpt_targets": {
+        "body_length": 1,
+        "barrel_width": 1.11,
+        "body_depth": 1.07,
+        "neck_length": 0.96,
+        "neck_thickness": 1.08,
+        "head_length": 0.95,
+        "head_width": 1.03,
+        "ear_length": 0.87,
+        "limb_length": 0.94,
+        "hoof_width": 1.05,
+        "hindquarter_width": 1.08,
+        "face_profile_depth_per_withers": -0.003,
+        "neck_arch_rise_per_withers": 0.025
+      },
+      "silhouette_acceptance": "Fuller body than iceland but longer legs than shetland; not an obese miniature draft",
+      "source_ids": [
+        "haflinger"
+      ]
+    },
+    "grey": {
+      "game_id": "grey",
+      "canonical_breed": "Andalusian / PRE",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.6,
+        "reference_range_m": [
+          1.54,
+          1.72
+        ],
+        "range_basis": "Artist working range for adult PRE-type model; primary page supplies conformation rather than this selected envelope."
+      },
+      "morphology": {
+        "build": "Baroque riding horse, rounded muscular quarters",
+        "neck": "Elevated arch and smooth thick crest",
+        "head_face": "Medium-long lean head, mildly convex face",
+        "ears": "Medium parallel forward ears",
+        "limbs": "Clean balanced limbs, strong joints",
+        "hooves": "Proportional rounded feet",
+        "mane_tail": "Long subtly wavy mane and tail",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 0.99,
+        "barrel_width": 1.06,
+        "body_depth": 1.03,
+        "neck_length": 1.01,
+        "neck_thickness": 1.12,
+        "head_length": 1.02,
+        "head_width": 1,
+        "ear_length": 1,
+        "limb_length": 1,
+        "hoof_width": 1.03,
+        "hindquarter_width": 1.06,
+        "face_profile_depth_per_withers": 0.012,
+        "neck_arch_rise_per_withers": 0.055
+      },
+      "silhouette_acceptance": "Subconvex face versus Arabian dish; less hair and less mass than black",
+      "source_ids": [
+        "andalusian"
+      ]
+    },
+    "black": {
+      "game_id": "black",
+      "canonical_breed": "Friesian",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.64,
+        "reference_range_m": [
+          1.575,
+          1.65
+        ],
+        "range_basis": "Selected typical riding-horse envelope; FHANA conformation article ideal 1.59–1.63 m, individuals vary."
+      },
+      "morphology": {
+        "build": "Substantial elegant rectangular riding/driving build",
+        "neck": "Long high-set arch; defined throat",
+        "head_face": "Relatively short refined head, straight or slightly hollow face",
+        "ears": "Small, tips gently inward",
+        "limbs": "Long forearm, strong clean joints",
+        "hooves": "Broad sound feet",
+        "mane_tail": "Long abundant wavy mane, forelock, full tail",
+        "feathering": "Distinct long fetlock/cannon fringe"
+      },
+      "sculpt_targets": {
+        "body_length": 1.03,
+        "barrel_width": 1.1,
+        "body_depth": 1.06,
+        "neck_length": 1.09,
+        "neck_thickness": 1.16,
+        "head_length": 0.97,
+        "head_width": 1,
+        "ear_length": 0.88,
+        "limb_length": 1.03,
+        "hoof_width": 1.09,
+        "hindquarter_width": 1.1,
+        "face_profile_depth_per_withers": -0.003,
+        "neck_arch_rise_per_withers": 0.07
+      },
+      "silhouette_acceptance": "Proud neck and flowing hair silhouette; less draft mass than shire",
+      "source_ids": [
+        "friesian"
+      ]
+    },
+    "pinto": {
+      "game_id": "pinto",
+      "canonical_breed": "American Paint Horse",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.55,
+        "reference_range_m": [
+          1.42,
+          1.65
+        ],
+        "range_basis": "Artist envelope; APHA describes stock type and ancestry, not a distinct mandatory height."
+      },
+      "morphology": {
+        "build": "Chosen slightly taller stock individual, broad athletic quarters",
+        "neck": "Medium sloping neck, clean throat",
+        "head_face": "Broad straight face, slightly longer than bay exemplar",
+        "ears": "Small-medium alert",
+        "limbs": "Strong clean legs",
+        "hooves": "Round supporting hooves",
+        "mane_tail": "Moderate soft mane and full tail",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 1.01,
+        "barrel_width": 1.06,
+        "body_depth": 1.02,
+        "neck_length": 0.99,
+        "neck_thickness": 1.04,
+        "head_length": 0.99,
+        "head_width": 1.04,
+        "ear_length": 0.94,
+        "limb_length": 1.01,
+        "hoof_width": 1.04,
+        "hindquarter_width": 1.1,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.025
+      },
+      "silhouette_acceptance": "Separate individual sculpture from bay in head/neck/barrel; coat alone cannot imply a universal breed anatomy",
+      "source_ids": [
+        "paint"
+      ]
+    },
+    "appaloosa": {
+      "game_id": "appaloosa",
+      "canonical_breed": "Appaloosa",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.54,
+        "reference_range_m": [
+          1.42,
+          1.63
+        ],
+        "range_basis": "Artist envelope; registry conformation source does not impose this range."
+      },
+      "morphology": {
+        "build": "Smooth athletic stock build, deep chest, strong loin",
+        "neck": "Clean medium neck",
+        "head_face": "Straight lean head with prominent eye",
+        "ears": "Medium pointed ears",
+        "limbs": "Long forearm, flat cannon and broad joints",
+        "hooves": "Rounded feet; optional vertical striping",
+        "mane_tail": "Chosen shorter moderate-density mane, never assume every Appaloosa is sparse",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 1,
+        "barrel_width": 1.04,
+        "body_depth": 1.04,
+        "neck_length": 0.98,
+        "neck_thickness": 1,
+        "head_length": 1.02,
+        "head_width": 1,
+        "ear_length": 1,
+        "limb_length": 0.99,
+        "hoof_width": 1.03,
+        "hindquarter_width": 1.08,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.025
+      },
+      "silhouette_acceptance": "Longer leaner head than bay, smoother less bulky haunch; optional mottled skin/white sclera supports identity",
+      "source_ids": [
+        "appaloosa"
+      ]
+    },
+    "sunset": {
+      "game_id": "sunset",
+      "canonical_breed": "Arabian",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.5,
+        "reference_range_m": [
+          1.448,
+          1.549
+        ],
+        "range_basis": "AHA educational standard 14.1–15.1 hands; individuals can fall outside."
+      },
+      "morphology": {
+        "build": "Refined compact athlete, short back, near-level croup",
+        "neck": "Long fine high-set arch with open throat",
+        "head_face": "Mild dish below eyes, short muzzle, broad forehead",
+        "ears": "Small fine ears with gently inward tips",
+        "limbs": "Fine-looking but sound joints and dense bone",
+        "hooves": "Compact round sound hooves",
+        "mane_tail": "Fine mane and lifted flowing tail",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 0.94,
+        "barrel_width": 0.96,
+        "body_depth": 1,
+        "neck_length": 1.08,
+        "neck_thickness": 0.89,
+        "head_length": 0.91,
+        "head_width": 1.04,
+        "ear_length": 0.78,
+        "limb_length": 1,
+        "hoof_width": 0.94,
+        "hindquarter_width": 0.99,
+        "face_profile_depth_per_withers": -0.018,
+        "neck_arch_rise_per_withers": 0.065
+      },
+      "silhouette_acceptance": "Mild dish is visible in profile without extreme distortion; high tail root and arch remain in silhouette",
+      "source_ids": [
+        "arabian",
+        "arabian_height"
+      ]
+    },
+    "iceland": {
+      "game_id": "iceland",
+      "canonical_breed": "Icelandic Horse",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.38,
+        "reference_range_m": [
+          1.3,
+          1.45
+        ],
+        "range_basis": "Artist working envelope; FEIF references here support robust balanced riding type, not this numerical restriction."
+      },
+      "morphology": {
+        "build": "Robust small riding horse, strong broad back and loin",
+        "neck": "Well-carried muscular medium neck",
+        "head_face": "Straight practical head, broad forehead",
+        "ears": "Neat medium upright ears",
+        "limbs": "Sturdy joints, strong lower legs",
+        "hooves": "Round hard supporting hooves",
+        "mane_tail": "Very thick long mane, forelock and tail",
+        "feathering": "Small pastern tufts"
+      },
+      "sculpt_targets": {
+        "body_length": 1.03,
+        "barrel_width": 1.08,
+        "body_depth": 1.03,
+        "neck_length": 0.93,
+        "neck_thickness": 1.07,
+        "head_length": 1,
+        "head_width": 1.06,
+        "ear_length": 0.93,
+        "limb_length": 0.92,
+        "hoof_width": 1.06,
+        "hindquarter_width": 1.03,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.03
+      },
+      "silhouette_acceptance": "Longer-legged and longer-backed than shetland; full shaggy mane without draft feather",
+      "source_ids": [
+        "icelandic",
+        "icelandic_build"
+      ]
+    },
+    "welsh": {
+      "game_id": "welsh",
+      "canonical_breed": "Welsh Mountain Pony / Section A",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.19,
+        "reference_range_m": [
+          1.067,
+          1.219
+        ],
+        "range_basis": "Artist lower bound; WPCS Section A maximum 1.219 m."
+      },
+      "morphology": {
+        "build": "Refined compact pony, deep ribs, strong coupling",
+        "neck": "Longer well-carried neck than Shetland",
+        "head_face": "Small tapering face, slight concavity chosen for this individual",
+        "ears": "Small pointed fairly close ears",
+        "limbs": "Long forearm relative to short cannon",
+        "hooves": "Dense round hooves",
+        "mane_tail": "Natural full mane, jaunty tail",
+        "feathering": "Minimal"
+      },
+      "sculpt_targets": {
+        "body_length": 0.96,
+        "barrel_width": 1.03,
+        "body_depth": 1.04,
+        "neck_length": 1.02,
+        "neck_thickness": 0.97,
+        "head_length": 0.89,
+        "head_width": 1.03,
+        "ear_length": 0.78,
+        "limb_length": 0.9,
+        "hoof_width": 0.98,
+        "hindquarter_width": 1.02,
+        "face_profile_depth_per_withers": -0.007,
+        "neck_arch_rise_per_withers": 0.04
+      },
+      "silhouette_acceptance": "More refined neck/head than chestnut and visibly taller; never a 1.4 m Section B labeled Mountain Pony",
+      "source_ids": [
+        "welsh"
+      ]
+    },
+    "stock": {
+      "game_id": "stock",
+      "canonical_breed": "Australian Stock Horse",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.55,
+        "reference_range_m": [
+          1.473,
+          1.676
+        ],
+        "range_basis": "Artist envelope, not a registration restriction."
+      },
+      "morphology": {
+        "build": "Balanced all-purpose athletic working build",
+        "neck": "Medium-long trim neck",
+        "head_face": "Refined straight head and open throat",
+        "ears": "Medium alert ears",
+        "limbs": "Strong but unbulky limbs",
+        "hooves": "Proportional round feet",
+        "mane_tail": "Neat practical mane and tail",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 1.01,
+        "barrel_width": 1,
+        "body_depth": 1.01,
+        "neck_length": 1.02,
+        "neck_thickness": 0.97,
+        "head_length": 1,
+        "head_width": 0.99,
+        "ear_length": 0.97,
+        "limb_length": 1.02,
+        "hoof_width": 1,
+        "hindquarter_width": 1.03,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.025
+      },
+      "silhouette_acceptance": "Less heavy haunch/chest than bay, more body substance than thoro; differentiation is chosen exemplar variation",
+      "source_ids": [
+        "stock"
+      ]
+    },
+    "fjord": {
+      "game_id": "fjord",
+      "canonical_breed": "Norwegian Fjord",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.42,
+        "reference_range_m": [
+          1.372,
+          1.473
+        ],
+        "range_basis": "NFHR typical 13.2–14.2 hands, exceptions acknowledged."
+      },
+      "morphology": {
+        "build": "Broad powerful compact small horse",
+        "neck": "Muscular natural arch",
+        "head_face": "Broad forehead, short straight face, generous muzzle",
+        "ears": "Medium ears with dark edges",
+        "limbs": "Substantial flat bone and muscular gaskin",
+        "hooves": "Large dense round feet",
+        "mane_tail": "Upright clipped mane, pale guards around darker center; full natural tail",
+        "feathering": "Some, never profuse"
+      },
+      "sculpt_targets": {
+        "body_length": 0.98,
+        "barrel_width": 1.17,
+        "body_depth": 1.09,
+        "neck_length": 0.91,
+        "neck_thickness": 1.17,
+        "head_length": 0.95,
+        "head_width": 1.12,
+        "ear_length": 0.94,
+        "limb_length": 0.93,
+        "hoof_width": 1.11,
+        "hindquarter_width": 1.1,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.047
+      },
+      "silhouette_acceptance": "Two-tone standing mane and broad neck must be geometry; broader than haflinger",
+      "source_ids": [
+        "fjord"
+      ]
+    },
+    "morgan": {
+      "game_id": "morgan",
+      "canonical_breed": "Morgan",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.52,
+        "reference_range_m": [
+          1.448,
+          1.575
+        ],
+        "range_basis": "AMHA 14.1–15.2 hands; outliers allowed."
+      },
+      "morphology": {
+        "build": "Compact strong short-backed horse",
+        "neck": "Neck rises over withers with proud smooth crest",
+        "head_face": "Short straight/slightly dished face, rounded jaw",
+        "ears": "Small shapely upright ears",
+        "limbs": "Strong clean legs and short coupling",
+        "hooves": "Round feet open at heels",
+        "mane_tail": "Full groomed mane and tail",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 0.94,
+        "barrel_width": 1.04,
+        "body_depth": 1.02,
+        "neck_length": 1.01,
+        "neck_thickness": 1.07,
+        "head_length": 0.93,
+        "head_width": 1.06,
+        "ear_length": 0.87,
+        "limb_length": 0.99,
+        "hoof_width": 1.02,
+        "hindquarter_width": 1.07,
+        "face_profile_depth_per_withers": -0.006,
+        "neck_arch_rise_per_withers": 0.05
+      },
+      "silhouette_acceptance": "More compact and muscular than Arabian, face less dished; upright neck instead of stock carriage",
+      "source_ids": [
+        "morgan"
+      ]
+    },
+    "thoro": {
+      "game_id": "thoro",
+      "canonical_breed": "Thoroughbred",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.66,
+        "reference_range_m": [
+          1.626,
+          1.727
+        ],
+        "range_basis": "AMNH exhibit typical 16–17 hands; not Jockey Club registration limits."
+      },
+      "morphology": {
+        "build": "Tall lean speed athlete, prominent withers, sloping shoulder",
+        "neck": "Long lean neck with open throat",
+        "head_face": "Long dry straight head",
+        "ears": "Medium fine ears",
+        "limbs": "Long forearm/gaskin, clean dry tendons and joints",
+        "hooves": "Refined but properly sized feet",
+        "mane_tail": "Shorter neat mane, moderate tail",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 1.04,
+        "barrel_width": 0.92,
+        "body_depth": 1.01,
+        "neck_length": 1.09,
+        "neck_thickness": 0.88,
+        "head_length": 1.05,
+        "head_width": 0.94,
+        "ear_length": 1.02,
+        "limb_length": 1.1,
+        "hoof_width": 0.97,
+        "hindquarter_width": 1,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.022
+      },
+      "silhouette_acceptance": "Leggier and narrower than bay; racehorse lean not emaciated",
+      "source_ids": [
+        "thoroughbred",
+        "thoroughbred_height"
+      ]
+    },
+    "knab": {
+      "game_id": "knab",
+      "canonical_breed": "Knabstrupper",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.64,
+        "reference_range_m": [
+          1.49,
+          1.7
+        ],
+        "range_basis": "KNN horse program above 1.48 m; upper bound is artist choice."
+      },
+      "morphology": {
+        "build": "Chosen large-framed leggy riding type with depth",
+        "neck": "Medium well-set neck and flexible poll",
+        "head_face": "Proportional expressive head",
+        "ears": "Medium alert ears",
+        "limbs": "Strong clean legs, short flat cannon",
+        "hooves": "Well-shaped sound horn",
+        "mane_tail": "Full mane/tail; avoid rat-tail stereotype",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 1.05,
+        "barrel_width": 1.03,
+        "body_depth": 1.04,
+        "neck_length": 1.03,
+        "neck_thickness": 1.01,
+        "head_length": 1.04,
+        "head_width": 1.02,
+        "ear_length": 1,
+        "limb_length": 1.07,
+        "hoof_width": 1.04,
+        "hindquarter_width": 1.06,
+        "face_profile_depth_per_withers": 0.003,
+        "neck_arch_rise_per_withers": 0.032
+      },
+      "silhouette_acceptance": "Warmblood-like frame separate from stock Appaloosa; spots are secondary to frame",
+      "source_ids": [
+        "knabstrupper"
+      ]
+    },
+    "vanner": {
+      "game_id": "vanner",
+      "canonical_breed": "Gypsy Vanner",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.5,
+        "reference_range_m": [
+          1.372,
+          1.575
+        ],
+        "range_basis": "GVHS normal 13.2–15.2 hands; all sizes can preserve type."
+      },
+      "morphology": {
+        "build": "Small draft body, wide deep ribs and powerful rounded quarters",
+        "neck": "Upward-forward arch, muscular taper, no bulky underside",
+        "head_face": "Broad flat forehead, straight to mild convex face",
+        "ears": "Proportional broad-middle ears",
+        "limbs": "Heavy defined bone under hair",
+        "hooves": "Wide substantial hooves",
+        "mane_tail": "Very abundant long mane, forelock and tail",
+        "feathering": "Profuse from knee/hock over hoof"
+      },
+      "sculpt_targets": {
+        "body_length": 0.97,
+        "barrel_width": 1.2,
+        "body_depth": 1.13,
+        "neck_length": 0.95,
+        "neck_thickness": 1.15,
+        "head_length": 0.97,
+        "head_width": 1.13,
+        "ear_length": 0.93,
+        "limb_length": 0.94,
+        "hoof_width": 1.15,
+        "hindquarter_width": 1.18,
+        "face_profile_depth_per_withers": 0.006,
+        "neck_arch_rise_per_withers": 0.045
+      },
+      "silhouette_acceptance": "Most all-around feather and mane; much shorter than shire, body substantially broader than pinto",
+      "source_ids": [
+        "vanner"
+      ]
+    },
+    "marwari": {
+      "game_id": "marwari",
+      "canonical_breed": "Marwari",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.58,
+        "reference_range_m": [
+          1.5,
+          1.63
+        ],
+        "range_basis": "Artist working envelope; IHSI source used here establishes distinctive carriage/head/ears."
+      },
+      "morphology": {
+        "build": "Elegant dry riding horse",
+        "neck": "Upright graceful long neck",
+        "head_face": "Long lean aquiline face",
+        "ears": "Long inward-curving lyre ears; tips nearly meet",
+        "limbs": "Long clean limbs, defined joints",
+        "hooves": "Moderate compact feet",
+        "mane_tail": "Fine medium mane and tail",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 1.02,
+        "barrel_width": 0.97,
+        "body_depth": 1,
+        "neck_length": 1.08,
+        "neck_thickness": 0.95,
+        "head_length": 1.04,
+        "head_width": 0.97,
+        "ear_length": 1.16,
+        "limb_length": 1.04,
+        "hoof_width": 0.99,
+        "hindquarter_width": 1.01,
+        "face_profile_depth_per_withers": 0.012,
+        "neck_arch_rise_per_withers": 0.052
+      },
+      "silhouette_acceptance": "Inward ear curves must survive frontal 128 px crop; convex profile and high carriage distinguish from Arabian",
+      "source_ids": [
+        "marwari"
+      ]
+    },
+    "lipiz": {
+      "game_id": "lipiz",
+      "canonical_breed": "Lipizzaner",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.56,
+        "reference_range_m": [
+          1.53,
+          1.58
+        ],
+        "range_basis": "German Lipizzan association preferred adult range; outliers exist."
+      },
+      "morphology": {
+        "build": "Compact baroque muscular riding build",
+        "neck": "Strong arched crest and substantial base",
+        "head_face": "Straight to mild convex face, broad forehead",
+        "ears": "Small-medium alert ears",
+        "limbs": "Relatively short strong dry legs",
+        "hooves": "Strong rounded hooves",
+        "mane_tail": "Full softly waved mane and tail",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 0.97,
+        "barrel_width": 1.09,
+        "body_depth": 1.06,
+        "neck_length": 0.99,
+        "neck_thickness": 1.16,
+        "head_length": 1.01,
+        "head_width": 1.05,
+        "ear_length": 0.91,
+        "limb_length": 0.96,
+        "hoof_width": 1.05,
+        "hindquarter_width": 1.08,
+        "face_profile_depth_per_withers": 0.011,
+        "neck_arch_rise_per_withers": 0.06
+      },
+      "silhouette_acceptance": "More compact/short-legged than grey; crest and round haunch, not simply a white Friesian",
+      "source_ids": [
+        "lipizzan"
+      ]
+    },
+    "sport": {
+      "game_id": "sport",
+      "canonical_breed": "Friesian Sporthorse",
+      "classification": "crossbred_sport_type",
+      "height": {
+        "target_m": 1.68,
+        "reference_range_m": [
+          1.55,
+          1.75
+        ],
+        "range_basis": "Artist-selected Friesian x sporthorse exemplar; no universal type/height asserted from history-only source."
+      },
+      "morphology": {
+        "build": "Chosen taller athletic cross with less bulk",
+        "neck": "Long arched but lighter neck than Friesian",
+        "head_face": "Refined straight head with open throat",
+        "ears": "Medium neat ears",
+        "limbs": "Long clean athletic limbs",
+        "hooves": "Proportional sports feet",
+        "mane_tail": "Long but reduced-density mane/tail",
+        "feathering": "Light fetlock fringe"
+      },
+      "sculpt_targets": {
+        "body_length": 1.05,
+        "barrel_width": 1.03,
+        "body_depth": 1.02,
+        "neck_length": 1.08,
+        "neck_thickness": 1.03,
+        "head_length": 1.02,
+        "head_width": 0.99,
+        "ear_length": 0.96,
+        "limb_length": 1.07,
+        "hoof_width": 1.04,
+        "hindquarter_width": 1.04,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.052
+      },
+      "silhouette_acceptance": "Lighter crest/barrel and less feather than black, longer limbs; explicit game individual design",
+      "source_ids": [
+        "sporthorse",
+        "friesian"
+      ]
+    },
+    "akhal": {
+      "game_id": "akhal",
+      "canonical_breed": "Akhal-Teke",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.59,
+        "reference_range_m": [
+          1.499,
+          1.626
+        ],
+        "range_basis": "ATAA 14.3–16 hands, extremes undesirable."
+      },
+      "morphology": {
+        "build": "Lithe long-lined body, narrow chest with deep girth",
+        "neck": "Very long slim high neck and refined throat",
+        "head_face": "Long narrow dry face, length below eye, hooded eyes",
+        "ears": "Long slim forward-set ears",
+        "limbs": "Long forearm/gaskin, short cannon, defined joints",
+        "hooves": "Small round hard hooves",
+        "mane_tail": "Sparse fine mane/tail; very little forelock",
+        "feathering": "None"
+      },
+      "sculpt_targets": {
+        "body_length": 1.1,
+        "barrel_width": 0.87,
+        "body_depth": 0.99,
+        "neck_length": 1.16,
+        "neck_thickness": 0.8,
+        "head_length": 1.08,
+        "head_width": 0.89,
+        "ear_length": 1.13,
+        "limb_length": 1.08,
+        "hoof_width": 0.93,
+        "hindquarter_width": 0.97,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.037
+      },
+      "silhouette_acceptance": "Distinct length and narrowness without weakness; metallic sheen remains nonmetallic horse hair",
+      "source_ids": [
+        "akhal"
+      ]
+    },
+    "percheron": {
+      "game_id": "percheron",
+      "canonical_breed": "Percheron",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.73,
+        "reference_range_m": [
+          1.676,
+          1.803
+        ],
+        "range_basis": "PHAOA says most 16.2–17.3 hands; full population 15–19."
+      },
+      "morphology": {
+        "build": "Deep powerful draft frame and broad muscular quarters",
+        "neck": "Thick strong moderately arched neck",
+        "head_face": "Relatively refined broad straight/slight convex head",
+        "ears": "Medium attentive ears",
+        "limbs": "Massive but defined clean bone and joints",
+        "hooves": "Large wide feet",
+        "mane_tail": "Substantial mane and full tail, less than Vanner",
+        "feathering": "None to very slight pastern hair"
+      },
+      "sculpt_targets": {
+        "body_length": 1.03,
+        "barrel_width": 1.21,
+        "body_depth": 1.14,
+        "neck_length": 0.98,
+        "neck_thickness": 1.16,
+        "head_length": 1,
+        "head_width": 1.09,
+        "ear_length": 0.98,
+        "limb_length": 1.03,
+        "hoof_width": 1.2,
+        "hindquarter_width": 1.2,
+        "face_profile_depth_per_withers": 0.003,
+        "neck_arch_rise_per_withers": 0.04
+      },
+      "silhouette_acceptance": "Clean leg silhouette and shorter stronger neck separate from feathered drafts",
+      "source_ids": [
+        "percheron"
+      ]
+    },
+    "shire": {
+      "game_id": "shire",
+      "canonical_breed": "Shire",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.82,
+        "reference_range_m": [
+          1.68,
+          1.93
+        ],
+        "range_basis": "Artist mature envelope within SHSA description; stallion/mare/gelding height guidance differs and larger horses exist."
+      },
+      "morphology": {
+        "build": "Largest substantial draft exemplar, deep ribs and long quarters",
+        "neck": "Long commanding arch over broad shoulders",
+        "head_face": "Long lean head, mild Roman nose; avoid block jaw",
+        "ears": "Long alert ears",
+        "limbs": "Substantial flat bone and high hocks",
+        "hooves": "Very broad deep feet",
+        "mane_tail": "Long full mane and tail",
+        "feathering": "Fine silky rear-cannon and pastern fringe; avoid solid front boots"
+      },
+      "sculpt_targets": {
+        "body_length": 1.05,
+        "barrel_width": 1.23,
+        "body_depth": 1.16,
+        "neck_length": 1.07,
+        "neck_thickness": 1.18,
+        "head_length": 1.1,
+        "head_width": 1.08,
+        "ear_length": 1.15,
+        "limb_length": 1.07,
+        "hoof_width": 1.25,
+        "hindquarter_width": 1.23,
+        "face_profile_depth_per_withers": 0.012,
+        "neck_arch_rise_per_withers": 0.055
+      },
+      "silhouette_acceptance": "Tallest exemplar; long convex face plus back-of-leg feather, not enlarged Percheron",
+      "source_ids": [
+        "shire"
+      ]
+    },
+    "clyde": {
+      "game_id": "clyde",
+      "canonical_breed": "Clydesdale",
+      "classification": "breed",
+      "height": {
+        "target_m": 1.78,
+        "reference_range_m": [
+          1.727,
+          1.829
+        ],
+        "range_basis": "Clydesdale Horse Society normal 17–18 hands, smaller mares/larger males possible."
+      },
+      "morphology": {
+        "build": "Tall energetic draft with less squat silhouette",
+        "neck": "Long well-arched neck and high withers",
+        "head_face": "Broad forehead, flat profile, wide muzzle",
+        "ears": "Large ears",
+        "limbs": "Lengthy lower hind limb with flat quality bone",
+        "hooves": "Large open substantial feet",
+        "mane_tail": "Full mane and tail",
+        "feathering": "Plentiful silky feather"
+      },
+      "sculpt_targets": {
+        "body_length": 1.05,
+        "barrel_width": 1.15,
+        "body_depth": 1.1,
+        "neck_length": 1.11,
+        "neck_thickness": 1.13,
+        "head_length": 1.09,
+        "head_width": 1.08,
+        "ear_length": 1.16,
+        "limb_length": 1.11,
+        "hoof_width": 1.23,
+        "hindquarter_width": 1.15,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.053
+      },
+      "silhouette_acceptance": "More leggy than percheron, flatter face than shire; white stockings cannot substitute for feather geometry",
+      "source_ids": [
+        "clydesdale"
+      ]
+    }
+  },
+  "sources": {
+    "aqha": {
+      "title": "AQHA conformation chart (hosted by Italian Quarter Horse association)",
+      "url": "https://www.aiqh.eu/wp-content/uploads/2022/01/American-Quarter-Horse-Conformation-Chart.pdf"
+    },
+    "shetland": {
+      "title": "Shetland Pony Stud-Book Society breed standard",
+      "url": "https://www.shetlandponystudbooksociety.co.uk/about-the-breed/breed-standard/"
+    },
+    "mustang": {
+      "title": "Bureau of Land Management wild horse adoption brochure",
+      "url": "https://www.blm.gov/sites/blm.gov/files/wildhorse_adoption_brochure.pdf"
+    },
+    "haflinger": {
+      "title": "American Haflinger Registry judges packet",
+      "url": "https://haflingerregistry.com/wp-content/uploads/2023/03/JudgesPacket.pdf"
+    },
+    "andalusian": {
+      "title": "ANCCE PRE conformational characteristics",
+      "url": "https://www.ancce.es/en/contenido/morfologia-del-pre"
+    },
+    "friesian": {
+      "title": "FHANA Friesian conformation and performance",
+      "url": "https://fhana.com/the-friesian-horse/articles/friesian-conformation-and-performance/"
+    },
+    "paint": {
+      "title": "American Paint Horse Association breed description",
+      "url": "https://apha.com/registration/the-breed/"
+    },
+    "appaloosa": {
+      "title": "Appaloosa Horse Club 2025 handbook breed standard",
+      "url": "https://sub.appaloosa.com/pdfs/rulebook25_1.pdf"
+    },
+    "arabian": {
+      "title": "Arabian Horse Association conformation and breed standard",
+      "url": "https://hrsweb.arabianhorses.org/discover/arabian-horses/"
+    },
+    "arabian_height": {
+      "title": "AHA conformation education notebook",
+      "url": "https://arabianhorses.org/.content/judges-stewards/js-docs/JS_NB_Conformation.pdf"
+    },
+    "icelandic": {
+      "title": "FEIF breeding goals and assessment",
+      "url": "https://www.feif.org/raise/"
+    },
+    "icelandic_build": {
+      "title": "FEIF strong back, loins, legs and joints",
+      "url": "https://www.feif.org/2020/10/07/about-the-weight-of-a-rider/"
+    },
+    "welsh": {
+      "title": "Welsh Pony and Cob Society Section A standard",
+      "url": "https://www.wpcs.uk.com/welsh-mountain-pony"
+    },
+    "stock": {
+      "title": "Australian Stock Horse Society events handbook and Standard of Excellence",
+      "url": "https://ashs.com.au/media/1908/eventshandbookwebversionmar2020v2-compressed.pdf"
+    },
+    "fjord": {
+      "title": "Norwegian Fjord Horse Registry breed standard",
+      "url": "https://www.nfhr.com/catalog/index.php?breedstd=1"
+    },
+    "morgan": {
+      "title": "American Morgan Horse Association ideal Morgan",
+      "url": "https://www.morganhorse.com/about-morgan/ideal-morgan/"
+    },
+    "thoroughbred": {
+      "title": "The Jockey Club about the Thoroughbred",
+      "url": "https://www.thejockeyclub.co.uk/the-racing/racing-explained/racehorses/all-about-the-thoroughbred/"
+    },
+    "thoroughbred_height": {
+      "title": "American Museum of Natural History Thoroughbred conformation exhibit",
+      "url": "https://www.amnh.org/explore/ology/zoology/all-about-horses/thoroughbred"
+    },
+    "knabstrupper": {
+      "title": "Knabstrupperforeningen for Danmark 2024 purebred horse breeding program, pages 6–7",
+      "url": "https://knabstrupper.dk/cms/Clubknab/ClubImages/Avl%20og%20sport%20dokumenter/Avlsprogrammer%202024/2024%20UK%20Breeding%20Program%20PUREBRED%20Knabstrupper%20Horse%20FINAL%20updated%2020240120.pdf"
+    },
+    "vanner": {
+      "title": "Gypsy Vanner Horse Society breed standard, November 2019",
+      "url": "https://vanners.org/wp-content/uploads/2016/02/Breed-Standard-GVHS-November-24-2019.pdf"
+    },
+    "marwari": {
+      "title": "Indigenous Horse Society of India Marwari character statement",
+      "url": "https://www.horseindian.in/marwaricharacter.htm"
+    },
+    "lipizzan": {
+      "title": "German Lipizzan breed association standard",
+      "url": "https://lipizzanerpferd.de/en/"
+    },
+    "sporthorse": {
+      "title": "Friesian Sporthorse Association history and breeding intent",
+      "url": "https://www.friesiansporthorseassociation.com/FriesianSporthorseHistory.html",
+      "retrieval_note": "Search-index excerpt available; page returned 502. No precise conformation or height rule inferred from inaccessible content."
+    },
+    "akhal": {
+      "title": "Akhal-Teke Association of America breed standard",
+      "url": "https://akhal-teke.org/the-breed/breed-standard/"
+    },
+    "percheron": {
+      "title": "Percheron Horse Association of America disposition and characteristics",
+      "url": "https://percheronhorse.org/percheron-disposition-and-characteristics/"
+    },
+    "shire": {
+      "title": "Shire Horse Society Australia breed standard, 2015",
+      "url": "https://www.shirehorsesociety.com.au/documents/standard.pdf"
+    },
+    "clydesdale": {
+      "title": "Clydesdale Horse Society the Clydesdale today",
+      "url": "https://clydesdalehorsesociety.com/chs-information/the-clydesdale-today"
+    }
+  }
+}

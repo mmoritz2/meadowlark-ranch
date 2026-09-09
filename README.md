@@ -4,7 +4,7 @@ A cozy open-world horse game that runs in a browser tab. Ride across a 1000×100
 open world, care for and breed your horses, jump courses, and — on a headset —
 ride the same world in VR.
 
-Built from scratch in **one HTML file, no build step, no CDN**: clone it, serve the
+Built from scratch with **no build step and no CDN**: clone it, serve the
 folder, and it runs.
 
 **▶️ [Play it in your browser](https://mmoritz2.github.io/meadowlark-ranch/)**
@@ -18,6 +18,14 @@ python -m http.server 8431
 ```
 
 Then open <http://127.0.0.1:8431/>. Your ranch auto-saves to `localStorage`.
+
+The local **Breed Studio** is at <http://127.0.0.1:8431/breeds.html>. It shows all
+45 game horses and the separately preserved, user-approved horse study. The game
+uses 25 distinct authored breed models, with 20 fantasy variants built on their
+respective breed foundations. Each model has an editable Blender source, its own
+coat and groom, and a named 40-joint rig. Original horse mesh and UVs by
+[b2przemo](https://blendswap.com/blend/13903), licensed CC BY 3.0; see the
+[asset provenance and rebuild instructions](assets/models/artist-breeds/SOURCE.md).
 
 For VR, serve over HTTPS (WebXR requires a secure origin) and press **Ride in VR**:
 
@@ -80,7 +88,7 @@ horse when you meant to ride on the stick alone, so each can be picked outright.
 |---|---|
 | **World** | ~1000×1000 units of ridged hills, cliffs, a carved river with a bridge, a stream, wheat fields, desert canyon, and a snowline — one continuous mesh, coloured by slope and altitude |
 | **Money** | Livery stalls that earn while you are away (how many depends on what you have built), an earnings record day by day, 49 leaderboards ranked against the ranches in the valley whether or not you are online, four rotating 28-day seasons with a 30-tier pass on a free and a gold track, and VIP bought with gems you earn by playing — there is no real money anywhere in this game |
-| **Horses** | 44 breeds from ponies to winged mythics and dragons, each with its own build and its own coat markings (dapple, appaloosa, pinto, roan, points, leopard, sooty, dun, metallic) drawn in the shader from the body's own axes; five stats you can feel in the ride, trained by forage that grows by region; six temperaments; breed mastery that unlocks tail colours, browband studs, a sparkle trail and bareback riding; tricks at a halt; care, bonding, XP and levels; breeding; foals that grow up over real time |
+| **Horses** | 45 horse identities: 24 real breeds, a Bay sporthorse and 20 fantasy variants. Distinct breed proportions, textured coats, individual-strand manes and tails, and draft feathering; walk, trot, canter, gallop and jump; five stats trained by forage; six temperaments; breed mastery; care, bonding, XP and levels; breeding and foals that grow over real time. The older halt tricks are not yet adapted to the new anatomical rig. |
 | **Tack** | Saddle, pad, bridle and horseshoes as gear with rarity, bonuses, upgrades and merges; Silver Keys open tack chests and Grandma's locked tack room; nothing costs money |
 | **Story** | Two books: Grandpa Wren's ranch, then the Silver Kestrel, a grey horse followed region by region through people to talk to, clue puzzles, and a tameable reward |
 | **Ranch** | Build it: fourteen pieces placed on the ground, builder points, six ranch levels with real perks |
@@ -149,31 +157,109 @@ at startup). The interesting parts are the systems written on top of it:
 
 ### The art pipeline
 
-The horse, the rider, foliage and props under `assets/models/` were generated locally rather
-than bought: a reference image per asset, then image-to-3D, then texture baking, then
-auto-rigging for the animated ones. `tools/asset-gen/` holds the scripts that drive it.
+The original horses, rider, foliage and props under `assets/models/` were generated locally:
+a reference image per asset, then image-to-3D, texture baking and rigging.
+`tools/asset-gen/` holds the scripts that drive it. The replacement horse studies in
+`assets/models/horse-candidates/` use licensed artist-authored meshes; their original
+files, license records and adaptation notes are retained beside each candidate.
+
+### September 2026 visual update
+
+The playable game now uses a refined Blender horse with a natural, unlit coat
+texture, corrected hair texture direction, and a preserved 33-bone rig. Original
+ComfyUI meadow, trail, and arena materials replace the older ground textures.
+The scene also has a blue sky with soft clouds, layered mountain ridges, fuller
+tree canopies, tapered grass, balanced daylight, and antialiasing through the
+postprocessing pipeline.
+
+The editable source is `assets/models/horse_showcase.blend`. Rebuild commands and
+rig compatibility measurements are in `tools/asset-gen/HORSE_REFINEMENT.md`;
+terrain prompts, workflows, and reproduction instructions are in
+`assets/textures/pastoral/README.md`. The horse retains its existing anatomy and
+procedural gait system. Reaching the reference game's full character quality
+still requires an authored sculpt, rider rig, and animation library.
+
+## World realism
+
+The world uses a denser terrain mesh with matching riding collision, continuous
+downhill river and creek channels, an arched bridge at the actual crossing, and
+surface materials that blend with slope, tree cover, riverbanks and climate.
+Botanical trees and shrubs, curved grass blades, photographed-style generated
+leaf and needle textures, and distant forest textures baked from the actual tree
+meshes replace the earlier sphere/cone scenery.
+
+Original ComfyUI materials supply weathered timber, cedar shingles, forest
+litter and sedimentary rock. Detailed barns and cottages have recessed windows,
+door joinery, foundations and gutters. Canyon formations and the waterfall cliff
+have eroded silhouettes, physical depth and rubble at their bases; riverbanks
+have clustered sedges, reeds, gravel and driftwood. The sources and reproduction
+records are in `assets/textures/realism/README.md`.
+
+Run `node tools/qa-world.cjs` with the local server on port 8431, or pass its URL
+as the first argument. This Playwright check verifies rendered terrain against
+collision, downhill water, channel depth, a complete bridge crossing, and the
+day/night and graphics settings. Results and screenshots go in
+`output/world-validation/`. This remains an evolving game world; its characters,
+some props, and procedural water still have a stylized appearance.
 
 ## Honest limitations
 
-- The rider is a generated mesh with no skeleton. Her lean, breathing and head turn are a
-  vertex shader, not a character rig, so she can sit a horse beautifully and do nothing else.
+- The rider is a generated mesh without a skeleton. Her lean, breathing, posting and head turn use a
+  vertex shader; the rein anchors follow the same deformation. A dedicated character rig is still needed.
 - Multiplayer runs over a **public, unauthenticated** MQTT broker. That is fine for
   riding with friends and wrong for anything else: anyone holding a club code can join
   that room and read its chat, so a code is a password, not a username. There is no
   account system, no moderation and no server of my own — it is a demo, not a service.
-- `ranch3d.html` is deliberately one large file. It is organised in sections, but it
+- Most systems remain in `ranch3d.html`; sky and environment art live in small local modules. It is organised in sections, but it
   is a single-author codebase, not a module structure a team would share.
 - Terrain collision is height-field based, so very steep cliffs can be climbed.
 
 ## Credits
 
-Original code and generated art. Three.js and MQTT.js are vendored under their own
+Original code, generated art and the attributed horse studies below. Three.js and MQTT.js are vendored under their own
 licenses in `assets/vendor/`. Built as a personal project by
 [@mmoritz2](https://github.com/mmoritz2).
 
 Inspired by **Star Equestrian** and **Horse Riding Tales** (Foxie Ventures) — the games
 that got me interested in how a cozy horse world holds a player's attention. This is an
 independent from-scratch project, not affiliated with or derived from them; any
-resemblance is genre admiration, and all code and assets here are my own.
+resemblance is genre admiration. No models or textures were extracted from either game.
+
+- Replacement horse foundation: [Horse by b2przemo](https://blendswap.com/blend/13903), [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). Adapted materials, grooming and presentation. Original license and acquisition details: `assets/models/horse-candidates/b2przemo/SOURCE.md`.
+- Comparison horse: [Realtime Ranchers by Lyndon Daniels](https://opengameart.org/content/realtime-ranchers-3d-model-pack), [CC0](https://creativecommons.org/publicdomain/zero/1.0/). Material paths and presentation adapted. Details: `assets/models/horse-candidates/lyndon-daniels/SOURCE.md`.
 
 `DEVELOPMENT.md` is the full build log, including what didn't work the first time.
+
+## Breed models and studio
+
+Open `breeds.html` to see the new **Bay horse study** by default (`?horse=artist-study`). The existing game **Bay sporthorse** remains available at `?horse=hero`, with its revised rig, eight animation clips, gait/lead selection, pause and slow playback. The 24 earlier breed models are listed separately and retain their own names and shapes. Orbit, side/head views, clay, wireframe and hair controls work across the catalog.
+
+The user rejected the horse artwork again on 9 September 2026. `horse-art-review.html` compares the actual artist-authored replacement studies and existing horse at the same scale and lighting. These are development studies; an anatomy comparison does not certify finished animation or commercial-reference parity.
+
+For local preview, run `python tools/serve-preview.py` from this project and open `http://127.0.0.1:8431/breeds.html`. This serves fresh project files on localhost. The server must be running for the studio and uncached game assets to load.
+
+The existing sporthorse's GLB, editable Blender rig/actions, source hashes and animation notes are in `assets/models/hero-horse/`. It is distinct from the earlier breed library; the same model is not relabeled as every breed.
+
+Choose **Bay sporthorse → Ride this horse** in the studio, or **Stable → Adopt & ride · Free** in the ranch. Adoption reuses an existing sporthorse and preserves earlier horses; the selected horse persists across reloads. **Breed Studio** is also available directly in the ranch toolbar. New saves begin with a Bay sporthorse. Its runtime adapter is `assets/game-hero-horse.js`; other breeds and dragons retain their own model paths.
+
+Editable Blender source, GLBs, shared textures, breed measurements, and reproduction instructions are in `assets/models/breeds/`. Model checks run with `python tools/validate-breed-assets.py`; gameplay checks use `node tools/qa-breeds.cjs`. These models improve breed recognition, proportions, and hair; close-up facial anatomy and motion still need further art refinement before claiming commercial reference parity.
+
+## Ranch arrival art and camera
+
+The arrival area now uses matching timber architecture for the barn, summoning
+stall, tack room and open stable row. Original batched practice fences, botanical
+planters, bound hay stacks and physical signs are in `assets/ranch-arrival-art.js`.
+Arena footing gains irregular wear; foliage texture contrast is reduced before
+lighting, preserving silhouettes and shadow coverage.
+
+The follow camera sweeps against registered architecture, moves around obstructing
+walls, and checks its interpolated path. VR, free camera and summoning cinematics
+retain their separate controls. HUD layouts fit narrow screens; Summoning Stall
+has a sticky Close button and Escape dismissal. Reward notices queue one at a
+time while rewards are credited immediately.
+
+Validation: `node tools/test-follow-camera.mjs`,
+`node tools/qa-visual-quality.cjs output/visual-quality-review --camera-checks`,
+and `node tools/run-web-game-skill.cjs`. The last command runs the installed game
+skill client with native Windows D3D rendering. This is an art and integration
+pass, not a claim of parity with the reference game's authored characters/world.

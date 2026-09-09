@@ -1,0 +1,130 @@
+{
+  "id": "vanner",
+  "name": "Gypsy Vanner",
+  "label": "Gypsy Vanner",
+  "file": "vanner.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.5,
+  "heightM": 1.8400901556015015,
+  "fitScale": 0.9666666666666667,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.4445833320617676,
+        -0.09769654273986816
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.5,
+        0.10088608960310617
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.578872947008028,
+        0.8811690806709703
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.7103125454170365,
+        0.7936944104321513
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.4268322497943027,
+        1.0395922148354215
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.6645912048753895,
+        0.510006681996126
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.2105836895914261,
+        -0.9727448813840506
+      ]
+    ],
+    "eyes": [
+      [
+        -0.10145559227972643,
+        1.6258421505829561,
+        0.8569466662629678
+      ],
+      [
+        0.10145559227972643,
+        1.6258421505829561,
+        0.8569466662629678
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.074636669968615,
+        1.4652928921137283,
+        1.0353491258797152
+      ],
+      [
+        0.074636669968615,
+        1.4652928921137283,
+        1.0353491258797152
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Small draft body, wide deep ribs and powerful rounded quarters",
+  "morphology": {
+    "build": "Small draft body, wide deep ribs and powerful rounded quarters",
+    "neck": "Upward-forward arch, muscular taper, no bulky underside",
+    "head_face": "Broad flat forehead, straight to mild convex face",
+    "ears": "Proportional broad-middle ears",
+    "limbs": "Heavy defined bone under hair",
+    "hooves": "Wide substantial hooves",
+    "mane_tail": "Very abundant long mane, forelock and tail",
+    "feathering": "Profuse from knee/hock over hoof"
+  },
+  "coat": "Piebald with abundant white feather",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "5508e3b6525a5d2c734f9203968040c558a033b598b8dfd473c2882b7c06a1c9",
+  "bodyGeometrySha256": "d32590dd3713b805a015f537d9ff1dedf69af6c37d620487ed0f77e00882d9b8",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840,
+    "HorseFeather": 62400
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 2.5,
+    "feathering": 1.0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.5,
+    "groundY": 0.0
+  }
+}

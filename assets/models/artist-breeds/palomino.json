@@ -1,0 +1,129 @@
+{
+  "id": "palomino",
+  "name": "Palomino Mustang",
+  "label": "Palomino Mustang",
+  "file": "palomino.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.45,
+  "heightM": 1.808201789855957,
+  "fitScale": 1.0,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0.0,
+        1.4024012441635132,
+        -0.0906418114900589
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.45,
+        0.10985943774382273
+      ]
+    ],
+    "head": [
+      [
+        0.0,
+        1.548717304813216,
+        0.8944824890451103
+      ]
+    ],
+    "poll": [
+      [
+        0.0,
+        1.6747553034286051,
+        0.80503483772222
+      ]
+    ],
+    "muzzle": [
+      [
+        0.0,
+        1.401302520998543,
+        1.0597374957281578
+      ]
+    ],
+    "crest": [
+      [
+        0.0,
+        1.5744495655825181,
+        0.521037984430341
+      ]
+    ],
+    "tail": [
+      [
+        0.0,
+        1.1941459563747656,
+        -0.9741444778396515
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09232820670497938,
+        1.5962176240423882,
+        0.8700580708632006
+      ],
+      [
+        0.09232820670497938,
+        1.5962176240423882,
+        0.8700580708632006
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.06781597300330446,
+        1.4348803328674409,
+        1.0561086838820415
+      ],
+      [
+        0.06781597300330446,
+        1.4348803328674409,
+        1.0561086838820415
+      ]
+    ]
+  },
+  "family": "breed",
+  "conformation": "Selected hardy ranch individual, moderate substance",
+  "morphology": {
+    "build": "Selected hardy ranch individual, moderate substance",
+    "neck": "Medium muscular neck, relaxed carriage",
+    "head_face": "Straight to faintly convex, practical muzzle",
+    "ears": "Medium forward ears",
+    "limbs": "Compact strong lower limbs",
+    "hooves": "Well-rounded compact hooves",
+    "mane_tail": "Natural medium-long slightly irregular mane",
+    "feathering": "Minimal"
+  },
+  "coat": "Golden palomino with ivory mane",
+  "sourceBasis": "Derivative of the user-approved b2przemo authored horse, CC BY 3.0",
+  "sha256": "1a5097aa8466b7e7b5d576ebe63c95b560ec8f12fa8bae29d7a03683027dae10",
+  "bodyGeometrySha256": "dff286dc1d1b23fcc148d6c6106b6449e18688c2dbf9fc10b8594f5f5d240af3",
+  "triangles": {
+    "HorseBody": 40780,
+    "Seated left eye": 1840,
+    "Horizontal pupil -1": 960,
+    "Seated right eye": 1840,
+    "Horizontal pupil 1": 960,
+    "HorseGroom": 120840
+  },
+  "jointCount": 40,
+  "clips": [
+    "Rest",
+    "Idle"
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "feathering": 0
+  },
+  "validation": {
+    "bodyVertices": 20392,
+    "finite": true,
+    "maxWeightError": 1.2026430340483785e-07,
+    "maxInfluences": 4,
+    "actualWithersM": 1.4500000476837158,
+    "groundY": 0.0
+  }
+}

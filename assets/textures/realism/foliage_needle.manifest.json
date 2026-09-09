@@ -1,0 +1,28 @@
+{
+  "generator": "Local ComfyUI FLUX.2 dev fp8mixed",
+  "prompt": "Photoreal botanical cutout texture of a dense healthy evergreen balsam fir and spruce branch spray for a realistic three dimensional foliage card. One broad irregular spreading evergreen bough with six overlapping branching flat sprays, many hundreds of short thick flattened needles packed densely around fine brown-green twigs, naturally irregular needle lengths and orientations. Dense overlapping foliage fills approximately forty-five percent of the full square image, open small gaps between neighboring sprays but thick opaque foliage along the central branchlets. Short blunt-pointed needles, real natural fir anatomy, not long thin pine hairs, not geometric zigzag rows. Rich muted medium-dark olive sage green with natural lighter new needles and warm brown slender twigs. Front orthographic view of a thirty-five centimeter wide evergreen botanical specimen, slight natural curvature and depth but diffuse albedo lighting. Entire branch remains inside the central eighty-eight percent of a square with a generous pure-white border on all sides. Isolated on completely white background, cross-polarized flat soft diffuse illumination, no cast shadows, no grey background, no directional sunlight, no specular shine, no dramatic contrast, no depth of field, no text, no watermark, no illustration or painting. Realistic fine botanical detail, full natural dense foliage, organic asymmetrical broad silhouette.",
+  "seed": 9082420,
+  "steps": 28,
+  "guidance": 3.5,
+  "size": 1024,
+  "seamless": false,
+  "source_sha256": "79a227d5173a9605f13baa03d13be9e7076d2a087f50138eccff918a5bc13032",
+  "alpha_method": "White-distance/chroma matte; bright neutral source veto after hole closing; one-pixel feather; separate dark needle/bark color-core donors bleed across all contaminated pixels and gutters.",
+  "color_core_coverage": 0.4322,
+  "bright_neutral_mask_pixels": 0,
+  "foreground_coverage": 0.4533,
+  "opaque_mean_srgb": [
+    88,
+    108,
+    66
+  ],
+  "palette": {
+    "target_srgb_mean": [
+      90,
+      110,
+      68
+    ],
+    "contrast": 0.82
+  },
+  "output": "foliage_needle_rgba.png"
+}

@@ -1,0 +1,1378 @@
+{
+  "passed": true,
+  "physicalModels": 25,
+  "approvedSourceUnchanged": true,
+  "maxNeutralDeformationM": 4.924151790695877e-07,
+  "models": [
+    {
+      "id": "bay",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.403894931808364e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 2.388837865275353e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "chestnut",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 1.3657139822709083e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 5.960464477539063e-08,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 5.960464477539063e-08,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 5.960464477539063e-08,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 5.960464477539063e-08,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 1.3328003749250113e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "palomino",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 1.700626643078525e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 1.6859768348751402e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "haflinger",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.672100639407232e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "grey",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 3.453084893899103e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "black",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.8115454709698567e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 1.3328003749250113e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseFeather",
+          "restMaxDeformationM": 1.4370159448672764e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "pinto",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.6749555872404934e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 2.1490760299348766e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 2.1490760299348766e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 2.1490760299348766e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 2.1490760299348766e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "appaloosa",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.669762502188819e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 2.457562461863554e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "sunset",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 3.796142102139293e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "iceland",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.862419592186592e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 1.6875194986024685e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "welsh",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.1503671541306096e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 1.3328003749250113e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "stock",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 3.3719536697502804e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 3.371747880871523e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 3.371747880871523e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 3.371747880871523e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 3.371747880871523e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 3.371747880871523e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "fjord",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.1490760299348766e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "morgan",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 1.8852324677824966e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.3328003749250113e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.3328003749250113e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.3328003749250113e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.3328003749250113e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "thoro",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.7314279645418166e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 2.384185791015625e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "knab",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "vanner",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.457562461863554e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.1944189326376765e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.1944189326376765e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.1944189326376765e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.1944189326376765e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 2.457562461863554e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseFeather",
+          "restMaxDeformationM": 1.2377834115800373e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "marwari",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.6858739404357614e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "lipiz",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.669762502188819e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 2.1490760299348766e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 2.1490760299348766e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 2.1490760299348766e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 2.1490760299348766e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "sport",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 4.924151790695877e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 7.450580596923828e-09,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 7.450580596923828e-09,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 7.450580596923828e-09,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 7.450580596923828e-09,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 3.577054704474748e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "akhal",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 3.371747880871523e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 3.371747880871523e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "percheron",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 3.4240261593687705e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 1.1920928955078125e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 1.3328003749250113e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "shire",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 4.308471767545033e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseFeather",
+          "restMaxDeformationM": 2.385349660155493e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "clyde",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 3.3735995288695185e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 2.6656007498500226e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 3.371747880871523e-07,
+          "finite": true
+        },
+        {
+          "name": "HorseFeather",
+          "restMaxDeformationM": 1.302387275279562e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    },
+    {
+      "id": "bay-sporthorse",
+      "jointCount": 40,
+      "meshes": [
+        {
+          "name": "HorseBody",
+          "restMaxDeformationM": 2.8361180887631e-07,
+          "finite": true
+        },
+        {
+          "name": "Seated left eye",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Seated right eye",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "restMaxDeformationM": 0.0,
+          "finite": true
+        },
+        {
+          "name": "HorseGroom",
+          "restMaxDeformationM": 1.3328003749250113e-07,
+          "finite": true
+        }
+      ],
+      "eyeAttachments": [
+        {
+          "name": "Seated left eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil -1",
+          "rigidToHead": true
+        },
+        {
+          "name": "Seated right eye",
+          "rigidToHead": true
+        },
+        {
+          "name": "Horizontal pupil 1",
+          "rigidToHead": true
+        }
+      ]
+    }
+  ]
+}
