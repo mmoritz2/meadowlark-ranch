@@ -11937,7 +11937,17 @@ function tick(stepSeconds){
     this height, so it is over the rail well before the top of its arc. Blocking up to 1.0 m
     asked for the exact apex of a perfect jump and refused everything else. At 0.62 m a
     canter or a gallop clears the rails and a walk still cannot. */
- if(player.y<0.62){
+ /* And then the mount changed under it. The baked hero jump lifts player.y to 0.88 m and
+    holds it above 0.62 for about a fifth of a second, in the middle of an arc that does not
+    begin until 0.38 s after the button. Measured against the arena's east rail: at a gallop
+    you had to ask for the jump between 2.5 and 7 m out, and at a TROT the window was under
+    two metres wide — miss it and the rail simply refused you. That is what "it won't let me
+    jump the fence" meant, and no amount of trying harder was going to fix it.
+    On that mount, ask the jump instead of the height: if she is in the air phase of a jump,
+    she is over the rail. The procedural mount, which really does clear 2 m, keeps the
+    height test it was tuned for. */
+ const jumpAir=RIG.heroJumpAge!==null&&RIG.heroJumpAge<1.25;   // from the button, not from the lift
+ if(player.y<0.62&&!jumpAir){
   for(const w of walls){
    const abx=w.x2-w.x1,abz=w.z2-w.z1;
    const tt=THREE.MathUtils.clamp(((player.pos.x-w.x1)*abx+(player.pos.z-w.z1)*abz)/(abx*abx+abz*abz),0,1);
