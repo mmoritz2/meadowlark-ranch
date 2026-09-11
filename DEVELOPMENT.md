@@ -281,3 +281,50 @@ buttons on touch devices.
 
 *Built collaboratively with Claude (Anthropic). All game code and art are
 original; the game is inspired by, but contains no assets from, Star Equestrian.*
+
+## Feature modules
+
+Sixteen feature packages plug into `ranch3d.html` through one context object, `G`. The
+full contract (what `G` exposes, every hook, how to add a panel, a tab, a save field, an
+event, a quest, a daily, an achievement, a fast-travel stop, a region, a collectible, a club
+message) is written at the top of `assets/features/index.js` and is meant to be read in two
+minutes. The short version:
+
+- **One file per package** in `assets/features/<pkg>.js`, exporting `id` and `install(G)`.
+  `index.js` imports all sixteen and exports `FEATURES`; a package never edits `index.js`.
+- **Nothing at import time.** Imports are hoisted above every const in the game. All work
+  happens inside `install(G)`, which `installFeatures()` calls once, immediately before
+  `const MERGE_STATS=mergeStatics();` (that line is load-bearing for the QA scripts — never
+  reword it). By then every const and let in the module exists.
+- **Hooks, not edits.** `G.on('tick',fn)`, `G.on('ride',fn)`, `G.on('key',fn)`, `'camera'`,
+  `'netPos'`, `'remote'`, `'chat'`, `'message'`, `'wallet'`, `'courseFinish'`, `'ribbons'`,
+  `'careAct'`, `'dlg'`, `'seasonRoll'`, `'weekRoll'`, `'grantHorse'`, `'foal'`, `'boot'`,
+  `'state'`, `'interval30'`, `'dailyEvt'` and the rest are each ONE inserted line in the
+  game; packages register against them. `G.run` returns the first truthy result, so a hook
+  can swallow a key or a message by returning `true`.
+- **Multipliers, not edits.** `G.addMul('xp'|'coin'|'gem'|'stamDrain'|…, fn)` adds a factor;
+  `addCoins`, `addXp3D` and the stamina code multiply everything registered. VIP and the
+  ranch level are already factors.
+- **Panels and dock buttons** come from `G.ui.panel({...})`; tabs on existing panels from
+  `G.ui.shopTab/questTab/lbTab/buildTab`; extra rows in existing renderers from the section
+  registries (`careSection`, `stableRow`, `eventCard`, `onlineSection`, …). Buttons carry
+  `data-fx="name:arg"` and dispatch to `G.ui.action('name', fn)`.
+- **Save fields** come from `G.save.ensure(fn)` / `G.save.ensureHorse(fn)` (cheap `||`
+  guards; they run on every read and write). `ensureCore` already provides the shared ones
+  (`pid`, `dust`, `inbox`, `btok`, `tokens`, `doors`, `flags`, `mig`, `friends{}`, `rider`,
+  `keymap`, `a11y`, `story{idx,prog,v}` and the per-horse `traits/variant/blood/hair/acc/fx/
+  sex/bondDay/trait/lineage`).
+- **Horses** are created only through `G.horse.grantHorse(s,breedKey,opts)` and
+  `G.horse.makeFoal(s,a,b,opts)`; whether a breed is offered in the shop, the market or the
+  Summoning Stall is `G.horse.breedAvailable(b,ctx)` (story horses are never offered).
+- **The rule about the boot pass:** everything the offline-decay / daily-gift pass reads
+  (the block that starts `const sec=Math.min(24*3600,…` just under the save load) must be
+  declared ABOVE it. A `const` declared further down is a ReferenceError at that point and
+  the engine fails to load for a returning player. The scaffold's own registries live above
+  `let save=null` for exactly this reason.
+- **Verify headlessly:** `tools/qa-features.cjs` boots `?qa=features`, waits for
+  `graphics.horseReady`, asserts `window.__features` (that is `G`), checks every package
+  installed and exercises the registries. Each package ships a `tools/qa-<pkg>.cjs` of the
+  same shape; run it with `QA_URL=http://127.0.0.1:8431 NODE_PATH=$(npm root -g) node
+  tools/qa-<pkg>.cjs` against `python3 tools/serve-preview.py`. Always also run
+  `node --check` on the extracted module: the loader swallows syntax errors silently.

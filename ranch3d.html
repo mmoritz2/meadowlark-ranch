@@ -119,7 +119,7 @@ body.posing #dock,body.posing #questTrack,body.posing #statusCard,body.posing #m
 #loadbar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffe6a8);border-radius:99px;transition:width .25s ease}
 #loadpct{margin-top:8px;font-family:var(--font);font-size:13px;font-weight:700;opacity:.7}
 /* ---- panels ---- */
-#eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel,#moneyPanel,#summonPanel,#buildPanel,#stablePanel,#questPanel,#profilePanel{position:fixed;top:calc(64px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:10;background:linear-gradient(180deg,#fffdf7,#fbf3e3);border:1px solid rgba(255,255,255,.8);border-radius:var(--r-l);padding:16px 16px 18px;display:none;flex-direction:column;gap:8px;max-height:min(74vh,760px);overflow:auto;width:min(470px,94vw);color:var(--ink);box-shadow:var(--sh-3),inset 0 1px 0 #fff;animation:panelIn .22s ease;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+#eventsPanel,#carePanel,#shopPanel,#onlinePanel,#lbPanel,#moneyPanel,#summonPanel,#buildPanel,#stablePanel,#questPanel,#profilePanel,.fpanel{position:fixed;top:calc(64px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:10;background:linear-gradient(180deg,#fffdf7,#fbf3e3);border:1px solid rgba(255,255,255,.8);border-radius:var(--r-l);padding:16px 16px 18px;display:none;flex-direction:column;gap:8px;max-height:min(74vh,760px);overflow:auto;width:min(470px,94vw);color:var(--ink);box-shadow:var(--sh-3),inset 0 1px 0 #fff;animation:panelIn .22s ease;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
 @keyframes panelIn{from{transform:translateX(-50%) translateY(-14px) scale(.985)}to{transform:translateX(-50%) translateY(0) scale(1)}}   /* transform only: an entrance must never leave a panel invisible if the timeline stalls */
 #eventsPanel::-webkit-scrollbar,#shopPanel::-webkit-scrollbar,#stablePanel::-webkit-scrollbar,#questPanel::-webkit-scrollbar,#lbPanel::-webkit-scrollbar,#carePanel::-webkit-scrollbar,#buildPanel::-webkit-scrollbar,#onlinePanel::-webkit-scrollbar{width:8px}
 #eventsPanel::-webkit-scrollbar-thumb,#shopPanel::-webkit-scrollbar-thumb,#stablePanel::-webkit-scrollbar-thumb,#questPanel::-webkit-scrollbar-thumb,#lbPanel::-webkit-scrollbar-thumb,#carePanel::-webkit-scrollbar-thumb,#buildPanel::-webkit-scrollbar-thumb,#onlinePanel::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:8px}
@@ -189,6 +189,7 @@ body.summoning #summonFx{display:block}
 .calDay.open .rw{color:#3f5f2c}
 .calDay.done{background:#e2efd6;border-color:#bfe0a4}
 .calDay.done .rw{color:#5b7a44}
+#dock .pip,#sysBtns .pip{display:inline-block;min-width:15px;height:15px;line-height:15px;border-radius:9px;background:#e05a3c;color:#fff;font-size:10px;font-weight:800;margin-left:4px;padding:0 3px;vertical-align:top}
 .lbTabs .pip{display:inline-block;min-width:15px;height:15px;line-height:15px;border-radius:9px;background:#e05a3c;color:#fff;font-size:10px;font-weight:800;margin-left:4px;padding:0 3px}
 .evrow.done{border-color:#bfe0a4;background:linear-gradient(180deg,#fff,#f4fbea)}
 .crow{display:flex;align-items:center;gap:8px;font-size:13px}
@@ -285,6 +286,7 @@ body.touch #stickZone{display:block}
   <span class="w" title="Gems"><i>💎</i><b id="gemEl">0</b></span>
   <span class="w" id="vipEl" title="VIP" style="display:none">👑<b id="vipDaysEl"></b></span>
   <span class="w" title="Silver Keys open tack chests"><i>🗝️</i><b id="keyEl">0</b></span>
+  <span class="w" id="dustEl" style="display:none"></span><span class="w" id="btokEl" style="display:none"></span><span class="w" id="tokEl" style="display:none"></span>
  </div>
  <div id="sysBtns">
   <button id="photoBtn" class="ico" title="Save a photo (P)">📷</button>
@@ -414,9 +416,11 @@ import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
+import {FEATURES} from './assets/features/index.js?v=feat-1';
 
 /* ================= save sync with the 2D game ================= */
 const SAVE_KEY='starRanchFable_v1';   // NOT renamed with the game: changing this orphans every existing save
+const BUILD='2026.09.11';
 /* Progress is per-browser, so a new visitor always starts fresh. This is for checking what
    that first run actually looks like on a machine that has already been played: open the
    game with ?newgame. It confirms first if there is anything to lose, then drops you back
@@ -431,6 +435,84 @@ if(location.search.includes('newgame')){
  }catch(e){}
 }
 let save=null;
+/* ===== Feature-module scaffold: the parts that must exist before the boot pass =============
+   Sixteen feature packages plug into this file through ONE context object, G (assembled in
+   installFeatures() just before the animation loop starts — see assets/features/index.js for
+   the contract). What lives up here is only what the boot pass below needs: the event bus,
+   the multiplier registry, the save-shape ensures and the shared tables. Nothing here reads
+   a const declared further down. */
+const HOOKS={};
+const G={
+ on(name,fn){(HOOKS[name]=HOOKS[name]||[]).push(fn);return fn;},
+ off(name,fn){const a=HOOKS[name];if(!a)return;const i=a.indexOf(fn);if(i>=0)a.splice(i,1);},
+ run(name,...args){const a=HOOKS[name];if(!a||!a.length)return undefined;let out;for(const f of a){try{const r=f(...args);if(r&&out===undefined)out=r;}catch(e){console.error('hook '+name,e);}}return out;},
+ installed:[],errors:[],
+};
+const MULS={};
+function addMul(name,fn){(MULS[name]=MULS[name]||[]).push(fn);return fn;}
+function mulOf(name,s,h,ctx){const a=MULS[name];if(!a)return 1;let m=1;for(const f of a){try{const v=f(s,h,ctx);if(typeof v==='number'&&isFinite(v))m*=v;}catch(e){}}return m;}
+const SAVE_ENSURES=[], HORSE_ENSURES=[];
+function runEnsures(s){if(!s)return s;for(const f of SAVE_ENSURES){try{f(s);}catch(e){console.error('ensure',e);}}return s;}
+const RIDER_DEF_SHIRT='#3d4a6e', RIDER_DEF_PANTS='#cfc6ae';
+function rand8(){return Math.random().toString(36).slice(2,10).toUpperCase().padEnd(8,'X');}
+function ensureCore(s){
+ if(!s)return s;
+ s.items=s.items||{}; s.stats=s.stats||{}; s.life=s.life||{since:Date.now()}; s.flags=s.flags||{}; s.mig=s.mig||{};
+ if(!s.pid)s.pid='MR-'+rand8();
+ if(s.dust==null)s.dust=0;
+ s.inbox=s.inbox||[];
+ if(s.btok==null)s.btok=s.breedVoucher?1:0;
+ if('breedVoucher' in s)delete s.breedVoucher;
+ s.tokens=s.tokens||{key:'',n:0};
+ s.doors=s.doors||{};
+ if(s.tackRoom){s.doors.tackroom=s.tackRoom;delete s.tackRoom;}
+ s.perks=s.perks||{}; s.mastery=s.mastery||{};
+ s.wardrobe=s.wardrobe||{owned:{},worn:{}};
+ s.codes=s.codes||{}; if(s.seenBuild==null)s.seenBuild='';
+ if(Array.isArray(s.friends)){const o={};for(const n of s.friends)if(n)o[n]=true;s.friends=o;}else s.friends=s.friends||{};
+ s.blocked=s.blocked||{};
+ s.rider=s.rider||{shirt:RIDER_DEF_SHIRT,pants:RIDER_DEF_PANTS,helmet:null,skin:null,hair:null};
+ s.keymap=s.keymap||{}; s.a11y=s.a11y||{textScale:1,cb:'none'};
+ s.story=s.story||{idx:0,prog:0}; if(s.story.idx==null)s.story.idx=0; if(s.story.prog==null)s.story.prog=0; if(!s.story.v)s.story.v=1;
+ return s;
+}
+SAVE_ENSURES.push(ensureCore);
+HORSE_ENSURES.push(function ensureHorseCore(h){
+ if(h.traits===undefined)h.traits=null; if(h.variant===undefined)h.variant=null;
+ if(!h.blood)h.blood={[h.breed||'bay']:100};
+ h.hair=h.hair||{mane:'natural',tail:'natural'}; h.acc=h.acc||{}; h.fx=h.fx||{};
+ if(!h.sex)h.sex=((h.id||0)%2)?'m':'f';
+ if(h.bondDay===undefined)h.bondDay=null; if(h.trait===undefined)h.trait=null;
+ h.lineage=h.lineage||{sire:null,dam:null,gen:0};
+});
+function grantGems(s,n){n=Math.round(n*mulOf('gem',s));s.gems=(s.gems||0)+n;return n;}
+/* Shared registries packages assign into (see the contract in assets/features/index.js). */
+const TRAITS={}, BREED_CEIL={}, HAIR_STYLES={mane:[],tail:[]}, QUEST_TYPES={}, COURSE_KINDS={}, SOURCE_RULES=[];
+const MAP_MARKERS=[], MINI_MARKERS=[], NET_SUBS=[];
+const KEYMAP={care:'KeyI',shop:'KeyO',events:'KeyU',stable:'KeyN',quests:'KeyJ',club:'KeyK',boards:'KeyL',chat:'Enter',pet:'KeyG',whistle:'KeyH',slide:'KeyX',wild:'KeyZ',firstPerson:'KeyT',emoteBar:'KeyY',kick:'Digit6',brush:'Digit7',guitar:'Digit8',sprint:'ShiftLeft',rotFine:'Shift+R/Q'};
+let KEYMAP_USER={};
+function keyOf(name){return KEYMAP_USER[name]||KEYMAP[name]||null;}
+/* Reward kinds. payReward(s,r) pays every key of r it knows; packages add kinds. */
+const REWARD_KINDS={};
+function rewardKind(k,pay,label){REWARD_KINDS[k]={pay,label:label||(v=>v+' '+k)};}
+rewardKind('c',(s,v)=>{s.coins+=v;s.stats=s.stats||{};s.stats.earned=(s.stats.earned||0)+v;logEarn(s,v);},v=>v+'🪙');
+rewardKind('g',(s,v)=>{grantGems(s,v);},v=>v+'💎');
+rewardKind('k',(s,v)=>{s.keys=(s.keys||0)+v;},v=>v+'🗝️');
+rewardKind('p',(s,v)=>{s.pass=s.pass||{pts:0};s.pass.pts+=v;},v=>v+'🎟️');
+rewardKind('sp',(s,v)=>{addSP(s,v,'reward');},v=>v+'⭐');
+rewardKind('xp',(s,v)=>{const h=s.horses[rideIdx];if(h)applyXp(s,h,v);},v=>'+'+v+' XP');
+rewardKind('sxp',(s,v)=>{const h=s.horses[rideIdx];if(h)for(const k in v)grantStatXp(s,h,k,v[k]);},v=>Object.keys(v).map(k=>'+'+v[k]+' '+k+' XP').join(' '));
+rewardKind('items',(s,v)=>{s.items=s.items||{};for(const k in v)s.items[k]=(s.items[k]||0)+v[k];},v=>Object.keys(v).map(k=>v[k]+' '+((typeof FOODS3!=='undefined'&&FOODS3[k])?FOODS3[k].emoji:k)).join(' '));
+rewardKind('gear',(s,v)=>{s.tack=s.tack||[];s.tack.push(genGear(v===true?undefined:v));},v=>(v===true?'':v+' ')+'tack');
+rewardKind('dust',(s,v)=>{s.dust=(s.dust||0)+v;},v=>v+'✨ dust');
+rewardKind('btok',(s,v)=>{s.btok=(s.btok||0)+v;},v=>v+' breeding token'+(v>1?'s':''));
+rewardKind('tok',(s,v)=>{s.tokens=s.tokens||{key:'',n:0};s.tokens.n=(s.tokens.n||0)+v;},v=>v+' season tokens');
+rewardKind('tickets',(s,v)=>{s.tickets=(s.tickets||0)+v;},v=>v+'🎫');
+function payReward(s,r){if(!s||!r)return;for(const k in r){const d=REWARD_KINDS[k];if(d&&r[k])try{d.pay(s,r[k],r);}catch(e){console.error('reward '+k,e);}}}
+function rewardLabel(r){if(!r)return '';return Object.keys(r).filter(k=>REWARD_KINDS[k]&&r[k]).map(k=>{try{return REWARD_KINDS[k].label(r[k],r);}catch(e){return '';}}).filter(Boolean).join(' ');}
+function isoWeekKey(t){const d=new Date(t||Date.now());const day=(d.getUTCDay()+6)%7;return new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()-day)).toISOString().slice(0,10);}   // Monday 00:00 UTC
+function dateKey(t){return new Date(t||Date.now()).toDateString();}
+const BOOT_INFO={rolled:null,wkClosed:null};
 /* Five stats, each levelled on its own. Speed, stamina and jump were always there; acceleration
    and agility are new, and for the first time all five change how the horse rides: speed sets
    the gallop, acceleration how fast you get there, agility how tight you turn, jump how high.
@@ -543,6 +625,8 @@ function seasonRoll(s){
  const had={key:s.pass.key,pts:s.pass.pts||0,tier:passTier(s.pass.pts)};
  s.seasonLog=(s.seasonLog||[]).concat([had]).slice(-8);
  s.pass={pts:0,key:k,claims:{},gold:{},prev:had};
+ s.tokens={key:k,n:0};                              // season tokens do not carry over
+ G.run('seasonRoll',s,had.key,k);
  return had;
 }
 /* One claim path, used by the flat panel and the headset menu alike, so the two cannot
@@ -554,11 +638,10 @@ function passClaim(sv,i,gold){
  if(gold&&!isVIP(sv))return null;
  const r=(gold?PASS_GOLD:PASS_FREE)[i]; if(!r)return null;
  done[i]=1;
- if(r.c)sv.coins+=r.c;
- if(r.g)sv.gems+=r.g;
- if(r.k)sv.keys=(sv.keys||0)+r.k;
+ payReward(sv,r);
  if(r.tack)sv.goldTack=true;
  if(r.tint){sv.seasonTack=sv.seasonTack||{};sv.seasonTack[seasonNow().def.id]=1;}
+ G.run('passClaim',sv,r,i,gold);
  return r;
 }
 /* ---- the end of the week --------------------------------------------------------------
@@ -606,7 +689,7 @@ function calClaim(sv,i){
  const r=CALENDAR[i]; if(!r)return null;
  c.claimed[i]=1;
  if(r.c)sv.coins+=r.c;
- if(r.g)sv.gems+=r.g;
+ if(r.g)grantGems(sv,r.g);
  if(r.k)sv.keys=(sv.keys||0)+r.k;
  if(r.gear){sv.tack=sv.tack||[];sv.tack.push(genGear(r.gear));}
  return r;
@@ -637,6 +720,7 @@ function weekRoll(s){
  s.wk=s.wk||{week:wk,sp:0,photos:0,events:0,days:0,lastDay:''};
  if(s.wk.week===wk)return null;
  const closed=Object.assign({},s.wk);
+ G.run('weekRoll',s);
  s.wkLast=Object.assign({},closed,{claimed:false});
  s.wk={week:wk,sp:0,photos:0,events:0,days:0,lastDay:''};
  return closed;
@@ -738,7 +822,8 @@ const TACK_ROOM={x:-24,z:-26};
 const STAT_KEYS=['speed','stamina','jump','accel','agility'];
 const STAT_LBL={speed:'💨 Speed',stamina:'🫀 Stamina',jump:'⤴️ Jump',accel:'🚀 Acceleration',agility:'🌀 Agility'};
 function statCap(h){return Math.min(10,4+(h.level||1));}                       // the horse's level gates every stat: a starter has room to train, a level-six horse can max out
-function statCeil(h){const b=(typeof BREEDS3!=='undefined')&&BREEDS3.find(x=>x[0]===h.breed);const base=b?TIER_BASE[b[2]]:4;return Math.min(10,base+5);}
+function statCeil(h,k){const bc=BREED_CEIL[h.breed];if(bc!=null){if(typeof bc==='number')return bc;if(k&&typeof bc[k]==='number')return bc[k];if(!k&&typeof bc.all==='number')return bc.all;}   // per-breed ceilings, or the tier formula
+ const b=(typeof BREEDS3!=='undefined')&&BREEDS3.find(x=>x[0]===h.breed);const base=b?TIER_BASE[b[2]]:4;return Math.min(10,base+5);}
 function statNeed(v){return 20+10*v;}                                          // stat XP to go from v to v+1
 function ensureStats(h){
  h.stats=h.stats||{};
@@ -746,7 +831,19 @@ function ensureStats(h){
  h.sxp=h.sxp||{}; for(const k of STAT_KEYS)h.sxp[k]=h.sxp[k]||0;
  h.gear=h.gear||{};
  if(!h.pers)h.pers=PERS_KEYS[((h.id||0)*7+3)%PERS_KEYS.length];   // one temperament for life, the same on every device
+ for(const f of HORSE_ENSURES){try{f(h);}catch(e){}}
  return h;
+}
+/* Stat XP into one stat, capped by level and breed. The one loop that careAct, drills,
+   supplements and rewards all share. Returns {up,capped,cap,v}. */
+function grantStatXp(s,h,k,xp,why){
+ ensureStats(h);
+ const cap=Math.min(statCap(h),statCeil(h,k));
+ if(h.stats[k]>=cap)return {up:false,capped:true,cap,v:h.stats[k]};
+ h.sxp[k]=(h.sxp[k]||0)+xp; let up=0;
+ while(h.stats[k]<cap&&h.sxp[k]>=statNeed(h.stats[k])){h.sxp[k]-=statNeed(h.stats[k]);h.stats[k]++;up++;}
+ if(up)addSP(s,h.stats[k],why||'stat');
+ return {up:up>0,capped:false,cap,v:h.stats[k]};
 }
 /* Tack as gear. A horse wears four pieces: saddle, saddle pad, bridle, horseshoes. Each piece
    has a rarity, and a rarity means up to three stat bonuses; the bonuses sit on top of the
@@ -836,7 +933,7 @@ if(!save||!save.horses||!save.horses.length){
 }
 const myHorses=save.horses;
 _ranchLvlCache=ranchLevel(save);   // the real level, so being away decays at the ranch's own rate
-if(myHorses.some(h=>!h.sxp||!h.gear)||!save.tack||save.keys==null){myHorses.forEach(ensureStats);save.tack=save.tack||[];if(save.keys==null)save.keys=1;try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}   // older saves: five stats, a tack locker and a welcome key
+{myHorses.forEach(ensureStats);runEnsures(save);save.tack=save.tack||[];if(save.keys==null)save.keys=1;try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}   // older saves: five stats, a tack locker, a welcome key, and every shared field the feature modules expect (ensureCore)
 tackInv=save.tack||[];
 let rideIdx=Math.max(0,myHorses.findIndex(h=>h.id===save.ridingHorseId));
 // the 3D world now owns the ranch: needs decay (even while away) & the daily gift
@@ -847,8 +944,8 @@ const DECAY3={hunger:100/(8*3600),thirst:100/(6*3600),clean:100/(12*3600),happy:
   for(const h of save.horses)
    for(const k in DECAY3)h.needs[k]=Math.max(15,h.needs[k]-DECAY3[k]*sec*ranchMul('decay')*persDecay(h));
  }
- const rolled=seasonRoll(save);
- const wkClosed=weekRoll(save);
+ const rolled=seasonRoll(save); BOOT_INFO.rolled=rolled;
+ const wkClosed=weekRoll(save); BOOT_INFO.wkClosed=wkClosed;
  if(wkClosed)setTimeout(()=>{try{toast('📅 Your week is in — collect your wages in the 🏅 panel.');}catch(e){}},3200);
  VIPON=isVIP(save);
  boardTick(save);                                   // the stalls earned while you were gone
@@ -890,6 +987,7 @@ setInterval(()=>{
   s.stats.dist=(s.stats.dist||0)+Math.round(distAcc);
   distAcc=0;
   s.lastSeen=Date.now();
+  runEnsures(s); G.run('interval30',s,Date.now());
   localStorage.setItem(SAVE_KEY,JSON.stringify(s));
  }catch(e){}
  if(grewName){
@@ -907,13 +1005,18 @@ function syncSave(fn){
  if(!save)return;
  try{
   const s=JSON.parse(localStorage.getItem(SAVE_KEY));
+  runEnsures(s);
   fn(s);
   localStorage.setItem(SAVE_KEY,JSON.stringify(s));
  }catch(e){}
 }
-function addCoins(n){if(VIPON)n=Math.round(n*VIP_COIN);coins+=n;$('coinEl').textContent=coins;syncSave(s=>{s.coins+=n;s.stats=s.stats||{};s.stats.earned=(s.stats.earned||0)+n;logEarn(s,n);});}
+function addCoins(n){n=Math.round(n*mulOf('coin'));coins+=n;$('coinEl').textContent=coins;syncSave(s=>{s.coins+=n;s.stats=s.stats||{};s.stats.earned=(s.stats.earned||0)+n;logEarn(s,n);});}
 function statBump(k,n){syncSave(s=>{s.stats=s.stats||{};s.stats[k]=(s.stats[k]||0)+n;});}
-function addGems(n){gems+=n;$('gemEl').textContent=gems;syncSave(s=>{s.gems+=n;});}
+function addGems(n){let got=n;syncSave(s=>{got=grantGems(s,n);});gems+=got;$('gemEl').textContent=gems;}
+function addKeys(n){syncSave(s=>{s.keys=(s.keys||0)+n;});refreshWallet();}
+addMul('coin',()=>VIPON?VIP_COIN:1);                       // VIP and the ranch level are multiplier factors now; packages add their own with G.addMul
+addMul('xp',()=>ranchMul('xp'));
+addMul('xp',(s,h)=>(s&&h&&masteryOf(s,h.breed)>=10)?1.1:1);
 const toastQueue=[];
 let activeToast=null;
 function showNextToast(){
@@ -957,32 +1060,44 @@ const sThud=()=>beep(140,60,0.16,'square',0.12);
 const sHoof=alt=>beep(alt?95:75,alt?70:55,0.05,'triangle',0.05);
 const sNeigh=()=>{beep(700,250,0.35,'sawtooth',0.05);beep(900,300,0.3,'sawtooth',0.035,0.05);};
 $('muteBtn').onclick=()=>{muted=!muted;$('muteBtn').textContent=muted?'🔇':'🔊';syncSave(s=>{s.muted=muted;});};
-function addXp3D(n){
- n=Math.round(n*ranchMul('xp'));
- let leveled=false,lvl=0,grew=false;
+/* The level loop, on its own so rewards and packages can level any horse in a save. */
+function applyXp(s,h,n){
+ const r={leveled:false,levels:0,lvl:h.level||1,grew:false,n};
+ h.level=h.level||1; h.xp=(h.xp||0)+n;
+ while(h.xp>=50+h.level*50){
+  h.xp-=50+h.level*50; h.level++; r.leveled=true; r.levels++; r.lvl=h.level;
+  addSP(s,2*h.level,'level');
+  ensureStats(h);
+  const st=STAT_KEYS[Math.floor(Math.random()*STAT_KEYS.length)];
+  h.stats[st]=Math.min(10,h.stats[st]+1);
+ }
+ if(h.foal&&h.level>=3){h.foal=false;r.grew=true;s.stats=s.stats||{};s.stats.grown=(s.stats.grown||0)+1;}
+ r.xp=h.xp;
+ return r;
+}
+/* XP for the horse being ridden. Every registered 'xp' multiplier applies (ranch level,
+   breed mastery, VIP, whatever a package adds). trainXp used to skip all of them. */
+function addXp3D(n,opts){
+ opts=opts||{};
+ let res=null,name='';
  syncSave(s=>{
   const h=s.horses[rideIdx];
   if(!h)return;
-  h.xp=(h.xp||0)+Math.round(n*(masteryOf(s,h.breed)>=10?1.1:1));
-  while(h.xp>=50+h.level*50){
-   h.xp-=50+h.level*50;
-   h.level++;
-   leveled=true;lvl=h.level;
-   addSP(s,2*h.level,'level');
-   ensureStats(h);
-   const st=STAT_KEYS[Math.floor(Math.random()*STAT_KEYS.length)];
-   h.stats[st]=Math.min(10,h.stats[st]+1);
-  }
-  if(h.foal&&h.level>=3){h.foal=false;grew=true;s.stats=s.stats||{};s.stats.grown=(s.stats.grown||0)+1;}
+  name=h.name;
+  res=applyXp(s,h,Math.round(n*mulOf('xp',s,h)));
+  if(res.leveled&&opts.coinsPerLevel){const c=opts.coinsPerLevel*res.levels;s.coins+=c;s.stats=s.stats||{};s.stats.earned=(s.stats.earned||0)+c;logEarn(s,c);}
  });
- if(leveled){
-  myHorses[rideIdx].level=lvl;
+ if(!res)return;
+ const local=myHorses[rideIdx];
+ if(local){local.level=res.lvl;local.xp=res.xp;}
+ if(res.leveled){
+  if(opts.coinsPerLevel)refreshWallet();
   sGem();
-  toast('🎉 '+myHorses[rideIdx].name+' trained up to level '+lvl+'!');
+  toast('🎉 '+name+' trained up to level '+res.lvl+'!'+(opts.coinsPerLevel?' (+'+(opts.coinsPerLevel*res.levels)+'🪙)':''));
  }
- if(grew){
+ if(res.grew){
   sNeigh();
-  toast('🍼→🐴 '+myHorses[rideIdx].name+' grew into a beautiful horse!');
+  toast('🍼→🐴 '+name+' grew into a beautiful horse!');
   reloadHorses();
  }
 }
@@ -1355,6 +1470,8 @@ vrRig.add(vrDot);
 const vrRayc=new THREE.Raycaster();
 const _vrM4=new THREE.Matrix4();
 let vrPage='status',vrShopTab='horses',vrQuestTab='daily',vrBtns=[];
+let TABS=[['status','Status'],['map','Map'],['shop','Shop'],['stable','Stable'],['quests','Quests'],['events','Events'],['pass','Pass']];   // feature panels append their own (G.ui.panel vr:{…})
+const VR_BUILDERS={};
 const vrScroll={};                       // per-page scroll offset, in canvas pixels
 let vrClip=null,vrContentH=0,vrListTop=0,vrListH=0;
 const VRM_ROW=74,VRM_GAP=8,VRM_STEP=82;
@@ -1518,11 +1635,12 @@ function drawVRMenu(){
  c.textAlign='right';
  c.fillText('🪙 '+vrTxt('coinEl','0')+'   💎 '+vrTxt('gemEl','0'),VRM_W-36,48);
 
- const TABS=[['status','Status'],['map','Map'],['shop','Shop'],['stable','Stable'],['quests','Quests'],['events','Events'],['pass','Pass']];
  /* Seven tabs plus Leave will not fit at the old 138px pitch on a 1024-wide panel, so the
-    row is tightened rather than letting Leave run off the edge. */
- TABS.forEach(([k,lbl],i)=>vrButton(c,'tab:'+k,lbl,18+i*125,80,118,50,vrPage===k?'dark':'',21));
- vrButton(c,'exit','Leave',18+7*125,80,118,50,'',21);
+    row is tightened rather than letting Leave run off the edge — and tightened again for
+    every tab a feature package adds. */
+ const pitch=Math.min(125,Math.floor((VRM_W-36)/(TABS.length+1)));
+ TABS.forEach(([k,lbl],i)=>vrButton(c,'tab:'+k,lbl,18+i*pitch,80,pitch-7,50,vrPage===k?'dark':'',21));
+ vrButton(c,'exit','Leave',18+TABS.length*pitch,80,pitch-7,50,'',21);
 
  const hasSub=(vrPage==='shop'||vrPage==='quests');
  if(vrPage==='shop'){
@@ -1595,6 +1713,7 @@ function drawVRList(c){
   else if(vrPage==='quests')note=buildVRQuests(rows,sv);
   else if(vrPage==='events')note=buildVREvents(rows,sv);
   else if(vrPage==='pass')note=buildVRPass(rows,sv);
+  else if(VR_BUILDERS[vrPage])note=VR_BUILDERS[vrPage](rows,sv)||'';
  }catch(e){
   rows.length=0;
   note='Could not read your save just now — try again in a moment.';
@@ -1697,7 +1816,7 @@ function buildVRShop(rows,sv){
   const ok=elig.map(e=>e.i);
   if(vrMateA===null||!ok.includes(vrMateA))vrMateA=ok[0];
   if(vrMateB===null||!ok.includes(vrMateB)||vrMateB===vrMateA)vrMateB=ok.find(i=>i!==vrMateA);
-  const free=!!sv.breedVoucher;
+  const free=(sv.btok||0)>0;
   const afford=free||(sv.coins||0)>=400;
   const parent=(idx,slot,label)=>{
    const h=sv.horses[idx];
@@ -1903,6 +2022,7 @@ function vrMenuClick(id){
    try{hidePanels();}catch(e){}
    return;
   }
+  else uiDispatch(id);                     // a feature package's own action (G.ui.action)
  }catch(e){
   try{toast('That did not work — try it on the flat screen.');}catch(e2){}
  }
@@ -4626,7 +4746,8 @@ function hairColourFor(colors,coat,tailCol){
  const mane=new THREE.Color(colors?.mane||'#332214');
  return {mane,tail:tailCol?new THREE.Color(tailCol):mane.clone()};
 }
-function hairColour(){
+function hairColour(){hairColourInner();G.run('coat',myHorses[rideIdx]);}   // the 'coat' hook fires after every recolour
+function hairColourInner(){
  const h=myHorses[rideIdx]; if(!h)return;
  if(RIG.profile?.artistBreed){configureArtistCustomization(RIG,h);return;}
  const hc=hairColourFor(h.colors,h.coat,h.tailCol);
@@ -5206,11 +5327,12 @@ function tintWings(type){   // player's rigged mount
  if(!player.parts||!player.parts.wings) return;
  player.parts.wings.forEach(w=>tintWingMats(w,type));
 }
-function applyCoat(){
+function applyCoat(){applyCoatInner();G.run('coat',myHorses[rideIdx]);}
+function applyCoatInner(){
  const selected=myHorses[rideIdx]?.breed||'bay';if(RIG.requestedBreed!==selected)requestPlayerBreed(selected);
  if(!RIG.ready||!RIG.skin||!RIG.baseMat) return;
  const h=myHorses[rideIdx];
- if(RIG.profile?.hero){hairColour();return;}
+ if(RIG.profile?.hero){hairColourInner();return;}
  if(RIG.profile?.artistBreed){
   const want=!!h?.dragon;if(RIG.drg){RIG.drg.parent?.remove(RIG.drg);RIG.drg.geometry.dispose();RIG.drg.material.dispose();RIG.drg=null;}
   if(want)RIG.drg=buildDragonBody(RIG.skin,RIG.bones,player.mesh,DRAGON_TINT[h.coat]||DRAGON_TINT._);
@@ -5247,7 +5369,7 @@ function applyCoat(){
     u3.uAxis.value.set(B.L,B.H,B.W); u3.uFlip.value=B.headHi;}}}
  if(RIG.coatMat.userData.shader){RIG.coatMat.userData.shader.uniforms.uTail.value.copy(RIG.coatMat.userData.tail);RIG.coatMat.userData.shader.uniforms.uTailBlend.value=RIG.coatMat.userData.tailBlend;}
  RIG.skin.material=RIG.coatMat;
- hairColour();
+ hairColourInner();
 }
 /* Load the selected breed asynchronously. Sequence IDs prevent a slow prior selection
    from replacing the horse currently selected in the stable. */
@@ -5539,6 +5661,7 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
  if(!TACK.bitL){TACK.bitL=new THREE.Object3D();TACK.bitL.position.set(0.13,1.34,1.0);
   TACK.bitR=new THREE.Object3D();TACK.bitR.position.set(-0.13,1.34,1.0);}   // rein anchors at the gen horse's mouth corners
  if(TACK.bitL.parent!==player.mesh){player.mesh.add(TACK.bitL);player.mesh.add(TACK.bitR);}
+ G.run('attachTack',myHorses[rideIdx]);
 }
 /* ===== The seat ==============================================================
    Everything the instructor shouts, in one place: heels down, leg on the girth, hands low
@@ -6123,7 +6246,7 @@ function updateShoes(dt,t){
     s.coins+=80;
     s.stats=s.stats||{};
     s.stats.shoesFound=(s.stats.shoesFound||0)+1;
-    if(s.shoes.got.length>=SHOE_N){s.gems+=6;all=true;}
+    if(s.shoes.got.length>=SHOE_N){grantGems(s,6);all=true;}
    });
    refreshWallet();sCoin();
    const left=shoes.filter(q=>!q.got).length;
@@ -6521,23 +6644,24 @@ for(let i=0;i<18;i++){
    under the pines. Picking one puts it in the basket rather than paying coins, so the way to
    train a stat is to ride to where its food grows. Each patch respawns a while after. */
 const forage=[];
-{
- const mk={
-  lettuce:()=>{const g=new THREE.Group();blob(0.24,0.17,0.24,'#7cc26a',0,0.15,0,g);blob(0.16,0.14,0.16,'#a9dc8a',0,0.22,0,g);return g;},
-  pumpkin:()=>{const g=new THREE.Group();blob(0.3,0.21,0.3,'#e8862a',0,0.2,0,g);blob(0.3,0.21,0.3,'#d4741f',0.02,0.19,0.02,g).scale.set(0.98,1,0.98);tube(0.03,0.04,0.12,'#5a7a3a',0,0.44,0,g);return g;},
-  orange:()=>{const g=new THREE.Group();blob(0.34,0.3,0.34,'#3f7d3a',0,0.3,0,g);[[0.16,0.42,0.1],[-0.14,0.36,0.14],[0.02,0.5,-0.14]].forEach(q=>blob(0.09,0.09,0.09,'#f5931e',q[0],q[1],q[2],g));return g;},
-  truffle:()=>{const g=new THREE.Group();blob(0.17,0.12,0.16,'#4a3320',0,0.1,0,g);blob(0.12,0.09,0.13,'#5e4630',0.06,0.13,0.03,g);return g;},
- };
- const spots={lettuce:[0,0,25,150,10],pumpkin:[215,-105,6,70,8],orange:[-220,130,12,90,7],truffle:[-30,-58,4,26,6]};
- for(const item in spots){
-  const [cx,cz,r0,r1,count]=spots[item];
-  for(let i=0;i<count;i++){
-   const g=mk[item](); g.traverse(o=>{if(o.isMesh)o.castShadow=true;});
-   const f={g,t:0,item,cx,cz,r0,r1};
-   forageRespawn(f); scene.add(g); forage.push(f);
-  }
+const FORAGE_MK={
+ lettuce:()=>{const g=new THREE.Group();blob(0.24,0.17,0.24,'#7cc26a',0,0.15,0,g);blob(0.16,0.14,0.16,'#a9dc8a',0,0.22,0,g);return g;},
+ pumpkin:()=>{const g=new THREE.Group();blob(0.3,0.21,0.3,'#e8862a',0,0.2,0,g);blob(0.3,0.21,0.3,'#d4741f',0.02,0.19,0.02,g).scale.set(0.98,1,0.98);tube(0.03,0.04,0.12,'#5a7a3a',0,0.44,0,g);return g;},
+ orange:()=>{const g=new THREE.Group();blob(0.34,0.3,0.34,'#3f7d3a',0,0.3,0,g);[[0.16,0.42,0.1],[-0.14,0.36,0.14],[0.02,0.5,-0.14]].forEach(q=>blob(0.09,0.09,0.09,'#f5931e',q[0],q[1],q[2],g));return g;},
+ truffle:()=>{const g=new THREE.Group();blob(0.17,0.12,0.16,'#4a3320',0,0.1,0,g);blob(0.12,0.09,0.13,'#5e4630',0.06,0.13,0.03,g);return g;},
+};
+const FORAGE_SPOTS={lettuce:[0,0,25,150,10],pumpkin:[215,-105,6,70,8],orange:[-220,130,12,90,7],truffle:[-30,-58,4,26,6]};   // [cx,cz,rMin,rMax,count]
+function spawnForage(item){
+ const box=FORAGE_SPOTS[item], mk=FORAGE_MK[item]; if(!box||!mk)return;
+ const [cx,cz,r0,r1,count]=box;
+ for(let i=0;i<count;i++){
+  const g=mk(); g.traverse(o=>{if(o.isMesh)o.castShadow=true;});
+  const f={g,t:0,item,cx,cz,r0,r1};
+  forageRespawn(f); scene.add(g); forage.push(f);
  }
 }
+for(const item in FORAGE_SPOTS)spawnForage(item);
+function addForageSpot(item,box,mk){if(mk)FORAGE_MK[item]=mk;FORAGE_SPOTS[item]=box;spawnForage(item);}
 function forageRespawn(f){
  for(let k=0;k<20;k++){
   const a=Math.random()*Math.PI*2,rr=f.r0+Math.random()*(f.r1-f.r0);
@@ -7321,7 +7445,7 @@ const horseScale=h=>{
    every seat in the game (player, club riders, NPCs) keeps its numbers. */
 const RIDER_MESH={geo:null,mat:null,pending:[],riders:[]};
 const RIDER_FIT={s:0.74, dz:-0.10, spread:0.16, hip:[0,-0.18,-0.30], handL:[-0.07,0.17,0.42], handR:[0.07,0.17,0.42]};   // mesh units -> seat: scale, seat shift, and where her hip and hands are in the mesh
-const RIDER_DEF_SHIRT='#3d4a6e', RIDER_DEF_PANTS='#cfc6ae';
+/* RIDER_DEF_SHIRT / RIDER_DEF_PANTS moved up beside SAVE_KEY: ensureCore reads them at boot. */
 function riderRefit(){for(const R of RIDER_MESH.riders)R._fit();}
 new GLTFLoader().load('assets/models/rider_seat_textured.glb',g=>{
  let mesh=null; g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});
@@ -7797,6 +7921,7 @@ function rebuildAll(){
   herd.push({parts,idx:i,pos:new THREE.Vector3(ax,0,az),heading:Math.random()*6,tx:ax,tz:az,rest:Math.random()*4,phase:Math.random()*6,graze:0,earT:1+Math.random()*4,earA:0});
   n++;
  }
+ G.run('rebuild');
 }
 const sel=$('horseSel');
 myHorses.forEach((h,i)=>{
@@ -7885,7 +8010,7 @@ function takePhoto(){
    sv.pass=sv.pass||{pts:0};
    sv.pass.pts+=40;
    sv.coins+=120;
-   sv.gems+=1;
+   grantGems(sv,1);
   });
   refreshWallet();
   sGem();
@@ -7930,6 +8055,8 @@ addEventListener('keydown',e=>{
  if(/^Digit[1-5]$/.test(e.code||'')&&!e.repeat&&!freeCam&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){horseEmote(['rear','bow','liedown','nuzzle','toss'][+e.code[5]-1]);}
  if(build.type||build.remove){ if(e.code==='Escape'){endBuild();return;} if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} if(e.code==='KeyQ'){build.rot-=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} }
  if(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='SELECT'))return;
+ if(G.run('key',e))return;                                  // a package swallowed the key
+ if(!e.repeat&&!freeCam&&PANEL_HOTKEYS[e.code]){PANEL_HOTKEYS[e.code](e);e.preventDefault();return;}
  keys[e.code]=true;
  if(['Space','ArrowUp','ArrowDown'].includes(e.code))e.preventDefault();
  if(e.code==='KeyE'&&nearNPC)openDlg(); else if(e.code==='KeyE'&&nearThing)useThing();
@@ -7954,7 +8081,7 @@ addEventListener('keydown',e=>{
  if(e.code==='KeyR')startTrick('spin');
  if(e.code==='KeyV')startTrick('flip');
 });
-addEventListener('keyup',e=>{keys[e.code]=false;});
+addEventListener('keyup',e=>{keys[e.code]=false;G.run('keyup',e);});
 // turnA/goA are the analog VR thumbstick (-1..1 steer, 0..1 throttle); the booleans are
 // what the keyboard and the on-screen buttons set, and what most of the game reads.
 const touch={left:false,right:false,go:false,gal:false,jump:false,turnA:0,goA:0,brake:false,analog:false};
@@ -8116,8 +8243,10 @@ const arrow=new THREE.Mesh(new THREE.ConeGeometry(0.28,0.65,8),new THREE.MeshBas
 arrow.rotation.x=Math.PI;
 arrow.visible=false;
 scene.add(arrow);
+function eventPar(ev){return ev.par||(ev.n?ev.n*9:0)||40;}
 function startCourse(ev){
  cancelCourse();
+ if(ev.kind&&COURSE_KINDS[ev.kind]){COURSE_KINDS[ev.kind](ev);return;}   // a package's own course kind (show, gauntlet, pvp …)
  if(ev.dressage){startDressage(ev);return;}
  player.stam=1; player.blown=false; player.boostT=0;
  const jumps3=[];
@@ -8173,6 +8302,7 @@ function startCourse(ev){
  $('courseHud').style.display='flex';
  $('courseHudTxt').textContent='🏆 '+ev.name+' — get ready!';
  if(net.client&&net.client.connected)netSendChat('🏁 started '+ev.name+' — join from 🏆 Events and race me!');
+ G.run('courseStart',course);
 }
 function cancelCourse(){
  if(course&&course.items){for(const it of course.items)scene.remove(it.m);}
@@ -8222,10 +8352,13 @@ function weeklyFeatured(){
  return pick(jumps,h+1,2).concat(pick(races,h+7,2));
 }
 const WEEK_TIERS=[[4,{k:1,c:200,g:2}],[8,{k:2,g:4}],[12,{g:6,gear:'Rare'}],[16,{g:10,k:2,gear:'Epic'}]];
-function awardRibbons(ev,t,faults){
- const par=ev.par||ev.n*9||40;
+function awardRibbons(ev,t,faults,extra){
+ const par=eventPar(ev);
  const stars=t<par?3:t<par*1.4?2:1;
- const rib=1+(stars>=2?1:0)+(stars>=3?1:0)+((faults||0)===0?1:0);
+ const RB0={ev,t,faults:faults||0,stars,rib:1+(stars>=2?1:0)+(stars>=3?1:0)+((faults||0)===0?1:0),acc:0,lineOff:0,refusals:0};
+ Object.assign(RB0,extra||{});
+ G.run('ribbons',RB0);                                  // packages may add or take a ribbon (gold ribbons, bond ribbons)
+ const rib=Math.max(0,Math.min(6,Math.round(RB0.rib)));
  let msg='',featured=false,newWeekly=0;
  syncSave(s=>{
   ensureWeek(s);
@@ -8268,6 +8401,7 @@ function startDressage(ev){
  $('courseHud').style.display='flex'; $('courseHudTxt').textContent='🎽 '+ev.name+' — '+figs[0].text;
  player.stam=1; player.blown=false; player.boostT=0;
  toast('🎽 '+ev.name+': '+figs.length+' figures. Ctrl walks, Shift canters.');
+ G.run('courseStart',course);
 }
 function tickDressage(dt){
  const c=course, f=c.figs[c.fi]; if(!f||c.done)return;
@@ -8302,6 +8436,7 @@ function finishDressage(){
  const par=ev.par||60, tEq=par*(pct>=0.9?0.5:pct>=0.75?0.9:pct>=0.6?1.2:1.6);
  const RB=awardRibbons(ev,tEq,pct>=0.75?0:1);
  const pay=Math.round(ev.reward*Math.max(0.3,pct)*(RB.featured?1.5:1));
+ G.run('courseFinish',{c,ev,stars:pct>=0.9?3:pct>=0.75?2:1,RB,pay,pct,dressage:true});
  addCoins(pay); addXp3D(Math.round(ev.reward/8)); passAdd(50); weekBump('events',1);
  const dgem=(first&&pct>=0.6?3:0)+(pct>=0.75?2:1);
  addGems(dgem);
@@ -8321,6 +8456,7 @@ function finishCourse(){
  try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));first=!!(s&&!(s.trophies&&s.trophies[ev.id]));}catch(e){}
  const RB=awardRibbons(ev,c.t,c.faults||0);
  const pay=RB.featured?Math.round(ev.reward*1.5):ev.reward;
+ G.run('courseFinish',{c,ev,stars:stars.length,RB,pay,dressage:false});
  addCoins(pay);
  addXp3D(Math.round(ev.reward/8));
  passAdd(50);
@@ -8525,12 +8661,9 @@ function endDrill(done){
  syncSave(sv=>{
   const h=sv.horses[rideIdx]; if(!h)return;
   ensureStats(h);
-  const cap=Math.min(statCap(h),statCeil(h));
-  h.sxp[st]=(h.sxp[st]||0)+xp;
-  let up=false;
-  while(h.stats[st]<cap&&h.sxp[st]>=statNeed(h.stats[st])){h.sxp[st]-=statNeed(h.stats[st]);h.stats[st]++;up=true;}
-  if(h.stats[st]>=cap)h.sxp[st]=0;
-  if(up){lvl=h.stats[st];addSP(sv,h.stats[st],'drill');}
+  const R=grantStatXp(sv,h,st,xp,'drill');
+  if(h.stats[st]>=R.cap)h.sxp[st]=0;
+  if(R.up)lvl=h.stats[st];
   sv.coins+=cleared*8;
   sv.stats=sv.stats||{}; sv.stats.drills=(sv.stats.drills||0)+(done?1:0);
   logEarn(sv,cleared*8);
@@ -8570,6 +8703,7 @@ function openEvents(){
  const sv=freshSave()||{}; syncSave(x=>ensureWeek(x)); const sw=freshSave(); const wk=sw.weekly, rb=sw.ribbons||{}, feat=weeklyFeatured(), featIds=new Set(feat.map(f=>f.id));
  const wkRib=Object.values(wk.rib).reduce((a,b)=>a+b,0);
  let html='<b style="font-size:16px">🏆 Basin Championship — ride the course before the clock!</b>';
+ html+=sect('eventCard',sw,myHorses[rideIdx]);
  html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">📅 This week · '+wkRib+'/16 ribbons · ⭐ '+((sw.sp&&sw.sp.pts)||0)+' Star Points</b>'
   +'<span style="width:100%;font-size:11px;color:#8c7a63">Four featured events, half as much again in coins. Ribbons on them fill the tiers; everything resets Monday.</span>'
   +'<span style="width:100%;display:flex;gap:5px;flex-wrap:wrap">'+WEEK_TIERS.map((t,i)=>{const cl=wk.claimed[i]; const rw=(t[1].k?t[1].k+'🗝️ ':'')+(t[1].c?t[1].c+'🪙 ':'')+(t[1].g?t[1].g+'💎 ':'')+(t[1].gear?t[1].gear+' tack':'');
@@ -8592,7 +8726,7 @@ function openEvents(){
     }).join('')+'</span></div>';}
  html+=EVENTS3.map((ev,i)=>{
   const won=tr[ev.id],ok=lvl>=ev.lvl, isF=featIds.has(ev.id), r=rb[ev.id]||0, wr=wk.rib[ev.id]||0;
-  return '<div class="evrow'+(isF?' done':'')+'">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b>'+(isF?' <span class="badge">FEATURED</span>':'')+'<span>'+ev.town+' · '+(ev.dressage?'🎽 dressage · '+DRESSAGE_TESTS[ev.id].length+' figures'+(sw.bestScore&&sw.bestScore[ev.id]?' · best '+Math.round(sw.bestScore[ev.id]*100)+'%':''):ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps')+' · Lv '+ev.lvl+(r?' · '+'🎀'.repeat(r):'')+(isF&&wr<4?' · '+wr+'/4 this week':'')+'</span>'+
+  return '<div class="evrow'+(isF?' done':'')+'">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b>'+(isF?' <span class="badge">FEATURED</span>':'')+'<span>'+ev.town+' · '+(ev.dressage?'🎽 dressage · '+DRESSAGE_TESTS[ev.id].length+' figures'+(sw.bestScore&&sw.bestScore[ev.id]?' · best '+Math.round(sw.bestScore[ev.id]*100)+'%':''):ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps')+' · Lv '+ev.lvl+(r?' · '+'🎀'.repeat(r):'')+(isF&&wr<4?' · '+wr+'/4 this week':'')+'</span>'+sect('eventRow',ev,sw,myHorses[rideIdx])+
    (ok?'<button data-ev="'+i+'">'+(won?'Again':'Enter · '+(isF?Math.round(ev.reward*1.5):ev.reward)+'🪙')+'</button>':'<span style="flex:none">🔒</span>')+'</div>';
  }).join('')+'<div class="evrow"><span>Jump every numbered fence in order — follow the golden arrow! Ribbons: finish · two stars · three stars · a clean round.</span><button id="evClose">Close</button></div>';
  p.innerHTML=html;
@@ -8602,18 +8736,19 @@ function openEvents(){
  p.querySelectorAll('button[data-ev]').forEach(b=>{b.onclick=()=>startCourse(EVENTS3[+b.dataset.ev]);});
  p.querySelectorAll('button[data-wk]').forEach(b=>{b.onclick=()=>claimWeekly(+b.dataset.wk);});
  $('evClose').onclick=()=>{p.style.display='none';};
+ bindFx(p);
 }
 function claimWeekly(i){
  const t=WEEK_TIERS[i]; if(!t)return; let ok=false;
  syncSave(s=>{ ensureWeek(s); const have=Object.values(s.weekly.rib).reduce((a,b)=>a+b,0); if(s.weekly.claimed[i]||have<t[0])return; s.weekly.claimed[i]=true;
-  const r=t[1]; if(r.c)s.coins+=r.c; if(r.g)s.gems+=r.g; if(r.k)s.keys=(s.keys||0)+r.k; if(r.gear){s.tack=s.tack||[];s.tack.push(genGear(r.gear));} ok=true; });
+  const r=t[1]; if(r.c)s.coins+=r.c; if(r.g)grantGems(s,r.g); if(r.k)s.keys=(s.keys||0)+r.k; if(r.gear){s.tack=s.tack||[];s.tack.push(genGear(r.gear));} ok=true; });
  if(ok){refreshWallet();refreshTack();sGem();toast('📅 Weekly tier '+(i+1)+' claimed!');openEvents();openEvents();}
 }
 $('eventsBtn').onclick=openEvents;
 $('courseQuit').onclick=()=>cancelCourse();
 
 /* ================= ranch life in 3D: care, shop & breeding ================= */
-function freshSave(){try{return JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){return null;}}
+function freshSave(){try{return runEnsures(JSON.parse(localStorage.getItem(SAVE_KEY)));}catch(e){return null;}}
 function refreshWallet(){
  const s=freshSave();if(!s)return;
  coins=Math.floor(s.coins);gems=s.gems;
@@ -8623,6 +8758,8 @@ function refreshWallet(){
  VIPON=isVIP(s);
  const ve=$('vipEl');
  if(ve){ve.style.display=VIPON?'':'none'; const vd=$('vipDaysEl'); if(vd)vd.textContent=VIPON?vipDays(s)+'d':''; }
+ G.run('wallet',s);                                   // extra currencies and dock pips
+ uiPips();
 }
 function reloadHorses(){
  const s=freshSave();if(!s)return;
@@ -8639,7 +8776,67 @@ function reloadHorses(){
  sel.value=rideIdx;
  rebuildAll();
 }
-function hidePanels(){['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','moneyPanel','summonPanel','stablePanel','questPanel','profilePanel','buildPanel'].forEach(id=>{$(id).style.display='none';});}
+/* ===== Panels, dock buttons and renderer registries (G.ui) ===========================
+   A feature package never edits a renderer. It registers: a whole panel (uiPanel), a tab on
+   an existing panel (shopTab/questTab/lbTab/buildTab), a section spliced into an existing
+   renderer (careSection & co.), and named actions bound through data-fx="name:arg:arg".
+   The contract is written out in assets/features/index.js. */
+let PANEL_IDS=['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','moneyPanel','summonPanel','stablePanel','questPanel','profilePanel','buildPanel'];
+const PANEL_DEFS={}, PANEL_HOTKEYS={}, UI_ACTIONS={}, UI_SECTIONS={};
+const EXTRA_SHOP_TABS=[], EXTRA_QUEST_TABS=[], EXTRA_LB_TABS=[], EXTRA_BUILD_TABS=[];
+let buildTab='pieces';
+function hidePanels(){for(const id of PANEL_IDS){const p=$(id);if(p)p.style.display='none';}}
+function uiSection(name,fn){(UI_SECTIONS[name]=UI_SECTIONS[name]||[]).push(fn);return fn;}
+function sect(name,...args){const a=UI_SECTIONS[name];if(!a||!a.length)return '';let o='';for(const f of a){try{o+=f(...args)||'';}catch(e){console.error('section '+name,e);}}return o;}
+function uiAction(name,fn){UI_ACTIONS[name]=fn;return fn;}
+function uiDispatch(cmd,el){const parts=String(cmd||'').split(':');const fn=UI_ACTIONS[parts[0]];if(!fn)return false;try{fn(parts.slice(1),el,cmd);}catch(e){console.error('action '+cmd,e);}return true;}
+function bindFx(p){if(!p)return;p.querySelectorAll('[data-fx]').forEach(b=>{b.onclick=()=>uiDispatch(b.dataset.fx,b);});p.querySelectorAll('[data-fxin]').forEach(el=>{el.onchange=()=>uiDispatch(el.dataset.fxin,el);});}
+function addTab(list,def){const i=list.findIndex(t=>t.id===def.id);if(i>=0)list[i]=def;else if(typeof def.pos==='number')list.splice(Math.max(0,Math.min(list.length,def.pos)),0,def);else list.push(def);return def;}
+function mergeTabs(base,extra){const out=base.map(b=>({id:b[0],label:b[1]}));for(const t of extra){const row={id:t.id,label:t.label||t.id};const i=out.findIndex(b=>b.id===t.id);if(i>=0)out[i]=row;else if(typeof t.pos==='number')out.splice(Math.max(0,Math.min(out.length,t.pos)),0,row);else out.push(row);}return out;}
+function uiPanel(def){
+ const id=def.id; if(!id)throw Error('panel needs an id');
+ let p=$(id);
+ if(!p){p=document.createElement('div');p.id=id;p.className='fpanel';document.body.appendChild(p);}
+ if(!PANEL_IDS.includes(id))PANEL_IDS.push(id);
+ PANEL_DEFS[id]=def;
+ const bd=def.dock||(typeof def.sys==='object'?def.sys:null);
+ if(bd){
+  const btnId=bd.id||id.replace(/Panel$/,'')+'Btn';
+  let btn=$(btnId);
+  if(!btn){
+   btn=document.createElement('button');btn.id=btnId;
+   if(def.sys){btn.className='ico';$('sysBtns').appendChild(btn);}
+   else{const after=bd.after&&$(bd.after);if(after&&after.parentNode===$('dock'))after.after(btn);else $('dock').appendChild(btn);}
+  }
+  btn.textContent=bd.label||def.title||id; if(bd.title)btn.title=bd.title;
+  btn.onclick=()=>uiToggle(id);
+  def.btnId=btnId;
+ }
+ if(def.hotkey)PANEL_HOTKEYS[def.hotkey]=()=>uiToggle(id);
+ if(def.vr){const tab=def.vr.tab||id.replace(/Panel$/,'');if(!TABS.some(t=>t[0]===tab))TABS.push([tab,def.vr.label||def.title||tab]);if(def.vr.build)VR_BUILDERS[tab]=def.vr.build;}
+ if(def.dock&&typeof def.dock.pip==='function'&&def.btnId){let n=0;try{n=def.dock.pip()||0;}catch(e){}hudBadge(def.btnId,n);}   // painted again on every refreshWallet
+ return def;
+}
+function uiRender(id){
+ const def=PANEL_DEFS[id], p=$(id); if(!def||!p)return;
+ let html='';
+ try{html=def.render?def.render(p,freshSave()):'';}catch(e){console.error('panel '+id,e);html='<span>Something went wrong drawing this panel.</span>';}
+ if(typeof html==='string'&&html!=='')p.innerHTML=html;
+ bindFx(p);
+}
+function uiOpen(id){const p=$(id);if(!p)return;hidePanels();if(PANEL_DEFS[id])uiRender(id);p.style.display='flex';}
+function uiToggle(id){const p=$(id);if(!p)return;if(p.style.display==='flex'){p.style.display='none';return;}uiOpen(id);}
+function hudBadge(btnId,n){const b=$(btnId);if(!b)return;let pip=b.querySelector('.pip');if(!n){if(pip)pip.remove();return;}if(!pip){pip=document.createElement('span');pip.className='pip';b.appendChild(pip);}pip.textContent=n===true?'!':String(n);}
+function hudStat(id,html){const el=$(id);if(!el)return;if(html==null||html===''){el.style.display='none';el.innerHTML='';return;}el.innerHTML=html;el.style.display='';}
+function uiPips(){for(const id in PANEL_DEFS){const d=PANEL_DEFS[id];if(d.dock&&typeof d.dock.pip==='function'&&d.btnId){let n=0;try{n=d.dock.pip()||0;}catch(e){}hudBadge(d.btnId,n);}}}
+/* Text entry and confirmation. The scaffold's version is the native prompt/confirm; a
+   package may replace G.ui.nameDialog / G.ui.confirm with a #dlg-based one (XR has no prompt). */
+function nameDialog(o){let n=null;try{n=prompt(o.title||'Name?',o.def||'');}catch(e){}if(n!=null)n=String(n).trim().slice(0,o.max||14);if(o.onDone)o.onDone(n||null);}
+function confirmDialog(o){let ok=false;try{ok=confirm((o.title?o.title+'\n':'')+(o.body||''));}catch(e){}if(ok){if(o.onYes)o.onYes();}else if(o.onNo)o.onNo();}
+uiAction('close',a=>{if(a[0]&&$(a[0]))$(a[0]).style.display='none';else hidePanels();});
+uiAction('open',a=>{if(a[0])uiOpen(a[0]);});
+uiAction('shop',a=>openShop(a[0]||undefined));
+uiAction('rerender',a=>{if(a[0])uiRender(a[0]);});
 /* ===== Ranch building =====
    The ranch is yours to furnish: pick a piece from the catalogue, a ghost of it follows the
    pointer across the ground, turn it with R or Q, click to set it down. Five of the pieces
@@ -8736,12 +8933,21 @@ function openBuild(){
  hidePanels(); const sv=freshSave(); if(!sv)return; sv.decor=sv.decor||[];
  const pts=ranchPts(sv), L=ranchLevel(sv), next=RANCH_LEVELS[L];
  let html='<div class="ph">🏗️ Build your ranch <span class="chip" style="font-size:12px;padding:3px 10px">Lv '+L+' · '+pts+' pts'+(next?' · next at '+next:' · max')+'</span><button data-b="close" style="margin-left:auto">✖</button></div>';
+ const xb=EXTRA_BUILD_TABS.find(t=>t.id===buildTab);
+ if(EXTRA_BUILD_TABS.length)html+='<div class="crow" style="gap:6px">'+mergeTabs([['pieces','🪵 Pieces']],EXTRA_BUILD_TABS).map(tb=>'<button class="tabbtn '+(buildTab===tb.id?'on':'')+'" data-buildtab="'+tb.id+'">'+tb.label+'</button>').join('')+'</div>';
+ if(xb){try{html+=xb.render(sv)||'';}catch(e){console.error('build tab '+xb.id,e);}}
+ else{
  html+='<span style="font-size:12px;color:#8c7a63">Pick a piece, walk your horse anywhere in the valley, click the ground. Pieces are solid to horses and worth builder points; levels give perks.</span>';
  html+='<div style="font-size:12px;margin:2px 0">'+Object.keys(RANCH_PERKS).map(k=>'<div style="color:'+(L>=+k?'#3a7a3a':'#b8a888')+'">'+(L>=+k?'✅':'🔒')+' Lv '+k+' · '+RANCH_PERKS[k]+'</div>').join('')+'</div>';
  html+=Object.keys(DECOR_CAT).map(t=>{const c=DECOR_CAT[t];const have=sv.decor.filter(d=>d.t===t).length;return '<div class="evrow">'+c.emoji+' <b>'+c.label+'</b><span style="font-size:11px">'+c.price+'🪙 · '+c.pts+' pts'+(have?' · placed ×'+have:'')+'</span><button data-b="place:'+t+'">Place</button></div>';}).join('');
  html+='<div class="crow" style="gap:6px;margin-top:6px"><button data-b="remove">🧹 Remove a piece</button><span style="font-size:11px;color:#8c7a63">'+sv.decor.length+' pieces placed · build anywhere in the valley</span></div>';
+ html+=sect('build',sv);
+ }
  p.innerHTML=html; p.style.display='flex';
  p.querySelectorAll('[data-b]').forEach(b=>{b.onclick=()=>{const [a,arg]=b.dataset.b.split(':'); if(a==='close')p.style.display='none'; else if(a==='place')startPlace(arg); else if(a==='remove')startRemove();};});
+ p.querySelectorAll('[data-buildtab]').forEach(b=>{b.onclick=()=>{buildTab=b.dataset.buildtab;p.style.display='none';openBuild();};});
+ if(xb&&xb.bind){try{xb.bind(p,sv);}catch(e){}}
+ bindFx(p);
 }
 renderer.domElement.addEventListener('pointermove',e=>{ if(!build.ghost)return; const pt=groundPoint(e.clientX,e.clientY); if(!pt)return; build.ghost.visible=true; build.ghost.position.set(pt.x,pt.y,pt.z); build.ghost.rotation.y=build.rot; build.lastPt=[pt.x,pt.z]; const why=decorOk(build.type,pt.x,pt.z); $('buildHud').classList.toggle('bad',!!why); });
 renderer.domElement.addEventListener('pointerdown',e=>{ if(build.type||build.remove)build.down={x:e.clientX,y:e.clientY,id:e.pointerId}; });
@@ -8898,14 +9104,12 @@ function buySupp(k){
   if(!h){msg='No horse to feed.';return;}
   if(sv.coins<S.price){msg='That costs '+S.price+'🪙.';return;}
   ensureStats(h);
-  const cap=Math.min(statCap(h),statCeil(h));
+  const cap=Math.min(statCap(h),statCeil(h,k));
   const short=STAT_LBL[k].slice(STAT_LBL[k].indexOf(' ')+1);
   if(h.stats[k]>=cap){msg=h.name+"'s "+short+' is already at its ceiling for Lv '+(h.level||1)+'.';return;}
   sv.coins-=S.price;
-  h.sxp[k]=(h.sxp[k]||0)+S.sxp;
-  let up=false;
-  while(h.stats[k]<cap&&h.sxp[k]>=statNeed(h.stats[k])){h.sxp[k]-=statNeed(h.stats[k]);h.stats[k]++;up=true;}
-  if(up){lvl=h.stats[k];addSP(sv,h.stats[k],'stat');}
+  const up=grantStatXp(sv,h,k,S.sxp).up;
+  if(up)lvl=h.stats[k];
   msg=h.name+' takes the '+S.label+(up?' · '+STAT_LBL[k]+' → '+h.stats[k]+'!':' · +'+S.sxp+' '+short+' XP');
   ok=true;
  });
@@ -8925,6 +9129,7 @@ function renderCare(){
  const hearts=Math.max(0,Math.min(5,Math.round(h.bond/20)));
  const bars=[['🥕 Food','hunger','#e8943a'],['💧 Water','thirst','#4fa8e0'],['🧼 Clean','clean','#9b8cf0'],['😊 Happy','happy','#6bc46d']];
  $('carePanel').innerHTML='<b style="font-size:16px">🐴 '+h.name+' · Lv '+h.level+' · '+'❤️'.repeat(hearts)+'🤍'.repeat(5-hearts)+'</b>'
+ +sect('careHeader',s,h)
  +bars.map(b=>'<div class="crow"><span class="lbl">'+b[0]+'</span><div class="cbar"><div class="cfill" style="width:'+Math.round(h.needs[b[1]])+'%;background:'+b[2]+'"></div></div></div>').join('')
  +'<div class="crow"><span class="lbl">✨ XP</span><div class="cbar"><div class="cfill" style="width:'+Math.round(100*h.xp/(50+h.level*50))+'%;background:#f3b73d"></div></div></div>'
  +(()=>{ensureStats(h);const cap=Math.min(statCap(h),statCeil(h));
@@ -8947,8 +9152,10 @@ function renderCare(){
    if(M>=6)x+='<div class="crow" style="gap:4px"><span class="lbl" style="font-size:11px">Trail</span><button data-care="trail:'+(h.trail?'off':'on')+'">'+(h.trail?'✨ Sparkle trail on':'Sparkle trail off')+'</button></div>';
    if(M>=9)x+='<div class="crow" style="gap:4px"><span class="lbl" style="font-size:11px">Saddle</span><button data-care="bare:'+(h.bareback?'off':'on')+'">'+(h.bareback?'🐎 Bareback':'Saddled')+'</button></div>';
    return x;})()
+ +sect('care',s,h)
  +'<span style="font-size:11px;color:#8c7a63">Care builds bond ❤️ and XP. Each food trains one stat: 🥕 speed · 🍎 stamina · 🥬 agility · 🎃🍊 acceleration · 🍄 jump. Forage grows all over the Basin.</span>';
  $('carePanel').querySelectorAll('[data-care]').forEach(b=>{b.onclick=()=>careAct(b.dataset.care);});
+ bindFx($('carePanel'));
 }
 function careAct(k){
  if(k==='close'){$('carePanel').style.display='none';return;}
@@ -8971,6 +9178,7 @@ function careAct(k){
   }
   renderCare();return;
  }
+ if(!FOODS3[k]&&k!=='water'&&k!=='groom'&&k!=='pet'){if(G.run('careAct',k,freshSave(),myHorses[rideIdx]))return;}   // a package's own care action
  let msg='',ok=false,statUp=null;
  syncSave(s=>{
   const h=s.horses[rideIdx];if(!h)return;
@@ -8984,15 +9192,10 @@ function careAct(k){
    N.happy=Math.min(100,N.happy+f.happy);
    {const bg=bondGain(h,f.bond,'feed'); h.bond=Math.min(100,h.bond+bg); msg=h.name+' munches happily! +'+bg+' bond';} ok=true;
    if(f.stat){                                            // stat food: XP into one stat, capped by level and breed
-    ensureStats(h);
-    const sk=f.stat, cap=Math.min(statCap(h),statCeil(h)), short=STAT_LBL[sk].slice(STAT_LBL[sk].indexOf(' ')+1);
-    if(h.stats[sk]>=cap){msg+=' · '+short+' is maxed for Lv '+h.level;}
-    else{
-     h.sxp[sk]=(h.sxp[sk]||0)+f.sxp; let up=false;
-     while(h.stats[sk]<cap&&h.sxp[sk]>=statNeed(h.stats[sk])){h.sxp[sk]-=statNeed(h.stats[sk]);h.stats[sk]++;up=true;}
-     msg+=up?' · '+STAT_LBL[sk]+' → '+h.stats[sk]+'!':' · +'+f.sxp+' '+short+' XP';
-     if(up){statUp=sk;addSP(s,h.stats[sk],'stat');}
-    }
+    const sk=f.stat, short=STAT_LBL[sk].slice(STAT_LBL[sk].indexOf(' ')+1);
+    const R=grantStatXp(s,h,sk,f.sxp);
+    if(R.capped){msg+=' · '+short+' is maxed for Lv '+h.level;}
+    else{ msg+=R.up?' · '+STAT_LBL[sk]+' → '+h.stats[sk]+'!':' · +'+f.sxp+' '+short+' XP'; if(R.up)statUp=sk; }
    }
   }else if(k==='water'){
    if(N.thirst>=98){msg=h.name+" isn't thirsty right now!";ok=false;return;}
@@ -9016,7 +9219,7 @@ function careAct(k){
   {const fs=freshSave();if(fs&&fs.horses[rideIdx]&&myHorses[rideIdx]){myHorses[rideIdx].stats=fs.horses[rideIdx].stats;myHorses[rideIdx].sxp=fs.horses[rideIdx].sxp;}}   // the ride reads the live copy
   if(statUp){sGem();questEvt('train',1);}
   sChime();
-  const xp={carrot:6,apple:8,hay:4,water:3,groom:5,pet:2}[k]||0;
+  const xp=FOODS3[k]?(FOODS3[k].xp||0):({water:3,groom:5,pet:2}[k]||0);   // every food's XP comes off the table
   if(xp)addXp3D(xp);
   passAdd(3);
   dailyEvt(FOODS3[k]?'feed':k,1);
@@ -9085,6 +9288,55 @@ const NAMES3=['Luna','Comet','Willow','Maple','Storm','Honey','Pepper','Clover',
 const TACKS3=[['#c0392b','Scarlet'],['#2e86c1','Lake Blue'],['#7d3c98','Royal Plum'],['#1e8449','Meadow Green'],['#f39c12','Sunshine']];
 function blendHex(a,b){const c=new THREE.Color(a);c.lerp(new THREE.Color(b),0.5);return '#'+c.getHexString();}
 let shopTab3='horses';
+
+/* ===== One way to get a horse, one way to make a foal =================================
+   buyHorse3, the market, the Summoning Stall and taming all used to write their own horse
+   literal; breed3 and club breeding each had their own foal. Both are here now, and each
+   fires a hook ('grantHorse', 'foal') so a package can roll traits, a rarity, a coat
+   variant or a name on every acquisition without touching the call sites. */
+function breedSrc(b){const o=(b&&b[7])||{};return o.src||(o.story?'story':o.bredOnly?'breed':o.exclusive?'exclusive':o.season?'season':'shop');}
+function breedAvailable(b,ctx){for(const f of SOURCE_RULES){try{const r=f(ctx,b);if(r===true||r===false)return r;}catch(e){}}return breedSrc(b)==='shop';}
+function grantHorse(s,breedKey,opts){
+ opts=opts||{};
+ const b=BREEDS3.find(x=>x[0]===breedKey)||BREEDS3.find(x=>x[0]==='bay')||BREEDS3[0], o=b[7]||{};
+ const base=TIER_BASE[b[2]]||3, st=()=>Math.max(1,Math.min(10,base+Math.floor(Math.random()*3)-1));
+ const h=Object.assign({id:s.nextId++,name:opts.name||NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:b[0],
+  colors:opts.colors||{body:b[5],mane:b[6]},horn:!!o.horn,rainbow:!!o.rainbow,wings:!!o.wings,dragon:!!o.dragon,
+  coat:o.coat||null,ability:o.ability||null,glow:!!o.glow,
+  stats:opts.stats||{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},sxp:{},level:opts.level||1,xp:0,
+  bond:opts.bond==null?10:opts.bond,needs:opts.needs||{hunger:90,thirst:90,clean:90,happy:90},foal:!!opts.foal,tack:null,
+  src:opts.src||null},opts.extra||{});
+ if(h.foal&&!h.born)h.born=Date.now();
+ ensureStats(h);
+ s.horses.push(h);
+ G.run('grantHorse',s,h,opts);
+ return h;
+}
+function makeFoal(s,a,b,opts){
+ opts=opts||{};
+ const club=!!opts.club;                                   // b is a remote rider's horse (colors/breed/wings/coat only)
+ if(!club){ensureStats(a);ensureStats(b);}
+ const avg=k=>Math.max(1,Math.min(10,Math.round((((a.stats&&a.stats[k])||3)+((b.stats&&b.stats[k])||3))/2)+Math.floor(Math.random()*2)));
+ const wingChild=!!(a.wings||b.wings);                     // 🪽 wings pass down every generation
+ const dragChild=wingChild&&!!(a.dragon||(club?false:b.dragon));   // and a dragon's are dragon's wings
+ const childCoat=a.coat||b.coat||null;
+ const childMark=inheritMark(a,b);                         // patterns run in families
+ const breed=wingChild?(a.wings?a.breed:(b.breed||a.breed)):((Math.random()<0.5&&b.breed)?b.breed:a.breed);
+ const foal={id:s.nextId++,name:opts.name||NAMES3[Math.floor(Math.random()*NAMES3.length)],breed,
+  colors:{body:blendHex(a.colors.body,b.colors.body),mane:blendHex(a.colors.mane,b.colors.mane)},
+  horn:club?(!!a.horn&&Math.random()<0.4):((a.horn||b.horn)&&Math.random()<0.6),
+  rainbow:club?false:((a.rainbow||b.rainbow)&&Math.random()<0.5),wings:wingChild,dragon:dragChild,
+  coat:childCoat,mark:childMark.mark,markCol:childMark.col||undefined,
+  ability:a.ability||(club?null:b.ability)||(wingChild?'fly':null),glow:!!(a.glow||(club?childCoat:b.glow)),
+  stats:opts.stats||(club?(()=>{const st=()=>2+Math.floor(Math.random()*3);return {speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()};})():{speed:avg('speed'),stamina:avg('stamina'),jump:avg('jump'),accel:avg('accel'),agility:avg('agility')}),
+  sxp:{},level:1,xp:0,bond:30,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null,
+  lineage:{sire:a.id==null?null:a.id,dam:b.id==null?null:b.id,gen:Math.max((a.lineage&&a.lineage.gen)||0,(b.lineage&&b.lineage.gen)||0)+1}};
+ ensureStats(foal);
+ G.run('foal',s,foal,a,b,opts);
+ s.horses.push(foal);
+ return foal;
+}
+const SHOP_TABS=[['horses','🐴 Horses'],['market','🤝 Market'],['pets','🐾 Pets'],['food','🧺 Food'],['tack','🐎 Tack'],['style','🎨 Style'],['breed','💞 Breed'],['outfit','🧢 Outfit']];
 /* ===== The Market ==========================================================
    Star Equestrian has a market; this game had no way to let a horse go at all. That was
    survivable while horses only arrived by being bought on purpose — but the Summoning
@@ -9110,7 +9362,7 @@ function marketStock(){
  const ds=marketDay(); let x=0;
  for(const c of ds)x=(Math.imul(x,31)+c.charCodeAt(0))>>>0;
  const rnd=()=>{x=(Math.imul(x,1664525)+1013904223)>>>0; return x/4294967296;};
- const pool=BREEDS3.filter(b=>!(b[7]&&b[7].story)&&b[2]!=='Dragon'&&b[2]!=='Mythic'&&b[2]!=='Legendary');
+ const pool=BREEDS3.filter(b=>breedAvailable(b,'market')&&b[2]!=='Dragon'&&b[2]!=='Mythic'&&b[2]!=='Legendary');
  const out=[], used=[];
  for(let i=0;i<4;i++){
   const b=pool[Math.floor(rnd()*pool.length)]||BREEDS3[0];
@@ -9153,11 +9405,7 @@ function buyMarket(i){
   if(sv.horses.length>=stableCap(sv)){msg='Your stable is full.';return;}
   if(sv.coins<row.price){msg='Not enough coins.';return;}
   sv.coins-=row.price; sv.market.sold.push(i);
-  const o=row.b[7]||{};
-  sv.horses.push({id:sv.nextId++,name:row.name,breed:row.b[0],colors:{body:row.b[5],mane:row.b[6]},
-   horn:!!o.horn,rainbow:!!o.rainbow,wings:!!o.wings,dragon:!!o.dragon,coat:o.coat||null,
-   ability:o.ability||null,glow:!!o.glow,stats:Object.assign({},row.stats),sxp:{},level:row.level,
-   xp:0,bond:15,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
+  grantHorse(sv,row.b[0],{name:row.name,stats:Object.assign({},row.stats),level:row.level,bond:15,src:'market'});
   ok=true; msg='🤝 '+row.name+' the '+row.b[1]+' is yours.';
  });
  if(ok){refreshWallet();reloadHorses();sChime();passAdd(8);}
@@ -9210,9 +9458,11 @@ function openShop(tab){
  hidePanels();
  const s=freshSave();if(!s)return;
  let html='<div class="crow" style="gap:6px">'
- +['horses','market','pets','food','tack','style','breed','outfit'].map(tb=>'<button class="tabbtn '+(shopTab3===tb?'on':'')+'" data-shoptab="'+tb+'">'+({horses:'🐴 Horses',market:'🤝 Market',pets:'🐾 Pets',food:'🧺 Food',tack:'🐎 Tack',style:'🎨 Style',breed:'💞 Breed',outfit:'🧢 Outfit'})[tb]+'</button>').join('')
+ +mergeTabs(SHOP_TABS,EXTRA_SHOP_TABS).map(tb=>'<button class="tabbtn '+(shopTab3===tb.id?'on':'')+'" data-shoptab="'+tb.id+'">'+tb.label+'</button>').join('')
  +'<button data-shoptab="close" style="margin-left:auto">✖</button></div>';
- if(shopTab3==='style'){
+ const xt=EXTRA_SHOP_TABS.find(t=>t.id===shopTab3);   // a feature package's tab, or its override of a built-in one
+ if(xt){try{html+=xt.render(s,s.horses[rideIdx])||'';}catch(e){console.error('shop tab '+xt.id,e);}}
+ else if(shopTab3==='style'){
   const h=s.horses[rideIdx];
   const sw=(what,list,cur)=>'<div class="crow" style="gap:5px;flex-wrap:wrap"><span class="lbl">'+({body:'🐴 Coat',mane:'💇 Mane',tail:'🎀 Tail',mark:'✨ Markings'})[what]+'</span>'
    +list.map(([c,nm])=>'<button data-dye="'+what+':'+c+'" title="'+nm+'"'+(cur===c?' class="claimBtn"':'')
@@ -9252,7 +9502,7 @@ function openShop(tab){
     tab, so a standalone if left the rider's wardrobe hanging under the market */
  else if(shopTab3==='horses'){
   html+=BREEDS3.map((b,i)=>{
-   if(b[7]&&b[7].story)return '';
+   if(!breedAvailable(b,'shop'))return '';
    const owned=s.horses.filter(h=>h.breed===b[0]).length;
    const badge=b[2]==='Dragon'?' <span style="background:linear-gradient(90deg,#e2703a,#8f4bd0);color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">🐉 DRAGON</span>':b[2]==='Mythic'?' <span style="background:linear-gradient(90deg,#9d6bff,#ff7ad0);color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">✨ MYTHIC</span>':b[2]==='Draft'?' <span style="background:#e8b84b;color:#5a3d12;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">NEW</span>':'';
    const ico=b[7].dragon?'🐉':b[7].horn?'🦄':b[7].wings?'🪽':(b[7].coat||b[7].glow)?'✨':'🐴';
@@ -9329,6 +9579,8 @@ function openShop(tab){
   reloadHorses();
   toast('Looking sharp! 🧢');
  };});
+ if(xt&&xt.bind){try{xt.bind(p,s);}catch(e){console.error('shop tab '+xt.id,e);}}
+ bindFx(p);
 }
 function buyHorse3(i){
  const b=BREEDS3[i];
@@ -9337,9 +9589,7 @@ function buyHorse3(i){
  syncSave(s=>{
   if(s.coins<b[3]||s.gems<b[4]){msg='Not enough — ride events to earn more!';return;}
   s.coins-=b[3];s.gems-=b[4];
-  const base=TIER_BASE[b[2]];
-  const st=()=>Math.max(1,Math.min(10,base+Math.floor(Math.random()*3)-1));
-  s.horses.push({id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:b[0],colors:{body:b[5],mane:b[6]},horn:!!b[7].horn,rainbow:!!b[7].rainbow,wings:!!b[7].wings,dragon:!!b[7].dragon,coat:b[7].coat||null,ability:b[7].ability||null,glow:!!b[7].glow,stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},sxp:{},level:1,xp:0,bond:10,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
+  grantHorse(s,b[0],{src:'shop'});
   msg='Welcome to the ranch, '+s.horses[s.horses.length-1].name+' the '+b[1]+'! 🎉';
   ok=true;
  });
@@ -9367,10 +9617,10 @@ function buyBundle3(k){
    s.items.carrot+=15;s.items.apple+=8;s.items.hay+=8;
    ok=true;msg='🎁 Food Hamper unpacked — 15🥕 8🍎 8🌾!';
   }else{
-   if(s.breedVoucher){msg='You already hold a breeding voucher!';return;}
+   if(s.btok){msg='You already hold a breeding token!';return;}
    if(s.coins<350){msg='Not enough coins!';return;}
    s.coins-=350;
-   s.breedVoucher=true;
+   s.btok=(s.btok||0)+1;
    s.items.apple+=10;
    ok=true;msg="🎀 Breeder's Package: FREE breeding voucher + 10 apples!";
   }
@@ -9483,21 +9733,15 @@ function breed3(){
  if(ia===ib){toast('Pick two different horses!');return;}
  let msg='',ok=false;
  syncSave(s=>{
-  const freeBreed=!!s.breedVoucher;
+  const freeBreed=(s.btok||0)>0;                    // a breeding token
   if(!freeBreed&&s.coins<400){msg='Breeding costs 400 🪙';return;}
   const a=s.horses[ia],b=s.horses[ib];
   if(!a||!b)return;
-  if(freeBreed)s.breedVoucher=false;
+  if(freeBreed)s.btok--;
   else s.coins-=400;
-  ensureStats(a);ensureStats(b);
-  const avg=k=>Math.max(1,Math.min(10,Math.round((a.stats[k]+b.stats[k])/2)+Math.floor(Math.random()*2)));
-  const wingChild=!!(a.wings||b.wings);          // 🪽 wings pass down every generation
- const dragChild=wingChild&&!!(a.dragon||b.dragon);   // and a dragon's are dragon's wings
-  const childCoat=a.coat||b.coat||null;
-  const childMark=inheritMark(a,b);                  // patterns run in families now
-  s.horses.push({mark:childMark.mark,markCol:childMark.col||undefined,
-   id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:wingChild?(a.wings?a.breed:b.breed):(Math.random()<0.5?a.breed:b.breed),colors:{body:blendHex(a.colors.body,b.colors.body),mane:blendHex(a.colors.mane,b.colors.mane)},horn:(a.horn||b.horn)&&Math.random()<0.6,rainbow:(a.rainbow||b.rainbow)&&Math.random()<0.5,wings:wingChild,dragon:dragChild,coat:childCoat,ability:a.ability||b.ability||(wingChild?'fly':null),glow:!!(a.glow||b.glow),stats:{speed:avg('speed'),stamina:avg('stamina'),jump:avg('jump'),accel:avg('accel'),agility:avg('agility')},sxp:{},level:1,xp:0,bond:30,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null});
-  msg='A foal was born: '+s.horses[s.horses.length-1].name+'! 🍼'+(wingChild?' It has its parent\'s wings! 🪽':'')+' Watch it grow in the pasture!';
+  const foal=makeFoal(s,a,b,{src:'breed'});
+  const wingChild=!!foal.wings;
+  msg='A foal was born: '+foal.name+'! 🍼'+(wingChild?' It has its parent\'s wings! 🪽':'')+' Watch it grow in the pasture!';
   ok=true;
  });
  toast(msg);
@@ -9539,7 +9783,9 @@ function drawBigMap(){
  {const sv=freshSave()||{}; mc.font='13px sans-serif'; mc.textAlign='center';
   for(const c of CHESTS){const q=W2(c.x,c.z); const at=sv.chests&&sv.chests[c.id]; const open=at&&Date.now()-at<CHEST_REOPEN; mc.globalAlpha=open?0.45:1; mc.fillText(open?'📦':'🎁',q[0],q[1]+5);} mc.globalAlpha=1;
   for(const k in COLL_SETS){const have=(sv.sets&&sv.sets[k])||[]; COLL_SETS[k].pts.forEach((pt,i)=>{ if(have.includes(i))return; const q=W2(pt[0],pt[1]); mc.fillStyle=COLL_SETS[k].col; mc.beginPath(); mc.arc(q[0],q[1],2.6,0,7); mc.fill(); });}
-  const rq=W2(TACK_ROOM.x,TACK_ROOM.z); mc.fillText('🔐',rq[0],rq[1]+5); const fq=W2(20,16); mc.fillText('🎣',fq[0]+10,fq[1]-6); mc.textAlign='start';}
+  const rq=W2(TACK_ROOM.x,TACK_ROOM.z); mc.fillText('🔐',rq[0],rq[1]+5); const fq=W2(20,16); mc.fillText('🎣',fq[0]+10,fq[1]-6);
+  for(const mk of MAP_MARKERS){if(typeof mk.hidden==='function'&&mk.hidden(sv))continue;const q=W2(mk.x,mk.z);mc.globalAlpha=mk.alpha==null?1:mk.alpha;mc.fillText(mk.glyph||'📍',q[0],q[1]+5);}   // packages' markers
+  mc.globalAlpha=1; mc.textAlign='start';}
  mc.fillStyle='#b96b38';
  [[42,-50],[48,-56],[54,-48],[45,-43]].forEach(cc=>{
   const q=W2(cc[0],cc[1]);mc.fillRect(q[0]-3,q[1]-3,6,6);
@@ -9562,6 +9808,7 @@ function drawBigMap(){
  lbl(-220,125,'🏜️ Coyote Canyon');
  lbl(-160,-205,'🏔️ Hollowpeak');
  lbl(0,134,'🌉 Otter Ford');
+ for(const mk of MAP_MARKERS)if(mk.label)lbl(mk.x,mk.z+(mk.labelDz==null?-9:mk.labelDz),mk.label);
  const sv=freshSave();
  const n=(sv&&sv.shoes&&sv.shoes.date===new Date().toDateString())?sv.shoes.got.length:0;
  mc.font='700 14px "Trebuchet MS",sans-serif';
@@ -9601,7 +9848,12 @@ addEventListener('keydown',e=>{
    and never contacts the broker; the code stays put so flipping this back to true
    restores everything. Trail Pass and milestone rewards are NOT social and stay on. */
 const SOCIAL=true;
-const net={client:null,id:'p'+Math.random().toString(36).slice(2,8),club:null,lastPub:0};
+const net={client:null,id:(save&&save.pid)?'p'+String(save.pid).slice(3).toLowerCase():'p'+Math.random().toString(36).slice(2,8),club:null,lastPub:0};   // the id derives from the player ID, so it survives reloads
+/* Topic helpers for feature packages. A topic that starts with 'srf1/' is used as written
+   (with '{club}' filled in); anything else is a name inside the current club's namespace. */
+function netTopic(t){t=String(t);return t.startsWith('srf1/')?t.replace('{club}',net.club||''):'srf1/'+(net.club||'')+'/'+t;}
+function netSubscribe(topic){if(!NET_SUBS.includes(topic))NET_SUBS.push(topic);if(net.client&&net.client.connected&&net.club){try{net.client.subscribe(netTopic(topic));}catch(e){}}return topic;}
+function netPublish(topic,obj,opts){if(!SOCIAL||!net.client||!net.client.connected||!net.club)return false;try{net.client.publish(netTopic(topic),JSON.stringify(Object.assign({id:net.id,n:myName()},obj||{})),opts||{});return true;}catch(e){return false;}}
 
 /* Your club code is your room. It used to default to "kestrel" for everybody, which
    meant anyone who pressed Connect landed in ONE shared room with open chat and
@@ -9647,10 +9899,10 @@ function chatMsg(name,text){
  while(feed.children.length>8)feed.removeChild(feed.firstChild);
  setTimeout(()=>{if(d.parentNode)d.style.opacity='0.45';},9000);
 }
-function netSendChat(text){
+function netSendChat(text,extra){
  if(!SOCIAL)return;
  if(net.client&&net.club){
-  try{net.client.publish('srf1/'+net.club+'/chat',JSON.stringify({id:net.id,n:myName(),t:text}));}catch(e){}
+  try{net.client.publish('srf1/'+net.club+'/chat',JSON.stringify(Object.assign({id:net.id,n:myName(),t:text},extra||{})));}catch(e){}   // extra: piggy-back fields (tr, party, fr, race, …)
  }
  chatMsg(myName(),text);
  try{showBubble(player,text);}catch(e){}
@@ -9708,24 +9960,33 @@ async function netConnect(){
  const club=myClub().toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,24)||myClub();
  net.club=club;
  try{
-  net.client=mqtt.connect('wss://broker.emqx.io:8084/mqtt',{clientId:'srf_'+net.id,clean:true,connectTimeout:9000,reconnectPeriod:5000});
+  net.client=mqtt.connect('wss://broker.emqx.io:8084/mqtt',{clientId:'srf_'+net.id+'_'+Math.random().toString(36).slice(2,6),clean:true,connectTimeout:9000,reconnectPeriod:5000});
  }catch(e){netStatus('offline');return;}
  net.client.on('connect',()=>{
   netStatus('online');
   net.client.subscribe('srf1/'+club+'/pos');
   net.client.subscribe('srf1/'+club+'/chat');
   net.client.subscribe('srf1/'+club+'/lb/#');
+  for(const tp of NET_SUBS){try{net.client.subscribe(netTopic(tp));}catch(e){}}   // feature packages' topics, re-subscribed on every connect
+  G.run('connect',club);
   setTimeout(publishMyBoards,1500);
   toast('🟢 Connected to club "'+club+'" — riders who join it will appear in your world!');
   netSendChat('joined the club! 🐴');
  });
- net.client.on('message',(topic,payload)=>{
+ net.client.on('message',(topic,payload)=>netOnMessage(topic,payload));
+ net.client.on('close',()=>netStatus('offline'));
+ net.client.on('error',()=>netStatus('offline'));
+}
+/* The message dispatcher, on its own so a QA script can feed it synthetic messages. */
+function netOnMessage(topic,payload){
   let m;
-  try{m=JSON.parse(payload.toString());}catch(e){return;}
+  try{m=JSON.parse(typeof payload==='string'?payload:payload.toString());}catch(e){return;}
   if(!m||m.id===net.id)return;
+  if(G.run('message',topic,m)===true)return;            // a package handled its own topic
   if(topic.endsWith('/pos'))remoteUpdate(m);
   else if(topic.endsWith('/chat')&&typeof m.t==='string'){
    const nm2=String(m.n||'Rider').slice(0,14);
+   if(G.run('chat',m,nm2)===true)return;                // a piggy-backed field handled by a package
    if(m.id!==net.id&&Array.isArray(m.tr)&&m.tr.length>=2&&m.tr.length<=9){trailOffer={pts:m.tr.slice(0,9).map(p=>[String(p[0]).slice(0,20),+p[1]||0,+p[2]||0]),by:nm2};toast('🥾 '+nm2+' started a trail ride — open 🌐 Club to join');}
    if(m.id!==net.id&&m.party)startParty(nm2,true);
    chatMsg(nm2,m.t.slice(0,90));
@@ -9739,9 +10000,6 @@ async function netConnect(){
     lbData[tp[3]][String(m.n||tp[4]||'Rider').slice(0,14)]=m.v;
    }
   }
- });
- net.client.on('close',()=>netStatus('offline'));
- net.client.on('error',()=>netStatus('offline'));
 }
 function isFriend(name){
  const s=freshSave();
@@ -9839,6 +10097,7 @@ function remoteUpdate(m){
  if(m.ct)r.coat=m.ct;
  if(m.hl)r.horseLv=m.hl;
  if(r.rig?.profile.artistBreed){const look=JSON.stringify([m.c,m.tailCol,m.mark,m.markCol,m.ct]);if(look!==r.artistLook){r.artistLook=look;configureArtistCustomization(r.rig,{breed,colors:m.c,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,id:m.id});}}
+ G.run('remote',m,r);
 }
 function netTick(dt,t){
  if(!SOCIAL)return;
@@ -9847,13 +10106,15 @@ function netTick(dt,t){
   const s=freshSave();
   const h=s&&s.horses[rideIdx];
   try{
-   net.client.publish('srf1/'+net.club+'/pos',JSON.stringify({
+   const payload={
     id:net.id,n:myName(),x:+player.pos.x.toFixed(1),z:+player.pos.z.toFixed(1),
     h:+player.heading.toFixed(2),sp:+Math.abs(player.speed).toFixed(1),
     c:h?h.colors:null,k:h?(h.tack||'#7a583a'):null,tailCol:h?.tailCol||null,mark:h?.mark??null,markCol:h?.markCol??null,
     s:(s.rider&&s.rider.shirt)||RIDER_DEF_SHIRT,p:(s.rider&&s.rider.pants)||RIDER_DEF_PANTS,hr:(s.rider&&s.rider.hair)||null,sk:(s.rider&&s.rider.skin)||null,hm:(s.rider&&s.rider.helmet)||null,
     hn:h?String(h.name).slice(0,14):null,b:h?(h.breed||null):null,hl:h?(h.level||1):1,wg:!!(h&&h.wings),ct:h?(h.coat||null):null,
-   }));
+   };
+   G.run('netPos',payload,s,h);                          // packages add their own fields
+   net.client.publish('srf1/'+net.club+'/pos',JSON.stringify(payload));
   }catch(e){}
  }
  for(const id of Object.keys(remotes)){
@@ -9886,6 +10147,7 @@ function netTick(dt,t){
   r.parts.group.rotation.y=r.heading;
   r.rider.g.rotation.x=0;
   if(r.rider.u)r.rider.u.uLean.value=0.06+0.2*Math.min(1,r.sp/6)+Math.sin(r.phase)*0.03;
+  G.run('remoteTick',r,dt,t);
  }
 }
 function openOnline(){
@@ -9920,8 +10182,10 @@ function openOnline(){
   return '<span style="font-size:11px;color:#8c7a63">👥 Club roster — tap a name for their profile:</span>'
   +(names.length?'<div class="crow" style="gap:5px;flex-wrap:wrap">'+names.map(nm2=>'<button data-prof="'+nm2+'" style="font-size:12px;padding:4px 10px">'+(isFriend(nm2)?'💚 ':'')+nm2+'</button>').join('')+'</div>':'<span style="font-size:11px;color:#8c7a63">just you so far</span>');
  })()
+ +sect('online',s)
  +'<span style="font-size:11px;color:#8c7a63">Same club code = same world. Chat with 💬 (now with emotes & speech bubbles). Start a race and club mates can join the same event to race you live!</span>';
  p.style.display='flex';
+ bindFx(p);
  p.querySelectorAll('[data-tr]').forEach(b=>{b.onclick=()=>{const [a,arg]=b.dataset.tr.split(':');
   if(a==='add'){ if(trailDraft.length<9)trailDraft.push(TRAIL_STOPS[+arg].slice()); }
   else if(a==='clear')trailDraft=[];
@@ -10162,8 +10426,10 @@ const BOARDS=[
  {k:'life_carrots',g:'hobby',label:'Carrots fed',rate:8.5},
  {k:'life_pet',g:'hobby',label:'Pets and scratches',rate:6.5},
 ];
+function addBoard(row){BOARDS.push(row);return row;}
 function boardVal(s,k){
  if(k.slice(0,5)==='life_')return Math.round((s.life||{})[k.slice(5)]||0);
+ {const row=BOARDS.find(b=>b.k===k);if(row&&typeof row.val==='function')return Math.round(row.val(s)||0);}   // a package's board computes its own value
  if(k==='level')return s.horses.reduce((m,h)=>Math.max(m,h.level||1),0);
  if(k==='breeds')return new Set(s.horses.map(h=>h.breed)).size;
  if(k==='passTier')return passTier((s.pass&&s.pass.pts)||0);
@@ -10242,7 +10508,8 @@ function renderLB(){
   if(ptier>=i+1&&!claims[i])ready++;
   if(vip&&ptier>=i+1&&!golds[i])ready++;
  }
- html+='<div class="lbTabs">'+[['boards','🏅 Boards'],['photos','📸 Photos'],['week','📅 Week'],['pass','🎟️ Season Pass'],['vip','👑 VIP']].map(([k,l])=>
+ const xl=EXTRA_LB_TABS.find(t=>t.id===lbTab);
+ html+='<div class="lbTabs">'+mergeTabs([['boards','🏅 Boards'],['photos','📸 Photos'],['week','📅 Week'],['pass','🎟️ Season Pass'],['vip','👑 VIP']],EXTRA_LB_TABS).map(({id:k,label:l})=>
   '<button data-lbtab="'+k+'"'+(lbTab===k?' class="claimBtn"':'')+'>'+l
   +(k==='pass'&&ready?'<span class="pip">'+ready+'</span>':'')
   +(k==='vip'&&vip?'<span class="pip" style="background:#1e8449">'+vipDays(s)+'d</span>':'')
@@ -10251,7 +10518,9 @@ function renderLB(){
      const c=(s.cal&&s.cal.m===calMonth())?s.cal:null;
      return !!(c&&CALENDAR.some((r,i)=>i<c.i&&!(c.claimed||{})[i]));
     })()?'<span class="pip">!</span>':'')+'</button>').join('')+'</div>';
- if(lbTab==='pass'){
+ if(xl){try{html+=xl.render(s)||'';}catch(e){console.error('lb tab '+xl.id,e);}}
+ if(!xl&&lbTab==='pass'){
+ html+=sect('passRow',s);
  /* The season pass. Two rows of tiers, free on top and gold underneath, so you can see at
     a glance what riding without VIP still gets you. */
  /* The season pass. One card per tier, free reward over gold, scrolled sideways so
@@ -10285,7 +10554,7 @@ function renderLB(){
  +'<div class="sub" style="margin:6px 0 0">Paid for in gems you earn by playing — there is no real money in this game. Buying again adds to the days you already have.</div>'
  +'</div>';
  }
- if(lbTab==='photos'){
+ if(!xl&&lbTab==='photos'){
   const wth=weekTheme(), ph=loadPhotos(), stand=photoStandings();
   const mine=ph.shots.find(x=>x.id===ph.entry);
   const mi=stand.findIndex(r=>r.me);
@@ -10312,8 +10581,9 @@ function renderLB(){
   if(mi>5)html+='<div class="evrow"><b>#'+(mi+1)+' You</b><span>'+stand[mi].v+' pts</span></div>';
   html+='<div class="sub" style="margin:6px 0 0">Placing in the top three pays a bonus with your week\'s wages on Monday. The other ranches are the valley\'s own families, not other players — voting on real people\'s photos needs a club, and that is coming.</div></div>';
  }
- if(lbTab==='week'){
+ if(!xl&&lbTab==='week'){
   const L=s.wkLast, W=s.wk||{};
+  html+=sect('lbWeek',s);
   /* the month's calendar */
   {const c=(s.cal&&s.cal.m===calMonth())?s.cal:{m:calMonth(),i:0,claimed:{}};
    const ready=CALENDAR.reduce((a,r,i)=>a+((i<c.i&&!c.claimed[i])?1:0),0);
@@ -10345,11 +10615,11 @@ function renderLB(){
    +WAGE_TIERS.map(t=>'<div class="evrow"><b'+((W.sp||0)>=t.sp?' style="color:#3f5f2c"':'')+'>'+((W.sp||0)>=t.sp?'✅ ':'')+t.label+'</b><span>'+t.sp+'⭐ → '+t.c+'🪙'+(t.g?' '+t.g+'💎':'')+(t.k?' '+t.k+'🗝️':'')+'</span></div>').join('')
    +'<div class="sub" style="margin:6px 0 0">Star points come from events, trails, building and looking after your horses. Riding on more days pays more.</div></div>';
  }
- if(lbTab==='boards'){
+ if(!xl&&lbTab==='boards'){
  html+='<div class="lbTabs">'+[['ranks','📊 Ranks'],['miles','🎯 Milestones'],['times','⏱️ Times']].map(([k,l])=>
   '<button data-lbsub="'+k+'"'+(lbSub===k?' class="claimBtn"':'')+'>'+l+'</button>').join('')+'</div>';
  }
- if(lbTab==='boards'&&lbSub==='ranks'){
+ if(!xl&&lbTab==='boards'&&lbSub==='ranks'){
   html+='<div style="font-size:11px;color:#8c7a63;margin:2px 0 0">Ranked against the other ranches in the valley'
    +(online?' and everyone in your club':'')+'. The neighbours are ranch families, not other players — their numbers grow the longer you have been going.</div>';
   for(const [gid,glabel] of BOARD_GROUPS){
@@ -10365,7 +10635,7 @@ function renderLB(){
    }
   }
  }
- if(lbTab==='boards'&&lbSub==='miles'){
+ if(!xl&&lbTab==='boards'&&lbSub==='miles'){
  for(const k of Object.keys(MILES)){
   const me=statVal(s,k);
   const top=lbTop(k,false);
@@ -10381,7 +10651,7 @@ function renderLB(){
   }).join('')+'</span></div>';
  }
  }
- if(lbTab==='boards'&&lbSub==='times'){
+ if(!xl&&lbTab==='boards'&&lbSub==='times'){
  html+='<b style="font-size:14px">⏱️ Event best times</b>';
  const bt=s.bestTimes||{};
  html+=EVENTS3.map(ev=>{
@@ -10409,6 +10679,8 @@ function renderLB(){
  p.querySelectorAll('[data-lbtab]').forEach(b=>{
   b.onclick=()=>{ lbTab=b.dataset.lbtab; renderLB(); };
  });
+ if(xl&&xl.bind){try{xl.bind(p,s);}catch(e){}}
+ bindFx(p);
  p.querySelectorAll('[data-lbsub]').forEach(b=>{
   b.onclick=()=>{ lbSub=b.dataset.lbsub; renderLB(); };
  });
@@ -10431,7 +10703,7 @@ function renderLB(){
    let pay=null;
    syncSave(sv=>{ if(!sv.wkLast||sv.wkLast.claimed)return;
     pay=weekPayout(sv.wkLast); sv.wkLast.claimed=true;
-    sv.coins+=pay.c; sv.gems+=pay.g; if(pay.k)sv.keys=(sv.keys||0)+pay.k;
+    sv.coins+=pay.c; grantGems(sv,pay.g); if(pay.k)sv.keys=(sv.keys||0)+pay.k;
     sv.stats=sv.stats||{}; sv.stats.earned=(sv.stats.earned||0)+pay.c; logEarn(sv,pay.c); });
    if(pay){ refreshWallet(); sGem(); toast('📅 '+pay.label+': +'+pay.c+'🪙'+(pay.g?' +'+pay.g+'💎':'')+(pay.k?' +'+pay.k+'🗝️':'')); }
    renderLB();
@@ -10451,7 +10723,7 @@ function renderLB(){
     sv.lbClaims[key]=true;
     const r=MILES[k].tiers[i][1];
     if(r.c)sv.coins+=r.c;
-    if(r.g)sv.gems+=r.g;
+    if(r.g)grantGems(sv,r.g);
     if(r.k)sv.keys=(sv.keys||0)+r.k;
     if(r.gear){sv.tack=sv.tack||[];sv.tack.push(genGear(r.gear));}
     ok=true;
@@ -10522,6 +10794,7 @@ function renderMoney(){
   html+='<div class="sub">Come back tomorrow and this fills in day by day.</div>';
  }
  html+='<div class="sub" style="margin:5px 0 0">Lifetime: '+Math.floor((s.stats&&s.stats.earned)||0)+'🪙 earned.</div></div>';
+ html+=sect('money',s);
  /* where it comes from */
  html+='<div class="passCard" style="margin-top:6px"><b>💡 Where money comes from</b>'
   +'<div class="sub" style="margin-top:4px">'
@@ -10535,6 +10808,7 @@ function renderMoney(){
   +'</div></div>';
  p.innerHTML=html;
  p.style.display='flex';
+ bindFx(p);
  const cb=p.querySelector('[data-money="collect"]');
  if(cb)cb.onclick=()=>{
   let got=0;
@@ -10581,13 +10855,8 @@ function startSummon(tier){
  let newId=null;
  syncSave(sv=>{
   sv.gems-=tier.gems;
-  const o=br[7]||{}, st=()=>3+Math.floor(Math.random()*4);
-  newId=sv.nextId++;
-  sv.horses.push({id:newId,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],breed:br[0],
-   colors:{body:br[5],mane:br[6]},horn:!!o.horn,rainbow:!!o.rainbow,wings:!!o.wings,dragon:!!o.dragon,
-   coat:o.coat||null,ability:o.ability||null,glow:!!o.glow,
-   stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},sxp:{},level:1,xp:0,bond:10,
-   needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
+  const st=()=>3+Math.floor(Math.random()*4);
+  newId=grantHorse(sv,br[0],{stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},src:'summon',extra:{summonTier:tier.id,summonRar:rar}}).id;
   sv.stats=sv.stats||{}; sv.stats.summons=(sv.stats.summons||0)+1;
  });
  refreshWallet();
@@ -10847,6 +11116,7 @@ function renderStable(){
  if(ensureTurnout(s))syncSave(sv=>{ensureTurnout(sv);});
  const _out=turnedOut(s), _max=pastureMax(s);
  p.innerHTML='<div class="ph">🐎 Your Stable <span style="color:#8c7a63;font-size:13px;font-weight:600">'+s.horses.length+' horses · no limit</span><button data-st="close" style="margin-left:auto">✖</button></div>'
+ +sect('stableHeader',s)
  +'<div style="font-size:11.5px;color:#8c7a63;padding:0 2px">🌿 <b>'+_out+' of '+_max+'</b> out in the pasture'+(isVIP(s)?' (VIP)':'')+'. The rest are in the barn — keep as many horses as you like, and rotate who goes out to grass.</div>'
  +'<div class="evrow"><b>Bay sporthorse</b><span>A new arrival · ready to ride</span><button data-st="hero" class="claimBtn">'+(s.horses.some(h=>h.breed==='bay-sporthorse'&&!h.foal)?'Ride Bay sporthorse':'Adopt & ride · Free')+'</button></div>'
  +'<div style="padding:10px 18px"><a href="breeds.html?v=artist-study-1" target="_blank" rel="noopener" style="color:#45654e;font-weight:700">Open Breed Studio ↗</a></div>'
@@ -10860,6 +11130,7 @@ function renderStable(){
   +(h.foal?'<button data-st="eq:'+i+'" '+(h.id===companionId?'class="claimBtn"':'')+' title="A foal companion trots along behind you">'+(h.id===companionId?'🍼 Following ✓':'🍼 Equip')+'</button>':'')
   +(i===rideIdx?'':'<button data-st="out:'+i+'"'+(h.out?' class="claimBtn"':'')+' title="'+(h.out?'Out in the pasture':'Waiting in the barn')+'">'+(h.out?'🌿 Pasture':'🏠 Barn')+'</button>')
   +(i===rideIdx?'':'<button data-st="ride:'+i+'">🏇 Ride</button>')
+  +sect('stableRow',h,i)
   +'<button data-st="rn:'+i+'" title="Rename">✏️</button></div>';
  }).join('')
  +'<span style="font-size:11px;color:#8c7a63">⚠️ means a horse needs care · 🍼 Equip a foal so it follows you on rides!</span>'
@@ -10869,6 +11140,7 @@ function renderStable(){
   return '<div class="ph" style="font-size:14px;margin-top:6px">🐾 Pets <span style="color:#8c7a63;font-size:12px;font-weight:600">pick who follows</span></div>'
   +pets.map(k=>{const P=petCfg(k);const active=activePet===k;return '<div class="evrow">'+P.emoji+' <b>'+P.name+'</b><span>'+(active?'following you ✓':'at the ranch')+'</span><button data-pet="'+k+'"'+(active?' class="claimBtn"':'')+'>'+(active?'🐾 Following':'🐾 Follow')+'</button></div>';}).join('');
  })();
+ bindFx(p);
  p.querySelectorAll('[data-pet]').forEach(b=>{b.onclick=()=>{setActivePet(b.dataset.pet);renderStable();};});
  p.querySelectorAll('[data-st]').forEach(b=>{b.onclick=()=>{
   const [act,iS]=b.dataset.st.split(':'),i=+iS;
@@ -10961,8 +11233,13 @@ const DAILYQ=[
 ];
 // long-haul variants share their hooks with the base types
 function dailyTypeAliases(type){return type==='gallop'?['gallop','gallop2k']:type==='feed'?['feed','feed6']:[type];}
+const _dailyMemo={key:'',list:null};
 function todayDaily(){
  const ds=new Date().toDateString();
+ const mk=ds+'|'+DAILYQ.length; if(_dailyMemo.key===mk&&_dailyMemo.list)return _dailyMemo.list;
+ _dailyMemo.key=mk; return _dailyMemo.list=todayDailyRoll(ds);
+}
+function todayDailyRoll(ds){
  let h=0;for(let i=0;i<ds.length;i++)h=(h*31+ds.charCodeAt(i))|0;
  const idx=[];let k=Math.abs(h)||1;
  while(idx.length<3){k=(k*1103515245+12345)%2147483647;const j=k%DAILYQ.length;if(!idx.includes(j))idx.push(j);}
@@ -10991,10 +11268,11 @@ function dailyEvt(type,val){
   });
   if(crossed)toast('📋 Daily quest done: '+q.label+' — claim it in 📜 Quests!');
  }
+ G.run('dailyEvt',type,val);                              // side quests, foal quests, co-op goals listen here
 }
 function claimUmbrella(){
  let ok=false;
- syncSave(s=>{ensureDq(s); if(s.dq.umbrella||Object.keys(s.dq.claimed).length<3)return; s.dq.umbrella=true; s.keys=(s.keys||0)+1; s.gems=(s.gems||0)+1; ok=true;});
+ syncSave(s=>{ensureDq(s); if(s.dq.umbrella||Object.keys(s.dq.claimed).length<3)return; s.dq.umbrella=true; s.keys=(s.keys||0)+1; grantGems(s,1); ok=true;});
  if(ok){refreshWallet();sGem();toast('🌂 Umbrella: +1🗝️ +1💎');renderQuests();}
 }
 function claimDaily(type){
@@ -11005,7 +11283,7 @@ function claimDaily(type){
   if(s.dq.claimed[type]||(s.dq.prog[type]||0)<q.goal)return;
   s.dq.claimed[type]=true;
   if(q.r.c)s.coins+=q.r.c;
-  if(q.r.g)s.gems+=q.r.g;
+  if(q.r.g)grantGems(s,q.r.g);
   if(q.r.k)s.keys=(s.keys||0)+q.r.k;
   if(q.r.p){s.pass=s.pass||{pts:0};s.pass.pts+=q.r.p;}
   ok=true;
@@ -11042,7 +11320,7 @@ const ACHS=[
  {id:'bond100',icon:'❤️',label:'Soulmates',desc:'Reach 100 bond with a horse',v:s=>Math.round(s.horses.reduce((m,h)=>Math.max(m,h.bond||0),0)),goal:100,r:{g:1}},
  {id:'lvl5',icon:'⭐',label:'Rising star',desc:'Train a horse to level 5',v:s=>s.horses.reduce((m,h)=>Math.max(m,h.level||1),1),goal:5,r:{c:200}},
  {id:'dist25k',icon:'🧭',label:'Trail blazer',desc:'Ride 25 km in total',v:s=>(s.stats&&s.stats.dist)||0,goal:25000,r:{g:1}},
- {id:'friend1',social:true,icon:'🤝',label:'Club pal',desc:'Add a friend',v:s=>(s.friends||[]).length,goal:1,r:{c:100}},
+ {id:'friend1',social:true,icon:'🤝',label:'Club pal',desc:'Add a friend',v:s=>Object.keys(s.friends||{}).length,goal:1,r:{c:100}},
  {id:'shoe25',icon:'🍀',label:'Lucky streak',desc:'Find 25 golden horseshoes',v:s=>(s.stats&&s.stats.shoesFound)||0,goal:25,r:{g:2}},
  {id:'wild10',icon:'📸',label:'Wildlife photographer',desc:'Snap 10 wild animals with the camera',v:s=>(s.stats&&s.stats.wildPhotos)||0,goal:10,r:{g:1}},
  {id:'shoe3',icon:'🧲',label:'Lucky shoes',desc:'Find 3 golden horseshoes',v:s=>((s.stats&&s.stats.shoesFound)||0)+Object.keys(s.shoes3d||{}).length,goal:3,r:{c:250}},
@@ -11066,7 +11344,7 @@ function claimAch(id){
   if(s.achClaims[id]||a.v(s)<a.goal)return;
   s.achClaims[id]=true;
   if(a.r.c)s.coins+=a.r.c;
-  if(a.r.g)s.gems+=a.r.g;
+  if(a.r.g)grantGems(s,a.r.g);
   if(a.r.k)s.keys=(s.keys||0)+a.r.k;
   ok=true;
  });
@@ -11085,15 +11363,17 @@ function renderQuests(){
  ensureDq(s);
  const p=$('questPanel');
  let html='<div class="ph">📜 Quests <span class="chip" style="font-size:12px;padding:3px 10px">🔥 Day '+(s.streakN||1)+' streak</span><button data-q="close" style="margin-left:auto">✖</button></div>'
- +'<div class="crow" style="gap:6px"><button class="tabbtn '+(questTab==='daily'?'on':'')+'" data-q="tab:daily">📋 Daily</button><button class="tabbtn '+(questTab==='ach'?'on':'')+'" data-q="tab:ach">🏅 Achievements</button><button class="tabbtn '+(questTab==='coll'?'on':'')+'" data-q="tab:coll">🗺️ Collection</button></div>';
- if(questTab==='coll'){
+ +'<div class="crow" style="gap:6px">'+mergeTabs([['daily','📋 Daily'],['ach','🏅 Achievements'],['coll','🗺️ Collection']],EXTRA_QUEST_TABS).map(tb=>'<button class="tabbtn '+(questTab===tb.id?'on':'')+'" data-q="tab:'+tb.id+'">'+tb.label+'</button>').join('')+'</div>';
+ const xq=EXTRA_QUEST_TABS.find(t=>t.id===questTab);
+ if(xq){try{html+=xq.render(s)||'';}catch(e){console.error('quest tab '+xq.id,e);}}
+ else if(questTab==='coll'){
   const opened=CHESTS.filter(c=>s.chests&&s.chests[c.id]).length, fish=s.fish||{n:0,bottles:0};
   html+='<span style="font-size:12px;color:#8c7a63">Open the map (M) — chests, collectibles, the tack room and the fishing spot are all marked.</span>';
   html+=Object.keys(COLL_SETS).map(k=>{const have=(s.sets&&s.sets[k]||[]).length; const done=s.setsDone&&s.setsDone[k];
-   return '<div class="qrow'+(done?' claimed':'')+'"><span class="qico">'+COLL_SETS[k].label.split(' ')[0]+'</span><span class="qmain"><b>'+COLL_SETS[k].label.slice(COLL_SETS[k].label.indexOf(' ')+1)+'</b><span class="qbar"><span class="qfill" style="width:'+have*20+'%"></span></span></span><span style="font-size:11px;color:#8c7a63">'+have+'/5'+(done?' ✅':' → 2💎 1🗝️')+'</span></div>';}).join('');
+   return '<div class="qrow'+(done?' claimed':'')+'"><span class="qico">'+COLL_SETS[k].label.split(' ')[0]+'</span><span class="qmain"><b>'+COLL_SETS[k].label.slice(COLL_SETS[k].label.indexOf(' ')+1)+'</b><span class="qbar"><span class="qfill" style="width:'+have*20+'%"></span></span></span><span style="font-size:11px;color:#8c7a63">'+have+'/5'+(done?' ✅':' → '+rewardLabel(COLL_SETS[k].reward))+'</span></div>';}).join('');
   html+='<div class="qrow"><span class="qico">🎁</span><span class="qmain"><b>Treasure chests</b><span class="qbar"><span class="qfill" style="width:'+Math.round(100*opened/CHESTS.length)+'%"></span></span></span><span style="font-size:11px;color:#8c7a63">'+opened+'/'+CHESTS.length+' found · refill in 3 days</span></div>';
   html+='<div class="qrow"><span class="qico">🎣</span><span class="qmain"><b>Loon Lake</b><span style="font-size:11px;color:#8c7a63;font-weight:600">'+fish.n+' fish caught · '+fish.bottles+' bottle'+(fish.bottles===1?'':'s')+' found</span></span></div>';
-  html+='<div class="qrow"><span class="qico">🔐</span><span class="qmain"><b>Grandma\'s tack room</b><span style="font-size:11px;color:#8c7a63;font-weight:600">'+(s.tackRoom===weekKey()?'opened this week':'a Silver Key opens it: rare tack at least, once a week')+'</span></span></div>';
+  html+='<div class="qrow"><span class="qico">🔐</span><span class="qmain"><b>Grandma\'s tack room</b><span style="font-size:11px;color:#8c7a63;font-weight:600">'+((s.doors&&s.doors.tackroom)===weekKey()?'opened this week':'a Silver Key opens it: rare tack at least, once a week')+'</span></span></div>';
  }else if(questTab==='daily'){
   html+='<span style="font-size:12px;color:#8c7a63">Three fresh quests every day — they reset at midnight!</span>'
   +todayDaily().map(q=>{
@@ -11129,6 +11409,8 @@ function renderQuests(){
   else if(act==='um')claimUmbrella();
   else if(act==='ca')claimAch(arg);
  };});
+ if(xq&&xq.bind){try{xq.bind(p,s);}catch(e){}}
+ bindFx(p);
 }
 $('questBtn').onclick=openQuests;
 
@@ -11143,7 +11425,7 @@ $('questBtn').onclick=openQuests;
   s.streakLast=ds;
   const c=50+Math.min(7,s.streakN)*25;
   s.coins+=c;
-  const sg=s.streakN%2===0?2:1; s.gems+=sg;                 // a gem or two for coming back, every day
+  const sg=s.streakN%2===0?2:1; grantGems(s,sg);                 // a gem or two for coming back, every day
   if(calAdvance(s))msg2='📅 Day '+s.cal.i+' of the month is open — collect it in 🏅 → Week.';
   msg='🔥 Day '+s.streakN+' login streak! +'+c+'🪙 +'+sg+'💎';
  });
@@ -11153,14 +11435,19 @@ $('questBtn').onclick=openQuests;
 
 /* ---- fast travel from the big map ---- */
 const FT=[['🏠 Ranch',0,5],['🐴 Pasture',-70,-10],['🏘️ Cottonwood',47,-50],['🌾 Barleyfold',220,-110],['🤠 Coyote Canyon',-220,130],['🏔️ Hollowpeak',-160,-210],['💦 The Falls',-150,-222],['🌊 Loon Lake',20,16]];
-$('ftBar').innerHTML='<span class="chip" style="font-size:12px;padding:4px 10px">🧭 Fast travel:</span>'+FT.map((f,i)=>'<button data-ft="'+i+'">'+f[0]+'</button>').join('');
-$('ftBar').querySelectorAll('[data-ft]').forEach(b=>{b.onclick=()=>{
- if($('courseHud').style.display!=='none'){toast('🏁 Finish the race first!');return;}
- const f=FT[+b.dataset.ft];
- player.pos.set(f[1],0,f[2]);player.speed=0;
- toast('🧭 '+f[0].slice(f[0].indexOf(' ')+1)+', here we come!');
- dailyEvt('ft',1);
-};});
+function buildFtBar(){
+ const bar=$('ftBar'); if(!bar)return;
+ bar.innerHTML='<span class="chip" style="font-size:12px;padding:4px 10px">🧭 Fast travel:</span>'+FT.map((f,i)=>'<button data-ft="'+i+'">'+f[0]+'</button>').join('');
+ bar.querySelectorAll('[data-ft]').forEach(b=>{b.onclick=()=>{
+  if($('courseHud').style.display!=='none'){toast('🏁 Finish the race first!');return;}
+  const f=FT[+b.dataset.ft];
+  player.pos.set(f[1],0,f[2]);player.speed=0;
+  toast('🧭 '+f[0].slice(f[0].indexOf(' ')+1)+', here we come!');
+  dailyEvt('ft',1);
+ };});
+}
+buildFtBar();
+function addFT(entry){FT.push(entry);buildFtBar();return entry;}
 
 /* ---- rider profiles: view, friend, club breeding ---- */
 function openProfile(name){
@@ -11181,8 +11468,10 @@ function openProfile(name){
  +'<button data-pf="friend">'+(isFriend(name)?'💚 Friends ✓':'🤍 Add friend')+'</button>'
  +(online&&r.colors?'<button data-pf="breed" class="claimBtn">💞 Breed with '+(r.horseName||'their horse')+' (500 🪙)</button>':'')
  +'</div>'
+ +sect('profile',name,r)
  +'<span style="font-size:11px;color:#8c7a63">💞 Club breeding: your current horse and theirs have a foal — it blends both coats and joins YOUR pasture. Their horses are never affected.</span>';
  p.style.display='flex';
+ bindFx(p);
  p.querySelectorAll('[data-pf]').forEach(b=>{b.onclick=()=>{
   const act=b.dataset.pf;
   if(act==='close')p.style.display='none';
@@ -11201,19 +11490,7 @@ function breedWithRider(name){
   if(s.coins<500){msg='You need 500 🪙 for a club breeding.';return;}
   const mine=s.horses[rideIdx];if(!mine)return;
   s.coins-=500;
-  const st=()=>2+Math.floor(Math.random()*3);
-  const wingChild=!!(mine.wings||r.wings);   // 🪽 wings carry across clubs & generations
-  const childCoat=mine.coat||r.coat||null;
-  const childMark=inheritMark(mine,r);
-  const foal={id:s.nextId++,name:NAMES3[Math.floor(Math.random()*NAMES3.length)],
-   breed:wingChild?(mine.wings?mine.breed:(r.breed||mine.breed)):((Math.random()<0.5&&r.breed)?r.breed:mine.breed),
-   colors:{body:blendHex(mine.colors.body,r.colors.body),mane:blendHex(mine.colors.mane,r.colors.mane)},
-   horn:mine.horn&&Math.random()<0.4,rainbow:false,wings:wingChild,dragon:wingChild&&!!mine.dragon,
-   coat:childCoat,mark:childMark.mark,markCol:childMark.col||undefined,
-   ability:mine.ability||(wingChild?'fly':null),glow:!!mine.glow||!!childCoat,
-   stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},sxp:{},level:1,xp:0,bond:30,
-   needs:{hunger:90,thirst:90,clean:90,happy:90},foal:true,born:Date.now(),tack:null};
-  s.horses.push(foal);
+  const foal=makeFoal(s,mine,r,{club:true,src:'club',rider:name});
   s.stats=s.stats||{};
   s.stats.clubBreeds=(s.stats.clubBreeds||0)+1;
   msg='💞 A foal was born: '+foal.name+'! '+mine.name+' × '+(r.horseName||name+"'s horse")+' 🍼 Find it in the pasture!';
@@ -11286,12 +11563,26 @@ let storyIdx=0,storyProg=0,nearNPC=false;
 try{if(save&&save.story){storyIdx=save.story.idx||0;storyProg=save.story.prog||0;}}catch(e){}
 function saveStory(){syncSave(s=>{s.story={idx:storyIdx,prog:storyProg};});}
 function missionDone(){const m=STORY[storyIdx];return m&&storyProg>=m.goal;}
+/* Story missions from packages: append at the end, or insert a chapter before an index —
+   once per save (s.mig[tag]), moving the player's position so nobody replays a mission. */
+function storyAppend(entries){for(const e of entries)STORY.push(e);return STORY.length;}
+function storyInsertBefore(idx,entries,tag){
+ STORY.splice(idx,0,...entries);
+ let bumped=false;
+ syncSave(s=>{s.mig=s.mig||{};if(s.mig[tag])return;s.mig[tag]=1;s.story=s.story||{idx:0,prog:0};if((s.story.idx||0)>=idx){s.story.idx+=entries.length;bumped=true;}});
+ if(bumped)storyIdx+=entries.length;
+ return idx;
+}
+function addDaily(row){DAILYQ.push(row);_dailyMemo.key='';return row;}
+function addAch(row){if(row.social&&!SOCIAL)return null;ACHS.push(row);return row;}
 function questEvt(type,val){
  const m=STORY[storyIdx];
  if(!m||m.type!==type||storyProg>=m.goal)return;
- if(type==='event'){if(val===m.ev)storyProg=m.goal;}
+ const custom=QUEST_TYPES[type];                          // snapshot types a package registers: ribbons, tacklvl, ranchlvl, clues, door, gold …
+ if(custom){const np=custom(m,val,storyProg);if(typeof np==='number'&&isFinite(np))storyProg=Math.max(0,Math.min(m.goal,np));}
+ else if(type==='event'){if(val===m.ev)storyProg=m.goal;}
  else if(type==='forage'){if(val===m.item)storyProg=Math.min(m.goal,storyProg+1);}
- else storyProg=Math.min(m.goal,storyProg+val);
+ else storyProg=Math.min(m.goal,storyProg+(typeof val==='number'?val:1));   // any other type is a counter
  saveStory();
  if(storyProg>=m.goal){const g=NPC_DEFS.find(x=>x.id===(m.npc||'wren'))||NPC_DEFS[0];toast('📜 Done! Ride back and tell '+g.name);}
 }
@@ -11309,8 +11600,13 @@ function openDlg(){
   $('dlgBtn').onclick=()=>{d.style.display='none';};
   return;
  }
+ const sv0=freshSave();
+ const dlgExtra=G.run('dlg',def,sv0);
+ const extra=(typeof def.extraHtml==='function'?(def.extraHtml(sv0)||''):'')+(typeof dlgExtra==='string'?dlgExtra:'');   // a package's own lines and buttons
+ const roleBtn=(def.role&&def.role.open)?'<button id="dlgRole" style="margin-right:6px">'+(def.role.label||'🛍️ Shop')+'</button>':'';
+ if(typeof def.onTalk==='function'){try{def.onTalk(def,sv0);}catch(e){}}
  if(!m){
-  d.innerHTML=head+'<p>'+(def.id==='wren'?'You brought the Silver Kestrel home, champion. Your grandmother would have loved to see it. Ride free! 🏆':def.idle)+'</p><button id="dlgBtn">🐴</button>';
+  d.innerHTML=head+'<p>'+(def.id==='wren'?'You brought the Silver Kestrel home, champion. Your grandmother would have loved to see it. Ride free! 🏆':def.idle)+'</p>'+extra+roleBtn+'<button id="dlgBtn">🐴</button>';
  }else if(mine&&missionDone()){
   const r=m.reward;
   d.innerHTML=head+'<p>Wonderful work! Here — you earned it: <b>'+(r.c||0)+'🪙'+(r.g?' +'+r.g+'💎':'')+(r.k?' +'+r.k+'🗝️':'')+(r.gear?' + a Legendary piece of tack':'')+'</b></p><button id="dlgBtn">Claim ✨</button>';
@@ -11318,9 +11614,11 @@ function openDlg(){
   d.innerHTML=head+(m.ch?'<div style="font-size:11px;color:#8c7a63;letter-spacing:.04em">📖 '+m.ch+'</div>':'')+'<p>'+m.text+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':'')+'</span><br><br><button id="dlgBtn">On it!</button>';
  }else{
   const g=NPC_DEFS.find(x=>x.id===giver)||NPC_DEFS[0];
-  d.innerHTML=head+'<p>'+def.idle+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+' — '+(missionDone()?'tell '+npcShort(g):'ask '+npcShort(g)+' about it')+'</span><br><br><button id="dlgBtn">🐴</button>';
+  d.innerHTML=head+'<p>'+def.idle+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+' — '+(missionDone()?'tell '+npcShort(g):'ask '+npcShort(g)+' about it')+'</span><br><br>'+extra+roleBtn+'<button id="dlgBtn">🐴</button>';
  }
  d.style.display='block';
+ bindFx(d);
+ {const rb=$('dlgRole');if(rb)rb.onclick=()=>{d.style.display='none';openShop(def.role.open);};}
  $('dlgBtn').onclick=()=>{
   if(m&&mine&&missionDone()){
    addCoins(m.reward.c||0);
@@ -11369,6 +11667,18 @@ const NPC_DEFS=[
    tack room by the barn that a Silver Key opens once a week for a piece that is rare at
    least. And Loon Lake to fish, with a bite to catch and, now and then, a bottle. */
 const things=[];   // {kind,id,g,x,z,...}
+/* A package's interactable: push {kind,id,g,x,z,reach?,label(t)->string,use(t),tick(dt,t,dist)?}.
+   Generic label/use branches call t.label / t.use when present. */
+function addThing(t){things.push(t);if(t.g&&!t.g.parent)scene.add(t.g);return t;}
+/* A building on the ground with a label, a collider and camera awareness — the mkTackRoom shape. */
+function addBuilding(o){
+ const b=o.build(); b.position.set(o.x,groundH(o.x,o.z),o.z); b.rotation.y=o.rot||0;
+ b.traverse(m=>{if(m.isMesh){m.castShadow=true;m.receiveShadow=true;}});
+ scene.add(b); followCamera.register(b);
+ if(o.r)colliders.push({x:o.x,z:o.z,r:o.r});
+ if(o.label){const sp=nameSprite(o.label);sp.position.y=o.labelY||(b.userData.architecture&&b.userData.architecture.suggestedLabelY)||3;b.add(sp);}
+ return b;
+}
 function mkChest(c){
  const g=new THREE.Group();
  box(0.9,0.5,0.6,'#6b4423',0,0.25,0,g); const lid=box(0.92,0.22,0.62,'#7d5230',0,0.6,-0.0,g); lid.position.z=-0.0;
@@ -11420,7 +11730,7 @@ function summonRoll(tier){
 }
 function summonBreed(rar){
  const want=SUMMON_POOL[rar]||['Common'];
- const pool=BREEDS3.filter(b=>want.indexOf(b[2])>=0);
+ const pool=BREEDS3.filter(b=>want.indexOf(b[2])>=0&&breedAvailable(b,'summon'));   // no story or exclusive horses out of the stall (the Kestrel used to leak)
  return pool.length?pool[Math.floor(Math.random()*pool.length)]:BREEDS3[0];
 }
 const SUMMON={on:false,t:0,phase:'',tier:null,rar:null,breed:null,step:0,shown:'Common',
@@ -11479,42 +11789,45 @@ function mkTackRoom(){
 }
 let nearThing=null, fishing=null;
 function thingLabel(t){
+ if(typeof t.label==='function'){try{return t.label(t)||'';}catch(e){return '';}}
  if(t.kind==='chest'){const sv=freshSave(); const at=sv&&sv.chests&&sv.chests[t.id]; const open=at&&Date.now()-at<CHEST_REOPEN; return open?'🎁 Chest (refills in '+Math.ceil((CHEST_REOPEN-(Date.now()-at))/3600000)+'h)':'🎁 Open the chest (E)';}
- if(t.kind==='room'){const sv=freshSave(); const used=sv&&sv.tackRoom===weekKey(); return used?'🔐 Tack room (opens again next week)':'🔐 Unlock with a Silver Key (E)';}
+ if(t.kind==='room'){const sv=freshSave(); const used=sv&&sv.doors&&sv.doors.tackroom===weekKey(); return used?'🔐 Tack room (opens again next week)':'🔐 Unlock with a Silver Key (E)';}
  if(t.kind==='summon')return SUMMON.on?'✨ …something is coming':'✨ Call a horse (E)';
  if(t.kind==='fish')return fishing?(fishing.bit?'❗ BITE — reel in (E)!':'🎣 Waiting for a bite…'):'🎣 Fish (E)';
  return '';
 }
 function useThing(){
  const t=nearThing; if(!t)return;
+ if(typeof t.use==='function'){try{t.use(t);}catch(e){console.error('thing '+t.kind,e);}return;}
  if(t.kind==='chest'){
   let got=null;
   syncSave(sv=>{ sv.chests=sv.chests||{}; const at=sv.chests[t.id]; if(at&&Date.now()-at<CHEST_REOPEN)return;
    sv.chests[t.id]=Date.now(); const r={c:t.tier===1?80+Math.floor(Math.random()*80):t.tier===2?200:300};
    if(t.tier>=2)r.k=1; r.g=t.tier===3?4:t.tier===2?2:1; if(t.tier===3){r.gear='Rare';} if(t.tier===1){const fk=['carrot','apple','lettuce','pumpkin'][Math.floor(Math.random()*4)];sv.items[fk]=(sv.items[fk]||0)+3;r.food=fk;}
-   sv.coins+=r.c; if(r.k)sv.keys=(sv.keys||0)+r.k; if(r.g)sv.gems+=r.g; if(r.gear){sv.tack=sv.tack||[];sv.tack.push(genGear(r.gear));} sv.stats=sv.stats||{}; sv.stats.chests=(sv.stats.chests||0)+1; got=r; });
+   sv.coins+=r.c; if(r.k)sv.keys=(sv.keys||0)+r.k; if(r.g)grantGems(sv,r.g); if(r.gear){sv.tack=sv.tack||[];sv.tack.push(genGear(r.gear));} sv.stats=sv.stats||{}; sv.stats.chests=(sv.stats.chests||0)+1; got=r; });
   if(!got){toast('The chest is empty — it refills in a few days.');return;}
   t.lid.rotation.x=-1.2; refreshWallet(); refreshTack(); sGem(); passAdd(5);
   toast('🎁 '+got.c+'🪙'+(got.k?' +'+got.k+'🗝️':'')+(got.g?' +'+got.g+'💎':'')+(got.gear?' + Rare tack!':'')+(got.food?' + 3 '+FOODS3[got.food].emoji:''));
  }else if(t.kind==='room'){
   let ok=false,piece=null;
-  syncSave(sv=>{ if(sv.tackRoom===weekKey())return; if((sv.keys||0)<1)return; sv.keys--; sv.tackRoom=weekKey(); const r=Math.random(); piece=genGear(r<0.05?'Legendary':r<0.3?'Epic':'Rare'); sv.tack=sv.tack||[]; sv.tack.push(piece); sv.coins+=100; ok=true; });
-  if(!ok){const sv=freshSave(); toast(sv&&sv.tackRoom===weekKey()?'Grandma\'s tack room opens once a week.':'You need a Silver Key.');return;}
+  syncSave(sv=>{ if(sv.doors.tackroom===weekKey())return; if((sv.keys||0)<1)return; sv.keys--; sv.doors.tackroom=weekKey(); const r=Math.random(); piece=genGear(r<0.05?'Legendary':r<0.3?'Epic':'Rare'); sv.tack=sv.tack||[]; sv.tack.push(piece); sv.coins+=100; ok=true; });
+  if(!ok){const sv=freshSave(); toast(sv&&sv.doors&&sv.doors.tackroom===weekKey()?'Grandma\'s tack room opens once a week.':'You need a Silver Key.');return;}
   t.door.rotation.y=-1.3; refreshWallet(); refreshTack(); sGem(); toast('🔐 '+piece.rarity+'! '+piece.name+' — and 100🪙 in the tin');
  }else if(t.kind==='summon'){
   openSummon();
  }else if(t.kind==='fish'){
   if(!fishing){ fishing={t:2+Math.random()*4,bit:false,win:0}; toast('🎣 Cast… keep still and wait for the bite'); return; }
   if(fishing.bit){ const r=Math.random(); const c=r<0.05?{n:'a bottle with a note',c:60,k:1,bottle:true}:r<0.15?{n:'a Golden Loon Perch',c:150,g:1}:r<0.45?{n:'a Trout',c:70}:{n:'a Bass',c:40};
-   syncSave(sv=>{sv.fish=sv.fish||{n:0,bottles:0}; sv.fish.n++; if(c.bottle)sv.fish.bottles++; sv.coins+=c.c; if(c.k)sv.keys=(sv.keys||0)+c.k; if(c.g)sv.gems+=c.g;});
+   syncSave(sv=>{sv.fish=sv.fish||{n:0,bottles:0}; sv.fish.n++; if(c.bottle)sv.fish.bottles++; sv.coins+=c.c; if(c.k)sv.keys=(sv.keys||0)+c.k; if(c.g)grantGems(sv,c.g);});
    refreshWallet(); sChime(); if(c.g||c.k)sGem(); toast('🎣 Caught '+c.n+'! +'+c.c+'🪙'+(c.g?' +1💎':'')+(c.k?' +1🗝️':'')); dailyEvt('fish',1); passAdd(3); fishing=null; }
  }
 }
 function tickThings(dt){
  nearThing=null; let best=1e9;
  for(const t of things){ const d=Math.hypot(player.pos.x-t.x,player.pos.z-t.z);
+  if(typeof t.tick==='function'){try{t.tick(dt,t,d);}catch(e){}}   // a package's own kind
   if(t.kind==='coll'){ if(t.g.visible){t.m.rotation.y+=dt*1.5; if(d<1.6&&player.y<1.2)collect(t);} continue; }
-  const reach=t.kind==='fish'?8:t.kind==='room'?5.2:3.2; if(d<reach&&d<best){best=d;nearThing=t;} }   // the room has a collider, so its reach starts outside it
+  const reach=t.reach||(t.kind==='fish'?8:t.kind==='room'?5.2:3.2); if(d<reach&&d<best){best=d;nearThing=t;} }   // the room has a collider, so its reach starts outside it
  if(fishing){ if(Math.abs(player.speed)>0.6||!nearThing||nearThing.kind!=='fish'){fishing=null;toast('The line went slack.');}
   else if(!fishing.bit){fishing.t-=dt; if(fishing.t<=0){fishing.bit=true;fishing.win=1.0;sChime();toast('❗ Bite! Press E');}}
   else {fishing.win-=dt; if(fishing.win<=0){fishing=null;toast('It got away…');}} }
@@ -11522,12 +11835,14 @@ function tickThings(dt){
 function collect(t){
  t.g.visible=false; let done=false,cnt=0;
  syncSave(sv=>{ sv.sets=sv.sets||{}; const a=sv.sets[t.set]=sv.sets[t.set]||[]; if(!a.includes(t.i))a.push(t.i); cnt=a.length;
-  if(cnt>=5&&!(sv.setsDone&&sv.setsDone[t.set])){ sv.setsDone=sv.setsDone||{}; sv.setsDone[t.set]=true; const r=COLL_SETS[t.set].reward; sv.gems+=r.g||0; sv.keys=(sv.keys||0)+(r.k||0); done=true; } });
+  if(cnt>=5&&!(sv.setsDone&&sv.setsDone[t.set])){ sv.setsDone=sv.setsDone||{}; sv.setsDone[t.set]=true; const r=COLL_SETS[t.set].reward; payReward(sv,r); done=true; } });
  sCoin(); passAdd(3); refreshWallet();
- toast(COLL_SETS[t.set].label+' '+cnt+'/5'+(done?' — set complete! +2💎 +1🗝️':''));
+ toast(COLL_SETS[t.set].label+' '+cnt+'/5'+(done?' — set complete! +'+rewardLabel(COLL_SETS[t.set].reward):''));
  if(done)sGem();
 }
-const npcList=NPC_DEFS.map(def=>{const g=makeNPC(def);g.position.set(def.x,groundH(def.x,def.z),def.z);g.rotation.y=Math.atan2(-def.x,-def.z);scene.add(g);return {def,g};});
+function spawnNPC(def){const g=makeNPC(def);g.position.set(def.x,groundH(def.x,def.z),def.z);g.rotation.y=def.rot==null?Math.atan2(-def.x,-def.z):def.rot;scene.add(g);return {def,g};}
+const npcList=NPC_DEFS.map(spawnNPC);
+function addNPC(def){if(!NPC_DEFS.some(d=>d.id===def.id))NPC_DEFS.push(def);const e=spawnNPC(def);npcList.push(e);return e;}
 const npc=npcList[0].g;
 $('ctx').onclick=()=>{if(nearNPC)openDlg();else if(nearThing)useThing();};
 /* wild horses (tame them in the open world) */
@@ -11606,12 +11921,9 @@ function tameWild3(){
   if(s.horses.length>=stableCap(s)&&!w.wb.kestrel)return;   // the Kestrel always finds a stall
   const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
   const ri2=(a,b)=>Math.floor(a+Math.random()*(b-a+1));
-  const h={id:s.nextId++,name,breed:w.wb.breed,colors:{body:w.wb.body,mane:w.wb.mane},
-   horn:false,rainbow:false,spots:null,dapples:null,patches:null,
-   stats:{speed:cl(base+ri2(-1,1),1,10),stamina:cl(base+ri2(-1,1),1,10),jump:cl(base+ri2(-1,1),1,10),accel:cl(base+ri2(-1,1),1,10),agility:cl(base+ri2(-1,1),1,10)},sxp:{},
-   level:1,xp:0,bond:20,needs:{hunger:80,thirst:80,clean:60,happy:90},foal:false,
-   rx:Math.random(),ry:Math.random(),tx:0.5,ty:0.5,rest:2,phase:0,dir:1,moving:false};
-  s.horses.push(h);
+  const h=grantHorse(s,w.wb.breed,{name,colors:{body:w.wb.body,mane:w.wb.mane},bond:20,src:'wild',
+   stats:{speed:cl(base+ri2(-1,1),1,10),stamina:cl(base+ri2(-1,1),1,10),jump:cl(base+ri2(-1,1),1,10),accel:cl(base+ri2(-1,1),1,10),agility:cl(base+ri2(-1,1),1,10)},
+   needs:{hunger:80,thirst:80,clean:60,happy:90},extra:{horn:false,rainbow:false,wings:false,dragon:false,coat:null,ability:null,glow:false,spots:null,dapples:null,patches:null,wild:w.wb.breed,rx:Math.random(),ry:Math.random(),tx:0.5,ty:0.5,rest:2,phase:0,dir:1,moving:false}});
   myHorses.push(h);
   added=true;
  });
@@ -11679,42 +11991,17 @@ const REGIONS=[
  {name:'🏡 Meadowlark Ranch',x:0,z:0,r:32},
  {name:'🌾 Kestrel Basin Meadows',x:0,z:0,r:999},
 ];
+function regionAt(x,z){for(const rg of REGIONS)if(Math.hypot(x-rg.x,z-rg.z)<rg.r)return rg;return null;}
+function addRegion(rg){const i=REGIONS.findIndex(r=>r.r>=999);if(i>=0)REGIONS.splice(i,0,rg);else REGIONS.push(rg);return rg;}   // ahead of the catch-all
 let lastRegion='';
 setInterval(()=>{
- for(const rg of REGIONS){
-  if(Math.hypot(player.pos.x-rg.x,player.pos.z-rg.z)<rg.r){
-   if(rg.name!==lastRegion){lastRegion=rg.name;toast(rg.name);}
-   break;
-  }
- }
+ const rg=regionAt(player.pos.x,player.pos.z);
+ if(rg&&rg.name!==lastRegion){lastRegion=rg.name;toast(rg.name);G.run('region',rg);}
 },2500);
 /* training & care while riding */
 let rideDistAcc=0,drinkT=0,drinkCd=0;
 const sSplash=()=>beep(420,200,0.16,'sine',0.1);
-function trainXp(n){
- const local=myHorses[rideIdx];
- syncSave(s=>{
-  const h=s.horses[rideIdx];
-  if(!h)return;
-  h.xp+=n;
-  let lev=false;
-  while(h.xp>=50+h.level*50){
-   h.xp-=50+h.level*50;
-   h.level++;
-   s.coins+=50;
-   ensureStats(h);
-   const k=STAT_KEYS[Math.floor(Math.random()*STAT_KEYS.length)];
-   h.stats[k]=Math.min(10,h.stats[k]+1);
-   addSP(s,2*h.level,'level');
-   lev=true;
-  }
-  if(local){local.level=h.level;local.xp=h.xp;}
-  if(lev){
-   coins+=50;$('coinEl').textContent=coins;
-   toast('🎉 '+h.name+' trained up to level '+h.level+'! (+50🪙)');
-  }
- });
-}
+function trainXp(n){addXp3D(n,{coinsPerLevel:50});}   // riding XP: the same loop and multipliers as everything else, plus 50🪙 a level
 
 /* ================= gentle music & birdsong ================= */
 let musicTimer=null,musicStep=0;
@@ -11870,7 +12157,7 @@ function tick(stepSeconds){
  const abil=(myHorses[rideIdx]||{}).ability;
  const HS=effStats(myHorses[rideIdx]);                       // the five stats plus tack bonuses, felt in the hands
  const PM=persMul(myHorses[rideIdx]);
- const spMul=(0.82+0.036*(HS.speed||3))*PM.sp, acMul=(0.75+0.06*(HS.accel||3))*PM.ac, agMul=(0.80+0.05*(HS.agility||3))*PM.ag, jpMul=0.92+0.016*(HS.jump||3);
+ let spMul=(0.82+0.036*(HS.speed||3))*PM.sp, acMul=(0.75+0.06*(HS.accel||3))*PM.ac, agMul=(0.80+0.05*(HS.agility||3))*PM.ag, jpMul=0.92+0.016*(HS.jump||3);
  let target=0;
  if(course&&!course.started){target=0;}
  else if(freeCam){target=0;}
@@ -11885,13 +12172,19 @@ function tick(stepSeconds){
  if((inVR||touch.analog)&&target>0&&touch.goA>0)target*=0.34+0.66*touch.goA;   // stick or reins: ease out of a walk
  if(touch.brake){target=0;}                       // reins drawn back into your chest = whoa
  if((keys.ControlLeft||keys.ControlRight)&&target>0)target=Math.min(target,2.2);   // Ctrl: collect to a walk
+ /* The ride hook. Packages (sprint, dash, slide, exhaustion, spooks, swimming, perks) mutate
+    this one object instead of editing the movement code; target/acMul/agMul/jpMul/drain/regen
+    are read back below. noJump stops the jump triggers. */
+ const RIDE={target,spMul,acMul,agMul,jpMul,drain:1,regen:1,jumpMul:1,noJump:false,fwd,back,gallop,HS,PM};
+ G.run('ride',RIDE,dt);
+ target=RIDE.target; acMul=RIDE.acMul; agMul=RIDE.agMul; jpMul=RIDE.jpMul*RIDE.jumpMul;
  /* Stamina. A gallop spends it, at a rate the stamina stat sets: a stamina-3 horse holds a
     full gallop about twenty seconds, a stamina-10 horse nearly forty. A walk brings it back,
     a halt faster. Blown, the horse will not gallop until it has some back. Race pickups and
     a good horse's stat are the two ways to keep it. */
  if(player.stam==null)player.stam=1;
- if(gallop&&fwd&&!player.flying&&Math.abs(player.speed)>6.5)player.stam=Math.max(0,player.stam-dt*0.045*(1-0.06*((HS.stamina||3)-3)));
- else player.stam=Math.min(1,player.stam+dt*(Math.abs(player.speed)<0.5?0.12:Math.abs(player.speed)<3?0.07:0.035));
+ if(gallop&&fwd&&!player.flying&&Math.abs(player.speed)>6.5)player.stam=Math.max(0,player.stam-dt*0.045*(1-0.06*((HS.stamina||3)-3))*RIDE.drain*mulOf('stamDrain',null,myHorses[rideIdx],RIDE));
+ else player.stam=Math.min(1,player.stam+dt*(Math.abs(player.speed)<0.5?0.12:Math.abs(player.speed)<3?0.07:0.035)*RIDE.regen*mulOf('stamRegen',null,myHorses[rideIdx],RIDE));
  if(player.stam<=0.12)player.blown=true; if(player.blown&&player.stam>0.35)player.blown=false;
  if(player.blown&&target>5.5)target=5.5;
  if(player.boostT>0){player.boostT-=dt;target*=1.22;}
@@ -11990,10 +12283,10 @@ function tick(stepSeconds){
  }else{
   if(player.parts)player.parts.wingFly=false;
   if(RIG.heroMotion){
-   if((keys.Space||touch.jump)&&RIG.heroJumpAge===null&&!RIG.heroJumpHeld){if(winged)setFlying(true);else{startGameHeroJump(RIG);sJump();}}
+   if((keys.Space||touch.jump)&&!RIDE.noJump&&RIG.heroJumpAge===null&&!RIG.heroJumpHeld){if(winged)setFlying(true);else{startGameHeroJump(RIG);sJump();}}
    RIG.heroJumpHeld=!!(keys.Space||touch.jump);
   }
-  if(!RIG.heroMotion&&(keys.Space||touch.jump)&&player.y<=0){
+  if(!RIG.heroMotion&&(keys.Space||touch.jump)&&!RIDE.noJump&&player.y<=0){
    if(winged){setFlying(true);}
    else{player.vy=(abil==='leap'?11.7:9.2)*jpMul;player.speed=Math.min(13.5,player.speed+0.8);sJump();}
   }
@@ -12412,7 +12705,7 @@ function tick(stepSeconds){
     const ds2=new Date().toDateString();
     if(s.turtleDate===ds2)return;
     s.turtleDate=ds2;
-    s.gems+=2;
+    grantGems(s,2);
     did=true;
    });
    if(did){refreshWallet();sGem();toast('🐢✨ The GOLDEN TURTLE blessed you! +2💎');}
@@ -12428,7 +12721,7 @@ function tick(stepSeconds){
    s.pass=s.pass||{pts:0};
    s.pass.pts+=30;
    if(roll<0.4){const cc2=150+Math.floor(Math.random()*250);s.coins+=cc2;pmsg=cc2+' coins!';}
-   else if(roll<0.7){const gg2=1+Math.floor(Math.random()*2);s.gems+=gg2;pmsg=gg2+' gems!';}
+   else if(roll<0.7){const gg2=1+Math.floor(Math.random()*2);grantGems(s,gg2);pmsg=gg2+' gems!';}
    else{s.items.carrot+=10;s.items.apple+=5;pmsg='a feast of treats!';}
   });
   refreshWallet();
@@ -12447,6 +12740,7 @@ function tick(stepSeconds){
  tickRoundup(dt,t);
  tickBarn(dt,t);
  tickDrill(dt,t);
+ G.run('tick',dt,t);                     // THE per-frame hook for feature packages
  for(const cl of clouds){
   cl.position.x+=dt*0.7;
   if(cl.position.x>520)cl.position.x=-520;
@@ -12647,7 +12941,7 @@ function tick(stepSeconds){
   camera.lookAt(camLook.x+Math.sin(t*47)*rumble,camLook.y+Math.sin(t*53)*rumble,camLook.z);
  }else if(freeCam){
   tickFreeCam(dt);
- }else{
+ }else if(!G.run('camera',{camDesired,camLook,camSafe,dt,t,sp,grounded})){   // a package that returns true owns the camera this frame
   const shake=sp>7&&grounded?0.011:0;
   camLook.lerp(new THREE.Vector3(player.pos.x,gy+player.y+1.6,player.pos.z),1-Math.exp(-8*dt));
   camDesired.set(camX,camY+.2,camZ);
@@ -12828,6 +13122,7 @@ function tick(stepSeconds){
    rx===-78?mc.moveTo(q[0],q[1]):mc.lineTo(q[0],q[1]);
   }
   mc.stroke();
+  for(const mk of MINI_MARKERS){if(Math.abs(mk.x)>130||Math.abs(mk.z)>130)continue;if(typeof mk.hidden==='function'&&mk.hidden())continue;const q=W2(mk.x,mk.z);mc.fillStyle=mk.col||'#ffd166';mc.beginPath();mc.arc(q[0],q[1],mk.r||2.5,0,7);mc.fill();}
   // golden horseshoes sparkle on the map when you ride near them
   mc.fillStyle='#ffd166';
   for(const sh of shoes){
@@ -12902,13 +13197,20 @@ window.advanceTime=ms=>{
  for(let i=0;i<steps;i++)tick(ms/1000/steps);
 };
 window.resumeGame=()=>{manualStepping=false;clock.getDelta();renderer.setAnimationLoop(tick);};
-window.render_game_to_text=()=>JSON.stringify({
+window.render_game_to_text=()=>{const sv=freshSave()||{};const hh=myHorses[rideIdx]||{};const o={
  mode:course?'course':'free_roam',
+ build:BUILD,pid:sv.pid||null,
+ story:{idx:storyIdx,prog:storyProg},
+ net:{online:!!(net.client&&net.client.connected),club:net.club,remotes:Object.keys(remotes).length},
+ features:G.installed.slice(),
  coordinateSystem:'x east/west, z north/south, y up',
  horse:{
-  name:(myHorses[rideIdx]&&myHorses[rideIdx].name)||'',
-  breed:(myHorses[rideIdx]&&myHorses[rideIdx].breed)||'',
-  level:(myHorses[rideIdx]&&myHorses[rideIdx].level)||1
+  id:hh.id==null?null:hh.id,
+  name:hh.name||'',
+  breed:hh.breed||'',
+  bond:hh.bond||0,
+  pers:hh.pers||null,
+  level:hh.level||1
  },
  player:{
   x:Number(player.pos.x.toFixed(2)),
@@ -12926,16 +13228,70 @@ window.render_game_to_text=()=>JSON.stringify({
   time:Number(course.t.toFixed(2)),
   faults:course.faults||0
  }:null,
- wallet:{coins,gems},
+ wallet:{coins,gems,keys:sv.keys||0,dust:sv.dust||0,btok:sv.btok||0},
  weather:weather.mode,
  graphics:{quality,bridleFitted:!!TACK.bridle?.userData.artistBridle,horseModel:RIG.modelKey,artistRig:!!RIG.profile?.artistBreed,joints:RIG.bones?.length||0,motion:RIG.heroMotion?.mode||null,horseBreed:RIG.requestedBreed,horseLoading:!!RIG.loadingBreed,horseReady:RIG.ready,horseAttached:RIG.attachedTo===player.mesh,day:Number(dayT.toFixed(3)),triangles:renderer.info.render.triangles,drawCalls:renderer.info.render.calls},
  camera:{x:Number(camera.position.x.toFixed(2)),y:Number(camera.position.y.toFixed(2)),z:Number(camera.position.z.toFixed(2)),fov:Number(camera.fov.toFixed(1)),free:!!freeCam},
  jumping:player.y>0&&!player.flying,
  stamina:Number((player.stam||0).toFixed(3))
-});
+};G.run('state',o);return JSON.stringify(o);};
 const forestPoints=[].concat(FOLIAGE.oak,FOLIAGE.birch,FOLIAGE.blossom,FOLIAGE.pine,FOLIAGE.snowpine);
 scene.traverse(o=>{if(o.name.startsWith('Natural ')&&!o.name.endsWith('shrub')){const p=o.getWorldPosition(new THREE.Vector3());forestPoints.push({x:p.x,z:p.z,s:o.scale.x});}});
 terrainSurface.setTrees(forestPoints);
+/* ===== Feature modules: assemble the context object and install every package ===========
+   Runs once, here, where every const and let in the module exists. Packages never touch
+   game state at import time; everything happens inside install(G). The contract packages
+   write against is documented in assets/features/index.js. */
+function installFeatures(){
+ Object.assign(G,{
+  THREE,scene,camera,renderer,composer,
+  $,toast,hidePanels,openDlg,nameSprite,beep,sChime,sGem,sNeigh,sCoin,
+  save:{KEY:SAVE_KEY,fresh:freshSave,sync:syncSave,ensure(fn){SAVE_ENSURES.push(fn);return fn;},ensureHorse(fn){HORSE_ENSURES.push(fn);return fn;},
+   flag(s,name){s.flags=s.flags||{};if(s.flags[name])return false;s.flags[name]=1;return true;},build:BUILD,boot:BOOT_INFO},
+  money:{addCoins,addGems,addKeys,grantGems,payReward,rewardLabel,rewardKind,refreshWallet,statBump,logEarn},
+  xp:{addXp3D,applyXp,grantStatXp,addSP,passAdd,masteryOf,statCeil,statCap,statNeed,effStats,ensureStats,trainXp},
+  mul:mulOf,addMul,
+  quest:{questEvt,dailyEvt,story:{append:storyAppend,insertBefore:storyInsertBefore,list:()=>STORY},types:QUEST_TYPES,addDaily,addAch,
+   STORY,DAILYQ,ACHS,NPC_DEFS,storyIdx:()=>storyIdx,storyProg:()=>storyProg,todayDaily,claimDaily,claimAch,saveStory,missionDone},
+  tables:{EVENTS3,RACE_ROUTES,RACE_ITEMS,BREEDS3,TIER_BASE,FOODS3,FEED_TIER_LBL,PERS,PERS_KEYS,SEASONS,PASS_FREE,PASS_GOLD,VIP_PLANS,WAGE_TIERS,WEEK_TIERS,CALENDAR,
+   DECOR_CAT,RANCH_LEVELS,RANCH_PERKS,TACK_SETS,RARITIES,GEAR_SLOTS,GEAR_NOUN,GEAR_ADJ,RAR_SELL,RAR_W,RAR_COL,SUMMON_TIERS,SUMMON_POOL,PETS3,BOARDS,MILES,NEIGHBOURS,WILD_BREEDS,
+   EMOTES,MASTERY_UNLOCKS,TAIL_COLS,STUD_COLS,DYE_HAIR,DYE_BODY,DYE_MARK,MARKS,STAT_KEYS,STAT_LBL,CHESTS,COLL_SETS,FT,REGIONS,TRAIL_STOPS,TACK_ROOM,NAMES3,
+   TRAITS,BREED_CEIL,HAIR_STYLES,KEYMAP,REWARD_KINDS},
+  horse:{myHorses,rideIdx:()=>rideIdx,ridden:()=>myHorses[rideIdx],RIG:()=>RIG,TACK:()=>TACK,player,herd:()=>herd,remotes,
+   grantHorse,makeFoal,breedSrc,breedAvailable,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},
+   reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
+  world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,ranchArchitecture,arrivalArt,geology,box,tube,blob,
+   mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,
+   npcList,visitors,spawnCritter,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar},
+  net:{SOCIAL,net,remotes,lbData,myName,isFriend,publish:netPublish,subscribe:netSubscribe,sendChat:netSendChat,onMessage:netOnMessage,publishMyBoards,openProfile,chatMsg,showBubble,netConnect,topic:netTopic,subs:NET_SUBS},
+  time:{seasonNow,weekKey,isoWeekKey,dateKey,marketDay,calMonth},
+  course:{get:()=>course,startCourse,cancelCourse,finishCourse,finishDressage,awardRibbons,judgeJump,weeklyFeatured,startDressage,startDrill,startRoundup,ARENA_LETTERS,DRESSAGE_TESTS,eventPar,kinds:COURSE_KINDS},
+  ui:{panel:uiPanel,open:uiOpen,toggle:uiToggle,rerender:uiRender,panels:PANEL_IDS,defs:PANEL_DEFS,
+   shopTab:d=>addTab(EXTRA_SHOP_TABS,d),questTab:d=>addTab(EXTRA_QUEST_TABS,d),lbTab:d=>addTab(EXTRA_LB_TABS,d),buildTab:d=>addTab(EXTRA_BUILD_TABS,d),
+   careSection:f=>uiSection('care',f),careHeader:f=>uiSection('careHeader',f),stableRow:f=>uiSection('stableRow',f),stableHeader:f=>uiSection('stableHeader',f),
+   eventCard:f=>uiSection('eventCard',f),eventRow:f=>uiSection('eventRow',f),onlineSection:f=>uiSection('online',f),moneyRow:f=>uiSection('money',f),
+   buildSection:f=>uiSection('build',f),lbWeekSection:f=>uiSection('lbWeek',f),passRow:f=>uiSection('passRow',f),profileSection:f=>uiSection('profile',f),
+   section:uiSection,action:uiAction,dispatch:uiDispatch,bindFx,nameDialog,confirm:confirmDialog,hud:{badge:hudBadge,stat:hudStat,pips:uiPips},
+   hotkey(code,fn){PANEL_HOTKEYS[code]=fn;},
+   openShop,openCare,openEvents,openStable,openQuests,openOnline,openLB,openBuild,renderCare,renderStable,renderQuests,renderLB,renderMoney,drawVRMenu,TABS,VR_BUILDERS},
+  key:keyOf,
+ });
+ try{KEYMAP_USER=(freshSave()||{}).keymap||{};}catch(e){}
+ /* Panel hotkeys from the key map (remappable later through s.keymap). */
+ for(const [name,fn] of [['care',openCare],['shop',()=>openShop()],['events',openEvents],['stable',openStable],['quests',openQuests],['club',openOnline],['boards',openLB]]){
+  const code=keyOf(name); if(code&&!PANEL_HOTKEYS[code])PANEL_HOTKEYS[code]=fn;
+ }
+ for(const f of FEATURES){
+  try{ if(typeof f.install==='function')f.install(G); G.installed.push(f.id||'?'); }
+  catch(e){ console.error('feature '+(f&&f.id),e); G.errors.push({id:f&&f.id,error:String(e&&e.message||e)}); }
+ }
+ syncSave(s=>{});                                         // every package's ensures, once, written back
+ try{refreshWallet();}catch(e){}
+ try{buildFtBar();}catch(e){}
+ G.run('boot',freshSave(),BOOT_INFO);
+ if(location.search.includes('qa'))window.__features=G;   // headless verification without touching the MERGE_STATS injection
+}
+installFeatures();
 const MERGE_STATS=mergeStatics();
 renderer.setAnimationLoop(tick);   // drives rAF when flat, the XR frame loop when presenting
 addEventListener('resize',()=>{
