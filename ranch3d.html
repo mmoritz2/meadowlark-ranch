@@ -739,7 +739,7 @@ function weekBump(k,n2){
 function passRewardLabel(r){
  if(!r)return '';
  if(r.tint)return seasonNow().def.emoji+' season tack';
- return (r.c?r.c+'🪙':'')+(r.g?r.g+'💎':'')+(r.k?r.k+'🗝️':'')+(r.tack?' ✨golden':'');
+ return (r.c?r.c+'🪙':'')+(r.g?r.g+'💎':'')+(r.k?r.k+'🗝️':'')+(r.tack?' ✨golden':'')+(r.emote?' 🎭'+r.emote:'');
 }
 /* The ranch catalogue and level live up here, not with the build UI: the offline-decay
    pass below runs while the module is still evaluating and reads the ranch level, and a
@@ -4867,15 +4867,15 @@ const EMOTES={
  toss:{dur:1.1,fa:0,fk:0,ha:0,hk:0,neck:0,osc:0.38,pitch:0,lift:0,lean:0,label:'🌀 Head toss'},
 };
 function emEnv(em){const p=Math.min(1,em.t/em.dur);const e=p<0.22?p/0.22:p>0.78?(1-p)/0.22:1;return e*e*(3-2*e);}
-function horseEmote(type){
- const E=EMOTES[type]; if(!E)return false;
- if(RIG.heroMotion){toast('That pose is not available for this horse yet.');return false;}
+function horseEmote(type,opts){
+ const E=EMOTES[type]; if(!E)return false; opts=opts||{};
  if(RIG.emote||!RIG.ready||RIG.attachedTo!==player.mesh)return false;
- if(Math.abs(player.speed)>0.6||player.y>0||player.flying){toast('Come to a halt first.');return false;}
+ if(!opts.force&&G.run('emoteGate',type,myHorses[rideIdx]))return false;   // bond-personality-emotes: locked tricks toast their unlock
+ if(!opts.force&&(Math.abs(player.speed)>0.6||player.y>0||player.flying)){toast('Come to a halt first.');return false;}
  RIG.emote={type,t:0,dur:E.dur};
+ if(!opts.force){dailyEvt('emote',1);dailyEvt('pet',0);}
  if(type==='rear')sNeigh(); else sHoof(true);
  if(type==='nuzzle'){const now=Date.now(); if(!horseEmote._nz||now-horseEmote._nz>60000){horseEmote._nz=now; syncSave(s=>{const h=s.horses[rideIdx];if(h)h.bond=Math.min(100,(h.bond||0)+1);}); toast('💕 +1 bond');}}
- dailyEvt('pet',0);
  return true;
 }
 /* Legs off the ground. A horse whose legs freeze in one tuck the whole time it is in the
@@ -4961,6 +4961,7 @@ function driveRig(sp,grounded,t,dt){
   const state=tickGameHero(RIG,sp,dt,player.turnSm||0);
   if(!player.flying){if(RIG.heroJumpAge!==null){player.y=Math.max(0,state.bodyLiftM+RIG.heroJumpExtra);player.vy=0;}else{player.y=0;player.vy=0;}}
   if(RIG._hideFor!==player.mesh){hideProceduralBody();RIG._hideFor=player.mesh;}
+  if(RIG.emote){RIG.emote.t+=dt;if(RIG.emote.t>=RIG.emote.dur)RIG.emote=null;else G.run('rigEmote',RIG,RIG.emote,dt,t);}   // bond-personality-emotes poses the artist bones additively
   if(TACK.saddle)TACK.saddle.position.copy(breedSeat());
   return;
  }
@@ -5760,7 +5761,7 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
   R._patRun=Math.max(0,(R._patRun||0)-dtq);
   const patP=R._patRun>0?1-R._patRun/1.9:0;
   const patIdle=patP>0?Math.sin(patP*Math.PI)*(0.72+0.28*Math.sin(patP*Math.PI*7)):0;
-  const pat=Math.max(patIdle,(RIG.emote&&RIG.emote.type==='nuzzle')?emEnv(RIG.emote):0);
+  const pat=Math.max(patIdle,(RIG.emote&&(RIG.emote.type==='nuzzle'||RIG.emote.pet))?emEnv(RIG.emote):0);
   R.pose.rise=R._post*beat*0.115+R._air*0.20+(moving?0:Math.sin((tm||0)*1.5)*0.006);
   R.pose.lean=0.05+0.17*t+0.62*R._air+R._post*beat*0.16+breath+em+pat*0.13;
   R.pose.side=R._turn*0.13+(moving?Math.sin(ph*0.5)*0.018:Math.sin((tm||0)*0.6)*0.012);
@@ -5774,7 +5775,7 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
   player.mesh.getWorldQuaternion(_rdQ);
   _rdF.set(0,0,1).applyQuaternion(_rdQ); _rdU.set(0,1,0).applyQuaternion(_rdQ); _rdR.set(1,0,0).applyQuaternion(_rdQ);
   riderLegs(R,_rdF,_rdU,_rdR);
-  riderHands(R,_rdF,_rdU,_rdR,tm,pat);
+  if(!G.run('riderPose',R,tm,dt))riderHands(R,_rdF,_rdU,_rdR,tm,pat);   // a rider emote (wave, guitar…) owns the arms for its duration
  } else trackHead();
  /* In VR the rider is hidden, so the reins hang from your real hands instead of hers. bitL
     sits on the +x side, so pair it with whichever controller is further right. (This lived
@@ -9145,7 +9146,7 @@ function renderCare(){
  +'<button data-care="close">✖</button></div>'
  +(()=>{const P=PERS[h.pers]||PERS.relaxed; const M=masteryOf(s,h.breed); const nextU=Object.keys(MASTERY_UNLOCKS).map(Number).find(k=>k>M);
    let x='<div style="font-size:12px;margin-top:6px">'+P.emoji+' <b>'+P.label+'</b> — '+P.desc+'</div>';
-   x+='<div class="crow" style="gap:4px;flex-wrap:wrap;margin-top:4px"><span class="lbl" style="font-size:11px">Tricks (keys 1–5 at a halt)</span>'+Object.keys(EMOTES).map(k=>'<button data-care="em:'+k+'">'+EMOTES[k].label+'</button>').join('')+'</div>';
+   x+='<div class="crow" style="gap:4px;flex-wrap:wrap;margin-top:4px"><span class="lbl" style="font-size:11px">Tricks (keys 1–5 at a halt)</span>'+Object.keys(EMOTES).map(k=>'<button data-care="em:'+k+'"'+(EMOTES[k].locked&&EMOTES[k].locked(h)?' title="'+(EMOTES[k].lockHint||'Locked')+'"':'')+'>'+(EMOTES[k].locked&&EMOTES[k].locked(h)?'🔒 ':'')+EMOTES[k].label+'</button>').join('')+'</div>';
    x+='<div style="font-size:12px;margin-top:6px">🎖️ <b>'+breedLabel(h.breed)+' mastery '+M+'/10</b>'+(nextU?' · next at '+nextU+': '+MASTERY_UNLOCKS[nextU]:' · complete')+' <span style="color:#8c7a63">(own more '+breedLabel(h.breed)+'s to raise it)</span></div>';
    if(M>=2)x+='<div class="crow" style="gap:4px;flex-wrap:wrap"><span class="lbl" style="font-size:11px">Tail</span>'+TAIL_COLS.map(c=>'<button data-care="tail:'+c[0]+'" title="'+c[1]+'" style="'+(h.tailCol===c[0]?'outline:2px solid #4a3526;':'')+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+c[0]+';vertical-align:middle"></span></button>').join('')+'<button data-care="tail:none">natural</button></div>';
    if(M>=4)x+='<div class="crow" style="gap:4px;flex-wrap:wrap"><span class="lbl" style="font-size:11px">Studs</span>'+STUD_COLS.map(c=>'<button data-care="stud:'+c[0]+'" title="'+c[1]+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+c[0]+';vertical-align:middle"></span> '+c[1]+'</button>').join('')+'</div>';
@@ -9224,6 +9225,7 @@ function careAct(k){
   passAdd(3);
   dailyEvt(FOODS3[k]?'feed':k,1);
  }
+ G.run('careDone',k,ok,myHorses[rideIdx]);                // petting animation, brush sparkle, bond level-ups
  renderCare();
 }
 /* Prices: about half what they were. Saving up should be a weekend, not a term — the
@@ -12459,7 +12461,7 @@ function tick(stepSeconds){
     while(dh>Math.PI)dh-=Math.PI*2;
     while(dh<-Math.PI)dh+=Math.PI*2;
     a.heading+=dh*Math.min(1,dt*3);
-    const wsp=fl?Math.min(9.5,1.6+d*0.55):1.2;
+    const wsp=(fl||a.called)?Math.min(9.5,1.6+d*0.55):1.2;
     a.wsp=wsp;
     a.pos.x+=Math.sin(a.heading)*wsp*dt;
     a.pos.z+=Math.cos(a.heading)*wsp*dt;
@@ -13262,7 +13264,7 @@ function installFeatures(){
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
   world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,ranchArchitecture,arrivalArt,geology,box,tube,blob,
    mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,
-   npcList,visitors,spawnCritter,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar},
+   npcList,visitors,critters,spawnCritter,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar},
   net:{SOCIAL,net,remotes,lbData,myName,isFriend,publish:netPublish,subscribe:netSubscribe,sendChat:netSendChat,onMessage:netOnMessage,publishMyBoards,openProfile,chatMsg,showBubble,netConnect,topic:netTopic,subs:NET_SUBS},
   time:{seasonNow,weekKey,isoWeekKey,dateKey,marketDay,calMonth},
   course:{get:()=>course,startCourse,cancelCourse,finishCourse,finishDressage,awardRibbons,judgeJump,weeklyFeatured,startDressage,startDrill,startRoundup,ARENA_LETTERS,DRESSAGE_TESTS,eventPar,kinds:COURSE_KINDS},
