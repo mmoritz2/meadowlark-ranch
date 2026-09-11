@@ -170,7 +170,11 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
    breedVoucher:true,tackRoom:'2026-36',friends:['Ann','Bo'],story:{idx:3,prog:1}};
   localStorage.setItem('starRanchFable_v1',JSON.stringify(legacy));
  });
- stage('legacy save seeded'); await page.goto(base+'/ranch3d.html?qa=features&legacy='+Date.now(),{waitUntil:'load',timeout:120000}); stage('legacy loaded');
+ stage('legacy save seeded');
+ /* let the first page finish decoding its model textures before navigating away — leaving mid-load makes
+    GLTFLoader log "Couldn't load texture blob:" for the aborted images, which is not a game error */
+ await page.waitForLoadState('networkidle',{timeout:60000}).catch(()=>{}); await page.waitForTimeout(1500);
+ await page.goto(base+'/ranch3d.html?qa=features&legacy='+Date.now(),{waitUntil:'load',timeout:120000}); stage('legacy loaded');
  await page.waitForFunction(()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_game_to_text());return s.graphics&&s.graphics.horseReady&&!s.graphics.horseLoading;}catch(e){return false;}})(),null,{timeout:150000,polling:250});
  stage('legacy horseReady');
  const L=await page.evaluate(()=>{const G=window.__features;const s=G.save.fresh();return {btok:s.btok,voucher:s.breedVoucher,door:s.doors&&s.doors.tackroom,tackRoom:s.tackRoom,friends:s.friends,pid:s.pid,story:s.story,coins:s.coins,horses:s.horses.length,installed:G.installed.length,net:JSON.parse(render_game_to_text()).net,lineage:s.horses[0].lineage};});
