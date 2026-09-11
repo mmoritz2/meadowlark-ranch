@@ -38,18 +38,49 @@ export function startGameHeroJump(rig){
   if(!rig.heroMotion||rig.heroJumpAge!==null)return false;
   rig.heroJumpAge=0;rig.heroMotion.set('jump');return true;
 }
+/* The authored jump gathers for 0.38 s before it leaves the ground and plays out to 1.72 s,
+   the last half second of which is the horse standing on its own feet again. Measured from
+   the button: 0.40 s before anything visibly rose, and 1.73 s before the game would take
+   another press. That is what "it takes a very long time to respond" is.
+   The clip's timing is authored and stays. What changes is the clock it runs on: the gather
+   runs quick, the landing runs quick, and the game lets go of the jump at 1.20 s — on its
+   feet, straight back into the live gait — rather than idling to the end of the clip and
+   then crossfading through 'stand'. */
+const JUMP_GATHER_RATE=1.9,JUMP_LAND_RATE=1.35,JUMP_RELEASE=1.20,JUMP_GRACE=0.35;
+function jumpClockRate(age){return age<.38?JUMP_GATHER_RATE:age<1.16?1:JUMP_LAND_RATE;}
 export function tickGameHero(rig,speed,dt,turn=0){
   const motion=rig.heroMotion;if(!motion)return null;
   rig.artistClock=(rig.artistClock||0)+dt;rig.skin.material.userData.update?.(rig.artistClock);
   let rate=1;
+  if(rig.heroJumpGrace>0)rig.heroJumpGrace=Math.max(0,rig.heroJumpGrace-dt);
   if(rig.heroJumpAge!==null){
-    rig.heroJumpAge+=dt;
-    if(rig.heroJumpAge>=1.72)rig.heroJumpAge=null;
+    /* the jump age and the clip advance on the same clock, so the lift the game applies
+       stays in step with the lift the skeleton shows */
+    const jr=jumpClockRate(rig.heroJumpAge);rig.heroJumpAge+=dt*jr;rate=jr;rig.heroRate=jr;
+    /* and a rail stays open for a moment after she is back on her feet, so the quicker
+       gather does not make the fences any less forgiving than they were */
+    if(rig.heroJumpAge>=JUMP_RELEASE){rig.heroJumpAge=null;rig.heroJumpGrace=JUMP_GRACE;}
   }
   if(rig.heroJumpAge===null){
-    const gait=speed<.15?'stand':speed<2.1?'walk':speed<4.15?'trot':speed<6?'canter':'gallop';
-    motion.set(gait,{lead:turn<-.15?'right':'left'});
+    /* Gait with hysteresis: a horse that has just broken into a trot does not fall back
+       to a walk because its speed dipped a hair under the line it crossed. */
+    const up=speed<.15?0:speed<2.1?1:speed<4.15?2:speed<6?3:4, down=speed<.08?0:speed<1.7?1:speed<3.6?2:speed<5.4?3:4;
+    const prev=rig.heroGaitIdx??up;const idx=up>prev?up:down<prev?down:prev;rig.heroGaitIdx=idx;
+    const gait=['stand','walk','trot','canter','gallop'][idx];
+    /* Lead with hysteresis too. Every steer past a quarter-turn used to swap the lead, and
+       a swap re-phases all four legs through a fresh crossfade — so wiggling the reins at
+       a canter made the horse stumble every time. It now takes a committed turn to change,
+       and the lead is kept until the turn is well and truly over. */
+    const lead=rig.heroLead||'left';
+    rig.heroLead=turn<-.32?'right':turn>-.08?'left':lead;
+    motion.set(gait,{lead:rig.heroLead});
     if(gait!=='stand'){const scale=rig.profile.artistBreed?Math.max(.1,rig.scene.getWorldScale(rig.artistWorldScale).x):1;rate=Math.max(.3,Math.min(rig.profile.artistBreed?3:1.75,speed/((motion.gaits||HERO_GAITS)[gait].speed*scale)));}
+    /* The animation clock is the actual speed over the gait's nominal speed, and it used to
+       jump at every gait change — walk to trot at 2.1 m/s took it from 1.76x to 0.68x in one
+       frame, so the outgoing legs stalled mid-swing while the blend had barely begun. The
+       clock now eases between rates over a few frames; the crossfade covers the rest. */
+    rig.heroRate=rig.heroRate===undefined?rate:rig.heroRate+(rate-rig.heroRate)*Math.min(1,dt*7);
+    rate=rig.heroRate;
   }
   motion.setTurn(turn);motion.update(dt*rate);
   const state=motion.state;rig.phase=state.phase01;

@@ -5623,7 +5623,11 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
   const airborne=((RIG.heroJumpAge!==null&&RIG.heroJumpAge!==undefined)||(player.y>0.25))&&!player.flying;
   R._air =(R._air ||0)+((airborne?1:0)-(R._air||0))*k*1.7;
   /* posting is a trot thing — she sits the walk, and sits deep at the canter */
-  R._post=(R._post||0)+(((moving&&sp>2.1&&sp<6.6)?1:0)-(R._post||0))*k*0.6;
+  /* Posting is for the TROT. On the artist mounts ask the motion which gait it is in — the
+     speed band guessed here put her out of the saddle through every stride of the canter,
+     which is the gait a plain W settles into. */
+  const trotting=RIG.heroMotion?RIG.heroMotion.mode==='trot':(moving&&sp>2.1&&sp<6.6);
+  R._post=(R._post||0)+((trotting?1:0)-(R._post||0))*k*0.6;
   const beat=Math.max(0,Math.sin(ph));
   const breath=moving?Math.sin(ph)*0.018:Math.sin((tm||0)*1.4)*0.030;
   const em=RIG.emote?EMOTES[RIG.emote.type].lean*emEnv(RIG.emote):0;
@@ -11946,7 +11950,7 @@ function tick(stepSeconds){
     On that mount, ask the jump instead of the height: if she is in the air phase of a jump,
     she is over the rail. The procedural mount, which really does clear 2 m, keeps the
     height test it was tuned for. */
- const jumpAir=RIG.heroJumpAge!==null&&RIG.heroJumpAge<1.25;   // from the button, not from the lift
+ const jumpAir=(RIG.heroJumpAge!==null&&RIG.heroJumpAge<1.25)||(RIG.heroJumpGrace>0);   // from the button, and for a moment after she lands
  if(player.y<0.62&&!jumpAir){
   for(const w of walls){
    const abx=w.x2-w.x1,abz=w.z2-w.z1;
@@ -11990,8 +11994,15 @@ function tick(stepSeconds){
  }else{
   if(player.parts)player.parts.wingFly=false;
   if(RIG.heroMotion){
-   if((keys.Space||touch.jump)&&RIG.heroJumpAge===null&&!RIG.heroJumpHeld){if(winged)setFlying(true);else{startGameHeroJump(RIG);sJump();}}
-   RIG.heroJumpHeld=!!(keys.Space||touch.jump);
+   /* A press is remembered for a third of a second, so asking a shade early — while the
+      last jump is still landing — is honoured the moment the horse is free instead of
+      being thrown away. And a held key jumps again on landing: holding jump for three
+      seconds used to produce exactly one jump, because the latch that stops auto-repeat
+      also stopped everything else. */
+   {const jp=!!(keys.Space||touch.jump);
+    if(jp&&!RIG.heroJumpHeld)RIG.heroJumpWant=0.35; else if(RIG.heroJumpWant>0)RIG.heroJumpWant=Math.max(0,RIG.heroJumpWant-dt);
+    RIG.heroJumpHeld=jp;
+    if(RIG.heroJumpAge===null&&(RIG.heroJumpWant>0||jp)){RIG.heroJumpWant=0;if(winged)setFlying(true);else{startGameHeroJump(RIG);sJump();}}}
   }
   if(!RIG.heroMotion&&(keys.Space||touch.jump)&&player.y<=0){
    if(winged){setFlying(true);}

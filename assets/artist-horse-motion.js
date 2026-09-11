@@ -156,7 +156,11 @@ export function createArtistMotion({THREE,root,skin,heightM=null}){
     if(gait==='rest'){restMode=true;for(let i=0;i<n;i++){bones[i].position.copy(originalP[i]);bones[i].quaternion.copy(originalQ[i]);}root.updateMatrixWorld(true);skin.skeleton.update();return;}restMode=false;
     if(!ARTIST_GAITS[gait])gait='stand';lead=lead==='right'?'right':'left';const requestedSpeed=gait==='jump'?0:Math.max(0,Math.min((gaits[gait].speed||0)*1.15,speed??gaits[gait].speed));
     if(current.gait===gait&&current.lead===lead&&Math.abs(current.speed-requestedSpeed)<1e-7&&gait!=='jump')return;
-    previous=previous?{hold:true,targets:legs.map(l=>({target:l.target.clone(),pitch:l.pitch,contact:l.contact})),y:bodyY,pitch:bodyPitch,speed:speedMps}:{...current};current={gait,lead,phase:current.phase,age:0,speed:requestedSpeed};transitionAge=0;
+    /* Carry the LEFT FORE across the change: shift the new gait's phase so that foot is at the
+       same point of its own cycle it was a moment ago. The other three still re-phase to the
+       new pattern, but one leg stays planted through the crossfade instead of none. */
+    const carried=wrap(current.phase-strikes(current)[0]+strikes({gait,lead})[0]);
+    previous=previous?{hold:true,targets:legs.map(l=>({target:l.target.clone(),pitch:l.pitch,contact:l.contact})),y:bodyY,pitch:bodyPitch,speed:speedMps}:{...current};current={gait,lead,phase:carried,age:0,speed:requestedSpeed};transitionAge=0;
   }
   function reset(){current={gait:'stand',lead:'left',phase:0,age:0,speed:0};previous=null;transitionAge=1;time=0;distanceRaw=0;speedMps=0;bodyY=0;bodyPitch=0;phase01=0;grounded=true;step(0);}
   function actualPoint(index,out){out.fromBufferAttribute(pos,index);skin.applyBoneTransform(index,out);out.applyMatrix4(rawToRoot);out.y-=groundY;out.multiplyScalar(metres);return out;}
