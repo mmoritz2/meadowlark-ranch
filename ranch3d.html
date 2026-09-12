@@ -8275,7 +8275,7 @@ function startCourse(ev){
     m.position.set(x,groundH(x,z)+1.2,z); scene.add(m); raceItems.push({x,z,type,m}); }); });
  }else{
   const N=ev.n;
-  const cx=2,cz=1,A=Math.min(17,11+N*0.6),B=Math.min(13,8+N*0.5);
+  const cx=ev.at?ev.at[0]:2,cz=ev.at?ev.at[1]:1,A=Math.min(17,11+N*0.6),B=Math.min(13,8+N*0.5);   // ev.at: a town's own arena (world package)
   for(let i=0;i<N;i++){
    const th=i/N*Math.PI*2+0.4;
    const x=cx+Math.cos(th)*A,z=cz+Math.sin(th)*B;
@@ -11044,6 +11044,7 @@ function makePet(key){
  return {group:g,legs,tail,head};
 }
 let petComp=null;  // {key,parts,pos,heading,phase}
+G.petComp=()=>petComp;   // world package: the follower push-out keeps the pet out of the barn
 let activePet=(freshSave()||{}).activePet||null;
 function ownedPets(){const s=freshSave();return (s&&s.petList)||[];}
 function rebuildPet(){
@@ -11909,8 +11910,9 @@ function spawnKestrel(){
  wildTrust=0;
  toast('✨ The Silver Kestrel! Walk up slowly — no galloping.');
 }
-setTimeout(spawnWild3,18000);                       // the first one turns up sooner
-setInterval(()=>{if(Math.random()<0.6)spawnWild3();},45000);
+G.wild={get:()=>wild3,trust:()=>wildTrust,setTrust:v=>{wildTrust=v;},spawnWild3,spawnKestrel,despawnWild,tameWild3,strays:true};   // world package: the herds replace the stray when strays is false
+setTimeout(()=>{if(G.wild.strays)spawnWild3();},18000);                       // the first one turns up sooner
+setInterval(()=>{if(Math.random()<0.6&&G.wild.strays)spawnWild3();},45000);
 function tameWild3(){
  const w=wild3;
  const names=['Comet','Misty','River','Blaze','Willow','Storm','Maple','Echo'];
@@ -12054,6 +12056,7 @@ const GAITS={
  gallop:{off:[0,0.45,Math.PI+0.3,Math.PI],amp:0.95,rate:1.55,len:5.8},
 };
 function gaitFor(sp){return sp<2.8?GAITS.walk:sp<7?GAITS.trot:GAITS.gallop;}
+G.anim={animateHorse,tickRig,GAITS,gaitFor};   // world package: wild herds and sanctuary horses animate through the same functions
 function animateHorse(parts,phase,amp,gait,grounded,t,grazing,dt){
  const k=dt?Math.min(1,dt*14):1;
  for(let i=0;i<4;i++){
@@ -12428,7 +12431,7 @@ function tick(stepSeconds){
  }
  for(const a of herd){
   const hh=myHorses[a.idx];
-  const fl=hh&&hh.foal&&hh.id===companionId;
+  const fl=hh&&hh.id===companionId;   // any horse you take along, not only a foal (world package)
   if(fl){
    const fdx=player.pos.x-a.pos.x,fdz=player.pos.z-a.pos.z;
    const fd=Math.hypot(fdx,fdz);
