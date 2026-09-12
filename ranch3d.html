@@ -9660,6 +9660,10 @@ function grantHorse(s,breedKey,opts){
  if(h.foal&&!h.born)h.born=Date.now();
  ensureStats(h);
  s.horses.push(h);
+ /* Give the newcomer a turnout flag NOW. Without this h.out stays undefined, the pasture
+    loop skips it, and a horse you just tamed is owned but standing nowhere in the world
+    until something happens to open the Stable panel. */
+ ensureTurnout(s);
  G.run('grantHorse',s,h,opts);
  return h;
 }
@@ -12205,6 +12209,34 @@ function mkTackRoom(){
  for(const c of CHESTS)things.push(mkChest(c));
  for(const set in COLL_SETS)COLL_SETS[set].pts.forEach((pt,i)=>things.push(mkCollectible(set,i,pt)));
  things.push(mkTackRoom());
+ /* The pasture gate. The fence leaves a gap at x2 around z=-9; this is that gap.
+    Ride up with horses waiting in the barn and you can turn them out here, which is what
+    anyone who has just tamed a horse tries to do before they think to open a menu. */
+ const PGATE={x:PAST.x2,z:-9};
+ addThing({kind:'gate',id:'pasturegate',x:PGATE.x,z:PGATE.z,g:null,
+  label:()=>{
+   const sv=freshSave(); if(!sv)return '';
+   ensureTurnout(sv);
+   const waiting=(sv.horses||[]).filter(h=>!h.out&&sv.horses.indexOf(h)!==rideIdx);
+   const room=pastureMax(sv)-turnedOut(sv);
+   if(!waiting.length)return '\ud83c\udf3f The pasture gate \u00b7 everyone is already out';
+   if(room<=0)return '\ud83c\udf3f The pasture is full ('+turnedOut(sv)+'/'+pastureMax(sv)+') \u00b7 bring one in from the Stable';
+   return '\ud83c\udf3f Turn '+(waiting.length===1?waiting[0].name:waiting.length+' horses')+' out to grass (E)';
+  },
+  use:()=>{
+   let names=[],full=false;
+   syncSave(sv=>{
+    ensureTurnout(sv);
+    let room=pastureMax(sv)-turnedOut(sv);
+    if(room<=0){full=true;return;}
+    sv.horses.forEach((h,i)=>{ if(room>0&&!h.out&&i!==rideIdx){h.out=true;room--;names.push(h.name);} });
+   });
+   if(full){toast('\ud83c\udf3f The pasture is full \u2014 bring one in from the Stable first');return;}
+   if(!names.length){toast('\ud83c\udf3f They are all out to grass already');return;}
+   reloadHorses();
+   sChime();
+   toast('\ud83c\udf3f '+(names.length===1?names[0]+' is':names.join(', ')+' are')+' out to grass');
+  }});
  things.push(mkSummonStall());
  things.push({kind:'fish',id:'lake',x:20,z:16,g:null});
  setTimeout(()=>{const sv=freshSave(); if(!sv)return; for(const t of things){ if(t.kind==='coll'&&sv.sets&&sv.sets[t.set]&&sv.sets[t.set].includes(t.i))t.g.visible=false; if(t.kind==='chest'&&sv.chests&&sv.chests[t.id]&&Date.now()-sv.chests[t.id]<CHEST_REOPEN)t.lid.rotation.x=-1.2; }},1500);
