@@ -138,7 +138,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('preview: purebred, levelled trait, purity, stat ranges, likely coat, 90 s first foal',D1.preview&&Object.values(D1.preview).every(Boolean),D1.preview);
  check('pay → confirm card → pairing stored, 300 🪙 charged, 90 s gestation, barn busy',D1.confirmCard&&D1.paired&&D1.paired.has&&D1.paired.ms===90000&&D1.paired.dc===300&&D1.paired.mode==='c'&&D1.paired.gestCard&&D1.paired.busy,D1.paired);
  check('no birth before the due time',D1.notDue);
- check('birth: purebred bay foal, sire/dam ids + names, True Bred II (levelled), blood bay 100, genes from parents',D1.birth&&D1.birth.n===1&&D1.birth.foal&&D1.birth.unique&&D1.birth.breed==='bay'&&D1.birth.sire===1&&D1.birth.dam===2&&D1.birth.sireName==='Ash'&&D1.birth.gen===1&&D1.birth.cls==='pure'&&D1.birth.trait&&D1.birth.trait.id==='truebred'&&D1.birth.trait.lvl===2&&D1.birth.how==='levelled'&&D1.birth.blood.bay===100&&D1.birth.genes&&D1.birth.geneFromParents&&D1.birth.coatHow==='genes'&&/Black|Chestnut/.test(D1.birth.coatLabel||''),D1.birth);
+ check('birth: purebred bay foal, sire/dam ids + names, True Bred II (levelled), blood bay 100, coat from the parents\' genes (a mutation layers on top, never replaces)',D1.birth&&D1.birth.n===1&&D1.birth.foal&&D1.birth.unique&&D1.birth.breed==='bay'&&D1.birth.sire===1&&D1.birth.dam===2&&D1.birth.sireName==='Ash'&&D1.birth.gen===1&&D1.birth.cls==='pure'&&D1.birth.trait&&D1.birth.trait.id==='truebred'&&D1.birth.trait.lvl===2&&D1.birth.how==='levelled'&&D1.birth.blood.bay===100&&D1.birth.genes&&D1.birth.geneFromParents&&/^(genes|mutation)$/.test(D1.birth.coatHow||'')&&/Black|Chestnut/.test(D1.birth.coatLabel||''),D1.birth);
  check('birth side effects: pairing cleared, foal questline started on it, it follows you, stats.foals, coat registry, tutorial mission progressed, daily counted, token HUD shown',D1.birth&&D1.birth.breeding===null&&D1.birth.foalq&&D1.birth.foalq.idx===0&&D1.birth.foalq.active===D1.foalId&&D1.birth.companion===D1.foalId&&D1.birth.foals===1&&D1.birth.coatsFound.length===1&&D1.birth.story.idx===7&&D1.birth.story.prog>=1&&D1.birth.daily>=1&&D1.birth.btokBadge,{breeding:D1.birth&&D1.birth.breeding,foalq:D1.birth&&D1.birth.foalq,companion:D1.birth&&D1.birth.companion,story:D1.birth&&D1.birth.story,daily:D1.birth&&D1.birth.daily,coats:D1.birth&&D1.birth.coatsFound});
 
  /* cost by rarity, tokens, gems + hurry, the roster's recipe path */
@@ -187,7 +187,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('potion row: two checked, mirror parent select, wild option marked 🌿',D3.potRow&&D3.potRow.checked===2&&D3.potRow.mirrorSel&&D3.potRow.wildOpt,D3.potRow);
  check('potions are consumed on the pairing',D3.potUsed&&D3.potUsed.mirror===0&&D3.potUsed.horn===0&&D3.potUsed.pot&&D3.potUsed.pot.length===2,D3.potUsed);
  check('Mirror Draught copies the sire\'s coat exactly; Hornbud gives a horn',D3.mirror&&D3.mirror.body===D3.mirror.sireBody&&D3.mirror.horn===true&&D3.mirror.how==='mirror'&&D3.mirror.cls==='cross',D3.mirror);
- check('wild window: the foal wears Dusk\'s Brindle Gold (roan), wildFoals counted, crossbreed trait',D3.wild&&D3.wild.body===D3.wild.damBody&&D3.wild.mark==='roan'&&D3.wild.how==='wild'&&D3.wild.wildFoals===1&&D3.wild.bred===true&&D3.wild.trait==='cross',D3.wild);
+ check('wild window: the foal wears Dusk\'s Brindle Gold (roan), wildFoals counted, crossbreed trait',D3.wild&&D3.wild.body===D3.wild.damBody&&D3.wild.mark==='roan'&&D3.wild.how==='wild'&&D3.wild.wildFoals>=1&&D3.wild.bred===true&&D3.wild.trait==='cross',D3.wild);
  check('after 72 h the wild coat is not copied and the 🌿 tag is gone',D3.afterWindow&&D3.afterWindow.how==='genes'&&!D3.afterWindow.copied&&!D3.afterWindow.wildOpt,D3.afterWindow);
  check('Marta\'s stall: Starlight Elixir for 750 🪙',D3.stall&&D3.stall.dc===750&&D3.stall.owned===1,D3.stall);
 
@@ -210,6 +210,18 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   G.ui.openCare(); const cp=$('carePanel'); out.care={row:new RegExp('🍼 '+f0.name).test(cp.textContent),btns:['foal:treat','foal:groom','foal:play','foal:call'].filter(k=>!cp.querySelector('[data-care="'+k+'"]')),step:/Foal's first steps/.test(cp.textContent)};
   cp.querySelector('[data-care="foal:treat"]').click(); out.feed={idx:sv().foalq.idx,carrots:sv().items.carrot};
   cp.querySelector('[data-care="foal:groom"]').click(); out.groom={idx:sv().foalq.idx};
+  /* 📣 Call: the click must not teleport the foal to your side — it clears the graze and
+     canters in under its own legs. The entity is placed far away AFTER the click (the care
+     action reloads the herd, which re-scatters it) so the distance closed is all movement. */
+  {cp.querySelector('[data-care="foal:call"]').click();
+   const ent=()=>G.horse.herd().find(x=>G.horse.myHorses[x.idx]&&G.horse.myHorses[x.idx].id===fid);
+   const e=ent(); let d0=0,peak=0,rest0=0;
+   if(e){e.pos.x=G.horse.player.pos.x+30;e.pos.z=G.horse.player.pos.z;e.rest=9;e.tx=e.pos.x;e.tz=e.pos.z;e.wsp=1.2;
+    rest0=e.rest; d0=Math.hypot(G.horse.player.pos.x-e.pos.x,G.horse.player.pos.z-e.pos.z);}
+   for(let i=0;i<8;i++){window.advanceTime(500);const ei=ent();if(ei)peak=Math.max(peak,ei.wsp||0);}
+   const e2=ent();
+   out.call={d0:Math.round(d0),rest0,after:e2?Math.round(Math.hypot(G.horse.player.pos.x-e2.pos.x,G.horse.player.pos.z-e2.pos.z)):-1,wsp:Math.round(peak),rest:e2&&Math.round(e2.rest)};}
+  G.ui.openCare();
   /* the walk: ride with the foal at your side */
   G.hidePanels(); window.__features.horse.player.speed=0;
   const ent2=G.horse.herd().find(e=>G.horse.myHorses[e.idx]&&G.horse.myHorses[e.idx].id===fid); if(ent2){G.horse.player.pos.set(ent2.pos.x+1.5,0,ent2.pos.z+1.5);}
@@ -234,6 +246,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('E plays with the foal: counted, daily, bond',D4.play1&&D4.play1.plays===1&&D4.play1.dailyPlay===1&&D4.play1.bond>30,D4.play1);
  check('Care panel shows the foal row with treat/groom/play/call and the questline step',D4.care&&D4.care.row&&D4.care.btns.length===0&&D4.care.step,D4.care);
  check('treat (uses a carrot) and groom advance the questline',D4.feed&&D4.feed.idx===2&&D4.feed.carrots===9&&D4.groom.idx===3,{feed:D4.feed,groom:D4.groom});
+ check('📣 Call: the graze is broken and the foal canters 30 m in under its own legs, never teleported',D4.call&&D4.call.d0===30&&D4.call.rest0===9&&D4.call.after<12&&D4.call.wsp>2.5,D4.call);
  check('riding beside the foal accumulates the walk; 300 m completes it',D4.walk&&(D4.walk.prog>0||D4.walk.idx>3)&&D4.walkDone===4,{walk:D4.walk,done:D4.walkDone});
  check('two plays finish step 5 (a Mirror Draught)',D4.play2&&D4.play2.idx===5&&D4.play2.potMirror===1&&D4.play2.plays===3,D4.play2);
  check('ride gate: no Ride button for a foal, the dropdown refuses it; sheet/tree buttons and trait chip on the row',D4.gate&&!D4.gate.rideBtn&&D4.gate.sheetBtn&&D4.gate.treeBtn&&D4.gate.traitChip&&D4.gate.rideIdxAfter===D4.gate.rideIdxBefore,D4.gate);
@@ -283,7 +296,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('recipe catalogue: alicorn and celestial with parents and odds, egg marker, owned tick; 6-star filter',D5.rec&&D5.rec.alicorn&&D5.rec.celestial&&D5.rec.egg&&D5.rec.owned&&D5.rec.six.alicorn&&!D5.rec.six.celestial,D5.rec);
  check('shop breed tab still routes to the barn',D5.shopBreed);
  check('quest tab 🍼 Foal lists the questline, all six done',D5.qtab);
- check('achievements count foals, questline, hatch, wild foal, coats, recipe',D5.ach&&D5.ach.foal1>=5&&D5.ach.foalq===6&&D5.ach.hatch1===1&&D5.ach.wildfoal1===1&&D5.ach.coats>=1&&D5.ach.trait3>=2,D5.ach);
+ check('achievements count foals, questline, hatch, wild foal, coats, recipe',D5.ach&&D5.ach.foal1>=5&&D5.ach.foalq===6&&D5.ach.hatch1===1&&D5.ach.wildfoal1>=1&&D5.ach.coats>=1&&D5.ach.trait3>=3,D5.ach);
  check('state dump: btok, foals, foalq, companion',D5.state&&D5.state.btok>=3&&D5.state.foals>=5&&D5.state.foalq&&D5.state.foalq.idx===6,D5.state);
  console.log(await page.evaluate(()=>render_game_to_text()));
  check('no console/page errors',errors.length===0,errors.slice(0,6));

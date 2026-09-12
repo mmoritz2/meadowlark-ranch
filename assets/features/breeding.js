@@ -309,15 +309,22 @@ export function install(G){
   const wildP=[A,B].find(p=>wildWindow(p));
   if(pots.includes('mirror')){const src=opts.mirror==='b'?B:A;copyLook(foal,src);foal.coatHow='mirror';}
   else if(wildP&&!isFantasy(foal)&&Math.random()<0.7){copyLook(foal,wildP);foal.coatHow='wild';wildP.wild.bred=true;s.stats=s.stats||{};s.stats.wildFoals=(s.stats.wildFoals||0)+1;}
-  else if(!isFantasy(foal)&&!foal.recipeHit&&!rosterHit&&!foal.mutant){
+  else if(!isFantasy(foal)&&!foal.recipeHit&&!rosterHit){
+   /* A real-breed foal always wears what its genes say. The roster's rare mutation is not a
+      separate coat but a layer on top of that: the genetic base, hue-shifted, keeping the
+      odd pattern the mutation rolled — so the genotype on the sheet still explains the horse. */
+   const mut=!!foal.mutant, mutMark=mut?{mark:foal.mark,markCol:foal.markCol}:null;
    foal.genes=mixGenes(genesOf(A),genesOf(B));
    let ph=phenotype(foal.genes,foal.id);
    /* duplicate protection: a full sibling born within a day with the same coat is re-mixed once */
    const twin=s.horses.some(h=>h!==foal&&h.lineage&&h.lineage.sire===foal.lineage.sire&&h.lineage.dam===foal.lineage.dam&&Date.now()-(h.born||0)<864e5&&h.coatLabel===ph.label);
    if(twin){foal.genes=mixGenes(genesOf(A),genesOf(B));ph=phenotype(foal.genes,foal.id+1);}
    foal.colors={body:ph.body,mane:ph.mane};if(ph.mark&&ph.mark!=='none'){foal.mark=ph.mark;if(ph.markCol)foal.markCol=ph.markCol;else delete foal.markCol;}else{delete foal.mark;delete foal.markCol;}
-   foal.variant=null;foal.coatLabel=ph.label;foal.coatHow='genes';
-   if(noteCoat(s,ph.label)){foal.newCoat=true;setTimeout(()=>{try{toast('🎨 New coat discovered: '+ph.label+'!');}catch(e){}},1100);}
+   if(mut){const rnd=lcg((foal.id||0)*13+1);foal.colors.body=jitterHex(ph.body,rnd,18,0.2);
+    if(mutMark.mark){foal.mark=mutMark.mark;if(mutMark.markCol)foal.markCol=mutMark.markCol;else delete foal.markCol;}}
+   const label=mut?ph.label+' (mutation)':ph.label;
+   foal.variant=null;foal.coatLabel=label;foal.coatHow=mut?'mutation':'genes';
+   if(noteCoat(s,label)){foal.newCoat=true;setTimeout(()=>{try{toast('🎨 New coat discovered: '+label+'!');}catch(e){}},1100);}
   }else if(!foal.genes)foal.genes=mixGenes(genesOf(A),genesOf(B));
   if(pots.includes('hornbud'))foal.horn=true;
   if(pots.includes('starlight')){foal.glow=true;foal.rainbow=true;}
@@ -403,6 +410,7 @@ export function install(G){
  function companionFoal(s){const c=s.companion&&byId(s,s.companion);if(c&&c.foal&&!c.egg)return c;return s.horses.filter(h=>h.foal&&!h.egg).sort((x,y)=>(y.born||0)-(x.born||0))[0]||null;}
  function foalEntity(id){for(const e of G.horse.herd()){const h=G.horse.myHorses[e.idx];if(h&&h.id===id)return e;}return null;}
  const gambol={id:null,t:0,ang:0};
+ const callFoal={id:null,t:0};                             // 📣 Call: the foal comes at a canter (a.called in the herd loop)
  function foalAct(act){
   let msg='',ok=false,fid=null;
   sync(s=>{
@@ -419,7 +427,7 @@ export function install(G){
    if(ok==='foalplay'){gambol.id=fid;gambol.t=4;G.quest.dailyEvt('foalplay',1);foalEvt('foalplay',1);}
    if(ok==='foalfeed'){G.quest.dailyEvt('feed',1);foalEvt('foalfeed',1);}
    if(ok==='foalgroom'){G.quest.dailyEvt('groom',1);foalEvt('foalgroom',1);}
-   if(ok==='call'){const e=foalEntity(fid);if(e){e.pos.x=player.pos.x+2;e.pos.z=player.pos.z+2;e.rest=0;}}
+   if(ok==='call'){const e=foalEntity(fid);if(e){callFoal.id=fid;callFoal.t=14;e.called=true;e.rest=0;e.tx=player.pos.x;e.tz=player.pos.z;}}
    try{G.xp.passAdd(3);}catch(e){}
    G.horse.reloadHorses();
    if($('carePanel').style.display==='flex')G.ui.renderCare();
@@ -428,6 +436,10 @@ export function install(G){
  const walk={acc:0,near:false,t:0,growSeen:{}};
  G.on('tick',(dt,t)=>{
   if(gambol.t>0){const e=foalEntity(gambol.id);gambol.t-=dt;if(e){gambol.ang+=dt*2.2;e.rest=0;e.tx=player.pos.x+Math.cos(gambol.ang)*3.1;e.tz=player.pos.z+Math.sin(gambol.ang)*3.1;}}
+  if(callFoal.id!=null){const e=foalEntity(callFoal.id);callFoal.t-=dt;
+   const arrived=e&&Math.hypot(player.pos.x-e.pos.x,player.pos.z-e.pos.z)<3.2;
+   if(!e||arrived||callFoal.t<=0){if(e)e.called=false;callFoal.id=null;}
+   else{e.called=true;e.rest=0;e.tx=player.pos.x;e.tz=player.pos.z;}}
   walk.t+=dt; if(walk.t<0.5)return; const step=walk.t; walk.t=0;
   const s0=G.horse.myHorses; let f=null; const cid=(window.__cachedCompanion||0);
   for(const h of s0)if(h.foal&&!h.egg&&(h.id===cid||!f))f=h;
