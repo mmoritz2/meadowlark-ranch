@@ -36,13 +36,13 @@ export function install(G){
   1:{id:'perk1',label:'Breed perk I',icon:'🎯'},2:{id:'dye1',label:'Natural hair dyes',icon:'🎨'},
   3:{id:'perk2',label:'Breed perk II',icon:'🎯'},4:{id:'style1',label:'Mane & tail styles I · browband studs',icon:'💇'},
   5:{id:'perk3',label:'Breed perk III',icon:'🎯'},6:{id:'dye2',label:'Bold hair dyes · sparkle trail',icon:'🌈'},
-  7:{id:'perk4',label:'Breed perk IV',icon:'🎯'},8:{id:'style2',label:'Mane & tail styles II · stable badge 🎖️',icon:'💇'},
+  7:{id:'perk4',label:'Breed perk IV · Second wind',icon:'🎯'},8:{id:'style2',label:'Mane & tail styles II · stable badge 🎖️',icon:'💇'},
   9:{id:'bare',label:'Bareback riding',icon:'🐎'},10:{id:'perk5',label:'Master perk · +10% XP',icon:'👑'}};
  const LADDER_F={1:{id:'perk1',label:'Breed perk I',icon:'🎯'},2:{id:'acc1',label:'Exclusive accessory I · styles I',icon:'✨'},
   3:{id:'perk2',label:'Breed perk II',icon:'🎯'},4:{id:'acc2',label:'Exclusive accessory II · styles II · bold dyes',icon:'✨'},
   5:{id:'wild',label:'Wild Mode · master perk',icon:'🐎'}};
  function ladderOf(b){ if(isFantasy(b))return LADDER_F; const r=breedRow(b); if(r&&r[2]==='Epic'){const L=Object.assign({},LADDER);L[9]={id:'bare',label:'Bareback riding · Wild Mode',icon:'🐎'};return L;} return LADDER; }
- Object.assign(T.MASTERY_UNLOCKS,{1:'Breed perk',2:'Natural hair dyes',3:'Breed perk II',4:'Mane & tail styles I + browband studs',5:'Breed perk III',6:'Bold hair dyes + sparkle trail',7:'Breed perk IV',8:'Mane & tail styles II + stable badge 🎖️',9:'Bareback riding',10:'Master perk + 10% XP'});
+ Object.assign(T.MASTERY_UNLOCKS,{1:'Breed perk',2:'Natural hair dyes',3:'Breed perk II',4:'Mane & tail styles I + browband studs',5:'Breed perk III',6:'Bold hair dyes + sparkle trail',7:'Breed perk IV · Second wind: recover from blown 30% faster',8:'Mane & tail styles II + stable badge 🎖️',9:'Bareback riding',10:'Master perk + 10% XP'});
  /* what each cosmetic needs, by ladder */
  const NEED={styleT1:b=>isFantasy(b)?2:4, styleT2:b=>isFantasy(b)?4:8, dye1:b=>2, dye2:b=>isFantasy(b)?4:6, studs:b=>isFantasy(b)?2:4, trail:b=>isFantasy(b)?3:6, bare:b=>isFantasy(b)?5:9};
  function canWild(s,h){ if(!h)return false; const M=masteryOf(s,h.breed); if(isFantasy(h.breed))return M>=5; const r=breedRow(h.breed); return !!r&&r[2]==='Epic'&&M>=9; }
