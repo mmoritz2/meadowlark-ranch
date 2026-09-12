@@ -403,7 +403,11 @@ export function install(G){
  }
  function refreshUI(){ try{ if($('breedPanel')&&$('breedPanel').style.display==='flex')G.ui.rerender('breedPanel'); else if($('shopPanel').style.display==='flex'&&/data-fx="breed:/.test($('shopPanel').innerHTML))G.ui.openShop('breed'); }catch(e){} G.ui.hud.pips(); }
  G.on('interval30',()=>{setTimeout(()=>{checkBirth();hatchCheck();},10);});
- let birthT=0; G.on('tick',(dt)=>{birthT+=dt;if(birthT>4){birthT=0;const s=fresh();if(s&&s.breeding&&Date.now()-s.breeding.since>=s.breeding.ms)checkBirth();}});
+ /* One poll for both the due foal and the foal that has grown up: each fresh() is a JSON
+    parse of the whole save, so the two passes share a single read every two seconds. */
+ let pollT=0; G.on('tick',dt=>{pollT+=dt;if(pollT<2)return;pollT=0;const s=fresh();if(!s)return;
+  if(s.breeding&&Date.now()-s.breeding.since>=s.breeding.ms)checkBirth();
+  growthCheck(s);});
  G.on('breed3',()=>{ const A=$('mateA3'),B=$('mateB3'); if(A&&B){const s=fresh();const a=s.horses[+A.value],b=s.horses[+B.value];if(a&&b){ui.a=a.id;ui.b=b.id;ui.confirm='c';startPairing('c');return true;}} G.ui.open('breedPanel'); return true; });
 
  /* ---- 10. foal stage: companion play, walk, growth ---------------------------------- */
@@ -452,7 +456,6 @@ export function install(G){
  /* growth: the 30 s pass and level 3 both clear foal:true; the questline notices either way */
  function growthCheck(s){ if(!s.foalq||s.foalq.idx>=FOAL_STORY.length)return; const f=byId(s,s.foalq.active); if(f&&!f.foal&&!walk.growSeen[f.id]){walk.growSeen[f.id]=1;setTimeout(()=>foalEvt('foalgrow',1),50);} }
  G.on('interval30',s=>growthCheck(s));
- let growT=0; G.on('tick',dt=>{growT+=dt;if(growT>2){growT=0;const s=fresh();if(s)growthCheck(s);}});
  /* care actions for the foal (the Care panel buttons and the E prompt) */
  G.on('careAct',k=>{ if(!/^foal:/.test(k))return false; foalAct(k.slice(5)); return true; });
  G.world.addThing({kind:'foalplay',id:'foalplay',x:1e6,z:1e6,g:null,reach:3.5,
