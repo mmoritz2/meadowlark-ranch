@@ -39,6 +39,17 @@ const FANTASY_FX={
    _ramp+=vec3(1.0,0.86,0.55)*pow(_cor,2.2)*0.6;
    _emis=_ramp*uGlow*(0.06+0.35*_l)+vec3(1.0,0.66,0.24)*_cor*_fl*2.1;`,
 };
+/* Feature packages register their own themes: cfg is {ramp:[dark,mid,bright],glow,rough}, fx is a GLSL
+   fragment that may read _l (luminance), _fres, vMapUv, uTime, uGlow and must write _ramp/_emis. An
+   appearance entry (see EQUINE_FANTASY_APPEARANCE) is registered alongside when a breed key is given. */
+export function registerFantasyTheme(key,cfg,fx,appearance){
+ if(!key||!cfg||!fx)return false;
+ FANTASY_CFG[key]=cfg; FANTASY_FX[key]=fx;
+ if(appearance&&appearance.key)EQUINE_FANTASY_APPEARANCE[appearance.key]=Object.assign({theme:key},appearance,{key:undefined});
+ return true;
+}
+export function registerFantasyAppearance(key,appearance){if(key&&appearance)EQUINE_FANTASY_APPEARANCE[key]=appearance;return EQUINE_FANTASY_APPEARANCE[key];}
+export function fantasyThemes(){return Object.keys(FANTASY_CFG);}
 export function createEquineFantasyCoat(THREE, baseMat, type, scaly=false){
  const cfg=FANTASY_CFG[type]||FANTASY_CFG.galaxy;
  const fx=FANTASY_FX[type]||FANTASY_FX.galaxy;

@@ -4793,7 +4793,7 @@ function dressWithRig(ent,parts,colors,opts){
  if(inst.profile.artistBreed)mat=opts.coat&&opts.coat!==inst.fantasyAppearance?.theme?createEquineFantasyCoat(THREE,inst.baseMat,opts.coat,!!opts.dragon):skin.material;
  else if(inst.profile.hero)mat=skin.material;
  else if(opts.coat)mat=fantasyCoatRig(opts.coat,!!opts.dragon);
- else {mat=makeCoatMat(skin,inst.baseMat);setCoatUniforms(mat,colors?.body,opts.tailCol,opts.mark!==undefined&&opts.mark!==null?opts.mark:br?.[7]?.mark,opts.markCol||br?.[7]?.markCol,opts.seed);}
+ else {mat=makeCoatMat(skin,inst.baseMat);setCoatUniforms(mat,colors?.body,opts.tailCol,opts.mark!==undefined&&opts.mark!==null?opts.mark:br?.[7]?.mark,opts.markCol||br?.[7]?.markCol,opts.seed,opts.mark2);}
  skin.material=mat;
  if(opts.dragon){try{ent.drg=buildDragonBody(skin,inst.bones,parts.group,DRAGON_TINT[opts.coat]||DRAGON_TINT._);}catch(e){}}
  let hair=null;
@@ -5007,24 +5007,24 @@ function configureArtistCustomization(rig,h){
  const same=(a,b)=>new THREE.Color(a||'#332214').equals(new THREE.Color(b||'#332214'));
  const customBody=h.colors?.body&&!same(h.colors.body,def?.[5]),customMarkColor=h.markCol&&!same(h.markCol,opts.markCol||'#f2ece0');
  const keepFantasyNone=h.mark==='none'&&!!(h.coat||rig.fantasyAppearance||rig.fantasyMaterial)&&!customBody&&!customMarkColor;
- const customMark=h.mark!=null&&!keepFantasyNone;
+ const customMark=h.mark!=null&&!keepFantasyNone, customMark2=!!(h.mark2&&MARKS2[h.mark2]);
  if(rig.coatMat){rig.coatMat.dispose();rig.coatMat=null;}rig.skin.material=rig.fantasyMaterial||rig.fantasyAppearance?.material||rig.baseMat;
- if(customBody||customMark||customMarkColor){
+ if(customBody||customMark||customMarkColor||customMark2){
   let base=rig.baseMat;if(customMark){if(!artistNeutralMap){artistNeutralMap=new THREE.TextureLoader().load('./assets/models/horse-candidates/b2przemo/bay-study-albedo.png');artistNeutralMap.colorSpace=THREE.SRGBColorSpace;artistNeutralMap.flipY=false;}base={...rig.baseMat,map:artistNeutralMap};}
-  const mat=makeCoatMat(rig.skin,base),u=mat.userData;u.col.set(h.colors?.body||def?.[5]||'#9c4f23');u.blend=customBody||customMark?1:0;u.mark=customMark?MARKS[markOf(h)]||0:0;u.markCol.set(markColOf(h));u.markTint=customMarkColor&&!customMark?1:0;u.seed=Number.isFinite(Number(h.id))?Number(h.id)%97:Array.from(String(h.id||'')).reduce((n,c)=>(n*31+c.charCodeAt(0))%97,0);
+  const mat=makeCoatMat(rig.skin,base),u=mat.userData;u.col.set(h.colors?.body||def?.[5]||'#9c4f23');u.blend=customBody||customMark?1:0;u.mark=customMark?MARKS[markOf(h)]||0:0;u.mark2=MARKS2[h.mark2]||0;u.markCol.set(markColOf(h));u.markTint=customMarkColor&&!customMark?1:0;u.seed=Number.isFinite(Number(h.id))?Number(h.id)%97:Array.from(String(h.id||'')).reduce((n,c)=>(n*31+c.charCodeAt(0))%97,0);
   const c=new THREE.Color(def?.[5]||'#9c4f23');u.baseLum=customMark?.14:Math.max(.008,c.r*.299+c.g*.587+c.b*.114);mat.customProgramCacheKey=()=> 'artist-custom-coat-v1';rig.coatMat=mat;rig.skin.material=mat;
  }
  const maneOverride=!!h.colors?.mane&&!same(h.colors.mane,def?.[6]),tailOverride=!!h.tailCol||maneOverride;
  (rig.groom||rig.hair)?.setColors?.({maneColor:h.colors?.mane||def?.[6],tailColor:h.tailCol||h.colors?.mane||def?.[6],maneOverride,tailOverride});
 }
 function ensureCoatMat(){ if(RIG.coatMat||!RIG.baseMat)return; RIG.coatMat=makeCoatMat(); }
-function setCoatUniforms(m,bodyHex,tailHex,mark,markHex,seed){
+function setCoatUniforms(m,bodyHex,tailHex,mark,markHex,seed,mark2){
  const bc=new THREE.Color(bodyHex||'#9c4f23'), ch=new THREE.Color('#9c4f23');
  const blend=Math.min(1,Math.hypot(bc.r-ch.r,bc.g-ch.g,bc.b-ch.b)/0.32);
  m.userData.col.copy(bc); m.userData.blend=blend; m.userData.tail.set(tailHex||'#000000'); m.userData.tailBlend=tailHex?1:0;
- m.userData.mark=MARKS[mark]||0; m.userData.markCol.set(markHex||'#f2ece0'); m.userData.seed=(seed||0)%97;
+ m.userData.mark=MARKS[mark]||0; m.userData.markCol.set(markHex||'#f2ece0'); m.userData.seed=(seed||0)%97; m.userData.mark2=MARKS2[mark2]||0;
  if(m.userData.shader){const u2=m.userData.shader.uniforms;
-  u2.uMark.value=m.userData.mark; u2.uMarkCol.value.copy(m.userData.markCol); u2.uSeed.value=m.userData.seed;
+  u2.uMark.value=m.userData.mark; u2.uMarkCol.value.copy(m.userData.markCol); u2.uSeed.value=m.userData.seed; if(u2.uMark2)u2.uMark2.value=m.userData.mark2;
   const B=m.userData.bodyAxes||measureBody(); if(B.ready){u2.uBBMin.value.copy(B.min);u2.uBBSize.value.copy(B.size);
    u2.uAxis.value.set(B.L,B.H,B.W); u2.uFlip.value=B.headHi;}}
  if(m.userData.shader){const u=m.userData.shader.uniforms;u.uCoat.value.copy(bc);u.uBlend.value=blend;u.uTail.value.copy(m.userData.tail);u.uTailBlend.value=m.userData.tailBlend;}
@@ -5056,6 +5056,7 @@ function measureBody(skin=RIG.skin){
   report:{size:size.toArray(),L,H,W,head:head.toArray(),dock:dock.toArray(),headHi}};
 }
 const MARKS={none:0,dapple:1,appaloosa:2,pinto:3,roan:4,points:5,leopard:6,sooty:7,dun:8,metal:9};
+const MARKS2={none:0,blaze:1,snip:2,socks:3,stockings:4,star:5};   // a second layer: face and leg white, over any pattern
 /* ---- markings are inherited ------------------------------------------------------------
    A foal used to take its parents' colours but always its BREED's pattern, so breeding a
    Knabstrupper to a Paint could never give you a spotted Paint. Patterns run in families:
@@ -5104,12 +5105,12 @@ function makeCoatMat(skin=RIG.skin,baseMat=RIG.baseMat){
  m.userData.bodyAxes=measureBody(skin);
  m.userData.col=new THREE.Color('#9c4f23'); m.userData.blend=0;
  m.userData.tail=new THREE.Color('#000000'); m.userData.tailBlend=0;
- m.userData.mark=0; m.userData.markCol=new THREE.Color('#ffffff'); m.userData.seed=0;m.userData.baseLum=.14;m.userData.markTint=0;m.userData.artist=artist;
+ m.userData.mark=0; m.userData.markCol=new THREE.Color('#ffffff'); m.userData.seed=0;m.userData.baseLum=.14;m.userData.markTint=0;m.userData.artist=artist;m.userData.mark2=0;
  m.onBeforeCompile=sh=>{                       // recolour by the texture's luminance (keeps mane/socks/shading pattern)
   sh.uniforms.uCoat={value:m.userData.col}; sh.uniforms.uBlend={value:m.userData.blend}; sh.uniforms.uTail={value:m.userData.tail}; sh.uniforms.uTailBlend={value:m.userData.tailBlend};
   const B=m.userData.bodyAxes;
   sh.uniforms.uArtistBaseLum={value:m.userData.baseLum};sh.uniforms.uArtistMarkTint={value:m.userData.markTint};
-  sh.uniforms.uMark={value:m.userData.mark}; sh.uniforms.uMarkCol={value:m.userData.markCol}; sh.uniforms.uSeed={value:m.userData.seed};
+  sh.uniforms.uMark={value:m.userData.mark}; sh.uniforms.uMarkCol={value:m.userData.markCol}; sh.uniforms.uSeed={value:m.userData.seed}; sh.uniforms.uMark2={value:m.userData.mark2||0};
   sh.uniforms.uBBMin={value:B.ready?B.min.clone():new THREE.Vector3()};
   sh.uniforms.uBBSize={value:B.ready?B.size.clone():new THREE.Vector3(1,1,1)};
   sh.uniforms.uAxis={value:new THREE.Vector3(B.ready?B.L:0,B.ready?B.H:1,B.ready?B.W:2)};
@@ -5117,7 +5118,7 @@ function makeCoatMat(skin=RIG.skin,baseMat=RIG.baseMat){
   sh.vertexShader='attribute float aRegion; varying float vRegion; varying vec3 vBody;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n vRegion=aRegion; vBody=position;');
   sh.fragmentShader=
    'uniform float uArtistBaseLum;uniform float uArtistMarkTint;uniform vec3 uCoat;uniform float uBlend;uniform vec3 uTail;uniform float uTailBlend;\n'+
-   'uniform float uMark;uniform vec3 uMarkCol;uniform float uSeed;\n'+
+   'uniform float uMark;uniform vec3 uMarkCol;uniform float uSeed;uniform float uMark2;\n'+
    'uniform vec3 uBBMin;uniform vec3 uBBSize;uniform vec3 uAxis;uniform float uFlip;\n'+
    'varying float vRegion; varying vec3 vBody;\n'+
    'float _mh(vec2 v){v=fract(v*vec2(127.1,311.7)+uSeed);v+=dot(v,v+34.7);return fract(v.x*v.y*95.43);}\n'+
@@ -5200,6 +5201,19 @@ function makeCoatMat(skin=RIG.skin,baseMat=RIG.baseMat){
       diffuseColor.rgb=mix(diffuseColor.rgb,uMarkCol,fr*0.55);
       diffuseColor.rgb*=1.0+0.22*_mf(vMapUv*11.0);
      }
+    }
+    if(uMark2>0.5){                                   // second layer: face and leg white on top of any pattern
+     vec3 _r2=(vBody-uBBMin)/max(uBBSize,vec3(0.001));
+     float fl2=_pick(_r2,uAxis.x); if(uFlip<0.5)fl2=1.0-fl2;
+     float fh2=_pick(_r2,uAxis.y);
+     float fw2=abs(_pick(_r2,uAxis.z)-0.5)*2.0;
+     float w2=0.0;
+     if(uMark2<1.5){ w2=smoothstep(0.84,0.90,fl2)*(1.0-smoothstep(0.10,0.20,fw2))*smoothstep(0.45,0.60,fh2); }            // blaze: a stripe down the face
+     else if(uMark2<2.5){ w2=smoothstep(0.95,0.985,fl2)*smoothstep(0.42,0.55,fh2)*(1.0-smoothstep(0.62,0.72,fh2)); }     // snip: a pale muzzle
+     else if(uMark2<3.5){ w2=(1.0-smoothstep(0.08,0.13,fh2))*smoothstep(0.045,0.09,fh2); }                                // socks
+     else if(uMark2<4.5){ w2=(1.0-smoothstep(0.17,0.24,fh2))*smoothstep(0.045,0.09,fh2); }                                // stockings
+     else { float sd=length(vec2((fl2-0.90)*3.0,(fh2-0.74)*2.0)); w2=1.0-smoothstep(0.05,0.09,sd); }                    // star
+     diffuseColor.rgb=mix(diffuseColor.rgb,vec3(0.94,0.92,0.88),clamp(w2,0.0,1.0)*0.9);
     }
     if(vRegion>0.5) diffuseColor.rgb=mix(diffuseColor.rgb, uTail*clamp(_l/0.5,0.0,1.6), uTailBlend);`);
  };
@@ -5359,11 +5373,11 @@ function applyCoatInner(){
  if(RIG.coatMat.userData.shader){RIG.coatMat.userData.shader.uniforms.uCoat.value.copy(bc);RIG.coatMat.userData.shader.uniforms.uBlend.value=blend;}
  RIG.coatMat.userData.tail.set((h&&h.tailCol)||'#000000'); RIG.coatMat.userData.tailBlend=(h&&h.tailCol)?1:0;
  {const mk=markOf(h);                                 // the horse's own pattern, which a foal inherits
-  RIG.coatMat.userData.mark=MARKS[mk]||0;
+  RIG.coatMat.userData.mark=MARKS[mk]||0; RIG.coatMat.userData.mark2=MARKS2[h&&h.mark2]||0;
   RIG.coatMat.userData.markCol.set(markColOf(h));
   RIG.coatMat.userData.seed=((h&&h.id)||0)%97;
   if(RIG.coatMat.userData.shader){const u3=RIG.coatMat.userData.shader.uniforms;
-   u3.uMark.value=RIG.coatMat.userData.mark; u3.uMarkCol.value.copy(RIG.coatMat.userData.markCol);
+   u3.uMark.value=RIG.coatMat.userData.mark; u3.uMarkCol.value.copy(RIG.coatMat.userData.markCol); if(u3.uMark2)u3.uMark2.value=RIG.coatMat.userData.mark2;
    u3.uSeed.value=RIG.coatMat.userData.seed;
    const B=measureBody(); if(B.ready){u3.uBBMin.value.copy(B.min);u3.uBBSize.value.copy(B.size);
     u3.uAxis.value.set(B.L,B.H,B.W); u3.uFlip.value=B.headHi;}}}
@@ -7871,7 +7885,7 @@ function refreshBarn(){
 function tickBarn(dt,t){
  for(const b of barnHorses){
   const horse=myHorses[b.idx];
-  if(horse){dressWithRig(b,b.parts,horse.colors,{breed:horse.breed,mine:true,foal:horse.foal,coat:horse.coat,dragon:horse.dragon,tailCol:horse.tailCol,mark:horse.mark,markCol:horse.markCol,seed:horse.id});tickRig(b,0,dt,t,0);}
+  if(horse){dressWithRig(b,b.parts,horse.colors,{breed:horse.breed,mine:true,foal:horse.foal,coat:horse.coat,dragon:horse.dragon,tailCol:horse.tailCol,mark:horse.mark,markCol:horse.markCol,mark2:horse.mark2,seed:horse.id});tickRig(b,0,dt,t,0);}
   b.phase+=dt*0.9;
   animateHorse(b.parts,b.phase,0.05,GAITS.walk,true,t,1);   // standing, head down now and then
  }
@@ -9283,7 +9297,10 @@ const BREEDS3=[
  ['shire','Shire','Draft',45,0,'#3a3530','#1d1a17',{mark:'roan',markCol:'#ded4c4',size:1.16}],
  ['clyde','Clydesdale','Draft',45,0,'#7a4526','#2e2018',{mark:'pinto',markCol:'#f0e8d8',size:1.12}],
 ];
-const TIER_BASE={Common:3,Uncommon:4,Rare:5,Epic:6,Legendary:7,Draft:4,Mythic:8,Dragon:9};
+const TIER_BASE={Common:3,Uncommon:4,Rare:5,Epic:6,Legendary:7,Draft:4,Mythic:8,Dragon:9,Ascendant:10};
+/* Star rarity. Every horse card shows it; the stars set the stat ceiling (through TIER_BASE), the
+   source it can come from (breedSrc) and how many traits it rolls. Six stars are bred, never bought. */
+const TIER_STARS={Common:2,Draft:2,Uncommon:3,Rare:3,Epic:4,Legendary:5,Mythic:5,Dragon:5,Ascendant:6};
 const NAMES3=['Luna','Comet','Willow','Maple','Storm','Honey','Pepper','Clover','Biscuit','River','Aspen','Mocha','Daisy','Blaze','Echo','Juniper','Ginger','Onyx','Pearl','Sage'];
 const TACKS3=[['#c0392b','Scarlet'],['#2e86c1','Lake Blue'],['#7d3c98','Royal Plum'],['#1e8449','Meadow Green'],['#f39c12','Sunshine']];
 function blendHex(a,b){const c=new THREE.Color(a);c.lerp(new THREE.Color(b),0.5);return '#'+c.getHexString();}
@@ -9349,7 +9366,7 @@ const SHOP_TABS=[['horses','🐴 Horses'],['market','🤝 Market'],['pets','🐾
 function horseValue(h){
  if(!h)return 0;
  const br=BREEDS3.find(b=>b[0]===h.breed);
- const base={Common:130,Draft:170,Uncommon:240,Rare:430,Epic:820,Mythic:1500,Legendary:1400,Dragon:1900}[br?br[2]:'Common']||130;
+ const base={Common:130,Draft:170,Uncommon:240,Rare:430,Epic:820,Mythic:1500,Legendary:1400,Dragon:1900,Ascendant:2600}[br?br[2]:'Common']||130;
  const st=h.stats?Object.keys(h.stats).reduce((a,k)=>a+(h.stats[k]||0),0):0;
  const o=br&&br[7]||{};
  const extra=(o.wings?260:0)+(o.horn?220:0)+(o.dragon?420:0)+(o.coat?180:0);
@@ -12468,7 +12485,7 @@ function tick(stepSeconds){
   animateHorse(a.parts,a.phase,resting?0.05:((a.wsp||1.2)>3.5?0.72:0.42),(a.wsp||1.2)>3.5?GAITS.gallop:GAITS.walk,true,t,a.graze,dt);
   {const hh=myHorses[a.idx]; const bd=hh&&BREEDS3.find(b=>b[0]===hh.breed);
    dressWithRig(a,a.parts,hh&&hh.colors,{breed:hh?.breed,foal:hh?.foal,tailCol:hh&&hh.tailCol,coat:hh&&hh.coat,dragon:hh&&hh.dragon,mine:true,
-    mark:hh?.mark, markCol:hh?.markCol, seed:(hh&&hh.id)||0}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
+    mark:hh?.mark, markCol:hh?.markCol, mark2:hh?.mark2, seed:(hh&&hh.id)||0}); tickRig(a,resting?0:(a.wsp||1.2),dt,t,a.graze>0?1:0);
    const el=dragonElement(hh);                       // a dragon in the pasture breathes now and then
    if(el){ a.brT=(a.brT==null?3+Math.random()*9:a.brT)-dt;
     if(a.brT<0){ a.brOn=0.85; a.brT=7+Math.random()*11; }
@@ -12655,7 +12672,7 @@ function tick(stepSeconds){
   if(d<1.5&&player.y<1.2){
    f.g.visible=false; f.t=(40+Math.random()*30)*ranchMul('forage');
    syncSave(s=>{s.items=s.items||{};s.items[f.item]=(s.items[f.item]||0)+1;});
-   sCoin(); passAdd(2); dailyEvt('carrots',1); questEvt('forage',f.item);
+   sCoin(); passAdd(2); dailyEvt('carrots',1); questEvt('forage',f.item); G.run('forage',f.item,f);   // traits: gathering luck
    const fd=FOODS3[f.item]; toast(fd.emoji+' '+fd.label+' — trains '+STAT_LBL[fd.stat]);
   }
  }
@@ -13256,15 +13273,15 @@ function installFeatures(){
   tables:{EVENTS3,RACE_ROUTES,RACE_ITEMS,BREEDS3,TIER_BASE,FOODS3,FEED_TIER_LBL,PERS,PERS_KEYS,SEASONS,PASS_FREE,PASS_GOLD,VIP_PLANS,WAGE_TIERS,WEEK_TIERS,CALENDAR,
    DECOR_CAT,RANCH_LEVELS,RANCH_PERKS,TACK_SETS,RARITIES,GEAR_SLOTS,GEAR_NOUN,GEAR_ADJ,RAR_SELL,RAR_W,RAR_COL,SUMMON_TIERS,SUMMON_POOL,PETS3,BOARDS,MILES,NEIGHBOURS,WILD_BREEDS,
    EMOTES,MASTERY_UNLOCKS,TAIL_COLS,STUD_COLS,DYE_HAIR,DYE_BODY,DYE_MARK,MARKS,STAT_KEYS,STAT_LBL,CHESTS,COLL_SETS,FT,REGIONS,TRAIL_STOPS,TACK_ROOM,NAMES3,
-   TRAITS,BREED_CEIL,HAIR_STYLES,KEYMAP,REWARD_KINDS},
+   TRAITS,BREED_CEIL,HAIR_STYLES,KEYMAP,REWARD_KINDS,TIER_STARS,MARKS2,FANTASY_CFG,FANTASY_FX,FANTASY_COAT,COAT_BASE,DRAGON_TINT,WING_TINT,ELEM_OF},
   horse:{myHorses,rideIdx:()=>rideIdx,ridden:()=>myHorses[rideIdx],RIG:()=>RIG,TACK:()=>TACK,player,herd:()=>herd,remotes,
-   grantHorse,makeFoal,breedSrc,breedAvailable,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},
+   grantHorse,makeFoal,breedSrc,breedAvailable,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
   world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,ranchArchitecture,arrivalArt,geology,box,tube,blob,
    mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,
    npcList,visitors,spawnCritter,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar},
   net:{SOCIAL,net,remotes,lbData,myName,isFriend,publish:netPublish,subscribe:netSubscribe,sendChat:netSendChat,onMessage:netOnMessage,publishMyBoards,openProfile,chatMsg,showBubble,netConnect,topic:netTopic,subs:NET_SUBS},
-  time:{seasonNow,weekKey,isoWeekKey,dateKey,marketDay,calMonth},
+  time:{seasonNow,weekKey,isoWeekKey,dateKey,marketDay,calMonth,dayT:()=>dayT},
   course:{get:()=>course,startCourse,cancelCourse,finishCourse,finishDressage,awardRibbons,judgeJump,weeklyFeatured,startDressage,startDrill,startRoundup,ARENA_LETTERS,DRESSAGE_TESTS,eventPar,kinds:COURSE_KINDS},
   ui:{panel:uiPanel,open:uiOpen,toggle:uiToggle,rerender:uiRender,panels:PANEL_IDS,defs:PANEL_DEFS,
    shopTab:d=>addTab(EXTRA_SHOP_TABS,d),questTab:d=>addTab(EXTRA_QUEST_TABS,d),lbTab:d=>addTab(EXTRA_LB_TABS,d),buildTab:d=>addTab(EXTRA_BUILD_TABS,d),
