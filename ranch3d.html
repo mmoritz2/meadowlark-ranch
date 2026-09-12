@@ -8728,7 +8728,7 @@ function tickDressage(dt){
  if(f.gait==='halt'){
   if(d<3.5&&sp<0.3){f.holdT+=dt; f.good+=dt; f.total+=dt; if(f.holdT>=f.hold)done=true;} else if(d<6){f.total+=dt;}
  }else{
-  f.total+=dt; if(g===f.gait)f.good+=dt;
+  f.total+=dt; if(g===f.gait&&(!f.fast||sp>9))f.good+=dt;   // fast: a lengthened stride has to be ridden forward
   if(f.circle){
    if(d<12&&d>2.5){ const a=Math.atan2(player.pos.z-mz,player.pos.x-mx); if(f.lastAng!=null){let da=a-f.lastAng; if(da>Math.PI)da-=2*Math.PI; if(da<-Math.PI)da+=2*Math.PI; if(g===f.gait)f.sweep+=Math.abs(da);} f.lastAng=a; }
    else f.lastAng=null;
@@ -8747,7 +8747,9 @@ function tickDressage(dt){
  $('courseHudTxt').textContent='🎽 '+f.text+' · '+GAIT_ICON[g]+' '+(g===f.gait||(f.gait==='halt'&&d>=3.5)?'✓':'want '+GAIT_ICON[f.gait])+(f.circle?' · circle '+Math.round(100*Math.min(1,f.sweep/(Math.PI*1.8)))+'%':'')+(f.gait==='halt'&&d<3.5?' · hold '+f.holdT.toFixed(1)+'/'+f.hold+'s':'')+(nDone?' · '+Math.round(100*sofar/(10*nDone))+'%':'');
 }
 function finishDressage(){
- const c=course, ev=c.ev; const total=c.figs.reduce((a,f)=>a+(f.score||0),0), pct=total/(10*c.figs.length);
+ const c=course, ev=c.ev; const total=c.figs.reduce((a,f)=>a+(f.score||0),0);
+ let pct=total/(10*c.figs.length);
+ if(c.turnout!=null)pct=0.5*c.turnout+0.5*pct;      // a showmanship class is scored half on turnout, half on the pattern
  let first=false; try{const s=freshSave(); first=!!(s&&!(s.trophies&&s.trophies[ev.id]));}catch(e){}
  const par=ev.par||60, tEq=par*(pct>=0.9?0.5:pct>=0.75?0.9:pct>=0.6?1.2:1.6);
  const RB=awardRibbons(ev,tEq,pct>=0.75?0:1,Object.assign({acc:pct},c.rb||{}));
@@ -9042,7 +9044,7 @@ function openEvents(){
     }).join('')+'</span></div>';}
  html+=EVENTS3.map((ev,i)=>{
   const won=tr[ev.id],gate=G.run('eventGate',ev,myHorses[rideIdx])||{ok:lvl>=ev.lvl,html:''},ok=gate.ok, isF=featIds.has(ev.id), r=rb[ev.id]||0, wr=wk.rib[ev.id]||0, gold=!!(sw.ribbonGold&&sw.ribbonGold[ev.id]);
-  return '<div class="evrow'+(isF?' done':'')+'">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b>'+(isF?' <span class="badge">FEATURED</span>':'')+'<span>'+ev.town+' · '+(ev.dressage?'🎽 dressage · '+DRESSAGE_TESTS[ev.id].length+' figures'+(sw.bestScore&&sw.bestScore[ev.id]?' · best '+Math.round(sw.bestScore[ev.id]*100)+'%':''):ev.xc?'🌲 cross country · '+RACE_ROUTES[ev.route].length+' gates · '+RACE_ROUTES[ev.route].length+' fences':ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps'+(ev.laps>1?' × '+ev.laps+' laps':''))+' · Lv '+ev.lvl+(r?' · '+'🎀'.repeat(Math.min(3,r-(gold?1:0)))+(gold?'🥇':''):'')+(isF&&wr<4?' · '+wr+'/4 this week':'')+'</span>'+sect('eventRow',ev,sw,myHorses[rideIdx])+
+  return '<div class="evrow'+(isF?' done':'')+'">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b>'+(isF?' <span class="badge">FEATURED</span>':'')+'<span>'+ev.town+' · '+(ev.blurb?ev.blurb:ev.dressage?'🎽 dressage · '+DRESSAGE_TESTS[ev.id].length+' figures'+(sw.bestScore&&sw.bestScore[ev.id]?' · best '+Math.round(sw.bestScore[ev.id]*100)+'%':''):ev.xc?'🌲 cross country · '+RACE_ROUTES[ev.route].length+' gates · '+RACE_ROUTES[ev.route].length+' fences':ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps'+(ev.laps>1?' × '+ev.laps+' laps':''))+' · Lv '+ev.lvl+(r?' · '+'🎀'.repeat(Math.min(3,r-(gold?1:0)))+(gold?'🥇':''):'')+(isF&&wr<4?' · '+wr+'/4 this week':'')+'</span>'+sect('eventRow',ev,sw,myHorses[rideIdx])+
    (ok?(G.run('eventEnter',ev,i,{won,isF,sw})||'<button data-ev="'+i+'">'+(won?'Again':'Enter · '+(isF?Math.round(ev.reward*1.5):ev.reward)+'🪙')+'</button>'):'<span style="flex:none">🔒'+(gate.html||'')+'</span>')+'</div>';
  }).join('')+'<div class="evrow"><span>Jump every numbered fence in order — follow the golden arrow! Three green ribbons: finish · two stars · three stars. The gold: 95% accuracy with nothing down.</span><button id="evClose">Close</button></div>';
  p.innerHTML=html;
