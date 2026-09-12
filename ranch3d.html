@@ -402,7 +402,7 @@ import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig} from './assets/game-hero-horse.js?v=artist-breeds-1';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig} from './assets/game-hero-horse.js?v=gaits-2';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js';
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js';
@@ -12000,7 +12000,7 @@ function tick(stepSeconds){
       seconds used to produce exactly one jump, because the latch that stops auto-repeat
       also stopped everything else. */
    {const jp=!!(keys.Space||touch.jump);
-    if(jp&&!RIG.heroJumpHeld)RIG.heroJumpWant=0.35; else if(RIG.heroJumpWant>0)RIG.heroJumpWant=Math.max(0,RIG.heroJumpWant-dt);
+    if(jp&&!RIG.heroJumpHeld)RIG.heroJumpWant=0.5; else if(RIG.heroJumpWant>0)RIG.heroJumpWant=Math.max(0,RIG.heroJumpWant-dt);
     RIG.heroJumpHeld=jp;
     if(RIG.heroJumpAge===null&&(RIG.heroJumpWant>0||jp)){RIG.heroJumpWant=0;if(winged)setFlying(true);else{startGameHeroJump(RIG);sJump();}}}
   }

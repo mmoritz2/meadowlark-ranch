@@ -1,4 +1,4 @@
-import {createArtistMotion,ARTIST_GAITS} from './artist-horse-motion.js?v=artist-breeds-1';
+import {createArtistMotion,ARTIST_GAITS} from './artist-horse-motion.js?v=gaits-2';
 import {finishHeroCoat} from './hero-horse-coat.js?v=hero-ranch-1';
 import {createHeroHorseGroom} from './hero-horse-groom.js?v=hero-ranch-1';
 import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-20260908-4';
@@ -46,7 +46,7 @@ export function startGameHeroJump(rig){
    runs quick, the landing runs quick, and the game lets go of the jump at 1.20 s — on its
    feet, straight back into the live gait — rather than idling to the end of the clip and
    then crossfading through 'stand'. */
-const JUMP_GATHER_RATE=1.9,JUMP_LAND_RATE=1.35,JUMP_RELEASE=1.20,JUMP_GRACE=0.35;
+const JUMP_GATHER_RATE=2.4,JUMP_LAND_RATE=1.6,JUMP_RELEASE=1.18,JUMP_GRACE=0.35;
 function jumpClockRate(age){return age<.38?JUMP_GATHER_RATE:age<1.16?1:JUMP_LAND_RATE;}
 export function tickGameHero(rig,speed,dt,turn=0){
   const motion=rig.heroMotion;if(!motion)return null;
@@ -83,7 +83,13 @@ export function tickGameHero(rig,speed,dt,turn=0){
     rate=rig.heroRate;
   }
   motion.setTurn(turn);motion.update(dt*rate);
-  const state=motion.state;rig.phase=state.phase01;
+  const state=motion.state;
+  /* The legs re-phase at a gait change (the left fore is carried, the rest jump to the new
+     pattern), so phase01 steps. Everything that rides on rig.phase — the rider's posting,
+     her breathing, the sway — wants a beat that never steps. Accumulate the motion's phase
+     and ignore any single-frame jump too big to be a stride. */
+  {const p1=state.phase01,p0=rig.lastPhase01;let d=p0===undefined?0:p1-p0;d-=Math.round(d);if(Math.abs(d)>.2)d=0;
+   let ph=((rig.phase??p1)+d)%1;if(ph<0)ph+=1;rig.phase=ph;rig.lastPhase01=p1;}
   // Physics and the render skeleton share the approved jump timing. Only the
   // extra fence-clearance lift belongs on the mount; skeletal lift stays in bones.
   const u=rig.heroJumpAge===null?0:Math.max(0,Math.min(1,(rig.heroJumpAge-.38)/.78));

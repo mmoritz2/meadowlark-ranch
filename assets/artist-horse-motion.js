@@ -55,7 +55,7 @@ export function createArtistMotion({THREE,root,skin,heightM=null}){
   let restMode=false;
   let current={gait:'stand',phase:0,age:0,lead:'left',speed:0},previous=null,transitionAge=1;
   let time=0,distanceRaw=0,speedMps=0,bodyY=0,bodyPitch=0,phase01=0,grounded=true,turn=0;
-  const fadeDuration=.48,bodyScratch={y:0,pitch:0,speed:0,phase:0,grounded:true};
+  const fadeDuration=.32,bodyScratch={y:0,pitch:0,speed:0,phase:0,grounded:true};
   const params=state=>gaits[state.gait]||gaits.stand;
   function strikes(state){
     const left=state.lead!=='right';
