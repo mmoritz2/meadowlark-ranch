@@ -4988,7 +4988,7 @@ function airLegPose(L,i,a,kb,air,t,pl){
 }
 function poseRigBones(B,phase,sp,grounded,air,t,dt,graze,cal=RIG){
  const TAU=Math.PI*2, q=_rigQ;
- const em=(B===RIG.bones)?RIG.emote:null, E=em&&EMOTES[em.type], ee=em?emEnv(em):0;
+ const em=(B===RIG.bones)?RIG.emote:(cal&&cal!==RIG&&cal.emote)||null, E=em&&EMOTES[em.type], ee=em?emEnv(em):0;
  const moving=sp>0.25&&grounded, run=Math.max(0,Math.min(1,(sp-4)/4));
  const strideLen=(sp<2.8?1.7:sp<7?2.7:5.8)*Math.max(.45,player.mesh.scale.x);          // metres of ground per leg cycle
  const ph=phase, swingAmp=moving?0.36+run*0.55:0, kneeAmp=moving?0.32+run*0.7:0;
@@ -8141,6 +8141,7 @@ window._k=keys;window._player=player;window._herd=()=>herd;
 window._mh=cfg=>{const p=makeHorse(cfg||{colors:{body:'#f2f5fb',mane:'#dfe7f4'},wings:true,seed:9});scene.add(p.group);return p;};
 addEventListener('keydown',e=>{
  if(e.code==='Escape'){
+  if(G.run('escape')===true){e.preventDefault();return;}   // a package owned Escape (spectating, ranch tours)
   if(freeCam)toggleFreeCam();
   if(build.type||build.remove)endBuild();
   if($('bigmapWrap').style.display==='flex')toggleMap();
@@ -9082,14 +9083,16 @@ function tickFreeCam(dt){
 }
 const TRAIL_STOPS=[['🏠 Ranch',0,5],['🌊 Loon Lake',20,16],['🐴 Pasture',-70,-10],['🌲 Pines',-30,-58],['🏘️ Cottonwood',47,-50],['🌉 River bridge',0,118],['🌾 Barleyfold',220,-110],['🤠 Coyote Canyon',-220,130],['🏔️ Hollowpeak',-160,-210]];
 let trailRide=null, trailDraft=[], trailOffer=null;
-function startTrail(pts,by){
+function startTrail(pts,by,opts){
  if(!pts||pts.length<2)return false;
- trailRide={pts:pts.map(p=>p.slice()),idx:0,by:by||myName(),t:0}; trailOffer=null;
- toast('🥾 Trail ride: '+pts.map(p=>p[0]).join(' → ')+' — follow the golden arrow'); sChime(); return true;
+ trailRide=Object.assign({pts:pts.map(p=>p.slice()),idx:0,by:by||myName(),t:0,roster:{}},opts||{}); trailOffer=null;
+ toast('🥾 '+(trailRide.name?trailRide.name+': ':'Trail ride: ')+pts.map(p=>p[0]).join(' → ')+' — follow the golden arrow'); sChime(); return true;
 }
-function announceTrail(pts){
- if(net.client&&net.club){try{net.client.publish('srf1/'+net.club+'/chat',JSON.stringify({id:net.id,n:myName(),t:'🥾 started a trail ride: '+pts.map(p=>p[0]).join(' → '),tr:pts}));}catch(e){}}
+function announceTrail(pts,extra){
+ if(net.client&&net.club){try{net.client.publish('srf1/'+net.club+'/chat',JSON.stringify(Object.assign({id:net.id,n:myName(),t:'🥾 started a trail ride: '+pts.map(p=>p[0]).join(' → '),tr:pts},extra||{})));}catch(e){}}
 }
+/* The trail internals, for the social-play package (named rides, custom pins, expeditions). */
+G.trail={STOPS:TRAIL_STOPS,start:startTrail,announce:announceTrail,get arrow(){return arrow;},get ride(){return trailRide;},set ride(v){trailRide=v;},get draft(){return trailDraft;},set draft(v){trailDraft=v;},get offer(){return trailOffer;},set offer(v){trailOffer=v;}};
 function tickTrail(dt){
  if(!trailRide||course)return;
  const p=trailRide.pts[trailRide.idx]; trailRide.t+=dt;
@@ -9098,10 +9101,12 @@ function tickTrail(dt){
   trailRide.idx++; sCoin();
   if(trailRide.idx>=trailRide.pts.length){
    const stops=trailRide.pts.length, pay=40*stops;
-   addCoins(pay); passAdd(30); syncSave(sv=>{addSP(sv,3,'trail'); sv.stats=sv.stats||{}; sv.stats.trails=(sv.stats.trails||0)+1;});
-   toast('🥾 Trail ride done! '+stops+' stops · +'+pay+'🪙 +30🎟️'); sGem(); dailyEvt('trail',1);
+   if(G.run('trailDone',trailRide)!==true){                       // social-play pays expeditions and distance-scaled rides itself
+    addCoins(pay); passAdd(30); syncSave(sv=>{addSP(sv,3,'trail'); sv.stats=sv.stats||{}; sv.stats.trails=(sv.stats.trails||0)+1;});
+    toast('🥾 Trail ride done! '+stops+' stops · +'+pay+'🪙 +30🎟️'); sGem(); dailyEvt('trail',1);
+   }
    trailRide=null; arrow.visible=false;
-  }else toast('🥾 '+p[0]+' ✓ · next: '+trailRide.pts[trailRide.idx][0]);
+  }else {toast('🥾 '+p[0]+' ✓ · next: '+trailRide.pts[trailRide.idx][0]); G.run('trailStop',trailRide,p);}
  }
 }
 let party=null, partyFX=null, partyBanner=null;
@@ -10043,7 +10048,7 @@ function chatMsg(name,text){
  d.textContent=name+': '+text;
  const feed=$('chatFeed');
  feed.appendChild(d);
- while(feed.children.length>8)feed.removeChild(feed.firstChild);
+ while(feed.children.length>(G.chatLines||8))feed.removeChild(feed.firstChild);
  setTimeout(()=>{if(d.parentNode)d.style.opacity='0.45';},9000);
 }
 function netSendChat(text,extra){
@@ -10193,7 +10198,7 @@ function remoteUpdate(m){
   BREED_MODELS.load(breed).then(()=>{const latest=remoteBreedPending.get(m.id);remoteBreedPending.delete(m.id);if(latest)remoteUpdate(latest);}).catch(e=>{remoteBreedPending.delete(m.id);console.warn('Remote breed unavailable',breed,e);});return;
  }
  if(!r){
-  if(Object.keys(remotes).length>=12)return;
+  if(Object.keys(remotes).length>=(G.remoteMax||12))return;
   const parts=makeHorse({colors:(m.c&&m.c.body)?m.c:{body:'#8a5a2b',mane:'#332214'},tack:m.k||'#7a583a',bridle:true,seed:5,breed,wings:!!m.wg,coat:m.ct||null,horn:!!BREEDS3.find(b=>b[0]===breed)?.[7]?.horn,dragon:!!BREEDS3.find(b=>b[0]===breed)?.[7]?.dragon});
   const rider=makeRider({shirt:m.s||RIDER_DEF_SHIRT,pants:m.p||RIDER_DEF_PANTS,hair:m.hr||null,skin:m.sk||null,helmet:m.hm||null});
   parts.group.add(rider.g);
