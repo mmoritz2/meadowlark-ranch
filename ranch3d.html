@@ -111,21 +111,23 @@ canvas{display:block}
    Those anonymous text nodes rule out a grid here, so: one no-wrap flex line, the text cells
    given min-width:0 so they shrink and wrap inside themselves, and the trailing control pinned
    right with flex:none. A price chip can no longer be pushed onto a line of its own. */
-.evrow{display:flex;flex-wrap:nowrap;align-items:center;gap:var(--sp-2);
+.evrow{display:flex;flex-wrap:nowrap;align-items:center;gap:var(--sp-2);max-width:100%;box-sizing:border-box;
  border:1px solid var(--line);border-radius:14px;padding:var(--sp-2) var(--sp-3);background:var(--paper-raised);
  box-shadow:var(--e0);font-size:var(--fs-md);min-height:var(--tap);transition:transform .12s,box-shadow .15s,border-color .15s}
 /* The text cells still shrink, but never below a readable floor: a row that a feature package
    has stuffed with extra chips used to squeeze a name down to one character per line. min() keeps
    the floor from becoming a minimum width on a narrow phone row, and break-word splits a word only
    when it genuinely cannot fit rather than at every character. */
-.evrow>b{flex:0 1 auto;min-width:min(100%,4.5em);font-weight:800;overflow-wrap:break-word;line-height:var(--lh-tight)}
-.evrow>span{flex:1 1 auto;min-width:min(100%,6em);color:var(--ink-2);font-size:var(--fs-sm);font-weight:600;overflow-wrap:break-word;line-height:var(--lh-tight)}
+.evrow>b{flex:0 1 auto;min-width:0;font-weight:800;overflow-wrap:normal;word-break:normal;line-height:var(--lh-tight)}
+.evrow>span:not(.mk-thumb):not(.thumb){flex:1 1 auto;min-width:0;color:var(--ink-2);font-size:var(--fs-sm);font-weight:600;overflow-wrap:break-word;line-height:var(--lh-tight)}
 .evrow>button,.evrow>select,.evrow>.chip,.evrow>.mk-chip,.evrow>.badge{flex:0 0 auto;white-space:nowrap;margin:0}
 /* The stable roster is the one row six feature packages all splice into — breed, bond, mastery,
    lineage, tack. One line cannot hold that, and nowrap pushed Tack and Rename off the end where
    they could not be clicked. Here, and only here, the row wraps so every control stays reachable. */
 #stablePanel .evrow{flex-wrap:wrap;row-gap:var(--sp-1)}
 .evrow>button:first-of-type,.evrow>.chip:first-of-type,.evrow>.mk-chip:first-of-type{margin-left:auto}
+ .evrow>button,.evrow>select,.evrow>.chip,.evrow>.mk-chip,.evrow>.badge{order:5}
+}
 .evrow:hover,.mk-row:hover{transform:translateX(2px);box-shadow:var(--e1)}
 .evrow.done,.qrow.done{border-color:#bfe0a4;background:linear-gradient(180deg,#fff,var(--good-bg))}
 .qrow.claimed{opacity:.55}
