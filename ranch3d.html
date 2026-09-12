@@ -7957,7 +7957,7 @@ myHorses.forEach((h,i)=>{
  sel.appendChild(o);
 });
 sel.value=String(rideIdx);
-sel.onchange=()=>{rideIdx=+sel.value;player.y=0;player.vy=0;rebuildAll();sNeigh();};
+sel.onchange=()=>{const nh=myHorses[+sel.value];if(nh&&nh.foal&&G.run('rideFoal',nh)){sel.value=String(rideIdx);return;}rideIdx=+sel.value;player.y=0;player.vy=0;rebuildAll();sNeigh();};
 rebuildAll();
 /* riding companions — friends on the trails */
 const npcs=[];
@@ -8793,6 +8793,7 @@ function reloadHorses(){
  if(ensureTurnout(s))syncSave(sv=>{ensureTurnout(sv);});   // a new arrival gets a stall and a field
  myHorses.length=0;
  for(const h of s.horses)myHorses.push(h);
+ try{if(s.companion!==undefined)companionId=s.companion||null;}catch(e){}   // a newborn foal is equipped on disk by the breeding package (try: companionId is declared further down)
  if(rideIdx>=myHorses.length)rideIdx=0;
  sel.innerHTML='';
  myHorses.forEach((h,i)=>{
@@ -9760,6 +9761,7 @@ function buyTack3(col){
  }else toast('Not enough coins!');
 }
 function breed3(){
+ if(G.run('breed3'))return;                                   // the breeding package owns the pairing (Marta's barn)
  const ia=+$('mateA3').value,ib=+$('mateB3').value;
  if(ia===ib){toast('Pick two different horses!');return;}
  let msg='',ok=false;
@@ -11160,7 +11162,7 @@ function renderStable(){
   +'<span>'+breedLabel(h.breed)+(h.foal?' foal 🌱 grows up in '+Math.max(1,Math.ceil((86400000-(Date.now()-(h.born||Date.now())))/3600000))+'h':'')+' · Lv '+(h.level||1)+' · '+'❤️'.repeat(hearts)+'</span>'
   +(h.foal?'<button data-st="eq:'+i+'" '+(h.id===companionId?'class="claimBtn"':'')+' title="A foal companion trots along behind you">'+(h.id===companionId?'🍼 Following ✓':'🍼 Equip')+'</button>':'')
   +(i===rideIdx?'':'<button data-st="out:'+i+'"'+(h.out?' class="claimBtn"':'')+' title="'+(h.out?'Out in the pasture':'Waiting in the barn')+'">'+(h.out?'🌿 Pasture':'🏠 Barn')+'</button>')
-  +(i===rideIdx?'':'<button data-st="ride:'+i+'">🏇 Ride</button>')
+  +(i===rideIdx||h.foal?'':'<button data-st="ride:'+i+'">🏇 Ride</button>')   // a foal is not ridden until it grows up
   +sect('stableRow',h,i)
   +'<button data-st="rn:'+i+'" title="Rename">✏️</button></div>';
  }).join('')
@@ -11177,7 +11179,7 @@ function renderStable(){
   const [act,iS]=b.dataset.st.split(':'),i=+iS;
   if(act==='close'){p.style.display='none';return;}
   if(act==='hero'){adoptBaySporthorse();return;}
-  if(act==='ride'){rideIdx=i;sel.value=String(i);rebuildAll();sNeigh();renderStable();toast('🏇 Now riding '+myHorses[i].name+'!');}
+  if(act==='ride'){if(myHorses[i]&&myHorses[i].foal&&G.run('rideFoal',myHorses[i]))return;rideIdx=i;sel.value=String(i);rebuildAll();sNeigh();renderStable();toast('🏇 Now riding '+myHorses[i].name+'!');}
   if(act==='eq'){
    const h=myHorses[i];
    companionId=(companionId===h.id)?null:h.id;
