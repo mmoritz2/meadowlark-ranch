@@ -95,7 +95,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   for(let i=0;i<10;i++)N.onMessage('srf1/'+CLUB+'/chat',JSON.stringify({id:'zz',n:'Ann',t:'line '+i}));
   /* the log is fed by a MutationObserver on the ticker, so it lands one microtask later */
   return new Promise(res=>setTimeout(()=>{
-   out.chat={feedChildren:feed.children.length,log:C.clubLog.length-before,lastFeed:feed.lastChild.textContent};
+   out.chat={cap:(window.__features&&window.__features.chatLines)||8,feedChildren:feed.children.length,log:C.clubLog.length-before,lastFeed:feed.lastChild.textContent};
    out.savedLog=(S.fresh().chatLog||[]).length;
    C.toggleMute('Ann');
    const muteBefore=C.clubLog.length;
@@ -121,7 +121,9 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('club-notice-board: the notice achievement reads 1',a.ach_notice===1,a.ach_notice);
  check('clubs-create-join: presence cards build a 3-rider roster',a.memberCount===3&&a.rosterText,{memberCount:a.memberCount,rosterText:a.rosterText});
  check('clubs-create-join: a retained club card names the club and its founder',a.metaSeen.name==='Meadow Riders'&&a.metaSeen.founder==='Ann',a.metaSeen);
- check('club-chat: the ticker keeps 8 lines while the log keeps all 11',a.chat.feedChildren===8&&a.chat.log===11,a.chat);
+ /* The ticker's cap is G.chatLines, which the social package raises from 8 to 30 and makes
+   scrollable. With 11 messages the feed keeps min(cap, 11); the log always keeps all 11. */
+ check('club-chat: the ticker keeps its line cap while the log keeps all 11',a.chat.feedChildren===Math.min(a.chat.cap,11)&&a.chat.log===11,a.chat);
  check('club-chat: the last 30 lines are written to the save',a.savedLog===11,a.savedLog);
  check('club-chat: a muted rider is dropped before the ticker and the log',a.muted.isMuted&&a.muted.grew===0&&a.muted.body&&a.unmuted,a.muted);
 
