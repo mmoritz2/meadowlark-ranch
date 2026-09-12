@@ -42,6 +42,14 @@ export function install(G){
   '🌲 Hollowpeak Pines':{id:'pines',biome:'forest',ft:null},
   '🏡 Meadowlark Ranch':{id:'ranch',biome:'meadow',ft:'🏠 Ranch',venue:{x:2,z:1}},
   '🌾 Kestrel Basin Meadows':{id:'meadows',biome:'meadow',ft:null},
+  /* The four quarters past the old fence. Deliberately no unlock rule: a locked region is
+     physically barred, not merely un-fast-travellable, and gating these would hand the
+     player a bigger basin and then fence most of it off again. They are open country,
+     and their fast-travel stops open with them. */
+  '🍂 Amberwood':{id:'amberwood',biome:'forest',ft:'🍂 Amberwood'},
+  '🪻 Willowmere Marsh':{id:'willowmere',biome:'marsh',ft:'🪻 Willowmere'},
+  '❄️ Frostpine Tundra':{id:'frostpine',biome:'mountain',ft:'❄️ Frostpine'},
+  '🏜️ Ochre Reach':{id:'ochre',biome:'desert',ft:'🏜️ Ochre Reach'},
  };
  for(const rg of T.REGIONS){const m=REGION_META[rg.name];if(m)Object.assign(rg,m);else if(!rg.id)rg.id=rg.name.replace(/[^a-z]/gi,'').toLowerCase();}
  const OPEN_ROTATION=['coyote','hollowpeak','barleyfold'];   // one locked region opens to everyone for a season's first week

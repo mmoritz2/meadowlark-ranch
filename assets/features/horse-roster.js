@@ -678,7 +678,7 @@ export function install(G){
  /* ---- 9. world, events, quests, achievements ------------------------------------------ */
  T.RACE_ROUTES.ll=[[8,30],[20,16],[34,6],[44,22],[30,34],[12,12]];
  if(!T.EVENTS3.some(e=>e.id==='l1'))T.EVENTS3.push({id:'l1',town:'Loon Lake',name:'Loon Lake Crossing',lvl:3,race:true,route:'ll',reward:450,trains:['speed','stamina']});   // trains: the stats package's per-event stat XP
- T.REGIONS.unshift({name:'🌊 Loon Lake shallows',x:20,z:16,r:4.4});
+ T.REGIONS.unshift({name:'🌊 Loon Lake shallows',x:20,z:16,r:4.4,id:'shallows',biome:'lake'});   // id+biome, because this is added after the world package has stamped its metadata onto the rest
  G.quest.addDaily({type:'swim',icon:'🏊',label:'Swim 120 m',goal:120,r:{c:120,g:2,p:15}});
  const ownedOf=(s,f)=>s.horses.filter(f).length;
  G.quest.addAch({id:'star6',icon:'👑',label:'Six stars',desc:'Own a six-star horse',v:s=>ownedOf(s,h=>starsN(h)>=6),goal:1,r:{g:10}});

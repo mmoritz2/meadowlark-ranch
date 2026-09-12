@@ -11876,7 +11876,10 @@ $('questBtn').onclick=openQuests;
 })();
 
 /* ---- fast travel from the big map ---- */
-const FT=[['🏠 Ranch',0,5],['🐴 Pasture',-70,-10],['🏘️ Cottonwood',47,-50],['🌾 Barleyfold',220,-110],['🤠 Coyote Canyon',-220,130],['🏔️ Hollowpeak',-160,-210],['💦 The Falls',-150,-222],['🌊 Loon Lake',20,16]];
+const FT=[['🏠 Ranch',0,5],['🐴 Pasture',-70,-10],['🏘️ Cottonwood',47,-50],['🌾 Barleyfold',220,-110],['🤠 Coyote Canyon',-220,130],['🏔️ Hollowpeak',-160,-210],['💦 The Falls',-150,-222],['🌊 Loon Lake',20,16],
+ /* The four new quarters. Each arrival point was checked for flat ground, no collider
+    within two and a half metres, and no river — you land standing, not inside a rock. */
+ ['🍂 Amberwood',300,-300],['🪻 Willowmere',310,300],['❄️ Frostpine',-300,-320],['🏜️ Ochre Reach',-330,300]];
 function buildFtBar(){
  const bar=$('ftBar'); if(!bar)return;
  bar.innerHTML='<span class="chip" style="font-size:12px;padding:4px 10px">🧭 Fast travel:</span>'+FT.map((f,i)=>'<button data-ft="'+i+'">'+f[0]+'</button>').join('');
