@@ -59,6 +59,7 @@ export function install(G){
  const ridden=()=>G.horse.ridden();
  const bondLevel=h=>{h=h===undefined?ridden():h;return Math.max(0,Math.min(5,Math.floor(((h&&h.bond)||0)/20)));};
  const persWhistleOk=h=>bondLevel(h)>=persOf(h).whistleLv;
+ const persExhaust=h=>persOf(h).exhaust, persFearless=h=>!!persOf(h).fearless, persRecover=h=>persOf(h).recover;
  const persTraits=h=>{const P=persOf(h);const src=[['ribbon','ribbons'],['feed','food'],['ride','riding'],['pet','petting'],['groom','grooming']].filter(x=>(P[x[0]]||1)>=1.3).map(x=>x[1]);
   return 'Bonds from: '+(src.length?src.join(', '):'everything evenly')+' · '+(P.whistleLv<=0?'always answers the whistle':'answers the whistle from bond Lv '+P.whistleLv)+' · when blown: '+({stop:'stops dead and sulks',balk:'balks for a moment',slow:'slows to a walk'}[P.exhaust]||'slows')+' · '+(P.fearless?'unafraid of wildlife':P.spookMul>1?'spooks easily':'can spook');};
 
@@ -446,7 +447,7 @@ export function install(G){
   +'<button data-fx="bpe:pet" title="'+pa.label+'">💗 '+pa.label+'</button><button data-fx="bpe:brush" title="Brush '+h.name+' ('+String(G.key('brush')||'').replace('Digit','key ')+')">🧽 Brush</button><button data-fx="bpe:whistle">🎵 Whistle</button><button data-fx="open:emotePanel">🎭 Emotes</button></div>'
   +'<div style="font-size:11px;color:#8c7a63">'+[1,2,3,4,5].map(l=>(lv>=l?'✅':'🔒')+' Lv '+l+' '+BOND_NAMES[l]+': '+BOND_UNLOCKS[l]).join('<br>')+'</div>';
  });
- G.ui.stableRow((h,i)=>{const s=G.save.fresh()||{};const fav=s.whistleHorse===h.id;return (i===G.horse.rideIdx()?'':'<button data-fx="bpe:whistleHorse:'+h.id+'"'+(fav?' class="claimBtn"':'')+' title="The horse your whistle calls">'+(fav?'🎵 Whistle ✓':'🎵')+'</button>')+'<span style="font-size:11px;color:#8c7a63">bond Lv '+bondLevel(h)+'</span>';});
+ G.ui.stableRow((h,i)=>{const s=G.save.fresh()||{};const fav=s.whistleHorse===h.id;return (i===G.horse.rideIdx()?'':'<button data-fx="bpe:whistleHorse:'+h.id+'"'+(fav?' class="claimBtn"':'')+' title="The horse your whistle calls">'+(fav?'🎵 Whistle ✓':'🎵')+'</button>')+'<span style="font-size:11px;color:#8c7a63" title="'+persTraits(h).replace(/"/g,'&quot;')+'">bond Lv '+bondLevel(h)+' · '+BOND_NAMES[bondLevel(h)]+'</span>';});
 
  /* ---- per-frame ------------------------------------------------------------------------------- */
  let hintT=0,petHinted=false,sparkT=0;
@@ -472,5 +473,5 @@ export function install(G){
  G.on('boot',()=>{refreshRecov();syncLiveBond();});
 
  /* ---- exports for the other packages ---------------------------------------------------------- */
- Object.assign(G.horse,{bondLevel,persOf,addBond,persWhistleOk,persTraits,horseEmotes,riderEmote,emoteOwned,emoteUnlocked,doWhistle,petNearby,RIDER_EMOTES,PET_ANIMS,BOND_LEVELS,BOND_NAMES,BOND_UNLOCKS,PERS_DEFAULT,spook,whistle,applyDirt,flushBondToasts:flushToasts,syncLiveBond,log:LOG});
+ Object.assign(G.horse,{bondLevel,persOf,addBond,persWhistleOk,persExhaust,persFearless,persRecover,persTraits,horseEmotes,riderEmote,emoteOwned,emoteUnlocked,doWhistle,petNearby,RIDER_EMOTES,PET_ANIMS,BOND_LEVELS,BOND_NAMES,BOND_UNLOCKS,PERS_DEFAULT,spook,whistle,applyDirt,flushBondToasts:flushToasts,syncLiveBond,log:LOG});
 }

@@ -157,6 +157,8 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   out.remote={exists:!!rm,em:rm&&rm.rig&&rm.rig.emote&&rm.rig.emote.type,rem:rm&&rm.riderEmote&&rm.riderEmote.type};
   let payload={}; G.run('netPos',payload,G.save.fresh(),G.horse.ridden()); out.netPos={hasEm:'em' in payload,hasRem:'rem' in payload};
   /* 14. quests, boards, state keys */
+  G.ui.openStable(); const stTxt=document.getElementById('stablePanel').innerHTML; G.hidePanels();
+  out.stable={traitTip:/title="Bonds from:/.test(stTxt),lvName:/bond Lv 2 · Companion/.test(stTxt),helpers:G.horse.persExhaust({pers:'aloof'})==='stop'&&G.horse.persFearless({pers:'relaxed'})===true&&G.horse.persRecover({pers:'energetic'})===1.15};
   out.tables={achs:['magnif5','spook10','emote25','bond5'].filter(id=>!G.quest.ACHS.some(a=>a.id===id)),dailies:['magnif','emote','whistle'].filter(t=>!G.quest.DAILYQ.some(d=>d.type===t)),kick:!!G.tables.EMOTES.kick,pose:!!document.querySelector('#poseBar [data-pose="kick"]')};
   const o=st(); out.state={keys:['bondLevel','emote','clean','persTraits'].filter(k=>o.horse[k]===undefined),top:['spook','whistle','riderEmote'].filter(k=>o[k]===undefined),blown:o.player.blown,exhaustT:o.player.exhaustT};
   out.save={emotes:!!G.save.fresh().emotes,magnif:G.save.fresh().magnif,whistleHorse:G.save.fresh().whistleHorse};
@@ -187,6 +189,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('coat dirt darkens at clean 10 and lightens after a groom; no chore gate on courses',r.dirt.dirt0>0.8&&r.dirt.dirt1<0.5&&r.dirt.lum1>r.dirt.lum0&&r.dirt.clean1>=60&&r.dirt.courseOn,r.dirt);
  check('remote rider mirrors horse + rider emotes from /pos; netPos adds em/rem',r.remote.exists&&r.remote.em==='rear'&&r.remote.rem==='wave'&&r.netPos.hasEm&&r.netPos.hasRem,{remote:r.remote,netPos:r.netPos});
  check('achievements, dailies, kick emote, pose bar button',r.tables.achs.length===0&&r.tables.dailies.length===0&&r.tables.kick&&r.tables.pose,r.tables);
+ check('stable rows carry the bond level name and a personality trait tooltip; template helpers exposed',r.stable.traitTip&&r.stable.lvName&&r.stable.helpers,r.stable);
  check('render_game_to_text carries bond/emote/spook/whistle keys',r.state.keys.length===0&&r.state.top.length===0,r.state);
  check('save fields ensured on an old save (emotes, magnif, whistleHorse)',r.save.emotes&&typeof r.save.magnif==='number',r.save);
  check('no console/page errors',errors.length===0,errors.slice(0,5));
