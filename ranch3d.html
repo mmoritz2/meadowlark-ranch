@@ -592,7 +592,7 @@ let VIPON=false;                                  // cached: addCoins runs on ev
    is unlimited now; what is limited is how many are turned out at once, which you choose. */
 function stableCap(s){return Infinity;}
 const PASTURE_BASE=8;
-function pastureMax(s){return isVIP(s)?12:PASTURE_BASE;}   // VIP turns out a bigger string
+function pastureMax(s){return isVIP(s)?12:Math.max(PASTURE_BASE,G.run('pastureMax',s)||0);}   // VIP turns out a bigger string; so does a Ranch Prestige perk
 /* Which horses are in the field. An older save has none of these flags, so the first
    few become the ones out to grass and everybody else waits in the barn. */
 /* Gives a turnout flag to any horse that has not got one — which covers both a save made
@@ -635,7 +635,7 @@ function passClaim(sv,i,gold){
  sv.pass=sv.pass||{pts:0}; sv.pass.claims=sv.pass.claims||{}; sv.pass.gold=sv.pass.gold||{};
  const done=gold?sv.pass.gold:sv.pass.claims;
  if(done[i]||passTier(sv.pass.pts)<i+1)return null;
- if(gold&&!isVIP(sv))return null;
+ if(gold&&!isVIP(sv)&&!G.run('goldPass',sv))return null;   // VIP, or a perk a package grants (Ranch Prestige)
  const r=(gold?PASS_GOLD:PASS_FREE)[i]; if(!r)return null;
  done[i]=1;
  payReward(sv,r);
@@ -1092,8 +1092,9 @@ function toast(msg){
 
 /* ================= tiny sounds ================= */
 let AC=null;
+let SFX_VOL=(save&&save.sfxVol!=null)?Math.max(0,Math.min(1,+save.sfxVol||0)):1;   // master volume, set from ⚙️ Settings
 function beep(f0,f1,dur,type,vol,delay){
- if(muted)return;
+ if(muted||SFX_VOL<=0)return;
  try{
   if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
   if(AC.state==='suspended')AC.resume();
@@ -1101,7 +1102,7 @@ function beep(f0,f1,dur,type,vol,delay){
   o.type=type||'sine';
   o.frequency.setValueAtTime(f0,t);
   o.frequency.exponentialRampToValueAtTime(Math.max(1,f1),t+dur);
-  g.gain.setValueAtTime(vol||0.1,t);
+  g.gain.setValueAtTime((vol||0.1)*SFX_VOL,t);
   g.gain.exponentialRampToValueAtTime(0.001,t+dur);
   o.connect(g);g.connect(AC.destination);
   o.start(t);o.stop(t+dur+0.02);
@@ -1115,6 +1116,7 @@ const sThud=()=>beep(140,60,0.16,'square',0.12);
 const sHoof=alt=>beep(alt?95:75,alt?70:55,0.05,'triangle',0.05);
 const sNeigh=()=>{beep(700,250,0.35,'sawtooth',0.05);beep(900,300,0.3,'sawtooth',0.035,0.05);};
 $('muteBtn').onclick=()=>{muted=!muted;$('muteBtn').textContent=muted?'🔇':'🔊';syncSave(s=>{s.muted=muted;});};
+G.audio={vol:()=>SFX_VOL,setVol(v){SFX_VOL=Math.max(0,Math.min(1,+v||0));},muted:()=>muted,setMuted(m){muted=!!m;$('muteBtn').textContent=muted?'🔇':'🔊';syncSave(s=>{s.muted=muted;});}};   // the settings screen (account-economy) drives sound through this
 /* The level loop, on its own so rewards and packages can level any horse in a save. */
 function applyXp(s,h,n){
  const r={leveled:false,levels:0,lvl:h.level||1,grew:false,n};
@@ -2399,6 +2401,7 @@ function applyQuality(q){
  if(qb)qb.title=QUAL_LABEL[q];
 }
 applyQuality(quality);
+G.gfx={apply:applyQuality,get:()=>quality,bloom:()=>useBloom,setBloom(b){useBloom=!!b;},labels:QUAL_LABEL};   // the settings screen (account-economy) drives graphics through this
 /* Frame-time watchdog. A machine that cannot hold the tier it started on gets stepped down
    one tier at a time, with a toast, and the choice sticks for next time. Judged on real
    frame intervals over two-second windows, so a display that simply refreshes slowly
