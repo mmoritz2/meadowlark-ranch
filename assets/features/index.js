@@ -166,4 +166,5 @@ import * as social from './social-play.js';
 import * as seasons from './seasons.js';
 import * as uikit from './ui-kit.js';
 import * as ui2horse from './ui2-horse.js';
-export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,uikit,ui2horse];
+import * as ui2shop from './ui2-shop.js';
+export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,uikit,ui2horse,ui2shop];
