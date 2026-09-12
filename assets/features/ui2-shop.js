@@ -198,6 +198,8 @@ export function install(G){
    one 27px sliver: the stall looked empty and nothing could be clicked. */
 #summonPanel .s2-banner::before,#shopPanel .s2-banner::before{content:'';position:absolute;left:0;right:0;top:0;height:4px;background:var(--rar)}
 #summonPanel .s2-b-head,#shopPanel .s2-b-head{display:flex;align-items:center;gap:9px;margin-bottom:3px}
+#summonPanel .s2-notes,#shopPanel .s2-notes{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+#summonPanel .s2-note-chip,#shopPanel .s2-note-chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;line-height:1.45}
 #summonPanel .s2-b-name,#shopPanel .s2-b-name{font-family:var(--display);font-size:16px;font-weight:600;color:var(--ink)}
 #summonPanel .s2-b-cost,#shopPanel .s2-b-cost{margin-left:auto;display:inline-flex;align-items:center;gap:4px;
  font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:999px;
@@ -515,6 +517,14 @@ body.summoning #s2Vig.on{opacity:.42}
   const top=colOf(lead);
   const cost=+t.gems||0, gems=s.gems||0, short=gems<cost?cost-gems:0;
   const extra=card.querySelector('.summonCardSect,[data-sect]');   // whatever a package spliced in
+  /* The stable also prints things the tier table cannot tell us: how close the pity counter
+     is, which horse is rate-up, how many calls are still repeat-free, the painted statline.
+     Rebuilding the card from t.odds alone threw all of that away, so a player could no
+     longer see the promises the draw is making. Keep every chip that is not a plain
+     rarity percentage and show it under the odds. */
+  const RARE_CHIP=/^(Common|Uncommon|Rare|Epic|Legendary|Mythic)\s+\d+(\.\d+)?%$/;
+  const notes=Array.from(card.querySelectorAll('.sumOdd'))
+    .filter(n=>!RARE_CHIP.test((n.textContent||'').trim()));
 
   const meter=keys.map(k=>'<i style="width:'+(odds[k]/total*100).toFixed(2)+'%;background:'+colOf(k)+'"></i>').join('');
   const chips=keys.map(k=>'<span class="s2-odd'+(k===best?' s2-odd-best':'')+'" style="--oc:'+colOf(k)+';--oi:'+inkOf(k)+'">'
@@ -537,6 +547,11 @@ body.summoning #s2Vig.on{opacity:.42}
   card.style.setProperty('--rar-ink',inkOf(lead));
   card.appendChild(head); if(t.blurb)card.appendChild(blurb);
   card.appendChild(mt); card.appendChild(od);
+  if(notes.length){
+   const nd=document.createElement('div'); nd.className='s2-notes';
+   notes.forEach(n=>{n.classList.add('s2-note-chip');nd.appendChild(n);});
+   card.appendChild(nd);
+  }
   if(extra)card.appendChild(extra);
   foot.appendChild(btn);
   if(short){
