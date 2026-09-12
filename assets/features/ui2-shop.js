@@ -192,7 +192,11 @@ export function install(G){
  border-radius:18px;border:1px solid color-mix(in srgb,var(--rar) 38%,var(--line));
  background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--rar) 8%,#fffbf2));
  box-shadow:var(--e0)}
-#summonPanel .s2-banner,#shopPanel .s2-banner::before{content:'';position:absolute;left:0;right:0;top:0;height:4px;background:var(--rar)}
+/* The rarity stripe belongs to the ::before ONLY. The stray comma in the original selector
+   ("#summonPanel .s2-banner, #shopPanel .s2-banner::before") applied position:absolute,
+   top:0 and height:4px to every banner CARD in the summon panel, so all seven stacked into
+   one 27px sliver: the stall looked empty and nothing could be clicked. */
+#summonPanel .s2-banner::before,#shopPanel .s2-banner::before{content:'';position:absolute;left:0;right:0;top:0;height:4px;background:var(--rar)}
 #summonPanel .s2-b-head,#shopPanel .s2-b-head{display:flex;align-items:center;gap:9px;margin-bottom:3px}
 #summonPanel .s2-b-name,#shopPanel .s2-b-name{font-family:var(--display);font-size:16px;font-weight:600;color:var(--ink)}
 #summonPanel .s2-b-cost,#shopPanel .s2-b-cost{margin-left:auto;display:inline-flex;align-items:center;gap:4px;
