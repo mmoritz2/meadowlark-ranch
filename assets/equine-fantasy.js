@@ -8,6 +8,9 @@ const FANTASY_CFG={
  /* An actual eclipse: the body goes almost black and all the light is in the corona that
     burns around the silhouette. Shadow is violet all over; this is only lit at its edge. */
  eclipse:{ramp:['#040308','#0f0b16','#c98a2a'], glow:0.75, rough:0.80},
+ /* The story horse: a silver coat with pale dapples, a cool moonlight rim and snow drifting
+    across it — the grey mare the mountain calls the Silver Kestrel. */
+ moonlit:{ramp:['#4e5a70','#c6cfdb','#ffffff'], glow:0.45, rough:0.55},
 };
 const FANTASY_FX={
  fire:`float em=_hash(floor(vMapUv*vec2(44.0,30.0))+floor(uTime*4.0)*7.0);
@@ -38,6 +41,11 @@ const FANTASY_FX={
    _ramp=mix(_ramp*0.30,vec3(1.0,0.72,0.30),clamp(_cor*_fl*1.15,0.0,1.0));
    _ramp+=vec3(1.0,0.86,0.55)*pow(_cor,2.2)*0.6;
    _emis=_ramp*uGlow*(0.06+0.35*_l)+vec3(1.0,0.66,0.24)*_cor*_fl*2.1;`,
+ moonlit:`float _sn=step(0.986,_hash(floor(vMapUv*vec2(120.0,80.0))+floor(uTime*1.5)*3.0))*(0.5+0.5*sin(uTime*2.5+vMapUv.y*40.0));
+   float _dap=smoothstep(0.35,0.75,_hash(floor(vMapUv*vec2(26.0,18.0))+2.3))*0.18;
+   _ramp=mix(_ramp,vec3(0.86,0.90,0.98),_dap);
+   _ramp+=vec3(1.0)*_sn*1.2;
+   _emis=_ramp*uGlow*(0.12+0.5*_l)+vec3(0.80,0.88,1.0)*_fres*0.55+vec3(1.0)*_sn*1.4;`,
 };
 export function createEquineFantasyCoat(THREE, baseMat, type, scaly=false){
  const cfg=FANTASY_CFG[type]||FANTASY_CFG.galaxy;
@@ -473,7 +481,7 @@ function tintWingMats(piv,type){   // tint one wing's two feather materials to a
 // Shared by the ranch and Studio so a horse has the same coat in both places.
 export const EQUINE_FANTASY_APPEARANCE={
  aether:{theme:'galaxy',mane:'#b79dff'},sunspear:{theme:'fire',mane:'#ffb04a'},meadowlight:{theme:'aurora',mane:'#7df0c4'},tempest:{theme:'shadow',mane:'#a07ce0'},eclipse:{theme:'eclipse',mane:'#ffb44a'},glacier:{theme:'ice',mane:'#8fd0ec'},
- unicorn:{body:'#f6f3ff',mane:'#cdb4f9',horn:true},pegasus:{body:'#f2f5fb',mane:'#dfe7f4',wings:true},celestial:{theme:'galaxy',mane:'#b79dff',horn:true},ember:{theme:'fire',mane:'#ff8a3a'},frost:{theme:'ice',mane:'#8fd0ec'},aurora:{theme:'aurora',mane:'#7df0c4',wings:true},phoenix:{theme:'fire',mane:'#ff9a4a',wings:true},shadowmare:{theme:'shadow',mane:'#a07ce0'},kestrel:{body:'#c9ced6',mane:'#eef2f7'},
+ unicorn:{body:'#f6f3ff',mane:'#cdb4f9',horn:true},pegasus:{body:'#f2f5fb',mane:'#dfe7f4',wings:true},celestial:{theme:'galaxy',mane:'#b79dff',horn:true},ember:{theme:'fire',mane:'#ff8a3a'},frost:{theme:'ice',mane:'#8fd0ec'},aurora:{theme:'aurora',mane:'#7df0c4',wings:true},phoenix:{theme:'fire',mane:'#ff9a4a',wings:true},shadowmare:{theme:'shadow',mane:'#a07ce0'},kestrel:{theme:'moonlit',mane:'#eef2f7'},
  frostdrake:{theme:'ice',mane:'#8fd0ec',dragon:true,wings:true},emberdrake:{theme:'fire',mane:'#ff8a3a',dragon:true,wings:true},amethyst:{theme:'galaxy',mane:'#b79dff',dragon:true,wings:true},stormdrake:{theme:'shadow',mane:'#a07ce0',dragon:true,wings:true},verdant:{theme:'aurora',mane:'#7df0c4',dragon:true,wings:true},
 };
 export function applyEquineFantasyAppearance(THREE,inst,key){

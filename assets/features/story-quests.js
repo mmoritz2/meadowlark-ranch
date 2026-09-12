@@ -98,7 +98,9 @@ export function install(G){
  /* Every horse that arrives gets a name from the player: shop, market, summon, taming, foals.
     grantHorse fires inside syncSave, so the dialogue is queued and opened from the tick. */
  const pendingNames=[];
- G.on('grantHorse',(s,h,opts)=>{opts=opts||{};if(!AUTO_NAME||opts.src==='qa'||opts.noName||opts.silent)return;pendingNames.push({id:h.id,def:h.name,breed:h.breed});});
+ G.on('grantHorse',(s,h,opts)=>{opts=opts||{};
+  if(h.breed==='bay-sporthorse'&&s.starterCoat&&s.starterCoat.chosen&&!opts.colors)applyStarterCoat(s,h,s.starterCoat.id);   // a second sporthorse (?adopt=, the stable) wears the coat you chose
+  if(!AUTO_NAME||opts.src==='qa'||opts.noName||opts.silent)return;pendingNames.push({id:h.id,def:h.name,breed:h.breed});});
  function flushPendingName(){
   if(!pendingNames.length)return; const d=$('dlg'); if(d&&d.style.display==='block')return;
   const p=pendingNames.shift(); const s=fresh(); const i=(s.horses||[]).findIndex(h=>h.id===p.id); if(i<0)return;
@@ -357,7 +359,8 @@ export function install(G){
  function setFoalName(n){if(!foal)return;try{foal.group.remove(foal.tag);}catch(e){}foal.tag=G.nameSprite('✨ '+n);foal.tag.position.y=2.7;foal.group.add(foal.tag);}
  function spawnFoal(){
   if(foal)return;
-  const parts=H.makeHorse({colors:{body:'#d7dbe3',mane:'#f4f6fa'},seed:11}); const g=parts.group; g.scale.setScalar(0.78);
+  const parts=H.makeHorse({colors:{body:'#d7dbe3',mane:'#f4f6fa'},coat:'moonlit',seed:11});   // the same moonlit coat she wears when you find her again
+  const g=parts.group; g.scale.setScalar(0.78);
   const x=-7,z=-21; g.position.set(x,W.groundH(x,z),z); G.scene.add(g);
   foal={parts,group:g,tag:null,x,z,heading:0,phase:0,bolt:0};
   setFoalName(fresh().story.name||'?');

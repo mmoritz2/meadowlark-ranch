@@ -3082,10 +3082,11 @@ const FANTASY_COAT={
  aurora:{emissive:0x3ce0a0,ei:0.6,rough:0.5},
  shadow:{emissive:0x6a3ad0,ei:0.45,rough:0.45},
  eclipse:{emissive:0xffb44a,ei:0.5,rough:0.5},
+ moonlit:{emissive:0x9fb4dc,ei:0.35,rough:0.45},   // the story horse's silver coat
 };
 // Base solid colour for each mythic coat — used for procedural horses' legs/ears AND as the
 // coatMat base so the body is top-lit (no directional banding) instead of a stretched gradient.
-const COAT_BASE={fire:'#bc3a10',galaxy:'#3a2a72',shadow:'#181030',ice:'#8fd0ea',aurora:'#1f9e78',eclipse:'#0d0a12'};
+const COAT_BASE={fire:'#bc3a10',galaxy:'#3a2a72',shadow:'#181030',ice:'#8fd0ea',aurora:'#1f9e78',eclipse:'#0d0a12',moonlit:'#c9ced6'};
 function fantasyCoatTex(type){
  return canvasTex(256,256,(c,w,h)=>{
   if(type==='galaxy'||type==='shadow'||type==='eclipse'){
@@ -5219,6 +5220,9 @@ const FANTASY_CFG={
  /* An actual eclipse: the body goes almost black and all the light is in the corona that
     burns around the silhouette. Shadow is violet all over; this is only lit at its edge. */
  eclipse:{ramp:['#040308','#0f0b16','#c98a2a'], glow:0.75, rough:0.80},
+ /* The story horse: a silver coat with pale dapples, a cool moonlight rim and snow drifting
+    across it — the grey mare the mountain calls the Silver Kestrel. */
+ moonlit:{ramp:['#4e5a70','#c6cfdb','#ffffff'], glow:0.45, rough:0.55},
 };
 const FANTASY_FX={
  fire:`float em=_hash(floor(vMapUv*vec2(44.0,30.0))+floor(uTime*4.0)*7.0);
@@ -5249,6 +5253,11 @@ const FANTASY_FX={
    _ramp=mix(_ramp*0.30,vec3(1.0,0.72,0.30),clamp(_cor*_fl*1.15,0.0,1.0));
    _ramp+=vec3(1.0,0.86,0.55)*pow(_cor,2.2)*0.6;
    _emis=_ramp*uGlow*(0.06+0.35*_l)+vec3(1.0,0.66,0.24)*_cor*_fl*2.1;`,
+ moonlit:`float _sn=step(0.986,_hash(floor(vMapUv*vec2(120.0,80.0))+floor(uTime*1.5)*3.0))*(0.5+0.5*sin(uTime*2.5+vMapUv.y*40.0));
+   float _dap=smoothstep(0.35,0.75,_hash(floor(vMapUv*vec2(26.0,18.0))+2.3))*0.18;
+   _ramp=mix(_ramp,vec3(0.86,0.90,0.98),_dap);
+   _ramp+=vec3(1.0)*_sn*1.2;
+   _emis=_ramp*uGlow*(0.12+0.5*_l)+vec3(0.80,0.88,1.0)*_fres*0.55+vec3(1.0)*_sn*1.4;`,
 };
 function fantasyCoatRig(type,scaly){
  const key='fcr_'+type+(scaly?'_s':''); RIG._fcr=RIG._fcr||{};
@@ -9281,7 +9290,7 @@ const BREEDS3=[
  ['stormdrake','Storm Dragon','Dragon',0,20,'#241830','#a07ce0',{wings:true,dragon:true,coat:'shadow',glow:true,ability:'fly'}],
  ['verdant','Verdant Dragon','Dragon',0,20,'#143038','#7df0c4',{wings:true,dragon:true,coat:'aurora',glow:true,ability:'fly'}],
  ['shadowmare','Shadow Mare','Mythic',0,14,'#241830','#a07ce0',{coat:'shadow',glow:true,ability:'swift'}],
- ['kestrel','Silver Kestrel','Legendary',0,0,'#c9ced6','#eef2f7',{story:true}],   // book two's reward: not for sale
+ ['kestrel','Silver Kestrel','Legendary',0,0,'#c9ced6','#eef2f7',{story:true,coat:'moonlit',glow:true}],   // book two's reward: not for sale
  ['shire','Shire','Draft',45,0,'#3a3530','#1d1a17',{mark:'roan',markCol:'#ded4c4',size:1.16}],
  ['clyde','Clydesdale','Draft',45,0,'#7a4526','#2e2018',{mark:'pinto',markCol:'#f0e8d8',size:1.12}],
 ];
@@ -11854,7 +11863,7 @@ function addNPC(def){if(!NPC_DEFS.some(d=>d.id===def.id))NPC_DEFS.push(def);cons
 const npc=npcList[0].g;
 $('ctx').onclick=()=>{if(nearNPC)openDlg();else if(nearThing)useThing();};
 /* wild horses (tame them in the open world) */
-const KESTREL_WB={breed:'kestrel',body:'#c9ced6',mane:'#eef2f7',base:7,kestrel:true};
+const KESTREL_WB={breed:'kestrel',body:'#c9ced6',mane:'#eef2f7',base:7,kestrel:true,coat:'moonlit',glow:true};
 const WILD_BREEDS=[
  {breed:'bay',body:'#8a5a2b',mane:'#332214',base:3},
  {breed:'palomino',body:'#d9a85c',mane:'#f4e6c5',base:4},
@@ -11909,7 +11918,7 @@ function despawnWild(quiet){
 function spawnKestrel(){
  if(wild3)return;
  const wb=KESTREL_WB;
- const parts=makeHorse({colors:{body:wb.body,mane:wb.mane},seed:7});
+ const parts=makeHorse({colors:{body:wb.body,mane:wb.mane},coat:wb.coat||null,seed:7});
  const tag=nameSprite('✨ Silver Kestrel'); tag.position.y=2.7; parts.group.add(tag);
  const a=Math.random()*Math.PI*2, px=player.pos.x+Math.cos(a)*38, pz=player.pos.z+Math.sin(a)*38;
  parts.group.position.set(px,groundH(px,pz),pz); scene.add(parts.group);
@@ -11931,7 +11940,7 @@ function tameWild3(){
   const ri2=(a,b)=>Math.floor(a+Math.random()*(b-a+1));
   const h=grantHorse(s,w.wb.breed,{name,colors:{body:w.wb.body,mane:w.wb.mane},bond:20,src:'wild',
    stats:{speed:cl(base+ri2(-1,1),1,10),stamina:cl(base+ri2(-1,1),1,10),jump:cl(base+ri2(-1,1),1,10),accel:cl(base+ri2(-1,1),1,10),agility:cl(base+ri2(-1,1),1,10)},
-   needs:{hunger:80,thirst:80,clean:60,happy:90},extra:{horn:false,rainbow:false,wings:false,dragon:false,coat:null,ability:null,glow:false,spots:null,dapples:null,patches:null,wild:w.wb.breed,rx:Math.random(),ry:Math.random(),tx:0.5,ty:0.5,rest:2,phase:0,dir:1,moving:false}});
+   needs:{hunger:80,thirst:80,clean:60,happy:90},extra:{horn:false,rainbow:false,wings:false,dragon:false,coat:w.wb.coat||null,ability:null,glow:!!w.wb.glow,spots:null,dapples:null,patches:null,wild:w.wb.breed,rx:Math.random(),ry:Math.random(),tx:0.5,ty:0.5,rest:2,phase:0,dir:1,moving:false}});
   myHorses.push(h);
   added=true;
  });
