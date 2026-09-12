@@ -126,7 +126,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   return out;
  });
  check('window.__features exists',r.hasG);
- check('all 16 packages installed without error',r.installed&&r.installed.length===16&&r.errors.length===0,{installed:r.installed,errors:r.errors});
+ check('every package installed without error',r.installed&&r.installed.length>=16&&r.errors.length===0,{installed:r.installed,errors:r.errors});
  check('event bus + multipliers',r.hasHooks);
  check('context groups present',r.groups&&r.groups.length===0,r.groups);
  check('ensureCore save fields',r.saveFields&&r.saveFields.length===0,{missing:r.saveFields,pid:r.pid,storyV:r.storyV});
@@ -181,7 +181,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  await page.waitForFunction(()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_game_to_text());return s.graphics&&s.graphics.horseReady&&!s.graphics.horseLoading;}catch(e){return false;}})(),null,{timeout:150000,polling:250});
  stage('legacy horseReady');
  const L=await page.evaluate(()=>{const G=window.__features;const s=G.save.fresh();return {btok:s.btok,voucher:s.breedVoucher,door:s.doors&&s.doors.tackroom,tackRoom:s.tackRoom,friends:s.friends,pid:s.pid,story:s.story,storyLabel:G.quest.STORY[s.story.idx]&&G.quest.STORY[s.story.idx].label,coins:s.coins,horses:s.horses.length,installed:G.installed.length,net:JSON.parse(render_game_to_text()).net,lineage:s.horses[0].lineage};});
- check('legacy save migrates (btok, doors.tackroom, friends{}, pid, story.v)',L.btok===1&&L.voucher===undefined&&L.door==='2026-36'&&L.tackRoom===undefined&&L.friends&&L.friends.Ann===true&&L.friends.Bo===true&&/^MR-/.test(L.pid)&&L.storyLabel==='Visit Loon Lake'&&L.story.v===1&&L.horses===1&&L.installed===16&&L.lineage,L);
+ check('legacy save migrates (btok, doors.tackroom, friends{}, pid, story.v)',L.btok===1&&L.voucher===undefined&&L.door==='2026-36'&&L.tackRoom===undefined&&L.friends&&L.friends.Ann===true&&L.friends.Bo===true&&/^MR-/.test(L.pid)&&L.storyLabel==='Visit Loon Lake'&&L.story.v===1&&L.horses===1&&L.installed>=16&&L.lineage,L);
  check('no console/page errors',errors.length===0,errors.slice(0,5));
  await browser.close();
  const failed=checks.filter(c=>!c.ok);

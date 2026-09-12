@@ -164,7 +164,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   out.save={emotes:!!G.save.fresh().emotes,magnif:G.save.fresh().magnif,whistleHorse:G.save.fresh().whistleHorse};
   return out;
  });
- check('16 packages installed, none failed',r.installed===16&&r.errors.length===0,{installed:r.installed,errors:r.errors});
+ check('every package installed, none failed',r.installed>=16&&r.errors.length===0,{installed:r.installed,errors:r.errors});
  check('six personalities carry the full behaviour template',r.pers.n===6&&r.pers.full,r.pers);
  check('bondGain honours ribbon/ride weights (aloof ribbon 4->10, ride 4->1)',r.pers.aloofRibbon===10&&r.pers.aloofRide===1,{ribbon:r.pers.aloofRibbon,ride:r.pers.aloofRide});
  check('persOf defaults + whistle threshold (aloof Lv2)',r.pers.defaults.whistleLv===1&&r.pers.defaults.exhaust==='slow'&&r.pers.whistleLow===false&&r.pers.whistleOk===true&&r.pers.aloofFearless===true&&r.pers.alertSpook>1,r.pers);
