@@ -804,7 +804,12 @@ function bondGain(h,x,kind){const p=h&&PERS[h.pers]; let m=1; if(p&&p[kind])m*=p
 const MASTERY_UNLOCKS={2:'Tail colours',4:'Browband stud colours',6:'Sparkle trail at the gallop',8:'Stable badge 🎖️',9:'Bareback riding',10:'+10% XP for this breed'};
 const TAIL_COLS=[['#f4e6c5','Flaxen'],['#151515','Black'],['#d8dde3','Silver'],['#8a4a25','Chestnut'],['#e8b4c8','Rose'],['#3b6fd6','Lake blue']];
 const STUD_COLS=[['#d8b24a','Gold'],['#d9dde3','Silver'],['#e8a0b8','Rose'],['#7fd0e8','Ice']];
-function masteryOf(s,breed){s.mastery=s.mastery||{};const cnt=s.horses.filter(h=>h.breed===breed).length;s.mastery[breed]=Math.max(s.mastery[breed]||0,cnt);return Math.min(10,s.mastery[breed]);}
+/* A named coat variant counts toward its base breed's ladder (an Aether Friesian is still a
+   Friesian) while keeping its own; the mastery-style package caps fantasy horses at five
+   rungs through G.masteryMax. */
+const BREED_FAMILY={aether:'black',sunspear:'sunset',meadowlight:'bay',tempest:'clyde',eclipse:'thoro',glacier:'percheron'};
+function masteryBreed(b){return BREED_FAMILY[b]||b;}
+function masteryOf(s,breed){s.mastery=s.mastery||{};const fam=BREED_FAMILY[breed]?null:breed;const cnt=s.horses.filter(h=>h.breed===breed||(fam&&BREED_FAMILY[h.breed]===fam)).length;s.mastery[breed]=Math.max(s.mastery[breed]||0,cnt);return Math.min(G.masteryMax?G.masteryMax(breed):10,s.mastery[breed]);}
 /* Treasure tables live up here with the other data: achievements read them at start-up. */
 const CHESTS=[
  {id:'barn',x:-21,z:-9,tier:1},{id:'lake',x:27,z:22,tier:1},{id:'bridge',x:6,z:118,tier:1},{id:'pasture',x:-100,z:20,tier:1},
@@ -5381,7 +5386,9 @@ function breedSeat(rig=RIG){
  const live=gameHeroSeat(rig,rig.scene?.parent);if(live)return live.clone();
  return BREED_MODELS.mountPoint(rig,rig.profile?.anchors?.saddle)||new THREE.Vector3(0,1.39,-.30);
 }
-function riderSeat(){const seat=breedSeat(),scale=player.mesh?.scale.x||1;return {y:seat.y+((RIG.profile?.hero||RIG.profile?.artistBreed)?.14:.18)/scale,z:seat.z+.02/scale};}
+function riderSeat(){const seat=breedSeat(),scale=player.mesh?.scale.x||1;const o={y:seat.y+((RIG.profile?.hero||RIG.profile?.artistBreed)?.14:.18)/scale,z:seat.z+.02/scale};
+ if(myHorses[rideIdx]&&myHorses[rideIdx].bareback){o.y-=.10/scale;o.z+=.03/scale;}   // mastery-style: bareback, she sits on the back, not on a saddle that is not there
+ return o;}
 async function requestPlayerBreed(breed){
  const ticket=++breedRequest;RIG.requestedBreed=breed;RIG.loadingBreed=true;
  let asset;
@@ -5680,7 +5687,7 @@ const _rdA=new THREE.Vector3(),_rdB=new THREE.Vector3(),_rdC=new THREE.Vector3()
       _rdT=new THREE.Vector3(),_rdQ=new THREE.Quaternion();
 /* feet into the irons, heels down */
 function riderLegs(R,F,U,Rt){
- const st=TACK.saddle&&TACK.saddle.userData&&TACK.saddle.userData.stir, B=R.sk.by;
+ const st=TACK.saddle&&TACK.saddle.visible&&TACK.saddle.userData&&TACK.saddle.userData.stir, B=R.sk.by;   // no saddle (bareback, Wild Mode): the legs hang, no irons to find
  if(!st){ R._seat(R.pose.lean,R.pose.side,R.pose.head,R.pose.rise,R.pose.spread); R.fitG.updateMatrixWorld(true); return; }
  for(const s of [1,-1]){ const S=s>0?'R':'L', anc=s>0?st.R:st.L;
   if(!anc)continue;
@@ -9152,6 +9159,7 @@ function renderCare(){
  +(()=>{const P=PERS[h.pers]||PERS.relaxed; const M=masteryOf(s,h.breed); const nextU=Object.keys(MASTERY_UNLOCKS).map(Number).find(k=>k>M);
    let x='<div style="font-size:12px;margin-top:6px">'+P.emoji+' <b>'+P.label+'</b> — '+P.desc+'</div>';
    x+='<div class="crow" style="gap:4px;flex-wrap:wrap;margin-top:4px"><span class="lbl" style="font-size:11px">Tricks (keys 1–5 at a halt)</span>'+Object.keys(EMOTES).map(k=>'<button data-care="em:'+k+'">'+EMOTES[k].label+'</button>').join('')+'</div>';
+   const mx=G.run('careMastery',s,h); if(mx)return x+mx;   // the mastery-style package draws the ladder, perks and looks rows
    x+='<div style="font-size:12px;margin-top:6px">🎖️ <b>'+breedLabel(h.breed)+' mastery '+M+'/10</b>'+(nextU?' · next at '+nextU+': '+MASTERY_UNLOCKS[nextU]:' · complete')+' <span style="color:#8c7a63">(own more '+breedLabel(h.breed)+'s to raise it)</span></div>';
    if(M>=2)x+='<div class="crow" style="gap:4px;flex-wrap:wrap"><span class="lbl" style="font-size:11px">Tail</span>'+TAIL_COLS.map(c=>'<button data-care="tail:'+c[0]+'" title="'+c[1]+'" style="'+(h.tailCol===c[0]?'outline:2px solid #4a3526;':'')+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+c[0]+';vertical-align:middle"></span></button>').join('')+'<button data-care="tail:none">natural</button></div>';
    if(M>=4)x+='<div class="crow" style="gap:4px;flex-wrap:wrap"><span class="lbl" style="font-size:11px">Studs</span>'+STUD_COLS.map(c=>'<button data-care="stud:'+c[0]+'" title="'+c[1]+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+c[0]+';vertical-align:middle"></span> '+c[1]+'</button>').join('')+'</div>';
@@ -13262,7 +13270,7 @@ function installFeatures(){
   save:{KEY:SAVE_KEY,fresh:freshSave,sync:syncSave,ensure(fn){SAVE_ENSURES.push(fn);return fn;},ensureHorse(fn){HORSE_ENSURES.push(fn);return fn;},
    flag(s,name){s.flags=s.flags||{};if(s.flags[name])return false;s.flags[name]=1;return true;},build:BUILD,boot:BOOT_INFO},
   money:{addCoins,addGems,addKeys,grantGems,payReward,rewardLabel,rewardKind,refreshWallet,statBump,logEarn},
-  xp:{addXp3D,applyXp,grantStatXp,addSP,passAdd,masteryOf,statCeil,statCap,statNeed,effStats,ensureStats,trainXp,MAX_LEVEL},
+  xp:{addXp3D,applyXp,grantStatXp,addSP,passAdd,masteryOf,masteryBreed,statCeil,statCap,statNeed,effStats,ensureStats,trainXp,MAX_LEVEL},
   mul:mulOf,addMul,
   quest:{questEvt,dailyEvt,story:{append:storyAppend,insertBefore:storyInsertBefore,list:()=>STORY},types:QUEST_TYPES,addDaily,addAch,
    STORY,DAILYQ,ACHS,NPC_DEFS,storyIdx:()=>storyIdx,storyProg:()=>storyProg,todayDaily,claimDaily,claimAch,saveStory,missionDone},

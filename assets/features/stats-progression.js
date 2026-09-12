@@ -376,7 +376,7 @@ export function install(G){
  G.addMul('xp',(s,h)=>h?bondMul(h):1);
  G.addMul('xp',(s,h)=>tackMul(s,h));
  G.addMul('xp',(s)=>(s&&s.perks&&s.perks.xp)?1.10:1);
- G.addMul('sxp',(s,h)=>(s&&h&&X.masteryOf(s,h.breed)>=5)?1.05:1);
+ G.addMul('sxp',(s,h)=>(!G.mastery&&s&&h&&X.masteryOf(s,h.breed)>=5)?1.05:1);   // placeholder rung: the mastery-style ladder (G.mastery) replaces it with breed perks
  G.addMul('sxp',(s,h)=>(h&&(h.bond||0)>=80)?1.05:1);
  G.addMul('sxp',(s,h,k)=>(h&&BREED_SXP[h.breed]&&BREED_SXP[h.breed][k])||1);
  G.addMul('sxp',(s)=>(s&&s.perks&&s.perks.sxp)?1.10:1);
@@ -384,7 +384,7 @@ export function install(G){
  G.ui.careSection((s,h)=>{
   const tr=BREED_SXP[h.breed]; const bits=[];
   if(tr)for(const k in tr)bits.push('🧬 '+(TRAIT_LBL[h.breed]||'Breed trait')+': +'+Math.round((tr[k]-1)*100)+'% '+short(k)+' XP');
-  if(X.masteryOf(s,h.breed)>=5)bits.push('🎖️ mastery 5: +5% stat XP');
+  if(!G.mastery&&X.masteryOf(s,h.breed)>=5)bits.push('🎖️ mastery 5: +5% stat XP');
   if((h.bond||0)>=80)bits.push('❤️ bond 80+: +5% stat XP, steady around wildlife');
   if(s.perks&&s.perks.sxp)bits.push('🏅 Scholar perk: +10% stat XP');
   if(s.perks&&s.perks.xp)bits.push('🏅 Quick study perk: +10% horse XP');

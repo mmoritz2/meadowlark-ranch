@@ -162,7 +162,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('every event lists two trained stats; the events panel says so',r.trains&&r.trains.rows===r.trains.total&&r.trains.h1[0]==='jump'&&r.evRow,{trains:r.trains,evRow:r.evRow});
  check('finishing Cottonwood Welcome Jump grants jump + agility stat XP (not speed)',r.evXp&&r.evXp.jump>0&&r.evXp.agility>0&&r.evXp.speed===0,r.evXp);
  check('xp multipliers stack: bond 100 > bond 10, achievement perk +10%',r.mul&&r.mul.mHigh>r.mul.mLow&&Math.abs(r.mul.mHigh/r.mul.mLow-1.15)<0.01&&Math.abs(r.mul.mPerk/r.mul.mLow-1.10)<0.01,r.mul);
- check('breed trait: Quarter Horse learns acceleration 25% faster (20 → 25 sxp)',r.mul&&Math.abs(r.mul.sxpBay-1.25)<0.01&&Math.abs(r.mul.sxpBayJump-1)<0.01&&r.sxpApplied===25&&/stat XP/.test(r.mul.mastery5||''),{sxpApplied:r.sxpApplied,mul:r.mul});
+ check('breed trait: Quarter Horse learns acceleration 25% faster (20 → 25 sxp)',r.mul&&Math.abs(r.mul.sxpBay-1.25)<0.01&&Math.abs(r.mul.sxpBayJump-1)<0.01&&r.sxpApplied===25&&/stat XP|Breed perk/.test(r.mul.mastery5||''),{sxpApplied:r.sxpApplied,mul:r.mul});
  check('forage: 19 kinds, apples on orchard trees at Cottonwood, hives, map markers',r.forage&&r.forage.kinds>=19&&r.forage.apples>=14&&r.forage.nearOrchard===r.forage.apples&&r.forage.honey===3&&r.forage.markers===1,r.forage);
  check('picking an apple fills the basket, counts for the forage daily and hides the node',r.pick&&r.pick.apple>=1&&r.pick.forage===r.pick.apple&&r.pick.hidden,r.pick);   // two apples can hang within reach of one tree
  check('coyotes and mountain goats live in the canyon and on Hollowpeak',r.wild&&r.wild.coyote&&r.wild.goat&&r.wild.spawned===6,r.wild);
