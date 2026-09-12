@@ -47,7 +47,10 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   const h1=G.save.fresh().horses[G.horse.rideIdx()];
   out.xpMul={before:xp0,after:h1.xp,level:h1.level,lvl0};
   /* rewards */
-  let paid=null; G.save.sync(sv=>{const g0=sv.gems,c0=sv.coins,k0=sv.keys;G.money.payReward(sv,{c:5,g:2,k:1,dust:3,btok:1,items:{carrot:2}});paid={dc:sv.coins-c0,dg:sv.gems-g0,dk:sv.keys-k0,dust:sv.dust,btok:sv.btok,carrot:sv.items.carrot};});
+  /* gems go through grantGems, so a package's gem multiplier (the double-gem weekend the
+     account package registers) is part of what a reward pays on those days. */
+  const gemMul=(()=>{try{return (JSON.parse(render_game_to_text()).wallet||{}).gemMul||1;}catch(e){return 1;}})();
+  let paid=null; G.save.sync(sv=>{const g0=sv.gems,c0=sv.coins,k0=sv.keys;G.money.payReward(sv,{c:5,g:2,k:1,dust:3,btok:1,items:{carrot:2}});paid={dc:sv.coins-c0,dg:sv.gems-g0,dk:sv.keys-k0,dust:sv.dust,btok:sv.btok,carrot:sv.items.carrot,gemMul};});
   out.paid=paid; out.rewardLabel=G.money.rewardLabel({c:5,g:2,k:1});
   /* stat xp */
   let sxp=null; G.save.sync(sv=>{const hh=sv.horses[0];const v0=hh.stats.speed;const R=G.xp.grantStatXp(sv,hh,'speed',1000);sxp={v0,v1:hh.stats.speed,cap:R.cap,ceil:G.xp.statCeil(hh,'speed')};});
@@ -129,7 +132,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('ensureCore save fields',r.saveFields&&r.saveFields.length===0,{missing:r.saveFields,pid:r.pid,storyV:r.storyV});
  check('horse ensures',r.horseFields&&r.horseFields.length===0,r.horseFields);
  check('xp multiplier applied (10 xp x2 x ranch)',r.xpMul&&(r.xpMul.after-r.xpMul.before===20||r.xpMul.level>r.xpMul.lvl0),r.xpMul);
- check('payReward pays c/g/k/dust/btok/items',r.paid&&r.paid.dc===5&&r.paid.dg===2&&r.paid.dk===1&&r.paid.dust===3&&r.paid.btok>=1&&r.paid.carrot>=2,r.paid);
+ check('payReward pays c/g/k/dust/btok/items',r.paid&&r.paid.dc===5&&r.paid.dg===2*r.paid.gemMul&&r.paid.dk===1&&r.paid.dust===3&&r.paid.btok>=1&&r.paid.carrot>=2,r.paid);
  check('rewardLabel',r.rewardLabel==='5🪙 2💎 1🗝️',r.rewardLabel);
  check('grantStatXp caps at level/breed ceiling',r.sxp&&r.sxp.v1===r.sxp.cap&&r.sxp.v1>r.sxp.v0,r.sxp);
  check('BREED_CEIL overrides statCeil',r.ceilOverride===4,r.ceilOverride);

@@ -108,13 +108,20 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   /* star points: a daily quest claim, the umbrella, a tack level, a foraged truffle */
   const q=G.quest.todayDaily()[0]; const spBefore=(sv().sp||{}).pts||0;
   S.sync(x=>{x.dq=x.dq||{};x.dq.date=new Date().toDateString();x.dq.prog=x.dq.prog||{};x.dq.claimed=x.dq.claimed||{};x.dq.prog[q.type]=q.goal;});
-  G.quest.claimDaily(q.type); s=sv(); out.spDaily={d:((s.sp||{}).pts||0)-spBefore,src:((s.sp||{}).src||{}).daily,prestigeDeeds:s.prestige.pts};
-  S.sync(x=>{for(const qq of G.quest.todayDaily())x.dq.claimed[qq.type]=true;x.dq.umbrella=true;}); A.walletWatch(); s=sv(); out.spUmb={src:((s.sp||{}).src||{}).umbrella,daily:((s.sp||{}).src||{}).daily};
+  /* The total ⭐ a claim pays is not ours alone — the base game also pays ⭐ for the stat and
+     level the quest's XP reward buys — so the ledger's own 'daily' line is what we assert. */
+  G.quest.claimDaily(q.type); s=sv(); out.spDaily={d:((s.sp||{}).src||{}).daily||0,all:((s.sp||{}).pts||0)-spBefore,src:((s.sp||{}).src||{}).daily,prestigeDeeds:s.prestige.pts};
+  /* Sibling packages add their own dailies through addDaily, so the umbrella tally is
+     10⭐ per daily on the board today, not a fixed three. */
+  out.dailyN=G.quest.todayDaily().length;
+  S.sync(x=>{for(const qq of G.quest.todayDaily())x.dq.claimed[qq.type]=true;x.dq.umbrella=true;}); A.walletWatch(); s=sv(); out.spUmb={src:((s.sp||{}).src||{}).umbrella,daily:((s.sp||{}).src||{}).daily,want:10*out.dailyN};
   S.sync(x=>{x.tack=x.tack||[];x.tack.push({id:'qa-rare',slot:'saddle',rarity:'Rare',name:'QA saddle',bonus:{speed:1},lvl:1});}); A.walletWatch();
   S.sync(x=>{x.tack.find(t=>t.id==='qa-rare').lvl=2;}); A.walletWatch(); s=sv(); out.spTack=((s.sp||{}).src||{}).tack;
   S.sync(x=>{x.items.truffle=(x.items.truffle||0)+1;}); G.quest.dailyEvt('carrots',1); s=sv(); out.spForage=((s.sp||{}).src||{}).forage;
-  /* prestige: 10 stalls (400 builder pts) + 40 ribbons (120) + 4 trophies (100) = 620 -> level 4 */
-  S.sync(x=>{x.decor=[];for(let i=0;i<10;i++)x.decor.push({id:'q'+i,t:'stall',x:0,z:0,ry:0});x.ribbonTotal=40;x.trophies={a:1,b:1,c:1,d:1};});
+  /* prestige: 10 stalls (400 builder pts) + 40 ribbons (120) + 4 trophies (100) = 620 -> level 4.
+     Mastery is cleared first: a fresh ranch already carries a breed mastery point from the
+     starter horse (10 prestige points), and that would make the arithmetic here drift. */
+  S.sync(x=>{x.mastery={};x.decor=[];for(let i=0;i<10;i++)x.decor.push({id:'q'+i,t:'stall',x:0,z:0,ry:0});x.ribbonTotal=40;x.trophies={a:1,b:1,c:1,d:1};});
   G.money.refreshWallet(); s=sv();
   out.prestige={pts:A.prestigePts(s)-s.prestige.pts,deeds:s.prestige.pts,lvl:A.prestigeLevel(s),state:st().prestige.lvl,p10:A.hasPerk(s,'pasture10'),gold:A.hasPerk(s,'gold'),ev:A.eventMul(s),savedLvl:s.prestige.lvl,title:A.titleOf(s)};
   G.ui.openLB(); const lp=document.getElementById('lbPanel'); const pt=lp.querySelector('[data-lbtab="prestige"]'); out.prestige.tab=!!pt; if(pt)pt.click();
@@ -185,7 +192,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('remap Quests J→; live, back to default, clashes refused',r.remap.saved==='Semicolon'&&r.remap.zOpens==='flex'&&r.remap.jDead!=='flex'&&r.remap.cleared&&r.remap.jBack==='flex'&&r.remap.clash,r.remap);
  check('Enter opens the chat bar and focuses the input',r.chat.bar==='flex'&&r.chat.focus==='chatIn',r.chat);
  check('gem exchange: key for 8💎, ticket for 3💎, 1⭐ per 10💎 spent',r.gemKey.dk===1&&r.gemKey.gems===32&&r.gemKey.sp===0&&r.gemTicket.gems===29&&r.gemTicket.tickets===2&&r.gemTicket.spGems===1,{key:r.gemKey,ticket:r.gemTicket});
- check('star points: daily quest 10 (+5 deeds), umbrella 40',r.spDaily.d===10&&r.spDaily.src===10&&r.spDaily.prestigeDeeds>=5&&r.spUmb.src===40&&r.spUmb.daily===30,{daily:r.spDaily,umb:r.spUmb});
+ check('star points: daily quest 10 (+5 deeds), umbrella 40, 10 per daily on the board',r.spDaily.d===10&&r.spDaily.src===10&&r.spDaily.all>=10&&r.spDaily.prestigeDeeds>=5&&r.spUmb.src===40&&r.spUmb.daily===r.spUmb.want,{daily:r.spDaily,umb:r.spUmb,dailies:r.dailyN});
  check('star points: Rare tack level = 3, foraged truffle = 4',r.spTack===3&&r.spForage===4,{tack:r.spTack,forage:r.spForage});
  check('prestige level 4 from 620 points, pasture10 on, gold off, no event bonus yet',r.prestige.pts===620&&r.prestige.lvl===4&&r.prestige.state===4&&r.prestige.p10&&!r.prestige.gold&&r.prestige.ev===1.1&&r.prestige.savedLvl===4&&r.prestige.title==='Ribbon rider',r.prestige);
  check('prestige tab shows perks with ✅/🔒; week tab shows the SP breakdown; pass tab the x2 weekend',r.prestige.tab&&r.prestige.text&&r.spBreakdown&&r.passX2,{tab:r.prestige.tab,text:r.prestige.text,sp:r.spBreakdown,x2:r.passX2});
