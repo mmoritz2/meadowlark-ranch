@@ -209,7 +209,8 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   const pl=G.horse.player;
   /* pines herd: stand by a horse, trust grows, HUD shows a bar */
   const pines=P.herds.find(h=>h.def.id==='pines'); const m=pines.members[0];
-  pl.pos.set(m.pos.x+3,0,m.pos.z); pl.speed=0; pl.heading=0; window.advanceTime(3000);
+  const stay=(mm,ms)=>{for(let k=0;k<ms/500;k++){pl.pos.set(mm.pos.x+3,0,mm.pos.z);pl.speed=0;window.advanceTime(500);}};   // walk along with her, as a player would
+  pl.heading=0; stay(m,3000);
   const hud=document.getElementById('tameHud');
   out.hud={display:hud.style.display,fill:parseFloat(document.getElementById('tameFill').style.width),txt:document.getElementById('tameTxt').textContent,trust:Math.round(m.trust),fled:m.flee>0};
   /* a carrot for +25 */
@@ -219,13 +220,14 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   const t0=m.trust; window.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyE'}));
   out.carrot={dTrust:Math.round(m.trust-t0),carrots:G.save.fresh().items.carrot};
   /* keep standing: she starts to follow at 50, and comes along when we move off */
-  window.advanceTime(4000);
+  stay(m,4000);
   out.follow=m.follow; out.trustNow=Math.round(m.trust);
   pl.pos.set(m.pos.x+9,0,m.pos.z+9); window.advanceTime(2500);
   out.followDist=Math.round(Math.hypot(m.pos.x-pl.pos.x,m.pos.z-pl.pos.z)); out.trustAfterWalk=Math.round(m.trust);
   out.walkDaily=(G.save.fresh().life||{}).walkwild||0;
-  /* spook: gallop past another one */
-  const m2=pines.members[1]; pl.pos.set(m2.pos.x+5,0,m2.pos.z); pl.speed=8; window.advanceTime(400);
+  /* spook: shake off any follower first (they lose you past 40 m), then gallop past another one */
+  pl.pos.set(pines.def.x+90,0,pines.def.z); window.advanceTime(300);
+  const m2=pines.members.find(x=>!x.follow)||pines.members[1]; pl.pos.set(m2.pos.x+5,0,m2.pos.z); pl.speed=12; window.advanceTime(400);
   out.spook={bad:hud.classList.contains('bad'),txt:document.getElementById('tameTxt').textContent,flee:m2.flee>0};
   pl.speed=0;
   return out;
@@ -240,7 +242,8 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  const r9=await ev(()=>{
   const G=window.__features,P=G.worldPkg,out={};
   const pl=G.horse.player; const coy=P.herds.find(h=>h.def.id==='coyote'); const m=coy.members[0];
-  pl.pos.set(m.pos.x+3,0,m.pos.z); pl.speed=0; window.advanceTime(9000);
+  const stay=(mm,ms)=>{for(let k=0;k<ms/500;k++){pl.pos.set(mm.pos.x+3,0,mm.pos.z);pl.speed=0;window.advanceTime(500);}};
+  stay(m,9000);
   out.solo={local:Math.round(m.trust),eff:Math.round(P.effTrust(m)),tamed:!!m.taming,follow:m.follow};
   /* a club mate stands with her: their trust arrives on the chat topic */
   G.net.onMessage('srf1/x/chat',JSON.stringify({id:'other1',n:'Rider9',t:'',wild:{h:'coyote',i:m.i,tr:20}}));

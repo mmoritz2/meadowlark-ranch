@@ -601,7 +601,7 @@ export function install(G){
  /* The herd loop. Idle herds cost nothing: a herd more than 260 m off is skipped whole. */
  function tickHerds(dt,t){
   const sp=Math.abs(player.speed),now=performance.now();
-  P.trustFocus=null;let focusD=20;
+  P.trustFocus=null;let focusScore=-1e9;   // the horse you are working on wins over a stranger that wandered closer
   for(const hd of P.herds){
    const far=hyp(player.pos.x,player.pos.z,hd.def.x,hd.def.z);
    if(hd.respawn.length&&hd.respawn[0].at<now){const r=hd.respawn.shift();hd.members.push(spawnMember(hd.def,r.i));}
@@ -635,7 +635,7 @@ export function install(G){
       if(dd<0.6){m.rest=2+Math.random()*4;const a2=Math.random()*Math.PI*2,rr=Math.random()*m.herd.r;m.tx=m.herd.x+Math.cos(a2)*rr;m.tz=m.herd.z+Math.sin(a2)*rr;}
       else mv=steer(m,m.tx,m.tz,dt,1.1,{stop:0.6,base:1.1,gain:0,turn:2});}
      amp=m.rest>0?0.05:0.4;
-     if(wd<5.5&&sp<2){m.trust=Math.min(100,m.trust+dt*9*(m.fedT>0?2:1));
+     if(wd<5.5&&sp<2){m.trust=Math.min(100,m.trust+dt*9*(m.fedT>0?2:1));m.rest=Math.max(m.rest,0.6);   // she stands for you while you are calm beside her
       if(m.trust>=50&&!m.follow&&!m.coop){m.follow=true;toast('🐎 '+m.name+' trusts you enough to follow — walk her home, slowly.');}
       if(m.trust>=50&&m.coop&&!m.follow&&effTrust(m)>=50){m.follow=true;toast('🐎 '+m.name+' trusts you enough to follow — walk her home, slowly.');}
       checkTame(m);}
@@ -647,7 +647,7 @@ export function install(G){
      if(wd<60)H.dressWithRig(m,m.parts,{body:m.wb.body,mane:m.wb.mane},{breed:m.wb.breed});
      A.tickRig(m,mv,dt,t,m.rest>0&&!m.follow&&m.flee<=0?1:0);}
     m.parts.group.position.set(m.pos.x,groundH(m.pos.x,m.pos.z),m.pos.z);m.parts.group.rotation.y=m.heading;
-    if(wd<focusD){focusD=wd;P.trustFocus=m;}
+    if(wd<20){const sc=effTrust(m)*10-wd+(m.follow?200:0);if(sc>focusScore){focusScore=sc;P.trustFocus=m;}}
    }
   }
  }
