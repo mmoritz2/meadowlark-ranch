@@ -763,7 +763,7 @@ const DECOR_CAT={
 };
 const RANCH_LEVELS=[0,60,160,320,560,900];
 const RANCH_PERKS={2:'Horses get hungry and thirsty 15% slower',3:'Horses earn 10% more XP',4:'Forage grows back 30% sooner',5:'Horses get hungry and thirsty 30% slower',6:'Horses earn 25% more XP'};
-function ranchPts(s){return (s.decor||[]).reduce((a,d)=>a+((DECOR_CAT[d.t]||{}).pts||0),0);}
+function ranchPts(s){return (s.decor||[]).reduce((a,d)=>a+((DECOR_CAT[d.t]||{}).pts||0),0)+(s.builderBonus||0);}   // builderBonus: points the builder quests pay
 function ranchLevel(s){const p=ranchPts(s);let l=1;for(let i=1;i<RANCH_LEVELS.length;i++)if(p>=RANCH_LEVELS[i])l=i+1;return l;}
 let _ranchLvlCache=1;
 function ranchMul(k){const L=_ranchLvlCache; if(k==='decay')return L>=5?0.7:L>=2?0.85:1; if(k==='xp')return L>=6?1.25:L>=3?1.10:1; if(k==='forage')return L>=4?0.7:1; return 1;}
@@ -3139,10 +3139,11 @@ const FANTASY_COAT={
  aurora:{emissive:0x3ce0a0,ei:0.6,rough:0.5},
  shadow:{emissive:0x6a3ad0,ei:0.45,rough:0.45},
  eclipse:{emissive:0xffb44a,ei:0.5,rough:0.5},
+ moonlit:{emissive:0x9fb4dc,ei:0.35,rough:0.45},   // the story horse's silver coat
 };
 // Base solid colour for each mythic coat — used for procedural horses' legs/ears AND as the
 // coatMat base so the body is top-lit (no directional banding) instead of a stretched gradient.
-const COAT_BASE={fire:'#bc3a10',galaxy:'#3a2a72',shadow:'#181030',ice:'#8fd0ea',aurora:'#1f9e78',eclipse:'#0d0a12'};
+const COAT_BASE={fire:'#bc3a10',galaxy:'#3a2a72',shadow:'#181030',ice:'#8fd0ea',aurora:'#1f9e78',eclipse:'#0d0a12',moonlit:'#c9ced6'};
 function fantasyCoatTex(type){
  return canvasTex(256,256,(c,w,h)=>{
   if(type==='galaxy'||type==='shadow'||type==='eclipse'){
@@ -5291,6 +5292,9 @@ const FANTASY_CFG={
  /* An actual eclipse: the body goes almost black and all the light is in the corona that
     burns around the silhouette. Shadow is violet all over; this is only lit at its edge. */
  eclipse:{ramp:['#040308','#0f0b16','#c98a2a'], glow:0.75, rough:0.80},
+ /* The story horse: a silver coat with pale dapples, a cool moonlight rim and snow drifting
+    across it — the grey mare the mountain calls the Silver Kestrel. */
+ moonlit:{ramp:['#4e5a70','#c6cfdb','#ffffff'], glow:0.45, rough:0.55},
 };
 const FANTASY_FX={
  fire:`float em=_hash(floor(vMapUv*vec2(44.0,30.0))+floor(uTime*4.0)*7.0);
@@ -5321,6 +5325,11 @@ const FANTASY_FX={
    _ramp=mix(_ramp*0.30,vec3(1.0,0.72,0.30),clamp(_cor*_fl*1.15,0.0,1.0));
    _ramp+=vec3(1.0,0.86,0.55)*pow(_cor,2.2)*0.6;
    _emis=_ramp*uGlow*(0.06+0.35*_l)+vec3(1.0,0.66,0.24)*_cor*_fl*2.1;`,
+ moonlit:`float _sn=step(0.986,_hash(floor(vMapUv*vec2(120.0,80.0))+floor(uTime*1.5)*3.0))*(0.5+0.5*sin(uTime*2.5+vMapUv.y*40.0));
+   float _dap=smoothstep(0.35,0.75,_hash(floor(vMapUv*vec2(26.0,18.0))+2.3))*0.18;
+   _ramp=mix(_ramp,vec3(0.86,0.90,0.98),_dap);
+   _ramp+=vec3(1.0)*_sn*1.2;
+   _emis=_ramp*uGlow*(0.12+0.5*_l)+vec3(0.80,0.88,1.0)*_fres*0.55+vec3(1.0)*_sn*1.4;`,
 };
 function fantasyCoatRig(type,scaly){
  const key='fcr_'+type+(scaly?'_s':''); RIG._fcr=RIG._fcr||{};
@@ -8999,6 +9008,7 @@ function placeAt(x,z){
  spawnDecor(d); refreshWallet(); sCoin();
  const sv=freshSave(); const L=ranchLevel(sv); if(L>_ranchLvlCache){_ranchLvlCache=L;sGem();toast('🏗️ Ranch level '+L+'! '+(RANCH_PERKS[L]||''));} else toast(c.emoji+' '+c.label+' placed · '+ranchPts(sv)+' builder points');
  passAdd(2); statBump('built',1);
+ questEvt('build',t); questEvt('ranchlvl',0); dailyEvt('build',1);   // the builder questline and the build daily
  return true;
 }
 function removeAt(cx,cy){
@@ -9255,15 +9265,16 @@ function careAct(k){
  }
  if(k==='rename'){
   const h=myHorses[rideIdx];
-  const n=prompt('New name for '+h.name+':',h.name);
-  if(n&&n.trim()){
-   const nm=n.trim().slice(0,14);
-   syncSave(s=>{if(s.horses[rideIdx])s.horses[rideIdx].name=nm;});
-   h.name=nm;
-   $('nameEl').textContent=nm+(h.horn?' 🦄':'');
-   sel.options[rideIdx].textContent='🐴 '+nm;
-  }
-  renderCare();return;
+  (G.ui&&G.ui.nameDialog||nameDialog)({title:'Rename '+h.name,def:h.name,max:14,onDone:n=>{
+   if(n&&n.trim()){
+    const nm=n.trim().slice(0,14);
+    syncSave(s=>{if(s.horses[rideIdx])s.horses[rideIdx].name=nm;});
+    h.name=nm;
+    $('nameEl').textContent=nm+(h.horn?' 🦄':'');
+    sel.options[rideIdx].textContent='🐴 '+nm;
+   }
+   renderCare();}});
+  return;
  }
  if(!FOODS3[k]&&k!=='water'&&k!=='groom'&&k!=='pet'){if(G.run('careAct',k,freshSave(),myHorses[rideIdx]))return;}   // a package's own care action
  let msg='',ok=false,statUp=null;
@@ -9304,7 +9315,7 @@ function careAct(k){
  if(!ok&&msg&&msg.indexOf('stock up')>=0)openShop('food');
  if(ok){
   {const fs=freshSave();if(fs&&fs.horses[rideIdx]&&myHorses[rideIdx]){myHorses[rideIdx].stats=fs.horses[rideIdx].stats;myHorses[rideIdx].sxp=fs.horses[rideIdx].sxp;}}   // the ride reads the live copy
-  if(statUp){sGem();questEvt('train',1);}
+  if(statUp){sGem();questEvt('train',1);dailyEvt('train',1);}
   sChime();
   const xp=FOODS3[k]?(FOODS3[k].xp||0):({water:3,groom:5,pet:2}[k]||0);   // every food's XP comes off the table
   if(xp)addXp3D(xp);
@@ -9367,7 +9378,7 @@ const BREEDS3=[
  ['stormdrake','Storm Dragon','Dragon',0,20,'#241830','#a07ce0',{wings:true,dragon:true,coat:'shadow',glow:true,ability:'fly'}],
  ['verdant','Verdant Dragon','Dragon',0,20,'#143038','#7df0c4',{wings:true,dragon:true,coat:'aurora',glow:true,ability:'fly'}],
  ['shadowmare','Shadow Mare','Mythic',0,14,'#241830','#a07ce0',{coat:'shadow',glow:true,ability:'swift'}],
- ['kestrel','Silver Kestrel','Legendary',0,0,'#c9ced6','#eef2f7',{story:true}],   // book two's reward: not for sale
+ ['kestrel','Silver Kestrel','Legendary',0,0,'#c9ced6','#eef2f7',{story:true,coat:'moonlit',glow:true}],   // book two's reward: not for sale
  ['shire','Shire','Draft',45,0,'#3a3530','#1d1a17',{mark:'roan',markCol:'#ded4c4',size:1.16}],
  ['clyde','Clydesdale','Draft',45,0,'#7a4526','#2e2018',{mark:'pinto',markCol:'#f0e8d8',size:1.12}],
 ];
@@ -11305,8 +11316,8 @@ function renderStable(){
 }
 function renameHorse(i){
  const h=myHorses[i];if(!h)return;
- const n=prompt('New name for '+h.name+':',h.name);
- if(n&&n.trim()){
+ (G.ui&&G.ui.nameDialog||nameDialog)({title:'Rename '+h.name,def:h.name,max:14,onDone:n=>{
+  if(!(n&&n.trim()))return;
   const nm=n.trim().slice(0,14);
   syncSave(s=>{if(s.horses[i])s.horses[i].name=nm;});
   h.name=nm;
@@ -11314,7 +11325,7 @@ function renameHorse(i){
   if(sel.options[i])sel.options[i].textContent='🐴 '+nm;
   rebuildAll();
   renderStable();
- }
+ }});
 }
 $('stableBtn').onclick=openStable;
 $('breedStudioBtn').onclick=()=>window.open('breeds.html?v=artist-study-1','_blank','noopener');
@@ -11364,18 +11375,27 @@ const DAILYQ=[
  {type:'shoe',icon:'🍀',label:'Find 3 golden horseshoes',goal:3,r:{c:220,g:3,p:20}},
  {type:'wildphoto',icon:'📸',label:'Photograph 2 wild animals',goal:2,r:{c:200,g:2,p:20}},
 ];
+const DAILY_N=6;   // six a day: feeding, training, riding, foraging and taming all get a turn
 // long-haul variants share their hooks with the base types
 function dailyTypeAliases(type){return type==='gallop'?['gallop','gallop2k']:type==='feed'?['feed','feed6']:[type];}
 const _dailyMemo={key:'',list:null};
 function todayDaily(){
  const ds=new Date().toDateString();
  const mk=ds+'|'+DAILYQ.length; if(_dailyMemo.key===mk&&_dailyMemo.list)return _dailyMemo.list;
- _dailyMemo.key=mk; return _dailyMemo.list=todayDailyRoll(ds);
+ /* The day's roll is snapshotted in the save the first time it is drawn, so a package that
+    adds daily rows (addDaily) after a player has already started the day does not reshuffle
+    the quests they are half-way through. */
+ let list=null;
+ syncSave(s=>{ ensureDq(s);
+  if(Array.isArray(s.dq.roll)&&s.dq.roll.length){const rows=s.dq.roll.map(t=>DAILYQ.find(q=>q.type===t)).filter(Boolean); if(rows.length===s.dq.roll.length)list=rows;}
+  if(!list){list=todayDailyRoll(ds); s.dq.roll=list.map(q=>q.type);} });
+ if(!list)list=todayDailyRoll(ds);
+ _dailyMemo.key=mk; return _dailyMemo.list=list;
 }
 function todayDailyRoll(ds){
  let h=0;for(let i=0;i<ds.length;i++)h=(h*31+ds.charCodeAt(i))|0;
- const idx=[];let k=Math.abs(h)||1;
- while(idx.length<3){k=(k*1103515245+12345)%2147483647;const j=k%DAILYQ.length;if(!idx.includes(j))idx.push(j);}
+ const idx=[];let k=Math.abs(h)||1; const n=Math.min(DAILY_N,DAILYQ.length);
+ while(idx.length<n){k=(k*1103515245+12345)%2147483647;const j=k%DAILYQ.length;if(!idx.includes(j))idx.push(j);}
  return idx.map(i=>DAILYQ[i]);
 }
 function ensureDq(s){
@@ -11403,10 +11423,11 @@ function dailyEvt(type,val){
  }
  G.run('dailyEvt',type,val);                              // side quests, foal quests, co-op goals listen here
 }
+const UMBRELLA_R={k:1,g:4,sp:40,p:30};   // the meta-quest: every daily done pays a key, gems, club points and pass points on top
 function claimUmbrella(){
  let ok=false;
- syncSave(s=>{ensureDq(s); if(s.dq.umbrella||Object.keys(s.dq.claimed).length<3)return; s.dq.umbrella=true; s.keys=(s.keys||0)+1; grantGems(s,1); ok=true;});
- if(ok){refreshWallet();sGem();toast('🌂 Umbrella: +1🗝️ +1💎');renderQuests();}
+ syncSave(s=>{ensureDq(s); if(s.dq.umbrella||Object.keys(s.dq.claimed).length<DAILY_N)return; s.dq.umbrella=true; payReward(s,UMBRELLA_R); ok=true;});
+ if(ok){refreshWallet();sGem();toast('🌂 Umbrella: +'+rewardLabel(UMBRELLA_R));renderQuests();}
 }
 function claimDaily(type){
  const q=todayDaily().find(q=>q.type===type);if(!q)return;
@@ -11415,14 +11436,10 @@ function claimDaily(type){
   ensureDq(s);
   if(s.dq.claimed[type]||(s.dq.prog[type]||0)<q.goal)return;
   s.dq.claimed[type]=true;
-  if(q.r.c)s.coins+=q.r.c;
-  if(q.r.g)grantGems(s,q.r.g);
-  if(q.r.k)s.keys=(s.keys||0)+q.r.k;
-  if(q.r.p){s.pass=s.pass||{pts:0};s.pass.pts+=q.r.p;}
-  payReward(s,Object.assign({},q.r,{c:0,g:0,k:0,p:0}));   // any other reward kind (xp, feed bag, …)
+  payReward(s,q.r);   // coins, gems, keys, pass points, club points — every daily pays club SP now
   ok=true;
  });
- if(ok){refreshWallet();sChime();toast('📋 +'+(q.r.c||0)+'🪙'+(q.r.g?' +'+q.r.g+'💎':'')+(q.r.k?' +'+q.r.k+'🗝️':'')+(q.r.p?' +'+q.r.p+'🎟️':'')+(()=>{const x=rewardLabel(Object.assign({},q.r,{c:0,g:0,k:0,p:0}));return x?' '+x:'';})());renderQuests();}
+ if(ok){refreshWallet();sChime();toast('📋 +'+rewardLabel(q.r));renderQuests();}
 }
 
 /* ---- achievements ---- */
@@ -11477,10 +11494,7 @@ function claimAch(id){
   s.achClaims=s.achClaims||{};
   if(s.achClaims[id]||a.v(s)<a.goal)return;
   s.achClaims[id]=true;
-  if(a.r.c)s.coins+=a.r.c;
-  if(a.r.g)grantGems(s,a.r.g);
-  if(a.r.k)s.keys=(s.keys||0)+a.r.k;
-  payReward(s,Object.assign({},a.r,{c:0,g:0,k:0}));   // any other reward kind (xp, feed bag, perk, …)
+  payReward(s,a.r);
   ok=true;
  });
  if(ok){refreshWallet();sChime();toast('🏅 Achievement: '+a.label+'! +'+(a.r.c||0)+'🪙'+(a.r.g?' +'+a.r.g+'💎':'')+(a.r.k?' +'+a.r.k+'🗝️':'')+(()=>{const x=rewardLabel(Object.assign({},a.r,{c:0,g:0,k:0}));return x?' '+x:'';})());renderQuests();}
@@ -11510,18 +11524,18 @@ function renderQuests(){
   html+='<div class="qrow"><span class="qico">🎣</span><span class="qmain"><b>Loon Lake</b><span style="font-size:11px;color:#8c7a63;font-weight:600">'+fish.n+' fish caught · '+fish.bottles+' bottle'+(fish.bottles===1?'':'s')+' found</span></span></div>';
   html+='<div class="qrow"><span class="qico">🔐</span><span class="qmain"><b>Grandma\'s tack room</b><span style="font-size:11px;color:#8c7a63;font-weight:600">'+((s.doors&&s.doors.tackroom)===weekKey()?'opened this week':'a Silver Key opens it: rare tack at least, once a week')+'</span></span></div>';
  }else if(questTab==='daily'){
-  html+='<span style="font-size:12px;color:#8c7a63">Three fresh quests every day — they reset at midnight!</span>'
+  html+='<span style="font-size:12px;color:#8c7a63">'+DAILY_N+' fresh quests every day — each pays gems and club points; they reset at midnight!</span>'
   +todayDaily().map(q=>{
    const prog=Math.min(q.goal,s.dq.prog[q.type]||0),done=prog>=q.goal,cl=!!s.dq.claimed[q.type];
    return '<div class="qrow'+(done?' done':'')+(cl?' claimed':'')+'"><span class="qico">'+q.icon+'</span>'
    +'<span class="qmain">'+q.label+'<span class="qbar"><span class="qfill" style="width:'+Math.round(100*prog/q.goal)+'%"></span></span></span>'
    +'<span style="font-size:11px;color:#8c7a63">'+Math.floor(prog)+'/'+q.goal+'</span>'
-   +(cl?'<span>✅</span>':done?'<button class="claimBtn" data-q="cd:'+q.type+'">Claim '+(q.r.c||0)+'🪙</button>':'<span style="font-size:11px;color:#b8a888">'+(q.r.c||0)+'🪙'+(q.r.k?'+'+q.r.k+'🗝️':'')+(q.r.p?'+'+q.r.p+'🎟️':'')+'</span>')
+   +(cl?'<span>✅</span>':done?'<button class="claimBtn" data-q="cd:'+q.type+'">Claim '+(q.r.c||0)+'🪙</button>':'<span style="font-size:11px;color:#b8a888">'+rewardLabel(q.r)+'</span>')
    +'</div>';
   }).join('');
-  const un=Math.min(3,Object.keys(s.dq.claimed).length), udone=un>=3, ucl=!!s.dq.umbrella;
-  html+='<div class="qrow'+(udone&&!ucl?' done':'')+(ucl?' claimed':'')+'"><span class="qico">🌂</span><span class="qmain">Umbrella: claim all three<span class="qbar"><span class="qfill" style="width:'+Math.round(100*un/3)+'%"></span></span></span><span style="font-size:11px;color:#8c7a63">'+un+'/3</span>'
-   +(ucl?'<span>✅</span>':udone?'<button class="claimBtn" data-q="um:x">Claim 🗝️+💎</button>':'<span style="font-size:11px;color:#b8a888">🗝️+💎</span>')+'</div>';
+  const un=Math.min(DAILY_N,Object.keys(s.dq.claimed).length), udone=un>=DAILY_N, ucl=!!s.dq.umbrella;
+  html+='<div class="qrow'+(udone&&!ucl?' done':'')+(ucl?' claimed':'')+'"><span class="qico">🌂</span><span class="qmain">Umbrella: claim all '+DAILY_N+'<span class="qbar"><span class="qfill" style="width:'+Math.round(100*un/DAILY_N)+'%"></span></span></span><span style="font-size:11px;color:#8c7a63">'+un+'/'+DAILY_N+'</span>'
+   +(ucl?'<span>✅</span>':udone?'<button class="claimBtn" data-q="um:x">Claim '+rewardLabel(UMBRELLA_R)+'</button>':'<span style="font-size:11px;color:#b8a888">'+rewardLabel(UMBRELLA_R)+'</span>')+'</div>';
  }else{
   s.achClaims=s.achClaims||{};
   const rows=ACHS.map(a=>({a,v:Math.min(a.goal,a.v(s)),cl:!!s.achClaims[a.id]}));
@@ -11696,8 +11710,9 @@ const STORY=[
 ];
 let storyIdx=0,storyProg=0,nearNPC=false;
 try{if(save&&save.story){storyIdx=save.story.idx||0;storyProg=save.story.prog||0;}}catch(e){}
-function saveStory(){syncSave(s=>{s.story={idx:storyIdx,prog:storyProg};});}
+function saveStory(){syncSave(s=>{s.story=Object.assign(s.story||{},{idx:storyIdx,prog:storyProg});});}   // keeps era, name, clues and v beside the cursor
 function missionDone(){const m=STORY[storyIdx];return m&&storyProg>=m.goal;}
+function storyText(t){const s=freshSave();return String(t==null?'':t).replace(/\{name\}/g,(s&&s.story&&s.story.name)||'the grey mare');}   // the prologue horse's name, wherever the story says it
 /* Story missions from packages: append at the end, or insert a chapter before an index —
    once per save (s.mig[tag]), moving the player's position so nobody replays a mission. */
 function storyAppend(entries){for(const e of entries)STORY.push(e);return STORY.length;}
@@ -11728,25 +11743,26 @@ function openDlg(){
  const giver=m?(m.npc||'wren'):null, mine=m&&giver===def.id;
  if(m&&m.type==='talk'&&m.talk===def.id&&storyProg<m.goal){storyProg=m.goal;saveStory();}   // the conversation is the mission
  if(m&&m.type==='guess'&&mine&&storyProg<m.goal){                                              // a clue and three suspects
-  d.innerHTML=head+'<p>'+m.text+'</p><p style="font-size:13px;color:#5a4a3a">🔍 '+m.clue+'</p>'
+  d.innerHTML=head+'<p>'+storyText(m.text)+'</p><p style="font-size:13px;color:#5a4a3a">🔍 '+m.clue+'</p>'
    +m.options.map((o,i)=>'<button data-g="'+i+'" style="display:block;margin:4px 0">'+o+'</button>').join('')+'<button id="dlgBtn" style="margin-top:6px">Let me think…</button>';
   d.style.display='block';
   d.querySelectorAll('[data-g]').forEach(b=>{b.onclick=()=>{ if(+b.dataset.g===m.answer){storyProg=m.goal;saveStory();sGem();toast('🔍 Solved!');openDlg();} else toast(m.wrong||'Hmm — look at the clues again.'); };});
   $('dlgBtn').onclick=()=>{d.style.display='none';};
   return;
  }
+ if(m&&mine&&storyProg<m.goal&&G.run('dlgMission',def,m,d))return;   // a package-owned mission type (name, door, clues, ribbons, build…) draws its own dialogue
  const sv0=freshSave();
  const dlgExtra=G.run('dlg',def,sv0);
  const extra=(typeof def.extraHtml==='function'?(def.extraHtml(sv0)||''):'')+(typeof dlgExtra==='string'?dlgExtra:'');   // a package's own lines and buttons
  const roleBtn=(def.role&&def.role.open)?'<button id="dlgRole" style="margin-right:6px">'+(def.role.label||'🛍️ Shop')+'</button>':'';
  if(typeof def.onTalk==='function'){try{def.onTalk(def,sv0);}catch(e){}}
  if(!m){
-  d.innerHTML=head+'<p>'+(def.id==='wren'?'You brought the Silver Kestrel home, champion. Your grandmother would have loved to see it. Ride free! 🏆':def.idle)+'</p>'+extra+roleBtn+'<button id="dlgBtn">🐴</button>';
+  d.innerHTML=head+'<p>'+(def.id==='wren'?(G.run('storyEpilogue',def)||'You brought the Silver Kestrel home, champion. Your grandmother would have loved to see it. Ride free! 🏆'):def.idle)+'</p>'+extra+roleBtn+'<button id="dlgBtn">🐴</button>';
  }else if(mine&&missionDone()){
   const r=m.reward;
-  d.innerHTML=head+'<p>Wonderful work! Here — you earned it: <b>'+(r.c||0)+'🪙'+(r.g?' +'+r.g+'💎':'')+(r.k?' +'+r.k+'🗝️':'')+(r.gear?' + a Legendary piece of tack':'')+'</b></p><button id="dlgBtn">Claim ✨</button>';
+  d.innerHTML=head+'<p>Wonderful work! Here — you earned it: <b>'+rewardLabel(r)+'</b></p><button id="dlgBtn">Claim ✨</button>';
  }else if(mine){
-  d.innerHTML=head+(m.ch?'<div style="font-size:11px;color:#8c7a63;letter-spacing:.04em">📖 '+m.ch+'</div>':'')+'<p>'+m.text+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':'')+'</span><br><br><button id="dlgBtn">On it!</button>';
+  d.innerHTML=head+(m.ch?'<div style="font-size:11px;color:#8c7a63;letter-spacing:.04em">📖 '+m.ch+'</div>':'')+'<p>'+storyText(m.text)+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':'')+'</span><br><br><button id="dlgBtn">On it!</button>';
  }else{
   const g=NPC_DEFS.find(x=>x.id===giver)||NPC_DEFS[0];
   d.innerHTML=head+'<p>'+def.idle+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+' — '+(missionDone()?'tell '+npcShort(g):'ask '+npcShort(g)+' about it')+'</span><br><br>'+extra+roleBtn+'<button id="dlgBtn">🐴</button>';
@@ -11756,13 +11772,13 @@ function openDlg(){
  {const rb=$('dlgRole');if(rb)rb.onclick=()=>{d.style.display='none';openShop(def.role.open);};}
  $('dlgBtn').onclick=()=>{
   if(m&&mine&&missionDone()){
-   addCoins(m.reward.c||0);
-   if(m.reward.g)addGems(m.reward.g);
-   if(m.reward.k){syncSave(s=>{s.keys=(s.keys||0)+m.reward.k;});refreshWallet();}
-   if(m.reward.gear){syncSave(s=>{s.tack=s.tack||[];s.tack.push(genGear(m.reward.gear));});refreshTack();toast('🐎 A Legendary piece is in your tack locker!');}
-   {const extra=Object.assign({},m.reward,{c:0,g:0,k:0,gear:0}); if(Object.keys(extra).some(k=>extra[k])){syncSave(s=>payReward(s,extra));const x=rewardLabel(extra);if(x)toast('🎁 '+x);reloadHorses();}}   // xp, feed bags and other package reward kinds
+   {const rw=Object.assign({},m.reward); if(rw.c)rw.c=Math.round(rw.c*mulOf('coin'));   // one payout path for the whole bundle; VIP/ranch coin bonus still applies
+    syncSave(s=>payReward(s,rw)); refreshWallet(); refreshTack();
+    if(m.reward.gear)toast('🐎 '+(m.reward.gear===true?'A new':'A '+m.reward.gear)+' piece is in your tack locker!');
+    const extra=Object.assign({},rw,{c:0,g:0,k:0,gear:0}); if(Object.keys(extra).some(k=>extra[k])){const x=rewardLabel(extra);if(x)toast('🎁 '+x);reloadHorses();}}   // xp, feed bags and other package reward kinds
    sGem();
-   storyIdx++;storyProg=0;saveStory();
+   const doneIdx=storyIdx; storyIdx++;storyProg=0;saveStory();
+   G.run('missionClaim',m,doneIdx);
    const nm=STORY[storyIdx];
    toast('📜 Mission complete! '+(nm?(nm.ch&&nm.ch!==m.ch?'New chapter: '+nm.ch:'New mission from '+npcShort(NPC_DEFS.find(x=>x.id===(nm.npc||'wren'))||NPC_DEFS[0])):'Story complete! 🏆'));
   }
@@ -11985,7 +12001,7 @@ function addNPC(def){if(!NPC_DEFS.some(d=>d.id===def.id))NPC_DEFS.push(def);cons
 const npc=npcList[0].g;
 $('ctx').onclick=()=>{if(nearNPC)openDlg();else if(nearThing)useThing();};
 /* wild horses (tame them in the open world) */
-const KESTREL_WB={breed:'kestrel',body:'#c9ced6',mane:'#eef2f7',base:7,kestrel:true};
+const KESTREL_WB={breed:'kestrel',body:'#c9ced6',mane:'#eef2f7',base:7,kestrel:true,coat:'moonlit',glow:true};
 const WILD_BREEDS=[
  {breed:'bay',body:'#8a5a2b',mane:'#332214',base:3},
  {breed:'palomino',body:'#d9a85c',mane:'#f4e6c5',base:4},
@@ -12040,7 +12056,7 @@ function despawnWild(quiet){
 function spawnKestrel(){
  if(wild3)return;
  const wb=KESTREL_WB;
- const parts=makeHorse({colors:{body:wb.body,mane:wb.mane},seed:7});
+ const parts=makeHorse({colors:{body:wb.body,mane:wb.mane},coat:wb.coat||null,seed:7});
  const tag=nameSprite('✨ Silver Kestrel'); tag.position.y=2.7; parts.group.add(tag);
  const a=Math.random()*Math.PI*2, px=player.pos.x+Math.cos(a)*38, pz=player.pos.z+Math.sin(a)*38;
  parts.group.position.set(px,groundH(px,pz),pz); scene.add(parts.group);
@@ -12053,7 +12069,7 @@ setInterval(()=>{if(Math.random()<0.6)spawnWild3();},45000);
 function tameWild3(){
  const w=wild3;
  const names=['Comet','Misty','River','Blaze','Willow','Storm','Maple','Echo'];
- const name=w.wb.kestrel?'Kestrel':names[Math.floor(Math.random()*names.length)];
+ const name=w.wb.kestrel?((((freshSave()||{}).story||{}).name)||'Kestrel'):names[Math.floor(Math.random()*names.length)];   // the name given in the prologue
  const base=w.wb.base;
  let added=false;
  syncSave(s=>{
@@ -12062,7 +12078,7 @@ function tameWild3(){
   const ri2=(a,b)=>Math.floor(a+Math.random()*(b-a+1));
   const h=grantHorse(s,w.wb.breed,{name,colors:{body:w.wb.body,mane:w.wb.mane},bond:20,src:'wild',
    stats:{speed:cl(base+ri2(-1,1),1,10),stamina:cl(base+ri2(-1,1),1,10),jump:cl(base+ri2(-1,1),1,10),accel:cl(base+ri2(-1,1),1,10),agility:cl(base+ri2(-1,1),1,10)},
-   needs:{hunger:80,thirst:80,clean:60,happy:90},extra:{horn:false,rainbow:false,wings:false,dragon:false,coat:null,ability:null,glow:false,spots:null,dapples:null,patches:null,wild:w.wb.breed,rx:Math.random(),ry:Math.random(),tx:0.5,ty:0.5,rest:2,phase:0,dir:1,moving:false}});
+   needs:{hunger:80,thirst:80,clean:60,happy:90},extra:{horn:false,rainbow:false,wings:false,dragon:false,coat:w.wb.coat||null,ability:null,glow:!!w.wb.glow,spots:null,dapples:null,patches:null,wild:w.wb.breed,rx:Math.random(),ry:Math.random(),tx:0.5,ty:0.5,rest:2,phase:0,dir:1,moving:false}});
   myHorses.push(h);
   added=true;
  });
@@ -12663,9 +12679,9 @@ function tick(stepSeconds){
  $('ctx').style.display=(nearNPC||nearThing||rl)?'block':'none';
  if(nearNPC)$('ctx').textContent='💬 Talk to '+nearNPC.def.name+' (E)'; else if(nearThing)$('ctx').textContent=thingLabel(nearThing); else if(rl)$('ctx').textContent=rl;
  const giver=m?(NPC_DEFS.find(x=>x.id===(m.npc||'wren'))||NPC_DEFS[0]):null;
- $('questTrack').textContent=m?
+ $('questTrack').textContent=G.run('questPill',m)||(m?
   ('📜 '+(m.ch?m.ch+' · ':'')+m.label+(missionDone()?' ✅ → tell '+giver.name.replace('Grandpa ','').replace('Farmer ','').replace('Sheriff ','')+'!':(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':''))):
-  '📜 Story complete! 🏆';
+  '📜 Story complete! 🏆');   // a package may own the pill (story percentage, next chapter)
  if(m&&m.type==='visit'&&storyProg<m.goal&&Math.hypot(player.pos.x-m.x,player.pos.z-m.z)<m.r){
   storyProg=m.goal;saveStory();
   toast('📜 Spot visited — tell '+giver.name+'!');

@@ -398,7 +398,7 @@ export function install(G){
  G.quest.types.ribbons=(m,val,prog)=>prog+(typeof val==='number'?val:1);
  G.quest.types.gold=(m,val,prog)=>(!m.ev||val===m.ev)?m.goal:prog;
  G.on('courseFinish',({c,ev,RB,pay,dressage,pct})=>{
-  const acc=dressage?pct:(c.rb&&c.rb.acc)||0; const S=c.ce||{};
+  const acc=dressage?pct:(c&&c.rb&&c.rb.acc)||0; const S=(c&&c.ce)||{};   // other packages replay a finish without a live course object
   G.save.sync(s=>{ s.bestAcc=s.bestAcc||{}; if(!s.bestAcc[ev.id]||acc>s.bestAcc[ev.id])s.bestAcc[ev.id]=+acc.toFixed(3);
    const h=s.horses[G.horse.rideIdx()]; if(h){const sx=statXpFor(ev); const mul=(S.diff&&S.diff.rewMul)||1; for(const k in sx)G.xp.grantStatXp(s,h,k,Math.round(sx[k]*mul*Math.max(0.3,acc)));}
    if(ev.xc)s.stats.xc=(s.stats.xc||0)+1; });
