@@ -9324,6 +9324,7 @@ function tickFreeCam(dt){
  f.pos.y=Math.max(groundH(f.pos.x,f.pos.z)+0.4,f.pos.y);
  camera.position.copy(f.pos); camera.lookAt(f.pos.x+dir.x,f.pos.y+dir.y,f.pos.z+dir.z);
 }
+G.cam={toggleFree:toggleFreeCam,isFree:()=>!!freeCam};   // photo mode (clubs-boards) takes the free camera with it
 const TRAIL_STOPS=[['🏠 Ranch',0,5],['🌊 Loon Lake',20,16],['🐴 Pasture',-70,-10],['🌲 Pines',-30,-58],['🏘️ Cottonwood',47,-50],['🌉 River bridge',0,118],['🌾 Barleyfold',220,-110],['🤠 Coyote Canyon',-220,130],['🏔️ Hollowpeak',-160,-210]];
 let trailRide=null, trailDraft=[], trailOffer=null;
 function startTrail(pts,by){
@@ -12606,7 +12607,8 @@ function startHints(){
 }
 function tick(stepSeconds){
  // The animation loop supplies a timestamp; explicit test steps use a separate flag.
- const dt=manualStepping?stepSeconds:Math.min(0.05,clock.getDelta());
+ let dt=manualStepping?stepSeconds:Math.min(0.05,clock.getDelta());
+ if(G.photoPause)dt=0;                    // photo mode's ⏸ freeze (clubs-boards): the camera still flies, the valley holds still
  if(manualStepping)clock.elapsedTime+=dt;
  const t=clock.elapsedTime;
  frameWatch(t);
