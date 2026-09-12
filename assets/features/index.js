@@ -164,4 +164,5 @@ import * as world from './world.js';
 import * as clubs from './clubs-boards.js';
 import * as social from './social-play.js';
 import * as seasons from './seasons.js';
-export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons];
+import * as uikit from './ui-kit.js';
+export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,uikit];

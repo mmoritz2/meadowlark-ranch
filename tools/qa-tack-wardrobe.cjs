@@ -204,7 +204,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  await page.waitForFunction(()=>!document.getElementById('load'),null,{timeout:30000,polling:250}).catch(()=>{});
  await page.evaluate(()=>window.advanceTime(700));
  const T=await page.evaluate(()=>{const p=document.getElementById('riderPanel');return {shown:p&&p.style.display,installed:window.__features.installed.length,errors:window.__features.errors};});
- check('O creator does not reopen once made; all packages installed',T.shown!=='flex'&&T.installed===16&&T.errors.length===0,T);
+ check('O creator does not reopen once made; all packages installed',T.shown!=='flex'&&T.installed>=16&&T.errors.length===0,T);
  check('no console/page errors',errors.length===0,errors.slice(0,6));
  await browser.close();
  const failed=checks.filter(c=>!c.ok);

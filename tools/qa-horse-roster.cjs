@@ -257,7 +257,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  await page.goto(base+'/ranch3d.html?qa=roster&legacy='+Date.now(),{waitUntil:'load',timeout:120000}); stage('legacy loaded');
  await page.waitForFunction(READY,null,{timeout:150000,polling:250}); stage('legacy horseReady');
  const L=await page.evaluate(()=>{const G=window.__features,s=G.save.fresh(),R=G.horse.roster;return {roster:!!s.roster,traits:s.horses.map(h=>Array.isArray(h.traits)),drakeTraits:s.horses[1].traits.length,drakeStars:R.starsN(s.horses[1]),variant:s.horses[0].variant,mark2:s.horses.map(h=>h.mark2),installed:G.installed.length,errs:G.errors.length};});
- check('legacy save: roster fields, traits rolled (1-2 on a dragon), no variant forced on old horses',L.roster&&L.traits.every(Boolean)&&L.drakeTraits>=1&&L.drakeStars===5&&L.variant===null&&L.installed===16&&L.errs===0,L);
+ check('legacy save: roster fields, traits rolled (1-2 on a dragon), no variant forced on old horses',L.roster&&L.traits.every(Boolean)&&L.drakeTraits>=1&&L.drakeStars===5&&L.variant===null&&L.installed>=16&&L.errs===0,L);
  /* ---- ?inspect-breed on a package row: the alias resolves to an authored body and it rigs ---- */
  const warns=[]; page.on('console',m=>{if(m.type()==='warning'&&/Breed model unavailable/.test(m.text()))warns.push(m.text().slice(0,120));});
  await page.evaluate(()=>{const G=window.__features;G.save.sync(sv=>{G.horse.grantHorse(sv,'tidewalker',{src:'qa'});});});
