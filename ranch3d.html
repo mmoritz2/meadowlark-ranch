@@ -114,9 +114,17 @@ canvas{display:block}
 .evrow{display:flex;flex-wrap:nowrap;align-items:center;gap:var(--sp-2);
  border:1px solid var(--line);border-radius:14px;padding:var(--sp-2) var(--sp-3);background:var(--paper-raised);
  box-shadow:var(--e0);font-size:var(--fs-md);min-height:var(--tap);transition:transform .12s,box-shadow .15s,border-color .15s}
-.evrow>b{flex:0 1 auto;min-width:0;font-weight:800;overflow-wrap:anywhere;line-height:var(--lh-tight)}
-.evrow>span{flex:1 1 auto;min-width:0;color:var(--ink-2);font-size:var(--fs-sm);font-weight:600;overflow-wrap:anywhere;line-height:var(--lh-tight)}
+/* The text cells still shrink, but never below a readable floor: a row that a feature package
+   has stuffed with extra chips used to squeeze a name down to one character per line. min() keeps
+   the floor from becoming a minimum width on a narrow phone row, and break-word splits a word only
+   when it genuinely cannot fit rather than at every character. */
+.evrow>b{flex:0 1 auto;min-width:min(100%,4.5em);font-weight:800;overflow-wrap:break-word;line-height:var(--lh-tight)}
+.evrow>span{flex:1 1 auto;min-width:min(100%,6em);color:var(--ink-2);font-size:var(--fs-sm);font-weight:600;overflow-wrap:break-word;line-height:var(--lh-tight)}
 .evrow>button,.evrow>select,.evrow>.chip,.evrow>.mk-chip,.evrow>.badge{flex:0 0 auto;white-space:nowrap;margin:0}
+/* The stable roster is the one row six feature packages all splice into — breed, bond, mastery,
+   lineage, tack. One line cannot hold that, and nowrap pushed Tack and Rename off the end where
+   they could not be clicked. Here, and only here, the row wraps so every control stays reachable. */
+#stablePanel .evrow{flex-wrap:wrap;row-gap:var(--sp-1)}
 .evrow>button:first-of-type,.evrow>.chip:first-of-type,.evrow>.mk-chip:first-of-type{margin-left:auto}
 .evrow:hover,.mk-row:hover{transform:translateX(2px);box-shadow:var(--e1)}
 .evrow.done,.qrow.done{border-color:#bfe0a4;background:linear-gradient(180deg,#fff,var(--good-bg))}
@@ -228,8 +236,13 @@ button.ico{width:38px;height:38px;padding:0;border-radius:50%;font-size:17px;dis
 #countdown{position:fixed;top:36%;left:50%;transform:translate(-50%,-50%);z-index:8;font-family:var(--display);font-size:110px;font-weight:700;color:var(--ink-inv);text-shadow:0 6px 24px rgba(40,25,5,.55),0 0 2px rgba(0,0,0,.4);display:none;letter-spacing:.02em}
 
 /* ---------- the dock: one height, one baseline, every item labelled ---------- */
-#dock{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:6;
- display:flex;align-items:stretch;gap:2px;padding:5px;border-radius:20px;max-width:calc(100vw - 190px);
+/* Anchored in the band to the RIGHT of the minimap rather than centred on the viewport: now that
+   every item carries a label the bar is wide enough that a viewport-centred dock slid its first
+   item under the minimap. width:max-content + margin auto keeps it centred in that band while it
+   fits, and clamps it to the band (still scrollable) when it does not. */
+#dock{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));
+ left:calc(186px + env(safe-area-inset-left));right:12px;width:max-content;margin:0 auto;z-index:6;
+ display:flex;align-items:stretch;gap:2px;padding:5px;border-radius:20px;max-width:100%;
  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
  scroll-snap-type:x proximity;
  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);
@@ -392,7 +405,7 @@ body.touch #stickZone{display:block}
  #questTrack{top:calc(104px + env(safe-area-inset-top));left:auto;right:12px;transform:none;max-width:calc(100vw - 290px)}
  #courseHud{top:calc(154px + env(safe-area-inset-top));max-width:calc(100vw - 32px);font-size:14px}
  #stamWrap{top:calc(194px + env(safe-area-inset-top))}
- #dock{left:176px;right:12px;transform:none;max-width:none}
+ #dock{left:176px;right:12px;transform:none;width:auto;max-width:none}
  #hint{max-width:calc(100vw - 210px);left:auto;right:12px;transform:none;font-size:12px;text-align:center}
 }
 @media(max-width:720px){
@@ -410,7 +423,7 @@ body.touch #stickZone{display:block}
  #vrBtn{top:calc(110px + env(safe-area-inset-top))!important;font-size:12px;padding:6px 11px}
  #questTrack{top:calc(110px + env(safe-area-inset-top));left:12px;transform:none;max-width:calc(100vw - 154px);font-size:12px}
  /* the dock moves to the top on a phone, clear of the joystick and the touch pad */
- #dock{top:calc(156px + env(safe-area-inset-top));bottom:auto;left:12px;right:12px;transform:none;max-width:none;justify-content:flex-start;padding:4px}
+ #dock{top:calc(156px + env(safe-area-inset-top));bottom:auto;left:12px;right:12px;transform:none;width:auto;max-width:none;justify-content:flex-start;padding:4px}
  #dock button{height:42px;min-height:42px;padding:0 11px;font-size:12.5px}
  #hint{display:none}
  #ctx{bottom:calc(96px + env(safe-area-inset-bottom))}
