@@ -8329,7 +8329,8 @@ arrow.rotation.x=Math.PI;
 arrow.visible=false;
 scene.add(arrow);
 function eventPar(ev){return ev.par||(ev.n?ev.n*9:0)||40;}
-function startCourse(ev){
+function startCourse(ev,di){
+ if(G.run('courseGate',ev,di))return;                       // a package refused entry (stat prerequisites) or noted the difficulty
  cancelCourse();
  if(ev.kind&&COURSE_KINDS[ev.kind]){COURSE_KINDS[ev.kind](ev);return;}   // a package's own course kind (show, gauntlet, pvp …)
  if(ev.dressage){startDressage(ev);return;}
@@ -8438,7 +8439,7 @@ function weeklyFeatured(){
 }
 const WEEK_TIERS=[[4,{k:1,c:200,g:2}],[8,{k:2,g:4}],[12,{g:6,gear:'Rare'}],[16,{g:10,k:2,gear:'Epic'}]];
 function awardRibbons(ev,t,faults,extra){
- const par=eventPar(ev);
+ const par=(extra&&extra.par)||eventPar(ev);
  const stars=t<par?3:t<par*1.4?2:1;
  const RB0={ev,t,faults:faults||0,stars,rib:1+(stars>=2?1:0)+(stars>=3?1:0)+((faults||0)===0?1:0),acc:0,lineOff:0,refusals:0};
  Object.assign(RB0,extra||{});
@@ -8519,8 +8520,8 @@ function finishDressage(){
  const c=course, ev=c.ev; const total=c.figs.reduce((a,f)=>a+(f.score||0),0), pct=total/(10*c.figs.length);
  let first=false; try{const s=freshSave(); first=!!(s&&!(s.trophies&&s.trophies[ev.id]));}catch(e){}
  const par=ev.par||60, tEq=par*(pct>=0.9?0.5:pct>=0.75?0.9:pct>=0.6?1.2:1.6);
- const RB=awardRibbons(ev,tEq,pct>=0.75?0:1);
- const pay=Math.round(ev.reward*Math.max(0.3,pct)*(RB.featured?1.5:1));
+ const RB=awardRibbons(ev,tEq,pct>=0.75?0:1,Object.assign({acc:pct},c.rb||{}));
+ const pay=Math.round(ev.reward*Math.max(0.3,pct)*(RB.featured?1.5:1)*(c.payMul||1));
  G.run('courseFinish',{c,ev,stars:pct>=0.9?3:pct>=0.75?2:1,RB,pay,pct,dressage:true});
  addCoins(pay); addXp3D(Math.round(ev.reward/8)); passAdd(50); weekBump('events',1);
  const dgem=(first&&pct>=0.6?3:0)+(pct>=0.75?2:1);
@@ -8539,8 +8540,8 @@ function finishCourse(){
  const stars=c.t<par?'⭐⭐⭐':c.t<par*1.4?'⭐⭐':'⭐';
  let first=false;
  try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));first=!!(s&&!(s.trophies&&s.trophies[ev.id]));}catch(e){}
- const RB=awardRibbons(ev,c.t,c.faults||0);
- const pay=RB.featured?Math.round(ev.reward*1.5):ev.reward;
+ const RB=awardRibbons(ev,c.t,c.faults||0,c.rb||null);
+ const pay=Math.round((RB.featured?ev.reward*1.5:ev.reward)*(c.payMul||1));
  G.run('courseFinish',{c,ev,stars:stars.length,RB,pay,dressage:false});
  addCoins(pay);
  addXp3D(Math.round(ev.reward/8));
@@ -8810,15 +8811,15 @@ function openEvents(){
       :'<button data-drill="'+k+'" style="font-size:11px;padding:3px 8px">'+STAT_LBL[k]+' '+at+'/'+cap+'</button>';
     }).join('')+'</span></div>';}
  html+=EVENTS3.map((ev,i)=>{
-  const won=tr[ev.id],ok=lvl>=ev.lvl, isF=featIds.has(ev.id), r=rb[ev.id]||0, wr=wk.rib[ev.id]||0;
-  return '<div class="evrow'+(isF?' done':'')+'">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b>'+(isF?' <span class="badge">FEATURED</span>':'')+'<span>'+ev.town+' · '+(ev.dressage?'🎽 dressage · '+DRESSAGE_TESTS[ev.id].length+' figures'+(sw.bestScore&&sw.bestScore[ev.id]?' · best '+Math.round(sw.bestScore[ev.id]*100)+'%':''):ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps')+' · Lv '+ev.lvl+(r?' · '+'🎀'.repeat(r):'')+(isF&&wr<4?' · '+wr+'/4 this week':'')+'</span>'+sect('eventRow',ev,sw,myHorses[rideIdx])+
-   (ok?'<button data-ev="'+i+'">'+(won?'Again':'Enter · '+(isF?Math.round(ev.reward*1.5):ev.reward)+'🪙')+'</button>':'<span style="flex:none">🔒</span>')+'</div>';
- }).join('')+'<div class="evrow"><span>Jump every numbered fence in order — follow the golden arrow! Ribbons: finish · two stars · three stars · a clean round.</span><button id="evClose">Close</button></div>';
+  const won=tr[ev.id],gate=G.run('eventGate',ev,myHorses[rideIdx])||{ok:lvl>=ev.lvl,html:''},ok=gate.ok, isF=featIds.has(ev.id), r=rb[ev.id]||0, wr=wk.rib[ev.id]||0, gold=!!(sw.ribbonGold&&sw.ribbonGold[ev.id]);
+  return '<div class="evrow'+(isF?' done':'')+'">'+(won?'🏆':'▫️')+' <b>'+ev.name+'</b>'+(isF?' <span class="badge">FEATURED</span>':'')+'<span>'+ev.town+' · '+(ev.dressage?'🎽 dressage · '+DRESSAGE_TESTS[ev.id].length+' figures'+(sw.bestScore&&sw.bestScore[ev.id]?' · best '+Math.round(sw.bestScore[ev.id]*100)+'%':''):ev.xc?'🌲 cross country · '+RACE_ROUTES[ev.route].length+' gates · '+RACE_ROUTES[ev.route].length+' fences':ev.race?'🏁 race · '+RACE_ROUTES[ev.route].length+' gates':ev.n+' jumps'+(ev.laps>1?' × '+ev.laps+' laps':''))+' · Lv '+ev.lvl+(r?' · '+'🎀'.repeat(Math.min(3,r-(gold?1:0)))+(gold?'🥇':''):'')+(isF&&wr<4?' · '+wr+'/4 this week':'')+'</span>'+sect('eventRow',ev,sw,myHorses[rideIdx])+
+   (ok?(G.run('eventEnter',ev,i,{won,isF,sw})||'<button data-ev="'+i+'">'+(won?'Again':'Enter · '+(isF?Math.round(ev.reward*1.5):ev.reward)+'🪙')+'</button>'):'<span style="flex:none">🔒'+(gate.html||'')+'</span>')+'</div>';
+ }).join('')+'<div class="evrow"><span>Jump every numbered fence in order — follow the golden arrow! Three green ribbons: finish · two stars · three stars. The gold: 95% accuracy with nothing down.</span><button id="evClose">Close</button></div>';
  p.innerHTML=html;
  p.style.display='flex';
  p.querySelectorAll('button[data-round]').forEach(b=>{b.onclick=()=>{p.style.display='none';startRoundup();};});
  p.querySelectorAll('button[data-drill]').forEach(b=>{b.onclick=()=>{p.style.display='none';startDrill(b.dataset.drill);};});
- p.querySelectorAll('button[data-ev]').forEach(b=>{b.onclick=()=>startCourse(EVENTS3[+b.dataset.ev]);});
+ p.querySelectorAll('button[data-ev]').forEach(b=>{b.onclick=()=>{const [ei,di]=b.dataset.ev.split(':');startCourse(EVENTS3[+ei],di==null?undefined:+di);};});
  p.querySelectorAll('button[data-wk]').forEach(b=>{b.onclick=()=>claimWeekly(+b.dataset.wk);});
  $('evClose').onclick=()=>{p.style.display='none';};
  bindFx(p);
@@ -13192,6 +13193,7 @@ function tick(stepSeconds){
   }else{
    course.t+=dt;
    if(course.dressage)tickDressage(dt);
+   if(!G.run('courseTick',course,dt,t)){   // a package that returns true owns course progress this frame
    const j=course.jumps[course.idx];
    if(course.race&&course.items){
     for(const it of course.items){ if(!it.m.visible)continue; it.m.rotation.y+=dt*3; if(Math.hypot(player.pos.x-it.x,player.pos.z-it.z)<2.4){ it.m.visible=false; RACE_ITEMS[it.type].fx(); sCoin(); toast(RACE_ITEMS[it.type].label); } }
@@ -13234,6 +13236,7 @@ function tick(stepSeconds){
      arrow.position.set(nj.x,groundH(nj.x,nj.z)+(course.race?3.4:2.6)+Math.sin(t*4)*0.18,nj.z);
      $('courseHudTxt').textContent='🏆 '+course.ev.name+(course.race?' · Gate ':' · Jump ')+(course.idx+1)+'/'+course.jumps.length+' · ⏱ '+course.t.toFixed(1)+'s';
     }
+   }
    }
   }
  }
@@ -13401,12 +13404,12 @@ function installFeatures(){
   horse:{myHorses,rideIdx:()=>rideIdx,ridden:()=>myHorses[rideIdx],RIG:()=>RIG,TACK:()=>TACK,player,herd:()=>herd,remotes,
    grantHorse,makeFoal,breedSrc,breedAvailable,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,ranchArchitecture,arrivalArt,geology,box,tube,blob,
+  world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,arrivalArt,geology,box,tube,blob,
    mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,
    npcList,visitors,spawnCritter,CRITTER_DEFS,critters,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar},
   net:{SOCIAL,net,remotes,lbData,myName,isFriend,publish:netPublish,subscribe:netSubscribe,sendChat:netSendChat,onMessage:netOnMessage,publishMyBoards,openProfile,chatMsg,showBubble,netConnect,topic:netTopic,subs:NET_SUBS},
   time:{seasonNow,weekKey,isoWeekKey,dateKey,marketDay,calMonth,dayT:()=>dayT},
-  course:{get:()=>course,startCourse,cancelCourse,finishCourse,finishDressage,awardRibbons,judgeJump,weeklyFeatured,startDressage,startDrill,startRoundup,ARENA_LETTERS,DRESSAGE_TESTS,eventPar,kinds:COURSE_KINDS},
+  course:{get:()=>course,arrow,startCourse,cancelCourse,finishCourse,finishDressage,awardRibbons,judgeJump,weeklyFeatured,startDressage,startDrill,startRoundup,ARENA_LETTERS,DRESSAGE_TESTS,eventPar,kinds:COURSE_KINDS},
   ui:{panel:uiPanel,open:uiOpen,toggle:uiToggle,rerender:uiRender,panels:PANEL_IDS,defs:PANEL_DEFS,
    shopTab:d=>addTab(EXTRA_SHOP_TABS,d),questTab:d=>addTab(EXTRA_QUEST_TABS,d),lbTab:d=>addTab(EXTRA_LB_TABS,d),buildTab:d=>addTab(EXTRA_BUILD_TABS,d),
    careSection:f=>uiSection('care',f),careHeader:f=>uiSection('careHeader',f),stableRow:f=>uiSection('stableRow',f),stableHeader:f=>uiSection('stableHeader',f),
