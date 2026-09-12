@@ -864,26 +864,63 @@ const RARITIES=['Common','Uncommon','Rare','Epic','Legendary'];
 const RAR_COL={Common:'#b8a888',Uncommon:'#5cb85c',Rare:'#3b8bd6',Epic:'#9b59b6',Legendary:'#f0b429',Mythic:'#9d6bff',Dragon:'#e2703a',Draft:'#e8b84b'};
 const RAR_W={Common:52,Uncommon:28,Rare:13,Epic:5.5,Legendary:1.5};
 const RAR_SELL={Common:40,Uncommon:90,Rare:200,Epic:450,Legendary:1000};
-const GEAR_ADJ={Common:['Plain','Sturdy','Everyday','Oiled'],Uncommon:['Fine','Tooled','Meadow','Riverside'],Rare:['Silver-stitched','Cottonwood','Twilight','Basin'],Epic:['Starlit','Storm','Canyon','Hollowpeak'],Legendary:['Kestrel','Aurora','Meadowlark','Champion']};
+/* A rarity always means the same shape of bonus: Common +1 to one stat, Uncommon +2, Rare +3
+   and +1, Epic +4 and +4, Legendary +5, +5 and +2 on three stats. The first stat is the
+   piece's primary and names its adjective; the second is its "of". */
+const RAR_PATTERN={Common:[1],Uncommon:[2],Rare:[3,1],Epic:[4,4],Legendary:[5,5,2]};
+const RAR_PARTS={Common:1,Uncommon:3,Rare:8,Epic:20,Legendary:50};      // what stripping a spare is worth
+const STAT_ADJ={agility:'Agile',stamina:'Enduring',jump:'Leaping',accel:'Quick',speed:'Swift'};
+const STAT_OF={agility:'Agility',stamina:'Stamina',jump:'Jump',accel:'Acceleration',speed:'Speed'};
+const TACK_STYLES=['Prairie','Trail','Meadow','Pasture','Orchard','Willow','Juniper','Sage','Village','Homestead'];   // set-less styles for Common and Uncommon
+const GEAR_ADJ={Common:['Plain','Sturdy','Everyday','Oiled'],Uncommon:['Fine','Tooled','Meadow','Riverside'],Rare:['Silver-stitched','Cottonwood','Twilight','Basin'],Epic:['Starlit','Storm','Canyon','Hollowpeak'],Legendary:['Kestrel','Aurora','Meadowlark','Champion']};   // legacy: how old items were named, kept so gearSet can still read them
 const GEAR_NOUN={saddle:'Saddle',pad:'Pad',bridle:'Bridle',shoes:'Shoes'};
+const TACK_MAX_LVL=8;
+const TOOLKITS={kit1:{label:'Tack Toolkit I',emoji:'🧰',tier:1,price:180,parts:0},kit2:{label:'Tack Toolkit II',emoji:'🧰',tier:2,price:420,parts:10},kit3:{label:'Tack Toolkit III',emoji:'🧰',tier:3,price:900,parts:30}};   // Bo sells them for coins plus stripped parts
+function kitForLvl(lvl){return lvl<=3?'kit1':lvl<=6?'kit2':'kit3';}          // the kit an upgrade FROM this level needs
 function rollRarity(){let t=0;for(const r of RARITIES)t+=RAR_W[r];let x=Math.random()*t;for(const r of RARITIES){x-=RAR_W[r];if(x<=0)return r;}return 'Common';}
 /* ---- tack sets ------------------------------------------------------------------------
-   Star Equestrian's tack has legendary SETS: matching pieces that pay a bonus on top of
-   their own stats once you have two, and again at all four. The adjectives on Epic and
-   Legendary tack were already themed — Starlit, Storm, Canyon, Hollowpeak, Kestrel,
-   Aurora, Meadowlark, Champion — so those names become the sets, and every piece you have
-   already earned falls into one without anything being regenerated. */
-const TACK_SETS={
- Starlit:   {two:{agility:2},           four:{agility:3,jump:2},   blurb:'quick over a course'},
- Storm:     {two:{accel:2},             four:{accel:3,speed:2},    blurb:'off the mark like thunder'},
- Canyon:    {two:{stamina:2},           four:{stamina:4},          blurb:'goes all day'},
- Hollowpeak:{two:{jump:2},              four:{jump:4},             blurb:'built for height'},
- Kestrel:   {two:{speed:3},             four:{speed:4,accel:3},    blurb:'the fastest tack in the basin'},
- Aurora:    {two:{jump:2,agility:2},    four:{jump:3,agility:3,stamina:2}, blurb:'light as a rider can wish'},
- Meadowlark:{two:{stamina:2,bond:0},    four:{stamina:3,speed:3},  blurb:'home ground advantage'},
- Champion:  {two:{speed:2,jump:2},      four:{speed:3,jump:3,accel:3},     blurb:'what a winner wears'},
-};
-/* The set is read off the name, so nothing had to be stored on old items. */
+   Rare and better tack belongs to a named SET: a four-piece family with one style word in
+   every name, one fixed stat pattern on every piece, its own leather tint on the saddle,
+   and a bonus on top once you wear two, and again at all four. Eleven Legendary sets carry
+   three stats, ten Epic sets two, five Rare sets two. The original eight themed names
+   (Starlit, Storm, Canyon, Hollowpeak, Kestrel, Aurora, Meadowlark, Champion) keep their
+   rarity so every piece earned before this still falls into its set. */
+const SET_DEFS=[ // [key, rarity, primary, secondary, tertiary, saddle tint, blurb]
+ ['Kestrel','Legendary','speed','accel','agility','#f0b429','the fastest tack in the basin'],
+ ['Aurora','Legendary','jump','agility','stamina','#b7e8ff','light as a rider can wish'],
+ ['Meadowlark','Legendary','stamina','speed','jump','#ffe27a','home ground advantage'],
+ ['Champion','Legendary','speed','jump','accel','#ffd166','what a winner wears'],
+ ['Loon','Legendary','agility','stamina','speed','#4f9ad6','turns on a ripple'],
+ ['Coyote','Legendary','accel','agility','jump','#d98b4a','gone before the dust settles'],
+ ['Falls','Legendary','accel','stamina','speed','#8fd3e8','a river that never tires'],
+ ['Sunrise','Legendary','jump','speed','stamina','#ff9a5c','first over the ridge'],
+ ['Comet','Legendary','accel','speed','agility','#c9b6ff','a streak across the sky'],
+ ['Wildfire','Legendary','speed','stamina','agility','#ff6b3d','burns through any trail'],
+ ['Moonlit','Legendary','agility','jump','accel','#dfe3ea','silent and sure at night'],
+ ['Starlit','Epic','agility','jump',null,'#5a4a9a','quick over a course'],
+ ['Storm','Epic','accel','speed',null,'#4a5a70','off the mark like thunder'],
+ ['Canyon','Epic','stamina','agility',null,'#b8623a','goes all day'],
+ ['Hollowpeak','Epic','jump','stamina',null,'#8aa0b8','built for height'],
+ ['Ember','Epic','speed','accel',null,'#e07a3c','warm off the line'],
+ ['Thistle','Epic','agility','stamina',null,'#9a6bb5','prickly-quick through the turns'],
+ ['Harvest','Epic','stamina','jump',null,'#d9a441','carries the whole cart'],
+ ['Bluebell','Epic','jump','accel',null,'#5c7fd6','springs from a standstill'],
+ ['Ranger','Epic','speed','stamina',null,'#6b4a2e','the Western long-rider set'],
+ ['Lantern','Epic','accel','jump',null,'#f2c14e','lights the way over a fence'],
+ ['Cottonwood','Rare','speed','agility',null,'#c9d6a3','village-made'],
+ ['Twilight','Rare','stamina','speed',null,'#6a5a8a','rides on past dusk'],
+ ['Basin','Rare','agility','accel',null,'#a9cfe8','made for home ground'],
+ ['Silver','Rare','jump','stamina',null,'#c8c8d0','stitched with silver thread'],
+ ['Prairie','Rare','accel','stamina',null,'#d9c49a','the open-range set'],
+];
+const SET_TIER_BONUS={Rare:{two:[1],four:[2,1]},Epic:{two:[2],four:[3,2]},Legendary:{two:[3],four:[4,3,1]}};
+const TACK_SETS={}, SET_KEYS={Rare:[],Epic:[],Legendary:[]};
+for(const [key,rarity,p,s,t,tint,blurb] of SET_DEFS){
+ const stats=[p,s,t].filter(Boolean), tb=SET_TIER_BONUS[rarity], mk=arr=>{const o={};arr.forEach((v,i)=>{if(stats[i])o[stats[i]]=v;});return o;};
+ TACK_SETS[key]={rarity,stats,primary:p,secondary:s,tertiary:t,style:key,tint,two:mk(tb.two),four:mk(tb.four),blurb,western:key==='Ranger'};
+ SET_KEYS[rarity].push(key);
+}
+/* The set is stored on new items; old ones are read off the first word of the name. */
 function gearSet(item){
  if(!item)return null;
  if(item.set)return TACK_SETS[item.set]?item.set:null;
@@ -909,17 +946,28 @@ function setBonus(h){
  out._counts=count;
  return out;
 }
-function genGear(rarity,slot){
- rarity=rarity||rollRarity(); slot=slot||GEAR_SLOTS[Math.floor(Math.random()*GEAR_SLOTS.length)];
- const ri=RARITIES.indexOf(rarity);
- const nStats=ri<=0?1:ri===1?(Math.random()<0.5?1:2):ri===2?2:ri===3?(Math.random()<0.5?2:3):3;
- const pool=STAT_KEYS.slice().sort(()=>Math.random()-0.5).slice(0,nStats);
- const bonus={}; for(const k of pool)bonus[k]=ri<=1?1:ri===2?(Math.random()<0.5?1:2):ri===3?2:(Math.random()<0.5?2:3);
- const adj=GEAR_ADJ[rarity][Math.floor(Math.random()*GEAR_ADJ[rarity].length)];
- return {id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),slot,rarity,name:adj+' '+GEAR_NOUN[slot],bonus,lvl:1};
+/* [Primary adjective] [Style] [Slot] of [Secondary]: the name tells you the bonus. Rare and
+   better roll a set (or take the one asked for); saddles and bridles are English or Western. */
+function genGear(rarity,slot,opts){
+ opts=opts||{};
+ rarity=RARITIES.includes(rarity)?rarity:rollRarity(); slot=GEAR_SLOTS.includes(slot)?slot:GEAR_SLOTS[Math.floor(Math.random()*GEAR_SLOTS.length)];
+ const pat=RAR_PATTERN[rarity];
+ let set=opts.set&&TACK_SETS[opts.set]?opts.set:null;
+ if(!set&&SET_KEYS[rarity]){const pool=SET_KEYS[rarity];set=pool[Math.floor(Math.random()*pool.length)];}
+ const stats=set?TACK_SETS[set].stats.slice(0,pat.length):STAT_KEYS.slice().sort(()=>Math.random()-0.5).slice(0,pat.length);
+ const bonus={}; stats.forEach((k,i)=>{bonus[k]=pat[i];});
+ const styleWord=set||TACK_STYLES[Math.floor(Math.random()*TACK_STYLES.length)];
+ const style=(slot==='saddle'||slot==='bridle')?(opts.style||((set&&TACK_SETS[set].western)||Math.random()<0.35?'western':'english')):null;
+ const name=STAT_ADJ[stats[0]]+' '+styleWord+' '+GEAR_NOUN[slot]+(stats[1]?' of '+STAT_OF[stats[1]]:'');
+ return {id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),slot,rarity,name,bonus,lvl:1,set,primary:stats[0],secondary:stats[1]||null,style,merged:0};
 }
-function gearBonus(item){const m=1+0.25*((item.lvl||1)-1);const o={};for(const k in item.bonus)o[k]=Math.round(item.bonus[k]*m);return o;}
-function gearUpgradeCost(item){return Math.round(120*(item.lvl||1)*(1+RARITIES.indexOf(item.rarity)*0.6));}
+function gearPrimary(item){if(item.primary&&item.bonus&&item.bonus[item.primary]!=null)return item.primary;let best=null;for(const k in (item.bonus||{}))if(best===null||item.bonus[k]>item.bonus[best])best=k;return best;}
+/* Levels add to the primary every second level and to the secondary every fourth, so a
+   Legendary at Lv 8 wears +8/+6/+2 rather than doubling everything. */
+function gearBonus(item){const lvl=item.lvl||1,p=gearPrimary(item),s=item.secondary||null;const o={};for(const k in item.bonus)o[k]=(item.bonus[k]||0)+(k===p?Math.floor((lvl-1)/2):0)+(k===s?Math.floor((lvl-1)/4):0);return o;}
+function gearUpgradeCost(item){const lvl=item.lvl||1;return {c:Math.round(120*lvl*(1+RARITIES.indexOf(item.rarity)*0.6)),kit:kitForLvl(lvl)};}
+function gearMergeCost(item){return Math.round(250*(item.lvl||1)*(1+RARITIES.indexOf(item.rarity)*0.8));}   // the gold sink: merging a spare into a piece raises its primary bonus
+function saddleStyleOf(h){if(!h)return 'english';const it=h.gear&&h.gear.saddle&&tackInv.find(t=>t.id===h.gear.saddle);return (it&&it.style)||h.saddleStyle||'english';}   // the worn saddle decides; the horse's own pick is the fallback
 let tackInv=[];                                                                 // live mirror of the save's tack inventory
 function effStats(h){                                                           // trained stats plus what the horse is wearing
  const o={}; if(!h)return o; ensureStats(h);
@@ -1576,7 +1624,8 @@ const VR_OUTFIT=[
  ['shirt','👕 Shirt',['#c98c5a','#b34a4a','#4a7ab3','#5a9a5a','#8a5ab3','#e8d9b8']],
  ['pants','👖 Pants',['#4a4338','#2e3a52','#6b4a2e','#3a3a3a']],
  ['helmet','⛑️ Helmet',['#2e2e38','#7d3c98','#b3622f','#e8e8e8','#2e86c1']],
- ['skin','🖐️ Skin',['#f0c8a8','#e3a37d','#c98a62','#a06a48']]
+ ['skin','🖐️ Skin',['#f0c8a8','#e3a37d','#c98a62','#a06a48','#6b4530']],
+ ['hair','💇 Hair',['#1e140e','#4a2e1c','#8a4a25','#d9a85c','#b3402a','#c8c8d0','#e8a0c8','#6a8fd0']]
 ];
 let vrMateA=null,vrMateB=null;
 
@@ -5403,6 +5452,7 @@ function breedSeat(rig=RIG){
 }
 function riderSeat(){const seat=breedSeat(),scale=player.mesh?.scale.x||1;const o={y:seat.y+((RIG.profile?.hero||RIG.profile?.artistBreed)?.14:.18)/scale,z:seat.z+.02/scale};
  if(myHorses[rideIdx]&&myHorses[rideIdx].bareback){o.y-=.10/scale;o.z+=.03/scale;}   // mastery-style: bareback, she sits on the back, not on a saddle that is not there
+ if(TACK.saddle&&TACK.saddle.userData.style==='western'){o.y-=WESTERN_SEAT.dy/scale;o.z+=WESTERN_SEAT.dz/scale;}   // tack-wardrobe: a Western seat sits deeper and a touch further back
  return o;}
 async function requestPlayerBreed(breed){
  const ticket=++breedRequest;RIG.requestedBreed=breed;RIG.loadingBreed=true;
@@ -5447,6 +5497,7 @@ function _fit(obj,scalar){obj.scale.setScalar(1);obj.position.set(0,0,0);obj.rot
    is fitted here so the group's origin is the seat, which is what everything else
    (placement, bareback, the rider's seat) already assumes. Until a file is in, the
    procedural saddle stands in; when it arrives the mount re-dresses itself. */
+const WESTERN_SEAT={dy:.03,dz:-.04};   // how far the rider's hip drops and slides back in a Western saddle
 const SADDLE_GLB={files:{western:'assets/models/saddle2_textured.glb',english:'assets/models/saddle_en_textured.glb'},fit:{western:{s:0.46,sy:0.36,ry:Math.PI/2,y:-0.18,z:0.0},english:{s:0.46,sy:0.40,ry:Math.PI/2,y:-0.20,z:0.0}}};
 for(const st in SADDLE_GLB.files){
  new GLTFLoader().load(SADDLE_GLB.files[st],g=>{
@@ -5495,6 +5546,7 @@ function buildHeroSaddle(rig,style){
   const tread=put(new THREE.BoxGeometry(.018,.012,.100),metal);tread.position.set(s*.270,-.512,.200);
  }
  saddleStirrups(g,.270,-.512,.200);
+ if((style||'english')==='western'){const horn=put(new THREE.CylinderGeometry(.028,.042,.13,10),leather);horn.position.set(0,.085,.215);const cap=put(new THREE.SphereGeometry(.05,10,8),edge);cap.scale.set(1,.6,1);cap.position.set(0,.155,.215);horn.name=cap.name='horn';}   // tack-wardrobe: a Western hero saddle carries a horn
  const q=section(.06),gp=[];for(let k=0;k<=48;k++){const t=.6+(Math.PI*2-1.2)*k/48;gp.push([Math.sin(t)*(q.rx+.008),q.cy+Math.cos(t)*(q.ry+.008),.06]);}
  const path=new THREE.CatmullRomCurve3(gp.map(p=>new THREE.Vector3(...p))),sh=new THREE.Shape();sh.moveTo(-.024,-.005);sh.lineTo(.024,-.005);sh.lineTo(.024,.005);sh.lineTo(-.024,.005);sh.closePath();put(new THREE.ExtrudeGeometry(sh,{steps:64,bevelEnabled:false,extrudePath:path}),leather);
  g.userData.mats={leather,pad,dark:edge};return g;
@@ -5504,10 +5556,10 @@ function buildSaddle(style,rig=RIG){
  const W=style==='western';
  if(SADDLE_GLB[W?'western':'english']){
   const src=SADDLE_GLB[W?'western':'english'], f=SADDLE_GLB.fit[W?'western':'english'];
-  const g=new THREE.Group(); const m=new THREE.Mesh(src.geo,src.mat);
+  const g=new THREE.Group(); const m=new THREE.Mesh(src.geo,src.mat.clone());   // own material: a set tint or paint recolours this saddle only
   m.scale.set(f.s,f.sy||f.s,f.s); m.rotation.y=f.ry; m.position.set(0,f.y,f.z);   // a little shorter than wide: the fenders would otherwise hang below the boots
   m.castShadow=true; m.receiveShadow=true; m.frustumCulled=false; g.add(m);
-  g.userData.proc=true; g.userData.glb=true; g.userData.style=W?'western':'english';
+  g.userData.proc=true; g.userData.glb=true; g.userData.style=W?'western':'english'; g.userData.mats={leather:m.material,pad:null};
   return saddleStirrups(g,0.25,-0.42,0.28);
  }
  const g=new THREE.Group(); g.userData.style=W?'western':'english';
@@ -5528,7 +5580,7 @@ function buildSaddle(style,rig=RIG){
  if(!W){add(SPH,dark,[0.17,-0.09,0.17],[0.03,0.11,0.06]);              // small knee rolls
  add(SPH,dark,[-0.17,-0.09,0.17],[0.03,0.11,0.06]);}
  if(W){ add(BOX,leather,[0,-0.07,-0.02],[0.66,0.03,0.80]);            // Western: a broad skirt under the seat
-  add(new THREE.CylinderGeometry(0.03,0.045,0.15,10),dark,[0,0.13,0.30]); add(SPH,dark,[0,0.215,0.30],[0.10,0.06,0.10]);   // the horn
+  add(new THREE.CylinderGeometry(0.03,0.045,0.15,10),dark,[0,0.13,0.30]).name='horn'; add(SPH,dark,[0,0.215,0.30],[0.10,0.06,0.10]).name='horn';   // the horn
   add(SPH,leather,[0,0.05,-0.30],[0.46,0.12,0.14]); }               // a lower, wider cantle
  [-1,1].forEach(s=>{
   add(BOX,leather,[s*0.24,-0.22,0.26],[0.03,0.30,W?0.17:0.05]);   // stirrup leathers, or Western fenders — short enough that the irons meet the rider's boots
@@ -5562,7 +5614,7 @@ function buildBreedBridle(rig){
  const g=new THREE.Group(),leather=new THREE.MeshStandardMaterial({color:0x38271c,roughness:.7});
  const iron=new THREE.MeshStandardMaterial({color:0xb8bcc2,metalness:.75,roughness:.3});
  const gold=new THREE.MeshStandardMaterial({color:0xd8b24a,metalness:.7,roughness:.35});
- const addCurve=(pts,r,mat,closed=false)=>{const curve=new THREE.CatmullRomCurve3(pts.map(v=>v.clone().sub(head)),closed);let geo;if(rig.profile.hero&&mat===leather){const sh=new THREE.Shape();sh.moveTo(-r,-.002);sh.lineTo(r,-.002);sh.lineTo(r,.002);sh.lineTo(-r,.002);sh.closePath();geo=new THREE.ExtrudeGeometry(sh,{steps:closed?64:32,bevelEnabled:false,extrudePath:curve});}else geo=new THREE.TubeGeometry(curve,closed?36:12,r,5,closed);const mesh=new THREE.Mesh(geo,mat);mesh.castShadow=true;g.add(mesh);};
+ const addCurve=(pts,r,mat,closed=false)=>{const curve=new THREE.CatmullRomCurve3(pts.map(v=>v.clone().sub(head)),closed);let geo;if(rig.profile.hero&&mat===leather){const sh=new THREE.Shape();sh.moveTo(-r,-.002);sh.lineTo(r,-.002);sh.lineTo(r,.002);sh.lineTo(-r,.002);sh.closePath();geo=new THREE.ExtrudeGeometry(sh,{steps:closed?64:32,bevelEnabled:false,extrudePath:curve});}else geo=new THREE.TubeGeometry(curve,closed?36:12,r,5,closed);const mesh=new THREE.Mesh(geo,mat);mesh.castShadow=true;g.add(mesh);return mesh;};
  const bitPoints=[];
  if(rig.profile.hero){
   const src=rig.skin.geometry.attributes.position,rawPoll=new THREE.Vector3(...A.poll[0]),rawMuzzle=new THREE.Vector3(...A.muzzle[0]),axis=rawPoll.clone().sub(rawMuzzle).normalize();
@@ -5572,14 +5624,14 @@ function buildBreedBridle(rig){
    const uc=pts.length?(u0+u1)/2:0,vc=pts.length?(v0+v1)/2:-.05;center.addScaledVector(side,uc).addScaledVector(dorsal,vc);
    const ring=[];for(let k=0;k<48;k++){const t=k/48*Math.PI*2,dx=Math.cos(t),dy=Math.sin(t),radii=[];for(const p of pts){const x=p[0]-uc,y=p[1]-vc,r=Math.hypot(x,y);if((x*dx+y*dy)/Math.max(.0001,r)>.96)radii.push(r);}radii.sort((a,b)=>a-b);const radius=(radii.length?radii[Math.floor((radii.length-1)*.72)]:Math.hypot((u1-u0)*.5*dx,(v1-v0)*.5*dy))+.006;const p=center.clone().addScaledVector(side,dx*radius).addScaledVector(dorsal,dy*radius);ring.push(BREED_MODELS.mountPoint(rig,p.toArray()));}return {ring,center};};
   const nose=section(.33),crown=section(.88),brow=section(.71),mouth=section(.07);
-  addCurve(nose.ring,.007,leather,true);addCurve(crown.ring.slice(0,25),.006,leather);addCurve(brow.ring.slice(0,25),.006,leather);
+  addCurve(nose.ring,.007,leather,true).name='noseband';addCurve(crown.ring.slice(0,25),.006,leather);addCurve(brow.ring.slice(0,25),.006,leather);
   const lateral=(x,y,sg)=>{const near=[];for(let i=0;i<src.count;i++){const px=src.getX(i),py=src.getY(i);if(px<.64||py>.745)continue;const d=(px-x)*(px-x)+(py-y)*(py-y);if(d<.003)near.push([d,src.getZ(i)]);}near.sort((a,b)=>a[0]-b[0]);const zs=near.slice(0,26).map(p=>p[1]).sort((a,b)=>a-b);return (zs[Math.floor((zs.length-1)*(sg>0?.95:.05))]||0)+sg*.008;};
   for(const [index,sg]of [[0,1],[24,-1]]){const xy=sg>0?[[.710,.705],[.746,.605],[.838,.500],[.932,.373]]:[[.747,.712],[.770,.625],[.852,.500],[.945,.373]],guide=new THREE.CatmullRomCurve3(xy.map(p=>new THREE.Vector3(p[0],p[1],0))),pts=[];for(let k=0;k<=30;k++){const p=guide.getPoint(k/30);p.z=lateral(p.x,p.y,sg);pts.push(BREED_MODELS.mountPoint(rig,p.toArray()));}const bit=pts[pts.length-1];bitPoints.push(bit);addCurve(pts,.0055,leather);const ring=new THREE.Mesh(new THREE.TorusGeometry(.020,.0038,7,22),iron);ring.position.copy(bit).sub(head);ring.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),right);g.add(ring);}
 
  }else{
  const nose=muzzle.clone().lerp(poll,.19),crown=poll.clone().lerp(muzzle,.15);
  const ring=(center,w,d)=>Array.from({length:32},(_,i)=>center.clone().addScaledVector(right,Math.cos(i/32*Math.PI*2)*w).addScaledVector(front,Math.sin(i/32*Math.PI*2)*d));
- addCurve(ring(nose,noseWidth*.65,.07*rig.fitScale),.009,leather,true);
+ addCurve(ring(nose,noseWidth*.65,.07*rig.fitScale),.009,leather,true).name='noseband';
  addCurve(ring(crown,width*.57,.09*rig.fitScale),.009,leather,true);
  for(const sign of[-1,1]){
   const bit=nose.clone().addScaledVector(right,sign*noseWidth*.7).addScaledVector(face,-.055);
@@ -5610,7 +5662,7 @@ function buildBridle(dragon,rig=RIG){
  const put=(m,x,y,z)=>{m.position.set(x-H0.x,y-H0.y,z-H0.z);m.castShadow=true;g.add(m);return m;};
  const ring=(R,tube,arc)=>new THREE.TorusGeometry(R,tube,6,18,arc||Math.PI*2);
  // noseband: a ring square to the steep face line (its normal is the muzzle->poll direction)
- const nose=put(new THREE.Mesh(ring(0.10,0.013),strap),-0.145,1.425,0.965); nose.rotation.x=0.69; nose.scale.set(0.82,1,1);
+ const nose=put(new THREE.Mesh(ring(0.10,0.013),strap),-0.145,1.425,0.965); nose.rotation.x=0.69; nose.scale.set(0.82,1,1); nose.name='noseband';
  // eyes: glossy dark spheres just proud of the socket, so the face catches the light
  const eyeMat=new THREE.MeshPhysicalMaterial({color:0x1a1410,roughness:0.08,metalness:0,clearcoat:1,clearcoatRoughness:0.05,envMapIntensity:1.2});
  if(!dragon&&!rig.profile?.anchors)for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.031,14,12),eyeMat),-0.115+sg*0.118,1.62,0.845); e.castShadow=false; }
@@ -5662,7 +5714,7 @@ function buildBridle(dragon,rig=RIG){
 function attachTack(){   // idempotent: places whatever has loaded so far onto the current mount
  if(!USE_GEN_HORSE||!USE_GEN_TACK)return;
  if(!player.mesh||!TACK.saddle)return;
- {const want=(myHorses[rideIdx]&&myHorses[rideIdx].saddleStyle)||'english'; if(TACK.saddle.userData.style!==want||!!TACK.saddle.userData.hero!==!!(RIG.profile?.hero||RIG.profile?.artistBreed)||(RIG.profile?.artistBreed&&TACK.saddle.userData.modelKey!==(RIG.key||RIG.modelKey))||(!RIG.profile?.hero&&!RIG.profile?.artistBreed&&!TACK.saddle.userData.glb&&SADDLE_GLB[want])){ if(TACK.saddle.parent)TACK.saddle.parent.remove(TACK.saddle); TACK.saddle=buildSaddle(want); }}   // the saddle this horse wears, generated when its file is in
+ {const want=saddleStyleOf(myHorses[rideIdx]); if(TACK.saddle.userData.style!==want||!!TACK.saddle.userData.hero!==!!(RIG.profile?.hero||RIG.profile?.artistBreed)||(RIG.profile?.artistBreed&&TACK.saddle.userData.modelKey!==(RIG.key||RIG.modelKey))||(!RIG.profile?.hero&&!RIG.profile?.artistBreed&&!TACK.saddle.userData.glb&&SADDLE_GLB[want])){ if(TACK.saddle.parent)TACK.saddle.parent.remove(TACK.saddle); TACK.saddle=buildSaddle(want); }}   // the saddle this horse wears, generated when its file is in
  if(player.rider&&player.rider.g)player.rider.g.visible=false;   // hide procedural rider
  if(TACK.saddle){
   if(TACK.saddle.userData&&TACK.saddle.userData.proc){TACK.saddle.position.set(0,SADDLE_Y,SADDLE_Z);}  // procedural: pre-sized & oriented
@@ -5674,7 +5726,7 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
  {const hh=myHorses[rideIdx], want=hh&&hh.dragon?(DRAGON_TINT[hh.coat]||DRAGON_TINT._):null;
   if(TACK.bridle&&(!!TACK.bridle.userData.dragon!==!!want||TACK.bridle.userData.modelKey!==(RIG.key||RIG.modelKey))){ if(TACK.bridle.parent)TACK.bridle.parent.remove(TACK.bridle); TACK.bridle=null; }
   if(!TACK.bridle)TACK.bridle=buildBridle(want);}
- TACK.bridle.visible=true; TACK.bridle.traverse(o=>{if(o.isMesh)o.visible=true;});
+ TACK.bridle.visible=true; TACK.bridle.traverse(o=>{if(o.isMesh)o.visible=true;}); TACK.bridle.userData.western=undefined; dressBridle();   // every strap shows, then the headstall style hides the noseband
  if(TACK.bridle.parent!==player.mesh)player.mesh.add(TACK.bridle);
  if(player.rider&&player.rider.g){                       // articulated procedural rider sits the saddle
   player.rider._setHero?.(!!(RIG.profile?.hero||RIG.profile?.artistBreed));
@@ -5771,7 +5823,7 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
   const airborne=((RIG.heroJumpAge!==null&&RIG.heroJumpAge!==undefined)||(player.y>0.25))&&!player.flying;
   R._air =(R._air ||0)+((airborne?1:0)-(R._air||0))*k*1.7;
   /* posting is a trot thing — she sits the walk, and sits deep at the canter */
-  R._post=(R._post||0)+(((moving&&sp>2.1&&sp<6.6)?1:0)-(R._post||0))*k*0.6;
+  R._post=(R._post||0)+(((moving&&sp>2.1&&sp<6.6&&TACK.saddle?.userData?.style!=='western')?1:0)-(R._post||0))*k*0.6;   // Western riders sit the jog
   const beat=Math.max(0,Math.sin(ph));
   const breath=moving?Math.sin(ph)*0.018:Math.sin((tm||0)*1.4)*0.030;
   const em=RIG.emote?EMOTES[RIG.emote.type].lean*emEnv(RIG.emote):0;
@@ -7490,7 +7542,8 @@ function riderMaterial(base,fit){
  const u={
   uShirt:{value:new THREE.Color(fit.shirt||RIDER_DEF_SHIRT)},uPants:{value:new THREE.Color(fit.pants||RIDER_DEF_PANTS)},
   uShirtW:{value:fit.shirt&&!same(fit.shirt,RIDER_DEF_SHIRT)?1:0},uPantsW:{value:fit.pants&&!same(fit.pants,RIDER_DEF_PANTS)?1:0},
-  uSkin:{value:new THREE.Color(fit.skin||'#f0c8a8')},uSkinW:{value:fit.skin?1:0},uHair:{value:new THREE.Color(fit.hair||'#4a2e1c')},uHairW:{value:fit.hair?1:0},uHelm:{value:new THREE.Color(fit.helmet||'#2e2e38')},uHelmW:{value:fit.helmet&&!same(fit.helmet,'#2e2e38')?1:0}};
+  uSkin:{value:new THREE.Color(fit.skin||'#f0c8a8')},uSkinW:{value:fit.skin?1:0},uHair:{value:new THREE.Color(fit.hair||'#4a2e1c')},uHairW:{value:fit.hair?1:0},uHelm:{value:new THREE.Color(fit.helmet&&fit.helmet!=='none'?fit.helmet:'#2e2e38')},uHelmW:{value:fit.helmet&&fit.helmet!=='none'&&!same(fit.helmet,'#2e2e38')?1:0},
+  uBoot:{value:new THREE.Color(fit.boots||'#3b2a14')},uBootW:{value:fit.boots?1:0},uHelmHide:{value:fit.helmet==='none'?1:0}};   // boots band and a bare head (tack-wardrobe)
  m.userData.u=u;
  m.onBeforeCompile=sh=>{
   Object.assign(sh.uniforms,u);
@@ -7501,20 +7554,24 @@ function riderMaterial(base,fit){
    .replace('#include <common>','#include <common>\nvarying vec3 vRP;')
    .replace('#include <beginnormal_vertex>','#include <beginnormal_vertex>\n vRP=position;');
   sh.fragmentShader=sh.fragmentShader
-   .replace('#include <common>','#include <common>\nuniform vec3 uShirt,uPants,uSkin,uHair,uHelm; uniform float uShirtW,uPantsW,uSkinW,uHairW,uHelmW; varying vec3 vRP;\nfloat rBand(float y,float a,float b){return smoothstep(a-0.02,a+0.02,y)*(1.0-smoothstep(b-0.02,b+0.02,y));}')
+   .replace('#include <common>','#include <common>\nuniform vec3 uShirt,uPants,uSkin,uHair,uHelm,uBoot; uniform float uShirtW,uPantsW,uSkinW,uHairW,uHelmW,uBootW,uHelmHide; varying vec3 vRP;\nfloat rBand(float y,float a,float b){return smoothstep(a-0.02,a+0.02,y)*(1.0-smoothstep(b-0.02,b+0.02,y));}')
    .replace('#include <map_fragment>',`#include <map_fragment>
  { float ry=vRP.y, rl=dot(diffuseColor.rgb,vec3(.3,.59,.11));
    float rwS=uShirtW*smoothstep(-0.30,-0.24,ry)*(1.-smoothstep(0.52,0.60,ry))*(1.-smoothstep(0.28,0.36,vRP.z));
    float rwP=uPantsW*smoothstep(-0.64,-0.56,ry)*(1.-smoothstep(-0.30,-0.24,ry));
    diffuseColor.rgb=mix(diffuseColor.rgb,uShirt*(0.45+1.4*rl),rwS);
    diffuseColor.rgb=mix(diffuseColor.rgb,uPants*(0.25+0.95*rl),rwP);
+   float rwB=uBootW*(1.0-smoothstep(-0.66,-0.58,ry));
+   diffuseColor.rgb=mix(diffuseColor.rgb,uBoot*(0.3+0.9*rl),rwB);
    /* Skin, hair and helmet are told apart by where they are and what the baked pixel looks like:
       skin is light and warm on the face and the hands, hair is dark and warm behind the head,
       the helmet is dark above the brim. The navy coat is cool, so it is never mistaken for hair. */
    float rwarm=diffuseColor.r-diffuseColor.b, rz=vRP.z;
    float rwSk=uSkinW*step(0.06,rwarm)*smoothstep(0.40,0.52,rl)*clamp(rBand(ry,0.55,0.80)+rBand(ry,0.10,0.25)*step(0.30,rz),0.0,1.0);
    float rwH=uHairW*step(0.02,rwarm)*(1.0-smoothstep(0.28,0.40,rl))*rBand(ry,0.30,0.79)*(1.0-smoothstep(0.0,0.06,rz));
-   float rwHm=uHelmW*(1.0-smoothstep(0.20,0.30,rl))*smoothstep(0.80,0.84,ry);
+   float rwHm0=(1.0-smoothstep(0.20,0.30,rl))*smoothstep(0.80,0.84,ry);
+   if(uHelmHide>0.5&&rwHm0>0.5)discard;
+   float rwHm=uHelmW*rwHm0;
    diffuseColor.rgb=mix(diffuseColor.rgb,uSkin*clamp(rl/0.62,0.55,1.3),rwSk);
    diffuseColor.rgb=mix(diffuseColor.rgb,uHair*clamp(rl/0.22,0.4,1.6),rwH);
    diffuseColor.rgb=mix(diffuseColor.rgb,uHelm*clamp(rl/0.15,0.5,1.5),rwHm); }`);
@@ -9664,23 +9721,40 @@ function buyBundle3(k){
 function weekKey(){const d=new Date();const o=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-'+Math.floor((d-o)/864e5/7);}
 function gearRow(it,h,equippedHere){
  const b=gearBonus(it), bt=Object.keys(b).map(k=>'+'+b[k]+' '+STAT_LBL[k].slice(STAT_LBL[k].indexOf(' ')+1)).join(', ');
- const _set=gearSet(it);
+ const _set=gearSet(it), lvl=it.lvl||1;
  const dot='<span style="flex:none;width:14px;height:14px;border-radius:50%;background:'+RAR_COL[it.rarity]+'"></span>';
  const worn=h&&h.gear&&h.gear[it.slot]===it.id;
  let btns='';
  if(worn)btns+='<button data-tk="off:'+it.slot+'">Take off</button>';
  else btns+='<button data-tk="on:'+it.id+'">Put on</button>';
- if((it.lvl||1)<5)btns+='<button data-tk="up:'+it.id+'" title="Upgrade with coins">⬆ '+gearUpgradeCost(it)+'🪙</button>';
- if((it.lvl||1)<5)btns+='<button data-tk="merge:'+it.id+'" title="Merge a spare of the same slot for a free level">🔀</button>';
+ if(lvl<TACK_MAX_LVL){const uc=gearUpgradeCost(it);btns+='<button data-tk="up:'+it.id+'" title="Upgrade: coins plus a '+TOOLKITS[uc.kit].label+'">⬆ '+uc.c+'🪙 + 🧰'+TOOLKITS[uc.kit].tier+'</button>';}
+ if((it.merged||0)<3)btns+='<button data-tk="merge:'+it.id+'" title="Merge a spare of the same slot (or '+RAR_PARTS[it.rarity]+' parts) into this piece: +1 to its main stat for '+gearMergeCost(it)+' coins">🔀 '+gearMergeCost(it)+'🪙</button>';
+ if(!worn)btns+='<button data-tk="strip:'+it.id+'" title="Strip for parts">🔧 '+RAR_PARTS[it.rarity]+' parts</button>';
  if(!worn)btns+='<button data-tk="sell:'+it.id+'" title="Sell">'+RAR_SELL[it.rarity]+'🪙</button>';
- return '<div class="evrow">'+dot+' <b>'+it.name+'</b><span style="font-size:11px">'+it.rarity+' · Lv '+(it.lvl||1)+' · '+bt+(worn?' · <b>worn</b>':'')+'</span><span style="flex:none;display:flex;gap:4px;flex-wrap:wrap">'+btns+'</span></div>';
+ return '<div class="evrow">'+dot+' <b>'+(it.style==='western'?'🤠 ':'')+it.name+'</b><span style="font-size:11px">'+it.rarity+' · Lv '+lvl+'/'+TACK_MAX_LVL+' · '+bt+(_set?' · '+_set+' set':'')+((it.merged||0)?' · merged ×'+it.merged:'')+(worn?' · <b>worn</b>':'')+'</span><span style="flex:none;display:flex;gap:4px;flex-wrap:wrap">'+btns+'</span></div>';
+}
+/* Three pieces on the Cottonwood market stall each day, the same three for everyone: the
+   day seeds the roll. Bought pieces are remembered until the stall turns over. */
+function marketTackStock(){
+ const day=marketDay(); let seed=0; for(let i=0;i<day.length;i++)seed=(seed*31+day.charCodeAt(i))>>>0;
+ const prng=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+ const orig=Math.random; Math.random=prng; const out=[];
+ try{ for(let i=0;i<3;i++){ const r=prng(); const rar=r<0.45?'Common':r<0.80?'Uncommon':r<0.95?'Rare':'Epic'; const it=genGear(rar,GEAR_SLOTS[i%4===3?Math.floor(prng()*4):i]); it.id='mkt'+day.replace(/\W/g,'')+i; it.price=Math.round(RAR_SELL[rar]*2.5); out.push(it); } }
+ finally{ Math.random=orig; }
+ return out;
 }
 function tackLockerHtml(s){
  const h=s.horses[rideIdx]; if(h)ensureStats(h);
- const inv=s.tack||[]; const keys=s.keys||0;
- const freeKey=(s.keyWeek!==weekKey());
- let html='<div class="evrow">🗝️ <b>Silver Keys: '+keys+'</b><span style="font-size:11px">A key opens a tack chest: one piece, rarity rolled. Keys come from events, taming, breeding, the Trail Pass and trophies.</span>'
+ const inv=s.tack||[]; const keys=s.keys||0; const tw=s.tw||{}; const items=s.items||{};
+ const freeKey=(s.keyWeek!==weekKey()), freeKit=(tw.kitWeek!==weekKey());
+ let html='<div class="evrow">🗝️ <b>Silver Keys: '+keys+'</b><span style="font-size:11px">A key opens a tack chest: one piece, rarity rolled (Common 52% · Uncommon 28% · Rare 13% · Epic 5.5% · Legendary 1.5%). Keys come from events, taming, breeding, the Trail Pass and trophies. Tack also comes from the market stall below, world chests, Grandma\'s tack room, Bo\'s missions and the top rung of the weekly ⭐ Star Points ladder.</span>'
   +'<span style="flex:none;display:flex;gap:4px"><button data-tk="chest" '+(keys>0?'':'disabled')+'>Open chest 🗝️</button>'+(freeKey?'<button data-tk="freekey">🎁 Weekly key</button>':'')+'</span></div>';
+ html+='<div class="evrow">🧰 <b>Bo\'s Saddlery</b><span style="font-size:11px">Toolkits I·II·III: '+(items.kit1||0)+' · '+(items.kit2||0)+' · '+(items.kit3||0)+' — an upgrade needs one (I up to Lv 3, II to Lv 6, III to Lv 8). 🔧 Parts: <b>'+(s.parts||0)+'</b> from stripped spares. Bigger kits drop from chests and quests.</span>'
+  +'<span style="flex:none;display:flex;gap:4px;flex-wrap:wrap">'+Object.keys(TOOLKITS).map(k=>{const K=TOOLKITS[k];return '<button data-tk="buykit:'+k+'" '+(s.coins>=K.price&&(s.parts||0)>=K.parts?'':'disabled')+'>Kit '+'I'.repeat(K.tier).replace('III','III')+' · '+K.price+'🪙'+(K.parts?' + '+K.parts+' parts':'')+'</button>';}).join('')+(freeKit?'<button data-tk="freekit">🎁 Weekly kit</button>':'')+'</span></div>';
+ {const stock=marketTackStock(), sold=(tw.market&&tw.market.day===marketDay()&&tw.market.sold)||[];
+  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🤝 Cottonwood market · today\'s tack</div>'
+   +stock.map((it,i)=>{const b=Object.keys(it.bonus).map(k=>'+'+it.bonus[k]+' '+STAT_LBL[k].slice(STAT_LBL[k].indexOf(' ')+1)).join(', ');
+    return '<div class="evrow"><span style="flex:none;width:14px;height:14px;border-radius:50%;background:'+RAR_COL[it.rarity]+'"></span> <b>'+(it.style==='western'?'🤠 ':'')+it.name+'</b><span style="font-size:11px">'+it.rarity+' · '+b+(it.set?' · '+it.set+' set':'')+'</span><span style="flex:none">'+(sold.includes(i)?'<span style="font-size:11px;color:#8c7a63">sold ✓</span>':'<button data-tk="mkt:'+i+'" '+(s.coins>=it.price?'':'disabled')+'>'+it.price+'🪙</button>')+'</span></div>';}).join('');}
  if(h){
   const eff=effStats(h);
   html+='<div style="font-size:12px;color:#8c7a63;margin:6px 0 2px"><b>'+h.name+'</b> is wearing · '+STAT_KEYS.map(k=>STAT_LBL[k].split(' ')[0]+' '+eff[k]+(eff[k]>h.stats[k]?'<small style="color:#3b8bd6">(+'+(eff[k]-h.stats[k])+')</small>':'')).join(' ')+'</div>';
@@ -9688,18 +9762,19 @@ function tackLockerHtml(s){
    return it?gearRow(it,h,true):'<div class="evrow"><span style="flex:none;width:14px;height:14px;border-radius:50%;border:1px dashed #b8a888"></span> <b>'+GEAR_SLOT_LBL[sl]+'</b><span style="font-size:11px;color:#b8a888">nothing yet</span><span style="flex:none"><button data-tk="order:'+sl+'">Order plain · 150🪙</button></span></div>';}).join('');
  }
  const spare=inv.filter(it=>!(h&&h.gear&&h.gear[it.slot]===it.id));
- html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">Locker · '+spare.length+' spare piece'+(spare.length===1?'':'s')+'</div>';
- html+=spare.length?spare.sort((a,b)=>RARITIES.indexOf(b.rarity)-RARITIES.indexOf(a.rarity)).map(it=>gearRow(it,h,false)).join(''):'<div style="font-size:11px;color:#b8a888">Open a chest or order a plain piece, then put it on.</div>';
+ html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">Locker · '+spare.length+' spare piece'+(spare.length===1?'':'s')+' · Common +1 · Uncommon +2 · Rare +3/+1 · Epic +4/+4 · Legendary +5/+5/+2</div>';
+ html+=spare.length?spare.sort((a,b)=>RARITIES.indexOf(b.rarity)-RARITIES.indexOf(a.rarity)).map(it=>gearRow(it,h,false)).join(''):'<div style="font-size:11px;color:#b8a888">Open a chest, buy from the market or order a plain piece, then put it on.</div>';
  /* what the matching pieces are doing for this horse */
  {const sb=setBonus(h), counts=(sb&&sb._counts)||{};
   const rows=Object.keys(counts).map(st=>{
    const c=counts[st], def=TACK_SETS[st], on=c>=4?'four':c>=2?'two':null;
    const gain=on?Object.keys(def[on]).filter(k=>def[on][k]).map(k=>'+'+def[on][k]+' '+STAT_LBL[k].slice(STAT_LBL[k].indexOf(' ')+1)).join(', '):'';
-   return '<div class="evrow"><b>'+st+' set '+c+'/4</b><span>'+(on?gain+' — '+def.blurb:'wear 2 for a bonus')+'</span></div>';
+   return '<div class="evrow"><span style="flex:none;width:14px;height:14px;border-radius:50%;background:'+def.tint+'"></span><b>'+st+' set '+c+'/4</b><span>'+(on?gain+' — '+def.blurb:'wear 2 for a bonus')+'</span></div>';
   });
-  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">✨ Tack sets</div>'
-   +(rows.length?rows.join(''):'<div style="font-size:11px;color:#b8a888">Matching Epic and Legendary pieces — Starlit, Storm, Canyon, Hollowpeak, Kestrel, Aurora, Meadowlark, Champion — pay a bonus at 2 and again at 4.</div>');}
- html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🐎 Saddle style</div><div class="crow" style="gap:6px"><button data-tk="style:english" '+((h&&h.saddleStyle)!=='western'?'class="claimBtn"':'')+'>🏇 English</button><button data-tk="style:western" '+((h&&h.saddleStyle)==='western'?'class="claimBtn"':'')+'>🤠 Western</button></div>';
+  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">✨ Tack sets · '+SET_KEYS.Legendary.length+' Legendary, '+SET_KEYS.Epic.length+' Epic, '+SET_KEYS.Rare.length+' Rare</div>'
+   +(rows.length?rows.join(''):'')
+   +'<div style="font-size:11px;color:#b8a888">Every Rare or better piece belongs to a set named in its title — wear 2 for a bonus and all 4 for more. Legendary: '+SET_KEYS.Legendary.join(', ')+'. Epic: '+SET_KEYS.Epic.join(', ')+'. Rare: '+SET_KEYS.Rare.join(', ')+'.</div>';}
+ html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🐎 Saddle style · the worn saddle decides; this is the fallback</div><div class="crow" style="gap:6px"><button data-tk="style:english" '+((h&&h.saddleStyle)!=='western'?'class="claimBtn"':'')+'>🏇 English</button><button data-tk="style:western" '+((h&&h.saddleStyle)==='western'?'class="claimBtn"':'')+'>🤠 Western</button><span style="font-size:11px;color:#8c7a63">now: '+(saddleStyleOf(h)==='western'?'🤠 Western — sits deep, no posting':'🏇 English — rises to the trot')+'</span></div>';
  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🎨 Saddle paint · 150🪙</div><div class="crow" style="gap:6px;flex-wrap:wrap">'
   +TACKS3.map(tk=>'<button data-buyt="'+tk[0]+'" title="'+tk[1]+'"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+tk[0]+';vertical-align:middle"></span> '+tk[1]+'</button>').join('')
   +(s.goldTack?'<button data-buyt="#ffd166">✨ Golden</button>':'')
@@ -9709,40 +9784,64 @@ function tackLockerHtml(s){
  return html;
 }
 function tackAct(cmd){
- const [op,arg]=cmd.split(':'); let msg='',ok=false,got=null;
+ const [op,arg]=cmd.split(':'); let msg='',ok=false,got=null,upgraded=false,refit=false;
  syncSave(s=>{
-  s.tack=s.tack||[]; const h=s.horses[rideIdx]; if(h)ensureStats(h);
+  s.tack=s.tack||[]; s.items=s.items||{}; s.tw=s.tw||{}; if(s.parts==null)s.parts=0; const h=s.horses[rideIdx]; if(h)ensureStats(h);
+  const maxLvl=()=>s.tack.reduce((m,t)=>Math.max(m,t.lvl||1),1);
   if(op==='chest'){ if((s.keys||0)<1){msg='No keys — finish an event or a daily.';return;} s.keys--; got=genGear(); s.tack.push(got); msg='🗝️ '+got.rarity+'! '+got.name; ok=true; }
   else if(op==='freekey'){ if(s.keyWeek===weekKey()){msg='Already claimed this week.';return;} s.keyWeek=weekKey(); s.keys=(s.keys||0)+1; msg='🎁 A Silver Key — see you next week!'; ok=true; }
-  else if(op==='order'){ if(s.coins<150){msg='Not enough coins!';return;} s.coins-=150; got=genGear('Common',arg); s.tack.push(got); if(h)h.gear[arg]=got.id; msg='Ordered a '+got.name+' and put it on.'; ok=true; }
-  else if(op==='on'){ const it=s.tack.find(t=>t.id===arg); if(!it||!h)return; h.gear[it.slot]=it.id; msg=h.name+' wears the '+it.name+'.'; ok=true; }
-  else if(op==='off'){ if(!h)return; delete h.gear[arg]; msg='Taken off.'; ok=true; }
-  else if(op==='up'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; const c=gearUpgradeCost(it); if(s.coins<c){msg='Upgrade costs '+c+' coins.';return;} if((it.lvl||1)>=5){msg='Already at Lv 5.';return;} s.coins-=c; it.lvl=(it.lvl||1)+1; msg=it.name+' is now Lv '+it.lvl+'!'; ok=true; }
-  else if(op==='merge'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; if((it.lvl||1)>=5){msg='Already at Lv 5.';return;}
+  else if(op==='buykit'){ const K=TOOLKITS[arg||'kit1']; if(!K)return; if(s.coins<K.price){msg='Not enough coins!';return;} if((s.parts||0)<K.parts){msg='Bo needs '+K.parts+' parts for that kit — strip spare tack.';return;} s.coins-=K.price; s.parts-=K.parts; s.items[arg||'kit1']=(s.items[arg||'kit1']||0)+1; msg='🧰 Bo hands over a '+K.label+'.'; ok=true; }
+  else if(op==='freekit'){ if(s.tw.kitWeek===weekKey()){msg='Bo already gave you this week\'s kit.';return;} s.tw.kitWeek=weekKey(); s.items.kit1=(s.items.kit1||0)+1; msg='🎁 A Tack Toolkit I on the house — see you next week!'; ok=true; }
+  else if(op==='mkt'){ const stock=marketTackStock(), it=stock[+arg]; if(!it)return; s.tw.market=(s.tw.market&&s.tw.market.day===marketDay())?s.tw.market:{day:marketDay(),sold:[]}; if(s.tw.market.sold.includes(+arg)){msg='Sold already.';return;} if(s.coins<it.price){msg='Not enough coins!';return;} s.coins-=it.price; s.tw.market.sold.push(+arg); got=Object.assign({},it,{id:Date.now().toString(36)+Math.random().toString(36).slice(2,6)}); delete got.price; s.tack.push(got); s.stats=s.stats||{}; s.stats.tackBought=(s.stats.tackBought||0)+1; msg='🤝 Bought the '+got.name+'.'; ok=true; }
+  else if(op==='order'){ if(s.coins<150){msg='Not enough coins!';return;} s.coins-=150; got=genGear('Common',arg,{style:h&&h.saddleStyle}); s.tack.push(got); if(h)h.gear[arg]=got.id; msg='Ordered a '+got.name+' and put it on.'; ok=true; refit=true; }
+  else if(op==='on'){ const it=s.tack.find(t=>t.id===arg); if(!it||!h)return; h.gear[it.slot]=it.id; msg=h.name+' wears the '+it.name+'.'; ok=true; refit=true; }
+  else if(op==='off'){ if(!h)return; delete h.gear[arg]; msg='Taken off.'; ok=true; refit=true; }
+  else if(op==='up'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; if((it.lvl||1)>=TACK_MAX_LVL){msg='Already at Lv '+TACK_MAX_LVL+'.';return;} const uc=gearUpgradeCost(it);
+   if((s.items[uc.kit]||0)<1){msg='Bo needs a '+TOOLKITS[uc.kit].label+' for that — buy one at the saddlery, or find one in a chest.';return;}
+   if(s.coins<uc.c){msg='Upgrade costs '+uc.c+' coins and a '+TOOLKITS[uc.kit].label+'.';return;}
+   s.coins-=uc.c; s.items[uc.kit]--; it.lvl=(it.lvl||1)+1; addSP(s,RARITIES.indexOf(it.rarity)+1,'tack'); s.stats=s.stats||{}; s.stats.tackUps=(s.stats.tackUps||0)+1; msg=it.name+' is now Lv '+it.lvl+'! +'+(RARITIES.indexOf(it.rarity)+1)+'⭐'; ok=true; upgraded=maxLvl(); }
+  else if(op==='merge'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; if((it.merged||0)>=3){msg='That piece has taken all the merges it can (3).';return;}
+   const cost=gearMergeCost(it); if(s.coins<cost){msg='Merging costs '+cost+' coins.';return;}
    const worn=new Set(s.horses.flatMap(x=>Object.values(x.gear||{})));
    const fodder=s.tack.filter(t=>t.id!==it.id&&t.slot===it.slot&&!worn.has(t.id)&&RARITIES.indexOf(t.rarity)<=RARITIES.indexOf(it.rarity)).sort((a,b)=>RARITIES.indexOf(a.rarity)-RARITIES.indexOf(b.rarity))[0];
-   if(!fodder){msg='Nothing to merge: you need a spare '+GEAR_NOUN[it.slot].toLowerCase()+' of the same or lower rarity.';return;}
-   s.tack=s.tack.filter(t=>t.id!==fodder.id); it.lvl=(it.lvl||1)+1; msg='Merged the '+fodder.name+' in: '+it.name+' is Lv '+it.lvl+'.'; ok=true; }
-  else if(op==='style'){ if(!h)return; h.saddleStyle=arg; msg=arg==='western'?'🤠 A Western saddle for '+h.name+'.':'🏇 An English saddle for '+h.name+'.'; ok=true; }
+   const need=RAR_PARTS[it.rarity];
+   if(fodder){s.tack=s.tack.filter(t=>t.id!==fodder.id);}
+   else if((s.parts||0)>=need){s.parts-=need;}
+   else {msg='Nothing to merge: you need a spare '+GEAR_NOUN[it.slot].toLowerCase()+' of the same or lower rarity, or '+need+' parts.';return;}
+   s.coins-=cost; const pk=gearPrimary(it); it.bonus[pk]=(it.bonus[pk]||0)+1; it.merged=(it.merged||0)+1; s.stats=s.stats||{}; s.stats.merges=(s.stats.merges||0)+1;
+   msg=(fodder?'Merged the '+fodder.name+' in':'Used '+need+' parts')+': '+it.name+' now gives +'+it.bonus[pk]+' '+STAT_OF[pk].toLowerCase()+'.'; ok=true; upgraded=maxLvl(); }
+  else if(op==='strip'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; const worn=s.horses.some(x=>Object.values(x.gear||{}).includes(it.id)); if(worn){msg='Take it off first.';return;} s.tack=s.tack.filter(t=>t.id!==it.id); s.parts=(s.parts||0)+RAR_PARTS[it.rarity]; s.stats=s.stats||{}; s.stats.strips=(s.stats.strips||0)+1; msg='🔧 Stripped for '+RAR_PARTS[it.rarity]+' parts ('+s.parts+' now).'; ok=true; }
+  else if(op==='style'){ if(!h)return; h.saddleStyle=arg; msg=arg==='western'?'🤠 '+h.name+' goes Western when no saddle says otherwise.':'🏇 '+h.name+' goes English when no saddle says otherwise.'; ok=true; refit=true; }
   else if(op==='sell'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; const worn=s.horses.some(x=>Object.values(x.gear||{}).includes(it.id)); if(worn){msg='Take it off first.';return;} s.tack=s.tack.filter(t=>t.id!==it.id); s.coins+=RAR_SELL[it.rarity]; msg='Sold for '+RAR_SELL[it.rarity]+' coins.'; ok=true; }
  });
  refreshTack(); refreshWallet();
- if(op==='style'&&ok){const fs=freshSave();if(fs&&fs.horses[rideIdx]&&myHorses[rideIdx])myHorses[rideIdx].saddleStyle=fs.horses[rideIdx].saddleStyle; attachTack();}
+ if(refit&&ok){const fs=freshSave();if(fs&&fs.horses[rideIdx]&&myHorses[rideIdx])myHorses[rideIdx].saddleStyle=fs.horses[rideIdx].saddleStyle; attachTack();}
  dressSaddle();
+ if(upgraded){try{questEvt('tacklvl',upgraded);dailyEvt('tackup',1);}catch(e){}}
  toast(msg); if(ok){ if(got&&RARITIES.indexOf(got.rarity)>=2)sGem(); else sChime(); }
  openShop('tack');
 }
 /* The saddle you see is the saddle you wear: the pad takes the rarity's colour and the
-   leather the paint you chose. */
+   leather the paint you chose — or, unpainted, the tint of the saddle's set. */
+/* The bridle's studs take the horse's colour, and the worn bridle's style decides the headstall:
+   a Western one goes without a noseband (tack-wardrobe). */
+function dressBridle(){
+ const br=TACK.bridle, h=myHorses[rideIdx]; if(!br||!h)return;
+ if(br.userData.gold)br.userData.gold.color.set(h.studCol||'#d8b24a');
+ const brIt=h.gear&&tackInv.find(t=>t.id===h.gear.bridle), west=((brIt&&brIt.style)||h.saddleStyle)==='western';
+ if(br.userData.western!==west){br.userData.western=west;br.traverse(o=>{if(o.isMesh&&/^noseband$/i.test(o.name))o.visible=!west;});}
+}
 function dressSaddle(){
  const sd=TACK.saddle; if(!sd)return;
  const h=myHorses[rideIdx]; if(!h)return;
- if(!sd.userData.mats){ sd.visible=!h.bareback; if(TACK.bridle&&TACK.bridle.userData.gold)TACK.bridle.userData.gold.color.set(h.studCol||'#d8b24a'); return; }
+ dressBridle();
+ if(!sd.userData.mats){ sd.visible=!h.bareback; return; }
  const padIt=h.gear&&tackInv.find(t=>t.id===h.gear.pad);
- sd.userData.mats.pad.color.set(padIt?RAR_COL[padIt.rarity]:sd.userData.hero?0x686454:0xe6dcc6);
- sd.userData.mats.leather.color.set(h.tack||(sd.userData.hero?0x30221b:0x6b4423));
+ const sdIt=h.gear&&tackInv.find(t=>t.id===h.gear.saddle), sdSet=sdIt&&gearSet(sdIt);
+ if(sd.userData.mats.pad)sd.userData.mats.pad.color.set(padIt?RAR_COL[padIt.rarity]:sd.userData.hero?0x686454:0xe6dcc6);
+ if(sd.userData.glb){const c=h.tack||(sdSet?TACK_SETS[sdSet].tint:null); if(c)sd.userData.mats.leather.color.set(c).multiplyScalar(1.6); else sd.userData.mats.leather.color.setScalar(1.25);}   // the bake is dark: tints multiply, so lift them
+ else sd.userData.mats.leather.color.set(h.tack||(sdSet?TACK_SETS[sdSet].tint:(sd.userData.hero?0x30221b:0x6b4423)));
  sd.visible=!h.bareback;                                                     // mastery 9: ride bareback
- if(TACK.bridle&&TACK.bridle.userData.gold)TACK.bridle.userData.gold.color.set(h.studCol||'#d8b24a');
 }
 function buyTack3(col){
  let ok=false,nm='';
@@ -10102,7 +10201,7 @@ function remoteUpdate(m){
    fitArtistFeatures(rrig,parts);
    {let sk=rrig.skin; if(sk&&RIG.baseMat&&!m.ct&&!rrig.profile.hero&&!rrig.profile.artistBreed){const cm=makeCoatMat(sk,rrig.baseMat); setCoatUniforms(cm,(m.c&&m.c.body)||'#8a5a2b',null); sk.material=cm;}}
 
-   const sd=buildSaddle(undefined,rrig);           // same builder the player's mount uses
+   const sd=buildSaddle(m.ss==='western'?'western':undefined,rrig);           // same builder the player's mount uses; ss carries their saddle style
    sd.position.copy(breedSeat(rrig));
    parts.group.add(sd);rrig.saddle=sd;
    const br=buildBridle(null,rrig); parts.group.add(br); r_bridle=br;
@@ -11839,17 +11938,19 @@ function useThing(){
   let got=null;
   syncSave(sv=>{ sv.chests=sv.chests||{}; const at=sv.chests[t.id]; if(at&&Date.now()-at<CHEST_REOPEN)return;
    sv.chests[t.id]=Date.now(); const r={c:t.tier===1?80+Math.floor(Math.random()*80):t.tier===2?200:300};
-   if(t.tier>=2)r.k=1; r.g=t.tier===3?4:t.tier===2?2:1; if(t.tier===3){r.gear='Rare';} if(t.tier===1){const fk=['carrot','apple','lettuce','pumpkin'][Math.floor(Math.random()*4)];sv.items[fk]=(sv.items[fk]||0)+3;r.food=fk;}
+   if(t.tier>=2)r.k=1; r.g=t.tier===3?4:t.tier===2?2:1; {const rr=Math.random(); if(t.tier===3)r.gear=rr<0.2?'Epic':'Rare'; else if(t.tier===2&&rr<0.3)r.gear='Rare'; else if(rr<0.15)r.gear='Uncommon';}
+   if(t.tier>=2||Math.random()<0.1){r.kit=t.tier===3?'kit3':t.tier===2?'kit2':(Math.random()<0.1?'kit3':'kit1');sv.items[r.kit]=(sv.items[r.kit]||0)+1;}   // tack toolkits (tack-wardrobe)
+   if(t.tier===1){const fk=['carrot','apple','lettuce','pumpkin'][Math.floor(Math.random()*4)];sv.items[fk]=(sv.items[fk]||0)+3;r.food=fk;}
    if(t.tier===3||Math.random()<0.5){r.bag=t.tier===3?'bag3':t.tier===2?'bag2':'bag1';sv.items[r.bag]=(sv.items[r.bag]||0)+1;}   // a feed bag, Rare from the big chests
    sv.coins+=r.c; if(r.k)sv.keys=(sv.keys||0)+r.k; if(r.g)grantGems(sv,r.g); if(r.gear){sv.tack=sv.tack||[];sv.tack.push(genGear(r.gear));} sv.stats=sv.stats||{}; sv.stats.chests=(sv.stats.chests||0)+1; got=r; });
   if(!got){toast('The chest is empty — it refills in a few days.');return;}
   t.lid.rotation.x=-1.2; refreshWallet(); refreshTack(); sGem(); passAdd(5);
-  toast('🎁 '+got.c+'🪙'+(got.k?' +'+got.k+'🗝️':'')+(got.g?' +'+got.g+'💎':'')+(got.gear?' + Rare tack!':'')+(got.food?' + 3 '+FOODS3[got.food].emoji:'')+(got.bag?' + 🛍️ '+((G.tables&&G.tables.FEED_BAGS&&G.tables.FEED_BAGS[got.bag])?G.tables.FEED_BAGS[got.bag].label:'feed bag'):''));
+  toast('🎁 '+got.c+'🪙'+(got.k?' +'+got.k+'🗝️':'')+(got.g?' +'+got.g+'💎':'')+(got.gear?' + '+got.gear+' tack!':'')+(got.kit?' + '+TOOLKITS[got.kit].label:'')+(got.food?' + 3 '+FOODS3[got.food].emoji:'')+(got.bag?' + 🛍️ '+((G.tables&&G.tables.FEED_BAGS&&G.tables.FEED_BAGS[got.bag])?G.tables.FEED_BAGS[got.bag].label:'feed bag'):''));
  }else if(t.kind==='room'){
   let ok=false,piece=null;
-  syncSave(sv=>{ if(sv.doors.tackroom===weekKey())return; if((sv.keys||0)<1)return; sv.keys--; sv.doors.tackroom=weekKey(); const r=Math.random(); piece=genGear(r<0.05?'Legendary':r<0.3?'Epic':'Rare'); sv.tack=sv.tack||[]; sv.tack.push(piece); sv.coins+=100; ok=true; });
+  syncSave(sv=>{ if(sv.doors.tackroom===weekKey())return; if((sv.keys||0)<1)return; sv.keys--; sv.doors.tackroom=weekKey(); const r=Math.random(); piece=genGear(r<0.05?'Legendary':r<0.3?'Epic':'Rare'); sv.tack=sv.tack||[]; sv.tack.push(piece); sv.coins+=100; sv.items=sv.items||{}; sv.items.kit2=(sv.items.kit2||0)+1; ok=true; });   // and a Tack Toolkit II (tack-wardrobe)
   if(!ok){const sv=freshSave(); toast(sv&&sv.doors&&sv.doors.tackroom===weekKey()?'Grandma\'s tack room opens once a week.':'You need a Silver Key.');return;}
-  t.door.rotation.y=-1.3; refreshWallet(); refreshTack(); sGem(); toast('🔐 '+piece.rarity+'! '+piece.name+' — and 100🪙 in the tin');
+  t.door.rotation.y=-1.3; refreshWallet(); refreshTack(); sGem(); toast('🔐 '+piece.rarity+'! '+piece.name+' — a Tack Toolkit II and 100🪙 in the tin');
  }else if(t.kind==='summon'){
   openSummon();
  }else if(t.kind==='fish'){
