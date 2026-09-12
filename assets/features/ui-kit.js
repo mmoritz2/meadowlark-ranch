@@ -34,7 +34,12 @@ export function install(G){
   if(!document.getElementById('mkKitBase')){
    const st=document.createElement('style'); st.id='mkKitBase';
    st.textContent=
-    ':where(.mk-panel-body){display:flex;flex-direction:column;gap:8px;min-height:0;flex:1 1 auto;overflow:auto}'
+    ':where(.mk-panel-body){display:flex;flex-direction:column;gap:8px;min-height:0;flex:1 1 auto;overflow:auto}'+
+    /* A scrolling body is a flex COLUMN, so by default every child may be compressed toward
+       its minimum height before the body agrees to scroll. That is how a row of trail-ride
+       stops 140px tall was squashed into its 30px min-height and spilled over the controls
+       beneath it, and how the summon banners collapsed. Nothing in a panel body shrinks. */
+    '.mk-panel-body>*{flex-shrink:0}'
    +':where(.mk-panel-head){flex:0 0 auto}'
    +':where(.mk-thumb){position:relative;flex:none;display:inline-flex;align-items:center;justify-content:center;'
      +'width:var(--mk-thumb,40px);height:var(--mk-thumb,40px);border-radius:12px;overflow:hidden;'
