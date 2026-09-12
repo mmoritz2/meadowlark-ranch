@@ -324,9 +324,10 @@ export function install(G){
   const s=S.fresh()||{};
   if(!name||name===me())return;
   if(kind==='req'&&friendsOf(s).length>=FRIEND_MAX){toast('💚 Your friends list is full ('+FRIEND_MAX+').');return;}
-  if(!ping({fr:{k:kind,to:name}})){toast('🌐 Connect to a club first.');return;}
+  const sent=ping({fr:{k:kind,to:name}});
+  if(kind==='req'&&!sent){toast('🌐 Connect to a club first — a request has to reach them.');return;}
   if(kind==='req'){S.sync(sv=>{sv.friendReq.out[name]=now();});toast('💌 Friend request sent to '+name+'.');}
-  if(kind==='acc'){S.sync(sv=>{sv.friends[name]=true;delete sv.friendReq.in[name];});toast('💚 '+name+' is a friend now!');G.sChime();}
+  if(kind==='acc'){S.sync(sv=>{sv.friends[name]=true;delete sv.friendReq.in[name];});toast('💚 '+name+' is a friend now!'+(sent?'':' (they will hear about it next time you are both online)'));G.sChime();}
   if(kind==='rm'){S.sync(sv=>{delete sv.friends[name];delete sv.friendReq.out[name];delete sv.friendReq.in[name];});toast('🤍 Removed '+name+'.');}
   refreshOnline();
  }
@@ -589,8 +590,8 @@ export function install(G){
   H.player.speed=0;
   G.hidePanels();
   drawSpecHud();
-  Q.dailyEvt('spectate',1);
   stat('spectated',1);
+  Q.dailyEvt('spectate',1);
   toast(spec.seat?'👁️ In the grandstand — Esc to leave.':'👁️ Watching '+((N.remotes[spec.id]||{}).name||'a rider')+' — Esc to stop.');
  }
  function stopSpectate(){ if(!spec)return; spec=null; specHud.style.display='none'; toast('👁️ Back on your own horse.'); }
