@@ -45,8 +45,14 @@ export function install(G){
 .c2-note .c2-noteBody{font-size:11.5px;line-height:1.5;color:var(--ink-2,#6b5a49);padding-bottom:2px}
 
 /* ---------- events: a programme entry ---------- */
-.evrow.c2-ev{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;flex:0 0 auto;
- column-gap:var(--sp-3,12px);row-gap:6px;flex-wrap:wrap;padding:10px 12px;position:relative;overflow:hidden}
+.evrow.c2-ev{display:grid;grid-template-columns:minmax(9rem,1fr) minmax(0,auto);align-items:center;flex:0 0 auto;
+ column-gap:var(--sp-3,12px);row-gap:6px;padding:10px 12px;position:relative;overflow:hidden}
+/* Every child lands in the text column unless it asks for the action column. Without this
+   the leftover nodes from the original renderer auto-place into column 2 beside the buttons;
+   they carry white-space:nowrap, so that column grows to fit a whole sentence on one line and
+   the 1fr text column collapses to a couple of pixels, stacking each word one letter per line. */
+.evrow.c2-ev>*{grid-column:1;min-width:0;white-space:normal;overflow-wrap:anywhere}
+.evrow.c2-ev>.c2-evAct{grid-column:2;grid-row:1}
 .evrow.c2-ev::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line-2,#d4bf93)}
 .evrow.c2-ev.is-feat::before{background:var(--brass,#e0b25a)}
 .evrow.c2-ev.is-feat{border-color:#e8cf8a;background:linear-gradient(180deg,#fffdf5,#fff8e6)}
@@ -75,10 +81,23 @@ export function install(G){
  font-size:9px;line-height:1;background:var(--paper-3,#efe1c6);box-shadow:inset 0 0 0 1px var(--line-2,#d4bf93);color:transparent}
 .c2-pip.on{background:var(--meadow-3,#eaf5dc);box-shadow:inset 0 0 0 1.5px var(--meadow-2,#3f8f4c);color:#3f8f4c}
 .c2-pip.gold.on{background:var(--brass-3,#fff0c2);box-shadow:inset 0 0 0 1.5px var(--brass-2,#c8952f);color:#8a6413}
-.c2-evAct{grid-column:2;justify-self:end;align-self:center;display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none;white-space:nowrap}
+.c2-evAct{grid-column:2;justify-self:end;align-self:center;display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none;white-space:nowrap;min-width:0}
 .c2-evAct>button{width:100%}
 .c2-evAct>button{min-height:38px}
 .c2-evAct .c2-purse{font-size:10.5px;font-weight:800;color:var(--ink-3,#9a8770);font-variant-numeric:tabular-nums}
+/* A narrow panel has no room for a column of entry buttons beside the programme entry, so
+   they go underneath it, side by side, and the specs get the full width to spread across. */
+@media (max-width:900px){
+ .evrow.c2-ev{grid-template-columns:minmax(0,1fr)}
+ .evrow.c2-ev>.c2-evAct{grid-column:1;grid-row:auto;justify-self:stretch;align-items:stretch;
+  flex-direction:row;flex-wrap:wrap;gap:6px;white-space:normal}
+ .evrow.c2-ev>.c2-evAct>button{width:auto;flex:1 1 auto}
+ .evrow.c2-ev>.c2-evAct>.c2-purse{flex:1 0 100%;text-align:right}
+}
+/* The card already states the time, the requirements, the ribbons and the reward, so the
+   original renderer's line saying all of it again is hidden — unless it carries a control,
+   in which case it stays visible and keeps working. */
+.c2-evExtra.c2-dup{display:none}
 .c2-lockNote{font-size:11px;font-weight:800;color:var(--ink-3,#9a8770);display:flex;align-items:center;gap:4px}
 .c2-evExtra{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:3px 8px;align-items:center;font-size:10.5px;
  font-weight:700;color:var(--ink-3,#9a8770);border-top:1px dashed var(--line,#e6d6b8);padding-top:5px}
@@ -287,7 +306,7 @@ export function install(G){
     row.dataset.c2='ev';
     row.appendChild(main);
     if(actWrap.childNodes.length)row.appendChild(actWrap);
-    if(extras.length){const ex=el('div','c2-evExtra');extras.forEach(n=>ex.appendChild(n));row.appendChild(ex);}
+    if(extras.length){const ex=el('div','c2-evExtra');extras.forEach(n=>ex.appendChild(n));if(!ex.querySelector('button,select,input,a,[data-ev],[data-fx],[data-q]'))ex.classList.add('c2-dup');row.appendChild(ex);}
     if(meta)meta.remove();
    }catch(e){try{row.dataset.c2='err';}catch(e2){}}
   });
