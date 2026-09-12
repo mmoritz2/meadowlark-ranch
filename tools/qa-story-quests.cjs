@@ -252,7 +252,10 @@ const run=(page,code)=>page.evaluate('(()=>{'+H+code+'})()');
   out.wren=wrenTalk(); out.buildBtn=/Open Build/.test(dlgText()); click('#dlgBtn'); out.buildPanel=$('buildPanel').style.display;
   /* place three fences through the pointer, from the pasture (the arena box refuses pieces) */
   goto(-42,-8); G.horse.player.heading=Math.PI; window.advanceTime(300);
-  const place=(t,off)=>{G.hidePanels();G.ui.openBuild();const b=document.querySelector('[data-b="place:'+t+'"]');if(!b)return 'nobtn';b.click();window.advanceTime(80);
+  const place=(t,off)=>{G.hidePanels();G.ui.openBuild();
+   /* the ranch package replaces the Pieces tab with its own catalogue (data-fx="ranch:place:<t>"),
+      so accept either markup — this check is about the mission, not about who drew the button */
+   const b=document.querySelector('[data-b="place:'+t+'"]')||document.querySelector('[data-fx="ranch:place:'+t+'"]');if(!b)return 'nobtn';b.click();window.advanceTime(80);
    const cv=G.renderer.domElement; const r=cv.getBoundingClientRect(); const x=r.left+r.width/2+(off||0)*110, y=r.top+r.height*0.62;
    cv.dispatchEvent(new PointerEvent('pointermove',{clientX:x,clientY:y,pointerId:1,bubbles:true}));
    cv.dispatchEvent(new PointerEvent('pointerdown',{clientX:x,clientY:y,pointerId:1,bubbles:true}));

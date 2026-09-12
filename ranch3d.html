@@ -592,7 +592,7 @@ let VIPON=false;                                  // cached: addCoins runs on ev
    is unlimited now; what is limited is how many are turned out at once, which you choose. */
 function stableCap(s){return Infinity;}
 const PASTURE_BASE=8;
-function pastureMax(s){return isVIP(s)?12:Math.max(PASTURE_BASE,G.run('pastureMax',s)||0);}   // VIP turns out a bigger string; so does a Ranch Prestige perk
+function pastureMax(s){const base=Math.max(PASTURE_BASE,(G.ranch&&G.ranch.pastureBase)?G.ranch.pastureBase(s):0,G.run('pastureMax',s)||0);return base+(isVIP(s)?4:0);}   // the home ranch and its paddocks set the base (assets/features/ranch.js); VIP and the Ranch Prestige perk raise it
 /* Which horses are in the field. An older save has none of these flags, so the first
    few become the ones out to grass and everybody else waits in the barn. */
 /* Gives a turnout flag to any horse that has not got one — which covers both a save made
@@ -763,10 +763,11 @@ const DECOR_CAT={
 };
 const RANCH_LEVELS=[0,60,160,320,560,900];
 const RANCH_PERKS={2:'Horses get hungry and thirsty 15% slower',3:'Horses earn 10% more XP',4:'Forage grows back 30% sooner',5:'Horses get hungry and thirsty 30% slower',6:'Horses earn 25% more XP'};
-function ranchPts(s){return (s.decor||[]).reduce((a,d)=>a+((DECOR_CAT[d.t]||{}).pts||0),0)+(s.builderBonus||0);}   // builderBonus: points the builder quests pay
+function decorPts(c){if(!c)return 0;return c.pts!=null?c.pts:Math.max(1,Math.round((c.price||0)/10+(c.gems||0)*3));}   // points follow the price unless a piece says otherwise
+function ranchPts(s){return (s.decor||[]).reduce((a,d)=>a+decorPts(DECOR_CAT[d.t]),0)+(s.builderBonus||0)+((G.ranch&&G.ranch.extraPts)?G.ranch.extraPts(s):0);}   // builderBonus: points the builder quests pay; extraPts: land buildings (ranch package)
 function ranchLevel(s){const p=ranchPts(s);let l=1;for(let i=1;i<RANCH_LEVELS.length;i++)if(p>=RANCH_LEVELS[i])l=i+1;return l;}
 let _ranchLvlCache=1;
-function ranchMul(k){const L=_ranchLvlCache; if(k==='decay')return L>=5?0.7:L>=2?0.85:1; if(k==='xp')return L>=6?1.25:L>=3?1.10:1; if(k==='forage')return L>=4?0.7:1; return 1;}
+function ranchMul(k){const L=_ranchLvlCache; let m=1; if(k==='decay')m=L>=5?0.7:L>=2?0.85:1; else if(k==='xp')m=L>=6?1.25:L>=3?1.10:1; else if(k==='forage')m=L>=4?0.7:1; if(G.ranch&&G.ranch.mul)m*=G.ranch.mul(k,L); return m;}   // 'stall' and 'board' (stars), decor sets and the home ranch perk come from the ranch package
 /* ---- the ranch as a business ---------------------------------------------------------
    Everything you earned until now came from you doing something. A ranch should also earn
    while you are not there: riders from the valley board their horses in your spare stalls,
@@ -775,7 +776,7 @@ function ranchMul(k){const L=_ranchLvlCache; if(k==='decay')return L>=5?0.7:L>=2
 function boardStalls(s){return Math.min(8,Math.floor(ranchPts(s)/70));}
 function boardRate(s){                                   // coins per hour
  const st=boardStalls(s); if(!st)return 0;
- return Math.round(st*8*(1+0.12*(ranchLevel(s)-1))*(isVIP(s)?VIP_COIN:1));
+ return Math.round(st*8*(1+0.12*(ranchLevel(s)-1))*(isVIP(s)?VIP_COIN:1)*ranchMul('board'));   // the star rating lifts what boarders pay
 }
 const BOARD_CAP_H=24;                                    // the stalls fill up after a day
 function boardTick(s){
@@ -7934,16 +7935,18 @@ function buildBarnRow(){
  const sign=nameSprite('🏠 The barn'); sign.position.set(0,3.4,BARN_ROW.z0+BARN_ROW.step*2.5); g.add(sign);
  return barnBuilt;
 }
+function disposeHorseEnt(b){try{scene.remove(b.parts.group);if(b.rig){disposeMountedRig(b.rig);b.rig.skin.material.dispose();worldRigCount=Math.max(0,worldRigCount-1);}}catch(e){}}   // a standing horse (barn, post, land stall) put away
+function resetBarn(){ if(barnBuilt&&barnBuilt.g)scene.remove(barnBuilt.g); barnBuilt=null; }   // the home ranch moved: BARN_ROW changed, the row is rebuilt there
 /* Put the horses that are NOT out to grass into the stalls. */
 function refreshBarn(){
- for(const b of barnHorses){ try{scene.remove(b.parts.group);if(b.rig){disposeMountedRig(b.rig);b.rig.skin.material.dispose();worldRigCount=Math.max(0,worldRigCount-1);}}catch(e){} }
+ for(const b of barnHorses)disposeHorseEnt(b);
  for(const pl of barnPlates){ try{pl.parent&&pl.parent.remove(pl);}catch(e){} }
  barnHorses=[]; barnPlates=[];
  buildBarnRow();
  const inside=[];
  for(let i=0;i<myHorses.length;i++){
   if(i===rideIdx)continue;
-  if(myHorses[i].out)continue;
+  if(myHorses[i].out||myHorses[i].hitch)continue;   // out to grass, or hitched at a post (ranch package)
   inside.push(i);
  }
  for(let k=0;k<BARN_ROW.n;k++){
@@ -8150,7 +8153,7 @@ addEventListener('keydown',e=>{
  }
  if(e.code==='KeyC'&&!e.repeat&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){toggleFreeCam();}
  if(/^Digit[1-5]$/.test(e.code||'')&&!e.repeat&&!freeCam&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){horseEmote(['rear','bow','liedown','nuzzle','toss'][+e.code[5]-1]);}
- if(build.type||build.remove){ if(e.code==='Escape'){endBuild();return;} if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} if(e.code==='KeyQ'){build.rot-=Math.PI/4;if(build.ghost)build.ghost.rotation.y=build.rot;return;} }
+ if(build.type||build.remove||build.move){ const rs=e.shiftKey?Math.PI/16:Math.PI/4; if(e.code==='Escape'){endBuild();return;} if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;} if(e.code==='KeyQ'){build.rot-=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;} }
  if(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='SELECT'))return;
  if(G.run('key',e))return;                                  // a package swallowed the key
  if(!e.repeat&&!freeCam&&PANEL_HOTKEYS[e.code]){PANEL_HOTKEYS[e.code](e);e.preventDefault();return;}
@@ -8945,8 +8948,9 @@ uiAction('rerender',a=>{if(a[0])uiRender(a[0]);});
    slowly, XP comes faster, forage grows back sooner. Nothing here costs anything but coins. */
 const decorObjs=[];   // {d, g, coll}
 function buildDecorMesh(t,forGhost){
- const c=DECOR_CAT[t]; const g=new THREE.Group();
- if(c.prop){
+ const c=DECOR_CAT[t]; if(!c)return null; const g=new THREE.Group();
+ if(c.mk){ c.mk(g,forGhost,{box,tube,blob,THREE,nameSprite,smat}); }
+ else if(c.prop){
   const src=PROP_SRC[c.prop]; if(!src)return null;
   const s=FOLIAGE_H[c.prop]/src.h; const m=new THREE.Mesh(src.geo,src.mat); m.scale.setScalar(s); m.position.y=-src.minY*s-0.05*FOLIAGE_H[c.prop]; m.castShadow=true; m.receiveShadow=true; g.add(m);
  }else if(t==='fence'){
@@ -8967,15 +8971,16 @@ function decorOk(t,x,z,skip){
  if(Math.hypot(x,z)>290)return 'Past the edge of the valley';   // the whole valley is yours to build in
  if(Math.abs(x)<27&&Math.abs(z)<22)return 'Not in the arena';
  if(Math.abs(z-riverZ(x))<8)return 'Not in the river';
- const r=DECOR_CAT[t].r;
- for(const o of decorObjs){ if(o===skip)continue; const rr=DECOR_CAT[o.d.t].r; if(Math.hypot(o.d.x-x,o.d.z-z)<(r+rr)*0.85)return 'Overlaps another piece'; }
+ const c=DECOR_CAT[t]; if(!c)return 'Unknown piece'; const r=c.r;
+ if(G.ranch&&G.ranch.decorOk){const v=G.ranch.decorOk(c,x,z,skip);if(v!==undefined)return v;}   // indoor rooms, walls and floors, land slots
+ for(const o of decorObjs){ if(o===skip)continue; const oc=DECOR_CAT[o.d.t]||{r:0.3}; if(oc.flat||c.flat)continue; if(Math.hypot(o.d.x-x,o.d.z-z)<(r+oc.r)*0.85)return 'Overlaps another piece'; }
  for(const c of colliders){ if(c.decor)continue; if(Math.hypot(c.x-x,c.z-z)<c.r+r*0.6)return 'Something is in the way'; }
  return null;
 }
 function spawnDecor(d){
  const g=buildDecorMesh(d.t,false); if(!g)return null;
  g.position.set(d.x,groundH(d.x,d.z),d.z); g.rotation.y=d.ry||0; scene.add(g);
- const coll={x:d.x,z:d.z,r:DECOR_CAT[d.t].r,decor:true}; if(DECOR_CAT[d.t].r>0.35)colliders.push(coll);
+ const coll={x:d.x,z:d.z,r:DECOR_CAT[d.t].r,decor:true,id:d.id}; if(DECOR_CAT[d.t].r>0.35&&!DECOR_CAT[d.t].flat)colliders.push(coll);
  const o={d,g,coll}; decorObjs.push(o); return o;
 }
 function rebuildDecor(){
@@ -8983,7 +8988,7 @@ function rebuildDecor(){
  _ranchLvlCache=ranchLevel(sv);
  for(const d of sv.decor){ if(decorObjs.some(o=>o.d.id===d.id))continue; if(!d.id)d.id=Math.random().toString(36).slice(2,8); const o=spawnDecor(d); }
 }
-const build={type:null,ghost:null,rot:0,remove:false,down:null,lastPt:null};
+const build={type:null,ghost:null,rot:0,remove:false,down:null,lastPt:null,moving:null,move:false};   // moving: the placed piece being picked up; move: click-a-piece mode
 const _bray=new THREE.Raycaster(),_bndc=new THREE.Vector2(),_bpt=new THREE.Vector3();
 function groundPoint(cx,cy){
  _bndc.set((cx/innerWidth)*2-1,-(cy/innerHeight)*2+1); _bray.setFromCamera(_bndc,camera);
@@ -8996,36 +9001,56 @@ function startPlace(t){
  endBuild(); const c=DECOR_CAT[t]; if(!c)return;
  const g=buildDecorMesh(t,true); if(!g){toast('That piece is still loading — try again in a moment.');return;}
  build.type=t; build.ghost=g; build.rot=0; g.visible=false; scene.add(g); hidePanels();
- buildHud(c.emoji+' Placing <b>'+c.label+'</b> · '+c.price+'🪙 · click the ground to set it down · R / Q turn · Esc done<button data-bh="rot">↻</button><button data-bh="done">Done</button>');
- $('buildHud').querySelectorAll('[data-bh]').forEach(b=>{b.onclick=e=>{e.stopPropagation(); if(b.dataset.bh==='rot')build.rot+=Math.PI/4; else endBuild();};});
+ buildHud(c.emoji+' Placing <b>'+c.label+'</b> · '+(c.gems?c.gems+'💎':c.price+'🪙')+' · click the ground to set it down · R / Q turn (Shift: fine) · Esc done<button data-bh="rot">↻</button><button data-bh="rotf" title="Fine turn">↻°</button><button data-bh="done">Done</button>');
+ $('buildHud').querySelectorAll('[data-bh]').forEach(b=>{b.onclick=e=>{e.stopPropagation(); if(b.dataset.bh==='rot')build.rot+=Math.PI/4; else if(b.dataset.bh==='rotf')build.rot+=Math.PI/16; else endBuild(); if(build.ghost)build.ghost.rotation.y=build.rot;};});
 }
+/* Pick a placed piece up again: it becomes the ghost, and setting it down costs nothing. */
+function startMove(o){ if(!o)return false; const c=DECOR_CAT[o.d.t]; if(!c)return false; endBuild(); const g=buildDecorMesh(o.d.t,true); if(!g)return false;
+ build.type=o.d.t; build.moving=o; build.rot=o.d.ry||0; build.ghost=g; g.visible=false; scene.add(g); o.g.visible=false; hidePanels();
+ buildHud(c.emoji+' Moving <b>'+c.label+'</b> · click the ground to set it down · R / Q turn (Shift: fine) · Esc puts it back<button data-bh="rot">↻</button><button data-bh="rotf" title="Fine turn">↻°</button><button data-bh="done">Put back</button>');
+ $('buildHud').querySelectorAll('[data-bh]').forEach(b=>{b.onclick=e=>{e.stopPropagation(); if(b.dataset.bh==='rot')build.rot+=Math.PI/4; else if(b.dataset.bh==='rotf')build.rot+=Math.PI/16; else endBuild(); if(build.ghost)build.ghost.rotation.y=build.rot;};});
+ return true; }
+function startMoveMode(){ endBuild(); build.move=true; hidePanels(); buildHud('✋ Click a piece to pick it up · Esc done<button data-bh="done">Done</button>'); $('buildHud').querySelector('[data-bh]').onclick=e=>{e.stopPropagation();endBuild();}; }
 function startRemove(){ endBuild(); build.remove=true; hidePanels(); buildHud('🧹 Click a piece to remove it (half its price back) · Esc done<button data-bh="done">Done</button>'); $('buildHud').querySelector('[data-bh]').onclick=e=>{e.stopPropagation();endBuild();}; }
-function endBuild(){ if(build.ghost){scene.remove(build.ghost);build.ghost=null;} build.type=null; build.remove=false; buildHud(null); }
+function endBuild(){ if(build.ghost){scene.remove(build.ghost);build.ghost=null;} if(build.moving){build.moving.g.visible=true;build.moving=null;} build.type=null; build.remove=false; build.move=false; buildHud(null); }
 function placeAt(x,z){
  const t=build.type; if(!t)return false; const c=DECOR_CAT[t];
- const why=decorOk(t,x,z); if(why){toast('🚫 '+why);return false;}
- let ok=false,d=null;
- syncSave(sv=>{ sv.decor=sv.decor||[]; if(sv.decor.length>=2000){toast('That is two thousand pieces — even this valley has to stop somewhere!');return;} if(sv.coins<c.price){toast('Not enough coins — '+c.price+'🪙');return;}
-  sv.coins-=c.price; d={id:Math.random().toString(36).slice(2,8),t,x:+x.toFixed(2),z:+z.toFixed(2),ry:+build.rot.toFixed(3)}; sv.decor.push(d); addSP(sv,Math.ceil(c.pts/2),'build'); ok=true; });
+ if(G.ranch&&G.ranch.snap){const q=G.ranch.snap(c,x,z,build.rot,build.moving);if(q){x=q.x;z=q.z;if(q.ry!=null)build.rot=q.ry;}}   // walls snap end to end
+ const mv=build.moving;
+ const why=decorOk(t,x,z,mv); if(why){toast('🚫 '+why);return false;}
+ if(mv){   // a piece picked up again: same piece, new spot, nothing to pay
+  const nx=+x.toFixed(2),nz=+z.toFixed(2),ry=+build.rot.toFixed(3);
+  syncSave(sv=>{const d=(sv.decor||[]).find(d=>d.id===mv.d.id);if(d){d.x=nx;d.z=nz;d.ry=ry;}});
+  mv.d.x=nx;mv.d.z=nz;mv.d.ry=ry; mv.g.position.set(nx,groundH(nx,nz),nz); mv.g.rotation.y=ry; mv.g.visible=true; if(mv.coll){mv.coll.x=nx;mv.coll.z=nz;}
+  build.moving=null; endBuild(); sChime(); toast(c.emoji+' '+c.label+' moved'); return true;
+ }
+ let ok=false,d=null,sp=0;
+ syncSave(sv=>{ sv.decor=sv.decor||[]; if(sv.decor.length>=2000){toast('That is two thousand pieces — even this valley has to stop somewhere!');return;}
+  if(c.gems){ if((sv.gems||0)<c.gems){toast('Not enough gems — '+c.gems+'💎');return;} sv.gems-=c.gems; }
+  else if(sv.coins<c.price){toast('Not enough coins — '+c.price+'🪙');return;} else sv.coins-=c.price;
+  d={id:Math.random().toString(36).slice(2,8),t,x:+x.toFixed(2),z:+z.toFixed(2),ry:+build.rot.toFixed(3)}; sv.decor.push(d);
+  sp=Math.ceil(decorPts(c)/2)+(c.gems?Math.max(1,Math.floor(c.gems/10)):0);   // half the builder points, and a Star Point per 10 gems of premium decor
+  addSP(sv,sp,'build'); sv.stats=sv.stats||{}; sv.stats.decorGems=(sv.stats.decorGems||0)+(c.gems||0); sv.stats.decorSpend=(sv.stats.decorSpend||0)+(c.gems?0:c.price||0); ok=true; });
  if(!ok)return false;
  spawnDecor(d); refreshWallet(); sCoin();
- const sv=freshSave(); const L=ranchLevel(sv); if(L>_ranchLvlCache){_ranchLvlCache=L;sGem();toast('🏗️ Ranch level '+L+'! '+(RANCH_PERKS[L]||''));} else toast(c.emoji+' '+c.label+' placed · '+ranchPts(sv)+' builder points');
- passAdd(2); statBump('built',1);
+ const sv=freshSave(); const L=ranchLevel(sv); if(L>_ranchLvlCache){_ranchLvlCache=L;sGem();toast('🏗️ Ranch level '+L+'! '+(RANCH_PERKS[L]||''));} else toast(c.emoji+' '+c.label+' placed · '+ranchPts(sv)+' builder points · +'+sp+' ⭐');
+ passAdd(2); statBump('built',1); G.run('decorPlaced',d,c);
  questEvt('build',t); questEvt('ranchlvl',0); dailyEvt('build',1);   // the builder questline and the build daily
  return true;
 }
-function removeAt(cx,cy){
+function pickDecor(cx,cy){
  _bndc.set((cx/innerWidth)*2-1,-(cy/innerHeight)*2+1); _bray.setFromCamera(_bndc,camera);
- const hits=_bray.intersectObjects(decorObjs.map(o=>o.g),true); if(!hits.length)return false;
+ const hits=_bray.intersectObjects(decorObjs.map(o=>o.g),true); if(!hits.length)return null;
  let o=null; for(const cand of decorObjs){ let p=hits[0].object; while(p){ if(p===cand.g){o=cand;break;} p=p.parent; } if(o)break; }
- if(!o)return false;
- removeDecor(o); return true;
+ return o;
 }
+function removeAt(cx,cy){ const o=pickDecor(cx,cy); if(!o)return false; removeDecor(o); return true; }
 function removeDecor(o){
  const c=DECOR_CAT[o.d.t]; scene.remove(o.g); const ci=colliders.indexOf(o.coll); if(ci>=0)colliders.splice(ci,1);
  decorObjs.splice(decorObjs.indexOf(o),1);
- syncSave(sv=>{ sv.decor=(sv.decor||[]).filter(d=>d.id!==o.d.id); sv.coins+=Math.floor(c.price/2); });
- refreshWallet(); _ranchLvlCache=ranchLevel(freshSave()); toast('🧹 Removed · +'+Math.floor(c.price/2)+'🪙 back');
+ const back=c.gems?Math.floor(c.gems/2):Math.floor(c.price/2);
+ syncSave(sv=>{ sv.decor=(sv.decor||[]).filter(d=>d.id!==o.d.id); if(c.gems)sv.gems=(sv.gems||0)+back; else sv.coins+=back; for(const h of sv.horses)if(h.hitch===o.d.id)h.hitch=null; });
+ refreshWallet(); _ranchLvlCache=ranchLevel(freshSave()); toast('🧹 Removed · +'+back+(c.gems?'💎':'🪙')+' back'); G.run('decorRemoved',o.d,c);
 }
 function openBuild(){
  const p=$('buildPanel'); if(p.style.display==='flex'){p.style.display='none';return;}
@@ -9048,10 +9073,11 @@ function openBuild(){
  if(xb&&xb.bind){try{xb.bind(p,sv);}catch(e){}}
  bindFx(p);
 }
-renderer.domElement.addEventListener('pointermove',e=>{ if(!build.ghost)return; const pt=groundPoint(e.clientX,e.clientY); if(!pt)return; build.ghost.visible=true; build.ghost.position.set(pt.x,pt.y,pt.z); build.ghost.rotation.y=build.rot; build.lastPt=[pt.x,pt.z]; const why=decorOk(build.type,pt.x,pt.z); $('buildHud').classList.toggle('bad',!!why); });
-renderer.domElement.addEventListener('pointerdown',e=>{ if(build.type||build.remove)build.down={x:e.clientX,y:e.clientY,id:e.pointerId}; });
+renderer.domElement.addEventListener('pointermove',e=>{ if(!build.ghost)return; const pt=groundPoint(e.clientX,e.clientY); if(!pt)return; if(G.ranch&&G.ranch.snap){const q=G.ranch.snap(DECOR_CAT[build.type],pt.x,pt.z,build.rot,build.moving);if(q){pt.x=q.x;pt.z=q.z;pt.y=groundH(q.x,q.z);if(q.ry!=null)build.rot=q.ry;}} build.ghost.visible=true; build.ghost.position.set(pt.x,pt.y,pt.z); build.ghost.rotation.y=build.rot; build.lastPt=[pt.x,pt.z]; const why=decorOk(build.type,pt.x,pt.z); $('buildHud').classList.toggle('bad',!!why); });
+renderer.domElement.addEventListener('pointerdown',e=>{ if(build.type||build.remove||build.move)build.down={x:e.clientX,y:e.clientY,id:e.pointerId}; });
 addEventListener('pointerup',e=>{ const dn=build.down; build.down=null; if(!dn||e.pointerId!==dn.id)return; if(Math.hypot(e.clientX-dn.x,e.clientY-dn.y)>7)return;
  if(build.remove){removeAt(e.clientX,e.clientY);return;}
+ if(build.move&&!build.type){const o=pickDecor(e.clientX,e.clientY);if(o)startMove(o);return;}
  if(build.type){ const pt=groundPoint(e.clientX,e.clientY); if(pt)placeAt(pt.x,pt.z); } });
 $('buildBtn').onclick=openBuild;
 setTimeout(rebuildDecor,4000);
@@ -9105,8 +9131,11 @@ function tickTrail(dt){
  }
 }
 let party=null, partyFX=null, partyBanner=null;
-function startParty(host,remote){
- party={t:90,host:host||myName(),got:false,x:0,z:5};
+function startParty(host,remote,opts){
+ opts=opts||{};
+ if(!remote&&G.run('partyHost',opts)===true)return false;   // the ranch package gates public parties on builder points
+ const px=opts.x==null?0:+opts.x, pz=opts.z==null?5:+opts.z, len=Math.max(30,Math.min(600,+opts.len||90));
+ party={t:len,host:host||myName(),got:false,x:px,z:pz,priv:!!opts.priv,game:opts.game||null,len};
  if(!partyFX){
   partyFX=new THREE.InstancedMesh(new THREE.BoxGeometry(0.18,0.04,0.12),new THREE.MeshBasicMaterial({vertexColors:false}),160);
   partyFX.userData.p=[]; const m4=new THREE.Matrix4(), col=new THREE.Color();
@@ -9114,9 +9143,10 @@ function startParty(host,remote){
   partyFX.instanceColor.needsUpdate=true; partyFX.frustumCulled=false; scene.add(partyFX);
   partyBanner=nameSprite('🎉 Party!'); partyBanner.scale.set(4.2,1.05,1); scene.add(partyBanner);
  }
- partyFX.visible=true; partyBanner.visible=true; partyBanner.position.set(0,groundH(0,5)+5.5,5);
- if(!remote){ if(net.client&&net.club){try{net.client.publish('srf1/'+net.club+'/chat',JSON.stringify({id:net.id,n:myName(),t:'🎉 is throwing a ranch party — ride to the ranch!',party:1}));}catch(e){}} syncSave(sv=>{sv.stats=sv.stats||{};sv.stats.parties=(sv.stats.parties||0)+1;}); }
- toast('🎉 '+(remote?host+' is throwing a ranch party — ride to the ranch!':'Ranch party! Everyone at the ranch in the next minute and a half gets a gift.'));
+ partyFX.visible=true; partyBanner.visible=true; partyBanner.position.set(px,groundH(px,pz)+5.5,pz); partyFX.position.set(px,0,pz-5);
+ if(!remote){ if(net.client&&net.club){try{net.client.publish('srf1/'+net.club+'/chat',JSON.stringify({id:net.id,n:myName(),t:(opts.priv?'🎉 is throwing a private ranch party — you are invited!':'🎉 is throwing a ranch party — ride to the ranch!'),party:{priv:opts.priv?1:0,to:opts.priv?(opts.to||[]).slice(0,40):undefined,x:px,z:pz,len,game:opts.game||null}}));}catch(e){}} syncSave(sv=>{sv.stats=sv.stats||{};sv.stats.parties=(sv.stats.parties||0)+1;if(opts.priv)sv.stats.privParties=(sv.stats.privParties||0)+1;}); }
+ toast('🎉 '+(remote?host+' is throwing a'+(opts.priv?' private':'')+' ranch party — ride over!':(opts.priv?'Private party! ':'Ranch party! ')+'Everyone who arrives in the next '+(len>=120?Math.round(len/60)+' minutes':'minute and a half')+' gets a gift.')+(opts.game?' · '+opts.game:''));
+ return true;
 }
 function tickParty(dt){
  if(!party)return;
@@ -9125,7 +9155,7 @@ function tickParty(dt){
   partyFX.userData.p.forEach((c,i)=>{ c.y+=c.vy*dt; c.r+=dt*3; if(c.y<groundH(c.x,c.z)+0.05){c.y=groundH(c.x,c.z)+9+Math.random()*3;} e.set(c.r,c.r*0.7,0); q.setFromEuler(e); v.set(c.x,c.y,c.z); m4.compose(v,q,sc); partyFX.setMatrixAt(i,m4); });
   partyFX.instanceMatrix.needsUpdate=true; }
  if(!party.got&&Math.hypot(player.pos.x-party.x,player.pos.z-party.z)<25){ party.got=true; addCoins(100); addGems(1); sGem(); toast('🎁 Party gift: +100🪙 +1💎'); syncSave(sv=>{sv.stats=sv.stats||{};sv.stats.partied=(sv.stats.partied||0)+1;}); }
- if(party.t<=0){ party=null; if(partyFX){partyFX.visible=false;partyBanner.visible=false;} toast('🎉 The party winds down.'); }
+ if(party.t<=0){ party=null; if(partyFX){partyFX.visible=false;partyBanner.visible=false;partyFX.position.set(0,0,0);} toast('🎉 The party winds down.'); }
 }
 const RUNAWAY_SPOTS=[[120,-60],[-95,95],[70,150]];
 const SANCTUARY={x:-70,z:-10,r:20};
@@ -9758,12 +9788,14 @@ function marketTackStock(){
  finally{ Math.random=orig; }
  return out;
 }
+function tackIdx(s){const i=(G.ranch&&G.ranch.tackFor!=null)?G.ranch.tackFor:rideIdx;return (s.horses&&s.horses[i])?i:rideIdx;}   // which horse the locker dresses (ranch package: any stalled horse, not only the ridden one)
 function tackLockerHtml(s){
- const h=s.horses[rideIdx]; if(h)ensureStats(h);
+ const ti=tackIdx(s), h=s.horses[ti]; if(h)ensureStats(h);   // ranch package: the locker can dress any stalled horse
  const inv=s.tack||[]; const keys=s.keys||0; const tw=s.tw||{}; const items=s.items||{};
  const freeKey=(s.keyWeek!==weekKey()), freeKit=(tw.kitWeek!==weekKey());
  let html='<div class="evrow">🗝️ <b>Silver Keys: '+keys+'</b><span style="font-size:11px">A key opens a tack chest: one piece, rarity rolled (Common 52% · Uncommon 28% · Rare 13% · Epic 5.5% · Legendary 1.5%). Keys come from events, taming, breeding, the Trail Pass and trophies. Tack also comes from the market stall below, world chests, Grandma\'s tack room, Bo\'s missions and the top rung of the weekly ⭐ Star Points ladder.</span>'
   +'<span style="flex:none;display:flex;gap:4px"><button data-tk="chest" '+(keys>0?'':'disabled')+'>Open chest 🗝️</button>'+(freeKey?'<button data-tk="freekey">🎁 Weekly key</button>':'')+'</span></div>';
+ html+=sect('tackHeader',s,ti);   // the horse picker (ranch package)
  html+='<div class="evrow">🧰 <b>Bo\'s Saddlery</b><span style="font-size:11px">Toolkits I·II·III: '+(items.kit1||0)+' · '+(items.kit2||0)+' · '+(items.kit3||0)+' — an upgrade needs one (I up to Lv 3, II to Lv 6, III to Lv 8). 🔧 Parts: <b>'+(s.parts||0)+'</b> from stripped spares. Bigger kits drop from chests and quests.</span>'
   +'<span style="flex:none;display:flex;gap:4px;flex-wrap:wrap">'+Object.keys(TOOLKITS).map(k=>{const K=TOOLKITS[k];return '<button data-tk="buykit:'+k+'" '+(s.coins>=K.price&&(s.parts||0)>=K.parts?'':'disabled')+'>Kit '+'I'.repeat(K.tier).replace('III','III')+' · '+K.price+'🪙'+(K.parts?' + '+K.parts+' parts':'')+'</button>';}).join('')+(freeKit?'<button data-tk="freekit">🎁 Weekly kit</button>':'')+'</span></div>';
  {const stock=marketTackStock(), sold=(tw.market&&tw.market.day===marketDay()&&tw.market.sold)||[];
@@ -9801,7 +9833,7 @@ function tackLockerHtml(s){
 function tackAct(cmd){
  const [op,arg]=cmd.split(':'); let msg='',ok=false,got=null,upgraded=false,refit=false;
  syncSave(s=>{
-  s.tack=s.tack||[]; s.items=s.items||{}; s.tw=s.tw||{}; if(s.parts==null)s.parts=0; const h=s.horses[rideIdx]; if(h)ensureStats(h);
+  s.tack=s.tack||[]; s.items=s.items||{}; s.tw=s.tw||{}; if(s.parts==null)s.parts=0; const ti=tackIdx(s), h=s.horses[ti]; if(h)ensureStats(h);
   const maxLvl=()=>s.tack.reduce((m,t)=>Math.max(m,t.lvl||1),1);
   if(op==='chest'){ if((s.keys||0)<1){msg='No keys — finish an event or a daily.';return;} s.keys--; got=genGear(); s.tack.push(got); msg='🗝️ '+got.rarity+'! '+got.name; ok=true; }
   else if(op==='freekey'){ if(s.keyWeek===weekKey()){msg='Already claimed this week.';return;} s.keyWeek=weekKey(); s.keys=(s.keys||0)+1; msg='🎁 A Silver Key — see you next week!'; ok=true; }
@@ -9809,7 +9841,7 @@ function tackAct(cmd){
   else if(op==='freekit'){ if(s.tw.kitWeek===weekKey()){msg='Bo already gave you this week\'s kit.';return;} s.tw.kitWeek=weekKey(); s.items.kit1=(s.items.kit1||0)+1; msg='🎁 A Tack Toolkit I on the house — see you next week!'; ok=true; }
   else if(op==='mkt'){ const stock=marketTackStock(), it=stock[+arg]; if(!it)return; s.tw.market=(s.tw.market&&s.tw.market.day===marketDay())?s.tw.market:{day:marketDay(),sold:[]}; if(s.tw.market.sold.includes(+arg)){msg='Sold already.';return;} if(s.coins<it.price){msg='Not enough coins!';return;} s.coins-=it.price; s.tw.market.sold.push(+arg); got=Object.assign({},it,{id:Date.now().toString(36)+Math.random().toString(36).slice(2,6)}); delete got.price; s.tack.push(got); s.stats=s.stats||{}; s.stats.tackBought=(s.stats.tackBought||0)+1; msg='🤝 Bought the '+got.name+'.'; ok=true; }
   else if(op==='order'){ if(s.coins<150){msg='Not enough coins!';return;} s.coins-=150; got=genGear('Common',arg,{style:h&&h.saddleStyle}); s.tack.push(got); if(h)h.gear[arg]=got.id; msg='Ordered a '+got.name+' and put it on.'; ok=true; refit=true; }
-  else if(op==='on'){ const it=s.tack.find(t=>t.id===arg); if(!it||!h)return; h.gear[it.slot]=it.id; msg=h.name+' wears the '+it.name+'.'; ok=true; refit=true; }
+  else if(op==='on'){ const it=s.tack.find(t=>t.id===arg); if(!it||!h)return; for(const x of s.horses){if(x===h||!x.gear)continue;for(const sl in x.gear)if(x.gear[sl]===it.id)delete x.gear[sl];} h.gear[it.slot]=it.id; msg=h.name+' wears the '+it.name+'.'; ok=true; refit=true; }   // one piece, one horse (ranch package)
   else if(op==='off'){ if(!h)return; delete h.gear[arg]; msg='Taken off.'; ok=true; refit=true; }
   else if(op==='up'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; if((it.lvl||1)>=TACK_MAX_LVL){msg='Already at Lv '+TACK_MAX_LVL+'.';return;} const uc=gearUpgradeCost(it);
    if((s.items[uc.kit]||0)<1){msg='Bo needs a '+TOOLKITS[uc.kit].label+' for that — buy one at the saddlery, or find one in a chest.';return;}
@@ -10135,7 +10167,7 @@ function netOnMessage(topic,payload){
    const nm2=String(m.n||'Rider').slice(0,14);
    if(G.run('chat',m,nm2)===true)return;                // a piggy-backed field handled by a package
    if(m.id!==net.id&&Array.isArray(m.tr)&&m.tr.length>=2&&m.tr.length<=9){trailOffer={pts:m.tr.slice(0,9).map(p=>[String(p[0]).slice(0,20),+p[1]||0,+p[2]||0]),by:nm2};toast('🥾 '+nm2+' started a trail ride — open 🌐 Club to join');}
-   if(m.id!==net.id&&m.party)startParty(nm2,true);
+   if(m.id!==net.id&&m.party)startParty(nm2,true,typeof m.party==='object'?m.party:undefined);   // {priv,to,x,z,len,game} — the ranch package vets private invites in its 'chat' hook
    chatMsg(nm2,m.t.slice(0,90));
    const rm=Object.values(remotes).find(r=>r.name===nm2);
    if(rm)showBubble(rm,m.t);
@@ -10318,7 +10350,7 @@ function openOnline(){
  +'<div class="crow" style="gap:4px;flex-wrap:wrap">'+TRAIL_STOPS.map((st,i)=>'<button data-tr="add:'+i+'" style="font-size:11px;padding:3px 7px">'+st[0]+'</button>').join('')+'</div>'
  +'<div class="crow" style="gap:6px"><span style="font-size:12px;flex:1">'+(trailDraft.length?trailDraft.map(p=>p[0]).join(' → '):'no stops yet')+'</span><button data-tr="clear">Clear</button><button data-tr="start" '+(trailDraft.length>=2?'class="claimBtn"':'disabled')+'>Start ride</button></div>'
  +'<b style="font-size:13px;margin-top:6px">🎉 Ranch party</b>'
- +'<div class="crow" style="gap:6px"><span style="font-size:12px;flex:1">'+(party?'Party on at '+party.host+'\'s ranch — '+Math.ceil(party.t)+'s left':'Confetti, a banner, and a gift for everyone who rides to the ranch within a minute and a half.')+'</span><button data-tr="party" '+(party?'disabled':'')+'>🎉 Throw a party</button></div>'
+ +'<div class="crow" style="gap:6px"><span style="font-size:12px;flex:1">'+(party?'Party on at '+party.host+'\'s ranch — '+Math.ceil(party.t)+'s left':'Confetti, a banner, and a gift for everyone who rides to the ranch within a minute and a half.')+'</span><button data-tr="party" '+((party||(G.ranch&&G.ranch.canHostPublic&&!G.ranch.canHostPublic()))?'disabled':'')+'>🎉 Throw a party</button></div>'
  +'<b style="font-size:13px">Riders here now ('+riders.length+')</b>'
  +(riders.length?riders.map(r=>'<div class="evrow">🐴 <b>'+r.name+'</b><span>'+(r.horseName?'riding '+r.horseName:'')+'</span><button data-prof="'+r.name+'">👤 Profile</button><button data-friend="'+r.name+'">'+(isFriend(r.name)?'💚 Friend':'🤍 Befriend')+'</button></div>').join(''):'<span style="font-size:12px;color:#8c7a63">No one yet — share your club code with friends! Anyone who opens the game and joins the same club rides in your world.</span>')
  +(function(){
@@ -11310,6 +11342,7 @@ function renderStable(){
     myHorses[i].out=now;
     syncSave(sv=>{ if(sv.horses[i])sv.horses[i].out=now; });
     msg=now?'🌿 '+myHorses[i].name+' is out in the pasture.':'🏠 '+myHorses[i].name+' is in the barn.';
+    if(!now)dailyEvt('stallin',1);
     rebuildAll();
    }
    toast(msg); renderStable();
@@ -13439,6 +13472,8 @@ function installFeatures(){
    openShop,openCare,openEvents,openStable,openQuests,openOnline,openLB,openBuild,renderCare,renderStable,renderQuests,renderLB,renderMoney,drawVRMenu,TABS,VR_BUILDERS},
   key:keyOf,
  });
+ G.ranchSys={BARN_ROW,PAST,buildBarnRow,refreshBarn,resetBarn,barnHorses:()=>barnHorses,disposeHorseEnt,tickRig,animateHorse,GAITS,horseScale,decorObjs,build,spawnDecor,decorOk,startPlace,startMove,startMoveMode,startRemove,endBuild,removeDecor,pickDecor,decorPts,ranchPts,ranchLevel,ranchMul,
+  level:()=>_ranchLvlCache,refreshLevel(){_ranchLvlCache=ranchLevel(freshSave()||{});return _ranchLvlCache;},party:()=>party,startParty,boardStalls,boardRate,rebuildDecor,tackAct,tackIdx,sel:()=>sel,removeAt,placeAt,setRideIdx(i){rideIdx=i;sel.value=String(i);}};   // the ranch package's seam (assets/features/ranch.js)
  try{KEYMAP_USER=(freshSave()||{}).keymap||{};}catch(e){}
  /* Panel hotkeys from the key map (remappable later through s.keymap). */
  for(const [name,fn] of [['care',openCare],['shop',()=>openShop()],['events',openEvents],['stable',openStable],['quests',openQuests],['club',openOnline],['boards',openLB]]){
