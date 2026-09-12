@@ -99,6 +99,18 @@ export function install(G){
 #shopPanel .s2-row .s2-glyph{display:inline-flex;align-items:center;justify-content:center;
  font-size:24px;line-height:1;background:radial-gradient(circle at 50% 35%,#fff,#f1e6cf)}
 #shopPanel .s2-row .s2-copy{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px}
+/* The text column must never be squeezed to nothing. A trailing block that refuses to shrink
+   (a wide button plus its label) used to take the whole row and leave the copy at 18px, which
+   wraps a sentence one or two characters per line — the Tack tab was a tall column of single
+   letters. The copy now holds a floor and the trailing block yields; on a narrow panel the
+   trailing block drops to its own line instead of fighting for width. */
+#shopPanel .s2-row{flex-wrap:wrap}
+#shopPanel .s2-row .s2-copy{min-width:min(100%,9rem)}
+#shopPanel .s2-row .s2-trail{flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:560px){
+ #shopPanel .s2-row .s2-trail{max-width:none;flex:1 1 100%;margin-left:0;justify-content:flex-start}
+ #shopPanel .s2-row .s2-copy{flex:1 1 100%}
+}
 #shopPanel .s2-row .s2-title{display:flex;align-items:center;gap:7px;flex-wrap:wrap;
  font-family:var(--display);font-size:14.5px;font-weight:600;color:var(--ink);line-height:1.15}
 #shopPanel .s2-row .s2-title b{font-weight:600;font-family:inherit}
@@ -109,9 +121,26 @@ export function install(G){
 #shopPanel .s2-row .s2-meta{font-size:11.5px;font-weight:600;color:var(--ink-2);line-height:1.3;
  overflow-wrap:break-word}
 #shopPanel .s2-row .s2-meta em{font-style:normal;color:var(--ink-3)}
-#shopPanel .s2-row .s2-trail{flex:0 0 auto;margin-left:auto;display:flex;align-items:flex-end;
+#shopPanel .s2-row .s2-trail{flex:0 1 auto;min-width:0;max-width:60%;margin-left:auto;display:flex;align-items:flex-end;
  flex-direction:column;gap:4px}
-#shopPanel .s2-row .s2-trail-row{display:flex;align-items:center;gap:5px}
+#shopPanel .s2-row .s2-trail-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:100%;min-width:0}
+/* Buttons keep their own text on one line, but the ROW of them must wrap, or a second
+   button simply hangs off the right edge of the sheet. */
+#shopPanel .s2-row .s2-trail button{max-width:100%}
+/* The kit buttons sit in an unclassed wrapper inside the trailing block. It had no width
+   limit, so it grew to 574px inside a 365px sheet and the first two buttons were pushed out
+   of sight. It now fits the row and wraps onto a second line. */
+/* The wrapper is a SPAN carrying an inline flex:none, so it neither matched a div rule nor
+   agreed to shrink; both have to be overridden for the buttons to stay inside the sheet. */
+#shopPanel .s2-trail-row>*{max-width:100%;min-width:0;flex-wrap:wrap;flex:0 1 auto!important}
+/* A label sitting beside a control in a scrolling control row (the 'Dressing' line) kept
+   white-space:nowrap, so its sentence ran off the edge instead of wrapping. */
+#shopPanel .crow>span{white-space:normal;min-width:0;overflow-wrap:anywhere}
+/* A control row wraps rather than scrolling its label out of sight — except the tab
+   strip, which is meant to scroll. */
+#shopPanel .crow:not(:has(>.tabbtn)){flex-wrap:wrap;overflow-x:visible}
+/* Loose text beside a control (the 'Dressing' line) wraps rather than running off. */
+#shopPanel .evrow>span:not(.s2-glyph):not(.mk-thumb){min-width:0;overflow-wrap:anywhere;white-space:normal}
 
 /* --- the price: a pill that carries its rarity, tabular, never on a second line --- */
 #shopPanel .s2-row .s2-trail button{margin:0;white-space:nowrap;font-variant-numeric:tabular-nums;
