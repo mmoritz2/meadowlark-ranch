@@ -168,4 +168,5 @@ import * as uikit from './ui-kit.js';
 import * as ui2horse from './ui2-horse.js';
 import * as ui2shop from './ui2-shop.js';
 import * as ui2compete from './ui2-compete.js';
-export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,uikit,ui2horse,ui2shop,ui2compete];
+import * as ui2hud from './ui2-hud.js';
+export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,uikit,ui2horse,ui2shop,ui2compete,ui2hud];
