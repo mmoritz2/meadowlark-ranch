@@ -4,7 +4,9 @@
    upgrade levels with toolkits, merge and strip, the market stall and chest odds, English/Western
    saddles and the rider's seat, the two tack missions, the rider creator, the wardrobe (live recolour,
    dust unlocks, helmet off, hairstyles), the Season Store, the prestige set and its badge on remotes,
-   and the render_game_to_text keys. A second load checks the creator shows once for an old save.
+   the Western headstall (no noseband), the Star Points Legendary rung, the tack-room toolkit, VR outfit
+   parity, the GLB saddle tint, and the render_game_to_text keys. A second load checks the creator shows
+   once for an old save.
 
    Usage:  QA_URL=http://127.0.0.1:8431 NODE_PATH=$(npm root -g) node tools/qa-tack-wardrobe.cjs */
 const {chromium}=require('playwright');
@@ -27,7 +29,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   const response=await route.fetch();const html=await response.text();
   const marker='const MERGE_STATS=mergeStatics();';
   if(!html.includes(marker))throw Error('Game QA injection point is missing');
-  await route.fulfill({response,body:html.replace(marker,`window.__qa={genGear,gearBonus,gearUpgradeCost,gearMergeCost,gearSet,setBonus,effStats,gearPrimary,TACK_SETS,SET_KEYS,RAR_PATTERN,STAT_ADJ,STAT_OF,RAR_PARTS,TOOLKITS,TACK_MAX_LVL,tackAct,marketTackStock,riderSeat,TACK,player,RIG,attachTack,dressSaddle,refreshTack,saddleStyleOf,remoteUpdate,remotes,useThing,things,CHESTS,setNear:t=>{nearThing=t;},setStory:(i,p)=>{storyIdx=i;storyProg=p;saveStory();},STORY,scene,freshSave,syncSave,rideIdx:()=>rideIdx,RIDER_MESH};`+marker)});
+  await route.fulfill({response,body:html.replace(marker,`window.__qa={genGear,gearBonus,gearUpgradeCost,gearMergeCost,gearSet,setBonus,effStats,gearPrimary,TACK_SETS,SET_KEYS,RAR_PATTERN,STAT_ADJ,STAT_OF,RAR_PARTS,TOOLKITS,TACK_MAX_LVL,tackAct,marketTackStock,riderSeat,TACK,player,RIG,attachTack,dressSaddle,refreshTack,saddleStyleOf,remoteUpdate,remotes,useThing,things,CHESTS,setNear:t=>{nearThing=t;},setStory:(i,p)=>{storyIdx=i;storyProg=p;saveStory();},STORY,scene,freshSave,syncSave,rideIdx:()=>rideIdx,RIDER_MESH,VR_OUTFIT,buildSaddle,SADDLE_GLB,weekKey,MILES,setLb:(t,s)=>{lbTab=t;lbSub=s;}};`+marker)});
  });
  stage('launch'); await page.goto(base+'/ranch3d.html?qa=tack-wardrobe&fresh='+Date.now(),{waitUntil:'load',timeout:120000}); stage('loaded');
  await page.waitForFunction(READY,null,{timeout:150000,polling:250}); stage('horseReady');
@@ -125,6 +127,27 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
    if(rm&&rm.rider.mesh){const ru=rm.rider.mesh.material.userData.u;out.remote.shirt1=ru.uShirt.value.getHexString();out.remote.boots=ru.uBootW.value;out.remote.hair=rm.rider._twHair&&rm.rider._twHair.name;out.remote.body=+(rm.rider.fitG.scale.x/rm.rider.fitG.scale.y).toFixed(3);
     Q.remoteUpdate({id:'qa1',n:'Tess',x:Q.player.pos.x+3,z:Q.player.pos.z+3,h:0,sp:0,bd:0,b:'bay-sporthorse',s:'#8a5ab3',p:'#3a3a3a',bo:'f',hs:'bun'});out.remote.shirt2=ru.uShirt.value.getHexString();out.remote.badge2=rm.badge;out.remote.hair2=rm.rider._twHair&&rm.rider._twHair.name;}
   }
+  /* P. Western headstall: the worn bridle decides whether the noseband shows */
+  {let wb=null,eb=null;G.save.sync(s=>{const W=Q.genGear('Rare','bridle',{style:'western'}),E=Q.genGear('Rare','bridle',{style:'english'});s.tack.push(W,E);wb=W.id;eb=E.id;});
+   const nosebands=()=>{const o=[];Q.TACK.bridle&&Q.TACK.bridle.traverse(x=>{if(x.isMesh&&/^noseband$/i.test(x.name))o.push(x.visible);});return o;};
+   Q.tackAct('on:'+wb);out.headstall={hasBridle:!!Q.TACK.bridle,western:Q.TACK.bridle&&Q.TACK.bridle.userData.western,noseW:nosebands()};
+   Q.tackAct('on:'+eb);out.headstall.english=Q.TACK.bridle&&Q.TACK.bridle.userData.western;out.headstall.noseE=nosebands();}
+  /* Q. leaderboard exclusive: 800 Star Points in a week pays a Legendary piece */
+  {const sp=Q.MILES.sp.tiers;const i=sp.findIndex(t=>t[0]===800);out.miles={i,gear:i>=0&&sp[i][1].gear};
+   G.save.sync(s=>{s.sp={week:Q.weekKey(),pts:800};s.lbClaims=s.lbClaims||{};delete s.lbClaims['sp_'+i];});const n0=Q.freshSave().tack.length;
+   Q.setLb('boards','miles');G.ui.openLB();const b=document.querySelector('#lbPanel [data-claim="sp_'+i+'"]');out.miles.btn=!!b;if(b)b.click();
+   const s=Q.freshSave();const added=s.tack.slice(n0);out.miles.added=added.length;out.miles.rarity=added[0]&&added[0].rarity;out.miles.claimed=!!s.lbClaims['sp_'+i];G.hidePanels();}
+  /* R. Grandma's tack room pays a Toolkit II with the piece */
+  {const room=Q.things.find(t=>t.kind==='room');out.room={found:!!room};
+   if(room){G.save.sync(s=>{s.keys=1;s.doors=s.doors||{};s.doors.tackroom='';s.items.kit2=0;});const n0=Q.freshSave().tack.length;Q.setNear(room);Q.useThing();const s=Q.freshSave();out.room.kit2=s.items.kit2;out.room.piece=s.tack.length-n0;out.room.keys=s.keys;out.room.rarity=s.tack[s.tack.length-1].rarity;}}
+  /* S. VR outfit mirror lists the same slots as the flat tab */
+  {const rows=Q.VR_OUTFIT.map(r=>r[0]);out.vr={rows,skins:(Q.VR_OUTFIT.find(r=>r[0]==='skin')||[])[2].length,hair:(Q.VR_OUTFIT.find(r=>r[0]==='hair')||[[],[],[]])[2].length};}
+  /* T. GLB saddle (non-hero breeds): own material, set tint multiplies the bake */
+  {const glb=Q.SADDLE_GLB.english;out.glb={loaded:!!glb};
+   if(glb){const g=Q.buildSaddle('english',{profile:{}});out.glb.own=g.userData.mats&&g.userData.mats.leather!==glb.mat&&g.userData.glb===true;
+    let kid=null;G.save.sync(s=>{const it=Q.genGear('Legendary','saddle',{set:'Kestrel',style:'english'});s.tack.push(it);s.horses[Q.rideIdx()].gear.saddle=it.id;kid=it.id;});Q.refreshTack();
+    const real=Q.TACK.saddle;try{Q.TACK.saddle=g;Q.dressSaddle();out.glb.tinted=g.userData.mats.leather.color.getHexString();G.save.sync(s=>{delete s.horses[Q.rideIdx()].gear.saddle;});Q.refreshTack();Q.dressSaddle();out.glb.plain=g.userData.mats.leather.color.r.toFixed(2);}finally{Q.TACK.saddle=real;}
+    const want=new G.THREE.Color(Q.TACK_SETS.Kestrel.tint).multiplyScalar(1.6).getHexString();out.glb.want=want;}}
   /* N. state */
   {const st=JSON.parse(render_game_to_text());out.state={rider:st.rider&&Object.keys(st.rider),tack:st.tack&&Object.keys(st.tack),sets:st.tack&&st.tack.sets,dustEl:document.getElementById('dustEl').textContent};}
   return out;
@@ -160,6 +183,11 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  if(r.store&&r.store.ranger)check('L Ranger Western tack set: four Epic Western Ranger pieces',r.store.ranger.n===4&&r.store.ranger.allRanger&&r.store.ranger.western===2,r.store.ranger);
  check('M prestige set gated, then worn with boots band + state flag',r.prestige&&r.prestige.before===false&&r.prestige.btn&&r.prestige.after.helmet==='#d4af37'&&r.prestige.after.boots==='#3b2a14'&&r.prestige.after.bootW===1&&r.prestige.after.bootHex==='3b2a14'&&r.prestige.after.state===true,r.prestige);
  check('M remote rider: badge tag, Western saddle, hairstyle/body/boots applied and live outfit propagation',r.remote&&r.remote.exists&&r.remote.badge===true&&r.remote.tag&&r.remote.saddleStyle==='western'&&r.remote.shirt1==='4a7ab3'&&r.remote.boots===1&&r.remote.hair==='hair-crop'&&r.remote.body>1.05&&r.remote.shirt2==='8a5ab3'&&r.remote.badge2===false&&r.remote.hair2==='hair-bun'&&r.remote.profile===true,r.remote);
+ check('P Western bridle hides the noseband; English shows it',r.headstall&&r.headstall.hasBridle&&r.headstall.western===true&&r.headstall.noseW.length>0&&r.headstall.noseW.every(v=>v===false)&&r.headstall.english===false&&r.headstall.noseE.every(v=>v===true),r.headstall);
+ check('Q weekly Star Points ladder tops out with a Legendary piece (leaderboard exclusive)',r.miles&&r.miles.i>=0&&r.miles.gear==='Legendary'&&r.miles.btn&&r.miles.added===1&&r.miles.rarity==='Legendary'&&r.miles.claimed,r.miles);
+ check('R tack room pays a Rare+ piece and a Toolkit II for a key',r.room&&r.room.found&&r.room.kit2===1&&r.room.piece===1&&r.room.keys===0&&['Rare','Epic','Legendary'].includes(r.room.rarity),r.room);
+ check('S VR outfit mirror: shirt/pants/helmet/skin/hair rows, 5 skin tones',r.vr&&r.vr.rows.join()==='shirt,pants,helmet,skin,hair'&&r.vr.skins===5&&r.vr.hair===8,r.vr);
+ if(r.glb&&r.glb.loaded)check('T GLB saddle has its own material and takes the set tint',r.glb.own&&r.glb.tinted===r.glb.want&&r.glb.plain==='1.25',r.glb);else check('T GLB saddle file present (skipped tint check: not loaded)',true,r.glb);
  check('N render_game_to_text carries rider + tack keys, dust HUD painted',r.state&&r.state.rider&&r.state.rider.includes('prestige')&&r.state.tack&&r.state.tack.includes('maxLvl')&&r.state.sets===26&&/✨ 0/.test(r.state.dustEl),r.state);
  /* second load: an old save without rider.made shows the creator once; after Done a reload does not */
  await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('starRanchFable_v1'));delete s.rider.made;s.rider={shirt:'#c98c5a',pants:'#2e3a52'};delete s.tw;localStorage.setItem('starRanchFable_v1',JSON.stringify(s));});

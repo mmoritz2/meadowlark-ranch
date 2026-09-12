@@ -1616,7 +1616,8 @@ const VR_OUTFIT=[
  ['shirt','👕 Shirt',['#c98c5a','#b34a4a','#4a7ab3','#5a9a5a','#8a5ab3','#e8d9b8']],
  ['pants','👖 Pants',['#4a4338','#2e3a52','#6b4a2e','#3a3a3a']],
  ['helmet','⛑️ Helmet',['#2e2e38','#7d3c98','#b3622f','#e8e8e8','#2e86c1']],
- ['skin','🖐️ Skin',['#f0c8a8','#e3a37d','#c98a62','#a06a48']]
+ ['skin','🖐️ Skin',['#f0c8a8','#e3a37d','#c98a62','#a06a48','#6b4530']],
+ ['hair','💇 Hair',['#1e140e','#4a2e1c','#8a4a25','#d9a85c','#b3402a','#c8c8d0','#e8a0c8','#6a8fd0']]
 ];
 let vrMateA=null,vrMateB=null;
 
@@ -5531,10 +5532,10 @@ function buildSaddle(style,rig=RIG){
  const W=style==='western';
  if(SADDLE_GLB[W?'western':'english']){
   const src=SADDLE_GLB[W?'western':'english'], f=SADDLE_GLB.fit[W?'western':'english'];
-  const g=new THREE.Group(); const m=new THREE.Mesh(src.geo,src.mat);
+  const g=new THREE.Group(); const m=new THREE.Mesh(src.geo,src.mat.clone());   // own material: a set tint or paint recolours this saddle only
   m.scale.set(f.s,f.sy||f.s,f.s); m.rotation.y=f.ry; m.position.set(0,f.y,f.z);   // a little shorter than wide: the fenders would otherwise hang below the boots
   m.castShadow=true; m.receiveShadow=true; m.frustumCulled=false; g.add(m);
-  g.userData.proc=true; g.userData.glb=true; g.userData.style=W?'western':'english';
+  g.userData.proc=true; g.userData.glb=true; g.userData.style=W?'western':'english'; g.userData.mats={leather:m.material,pad:null};
   return saddleStirrups(g,0.25,-0.42,0.28);
  }
  const g=new THREE.Group(); g.userData.style=W?'western':'english';
@@ -5589,7 +5590,7 @@ function buildBreedBridle(rig){
  const g=new THREE.Group(),leather=new THREE.MeshStandardMaterial({color:0x38271c,roughness:.7});
  const iron=new THREE.MeshStandardMaterial({color:0xb8bcc2,metalness:.75,roughness:.3});
  const gold=new THREE.MeshStandardMaterial({color:0xd8b24a,metalness:.7,roughness:.35});
- const addCurve=(pts,r,mat,closed=false)=>{const curve=new THREE.CatmullRomCurve3(pts.map(v=>v.clone().sub(head)),closed);let geo;if(rig.profile.hero&&mat===leather){const sh=new THREE.Shape();sh.moveTo(-r,-.002);sh.lineTo(r,-.002);sh.lineTo(r,.002);sh.lineTo(-r,.002);sh.closePath();geo=new THREE.ExtrudeGeometry(sh,{steps:closed?64:32,bevelEnabled:false,extrudePath:curve});}else geo=new THREE.TubeGeometry(curve,closed?36:12,r,5,closed);const mesh=new THREE.Mesh(geo,mat);mesh.castShadow=true;g.add(mesh);};
+ const addCurve=(pts,r,mat,closed=false)=>{const curve=new THREE.CatmullRomCurve3(pts.map(v=>v.clone().sub(head)),closed);let geo;if(rig.profile.hero&&mat===leather){const sh=new THREE.Shape();sh.moveTo(-r,-.002);sh.lineTo(r,-.002);sh.lineTo(r,.002);sh.lineTo(-r,.002);sh.closePath();geo=new THREE.ExtrudeGeometry(sh,{steps:closed?64:32,bevelEnabled:false,extrudePath:curve});}else geo=new THREE.TubeGeometry(curve,closed?36:12,r,5,closed);const mesh=new THREE.Mesh(geo,mat);mesh.castShadow=true;g.add(mesh);return mesh;};
  const bitPoints=[];
  if(rig.profile.hero){
   const src=rig.skin.geometry.attributes.position,rawPoll=new THREE.Vector3(...A.poll[0]),rawMuzzle=new THREE.Vector3(...A.muzzle[0]),axis=rawPoll.clone().sub(rawMuzzle).normalize();
@@ -5599,14 +5600,14 @@ function buildBreedBridle(rig){
    const uc=pts.length?(u0+u1)/2:0,vc=pts.length?(v0+v1)/2:-.05;center.addScaledVector(side,uc).addScaledVector(dorsal,vc);
    const ring=[];for(let k=0;k<48;k++){const t=k/48*Math.PI*2,dx=Math.cos(t),dy=Math.sin(t),radii=[];for(const p of pts){const x=p[0]-uc,y=p[1]-vc,r=Math.hypot(x,y);if((x*dx+y*dy)/Math.max(.0001,r)>.96)radii.push(r);}radii.sort((a,b)=>a-b);const radius=(radii.length?radii[Math.floor((radii.length-1)*.72)]:Math.hypot((u1-u0)*.5*dx,(v1-v0)*.5*dy))+.006;const p=center.clone().addScaledVector(side,dx*radius).addScaledVector(dorsal,dy*radius);ring.push(BREED_MODELS.mountPoint(rig,p.toArray()));}return {ring,center};};
   const nose=section(.33),crown=section(.88),brow=section(.71),mouth=section(.07);
-  addCurve(nose.ring,.007,leather,true);addCurve(crown.ring.slice(0,25),.006,leather);addCurve(brow.ring.slice(0,25),.006,leather);
+  addCurve(nose.ring,.007,leather,true).name='noseband';addCurve(crown.ring.slice(0,25),.006,leather);addCurve(brow.ring.slice(0,25),.006,leather);
   const lateral=(x,y,sg)=>{const near=[];for(let i=0;i<src.count;i++){const px=src.getX(i),py=src.getY(i);if(px<.64||py>.745)continue;const d=(px-x)*(px-x)+(py-y)*(py-y);if(d<.003)near.push([d,src.getZ(i)]);}near.sort((a,b)=>a[0]-b[0]);const zs=near.slice(0,26).map(p=>p[1]).sort((a,b)=>a-b);return (zs[Math.floor((zs.length-1)*(sg>0?.95:.05))]||0)+sg*.008;};
   for(const [index,sg]of [[0,1],[24,-1]]){const xy=sg>0?[[.710,.705],[.746,.605],[.838,.500],[.932,.373]]:[[.747,.712],[.770,.625],[.852,.500],[.945,.373]],guide=new THREE.CatmullRomCurve3(xy.map(p=>new THREE.Vector3(p[0],p[1],0))),pts=[];for(let k=0;k<=30;k++){const p=guide.getPoint(k/30);p.z=lateral(p.x,p.y,sg);pts.push(BREED_MODELS.mountPoint(rig,p.toArray()));}const bit=pts[pts.length-1];bitPoints.push(bit);addCurve(pts,.0055,leather);const ring=new THREE.Mesh(new THREE.TorusGeometry(.020,.0038,7,22),iron);ring.position.copy(bit).sub(head);ring.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),right);g.add(ring);}
 
  }else{
  const nose=muzzle.clone().lerp(poll,.19),crown=poll.clone().lerp(muzzle,.15);
  const ring=(center,w,d)=>Array.from({length:32},(_,i)=>center.clone().addScaledVector(right,Math.cos(i/32*Math.PI*2)*w).addScaledVector(front,Math.sin(i/32*Math.PI*2)*d));
- addCurve(ring(nose,noseWidth*.65,.07*rig.fitScale),.009,leather,true);
+ addCurve(ring(nose,noseWidth*.65,.07*rig.fitScale),.009,leather,true).name='noseband';
  addCurve(ring(crown,width*.57,.09*rig.fitScale),.009,leather,true);
  for(const sign of[-1,1]){
   const bit=nose.clone().addScaledVector(right,sign*noseWidth*.7).addScaledVector(face,-.055);
@@ -5637,7 +5638,7 @@ function buildBridle(dragon,rig=RIG){
  const put=(m,x,y,z)=>{m.position.set(x-H0.x,y-H0.y,z-H0.z);m.castShadow=true;g.add(m);return m;};
  const ring=(R,tube,arc)=>new THREE.TorusGeometry(R,tube,6,18,arc||Math.PI*2);
  // noseband: a ring square to the steep face line (its normal is the muzzle->poll direction)
- const nose=put(new THREE.Mesh(ring(0.10,0.013),strap),-0.145,1.425,0.965); nose.rotation.x=0.69; nose.scale.set(0.82,1,1);
+ const nose=put(new THREE.Mesh(ring(0.10,0.013),strap),-0.145,1.425,0.965); nose.rotation.x=0.69; nose.scale.set(0.82,1,1); nose.name='noseband';
  // eyes: glossy dark spheres just proud of the socket, so the face catches the light
  const eyeMat=new THREE.MeshPhysicalMaterial({color:0x1a1410,roughness:0.08,metalness:0,clearcoat:1,clearcoatRoughness:0.05,envMapIntensity:1.2});
  if(!dragon&&!rig.profile?.anchors)for(const sg of[-1,1]){ const e=put(new THREE.Mesh(new THREE.SphereGeometry(0.031,14,12),eyeMat),-0.115+sg*0.118,1.62,0.845); e.castShadow=false; }
@@ -5701,7 +5702,7 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
  {const hh=myHorses[rideIdx], want=hh&&hh.dragon?(DRAGON_TINT[hh.coat]||DRAGON_TINT._):null;
   if(TACK.bridle&&(!!TACK.bridle.userData.dragon!==!!want||TACK.bridle.userData.modelKey!==(RIG.key||RIG.modelKey))){ if(TACK.bridle.parent)TACK.bridle.parent.remove(TACK.bridle); TACK.bridle=null; }
   if(!TACK.bridle)TACK.bridle=buildBridle(want);}
- TACK.bridle.visible=true; TACK.bridle.traverse(o=>{if(o.isMesh)o.visible=true;});
+ TACK.bridle.visible=true; TACK.bridle.traverse(o=>{if(o.isMesh)o.visible=true;}); TACK.bridle.userData.western=undefined; dressBridle();   // every strap shows, then the headstall style hides the noseband
  if(TACK.bridle.parent!==player.mesh)player.mesh.add(TACK.bridle);
  if(player.rider&&player.rider.g){                       // articulated procedural rider sits the saddle
   player.rider._setHero?.(!!(RIG.profile?.hero||RIG.profile?.artistBreed));
@@ -9714,7 +9715,7 @@ function tackLockerHtml(s){
  const h=s.horses[rideIdx]; if(h)ensureStats(h);
  const inv=s.tack||[]; const keys=s.keys||0; const tw=s.tw||{}; const items=s.items||{};
  const freeKey=(s.keyWeek!==weekKey()), freeKit=(tw.kitWeek!==weekKey());
- let html='<div class="evrow">🗝️ <b>Silver Keys: '+keys+'</b><span style="font-size:11px">A key opens a tack chest: one piece, rarity rolled (Common 52% · Uncommon 28% · Rare 13% · Epic 5.5% · Legendary 1.5%). Keys come from events, taming, breeding, the Trail Pass and trophies.</span>'
+ let html='<div class="evrow">🗝️ <b>Silver Keys: '+keys+'</b><span style="font-size:11px">A key opens a tack chest: one piece, rarity rolled (Common 52% · Uncommon 28% · Rare 13% · Epic 5.5% · Legendary 1.5%). Keys come from events, taming, breeding, the Trail Pass and trophies. Tack also comes from the market stall below, world chests, Grandma\'s tack room, Bo\'s missions and the top rung of the weekly ⭐ Star Points ladder.</span>'
   +'<span style="flex:none;display:flex;gap:4px"><button data-tk="chest" '+(keys>0?'':'disabled')+'>Open chest 🗝️</button>'+(freeKey?'<button data-tk="freekey">🎁 Weekly key</button>':'')+'</span></div>';
  html+='<div class="evrow">🧰 <b>Bo\'s Saddlery</b><span style="font-size:11px">Toolkits I·II·III: '+(items.kit1||0)+' · '+(items.kit2||0)+' · '+(items.kit3||0)+' — an upgrade needs one (I up to Lv 3, II to Lv 6, III to Lv 8). 🔧 Parts: <b>'+(s.parts||0)+'</b> from stripped spares. Bigger kits drop from chests and quests.</span>'
   +'<span style="flex:none;display:flex;gap:4px;flex-wrap:wrap">'+Object.keys(TOOLKITS).map(k=>{const K=TOOLKITS[k];return '<button data-tk="buykit:'+k+'" '+(s.coins>=K.price&&(s.parts||0)>=K.parts?'':'disabled')+'>Kit '+'I'.repeat(K.tier).replace('III','III')+' · '+K.price+'🪙'+(K.parts?' + '+K.parts+' parts':'')+'</button>';}).join('')+(freeKit?'<button data-tk="freekit">🎁 Weekly kit</button>':'')+'</span></div>';
@@ -9790,16 +9791,25 @@ function tackAct(cmd){
 }
 /* The saddle you see is the saddle you wear: the pad takes the rarity's colour and the
    leather the paint you chose — or, unpainted, the tint of the saddle's set. */
+/* The bridle's studs take the horse's colour, and the worn bridle's style decides the headstall:
+   a Western one goes without a noseband (tack-wardrobe). */
+function dressBridle(){
+ const br=TACK.bridle, h=myHorses[rideIdx]; if(!br||!h)return;
+ if(br.userData.gold)br.userData.gold.color.set(h.studCol||'#d8b24a');
+ const brIt=h.gear&&tackInv.find(t=>t.id===h.gear.bridle), west=((brIt&&brIt.style)||h.saddleStyle)==='western';
+ if(br.userData.western!==west){br.userData.western=west;br.traverse(o=>{if(o.isMesh&&/^noseband$/i.test(o.name))o.visible=!west;});}
+}
 function dressSaddle(){
  const sd=TACK.saddle; if(!sd)return;
  const h=myHorses[rideIdx]; if(!h)return;
- if(!sd.userData.mats){ sd.visible=!h.bareback; if(TACK.bridle&&TACK.bridle.userData.gold)TACK.bridle.userData.gold.color.set(h.studCol||'#d8b24a'); return; }
+ dressBridle();
+ if(!sd.userData.mats){ sd.visible=!h.bareback; return; }
  const padIt=h.gear&&tackInv.find(t=>t.id===h.gear.pad);
  const sdIt=h.gear&&tackInv.find(t=>t.id===h.gear.saddle), sdSet=sdIt&&gearSet(sdIt);
- sd.userData.mats.pad.color.set(padIt?RAR_COL[padIt.rarity]:sd.userData.hero?0x686454:0xe6dcc6);
- sd.userData.mats.leather.color.set(h.tack||(sdSet?TACK_SETS[sdSet].tint:(sd.userData.hero?0x30221b:0x6b4423)));
+ if(sd.userData.mats.pad)sd.userData.mats.pad.color.set(padIt?RAR_COL[padIt.rarity]:sd.userData.hero?0x686454:0xe6dcc6);
+ if(sd.userData.glb){const c=h.tack||(sdSet?TACK_SETS[sdSet].tint:null); if(c)sd.userData.mats.leather.color.set(c).multiplyScalar(1.6); else sd.userData.mats.leather.color.setScalar(1.25);}   // the bake is dark: tints multiply, so lift them
+ else sd.userData.mats.leather.color.set(h.tack||(sdSet?TACK_SETS[sdSet].tint:(sd.userData.hero?0x30221b:0x6b4423)));
  sd.visible=!h.bareback;                                                     // mastery 9: ride bareback
- if(TACK.bridle&&TACK.bridle.userData.gold)TACK.bridle.userData.gold.color.set(h.studCol||'#d8b24a');
 }
 function buyTack3(col){
  let ok=false,nm='';
@@ -11894,16 +11904,17 @@ function useThing(){
   syncSave(sv=>{ sv.chests=sv.chests||{}; const at=sv.chests[t.id]; if(at&&Date.now()-at<CHEST_REOPEN)return;
    sv.chests[t.id]=Date.now(); const r={c:t.tier===1?80+Math.floor(Math.random()*80):t.tier===2?200:300};
    if(t.tier>=2)r.k=1; r.g=t.tier===3?4:t.tier===2?2:1; {const rr=Math.random(); if(t.tier===3)r.gear=rr<0.2?'Epic':'Rare'; else if(t.tier===2&&rr<0.3)r.gear='Rare'; else if(rr<0.15)r.gear='Uncommon';}
-   if(t.tier>=2||Math.random()<0.1){r.kit=t.tier===3?'kit3':t.tier===2?'kit2':(Math.random()<0.1?'kit3':'kit1');sv.items[r.kit]=(sv.items[r.kit]||0)+1;}   // tack toolkits (tack-wardrobe) if(t.tier===1){const fk=['carrot','apple','lettuce','pumpkin'][Math.floor(Math.random()*4)];sv.items[fk]=(sv.items[fk]||0)+3;r.food=fk;}
+   if(t.tier>=2||Math.random()<0.1){r.kit=t.tier===3?'kit3':t.tier===2?'kit2':(Math.random()<0.1?'kit3':'kit1');sv.items[r.kit]=(sv.items[r.kit]||0)+1;}   // tack toolkits (tack-wardrobe)
+   if(t.tier===1){const fk=['carrot','apple','lettuce','pumpkin'][Math.floor(Math.random()*4)];sv.items[fk]=(sv.items[fk]||0)+3;r.food=fk;}
    sv.coins+=r.c; if(r.k)sv.keys=(sv.keys||0)+r.k; if(r.g)grantGems(sv,r.g); if(r.gear){sv.tack=sv.tack||[];sv.tack.push(genGear(r.gear));} sv.stats=sv.stats||{}; sv.stats.chests=(sv.stats.chests||0)+1; got=r; });
   if(!got){toast('The chest is empty — it refills in a few days.');return;}
   t.lid.rotation.x=-1.2; refreshWallet(); refreshTack(); sGem(); passAdd(5);
   toast('🎁 '+got.c+'🪙'+(got.k?' +'+got.k+'🗝️':'')+(got.g?' +'+got.g+'💎':'')+(got.gear?' + '+got.gear+' tack!':'')+(got.kit?' + '+TOOLKITS[got.kit].label:'')+(got.food?' + 3 '+FOODS3[got.food].emoji:''));
  }else if(t.kind==='room'){
   let ok=false,piece=null;
-  syncSave(sv=>{ if(sv.doors.tackroom===weekKey())return; if((sv.keys||0)<1)return; sv.keys--; sv.doors.tackroom=weekKey(); const r=Math.random(); piece=genGear(r<0.05?'Legendary':r<0.3?'Epic':'Rare'); sv.tack=sv.tack||[]; sv.tack.push(piece); sv.coins+=100; ok=true; });
+  syncSave(sv=>{ if(sv.doors.tackroom===weekKey())return; if((sv.keys||0)<1)return; sv.keys--; sv.doors.tackroom=weekKey(); const r=Math.random(); piece=genGear(r<0.05?'Legendary':r<0.3?'Epic':'Rare'); sv.tack=sv.tack||[]; sv.tack.push(piece); sv.coins+=100; sv.items=sv.items||{}; sv.items.kit2=(sv.items.kit2||0)+1; ok=true; });   // and a Tack Toolkit II (tack-wardrobe)
   if(!ok){const sv=freshSave(); toast(sv&&sv.doors&&sv.doors.tackroom===weekKey()?'Grandma\'s tack room opens once a week.':'You need a Silver Key.');return;}
-  t.door.rotation.y=-1.3; refreshWallet(); refreshTack(); sGem(); toast('🔐 '+piece.rarity+'! '+piece.name+' — and 100🪙 in the tin');
+  t.door.rotation.y=-1.3; refreshWallet(); refreshTack(); sGem(); toast('🔐 '+piece.rarity+'! '+piece.name+' — a Tack Toolkit II and 100🪙 in the tin');
  }else if(t.kind==='summon'){
   openSummon();
  }else if(t.kind==='fish'){

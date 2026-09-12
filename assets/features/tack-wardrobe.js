@@ -7,9 +7,10 @@
    hairstyles as real meshes on the head bone), the Season Store (outfits and a Western tack set for
    🎟️ season tokens), the prestige set with a 👑 badge other riders see, Bo the Saddler with the two
    tack tutorial missions, the tack dailies and achievements, and the /pos fields that let club mates
-   see all of it. The tack economy itself (rarity patterns, names, 26 sets, upgrades, toolkits, merge
-   and strip, market stall, English/Western) is inline in ranch3d.html because the boot pass pays
-   tack rewards before any package installs. */
+   see all of it, plus the week's top Star Points milestone (a Legendary piece: the leaderboard
+   exclusive). The tack economy itself (rarity patterns, names, 26 sets, upgrades, toolkits, merge
+   and strip, market stall, English/Western saddles and headstalls) is inline in ranch3d.html
+   because the boot pass pays tack rewards before any package installs. */
 export const id='tack-wardrobe';
 export function install(G){
  const {$,toast,THREE}=G;
@@ -213,6 +214,8 @@ export function install(G){
  G.quest.addDaily({type:'tackup',icon:'🧰',label:'Upgrade or merge a piece of tack',goal:1,r:{c:120,g:2,p:15}});
  const maxLvl=s=>(s.tack||[]).reduce((m,t)=>Math.max(m,t.lvl||1),0);
  const legendFull=s=>{const inv=s.tack||[];return s.horses.some(h=>{const c={};for(const sl of G.tables.GEAR_SLOTS){const it=h.gear&&inv.find(t=>t.id===h.gear[sl]);const st=it&&G.horse.gearSet(it);if(st&&G.tables.TACK_SETS[st].rarity==='Legendary')c[st]=(c[st]||0)+1;}return Object.values(c).some(n=>n>=4);})?1:0;};
+ /* leaderboard exclusive: the top rung of the weekly Star Points ladder is a Legendary piece */
+ {const sp=G.tables.MILES&&G.tables.MILES.sp;if(sp&&!sp.tiers.some(t=>t[0]===800))sp.tiers.push([800,{g:12,k:2,gear:'Legendary'}]);}
  G.quest.addAch({id:'tack10',icon:'🐎',label:'Well stocked',desc:'Own 10 pieces of tack',v:s=>(s.tack||[]).length,goal:10,r:{k:1}});
  G.quest.addAch({id:'merge5',icon:'🔀',label:'Saddler\'s apprentice',desc:'Merge tack 5 times',v:s=>(s.stats&&s.stats.merges)||0,goal:5,r:{c:300}});
  G.quest.addAch({id:'saddler8',icon:'🧰',label:'Master Saddler',desc:'Raise a piece of tack to Lv 8 (unlocks the 👑 prestige set)',v:maxLvl,goal:8,r:{g:3}});
