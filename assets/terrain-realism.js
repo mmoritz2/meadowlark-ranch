@@ -78,6 +78,20 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       float snow=snowRegion*(1.0-smoothstep(.25,.58,slope));
       vec3 snowColor=texture2D(terrainSnow,p/7.1).rgb*vec3(.86,.91,.94)*(0.94+macro*.09);
       surface=mix(surface,snowColor,snow*.98);
+      /* The four quarters opened up beyond the old fence. Each re-tints ground the shader
+         already samples, so a new country costs a smoothstep rather than another texture. */
+      float amber=1.0-smoothstep(74.0,140.0,length(p-vec2(300.0,-300.0)));
+      vec3 amberCol=texture2D(terrainForest,p/2.9).rgb*vec3(1.34,.94,.55)*(0.95+macro*.12);
+      surface=mix(surface,amberCol,amber*.9);
+      float marsh=1.0-smoothstep(66.0,128.0,length(p-vec2(310.0,300.0)));
+      vec3 marshCol=texture2D(terrainForest,p/3.6).rgb*vec3(.72,.86,.66)*(0.80+macro*.10);
+      surface=mix(surface,marshCol,marsh*.92*(1.0-smoothstep(.30,.62,slope)));
+      float tundra=1.0-smoothstep(70.0,134.0,length(p-vec2(-300.0,-320.0)));
+      vec3 tundraCol=mix(texture2D(terrainSnow,p/9.4).rgb*vec3(.90,.94,.93),rock*vec3(1.02,1.0,.96),0.42)*(0.96+macro*.08);
+      surface=mix(surface,tundraCol,tundra*.88);
+      float ochre=1.0-smoothstep(70.0,134.0,length(p-vec2(-330.0,300.0)));
+      vec3 ochreCol=texture2D(terrainSoil,soilUV*1.24).rgb*vec3(1.22,.72,.52)*(0.95+macro*.10);
+      surface=mix(surface,mix(ochreCol,rock*vec3(1.18,.80,.62),stone),ochre*.94);
       diffuseColor.rgb*=surface;
     `);
   };

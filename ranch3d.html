@@ -2977,6 +2977,11 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const biomeAt=(x,z)=>{
   if(Math.hypot(x+220,z-130)<150)return 'desert';
   if(Math.hypot(x+160,z+210)<140)return 'snow';
+  /* The four new quarters of the basin, out past where the old fence stood. */
+  if(Math.hypot(x-300,z+300)<130)return 'amber';    // Amberwood, the turning broadleaf
+  if(Math.hypot(x-310,z-300)<120)return 'marsh';    // Willowmere, reed and standing water
+  if(Math.hypot(x+300,z+320)<125)return 'tundra';   // Frostpine, above the treeline
+  if(Math.hypot(x+330,z-300)<125)return 'badland';  // Ochre Reach, red rock and dust
   if(Math.abs(z-riverZ(x))<11||Math.hypot(x-20,z-16)<9.5)return 'water';
   return 'meadow';
  };
@@ -2993,6 +2998,10 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   desert:{fern:'#d8bb72',rock:'#a8794a',p:0.80,sz:1.35},   // dry scrub, and plenty of it
   snow  :{fern:'#a4b0a2',rock:'#8e969d',p:0.62,sz:1.05},   // dead tufts showing through the crust
   water :{fern:'#a4b392',rock:'#7e8a86',p:0.90,sz:1.0},
+  amber :{fern:'#c8934a',rock:'#8a7a68',p:0.95,sz:1.05},   // fallen leaf and bracken gone over
+  marsh :{fern:'#7f9463',rock:'#6f7a70',p:1.00,sz:1.25},   // rush and sedge, thick with it
+  tundra:{fern:'#9aa894',rock:'#8a8f96',p:0.70,sz:0.85},   // lichen and low scrub on thin soil
+  badland:{fern:'#c98f5c',rock:'#9c5a3c',p:0.72,sz:1.30},  // ochre dust and broken rock
  };
  const FLC=[new THREE.Color('#ffffff'),new THREE.Color('#fff1a8'),new THREE.Color('#f7b7d2'),new THREE.Color('#cdb8f2'),new THREE.Color('#ffffff')];
  let cx0=1e9,cz0=1e9;
@@ -3625,6 +3634,8 @@ let farForest=null;
   if(Math.abs(x)>480||Math.abs(z)>480)continue;
   if(Math.abs(z-riverZ(x))<10)continue;
   if(Math.hypot(x+220,z-130)<165)continue;                 // Coyote sand
+  if(Math.hypot(x+330,z-300)<128)continue;                 // Ochre Reach: bare rock, no wood
+  if(Math.hypot(x+300,z+320)<126)continue;                 // Frostpine: above the broadleaf line
   const dSnow=Math.hypot(x+160,z+210);
   if(dSnow<128)continue;                                   // the snowfield itself stays open
   if(Math.hypot(x-220,z+110)<120)continue;                 // Barleyfold fields
@@ -3674,14 +3685,9 @@ const birchMat=new THREE.MeshStandardMaterial({map:birchTex,roughness:0.9});
 birchMat.envMapIntensity=0.46;
 const leafMat=new THREE.MeshStandardMaterial({map:leafTex,alphaTest:0.45,side:THREE.DoubleSide,roughness:1});
 leafMat.envMapIntensity=0.58;
-const leafMats=[leafMat,leafMat.clone(),leafMat.clone(),leafMat.clone(),leafMat.clone()];
-/* Two of the five are autumn trees, so a scatter of gold and rust runs through the woods
-   even where the good trees have not turned. */
-leafMats[1].color.set('#d99b34'); leafMats[3].color.set('#c25a2c');
-leafMats[1].color.set('#dff5c8');
-leafMats[2].color.set('#c8e8b0');
-leafMats[3].color.set('#ffd9a0');
-leafMats[4].color.set('#bfe6a8');
+/* There were five cloned leaf materials here, each given a colour and then two of them given
+   a second colour on the next line, and nothing ever used any of them: the trees take their
+   autumn from per-instance colours further down. Removed rather than left to mislead. */
 const pineMat=new THREE.MeshStandardMaterial({map:pineTex,alphaTest:0.4,side:THREE.DoubleSide,roughness:1});
 pineMat.envMapIntensity=0.52;
 
@@ -4033,7 +4039,10 @@ function placeSeedTrees(){
     {const band=0.5+0.5*Math.sin(tp.x*0.0125+1.7)*Math.cos(tp.z*0.0104-0.6);   // where the stand has turned
      const turn=Math.max(0,Math.min(1,(band-0.40)*2.3));
      const jit=((Math.imul((tp.x*7|0)^(tp.z*13|0),2654435761)>>>8)%1000)/1000;
-     _lc.set(0xffffff).lerp(AUT[Math.floor(jit*AUT.length)%AUT.length],turn*(0.16+jit*0.16));
+     /* Amberwood is named for this: the whole wood is over, not a stand here and there. */
+     const amb=Math.max(0,1-Math.hypot(tp.x-300,tp.z+300)/130);
+     const amt=Math.min(0.88,turn*(0.16+jit*0.16)+amb*amb*0.72);
+     _lc.set(0xffffff).lerp(AUT[Math.floor(jit*AUT.length)%AUT.length],amt);
      lInst.setColorAt(i,_lc);}
     vt.set(tp.x,groundH(tp.x,tp.z)-minY*s-0.06*cfg.h*tp.s,tp.z);
     sct.set(s,s,s);
@@ -4065,23 +4074,25 @@ const FOLIAGE={oak:[],birch:[],blossom:[],pine:[],snowpine:[],bush:[],flowerbush
  haybale:[],trough:[],barrel:[],boulder:[],stump:[]};
 const TREE_MIX=['oak','oak','oak','birch','blossom','pine','pine'];   // broadleaf-heavy mix
 const CANYON={x:-220,z:130,r:140};                          // desert region — cacti only, no leafy trees
-const inCoyote=(x,z)=>Math.hypot(x-CANYON.x,z-CANYON.z)<CANYON.r;
+const OCHRE={x:-330,z:300,r:120};                           // Ochre Reach — the same bare rock
+const inCoyote=(x,z)=>Math.hypot(x-CANYON.x,z-CANYON.z)<CANYON.r||Math.hypot(x-OCHRE.x,z-OCHRE.z)<OCHRE.r;
 const SNOWF={x:-160,z:-210,r:150};                          // Hollowpeak — evergreens only
-const inSnow=(x,z)=>Math.hypot(x-SNOWF.x,z-SNOWF.z)<SNOWF.r;
-for(let i=0;i<300;i++){                                      // dense forest scatter
+const TUNDRA={x:-300,z:-320,r:120};                         // Frostpine — above the broadleaf line
+const inSnow=(x,z)=>Math.hypot(x-SNOWF.x,z-SNOWF.z)<SNOWF.r||Math.hypot(x-TUNDRA.x,z-TUNDRA.z)<TUNDRA.r;
+for(let i=0;i<560;i++){                                      // dense forest scatter, out to the new edge
  let x,z;
  do{
-  const a=Math.random()*Math.PI*2,rr=33+Math.random()*290;
+  const a=Math.random()*Math.PI*2,rr=33+Math.random()*415;
   x=Math.cos(a)*rr;z=Math.sin(a)*rr;
  }while((Math.abs(x)<30&&Math.abs(z)<26)||Math.abs(z-riverZ(x))<8||inCoyote(x,z));
  colliders.push({x,z,r:0.8});
  const sp=inSnow(x,z)?'snowpine':TREE_MIX[(Math.random()*TREE_MIX.length)|0];
  (FOLIAGE[sp]||(FOLIAGE[sp]=[])).push({x,z,s:1.0+Math.random()*1.0,r:Math.random()*Math.PI*2});   // bigger + more size variety
 }
-for(let i=0;i<150;i++){                                      // lots of bushes (no collider — brush past)
+for(let i=0;i<280;i++){                                      // lots of bushes (no collider — brush past)
  let x,z;
  do{
-  const a=Math.random()*Math.PI*2,rr=30+Math.random()*280;
+  const a=Math.random()*Math.PI*2,rr=30+Math.random()*420;
   x=Math.cos(a)*rr;z=Math.sin(a)*rr;
  }while((Math.abs(x)<29&&Math.abs(z)<25)||Math.abs(z-riverZ(x))<7||inCoyote(x,z)||inSnow(x,z));
  (Math.random()<0.7?FOLIAGE.bush:FOLIAGE.flowerbush).push({x,z,s:0.9+Math.random()*0.9,r:Math.random()*Math.PI*2});
@@ -4103,17 +4114,17 @@ const FOLIAGE_H={snowpine:7.2,oak:6.2,birch:6.6,blossom:6.2,pine:7.4,bush:1.9,fl
 [[-30,8],[-31.8,10.2],[-28.6,11.4],[-32.4,7.2],[-29.4,13.1]].forEach(([x,z],i)=>FOLIAGE.haybale.push({x,z,s:0.95+((i*7)%3)*0.06,r:i*0.9}));
 FOLIAGE.trough.push({x:-46,z:-6,s:1,r:0.35},{x:-30,z:-4,s:1,r:1.6});
 [[-30,-9],[-31.3,-10.6],[-28.9,-11.2]].forEach(([x,z],i)=>FOLIAGE.barrel.push({x,z,s:0.9+i*0.06,r:i*1.1}));
-for(let i=0;i<40;i++){                                       // boulders: meadow and hills, not sand or snow
+for(let i=0;i<74;i++){                                       // boulders: meadow and hills, not sand or snow
  let x,z;
- do{ const a=Math.random()*Math.PI*2,rr=40+Math.random()*290; x=Math.cos(a)*rr;z=Math.sin(a)*rr; }
+ do{ const a=Math.random()*Math.PI*2,rr=40+Math.random()*410; x=Math.cos(a)*rr;z=Math.sin(a)*rr; }
  while((Math.abs(x)<32&&Math.abs(z)<28)||Math.abs(z-riverZ(x))<9||inCoyote(x,z)||inSnow(x,z));
  const s=0.8+Math.random()*1.4;
  FOLIAGE.boulder.push({x,z,s,r:Math.random()*Math.PI*2});
  colliders.push({x,z,r:0.9*s});
 }
-for(let i=0;i<24;i++){                                       // stumps: where trees would have stood
+for(let i=0;i<44;i++){                                       // stumps: where trees would have stood
  let x,z;
- do{ const a=Math.random()*Math.PI*2,rr=45+Math.random()*260; x=Math.cos(a)*rr;z=Math.sin(a)*rr; }
+ do{ const a=Math.random()*Math.PI*2,rr=45+Math.random()*400; x=Math.cos(a)*rr;z=Math.sin(a)*rr; }
  while((Math.abs(x)<32&&Math.abs(z)<28)||Math.abs(z-riverZ(x))<8||inCoyote(x,z)||inSnow(x,z));
  FOLIAGE.stump.push({x,z,s:0.8+Math.random()*0.6,r:Math.random()*Math.PI*2});
 }
@@ -4667,7 +4678,7 @@ function cheapTree(x,z,s){
  colliders.push({x,z,r:.55});
 }
 for(let g=0;g<8;g++){
- const ga=Math.random()*Math.PI*2,grr=60+Math.random()*220;
+ const ga=Math.random()*Math.PI*2,grr=60+Math.random()*370;
  const gx=Math.cos(ga)*grr,gz=Math.sin(ga)*grr;
  if(Math.abs(gz-riverZ(gx))<14)continue;
  for(let k=0;k<6;k++){
@@ -4677,8 +4688,8 @@ for(let g=0;g<8;g++){
   cheapTree(x,z,0.9+Math.random()*0.8);
  }
 }
-for(let i=0;i<24;i++){
- const a=Math.random()*Math.PI*2,rr=30+Math.random()*250;
+for(let i=0;i<44;i++){
+ const a=Math.random()*Math.PI*2,rr=30+Math.random()*400;
  const x=Math.cos(a)*rr,z=Math.sin(a)*rr;
  if((Math.abs(x)<28&&Math.abs(z)<23)||Math.abs(z-riverZ(x))<8||inCoyote(x,z)||inSnow(x,z))continue;
  const b=makeNaturalShrub({THREE,scale:.8+Math.random()*.3,seed:i*17});
@@ -10161,7 +10172,7 @@ $('shopBtn').onclick=()=>openShop();
 /* ================= world map ================= */
 function drawBigMap(){
  const mc=$('bigmap').getContext('2d');
- const S=560/700;
+ const S=560/960;                                   // the basin is 455 in every direction now
  const W2=(x,z)=>[280+x*S,280+z*S];
  mc.fillStyle='#5d8c4f';mc.fillRect(0,0,560,560);
  const zone=(x,z,r,c)=>{
@@ -10173,11 +10184,15 @@ function drawBigMap(){
  zone(-220,130,170,'rgba(217,162,118,0.75)');
  zone(220,-110,150,'rgba(232,224,154,0.55)');
  zone(-160,-210,170,'rgba(238,242,240,0.6)');
+ zone(300,-300,150,'rgba(214,150,72,0.55)');     // Amberwood
+ zone(310,300,140,'rgba(120,150,110,0.55)');     // Willowmere Marsh
+ zone(-300,-320,145,'rgba(226,236,238,0.5)');    // Frostpine Tundra
+ zone(-330,300,145,'rgba(198,110,70,0.55)');     // Ochre Reach
  mc.strokeStyle='#4f9ad6';mc.lineWidth=6;mc.lineCap='round';
  mc.beginPath();
- for(let x=-340;x<=340;x+=16){
+ for(let x=-455;x<=455;x+=16){
   const q=W2(x,riverZ(x));
-  x===-150?mc.moveTo(q[0],q[1]):mc.lineTo(q[0],q[1]);
+  x===-455?mc.moveTo(q[0],q[1]):mc.lineTo(q[0],q[1]);
  }
  mc.stroke();
  mc.fillStyle='#d9c49a';
@@ -12447,6 +12462,10 @@ cottage(42,-50,0.4);cottage(48,-56,-0.3);cottage(54,-48,0.9);cottage(45,-43,2.6)
 }
 const REGIONS=[
  {name:'🐴 Home Pasture',x:-71,z:-10,r:42},
+ {name:'🍂 Amberwood',x:300,z:-300,r:130},
+ {name:'🪻 Willowmere Marsh',x:310,z:300,r:120},
+ {name:'❄️ Frostpine Tundra',x:-300,z:-320,r:125},
+ {name:'🏜️ Ochre Reach',x:-330,z:300,r:125},
  {name:'🏜️ Coyote Canyon',x:-220,z:130,r:120},
  {name:'🌾 Barleyfold Farms',x:215,z:-105,r:90},
  {name:'💦 Hollowpeak Falls',x:-150,z:-232,r:26},
@@ -12678,8 +12697,12 @@ function tick(stepSeconds){
  player.heading+=turn*dt*yawRate*agMul;
  player.pos.x+=Math.sin(player.heading)*player.speed*dt;
  player.pos.z+=Math.cos(player.heading)*player.speed*dt;
+ /* The basin runs to the terrain grid's edge. 455 keeps the horse inside the ground mesh
+    (+-500) and inside the clutter limit (+-470) with room to spare, and opens roughly
+    eighty per cent more ridable land than the old 340 fence allowed. */
+ const WORLD_R=455;
  const rr=Math.hypot(player.pos.x,player.pos.z);
- if(rr>340){player.pos.x*=340/rr;player.pos.z*=340/rr;}
+ if(rr>WORLD_R){player.pos.x*=WORLD_R/rr;player.pos.z*=WORLD_R/rr;}
  /* collision: solid obstacles & jumpable fences (soaring clears them all) */
  if(player.y<2.5)for(const c of colliders){
   const ox=player.pos.x-c.x,oz=player.pos.z-c.z;
@@ -13579,7 +13602,10 @@ function tick(stepSeconds){
   mc.fillStyle='rgba(44,78,40,0.85)';
   mc.fillRect(0,0,140,140);
   const S=70/130;
-  const W2=(x,z)=>[70+x*S,70+z*S];
+  /* Centred on the RIDER, not the ranch. It used to be pinned to the world origin, which
+     was tolerable when you could only ride 340 units and useless now. */
+  const pcx=player.pos.x, pcz=player.pos.z;
+  const W2=(x,z)=>[70+(x-pcx)*S,70+(z-pcz)*S];
   mc.fillStyle='#d9c49a';
   mc.beginPath();mc.ellipse(70,70,23.5*S,18.5*S,0,0,7);mc.fill();
   mc.strokeStyle='rgba(244,240,230,0.9)';mc.lineWidth=1.5;
@@ -13591,12 +13617,12 @@ function tick(stepSeconds){
   mc.beginPath();mc.arc(pp[0],pp[1],4.5*S,0,7);mc.fill();
   mc.strokeStyle='#4f9ad6';mc.lineWidth=3.5;
   mc.beginPath();
-  for(let rx=-128;rx<=128;rx+=12){
+  for(let rx=pcx-140;rx<=pcx+140;rx+=12){
    const q=W2(rx,riverZ(rx));
-   rx===-78?mc.moveTo(q[0],q[1]):mc.lineTo(q[0],q[1]);
+   rx<pcx-139?mc.moveTo(q[0],q[1]):mc.lineTo(q[0],q[1]);
   }
   mc.stroke();
-  for(const mk of MINI_MARKERS){if(Math.abs(mk.x)>130||Math.abs(mk.z)>130)continue;if(typeof mk.hidden==='function'&&mk.hidden())continue;const q=W2(mk.x,mk.z);mc.fillStyle=mk.col||'#ffd166';mc.beginPath();mc.arc(q[0],q[1],mk.r||2.5,0,7);mc.fill();}
+  for(const mk of MINI_MARKERS){if(Math.abs(mk.x-pcx)>140||Math.abs(mk.z-pcz)>140)continue;if(typeof mk.hidden==='function'&&mk.hidden())continue;const q=W2(mk.x,mk.z);mc.fillStyle=mk.col||'#ffd166';mc.beginPath();mc.arc(q[0],q[1],mk.r||2.5,0,7);mc.fill();}
   // golden horseshoes sparkle on the map when you ride near them
   mc.fillStyle='#ffd166';
   for(const sh of shoes){
