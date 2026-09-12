@@ -821,7 +821,8 @@ const COLL_SETS={
 const TACK_ROOM={x:-24,z:-26};
 const STAT_KEYS=['speed','stamina','jump','accel','agility'];
 const STAT_LBL={speed:'💨 Speed',stamina:'🫀 Stamina',jump:'⤴️ Jump',accel:'🚀 Acceleration',agility:'🌀 Agility'};
-function statCap(h){return Math.min(10,4+(h.level||1));}                       // the horse's level gates every stat: a starter has room to train, a level-six horse can max out
+const MAX_LEVEL=50;                                                            // horses level to 50; the stat cap climbs one notch every five levels and reaches 10 at Lv 30
+function statCap(h){return Math.min(10,4+Math.floor((h.level||1)/5));}        // the horse's level gates every stat: a starter has room to train, only a well-levelled horse can max out
 function statCeil(h,k){const bc=BREED_CEIL[h.breed];if(bc!=null){if(typeof bc==='number')return bc;if(k&&typeof bc[k]==='number')return bc[k];if(!k&&typeof bc.all==='number')return bc.all;}   // per-breed ceilings, or the tier formula
  const b=(typeof BREEDS3!=='undefined')&&BREEDS3.find(x=>x[0]===h.breed);const base=b?TIER_BASE[b[2]]:4;return Math.min(10,base+5);}
 function statNeed(v){return 20+10*v;}                                          // stat XP to go from v to v+1
@@ -840,6 +841,7 @@ function grantStatXp(s,h,k,xp,why){
  ensureStats(h);
  const cap=Math.min(statCap(h),statCeil(h,k));
  if(h.stats[k]>=cap)return {up:false,capped:true,cap,v:h.stats[k]};
+ xp=Math.max(0,Math.round(xp*mulOf('sxp',s,h,k)));                                  // every registered stat-XP factor applies (mastery, bond, breed traits, perks)
  h.sxp[k]=(h.sxp[k]||0)+xp; let up=0;
  while(h.stats[k]<cap&&h.sxp[k]>=statNeed(h.stats[k])){h.sxp[k]-=statNeed(h.stats[k]);h.stats[k]++;up++;}
  if(up)addSP(s,h.stats[k],why||'stat');
@@ -1064,13 +1066,14 @@ $('muteBtn').onclick=()=>{muted=!muted;$('muteBtn').textContent=muted?'🔇':'�
 function applyXp(s,h,n){
  const r={leveled:false,levels:0,lvl:h.level||1,grew:false,n};
  h.level=h.level||1; h.xp=(h.xp||0)+n;
- while(h.xp>=50+h.level*50){
+ while(h.level<MAX_LEVEL&&h.xp>=50+h.level*50){
   h.xp-=50+h.level*50; h.level++; r.leveled=true; r.levels++; r.lvl=h.level;
   addSP(s,2*h.level,'level');
   ensureStats(h);
-  const st=STAT_KEYS[Math.floor(Math.random()*STAT_KEYS.length)];
-  h.stats[st]=Math.min(10,h.stats[st]+1);
+  const room=STAT_KEYS.filter(k=>h.stats[k]<Math.min(statCap(h),statCeil(h,k)));   // the level-up bump respects the breed ceiling
+  if(room.length){const st=room[Math.floor(Math.random()*room.length)];h.stats[st]=Math.min(10,h.stats[st]+1);}
  }
+ if(h.level>=MAX_LEVEL)h.xp=0;
  if(h.foal&&h.level>=3){h.foal=false;r.grew=true;s.stats=s.stats||{};s.stats.grown=(s.stats.grown||0)+1;}
  r.xp=h.xp;
  return r;
@@ -6250,8 +6253,9 @@ function updateShoes(dt,t){
     if(s.shoes.got.length>=SHOE_N){grantGems(s,6);all=true;}
    });
    refreshWallet();sCoin();
+   addXp3D(15); passAdd(4);                       // a horseshoe is worth coins AND horse XP
    const left=shoes.filter(q=>!q.got).length;
-   toast(all?'🥇 ALL '+SHOE_N+' golden horseshoes found today! +80🪙 +2💎':'🍀 Golden horseshoe! +80🪙 — '+left+' more hidden somewhere today…');
+   toast(all?'🥇 ALL '+SHOE_N+' golden horseshoes found today! +80🪙 +15 XP +6💎':'🍀 Golden horseshoe! +80🪙 +15 XP — '+left+' more hidden somewhere today…');
    dailyEvt('shoe',1);
   }
  }
@@ -6654,16 +6658,18 @@ const FORAGE_MK={
 const FORAGE_SPOTS={lettuce:[0,0,25,150,10],pumpkin:[215,-105,6,70,8],orange:[-220,130,12,90,7],truffle:[-30,-58,4,26,6]};   // [cx,cz,rMin,rMax,count]
 function spawnForage(item){
  const box=FORAGE_SPOTS[item], mk=FORAGE_MK[item]; if(!box||!mk)return;
- const [cx,cz,r0,r1,count]=box;
+ const at=Array.isArray(box)?null:(box.at||null);                                   // {at:[[x,z],...],count,jitter} anchors the patch to trees or rows
+ const [cx,cz,r0,r1,count]=at?[at[0][0],at[0][1],0,0,box.count||at.length]:box;
  for(let i=0;i<count;i++){
   const g=mk(); g.traverse(o=>{if(o.isMesh)o.castShadow=true;});
-  const f={g,t:0,item,cx,cz,r0,r1};
+  const f={g,t:0,item,cx,cz,r0,r1,at,jitter:at?(box.jitter==null?1.2:box.jitter):0};
   forageRespawn(f); scene.add(g); forage.push(f);
  }
 }
 for(const item in FORAGE_SPOTS)spawnForage(item);
 function addForageSpot(item,box,mk){if(mk)FORAGE_MK[item]=mk;FORAGE_SPOTS[item]=box;spawnForage(item);}
 function forageRespawn(f){
+ if(f.at&&f.at.length){const p=f.at[Math.floor(Math.random()*f.at.length)],x=p[0]+(Math.random()-0.5)*2*f.jitter,z=p[1]+(Math.random()-0.5)*2*f.jitter;f.g.position.set(x,groundH(x,z),z);f.g.visible=true;return;}
  for(let k=0;k<20;k++){
   const a=Math.random()*Math.PI*2,rr=f.r0+Math.random()*(f.r1-f.r0);
   const x=f.cx+Math.cos(a)*rr,z=f.cz+Math.sin(a)*rr;
@@ -9133,10 +9139,10 @@ function renderCare(){
  +sect('careHeader',s,h)
  +bars.map(b=>'<div class="crow"><span class="lbl">'+b[0]+'</span><div class="cbar"><div class="cfill" style="width:'+Math.round(h.needs[b[1]])+'%;background:'+b[2]+'"></div></div></div>').join('')
  +'<div class="crow"><span class="lbl">✨ XP</span><div class="cbar"><div class="cfill" style="width:'+Math.round(100*h.xp/(50+h.level*50))+'%;background:#f3b73d"></div></div></div>'
- +(()=>{ensureStats(h);const cap=Math.min(statCap(h),statCeil(h));
-   return '<div style="font-size:11px;color:#8c7a63;margin-top:4px">Stats · cap '+cap+' at Lv '+h.level+' · feed to train</div>'
-   +STAT_KEYS.map(k=>{const v=h.stats[k],need=statNeed(v),px=v>=cap?100:Math.round(100*Math.min(1,(h.sxp[k]||0)/need));
-     return '<div class="crow"><span class="lbl">'+STAT_LBL[k]+'</span><div class="cbar" title="'+(v>=cap?'at cap':(h.sxp[k]||0)+' / '+need+' XP to '+(v+1))+'"><div class="cfill" style="width:'+px+'%;background:'+(v>=cap?'#c9b27a':'#7fb0e0')+'"></div></div><b style="width:22px;text-align:right">'+v+'</b></div>';}).join('');})()
+ +(()=>{ensureStats(h);const lc=statCap(h);
+   return '<div style="font-size:11px;color:#8c7a63;margin-top:4px">Stats · level cap '+lc+' at Lv '+h.level+(lc<10?' (next at Lv '+(Math.floor(h.level/5)+1)*5+')':'')+' · each breed has its own ceilings · feed to train</div>'
+   +STAT_KEYS.map(k=>{const v=h.stats[k],need=statNeed(v),bc=statCeil(h,k),cap=Math.min(lc,bc),px=v>=cap?100:Math.round(100*Math.min(1,(h.sxp[k]||0)/need));
+     return '<div class="crow"><span class="lbl">'+STAT_LBL[k]+'</span><div class="cbar" title="'+(v>=cap?(v>=bc?'at the breed ceiling ('+bc+')':'at cap for Lv '+h.level+' · breed ceiling '+bc):(h.sxp[k]||0)+' / '+need+' XP to '+(v+1)+' · breed ceiling '+bc)+'"><div class="cfill" style="width:'+px+'%;background:'+(v>=cap?(v>=bc?'#d4a24a':'#c9b27a'):'#7fb0e0')+'"></div></div><b style="width:38px;text-align:right;white-space:nowrap">'+v+'<span style="color:#8c7a63;font-weight:600;font-size:11px">/'+cap+'</span></b></div>';}).join('');})()
  +'<div class="crow" style="gap:6px;flex-wrap:wrap">'
  +Object.keys(FOODS3).filter(k=>(s.items[k]||0)>0||['carrot','apple','hay'].includes(k)).map(k=>'<button data-care="'+k+'" title="'+FOODS3[k].label+(FOODS3[k].stat?' · trains '+STAT_LBL[FOODS3[k].stat]:'')+'">'+FOODS3[k].emoji+' '+(s.items[k]||0)+'</button>').join('')
  +'<button data-care="water">💧</button>'
@@ -9509,7 +9515,7 @@ function openShop(tab){
    const badge=b[2]==='Dragon'?' <span style="background:linear-gradient(90deg,#e2703a,#8f4bd0);color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">🐉 DRAGON</span>':b[2]==='Mythic'?' <span style="background:linear-gradient(90deg,#9d6bff,#ff7ad0);color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">✨ MYTHIC</span>':b[2]==='Draft'?' <span style="background:#e8b84b;color:#5a3d12;border-radius:8px;padding:1px 7px;font-size:11px;font-weight:800">NEW</span>':'';
    const ico=b[7].dragon?'🐉':b[7].horn?'🦄':b[7].wings?'🪽':(b[7].coat||b[7].glow)?'✨':'🐴';
    const ab=b[7].ability?{swift:' · 💨 Swift',leap:' · ⤴️ Leap',fly:' · 🪽 Flight',glow:' · ✨ Glow'}[b[7].ability]:'';
-   return '<div class="evrow">'+ico+' <b>'+b[1]+'</b>'+badge+'<span>'+b[2]+ab+(owned?' · owned ×'+owned:'')+'</span><button data-buyh="'+i+'">'+(b[7].hero?'Adopt & ride · Free':b[3]?b[3]+' 🪙':b[4]+' 💎')+'</button></div>';
+   return '<div class="evrow">'+ico+' <b>'+b[1]+'</b>'+badge+'<span>'+b[2]+ab+(owned?' · owned ×'+owned:'')+sect('shopHorseRow',b,s)+'</span><button data-buyh="'+i+'">'+(b[7].hero?'Adopt & ride · Free':b[3]?b[3]+' 🪙':b[4]+' 💎')+'</button></div>';
   }).join('')+'<span style="font-size:11px;color:#8c7a63">'+s.horses.length+' horses and counting · no limits — new friends graze in the Home Pasture</span>';
  }else if(shopTab3==='pets'){
   const owned=s.petList||[];
@@ -11288,9 +11294,10 @@ function claimDaily(type){
   if(q.r.g)grantGems(s,q.r.g);
   if(q.r.k)s.keys=(s.keys||0)+q.r.k;
   if(q.r.p){s.pass=s.pass||{pts:0};s.pass.pts+=q.r.p;}
+  payReward(s,Object.assign({},q.r,{c:0,g:0,k:0,p:0}));   // any other reward kind (xp, feed bag, …)
   ok=true;
  });
- if(ok){refreshWallet();sChime();toast('📋 +'+(q.r.c||0)+'🪙'+(q.r.g?' +'+q.r.g+'💎':'')+(q.r.k?' +'+q.r.k+'🗝️':'')+(q.r.p?' +'+q.r.p+'🎟️':''));renderQuests();}
+ if(ok){refreshWallet();sChime();toast('📋 +'+(q.r.c||0)+'🪙'+(q.r.g?' +'+q.r.g+'💎':'')+(q.r.k?' +'+q.r.k+'🗝️':'')+(q.r.p?' +'+q.r.p+'🎟️':'')+(()=>{const x=rewardLabel(Object.assign({},q.r,{c:0,g:0,k:0,p:0}));return x?' '+x:'';})());renderQuests();}
 }
 
 /* ---- achievements ---- */
@@ -11348,9 +11355,10 @@ function claimAch(id){
   if(a.r.c)s.coins+=a.r.c;
   if(a.r.g)grantGems(s,a.r.g);
   if(a.r.k)s.keys=(s.keys||0)+a.r.k;
+  payReward(s,Object.assign({},a.r,{c:0,g:0,k:0}));   // any other reward kind (xp, feed bag, perk, …)
   ok=true;
  });
- if(ok){refreshWallet();sChime();toast('🏅 Achievement: '+a.label+'! +'+(a.r.c||0)+'🪙'+(a.r.g?' +'+a.r.g+'💎':''));renderQuests();}
+ if(ok){refreshWallet();sChime();toast('🏅 Achievement: '+a.label+'! +'+(a.r.c||0)+'🪙'+(a.r.g?' +'+a.r.g+'💎':'')+(a.r.k?' +'+a.r.k+'🗝️':'')+(()=>{const x=rewardLabel(Object.assign({},a.r,{c:0,g:0,k:0}));return x?' '+x:'';})());renderQuests();}
 }
 
 /* ---- quest panel ---- */
@@ -11627,6 +11635,7 @@ function openDlg(){
    if(m.reward.g)addGems(m.reward.g);
    if(m.reward.k){syncSave(s=>{s.keys=(s.keys||0)+m.reward.k;});refreshWallet();}
    if(m.reward.gear){syncSave(s=>{s.tack=s.tack||[];s.tack.push(genGear(m.reward.gear));});refreshTack();toast('🐎 A Legendary piece is in your tack locker!');}
+   {const extra=Object.assign({},m.reward,{c:0,g:0,k:0,gear:0}); if(Object.keys(extra).some(k=>extra[k])){syncSave(s=>payReward(s,extra));const x=rewardLabel(extra);if(x)toast('🎁 '+x);reloadHorses();}}   // xp, feed bags and other package reward kinds
    sGem();
    storyIdx++;storyProg=0;saveStory();
    const nm=STORY[storyIdx];
@@ -11806,10 +11815,11 @@ function useThing(){
   syncSave(sv=>{ sv.chests=sv.chests||{}; const at=sv.chests[t.id]; if(at&&Date.now()-at<CHEST_REOPEN)return;
    sv.chests[t.id]=Date.now(); const r={c:t.tier===1?80+Math.floor(Math.random()*80):t.tier===2?200:300};
    if(t.tier>=2)r.k=1; r.g=t.tier===3?4:t.tier===2?2:1; if(t.tier===3){r.gear='Rare';} if(t.tier===1){const fk=['carrot','apple','lettuce','pumpkin'][Math.floor(Math.random()*4)];sv.items[fk]=(sv.items[fk]||0)+3;r.food=fk;}
+   if(t.tier===3||Math.random()<0.5){r.bag=t.tier===3?'bag3':t.tier===2?'bag2':'bag1';sv.items[r.bag]=(sv.items[r.bag]||0)+1;}   // a feed bag, Rare from the big chests
    sv.coins+=r.c; if(r.k)sv.keys=(sv.keys||0)+r.k; if(r.g)grantGems(sv,r.g); if(r.gear){sv.tack=sv.tack||[];sv.tack.push(genGear(r.gear));} sv.stats=sv.stats||{}; sv.stats.chests=(sv.stats.chests||0)+1; got=r; });
   if(!got){toast('The chest is empty — it refills in a few days.');return;}
   t.lid.rotation.x=-1.2; refreshWallet(); refreshTack(); sGem(); passAdd(5);
-  toast('🎁 '+got.c+'🪙'+(got.k?' +'+got.k+'🗝️':'')+(got.g?' +'+got.g+'💎':'')+(got.gear?' + Rare tack!':'')+(got.food?' + 3 '+FOODS3[got.food].emoji:''));
+  toast('🎁 '+got.c+'🪙'+(got.k?' +'+got.k+'🗝️':'')+(got.g?' +'+got.g+'💎':'')+(got.gear?' + Rare tack!':'')+(got.food?' + 3 '+FOODS3[got.food].emoji:'')+(got.bag?' + 🛍️ '+((G.tables&&G.tables.FEED_BAGS&&G.tables.FEED_BAGS[got.bag])?G.tables.FEED_BAGS[got.bag].label:'feed bag'):''));
  }else if(t.kind==='room'){
   let ok=false,piece=null;
   syncSave(sv=>{ if(sv.doors.tackroom===weekKey())return; if((sv.keys||0)<1)return; sv.keys--; sv.doors.tackroom=weekKey(); const r=Math.random(); piece=genGear(r<0.05?'Legendary':r<0.3?'Epic':'Rare'); sv.tack=sv.tack||[]; sv.tack.push(piece); sv.coins+=100; ok=true; });
@@ -12647,6 +12657,7 @@ function tick(stepSeconds){
   if(d<1.4&&player.y<1.2){
    c.g.visible=false;c.t=15;
    addCoins(3);sCoin();statBump('carrots',1);passAdd(2);
+   syncSave(s=>{s.items=s.items||{};s.items.carrot=(s.items.carrot||0)+1;});   // a picked carrot is a carrot in the basket
    questEvt('carrots',1);
    dailyEvt('carrots',1);
   }
@@ -12657,8 +12668,10 @@ function tick(stepSeconds){
   if(d<1.5&&player.y<1.2){
    f.g.visible=false; f.t=(40+Math.random()*30)*ranchMul('forage');
    syncSave(s=>{s.items=s.items||{};s.items[f.item]=(s.items[f.item]||0)+1;});
-   sCoin(); passAdd(2); dailyEvt('carrots',1); questEvt('forage',f.item);
-   const fd=FOODS3[f.item]; toast(fd.emoji+' '+fd.label+' — trains '+STAT_LBL[fd.stat]);
+   sCoin(); passAdd(2); dailyEvt('carrots',1); dailyEvt('forage',1); questEvt('forage',f.item);
+   const fd=FOODS3[f.item]||{emoji:'🧺',label:f.item,tier:1};
+   syncSave(s=>addSP(s,Math.max(1,Math.min(4,fd.tier||1)),'forage'));            // only wild-picked food earns club Star Points, by rarity
+   toast(fd.emoji+' '+fd.label+(fd.stat?' — trains '+STAT_LBL[fd.stat]:'')+' · +'+Math.max(1,Math.min(4,fd.tier||1))+'⭐');
   }
  }
  for(const gp of gemPickups){
@@ -13251,11 +13264,11 @@ function installFeatures(){
   save:{KEY:SAVE_KEY,fresh:freshSave,sync:syncSave,ensure(fn){SAVE_ENSURES.push(fn);return fn;},ensureHorse(fn){HORSE_ENSURES.push(fn);return fn;},
    flag(s,name){s.flags=s.flags||{};if(s.flags[name])return false;s.flags[name]=1;return true;},build:BUILD,boot:BOOT_INFO},
   money:{addCoins,addGems,addKeys,grantGems,payReward,rewardLabel,rewardKind,refreshWallet,statBump,logEarn},
-  xp:{addXp3D,applyXp,grantStatXp,addSP,passAdd,masteryOf,statCeil,statCap,statNeed,effStats,ensureStats,trainXp},
+  xp:{addXp3D,applyXp,grantStatXp,addSP,passAdd,masteryOf,statCeil,statCap,statNeed,effStats,ensureStats,trainXp,MAX_LEVEL},
   mul:mulOf,addMul,
   quest:{questEvt,dailyEvt,story:{append:storyAppend,insertBefore:storyInsertBefore,list:()=>STORY},types:QUEST_TYPES,addDaily,addAch,
    STORY,DAILYQ,ACHS,NPC_DEFS,storyIdx:()=>storyIdx,storyProg:()=>storyProg,todayDaily,claimDaily,claimAch,saveStory,missionDone},
-  tables:{EVENTS3,RACE_ROUTES,RACE_ITEMS,BREEDS3,TIER_BASE,FOODS3,FEED_TIER_LBL,PERS,PERS_KEYS,SEASONS,PASS_FREE,PASS_GOLD,VIP_PLANS,WAGE_TIERS,WEEK_TIERS,CALENDAR,
+  tables:{EVENTS3,RACE_ROUTES,RACE_ITEMS,BREEDS3,TIER_BASE,FOODS3,FEED_TIER_LBL,SUPPS,PERS,PERS_KEYS,SEASONS,PASS_FREE,PASS_GOLD,VIP_PLANS,WAGE_TIERS,WEEK_TIERS,CALENDAR,
    DECOR_CAT,RANCH_LEVELS,RANCH_PERKS,TACK_SETS,RARITIES,GEAR_SLOTS,GEAR_NOUN,GEAR_ADJ,RAR_SELL,RAR_W,RAR_COL,SUMMON_TIERS,SUMMON_POOL,PETS3,BOARDS,MILES,NEIGHBOURS,WILD_BREEDS,
    EMOTES,MASTERY_UNLOCKS,TAIL_COLS,STUD_COLS,DYE_HAIR,DYE_BODY,DYE_MARK,MARKS,STAT_KEYS,STAT_LBL,CHESTS,COLL_SETS,FT,REGIONS,TRAIL_STOPS,TACK_ROOM,NAMES3,
    TRAITS,BREED_CEIL,HAIR_STYLES,KEYMAP,REWARD_KINDS},
@@ -13264,7 +13277,7 @@ function installFeatures(){
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
   world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,ranchArchitecture,arrivalArt,geology,box,tube,blob,
    mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,
-   npcList,visitors,critters,spawnCritter,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar},
+   npcList,visitors,spawnCritter,CRITTER_DEFS,critters,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar},
   net:{SOCIAL,net,remotes,lbData,myName,isFriend,publish:netPublish,subscribe:netSubscribe,sendChat:netSendChat,onMessage:netOnMessage,publishMyBoards,openProfile,chatMsg,showBubble,netConnect,topic:netTopic,subs:NET_SUBS},
   time:{seasonNow,weekKey,isoWeekKey,dateKey,marketDay,calMonth},
   course:{get:()=>course,startCourse,cancelCourse,finishCourse,finishDressage,awardRibbons,judgeJump,weeklyFeatured,startDressage,startDrill,startRoundup,ARENA_LETTERS,DRESSAGE_TESTS,eventPar,kinds:COURSE_KINDS},
