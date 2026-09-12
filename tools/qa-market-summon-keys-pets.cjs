@@ -205,7 +205,11 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   t.use(t);
   window.advanceTime(3000);
   const s=G.save.fresh();
-  out.open={keys0:before.keys,keys1:s.keys,stamp:s.doors[t.id],iso:G.time.isoWeekKey(),count:s.mk.doors,
+  /* the door pays a random loot, and one of the entries is "2 more Silver Keys" — so the key
+     it charged is only visible once you subtract what the roll handed back. */
+  out.open={keys0:before.keys,keys1:s.keys,loot:(s.mk.lastDoor||{}).kind,
+   keyLoot:((s.mk.lastDoor||{}).kind==='keys2')?2:0,
+   stamp:s.doors[t.id],iso:G.time.isoWeekKey(),count:s.mk.doors,
    gained:(s.gems-before.gems)+(s.keys-(before.keys-1))+((s.dust||0)-(before.dust||0))+((s.tack||[]).length-(before.tack||[]).length)+(s.horses.length-before.horses.length)+Math.round(s.coins-before.coins)};
   t.use(t);                                          // a second try the same week does nothing
   out.twice=G.save.fresh().keys;
@@ -216,7 +220,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('every loot kind pays out',
   doors.probe.gems6.dg===6*doors.gemMul&&doors.probe.keys2.dk===2&&doors.probe.dust40.dd===40&&doors.probe.tackLeg.dt===1&&doors.probe.horse.dh===1&&doors.probe.coins250.dc===250,{gemMul:doors.gemMul,probe:doors.probe});
  check('opening a door costs one key, stamps the week and pays something',
-  doors.open.keys1<=doors.open.keys0&&doors.open.stamp===doors.open.iso&&doors.open.count===1&&doors.open.gained>0,doors.open);
+  doors.open.keys1===doors.open.keys0-1+doors.open.keyLoot&&doors.open.stamp===doors.open.iso&&doors.open.count===1&&doors.open.gained>0,doors.open);
  check('a door only opens once a week',doors.twice===doors.open.keys1&&/opens again Monday/.test(doors.labelAfter),{twice:doors.twice,label:doors.labelAfter});
  await page.click('#shopPanel [data-shoptab="doors"]');
  const doorTab=await page.evaluate(()=>{
@@ -277,7 +281,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   });
   G.horse.reloadHorses();
   const sel=document.getElementById('horseSel'); sel.value='0'; sel.onchange();     // ride the Luminous Spirit
-  G.pets.setActive('glimmerfox');
+  if(G.pets.active()!=='glimmerfox')G.pets.setActive('glimmerfox');   // setActive toggles, so only when it is not already out
   window.advanceTime(6000);
   const P=G.pets.comp(), s=G.save.fresh();
   const near={combo:P?P.combo:0,key:P&&P.key,breed:G.horse.ridden().breed,combos:s.mk.combos};
@@ -285,13 +289,14 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
      instead of being teleported to your heels) */
   G.horse.player.pos.set(G.horse.player.pos.x+18,0,G.horse.player.pos.z+18);
   window.advanceTime(250);
-  const far={combo:G.pets.comp()?G.pets.comp().combo:0,d:Math.hypot(G.horse.player.pos.x-G.pets.comp().pos.x,G.horse.player.pos.z-G.pets.comp().pos.z)};
+  const fc=G.pets.comp();
+  const far={combo:fc?fc.combo:0,gone:!fc,d:fc?Math.hypot(G.horse.player.pos.x-fc.pos.x,G.horse.player.pos.z-fc.pos.z):-1};
   const st=JSON.parse(window.render_game_to_text());
   return {near,far,state:st.market};
  });
  check('a matched horse and pet transform side by side',
   combo.near.breed==='lumen'&&combo.near.key==='glimmerfox'&&combo.near.combo>0.9&&combo.near.combos>=1,combo.near);
- check('the glow fades when they are apart',combo.far.combo<combo.near.combo,combo.far);
+ check('the glow fades when they are apart',!combo.far.gone&&combo.far.combo<combo.near.combo,combo.far);
  check('render_game_to_text carries the market keys',
   combo.state&&combo.state.banners>=9&&combo.state.doors.total===5&&combo.state.pets.total>=12&&combo.state.breeds.total>0,combo.state);
 

@@ -339,7 +339,9 @@ export function install(G){
   if(dup)toast('🐾 '+pick.name+' again — the pair of you shake off '+PET_DUP_DUST+'✨ dust.');
   else{
    toast('🐾 '+rar+'! '+pick.emoji+' '+pick.name+' trots out of the stall — 🛍️ Shop → 🐾 Pets to take it with you.');
-   try{G.pets.setActive(pick.key);}catch(e){}
+   /* setActive TOGGLES. Calling it blind sends the pet home again whenever the stall hands
+      you the one already at your heel, which is exactly what a run of calls tends to do. */
+   try{if(G.pets.active()!==pick.key)G.pets.setActive(pick.key);}catch(e){}
   }
   G.quest.dailyEvt('summon',1);
   if(shopCall)U.openShop('summon');                       // called from the Market: put the banners back
@@ -525,6 +527,7 @@ export function install(G){
    sv.keys--; sv.doors[t.id]=wk;
    kind=rollLoot(d); got=applyLoot(sv,kind);
    sv.mk=sv.mk||{}; sv.mk.doors=(sv.mk.doors||0)+1;
+   sv.mk.lastDoor={id:t.id,kind,got};                     // what the last door actually paid
    sv.stats=sv.stats||{}; sv.stats.doors=(sv.stats.doors||0)+1;
    ok=true;
   });
