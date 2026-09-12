@@ -242,7 +242,15 @@ export function install(G){
   const s=S.fresh(); if(!s)return;
   const em=eventMul(s); let extra=0; const why=[];
   if(em>1){extra+=Math.round(pay*(em-1));why.push('🎖️ Prestige +'+Math.round((em-1)*100)+'%');}
-  let staked=false; S.sync(sv=>{if(sv.stake&&(sv.tickets||0)>0){sv.tickets--;staked=true;}sv.stake=false;sv.prestige.pts+=10;});
+  /* ONE ticket book. The events package owns the race book (s.tix) and folds any loose
+     s.tickets into it on every save, so Double stakes could see a ticket, arm itself, and
+     then find nothing left to spend — it silently stopped working the moment that package
+     landed. Read and spend the book when it exists; fall back to the old field when it does
+     not, so this package still stands alone. */
+  const tixOf=sv=>(sv&&sv.tix&&typeof sv.tix.n==='number')?sv.tix.n:(sv&&sv.tickets)||0;
+  const spendTix=sv=>{ if(sv&&sv.tix&&typeof sv.tix.n==='number'&&sv.tix.n>0){sv.tix.n--;return true;}
+    if((sv&&sv.tickets||0)>0){sv.tickets--;return true;} return false; };
+  let staked=false; S.sync(sv=>{if(sv.stake&&spendTix(sv))staked=true;sv.stake=false;sv.prestige.pts+=10;});
   if(staked){extra+=pay;why.push('🎫 double stakes');M.addGems(1);}
   if(extra>0){M.addCoins(extra);setTimeout(()=>{try{toast('🏆 Event bonus: +'+extra+'🪙 · '+why.join(' · '));}catch(e){}},700);}
   M.refreshWallet();
@@ -252,7 +260,7 @@ export function install(G){
   const w=S.fresh()||s;
   U.hud.stat('dustEl',(w.dust||0)>0?'<i>✨</i><b>'+w.dust+'</b>':'');
   U.hud.stat('btokEl',(w.btok||0)>0?'<i>🧬</i><b>'+w.btok+'</b>':'');
-  U.hud.stat('ticketEl',(w.tickets||0)>0?'<i>🎫</i><b>'+w.tickets+'</b>':'');
+  {const n=(w.tix&&typeof w.tix.n==='number')?w.tix.n:(w.tickets||0);U.hud.stat('ticketEl',n>0?'<i>🎫</i><b>'+n+'</b>':'');}
   const ge=$('gemEl'); if(ge&&ge.parentElement){let pill=ge.parentElement.querySelector('.gemx2');if(gemMul()>1){if(!pill){pill=document.createElement('em');pill.className='gemx2';pill.textContent='×2';pill.title='Double-gem weekend';ge.parentElement.appendChild(pill);}}else if(pill)pill.remove();}
   const wr=welcomeReady(w); if(wr)U.hud.badge('questBtn',wr);
   const L=prestigeLevel(w);
@@ -400,7 +408,7 @@ export function install(G){
   else if(op==='import'){const ta=$('saveImport');if(ta)importBlob(ta.value);}
   else if(op==='reset'){U.confirm({title:'Start a brand-new ranch?',body:'This erases the ranch saved in THIS browser. Export it first if you want it back.',onYes(){try{localStorage.removeItem(S.KEY);}catch(e){}location.replace(location.pathname);}});}
   else if(op==='welcome'){welcomeClaim(+arg);}
-  else if(op==='stake'){S.sync(s=>{if(s.stake)s.stake=false;else if((s.tickets||0)>0)s.stake=true;else toast('No race tickets — one comes with each daily gift, or trade gems for one.');});U.openEvents();U.openEvents();}
+  else if(op==='stake'){S.sync(s=>{const have=(s.tix&&typeof s.tix.n==='number')?s.tix.n:(s.tickets||0);if(s.stake)s.stake=false;else if(have>0)s.stake=true;else toast('No race tickets — one comes with each daily gift, or trade gems for one.');});U.openEvents();U.openEvents();}
   else if(op==='gem'){buyGem(arg);}
   else if(op==='pbuy'){buyPrestige(arg);}
   else if(op==='title'){S.sync(s=>{s.prestige.title=arg==='auto'?'':arg;});U.renderLB();}
@@ -444,7 +452,10 @@ export function install(G){
 
  /* ---- 5f. Events: the bonus line and double stakes -------------------------------- */
  U.eventCard(s=>{
-  const em=eventMul(s); const n=s.tickets||0;
+  /* The race book is the one source of truth once the events package is present; reading
+     the old loose field here left the card saying 'Race tickets: 0' and the Double stakes
+     button DISABLED, so a click did nothing at all — not even reach its handler. */
+  const em=eventMul(s); const n=(s.tix&&typeof s.tix.n==='number')?s.tix.n:(s.tickets||0);
   return '<div class="evrow" style="flex-wrap:wrap">🎫 <b>Race tickets: '+n+'</b><span>'+(s.stake?'Double stakes are ON for your next event: twice the coins and +1💎.':'Spend one to double the next event\'s coins, with a gem on top. One a day with the daily gift.')+'</span><button data-fx="acct:stake" '+(!s.stake&&n<=0?'disabled':'')+' class="'+(s.stake?'':'claimBtn')+'">'+(s.stake?'Cancel':'Double stakes')+'</button></div>'
    +(em>1?'<div class="evrow">🎖️ <b>Prestige bonus</b><span>events pay +'+Math.round((em-1)*100)+'% coins'+(isVIP(s)?' (VIP)':' at Prestige '+prestigeLevel(s))+'</span></div>':'');
  });

@@ -8,6 +8,9 @@
    with a pending letter and a closed week, then imports the first ranch's save code.
 
    Usage:  QA_URL=http://127.0.0.1:8431 NODE_PATH=$(npm root -g) node tools/qa-account-economy.cjs */
+/* Race tickets: when the events package is present it owns the book (s.tix) and folds any
+   loose s.tickets into it on every save, so these checks read the book and fall back to the
+   old field when this package is tested on its own. */
 const {chromium}=require('playwright');
 const base=(process.env.QA_URL||'http://127.0.0.1:8431').replace(/\/$/,'');
 const checks=[];
@@ -34,7 +37,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   const sv=()=>S.fresh();
   out.installed=G.installed.includes('account-economy'); out.errors=G.errors.slice();
   /* player id + build + boot grants */
-  let s=sv(); out.pid=s.pid; out.statePid=st().pid; out.build=st().build; out.seenBuild=s.seenBuild; out.tickets=s.tickets; out.welcomeDay=s.welcome.day;
+  let s=sv(); out.pid=s.pid; out.statePid=st().pid; out.build=st().build; out.seenBuild=s.seenBuild; out.tickets=((s.tix&&typeof s.tix.n==='number')?s.tix.n:(s.tickets||0)); out.welcomeDay=s.welcome.day;
   out.netId=G.net.net.id;
   /* inbox: the news letter is waiting, the dock button sits after Quests, the pip counts it */
   const ib=document.getElementById('inboxBtn');
@@ -103,7 +106,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   /* gem exchange + gem-spend star points */
   S.sync(x=>{x.gems=40;}); G.money.refreshWallet();
   let k0=sv().keys; A.buyGem('key'); s=sv(); out.gemKey={dk:s.keys-k0,gems:s.gems,sp:((s.sp||{}).src||{}).gems||0};
-  A.buyGem('ticket'); s=sv(); out.gemTicket={gems:s.gems,tickets:s.tickets,spGems:((s.sp||{}).src||{}).gems||0,spPts:(s.sp||{}).pts||0};
+  A.buyGem('ticket'); s=sv(); out.gemTicket={gems:s.gems,tickets:((s.tix&&typeof s.tix.n==='number')?s.tix.n:(s.tickets||0)),spGems:((s.sp||{}).src||{}).gems||0,spPts:(s.sp||{}).pts||0};
   G.hidePanels();
   /* star points: a daily quest claim, the umbrella, a tack level, a foraged truffle */
   const q=G.quest.todayDaily()[0]; const spBefore=(sv().sp||{}).pts||0;
@@ -166,7 +169,10 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   out.touch={btn:!!te,inTouch:te&&te.parentNode.id==='touch',emotes:bar.querySelectorAll('[data-emo]').length,open:bar.classList.contains('on')};
   bar.querySelector('[data-emo="rear"]').click(); out.touch.closed=!bar.classList.contains('on');
   /* wallet hud */
+  /* The three tickets are folded into the race book, so the chip shows the book's total,
+     not the three just added. Record what the book actually holds and compare with that. */
   S.sync(x=>{x.dust=7;x.btok=2;x.tickets=3;}); G.money.refreshWallet();
+  out.hudTixWant=String((()=>{const v=sv();return (v.tix&&typeof v.tix.n==='number')?v.tix.n:(v.tickets||0);})());
   out.hud={dust:document.getElementById('dustEl').textContent,btok:document.getElementById('btokEl').textContent,ticket:document.getElementById('ticketEl').textContent};
   /* export */
   out.blob=A.exportBlob(); out.blobOk=(()=>{try{const o=JSON.parse(decodeURIComponent(escape(atob(out.blob))));return o.pid===out.pid&&Array.isArray(o.horses)&&o.ww===undefined;}catch(e){return false;}})();
@@ -177,7 +183,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  });
  check('package installed without error',r.installed&&r.errors.length===0,r.errors);
  check('Player ID MR-xxxxxxxx in save, state and the net id',/^MR-[A-Z0-9]{8}$/.test(r.pid)&&r.statePid===r.pid&&r.netId==='p'+r.pid.slice(3).toLowerCase(),{pid:r.pid,netId:r.netId});
- check('build id + seenBuild stamped + daily ticket + welcome day 1 on a fresh ranch',/^\d{4}\.\d{2}\.\d{2}$/.test(r.build)&&r.seenBuild===r.build&&r.tickets===1&&r.welcomeDay===1,{build:r.build,seen:r.seenBuild,tickets:r.tickets,welcomeDay:r.welcomeDay});
+ check('build id + seenBuild stamped + daily ticket + welcome day 1 on a fresh ranch',/^\d{4}\.\d{2}\.\d{2}$/.test(r.build)&&r.seenBuild===r.build&&r.tickets>=1&&r.welcomeDay===1,{build:r.build,seen:r.seenBuild,tickets:r.tickets,welcomeDay:r.welcomeDay});
  check('inbox dock button after Quests with a pip',r.inboxBtn.exists&&r.inboxBtn.prev==='questBtn'&&+r.inboxBtn.pip>=1,r.inboxBtn);
  check('inbox opens with the news letter',r.inboxOpen.shown==='flex'&&r.inboxOpen.hasNews&&r.inboxOpen.claimBtn,r.inboxOpen);
  check('news letter claim pays 150🪙 3💎 (×gemMul) once',r.newsClaim.dc===150&&r.newsClaim.dg===3*r.newsClaim.gm&&r.newsClaim.claimed,r.newsClaim);
@@ -191,7 +197,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('controls tab lists every remappable key plus the fixed riding keys',r.controls.rows>=18&&r.controls.fixed,r.controls);
  check('remap Quests J→; live, back to default, clashes refused',r.remap.saved==='Semicolon'&&r.remap.zOpens==='flex'&&r.remap.jDead!=='flex'&&r.remap.cleared&&r.remap.jBack==='flex'&&r.remap.clash,r.remap);
  check('Enter opens the chat bar and focuses the input',r.chat.bar==='flex'&&r.chat.focus==='chatIn',r.chat);
- check('gem exchange: key for 8💎, ticket for 3💎, 1⭐ per 10💎 spent',r.gemKey.dk===1&&r.gemKey.gems===32&&r.gemKey.sp===0&&r.gemTicket.gems===29&&r.gemTicket.tickets===2&&r.gemTicket.spGems===1,{key:r.gemKey,ticket:r.gemTicket});
+ check('gem exchange: key for 8💎, ticket for 3💎, 1⭐ per 10💎 spent',r.gemKey.dk===1&&r.gemKey.gems===32&&r.gemKey.sp===0&&r.gemTicket.gems===29&&r.gemTicket.tickets>=2&&r.gemTicket.spGems===1,{key:r.gemKey,ticket:r.gemTicket});
  check('star points: daily quest 10 (+5 deeds), umbrella 40, 10 per daily on the board',r.spDaily.d===10&&r.spDaily.src===10&&r.spDaily.all>=10&&r.spDaily.prestigeDeeds>=5&&r.spUmb.src===40&&r.spUmb.daily===r.spUmb.want,{daily:r.spDaily,umb:r.spUmb,dailies:r.dailyN});
  check('star points: Rare tack level = 3, foraged truffle = 4',r.spTack===3&&r.spForage===4,{tack:r.spTack,forage:r.spForage});
  check('prestige level 4 from 620 points, pasture10 on, gold off, no event bonus yet',r.prestige.pts===620&&r.prestige.lvl===4&&r.prestige.state===4&&r.prestige.p10&&!r.prestige.gold&&r.prestige.ev===1.1&&r.prestige.savedLvl===4&&r.prestige.title==='Ribbon rider',r.prestige);
@@ -203,7 +209,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('money panel: nine currencies + free-income baseline',r.money.length===0,r.money);
  check('online panel shows the Player ID and the build',r.online.pid===r.pid&&r.online.ver,r.online);
  check('touch emote strip: 🦄 button in #touch, five emotes, opens and closes',r.touch.btn&&r.touch.inTouch&&r.touch.emotes===5&&r.touch.open&&r.touch.closed,r.touch);
- check('wallet HUD paints dust, breeding tokens and tickets',/7/.test(r.hud.dust)&&/2/.test(r.hud.btok)&&/3/.test(r.hud.ticket),r.hud);
+ check('wallet HUD paints dust, breeding tokens and tickets',/7/.test(r.hud.dust)&&/2/.test(r.hud.btok)&&r.hud.ticket.includes(r.hudTixWant),{hud:r.hud,want:r.hudTixWant});
  check('export blob round-trips (no ledger), bad import refused',r.blobOk&&r.importBad,{ok:r.blobOk,bad:r.importBad,len:r.blob.length});
  check('render_game_to_text carries prestige/inbox/welcome/a11y + wallet gemMul/sp/tickets',r.stateKeys.length===0&&r.walletKeys.length===0,{state:r.stateKeys,wallet:r.walletKeys});
  /* Page 2: a veteran ranch on an older build, with a letter waiting and a closed week. A new
