@@ -1703,8 +1703,9 @@ function drawVRMenu(){
 
  const hasSub=(vrPage==='shop'||vrPage==='quests');
  if(vrPage==='shop'){
-  [['horses','🐴 Horses'],['pets','🐾 Pets'],['food','🧺 Food'],['tack','🐎 Tack'],['breed','💞 Breed'],['outfit','🧢 Outfit']]
-   .forEach(([k,lbl],i)=>vrButton(c,'shoptab:'+k,lbl,36+i*158,144,150,44,vrShopTab===k?'dark':'',20));
+  const sub=[['horses','🐴 Horses'],['summon','✨ Summon'],['pets','🐾 Pets'],['food','🧺 Food'],['tack','🐎 Tack'],['breed','💞 Breed'],['doors','🔐 Doors'],['outfit','🧢 Outfit']];
+  const sp=Math.floor((VRM_W-72)/sub.length);
+  sub.forEach(([k,lbl],i)=>vrButton(c,'shoptab:'+k,lbl,36+i*sp,144,sp-8,44,vrShopTab===k?'dark':'',19));
  }else if(vrPage==='quests'){
   [['daily','📋 Daily'],['ach','🏅 Achievements']]
    .forEach(([k,lbl],i)=>vrButton(c,'questtab:'+k,lbl,36+i*250,144,240,44,vrQuestTab===k?'dark':'',21));
@@ -1812,6 +1813,30 @@ function drawVRList(c){
 }
 
 function buildVRShop(rows,sv){
+ /* the summoning stables and the key doors, mirrored from the flat shop so the headset
+    sees the same odds and the same pity counters */
+ if(vrShopTab==='summon'){
+  for(const t of SUMMON_TIERS){
+   if(typeof t.when==='function'&&!t.when(sv))continue;
+   const pity=(sv.mk&&sv.mk.pity&&sv.mk.pity[t.id])||0;
+   const odds=SUMMON_ORDER.filter(k=>t.odds[k]>0).map(k=>k+' '+t.odds[k]+'%').join('  ·  ');
+   const afford=(sv.gems||0)>=t.gems;
+   rows.push(y=>{
+    vrListRow(c0,y,t.emoji,t.label,odds+(t.pity?'  ·  pity '+pity+'/'+t.pity:''),!afford);
+    vrButton(c0,afford?'summon:'+t.id:'noop',t.gems+' 💎',760,y+13,228,48,afford?'dark':'',24);
+   });
+  }
+  return 'No stables are open.';
+ }
+ if(vrShopTab==='doors'){
+  const K=(G.market&&G.market.KEY_DOORS)||[];
+  rows.push(y=>vrListRow(c0,y,'🗝️','Silver Keys: '+(sv.keys||0),'one key opens one door, once a week'));
+  for(const d of K){
+   const odds=d.loot.map(l=>((G.market.LOOT[l[0]]||{}).lbl||l[0])+' '+l[1]+'%').join('  ·  ');
+   rows.push(y=>vrListRow(c0,y,'🔐',d.label,odds));
+  }
+  return 'No doors yet.';
+ }
  if(vrShopTab==='horses'){
   BREEDS3.forEach((b,i)=>{
    const owned=(sv.horses||[]).filter(h=>h.breed===b[0]).length;
@@ -2000,6 +2025,7 @@ function vrMenuClick(id){
  if(id==='exit'){const s=renderer.xr.getSession();if(s)s.end();return;}
  if(id.startsWith('tab:')){vrPage=id.slice(4);drawVRMenu();return;}
  if(id.startsWith('shoptab:')){vrShopTab=id.slice(8);vrScroll.shop=0;drawVRMenu();return;}
+ if(id.startsWith('summon:')){const t=SUMMON_TIERS.find(x=>x.id===id.slice(7));if(t)startSummon(t);return;}
  if(id.startsWith('questtab:')){vrQuestTab=id.slice(9);vrScroll.quests=0;drawVRMenu();return;}
  if(id.startsWith('care:')){try{careAct(id.slice(5));}catch(e){}drawVRMenu();return;}
  if(id.startsWith('pass:')||id.startsWith('gpass:')){
@@ -9761,7 +9787,7 @@ function marketTackStock(){
 function tackLockerHtml(s){
  const h=s.horses[rideIdx]; if(h)ensureStats(h);
  const inv=s.tack||[]; const keys=s.keys||0; const tw=s.tw||{}; const items=s.items||{};
- const freeKey=(s.keyWeek!==weekKey()), freeKit=(tw.kitWeek!==weekKey());
+ const freeKey=(s.keyWeek!==isoWeekKey()), freeKit=(tw.kitWeek!==weekKey());   // the key week is Monday-anchored
  let html='<div class="evrow">🗝️ <b>Silver Keys: '+keys+'</b><span style="font-size:11px">A key opens a tack chest: one piece, rarity rolled (Common 52% · Uncommon 28% · Rare 13% · Epic 5.5% · Legendary 1.5%). Keys come from events, taming, breeding, the Trail Pass and trophies. Tack also comes from the market stall below, world chests, Grandma\'s tack room, Bo\'s missions and the top rung of the weekly ⭐ Star Points ladder.</span>'
   +'<span style="flex:none;display:flex;gap:4px"><button data-tk="chest" '+(keys>0?'':'disabled')+'>Open chest 🗝️</button>'+(freeKey?'<button data-tk="freekey">🎁 Weekly key</button>':'')+'</span></div>';
  html+='<div class="evrow">🧰 <b>Bo\'s Saddlery</b><span style="font-size:11px">Toolkits I·II·III: '+(items.kit1||0)+' · '+(items.kit2||0)+' · '+(items.kit3||0)+' — an upgrade needs one (I up to Lv 3, II to Lv 6, III to Lv 8). 🔧 Parts: <b>'+(s.parts||0)+'</b> from stripped spares. Bigger kits drop from chests and quests.</span>'
@@ -9804,7 +9830,7 @@ function tackAct(cmd){
   s.tack=s.tack||[]; s.items=s.items||{}; s.tw=s.tw||{}; if(s.parts==null)s.parts=0; const h=s.horses[rideIdx]; if(h)ensureStats(h);
   const maxLvl=()=>s.tack.reduce((m,t)=>Math.max(m,t.lvl||1),1);
   if(op==='chest'){ if((s.keys||0)<1){msg='No keys — finish an event or a daily.';return;} s.keys--; got=genGear(); s.tack.push(got); msg='🗝️ '+got.rarity+'! '+got.name; ok=true; }
-  else if(op==='freekey'){ if(s.keyWeek===weekKey()){msg='Already claimed this week.';return;} s.keyWeek=weekKey(); s.keys=(s.keys||0)+1; msg='🎁 A Silver Key — see you next week!'; ok=true; }
+  else if(op==='freekey'){ if(s.keyWeek===isoWeekKey()){msg='Already claimed this week.';return;} s.keyWeek=isoWeekKey(); s.keys=(s.keys||0)+1; msg='🎁 A Silver Key — see you Monday!'; ok=true; }
   else if(op==='buykit'){ const K=TOOLKITS[arg||'kit1']; if(!K)return; if(s.coins<K.price){msg='Not enough coins!';return;} if((s.parts||0)<K.parts){msg='Bo needs '+K.parts+' parts for that kit — strip spare tack.';return;} s.coins-=K.price; s.parts-=K.parts; s.items[arg||'kit1']=(s.items[arg||'kit1']||0)+1; msg='🧰 Bo hands over a '+K.label+'.'; ok=true; }
   else if(op==='freekit'){ if(s.tw.kitWeek===weekKey()){msg='Bo already gave you this week\'s kit.';return;} s.tw.kitWeek=weekKey(); s.items.kit1=(s.items.kit1||0)+1; msg='🎁 A Tack Toolkit I on the house — see you next week!'; ok=true; }
   else if(op==='mkt'){ const stock=marketTackStock(), it=stock[+arg]; if(!it)return; s.tw.market=(s.tw.market&&s.tw.market.day===marketDay())?s.tw.market:{day:marketDay(),sold:[]}; if(s.tw.market.sold.includes(+arg)){msg='Sold already.';return;} if(s.coins<it.price){msg='Not enough coins!';return;} s.coins-=it.price; s.tw.market.sold.push(+arg); got=Object.assign({},it,{id:Date.now().toString(36)+Math.random().toString(36).slice(2,6)}); delete got.price; s.tack.push(got); s.stats=s.stats||{}; s.stats.tackBought=(s.stats.tackBought||0)+1; msg='🤝 Bought the '+got.name+'.'; ok=true; }
@@ -10976,13 +11002,16 @@ function openSummon(){
  let html='<div class="ph panelHeader"><b id="summonTitle">✨ The Summoning Stall</b><button class="panelClose" id="summonClose" aria-label="Close summoning stall">Close ×</button></div>'
   +'<div style="font-size:11.5px;color:#8c7a63;margin:2px 0 6px">Call a horse out of the stall. The light under the door tells you what is coming — if you can bear to watch it climb.</div>';
  for(const t of SUMMON_TIERS){
-  const can=(s.gems||0)>=t.gems && s.horses.length<stableCap(s);
+  if(typeof t.when==='function'&&!t.when(s))continue;                               // a limited banner only runs in its window
+  const full=!t.custom&&s.horses.length>=stableCap(s);
+  const can=(s.gems||0)>=t.gems && !full;
   html+='<div class="sumTier"><div class="ph"><b>'+t.emoji+' '+t.label+'</b><span style="font-size:11px;color:#8c7a63">'+t.gems+'💎</span></div>'
    +'<div style="font-size:11.5px;color:#4a3526">'+t.blurb+'</div>'
    +'<div class="odds">'+SUMMON_ORDER.filter(k=>t.odds[k]>0).map(k=>
      '<span class="sumOdd" style="background:'+SUMMON_COL[k]+(k==='Common'?';color:#4a3526':'')+'">'+k+' '+t.odds[k]+'%</span>').join('')+'</div>'
+   +sect('summonCard',t,s)                                                          // pity, rate-up and no-repeat chips
    +'<div style="margin-top:7px"><button data-summon="'+t.id+'"'+(can?' class="claimBtn"':' disabled')+'>'
-   +(s.horses.length>=stableCap(s)?'Stable is full':'Call · '+t.gems+'💎')+'</button></div></div>';
+   +(full?'Stable is full':(t.btn||'Call')+' · '+t.gems+'💎')+'</button></div></div>';
  }
  html+='<div style="font-size:11px;color:#8c7a63">Gems come from riding — events, daily gifts, chests, the pass. Nothing here costs real money.</div>';
  p.innerHTML=html; p.style.display='flex';
@@ -10997,15 +11026,23 @@ function startSummon(tier){
  if(SUMMON.on)return;
  const s=freshSave(); if(!s)return;
  if((s.gems||0)<tier.gems){toast('Not enough gems yet.');return;}
+ if(tier.custom){G.run('summonCustom',tier,s);return;}                              // the pet call and anything else a package stages itself
  if(s.horses.length>=stableCap(s)){toast('Your stable is full.');return;}
- const rar=summonRoll(tier), br=summonBreed(rar);
+ const D={tier,rar:summonRoll(tier),breed:null,stats:null,colors:null,extra:{summonTier:tier.id}};
+ G.run('summonDraw',D,s);                                                           // pity, the first-30 no-repeat rule, painted coats
+ const rar=D.rar, br=D.breed=(D.breed||summonBreed(D.rar,tier));
+ D.extra.summonRar=rar;
  let newId=null;
  syncSave(sv=>{
   sv.gems-=tier.gems;
   const st=()=>3+Math.floor(Math.random()*4);
-  newId=grantHorse(sv,br[0],{stats:{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},src:'summon',extra:{summonTier:tier.id,summonRar:rar}}).id;
+  const opts={stats:D.stats||{speed:st(),stamina:st(),jump:st(),accel:st(),agility:st()},src:'summon',extra:D.extra};
+  if(D.colors)opts.colors=D.colors;
+  newId=grantHorse(sv,br[0],opts).id;
   sv.stats=sv.stats||{}; sv.stats.summons=(sv.stats.summons||0)+1;
+  G.run('summonPaid',sv,D);
  });
+ SUMMON.draw=D;
  refreshWallet();
  SUMMON.on=true; SUMMON.t=0; SUMMON.tier=tier; SUMMON.rar=rar; SUMMON.breed=br;
  SUMMON.horseId=newId; SUMMON.step=-1; SUMMON.shown='Common'; SUMMON.cam=true; SUMMON.done=false;
@@ -11089,6 +11126,7 @@ function tickSummon(dt){
   if(SUMMON.doorL){SUMMON.doorL.rotation.y=0;SUMMON.doorR.rotation.y=0;}
   const sv=freshSave(); const h=sv.horses.find(x=>x.id===SUMMON.horseId);
   toast('✨ '+SUMMON.rar+'! '+(h?h.name:'')+' the '+SUMMON.breed[1]+' is yours.');
+  G.run('summonDone',sv,SUMMON.draw||null,h);                                        // duplicate → mastery, pity chips
   passAdd(20); weekBump('events',0); refreshWallet();
  }
 }
@@ -11883,11 +11921,15 @@ function summonRoll(tier){
  for(const k of SUMMON_ORDER){ x-=(tier.odds[k]||0); if(x<=0&&(tier.odds[k]||0)>0)return k; }
  return 'Common';
 }
-function summonBreed(rar){
+function summonPool(rar,tier){
  const want=SUMMON_POOL[rar]||['Common'];
- const pool=BREEDS3.filter(b=>want.indexOf(b[2])>=0&&breedAvailable(b,'summon'));   // no story or exclusive horses out of the stall (the Kestrel used to leak)
- return pool.length?pool[Math.floor(Math.random()*pool.length)]:BREEDS3[0];
+ let pool=BREEDS3.filter(b=>want.indexOf(b[2])>=0&&breedAvailable(b,'summon'));   // no story or exclusive horses out of the stall (the Kestrel used to leak)
+ if(tier&&typeof tier.pool==='function'){                                          // a themed banner keeps its own stable
+  const f=pool.filter(b=>{try{return !!tier.pool(b);}catch(e){return false;}}); if(f.length)pool=f;
+ }
+ return pool;
 }
+function summonBreed(rar,tier){const pool=summonPool(rar,tier);return pool.length?pool[Math.floor(Math.random()*pool.length)]:BREEDS3[0];}
 const SUMMON={on:false,t:0,phase:'',tier:null,rar:null,breed:null,step:0,shown:'Common',
               light:null,glow:null,doorL:null,doorR:null,cam:false,horseId:null};
 function mkSummonStall(){
@@ -11959,18 +12001,19 @@ function useThing(){
   syncSave(sv=>{ sv.chests=sv.chests||{}; const at=sv.chests[t.id]; if(at&&Date.now()-at<CHEST_REOPEN)return;
    sv.chests[t.id]=Date.now(); const r={c:t.tier===1?80+Math.floor(Math.random()*80):t.tier===2?200:300};
    if(t.tier>=2)r.k=1; r.g=t.tier===3?4:t.tier===2?2:1; {const rr=Math.random(); if(t.tier===3)r.gear=rr<0.2?'Epic':'Rare'; else if(t.tier===2&&rr<0.3)r.gear='Rare'; else if(rr<0.15)r.gear='Uncommon';}
+   if(t.tier>=2){r.dust=t.tier===3?8:4;sv.dust=(sv.dust||0)+r.dust;}   // ✨ cosmetic dust (market package)
    if(t.tier>=2||Math.random()<0.1){r.kit=t.tier===3?'kit3':t.tier===2?'kit2':(Math.random()<0.1?'kit3':'kit1');sv.items[r.kit]=(sv.items[r.kit]||0)+1;}   // tack toolkits (tack-wardrobe)
    if(t.tier===1){const fk=['carrot','apple','lettuce','pumpkin'][Math.floor(Math.random()*4)];sv.items[fk]=(sv.items[fk]||0)+3;r.food=fk;}
    if(t.tier===3||Math.random()<0.5){r.bag=t.tier===3?'bag3':t.tier===2?'bag2':'bag1';sv.items[r.bag]=(sv.items[r.bag]||0)+1;}   // a feed bag, Rare from the big chests
    sv.coins+=r.c; if(r.k)sv.keys=(sv.keys||0)+r.k; if(r.g)grantGems(sv,r.g); if(r.gear){sv.tack=sv.tack||[];sv.tack.push(genGear(r.gear));} sv.stats=sv.stats||{}; sv.stats.chests=(sv.stats.chests||0)+1; got=r; });
   if(!got){toast('The chest is empty — it refills in a few days.');return;}
   t.lid.rotation.x=-1.2; refreshWallet(); refreshTack(); sGem(); passAdd(5);
-  toast('🎁 '+got.c+'🪙'+(got.k?' +'+got.k+'🗝️':'')+(got.g?' +'+got.g+'💎':'')+(got.gear?' + '+got.gear+' tack!':'')+(got.kit?' + '+TOOLKITS[got.kit].label:'')+(got.food?' + 3 '+FOODS3[got.food].emoji:'')+(got.bag?' + 🛍️ '+((G.tables&&G.tables.FEED_BAGS&&G.tables.FEED_BAGS[got.bag])?G.tables.FEED_BAGS[got.bag].label:'feed bag'):''));
+  toast('🎁 '+got.c+'🪙'+(got.k?' +'+got.k+'🗝️':'')+(got.g?' +'+got.g+'💎':'')+(got.dust?' +'+got.dust+'✨':'')+(got.gear?' + '+got.gear+' tack!':'')+(got.kit?' + '+TOOLKITS[got.kit].label:'')+(got.food?' + 3 '+FOODS3[got.food].emoji:'')+(got.bag?' + 🛍️ '+((G.tables&&G.tables.FEED_BAGS&&G.tables.FEED_BAGS[got.bag])?G.tables.FEED_BAGS[got.bag].label:'feed bag'):''));
  }else if(t.kind==='room'){
-  let ok=false,piece=null;
-  syncSave(sv=>{ if(sv.doors.tackroom===weekKey())return; if((sv.keys||0)<1)return; sv.keys--; sv.doors.tackroom=weekKey(); const r=Math.random(); piece=genGear(r<0.05?'Legendary':r<0.3?'Epic':'Rare'); sv.tack=sv.tack||[]; sv.tack.push(piece); sv.coins+=100; sv.items=sv.items||{}; sv.items.kit2=(sv.items.kit2||0)+1; ok=true; });   // and a Tack Toolkit II (tack-wardrobe)
+  let ok=false,piece=null,dust=0;
+  syncSave(sv=>{ if(sv.doors.tackroom===weekKey())return; if((sv.keys||0)<1)return; sv.keys--; sv.doors.tackroom=weekKey(); const r=Math.random(); piece=genGear(r<0.05?'Legendary':r<0.3?'Epic':'Rare'); sv.tack=sv.tack||[]; sv.tack.push(piece); sv.coins+=100; sv.items=sv.items||{}; sv.items.kit2=(sv.items.kit2||0)+1; dust=12+Math.floor(Math.random()*13); sv.dust=(sv.dust||0)+dust; ok=true; });   // and a Tack Toolkit II (tack-wardrobe)
   if(!ok){const sv=freshSave(); toast(sv&&sv.doors&&sv.doors.tackroom===weekKey()?'Grandma\'s tack room opens once a week.':'You need a Silver Key.');return;}
-  t.door.rotation.y=-1.3; refreshWallet(); refreshTack(); sGem(); toast('🔐 '+piece.rarity+'! '+piece.name+' — a Tack Toolkit II and 100🪙 in the tin');
+  t.door.rotation.y=-1.3; refreshWallet(); refreshTack(); sGem(); toast('🔐 '+piece.rarity+'! '+piece.name+' — a Tack Toolkit II, 100🪙 and '+dust+'✨ dust in the tin');
  }else if(t.kind==='summon'){
   openSummon();
  }else if(t.kind==='fish'){
@@ -13437,6 +13480,8 @@ function installFeatures(){
    section:uiSection,action:uiAction,dispatch:uiDispatch,bindFx,nameDialog,confirm:confirmDialog,hud:{badge:hudBadge,stat:hudStat,pips:uiPips},
    hotkey(code,fn){PANEL_HOTKEYS[code]=fn;},
    openShop,openCare,openEvents,openStable,openQuests,openOnline,openLB,openBuild,renderCare,renderStable,renderQuests,renderLB,renderMoney,drawVRMenu,TABS,VR_BUILDERS},
+  summon:{open:openSummon,start:startSummon,roll:summonRoll,pool:summonPool,breed:summonBreed,state:SUMMON,STALL:SUMMON_STALL,ORDER:SUMMON_ORDER,COL:SUMMON_COL},
+  pets:{PETS3,cfg:petCfg,make:makePet,comp:()=>petComp,active:()=>activePet,setActive:setActivePet,buy:buyPet,rebuild:rebuildPet},
   key:keyOf,
  });
  try{KEYMAP_USER=(freshSave()||{}).keymap||{};}catch(e){}
