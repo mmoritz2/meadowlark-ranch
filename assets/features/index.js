@@ -165,4 +165,5 @@ import * as clubs from './clubs-boards.js';
 import * as social from './social-play.js';
 import * as seasons from './seasons.js';
 import * as uikit from './ui-kit.js';
-export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,uikit];
+import * as ui2compete from './ui2-compete.js';
+export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,uikit,ui2compete];
