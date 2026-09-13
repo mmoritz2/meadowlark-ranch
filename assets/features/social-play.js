@@ -586,6 +586,11 @@ export function install(G){
  let spec=null;
  function startSpectate(remoteId,seat){
   if(G.course.get()){toast('Finish your round first.');return;}
+  /* events-pvp registered its own camera hook before this one, and G.run returns the first
+     truthy result — so if its plain grandstand seat were still on it would hold the camera
+     at the stand while this seat tried to follow a rider round the course. Stand up from it
+     first, and it yields for the rest of the watch. */
+  if(G.events&&G.events.setSpectate)G.events.setSpectate(false);
   spec={id:remoteId||null,seat:!!seat||!remoteId,snap:true};
   H.player.speed=0;
   G.hidePanels();
@@ -638,6 +643,13 @@ export function install(G){
  });
  G.on('ride',R=>{ if(spec||tour){R.target=0;R.noJump=true;} });
  /* The grandstand itself: an interactable on the arena's west side. */
+ /* Two packages built a grandstand on the same corner of the arena. events-pvp put a plain
+    seat there; this one put a seat that can also follow a rider round their round and show
+    their faults. Both landed on (-28.5, 0), so nearThing() handed every E press to whichever
+    was registered first — events-pvp, which installs eight packages earlier — and this seat
+    was unreachable from inside the world. There is one stand now: the earlier thing comes
+    out, and events-pvp keeps its setSpectate API for the arena's own tests. */
+ for(let i=W.things.length-1;i>=0;i--){const t=W.things[i];if(t&&t.id==='grandstand'&&t.kind==='stand')W.things.splice(i,1);}
  W.addThing({kind:'grandstand',id:'arena-stand',x:-28.5,z:0,reach:4.5,
   label:()=>spec?'👁️ Watching from the grandstand (Esc to leave)':'👁️ Sit in the grandstand and watch (E)',
   use:()=>{ if(spec)stopSpectate(); else startSpectate(null,true); }});
