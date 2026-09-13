@@ -119,9 +119,15 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   out.spook={critter:deer.def&&deer.def.name||deer.key,spT,spSpeedDrop,lifeSpook:(G.save.fresh().life||{}).spook||0,toast:G.horse.log.some(m=>/shies/.test(m))};
   /* 8. magnificent ribbons feed bond (challenging ribbon x1.5) */
   const ev=G.tables.EVENTS3[0]; const b0=G.save.fresh().horses[0].bond;
-  const RB=G.course.awardRibbons(ev,1,0); G.run('courseFinish',{c:{},ev,stars:3,RB,pay:0,dressage:false});
+  /* A real finish hands awardRibbons the round it rode: course-engine seeds c.rb={acc,lineOff,
+     refusals} at the start line and finishCourse passes it through as the extra. Calling with
+     the time alone left acc at 0, which is a round that met no fence cleanly — the course engine
+     rightly withholds the fourth (gold) ribbon for that, so this was measuring a scrappy round
+     and calling it magnificent. Ride the two rounds properly: clean, then the same with a fault. */
+  const clean={acc:1,lineOff:0,refusals:0};
+  const RB=G.course.awardRibbons(ev,1,0,clean); G.run('courseFinish',{c:{},ev,stars:3,RB,pay:0,dressage:false});
   const s1=G.save.fresh();
-  const RB2=G.course.awardRibbons(ev,1,1); G.run('courseFinish',{c:{},ev,stars:3,RB:RB2,pay:0,dressage:false});
+  const RB2=G.course.awardRibbons(ev,1,1,clean); G.run('courseFinish',{c:{},ev,stars:3,RB:RB2,pay:0,dressage:false});
   const s2=G.save.fresh();
   G.ui.openEvents(); const evTxt=document.getElementById('eventsPanel').innerHTML; G.hidePanels();
   out.magnif={rib1:RB.rib,magnif:s1.magnif,bond1:s1.horses[0].bond,d1:s1.horses[0].bond-b0,rib2:RB2.rib,magnif2:s2.magnif,d2:s2.horses[0].bond-s1.horses[0].bond,glyph:/🏵️/.test(evTxt),ach:G.quest.ACHS.some(a=>a.id==='magnif5'),daily:G.quest.DAILYQ.some(d=>d.type==='magnif'),board:G.tables.BOARDS.some(b=>b.k==='magnif')};
