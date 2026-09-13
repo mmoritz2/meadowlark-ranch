@@ -107,8 +107,13 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   /* a refusal: run at fence 1 of lap 2 without asking for the jump (after the last jump has landed) */
   window.advanceTime(1500); const j=c.jumps[0]; p.pos.set(j.x-Math.sin(j.rotY)*3,0,j.z-Math.cos(j.rotY)*3); p.heading=j.rotY; p.speed=6; Q.key('ArrowUp'); for(let k=0;k<20&&Q.st().course.refusals===0;k++)window.advanceTime(50); Q.key('ArrowUp',false); window.advanceTime(17);
   const s2=Q.st(); out.refusal={grade:s2.course.lastGrade,refusals:s2.course.refusals,index:s2.course.index,speed:s2.player.speed};
-  /* then take it late */
-  Q.crossFence(c.jumps[0],0.12); const s3=Q.st(); out.late={grade:s3.course.lastGrade,index:s3.course.index};
+  /* Then take it late: ask for the jump as the fence arrives. 0 is the age startGameHeroJump
+     writes on the press itself, so the horse is still gathering when it crosses the plane and
+     judgeJump reads a take-off that has not left the ground. The old 0.12 was written when the
+     jump clock ran at 1x for the whole clip; the gather now runs at JUMP_GATHER_RATE 2.4
+     (assets/game-hero-horse.js), so 0.12 is a press 0.16 s before the fence and the horse is
+     genuinely airborne over it — 'good', and rightly so. */
+  Q.crossFence(c.jumps[0],0); const s3=Q.st(); out.late={grade:s3.course.lastGrade,index:s3.course.index};
   /* knock one down: walk through the rails with no jump at all */
   window.advanceTime(1500); const j2=c.jumps[1]; p.pos.set(j2.x-Math.sin(j2.rotY)*6,0,j2.z-Math.cos(j2.rotY)*6); p.heading=j2.rotY; p.speed=0; window.advanceTime(17);
   p.pos.set(j2.x-Math.sin(j2.rotY)*0.5,0,j2.z-Math.cos(j2.rotY)*0.5); p.speed=2.2; window.advanceTime(800);
@@ -173,12 +178,18 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   G.course.startCourse(Q.ev('a2'),1); Q.passCountdown(); const c=G.course.get();
   const kinds=c.jumps.map(j=>j.kind);
   out.build={n:c.jumps.length,alt:kinds.every((k,i)=>k===(i%2?'fence':'gate')),outside:c.jumps.every(j=>Math.abs(j.x)>25||Math.abs(j.z)>20),onGround:c.jumps.every(j=>Math.abs(j.g.position.y-G.world.groundH(j.x,j.z))<0.5),par:c.par,timeAllowed:c.ce.timeAllowed,pads:c.items.filter(i=>i.pad).length};
-  let stamAfter=null, gateOk=true, fenceOk=true;
-  while(G.course.get()){
+  /* One pass per obstacle is all this should ever take, but the loop condition is the course
+     still being open, so an obstacle that stops advancing spins in the page for ever and the
+     script dies on the 900 s watchdog with nothing to say — which is exactly how it went once on
+     a loaded machine. Three passes an obstacle is generous; past that, give up and let the finish
+     checks below report the half-run course rather than hanging. */
+  let stamAfter=null, gateOk=true, fenceOk=true, guard=0;
+  while(G.course.get()&&guard++<c.jumps.length*3){
    const cc=G.course.get(); const j=cc.jumps[cc.idx]; const idx=cc.idx;
    if(j.kind==='gate'){Q.toGate(j); if(G.course.get()&&G.course.get().idx!==idx+1)gateOk=false;}
    else{ p.stam=0.5; Q.crossFence(j,0.7); if(stamAfter===null)stamAfter=p.stam; if(G.course.get()&&G.course.get().idx!==idx+1)fenceOk=false; }
   }
+  out.guard=guard;
   const sv=G.save.fresh(); out.run={gateOk,fenceOk,stamAfter,mode:Q.st().mode,gold:!!sv.ribbonGold.a2,xc:sv.stats.xc,ribbons:sv.ribbons.a2,acc:sv.bestAcc.a2};
   return out;
  });
