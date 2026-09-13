@@ -128,6 +128,28 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('a banked week opens the gold row with no VIP and no gems',!chal.goldBefore&&chal.goldAfter&&chal.goldOpen&&!chal.vip,{before:chal.goldBefore,after:chal.goldAfter,vip:chal.vip});
  check('#tokEl is painted in the house chip shape',chal.chip.shown&&/<i>🎟️<\/i><b>\d+<\/b>/.test(chal.chip.html||''),chal.chip);
 
+ /* ---- 3b. a FRACTIONAL emitter ------------------------------------------------------- */
+ /* The checks above drive dailyEvt with the whole goal, which is not what the game sends.
+    ranch3d.html:13043 reports dailyEvt('gallop',sp*dt) — speed times frame time — so the sun
+    season's tally is a float, and reading it straight back out put
+    "0.26892000000000005 / 12" on the challenge card. Drive it the way the game does and
+    insist on what a human sees. */
+ const frac=await page.evaluate(async()=>{
+  const G=window.__features;
+  G.seasons.override('sun');
+  G.save.sync(s=>{s.sn.prog={};s.sn.paid={};});
+  G.quest.dailyEvt('gallop',7.9*0.0166); G.quest.dailyEvt('gallop',8.3*0.0166);
+  const p=document.getElementById('lbPanel');
+  if(p.style.display==='flex')p.style.display='none';
+  G.ui.openLB(); const b=p.querySelector('[data-lbtab="pass"]'); if(b)b.click();
+  const m=/Twelve good gallops[^0-9]*([0-9.]+)\s*\/\s*12/.exec(p.innerText||'');
+  const raw=G.save.fresh().sn.prog['su-gallop'];
+  G.seasons.override('bloom');
+  return {raw,shown:m?m[1]:null,digits:String(raw).length};
+ });
+ check('a fractional dailyEvt still shows the player a whole number',/^\d+$/.test(frac.shown||''),frac);
+ check('a fractional dailyEvt does not fill the save with float noise',frac.digits<=6,{raw:frac.raw});
+
  /* ---- 4. the gold row on the track screen, locked then open --------------------------- */
  const openPass=async()=>page.evaluate(()=>{
   const p=document.getElementById('lbPanel');

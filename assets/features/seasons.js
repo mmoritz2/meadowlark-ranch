@@ -132,7 +132,12 @@ export function install(G){
  const WEEK_BONUS={tok:20,p:80,g:1};
  const chalOf=()=>CHALLENGES[sid()]||CHALLENGES.bloom;
  const chalDone=(s,c)=>!!(s&&s.sn&&s.sn.paid&&s.sn.paid[c.id]);
- const chalProg=(s,c)=>Math.min(c.goal,(s&&s.sn&&s.sn.prog&&s.sn.prog[c.id])||0);
+ /* Floored, because not every emitter counts in whole things. dailyEvt('gallop',sp*dt) at
+    ranch3d.html:13043 reports speed×frametime, so the raw tally is a float and a player who
+    galloped for a second was reading "0.26892000000000005 / 12" off the challenge card. The
+    tally itself stays fractional — the crossing test below needs it — and only what a human
+    looks at is rounded down, which also keeps a bar from claiming a goal it has not reached. */
+ const chalProg=(s,c)=>Math.min(c.goal,Math.floor((s&&s.sn&&s.sn.prog&&s.sn.prog[c.id])||0));
  const weekDone=s=>chalOf().every(c=>chalDone(s,c));
  /* dailyEvt fires on nearly every action in the game, so the cheap test comes first and the
     save is only opened when this season actually cares about the thing that happened. */
@@ -145,7 +150,9 @@ export function install(G){
    rollState(st); rollWeek(st);
    for(const c of list){
     if(c.type!==type||st.paid[c.id])continue;
-    st.prog[c.id]=Math.min(c.goal,(st.prog[c.id]||0)+(val||1));
+    /* Rounded to three places so a fractional emitter cannot drift the save into float noise
+       over a week of galloping; the display floors this again. */
+    st.prog[c.id]=Math.min(c.goal,Math.round(((st.prog[c.id]||0)+(val||1))*1e3)/1e3);
     if(st.prog[c.id]>=c.goal){ st.paid[c.id]=1; M.payReward(s,c.r); crossed=c; }
    }
    const wkTag='week:'+st.wk;
