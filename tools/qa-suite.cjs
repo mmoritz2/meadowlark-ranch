@@ -35,11 +35,31 @@ function selfCheck(){
  return ok;
 }
 
+/* selfCheck proves the helper answers correctly. It does not prove anybody asks it, and the bug
+   this sweep was about was never a wrong ternary — it was a literal sitting in a launch line.
+   That literal comes back the moment somebody copies an old script as a starting point, so read
+   the fleet and fail on the three spellings that were wrong in the first place. qa-platform.cjs
+   and this file are exempt: one documents the literals and the other has to name them to assert
+   on them. Comments are stripped first, minus the '//' of a URL, so prose about the bug is free
+   to keep saying d3d11. */
+function sweepCheck(){
+ const strip=s=>s.replace(/\/\*[\s\S]*?\*\//g,'').replace(/(^|[^:])\/\/.*$/gm,'$1');
+ const bad=[];
+ for(const f of fs.readdirSync(dir).filter(f=>f.endsWith('.cjs')&&f!=='qa-platform.cjs'&&f!=='qa-suite.cjs')){
+  const src=strip(fs.readFileSync(path.join(dir,f),'utf8'));
+  if(/--use-angle=(d3d11|metal|gl)\b/.test(src))bad.push(f+': hardcoded ANGLE backend');
+  if(/127\.0\.0\.1:8431/.test(src))bad.push(f+': hardcoded port 8431');
+  if(/[A-Za-z]:[\\/]Users[\\/]/.test(src))bad.push(f+': absolute Windows user path');
+ }
+ console.log((bad.length?'FAIL ':'PASS ')+'no script hardcodes a backend, a port or a home directory'+(bad.length?' — '+JSON.stringify(bad):''));
+ return !bad.length;
+}
+
 const suite=fs.readdirSync(dir).filter(f=>/^qa-.*\.cjs$/.test(f)&&f!=='qa-platform.cjs'&&f!=='qa-suite.cjs')
  .filter(f=>/'PASS '|"PASS "/.test(fs.readFileSync(path.join(dir,f),'utf8')))
  .filter(f=>!want.length||want.some(w=>f.includes(w))).sort();
 
-const selfOk=selfCheck();
+const selfOk=selfCheck(),sweepOk=sweepCheck();
 console.log('# '+suite.length+' script(s) against '+QA.BASE+' on '+QA.GPU+'\n');
 const rows=[];
 for(const f of suite){
@@ -57,5 +77,5 @@ for(const f of suite){
 const tot=rows.reduce((a,r)=>({pass:a.pass+r.pass,fail:a.fail+r.fail,bad:a.bad+(r.exit?1:0)}),{pass:0,fail:0,bad:0});
 console.log('\nTOTAL '+tot.pass+' pass, '+tot.fail+' fail, '+tot.bad+' script(s) exited non-zero');
 fs.mkdirSync(path.join(root,'output'),{recursive:true});
-fs.writeFileSync(path.join(root,'output','qa-suite.json'),JSON.stringify({base:QA.BASE,gpu:QA.GPU,platformSelfCheck:selfOk,rows,tot},null,2));
-process.exit(tot.fail||tot.bad||!selfOk?1:0);
+fs.writeFileSync(path.join(root,'output','qa-suite.json'),JSON.stringify({base:QA.BASE,gpu:QA.GPU,platformSelfCheck:selfOk,sweepClean:sweepOk,rows,tot},null,2));
+process.exit(tot.fail||tot.bad||!selfOk||!sweepOk?1:0);

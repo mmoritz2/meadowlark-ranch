@@ -83,7 +83,12 @@ function ffmpegPath(){
     ffmpeg-1011 and quietly hand back the older binary. */
  let dirs=[];try{dirs=fs.readdirSync(root).filter(n=>n.startsWith('ffmpeg-')).sort((a,b)=>parseInt(b.slice(7),10)-parseInt(a.slice(7),10));}catch(e){return null;}
  for(const d of dirs){
-  const hit=fs.readdirSync(path.join(root,d)).filter(n=>/^ffmpeg/.test(n)).map(n=>path.join(root,d,n)).find(p=>{try{return fs.statSync(p).isFile();}catch(e){return false;}});
+  /* A name starting with ffmpeg- is not necessarily a directory — a half-finished download or
+     a stray file leaves one lying in the cache root — and an unguarded readdirSync on it threw
+     ENOTDIR out of a function whose whole contract is that it returns null instead. Skip it and
+     keep looking, because the next entry down is very often the binary we wanted. */
+  let names=[];try{names=fs.readdirSync(path.join(root,d));}catch(e){continue;}
+  const hit=names.filter(n=>/^ffmpeg/.test(n)).map(n=>path.join(root,d,n)).find(p=>{try{return fs.statSync(p).isFile();}catch(e){return false;}});
   if(hit)return hit;
  }
  return null;
