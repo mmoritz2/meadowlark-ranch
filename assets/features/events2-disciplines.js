@@ -398,11 +398,48 @@ export function install(G){
     straight onto Sparrow Creek: a rider six metres off the approach has to turn to her fence,
     but a rider stood in the creek is standing in a creek. If nothing at all is clear the ideal
     wins anyway; an awkward start line still beats no start line and a hack across the valley. */
- function findSpot(c,x,z,rotY,skip){
+ /* Standing somewhere is not the same as being able to LEAVE it. standable() asks only about the
+    patch of ground under the horse, and backing off is the first thing findSpot tries — which is
+    how a rider was set down twenty metres behind fence one of the Twilight Cup, on the grass, on
+    the far side of the ranch arena's own east rail, facing a fence she could not reach: holding
+    forward she scraped along the rail and stalled eight metres short with the round clock running.
+    The same thing put the two Basin Freestyles two metres outside the south rail while the judge
+    waited at A inside it. So a candidate must also have a clear RUN to the obstacle: walk the
+    straight line and refuse the spot if a wall stands across it. */
+ function clearRun(c,px,pz,tx,tz,skip){
+  const d=Math.hypot(tx-px,tz-pz); if(!(d>0.01))return true;
+  /* WALLS only, and only the part of the run that is not the obstacle itself. The first version of
+     this asked about colliders too and stopped three metres short of nothing: a fence's own
+     standards are colliders, so every candidate was rejected on its last stride and the search
+     fell back to whatever was nearest, which moved the start line at a dozen events that were
+     never broken. What actually stranded a rider at the Twilight Cup and the two Basin Freestyles
+     was a RAIL — a wall, standing across the whole approach — and a wall is also the only thing
+     here a horse cannot simply go around. */
+  const stop=Math.max(0,d-3.5), n=Math.max(4,Math.min(40,Math.ceil(stop/1.2)));
+  for(let i=1;i<=n;i++){
+   const f=(stop/d)*(i/n), x=px+(tx-px)*f, z=pz+(tz-pz)*f;
+   if(onWall(x,z,1.0))return false;
+  }
+  return true;
+ }
+ function findSpot(c,x,z,rotY,skip,target){
   const bx=Math.sin(rotY), bz=Math.cos(rotY), ax=Math.cos(rotY), az=-Math.sin(rotY);
-  for(const side of[0,-1.5,1.5,-3,3,-4.5,4.5,-6,6])for(const back of[0,2,4,6,8,10,12]){
+  /* Where she is meant to be riding TO. The jumping start line is drawn ten metres back from its
+     fence and a test's is seven back from A, so the caller says which rather than this guessing. */
+  const tx=target?target[0]:x+bx*10, tz=target?target[1]:z+bz*10;
+  /* Negative setbacks come last and stand the rider CLOSER than the ideal ten metres. Inside a
+     railed arena there is often nowhere further back to go, and a start line six metres out that
+     she can ride from beats a textbook one she cannot. */
+  const BACKS=[0,2,4,6,8,10,12,-2,-4,-6];
+  for(const side of[0,-1.5,1.5,-3,3,-4.5,4.5,-6,6])for(const back of BACKS){
    const px=x-bx*back+ax*side, pz=z-bz*back+az*side;
-   if(standable(c,px,pz,skip))return [px,pz];
+   if(standable(c,px,pz,skip)&&clearRun(c,px,pz,tx,tz,skip))return [px,pz];
+  }
+  /* Nothing had both. Take standable-and-reachable off the table and settle for reachable: being
+     able to start the round matters more than the ground being pretty. */
+  for(const side of[0,-1.5,1.5,-3,3])for(const back of BACKS){
+   const px=x-bx*back+ax*side, pz=z-bz*back+az*side;
+   if(clearRun(c,px,pz,tx,tz,skip))return [px,pz];
   }
   return [x,z];
  }
@@ -430,7 +467,7 @@ export function install(G){
   gauntlet:'the first element is ahead.',jump:'the first fence is ahead.'};
  function marshal(c){
   const j=c.jumps&&c.jumps[0]; if(!j)return null;
-  const at=findSpot(c,j.x-Math.sin(j.rotY)*10,j.z-Math.cos(j.rotY)*10,j.rotY,j);
+  const at=findSpot(c,j.x-Math.sin(j.rotY)*10,j.z-Math.cos(j.rotY)*10,j.rotY,j,[j.x,j.z]);
   return lineUp(c,at[0],at[1],j.rotY,AHEAD[discOf(c.ev).k]||AHEAD.jump);
  }
  /* A test has no first obstacle to line up behind — it has a letter. Every test in the game opens
@@ -443,7 +480,7 @@ export function install(G){
  function marshalTest(c,show){
   const AL=G.course.ARENA_LETTERS, A=AL&&AL.A, C=AL&&AL.C; if(!A||!C)return null;
   const dx=C[0]-A[0], dz=C[1]-A[1], d=Math.hypot(dx,dz)||1, rotY=Math.atan2(dx/d,dz/d);
-  const at=findSpot(c,A[0]-dx/d*7,A[1]-dz/d*7,rotY,null);
+  const at=findSpot(c,A[0]-dx/d*7,A[1]-dz/d*7,rotY,null,[A[0],A[1]]);
   return lineUp(c,at[0],at[1],rotY,show?'walk in at A — the judge is waiting at C.'
                                        :'walk in at A and ride the centre line to C.');
  }
@@ -1210,7 +1247,12 @@ export function install(G){
     figures:c.figs?c.figs.length:0,holds:c.figs?c.figs.map(f=>f.hold||0):[],diff:c.ev2Diff||null,par:c.par};
    /* the box is its own long-lived mesh now, so the flag reads its visibility as well as the
       per-course furniture the gauntlet's décor still goes through */
-   o.ev2.startBox=CUR.fx.length>0||!!(SBOX&&SBOX.visible);
+   /* Two different facts, reported separately. They were briefly ORed into one field when the
+      start box stopped going through addFx, which kept a start-box check passing but made a
+      DECOR check — a different suite asking whether the gauntlet still lays its season's
+      scenery — true no matter what, since a box is up at every start. */
+   o.ev2.startBox=!!(SBOX&&SBOX.visible);      // the start box mesh is standing
+   o.ev2.fx=CUR.fx.length>0;                   // course scenery groups are laid
    /* where the rider was put, whether she was carried there at all, and the height of the ground
       under her — enough for a headless check to see the fast travel without reading the scene */
    o.ev2.start=CUR.start||null;

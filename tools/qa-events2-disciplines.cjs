@@ -476,7 +476,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   const c=G.course.get();
   out.allowed=c.ce.timeAllowed; out.hud=Q.hud(); out.hazards=(c.hazards||[]).length;
   out.obstacles=c.jumps.length;
-  out.decor=JSON.parse(render_game_to_text()).ev2.startBox;
+  out.decor=JSON.parse(render_game_to_text()).ev2.fx;   // the scenery groups, not the start box
   G.course.cancelCourse(); window.advanceTime(40);
   return out;
  });

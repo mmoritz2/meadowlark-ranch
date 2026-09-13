@@ -69,7 +69,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
     out.heading=+p.heading.toFixed(3);
     out.moveddist=+Math.hypot(p.pos.x-from[0],p.pos.z-from[1]).toFixed(1);
     const st=JSON.parse(render_game_to_text()).ev2||{};
-    out.start=st.start||null; out.startBox=!!st.startBox; out.disc=st.disc||null;
+    out.start=st.start||null; out.startBox=!!st.startBox; out.fx=!!st.fx; out.disc=st.disc||null;
     out.toasts=window.__toasts.slice();
     /* the box itself, as it stands in the scene: eleven white members and one 🏁 START sprite —
        and it is one mesh for the life of the page, so count every one the scene is carrying */
@@ -80,6 +80,18 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
       rotY:+g.rotation.y.toFixed(3),sprites,meshes,inScene:g.parent===G.scene,visible:g.visible};
      out.boxOffRider=+Math.hypot(g.position.x-p.pos.x,g.position.z-p.pos.z).toFixed(2);}
     else out.box=null;
+    /* Can she actually RIDE to it? This suite measured where she was put and never whether she
+       could leave, which is how a start line outside the arena's own rail passed ninety-five
+       checks while the horse stalled against it with the clock running. Walk the straight line
+       and count walls standing across it, ignoring the last 3.5 m, which is the obstacle's own
+       footprint. Walls only: a rail spans the whole approach, a collider is gone round. */
+    const wallsAcross=(tx,tz)=>{ const W2=G.world; const d=Math.hypot(tx-p.pos.x,tz-p.pos.z);
+     if(!(d>0.01))return 0; const stop=Math.max(0,d-3.5), n=Math.max(4,Math.ceil(stop/1.2)); let hit=0;
+     for(let i=1;i<=n;i++){ const f=(stop/d)*(i/n), x=p.pos.x+(tx-p.pos.x)*f, z=p.pos.z+(tz-p.pos.z)*f;
+      for(const w of (W2.walls||[])){ const dx=w.x2-w.x1,dz=w.z2-w.z1,l2=dx*dx+dz*dz;
+       let t=l2>0?((x-w.x1)*dx+(z-w.z1)*dz)/l2:0; t=t<0?0:t>1?1:t;
+       if(Math.hypot(x-(w.x1+dx*t),z-(w.z1+dz*t))<1.0){hit++;break;} } }
+     return hit; };
     /* the obstacle she is pointed at */
     if(c&&c.jumps&&c.jumps.length){
      const j=c.jumps[0], d=Math.hypot(p.pos.x-j.x,p.pos.z-j.z);
@@ -90,6 +102,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
      /* how far off the middle of the fence she is, measured along its own rails: a fence is
         3.2 m wide, so anything under 1.6 has her between the wings */
      out.offLine=+Math.abs((j.x-p.pos.x)*Math.cos(j.rotY)-(j.z-p.pos.z)*Math.sin(j.rotY)).toFixed(2);
+     out.blockedJ0=wallsAcross(j.x,j.z);
      out.nearOther=c.jumps.length>1?+Math.min.apply(null,c.jumps.slice(1).map(q=>Math.hypot(p.pos.x-q.x,p.pos.z-q.z))).toFixed(2):999;
     }
     /* or the letters she is pointed down */
@@ -98,6 +111,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
      out.A=A.slice(); out.C=C.slice();
      out.distA=+Math.hypot(p.pos.x-A[0],p.pos.z-A[1]).toFixed(2);
      out.distC=+Math.hypot(p.pos.x-C[0],p.pos.z-C[1]).toFixed(2);
+     out.blockedA=wallsAcross(A[0],A[1]);
      out.AC=+Math.hypot(C[0]-A[0],C[1]-A[1]).toFixed(2);
      const ac=Math.atan2(C[0]-A[0],C[1]-A[1]);
      out.square=+Math.abs(wrap(p.heading-ac)).toFixed(3);
@@ -145,9 +159,13 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
    r.river>6&&r.lake>7&&r.creek>4&&r.inCollider===0&&r.onWall===0&&r.slope<3,
    {river:r.river,lake:r.lake,creek:r.creek,collider:r.inCollider,wall:r.onWall,slope:r.slope});
   if(opts.obstacle){
-   check(name+' — ten metres or so behind the first obstacle, square to it and on its approach',
-    r.distJ0>=9.5&&r.distJ0<=24&&r.square<0.02&&r.offLine<=6.1,
-    {dist:r.distJ0,squareErr:r.square,offCentre:r.offLine,facing:r.facing});
+   /* Ten metres is the ideal, not the invariant. Inside a railed arena there is often nowhere
+      further back to stand, and a line four metres out that she can ride from beats a textbook
+      one on the wrong side of a rail — which is exactly what this check used to wave through.
+      So: square, on the approach, far enough to get going, and NOTHING standing across the run. */
+   check(name+' — behind the first obstacle, square to it, on its approach, with a clear run to it',
+    r.distJ0>=3&&r.distJ0<=24&&r.square<0.02&&r.offLine<=6.1&&r.blockedJ0===0,
+    {dist:r.distJ0,squareErr:r.square,offCentre:r.offLine,facing:r.facing,wallsAcross:r.blockedJ0});
    check(name+' — the box is not planted on top of another obstacle',
     r.nearOther>=5,{nearest:r.nearOther});
   }
@@ -219,7 +237,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  const gt=await enter('gt');
  landing('gauntlet · the seasonal trial',gt,{obstacle:true,town:'Meadowlark Ranch'});
  check('gauntlet · the line is at the first element of this season\'s own route, and the décor is still laid',
-  /first element is ahead/.test((gt.toasts||[]).join('|'))&&gt.startBox,
+  /first element is ahead/.test((gt.toasts||[]).join('|'))&&gt.fx,
   {toast:(gt.toasts||[]).filter(t=>/Lined up/.test(t))[0]||null,dist:gt.distJ0});
 
  /* ---------------------------------------------------------------- 5. dressage ---------- */
@@ -237,13 +255,13 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  const d2=await enter('d2');
  landing('dressage · Basin Freestyle (the ranch arena, which never moves)',d2,{town:'Kestrel Basin'});
  check('dressage · the home arena test lines up at the home A',
-  Math.hypot(d2.A[0]-2,d2.A[1]+15)<0.1&&d2.distA>=6&&d2.distA<=20&&d2.square<0.02&&d2.offLine<=6.1,
-  {A:d2.A,distA:d2.distA,squareErr:d2.square,offCentre:d2.offLine});
+  Math.hypot(d2.A[0]-2,d2.A[1]+15)<0.1&&d2.distA>=2.5&&d2.distA<=20&&d2.square<0.02&&d2.offLine<=6.1&&d2.blockedA===0,
+  {A:d2.A,distA:d2.distA,squareErr:d2.square,offCentre:d2.offLine,wallsAcross:d2.blockedA});
  const dExtra=dressIds.filter(id=>id!=='d1'&&id!=='d2');
  const dRest=[]; for(const id of dExtra)dRest.push(await enter(id));
  check('dressage · every other test in the programme lines up outside its own A too',
-  dRest.length>0&&dRest.every(r=>r.started&&r.distA>=6&&r.distA<=21&&r.square<0.02&&r.offLine<=6.1&&r.inCollider===0&&r.river>6&&lined(r)),
-  dRest.map(r=>({id:r.id,distA:r.distA,sq:r.square,off:r.offLine,coll:r.inCollider,river:r.river})));
+  dRest.length>0&&dRest.every(r=>r.started&&r.distA>=2.5&&r.distA<=21&&r.square<0.02&&r.offLine<=6.1&&r.inCollider===0&&r.river>6&&r.blockedA===0&&lined(r)),
+  dRest.map(r=>({id:r.id,distA:r.distA,sq:r.square,off:r.offLine,coll:r.inCollider,river:r.river,wallsAcross:r.blockedA})));
 
  /* ---------------------------------------------------------------- 6. showmanship ------- */
  stage('showmanship');
