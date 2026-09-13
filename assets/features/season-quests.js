@@ -207,11 +207,41 @@ export function install(G){
     One out by each village: a painted board on a post that pays its own members a handful of
     season tokens and a slice of pass progress once a day, and tells everybody else, politely,
     to go and find their own. */
- function clearOf(x,z,r){
-  const cl=W.colliders||[];
-  const hit=(px,pz)=>cl.some(c=>Math.hypot(px-c.x,pz-c.z)<(c.r||0)+r);
+ /* Two things can own the E key at one spot and only one of them wins: the inline handler asks
+    nearNPC before it asks nearThing, and nearNPC reaches 3.5 m. A board planted inside that
+    radius is therefore not a board at all, it is a second way to say good morning to whoever
+    happens to be standing on it — and villagers do not stand still. Old Ned walks a four-corner
+    beat around Cottonwood that passes within three metres of where the board wanted to go, so
+    for the two or three seconds a lap that he is closest the post silently stops answering.
+    Keeping clear of the colliders is therefore not enough; the posts keep clear of every NPC's
+    pitch and of every waypoint the NPC walks through on its way round. */
+ const NPC_TALK=3.5, POST_NPC_CLEAR=NPC_TALK+3.4;   // the rider pulls up a metre or so off the board, so leave room for that too
+ function npcSpots(){
+  const out=[], add=(x,z)=>{ if(isFinite(x)&&isFinite(z))out.push([+x,+z]); };
+  /* Where everybody is standing right now. Quest-givers never move, so for them this is the
+     whole answer. */
+  try{ for(const q of (W.npcList||[])) if(q&&q.g&&q.g.position)add(q.g.position.x,q.g.position.z); }catch(e){}
+  /* Villagers are the other half and the half that bites: world.js keeps their round on the
+     townsfolk record rather than on the NPC def — the def only ever carries the first waypoint,
+     which is why avoiding the defs alone would leave a board sitting on three quarters of a beat
+     it never knew about. These are world coordinates, the same frame the posts are placed in. */
+  try{ for(const f of ((G.worldPkg&&G.worldPkg.townsfolk)||[])){
+   if(Array.isArray(f.path))for(const w of f.path)if(w&&w.length>=2)add(w[0],w[1]);
+  } }catch(e){}
+  return out;
+ }
+ /* npcClear is opt-in because Wick wants a different answer from the posts: he IS an NPC, so he
+    only needs elbow room from the others, while a post needs to lose the argument to none of them. */
+ function clearOf(x,z,r,npcClear){
+  const cl=W.colliders||[], np=npcClear>0?npcSpots():null;
+  const hit=(px,pz)=>cl.some(c=>Math.hypot(px-c.x,pz-c.z)<(c.r||0)+r)
+   ||(!!np&&np.some(p=>Math.hypot(px-p[0],pz-p[1])<npcClear));
   if(!hit(x,z))return [x,z];
-  for(let ring=1;ring<=4;ring++)for(let i=0;i<10;i++){
+  /* Three extra rings over the original four: the NPC rule rejects more candidates than the
+     collider rule ever did, and a post that gave up and sat back down on a patrol route would
+     be exactly the bug this is here to stop. The ring-and-angle order is otherwise untouched,
+     so anything that was already placed lands where it always did. */
+  for(let ring=1;ring<=7;ring++)for(let i=0;i<10;i++){
    const a=i/10*Math.PI*2, px=x+Math.cos(a)*ring*3.2, pz=z+Math.sin(a)*ring*3.2;
    if(!hit(px,pz))return [px,pz];
   }
@@ -229,7 +259,7 @@ export function install(G){
  const POSTS=[];
  for(const h of HOUSES){
   try{
-   const [px,pz]=clearOf(h.x,h.z,2.2);
+   const [px,pz]=clearOf(h.x,h.z,2.2,POST_NPC_CLEAR);
    const g=postMesh(h); g.position.set(px,W.groundH(px,pz),pz);
    g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
    G.scene.add(g); try{W.followCamera.register(g);}catch(e){}
@@ -263,11 +293,19 @@ export function install(G){
     would sit behind the whole of book two and it would never reset. Wick carries his own
     four entries instead, counted off dailyEvt and turned in at the man himself, which is
     what a player sees anyway. */
- const WICK_AT=clearOf(-18,-9,2.0);
+ const WICK_AT=clearOf(-18,-9,2.0,NPC_TALK+1.4);
  let wick=null;
  try{ wick=W.addNPC(Object.assign({},WICK,{x:WICK_AT[0],z:WICK_AT[1],
   extraHtml:s=>bookDialogue(s), onTalk:()=>{ S.sync(s=>{ if(!s.seasonQ.met){s.seasonQ.met=true;} }); }})); }
  catch(e){ console.error('almanac npc',e); }
+ /* world.js pins every non-folk NPC on the big map, but it does that once at its own install,
+    and this package installs after it — so Wick, who is added later, was the only quest-giver
+    in the valley with nobody to point at him. Every toast about the almanac says he is "west of
+    the ranch yard" and then leaves the player to sweep the field for him. Same marker shape
+    world.js uses, so he sorts into the 'npc' family with the rest of them rather than becoming
+    a loose pin of his own. */
+ try{ if(wick)W.mapMarkers.push({x:WICK_AT[0],z:WICK_AT[1]+6,glyph:WICK.icon,kind:'npc',npc:WICK.id,label:WICK.name}); }
+ catch(e){ console.error('almanac marker',e); }
  const entries=()=>book().entries;
  const entryAt=i=>entries()[i]||null;
  /* Which entry is open, held in memory so the hook below can decide in a string compare. */

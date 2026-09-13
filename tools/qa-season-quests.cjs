@@ -81,6 +81,21 @@ async function open(ctx,ts,fresh,tag){
   out.wick=G.world.npcList.filter(q=>q.def&&q.def.id==='almanac').length;
   out.wickClear=(()=>{const w=HS.wick();if(!w)return false;
    return !G.world.colliders.some(c=>Math.hypot(w.def.x-c.x,w.def.z-c.z)<(c.r||0)+1.2);})();
+  /* nearNPC is tested before nearThing and reaches 3.5 m, so a board inside a villager's talk
+     radius is not a board at all — E goes to the villager and the post silently pays nothing.
+     Villagers walk beats, so the waypoints count as much as where they happen to be standing. */
+  out.postNpcGap=(()=>{const sp=[];
+   for(const q of G.world.npcList)sp.push([q.g.position.x,q.g.position.z]);
+   /* the rounds live on the townsfolk records, not on the NPC defs — a villager's def only
+      carries the first waypoint, so checking defs alone would miss three quarters of the beat */
+   for(const f of ((G.worldPkg&&G.worldPkg.townsfolk)||[]))
+    if(Array.isArray(f.path))for(const w of f.path)sp.push([+w[0],+w[1]]);
+   /* measured from where the RIDER ends up, a metre or so off the board, not from the board */
+   return HS.posts.map(p=>({h:p.h.id,d:+Math.min.apply(null,sp.map(t=>Math.hypot(p.x+1.2-t[0],p.z+1.2-t[1]))).toFixed(2)}));})();
+  /* world.js pins every non-folk NPC once, at its own install, which is before this package
+     adds Wick — so he has to bring his own pin or be the one quest-giver nobody can find. */
+  out.npcFamily={defs:G.quest.NPC_DEFS.filter(d=>!d.folk).length,pins:G.worldPkg.markerKinds().npc};
+  out.wickPin=G.world.mapMarkers.filter(m=>m.kind==='npc'&&m.npc==='almanac').length;
   /* the pledge screen */
   out.tabOpened=lbTab('house');
   out.pledgeBtns=document.querySelectorAll('#lbPanel [data-fx^="house:pledge:"]').length;
@@ -146,6 +161,10 @@ async function open(ctx,ts,fresh,tag){
  check('house posts · four standing in the world on solid ground',r1.posts===4&&r1.postGround,{things:r1.posts,ground:r1.postGround});
  check('house posts · four 🛡️ markers on the big map',r1.markers===4,r1.markers);
  check('almanac · Wick spawned once, clear of every collider',r1.wick===1&&r1.wickClear,{n:r1.wick,clear:r1.wickClear});
+ check('house posts · every board clears the villagers\' 3.5 m talk radius, waypoints included',
+   r1.postNpcGap.length===4&&r1.postNpcGap.every(p=>p.d>4.5),r1.postNpcGap);
+ check('almanac · Wick carries his own map pin, so the npc family still balances',
+   r1.wickPin===1&&r1.npcFamily.defs===r1.npcFamily.pins,{pin:r1.wickPin,family:r1.npcFamily});
  check('pledge · the 🛡️ Houses tab offers all four houses',r1.tabOpened&&r1.pledgeBtns===4,{tab:r1.tabOpened,btns:r1.pledgeBtns});
  check('pledge · the standing names all four houses',['House Cottonwood','House Barleyfold','House Coyote','House Hollowpeak'].every(n=>r1.lbText.indexOf(n)>=0));
  check('pledge · clicking Cottonwood writes s.house.id',r1.clicked&&r1.pledged==='cottonwood',{clicked:r1.clicked,id:r1.pledged});
