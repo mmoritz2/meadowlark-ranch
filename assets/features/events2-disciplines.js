@@ -30,8 +30,13 @@
                    handling mark for standing still and square through a halt and walking when
                    the pattern says walk, fed into the engine's own per-figure marks, with the
                    judge's card as a card you can read
-     the start     races and cross country marshal you to a start box behind the first gate
-                   instead of starting the clock wherever you happened to be standing
+     the start     every event marshals you to a start line instead of starting the clock
+                   wherever you happened to be standing: a start box ten metres behind the first
+                   obstacle, square to it and facing it, for anything with obstacles, and the
+                   arena entrance at A facing down the centre line to C for a test or a
+                   showmanship class. The spot is tested against the river, the colliders, the
+                   fence walls and the slope of the ground before a rider is put on it, and she
+                   is told in a line of text where she has been taken
      the gauntlet  one loop with four names becomes four loops: each season its own shape, its
                    own length, its own limit, its own décor and its own best time — and one
                    clock, since the row advertised 150 s, counted against 113 and cut you off
@@ -313,9 +318,14 @@ export function install(G){
   G.scene.add(g); return g;
  }
 
- /* ================================================================= the start box ========= */
- /* Every race started wherever the rider happened to be standing with the clock already
-    running. Barleyfold's cross country begins 217 units from its first gate on a 54 s par. */
+ /* ================================================================= the start ============= */
+ /* Every round started wherever the rider happened to be standing with the clock already
+    running. Barleyfold's cross country begins 217 units from its first gate on a 54 s par — and
+    only a race or a cross country was ever marshalled, so a show jumping round, a seasonal
+    trial, a dressage test and a showmanship class all still began with a long hack across the
+    valley to find out where the first fence was. Every kind of event is carried to a line now:
+    behind the first obstacle for anything with obstacles, and outside A facing C for a test,
+    because that is where a test actually begins. */
  function buildStartBox(x,z,rotY){
   const g=grp(x,z,rotY), m=W.mats.whitePaintMat;
   for(const s of[-1,1]){
@@ -325,14 +335,117 @@ export function install(G){
   W.box(6.4,0.05,0.45,m,0,0.04,0.1,g);
   const sp=G.nameSprite('🏁 START'); sp.position.set(0,1.9,-3.2); sp.scale.set(2.2,0.5,1); g.add(sp);
   g.traverse(o=>{if(o.isMesh)o.castShadow=true;});
+  g.userData.ev2StartBox=true;
   return g;
  }
+ /* One start box for the life of the page, not one a round. It used to be handed to addFx and
+    thrown away with the rest of the course furniture, which cost eleven geometries and a 512×128
+    canvas sign every time anybody entered anything — and nameSprite keeps a reference to every
+    sprite it has ever made, so each disposed sign stayed on that list until the tab closed. Now
+    the same box is moved to wherever the rider has been lined up and parked out of sight between
+    rounds, which is also the only honest reading of 'reuse the mesh, do not build a second one'. */
+ let SBOX=null;
+ function showBox(x,z,rotY){
+  try{
+   if(!SBOX)SBOX=buildStartBox(x,z,rotY);
+   if(!SBOX.parent)G.scene.add(SBOX);
+   SBOX.position.set(x,W.groundH(x,z),z); SBOX.rotation.y=rotY; SBOX.visible=true;
+  }catch(e){ console.error('ev2 start box',e); }
+  return null;                                           // deliberately not addFx's to dispose
+ }
+ function hideBox(){ if(SBOX)SBOX.visible=false; }
+ /* Whether a horse can stand somewhere. The water tests are the world's own numbers — the river
+    channel runs about five units either side of riverZ, Sparrow Creek about four either side of
+    streamX until it joins at z≈160, and Loon Lake is a circle at (20,16) — widened a little here
+    because a rider dropped on the bank of a river is still a rider in the wrong place. The
+    collider and wall tests are the ones world.js's own follower AI uses to keep a foal out of the
+    barn and on the right side of a fence. The last is the ground itself: if the ground three
+    metres away is three metres up or down, this is a cliff face, and dropping a rider onto one is
+    worse than leaving her where she was. Everything is wrapped, because a world that has not
+    finished building must cost a course start nothing rather than throw inside it. */
+ function wet(x,z){
+  try{ if(Math.abs(z-W.riverZ(x))<7)return true; }catch(e){}
+  try{ if(Math.hypot(x-20,z-16)<8)return true; }catch(e){}
+  try{ if(z<163&&Math.abs(x-W.streamX(z))<5)return true; }catch(e){}
+  return false;
+ }
+ function onWall(x,z,pad){
+  try{ for(const w of (W.walls||[])){
+   const dx=w.x2-w.x1, dz=w.z2-w.z1, l2=dx*dx+dz*dz;
+   let t=l2>0?((x-w.x1)*dx+(z-w.z1)*dz)/l2:0; t=t<0?0:t>1?1:t;
+   if(Math.hypot(x-(w.x1+dx*t),z-(w.z1+dz*t))<pad)return true;
+  } }catch(e){}
+  return false;
+ }
+ function standable(c,x,z,skip){
+  if(wet(x,z))return false;
+  try{ for(const col of (W.colliders||[]))if(Math.hypot(x-col.x,z-col.z)<col.r+1.6)return false; }catch(e){}
+  if(onWall(x,z,1.6))return false;
+  try{ for(const j of (c.jumps||[]))if(j!==skip&&Math.hypot(x-j.x,z-j.z)<5)return false; }catch(e){}
+  try{ const h=W.groundH(x,z);
+   for(const d of[[3,0],[-3,0],[0,3],[0,-3]])if(Math.abs(W.groundH(x+d[0],z+d[1])-h)>3)return false; }catch(e){}
+  return true;
+ }
+ /* Somewhere to stand, starting at the ideal and giving ground grudgingly. The whole line of
+    setbacks is tried before a single metre is given up sideways, because standing back costs
+    nothing and standing to one side costs the rider her approach: she is square to the fence, so
+    a metre and a half off the line is a metre and a half off the middle of a fence 3.2 m wide.
+    Backing off is free in the other sense too: an arena course is a ring, the track curves away
+    from the tangent, and every extra metre behind fence one is measurably further from fence
+    twelve — at Hollowpeak's twelve-fence course ten metres back leaves 4.2 m of the last fence
+    and twelve metres leaves 6.0. It does go as far as six metres sideways in the end, because
+    the valley scatters its scenery afresh every boot and findClear can drop the Barleyfold arena
+    straight onto Sparrow Creek: a rider six metres off the approach has to turn to her fence,
+    but a rider stood in the creek is standing in a creek. If nothing at all is clear the ideal
+    wins anyway; an awkward start line still beats no start line and a hack across the valley. */
+ function findSpot(c,x,z,rotY,skip){
+  const bx=Math.sin(rotY), bz=Math.cos(rotY), ax=Math.cos(rotY), az=-Math.sin(rotY);
+  for(const side of[0,-1.5,1.5,-3,3,-4.5,4.5,-6,6])for(const back of[0,2,4,6,8,10,12]){
+   const px=x-bx*back+ax*side, pz=z-bz*back+az*side;
+   if(standable(c,px,pz,skip))return [px,pz];
+  }
+  return [x,z];
+ }
+ /* The three guards the race start has always carried are all still right: a rider who is already
+    at the line does not want to be shuffled two metres sideways, a rider in the air is flying on
+    purpose, and a passenger on the balloon or the ferry is not the one steering. That last one
+    only half worked — the vehicle lives on world.js's own package state and nothing has ever set
+    player.veh — so ask G.worldPkg as well, and keep the old field for whoever starts writing it. */
+ function aboard(){ try{ return !!(player.veh||(G.worldPkg&&G.worldPkg.veh)); }catch(e){ return !!player.veh; } }
+ /* A silent teleport is a glitch; the same teleport with a line of text is a feature. Say where
+    she has been taken and what is in front of her, and only when she has actually been moved. */
+ function lineUp(c,x,z,rotY,ahead){
+  const moved=Math.hypot(player.pos.x-x,player.pos.z-z)>12&&!player.flying&&!aboard();
+  if(moved){
+   player.pos.set(x,0,z); player.y=0; player.vy=0; player.speed=0; player.heading=rotY;
+   try{ if(W.pushOut)W.pushOut(player,0.7); }catch(e){}    // world.js's own push-out, for anything the search missed
+   x=player.pos.x; z=player.pos.z;
+   toast('🏁 Lined up at '+(c.ev.town||'the arena')+' — '+ahead);
+  }
+  let y=0; try{y=+W.groundH(x,z).toFixed(2);}catch(e){}
+  CUR.start={x:+x.toFixed(2),z:+z.toFixed(2),y,heading:+rotY.toFixed(3),moved};
+  return showBox(x,z,rotY);
+ }
+ const AHEAD={race:'the first gate is ahead.',xc:'the first obstacle is ahead.',
+  gauntlet:'the first element is ahead.',jump:'the first fence is ahead.'};
  function marshal(c){
   const j=c.jumps&&c.jumps[0]; if(!j)return null;
-  const bx=j.x-Math.sin(j.rotY)*10, bz=j.z-Math.cos(j.rotY)*10;
-  const far=Math.hypot(player.pos.x-bx,player.pos.z-bz)>12;
-  if(far&&!player.flying&&!player.veh){ player.pos.set(bx,0,bz); player.speed=0; player.heading=j.rotY; }
-  return buildStartBox(bx,bz,j.rotY);
+  const at=findSpot(c,j.x-Math.sin(j.rotY)*10,j.z-Math.cos(j.rotY)*10,j.rotY,j);
+  return lineUp(c,at[0],at[1],j.rotY,AHEAD[discOf(c.ev).k]||AHEAD.jump);
+ }
+ /* A test has no first obstacle to line up behind — it has a letter. Every test in the game opens
+    'enter at A', the judge sits at C, and the centre line between them is the direction the horse
+    faces. tickDressage closes a figure the moment the rider is inside 3.5 m of its letter, so
+    standing her ON A would hand her the opening figure for nothing; she is put two horse-lengths
+    outside the short side instead and walks in, which is the movement that figure is asking for.
+    The letters are read live rather than from ARENA_HOME because shiftArena has already carried
+    them to the town on the card, and a Cottonwood test is ridden at Cottonwood. */
+ function marshalTest(c,show){
+  const AL=G.course.ARENA_LETTERS, A=AL&&AL.A, C=AL&&AL.C; if(!A||!C)return null;
+  const dx=C[0]-A[0], dz=C[1]-A[1], d=Math.hypot(dx,dz)||1, rotY=Math.atan2(dx/d,dz/d);
+  const at=findSpot(c,A[0]-dx/d*7,A[1]-dz/d*7,rotY,null);
+  return lineUp(c,at[0],at[1],rotY,show?'walk in at A — the judge is waiting at C.'
+                                       :'walk in at A and ride the centre line to C.');
  }
 
  /* ================================================================= pace-setters ========== */
@@ -428,7 +541,7 @@ export function install(G){
  function resetCur(c){
   CUR.c=c||null; CUR.disc=c?discOf(c.ev).k:null; CUR.fx=[]; CUR.fenceFaults=0; CUR.refuseAt={}; CUR.lastRef=0; CUR.lastGrades=0;
   CUR.elim=false; CUR.xcTime=0; CUR.xcJump=0; CUR.gateSum=0; CUR.gateN=0; CUR.watch=null; CUR.hazHits=0; CUR.raceAcc=null;
-  CUR.lastIdx=0; CUR.place=null; CUR.gold=false; CUR.rib=0; CUR.show=null; CUR.fig=-1; CUR.figQ=null; CUR.handling=0; CUR.turnout0=0; CUR.camT=0; CUR.hud=''; CUR.demoted=false; CUR.lifted=0;
+  CUR.lastIdx=0; CUR.place=null; CUR.gold=false; CUR.rib=0; CUR.show=null; CUR.fig=-1; CUR.figQ=null; CUR.handling=0; CUR.turnout0=0; CUR.camT=0; CUR.hud=''; CUR.demoted=false; CUR.lifted=0; CUR.start=null;
  }
  function addFx(g){ if(g)CUR.fx.push(g); }
  function clearFx(){ for(const g of CUR.fx)disposeGroup(g); CUR.fx=[]; }
@@ -481,14 +594,17 @@ export function install(G){
  /* ================================================================= courseStart =========== */
  G.on('courseStart',c=>{
   if(!c)return;
-  clearFx(); clearGhosts(); homeArena(); resetCur(c);
+  clearFx(); clearGhosts(); homeArena(); hideBox(); resetCur(c);
   try{const sv=G.save.fresh()||{};CUR.goldBefore=!!(sv.ribbonGold||{})[c.ev.id];}catch(e){}
   const S=c.ce||null;
   /* ---- the judged classes ---- */
   if(c.dressage){
+   const show=!!(c.show||c.ev.kind==='show');
    try{bendTest(c);}catch(e){console.error('ev2 bendTest',e);}
    if(c.ev.at){ const X=ARENA_HOME.X||[2,1]; shiftArena(c.ev.at[0]-X[0],c.ev.at[1]-X[1]); placeLetters(c); }
-   if(c.show||c.ev.kind==='show'){
+   /* after the arena has travelled, never before: A is wherever the letters have just been put */
+   try{addFx(marshalTest(c,show));}catch(e){console.error('ev2 marshalTest',e);}
+   if(show){
     CUR.show={still:0,fidget:0,square:0,crooked:0,rush:0,quiet:0};
     CUR.turnout0=c.turnout==null?0:c.turnout;
     CUR.camT=3.0;                                        // the inspection beat, before the first stride
@@ -509,8 +625,14 @@ export function install(G){
    const def=gauntletDef(seasonKey()); addFx(buildDecor(c,def.decor,T.RACE_ROUTES[c.ev.route]||GT_BASE));
    if(c.ev.limit)S.timeAllowed=c.ev.limit;               // the hard limit IS the clock, at every level
   }
-  /* ---- the start box, the hazards, the field ---- */
-  if(c.race||c.ev.xc){ addFx(marshal(c)); }
+  /* ---- the start line, the hazards, the field ---- */
+  /* Unconditional now. It used to read `if(c.race||c.ev.xc)`, which is why the nine jumping
+     rounds were the only events in the game you had to hack to. Anything that reaches here with
+     a first obstacle gets the race's own treatment; marshal answers null for anything that does
+     not, so a course kind a sister package invents tomorrow costs nothing. */
+  /* wrapped because the hazards, the field and the countdown caption all come after it, and a
+     start line nobody could build must not cost the rider the rest of her round */
+  try{addFx(marshal(c));}catch(e){console.error('ev2 marshal',e);}
   if(c.race)tidyHazards(c);                              // events-pvp laid its own set two hooks ago
   if(S.kind==='race'&&!c.ev.gauntlet)buildGhosts(c);
   caption(c);
@@ -1054,7 +1176,7 @@ export function install(G){
  });
  G.on('tick',(dt,t)=>{
   const c=G.course.get();
-  if(lastCourse&&lastCourse!==c){ clearFx(); clearGhosts(); homeArena(); callEl.classList.remove('on'); if(!c)resetCur(null); }
+  if(lastCourse&&lastCourse!==c){ clearFx(); clearGhosts(); homeArena(); hideBox(); callEl.classList.remove('on'); if(!c)resetCur(null); }
   lastCourse=c;
   if(c&&!c.started)callEl.classList.add('on'); else callEl.classList.remove('on');
   if(CUR.camT>0&&c&&!c.started)CUR.camT-=dt; else CUR.camT=0;
@@ -1086,7 +1208,12 @@ export function install(G){
     field:GH.on?GH.list.length+1:1,place:CUR.place?CUR.place.place:1,pacers:GH.list.map(g=>({n:g.nm,s:+g.s.toFixed(1),v:+g.v.toFixed(2)}))};
    if(c.dressage)o.ev2.judged={show:!!CUR.show,handling:+CUR.handling.toFixed(3),turnout:+(CUR.turnout0||0).toFixed(3),
     figures:c.figs?c.figs.length:0,holds:c.figs?c.figs.map(f=>f.hold||0):[],diff:c.ev2Diff||null,par:c.par};
-   o.ev2.startBox=CUR.fx.length>0;
+   /* the box is its own long-lived mesh now, so the flag reads its visibility as well as the
+      per-course furniture the gauntlet's décor still goes through */
+   o.ev2.startBox=CUR.fx.length>0||!!(SBOX&&SBOX.visible);
+   /* where the rider was put, whether she was carried there at all, and the height of the ground
+      under her — enough for a headless check to see the fast travel without reading the scene */
+   o.ev2.start=CUR.start||null;
   }
  });
 
@@ -1094,5 +1221,6 @@ export function install(G){
  G.events2={DISCS,discOf,discDetail,obstacleCount,FENCE_TYPES,XC_TYPES,GAUNTLET_SEASONS,gauntletDef,applyGauntletSeason,
   routeLen,fixPars,rewardLine,allowedLine,SCORE_BANDS,reqLine,openCard(id){cardFor=evById(id);if(cardFor)G.ui.open('ev2CardPanel');},
   openSheet(){G.ui.open('ev2SheetPanel');},setFilter(k){FILTER=k;applyFilter();},filter:()=>FILTER,fixRows,applyFilter,
-  state:CUR,shiftArena,homeArena,ARENA_HOME,tidyHazards,marshal,ghosts:GH,ghostPlace,playerArc};
+  state:CUR,shiftArena,homeArena,ARENA_HOME,tidyHazards,marshal,marshalTest,findSpot,standable,wet,onWall,
+  startBox:()=>SBOX,hideBox,ghosts:GH,ghostPlace,playerArc};
 }
