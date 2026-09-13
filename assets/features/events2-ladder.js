@@ -207,9 +207,13 @@ export function install(G){
   /* The two aggressive pick-ups are downgraded to carrots when there is nobody to use them on.
      There is somebody now — but events-pvp's own mud and bale talk to the club over chat, so the
      solo race gets its own pair that act on the field that is actually here. */
+  /* ranch3d bakes a pick-up's colour into its material from the type it was SPAWNED as, so a
+     re-tag after the fact leaves a shield-blue crystal that hands out a mud slick. Repaint it. */
   try{
-   const items=(c.items||[]).filter(it=>!it.pad);
-   items.forEach((it,k)=>{ if(k%4===3)it.type='ladSlick'; else if(k%7===5)it.type='ladBale'; });
+   const items=(c.items||[]).filter(it=>it.type!=='pad'&&!it.pad);
+   items.forEach((it,k)=>{ const t=k%4===3?'ladSlick':k%7===5?'ladBale':null; if(!t)return;
+    it.type=t; const col=T.RACE_ITEMS[t].col;
+    try{it.m.material.color.setHex(col);it.m.material.emissive.setHex(col);}catch(e){} });
   }catch(e){}
   ladHud.classList.add('on');
  }
@@ -249,9 +253,15 @@ export function install(G){
    if(kind==='bale'){r.pen+=1.5;}else{r.slowT=2.0;r.pen+=0.6;}
    hit++;
   }
-  if(hit)toast(kind==='bale'?('🌾 Bale down — '+hit+' rider'+(hit>1?'s':'')+' behind you have to go round it.')
-   :('🪣 Mud slick — '+hit+' rider'+(hit>1?'s':'')+' behind you are wearing it.'));
-  else toast('🪣 Out in front already — nothing behind you to throw it at.');
+  if(hit){toast(kind==='bale'?('🌾 Bale down — '+hit+' rider'+(hit>1?'s':'')+' behind you have to go round it.')
+   :('🪣 Mud slick — '+hit+' rider'+(hit>1?'s':'')+' behind you are wearing it.'));return;}
+  /* Nobody behind you is very nearly always because you are LAST, not because you are first: the
+     player's progress is counted in gates crossed and sits at zero until the first one, while the
+     field moves continuously from the drop — which is exactly where the opening pick-ups lie. The
+     old line congratulated a rider in P4/4 on being out in front. Say what is true and give the
+     same carrot the no-field case gives, so the pick-up is never a dud. */
+  player.boostT=3; player.stam=Math.min(1,(player.stam||0)+0.3);
+  toast('🥕 Nobody behind you to throw it at — you take the pace instead.');
  }
  T.RACE_ITEMS.ladSlick={col:0x7a5a3a,label:'🪣 Mud slick!',fx:()=>slowField('mud')};
  T.RACE_ITEMS.ladBale={col:0xd9a441,label:'🌾 Hay bale!',fx:()=>slowField('bale')};
@@ -260,7 +270,11 @@ export function install(G){
  G.on('courseStart',c=>{
   if(!c)return;
   try{
-   if(pendingRematch&&c.ev&&pendingRematch.ev===c.ev.id&&Date.now()-pendingRematch.at<8000){c.ladRematch=true;pendingRematch=null;}
+   /* tixSpent is what the crash-saver reads to decide whether a round the game never tidied up
+      owes the player a ticket back, and events-pvp only ever sets it on a challenge. The rematch
+      is the one other place a ticket leaves the book, so it has to say so — otherwise the single
+      ticket a solo rider can lose to a reload is the only one the refund does not cover. */
+   if(pendingRematch&&c.ev&&pendingRematch.ev===c.ev.id&&Date.now()-pendingRematch.at<8000){c.ladRematch=true;c.tixSpent=true;pendingRematch=null;}
    else pendingRematch=null;
    clearField();
    /* A gauntlet is a trial against a hard limit and a dressage test is judged alone; neither wants
@@ -443,6 +457,11 @@ export function install(G){
    if(s.bestAcc)delete s.bestAcc[ev.id];
    if(s.ribbonsBy)for(const k of Object.keys(s.ribbonsBy))if(k.indexOf(ev.id+':')===0)delete s.ribbonsBy[k];
    if(r)s.ribbonTotal=Math.max(0,(s.ribbonTotal||0)-r);
+   /* awardRibbons also runs the ribbons through addSP, which is the week's Star Point tally and
+      the wage it pays — take those back too, or a friendly race with no stakes is still the
+      cheapest Star Points in the game. s.ribbons[ev.id] is deleted on every one of these, so the
+      high-water mark is always exactly what this round handed out and r is never an over-count. */
+   if(r){ if(s.sp)s.sp.pts=Math.max(0,(s.sp.pts||0)-r); if(s.wk)s.wk.sp=Math.max(0,(s.wk.sp||0)-r); }
    if(s.weekly&&s.weekly.rib)delete s.weekly.rib[ev.id];
    s.lad=s.lad||{}; s.lad.danced=(s.lad.danced||0)+(ev.id==='dance'?1:0);
   }); }catch(e){} },30);
