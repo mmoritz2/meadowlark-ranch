@@ -1,15 +1,16 @@
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/hero-horse-review');
 const onlyPrevious=process.argv.includes('--previous');
 fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],states=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  const fileOverride=process.argv.find(a=>a.startsWith('--file='))?.slice(7)||(process.argv.includes('--paint')?'hero-textured-review.glb':null);
  if(fileOverride)await page.route('**/hero-horse/manifest.json',route=>{const spec=JSON.parse(fs.readFileSync('assets/models/hero-horse/manifest.json','utf8'));Object.assign(spec,{file:fileOverride,revision:'qa-'+Date.now(),name:'Bay sporthorse',heroGroom:null,anchors:null,rigged:process.argv.includes('--rigged')});if(process.argv.includes('--groom'))Object.assign(spec,JSON.parse(fs.readFileSync('assets/models/hero-horse/hero-groom-anchors.json','utf8')),{file:fileOverride});return route.fulfill({json:spec});});
- await page.goto('http://127.0.0.1:8431/hero-horse.html?model=previous');
+ await page.goto(QA.BASE+'/hero-horse.html?model=previous');
  const ready=key=>page.waitForFunction(k=>window.render_game_to_text&&JSON.parse(render_game_to_text()).selected===k&&JSON.parse(render_game_to_text()).modelReady&&!JSON.parse(render_game_to_text()).loading,key,{timeout:120000});
  const state=()=>page.evaluate(()=>JSON.parse(render_game_to_text()));
  for(const key of onlyPrevious?['previous']:['previous','candidate']){

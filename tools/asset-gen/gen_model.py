@@ -17,6 +17,7 @@ Notes:
   - Output GLB is copied into ../../assets/models/<name>.glb
 """
 import argparse
+import os
 import shutil
 import sys
 import time
@@ -25,8 +26,9 @@ from pathlib import Path
 import comfy
 from gen_image import flux_graph, FLUX_CKPT
 
-COMFY_INPUT = Path(r"C:\Users\msmor\Documents\ComfyUI\input")
-COMFY_OUTPUT = Path(r"C:\Users\msmor\Documents\ComfyUI\output")
+COMFY_BASE = Path(os.environ.get("COMFY_BASE", r"C:\Users\msmor\Documents\ComfyUI"))
+COMFY_INPUT = COMFY_BASE / "input"
+COMFY_OUTPUT = COMFY_BASE / "output"
 SHAPE_MODEL_21 = "hy3dgen\\hunyuan3d-dit-v2-1-fp16.ckpt"
 SHAPE_MODEL_20 = "hy3dgen\\hunyuan3d-dit-v2-0-fp16.safetensors"
 

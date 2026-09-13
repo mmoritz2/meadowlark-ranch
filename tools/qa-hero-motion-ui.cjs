@@ -1,8 +1,9 @@
 /* Real controls and real-time pause/playback audit. No viewer or model edits. */
-const{chromium}=require('playwright');const fs=require('node:fs'),path=require('node:path');
+const QA=require('./qa-platform.cjs');
+const{chromium}=QA;const fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/hero-motion-ui');fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const context=await browser.newContext({viewport:{width:1440,height:1000}}),page=await context.newPage(),errors=[],checks={},details={};
  page.setDefaultTimeout(5000);
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
@@ -12,7 +13,7 @@ const out=path.resolve(process.argv[2]||'output/hero-motion-ui');fs.mkdirSync(ou
  const ready=selected=>page.waitForFunction(selected=>window.render_game_to_text&&(()=>{const s=JSON.parse(render_game_to_text());return !s.loading&&s.modelReady&&s.selected===selected})(),selected);
  const layout=()=>page.evaluate(()=>{const els=[document.querySelector('.controls'),...document.querySelectorAll('.controls button,.controls select')].filter(e=>!e.hidden),rects=els.map(e=>{const r=e.getBoundingClientRect();return{id:e.id||'controls',x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height}});return{width:innerWidth,height:innerHeight,noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth,rects,fit:rects.every(r=>r.x>=0&&r.y>=0&&r.right<=innerWidth+.5&&r.bottom<=innerHeight+.5)}});
  try{
-  await page.goto('http://127.0.0.1:8431/hero-horse.html');await ready('candidate');await page.evaluate(()=>heroMotionQA.pauseRealtime(true));
+  await page.goto(QA.BASE+'/hero-horse.html');await ready('candidate');await page.evaluate(()=>heroMotionQA.pauseRealtime(true));
   checks.allGaits=true;details.gaits=[];
   for(const gait of['stand','walk','trot','canter','gallop','jump']){await page.selectOption('#motion',gait);await step(gait==='jump'?700:600);const s=await snap();const ok=s.gait===gait&&(gait!=='jump'||!s.grounded);details.gaits.push({requested:gait,actual:s.gait,phase:s.phase01,grounded:s.grounded,ok});checks.allGaits&&=ok}
   await step(1600);checks.jumpReturnsToIdle=(await snap()).gait==='stand';

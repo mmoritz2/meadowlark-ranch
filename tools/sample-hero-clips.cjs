@@ -1,13 +1,14 @@
 // Sample the actual rendered controller; the Python exporter consumes local
 // bone transforms, so Blender and glTF playback use the same authored poses.
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const output=path.resolve(process.argv[2]||'output/hero-animation-clips/samples.json');
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const page=await browser.newPage({viewport:{width:1280,height:900}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:8431/hero-horse.html');
+ await page.goto(QA.BASE+'/hero-horse.html');
  await page.waitForFunction(()=>window.heroMotionQA&&heroMotionQA.snapshot(),null,{timeout:120000});
  await page.evaluate(()=>heroMotionQA.pauseRealtime(true));
  const source='hero-rigged-v2.glb',sourceBytes=fs.readFileSync(path.join('assets/models/hero-horse',source));

@@ -1,10 +1,11 @@
 /* Read-only runtime trial: substitutes one reach margin via Playwright route. */
-const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA,fs=require('node:fs'),path=require('node:path');
 const out=path.resolve('output/hero-motion-margin-trial');fs.mkdirSync(out,{recursive:true});
 const source=fs.readFileSync(path.join(__dirname,'qa-hero-motion.cjs'),'utf8');
 const {analyze}=new Function('require','process',source.slice(0,source.indexOf('(async()=>{'))+'return {analyze};')(require,{argv:[]});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const original=fs.readFileSync('assets/hero-horse-motion.js','utf8'),find='distanceTo(restP[leg.fetlock])-.002,horizontal=';
  if(!original.includes(find))throw Error('Expected exact original margin absent');
  const results={};
@@ -12,7 +13,7 @@ const {analyze}=new Function('require','process',source.slice(0,source.indexOf('
   const folder=path.join(out,String(margin));fs.mkdirSync(folder,{recursive:true});
   const page=await browser.newPage({viewport:{width:1440,height:1000}});
   await page.route('**/assets/hero-horse-motion.js*',r=>r.fulfill({contentType:'text/javascript',body:original.replace(find,'distanceTo(restP[leg.fetlock])-'+margin+',horizontal=')}));
-  await page.goto('http://127.0.0.1:8431/hero-horse.html');
+  await page.goto(QA.BASE+'/hero-horse.html');
   await page.waitForFunction(()=>window.heroMotionQA&&JSON.parse(render_game_to_text()).modelReady&&!JSON.parse(render_game_to_text()).loading,null,{timeout:120000});
   const baseline=await page.evaluate(()=>{heroMotionQA.pauseRealtime(true);heroMotionQA.reset();return heroMotionQA.snapshot();});
   const stable=await page.evaluate(()=>{heroMotionQA.set('walk');advanceTime(2000);return heroMotionQA.snapshot();});

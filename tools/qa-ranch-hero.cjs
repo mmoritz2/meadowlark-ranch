@@ -1,7 +1,8 @@
-const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA,fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/ranch-hero-qa');fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ const browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const page=await browser.newPage({viewport:{width:1440,height:960}}),errors=[];
  page.on('pageerror',e=>{errors.push(e.message);console.error(e.message)});page.on('console',m=>{if(m.type()==='error'){errors.push(m.text());console.error(m.text())}});
  await page.route('**/ranch3d.html*',route=>route.fulfill({contentType:'text/html',body:fs.readFileSync('ranch3d.html','utf8').replace('const MERGE_STATS=mergeStatics();',`window.__heroQA={THREE,RIG,player,TACK,BREED_MODELS,scene,renderer,camera,myHorses,adoptBaySporthorse,
@@ -10,7 +11,7 @@ const out=path.resolve(process.argv[2]||'output/ranch-hero-qa');fs.mkdirSync(out
   view(angle='quarter'){const h=groundH(player.pos.x,player.pos.z);camera.position.set(player.pos.x+(angle==='side'?5.2:4.6),h+2.4,player.pos.z+(angle==='side'?0:4));camera.lookAt(player.pos.x,h+1.5,player.pos.z);composer.render();},
   state(){return {breed:myHorses[rideIdx].breed,model:RIG.modelKey,groom:RIG.groom?.stats,motion:RIG.heroMotion?.mode,phase:RIG.phase,jumpAge:RIG.heroJumpAge,jumpExtra:RIG.heroJumpExtra,gameY:player.y,meshY:player.mesh.position.y,ground:groundH(player.pos.x,player.pos.z),seat:TACK.saddle?.position.toArray(),rider:player.rider.g.position.toArray(),bridle:TACK.bridle?.position.toArray(),head:player.mesh.worldToLocal(RIG.bones[6].getWorldPosition(new THREE.Vector3())).toArray(),finite:RIG.bones.every(b=>b.matrixWorld.elements.every(Number.isFinite)),feet:RIG.heroMotion?.snapshot().feet};}
  };const MERGE_STATS=mergeStatics();`)}));
- await page.goto('http://127.0.0.1:8431/ranch3d.html?adopt=bay-sporthorse&v=hero-ranch-1',{waitUntil:'load',timeout:120000});
+ await page.goto(QA.BASE+'/ranch3d.html?adopt=bay-sporthorse&v=hero-ranch-1',{waitUntil:'load',timeout:120000});
  await page.waitForFunction(()=>window.__heroQA?.RIG.modelKey==='bay-sporthorse'&&!__heroQA.RIG.loadingBreed,{},{timeout:120000});
  await page.evaluate(async()=>{await __heroQA.RIG.groom.ready;__heroQA.start();advanceTime(800);});
  const states=[];

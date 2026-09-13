@@ -1,10 +1,11 @@
-const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA,fs=require('node:fs'),path=require('node:path');
 const out=path.resolve('output/b2-rig-browser');fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const page=await browser.newPage({viewport:{width:1440,height:960}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
- await page.goto('http://127.0.0.1:8431/horse-art-review.html');await page.waitForFunction(()=>window.render_game_to_text&&JSON.parse(render_game_to_text()).modelReady&&!JSON.parse(render_game_to_text()).loading);
+ await page.goto(QA.BASE+'/horse-art-review.html');await page.waitForFunction(()=>window.render_game_to_text&&JSON.parse(render_game_to_text()).modelReady&&!JSON.parse(render_game_to_text()).loading);
  await page.evaluate(()=>advanceTime(0));
  const initial=await page.evaluate(()=>JSON.parse(render_game_to_text()));
  if(!initial.animations.includes('Walk_InPlace'))throw new Error('No Walk_InPlace clip');

@@ -1,11 +1,12 @@
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path'),sharp=require('sharp');
-const url='http://127.0.0.1:8431/breeds.html';
+const url=QA.BASE+'/breeds.html';
 const out=path.resolve(process.argv[2]||'output/artist-breed-studio');
 const quick=process.argv.includes('--quick'),thumbnails=process.argv.includes('--thumbnails'),only=process.argv.find(a=>a.startsWith('--only='))?.slice(7).split(',');
 fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const page=await browser.newPage({viewport:{width:1440,height:1000},deviceScaleFactor:1});
  const errors=[],checks={},states=[],captures=[],motionSamples=[];
  page.on('pageerror',e=>errors.push(e.stack||e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});

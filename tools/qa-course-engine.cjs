@@ -5,9 +5,10 @@
    penalty, inspiring-jump stamina refunds, speed pads, cross country, difficulty, accuracy + gold ribbons,
    stat prerequisites, the event card and the first-person camera.
 
-   Usage:  QA_URL=http://127.0.0.1:8431 NODE_PATH=$(npm root -g) node tools/qa-course-engine.cjs */
-const {chromium}=require('playwright');
-const base=(process.env.QA_URL||'http://127.0.0.1:8431').replace(/\/$/,'');
+   Usage:  QA_PORT=8431 NODE_PATH=$(npm root -g) node tools/qa-course-engine.cjs */
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
+const base=QA.BASE;
 const url=base+'/ranch3d.html?qa=course-engine&fresh='+Date.now();
 const checks=[];
 function check(name,ok,detail){checks.push({name,ok:!!ok,detail});console.log((ok?'PASS ':'FAIL ')+name+(detail!==undefined?' — '+JSON.stringify(detail):''));}
@@ -17,7 +18,7 @@ let browser=null;
 setTimeout(async()=>{console.error('WATCHDOG: no result after 900 s');try{if(browser)await browser.close();}catch(e){}process.exit(3);},900000).unref();
 const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_game_to_text());return s.graphics&&s.graphics.horseReady&&!s.graphics.horseLoading;}catch(e){return false;}})();
 (async()=>{
- browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const page=await browser.newPage({viewport:{width:1280,height:800}});
  const errors=[];
  page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));

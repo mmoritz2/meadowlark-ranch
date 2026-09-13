@@ -5,9 +5,10 @@
    stat XP from events, stackable XP multipliers, region wildlife, golden-horseshoe XP and fishing
    at the river spots.
 
-   Usage:  QA_URL=http://127.0.0.1:8431 NODE_PATH=$(npm root -g) node tools/qa-stats-progression.cjs */
-const {chromium}=require('playwright');
-const base=(process.env.QA_URL||'http://127.0.0.1:8431').replace(/\/$/,'');
+   Usage:  QA_PORT=8431 NODE_PATH=$(npm root -g) node tools/qa-stats-progression.cjs */
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
+const base=QA.BASE;
 const url=base+'/ranch3d.html?qa=stats-progression&fresh='+Date.now();
 const checks=[];
 function check(name,ok,detail){checks.push({name,ok:!!ok,detail});console.log((ok?'PASS ':'FAIL ')+name+(detail!==undefined?' — '+JSON.stringify(detail):''));}
@@ -17,7 +18,7 @@ let browser=null;
 setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(browser)await browser.close();}catch(e){}process.exit(3);},600000).unref();
 const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_game_to_text());return s.graphics&&s.graphics.horseReady&&!s.graphics.horseLoading;}catch(e){return false;}})();
 (async()=>{
- browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const page=await browser.newPage({viewport:{width:1280,height:800}});
  const errors=[];
  page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));

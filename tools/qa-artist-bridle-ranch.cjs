@@ -1,5 +1,6 @@
 // Actual ranch integration in an isolated browser, without touching user saves.
-const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA,fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/artist-bridle-ranch');fs.mkdirSync(out,{recursive:true});
 const injection=`window.__bridleQA={
  select(key){const h=myHorses[0],b=BREEDS3.find(b=>b[0]===key),o=b[7]||{};Object.assign(h,{breed:key,colors:{body:b[5],mane:b[6]},horn:!!o.horn,wings:!!o.wings,dragon:!!o.dragon,coat:o.coat||null,foal:false});delete h.mark;delete h.markCol;delete h.tailCol;sel.value='0';sel.onchange();},
@@ -10,11 +11,11 @@ const injection=`window.__bridleQA={
 };const MERGE_STATS=mergeStatics();`;
 (async()=>{let browser;const report={checks:{},errors:[],states:[]};
  try{
-  browser=await chromium.launch({headless:!process.argv.includes('--headed'),args:['--use-angle=d3d11']});const page=await browser.newPage({viewport:{width:1000,height:850}});
+  browser=await chromium.launch({headless:!process.argv.includes('--headed'),args:[QA.ANGLE]});const page=await browser.newPage({viewport:{width:1000,height:850}});
   page.on('pageerror',e=>report.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
   await page.addInitScript(()=>addEventListener('error',e=>{window.__qaStartupError=e.message;}));
   await page.route('**/ranch3d.html*',r=>r.fulfill({contentType:'text/html',body:fs.readFileSync('ranch3d.html','utf8').replace('const MERGE_STATS=mergeStatics();',injection)}));
-  await page.goto('http://127.0.0.1:8431/ranch3d.html?qa=bridle',{waitUntil:'load',timeout:90000});
+  await page.goto(QA.BASE+'/ranch3d.html?qa=bridle',{waitUntil:'load',timeout:90000});
   const ready=async key=>{await page.waitForFunction(k=>window.__qaStartupError||window.__bridleQA&&__bridleQA.state().ready&&(!k||__bridleQA.state().breed===k),key,{timeout:60000});const error=await page.evaluate(()=>window.__qaStartupError);if(error)throw Error(error);};await ready();
   await page.addStyleTag({content:'body>div,body>nav{visibility:hidden!important}'});
   for(const key of (process.env.BRIDLE_KEYS||'bay-sporthorse,thoro,chestnut,grey,shire,amethyst').split(',')){

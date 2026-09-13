@@ -4,11 +4,15 @@
    the shared save fields are present, hooks fire, registries splice into the renderers, and
    render_game_to_text carries the new keys. Prints the state dump at the end.
 
-   Usage:  QA_URL=http://127.0.0.1:8431 NODE_PATH=$(npm root -g) node tools/qa-features.cjs
-   Server: python3 tools/serve-preview.py   (127.0.0.1:8431)
-   Every feature package copies this shape as tools/qa-<pkg>.cjs. */
-const {chromium}=require('playwright');
-const base=(process.env.QA_URL||'http://127.0.0.1:8431').replace(/\/$/,'');
+   Usage:  QA_PORT=8431 NODE_PATH=$(npm root -g) node tools/qa-features.cjs
+   Server: python3 tools/serve-preview.py 8431
+   Every feature package copies this shape as tools/qa-<pkg>.cjs. Copy the qa-platform
+   require with it: QA.ANGLE is the only correct way to name a GPU backend in here, and
+   QA.BASE is what lets two agents run their own server and their own checks side by side.
+   QA_PORT picks the port; QA_URL overrides the whole base when the server is elsewhere. */
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
+const base=QA.BASE;
 const url=base+'/ranch3d.html?qa=features&fresh='+Date.now();
 const checks=[];
 function check(name,ok,detail){checks.push({name,ok:!!ok,detail});console.log((ok?'PASS ':'FAIL ')+name+(detail!==undefined?' — '+JSON.stringify(detail):''));}
@@ -17,7 +21,7 @@ const stage=s=>console.log('… '+s+' @'+((Date.now()-t0)/1000).toFixed(1)+'s');
 let browser=null;
 setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(browser)await browser.close();}catch(e){}process.exit(3);},600000).unref();
 (async()=>{
- browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const page=await browser.newPage({viewport:{width:1280,height:800}});
  const errors=[];
  page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));

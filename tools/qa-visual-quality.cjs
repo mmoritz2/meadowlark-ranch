@@ -1,7 +1,8 @@
-const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA,fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/visual-quality');fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11','--disable-background-timer-throttling']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE,'--disable-background-timer-throttling']});
  const page=await browser.newPage({viewport:{width:1440,height:960}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
  await page.route('**/ranch3d.html*',route=>route.fulfill({contentType:'text/html',body:fs.readFileSync('ranch3d.html','utf8').replace('const MERGE_STATS=mergeStatics();',`window.__artQA={THREE,scene,camera,renderer,RIG,player,groundH,
@@ -10,7 +11,7 @@ const out=path.resolve(process.argv[2]||'output/visual-quality');fs.mkdirSync(ou
   orbit(a){camYaw=a;},
   cameraState(){return {position:camera.position.toArray(),target:camLook.toArray(),player:player.pos.toArray(),cameraClear:typeof followCamera==='undefined'?null:followCamera.isClear(camLook,camera.position),obstacles:typeof followCamera==='undefined'?0:followCamera.obstacleCount};}
  };const MERGE_STATS=mergeStatics();`)}));
- await page.goto('http://127.0.0.1:8431/ranch3d.html?adopt=bay-sporthorse',{waitUntil:'load',timeout:120000});
+ await page.goto(QA.BASE+'/ranch3d.html?adopt=bay-sporthorse',{waitUntil:'load',timeout:120000});
  await page.waitForFunction(()=>window.__artQA?.RIG.modelKey==='bay-sporthorse'&&!__artQA.RIG.loadingBreed,null,{timeout:120000});
  await page.evaluate(async()=>{await __artQA.RIG.groom.ready;advanceTime(100);});await page.waitForTimeout(2500);
  const shots=[['arena',[-3,-3,0],[2.2,2.7,2],[-3,1.5,-3]],['arrival',[0,16,Math.PI]],['stall-camera',[-27.5,-8.5,Math.PI]],['barn-camera',[-10,-14,Math.PI/2]]];

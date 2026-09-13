@@ -13,7 +13,7 @@ import runpy
 import time
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-RUNTIME = pathlib.Path(r'C:\Users\msmor\Desktop\hy3d-paint')
+RUNTIME = pathlib.Path(os.environ.get('HY3D_PAINT', r'C:\Users\msmor\Desktop\hy3d-paint'))
 
 
 def main():

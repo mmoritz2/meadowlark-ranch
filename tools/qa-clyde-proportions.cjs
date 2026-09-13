@@ -1,9 +1,10 @@
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[3]||'output/clyde-proportions-qa');fs.mkdirSync(out,{recursive:true});
 const beforeDir=process.argv[2];
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const errors=[],states=[];
  const watch=page=>{page.on('pageerror',e=>{errors.push(e.message);console.error(e.message);});page.on('console',m=>{if(m.type()==='error'){errors.push(m.text());console.error(m.text());}});};
  for(const version of beforeDir?['before','after']:['after']){
@@ -13,7 +14,7 @@ const beforeDir=process.argv[2];
    await page.route('**/models/breeds/manifest.json',r=>r.fulfill({contentType:'application/json',body:fs.readFileSync(path.join(beforeDir,'manifest.json'))}));
    await page.route('**/models/breeds/clyde.glb*',r=>r.fulfill({contentType:'model/gltf-binary',body:fs.readFileSync(path.join(beforeDir,'clyde.glb'))}));
   }
-  await page.goto('http://127.0.0.1:8431/breeds.html');
+  await page.goto(QA.BASE+'/breeds.html');
   await page.waitForFunction(()=>window.render_game_to_text&&!JSON.parse(render_game_to_text()).loading,null,{timeout:90000,polling:200});
   await page.locator('[data-key="clyde"]').click();
   await page.waitForFunction(()=>JSON.parse(render_game_to_text()).breed==='clyde'&&!JSON.parse(render_game_to_text()).loading,null,{timeout:90000,polling:200});
@@ -33,7 +34,7 @@ const beforeDir=process.argv[2];
   mount:async()=>{const b=BREEDS3.find(b=>b[0]==='clyde');Object.assign(myHorses[rideIdx],{breed:'clyde',colors:{body:b[5],mane:b[6]},coat:null,dragon:false,horn:false,wings:false});rebuildAll();await requestPlayerBreed('clyde');dayT=.34;weather.mode='clear';weather.timer=9999;player.pos.set(0,0,8);player.heading=Math.PI;},
   view:()=>{const h=groundH(player.pos.x,player.pos.z);camera.position.set(player.pos.x+4.4,h+2.4,player.pos.z+3.5);camera.lookAt(player.pos.x,h+1.4,player.pos.z);renderer.info.reset();composer.render();},
   fit:()=>({model:RIG.modelKey,bones:RIG.bones.length,scale:player.mesh.scale.x,head:RIG.headBone?.position.toArray(),saddle:TACK.saddle.position.toArray(),bridle:TACK.bridle.position.toArray(),finite:RIG.bones.every(b=>b.matrixWorld.elements.every(Number.isFinite))&&TACK.bridle.matrixWorld.elements.every(Number.isFinite)})};const MERGE_STATS=mergeStatics();`)}));
- await page.goto('http://127.0.0.1:8431/ranch3d.html',{waitUntil:'load',timeout:90000});
+ await page.goto(QA.BASE+'/ranch3d.html',{waitUntil:'load',timeout:90000});
  await page.waitForFunction(()=>window.__clydeQA?.RIG.ready,null,{timeout:90000,polling:200});
  await page.evaluate(async()=>{await __clydeQA.mount();advanceTime(600);__clydeQA.view();});
  await page.screenshot({path:path.join(out,'ridden.png')});

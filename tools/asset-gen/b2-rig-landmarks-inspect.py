@@ -1,5 +1,5 @@
-import bpy,json,numpy as np,pathlib
-root=pathlib.Path('C:/Users/msmor/Desktop/star_ranch_fable/assets/models/horse-candidates/b2przemo')
+import os,bpy,json,numpy as np,pathlib
+root=pathlib.Path(os.environ.get('B2_SOURCE','C:/Users/msmor/Desktop/star_ranch_fable/assets/models/horse-candidates/b2przemo'))
 bpy.ops.wm.open_mainfile(filepath=str(root/'horse-finished-study.blend'))
 o=bpy.data.objects.get('Artist body — preserved quad topology');p=np.array([v.co[:] for v in o.data.vertices]);print('bounds',p.min(0),p.max(0))
 for front in [True,False]:

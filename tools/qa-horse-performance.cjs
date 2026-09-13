@@ -1,15 +1,15 @@
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs');
 (async()=>{
- /* --use-angle=d3d11 is a Windows backend. On a Mac it silently falls back to software, and
-   the script then reports the speed of a CPU rasteriser rather than the game: 6.5 SECONDS a
-   frame on the current scene, which looks like catastrophe and means nothing. Pick the
-   platform's own backend so the number refers to the machine the game will run on. */
- const GPU=process.platform==='darwin'?'metal':'d3d11';
- const browser=await chromium.launch({headless:true,args:['--use-angle='+GPU,'--enable-gpu-rasterization','--ignore-gpu-blocklist','--disable-background-timer-throttling']});
+ /* QA.ANGLE is the platform's own GPU backend rather than a literal. This script is the
+    reason the helper exists: with the Windows d3d11 backend hardcoded it measured a CPU
+    rasteriser instead of the game and reported 6.5 SECONDS a frame, which looks like
+    catastrophe and means nothing. See tools/qa-platform.cjs for the rest of that story. */
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist','--disable-background-timer-throttling']});
  const page=await browser.newPage({viewport:{width:1440,height:960}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:8431/ranch3d.html',{timeout:120000});
+ await page.goto(QA.BASE+'/ranch3d.html',{timeout:120000});
  await page.waitForFunction(()=>window.render_game_to_text&&JSON.parse(render_game_to_text()).graphics.horseReady&&!JSON.parse(render_game_to_text()).graphics.horseLoading,null,{timeout:120000,polling:250});
  const timing=await page.evaluate(()=>new Promise(resolve=>{
   const spans=[];let last=performance.now(),warmup=30;

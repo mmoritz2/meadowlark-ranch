@@ -1,8 +1,9 @@
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/breed-qa');fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11','--disable-background-timer-throttling']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE,'--disable-background-timer-throttling']});
  const page=await browser.newPage({viewport:{width:1440,height:960}});
  const errors=[],warnings=[];page.on('pageerror',e=>{errors.push(e.message);console.error(e.message);});page.on('console',m=>{if(m.type()==='error'){errors.push(m.text());console.error(m.text());}if(m.type()==='warning')warnings.push(m.text());});
  const preview=!fs.existsSync('assets/models/breeds/manifest.json');
@@ -17,7 +18,7 @@ const out=path.resolve(process.argv[2]||'output/breed-qa');fs.mkdirSync(out,{rec
   };const MERGE_STATS=mergeStatics();`);
   route.fulfill({contentType:'text/html',body:html});
  });
- await page.goto('http://127.0.0.1:8431/ranch3d.html',{waitUntil:'load',timeout:120000});
+ await page.goto(QA.BASE+'/ranch3d.html',{waitUntil:'load',timeout:120000});
  await page.waitForFunction(()=>window.__breedQA?.RIG.ready&&!window.__breedQA.RIG.loadingBreed,null,{timeout:120000,polling:250});
  const save=async name=>{await page.screenshot({path:path.join(out,name+'.png')});};
  await page.evaluate(()=>{__breedQA.start();advanceTime(600);__breedQA.view();});await save('riding');
