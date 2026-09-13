@@ -275,6 +275,12 @@ export function install(G){
   frost:{route:'gt_frost',pts:gtLoop(0.85,3.6,0),limit:130,decor:'frost',twist:'Short, hard ground, and the shortest clock of the year.'},
  };
  const DECOR_COL={petal:['#ffd1e8','#ffb3d9'],dust:['#d9c49a','#c9ab7a'],leaf:['#c9772f','#a8541f'],frost:['#dff1ff','#bcd9ef']};
+ /* events-pvp's GTD is not a copy of the live season's row, it IS GAUNTLETS[whatever season was
+    running when the page loaded]. Writing the new season's name through GTD therefore overwrites
+    that row for good, and the year comes round to a spring loop still calling itself the frost
+    one. Take the four names before anybody has had a chance to smudge them. */
+ const GT_NAMES={};
+ try{ const GS=(G.events&&G.events.GAUNTLETS)||{}; for(const k in GS)GT_NAMES[k]={name:GS[k].name,icon:GS[k].icon,blurb:GS[k].blurb}; }catch(e){}
  function seasonKey(){ try{return G.time.seasonNow().def.id;}catch(e){return 'bloom';} }
  function gauntletDef(k){ return GAUNTLET_SEASONS[k]||GAUNTLET_SEASONS.bloom; }
  function applyGauntletSeason(k){
@@ -285,8 +291,8 @@ export function install(G){
   /* events-pvp holds the season's name object by reference and prints it in its own toasts and
      its Events card; writing the new season into that same object keeps them in step without
      reaching into its file. */
-  try{ const S=G.events&&G.events.GAUNTLETS&&G.events.GAUNTLETS[k];
-   if(S&&G.events.GTD){Object.assign(G.events.GTD,{name:S.name,icon:S.icon,blurb:S.blurb});ev.name=S.name;} }catch(e){}
+  try{ const S=GT_NAMES[k];
+   if(S&&G.events.GTD){Object.assign(G.events.GTD,S);ev.name=S.name;} }catch(e){}
   ev.blurb=discOf(ev).icon+' '+discOf(ev).label.toLowerCase()+' · '+discDetail(ev);
   return def;
  }
