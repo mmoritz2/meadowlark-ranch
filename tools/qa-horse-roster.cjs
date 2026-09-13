@@ -182,16 +182,49 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('The Prospector: faster in Coyote Canyon than without the trait, and no bonus at the ranch',canyon.player.speed>canyonPlain.player.speed*1.015&&Math.abs(ranchP.player.speed-ranchPlain.player.speed)<0.25,{canyon:canyon.player.speed,plain:canyonPlain.player.speed,ranch:ranchP.player.speed,ranchPlain:ranchPlain.player.speed});
  const early=await page.evaluate(async()=>{
   const G=window.__features,p=G.horse.player; const run=async(traits)=>{
+   /* The catalogue and care panels are left open by the UI section above, and a course started
+      with a panel up does not behave like one started from the saddle. Clear the screen first so
+      both runs of this comparison begin from the same place. */
+   G.hidePanels(); window.advanceTime(200);
    G.save.sync(sv=>{sv.horses[G.horse.rideIdx()].traits=traits;});G.horse.myHorses[G.horse.rideIdx()].traits=traits;G.horse.roster.refreshCur();
-   G.course.startCourse(G.tables.EVENTS3.find(e=>e.id==='pp')); p.speed=0;p.stam=1;p.blown=false;
-   window.advanceTime(4200);   // the countdown
+   /* Both runs have to begin on the SAME leg or the comparison is meaningless, and occasionally a
+      restart comes up already past the first flag. Rather than measure whatever it got, throw that
+      attempt away and line up again — and if it still will not start on leg one, return started
+      false so the check fails loudly instead of comparing against a horse that never raced. */
+   let tries=0;
+   for(;;){
+    G.course.startCourse(G.tables.EVENTS3.find(e=>e.id==='pp')); p.speed=0;p.stam=1;p.blown=false;
+    window.advanceTime(4200);   // the countdown
+    const c0=G.course.get();
+    if(c0&&c0.started&&c0.idx===0)break;
+    G.course.cancelCourse(); G.hidePanels(); window.advanceTime(900);
+    if(++tries>=3)return {speed:0,started:false,idx:-1};
+   }
    window.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyW'}));window.dispatchEvent(new KeyboardEvent('keydown',{code:'ShiftLeft'}));
-   window.advanceTime(2500);
-   const s=JSON.parse(render_game_to_text());
+   /* Sample the LEG, not a stopwatch. This used to gallop for a flat 2.5 s and read the speed,
+      which worked only because a race began wherever the horse happened to be loitering — 19 m
+      from the first gate in one run and 34 m in the next, so 2.5 s was still inside the opening
+      leg. The start box lines every rider up ten metres out and square to the first flag, which
+      is a fairer race and a shorter first leg: it is crossed in about a second at a gallop, so a
+      fixed 2.5 s now reads the SECOND leg, where a first-leg trait is correctly doing nothing.
+      Stepping and keeping the last reading taken while c.idx is still 0 measures the thing the
+      trait actually claims, and it does not care where the start line moves to next. */
+   let last=null;
+   for(let i=0;i<16;i++){
+    window.advanceTime(150);
+    const st=JSON.parse(render_game_to_text());
+    if(!(st.course&&st.course.started)||st.course.index!==0)break;
+    last={speed:st.player.speed,started:true,idx:0};
+   }
    window.dispatchEvent(new KeyboardEvent('keyup',{code:'KeyW'}));window.dispatchEvent(new KeyboardEvent('keyup',{code:'ShiftLeft'}));
-   G.course.cancelCourse(); return {speed:s.player.speed,started:s.course&&s.course.started,idx:s.course&&s.course.index};};
+   G.course.cancelCourse();
+   G.hidePanels(); window.advanceTime(700);   // let the result card and the cancel settle before the next start
+   return last||{speed:0,started:false,idx:-1};};
   const a=await run(['earlybird']), b=await run([]); return {a,b};});
- check('Early Bird: faster on the first leg of a race',early.a.started&&early.a.idx===0&&early.a.speed>early.b.speed*1.05,early);
+ /* Both runs must actually have started. Without the b.started clause a control run that
+    never left the gate reports speed 0, and the comparison passes against nothing — which is
+    exactly what happened the first time this harness was rewritten. */
+ check('Early Bird: faster on the first leg of a race',early.a.started&&early.a.idx===0&&early.b.started&&early.b.idx===0&&early.a.speed>early.b.speed*1.05,early);
  /* swimming on the family horse */
  const riverZ=await page.evaluate(()=>window.__features.world.riverZ(40));
  await placeAt(40,riverZ,[],Math.PI/2); const swimS=await sampleRide(3000,true); const swim=swimS[swimS.length-1], swimAll=swimS.every(s=>s.swim), swimMax=Math.max(...swimS.map(s=>s.speed));
