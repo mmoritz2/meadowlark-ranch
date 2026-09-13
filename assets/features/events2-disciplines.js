@@ -417,11 +417,11 @@ export function install(G){
 
  /* ================================================================= per-course state ====== */
  const CUR={c:null,disc:null,fx:[],fenceFaults:0,refuseAt:{},lastRef:0,lastGrades:0,elim:false,
-  xcTime:0,xcJump:0,gateSum:0,gateN:0,gateMin:99,hazHits:0,raceAcc:null,lastIdx:0,
+  xcTime:0,xcJump:0,gateSum:0,gateN:0,watch:null,hazHits:0,raceAcc:null,lastIdx:0,
   show:null,fig:-1,figQ:null,handling:0,turnout0:0,camT:0,goldBefore:false,hud:''};
  function resetCur(c){
   CUR.c=c||null; CUR.disc=c?discOf(c.ev).k:null; CUR.fx=[]; CUR.fenceFaults=0; CUR.refuseAt={}; CUR.lastRef=0; CUR.lastGrades=0;
-  CUR.elim=false; CUR.xcTime=0; CUR.xcJump=0; CUR.gateSum=0; CUR.gateN=0; CUR.gateMin=99; CUR.hazHits=0; CUR.raceAcc=null;
+  CUR.elim=false; CUR.xcTime=0; CUR.xcJump=0; CUR.gateSum=0; CUR.gateN=0; CUR.watch=null; CUR.hazHits=0; CUR.raceAcc=null;
   CUR.lastIdx=0; CUR.place=null; CUR.gold=false; CUR.rib=0; CUR.show=null; CUR.fig=-1; CUR.figQ=null; CUR.handling=0; CUR.turnout0=0; CUR.camT=0; CUR.hud=''; CUR.demoted=false; CUR.lifted=0;
  }
  function addFx(g){ if(g)CUR.fx.push(g); }
@@ -882,7 +882,19 @@ export function install(G){
   try{G.money.addCoins(60);}catch(e){}
   setTimeout(()=>{try{G.course.cancelCourse();}catch(e){}},0);
  }
- function commitGate(){ if(CUR.gateMin<90){CUR.gateSum+=Math.min(4.6,CUR.gateMin);CUR.gateN++;CUR.gateMin=99;} }
+ /* A gate cannot be marked on the range at which it scores. course-engine rings the gate and
+    advances the course the instant the rider is inside 4.6 units of it, so 4.6 is the closest
+    range anyone is ever observed at while the gate is still the live one — which marked a rider
+    galloping dead through the middle at 3% and put the gold ribbon out of everybody's reach.
+    She passes the middle a few frames AFTER the ring lights, so the gate is kept under watch
+    until she is clear of it and the mark is the nearest she actually came to the flag. */
+ function watchGate(j){ CUR.watch={j,min:Math.hypot(player.pos.x-j.x,player.pos.z-j.z)}; }
+ function tickWatch(){
+  const w=CUR.watch; if(!w)return;
+  const d=Math.hypot(player.pos.x-w.j.x,player.pos.z-w.j.z);
+  if(d<w.min)w.min=d; else if(d>w.min+0.6||d>9)commitGate();      // she is going away again: that was the nearest
+ }
+ function commitGate(){ const w=CUR.watch; if(!w)return; CUR.gateSum+=Math.min(4.6,w.min); CUR.gateN++; CUR.watch=null; }
  function gateClean(){ return CUR.gateN?clamp(1-(CUR.gateSum/CUR.gateN)/4.6,0,1):1; }
  function raceScore(c){
   const S=c.ce||{}, t=c.t||0, par=c.par||1;
@@ -914,13 +926,13 @@ export function install(G){
   priceGrades(c);
   /* ---- races: gate cleanliness, hazards hit ---- */
   if(S.kind==='race'||S.kind==='xc'){
-   const j=fenceOf(c);
-   if(j&&j.kind==='gate'){ const d=Math.hypot(player.pos.x-j.x,player.pos.z-j.z); if(d<CUR.gateMin)CUR.gateMin=d; }
    if(c.idx!==CUR.lastIdx){
     const was=c.jumps[CUR.lastIdx];
-    if(was&&was.kind==='gate'){const d=Math.hypot(player.pos.x-was.x,player.pos.z-was.z);if(d<CUR.gateMin)CUR.gateMin=d;}
-    commitGate(); CUR.lastIdx=c.idx;
+    commitGate();                                        // whatever was still being watched is finished with
+    if(was&&was.kind==='gate')watchGate(was);
+    CUR.lastIdx=c.idx;
    }
+   tickWatch();
    for(const h of (c.hazards||[])){ if(h.cd>2.9&&!h._ev2)  {h._ev2=1;CUR.hazHits++;} if(h.cd<=0)h._ev2=0; }
   }
   if(S.kind==='race'){ CUR.raceAcc=raceScore(c); S.raceAcc=CUR.raceAcc; S.gateClean=gateClean(); tickGhosts(c,dt,t); CUR.place=ghostPlace(c); }
