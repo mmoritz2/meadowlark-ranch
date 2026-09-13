@@ -157,7 +157,12 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('A rarity bonus table: fixed pattern per rarity, primary holds the top value',P&&Object.values(P).every(v=>v.ok&&v.prim),P);
  check('B names encode primary adjective, style word, slot and "of secondary"; saddles/bridles carry a style',r.naming&&r.naming.bad===0&&r.naming.adjBad===0&&r.naming.ofBad===0&&r.naming.setBad===0&&r.naming.styleBad===0&&r.naming.western>0,r.naming);
  check('B legacy names still resolve their set (Starlit, Silver-stitched) and Common stays set-less',r.legacy&&r.legacy.starlit==='Starlit'&&r.legacy.silver==='Silver'&&r.legacy.plain===null&&r.legacy.legacyBonus.accel===4,r.legacy);
- check('C 11 Legendary + 10 Epic + 5 Rare sets',r.setCounts&&r.setCounts.L===11&&r.setCounts.E===10&&r.setCounts.R===5&&r.setCounts.total===26,r.setCounts);
+ /* The three rarity rosters are the invariant worth defending: those 26 sets are designed, named
+    and balanced, and losing one is a real fault. The TOTAL is not an invariant — index.js lists
+    TACK_SETS[k]= as a sanctioned extension point, and the seasons package now adds four seasonal
+    Epic sets through it. Pinning the total to 26 meant the first package to use a documented
+    extension point failed a test belonging to a different package, so the total is now a floor. */
+ check('C 11 Legendary + 10 Epic + 5 Rare sets (plus any a package has added)',r.setCounts&&r.setCounts.L===11&&r.setCounts.E===10&&r.setCounts.R===5&&r.setCounts.total>=26,r.setCounts);
  check('C every Legendary piece of a set wears the same +5/+5/+2 on the set stats',r.legendGroups&&r.legendGroups.mismatch===0&&r.legendGroups.sets>=8,r.legendGroups);
  check('C four Kestrel pieces: set bonus counts 4/4 and effStats carries the four-piece bonus',r.kestrel&&r.kestrel.counts.Kestrel===4&&r.kestrel.speedGain>=5+3+4&&r.kestrel.accelGain>=5+3,r.kestrel);
  check('C worn Kestrel saddle tints the leather to the set colour',r.tint&&r.tint.has&&r.tint.hex===r.tint.want,r.tint);
