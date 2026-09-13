@@ -6,6 +6,7 @@
 
    Usage:  QA_URL=http://127.0.0.1:8551 NODE_PATH=$(npm root -g) node tools/qa-events2-disciplines.cjs */
 const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');   // the backend comes from the platform, never baked in
 const base=(process.env.QA_URL||'http://127.0.0.1:8551').replace(/\/$/,'');
 const url=base+'/ranch3d.html?qa=events2-disciplines&fresh='+Date.now();
 const checks=[];
@@ -16,7 +17,7 @@ let browser=null;
 setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(browser)await browser.close();}catch(e){}process.exit(3);},600000).unref();
 
 (async()=>{
- browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const page=await browser.newPage({viewport:{width:1280,height:800}});
  const errors=[];
  page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));

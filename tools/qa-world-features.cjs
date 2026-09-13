@@ -33,6 +33,14 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  stage('horseReady');
  const ev=(fn,...args)=>page.evaluate(fn,...args);
 
+ /* The context bar is repainted from the render loop, on a REAL animation frame — advanceTime
+    moves the simulation clock but does not hand the browser a frame, so a prompt read straight
+    after a teleport can still be the one from the previous location. That is exactly how the
+    auction-house and balloon checks used to fail: together, each reading the OTHER's prompt, one
+    place behind. Waiting on two real frames lets the bar catch up. Installed in the page once so
+    every ctx read can await it. */
+ await page.evaluate(()=>{ window.settleCtx=()=>new Promise(res=>requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(res,30)))); });
+
  /* ---- install + regions + gating ---- */
  const r1=await ev(()=>{
   const G=window.__features,P=G.worldPkg,out={};
@@ -100,7 +108,7 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('four town arenas built',r2.arenas.length===4,r2.arenas);
 
  /* ---- towns: buildings, doors, townsfolk ---- */
- const r3=await ev(()=>{
+ const r3=await ev(async()=>{
   const G=window.__features,P=G.worldPkg,out={};
   out.landmarks=P.LANDMARKS.length; out.byTown=P.TOWNS.map(t=>t.id+':'+t.buildings.length);
   out.walls=P.TOWNS.find(t=>t.id==='barleyfold').wallSegs;
@@ -111,7 +119,11 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   out.moved=P.townsfolk.filter((f,i)=>Math.hypot(f.x-before[i][0],f.z-before[i][1])>0.5).length;
   /* the auction house door opens the market */
   const dr=G.world.things.find(t=>t.kind==='door'&&t.id==='cottonwood:auction');
-  pl.pos.set(dr.x+dr.reach-1.2,0,dr.z); pl.speed=0; window.advanceTime(120);
+  /* Half a second, not 120 ms. The context bar is repainted on a frame, and under load — this
+     machine runs several agents at once — 120 ms was not always long enough for the prompt to
+     catch up with a teleport. The tell was that the auction-house and balloon checks failed
+     together reading EACH OTHER's prompt, one location behind, rather than reading noise. */
+  pl.pos.set(dr.x+dr.reach-1.2,0,dr.z); pl.speed=0; window.advanceTime(300); await settleCtx();
   out.ctx=document.getElementById('ctx').textContent;
   window.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyE'}));
   out.shop=document.getElementById('shopPanel').style.display; out.shopHasMarket=/[Mm]arket|Auction|auction|Sell|sell/.test(document.getElementById('shopPanel').textContent);
@@ -168,10 +180,10 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('M toggles the big map',r5.map==='flex',r5.map);
 
  /* ---- balloon ---- */
- const r6=await ev(()=>{
+ const r6=await ev(async()=>{
   const G=window.__features,P=G.worldPkg,out={};
   const pl=G.horse.player; const st=P.BALLOON_STATIONS[0];
-  pl.pos.set(st.x+3.5,0,st.z); pl.speed=0; window.advanceTime(120);
+  pl.pos.set(st.x+3.5,0,st.z); pl.speed=0; window.advanceTime(300); await settleCtx();
   out.ctx=document.getElementById('ctx').textContent;
   window.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyE'}));
   const v=P.vehicle(); out.kind=v&&v.kind; if(v)v.dur=8;
@@ -190,10 +202,10 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('balloon lands at a station and counts',r6.after===null&&r6.landedNear.some(d=>d<12)&&r6.balloons===1,{near:r6.landedNear,n:r6.balloons});
 
  /* ---- ferry ---- */
- const r7=await ev(()=>{
+ const r7=await ev(async()=>{
   const G=window.__features,P=G.worldPkg,out={};
   const pl=G.horse.player; const d0=P.FERRY.docks[0];
-  pl.pos.set(d0.x,0,d0.bz); pl.speed=0; window.advanceTime(120);
+  pl.pos.set(d0.x,0,d0.bz); pl.speed=0; window.advanceTime(300); await settleCtx();
   out.ctx=document.getElementById('ctx').textContent;
   window.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyE'}));
   const v=P.vehicle(); out.kind=v&&v.kind; if(v)v.dur=6;
@@ -277,13 +289,13 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('wildDone from a finisher pays the helper and clears the horse',r9.helperPaid.dc>=300&&r9.helperPaid.members===r9.after.members-1&&r9.chatSwallowed,r9.helperPaid);
 
  /* ---- sanctuaries + companion ---- */
- const r10=await ev(()=>{
+ const r10=await ev(async()=>{
   const G=window.__features,P=G.worldPkg,out={};
   G.save.sync(s=>{s.sanctuary.pines=[{breed:'bay',body:'#8a5a2b',mane:'#332214',name:'Sage',from:'wild',at:Date.now()},{breed:'grey',body:'#b9bec6',mane:'#787f8a',name:'Reed',from:'runaway',at:Date.now()}];});
   const sc=P.SANCTUARIES[0]; P.refreshSanctuary(sc);
   let n=0; G.scene.traverse(o=>{if(o.name==='sanctuary-horse'&&Math.hypot(o.position.x-sc.x,o.position.z-sc.z)<sc.r)n++;});
   out.shown=n;
-  const pl=G.horse.player; pl.pos.set(sc.x,0,sc.z+sc.r+3); pl.speed=0; window.advanceTime(120);
+  const pl=G.horse.player; pl.pos.set(sc.x,0,sc.z+sc.r+3); pl.speed=0; window.advanceTime(300); await settleCtx();
   out.ctx=document.getElementById('ctx').textContent;
   window.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyE'}));
   const d=document.getElementById('dlg'); out.dlg={shown:d.style.display,sage:/Sage/.test(d.textContent),reed:/Reed/.test(d.textContent)}; d.style.display='none';
