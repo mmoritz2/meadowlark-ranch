@@ -274,27 +274,42 @@ const shut=p=>p.evaluate(()=>{try{hidePanels();}catch(e){document.querySelectorA
  check('the HUD names the piece and prices it',/\S/.test(hud.name||'')&&hud.pills>=2,{name:hud.name,pills:hud.pills});
  check('BUILD-12: the HUD carries a session budget',/placed/.test(hud.budget||''),{budget:hud.budget});
 
+ /* The valley's scenery is scattered afresh on every boot — two loads of the same page differ
+    by a dozen colliders — so a hard-coded "open pasture" coordinate is clear only by luck. The
+    first draft of this file used (-70,-40), and a tree landing within two metres of it failed
+    three checks at once and made the suite report 47/50 on one run and 50/50 on the next. Ask
+    the game which spot is genuinely clear and hang the rest of the build test on that. */
+ const FREE=await page.evaluate(()=>{
+  const G=window.__features, t=G.ranchSys.build.type;
+  for(let r=34;r<=170;r+=6)for(let k=0;k<24;k++){
+   const a=k/24*Math.PI*2+r*0.7, x=Math.round(Math.cos(a)*r), z=Math.round(Math.sin(a)*r);
+   if(G.ranchSys.decorOk(t,x,z)===null)return [x,z];
+  }
+  return null;
+ });
+ check('the run found a genuinely clear spot to build on',Array.isArray(FREE),{spot:FREE});
+
  /* BUILD-3: the refusal reason decorOk() computes must reach the screen */
- const why=await page.evaluate(async()=>{
+ const why=await page.evaluate(async(FREE)=>{
   const G=window.__features, B=G.ranchSys.build;
   B.lastPt=[0,0];                                   // dead centre of the arena — always illegal
   await new Promise(r=>setTimeout(r,500));
   const bad=(document.querySelector('#buildHud .c3-hudState')||{}).textContent||'';
   const badCls=(document.querySelector('#buildHud .c3-hudState')||{}).className||'';
-  B.lastPt=[-70,-40];                               // open pasture — legal
+  B.lastPt=[FREE[0],FREE[1]];                       // a spot the game itself just called clear
   await new Promise(r=>setTimeout(r,500));
   const ok=(document.querySelector('#buildHud .c3-hudState')||{}).textContent||'';
   return {bad:bad.trim(),badCls,ok:ok.trim(),truth:G.ranchSys.decorOk(B.type,0,0)};
- });
+ },FREE);
  check('BUILD-3: the HUD shows the reason a spot is refused, not just a red border',
   why.bad.indexOf(why.truth)>=0&&/bad/.test(why.badCls),why);
  check('BUILD-3: a legal spot reads as legal',/place it/i.test(why.ok),{ok:why.ok});
 
  /* place a piece for real, then take it back with the HUD control */
- const place=await page.evaluate(async()=>{
+ const place=await page.evaluate(async(FREE)=>{
   const G=window.__features;
   const n0=(G.save.fresh().decor||[]).length, c0=Math.floor(G.save.fresh().coins);
-  G.ranchSys.placeAt(-70,-40);
+  G.ranchSys.placeAt(FREE[0],FREE[1]);
   await new Promise(r=>setTimeout(r,600));
   const n1=(G.save.fresh().decor||[]).length, c1=Math.floor(G.save.fresh().coins);
   const budget=(document.querySelector('#buildHud .c3-hudBudget')||{}).textContent||'';
@@ -304,7 +319,7 @@ const shut=p=>p.evaluate(()=>{try{hidePanels();}catch(e){document.querySelectorA
   await new Promise(r=>setTimeout(r,600));
   const n2=(G.save.fresh().decor||[]).length, c2=Math.floor(G.save.fresh().coins);
   return {n0,n1,n2,c0,c1,c2,budget,undoShown};
- });
+ },FREE);
  check('placing a piece really places it, and the HUD budget counts it',
   place.n1===place.n0+1&&place.c1<place.c0&&/1 placed/.test(place.budget),place);
  check('BUILD-12: ↩ Remove last takes the piece back out of the world',
