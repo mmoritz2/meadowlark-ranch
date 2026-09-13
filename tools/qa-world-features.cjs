@@ -80,6 +80,13 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   const G=window.__features,P=G.worldPkg,out={};
   const a1=G.tables.EVENTS3.find(e=>e.id==='a1'); out.at=a1.at;
   const v=G.tables.REGIONS.find(r=>r.id==='barleyfold').venue;
+  /* The Farm Derby is a level-3 event and the entry gate is quite right to turn away the
+     level-1 horse a fresh save starts with. This check is about WHERE the fences land, not
+     about who is allowed to enter, so put the ridden horse over the bar first. Without it
+     startCourse refuses, no course exists, and the check reads a working venue as a broken
+     one — which is exactly what it has been doing. */
+  const rh=G.horse.ridden(); if(rh)rh.level=Math.max(rh.level||1,a1.lvl||1);
+  out.lvl=rh&&rh.level;
   G.horse.player.pos.set(0,0,5);
   G.course.startCourse(a1); const c=G.course.get();
   out.jump0=c&&c.jumps[0]&&{x:Math.round(c.jumps[0].x),z:Math.round(c.jumps[0].z)}; out.venue=v;
