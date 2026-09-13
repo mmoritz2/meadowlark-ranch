@@ -346,10 +346,17 @@ export function install(G){
 
  /* ---- 8. tokens: sources and the wallet ---------------------------------------------- */
  function addBtok(n,why){let v=0;sync(s=>{s.btok=(s.btok||0)+n;v=s.btok;});G.money.refreshWallet();if(n>0)toast('💞 +'+n+' breeding token'+(n>1?'s':'')+(why?' — '+why:'')+' ('+v+')');}
- G.on('courseFinish',({ev,stars,RB})=>{
+ G.on('courseFinish',({c,ev,stars,RB})=>{
   if(!ev)return; let n=0,why=[];
   let first=false; try{const s=fresh();first=!!(s&&!(s.trophies&&s.trophies[ev.id]));}catch(e){}
-  if(ev.race&&stars>=2){n++;why.push('race');} if(!ev.race&&stars>=3){n++;why.push('clean round');}
+  /* events-pvp landed a token of its own for a three-star race a day after this package did,
+     and it pays straight into s.btok with its own toast — so a clean race handed the player two
+     tokens and two messages for one finish. It records what it paid on the course as c.btGained
+     and its hook runs first, so let that one stand and only pay here for a race it did not cover.
+     With the racing package absent (or on any other finish) btGained is undefined and this pays
+     as it always did; the real tidy-up is deleting the duplicate grant in events-pvp.js. */
+  const racingPaid=!!(c&&c.btGained&&stars>=3&&!ev.friendly);
+  if(ev.race&&stars>=2&&!racingPaid){n++;why.push('race');} if(!ev.race&&stars>=3){n++;why.push('clean round');}
   if(first){n++;why.push('first win');} if(RB&&RB.featured){n++;why.push('featured');}
   if(n)setTimeout(()=>addBtok(n,why.join(' + ')),900);
   if(stars>=3&&Math.random()<(RB&&RB.featured?0.4:0.2)){const k=POT_KEYS[Math.floor(Math.random()*POT_KEYS.length)];sync(s=>{s.items['pot_'+k]=(s.items['pot_'+k]||0)+1;});setTimeout(()=>{try{toast(POTIONS[k].emoji+' A '+POTIONS[k].label+' for the foaling barn!');}catch(e){}},1600);}
@@ -519,7 +526,15 @@ export function install(G){
  G.world.addBuilding({x:-31,z:-38,rot:0.55,r:2.6,label:'🍼 Marta\'s Foaling Barn',build:()=>G.world.ranchArchitecture.buildOutbuilding({width:4.2,depth:3.2,height:2.9,animatedDoorOpening:{width:1.3,height:2.0}})});
  G.world.addThing({kind:'foalbarn',id:'foalbarn',x:-29,z:-35,g:null,reach:5.5,label(){const s=fresh();const br=s&&s.breeding;return br?(Date.now()-br.since>=br.ms?'🍼 A foal is here! (E)':'🍼 Foaling barn — due in '+mins(br.ms-(Date.now()-br.since))+' (E)'):'🍼 Foaling barn — breed (E)';},use(){checkBirth();G.ui.open('breedPanel');}});
  G.world.mapMarkers.push({x:-31,z:-38,glyph:'🍼',label:'Foaling barn'}); G.world.miniMarkers.push({x:-31,z:-38,col:'#e8a0c8'});
- G.quest.story.insertBefore(7,[{npc:'marta',label:'Breed your first foal',text:'You\'ve tamed a wild one — now let\'s raise one. Pick a stallion and a mare who trust you (❤️ '+BREED_BOND+'+), and I\'ll see the foal safely born. Everything a foal is, it gets from its parents: coat, stats, and a trait of its own.',type:'breed',goal:1,reward:{c:500,g:5,items:{pot_mirror:1}}}],'breeding-tutorial');
+ /* The tutorial belongs immediately after 'Tame a wild horse' — Marta's line opens with "you've
+    tamed a wild one", and you need a second horse before a pairing means anything. A bare index
+    only pointed there while nothing else spliced chapters in ahead of it; tack-wardrobe and
+    story-quests both do now (prologue, builder, the two search chapters), and the mission had
+    drifted all the way back to eighth in the story, between the clean jump and the first fence.
+    Anchor on the mission itself so a neighbour's chapter never moves it again, and fall back to
+    the old slot only if book one ever loses its taming mission altogether. */
+ {const ST=G.quest.STORY, tame=ST.findIndex(m=>m.type==='tame'&&!m.ch);
+  G.quest.story.insertBefore(tame<0?Math.min(7,ST.length):tame+1,[{npc:'marta',label:'Breed your first foal',text:'You\'ve tamed a wild one — now let\'s raise one. Pick a stallion and a mare who trust you (❤️ '+BREED_BOND+'+), and I\'ll see the foal safely born. Everything a foal is, it gets from its parents: coat, stats, and a trait of its own.',type:'breed',goal:1,reward:{c:500,g:5,items:{pot_mirror:1}}}],'breeding-tutorial');}
 
  /* ---- 14. the breeding panel --------------------------------------------------------- */
  function optRow(s,e){const h=e.h;return '<option value="'+h.id+'">'+esc(h.name)+' · '+esc(lbl(h.breed))+' · ❤️'+Math.round(h.bond||0)+(wildWindow(h)?' · 🌿 wild '+mins(wildLeft(h)):'')+'</option>';}

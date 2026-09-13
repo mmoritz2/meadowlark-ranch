@@ -64,7 +64,7 @@ export function install(G){
   return 'Bonds from: '+(src.length?src.join(', '):'everything evenly')+' · '+(P.whistleLv<=0?'always answers the whistle':'answers the whistle from bond Lv '+P.whistleLv)+' · when blown: '+({stop:'stops dead and sulks',balk:'balks for a moment',slow:'slows to a walk'}[P.exhaust]||'slows')+' · '+(P.fearless?'unafraid of wildlife':P.spookMul>1?'spooks easily':'can spook');};
 
  /* ---- save fields ---------------------------------------------------------------------- */
- G.save.ensure(s=>{s.emotes=s.emotes||{};if(s.magnif==null)s.magnif=0;if(s.whistleHorse===undefined)s.whistleHorse=null;if(s.dirtSeen==null)s.dirtSeen=0;});
+ G.save.ensure(s=>{s.emotes=s.emotes||{};if(s.magnif==null)s.magnif=0;s.magnifEv=s.magnifEv||{};if(s.whistleHorse===undefined)s.whistleHorse=null;if(s.dirtSeen==null)s.dirtSeen=0;});
  G.save.ensureHorse(h=>{if(h.bondDay===undefined)h.bondDay=null;});
 
  /* ---- bond ------------------------------------------------------------------------------ */
@@ -287,12 +287,19 @@ export function install(G){
  G.on('courseFinish',({ev,RB})=>{
   const R=lastRib&&lastRib.ev===ev?lastRib:{magnif:false,rib:(RB&&RB.rib)||1}; lastRib=null;
   let g=0,mag=0;
-  G.save.sync(s=>{const h=s.horses[G.horse.rideIdx()];if(R.magnif){s.magnif=(s.magnif||0)+1;mag=s.magnif;}if(h)g=addBond(s,h,R.magnif?6:R.rib,'ribbon');});
+  G.save.sync(s=>{const h=s.horses[G.horse.rideIdx()];if(R.magnif){s.magnif=(s.magnif||0)+1;mag=s.magnif;s.magnifEv=s.magnifEv||{};if(ev&&ev.id)s.magnifEv[ev.id]=1;}if(h)g=addBond(s,h,R.magnif?6:R.rib,'ribbon');});
   if(R.magnif){toast('🏵️ Magnificent ribbon! +'+g+' bond');G.quest.dailyEvt('magnif',1);try{G.sGem();}catch(e){}}
   else if(g>0)toast('🎀 +'+g+' bond for the ribbon');
   syncLiveBond(); flushToasts();
  });
- G.ui.eventRow((ev,s)=>(s.ribbons&&s.ribbons[ev.id]>=4)?'<span title="Magnificent ribbon: under par with no faults">🏵️</span>':'');
+ /* The glyph used to read a fourth ribbon as the magnificent one, which was true while the fourth
+    was the one for a faultless round. The course engine now spends that fourth on a gold ribbon,
+    which wants 95% accuracy as well, so a player could ride under par, take the 🏵️ toast and the
+    bond, and still find nothing on the events board — the award worked and nothing showed it.
+    Read the same fact the award records instead, and keep the old test as a fallback so saves
+    from before this still show their glyphs: rib 4 implies three stars and gold, hence no faults,
+    hence magnificent, so it can only ever under-report, never invent one. */
+ G.ui.eventRow((ev,s)=>((s.magnifEv&&s.magnifEv[ev.id])||(s.ribbons&&s.ribbons[ev.id]>=4))?'<span title="Magnificent ribbon: under par with no faults">🏵️</span>':'');
  G.quest.addAch({id:'magnif5',icon:'🏵️',label:'Magnificent',desc:'Earn 5 magnificent ribbons (under par, no faults)',v:s=>s.magnif||0,goal:5,r:{g:3,k:1}});
  G.quest.addAch({id:'spook10',icon:'🧘',label:'Bombproof',desc:'Settle your horse after 10 spooks',v:s=>(s.life&&s.life.spook)||0,goal:10,r:{c:250}});
  G.quest.addAch({id:'emote25',icon:'🎭',label:'Show pony',desc:'Show off 25 tricks and emotes',v:s=>(s.life&&s.life.emote)||0,goal:25,r:{c:200,g:1}});

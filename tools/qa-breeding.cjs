@@ -40,7 +40,12 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   out.npc=G.quest.NPC_DEFS.some(d=>d.id==='marta')&&G.world.npcList.some(e=>e.def.id==='marta');
   out.things=['foalbarn','eggnest','foalplay'].filter(id=>!G.world.things.some(t=>t.id===id));
   out.marker=G.world.mapMarkers.some(m=>m.glyph==='🍼');
-  out.story={label:G.quest.STORY[7]&&G.quest.STORY[7].label,npc:G.quest.STORY[7]&&G.quest.STORY[7].npc,type:G.quest.STORY[7]&&G.quest.STORY[7].type,before:G.quest.STORY[6].label,after:G.quest.STORY[8].label};
+  /* Find the mission, do not assume where it sits: half a dozen packages splice chapters into
+     the story through G.quest.story.insertBefore, so its index is whatever they leave it. What
+     matters is the slot — straight after the taming mission, still inside book one. */
+  {const S=G.quest.STORY, i=S.findIndex(m=>m.type==='breed'&&m.label==='Breed your first foal'), fin=S.findIndex(m=>m.type==='event'&&m.ev==='w2');
+   out.story={i,label:i>0&&S[i].label,npc:i>0&&S[i].npc,type:i>0&&S[i].type,before:i>0&&S[i-1].label,after:i>0&&S[i+1]&&S[i+1].label,beforeFinal:i>0&&i<fin};
+   out.breedIdx=i; out.mig=G.save.fresh().mig;}
   out.dailies=['foalplay','egg'].filter(t=>!G.quest.DAILYQ.some(d=>d.type===t)); out.breedDailyTok=(G.quest.DAILYQ.find(d=>d.type==='breed')||{r:{}}).r.btok;
   out.achs=['foal1','foalq','coats10','hatch1','wildfoal1','prestige1','trait3','recipe1'].filter(id=>!G.quest.ACHS.some(a=>a.id===id));
   out.questTab=!!G.ui.defs;
@@ -75,7 +80,11 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('22 class traits in the shared TRAITS registry (6+3 pure, 6+3 cross, 4 prestige) beside the roster\'s',A.traits&&A.traits.n===22&&A.traits.inRegistry===0&&A.traits.pure===9&&A.traits.cross===9&&A.traits.prestige===4&&A.traits.rosterKept,A.traits);
  check('panels + dock button after the stable',A.panels&&A.panels.length===0&&A.dock.btn&&A.dock.prev==='stableBtn',{panels:A.panels,dock:A.dock});
  check('Marta, the barn, the nest and the play prompt exist',A.npc&&A.things.length===0&&A.marker,{npc:A.npc,things:A.things,marker:A.marker});
- check('tutorial mission inserted after Tame a wild horse, given by Marta',A.story&&A.story.label==='Breed your first foal'&&A.story.npc==='marta'&&A.story.type==='breed'&&/Tame/.test(A.story.before)&&/Championship/.test(A.story.after),A.story);
+ /* 'after' used to name the Championship Final, which sat next to the taming mission in the base
+    table. story-quests has since spliced its three-ribbon chapter in between them through
+    G.quest.story.insertBefore('sq-ribbons'), so the tutorial can no longer touch both at once;
+    the placement invariant that survives is the anchor itself plus book one. */
+ check('tutorial mission inserted after Tame a wild horse, given by Marta',A.story&&A.story.label==='Breed your first foal'&&A.story.npc==='marta'&&A.story.type==='breed'&&/Tame/.test(A.story.before)&&A.story.beforeFinal,A.story);
  check('dailies, breed daily pays a token, achievements',A.dailies.length===0&&A.breedDailyTok===1&&A.achs.length===0,{dailies:A.dailies,tok:A.breedDailyTok,achs:A.achs});
  check('save shape: breeding/foalq null, coatsFound, horse prestige/genes/sex/blood',A.save&&A.save.breeding===null&&A.save.foalq===null&&A.save.coats==='object'&&A.save.prestige===null&&A.save.genes&&/^[mf]$/.test(A.save.sex)&&A.save.blood,A.save);
  check('cost by rarity: Common 300/1, Dragon×Mythic 2200/5, Ascendant 2600/5, Epic 1100/3',A.cost&&A.cost.cc.c===300&&A.cost.cc.t===1&&A.cost.dm.c===2200&&A.cost.dm.t===5&&A.cost.asc.c===2600&&A.cost.ep.c===1100&&A.cost.ep.t===3&&A.cost.dm.gestMs===28*60e3,A.cost);
@@ -90,10 +99,17 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('render_game_to_text carries breeding',A.state&&A.state.btok===0&&A.state.pairing===null&&A.state.foalq===null,A.state);
 
  /* ---- seeded save: the barn end to end -------------------------------------------- */
- await page.evaluate(()=>{
+ await page.evaluate(({breedIdx,mig})=>{
   const now=Date.now(), mk=(id,name,breed,sex,body,mane,extra)=>Object.assign({id,name,breed,sex,colors:{body,mane},horn:false,rainbow:false,wings:false,dragon:false,coat:null,stats:{speed:5,stamina:5,jump:5,accel:5,agility:5},sxp:{},level:6,xp:0,bond:70,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null,out:true},extra||{});
   const gBay={E:['E','e'],A:['a','a'],Cr:['n','n'],D:['n','n'],G:['n','n'],Rn:['n','n'],To:['n','n'],Lp:['n','n'],Z:['n','n']};
-  const sv={v:2,ranchName:'Meadowlark Ranch',founded:now-864e5*9,coins:20000,gems:60,items:{carrot:10,apple:4,hay:3,pot_mirror:1,pot_hornbud:1},nextId:10,decor:[],projects:{},trophies:{},wild:null,wildTrust:0,muted:false,lastSeen:now,lastDaily:'',questDate:'',quests:[],totalRaces:0,started:true,keys:1,tack:[],btok:3,story:{idx:7,prog:0,v:1},mig:{'breeding-tutorial':1},
+  /* The birth has to land on a save whose story cursor is ON the tutorial, and that index only
+     exists once every package has spliced its chapters in — so take it, and the migration stamps
+     that go with it, from the game we just booted rather than writing a number here. Carrying the
+     stamps over is what keeps the cursor still: storyInsertBefore walks a saved cursor forward
+     once per tag, and a seed that arrives pre-stamped has already had that done to it. sq-init is
+     dropped because it is not a splice — it is the pass that decides the save's era. */
+  const mg=Object.assign({},mig); delete mg['sq-init'];
+  const sv={v:2,ranchName:'Meadowlark Ranch',founded:now-864e5*9,coins:20000,gems:60,items:{carrot:10,apple:4,hay:3,pot_mirror:1,pot_hornbud:1},nextId:10,decor:[],projects:{},trophies:{},wild:null,wildTrust:0,muted:false,lastSeen:now,lastDaily:'',questDate:'',quests:[],totalRaces:0,started:true,keys:1,tack:[],btok:3,story:{idx:breedIdx,prog:0,v:1},mig:mg,
    horses:[
     mk(1,'Ash','bay','m','#8a5a2b','#332214',{trait:{id:'truebred',lvl:1},genes:gBay,mark:'points',markCol:'#241a12'}),
     mk(2,'Bramble','bay','f','#8a5a2b','#332214',{trait:{id:'truebred',lvl:1},genes:gBay,mark:'points',markCol:'#241a12'}),
@@ -104,7 +120,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
     mk(9,'Shell','ancientdrake','f','#0d0a12','#ffb44a',{wings:true,dragon:true,coat:'eclipse',glow:true,ability:'fly',foal:true,egg:true,eggWarm:4,eggLaid:now-60e3,born:now-60e3,level:1,bond:30,lineage:{sire:5,dam:6,gen:1,sireName:'Ember',damName:'Nova'}}),
    ]};
   localStorage.setItem('starRanchFable_v1',JSON.stringify(sv));
- });
+ },{breedIdx:A.breedIdx,mig:A.mig});
  stage('seeded');
  await page.waitForLoadState('networkidle',{timeout:60000}).catch(()=>{}); await page.waitForTimeout(1200);
  await page.goto(base+'/ranch3d.html?qa=breeding&seeded='+Date.now(),{waitUntil:'load',timeout:120000}); stage('seeded loaded');
@@ -131,7 +147,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   /* time-warp and collect */
   warp(); const n0=sv().horses.length; B.checkBirth(); const s2=sv(); const foal=s2.horses[s2.horses.length-1];
   out.birth={n:s2.horses.length-n0,foal:foal.foal,name:foal.name,unique:s2.horses.filter(h=>h.name===foal.name).length===1,breed:foal.breed,sire:foal.lineage.sire,dam:foal.lineage.dam,sireName:foal.lineage.sireName,gen:foal.lineage.gen,cls:foal.lineage.cls,trait:foal.trait,how:foal.traitHow,blood:foal.blood,genes:!!foal.genes,geneFromParents:foal.genes&&foal.genes.A.join('')==='aa',coatLabel:foal.coatLabel,coatHow:foal.coatHow,sex:foal.sex,prestige:foal.prestige,breeding:s2.breeding,foalq:s2.foalq,companion:s2.companion,foals:s2.stats.foals,coatsFound:Object.keys(s2.coatsFound),story:JSON.parse(render_game_to_text()).story,daily:(s2.life&&s2.life.breed)||0,btokBadge:$('btokEl').style.display!=='none'};
-  out.foalId=foal.id;
+  out.foalId=foal.id; out.breedIdx=G.quest.STORY.findIndex(m=>m.type==='breed'&&m.label==='Breed your first foal');
   return out;
  });
  check('legacy migration: wild string → window object, genes derived for every horse, egg kept',D1.migrated&&D1.migrated.wild==='object'&&D1.migrated.genesAll&&D1.migrated.legacyEgg,D1.migrated);
@@ -140,7 +156,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('pay → confirm card → pairing stored, 300 🪙 charged, 90 s gestation, barn busy',D1.confirmCard&&D1.paired&&D1.paired.has&&D1.paired.ms===90000&&D1.paired.dc===300&&D1.paired.mode==='c'&&D1.paired.gestCard&&D1.paired.busy,D1.paired);
  check('no birth before the due time',D1.notDue);
  check('birth: purebred bay foal, sire/dam ids + names, True Bred II (levelled), blood bay 100, coat from the parents\' genes (a mutation layers on top, never replaces)',D1.birth&&D1.birth.n===1&&D1.birth.foal&&D1.birth.unique&&D1.birth.breed==='bay'&&D1.birth.sire===1&&D1.birth.dam===2&&D1.birth.sireName==='Ash'&&D1.birth.gen===1&&D1.birth.cls==='pure'&&D1.birth.trait&&D1.birth.trait.id==='truebred'&&D1.birth.trait.lvl===2&&D1.birth.how==='levelled'&&D1.birth.blood.bay===100&&D1.birth.genes&&D1.birth.geneFromParents&&/^(genes|mutation)$/.test(D1.birth.coatHow||'')&&/Black|Chestnut/.test(D1.birth.coatLabel||''),D1.birth);
- check('birth side effects: pairing cleared, foal questline started on it, it follows you, stats.foals, coat registry, tutorial mission progressed, daily counted, token HUD shown',D1.birth&&D1.birth.breeding===null&&D1.birth.foalq&&D1.birth.foalq.idx===0&&D1.birth.foalq.active===D1.foalId&&D1.birth.companion===D1.foalId&&D1.birth.foals===1&&D1.birth.coatsFound.length===1&&D1.birth.story.idx===7&&D1.birth.story.prog>=1&&D1.birth.daily>=1&&D1.birth.btokBadge,{breeding:D1.birth&&D1.birth.breeding,foalq:D1.birth&&D1.birth.foalq,companion:D1.birth&&D1.birth.companion,story:D1.birth&&D1.birth.story,daily:D1.birth&&D1.birth.daily,coats:D1.birth&&D1.birth.coatsFound});
+ check('birth side effects: pairing cleared, foal questline started on it, it follows you, stats.foals, coat registry, tutorial mission progressed, daily counted, token HUD shown',D1.birth&&D1.birth.breeding===null&&D1.birth.foalq&&D1.birth.foalq.idx===0&&D1.birth.foalq.active===D1.foalId&&D1.birth.companion===D1.foalId&&D1.birth.foals===1&&D1.birth.coatsFound.length===1&&D1.breedIdx>0&&D1.birth.story.idx===D1.breedIdx&&D1.birth.story.prog>=1&&D1.birth.daily>=1&&D1.birth.btokBadge,{breeding:D1.birth&&D1.birth.breeding,foalq:D1.birth&&D1.birth.foalq,companion:D1.birth&&D1.birth.companion,story:D1.birth&&D1.birth.story,breedIdx:D1.breedIdx,daily:D1.birth&&D1.birth.daily,coats:D1.birth&&D1.birth.coatsFound});
 
  /* cost by rarity, tokens, gems + hurry, the roster's recipe path */
  const D2=await page.evaluate(()=>{
