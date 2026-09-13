@@ -38,6 +38,11 @@ const H=`
  const click=sel=>{const b=document.querySelector(sel);if(!b)return false;b.click();return true;};
  const wrenTalk=()=>talk(-11,-17.5);
  const claim=()=>{wrenTalk();const ok=/Claim/.test(dlgText());click('#dlgBtn');return ok;};
+ /* Gems are not paid at face value. account-economy registers a 'gem' factor through G.addMul
+    and doubles every gem earned on the second and fourth weekend of a season, which it advertises
+    to the player as the double-gem weekend — so a reward of 5💎 legitimately lands as 10💎 on four
+    days in twenty-eight. Every gem expectation below multiplies by this instead of guessing. */
+ const gemMul=()=>G.mul('gem',sv());
 `;
 const run=(page,code)=>page.evaluate('(()=>{'+H+code+'})()');
 (async()=>{
@@ -88,22 +93,34 @@ const run=(page,code)=>page.evaluate('(()=>{'+H+code+'})()');
   out.stallDlg={open:$('dlg').style.display,nameIn:!!$('nameIn'),def:$('nameIn')&&$('nameIn').value,coats:document.querySelectorAll('[data-nm^="coat:"]').length};
   click('[data-nm="coat:grey"]'); if($('nameIn')){$('nameIn').value='Biscuit';click('#dlgBtn');}
   const s6=sv(); out.stall2={keys:s6.keys,door:!!s6.doors.starter,name:s6.horses[0].name,body:s6.horses[0].colors.body,chosen:s6.starterCoat.chosen,named:s6.named,prog:s6.story.prog,nameEl:$('nameEl').textContent,stateName:st().horse.name};
-  out.claim4=claim(); window.advanceTime(50); const s7=sv(); out.bundle={idx:s7.story.idx,coins:s7.coins-out.coins5,gems:s7.gems-s5.gems,tack:(s7.tack||[]).length,rarity:s7.tack[0]&&s7.tack[0].rarity,carrot:s7.items.carrot-s5.items.carrot,pill:$('questTrack').textContent};
+  out.claim4=claim(); window.advanceTime(50); const s7=sv(); out.bundle={idx:s7.story.idx,coins:s7.coins-out.coins5,gems:s7.gems-s5.gems,gemMul:gemMul(),tack:(s7.tack||[]).length,rarity:s7.tack[0]&&s7.tack[0].rarity,carrot:s7.items.carrot-s5.items.carrot,pill:$('questTrack').textContent};
   /* roster: Bram opens the saddlery */
   out.bram=talk(44,-48); out.bramRole=!!$('dlgRole')&&$('dlgRole').textContent; out.bramTxt=dlgText().slice(0,60); click('#dlgRole');
   out.shop={shown:$('shopPanel').style.display,tackOn:!!document.querySelector('[data-shoptab="tack"].on')}; G.hidePanels();
   out.met=Object.keys(sv().met);
   /* a second sporthorse arrives in the coat you chose */
-  G.save.sync(s=>{G.horse.grantHorse(s,'bay-sporthorse',{src:'qa'});}); out.adopt=(()=>{const h=sv().horses.find(h=>h.breed==='bay-sporthorse'&&h.name!=='Biscuit');return h?{body:h.colors.body,mane:h.colors.mane}:null;})();
+  /* Name the newcomer ourselves. grantHorse rolls a name out of NAMES3, which contains Biscuit —
+     so one run in twenty the adopted sporthorse was called Biscuit too, the lookup below found
+     nothing, and a working coat hook read as a broken one. */
+  G.save.sync(s=>{G.horse.grantHorse(s,'bay-sporthorse',{src:'qa',name:'Sundance'});}); out.adopt=(()=>{const h=sv().horses.find(h=>h.breed==='bay-sporthorse'&&h.name==='Sundance');return h?{body:h.colors.body,mane:h.colors.mane}:null;})();
   /* stable header offers the coat only until chosen */
   G.ui.openStable(); out.coatRow=document.querySelectorAll('[data-fx^="sq:coat:"]').length; G.hidePanels();
   /* dailies + umbrella */
-  const today=G.quest.todayDaily(); out.daily={n:today.length,sp:G.quest.DAILYQ.every(q=>q.r.sp===10),train:G.quest.DAILYQ.some(q=>q.type==='train'),build:G.quest.DAILYQ.some(q=>q.type==='build'),total:G.quest.DAILYQ.length,roll:sv().dq.roll};
+  /* Club SP is not on the daily rows and must not be: account-economy's wallet ledger credits
+     10⭐ per claim and 40⭐ for the umbrella, and an sp: on the row pays the same points a second
+     time. Here we assert the rows stay clean and name any that do not; the claim below asserts
+     the 10⭐ still arrives. */
+  const spRows=G.quest.DAILYQ.filter(q=>q.r&&q.r.sp).map(q=>q.type);
+  const today=G.quest.todayDaily(); out.daily={n:today.length,sp:spRows.length===0,spRows,train:G.quest.DAILYQ.some(q=>q.type==='train'),build:G.quest.DAILYQ.some(q=>q.type==='build'),total:G.quest.DAILYQ.length,roll:sv().dq.roll};
   const q0=today[0]; let sp0=0,g0=0; G.save.sync(s=>{s.dq.prog[q0.type]=q0.goal;sp0=(s.sp&&s.sp.pts)||0;g0=s.gems;}); G.quest.claimDaily(q0.type);
-  const s8=sv(); out.dailyClaim={sp:(s8.sp.pts||0)-sp0,gems:s8.gems-g0,rg:q0.r.g,claimed:!!s8.dq.claimed[q0.type]};
-  let k0=0,g1=0,sp1=0; G.save.sync(s=>{for(const q of today)s.dq.claimed[q.type]=true;k0=s.keys;g1=s.gems;sp1=s.sp.pts;}); G.quest.claimUmbrella?0:0; document.querySelector('[data-q="um:x"]')?0:0;
+  const s8=sv(); out.dailyClaim={sp:(s8.sp.pts||0)-sp0,ledger:((s8.sp.src||{}).daily)||0,gems:s8.gems-g0,rg:q0.r.g,gemMul:gemMul(),claimed:!!s8.dq.claimed[q0.type]};
+  /* Mark the other five claimed the short way, then let the ledger settle BEFORE the snapshot:
+     it credits 10⭐ for every daily claim it has not seen yet, and five claims that never went
+     through claimDaily would otherwise be counted inside the umbrella's own delta. */
+  let k0=0,g1=0,sp1=0,umb0=0; G.save.sync(s=>{for(const q of today)s.dq.claimed[q.type]=true;}); G.money.refreshWallet();
+  G.save.sync(s=>{k0=s.keys;g1=s.gems;sp1=s.sp.pts;umb0=((s.sp.src||{}).umbrella)||0;});
   G.ui.renderQuests(); click('[data-q="tab:daily"]'); out.umbrellaBtn=!!document.querySelector('[data-q="um:x"]'); click('[data-q="um:x"]');
-  const s9=sv(); out.umbrella={on:s9.dq.umbrella,keys:s9.keys-k0,gems:s9.gems-g1,sp:s9.sp.pts-sp1};
+  const s9=sv(); out.umbrella={on:s9.dq.umbrella,keys:s9.keys-k0,gems:s9.gems-g1,gemMul:gemMul(),sp:s9.sp.pts-sp1,ledger:(((s9.sp.src||{}).umbrella)||0)-umb0};
   click('[data-q="um:x"]'); out.umbrellaTwice=sv().keys-k0;
   /* quest log */
   G.ui.openQuests(); click('[data-q="tab:story"]'); const qp=$('questPanel');
@@ -134,14 +151,22 @@ const run=(page,code)=>page.evaluate('(()=>{'+H+code+'})()');
  check('Wren explains the old stall',r1.wrenDoor&&r1.doorDlg);
  check('old stall prompt + naming with three coats',/old stall/.test(r1.ctx)&&r1.stallDlg.open==='block'&&r1.stallDlg.nameIn&&r1.stallDlg.def==='Clover'&&r1.stallDlg.coats===3,{ctx:r1.ctx,dlg:r1.stallDlg});
  check('door spends the key, names the starter, applies the grey coat',r1.stall2&&r1.stall2.keys===0&&r1.stall2.door&&r1.stall2.name==='Biscuit'&&r1.stall2.body==='#b9b9bd'&&r1.stall2.chosen&&r1.stall2.named&&r1.stall2.prog===1&&/^Biscuit/.test(r1.stall2.nameEl)&&r1.stall2.stateName==='Biscuit',r1.stall2);
- check('starter bundle: +100🪙 +5💎 + Common tack + 5 🥕, story moves to Collect 5 carrots',r1.claim4&&r1.bundle.idx===5&&r1.bundle.coins===100&&r1.bundle.gems===5&&r1.bundle.tack===1&&r1.bundle.rarity==='Common'&&r1.bundle.carrot===5&&/Collect 5 carrots/.test(r1.bundle.pill),r1.bundle);
+ /* Five gems is what the mission row pays; what lands in the wallet is that times the season's
+    gem factor, so on a double-gem weekend ten is the right answer and five would be the bug. */
+ check('starter bundle: +100🪙 +5💎 + Common tack + 5 🥕, story moves to Collect 5 carrots',r1.claim4&&r1.bundle.idx===5&&r1.bundle.coins===100&&r1.bundle.gems===5*r1.bundle.gemMul&&r1.bundle.tack===1&&r1.bundle.rarity==='Common'&&r1.bundle.carrot===5&&/Collect 5 carrots/.test(r1.bundle.pill),r1.bundle);
  check('Bram the Saddler opens the tack shop from his dialogue',r1.bram&&/saddlery/.test(r1.bramRole||'')&&r1.shop.shown==='flex'&&r1.shop.tackOn,{talk:r1.bram,role:r1.bramRole,txt:r1.bramTxt,shop:r1.shop});
  check('people met are recorded',r1.met.includes('bram')&&r1.met.includes('june'),r1.met);
  check('coat card leaves the stable once chosen',r1.coatRow===0,r1.coatRow);
  check('a later sporthorse (adoption) wears the chosen grey coat',r1.adopt&&r1.adopt.body==='#b9b9bd'&&r1.adopt.mane==='#5a5a60',r1.adopt);
- check('six dailies, 23+ templates, SP on all, train/build rows, roll snapshotted',r1.daily&&r1.daily.n===6&&r1.daily.sp&&r1.daily.train&&r1.daily.build&&r1.daily.total>=23&&r1.daily.roll&&r1.daily.roll.length===6,r1.daily);
- check('claimDaily pays 10 club SP and the gems',r1.dailyClaim&&r1.dailyClaim.sp===10&&r1.dailyClaim.gems===r1.dailyClaim.rg&&r1.dailyClaim.claimed,r1.dailyClaim);
- check('umbrella needs all six and pays +1🗝️ +4💎 +40⭐; second claim is a no-op',r1.umbrellaBtn&&r1.umbrella.on&&r1.umbrella.keys===1&&r1.umbrella.gems===4&&r1.umbrella.sp===40&&r1.umbrellaTwice===1,r1.umbrella);
+ /* spRows names any row that slipped through the boot-time normalise, so a package that adds a
+    daily with sp: on it in future says so by name instead of just reading as "false". */
+ check('six dailies, 23+ templates, no SP on the rows (the ledger pays it), train/build rows, roll snapshotted',r1.daily&&r1.daily.n===6&&r1.daily.sp&&r1.daily.train&&r1.daily.build&&r1.daily.total>=23&&r1.daily.roll&&r1.daily.roll.length===6,r1.daily);
+ check('claimDaily pays 10 club SP and the gems',r1.dailyClaim&&r1.dailyClaim.sp===10&&r1.dailyClaim.ledger===10&&r1.dailyClaim.gems===r1.dailyClaim.rg*r1.dailyClaim.gemMul&&r1.dailyClaim.claimed,r1.dailyClaim);
+ /* KNOWN FAIL, and it is the game, not this line: the umbrella pays its 40⭐ twice — once from
+    UMBRELLA_R in ranch3d.html and once from account-economy's ledger — so sp reads 80 while
+    ledger reads 40. The one-line fix is inline (drop sp:40 from UMBRELLA_R) and out of reach of
+    a package, so the assertion stands at 40 and reports the truth until somebody makes it. */
+ check('umbrella needs all six and pays +1🗝️ +4💎 +40⭐; second claim is a no-op',r1.umbrellaBtn&&r1.umbrella.on&&r1.umbrella.keys===1&&r1.umbrella.gems===4*r1.umbrella.gemMul&&r1.umbrella.sp===40&&r1.umbrellaTwice===1,r1.umbrella);
  check('quest log Story tab: percentage, every mission, ribbon gate, next chapter',r1.log&&r1.log.shown==='flex'&&r1.log.pct&&r1.log.rows>=r1.storyLen&&r1.log.ribbonRow&&r1.log.next&&r1.log.cur,r1.log);
  check('quest log Side tab lists people of the Basin',r1.sideTab&&r1.sideTab.rows>=13&&r1.sideTab.people,r1.sideTab);
  check('side quests: >=200 generated + 24 hand-written over 8+ regions, all givers/types valid',r1.sideq&&r1.sideq.n>=200&&r1.sideq.badNpc===0&&r1.sideq.badType===0&&r1.sideq.hand===24&&r1.sideq.regions>=8,r1.sideq);
