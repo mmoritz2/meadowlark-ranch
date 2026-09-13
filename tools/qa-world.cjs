@@ -1,12 +1,13 @@
 /* Run against a local game server: node tools/qa-world.cjs [url].
    Debug access is injected only into the Playwright response, never the shipped game. */
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs');
 const path=require('node:path');
-const url=process.argv[2]||'http://127.0.0.1:8431/ranch3d.html';
+const url=process.argv[2]||QA.BASE+'/ranch3d.html';
 const out=path.resolve('output/world-validation');fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ const browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  await page.route('**/ranch3d.html*',async route=>{

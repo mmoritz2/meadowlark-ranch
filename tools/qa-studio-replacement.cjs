@@ -1,19 +1,20 @@
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path'),{pathToFileURL}=require('node:url');
-const url=process.env.STUDIO_URL||'http://127.0.0.1:8431/breeds.html';
+const url=process.env.STUDIO_URL||QA.BASE+'/breeds.html';
 const out=path.resolve(process.argv[2]||'output/studio-replacement');
 if(process.argv.includes('--skill')){
  const launch=chromium.launch.bind(chromium);
  chromium.launch=async options=>{
-  const browser=await launch({...options,args:['--use-angle=d3d11']}),newPage=browser.newPage.bind(browser);
+  const browser=await launch({...options,args:[QA.ANGLE]}),newPage=browser.newPage.bind(browser);
   browser.newPage=async options=>{const page=await newPage(options),goto=page.goto.bind(page);page.goto=async(...args)=>{const response=await goto(...args);await page.waitForFunction(()=>window.render_game_to_text&&JSON.parse(render_game_to_text()).modelReady&&!JSON.parse(render_game_to_text()).loading);await page.waitForTimeout(500);return response;};return page;};return browser;
  };
  process.argv=['node','web_game_playwright_client.js','--url',url,'--actions-json',JSON.stringify({steps:[{buttons:['left_mouse_button'],frames:2,mouse_x:700,mouse_y:400},{buttons:[],frames:8}]}),'--iterations','2','--pause-ms','250','--screenshot-dir',out];
- import(pathToFileURL('C:/Users/msmor/.codex/skills/develop-web-game/scripts/web_game_playwright_client.js').href);
+ import(pathToFileURL(QA.skillScript('web_game_playwright_client.js')).href);
 }else{
  fs.mkdirSync(out,{recursive:true});
  (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],checks={},states=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  const state=()=>page.evaluate(()=>JSON.parse(render_game_to_text()));

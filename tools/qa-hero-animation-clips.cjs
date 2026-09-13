@@ -1,5 +1,6 @@
 /** Load real baked clips in Three.js and exercise every joint through a mixer. */
-const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA,fs=require('node:fs'),path=require('node:path');
 const out=path.resolve('output/hero-animation-clips'),model=path.resolve(process.argv[2]||'assets/models/hero-horse/hero-animated.glb');
 const source=path.resolve(process.argv[3]||'assets/models/hero-horse/hero-rigged-v2.glb');
 const expected=['idle','walk','trot','canter-left','canter-right','gallop-left','gallop-right','jump'];
@@ -8,7 +9,7 @@ function read(file){const raw=fs.readFileSync(file);let offset=12,doc,bin;while(
  fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'index.html'),'<!doctype html><script type="importmap">{"imports":{"three":"/assets/vendor/three/build/three.module.js"}}</script><title>Animation clip validation</title>');
  const a=read(source),b=read(model),checks={sourceBytesPreserved:b.bin.subarray(0,a.bin.length).equals(a.bin),sourceDefinitionsPreserved:['nodes','meshes','materials','images','textures','samplers','skins','scenes'].every(k=>JSON.stringify(a.doc[k])===JSON.stringify(b.doc[k]))};
  const browser=await chromium.launch({headless:true}),page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
- await page.goto('http://127.0.0.1:8431/output/hero-animation-clips/');
+ await page.goto(QA.BASE+'/output/hero-animation-clips/');
  const result=await page.evaluate(async url=>{
   const THREE=await import('three'),{GLTFLoader}=await import('/assets/vendor/three/examples/jsm/loaders/GLTFLoader.js');
   const asset=await new GLTFLoader().loadAsync(url),mixer=new THREE.AnimationMixer(asset.scene),bones=[];asset.scene.traverse(o=>{if(o.isBone)bones.push(o)});const byName=Object.fromEntries(bones.map(b=>[b.name,b]));

@@ -1,5 +1,6 @@
 // Isolated browser fixture: never connects to the user's browser or saved stable.
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/artist-ranch-qa');fs.mkdirSync(out,{recursive:true});
 const flightOnly=process.argv.includes('--flight-only');
@@ -11,7 +12,7 @@ const injection=`window.__artistQA={THREE,RIG,player,TACK,BREED_MODELS,scene,ren
  state(){const head=RIG.bones?.find(b=>b.name==='head');return {breed:myHorses[rideIdx].breed,model:RIG.modelKey,requested:RIG.requestedBreed,loading:RIG.loadingBreed,ready:RIG.ready,artist:!!RIG.profile?.artistBreed,file:RIG.profile?.file,bones:RIG.bones?.length,bodyName:RIG.skin?.name,rotation:RIG.scene?.rotation.toArray(),finite:RIG.bones?.every(b=>b.matrixWorld.elements.every(Number.isFinite)),groom:RIG.groom?.stats,motion:RIG.heroMotion?.mode||RIG.artistMotion?.mode,feet:(RIG.heroMotion||RIG.artistMotion)?.snapshot().feet,gameY:player.y,ground:groundH(player.pos.x,player.pos.z),seat:TACK.saddle?.position.toArray(),rider:player.rider?.g.position.toArray(),bridle:TACK.bridle?.position.toArray(),head:head?player.mesh.worldToLocal(head.getWorldPosition(new THREE.Vector3())).toArray():null,wingCount:player.parts.wings?.length||0,horn:!!player.parts.horn?.visible,breath:document.getElementById('breathBtn').style.display!=='none'};}
 };const MERGE_STATS=mergeStatics();`;
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11','--disable-background-timer-throttling']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE,'--disable-background-timer-throttling']});
  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],warnings=[],states=[],checks={},requests=[];
  const report={checks,errors,warnings,states,requests};
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());if(m.type()==='warning')warnings.push(m.text());});
@@ -20,7 +21,7 @@ const injection=`window.__artistQA={THREE,RIG,player,TACK,BREED_MODELS,scene,ren
  const ready=async key=>{await page.waitForFunction(k=>window.__artistQA?.state().ready&&!__artistQA.state().loading&&(!k||__artistQA.state().breed===k)&&(!k||__artistQA.state().requested===k),key,{timeout:120000});await page.evaluate(()=>advanceTime(16));return page.evaluate(()=>__artistQA.state());};
  const capture=async name=>{await page.evaluate(()=>__artistQA.view());await page.screenshot({path:path.join(out,name+'.png')});};
  try{
-  await page.goto('http://127.0.0.1:8431/ranch3d.html?qa=artist-breeds',{waitUntil:'load',timeout:120000});await ready();await page.evaluate(()=>{__artistQA.start();advanceTime(200);});
+  await page.goto(QA.BASE+'/ranch3d.html?qa=artist-breeds',{waitUntil:'load',timeout:120000});await ready();await page.evaluate(()=>{__artistQA.start();advanceTime(200);});
   report.initialSave=await page.evaluate(()=>{const s=JSON.parse(localStorage.starRanchFable_v1);return{count:s.horses.length,coins:s.coins,gems:s.gems,id:s.ridingHorseId};});
   report.roster=await page.evaluate(()=>__artistQA.roster());
   for(const breed of report.roster.filter(b=>!flightOnly||b.id==='emberdrake')){

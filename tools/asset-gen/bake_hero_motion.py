@@ -17,6 +17,7 @@ import copy
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 import struct
 import subprocess
@@ -294,7 +295,13 @@ def main():
     parser.add_argument('--source', type=Path, default=MODELS / 'hero-rigged-v2.glb')
     parser.add_argument('--output', type=Path, default=MODELS / 'hero-animated.glb')
     parser.add_argument('--blend', type=Path, help='Optional editable Blender action library')
-    parser.add_argument('--blender', default=r'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe')
+    # Blender's install path is per-platform and the flag is what a user overrides, so the
+    # default just has to be right on the machine you happen to be on rather than on one.
+    blender_default = os.environ.get('BLENDER') or {
+        'win32': r'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe',
+        'darwin': '/Applications/Blender.app/Contents/MacOS/Blender',
+    }.get(sys.platform, 'blender')
+    parser.add_argument('--blender', default=blender_default)
     parser.add_argument('--allow-partial', action='store_true', help='Only for an explicitly requested partial sample set')
     parser.add_argument('--describe-source', action='store_true')
     args = parser.parse_args(arguments)

@@ -1,10 +1,13 @@
 // Prove the fix: a granted horse is out to grass immediately, and the pasture gate
 // turns waiting horses out when you ride up to it.
-const {chromium}=require('playwright');
-const BASE=process.env.QA_URL||'http://127.0.0.1:8477';
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
+/* This one was written against a throwaway fallback server on 8477 and kept the number.
+   QA.BASE defaults to the house 8431 instead; QA_PORT=8477 gets the old behaviour back. */
+const BASE=QA.BASE;
 const checks=[];const ck=(n,ok,d)=>{checks.push({n,ok});console.log((ok?'PASS ':'FAIL ')+n+(d!==undefined?' — '+JSON.stringify(d):''));};
 (async()=>{
- const b=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--ignore-gpu-blocklist']});
+ const b=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--ignore-gpu-blocklist']});
  const p=await b.newPage({viewport:{width:1280,height:800}});
  const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push(m.text().slice(0,160));});
  await p.goto(BASE+'/ranch3d.html?qa=turnout&fresh='+Date.now(),{waitUntil:'load',timeout:120000});

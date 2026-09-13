@@ -7,12 +7,13 @@
    (perks, shop, event bonus) and the Star Point sources. A second load seeds a veteran save
    with a pending letter and a closed week, then imports the first ranch's save code.
 
-   Usage:  QA_URL=http://127.0.0.1:8431 NODE_PATH=$(npm root -g) node tools/qa-account-economy.cjs */
+   Usage:  QA_PORT=8431 NODE_PATH=$(npm root -g) node tools/qa-account-economy.cjs */
 /* Race tickets: when the events package is present it owns the book (s.tix) and folds any
    loose s.tickets into it on every save, so these checks read the book and fall back to the
    old field when this package is tested on its own. */
-const {chromium}=require('playwright');
-const base=(process.env.QA_URL||'http://127.0.0.1:8431').replace(/\/$/,'');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
+const base=QA.BASE;
 const checks=[];
 function check(name,ok,detail){checks.push({name,ok:!!ok,detail});console.log((ok?'PASS ':'FAIL ')+name+(detail!==undefined?' — '+JSON.stringify(detail):''));}
 const t0=Date.now();
@@ -21,7 +22,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
 let browser=null;
 setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(browser)await browser.close();}catch(e){}process.exit(3);},600000).unref();
 (async()=>{
- browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const page=await browser.newPage({viewport:{width:1280,height:800}});
  const errors=[];
  page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));

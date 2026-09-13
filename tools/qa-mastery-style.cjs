@@ -5,9 +5,10 @@
    Three seeded saves are booted (a Quarter Horse family at mastery 5, nine Lipizzaners with
    the ridden one bareback, a pair of Celestial Unicorns) and one reload proves persistence.
 
-   Usage:  QA_URL=http://127.0.0.1:8431 NODE_PATH=$(npm root -g) node tools/qa-mastery-style.cjs */
-const {chromium}=require('playwright');
-const base=(process.env.QA_URL||'http://127.0.0.1:8431').replace(/\/$/,'');
+   Usage:  QA_PORT=8431 NODE_PATH=$(npm root -g) node tools/qa-mastery-style.cjs */
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
+const base=QA.BASE;
 const checks=[];
 function check(name,ok,detail){checks.push({name,ok:!!ok,detail});console.log((ok?'PASS ':'FAIL ')+name+(detail!==undefined?' — '+JSON.stringify(detail):''));}
 const t0=Date.now();
@@ -32,7 +33,7 @@ async function boot(page,save,tag){
  stage(tag+' horseReady');
 }
 (async()=>{
- browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const errors=[];
  const newPage=async()=>{const ctx=await browser.newContext({viewport:{width:1280,height:800}});const page=await ctx.newPage();
   page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('dialog',d=>{d.dismiss().catch(()=>{});});return page;};

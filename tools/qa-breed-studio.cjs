@@ -1,11 +1,12 @@
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path');
 const out=process.argv[2]||'output/breed-studio-qa';fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const page=await browser.newPage({viewport:{width:1500,height:940}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
- await page.goto('http://127.0.0.1:8431/breeds.html?horse=bay');
+ await page.goto(QA.BASE+'/breeds.html?horse=bay');
  await page.waitForFunction(()=>window.render_game_to_text&&JSON.parse(render_game_to_text()).breed==='bay'&&!JSON.parse(render_game_to_text()).loading,null,{timeout:120000,polling:200});
  const count=await page.locator('#list button').count(),state=()=>page.evaluate(()=>JSON.parse(render_game_to_text()));
  const save=async name=>page.screenshot({path:path.join(out,name+'.png')});

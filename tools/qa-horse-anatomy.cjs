@@ -1,6 +1,7 @@
 // Same-camera anatomy review in the actual gallery renderer. Optional fixture
 // directory holds a manifest and GLBs for reviewing a saved or candidate build.
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/horse-anatomy-qa');
 const fixture=process.argv[3];
@@ -9,7 +10,7 @@ const selfShadow=process.argv[5]!=='off';
 const normalMap=process.argv[6]!=='off';
 fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],states=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  if(fixture){
@@ -30,7 +31,7 @@ fs.mkdirSync(out,{recursive:true});
    controls.minDistance=.35;controls.maxDistance=20;controls.target.copy(center);camera.position.copy(center).addScaledVector(offset,distance);controls.update();renderer.render(scene,camera);
    return {breed:selectedKey,vertices:body.geometry.attributes.position.count,groom:groom.stats,head:center.toArray(),camera:camera.position.toArray(),finite:inst.bones.every(b=>b.matrixWorld.elements.every(Number.isFinite))};
   };window.advanceTime=ms=>{`)}));
- await page.goto('http://127.0.0.1:8431/breeds.html');
+ await page.goto(QA.BASE+'/breeds.html');
  await page.waitForFunction(()=>window.render_game_to_text&&!JSON.parse(render_game_to_text()).loading,null,{timeout:120000,polling:200});
  for(const key of keys){
   await page.locator(`[data-key="${key}"]`).click();

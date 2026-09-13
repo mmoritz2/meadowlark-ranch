@@ -1,10 +1,11 @@
 /* Independent current-hero studio checks; does not mutate app code or assets. */
-const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA,fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const out=path.resolve(process.argv[2]||'output/breed-studio-current-qa');fs.mkdirSync(out,{recursive:true});
 const expected=JSON.parse(fs.readFileSync('assets/models/hero-horse/manifest.json','utf8'));
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const page=await browser.newPage({viewport:{width:1500,height:940}}),errors=[],failed=[],requests=[],hashJobs=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  page.on('requestfailed',r=>failed.push({url:r.url(),error:r.failure()?.errorText}));
@@ -12,7 +13,7 @@ const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
  const state=()=>page.evaluate(()=>JSON.parse(render_game_to_text()));
  const save=name=>page.screenshot({path:path.join(out,name+'.png')});
  const ready=key=>page.waitForFunction(key=>window.render_game_to_text&&JSON.parse(render_game_to_text()).breed===key&&!JSON.parse(render_game_to_text()).loading&&JSON.parse(render_game_to_text()).status==='',key,{timeout:90000});
- await page.goto('http://127.0.0.1:8431/breeds.html?review=equine-v2');await ready('hero');await page.waitForFunction(()=>JSON.parse(render_game_to_text()).count===25);
+ await page.goto(QA.BASE+'/breeds.html?review=equine-v2');await ready('hero');await page.waitForFunction(()=>JSON.parse(render_game_to_text()).count===25);
  const initial=await state();await save('default-hero');
  const checks={defaultHero:initial.breed==='hero'&&initial.asset.current&&initial.name==='Bay sporthorse',count:initial.count===25,
   manifestIdentity:initial.asset.file===expected.file&&initial.asset.sha256===expected.sha256,
@@ -40,7 +41,7 @@ const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
  const retry=await browser.newPage({viewport:{width:1200,height:900}});let aborted=0;const expectedErrors=[];
  retry.on('pageerror',e=>expectedErrors.push(e.message));retry.on('console',m=>{if(m.type()==='error')expectedErrors.push(m.text());});
  await retry.route('**/hero-animated.glb*',route=>{if(!aborted++){return route.abort('failed');}return route.continue();});
- await retry.goto('http://127.0.0.1:8431/breeds.html?review=retry');await retry.waitForFunction(()=>document.querySelector('#status').textContent.includes('Select it again to retry'),null,{timeout:90000});await retry.screenshot({path:path.join(out,'intentional-load-failure.png')});
+ await retry.goto(QA.BASE+'/breeds.html?review=retry');await retry.waitForFunction(()=>document.querySelector('#status').textContent.includes('Select it again to retry'),null,{timeout:90000});await retry.screenshot({path:path.join(out,'intentional-load-failure.png')});
  await retry.locator('[data-key="hero"]').click();await retry.waitForFunction(()=>window.render_game_to_text&&JSON.parse(render_game_to_text()).breed==='hero'&&!JSON.parse(render_game_to_text()).loading,null,{timeout:90000});checks.failedLoadRetry=await retry.evaluate(()=>JSON.parse(render_game_to_text()).modelReady&&document.querySelector('#status').textContent==='');await retry.screenshot({path:path.join(out,'retry-success.png')});
  const report={checks,pass:Object.values(checks).every(Boolean),initial,restored,motions,older,loadedBinaryHashes:hashes,requests,errors,failed,intentionalFailureErrors:expectedErrors,visualReview:'pending'};
  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({checks,pass:report.pass,errors,failed},null,2));await browser.close();if(!report.pass)process.exitCode=1;

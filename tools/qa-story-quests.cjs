@@ -9,9 +9,10 @@
     4. a save parked on the builder chapter — real placements through the pointer, builder points,
        ranch level, then the clue hunt across Mia, Theo and Wren, and the season cadence.
 
-   Usage:  QA_URL=http://127.0.0.1:8431 NODE_PATH=$(npm root -g) node tools/qa-story-quests.cjs */
-const {chromium}=require('playwright');
-const base=(process.env.QA_URL||'http://127.0.0.1:8431').replace(/\/$/,'');
+   Usage:  QA_PORT=8431 NODE_PATH=$(npm root -g) node tools/qa-story-quests.cjs */
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
+const base=QA.BASE;
 const SAVE_KEY='starRanchFable_v1';
 const checks=[];
 function check(name,ok,detail){checks.push({name,ok:!!ok,detail});console.log((ok?'PASS ':'FAIL ')+name+(detail!==undefined?' — '+JSON.stringify(detail):''));}
@@ -19,7 +20,7 @@ const t0=Date.now();
 const stage=s=>console.log('… '+s+' @'+((Date.now()-t0)/1000).toFixed(1)+'s');
 let browser=null;
 setTimeout(async()=>{console.error('WATCHDOG: no result after 900 s');try{if(browser)await browser.close();}catch(e){}process.exit(3);},900000).unref();
-const ARGS=['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist'];
+const ARGS=['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist'];
 const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_game_to_text());return s.graphics&&s.graphics.horseReady&&!s.graphics.horseLoading;}catch(e){return false;}})();
 async function boot(page,tag){
  await page.goto(base+'/ranch3d.html?qa=story-quests&'+tag+'='+Date.now(),{waitUntil:'load',timeout:120000}); stage(tag+' loaded');

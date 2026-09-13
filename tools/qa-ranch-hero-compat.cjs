@@ -1,5 +1,6 @@
 // Isolated save/identity/async-selection regression test. Never opens user browser data.
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path');
 const out=path.resolve('output/hero-compat-qa');fs.mkdirSync(out,{recursive:true});
 const fields=['id','name','breed','colors','horn','wings','dragon','coat','stats','sxp','gear','level','xp','bond','foal','tack'];
@@ -14,7 +15,7 @@ const injection=`window.__compatQA={THREE,RIG,player,BREED_MODELS,scene,camera,r
  view:()=>{dayT=.34;weather.mode='clear';weather.timer=9999;player.pos.set(0,0,8);player.heading=Math.PI;advanceTime(16);const h=groundH(player.pos.x,player.pos.z);camera.position.set(player.pos.x+4.2,h+2.1,player.pos.z+3.5);camera.lookAt(player.pos.x,h+1.1,player.pos.z);composer.render();}
 };const MERGE_STATS=mergeStatics();`;
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11','--disable-background-timer-throttling']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE,'--disable-background-timer-throttling']});
  const context=await browser.newContext({viewport:{width:1280,height:900}});
  const page=await context.newPage(),errors=[],warnings=[],requests=[];
  const report={checks:{},states:{},errors,warnings,requests};
@@ -25,7 +26,7 @@ const injection=`window.__compatQA={THREE,RIG,player,BREED_MODELS,scene,camera,r
  await page.route('**/models/hero-horse/*.glb*',async r=>{requests.push({url:r.request().url(),delayedMs:900});await new Promise(f=>setTimeout(f,900));await r.continue();});
  const ready=async key=>{await page.waitForFunction(k=>window.__compatQA?.state().breed===k&&__compatQA.state().ready&&!__compatQA.state().loading&&__compatQA.state().requested===k,null===key?null:key,{timeout:120000,polling:100});await page.evaluate(()=>advanceTime(16));return page.evaluate(()=>__compatQA.state());};
  try{
-  await page.goto('http://127.0.0.1:8431/ranch3d.html?qa=hero-compat',{waitUntil:'load',timeout:120000});
+  await page.goto(QA.BASE+'/ranch3d.html?qa=hero-compat',{waitUntil:'load',timeout:120000});
   report.states.initial=await ready('shire');
   const savedInitial=await page.evaluate(()=>__compatQA.saved());
   report.checks.existingStableUnchanged=JSON.stringify(savedInitial.horses.map(projection))===JSON.stringify(seed.horses.map(projection));
