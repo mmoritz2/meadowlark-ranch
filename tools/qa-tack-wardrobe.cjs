@@ -91,7 +91,9 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
    window.advanceTime(400);out.western.post=Q.player.rider._post||0;
    Q.tackAct('on:'+eid);out.western.backE={style:Q.TACK.saddle.userData.style,horn:!!Q.TACK.saddle.getObjectByName('horn')};}
   /* H. tack missions */
-  {const [M1,M2]=G.wardrobe.missions;const i1=Q.STORY.indexOf(M1),i2=Q.STORY.indexOf(M2);out.missions={i1,i2,npc:G.quest.NPC_DEFS.some(d=>d.id==='saddler'),npcSpawned:G.world.npcList.some(n=>n.def.id==='saddler'),daily:G.quest.DAILYQ.some(q=>q.type==='tackup'),achs:['tack10','merge5','saddler8','legendset','season3'].filter(id=>!G.quest.ACHS.some(a=>a.id===id))};
+  {const [M1,M2]=G.wardrobe.missions;const i1=Q.STORY.indexOf(M1),i2=Q.STORY.indexOf(M2);
+   const once=[M1,M2].map(m=>Q.STORY.filter(x=>x===m).length).join();
+   out.missions={i1,i2,once,storyLen:Q.STORY.length,npc:G.quest.NPC_DEFS.some(d=>d.id==='saddler'),npcSpawned:G.world.npcList.some(n=>n.def.id==='saddler'),daily:G.quest.DAILYQ.some(q=>q.type==='tackup'),achs:['tack10','merge5','saddler8','legendset','season3'].filter(id=>!G.quest.ACHS.some(a=>a.id===id))};
    Q.setStory(i1,0);let id=null;G.save.sync(s=>{s.coins=5000;s.items.kit1=1;const it=Q.genGear('Common','pad');s.tack.push(it);id=it.id;});Q.tackAct('up:'+id);
    out.missions.prog=G.quest.storyProg();out.missions.done=G.quest.missionDone();
    const k0=Q.freshSave().items.kit1||0;Q.setStory(i1+1,0);window.advanceTime(700);const s=Q.freshSave();out.missions.kitPaid=(s.items.kit1||0)-k0;out.missions.mig=!!s.mig['tw-kit-kit1-2'];window.advanceTime(700);out.missions.kitOnce=(Q.freshSave().items.kit1||0)-k0;
@@ -149,8 +151,10 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
     let kid=null;G.save.sync(s=>{const it=Q.genGear('Legendary','saddle',{set:'Kestrel',style:'english'});s.tack.push(it);s.horses[Q.rideIdx()].gear.saddle=it.id;kid=it.id;});Q.refreshTack();
     const real=Q.TACK.saddle;try{Q.TACK.saddle=g;Q.dressSaddle();out.glb.tinted=g.userData.mats.leather.color.getHexString();G.save.sync(s=>{delete s.horses[Q.rideIdx()].gear.saddle;});Q.refreshTack();Q.dressSaddle();out.glb.plain=g.userData.mats.leather.color.r.toFixed(2);}finally{Q.TACK.saddle=real;}
     const want=new G.THREE.Color(Q.TACK_SETS.Kestrel.tint).multiplyScalar(1.6).getHexString();out.glb.want=want;}}
-  /* N. state */
-  {const st=JSON.parse(render_game_to_text());out.state={rider:st.rider&&Object.keys(st.rider),tack:st.tack&&Object.keys(st.tack),sets:st.tack&&st.tack.sets,dustEl:document.getElementById('dustEl').textContent};}
+  /* N. state. The dust chip is painted from the wallet pass and is deliberately blank at zero, so
+     put a number of our own in and refresh rather than reading whatever dust the run left behind. */
+  {G.save.sync(s=>{s.dust=7;});G.money.refreshWallet();
+   const st=JSON.parse(render_game_to_text());out.state={rider:st.rider&&Object.keys(st.rider),tack:st.tack&&Object.keys(st.tack),sets:st.tack&&st.tack.sets,setsWant:Object.keys(Q.TACK_SETS).length,dust:Q.freshSave().dust,dustEl:document.getElementById('dustEl').textContent};}
   return out;
  });
  const P=r.pattern;
@@ -167,6 +171,12 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('C four Kestrel pieces: set bonus counts 4/4 and effStats carries the four-piece bonus',r.kestrel&&r.kestrel.counts.Kestrel===4&&r.kestrel.speedGain>=5+3+4&&r.kestrel.accelGain>=5+3,r.kestrel);
  check('C worn Kestrel saddle tints the leather to the set colour',r.tint&&r.tint.has&&r.tint.hex===r.tint.want,r.tint);
  check('C Rare pieces always belong to a set and a Rare pair pays a bonus',r.rarePair&&r.rarePair.rareNull===0&&r.rarePair.counts.Basin===2&&/agility:1/.test(r.rarePair.bonus),r.rarePair);
+ /* This one fails on a real double payment, and the assertion is right to fail: one upgrade of a
+    one-star piece pays 2 SP. ranch3d.html's tackAct 'up' branch pays addSP(RARITIES.indexOf+1)
+    and toasts '+1⭐'; account-economy's walletWatch then sees the tack score climb by that same
+    star and pays it again as sp.src.tack. Either payer alone is right — dropping the inline one
+    is the smaller change, the ledger already runs inside the same refreshWallet — but both files
+    belong to other packages, so this stays red on purpose rather than being tuned to 2. */
  check('D upgrade spends coins + Toolkit I, pays 1 SP per rarity star',r.up1&&r.up1.lvl===2&&r.up1.kit1===0&&r.up1.sp===1&&r.up1.coins<5000,r.up1);
  check('D upgrade refused without a toolkit (level and coins unchanged)',r.up2&&r.up2.lvl===2&&r.up2.coinsSame&&r.up2.kit1===0,r.up2);
  check('D levels stop at 8, kits I/II/III consumed by tier, no upgrade button at max',r.up8&&r.up8.lvl===8&&r.up8.max===8&&r.up8.kits[0]===3&&r.up8.kits[1]===2&&r.up8.kits[2]===4&&!r.up8.btn,r.up8);
@@ -177,7 +187,16 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('F market stall: 3 date-seeded pieces, buy once',r.market&&r.market.n===3&&r.market.same&&r.marketBuy.coinsDown===r.marketBuy.price&&r.marketBuy.grew===1&&r.marketBuy.twice===1,{market:r.market,buy:r.marketBuy});
  check('F tier-1 chest drops Uncommon tack ~15% and a toolkit ~10%',r.chest&&r.chest.found&&r.chest.uncRate>=0.08&&r.chest.uncRate<=0.24&&r.chest.kitRate>=0.04&&r.chest.kitRate<=0.2,r.chest);
  check('G worn Western saddle: style, horn, seat drops by the Western offset, no posting',r.western&&r.western.styleW==='western'&&r.western.hornW&&!r.western.hornE&&Math.abs(r.western.seatDrop-r.western.wantDrop)<1e-3&&r.western.of==='western'&&r.western.post<0.01&&r.western.backE.style==='english'&&!r.western.backE.horn,r.western);
- check('H tack missions inserted with Bo the Saddler, daily and achievements registered',r.missions&&r.missions.i1===4&&r.missions.i2>r.missions.i1&&r.missions.npc&&r.missions.npcSpawned&&r.missions.daily&&r.missions.achs.length===0,r.missions);
+ /* The package asks for story slots 4 and 14 and gets them, but the slot it ends up in is not its
+    to keep: G.quest.story.insertBefore is a documented extension point (index.js section 6) and
+    later packages splice their own chapters in ahead of Bo, which walks M1 down to 14 and M2 to
+    31 without either mission moving relative to anything that matters. Pinning the absolute index
+    failed this package for other packages' correct work. What is still this package's to promise,
+    and is checked now: both missions are in the story exactly once — insertBefore splices blind,
+    so a double install shows up here — Bo's Lv 2 tutorial still comes before the Lv 8 one, and it
+    still sits in the opening half of the story rather than past the end of it. The check below
+    drives M1 at whatever index it landed on and proves it still works there. */
+ check('H tack missions inserted with Bo the Saddler, daily and achievements registered',r.missions&&r.missions.i1>=0&&r.missions.once==='1,1'&&r.missions.i2>r.missions.i1&&r.missions.i1*2<r.missions.storyLen&&r.missions.npc&&r.missions.npcSpawned&&r.missions.daily&&r.missions.achs.length===0,r.missions);
  check('H upgrading advances the tacklvl mission and the kit reward is paid once on completion',r.missions&&r.missions.prog===2&&r.missions.done&&r.missions.kitPaid===1&&r.missions.mig&&r.missions.kitOnce===1,r.missions);
  check('I rider creator opens on first launch, body gates hairstyles, dice names, done saves + starter saddle',r.creator&&r.creator.exists&&r.creator.autoOpen&&r.creator.cropShown&&r.creator.braidHidden&&r.creator.after.made&&r.creator.after.nameMatches&&r.creator.after.hairStyle==='crop'&&r.creator.after.body==='m'&&r.creator.after.starter&&r.creator.after.starterWorn&&r.creator.after.hairMesh==='hair-crop'&&r.creator.after.scaleX>1.05&&r.creator.after.closed==='none',r.creator);
  check('J outfit change recolours the live rider without a rebuild',r.outfit&&r.outfit.shirt==='#b34a4a'&&r.outfit.hex==='b34a4a'&&r.outfit.w===1&&r.outfit.sameRider&&r.outfit.sceneSame,r.outfit);
@@ -194,7 +213,17 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('R tack room pays a Rare+ piece and a Toolkit II for a key',r.room&&r.room.found&&r.room.kit2===1&&r.room.piece===1&&r.room.keys===0&&['Rare','Epic','Legendary'].includes(r.room.rarity),r.room);
  check('S VR outfit mirror: shirt/pants/helmet/skin/hair rows, 5 skin tones',r.vr&&r.vr.rows.join()==='shirt,pants,helmet,skin,hair'&&r.vr.skins===5&&r.vr.hair===8,r.vr);
  if(r.glb&&r.glb.loaded)check('T GLB saddle has its own material and takes the set tint',r.glb.own&&r.glb.tinted===r.glb.want&&r.glb.plain==='1.25',r.glb);else check('T GLB saddle file present (skipped tint check: not loaded)',true,r.glb);
- check('N render_game_to_text carries rider + tack keys, dust HUD painted',r.state&&r.state.rider&&r.state.rider.includes('prestige')&&r.state.tack&&r.state.tack.includes('maxLvl')&&r.state.sets===26&&/✨ 0/.test(r.state.dustEl),r.state);
+ /* Two numbers in here were pinned to a game that has since moved, and neither pin was the point
+    of the check. `sets` mirrors TACK_SETS, which index.js lists as an extension point
+    (TACK_SETS[k]=) and which the seasons package now uses for four seasonal Epic sets, so the
+    state key is checked against the live table, with the 26 designed sets as a floor — check C
+    above still pins the per-rarity rosters at exactly 11/10/5. The dust chip was pinned to
+    '✨ 0', which was this package's own wallet painting of an empty purse; the account package
+    installs after this one, paints the same element as an icon and a bold count, and leaves it
+    blank at zero on purpose — so '✨ 0' is the one thing it can never say. The invariant that
+    matters, that the wallet pass puts the ✨ glyph and the player's real dust in the chip, is
+    asserted against a figure this test sets itself and no longer cares who spells it or how. */
+ check('N render_game_to_text carries rider + tack keys, dust HUD painted',r.state&&r.state.rider&&r.state.rider.includes('prestige')&&r.state.tack&&r.state.tack.includes('maxLvl')&&r.state.sets===r.state.setsWant&&r.state.sets>=26&&r.state.dust===7&&r.state.dustEl.includes('✨')&&r.state.dustEl.includes('7'),r.state);
  /* second load: an old save without rider.made shows the creator once; after Done a reload does not */
  await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('starRanchFable_v1'));delete s.rider.made;s.rider={shirt:'#c98c5a',pants:'#2e3a52'};delete s.tw;localStorage.setItem('starRanchFable_v1',JSON.stringify(s));});
  await page.waitForLoadState('networkidle',{timeout:60000}).catch(()=>{}); await page.waitForTimeout(2500);

@@ -117,6 +117,15 @@ const BREED_PERKS={
  sunflare:{5:{label:'Sun flare',ac:.06},10:{label:'High noon',sp:.05}}, noonshade:{5:{label:'Shade seeker',stam:.88},10:{label:'Dust devil',ag:.06}}, heliosdrake:{5:{label:'Heliosflight',sp:.04},10:{label:'Corona',ac:.08}},
  harvestmoon:{5:{label:'Harvest heart',stam:.85},10:{label:'Moon pull',ac:.06}}, cinderlark:{5:{label:'Cinder step',ac:.06},10:{label:'Ember song',sp:.05}}, ashwing:{5:{label:'Ash wing',ag:.05},10:{label:'Smoke trail',jp:.06}},
  snowlark:{5:{label:'Snow tölt',ag:.06},10:{label:'Winter coat',stam:.8}}, rimewalker:{5:{label:'Rime heart',stam:.85},10:{label:'Frost pull',ac:.06}}, polarisdrake:{5:{label:'Polarisflight',jp:.06},10:{label:'North star',sp:.05}},
+ /* Three horses reach BREEDS3 from other packages — the Luminous Spirit from the summoning
+    stall, the Ember Friesian from the club and the Larksong Unicorn from the photo board — and
+    BREEDS3.push is theirs to use, so their perks have to be met here. Without a row perkFor
+    returns null and perkLine renders nothing, which means the three most prestigious horses in
+    the game were the only ones that paid a rider nothing at all for mastering them. Each is
+    built around whatever its own stat line is best at, the way the rest of the table is. */
+ lumen:{5:{label:'Spirit step',ag:.05},10:{label:'Moonlit calm',stam:.85}},
+ emberfriesian:{5:{label:'Ember temper',ac:.06},10:{label:'Banner bearer',sp:.05}},
+ larksong:{5:{label:'Camera-ready',ag:.05},10:{label:'Cover star',stam:.85}},
 };
 const FLIGHT_UNLOCKS={1:'Flying Leap — taking off costs no stamina',4:'Wing Tuck — Shift dives 25% faster',7:'Aerial Acrobatics — Q rolls and R spins in flight score pass points',10:'Soaring Speed — +15% cruise, boosts last 30% longer, gallop drains 30% less'};
 

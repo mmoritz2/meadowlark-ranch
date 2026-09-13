@@ -22,8 +22,13 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const page=await browser.newPage({viewport:{width:1280,height:800}});
  const errors=[];
+ /* A 404 reaches the console as 'Failed to load resource: the server responded with a status of
+    404', with no hint as to which resource, which is useless to whoever has to fix it. Record the
+    URL of every bad response alongside so the failure detail names the file. */
+ const netBad=[];
  page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));
  page.on('console',m=>{if(m.type()==='error')errors.push(m.text().slice(0,300));});
+ page.on('response',r=>{if(r.status()>=400)netBad.push(r.status()+' '+r.url());});
  page.on('dialog',d=>{d.dismiss().catch(()=>{});});
  stage('launch'); await page.goto(url,{waitUntil:'load',timeout:120000}); stage('loaded');
  await page.waitForFunction(READY,null,{timeout:150000,polling:250});
@@ -175,11 +180,20 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   steer();window.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyW'}));window.dispatchEvent(new KeyboardEvent('keydown',{code:'ShiftLeft'}));const out=[];for(let t=0;t<ms;t+=100){steer();window.advanceTime(100);const s=JSON.parse(render_game_to_text());out.push({swim:s.swimming,speed:s.player.speed,stam:s.stamina,depth:s.waterDepth,x:s.player.x,z:s.player.z});}
   window.dispatchEvent(new KeyboardEvent('keyup',{code:'KeyW'}));window.dispatchEvent(new KeyboardEvent('keyup',{code:'ShiftLeft'}));return out;},{ms,follow:!!follow});
  stage('ride checks');
+ /* Coyote Canyon is a locked region on a fresh save — it opens after book one of the story or at
+    ranch level 3 — and the world package's soft boundary quite correctly carries a rider who is
+    standing deep inside a locked region out to the nearest open fast-travel spot. Dropping the
+    horse at the canyon and riding off therefore measured the Prospector at Ochre Reach, where its
+    region list does not match and it is supposed to do nothing. Write the unlock the game itself
+    writes (world.js ensureUnlocks stamps s.unlocked[id] the first time a rule comes true) so the
+    horse is allowed to stand where the trait applies. */
+ const unlocked=await page.evaluate(()=>{const G=window.__features;G.save.sync(s=>{s.unlocked=s.unlocked||{};s.unlocked.coyote=Date.now();});return JSON.parse(render_game_to_text()).world.locked;});
+ check('Coyote Canyon opens once the region is unlocked (the trait has somewhere to bite)',!unlocked.includes('coyote'),unlocked);
  await placeAt(-220,130,['prospector']); const canyon=await gallopFor(5000,true);
  await placeAt(-220,130,[]); const canyonPlain=await gallopFor(5000,true);
  await placeAt(-40,-10,['prospector']); const ranchP=await gallopFor(5000,true);
  await placeAt(-40,-10,[]); const ranchPlain=await gallopFor(5000,true);
- check('The Prospector: faster in Coyote Canyon than without the trait, and no bonus at the ranch',canyon.player.speed>canyonPlain.player.speed*1.015&&Math.abs(ranchP.player.speed-ranchPlain.player.speed)<0.25,{canyon:canyon.player.speed,plain:canyonPlain.player.speed,ranch:ranchP.player.speed,ranchPlain:ranchPlain.player.speed});
+ check('The Prospector: faster in Coyote Canyon than without the trait, and no bonus at the ranch',canyon.player.region==='coyote'&&canyon.player.speed>canyonPlain.player.speed*1.015&&Math.abs(ranchP.player.speed-ranchPlain.player.speed)<0.25,{canyon:canyon.player.speed,plain:canyonPlain.player.speed,ranch:ranchP.player.speed,ranchPlain:ranchPlain.player.speed,at:canyon.player.region,atRanch:ranchP.player.region});
  const early=await page.evaluate(async()=>{
   const G=window.__features,p=G.horse.player; const run=async(traits)=>{
    /* The catalogue and care panels are left open by the UI section above, and a course started
@@ -300,7 +314,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  await page.waitForFunction(READY,null,{timeout:150000,polling:250}); await page.waitForTimeout(1500);
  const I=await page.evaluate(()=>{const G=window.__features,h=G.horse.ridden(),R=G.horse.RIG();return {breed:h&&h.breed,ability:JSON.parse(render_game_to_text()).roster.ability,resolved:G.horse.breedModels.resolve('tidewalker'),rig:!!(R&&R.skin),mat:R&&R.skin&&R.skin.material&&R.skin.material.type};});
  check('?inspect-breed=tidewalker rides the package horse on the Sunset Arabian body, no "Breed model unavailable"',I.breed==='tidewalker'&&I.ability==='swim'&&I.resolved==='sunset'&&I.rig&&warns.length===0,Object.assign(I,{warns}));
- check('no console/page errors',errors.length===0,errors.slice(0,6));
+ check('no console/page errors',errors.length===0,{errors:errors.slice(0,6),http:netBad.slice(0,6)});
  console.log(await page.evaluate(()=>render_game_to_text()));
  await browser.close();
  const failed=checks.filter(c=>!c.ok);
