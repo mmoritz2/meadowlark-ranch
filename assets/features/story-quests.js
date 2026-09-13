@@ -225,10 +225,19 @@ export function install(G){
  G.on('interval30',()=>{releaseBooks(false);});
  G.on('storyEpilogue',()=>{const b=nextBook();if(!b)return null;return 'Two books of the story are behind you, and the next is on its way: <b>'+esc(b.title)+'</b> arrives with the new season in '+daysUntil(b.releaseAt)+' day'+(daysUntil(b.releaseAt)===1?'':'s')+'. Until then — ride free, kiddo.';});
 
- /* Achievements follow the new mission count instead of hard-coded goals. */
- {const a8=ACHS.find(a=>a.id==='story8'), b2=ACHS.find(a=>a.id==='book2');
+ /* Achievements follow the new mission count instead of hard-coded goals, and they are worked out
+    a second time on 'boot', because we are only the eighth package to install and the ones behind
+    us braid missions in as well — breeding splices its foal tutorial in at index 7, which shunts
+    every later mission down one. Pinning the goals at install time left 'Grandpa Wren's pride' one
+    short of the truth, so it popped the moment you accepted the Championship Final instead of when
+    you won it, and 'The Silver Kestrel' likewise. Books released later only ever append, so the
+    end of installFeatures is the last moment an index can move. */
+ function syncAchGoals(){
+  const a8=ACHS.find(a=>a.id==='story8'), b2=ACHS.find(a=>a.id==='book2');
   const i8=STORY.findIndex(m=>m.type==='event'&&m.ev==='w2'), i2=STORY.findIndex(m=>m.ch==='The Silver Kestrel'&&m.type==='talk');
-  if(a8&&i8>=0)a8.goal=i8+1; if(b2&&i2>=0)b2.goal=i2+1;}
+  if(a8&&i8>=0)a8.goal=i8+1; if(b2&&i2>=0)b2.goal=i2+1;
+ }
+ syncAchGoals(); G.on('boot',()=>syncAchGoals());
  Q.addAch({id:'named1',icon:'✏️',label:'Christened',desc:'Name a horse yourself',v:s=>(s.stats&&s.stats.named)||0,goal:1,r:{c:100}});
  Q.addAch({id:'meet8',icon:'🤝',label:'Know the Basin',desc:'Meet 8 people',v:s=>Object.keys(s.met||{}).length,goal:8,r:{c:250,g:1}});
  Q.addAch({id:'side10',icon:'📌',label:'Helping hands',desc:'Finish 10 side quests',v:s=>(s.side&&s.side.n)||0,goal:10,r:{c:300,g:2}});
@@ -531,13 +540,27 @@ export function install(G){
  {const g=new THREE.Group(); const x=5,z=-3; for(const bx of[-0.6,0.6])W.box(0.1,1.9,0.1,'#5a3d22',bx,0.95,0,g); W.box(1.7,1.0,0.08,'#e9dcc0',0,1.6,0,g); W.box(1.9,0.12,0.16,'#8a6745',0,2.15,0,g); const sp=G.nameSprite('📌 Quest board'); sp.position.y=2.6; g.add(sp); g.position.set(x,W.groundH(x,z),z); g.rotation.y=Math.PI*0.15; g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
   W.addThing({kind:'sqboard',id:'board',g,x,z,reach:3.4,label:()=>'📌 Quest board (E)',use:()=>openSideTab()});}
 
- /* ---------- dailies: six a day, club points on every one, five new templates ---------- */
- for(const q of DAILYQ){q.r=q.r||{};if(!q.r.sp)q.r.sp=10;if(q.r.g)q.r.g=Math.min(6,q.r.g+1);}   // 2-4 gems a daily: SE's 10 rescaled to this economy
- Q.addDaily({type:'train',icon:'📈',label:'Raise a stat with food',goal:1,r:{c:120,g:4,p:15,sp:10}});
- Q.addDaily({type:'build',icon:'🏗️',label:'Place 2 ranch pieces',goal:2,r:{c:100,g:3,p:10,sp:10}});
- Q.addDaily({type:'forage',icon:'🧺',label:'Forage 4 wild foods',goal:4,r:{c:120,g:3,p:15,sp:10}});
- Q.addDaily({type:'talkn',icon:'💬',label:'Chat with 3 people',goal:3,r:{c:80,g:3,p:10,sp:10}});
- Q.addDaily({type:'side',icon:'📌',label:'Finish a side quest',goal:1,r:{c:150,g:4,p:20,sp:10}});
+ /* ---------- dailies: six a day, five new templates ---------- */
+ /* Not one sp: in here, and that absence is load-bearing. account-economy's wallet ledger has
+    credited 10⭐ for every daily claim and 40⭐ for the umbrella since three hours before this
+    package existed, and it is what the club Week tab promises the player in so many words — "a
+    daily quest 10 and the umbrella 40". Putting sp:10 on the reward row as well paid the same
+    club points twice, 20 a daily and 120 a full day, and because payReward's sp lands outside the
+    ledger's own tally the extra was swept into the breakdown's unlabelled "ribbons, levels, stats,
+    drills, building" chip, where a player reading the panel could never find it.
+    We stay the daily table's normaliser — ranch.js says as much where it registers its own rows —
+    but the normalising now runs the other way and on 'boot' rather than here, because half the
+    table arrives after we install: fifteen rows from packages behind us carry no sp at all, and
+    ranch.js's 'stallin' copied the old sp:10 convention precisely because it saw this loop run
+    before it. One pass at the end of installFeatures catches every one of them. */
+ const stripDailySp=()=>{for(const q of DAILYQ)if(q.r&&q.r.sp)delete q.r.sp;};
+ for(const q of DAILYQ){q.r=q.r||{};if(q.r.g)q.r.g=Math.min(6,q.r.g+1);}   // 2-4 gems a daily: SE's 10 rescaled to this economy
+ stripDailySp(); G.on('boot',stripDailySp);
+ Q.addDaily({type:'train',icon:'📈',label:'Raise a stat with food',goal:1,r:{c:120,g:4,p:15}});
+ Q.addDaily({type:'build',icon:'🏗️',label:'Place 2 ranch pieces',goal:2,r:{c:100,g:3,p:10}});
+ Q.addDaily({type:'forage',icon:'🧺',label:'Forage 4 wild foods',goal:4,r:{c:120,g:3,p:15}});
+ Q.addDaily({type:'talkn',icon:'💬',label:'Chat with 3 people',goal:3,r:{c:80,g:3,p:10}});
+ Q.addDaily({type:'side',icon:'📌',label:'Finish a side quest',goal:1,r:{c:150,g:4,p:20}});
 
  /* ---------- the quest log: Story and Side tabs ---------- */
  const trackChip=t=>t==='search'?'<span style="font-size:10px;color:#5b7fbf">🔎</span>':'<span style="font-size:10px;color:#b8892f">🏆</span>';
