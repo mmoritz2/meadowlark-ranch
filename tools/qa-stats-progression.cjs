@@ -54,9 +54,9 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   S.sync(s=>{s.items.bag3=(s.items.bag3||0)+1;});
   G.ui.openCare();
   const careTxt=text('carePanel');
-  out.care={lvl:/Level 1 \/ 50/.test(careTxt),xpBonus:/XP bonus \+\d+%/.test(careTxt),perStat:document.querySelectorAll('#carePanel .cbar[title*="breed ceiling"]').length,bagBtn:!!document.querySelector('#carePanel [data-fx="sp:bag:bag3"]')};
+  out.care={lvl:/Level 1 \/ 50/.test(careTxt),xpBonus:/XP bonus \+\d+%/.test(careTxt),perStat:document.querySelectorAll('#carePanel .cbar[title*="breed ceiling"]').length,bagBtn:!!document.querySelector('#carePanel [data-fx="feed:bag:bag3"]')};
   const before=fresh().horses[ri()], bag3Before=fresh().items.bag3;
-  document.querySelector('#carePanel [data-fx="sp:bag:bag3"]').click();
+  document.querySelector('#carePanel [data-fx="feed:bag:bag3"]').click();
   const after=fresh().horses[ri()];
   out.bag={before:{level:before.level,xp:before.xp,bag3:bag3Before},after:{level:after.level,xp:after.xp,bag3:fresh().items.bag3},lifeBag:fresh().life.bag};
   G.hidePanels();
@@ -68,10 +68,10 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   G.horse.myHorses[ri()].level=1;G.horse.myHorses[ri()].xp=0;
   G.ui.openShop('food');
   const shopTxt=text('shopPanel');
-  out.shop={tierHeaders:[1,2,3,4].filter(t=>shopTxt.includes(T.FEED_TIER_LBL[t])).length,buyBtns:document.querySelectorAll('#shopPanel [data-fx^="sp:buy:"]').length,supps:document.querySelectorAll('#shopPanel [data-supp]').length,bags:/Feed bags/.test(shopTxt),traderHint:/sold by Hollis in Barleyfold/.test(shopTxt)};
+  out.shop={tierHeaders:[1,2,3,4].filter(t=>shopTxt.includes(T.FEED_TIER_LBL[t])).length,buyBtns:document.querySelectorAll('#shopPanel [data-fx^="feed:buy:"]').length,supps:document.querySelectorAll('#shopPanel [data-supp]').length,bags:/Feed bags/.test(shopTxt),traderHint:/sold by Hollis in Barleyfold/.test(shopTxt)};
   /* buying off the shelf */
   S.sync(s=>{s.coins=1000;});
-  const c0=fresh().coins; document.querySelector('#shopPanel [data-fx="sp:buy:carrot:5"]').click();
+  const c0=fresh().coins; document.querySelector('#shopPanel [data-fx="feed:buy:carrot:5"]').click();
   out.buy={dc:c0-fresh().coins,carrots:fresh().items.carrot};
   G.hidePanels();
   /* ---- 7. stat XP from events ---- */
@@ -105,15 +105,15 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   /* ---- 9. wildlife ---- */
   out.wild={coyote:!!W.CRITTER_DEFS.coyote,goat:!!W.CRITTER_DEFS.goat,spawned:W.critters.filter(c=>c.key==='coyote'||c.key==='goat').length};
   /* ---- 6. traders ---- */
-  const marta=T.TRADERS.find(t=>t.id==='marta');
-  out.traderNpc={inDefs:!!G.quest.NPC_DEFS.find(d=>d.id==='marta'),inList:!!W.npcList.find(n=>n.def.id==='marta'),n:T.TRADERS.length};
-  G.horse.player.pos.set(marta.x+1.5,0,marta.z+1.5); G.horse.player.speed=0; window.advanceTime(150);
+  const posy=T.TRADERS.find(t=>t.id==='posy');
+  out.traderNpc={inDefs:!!G.quest.NPC_DEFS.find(d=>d.id==='posy'),inList:!!W.npcList.find(n=>n.def.id==='posy'),n:T.TRADERS.length};
+  G.horse.player.pos.set(posy.x+1.5,0,posy.z+1.5); G.horse.player.speed=0; window.advanceTime(150);
   G.openDlg();
-  const dlg=document.getElementById('dlg'); out.dlg={shown:dlg.style.display,browse:/Browse Marta/.test(dlg.textContent)};
-  const bb=dlg.querySelector('[data-fx="sp:trader:marta"]'); if(bb)bb.click();
+  const dlg=document.getElementById('dlg'); out.dlg={shown:dlg.style.display,browse:/Browse Posy/.test(dlg.textContent)};
+  const bb=dlg.querySelector('[data-fx="feed:trader:posy"]'); if(bb)bb.click();
   const st=text('shopPanel');
-  out.traderShop={open:document.getElementById('shopPanel').style.display,header:/Marta's stall · Cottonwood/.test(st),stockRows:document.querySelectorAll('#shopPanel [data-fx^="sp:buy:"]').length,hasApple:/Apple/.test(st),hasDaikon:/Daikon/.test(st),supps:document.querySelectorAll('#shopPanel [data-supp]').length};
-  const c1=fresh().coins; const ab=document.querySelector('#shopPanel [data-fx="sp:buy:strawberry:1"]'); if(ab)ab.click();
+  out.traderShop={open:document.getElementById('shopPanel').style.display,header:/Posy's stall · Cottonwood/.test(st),stockRows:document.querySelectorAll('#shopPanel [data-fx^="feed:buy:"]').length,hasApple:/Apple/.test(st),hasDaikon:/Daikon/.test(st),supps:document.querySelectorAll('#shopPanel [data-supp]').length};
+  const c1=fresh().coins; const ab=document.querySelector('#shopPanel [data-fx="feed:buy:strawberry:1"]'); if(ab)ab.click();
   out.traderBuy={dc:c1-fresh().coins,strawberry:fresh().items.strawberry,traders:fresh().traders};
   G.hidePanels();
   /* ---- 10. golden horseshoes ---- */
@@ -138,7 +138,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   /* selling the catch */
   S.sync(s=>{s.items.trout=(s.items.trout||0)+2;});
   const trout0=fresh().items.trout;
-  G.ui.openShop('food'); const c2=fresh().coins; const sb=document.querySelector('#shopPanel [data-fx="sp:sell:trout:1"]'); if(sb)sb.click();
+  G.ui.openShop('food'); const c2=fresh().coins; const sb=document.querySelector('#shopPanel [data-fx="feed:sell:trout:1"]'); if(sb)sb.click();
   out.sell={btn:!!sb,dc:fresh().coins-c2,left:fresh().items.trout,trout0};
   G.hidePanels();
   /* ---- state hook ---- */
@@ -168,9 +168,9 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('picking an apple fills the basket, counts for the forage daily and hides the node',r.pick&&r.pick.apple>=1&&r.pick.forage===r.pick.apple&&r.pick.hidden,r.pick);   // two apples can hang within reach of one tree
  check('coyotes and mountain goats live in the canyon and on Hollowpeak',r.wild&&r.wild.coyote&&r.wild.goat&&r.wild.spawned===6,r.wild);
  check('five traders stand in the towns',r.traderNpc&&r.traderNpc.inDefs&&r.traderNpc.inList&&r.traderNpc.n===5,r.traderNpc);
- check('talking to Marta offers her stall',r.dlg&&r.dlg.shown==='block'&&r.dlg.browse,r.dlg);
+ check('talking to Posy offers her stall',r.dlg&&r.dlg.shown==='block'&&r.dlg.browse,r.dlg);
  check('her stall lists only Cottonwood stock (apples yes, daikon no) plus supplements',r.traderShop&&r.traderShop.open==='flex'&&r.traderShop.header&&r.traderShop.hasApple&&!r.traderShop.hasDaikon&&r.traderShop.stockRows>=7&&r.traderShop.supps===5,r.traderShop);
- check('buying strawberries from Marta costs 16 and logs the trader',r.traderBuy&&r.traderBuy.dc===16&&r.traderBuy.strawberry>=1&&r.traderBuy.traders&&r.traderBuy.traders.marta>=1,r.traderBuy);
+ check('buying strawberries from Posy costs 16 and logs the trader',r.traderBuy&&r.traderBuy.dc===16&&r.traderBuy.strawberry>=1&&r.traderBuy.traders&&r.traderBuy.traders.posy>=1,r.traderBuy);
  check('golden horseshoe pays 80 coins and 15 XP',r.shoe&&r.shoe.dcoins===80&&r.shoe.dxp===15&&r.shoe.got,r.shoe);
  check('four fishing spots replace the single lake thing; river spots sit on the bank',r.fishSpots&&r.fishSpots.n===4&&r.fishSpots.things===4&&r.fishSpots.oldLake===0&&Math.abs(r.fishSpots.fordZ-r.fishSpots.riverZ)>7,r.fishSpots);
  check('fishing at Otter Ford: cast, rod shown, bite, catch lands in the basket, rod put away',r.fish&&/Fish at Otter Ford/.test(r.fish.ctx0)&&r.fish.waiting&&r.fish.bit&&/BITE/.test(r.fish.ctx1)&&r.fish.caught===1&&r.fish.fordCount===1&&(r.fish.fishItems===1||r.fish.bottles===1)&&r.fish.rodOn&&r.fish.rodOff,r.fish);

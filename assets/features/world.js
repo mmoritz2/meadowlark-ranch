@@ -351,7 +351,19 @@ export function install(G){
    if(LBL[0])MK.push({x:rg.x,z:rg.z,glyph:' ',label:LBL[0],labelDz:LBL[1],kind:'region'});}
   if(rg.unlock)MK.push({x:rg.x,z:rg.z-16,glyph:'🔒',kind:'lock',hidden:s=>regionUnlocked(rg,s)});
  }
- for(const item in W.FORAGE_SPOTS){const b=W.FORAGE_SPOTS[item],f=T.FOODS3[item];MK.push({x:b[0]+(b[2]+b[3])/2*0.5,z:b[1]-(b[2]+b[3])/2*0.5,glyph:(f&&f.emoji)||'🌿',alpha:0.8,kind:'forage',item});}
+ /* A forage spot comes in two shapes: a scatter box [cx,cz,rMin,rMax,n], and a list of exact
+    points ({at:[[x,z]…],count,jitter}) for the things that hang on a particular tree or hive.
+    Reading box fields off the second shape gave NaN, so the apple, honey, corn and royal-jelly
+    pins have been sitting at no coordinate at all — four map markers a player could never see or
+    steer by. Average the points instead. And skip an item whose own package has already named the
+    patch, or the map carries the same fruit twice a few metres apart. */
+ for(const item in W.FORAGE_SPOTS){
+  if(MK.some(m=>m.kind==='forage'&&m.item===item))continue;
+  const b=W.FORAGE_SPOTS[item],f=T.FOODS3[item],at=!Array.isArray(b)&&b.at||null;
+  const x=at?at.reduce((t,p)=>t+p[0],0)/at.length:b[0]+(b[2]+b[3])/2*0.5;
+  const z=at?at.reduce((t,p)=>t+p[1],0)/at.length:b[1]-(b[2]+b[3])/2*0.5;
+  MK.push({x,z,glyph:(f&&f.emoji)||'🌿',alpha:0.8,kind:'forage',item});
+ }
  for(const ev of T.EVENTS3){const at=ev.at||(ev.race&&T.RACE_ROUTES[ev.route]&&T.RACE_ROUTES[ev.route][0])||(ev.dressage?[2,1]:null);if(at)MK.push({x:at[0]+(ev.race?0:4),z:at[1]+(ev.race?-4:0),glyph:ev.race?'🏁':'🏆',kind:'venue',ev:ev.id,alpha:0.9});}
  for(const d of Q.NPC_DEFS){if(d.folk)continue;MK.push({x:d.x,z:d.z+6,glyph:d.icon||'💬',kind:'npc',npc:d.id});}
  for(const f of T.FT)MK.push({x:f[1],z:f[2]-7,glyph:'🧭',alpha:0.85,kind:'ft'});

@@ -85,17 +85,28 @@ const FISH={
  char:{label:'Falls Char',emoji:'🐠',sell:110,tier:3},
  goldperch:{label:'Golden Loon Perch',emoji:'🐡',sell:150,tier:3,gem:1},
 };
-/* Where to fish, and what bites there. Odds are cumulative rolls; 'bottle' is a message bottle. */
+/* Where to fish, and what bites there. Odds are cumulative rolls; 'bottle' is a message bottle.
+   The ford post sits at the ford proper rather than at x:14, because world.js lands its Otter Ford
+   ferry on the same bank at x:16 with a nine-metre reach. Two metres apart, nearThing simply took
+   whichever was nearer, and it was always the boat: a rider who rode to Otter Ford to fish was
+   offered the ferry instead and could not cast at all. Sixteen metres upstream, at the crossing the
+   map already labels 🌉 Otter Ford, the two prompts never overlap. */
 const FISH_SPOTS=[
  {id:'lake',name:'Loon Lake',x:20,z:16,odds:[['bottle',0.05],['goldperch',0.15],['trout',0.45],['bass',1]]},
- {id:'ford',name:'Otter Ford',x:14,z:null,odds:[['bottle',0.05],['bass',0.2],['trout',0.5],['chub',1]]},
+ {id:'ford',name:'Otter Ford',x:0,z:null,odds:[['bottle',0.05],['bass',0.2],['trout',0.5],['chub',1]]},
  {id:'falls',name:'Hollowpeak Falls',x:-146,z:-218,odds:[['bottle',0.05],['goldperch',0.15],['trout',0.55],['char',1]]},
  {id:'creek',name:'Canyon Creek',x:null,z:150,odds:[['bottle',0.05],['char',0.15],['bass',0.45],['chub',1]]},
 ];
 
-/* The traders. Each stall carries its region's food; every stall sells supplements. */
+/* The traders. Each stall carries its region's food; every stall sells supplements.
+   The Cottonwood grocer used to be Marta, which is also the id breeding.js gives its foaling
+   midwife. addNPC keeps the first def it is handed for an id and we are FEATURES[0], so the
+   breeder's def never reached NPC_DEFS: her body stood in the paddock with no map pin, the
+   'Breed your first foal' mission pointed the player at the village grocery instead, and
+   breeding's own dlg hook — which matches on the id — hung the foaling barn, the recipe book
+   and the breeding tokens off the grocer's stall. She is Posy now, and the two are two people. */
 const TRADERS=[
- {id:'marta',name:'Marta',icon:'🧺',town:'Cottonwood',x:58,z:-44,hat:'#7fae5e',shirt:'#e0c48a',idle:'Fresh from the orchard and the gardens — apples, strawberries, peas. Have a look at the stall.',stock:['apple','strawberry','sweetpea','lettuce','carrot','hay','bag1']},
+ {id:'posy',name:'Posy',icon:'🧺',town:'Cottonwood',x:58,z:-44,hat:'#7fae5e',shirt:'#e0c48a',idle:'Fresh from the orchard and the gardens — apples, strawberries, peas. Have a look at the stall.',stock:['apple','strawberry','sweetpea','lettuce','carrot','hay','bag1']},
  {id:'hollis',name:'Hollis',icon:'🌽',town:'Barleyfold',x:222,z:-104,hat:'#a8783a',shirt:'#c9a24a',idle:'Barleyfold grows the odd stuff the valley can\'t: daikon, zucchini, the sweetest corn. Priced fair.',stock:['pumpkin','watermelon','corn','daikon','zucchini','hay','bag1','bag2']},
  {id:'rosa',name:'Rosa',icon:'🌵',town:'Coyote Canyon',x:-216,z:134,hat:'#c94f3a',shirt:'#e8a05a',idle:'Prickly pear takes patience to pick. Buy it here and keep your hands whole, partner.',stock:['orange','pricklypear','oats','carrot','hay','bag1','bag2']},
  {id:'tomas',name:'Tomas',icon:'🌲',town:'Hollowpeak',x:-156,z:-192,hat:'#4a6a4a',shirt:'#8aa0b8',idle:'Truffles, huckleberries, chestnuts and the moss that grows where the snow stops. Mountain food for a mountain horse.',stock:['berries','truffle','snowmoss','chestnut','apple','bag1','bag2']},
@@ -152,9 +163,17 @@ export function install(G){
    +' · <span title="'+(f.parts.length?f.parts.map(p=>p[0]+' ×'+p[1].toFixed(2)).join(', '):'no bonuses yet — bond, tack, mastery and achievements all add up')+'">✨ XP bonus +'+Math.max(0,pct)+'%</span>'
    +(f.parts.length?' <span style="color:#8c7a63">('+f.parts.map(p=>p[0]+' +'+Math.round((p[1]-1)*100)+'%').join(', ')+')</span>':'')+'</div>';
  });
- /* dailies and story hand out horse XP now (paid through the reward kinds registered in ranch3d) */
- for(const q of Q.DAILYQ){ if(q.type==='event')q.r.bag=q.r.bag||'bag2'; if(q.type==='gallop2k')q.r.bag=q.r.bag||'bag3'; if(q.type==='cleanjump')q.r.xp=q.r.xp||30; if(q.type==='tame')q.r.xp=q.r.xp||60; if(q.type==='fish')q.label='Catch 2 fish at any water'; }
- for(const m of Q.STORY){ if(m.reward&&!m.reward.xp&&m.reward.c)m.reward.xp=Math.max(10,Math.round(m.reward.c/5)); }   // roughly a fifth of the coin value as horse XP
+ /* Dailies and story hand out horse XP now (paid through the reward kinds registered in ranch3d).
+    This package is FEATURES[0], so at install time Q.STORY holds only the inline missions: the
+    story package, the breeding tutorial and the seasonal books all append theirs after us, and a
+    mission we never walked paid no horse XP at all — sixteen of the fifty-nine. So the pass runs
+    again on 'boot', once every package is in. Both guards are ||-shaped, so a second walk is a
+    no-op over what the first already set. */
+ function backfillQuests(){
+  for(const q of Q.DAILYQ){ if(q.type==='event')q.r.bag=q.r.bag||'bag2'; if(q.type==='gallop2k')q.r.bag=q.r.bag||'bag3'; if(q.type==='cleanjump')q.r.xp=q.r.xp||30; if(q.type==='tame')q.r.xp=q.r.xp||60; if(q.type==='fish')q.label='Catch 2 fish at any water'; }
+  for(const m of Q.STORY){ if(m.reward&&!m.reward.xp&&m.reward.c)m.reward.xp=Math.max(10,Math.round(m.reward.c/5)); }   // roughly a fifth of the coin value as horse XP
+ }
+ backfillQuests(); G.on('boot',backfillQuests);
 
  /* ================= 3. feed bags ================= */
  M.rewardKind('bag',(s,v)=>{s.items=s.items||{};if(typeof v==='string')s.items[v]=(s.items[v]||0)+1;else if(v&&typeof v==='object')for(const k in v)s.items[k]=(s.items[k]||0)+v[k];},
@@ -164,10 +183,16 @@ export function install(G){
  G.ui.careSection((s,h)=>{
   const own=bagsOwned(s);
   return '<div class="crow" style="gap:6px;flex-wrap:wrap;margin-top:4px"><span class="lbl" style="font-size:11px" title="Feed bags give a fixed chunk of horse XP. They drop from events, chests, daily quests and achievements.">🛍️ Feed bags</span>'
-   +(own.length?own.map(k=>'<button data-fx="sp:bag:'+k+'" title="'+FEED_BAGS[k].label+' · '+FEED_BAGS[k].rar+' · +'+FEED_BAGS[k].xp+' horse XP" style="border-left:4px solid '+T.RAR_COL[FEED_BAGS[k].rar]+'">'+FEED_BAGS[k].emoji+' '+FEED_BAGS[k].label.replace(' Feed Bag','')+' ×'+s.items[k]+' <span style="color:#8c7a63;font-size:11px">+'+FEED_BAGS[k].xp+' XP</span></button>').join('')
+   +(own.length?own.map(k=>'<button data-fx="feed:bag:'+k+'" title="'+FEED_BAGS[k].label+' · '+FEED_BAGS[k].rar+' · +'+FEED_BAGS[k].xp+' horse XP" style="border-left:4px solid '+T.RAR_COL[FEED_BAGS[k].rar]+'">'+FEED_BAGS[k].emoji+' '+FEED_BAGS[k].label.replace(' Feed Bag','')+' ×'+s.items[k]+' <span style="color:#8c7a63;font-size:11px">+'+FEED_BAGS[k].xp+' XP</span></button>').join('')
     :'<span style="font-size:11px;color:#8c7a63">none yet — win events, open chests, finish dailies</span>')+'</div>';
  });
- G.ui.action('sp',(args)=>{
+ /* This was registered as 'sp' and social-play registers 'sp' too, for its own big surface of
+    friend, ride and club buttons. uiAction is a plain assignment into one map, so the later
+    package silently took the name off us — and because we install first, every feed-bag, buy,
+    sell, barter and trader button in the game has been landing in social-play's handler and
+    falling through it as an unknown verb. Nothing threw; the buttons simply did nothing.
+    'feed' is ours alone, and the whole food economy hangs off it. */
+ G.ui.action('feed',(args)=>{
   const what=args[0];
   if(what==='bag')useBag(args[1]);
   else if(what==='buy')buyFood(args[1],+args[2]||1);
@@ -232,24 +257,24 @@ export function install(G){
   if(ok){G.sChime();G.ui.openShop('food');}
  }
  const foodRow=(s,k,price,buyable,note)=>{const f=FOODS3[k];return '<div class="evrow">'+f.emoji+' <b>'+f.label+'</b><span>'+(price?price+' 🪙 each · ':'')+'you have '+(s.items[k]||0)+(f.stat?' · trains '+STAT_LBL[f.stat]+' +'+f.sxp+' XP':' · fills the belly')+(f.where?' · grows in '+f.where:'')+(note?' · '+note:'')+'</span>'
-  +(buyable?'<button data-fx="sp:buy:'+k+':1">+1</button><button data-fx="sp:buy:'+k+':5">+5</button>':'')+'</div>';};
- const bagRow=(s,k,buyable)=>{const B=FEED_BAGS[k];return '<div class="evrow" style="border-left:4px solid '+T.RAR_COL[B.rar]+'">'+B.emoji+' <b>'+B.label+'</b><span>'+B.rar+' · +'+B.xp+' horse XP · you have '+(s.items[k]||0)+(buyable?' · '+B.price+' 🪙':' · a prize from events, chests and quests')+'</span>'+(buyable?'<button data-fx="sp:buy:'+k+':1">+1</button>':'')+'</div>';};
+  +(buyable?'<button data-fx="feed:buy:'+k+':1">+1</button><button data-fx="feed:buy:'+k+':5">+5</button>':'')+'</div>';};
+ const bagRow=(s,k,buyable)=>{const B=FEED_BAGS[k];return '<div class="evrow" style="border-left:4px solid '+T.RAR_COL[B.rar]+'">'+B.emoji+' <b>'+B.label+'</b><span>'+B.rar+' · +'+B.xp+' horse XP · you have '+(s.items[k]||0)+(buyable?' · '+B.price+' 🪙':' · a prize from events, chests and quests')+'</span>'+(buyable?'<button data-fx="feed:buy:'+k+':1">+1</button>':'')+'</div>';};
  const suppRows=(s,h)=>{const SUPPS=T.SUPPS||{};return '<div style="font-size:12px;color:#8c7a63;margin:10px 0 2px">💊 Supplements · straight onto '+(h?h.name:'your horse')+'</div>'
   +Object.keys(SUPPS).map(k=>{const Sp=SUPPS[k],at=h&&h.stats?h.stats[k]:0,cap=h?Math.min(X.statCap(h),X.statCeil(h,k)):10,maxed=at>=cap;
    return '<div class="evrow"'+(maxed?' style="opacity:.5"':'')+'>'+Sp.emoji+' <b>'+Sp.label+'</b><span>+'+Sp.sxp+' '+short(k)+' XP · now '+at+'/'+cap+'</span>'+(maxed?'<span style="font-size:11px;color:#8c7a63">at its ceiling</span>':'<button data-supp="'+k+'"'+(s.coins<Sp.price?' disabled':'')+'>'+Sp.price+' 🪙</button>')+'</div>';}).join('')
   +'<div style="font-size:11px;color:#8c7a63">A stat cannot go past its cap — level the horse up, and mind the breed ceiling.</div>';};
  const fishRows=s=>{const own=Object.keys(FISH).filter(k=>(s.items[k]||0)>0);if(!own.length)return '';
-  return '<div style="font-size:12px;color:#8c7a63;margin:10px 0 2px">🎣 Your catch · sells for coins</div>'+own.map(k=>'<div class="evrow">'+FISH[k].emoji+' <b>'+FISH[k].label+'</b><span>'+FISH[k].sell+' 🪙 each · you have '+s.items[k]+'</span><button data-fx="sp:sell:'+k+':1">Sell 1</button><button data-fx="sp:sell:'+k+':'+s.items[k]+'">Sell all</button></div>').join('');};
+  return '<div style="font-size:12px;color:#8c7a63;margin:10px 0 2px">🎣 Your catch · sells for coins</div>'+own.map(k=>'<div class="evrow">'+FISH[k].emoji+' <b>'+FISH[k].label+'</b><span>'+FISH[k].sell+' 🪙 each · you have '+s.items[k]+'</span><button data-fx="feed:sell:'+k+':1">Sell 1</button><button data-fx="feed:sell:'+k+':'+s.items[k]+'">Sell all</button></div>').join('');};
  G.ui.shopTab({id:'food',label:'🧺 Food',render(s,h){
   if(shopTrader){const tr=TRADERS.find(t=>t.id===shopTrader);if(!tr||dist(tr.x,tr.z)>16)shopTrader=null;}
   const tr=shopTrader&&TRADERS.find(t=>t.id===shopTrader);
   let html='';
   if(tr){
-   html+='<div class="ph" style="font-size:14px">'+tr.icon+' '+tr.name+'\'s stall · '+tr.town+' <button data-fx="sp:shelf" style="margin-left:auto;font-size:11px">🛍️ the ranch shelf</button></div>'
+   html+='<div class="ph" style="font-size:14px">'+tr.icon+' '+tr.name+'\'s stall · '+tr.town+' <button data-fx="feed:shelf" style="margin-left:auto;font-size:11px">🛍️ the ranch shelf</button></div>'
     +'<div style="font-size:11px;color:#8c7a63;margin-bottom:4px">A resource trader: buy stat food for coins if you would rather not forage. Only wild-picked food earns club ⭐.</div>'
     +tr.stock.filter(k=>FOODS3[k]).map(k=>foodRow(s,k,FOODS3[k].price,true)).join('')
     +tr.stock.filter(k=>FEED_BAGS[k]).map(k=>bagRow(s,k,true)).join('')
-    +(tr.buysFish?'<div style="font-size:12px;color:#8c7a63;margin:10px 0 2px">🎣 Nell buys fish · or trades 3 of any fish for 🍯 Wild Honey</div>'+(fishRows(s)||'<span style="font-size:11px;color:#8c7a63">Bring her something from the lake or the river.</span>')+'<div class="evrow">🍯 <b>Three fish for a jar of honey</b><span>any species</span><button data-fx="sp:barter">Trade</button></div>':'')
+    +(tr.buysFish?'<div style="font-size:12px;color:#8c7a63;margin:10px 0 2px">🎣 Nell buys fish · or trades 3 of any fish for 🍯 Wild Honey</div>'+(fishRows(s)||'<span style="font-size:11px;color:#8c7a63">Bring her something from the lake or the river.</span>')+'<div class="evrow">🍯 <b>Three fish for a jar of honey</b><span>any species</span><button data-fx="feed:barter">Trade</button></div>':'')
     +suppRows(s,h);
    return html;
   }
@@ -306,7 +331,10 @@ export function install(G){
   chestnut:[-150,-190,10,60,3], zucchini:[240,-80,5,30,3], royaljelly:{at:hives,count:1,jitter:0.8},
  };
  for(const k in spots)W.addForageSpot(k,spots[k],mk[k]);
- W.mapMarkers.push({x:68,z:-52,glyph:'🍎',label:'🍎 Cottonwood orchard'},{x:40,z:32,glyph:'🍯'},{x:203,z:-90,glyph:'🌽'},{x:-30,z:-58,glyph:'🫐'},{x:-228,z:142,glyph:'🌵'},{x:-160,z:-210,glyph:'🪴'});
+ /* The six patches worth naming get their pin here, tagged like any other forage pin. world.js
+    marks every forage spot on the map and now skips an item that already carries one, so the
+    orchard stopped drawing two 🍎 on the same wood — one of ours and one of its. */
+ W.mapMarkers.push({x:68,z:-52,glyph:'🍎',label:'🍎 Cottonwood orchard',kind:'forage',item:'apple'},{x:40,z:32,glyph:'🍯',kind:'forage',item:'honey'},{x:203,z:-90,glyph:'🌽',kind:'forage',item:'corn'},{x:-30,z:-58,glyph:'🫐',kind:'forage',item:'berries'},{x:-228,z:142,glyph:'🌵',kind:'forage',item:'pricklypear'},{x:-160,z:-210,glyph:'🪴',kind:'forage',item:'snowmoss'});
  /* wildlife by region: coyotes on the canyon floor, goats on the Hollowpeak scree */
  if(W.CRITTER_DEFS&&!W.CRITTER_DEFS.coyote){
   W.CRITTER_DEFS.coyote={size:0.9,gait:'walk4',speed:1.9,fleeR:11,fleeSpeed:9.5,dusky:true,detail:3,spook:true,
@@ -344,13 +372,20 @@ export function install(G){
  /* ================= 6. resource traders ================= */
  for(const tr of TRADERS){
   W.addNPC({id:tr.id,name:tr.name,icon:tr.icon,x:tr.x,z:tr.z,hat:tr.hat,shirt:tr.shirt,idle:tr.idle,trader:true,
-   extraHtml:(s)=>'<button data-fx="sp:trader:'+tr.id+'" style="margin-right:6px">'+tr.icon+' Browse '+tr.name+'\'s stall</button>'});
-  W.mapMarkers.push({x:tr.x,z:tr.z,glyph:'🧺',labelDz:9});
+   extraHtml:(s)=>'<button data-fx="feed:trader:'+tr.id+'" style="margin-right:6px">'+tr.icon+' Browse '+tr.name+'\'s stall</button>'});
+  /* No pin of our own: world.js pins every NPC that is not townsfolk, with that NPC's own icon,
+     so each of these five was drawing twice — the same basket six metres from itself. */
  }
 
  /* ================= 7. stat XP from events and races ================= */
  const trainsOf=ev=>ev.trains||EVENT_TRAINS[ev.id]||(ev.dressage?['agility','accel']:ev.race?['speed','stamina']:['jump','agility']);
- for(const ev of EVENTS3)if(!ev.trains)ev.trains=trainsOf(ev);
+ /* Same install-order story as the quest backfill: events2-disciplines and the ladder push their
+    nine rows (the shows, d3-d6, the gauntlet and the x2 race) long after we have walked the table,
+    so those rows carried no .trains of their own. trainsOf still answered for them by kind, which
+    is why the panel and the payout looked right — but a package reading ev.trains straight off the
+    row got undefined. Walk it again on 'boot' and the promise in the header holds for every row. */
+ function backfillTrains(){for(const ev of EVENTS3)if(!ev.trains)ev.trains=trainsOf(ev);}
+ backfillTrains(); G.on('boot',backfillTrains);
  G.ui.eventRow((ev)=>' · <span title="Stat XP on finishing">trains '+trainsOf(ev).map(k=>glyph(k)).join('')+'</span>');
  G.on('courseFinish',({ev,stars,RB,dressage,pct})=>{
   const keys=trainsOf(ev);
