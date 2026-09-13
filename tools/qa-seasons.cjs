@@ -10,6 +10,7 @@
 
    Usage:  QA_URL=http://127.0.0.1:8511 NODE_PATH=$(npm root -g) node tools/qa-seasons.cjs */
 const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');   // the backend comes from the platform, never baked in
 const base=(process.env.QA_URL||'http://127.0.0.1:8511').replace(/\/$/,'');
 const url=base+'/ranch3d.html?qa=seasons&fresh='+Date.now();
 const checks=[];
@@ -22,7 +23,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
 const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_game_to_text());return s.graphics&&s.graphics.horseReady&&!s.graphics.horseLoading;}catch(e){return false;}})();
 
 (async()=>{
- browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const page=await browser.newPage({viewport:{width:1280,height:900}});
  const errors=[];
  page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));

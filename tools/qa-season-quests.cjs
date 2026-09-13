@@ -17,6 +17,7 @@
 
    Usage:  QA_URL=http://127.0.0.1:8513 NODE_PATH=$(npm root -g) node tools/qa-season-quests.cjs */
 const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');   // the backend comes from the platform, never baked in
 const base=(process.env.QA_URL||'http://127.0.0.1:8513').replace(/\/$/,'');
 const EPOCH=Date.UTC(2026,0,5), DAY=864e5;
 const at=(n,day)=>EPOCH+n*28*DAY+((day||1)-1)*DAY+3600e3;
@@ -26,7 +27,7 @@ const t0=Date.now();
 const stage=s=>console.log('… '+s+' @'+((Date.now()-t0)/1000).toFixed(1)+'s');
 let browser=null;
 setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(browser)await browser.close();}catch(e){}process.exit(3);},600000).unref();
-const ARGS=['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist'];
+const ARGS=['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist'];
 const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_game_to_text());return s.graphics&&s.graphics.horseReady&&!s.graphics.horseLoading;}catch(e){return false;}})();
 
 /* helpers evaluated in the page */

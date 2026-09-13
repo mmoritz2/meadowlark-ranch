@@ -13,6 +13,7 @@
    Usage:  QA_URL=http://127.0.0.1:8512 NODE_PATH=$(npm root -g) node tools/qa-season-hunts.cjs
    Server: python3 qa/serve-fallback.py <worktree> <main clone> 8512 */
 const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');   // the backend comes from the platform, never baked in
 const base=(process.env.QA_URL||'http://127.0.0.1:8512').replace(/\/$/,'');
 const EPOCH=Date.UTC(2026,0,5), DAY=864e5;
 const seasonAt=(n,day)=>EPOCH+n*28*DAY+((day||10)-1)*DAY+3600e3;
@@ -44,7 +45,7 @@ const step=(page,ms)=>page.evaluate(m=>advanceTime(m),ms);
 const wallet=page=>page.evaluate(()=>{const s=window.__features.save.fresh();return {c:s.coins,g:s.gems,k:s.keys||0,tok:(s.tokens&&s.tokens.n)||0};});
 
 (async()=>{
- browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const errors=[];
 
  /* ============================ 1. bloom: the egg hunt, and the bounty ============================ */

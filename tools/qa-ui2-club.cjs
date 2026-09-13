@@ -7,6 +7,7 @@
    Usage:  QA_URL=http://127.0.0.1:8514 NODE_PATH=$(npm root -g) node tools/qa-ui2-club.cjs
    Server: python3 .../serve-fallback.py <worktree> <main clone> 8514                        */
 const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');   // the backend comes from the platform, never baked in
 const base=(process.env.QA_URL||'http://127.0.0.1:8514').replace(/\/$/,'');
 const checks=[];
 function check(name,ok,detail){checks.push({name,ok:!!ok,detail});console.log((ok?'PASS ':'FAIL ')+name+(detail!==undefined?' — '+JSON.stringify(detail):''));}
@@ -50,7 +51,7 @@ const openClub=p=>p.evaluate(()=>{const b=document.getElementById('onlinePanel')
 const shut=p=>p.evaluate(()=>{try{hidePanels();}catch(e){document.querySelectorAll('.fpanel,[id$="Panel"]').forEach(x=>x.style.display='none');}});
 
 (async()=>{
- browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling','--use-angle=metal','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
  const errors=[];
  const ABORTED=/Couldn't load texture blob:/;         // a texture whose page we navigated away from
  const wire=p=>{p.on('pageerror',e=>errors.push('PAGEERROR '+e.message));
