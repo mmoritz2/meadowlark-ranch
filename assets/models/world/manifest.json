@@ -1,0 +1,213 @@
+{
+  "version": 1,
+  "purpose": "Photoscanned nature props sourced from Poly Haven, optimised for the placeFoliage() loader path.",
+  "source": "https://polyhaven.com/",
+  "license": "CC0 1.0 Universal",
+  "licenseUrl": "https://polyhaven.com/license",
+  "licenseVerified": "2026-09-14",
+  "licenseQuote": "Our assets are all licensed as CC0, which is effectively Public Domain even in jurisdictions that do not support the Public Domain. [...] You can use our assets for any purpose, including commercial work. You do not need to give credit or attribution when using them (although it is appreciated). You can redistribute them, share them around, include them when sharing your own work, or even in a product you sell.",
+  "attributionRequired": false,
+  "redistributionPermitted": true,
+  "downloaded": "2026-09-14",
+  "sourceFormat": "glTF 1k (gltf + bin + 1024px jpg textures)",
+  "pipeline": "build-world-props.mjs: flatten -> dedup -> join -> weld -> simplify(meshoptimizer) -> drop ARM/occlusion -> BLEND->MASK -> textureCompress webp (baseColor 512 q82, normal 256 q92) -> prune",
+  "extensionsUsed": [
+    "EXT_texture_webp"
+  ],
+  "compression": "EXT_texture_webp only. No Draco, no EXT_meshopt_compression, no KTX2: placeFoliage() constructs a bare GLTFLoader with no DRACOLoader/MeshoptDecoder/KTX2Loader, so those would fail to decode at runtime.",
+  "validation": "gltf-transform 4.5.0 validate: 0 errors on every file (2026-09-14).",
+  "props": {
+    "namaqualand_boulder_03": {
+      "file": "namaqualand_boulder_03.glb",
+      "name": "Namaqualand Boulder 03",
+      "assetPage": "https://polyhaven.com/a/namaqualand_boulder_03",
+      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_boulder_03/namaqualand_boulder_03_1k.gltf",
+      "authors": {
+        "Jenelle van Heerden": "modeling",
+        "Dario Barresi": "Photography"
+      },
+      "datePublished": "2024-10-08",
+      "license": "CC0 1.0 Universal",
+      "sha256": "c3e564b996b4524bbbc242f3846f6d3507c2ccefc632ebdceb6eefb5c1104374",
+      "bytes": 178656,
+      "trianglesOriginal": 64826,
+      "trianglesShipped": 4000,
+      "meshes": 1,
+      "materials": 1,
+      "alphaMode": "OPAQUE",
+      "doubleSided": true,
+      "intendedHeightM": 1.6,
+      "originalSha256": {
+        "namaqualand_boulder_03.bin": "d24151021ed310fe3207f1b5964bff22b583e77d2617427a88b5dcbc0447a475",
+        "namaqualand_boulder_03_1k.gltf": "14560936aaad68da0c0fc549b54c67bba4cd573dfe5b07f92835b9ca044a0092",
+        "textures/namaqualand_boulder_03_arm_1k.jpg": "604806ac2a67d6ae97d7bdeea2a0c859eac2cc42a08af480abdec70fd0385cf5",
+        "textures/namaqualand_boulder_03_diff_1k.jpg": "cd1a44c22932eb18a5989474f60bdccd622a1fdb0854fd69899a32ab8efe3bd4",
+        "textures/namaqualand_boulder_03_nor_gl_1k.jpg": "c4c1d34d5fe79fdda70ddf1dc52046f3bb6002576d75c9a4643403c0ecdc55f4"
+      }
+    },
+    "rock_07": {
+      "file": "rock_07.glb",
+      "name": "Rock 07",
+      "assetPage": "https://polyhaven.com/a/rock_07",
+      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_07/rock_07_1k.gltf",
+      "authors": {
+        "Jenelle van Heerden": "All"
+      },
+      "datePublished": "2024-02-06",
+      "license": "CC0 1.0 Universal",
+      "sha256": "32d07c910acb99225dd61bfce699b472f1e9d74fb8a7d030ee1ea9b2f540bb02",
+      "bytes": 180252,
+      "trianglesOriginal": 14844,
+      "trianglesShipped": 3500,
+      "meshes": 1,
+      "materials": 1,
+      "alphaMode": "OPAQUE",
+      "doubleSided": true,
+      "intendedHeightM": 0.6,
+      "originalSha256": {
+        "rock_07.bin": "e4a532a6d6cf4a08c288f501b790f32cba0528136a29959ce774c3cd39369e7e",
+        "rock_07_1k.gltf": "efcc2dcaa133ff8ad5c865dc2135772e8f5dbc83fa38db2ee2cf25382436b6e6",
+        "textures/rock_07_arm_1k.jpg": "1ed76e9a8542c76bdc6b7b018720ae1f52cd75d9f5ae719f613de3f5032cf4da",
+        "textures/rock_07_diff_1k.jpg": "8ff1965aa1664cc4abcc0131c44ee2b97ab14d6e131d7a51429ff261eeb101c8",
+        "textures/rock_07_nor_gl_1k.jpg": "57cb2210951aeb376164fce5f7c65f03e5599def04873b56cad0f173c275d78d"
+      }
+    },
+    "tree_stump_01": {
+      "file": "tree_stump_01.glb",
+      "name": "Tree Stump 01",
+      "assetPage": "https://polyhaven.com/a/tree_stump_01",
+      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/tree_stump_01/tree_stump_01_1k.gltf",
+      "authors": {
+        "Rob Tuytel": "All"
+      },
+      "datePublished": "2023-07-05",
+      "license": "CC0 1.0 Universal",
+      "sha256": "fa666881196fe51b381b51717c19f4389a37f78d042e3f2b0e53790d6e3f2ef3",
+      "bytes": 241544,
+      "trianglesOriginal": 41046,
+      "trianglesShipped": 4995,
+      "meshes": 1,
+      "materials": 1,
+      "alphaMode": "OPAQUE",
+      "doubleSided": true,
+      "intendedHeightM": 0.7,
+      "originalSha256": {
+        "tree_stump_01.bin": "b4d9ca70b3c908c4a638fbd6a23ed96c84055bbbf14cf44b89e31ad59fa21e0a",
+        "tree_stump_01_1k.gltf": "9c66ba87d693f35eb404acaa96e0eeff831c295b61a0a903795584cbcc3527c9",
+        "textures/tree_stump_01_arm_1k.jpg": "d845cd6ab45288c546267d059ebe1f8a737e174330fe9375e5f99e753f2f95d8",
+        "textures/tree_stump_01_diff_1k.jpg": "781ebe420ac4d84f2e44b9e9937a596e3d5d90711d978a1392f8bf3771b5bf31",
+        "textures/tree_stump_01_nor_gl_1k.jpg": "425117514b0386bb6df41cb64a61a624d2596472e05777483d4021b3285e3ceb"
+      }
+    },
+    "shrub_03": {
+      "file": "shrub_03.glb",
+      "name": "Shrub 03",
+      "assetPage": "https://polyhaven.com/a/shrub_03",
+      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/shrub_03/shrub_03_1k.gltf",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "datePublished": "2024-02-06",
+      "license": "CC0 1.0 Universal",
+      "sha256": "4eeaea44a0e4cc67c9894695cdf68fe631855cdebf7ebdc4d9375b4090c574da",
+      "bytes": 230692,
+      "trianglesOriginal": 8287,
+      "trianglesShipped": 5999,
+      "meshes": 1,
+      "materials": 1,
+      "alphaMode": "MASK",
+      "doubleSided": true,
+      "intendedHeightM": 0.55,
+      "originalSha256": {
+        "shrub_03.bin": "bf4df21e6d2a2bc5f00b4c9142f776171fe7da00cf960001825748067af542b6",
+        "shrub_03_1k.gltf": "b76d7c14bc027e834e82d3f984c32b5d060e62908aa90ff9420a637ca253a8ea",
+        "textures/shrub_03_arm_1k.jpg": "3e2b16812a623037138eedace958210c5f3443a827bbe69663045bba5612f815",
+        "textures/shrub_03_diff_1k.jpg": "3cadc7aba46d3aabbd7d6d2b1d04aa32e2a7da0bc87c2d38ef3cb1ee42cb03ec",
+        "textures/shrub_03_nor_gl_1k.jpg": "ff856bacfce859b8a7555dd9a3b92fbd36b2e775d486be71df485afb4235d6c9"
+      }
+    },
+    "shrub_04": {
+      "file": "shrub_04.glb",
+      "name": "Shrub 04",
+      "assetPage": "https://polyhaven.com/a/shrub_04",
+      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/shrub_04/shrub_04_1k.gltf",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "datePublished": "2024-02-06",
+      "license": "CC0 1.0 Universal",
+      "sha256": "def8cf92dd0de568451fcd6e7971ce3ffcd55780c0beeeb8fdb2e53943c3edd9",
+      "bytes": 252104,
+      "trianglesOriginal": 27327,
+      "trianglesShipped": 5852,
+      "meshes": 1,
+      "materials": 1,
+      "alphaMode": "MASK",
+      "doubleSided": true,
+      "intendedHeightM": 0.45,
+      "originalSha256": {
+        "shrub_04.bin": "cb442c39682e54cc63f912aa78ab17a03566f947a61adbbbaaa6473166744f01",
+        "shrub_04_1k.gltf": "782832cbc57e96686b78c6ef9df6234c25f564f78421c8ed4bd42c3631f5aeae",
+        "textures/shrub_04_arm_1k.jpg": "d1085df021928b29b0f38dde7e58e9a2e304c4e8d838e390b37cf57f8aa492e8",
+        "textures/shrub_04_diff_1k.jpg": "0b0fa0a474753d13f3093858cea79d0de05da1e6a0c5d6e181cd351080980b6c",
+        "textures/shrub_04_nor_gl_1k.jpg": "200d791e0474495bfc876ba1c289dade669c6a5b124647c55bc840a875f6b51c"
+      }
+    },
+    "fern_02": {
+      "file": "fern_02.glb",
+      "name": "Fern 02",
+      "assetPage": "https://polyhaven.com/a/fern_02",
+      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/fern_02/fern_02_1k.gltf",
+      "authors": {
+        "Rob Tuytel": "scanning",
+        "Rico Cilliers": "modeling"
+      },
+      "datePublished": "2022-05-27",
+      "license": "CC0 1.0 Universal",
+      "sha256": "b3b026a310b9b391ebd2f402ceb631f6170eb9b7134e2c109d4d224c4885743a",
+      "bytes": 169152,
+      "trianglesOriginal": 6232,
+      "trianglesShipped": 4999,
+      "meshes": 1,
+      "materials": 1,
+      "alphaMode": "MASK",
+      "doubleSided": true,
+      "intendedHeightM": 0.55,
+      "originalSha256": {
+        "fern_02.bin": "fe1abb762bcbbc7ad9e86925c8080437a62add257d9280e9142fdc85c226e64c",
+        "fern_02_1k.gltf": "33974295ee19670af4877705fc7d91f33f42d6302f0d44a625e072271223031f",
+        "textures/fern_02_arm_1k.jpg": "ebfb5d76ce9cbdaec20bcd22dce9b755f0b1b8650ef29ca13555e3e6961025d7",
+        "textures/fern_02_diff_1k.jpg": "a828a6e7b4c01c826911e2eac4b3afc7457dab7b3b392a31c681ed88b7d50029",
+        "textures/fern_02_nor_gl_1k.jpg": "45bce132c6e96a0864bc89ab5da51361ab3f4afa83a6669ae499ab5ca811f621"
+      }
+    },
+    "grass_medium_02": {
+      "file": "grass_medium_02.glb",
+      "name": "Grass Medium 02",
+      "assetPage": "https://polyhaven.com/a/grass_medium_02",
+      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/grass_medium_02/grass_medium_02_1k.gltf",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "datePublished": "2024-02-06",
+      "license": "CC0 1.0 Universal",
+      "sha256": "ca765549c5971d41801a7d746ed3c47b91c0e027400d0961104383d42ff3505b",
+      "bytes": 233724,
+      "trianglesOriginal": 7842,
+      "trianglesShipped": 6000,
+      "meshes": 1,
+      "materials": 1,
+      "alphaMode": "MASK",
+      "doubleSided": true,
+      "intendedHeightM": 0.45,
+      "originalSha256": {
+        "grass_medium_02.bin": "aa8493bc1544a89e08bf440c7ba361042bfe6ea48b1fefc7e4af2dfff42fdf4a",
+        "grass_medium_02_1k.gltf": "7037f8d2dfc6aeec0bf72f4eeb96cfa3f6b3a5e6c6f0bc5de537c055b2fd5d04",
+        "textures/grass_medium_02_arm_1k.jpg": "f0d57bfd95bff7710526b49d47cf2326ee3796e425639d53b983d1472480b57d",
+        "textures/grass_medium_02_diff_1k.jpg": "91ae99005b449011aceb207a68a937258fd9bfd66ff367d344c50398b1df389c",
+        "textures/grass_medium_02_nor_gl_1k.jpg": "0b464550366ed72a6cad9c357e19ac4c83fc9adc87272771479138129853b300"
+      }
+    }
+  },
+  "totalBytes": 1486124
+}
