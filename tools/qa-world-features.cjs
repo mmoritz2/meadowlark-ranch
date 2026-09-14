@@ -51,6 +51,10 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   const s=G.save.fresh();
   out.saveFields=['unlocked','bottles','toyUnicorn','sanctuary','wildSeen','companion'].filter(k=>s[k]===undefined);
   out.lockedFresh=R.filter(r=>r.unlock&&!P.regionUnlocked(r,s)).map(r=>r.id);
+  /* One locked region is thrown open to everyone for the first week of every season, on a
+     three-season rotation (world.js OPEN_ROTATION). Which one depends on today's date, so the
+     list below has to know that or it fails for seven days in every eighty-four. */
+  out.seasonOpenNow=R.filter(r=>r.unlock&&P.seasonOpen(r)).map(r=>r.id);
   /* fast travel to a locked region is refused with a padlock toast */
   const pl=G.horse.player; pl.pos.set(-7,0,10); pl.speed=0;
   const btn=document.querySelector('#ftBar [data-ft="3"]');
@@ -77,7 +81,13 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('world installed without error',r1.installed&&r1.errors.length===0&&r1.hasPkg,{errors:r1.errors});
  check('REGIONS carry id/biome metadata; regionAt(215,-105) is barleyfold',r1.meta&&r1.barleyAt==='barleyfold',{ids:r1.ids,at:r1.barleyAt});
  check('ensure() save fields present',r1.saveFields.length===0,r1.saveFields);
- check('fresh save: Barleyfold, Coyote, Hollowpeak (+Falls) locked',['barleyfold','coyote','hollowpeak','falls'].every(k=>r1.lockedFresh.includes(k)),r1.lockedFresh);
+ /* Everything that should be locked IS locked, except whichever region the season has opened to
+   everyone this week — and that one must be genuinely open, not merely missing, which is the
+   extra thing this now proves. */
+ check('fresh save: Barleyfold, Coyote, Hollowpeak (+Falls) locked, bar this season\'s open region',
+  ['barleyfold','coyote','hollowpeak','falls'].every(k=>r1.lockedFresh.includes(k)||r1.seasonOpenNow.includes(k))
+  &&r1.seasonOpenNow.every(k=>!r1.lockedFresh.includes(k)),
+  {locked:r1.lockedFresh,openThisWeek:r1.seasonOpenNow});
  check('locked fast-travel button is greyed and refuses with a 🔒 toast',r1.ftLockedClass&&/🔒/.test(r1.ftText)&&r1.afterLockedClick.x===-7&&r1.afterLockedClick.lastLock==='barleyfold',r1.afterLockedClick);
  check('soft boundary pushes a rider out of a locked region',r1.pushedOut.region!=='barleyfold'&&r1.pushedOut.dist>=60,r1.pushedOut);
  check('ranch level 3 unlocks the three regions (toast + s.unlocked)',r1.ranchLevel>=3&&['barleyfold','coyote','hollowpeak'].every(k=>r1.unlockedNow.includes(k))&&r1.lockedAfter.length===0,{lvl:r1.ranchLevel,now:r1.unlockedNow,after:r1.lockedAfter});
