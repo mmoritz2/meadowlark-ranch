@@ -399,13 +399,25 @@ export function install(G){
 
  /* Copies of ranch3d.html's own orbit listeners, for the reason in the header. One pointer id
     only: on a phone the second thumb arriving is the normal case, and without the id test it
-    overwrites the drag origin and the view lurches every time either thumb moves. */
+    overwrites the drag origin and the view lurches every time either thumb moves.
+
+    And a drag only counts while this rig is the one driving. The built-in listener has the same
+    rule — it hands a drag straight to freeCam and returns — but this copy originally only
+    checked first person, so a pan in photo mode, a look round from the grandstand or a spin in
+    the balloon basket was quietly winding up F.yaw the whole time. Measured: entering the free
+    camera, panning 400 px and pressing C to come back left the follow rig at yaw -2.16 rad, so
+    the rider was suddenly being watched from 124 degrees round the wrong side of her own
+    horse — and at a halt nothing unwinds it, because the unwind only runs above 0.6 m/s. The
+    test goes in pointermove as well as pointerdown, since photo mode can be entered with the
+    button held. */
+ const dragBlocked=()=>{try{return foreignCam()||(G.cam&&G.cam.isFree());}catch(e){return false;}};
  if(G.renderer&&G.renderer.domElement)G.renderer.domElement.addEventListener('pointerdown',e=>{
-  if(F.drag||document.body.classList.contains('fpv'))return;
+  if(F.drag||dragBlocked())return;
   F.drag={id:e.pointerId,x:e.clientX,y:e.clientY};
  });
  addEventListener('pointermove',e=>{
   if(!F.drag||e.pointerId!==F.drag.id)return;
+  if(dragBlocked()){F.drag.x=e.clientX;F.drag.y=e.clientY;return;}   // follow the pointer, move nothing
   F.yaw-=(e.clientX-F.drag.x)*0.006;
   F.pitch=clamp(F.pitch+(e.clientY-F.drag.y)*0.004,-0.30,0.62);
   F.drag.x=e.clientX;F.drag.y=e.clientY;
