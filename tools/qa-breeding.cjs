@@ -78,7 +78,10 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  });
  check('breeding installed without error',A.installed&&A.errors.length===0&&A.hasB,{installed:A.installed,errors:A.errors});
  check('22 class traits in the shared TRAITS registry (6+3 pure, 6+3 cross, 4 prestige) beside the roster\'s',A.traits&&A.traits.n===22&&A.traits.inRegistry===0&&A.traits.pure===9&&A.traits.cross===9&&A.traits.prestige===4&&A.traits.rosterKept,A.traits);
- check('panels + dock button after the stable',A.panels&&A.panels.length===0&&A.dock.btn&&A.dock.prev==='stableBtn',{panels:A.panels,dock:A.dock});
+ /* Which button the foaling barn sits next to is the HUD's business, and the HUD moves it into a
+    grouped overflow drawer where it leads its group — so the neighbour is recorded but no longer
+    asserted.  That the click opens the barn is still proved below. */
+ check('panels + the foaling-barn dock button exists',A.panels&&A.panels.length===0&&A.dock.btn,{panels:A.panels,dock:A.dock});
  check('Marta, the barn, the nest and the play prompt exist',A.npc&&A.things.length===0&&A.marker,{npc:A.npc,things:A.things,marker:A.marker});
  /* 'after' used to name the Championship Final, which sat next to the taming mission in the base
     table. story-quests has since spliced its three-ribbon chapter in between them through
