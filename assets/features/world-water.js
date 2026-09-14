@@ -237,12 +237,26 @@ export function install(G){
     three.js enables on its own; asking for vertexColors as well switches on USE_COLOR, whose
     `color` attribute these prototype geometries do not have — and an absent vertex attribute reads
     as (0,0,0), so the first version of this file grew a riverbank full of pure black reeds. */
- const pebbleMat=new THREE.MeshStandardMaterial({map:gravelTex,color:0xffffff,roughness:0.93,metalness:0});
+ /* Tinted down from white. gravelTex is already a pale sheet — a #8f8b7e ground with speckles up
+    to 240 grey — so leaving the material at 0xffffff and then letting the per-instance multiplier
+    run to 1.12 brightened it past the brightest thing in the scene. On the ranch lawn and on the
+    arena apron the result read as scattered chips of white paper rather than as wet gravel; on
+    the desert sand it read as broken glass. The tint costs nothing and is the difference between
+    litter and shingle. */
+ const pebbleMat=new THREE.MeshStandardMaterial({map:gravelTex,color:0x8b8578,roughness:0.93,metalness:0});
  const reedMat=new THREE.MeshStandardMaterial({map:reedTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:0.9,metalness:0});
  const rootMat=new THREE.MeshStandardMaterial({color:0x6b5540,roughness:0.95,metalness:0});
  const rockMat=new THREE.MeshStandardMaterial({map:gravelTex,color:0x9a958a,roughness:0.95,metalness:0});
  const wetRockMat=new THREE.MeshStandardMaterial({map:gravelTex,color:0x6e6f68,roughness:0.42,metalness:0.05});
  const timberMat=(W.mats&&W.mats.plankBrownMat)||new THREE.MeshStandardMaterial({color:0x8a6a44,roughness:0.9});
+ /* The jetty, the punt, the flume and the trough are all kept wood and belong in plankBrownMat's
+    fresh pine. The weir's sluice frame is a ruin that has stood in a river for fifty years, and
+    in that colour it was the brightest, most saturated object anywhere near the weir — your eye
+    went to the timber instead of to the drop. A clone, because plankBrownMat belongs to world.js
+    and half the ranch is built out of it; tinting the shared material would repaint every fence
+    rail in Kestrel Basin. */
+ const ruinTimberMat=(()=>{const m=timberMat.clone();m.color=new THREE.Color(0x6a5a4a).multiplyScalar(0.82);
+  m.roughness=Math.min(1,(m.roughness||0.9)+0.08);return m;})();
 
  /* An InstancedMesh filled from a list built during install, then frozen. Returns null rather
     than an empty mesh when nothing qualified, so a draw call is never spent on nothing. */
@@ -536,7 +550,16 @@ export function install(G){
     that argument. */
  const WEIR_X=-250;
  const BREACH_A=2.4, BREACH_B=5.2;                     // the gap, as an offset from the centreline
- if(claim(WEIR_X,riverZ(WEIR_X),9,'weir')){
+ /* This asked for a clear nine-metre circle in the middle of the river corridor, and it lost that
+    coin flip on three boots out of four: with the claim at 9 m the weir — sill, overfall, foam,
+    abutments, sluice ruin AND its map marker — simply did not exist most of the time, so the
+    landmark a player is told to go and see was usually not there when they arrived. Nine metres
+    reaches right across both banks into ground the flora packages scatter into, and that scatter
+    is not the same twice, which is exactly why the failure looked random. What actually has to be
+    clear is the channel the sill lies in; the two abutments are the parts that stand on the bank
+    and take a collider, and each of those already asks for its own 1.9 m circle a few lines down
+    and declines on its own if the ground is taken. */
+ if(claim(WEIR_X,riverZ(WEIR_X),2,'weir')){
   const zc=riverZ(WEIR_X), lvl=riverLevel(WEIR_X), sill=lvl+0.55;
   const inBreach=z=>z>zc+BREACH_A&&z<zc+BREACH_B;
   /* the sill: rough courses of stone, all of it one mesh */
@@ -604,7 +627,7 @@ export function install(G){
    const parts=[part(bg,WEIR_X,fy+2.5,fz,0.3,0.26,2.6,0),
                 part(bg,WEIR_X+0.1,fy+1.1,fz,0.16,1.5,2.0,0,0,0.22)];
    for(const s of[-1,1])parts.push(part(bg,WEIR_X,fy+1.3,fz+s*1.1,0.24,2.6,0.24,0));
-   merge(parts,timberMat,'Water | weir sluice',true);
+   merge(parts,ruinTimberMat,'Water | weir sluice',true);
   }
   /* loose stone thrown out below the drop, where the plunge has scoured the bed */
   for(let i=0;i<10;i++)boulder(WEIR_X+rr(2,6),lvl-0.1,zc+rr(-6,6),rr(0.25,0.6),0.55);
@@ -906,8 +929,13 @@ export function install(G){
    reeds.push({x,y:Math.min(groundH(x,z),surf)-0.06,z,sx:rr(0.34,0.58),sy:rr(0.55,1.02),sz:rr(0.34,0.58),
     ry:rnd()*6.28,c:0xffffff,cm:rr(0.72,1.12)});
   }
-  for(let i=0;i<40;i++){
-   const a=rnd()*6.28, off=rr(LK.r+0.2,LK.r+2.4);
+  /* Kept inside the shore band this package actually draws. At LK.r+0.2..LK.r+2.4 the ring of
+     stones landed on mown lawn a clear two metres beyond anything that looks like a shore, and at
+     this end of the pond that lawn is the arena apron — so Meadowlark's competition ring came out
+     with gravel scattered across it. LK.r-0.6..LK.r+1.0 puts them on the wet margin, which is
+     where a shore leaves its stones. */
+  for(let i=0;i<26;i++){
+   const a=rnd()*6.28, off=rr(LK.r-0.6,LK.r+1.0);
    const x=LK.x+Math.cos(a)*off, z=LK.z+Math.sin(a)*off, s=rr(0.08,0.26);
    pebbles.push({x,y:groundH(x,z)+s*0.22,z,sx:s*rr(1,1.5),sy:s*rr(0.5,0.85),sz:s*rr(1,1.4),
     ry:rnd()*6.28,c:0xffffff,cm:rr(0.8,1.2)});
