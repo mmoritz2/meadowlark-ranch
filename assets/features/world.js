@@ -108,7 +108,54 @@ export function install(G){
    prev={x,z,gap:inGap};}
  }
  function sign(text,w,h){try{return W.arrivalArt.buildSign({text,width:w||2.4,height:h||0.42});}catch(e){return new THREE.Group();}}
- function labelAt(g,text,y){const sp=G.nameSprite(text);sp.position.y=y||3;g.add(sp);return sp;}
+ /* ---- nameplates ---------------------------------------------------------------------
+    Two things are wrong with the built-in plate and both of them show up in a screenshot.
+    It cuts the text at 22 characters, which is how "Wick the Almanac-Keeper" came to read
+    "Wick the Almanac-Ke" and how half this package's shopfronts lost their last word; and a
+    plate is 2.4 m of fixed world geometry, so the moment anything wearing one walks past the
+    lens it becomes a white billboard across a third of the frame. plate() sizes the canvas to
+    the words instead of slicing them. The billboard half is handled by tickLabels() further
+    down, which fades every plate in the scene by distance — ours, the game's, anybody's.
+    Declared up here rather than beside the fade pass: labelAt runs while this file installs,
+    long before section 10's line is reached, and a const declared down there would still be
+    in its dead zone. */
+ const LABELS=[];
+ /* One house size for a nameplate. A couple of them are hung four metres wide — the quest
+    board's and the calendar's — which at eight metres away is a quarter of the screen and reads
+    as a menu that has escaped into the world. The canvas is untouched, so the words stay every
+    bit as readable; they simply stop shouting. */
+ const PLATE_MAX=2.6;
+ const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+ function plate(text){
+  const s=String(text==null?'':text);
+  const cv=document.createElement('canvas'),c=cv.getContext('2d');
+  let fs=56;c.font='700 '+fs+'px "Trebuchet MS",sans-serif';
+  let w=c.measureText(s).width;
+  while(w>860&&fs>30){fs-=2;c.font='700 '+fs+'px "Trebuchet MS",sans-serif';w=c.measureText(s).width;}   // something very long shrinks to fit instead of running off the end
+  cv.height=128;cv.width=Math.max(256,Math.ceil((w+120)/8)*8);   // setting width resets the context, so the font is set again below
+  c.fillStyle='rgba(255,255,253,0.88)';c.beginPath();c.roundRect(10,12,cv.width-20,104,44);c.fill();
+  c.font='700 '+fs+'px "Trebuchet MS",sans-serif';c.textAlign='center';c.fillStyle='#4a3526';
+  c.fillText(s,cv.width/2,68+fs*0.34);
+  const tx=new THREE.CanvasTexture(cv);tx.minFilter=THREE.LinearFilter;tx.generateMipmaps=false;
+  try{tx.anisotropy=G.renderer.capabilities.getMaxAnisotropy();}catch(e){}
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true}));
+  sp.scale.set(0.6*cv.width/cv.height,0.6,1);   // the plate keeps the game's 0.6 m height and grows sideways
+  sp.userData.plate=1;
+  return sp;
+ }
+ /* Repaint a plate somebody else already hung, for the cases where we know the full text and
+    the game only kept the first 22 characters of it. */
+ function redress(sp,text){
+  if(!sp||!sp.material)return sp;
+  const np=plate(text);
+  try{if(sp.material.map)sp.material.map.dispose();}catch(e){}
+  sp.material.map=np.material.map;sp.material.needsUpdate=true;
+  sp.scale.copy(np.scale);
+  for(const L of LABELS)if(L.sp===sp){const k=np.scale.x>PLATE_MAX?PLATE_MAX/np.scale.x:1;L.bx=np.scale.x*k;L.by=np.scale.y*k;}
+  try{np.material.dispose();}catch(e){}
+  return sp;
+ }
+ function labelAt(g,text,y){const sp=plate(text);sp.position.y=y||3;g.add(sp);return sp;}
  function building(kind,opts){opts=opts||{};if(kind==='cottage')return W.ranchArchitecture.buildCottage({variant:opts.variant||0});if(kind==='barn')return W.ranchArchitecture.buildBarn();return W.ranchArchitecture.buildOutbuilding(Object.assign({width:4.6,depth:3.2,height:3.4,animatedDoorOpening:{width:1.0,height:1.9}},opts));}
  /* A door: stand near a building and press E to open the panel it houses. */
  function door(id,x,z,r,label,open){return W.addThing({kind:'door',id,x,z,g:null,reach:r,label:()=>label+' (E)',use:()=>{try{open();}catch(e){console.error('door '+id,e);}}});}
@@ -167,7 +214,11 @@ export function install(G){
   for(const b of tn.buildings){
    const need=b.r+1.5; const at=findClear(b.x,b.z,need,40); b.x=at[0]; b.z=at[1];
    let grp=null;
-   try{grp=W.addBuilding({x:b.x,z:b.z,rot:b.rot||0,r:b.r,label:b.label,build:()=>building(b.kind,Object.assign({variant:b.variant||0},b.opts||{}))});}catch(e){console.error('town building '+b.id,e);}
+   /* No label passed to addBuilding: its plate would arrive pre-truncated — "🛍️ Petal & Pail
+      general store" came out as "🛍️ Petal & Pail gener". We hang our own at the height the
+      architecture suggests instead. */
+   try{grp=W.addBuilding({x:b.x,z:b.z,rot:b.rot||0,r:b.r,build:()=>building(b.kind,Object.assign({variant:b.variant||0},b.opts||{}))});
+    if(grp)labelAt(grp,b.label,(grp.userData.architecture&&grp.userData.architecture.suggestedLabelY)||3);}catch(e){console.error('town building '+b.id,e);}
    if(b.open)door(tn.id+':'+b.id,b.x,b.z,b.r+2.6,b.door||b.label,b.open);
    P.LANDMARKS.push({id:tn.id+':'+b.id,region:tn.region,x:b.x,z:b.z,label:b.label,glyph:b.glyph||null,kind:b.kind,grp});
   }
@@ -527,11 +578,25 @@ export function install(G){
   return sp;
  }
  W.steer=steer;W.pushOut=pushOut;W.avoid=avoid;P.steer=steer;
+ /* Nothing that follows you is allowed to stand in the lens. The built-in loop parks a
+    companion 2.5 m from the rider on whichever side it happens to have arrived from, and that
+    is very often the side the camera is on: a horse three metres off the near plane is a wall
+    across a third of the frame, and you cannot see the horse you are actually riding. Push it
+    out of a cylinder round the camera at a couple of metres a second, so it reads as the foal
+    stepping aside rather than as a teleport. */
+ function clearOfCamera(a,dt,r){
+  const cx=G.camera.position.x,cz=G.camera.position.z;
+  const dx=a.pos.x-cx,dz=a.pos.z-cz,d=Math.hypot(dx,dz);
+  if(d>=r)return false;
+  if(d<0.05){a.pos.x+=Math.min(r,dt*2.5);return true;}   // dead on the lens: any direction will do
+  const push=Math.min(r-d,dt*2.5);a.pos.x+=dx/d*push;a.pos.z+=dz/d*push;return true;
+ }
  /* The companion foal (or any horse you take along) and the pet: the built-in loops integrate
-    them straight at their targets; this pass runs right after and keeps them out of the barn. */
+    them straight at their targets; this pass runs right after and keeps them out of the barn
+    and out of the camera. */
  function tickFollowers(dt){
-  if(P.companionEntry&&P.companionEntry.idx!=null){const a=P.companionEntry;if(H.myHorses[a.idx]&&H.myHorses[a.idx].id===P.companionId){const h0=a.heading;a.heading=avoid(a,a.heading,2.4);if(a.heading!==h0){a.pos.x+=Math.sin(a.heading)*dt*1.5;a.pos.z+=Math.cos(a.heading)*dt*1.5;}pushOut(a,0.55);a.parts.group.position.set(a.pos.x,groundH(a.pos.x,a.pos.z),a.pos.z);a.parts.group.rotation.y=a.heading;}}
-  const pet=G.petComp&&G.petComp();if(pet&&pet.pos){const before=pet.pos.x+':'+pet.pos.z;pushOut(pet,0.4);if(before!==pet.pos.x+':'+pet.pos.z)pet.parts.group.position.set(pet.pos.x,groundH(pet.pos.x,pet.pos.z),pet.pos.z);}
+  if(P.companionEntry&&P.companionEntry.idx!=null){const a=P.companionEntry;if(H.myHorses[a.idx]&&H.myHorses[a.idx].id===P.companionId){const h0=a.heading;a.heading=avoid(a,a.heading,2.4);if(a.heading!==h0){a.pos.x+=Math.sin(a.heading)*dt*1.5;a.pos.z+=Math.cos(a.heading)*dt*1.5;}pushOut(a,0.55);clearOfCamera(a,dt,4.2);a.parts.group.position.set(a.pos.x,groundH(a.pos.x,a.pos.z),a.pos.z);a.parts.group.rotation.y=a.heading;}}
+  const pet=G.petComp&&G.petComp();if(pet&&pet.pos){const before=pet.pos.x+':'+pet.pos.z;pushOut(pet,0.4);clearOfCamera(pet,dt,2.4);if(before!==pet.pos.x+':'+pet.pos.z)pet.parts.group.position.set(pet.pos.x,groundH(pet.pos.x,pet.pos.z),pet.pos.z);}
  }
  P.companionEntry=null;
  const findCompanion=()=>{const cid=(S.fresh()||{}).companion;P.companionEntry=null;P.companionId=cid;if(cid==null)return;for(const a of H.herd()){const hh=H.myHorses[a.idx];if(hh&&hh.id===cid){P.companionEntry=a;break;}}};
@@ -559,7 +624,7 @@ export function install(G){
   const wb=pickWb(herd);const a=Math.random()*Math.PI*2,r=Math.random()*herd.r*0.7;
   let x=herd.x+Math.cos(a)*r,z=herd.z+Math.sin(a)*r;const at=findClear(x,z,1.5,herd.r);x=at[0];z=at[1];
   const parts=H.makeHorse({colors:{body:wb.body,mane:wb.mane},seed:Math.floor(Math.random()*9),breed:wb.breed});
-  const tag=G.nameSprite('✨ wild'+(wb.variant?' · '+wb.variant:''));tag.position.y=2.7;parts.group.add(tag);
+  const tag=plate('✨ wild'+(wb.variant?' · '+wb.variant:''));tag.position.y=2.7;parts.group.add(tag);   // "✨ wild · Snowline Fjord" is 24 characters and the built-in plate ate the last two
   parts.group.position.set(x,groundH(x,z),z);scene.add(parts.group);
   const m={herd,i,wb,parts,tag,pos:new THREE.Vector3(x,0,z),heading:Math.random()*6,tx:x,tz:z,rest:rnd(1,4),phase:Math.random()*6,flee:0,trust:0,follow:false,remote:{},walked:0,name:NAMES[Math.floor(Math.random()*NAMES.length)],lastPub:0,coop:!!herd.coop,shown:false};
   m.thing=W.addThing({kind:'wild',id:herd.id+':'+i,x,z,g:null,reach:3.2,member:m,
@@ -719,7 +784,7 @@ export function install(G){
   for(const h of sc.horses){try{scene.remove(h.parts.group);}catch(e){}}sc.horses=[];
   const list=((S.fresh()||{}).sanctuary||{})[sc.id]||[];
   list.slice(0,6).forEach((e,k)=>{const a=k/6*Math.PI*2,r=sc.r*0.5;const x=sc.x+Math.cos(a)*r,z=sc.z+Math.sin(a)*r;
-   const parts=H.makeHorse({colors:{body:e.body||'#8a5a2b',mane:e.mane||'#332214'},seed:k+3,breed:e.breed||'bay'});const tag=G.nameSprite('🏕️ '+String(e.name||'Rescue').slice(0,14));tag.position.y=2.7;parts.group.add(tag);parts.group.position.set(x,groundH(x,z),z);parts.group.name='sanctuary-horse';scene.add(parts.group);
+   const parts=H.makeHorse({colors:{body:e.body||'#8a5a2b',mane:e.mane||'#332214'},seed:k+3,breed:e.breed||'bay'});const tag=plate('🏕️ '+String(e.name||'Rescue').slice(0,14));tag.position.y=2.7;parts.group.add(tag);parts.group.position.set(x,groundH(x,z),z);parts.group.name='sanctuary-horse';scene.add(parts.group);
    sc.horses.push({parts,pos:new THREE.Vector3(x,0,z),heading:Math.random()*6,tx:x,tz:z,rest:rnd(1,5),phase:Math.random()*6,e});});
  }
  for(const sc of SANCTUARIES)refreshSanctuary(sc);
@@ -742,7 +807,139 @@ export function install(G){
   d.style.display='block';$('dlgBtn').onclick=()=>{d.style.display='none';};
  }
 
- /* ================= 9. the per-frame pass, gating, state, boot ================= */
+ /* ================= 9. nameplates that earn their place ================= */
+ /* Stand in the yard and count them: the barn, the old stall, the tack room, Wren, Marta, the
+    quest board, June, every horse in the pasture and every horse that follows you, all wearing
+    a floating white plate at once. It reads as a debug view of a world rather than as a place,
+    and the moment one of the wearers walks past the camera its plate becomes a billboard. No
+    package owns them — a dozen of us hang them — so rather than chase the call sites, find them
+    in the scene and fade them by distance. They are easy to find: every plate the game builds
+    is a 512x128 canvas on a sprite, which nothing else in here is. */
+ function isPlate(o){
+  if(!o.isSprite||!o.material)return false;
+  if(o.userData&&o.userData.plate)return true;
+  const im=o.material.map&&o.material.map.image;
+  return !!(im&&im.width===512&&im.height===128);   // the chat bubble is 512x96 and stays out of this: a speech bubble you cannot read is worse than none
+ }
+ function scanLabels(){
+  let n=0;
+  scene.traverse(o=>{if(o.userData.wlbl||!isPlate(o))return;o.userData.wlbl=1;
+   const k=o.scale.x>PLATE_MAX?PLATE_MAX/o.scale.x:1;
+   LABELS.push({sp:o,bx:o.scale.x*k,by:o.scale.y*k,op:o.material.opacity});n++;});
+  for(let i=LABELS.length-1;i>=0;i--)if(!LABELS[i].sp.parent)LABELS.splice(i,1);   // a rebuilt barn throws its old plates away
+  return n;
+ }
+ /* Distances in metres from the camera. A wide plate is a name: you want it when you are close
+    enough for the name to matter, and never in your face — a building you are looking straight
+    at does not need telling you what it is. A narrow one is an arena letter or a jump number,
+    which you steer by from the far end of the school, so it keeps its range and only loses the
+    near end. Everything eases in and out; a plate that pops is as distracting as the clutter. */
+ function labelAlpha(d,wide){
+  if(wide)return d<2.6?0:d<5.4?(d-2.6)/2.8:d<18?1:d<30?1-(d-18)/12:0;
+  return d<1.5?0:d<3?(d-1.5)/1.5:d<52?1:d<72?1-(d-52)/20:0;
+ }
+ /* Sprites ignore lighting, so the game dims the ones it made by hand after dark; ours are not
+    in its list and would glow like UI at midnight. Same curve, read off the same clock. */
+ function dayTint(){try{const u=G.time.dayT(),elev=-12+66*(0.5-0.5*Math.cos(u*Math.PI*2));return 0.30+0.70*clamp(elev/14,0,1);}catch(e){return 1;}}
+ let labelScanT=0;
+ function tickLabels(dt){
+  labelScanT+=dt;if(labelScanT>2){labelScanT=0;scanLabels();}
+  const cx=G.camera.position.x,cy=G.camera.position.y,cz=G.camera.position.z,k=Math.min(1,dt*6);
+  let tint=-1;
+  for(let i=0;i<LABELS.length;i++){
+   const L=LABELS[i],sp=L.sp;if(!sp.parent)continue;
+   const e=sp.matrixWorld.elements,dx=e[12]-cx,dy=e[13]-cy,dz=e[14]-cz;   // one frame stale, which nobody can see in a fade
+   const d=Math.sqrt(dx*dx+dy*dy+dz*dz),wide=L.bx>=1.6;
+   L.op+=(labelAlpha(d,wide)-L.op)*k;
+   /* Only ever un-hide a plate we hid ourselves. Somebody else's visible=false is a decision —
+      the party banner is parked invisible at the origin between parties — and quietly turning
+      it back on would hang a "🎉 Party!" sign over an empty yard. */
+   if(L.op<0.015){if(sp.visible){sp.visible=false;L.hid=1;}continue;}
+   if(!sp.visible){if(!L.hid)continue;sp.visible=true;L.hid=0;}
+   sp.material.opacity=L.op;
+   const s=wide?clamp(d/12,0.45,1):1;   // and never bigger on screen than it is at twelve metres, whatever it does up close
+   sp.scale.set(L.bx*s,L.by*s,1);
+   if(sp.userData.plate){if(tint<0)tint=dayTint();sp.material.color.setScalar(tint);}
+  }
+ }
+ /* The people get their names back. addNPC builds the plate inside the game, where the text is
+    already cut, but the full name is right there on the def — so repaint it. This is what was
+    making Wick the Almanac-Keeper introduce himself as "Wick the Almanac-Ke". */
+ function fixNpcTags(){
+  let n=0;
+  for(const e of (W.npcList||[])){
+   const nm=e&&e.def&&e.def.name;if(!nm||!e.g)continue;
+   const txt='💬 '+String(nm).replace('Grandpa ','').replace('Farmer ','').replace('Sheriff ','');
+   if(txt.length<=22)continue;   // short enough that the game drew it whole
+   e.g.traverse(o=>{if(o.isSprite&&isPlate(o)&&!o.userData.plate){redress(o,txt);o.userData.plate=1;n++;}});
+  }
+  return n;
+ }
+ P.plate=plate;P.labels=LABELS;P.scanLabels=scanLabels;P.labelAlpha=labelAlpha;
+
+ /* ================= 10. the ambient butterflies ================= */
+ /* This is the pink rectangle that floats over the arena. A butterfly here is two bare quads
+    standing on edge, and the loop that animates them turns rotation.z — which, for a quad in
+    the XY plane, spins it in its own plane instead of flapping it. So what a player actually
+    sees is a flat pink card slowly rotating in mid-air, with no body, no shape and no shading:
+    it looks exactly like a missing texture. Lay the wings flat so the same rotation becomes a
+    flap, cut a wing shape out of them, and give the thing a body. The objects live in
+    ranch3d.html and are published there for diagnostics; nothing else touches them. */
+ function wingTex(col){
+  const cv=document.createElement('canvas');cv.width=cv.height=64;const c=cv.getContext('2d');
+  c.fillStyle=col;
+  c.beginPath();c.ellipse(27,23,25,20,-0.22,0,Math.PI*2);c.fill();          // fore wing
+  c.beginPath();c.ellipse(21,47,18,15,0.18,0,Math.PI*2);c.fill();          // hind wing
+  c.globalAlpha=0.4;c.fillStyle='#fff6e8';c.beginPath();c.ellipse(33,17,8,6,-0.2,0,Math.PI*2);c.fill();   // one pale eyespot, so it is not a single flat colour
+  c.globalAlpha=0.5;c.fillStyle='#3a3228';c.beginPath();c.ellipse(46,12,5,4,0,0,Math.PI*2);c.fill();
+  const t=new THREE.CanvasTexture(cv);t.minFilter=THREE.LinearFilter;t.generateMipmaps=false;return t;
+ }
+ function fixFlutters(){
+  const F=(window._life&&window._life.flutters)||[];
+  let n=0;
+  for(const f of F){
+   if(!f||!f.wl||!f.wr||f.wl.userData.wfix)continue;
+   let col='#ff8fab';try{col='#'+f.wl.material.color.getHexString();}catch(e){}
+   const g=new THREE.PlaneGeometry(0.1,0.085);g.rotateX(-Math.PI/2);g.translate(0.05,0,0);   // flat and hinged at the body, so rotation.z is a flap
+   const m=new THREE.MeshBasicMaterial({map:wingTex(col),transparent:true,alphaTest:0.4,side:THREE.DoubleSide,depthWrite:false});
+   const og=f.wl.geometry,om=f.wl.material;
+   f.wl.geometry=g;f.wr.geometry=g;f.wl.material=m;f.wr.material=m;
+   f.wl.userData.wfix=f.wr.userData.wfix=1;
+   try{og.dispose();om.dispose();}catch(e){}
+   const body=tube(0.009,0.011,0.085,'#463c30',0,0,0,f.g);body.rotation.x=Math.PI/2;   // a dark thread of a body, enough to read as an insect rather than as paper
+   blob(0.013,0.012,0.013,'#463c30',0,0,0.05,f.g);
+   n++;
+  }
+  return n;
+ }
+ /* A butterfly is 10 cm of wing. Half a metre from the lens that is a quarter of the screen in
+    flat colour, which is how a charming detail turns into a bug report. Nothing this small is
+    worth drawing inside arm's reach of the camera. */
+ function tickFlutters(){
+  const F=(window._life&&window._life.flutters)||[];if(!F.length)return;
+  const c=G.camera.position;
+  for(const f of F){if(!f.g.visible)continue;const p=f.g.position;if(Math.hypot(p.x-c.x,p.y-c.y,p.z-c.z)<1.5)f.g.visible=false;}
+ }
+ /* The pennant bunting is 36 unlit triangles floating at 1.12 m with nothing holding them up
+    and nothing between them — they read as coloured scraps hanging in the air over the rails.
+    Hang them point-down off a cord and the same 36 triangles read as bunting. Built in
+    ranch3d.html, so the flags are found in the scene rather than at their call site. */
+ function fixBunting(){
+  const flags=[];
+  scene.traverse(o=>{const g=o.geometry;if(!o.isMesh||!g||g.type!=='CircleGeometry')return;
+   const pr=g.parameters||{};if(pr.segments!==3||Math.abs(pr.radius-0.16)>0.01)return;flags.push(o);});
+  if(!flags.length)return 0;
+  for(const f of flags){f.rotation.z=-Math.PI/2;f.position.y=1.06;}   // the point hangs down, just under the cord
+  const cord=new THREE.Group();
+  for(const [x1,x2,z] of [[-22.2,22.4,-20],[-22.2,-3.9,20],[3.9,22.4,20]]){
+   const c=box(x2-x1,0.025,0.025,'#6b5a45',(x1+x2)/2,1.2,z,cord);c.castShadow=false;
+  }
+  scene.add(cord);
+  return flags.length;
+ }
+ P.fixFlutters=fixFlutters;P.fixBunting=fixBunting;
+
+ /* ================= 11. the per-frame pass, gating, state, boot ================= */
  let gateT=0,unlockT=0,lastLockToast=0,followersT=0,companionT=0;
  G.on('tick',(dt,t)=>{
   tickVehicle(dt);
@@ -750,6 +947,8 @@ export function install(G){
   tickTrustHud();
   tickSanctuaries(dt,t);
   tickTownsfolk(dt);
+  tickLabels(dt);
+  tickFlutters();
   followersT+=dt;if(followersT>0.1){followersT=0;tickFollowers(0.1);}
   unlockT+=dt;if(unlockT>3){unlockT=0;ensureUnlocks();}
   companionT+=dt;if(companionT>0.5){companionT=0;findCompanion();}
@@ -760,7 +959,7 @@ export function install(G){
     else{player.pos.x=rg.x+dx/d*(rg.r+2);player.pos.z=rg.z+dz/d*(rg.r+2);}
     player.speed=0;P.lastLock=rg.id;if(t-lastLockToast>4){lastLockToast=t;toast('🔒 '+lockText(rg));}}}}
  });
- G.on('interval30',()=>ensureUnlocks());
+ G.on('interval30',()=>{ensureUnlocks();fixNpcTags();});   // a package may put someone new in a town long after boot
  G.on('state',o=>{
   const rg=W.regionAt(player.pos.x,player.pos.z);
   o.player.region=rg?rg.id:null;
@@ -771,9 +970,13 @@ export function install(G){
    trust:P.trustFocus?{name:P.trustFocus.name,herd:P.trustFocus.herd.id,i:P.trustFocus.i,local:Math.round(P.trustFocus.trust),eff:Math.round(effTrust(P.trustFocus)),follow:!!P.trustFocus.follow,flee:P.trustFocus.flee>0,helpers:helpers(P.trustFocus)}:null,
    companion:s.companion==null?null:s.companion,bottles:(s.bottles||[]).length,badges:((s.sets&&s.sets.badges)||[]).length,toy:!!s.toyUnicorn,
    sanctuary:Object.keys(s.sanctuary||{}).reduce((a,k)=>{a[k]=(s.sanctuary[k]||[]).length;return a;},{}),
-   townsfolk:P.townsfolk.length,landmarks:P.LANDMARKS.length,markers:MK.length};
+   townsfolk:P.townsfolk.length,landmarks:P.LANDMARKS.length,markers:MK.length,
+   labels:LABELS.length,labelsShown:LABELS.reduce((a,L)=>a+(L.sp.visible?1:0),0)};
  });
  G.on('boot',()=>{ensureUnlocks();refreshFtLocks();findCompanion();
+  /* Last in the queue, on purpose: every package has hung its plates by now, so one sweep of
+     the scene catches all of them. */
+  try{P.labelsFound=scanLabels();P.tagsFixed=fixNpcTags();P.fluttersFixed=fixFlutters();P.buntingFixed=fixBunting();}catch(e){console.error('world labels',e);}
   const s=S.fresh();if(s&&S.flag(s,'seen-world')){S.sync(sv=>{sv.flags=sv.flags||{};sv.flags['seen-world']=1;});setTimeout(()=>{try{toast('🗺️ Kestrel Basin has grown: towns, a ferry, balloons and wild herds. Press M for the map.');}catch(e){}},6000);}});
  Object.assign(P,{boardBalloon,boardFerry,vehicle:()=>P.veh,landVehicle,findCompanion,tameMember,offerCarrot,openSanctuary,collectBottle,regionOf,refreshFtLocks,ftRegion,VENUE_OF});
 }
