@@ -1,213 +1,816 @@
 {
-  "version": 1,
-  "purpose": "Photoscanned nature props sourced from Poly Haven, optimised for the placeFoliage() loader path.",
-  "source": "https://polyhaven.com/",
-  "license": "CC0 1.0 Universal",
-  "licenseUrl": "https://polyhaven.com/license",
-  "licenseVerified": "2026-09-14",
-  "licenseQuote": "Our assets are all licensed as CC0, which is effectively Public Domain even in jurisdictions that do not support the Public Domain. [...] You can use our assets for any purpose, including commercial work. You do not need to give credit or attribution when using them (although it is appreciated). You can redistribute them, share them around, include them when sharing your own work, or even in a product you sell.",
-  "attributionRequired": false,
-  "redistributionPermitted": true,
-  "downloaded": "2026-09-14",
-  "sourceFormat": "glTF 1k (gltf + bin + 1024px jpg textures)",
-  "pipeline": "build-world-props.mjs: flatten -> dedup -> join -> weld -> simplify(meshoptimizer) -> drop ARM/occlusion -> BLEND->MASK -> textureCompress webp (baseColor 512 q82, normal 256 q92) -> prune",
-  "extensionsUsed": [
-    "EXT_texture_webp"
-  ],
-  "compression": "EXT_texture_webp only. No Draco, no EXT_meshopt_compression, no KTX2: placeFoliage() constructs a bare GLTFLoader with no DRACOLoader/MeshoptDecoder/KTX2Loader, so those would fail to decode at runtime.",
-  "validation": "gltf-transform 4.5.0 validate: 0 errors on every file (2026-09-14).",
-  "props": {
-    "namaqualand_boulder_03": {
-      "file": "namaqualand_boulder_03.glb",
-      "name": "Namaqualand Boulder 03",
-      "assetPage": "https://polyhaven.com/a/namaqualand_boulder_03",
-      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_boulder_03/namaqualand_boulder_03_1k.gltf",
-      "authors": {
-        "Jenelle van Heerden": "modeling",
-        "Dario Barresi": "Photography"
-      },
-      "datePublished": "2024-10-08",
-      "license": "CC0 1.0 Universal",
-      "sha256": "c3e564b996b4524bbbc242f3846f6d3507c2ccefc632ebdceb6eefb5c1104374",
-      "bytes": 178656,
-      "trianglesOriginal": 64826,
-      "trianglesShipped": 4000,
-      "meshes": 1,
-      "materials": 1,
-      "alphaMode": "OPAQUE",
-      "doubleSided": true,
-      "intendedHeightM": 1.6,
-      "originalSha256": {
-        "namaqualand_boulder_03.bin": "d24151021ed310fe3207f1b5964bff22b583e77d2617427a88b5dcbc0447a475",
-        "namaqualand_boulder_03_1k.gltf": "14560936aaad68da0c0fc549b54c67bba4cd573dfe5b07f92835b9ca044a0092",
-        "textures/namaqualand_boulder_03_arm_1k.jpg": "604806ac2a67d6ae97d7bdeea2a0c859eac2cc42a08af480abdec70fd0385cf5",
-        "textures/namaqualand_boulder_03_diff_1k.jpg": "cd1a44c22932eb18a5989474f60bdccd622a1fdb0854fd69899a32ab8efe3bd4",
-        "textures/namaqualand_boulder_03_nor_gl_1k.jpg": "c4c1d34d5fe79fdda70ddf1dc52046f3bb6002576d75c9a4643403c0ecdc55f4"
-      }
-    },
-    "rock_07": {
-      "file": "rock_07.glb",
-      "name": "Rock 07",
-      "assetPage": "https://polyhaven.com/a/rock_07",
-      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_07/rock_07_1k.gltf",
-      "authors": {
-        "Jenelle van Heerden": "All"
-      },
-      "datePublished": "2024-02-06",
-      "license": "CC0 1.0 Universal",
-      "sha256": "32d07c910acb99225dd61bfce699b472f1e9d74fb8a7d030ee1ea9b2f540bb02",
-      "bytes": 180252,
-      "trianglesOriginal": 14844,
-      "trianglesShipped": 3500,
-      "meshes": 1,
-      "materials": 1,
-      "alphaMode": "OPAQUE",
-      "doubleSided": true,
-      "intendedHeightM": 0.6,
-      "originalSha256": {
-        "rock_07.bin": "e4a532a6d6cf4a08c288f501b790f32cba0528136a29959ce774c3cd39369e7e",
-        "rock_07_1k.gltf": "efcc2dcaa133ff8ad5c865dc2135772e8f5dbc83fa38db2ee2cf25382436b6e6",
-        "textures/rock_07_arm_1k.jpg": "1ed76e9a8542c76bdc6b7b018720ae1f52cd75d9f5ae719f613de3f5032cf4da",
-        "textures/rock_07_diff_1k.jpg": "8ff1965aa1664cc4abcc0131c44ee2b97ab14d6e131d7a51429ff261eeb101c8",
-        "textures/rock_07_nor_gl_1k.jpg": "57cb2210951aeb376164fce5f7c65f03e5599def04873b56cad0f173c275d78d"
-      }
-    },
-    "tree_stump_01": {
-      "file": "tree_stump_01.glb",
-      "name": "Tree Stump 01",
-      "assetPage": "https://polyhaven.com/a/tree_stump_01",
-      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/tree_stump_01/tree_stump_01_1k.gltf",
-      "authors": {
-        "Rob Tuytel": "All"
-      },
-      "datePublished": "2023-07-05",
-      "license": "CC0 1.0 Universal",
-      "sha256": "fa666881196fe51b381b51717c19f4389a37f78d042e3f2b0e53790d6e3f2ef3",
-      "bytes": 241544,
-      "trianglesOriginal": 41046,
-      "trianglesShipped": 4995,
-      "meshes": 1,
-      "materials": 1,
-      "alphaMode": "OPAQUE",
-      "doubleSided": true,
-      "intendedHeightM": 0.7,
-      "originalSha256": {
-        "tree_stump_01.bin": "b4d9ca70b3c908c4a638fbd6a23ed96c84055bbbf14cf44b89e31ad59fa21e0a",
-        "tree_stump_01_1k.gltf": "9c66ba87d693f35eb404acaa96e0eeff831c295b61a0a903795584cbcc3527c9",
-        "textures/tree_stump_01_arm_1k.jpg": "d845cd6ab45288c546267d059ebe1f8a737e174330fe9375e5f99e753f2f95d8",
-        "textures/tree_stump_01_diff_1k.jpg": "781ebe420ac4d84f2e44b9e9937a596e3d5d90711d978a1392f8bf3771b5bf31",
-        "textures/tree_stump_01_nor_gl_1k.jpg": "425117514b0386bb6df41cb64a61a624d2596472e05777483d4021b3285e3ceb"
-      }
-    },
-    "shrub_03": {
-      "file": "shrub_03.glb",
-      "name": "Shrub 03",
-      "assetPage": "https://polyhaven.com/a/shrub_03",
-      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/shrub_03/shrub_03_1k.gltf",
-      "authors": {
-        "Rico Cilliers": "All"
-      },
-      "datePublished": "2024-02-06",
-      "license": "CC0 1.0 Universal",
-      "sha256": "4eeaea44a0e4cc67c9894695cdf68fe631855cdebf7ebdc4d9375b4090c574da",
-      "bytes": 230692,
-      "trianglesOriginal": 8287,
-      "trianglesShipped": 5999,
-      "meshes": 1,
-      "materials": 1,
-      "alphaMode": "MASK",
-      "doubleSided": true,
-      "intendedHeightM": 0.55,
-      "originalSha256": {
-        "shrub_03.bin": "bf4df21e6d2a2bc5f00b4c9142f776171fe7da00cf960001825748067af542b6",
-        "shrub_03_1k.gltf": "b76d7c14bc027e834e82d3f984c32b5d060e62908aa90ff9420a637ca253a8ea",
-        "textures/shrub_03_arm_1k.jpg": "3e2b16812a623037138eedace958210c5f3443a827bbe69663045bba5612f815",
-        "textures/shrub_03_diff_1k.jpg": "3cadc7aba46d3aabbd7d6d2b1d04aa32e2a7da0bc87c2d38ef3cb1ee42cb03ec",
-        "textures/shrub_03_nor_gl_1k.jpg": "ff856bacfce859b8a7555dd9a3b92fbd36b2e775d486be71df485afb4235d6c9"
-      }
-    },
-    "shrub_04": {
-      "file": "shrub_04.glb",
-      "name": "Shrub 04",
-      "assetPage": "https://polyhaven.com/a/shrub_04",
-      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/shrub_04/shrub_04_1k.gltf",
-      "authors": {
-        "Rico Cilliers": "All"
-      },
-      "datePublished": "2024-02-06",
-      "license": "CC0 1.0 Universal",
-      "sha256": "def8cf92dd0de568451fcd6e7971ce3ffcd55780c0beeeb8fdb2e53943c3edd9",
-      "bytes": 252104,
-      "trianglesOriginal": 27327,
-      "trianglesShipped": 5852,
-      "meshes": 1,
-      "materials": 1,
-      "alphaMode": "MASK",
-      "doubleSided": true,
-      "intendedHeightM": 0.45,
-      "originalSha256": {
-        "shrub_04.bin": "cb442c39682e54cc63f912aa78ab17a03566f947a61adbbbaaa6473166744f01",
-        "shrub_04_1k.gltf": "782832cbc57e96686b78c6ef9df6234c25f564f78421c8ed4bd42c3631f5aeae",
-        "textures/shrub_04_arm_1k.jpg": "d1085df021928b29b0f38dde7e58e9a2e304c4e8d838e390b37cf57f8aa492e8",
-        "textures/shrub_04_diff_1k.jpg": "0b0fa0a474753d13f3093858cea79d0de05da1e6a0c5d6e181cd351080980b6c",
-        "textures/shrub_04_nor_gl_1k.jpg": "200d791e0474495bfc876ba1c289dade669c6a5b124647c55bc840a875f6b51c"
-      }
-    },
-    "fern_02": {
-      "file": "fern_02.glb",
-      "name": "Fern 02",
-      "assetPage": "https://polyhaven.com/a/fern_02",
-      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/fern_02/fern_02_1k.gltf",
-      "authors": {
-        "Rob Tuytel": "scanning",
-        "Rico Cilliers": "modeling"
-      },
-      "datePublished": "2022-05-27",
-      "license": "CC0 1.0 Universal",
-      "sha256": "b3b026a310b9b391ebd2f402ceb631f6170eb9b7134e2c109d4d224c4885743a",
-      "bytes": 169152,
-      "trianglesOriginal": 6232,
-      "trianglesShipped": 4999,
-      "meshes": 1,
-      "materials": 1,
-      "alphaMode": "MASK",
-      "doubleSided": true,
-      "intendedHeightM": 0.55,
-      "originalSha256": {
-        "fern_02.bin": "fe1abb762bcbbc7ad9e86925c8080437a62add257d9280e9142fdc85c226e64c",
-        "fern_02_1k.gltf": "33974295ee19670af4877705fc7d91f33f42d6302f0d44a625e072271223031f",
-        "textures/fern_02_arm_1k.jpg": "ebfb5d76ce9cbdaec20bcd22dce9b755f0b1b8650ef29ca13555e3e6961025d7",
-        "textures/fern_02_diff_1k.jpg": "a828a6e7b4c01c826911e2eac4b3afc7457dab7b3b392a31c681ed88b7d50029",
-        "textures/fern_02_nor_gl_1k.jpg": "45bce132c6e96a0864bc89ab5da51361ab3f4afa83a6669ae499ab5ca811f621"
-      }
-    },
-    "grass_medium_02": {
-      "file": "grass_medium_02.glb",
-      "name": "Grass Medium 02",
-      "assetPage": "https://polyhaven.com/a/grass_medium_02",
-      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/grass_medium_02/grass_medium_02_1k.gltf",
-      "authors": {
-        "Rico Cilliers": "All"
-      },
-      "datePublished": "2024-02-06",
-      "license": "CC0 1.0 Universal",
-      "sha256": "ca765549c5971d41801a7d746ed3c47b91c0e027400d0961104383d42ff3505b",
-      "bytes": 233724,
-      "trianglesOriginal": 7842,
-      "trianglesShipped": 6000,
-      "meshes": 1,
-      "materials": 1,
-      "alphaMode": "MASK",
-      "doubleSided": true,
-      "intendedHeightM": 0.45,
-      "originalSha256": {
-        "grass_medium_02.bin": "aa8493bc1544a89e08bf440c7ba361042bfe6ea48b1fefc7e4af2dfff42fdf4a",
-        "grass_medium_02_1k.gltf": "7037f8d2dfc6aeec0bf72f4eeb96cfa3f6b3a5e6c6f0bc5de537c055b2fd5d04",
-        "textures/grass_medium_02_arm_1k.jpg": "f0d57bfd95bff7710526b49d47cf2326ee3796e425639d53b983d1472480b57d",
-        "textures/grass_medium_02_diff_1k.jpg": "91ae99005b449011aceb207a68a937258fd9bfd66ff367d344c50398b1df389c",
-        "textures/grass_medium_02_nor_gl_1k.jpg": "0b464550366ed72a6cad9c357e19ac4c83fc9adc87272771479138129853b300"
-      }
-    }
+ "version": 2,
+ "purpose": "Third-party CC0 world models, kept apart from the locally generated props in ../ . The directory IS the provenance boundary: nothing here was made by this project.",
+ "source": "Poly Haven",
+ "sourceUrl": "https://polyhaven.com/",
+ "license": "CC0 1.0 Universal",
+ "licenseUrl": "https://polyhaven.com/license",
+ "licenseVerified": "2026-09-14, read from the primary source",
+ "licenseQuote": "Our assets are all licensed as CC0, which is effectively Public Domain even in jurisdictions that do not support the Public Domain. [...] You can use our assets for any purpose, including commercial work. You do not need to give credit or attribution when using them (although it is appreciated). You can redistribute them, share them around, include them when sharing your own work, or even in a product you sell.",
+ "attributionRequired": false,
+ "redistributionPermitted": true,
+ "pipeline": "build-world-props.mjs: flatten -> dedup -> join -> weld -> simplify(meshoptimizer) -> drop ARM/occlusion -> BLEND->MASK -> textureCompress webp (baseColor 512 q82, normal 256 q92) -> prune",
+ "extensionsUsed": [
+  "EXT_texture_webp"
+ ],
+ "validation": "gltf-transform 4.5.0 validate: 0 errors on every file (2026-09-14).",
+ "derivation": {
+  "summary": "Downloaded at 1k, base-colour maps graded to the game palette, then decimated, texture-resized, WebP-compressed and vertex-quantized.",
+  "grade": {
+   "script": "tools/grade-photoscan.py",
+   "saturation": 0.6,
+   "blackLift": 0.18,
+   "gamma": 0.93,
+   "appliesTo": "*_diff_* base-colour maps only; ARM and normal maps untouched",
+   "reason": "Poly Haven photoscan albedo is markedly warmer and darker than this game's pale, near-neutral timber. Ungraded the props read as imports from another game; graded they sit in the palette."
   },
-  "totalBytes": 1486124
+  "optimise": "gltf-transform 4.5.0 optimize --compress quantize --texture-compress webp --texture-size {512|1024} --simplify-error {0.006..0.012} --instance false",
+  "runtimeExtensions": [
+   "KHR_mesh_quantization",
+   "EXT_texture_webp"
+  ],
+  "runtimeNote": "No Draco, meshopt or KTX2 anywhere in this repo, so neither was used: a Draco or meshopt GLB would silently fail to load in ranch3d.html."
+ },
+ "coordinates": "+Y up, right-handed glTF; models are in real-world metres and need no unit scaling",
+ "groups": {
+  "nature": "ground cover, shrubs, rock and stump photoscans",
+  "props": "barrels, crates, buckets, timber furniture and one jetty"
+ },
+ "assetCount": 19,
+ "assets": {
+  "namaqualand_boulder_03": {
+   "file": "namaqualand_boulder_03.glb",
+   "name": "Namaqualand Boulder 03",
+   "assetPage": "https://polyhaven.com/a/namaqualand_boulder_03",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_boulder_03/namaqualand_boulder_03_1k.gltf",
+   "authors": {
+    "Jenelle van Heerden": "modeling",
+    "Dario Barresi": "Photography"
+   },
+   "datePublished": "2024-10-08",
+   "license": "CC0 1.0 Universal",
+   "sha256": "c3e564b996b4524bbbc242f3846f6d3507c2ccefc632ebdceb6eefb5c1104374",
+   "bytes": 178656,
+   "trianglesOriginal": 64826,
+   "trianglesShipped": 4000,
+   "meshes": 1,
+   "materials": 1,
+   "alphaMode": "OPAQUE",
+   "doubleSided": true,
+   "intendedHeightM": 1.6,
+   "originalSha256": {
+    "namaqualand_boulder_03.bin": "d24151021ed310fe3207f1b5964bff22b583e77d2617427a88b5dcbc0447a475",
+    "namaqualand_boulder_03_1k.gltf": "14560936aaad68da0c0fc549b54c67bba4cd573dfe5b07f92835b9ca044a0092",
+    "textures/namaqualand_boulder_03_arm_1k.jpg": "604806ac2a67d6ae97d7bdeea2a0c859eac2cc42a08af480abdec70fd0385cf5",
+    "textures/namaqualand_boulder_03_diff_1k.jpg": "cd1a44c22932eb18a5989474f60bdccd622a1fdb0854fd69899a32ab8efe3bd4",
+    "textures/namaqualand_boulder_03_nor_gl_1k.jpg": "c4c1d34d5fe79fdda70ddf1dc52046f3bb6002576d75c9a4643403c0ecdc55f4"
+   },
+   "group": "nature"
+  },
+  "rock_07": {
+   "file": "rock_07.glb",
+   "name": "Rock 07",
+   "assetPage": "https://polyhaven.com/a/rock_07",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_07/rock_07_1k.gltf",
+   "authors": {
+    "Jenelle van Heerden": "All"
+   },
+   "datePublished": "2024-02-06",
+   "license": "CC0 1.0 Universal",
+   "sha256": "32d07c910acb99225dd61bfce699b472f1e9d74fb8a7d030ee1ea9b2f540bb02",
+   "bytes": 180252,
+   "trianglesOriginal": 14844,
+   "trianglesShipped": 3500,
+   "meshes": 1,
+   "materials": 1,
+   "alphaMode": "OPAQUE",
+   "doubleSided": true,
+   "intendedHeightM": 0.6,
+   "originalSha256": {
+    "rock_07.bin": "e4a532a6d6cf4a08c288f501b790f32cba0528136a29959ce774c3cd39369e7e",
+    "rock_07_1k.gltf": "efcc2dcaa133ff8ad5c865dc2135772e8f5dbc83fa38db2ee2cf25382436b6e6",
+    "textures/rock_07_arm_1k.jpg": "1ed76e9a8542c76bdc6b7b018720ae1f52cd75d9f5ae719f613de3f5032cf4da",
+    "textures/rock_07_diff_1k.jpg": "8ff1965aa1664cc4abcc0131c44ee2b97ab14d6e131d7a51429ff261eeb101c8",
+    "textures/rock_07_nor_gl_1k.jpg": "57cb2210951aeb376164fce5f7c65f03e5599def04873b56cad0f173c275d78d"
+   },
+   "group": "nature"
+  },
+  "tree_stump_01": {
+   "file": "tree_stump_01.glb",
+   "name": "Tree Stump 01",
+   "assetPage": "https://polyhaven.com/a/tree_stump_01",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/tree_stump_01/tree_stump_01_1k.gltf",
+   "authors": {
+    "Rob Tuytel": "All"
+   },
+   "datePublished": "2023-07-05",
+   "license": "CC0 1.0 Universal",
+   "sha256": "fa666881196fe51b381b51717c19f4389a37f78d042e3f2b0e53790d6e3f2ef3",
+   "bytes": 241544,
+   "trianglesOriginal": 41046,
+   "trianglesShipped": 4995,
+   "meshes": 1,
+   "materials": 1,
+   "alphaMode": "OPAQUE",
+   "doubleSided": true,
+   "intendedHeightM": 0.7,
+   "originalSha256": {
+    "tree_stump_01.bin": "b4d9ca70b3c908c4a638fbd6a23ed96c84055bbbf14cf44b89e31ad59fa21e0a",
+    "tree_stump_01_1k.gltf": "9c66ba87d693f35eb404acaa96e0eeff831c295b61a0a903795584cbcc3527c9",
+    "textures/tree_stump_01_arm_1k.jpg": "d845cd6ab45288c546267d059ebe1f8a737e174330fe9375e5f99e753f2f95d8",
+    "textures/tree_stump_01_diff_1k.jpg": "781ebe420ac4d84f2e44b9e9937a596e3d5d90711d978a1392f8bf3771b5bf31",
+    "textures/tree_stump_01_nor_gl_1k.jpg": "425117514b0386bb6df41cb64a61a624d2596472e05777483d4021b3285e3ceb"
+   },
+   "group": "nature"
+  },
+  "shrub_03": {
+   "file": "shrub_03.glb",
+   "name": "Shrub 03",
+   "assetPage": "https://polyhaven.com/a/shrub_03",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/shrub_03/shrub_03_1k.gltf",
+   "authors": {
+    "Rico Cilliers": "All"
+   },
+   "datePublished": "2024-02-06",
+   "license": "CC0 1.0 Universal",
+   "sha256": "4eeaea44a0e4cc67c9894695cdf68fe631855cdebf7ebdc4d9375b4090c574da",
+   "bytes": 230692,
+   "trianglesOriginal": 8287,
+   "trianglesShipped": 5999,
+   "meshes": 1,
+   "materials": 1,
+   "alphaMode": "MASK",
+   "doubleSided": true,
+   "intendedHeightM": 0.55,
+   "originalSha256": {
+    "shrub_03.bin": "bf4df21e6d2a2bc5f00b4c9142f776171fe7da00cf960001825748067af542b6",
+    "shrub_03_1k.gltf": "b76d7c14bc027e834e82d3f984c32b5d060e62908aa90ff9420a637ca253a8ea",
+    "textures/shrub_03_arm_1k.jpg": "3e2b16812a623037138eedace958210c5f3443a827bbe69663045bba5612f815",
+    "textures/shrub_03_diff_1k.jpg": "3cadc7aba46d3aabbd7d6d2b1d04aa32e2a7da0bc87c2d38ef3cb1ee42cb03ec",
+    "textures/shrub_03_nor_gl_1k.jpg": "ff856bacfce859b8a7555dd9a3b92fbd36b2e775d486be71df485afb4235d6c9"
+   },
+   "group": "nature"
+  },
+  "shrub_04": {
+   "file": "shrub_04.glb",
+   "name": "Shrub 04",
+   "assetPage": "https://polyhaven.com/a/shrub_04",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/shrub_04/shrub_04_1k.gltf",
+   "authors": {
+    "Rico Cilliers": "All"
+   },
+   "datePublished": "2024-02-06",
+   "license": "CC0 1.0 Universal",
+   "sha256": "def8cf92dd0de568451fcd6e7971ce3ffcd55780c0beeeb8fdb2e53943c3edd9",
+   "bytes": 252104,
+   "trianglesOriginal": 27327,
+   "trianglesShipped": 5852,
+   "meshes": 1,
+   "materials": 1,
+   "alphaMode": "MASK",
+   "doubleSided": true,
+   "intendedHeightM": 0.45,
+   "originalSha256": {
+    "shrub_04.bin": "cb442c39682e54cc63f912aa78ab17a03566f947a61adbbbaaa6473166744f01",
+    "shrub_04_1k.gltf": "782832cbc57e96686b78c6ef9df6234c25f564f78421c8ed4bd42c3631f5aeae",
+    "textures/shrub_04_arm_1k.jpg": "d1085df021928b29b0f38dde7e58e9a2e304c4e8d838e390b37cf57f8aa492e8",
+    "textures/shrub_04_diff_1k.jpg": "0b0fa0a474753d13f3093858cea79d0de05da1e6a0c5d6e181cd351080980b6c",
+    "textures/shrub_04_nor_gl_1k.jpg": "200d791e0474495bfc876ba1c289dade669c6a5b124647c55bc840a875f6b51c"
+   },
+   "group": "nature"
+  },
+  "fern_02": {
+   "file": "fern_02.glb",
+   "name": "Fern 02",
+   "assetPage": "https://polyhaven.com/a/fern_02",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/fern_02/fern_02_1k.gltf",
+   "authors": {
+    "Rob Tuytel": "scanning",
+    "Rico Cilliers": "modeling"
+   },
+   "datePublished": "2022-05-27",
+   "license": "CC0 1.0 Universal",
+   "sha256": "b3b026a310b9b391ebd2f402ceb631f6170eb9b7134e2c109d4d224c4885743a",
+   "bytes": 169152,
+   "trianglesOriginal": 6232,
+   "trianglesShipped": 4999,
+   "meshes": 1,
+   "materials": 1,
+   "alphaMode": "MASK",
+   "doubleSided": true,
+   "intendedHeightM": 0.55,
+   "originalSha256": {
+    "fern_02.bin": "fe1abb762bcbbc7ad9e86925c8080437a62add257d9280e9142fdc85c226e64c",
+    "fern_02_1k.gltf": "33974295ee19670af4877705fc7d91f33f42d6302f0d44a625e072271223031f",
+    "textures/fern_02_arm_1k.jpg": "ebfb5d76ce9cbdaec20bcd22dce9b755f0b1b8650ef29ca13555e3e6961025d7",
+    "textures/fern_02_diff_1k.jpg": "a828a6e7b4c01c826911e2eac4b3afc7457dab7b3b392a31c681ed88b7d50029",
+    "textures/fern_02_nor_gl_1k.jpg": "45bce132c6e96a0864bc89ab5da51361ab3f4afa83a6669ae499ab5ca811f621"
+   },
+   "group": "nature"
+  },
+  "grass_medium_02": {
+   "file": "grass_medium_02.glb",
+   "name": "Grass Medium 02",
+   "assetPage": "https://polyhaven.com/a/grass_medium_02",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/grass_medium_02/grass_medium_02_1k.gltf",
+   "authors": {
+    "Rico Cilliers": "All"
+   },
+   "datePublished": "2024-02-06",
+   "license": "CC0 1.0 Universal",
+   "sha256": "ca765549c5971d41801a7d746ed3c47b91c0e027400d0961104383d42ff3505b",
+   "bytes": 233724,
+   "trianglesOriginal": 7842,
+   "trianglesShipped": 6000,
+   "meshes": 1,
+   "materials": 1,
+   "alphaMode": "MASK",
+   "doubleSided": true,
+   "intendedHeightM": 0.45,
+   "originalSha256": {
+    "grass_medium_02.bin": "aa8493bc1544a89e08bf440c7ba361042bfe6ea48b1fefc7e4af2dfff42fdf4a",
+    "grass_medium_02_1k.gltf": "7037f8d2dfc6aeec0bf72f4eeb96cfa3f6b3a5e6c6f0bc5de537c055b2fd5d04",
+    "textures/grass_medium_02_arm_1k.jpg": "f0d57bfd95bff7710526b49d47cf2326ee3796e425639d53b983d1472480b57d",
+    "textures/grass_medium_02_diff_1k.jpg": "91ae99005b449011aceb207a68a937258fd9bfd66ff367d344c50398b1df389c",
+    "textures/grass_medium_02_nor_gl_1k.jpg": "0b464550366ed72a6cad9c357e19ac4c83fc9adc87272771479138129853b300"
+   },
+   "group": "nature"
+  },
+  "wine_barrel_01": {
+   "file": "props/wine_barrel_01.glb",
+   "name": "Wine Barrel 01",
+   "author": "James Ray Cock",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/wine_barrel_01",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wine_barrel_01/wine_barrel_01_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 165636,
+   "sha256": "8bb3abd40e88a55333342741a5e907c47670502762326a10c88bba971de47334",
+   "originalPolycount": 10820,
+   "shippedTriangles": 2464,
+   "meshes": 1,
+   "materials": 1,
+   "sizeMetres": [
+    0.74,
+    0.87,
+    0.75
+   ],
+   "instanceable": true,
+   "use": "Yard and stable dressing; the strongest match in the set. Two or three beside a barn wall.",
+   "originalFiles": {
+    "wine_barrel_01.bin": {
+     "bytes": 385912,
+     "sha256": "d827c31afed824b923ea9168462c93ab3ad3a88c4a68b155bd35efb1a02cbf00"
+    },
+    "wine_barrel_01_1k.gltf": {
+     "bytes": 6673,
+     "sha256": "503d3339677217c3241a3cdbc1c803ed1eb82d1a48f51436d1545ec5745ae8d8"
+    },
+    "textures/wine_barrel_01_arm_1k.jpg": {
+     "bytes": 172531,
+     "sha256": "be658e1389dbe8669e847b8fc7df8affdce46d6582f01ac701555b6446a40b9d"
+    },
+    "textures/wine_barrel_01_diff_1k.jpg": {
+     "bytes": 195980,
+     "sha256": "6bea25b4fadda0636b6b7e46e0cc15153eda21ef62c823d5ee2e06a5a7589214"
+    },
+    "textures/wine_barrel_01_nor_gl_1k.jpg": {
+     "bytes": 163587,
+     "sha256": "86cdb0729b44d1687c75d895e6d0ef650f7580d70f3bcb52bce6fedc5fd79b6f"
+    }
+   },
+   "group": "props"
+  },
+  "wooden_crate_01": {
+   "file": "props/wooden_crate_01.glb",
+   "name": "Wooden Crate 01",
+   "author": "James Ray Cock",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/wooden_crate_01",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_crate_01/wooden_crate_01_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 98736,
+   "sha256": "4e90335172ae6051f4ae2973639d74009c1030481c0fbb3c71c73a3af5267c29",
+   "originalPolycount": 6576,
+   "shippedTriangles": 616,
+   "meshes": 1,
+   "materials": 1,
+   "sizeMetres": [
+    0.82,
+    0.35,
+    0.4
+   ],
+   "instanceable": true,
+   "use": "Feed/tack crate at a stable door or on a cart.",
+   "originalFiles": {
+    "wooden_crate_01.bin": {
+     "bytes": 189408,
+     "sha256": "85f381f8035f7a6f2f3b848640894c6d3333b261946dd8a338c0fe19e0bea21e"
+    },
+    "wooden_crate_01_1k.gltf": {
+     "bytes": 5612,
+     "sha256": "fd9c6073acfc671e12b64666053f2805ae33aff5d3dbbcfe5c97c08c06644927"
+    },
+    "textures/wooden_crate_01_arm_1k.jpg": {
+     "bytes": 776699,
+     "sha256": "cd0b031c3924905e16ffd78ead062c2cc274148c4104d09635310097738b4679"
+    },
+    "textures/wooden_crate_01_diff_1k.jpg": {
+     "bytes": 711292,
+     "sha256": "16653f4abaf4c1d9bca94bde3bd8c54d0ea9a5298d1648abcf57de1f7ecc34cc"
+    },
+    "textures/wooden_crate_01_nor_gl_1k.jpg": {
+     "bytes": 594076,
+     "sha256": "f4ea44c7dc1686123d337039cb713d74e8a2dbc6d1bd2beeac276d06f5df3fab"
+    }
+   },
+   "group": "props"
+  },
+  "wooden_crate_02": {
+   "file": "props/wooden_crate_02.glb",
+   "name": "Wooden Crate 02",
+   "author": "James Ray Cock, Jurita Burger",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/wooden_crate_02",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_crate_02/wooden_crate_02_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 102536,
+   "sha256": "512eaa2feb8988544244ef79d820e9e68738a128ef2c231ff2638884cc874fce",
+   "originalPolycount": 5176,
+   "shippedTriangles": 523,
+   "meshes": 1,
+   "materials": 1,
+   "sizeMetres": [
+    0.53,
+    0.46,
+    1.16
+   ],
+   "instanceable": true,
+   "use": "Open slatted crate; reads as a feed trough filler or market crate.",
+   "originalFiles": {
+    "wooden_crate_02.bin": {
+     "bytes": 150064,
+     "sha256": "e68e272641f704e5241e4108894f0b97363d511944db8b991a48787d0160ea5e"
+    },
+    "wooden_crate_02_1k.gltf": {
+     "bytes": 4150,
+     "sha256": "e90985d317664668988cb95ce707784c94ab0ccc6d13c980ca789fa69a5cf7b6"
+    },
+    "textures/wooden_crate_02_arm_1k.jpg": {
+     "bytes": 819577,
+     "sha256": "a76af97005a66fe8c7cdcabf20174f06813e6a6d5cd9502157c93a57f3c89d5a"
+    },
+    "textures/wooden_crate_02_diff_1k.jpg": {
+     "bytes": 716110,
+     "sha256": "a6e57123110d2899af9493c22b1918174f1c96c707e7126ac67738d98ee10c07"
+    },
+    "textures/wooden_crate_02_nor_gl_1k.jpg": {
+     "bytes": 546319,
+     "sha256": "59342f730c9f336950f796ef5e4c3b8c794ce5adbd54d98a2ecb679a7e4ae5e8"
+    }
+   },
+   "group": "props"
+  },
+  "wooden_bucket_01": {
+   "file": "props/wooden_bucket_01.glb",
+   "name": "Wooden Bucket 01",
+   "author": "James Ray Cock",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/wooden_bucket_01",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_bucket_01/wooden_bucket_01_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 104356,
+   "sha256": "d7cc3b0abac21761ea853bbdb2436bab73c2d094a8c76c57d2775c0c96b2826e",
+   "originalPolycount": 5116,
+   "shippedTriangles": 637,
+   "meshes": 1,
+   "materials": 1,
+   "sizeMetres": [
+    0.36,
+    0.55,
+    0.34
+   ],
+   "instanceable": true,
+   "use": "Stave bucket at a wash bay, trough or well.",
+   "originalFiles": {
+    "wooden_bucket_01.bin": {
+     "bytes": 158408,
+     "sha256": "7dbce867270cbb1efe7b0970ebeb9b0d40dd53bcb62f57bfa541c04726ed4b7e"
+    },
+    "wooden_bucket_01_1k.gltf": {
+     "bytes": 4248,
+     "sha256": "f5338d760391b1f6183f09cbb3dfcb0d6b5d954d9a1d388e7debabce46fd999d"
+    },
+    "textures/wooden_bucket_01_arm_1k.jpg": {
+     "bytes": 777463,
+     "sha256": "3f093ca45792584632bbcc94fcc6a6521e5338a19202545f143303de6f6e8f17"
+    },
+    "textures/wooden_bucket_01_diff_1k.jpg": {
+     "bytes": 698083,
+     "sha256": "d9a8ec311099bc94510abdc4b246b67c893df5e829ada4a1014021dbc7c84561"
+    },
+    "textures/wooden_bucket_01_nor_gl_1k.jpg": {
+     "bytes": 693440,
+     "sha256": "ae12106f8dd1e69813d42d714e9c99b70af3b5fcce6953cfbf8d8a741b4da40f"
+    }
+   },
+   "group": "props"
+  },
+  "wooden_bucket_02": {
+   "file": "props/wooden_bucket_02.glb",
+   "name": "Wooden Bucket 02",
+   "author": "James Ray Cock",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/wooden_bucket_02",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_bucket_02/wooden_bucket_02_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 126996,
+   "sha256": "106db82ecac2a677df8b26409555bbea2ea07f30a34bd69af207579fe2095ce7",
+   "originalPolycount": 7252,
+   "shippedTriangles": 751,
+   "meshes": 1,
+   "materials": 1,
+   "sizeMetres": [
+    0.61,
+    0.35,
+    0.61
+   ],
+   "instanceable": true,
+   "use": "Wide stave tub; grooming or feed.",
+   "originalFiles": {
+    "wooden_bucket_02.bin": {
+     "bytes": 227128,
+     "sha256": "d733864312ab54d3d7908b930e858acde4eabe332ea742e0d1d15097c09aab93"
+    },
+    "wooden_bucket_02_1k.gltf": {
+     "bytes": 5625,
+     "sha256": "9ced8ec4849e59e7135d1ab342dbb106adc8c927d2178b1643f1089f19d548b5"
+    },
+    "textures/wooden_bucket_02_arm_1k.jpg": {
+     "bytes": 875674,
+     "sha256": "4873fc1f3cda8a0e49f254861b1a6761bc9d8f192509e7f9b2163fdc84d7e86d"
+    },
+    "textures/wooden_bucket_02_diff_1k.jpg": {
+     "bytes": 648386,
+     "sha256": "473693e53010cf87e0800037c39d8a5843351888b907c213e775bf1c10aac559"
+    },
+    "textures/wooden_bucket_02_nor_gl_1k.jpg": {
+     "bytes": 756137,
+     "sha256": "206d606d5ce5d27fcc13e5a0c34e338d7841f6f26a3dd3f3a4f9d45644da45be"
+    }
+   },
+   "group": "props"
+  },
+  "wooden_ladder": {
+   "file": "props/wooden_ladder.glb",
+   "name": "Wooden Ladder",
+   "author": "Miroslav Turura",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/wooden_ladder",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_ladder/wooden_ladder_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 149388,
+   "sha256": "a8feb545d8a2625465b7fe062ed919d48c96e21ae738e13828b0a9c909e4a8a3",
+   "originalPolycount": 8492,
+   "shippedTriangles": 1444,
+   "meshes": 1,
+   "materials": 1,
+   "sizeMetres": [
+    0.96,
+    1.33,
+    0.5
+   ],
+   "instanceable": true,
+   "use": "Timber stepladder against a barn wall or hay loft.",
+   "originalFiles": {
+    "wooden_ladder.bin": {
+     "bytes": 282184,
+     "sha256": "a86818f7a4a6fbedf147d413cc761983fa03b2d5b88dfdda346ffb3ed71698ef"
+    },
+    "wooden_ladder_1k.gltf": {
+     "bytes": 4390,
+     "sha256": "ad20acb57354f726ef0970ba8e1e02ac12028581173d02b941a8dcf0325c333c"
+    },
+    "textures/wooden_ladder_arm_1k.jpg": {
+     "bytes": 798553,
+     "sha256": "ed5fc0f9b1f053dbb43adbfb1e8db0429c42f01af49da117499a44f743db5a91"
+    },
+    "textures/wooden_ladder_diff_1k.jpg": {
+     "bytes": 758088,
+     "sha256": "c4219c7c0516099c04a1620e74967d358e70438dda042eb99a18cf8471462cfb"
+    },
+    "textures/wooden_ladder_nor_gl_1k.jpg": {
+     "bytes": 750034,
+     "sha256": "4539a49d3834e423b0940d1f04c06704acb56025c5fda24a5451ea7120efac50"
+    }
+   },
+   "group": "props"
+  },
+  "wooden_picnic_table": {
+   "file": "props/wooden_picnic_table.glb",
+   "name": "Wooden Picnic Table",
+   "author": "Ulan Cabanilla",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/wooden_picnic_table",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_picnic_table/wooden_picnic_table_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 399048,
+   "sha256": "77d2042b212d9ffe6aff727fd6dcc5367f31728db81ff516badd465b85013845",
+   "originalPolycount": 10210,
+   "shippedTriangles": 561,
+   "meshes": 2,
+   "materials": 2,
+   "sizeMetres": [
+    2.24,
+    0.74,
+    3.02
+   ],
+   "instanceable": false,
+   "use": "Rider rest stop, trailhead, camp in the autumn woodland quarter.",
+   "originalFiles": {
+    "wooden_picnic_table.bin": {
+     "bytes": 279116,
+     "sha256": "1efd51c292843194fbd709452d56d06c9ddc770f43a013db57ca79bfc2731b01"
+    },
+    "wooden_picnic_table_1k.gltf": {
+     "bytes": 5099,
+     "sha256": "6b0dd9916fd87dba2e5baad06e20c0badf68bc68a5761a13854fa9a215c6bd50"
+    },
+    "textures/wooden_picnic_table_bottom_arm_1k.jpg": {
+     "bytes": 699984,
+     "sha256": "555226136c1d754d4aa5da42385a9152a146c5175382c77cced611a6880efd35"
+    },
+    "textures/wooden_picnic_table_bottom_diff_1k.jpg": {
+     "bytes": 680087,
+     "sha256": "887b9a57213f87196fb090419e14d00095af8fa56c93ca6cd7d0d70ef4e5fd27"
+    },
+    "textures/wooden_picnic_table_bottom_nor_gl_1k.jpg": {
+     "bytes": 548315,
+     "sha256": "c5d6eb388eceb6d98e92ff31d3f3346d411b1bbcb15c05dc9da71e4a7e398539"
+    },
+    "textures/wooden_picnic_table_top_arm_1k.jpg": {
+     "bytes": 747432,
+     "sha256": "50d2b7a0b15c56bf82bc0c918e6eaa5f590a6fd61d32311c8da85c414ace297d"
+    },
+    "textures/wooden_picnic_table_top_diff_1k.jpg": {
+     "bytes": 722582,
+     "sha256": "4aefdef35bf343410dbebd8577dfc968f1d6420ccddc601b19912e84b2accc0a"
+    },
+    "textures/wooden_picnic_table_top_nor_gl_1k.jpg": {
+     "bytes": 625681,
+     "sha256": "1e65787457f9edfdd04f1ee3f777ac2d2a9d43bfbbd3cb40c1e086f939bba419"
+    }
+   },
+   "group": "props"
+  },
+  "planter_box_01": {
+   "file": "props/planter_box_01.glb",
+   "name": "Planter Box 01",
+   "author": "James Ray Cock",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/planter_box_01",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/planter_box_01/planter_box_01_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 100912,
+   "sha256": "b141ba6e65f66945968425030904cac5dc1992243bc330168186d75d59b7546f",
+   "originalPolycount": 8094,
+   "shippedTriangles": 358,
+   "meshes": 1,
+   "materials": 1,
+   "sizeMetres": [
+    0.9,
+    0.42,
+    0.41
+   ],
+   "instanceable": true,
+   "use": "Flower box along a fence line or under a stable window.",
+   "originalFiles": {
+    "planter_box_01.bin": {
+     "bytes": 250580,
+     "sha256": "cc97bc9ee05a90c78e27ca575a83eba86955e863dea8a12826f6ff02c2c11db3"
+    },
+    "planter_box_01_1k.gltf": {
+     "bytes": 2787,
+     "sha256": "15c7ff7396d872e5cad6743c796ff0f42e1f3f831fd334a26aa1fdbd11834a1f"
+    },
+    "textures/planter_box_01_arm_1k.jpg": {
+     "bytes": 745610,
+     "sha256": "b80b08f88166360af32a076082daaed820f0d364a5bef0acea651485017ccbd6"
+    },
+    "textures/planter_box_01_diff_1k.jpg": {
+     "bytes": 633117,
+     "sha256": "5ad77068bf07ca371e18322c04641754a7758f4479e2835b93f671b4a5143bee"
+    },
+    "textures/planter_box_01_nor_gl_1k.jpg": {
+     "bytes": 707323,
+     "sha256": "7d2ad01fdfc8ea9e39af0ddc1db710380afad859dc3848302ff72d21a6e21a27"
+    }
+   },
+   "group": "props"
+  },
+  "wooden_lantern_01": {
+   "file": "props/wooden_lantern_01.glb",
+   "name": "Wooden Lantern 01",
+   "author": "James Ray Cock",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/wooden_lantern_01",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_lantern_01/wooden_lantern_01_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 150544,
+   "sha256": "5e3772c5d6b620d3a38c71b2ccfee091ac4cefeb2fbd2b346179320edfb3cb14",
+   "originalPolycount": 8321,
+   "shippedTriangles": 914,
+   "meshes": 2,
+   "materials": 2,
+   "sizeMetres": [
+    0.22,
+    0.52,
+    0.23
+   ],
+   "instanceable": false,
+   "use": "Hanging or standing lantern at a door, camp or jetty.",
+   "originalFiles": {
+    "wooden_lantern_01.bin": {
+     "bytes": 268136,
+     "sha256": "65c6b1a776c66d4170dab3657f0809b1a8a88219507589d6c9aad70ffbe687a3"
+    },
+    "wooden_lantern_01_1k.gltf": {
+     "bytes": 9540,
+     "sha256": "2380275a5c90bf3442c426f3363e826e6b1ceff12a7e65f83b03cc8fac70a099"
+    },
+    "textures/wooden_lantern_01_arm_1k.jpg": {
+     "bytes": 842111,
+     "sha256": "6bbe63887f60d20445df75dcaef75653b86cb47fe9e139baab717de542cab429"
+    },
+    "textures/wooden_lantern_01_diff_1k.jpg": {
+     "bytes": 712250,
+     "sha256": "5a346e7e3335e9502eb4e25178d16ba29ae49786b75853d7bd36b386edf7a30d"
+    },
+    "textures/wooden_lantern_01_glass_arm_1k.jpg": {
+     "bytes": 561615,
+     "sha256": "2d549dde55d65c690872f148581d81b3468100e8a0eb22847f31273e47d8f1fb"
+    },
+    "textures/wooden_lantern_01_glass_diff_1k.jpg": {
+     "bytes": 410747,
+     "sha256": "1bfced8c9470ea01e73085439e8cee0c44c8ee8199b806a22cc4f2434ae2f151"
+    },
+    "textures/wooden_lantern_01_glass_nor_gl_1k.jpg": {
+     "bytes": 216436,
+     "sha256": "0aaab86f76172aeb7ccfa5f5c7f047f616726e6b3ce6636e162caf633f173c0a"
+    },
+    "textures/wooden_lantern_01_nor_gl_1k.jpg": {
+     "bytes": 747945,
+     "sha256": "06a7d3bb7342b5aa96d8c22d46883153df8948b59cab26e19f0e91ba82dba9ef"
+    }
+   },
+   "group": "props"
+  },
+  "watering_can_metal_01": {
+   "file": "props/watering_can_metal_01.glb",
+   "name": "Watering Can Metal 01",
+   "author": "Charles Nderitu",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/watering_can_metal_01",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/watering_can_metal_01/watering_can_metal_01_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 139000,
+   "sha256": "001e46c188cc264534dbcb8b2066e044d1911768e4961418005822470da53053",
+   "originalPolycount": 11837,
+   "shippedTriangles": 720,
+   "meshes": 1,
+   "materials": 1,
+   "sizeMetres": [
+    0.19,
+    0.19,
+    0.45
+   ],
+   "instanceable": true,
+   "use": "Yard detail beside a planter or tap.",
+   "originalFiles": {
+    "watering_can_metal_01.bin": {
+     "bytes": 318736,
+     "sha256": "8d8db62f70b3a0a8887dbc31f6507bd2dfb93b2878527cc06362dca766493a32"
+    },
+    "watering_can_metal_01_1k.gltf": {
+     "bytes": 3183,
+     "sha256": "aaf3cdf52d64d1081fc7a9113a1ee91a0f8c9bcf569b5ac9927c713b65bbbd2e"
+    },
+    "textures/watering_can_metal_01_arm_1k.jpg": {
+     "bytes": 944654,
+     "sha256": "966f78fca72dd7ae358c3199f6f7734830a7b09c782673e3e4bdfd0ce2d16689"
+    },
+    "textures/watering_can_metal_01_diff_1k.jpg": {
+     "bytes": 619613,
+     "sha256": "e684096ed02bf20dbe46875185aeef02bbc50d31730badfe5853a36ccc5ee2fe"
+    },
+    "textures/watering_can_metal_01_nor_gl_1k.jpg": {
+     "bytes": 725001,
+     "sha256": "13aaedd908aba518ab28d3401881529c9d2ee656459a110f5619b9aad2e86be7"
+    }
+   },
+   "group": "props"
+  },
+  "stone_fire_pit": {
+   "file": "props/stone_fire_pit.glb",
+   "name": "Stone Fire Pit",
+   "author": "Sebastian Platen",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/stone_fire_pit",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/stone_fire_pit/stone_fire_pit_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 134012,
+   "sha256": "9400d1eaa86429e622b0ef4df3df1953309d51eee4832225aa9ac1a49ee86c54",
+   "originalPolycount": 3887,
+   "shippedTriangles": 612,
+   "meshes": 1,
+   "materials": 1,
+   "sizeMetres": [
+    1.45,
+    0.38,
+    1.43
+   ],
+   "instanceable": true,
+   "use": "Camp ring for the autumn woodland, snow and red-rock quarters.",
+   "originalFiles": {
+    "stone_fire_pit.bin": {
+     "bytes": 96220,
+     "sha256": "83528a314ac1ff67a583a59640612e7f8dca803dbb581188b8226d9b661ef0d6"
+    },
+    "stone_fire_pit_1k.gltf": {
+     "bytes": 2792,
+     "sha256": "40034b326d28c06f25cf1cdb39a5ab3f3b1d1a9415d490af39621efe6c31cee6"
+    },
+    "textures/stone_fire_pit_arm_1k.jpg": {
+     "bytes": 681441,
+     "sha256": "9812f7511ccbddcb8340fd47a6fffcf3897820fad31004241639d6d2ea523e2c"
+    },
+    "textures/stone_fire_pit_diff_1k.jpg": {
+     "bytes": 785670,
+     "sha256": "3f2a2340a7dc7207d5b24deb7697c11c43bbd1963533b8f7c41644d32872d1ff"
+    },
+    "textures/stone_fire_pit_nor_gl_1k.jpg": {
+     "bytes": 969822,
+     "sha256": "6ba240fbdc1ab6dac4b06ac342e7fca9fa6064c7d4f98e75cfccad44214c533a"
+    }
+   },
+   "group": "props"
+  },
+  "modular_wooden_pier": {
+   "file": "buildings/modular_wooden_pier.glb",
+   "name": "Modular Wooden Pier",
+   "author": "Rico Cilliers",
+   "licence": "CC0 1.0 Universal",
+   "sourceUrl": "https://polyhaven.com/a/modular_wooden_pier",
+   "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/modular_wooden_pier/modular_wooden_pier_1k.gltf",
+   "downloadedOn": "2026-09-14",
+   "bytes": 1077780,
+   "sha256": "19e8af020f1e4b163703bbcd7c9d1d8cd1fc37b9513783d33973aa3dadc92805",
+   "originalPolycount": 84780,
+   "shippedTriangles": 1652,
+   "meshes": 3,
+   "materials": 3,
+   "sizeMetres": [
+    3.05,
+    7.51,
+    19.02
+   ],
+   "instanceable": false,
+   "use": "Jetty piles and deck for the marsh quarter; the only structure-scale asset available under a licence this repo can ship.",
+   "originalFiles": {
+    "modular_wooden_pier.bin": {
+     "bytes": 2651092,
+     "sha256": "6ec10b84aaaa02800b095850fc92cf850632e5becd76698dc6609f40f05e1b60"
+    },
+    "modular_wooden_pier_1k.gltf": {
+     "bytes": 21127,
+     "sha256": "eeea9853deb63e43510f8d9d6af21963c88adab77e17ccac9f9b8d3a7d34a923"
+    },
+    "textures/modular_wooden_pier_planks_arm_1k.jpg": {
+     "bytes": 722511,
+     "sha256": "4c03bcee7d0fb9708be5e5ebc4dd5fd73789f4eb24b6391dff6167f11c3ce95d"
+    },
+    "textures/modular_wooden_pier_planks_diff_1k.jpg": {
+     "bytes": 764066,
+     "sha256": "2670a7eae2a3104e8537e61d90a8d8b169c7eb0f69b51622bec10e9472dc4573"
+    },
+    "textures/modular_wooden_pier_planks_nor_gl_1k.jpg": {
+     "bytes": 1055218,
+     "sha256": "b23d7b0c23c9a41d50b7e1691e183902765aa4c21ac6ca6da678e874c4ddfb04"
+    },
+    "textures/modular_wooden_pier_poles_arm_1k.jpg": {
+     "bytes": 813524,
+     "sha256": "dacaff86f936bef10220aa60843efadae53039f064ad1a6fad735b912f1ba285"
+    },
+    "textures/modular_wooden_pier_poles_diff_1k.jpg": {
+     "bytes": 836152,
+     "sha256": "da9e017b41e052d5e47558bb98e61b577f66e9d44eb2d26dc9b085e317bede9e"
+    },
+    "textures/modular_wooden_pier_poles_nor_gl_1k.jpg": {
+     "bytes": 978238,
+     "sha256": "9b2d7ca04642e249428969fa32189f36fcea8577a282dbccca1ac15d59dce18e"
+    }
+   },
+   "group": "props"
+  }
+ }
 }
