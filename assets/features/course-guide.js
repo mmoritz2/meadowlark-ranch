@@ -452,6 +452,39 @@ export function install(G){
     because VR, the summon cinematic and free-cam are branches above the G.run where the hook is
     never called at all — a flag that only ever got set would go on claiming this rig was
     driving a camera it had not touched in ten seconds. */
+ /* ---- the wood, in buckets -------------------------------------------------------------
+    followCamera sweeps the eye against the architecture and knows nothing about trees, which
+    are not colliders because a rider goes straight through them. So an orbit angle that reads
+    beautifully in open meadow put the eye inside a canopy and filled the frame with leaves:
+    measured over twenty-six places around the basin, the horse was completely hidden at five
+    of them against three for the old dead-astern rig, and during one ride through ordinary
+    scattered meadow it happened in four shots out of eight.
+    G.world.forestPoints is every tree as {x,z,s}. Bucketed into sixteen-metre cells once, a
+    look-up costs nine cells rather than a walk over six hundred trees. */
+ const TG={cell:16,map:null};
+ function treeGrid(){
+  if(TG.map)return TG.map;
+  const pts=(W.forestPoints||[]); const m=new Map();
+  for(const t of pts){ if(!t||t.x==null)continue;
+   const k=((t.x/TG.cell)|0)+','+((t.z/TG.cell)|0);
+   let a=m.get(k); if(!a){a=[];m.set(k,a);}
+   a.push(t); }
+  TG.map=m; return m;
+ }
+ G.on('rebuild',()=>{TG.map=null;});
+ /* How far INTO a canopy a point is, in metres, or 0 when it is in the clear. A canopy is
+    taken as a disc of radius 2.4*scale whose underside is at 2.0*scale — under that you are
+    below the branches looking up through the trunks, which is a fine shot. */
+ function inCanopy(x,y,z){
+  const m=treeGrid(), cx=(x/TG.cell)|0, cz=(z/TG.cell)|0; let worst=0;
+  for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){
+   const a=m.get((cx+i)+','+(cz+j)); if(!a)continue;
+   for(const t of a){ const sc=t.s||1, r=2.4*sc;
+    if(y<W.groundH(t.x,t.z)+2.0*sc)continue;                 // below the crown
+    const d=Math.hypot(x-t.x,z-t.z); if(d<r){const bite=r-d; if(bite>worst)worst=bite;} }
+  }
+  return worst;
+ }
  G.on('tick',()=>{F.own=false;F.frames++;if(G.camera)_seen.copy(G.camera.position);});
 
  const angDiff=a=>Math.atan2(Math.sin(a),Math.cos(a));
@@ -500,11 +533,35 @@ export function install(G){
    const got=clamp(Math.hypot(cam.position.x-player.pos.x,cam.position.z-player.pos.z)/Math.max(1,run),0,1);
    /* The orbit angle is the lagged heading, plus the player's own drag, plus the three-quarter
       sweep — and the sweep carries most of the turn back, which is the BIAS above. */
-   const ang=F.head+F.yaw+CAM.off+CAM.offSp*F.u+lag*CAM.BIAS;
+   /* The field of view is VERTICAL, so a tall thin window is a far narrower window sideways:
+      78 degrees across at 1440x900, 26 degrees in portrait on a phone. The three-quarter
+      sweep that sits the horse elegantly off-centre on a monitor therefore threw her off
+      the side of a phone entirely — measured at -0.595 of half-width, i.e. outside the
+      frame. Scale the sideways part of the shot by how much sideways room there actually
+      is, against the desktop shape it was tuned on. */
+   const aspect=(G.camera&&G.camera.aspect)||1.6;
+   const hHalf=Math.atan(Math.tan(((G.camera&&G.camera.fov)||52)*Math.PI/360)*aspect);
+   const wide=clamp(Math.tan(hHalf)/Math.tan(Math.atan(Math.tan(52*Math.PI/360)*1.6)),0.28,1);
+   const ang=F.head+F.yaw+(CAM.off+CAM.offSp*F.u)*wide+lag*CAM.BIAS;
    const fx=Math.sin(ang), fz=Math.cos(ang);
    const foot=W.groundH(player.pos.x,player.pos.z)+(player.y||0)*0.8;
-   const ex=player.pos.x-fx*run, ez=player.pos.z-fz*run;
-   _eye.set(ex,Math.max(foot+rise,W.groundH(ex,ez)+1.25),ez);
+   let ex=player.pos.x-fx*run, ez=player.pos.z-fz*run;
+   let ey=Math.max(foot+rise,W.groundH(ex,ez)+1.25);
+   /* If that lands in a canopy, walk the eye back along its own arm toward the horse until it
+      is clear. Coming IN rather than going round keeps the three-quarter framing the whole
+      point of this rig — a shorter version of the good shot beats a long version of a bad one.
+      Six steps at a fifth of the arm each; if the wood never opens, take the closest tried. */
+   if(inCanopy(ex,ey,ez)>0){
+    let r2=run;
+    for(let k=0;k<6&&r2>2.2;k++){
+     r2*=0.8;
+     const nx=player.pos.x-fx*r2, nz=player.pos.z-fz*r2;
+     const ny=Math.max(foot+rise*(r2/Math.max(0.001,run)),W.groundH(nx,nz)+1.25);
+     ex=nx; ez=nz; ey=ny;
+     if(inCanopy(nx,ny,nz)<=0)break;
+    }
+   }
+   _eye.set(ex,ey,ez);
 
    /* Aim above her and ahead of her. Above is what drops her into the lower third and lets the
       valley have the top two thirds. Ahead is the look-ahead, swung part of the way into the
