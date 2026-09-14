@@ -1,0 +1,17 @@
+{
+  "name": "meadowlark-asset-pipeline",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "GLB measurement and recompression for assets/models. See ASSET_PIPELINE.md.",
+  "scripts": {
+    "measure": "node measure-glb.mjs ../../assets/models",
+    "optimize:props": "node optimize-glb.mjs ../../assets/models --props --in-place --manifest ../../assets/models/OPTIMIZATION.json"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "4.5.0",
+    "@gltf-transform/extensions": "4.5.0",
+    "@gltf-transform/functions": "4.5.0",
+    "sharp": "^0.34.0"
+  }
+}
