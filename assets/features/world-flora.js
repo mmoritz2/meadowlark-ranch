@@ -78,6 +78,15 @@ export function install(G){
  try{for(const f of T.FT)if(f&&f.length>2)KEEP.push([f[1],f[2],15]);}catch(e){}
  try{for(const rg of T.REGIONS)if(rg.venue)KEEP.push([rg.venue.x,rg.venue.z,32]);}catch(e){}
  const inKeep=(x,z)=>{for(let i=0;i<KEEP.length;i++){const k=KEEP[i],dx=x-k[0],dz=z-k[1];if(dx*dx+dz*dz<k[2]*k[2])return true;}return false;};
+ /* Keeping the trunks out of a clearing is not the same as leaving the clearing visible. A circle
+    of thirty metres at the centre of Cottonwood stops a tree standing in the street and does
+    nothing about the wood that grows to the edge of it: from the rise south of the village, six
+    cottages and their name labels went behind a wall of conifer, and the bridge and the ferry dock
+    went behind one oak. So a copse — which is a knot of trees up to twenty-two metres across, not
+    a single trunk — is measured as a disc against these circles rather than as a point, and given
+    room besides. Scrub, bracken, reeds and flowers are unaffected: they are knee-high and hide
+    nothing. */
+ const keepClear=(x,z,pad)=>{for(let i=0;i<KEEP.length;i++){const k=KEEP[i],dx=x-k[0],dz=z-k[1],R=k[2]+pad;if(dx*dx+dz*dz<R*R)return true;}return false;};
  /* The race routes are lines the game will gallop a horse down at speed with a following camera.
     Trees carry colliders, so a copse grown across one turns a race into a pinball table; the
     corridor is kept clear of anything with a trunk. Same cheap bounding-box reject as pathDist. */
@@ -661,7 +670,9 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   if(B==='desert'||B==='badland'||B==='tundra'||B==='snow')continue;   // those quarters are planted their own way
   if(inFarm(cx,cz)||!okDry(cx,cz,7)||slopeAt(cx,cz)>0.62)continue;
   if(COPSE.some(c=>hyp(cx,cz,c[0],c[1])<c[2]+34))continue;             // copses are separate things, not one wood
-  const R=rr(8,22); COPSE.push([cx,cz,R]); made++;
+  const R=rr(8,22);
+  if(keepClear(cx,cz,R+22))continue;                                  // a wood may not close over a landmark
+  COPSE.push([cx,cz,R]); made++;
   const autumn=B==='amber', wet=B==='marsh';
   const n=Math.round(5+R*1.05);
   for(let i=0;i<n;i++){
