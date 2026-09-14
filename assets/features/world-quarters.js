@@ -758,9 +758,16 @@ export function install(G){
   put(G_DISC,ICE,10,10,1,tat[0],lvl,tat[1],solid,{roughness:0.06,metalness:0.4,transparent:true,opacity:0.82}).rotation.x=-Math.PI/2;
   {const drop=Math.max(0.55,lvl-groundH(tat[0]+11,tat[1])+0.35);
    put(G_SKIRT,SNOW,10.6,drop,10.6,tat[0],lvl-drop/2,tat[1],solid).castShadow=false;}
+  /* Wind scour runs the way the wind runs. At eleven streaks laid at independently random
+     angles they crossed each other in the middle of the ice and read as a painted X on a
+     tennis court rather than as weather; a rider standing on the bank saw a marked-out rink.
+     One bearing for the whole tarn with a few degrees of wander, thinner ribbons, and enough
+     transparency that the ice still shows through, and they read as drift again. */
+  const scourA=rr(0,6.28);
   for(let k=0;k<11;k++){const a=rr(0,6.28),d=rr(1,8);
-   const m=bx(solid,'#e4f2f7',tat[0]+Math.cos(a)*d,lvl+0.02,tat[1]+Math.sin(a)*d,rr(3,7),0.02,rr(0.25,0.7));
-   m.rotation.y=rr(0,6.28);m.castShadow=false;}
+   const m=bx(solid,'#e4f2f7',tat[0]+Math.cos(a)*d,lvl+0.02,tat[1]+Math.sin(a)*d,rr(3,7),0.02,rr(0.12,0.3));
+   m.material=mt('#e4f2f7',{transparent:true,opacity:0.5,roughness:0.35});
+   m.rotation.y=scourA+rr(-0.09,0.09);m.castShadow=false;}
   /* Boot-and-hoof-packed snow round the rim, so the tarn has an edge you can see. */
   for(let k=0;k<26;k++){const a=k/26*Math.PI*2+rr(-0.06,0.06);
    lp(solid,'#f4f9fc',tat[0]+Math.cos(a)*rr(10.4,11.6),lvl-0.35,tat[1]+Math.sin(a)*rr(10.4,11.6),rr(1.2,2.6),rr(0.35,0.7),rr(1.2,2.2)).castShadow=false;}
