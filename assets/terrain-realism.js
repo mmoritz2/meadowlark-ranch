@@ -59,7 +59,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v3';
+  material.customProgramCacheKey = () => 'terrain-biomes-v4';
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
     sh.vertexShader = 'varying vec3 terrainPosition; varying vec3 terrainNormal;\n' + sh.vertexShader;
@@ -179,8 +179,17 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
 
       float canyon = 1.0-smoothstep(96.0,172.0, length(p-vec2(-220.0,130.0))+ecoB*0.9);
       float snowRegion = 1.0-smoothstep(88.0,158.0, length(p-vec2(-160.0,-210.0))+ecoA*0.8);
-      /* Snow lies on the rises and melts out of the hollows where the meltwater collects. */
-      float snow = snowRegion*(1.0-smoothstep(0.20,0.58,grade))*smoothstep(-1.6,2.6,hgt+(stand-0.5)*3.6);
+      /* Snow lies deeper on the rises and thins in the hollows where the meltwater collects —
+         but it THINS there, it does not disappear, and the difference matters because this gate
+         was calibrated against the whole basin's height range rather than against the two
+         regions it applies to. Hollowpeak's median ground height is 0.12 m and Frostpine's is
+         0.00, both of them sitting at the basin's middle rather than above it, so a gate that
+         opened at -1.6 and only saturated at 2.6 took Hollowpeak's snow cover from 0.92 to 0.39
+         and left a rider standing in the middle of the snow region on plain green pasture.
+         A floor under the term keeps every drift and every scoured crown the original bought
+         while leaving the place recognisably a snowfield. */
+      float lie = mix(0.62,1.0, smoothstep(-2.6,2.2,hgt+(stand-0.5)*3.6));
+      float snow = snowRegion*(1.0-smoothstep(0.20,0.58,grade))*lie;
       float amber  = 1.0-smoothstep(86.0,132.0, length(p-vec2( 300.0,-300.0))+ecoA);
       float marsh  = 1.0-smoothstep(76.0,124.0, length(p-vec2( 310.0, 300.0))+ecoB);
       float tundra = 1.0-smoothstep(80.0,128.0, length(p-vec2(-300.0,-320.0))+ecoB*0.85+ecoA*0.40);
