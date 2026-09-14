@@ -481,6 +481,17 @@ export function install(G){
      a cross one, and either way end up as metres along this line. */
   const gaps=(f.gates||[]).map(g=>f.cross?g*total:((g-f.t0)/(f.t1-f.t0))*total).filter(d=>d>3&&d<total-3);
   let lastX=null,lastZ=null,lastOpen=false;
+  /* Where the current unbroken stretch of fence began. A wall is still only emitted every third
+     sample — one long segment costs the per-frame sweep exactly what a short one does — but it now
+     spans the whole stretch since the last emission instead of only the last step. Emitting
+     lastX->x meant two samples in three carried no wall at all, and the holes that left were wider
+     than the 0.65 m the player is pushed away from a wall: measured on the built world, the median
+     distance from one wall end to the next was 2.58 m and seventy-three of them were over 4 m, so
+     a horse at a walk rode through the hedge wherever she liked and the five-bar gates were
+     decoration. closeRun() ends the stretch at the last solid sample, which is what a gate mouth
+     and a thin patch of hedge both need. */
+  let runX=null,runZ=null;
+  const closeRun=()=>{if(runX!==null&&lastX!==null&&(runX!==lastX||runZ!==lastZ))W.walls.push({x1:runX,z1:runZ,x2:lastX,z2:lastZ});runX=null;};
   for(let i=0;i<=n;i++){
    const p=line[i], pa=line[Math.max(0,i-1)], pb=line[Math.min(n,i+1)];
    let ttx=pb[0]-pa[0],ttz=pb[1]-pa[1];const tl2=Math.hypot(ttx,ttz)||1;ttx/=tl2;ttz/=tl2;
@@ -490,7 +501,7 @@ export function install(G){
    if(inGate){
     /* The gateposts stand at the mouth, the gate itself swung back out of the way. */
     if(!lastOpen&&lastX!==null){gatePost(lastX,lastZ,Math.atan2(s.tx,s.tz));fiveBarGate(lastX,lastZ,gh(lastX,lastZ),Math.atan2(s.tx,s.tz),1.5);}
-    lastOpen=true; lastX=x; lastZ=z; continue;
+    closeRun(); lastOpen=true; lastX=x; lastZ=z; continue;
    }
    if(lastOpen){gatePost(x,z,Math.atan2(s.tx,s.tz));lastOpen=false;lastX=x;lastZ=z;continue;}
    const yaw=Math.atan2(s.tx,s.tz), jit=hash01(x*0.7,z*0.7);
@@ -517,7 +528,7 @@ export function install(G){
        hedge has gone thin, and one in eleven has been let grow up into a standard — which is what
        a real hedgerow does when nobody lays it for a few years. */
     const thin=hash01(i*4.3,6.1);
-    if(thin>0.90){lastX=x;lastZ=z;continue;}
+    if(thin>0.90){closeRun();lastX=x;lastZ=z;continue;}
     const bushy=0.72+thin*0.62;
     for(let k2=0;k2<2;k2++){
      const jx=hash01(i*9+k2,4.1), jy=hash01(i*5+k2,8.3);
@@ -537,7 +548,8 @@ export function install(G){
    }
    if(lastX!==null&&!lastOpen){
     fenceM+=Math.hypot(x-lastX,z-lastZ);
-    if(i%3===0||i===n)W.walls.push({x1:lastX,z1:lastZ,x2:x,z2:z});
+    if(runX===null){runX=lastX;runZ=lastZ;}
+    if(i%3===0||i===n){W.walls.push({x1:runX,z1:runZ,x2:x,z2:z});runX=x;runZ=z;}
    }
    lastX=x; lastZ=z;
   }
