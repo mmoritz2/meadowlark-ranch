@@ -1,0 +1,474 @@
+{
+  "generatedAt": "2026-09-14T17:07:56.708Z",
+  "settings": {
+    "out": null,
+    "inPlace": true,
+    "maxTexture": 1024,
+    "quality": 92,
+    "nearLossless": false,
+    "quantize": false,
+    "manifest": "../../assets/models/OPTIMIZATION.json"
+  },
+  "totals": {
+    "bytesBefore": 36894480,
+    "bytesAfter": 4658600
+  },
+  "files": [
+    {
+      "file": "barrel_textured.glb",
+      "path": "../../assets/models/barrel_textured.glb",
+      "bytesBefore": 2822488,
+      "bytesAfter": 314836,
+      "sha256Before": "f58dea9de76246193fcf3a3886b95ad7ac94cfa0cf29a559afe5771dac11fbc7",
+      "sha256After": "c91b0ce59d3e9dda158a9a11301aeea0e6222fedf21c9d838ea731bdf7cfbb60",
+      "ratio": 0.111545558386785,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/barrel_textured.glb"
+    },
+    {
+      "file": "boulder_textured.glb",
+      "path": "../../assets/models/boulder_textured.glb",
+      "bytesBefore": 3205288,
+      "bytesAfter": 285516,
+      "sha256Before": "d40bd23418fcb74001428a77ab8498ab2f1f2cedbca9e490e7fca9ead6df90ae",
+      "sha256After": "a64a0e0a59b23dc53d41c4f22f198d568050785ad5ed25b2ba1f8af63c023c9c",
+      "ratio": 0.08907655099947337,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/boulder_textured.glb"
+    },
+    {
+      "file": "bush_textured.glb",
+      "path": "../../assets/models/bush_textured.glb",
+      "bytesBefore": 3188608,
+      "bytesAfter": 291492,
+      "sha256Before": "bea8eacde48e3b371dddecee9c3f91b3e44d750d6b0a06d7125b2e0a112adb61",
+      "sha256After": "f07bf73593247c22c3a3185a20398afe2eb383c3acb34960c58e3e86bb3fac8b",
+      "ratio": 0.09141669342860584,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/bush_textured.glb"
+    },
+    {
+      "file": "cactus2_textured.glb",
+      "path": "../../assets/models/cactus2_textured.glb",
+      "bytesBefore": 2542696,
+      "bytesAfter": 234096,
+      "sha256Before": "a85b14240f15e932205adc2e35a00afab965263b05d70e5664051e89475ca6a6",
+      "sha256After": "1c724d64cc8a1389b211a812b41e2db3655f976f6e98cafd06ca52d449282bc4",
+      "ratio": 0.09206605901767258,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/cactus2_textured.glb"
+    },
+    {
+      "file": "cactus_textured.glb",
+      "path": "../../assets/models/cactus_textured.glb",
+      "bytesBefore": 2015624,
+      "bytesAfter": 190544,
+      "sha256Before": "6adacc05ad08e0395b54ad6a88c7b8b510cafbfe292e44e1802bc172fccf4b2e",
+      "sha256After": "6190b4fdad0ad7d271a96f216293f6c5f2eb743297e9ddbff8f33cb3447bdf36",
+      "ratio": 0.09453350426468429,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/cactus_textured.glb"
+    },
+    {
+      "file": "flowerbush_textured.glb",
+      "path": "../../assets/models/flowerbush_textured.glb",
+      "bytesBefore": 4278752,
+      "bytesAfter": 718472,
+      "sha256Before": "89cc809106c84bec0b5af55529c2e764734aeeedc1fcdac103f9712b643c007f",
+      "sha256After": "46a52852861df2b40967ac5640d372713b31a097810af6e2f4ad49d57bc3a7d4",
+      "ratio": 0.1679162522155993,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/flowerbush_textured.glb"
+    },
+    {
+      "file": "haybale_textured.glb",
+      "path": "../../assets/models/haybale_textured.glb",
+      "bytesBefore": 4737804,
+      "bytesAfter": 618384,
+      "sha256Before": "f7b56163ce05e354ad8a64c84a9938a2950e4c710657b1ba0ad44f2800504ee6",
+      "sha256After": "b73b745bfa008f67ad7e2832703e72b0c80a27e4245566e1772817a7c2f99093",
+      "ratio": 0.1305212288224671,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/haybale_textured.glb"
+    },
+    {
+      "file": "rider_seat_textured.glb",
+      "path": "../../assets/models/rider_seat_textured.glb",
+      "bytesBefore": 2563108,
+      "bytesAfter": 514128,
+      "sha256Before": "7cab15663d35589f79b3857a091d4a98daf6f3c9eeba4a47a97e3ec514225de2",
+      "sha256After": "6fe31085e970bace0883c6f3f2af822722590c7ae2a63adf59f34da5bef6c6ed",
+      "ratio": 0.2005877239663721,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/rider_seat_textured.glb"
+    },
+    {
+      "file": "saddle2_textured.glb",
+      "path": "../../assets/models/saddle2_textured.glb",
+      "bytesBefore": 2204128,
+      "bytesAfter": 409316,
+      "sha256Before": "bec3ddc213609fff0fa1a2097f5b0de37b78716541c70d60839eb217295fcef1",
+      "sha256After": "dd314a9985b945bd231783bfee8072a2c9883a9e2fb9839d9d8c5f7efa7f44c6",
+      "ratio": 0.18570427851740007,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/saddle2_textured.glb"
+    },
+    {
+      "file": "saddle_en_textured.glb",
+      "path": "../../assets/models/saddle_en_textured.glb",
+      "bytesBefore": 2193472,
+      "bytesAfter": 363560,
+      "sha256Before": "10ca955ff5e3ec1d34e9ca2f2680da16e0934db496b6e5989a5d4705427e8dad",
+      "sha256After": "770fb3e12d9cf85f4b891c3005e032140c0150296e3d146fa337b4b726e9c28b",
+      "ratio": 0.16574636010854024,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/saddle_en_textured.glb"
+    },
+    {
+      "file": "stump_textured.glb",
+      "path": "../../assets/models/stump_textured.glb",
+      "bytesBefore": 3781752,
+      "bytesAfter": 379404,
+      "sha256Before": "feb7e8dea4ac9d4a0dbbb2e66a0222c179fd9ee477bef1ddfbc2892351035616",
+      "sha256After": "78edac40188aabd508f0a432537e7b1497806abbabfe4af83300c562e3ca3312",
+      "ratio": 0.10032492876317643,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/stump_textured.glb"
+    },
+    {
+      "file": "trough_textured.glb",
+      "path": "../../assets/models/trough_textured.glb",
+      "bytesBefore": 3360760,
+      "bytesAfter": 338852,
+      "sha256Before": "e55806af4519d4e92c1ac683d2643307301dd65f4ef54e87d0824977d3a457e8",
+      "sha256After": "61aef440f48ce77c427b4b2a9e0c25a33acbb2cfa9d9282c8422faa323b06a22",
+      "ratio": 0.10082600364203335,
+      "before": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "after": {
+        "meshCount": 1,
+        "primCount": 1,
+        "meshNames": [
+          "temp_mesh.ply"
+        ],
+        "firstMeshName": "temp_mesh.ply",
+        "firstMaterialName": "",
+        "nodeCount": 2,
+        "skinCount": 0,
+        "jointCounts": [],
+        "animationCount": 0
+      },
+      "problems": [],
+      "aspectDrift": 0,
+      "written": "../../assets/models/trough_textured.glb"
+    }
+  ]
+}

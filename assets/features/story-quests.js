@@ -44,7 +44,27 @@ export function install(G){
  S.sync(s=>{
   s.mig=s.mig||{}; if(s.mig['sq-init'])return; s.mig['sq-init']=1;
   const earned=(s.stats&&s.stats.earned)||0;
-  FRESH=(s.story.idx||0)===0&&(s.story.prog||0)===0&&!earned&&(s.horses||[]).length<=1&&!(s.decor&&s.decor.length);
+  /* Judging a save brand new is destructive — it re-runs the prologue behind the player and used
+     to confiscate their Silver Keys — so it must not rest on "has not picked a carrot yet". A
+     player who had been taking the daily gift for weeks without ever landing a jump, entering an
+     event, buying a second horse or placing a decoration satisfied every clause above and was sent
+     back to the prologue with their keys zeroed. Keys are never sold for gems
+     (market-summon-keys-pets.js), so that loss could not be undone.
+     The save already carries the evidence, and another package was already reading it: the welcome
+     block in account-economy.js calls a player a veteran on exactly this founded date, so on one
+     boot of one save the two packages contradicted each other. Ask the same questions it asks. */
+  /* Only signals that CANNOT already be true on a player's very first boot. The first attempt at
+     this also counted keys>0 and a non-empty lastDaily, and both are set during the opening
+     moments of a new game — a new player was handed a welcome key and a daily before this ran, was
+     judged "returning", and skipped the prologue altogether. The founding date, a streak above one
+     and a calendar past its second square are the three that a first session cannot fake. */
+  const days=(Date.now()-(s.founded||Date.now()))/864e5;
+  const returning=days>2||(s.streakN||0)>1||((s.cal&&s.cal.i)||0)>1;
+  FRESH=!returning&&(s.story.idx||0)===0&&(s.story.prog||0)===0&&!earned&&(s.horses||[]).length<=1&&!(s.decor&&s.decor.length);
+  /* s.keys=0 stays, and belongs here: the prologue is built around the player having none until
+     Auntie June puts the first one in their hand, and a save that is genuinely on its first boot
+     has nothing to lose. What was destructive was never this line — it was reaching it with a
+     veteran's save, and that is what the test above now prevents. */
   if(FRESH){ s.mig['sq-prologue']=1; s.story.era=1; s.named=false; s.keysGiven=false; s.keys=0; s.starterCoat={id:'bay',chosen:false}; }
   else { s.story.era=2; s.named=true; s.keysGiven=true; }
  });

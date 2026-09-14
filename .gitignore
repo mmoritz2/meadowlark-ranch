@@ -66,3 +66,7 @@ assets/models/horse-candidates/
 !assets/models/horse-candidates/b2przemo/bay-study-albedo.png
 # Full-resolution sources for the tiling materials; the tiles themselves are tracked.
 assets/textures/realism/source/
+
+# GLB recompression tooling (gltf-transform + sharp) is a build-time dependency only;
+# nothing from it ships. See tools/asset-gen/ASSET_PIPELINE.md.
+tools/asset-gen/node_modules/
