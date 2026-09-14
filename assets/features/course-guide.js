@@ -1,7 +1,11 @@
 /* Feature package 'course-guide'. Owned by that package: edit only this file and the inline hot
    spots assigned to it. See index.js for the contract. Nothing runs at import time.
 
-   What lives here — the line on the ground that says where to go next, on every kind of round.
+   What lives here — the line on the ground that says where to go next, on every kind of round,
+   and the follow camera that decides what the rider is looking at while she rides it. Two halves
+   of one question: where am I being sent, and can I see anything. The camera is the second
+   section of this file and keeps entirely to itself — its own state, its own hooks, and no line
+   of it touches the guide.
 
    A rider was told where the next obstacle was by one small gold cone floating over it. That
    cone is fine once you have found it and useless before: it is a single point in a basin that
@@ -277,4 +281,298 @@ export function install(G){
   target:()=>tx===null?null:[tx,tz],
   chevronAt(i){if(i<0||i>=core.count)return null;core.getMatrixAt(i,_m);return [_m.elements[12],_m.elements[13],_m.elements[14]];},
  };
+
+ /* ================================================================ the follow camera ===== */
+ /* The other half of telling a rider where she is: where she is SEEN from.
+
+    The built-in rig sits 6.0 m behind the horse on her exact centreline and 2.35 m up, and it
+    never moves. Measured on the arena sand at a halt, the horse's own bounding box covers 44%
+    of the frame, centred, and every bit of that 44% is hindquarters, tail and the back of the
+    rider's coat. You cannot see the horse's head, her shoulder, her expression or her gait —
+    the three things the whole game is about — and at a gallop the animal is a brown lozenge in
+    the middle of the picture with the world hidden behind it. The one genuinely handsome frame
+    in a whole screenshot set was an accident: mid-turn, the rig had not caught up with the
+    heading yet and the horse was briefly in three-quarter view. So this package makes that
+    accident the rule.
+
+    Four things, and nothing else:
+
+    The eye goes back, up and ROUND. It sits about thirty degrees off the spine, so we are
+    looking across her rather than up her tail: shoulder, barrel, head and the far hind leg all
+    read, and the tail stops being a vertical smear down the middle of the screen. She sits a
+    little left of centre with the world she is riding into open on the right.
+
+    It aims ABOVE and AHEAD of her, not at her. That is what puts the horse in the lower third
+    and the horizon where a landscape wants it. The look-ahead lengthens with speed, so a
+    gallop shows you more of what is coming and a halt shows you more of your horse.
+
+    It breathes. Distance, pitch, orbit angle and field of view all ride one eased speed
+    number: closer and higher at a halt, further back and flatter at a gallop, wider lens with
+    it. Nothing in here steps — every one of those is a first-order filter, and the speed
+    number itself climbs faster than it falls so that pulling up feels like settling rather
+    than like the camera chasing you.
+
+    And the heading it is built on LAGS the horse's. That is the cornering feel: turn and the
+    eye swings wide while the aim swings the other way, into the turn. The lag is self-limiting
+    — the harder she turns the harder the filter pulls — and hard-clamped besides, so a spin on
+    the spot can never end up broadside.
+
+    Terrain and buildings are not this package's problem to solve twice: followCamera.frame()
+    already sweeps the clearance volume against the registered architecture and orbits round
+    what it finds, and resolve() rechecks the interpolated position afterwards, which is what
+    stops a corner from being cut through a barn wall. Both are called here, on the same
+    contract — with two differences that the longer arm forced and that are argued where they
+    happen: the sweep is anchored on the horse rather than on the aim point, and the recheck is
+    applied at a bounded speed instead of all at once.
+
+    What it does NOT fix, and cannot from here: trees. followCamera only knows the architecture
+    somebody registered with it, and the valley's tree canopies are registered with nothing at
+    all, so a canopy can sit between the eye and the horse and neither rig will move for it.
+    That hole is the built-in one's too — in a before-and-after pair shot on the same wooded
+    path, the old camera's frame is 55% flat green tree with the horse nowhere in it, and this
+    one at least has her in shot behind leaves. It wants either canopy volumes registered, or
+    foliage that fades when the eye is inside it. Both live in files this package does not own.
+
+    ---- yielding ----------------------------------------------------------------------------
+    'camera' is the hook this codebase has most reason to be careful with. G.run does NOT stop
+    at the first truthy hook — it runs every one of them and returns the first truthy RESULT —
+    and course-guide installs twenty-first, after all four packages that already own the camera
+    somewhere. Returning true unconditionally would therefore not "win" the camera, it would
+    silently stamp on first person, the grandstand, the ferry and the balloon, and spectating,
+    every one of which had already placed the eye microseconds earlier in the same G.run.
+
+    So this yields two ways round. First, by asking each of them directly: course-engine puts
+    'fpv' on the body, world exposes G.worldPkg.vehicle(), social-play exposes G.social.spectate
+    as a live getter. events-pvp's grandstand is the one with no live getter at all, and its
+    seat is unreachable in the built world anyway (social-play splices the thing out and keeps
+    one stand), so the only door left into it is the G.events.setSpectate it publishes for QA —
+    which is read here, not changed. Second, and for anything that arrives later: the camera's
+    position is noted at the end of every frame, and if it has already moved by the time this
+    hook runs then somebody earlier in the list is driving and this one stands down. That net
+    catches a package nobody has written yet. VR, the summon stall and free-cam need no check —
+    they are branches ABOVE the G.run in ranch3d.html, so the hook is never called at all.
+
+    Drag-to-look is answered here rather than deferred to, because camYaw/camPitch/camDist are
+    locals of ranch3d.html that no package can read. The listeners below are deliberate copies
+    of the built-in ones — same element, same one-pointer rule, same clamps — so a thumb on the
+    on-screen stick still never reaches them; the built-in's copy of the state goes unused
+    while this rig owns the eye, and is recomputed from scratch the moment it does not. */
+
+ const CAM={
+  /* the rig at a halt, and how far each number travels by a flat gallop */
+  dist:8.3,   distSp:0.9,                                // metres along the slant from horse to eye
+  pitch:0.40, pitchSp:-0.12,                             // radians above the horizon; flatter at speed
+  off:0.52,   offSp:-0.08,                               // RADIANS round the horse, not metres — see below
+  lookY:1.62, lookYSp:0.34,                              // aim this far above her feet — puts her low in frame
+  LOOK_MIN:1.18,                                         // and this far when a wall has squeezed the shot in
+  lead:3.20,  leadSp:4.20,                               // and this far along where she is actually going
+  fov:52,     fovSp:5.5,
+  GALLOP:11.5,                                           // the speed that counts as "all of it"
+  LAG:3.1, LAG_GAIN:3.0, LAG_MAX:0.80,                   // heading filter: rate, self-limit, hard clamp
+  BIAS:0.72, LOOK_INTO:0.45, LEAD_TIGHT:0.60,            // how a corner is shared out — see below
+  EASE:5.0, LOOK_EASE:7.0, UP:2.4, DOWN:1.15,            // position, look point, and the speed number
+  OCC_IN:18, OCC_OUT:9, TUCK:0.14,                       // metres a second the obstruction pull may move the eye
+  ZOOM_MIN:0.62, ZOOM_MAX:1.75, SNAP:60,                 // wheel range, and the jump that warrants a cut
+ };
+ /* Why 'off' is an angle. The first go at this put the eye a fixed number of METRES off the
+    spine, and on screen it did almost nothing: 2.1 m at 6 m back is 19° round the horse, which
+    is still a rear view with a hint of flank. What makes an animal read as an animal is the
+    angle you see it from, and that angle is what a lateral offset stops controlling the moment
+    the distance changes. Sweeping the eye round the horse by a fixed 30° instead holds the
+    three-quarter at a halt, at a gallop, zoomed in and zoomed out, and it is one addition to
+    the orbit angle rather than a second basis vector to get the sign of wrong (which, for the
+    record, is exactly what happened: the first version had the horse on the wrong side).
+
+    Why a corner is shared out three ways. A camera that simply lagged the heading swings to the
+    OUTSIDE of a right-hand turn and gets a glorious near-broadside — and swings straight
+    through the spine on a left-hand one and ends up looking up her tail, which is the very
+    thing this is here to fix. So BIAS gives most of the turn back to the orbit angle, leaving
+    about a quarter of it as a visible swing; the three-quarter then only breathes between
+    roughly 16° and 41° instead of crossing zero. LOOK_INTO swings the aim into the turn, and
+    LEAD_TIGHT shortens the look-ahead as the turn tightens, because in a tight turn you are not
+    going anywhere far ahead and a long lead would drag the horse off the side of the frame. */
+ /* live state: the eased speed number, the lagging heading, and the player's own look-around */
+ const F={u:0,head:null,yaw:0,pitch:0,zoom:1,occ:1,drag:null,placed:false,own:false,broke:0,frames:0};
+ const _eye=new THREE.Vector3(), _look=new THREE.Vector3(), _anchor=new THREE.Vector3();
+ const _raw=new THREE.Vector3(), _tmp=new THREE.Vector3();
+ const _seen=new THREE.Vector3(NaN,NaN,NaN);
+
+ /* Copies of ranch3d.html's own orbit listeners, for the reason in the header. One pointer id
+    only: on a phone the second thumb arriving is the normal case, and without the id test it
+    overwrites the drag origin and the view lurches every time either thumb moves.
+
+    And a drag only counts while this rig is the one driving. The built-in listener has the same
+    rule — it hands a drag straight to freeCam and returns — but this copy originally only
+    checked first person, so a pan in photo mode, a look round from the grandstand or a spin in
+    the balloon basket was quietly winding up F.yaw the whole time. Measured: entering the free
+    camera, panning 400 px and pressing C to come back left the follow rig at yaw -2.16 rad, so
+    the rider was suddenly being watched from 124 degrees round the wrong side of her own
+    horse — and at a halt nothing unwinds it, because the unwind only runs above 0.6 m/s. The
+    test goes in pointermove as well as pointerdown, since photo mode can be entered with the
+    button held. */
+ const dragBlocked=()=>{try{return foreignCam()||(G.cam&&G.cam.isFree());}catch(e){return false;}};
+ if(G.renderer&&G.renderer.domElement)G.renderer.domElement.addEventListener('pointerdown',e=>{
+  if(F.drag||dragBlocked())return;
+  F.drag={id:e.pointerId,x:e.clientX,y:e.clientY};
+ });
+ addEventListener('pointermove',e=>{
+  if(!F.drag||e.pointerId!==F.drag.id)return;
+  if(dragBlocked()){F.drag.x=e.clientX;F.drag.y=e.clientY;return;}   // follow the pointer, move nothing
+  F.yaw-=(e.clientX-F.drag.x)*0.006;
+  F.pitch=clamp(F.pitch+(e.clientY-F.drag.y)*0.004,-0.30,0.62);
+  F.drag.x=e.clientX;F.drag.y=e.clientY;
+ });
+ const camDragEnd=e=>{if(F.drag&&(!e||e.pointerId===F.drag.id))F.drag=null;};
+ addEventListener('pointerup',camDragEnd);
+ addEventListener('pointercancel',camDragEnd);
+ addEventListener('wheel',e=>{F.zoom=clamp(F.zoom+e.deltaY*0.0014,CAM.ZOOM_MIN,CAM.ZOOM_MAX);},{passive:true});
+
+ /* events-pvp's grandstand is the one camera owner with no live getter. Wrap the entry point
+    it publishes so the flag is honest, rather than guess from the outside. Read-only: the
+    original is still what does the work. */
+ let pvpSeat=false;
+ try{
+  const ev=G.events;
+  if(ev&&typeof ev.setSpectate==='function'){
+   const orig=ev.setSpectate;
+   ev.setSpectate=on=>{pvpSeat=!!on;return orig(on);};
+  }
+ }catch(e){}
+ function foreignCam(){
+  if(pvpSeat)return true;                                                      // events-pvp, the grandstand
+  if(document.body.classList.contains('fpv'))return true;                      // course-engine, first person
+  try{if(G.worldPkg&&G.worldPkg.vehicle&&G.worldPkg.vehicle())return true;}catch(e){}   // world, ferry or balloon
+  try{if(G.social&&G.social.spectate)return true;}catch(e){}                   // social-play, watching a rider
+  return false;
+ }
+ /* The whole of the safety net, in one line. 'tick' runs a couple of hundred lines before the
+    camera block, so the position noted here is where the eye finished LAST frame: if it has
+    moved by the time the 'camera' hook runs, somebody earlier in the same G.run moved it and
+    this rig is not the owner. And ownership is CLEARED here rather than only set in the hook,
+    because VR, the summon cinematic and free-cam are branches above the G.run where the hook is
+    never called at all — a flag that only ever got set would go on claiming this rig was
+    driving a camera it had not touched in ten seconds. */
+ G.on('tick',()=>{F.own=false;F.frames++;if(G.camera)_seen.copy(G.camera.position);});
+
+ const angDiff=a=>Math.atan2(Math.sin(a),Math.cos(a));
+
+ G.on('camera',c=>{
+  if(F.broke>2||!player.mesh)return false;
+  try{
+   if(foreignCam()||!G.camera.position.equals(_seen)){F.own=false;return false;}
+   const cam=G.camera, dt=Math.min(c.dt,0.1), sp=Math.abs(player.speed)||0;
+   const head=player.heading;
+   if(F.head===null){F.head=head;}
+
+   /* The heading the EYE is built on chases the horse's, and the harder she is turning the
+      harder it chases — so the lag grows into a three-quarter view and then stops growing
+      instead of winding on round to broadside. The clamp is the belt to that brace, for a
+      spin on the spot where the filter alone would still be catching up. */
+   let lag=angDiff(head-F.head);
+   F.head+=lag*(1-Math.exp(-(CAM.LAG+CAM.LAG_GAIN*Math.abs(lag))*dt));
+   lag=angDiff(head-F.head);
+   if(lag>CAM.LAG_MAX)F.head=head-CAM.LAG_MAX; else if(lag<-CAM.LAG_MAX)F.head=head+CAM.LAG_MAX;
+
+   /* One number does all the breathing. It climbs about twice as fast as it falls: opening
+      the shot up as she takes off should feel immediate, closing it back down as she pulls up
+      should feel like the camera settling rather than pouncing. */
+   const u=clamp(sp/CAM.GALLOP,0,1);
+   F.u+=(u-F.u)*(1-Math.exp(-(u>F.u?CAM.UP:CAM.DOWN)*dt));
+
+   /* Drag yaw unwinds while she is going forward, the way the built-in rig's did — a look
+      around is a moment, not a mode — but more slowly, so a deliberate one survives a beat. */
+   if(!F.drag&&sp>0.6)F.yaw+=(0-F.yaw)*Math.min(1,dt*1.2);
+
+   /* A corner tucks the shot in a little. Partly because that is what a camera operator does
+      on a turn, and partly because the eye is on a nine-metre arm: at a hard gallop the horse
+      swings through three radians a second and every metre of that arm is another thirty
+      centimetres a frame of camera travel. */
+   const tight=Math.min(1,Math.abs(lag)/CAM.LAG_MAX);
+   const R=(CAM.dist+CAM.distSp*F.u)*F.zoom*(1-CAM.TUCK*tight);
+   const pitch=clamp(CAM.pitch+CAM.pitchSp*F.u+F.pitch,0.08,1.12);
+   const run=R*Math.cos(pitch), rise=R*Math.sin(pitch);
+   /* How much of the shot we are actually getting. When a wall or a gatepost has squeezed the
+      eye in to half its arm, an aim point three metres past the horse and nearly two metres up
+      is a steep look down PAST her and she slides off the bottom of the frame — measured at
+      the arena gate, where the clearance sweep pulls the eye to four metres and the horse's
+      box centre fell to 0.65 of the way down the picture. So the closer the shot is forced,
+      the more it aims at the horse herself. One frame stale, which nobody can see. */
+   const got=clamp(Math.hypot(cam.position.x-player.pos.x,cam.position.z-player.pos.z)/Math.max(1,run),0,1);
+   /* The orbit angle is the lagged heading, plus the player's own drag, plus the three-quarter
+      sweep — and the sweep carries most of the turn back, which is the BIAS above. */
+   const ang=F.head+F.yaw+CAM.off+CAM.offSp*F.u+lag*CAM.BIAS;
+   const fx=Math.sin(ang), fz=Math.cos(ang);
+   const foot=W.groundH(player.pos.x,player.pos.z)+(player.y||0)*0.8;
+   const ex=player.pos.x-fx*run, ez=player.pos.z-fz*run;
+   _eye.set(ex,Math.max(foot+rise,W.groundH(ex,ez)+1.25),ez);
+
+   /* Aim above her and ahead of her. Above is what drops her into the lower third and lets the
+      valley have the top two thirds. Ahead is the look-ahead, swung part of the way into the
+      turn and shortened as the turn tightens — and shortened again by a drag, because someone
+      who has pulled the view round to look at her wants her in the middle of it, not a lead
+      pointing off at where she would have been going. */
+   const lead=(CAM.lead+CAM.leadSp*F.u)*(1-CAM.LEAD_TIGHT*tight)*(1-0.85*Math.min(1,Math.abs(F.yaw)/1.2))*got;
+   const la=F.head+lag*CAM.LOOK_INTO;
+   const lookY=CAM.LOOK_MIN+(CAM.lookY+CAM.lookYSp*F.u-CAM.LOOK_MIN)*got;
+   _look.set(player.pos.x+Math.sin(la)*lead,foot+lookY,player.pos.z+Math.cos(la)*lead);
+   c.camLook.lerp(_look,F.placed?1-Math.exp(-CAM.LOOK_EASE*dt):1);
+
+   /* The clearance sweep is anchored on the HORSE, not on the aim point. followCamera pulls the
+      eye TOWARD whatever origin it is given when something blocks the line, and the aim point
+      here is metres out in front of her — so anchoring on it put the camera in front of the
+      horse the first time she cornered under trees, and the shot lost her completely. The
+      origin is the subject; where the lens happens to be pointing is a separate question. */
+   _anchor.set(player.pos.x,foot+1.45,player.pos.z);
+   c.camDesired.copy(_eye);
+   W.followCamera.frame(_anchor,c.camDesired,c.camSafe,dt);
+   /* A cut, not a dolly, when the horse has plainly teleported — fast travel, a ferry landing,
+      the first frame after boot. Easing across half the basin is a long slow drift through
+      other people's scenery. */
+   if(!F.placed||cam.position.distanceTo(c.camSafe)>CAM.SNAP){cam.position.copy(c.camSafe);F.placed=true;}
+   else cam.position.lerp(c.camSafe,1-Math.exp(-CAM.EASE*dt));
+   /* Recheck the interpolated point: both ends of a lerp can be clear of a barn and the path
+      between them still go through it. But applying that recheck AT FULL STRENGTH the frame it
+      fires is a snap, and on a nine-metre arm it is a big one — measured at 6.7 m in a single
+      frame, where the built-in rig's worst was 0.9, because a longer arm swung out to one side
+      crosses far more fence rail and jump standard than a short one straight astern. Nearly all
+      of those crossings last two or three frames: a rail whips through the line and is gone.
+      So the pull-in is eased, hard enough that riding into a barn closes the shot in about a
+      sixth of a second and gently enough that a rail flicking past costs a dip of a few
+      centimetres instead of yanking the eye onto the horse's shoulder and back. */
+   _raw.copy(cam.position);
+   const occWant=W.followCamera.resolve(_anchor,_raw,_tmp);
+   /* Rate-limited in METRES a second rather than as a filter constant, because the same filter
+      constant on a nine-metre arm moves the eye three times as far per frame as it does on a
+      three-metre one — which is precisely how the snap got to 6.7 m. Divide the allowance by
+      the arm and the worst frame is bounded no matter how far back the shot happens to be. */
+   const arm=Math.max(0.5,_raw.distanceTo(_anchor));
+   const cap=(occWant<F.occ?CAM.OCC_IN:CAM.OCC_OUT)*dt/arm;
+   F.occ=clamp(F.occ+clamp(occWant-F.occ,-cap,cap),0,1);
+   cam.position.copy(_anchor).lerp(_tmp.copy(_raw).setY(Math.max(_raw.y,W.groundH(_raw.x,_raw.z)+0.7)),F.occ);
+   const shake=sp>7&&c.grounded?0.010:0;
+   cam.lookAt(c.camLook.x+Math.sin(c.t*23)*shake,c.camLook.y+Math.sin(c.t*31)*shake,c.camLook.z+Math.cos(c.t*27)*shake);
+   const fovT=CAM.fov+CAM.fovSp*F.u;
+   if(Math.abs(cam.fov-fovT)>0.05){cam.fov+=(fovT-cam.fov)*Math.min(1,dt*2.5);cam.updateProjectionMatrix();}
+   F.own=true;
+   return true;
+  }catch(e){
+   /* A camera that throws every frame is worse than a camera that is merely too close, so
+      this stands down for good and hands the built-in rig back. */
+   F.broke++;F.own=false;
+   if(F.broke===1)console.warn('course-guide follow camera stood down',e);
+   return false;
+  }
+ });
+
+ G.on('state',o=>{
+  o.followCam={own:F.own,speedMix:+F.u.toFixed(2),lag:F.head===null?0:+angDiff(player.heading-F.head).toFixed(3),
+   yaw:+F.yaw.toFixed(3),pitch:+F.pitch.toFixed(3),zoom:+F.zoom.toFixed(2),
+   dist:+Math.hypot(G.camera.position.x-player.pos.x,G.camera.position.z-player.pos.z).toFixed(2),
+   rise:+(G.camera.position.y-(W.groundH(player.pos.x,player.pos.z)+(player.y||0))).toFixed(2),
+   fov:+G.camera.fov.toFixed(1),occ:+F.occ.toFixed(2),yielded:foreignCam(),frames:F.frames,broke:F.broke};
+ });
+ /* Handles for QA and for anyone framing a shot: CAM is live, so a cinematic can widen the
+    rig and put it back without this file knowing. reset() is what a teleport should call. */
+ G.followCam={CAM,state:F,isOwner:()=>F.own,yielding:()=>foreignCam(),
+  reset(){F.placed=false;F.head=null;F.u=0;F.yaw=0;F.pitch=0;F.occ=1;}};
 }
