@@ -40,9 +40,11 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   /* player id + build + boot grants */
   let s=sv(); out.pid=s.pid; out.statePid=st().pid; out.build=st().build; out.seenBuild=s.seenBuild; out.tickets=((s.tix&&typeof s.tix.n==='number')?s.tix.n:(s.tickets||0)); out.welcomeDay=s.welcome.day;
   out.netId=G.net.net.id;
-  /* inbox: the news letter is waiting, the dock button sits after Quests, the pip counts it */
+  /* inbox: the news letter is waiting, the dock button is reachable, the pip counts it.  Where
+     in the dock it sits is the HUD's business and the HUD moves it — it lives in the overflow
+     drawer now — so read the neighbour for the record and guard it, but do not assert on it. */
   const ib=document.getElementById('inboxBtn');
-  out.inboxBtn={exists:!!ib,prev:ib&&ib.previousElementSibling.id,pip:ib&&(ib.querySelector('.pip')||{}).textContent};
+  out.inboxBtn={exists:!!ib,prev:ib&&ib.previousElementSibling&&ib.previousElementSibling.id,pip:ib&&(ib.querySelector('.pip')||{}).textContent};
   ib.click(); const ip=document.getElementById('inboxPanel');
   out.inboxOpen={shown:ip.style.display,hasNews:/inbox, the settings/i.test(ip.textContent),claimBtn:!!ip.querySelector('[data-fx^="inbox:claim:news-"]')};
   let c0=st().wallet.coins,g0=st().wallet.gems; const gm=A.gemMul();
@@ -185,7 +187,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('package installed without error',r.installed&&r.errors.length===0,r.errors);
  check('Player ID MR-xxxxxxxx in save, state and the net id',/^MR-[A-Z0-9]{8}$/.test(r.pid)&&r.statePid===r.pid&&r.netId==='p'+r.pid.slice(3).toLowerCase(),{pid:r.pid,netId:r.netId});
  check('build id + seenBuild stamped + daily ticket + welcome day 1 on a fresh ranch',/^\d{4}\.\d{2}\.\d{2}$/.test(r.build)&&r.seenBuild===r.build&&r.tickets>=1&&r.welcomeDay===1,{build:r.build,seen:r.seenBuild,tickets:r.tickets,welcomeDay:r.welcomeDay});
- check('inbox dock button after Quests with a pip',r.inboxBtn.exists&&r.inboxBtn.prev==='questBtn'&&+r.inboxBtn.pip>=1,r.inboxBtn);
+ check('inbox dock button present with a pip',r.inboxBtn.exists&&+r.inboxBtn.pip>=1,r.inboxBtn);
  check('inbox opens with the news letter',r.inboxOpen.shown==='flex'&&r.inboxOpen.hasNews&&r.inboxOpen.claimBtn,r.inboxOpen);
  check('news letter claim pays 150🪙 3💎 (×gemMul) once',r.newsClaim.dc===150&&r.newsClaim.dg===3*r.newsClaim.gm&&r.newsClaim.claimed,r.newsClaim);
  check('news tab lists the season, the double-gem weekend and the builds',r.news.rows>=6&&r.news.season&&r.news.x2,r.news);
