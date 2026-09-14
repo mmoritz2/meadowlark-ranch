@@ -7,7 +7,9 @@
 
    Owned by this package: this file, the BREEDS3 rows it pushes, the fantasy themes it registers
    (assets/equine-fantasy.js), TIER_STARS/MARKS2 and the second marking layer of makeCoatMat.
-   Nothing here runs at import time — everything happens in install(G). */
+   Also, since section 6b, how a horse actually LOOKS once it is standing in the yard: the
+   lightness the coat palette is allowed to reach, the moonlit coat's one true silver, and the
+   finish on the mane and tail. Nothing here runs at import time — everything happens in install(G). */
 import {registerFantasyTheme,registerFantasyAppearance} from '../equine-fantasy.js?v=artist-breeds-1';
 export const id='horse-roster';
 
@@ -202,7 +204,7 @@ const NEW_THEMES={
    _ramp=mix(_ramp,vec3(0.85,0.9,1.0),_fres*0.5);
    _ramp+=vec3(1.0)*st*1.3;
    _emis=_ramp*uGlow*(0.2+0.6*_l)+vec3(0.7,0.8,1.0)*_fres*0.6+vec3(1.0)*st;`,
-  base:'#4a5a8a',coat:{emissive:0x8aa0e0,ei:0.45,rough:0.5},wing:{a:'#eef3ff',b:'#4a5a8a',e:'#8aa0e0',ei:0.42},
+  base:'#9aa3b0',coat:{emissive:0x8aa0e0,ei:0.45,rough:0.5},wing:{a:'#eef3ff',b:'#4a5a8a',e:'#8aa0e0',ei:0.42},
   drg:{web:'#b8c8ff',root:'#1e2848',bone:'#0e1424',glow:'#eef3ff',head:'#3a4a7a',ridge:'#eef3ff'},elem:'arcane'},
  petal:{cfg:{ramp:['#3a1428','#d86aa0','#ffe4f0'],glow:0.6,rough:0.6},
   fx:'',   // filled in below
@@ -286,6 +288,18 @@ export function install(G){
   if(T.DRAGON_TINT&&!T.DRAGON_TINT[k])T.DRAGON_TINT[k]=th.drg;
   if(T.ELEM_OF&&!T.ELEM_OF[k])T.ELEM_OF[k]=th.elem;
  }
+ /* 'moonlit' is the one theme that was already half-defined inline before this package existed,
+    and the two halves disagreed — the classic collision. The rigged mount took the ramp
+    registered above (dark slate to white), while every PROCEDURAL moonlit horse took the inline
+    COAT_BASE, a 79%-light #c9ced6, and then had a blue emissive laid over the top of it. The
+    prologue foal is exactly that horse, standing in the starting yard where every new player
+    meets her: lit by a 2.7-intensity sun through ACES, a base that pale has no headroom left to
+    shade with, so the emissive finishes the job and she renders as a flat white cut-out beside a
+    properly shaded bay. One coat, one answer: the theme's own silver, and a glow you notice at
+    night rather than one that erases the daylight. The emissive COLOUR stays 0x9fb4dc — the
+    story-quests QA identifies her by it. */
+ if(T.COAT_BASE)T.COAT_BASE.moonlit=NEW_THEMES.moonlit.base;
+ if(T.FANTASY_COAT&&T.FANTASY_COAT.moonlit){T.FANTASY_COAT.moonlit.ei=0.12;T.FANTASY_COAT.moonlit.rough=0.62;}
  if(T.DRAGON_TINT&&!T.DRAGON_TINT.eclipse)T.DRAGON_TINT.eclipse={web:'#ffb44a',root:'#1a1008',bone:'#0d0a12',glow:'#ffd080',head:'#2a1a08',ridge:'#ffd080'};
  if(T.WING_TINT&&!T.WING_TINT.eclipse)T.WING_TINT.eclipse={a:'#ffd080',b:'#2a1a08',e:'#ffb44a',ei:0.4};
  for(const row of NEW_BREEDS){const o=row[7]||{};
@@ -538,6 +552,139 @@ export function install(G){
  G.on('state',o=>{const p=player,h=cur.h;o.swimming=!!p.swim;o.flyAlt=Number((p.flyAlt||0).toFixed(2));o.waterDepth=Number(waterDepth(p.pos.x,p.pos.z).toFixed(2));
   o.roster={stars:h?starsN(h):0,rarity:h?rarityOf(h):null,variant:h?(h.variant||null):null,traits:h?traitsOf(h):[],mastery:cur.M,ability:cur.abil,mark2:h?(h.mark2||null):null};});
 
+ /* ---- 6b. the animal itself: what a coat may be, and what the hair does --------------- */
+ /* This section is about how the horse reads in a screenshot rather than what it can do, and
+    all three things it fixes were this package's to answer for.
+
+    One, the palette. The yard is lit hard — a 2.74 directional over a 1.2 hemisphere, through
+    ACES — and a coat whose albedo already sits near the top of the range has nothing left to
+    shade with, so it clips to paper. A dozen entries in COATS3 above were that pale (Pearl at
+    #e8e6df, Cremello, the white Lipizzaner) and every one of them rendered as a cut-out. Each
+    body colour now goes through one soft knee: under the knee nothing moves at all, over it the
+    excess is compressed to under half. A white horse stays the palest horse in the game and
+    gets back the headroom to have a shadow side.
+
+    Two, the hair. The authored groom is 66,000 vertices of individually tapered strands, and
+    it rendered as a black smear, because the four materials carrying it are a near-black
+    albedo (#18120c) with sheen at zero and no map. A dark tail in sunlight is mostly SHEEN;
+    with none there is no highlight for any of that geometry to appear in, and a fortune in
+    vertices reads as a silhouette. So: lift the albedo off the floor, turn the sheen on warm,
+    and give the tail a shade of its own the way sun and wear actually leave it.
+
+    Three, the tail never moved. artist-horse-motion swings the tail bones through 0.025 rad —
+    one and a half degrees — which at a standstill is nothing, and a horse with a rigid tail
+    reads as a model of a horse. The swish below is multiplied in after the motion solver has
+    posed the bone, so it composes with the gaits, the emotes and the dragon crest rather than
+    fighting any of them; see the note on the unwind, which is where the subtlety is. */
+ const LUM=c=>c.r*0.2126+c.g*0.7152+c.b*0.0722;                       // linear light, which is what THREE.Color holds
+ const PALE_KNEE=0.42, PALE_SLOPE=0.45;
+ function tameHex(hex){
+  const c=new THREE.Color(hex||'#9c4f23'), l=LUM(c);
+  if(!(l>PALE_KNEE))return hex;
+  return '#'+c.multiplyScalar((PALE_KNEE+(l-PALE_KNEE)*PALE_SLOPE)/l).getHexString();
+ }
+ /* Applied to the table itself and not to each roll, so the catalogue swatch, the dye button
+    and the horse in the pasture all quote one hex — and so qa-horse-roster's "a rolled coat
+    lands near its named coat" check goes on measuring against the same number. */
+ for(const k in COATS3)for(const v of COATS3[k])v[2]=tameHex(v[2]);
+
+ /* These three numbers were tuned by photographing the same bay and the same grey four times.
+    The first pass lifted the albedo, added a cream sheen at 0.85 AND lightened the tail dye —
+    three lifts stacked on top of each other, and the bay came out with a dusty flaxen tail
+    belonging to a different horse. The sheen does most of the work on its own, because on
+    strand geometry nearly every pixel faces the light at a grazing angle, so it is the thing
+    to keep small: a tight, hair-tinted highlight, not a cream wash. */
+ const HAIR_FLOOR=0.014, HAIR_SHEEN=0.32, finished=new WeakSet();
+ const isGroom=o=>o.isMesh&&(/groom|mane|forelock|strand|tail|feather/i.test(o.name||'')||/groom/i.test((o.parent&&o.parent.name)||''));
+ function groomMats(rig){
+  const out=[]; if(!rig||!rig.scene)return out;
+  rig.scene.traverse(o=>{if(isGroom(o))for(const m of (Array.isArray(o.material)?o.material:[o.material]))if(m&&out.indexOf(m)<0)out.push(m);});
+  return out;
+ }
+ /* instantiate() clones the breed's materials per horse, so a WeakSet is enough to promise each
+    material is finished exactly once however often the sweep comes round. The lift is ONE
+    multiplier shared by all four layers, so the small tonal difference the artist put between
+    them survives — and, being multiplicative, widens slightly, which is all to the good. */
+ function finishHair(rig){
+  const mats=groomMats(rig); if(!mats.length)return false;
+  let lo=1; for(const m of mats)if(m.color)lo=Math.min(lo,LUM(m.color));
+  const k=Math.min(4.2,lo>0.0005?HAIR_FLOOR/lo:1);
+  let did=false;
+  for(const m of mats){
+   if(finished.has(m))continue; finished.add(m); did=true;
+   if(k>1&&m.color)m.color.multiplyScalar(k);
+   if(m.sheenColor)m.sheenColor.copy(m.color||new THREE.Color('#5a4636')).lerp(new THREE.Color('#fff0d4'),0.14);
+   m.sheen=HAIR_SHEEN; m.sheenRoughness=0.24; m.metalness=0;
+   m.roughness=Math.min(m.roughness==null?0.64:m.roughness,0.54);
+   m.specularIntensity=Math.max(m.specularIntensity||0,0.62);
+   m.needsUpdate=true;                                                // sheen is a shader define, so this must recompile
+  }
+  return did;
+ }
+ /* A tail is not the mane: it hangs in the sun, it is washed and it wears, so it sits a shade
+    lighter and warmer — and on a black horse that shade is the whole difference between a tail
+    and a smear. The authored groom carries mane and tail on the SAME materials and tells them
+    apart only inside the dye shader, so the one way to give the tail a colour of its own is the
+    groom facade's setColors. The mane's override is read back and handed straight through: a
+    horse whose mane matches its breed keeps the authored groom, detail and all. h.tailCol is
+    deliberately NOT written — that field is the player's tail dye over in mastery-style, and a
+    colour nobody chose has no business turning up selected in the style room. */
+ function tailFromMane(hex){
+  const c=new THREE.Color(hex||'#332214'), l=LUM(c);
+  c.multiplyScalar(l<0.05?1.50:l<0.16?1.22:1.02);
+  c.lerp(new THREE.Color('#6b5038'),Math.max(0,0.15-l*0.5));
+  const l2=LUM(c); if(l2<0.020)c.multiplyScalar(0.020/Math.max(l2,0.0005));
+  return '#'+c.getHexString();
+ }
+ function finishTail(rig,h){
+  const g=rig&&(rig.groom||rig.hair); if(!g||!g.setColors)return;
+  if(h&&h.tailCol)return;                                             // the player picked a tail colour; it is theirs
+  const m0=groomMats(rig)[0]; if(!m0||!m0.color)return;
+  const d=m0.userData&&m0.userData.artistGroomDye, maneOn=!!(d&&d.maneOverride);
+  const mane=maneOn?'#'+d.mane.getHexString():'#'+m0.color.getHexString(), want=tailFromMane(mane);
+  if(d&&d.tailOverride&&'#'+d.tail.getHexString()===want)return;       // already wearing it — this runs on a sweep
+  try{g.setColors({maneColor:mane,tailColor:want,maneOverride:maneOn,tailOverride:true});}catch(e){}
+ }
+ /* The quaternions are kept per bone rather than allocated, because this runs for every rigged
+    horse on screen.
+
+    The unwind deserves a word, because getting it wrong is silent. The first version took the
+    previous swing back out unconditionally, which is correct only if nobody re-posed the bone
+    in between — and the solver re-poses it from rest every single frame, so what actually
+    reached the bone was prev⁻¹·current, the DIFFERENCE between two consecutive swings. A
+    quarter-turn of tail came out as a twitch of about a degree, and it measured as "the tail
+    moves", which is exactly the kind of result that gets believed. So remember the quaternion
+    left on the bone and unwind only when the bone still carries it untouched; on a normal
+    frame the solver has already wiped it and the swing applies whole. */
+ const SWISH=new WeakMap(), _si=new THREE.Quaternion(), _sax=new THREE.Vector3(1,0,0);
+ function swish(rig,t,sp){
+  if(!rig||!rig.bones)return;
+  for(const b of rig.bones){
+   const n=b.name.replace(/[.\s]/g,''); if(n.slice(0,4)!=='tail')continue;
+   const seg=+n.slice(4)||1, lag=(seg-1)*0.5, amp=(0.022+0.020*seg)*(1+Math.min(1.4,sp*0.2));
+   const a=Math.sin(t*1.35-lag)*amp+Math.sin(t*0.57-lag*0.6)*amp*0.5;
+   let st=SWISH.get(b); if(!st){st={sw:new THREE.Quaternion(),left:new THREE.Quaternion(),has:false};SWISH.set(b,st);}
+   if(st.has&&Math.abs(b.quaternion.dot(st.left))>1-1e-9)b.quaternion.multiply(_si.copy(st.sw).invert());
+   b.quaternion.multiply(st.sw.setFromAxisAngle(_sax,a));
+   st.left.copy(b.quaternion); st.has=true;
+  }
+ }
+ /* The sweep, not a one-shot: the breed model arrives asynchronously, a horse swap instantiates
+    fresh materials, and applyCoat re-issues setColors behind us. Two and a half times a second
+    over nine meshes costs nothing and means there is no load order to get wrong. */
+ let lookT=0;
+ function lookPass(){
+  const R=G.horse.RIG(); if(R&&R.scene){finishHair(R);finishTail(R,G.horse.ridden());}
+  for(const ent of G.horse.herd())if(ent.rig&&ent.rig.scene){finishHair(ent.rig);finishTail(ent.rig,G.horse.myHorses[ent.idx]);}
+ }
+ G.on('tick',(dt,t)=>{
+  lookT+=dt; if(lookT>0.4){lookT=0;lookPass();}
+  const R=G.horse.RIG(); if(R&&R.ready)swish(R,t,Math.abs(player.speed||0));
+  for(const ent of G.horse.herd())if(ent.rig)swish(ent.rig,t,0);
+ });
+ G.on('coat',()=>{lookPass();});
+ G.on('rebuild',()=>{lookPass();});
+
  /* ---- 7. seasons, the pass, exclusives, the boot pass ------------------------------- */
  G.money.rewardKind('seasonHorse',(s,v)=>{grantSeasonHorse(s,v);},v=>'🐴 season '+v+' horse');
  if(T.PASS_FREE[29]&&!T.PASS_FREE[29].seasonHorse)T.PASS_FREE[29].seasonHorse='pass';
@@ -705,5 +852,6 @@ export function install(G){
  /* ---- 10. exports for the other packages ----------------------------------------------- */
  G.horse.roster={rungOf,mxOf,TIER_STARS,COATS3,TRAITS3,VARIANT_RECIPES,DRAGON_FAMILY,BREED_PERKS,FLIGHT_UNLOCKS,FANTASY_CEIL,NEW_THEMES:Object.keys(NEW_THEMES),SEASON_CALL_GEMS,SEASON_CALL_PITY,
   rarityOf,starsN,starsOf,starsOfBreed,variantOf,variantLabel,coatsFor,rollCoat3,applyVariant,rollAppearance,rollTraits,traitsOf,perkFor,resolveVariant,howToGet,
-  seasonHorses,seasonInfo,grantExclusive,grantSeasonHorse,weeklyCheck,seasonCall,waterDepth,refreshCur,cur,noteCoat};
+  seasonHorses,seasonInfo,grantExclusive,grantSeasonHorse,weeklyCheck,seasonCall,waterDepth,refreshCur,cur,noteCoat,
+  PALE_KNEE,PALE_SLOPE,HAIR_FLOOR,tameHex,tailFromMane,groomMats,finishHair,finishTail,lookPass,swish};
 }
