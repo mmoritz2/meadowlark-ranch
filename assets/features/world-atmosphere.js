@@ -647,7 +647,13 @@ export function install(G){
    let d=rain?0.0052:0.00092+0.00062*K.horizon+0.00060*K.dawn+0.00045*K.night;
    d+=REG.marsh*0.00110*(1-K.day*0.4)+REG.snow*0.00075+REG.amber*0.00030-REG.badland*0.00022;
    SM.fogD+=(Math.max(0.0006,d)-SM.fogD)*Math.min(1,dt*1.1);
-   scene.fog.density=SM.fogD;
+   /* Not in VR. ranch3d pulls the fog right in to 0.0075 on entering VR (ranch3d.html:2359) so
+      that far less world is drawn for two eyes on a headset, and restores whatever it found on
+      the way out. Writing our density here every frame would quietly undo that clamp on the one
+      platform that can least afford it — a fifth of the fog and the whole basin drawn twice. The
+      colour above still applies, because tinting the fog costs nothing; only the distance is left
+      to the game. */
+   if(!(renderer.xr&&renderer.xr.isPresenting))scene.fog.density=SM.fogD;
   }
  };
 
