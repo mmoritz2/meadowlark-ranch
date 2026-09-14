@@ -170,12 +170,27 @@ export function install(G){
   /* Take the roomiest point rather than the first legal one, with a small penalty for
      wandering. First-fit put a nine-stone circle down with the nearest oak sixteen metres off
      when there was a forty-metre clearing twenty metres away, and a landmark that cannot be
-     seen for trees is not a landmark. */
+     seen for trees is not a landmark.
+
+     But the roomiest point is only worth having if it is the SAME point tomorrow. room() is
+     measured against trees that are sown afresh on every boot, so taking the argmax of a
+     continuous score over the whole sweep re-runs a photo-finish every session and a different
+     candidate wins: the Nine Sisters were landing up to seventy-seven metres apart between one
+     load and the next and dragging their map marker with them, the Chalk Mare's whole scarp was
+     sliding forty metres, and a stone circle that is not where you left it is not a place — it
+     is a rumour. So the sweep runs outwards from the nominal point and STOPS at the first
+     candidate that actually has the clearance the site asked for. A site that wants forty
+     metres of elbow room should say clear:40 and get it; what it must not do is re-decide.
+     The roomiest-wins scan is still there as the fallback for a site whose clearance simply
+     cannot be met anywhere in range, which is the only case where moving is better than
+     standing in a tree. */
   let best=null,bestScore=-1e9;
   for(let r=0;r<=(maxR||48);r+=6)for(let k=0;k<(r?16:1);k++){
    const a=k/16*Math.PI*2+r*0.37,x=cx+Math.cos(a)*r,z=cz+Math.sin(a)*r;
    if(!legal(x,z))continue;
-   const sc=Math.min(room(x,z),need*2.4)-r*0.22;
+   const rm=room(x,z);
+   if(rm>=need)return [x,z];
+   const sc=Math.min(rm,need*2.4)-r*0.22;
    if(sc>bestScore){bestScore=sc;best=[x,z];}
   }
   return best||[cx,cz];
