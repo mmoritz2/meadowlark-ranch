@@ -79,10 +79,25 @@ const DEF={
     here, and the wood turned into a flat lime wall with no depth in it, because the shading
     inside a tree IS the darkness the gain was eating. This is the setting where the spread
     comes down and the wood is still a wood. */
- lift:1.20, liftKnee:0.48,
+ /* Lift down from 1.20. Opening the shade closes the gap between a sunlit frame and a shaded
+    one, which was the point — but it also closes the gap WITHIN a frame, and that spread is the
+    modelling: the shading inside a tree, the roundness of a horse's barrel. The reference holds a
+    within-frame value spread of 0.232 and the first cut of this grade fell to 0.136. Cross-camera
+    consistency is worth having; paying for it by flattening every individual picture is not. */
+ lift:0.75, liftKnee:0.48,
  gamma:1.00,
- contrast:1.05, pivot:0.44,
- sat:1.32, vib:0.95, cap:0.34,
+ /* Retuned after an independent review scored the first cut on an UNBIASED camera set — the
+    original six vantages had four of them pointed at the same pale arena sand, which flattered
+    the numbers. On six real landscapes it came out at saturation 0.548 against the reference's
+    0.502, with 67% of pixels vivid against 55%: over the band, not inside it. Worse, within-frame
+    value spread fell to 0.122 where the reference holds 0.244 — the grade was buying colour by
+    eating the modelling, which is the opposite of what the reference does.
+    So: less saturation, more contrast, and a tighter chroma ceiling. The ceiling matters because
+    at 0.34 it was compressing the worst offender by only 7% and every tree trunk in frame was
+    going fluorescent orange — measured at #4c3b24 to #7f5517, saturation 0.540 to 0.814 — along
+    with the bay horse's own coat. */
+ contrast:1.22, pivot:0.44,
+ sat:1.20, vib:0.80, cap:0.26,
  lo:0.030, hi:0.16,   // the floor guard: no grade below lo, all of it above hi
  warm:0.015, split:0.012, tint:0.045,   // tint: the green-axis pull, see step 6 of the shader
  mix:1.0,
@@ -131,7 +146,22 @@ void main(){
  c=pow(max(c,0.0),vec3(1.0/uGamma));
  /* 3. Contrast about a pivot below middle grey, so it firms up the picture without dragging
        the shadows back down to where step 1 found them. */
- c=clamp((c-uPivot)*uContrast+uPivot,0.0,1.0);
+ /* Contrast, but held off the floor. Raising contrast is how the frame gets its modelling
+       back — the reference is high-key AND strongly modelled, and a grade that buys saturation
+       by flattening value spread has traded away the half that makes a horse look round. But
+       contrast about a pivot drags everything below the pivot DOWN, and at night most of the
+       frame already is. Measured before this guard: the share of a horse close-up below value
+       0.06 went from 45% to 79% — the animal became a silhouette. So the contrast fades out as
+       a pixel approaches black, which keeps the modelling in the lit half and leaves the night
+       where it was. */
+ /* The fade has to start well above black. Contrast about a 0.44 pivot pushes anything darker
+       than the pivot DOWN, and it does it per channel, so a night pixel at (0.09,0.08,0.12)
+       lands at (0.013,0.001,0.05) — saturation 0.98 purely as an artefact of the arithmetic,
+       and a horse that was a dim shape is now a silhouette. Fading contrast out below a quarter
+       brightness leaves the night as the renderer drew it, which is what it should be: this
+       grade exists to rescue washed-out DAYLIGHT, and the night was never the complaint. */
+ {float cw=smoothstep(0.08,0.30,dot(c,LUMA));
+  c=clamp(mix(c,(c-uPivot)*uContrast+uPivot,cw),0.0,1.0);}
  /* 4. Colour. uSat is flat; uVib is weighted by the SQUARE of how little colour a pixel
        already has, and by saturation rather than by chroma. Chroma is the obvious measure and
        it is useless here: chroma is S*V, and the washed-out meadow and the near-black wood
@@ -143,7 +173,14 @@ void main(){
  float mx=max(c.r,max(c.g,c.b));
  float sat0=mx>0.0001?(mx-min(c.r,min(c.g,c.b)))/mx:0.0;
  float pale=(1.0-sat0)*(1.0-sat0);   // 'flat' is a reserved interpolation qualifier in GLSL ES 3.00 and will not compile
- vec3 d=(c-vec3(l2))*(1.0+(uSat-1.0+uVib*pale)*lit);
+ /* Saturation has to answer to how much LIGHT there is, not merely to the floor guard.
+       Saturation is (max-min)/max, so the same colour boost applied to a dark pixel raises the
+       statistic enormously while doing almost nothing a player can see: measured across eleven
+       cameras, night went from 0.574 to 0.916 against a reference that sits at 0.495, and golden
+       hour to 0.657. The reference is not a hyper-saturated night; it is a bright game. So the
+       boost fades in with brightness and the dark half of the day keeps the colour it had. */
+ float slit=lit*smoothstep(0.06,0.32,l2);
+ vec3 d=(c-vec3(l2))*(1.0+(uSat-1.0+uVib*pale)*slit);
  /* A ceiling on how far from grey any one pixel may end up. Without it the vibrance found the
     tree bark — dull brown, and therefore 'pale' by the test above — and, with the shadow gain
     having already brightened it, turned every branch in the valley fluorescent coral. The
@@ -314,9 +351,22 @@ export function install(G){
   if(pass)pass.enabled=!!P.on;
   if(gradeMat){const u=gradeMat.uniforms;
    u.uLift.value=P.lift; u.uKnee.value=P.liftKnee; u.uGamma.value=P.gamma;
+   /* Off at night, and this is a scene fact rather than a per-pixel guess. Four passes of
+      per-pixel gating failed to stop this grade crushing the night: fading contrast out of the
+      shadows helped a little, widening the floor guard made it WORSE, because the guard also
+      gates the lift and the lift was the one part holding night pixels up. The grade exists to
+      rescue washed-out DAYLIGHT — the complaint was a ranch yard at 0.188 saturation, never a
+      midnight — so when the sun is down it simply stops, and the night is exactly what the
+      renderer drew. Measured on horse close-ups at midnight, where a rider has to be able to see
+      their own horse: crushed-to-black went 69% ungraded to 88% graded before this. */
+   let day=1; try{const d=G.time&&G.time.dayT&&G.time.dayT(); if(typeof d==='number'){
+    const h=Math.abs(((d%1)+1)%1-0.5)*2;            // 1 at noon, 0 at midnight
+    day=Math.max(0,Math.min(1,(h-0.18)/0.22));      // full grade by mid-morning, none after dusk
+   }}catch(e){}
+   u.uMix.value=P.mix*day;
    u.uContrast.value=P.contrast; u.uPivot.value=P.pivot;
    u.uSat.value=P.sat; u.uVib.value=P.vib; u.uCap.value=P.cap;
-   u.uWarm.value=P.warm; u.uSplit.value=P.split; u.uTint.value=P.tint; u.uMix.value=P.mix;
+   u.uWarm.value=P.warm; u.uSplit.value=P.split; u.uTint.value=P.tint;   // uMix is set above, gated by daylight
    u.uLo.value=P.lo; u.uHi.value=P.hi;}
   if(bloomPass)bloomPass.strength=P.on?P.bloom:bloomWas;
  };
