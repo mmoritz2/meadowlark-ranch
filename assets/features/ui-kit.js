@@ -78,13 +78,35 @@ export function install(G){
  let KEYS=null;                       // Set of index.json keys, or null until it loads
  const CACHE=new Map();               // resolved breed key -> file key | '' (known-missing)
 
+ /* Thirteen mythic breeds — ashwing, cinderlark, dryadwalker, duskmustang, harvestmoon,
+    kilnfriesian, larkunicorn, noonshade, petalmane, rimewalker, snowlark, sunflare, tidewalker —
+    have no portrait of their own, so each one asked for <key>.webp, got a 404, and fell back to
+    the emoji. Nothing looked broken, which is why it sat there: the only symptom was console
+    noise, and it failed qa-horse-roster's "no console errors" check.
+    They do not need a hand-kept alias list. Every one of their rows already carries body:, naming
+    the real conformation the horse is built on, and horse-roster.js already uses exactly that
+    field to alias the 3D MODEL. The portrait simply was not following the same rule. Read it from
+    the table instead of writing the thirteen out, and the fourteenth fantasy breed is covered the
+    day it is added rather than quietly 404ing until somebody reads a console.
+    Rebuilt when BREEDS3 grows, because packages push rows to it at install time. */
+ let BODY=null,BODY_N=-1;
+ function bodyOf(k){
+  let rows=null; try{rows=(G.tables&&G.tables.BREEDS3)||null;}catch(e){}
+  const n=rows?rows.length:0;
+  if(BODY===null||n!==BODY_N){
+   BODY=new Map(); BODY_N=n;
+   if(rows)for(const b of rows){ try{const o=b&&b[7]; if(o&&o.body&&b[0])BODY.set(slug(b[0]),slug(o.body));}catch(e){} }
+  }
+  return BODY.get(k)||'';
+ }
  function resolve(key){
   const k=slug(key); if(!k)return '';
   if(CACHE.has(k))return CACHE.get(k);
   let hit='';
-  if(!KEYS)hit=ALIAS[k]||k;                                    // optimistic before the index lands
+  if(!KEYS)hit=ALIAS[k]||bodyOf(k)||k;                         // optimistic before the index lands
   else if(KEYS.has(k))hit=k;
   else if(ALIAS[k]&&KEYS.has(ALIAS[k]))hit=ALIAS[k];
+  else if(bodyOf(k)&&KEYS.has(bodyOf(k)))hit=bodyOf(k);        // a fantasy breed wears its body's face
   else{
    let best='';
    for(const c of KEYS){                                       // prefix either way, longest wins
