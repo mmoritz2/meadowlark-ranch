@@ -1,7 +1,8 @@
 /* Assemble unchanged QA frame captures and extract real-time video frames.
  * Usage: node tools/review-hero-motion.cjs output/hero-motion-audit-v2
  */
-const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),{spawnSync}=require('node:child_process');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA,fs=require('node:fs'),path=require('node:path'),{spawnSync}=require('node:child_process');
 const out=path.resolve(process.argv[2]||'output/hero-motion-audit-v2');
 (async()=>{
  const browser=await chromium.launch({headless:true}),page=await browser.newPage({viewport:{width:1600,height:1220}});
@@ -19,8 +20,11 @@ const out=path.resolve(process.argv[2]||'output/hero-motion-audit-v2');
  }
  const movie=path.join(out,'gaits-and-transitions.webm');
  if(fs.existsSync(movie)){
-  const cache=path.join(process.env.LOCALAPPDATA,'ms-playwright');
-  const binary=fs.readdirSync(cache).filter(n=>n.startsWith('ffmpeg-')).map(n=>path.join(cache,n,'ffmpeg-win64.exe')).find(fs.existsSync);
+  /* This used to read %LOCALAPPDATA% and ask for ffmpeg-win64.exe by name. Off Windows the
+     variable is undefined, so path.join threw a TypeError about its first argument before
+     the script could report the real problem. QA.ffmpegPath knows where each OS keeps the
+     cache and takes whatever executable the ffmpeg-* directory actually holds. */
+  const binary=QA.ffmpegPath();
   if(!binary)throw Error('Playwright ffmpeg unavailable; video frames were not decoded');
   const times=[3,3.3,3.6,3.9,9,9.2,9.4,9.6,20,20.16,20.32,20.48],images=[];
   for(const t of times){const output=path.join(out,'clip-'+t.toFixed(2)+'.png');

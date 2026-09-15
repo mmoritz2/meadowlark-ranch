@@ -8,7 +8,11 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
   const loader=new GLTFLoader(manager);
   const manifestReady=fetch(new URL('manifest.json',base),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`Artist breed catalog HTTP ${r.status}`);return r.json();}).then(m=>{let hash=2166136261;for(const c of JSON.stringify(m))hash=Math.imul(hash^c.charCodeAt(0),16777619);revision=(hash>>>0).toString(16);manifest=m;return m;});
   manifestReady.catch(()=>{});
-  function resolve(key='bay') {if(manifest?.breeds?.[key])return key;const seen=new Set();while(manifest?.aliases?.[key]&&!seen.has(key)){seen.add(key);key=manifest.aliases[key];}return manifest?.breeds?.[key]?key:'bay';}
+  /* Feature packages add breed rows without touching the model manifest: alias(key, foundation) maps a new
+   * roster key onto an authored body, consulted after the manifest's own aliases. */
+  const extraAliases={};
+  function alias(key,to){if(key&&to)extraAliases[key]=to;return extraAliases;}
+  function resolve(key='bay') {if(manifest?.breeds?.[key])return key;const seen=new Set();while((manifest?.aliases?.[key]||extraAliases[key])&&!seen.has(key)){seen.add(key);key=manifest?.aliases?.[key]||extraAliases[key];}return manifest?.breeds?.[key]?key:'bay';}
   function profile(key){return manifest?.breeds?.[resolve(key)]||null;}
   function bodyIn(scene,spec){let body=null;scene.traverse(o=>{if(o.isSkinnedMesh&&(o.name===spec?.bodyMesh||o.name==='HorseBody'||/^Artist_body/.test(o.name)))body=o;});return body;}
   function prepare(gltf,key,spec){
@@ -37,5 +41,5 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
     return {...asset,scene,skin,bones:skin.skeleton.bones,boneMap,materials,baseMat:skin.material};
   }
   function mountPoint(asset,point){if(!Array.isArray(point))return null;if(Array.isArray(point[0]))point=point[0];if(point.length!==3||!point.every(Number.isFinite))return null;return new THREE.Vector3(point[0]*asset.fitScale,point[1]*asset.fitScale+asset.fitY,point[2]*asset.fitScale);}
-  return {load,resolve,profile,instantiate,mountPoint,get:key=>ready.get(resolve(key)),get manifest(){return manifest;},manifestReady};
+  return {load,resolve,profile,instantiate,mountPoint,alias,get:key=>ready.get(resolve(key)),get manifest(){return manifest;},manifestReady};
 }

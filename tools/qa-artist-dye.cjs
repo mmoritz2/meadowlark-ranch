@@ -1,6 +1,7 @@
 // Exercise actual paid grooming UI and saved inheritance in a separate browser.
 // No connection to the user's browser, account, or localStorage is made.
-const {chromium}=require('C:/Users/msmor/node_modules/playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path'),sharp=require('sharp');
 const out=path.resolve(process.argv[2]||'output/artist-dye');fs.mkdirSync(out,{recursive:true});
 const injection=`window.__artistDyeQA={
@@ -39,7 +40,7 @@ const injection=`window.__artistDyeQA={
 async function diff(a,b){const pa=await sharp(a).removeAlpha().raw().toBuffer({resolveWithObject:true}),pb=await sharp(b).removeAlpha().raw().toBuffer({resolveWithObject:true});if(pa.data.length!==pb.data.length)throw Error('Different capture sizes');let changed=0,sum=0;for(let i=0;i<pa.data.length;i+=3){let d=0;for(let j=0;j<3;j++)d+=Math.abs(pa.data[i+j]-pb.data[i+j]);sum+=d;if(d>24)changed++;}return{changedPixels:changed,meanChannelDifference:sum/pa.data.length,pixels:pa.data.length/3};}
 function comparable(state){const body=structuredClone(state.body);if(body.data?.bodyAxes)delete body.data.bodyAxes.report;return JSON.stringify({body,hair:state.hair,colors:state.horse.colors,mark:state.horse.mark,markCol:state.horse.markCol,tailCol:state.horse.tailCol});}
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11','--disable-background-timer-throttling']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE,'--disable-background-timer-throttling']});
  const page=await browser.newPage({viewport:{width:1280,height:900},deviceScaleFactor:1});const checks={},errors=[],states=[],payments=[],report={checks,errors,states,payments};
  await page.addInitScript(()=>addEventListener('error',e=>{window.__dyeRuntimeError=e.message;}));
  page.on('pageerror',e=>errors.push(e.stack));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
@@ -48,7 +49,7 @@ function comparable(state){const body=structuredClone(state.body);if(body.data?.
  const capture=async(name,id=9001)=>{const data=await page.evaluate(id=>__artistDyeQA.render(id),id),file=path.join(out,name+'.png');fs.writeFileSync(file,Buffer.from(data.split(',')[1],'base64'));return file;};
  const state=async(id=9001)=>page.evaluate(id=>__artistDyeQA.state(id),id);
  try{
-  await page.goto('http://127.0.0.1:8431/ranch3d.html?qa=artist-dye',{waitUntil:'load',timeout:120000});await page.waitForFunction(()=>window.__dyeRuntimeError||(window.__artistDyeQA&&window.render_game_to_text&&JSON.parse(render_game_to_text()).graphics.horseReady),null,{timeout:120000});const startupError=await page.evaluate(()=>window.__dyeRuntimeError);if(startupError)throw Error(startupError);
+  await page.goto(QA.BASE+'/ranch3d.html?qa=artist-dye',{waitUntil:'load',timeout:120000});await page.waitForFunction(()=>window.__dyeRuntimeError||(window.__artistDyeQA&&window.render_game_to_text&&JSON.parse(render_game_to_text()).graphics.horseReady),null,{timeout:120000});const startupError=await page.evaluate(()=>window.__dyeRuntimeError);if(startupError)throw Error(startupError);
   await page.evaluate(()=>__artistDyeQA.fixture());await ready();
   const baseline=await capture('00-pinto-default'),repeat=await capture('00-pinto-repeat');report.repeatDiff=await diff(baseline,repeat);checks.deterministicCapture=report.repeatDiff.changedPixels===0;
   const neighborImage=await capture('00-neighbor-default',9002),foalImage=await capture('00-inherited-foal',9003);

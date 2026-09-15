@@ -1,12 +1,13 @@
 /* Isolated existing-save test: Studio link -> adopt/select -> reload/repeat. */
-const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA,fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/studio-ride-link-qa');fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']}),page=await browser.newPage({viewport:{width:1440,height:960}}),errors=[],failed=[];
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]}),page=await browser.newPage({viewport:{width:1440,height:960}}),errors=[],failed=[];
  let generation=0;const requestGenerations=new Map();
  page.on('request',r=>requestGenerations.set(r,generation));
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('requestfailed',r=>failed.push({url:r.url(),error:r.failure()?.errorText,startedGeneration:requestGenerations.get(r),failedGeneration:generation,navigationCancelled:r.failure()?.errorText==='net::ERR_ABORTED'&&requestGenerations.get(r)<generation}));
- await page.goto('http://127.0.0.1:8431/breeds.html?horse=hero&review=ride-link');
+ await page.goto(QA.BASE+'/breeds.html?horse=hero&review=ride-link');
  await page.waitForFunction(()=>window.render_game_to_text&&JSON.parse(render_game_to_text()).breed==='hero'&&!JSON.parse(render_game_to_text()).loading,null,{timeout:90000});
  const seed=await page.evaluate(()=>{
   const horse=(id,name,breed)=>({id,name,breed,colors:{body:'#875335',mane:'#241a12'},horn:false,wings:false,dragon:false,coat:null,stats:{speed:3,stamina:3,jump:3,accel:3,agility:3},sxp:{},gear:{},level:2,xp:15,bond:45,needs:{hunger:90,thirst:90,clean:90,happy:90},foal:false,tack:null});
@@ -21,7 +22,7 @@ const out=path.resolve(process.argv[2]||'output/studio-ride-link-qa');fs.mkdirSy
  await ready();await page.waitForLoadState('networkidle',{timeout:30000});const adopted=await snap();await page.screenshot({path:path.join(out,'riding-approved-horse.png')});
  await page.click('#stableBtn');await page.screenshot({path:path.join(out,'existing-stable-plus-hero.png')});
  generation++;await page.reload({waitUntil:'domcontentloaded',timeout:120000});await ready();await page.waitForLoadState('networkidle',{timeout:30000});const reloaded=await snap();
- generation++;await page.goto('http://127.0.0.1:8431/breeds.html?horse=hero&review=ride-repeat');await page.waitForFunction(()=>window.render_game_to_text&&JSON.parse(render_game_to_text()).breed==='hero'&&!JSON.parse(render_game_to_text()).loading,null,{timeout:90000});generation++;await page.click('#ride');await ready();await page.waitForLoadState('networkidle',{timeout:30000});const repeated=await snap();
+ generation++;await page.goto(QA.BASE+'/breeds.html?horse=hero&review=ride-repeat');await page.waitForFunction(()=>window.render_game_to_text&&JSON.parse(render_game_to_text()).breed==='hero'&&!JSON.parse(render_game_to_text()).loading,null,{timeout:90000});generation++;await page.click('#ride');await ready();await page.waitForLoadState('networkidle',{timeout:30000});const repeated=await snap();
  const oneHero=s=>s.horses.filter(h=>h.breed==='bay-sporthorse'&&!h.foal).length===1;
  const preserved=s=>seed.horses.every(h=>s.horses.some(n=>n.id===h.id&&n.name===h.name&&n.breed===h.breed&&n.level===h.level));
  const chosen=s=>s.horses.find(h=>h.id===s.ridingHorseId)?.breed==='bay-sporthorse';

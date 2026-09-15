@@ -2,10 +2,11 @@
  * Usage: node tools/qa-hero-motion.cjs output/hero-motion-audit [--no-video]
  * Numeric tolerances are game QA targets, not veterinary diagnostic standards.
  */
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs'),path=require('node:path');
 const args=process.argv.slice(2),out=path.resolve(args.find(a=>!a.startsWith('--'))||'output/hero-motion-audit');
-const url=args.find(a=>a.startsWith('--url='))?.slice(6)||'http://127.0.0.1:8431/hero-horse.html';
+const url=args.find(a=>a.startsWith('--url='))?.slice(6)||QA.BASE+'/hero-horse.html';
 const videoEnabled=!args.includes('--no-video'),FPS=60,DT=1/FPS;
 const ids=['LF','RF','LH','RH'];
 const limbPairs=[[13,14],[14,15],[15,16],[16,17],[17,18],[7,8],[8,9],[9,10],[10,11],[11,12],
@@ -104,7 +105,7 @@ async function step(page,ms){return page.evaluate(ms=>{advanceTime(ms);return he
 async function settle(page,c){await set(page,c);let s;for(let i=0;i<600;i++){s=await step(page,DT*1000);if(i>120&&!s.transitioning)return s;}throw Error('Transition failed to settle: '+keyFor(c));}
 
 (async()=>{
- fs.mkdirSync(out,{recursive:true});const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ fs.mkdirSync(out,{recursive:true});const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const context=await browser.newContext({viewport:{width:1440,height:1000}}),page=await context.newPage(),errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  const report={url,createdAt:new Date().toISOString(),fps:FPS,cyclesRequested:4,tolerances:{stanceDriftM:.02,penetrationM:.01},

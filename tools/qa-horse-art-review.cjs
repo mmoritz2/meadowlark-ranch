@@ -1,17 +1,18 @@
-const {chromium}=require('playwright');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA;
 const fs=require('node:fs');
 const path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/horse-art-review-qa');
 fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']});
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]});
  const page=await browser.newPage({viewport:{width:1440,height:960}});
  const errors=[],checks=[],states=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  const state=()=>page.evaluate(()=>JSON.parse(render_game_to_text()));
  const ready=key=>page.waitForFunction(key=>{if(!window.render_game_to_text)return false;const s=JSON.parse(render_game_to_text());return s.modelReady&&!s.loading&&s.selected===key;},key,{timeout:60000});
  function check(label,pass){checks.push({label,pass});if(!pass)throw new Error(label);}
- await page.goto('http://127.0.0.1:8431/horse-art-review.html');
+ await page.goto(QA.BASE+'/horse-art-review.html');
  for(const model of ['b2przemo','lyndon','existing']){
    await page.locator(`[data-model="${model}"]`).click();await ready(model);
    for(const view of ['quarter','side','head']){

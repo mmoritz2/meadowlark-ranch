@@ -1,10 +1,11 @@
-const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path');
+const QA=require('./qa-platform.cjs');
+const {chromium}=QA,fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/hero-jump-audit');fs.mkdirSync(out,{recursive:true});
 const source=fs.readFileSync(path.join(__dirname,'qa-hero-motion.cjs'),'utf8');
 const {schemaErrors,poseDelta}=new Function('require','process',source.slice(0,source.indexOf('(async()=>{'))+'return {schemaErrors,poseDelta};')(require,{argv:[]});
 (async()=>{
- const browser=await chromium.launch({headless:true,args:['--use-angle=d3d11']}),page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
- page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:8431/hero-horse.html');
+ const browser=await chromium.launch({headless:true,args:[QA.ANGLE]}),page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));await page.goto(QA.BASE+'/hero-horse.html');
  await page.waitForFunction(()=>window.heroMotionQA&&JSON.parse(render_game_to_text()).modelReady&&!JSON.parse(render_game_to_text()).loading,null,{timeout:120000});
  const before=await page.evaluate(()=>{heroMotionQA.pauseRealtime(true);heroMotionQA.reset();return heroMotionQA.snapshot();});
  await page.click('#side');await page.evaluate(()=>heroMotionQA.set('jump'));

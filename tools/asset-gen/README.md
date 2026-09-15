@@ -152,6 +152,26 @@ does its own background removal and needs no separate VAE-decode step.
 - `comfy.py` — minimal ComfyUI API client (submit / monitor / download)
 - `gen_image.py` — FLUX texture & image generator
 - `workflows/` — saved API graphs (optional)
+- `measure-glb.mjs` — what a GLB actually costs: bytes, triangles, image codecs and
+  pixel sizes, extensions. Plain node, no install.
+- `optimize-glb.mjs` — the recompression step, with a guard that refuses to write a
+  file whose structure the game depends on.
+
+## Making a generated model cost what it should
+
+Anything this pipeline writes arrives with **no glTF extension at all** and one
+uncompressed 2048x2048 PNG, which is why a barrel was 2.7 MB. Run every new prop
+through the recompression step before committing it:
+
+```
+cd tools/asset-gen && npm install          # once
+node optimize-glb.mjs ../../assets/models --props --in-place \
+     --max-texture 1024 --quality 92 --manifest ../../assets/models/OPTIMIZATION.json
+```
+
+The settings, the before/after measurements, why Draco and meshopt are unavailable
+without a ranch3d.html change, and what was deliberately left alone are all in
+**`ASSET_PIPELINE.md`** beside this file.
 
 ## Current horse breed models
 
