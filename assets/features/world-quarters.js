@@ -704,9 +704,36 @@ export function install(G){
   /* A third of an opacity, not a half: at a half the banks stopped being mist over the water and
      started being a white wash over the village. */
   const mistMat=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(mc),transparent:true,depthWrite:false,side:THREE.DoubleSide,opacity:0.3});
+  /* Crossed quads are right for a reed clump and wrong for a mist bank, and this is the one place
+     the rule does not carry. A reed is a thing with a silhouette from every angle; a bank of mist
+     is not, and two upright sheets twenty metres across, crossed, seen from the saddle, read as
+     exactly what they are — flat white rectangles standing in the marsh with hard edges. That is
+     what shipped: the review called it "white X's and flat rectangles lying on the pools", and it
+     is plainly visible in a screenshot from a horse's back.
+     The ground mist in world-atmosphere.js already solved this properly, so use its answer here:
+     a HORIZONTAL sheet, which from a saddle reads as fog lying on water, plus the two fades that
+     make one work — out as the eye comes into its own plane, where a flat sheet would otherwise
+     collapse its whole gradient into one bright row of pixels, and out with distance, because a
+     sheet far off can never read correctly and the fog should carry the distance instead. */
+  mistMat.onBeforeCompile=sh=>{
+   sh.vertexShader='varying vec3 vQMistW;\n'+sh.vertexShader.replace('#include <project_vertex>',
+`#include <project_vertex>
+#ifdef USE_INSTANCING
+ vQMistW=(modelMatrix*instanceMatrix*vec4(transformed,1.0)).xyz;
+#else
+ vQMistW=(modelMatrix*vec4(transformed,1.0)).xyz;
+#endif`);
+   sh.fragmentShader='varying vec3 vQMistW;\n'+sh.fragmentShader.replace('#include <opaque_fragment>',
+`#include <opaque_fragment>
+ vec3 qmV=vQMistW-cameraPosition;
+ gl_FragColor.a*=smoothstep(0.04,0.40,abs(normalize(qmV).y));
+ gl_FragColor.a*=1.0-smoothstep(46.0,96.0,length(qmV));`);
+  };
+  mistMat.customProgramCacheKey=()=>'quarters-meremist-v2';
+  const G_MIST=G_PLANE.clone(); G_MIST.rotateX(-Math.PI/2);   // lying on the water, not standing in it
   const mistItems=[];
-  for(let i=0;i<6;i++){const p=POOLS[i%POOLS.length];mistItems.push({x:p.x+rr(-6,6),y:p.y+0.9,z:p.z+rr(-6,6),sx:rr(15,24),sy:rr(1.7,2.8),sz:rr(15,24),ry:rr(0,6.28)});}
-  const mist=scatter(G_CROSS,mistMat,mistItems,false);
+  for(let i=0;i<6;i++){const p=POOLS[i%POOLS.length];mistItems.push({x:p.x+rr(-6,6),y:p.y+0.55,z:p.z+rr(-6,6),sx:rr(15,24),sy:1,sz:rr(15,24),ry:rr(0,6.28)});}
+  const mist=scatter(G_MIST,mistMat,mistItems,false);
   if(mist){
    mist.renderOrder=2;mist.frustumCulled=false;P.anim.push('mist');
    const base=mistItems.map(m=>({x:m.x,y:m.y,z:m.z,sx:m.sx,sy:m.sy,sz:m.sz,ry:m.ry,ph:rnd()*6.28}));
@@ -716,7 +743,7 @@ export function install(G){
     for(let i=0;i<base.length;i++){const b0=base[i];
      _e.set(0,b0.ry,0);_q.setFromEuler(_e);
      _v.set(b0.x+Math.sin(t*0.05+b0.ph)*5,b0.y+Math.sin(t*0.13+b0.ph)*0.2,b0.z+Math.cos(t*0.043+b0.ph)*5);
-     _sc.set(b0.sx,b0.sy,b0.sz);
+     _sc.set(b0.sx,1,b0.sz);            // flat: the sheet has no height to breathe
      mist.setMatrixAt(i,_m4.compose(_v,_q,_sc));}
     mist.instanceMatrix.needsUpdate=true;});
   }
