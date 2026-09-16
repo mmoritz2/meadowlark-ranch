@@ -389,11 +389,20 @@ export function install(G){
  function setFoalName(n){if(!foal)return;try{foal.group.remove(foal.tag);}catch(e){}foal.tag=G.nameSprite('✨ '+n);foal.tag.position.y=2.7;foal.group.add(foal.tag);}
  function spawnFoal(){
   if(foal)return;
-  const parts=H.makeHorse({colors:{body:'#d7dbe3',mane:'#f4f6fa'},coat:'moonlit',seed:11});   // the same moonlit coat she wears when you find her again
+  /* A grey, not a white. #d7dbe3 over #f4f6fa is within a few percent of pure white in every
+     channel, and a shape with no tonal range in it cannot show its own form: she came out as a
+     flat pale cut-out standing beside a properly shaded bay, and every review of this game's look
+     picked her out. A real grey is mid-toned with darker points — the mane, the legs and the
+     muzzle stay dark for years — so there is something for the light to model. Same moonlit coat
+     she wears when you find her again. */
+  const parts=H.makeHorse({colors:{body:'#9aa3b0',mane:'#4f5763'},coat:'moonlit',seed:11});
   const g=parts.group; g.scale.setScalar(0.78);
   const x=-7,z=-21; g.position.set(x,W.groundH(x,z),z); G.scene.add(g);
   foal={parts,group:g,tag:null,x,z,heading:0,phase:0,bolt:0};
-  setFoalName(fresh().story.name||'?');
+  /* No tag until she has a name. Before this she wore a sprite reading "✨ ?" — a white pill with
+     a question mark hanging over her head in every frame she appeared in, which read as a missing
+     asset rather than as a foal nobody has named yet. */
+  {const nm=fresh().story.name; if(nm)setFoalName(nm);}
  }
  function removeFoal(){if(!foal)return;try{G.scene.remove(foal.group);}catch(e){}foal=null;}
  function tickFoal(dt){

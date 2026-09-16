@@ -2809,7 +2809,7 @@ const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:b
 }
 // sandy riding arena inside the paddock
 {
- const smatl=new THREE.MeshStandardMaterial({map:sandTex,roughness:1,normalMap:texData('assets/textures/pastoral/arena_normal.jpg',10),normalScale:new THREE.Vector2(0.20,0.20),roughnessMap:texData('assets/textures/pastoral/arena_roughness.jpg',10)});
+ const smatl=new THREE.MeshStandardMaterial({map:sandTex,roughness:1,normalMap:texData('assets/textures/pastoral/arena_normal.jpg',10),normalScale:new THREE.Vector2(0.55,0.55),roughnessMap:texData('assets/textures/pastoral/arena_roughness.jpg',10)});   // was 0.20: the arena is the single largest flat area a player looks at, and at a fifth strength its rake marks and hoof scuffs caught no light at all, so it read as a plain cream disc
  smatl.envMapIntensity=0.46;
  arrivalArt.enhanceArenaMaterial(smatl);
  const sand=new THREE.Mesh(new THREE.CircleGeometry(1,40),smatl);
