@@ -95,6 +95,65 @@ export function install(G){
  ringDark.position.y=-0.03; ringDark.renderOrder=2; ringLit.renderOrder=3;
  ring.add(ringDark); ring.add(ringLit); ring.visible=false; ring.frustumCulled=false; G.scene.add(ring);
 
+ /* ---------------------------------------------------------------- the takeoff window --- */
+ /* Jumping in this game has always been a timing skill and has never once said so. The rails
+    are judged on the horse's height as she crosses them — under 0.4 m knocks them down — and
+    that height is decided entirely by WHEN the rider pressed jump. course-engine grades the
+    crossing off heroJumpAge and has done all along: 0.58-0.96 s from take-off is 'perfect',
+    0.42-1.12 s is 'good', anything else is early or late. So the skill, the window and the
+    grades are all real; the only thing missing was any way to see the window before committing
+    to it. A rider could ride a hundred rounds and never learn what she was doing differently on
+    the clears, because the feedback arrived after the decision and never named the cause.
+
+    So: a ring over the fence that says press NOW. Take-off is the press, and the crossing comes
+    one flight-time later, so pressing at range d and speed v lands the crossing at age d/v —
+    which is exactly the number course-engine is about to grade. The bands below are ITS bands,
+    read straight off gradeCrossing rather than retuned here; if that function is ever
+    rebalanced this ring must be corrected with it or it will start lying. Green is the perfect
+    window, amber the wider clear, and red is everything that ends in rails on the floor. */
+ const TO_PERFECT=[0.58,0.96], TO_GOOD=[0.42,1.12];   // seconds of flight — course-engine's gradeCrossing
+ const TO_SHOW=2.2;                                   // start showing it about two strides out
+ const C_PERFECT=0x4ade5e, C_GOOD=0xf0b429, C_MISS=0xe4574c;
+ const reticleTex=(()=>{
+  const cv=document.createElement('canvas'); cv.width=cv.height=128;
+  const g=cv.getContext('2d');
+  g.strokeStyle='#fff'; g.lineWidth=15; g.beginPath(); g.arc(64,64,44,0,Math.PI*2); g.stroke();
+  g.strokeStyle='rgba(0,0,0,0.55)'; g.lineWidth=4;
+  g.beginPath(); g.arc(64,64,52,0,Math.PI*2); g.stroke();
+  g.beginPath(); g.arc(64,64,36,0,Math.PI*2); g.stroke();
+  const t=new THREE.CanvasTexture(cv); t.needsUpdate=true; return t;
+ })();
+ const reticleMat=new THREE.SpriteMaterial({map:reticleTex,transparent:true,opacity:0,depthWrite:false,depthTest:false,toneMapped:false});
+ const reticle=new THREE.Sprite(reticleMat);
+ reticle.renderOrder=6; reticle.visible=false; reticle.frustumCulled=false; reticle.scale.set(1.5,1.5,1);
+ G.scene.add(reticle);
+ let toGrade='';                                      // what the ring is saying this frame, for QA
+ /* Where the ring sits and what colour it is. Returns '' when there is nothing to time. */
+ function tickReticle(dt,t){
+  let show='';
+  try{
+   const c=G.course.get();
+   const j=c&&!c.dressage&&c.jumps?c.jumps[c.idx]:null;
+   /* nothing to time while she is already in the air — the decision has been made */
+   if(j&&enabled&&player.y<0.05){
+    const d=Math.hypot(player.pos.x-j.x,player.pos.z-j.z);
+    const v=Math.abs(player.speed||0);
+    const tc=v>0.8?d/v:99;                            // at a standstill there is no window to show
+    if(tc<=TO_SHOW){
+     show=(tc>=TO_PERFECT[0]&&tc<=TO_PERFECT[1])?'perfect':(tc>=TO_GOOD[0]&&tc<=TO_GOOD[1])?'good':'miss';
+     reticleMat.color.setHex(show==='perfect'?C_PERFECT:show==='good'?C_GOOD:C_MISS);
+     /* it tightens as the window closes, so the eye is drawn to the moment and not the ring */
+     const k=show==='perfect'?1.25+0.1*Math.sin(t*9):show==='good'?1.45:1.7;
+     reticle.scale.set(k,k,1);
+     reticleMat.opacity=show==='miss'?0.55:0.95;
+     reticle.position.set(j.x,groundH(j.x,j.z)+2.35,j.z);
+    }
+   }
+  }catch(e){}
+  reticle.visible=!!show; toGrade=show;
+ }
+
+
  /* ---------------------------------------------------------------- the readout ---------- */
  /* G.ui has panels, dock buttons, tabs and wallet chips, and nothing that owns the course HUD —
     so rather than float a box of its own over a screen that already carries five, the distance
@@ -234,10 +293,15 @@ export function install(G){
  G.on('courseFinish',o=>{const c=o&&o.c;if(!c||c===G.course.get())closing=true;});
  function hide(){
   core.count=rim.count=0; core.visible=rim.visible=ring.visible=false; tx=tz=null;
+  reticle.visible=false; toGrade='';
   if(distEl&&distEl.style.display!=='none')distEl.style.display='none';
  }
  G.on('tick',(dt,t)=>{
   if(broke>2)return;
+  /* ahead of every early return below: the take-off ring is about the NEXT fence, not about
+     whether the line to it happens to be drawn, and a ring left burning over a fence the rider
+     has already jumped is worse than no ring at all. */
+  tickReticle(dt,t);
   try{
    if(!enabled){if(fade!==0){fade=0;hide();}return;}
    const c=G.course.get();
@@ -285,6 +349,7 @@ export function install(G){
  /* ---------------------------------------------------------------- state + handles ------ */
  G.on('state',o=>{
   o.guide={on:fade>0.01,fade:+fade.toFixed(2),chevrons:core.count,built:SP.built,
+   takeoff:toGrade||null,takeoffShown:reticle.visible,
    spacing:+SP.spacing.toFixed(2),legLen:+SP.len.toFixed(1),onScoredLine:!SP.free&&SP.n>0,
    lays:STATS.lays,target:tx===null?null:[+tx.toFixed(1),+tz.toFixed(1)],
    dist:tx===null?null:+Math.hypot(player.pos.x-tx,player.pos.z-tz).toFixed(1),
@@ -293,7 +358,8 @@ export function install(G){
  /* Handles for QA and for anyone who needs the guide out of the way (a cinematic, a timing run).
     setEnabled is the honest way to measure what the ribbon costs: the same page, the same
     course, the feature on and off. */
- G.courseGuide={core,rim,ring,SP,STATS,plan,
+ G.courseGuide={core,rim,ring,reticle,SP,STATS,plan,
+  takeoff:()=>toGrade||null,TO_PERFECT,TO_GOOD,TO_SHOW,
   mats:{core:coreMat,rim:rimMat,ringLit:ringLitMat,ringDark:ringDarkMat},
   setEnabled(b){enabled=!!b;if(!enabled){fade=0;hide();}},
   isEnabled:()=>enabled,isOn:()=>fade>0.01,fadeNow:()=>fade,
