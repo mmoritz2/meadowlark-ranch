@@ -128,9 +128,17 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 900 s');try{if(bro
   await page.evaluate(id=>window.__cg.start(id),id);
   const L=await look();
   seen[id]=L;
+  /* The run has to have extent — a line, not a cluster — but two metres of it is a number this
+     suite could only ever ask of a long leg. A judged class opens with the walk in from the start
+     to A, which at the ranch's own arena is three metres end to end; take off the pad at the
+     letter and the clearance the ride pass keeps under the horse and there are 1.45 m left to
+     lay anything in. Asking for 2 m there is asking for arithmetic, not for a guide. So: two
+     metres, or nearly half the leg when the leg is shorter than that. */
+  const wantSpread=Math.min(2,(L.guide.legLen||0)*0.45);
   check('['+id+' · '+label+'] a run of chevrons is standing on the ground, pointing at the next obstacle',
-   L.visible&&L.n>=3&&L.grounded&&L.monotone&&L.nearTarget<=2.6&&L.farTarget>L.nearTarget+2,
-   {chevrons:L.n,visible:L.visible,grounded:L.grounded,monotone:L.monotone,nearest:L.nearTarget,furthest:L.farTarget});
+   L.visible&&L.n>=3&&L.grounded&&L.monotone&&L.nearTarget<=2.6&&L.farTarget-L.nearTarget>=wantSpread,
+   {chevrons:L.n,visible:L.visible,grounded:L.grounded,monotone:L.monotone,nearest:L.nearTarget,
+    furthest:L.farTarget,spread:+(L.farTarget-L.nearTarget).toFixed(2),wanted:+wantSpread.toFixed(2),leg:L.guide.legLen});
   check('['+id+'] the far end of the line is at the rider, and the near end is the target',
    L.ringVisible&&L.farFromRider<=L.guide.spacing+1.4&&L.nearTarget<L.farTarget,
    {farFromRider:L.farFromRider,spacing:L.guide.spacing,ring:L.ringVisible});

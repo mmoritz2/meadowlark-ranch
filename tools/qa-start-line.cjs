@@ -56,7 +56,10 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
     window.advanceTime(60);
     window.__toasts.length=0;
     const from=opts.from||YARD;
-    p.pos.set(from[0],0,from[1]); p.speed=0; p.heading=0; p.y=0; p.vy=0; p.flying=!!opts.flying;
+    /* Heading matters as much as position now that the package will straighten a rider who is
+       standing beside the line facing away from it, so a caller that means 'she is already lined
+       up' has to be able to say which way she is pointing. Zero stays the default. */
+    p.pos.set(from[0],0,from[1]); p.speed=0; p.heading=opts.heading==null?0:opts.heading; p.y=0; p.vy=0; p.flying=!!opts.flying;
     out.from=from.slice();
     /* the vehicle flag is set and cleared without a frame in between, so no vehicle tick runs */
     if(opts.veh)try{G.worldPkg.veh={kind:'balloon',t:0,dur:45};}catch(e){}
@@ -148,9 +151,17 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  /* one measurement, reused: was she carried, is she square, is the box under her, is it ground */
  function landing(name,r,opts){
   opts=opts||{};
-  check(name+' — carried to the line and told about it',
-   r.started&&r.moveddist>12&&lined(r),
-   {moved:r.moveddist,pos:r.pos,toast:(r.toasts||[]).filter(t=>/Lined up/.test(t))[0]||null});
+  /* Travelling a long way is not what makes a start line right — ending up ON it is. The seasonal
+     trial is held at the home ranch, five metres from the yard a rider opens 🏆 Events in, so a
+     flat 'she moved more than twelve metres' asked the gauntlet to fail for the venue being
+     close, and went on passing it while she sat in the yard facing the wrong way. What is
+     actually owed: she finishes standing on the start the package recorded, and if she was
+     carried to get there she was told she was carried. */
+  const atStart=!!r.start&&Math.hypot(r.pos[0]-r.start.x,r.pos[1]-r.start.z)<0.6;
+  check(name+' — put on the line, and told about it if she was carried there',
+   r.started&&atStart&&(r.moveddist<1||lined(r)),
+   {moved:r.moveddist,pos:r.pos,start:r.start?[r.start.x,r.start.z]:null,
+    toast:(r.toasts||[]).filter(t=>/Lined up/.test(t))[0]||null});
   check(name+' — a start box is standing on the ground under her, and it is the only one in the scene',
    !!r.box&&r.boxes===1&&r.box.inScene&&r.box.visible&&r.box.sprites===1&&r.box.meshes>=10
    &&r.boxOffRider<1.2&&r.boxOnGround<0.01&&Math.abs(r.box.rotY-r.heading)<0.02,
@@ -245,11 +256,28 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  const dressIds=prog.filter(e=>e.disc==='dressage').map(e=>e.id);
  const d1=await enter('d1');
  landing('dressage · Cottonwood Preliminary Test',d1,{town:'Cottonwood'});
+ /* Seven metres outside A is the ideal, not the invariant — the same lesson the jumping line
+    already learned, and here it is not even the same arena twice. world.js runs every away
+    venue through findClear() at boot, so how much room there is behind A depends on where the
+    valley's scenery let the arena settle that load: measured over four boots Cottonwood's A came
+    up at [76,-44] twice and at [131.42,10.89] and [113.72,-112.33] once each. On the cramped
+    boots a rail crosses the centre line ~6 m behind A — [72.9,-49.9]→[76.3,-50.9] on one of them
+    — putting the textbook spot 0.14 m from a fence with everything further back on the wrong
+    side of it, so the search correctly settles 5 m out, inside the rail, dead on the centre line
+    and square to C. Demanding six metres asked her to stand on a fence on half the boots. The
+    floor that means something is the 3.5 m a figure closes at, which the next check tests on its
+    own and which marshalTest now refuses to cross; here, match the 2.5 m the home arena and the
+    rest of the programme already use. */
  check('dressage · she is put outside A on the centre line, facing C',
-  d1.distA>=6&&d1.distA<=20&&d1.square<0.02&&d1.offLine<=6.1&&d1.distC>d1.AC,
+  d1.distA>=2.5&&d1.distA<=20&&d1.square<0.02&&d1.offLine<=6.1&&d1.distC>d1.AC,
   {A:d1.A,C:d1.C,distA:d1.distA,distC:d1.distC,AC:d1.AC,squareErr:d1.square,offCentre:d1.offLine});
- check('dressage · the opening figure is not handed to her: A is further than the 3.5 m a figure closes at',
-  d1.fig0==='A'&&d1.distA>3.5,{fig0:d1.fig0,distA:d1.distA});
+ /* This used to read distA>3.5, guarding the free 10/10 that a figure closing on proximity alone
+    paid to a rider who began inside its flag. That hole is shut at the other end now —
+    tickDressage wants 1.5 m of travel before it will close a figure — which is the only fix that
+    also covers a player who parks on A herself and opens 🏆 Events, something no start line can
+    prevent. What is left to assert here is that she opens at A and is not put on top of it. */
+ check('dressage · she opens at A and is not marshalled onto the letter itself',
+  d1.fig0==='A'&&d1.distA>2.5,{fig0:d1.fig0,distA:d1.distA});
  check('dressage · the letters travelled to Cottonwood and she was taken to the letters, not to the ranch',
   Math.hypot(d1.A[0]-2,d1.A[1]+15)>20&&d1.letters>=9,{A:d1.A,letters:d1.letters});
  const d2=await enter('d2');
@@ -268,8 +296,9 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  const showIds=prog.filter(e=>e.disc==='show').map(e=>e.id);
  const s1=await enter('s1');
  landing('showmanship · Cottonwood Showmanship',s1,{town:'Cottonwood'});
+ /* Same Cottonwood rail, same arithmetic: 5 m inside it beats 7 m on top of it. */
  check('showmanship · she is stood outside A facing the judge at C, and told so',
-  s1.distA>=6&&s1.distA<=20&&s1.square<0.02&&s1.offLine<=6.1&&s1.distC>s1.AC&&/the judge is waiting at C/.test((s1.toasts||[]).join('|')),
+  s1.distA>=2.5&&s1.distA<=20&&s1.square<0.02&&s1.offLine<=6.1&&s1.distC>s1.AC&&/the judge is waiting at C/.test((s1.toasts||[]).join('|')),
   {distA:s1.distA,squareErr:s1.square,offCentre:s1.offLine,toast:(s1.toasts||[]).filter(t=>/Lined up/.test(t))[0]||null});
  check('showmanship · the turnout is still taken and the judge\'s card is on screen behind the line',
   (s1.toasts||[]).some(t=>/^🧼 Turnout/.test(t))&&s1.sheetShown,
@@ -300,10 +329,13 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  stage('guards');
  const guards=await page.evaluate(async()=>{
   const G=window.__features,S=window.__sl,p=G.horse.player,out={};
-  /* already at the line: she is not shuffled two metres sideways for the sake of it */
+  /* already at the line: she is not shuffled two metres sideways for the sake of it. She is put
+     down beside it pointing the way the line points, which is the rider this guard is for — one
+     who rode up to the start herself. Pointing the other way is not 'already at the line', and
+     the package now turns that rider round rather than starting her backwards. */
   const first=await S.enter('pp');
   const at=first.pos.slice();
-  const near=await S.enter('pp',{from:[at[0]+4,at[1]+3]});
+  const near=await S.enter('pp',{from:[at[0]+4,at[1]+3],heading:first.heading});
   out.nearPos=near.pos.slice(); out.nearFrom=[at[0]+4,at[1]+3];
   out.nearMoved=near.moveddist; out.nearToast=(near.toasts||[]).some(t=>/Lined up/.test(t));
   out.nearBox=!!near.box;

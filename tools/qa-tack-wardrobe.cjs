@@ -171,12 +171,13 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('C four Kestrel pieces: set bonus counts 4/4 and effStats carries the four-piece bonus',r.kestrel&&r.kestrel.counts.Kestrel===4&&r.kestrel.speedGain>=5+3+4&&r.kestrel.accelGain>=5+3,r.kestrel);
  check('C worn Kestrel saddle tints the leather to the set colour',r.tint&&r.tint.has&&r.tint.hex===r.tint.want,r.tint);
  check('C Rare pieces always belong to a set and a Rare pair pays a bonus',r.rarePair&&r.rarePair.rareNull===0&&r.rarePair.counts.Basin===2&&/agility:1/.test(r.rarePair.bonus),r.rarePair);
- /* This one fails on a real double payment, and the assertion is right to fail: one upgrade of a
-    one-star piece pays 2 SP. ranch3d.html's tackAct 'up' branch pays addSP(RARITIES.indexOf+1)
-    and toasts '+1⭐'; account-economy's walletWatch then sees the tack score climb by that same
-    star and pays it again as sp.src.tack. Either payer alone is right — dropping the inline one
-    is the smaller change, the ledger already runs inside the same refreshWallet — but both files
-    belong to other packages, so this stays red on purpose rather than being tuned to 2. */
+ /* This one used to fail on a real double payment: one upgrade of a one-star piece paid 2 SP,
+    because ranch3d.html's tackAct 'up' branch paid addSP(RARITIES.indexOf+1) and toasted '+1⭐'
+    while account-economy's walletWatch saw the tack score climb by that same star and paid it
+    again as sp.src.tack. It was left red on purpose while the two files sat in different
+    worktrees. They are one tree now, so the inline payer is gone and the ledger — which is the
+    one that can see the whole wardrobe, and which refreshWallet already runs on the same click —
+    pays alone. The assertion was right all along and is left exactly as it was written. */
  check('D upgrade spends coins + Toolkit I, pays 1 SP per rarity star',r.up1&&r.up1.lvl===2&&r.up1.kit1===0&&r.up1.sp===1&&r.up1.coins<5000,r.up1);
  check('D upgrade refused without a toolkit (level and coins unchanged)',r.up2&&r.up2.lvl===2&&r.up2.coinsSame&&r.up2.kit1===0,r.up2);
  check('D levels stop at 8, kits I/II/III consumed by tier, no upgrade button at max',r.up8&&r.up8.lvl===8&&r.up8.max===8&&r.up8.kits[0]===3&&r.up8.kits[1]===2&&r.up8.kits[2]===4&&!r.up8.btn,r.up8);

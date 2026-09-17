@@ -422,7 +422,13 @@ export function install(G){
   }
   return true;
  }
- function findSpot(c,x,z,rotY,skip,target){
+ /* minT is the closest the search may stand to what it is aiming at. A jumping line does not care
+    — four metres off a fence is a tight but legal start — but a test does: tickDressage closes a
+    figure the moment the rider is inside 3.5 m of its letter, so a rider marshalled to 1 m from A
+    is handed the opening figure before the judge has looked up. The ideal for a test is 7 m back
+    and BACKS reaches -6, which lands exactly there whenever the valley has scattered the venue
+    somewhere too cramped to stand further out. Caller's rule, not this function's. */
+ function findSpot(c,x,z,rotY,skip,target,minT){
   const bx=Math.sin(rotY), bz=Math.cos(rotY), ax=Math.cos(rotY), az=-Math.sin(rotY);
   /* Where she is meant to be riding TO. The jumping start line is drawn ten metres back from its
      fence and a test's is seven back from A, so the caller says which rather than this guessing. */
@@ -431,14 +437,17 @@ export function install(G){
      railed arena there is often nowhere further back to go, and a start line six metres out that
      she can ride from beats a textbook one she cannot. */
   const BACKS=[0,2,4,6,8,10,12,-2,-4,-6];
+  const tooClose=(px,pz)=>minT>0&&Math.hypot(px-tx,pz-tz)<minT;
   for(const side of[0,-1.5,1.5,-3,3,-4.5,4.5,-6,6])for(const back of BACKS){
    const px=x-bx*back+ax*side, pz=z-bz*back+az*side;
+   if(tooClose(px,pz))continue;
    if(standable(c,px,pz,skip)&&clearRun(c,px,pz,tx,tz,skip))return [px,pz];
   }
   /* Nothing had both. Take standable-and-reachable off the table and settle for reachable: being
      able to start the round matters more than the ground being pretty. */
   for(const side of[0,-1.5,1.5,-3,3])for(const back of BACKS){
    const px=x-bx*back+ax*side, pz=z-bz*back+az*side;
+   if(tooClose(px,pz))continue;
    if(clearRun(c,px,pz,tx,tz,skip))return [px,pz];
   }
   return [x,z];
@@ -452,7 +461,15 @@ export function install(G){
  /* A silent teleport is a glitch; the same teleport with a line of text is a feature. Say where
     she has been taken and what is in front of her, and only when she has actually been moved. */
  function lineUp(c,x,z,rotY,ahead){
-  const moved=Math.hypot(player.pos.x-x,player.pos.z-z)>12&&!player.flying&&!aboard();
+  /* Being near the line is not the same as being ON it: 'already lined up' has to mean pointing
+     down the approach as well as standing beside it. Distance alone is what let the seasonal
+     trial begin with the rider sitting in the ranch yard — five metres off the approach, turned
+     a hundred and sixty degrees away from element one, the first fence literally behind her and
+     the start box standing over there without her — because the yard falls inside the twelve
+     metre courtesy. That courtesy is for a rider who has walked up to the line herself, and a
+     rider who has walked up to the line is facing down it. */
+  const askew=Math.abs(wrapA(player.heading-rotY))>0.35;
+  const moved=(Math.hypot(player.pos.x-x,player.pos.z-z)>12||askew)&&!player.flying&&!aboard();
   if(moved){
    player.pos.set(x,0,z); player.y=0; player.vy=0; player.speed=0; player.heading=rotY;
    try{ if(W.pushOut)W.pushOut(player,0.7); }catch(e){}    // world.js's own push-out, for anything the search missed
@@ -480,7 +497,14 @@ export function install(G){
  function marshalTest(c,show){
   const AL=G.course.ARENA_LETTERS, A=AL&&AL.A, C=AL&&AL.C; if(!A||!C)return null;
   const dx=C[0]-A[0], dz=C[1]-A[1], d=Math.hypot(dx,dz)||1, rotY=Math.atan2(dx/d,dz/d);
-  const at=findSpot(c,A[0]-dx/d*7,A[1]-dz/d*7,rotY,null,[A[0],A[1]]);
+  /* 2.5 m: enough that she is never marshalled onto the letter itself, with the arrow bobbing at
+     her feet and nothing to ride. It deliberately does NOT try to clear the 3.5 m a figure closes
+     at — tickDressage now wants a metre and a half of travel before it will close one, so no
+     distance hands her the opening figure, and a player can park on A herself anyway. Holding out
+     for 4.5 here cost more than it bought: the ranch's own arena has barely four metres between
+     its short-side rail and A, so the search had to step off the centre line to obey, and the
+     centre line is the thing a test is ridden down. */
+  const at=findSpot(c,A[0]-dx/d*7,A[1]-dz/d*7,rotY,null,[A[0],A[1]],2.5);
   return lineUp(c,at[0],at[1],rotY,show?'walk in at A — the judge is waiting at C.'
                                        :'walk in at A and ride the centre line to C.');
  }
