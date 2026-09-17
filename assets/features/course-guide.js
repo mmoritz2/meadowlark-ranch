@@ -54,6 +54,7 @@ export function install(G){
     toneMapped:false keeps ACES from pulling the bright end back down into the grass. */
  const MAXC=40;                                           // the most chevrons a leg is ever given
  const PAD=1.2;                                           // the nearest one stops short of the obstacle
+ const NEAR=0.8;                                          // ...and the run stops short of the horse: nothing is drawn under her nose
  const LIFT=0.105;                                        // above course-engine's own 0.06 markers
  const FADE_IN=0.45, FADE_OUT=0.32;
  const C_NEAR=new THREE.Color(0xeafdff), C_FAR=new THREE.Color(0x0d9ad2);
@@ -113,7 +114,7 @@ export function install(G){
  /* SP is the leg being ridden, as a polyline of at most three points with its arc lengths.
     Everything is a plain array reused in place; the only new objects made after install are the
     ones THREE hands back. */
- const SP={wx:[0,0,0],wz:[0,0,0],cum:[0,0,0],ang:[0,0],n:0,len:0,spacing:3,built:0,
+ const SP={wx:[0,0,0],wz:[0,0,0],cum:[0,0,0],ang:[0,0],n:0,len:0,spacing:3,built:0,pad:PAD,
   mode:-1,a:-1,b:-1,free:true};
  const _v=new THREE.Vector3(), _q=new THREE.Quaternion(), _sc=new THREE.Vector3(1,1,1), _m=new THREE.Matrix4(), _up=new THREE.Vector3(0,1,0), _col=new THREE.Color();
  const _p={x:0,z:0,a:0}, _pr={s:0,d:0};
@@ -143,17 +144,35 @@ export function install(G){
   }
   SP.cum[P.n-1]=len; SP.len=len;
   /* The spacing opens out on a long leg so the run always reaches back to the rider rather than
-     giving up forty chevrons short of her, and closes to two and a half metres on a short one. */
-  SP.spacing=clamp((len-PAD)/(MAXC-1),2.45,12);
-  SP.built=clamp(Math.floor((len-PAD)/SP.spacing)+1,0,MAXC);
-  if(SP.built<=0){core.count=rim.count=0;STATS.lays++;return;}
+     giving up forty chevrons short of her, and closes right down on a short one.
+
+     A fixed 2.45 m floor and a fixed 1.2 m pad were fine while every leg was a hack to the next
+     fence, and stopped reading the moment judged classes arrived: a test's first leg is the walk
+     in from the start to A, three to seven metres, and a three-metre leg came out as ONE chevron
+     sitting 1.2 m from the letter. One mark is not a line — it says nothing about direction, it
+     is the same picture whichever way the arena faces, and there is no far end of it to be at the
+     rider. So: count first, then divide. Three is the fewest that draws a direction, the pad
+     gives way on a short leg rather than eating half of it, and the spacing is whatever makes the
+     run span from the rider to a stride short of the target. On anything long enough to have
+     wanted 2.45 m this lands on the same numbers it always did. */
+  const pad=Math.min(PAD,len*0.25), usable=len-pad;
+  SP.pad=pad;
+  SP.spacing=clamp(usable/(MAXC-1),2.45,12);
+  SP.built=clamp(Math.floor(usable/SP.spacing)+1,0,MAXC);
+  /* Only a leg too short to hold three at 2.45 m is re-divided; every leg that could already is
+     laid on exactly the numbers it was before, down to the last decimal. The short one is divided
+     over the span that will actually be DRAWN rather than the whole leg: the ride pass below
+     keeps NEAR metres clear under the horse, so a third chevron laid behind that line is built
+     and then immediately culled, which is how a re-divided leg still came out as one mark. */
+  if(usable>NEAR+0.65&&SP.built<3){SP.built=3;SP.spacing=(usable-NEAR-0.05)/2;}   // the 5 cm keeps the last one clear of the cull as she rolls forward
+  if(SP.built<=0||usable<=0){core.count=rim.count=0;STATS.lays++;return;}
   /* The ramp is spread over the run that was actually built rather than over the forty slots the
      mesh could hold, so a twelve-metre leg between two fences tapers and cools exactly as much as
      a sixty-metre one down a race track. Colours are written here, once a leg, beside the
      matrices — never in the tick. */
   const span=Math.max(1,SP.built-1);
   for(let i=0;i<SP.built;i++){
-   const s=len-PAD-i*SP.spacing; segAt(s);
+   const s=usable-i*SP.spacing; segAt(s);
    /* the taper: widest and whitest at the obstacle, narrowing and cooling to cyan back toward the
       rider, which is what says which end of this line is the end you are being sent to */
    const k=i/span, sc=1.3-0.52*k;
@@ -241,7 +260,7 @@ export function install(G){
       belong, so all that changes is how many of them are drawn. */
    if(SP.built>0&&tx!==null){
     project(player.pos.x,player.pos.z);
-    const n=clamp(Math.floor((SP.len-PAD-_pr.s-0.8)/SP.spacing)+1,0,SP.built);
+    const n=clamp(Math.floor((SP.len-SP.pad-_pr.s-NEAR)/SP.spacing)+1,0,SP.built);
     core.count=rim.count=n;
    }
    const vis=fade>0.01;

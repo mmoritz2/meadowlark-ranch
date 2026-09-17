@@ -8745,11 +8745,22 @@ function tickDressage(dt){
   if(d<3.5&&sp<0.3){f.holdT+=dt; f.good+=dt; f.total+=dt; if(f.holdT>=f.hold)done=true;} else if(d<6){f.total+=dt;}
  }else{
   f.total+=dt; if(g===f.gait&&(!f.fast||sp>9))f.good+=dt;   // fast: a lengthened stride has to be ridden forward
+  /* A figure is something you RIDE, and the plain ones below used to close on being near the
+     letter and nothing else. Anyone standing inside its 3.5 m when the figure was asked for got
+     it on frame one — and f.total is a single frame there, so pct falls through to 1 and the
+     mark is a free 10/10. That is the opening 'enter at A' every time the start line lands
+     close to A, and a player who parks on A herself and opens 🏆 Events gets it whatever the
+     marshal does. So count the metres actually ridden since the figure was set, and want a good
+     metre of them: enough to make it a movement rather than a coincidence, and nothing at all to
+     a figure that was genuinely ridden — she has crossed the whole approach by the time she is
+     inside the flag. It stays well under a walking stride on purpose, so that no harness or
+     player pacing lands exactly on the threshold and decides the figure on a rounding error. */
+  f.rode=(f.rode||0)+sp*dt;
   if(f.circle){
    if(d<12&&d>2.5){ const a=Math.atan2(player.pos.z-mz,player.pos.x-mx); if(f.lastAng!=null){let da=a-f.lastAng; if(da>Math.PI)da-=2*Math.PI; if(da<-Math.PI)da+=2*Math.PI; if(g===f.gait)f.sweep+=Math.abs(da);} f.lastAng=a; }
    else f.lastAng=null;
    if(f.sweep>=Math.PI*1.8)done=true;
-  }else if(d<3.5)done=true;
+  }else if(d<3.5&&(f.rode||0)>1)done=true;      // near the letter AND ridden there — see f.rode above
  }
  const pct=f.total>0.2?f.good/f.total:1;
  if(done){
@@ -10089,7 +10100,13 @@ function tackAct(cmd){
   else if(op==='up'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; if((it.lvl||1)>=TACK_MAX_LVL){msg='Already at Lv '+TACK_MAX_LVL+'.';return;} const uc=gearUpgradeCost(it);
    if((s.items[uc.kit]||0)<1){msg='Bo needs a '+TOOLKITS[uc.kit].label+' for that — buy one at the saddlery, or find one in a chest.';return;}
    if(s.coins<uc.c){msg='Upgrade costs '+uc.c+' coins and a '+TOOLKITS[uc.kit].label+'.';return;}
-   s.coins-=uc.c; s.items[uc.kit]--; it.lvl=(it.lvl||1)+1; addSP(s,RARITIES.indexOf(it.rarity)+1,'tack'); s.stats=s.stats||{}; s.stats.tackUps=(s.stats.tackUps||0)+1; msg=it.name+' is now Lv '+it.lvl+'! +'+(RARITIES.indexOf(it.rarity)+1)+'⭐'; ok=true; upgraded=maxLvl(); }
+   /* The star is NOT paid here. account-economy's walletWatch keeps a running tack score —
+      the sum of (level-1)x(rarity+1) over the wardrobe — and pays out every rise in it as
+      sp.src.tack. refreshWallet() below fires the 'wallet' hook that runs it, on this same
+      click, so paying inline as well handed out two stars for one upgrade at every rarity.
+      One payer, and it is the ledger that can see the whole wardrobe. The toast still promises
+      the star, because the star still arrives. */
+   s.coins-=uc.c; s.items[uc.kit]--; it.lvl=(it.lvl||1)+1; s.stats=s.stats||{}; s.stats.tackUps=(s.stats.tackUps||0)+1; msg=it.name+' is now Lv '+it.lvl+'! +'+(RARITIES.indexOf(it.rarity)+1)+'⭐'; ok=true; upgraded=maxLvl(); }
   else if(op==='merge'){ const it=s.tack.find(t=>t.id===arg); if(!it)return; if((it.merged||0)>=3){msg='That piece has taken all the merges it can (3).';return;}
    const cost=gearMergeCost(it); if(s.coins<cost){msg='Merging costs '+cost+' coins.';return;}
    const worn=new Set(s.horses.flatMap(x=>Object.values(x.gear||{})));
@@ -11721,9 +11738,19 @@ function dailyEvt(type,val){
  G.run('dailyEvt',type,val);                              // side quests, foal quests, co-op goals listen here
 }
 const UMBRELLA_R={k:1,g:4,sp:40,p:30};   // the meta-quest: every daily done pays a key, gems, club points and pass points on top
+/* The 40⭐ on that row is what the player is PROMISED, not what this code hands over.
+   account-economy's walletWatch has credited the umbrella its 40 as sp.src.umbrella since before
+   the dailies were wired up, and the refreshWallet() two lines below fires the 'wallet' hook that
+   runs it — on this very click. Paying it through payReward as well gave 80⭐ for one umbrella,
+   and because payReward's sp lands outside the ledger's own tally the extra forty showed up in
+   the club panel's unlabelled chip where nobody could account for it. story-quests already
+   stripped exactly this double credit off every daily row (see stripDailySp) and it could never
+   reach this one, because the umbrella's row is here rather than in the daily table. So: the
+   label keeps its star, and payReward is handed everything except it. */
+const UMBRELLA_PAY={k:UMBRELLA_R.k,g:UMBRELLA_R.g,p:UMBRELLA_R.p};
 function claimUmbrella(){
  let ok=false;
- syncSave(s=>{ensureDq(s); if(s.dq.umbrella||Object.keys(s.dq.claimed).length<DAILY_N)return; s.dq.umbrella=true; payReward(s,UMBRELLA_R); ok=true;});
+ syncSave(s=>{ensureDq(s); if(s.dq.umbrella||Object.keys(s.dq.claimed).length<DAILY_N)return; s.dq.umbrella=true; payReward(s,UMBRELLA_PAY); ok=true;});
  if(ok){refreshWallet();sGem();toast('🌂 Umbrella: +'+rewardLabel(UMBRELLA_R));renderQuests();}
 }
 function claimDaily(type){
