@@ -447,7 +447,7 @@ export function install(G){
   /* the rig at a halt, and how far each number travels by a flat gallop */
   dist:8.3,   distSp:0.9,                                // metres along the slant from horse to eye
   pitch:0.40, pitchSp:-0.12,                             // radians above the horizon; flatter at speed
-  off:0.52,   offSp:-0.08,                               // RADIANS round the horse, not metres — see below
+  off:0.16,   offSp:-0.04,                               // RADIANS round the horse, not metres — see below
   lookY:1.62, lookYSp:0.34,                              // aim this far above her feet — puts her low in frame
   LOOK_MIN:1.18,                                         // and this far when a wall has squeezed the shot in
   lead:3.20,  leadSp:4.20,                               // and this far along where she is actually going
@@ -467,6 +467,16 @@ export function install(G){
     three-quarter at a halt, at a gallop, zoomed in and zoomed out, and it is one addition to
     the orbit angle rather than a second basis vector to get the sign of wrong (which, for the
     record, is exactly what happened: the first version had the horse on the wrong side).
+
+    That sweep was 0.52 rad — a fixed thirty degrees — and everything below is still written
+    for it. It is nine degrees now, because the owner of this game plays it and said the camera
+    veers off to the side. Thirty is a lovely still and a poor thing to steer from: the horse
+    you are aiming is not where the stick says she is, and every fence is met at an angle you
+    did not choose. Nine keeps her fractionally off dead centre — enough that her head is not
+    sitting on the vanishing point, enough that the corner swing below never visibly flips from
+    one shoulder to the other — while what you see down her neck is where she is actually
+    going. Raise it back toward 0.5 for the cinematic framing; nothing else in the rig changed
+    and a corner is still shared out exactly as described.
 
     Why a corner is shared out three ways. A camera that simply lagged the heading swings to the
     OUTSIDE of a right-hand turn and gets a glorious near-broadside — and swings straight
@@ -629,7 +639,14 @@ export function install(G){
    const wide=clamp(Math.tan(hHalf)/Math.tan(Math.atan(Math.tan(52*Math.PI/360)*1.6)),0.28,1);
    const ang=F.head+F.yaw+(CAM.off+CAM.offSp*F.u)*wide+lag*CAM.BIAS;
    const fx=Math.sin(ang), fz=Math.cos(ang);
-   const foot=W.groundH(player.pos.x,player.pos.z)+(player.y||0)*0.8;
+   /* The eye used to follow four fifths of her height. Over a fence that is the right
+      instinct — it damps the pogo, and a fifth of a 1.5 m jump is 30 cm nobody can see. On a
+      winged horse it is a disaster: a fifth of fifty metres is ten, so the further she climbed
+      the further the camera sank beneath her, until the shot was her belly against the sky. So
+      damp the first two metres, which covers every fence in the game, and follow one for one
+      above that, which is flight. */
+   const py=player.y||0, lift=py<=2?py*0.8:1.6+(py-2);
+   const foot=W.groundH(player.pos.x,player.pos.z)+lift;
    let ex=player.pos.x-fx*run, ez=player.pos.z-fz*run;
    let ey=Math.max(foot+rise,W.groundH(ex,ez)+1.25);
    /* If that lands in a canopy, walk the eye back along its own arm toward the horse until it
