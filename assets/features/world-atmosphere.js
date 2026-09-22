@@ -77,10 +77,18 @@ export function install(G){
     cold ground and its band is narrow; dusk is amber over ground that has had the sun on it
     all day and runs much further up the sky. Sharing one ramp was why the after-shots of dawn
     and dusk were indistinguishable. */
- const HOR_DAWN=[[-8,'#1c2740'],[-1,'#cf90a0'],[4,'#e7b3ae'],[12,'#cdd6de'],[26,'#b6d1de'],[50,'#aecbdd']];
- const HOR_DUSK=[[-8,'#1c2740'],[-1,'#e09071'],[4,'#eebd93'],[12,'#d2d7cf'],[26,'#b6d1de'],[50,'#aecbdd']];
- const ZEN_DAWN=[[-8,'#0a1024'],[-1,'#334478'],[4,'#42639e'],[14,'#3579ad'],[34,'#2c76b0'],[54,'#2a72ae']];
- const ZEN_DUSK=[[-8,'#0a1024'],[-1,'#2a4d7e'],[4,'#31659c'],[14,'#3178ac'],[34,'#2c76b0'],[54,'#2a72ae']];
+ /* The day half of both ramps is a bright clear summer blue, not the deep saturated one it was.
+    The riding game this is modelled on shows a daytime sky of about (139,198,228) above its
+    rocks; ours came out about (67,126,170) across the top of the frame, dark enough that the
+    open meadow read as late afternoon under a heavy sky. The grade pass downstream warms and
+    greens whatever reaches it, so these hexes sit bluer than what lands on screen, which is now
+    about (129,181,209). Everything from twelve degrees down, the golden hour and the night, is
+    untouched. The fog is mixed from these two below, so the far hills haze to the lighter blue
+    as well. */
+ const HOR_DAWN=[[-8,'#1c2740'],[-1,'#cf90a0'],[4,'#e7b3ae'],[12,'#cdd6de'],[26,'#c4e2f7'],[50,'#bcdff7']];
+ const HOR_DUSK=[[-8,'#1c2740'],[-1,'#e09071'],[4,'#eebd93'],[12,'#d2d7cf'],[26,'#c4e2f7'],[50,'#bcdff7']];
+ const ZEN_DAWN=[[-8,'#0a1024'],[-1,'#334478'],[4,'#42639e'],[14,'#4c9ad6'],[34,'#68b3ec'],[54,'#70bcf2']];
+ const ZEN_DUSK=[[-8,'#0a1024'],[-1,'#2a4d7e'],[4,'#31659c'],[14,'#4c9ad6'],[34,'#68b3ec'],[54,'#70bcf2']];
  const GLOW_DAWN=[[-4,'#5b4a68'],[0,'#ffa295'],[6,'#ffbda8'],[16,'#e8cdb4']];
  const GLOW_DUSK=[[-4,'#5f3c52'],[0,'#ff7a35'],[6,'#ff9c4e'],[16,'#f0c898']];
  /* Built once. A ramp is walked with two comparisons and one lerp per frame, which is the
