@@ -149,11 +149,16 @@ export function createArrivalArt({THREE,anisotropy=8}={}) {
     float rake=(.5+.5*sin(ap.x*36.0+sin(ap.y*.37)*1.8))*.024;
     float trackBand=exp(-pow((ar-.885)/.012,2.0));
     float footprint=pow(.5+.5*sin(atan(ap.y/18.5,ap.x/23.5)*270.0),8.0)*trackBand*.065;
-    diffuseColor.rgb*=vec3(.98,.955,.91)*(.94+.12*coarse+.04*grain-rake);
+    // Warm tan footing, churned by hooves up close. The near-neutral tint left the arena a pale
+    // cream disc that read as concrete from the rail. The churn is a half-metre mottle, faded
+    // out by 26 m, where it would only shimmer.
+    float churnNear=1.0-smoothstep(7.0,26.0,length(vViewPosition));
+    float churn=churnNear>0.004?smoothstep(.30,.72,arrivalNoise(ap*2.7+vec2(3.0,11.0))*.6+arrivalNoise(ap*6.1)*.4):0.0;
+    diffuseColor.rgb*=vec3(.90,.80,.66)*(.94+.14*coarse+.05*grain-rake)*(1.0-.13*churn*churnNear);
     diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(.49,.51,.49),worn*.88+damp*.24+footprint);
    `);
   };
-  material.customProgramCacheKey=()=>oldKey()+'|arrival-footing-1';material.needsUpdate=true;return material;
+  material.customProgramCacheKey=()=>oldKey()+'|arrival-footing-2';material.needsUpdate=true;return material;
  }
  return {buildPlanter,buildNoticeboard,buildPracticeJump,buildSign,buildHayStack,enhanceArenaMaterial,materials:{timber,darkTimber,soil,botanical,iron}};
 }
