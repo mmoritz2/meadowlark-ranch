@@ -8,11 +8,10 @@
    landscape with nothing standing in it has no near, middle and far; an outcrop at thirty metres
    is what makes the hills behind it read as distant.
 
-   Each outcrop is one big anchor block with three to six smaller ones round it — some half sunk,
-   one or two resting on its shoulder — built from the valley's own geology.makeBoulder, so it is
-   the same stone as the canyon, and merged so that a whole outcrop is a single draw call. They
-   are warmer and lighter than the canyon's rock, because a meadow outcrop is sun-bleached
-   sandstone and not wet limestone.
+   Each outcrop is one big anchor mass with three to six smaller boulders round it — some half
+   sunk, one often resting on its shoulder — merged so that a whole outcrop is a single draw call.
+   The stone is rounded, weathered sandstone of its own (see 'the stone' below), not the canyon's
+   bedded limestone: a meadow boulder is a soft rounded mass, and the reference's are exactly that.
 
    WHERE. Only in meadow, and never anywhere a rider needs to be: not on or near a road, a race
    route, the river, Sparrow Creek or the lake; not inside the ranch, a town or any of the four
@@ -23,18 +22,86 @@
    trees happen to push aside.
 
    Nothing runs at import time. */
-import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {mergeGeometries,mergeVertices} from 'three/addons/utils/BufferGeometryUtils.js';
 export const id='world-outcrops';
 export function install(G){
  const THREE=G.THREE, W=G.world, T=G.tables||{};
- if(!THREE||!W||!W.geology||!G.scene)return;
- const geo=W.geology;
+ if(!THREE||!W||!G.scene)return;
 
  /* ---------------------------------------------------------------- the stone ------------ */
- const mat=geo.material.clone();
- mat.name='Outcrop | sun-bleached sandstone';
- mat.color.setRGB(1.09,1.05,0.98);                // over the canyon's grey: a touch lighter and warmer — more and it reads as straw
+ /* Rounded, weathered sandstone, not the canyon's bedded limestone. The first cut borrowed the
+    valley's geology wholesale, and its texture is a photograph of limestone beds: every block came
+    out striped in horizontal courses, and makeBoulder is a bevelled fractured cube, so a heap of
+    them read as stacked slabs. The reference's meadow rock is the other thing entirely: big soft
+    rounded masses, warm grey-beige, mottled, with darker lichen in patches and no bedding at all.
+    So the stone here is its own: a lumpy squashed sphere with a flat underside and a cut or two
+    for a facet, shaded smooth, and a mottled sandstone texture painted once at install and laid
+    on triplanar in world space, so it runs continuously over every block in a heap and has no
+    seams to find. */
+ const h3=(x,y,z)=>{let h=Math.imul(x|0,374761393)^Math.imul(y|0,668265263)^Math.imul(z|0,1440662683);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967295;};
+ const n3=(x,y,z)=>{const ix=Math.floor(x),iy=Math.floor(y),iz=Math.floor(z),fx=x-ix,fy=y-iy,fz=z-iz;
+  const u=fx*fx*(3-2*fx),v=fy*fy*(3-2*fy),w=fz*fz*(3-2*fz),L=(a,b,t)=>a+(b-a)*t;
+  return L(L(L(h3(ix,iy,iz),h3(ix+1,iy,iz),u),L(h3(ix,iy+1,iz),h3(ix+1,iy+1,iz),u),v),
+           L(L(h3(ix,iy,iz+1),h3(ix+1,iy,iz+1),u),L(h3(ix,iy+1,iz+1),h3(ix+1,iy+1,iz+1),u),v),w);};
+ function sandstone(){
+  const S=256,cv=document.createElement('canvas');cv.width=cv.height=S;const c=cv.getContext('2d'),img=c.createImageData(S,S),d=img.data;
+  /* Periodic value noise, so the tile wraps without a seam. */
+  const pn=(x,y,P,k)=>{const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy,u=fx*fx*(3-2*fx),v=fy*fy*(3-2*fy);
+   const H=(a,b)=>h3(((a%P)+P)%P,((b%P)+P)%P,k);return (H(ix,iy)*(1-u)+H(ix+1,iy)*u)*(1-v)+(H(ix,iy+1)*(1-u)+H(ix+1,iy+1)*u)*v;};
+  for(let y=0;y<S;y++)for(let x=0;x<S;x++){
+   const X=x/S,Y=y/S;
+   const mott=pn(X*4,Y*4,4,11)*0.5+pn(X*8,Y*8,8,12)*0.3+pn(X*16,Y*16,16,13)*0.2;
+   const grain=pn(X*64,Y*64,64,14)*0.6+pn(X*128,Y*128,128,15)*0.4;
+   const lich=Math.max(0,pn(X*6,Y*6,6,16)*0.7+pn(X*24,Y*24,24,17)*0.3-0.60)/0.40;
+   const k=0.68+0.50*mott+0.18*(grain-0.5);
+   let r=178*k,g=165*k,b=144*k;
+   const q=Math.min(1,lich*1.5)*0.50; r=r*(1-q)+88*q; g=g*(1-q)+96*q; b=b*(1-q)+72*q;
+   const o=(y*S+x)*4;d[o]=r;d[o+1]=g;d[o+2]=b;d[o+3]=255;}
+  c.putImageData(img,0,0);
+  const t=new THREE.CanvasTexture(cv);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;
+ }
+ const mat=new THREE.MeshStandardMaterial({map:sandstone(),vertexColors:true,roughness:0.94,metalness:0});
+ mat.name='Outcrop | rounded sandstone';
  mat.envMapIntensity=0.55;
+ mat.onBeforeCompile=sh=>{
+  sh.vertexShader='varying vec3 vOcP;varying vec3 vOcN;\n'+sh.vertexShader.replace('#include <begin_vertex>',
+   '#include <begin_vertex>\n vOcP=(modelMatrix*vec4(position,1.0)).xyz; vOcN=normalize(mat3(modelMatrix)*normal);');
+  sh.fragmentShader='varying vec3 vOcP;varying vec3 vOcN;\n'+sh.fragmentShader.replace('#include <map_fragment>',`
+   vec3 ocW=pow(abs(normalize(vOcN)),vec3(4.0)); ocW/=(ocW.x+ocW.y+ocW.z);
+   vec3 ocT=texture2D(map,vOcP.zy/2.8).rgb*ocW.x+texture2D(map,vOcP.xz/2.8).rgb*ocW.y+texture2D(map,vOcP.xy/2.8).rgb*ocW.z;
+   diffuseColor.rgb*=ocT;`);
+ };
+ mat.customProgramCacheKey=()=>'outcrop-triplanar-1';
+ /* One welded unit sphere per level of detail, cloned for every block: welding is the slow part,
+    and doing it two hundred times over for the same sphere doubled this package's install time. */
+ const BASE={};
+ const unitSphere=d=>{if(!BASE[d]){const s=new THREE.IcosahedronGeometry(1,d);s.deleteAttribute('uv');s.deleteAttribute('normal');BASE[d]=mergeVertices(s);s.dispose();}return BASE[d].clone();};
+ function roundRock(radius,sd,flat,detail){
+  const g=unitSphere(detail);
+  const pa=g.attributes.position,n=pa.count,col=new Float32Array(n*3);
+  const o1=(sd*0.1373)%97,o2=(sd*0.2917)%89,o3=(sd*0.1731)%83;
+  const sx=0.84+(sd*0.618%1)*0.30,sz=0.80+(sd*0.414%1)*0.30;
+  const cutA=(sd*0.7071%1)*6.283,cutH=0.62+(sd*0.3183%1)*0.18,cutS=0.70+(sd*0.5772%1)*0.16;
+  let minY=1e9;
+  for(let i=0;i<n;i++){
+   let x=pa.getX(i),y=pa.getY(i),z=pa.getZ(i);
+   /* Big lumps, then knobs: a weathered boulder, not a ball. */
+   const r=1+0.40*(n3(x*1.05+o1,y*1.05+o2,z*1.05+o3)-0.5)+0.14*(n3(x*2.7+o3,y*2.7+o1,z*2.7+o2)-0.5);
+   x*=r*sx;y*=r*flat;z*=r*sz;
+   /* A tilted crown and one sheared side: the flat facets a block weathers along. */
+   y=Math.min(y,flat*(cutH+0.10*x-0.07*z));
+   const ca=Math.cos(cutA),sa=Math.sin(cutA),along=x*ca+z*sa;
+   if(along>cutS){x-=(along-cutS)*ca*0.85;z-=(along-cutS)*sa*0.85;}
+   y=Math.max(y,-flat*0.40);                             // it sits on a flat underside
+   pa.setXYZ(i,x*radius,y*radius,z*radius);if(y*radius<minY)minY=y*radius;
+   const m=0.88+0.12*n3(x*3.1+o2,y*3.1+o3,z*3.1+o1);col[i*3]=m;col[i*3+1]=m*0.985;col[i*3+2]=m*0.955;
+  }
+  for(let i=0;i<n;i++)pa.setY(i,pa.getY(i)-minY-radius*0.05);
+  g.setAttribute('color',new THREE.BufferAttribute(col,3));
+  g.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(n*2),2));   // unused: the map is laid on triplanar
+  g.computeVertexNormals();
+  return g;
+ }
 
  /* ---------------------------------------------------------------- where ---------------- */
  let seed=20260922;
@@ -84,8 +151,7 @@ export function install(G){
  function outcrop(x,z,R,sd){
   const parts=[], gy=W.groundH(x,z);
   const put=(r,px,pz,dy,yaw,tilt,flat)=>{
-   const b=geo.makeBoulder(r,sd+parts.length*97,{flatness:flat});
-   const g=b.geometry.clone(); b.geometry.dispose();
+   const g=roundRock(r,sd+parts.length*97,flat,r>R*0.5?3:2);
    _e.set(tilt*0.6,yaw,tilt); _q.setFromEuler(_e);
    _p.set(px-x, W.groundH(px,pz)-gy+dy, pz-z); _s.set(1,1,1);
    _m.compose(_p,_q,_s); g.applyMatrix4(_m); parts.push(g);
@@ -137,6 +203,7 @@ export function install(G){
   placed.push({x,z,r:R});
   cols.push({x,z,r:R*1.05});                                        // the anchor is solid; the satellites are small enough to ride round
  }
+ for(const k in BASE)BASE[k].dispose();                              // only ever cloned from
  G.scene.add(group);
 
  G.worldOutcrops={group,placed,material:mat};
