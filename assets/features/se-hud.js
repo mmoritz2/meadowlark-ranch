@@ -86,11 +86,13 @@ body.se-hud #mkMiniPlate{width:130px!important;height:130px!important;padding:0!
 body.se-hud #mini{width:130px!important;height:130px!important;border-radius:50%!important;border:4px solid #efe6cf!important;box-shadow:0 3px 12px rgba(0,0,0,.35),inset 0 0 0 1px rgba(0,0,0,.25)!important}
 body.se-hud #mkMiniPlate #mini{left:0!important;top:0!important;position:relative!important}
 body.se-hud #seNorth{position:fixed;left:calc(58px + 65px - 9px + env(safe-area-inset-left));top:calc(20px - 9px + env(safe-area-inset-top));width:18px;height:18px;border-radius:50%;
- background:#efe6cf;color:#3a2a12;font:900 11px/18px Nunito,system-ui,sans-serif;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.35);z-index:21;pointer-events:none}
+ background:#efe6cf;color:#3a2a12;font:900 11px/18px Nunito,system-ui,sans-serif;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.35);z-index:7;pointer-events:none}
 body.se-hud #vrBtn{display:none!important}
 body.se-hud #toasts{top:calc(96px + env(safe-area-inset-top))!important;bottom:auto!important;left:50%!important;right:auto!important;transform:translateX(-50%);align-items:center!important;width:min(420px,calc(100vw - 32px))!important}
 /* the root every floating control hangs off */
-#seHudRoot{position:fixed;inset:0;pointer-events:none;z-index:20}
+/* the layers the old HUD used: the dock sat at 6 and every panel (10) and dialog (11) covered it,
+   so a panel opened over the controls hides them instead of wearing a hexagon on its corner */
+#seHudRoot{position:fixed;inset:0;pointer-events:none;z-index:6}
 #seHudRoot>*{pointer-events:auto}
 /* round ☰ */
 #seMenuBtn{position:fixed;left:calc(12px + env(safe-area-inset-left));top:calc(14px + env(safe-area-inset-top));width:46px;height:46px;border-radius:50%!important;box-shadow:0 2px 6px rgba(0,0,0,.3)!important;min-width:0!important;
@@ -113,7 +115,7 @@ body.se-hud #toasts{top:calc(96px + env(safe-area-inset-top))!important;bottom:a
 /* the market: gold, a size up, with its name beneath */
 .se-market{width:66px!important;height:57px!important;filter:drop-shadow(0 3px 5px rgba(0,0,0,.45))!important}
 #seMarketLbl{position:fixed;width:84px;text-align:center;font:900 12px/1 Nunito,system-ui,sans-serif;color:#f3cf6a;letter-spacing:.6px;
- text-shadow:0 1px 0 #5a3708,0 0 3px rgba(0,0,0,.65);pointer-events:none}
+ text-shadow:0 1px 0 #5a3708,0 0 3px rgba(0,0,0,.65);pointer-events:none;z-index:6}
 /* the objective on the left edge */
 body.se-hud #questTrack{position:fixed!important;left:0!important;right:auto!important;top:calc(236px + env(safe-area-inset-top))!important;transform:none!important;
  max-width:min(300px,42vw)!important;height:auto!important;min-height:0!important;padding:7px 14px 7px 30px!important;margin:0!important;
@@ -123,7 +125,7 @@ body.se-hud #questTrack{position:fixed!important;left:0!important;right:auto!imp
 body.se-hud #questTrack::before{content:"!";position:absolute;left:0;top:0;bottom:0;width:20px;display:flex;align-items:center;justify-content:center;
  background:rgba(15,18,30,.8);color:#f3cf6a;font:900 16px/1 Nunito,system-ui,sans-serif}
 /* the thumbstick: always there, bottom left, and only as big as it looks */
-body.se-hud #stickZone{display:block!important;left:0!important;bottom:0!important;width:300px!important;height:300px!important;z-index:19!important}
+body.se-hud #stickZone{display:block!important;left:0!important;bottom:0!important;width:300px!important;height:300px!important;z-index:6!important}
 body.se-hud #stickBase{left:150px;top:150px;width:206px!important;height:206px!important;margin:-103px 0 0 -103px!important;opacity:.92!important;
  border:2.5px solid rgba(246,236,210,.7)!important;background:rgba(18,22,36,.18)!important;box-shadow:none!important}
 body.se-hud #stickBase::before,body.se-hud #stickBase::after{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px;border-radius:50%;background:rgba(246,236,210,.75)}
