@@ -4,7 +4,7 @@ export function createGrassTuftGeometry(THREE) {
   for(let blade=0;blade<7;blade++) {
     const a=blade*2.39996, spread=.07+(blade%3)*.055;
     const ox=Math.cos(a)*spread, oz=Math.sin(a)*spread;
-    const h=.24+(blade%4)*.072, bend=.14+(blade%3)*.05, width=.017+(blade%2)*.005;
+    const h=.25+(blade%4)*.060, bend=.15+(blade%3)*.05, width=.042+(blade%2)*.012;   // was .017/.005 wide: 2 cm blades read as fuzz, a carpet needs 4-5 cm; short and even, a lawn of clumps not a hay field
     const ca=Math.cos(a),sa=Math.sin(a),base=P.length/3;
     for(let row=0;row<4;row++){
       const t=row/3, centerX=ox+ca*bend*t*t,centerZ=oz+sa*bend*t*t;
@@ -12,7 +12,7 @@ export function createGrassTuftGeometry(THREE) {
         const w=width*(1-t)*side;
         P.push(centerX-sa*w,h*t,centerZ+ca*w);
         N.push(ca*.30,.955,sa*.30);
-        const shade=.58+t*.42;C.push(shade,shade,shade*.93);U.push((side+1)/2,t);
+        const shade=.46+t*.54;C.push(shade*.98,shade,shade*.80+.03*t);U.push((side+1)/2,t);   // darker at the root, a warm bright tip
       }
       if(row<3){const k=base+row*2;I.push(k,k+1,k+2,k+1,k+3,k+2);}
     }

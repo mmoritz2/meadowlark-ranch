@@ -2786,7 +2786,12 @@ const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:b
  for(let i=0;i<pos.count;i++){
   const x=pos.getX(i),z=pos.getZ(i);
   pos.setY(i,terrainH(x,z));
-  col.setScalar(.91+vnoise(x*.032,z*.032)*.09);
+  const lum=.91+vnoise(x*.032,z*.032)*.09;
+  /* The meadow albedo reads olive, and between broad blades it is what the eye sees as 'the
+     ground'. A riding game's meadow has no soil showing: tint the pasture toward green here,
+     and leave Coyote's sand and Hollowpeak's snow exactly as they were. */
+  const sand=Math.hypot(x+220,z-130)<150, snow=Math.hypot(x+160,z+210)<140;
+  if(sand||snow)col.setScalar(lum); else col.setRGB(lum*.80,lum*1.0,lum*.66);
   colors.push(col.r,col.g,col.b);
  }
  geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
@@ -2863,7 +2868,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   blades.setMatrixAt(placed,m4);
   /* was hue .24-.30 / sat .38-.60 / lum .50-.72 — a bright, uniform, cartoon green.
      Real grass sits yellower, much less saturated, and varies blade to blade. */
-  bcol.setHSL(0.19+Math.random()*0.04,0.16+Math.random()*0.14,0.72+Math.random()*0.13);
+  bcol.setHSL(0.255+Math.random()*0.03,0.50+Math.random()*0.14,0.60+Math.random()*0.12);   // matches the near carpet: saturated true green
   blades.setColorAt(placed,bcol);
   placed++;
  }
@@ -2879,7 +2884,11 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
     for the cells that enter the window as you move (a toroidal slot mapping means the cells
     leaving are exactly the ones whose slots the arrivals take). A distance fade in the shader
     lays the outer blades flat before the window edge could show. Flowers share the cells. */
- const NG_CELL=6, NG_W=18, NG_K=quality==='low'?65:150, NG_F=4, NG_R=NG_CELL*NG_W*0.5;
+ /* 14 cells across (a 42 m radius) at 240 a cell, from 18 at 150: the same 47k tufts, drawn where
+    they are seen. The outer ring of the old window was 40-50 m out, where a tuft is a speck the far
+    layer and the green ground already carry; spending those instances round the horse instead
+    makes the carpet under her 60% thicker for the same cost. */
+ const NG_CELL=6, NG_W=14, NG_K=quality==='low'?105:240, NG_F=4, NG_R=NG_CELL*NG_W*0.5;
  /* ihash multiplies as doubles and loses the low bits for big products, so its output bunches;
     positions from it landed in clumps on the cell grid. This one stays in 32-bit integers. */
  const gh=(ix,iz)=>{let h=(Math.imul(ix|0,374761393)+Math.imul(iz|0,668265263))|0; h=Math.imul(h^(h>>>13),1274126177); return ((h^(h>>>16))>>>0)/4294967295;};
@@ -2940,10 +2949,21 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
     c.ellipse(x+lean,top+13,4.6,12,lean*0.02,0,7); c.fill(); }
   }
  });
- const rockGeo=(()=>{                                     // one lumpy stone, reused everywhere
-  const g=new THREE.IcosahedronGeometry(0.5,0), pa=g.attributes.position;
-  for(let i=0;i<pa.count;i++){ const f=0.62+((Math.sin(i*12.9898)*43758.5453)%1+1)%1*0.6;
-   pa.setXYZ(i,pa.getX(i)*f,pa.getY(i)*f*0.72,pa.getZ(i)*f); }
+ /* One lumpy stone, reused everywhere. It was an icosahedron at detail 0 — twenty faces, and since
+    three.js builds that shape non-indexed every face kept its own flat normal, so the ground was
+    strewn with faceted crumbs. A riding game's boulders are smooth, rounded and softly shaded. An
+    indexed sphere shares its vertices, so computeVertexNormals gives smooth normals; the lumps are
+    hashed from each vertex's POSITION rather than its index, so the vertices a sphere duplicates
+    along its seam get the same push and the stone stays closed. */
+ const rockGeo=(()=>{
+  const g=new THREE.SphereGeometry(0.5,11,8), pa=g.attributes.position;
+  const hh=(x,y,z)=>{const t=Math.sin(x*12.9898+y*78.233+z*37.719)*43758.5453;return t-Math.floor(t);};
+  for(let i=0;i<pa.count;i++){
+   const x=pa.getX(i),y=pa.getY(i),z=pa.getZ(i);
+   const q=(v)=>Math.round(v*1000)/1000;                    // weld-safe key: seam twins round to the same point
+   const f=0.80+hh(q(x),q(y),q(z))*0.34+0.10*Math.sin(x*6.1+z*4.3);
+   pa.setXYZ(i,x*f*1.06,Math.max(-0.16,y*f*0.66),z*f*0.94);   // squat, with a flattened underside that sits into the ground
+  }
   g.computeVertexNormals(); return g;
  })();
  const nearMat=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:1});
@@ -2994,10 +3014,10 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(pathDist(x,z)<PATH_W*0.55)return false;               // nor on the road
   return true;};
  const CLUT={
-  meadow:{fern:'#b0bca0',rock:'#8c8a82',p:0.85,sz:0.95},
+  meadow:{fern:'#7aa84f',rock:'#a39784',p:0.85,sz:0.95},   // was '#b0bca0'/'#8c8a82': a pale sage that made every bush look dead, and a cold grey stone
   desert:{fern:'#d8bb72',rock:'#a8794a',p:0.80,sz:1.35},   // dry scrub, and plenty of it
   snow  :{fern:'#a4b0a2',rock:'#8e969d',p:0.62,sz:1.05},   // dead tufts showing through the crust
-  water :{fern:'#a4b392',rock:'#7e8a86',p:0.90,sz:1.0},
+  water :{fern:'#86a862',rock:'#8f8a80',p:0.90,sz:1.0},
   amber :{fern:'#c8934a',rock:'#8a7a68',p:0.95,sz:1.05},   // fallen leaf and bracken gone over
   marsh :{fern:'#7f9463',rock:'#6f7a70',p:1.00,sz:1.25},   // rush and sedge, thick with it
   tundra:{fern:'#9aa894',rock:'#8a8f96',p:0.70,sz:0.85},   // lichen and low scrub on thin soil
@@ -3011,9 +3031,9 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const id=slot*NG_K+k, h1=gh(ci*73+k*7,cj*131+k*3), h2=gh(ci*17+k*11,cj*59+k*5), h3=gh(k*13+ci,cj*7+k), h4=gh(k*29+cj,ci*3+k*17);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    if(!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);near.setMatrixAt(id,m4);continue;}
-   const sz=0.7+h3*0.75; e.set(0,h4*Math.PI,(h3-0.5)*0.12); q.setFromEuler(e); sc.set(sz,sz*(0.8+h1*0.5),sz);
+   const sz=0.82+h3*0.36; e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz,sz*(0.9+h1*0.22),sz);   // was 0.7-1.45 and up to 1.3 tall: a few tufts reached 86 cm
    v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc); near.setMatrixAt(id,m4);
-   bcol.setHSL(0.21+h2*0.035,0.42+h3*0.12,0.085+h4*0.065); near.setColorAt(id,bcol);
+   bcol.setHSL(0.248+h2*0.03,0.62+h3*0.10,0.105+h4*0.06); near.setColorAt(id,bcol);   // hue 89-100°, sat .62-.72: the stylised meadow green, not photographic olive
   }
   for(let k=0;k<NG_F;k++){
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
