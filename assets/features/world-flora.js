@@ -495,6 +495,12 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   const tb=BANK.trunk;
   if(tb.n<tb.cap){tb.im.setMatrixAt(tb.n,_m);_col.set(barkCol||BARK[kind]||'#ddd2ba').offsetHSL(0,(rnd()-0.5)*0.10,(rnd()-0.5)*0.22);tb.im.setColorAt(tb.n,_col);tb.n++;}
   if(!noColl){const r=Math.max(0.55,h*0.055);W.colliders.push({x,z,r});addOcc(x,z,r);}
+  /* And onto forestPoints, the list the follow camera reads to keep its eye and its sight line out
+     of the trees. Every copse this package planted had a collider for the horse and was invisible
+     to the camera, which only knew the valley's first trees; that stayed hidden while the eye rode
+     three metres up and put trunks straight across the shot once it came down to eye level. Its
+     crown model is an ~8 m tree at scale 1, so s is the height over eight. */
+  if(!noColl&&h>3&&W.forestPoints)W.forestPoints.push({x,z,s:h/8});
   return true;
  }
  function snag(x,z,h,col){
