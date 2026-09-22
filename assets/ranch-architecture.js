@@ -24,13 +24,18 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     }
     return materials.get(name);
   };
+  /* The siding photo is white-painted weathered board, and untinted it made every barn in the
+     valley a cold grey — the single biggest difference between the ranch you spawn into and the
+     warm timber of the riding game this is modelled on, whose cabins, pavilions and stalls are all
+     natural wood. Multiplying the photo by a honey-oak tint keeps every board line and scuff and
+     turns the paint into stain; the joinery stays white, which is the classic ranch pairing. */
   const siding = material('Ranch | weathered timber siding', {
-    color: '#ffffff', map: map('siding_albedo.jpg', true),
+    color: '#d9a673', map: map('siding_albedo.jpg', true),
     normalMap: map('siding_normal.jpg'), normalScale: new THREE.Vector2(.22,.22),
     roughnessMap: map('siding_roughness.jpg'), roughness: 1, envMapIntensity: .55,
   }, 2.4);
   const roof = material('Ranch | aged cedar shingles', {
-    color: '#ffffff', map: map('roof_albedo.jpg', true),
+    color: '#e6c3a0', map: map('roof_albedo.jpg', true),   // warmed to sit on the timber rather than read as grey slate
     normalMap: map('roof_normal.jpg'), normalScale: new THREE.Vector2(.24,.24),
     roughnessMap: map('roof_roughness.jpg'), roughness: 1, envMapIntensity: .45,
   }, 1.8);
