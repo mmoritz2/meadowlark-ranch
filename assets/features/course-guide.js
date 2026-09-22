@@ -570,6 +570,26 @@ export function install(G){
  /* How far INTO a canopy a point is, in metres, or 0 when it is in the clear. A canopy is
     taken as a disc of radius 2.4*scale whose underside is at 2.0*scale — under that you are
     below the branches looking up through the trunks, which is a fine shot. */
+ /* Is the line from the eye to the horse running through a crown? inCanopy asks only about the eye
+    itself, and only from the crown's base upward — which caught every problem while the eye sat
+    3 m up, and caught nothing once the camera came down to eye level: at 1.6-2.2 m the eye rides
+    among the trunks and low limbs, under the height that test starts looking, and what spoils the
+    shot there is a limb BETWEEN camera and horse rather than foliage round the lens. So sample the
+    sight line itself, against the low part of every crown near it. */
+ function sightBlocked(ex,ey,ez,tx,ty,tz){
+  const m=treeGrid();
+  for(let i=1;i<=5;i++){
+   const f=i/6, x=ex+(tx-ex)*f, y=ey+(ty-ey)*f, z=ez+(tz-ez)*f;
+   const cx=(x/TG.cell)|0, cz=(z/TG.cell)|0;
+   for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){
+    const L=m.get((cx+a)+','+(cz+b)); if(!L)continue;
+    for(const t of L){ const sc=t.s||1, g=W.groundH(t.x,t.z);
+     if(y<g+1.15*sc||y>g+7.5*sc)continue;                       // low limbs down to ~1.2 m, up through the crown
+     if(Math.hypot(x-t.x,z-t.z)<2.1*sc)return true; }
+   }
+  }
+  return false;
+ }
  function inCanopy(x,y,z){
   const m=treeGrid(), cx=(x/TG.cell)|0, cz=(z/TG.cell)|0; let worst=0;
   for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){
@@ -653,14 +673,15 @@ export function install(G){
       is clear. Coming IN rather than going round keeps the three-quarter framing the whole
       point of this rig — a shorter version of the good shot beats a long version of a bad one.
       Six steps at a fifth of the arm each; if the wood never opens, take the closest tried. */
-   if(inCanopy(ex,ey,ez)>0){
+   const hx=player.pos.x, hy=foot+1.4, hz=player.pos.z;                 // her shoulders: what the shot must see
+   if(inCanopy(ex,ey,ez)>0||sightBlocked(ex,ey,ez,hx,hy,hz)){
     let r2=run;
-    for(let k=0;k<6&&r2>2.2;k++){
+    for(let k=0;k<7&&r2>2.2;k++){
      r2*=0.8;
      const nx=player.pos.x-fx*r2, nz=player.pos.z-fz*r2;
      const ny=Math.max(foot+rise*(r2/Math.max(0.001,run)),W.groundH(nx,nz)+1.25);
      ex=nx; ez=nz; ey=ny;
-     if(inCanopy(nx,ny,nz)<=0)break;
+     if(inCanopy(nx,ny,nz)<=0&&!sightBlocked(nx,ny,nz,hx,hy,hz))break;
     }
    }
    _eye.set(ex,ey,ez);
