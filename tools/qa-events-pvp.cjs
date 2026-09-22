@@ -123,13 +123,18 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   out.high=+E.turnoutOf(G.save.fresh(),G.horse.ridden()).total.toFixed(3);
   G.course.startCourse(G.tables.EVENTS3.find(e=>e.id==='s1'));
   c=G.course.get(); out.highTurnout=+c.turnout.toFixed(3);
-  /* ride the pattern: teleport to each letter, halt, hold */
+  /* ride the pattern: at each letter, walk the walk figures and stand still for the halts.
+     This used to teleport onto every letter at speed 0 and wait, which only closed a WALK figure
+     because a figure once closed on proximity alone — the free 10/10 that tickDressage now
+     refuses: a figure wants a metre actually ridden (f.rode) before it will close. So a walk is
+     ridden at a walk, re-asserted each step since she coasts to a halt without input, and a halt
+     is held still, exactly as the pattern asks. */
   window.advanceTime(4200);
   for(let n=0;n<40&&G.course.get();n++){
    const cc=G.course.get(); const f=cc.figs[cc.fi]; if(!f)break;
    const [x,z]=G.course.ARENA_LETTERS[f.at];
-   G.horse.player.pos.set(x,0,z); G.horse.player.speed=0;
-   window.advanceTime((f.hold?f.hold*1000:0)+900);
+   if(f.gait==='halt'){ G.horse.player.pos.set(x,0,z); G.horse.player.speed=0; window.advanceTime((f.hold?f.hold*1000:0)+900); }
+   else{ for(let k=0;k<14&&G.course.get()&&G.course.get().fi===cc.fi;k++){ G.horse.player.pos.set(x,0,z); G.horse.player.speed=1.6; window.advanceTime(80); } }
   }
   await new Promise(r=>setTimeout(r,120));
   out.finished=G.course.get()===null;
