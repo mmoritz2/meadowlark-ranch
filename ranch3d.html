@@ -2529,8 +2529,11 @@ scene.add(rainbow);
 
 /* ================= night sky: stars, moon, fireflies, lit windows ================= */
 const C_SUN_HIGH=new THREE.Color('#fff0d2'),C_SUN_LOW=new THREE.Color('#ff9a4e'),C_MOON=new THREE.Color('#b9cdf2');
-const C_HEMI_DAY=new THREE.Color(0xc6d9ed),C_HEMI_NIGHT=new THREE.Color(0x65789c);
-const C_GROUND_DAY=new THREE.Color(0x898467),C_GROUND_NIGHT=new THREE.Color(0x39443e);
+/* Day sky fill was a cool blue (#c6d9ed). Once the fill was raised to give the soft shade of the
+   riding-game look, that blue cast the whole meadow cold (warmth R-B fell from +.10 to +.05
+   against the reference's +.11). A warmer, paler sky lifts the shade without cooling it. */
+const C_HEMI_DAY=new THREE.Color(0xe2e6dc),C_HEMI_NIGHT=new THREE.Color(0x65789c);
+const C_GROUND_DAY=new THREE.Color(0x8c9160),C_GROUND_NIGHT=new THREE.Color(0x39443e);   // bounce off the meadow: greener, as the ground now is
 const C_FOG_DAY=new THREE.Color(0xc2dce9),C_FOG_GOLD=new THREE.Color(0xd9bfa4),C_FOG_NIGHT=new THREE.Color(0x141c2e);
 const _fogCol=new THREE.Color(),_moonDir=new THREE.Vector3();
 /* Declared up here, not beside nameSprite(): the function is hoisted and called long
@@ -2677,11 +2680,16 @@ const grassLoad=rep=>texLoad('assets/textures/pastoral/meadow_albedo.jpg',rep);
 const groundTex=grassLoad(240);
 const sandTex=texLoad('assets/textures/pastoral/arena_albedo.jpg',10);   // generated tile, same repeat and wrap as the canvas it replaces
 // Tapered blades with curved tips; silhouettes stay soft at riding distance.
+/* The far meadow's blade card. Blades were 1.2-2.5% of the card wide and up to 98% of its height
+   — needles, which at distance read as a grey-green haze of spikes. A stylised riding game's
+   meadow reads as clumps: short, broad, leaf-shaped blades fanning out of one root. So: wider
+   (4.5-7%), shorter (30-68%), rooted near the middle and leaning outward from it, so each card
+   is a tuft rather than a scatter. The blade drawing and its colour ramp are unchanged. */
 function meadowBladeTexture(size,count){return canvasTex(size,size,(c,w,h)=>{
  c.clearRect(0,0,w,h);
  for(let i=0;i<count;i++){
-  const x=w*(0.12+Math.random()*0.76),tall=h*(0.38+Math.random()*0.60);
-  const lean=(Math.random()-0.5)*w*0.46,bw=w*(0.012+Math.random()*0.013);
+  const x=w*(0.30+Math.random()*0.40),tall=h*(0.30+Math.random()*0.38);
+  const lean=(x/w-0.5)*w*0.9+(Math.random()-0.5)*w*0.18,bw=w*(0.045+Math.random()*0.025);
   const tipX=x+lean,tipY=h-tall;
   const g=c.createLinearGradient(0,h,0,tipY);
   g.addColorStop(0,'#315b28');g.addColorStop(0.50,'#699342');
@@ -2692,8 +2700,29 @@ function meadowBladeTexture(size,count){return canvasTex(size,size,(c,w,h)=>{
   c.closePath();c.fill();
  }
 });}
-const grassBladeTex=meadowBladeTexture(256,9);
+const grassBladeTex=meadowBladeTexture(256,11);
 const grassBladeTex2=meadowBladeTexture(256,12);
+/* A drift of lupins: three spikes on one root, each a tapering column of small pea flowers over
+   a fan of palmate leaves. Drawn white-to-pale so the instance colour tints each clump violet,
+   blue or pink, the way a real stand of them runs. */
+const lupinTex=canvasTex(128,256,(c,w,h)=>{
+ c.clearRect(0,0,w,h);
+ const leaf=(cx,cy,r)=>{ for(let k=0;k<7;k++){const a=-Math.PI*0.95+k*Math.PI*0.95/6*2; c.fillStyle='#4f8a3a';
+   c.beginPath(); c.ellipse(cx+Math.cos(a)*r*0.55,cy+Math.sin(a)*r*0.32,r*0.5,r*0.14,a,0,Math.PI*2); c.fill();} };
+ leaf(46,h-18,34); leaf(84,h-22,30); leaf(64,h-10,30);
+ const spike=(x0,top,lean)=>{
+  c.strokeStyle='#4a7d34'; c.lineWidth=5; c.lineCap='round';
+  c.beginPath(); c.moveTo(x0,h-14); c.quadraticCurveTo(x0+lean*0.3,(h+top)/2,x0+lean,top+10); c.stroke();
+  const n=15;
+  for(let i=0;i<n;i++){                                   // pea flowers, wide at the foot and tapering to the tip
+   const t=i/(n-1), y=(h-78)+(top-(h-78))*t, x=x0+lean*(0.35+0.65*t), r=13*(1-t*0.72);
+   for(const sd of[-1,1]){ c.fillStyle=i%2?'#f4f0fb':'#ffffff';
+    c.beginPath(); c.ellipse(x+sd*r*0.55,y,r*0.62,r*0.46,0,0,Math.PI*2); c.fill(); }
+   c.fillStyle='rgba(120,100,160,0.28)'; c.beginPath(); c.ellipse(x,y+r*0.25,r*0.5,r*0.22,0,0,Math.PI*2); c.fill();
+  }
+ };
+ spike(40,30,-6); spike(66,14,4); spike(92,40,10);
+});
 const flowerTex=canvasTex(128,128,(c,w,h)=>{   // a small cluster: three heads on stems, tinted per instance
  c.clearRect(0,0,w,h);
  const heads=[[34,44],[64,30],[92,50]];
@@ -2868,7 +2897,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   blades.setMatrixAt(placed,m4);
   /* was hue .24-.30 / sat .38-.60 / lum .50-.72 — a bright, uniform, cartoon green.
      Real grass sits yellower, much less saturated, and varies blade to blade. */
-  bcol.setHSL(0.255+Math.random()*0.03,0.50+Math.random()*0.14,0.60+Math.random()*0.12);   // matches the near carpet: saturated true green
+  bcol.setHSL(0.255+Math.random()*0.03,0.40+Math.random()*0.12,0.66+Math.random()*0.12);   // matches the near carpet
   blades.setColorAt(placed,bcol);
   placed++;
  }
@@ -2975,13 +3004,16 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const reedMat=new THREE.MeshStandardMaterial({map:reedTex,alphaTest:0.42,side:THREE.DoubleSide,roughness:0.92});
  reedMat.envMapIntensity=0.5; windy(reedMat,0.26);
  const rockMat=new THREE.MeshStandardMaterial({roughness:0.95,metalness:0});
- const NG_FR=quality==='low'?2:4, NG_RK=quality==='low'?2:3, NG_RD=2;
+ const NG_FR=quality==='low'?2:4, NG_RK=quality==='low'?2:3, NG_RD=2, NG_LU=quality==='low'?5:10;
  const near=new THREE.InstancedMesh(createGrassTuftGeometry(THREE),nearMat,NG_W*NG_W*NG_K);
  const flow=new THREE.InstancedMesh(crossGeo(0.24,0.40),flMat,NG_W*NG_W*NG_F);
  const fern=new THREE.InstancedMesh(crossGeo(0.46,0.62),fernMat,NG_W*NG_W*NG_FR);
  const reed=new THREE.InstancedMesh(crossGeo(0.30,1.15),reedMat,NG_W*NG_W*NG_RD);
  const rock=new THREE.InstancedMesh(rockGeo,rockMat,NG_W*NG_W*NG_RK);
- for(const im of[near,flow,fern,reed,rock]){im.frustumCulled=false;im.receiveShadow=true;im.castShadow=false;scene.add(im);}
+ const luMat=new THREE.MeshStandardMaterial({map:lupinTex,alphaTest:0.45,side:THREE.DoubleSide,roughness:0.95});
+ luMat.envMapIntensity=0.6; windy(luMat,0.14);
+ const lupin=new THREE.InstancedMesh(crossGeo(0.34,1.0),luMat,NG_W*NG_W*NG_LU);
+ for(const im of[near,flow,fern,reed,rock,lupin]){im.frustumCulled=false;im.receiveShadow=true;im.castShadow=false;scene.add(im);}
  rock.castShadow=quality==='high';
  const okGrass=(x,z)=>{
   if(Math.abs(x)>470||Math.abs(z)>470)return false;
@@ -3033,7 +3065,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    if(!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);near.setMatrixAt(id,m4);continue;}
    const sz=0.82+h3*0.36; e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz,sz*(0.9+h1*0.22),sz);   // was 0.7-1.45 and up to 1.3 tall: a few tufts reached 86 cm
    v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc); near.setMatrixAt(id,m4);
-   bcol.setHSL(0.248+h2*0.03,0.62+h3*0.10,0.105+h4*0.06); near.setColorAt(id,bcol);   // hue 89-100°, sat .62-.72: the stylised meadow green, not photographic olive
+   bcol.setHSL(0.250+h2*0.03,0.47+h3*0.10,0.128+h4*0.06); near.setColorAt(id,bcol);   // hue 90-101°, sat .47-.57: matched by measurement to the reference's grass (lum .40, sat .58)
   }
   for(let k=0;k<NG_F;k++){
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
@@ -3045,6 +3077,18 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    flow.setColorAt(id,FLC[Math.floor(h1*FLC.length)%FLC.length]);
   }
   const hide=(im,id)=>{sc.set(0,0,0);m4.compose(v.set(0,-40,0),q.identity(),sc);im.setMatrixAt(id,m4);};
+  /* Lupins grow in drifts. A cell is in a drift when a coarse, 4-cell-wide hash field is high,
+     and inside one the clumps pack toward the drift's heart; everywhere else there are none. */
+  { const drift=(gh(Math.floor(ci/4)*7+3,Math.floor(cj/4)*11+5)*0.6+gh(ci*5+1,cj*3+2)*0.4);
+   for(let k=0;k<NG_LU;k++){
+    const id=slot*NG_LU+k, h1=gh(ci*67+k*29,cj*43+k*13), h2=gh(ci*31+k*17,cj*83+k*41), h3=gh(k*59+ci*7,cj*19+k*23);
+    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
+    if(drift<0.62||h3>(drift-0.62)*3.2||biomeAt(x,z)!=='meadow'||!okClutter(x,z)){hide(lupin,id);continue;}
+    const sz=0.75+h3*0.55; e.set(0,h2*Math.PI,(h1-0.5)*0.08); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.35),sz);
+    v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc); lupin.setMatrixAt(id,m4);
+    bcol.setHSL(0.72+h1*0.08,0.52+h2*0.22,0.55+h3*0.12); lupin.setColorAt(id,bcol);   // violet through blue-violet, a few paler
+   }
+  }
   for(let k=0;k<NG_FR;k++){                                  // ferns, scrub, dry brush, snow tufts
    const id=slot*NG_FR+k, h1=gh(ci*53+k*13,cj*89+k*17), h2=gh(ci*23+k*37,cj*71+k*19), h3=gh(k*47+ci*3,cj*29+k*11);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
@@ -3084,7 +3128,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    fillCell(ci,cj,((ci%NG_W)+NG_W)%NG_W+NG_W*(((cj%NG_W)+NG_W)%NG_W));
   }
   cx0=ci0;cz0=cj0;
-  for(const im of[near,flow,fern,reed,rock]){im.instanceMatrix.needsUpdate=true; if(im.instanceColor)im.instanceColor.needsUpdate=true;}
+  for(const im of[near,flow,fern,reed,rock,lupin]){im.instanceMatrix.needsUpdate=true; if(im.instanceColor)im.instanceColor.needsUpdate=true;}
  };
  nearGrass={near,flow,fern,reed,rock,tick:(t,px,pz)=>{nearU.uTime.value=t;nearU.uPlayer.value.set(px,0,pz);update(px,pz);},
   setVR:on=>{near.count=on?Math.floor(NG_W*NG_W*NG_K*0.5):NG_W*NG_W*NG_K;}};
@@ -13564,7 +13608,11 @@ function tick(stepSeconds){
  const keyT=(weather.mode==='rain'?1.3:2.65)*dayF+0.88*nightNow
   +(weather.mode==='rain'?0.15:0.55)*golden;   // ember punch at the horizon hours
  sun.intensity+=(keyT-sun.intensity)*Math.min(1,dt*1.5);
- const hemiT=THREE.MathUtils.lerp(0.82,weather.mode==='rain'?1.05:1.24,dayF);
+ /* Daytime sky fill 1.24 -> 1.62. Measured against the riding game this is modelled on, our meadow
+    sat ~20% darker (luminance .33 vs .43) and its shade fell off deeper. Exposure would lift the
+    highlights as much as the shadows; fill lifts the shade most, which is the soft, low-contrast
+    light that look is made of. Night keeps its 0.82. */
+ const hemiT=THREE.MathUtils.lerp(0.82,weather.mode==='rain'?1.30:1.62,dayF);
  hemi.intensity+=(hemiT-hemi.intensity)*Math.min(1,dt*1.5);
  hemi.color.copy(C_HEMI_NIGHT).lerp(C_HEMI_DAY,dayF);
  hemi.groundColor.copy(C_GROUND_NIGHT).lerp(C_GROUND_DAY,dayF);

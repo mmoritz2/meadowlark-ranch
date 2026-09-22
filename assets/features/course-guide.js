@@ -445,10 +445,10 @@ export function install(G){
 
  const CAM={
   /* the rig at a halt, and how far each number travels by a flat gallop */
-  dist:7.0,   distSp:0.9,                                // metres along the slant from horse to eye (was 8.3: the horse was a small thing in a big field)
-  pitch:0.40, pitchSp:-0.12,                             // radians above the horizon; flatter at speed
+  dist:5.4,   distSp:0.8,                                // metres along the slant from horse to eye. 8.3 made the horse a small thing in a big field; laid beside the reference she needed to be ~1.35x larger again
+  pitch:0.30, pitchSp:-0.08,                             // radians above the horizon; flatter at speed (was 0.40: looked down on her, and horizon-high like the reference is 0.30)
   off:0.16,   offSp:-0.04,                               // RADIANS round the horse, not metres — see below
-  lookY:1.62, lookYSp:0.34,                              // aim this far above her feet — puts her low in frame
+  lookY:1.70, lookYSp:0.30,                              // aim this far above her feet — puts her low in frame
   LOOK_MIN:1.18,                                         // and this far when a wall has squeezed the shot in
   lead:3.20,  leadSp:4.20,                               // and this far along where she is actually going
   fov:52,     fovSp:5.5,

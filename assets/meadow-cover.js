@@ -12,7 +12,7 @@ export function createGrassTuftGeometry(THREE) {
         const w=width*(1-t)*side;
         P.push(centerX-sa*w,h*t,centerZ+ca*w);
         N.push(ca*.30,.955,sa*.30);
-        const shade=.46+t*.54;C.push(shade*.98,shade,shade*.80+.03*t);U.push((side+1)/2,t);   // darker at the root, a warm bright tip
+        const shade=.58+t*.42;C.push(shade*.98,shade,shade*.86+.03*t);U.push((side+1)/2,t);   // a softer root: the reference's darkest grass sits at .29, ours had fallen to .22
       }
       if(row<3){const k=base+row*2;I.push(k,k+1,k+2,k+1,k+3,k+2);}
     }
