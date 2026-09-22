@@ -405,17 +405,36 @@ export function install(G){
   {const nm=fresh().story.name; if(nm)setFoalName(nm);}
  }
  function removeFoal(){if(!foal)return;try{G.scene.remove(foal.group);}catch(e){}foal=null;}
- function tickFoal(dt){
+ /* On screen she is the valley's own dapple grey, on the rig every other horse wears. The procedural
+    body above is only the stand-in for the second or so before the rig has loaded: beside a rigged
+    bay it read as a pale blue llama, a tube for a neck and a bead for a head, in the one yard every
+    new player starts in. Not the rig's moonlit coat: that is the night-blue, star-flecked mythic the
+    Silver Kestrel is two summers on, and on a half-drowned yearling it read as a glowing midnight
+    horse. A grey filly looks like a grey. The grey breed's own colours are passed so its authored
+    coat is used as it is, not repainted. Dressed from the tick because at spawn the rig is usually
+    still loading; dressWithRig does nothing until it can, and nothing once it has. */
+ function rigFoal(dt,t,sp){
+  if(!foal||!H.dressWithRig||!G.anim)return;
+  if(!foal.rig)H.dressWithRig(foal,foal.parts,{body:'#b9bec6',mane:'#787f8a'},{breed:'grey',seed:11});
+  if(!foal.rig)return;
+  /* A yearling, not a grown mare. dressWithRig sizes every horse to its breed's withers, and when
+     the model is still downloading it finishes the job from its own callback, after this call has
+     returned, so she is sized the first time she is seen with a rig, not straight after asking. */
+  if(!foal.sized){const w=foal.rig.profile&&foal.rig.profile.withersM;if(w)foal.group.scale.setScalar(w/1.45*0.78);foal.sized=true;}
+  G.anim.tickRig(foal,sp,dt,t,0);
+ }
+ function tickFoal(dt,t){
   if(!foal)return; const p=H.player; const i=idx();
-  if(foal.bolt>0){foal.bolt-=dt;const sp=11;foal.x+=Math.sin(foal.heading)*sp*dt;foal.z+=Math.cos(foal.heading)*sp*dt;foal.phase+=dt*14;foal.group.position.set(foal.x,W.groundH(foal.x,foal.z)+Math.abs(Math.sin(foal.phase))*0.12,foal.z);foal.group.rotation.y=foal.heading;if(foal.bolt<=0)removeFoal();return;}
-  if(i>PRO_N-4)return;   // she only follows in the first two beats
+  if(foal.bolt>0){foal.bolt-=dt;const sp=11;foal.x+=Math.sin(foal.heading)*sp*dt;foal.z+=Math.cos(foal.heading)*sp*dt;foal.phase+=dt*14;foal.group.position.set(foal.x,W.groundH(foal.x,foal.z)+(foal.rig?0:Math.abs(Math.sin(foal.phase))*0.12),foal.z);foal.group.rotation.y=foal.heading;rigFoal(dt,t,sp);if(foal&&foal.bolt<=0)removeFoal();return;}
+  if(i>PRO_N-4){rigFoal(dt,t,0);return;}   // she only follows in the first two beats
   const tx=p.pos.x-Math.sin(p.heading)*2.6+Math.cos(p.heading)*1.6, tz=p.pos.z-Math.cos(p.heading)*2.6-Math.sin(p.heading)*1.6;
-  const dx=tx-foal.x,dz=tz-foal.z,d=Math.hypot(dx,dz);
+  const dx=tx-foal.x,dz=tz-foal.z,d=Math.hypot(dx,dz); let mv=0;
   if(d>90){foal.x=tx;foal.z=tz;}
-  else if(d>1.2){const want=Math.atan2(dx,dz);let dh=want-foal.heading;while(dh>Math.PI)dh-=Math.PI*2;while(dh<-Math.PI)dh+=Math.PI*2;foal.heading+=dh*Math.min(1,dt*4);const sp=Math.min(12,1.5+d*1.4);foal.x+=Math.sin(foal.heading)*sp*dt;foal.z+=Math.cos(foal.heading)*sp*dt;foal.phase+=dt*(sp>6?12:7);}
-  const bob=d>1.2?Math.abs(Math.sin(foal.phase))*0.09:0;
+  else if(d>1.2){const want=Math.atan2(dx,dz);let dh=want-foal.heading;while(dh>Math.PI)dh-=Math.PI*2;while(dh<-Math.PI)dh+=Math.PI*2;foal.heading+=dh*Math.min(1,dt*4);const sp=Math.min(12,1.5+d*1.4);foal.x+=Math.sin(foal.heading)*sp*dt;foal.z+=Math.cos(foal.heading)*sp*dt;foal.phase+=dt*(sp>6?12:7);mv=sp;}
+  const bob=d>1.2&&!foal.rig?Math.abs(Math.sin(foal.phase))*0.09:0;
   foal.group.position.set(foal.x,W.groundH(foal.x,foal.z)+bob,foal.z); foal.group.rotation.y=foal.heading;
   if(foal.parts.legs)foal.parts.legs.forEach((l,k)=>{if(l&&l.rotation)l.rotation.x=(d>1.2?Math.sin(foal.phase+k*Math.PI/2)*0.5:0);});
+  rigFoal(dt,t,mv);
  }
  /* The storm: an overlay the tick drives with dt, so a headless advanceTime plays it too. */
  const cine={on:false,t:0,step:-1};
@@ -628,7 +647,7 @@ export function install(G){
  /* ---------- per frame ---------- */
  let pillTxt='', pillT=0, pillSig='', visitT=0;
  G.on('tick',(dt,t)=>{
-  tickFoal(dt); tickCine(dt);
+  tickFoal(dt,t); tickCine(dt);
   const m=cur(); const i=idx();
   if(m&&m.type==='cine'&&prog()<m.goal&&!cine.on&&fresh().story.era!==2)startCine();
   pillT+=dt; const sig=i+':'+prog()+':'+STORY.length; if(pillT>0.25||!pillTxt||sig!==pillSig){pillT=0;pillSig=sig;

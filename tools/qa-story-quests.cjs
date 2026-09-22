@@ -56,6 +56,20 @@ const run=(page,code)=>page.evaluate('(()=>{'+H+code+'})()');
 
  /* ================= 1. a brand-new save: the prologue ================= */
  await boot(page,'fresh');
+ /* The foal is dressed on the rig from the tick, once the grey's breed model has loaded, so this
+    waits on real frames for it (five seconds at most) instead of reading her in the same instant
+    she was spawned, and before r1 below plays the prologue through to the storm that takes her
+    away. What it asserts is what the player sees: a skinned body in the grey breed, and
+    not one visible piece left of the procedural stand-in, which is the part wearing the moonlit
+    emissive. */
+ const r1rig=await page.evaluate(async()=>{
+  const SQ=window.__features.storyQuests;
+  for(let i=0;i<300&&SQ.foal()&&!(SQ.foal().rig&&SQ.foal().sized);i++)await new Promise(r=>requestAnimationFrame(r));
+  const f=SQ.foal(); if(!f)return {foal:false};
+  let skinned=0,standIn=0; f.parts.group.traverse(o=>{if(!o.isMesh||!o.visible)return; if(o.isSkinnedMesh)skinned++;
+   if(o.material&&o.material.emissive&&o.material.emissive.getHexString()==='9fb4dc')standIn++;});
+  return {foal:true,rig:!!f.rig,breed:f.rig&&f.rig.profile&&f.rig.profile.id,skinned,standInVisible:standIn,scale:+f.group.scale.x.toFixed(3)};
+ });
  const r1=await run(page,`
   const out={};
   out.installed=G.installed.includes('story-quests'); out.errors=G.errors.slice(); out.hasSQ=!!SQ;
@@ -137,7 +151,8 @@ const run=(page,code)=>page.evaluate('(()=>{'+H+code+'})()');
  check('story arc: >=55 missions available, >=60 with the scheduled book, two tracks',r1.storyLen>=55&&r1.booksTotal>=60&&r1.badTypes.length===0&&r1.badNpc.length===0,{len:r1.storyLen,total:r1.booksTotal,tracks:r1.tracks,badTypes:r1.badTypes,badNpc:r1.badNpc,types:r1.types});
  check('NPC roster: 12 people, 3 with roles, Mia and Theo talkable',r1.npcs&&r1.npcs.n>=12&&r1.npcs.roles>=3&&r1.npcs.riders===2,r1.npcs);
  check('story foal and the old stall are in the world',r1.foal&&r1.stall);
- check('the foal wears the moonlit coat; the Kestrel row carries coat + glow',r1.foalCoat==='9fb4dc'&&r1.kestrelRow&&r1.kestrelRow.coat==='moonlit'&&r1.kestrelRow.glow===true&&r1.kestrelRow.story===true,{foal:r1.foalCoat,row:r1.kestrelRow});
+ check('the foal\'s procedural stand-in wears the moonlit coat; the Kestrel row carries coat + glow',r1.foalCoat==='9fb4dc'&&r1.kestrelRow&&r1.kestrelRow.coat==='moonlit'&&r1.kestrelRow.glow===true&&r1.kestrelRow.story===true,{foal:r1.foalCoat,row:r1.kestrelRow});
+ check('on screen the foal is the rigged dapple grey at a yearling\'s size, and none of the procedural stand-in shows',r1rig.rig&&r1rig.breed==='grey'&&r1rig.skinned>=1&&r1rig.standInVisible===0&&r1rig.scale<1,r1rig);
  check('mission 0 opens the naming dialogue at Wren',r1.talk0&&r1.nameIn,r1.dlg0);
  check('naming writes s.story.name and completes the mission; the pill says so; focus is released',r1.named&&r1.named.name==='Snowfall'&&r1.named.prog===1&&/✅/.test(r1.named.pill)&&r1.named.active!=='INPUT',r1.named);
  check('claim pays the bundle label (50🪙 + 3 🥕) and advances',r1.claim0&&r1.after0.idx===1&&r1.after0.coins===50&&r1.after0.carrot===3&&r1.after0.named===1,{after:r1.after0,txt:r1.claim0Txt});
