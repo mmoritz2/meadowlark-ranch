@@ -126,6 +126,12 @@ export function install(G){
     }
     return A;
    },
+   /* The same, with a normal and a colour for every corner instead of one per face: for a surface
+      that has to read as ground rather than as folded card. */
+   trisV(a,ns,cs){
+    for(let i=0;i<a.length;i++){pos.push(a[i]);nor.push(ns[i]);col.push(cs[i]);}
+    return A;
+   },
    /* Ground worn bare by hooves. It has to follow groundH: over ten metres of even this
       gentle terrain a flat disc sinks at one edge and floats at the other. The rim is
       jittered because a perfect circle of dirt reads as a decal rather than as a place
@@ -492,24 +498,44 @@ export function install(G){
    return [wx,groundH(wx,wz)+Math.max(0,lift),wz];
   };
   const A=Acc(5501,SCARP.x,y0,SCARP.z);
-  const NU=64,NV=22,turf=new THREE.Color('#6a7a4a'),bareC=new THREE.Color('#d8d2bd'),cc=new THREE.Color();
+  const NU=96,NV=40,turf=new THREE.Color('#6a7a4a'),bareC=new THREE.Color('#d8d2bd'),cc=new THREE.Color();
   const loc=p=>[p[0]-SCARP.x,p[1]-y0,p[2]-SCARP.z];
-  /* (u,v) is orientation-preserving whatever the bearing, so clockwise in parameter space is
-     the face you see. Get this the wrong way round and the whole bluff is invisible. */
-  for(let j=0;j<NV;j++)for(let i=0;i<NU;i++){
-   const u0=(i/NU-0.5)*SCARP.len*1.02,u1=((i+1)/NU-0.5)*SCARP.len*1.02,t0=j/NV,t1=(j+1)/NV;
-   const p00=loc(surf(u0,t0)),p10=loc(surf(u1,t0)),p01=loc(surf(u0,t1)),p11=loc(surf(u1,t1));
+  /* Shaded smooth, from a normal at every corner of the grid. Flat-shaded, every one of the four
+     thousand facets caught the sun at its own angle and the down came out as a low-poly model of
+     a hill — a mosaic of pale and dark triangles that no grass slope in the valley around it
+     looked anything like. The grid is finer than the first one for the same reason: the gullies
+     down the face run seven to a band, and twenty-two rows could not draw them, only alias them. */
+  const GP=[],GN=[],GC=[],gp=(i,j)=>GP[j*(NU+1)+i];
+  for(let j=0;j<=NV;j++)for(let i=0;i<=NU;i++){
+   const u=(i/NU-0.5)*SCARP.len*1.02,t=j/NV,v=(t-0.5)*SCARP.depth;
+   GP.push(loc(surf(u,t)));
    /* Turf, the whole way up, and nothing else. Two goes at scattering chalk scars over the
       face ended as horizontal stripes and then as a white hill with green patches, and both
       of them buried the only white thing here that is supposed to mean anything. Uffington
       works because the down is green: the figure is the only chalk showing. The variation is
-      just sun-bleached grass on the steep ground. */
-   const bleach=smooth(0.06,0.34,t0)*smooth(SCARP.crest+0.16,SCARP.crest*0.7,t0);
-   cc.copy(turf).lerp(bareC,clamp(bleach*0.20+ridged(u0*0.10+3,t0*24)*0.10,0,1))
-    .multiplyScalar(0.88+ridged(u0*0.16,t0*31)*0.20);
-   const hx='#'+cc.getHexString();
-   A.tris([p00[0],p00[1],p00[2],p11[0],p11[1],p11[2],p10[0],p10[1],p10[2]],hx,1);
-   A.tris([p00[0],p00[1],p00[2],p01[0],p01[1],p01[2],p11[0],p11[1],p11[2]],hx,1);
+      just sun-bleached grass on the steep ground, in metres both ways so that it drifts in
+      patches rather than running along the rows of the grid. */
+   const bleach=smooth(0.06,0.34,t)*smooth(SCARP.crest+0.16,SCARP.crest*0.7,t);
+   const drift=fbm(u*0.045+21,v*0.045-4),fine=fbm(u*0.17+5,v*0.17+9);
+   cc.copy(turf).lerp(bareC,clamp(bleach*0.18+(drift-0.5)*0.12,0,1))
+    .multiplyScalar(0.92+(fine-0.5)*0.18+(drift-0.5)*0.10);
+   GC.push([cc.r,cc.g,cc.b]);
+  }
+  for(let j=0;j<=NV;j++)for(let i=0;i<=NU;i++){
+   const a=gp(Math.max(0,i-1),j),b=gp(Math.min(NU,i+1),j),c=gp(i,Math.max(0,j-1)),d=gp(i,Math.min(NV,j+1));
+   const ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2],vx=d[0]-c[0],vy=d[1]-c[1],vz=d[2]-c[2];
+   let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;
+   const l=Math.hypot(nx,ny,nz)||1,sg=ny<0?-1:1;             // a heightfield: up is always out
+   GN.push([nx/l*sg,ny/l*sg,nz/l*sg]);
+  }
+  /* (u,v) is orientation-preserving whatever the bearing, so clockwise in parameter space is
+     the face you see. Get this the wrong way round and the whole bluff is invisible. */
+  const corner=(q,i,j)=>{const k=j*(NU+1)+i;q[0].push(...GP[k]);q[1].push(...GN[k]);q[2].push(...GC[k]);};
+  for(let j=0;j<NV;j++)for(let i=0;i<NU;i++){
+   const q=[[],[],[]];
+   corner(q,i,j);corner(q,i+1,j+1);corner(q,i+1,j);
+   corner(q,i,j);corner(q,i,j+1);corner(q,i+1,j+1);
+   A.trisV(q[0],q[1],q[2]);
   }
   /* The mare, in convex pieces fanned from their first point. An outline would want a
      triangulator, and a triangulator that gives up leaves a blank hillside; a fan cannot fail.
@@ -557,15 +583,28 @@ export function install(G){
      and the tail anticlockwise, so five of the nine pieces came out back-facing and were
      culled — which left a white shape on the hillside that was, unmistakably, a swan. */
   const area=p=>{let a=0;for(let i=0;i<p.length;i++){const q=p[(i+1)%p.length];a+=p[i][0]*q[1]-q[0]*p[i][1];}return a;};
+  /* Each fan triangle is cut into sixteen and every corner is pegged to the hill, so the chalk
+     drapes over the relief instead of spanning it. A flat triangle two metres across sat on the
+     crowns of the bumps and let the hollows show through as green holes in her barrel as soon
+     as the down was drawn fine enough to have hollows; laid through the same points it follows
+     the ground at a hand's depth everywhere. */
+  const chalk=new THREE.Color(CHALK),SUB=4,pegs=new Map();
+  const peg=(fx,fy)=>{const key=fx.toFixed(3)+','+fy.toFixed(3);let q=pegs.get(key);
+   if(!q){const u=U0+fx*SCALE,t=tAtHeight(u,H0+fy*VS),p=loc(surf(u,t)),n=nrm(u,t);
+    q=[p[0]+n[0]*0.36,p[1]+n[1]*0.36,p[2]+n[2]*0.36,n[0],n[1],n[2]];pegs.set(key,q);}
+   return q;};
   for(const raw of FIG){
    const poly=area(raw)>0?raw.slice().reverse():raw;
-   const pts=poly.map(([fx,fy])=>{
-    const u=U0+fx*SCALE,t=tAtHeight(u,H0+fy*VS);
-    const p=loc(surf(u,t)),n=nrm(u,t);
-    return [p[0]+n[0]*0.36,p[1]+n[1]*0.36,p[2]+n[2]*0.36];
-   });
-   for(let i=1;i<pts.length-1;i++)
-    A.tris([pts[0][0],pts[0][1],pts[0][2],pts[i][0],pts[i][1],pts[i][2],pts[i+1][0],pts[i+1][1],pts[i+1][2]],CHALK,1);
+   for(let i=1;i<poly.length-1;i++){
+    const [a0,a1]=poly[0],[b0,b1]=poly[i],[c0,c1]=poly[i+1],ps=[],ns=[],cs=[];
+    const V=(a,b)=>peg(a0+(b0-a0)*a/SUB+(c0-a0)*b/SUB,a1+(b1-a1)*a/SUB+(c1-a1)*b/SUB);
+    const tri=(p,q,r)=>{for(const v of [p,q,r]){ps.push(v[0],v[1],v[2]);ns.push(v[3],v[4],v[5]);cs.push(chalk.r,chalk.g,chalk.b);}};
+    for(let a=0;a<SUB;a++)for(let b=0;a+b<SUB;b++){
+     tri(V(a,b),V(a+1,b),V(a,b+1));
+     if(a+b<SUB-1)tri(V(a+1,b),V(a+1,b+1),V(a,b+1));
+    }
+    A.trisV(ps,ns,cs);
+   }
   }
   /* Chalk spoil where the cutting goes over the lip, and a scatter of it fallen to the toe. */
   for(let k=0;k<16;k++){const u=A.rr(-30,30),t=A.rr(0.02,0.07);
