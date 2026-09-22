@@ -83,7 +83,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   G.ui.onlineSection(()=>'<div id="qaOnline">online</div>');
   G.ui.open('qaPanel');
   const panel=document.getElementById('qaPanel');
-  out.panel={exists:!!panel,cls:panel&&panel.className,shown:panel&&panel.style.display,text:panel&&panel.textContent.slice(0,40),btn:!!document.getElementById('qaBtn'),btnParent:document.getElementById('qaBtn')&&document.getElementById('qaBtn').parentNode.id,prev:document.getElementById('qaBtn')&&document.getElementById('qaBtn').previousElementSibling.id,pip:document.getElementById('qaBtn')&&(document.getElementById('qaBtn').querySelector('.pip')||{}).textContent,vrTab:G.ui.TABS.some(t=>t[0]==='qa')};
+  out.panel={exists:!!panel,cls:panel&&panel.className,shown:panel&&panel.style.display,text:panel&&panel.textContent.slice(0,40),btn:!!document.getElementById('qaBtn'),btnParent:document.getElementById('qaBtn')&&document.getElementById('qaBtn').parentNode.id,prev:document.getElementById('qaBtn')&&document.getElementById('qaBtn').previousElementSibling.id,pip:document.getElementById('qaBtn')&&(document.getElementById('qaBtn').querySelector('.pip')||{}).textContent,vrTab:G.ui.TABS.some(t=>t[0]==='qa'),seHud:document.body.classList.contains('se-hud')};
   panel.querySelector('[data-fx="qa:go:7"]').click();
   out.acted=acted;
   panel.querySelector('[data-fx="close"]').click();
@@ -142,7 +142,11 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('BREED_CEIL overrides statCeil',r.ceilOverride===4,r.ceilOverride);
  check('grantHorse + makeFoal fire hooks',r.grant&&r.grant.n1===r.grant.n0+2&&r.grant.gh===1&&r.grant.fl===1&&r.grant.foalIsFoal,r.grant);
  check('Kestrel is story-only (no shop/market/summon leak)',r.kestrel&&r.kestrel.src==='story'&&!r.kestrel.shop&&!r.kestrel.summon&&!r.kestrel.market&&r.bayShop,r.kestrel);
- check('G.ui.panel creates panel + dock button after questBtn + pip + VR tab',r.panel&&r.panel.exists&&r.panel.cls==='fpanel'&&r.panel.shown==='flex'&&r.panel.btn&&r.panel.btnParent==='dock'&&r.panel.prev==='questBtn'&&r.panel.pip==='3'&&r.panel.vrTab,r.panel);
+ /* "after questBtn" is an order along the old bottom bar. se-hud replaces that bar: questBtn becomes
+    a hexagon and every other dock button is taken into the ☰ menu, so under it the button's
+    home is the dock (until the next sync picks it up) or the menu — not a slot beside questBtn. */
+ check('G.ui.panel creates panel + dock button after questBtn + pip + VR tab',r.panel&&r.panel.exists&&r.panel.cls==='fpanel'&&r.panel.shown==='flex'&&r.panel.btn
+  &&(r.panel.seHud?['dock','seTiles'].includes(r.panel.btnParent):(r.panel.btnParent==='dock'&&r.panel.prev==='questBtn'))&&r.panel.pip==='3'&&r.panel.vrTab,r.panel);
  check('data-fx dispatch',r.acted&&r.acted[0]==='go'&&r.acted[1]==='7',r.acted);
  check('close action',r.closed==='none',r.closed);
  check('care section spliced',r.careSect);

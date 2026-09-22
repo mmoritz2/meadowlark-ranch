@@ -192,7 +192,8 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('news letter claim pays 150🪙 3💎 (×gemMul) once',r.newsClaim.dc===150&&r.newsClaim.dg===3*r.newsClaim.gm&&r.newsClaim.claimed,r.newsClaim);
  check('news tab lists the season, the double-gem weekend and the builds',r.news.rows>=6&&r.news.season&&r.news.x2,r.news);
  check('welcome tab: day 1 open, claim pays 100🪙 2💎, day 2 locked',r.welcomeTab&&r.welcomeDay0.open&&r.welcomeDay0.text&&r.welcomeClaim.dc===100&&r.welcomeClaim.dg===2*r.newsClaim.gm&&r.welcomeClaim.claimed&&r.welcomeClaim.day1Locked,{tab:r.welcomeTab,d0:r.welcomeDay0,claim:r.welcomeClaim});
- check('settings button in the system tray opens the panel',r.settingsBtn.exists&&r.settingsBtn.parent==='sysBtns'&&r.settingsOpen==='flex',r.settingsBtn);
+ /* the tray on the dock HUD, the ☰ menu under se-hud — either way it has to exist and open */
+ check('settings button in the system tray opens the panel',r.settingsBtn.exists&&['sysBtns','seTiles'].includes(r.settingsBtn.parent)&&r.settingsOpen==='flex',{...r.settingsBtn,open:r.settingsOpen});
  check('gift code: stamped, delivered to the inbox, pays 500🪙, single-use, case-sensitive, invalid rejected',r.code.stamped&&r.code.letter&&r.code.dc===500&&r.code.again&&r.code.lower&&r.code.bad,r.code);
  check('accessibility: text scale, colour-blind class, high contrast applied + saved',r.a11y.scale==='1.3'&&r.a11y.saved===1.3&&r.a11y.cb&&r.a11y.contrast&&r.a11y.savedCb==='deutan',r.a11y);
  check('graphics: quality low applied, saved, locked, bloom off',r.gfx.q==='low'&&r.gfx.saved==='low'&&r.gfx.locked&&r.gfx.bloomOff,r.gfx);

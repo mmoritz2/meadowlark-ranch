@@ -851,6 +851,14 @@ body.posing #mkMiniPlate,body.freecam #mkMiniPlate,body.summoning #mkMiniPlate{d
     still a mutation record, and the observer that calls this function would then call it
     forever. */
  function arrangeDock(){
+  /* se-hud lays the controls out itself: it hides this bar and takes every button out of it —
+     the primary six into its hexagon cluster and market, the rest into its menu. Arranging
+     them back into a bar nobody can see would pull them out of that layout every time the
+     dock observer fired, which is exactly what happened: two packages, one set of buttons,
+     and the one that ran more often won. So when that package owns the HUD this one stands
+     down, and the first pass (which runs before it installs, and builds the drawers it reads)
+     is the only one. */
+  if(document.body&&document.body.classList.contains('se-hud'))return;
   const dock=$('dock'); if(!dock)return;
   dkBusy=true;
   try{
