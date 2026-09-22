@@ -96,7 +96,9 @@ export function install(G){
  /* The canyon's mesas and the mountain's slopes are placed by the terrain, so a structure asks
     for a clear circle before it is built instead of assuming one. */
  function clear(x,z,need){for(const c of W.colliders){if(hyp(x,z,c.x,c.z)<c.r+need)return false;}return Math.abs(z-riverZ(x))>need+8&&hyp(x,z,20,16)>need+10;}
- function findClear(cx,cz,need,maxR){if(clear(cx,cz,need))return [cx,cz];for(let r=6;r<=(maxR||60);r+=6)for(let k=0;k<10;k++){const a=k/10*Math.PI*2+r*0.3,x=cx+Math.cos(a)*r,z=cz+Math.sin(a)*r;if(clear(x,z,need))return [x,z];}return [cx,cz];}
+ /* ok, when it is given, is one more test the spot has to pass: for a placement that has to keep
+    off something that is not a collider. */
+ function findClear(cx,cz,need,maxR,ok){const fits=(x,z)=>clear(x,z,need)&&(!ok||ok(x,z));if(fits(cx,cz))return [cx,cz];for(let r=6;r<=(maxR||60);r+=6)for(let k=0;k<10;k++){const a=k/10*Math.PI*2+r*0.3,x=cx+Math.cos(a)*r,z=cz+Math.sin(a)*r;if(fits(x,z))return [x,z];}return [cx,cz];}
  P.findClear=findClear;
  const paintMat=W.mats.paintMat;
  function post(x,z,g,h,c){box(0.18,h||1.25,0.18,c||'#c9b083',x,(h||1.25)/2,z,g);}
@@ -442,7 +444,15 @@ export function install(G){
   const basket=box(3.2,1.3,3.2,'#a8804a',0,0.65,0,g);basket.castShadow=true;box(3.3,0.12,3.3,'#7a5a30',0,1.3,0,g);
   for(const [x,z] of [[-1.4,-1.4],[1.4,-1.4],[-1.4,1.4],[1.4,1.4]]){const rp=tube(0.03,0.03,2.6,'#5a4630',x*0.9,2.4,z*0.9,g);rp.rotation.z=-x*0.22;rp.rotation.x=z*0.22;}
   const burner=new THREE.Mesh(new THREE.SphereGeometry(0.28,8,6),new THREE.MeshStandardMaterial({color:0xffb040,emissive:0xff7a10,emissiveIntensity:1.2}));burner.position.y=2.5;g.add(burner);
-  const at=findClear(st.x,st.z,4.5,50);st.x=at[0];st.z=at[1];
+  /* Off every doorstep already standing, not just off the colliders. The auction house and the
+     Cottonwood field are both found room for round the same corner of town, and in an unlucky
+     boot the field came down on the auction-house doorstep; the prompt is whichever thing in
+     reach is nearest, so E at the door took off in a balloon. If nowhere within fifty metres
+     is clear of every prompt, clear of the colliders is still better than the bare centre. */
+  const offSteps=(x,z)=>W.things.every(t=>t.x==null||hyp(x,z,t.x,t.z)>(t.reach||3.2)+5.5);
+  let at=findClear(st.x,st.z,4.5,50,offSteps);
+  if(!offSteps(at[0],at[1])||!clear(at[0],at[1],4.5))at=findClear(st.x,st.z,4.5,50);
+  st.x=at[0];st.z=at[1];
   g.position.set(st.x,groundH(st.x,st.z),st.z);scene.add(g);W.followCamera.register(g);
   labelAt(g,st.label,11.5);
   return {g,burner};
