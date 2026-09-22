@@ -172,6 +172,15 @@ body.se-hud #breathBtn.se-act{bottom:calc(222px + env(safe-area-inset-bottom))}
 #seMenu .se-tiles>button .pip,#seMenu .se-tiles>button .badge{position:absolute!important;top:6px!important;right:6px!important;min-width:20px;height:20px;border-radius:10px;
  background:#e0332f!important;color:#fff!important;border:1.5px solid #fff!important;font:900 11px/17px Nunito,system-ui,sans-serif!important}
 #seMenu .se-tiles>button[style*="display: none"],#seMenu .se-tiles>button[style*="display:none"]{display:none!important}
+/* the objective marker: a white arrow over the distance, floating toward whoever the mission
+   wants you to see next, pinned to the screen edge when they are behind you or out of shot */
+#seWay{position:fixed;left:0;top:0;display:none;flex-direction:column;align-items:center;gap:1px;pointer-events:none;z-index:5;
+ transform:translate(-50%,-50%);will-change:transform}
+#seWay.on{display:flex}
+#seWay i{display:block;width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:15px solid #fff;
+ filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.6));transform-origin:50% 60%}
+#seWay b{font:900 20px/1 Nunito,system-ui,sans-serif;color:#fff;letter-spacing:.3px;text-shadow:0 1px 0 rgba(0,0,0,.55),0 0 4px rgba(0,0,0,.55),0 0 10px rgba(0,0,0,.25)}
+body.posing #seWay,body.freecam #seWay,body.summoning #seWay{display:none!important}
 /* every state that hid the dock hides this */
 body.posing #seHudRoot,body.freecam #seHudRoot,body.summoning #seHudRoot,
 body.posing #stickZone,body.summoning #seNorth,body.freecam #seNorth,body.posing #seNorth,
@@ -318,6 +327,62 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
  setInterval(sync,700);
  window.addEventListener('resize',()=>setTimeout(place,50));
 
+ /* ---------------------------------------------------------------- the objective marker -- */
+ /* Who does the current mission want you to go and see? The story records it in so many words:
+    a 'talk' mission names the person, a 'clues' mission lists the people to ask and the save
+    records who has already been asked, and every mission has a giver to hand in to. So: the
+    giver once it is done, otherwise the named person or the next unasked witness, otherwise the
+    giver. Nothing is guessed from the text. */
+ const way=document.createElement('div'); way.id='seWay'; way.innerHTML='<i></i><b></b>'; document.body.appendChild(way);
+ const wayArrow=way.querySelector('i'), wayTxt=way.querySelector('b');
+ let wayNpc=null, wayKey='';
+ function wayTarget(){
+  try{
+   const Q=G.quest, m=Q&&Q.STORY&&Q.STORY[Q.storyIdx()]; if(!m)return null;
+   const s=G.save.fresh()||{}, done=Q.storyProg()>=(m.goal||1);
+   let id=m.npc||'wren';
+   if(!done){
+    if(m.talk)id=m.talk;
+    else if(m.clues&&m.clues.length){ const had=(s.story&&s.story.clues)||[]; const nx=m.clues.find(c=>!had.includes(c.npc)); if(nx)id=nx.npc; }
+   }
+   if(id!==wayKey){ wayKey=id; wayNpc=((G.world&&G.world.npcList)||[]).find(q=>q.def&&q.def.id===id)||null; }
+   return wayNpc&&wayNpc.g;
+  }catch(e){ return null; }
+ }
+ const _wv=new G.THREE.Vector3();
+ function tickWay(){
+  const tg=wayTarget(), cam=G.camera, p=G.horse&&G.horse.player;
+  let show=!!(tg&&cam&&p)&&!(G.course&&G.course.get&&G.course.get())&&!menu.classList.contains('on');
+  if(show){
+   const d=Math.hypot(tg.position.x-p.pos.x,tg.position.z-p.pos.z);
+   if(d<6)show=false;
+   else{
+    _wv.set(tg.position.x,tg.position.y+3.1,tg.position.z).project(cam);
+    const W=innerWidth,H=innerHeight, behind=_wv.z>1;
+    let nx=behind?-_wv.x:_wv.x, ny=behind?-_wv.y:_wv.y;
+    /* on screen and in front: sit over their head. Otherwise pin to an inset edge, in the
+       direction they actually are, so a marker is always a heading you can ride toward */
+    const IX=0.80, IY=0.70, off=behind||Math.abs(nx)>IX||Math.abs(ny)>IY;
+    if(off){
+     const k=Math.min(IX/Math.max(Math.abs(nx),1e-4),IY/Math.max(Math.abs(ny),1e-4)); nx*=k; ny*=k;
+     if(behind&&ny>-0.2)ny=-0.50;
+     /* the bottom corners are the thumbstick and the action buttons: along the bottom edge the
+        marker keeps to the clear lane between them, and it never drops into the controls band */
+     if(ny<-0.30){ nx=Math.max(-0.42,Math.min(0.42,nx)); ny=Math.max(-0.50,ny); }
+     /* the top-left is the map and its hexagons, the top-right the wallet and market */
+     if(ny>0.45)nx=Math.max(-0.50,Math.min(0.55,nx));
+    }
+    const sx=(nx*0.5+0.5)*W, sy=(-ny*0.5+0.5)*H;
+    way.style.transform='translate('+sx.toFixed(1)+'px,'+sy.toFixed(1)+'px) translate(-50%,-50%)';
+    const ang=off?Math.atan2(nx,ny):0;          // up when they are ahead of you, round toward them when not
+    wayArrow.style.transform='rotate('+ang.toFixed(3)+'rad)';
+    const t=Math.round(d)+'m'; if(wayTxt.textContent!==t)wayTxt.textContent=t;
+   }
+  }
+  way.classList.toggle('on',show);
+ }
+ G.on('tick',tickWay);
+
  /* QA */
- G.seHud={root,menu,open:()=>{paintMenuHead();menu.classList.add('on');},close:closeMenu,HEXES,sync};
+ G.seHud={root,menu,open:()=>{paintMenuHead();menu.classList.add('on');},close:closeMenu,HEXES,sync,way,wayTarget:()=>{const t=wayTarget();return t?{id:wayKey,x:t.position.x,z:t.position.z}:null;}};
 }
