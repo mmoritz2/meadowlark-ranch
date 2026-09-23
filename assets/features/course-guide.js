@@ -536,6 +536,7 @@ export function install(G){
  function foreignCam(){
   if(pvpSeat)return true;                                                      // events-pvp, the grandstand
   if(document.body.classList.contains('fpv'))return true;                      // course-engine, first person
+  if(document.body.classList.contains('se-ov-open'))return true;               // se-care, the Horse Overview
   try{if(G.worldPkg&&G.worldPkg.vehicle&&G.worldPkg.vehicle())return true;}catch(e){}   // world, ferry or balloon
   try{if(G.social&&G.social.spectate)return true;}catch(e){}                   // social-play, watching a rider
   return false;
