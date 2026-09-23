@@ -126,8 +126,13 @@ const run=(page,code)=>page.evaluate('(()=>{'+H+code+'})()');
      the 10⭐ still arrives. */
   const spRows=G.quest.DAILYQ.filter(q=>q.r&&q.r.sp).map(q=>q.type);
   const today=G.quest.todayDaily(); out.daily={n:today.length,sp:spRows.length===0,spRows,train:G.quest.DAILYQ.some(q=>q.type==='train'),build:G.quest.DAILYQ.some(q=>q.type==='build'),total:G.quest.DAILYQ.length,roll:sv().dq.roll};
-  const q0=today[0]; let sp0=0,g0=0; G.save.sync(s=>{s.dq.prog[q0.type]=q0.goal;sp0=(s.sp&&s.sp.pts)||0;g0=s.gems;}); G.quest.claimDaily(q0.type);
-  const s8=sv(); out.dailyClaim={sp:(s8.sp.pts||0)-sp0,ledger:((s8.sp.src||{}).daily)||0,gems:s8.gems-g0,rg:q0.r.g,gemMul:gemMul(),claimed:!!s8.dq.claimed[q0.type]};
+  /* A daily's XP can level a horse up on the same claim, and every level-up pays its own club SP
+     (2 x the new level, applyXp). Which daily comes first depends on the date, so on some days the
+     claim lands a level and the total moves by 14 rather than 10. The daily's own 10 is what is
+     being tested, so the level-up SP is counted separately rather than assumed away. */
+  const q0=today[0]; let sp0=0,g0=0,lv0=[]; G.save.sync(s=>{s.dq.prog[q0.type]=q0.goal;sp0=(s.sp&&s.sp.pts)||0;g0=s.gems;lv0=(s.horses||[]).map(h=>h.level||1);}); G.quest.claimDaily(q0.type);
+  const s8=sv(); const lvSP=(s8.horses||[]).reduce((a,h,i)=>{let n=0;for(let l=(lv0[i]||1)+1;l<=(h.level||1);l++)n+=2*l;return a+n;},0);
+  out.dailyClaim={sp:(s8.sp.pts||0)-sp0,levelSP:lvSP,ledger:((s8.sp.src||{}).daily)||0,gems:s8.gems-g0,rg:q0.r.g,gemMul:gemMul(),claimed:!!s8.dq.claimed[q0.type],type:q0.type};
   /* Mark the other five claimed the short way, then let the ledger settle BEFORE the snapshot:
      it credits 10⭐ for every daily claim it has not seen yet, and five claims that never went
      through claimDaily would otherwise be counted inside the umbrella's own delta. */
@@ -176,7 +181,7 @@ const run=(page,code)=>page.evaluate('(()=>{'+H+code+'})()');
  /* spRows names any row that slipped through the boot-time normalise, so a package that adds a
     daily with sp: on it in future says so by name instead of just reading as "false". */
  check('six dailies, 23+ templates, no SP on the rows (the ledger pays it), train/build rows, roll snapshotted',r1.daily&&r1.daily.n===6&&r1.daily.sp&&r1.daily.train&&r1.daily.build&&r1.daily.total>=23&&r1.daily.roll&&r1.daily.roll.length===6,r1.daily);
- check('claimDaily pays 10 club SP and the gems',r1.dailyClaim&&r1.dailyClaim.sp===10&&r1.dailyClaim.ledger===10&&r1.dailyClaim.gems===r1.dailyClaim.rg*r1.dailyClaim.gemMul&&r1.dailyClaim.claimed,r1.dailyClaim);
+ check('claimDaily pays 10 club SP and the gems',r1.dailyClaim&&r1.dailyClaim.sp===10+r1.dailyClaim.levelSP&&r1.dailyClaim.ledger===10&&r1.dailyClaim.gems===r1.dailyClaim.rg*r1.dailyClaim.gemMul&&r1.dailyClaim.claimed,r1.dailyClaim);
  /* KNOWN FAIL, and it is the game, not this line: the umbrella pays its 40⭐ twice — once from
     UMBRELLA_R in ranch3d.html and once from account-economy's ledger — so sp reads 80 while
     ledger reads 40. The one-line fix is inline (drop sp:40 from UMBRELLA_R) and out of reach of
