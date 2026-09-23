@@ -114,3 +114,92 @@ export function fillOutTail(THREE,mesh,{width=2.9,depth=1.55,thick=2.6}={}){
   g.userData.tailFilled={rings:rings.length,moved,maxShift:+maxShift.toFixed(3),widthScale:BX.map(s=>+s.toFixed(2)),depthScale:BD.map(s=>+s.toFixed(2))};
   return g.userData.tailFilled;
 }
+
+/* Fuller manes, the same way: the authored strands, reshaped.
+
+   The mane is a few hundred strands of nine or twelve rings, rooted along the crest from the
+   poll to the withers and laid over to the right side of the neck. As authored they are fifteen
+   to thirty centimetres long, which on a sport horse is a neatly pulled show mane, and from any
+   distance it read as a dark seam along the crest. The reference's manes are long and heavy and
+   fall well down the neck.
+
+   Each strand is lengthened along its own path rather than scaled about its root. Scaling would
+   carry the drape outward with it and stand the lower half of the mane off the neck like a wing;
+   walking the rings further along the same curve keeps the drape where the artist put it, and
+   past the old tip the strand carries on in the direction it was already going, pulled over
+   toward straight down. Anything that new length would push into the neck is lifted back out to
+   just above the skin, measured against the horse's own body, so a long mane lies on the neck
+   instead of through it. Each ring is turned to face along the new path, since a ring that has
+   moved along a curve would otherwise sit skewed to it, and is swollen like the tail's so the
+   hair holds together at riding distance. The forelock is lengthened much less: long enough to
+   fall over the brow, not so long it hangs in her eyes. */
+export function fillOutMane(THREE,mesh,body,{length=1.75,forelock=1.25,thick=2.4,clear=0.010}={}){
+  const g=mesh&&mesh.geometry;
+  if(!g||g.userData.maneFilled||!g.index||!g.attributes.skinIndex||!mesh.skeleton)return null;
+  const pa=g.attributes.position,si=g.attributes.skinIndex,sw=g.attributes.skinWeight,sk=mesh.skeleton,n=pa.count;
+  const MANE=/neck|head|chest|spine|poll|crest|withers/i,TAIL=/^tail/i;
+  const domBone=v=>{let b=-1,w=0;for(let j=0;j<4;j++){const x=sw.getComponent(v,j);if(x>w){w=x;b=si.getComponent(v,j);}}return sk.bones[b]?sk.bones[b].name:'';};
+  /* The body, carried into this mesh's own space, bucketed into four-centimetre cells so every
+     point can find the skin under it cheaply. */
+  let grid=null,BP=null,BN=null;const CELL=0.04;
+  if(body&&body.geometry&&body.geometry.attributes.normal){
+    const bg=body.geometry,bpa=bg.attributes.position,bna=bg.attributes.normal,bn=bpa.count;
+    const M=new THREE.Matrix4().copy(mesh.bindMatrix).invert().multiply(body.bindMatrix),N=new THREE.Matrix3().getNormalMatrix(M);
+    BP=new Float32Array(bn*3);BN=new Float32Array(bn*3);grid=new Map();const v=new THREE.Vector3();
+    for(let i=0;i<bn;i++){v.fromBufferAttribute(bpa,i).applyMatrix4(M);BP[i*3]=v.x;BP[i*3+1]=v.y;BP[i*3+2]=v.z;
+      const key=Math.floor(v.x/CELL)+','+Math.floor(v.y/CELL)+','+Math.floor(v.z/CELL);let c=grid.get(key);if(!c)grid.set(key,c=[]);c.push(i);
+      v.fromBufferAttribute(bna,i).applyMatrix3(N).normalize();BN[i*3]=v.x;BN[i*3+1]=v.y;BN[i*3+2]=v.z;}
+  }
+  const lift=(p,gap)=>{
+    if(!grid)return;
+    const cx=Math.floor(p.x/CELL),cy=Math.floor(p.y/CELL),cz=Math.floor(p.z/CELL);let best=-1,bd=Infinity;
+    for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++)for(let dz=-1;dz<=1;dz++){const c=grid.get((cx+dx)+','+(cy+dy)+','+(cz+dz));if(!c)continue;
+      for(const i of c){const d=(p.x-BP[i*3])**2+(p.y-BP[i*3+1])**2+(p.z-BP[i*3+2])**2;if(d<bd){bd=d;best=i;}}}
+    if(best<0)return;
+    const d=(p.x-BP[best*3])*BN[best*3]+(p.y-BP[best*3+1])*BN[best*3+1]+(p.z-BP[best*3+2])*BN[best*3+2];
+    if(d<gap)p.set(p.x+BN[best*3]*(gap-d),p.y+BN[best*3+1]*(gap-d),p.z+BN[best*3+2]*(gap-d));
+  };
+  const par=new Int32Array(n);for(let i=0;i<n;i++)par[i]=i;
+  const find=a=>{while(par[a]!==a){par[a]=par[par[a]];a=par[a];}return a;};
+  const idx=g.index.array;
+  for(let t=0;t<idx.length;t+=3){const a=find(idx[t]),b=find(idx[t+1]);if(a!==b)par[a]=b;const c=find(idx[t+2]),r=find(b);if(c!==r)par[c]=r;}
+  const comps=new Map();for(let i=0;i<n;i++){const r=find(i);let c=comps.get(r);if(!c)comps.set(r,c=[]);c.push(i);}
+  const DOWN=new THREE.Vector3(0,-1,0),q=new THREE.Quaternion(),o=new THREE.Vector3(),p=new THREE.Vector3(),tn=new THREE.Vector3();
+  let strands=0,forelocks=0,lifted=0,moved=0;
+  for(const vs of comps.values()){
+    const R=vs.length/3;
+    if(vs.length%3||R<3||vs[vs.length-1]-vs[0]!==vs.length-1)continue;
+    const rb=domBone(vs[0]);if(!MANE.test(rb)||TAIL.test(rb))continue;
+    const C=[],T=[],S=[0];
+    for(let k=0;k<R;k++){const c=new THREE.Vector3();for(let j=0;j<3;j++)c.add(o.fromBufferAttribute(pa,vs[3*k+j]));C.push(c.multiplyScalar(1/3));}
+    let tight=true;for(let k=0;k<R&&tight;k++)for(let j=0;j<3;j++)if(o.fromBufferAttribute(pa,vs[3*k+j]).distanceTo(C[k])>0.015){tight=false;break;}
+    if(!tight)continue;
+    for(let k=0;k<R;k++){const a=C[Math.max(0,k-1)],b=C[Math.min(R-1,k+1)];T.push(b.clone().sub(a).normalize());if(k)S.push(S[k-1]+C[k].distanceTo(C[k-1]));}
+    const len=S[R-1];if(!(len>1e-4))continue;
+    /* A forelock falls forward, off the head: lengthen it only a little. */
+    const fore=/head/i.test(rb)&&C[R-1].z-C[0].z>0.03;
+    const L=fore?forelock:length;
+    const tip=C[R-1].clone().sub(C[R-2]).normalize().addScaledVector(DOWN,0.8).normalize();
+    const newC=[C[0].clone()],newT=[T[0].clone()];
+    for(let k=1;k<R;k++){
+      const s=S[k]*L;
+      if(s<=len){let j=0;while(j<R-2&&S[j+1]<s)j++;const f=(s-S[j])/Math.max(1e-6,S[j+1]-S[j]);
+        p.copy(C[j]).lerp(C[j+1],f);tn.copy(C[j+1]).sub(C[j]).normalize();}
+      else{p.copy(C[R-1]).addScaledVector(tip,s-len);tn.copy(tip);}
+      const before=p.clone();lift(p,clear+0.004*thick);if(before.distanceToSquared(p)>1e-10)lifted++;
+      newC.push(p.clone());newT.push(tn.clone());
+    }
+    /* Re-aim each ring along the path it now sits on (the path through the lifted points, so a
+       strand that was nudged off the neck still has its rings facing along it). */
+    for(let k=0;k<R;k++){const a=newC[Math.max(0,k-1)],b=newC[Math.min(R-1,k+1)];newT[k].copy(b).sub(a).normalize();}
+    for(let k=0;k<R;k++){
+      q.setFromUnitVectors(T[k],newT[k]);
+      for(let j=0;j<3;j++){const v=vs[3*k+j];o.fromBufferAttribute(pa,v).sub(C[k]).applyQuaternion(q).multiplyScalar(thick).add(newC[k]);pa.setXYZ(v,o.x,o.y,o.z);moved++;}
+    }
+    strands++;if(fore)forelocks++;
+  }
+  if(!strands)return null;
+  pa.needsUpdate=true;g.computeBoundingBox();g.computeBoundingSphere();
+  g.userData.maneFilled={strands,forelocks,lifted,moved};
+  return g.userData.maneFilled;
+}

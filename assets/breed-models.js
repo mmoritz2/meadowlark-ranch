@@ -1,6 +1,6 @@
 /* Approved artist-derived breed assets. Geometry/textures are cached; skeletons
  * and materials are private to each mounted horse. Native axes: +Z forward, +Y up. */
-import {fillOutTail} from './horse-tail-volume.js';
+import {fillOutTail,fillOutMane} from './horse-hair-volume.js';
 export function createBreedLibrary({THREE, GLTFLoader, clone}) {
   const base=new URL('./models/artist-breeds/',import.meta.url),pending=new Map(),ready=new Map(),files=new Map();
   let manifest=null,revision='';
@@ -26,10 +26,10 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
     const authored={...spec,id:key,artistBreed:true,hero:false,withersM,heightM:spec.heightM||bbox.max.y-bbox.min.y,anchors:JSON.parse(JSON.stringify(spec.anchors||{}))};
     const saddle=authored.anchors.saddle?.[0];
     if(saddle){let surface=-Infinity;const p=skin.geometry.attributes.position;for(let i=0;i<p.count;i++)if(Math.abs(p.getX(i)-saddle[0])<.055&&Math.abs(p.getZ(i)-saddle[2])<.075)surface=Math.max(surface,p.getY(i));if(Number.isFinite(surface))authored.anchors.saddle=[[saddle[0],surface+.008,saddle[2]]];}
-    /* Fuller tails (horse-tail-volume.js): the authored strands fanned out below the dock. Here,
+    /* Fuller tails and manes (horse-hair-volume.js): the authored strands reshaped. Here,
      * after the fit has been measured and once per file, so every horse cloned from this model
      * shares the one spread geometry and the fit is exactly what it was. */
-    scene.traverse(o=>{if(o.isSkinnedMesh&&o!==skin&&(o.name===spec.hairMesh||o.parent?.name===spec.hairMesh||/strand|groom/i.test(o.name)))fillOutTail(THREE,o);});
+    scene.traverse(o=>{if(o.isSkinnedMesh&&o!==skin&&(o.name===spec.hairMesh||o.parent?.name===spec.hairMesh||/strand|groom/i.test(o.name))){fillOutTail(THREE,o);fillOutMane(THREE,o,skin);}});
     const asset={key,scene,skin,profile:authored,fitScale,fitY,baseMat:skin.material,animations:gltf.animations||[]};ready.set(key,asset);return asset;
   }
   async function load(requested='bay'){
