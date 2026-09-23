@@ -328,7 +328,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   const [op,arg]=b.dataset.se.split(':');
   if(op==='close'){close();return;}
   if(op==='tab'){ST.tab=arg;render();return;}
-  if(op==='ride'){if(arg!=null)rideHorse(+arg);else close();return;}
+  if(op==='ride'){if(arg!=null)rideHorse(+arg);else{try{if(G.onFoot&&G.onFoot.on)G.onFoot.mount();}catch(err){}close();}return;}
   if(op==='cycle'){cycle(+arg||1);return;}
   if(op==='open'){openOther(arg);return;}
   if(op==='care'){try{G.ui.careAct(arg);}catch(err){console.error('se-care care '+arg,err);}later();return;}
@@ -398,20 +398,23 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
  G.on('camera',c=>{
   if(!ST.open)return false;
   const p=G.horse.player, cam=G.camera; if(!p||!cam)return false;
-  const h=p.heading, gy=G.world.groundH(p.pos.x,p.pos.z)+(p.y||0), sc=(p.mesh&&p.mesh.scale&&p.mesh.scale.x)||1;
+  /* On foot (on-foot package) the horse on show is the one she left standing, not the hidden mount. */
+  let sx=p.pos.x,sz=p.pos.z,h=p.heading,sy=p.y||0,sc=(p.mesh&&p.mesh.scale&&p.mesh.scale.x)||1;
+  try{const e=G.onFoot&&G.onFoot.on&&G.onFoot.horse();if(e){sx=e.x;sz=e.z;h=e.heading;sy=0;sc=e.sc||sc;}}catch(err){}
+  const gy=G.world.groundH(sx,sz)+sy;
   const vf=36*Math.PI/180, hf=2*Math.atan(Math.tan(vf/2)*(cam.aspect||1.33)), w=Math.max(0.18,GAP.r-GAP.l), cx=(GAP.l+GAP.r)/2;
   const hh=Math.max(0.2,GAP.b-GAP.t), cy=(GAP.t+GAP.b)/2;
   /* Far enough back that her whole length fits the free gap and her whole height fits the frame,
      from her right, which is the side the mane falls on, and a touch ahead of square. */
   const d=Math.max(2.3*sc/(2*0.86*w*Math.tan(hf/2)),2.15*sc/(2*0.80*hh*Math.tan(vf/2)));
   const Fx=Math.sin(h),Fz=Math.cos(h);
-  _at.set(p.pos.x,gy+0.95*sc,p.pos.z);
+  _at.set(sx,gy+0.95*sc,sz);
   /* Her right is the side the mane falls on, so that is the side to stand; but a fence or a wall
      behind that spot would pull the camera in until she fills the screen, so if the right side
      has no room the left side is used instead, and the choice is kept for as long as it is open
      so the view does not flip from one side to the other between frames. */
   const place=(side,out)=>{const Sx=-Math.cos(h)*side,Sz=Math.sin(h)*side;
-   out.set(p.pos.x+Sx*d+Fx*0.30*d,gy+1.15*sc+0.05*d,p.pos.z+Sz*d+Fz*0.30*d);
+   out.set(sx+Sx*d+Fx*0.30*d,gy+1.15*sc+0.05*d,sz+Sz*d+Fz*0.30*d);
    try{G.world.followCamera.resolve(_at,out,out);}catch(e){}
    return out.distanceTo(_at);};
   if(ST.side==null){const want=Math.hypot(d,0.30*d);const r=place(1,_eye),l=place(-1,_alt);ST.side=(r>=0.9*want||r>=l)?1:-1;}

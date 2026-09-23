@@ -605,7 +605,7 @@ import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
-import {FEATURES} from './assets/features/index.js?v=feat-2';
+import {FEATURES} from './assets/features/index.js?v=feat-3';
 
 /* ================= save sync with the 2D game ================= */
 const SAVE_KEY='starRanchFable_v1';   // NOT renamed with the game: changing this orphans every existing save
@@ -6113,6 +6113,7 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
  if(!USE_GEN_HORSE||!USE_GEN_TACK)return;   // procedural-mount fallback drives the rider itself
  const R=player.rider;
  if(!R||!R.g)return;
+ if(player.onFoot){reinL.visible=false;reinR.visible=false;return;}   // on foot (on-foot package): she is walking, not seated, and the reins stay on the horse
  const seat=riderSeat(); R.g.position.set(0,seat.y,seat.z); R.g.rotation.set(0,0,0);
  if(R.sk){
   const k=Math.min(1,(dt||0.016)*6);
@@ -7946,7 +7947,10 @@ function riderCullProp(src){
  const q=src.attributes.position,idx=src.index; if(!idx)return src;
  /* The strip hangs off both fists and joins below them: forward of z=0.30, between the
     fists' lower edge and the top of the knees, and nothing else of hers is in there. */
- const junk=i=>{const x=q.getX(i),y=q.getY(i),z=q.getZ(i);return z>0.300&&y<0.080&&y>-0.170&&Math.abs(x)<0.210;};
+ /* ...and the bridge of it between her fists, above them. With her hands on the reins it was hidden in
+    her grip; once she can stand and let her arms hang, it stretched from hand to hand across the front
+    of her breeches like a skin-coloured strap. The fists themselves sit outside |x| 0.08. */
+ const junk=i=>{const x=q.getX(i),y=q.getY(i),z=q.getZ(i);return (z>0.300&&y<0.080&&y>-0.170&&Math.abs(x)<0.210)||(z>0.290&&y>0.140&&y<0.260&&Math.abs(x)<0.075);};
  const keep=[];
  for(let i=0;i<idx.count;i+=3){const a=idx.getX(i),b=idx.getX(i+1),c=idx.getX(i+2);
   if(junk(a)&&junk(b)&&junk(c))continue; keep.push(a,b,c);}
@@ -12956,8 +12960,8 @@ function tick(stepSeconds){
   player.earA-=dt;
   player.parts.ears[0].rotation.x=Math.sin(player.earA*28)*0.35;
  }else{player.parts.ears[0].rotation.x*=0.9;}
- if(grounded&&sp>0.5)distAcc+=sp*dt;
- if(sp>3&&grounded){
+ if(grounded&&sp>0.5&&!player.onFoot)distAcc+=sp*dt;   // walking is not riding
+ if(sp>3&&grounded&&!player.onFoot){
   const step=Math.floor(player.phase/Math.PI);
   if(step!==player.lastStep){player.lastStep=step;player.alt=!player.alt;sHoof(player.alt);}
   if(sp>7&&t-lastDust>0.055){
