@@ -40,7 +40,11 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  const r=await page.evaluate(()=>{
   const Q=window.__qa, G=window.__features, out={};
   const sorted=o=>Object.values(o).sort((a,b)=>b-a);
-  const autoOpen=(document.getElementById('riderPanel')||{style:{}}).style.display==='flex';   // read before any tab opens (openShop hides other panels)
+  /* the first launch opens the full-screen Character screen now (the old panel is still there under it);
+     read it before any tab opens, then put it away: while it is up it holds the keyboard */
+  const chOn=()=>{const c=document.getElementById('seChar');return !!(c&&c.classList.contains('on'));};
+  const autoOpen=chOn()||(document.getElementById('riderPanel')||{style:{}}).style.display==='flex';
+  if(chOn()&&G.wardrobe&&G.wardrobe.closeChar)G.wardrobe.closeChar();
   /* A. rarity bonus table */
   out.pattern={};
   for(const rar of ['Common','Uncommon','Rare','Epic','Legendary']){let ok=true,prim=true;for(let i=0;i<200;i++){const it=Q.genGear(rar);const p=Q.RAR_PATTERN[rar];if(JSON.stringify(sorted(it.bonus))!==JSON.stringify(p.slice().sort((a,b)=>b-a))||Object.keys(it.bonus).length!==p.length)ok=false;if(it.bonus[it.primary]!==p[0])prim=false;}out.pattern[rar]={ok,prim};}
@@ -232,14 +236,14 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  await page.waitForFunction(READY,null,{timeout:150000,polling:250});
  await page.waitForFunction(()=>!document.getElementById('load'),null,{timeout:30000,polling:250}).catch(()=>{});
  await page.evaluate(()=>window.advanceTime(700));
- const L=await page.evaluate(()=>{const p=document.getElementById('riderPanel');const s=JSON.parse(localStorage.getItem('starRanchFable_v1'));const o={shown:p&&p.style.display,made:s.rider.made,body:s.rider.body,hairStyle:s.rider.hairStyle,parts:s.parts};p.querySelector('[data-fx="wd:done"]').click();o.madeAfter=JSON.parse(localStorage.getItem('starRanchFable_v1')).rider.made;return o;});
+ const L=await page.evaluate(()=>{const p=document.getElementById('riderPanel');const ch=document.getElementById('seChar');const s=JSON.parse(localStorage.getItem('starRanchFable_v1'));const o={shown:(ch&&ch.classList.contains('on'))?'flex':(p&&p.style.display),made:s.rider.made,body:s.rider.body,hairStyle:s.rider.hairStyle,parts:s.parts};(ch&&ch.classList.contains('on')?document.getElementById('chSave'):p.querySelector('[data-fx="wd:done"]')).click();o.madeAfter=JSON.parse(localStorage.getItem('starRanchFable_v1')).rider.made;return o;});
  check('O old save: creator shows once (ensure fills body/hairStyle/parts), Done marks it made',L.shown==='flex'&&L.made===false&&L.body==='f'&&L.hairStyle==='loose'&&L.parts===0&&L.madeAfter===true,L);
  await page.waitForLoadState('networkidle',{timeout:60000}).catch(()=>{}); await page.waitForTimeout(2500);
  await page.goto(base+'/ranch3d.html?qa=tack-wardrobe&again='+Date.now(),{waitUntil:'load',timeout:120000}); stage('third load');
  await page.waitForFunction(READY,null,{timeout:150000,polling:250});
  await page.waitForFunction(()=>!document.getElementById('load'),null,{timeout:30000,polling:250}).catch(()=>{});
  await page.evaluate(()=>window.advanceTime(700));
- const T=await page.evaluate(()=>{const p=document.getElementById('riderPanel');return {shown:p&&p.style.display,installed:window.__features.installed.length,errors:window.__features.errors};});
+ const T=await page.evaluate(()=>{const p=document.getElementById('riderPanel');const ch=document.getElementById('seChar');return {shown:(ch&&ch.classList.contains('on'))?'flex':(p&&p.style.display),installed:window.__features.installed.length,errors:window.__features.errors};});
  check('O creator does not reopen once made; all packages installed',T.shown!=='flex'&&T.installed>=16&&T.errors.length===0,T);
  check('no console/page errors',errors.length===0,errors.slice(0,6));
  await browser.close();

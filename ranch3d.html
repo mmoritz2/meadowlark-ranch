@@ -605,7 +605,8 @@ import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
-import {FEATURES} from './assets/features/index.js?v=feat-3';
+import {FEATURES} from './assets/features/index.js?v=feat-4';
+window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
 const SAVE_KEY='starRanchFable_v1';   // NOT renamed with the game: changing this orphans every existing save
@@ -7878,7 +7879,15 @@ function riderMaterial(base,fit){
    float rwSk=uSkinW*step(0.06,rwarm)*smoothstep(0.40,0.52,rl)*clamp(rBand(ry,0.55,0.80)+rBand(ry,0.10,0.25)*step(0.30,rz),0.0,1.0);
    float rwH=uHairW*step(0.02,rwarm)*(1.0-smoothstep(0.28,0.40,rl))*rBand(ry,0.30,0.79)*(1.0-smoothstep(0.0,0.06,rz));
    float rwHm0=(1.0-smoothstep(0.20,0.30,rl))*smoothstep(0.80,0.84,ry);
-   if(uHelmHide>0.5&&rwHm0>0.5)discard;
+   /* Bare-headed, the whole helmet goes, brim and all: it starts just above her brows (0.70), and the
+      hair (assets/rider-hair.js) covers the head it was hiding. Cutting it away only above 0.80 left
+      the brim across her forehead as a dark band under the hair. */
+   float rwBare=(1.0-smoothstep(0.20,0.30,rl))*smoothstep(0.698,0.708,ry);
+   if(uHelmHide>0.5&&rwBare>0.5)discard;
+   /* and the chin strap goes with it: the dark band from under her ears to under her chin, painted as skin */
+   /* only the head: above the collar (0.525), inside the jaw's width, and never the navy coat (cool) */
+   float rwStrap=uHelmHide*(1.0-smoothstep(0.24,0.32,rl))*rBand(ry,0.525,0.630)*step(-0.225,vRP.z)*step(vRP.z,0.12)*step(0.026,abs(vRP.x))*step(abs(vRP.x),0.125)*step(-0.035,rwarm);
+   diffuseColor.rgb=mix(diffuseColor.rgb,uSkinW>0.5?uSkin*0.92:vec3(0.86,0.63,0.53),rwStrap);   // her own baked skin, unless a tone was picked
    float rwHm=uHelmW*rwHm0;
    diffuseColor.rgb=mix(diffuseColor.rgb,uSkin*clamp(rl/0.62,0.55,1.3),rwSk);
    diffuseColor.rgb=mix(diffuseColor.rgb,uHair*clamp(rl/0.22,0.4,1.6),rwH);
@@ -7951,9 +7960,13 @@ function riderCullProp(src){
     her grip; once she can stand and let her arms hang, it stretched from hand to hand across the front
     of her breeches like a skin-coloured strap. The fists themselves sit outside |x| 0.08. */
  const junk=i=>{const x=q.getX(i),y=q.getY(i),z=q.getZ(i);return (z>0.300&&y<0.080&&y>-0.170&&Math.abs(x)<0.210)||(z>0.290&&y>0.140&&y<0.260&&Math.abs(x)<0.075);};
+ /* and the flat stand the sculpt was modelled on, a card under her soles. In the stirrups nobody saw it;
+    standing on the ground (on-foot, the Character screen) it was a plate under her boots. The hero
+    rider has always dropped it the same way (heroRiderGeometry). */
+ const plate=i=>q.getY(i)<-0.974;
  const keep=[];
  for(let i=0;i<idx.count;i+=3){const a=idx.getX(i),b=idx.getX(i+1),c=idx.getX(i+2);
-  if(junk(a)&&junk(b)&&junk(c))continue; keep.push(a,b,c);}
+  if((junk(a)&&junk(b)&&junk(c))||(plate(a)&&plate(b)&&plate(c)))continue; keep.push(a,b,c);}
  if(keep.length===idx.count)return src;
  const g=src.clone(); g.setIndex(keep); g.computeBoundingSphere(); return g;
 }
@@ -13872,7 +13885,7 @@ function installFeatures(){
    EMOTES,MASTERY_UNLOCKS,TAIL_COLS,STUD_COLS,DYE_HAIR,DYE_BODY,DYE_MARK,MARKS,STAT_KEYS,STAT_LBL,CHESTS,COLL_SETS,FT,REGIONS,TRAIL_STOPS,TACK_ROOM,NAMES3,
    TRAITS,BREED_CEIL,HAIR_STYLES,KEYMAP,REWARD_KINDS,TIER_STARS,MARKS2,FANTASY_CFG,FANTASY_FX,FANTASY_COAT,COAT_BASE,DRAGON_TINT,WING_TINT,ELEM_OF},
   horse:{myHorses,rideIdx:()=>rideIdx,ridden:()=>myHorses[rideIdx],RIG:()=>RIG,TACK:()=>TACK,player,herd:()=>herd,remotes,
-   grantHorse,makeFoal,breedSrc,breedAvailable,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
+   grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
   world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,arrivalArt,geology,box,tube,blob,
    mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,
@@ -13943,11 +13956,17 @@ addEventListener('resize',()=>{
 })();
 </script>
 <script>
-setTimeout(()=>{
- if(window.__gameModuleBlocked)return;
- const ld=document.getElementById('load');
- if(ld)ld.innerHTML='Hmm, the 3D engine could not load.<br>Check that the local game assets are present and try refreshing.';
-},9000);
+/* The engine failed only if the game module never ran; it says so the moment its imports resolve.
+   And only visible time counts: a browser pauses a page in a hidden tab or window, so nine seconds
+   of wall clock there said 'could not load' about a game that was simply waiting to be looked at. */
+(()=>{let seen=0,last=performance.now();
+ const tick=()=>{
+  if(window.__gameModuleBlocked||window.__gameModuleRan)return;
+  const now=performance.now(); if(document.visibilityState==='visible')seen+=Math.min(1000,now-last); last=now;
+  if(seen>=9000){const ld=document.getElementById('load');
+   if(ld)ld.innerHTML='Hmm, the 3D engine could not load.<br>Check that the local game assets are present and try refreshing.';return;}
+  setTimeout(tick,500);};
+ setTimeout(tick,500);})();
 </script>
 <script>
 /* Installable-app plumbing. Kept out of the game module on purpose: if any of

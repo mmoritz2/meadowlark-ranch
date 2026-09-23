@@ -342,7 +342,7 @@ export function install(G){
   if(t.closest('#seWhistle')||t.closest('#whistleBtn')){e.stopPropagation();e.preventDefault();callHorse(false);}
  },true);
 
- G.onFoot={get on(){return ST.on;},dismount,mount,toggle,callHorse,
+ G.onFoot={get on(){return ST.on;},dismount,mount,toggle,callHorse,pose,
   horse:()=>ST.horse?{x:ST.horse.x,z:ST.horse.z,heading:ST.horse.heading,sc:ST.horse.sc,group:ST.horse.parts.group}:null,
   walker:()=>ST.W,state:()=>({on:ST.on,horse:ST.horse?{x:+ST.horse.x.toFixed(2),z:+ST.horse.z.toFixed(2)}:null,calling:!!ST.call})};
  G.on('state',o=>{o.onFoot=G.onFoot.state();});

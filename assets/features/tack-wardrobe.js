@@ -11,6 +11,7 @@
    exclusive). The tack economy itself (rarity patterns, names, 26 sets, upgrades, toolkits, merge
    and strip, market stall, English/Western saddles and headstalls) is inline in ranch3d.html
    because the boot pass pays tack rewards before any package installs. */
+import {buildHair,hairStyles} from '../rider-hair.js';
 export const id='tack-wardrobe';
 export function install(G){
  const {$,toast,THREE}=G;
@@ -42,8 +43,7 @@ export function install(G){
  ];
  const SLOT_LBL={shirt:'👕 Shirt',pants:'👖 Pants',helmet:'⛑️ Helmet',boots:'👢 Boots',hair:'💇 Hair colour',skin:'🖐️ Skin'};
  const SLOTS=['shirt','pants','helmet','boots','hair','skin'];
- const HAIRSTYLES=[{id:'loose',label:'Loose',body:null},{id:'bun',label:'Bun',body:null},{id:'ponytail',label:'Ponytail',body:null},
-  {id:'braid',label:'Braid',body:['f']},{id:'pigtails',label:'Pigtails',body:['f']},{id:'crop',label:'Crop',body:['m']},{id:'quiff',label:'Quiff',body:['m']}];
+ const HAIRSTYLES=hairStyles;   // assets/rider-hair.js: long, curls, bob, ponytail, bun, braid, pigtails, crop, quiff
  const BODIES=[['f','👧 Cowgirl'],['m','👦 Cowboy']];
  const RIDER_NAMES=['Wren','Juniper','Sage','Rowan','Hazel','Finch','Marlow','Tess','Cody','Ellis','Piper','Lark','Reed','Quinn','Bryn','Ash','Fern','Milo','Nell','Otis',
   'Rosa','Sam','Tally','Indie','Jesse','Kit','Lou','Mack','Nico','Opal','Pip','Remy','Sky','Toby','Una','Vale','Wyatt','Ziggy','Clem','Dune'];
@@ -76,19 +76,11 @@ export function install(G){
  /* ---- the look, applied to a rider without rebuilding the herd ---------------------------- */
  function hairMeshes(R,fit){
   const head=R.sk&&R.sk.by&&R.sk.by.head; if(!head)return;
-  if(R._twHair){head.remove(R._twHair);R._twHair.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});R._twHair=null;}
-  const st=fit.hairStyle||'loose', g=new THREE.Group(); g.name='hair-'+st;
-  const mat=new THREE.MeshStandardMaterial({color:new THREE.Color(fit.hair||'#4a2e1c'),roughness:.85});
-  const put=(geo,x,y,z,sx,sy,sz)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);if(sx)m.scale.set(sx,sy,sz);m.castShadow=true;m.frustumCulled=false;g.add(m);return m;};
-  const sph=r=>new THREE.SphereGeometry(r,12,9), cap=(r,l)=>new THREE.CapsuleGeometry(r,l,4,8);
-  if(fit.helmet==='none'){const c=put(new THREE.SphereGeometry(.19,16,10,0,Math.PI*2,0,Math.PI*.55),0,.20,-.03);c.name='haircap';}   // a bare head shows the hair
-  if(st==='bun')put(sph(.085),0,.26,-.16);
-  else if(st==='ponytail'){const m=put(cap(.05,.24),0,.08,-.22);m.rotation.x=.35;}
-  else if(st==='braid'){put(sph(.05),0,.16,-.20);put(sph(.05),0,.05,-.25);put(sph(.05),0,-.06,-.29);}
-  else if(st==='pigtails'){for(const s of[-1,1]){const m=put(cap(.04,.18),s*.16,.10,-.12);m.rotation.z=s*.3;}}
-  else if(st==='quiff')put(sph(.07),0,.36,.06,1.3,.8,1);
-  else if(st==='loose')put(sph(.11),0,.06,-.20,1,1.4,.7);
-  head.add(g); R._twHair=g;
+  if(R._twHair){head.remove(R._twHair);try{R._twHairKit&&R._twHairKit.dispose();}catch(e){}R._twHair=null;R._twHairKit=null;}
+  /* real hairstyles on the head bone (assets/rider-hair.js): a cap and a fringe over a bare head,
+     and whatever falls from it, long, curly, bobbed, tied up or braided */
+  const kit=buildHair(THREE,fit.hairStyle||'loose',fit.hair||'#4a2e1c',{helmet:fit.helmet!=='none'});
+  head.add(kit.group); R._twHair=kit.group; R._twHairKit=kit;
  }
  function bodyScale(R,fit){
   if(!R._twFitWrapped){const f=R._fit;R._fit=()=>{f();if(R._twBody==='m')R.fitG.scale.x*=1.08;};R._twFitWrapped=true;}
@@ -144,6 +136,291 @@ export function install(G){
    +'<span style="font-size:11px;color:#8c7a63">More clothes and colours unlock later with ✨ dust — 🛍️ Shop → 🧢 Outfit.</span>'
    +'<button data-fx="wd:done" class="claimBtn">'+(r.made?'Done':'Saddle up! 🐴')+'</button>';
  }});
+ /* Done (the old panel) and SAVE (the Character screen) finish the same way: a name if there is
+ none, the rider marked made, and on the first time Grandma's old saddle on the horse. */
+ function finishCreator(v){let first=false;
+  G.save.sync(s=>{s.playerName=v||s.playerName||RIDER_NAMES[Math.floor(Math.random()*RIDER_NAMES.length)];if(!s.rider.made)first=true;s.rider.made=true;
+   if(!s.tw.starter){s.tw.starter=1;s.tack=s.tack||[];const g=G.horse.genGear('Common','saddle',{style:'english'});g.name='Grandma\'s Old Saddle';s.tack.push(g);const h=s.horses[G.horse.rideIdx()];if(h){h.gear=h.gear||{};if(!h.gear.saddle)h.gear.saddle=g.id;}}});
+  G.horse.refreshTack();G.horse.attachTack();G.horse.dressSaddle();applyLocal();G.hidePanels();G.sChime();
+  toast(first?'🐴 Welcome, '+(G.net.myName())+'! Grandma\'s old saddle is on your horse — the Tack tab will show you more.':'Saved. 🧢');
+ }
+ /* ---- the Character screen ---------------------------------------------------------------
+    The riding game this one is modelled on dresses its rider on one full screen: the rider
+    standing in the middle on a deep blue backdrop, a few round tools beside her (zoom, a dice,
+    the body switch, turn), and down the right a grid of choices under a strip of category
+    icons, appearance and outfit, with SAVE at the foot. Ours was a column of colour dots in a
+    cream card. This is that screen, drawn our own way: the rider in the middle is a real one
+    (the same builder as the rider in the saddle, stood up by the on-foot package's pose), in
+    her own little scene with its own renderer, turning under your finger, and every pick shows
+    on her at once. Nothing is kept until SAVE; close it and she is as she was.
+    The old creator panel is still there under it (G.ui.open('riderPanel')). */
+ const CH={open:false,draft:null,tab:'style',renderer:null,scene:null,cam:null,stage:null,R:null,spin:0.45,zoom:false,raf:0,drag:null,thumbs:{},thumbKey:'',t0:0};
+ const SVGI=p=>'<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';
+ const ICO={
+  style:'<path d="M7 20c-1.6-2.2-2.2-5-1.6-8C6.3 7 9 4.5 12.4 4.6c3.6.1 6.2 2.9 6.4 6.6.2 3.4-.8 6.4-2.4 8.8"/><path d="M8.2 11.5c1.8-.4 4.4-2.1 5.6-4.2.9 1.9 2.6 3.2 4.6 3.6"/><path d="M9.5 15.5c.8.7 1.6 1 2.5 1s1.7-.3 2.5-1"/>',
+  hair:'<path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.4 0 2-1 1.6-2.1-.5-1.3.4-2.4 1.8-2.4H18a2.5 2.5 0 0 0 2.5-2.6C20.4 8 16.6 3.5 12 3.5z"/><circle cx="7.6" cy="11.4" r="1.2"/><circle cx="10.4" cy="7.6" r="1.2"/><circle cx="14.8" cy="7.9" r="1.2"/>',
+  skin:'<path d="M8 20v-5.5L5.6 11.8a1.5 1.5 0 0 1 2.3-1.9L9 11.2V5.5a1.4 1.4 0 0 1 2.8 0V10V4.4a1.4 1.4 0 0 1 2.8 0V10V5.6a1.4 1.4 0 0 1 2.8 0v8.2c0 3-1.6 5-4 6.2"/>',
+  helmet:'<path d="M4 15.5c0-5 3.6-9 8.3-9 4.4 0 7.7 3.4 7.7 8v1H4z"/><path d="M13 6.6v8.9M4 15.5h-.8M20 15.5c.6 0 1.3.4 1.3 1.1"/>',
+  shirt:'<path d="M9 4l3 2.5L15 4l4.5 2-1.6 4.4-2.4-.9V20h-7V9.5l-2.4.9L4.5 6z"/><path d="M12 6.5v6"/>',
+  pants:'<path d="M7 4h10l1 16h-4l-2-9.5L10 20H6z"/><path d="M7 7h10"/>',
+  boots:'<path d="M8 3.5h5.5v9.5l5.4 2.6c1 .5 1.6 1.4 1.6 2.5V20H7.6c-.9 0-1.4-.6-1.3-1.5l.7-5.8z"/><path d="M7.4 16.5h13"/>',
+  zoom:'<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5M10.5 8v5M8 10.5h5"/>',
+  dice:'<rect x="4" y="4" width="16" height="16" rx="3.2"/><circle cx="8.6" cy="8.6" r="1.1" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.1" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.1" fill="currentColor"/>',
+  body:'<circle cx="9" cy="9.5" r="4"/><path d="M9 13.5V21M6.2 18h5.6"/><circle cx="16.2" cy="12.6" r="3.6"/><path d="M18.8 10l2.6-2.6M18.2 7.4h3.2v3.2"/>',
+  turn:'<path d="M19.4 12A7.4 7.4 0 1 1 17 6.6"/><path d="M17.8 3.6l-.6 3.4 3.4.4"/>',
+  bare:'<circle cx="12" cy="10" r="5.4"/><path d="M6 21c.8-3.4 3.3-5.3 6-5.3s5.2 1.9 6 5.3"/><path d="M4 4l16 16"/>'
+ };
+ const CATS=[['style','Hair style','appearance'],['hair','Hair colour','appearance'],['skin','Skin colour','appearance'],
+  ['helmet','Helmet','outfit'],['shirt','Jacket','outfit'],['pants','Breeches','outfit'],['boots','Boots','outfit']];
+ if(!$('seCharCss')){
+  const st=document.createElement('style'); st.id='seCharCss';
+  st.textContent=`
+#seChar{position:fixed;inset:0;z-index:45;display:none;font-family:Nunito,system-ui,sans-serif;color:#fff;background:#141a4a}
+#seChar.on{display:block}
+#seChar button{font-family:inherit;cursor:pointer;border:0;box-shadow:none}
+#seChar .ch-top{position:absolute;left:0;right:0;top:0;height:clamp(50px,8.5vh,64px);display:flex;align-items:center;gap:12px;padding:0 14px;z-index:2;
+ background:linear-gradient(180deg,rgba(30,24,38,.96),rgba(22,18,30,.92));box-shadow:0 3px 12px rgba(0,0,0,.35)}
+#seChar .ch-circ{width:clamp(38px,6vh,46px);height:clamp(38px,6vh,46px);border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+ background:radial-gradient(circle at 35% 30%,#3a5da3,#1c2d5a);border:3px solid #dfe6f5!important;color:#fff;font-size:22px;font-weight:900;line-height:1}
+#seChar .ch-title{font-size:clamp(19px,3.4vh,27px);font-weight:900;white-space:nowrap;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+#seChar .ch-sp{flex:1}
+#seChar .ch-pill{display:flex;align-items:center;gap:8px;height:clamp(30px,4.8vh,36px);padding:0 14px 0 8px;border-radius:18px;background:rgba(40,34,52,.95);
+ border:2px solid rgba(255,255,255,.28);font-weight:900;font-size:clamp(14px,2.3vh,18px);min-width:clamp(70px,8vw,100px);justify-content:space-between}
+#seChar .ch-stage{position:absolute;left:0;top:clamp(50px,8.5vh,64px);bottom:0;right:clamp(330px,36vw,500px)}
+#seChar .ch-stage canvas{display:block;width:100%!important;height:100%!important;cursor:grab;touch-action:none}
+#seChar .ch-tools{position:absolute;right:clamp(14px,4vw,64px);top:12%;display:flex;flex-direction:column;gap:14px}
+#seChar .ch-tool{width:clamp(44px,6.6vh,54px);height:clamp(44px,6.6vh,54px);border-radius:50%;padding:11px;color:#fff;background:rgba(40,40,90,.55);border:2.5px solid rgba(255,255,255,.85)!important}
+#seChar .ch-tool.on{background:rgba(245,214,61,.35)}
+#seChar .ch-name{position:absolute;left:50%;transform:translateX(-50%);bottom:18px;display:flex;align-items:center;gap:8px;padding:6px 8px 6px 16px;border-radius:24px;background:rgba(20,18,40,.72)}
+#seChar .ch-name span{font-weight:900;font-size:14px;color:#cfd3ff;text-transform:uppercase;letter-spacing:.4px}
+#seChar .ch-name input{width:150px;font:inherit;font-weight:900;font-size:18px;color:#fff;background:transparent;border:0;border-bottom:2px solid rgba(255,255,255,.4);outline:none;padding:2px 4px}
+#seChar .ch-name button{width:36px;height:36px;border-radius:50%;padding:7px;color:#fff;background:rgba(255,255,255,.14)}
+#seChar .ch-panel{position:absolute;right:0;top:clamp(50px,8.5vh,64px);bottom:0;width:clamp(330px,36vw,500px);display:flex;background:linear-gradient(180deg,#3b3170,#2b2458);box-shadow:-4px 0 14px rgba(0,0,0,.35)}
+#seChar .ch-main{flex:1;min-width:0;display:flex;flex-direction:column}
+#seChar .ch-head{padding:12px 10px 8px;text-align:center;font-weight:900;font-size:clamp(15px,2.4vh,19px);letter-spacing:.8px;text-transform:uppercase;background:rgba(0,0,0,.18)}
+#seChar .ch-grid{flex:1;overflow-y:auto;padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-content:start}
+#seChar .ch-grid::-webkit-scrollbar{width:8px}#seChar .ch-grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,.25);border-radius:8px}
+#seChar .ch-card{position:relative;aspect-ratio:1/1.12;border-radius:10px;padding:6px 4px 4px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;
+ background:linear-gradient(180deg,#d8c79d,#b69a63);color:#3a2a12;font-weight:900;font-size:12px;border:3px solid rgba(255,255,255,.0)!important;overflow:hidden}
+#seChar .ch-card.sel{border-color:#fff!important;box-shadow:0 0 0 2px #f5d63d,0 0 14px rgba(245,214,61,.55)!important}
+#seChar .ch-card .sw{flex:1;width:78%;border-radius:50%;margin:4px auto 0;aspect-ratio:1;max-height:62%;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18),0 2px 4px rgba(0,0,0,.25)}
+#seChar .ch-card img{position:absolute;inset:0;width:100%;height:78%;object-fit:cover;border-radius:7px 7px 0 0}
+#seChar .ch-card .ic{flex:1;width:60%;color:#5a4526;display:flex;align-items:center}
+#seChar .ch-card .lb{position:relative;z-index:1;width:100%;text-align:center;line-height:1.1;background:rgba(255,255,255,.55);border-radius:6px;padding:2px 2px}
+#seChar .ch-card .lock{position:absolute;left:4px;right:4px;bottom:4px;z-index:2;background:#241f4d;color:#fff;border-radius:6px;padding:2px;font-size:12px}
+#seChar .ch-foot{display:flex;gap:10px;padding:10px 12px 12px;background:rgba(0,0,0,.18)}
+#seChar .ch-btn{flex:1;min-height:clamp(42px,6.6vh,52px);border-radius:10px;font-weight:900;font-size:clamp(15px,2.3vh,19px);letter-spacing:.4px;text-transform:uppercase}
+#seChar .ch-undo{background:linear-gradient(180deg,#f1ead8,#d9ceb0);color:#3a2a12}
+#seChar .ch-save{background:linear-gradient(180deg,#f3de80,#d9b43d);color:#2a2340}
+#seChar .ch-strip{width:clamp(96px,9vw,112px);display:grid;grid-template-columns:1fr 1fr;align-content:start;background:#221c49}
+#seChar .ch-cat{aspect-ratio:1;padding:22%;color:#f3e6c8;background:transparent;border-bottom:1px solid rgba(255,255,255,.06)!important}
+#seChar .ch-cat.outfit{background:rgba(255,255,255,.05)}
+#seChar .ch-cat.on{background:linear-gradient(180deg,#e6c27a,#b98c3e);color:#3a2a12}
+#seChar .ch-sep{grid-column:1/-1;height:6px;background:rgba(0,0,0,.25)}
+@media (max-width:760px){#seChar .ch-stage{right:0;bottom:52%}#seChar .ch-panel{top:48%;width:100%}#seChar .ch-pill{display:none}
+ #seChar .ch-strip{width:86px}#seChar .ch-grid{grid-template-columns:repeat(3,1fr);gap:8px;padding:8px}#seChar .ch-name{bottom:8px}#seChar .ch-name input{width:110px;font-size:16px}
+ #seChar .ch-tools{right:10px;top:10px;gap:8px}}`;
+  document.head.appendChild(st);
+ }
+ const chRoot=document.createElement('div'); chRoot.id='seChar';
+ chRoot.innerHTML='<div class="ch-top"><button class="ch-circ" data-ch="close" title="Back">↩</button><div class="ch-title">🧑 Character</div><div class="ch-sp"></div>'
+  +'<div class="ch-pill" title="Dust"><b>✨</b><span id="chDust">0</span></div><div class="ch-pill" title="Coins"><b>🪙</b><span id="chCoins">0</span></div>'
+  +'<button class="ch-circ" data-ch="close" title="Close">✕</button></div>'
+  +'<div class="ch-stage" id="chStage">'
+  +'<div class="ch-tools"><button class="ch-tool" data-ch="zoom" title="Zoom">'+SVGI(ICO.zoom)+'</button><button class="ch-tool" data-ch="dice" title="Surprise me">'+SVGI(ICO.dice)+'</button>'
+  +'<button class="ch-tool" data-ch="body" title="Switch body">'+SVGI(ICO.body)+'</button><button class="ch-tool" data-ch="turn" title="Turn">'+SVGI(ICO.turn)+'</button></div>'
+  +'<div class="ch-name"><span>Name</span><input id="chName" maxlength="14" placeholder="Rider"><button data-ch="rname" title="Random name">'+SVGI(ICO.dice)+'</button></div></div>'
+  +'<div class="ch-panel"><div class="ch-main"><div class="ch-head" id="chHead"></div><div class="ch-grid" id="chGrid"></div>'
+  +'<div class="ch-foot"><button class="ch-btn ch-undo" data-ch="undo">Undo</button><button class="ch-btn ch-save" data-ch="save" id="chSave">Save</button></div></div>'
+  +'<div class="ch-strip" id="chStrip"></div></div>';
+ document.body.appendChild(chRoot);
+ /* the strip: appearance, then outfit */
+ {let h='',grp='';for(const c of CATS){if(grp&&grp!==c[2])h+='<div class="ch-sep"></div>';grp=c[2];h+='<button class="ch-cat '+c[2]+'" data-ch="tab:'+c[0]+'" title="'+c[1]+'">'+SVGI(ICO[c[0]])+'</button>';}$('chStrip').innerHTML=h;}
+
+ /* ---- her little stage --------------------------------------------------------------- */
+ function gradientTex(){
+  const cv=document.createElement('canvas');cv.width=8;cv.height=256;const c=cv.getContext('2d');
+  const g=c.createLinearGradient(0,0,0,256);g.addColorStop(0,'#10154a');g.addColorStop(0.55,'#2a36a6');g.addColorStop(0.8,'#3643b8');g.addColorStop(1,'#1c2270');
+  c.fillStyle=g;c.fillRect(0,0,8,256);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;return t;
+ }
+ function buildStage(){
+  /* a fresh canvas every time: closing gives its GL context back, and a lost context cannot be had again */
+  const stage=$('chStage'), canvas=document.createElement('canvas'); canvas.id='chCanvas'; stage.insertBefore(canvas,stage.firstChild);
+  canvas.addEventListener('pointerdown',e=>{CH.drag={x:e.clientX,s:CH.spin};try{canvas.setPointerCapture(e.pointerId);}catch(err){}});
+  canvas.addEventListener('pointermove',e=>{if(CH.drag)CH.spin=CH.drag.s+(e.clientX-CH.drag.x)*0.012;});
+  const up=()=>{CH.drag=null;}; canvas.addEventListener('pointerup',up); canvas.addEventListener('pointercancel',up);
+  const r=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});
+  r.setPixelRatio(Math.min(2,window.devicePixelRatio||1)); r.outputColorSpace=THREE.SRGBColorSpace;
+  r.toneMapping=THREE.ACESFilmicToneMapping; r.toneMappingExposure=1.05; r.shadowMap.enabled=true;
+  const sc=new THREE.Scene(); sc.background=gradientTex();
+  sc.add(new THREE.HemisphereLight(0xe4ebff,0x4a3e7a,1.35));
+  const key=new THREE.DirectionalLight(0xfff2e2,2.3);key.position.set(1.6,3.2,3.0);key.castShadow=true;key.shadow.mapSize.set(1024,1024);
+  Object.assign(key.shadow.camera,{left:-1.2,right:1.2,top:2.2,bottom:-0.2,near:0.5,far:9});sc.add(key);
+  const rim=new THREE.DirectionalLight(0xa9b8ff,1.3);rim.position.set(-2,2.6,-2.6);sc.add(rim);
+  /* a pool of light on the floor, and her shadow in it */
+  const fc=document.createElement('canvas');fc.width=fc.height=128;const f=fc.getContext('2d');const rg=f.createRadialGradient(64,64,4,64,64,64);
+  rg.addColorStop(0,'rgba(120,140,255,0.55)');rg.addColorStop(0.7,'rgba(70,80,200,0.18)');rg.addColorStop(1,'rgba(40,50,160,0)');f.fillStyle=rg;f.fillRect(0,0,128,128);
+  const floorTex=new THREE.CanvasTexture(fc);
+  const floor=new THREE.Mesh(new THREE.CircleGeometry(1.25,48),new THREE.MeshBasicMaterial({map:floorTex,transparent:true,depthWrite:false}));floor.rotation.x=-Math.PI/2;sc.add(floor);
+  const shadow=new THREE.Mesh(new THREE.CircleGeometry(1.2,48),new THREE.ShadowMaterial({opacity:0.35}));shadow.rotation.x=-Math.PI/2;shadow.position.y=0.002;shadow.receiveShadow=true;sc.add(shadow);
+  const holder=new THREE.Group(); holder.scale.setScalar(0.91); sc.add(holder);
+  const cam=new THREE.PerspectiveCamera(30,1,0.05,50);
+  CH.renderer=r; CH.scene=sc; CH.cam=cam; CH.stage=stage; CH.holder=holder; CH.disp=[floorTex,floor.geometry,floor.material,shadow.geometry,shadow.material,sc.background];
+  sizeStage();
+ }
+ function sizeStage(){
+  if(!CH.renderer)return; const st=CH.stage, w=Math.max(10,st.clientWidth), h=Math.max(10,st.clientHeight);
+  CH.renderer.setSize(w,h,false); CH.cam.aspect=w/h; CH.cam.updateProjectionMatrix();
+ }
+ function stageRider(){
+  if(CH.R){CH.holder.remove(CH.R.g);dropRider(CH.R);CH.R=null;}
+  if(!G.horse.makeRider)return;
+  const R=G.horse.makeRider(Object.assign({},CH.draft)); CH.holder.add(R.g); CH.R=R;
+  R.g.traverse(o=>{if(o.isMesh){o.castShadow=true;}});
+  applyRiderLook(R,CH.draft);
+ }
+ function dropRider(R){try{if(R._twHairKit)R._twHairKit.dispose();if(R.mesh&&R.mesh.material)R.mesh.material.dispose();}catch(e){}}
+ function frame(t){
+  if(!CH.open||!CH.renderer)return;
+  CH.raf=requestAnimationFrame(frame);
+  const R=CH.R; if(!R||!R.sk){if(CH.R&&!CH.R._looked&&CH.R.mesh){applyRiderLook(CH.R,CH.draft);CH.R._looked=true;}CH.renderer.render(CH.scene,CH.cam);return;}
+  const tt=(t||0)/1000;
+  if(G.onFoot&&G.onFoot.pose)G.onFoot.pose(R,0,0,0,tt,Math.sin(tt*0.45)*0.25);
+  if(!CH.drag)CH.spin+=0;                          // she holds still unless turned
+  CH.holder.rotation.y=CH.spin;
+  if(CH.zoom){CH.cam.position.set(0,1.40,1.35);CH.cam.lookAt(0,1.36,0);}
+  else{CH.cam.position.set(0,1.00,4.1);CH.cam.lookAt(0,0.80,0);}
+  CH.renderer.render(CH.scene,CH.cam);
+ }
+ /* Hair-style thumbnails, rendered off her own head, in her own hair colour: the reference
+    shows each style as a little bust and a word is a poor substitute. */
+ function makeThumbs(){
+  const R=CH.R; if(!R||!R.sk||!CH.renderer)return;
+  const key=String(CH.draft.body||'f');                                    // clay busts: only the body changes them
+  if(CH.thumbKey===key&&Object.keys(CH.thumbs).length)return;
+  CH.thumbKey=key; CH.thumbs={};
+  const S=192, rt=new THREE.WebGLRenderTarget(S,S), buf=new Uint8Array(S*S*4);
+  const LUT=new Uint8Array(256); for(let i=0;i<256;i++){const c=Math.min(1,i/255*1.15);LUT[i]=Math.round(255*(c<=0.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-0.055));}
+  const cv=document.createElement('canvas');cv.width=cv.height=S;const c2=cv.getContext('2d'),img=c2.createImageData(S,S);
+  const cam=new THREE.PerspectiveCamera(30,1,0.05,20), spin0=CH.holder.rotation.y, style0=CH.draft.hairStyle, bg0=CH.scene.background;
+  /* from behind her shoulder, three-quarters, on light card: what tells one style from another is the back of the head */
+  CH.holder.rotation.y=1.8; CH.scene.background=new THREE.Color('#e9dcbc');
+  const fill=new THREE.DirectionalLight(0xfff6ea,2.4); fill.position.set(0.8,1.8,2.2); CH.scene.add(fill);   // lit from the camera's side, not silhouetted
+  for(const hs of HAIRSTYLES){
+   /* on a clay bust, as the reference does: in her own dark hair on a navy coat the shape is lost */
+   applyRiderLook(R,Object.assign({},CH.draft,{hairStyle:hs.id,helmet:'none',hair:'#cfc8bc',skin:'#ddd6cb',shirt:'#a19c95',pants:'#cfcac2',boots:'#8d8781'}));
+   if(G.onFoot&&G.onFoot.pose)G.onFoot.pose(R,0,0,0,0,0);
+   cam.position.set(0.10,1.50,1.02); cam.lookAt(0,1.33,0);
+   CH.renderer.setRenderTarget(rt); CH.renderer.render(CH.scene,cam); CH.renderer.readRenderTargetPixels(rt,0,0,S,S,buf); CH.renderer.setRenderTarget(null);
+   /* GL rows run bottom up; and a render target gets neither the tone map nor the sRGB encode the
+      screen does, so the linear values are encoded here or every bust comes out half as bright */
+   for(let y=0;y<S;y++){const src=(S-1-y)*S*4,dst=y*S*4;for(let x=0;x<S*4;x+=4){img.data[dst+x]=LUT[buf[src+x]];img.data[dst+x+1]=LUT[buf[src+x+1]];img.data[dst+x+2]=LUT[buf[src+x+2]];img.data[dst+x+3]=255;}}
+   c2.putImageData(img,0,0); CH.thumbs[hs.id]=cv.toDataURL('image/jpeg',0.86);
+  }
+  rt.dispose(); CH.holder.rotation.y=spin0; CH.scene.background=bg0; CH.scene.remove(fill); fill.dispose();
+  applyRiderLook(R,Object.assign({},CH.draft,{hairStyle:style0}));
+ }
+
+ /* ---- the grid ---------------------------------------------------------------------- */
+ function renderChar(){
+  if(!CH.open)return;
+  const s=G.save.fresh(); if(!s)return;
+  const d=CH.draft, cat=CATS.find(c=>c[0]===CH.tab)||CATS[0];
+  chRoot.querySelectorAll('.ch-cat').forEach(b=>b.classList.toggle('on',b.dataset.ch==='tab:'+CH.tab));
+  $('chHead').textContent=cat[1];
+  let h='';
+  if(CH.tab==='style'){
+   if(CH.R&&CH.R.sk)makeThumbs();
+   for(const hs of HAIRSTYLES.filter(x=>!x.body||x.body.includes(d.body||'f'))){
+    const th=CH.thumbs[hs.id];
+    h+='<button class="ch-card'+((d.hairStyle||'loose')===hs.id?' sel':'')+'" data-ch="style:'+hs.id+'">'+(th?'<img alt="" src="'+th+'">':'<span class="ic">'+SVGI(ICO.style)+'</span>')+'<span class="lb">'+esc(hs.label)+'</span></button>';
+   }
+  }else{
+   const items=ALL_ITEMS.filter(i=>i.slot===CH.tab&&(!i.cost||s.wardrobe.owned[i.id]||!SEASON_ITEMS.includes(i)));
+   for(const it of items){
+    const on=String(d[CH.tab]||'').toLowerCase()===String(it.col).toLowerCase()||(d[CH.tab]==null&&CH.tab==='helmet'&&false);
+    const locked=!allowed(s,it);
+    const face=it.col==='none'?'<span class="ic">'+SVGI(ICO.bare)+'</span>':'<span class="sw" style="background:'+it.col+'"></span>';
+    h+='<button class="ch-card'+(on?' sel':'')+'" data-ch="'+(locked?'unlock:'+it.id:'pick:'+CH.tab+':'+it.col)+'" title="'+esc(it.label)+'">'+face+'<span class="lb">'+esc(it.label)+'</span>'+(locked?'<span class="lock">✨ '+it.cost+'</span>':'')+'</button>';
+   }
+  }
+  $('chGrid').innerHTML=h;
+  $('chDust').textContent=String(s.dust||0); $('chCoins').textContent=String(s.coins|0);
+  chRoot.querySelector('[data-ch="zoom"]').classList.toggle('on',CH.zoom);
+  $('chSave').textContent=s.rider&&s.rider.made?'Save':'Saddle up!';
+ }
+ const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+ function setDraft(patch){
+  Object.assign(CH.draft,patch);
+  if(CH.draft.body==='m'){const hs=HAIRSTYLES.find(x=>x.id===CH.draft.hairStyle);if(hs&&hs.body&&!hs.body.includes('m'))CH.draft.hairStyle='crop';}
+  else{const hs=HAIRSTYLES.find(x=>x.id===CH.draft.hairStyle);if(hs&&hs.body&&!hs.body.includes('f'))CH.draft.hairStyle='loose';}
+  if(CH.R)applyRiderLook(CH.R,CH.draft);
+  renderChar();
+ }
+ function surprise(){
+  const s=G.save.fresh(); if(!s)return;
+  const pick=slot=>{const L=ALL_ITEMS.filter(i=>i.slot===slot&&allowed(s,i));return L.length?L[Math.floor(Math.random()*L.length)].col:null;};
+  const styles=HAIRSTYLES.filter(x=>!x.body||x.body.includes(CH.draft.body||'f'));
+  setDraft({hairStyle:styles[Math.floor(Math.random()*styles.length)].id,hair:pick('hair'),skin:pick('skin'),shirt:pick('shirt'),pants:pick('pants'),boots:pick('boots'),
+   helmet:Math.random()<0.5?'none':pick('helmet')});
+ }
+
+ /* ---- open, close, save ------------------------------------------------------------- */
+ function openChar(tab){
+  const s=G.save.fresh(); if(!s)return;
+  try{G.hidePanels();}catch(e){}
+  CH.draft=fitOf(s); if(tab)CH.tab=tab;
+  CH.open=true; chRoot.classList.add('on'); document.body.classList.add('se-char-open');
+  $('chName').value=String(s.playerName||'');
+  if(!CH.renderer)buildStage(); else sizeStage();
+  stageRider();
+  CH.thumbKey=''; renderChar();
+  cancelAnimationFrame(CH.raf); CH.raf=requestAnimationFrame(frame);
+  /* the thumbnails want her skeleton; draw the grid again once it is in */
+  setTimeout(()=>{if(CH.open&&CH.tab==='style')renderChar();},250);
+ }
+ function closeChar(){
+  if(!CH.open)return;
+  CH.open=false; chRoot.classList.remove('on'); document.body.classList.remove('se-char-open');
+  cancelAnimationFrame(CH.raf);
+  if(CH.R){CH.holder.remove(CH.R.g);dropRider(CH.R);CH.R=null;}
+  /* a second GL context is not free: give it back */
+  try{for(const d of CH.disp||[])d.dispose();CH.renderer.dispose();CH.renderer.forceContextLoss();}catch(e){}
+  try{const cv=$('chCanvas');if(cv)cv.remove();}catch(e){}
+  CH.renderer=null; CH.scene=null; CH.thumbs={}; CH.thumbKey='';
+ }
+ function saveChar(){
+  const d=CH.draft, name=String($('chName').value||'').trim().slice(0,14);
+  G.save.sync(s=>{Object.assign(s.rider,{shirt:d.shirt,pants:d.pants,hair:d.hair,skin:d.skin,helmet:d.helmet,boots:d.boots,hairStyle:d.hairStyle,body:d.body});if(name)s.playerName=name;});
+  closeChar();
+  finishCreator(name);
+ }
+ chRoot.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('[data-ch]'); if(!b)return;
+  const [op,a1,a2]=b.dataset.ch.split(':');
+  if(op==='close')closeChar();
+  else if(op==='save')saveChar();
+  else if(op==='undo'){const s=G.save.fresh();if(s)setDraft(fitOf(s));}
+  else if(op==='tab'){CH.tab=a1;renderChar();}
+  else if(op==='style')setDraft({hairStyle:a1});
+  else if(op==='pick')setDraft({[a1]:b.dataset.ch.split(':').slice(2).join(':')});
+  else if(op==='unlock'){G.ui.dispatch('wd:unlock:'+a1);const it=itemById(a1),s=G.save.fresh();if(it&&s&&s.wardrobe.owned[it.id])setDraft({[it.slot]:it.col});else renderChar();}
+  else if(op==='zoom'){CH.zoom=!CH.zoom;renderChar();}
+  else if(op==='dice')surprise();
+  else if(op==='body')setDraft({body:CH.draft.body==='m'?'f':'m'});
+  else if(op==='turn')CH.spin+=Math.PI/2;
+  else if(op==='rname'){$('chName').value=RIDER_NAMES[Math.floor(Math.random()*RIDER_NAMES.length)];}
+ });
+ addEventListener('resize',()=>{if(CH.open)sizeStage();});
+ G.on('escape',()=>{if(CH.open){closeChar();return true;}return false;});
+ /* while it is up the horse holds still and the keys belong to the name field */
+ window.addEventListener('keydown',e=>{
+  if(!CH.open)return;
+  if(document.activeElement&&document.activeElement.id==='chName'){if(e.code==='Enter')saveChar();return;}
+  if(e.code==='Escape'){closeChar();e.preventDefault();}
+  e.stopImmediatePropagation();
+ },true);
+ G.on('tick',()=>{if(CH.open){const p=G.horse.player;if(p)p.speed=0;}});
  /* ---- Season Store ---------------------------------------------------------------------- */
  function seasonStoreHtml(s){
   const sn=G.time.seasonNow(), def=sn.def, items=SEASON_OUTFITS[def.id]||[], tok=(s.tokens&&s.tokens.n)||0;
@@ -171,12 +448,8 @@ export function install(G){
   else if(op==='body'){G.save.sync(s=>{s.rider.body=a[1]==='m'?'m':'f';const hs=HAIRSTYLES.find(h=>h.id===s.rider.hairStyle);if(hs&&hs.body&&!hs.body.includes(s.rider.body))s.rider.hairStyle='loose';ok=true;});applyLocal();msg=a[1]==='m'?'👦 Cowboy.':'👧 Cowgirl.';}
   else if(op==='name'){const v=String(el&&el.value||'').trim().slice(0,14);G.save.sync(s=>{s.playerName=v||s.playerName;});return;}
   else if(op==='dice'){const nm=RIDER_NAMES[Math.floor(Math.random()*RIDER_NAMES.length)];G.save.sync(s=>{s.playerName=nm;});const inp=$('riderPanel')&&$('riderPanel').querySelector('[data-fxin="wd:name"]');if(inp)inp.value=nm;msg='🎲 '+nm+' it is.';toast(msg);return;}
-  else if(op==='done'){const inp=$('riderPanel')&&$('riderPanel').querySelector('[data-fxin="wd:name"]');const v=inp?String(inp.value||'').trim().slice(0,14):'';let first=false;
-   G.save.sync(s=>{s.playerName=v||s.playerName||RIDER_NAMES[Math.floor(Math.random()*RIDER_NAMES.length)];if(!s.rider.made)first=true;s.rider.made=true;
-    if(!s.tw.starter){s.tw.starter=1;s.tack=s.tack||[];const g=G.horse.genGear('Common','saddle',{style:'english'});g.name='Grandma\'s Old Saddle';s.tack.push(g);const h=s.horses[G.horse.rideIdx()];if(h){h.gear=h.gear||{};if(!h.gear.saddle)h.gear.saddle=g.id;}}});
-   G.horse.refreshTack();G.horse.attachTack();G.horse.dressSaddle();applyLocal();G.hidePanels();G.sChime();
-   toast(first?'🐴 Welcome, '+(G.net.myName())+'! Grandma\'s old saddle is on your horse — the Tack tab will show you more.':'Saved. 🧢');return;}
-  else if(op==='creator'){G.ui.open('riderPanel');return;}
+  else if(op==='done'){const inp=$('riderPanel')&&$('riderPanel').querySelector('[data-fxin="wd:name"]');finishCreator(inp?String(inp.value||'').trim().slice(0,14):'');return;}
+  else if(op==='creator'){openChar();return;}
   else if(op==='store'){openStore();return;}
   else if(op==='season'){const it=SEASON_ITEMS.find(i=>i.id===a[1]);if(!it)return;const sn=G.time.seasonNow();
    G.save.sync(s=>{if(s.wardrobe.owned[it.id]){msg='Already yours.';return;}if(!(SEASON_OUTFITS[sn.def.id]||[]).includes(it)){msg='That outfit is out of season.';return;}
@@ -232,10 +505,10 @@ export function install(G){
   if(idx!==lastIdx){lastIdx=idx;
    for(const m of [M1,M2]){const at=G.quest.STORY.indexOf(m);if(at>=0&&at<idx){let paid=false;G.save.sync(s=>{s.mig=s.mig||{};const tag='tw-kit-'+m.twKit+'-'+m.goal;if(s.mig[tag])return;s.mig[tag]=1;s.items=s.items||{};s.items[m.twKit]=(s.items[m.twKit]||0)+1;paid=true;});
     if(paid)toast('🧰 Bo tucks a Tack Toolkit '+({kit1:'I',kit2:'II',kit3:'III'})[m.twKit]+' into your saddlebag.');}}}
-  if(!creatorChecked&&!$('load')){creatorChecked=true;const s=G.save.fresh();if(s&&autoCreator&&!(s.rider&&s.rider.made))G.ui.open('riderPanel');}
+  if(!creatorChecked&&!$('load')){creatorChecked=true;const s=G.save.fresh();if(s&&autoCreator&&!(s.rider&&s.rider.made))openChar();}   // the Character screen, the first time
  });
  G.on('rebuild',()=>{refreshLocal();});
  G.on('boot',s=>{refreshLocal(s);});
  /* handles for QA */
- G.wardrobe={WARDROBE,HAIRSTYLES,SEASON_OUTFITS,PRESTIGE_SET,RIDER_NAMES,applyRiderLook,prestigeOwned,fitOf,missions:[M1,M2]};
+ G.wardrobe={WARDROBE,HAIRSTYLES,SEASON_OUTFITS,PRESTIGE_SET,RIDER_NAMES,applyRiderLook,prestigeOwned,fitOf,missions:[M1,M2],openChar,closeChar,charState:()=>({open:CH.open,tab:CH.tab,draft:CH.draft&&Object.assign({},CH.draft),rider:!!CH.R,thumbs:Object.keys(CH.thumbs).length})};
 }
