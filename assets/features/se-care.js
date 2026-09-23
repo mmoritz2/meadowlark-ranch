@@ -126,6 +126,16 @@ export function install(G){
 #seOv .sv-go{display:flex;gap:10px;margin-top:12px;width:100%;justify-content:flex-end}
 #seOv .sv-heart{width:clamp(66px,8vw,92px);height:clamp(48px,7.6vh,62px);border-radius:12px;background:linear-gradient(180deg,#d45470,#a83550);color:#fff;font-size:30px}
 #seOv .sv-ride{flex:1;max-width:240px;height:clamp(48px,7.6vh,62px);border-radius:12px;background:linear-gradient(180deg,#fbe36a,#eec52d);color:#1f2350;font-size:clamp(22px,3.6vh,30px);font-weight:900;letter-spacing:.5px}
+#seOv .sv-arrow{position:absolute;width:clamp(44px,6.4vh,56px);height:clamp(44px,6.4vh,56px);margin-top:calc(clamp(44px,6.4vh,56px) / -2);border-radius:50%;
+ display:none;align-items:center;justify-content:center;pointer-events:auto;padding:0;
+ background:radial-gradient(circle at 35% 30%,rgba(58,93,163,.94),rgba(28,45,90,.94));border:3px solid #dfe6f5!important;color:#fff;font-size:clamp(28px,4.4vh,36px);font-weight:900;line-height:1;
+ box-shadow:0 4px 12px rgba(0,0,0,.35)!important}
+#seOv .sv-arrow.show{display:flex}
+#seOv .sv-arrow:hover{filter:brightness(1.18)}
+#seOv .sv-arrow:active{transform:scale(.94)}
+#seOv .sv-count{position:absolute;transform:translateX(-50%);display:none;padding:4px 14px;border-radius:14px;background:rgba(30,24,38,.8);
+ font-weight:900;font-size:clamp(13px,2vh,16px);pointer-events:none;white-space:nowrap;text-shadow:0 1px 0 rgba(0,0,0,.4)}
+#seOv .sv-count.show{display:block}
 #seOv .sv-more{margin-top:8px;background:none;color:#f3e6c8;font-weight:900;font-size:14px;text-decoration:underline;text-shadow:0 1px 2px rgba(0,0,0,.6)}
 body.se-ov-open #hud,body.se-ov-open #mini,body.se-ov-open #hint,body.se-ov-open #ftBar,body.se-ov-open #questTrack,body.se-ov-open #ctx,
 body.se-ov-open #statusCard,body.se-ov-open #stamWrap,body.se-ov-open #fcHint,body.se-ov-open #chatFeed,body.se-ov-open #chatBar,
@@ -150,7 +160,10 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   +'<button class="sv-circ" data-se="close" title="Close">✕</button></div>'
   +'<div class="sv-rail">'+TABS.map(t=>'<button class="sv-tab" data-se="tab:'+t[0]+'"><span>'+t[2]+'</span>'+t[1]+'</button>').join('')+'</div>'
   +'<div class="sv-card"><div class="sv-scroll" id="seOvBody"></div><div class="sv-btns" id="seOvBtns"></div></div>'
-  +'<div class="sv-right" id="seOvRight"></div>';
+  +'<div class="sv-right" id="seOvRight"></div>'
+  +'<button class="sv-arrow" id="seOvPrev" data-se="cycle:-1" title="Previous horse"><svg viewBox="0 0 24 24" width="55%" height="55%" aria-hidden="true"><polyline points="15,5 8,12 15,19" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
+  +'<button class="sv-arrow" id="seOvNext" data-se="cycle:1" title="Next horse"><svg viewBox="0 0 24 24" width="55%" height="55%" aria-hidden="true"><polyline points="9,5 16,12 9,19" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
+  +'<div class="sv-count" id="seOvCount"></div>';
  document.body.appendChild(root);
 
  /* ---------------------------------------------------------------- data ------------------- */
@@ -271,6 +284,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   body.scrollTop=top;
   $('seOvRight').innerHTML=rightColumn(s,h);
   $('seOvCoins').textContent=String(s.coins|0); $('seOvGems').textContent=String(s.gems|0);
+  try{placeArrows();}catch(e){}
  }
 
  /* ---------------------------------------------------------------- open, close ------------ */
@@ -282,7 +296,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   ST.fov=G.camera?G.camera.fov:null;
   try{if(p&&p.rider&&p.rider.g){ST.rider=p.rider.g.visible;p.rider.g.visible=false;}}catch(e){}
   document.body.classList.add('se-ov-open'); root.classList.add('on');
-  render(); measureGap();
+  render(); measureGap(); placeArrows();
  }
  function close(){
   if(!ST.open)return;
@@ -315,6 +329,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   if(op==='close'){close();return;}
   if(op==='tab'){ST.tab=arg;render();return;}
   if(op==='ride'){if(arg!=null)rideHorse(+arg);else close();return;}
+  if(op==='cycle'){cycle(+arg||1);return;}
   if(op==='open'){openOther(arg);return;}
   if(op==='care'){try{G.ui.careAct(arg);}catch(err){console.error('se-care care '+arg,err);}later();return;}
  });
@@ -332,6 +347,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   const tag=document.activeElement&&document.activeElement.tagName;
   if(tag==='INPUT'||tag==='TEXTAREA')return;
   if(e.code==='Escape'){close();}
+  else if(e.code==='ArrowLeft'||e.code==='ArrowRight'){e.preventDefault();if(!e.repeat)cycle(e.code==='ArrowLeft'?-1:1);}
   e.stopImmediatePropagation();
  },true);
 
@@ -352,6 +368,32 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
    rail=root.querySelector('.sv-rail').getBoundingClientRect(),top=root.querySelector('.sv-top').getBoundingClientRect();
   if(W<=760){GAP.l=rail.right/W;GAP.r=0.98;GAP.t=top.bottom/H+0.06;GAP.b=clamp(c.top/H,0.3,0.9);}   // upright phone: the space above the card
   else{GAP.l=clamp(c.right/W,0.2,0.7);GAP.r=0.86;GAP.t=top.bottom/H;GAP.b=0.98;}}catch(e){}}
+ /* The arrows either side of her: previous and next horse, flipped through in stable order with
+    foals skipped (a foal is not ridden until she grows up). They sit at the edges of the free
+    gap the horse is framed into, so they flank her at every window size, and they only show
+    when there is somebody to flip to. */
+ const rideable=s=>(s&&s.horses||[]).map((h,i)=>h&&!h.foal?i:-1).filter(i=>i>=0);
+ function placeArrows(){
+  const s=fresh(),R=rideable(s),W=innerWidth||1,H=innerHeight||1,ri=G.horse.rideIdx();
+  const prev=$('seOvPrev'),next=$('seOvNext'),cnt=$('seOvCount'); if(!prev||!next||!cnt)return;
+  const many=R.length>1;
+  prev.classList.toggle('show',many); next.classList.toggle('show',many); cnt.classList.toggle('show',many);
+  if(!many)return;
+  /* Low, at leg height: the ends of a standing horse are narrowest there, so the arrows flank her
+     instead of sitting on her chest and quarters. */
+  const size=prev.offsetWidth||52,y=(GAP.t+(GAP.b-GAP.t)*0.68)*H;
+  prev.style.left=(GAP.l*W+8)+'px'; prev.style.top=y+'px';
+  next.style.left=(GAP.r*W-(W<=760?8:44)-size)+'px'; next.style.top=y+'px';   // clear of the traits heading on the right
+  const at=Math.max(0,R.indexOf(ri)),H2=s.horses;
+  const nm=k=>{const h=H2[R[(at+k+R.length)%R.length]];return h?h.name:'';};
+  prev.title='Ride '+nm(-1); next.title='Ride '+nm(1);
+  cnt.textContent=(at+1)+' / '+R.length; cnt.style.left=(((GAP.l+GAP.r)/2)*W)+'px'; cnt.style.top=(GAP.b*H-(W<=760?36:48))+'px';
+ }
+ function cycle(dir){
+  const s=fresh(),R=rideable(s); if(R.length<2)return;
+  const at=R.indexOf(G.horse.rideIdx()),to=R[((at<0?0:at)+dir+R.length)%R.length];
+  rideHorse(to);
+ }
  addEventListener('resize',()=>{if(ST.open){measureGap();render();}});
  G.on('camera',c=>{
   if(!ST.open)return false;
@@ -361,7 +403,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   const hh=Math.max(0.2,GAP.b-GAP.t), cy=(GAP.t+GAP.b)/2;
   /* Far enough back that her whole length fits the free gap and her whole height fits the frame,
      from her right, which is the side the mane falls on, and a touch ahead of square. */
-  const d=Math.max(2.3*sc/(2*0.94*w*Math.tan(hf/2)),2.15*sc/(2*0.80*hh*Math.tan(vf/2)));
+  const d=Math.max(2.3*sc/(2*0.86*w*Math.tan(hf/2)),2.15*sc/(2*0.80*hh*Math.tan(vf/2)));
   const Fx=Math.sin(h),Fz=Math.cos(h);
   _at.set(p.pos.x,gy+0.95*sc,p.pos.z);
   /* Her right is the side the mane falls on, so that is the side to stand; but a fence or a wall
@@ -385,6 +427,14 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   return true;
  });
 
+ /* ?overview in the address opens straight into this screen once her model is standing there,
+    so a link can go directly to the horse. */
+ if(/[?&#]overview\b/i.test(String(location.search)+String(location.hash))){
+  let waited=0,done=false;
+  G.on('tick',dt=>{if(done||ST.open)return;waited+=dt||0.016;let ready=false;
+   try{ready=!!(G.horse.RIG().ready&&G.horse.player.mesh);}catch(e){}
+   if(ready&&waited>1.5){done=true;open('horse');}});
+ }
  G.seCare={open,close,render,state:()=>({open:ST.open,tab:ST.tab})};
  G.on('state',o=>{o.seCare={open:ST.open,tab:ST.tab};});
 }

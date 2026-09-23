@@ -29,6 +29,11 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 300 s');try{if(bro
   const ov=document.getElementById('seOv'),p=G.horse.player,cam=G.camera;
   out.installed=G.installed.includes('se-care')&&!!ov&&!!G.seCare;
   out.errors=G.errors.slice();
+  /* with one horse there is nobody to flip to: no arrows */
+  document.getElementById('careBtn').click(); await frames(10);
+  const shown=id=>{const e=document.getElementById(id);return !!e&&getComputedStyle(e).display!=='none';};
+  out.solo={horses:(G.save.fresh().horses||[]).filter(h=>!h.foal).length,prev:shown('seOvPrev'),next:shown('seOvNext')};
+  G.seCare.close(); await frames(3);
   /* a second horse, so there is somebody to switch to */
   G.save.sync(s=>{G.horse.grantHorse(s,'grey');}); G.horse.reloadHorses(); await frames(10);
   const fov0=cam.fov, rider0=!!(p.rider&&p.rider.g&&p.rider.g.visible);
@@ -59,6 +64,15 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 300 s');try{if(bro
   out.switch={cards,before:ri0,target,after:G.horse.rideIdx(),
    stillOpen:G.seCare.state().open,tab:G.seCare.state().tab,nameNow:((document.querySelector('#seOv .sv-name')||{}).textContent||'').replace('✎','').trim(),
    expect:s1.horses[G.horse.rideIdx()]&&s1.horses[G.horse.rideIdx()].name,riderHidden:!!(p.rider&&p.rider.g&&!p.rider.g.visible)};
+  /* 4b. the arrows either side of her flip through the horses, and so do the arrow keys */
+  const ri1=G.horse.rideIdx(), cnt=()=>(document.getElementById('seOvCount')||{}).textContent||'';
+  out.arrows={prev:shown('seOvPrev'),next:shown('seOvNext'),count0:cnt()};
+  document.getElementById('seOvNext').click(); await frames(30);
+  out.arrows.afterNext=G.horse.rideIdx(); out.arrows.count1=cnt(); out.arrows.from=ri1;
+  window.dispatchEvent(new KeyboardEvent('keydown',{code:'ArrowLeft',key:'ArrowLeft',bubbles:true})); await frames(30);
+  out.arrows.afterKey=G.horse.rideIdx(); out.arrows.open=G.seCare.state().open;
+  out.arrows.name=((document.querySelector('#seOv .sv-name')||{}).textContent||'').replace('✎','').trim();
+  out.arrows.expect=(G.save.fresh().horses[G.horse.rideIdx()]||{}).name;
   /* 5. Escape closes it and everything comes back */
   window.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape',key:'Escape',bubbles:true})); await frames(10);
   out.closed={on:ov.classList.contains('on'),body:document.body.classList.contains('se-ov-open'),fov:cam.fov,fov0,
@@ -77,6 +91,10 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 300 s');try{if(bro
  check('feeding a carrot from it goes through the game\'s care code',r.feed.button&&r.feed.after===r.feed.before-1,r.feed);
  check('My Horses switches the ridden horse and shows her',r.switch.cards>=2&&r.switch.target>=0&&r.switch.after===r.switch.target&&r.switch.after!==r.switch.before
   &&r.switch.stillOpen&&r.switch.tab==='horse'&&r.switch.nameNow===r.switch.expect&&r.switch.riderHidden,r.switch);
+ check('with only one horse there are no side arrows',r.solo.horses===1&&!r.solo.prev&&!r.solo.next,r.solo);
+ check('the side arrows flip to the next horse and the arrow keys flip back, with the counter following',
+  r.arrows.prev&&r.arrows.next&&/^\d+ \/ 2$/.test(r.arrows.count0)&&r.arrows.afterNext!==r.arrows.from&&r.arrows.count1!==r.arrows.count0
+  &&r.arrows.afterKey===r.arrows.from&&r.arrows.open&&r.arrows.name===r.arrows.expect,r.arrows);
  check('Escape closes it and gives back the rider, the lens and the HUD',!r.closed.on&&!r.closed.body&&Math.abs(r.closed.fov-r.closed.fov0)<0.5&&r.closed.rider===r.closed.rider0,r.closed);
  check('G.ui.openCare still opens the old care panel with its buttons',r.old.shown==='flex'&&r.old.cares>3&&!r.old.overlay,r.old);
  check('no page errors',errors.length===0,errors.slice(0,5));
