@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Rider lab</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>html,body{margin:0;background:#9fb4c8;overflow:hidden}canvas{display:block}#msg{position:fixed;left:8px;top:6px;font:12px sans-serif;color:#123}</style>
+<script type="importmap">{"imports":{"three":"../assets/vendor/three/build/three.module.js","three/addons/":"../assets/vendor/three/examples/jsm/"}}</script>
+</head><body><div id="msg">loading…</div>
+<script type="module">
+/* Rider lab: the rider from assets/rider-model.js on its own, lit like the game, for looking at.
+   ?view=front|side|back|three|face|seat|seatside|walk   &style= &helmet= (none|#hex) &outfit= &skin= &hair= &shirt= &pants= &boots= &eyes= &body=f|m &t=
+   Dev tool only; the game builds her through makeRider in ranch3d.html. */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {clone} from 'three/addons/utils/SkeletonUtils.js';
+import {createRiderLibrary} from '../assets/rider-model.js';
+const Q=new URLSearchParams(location.search), q=(k,d)=>Q.has(k)?Q.get(k):d;
+const RJ={hips:[0,-0.235,-0.250],spine:[0,-0.020,-0.230],chest:[0,0.245,-0.200],neck:[0,0.470,-0.190],head:[0,0.560,-0.165],headEnd:[0,0.930,-0.150],
+ shoulder:[0.185,0.435,-0.170],elbow:[0.212,0.135,-0.020],wrist:[0.140,0.132,0.300],hand:[0.108,0.140,0.392],
+ legTop:[0.115,-0.250,-0.245],knee:[0.216,-0.358,0.312],ankle:[0.168,-0.855,0.172],ball:[0.192,-0.972,0.330],toe:[0.190,-0.980,0.452]};
+const W=+q('w',720),H=+q('h',900);
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setSize(W,H);renderer.setPixelRatio(1);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x9fb4c8);
+scene.add(new THREE.HemisphereLight(0xc6d9ed,0x898467,1.05));
+const sun=new THREE.DirectionalLight(0xffedda,3.15);sun.position.set(2.5,5,4);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-2,right:2,top:2.5,bottom:-1,near:0.5,far:15});sun.shadow.bias=-0.0004;scene.add(sun);
+const fill=new THREE.DirectionalLight(0xdde8ff,0.6);fill.position.set(-3,2,-2);scene.add(fill);
+const ground=new THREE.Mesh(new THREE.CircleGeometry(3,48),new THREE.MeshStandardMaterial({color:0x8a9a6a,roughness:1}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+const cam=new THREE.PerspectiveCamera(+q('fov',30),W/H,0.05,50);
+const lib=createRiderLibrary({THREE,GLTFLoader,clone,RJ});
+const body=q('body','f');
+const fit={shirt:q('shirt','#3d4a6e'),pants:q('pants','#cfc6ae'),boots:q('boots','#3b2a14'),helmet:q('helmet','#2e2e38'),skin:q('skin',null),hair:q('hair','#4a2e1c'),hairStyle:q('style','ponytail'),outfit:q('outfit','riding'),eyes:q('eyes','brown'),body};
+if(fit.helmet==='none')fit.helmet='none';
+window.lab={lib,fit,THREE,cam};
+try{
+ const kit=await lib.kit(body);
+ const view=q('view','three');
+ /* a stand-in for the game's R, with its seat, to try adoptRider exactly as the game will */
+ const R={g:new THREE.Group(),fitG:new THREE.Group(),handL:new THREE.Object3D(),handR:new THREE.Object3D(),pose:{lean:0.05,side:0,head:0,rise:0,spread:0.16}};
+ R.g.add(R.fitG);
+ R._rest=()=>{for(const b of R.sk.list){b.quaternion.set(0,0,0,1);b.position.copy(b.userData.rest);}};
+ R._seat=(lean,side,look,rise,spread)=>{const B=R.sk.by;
+  B.hips.rotation.set(lean*0.50,0,side*0.45);B.spine.rotation.set(lean*0.30,0,side*0.30);B.chest.rotation.set(lean*0.16,0,side*0.20);
+  B.neck.rotation.set(-0.105-lean*0.40,-look*0.35,-side*0.30);B.head.rotation.set(-0.065-lean*0.22,-look*0.55,-side*0.25);
+  B.hips.position.y=B.hips.userData.rest.y+(rise||0);
+  if(spread){const a=spread*1.7;B.thighR.rotation.set(0.60,a,0);B.thighL.rotation.set(0.60,-a,0);B.shinR.rotation.set(-0.70,0,0);B.shinL.rotation.set(-0.70,0,0);B.footR.rotation.set(-0.52,0,0);B.footL.rotation.set(-0.52,0,0);}};
+ const rig=lib.build(kit,fit);
+ lib.adoptRider(R,rig,{fit:{s:1,dy:0,dz:0}});
+ window.lab.R=R;window.lab.rig=rig;
+ scene.add(R.g);
+ const seated=view.startsWith('seat')||view==='hands';
+ if(seated){R._apply();R.g.position.set(0,0.95,0);}
+ else{
+  const t=+q('t',0.4); const sp=view==='walk'?1.45:view==='jog'?3.2:0;
+  R.locomote(0.001,{speed:sp});rig.mixer.setTime(t);R.locomote(0,{speed:sp});
+ }
+ /* markers for the rein anchors, when asked */
+ if(Q.has('marks'))for(const h of [R.handL,R.handR]){const m=new THREE.Mesh(new THREE.SphereGeometry(0.012),new THREE.MeshBasicMaterial({color:0xff2060}));h.add(m);}
+ const views0={front:[0,1.0,4.6,0,0.9,0],back:[0,1.0,-4.6,0,0.9,0],side:[4.6,1.0,0,0,0.9,0],three:[2.8,1.35,3.8,0,0.88,0],
+  face:[0.18,1.62,0.75,0,1.60,0.02],seat:[2.2,1.2,2.6,0,0.85,0],seatside:[3.2,1.0,0,0,0.8,0],walk:[3.0,1.2,2.6,0,0.85,0],jog:[3.0,1.2,2.6,0,0.85,0],seatfront:[0,1.1,3.6,0,0.85,0],hands:[0.42,1.42,1.05,0,1.20,0.40],feet:[0.9,0.35,1.4,0,0.18,0]};
+ const views=views0; const v=views[view]||views.three; cam.position.set(v[0],v[1],v[2]); cam.lookAt(v[3],v[4],v[5]);
+ if(view==='face'){cam.fov=+q('fov',24);cam.updateProjectionMatrix();}
+ /* outfits load late: give them a moment */
+ const until=performance.now()+4000, want=()=>fit.outfit!=='riding'?!!rig.outfit:!!rig.boots;
+ const tick=()=>{renderer.render(scene,cam);if(!want()&&performance.now()<until)requestAnimationFrame(tick);else{renderer.render(scene,cam);document.getElementById('msg').textContent='';window.labReady=true;setInterval(()=>renderer.render(scene,cam),100);}};
+ tick();
+}catch(e){document.getElementById('msg').textContent='ERROR '+e.message;console.error(e);window.labError=String(e&&e.stack||e);}
+</script></body></html>

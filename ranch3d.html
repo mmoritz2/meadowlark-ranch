@@ -605,7 +605,8 @@ import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
-import {FEATURES} from './assets/features/index.js?v=feat-5';
+import {createRiderLibrary} from './assets/rider-model.js?v=rider-1';
+import {FEATURES} from './assets/features/index.js?v=feat-6';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -6161,6 +6162,7 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
   _rdF.set(0,0,1).applyQuaternion(_rdQ); _rdU.set(0,1,0).applyQuaternion(_rdQ); _rdR.set(1,0,0).applyQuaternion(_rdQ);
   riderLegs(R,_rdF,_rdU,_rdR);
   if(!G.run('riderPose',R,tm,dt))riderHands(R,_rdF,_rdU,_rdR,tm,pat);   // a rider emote (wave, guitar…) owns the arms for its duration
+  if(R._sync)R._sync();   // the character's own bones take the role bones' pose (assets/rider-model.js)
  } else trackHead();
  /* In VR the rider is hidden, so the reins hang from your real hands instead of hers. bitL
     sits on the +x side, so pair it with whichever controller is further right. (This lived
@@ -7836,14 +7838,18 @@ const RIDER_MESH={geo:null,mat:null,pending:[],riders:[]};
 const RIDER_FIT={s:0.74, dz:-0.10, spread:0.16, hip:[0,-0.18,-0.30], handL:[-0.07,0.17,0.42], handR:[0.07,0.17,0.42]};   // mesh units -> seat: scale, seat shift, and where her hip and hands are in the mesh
 /* RIDER_DEF_SHIRT / RIDER_DEF_PANTS moved up beside SAVE_KEY: ensureCore reads them at boot. */
 function riderRefit(){for(const R of RIDER_MESH.riders)R._fit();}
-new GLTFLoader().load('assets/models/rider_seat_textured.glb',g=>{
- let mesh=null; g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});
- if(!mesh)return;
- mesh.geometry.computeBoundingSphere();
- if(mesh.material.map)mesh.material.map.anisotropy=8;
- RIDER_MESH.geo=riderSkinAttrs(riderCullProp(mesh.geometry)); RIDER_MESH.mat=mesh.material;
- RIDER_MESH.pending.forEach(f=>f()); RIDER_MESH.pending.length=0;
-},undefined,e=>console.warn('rider mesh failed to load',e));
+/* The sculpt is the fallback now: the rider is the character in assets/rider-model.js (RIDER_LIB, below
+   the joint table), and this loads only if that fails, or with ?oldrider for a comparison. */
+function loadSculptRider(){
+ new GLTFLoader().load('assets/models/rider_seat_textured.glb',g=>{
+  let mesh=null; g.scene.traverse(o=>{if(o.isMesh&&!mesh)mesh=o;});
+  if(!mesh)return;
+  mesh.geometry.computeBoundingSphere();
+  if(mesh.material.map)mesh.material.map.anisotropy=8;
+  RIDER_MESH.geo=riderSkinAttrs(riderCullProp(mesh.geometry)); RIDER_MESH.mat=mesh.material;
+  RIDER_MESH.pending.forEach(f=>f()); RIDER_MESH.pending.length=0;
+ },undefined,e=>console.warn('rider mesh failed to load',e));
+}
 function riderMaterial(base,fit){
  const m=base.clone(); m.roughness=0.72; m.metalness=0;
  m.side=THREE.DoubleSide;   // the sculpt has a few torn faces at the hip: close them from behind
@@ -7949,6 +7955,19 @@ for(const s of [1,-1]){ const S=s>0?'R':'L';
  RIDER_HINGE['knee'+S] =riderHinge(rjm(RJ.legTop,s),rjm(RJ.knee,s),rjm(RJ.ankle,s));
  RIDER_HINGE['elbow'+S]=riderHinge(rjm(RJ.shoulder,s),rjm(RJ.elbow,s),rjm(RJ.wrist,s));
 }
+/* ---- the rider herself ---------------------------------------------------------------
+   A real character now (assets/rider-model.js: Quaternius' CC0 base body, hair, outfits and animation
+   library): a face, hairstyles, a riding helmet, riding clothes in the wardrobe's colours, and walk and
+   idle clips on foot. adoptRider gives her the role bones every seat and IK here already poses, standing
+   on her own joints in a seat built from RJ above, so none of it had to change. The fit puts her hip
+   where the sculpt's was and her seat on the saddle: measured, the lowest point of the seat and the back
+   of it land where the sculpt's did (15 cm under the origin, 19 cm behind), at 0.94 of her 1.77 m. */
+const RIDER_LIB=createRiderLibrary({THREE,GLTFLoader,clone:skeletonClone,RJ});
+const RIDER_UBC={ok:null};   // null loading, true ready, false failed (the sculpt stands in)
+const UBC_FIT={f:{s:0.94,dy:-0.077,dz:-0.089},m:{s:0.94,dy:-0.082,dz:-0.091}};
+if(/[?&]oldrider\b/.test(location.search)){RIDER_UBC.ok=false;loadSculptRider();}
+else RIDER_LIB.kit('f').then(()=>{RIDER_UBC.ok=true;const p=RIDER_MESH.pending.splice(0);p.forEach(f=>f());})
+ .catch(e=>{console.warn('rider model failed to load; the old rider stands in',e);RIDER_UBC.ok=false;loadSculptRider();});
 /* The sculpt came holding a loop of rein of its own — a slab of geometry hanging between
    her fists and her thigh that reads as a smear of mud from every angle. The game hangs
    real reins off her hands, so the sculpted one was only ever in the way. */
@@ -8116,7 +8135,20 @@ function makeRider(custom){
  const dial=k=>({get value(){return R.pose[k];},set value(v){R.pose[k]=v;R._apply();}});
  R.u={uLean:dial('lean'),uSide:dial('side'),uHead:dial('head'),uRise:dial('rise'),uSpread:dial('spread')};
  R._setHero=hero=>{R._hero=hero;if(R.mesh)R.mesh.geometry=hero?heroRiderGeometry(RIDER_MESH.geo):RIDER_MESH.geo;R._fit();};
+ /* the character (RIDER_LIB) when it loaded, the old sculpt when it did not; a second body waits for
+    its own kit and falls back to the first */
+ const attachUBC=()=>{
+  const go=kit=>{
+   if(R.sk||R._dead||!kit)return;
+   const rig=RIDER_LIB.build(kit,fit);
+   RIDER_LIB.adoptRider(R,rig,{fit:UBC_FIT[kit.body]});
+   G.run('riderReady',R);
+  };
+  const body=fit.body==='m'?'m':'f', k=RIDER_LIB.ready(body);
+  if(k)go(k); else RIDER_LIB.kit(body).then(go,()=>go(RIDER_LIB.ready('f')));
+ };
  const attach=()=>{
+  if(RIDER_UBC.ok){attachUBC();return;}
   const geo=R._hero?heroRiderGeometry(RIDER_MESH.geo):RIDER_MESH.geo;
   const m=new THREE.SkinnedMesh(geo,riderMaterial(RIDER_MESH.mat,fit));
   m.castShadow=true; m.frustumCulled=false;
@@ -8131,7 +8163,7 @@ function makeRider(custom){
   R.handR.position.set(gx,gy,gz); R.handL.position.set(-gx,gy,gz);
   R._fit();
  };
- if(RIDER_MESH.geo)attach(); else RIDER_MESH.pending.push(attach);
+ if(RIDER_UBC.ok||RIDER_MESH.geo)attach(); else RIDER_MESH.pending.push(attach);
  R._fit();
  r.position.set(0,1.86,-0.14);   // the procedural horse's seat; the rigged mount re-seats her
  /* Rebuilding the mount makes a new rider, and the old one was kept on this list for ever
@@ -8347,14 +8379,14 @@ rebuildAll();
 const npcs=[];
 {
  const defs=[
-  {name:'Juniper',body:'#9c4f23',mane:'#6e3617',tack:'#2e86c1',off:1,shirt:'#5a9a5a',pants:'#5a4632',
+  {name:'Juniper',body:'#9c4f23',mane:'#6e3617',tack:'#2e86c1',off:1,shirt:'#5a9a5a',pants:'#5a4632',look:{hairStyle:'braid',hair:'#8a4a25',skin:'#e3a37d',helmet:'#2e86c1',eyes:'green'},
    route:[[0,66],[0,121],[55,170],[110,130],[70,60],[10,20]]},
-  {name:'Rowan',body:'#26262e',mane:'#101015',tack:'#c0392b',off:5,shirt:'#b34a4a',pants:'#2e3a52',
+  {name:'Rowan',body:'#26262e',mane:'#101015',tack:'#c0392b',off:5,shirt:'#b34a4a',pants:'#2e3a52',look:{body:'m',hairStyle:'crop',hair:'#1e140e',skin:'#a06a48',helmet:'#2e2e38',eyes:'brown'},
    route:[[0,66],[0,121],[60,185],[150,105],[140,-20],[105,-115],[0,-140],[-90,-100],[-130,0],[-80,80],[-15,60],[0,14]]},
  ];
  for(const d of defs){
   const parts=makeHorse({colors:{body:d.body,mane:d.mane},tack:d.tack,bridle:true,seed:11});
-  const rider=makeRider({shirt:d.shirt,pants:d.pants});
+  const rider=makeRider(Object.assign({shirt:d.shirt,pants:d.pants},d.look));   // each club rider their own look, not the player's
   parts.group.add(rider.g);
   const tag=nameSprite(d.name);
   tag.position.y=3.15;
@@ -10573,7 +10605,7 @@ function remoteUpdate(m){
  if(!r){
   if(Object.keys(remotes).length>=(G.remoteMax||12))return;
   const parts=makeHorse({colors:(m.c&&m.c.body)?m.c:{body:'#8a5a2b',mane:'#332214'},tack:m.k||'#7a583a',bridle:true,seed:5,breed,wings:!!m.wg,coat:m.ct||null,horn:!!BREEDS3.find(b=>b[0]===breed)?.[7]?.horn,dragon:!!BREEDS3.find(b=>b[0]===breed)?.[7]?.dragon});
-  const rider=makeRider({shirt:m.s||RIDER_DEF_SHIRT,pants:m.p||RIDER_DEF_PANTS,hair:m.hr||null,skin:m.sk||null,helmet:m.hm||null});
+  const rider=makeRider({shirt:m.s||RIDER_DEF_SHIRT,pants:m.p||RIDER_DEF_PANTS,hair:m.hr||null,skin:m.sk||null,helmet:m.hm||null,boots:m.bt||null,hairStyle:m.hs||null,body:m.bo==='m'?'m':'f',outfit:m.of||null,eyes:m.ey||null});   // body, style, outfit, eyes: tack-wardrobe's /pos fields
   parts.group.add(rider.g);
   /* Swap in the good horse. The procedural body goes, and so does its tack — the
      procedural saddle sits at y≈1.75 and its bridle hangs off the procedural head,
@@ -12545,10 +12577,10 @@ function tameWild3(){
 const visitors=[];
 {
  const WAY=[[30,30],[-30,34],[-44,0],[-30,-34],[20,-38],[44,-8],[40,24]];
- [{name:'Mia & Comet',body:'#9c4f23',mane:'#6e3617'},
-  {name:'Theo & Pepper',body:'#33333b',mane:'#16161c'}].forEach((c,ci)=>{
+ [{name:'Mia & Comet',body:'#9c4f23',mane:'#6e3617',look:{shirt:'#d9527a',pants:'#f0ece0',hairStyle:'ponytail',hair:'#d9a85c',skin:'#f0c8a8',helmet:'#e8e8e8',eyes:'blue'}},
+  {name:'Theo & Pepper',body:'#33333b',mane:'#16161c',look:{body:'m',shirt:'#4a7ab3',pants:'#4a4338',hairStyle:'short',hair:'#4a2e1c',skin:'#c98a62',helmet:'#2e2e38',boots:'#1a1a1a'}}].forEach((c,ci)=>{
   const parts=makeHorse({colors:{body:c.body,mane:c.mane},tack:'#2e86c1',bridle:true,seed:ci+5});
-  const rd=makeRider();
+  const rd=makeRider(c.look);   // their own look: with no argument a rider dresses as the player
   parts.group.add(rd.g);
   const tag=nameSprite(c.name);
   tag.position.y=3.15;
@@ -13885,7 +13917,7 @@ function installFeatures(){
    EMOTES,MASTERY_UNLOCKS,TAIL_COLS,STUD_COLS,DYE_HAIR,DYE_BODY,DYE_MARK,MARKS,STAT_KEYS,STAT_LBL,CHESTS,COLL_SETS,FT,REGIONS,TRAIL_STOPS,TACK_ROOM,NAMES3,
    TRAITS,BREED_CEIL,HAIR_STYLES,KEYMAP,REWARD_KINDS,TIER_STARS,MARKS2,FANTASY_CFG,FANTASY_FX,FANTASY_COAT,COAT_BASE,DRAGON_TINT,WING_TINT,ELEM_OF},
   horse:{myHorses,rideIdx:()=>rideIdx,ridden:()=>myHorses[rideIdx],RIG:()=>RIG,TACK:()=>TACK,player,herd:()=>herd,remotes,
-   grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
+   grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
   world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,arrivalArt,geology,box,tube,blob,
    mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,

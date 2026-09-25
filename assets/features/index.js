@@ -150,9 +150,9 @@
    ============================================================================================ */
 import * as stats from './stats-progression.js';
 import * as roster from './horse-roster.js';
-import * as bond from './bond-personality-emotes.js';
+import * as bond from './bond-personality-emotes.js?v=2';   // versioned: rider emotes reach the character's own bones
 import * as mastery from './mastery-style.js';
-import * as tack from './tack-wardrobe.js?v=2';   // versioned: the Character screen and the new hair came in here
+import * as tack from './tack-wardrobe.js?v=3';   // versioned: the Character screen, then the character herself (outfits, eyes)
 import * as course from './course-engine.js';
 import * as events from './events-pvp.js';
 import * as story from './story-quests.js';
@@ -186,6 +186,6 @@ import * as lookGrade from './look-grade.js';
 import * as ui2merge from './ui2-merge.js';
 import * as seHud from './se-hud.js';
 import * as seCare from './se-care.js?v=3';   // versioned so a browser that cached an earlier cut fetches this one
-import * as onFoot from './on-foot.js?v=2';
+import * as onFoot from './on-foot.js?v=3';   // versioned: she walks with the animation library's clips
 import * as seMarket from './se-market.js';
 export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,seasonHunts,seasonQuests,ev2disc,ev2ladder,courseGuide,wVistas,wFlora,wWater,wAtmos,wQuarters,wPaths,wOutcrops,uikit,ui2horse,ui2shop,ui2compete,ui2hud,ui2club,ui2merge,lookGrade,seHud,seCare,onFoot,seMarket];

@@ -128,7 +128,7 @@ export function install(G){
  G.on('rigEmote',(rig,em,dt,t)=>{applyRigEmote(rig,em,emEnv(em),t);});
  G.on('remoteTick',(r,dt,t)=>{
   if(r.rig&&r.rig.emote){const em=r.rig.emote;em.t+=dt;if(em.t>=em.dur)r.rig.emote=null;else if(r.rig.heroMotion)applyRigEmote(r.rig,em,emEnv(em),t);}
-  if(r.riderEmote){const e=r.riderEmote;e.t+=dt;if(e.t>=e.dur){r.riderEmote=null;hideGuitar(r.rider);}else if(r.rider&&r.rider.sk)poseRiderEmote(r.rider,e,t,dt,r.parts&&r.parts.group);}
+  if(r.riderEmote){const e=r.riderEmote;e.t+=dt;if(e.t>=e.dur){r.riderEmote=null;hideGuitar(r.rider);}else if(r.rider&&r.rider.sk){poseRiderEmote(r.rider,e,t,dt,r.parts&&r.parts.group);if(r.rider._sync)r.rider._sync();}}
  });
  G.on('netPos',(payload)=>{const RIG=G.horse.RIG();payload.em=RIG.emote?RIG.emote.type:null;payload.rem=player.riderEmote?player.riderEmote.type:null;});
  G.on('remote',(m,r)=>{

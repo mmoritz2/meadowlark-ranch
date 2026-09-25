@@ -30,13 +30,19 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 300 s');try{if(bro
   const wait=ms=>new Promise(res=>setTimeout(res,ms));
   const q=sel=>document.querySelector('#seChar '+sel);
   const saved=()=>JSON.parse(JSON.stringify(G.save.fresh().rider));
+  /* the rider is the character (assets/rider-model.js): her hair group, the helmet on her head bone; the
+     old sculpt's cap and recolour uniforms are read only if she is the fallback */
+  const hairOf=R=>R&&R.rig?(R.rig.hair&&R.rig.hair.name):(R&&R._twHair&&R._twHair.name);
+  const capOf=R=>R&&R.rig?!!(R.rig.hair&&R.rig.hair.children.length):!!(R&&R._twHair&&R._twHair.getObjectByName('haircap'));
+  const bareOf=R=>R&&R.rig?(!R.rig.helmet.parent&&R.rig.u.uHelmet.value===0):!!(R&&R.mesh&&R.mesh.material.userData.u.uHelmHide.value===1);
   out.installed=!!(W&&W.openChar&&document.getElementById('seChar'));
   const before=saved();
   /* 1. open */
   G.ui.dispatch('wd:creator'); await frames(10); await wait(400); await frames(4);
   const st=W.charState();
   out.open={on:document.getElementById('seChar').classList.contains('on'),rider:st.rider,canvas:!!q('canvas'),cards:document.querySelectorAll('#seChar .ch-card').length,
-   imgs:document.querySelectorAll('#seChar .ch-card img').length,thumbs:st.thumbs,cats:document.querySelectorAll('#seChar .ch-cat').length,head:(q('.ch-head')||{}).textContent};
+   imgs:document.querySelectorAll('#seChar .ch-card img').length,thumbs:st.thumbs,cats:document.querySelectorAll('#seChar .ch-cat').length,head:(q('.ch-head')||{}).textContent,
+   want:W.HAIRSTYLES.filter(h=>!h.body||h.body.includes('f')).length,ubc:!!(st.rider&&G.horse.player.rider&&G.horse.player.rider.rig)};
   /* the canvas really has her on it: sample the middle of the stage for pixels that are not the backdrop */
   { const cv=q('canvas'),c=document.createElement('canvas');c.width=cv.width;c.height=cv.height;const x=c.getContext('2d');x.drawImage(cv,0,0);
     const d=x.getImageData(Math.floor(cv.width*0.35),Math.floor(cv.height*0.15),Math.floor(cv.width*0.3),Math.floor(cv.height*0.7)).data;let odd=0,n=0;
@@ -57,35 +63,42 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 300 s');try{if(bro
   q('[data-ch="body"]').click(); await frames(3); q('[data-ch="tab:style"]').click(); await frames(3); await wait(300); await frames(2);
   out.body={draftBody:W.charState().draft.body,crop:!!q('[data-ch="style:crop"]'),braid:!!q('[data-ch="style:braid"]')};
   q('[data-ch="undo"]').click(); await frames(3);
-  const du=W.charState().draft; out.undo={body:du.body,hairStyle:du.hairStyle,helmet:du.helmet,matches:du.hairStyle===(before.hairStyle||'loose')&&(du.helmet||null)===(before.helmet||null)};
+  const du=W.charState().draft; out.undo={body:du.body,hairStyle:du.hairStyle,helmet:du.helmet,matches:du.hairStyle===(before.hairStyle||'long')&&(du.helmet||null)===(before.helmet||null)};
   /* 4. SAVE writes it and dresses the real rider */
   q('[data-ch="style:curly"]').click(); await frames(2); q('[data-ch="tab:helmet"]').click(); await frames(2); q('[data-ch="pick:helmet:none"]').click(); await frames(2);
+  out.kitCards={};
+  q('[data-ch="tab:outfit"]').click(); await frames(2); out.kitCards.outfits=document.querySelectorAll('#seChar [data-ch^="outfit:"]').length; q('[data-ch="outfit:peasant"]').click(); await frames(2);
+  q('[data-ch="tab:eyes"]').click(); await frames(2); out.kitCards.eyes=document.querySelectorAll('#seChar [data-ch^="eyes:"]').length; q('[data-ch="eyes:green"]').click(); await frames(2);
   document.getElementById('chName').value='Juniper';
   q('[data-ch="save"]').click(); await frames(6);
   const sv4=saved(), R=G.horse.player.rider;
+  /* the Stable outfit arrives with its file: give it a moment */
+  for(let i=0;i<40&&R&&R.rig&&!R.rig.outfit;i++)await wait(100);
   out.save={closed:!document.getElementById('seChar').classList.contains('on'),style:sv4.hairStyle,helmet:sv4.helmet,made:sv4.made,name:G.save.fresh().playerName,
-   hair:R&&R._twHair&&R._twHair.name,cap:!!(R&&R._twHair&&R._twHair.getObjectByName('haircap')),bare:R&&R.mesh&&R.mesh.material.userData.u.uHelmHide.value,
+   hair:hairOf(R),cap:capOf(R),bare:bareOf(R),outfit:sv4.outfit,eyes:sv4.eyes,wearing:R&&R.rig?(R.rig.outfit&&R.rig.outfit.id):'n/a',
    released:W.charState().rider===false};
   /* 5. Escape closes without saving */
   G.ui.dispatch('wd:creator'); await frames(8);
   q('[data-ch="tab:style"]').click(); await frames(2);   // it opens on the tab you left it on
-  q('[data-ch="style:bob"]').click(); await frames(2);
+  q('[data-ch="style:bun"]').click(); await frames(2);
   window.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape',key:'Escape',bubbles:true})); await frames(4);
   out.esc={closed:!document.getElementById('seChar').classList.contains('on'),style:saved().hairStyle};
   /* 6. a helmet gets neither cap nor fringe */
   G.ui.dispatch('wd:wear:helmet:#2e2e38'); await frames(4);
-  const R2=G.horse.player.rider; out.helmet={hair:R2._twHair&&R2._twHair.name,cap:!!(R2._twHair&&R2._twHair.getObjectByName('haircap')),bare:R2.mesh.material.userData.u.uHelmHide.value};
+  const R2=G.horse.player.rider; out.helmet={hair:hairOf(R2),cap:capOf(R2),bare:bareOf(R2),ubc:!!R2.rig};
   return out;
  });
  check('the Character screen is installed',r.installed);
- check('it opens with her standing on her own stage and a clay bust for every style',r.open.on&&r.open.rider&&r.open.canvas&&r.open.notBackdrop>0.03&&r.open.cards===7&&r.open.imgs===7&&r.open.thumbs>=7&&r.open.cats===7&&/hair style/i.test(r.open.head||''),r.open);
+ check('it opens with her standing on her own stage and a clay bust for every style',r.open.on&&r.open.rider&&r.open.canvas&&r.open.notBackdrop>0.03&&r.open.cards===r.open.want&&r.open.imgs===r.open.want&&r.open.want>=7&&r.open.thumbs>=r.open.want&&r.open.cats===9&&/hair style/i.test(r.open.head||''),r.open);
+ check('the rider is the character (not the old sculpt)',r.open.ubc===true,{ubc:r.open.ubc});
+ check('the Outfit and Eyes categories offer three outfits and six eye colours',r.kitCards&&r.kitCards.outfits===3&&r.kitCards.eyes===6,r.kitCards);
  check('picks show on the draft and are not saved until SAVE',r.picks.draft.hairStyle==='curly'&&r.picks.draft.helmet==='none'&&(!r.picks.hairCol||r.picks.draft.hair===r.picks.hairCol)&&r.picks.savedStyle!=='curly'&&r.picks.savedHelmet!=='none'&&r.picks.preview,r.picks);
  check('the dice changes her',r.dice);
  check('the body switch offers the other body\'s styles',r.body.draftBody==='m'&&r.body.crop&&!r.body.braid,r.body);
  check('UNDO goes back to what is saved',r.undo.matches,r.undo);
- check('SAVE writes it, names her, dresses the real rider bareheaded with a cap, and closes',r.save.closed&&r.save.style==='curly'&&r.save.helmet==='none'&&r.save.made===true&&r.save.name==='Juniper'&&r.save.hair==='hair-curly'&&r.save.cap&&r.save.bare===1&&r.save.released,r.save);
+ check('SAVE writes it, names her, dresses the real rider bareheaded in her curls, in the Stable outfit with green eyes, and closes',r.save.closed&&r.save.style==='curly'&&r.save.helmet==='none'&&r.save.made===true&&r.save.name==='Juniper'&&r.save.hair==='hair-curly'&&r.save.cap&&r.save.bare===true&&r.save.outfit==='peasant'&&r.save.eyes==='green'&&(r.save.wearing==='peasant'||r.save.wearing==='n/a')&&r.save.released,r.save);
  check('Escape closes it without saving',r.esc.closed&&r.esc.style==='curly',r.esc);
- check('under a helmet there is no cap',r.helmet.hair==='hair-curly'&&!r.helmet.cap&&r.helmet.bare===0,r.helmet);
+ check('a helmet goes on over her hair',r.helmet.hair==='hair-curly'&&r.helmet.bare===false&&(r.helmet.ubc||!r.helmet.cap),r.helmet);
  check('no page errors',errors.length===0,errors.slice(0,5));
  const bad=checks.filter(c=>!c.ok).length;
  console.log(bad?('FAILED '+bad+'/'+checks.length):('passed '+checks.length+'/'+checks.length));

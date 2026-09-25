@@ -34,12 +34,23 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  });
  stage('launch'); await page.goto(base+'/ranch3d.html?qa=tack-wardrobe&fresh='+Date.now(),{waitUntil:'load',timeout:120000}); stage('loaded');
  await page.waitForFunction(READY,null,{timeout:150000,polling:250}); stage('horseReady');
- await page.waitForFunction(()=>window.__qa&&window.__qa.RIDER_MESH.geo&&window.__features,null,{timeout:60000,polling:250}).catch(()=>{});
+ await page.waitForFunction(()=>window.__qa&&window.__features&&(window.__qa.RIDER_MESH.geo||(window.__qa.player.rider&&window.__qa.player.rider.sk)),null,{timeout:60000,polling:250}).catch(()=>{});
+ /* the rider is the character from assets/rider-model.js now; the creator below switches her to the other
+    body, which is another model — have it in hand so the switch happens inside the one evaluate */
+ await page.evaluate(()=>{const L=window.__features.horse.riderLib;return L?L.kit('m').then(()=>true):false;}).catch(()=>{});
  await page.waitForFunction(()=>!document.getElementById('load'),null,{timeout:30000,polling:250}).catch(()=>{});
  await page.evaluate(()=>window.advanceTime(700)); stage('curtain down');
  const r=await page.evaluate(()=>{
   const Q=window.__qa, G=window.__features, out={};
   const sorted=o=>Object.values(o).sort((a,b)=>b-a);
+  /* what a rider is wearing, read off whichever rider it is: the character (R.rig: her uniforms, her hair
+     group, the helmet on her head bone, her body's kit) or the old sculpt (its recolour uniforms) */
+  const view=R=>{
+   if(R&&R.rig){const u=R.rig.u;return {shirt:u.uShirt.value.getHexString(),boot:u.uBoot.value.getHexString(),hair:R.rig.hair&&R.rig.hair.name,
+    bare:!R.rig.helmet.parent&&u.uHelmet.value===0,cap:!!(R.rig.hair&&R.rig.hair.children.length),male:R.rig.kit.body==='m'};}
+   const u=R&&R.mesh&&R.mesh.material.userData.u;if(!u)return {};
+   return {shirt:u.uShirt.value.getHexString(),boot:u.uBoot.value.getHexString(),bootW:u.uBootW.value,shirtW:u.uShirtW.value,hair:R._twHair&&R._twHair.name,
+    bare:u.uHelmHide.value===1&&u.uHelmW.value===0,cap:!!(R._twHair&&R._twHair.getObjectByName('haircap')),male:R.fitG.scale.x/R.fitG.scale.y>1.05};};
   /* the first launch opens the full-screen Character screen now (the old panel is still there under it);
      read it before any tab opens, then put it away: while it is up it holds the keyboard */
   const chOn=()=>{const c=document.getElementById('seChar');return !!(c&&c.classList.contains('on'));};
@@ -106,13 +117,13 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   {const p=document.getElementById('riderPanel');out.creator={exists:!!p,autoOpen};
    G.ui.open('riderPanel');p.querySelector('[data-fx="wd:body:m"]').click();out.creator.cropShown=!!p.querySelector('[data-fx="wd:hair:crop"]');out.creator.braidHidden=!p.querySelector('[data-fx="wd:hair:braid"]');
    Q.tackAct('off:saddle');G.ui.open('riderPanel');p.querySelector('[data-fx="wd:hair:crop"]').click();p.querySelector('[data-fx="wd:dice"]').click();const nm=p.querySelector('[data-fxin="wd:name"]').value;p.querySelector('[data-fx="wd:done"]').click();
-   const s=Q.freshSave();const R=Q.player.rider;out.creator.after={made:s.rider.made,name:s.playerName,nameMatches:s.playerName===nm&&nm.length>0,hairStyle:s.rider.hairStyle,body:s.rider.body,starter:s.tack.some(t=>t.name==="Grandma's Old Saddle"),starterWorn:s.tack.some(t=>t.name==="Grandma's Old Saddle"&&s.horses[Q.rideIdx()].gear.saddle===t.id),hairMesh:R&&R._twHair&&R._twHair.name,scaleX:+(R.fitG.scale.x/R.fitG.scale.y).toFixed(3),closed:p.style.display};}
+   const s=Q.freshSave();const R=Q.player.rider;out.creator.after={made:s.rider.made,name:s.playerName,nameMatches:s.playerName===nm&&nm.length>0,hairStyle:s.rider.hairStyle,body:s.rider.body,starter:s.tack.some(t=>t.name==="Grandma's Old Saddle"),starterWorn:s.tack.some(t=>t.name==="Grandma's Old Saddle"&&s.horses[Q.rideIdx()].gear.saddle===t.id),hairMesh:view(R).hair,male:view(R).male,closed:p.style.display};}
   /* J. change outfit: live recolour without a rebuild, helmet off */
-  {G.ui.openShop('outfit');const sp=document.getElementById('shopPanel');const n0=Q.scene.children.length;const R=Q.player.rider;const u=R.mesh.material.userData.u;
+  {G.ui.openShop('outfit');const sp=document.getElementById('shopPanel');const n0=Q.scene.children.length;const R=Q.player.rider;
    sp.querySelector('[data-fx="wd:wear:shirt:#b34a4a"]').click();const s=Q.freshSave();
-   out.outfit={shirt:s.rider.shirt,hex:u.uShirt.value.getHexString(),w:u.uShirtW.value,sameRider:Q.player.rider===R,sceneSame:Q.scene.children.length===n0};
-   document.querySelector('#shopPanel [data-fx="wd:wear:helmet:none"]').click();out.outfit.helmet={saved:Q.freshSave().rider.helmet,hide:u.uHelmHide.value,helmW:u.uHelmW.value,cap:!!(R._twHair&&R._twHair.getObjectByName('haircap'))};
-   document.querySelector('#shopPanel [data-fx="wd:hair:bun"]').click();out.outfit.bun=R._twHair&&R._twHair.name;}
+   out.outfit={shirt:s.rider.shirt,hex:view(R).shirt,sameRider:Q.player.rider===R,sceneSame:Q.scene.children.length===n0};
+   document.querySelector('#shopPanel [data-fx="wd:wear:helmet:none"]').click();out.outfit.helmet={saved:Q.freshSave().rider.helmet,bare:view(R).bare,cap:view(R).cap};
+   document.querySelector('#shopPanel [data-fx="wd:hair:bun"]').click();out.outfit.bun=view(R).hair;}
   /* K. dust unlocks */
   {G.save.sync(s=>{s.dust=10;});G.ui.openShop('outfit');const sp=document.getElementById('shopPanel');const locked=sp.querySelectorAll('[data-fx^="wd:unlock:"]');out.dust={locked:locked.length,header:/10<\/b> dust/.test(sp.innerHTML)};
    const first=locked[0];const id=first.dataset.fx.split(':')[2];const it=G.wardrobe.WARDROBE.find(i=>i.id===id);first.click();let s=Q.freshSave();
@@ -127,12 +138,13 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
    const ranger=items.find(i=>i.kind==='tack');if(ranger){G.save.sync(s=>{s.tokens.n=500;});const n0=Q.freshSave().tack.length;G.ui.dispatch('wd:season:'+ranger.id);const t=Q.freshSave().tack.slice(n0);out.store.ranger={n:t.length,allRanger:t.every(x=>x.set==='Ranger'&&x.rarity==='Epic'),western:t.filter(x=>x.style==='western').length};}}
   /* M. prestige set + badge on a remote + live outfit propagation */
   {out.prestige={before:G.wardrobe.prestigeOwned(Q.freshSave())};G.save.sync(s=>{s.vip={until:Date.now()+864e5};});G.ui.openShop('outfit');const btn=document.querySelector('#shopPanel [data-fx="wd:set:prestige"]');out.prestige.btn=!!btn;if(btn)btn.click();
-   const s=Q.freshSave();const u=Q.player.rider.mesh.material.userData.u;const st=JSON.parse(render_game_to_text());out.prestige.after={helmet:s.rider.helmet,boots:s.rider.boots,bootW:u.uBootW.value,bootHex:u.uBoot.value.getHexString(),state:st.rider.prestige,stateBoots:st.rider.boots};
+   const s=Q.freshSave();const st=JSON.parse(render_game_to_text());out.prestige.after={helmet:s.rider.helmet,boots:s.rider.boots,bootHex:view(Q.player.rider).boot,state:st.rider.prestige,stateBoots:st.rider.boots};
    Q.remoteUpdate({id:'qa1',n:'Tess',x:Q.player.pos.x+3,z:Q.player.pos.z+3,h:0,sp:0,bd:1,b:'bay-sporthorse',s:'#4a7ab3',p:'#3a3a3a',bo:'m',hs:'crop',bt:'#a8322a',ss:'western'});
    const rm=Q.remotes.qa1;out.remote={exists:!!rm,badge:rm&&rm.badge,tag:rm&&rm.parts.group.children.some(o=>o.isSprite&&Math.abs(o.position.y-3.15)<1e-3),saddleStyle:rm&&rm.rig&&rm.rig.saddle&&rm.rig.saddle.userData.style};
    G.net.openProfile('Tess');out.remote.profile=/PRESTIGE/.test(document.getElementById('profilePanel').textContent);G.hidePanels();
-   if(rm&&rm.rider.mesh){const ru=rm.rider.mesh.material.userData.u;out.remote.shirt1=ru.uShirt.value.getHexString();out.remote.boots=ru.uBootW.value;out.remote.hair=rm.rider._twHair&&rm.rider._twHair.name;out.remote.body=+(rm.rider.fitG.scale.x/rm.rider.fitG.scale.y).toFixed(3);
-    Q.remoteUpdate({id:'qa1',n:'Tess',x:Q.player.pos.x+3,z:Q.player.pos.z+3,h:0,sp:0,bd:0,b:'bay-sporthorse',s:'#8a5ab3',p:'#3a3a3a',bo:'f',hs:'bun'});out.remote.shirt2=ru.uShirt.value.getHexString();out.remote.badge2=rm.badge;out.remote.hair2=rm.rider._twHair&&rm.rider._twHair.name;}
+   if(rm&&rm.rider.mesh){const v1=view(rm.rider);out.remote.shirt1=v1.shirt;out.remote.boot=v1.boot;out.remote.hair=v1.hair;out.remote.male=v1.male;
+    /* the second packet is a girl in a bun: the character is rebuilt for the other body, so read the rider afresh */
+    Q.remoteUpdate({id:'qa1',n:'Tess',x:Q.player.pos.x+3,z:Q.player.pos.z+3,h:0,sp:0,bd:0,b:'bay-sporthorse',s:'#8a5ab3',p:'#3a3a3a',bo:'f',hs:'bun'});const v2=view(rm.rider);out.remote.shirt2=v2.shirt;out.remote.badge2=rm.badge;out.remote.hair2=v2.hair;out.remote.male2=v2.male;}
   }
   /* P. Western headstall: the worn bridle decides whether the noseband shows */
   {let wb=null,eb=null;G.save.sync(s=>{const W=Q.genGear('Rare','bridle',{style:'western'}),E=Q.genGear('Rare','bridle',{style:'english'});s.tack.push(W,E);wb=W.id;eb=E.id;});
@@ -203,16 +215,16 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
     drives M1 at whatever index it landed on and proves it still works there. */
  check('H tack missions inserted with Bo the Saddler, daily and achievements registered',r.missions&&r.missions.i1>=0&&r.missions.once==='1,1'&&r.missions.i2>r.missions.i1&&r.missions.i1*2<r.missions.storyLen&&r.missions.npc&&r.missions.npcSpawned&&r.missions.daily&&r.missions.achs.length===0,r.missions);
  check('H upgrading advances the tacklvl mission and the kit reward is paid once on completion',r.missions&&r.missions.prog===2&&r.missions.done&&r.missions.kitPaid===1&&r.missions.mig&&r.missions.kitOnce===1,r.missions);
- check('I rider creator opens on first launch, body gates hairstyles, dice names, done saves + starter saddle',r.creator&&r.creator.exists&&r.creator.autoOpen&&r.creator.cropShown&&r.creator.braidHidden&&r.creator.after.made&&r.creator.after.nameMatches&&r.creator.after.hairStyle==='crop'&&r.creator.after.body==='m'&&r.creator.after.starter&&r.creator.after.starterWorn&&r.creator.after.hairMesh==='hair-crop'&&r.creator.after.scaleX>1.05&&r.creator.after.closed==='none',r.creator);
- check('J outfit change recolours the live rider without a rebuild',r.outfit&&r.outfit.shirt==='#b34a4a'&&r.outfit.hex==='b34a4a'&&r.outfit.w===1&&r.outfit.sameRider&&r.outfit.sceneSame,r.outfit);
- check('J helmet off hides the helmet band and shows a hair cap; hairstyle swaps the mesh',r.outfit&&r.outfit.helmet.saved==='none'&&r.outfit.helmet.hide===1&&r.outfit.helmet.helmW===0&&r.outfit.helmet.cap&&r.outfit.bun==='hair-bun',r.outfit&&r.outfit.helmet);
+ check('I rider creator opens on first launch, body gates hairstyles, dice names, done saves + starter saddle',r.creator&&r.creator.exists&&r.creator.autoOpen&&r.creator.cropShown&&r.creator.braidHidden&&r.creator.after.made&&r.creator.after.nameMatches&&r.creator.after.hairStyle==='crop'&&r.creator.after.body==='m'&&r.creator.after.starter&&r.creator.after.starterWorn&&r.creator.after.hairMesh==='hair-crop'&&r.creator.after.male===true&&r.creator.after.closed==='none',r.creator);
+ check('J outfit change recolours the live rider without a rebuild',r.outfit&&r.outfit.shirt==='#b34a4a'&&r.outfit.hex==='b34a4a'&&r.outfit.sameRider&&r.outfit.sceneSame,r.outfit);
+ check('J helmet off takes the helmet off her head and shows her hair; hairstyle swaps the mesh',r.outfit&&r.outfit.helmet.saved==='none'&&r.outfit.helmet.bare&&r.outfit.helmet.cap&&r.outfit.bun==='hair-bun',r.outfit&&r.outfit.helmet);
  check('K dust unlocks: locked pieces listed, unlock spends dust and wears it',r.dust&&r.dust.locked>=10&&r.dust.header&&r.dust.after.dust===10-r.dust.after.cost&&r.dust.after.owned===1&&r.dust.after.slotSet&&r.dust.after.stateOwned>=1&&r.dust.after.nowWear,r.dust);
  check('K unlock refused without dust (nothing owned, still locked)',r.dust&&r.dust.poor.ownedSame&&r.dust.poor.dust===0&&r.dust.poor.stillLocked===r.dust.locked-1,r.dust&&r.dust.poor);
  check('L season store shows this season\'s outfits and sells for tokens',r.store&&r.store.open==='flex'&&r.store.season&&r.store.tab&&r.store.n===r.store.want&&r.store.after.tokens===r.store.after.want&&r.store.after.owned&&(r.store.after.slot===true||r.store.after.slot==='tack')&&r.store.after.rows===r.store.want-1,r.store);
  check('L out-of-season outfit refused',r.store&&!r.store.outOfSeason.owned,r.store&&r.store.outOfSeason);
  if(r.store&&r.store.ranger)check('L Ranger Western tack set: four Epic Western Ranger pieces',r.store.ranger.n===4&&r.store.ranger.allRanger&&r.store.ranger.western===2,r.store.ranger);
- check('M prestige set gated, then worn with boots band + state flag',r.prestige&&r.prestige.before===false&&r.prestige.btn&&r.prestige.after.helmet==='#d4af37'&&r.prestige.after.boots==='#3b2a14'&&r.prestige.after.bootW===1&&r.prestige.after.bootHex==='3b2a14'&&r.prestige.after.state===true,r.prestige);
- check('M remote rider: badge tag, Western saddle, hairstyle/body/boots applied and live outfit propagation',r.remote&&r.remote.exists&&r.remote.badge===true&&r.remote.tag&&r.remote.saddleStyle==='western'&&r.remote.shirt1==='4a7ab3'&&r.remote.boots===1&&r.remote.hair==='hair-crop'&&r.remote.body>1.05&&r.remote.shirt2==='8a5ab3'&&r.remote.badge2===false&&r.remote.hair2==='hair-bun'&&r.remote.profile===true,r.remote);
+ check('M prestige set gated, then worn with boots band + state flag',r.prestige&&r.prestige.before===false&&r.prestige.btn&&r.prestige.after.helmet==='#d4af37'&&r.prestige.after.boots==='#3b2a14'&&r.prestige.after.bootHex==='3b2a14'&&r.prestige.after.state===true,r.prestige);
+ check('M remote rider: badge tag, Western saddle, hairstyle/body/boots applied and live outfit propagation',r.remote&&r.remote.exists&&r.remote.badge===true&&r.remote.tag&&r.remote.saddleStyle==='western'&&r.remote.shirt1==='4a7ab3'&&r.remote.boot==='a8322a'&&r.remote.hair==='hair-crop'&&r.remote.male===true&&r.remote.shirt2==='8a5ab3'&&r.remote.badge2===false&&r.remote.hair2==='hair-bun'&&r.remote.male2===false&&r.remote.profile===true,r.remote);
  check('P Western bridle hides the noseband; English shows it',r.headstall&&r.headstall.hasBridle&&r.headstall.western===true&&r.headstall.noseW.length>0&&r.headstall.noseW.every(v=>v===false)&&r.headstall.english===false&&r.headstall.noseE.every(v=>v===true),r.headstall);
  check('Q weekly Star Points ladder tops out with a Legendary piece (leaderboard exclusive)',r.miles&&r.miles.i>=0&&r.miles.gear==='Legendary'&&r.miles.btn&&r.miles.added===1&&r.miles.rarity==='Legendary'&&r.miles.claimed,r.miles);
  check('R tack room pays a Rare+ piece and a Toolkit II for a key',r.room&&r.room.found&&r.room.kit2===1&&r.room.piece===1&&r.room.keys===0&&['Rare','Epic','Legendary'].includes(r.room.rarity),r.room);
@@ -237,7 +249,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  await page.waitForFunction(()=>!document.getElementById('load'),null,{timeout:30000,polling:250}).catch(()=>{});
  await page.evaluate(()=>window.advanceTime(700));
  const L=await page.evaluate(()=>{const p=document.getElementById('riderPanel');const ch=document.getElementById('seChar');const s=JSON.parse(localStorage.getItem('starRanchFable_v1'));const o={shown:(ch&&ch.classList.contains('on'))?'flex':(p&&p.style.display),made:s.rider.made,body:s.rider.body,hairStyle:s.rider.hairStyle,parts:s.parts};(ch&&ch.classList.contains('on')?document.getElementById('chSave'):p.querySelector('[data-fx="wd:done"]')).click();o.madeAfter=JSON.parse(localStorage.getItem('starRanchFable_v1')).rider.made;return o;});
- check('O old save: creator shows once (ensure fills body/hairStyle/parts), Done marks it made',L.shown==='flex'&&L.made===false&&L.body==='f'&&L.hairStyle==='loose'&&L.parts===0&&L.madeAfter===true,L);
+ check('O old save: creator shows once (ensure fills body/hairStyle/parts), Done marks it made',L.shown==='flex'&&L.made===false&&L.body==='f'&&L.hairStyle==='long'&&L.parts===0&&L.madeAfter===true,L);
  await page.waitForLoadState('networkidle',{timeout:60000}).catch(()=>{}); await page.waitForTimeout(2500);
  await page.goto(base+'/ranch3d.html?qa=tack-wardrobe&again='+Date.now(),{waitUntil:'load',timeout:120000}); stage('third load');
  await page.waitForFunction(READY,null,{timeout:150000,polling:250});

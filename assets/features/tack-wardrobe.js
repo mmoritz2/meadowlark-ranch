@@ -11,7 +11,8 @@
    exclusive). The tack economy itself (rarity patterns, names, 26 sets, upgrades, toolkits, merge
    and strip, market stall, English/Western saddles and headstalls) is inline in ranch3d.html
    because the boot pass pays tack rewards before any package installs. */
-import {buildHair,hairStyles} from '../rider-hair.js';
+import {buildHair} from '../rider-hair.js';   // the old sculpt's hair, for the fallback rider only
+import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=rider-1';
 export const id='tack-wardrobe';
 export function install(G){
  const {$,toast,THREE}=G;
@@ -43,7 +44,10 @@ export function install(G){
  ];
  const SLOT_LBL={shirt:'👕 Shirt',pants:'👖 Pants',helmet:'⛑️ Helmet',boots:'👢 Boots',hair:'💇 Hair colour',skin:'🖐️ Skin'};
  const SLOTS=['shirt','pants','helmet','boots','hair','skin'];
- const HAIRSTYLES=hairStyles;   // assets/rider-hair.js: long, curls, bob, ponytail, bun, braid, pigtails, crop, quiff
+ /* the rider's hairstyles (assets/rider-model.js): the pack's own, plus the drawn-back styles and curls built
+    there for her head */
+ const HAIRSTYLES=RIDER_HAIR.map(h=>({id:h.id,label:h.label,body:h.body}));
+ const OUTFITS=RIDER_OUTFITS, EYES=RIDER_EYES;
  const BODIES=[['f','👧 Cowgirl'],['m','👦 Cowboy']];
  const RIDER_NAMES=['Wren','Juniper','Sage','Rowan','Hazel','Finch','Marlow','Tess','Cody','Ellis','Piper','Lark','Reed','Quinn','Bryn','Ash','Fern','Milo','Nell','Otis',
   'Rosa','Sam','Tally','Indie','Jesse','Kit','Lou','Mack','Nico','Opal','Pip','Remy','Sky','Toby','Una','Vale','Wyatt','Ziggy','Clem','Dune'];
@@ -65,21 +69,24 @@ export function install(G){
   s.tw=s.tw||{};
   s.wardrobe=s.wardrobe||{owned:{},worn:{}}; s.wardrobe.owned=s.wardrobe.owned||{};
   const r=s.rider=s.rider||{shirt:DEF_SHIRT,pants:DEF_PANTS,helmet:null,skin:null,hair:null};
-  if(r.body==null)r.body='f'; if(r.hairStyle==null)r.hairStyle='loose'; if(r.boots===undefined)r.boots=null; if(r.made==null)r.made=false;
+  if(r.body==null)r.body='f'; if(r.boots===undefined)r.boots=null; if(r.made==null)r.made=false;
+  r.hairStyle=riderHairId(r.hairStyle,r.body);   // 'loose' and 'quiff' were the old sculpt's names
+  if(!r.outfit)r.outfit='riding'; if(!r.eyes)r.eyes='brown';
  });
  const isVIP=s=>!!(s&&s.vip&&s.vip.until>Date.now());
  function prestigeOwned(s){return isVIP(s)||!!(s.achClaims&&(s.achClaims.saddler8||s.achClaims.legendset))||!!(s.wardrobe&&s.wardrobe.owned.prestige);}
  function allowed(s,it){return !it.cost||!!(s.wardrobe&&s.wardrobe.owned[it.id]);}
  function wearing(s,slot,val){const cur=s.rider[slot];return (cur==null&&val==null)||(String(cur||'').toLowerCase()===String(val||'').toLowerCase());}
- function fitOf(s){const r=s.rider||{};return {shirt:r.shirt||DEF_SHIRT,pants:r.pants||DEF_PANTS,hair:r.hair||null,skin:r.skin||null,helmet:r.helmet||null,boots:r.boots||null,hairStyle:r.hairStyle||'loose',body:r.body||'f'};}
- const lookKey=f=>[f.shirt,f.pants,f.hair,f.skin,f.helmet,f.boots,f.hairStyle,f.body].join('|');
+ function fitOf(s){const r=s.rider||{},body=r.body||'f';return {shirt:r.shirt||DEF_SHIRT,pants:r.pants||DEF_PANTS,hair:r.hair||null,skin:r.skin||null,helmet:r.helmet||null,boots:r.boots||null,hairStyle:riderHairId(r.hairStyle,body),body,outfit:r.outfit||'riding',eyes:r.eyes||'brown'};}
+ const lookKey=f=>[f.shirt,f.pants,f.hair,f.skin,f.helmet,f.boots,f.hairStyle,f.body,f.outfit,f.eyes].join('|');
  /* ---- the look, applied to a rider without rebuilding the herd ---------------------------- */
  function hairMeshes(R,fit){
   const head=R.sk&&R.sk.by&&R.sk.by.head; if(!head)return;
   if(R._twHair){head.remove(R._twHair);try{R._twHairKit&&R._twHairKit.dispose();}catch(e){}R._twHair=null;R._twHairKit=null;}
   /* real hairstyles on the head bone (assets/rider-hair.js): a cap and a fringe over a bare head,
      and whatever falls from it, long, curly, bobbed, tied up or braided */
-  const kit=buildHair(THREE,fit.hairStyle||'loose',fit.hair||'#4a2e1c',{helmet:fit.helmet!=='none'});
+  const OLD={long:'loose',buns:'bun',short:'quiff',beard:'crop'};   // the character's style names, in the old builder's words
+  const kit=buildHair(THREE,OLD[fit.hairStyle]||fit.hairStyle||'loose',fit.hair||'#4a2e1c',{helmet:fit.helmet!=='none'});
   head.add(kit.group); R._twHair=kit.group; R._twHairKit=kit;
  }
  function bodyScale(R,fit){
@@ -88,6 +95,9 @@ export function install(G){
  }
  function applyRiderLook(R,fit){
   if(!R)return false;
+  /* the character dresses herself (assets/rider-model.js); another body is another rider, so say no and
+     let the caller rebuild */
+  if(R.setLook){if(R.rig&&R.rig.kit.body!==(fit.body==='m'?'m':'f'))return false;R.setLook(fit);R._twLook=lookKey(fit);return true;}
   const u=R.mesh&&R.mesh.material&&R.mesh.material.userData&&R.mesh.material.userData.u; if(!u)return false;
   const same=(a,b)=>String(a||'').toLowerCase()===b;
   u.uShirt.value.set(fit.shirt||DEF_SHIRT); u.uShirtW.value=fit.shirt&&!same(fit.shirt,DEF_SHIRT)?1:0;
@@ -114,13 +124,19 @@ export function install(G){
  }
  function hairRow(s){
   const body=s.rider.body||'f';
-  return '<div class="crow" style="flex-wrap:wrap"><span class="lbl">💇 Hairstyle</span>'+HAIRSTYLES.filter(h=>!h.body||h.body.includes(body)).map(h=>'<button data-fx="wd:hair:'+h.id+'" '+((s.rider.hairStyle||'loose')===h.id?'class="claimBtn"':'')+' style="font-size:11px;padding:3px 8px">'+h.label+'</button>').join('')+'</div>';
+  const cur=riderHairId(s.rider.hairStyle,body);
+  return '<div class="crow" style="flex-wrap:wrap"><span class="lbl">💇 Hairstyle</span>'+HAIRSTYLES.filter(h=>!h.body||h.body.includes(body)).map(h=>'<button data-fx="wd:hair:'+h.id+'" '+(cur===h.id?'class="claimBtn"':'')+' style="font-size:11px;padding:3px 8px">'+h.label+'</button>').join('')+'</div>';
+ }
+ function kitRow(s){
+  const cur=s.rider.outfit||'riding', eye=s.rider.eyes||'brown';
+  return '<div class="crow" style="flex-wrap:wrap"><span class="lbl">🧥 Outfit</span>'+OUTFITS.map(o=>'<button data-fx="wd:outfit:'+o.id+'" '+(cur===o.id?'class="claimBtn"':'')+' style="font-size:11px;padding:3px 8px">'+o.icon+' '+o.label+'</button>').join('')+'</div>'
+   +'<div class="crow" style="flex-wrap:wrap"><span class="lbl">👁️ Eyes</span>'+EYES.map(e=>sw('wd:eyes:'+e.id,e.col,eye===e.id,e.label)).join('')+'</div>';
  }
  G.ui.shopTab({id:'outfit',label:'🧢 Outfit',render(s,h){
   const owned=Object.keys(s.wardrobe.owned).length, tok=(s.tokens&&s.tokens.n)||0, pres=prestigeOwned(s);
   let html='<div class="crow" style="flex-wrap:wrap;gap:6px"><span style="font-size:12px;color:#8c7a63">✨ <b>'+(s.dust||0)+'</b> dust · 🎟️ <b>'+tok+'</b> season tokens · '+owned+' unlocked</span><button data-fx="wd:creator" style="font-size:11px">🧑 Rider</button><button data-fx="wd:store" style="font-size:11px">🛍️ Season Store</button></div>'
    +'<span style="font-size:12px;color:#8c7a63">Dress your rider — picks apply instantly and your club mates see them. 🔒 pieces unlock with ✨ dust from loot doors.</span>'
-   +hairRow(s)+SLOTS.map(sl=>slotRow(s,sl,false)).join('');
+   +kitRow(s)+hairRow(s)+SLOTS.map(sl=>slotRow(s,sl,false)).join('');
   const wornSet=['helmet','shirt','pants','boots'].every(k=>wearing(s,k,PRESTIGE_SET[k]));
   html+='<div class="evrow">👑 <b>Prestige set</b><span style="font-size:11px">'+(pres?'Gold helmet, midnight jacket, black breeches, saddle-brown boots — and a 👑 badge over your name.':'Reach it by raising a piece of tack to Lv 8, wearing a full Legendary set, or holding a Trail Pass membership.')+'</span>'
    +(pres?'<button data-fx="wd:set:prestige" '+(wornSet?'class="claimBtn"':'')+'>'+(wornSet?'Wearing ✓':'Wear the set')+'</button>':'<span style="font-size:11px;color:#b8a888">🔒</span>')+'</div>';
@@ -168,10 +184,12 @@ export function install(G){
   dice:'<rect x="4" y="4" width="16" height="16" rx="3.2"/><circle cx="8.6" cy="8.6" r="1.1" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15.4" cy="8.6" r="1.1" fill="currentColor"/><circle cx="8.6" cy="15.4" r="1.1" fill="currentColor"/>',
   body:'<circle cx="9" cy="9.5" r="4"/><path d="M9 13.5V21M6.2 18h5.6"/><circle cx="16.2" cy="12.6" r="3.6"/><path d="M18.8 10l2.6-2.6M18.2 7.4h3.2v3.2"/>',
   turn:'<path d="M19.4 12A7.4 7.4 0 1 1 17 6.6"/><path d="M17.8 3.6l-.6 3.4 3.4.4"/>',
-  bare:'<circle cx="12" cy="10" r="5.4"/><path d="M6 21c.8-3.4 3.3-5.3 6-5.3s5.2 1.9 6 5.3"/><path d="M4 4l16 16"/>'
+  bare:'<circle cx="12" cy="10" r="5.4"/><path d="M6 21c.8-3.4 3.3-5.3 6-5.3s5.2 1.9 6 5.3"/><path d="M4 4l16 16"/>',
+  eyes:'<path d="M2.8 12c2.3-3.9 5.5-5.9 9.2-5.9s6.9 2 9.2 5.9c-2.3 3.9-5.5 5.9-9.2 5.9S5.1 15.9 2.8 12z"/><circle cx="12" cy="12" r="3.1"/><circle cx="12" cy="12" r="1" fill="currentColor"/>',
+  outfit:'<path d="M8.5 3.8h7l1.2 3.4 3.3 1.3-1.7 5.2-2.3-.6V20H8V13.1l-2.3.6L4 8.5l3.3-1.3z"/><path d="M8.5 3.8c.7 1.7 1.9 2.6 3.5 2.6s2.8-.9 3.5-2.6M12 6.4V20M9.3 11h1.5M9.3 14h1.5"/>'
  };
- const CATS=[['style','Hair style','appearance'],['hair','Hair colour','appearance'],['skin','Skin colour','appearance'],
-  ['helmet','Helmet','outfit'],['shirt','Jacket','outfit'],['pants','Breeches','outfit'],['boots','Boots','outfit']];
+ const CATS=[['style','Hair style','appearance'],['hair','Hair colour','appearance'],['eyes','Eyes','appearance'],['skin','Skin colour','appearance'],
+  ['outfit','Outfit','outfit'],['helmet','Helmet','outfit'],['shirt','Jacket','outfit'],['pants','Breeches','outfit'],['boots','Boots','outfit']];
  if(!$('seCharCss')){
   const st=document.createElement('style'); st.id='seCharCss';
   st.textContent=`
@@ -255,7 +273,7 @@ export function install(G){
   const sc=new THREE.Scene(); sc.background=gradientTex();
   sc.add(new THREE.HemisphereLight(0xe4ebff,0x4a3e7a,1.35));
   const key=new THREE.DirectionalLight(0xfff2e2,2.3);key.position.set(1.6,3.2,3.0);key.castShadow=true;key.shadow.mapSize.set(1024,1024);
-  Object.assign(key.shadow.camera,{left:-1.2,right:1.2,top:2.2,bottom:-0.2,near:0.5,far:9});sc.add(key);
+  Object.assign(key.shadow.camera,{left:-1.2,right:1.2,top:2.2,bottom:-0.2,near:0.5,far:9});key.shadow.bias=-0.0006;key.shadow.normalBias=0.012;sc.add(key);   // no acne on her clothes
   const rim=new THREE.DirectionalLight(0xa9b8ff,1.3);rim.position.set(-2,2.6,-2.6);sc.add(rim);
   /* a pool of light on the floor, and her shadow in it */
   const fc=document.createElement('canvas');fc.width=fc.height=128;const f=fc.getContext('2d');const rg=f.createRadialGradient(64,64,4,64,64,64);
@@ -279,13 +297,21 @@ export function install(G){
   R.g.traverse(o=>{if(o.isMesh){o.castShadow=true;}});
   applyRiderLook(R,CH.draft);
  }
- function dropRider(R){try{if(R._twHairKit)R._twHairKit.dispose();if(R.mesh&&R.mesh.material)R.mesh.material.dispose();}catch(e){}}
+ function dropRider(R){R._dead=true;try{if(R._dispose)R._dispose();if(R._twHairKit)R._twHairKit.dispose();if(!R.rig&&R.mesh&&R.mesh.material)R.mesh.material.dispose();}catch(e){}}
+ /* stand her up: the character plays her idle; the old sculpt is stood by the on-foot package's pose */
+ function standUp(R,dt,tt,look){
+  if(R.locomote){CH.holder.scale.setScalar(R.walkScale||1);R.locomote(dt,{speed:0,look});return;}
+  CH.holder.scale.setScalar(0.91);
+  if(G.onFoot&&G.onFoot.pose)G.onFoot.pose(R,0,0,0,tt,look);
+ }
  function frame(t){
   if(!CH.open||!CH.renderer)return;
   CH.raf=requestAnimationFrame(frame);
   const R=CH.R; if(!R||!R.sk){if(CH.R&&!CH.R._looked&&CH.R.mesh){applyRiderLook(CH.R,CH.draft);CH.R._looked=true;}CH.renderer.render(CH.scene,CH.cam);return;}
-  const tt=(t||0)/1000;
-  if(G.onFoot&&G.onFoot.pose)G.onFoot.pose(R,0,0,0,tt,Math.sin(tt*0.45)*0.25);
+  const tt=(t||0)/1000, dt=CH.lastT?Math.min(0.1,tt-CH.lastT):0.016; CH.lastT=tt;
+  /* she can arrive after the screen opened (her files still loading on a first launch): the busts want her */
+  if(CH.tab==='style'&&!CH.thumbKey){renderChar();}
+  standUp(R,dt,tt,Math.sin(tt*0.45)*0.25);
   if(!CH.drag)CH.spin+=0;                          // she holds still unless turned
   CH.holder.rotation.y=CH.spin;
   if(CH.zoom){CH.cam.position.set(0,1.40,1.35);CH.cam.lookAt(0,1.36,0);}
@@ -306,11 +332,15 @@ export function install(G){
   /* from behind her shoulder, three-quarters, on light card: what tells one style from another is the back of the head */
   CH.holder.rotation.y=1.8; CH.scene.background=new THREE.Color('#e9dcbc');
   const fill=new THREE.DirectionalLight(0xfff6ea,2.4); fill.position.set(0.8,1.8,2.2); CH.scene.add(fill);   // lit from the camera's side, not silhouetted
-  for(const hs of HAIRSTYLES){
+  const body=CH.draft.body||'f';
+  for(const hs of HAIRSTYLES.filter(x=>!x.body||x.body.includes(body))){
    /* on a clay bust, as the reference does: in her own dark hair on a navy coat the shape is lost */
-   applyRiderLook(R,Object.assign({},CH.draft,{hairStyle:hs.id,helmet:'none',hair:'#cfc8bc',skin:'#ddd6cb',shirt:'#a19c95',pants:'#cfcac2',boots:'#8d8781'}));
-   if(G.onFoot&&G.onFoot.pose)G.onFoot.pose(R,0,0,0,0,0);
-   cam.position.set(0.10,1.50,1.02); cam.lookAt(0,1.33,0);
+   applyRiderLook(R,Object.assign({},CH.draft,{hairStyle:hs.id,helmet:'none',hair:'#cfc8bc',skin:'#ddd6cb',shirt:'#a19c95',pants:'#cfcac2',boots:'#8d8781',outfit:'riding',eyes:'brown'}));
+   standUp(R,0,0,0);
+   if(R.rig){ /* the character's head, wherever her height puts it */
+    CH.holder.updateMatrixWorld(true); const hp=R.rig.bones.Head.getWorldPosition(new THREE.Vector3()); hp.y+=0.085;
+    cam.position.set(hp.x+0.07,hp.y+0.10,hp.z+0.64); cam.lookAt(hp.x,hp.y-0.01,hp.z);
+   }else{cam.position.set(0.10,1.50,1.02); cam.lookAt(0,1.33,0);}
    CH.renderer.setRenderTarget(rt); CH.renderer.render(CH.scene,cam); CH.renderer.readRenderTargetPixels(rt,0,0,S,S,buf); CH.renderer.setRenderTarget(null);
    /* GL rows run bottom up; and a render target gets neither the tone map nor the sRGB encode the
       screen does, so the linear values are encoded here or every bust comes out half as bright */
@@ -331,11 +361,17 @@ export function install(G){
   let h='';
   if(CH.tab==='style'){
    if(CH.R&&CH.R.sk)makeThumbs();
+   const cur=riderHairId(d.hairStyle,d.body);
    for(const hs of HAIRSTYLES.filter(x=>!x.body||x.body.includes(d.body||'f'))){
     const th=CH.thumbs[hs.id];
-    h+='<button class="ch-card'+((d.hairStyle||'loose')===hs.id?' sel':'')+'" data-ch="style:'+hs.id+'">'+(th?'<img alt="" src="'+th+'">':'<span class="ic">'+SVGI(ICO.style)+'</span>')+'<span class="lb">'+esc(hs.label)+'</span></button>';
+    h+='<button class="ch-card'+(cur===hs.id?' sel':'')+'" data-ch="style:'+hs.id+'">'+(th?'<img alt="" src="'+th+'">':'<span class="ic">'+SVGI(ICO.style)+'</span>')+'<span class="lb">'+esc(hs.label)+'</span></button>';
    }
+  }else if(CH.tab==='outfit'){
+   for(const o of OUTFITS)h+='<button class="ch-card'+((d.outfit||'riding')===o.id?' sel':'')+'" data-ch="outfit:'+o.id+'"><span class="ic" style="font-size:34px;justify-content:center">'+o.icon+'</span><span class="lb">'+esc(o.label)+'</span></button>';
+  }else if(CH.tab==='eyes'){
+   for(const e of EYES)h+='<button class="ch-card'+((d.eyes||'brown')===e.id?' sel':'')+'" data-ch="eyes:'+e.id+'"><span class="sw" style="background:radial-gradient(circle,#111 0 22%,'+e.col+' 24% 62%,#f4f1ea 64%)"></span><span class="lb">'+esc(e.label)+'</span></button>';
   }else{
+   if((d.outfit||'riding')!=='riding'&&['shirt','pants','boots'].includes(CH.tab))h+='<div style="grid-column:1/-1;font-size:12px;font-weight:800;color:#e9e3ff;background:rgba(0,0,0,.22);border-radius:8px;padding:6px 8px">These colours dress the 🏇 Riding kit — pick it under Outfit to see them.</div>';
    const items=ALL_ITEMS.filter(i=>i.slot===CH.tab&&(!i.cost||s.wardrobe.owned[i.id]||!SEASON_ITEMS.includes(i)));
    for(const it of items){
     const on=String(d[CH.tab]||'').toLowerCase()===String(it.col).toLowerCase()||(d[CH.tab]==null&&CH.tab==='helmet'&&false);
@@ -352,9 +388,9 @@ export function install(G){
  const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
  function setDraft(patch){
   Object.assign(CH.draft,patch);
-  if(CH.draft.body==='m'){const hs=HAIRSTYLES.find(x=>x.id===CH.draft.hairStyle);if(hs&&hs.body&&!hs.body.includes('m'))CH.draft.hairStyle='crop';}
-  else{const hs=HAIRSTYLES.find(x=>x.id===CH.draft.hairStyle);if(hs&&hs.body&&!hs.body.includes('f'))CH.draft.hairStyle='loose';}
-  if(CH.R)applyRiderLook(CH.R,CH.draft);
+  CH.draft.hairStyle=riderHairId(CH.draft.hairStyle,CH.draft.body);
+  /* a character of the other body is another character: build her; otherwise just dress this one */
+  if(CH.R){if(CH.R.rig&&CH.R.rig.kit.body!==(CH.draft.body==='m'?'m':'f')){stageRider();CH.thumbKey='';setTimeout(()=>{if(CH.open&&CH.tab==='style')renderChar();},400);}else applyRiderLook(CH.R,CH.draft);}
   renderChar();
  }
  function surprise(){
@@ -362,7 +398,8 @@ export function install(G){
   const pick=slot=>{const L=ALL_ITEMS.filter(i=>i.slot===slot&&allowed(s,i));return L.length?L[Math.floor(Math.random()*L.length)].col:null;};
   const styles=HAIRSTYLES.filter(x=>!x.body||x.body.includes(CH.draft.body||'f'));
   setDraft({hairStyle:styles[Math.floor(Math.random()*styles.length)].id,hair:pick('hair'),skin:pick('skin'),shirt:pick('shirt'),pants:pick('pants'),boots:pick('boots'),
-   helmet:Math.random()<0.5?'none':pick('helmet')});
+   helmet:Math.random()<0.5?'none':pick('helmet'),eyes:EYES[Math.floor(Math.random()*EYES.length)].id,
+   outfit:Math.random()<0.7?'riding':OUTFITS[1+Math.floor(Math.random()*(OUTFITS.length-1))].id});
  }
 
  /* ---- open, close, save ------------------------------------------------------------- */
@@ -391,7 +428,7 @@ export function install(G){
  }
  function saveChar(){
   const d=CH.draft, name=String($('chName').value||'').trim().slice(0,14);
-  G.save.sync(s=>{Object.assign(s.rider,{shirt:d.shirt,pants:d.pants,hair:d.hair,skin:d.skin,helmet:d.helmet,boots:d.boots,hairStyle:d.hairStyle,body:d.body});if(name)s.playerName=name;});
+  G.save.sync(s=>{Object.assign(s.rider,{shirt:d.shirt,pants:d.pants,hair:d.hair,skin:d.skin,helmet:d.helmet,boots:d.boots,hairStyle:d.hairStyle,body:d.body,outfit:d.outfit||'riding',eyes:d.eyes||'brown'});if(name)s.playerName=name;});
   closeChar();
   finishCreator(name);
  }
@@ -403,6 +440,8 @@ export function install(G){
   else if(op==='undo'){const s=G.save.fresh();if(s)setDraft(fitOf(s));}
   else if(op==='tab'){CH.tab=a1;renderChar();}
   else if(op==='style')setDraft({hairStyle:a1});
+  else if(op==='outfit')setDraft({outfit:a1});
+  else if(op==='eyes')setDraft({eyes:a1});
   else if(op==='pick')setDraft({[a1]:b.dataset.ch.split(':').slice(2).join(':')});
   else if(op==='unlock'){G.ui.dispatch('wd:unlock:'+a1);const it=itemById(a1),s=G.save.fresh();if(it&&s&&s.wardrobe.owned[it.id])setDraft({[it.slot]:it.col});else renderChar();}
   else if(op==='zoom'){CH.zoom=!CH.zoom;renderChar();}
@@ -445,7 +484,9 @@ export function install(G){
    if(ok){applyLocal();G.sChime();msg='✨ Unlocked the '+it.label+'!';}}
   else if(op==='set'&&a[1]==='prestige'){G.save.sync(s=>{if(!prestigeOwned(s)){msg='The prestige set is not yours yet.';return;}Object.assign(s.rider,{helmet:PRESTIGE_SET.helmet,shirt:PRESTIGE_SET.shirt,pants:PRESTIGE_SET.pants,boots:PRESTIGE_SET.boots});ok=true;});if(ok){applyLocal();G.sGem();msg='👑 Dressed to the nines.';}}
   else if(op==='hair'){const hs=HAIRSTYLES.find(h=>h.id===a[1]);if(!hs)return;G.save.sync(s=>{if(hs.body&&!hs.body.includes(s.rider.body||'f')){msg='That style does not suit this body.';return;}s.rider.hairStyle=hs.id;ok=true;});if(ok){applyLocal();msg='💇 '+hs.label+'.';}}
-  else if(op==='body'){G.save.sync(s=>{s.rider.body=a[1]==='m'?'m':'f';const hs=HAIRSTYLES.find(h=>h.id===s.rider.hairStyle);if(hs&&hs.body&&!hs.body.includes(s.rider.body))s.rider.hairStyle='loose';ok=true;});applyLocal();msg=a[1]==='m'?'👦 Cowboy.':'👧 Cowgirl.';}
+  else if(op==='body'){G.save.sync(s=>{s.rider.body=a[1]==='m'?'m':'f';s.rider.hairStyle=riderHairId(s.rider.hairStyle,s.rider.body);ok=true;});applyLocal();msg=a[1]==='m'?'👦 Cowboy.':'👧 Cowgirl.';}
+  else if(op==='outfit'){const o=OUTFITS.find(x=>x.id===a[1]);if(!o)return;G.save.sync(s=>{s.rider.outfit=o.id;ok=true;});applyLocal();msg=o.icon+' '+o.label+'.';}
+  else if(op==='eyes'){const e=EYES.find(x=>x.id===a[1]);if(!e)return;G.save.sync(s=>{s.rider.eyes=e.id;ok=true;});applyLocal();msg='👁️ '+e.label+' eyes.';}
   else if(op==='name'){const v=String(el&&el.value||'').trim().slice(0,14);G.save.sync(s=>{s.playerName=v||s.playerName;});return;}
   else if(op==='dice'){const nm=RIDER_NAMES[Math.floor(Math.random()*RIDER_NAMES.length)];G.save.sync(s=>{s.playerName=nm;});const inp=$('riderPanel')&&$('riderPanel').querySelector('[data-fxin="wd:name"]');if(inp)inp.value=nm;msg='🎲 '+nm+' it is.';toast(msg);return;}
   else if(op==='done'){const inp=$('riderPanel')&&$('riderPanel').querySelector('[data-fxin="wd:name"]');finishCreator(inp?String(inp.value||'').trim().slice(0,14):'');return;}
@@ -461,11 +502,20 @@ export function install(G){
  });
  G.ui.careHeader((s,h)=>'<button data-fx="wd:creator" style="font-size:11px">🧑 Rider</button>');
  /* ---- what club mates see ---------------------------------------------------------------- */
- G.on('netPos',(payload,s,h)=>{const r=(s&&s.rider)||{};payload.hs=r.hairStyle||'loose';payload.bt=r.boots||null;payload.bo=r.body||'f';payload.bd=prestigeOwned(s)?1:0;payload.ss=G.horse.TACK()&&G.horse.TACK().saddle&&G.horse.TACK().saddle.userData.style==='western'?'western':'english';});
+ G.on('netPos',(payload,s,h)=>{const r=(s&&s.rider)||{};payload.hs=r.hairStyle||'long';payload.bt=r.boots||null;payload.bo=r.body||'f';payload.of=r.outfit||'riding';payload.ey=r.eyes||'brown';payload.bd=prestigeOwned(s)?1:0;payload.ss=G.horse.TACK()&&G.horse.TACK().saddle&&G.horse.TACK().saddle.userData.style==='western'?'western':'english';});
  G.on('remote',(m,r)=>{
   if(!r||!r.rider)return;
-  const fit={shirt:m.s||DEF_SHIRT,pants:m.p||DEF_PANTS,hair:m.hr||null,skin:m.sk||null,helmet:m.hm||null,boots:m.bt||null,hairStyle:String(m.hs||'loose').slice(0,10),body:m.bo==='m'?'m':'f'};
-  const k=lookKey(fit); if(r.rider._twLook!==k)applyRiderLook(r.rider,fit);       // returns false until the sculpt is in; tries again next packet
+  const bo=m.bo==='m'?'m':'f';
+  const fit={shirt:m.s||DEF_SHIRT,pants:m.p||DEF_PANTS,hair:m.hr||null,skin:m.sk||null,helmet:m.hm||null,boots:m.bt||null,hairStyle:riderHairId(String(m.hs||'long').slice(0,10),bo),body:bo,
+   outfit:OUTFITS.some(o=>o.id===m.of)?m.of:'riding',eyes:EYES.some(e=>e.id===m.ey)?m.ey:'brown'};
+  const k=lookKey(fit);
+  if(r.rider._twLook!==k&&!applyRiderLook(r.rider,fit)&&r.rider.setLook&&G.horse.makeRider){   // false until she is in; tries again next packet
+   /* the character said no: another body is another rider, so build that one where this one sits */
+   const old=r.rider,par=old.g.parent,nr=G.horse.makeRider(fit);
+   if(par){nr.g.position.copy(old.g.position);nr.g.rotation.copy(old.g.rotation);nr.g.scale.copy(old.g.scale);par.remove(old.g);par.add(nr.g);}
+   old._dead=true;try{old._dispose&&old._dispose();}catch(e){}
+   r.rider=nr; applyRiderLook(nr,fit);
+  }
   const badge=!!m.bd; if(badge!==!!r.badge){r.badge=badge;
    try{const grp=r.parts&&r.parts.group;const old=grp&&grp.children.find(o=>o.isSprite&&Math.abs(o.position.y-3.15)<1e-3);if(old){grp.remove(old);}
     const tag=G.nameSprite((badge?'👑':'')+(G.net.isFriend(r.name)?'💚':'🌐')+r.name);tag.position.y=3.15;grp.add(tag);}catch(e){}}
@@ -473,7 +523,7 @@ export function install(G){
  G.ui.profileSection((name,r)=>r&&r.badge?'<div style="font-size:12px"><span style="background:#d4af37;color:#3a2a10;border-radius:8px;padding:1px 8px;font-weight:800">👑 PRESTIGE</span></div>':'');
  G.on('wallet',s=>{G.ui.hud.stat('dustEl','✨ '+(s.dust||0));});
  G.on('state',o=>{const s=G.save.fresh()||{};const r=s.rider||{};const inv=s.tack||[];
-  o.rider={shirt:r.shirt||null,pants:r.pants||null,helmet:r.helmet||null,skin:r.skin||null,hair:r.hair||null,boots:r.boots||null,hairStyle:r.hairStyle||null,body:r.body||null,made:!!r.made,name:s.playerName||null,dust:s.dust||0,tokens:(s.tokens&&s.tokens.n)||0,owned:Object.keys((s.wardrobe&&s.wardrobe.owned)||{}).length,prestige:prestigeOwned(s)};
+  o.rider={shirt:r.shirt||null,pants:r.pants||null,helmet:r.helmet||null,skin:r.skin||null,hair:r.hair||null,boots:r.boots||null,hairStyle:r.hairStyle||null,body:r.body||null,outfit:r.outfit||null,eyes:r.eyes||null,made:!!r.made,name:s.playerName||null,dust:s.dust||0,tokens:(s.tokens&&s.tokens.n)||0,owned:Object.keys((s.wardrobe&&s.wardrobe.owned)||{}).length,prestige:prestigeOwned(s)};
   const T=G.horse.TACK();
   o.tack={n:inv.length,maxLvl:inv.reduce((m,t)=>Math.max(m,t.lvl||1),0),parts:s.parts||0,kits:{kit1:(s.items&&s.items.kit1)||0,kit2:(s.items&&s.items.kit2)||0,kit3:(s.items&&s.items.kit3)||0},saddleStyle:T&&T.saddle?T.saddle.userData.style||null:null,sets:Object.keys(G.tables.TACK_SETS).length};});
  /* ---- Bo the Saddler, the tack missions, dailies and achievements ------------------------ */
@@ -499,7 +549,9 @@ export function install(G){
  const autoCreator=!(location.search.includes('qa=')&&!location.search.includes('qa=tack'));
  G.on('tick',(dt,t)=>{
   const R=G.horse.player.rider;
-  if(R&&R.mesh&&R._twLook!==localLook){if(!localFit)refreshLocal();if(localFit)applyRiderLook(R,localFit);}
+  if(R&&R.mesh&&R._twLook!==localLook){if(!localFit)refreshLocal();
+   /* the character says no to another body: rebuild her, once per look */
+   if(localFit&&!applyRiderLook(R,localFit)&&R.setLook&&R._twReload!==localLook){R._twReload=localLook;G.horse.reloadHorses();}}
   acc+=dt; if(acc<0.5)return; acc=0;
   const idx=G.quest.storyIdx();
   if(idx!==lastIdx){lastIdx=idx;

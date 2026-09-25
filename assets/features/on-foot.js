@@ -10,9 +10,10 @@
                    and bridle, parked where she stopped. It stands and grazes, comes at a trot
                    when whistled, and carries an E prompt: "Ride <name>".
      the rider   — the player's own rider, lifted out of the saddle into a group of her own and
-                   posed standing: her seated sculpt has its legs re-aimed straight down bone by
-                   bone, and a walk or a jog cycle is laid over that. Her hair, colours and helmet
-                   come with her, because it is the same rider, not a copy.
+                   stood up: the character (assets/rider-model.js) walks with the animation
+                   library's idle, walk and jog, blended by speed; the old sculpt, if it is the one
+                   loaded, has its legs re-aimed straight down bone by bone with a walk or jog cycle
+                   laid over. Her hair, clothes and helmet come with her: it is the same rider.
 
    The game's player position follows her, so everything that asks where the player is — the
    E prompts, the minimap, the quests, the NPCs, the collisions — asks about her. The mounted
@@ -136,7 +137,7 @@ export function install(G){
   const lx=Math.cos(hd),lz=-Math.sin(hd);
   player.pos.x=x+lx*1.05; player.pos.z=z+lz*1.05; player.heading=hd;
   ST.R=player.rider; ST.mesh=player.mesh;
-  ST.W=new THREE.Group(); ST.W.name='on-foot rider'; ST.W.scale.setScalar(RIDER_H); scene.add(ST.W);
+  ST.W=new THREE.Group(); ST.W.name='on-foot rider'; ST.W.scale.setScalar(ST.R.walkScale||RIDER_H); scene.add(ST.W);   // the character is her own size already
   ST.W.add(ST.R.g);
   player.mesh.visible=false;
   player.onFoot=true; ST.on=true; ST.snap=true; ST.cam=null; ST.camYaw=null; ST.ph=0; ST.amp=0; ST.run=0;
@@ -198,6 +199,7 @@ export function install(G){
   if(ST.R&&ST.R.g&&ST.R.g.parent===ST.W)ST.W.remove(ST.R.g);
   ST.R=player.rider; ST.mesh=player.mesh;
   if(ST.R&&ST.R.g)ST.W.add(ST.R.g);
+  if(ST.R&&ST.W)ST.W.scale.setScalar(ST.R.walkScale||RIDER_H);
   if(player.mesh)player.mesh.visible=false;
  }
 
@@ -228,7 +230,8 @@ export function install(G){
   ST.ph+=(player.speed<0?-1:1)*sp*dt/stride*Math.PI*2;
   if(sp<0.08)ST.ph+=(Math.round(ST.ph/Math.PI)*Math.PI-ST.ph)*Math.min(1,dt*5);   // come to rest feet together
   ST.look+=(Math.sin(t*0.5)*0.18*(1-ST.amp)-ST.look)*Math.min(1,dt*1.5);
-  pose(R,ST.ph,ST.amp,ST.run,t,ST.look);
+  /* the character walks with the animation library's own idle, walk and jog; the old sculpt is posed */
+  if(R.locomote)R.locomote(dt,{speed:player.speed,look:ST.look}); else pose(R,ST.ph,ST.amp,ST.run,t,ST.look);
   tickHorse(dt,t);
  });
 
@@ -342,7 +345,7 @@ export function install(G){
   if(t.closest('#seWhistle')||t.closest('#whistleBtn')){e.stopPropagation();e.preventDefault();callHorse(false);}
  },true);
 
- G.onFoot={get on(){return ST.on;},dismount,mount,toggle,callHorse,pose,
+ G.onFoot={get on(){return ST.on;},dismount,mount,toggle,callHorse,pose:(R,ph,amp,run,t,look)=>R&&R.locomote?R.locomote(0.016,{speed:0,look}):pose(R,ph,amp,run,t,look),
   horse:()=>ST.horse?{x:ST.horse.x,z:ST.horse.z,heading:ST.horse.heading,sc:ST.horse.sc,group:ST.horse.parts.group}:null,
   walker:()=>ST.W,state:()=>({on:ST.on,horse:ST.horse?{x:+ST.horse.x.toFixed(2),z:+ST.horse.z.toFixed(2)}:null,calling:!!ST.call})};
  G.on('state',o=>{o.onFoot=G.onFoot.state();});

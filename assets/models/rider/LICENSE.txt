@@ -1,0 +1,5 @@
+The models, textures and animations in this folder are by Quaternius (https://quaternius.com),
+released under CC0 1.0 Universal (public domain): https://creativecommons.org/publicdomain/zero/1.0/
+
+From the free [Standard] versions of: Universal Base Characters, Universal Animation Library,
+Modular Character Outfits - Fantasy. Cut down for the web by tools/asset-gen/build-rider.mjs.

@@ -206,3 +206,32 @@ directory listing:
 The libvips LGPL matters only if libvips binaries were redistributed; they are a local
 dev dependency, `tools/asset-gen/node_modules/` is gitignored, and no part of it is
 served by GitHub Pages.
+
+## The rider (`assets/models/rider/`, `build-rider.mjs`)
+
+The rider is a third-party character, added on purpose: Quaternius' **CC0 1.0** (public domain)
+packs, from the free *[Standard]* downloads at quaternius.itch.io, no payment:
+
+| pack | used for |
+| --- | --- |
+| Universal Base Characters [Standard] | the two bodies (`rider-f.glb`, `rider-m.glb`), eyes, brows, hairstyles (`rider-hair.glb`) |
+| Universal Animation Library [Standard] | the clips she walks and stands with (`rider-anims.glb`), on the same 65-bone skeleton |
+| Modular Character Outfits – Fantasy [Standard] | the Peasant and Ranger outfits (`outfit-*.glb`); the Peasant boots are also the riding kit's boots |
+
+Each zip was listed before it was unpacked (models, textures and licence text only), and the
+licence text in each pack reads CC0 1.0 Universal. `assets/models/rider/LICENSE.txt` records
+it beside the files.
+
+`build-rider.mjs` makes the web files from the unzipped packs:
+
+    node build-rider.mjs "<Universal Base Characters[Standard]>" "<Universal Animation Library[Standard]>" \
+      "<Modular Character Outfits - Fantasy[Standard]>" ../../assets/models/rider
+
+It keeps only POSITION/NORMAL/TEXCOORD_0/JOINTS_0/WEIGHTS_0 (the sources carry five UV sets and
+three colour sets for their engine shaders, the colour sets solid white), resizes textures to
+1024 (eyes 256, small maps 512) and re-encodes them as WebP, bakes the hairstyles into the Head
+bone's space (they are weighted 100% to it; the build refuses otherwise), and keeps 15 clips with
+their rotation tracks and the pelvis translation only (the clips were made on a taller mannequin).
+Result: the default rider is about 2.5 MB (body 0.74, hair 0.58, clips 0.49, and the Peasant file
+0.72 for the riding kit's boots); the other outfit and the second body load only when worn. Everything else about her — the painted riding kit, the helmet,
+the drawn-back hairstyles, the seat — is built at runtime by `assets/rider-model.js`.
