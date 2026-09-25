@@ -570,7 +570,11 @@ body.touch #stickZone{display:block}
      goes online — see loadMQTT() in the module. Loading it up front would put it on the
      critical path of every single-player launch, which is most of them. -->
 
-<link rel="preload" href="assets/models/rider_seat_textured.glb" as="fetch">
+<!-- the rider (assets/rider-model.js): her body, hair, clips, and the Stable outfit's file for her riding boots -->
+<link rel="preload" href="assets/models/rider/rider-f.glb" as="fetch" crossorigin="anonymous">
+<link rel="preload" href="assets/models/rider/rider-hair.glb" as="fetch" crossorigin="anonymous">
+<link rel="preload" href="assets/models/rider/rider-anims.glb" as="fetch" crossorigin="anonymous">
+<link rel="preload" href="assets/models/rider/outfit-peasant-f.glb" as="fetch" crossorigin="anonymous">
 <script type="importmap">
 {
  "imports":{
