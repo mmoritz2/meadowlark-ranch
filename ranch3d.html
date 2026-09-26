@@ -609,8 +609,8 @@ import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
-import {createRiderLibrary} from './assets/rider-model.js?v=rider-1';
-import {FEATURES} from './assets/features/index.js?v=feat-7';
+import {createRiderLibrary} from './assets/rider-model.js?v=rider-2';
+import {FEATURES} from './assets/features/index.js?v=feat-8';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -12814,7 +12814,7 @@ function tick(stepSeconds){
  /* The ride hook. Packages (sprint, dash, slide, exhaustion, spooks, swimming, perks) mutate
     this one object instead of editing the movement code; target/acMul/agMul/jpMul/drain/regen
     are read back below. noJump stops the jump triggers. */
- const RIDE={target,spMul,acMul,agMul,jpMul,drain:1,regen:1,jumpMul:1,noJump:false,fwd,back,gallop,HS,PM};
+ const RIDE={target,spMul,acMul,agMul,jpMul,drain:1,regen:1,jumpMul:1,noJump:false,fwd,back,gallop,HS,PM,jump:!!(keys.Space||touch.jump)};   // jump: the press itself, for a package with a jump of its own (on-foot)
  G.run('ride',RIDE,dt);
  target=RIDE.target; acMul=RIDE.acMul; agMul=RIDE.agMul; jpMul=RIDE.jpMul*RIDE.jumpMul;
  /* Stamina. A gallop spends it, at a rate the stamina stat sets: a stamina-3 horse holds a

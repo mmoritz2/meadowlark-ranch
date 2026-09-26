@@ -22,6 +22,10 @@
    the camera through the 'camera' hook, and three one-line guards inline (driveRider, the
    hoofbeats and the riding distance) keep the saddle out of it.
 
+   On foot W walks, Shift (or the run toggle) runs flat out on the animation library's sprint, and
+   Space (or the jump button) jumps: a person's hop along a true arc, in the library's in-air pose,
+   landing in its crouch.
+
    Getting back on: E at the horse, the saddle button, or F. From far off, the saddle button
    whistles the horse over and puts her up when it arrives. Changing horse while on foot — the
    Horse Overview, or E beside a pasture horse — puts her straight up on the new one. A course
@@ -204,11 +208,21 @@ export function install(G){
  }
 
  /* ---------------------------------------------------------------- walking -------------- */
+ /* W walks, Shift (or the run toggle) runs flat out, Space (or the jump button) jumps. The horse's
+    jump stays barred (noJump); hers is her own: a hop about half a metre high, higher and longer at a
+    run, one per press. */
+ const WALK=1.45, RUN=5.5;
  G.on('ride',RIDE=>{
   if(!ST.on)return;
-  RIDE.target=RIDE.fwd?(RIDE.gallop?3.3:1.45):(RIDE.back?-0.9:0);
+  RIDE.target=RIDE.fwd?(RIDE.gallop?RUN:WALK):(RIDE.back?-0.9:0);
   RIDE.acMul=2.6; RIDE.agMul=1.8; RIDE.noJump=true; RIDE.drain=0;
   ST.target=RIDE.target;
+  if(RIDE.jump&&!ST.jumpHeld&&!ST.jump&&!ST.land){
+   const run=clamp((Math.abs(player.speed||0)-1.5)/3.5,0,1);
+   ST.jump={t:0,dur:0.64+0.08*run,h:0.50+0.20*run};
+   try{G.beep&&G.beep(380,720,0.12,'sine',0.06);}catch(e){}   // a lighter hop than the horse's jump
+  }
+  ST.jumpHeld=!!RIDE.jump;
  });
  G.on('tick',(dt,t)=>{
   if(!ST.on)return;
@@ -222,7 +236,12 @@ export function install(G){
      code slows everything at a horse's rate, so the rest of the stop is taken here. */
   if(Math.abs(ST.target||0)<Math.abs(player.speed||0)){player.speed+=((ST.target||0)-player.speed)*Math.min(1,dt*7);if(Math.abs(player.speed)<0.05&&!ST.target)player.speed=0;}
   const sp=Math.abs(player.speed||0);
-  ST.W.position.set(player.pos.x,Wd.groundH(player.pos.x,player.pos.z),player.pos.z);
+  /* the jump: a true arc for the flight, then the landing */
+  let lift=0,air=null,land=null;
+  if(ST.jump){const J=ST.jump;J.t+=dt;const p=Math.min(1,J.t/J.dur);lift=J.h*4*p*(1-p);air=p;if(p>=1){ST.jump=null;ST.land={t:0,dur:0.42};}}
+  else if(ST.land){ST.land.t+=dt;land=Math.min(1,ST.land.t/ST.land.dur);if(land>=1)ST.land=null;}
+  ST.lift=lift;
+  ST.W.position.set(player.pos.x,Wd.groundH(player.pos.x,player.pos.z)+lift,player.pos.z);
   ST.W.rotation.y=player.heading;
   ST.run+=(clamp((sp-1.9)/1.1,0,1)-ST.run)*Math.min(1,dt*6);
   ST.amp+=((sp<0.08?0:Math.min(1,sp/1.1))-ST.amp)*Math.min(1,dt*8);
@@ -231,7 +250,7 @@ export function install(G){
   if(sp<0.08)ST.ph+=(Math.round(ST.ph/Math.PI)*Math.PI-ST.ph)*Math.min(1,dt*5);   // come to rest feet together
   ST.look+=(Math.sin(t*0.5)*0.18*(1-ST.amp)-ST.look)*Math.min(1,dt*1.5);
   /* the character walks with the animation library's own idle, walk and jog; the old sculpt is posed */
-  if(R.locomote)R.locomote(dt,{speed:player.speed,look:ST.look}); else pose(R,ST.ph,ST.amp,ST.run,t,ST.look);
+  if(R.locomote)R.locomote(dt,{speed:player.speed,look:ST.look,air,land}); else pose(R,ST.ph,ST.amp,ST.run,t,ST.look);
   tickHorse(dt,t);
  });
 
@@ -331,7 +350,7 @@ export function install(G){
   st.textContent='#seMount{position:fixed;width:62px;height:62px;right:calc(210px + env(safe-area-inset-right));bottom:calc(20px + env(safe-area-inset-bottom));'
    +'border:0;padding:0;border-radius:50%;background-color:transparent;background-size:100% 100%;background-repeat:no-repeat;cursor:pointer;pointer-events:auto;z-index:7}'
    +'#seMount:hover{filter:drop-shadow(0 2px 4px rgba(0,0,0,.35)) brightness(1.15)}#seMount:active{transform:scale(.94)}'
-   +'body.on-foot #seJump,body.on-foot #flyBtn,body.on-foot #breathBtn,body.on-foot #tJump{display:none!important}'
+   +'body.on-foot #flyBtn,body.on-foot #breathBtn{display:none!important}'   // the jump button stays: she can jump
    +'body.se-ov-open #seMount,body.posing #seMount{display:none!important}'
    +'@media (max-width:760px){#seMount{width:52px;height:52px;right:calc(150px + env(safe-area-inset-right));bottom:calc(14px + env(safe-area-inset-bottom))}}';
   document.head.appendChild(st);

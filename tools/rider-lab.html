@@ -52,13 +52,15 @@ try{
  const seated=view.startsWith('seat')||view==='hands';
  if(seated){R._apply();R.g.position.set(0,0.95,0);}
  else{
-  const t=+q('t',0.4); const sp=view==='walk'?1.45:view==='jog'?3.2:0;
-  R.locomote(0.001,{speed:sp});rig.mixer.setTime(t);R.locomote(0,{speed:sp});
+  const t=+q('t',0.4); const sp=view==='walk'?1.45:view==='jog'?3.2:view==='sprint'?5.5:0;
+  if(Q.has('clip')){ /* one clip on its own, at time t */
+   R.locomote(0.001,{speed:0});rig.mixer.stopAllAction();const a=rig.action(q('clip'));a.reset();a.setEffectiveWeight(1);a.play();a.time=t;rig.mixer.update(0);rig.root.updateMatrixWorld(true);
+  }else{R.locomote(0.001,{speed:sp});rig.mixer.setTime(t);R.locomote(0,{speed:sp});}
  }
  /* markers for the rein anchors, when asked */
  if(Q.has('marks'))for(const h of [R.handL,R.handR]){const m=new THREE.Mesh(new THREE.SphereGeometry(0.012),new THREE.MeshBasicMaterial({color:0xff2060}));h.add(m);}
  const views0={front:[0,1.0,4.6,0,0.9,0],back:[0,1.0,-4.6,0,0.9,0],side:[4.6,1.0,0,0,0.9,0],three:[2.8,1.35,3.8,0,0.88,0],
-  face:[0.18,1.62,0.75,0,1.60,0.02],seat:[2.2,1.2,2.6,0,0.85,0],seatside:[3.2,1.0,0,0,0.8,0],walk:[3.0,1.2,2.6,0,0.85,0],jog:[3.0,1.2,2.6,0,0.85,0],seatfront:[0,1.1,3.6,0,0.85,0],hands:[0.42,1.42,1.05,0,1.20,0.40],feet:[0.9,0.35,1.4,0,0.18,0]};
+  face:[0.18,1.62,0.75,0,1.60,0.02],seat:[2.2,1.2,2.6,0,0.85,0],seatside:[3.2,1.0,0,0,0.8,0],walk:[3.0,1.2,2.6,0,0.85,0],jog:[3.0,1.2,2.6,0,0.85,0],sprint:[3.0,1.2,2.6,0,0.85,0],seatfront:[0,1.1,3.6,0,0.85,0],hands:[0.42,1.42,1.05,0,1.20,0.40],feet:[0.9,0.35,1.4,0,0.18,0]};
  const views=views0; const v=views[view]||views.three; cam.position.set(v[0],v[1],v[2]); cam.lookAt(v[3],v[4],v[5]);
  if(view==='face'){cam.fov=+q('fov',24);cam.updateProjectionMatrix();}
  /* outfits load late: give them a moment */

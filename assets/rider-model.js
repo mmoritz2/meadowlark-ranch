@@ -745,25 +745,34 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
   };
   const turnW=(b,axisW,ang)=>{if(!b||Math.abs(ang)<1e-5)return;_q.setFromAxisAngle(axisW,ang);b.getWorldQuaternion(_wq);_wq.premultiply(_q);
    b.parent.getWorldQuaternion(_pq);b.quaternion.copy(_pq.invert().multiply(_wq));b.updateMatrixWorld(true);};
-  /* on foot: idle, walk and jog, weighted by speed, the walk and the jog kept in step */
+  /* On foot: idle, walk, jog and sprint, weighted by speed and kept in step with each other; and a
+     jump — o.air is how far through the flight she is (the game lifts her; the library's in-air pose
+     here), o.land how far through coming down (its landing, played by hand). The weights always sum
+     to one, or the mixer lets the T-pose show through the gap. */
   R.locomote=(dt,o)=>{
    o=o||{}; const sp=Math.abs(o.speed||0), back=(o.speed||0)<-0.05;
    if(mode!=='clip'){mode='clip';rig.mixer.stopAllAction();for(const k in rig.actions){rig.actions[k].play();rig.actions[k].setEffectiveWeight(0);}}
    const sm=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
-   const pose=o.pose||null;
-   const idle=rig.action(pose||'idle'),walk=rig.action('walk'),jog=rig.action('jog');
-   const mv=sm(0.05,0.55,sp),run=sm(1.9,2.9,sp);
-   const w={idle:1-mv,walk:mv*(1-run),jog:mv*run};
-   for(const k in rig.actions){const a=rig.actions[k];a.setEffectiveWeight(k===(pose||'idle')?w.idle:k==='walk'?w.walk:k==='jog'?w.jog:0);}
+   const pose=o.pose||null, idleK=pose||'idle';
+   const idle=rig.action(idleK),walk=rig.action('walk'),jog=rig.action('jog'),sprint=rig.action('sprint'),inAir=rig.action('Jump_Loop'),landing=rig.action('Jump_Land');
+   const mv=sm(0.05,0.55,sp),run=sm(1.9,2.9,sp),fast=sm(3.9,5.0,sp);
+   const wAir=o.air!=null?sm(0,0.12,o.air)*(1-sm(0.88,1,o.air)):0, wLand=o.land!=null?1-sm(0.5,1,o.land):0;
+   const ground=Math.max(0,1-wAir-wLand);
+   const w={idle:(1-mv)*ground,walk:mv*(1-run)*ground,jog:mv*run*(1-fast)*ground,sprint:mv*run*fast*ground,Jump_Loop:wAir,Jump_Land:wLand};
+   w[idleK]=w.idle;
+   for(const k in rig.actions)rig.actions[k].setEffectiveWeight(w[k]||0);
    walk.timeScale=(back?-1:1)*Math.max(0.55,sp/1.30);
    jog.timeScale=Math.max(0.7,sp/3.0);
+   if(sprint)sprint.timeScale=Math.max(0.8,sp/5.6);
    if(w.walk>0.01&&w.jog>0.01)jog.time=(walk.time/walk.getClip().duration)*jog.getClip().duration;
+   if(sprint&&w.jog>0.01&&w.sprint>0.01)sprint.time=(jog.time/jog.getClip().duration)*sprint.getClip().duration;
+   if(landing){landing.timeScale=0;landing.time=(o.land||0)*0.62;}   // the crouch and the rise, by hand
    rig.mixer.update(Math.min(dt||0.016,0.1));
    /* The library's idle stands like a fighter: feet wide, arms held off the body, fists. Standing about
       by her horse she should look at ease, so ease it: arms in to her sides, feet a little closer (the
       soles turned back flat), and hands at rest instead of fists, walking too. */
    rig.root.updateMatrixWorld(true);
-   const ease=w.idle*(pose?0:1);
+   const ease=w.idle*(pose?0:1);   // (a jump takes its weight, so the easing fades with it)
    if(ease>0.01){
     rig.root.getWorldQuaternion(_wq); const fwd=V(0,0,1).applyQuaternion(_wq);
     for(const [n,s,a] of [['upperarm_l',1,0.20],['upperarm_r',-1,0.20],['thigh_l',1,0.055],['thigh_r',-1,0.055],['foot_l',1,-0.055],['foot_r',-1,-0.055]])

@@ -1,7 +1,7 @@
 /* On foot (assets/features/on-foot.js): getting off the horse and walking about.
 
    Boots the game and does what a player does: the saddle button to get off, W to walk, Shift to
-   jog, a drag and the wheel to turn and bring in the view, Space (nothing: she cannot jump), the whistle to call the horse over, E at the horse to get
+   run, a drag and the wheel to turn and bring in the view, Space to jump, the whistle to call the horse over, E at the horse to get
    back on, F off and on again, the saddle button from thirty metres (whistle, then up when it
    arrives), a different horse picked while on foot (up on the new one), and the Horse Overview on
    foot (it shows the parked horse, and RIDE gets her up).
@@ -41,16 +41,20 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 400 s');try{if(bro
   out.off={on:F.on,flag:p.onFoot===true,body:document.body.classList.contains('on-foot'),horse:!!hs,horseAtStop:hs?+d2(hs,at0).toFixed(2):null,
    riderInWalker:!!(W&&p.rider&&p.rider.g.parent===W),meshHidden:p.mesh.visible===false,walkerShown:!!(W&&W.visible&&inScene(W)),
    stepped:+d2(p.pos,at0).toFixed(2),prompt:G.world.things.some(t=>t.kind==='mount'),
-   jumpHidden:(()=>{const e=document.getElementById('seJump');return !e||getComputedStyle(e).display==='none';})()};
+   jumpShown:(()=>{const e=document.getElementById('seJump');return !!e&&getComputedStyle(e).display!=='none';})()};
   /* 2. walk, jog, and no jump */
   const a0={x:p.pos.x,z:p.pos.z};
   key('KeyW',true); await wait(1400); await frames(2);
   out.walk={moved:+d2(p.pos,a0).toFixed(2),speed:+p.speed.toFixed(2),horseStayed:+d2(F.horse(),hs).toFixed(2)};
-  key('ShiftLeft',true); await wait(1200); await frames(2);
-  out.jog={speed:+p.speed.toFixed(2)};
-  key('Space',true); await wait(500); out.jog.y=p.y; key('Space',false);
-  key('ShiftLeft',false); key('KeyW',false); await wait(900); await frames(2);
+  key('ShiftLeft',true); await wait(2000); await frames(2);
+  out.run={speed:+p.speed.toFixed(2)};
+  key('ShiftLeft',false); key('KeyW',false); await wait(1200); await frames(2);
   out.stop={speed:+p.speed.toFixed(2)};
+  /* Space: she jumps, up along an arc and back down, and the horse's own jump never fires */
+  { const Wj=F.walker(), above=()=>Wj.position.y-G.world.groundH(Wj.position.x,Wj.position.z);
+    let top=0; key('Space',true); const tEnd=performance.now()+900; while(performance.now()<tEnd){await frames(1);top=Math.max(top,above());}
+    key('Space',false); await wait(500); await frames(2);
+    out.jump={top:+top.toFixed(2),after:+above().toFixed(3),horseY:p.y}; }
   const cam=G.camera, Wn=F.walker();
   out.cam={dist:+Math.hypot(cam.position.x-Wn.position.x,cam.position.z-Wn.position.z).toFixed(2),above:+(cam.position.y-Wn.position.y).toFixed(2)};
   /* the view turns round her as it does round the horse: a real drag across the canvas, then the wheel */
@@ -112,10 +116,11 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 400 s');try{if(bro
   return out;
  });
  check('on-foot installed, no package errors',r.installed&&r.errors.length===0,{errors:r.errors});
- check('the saddle button gets her off: rider in her own group, horse parked where she stopped, mount hidden, jump button hidden',
-  r.off.on&&r.off.flag&&r.off.body&&r.off.horse&&r.off.horseAtStop<0.05&&r.off.riderInWalker&&r.off.meshHidden&&r.off.walkerShown&&r.off.stepped>0.8&&r.off.stepped<1.4&&r.off.prompt&&r.off.jumpHidden,r.off);
+ check('the saddle button gets her off: rider in her own group, horse parked where she stopped, mount hidden, jump button there for her',
+  r.off.on&&r.off.flag&&r.off.body&&r.off.horse&&r.off.horseAtStop<0.05&&r.off.riderInWalker&&r.off.meshHidden&&r.off.walkerShown&&r.off.stepped>0.8&&r.off.stepped<1.4&&r.off.prompt&&r.off.jumpShown,r.off);
  check('W walks her at walking pace and the horse stays put',r.walk.moved>1.2&&r.walk.speed>1.2&&r.walk.speed<1.6&&r.walk.horseStayed<0.05,r.walk);
- check('Shift jogs, Space does not jump, and she stops when the keys come up',r.jog.speed>2.6&&r.jog.speed<3.4&&r.jog.y===0&&Math.abs(r.stop.speed)<0.1,{jog:r.jog,stop:r.stop});
+ check('Shift runs flat out and she stops when the keys come up',r.run.speed>4.8&&r.run.speed<5.8&&Math.abs(r.stop.speed)<0.1,{run:r.run,stop:r.stop});
+ check('Space makes her jump: up about half a metre and back down, and the horse\'s jump never fires',r.jump.top>0.3&&r.jump.top<0.9&&r.jump.after<0.02&&r.jump.horseY===0,r.jump);
  check('she is standing: hips about a metre up, both boots on the ground',r.stand.hips>0.7&&r.stand.hips<1.15&&Math.min(r.stand.footL,r.stand.footR)>0.03&&Math.max(r.stand.footL,r.stand.footR)<0.2,r.stand);
  check('the camera follows her on foot from a few metres back',r.cam.dist>2&&r.cam.dist<4.5&&r.cam.above>1&&r.cam.above<2.6,r.cam);
  check('on foot a drag turns the view round her and the wheel brings it in close, as in the saddle',r.orbit.turned>1.0&&r.orbit.near<2.6&&r.orbit.stillThere<0.05,r.orbit);
