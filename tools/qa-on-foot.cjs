@@ -1,7 +1,7 @@
 /* On foot (assets/features/on-foot.js): getting off the horse and walking about.
 
    Boots the game and does what a player does: the saddle button to get off, W to walk, Shift to
-   jog, Space (nothing: she cannot jump), the whistle to call the horse over, E at the horse to get
+   jog, a drag and the wheel to turn and bring in the view, Space (nothing: she cannot jump), the whistle to call the horse over, E at the horse to get
    back on, F off and on again, the saddle button from thirty metres (whistle, then up when it
    arrives), a different horse picked while on foot (up on the new one), and the Horse Overview on
    foot (it shows the parked horse, and RIDE gets her up).
@@ -53,6 +53,18 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 400 s');try{if(bro
   out.stop={speed:+p.speed.toFixed(2)};
   const cam=G.camera, Wn=F.walker();
   out.cam={dist:+Math.hypot(cam.position.x-Wn.position.x,cam.position.z-Wn.position.z).toFixed(2),above:+(cam.position.y-Wn.position.y).toFixed(2)};
+  /* the view turns round her as it does round the horse: a real drag across the canvas, then the wheel */
+  { const cv=G.renderer.domElement, rc=cv.getBoundingClientRect(), cx=rc.left+rc.width*0.5, cy=rc.top+rc.height*0.5;
+    const az=()=>Math.atan2(cam.position.x-Wn.position.x,cam.position.z-Wn.position.z);
+    const a0=az();
+    cv.dispatchEvent(new PointerEvent('pointerdown',{pointerId:7,clientX:cx,clientY:cy,bubbles:true}));
+    window.dispatchEvent(new PointerEvent('pointermove',{pointerId:7,clientX:cx+260,clientY:cy,bubbles:true}));
+    window.dispatchEvent(new PointerEvent('pointerup',{pointerId:7,clientX:cx+260,clientY:cy,bubbles:true}));
+    await wait(900); await frames(2);
+    const a1=az(), turned=Math.abs(Math.atan2(Math.sin(a1-a0),Math.cos(a1-a0)));
+    window.dispatchEvent(new WheelEvent('wheel',{deltaY:-250,bubbles:true})); await wait(900); await frames(2);
+    out.orbit={turned:+turned.toFixed(2),near:+Math.hypot(cam.position.x-Wn.position.x,cam.position.z-Wn.position.z).toFixed(2),stillThere:+Math.hypot(p.pos.x-Wn.position.x,p.pos.z-Wn.position.z).toFixed(2)};
+    G.world.camOrbit.yaw=0; window.dispatchEvent(new WheelEvent('wheel',{deltaY:250,bubbles:true})); await wait(700); }
   /* the rider really is standing: her hips well above her boots, both boots on the ground */
   { const R=p.rider,B=R.sk.by,h=new T.Vector3(),fl=new T.Vector3(),fr=new T.Vector3();
     B.hips.getWorldPosition(h);B.footL.getWorldPosition(fl);B.footR.getWorldPosition(fr);
@@ -106,6 +118,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 400 s');try{if(bro
  check('Shift jogs, Space does not jump, and she stops when the keys come up',r.jog.speed>2.6&&r.jog.speed<3.4&&r.jog.y===0&&Math.abs(r.stop.speed)<0.1,{jog:r.jog,stop:r.stop});
  check('she is standing: hips about a metre up, both boots on the ground',r.stand.hips>0.7&&r.stand.hips<1.15&&Math.min(r.stand.footL,r.stand.footR)>0.03&&Math.max(r.stand.footL,r.stand.footR)<0.2,r.stand);
  check('the camera follows her on foot from a few metres back',r.cam.dist>2&&r.cam.dist<4.5&&r.cam.above>1&&r.cam.above<2.6,r.cam);
+ check('on foot a drag turns the view round her and the wheel brings it in close, as in the saddle',r.orbit.turned>1.0&&r.orbit.near<2.6&&r.orbit.stillThere<0.05,r.orbit);
  check('the whistle brings the parked horse to her',r.call.calling&&r.call.done&&r.call.after<r.call.far0&&r.call.after<3.4,r.call);
  check('E at the horse puts her back in the saddle and clears the parked horse away',!r.onE.on&&!r.onE.flag&&r.onE.riderOnMount&&r.onE.meshShown&&r.onE.horseGone&&r.onE.cols===0&&!r.onE.prompt&&!r.onE.body,r.onE);
  check('F gets her off and back on',r.f.off&&r.f.onAgain,r.f);

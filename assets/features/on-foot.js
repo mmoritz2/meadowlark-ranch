@@ -286,8 +286,14 @@ export function install(G){
   const px=player.pos.x,pz=player.pos.z,gy=Wd.groundH(px,pz);
   if(ST.camYaw==null||ST.snap)ST.camYaw=player.heading;
   ST.camYaw+=angDiff(player.heading-ST.camYaw)*(1-Math.exp(-(3.2+Math.abs(player.speed))*dt));
+  /* The same hands as in the saddle: drag to turn the view round her, the wheel to come in close or
+     stand back (the riding camera's own orbit, G.world.camOrbit, which swings back behind her as she
+     walks on, as it does behind the horse). Its riding numbers scaled to a person: 6.2 m and 0.27 rad
+     behind a horse is 3.4 m and 0.21 behind her. */
+  const O=Wd.camOrbit, yawOff=O?O.yaw:0, pitch=O?Math.max(0.02,O.pitch-0.06):0.21, dist=O?O.dist*0.55:3.4;
+  const ang=ST.camYaw+yawOff, hd=dist*Math.cos(pitch);
   _at.set(px,gy+1.22,pz);
-  _eye.set(px-Math.sin(ST.camYaw)*3.4,gy+1.95,pz-Math.cos(ST.camYaw)*3.4);
+  _eye.set(px-Math.sin(ang)*hd,gy+1.22+dist*Math.sin(pitch),pz-Math.cos(ang)*hd);
   try{Wd.followCamera.resolve(_at,_eye,_eye);}catch(e){}
   if(!ST.cam||ST.snap){ST.cam=_eye.clone();ST.snap=false;}else ST.cam.lerp(_eye,1-Math.exp(-7*dt));
   cam.position.copy(ST.cam); cam.lookAt(_at);

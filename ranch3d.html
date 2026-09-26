@@ -610,7 +610,7 @@ import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-1';
-import {FEATURES} from './assets/features/index.js?v=feat-6';
+import {FEATURES} from './assets/features/index.js?v=feat-7';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -13924,6 +13924,9 @@ function installFeatures(){
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
   world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,arrivalArt,geology,box,tube,blob,
+   /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
+      that should answer the same hands: on-foot's */
+   camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},
    mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,
    npcList,visitors,spawnCritter,CRITTER_DEFS,critters,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar,
    /* Every tree in the basin as {x,z,s}. The follow camera needs it: followCamera.frame()
