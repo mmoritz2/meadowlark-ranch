@@ -21,8 +21,48 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Meadowlark">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Meadowlark Ranch 🐴✨</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐴</text></svg>">
+<title>Meadowlark Ranch</title>
+<link rel="icon" href="assets/icons/icon-192.png">
+<script>
+/* No emojis on screen. The game's words were written with emojis in them (about four thousand), and
+   the look it is after has none: drawn icons, plain words. Rather than rewrite every string, what the
+   player sees is cleaned on its way out. This part runs first, before anything draws, and cleans text
+   drawn on a canvas (name plates, signs, the maps); assets/features/no-emoji.js cleans the page.
+   A glyph that stood alone (a map marker) becomes a small drawn mark in its place.
+   ?emoji=1 keeps them; a QA run (?qa=) keeps them unless it asks for ?emoji=0, so the logic tests
+   that read the game's own strings go on reading them. */
+(()=>{
+ const q=new URLSearchParams(location.search);
+ const on=q.get('emoji')==='1'?false:q.get('emoji')==='0'?true:!q.has('qa');
+ const SEQ='(?:\\p{Regional_Indicator}{2}|[0-9#*]\\uFE0F?\\u20E3|(?:\\p{Emoji_Presentation}|\\p{Extended_Pictographic}\\uFE0F)(?:\\p{Emoji_Modifier}|\\uFE0F|\\u200D(?:\\p{Emoji_Presentation}|\\p{Extended_Pictographic})\\uFE0F?)*|[\\uFE0F\\u200D\\u20E3])';
+ let RE,TEST;
+ try{RE=new RegExp(SEQ,'gu');TEST=new RegExp(SEQ,'u');}catch(e){window.__noEmoji={on:false,test:()=>false,clean:s=>s};return;}
+ const WORD={'\u{1FA99}':' coins','\u{1F48E}':' gems','\u{1F5DD}️':' keys','\u{1F5DD}':' keys','\u{1F511}':' keys','\u{1F380}':' ribbons'};
+ /* the words left behind: no doubled spaces, no space before punctuation, nothing dangling at the ends */
+ const tidy=s=>s.replace(/[ \t ]{2,}/g,' ').replace(/ ([,.;:!?)\]])/g,'$1').replace(/\( /g,'(').replace(/^[ \t ]*[·•|—-]?[ \t ]+/,'').replace(/[ \t ]+[·•|—-]?[ \t ]*$/,'');
+ const test=s=>typeof s==='string'&&TEST.test(s);
+ const clean=(s,words)=>{if(!test(s))return s;let o=s;if(words)o=o.replace(/(\d)\s?(\u{1FA99}|\u{1F48E}|\u{1F5DD}️?|\u{1F511}|\u{1F380})/gu,(m,d,e)=>d+(WORD[e]||''));o=o.replace(RE,'');return /\S/.test(s)&&!/\S/.test(o)?'':tidy(o);};
+ window.__noEmoji={on,SEQ,test,clean,tidy};
+ if(!on)return;
+ document.title=clean(document.title);
+ /* canvas: the text without them; a glyph drawn on its own becomes a mark of its own */
+ const P=CanvasRenderingContext2D.prototype, fT=P.fillText, sT=P.strokeText, mT=P.measureText;
+ const MARK={'\u{1F512}':'#8a8fa3','❗':'#e0513f','❓':'#f2c14e','⭐':'#f2c14e','\u{1F31F}':'#f2c14e','\u{1F3C6}':'#e2ad37','\u{1F3DF}':'#c9844a','\u{1F3E0}':'#c9844a','\u{1F3E1}':'#c9844a','\u{1F434}':'#9a6a3c','\u{1F40E}':'#9a6a3c','\u{1F4CD}':'#e0513f','\u{1F6A9}':'#e0513f','\u{1F3C1}':'#2b2b2b','\u{1F4B0}':'#e2ad37','\u{1FA99}':'#e2ad37','\u{1F48E}':'#ef4fa6','\u{1F381}':'#d9534f','\u{1F333}':'#3f8f4c','\u{1F332}':'#2f6f3c','\u{1F30A}':'#3f8fc6','\u{1F4A7}':'#3f8fc6','\u{1F6D2}':'#e2ad37','\u{1F3EA}':'#e2ad37','\u{1F9F3}':'#8a6a44','\u{1F3AF}':'#d9534f'};
+ function mark(ctx,t,x,y){
+  const k=(t.match(RE)||[''])[0].replace(/️/g,''), col=MARK[k]||'#f2c14e';
+  const px=parseFloat((String(ctx.font).match(/([\d.]+)px/)||[0,14])[1])||14, r=Math.max(2.5,px*0.3);
+  const al=ctx.textAlign, bl=ctx.textBaseline;
+  const cx=al==='left'||al==='start'?x+r:al==='right'||al==='end'?x-r:x;
+  const cy=bl==='middle'?y:bl==='top'||bl==='hanging'?y+r*1.25:y-r*1.05;
+  ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle=col; ctx.fill();
+  ctx.lineWidth=Math.max(1,r*0.32); ctx.strokeStyle='rgba(20,16,10,.85)'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx-r*0.3,cy-r*0.3,r*0.32,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,.55)'; ctx.fill(); ctx.restore();
+ }
+ P.fillText=function(t,x,y,w){if(typeof t!=='string'||!TEST.test(t))return fT.apply(this,arguments);const s=clean(t,true);if(!s){mark(this,t,x,y);return;}return w===undefined?fT.call(this,s,x,y):fT.call(this,s,x,y,w);};
+ P.strokeText=function(t,x,y,w){if(typeof t!=='string'||!TEST.test(t))return sT.apply(this,arguments);const s=clean(t,true);if(!s)return;return w===undefined?sT.call(this,s,x,y):sT.call(this,s,x,y,w);};
+ P.measureText=function(t){return mT.call(this,typeof t==='string'&&TEST.test(t)?(clean(t,true)||'M'):t);};
+})();
+</script>
 <style>
 /* ================= Meadowlark UI 4 — paper & leather =================
    One design system, three layers:
@@ -610,7 +650,7 @@ import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-3';
-import {FEATURES} from './assets/features/index.js?v=feat-10';
+import {FEATURES} from './assets/features/index.js?v=feat-11';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */

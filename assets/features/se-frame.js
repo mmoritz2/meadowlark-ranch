@@ -113,6 +113,19 @@ export function install(G){
   treasure:'<path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10H4z"/><path d="M4 12h16M11 11h2v3h-2z"/>',
   map:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>',
   wallet:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12.5h2"/>',
+  gift:'<rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M3 9h18M12 9v11M12 9c-1.5-3-5-4-5-1.5S12 9 12 9zM12 9c1.5-3 5-4 5-1.5S12 9 12 9z"/>',
+  calendar:'<rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+  star:'<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>',
+  trophy:'<path d="M8 4h8v4.5a4 4 0 0 1-8 0zM8 6H5.2a2.8 2.8 0 0 0 3.1 3.9M16 6h2.8a2.8 2.8 0 0 1-3.1 3.9M12 12.5V16M9 20h6M10 16h4v4h-4z"/>',
+  egg:'<path d="M12 3c-3.6 0-6.5 6-6.5 10a6.5 6.5 0 0 0 13 0C18.5 9 15.6 3 12 3z"/>',
+  compass:'<circle cx="12" cy="12" r="8.6"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+  pin:'<path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+  paw:'<circle cx="7" cy="10" r="1.8"/><circle cx="10.5" cy="6.5" r="1.8"/><circle cx="14.5" cy="6.5" r="1.8"/><circle cx="18" cy="10" r="1.8"/><path d="M12 12c-3 0-5.5 3.5-5.5 5.5 0 2 2 2.5 5.5 1.5 3.5 1 5.5.5 5.5-1.5 0-2-2.5-5.5-5.5-5.5z"/>',
+  food:'<path d="M12 8c-3-2.5-7-1-7 3.5S8 20 12 20s7-4 7-8.5S15 5.5 12 8z"/><path d="M12 8c0-2 1-3.5 2.5-4"/>',
+  sparkle:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+  clock:'<circle cx="12" cy="13" r="8"/><path d="M12 8.5V13l3 2M10 2.5h4"/>',
+  heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  list:'<path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>',
   ticket:'<path d="M3.5 7.5h17v3a2 2 0 0 0 0 3.8v3.2h-17v-3.2a2 2 0 0 0 0-3.8z"/>'
  };
  const line=(k,col,sw)=>'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="'+(col||'currentColor')+'" stroke-width="'+(sw||2.1)+'" stroke-linecap="round" stroke-linejoin="round">'+(LINE[k]||LINE.collection)+'</svg>';
@@ -189,7 +202,8 @@ body.se-screen-open #dlg{z-index:15!important}
  margin:0!important;padding:8px 4px!important;border:0!important;border-radius:0!important;border-bottom:1px solid rgba(255,255,255,.07)!important;background:transparent!important;box-shadow:none!important;
  font-size:0!important;color:transparent!important;white-space:normal}
 .se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn>*:not(.pip):not(.badge){display:none!important}
-.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn::before{content:attr(data-se-g);font-size:23px;line-height:1;color:#fff}
+.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn::before{content:'';width:25px;height:25px;background:#f3efff;-webkit-mask:var(--se-tic) center/contain no-repeat;mask:var(--se-tic) center/contain no-repeat}
+.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn.on::before{background:#4a3519}
 .se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn::after{content:attr(data-se-l);font:800 11.5px/1.1 Nunito,system-ui,sans-serif;color:#e9e4ff;text-align:center;max-width:100%;overflow-wrap:anywhere}
 .se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn.on{background:linear-gradient(180deg,var(--sef-cream),var(--sef-cream2))!important}
 .se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn.on::after{color:var(--sef-ink)}
@@ -327,12 +341,20 @@ body.se-frame-open #seFrameTop{display:flex}
  }
  function goBack(){const P=current;if(!P)return;const to=backTo[P.id];delete backTo[P.id];P._seGoingBack=true;closePanel(P);P._seGoingBack=false;if(to)setTimeout(()=>{try{to();}catch(e){}},0);}
  const EMO=/^((?:\p{Extended_Pictographic}|\p{Emoji_Presentation}|\p{Regional_Indicator})(?:️|⃣|\p{Emoji_Modifier}|‍(?:\p{Extended_Pictographic}|\p{Emoji_Presentation}))*)\s*(.*)$/u;
+ const TAB_IC=[[/story|journey|chapter|book/i,'journey'],[/side|errand|odd job/i,'map'],[/welcome|gift|reward/i,'gift'],[/season|pass/i,'season'],[/daily|today|week/i,'calendar'],
+  [/achiev|medal|trophy/i,'trophy'],[/collect|catalog|album|codex/i,'collection'],[/master|skill|star/i,'star'],[/foal|breed|lineage|blood/i,'foal'],[/co-?op|club|friend|team|member|online/i,'club'],
+  [/hunt|egg/i,'egg'],[/horizon|explor|travel|region|world/i,'compass'],[/board|rank|leader|ladder|podium/i,'podium'],[/race|pvp|rival/i,'race'],[/event|show|class|compet/i,'events'],
+  [/build|piece|decor|ranch|land|furniture/i,'build'],[/horse|stable|herd|stall/i,'horses'],[/style|dye|look|groom|coat/i,'style'],[/pet/i,'paw'],[/food|feed|recipe/i,'food'],[/care|health|bond/i,'heart'],
+  [/setting|option|control/i,'gear'],[/chat|message/i,'chat'],[/emote|dance/i,'emotes'],[/inbox|mail|letter/i,'inbox'],[/wallet|money|coin|gem|bank/i,'wallet'],[/shop|market|store|buy/i,'market'],
+  [/treasure|chest|find/i,'treasure'],[/map|route|trail/i,'map'],[/time|history|log/i,'clock'],[/all|list|overview|summary/i,'list']];
+ const tabIcon=lbl=>{const m=TAB_IC.find(t=>t[0].test(lbl));return m?m[1]:'sparkle';};
+ const tabUri={}; const tabMask=k=>tabUri[k]||(tabUri[k]='url("data:image/svg+xml;charset=utf-8,'+encodeURIComponent(line(k,'#000',2.1))+'")');
  function splitTabs(P){
   P.querySelectorAll('.mk-panel-body>.crow>.tabbtn').forEach(b=>{
    const txt=[...b.childNodes].filter(n=>!(n.classList&&(n.classList.contains('pip')||n.classList.contains('badge')))).map(n=>n.textContent).join('').replace(/\s+/g,' ').trim();
    if(b.dataset.seTxt===txt)return;
    const m=txt.match(EMO);
-   b.dataset.seTxt=txt; b.dataset.seG=m?m[1]:'•'; b.dataset.seL=m?m[2]:txt;
+   b.dataset.seTxt=txt; b.dataset.seL=(m?m[2]:txt).trim()||txt; b.style.setProperty('--se-tic',tabMask(tabIcon(b.dataset.seL)));
   });
  }
  function frame(P){
