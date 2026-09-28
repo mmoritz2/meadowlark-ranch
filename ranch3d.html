@@ -609,8 +609,8 @@ import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
-import {createRiderLibrary} from './assets/rider-model.js?v=rider-2';
-import {FEATURES} from './assets/features/index.js?v=feat-8';
+import {createRiderLibrary} from './assets/rider-model.js?v=rider-3';
+import {FEATURES} from './assets/features/index.js?v=feat-9';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -12856,6 +12856,7 @@ function tick(stepSeconds){
  if(rr>WORLD_R){player.pos.x*=WORLD_R/rr;player.pos.z*=WORLD_R/rr;}
  /* collision: solid obstacles & jumpable fences (soaring clears them all) */
  if(player.y<2.5)for(const c of colliders){
+  if(c.climb&&player.onFoot)continue;   // rock she can climb: on foot the rock's own surface stops her or carries her (on-foot)
   const ox=player.pos.x-c.x,oz=player.pos.z-c.z;
   const d2=ox*ox+oz*oz,rad=c.r+0.55;
   if(d2<rad*rad){
@@ -13927,6 +13928,9 @@ function installFeatures(){
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},
+   /* rock she can climb on foot: packages push {mesh,x,z,r,y} (the mesh to stand on, a circle round it, its
+      base height), and mark the matching collider climb:true so it does not shove her off it */
+   climbables:[],
    mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,
    npcList,visitors,spawnCritter,CRITTER_DEFS,critters,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar,
    /* Every tree in the basin as {x,z,s}. The follow camera needs it: followCamera.frame()

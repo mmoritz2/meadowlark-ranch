@@ -745,20 +745,31 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
   };
   const turnW=(b,axisW,ang)=>{if(!b||Math.abs(ang)<1e-5)return;_q.setFromAxisAngle(axisW,ang);b.getWorldQuaternion(_wq);_wq.premultiply(_q);
    b.parent.getWorldQuaternion(_pq);b.quaternion.copy(_pq.invert().multiply(_wq));b.updateMatrixWorld(true);};
-  /* On foot: idle, walk, jog and sprint, weighted by speed and kept in step with each other; and a
-     jump — o.air is how far through the flight she is (the game lifts her; the library's in-air pose
-     here), o.land how far through coming down (its landing, played by hand). The weights always sum
-     to one, or the mixer lets the T-pose show through the gap. */
+  /* aim a bone so it points (towards its child) along a world direction, blended in by wt */
+  const _aq=new THREE.Quaternion(),_aw=new THREE.Quaternion(),_ap=new THREE.Quaternion(),_a0=new THREE.Vector3(),_a1=new THREE.Vector3();
+  const aimW=(b,child,dirW,wt)=>{if(!b||!child)return;b.updateMatrixWorld(true);b.getWorldPosition(_a0);child.getWorldPosition(_a1);_a1.sub(_a0);
+   if(_a1.lengthSq()<1e-10)return;_aq.setFromUnitVectors(_a1.normalize(),dirW.normalize());b.getWorldQuaternion(_aw);_aw.premultiply(_aq);
+   b.parent.getWorldQuaternion(_ap);_ap.invert().multiply(_aw);b.quaternion.slerp(_ap,wt);b.updateMatrixWorld(true);};
+  /* On foot: idle, walk, jog and sprint, weighted by speed and kept in step with each other; and what
+     on-foot says she is doing besides: o.air (0..1) how much she is off the ground (the library's
+     in-air pose; the game moves her), o.land how far through coming down (its landing, played by
+     hand), o.roll the same for a roll out of a long drop, o.swim (0..1) how much she is swimming and
+     o.swimMove how much of that is a stroke rather than treading water, and o.climb (0..1) with
+     o.climbPh, a climbing motion laid over the rest (the library has no climb). The clip weights
+     always sum to one, or the mixer lets the T-pose show through the gap. */
   R.locomote=(dt,o)=>{
    o=o||{}; const sp=Math.abs(o.speed||0), back=(o.speed||0)<-0.05;
    if(mode!=='clip'){mode='clip';rig.mixer.stopAllAction();for(const k in rig.actions){rig.actions[k].play();rig.actions[k].setEffectiveWeight(0);}}
    const sm=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
    const pose=o.pose||null, idleK=pose||'idle';
    const idle=rig.action(idleK),walk=rig.action('walk'),jog=rig.action('jog'),sprint=rig.action('sprint'),inAir=rig.action('Jump_Loop'),landing=rig.action('Jump_Land');
+   const roll=rig.action('Roll'),swimF=rig.action('Swim_Fwd_Loop'),swimI=rig.action('Swim_Idle_Loop');
    const mv=sm(0.05,0.55,sp),run=sm(1.9,2.9,sp),fast=sm(3.9,5.0,sp);
-   const wAir=o.air!=null?sm(0,0.12,o.air)*(1-sm(0.88,1,o.air)):0, wLand=o.land!=null?1-sm(0.5,1,o.land):0;
-   const ground=Math.max(0,1-wAir-wLand);
-   const w={idle:(1-mv)*ground,walk:mv*(1-run)*ground,jog:mv*run*(1-fast)*ground,sprint:mv*run*fast*ground,Jump_Loop:wAir,Jump_Land:wLand};
+   let rem=1; const take=v=>{v=Math.max(0,Math.min(rem,v||0));rem-=v;return v;};
+   const wSwim=take(o.swim), wRoll=take(o.roll!=null?1-sm(0.82,1,o.roll):0), wAir=take(o.air), wLand=take(o.land!=null?1-sm(0.5,1,o.land):0);
+   const ground=rem, sm2=Math.max(0,Math.min(1,o.swimMove||0));
+   const w={idle:(1-mv)*ground,walk:mv*(1-run)*ground,jog:mv*run*(1-fast)*ground,sprint:mv*run*fast*ground,
+    Jump_Loop:wAir,Jump_Land:wLand,Roll:wRoll,Swim_Fwd_Loop:wSwim*sm2,Swim_Idle_Loop:wSwim*(1-sm2)};
    w[idleK]=w.idle;
    for(const k in rig.actions)rig.actions[k].setEffectiveWeight(w[k]||0);
    walk.timeScale=(back?-1:1)*Math.max(0.55,sp/1.30);
@@ -767,6 +778,8 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    if(w.walk>0.01&&w.jog>0.01)jog.time=(walk.time/walk.getClip().duration)*jog.getClip().duration;
    if(sprint&&w.jog>0.01&&w.sprint>0.01)sprint.time=(jog.time/jog.getClip().duration)*sprint.getClip().duration;
    if(landing){landing.timeScale=0;landing.time=(o.land||0)*0.62;}   // the crouch and the rise, by hand
+   if(roll){roll.timeScale=0;roll.time=(o.roll||0)*roll.getClip().duration;}
+   if(swimF)swimF.timeScale=Math.max(0.6,Math.min(1.6,sp/1.3));
    rig.mixer.update(Math.min(dt||0.016,0.1));
    /* The library's idle stands like a fighter: feet wide, arms held off the body, fists. Standing about
       by her horse she should look at ease, so ease it: arms in to her sides, feet a little closer (the
@@ -779,6 +792,20 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
      turnW(rig.bones[n],fwd,-s*a*ease);
    }
    for(const [n,q] of kit.seat.relax){const b=rig.bones[n];if(b)b.quaternion.slerp(q,0.85);}
+   /* Climbing: hands reaching up in turn, the opposite knee up to find a hold, body into the rock and the
+      head tipped back to look for the next grip. Each limb is aimed in her own frame (x her left, y up,
+      z into the rock) and blended over whatever the clips had by o.climb. */
+   if(o.climb>0.01){
+    rig.root.getWorldQuaternion(_wq); const toW=v=>v.applyQuaternion(_wq);
+    const ph=o.climbPh||0, cw=Math.min(1,o.climb), B=rig.bones;
+    for(const s of [1,-1]){ const sd=s>0?'l':'r', up=0.5+0.5*Math.sin(ph+(s>0?0:Math.PI)), kn=1-up;
+     aimW(B['upperarm_'+sd],B['lowerarm_'+sd],toW(V(0.22*s,0.28+0.66*up,0.92-0.55*up)),cw);
+     aimW(B['lowerarm_'+sd],B['hand_'+sd],toW(V(0.06*s,0.62+0.34*up,0.78-0.5*up)),cw);
+     aimW(B['thigh_'+sd],B['calf_'+sd],toW(V(0.14*s,-0.97+0.62*kn,0.20+0.72*kn)),cw);
+     aimW(B['calf_'+sd],B['foot_'+sd],toW(V(0.05*s,-0.96,0.08-0.25*kn)),cw);
+    }
+    const hd=B.Head; if(hd){_q.setFromAxisAngle(V(1,0,0),-0.32*cw);hd.quaternion.multiply(_q);}
+   }
    /* a turn of the head when she is standing about */
    if(o.look){const hd=rig.bones.Head;_q.setFromAxisAngle(V(0,1,0),o.look*0.6);hd.quaternion.multiply(_q);}
    rig.root.updateMatrixWorld(true);

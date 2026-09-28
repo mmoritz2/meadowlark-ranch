@@ -201,7 +201,10 @@ export function install(G){
   if(!m)continue;
   group.add(m);
   placed.push({x,z,r:R});
-  cols.push({x,z,r:R*1.05});                                        // the anchor is solid; the satellites are small enough to ride round
+  cols.push({x,z,r:R*1.05,climb:true});                             // the anchor is solid; the satellites are small enough to ride round
+  /* and on foot it is rock to climb: on-foot stands her on the mesh itself (satellites and all) */
+  m.updateMatrixWorld(true);
+  if(W.climbables)W.climbables.push({mesh:m,x,z,r:R*1.95,y:m.position.y,kind:'outcrop'});
  }
  for(const k in BASE)BASE[k].dispose();                              // only ever cloned from
  G.scene.add(group);

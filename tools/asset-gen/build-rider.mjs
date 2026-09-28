@@ -172,7 +172,8 @@ async function outfit(src, file) {
 
 /* ------------------------------------------------------------------ animation --------- */
 const CLIPS = ['Idle_Loop', 'Idle_Talking_Loop', 'Walk_Loop', 'Jog_Fwd_Loop', 'Sprint_Loop', 'Sitting_Idle_Loop', 'Driving_Loop',
-  'Interact', 'PickUp_Table', 'Fixing_Kneeling', 'Dance_Loop', 'Jump_Start', 'Jump_Loop', 'Jump_Land', 'Crouch_Idle_Loop'];
+  'Interact', 'PickUp_Table', 'Fixing_Kneeling', 'Dance_Loop', 'Jump_Start', 'Jump_Loop', 'Jump_Land', 'Crouch_Idle_Loop',
+  'Swim_Fwd_Loop', 'Swim_Idle_Loop', 'Roll'];
 async function anims() {
   const doc = await readGLB(join(UAL, 'Unreal-Godot', 'UAL1_Standard.glb'));
   const root = doc.getRoot();

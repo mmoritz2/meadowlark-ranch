@@ -145,6 +145,7 @@ export function install(G){
   ST.W.add(ST.R.g);
   player.mesh.visible=false;
   player.onFoot=true; ST.on=true; ST.snap=true; ST.cam=null; ST.camYaw=null; ST.ph=0; ST.amp=0; ST.run=0;
+  resetBody();
   document.body.classList.add('on-foot');
   placeHorseCols();
   ST.thing={kind:'mount',id:'on-foot-horse',g:null,x:ST.horse.x,z:ST.horse.z,reach:2.9,label:()=>'🐴 Ride '+name()+' (E)',use:()=>mount()};
@@ -208,22 +209,75 @@ export function install(G){
  }
 
  /* ---------------------------------------------------------------- walking -------------- */
- /* W walks, Shift (or the run toggle) runs flat out, Space (or the jump button) jumps. The horse's
-    jump stays barred (noJump); hers is her own: a hop about half a metre high, higher and longer at a
-    run, one per press. */
- const WALK=1.45, RUN=5.5;
+ /* ---------------------------------------------------------------- moving about --------- */
+ /* Walking, running, jumping, falling, climbing, wading and swimming are one body in the world: ST.fy
+    is where her feet are and ST.vy how fast that is changing, and each frame she stands on whatever is
+    under her — the ground, a rock she has climbed, the bed of a river she is wading, or the surface of
+    water too deep to stand in.
+      W walks, Shift (or the run toggle) runs flat out, Space (or the jump button) jumps.
+      Walk into rock (the meadow outcrops, and whatever else is in G.world.climbables) and keep walking:
+      she climbs it, hands and feet, and stands on top. Let go, or walk off an edge, and she falls; a
+      long drop ends in a roll.
+      Water: past her knees it slows her, and deeper than her thighs she swims, treading water or
+      stroking when she moves: the river's channel and the middle of Loon Lake. */
+ const WALK=1.45, RUN=5.5, SWIM=1.35, SWIM_FAST=2.2, SWIM_D=0.72, WADE_D=0.3, STEP=0.45, CLIMB=1.25, GRAV=9.8;   // the river runs about 0.8 m deep: she swims it, as the horse does
+ const LAKE={x:20,z:16,r:4.5};
+ /* the river's bed is carved into the terrain; Loon Lake is a disc laid on the ground, so its depth is
+    the one the horse swims it at (horse-roster) and the ground itself hides whatever is below */
+ function waterAt(x,z){
+  let depth=0,surface=0;
+  const dl=Math.hypot(x-LAKE.x,z-LAKE.z);
+  if(dl<LAKE.r){const d=0.35+0.9*(1-dl/LAKE.r);if(d>depth){depth=d;surface=Wd.groundH(LAKE.x,LAKE.z)+0.02;}}
+  try{const rz=Wd.riverZ(x);if(Math.abs(z-rz)<9){const th=Wd.terrainH(x,z);if(Wd.groundH(x,z)<=th+0.3){const lv=Wd.riverLevel(x);if(lv-th>depth){depth=lv-th;surface=lv;}}}}catch(e){}
+  return depth>0.02?{depth,surface}:null;
+ }
+ const ray=new THREE.Raycaster(), _ro=new THREE.Vector3(), _rd=new THREE.Vector3(0,-1,0);
+ function rockAt(x,z){            // the top of any climbable rock under (x,z), and which rock
+  let best=-Infinity,hit=null;
+  for(const c of (Wd.climbables||[])){const dx=x-c.x,dz=z-c.z;if(dx*dx+dz*dz>c.r*c.r)continue;
+   _ro.set(x,(c.y||0)+c.r*2+4,z);ray.set(_ro,_rd);ray.far=c.r*2+10;
+   const hs=ray.intersectObject(c.mesh,false);if(hs.length&&hs[0].point.y>best){best=hs[0].point.y;hit=c;}}
+  return hit?{h:best,c:hit}:null;
+ }
+ /* where her feet would rest at (x,z) */
+ function footing(x,z){
+  const wa=waterAt(x,z), rk=rockAt(x,z);
+  let h=Wd.groundH(x,z),kind='ground',rock=null;
+  if(wa){kind=wa.depth>SWIM_D?'swim':wa.depth>WADE_D?'wade':'ground';h=kind==='swim'?wa.surface:wa.surface-wa.depth;}
+  if(rk&&rk.h>h){h=rk.h;kind='rock';rock=rk.c;}
+  return {h,kind,rock,water:wa};
+ }
  G.on('ride',RIDE=>{
   if(!ST.on)return;
-  RIDE.target=RIDE.fwd?(RIDE.gallop?RUN:WALK):(RIDE.back?-0.9:0);
-  RIDE.acMul=2.6; RIDE.agMul=1.8; RIDE.noJump=true; RIDE.drain=0;
-  ST.target=RIDE.target;
-  if(RIDE.jump&&!ST.jumpHeld&&!ST.jump&&!ST.land){
+  const m=ST.mode||'ground';
+  let tg=RIDE.fwd?(RIDE.gallop?RUN:WALK):(RIDE.back?-0.9:0);
+  if(m==='swim')tg=RIDE.fwd?(RIDE.gallop?SWIM_FAST:SWIM):(RIDE.back?-0.5:0);
+  else if(m==='wade')tg*=0.6;
+  if(ST.climbing)tg=RIDE.fwd?0.9:0;                      // pressed to the rock, the push is what climbs
+  /* on the rock face: S lets go, Space pushes off it */
+  if(ST.climbing&&(RIDE.back||(RIDE.jump&&!ST.jumpHeld)))ST.letGo=RIDE.back?'drop':'push';
+  RIDE.target=tg; RIDE.acMul=m==='swim'?1.4:2.6; RIDE.agMul=m==='swim'?1.1:1.8; RIDE.noJump=true; RIDE.drain=0;
+  ST.target=tg;
+  /* her own jump, one per press, from anything she is standing on */
+  if(RIDE.jump&&!ST.jumpHeld&&(m==='ground'||m==='rock')&&!ST.air&&!ST.climbing&&!ST.roll){
    const run=clamp((Math.abs(player.speed||0)-1.5)/3.5,0,1);
-   ST.jump={t:0,dur:0.64+0.08*run,h:0.50+0.20*run};
+   ST.vy=3.3+0.6*run; ST.air=true; ST.fallFrom=ST.fy;
    try{G.beep&&G.beep(380,720,0.12,'sine',0.06);}catch(e){}   // a lighter hop than the horse's jump
   }
   ST.jumpHeld=!!RIDE.jump;
  });
+ /* ripples round her in the water */
+ const ripples=[]; let rippleT=0;
+ function ripple(x,y,z,big){
+  let r=ripples.find(q=>q.life<=0);
+  if(!r){if(ripples.length>=8)return;const m=new THREE.Mesh(new THREE.RingGeometry(0.82,1,40),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide}));
+   m.rotation.x=-Math.PI/2;m.renderOrder=3;scene.add(m);r={m,life:0,big:false};ripples.push(r);}
+  r.life=1;r.big=!!big;r.m.position.set(x,y+0.03,z);r.m.scale.setScalar(0.3);r.m.visible=true;
+ }
+ function tickRipples(dt){for(const r of ripples){if(r.life<=0)continue;r.life-=dt/(r.big?1.4:1.1);const k=1-Math.max(0,r.life);
+  r.m.scale.setScalar(0.3+k*(r.big?2.4:1.4));r.m.material.opacity=Math.max(0,r.life)*(r.big?0.75:0.5);if(r.life<=0)r.m.visible=false;}}
+ function resetBody(){ST.fy=Wd.groundH(player.pos.x,player.pos.z);ST.vy=0;ST.air=false;ST.climbing=false;ST.land=null;ST.roll=null;
+  ST.swimW=0;ST.airW=0;ST.climbW=0;ST.climbPh=0;ST.mode='ground';ST.prev=null;ST.fallFrom=null;}
  G.on('tick',(dt,t)=>{
   if(!ST.on)return;
   dt=Math.min(dt||0.016,0.1);
@@ -236,23 +290,74 @@ export function install(G){
      code slows everything at a horse's rate, so the rest of the stop is taken here. */
   if(Math.abs(ST.target||0)<Math.abs(player.speed||0)){player.speed+=((ST.target||0)-player.speed)*Math.min(1,dt*7);if(Math.abs(player.speed)<0.05&&!ST.target)player.speed=0;}
   const sp=Math.abs(player.speed||0);
-  /* the jump: a true arc for the flight, then the landing */
-  let lift=0,air=null,land=null;
-  if(ST.jump){const J=ST.jump;J.t+=dt;const p=Math.min(1,J.t/J.dur);lift=J.h*4*p*(1-p);air=p;if(p>=1){ST.jump=null;ST.land={t:0,dur:0.42};}}
-  else if(ST.land){ST.land.t+=dt;land=Math.min(1,ST.land.t/ST.land.dur);if(land>=1)ST.land=null;}
-  ST.lift=lift;
-  ST.W.position.set(player.pos.x,Wd.groundH(player.pos.x,player.pos.z)+lift,player.pos.z);
+  if(ST.fy==null)resetBody();
+  const prev=ST.prev||{x:player.pos.x,z:player.pos.z};
+  let f=footing(player.pos.x,player.pos.z);
+  /* a face of rock where she is stepping: she cannot walk into it, so back she goes — and if she is
+     pushing on, up she climbs (from a jump too: she grabs it) until the rock ahead is a step, not a wall */
+  const wasClimbing=ST.climbing; ST.climbing=false;
+  /* too steep to walk is steeper than about 48 degrees, or a sudden step higher than her knee */
+  const moved=Math.hypot(player.pos.x-prev.x,player.pos.z-prev.z), rise=f.h-ST.fy;
+  if(f.kind==='rock'&&rise>0.02&&(rise>STEP||rise>moved*1.1)){
+   player.pos.x=prev.x; player.pos.z=prev.z;
+   if((ST.target||0)>0.05||(wasClimbing&&RIDE_FWD())){ST.climbing=true;ST.air=false;ST.vy=0;ST.fy+=CLIMB*dt;ST.climbPh+=dt*6.2;}
+   f=footing(prev.x,prev.z);
+  }
+  /* not pushing, but still on the face: she hangs on where she is, until S or Space */
+  if(!ST.climbing&&wasClimbing&&!ST.air&&!ST.letGo&&(ST.target||0)<=0.05){   // (pushing on over rock she can walk is walking)
+   const fa=footing(player.pos.x+Math.sin(player.heading)*0.4,player.pos.z+Math.cos(player.heading)*0.4);
+   if(fa.kind==='rock'&&fa.h>ST.fy-0.05){ST.climbing=true;ST.vy=0;}
+  }
+  if(ST.letGo){
+   if(wasClimbing||ST.climbing){ST.climbing=false;ST.air=true;ST.fallFrom=ST.fy;ST.vy=ST.letGo==='push'?2.6:0;
+    if(ST.letGo==='push'){player.pos.x-=Math.sin(player.heading)*0.35;player.pos.z-=Math.cos(player.heading)*0.35;f=footing(player.pos.x,player.pos.z);}}
+   ST.letGo=null;
+  }
+  const floor=f.h, stick=0.05+sp*dt;
+  if(ST.climbing){ ST.mode='climb'; }
+  else if(ST.air){                                                  // off the ground: gravity
+   ST.vy-=GRAV*dt; ST.fy+=ST.vy*dt;
+   if(ST.fy<=floor){
+    const wet=f.water&&f.water.depth>WADE_D, drop=(ST.fallFrom!=null?ST.fallFrom:ST.fy)-floor, hit=-ST.vy;
+    ST.fy=floor; ST.vy=0; ST.air=false; ST.fallFrom=null;
+    if(wet){ripple(player.pos.x,f.water.surface,player.pos.z,true);try{G.beep&&G.beep(260,120,0.18,'sine',0.07);}catch(e){}}
+    else if(drop>2.2||hit>7.2)ST.roll={t:0,dur:1.05};
+    else if(hit>2.4)ST.land={t:0,dur:0.42};
+   }
+  }
+  else if(f.water&&f.water.depth>WADE_D){                           // in the water: she floats to her level, no falling
+   ST.vy=0; ST.fy+=(floor-ST.fy)*Math.min(1,dt*(ST.fy>floor?2.6:6));
+  }
+  else if(ST.fy>floor+stick){ ST.air=true; ST.vy=Math.min(ST.vy||0,0); ST.fallFrom=ST.fy; }   // stepped off an edge
+  else ST.fy+=(floor-ST.fy)*Math.min(1,dt*14);                       // on her feet: up a step, down a slope
+  if(!ST.climbing&&!ST.air)ST.mode=f.kind;
+  ST.rockOn=ST.mode==='rock'?f.rock:null;
+  if(ST.land){ST.land.t+=dt;if(ST.land.t>=ST.land.dur)ST.land=null;}
+  if(ST.roll){ST.roll.t+=dt;if(ST.roll.t>=ST.roll.dur)ST.roll=null;}
+  ST.prev={x:player.pos.x,z:player.pos.z};
+  ST.W.position.set(player.pos.x,ST.fy,player.pos.z);
   ST.W.rotation.y=player.heading;
+  /* the water rings round her as she moves through it */
+  if(f.water&&f.water.depth>WADE_D&&!ST.air){rippleT+=dt;if(rippleT>(sp>0.3?0.42:1.1)){rippleT=0;ripple(player.pos.x,f.water.surface,player.pos.z,false);}}
+  tickRipples(dt);
   ST.run+=(clamp((sp-1.9)/1.1,0,1)-ST.run)*Math.min(1,dt*6);
   ST.amp+=((sp<0.08?0:Math.min(1,sp/1.1))-ST.amp)*Math.min(1,dt*8);
   const stride=1.25+0.85*ST.run;                                   // metres a full cycle (two steps)
   ST.ph+=(player.speed<0?-1:1)*sp*dt/stride*Math.PI*2;
   if(sp<0.08)ST.ph+=(Math.round(ST.ph/Math.PI)*Math.PI-ST.ph)*Math.min(1,dt*5);   // come to rest feet together
   ST.look+=(Math.sin(t*0.5)*0.18*(1-ST.amp)-ST.look)*Math.min(1,dt*1.5);
-  /* the character walks with the animation library's own idle, walk and jog; the old sculpt is posed */
-  if(R.locomote)R.locomote(dt,{speed:player.speed,look:ST.look,air,land}); else pose(R,ST.ph,ST.amp,ST.run,t,ST.look);
+  const ease=(w,to,k)=>w+(to-w)*Math.min(1,dt*k);
+  ST.swimW=ease(ST.swimW||0,ST.mode==='swim'?1:0,5);
+  ST.airW=ease(ST.airW||0,ST.air&&!ST.climbing&&!(f.water&&f.water.depth>WADE_D)?1:0,10);
+  ST.climbW=ease(ST.climbW||0,ST.climbing?1:0,8);
+  /* the character: the animation library's clips, blended by what she is doing; the old sculpt is posed */
+  if(R.locomote)R.locomote(dt,{speed:ST.climbing?0:player.speed,look:ST.look,air:ST.airW,
+   land:ST.land?ST.land.t/ST.land.dur:null,roll:ST.roll?ST.roll.t/ST.roll.dur:null,
+   swim:ST.swimW,swimMove:clamp(sp/1.1,0,1),climb:ST.climbW,climbPh:ST.climbPh});
+  else pose(R,ST.ph,ST.amp,ST.run,t,ST.look);
   tickHorse(dt,t);
  });
+ const RIDE_FWD=()=>(ST.target||0)>0.05;
 
  /* ---------------------------------------------------------------- the parked horse ------ */
  function tickHorse(dt,t){
@@ -311,8 +416,9 @@ export function install(G){
      behind a horse is 3.4 m and 0.21 behind her. */
   const O=Wd.camOrbit, yawOff=O?O.yaw:0, pitch=O?Math.max(0.02,O.pitch-0.06):0.21, dist=O?O.dist*0.55:3.4;
   const ang=ST.camYaw+yawOff, hd=dist*Math.cos(pitch);
-  _at.set(px,gy+1.22,pz);
-  _eye.set(px-Math.sin(ang)*hd,gy+1.22+dist*Math.sin(pitch),pz-Math.cos(ang)*hd);
+  const fy=ST.fy!=null?ST.fy:gy, lookH=fy+(ST.mode==='swim'?0.4:1.22);   // up a rock or down in the water, the camera is on her
+  _at.set(px,lookH,pz);
+  _eye.set(px-Math.sin(ang)*hd,lookH+dist*Math.sin(pitch),pz-Math.cos(ang)*hd);
   try{Wd.followCamera.resolve(_at,_eye,_eye);}catch(e){}
   if(!ST.cam||ST.snap){ST.cam=_eye.clone();ST.snap=false;}else ST.cam.lerp(_eye,1-Math.exp(-7*dt));
   cam.position.copy(ST.cam); cam.lookAt(_at);
@@ -372,6 +478,8 @@ export function install(G){
 
  G.onFoot={get on(){return ST.on;},dismount,mount,toggle,callHorse,pose:(R,ph,amp,run,t,look)=>R&&R.locomote?R.locomote(0.016,{speed:0,look}):pose(R,ph,amp,run,t,look),
   horse:()=>ST.horse?{x:ST.horse.x,z:ST.horse.z,heading:ST.horse.heading,sc:ST.horse.sc,group:ST.horse.parts.group}:null,
-  walker:()=>ST.W,state:()=>({on:ST.on,horse:ST.horse?{x:+ST.horse.x.toFixed(2),z:+ST.horse.z.toFixed(2)}:null,calling:!!ST.call})};
+  walker:()=>ST.W,footing:(x,z)=>footing(x,z),waterAt:(x,z)=>waterAt(x,z),standingOn:()=>ST.on&&ST.mode==='rock'?ST.rockOn:null,
+  state:()=>({on:ST.on,horse:ST.horse?{x:+ST.horse.x.toFixed(2),z:+ST.horse.z.toFixed(2)}:null,calling:!!ST.call,
+   mode:ST.mode||null,feet:ST.fy!=null?+(ST.fy-Wd.groundH(player.pos.x,player.pos.z)).toFixed(2):null,climbing:!!ST.climbing,air:!!ST.air,rolling:!!ST.roll})};
  G.on('state',o=>{o.onFoot=G.onFoot.state();});
 }

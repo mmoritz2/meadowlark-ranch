@@ -74,6 +74,36 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 400 s');try{if(bro
     B.hips.getWorldPosition(h);B.footL.getWorldPosition(fl);B.footR.getWorldPosition(fr);
     const gy=G.world.groundH(p.pos.x,p.pos.z);
     out.stand={hips:+(h.y-gy).toFixed(2),footL:+(fl.y-gy).toFixed(2),footR:+(fr.y-gy).toFixed(2)}; }
+  const home={x:p.pos.x,z:p.pos.z,h:p.heading};   // the swim and the climb go a way off: she comes back here after
+  /* water: into the river by the ranch bridge (open from the start), wading and then swimming */
+  { const x=24, z=G.world.riverZ(x); p.pos.x=x; p.pos.z=z-3.5; p.heading=0; await frames(3); p.pos.x=x; p.pos.z=z-3.5; await frames(3);
+    const seen={}; let top=-9, swimFeet=null, horseSwim=false; key('KeyW',true);
+    const tEnd=performance.now()+4200; while(performance.now()<tEnd){await frames(1);const st=F.state();seen[st.mode]=(seen[st.mode]||0)+1;if(st.mode==='swim'){swimFeet=st.feet;horseSwim=horseSwim||!!p.swim;}}
+    key('KeyW',false); await wait(400);
+    out.water={seen,swimFeet,horseSwim,depth:+(F.waterAt(x,z)||{depth:0}).depth.toFixed(2)};
+    p.pos.x=x; p.pos.z=z-12; await frames(6); }
+  /* rock: the tallest outcrop near the ranch, walked into and climbed, W held, steered at its middle */
+  { /* the tallest near the ranch (its top vertex above its base; the placement shifts a little between loads) */
+    const rise=o=>{const m=(G.worldOutcrops.group.children||[]).find(q=>Math.abs(q.position.x-o.x)<0.01&&Math.abs(q.position.z-o.z)<0.01);if(!m)return 0;const pa=m.geometry.attributes.position;let t=-1e9;for(let i=0;i<pa.count;i++)t=Math.max(t,pa.getY(i));return t;};
+    const O=(G.worldOutcrops&&G.worldOutcrops.placed||[]).filter(o=>Math.hypot(o.x,o.z)<150).map(o=>({...o,rise:rise(o)})).sort((a,b)=>b.rise-a.rise), oc=O[0];
+    if(oc){ const ang=Math.atan2(oc.x,oc.z)+Math.PI, sx=oc.x+Math.sin(ang)*(oc.r*1.2+1.4), sz=oc.z+Math.cos(ang)*(oc.r*1.2+1.4);
+     p.pos.x=sx; p.pos.z=sz; p.heading=Math.atan2(oc.x-sx,oc.z-sz); await frames(3); p.pos.x=sx; p.pos.z=sz; await frames(3);
+     let climbed=0, top=0, hang=null; key('KeyW',true);
+     const tEnd=performance.now()+12000;
+     while(performance.now()<tEnd){await frames(1);p.heading=Math.atan2(oc.x-p.pos.x,oc.z-p.pos.z);const st=F.state();if(st.climbing)climbed++;top=Math.max(top,st.feet||0);
+      /* partway up, let go of W: she hangs on */
+      if(st.climbing&&climbed===12&&!hang){key('KeyW',false);const f0=F.state().feet;await wait(700);const f1=F.state();hang={f0,f1:f1.feet,still:f1.climbing};key('KeyW',true);}
+      if(st.mode==='rock'&&(st.feet||0)>Math.min(1.4,oc.rise*0.75)){key('KeyW',false);break;}}
+     key('KeyW',false);
+     const onTop=F.state(); await wait(300);
+     /* and S drops her off a rock face: climb a little, then S */
+     out.rock={r:+oc.r.toFixed(2),climbed,top:+top.toFixed(2),hang,onTop:{mode:onTop.mode,feet:onTop.feet}};
+     p.pos.x=sx; p.pos.z=sz; p.heading=Math.atan2(oc.x-sx,oc.z-sz); await frames(4); p.pos.x=sx; p.pos.z=sz; await frames(4);
+     key('KeyW',true); let c2=0; const t2=performance.now()+6000; while(performance.now()<t2&&c2<30){await frames(1);p.heading=Math.atan2(oc.x-p.pos.x,oc.z-p.pos.z);if(F.state().climbing)c2++;}
+     key('KeyW',false); await wait(300); const before=F.state().feet; key('KeyS',true); await wait(900); key('KeyS',false); await wait(300);
+     out.rock.drop={climbedFirst:c2,before,after:F.state().feet,mode:F.state().mode};
+     out.rock.rise=+oc.rise.toFixed(2); } }
+  p.pos.x=home.x; p.pos.z=home.z; p.heading=home.h; await frames(8);
   /* 3. the whistle calls the parked horse to her */
   const far0=+d2(F.horse(),p.pos).toFixed(2);
   await tap('KeyH'); out.call={far0,calling:F.state().calling};
@@ -124,6 +154,9 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 400 s');try{if(bro
  check('she is standing: hips about a metre up, both boots on the ground',r.stand.hips>0.7&&r.stand.hips<1.15&&Math.min(r.stand.footL,r.stand.footR)>0.03&&Math.max(r.stand.footL,r.stand.footR)<0.2,r.stand);
  check('the camera follows her on foot from a few metres back',r.cam.dist>2&&r.cam.dist<4.5&&r.cam.above>1&&r.cam.above<2.6,r.cam);
  check('on foot a drag turns the view round her and the wheel brings it in close, as in the saddle',r.orbit.turned>1.0&&r.orbit.near<2.6&&r.orbit.stillThere<0.05,r.orbit);
+ check('into the river she wades and then swims (feet at the surface), and the horse\'s own swimming stays out of it',r.water.seen.wade>5&&r.water.seen.swim>5&&r.water.swimFeet>0.5&&!r.water.horseSwim,r.water);
+ check('walked into a rock she climbs it and stands on top',r.rock&&r.rock.climbed>=12&&r.rock.onTop.mode==='rock'&&r.rock.onTop.feet>Math.min(1.4,r.rock.rise*0.75),r.rock);
+ check('let go of W on the rock face and she hangs on; S drops her off it',r.rock&&r.rock.hang&&r.rock.hang.still&&Math.abs(r.rock.hang.f1-r.rock.hang.f0)<0.08&&r.rock.drop.climbedFirst>=10&&r.rock.drop.after<Math.max(0.2,r.rock.drop.before-0.3),{hang:r.rock&&r.rock.hang,drop:r.rock&&r.rock.drop});
  check('the whistle brings the parked horse to her',r.call.calling&&r.call.done&&r.call.after<r.call.far0&&r.call.after<3.4,r.call);
  check('E at the horse puts her back in the saddle and clears the parked horse away',!r.onE.on&&!r.onE.flag&&r.onE.riderOnMount&&r.onE.meshShown&&r.onE.horseGone&&r.onE.cols===0&&!r.onE.prompt&&!r.onE.body,r.onE);
  check('F gets her off and back on',r.f.off&&r.f.onAgain,r.f);

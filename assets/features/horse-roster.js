@@ -467,7 +467,7 @@ export function install(G){
   if(acN)R.acMul+=0.06*acN*(PM.ac||1); if(agN)R.agMul+=0.05*agN*(PM.ag||1);
   if(spF)R.target*=1+spF; if(acF)R.acMul*=1+acF; if(agF)R.agMul*=1+agF; if(jpF)R.jpMul*=1+jpF;
   /* swimming */
-  const depth=waterDepth(p.pos.x,p.pos.z), swimming=depth>0.45&&!p.flying&&(p.y||0)<0.3;
+  const depth=waterDepth(p.pos.x,p.pos.z), swimming=depth>0.45&&!p.flying&&(p.y||0)<0.3&&!p.onFoot;   // on foot she swims herself (on-foot)
   if(swimming&&!p.swim){p.swim=true;try{G.beep(420,180,0.16,'sine',0.08);}catch(e){}if(!window._swimTut){window._swimTut=1;toast('🌊 Swimming! Water is slow going — a Tidewalker cuts straight across.');}}
   else if(!swimming&&p.swim){p.swim=false;p.swimDepth=0;}
   if(p.swim){
