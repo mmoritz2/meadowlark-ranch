@@ -693,7 +693,7 @@ b.c3-sec,div.c3-sec{display:flex!important;align-items:center;gap:var(--sp-2,8px
    if(n.dataset&&n.dataset.c3)return;
    if(n.tagName==='SPAN'||n.tagName==='DIV'){
     const t=txt(n);
-    if(/password|anyone who has it/i.test(t))fold(n,'🔑 Who can join?');
+    if(/password|anyone who has it/i.test(t)){const had=pane.querySelector(':scope>details.c3-note[data-join] .c3-noteBody');if(had&&!hasCtl(n)){had.appendChild(n);}else if(fold(n,'🔑 Who can join?')){const d=n.closest('details.c3-note');if(d)d.dataset.join='1';}}   // two notes about joining are one fold, not two
     else if(/export or import|Prestige/i.test(t))fold(n,'ℹ️ About this ranch');
     else fold(n,'How this works');
    }

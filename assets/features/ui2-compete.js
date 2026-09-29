@@ -150,12 +150,12 @@ export function install(G){
 .st-ready .c2-qFill,.st-done .c2-qFill{background:var(--meadow-2,#3f8f4c)}
 .c2-qNum{font-size:10.5px;font-weight:800;color:var(--ink-2,#6b5a49);font-variant-numeric:tabular-nums;white-space:nowrap}
 .c2-qRew{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;color:var(--ink-3,#9a8770);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.c2-qRew .c2-rewTag{font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3,#9a8770)}
+.c2-qRew .c2-rewTag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3,#9a8770)}
 .c2-qRew .c2-rewVal{color:var(--ink,#3b2a1e);font-variant-numeric:tabular-nums}
 .st-ready .c2-qRew .c2-rewVal{color:var(--good,#3f8f4c)}
 .c2-qEnd{grid-column:3;justify-self:end;display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:none;white-space:nowrap}
 .c2-qEnd>button{min-height:36px}
-.c2-state{font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:2px 7px;
+.c2-state{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:2px 7px;
  background:var(--paper-2,#f6ecd9);color:var(--ink-3,#9a8770);box-shadow:inset 0 0 0 1px var(--line,#e6d6b8)}
 .c2-state.done{background:var(--meadow-3,#eaf5dc);color:#3f5f2c;box-shadow:inset 0 0 0 1px #bfe0a4}
 

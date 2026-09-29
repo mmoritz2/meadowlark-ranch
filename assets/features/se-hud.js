@@ -114,7 +114,7 @@ body.se-hud #toasts{top:calc(96px + env(safe-area-inset-top))!important;bottom:a
 .se-hexbtn.se-alert::after{content:""!important;display:block!important;position:absolute;top:0;right:4px;width:13px;height:13px;border-radius:50%;background:#e0332f;border:1.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 /* the market: gold, a size up, with its name beneath */
 .se-market{width:66px!important;height:57px!important;filter:drop-shadow(0 3px 5px rgba(0,0,0,.45))!important}
-#seMarketLbl{position:fixed;width:84px;text-align:center;font:900 12px/1 Nunito,system-ui,sans-serif;color:#f3cf6a;letter-spacing:.6px;
+#seMarketLbl{position:fixed;width:84px;text-align:center;font:900 12px/1 Nunito,system-ui,sans-serif;color:#f3cf6a;letter-spacing:.6px;background:rgba(20,20,30,.66);border-radius:8px;padding:3px 0;
  text-shadow:0 1px 0 #5a3708,0 0 3px rgba(0,0,0,.65);pointer-events:none;z-index:6}
 /* the objective on the left edge */
 body.se-hud #questTrack{position:fixed!important;left:0!important;right:auto!important;top:calc(236px + env(safe-area-inset-top))!important;transform:none!important;
@@ -172,6 +172,12 @@ body.se-hud #breathBtn.se-act{bottom:calc(222px + env(safe-area-inset-bottom))}
 #seMenu .se-tiles>button .pip,#seMenu .se-tiles>button .badge{position:absolute!important;top:6px!important;right:6px!important;min-width:20px;height:20px;border-radius:10px;
  background:#e0332f!important;color:#fff!important;border:1.5px solid #fff!important;font:900 11px/17px Nunito,system-ui,sans-serif!important}
 #seMenu .se-tiles>button[style*="display: none"],#seMenu .se-tiles>button[style*="display:none"]{display:none!important}
+/* riding an event: the reference keeps the view clear — the course readout, the map, the stick and the jump button, and
+   nothing else. The menus, the market, the wallet, the quest line and the side buttons step out of the way, and
+   messages drop below the horse instead of lying across the course readout at the top */
+body.se-course .se-hexbtn,body.se-course #seMenuBtn,body.se-course #seMarketLbl,body.se-course #hud,body.se-course #questTrack,body.se-course #seEmote,
+body.se-course #seWhistle,body.se-course #seMount,body.se-course #photoBtn,body.se-course #seWay,body.se-course #ctx{display:none!important}
+body.se-course.se-hud #toasts{top:calc(170px + env(safe-area-inset-top))!important;bottom:auto!important;left:calc(14px + env(safe-area-inset-left))!important;transform:none!important;align-items:flex-start!important;width:min(300px,calc(100vw - 32px))!important;opacity:.94}
 /* the objective marker: a white arrow over the distance, floating toward whoever the mission
    wants you to see next, pinned to the screen edge when they are behind you or out of shot */
 #seWay{position:fixed;left:0;top:0;display:none;flex-direction:column;align-items:center;gap:1px;pointer-events:none;z-index:5;
@@ -309,6 +315,7 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
  /* ---------------------------------------------------------------- keeping it true ------- */
  function sync(){
   place();
+  try{document.body.classList.toggle('se-course',!!(G.course&&G.course.get&&G.course.get()));}catch(e){}
   /* the horse hexagon wears the ridden horse's level, and a red dot when she needs you */
   try{
    const cb=$('careBtn');
@@ -382,6 +389,8 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
   way.classList.toggle('on',show);
  }
  G.on('tick',tickWay);
+ G.on('courseStart',()=>document.body.classList.add('se-course'));
+ G.on('courseFinish',()=>setTimeout(sync,0));
 
  /* QA */
  G.seHud={root,menu,open:()=>{paintMenuHead();menu.classList.add('on');},close:closeMenu,HEXES,sync,way,wayTarget:()=>{const t=wayTarget();return t?{id:wayKey,x:t.position.x,z:t.position.z}:null;}};

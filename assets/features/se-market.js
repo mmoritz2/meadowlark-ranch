@@ -97,12 +97,15 @@ export function install(G){
 #shopPanel.se-mk>.s2-row .s2-trail{flex:0 0 auto!important;max-width:none!important;margin:0!important;align-items:stretch!important;justify-content:center!important}
 #shopPanel.se-mk>.s2-row .s2-trail-row{justify-content:center!important}
 #shopPanel.se-mk>.s2-row .s2-trail button{min-height:38px;padding:6px 14px;border:0!important;border-radius:10px!important;font-weight:900!important;
- background:linear-gradient(180deg,#8fd35c,#58a53b)!important;color:#fff!important;text-shadow:0 1px 0 rgba(0,0,0,.25);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)!important;flex:1 1 auto;
+ background:linear-gradient(180deg,#4c9a34,#2f7a2c)!important;color:#fff!important;text-shadow:0 1px 0 rgba(0,0,0,.35);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)!important;flex:1 1 auto;
  white-space:normal!important;line-height:1.15}   /* a long label wraps inside a narrow card instead of running off it */
-#shopPanel.se-mk>.s2-row .s2-trail button:disabled{background:linear-gradient(180deg,#aaa3c4,#8a83a6)!important;opacity:1!important}
+#shopPanel.se-mk>.s2-row .s2-trail button:disabled{background:linear-gradient(180deg,#6f6890,#5a5478)!important;opacity:1!important}
 #shopPanel.se-mk>.s2-row .s2-trail button.claimBtn{background:linear-gradient(180deg,#f3de80,#d9b43d)!important;color:#2a2340!important;text-shadow:none}
 #shopPanel.se-mk>.s2-row .s2-trail span{color:#5b4f7c!important}
 #shopPanel.se-mk>.s2-row.s2-locked,#shopPanel.se-mk>.s2-row.s2-cant{background:linear-gradient(180deg,#e7e3f4,#d6cfea)!important}
+#shopPanel.se-mk>.s2-row.s2-cant{opacity:1!important}
+#shopPanel.se-mk>.crow>span,#shopPanel.se-mk>.crow .lbl,#shopPanel.se-mk>.crow>b,#shopPanel.se-mk>.mk-panel-body>div{color:#e6e0ff!important}
+#shopPanel.se-mk>.s2-head .s2-h-n b{color:#9ff0a0!important}
 #shopPanel.se-mk>.s2-banner{grid-column:span 2}
 #shopPanel.se-mk>.passCard{grid-column:span 2;background:linear-gradient(180deg,#f6f3ff,#e7e0fb)!important;border:0!important;box-shadow:0 4px 12px rgba(10,6,40,.35)!important}
 #shopPanel.se-mk>.passCard.s2-foot{grid-column:1/-1}

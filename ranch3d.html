@@ -79,7 +79,7 @@
  --paper:#fffaf1;--paper-2:#f6ecd9;--paper-3:#efe1c6;--paper-raised:#fff;
  --line:#e6d6b8;--line-2:#d4bf93;
  /* ink — the type */
- --ink:#3b2a1e;--ink-2:#6b5a49;--ink-3:#9a8770;--ink-inv:#fff8ea;
+ --ink:#3b2a1e;--ink-2:#5f4f3e;--ink-3:#6b5842;--ink-inv:#fff8ea;
  /* leather — the dark ground */
  --leather:#6b4a2f;--leather-2:#4a3220;--dark:rgba(43,30,20,.88);
  /* brass — the one accent */
@@ -3070,6 +3070,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.hypot(x+160,z+210)<140)return false;             // Hollowpeak snow
   if(Math.hypot(x-20,z-16)<5.4)return false;               // Loon Lake
   if(pathDist(x,z)<PATH_W*0.62)return false;               // the road is worn bare
+  if(window.__onCourse&&window.__onCourse(x,z,3.4))return false;   // nor the event courses (course-clear.js): a mown track to ride and to see down
   return true;};
  /* Which country you are standing in, and therefore what grows here. */
  const biomeAt=(x,z)=>{
@@ -3090,6 +3091,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.hypot(x-20,z-16)<5.6)return false;               // not in the lake
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
   if(pathDist(x,z)<PATH_W*0.55)return false;               // nor on the road
+  if(window.__onCourse&&window.__onCourse(x,z,3.8))return false;   // nor on a course
   return true;};
  const CLUT={
   meadow:{fern:'#7aa84f',rock:'#a39784',p:0.85,sz:0.95},   // was '#b0bca0'/'#8c8a82': a pale sage that made every bush look dead, and a cold grey stone
@@ -4544,7 +4546,7 @@ let waterMat=null;   // hoisted: the pond reuses it
     const height=kind==='mesa'?11+rnd()*17:4.5+rnd()*8.5;
     if(kind==='mesa')geology.placeMesa(x,z,radius,height,i+1107);
     else geology.placeHoodoo(x,z,radius,height,i+3527);
-    colliders.push({x,z,r:radius*.95});placed++;
+    colliders.push({x,z,r:radius*.95,landform:kind==='mesa'});placed++;   // landform: seeded, the same on every load, so course-clear may bend a route round it
    }
   }
  }

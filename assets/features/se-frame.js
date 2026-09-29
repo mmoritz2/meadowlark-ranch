@@ -171,7 +171,7 @@ export function install(G){
 body.se-screen-open #seHudRoot,body.se-screen-open #seWay,body.se-screen-open #seMarketLbl,body.se-screen-open #stickZone,body.se-screen-open #seMount,body.se-screen-open #hud,
 body.se-screen-open #questTrack,body.se-screen-open #ctx,body.se-screen-open #mini,body.se-screen-open #mkMiniPlate,body.se-screen-open #seNorth,body.se-screen-open #statusCard,
 body.se-screen-open #dock,body.se-screen-open #touch,body.se-screen-open #chatFeed,body.se-screen-open #hint{visibility:hidden!important}
-body.se-screen-open #toasts{z-index:14!important}
+body.se-screen-open #toasts{z-index:14!important;top:auto!important;bottom:calc(22px + env(safe-area-inset-bottom))!important}
 body.se-screen-open #dlg{z-index:15!important}
 .se-covered{opacity:0!important;pointer-events:none!important;animation:none!important}   /* opacity, not visibility: its text stays readable to the game and its tests */
 .se-covered *{pointer-events:none!important}
@@ -195,27 +195,44 @@ body.se-screen-open #dlg{z-index:15!important}
 .se-fr>.mk-panel-head .chip{background:rgba(255,255,255,.14)!important;border:0!important;border-radius:14px!important;padding:3px 10px!important}
 .se-fr>.mk-panel-head>button:last-child,.se-fr .mk-x{display:none!important}
 /* tabs: the dark column down the left, a picture over each name */
-.se-fr .mk-panel-body>.crow:has(> .tabbtn){position:fixed!important;left:0;top:${TOP};bottom:0;width:${SIDE}!important;z-index:2;display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;
+.se-fr .mk-panel-body>.crow.se-tabcol{position:fixed!important;left:0;top:${TOP};bottom:0;width:${SIDE}!important;z-index:2;display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;
  gap:0!important;margin:0!important;padding:0!important;overflow-y:auto!important;overflow-x:hidden!important;background:linear-gradient(180deg,#2a2760,#1d1b47)!important;
  box-shadow:3px 0 10px rgba(0,0,0,.35)!important;border:0!important;border-radius:0!important;-webkit-mask-image:none!important;mask-image:none!important;scrollbar-width:none}
-.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn{position:relative;flex:none;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%!important;min-height:64px!important;
+.se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn{position:relative;flex:none;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%!important;min-height:64px!important;
  margin:0!important;padding:8px 4px!important;border:0!important;border-radius:0!important;border-bottom:1px solid rgba(255,255,255,.07)!important;background:transparent!important;box-shadow:none!important;
  font-size:0!important;color:transparent!important;white-space:normal}
-.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn>*:not(.pip):not(.badge){display:none!important}
-.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn::before{content:'';width:25px;height:25px;background:#f3efff;-webkit-mask:var(--se-tic) center/contain no-repeat;mask:var(--se-tic) center/contain no-repeat}
-.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn.on::before{background:#4a3519}
-.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn::after{content:attr(data-se-l);font:800 11.5px/1.1 Nunito,system-ui,sans-serif;color:#e9e4ff;text-align:center;max-width:100%;overflow-wrap:anywhere}
-.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn.on{background:linear-gradient(180deg,var(--sef-cream),var(--sef-cream2))!important}
-.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn.on::after{color:var(--sef-ink)}
-.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn:hover:not(.on){background:rgba(255,255,255,.08)!important}
-.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn .pip,.se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn .badge{position:absolute;top:6px;right:8px;font-size:10px!important;color:#fff!important}
+.se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn>*:not(.pip):not(.badge){display:none!important}
+.se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn::before{content:'';width:25px;height:25px;background:#f3efff;-webkit-mask:var(--se-tic) center/contain no-repeat;mask:var(--se-tic) center/contain no-repeat}
+.se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn.on::before{background:#4a3519}
+.se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn::after{content:attr(data-se-l);font:800 11.5px/1.1 Nunito,system-ui,sans-serif;color:#e9e4ff;text-align:center;max-width:100%;overflow-wrap:anywhere}
+.se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn.on{background:linear-gradient(180deg,var(--sef-cream),var(--sef-cream2))!important}
+.se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn.on::after{color:var(--sef-ink)}
+.se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn:hover:not(.on){background:rgba(255,255,255,.08)!important}
+.se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn .pip,.se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn .badge{position:absolute;top:6px;right:8px;font-size:10px!important;color:#fff!important}
+.se-fr .mk-panel-body>.crow:has(> .tabbtn):not(.se-tabcol){background:rgba(22,20,44,.8)!important;border-radius:10px!important;padding:6px 10px!important;gap:6px!important;flex-wrap:wrap!important;border:0!important;box-shadow:none!important}
+.se-fr .mk-panel-body>.crow:has(> .tabbtn):not(.se-tabcol)>.lbl,.se-fr .mk-panel-body>.crow:has(> .tabbtn):not(.se-tabcol)>span{color:#f1ecff!important;background:none!important}
+.se-fr .mk-panel-body>.crow:has(> .tabbtn):not(.se-tabcol)>.tabbtn{background:linear-gradient(180deg,#fdf8ea,#ecdfc2)!important;color:#3b2a17!important;border:0!important;border-radius:14px!important;padding:4px 12px!important;min-height:0!important;font-weight:800!important}
+.se-fr .mk-panel-body>.crow:has(> .tabbtn):not(.se-tabcol)>.tabbtn.on{background:linear-gradient(180deg,var(--sef-gold1),var(--sef-gold2))!important;color:#3a2a10!important}
 /* rows: cream cards */
 .se-fr .qrow,.se-fr .evrow,.se-fr .c2-blk,.se-fr .passCard,.se-fr .ui2-srow,.se-fr .lbrow,.se-fr .mk-panel-body>.crow:not(:has(> .tabbtn)),.se-fr .mk-card{
  background:linear-gradient(180deg,#f7f0de,#ece0c3)!important;border:1.5px solid #d6c298!important;border-radius:10px!important;box-shadow:0 3px 8px rgba(0,0,0,.28)!important;color:var(--sef-ink)!important}
-.se-fr .mk-panel-body>span,.se-fr .mk-panel-body>p,.se-fr .mk-panel-body>small{color:#efeafc!important;text-shadow:0 1px 2px rgba(0,0,0,.5)}
-.se-fr .mk-panel-body>div:not([class]){color:#efeafc}
-.se-fr .mk-panel-body>div:not([class]) b{color:#fff}
-.se-fr .mk-panel-body>div:not([class]) a{color:#ffe08a}
+/* words that sit straight on the world, outside any card, get a dark plate of their own and light ink, whatever colour
+   their renderer wrote them in (they were written for a cream panel, and brown on a dimmed meadow cannot be read).
+   A class-less wrapper that holds cards of its own is structure, not a note: it stays clear, and its cards keep theirs. */
+.se-fr .mk-panel-body>:is(span,p,small,a,b,strong,.bGroup,.sub,.ladSheet,details,.ev2card,.ladCard),.se-fr .mk-panel-body>div:not([class]):not(:has(> div[class])),#onlinePanel.se-fr .c3-pane>:is(span,p,small,b:not(.c3-sec),details,.c3-note,.sub,div:not([class])){
+ background:rgba(22,20,44,.82)!important;border-radius:8px!important;padding:7px 12px!important;color:#f1ecff!important;text-shadow:none!important;box-shadow:0 2px 6px rgba(0,0,0,.25);opacity:1!important}
+:is(.se-fr .mk-panel-body>:is(span,p,small,a,b,strong,.bGroup,.sub,.ladSheet,details,.ev2card,.ladCard),.se-fr .mk-panel-body>div:not([class]):not(:has(> div[class])),#onlinePanel.se-fr .c3-pane>:is(span,p,small,b:not(.c3-sec),details,.c3-note,.sub,div:not([class]))) :is(span,b,i,em,small,strong,p,div,label,summary,td,th,li):not(button *):not(.chip):not(.badge):not(.pip):not(.noe):not(.noe-t):not(.mk-card *):not(.evrow *):not(.qrow *){color:#f1ecff!important}
+:is(.se-fr .mk-panel-body>:is(span,p,small,a,b,strong,.bGroup,.sub,.ladSheet,details,.ev2card,.ladCard),.se-fr .mk-panel-body>div:not([class]):not(:has(> div[class])),#onlinePanel.se-fr .c3-pane>:is(span,p,small,b:not(.c3-sec),details,.c3-note,.sub,div:not([class]))) :is(.me,.you,.mine,[data-me]){color:#ffd970!important}
+.se-fr .mk-panel-body>div:not([class]):has(> div[class]){background:transparent!important;padding:0!important;box-shadow:none!important;color:inherit}
+.se-fr .mk-panel-body>:is(b,strong,.bGroup){display:block;font:800 clamp(14px,2.3vh,17px)/1.25 var(--sef-serif)!important;letter-spacing:.5px;text-transform:uppercase;color:#f3d77f!important}
+.se-fr .mk-panel-body>.ph>span,.se-fr .mk-panel-body>.ph>b{color:#fff!important}
+.se-fr .mk-panel-body a,.se-fr .mk-panel-body>div:not([class]) a{color:#ffd970!important;text-decoration-color:rgba(255,217,112,.5)}
+#onlinePanel.se-fr .c3-pane>.crow>span,#onlinePanel.se-fr .c3-pane>.crow>.lbl,#onlinePanel.se-fr #pidOnline{color:#f1ecff!important}
+#onlinePanel.se-fr b.c3-sec{color:#f3d77f!important;font:800 clamp(14px,2.3vh,17px)/1.25 var(--sef-serif)!important;letter-spacing:.5px;text-transform:uppercase;text-shadow:0 1px 2px #000}
+#onlinePanel.se-fr .c3-note>summary,#onlinePanel.se-fr .c3-noteBody{color:#f1ecff!important}
+/* a locked or not-yet row is shown as a muted card, not a see-through one */
+.se-fr .qrow[style*="opacity"],.se-fr .evrow[style*="opacity"]{opacity:1!important;background:linear-gradient(180deg,#e7ddc8,#d9ccb0)!important;color:#5a4a38!important}
+.se-fr .mk-panel-body>div:not([class]):empty,.se-fr .mk-panel-body>span:empty{display:none!important}
 .se-fr .c2-sechead,.se-fr .mk-panel-body>.ph,.se-fr .mk-section{margin:14px 2px 2px!important;padding:0 0 5px!important;border:0!important;border-bottom:2px solid rgba(233,210,150,.55)!important;
  background:transparent!important;color:#fff!important;font:800 clamp(15px,2.5vh,19px)/1.2 var(--sef-serif)!important;letter-spacing:.7px;text-transform:uppercase;text-shadow:0 1px 2px rgba(0,0,0,.5);box-shadow:none!important}
 .se-fr button.claimBtn{background:linear-gradient(180deg,var(--sef-gold1),var(--sef-gold2))!important;color:#3a2a10!important;border:0!important;border-radius:8px!important;
@@ -224,6 +241,9 @@ body.se-screen-open #dlg{z-index:15!important}
  font-weight:800!important;box-shadow:inset 0 -2px 0 rgba(90,60,20,.14),0 1px 2px rgba(0,0,0,.2)!important}
 .se-fr button:disabled{opacity:.55;filter:grayscale(.5)}
 .se-fr input,.se-fr select,.se-fr textarea{background:#fffaf0!important;color:var(--sef-ink)!important;border:1px solid #cdb68a!important;border-radius:8px!important}
+/* the faint grey-browns written inline all over the game fail on a cream card; they read one step darker everywhere */
+[style*="color:#b8a98a"],[style*="color:#b8a888"],[style*="color: #b8a98a"],[style*="color:#b0a080"]{color:#6f5f4b!important}
+[style*="color:#8c7a63"],[style*="color: #8c7a63"],[style*="color:#9a8770"]{color:#5e4e3c!important}
 #seFrameTop{display:none}
 body.se-frame-open #seFrameTop{display:flex}
 /* ---------------- the main menu (☰): a full screen of parchment tiles ---------------- */
@@ -266,7 +286,7 @@ body.se-frame-open #seFrameTop{display:flex}
 #seMenu.se-main .se-tiles>button::before{content:attr(data-sem-t)!important;position:absolute!important;left:6px;right:6px;bottom:clamp(22px,4vh,32px);display:block!important;z-index:1;
  font:800 clamp(13px,2.3vh,18px)/1.05 var(--sef-serif)!important;color:#5a3b1a!important;text-transform:uppercase;letter-spacing:.3px;text-align:center;white-space:normal}
 #seMenu.se-main .se-tiles>button::after{content:attr(data-sem-s)!important;position:absolute!important;left:6px;right:6px;bottom:clamp(8px,1.6vh,14px);display:block!important;z-index:1;
- font:700 clamp(9.5px,1.55vh,12px)/1.1 Nunito,system-ui,sans-serif!important;color:#7d5f39!important;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:none!important;letter-spacing:0}
+ font:700 clamp(10.5px,1.65vh,13px)/1.1 Nunito,system-ui,sans-serif!important;color:#583a19!important;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:none!important;letter-spacing:0}
 #seMenu.se-main .se-tiles>button.sem-feat{background:var(--sem-ic,none) center 42%/clamp(56px,11vh,90px) no-repeat,radial-gradient(120% 80% at 50% 35%,#8d5a2c,#6a421f)!important;
  border-color:#e7c569!important;box-shadow:inset 0 0 0 3px #7b4d24,inset 0 0 0 4px #d9b454,0 4px 12px rgba(0,0,0,.45)!important}
 #seMenu.se-main .se-tiles>button.sem-feat::before{bottom:clamp(24px,4.4vh,34px);color:#3a260c!important}
@@ -275,7 +295,7 @@ body.se-frame-open #seFrameTop{display:flex}
 #seMenu.se-main .se-tiles>button.sem-feat .sem-ribbon{position:absolute;left:-2px;right:-2px;top:8px;padding:5px 2px 6px;text-align:center;background:linear-gradient(180deg,#be3a30,#8f2019);
  font:800 clamp(11px,1.9vh,15px)/1 var(--sef-serif);color:#fff;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 3px rgba(0,0,0,.4);text-shadow:0 1px 0 rgba(0,0,0,.35)}
 #seMenu.se-main .se-tiles>button .sem-tag{position:absolute;left:7px;top:7px;display:flex;align-items:center;gap:4px;padding:2px 7px;border-radius:4px;background:rgba(80,56,28,.16);
- font:900 clamp(10px,1.7vh,13px)/1.2 Nunito,system-ui,sans-serif;color:#6a4a26}
+ font:900 clamp(10px,1.7vh,13px)/1.2 Nunito,system-ui,sans-serif;color:#4a3318}
 #seMenu.se-main .se-tiles>button .sem-tag svg{width:15px;height:15px}
 #seMenu.se-main .se-tiles>button .pip,#seMenu.se-main .se-tiles>button .badge{position:absolute!important;top:7px!important;right:7px!important;left:auto!important;min-width:20px;height:20px;padding:0 6px;border-radius:10px;
  background:#d93a33!important;color:#fff!important;border:1.5px solid #fff!important;font:900 11px/17px Nunito,system-ui,sans-serif!important;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.35)}
@@ -286,8 +306,8 @@ body.se-frame-open #seFrameTop{display:flex}
 #seMenu.se-main .sem-foot .sem-sp{flex:1}
 @media (max-width:760px){
  .se-fr.se-fr-tabs{padding-left:0!important;padding-top:calc(${TOP} + 70px)!important}
- .se-fr .mk-panel-body>.crow:has(> .tabbtn){top:${TOP};bottom:auto;right:0;width:auto!important;height:62px;flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important}
- .se-fr .mk-panel-body>.crow:has(> .tabbtn)>.tabbtn{width:auto!important;min-width:76px;min-height:62px!important;border-bottom:0!important;border-right:1px solid rgba(255,255,255,.07)!important}
+ .se-fr .mk-panel-body>.crow.se-tabcol{top:${TOP};bottom:auto;right:0;width:auto!important;height:62px;flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important}
+ .se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn{width:auto!important;min-width:76px;min-height:62px!important;border-bottom:0!important;border-right:1px solid rgba(255,255,255,.07)!important}
  .se-pill{min-width:0;padding:0 10px 0 28px;margin-left:10px}.se-pill>svg{width:30px;height:30px;left:-10px}
  #seMenu.se-main .sem-util,#seMenu.se-main .sem-promo{display:none}
  #seMenu.se-main .se-tiles{grid-auto-columns:128px!important}}`;
@@ -356,11 +376,13 @@ body.se-frame-open #seFrameTop{display:flex}
    const m=txt.match(EMO);
    b.dataset.seTxt=txt; b.dataset.seL=(m?m[2]:txt).trim()||txt; b.style.setProperty('--se-tic',tabMask(tabIcon(b.dataset.seL)));
   });
+  /* only the first row of tabs is the column down the left; a second row (a filter under it) stays where it is, as pills */
+  const rows=[...P.querySelectorAll(':scope>.mk-panel-body>.crow')].filter(r=>r.querySelector(':scope>.tabbtn'));
+  rows.forEach((r,i)=>r.classList.toggle('se-tabcol',i===0));
  }
  function frame(P){
   const def=FRAMED[P.id]||['collection','Menu'];
-  P.classList.add('se-fr'); P.classList.toggle('se-fr-tabs',!!P.querySelector('.mk-panel-body>.crow>.tabbtn'));
-  splitTabs(P);
+  P.classList.add('se-fr'); splitTabs(P); P.classList.toggle('se-fr-tabs',!!P.querySelector('.mk-panel-body>.crow.se-tabcol'));
   if(current!==P){current=P; top.setTitle(def[1],'',def[0]);}
   document.body.classList.add('se-frame-open','se-screen-open'); paintPills(top);
  }
@@ -391,7 +413,7 @@ body.se-frame-open #seFrameTop{display:flex}
    let style=false,kids=false; for(const m of muts){if(m.type==='attributes')style=true;else kids=true;}
    if(style)sync(P);
    if(kids){
-    if(P.classList.contains('se-fr')){P.classList.toggle('se-fr-tabs',!!P.querySelector('.mk-panel-body>.crow>.tabbtn'));splitTabs(P);}
+    if(P.classList.contains('se-fr')){splitTabs(P);P.classList.toggle('se-fr-tabs',!!P.querySelector('.mk-panel-body>.crow.se-tabcol'));}
     else if(COVERS[P.id]&&COVERS[P.id].on&&COVERS[P.id].refresh){try{COVERS[P.id].refresh(P);}catch(e){}}
    }
   }).observe(P,{attributes:true,attributeFilter:['style'],childList:true,subtree:true});

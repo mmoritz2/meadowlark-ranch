@@ -125,17 +125,17 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   const p=document.getElementById('resultPanel');
   out.open=p&&p.style.display==='flex';
   out.noDockButton=!document.getElementById('resultBtn');
-  const txt=(p&&p.innerText)||'';
+  const txt=(p&&p.innerText)||'';   // innerText follows the frame's capitals on headings, so the words are matched ignoring case
   out.txt=txt.slice(0,900);
-  out.hasTime=/\d+\.\d+s/.test(txt);
-  out.hasPlace=/finished P\d of \d/.test(txt);
-  out.hasScore=txt.includes('The score')&&/Accuracy \d+%/.test(txt);
-  out.hasPurse=txt.includes('Purse');
-  out.hasRibbons=/ribbons won all told/.test(txt);
-  out.hasRank=/racing points/.test(txt);
-  out.hasNext=txt.includes('Next on the ladder');
+  out.hasTime=/\d+\.\d+s/i.test(txt);
+  out.hasPlace=/finished P\d of \d/i.test(txt);
+  out.hasScore=/The score/i.test(txt)&&/Accuracy \d+%/i.test(txt);
+  out.hasPurse=/Purse/i.test(txt);
+  out.hasRibbons=/ribbons won all told/i.test(txt);
+  out.hasRank=/racing points/i.test(txt);
+  out.hasNext=/Next on the ladder/i.test(txt);
   out.hasAgain=!!p.querySelector('[data-fx^="lad:again"]');
-  out.hasRecap=txt.includes('Also this round');
+  out.hasRecap=/Also this round/i.test(txt);
   const a=G.save.fresh();
   out.rib1=(a.lad&&a.lad.rib.total)||0;
   out.lastRun=a.lastRun;
@@ -200,7 +200,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   out.rows=G.events.weeklyRows(ev,s).length;
   out.place=G.events.myPlace(G.events.weeklyRows(ev,s));
   const rtxt=document.getElementById('resultPanel').innerText||'';
-  out.card=rtxt.includes("This week's board");
+  out.card=rtxt.toLowerCase().includes("this week's board");   // innerText follows the frame's capitals
   /* The card's recap is exactly what reached the toast queue this round — this harness's own spy
      sits ABOVE the package's filter and still sees the line the player never does, so the recap is
      the honest surface to read. It must announce the placing and must not deny the gold. */
@@ -289,10 +289,10 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   out.previewOpen=rp.style.display==='flex';
   const ptxt=rp.innerText;
   out.preview=ptxt.slice(0,700);
-  out.pAllowed=/Time allowed \d+/.test(ptxt)||/Score to beat/.test(ptxt);
-  out.pFavours=ptxt.includes('What this race favours')||ptxt.includes('What it pays');
-  out.pPays=/What it pays/.test(ptxt)&&/XP/.test(ptxt)&&/💎/.test(ptxt);
-  out.pRecord=ptxt.includes('Your record here');
+  out.pAllowed=/Time allowed \d+/i.test(ptxt)||/Score to beat/i.test(ptxt);
+  out.pFavours=/What this race favours|What it pays/i.test(ptxt);   // innerText follows the frame's capitals
+  out.pPays=/What it pays/i.test(ptxt)&&/XP/.test(ptxt)&&/💎/.test(ptxt);
+  out.pRecord=/Your record here/i.test(ptxt);
   out.pEnter=!!rp.querySelector('[data-fx^="lad:again"]');
   G.hidePanels();
   return out;
@@ -400,7 +400,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   const s=G.save.fresh();
   out.champion=s.lad.champion;
   const txt=document.getElementById('resultPanel').innerText;
-  out.card=txt.includes('The Basin Championship');
+  out.card=txt.toLowerCase().includes('the basin championship');
   out.standings=(txt.match(/👑|#2|#3/g)||[]).length;
   out.state=JSON.parse(render_game_to_text()).ladder.champion;
   return out;

@@ -58,7 +58,9 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 300 s');try{if(bro
  check('the close button shuts it and takes the full-screen classes away',d.shop==='none'&&!d.cls&&!d.body,d);
  /* 5. the ☰ menu tile */
  const e=await page.evaluate(async()=>{const b=document.getElementById('charBtn');const inMenu=!!(b&&b.closest('#seTiles'));const m=document.getElementById('seMenuBtn');if(m)m.click();await new Promise(r=>setTimeout(r,300));
-  const vis=b&&b.getBoundingClientRect().width>0;if(b)b.click();await new Promise(r=>setTimeout(r,700));return {exists:!!b,inMenu,vis,opened:document.getElementById('seChar').classList.contains('on')};});
+  /* se-frame draws the ☰ menu's own Character tile (which clicks #charBtn) and keeps the dock button itself out of sight */
+  const tile=document.querySelector('#seTiles>[data-sem-main="character"]')||b;
+  const vis=!!tile&&tile.getBoundingClientRect().width>0;if(tile)tile.click();await new Promise(r=>setTimeout(r,700));return {exists:!!b,inMenu,vis,opened:document.getElementById('seChar').classList.contains('on')};});
  check('the Character tile is in the ☰ menu and opens the Character screen',e.exists&&e.inMenu&&e.vis&&e.opened,e);
  check('no page errors',errors.length===0,errors.slice(0,5));
  const bad=checks.filter(c=>!c.ok).length;

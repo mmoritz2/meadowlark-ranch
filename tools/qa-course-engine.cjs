@@ -82,7 +82,7 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   return out;
  });
  check('package installed without error',r.installed&&r.errors.length===0,r.errors);
- check('EVENTS3 gains x2, a2 becomes cross country, xc routes, laps/req/line flags',r.tables.x2&&r.tables.a2xc&&r.tables.xc1===7&&r.tables.xc2===7&&r.tables.diffs===3&&r.tables.h2laps===2&&r.tables.h2req&&r.tables.h2req.jump===2&&r.tables.lineRows>=10,r.tables);
+ check('EVENTS3 gains x2, a2 becomes cross country, xc routes, laps/req/line flags',r.tables.x2&&r.tables.a2xc&&r.tables.xc1>=7&&r.tables.xc2>=7&&r.tables.diffs===3&&r.tables.h2laps===2&&r.tables.h2req&&r.tables.h2req.jump===2&&r.tables.lineRows>=10,r.tables);
  check('save ensures (bestAcc, ribbonGold, ribbonsBy, evDiff)',r.save.bestAcc&&r.save.ribbonGold&&r.save.ribbonsBy&&r.save.evDiff===1,r.save);
  check('dailies, achievements, story types registered',r.quests.daily&&r.quests.ach&&r.quests.types,r.quests);
  check('three world speed pads on the ranch track',r.worldPads===3,r.worldPads);
@@ -149,7 +149,7 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  const L=await page.evaluate(()=>{
   const G=window.__features,Q=window.__qa,out={};const p=G.horse.player;
   G.course.startCourse(Q.ev('bd'),1); Q.passCountdown(); const c=G.course.get();
-  out.line={hasLine:!!c.ce.line,legs:c.ce.line&&c.ce.line.length};
+  out.line={hasLine:!!c.ce.line,legs:c.ce.line&&c.ce.line.length,gates:G.tables.RACE_ROUTES.bd.length};   // course-clear may bend a route round a mesa, adding gates
   Q.toGate(c.jumps[0]);
   const pts=G.tables.RACE_ROUTES.bd; const cx=pts.reduce((a,q)=>a+q[0],0)/pts.length, cz=pts.reduce((a,q)=>a+q[1],0)/pts.length;
   p.pos.set(cx,0,cz); p.heading=0; Q.key('ArrowUp'); window.advanceTime(3000); Q.key('ArrowUp',false);
@@ -166,9 +166,9 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   const sv=G.save.fresh(); const cc=G.course.get(); out.done={mode:Q.st().mode,bestAcc:sv.bestAcc.bd,ribbons:sv.ribbons.bd,idx:cc&&cc.idx,total:cc&&cc.jumps.length,started:cc&&cc.started,t:cc&&cc.t};
   return out;
  });
- check('race carries an ideal line (one leg per gate)',L.line.hasLine&&L.line.legs===7,L.line);
+ check('race carries an ideal line (one leg per gate)',L.line.hasLine&&L.line.legs===L.line.gates&&L.line.gates>=7,L.line);
  check('riding the middle of the loop accrues a line penalty',L.off.lineOff>2&&L.off.index===1,L.off);
- check('speed pads: one per leg, boost fires, fires again after the cooldown; a boost pickup is single use',L.pads===7&&L.pad.b1&&!L.pad.b2&&L.pad.b3&&L.pad.boostOnce,L.pad);
+ check('speed pads: one per leg, boost fires, fires again after the cooldown; a boost pickup is single use',L.pads===L.line.gates&&L.pad.b1&&!L.pad.b2&&L.pad.b3&&L.pad.boostOnce,L.pad);
  check('race finishes through the gates, accuracy recorded',L.done.mode==='free_roam'&&L.done.bestAcc>0&&L.done.ribbons>=1,L.done);
 
  /* ---- cross country: gates and natural fences alternating along the Barleyfold loop ---- */

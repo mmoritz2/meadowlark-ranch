@@ -115,7 +115,7 @@ export function install(G){
 #seOv .sv-mast b{width:30px;height:32px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#3a3446,#23202c);
  clip-path:polygon(50% 0,100% 18%,100% 64%,50% 100%,0 64%,0 18%);color:#ffd257;font-size:16px}
 #seOv .sv-traits{margin-top:auto;width:100%}
-#seOv .sv-traits h4{margin:0 0 8px;font-size:17px;font-weight:900;text-transform:uppercase;text-shadow:0 2px 0 rgba(0,0,0,.45)}
+#seOv .sv-traits h4{margin:0 0 8px;font-size:17px;font-weight:900;text-transform:uppercase;text-shadow:0 2px 0 rgba(0,0,0,.45);background:rgba(18,22,36,.62);border-radius:8px;padding:4px 10px;display:inline-block}
 #seOv .sv-cards{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 #seOv .sv-tc{position:relative;width:clamp(76px,8.4vw,96px);padding:18px 4px 8px;border-radius:9px;background:linear-gradient(180deg,#f3ead7,#e0d3b6);color:#3a2a14;text-align:center;
  font-size:12px;font-weight:900;text-transform:uppercase;box-shadow:0 3px 8px rgba(0,0,0,.3)}
@@ -136,7 +136,7 @@ export function install(G){
 #seOv .sv-count{position:absolute;transform:translateX(-50%);display:none;padding:4px 14px;border-radius:14px;background:rgba(30,24,38,.8);
  font-weight:900;font-size:clamp(13px,2vh,16px);pointer-events:none;white-space:nowrap;text-shadow:0 1px 0 rgba(0,0,0,.4)}
 #seOv .sv-count.show{display:block}
-#seOv .sv-more{margin-top:8px;background:none;color:#f3e6c8;font-weight:900;font-size:14px;text-decoration:underline;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+#seOv .sv-more{margin-top:8px;background:rgba(18,22,36,.66);border-radius:8px;padding:5px 12px;color:#fff3d6;font-weight:900;font-size:14px;text-decoration:underline;text-shadow:none}
 body.se-ov-open #hud,body.se-ov-open #mini,body.se-ov-open #hint,body.se-ov-open #ftBar,body.se-ov-open #questTrack,body.se-ov-open #ctx,
 body.se-ov-open #statusCard,body.se-ov-open #stamWrap,body.se-ov-open #fcHint,body.se-ov-open #chatFeed,body.se-ov-open #chatBar,
 body.se-ov-open #seHudRoot,body.se-ov-open #seWay,body.se-ov-open #seMarketLbl,body.se-ov-open #stickZone,body.se-ov-open #dock,

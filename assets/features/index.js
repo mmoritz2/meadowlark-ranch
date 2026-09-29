@@ -189,7 +189,8 @@ import * as seCare from './se-care.js?v=3';   // versioned so a browser that cac
 import * as onFoot from './on-foot.js?v=6';   // versioned: she walks, runs, jumps, climbs and swims on the animation library's clips, and the view turns round her
 import * as seMarket from './se-market.js';
 import * as treasures from './hidden-treasures.js';   // golden horseshoes on the rocks and in the water, for on-foot
+import * as courseClear from './course-clear.js?v=1';   // a mown, cleared track on every event course; routes bent round what cannot be cleared
 import * as seFrame from './se-frame.js?v=2';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use
 import * as seEvents from './se-events.js?v=1';   // Riding Events as towns and a carousel of entry tickets, each event's page with its course map
 import * as noEmoji from './no-emoji.js?v=1';   // nothing on the page is an emoji: meaningful ones become drawn icons, the rest go (installed last, so it sees everything)
-export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,seasonHunts,seasonQuests,ev2disc,ev2ladder,courseGuide,wVistas,wFlora,wWater,wAtmos,wQuarters,wPaths,wOutcrops,uikit,ui2horse,ui2shop,ui2compete,ui2hud,ui2club,ui2merge,lookGrade,seHud,seCare,onFoot,seMarket,treasures,seFrame,seEvents,noEmoji];
+export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,seasonHunts,seasonQuests,ev2disc,ev2ladder,courseGuide,wVistas,wFlora,wWater,wAtmos,wQuarters,wPaths,wOutcrops,uikit,ui2horse,ui2shop,ui2compete,ui2hud,ui2club,ui2merge,lookGrade,seHud,seCare,onFoot,seMarket,treasures,courseClear,seFrame,seEvents,noEmoji];

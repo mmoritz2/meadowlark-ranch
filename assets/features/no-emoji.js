@@ -132,6 +132,11 @@ export function install(G){
   stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>',shield:'<path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/>',tools:'<rect x="3" y="9" width="18" height="11" rx="2"/><path d="M9 9V6h6v3M3 14h18"/>',
   bottle:'<path d="M10 3h4v3l2 3v11a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V9l2-3z"/><path d="M8 13h8"/>',
   unicorn:'<path d="M8.5 20v-4.6C6.4 14.2 5.4 12 6 9.6L7.3 5l1.9 1.8 1.9-2.6c3.1.6 5.8 3.1 6.4 6.6l1.6 3.1-2.1 1.5-2-1.1c-1 .9-2.1 1.4-3.1 1.4V20M13 5.5 16.5 1.5"/>',
+  heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  rock:'<path d="M4 18l2.5-6 4-4 5 1.5 3 4 1.5 4.5z"/><path d="M10.5 8l1.5 4 3.5 1"/>',log:'<ellipse cx="17" cy="12" rx="3.5" ry="5"/><path d="M17 7H7a3.5 5 0 0 0 0 10h10"/><circle cx="17" cy="12" r="1.5"/>',
+  fence:'<path d="M5 20V7l1.5-2L8 7v13M11 20V7l1.5-2L14 7v13M17 20V7l1.5-2L20 7v13M3 10h19M3 16h19"/>',lantern:'<path d="M9 5h6M12 3v2M8 8h8l-1 10H9zM9.5 18v2h5v-2"/><path d="M12 11v4"/>',
+  bench:'<path d="M3 11h18M4 11v7M20 11v7M3 15h18M5 7h14v4"/>',sign:'<path d="M12 21V10M5 4h14v6H5z"/>',flower:'<circle cx="12" cy="9" r="2"/><path d="M12 5a2 2 0 1 1 0 0M12 11v10M12 16c-2-2-4-2-5-1M12 18c2-2 4-2 5-1"/><circle cx="12" cy="5" r="2"/><circle cx="16" cy="9" r="2"/><circle cx="8" cy="9" r="2"/>',
+  barrel:'<path d="M7 4h10c1.5 3 1.5 13 0 16H7c-1.5-3-1.5-13 0-16zM6 9h12M6 15h12"/>',bucket:'<path d="M5 8h14l-2 12H7zM5 8a7 7 0 0 1 14 0"/>',tent:'<path d="M3 20 12 4l9 16zM12 4v16M9 20l3-5 3 5"/>',
   dot:'<circle cx="12" cy="12" r="4.5"/>'
  };
  const LINE_OF={
@@ -153,7 +158,8 @@ export function install(G){
   '\u{1F4AB}':'sparkle','\u{1F465}':'users','\u{1F46A}':'users','\u{1F91D}':'users','\u{1F310}':'globe','\u{1F30D}':'globe','\u{1F30E}':'globe','\u{1F30F}':'globe',
   '\u{1F6CD}':'shop','\u{1F6D2}':'shop','\u{1F3EA}':'shop','\u{1F3EC}':'shop','\u{1F30A}':'wave','\u{1F3D4}':'mountain','⛰':'mountain','\u{1F3D5}':'mountain','\u{1F3DC}':'mountain','\u{1F3D7}':'hammer','\u{1F528}':'hammer',
   '\u{1F455}':'shirt','\u{1F97C}':'shirt','\u{1F3BD}':'shirt','\u{1F454}':'shirt','\u{1F9E2}':'shirt','\u{1F4EC}':'inbox','\u{1F4EE}':'inbox','\u{1F4E9}':'inbox','✉':'inbox','\u{1F4E5}':'tray','\u{1F4E6}':'tray',
-  '\u{1F4A8}':'wind','\u{1F300}':'swirl','⤴':'jump','⤵':'jump','\u{1FA9C}':'jump','\u{1F680}':'rocket','⏩':'fast','⏭':'fast','\u{1F3C5}':'medal','\u{1F396}':'medal','✂':'scissors',
+  '\u{1F4A8}':'wind','\u{1FAC0}':'heart','\u{1F300}':'swirl','⤴':'jump','⤵':'jump','\u{1FA9C}':'jump','\u{1F680}':'rocket','⏩':'fast','⏭':'fast','\u{1F3C5}':'medal','\u{1F396}':'medal','✂':'scissors',
+  '\u{1FAA8}':'rock','\u{1FAB5}':'log','\u{1F6A7}':'fence','\u{1F9F1}':'fence','\u{1F3EE}':'lantern','\u{1F56F}':'lantern','\u{1FA91}':'bench','\u{1FAA7}':'sign','\u{1F337}':'flower','\u{1F33B}':'flower','\u{1F33C}':'flower','\u{1F338}':'flower','\u{1F339}':'flower','\u{1F490}':'flower','\u{1F3F5}':'flower','\u{1F6E2}':'barrel','\u{1FAA3}':'bucket','\u26FA':'tent',
   '\u{1F302}':'umbrella','☂':'umbrella','☔':'umbrella','\u{1F514}':'bell','\u{1F4A1}':'lightbulb','\u{1F6E1}':'shield','\u{1F9F0}':'tools','\u{1F9F4}':'bottle','\u{1F9C3}':'bottle'
  };
  const uri=svg=>'url("data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)+'")';
@@ -191,7 +197,7 @@ export function install(G){
  const SKIP=new Set(['SCRIPT','STYLE','TEXTAREA','INPUT','NOSCRIPT','CODE','PRE']);
  const skipEl=el=>{for(let e=el;e&&e!==document.body;e=e.parentElement){if(SKIP.has(e.tagName)||e.isContentEditable)return true;const c=e.classList;if(c&&(c.contains('noe-t')||c.contains('noe')))return true;if(e.dataset&&e.dataset.noeKeep!=null)return true;}return false;};
  const OPTION_WORDS={'\u{1F3C7}':'Riding · ','\u{1F33F}':'At grass · ','⛓':'Hitched · ','❤':'♥','⭐':'★'};
- const ICONISH=/(^|[\s_-])(qico|c2-qIco|ico|ic|icon|glyph|scPortrait|gaitEl|emoji|av|avatar)([\s_-]|$)|tab/i;
+ const ICONISH=/(^|[\s_-])(qico|c2-qIco|ico|ic|icon|glyph|scPortrait|gaitEl|emoji|av|avatar|thumb|plate|pic|art)([\s_-]|$)|c3-plate|mk-thumb|s2-glyph|tab/i;
  let cleaned=0;
  function cleanText(n){
   const t=n.nodeValue; if(!t||!has(t))return;
@@ -219,6 +225,11 @@ export function install(G){
    const near=(typeof prev==='string'&&/[\d%]\s?$/.test(prev))||(typeof next==='string'&&/^\s?[\d+×x]/.test(next))||(prev===undefined&&next===undefined)
     ||(prev&&typeof prev!=='string'&&!!iconOf(prev.e))||(next&&typeof next!=='string'&&!!iconOf(next.e));
    let ic=ALWAYS[x.e]?{c:ALWAYS[x.e]}:(NEAR[x.e]&&(near||slot))?{c:NEAR[x.e]}:null;
+   /* a line icon where the emoji stood for a word: beside a number ("8" of a stat), or inside a sentence between words
+      ("adopt a 🐶 in the Shop"); a prefix at the start of a line or a tail at its end is only decoration */
+   const midWords=typeof prev==='string'&&/\p{L}[\s,]*$/u.test(prev)&&typeof next==='string'&&/^[\s,]*\p{L}/u.test(next)||(prev&&typeof prev!=='string'&&next&&typeof next==='string'&&/^[\s,]*\p{L}/u.test(next)&&i>1);
+   const byNumber=(typeof prev==='string'&&/\d\s?$/.test(prev))||(typeof next==='string'&&/^\s?\d/.test(next));
+   if(!ic&&LINE_OF[x.e]&&(midWords||byNumber))ic={l:LINE_OF[x.e]};
    if(!ic&&(slot||inChat||(onlyChild&&LINE_OF[x.e])))ic=LINE_OF[x.e]?{l:LINE_OF[x.e]}:NEAR[x.e]?{c:NEAR[x.e]}:(slot||inChat)?{l:'dot'}:null;
    if(ic){frag.appendChild(iconEl(ic,x.raw));continue;}
    /* hidden, together with one space beside it so no gap is left behind */

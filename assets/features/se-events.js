@@ -237,7 +237,7 @@ export function install(G){
  if(!$('seEvCss')){
   const st=document.createElement('style'); st.id='seEvCss';
   st.textContent=`
-#seEv{position:fixed;inset:0;z-index:10;display:none;font-family:Nunito,system-ui,sans-serif;color:#fff;overflow:hidden;user-select:none;-webkit-user-select:none}
+#seEv{position:fixed;inset:0;z-index:10;display:none;font-family:Nunito,system-ui,sans-serif;color:#fff;overflow:clip;user-select:none;-webkit-user-select:none}
 #seEv.on{display:block}
 #seEv .sev-dim{position:absolute;inset:0;background:rgba(18,18,26,.34);backdrop-filter:blur(2.5px) saturate(.55) brightness(.8);-webkit-backdrop-filter:blur(2.5px) saturate(.55) brightness(.8)}
 #seEv .se-strip{position:absolute}
@@ -253,7 +253,7 @@ export function install(G){
 #seEv .sev-tab.on{background:linear-gradient(180deg,#d6b27a,#b48a52);color:#34240f}
 #seEv .sev-tab.lock{color:#c9c6e6}
 #seEv .sev-tab i{position:absolute;top:3px;right:4px;width:8px;height:8px;border-radius:50%;background:#e43a33;box-shadow:0 0 0 1.5px #fff}
-#seEv .sev-point{position:absolute;top:100%;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid #b48a52;transform:translateX(-50%);transition:left .25s}
+#seEv .sev-point{position:absolute;top:calc(50% + clamp(15px,2.3vh,19px));width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid #b48a52;transform:translateX(-50%);transition:left .25s}
 #seEv .sev-dots{position:absolute;top:50%;width:9px;height:9px;border-radius:50%;border:2px solid rgba(215,215,225,.7);background:#2a2940;transform:translate(-50%,-50%)}
 /* the carousel */
 #seEv .sev-stage{position:absolute;left:0;right:0;top:calc(${TOP} + clamp(56px,9vh,76px));bottom:clamp(40px,6.5vh,56px);touch-action:pan-y}
@@ -275,7 +275,7 @@ export function install(G){
 #seEv .sev-photo::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(40,25,10,.4));pointer-events:none}
 #seEv .sev-ring{position:absolute;left:50%;top:43%;width:clamp(96px,18vh,142px);height:clamp(96px,18vh,142px);transform:translate(-50%,-50%);z-index:1}
 #seEv .sev-ring svg{width:100%;height:100%;display:block;overflow:visible}
-#seEv .sev-pct{position:absolute;left:0;right:0;top:calc(43% + clamp(48px,9vh,71px));text-align:center;font:900 clamp(15px,2.6vh,20px)/1 Nunito,system-ui,sans-serif;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7);z-index:1}
+#seEv .sev-pct{position:absolute;left:50%;transform:translateX(-50%);top:calc(43% + clamp(50px,9.4vh,74px));text-align:center;font:900 clamp(15px,2.6vh,20px)/1 Nunito,system-ui,sans-serif;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7);z-index:1;background:rgba(24,18,10,.62);border-radius:10px;padding:2px 10px}
 #seEv .sev-gold{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;height:clamp(22px,3.5vh,28px);padding:0 18px;z-index:1;white-space:nowrap;
  background:rgba(38,34,30,.88);color:#f4eedd;font:800 clamp(10.5px,1.7vh,13px)/1 Nunito,system-ui,sans-serif;clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,10px 100%,0 50%)}
 #seEv .sev-gold svg{width:clamp(16px,2.6vh,20px);height:clamp(16px,2.6vh,20px)}
@@ -285,6 +285,7 @@ export function install(G){
 #seEv .sev-foot .sev-lv{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:rgba(255,255,255,.18);font-size:12px}
 #seEv .sev-new{position:absolute;right:-6px;top:-14px;z-index:3;padding:4px 9px;background:linear-gradient(180deg,#ffd34d,#f2b01e);color:#3b2600;font:900 clamp(10px,1.7vh,13px)/1 Georgia,serif;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 4px rgba(0,0,0,.35)}
 #seEv .sev-feat{position:absolute;left:37%;top:-14px;z-index:3;padding:4px 9px;background:linear-gradient(180deg,#b5dcff,#72aee8);color:#10233f;font:900 clamp(10px,1.7vh,13px)/1 Georgia,serif;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 4px rgba(0,0,0,.35)}
+#seEv .sev-photo:has(.sev-lockv) :is(.sev-ring,.sev-pct,.sev-gold){display:none}
 #seEv .sev-lockv{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(20,18,30,.5);text-align:center;padding:10%}
 #seEv .sev-lockv svg{width:34px;height:34px}
 #seEv .sev-lockv b{font:800 clamp(13px,2.2vh,17px)/1.2 Georgia,serif;text-transform:uppercase;letter-spacing:.4px}
@@ -396,7 +397,7 @@ export function install(G){
 
  /* ---------------------------------------------------------------- the screen ------------ */
  const root=document.createElement('div'); root.id='seEv'; root.setAttribute('role','dialog'); root.setAttribute('aria-label','Riding Events');
- root.innerHTML='<div class="sev-dim"></div><div class="sev-towns"><span class="sev-tabs" id="sevTabs"></span></div>'
+ root.innerHTML='<div class="sev-dim"></div><div class="sev-towns"><span class="sev-tabs" id="sevTabs"></span><span class="sev-point" id="sevPoint"></span></div>'
   +'<div class="sev-stage" id="sevStage"></div>'
   +'<div class="sev-promo wk" id="sevWeek"></div>'
   +'<div class="sev-links"><button class="se-cream" data-sev="special" id="sevSpecial" style="display:none"></button><button class="se-cream" data-sev="ladder">Ladder</button><button class="se-cream" data-sev="classic">All events</button></div>'
@@ -433,8 +434,8 @@ export function install(G){
   /* the tabs */
   const tabs=$('sevTabs');
   tabs.innerHTML=TW.map((t,i)=>{const lk=townLock(t.name);const fresh=!lk&&t.evs.some(ev=>!ev.special&&gate(ev).ok&&!((s.ribbons||{})[ev.id]));
-   return '<button class="sev-tab'+(i===ti?' on':'')+(lk?' lock':'')+'" data-town="'+i+'" title="'+esc(lk||t.name)+'">'+(lk?K.line('lock',i===ti?'#34240f':'#fff',2.4):'')+esc(t.name.replace(/ Ranch$/,''))+(fresh&&i!==ti?'<i></i>':'')+'</button>';}).join('')+'<span class="sev-point" id="sevPoint"></span>';
-  requestAnimationFrame(()=>{const on=tabs.querySelector('.sev-tab.on'),pt=$('sevPoint');if(on&&pt){pt.style.left=(on.offsetLeft+on.offsetWidth/2)+'px';on.scrollIntoView({block:'nearest',inline:'center'});}});
+   return '<button class="sev-tab'+(i===ti?' on':'')+(lk?' lock':'')+'" data-town="'+i+'" title="'+esc(lk||t.name)+'">'+(lk?K.line('lock',i===ti?'#34240f':'#fff',2.4):'')+esc(t.name.replace(/ Ranch$/,''))+(fresh&&i!==ti?'<i></i>':'')+'</button>';}).join('');
+  requestAnimationFrame(()=>{const on=tabs.querySelector('.sev-tab.on'),pt=$('sevPoint');if(on&&pt){tabs.scrollLeft=Math.max(0,on.offsetLeft-(tabs.clientWidth-on.offsetWidth)/2);pt.style.left=(tabs.offsetLeft+on.offsetLeft-tabs.scrollLeft+on.offsetWidth/2)+'px';}});   // only the strip scrolls: scrollIntoView moved the whole screen
   /* the cards */
   const T0=TW[ti]; if(!T0){$('sevStage').innerHTML='';return;}
   const lk=townLock(T0.name), feat=featured();
@@ -557,11 +558,11 @@ export function install(G){
   if(mv.kind==='route'){
    const d='M'+P.map(p=>f1(p[0])+' '+f1(p[1])).join('L');
    s+='<path d="'+d+'" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="11" stroke-linejoin="round" stroke-linecap="round"/><path d="'+d+'" fill="none" stroke="#fff" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="1 0"/>';
-   P.forEach((p,i)=>{s+='<circle cx="'+f1(p[0])+'" cy="'+f1(p[1])+'" r="15" fill="'+(i===0?'#3fae5a':i===P.length-1?'#d94b3b':'#26245e')+'" stroke="#fff" stroke-width="3"/><text x="'+f1(p[0])+'" y="'+f1(p[1]+5.5)+'" text-anchor="middle" font-family="Nunito,system-ui,sans-serif" font-weight="900" font-size="15" fill="#fff">'+(i===0?'S':i+'')+'</text>';});
+   P.forEach((p,i)=>{s+='<circle cx="'+f1(p[0])+'" cy="'+f1(p[1])+'" r="15" fill="'+(i===0?'#23703a':i===P.length-1?'#b3362a':'#26245e')+'" stroke="#fff" stroke-width="3"/><text x="'+f1(p[0])+'" y="'+f1(p[1]+5.5)+'" text-anchor="middle" font-family="Nunito,system-ui,sans-serif" font-weight="900" font-size="15" fill="#fff">'+(i===0?'S':i+'')+'</text>';});
   }else if(mv.kind==='fences'){
    const d='M'+P.map(p=>f1(p[0])+' '+f1(p[1])).join('L')+'Z';
    s+='<path d="'+d+'" fill="none" stroke="rgba(0,0,0,.5)" stroke-width="9" stroke-linejoin="round"/><path d="'+d+'" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="14 9" stroke-linejoin="round"/>';
-   P.forEach((p,i)=>{s+='<circle cx="'+f1(p[0])+'" cy="'+f1(p[1])+'" r="17" fill="#2e86c1" stroke="#fff" stroke-width="3"/><text x="'+f1(p[0])+'" y="'+f1(p[1]+6)+'" text-anchor="middle" font-family="Nunito,system-ui,sans-serif" font-weight="900" font-size="17" fill="#fff">'+(i+1)+'</text>';});
+   P.forEach((p,i)=>{s+='<circle cx="'+f1(p[0])+'" cy="'+f1(p[1])+'" r="17" fill="#1f5f8f" stroke="#fff" stroke-width="3"/><text x="'+f1(p[0])+'" y="'+f1(p[1]+6)+'" text-anchor="middle" font-family="Nunito,system-ui,sans-serif" font-weight="900" font-size="17" fill="#fff">'+(i+1)+'</text>';});
   }else{
    const d='M'+P.map(p=>f1(p[0])+' '+f1(p[1])).join('L')+'Z';
    s+='<path d="'+d+'" fill="none" stroke="rgba(0,0,0,.5)" stroke-width="9"/><path d="'+d+'" fill="none" stroke="#fff" stroke-width="4"/>';
