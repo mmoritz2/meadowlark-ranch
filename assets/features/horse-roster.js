@@ -756,7 +756,7 @@ export function install(G){
   }).join('');
   const locked=BREEDS3.filter(b=>!G.horse.breedAvailable(b,'shop')&&(!shopStars||starsOfBreed(b)===shopStars));
   html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">🔒 Not on the shelf · '+locked.length+' horses come from play — <button data-fx="open:catalogPanel" style="font-size:11px;padding:2px 8px">📖 Catalogue</button></div>';
-  html+=locked.slice(0,40).map(b=>'<div class="evrow" style="opacity:.85">'+icoOf(b)+' <b>'+esc(b[1])+'</b>'+badgeOf(b)+'<span><span style="color:#d9a520;letter-spacing:-2px">'+STAR.repeat(starsOfBreed(b))+'</span> '+howToGet(b)+'</span></div>').join('');
+  html+=locked.map(b=>'<div class="evrow" style="opacity:.85">'+icoOf(b)+' <b>'+esc(b[1])+'</b>'+badgeOf(b)+'<span><span style="color:#d9a520;letter-spacing:-2px">'+STAR.repeat(starsOfBreed(b))+'</span> '+howToGet(b)+'</span></div>').join('');
   html+='<span style="font-size:11px;color:#8c7a63">'+s.horses.length+' horses and counting · no limits — new friends graze in the Home Pasture</span>';
   return html;
  }});
@@ -856,7 +856,8 @@ export function install(G){
  G.quest.addAch({id:'peg10',icon:'🪽',label:'Soaring speed',desc:'Master a winged horse',v:s=>Math.max(0,...s.horses.filter(h=>h.wings).map(h=>Math.round(10*G.xp.masteryOf(s,h.breed)/mxOf(h.breed))),0),goal:10,r:{g:5}});
 
  /* ---- 10. exports for the other packages ----------------------------------------------- */
- G.horse.roster={rungOf,mxOf,TIER_STARS,COATS3,TRAITS3,VARIANT_RECIPES,DRAGON_FAMILY,BREED_PERKS,FLIGHT_UNLOCKS,FANTASY_CEIL,NEW_THEMES:Object.keys(NEW_THEMES),SEASON_CALL_GEMS,SEASON_CALL_PITY,
+ /* SRC_LABEL is shared so a later package can add the words for a source of its own (new-breeds: a week of riding) */
+ G.horse.roster={SRC_LABEL,rungOf,mxOf,TIER_STARS,COATS3,TRAITS3,VARIANT_RECIPES,DRAGON_FAMILY,BREED_PERKS,FLIGHT_UNLOCKS,FANTASY_CEIL,NEW_THEMES:Object.keys(NEW_THEMES),SEASON_CALL_GEMS,SEASON_CALL_PITY,
   rarityOf,starsN,starsOf,starsOfBreed,variantOf,variantLabel,coatsFor,rollCoat3,applyVariant,rollAppearance,rollTraits,traitsOf,perkFor,resolveVariant,howToGet,
   seasonHorses,seasonInfo,grantExclusive,grantSeasonHorse,weeklyCheck,seasonCall,waterDepth,refreshCur,cur,noteCoat,
   PALE_KNEE,PALE_SLOPE,HAIR_FLOOR,tameHex,tailFromMane,groomMats,finishHair,finishTail,lookPass,swish};

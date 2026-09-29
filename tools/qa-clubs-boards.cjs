@@ -202,7 +202,9 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
    shop:G.horse.breedAvailable(row,'shop'),market:G.horse.breedAvailable(row,'market'),summon:G.horse.breedAvailable(row,'summon'),
    pshop:G.horse.breedAvailable(prow,'shop'),src:G.horse.breedSrc(row)};
   G.ui.openShop('horses');
-  out.exclusive.shopHtml=!/Ember Friesian/.test(document.getElementById('shopPanel').textContent)&&!/Larksong/.test(document.getElementById('shopPanel').textContent);
+  /* on sale = a row with a buy button; the shop also lists every horse not on the shelf, with where it comes from */
+  {const forSale=[...document.getElementById('shopPanel').querySelectorAll('.evrow')].filter(r=>r.querySelector('[data-buyh]')).map(r=>r.textContent).join('|');
+   out.exclusive.shopHtml=!/Ember Friesian/.test(forSale)&&!/Larksong/.test(forSale);}
   G.hidePanels();
   return out;
  });
