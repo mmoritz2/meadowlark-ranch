@@ -179,18 +179,18 @@ import * as wOutcrops from './world-outcrops.js';
 import * as uikit from './ui-kit.js';
 import * as ui2horse from './ui2-horse.js';
 import * as ui2shop from './ui2-shop.js';
-import * as ui2compete from './ui2-compete.js';
+import * as ui2compete from './ui2-compete.js?v=2';
 import * as ui2hud from './ui2-hud.js';
-import * as ui2club from './ui2-club.js';
+import * as ui2club from './ui2-club.js?v=2';
 import * as lookGrade from './look-grade.js';
 import * as ui2merge from './ui2-merge.js';
-import * as seHud from './se-hud.js';
-import * as seCare from './se-care.js?v=3';   // versioned so a browser that cached an earlier cut fetches this one
+import * as seHud from './se-hud.js?v=2';   // versioned: the clear view while riding an event
+import * as seCare from './se-care.js?v=4';   // versioned so a browser that cached an earlier cut fetches this one
 import * as onFoot from './on-foot.js?v=6';   // versioned: she walks, runs, jumps, climbs and swims on the animation library's clips, and the view turns round her
-import * as seMarket from './se-market.js';
+import * as seMarket from './se-market.js?v=2';
 import * as treasures from './hidden-treasures.js';   // golden horseshoes on the rocks and in the water, for on-foot
 import * as courseClear from './course-clear.js?v=1';   // a mown, cleared track on every event course; routes bent round what cannot be cleared
-import * as seFrame from './se-frame.js?v=2';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use
-import * as seEvents from './se-events.js?v=1';   // Riding Events as towns and a carousel of entry tickets, each event's page with its course map
-import * as noEmoji from './no-emoji.js?v=1';   // nothing on the page is an emoji: meaningful ones become drawn icons, the rest go (installed last, so it sees everything)
+import * as seFrame from './se-frame.js?v=3';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use
+import * as seEvents from './se-events.js?v=2';   // Riding Events as towns and a carousel of entry tickets, each event's page with its course map
+import * as noEmoji from './no-emoji.js?v=2';   // nothing on the page is an emoji: meaningful ones become drawn icons, the rest go (installed last, so it sees everything)
 export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,seasonHunts,seasonQuests,ev2disc,ev2ladder,courseGuide,wVistas,wFlora,wWater,wAtmos,wQuarters,wPaths,wOutcrops,uikit,ui2horse,ui2shop,ui2compete,ui2hud,ui2club,ui2merge,lookGrade,seHud,seCare,onFoot,seMarket,treasures,courseClear,seFrame,seEvents,noEmoji];
