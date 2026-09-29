@@ -650,7 +650,7 @@ import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-3';
-import {FEATURES} from './assets/features/index.js?v=feat-13';
+import {FEATURES} from './assets/features/index.js?v=feat-14';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -8420,20 +8420,24 @@ function rebuildAll(){
  let n=0;
  try{refreshBarn();}catch(e){}                 // whoever is not out to grass is in a stall
  const _sv=freshSave(); const _pm=_sv?pastureMax(_sv):PASTURE_BASE;
- for(let i=0;i<myHorses.length&&n<_pm;i++){
+ for(let i=0;i<myHorses.length;i++){
   if(i===rideIdx)continue;
-  const hh=myHorses[i];
-  if(!hh.out)continue;                       // in the barn, not in the field
+  const hh=myHorses[i], along=!!_sv&&_sv.companion!=null&&hh.id===_sv.companion&&!hh.egg;   // read from the save: this runs at boot, before companionId is declared further down
+  /* The horse you are taking along comes with you from wherever it is kept. It used to be built only if it
+     was out in the field and the field was not already full, so a foal born into a full pasture, or kept in
+     the barn, said "Following" in the stable and was nowhere to be seen. */
+  if(!along&&(!hh.out||n>=_pm))continue;     // in the barn, not in the field (or the field is full)
   const parts=makeHorse({colors:hh.colors,horn:hh.horn,wings:hh.wings,dragon:hh.dragon,coat:hh.coat,tack:hh.tack||null,seed:hh.id||(i+2),breed:hh.breed});
   parts.group.scale.setScalar(horseScale(hh));
   const sp=nameSprite(hh.name);
   sp.position.y=3.0;
   parts.group.add(sp);
-  const ax=PAST.x1+4+Math.random()*(PAST.x2-PAST.x1-8),az=PAST.z1+4+Math.random()*(PAST.z2-PAST.z1-8);
+  let ax=PAST.x1+4+Math.random()*(PAST.x2-PAST.x1-8),az=PAST.z1+4+Math.random()*(PAST.z2-PAST.z1-8);
+  if(along&&player){ax=player.pos.x-Math.sin(player.heading)*3+Math.cos(player.heading)*1.5;az=player.pos.z-Math.cos(player.heading)*3-Math.sin(player.heading)*1.5;}   // at her side, not across the ranch
   parts.group.position.set(ax,0,az);
   scene.add(parts.group);
-  herd.push({parts,idx:i,pos:new THREE.Vector3(ax,0,az),heading:Math.random()*6,tx:ax,tz:az,rest:Math.random()*4,phase:Math.random()*6,graze:0,earT:1+Math.random()*4,earA:0});
-  n++;
+  herd.push({parts,idx:i,pos:new THREE.Vector3(ax,0,az),heading:along&&player?player.heading:Math.random()*6,tx:ax,tz:az,rest:Math.random()*4,phase:Math.random()*6,graze:0,earT:1+Math.random()*4,earA:0});
+  if(!along)n++;
  }
  G.run('rebuild');
 }
@@ -11861,6 +11865,7 @@ function renderStable(){
    const h=myHorses[i];
    companionId=(companionId===h.id)?null:h.id;
    syncSave(s=>{s.companion=companionId;});
+   rebuildAll();   // build the foal beside her now (a foal in the barn is not in the world until it is taken along), and put a barn foal back when it is left home
    toast(companionId?'🍼 '+h.name+' is following you now!':'🍼 '+h.name+' stays in the pasture.');
    renderStable();
   }

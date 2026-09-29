@@ -438,7 +438,8 @@ export function install(G){
  function back(){
   if(root.classList.contains('sheet')){root.classList.remove('sheet');return;}
   if(st.page){st.page=null;root.classList.remove('page');paint();return;}
-  closeAll();
+  const f=K.takeBack('eventsPanel');   // a screen that sent the player here (My Journey's discipline cards) gets them back
+  closeAll(); if(f)setTimeout(()=>{try{f();}catch(e){}},0);
  }
  function show(){st.on=true;root.classList.add('on');K.settle();paint();}
  function hide(){st.on=false;st.page=null;root.classList.remove('on','page','sheet');K.settle();}
@@ -673,5 +674,5 @@ export function install(G){
  G.on('courseStart',()=>{if(st.on){st.page=null;root.classList.remove('page','sheet');const P=$('eventsPanel');if(P)P.style.display='none';}});   // only this screen closes: a card a discipline opens at the start (the judge's card) stays up
  G.on('state',o=>{o.seEvents={on:st.on,town:st.townName||null,card:st.on&&TW[st.town]?(TW[st.town].evs[st.cur[TW[st.town].name]||0]||{}).id:null,page:st.page,sheet:root.classList.contains('sheet'),
   towns:TW.map(t=>({name:t.name,n:t.evs.length,lock:!!townLock(t.name)}))};});
- G.seEvents={open:()=>{const b=$('eventsBtn');if(b)b.click();},openPage:id=>{const ev=evById(id);if(ev)openPage(ev);},move,paint,ticketSvg,horseSvg,towns,venueView,mapView,state:st};
+ G.seEvents={open:()=>{const b=$('eventsBtn');if(b)b.click();},openPage:id=>{const ev=evById(id);if(ev)openPage(ev);},move,paint,ticketSvg,horseSvg,scene,towns,venueView,mapView,state:st};
 }

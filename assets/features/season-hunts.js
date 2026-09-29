@@ -81,7 +81,7 @@ export function install(G){
   const h=groundH(x,z);
   if(Math.abs(z-riverZ(x))<55&&h<riverLevel(x)+0.35)return false;    // the wet bottoms either side of the channel
   if(Math.abs(groundH(x+1.5,z)-h)>1.0||Math.abs(groundH(x,z+1.5)-h)>1.0)return false;
-  for(const c of W.colliders){if(Math.abs(c.x-x)>9)continue;if(hyp(x,z,c.x,c.z)<(c.r||1)+1.4)return false;}
+  for(const c of W.colliders){const R=(c.r||1)+1.4;if(Math.abs(c.x-x)>R)continue;if(hyp(x,z,c.x,c.z)<R)return false;}   // the reach is the collider's own: a canyon mesa is fourteen metres round, and a flat 9 m cut-off laid an egg inside one
   return true;
  }
  P.placeable=placeable;
@@ -156,7 +156,7 @@ export function install(G){
  function resettle(){
   for(const h of HUNTS){ if(!h.live)continue;
    for(const it of h.items){ if(it.got)continue;
-    if(!W.colliders.some(c=>Math.abs(c.x-it.x)<=9&&hyp(it.x,it.z,c.x,c.z)<(c.r||1)+1.4))continue;
+    if(!W.colliders.some(c=>hyp(it.x,it.z,c.x,c.z)<(c.r||1)+1.4))continue;
     const zone=ZONES.find(z=>z.id===it.zone); if(!zone)continue;
     const at=spotIn(zone,lcg(huntSeed(h.def)+'|moved|'+it.i));
     it.x=at[0]; it.z=at[1]; it.y=groundH(at[0],at[1])+(h.def.lift==null?0.05:h.def.lift);

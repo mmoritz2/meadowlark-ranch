@@ -98,6 +98,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 480 s');try{if(bro
   out.closed={panel:P.style.display,screen:G.seEvents.state.on,hud:getComputedStyle($('seHudRoot')).visibility};
   /* a menu with tabs, framed */
   $('questBtn').click(); await wait(300);
+  G.seFrame.classic('questPanel'); await wait(250);   // the Journey is a hub now; its full list is the classic view
   const Q=$('questPanel'), tabs=[...Q.querySelectorAll('.mk-panel-body>.crow>.tabbtn')];
   out.frame={framed:Q.classList.contains('se-fr'),tabsLeft:Q.classList.contains('se-fr-tabs'),split:tabs.length>3&&tabs.every(b=>b.dataset.seL),col:tabs[0]?Math.round(tabs[0].getBoundingClientRect().left):null,
    title:$('seFrameTop').querySelector('.se-ttl-b').textContent,strip:vis($('seFrameTop'))};
