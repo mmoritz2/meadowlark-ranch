@@ -239,7 +239,8 @@ const ready=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
   out.regen={base:+base.toFixed(3),friesian:+fr.toFixed(3),ratio:+(fr/base).toFixed(2)};
   /* fast sprint + sliding stop with bond 80 vs bond 10 */
   const gallop=()=>{p.pos.set(-70,0,-10);p.heading=0;p.speed=0;p.stam=1;p.blown=false;Q.key('ArrowUp');Q.key('ShiftLeft');window.advanceTime(3000);const v=Q.st().player.speed;return v;};
-  h.bond=10; const v10=gallop(); Q.release(); Q.key('KeyX'); window.advanceTime(500); const slide10=Q.st().player; Q.key('KeyX',false); window.advanceTime(1500);
+  /* the bond goes in the save too: riding copies the saved bond back over the horse in hand every 200 m */
+  h.bond=10; G.save.sync(s=>{s.horses[G.horse.rideIdx()].bond=10;}); const v10=gallop(); Q.release(); Q.key('KeyX'); window.advanceTime(500); const slide10=Q.st().player; Q.key('KeyX',false); window.advanceTime(1500);
   h.bond=79; G.save.sync(s=>{s.horses[G.horse.rideIdx()].bond=79;}); const v80=gallop(); Q.release(); Q.key('KeyX'); window.advanceTime(100); const sl=Q.st().player; const icon=document.getElementById('gaitEl').textContent; window.advanceTime(400); const sl2=Q.st().player; Q.key('KeyX',false); window.advanceTime(1200); const sl3=Q.st().player;
   out.tricks={v10,v80,ratio:+(v80/v10).toFixed(3),slide10:slide10.slide,speed10:slide10.speed,slide80:sl.slide,icon,speed80:sl2.speed,stopped:sl3.speed,slides:(G.save.fresh().stats||{}).slides};
   /* S from a gallop also slides at bond 3+ */

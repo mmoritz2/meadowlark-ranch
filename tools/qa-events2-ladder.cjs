@@ -68,11 +68,20 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  const r2=await page.evaluate(()=>{
   const G=window.__features, out={};
   const pp=G.tables.EVENTS3.find(e=>e.id==='pp');
+  window.__toasts.length=0;
   G.course.startCourse(pp);
+  /* ONE field: the countdown call, the line-up message, the live board, the course readout and the
+     state all name the same riders. There used to be two fields, the pace-setters and ours, with
+     different names in each (and one ranch in both). */
+  out.caption=(document.getElementById('ev2Call')||{}).innerText||'';
+  out.lineup=(window.__toasts||[]).filter(t=>/line up beside you/.test(t)).pop()||'';
   window.advanceTime(4200);                       // through the countdown
   const F=G.ladder.FIELD();
   out.n=F?F.rivals.length:0;
   out.named=F?F.rivals.map(r=>r.n):[];
+  out.pacers=G.events2&&G.events2.ghosts?G.events2.ghosts.list.map(g=>g.nm):[];
+  {const c0=G.course.get(), j0=c0.jumps[0]; out.atGo=F?F.rivals.map(r=>r.g?+Math.hypot(r.g.position.x-j0.x,r.g.position.z-j0.z).toFixed(1):null):[];
+   out.stateNames=((JSON.parse(render_game_to_text()).ev2||{}).race||{}).pacers?JSON.parse(render_game_to_text()).ev2.race.pacers.map(g=>g.n):[];}
   out.fromValley=out.named.every(n=>G.tables.NEIGHBOURS.some(([nm])=>nm===n));
   /* the rivals are IN THE WORLD, not just in a number */
   out.inScene=F?F.rivals.filter(r=>r.g&&r.g.parent===G.scene).length:0;
@@ -86,6 +95,8 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   out.hudTxt=hud.innerText;
   out.hudNames=out.named.filter(n=>out.hudTxt.includes(n)).length;
   out.hudGap=/[-+]\d+\.\d+s/.test(out.hudTxt);
+  out.readout=(document.getElementById('courseHudTxt')||{}).textContent||'';
+  {const m1=/P(\d+)\/(\d+)/.exec(out.hudTxt), m2=/P(\d+)\/(\d+)/.exec(out.readout); out.samePlace=!!(m1&&m2&&m1[0]===m2[0]);}
   /* standing still, three riders who left the box are ahead of you */
   let st=JSON.parse(render_game_to_text());
   out.placeBehind=st.course.place; out.field=st.course.field;
@@ -103,6 +114,11 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('a solo race spawns a named field drawn from the valley',r2.n>=3&&r2.fromValley,{n:r2.n,names:r2.named});
  check('the rivals are horses in the scene, not numbers',r2.inScene===r2.n&&r2.moved>2,{inScene:r2.inScene,moved:+r2.moved.toFixed(1)});
  check('the live board names them and shows the gap in seconds',r2.hudOn&&r2.hudNames>=2&&r2.hudGap,{hud:r2.hudTxt});
+ check('one field: the call, the line-up message, the live board, the readout and the state name the same riders, and the same placing',
+  r2.n>=3&&r2.named.every(n=>r2.caption.includes(n)&&r2.lineup.includes(n)&&r2.hudTxt.includes(n))&&r2.pacers.length===r2.n
+  &&r2.pacers.every(n=>r2.named.includes(n))&&r2.stateNames.join()===r2.pacers.join()&&r2.samePlace,
+  {named:r2.named,pacers:r2.pacers,state:r2.stateNames,caption:r2.caption,lineup:r2.lineup,hud:r2.hudTxt,readout:r2.readout});
+ check('at GO nobody in the field is standing in gate one',r2.atGo.length===r2.n&&r2.atGo.every(d=>d!=null&&d>3),r2.atGo);
  check('placing moves with the race',r2.placeBehind>1&&r2.placeAhead===1&&r2.field>=3,
   {behind:r2.placeBehind,ahead:r2.placeAhead,field:r2.field});
  check('render_game_to_text carries the field for a solo race',r2.rivals>=4,r2.rivals);
@@ -464,6 +480,8 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   const ride=async id=>{
    const ev=G.tables.EVENTS3.find(e=>e.id===id);
    G.course.startCourse(ev);
+   /* a showmanship class waits while the judge's card is up; a rider who has read it says so */
+   const ready=document.querySelector('#ev2SheetPanel [data-fx="ev2:ready"]'); if(ready)ready.click();
    window.advanceTime(4200);
    for(let n=0;n<80&&G.course.get();n++){
     const cc=G.course.get(); const f=cc.figs&&cc.figs[cc.fi]; if(!f)break;
@@ -482,27 +500,74 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
      window.advanceTime((f.hold?f.hold*1000:0)+900);
     }
    }
-   await new Promise(r=>setTimeout(r,700));
-   return document.getElementById('resultPanel').innerText||'';
+   /* the card opens on a real timer a moment after the finish; wait for it rather than guess */
+   const w0=Date.now(); while(Date.now()-w0<5000&&document.getElementById('resultPanel').style.display!=='flex')await new Promise(r=>setTimeout(r,60));
+   await new Promise(r=>setTimeout(r,200));
+   const ep=document.getElementById('ev2ResultPanel');
+   out.cards=(out.cards||[]).concat([{id,result:document.getElementById('resultPanel').style.display,ev2:ep?ep.style.display:null}]);
+   return document.getElementById('resultPanel').textContent||'';   // textContent: the frame's capitals are only paint
   };
   const d=await ride('d1');
+  const dl=d.toLowerCase();
   out.dDone=G.course.get()===null;
-  out.dSheet=d.includes('The test, figure by figure');
+  out.dSheet=dl.includes('the test, figure by figure');
   out.dFigures=(d.match(/\d+\/10/g)||[]).length;
-  out.dMark=/Final mark\s*\n?\s*\d+%/.test(d.replace(/\n/g,'\n'));
+  out.dMark=/final mark\s*\d+%/i.test(d);
   out.dTxt=d.slice(0,500);
   const s2=await ride('s1');
+  const sl=s2.toLowerCase();
   out.sDone=G.course.get()===null;
-  out.sTurnout=/Turnout \d+%/.test(s2);
-  out.sParts=['Coat & grooming','Mane & tail','Tack turnout','Manners'].filter(k=>s2.includes(k)).length;
-  out.sPattern=s2.includes('The pattern');
-  out.sTxt=s2.slice(0,500);
+  out.sTurnout=/turnout \d+%/i.test(s2);
+  out.sParts=['coat & grooming','mane & tail','tack turnout','manners'].filter(k=>sl.includes(k)).length;
+  out.sPattern=sl.includes('the pattern');
+  out.sHandling=/handling in the ring\s*\d+%/i.test(s2);
+  out.sFigures=sl.includes('figure by figure')&&(s2.match(/\d+\/10/g)||[]).length>=4;
+  out.sTwoHandlings=/handling \d+% · final/i.test(s2);
+  out.sTxt=s2.slice(0,700);
   return out;
  });
  check('a dressage test ends on its own score sheet, figure by figure',
   r12.dDone&&r12.dSheet&&r12.dFigures>=5,{sheet:r12.dSheet,figures:r12.dFigures,txt:r12.dTxt});
  check('a showmanship class ends on the turnout breakdown the judge marked',
   r12.sDone&&r12.sTurnout&&r12.sParts>=3&&r12.sPattern,{turnout:r12.sTurnout,parts:r12.sParts,txt:r12.sTxt});
+ /* Every finish used to open the discipline's card and then, a third of a second later, this one
+    over it. One card now, and it carries what the other one had: the judge's handling mark and
+    the pattern figure by figure — and not events-pvp's summary line that calls the pattern mark
+    'handling', which put two different handling numbers on the same card. */
+ check('a judged finish puts up ONE card, with the handling mark and the pattern figure by figure',
+  r12.cards.every(c=>c.result==='flex'&&c.ev2!=='flex')&&r12.sHandling&&r12.sFigures&&!r12.sTwoHandlings,
+  {cards:r12.cards,handling:r12.sHandling,figures:r12.sFigures,twoHandlings:r12.sTwoHandlings});
+
+ /* ---------------------------------------------------------------- 13. locked entries ---- */
+ /* The full card offered a gold 'Enter' for a difficulty the horse had not reached (Elite opens two
+    levels after the event), and pressing it closed every menu and started nothing. */
+ const r13=await page.evaluate(async()=>{
+  const G=window.__features, out={};
+  G.hidePanels();
+  G.save.sync(s=>{const h=s.horses[G.horse.rideIdx()];h.level=1;s.evDiff=2;}); G.horse.reloadHorses();
+  G.ui.dispatch('lad:why:h1');
+  const rp=document.getElementById('resultPanel');
+  out.open=rp.style.display==='flex';
+  out.enter=!!rp.querySelector('[data-fx="lad:again:h1"]');
+  const lk=rp.querySelector('.ladLock'); out.lock=lk?lk.textContent:'';
+  /* the page was reloaded in section 8, which took the toast spy with it */
+  if(!window.__toasts){window.__toasts=[];const t0=G.toast;G.toast=m=>{window.__toasts.push(String(m));return t0(m);};}
+  window.__toasts.length=0;
+  G.ui.dispatch('lad:again:h1');
+  out.started=!!G.course.get();
+  out.stillOpen=rp.style.display==='flex';
+  out.told=(window.__toasts||[]).some(t=>/opens at Lv 3/.test(t));
+  /* the level it asks for, reached: the Enter button is back */
+  G.save.sync(s=>{const h=s.horses[G.horse.rideIdx()];h.level=12;}); G.horse.reloadHorses();
+  G.ui.rerender('resultPanel');
+  out.enterBack=!!rp.querySelector('[data-fx="lad:again:h1"]');
+  G.save.sync(s=>{s.evDiff=1;}); G.hidePanels();
+  return out;
+ });
+ check('the full card shows a locked difficulty as a lock, not as an Enter button',
+  r13.open&&!r13.enter&&/opens at Lv 3/.test(r13.lock)&&r13.enterBack,{open:r13.open,enter:r13.enter,lock:r13.lock,enterBack:r13.enterBack});
+ check('riding a locked round from the ladder says why and leaves the menu open',
+  !r13.started&&r13.stillOpen&&r13.told,{started:r13.started,stillOpen:r13.stillOpen,told:r13.told});
 
  /* ---------------------------------------------------------------- done ----------------- */
  const state=await page.evaluate(()=>render_game_to_text());

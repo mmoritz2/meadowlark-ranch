@@ -107,7 +107,14 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
      out.offLine=+Math.abs((j.x-p.pos.x)*Math.cos(j.rotY)-(j.z-p.pos.z)*Math.sin(j.rotY)).toFixed(2);
      out.blockedJ0=wallsAcross(j.x,j.z);
      out.nearOther=c.jumps.length>1?+Math.min.apply(null,c.jumps.slice(1).map(q=>Math.hypot(p.pos.x-q.x,p.pos.z-q.z))).toFixed(2):999;
+     /* and how far she is from the nearest other fence's RAILS: the segment between its standards,
+        which stand 1.6 m either side of its middle, so 1.7 m to their outer faces */
+     out.nearOtherRail=c.jumps.length>1?+Math.min.apply(null,c.jumps.slice(1).map(q=>{const lx=p.pos.x-q.x,lz=p.pos.z-q.z,r=q.rotY||0;
+      const al=lx*Math.cos(r)-lz*Math.sin(r), ac=lx*Math.sin(r)+lz*Math.cos(r); return Math.hypot(Math.max(0,Math.abs(al)-1.7),ac);})).toFixed(2):999;
     }
+    /* whether this start is inside a town's railed ring, and whether she is inside its rail */
+    try{ const R=G.events2.ringOf&&G.events2.ringOf(c); out.ring=!!R;
+     if(R){ out.ringAt=[R.x,R.z]; out.inRing=G.events2.inRing(R,p.pos.x,p.pos.z,0); } }catch(e){ out.ring=false; }
     /* or the letters she is pointed down */
     if(c&&c.dressage){
      const AL=G.course.ARENA_LETTERS, A=AL.A, C=AL.C;
@@ -177,8 +184,16 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
    check(name+' — behind the first obstacle, square to it, on its approach, with a clear run to it',
     r.distJ0>=3&&r.distJ0<=24&&r.square<0.02&&r.offLine<=6.1&&r.blockedJ0===0,
     {dist:r.distJ0,squareErr:r.square,offCentre:r.offLine,facing:r.facing,wallsAcross:r.blockedJ0});
+   /* Five metres from every other fence's middle is the rule in the open. Inside a town's ring it
+      cannot be met: on a ten- to twelve-fence course the ring is 20 x 15 and fence one sits a few
+      metres from both the rail and the last fence, so no spot behind it and inside the rail is five
+      metres from that fence's middle (Hollowpeak's twelve-fence final measured 2.6 at best). What
+      matters there is that she is not standing IN a fence: clear of its rails by 1.75 m or more and
+      2.5 m from its middle, which is the package's own in-ring rule (1.8 m off rails it treats as
+      1.8 m long either way) with five centimetres for world.js's push-out. */
    check(name+' — the box is not planted on top of another obstacle',
-    r.nearOther>=5,{nearest:r.nearOther});
+    r.ring?(r.nearOtherRail>=1.75&&r.nearOther>=2.5):r.nearOther>=5,
+    {nearest:r.nearOther,nearestRail:r.nearOtherRail,inTownRing:!!r.ring});
   }
   check(name+' — the countdown names the venue on screen',
    r.callShown&&r.hudShown&&r.call.indexOf(opts.town||'')>=0,
@@ -209,9 +224,13 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  stage('show jumping');
  const h1=await enter('h1');
  landing('show jumping · Cottonwood Welcome Jump',h1,{obstacle:true,town:'Cottonwood'});
- check('show jumping · the hack across the valley is gone: the yard is 100 m+ from the line',
-  h1.moveddist>100&&linedAt(h1,'Cottonwood')&&/first fence is ahead/.test((h1.toasts||[]).join('|')),
-  {from:h1.from,to:h1.pos,moved:h1.moveddist});
+ /* This read 'the yard is 100 m+ from the line', which was Cottonwood's distance when world.js let
+    the town arenas settle anywhere; they stand at fixed spots now and Cottonwood's ring is 84.8 m
+    from the yard. What was always meant: she is carried out of the yard and set down inside the
+    Cottonwood ring's rail, and told so — not left in the yard to hack there. */
+ check('show jumping · the hack across the valley is gone: she is carried from the yard into the Cottonwood ring',
+  h1.moveddist>40&&h1.ring&&h1.inRing&&linedAt(h1,'Cottonwood')&&/first fence is ahead/.test((h1.toasts||[]).join('|')),
+  {from:h1.from,to:h1.pos,moved:h1.moveddist,ring:h1.ringAt||null,insideRail:!!h1.inRing});
  const w2=await enter('w2');
  landing('show jumping · Basin Championship Final (12 fences, Hollowpeak)',w2,{obstacle:true,town:'Hollowpeak'});
  const tc=await enter('tc');
@@ -426,6 +445,156 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   ride.startedFromBox&&ride.gold&&ride.acc>=0.95&&/gold ribbon/.test(ride.result),
   {gold:ride.gold,acc:ride.acc,tries:ride.tries,startedAt:ride.startedAt,faults:ride.faults,
    grades:ride.grades,elim:ride.elim,result:(ride.result||'').slice(0,160)});
+
+ /* ---------------------------------------------------------------- 10b. restart, field, call */
+ stage('restart, field and the call');
+ const rf=await page.evaluate(async()=>{
+  const G=window.__features,S=window.__sl,p=G.horse.player,out={};
+  const pos=()=>[+p.pos.x.toFixed(2),+p.pos.z.toFixed(2)];
+  /* a race given up a stride after gate one rang, entered again from where she stopped: two metres
+     short of gate one and facing down the line, which is inside the twelve-metre courtesy */
+  await S.enter('pp'); window.advanceTime(4200);
+  let c=G.course.get(); const j=c.jumps[0], dx=Math.sin(j.rotY), dz=Math.cos(j.rotY);
+  const short=await S.enter('pp',{from:[+(j.x-dx*2).toFixed(2),+(j.z-dz*2).toFixed(2)],heading:j.rotY});
+  window.advanceTime(4200); c=G.course.get();
+  out.short={lined:(short.toasts||[]).some(t=>/Lined up/.test(t)),dist:short.distJ0,idxAtGo:c?c.idx:null,started:!!(c&&c.started)};
+  const past=await S.enter('pp',{from:[+(j.x+dx*3).toFixed(2),+(j.z+dz*3).toFixed(2)],heading:j.rotY});
+  window.advanceTime(4200); c=G.course.get();
+  out.past={lined:(past.toasts||[]).some(t=>/Lined up/.test(t)),dist:past.distJ0,idxAtGo:c?c.idx:null,started:!!(c&&c.started)};
+  /* the field, during the count and just after GO */
+  const rr=await S.enter('rr'); c=G.course.get();
+  const g0=c.jumps[0], hx=Math.sin(p.heading), hz=Math.cos(p.heading), ax=Math.cos(p.heading), az=-Math.sin(p.heading);
+  const rel=o=>{const lx=o.position.x-p.pos.x, lz=o.position.z-p.pos.z; return {along:+(lx*hx+lz*hz).toFixed(2),side:+(lx*ax+lz*az).toFixed(2),fromOrigin:+Math.hypot(o.position.x,o.position.z).toFixed(1)};};
+  const GH=G.events2.ghosts;
+  out.field={n:GH.list.length,rider:pos(),count:GH.list.map(g=>rel(g.parts.group))};
+  const riderToGate=Math.hypot(p.pos.x-g0.x,p.pos.z-g0.z);
+  window.advanceTime(3800);                                // the count, and a fifth of a second of the race
+  c=G.course.get();
+  out.field.started=!!(c&&c.started);
+  out.field.riderToGate=+riderToGate.toFixed(2);
+  out.field.atGo=GH.list.map(g=>+Math.hypot(g.parts.group.position.x-g0.x,g.parts.group.position.z-g0.z).toFixed(2));
+  /* the story's grey filly followed a new rider onto the course and stood at her shoulder on the
+     start line, among the field; while a course is up she waits out of it */
+  {const f=G.storyQuests&&G.storyQuests.foal&&G.storyQuests.foal(), st=rr.start;
+   out.foal=f?{shown:!!(f.group.visible&&f.group.parent),dStart:st?+Math.hypot(f.x-st.x,f.z-st.z).toFixed(1):null}:null;}
+  /* a crowded start never stands two of the field in one lane */
+  {const L=G.events2.startLanes(c,16).map(l=>+l.lat.toFixed(2)); out.lanes={n:L.length,distinct:new Set(L).size};}
+  /* A rider who walked up to the line herself is left where she stands, up to twelve metres from the
+     box: fourteen metres back on the line, the field must be level with her, not four metres up the
+     track, and nobody stands on her spot. The same a lane-width to one side. */
+  out.walked=[];
+  for(const [back,side] of [[14,0],[11.5,4.4]]){
+   const ax2=Math.cos(g0.rotY), az2=-Math.sin(g0.rotY), gx=Math.sin(g0.rotY), gz=Math.cos(g0.rotY);
+   const w=await S.enter('rr',{from:[+(g0.x-gx*back+ax2*side).toFixed(2),+(g0.z-gz*back+az2*side).toFixed(2)],heading:g0.rotY});
+   const hx2=Math.sin(p.heading), hz2=Math.cos(p.heading), sx=Math.cos(p.heading), sz=-Math.sin(p.heading);
+   out.walked.push({moved:w.start&&w.start.moved,field:G.events2.ghosts.list.map(g=>{const o=g.parts.group.position,lx=o.x-p.pos.x,lz=o.z-p.pos.z;return {along:+(lx*hx2+lz*hz2).toFixed(2),side:+(lx*sx+lz*sz).toFixed(2)};})});
+  }
+  /* Hollowpeak's twelve-fence round: the ring tiers put its start line five metres from fence one.
+     Starting again from exactly where she was put, with the horse still walking, must leave her
+     there: no second move, no zeroed speed, no second 'Lined up'. */
+  {const a=await S.enter('w2'); const cw=G.course.get(), j1=cw&&cw.jumps[0];
+   out.w2={along:a.start&&j1?+(-((a.start.x-j1.x)*Math.sin(j1.rotY)+(a.start.z-j1.z)*Math.cos(j1.rotY))).toFixed(2):null};
+   window.__toasts.length=0; p.speed=3; G.course.cancelCourse(); G.course.startCourse(S.ev('w2'),1);
+   const s2=JSON.parse(render_game_to_text()).ev2.start;
+   out.w2.moved=s2?s2.moved:null; out.w2.speed=+p.speed.toFixed(1); out.w2.lined=window.__toasts.some(t=>/Lined up/.test(t));}
+  if(G.course.get())G.course.cancelCourse();
+  window.advanceTime(60);
+  return out;
+ });
+ check('a restart from two metres short of gate one puts her back on the line, and gate one is still to ride at GO',
+  rf.short.lined&&rf.short.dist>=6&&rf.short.started&&rf.short.idxAtGo===0,rf.short);
+ check('a restart from past gate one puts her back behind it, and gate one is still to ride at GO',
+  rf.past.lined&&rf.past.dist>=6&&rf.past.started&&rf.past.idxAtGo===0,rf.past);
+ /* they used to stand at the world origin (the ranch arena) for the whole count and appear at gate
+    one, 14-17 m up the track, at GO */
+ check('the pace-setters stand on her line for the count, in lanes beside the start box, not at the ranch arena',
+  rf.field.n>=2&&rf.field.count.every(g=>Math.abs(g.along)<0.6&&Math.abs(g.side)>=3.8&&Math.abs(g.side)<=14&&g.fromOrigin>5),rf.field);
+ check('at GO the field rides from the start line: nobody is handed a head start up the track',
+  rf.field.started&&rf.field.atGo.every(d=>d>rf.field.riderToGate-4),{riderToGate:rf.field.riderToGate,fieldToGate:rf.field.atGo});
+ check('a crowded start line never stands two of the field in one lane',rf.lanes.n===16&&rf.lanes.distinct===16,rf.lanes);
+ check('a rider left where she walked up to, behind the box, has the field level with her and nobody on her spot',
+  rf.walked.length===2&&rf.walked.every(w=>w.moved===false&&w.field.length>=2&&w.field.every(g=>Math.abs(g.along)<0.6&&Math.abs(g.side)>=3.8)),rf.walked);
+ check('starting again on a start line five metres from fence one leaves her where she was put, still walking, with no second toast',
+  rf.w2.along!=null&&rf.w2.moved===false&&rf.w2.speed>=2.9&&!rf.w2.lined,rf.w2);
+ check('the story filly does not stand on the start line or ride the course with her',!rf.foal||!rf.foal.shown,rf.foal);
+
+ /* ---------------------------------------------------------------- 10c. the call on screen */
+ /* What covers gate one while the count runs. The call used to be hung under the course readout with
+    a 110 px numeral under it; with the riding camera raised, gate one stands higher on the screen and
+    the numeral sat on the top of its gold ring and the arrow over it, and on a phone the one-line call
+    lay across the ring, its number sign and the arrow. Measured here against gate one's ring, sign and
+    arrow as the camera projects them, and against the readout, the map and any message on screen. */
+ function callShot(){
+  const G=window.__features, THREE=G.THREE, cam=G.camera, c=G.course.get();
+  const R=e=>{ if(typeof e==='string')e=document.getElementById(e); if(!e)return null; const cs=getComputedStyle(e);
+   if(cs.display==='none'||cs.visibility==='hidden'||+cs.opacity<0.05)return null; const b=e.getBoundingClientRect(); if(!(b.width>0&&b.height>0))return null;
+   return {l:Math.round(b.left),t:Math.round(b.top),r:Math.round(b.right),b:Math.round(b.bottom),h:Math.round(b.height)}; };
+  const P=o=>{ if(!o)return null; o.updateMatrixWorld(true); const bx=new THREE.Box3().setFromObject(o); if(bx.isEmpty())return null; let l=1e9,t=1e9,r=-1e9,b=-1e9;
+   for(const X of [bx.min.x,bx.max.x])for(const Y of [bx.min.y,bx.max.y])for(const Z of [bx.min.z,bx.max.z]){ const v=new THREE.Vector3(X,Y,Z).project(cam); if(v.z>1)continue;
+    const sx=(v.x+1)/2*innerWidth, sy=(1-v.y)/2*innerHeight; l=Math.min(l,sx); t=Math.min(t,sy); r=Math.max(r,sx); b=Math.max(b,sy); }
+   return l<r?{l:Math.round(l),t:Math.round(t),r:Math.round(r),b:Math.round(b)}:null; };
+  const j=c&&c.jumps&&c.jumps[0]; let sign=null; if(j)j.g.children.forEach(k=>{ if(k.isSprite&&!sign)sign=k; });
+  const call=document.getElementById('ev2Call'), n=call&&call.querySelector('.ev2n'), cd=document.getElementById('countdown');
+  const o={call:R('ev2Call'),hud:R('courseHud'),numeral:R('countdown'),mini:R('mini'),toast:[...document.querySelectorAll('#toasts > *')].map(R).filter(Boolean),
+   ring:j&&P(j.ring),sign:P(sign),arrow:G.course.arrow&&G.course.arrow.visible?P(G.course.arrow):null,
+   count:n?n.textContent:null,fontPx:call?parseFloat(getComputedStyle(call).fontSize):0,numeralPx:cd?parseFloat(getComputedStyle(cd).fontSize):0,w:innerWidth,h:innerHeight};
+  const ov=(a,b)=>!!(a&&b&&Math.min(a.r,b.r)-Math.max(a.l,b.l)>0&&Math.min(a.b,b.b)-Math.max(a.t,b.t)>0);
+  const mine={call:o.call,numeral:o.numeral}; o.toast.forEach((t,i)=>{mine['message'+i]=t;});
+  o.hits=[];
+  for(const k in mine)for(const g of ['ring','sign','arrow','hud','mini'])if(ov(mine[k],o[g]))o.hits.push(k+' over '+g);
+  o.toast.forEach((t,i)=>{ if(ov(t,o.call))o.hits.push('message'+i+' over call'); if(ov(t,o.numeral))o.hits.push('message'+i+' over numeral'); });
+  if(ov(o.call,o.numeral))o.hits.push('numeral over call');
+  return o;
+ }
+ stage('the call on screen');
+ const desk=await page.evaluate(async()=>{
+  const G=window.__features,S=window.__sl; await S.enter('pp'); window.advanceTime(1600);   // into the count, once the camera has swung in behind her (it takes about a second and a half after she is carried)
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+ });
+ const deskShot=await page.evaluate(callShot);
+ await page.evaluate(()=>{const G=window.__features;if(G.course.get())G.course.cancelCourse();window.advanceTime(60);});
+ check('the countdown call is in the top band under the course readout, the count stands level with it at its left, and none of it covers gate one\'s ring, its number or the arrow',
+  !!deskShot.call&&!!deskShot.hud&&deskShot.call.t>=deskShot.hud.b&&deskShot.call.b<deskShot.h*0.3
+  &&!!deskShot.numeral&&deskShot.numeral.r<=deskShot.call.l+1&&deskShot.numeral.t<deskShot.call.b&&deskShot.numeral.b>deskShot.call.t
+  &&deskShot.numeralPx>=60&&deskShot.numeralPx<=72&&!!deskShot.ring&&!!deskShot.arrow&&deskShot.hits.length===0,deskShot);
+
+ /* A phone held upright has no sky under the readout, so the call goes up beside the map, above the
+    readout, carrying the count itself; a phone on its side is shorter still, so the call is one line
+    in the strip of sky across the top. Neither draws the big numeral, and a message never lies across
+    the readout or the call. */
+ const onPhone=async(vp,tag)=>{
+  const ctx=await browser.newContext(Object.assign({isMobile:true,hasTouch:true},vp));
+  const pg=await ctx.newPage();
+  pg.on('pageerror',e=>errors.push(tag+' PAGEERROR '+e.message));
+  pg.on('dialog',d=>{d.dismiss().catch(()=>{});});
+  await pg.goto(base+'/ranch3d.html?qa=start-line-'+tag+'&fresh='+Date.now(),{waitUntil:'load',timeout:120000});
+  await pg.waitForFunction(()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_game_to_text());return s.graphics&&s.graphics.horseReady&&!s.graphics.horseLoading;}catch(e){return false;}})(),null,{timeout:180000,polling:250});
+  const out={};
+  for(const id of ['rr','pp']){
+   await pg.evaluate(id=>{
+    const G=window.__features,p=G.horse.player;
+    try{const c=document.getElementById('seChar');if(c&&c.classList.contains('on')&&G.wardrobe)G.wardrobe.closeChar();}catch(e){}
+    if(G.course.get())G.course.cancelCourse(); window.advanceTime(60);
+    p.pos.set(-7,0,9); p.heading=0; p.speed=0;
+    G.course.startCourse(G.tables.EVENTS3.find(e=>e.id===id),1); window.advanceTime(1600);
+   },id);
+   await pg.waitForTimeout(300);                          // the first message of the round is up on its real timer
+   const o=await pg.evaluate(callShot);
+   o.goWord=await pg.evaluate(()=>{const G=window.__features;window.advanceTime(1700);const n=document.querySelector('#ev2Call .ev2n');const w=n?n.textContent:null;
+    if(G.course.get())G.course.cancelCourse(); window.advanceTime(60); return w;});
+   out[id]=o;
+  }
+  await ctx.close();
+  return out;
+ };
+ const phone=await onPhone({viewport:{width:390,height:844}},'phone').catch(e=>({err:String(e&&e.message||e)}));
+ check('on a phone the call is up in the sky beside the map, above the course readout, carrying the count, with no numeral, and neither it nor a message covers gate one\'s ring, its number, the arrow or the readout',
+  !phone.err&&['rr','pp'].every(k=>{const o=phone[k];return o&&!!o.call&&!!o.hud&&!!o.mini&&o.call.l>=o.mini.r&&o.call.b<=o.hud.t&&o.call.h<=o.fontPx*1.35*2+18
+   &&!o.numeral&&/^[1-4]$/.test(o.count||'')&&o.goWord==='GO!'&&!!o.ring&&!!o.arrow&&o.hits.length===0;}),phone);
+ const side=await onPhone({viewport:{width:844,height:390}},'landscape').catch(e=>({err:String(e&&e.message||e)}));
+ check('on a phone on its side the call is one line in the sky across the top, carrying the count, with no numeral, clear of the map, the readout, gate one\'s ring, its number, the arrow and any message',
+  !side.err&&['rr','pp'].every(k=>{const o=side[k];return o&&!!o.call&&o.call.h<=o.fontPx*1.35+14&&o.call.b<o.h*0.2
+   &&!o.numeral&&/^[1-4]$/.test(o.count||'')&&o.goWord==='GO!'&&!!o.ring&&!!o.arrow&&o.hits.length===0;}),side);
 
  /* ---------------------------------------------------------------- 11. errors ----------- */
  check('no console or page errors',errors.length===0,errors.slice(0,5));

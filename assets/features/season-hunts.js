@@ -143,12 +143,29 @@ export function install(G){
    W.addThing(it);
    /* miniMarkers' hidden() means 'do not draw', so the test is inverted: a spark shows up only
       inside sixty metres, exactly the way the golden horseshoes come up on the minimap. */
-   it.mini={x:at[0],z:at[1],col:def.col,r:3,hidden:()=>!(h.live&&!it.got&&hyp(player.pos.x,player.pos.z,at[0],at[1])<62)};
+   it.mini={x:at[0],z:at[1],col:def.col,r:3,hidden:()=>!(h.live&&!it.got&&hyp(player.pos.x,player.pos.z,it.x,it.z)<62)};
    W.miniMarkers.push(it.mini);
    h.items.push(it);
   }
   h.live=true;
  }
+ /* The hunt is laid at boot, and a few packages put up something solid after that (a venue, a grandstand, a
+    rock that waited for the trees): now and then an egg ended up inside one, where nobody could ever pick it
+    up and the set could never be finished. Every few seconds a piece that something solid has landed on is
+    moved to a clear spot in its own quarter, the same spot for everyone that week. */
+ function resettle(){
+  for(const h of HUNTS){ if(!h.live)continue;
+   for(const it of h.items){ if(it.got)continue;
+    if(!W.colliders.some(c=>Math.abs(c.x-it.x)<=9&&hyp(it.x,it.z,c.x,c.z)<(c.r||1)+1.4))continue;
+    const zone=ZONES.find(z=>z.id===it.zone); if(!zone)continue;
+    const at=spotIn(zone,lcg(huntSeed(h.def)+'|moved|'+it.i));
+    it.x=at[0]; it.z=at[1]; it.y=groundH(at[0],at[1])+(h.def.lift==null?0.05:h.def.lift);
+    it.g.position.set(it.x,it.y,it.z); if(it.mini){it.mini.x=it.x;it.mini.z=it.z;}
+    P.moved=(P.moved||[]).concat([{id:it.id,to:[Math.round(it.x),Math.round(it.z)]}]);
+   }
+  }
+ }
+ P.resettle=resettle;
  let hintAt=0;
  function tickItem(h,it,d){
   if(it.got||!h.live)return;
@@ -601,7 +618,7 @@ export function install(G){
  let slowT=0;
  G.on('tick',dt=>{
   tickBounties(dt);
-  slowT+=dt; if(slowT>5){slowT=0;refresh();}
+  slowT+=dt; if(slowT>5){slowT=0;refresh();resettle();}
  });
  G.on('seasonRoll',()=>{applyCoats();refresh(true);refreshCoatMarks();});
  G.on('interval30',()=>{refresh();refreshBounties();refreshCoatMarks();});
@@ -621,6 +638,7 @@ export function install(G){
   try{buildPost();}catch(e){console.error('bounty post',e);}
   buildCoatMarks();
   refresh(true); refreshBounties(true); refreshCoatMarks();
+  setTimeout(()=>{try{resettle();}catch(e){}},1500);
   const s=S.fresh();
   if(s&&S.flag(s,'seen-hunts')){
    S.sync(sv=>{sv.flags=sv.flags||{};sv.flags['seen-hunts']=1;});

@@ -832,7 +832,13 @@ export function install(G){
  });
 
  /* ---- 9. world, events, quests, achievements ------------------------------------------ */
- T.RACE_ROUTES.ll=[[8,30],[20,16],[34,6],[44,22],[30,34],[12,12]];
+ /* Loon Lake sits in the home arena's north-east corner, inside the rail, so the first route (gate two
+    in the middle of the lake, over the arena fence three times) could not be ridden. The race now
+    runs round the outside of that corner: past the lake's rail, out east and back to the arena mouth.
+    It turns north short of the Loon Lake Shore's plots: its east side used to run five metres from the
+    middle of plot k5, through whatever the player had built there, and every leg now keeps 7.5 m
+    from every plot's centre (ranch3d.html's ROUTE_REV retires the times ridden on the old line). */
+ T.RACE_ROUTES.ll=[[-10,31],[22,26],[23,50],[2,58],[-22,46]];
  if(!T.EVENTS3.some(e=>e.id==='l1'))T.EVENTS3.push({id:'l1',town:'Loon Lake',name:'Loon Lake Crossing',lvl:3,race:true,route:'ll',reward:450,trains:['speed','stamina']});   // trains: the stats package's per-event stat XP
  T.REGIONS.unshift({name:'🌊 Loon Lake shallows',x:20,z:16,r:4.4,id:'shallows',biome:'lake'});   // id+biome, because this is added after the world package has stamped its metadata onto the rest
  G.quest.addDaily({type:'swim',icon:'🏊',label:'Swim 120 m',goal:120,r:{c:120,g:2,p:15}});

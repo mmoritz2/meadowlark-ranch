@@ -94,10 +94,13 @@ export function install(G){
    +(o.coats?'<div style="font-size:12px;color:#8c7a63;margin-top:10px;font-weight:700">Coat</div><div id="sqCoats" style="display:flex;gap:6px;flex-wrap:wrap">'+o.coats.map(c=>'<button data-nm="coat:'+c[0]+'" class="tabbtn'+(c[0]===coat?' on':'')+'" style="display:inline-flex;align-items:center;gap:6px;border:1px solid #d8ccb4"><span style="width:16px;height:16px;border-radius:50%;background:'+c[2]+';border:2px solid '+c[3]+'"></span>'+c[1]+'</button>').join('')+'</div>':'')
    +'<div style="display:flex;gap:6px;margin-top:10px"><button id="dlgBtn" class="claimBtn">'+esc(o.ok||'Name it ✨')+'</button>'+(o.cancel===false?'':'<button data-nm="x">'+esc(o.cancelLabel||'Later')+'</button>')+'</div>';
   d.style.display='block';
-  const inp=$('nameIn'); try{inp.focus();inp.select();}catch(e){}
+  /* Focus waits for the key that opened this to finish. The dialog is opened from the E keydown (talking to Wren, opening
+     the old stall), and focusing the box inside that keydown meant the same press typed its 'e' into it: the first two
+     horses of every keyboard game were called "e". A held E's auto-repeat is refused for the same reason. */
+  const inp=$('nameIn'), opened=Date.now(); setTimeout(()=>{try{if(d.style.display==='block'&&document.body.contains(inp)){inp.focus();inp.select();}}catch(e){}},0);
   const finish=(n,c)=>{try{inp.blur();if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();}catch(e){}d.style.display='none';if(o.onDone)o.onDone(n,c);};   // blur first: the game ignores keys while an input has focus
   $('dlgBtn').onclick=()=>{const n=String(inp.value||'').trim().slice(0,max);if(!n){toast('Give the horse a name first!');try{inp.focus();}catch(e){}return;}finish(n,coat);};
-  inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('dlgBtn').click();}e.stopPropagation();};
+  inp.onkeydown=e=>{if(e.repeat&&Date.now()-opened<1500){e.preventDefault();e.stopPropagation();return;}if(e.key==='Enter'){e.preventDefault();$('dlgBtn').click();}e.stopPropagation();};
   d.querySelectorAll('[data-nm]').forEach(b=>{b.onclick=()=>{const v=b.dataset.nm;
    if(v==='rnd'){inp.value=randName();}
    else if(v==='x'){finish(null,coat);}
@@ -424,15 +427,34 @@ export function install(G){
   G.anim.tickRig(foal,sp,dt,t,0);
  }
  function tickFoal(dt,t){
-  if(!foal)return; const p=H.player; const i=idx();
+  if(!foal)return; const p=H.player; const i=idx(); foal.group.visible=true;
   if(foal.bolt>0){foal.bolt-=dt;const sp=11;foal.x+=Math.sin(foal.heading)*sp*dt;foal.z+=Math.cos(foal.heading)*sp*dt;foal.phase+=dt*14;foal.group.position.set(foal.x,W.groundH(foal.x,foal.z)+(foal.rig?0:Math.abs(Math.sin(foal.phase))*0.12),foal.z);foal.group.rotation.y=foal.heading;rigFoal(dt,t,sp);if(foal&&foal.bolt<=0)removeFoal();return;}
+  /* An event is ridden alone. She used to follow the rider onto it: a new player's first race began
+     with the grey filly standing at her shoulder on the River Run start line, between the start box
+     and the pace-setters' lanes, and then galloping the course beside her. While a course is up she
+     waits out of it (off the screen), and when it is over she is back at the rider's shoulder, or,
+     past the beats where she follows, simply where she was. */
+  if(G.course&&G.course.get&&G.course.get()){foal.group.visible=false;foal.away=true;return;}
+  const back=!!foal.away; foal.away=false;
   if(i>PRO_N-4){rigFoal(dt,t,0);return;}   // she only follows in the first two beats
-  const tx=p.pos.x-Math.sin(p.heading)*2.6+Math.cos(p.heading)*1.6, tz=p.pos.z-Math.cos(p.heading)*2.6-Math.sin(p.heading)*1.6;
+  /* She keeps alongside, at the horse's shoulder and nearly three metres out, on the side away from the camera. She used
+     to trail 2.6 m behind, which is between the camera and the horse: she filled a fifth of the screen at a halt and over
+     half of it in a turn, for the whole of the opening. At the shoulder, the camera (always behind the horse, and lagging
+     it in a turn) never comes near her. She changes sides only when the view has been swung round to hers and left
+     there, so a turn never sends her running across behind the horse, through the shot. */
+  const cam=G.camera;
+  if(cam){const lx=Math.cos(p.heading),lz=-Math.sin(p.heading), cs=(cam.position.x-p.pos.x)*lx+(cam.position.z-p.pos.z)*lz;
+   if(foal.side==null)foal.side=cs>0?-1:1;
+   else if(cs*foal.side>2.5){foal.flipT=(foal.flipT||0)+dt;if(foal.flipT>1.5){foal.side=-foal.side;foal.flipT=0;}}else foal.flipT=0;}
+  const sd=(foal.side||1)*2.8, tx=p.pos.x+Math.sin(p.heading)*0.4+Math.cos(p.heading)*sd, tz=p.pos.z+Math.cos(p.heading)*0.4-Math.sin(p.heading)*sd;
+  if(back){foal.x=tx;foal.z=tz;foal.heading=p.heading;}
   const dx=tx-foal.x,dz=tz-foal.z,d=Math.hypot(dx,dz); let mv=0;
   if(d>90){foal.x=tx;foal.z=tz;}
   else if(d>1.2){const want=Math.atan2(dx,dz);let dh=want-foal.heading;while(dh>Math.PI)dh-=Math.PI*2;while(dh<-Math.PI)dh+=Math.PI*2;foal.heading+=dh*Math.min(1,dt*4);const sp=Math.min(12,1.5+d*1.4);foal.x+=Math.sin(foal.heading)*sp*dt;foal.z+=Math.cos(foal.heading)*sp*dt;foal.phase+=dt*(sp>6?12:7);mv=sp;}
   const bob=d>1.2&&!foal.rig?Math.abs(Math.sin(foal.phase))*0.09:0;
   foal.group.position.set(foal.x,W.groundH(foal.x,foal.z)+bob,foal.z); foal.group.rotation.y=foal.heading;
+  /* and if the view is swung right onto her anyway, she steps out of the picture rather than fill it */
+  if(cam)foal.group.visible=Math.hypot(cam.position.x-foal.x,cam.position.z-foal.z)>2.6;
   if(foal.parts.legs)foal.parts.legs.forEach((l,k)=>{if(l&&l.rotation)l.rotation.x=(d>1.2?Math.sin(foal.phase+k*Math.PI/2)*0.5:0);});
   rigFoal(dt,t,mv);
  }

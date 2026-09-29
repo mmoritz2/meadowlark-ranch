@@ -488,7 +488,7 @@ export function install(G){
  function evRows(ev,s){
   const wk=G.time.weekKey(), par=(G.course.eventPar?G.course.eventPar(ev):0)||(ev.n?ev.n*9:45);
   const rows=T.NEIGHBOURS.map(([nm,str])=>({n:nm,v:+(par*(1.42-0.40*hsh(wk+ev.id+nm))/Math.min(1.25,str)).toFixed(2)}));
-  const club=(N.lbData&&N.lbData['ev_'+ev.id])||{};
+  const club=(N.lbData&&N.lbData['ev_'+ev.id+((G.course&&G.course.routeRev&&G.course.routeRev(ev))||'')])||{};   // the board of this course as it is drawn now
   for(const nm of Object.keys(club)){if(nm===N.myName())continue;rows.push({n:nm,v:+club[nm]||0,club:true});}
   const mine=+((s.bestTimes||{})[ev.id]||0);
   rows.push({n:'You',v:mine,me:true});
@@ -733,9 +733,10 @@ export function install(G){
   }else if(L&&L.claimed){
    h+='<div class="evrow">✅ <b>Last week collected</b><span>tier '+(L.tier||chestTier(L.total||0))+' · rank #'+(L.rank||'—')+' · '+(L.total||0)+'⭐</span></div>';
   }
-  /* the ladder */
+  /* the ladder. (Design note, not for the player: the reference game pays chests to its top hundred clubs; the Basin has
+     only a valley's worth, so every club on this board gets a chest.) */
   h+='<div class="bGroup">The Basin club ladder</div>'
-   +'<div style="font-size:11px;color:#8c7a63;margin-bottom:3px">Star Equestrian pays chests to the top hundred clubs; the Basin has a valley\'s worth, so every club on this board is in the running. The other clubs are the valley\'s own — their weeks are fixed on Monday and do not move again until the next one, so a club of two really can finish first.</div>';
+   +'<div style="font-size:11px;color:#8c7a63;margin-bottom:3px">Every club on this board is in the running for a chest. The other clubs are the valley\'s own — their weeks are fixed on Monday and do not move again until the next one, so a club of two really can finish first.</div>';
   h+=r.rows.slice(0,12).map((row,i)=>'<div class="clubRow'+(row.me?' me':'')+'">'+(i===0?'👑':i===1?'🥈':i===2?'🥉':'#'+(i+1))+' <b>'+esc(row.n)+'</b>'
    +'<span style="font-size:11px;color:#8c7a63">'+(row.mem||1)+' rider'+((row.mem||1)===1?'':'s')+(row.club?' · club':'')+'</span><span class="cv">'+row.v+'⭐</span></div>').join('');
   if(r.rank>12)h+='<div class="clubRow me">#'+r.rank+' <b>'+esc(nm)+'</b><span class="cv">'+tot+'⭐</span></div>';
@@ -746,8 +747,9 @@ export function install(G){
    +(mem.length?mem.map(x=>'<div class="clubRow">🐴 <b>'+esc(x)+'</b><span class="cv">'+(clubMembers[x].sp||0)+'⭐</span></div>').join('')
      :'<span style="font-size:11.5px;color:#8c7a63">Just you this week. Share your club code from 🌐 Club — every rider who joins adds their week to this total.</span>');
   /* the chest odds for the tier in progress */
+  /* (Design note: the tiers are the reference game's 20k/50k/100k rescaled to this ranch's economy.) */
   h+='<div class="bGroup">This week\'s chest — tier '+tier+'</div>'+oddsHtml(tier)
-   +'<div class="sub" style="margin-top:3px">Tiers at '+CLUB_CHEST_TIERS.map(x=>x.sp+'⭐→T'+x.t).join(' · ')+'. Rescaled from Star Equestrian\'s 20k/50k/100k to this ranch\'s economy, where a champion week on your own is 550⭐.</div>';
+   +'<div class="sub" style="margin-top:3px">Tiers at '+CLUB_CHEST_TIERS.map(x=>x.sp+'⭐→T'+x.t).join(' · ')+'. A champion week on your own is about 550⭐, so every rider who joins moves the chest up.</div>';
   /* the club horse */
   const owns=(s.horses||[]).some(x=>x.breed===CLUB_HORSE), vouchers=s.clubHorseVoucher||0;
   h+='<div class="bGroup">🔥 The Ember Friesian</div>'

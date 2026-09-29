@@ -341,7 +341,7 @@ export function install(G){
     its bounding box is a solid slab the size of the water tower and the chase camera would
     shove itself out of a volume that is nine tenths air. */
  function landmark(def){
-  const at=clearAt(def.x,def.z,def.clear||6,def.maxR||54);
+  const at=def.fixed?[def.x,def.z]:clearAt(def.x,def.z,def.clear||6,def.maxR||54);   // fixed: the caller already sited it on fixed ground (fixedSite)
   const x=at[0],z=at[1],y=groundH(x,z);
   const A=Acc(def.seed||1,x,y,z);
   try{def.build(A,{x,z,y});}catch(e){console.error('landmark '+def.id,e);}
@@ -472,8 +472,53 @@ export function install(G){
     hand's breadth off it. A horse cannot climb it, which is right — you ride to the foot, and
     then you ride back out to the stone, because up close she is only a white smear. */
  const SCARP={x:-76,z:172,len:112,depth:76,h:26,crest:0.40};
+ /* Sited on fixed ground only. clearAt measures room against the trees, which are sown afresh every boot, so the scarp (a
+    hundred and twelve metres of r10 colliders) and its viewing stone slid up to forty-five metres from one load to the
+    next, and nothing stopped either landing across a race route, a town arena or a road. fixedSite asks only what is the
+    same on every load: the roads, the river, the creek and Loon Lake, every race route and start box (the season's
+    gauntlet loops too, from events2, which installs before this file), every arena, every ranch plot, pasture and barn
+    row (the stone once stood on plots l5 and l6), and the seeded landforms. Every point
+    of the mound's footprint and of the stone's patch has to pass, the sweep runs outwards from the nominal site, and the
+    first site that passes is taken, so it is the same site every time. The random trees are then cleared off the mound
+    instead of the mound being moved off them: course-clear hides whatever grows inside P.clearZones. */
+ function routeSegs(){
+  const out=[],R=T.RACE_ROUTES||{};
+  const add=pl=>{for(let i=0;i<pl.length;i++){const a=pl[i],b=pl[(i+1)%pl.length];if(a&&b)out.push([a[0],a[1],b[0],b[1]]);}
+   if(pl.length>1&&pl[0]&&pl[1]){const a=pl[0],b=pl[1],L=hyp(a[0],a[1],b[0],b[1])||1;out.push([a[0]-(b[0]-a[0])/L*14,a[1]-(b[1]-a[1])/L*14,a[0],a[1]]);}};
+  for(const k in R)if(Array.isArray(R[k]))add(R[k]);
+  try{const GS=G.events2&&G.events2.GAUNTLET_SEASONS;if(GS)for(const k in GS){const d=GS[k];if(d&&Array.isArray(d.pts)&&!R[d.route])add(d.pts);}}catch(e){}
+  return out;
+ }
+ const segDist=(x,z,s)=>{const dx=s[2]-s[0],dz=s[3]-s[1],l2=dx*dx+dz*dz||1e-6;let t=((x-s[0])*dx+(z-s[1])*dz)/l2;t=t<0?0:t>1?1:t;return hyp(x,z,s[0]+dx*t,s[1]+dz*t);};
+ function fixedFree(x,z,pad,segs){
+  if(W.pathDist(x,z)<pad+4)return false;
+  if(Math.abs(z-W.riverZ(x))<pad+12)return false;
+  if(z<=172&&Math.abs(x-W.streamX(z))<pad+12)return false;
+  if(hyp(x,z,20,16)<pad+10)return false;
+  for(const sg of segs)if(segDist(x,z,sg)<pad+6)return false;
+  for(const rg of T.REGIONS){const v=rg.venue;if(!v)continue;const home=rg.id==='ranch',A=(home?30:20)+pad+6,B=(home?25:15)+pad+6;if(((x-v.x)/A)**2+((z-v.z)/B)**2<1||(!home&&Math.abs(x-v.x)<8+pad&&z>v.z&&z<v.z+27+pad))return false;}
+  for(const c of W.colliders)if(c&&c.landform&&hyp(x,z,c.x,c.z)<c.r+pad)return false;
+  /* the ranches a player can own or build on: every 12 m plot, every pasture and every barn row */
+  const RG=G.ranch||{};
+  for(const k in (RG.SLOTS||{})){const q=RG.SLOTS[k];if(Math.abs(x-q.x)<8+pad&&Math.abs(z-q.z)<8+pad)return false;}
+  for(const r of (RG.RANCHES||[])){const a=r.past,b=r.barn;if(a&&x>a.x1-2-pad&&x<a.x2+2+pad&&z>a.z1-2-pad&&z<a.z2+2+pad)return false;
+   if(b&&Math.abs(x-b.x)<5+pad&&z>b.z0-5-pad&&z<b.z0+b.step*b.n+5+pad)return false;}
+  return true;
+ }
+ function fixedSite(cx,cz,maxR,fits){
+  for(let r=0;r<=maxR;r+=6)for(let k=0;k<(r?16:1);k++){const a=k/16*Math.PI*2+r*0.37,x=cx+Math.cos(a)*r,z=cz+Math.sin(a)*r;if(fits(x,z))return [+x.toFixed(2),+z.toFixed(2)];}
+  return null;
+ }
+ P.clearZones=P.clearZones||[];
  {
-  const at=clearAt(SCARP.x,SCARP.z,18,44);SCARP.x=at[0];SCARP.z=at[1];
+  const segs=routeSegs();
+  const frame=(cx,cz)=>{const f=Math.atan2(cx,cz);return {f,ax:Math.cos(f),az:-Math.sin(f),ox:Math.sin(f),oz:Math.cos(f)};};
+  const scarpFits=(cx,cz)=>{const F=frame(cx,cz);
+   for(let u=-56;u<=56;u+=8)for(let t=0;t<=1.001;t+=0.1){const v=(t-0.5)*SCARP.depth;if(!fixedFree(cx+F.ox*v+F.ax*u,cz+F.oz*v+F.az*u,2,segs))return false;}
+   const sx=cx-F.ox*95,sz=cz-F.oz*95;for(let k=0;k<9;k++){const a=k/8*Math.PI*2,rr=k?7:0;if(!fixedFree(sx+Math.cos(a)*rr,sz+Math.sin(a)*rr,2,segs))return false;}
+   return true;};
+  const at=fixedSite(SCARP.x,SCARP.z,44,scarpFits);
+  SCARP.sited=!!at; if(at){SCARP.x=at[0];SCARP.z=at[1];}
   const face=Math.atan2(SCARP.x,SCARP.z);                 // outward: away from the middle of the basin
   const ax=Math.cos(face),az=-Math.sin(face),ox=Math.sin(face),oz=Math.cos(face);
   const y0=groundH(SCARP.x,SCARP.z);
@@ -618,11 +663,16 @@ export function install(G){
     W.colliders.push({x:SCARP.x+ax*u+ox*v,z:SCARP.z+az*u+oz*v,r:10});}}
   P.SCARP=SCARP;
   /* The viewing stone, sixty metres off the toe of the scarp. That distance is the whole point
-     of it: from the foot she is a white smear, and from here she is a horse. */
-  const vx=SCARP.x-ox*95,vz=SCARP.z-oz*95;
+     of it: from the foot she is a white smear, and from here she is a horse. Its patch was checked with the mound's
+     footprint, so it stands exactly there (fixed) instead of shuffling round whatever tree grew on it. */
+  const vx=+(SCARP.x-ox*95).toFixed(2),vz=+(SCARP.z-oz*95).toFixed(2);
+  /* What course-clear takes off the mound and the stone's patch: a tree whose foot is buried under a metre of chalk down
+     otherwise pokes its crown out of the slope. Raised ground only, from the same profile the mesh is built from. */
+  P.clearZones.push((x,z)=>{const dx=x-SCARP.x,dz=z-SCARP.z,u=dx*ax+dz*az,v=dx*ox+dz*oz;if(Math.abs(u)>SCARP.len/2+2||Math.abs(v)>SCARP.depth/2+2)return false;const t=v/SCARP.depth+0.5;return SCARP.h*prof(Math.max(0,Math.min(1,t)))*along(u)>0.6;});
+  P.clearZones.push((x,z)=>hyp(x,z,vx,vz)<7.5);
   landmark({
    id:'chalkmare',name:'The Chalk Mare',glyph:'🐎',mapLabel:'🐎 The Chalk Mare',labelDz:16,
-   x:vx,z:vz,clear:5,maxR:18,seed:812,label:'🐎 The Chalk Mare',labelY:3.6,labelW:4.4,tall:19,reach:17,mini:'#f4f0e0',
+   x:vx,z:vz,fixed:!!SCARP.sited,clear:5,maxR:18,seed:812,label:'🐎 The Chalk Mare',labelY:3.6,labelW:4.4,tall:19,reach:17,mini:'#f4f0e0',
    colliders:[[0,0,1.2]],
    blurb:'Forty-odd metres of galloping mare scoured into the chalk of Whitehorse Scarp, and nobody at the ranch will tell you who cut her. Grandpa Wren says the grass has to be pared back every spring or she closes over in a season; that somebody always does it; and that in seventy years he has never once seen who.',
    arrive:'Stand at the stone to look. Any nearer and she is a white smear on a hillside.',

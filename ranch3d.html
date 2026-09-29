@@ -650,7 +650,7 @@ import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-3';
-import {FEATURES} from './assets/features/index.js?v=feat-12';
+import {FEATURES} from './assets/features/index.js?v=feat-13';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -3539,7 +3539,7 @@ const contactTex=canvasTex(128,128,(c,w,h)=>{
 function contactShadow(parent){
  const m=new THREE.Mesh(new THREE.CircleGeometry(1,20),
   new THREE.MeshBasicMaterial({map:contactTex,transparent:true,depthWrite:false,
-   blending:THREE.MultiplyBlending}));
+   blending:THREE.MultiplyBlending,toneMapped:false}));   // multiplied onto what is already drawn: tone mapping turned its white rim grey, a hard dark disc whenever bloom was off (Low graphics)
  m.rotation.x=-Math.PI/2;
  m.scale.set(1.12,0.70,1);        // sits under the barrel, where the sky is occluded
  m.position.y=0.02;
@@ -4213,8 +4213,8 @@ for(let i=0;i<90;i++){                                       // cacti across Coy
  const a=Math.random()*Math.PI*2,rr=Math.random()*(CANYON.r*0.92);
  const x=CANYON.x+Math.cos(a)*rr, z=CANYON.z+Math.sin(a)*rr;
  if(Math.abs(z-riverZ(x))<7)continue;
- colliders.push({x,z,r:0.6});
- (Math.random()<0.6?FOLIAGE.cactus:FOLIAGE.cactus2).push({x,z,s:0.9+Math.random()*1.0,r:Math.random()*Math.PI*2});
+ const col={x,z,r:0.6,plant:true};colliders.push(col);   // plant: course-clear may take it off a course before the model has even loaded
+ (Math.random()<0.6?FOLIAGE.cactus:FOLIAGE.cactus2).push({x,z,s:0.9+Math.random()*1.0,r:Math.random()*Math.PI*2,col});
 }
 const FOLIAGE_H={snowpine:7.2,oak:6.2,birch:6.6,blossom:6.2,pine:7.4,bush:1.9,flowerbush:1.8,cactus:4.4,cactus2:2.4,
  haybale:1.5,trough:0.8,barrel:1.0,boulder:1.6,stump:0.7};   // ~units tall (bigger)
@@ -4258,7 +4258,9 @@ function placeFoliage(name){
    const s=tp.s*FOLIAGE_H[name]/h;
    q.setFromEuler(new THREE.Euler(0,tp.r,0));
    p.set(tp.x,groundH(tp.x,tp.z)-minY*s-0.06*FOLIAGE_H[name]*tp.s,tp.z);   // sunk into the ground, not resting on the analytic curve
-   sc.set(s,s,s); m.compose(p,q,sc); inst.setMatrixAt(i,m);
+   sc.set(s,s,s); if(tp.col&&colliders.indexOf(tp.col)<0)sc.set(0,0,0);   // course-clear took its collider off a course or out of an arena: the plant goes with it
+   if(name==='stump'&&window.__onCourse&&window.__onCourse(tp.x,tp.z,3.4))sc.set(0,0,0);   // a stump arriving after course-clear mowed the track stays off it, like the grass
+   m.compose(p,q,sc); inst.setMatrixAt(i,m);
   });
   inst.instanceMatrix.needsUpdate=true; if(name!=='bush'&&name!=='flowerbush'&&name!=='boulder')scene.add(inst);
   console.log('placed',list.length,'generated',name);
@@ -4434,8 +4436,8 @@ let waterMat=null;   // hoisted: the pond reuses it
   const lip=groundH(FX,FZ)+HGT, foot=groundH(FX,FZ+11);
   const cliff=geology.makeWaterfallCliff({width:WID*2,lip,foot,seed:9031});
   cliff.position.set(FX,foot,FZ);scene.add(cliff);
-  for(let j=0;j<=SEG;j+=2){ const u=j/SEG*2-1;                    // solid to ride into
-   colliders.push({x:FX+u*WID,z:FZ+Math.pow(Math.abs(u),2.1)*6.4,r:1.6}); }
+  for(let j=0;j<=SEG;j+=2){ const u=j/SEG*2-1;                    // solid to ride into; landform, so course-clear never takes the rock face for a clearable post
+   colliders.push({x:FX+u*WID,z:FZ+Math.pow(Math.abs(u),2.1)*6.4,r:1.6,landform:true}); }
   /* the falling water: a sheet through the notch, its texture scrolling down */
   const fallTex=waterShimTex.clone(); fallTex.needsUpdate=true;
   fallTex.wrapS=fallTex.wrapT=THREE.RepeatWrapping; fallTex.repeat.set(1.1,2.6);
@@ -4724,13 +4726,20 @@ let waterMat=null;   // hoisted: the pond reuses it
  scene.add(wheat);
 }
 /* ================= the four zones of Kestrel Basin ================= */
+/* The canyon's eight extra mesas were thrown down with Math.random, so from one load to the next a
+   new one could land across the Coyote Derby, in the town arena or on the outpost, and the Derby's
+   leaderboard times were ridden round different rock on different days. They are seeded now, like
+   the canyon's own mesas above: the same eight on every load, tagged landform so course-clear knows
+   them for fixed ground, and they keep fifty metres off the outpost so the town and its arena
+   stand on open desert. */
+{let seed=20260929;const rnd=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
 for(let i=0;i<8;i++){
- const x=-160-Math.random()*130,z=80+Math.random()*110;
- const hgt=9+Math.random()*13,rad=5+Math.random()*7;
- if(Math.abs(z-riverZ(x))<rad*1.3+9||pathDist(x,z)<rad+3)continue;
+ const x=-160-rnd()*130,z=80+rnd()*110;
+ const hgt=9+rnd()*13,rad=5+rnd()*7;
+ if(Math.abs(z-riverZ(x))<rad*1.3+9||pathDist(x,z)<rad+3||Math.hypot(x-CANYON.x,z-CANYON.z)<50)continue;
  geology.placeMesa(x,z,rad,hgt,i+8234);
- colliders.push({x,z,r:rad*.95});
-}
+ colliders.push({x,z,r:rad*.95,landform:true});
+}}
 for(let i=0;i<14;i++){
  const x=-150-Math.random()*130,z=70+Math.random()*120;
  if(Math.abs(z-riverZ(x))<9)continue;
@@ -6780,6 +6789,7 @@ function updateTrail(dt){
  }
 }
 /* ================= show arena detailing ================= */
+const FLOODLIGHTS=[[-25.9,-20.9],[25.9,-20.9],[-25.9,20.9],[25.9,20.9]];   // one step outside each corner of the rail (x=±25, z=±20)
 {
  // worn hoof track & rake rings in the footing
  const lane=new THREE.Mesh(new THREE.RingGeometry(0.86,0.985,56),
@@ -6849,7 +6859,8 @@ function updateTrail(dt){
   scene.add(bl);
   followCamera.register(bl);
  }
- // judge's tower (northeast corner)
+ // judge's tower, just outside the east rail. It stood in the north-east corner, poking through the rail, and with
+ // the two fences made a pocket a horse sliding along the north rail ran into and could not turn out of.
  {
   const jt=new THREE.Group();
   for(const sx of[-1,1])for(const sz of[-1,1])
@@ -6867,7 +6878,7 @@ function updateTrail(dt){
   jt.add(jroof);
   blob(0.16,0.22,0.14,clothMat('#2e3a52'),0,2.7,0,jt);
   blob(0.1,0.11,0.1,'#e3a37d',0,3.0,0,jt);
-  jt.position.set(24,0,-17);
+  jt.position.set(27.6,groundH(27.6,-6),-6);
   scene.add(jt);
   followCamera.register(jt);
  }
@@ -6891,16 +6902,20 @@ function updateTrail(dt){
   const planter=arrivalArt.buildPlanter({width:.9,depth:.4,height:.34,seed:i+41});
   planter.position.set(x,0,z);planter.rotation.y=-th;scene.add(planter);
  }
- // corner floodlights — they switch on at dusk (HDR colour so the bloom catches them)
- for(const cpos of[[-24,-19],[24,-19],[-24,19],[24,19]]){
-  tube(0.08,0.11,6.5,'#7d8893',cpos[0],3.25,cpos[1],scene);
-  box(0.7,0.4,0.3,'#5a626b',cpos[0],6.7,cpos[1],scene);
+ // corner floodlights — they switch on at dusk (HDR colour so the bloom catches them). They stood a
+ // metre inside the rail, and their solid poles made a pocket with the two fences where a horse
+ // sliding along the rail was wedged for good; they stand just outside each corner now, lamps
+ // turned in over the arena.
+ for(const cpos of FLOODLIGHTS){
+  const fl=new THREE.Group();fl.position.set(cpos[0],0,cpos[1]);fl.rotation.y=Math.atan2(-cpos[0],-cpos[1]);scene.add(fl);
+  tube(0.08,0.11,6.5,'#7d8893',0,3.25,0,fl);
+  box(0.7,0.4,0.3,'#5a626b',0,6.7,0,fl);
   const paneMat=new THREE.MeshBasicMaterial({color:0x8fa0ac});
   glowPanes.push({mat:paneMat,day:new THREE.Color(0x8fa0ac),night:new THREE.Color(2.3,2.0,1.25)});
   const pane=new THREE.Mesh(new THREE.PlaneGeometry(0.6,0.3),paneMat);
-  pane.position.set(cpos[0],6.7,cpos[1]+0.17);
+  pane.position.set(0,6.7,0.17);
   pane.rotation.x=-0.25;
-  scene.add(pane);
+  fl.add(pane);
  }
  // spare striped poles & mounting block by the west rail
  for(let i=0;i<3;i++){
@@ -7012,8 +7027,8 @@ colliders.push(
  {x:42,z:-50,r:2.7},{x:48,z:-56,r:2.7},{x:54,z:-48,r:2.7},{x:45,z:-43,r:2.7}, // cottages
  {x:-59,z:-19,r:3.4},          // run-in shelter
  {x:-28.5,z:-4,r:2.3},{x:-28.5,z:0,r:2.3},{x:-28.5,z:4,r:2.3}, // bleachers
- {x:24,z:-17,r:1.7},           // judge tower
- {x:-24,z:-19,r:0.4},{x:24,z:-19,r:0.4},{x:-24,z:19,r:0.4},{x:24,z:19,r:0.4}, // floodlights
+ {x:27.6,z:-6,r:1.7},          // judge tower, outside the east rail
+ ...FLOODLIGHTS.map(p=>({x:p[0],z:p[1],r:0.3})), // floodlights, outside the corners
  {x:-3,z:20,r:0.32},{x:3,z:20,r:0.32}, // arch posts
  {x:85,z:-40,r:2.1},{x:215,z:-108,r:2.1}, // windmills
  {x:-6,z:-18,r:1.1},{x:-36.5,z:-9.5,r:1.1}, // troughs
@@ -7842,20 +7857,30 @@ function nameSprite(text){
     quietly cutting "MEADOWLARK ARENA" down to "MEADOWLARK". */
  const cv=document.createElement('canvas');cv.width=512;cv.height=128;
  const c=cv.getContext('2d');
- c.fillStyle='rgba(255,255,253,0.88)';
+ /* Readable, not washed out. Measured on screen the tags came out at about 2.9:1: brown #4a3526 on
+    a 88% white pill turned into rgb(142,111,83) on grey. Three things did it. The canvas texture had
+    no colour space, so its sRGB colours were read as linear and lifted a second time on the way
+    out; the sprite went through tone mapping, which greys white; and the pill was see-through. So
+    the texture is sRGB, the material skips tone mapping, the pill is solid with a thin rim to hold
+    its edge against a bright sky, and the words are near-black with a light outline. */
+ c.fillStyle='#fffdf7';
  c.beginPath();c.roundRect(56,12,400,104,44);c.fill();
- c.textAlign='center';c.fillStyle='#4a3526';
+ c.lineWidth=4;c.strokeStyle='#7a6248';c.stroke();
+ c.textAlign='center';
  /* Shrink to fit rather than clip. A fixed size overflowed the plate for anything as long
     as "MEADOWLARK ARENA", and the canvas edge cut it mid-word. */
- const label=text.slice(0,22);
+ /* and never cut a word in half: 22 characters made "Silverbirch · pace-setter" read "Silverbirch · pace-" */
+ const label=text.length<=30?text:text.slice(0,30).replace(/\s+\S*$/,'')+'…';
  let fs=56;
  c.font='700 '+fs+'px "Trebuchet MS",sans-serif';
- while(c.measureText(label).width>384&&fs>24){fs-=2;c.font='700 '+fs+'px "Trebuchet MS",sans-serif';}
- c.fillText(label,256,68+fs*0.34);
+ while(c.measureText(label).width>384&&fs>22){fs-=2;c.font='700 '+fs+'px "Trebuchet MS",sans-serif';}
+ c.lineJoin='round';c.lineWidth=Math.max(5,fs*0.16);c.strokeStyle='#fffdf7';c.strokeText(label,256,68+fs*0.34);
+ c.fillStyle='#1b140e';c.fillText(label,256,68+fs*0.34);
  const tx=new THREE.CanvasTexture(cv);
+ tx.colorSpace=THREE.SRGBColorSpace;
  tx.minFilter=THREE.LinearFilter;tx.generateMipmaps=false;
  tx.anisotropy=renderer.capabilities.getMaxAnisotropy();
- const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true}));
+ const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,toneMapped:false}));
  sp.scale.set(2.4,0.6,1);
  nameSprites.push(sp);
  return sp;
@@ -8557,13 +8582,15 @@ addEventListener('keydown',e=>{
   sNeigh();
   toast('🐴 Now riding '+myHorses[rideIdx].name+'!');
  }
- if(e.code==='KeyP'){
+ if(e.code==='KeyP'&&!e.repeat){
+  /* The camera button says 'Save a photo (P)', and P only ever opened a nearby online rider's profile, so on your own
+     it did nothing. It still opens the profile when somebody is within eight metres; otherwise it is the shutter. */
   let best=null,bd=8;
   for(const r of Object.values(remotes)){
    const d=Math.hypot(player.pos.x-r.x,player.pos.z-r.z);
    if(d<bd){bd=d;best=r;}
   }
-  if(best)openProfile(best.name);
+  if(best)openProfile(best.name);else takePhoto();
  }
  if(e.code==='KeyF')setFlying(!player.flying);
  if(e.code==='KeyB'&&!e.repeat)keys.KeyB=true;
@@ -8703,30 +8730,95 @@ const EVENTS3=[
  {id:'d1',town:'Cottonwood',name:'Cottonwood Preliminary Test',lvl:2,dressage:true,par:60,reward:300},
  {id:'d2',town:'Kestrel Basin',name:'Basin Freestyle',lvl:6,dressage:true,par:90,reward:700},
 ];
+/* Every route is surveyed ground, measured against the built world rather than drawn as straight
+   lines over a map: each gate stands on dry, open, near-level ground, and each leg (the closing one
+   too, where the pickups lie) keeps clear of buildings, fences, walls, water, the mesas and the
+   town arenas. The first cut ran the River Run and the Grand Loop over the bridge and back through
+   the river, set a Grand Loop gate in the shallows, drove the Pony Dash through the Summoning Stall
+   and twice over the pasture fence, put the Coyote Derby sixty metres up the river bed and through
+   three mesas and the outpost, and stood a Snow Trail gate in the waterfall's rock amphitheatre.
+   So: the River Run and the Grand Loop keep to the ranch side of the river (the only dry crossing
+   is the bridge, and a loop cannot use it twice) and the Grand Loop's east side runs between
+   Cottonwood and Sparrow Creek; the Pony Dash is ridden inside the Home Pasture, clear of its
+   fence; the Derby circles the open desert basin south of the canyon's mesas round the Coyote
+   arena; the Snow Trail loops the snowfield between the Pines and Hollowpeak, west of the town, well
+   short of the falls and clear of the Pines sanctuary's rail. None of it bends round anything placed at random, so every rider on
+   every load rides the same course and the leaderboard times compare.
+   The ranch plots are ground too. A leg that ran past a buyable plot ran straight through whatever the player built on it:
+   the Grand Loop's west leg passed a metre and a half from plot l8 and three from the free starter plot l1, its east leg
+   crossed plot k4 on the Loon Lake Shore, and the River Run finished across plot k3. Every leg now keeps at least 7.5 m from
+   every plot's centre and off every ranch's pasture and barn row: the Grand Loop comes home south of l7, between the plots and
+   the Home Pasture fence, and its east side keeps to the creek side of k4; the River Run finishes short of the Loon Lake plots;
+   and the south leg swings wide of the Cottonwood arena, which moved off the Loon Lake Shore to the flat ground south of the
+   ranch. A time ridden before these routes changed is not a time on these routes, so ROUTE_REV below retires them. */
 const RACE_ROUTES={
- rr:[[0,66],[0,121],[55,170],[110,130],[70,60],[10,20]],
- r1:[[0,66],[0,121],[60,185],[150,105],[140,-20],[105,-115],[0,-140],[-90,-100],[-130,0],[-80,80],[-15,60],[0,14]],
- pp:[[-26,14],[-26,-50],[-115,-50],[-115,30],[-65,32],[-30,20]],
- bd:[[-60,40],[-120,70],[-200,90],[-260,140],[-200,180],[-120,130],[-60,80]],
- wt:[[-40,-60],[-100,-120],[-170,-170],[-220,-230],[-150,-250],[-90,-180],[-40,-100]],
+ rr:[[0,66],[26,96],[56,126],[90,120],[96,76],[54,74]],
+ r1:[[0,66],[45,95],[88,98],[99,25],[98,-30],[90,-110],[-20,-150],[-90,-100],[-134,0],[-114,31],[-50,35],[-5,40]],
+ pp:[[-60,16],[-100,14],[-102,-36],[-70,-38],[-42,-34],[-40,2]],
+ bd:[[-196,200],[-200,262],[-262,280],[-305,255],[-300,212],[-262,198],[-226,190]],
+ wt:[[-80,-62],[-128,-92],[-195,-118],[-238,-165],[-208,-192],[-148,-142],[-100,-112]],
 };
+/* Route revisions. Every one of these routes was redrawn on 2026-09-28 (the Loon Lake Crossing, the two cross-country loops
+   and the seasonal gauntlets live in their packages), and every one of them changed length, so a best time or a weekly board
+   row ridden before that is a time on a different course. The weekly board rows are keyed with the revision (boardKey), so
+   an old-course time left on the club's board is simply never read again; and the save forgets its own old-course times
+   once (retireOldRouteTimes, below). Redraw a route again and bump its number here, and the same two things follow. */
+const ROUTE_REV={rr:2,r1:2,pp:2,bd:2,wt:2,ll:2,xc1:2,xc2:2,gt:2,gt_bloom:2,gt_sun:2,gt_ember:2,gt_frost:2};
+const ROUTE_REV_EVENTS=['rr','r1','r2','pp','bd','wt','l1','a2','x2'];   // and every gauntlet, whose ids start 'gt'
+function routeRevOf(ev){const r=ev&&ev.route&&ROUTE_REV[ev.route];return r?'_r'+r:'';}
+function boardKey(ev,wk){return 'wk_'+(wk||weekKey())+'_'+ev.id+routeRevOf(ev);}
+SAVE_ENSURES.push(function retireOldRouteTimes(s){
+ if(!s)return; s.mig=s.mig||{}; if(s.mig['routes-r2'])return; s.mig['routes-r2']=1;
+ const hit=id=>ROUTE_REV_EVENTS.includes(id)||/^gt/.test(String(id));
+ const drop=(o,week)=>{if(!o||(week&&o.week!==weekKey()))return;for(const k of ['times','gold'])if(o[k])for(const id of Object.keys(o[k]))if(hit(id))delete o[k][id];};
+ if(s.bestTimes)for(const id of Object.keys(s.bestTimes))if(hit(id))delete s.bestTimes[id];
+ /* This week's board rows go; last week's stay, because Monday's settlement has yet to pay them and they were ridden against
+    last week's board, on the course it had. events2-ladder keeps its own copy of the week and puts it back into an empty
+    s.weekly, so both copies go together. */
+ drop(s.weekly,true); drop(s.lad&&s.lad.wk,true);
+ if(s.runSaved&&hit(s.runSaved.ev))s.runSaved=null;   // a half-ridden round resumes at a gate number, on the old course's gates
+ if(s.ev2&&s.ev2.gaunt)s.ev2.gaunt={};                // the seasonal gauntlet's best time, per season
+});
 function makeGate(x,z,rotY){
  const g=new THREE.Group();
+ /* Each post stands on its own ground. The whole gate used to sit at the height of its centre, so
+    on a slope one post floated in the air and the other was sunk to its flag. */
+ const y0=groundH(x,z), c=Math.cos(rotY), sn=Math.sin(rotY);
  for(const s of[-1,1]){
-  tube(0.05,0.06,2.6,whitePaintMat,s*2.6,1.3,0,g);
+  const dy=groundH(x+s*2.6*c,z-s*2.6*sn)-y0;
+  tube(0.05,0.06,2.6,whitePaintMat,s*2.6,dy+1.3,0,g);
   const flag=new THREE.Mesh(new THREE.PlaneGeometry(0.7,0.42),
    new THREE.MeshBasicMaterial({color:s<0?0xc0392b:0x2e86c1,side:THREE.DoubleSide}));
-  flag.position.set(s*2.6+(s<0?0.35:-0.35),2.35,0);
+  flag.position.set(s*2.6+(s<0?0.35:-0.35),dy+2.35,0);
   g.add(flag);
  }
  const ring=new THREE.Mesh(new THREE.TorusGeometry(1.6,0.07,8,24),
-  new THREE.MeshBasicMaterial({color:0xffd166}));
+  new THREE.MeshBasicMaterial({color:0xffd166,transparent:true}));   // transparent from the start: styleGates dims the gates still to come
  ring.position.y=1.6;
  g.add(ring);
- g.position.set(x,groundH(x,z),z);
+ g.position.set(x,y0,z);
  g.rotation.y=rotY;
  scene.add(g);
  return {g,ring};
+}
+/* Which gate is next. Every gate not yet passed used to be the same gold ring, so at a loop's start the last gate, standing
+   big beside the start box, looked every bit as much the target as gate one ahead; only the small number said otherwise.
+   Now the next ring is brighter than white-hot gold (above 1.0, so the bloom catches it), bigger, and breathes; the gates
+   after it are dimmed and a little smaller; the passed ones stay green. Run every frame after whoever owns course progress
+   (the inline race loop or course-engine), so it never matters who recoloured what. A ring grows about its own bottom so it
+   never sinks into the ground. Stand-in rings (the gauntlet's cones) are not meshes and are left alone. */
+const GATE_NEXT=new THREE.Color(0xffe89a), GATE_AHEAD=new THREE.Color(0xa89c7c), GATE_DONE=new THREE.Color(0x69db7c);
+function styleGates(c,t){
+ if(!c||!c.jumps)return;
+ const beat=0.5+0.5*Math.sin(t*5.2);
+ for(let i=0;i<c.jumps.length;i++){
+  const r=c.jumps[i]&&c.jumps[i].ring; if(!r||!r.isMesh||!r.material)continue;
+  const m=r.material; let k=1;
+  if(i===c.idx){m.color.copy(GATE_NEXT).multiplyScalar(1.35+0.45*beat);m.opacity=1;k=1.22+0.08*beat;}
+  else if(i<c.idx){m.color.copy(GATE_DONE);m.opacity=0.85;}
+  else{m.color.copy(GATE_AHEAD);m.opacity=0.42;k=0.88;}
+  r.scale.setScalar(k); r.position.y=1.6*k;
+ }
 }
 let course=null;
 const arrow=new THREE.Mesh(new THREE.ConeGeometry(0.28,0.65,8),new THREE.MeshBasicMaterial({color:0xffd166}));
@@ -8889,6 +8981,7 @@ function startDressage(ev){
   g.position.set(x,groundH(x,z),z); scene.add(g); letters.push(g); }
  const figs=DRESSAGE_TESTS[ev.id].map(f=>Object.assign({good:0,total:0,sweep:0,lastAng:null,holdT:0,score:null},f));
  course={items:[],ev,jumps:[],idx:0,t:0,cd:3.6,started:false,faults:0,race:false,par:ev.par||60,dressage:true,figs,fi:0,letters};
+ setPracticeJumps(false);        // the practice fences stood on the figures (one on K); cancelCourse puts them back
  $('courseHud').style.display='flex'; $('courseHudTxt').textContent='🎽 '+ev.name+' — '+figs[0].text;
  player.stam=1; player.blown=false; player.boostT=0;
  toast('🎽 '+ev.name+': '+figs.length+' figures. Ctrl walks, Shift canters.');
@@ -10521,9 +10614,10 @@ function makeBubbleSprite(text){
  c.fillStyle='rgba(255,255,253,0.95)';
  c.beginPath();c.roundRect(8,6,496,72,26);c.fill();
  c.font='600 34px "Trebuchet MS",sans-serif';
- c.textAlign='center';c.fillStyle='#4a3526';
+ c.textAlign='center';c.fillStyle='#1b140e';
  c.fillText(String(text).slice(0,26),256,54);
- const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true}));
+ const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;   // as nameSprite: sRGB, and past the tone mapping, or the words go grey
+ const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,toneMapped:false}));
  sp.scale.set(3.6,0.7,1);
  sp.position.y=3.75;
  return sp;
@@ -10994,7 +11088,7 @@ function publishMyBoards(){
   }
   const bt=s.bestTimes||{};
   for(const id of Object.keys(bt)){
-   net.client.publish('srf1/'+net.club+'/lb/ev_'+id+'/'+nm,JSON.stringify({n:nm,v:bt[id]}),{retain:true});
+   net.client.publish('srf1/'+net.club+'/lb/ev_'+id+routeRevOf(EVENTS3.find(e=>e.id===id))+'/'+nm,JSON.stringify({n:nm,v:bt[id]}),{retain:true});
   }
  }catch(e){}
 }
@@ -11259,7 +11353,7 @@ function renderLB(){
  const bt=s.bestTimes||{};
  html+=EVENTS3.map(ev=>{
   const mine=bt[ev.id]?bt[ev.id]+'s':'—';
-  const top=lbTop('ev_'+ev.id,true);
+  const top=lbTop('ev_'+ev.id+routeRevOf(ev),true);   // times on a redrawn course never rank against the old one
   return '<div class="evrow"><b>'+ev.name+'</b><span>you: '+mine+(top.length?' · 👑 '+top[0].n+' '+top[0].v+'s':'')+'</span></div>';
  }).join('');
  }
@@ -12066,7 +12160,7 @@ $('questBtn').onclick=openQuests;
 })();
 
 /* ---- fast travel from the big map ---- */
-const FT=[['🏠 Ranch',0,5],['🐴 Pasture',-70,-10],['🏘️ Cottonwood',47,-50],['🌾 Barleyfold',220,-110],['🤠 Coyote Canyon',-220,130],['🏔️ Hollowpeak',-160,-210],['💦 The Falls',-150,-222],['🌊 Loon Lake',20,16],
+const FT=[['🏠 Ranch',0,5],['🐴 Pasture',-70,-10],['🏘️ Cottonwood',47,-50],['🌾 Barleyfold',220,-110],['🤠 Coyote Canyon',-220,130],['🏔️ Hollowpeak',-160,-210],['💦 The Falls',-150,-222],['🌊 Loon Lake',13.5,14.5,1.35],   // on the west shore facing the water: the lake's own centre dropped you in it, swimming
  /* The four new quarters. Each arrival point was checked for flat ground, no collider
     within two and a half metres, and no river — you land standing, not inside a rock. */
  ['🍂 Amberwood',300,-300],['🪻 Willowmere',310,300],['❄️ Frostpine',-300,-320],['🏜️ Ochre Reach',-330,300]];
@@ -12076,7 +12170,7 @@ function buildFtBar(){
  bar.querySelectorAll('[data-ft]').forEach(b=>{b.onclick=()=>{
   if($('courseHud').style.display!=='none'){toast('🏁 Finish the race first!');return;}
   const f=FT[+b.dataset.ft];
-  player.pos.set(f[1],0,f[2]);player.speed=0;
+  player.pos.set(f[1],0,f[2]);player.speed=0;if(typeof f[3]==='number')player.heading=f[3];   // a bought ranch's entry carries its id in that slot, not a heading
   toast('🧭 '+f[0].slice(f[0].indexOf(' ')+1)+', here we come!');
   dailyEvt('ft',1);
  };});
@@ -12175,24 +12269,24 @@ const STORY=[
  {ch:'Hoofprints at Dawn',label:'Visit Loon Lake',text:'Kiddo — at dusk last night I saw a grey horse drinking at Loon Lake, silver as the moon. Nobody\'s horse. Your grandmother used to tell of one like it. Ride down and look for her.',type:'visit',x:20,z:16,r:10,goal:1,reward:{c:150}},
  {ch:'Hoofprints at Dawn',label:'Gather 3 lettuces from the meadow',text:'Hoofprints in the mud, and the meadow lettuce grazed to the ground. She has a taste for it. Gather three heads — we may need them to win her over.',type:'forage',item:'lettuce',goal:3,reward:{c:150}},
  {ch:'Hoofprints at Dawn',label:'Gallop 800 m on her trail',text:'The prints lead off north, fast. Whatever she is, she can run. Open up and follow the trail — 800 metres at a full gallop.',type:'gallop',goal:800,reward:{c:200}},
- {ch:'Hoofprints at Dawn',label:'Ask Ada in Cottonwood',text:'The trail runs toward Cottonwood. Ada keeps the village garden; if a strange horse came through, she will know. Ride north past the pines and talk to her.',type:'talk',talk:'ada',npc:'ada',goal:1,reward:{c:150}},
+ {ch:'Hoofprints at Dawn',label:'Ask Ada in Cottonwood',handoff:true,text:'The trail runs toward Cottonwood. Ada keeps the village garden; if a strange horse came through, she will know. Ride north past the pines and talk to her.',type:'talk',talk:'ada',npc:'ada',goal:1,reward:{c:150}},
  {ch:'The Cottonwood Ribbon',npc:'ada',label:'Win the Cottonwood Meadow Dash',text:'A grey horse? Oh yes — she came through at a flat gallop and left a torn silver ribbon on my gate. If you mean to keep up with her, show me you can: win the Meadow Dash.',type:'event',ev:'h2',goal:1,reward:{c:250,k:1}},
  {ch:'The Cottonwood Ribbon',npc:'ada',label:'Train a stat with food',text:'She turns like a swallow. Your horse will need to be nimble: feed lettuce, or whatever you have, until one of its stats goes up a level.',type:'train',goal:1,reward:{c:200}},
  {ch:'The Cottonwood Ribbon',npc:'ada',label:'Who trampled the flowerbed?',text:'Before you go — someone trampled my flowerbed last night, and I want to know who.',clue:'The prints are small and unshod, and there is a grey hair caught on the fence.',options:['Mia\'s Comet (a shod chestnut)','Theo\'s Pepper (a black pony)','The grey horse herself'],answer:2,wrong:'Look at the clues again: what colour was the hair? Were the hooves shod?',type:'guess',goal:1,reward:{c:250,g:1}},
- {ch:'The Cottonwood Ribbon',npc:'ada',label:'Ask Farmer Otto in Barleyfold',text:'So she was here. She went east, toward the wheat. Otto at Barleyfold sees everything that crosses his fields — go and ask him.',type:'talk',talk:'otto',npc:'otto',goal:1,reward:{c:150}},
+ {ch:'The Cottonwood Ribbon',npc:'ada',label:'Ask Farmer Otto in Barleyfold',handoff:true,text:'So she was here. She went east, toward the wheat. Otto at Barleyfold sees everything that crosses his fields — go and ask him.',type:'talk',talk:'otto',npc:'otto',goal:1,reward:{c:150}},
  {ch:'Barleyfold Whispers',npc:'otto',label:'Collect 5 pumpkins',text:'The silver mare! She ran my fence line for two nights and took one of my own mares with her. Help me bring the harvest in first — five pumpkins — and I will tell you where they went.',type:'forage',item:'pumpkin',goal:5,reward:{c:250}},
  {ch:'Barleyfold Whispers',npc:'otto',label:'Win the Barleyfold Farm Derby',text:'Good. Now, a horse that can catch her needs speed on the flat. The Farm Derby is this week — win it.',type:'event',ev:'a1',goal:1,reward:{c:320,k:1}},
  {ch:'Barleyfold Whispers',npc:'otto',label:'Tame a wild horse',text:'My mare is out there somewhere, running wild. Wild horses roam the far meadows: walk up slowly, stay close until it trusts you, and bring one home. Whichever it is, it will be a good horse.',type:'tame',goal:1,reward:{c:300,g:1}},
- {ch:'Barleyfold Whispers',npc:'otto',label:'Ask Sheriff Bea in Coyote Canyon',text:'They headed west into the canyon. Sheriff Bea patrols that country; she will have seen the tracks.',type:'talk',talk:'bea',npc:'bea',goal:1,reward:{c:150}},
+ {ch:'Barleyfold Whispers',npc:'otto',label:'Ask Sheriff Bea in Coyote Canyon',handoff:true,text:'They headed west into the canyon. Sheriff Bea patrols that country; she will have seen the tracks.',type:'talk',talk:'bea',npc:'bea',goal:1,reward:{c:150}},
  {ch:'Canyon Tracks',npc:'bea',label:'Collect 4 oranges',text:'Tracks? Partner, that mare has been raiding the orange grove every night. Pick four oranges before she gets the lot, and I will show you where she waters.',type:'forage',item:'orange',goal:4,reward:{c:250}},
  {ch:'Canyon Tracks',npc:'bea',label:'Win the Coyote Desert Derby',text:'Out here the sand slows a horse. Win the Desert Derby and I will believe yours can follow her over the dunes.',type:'event',ev:'bd',goal:1,reward:{c:400,k:1}},
  {ch:'Canyon Tracks',npc:'bea',label:'Take a photo in the canyon',text:'Nobody in town believes me about her. Take a photograph out here — the mesas at least — so they know you were on the trail.',type:'photo',goal:1,reward:{c:200}},
  {ch:'Canyon Tracks',npc:'bea',label:'Who raided the grove?',text:'One more thing. Something else has been at the oranges, and it was not her.',clue:'The prints are big and shod, the fence is smeared with orange, and there is a red hair on the post.',options:['Mia\'s Comet (a chestnut with a sweet tooth)','The grey mare','A coyote'],answer:0,wrong:'Coyotes do not wear shoes, and the grey mare is grey. Think about the red hair.',type:'guess',goal:1,reward:{c:250,g:1}},
- {ch:'Canyon Tracks',npc:'bea',label:'Ask Ilse at Hollowpeak',text:'Her tracks climb north, into the snow. Ilse lives up at Hollowpeak and reads snow like a book. Wrap up warm.',type:'talk',talk:'ilse',npc:'ilse',goal:1,reward:{c:150}},
+ {ch:'Canyon Tracks',npc:'bea',label:'Ask Ilse at Hollowpeak',handoff:true,text:'Her tracks climb north, into the snow. Ilse lives up at Hollowpeak and reads snow like a book. Wrap up warm.',type:'talk',talk:'ilse',npc:'ilse',goal:1,reward:{c:150}},
  {ch:'The Silver Kestrel',npc:'ilse',label:'Win the Hollowpeak Snow Trail',text:'So you are the one following her. Up here we call her the Silver Kestrel — she has wintered on this mountain for years. Snow is heavy going; win the Snow Trail and I will know you can ride it.',type:'event',ev:'wt',goal:1,reward:{c:500,k:1}},
  {ch:'The Silver Kestrel',npc:'ilse',label:'Land 6 clean jumps',text:'She jumps the drifts like they are nothing. Show me six clean jumps — any white-railed fence will do.',type:'cleanjump',goal:6,reward:{c:300}},
  {ch:'The Silver Kestrel',npc:'ilse',label:'Find and tame the Silver Kestrel',text:'She is on the snowfield now. Walk up slowly — no galloping — and stay near her. If she trusts you, she is yours. If she does not, she never will be.',type:'kestrel',goal:1,reward:{c:800,g:3}},
- {ch:'The Silver Kestrel',npc:'ilse',label:'Tell Grandpa Wren',text:'You did it. Ride her home and tell your grandfather — he has waited longer than you know.',type:'talk',talk:'wren',npc:'wren',goal:1,reward:{c:1500,g:5,gear:'Legendary'}},
+ {ch:'The Silver Kestrel',npc:'ilse',label:'Tell Grandpa Wren',handoff:true,text:'You did it. Ride her home and tell your grandfather — he has waited longer than you know.',type:'talk',talk:'wren',npc:'wren',goal:1,reward:{c:1500,g:5,gear:'Legendary'}},
 ];
 let storyIdx=0,storyProg=0,nearNPC=false;
 try{if(save&&save.story){storyIdx=save.story.idx||0;storyProg=save.story.prog||0;}}catch(e){}
@@ -12227,7 +12321,11 @@ function openDlg(){
  const q=nearNPC||npcList[0], def=q.def, m=STORY[storyIdx], d=$('dlg');
  const head='<b>'+def.icon+' '+def.name+'</b>';
  const giver=m?(m.npc||'wren'):null, mine=m&&giver===def.id;
- if(m&&m.type==='talk'&&m.talk===def.id&&storyProg<m.goal){storyProg=m.goal;saveStory();}   // the conversation is the mission
+ /* The conversation is the mission. It is marked done here, before the dialogue is chosen, so the reward branch below
+    would win and the whole point of the visit — what the person came to say (Auntie June's Silver Key) — was never
+    shown. talkNow carries that through: the story text is printed with the reward, or with the pointer back to the giver. */
+ const talkNow=!!(m&&m.type==='talk'&&m.talk===def.id&&storyProg<m.goal);
+ if(talkNow){storyProg=m.goal;saveStory();}
  if(m&&m.type==='guess'&&mine&&storyProg<m.goal){                                              // a clue and three suspects
   d.innerHTML=head+'<p>'+storyText(m.text)+'</p><p style="font-size:13px;color:#5a4a3a">🔍 '+m.clue+'</p>'
    +m.options.map((o,i)=>'<button data-g="'+i+'" style="display:block;margin:4px 0">'+o+'</button>').join('')+'<button id="dlgBtn" style="margin-top:6px">Let me think…</button>';
@@ -12246,12 +12344,12 @@ function openDlg(){
   d.innerHTML=head+'<p>'+(def.id==='wren'?(G.run('storyEpilogue',def)||'You brought the Silver Kestrel home, champion. Your grandmother would have loved to see it. Ride free! 🏆'):def.idle)+'</p>'+extra+roleBtn+'<button id="dlgBtn">🐴</button>';
  }else if(mine&&missionDone()){
   const r=m.reward;
-  d.innerHTML=head+'<p>Wonderful work! Here — you earned it: <b>'+rewardLabel(r)+'</b></p><button id="dlgBtn">Claim ✨</button>';
+  d.innerHTML=head+(talkNow&&!m.handoff?(m.ch?'<div style="font-size:11px;color:#8c7a63;letter-spacing:.04em">'+m.ch+'</div>':'')+'<p>'+storyText(m.text)+'</p><p>Here — this is for you: <b>'+rewardLabel(r)+'</b></p>':'<p>Wonderful work! Here — you earned it: <b>'+rewardLabel(r)+'</b></p>')+'<button id="dlgBtn">Claim ✨</button>';
  }else if(mine){
-  d.innerHTML=head+(m.ch?'<div style="font-size:11px;color:#8c7a63;letter-spacing:.04em">📖 '+m.ch+'</div>':'')+'<p>'+storyText(m.text)+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':'')+'</span><br><br><button id="dlgBtn">On it!</button>';
+  d.innerHTML=head+(m.ch?'<div style="font-size:11px;color:#8c7a63;letter-spacing:.04em">📖 '+m.ch+'</div>':'')+'<p>'+storyText(m.text)+'</p><span style="color:#8c7a63;font-size:13px">📜 '+storyText(m.label)+(m.goal>1?' ('+Math.floor(storyProg)+'/'+m.goal+')':'')+'</span><br><br><button id="dlgBtn">On it!</button>';
  }else{
   const g=NPC_DEFS.find(x=>x.id===giver)||NPC_DEFS[0];
-  d.innerHTML=head+'<p>'+def.idle+'</p><span style="color:#8c7a63;font-size:13px">📜 '+m.label+' — '+(missionDone()?'tell '+npcShort(g):'ask '+npcShort(g)+' about it')+'</span><br><br>'+extra+roleBtn+'<button id="dlgBtn">🐴</button>';
+  d.innerHTML=head+'<p>'+(talkNow&&!m.handoff?storyText(m.text):def.idle)+'</p><span style="color:#8c7a63;font-size:13px">📜 '+storyText(m.label)+' — '+(missionDone()?'tell '+npcShort(g):'ask '+npcShort(g)+' about it')+'</span><br><br>'+extra+roleBtn+'<button id="dlgBtn">🐴</button>';
  }
  d.style.display='block';
  bindFx(d);
@@ -12658,8 +12756,8 @@ const REGIONS=[
  {name:'🍂 Amberwood',x:300,z:-300,r:130},
  {name:'🪻 Willowmere Marsh',x:310,z:300,r:120},
  {name:'❄️ Frostpine Tundra',x:-300,z:-320,r:125},
+ {name:'🏜️ Coyote Canyon',x:-220,z:130,r:120},   // before Ochre Reach: where the two circles overlap (the Coyote arena, the Derby) it is the canyon
  {name:'🏜️ Ochre Reach',x:-330,z:300,r:125},
- {name:'🏜️ Coyote Canyon',x:-220,z:130,r:120},
  {name:'🌾 Barleyfold Farms',x:215,z:-105,r:90},
  {name:'💦 Hollowpeak Falls',x:-150,z:-232,r:26},
  {name:'🏔️ Hollowpeak Heights',x:-160,z:-210,r:120},
@@ -13798,6 +13896,7 @@ function tick(stepSeconds){
    }
    }
   }
+  if(course)styleGates(course,t);   // the countdown too: gate one is lit before GO
  }
  /* minimap */
  {
@@ -13812,12 +13911,23 @@ function tick(stepSeconds){
      was tolerable when you could only ride 340 units and useless now. */
   const pcx=player.pos.x, pcz=player.pos.z;
   const W2=(x,z)=>[70+(x-pcx)*S,70+(z-pcz)*S];
-  mc.fillStyle='#d9c49a';
-  mc.beginPath();mc.ellipse(70,70,23.5*S,18.5*S,0,0,7);mc.fill();
-  mc.strokeStyle='rgba(244,240,230,0.9)';mc.lineWidth=1.5;
-  mc.strokeRect(70-25*S,70-20*S,50*S,40*S);
-  mc.strokeStyle='rgba(244,240,230,0.75)';mc.lineWidth=1.1;
-  mc.strokeRect(70+PAST.x1*S,70+PAST.z1*S,(PAST.x2-PAST.x1)*S,(PAST.z2-PAST.z1)*S);
+  /* The home arena and the pasture go through W2 like everything else. They were still drawn at the
+     fixed spots they had when the map was pinned to the origin, so once it followed the rider the
+     arena's sand oval and its box sat under her arrow wherever she rode (over the next-gate dots at a
+     race start) and a phantom pasture floated beside it. Off the map, they are not drawn at all. */
+  const onMap=(x1,z1,x2,z2)=>x2>pcx-132&&x1<pcx+132&&z2>pcz-132&&z1<pcz+132;
+  if(onMap(-25,-20,25,20)){
+   const ac=W2(0,0),ar=W2(-25,-20);
+   mc.fillStyle='#d9c49a';
+   mc.beginPath();mc.ellipse(ac[0],ac[1],23.5*S,18.5*S,0,0,7);mc.fill();
+   mc.strokeStyle='rgba(244,240,230,0.9)';mc.lineWidth=1.5;
+   mc.strokeRect(ar[0],ar[1],50*S,40*S);
+  }
+  if(onMap(PAST.x1,PAST.z1,PAST.x2,PAST.z2)){
+   const pq0=W2(PAST.x1,PAST.z1);
+   mc.strokeStyle='rgba(244,240,230,0.75)';mc.lineWidth=1.1;
+   mc.strokeRect(pq0[0],pq0[1],(PAST.x2-PAST.x1)*S,(PAST.z2-PAST.z1)*S);
+  }
   mc.fillStyle='#4f9ad6';
   const pp=W2(20,16);
   mc.beginPath();mc.arc(pp[0],pp[1],4.5*S,0,7);mc.fill();
@@ -13983,7 +14093,7 @@ function installFeatures(){
    forestPoints},
   net:{SOCIAL,net,remotes,lbData,myName,isFriend,publish:netPublish,subscribe:netSubscribe,sendChat:netSendChat,onMessage:netOnMessage,publishMyBoards,openProfile,chatMsg,showBubble,netConnect,topic:netTopic,subs:NET_SUBS},
   time:{seasonNow,weekKey,isoWeekKey,dateKey,marketDay,calMonth,dayT:()=>dayT},
-  course:{get:()=>course,arrow,startCourse,cancelCourse,finishCourse,finishDressage,awardRibbons,judgeJump,weeklyFeatured,startDressage,startDrill,startRoundup,ARENA_LETTERS,DRESSAGE_TESTS,eventPar,kinds:COURSE_KINDS},
+  course:{get:()=>course,arrow,startCourse,cancelCourse,finishCourse,finishDressage,awardRibbons,judgeJump,weeklyFeatured,startDressage,startDrill,startRoundup,ARENA_LETTERS,DRESSAGE_TESTS,eventPar,kinds:COURSE_KINDS,styleGates,ROUTE_REV,routeRev:routeRevOf,boardKey},
   ui:{panel:uiPanel,open:uiOpen,toggle:uiToggle,rerender:uiRender,panels:PANEL_IDS,defs:PANEL_DEFS,
    shopTab:d=>addTab(EXTRA_SHOP_TABS,d),questTab:d=>addTab(EXTRA_QUEST_TABS,d),lbTab:d=>addTab(EXTRA_LB_TABS,d),buildTab:d=>addTab(EXTRA_BUILD_TABS,d),
    careSection:f=>uiSection('care',f),careHeader:f=>uiSection('careHeader',f),stableRow:f=>uiSection('stableRow',f),stableHeader:f=>uiSection('stableHeader',f),

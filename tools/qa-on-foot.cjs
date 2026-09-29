@@ -82,10 +82,10 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 400 s');try{if(bro
     key('KeyW',false); await wait(400);
     out.water={seen,swimFeet,horseSwim,depth:+(F.waterAt(x,z)||{depth:0}).depth.toFixed(2)};
     p.pos.x=x; p.pos.z=z-12; await frames(6); }
-  /* rock: the tallest outcrop near the ranch, walked into and climbed, W held, steered at its middle */
+  /* rock: the tallest of the outcrops nearest the ranch, walked into and climbed, W held, steered at its middle */
   { /* the tallest near the ranch (its top vertex above its base; the placement shifts a little between loads) */
     const rise=o=>{const m=(G.worldOutcrops.group.children||[]).find(q=>Math.abs(q.position.x-o.x)<0.01&&Math.abs(q.position.z-o.z)<0.01);if(!m)return 0;const pa=m.geometry.attributes.position;let t=-1e9;for(let i=0;i<pa.count;i++)t=Math.max(t,pa.getY(i));return t;};
-    const O=(G.worldOutcrops&&G.worldOutcrops.placed||[]).filter(o=>Math.hypot(o.x,o.z)<150).map(o=>({...o,rise:rise(o)})).sort((a,b)=>b.rise-a.rise), oc=O[0];
+    const O=(G.worldOutcrops&&G.worldOutcrops.placed||[]).filter(o=>!(G.worldPkg&&G.worldPkg.lockedAt&&G.worldPkg.lockedAt(o.x,o.z))).sort((a,b)=>Math.hypot(a.x,a.z)-Math.hypot(b.x,b.z)).slice(0,5).map(o=>({...o,rise:rise(o)})).sort((a,b)=>b.rise-a.rise), oc=O[0];   // the five nearest in open country at any distance: venues keep the ground near home clear, and a locked region turns her back at its edge
     if(oc){ const ang=Math.atan2(oc.x,oc.z)+Math.PI, sx=oc.x+Math.sin(ang)*(oc.r*1.2+1.4), sz=oc.z+Math.cos(ang)*(oc.r*1.2+1.4);
      p.pos.x=sx; p.pos.z=sz; p.heading=Math.atan2(oc.x-sx,oc.z-sz); await frames(3); p.pos.x=sx; p.pos.z=sz; await frames(3);
      let climbed=0, top=0, hang=null; key('KeyW',true);

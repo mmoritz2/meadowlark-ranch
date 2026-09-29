@@ -10,7 +10,7 @@
    only when the network is actually unavailable. Result — the live version is
    always what you see, and the game still runs on a plane. */
 
-const CACHE = 'meadowlark-v2';
+const CACHE = 'meadowlark-v3';
 
 self.addEventListener('install', e => {
   self.skipWaiting();                       // a new build takes over immediately
@@ -37,7 +37,9 @@ self.addEventListener('fetch', e => {
          that cache meant a refresh could show a build that was already replaced. Assets
          keep the default, since they are large and change by name. */
       const path = url.pathname;
-      const revalidate = /\.(html|webmanifest)$/.test(path) || path.endsWith('/') || path.endsWith('sw.js');
+      /* The game's code is revalidated too (a feature file edited in place kept running from the HTTP cache on a normal
+         reload, mixed with newer modules): scripts are small next to the models and textures. */
+      const revalidate = /\.(html|webmanifest|js|mjs)$/.test(path) || path.endsWith('/') || path.endsWith('sw.js');
       const fresh = await fetch(revalidate ? new Request(req, { cache: 'no-cache' }) : req);
       if (fresh && fresh.status === 200 && fresh.type === 'basic') {
         const copy = fresh.clone();

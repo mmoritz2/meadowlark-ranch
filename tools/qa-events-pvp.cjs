@@ -147,7 +147,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('showmanship runs on the dressage engine at walk/halt only',
   r3.lowCourse&&r3.lowCourse.show&&r3.lowCourse.dress&&r3.lowCourse.gaits.every(g=>g==='walk'||g==='halt'),r3.lowCourse);
  check('the class finishes and records a turnout-blended score',r3.finished&&typeof r3.bestScore==='number'&&typeof r3.showBest==='number',{best:r3.bestScore,show:r3.showBest});
- check('the finish names the turnout',await toasted('[Tt]urnout .*handling'));
+ check('the finish names the turnout',await toasted('[Tt]urnout .*(pattern|handling)'));   // the pattern mark was mislabelled handling (the judge's handling is its own mark)
 
  /* ---------------------------------------------------------------- 4. arena ------------ */
  const r4=await page.evaluate(()=>{

@@ -440,8 +440,20 @@ export function install(G){
   {tr:TRACKS[0],      kind:'stone', side:-1, off:11.0, cross:{t:0.14,len:26}, gates:[]},
   {tr:TRACKS[5],      kind:'rail',  side: 1, off:11.0, cross:{t:0.12,len:24}, gates:[]},
  ];
- const GATE_W=5.0;
+ const GATE_W=5.0, COURSE_W=6.4;
  let fenceM=0, gateN=0;
+ /* Every race and cross-country leg, the closing leg of a loop included. The boundaries are hung off the
+    roads with gates where a road would want one, but nobody asked where the courses ran: the Barleyfold
+    cross country crossed these hedges and rails five times and the rider met a wall of hedge mid-gallop.
+    Wherever a course crosses a boundary now, a gate mouth is left open for it, just as for a road.
+    Only a loop is ridden back to its start: cross country sets its last fence on the closing leg and a
+    gauntlet runs round to its first element. A plain race finishes at its last gate, so its closing leg
+    is ridden by nobody and gets no gap. */
+ const courseSegs=[];
+ try{const loops=new Set((T.EVENTS3||[]).filter(ev=>ev&&(ev.xc||ev.gauntlet||ev.kind==='gauntlet')).map(ev=>ev.route));
+  for(const k in (T.RACE_ROUTES||{})){const R=T.RACE_ROUTES[k];if(!Array.isArray(R)||R.length<2)continue;for(let i=0;i<R.length;i++){const a=R[i],b=R[(i+1)%R.length];if(a&&b&&(i<R.length-1||(R.length>2&&loops.has(k))))courseSegs.push([a[0],a[1],b[0],b[1]]);}}}catch(e){}
+ const crossT=(ax,az,bx,bz,cx,cz,dx,dz)=>{const d=(bx-ax)*(dz-cz)-(bz-az)*(dx-cx);if(Math.abs(d)<1e-9)return null;const t=((cx-ax)*(dz-cz)-(cz-az)*(dx-cx))/d,u=((cx-ax)*(bz-az)-(cz-az)*(bx-ax))/d;return (t>=0&&t<=1&&u>=0&&u<=1)?t:null;};
+ P.courseGaps=[];
  P.gateAt=[];                                                  // so QA can stand at one and check it opens
  function fiveBarGate(x,z,y,yaw,swing){
   /* Hung open against its post, which is how a gate on a working farm spends most of its life and
@@ -473,6 +485,7 @@ export function install(G){
   }
   return out;
  }
+ const inVista=(x,z)=>{for(const f of ((G.vistas&&G.vistas.clearZones)||[])){try{if(f(x,z))return true;}catch(e){}}return false;};
  function runFence(f){
   const kind=f.kind, line=lineOf(f), n=line.length-1;
   let total=0; const cum=[0];
@@ -480,6 +493,8 @@ export function install(G){
   /* Gate positions are given as fractions of the road for a roadside run and of the run itself for
      a cross one, and either way end up as metres along this line. */
   const gaps=(f.gates||[]).map(g=>f.cross?g*total:((g-f.t0)/(f.t1-f.t0))*total).filter(d=>d>3&&d<total-3);
+  const cgaps=[];   // metres along this line where a course crosses it
+  for(let i=1;i<=n;i++)for(const sg of courseSegs){const t=crossT(line[i-1][0],line[i-1][1],line[i][0],line[i][1],sg[0],sg[1],sg[2],sg[3]);if(t!=null){const d=cum[i-1]+(cum[i]-cum[i-1])*t;cgaps.push(d);P.courseGaps.push([Math.round((line[i-1][0]+(line[i][0]-line[i-1][0])*t)*10)/10,Math.round((line[i-1][1]+(line[i][1]-line[i-1][1])*t)*10)/10]);}}
   let lastX=null,lastZ=null,lastOpen=false;
   /* Where the current unbroken stretch of fence began. A wall is still only emitted every third
      sample — one long segment costs the per-frame sweep exactly what a short one does — but it now
@@ -497,7 +512,11 @@ export function install(G){
    let ttx=pb[0]-pa[0],ttz=pb[1]-pa[1];const tl2=Math.hypot(ttx,ttz)||1;ttx/=tl2;ttz/=tl2;
    const s={tx:ttx,tz:ttz,nx:-ttz,nz:ttx};
    const x=p[0], z=p[1], y=gh(x,z), dist=cum[i];
-   const inGate=gaps.some(g=>Math.abs(dist-g)<GATE_W/2);
+   /* Ground world-vistas keeps clear (the Chalk Mare's viewing stone, sited on fixed ground since it stopped shuffling round
+      the random trees): the boundary simply stops short of it and takes up again on the far side, rather than running a rail
+      through the stone a metre from its middle. No gateposts: this is a break in a field wall, not a way through it. */
+   if(inVista(x,z)){closeRun();lastX=null;lastZ=null;lastOpen=false;continue;}
+   const inGate=gaps.some(g=>Math.abs(dist-g)<GATE_W/2)||cgaps.some(g=>Math.abs(dist-g)<COURSE_W/2);
    if(inGate){
     /* The gateposts stand at the mouth, the gate itself swung back out of the way. */
     if(!lastOpen&&lastX!==null){gatePost(lastX,lastZ,Math.atan2(s.tx,s.tz));fiveBarGate(lastX,lastZ,gh(lastX,lastZ),Math.atan2(s.tx,s.tz),1.5);}

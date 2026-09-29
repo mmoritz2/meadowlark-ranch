@@ -407,16 +407,19 @@ export function install(G){
  function finishBrush(){
   try{G.ui.renderCare();const b=document.querySelector('#carePanel [data-care="groom"]');if(b)b.click();}catch(e){}
  }
- /* the campfire by the ranch house: a place to sit and play */
+ /* the campfire by the ranch house: a place to sit and play. It stood inside the home arena at (4,9),
+    on the dressage figures (its collider stopped a horse dead on the E to M line), so it sits just
+    outside the arena mouth now, off every race line. */
+ const FIRE={x:-19,z:27};
  try{
-  const gh=G.world.groundH(4,9); const g=new THREE.Group(); g.position.set(4,gh,9);
+  const gh=G.world.groundH(FIRE.x,FIRE.z); const g=new THREE.Group(); g.position.set(FIRE.x,gh,FIRE.z);
   const logM=new THREE.MeshStandardMaterial({color:0x5a3d24,roughness:0.9});
   for(let i=0;i<6;i++){const l=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,0.55,7),logM);l.rotation.z=Math.PI/2;l.rotation.y=i*Math.PI/3;l.position.set(Math.cos(i*Math.PI/3)*0.32,0.09,Math.sin(i*Math.PI/3)*0.32);g.add(l);}
   for(let i=0;i<3;i++){const s=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.3,0.22,10),new THREE.MeshStandardMaterial({color:0x8d8378,roughness:1}));s.position.set(Math.cos(i*2.1)*1.3,0.11,Math.sin(i*2.1)*1.3);g.add(s);}
   const flame=new THREE.Mesh(new THREE.ConeGeometry(0.18,0.5,8),new THREE.MeshStandardMaterial({color:0xffa030,emissive:0xff6a10,emissiveIntensity:1.4,transparent:true,opacity:0.9}));flame.position.y=0.32;g.add(flame);
   const light=new THREE.PointLight(0xffa040,0.9,7);light.position.y=0.6;g.add(light);
-  G.scene.add(g); G.world.colliders.push({x:4,z:9,r:0.8});
-  G.world.addThing({kind:'camp',id:'ranchfire',x:4,z:9,g:null,label:()=>'🎸 Play a tune by the fire (E)',use:()=>{riderEmote(emoteOwned(G.save.fresh(),'guitar')?'guitar':'airguitar');},tick:(dt,t)=>{flame.scale.y=1+Math.sin(t*9)*0.12;flame.rotation.y=t*2;}});
+  G.scene.add(g); G.world.colliders.push({x:FIRE.x,z:FIRE.z,r:0.8});
+  G.world.addThing({kind:'camp',id:'ranchfire',x:FIRE.x,z:FIRE.z,g:null,label:()=>'🎸 Play a tune by the fire (E)',use:()=>{riderEmote(emoteOwned(G.save.fresh(),'guitar')?'guitar':'airguitar');},tick:(dt,t)=>{flame.scale.y=1+Math.sin(t*9)*0.12;flame.rotation.y=t*2;}});
  }catch(e){console.warn('campfire',e);}
 
  /* ---- emote panel ----------------------------------------------------------------------- */

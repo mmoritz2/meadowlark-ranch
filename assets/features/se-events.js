@@ -291,15 +291,18 @@ export function install(G){
 #seEv .sev-lockv b{font:800 clamp(13px,2.2vh,17px)/1.2 Georgia,serif;text-transform:uppercase;letter-spacing:.4px}
 #seEv .sev-lockv span{font:700 clamp(11px,1.8vh,14px)/1.3 Nunito,system-ui,sans-serif;color:#e6e0f6}
 #seEv .sev-arrow{position:absolute;bottom:-6px;z-index:6;width:30px!important;height:30px!important;padding:5px!important}
-#seEv .sev-arrow.l{right:calc(50% + 48px)}
-#seEv .sev-arrow.r{left:calc(50% + 48px)}
+#seEv .sev-arrow.l{right:calc(50% + var(--dw,48px))}
+#seEv .sev-arrow.r{left:calc(50% + var(--dw,48px))}
 #seEv .sev-arrow[hidden]{display:none!important}
-#seEv .sev-count{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);display:flex;gap:6px;z-index:6}
-#seEv .sev-count i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
-#seEv .sev-count i.on{background:#fff}
+#seEv .sev-count{position:absolute;left:50%;bottom:0;transform:translateX(-50%);display:flex;gap:0;z-index:6}
+/* each dot is a button: a clear border round it makes a finger-sized target without making the dot any bigger */
+#seEv .sev-count i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);border:5px solid transparent;background-clip:padding-box;cursor:pointer}
+#seEv .sev-count i.on{background:#fff;background-clip:padding-box}
 /* the week's card, and the special event's */
+/* above every card (their z-index runs up to 5): the card beside the centre one slid under the week's card and printed its
+   lock and its ribbons over the trophy */
 #seEv .sev-promo{position:absolute;top:calc(${TOP} + clamp(70px,11vh,92px));bottom:clamp(40px,6.5vh,56px);width:clamp(150px,14.5vw,196px);display:flex;flex-direction:column;
- border-radius:6px;overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,.5);border:2px solid #d9b45e;background:linear-gradient(180deg,#472a6f,#2a1a4c);z-index:3;max-height:470px;margin:auto 0}
+ border-radius:6px;overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,.5);border:2px solid #d9b45e;background:linear-gradient(180deg,#472a6f,#2a1a4c);z-index:6;max-height:470px;margin:auto 0}
 #seEv .sev-promo.wk{left:-4px;border-left:0;border-radius:0 6px 6px 0}
 #seEv .sev-promo.sp{right:-4px;border-right:0;border-radius:6px 0 0 6px;background:linear-gradient(180deg,#6d3d18,#3b1f0d)}
 #seEv .sev-promo .pr-h{flex:none;padding:6px 4px 7px;text-align:center;background:linear-gradient(180deg,#c3382e,#8e1f19);font:900 clamp(11px,1.8vh,14px)/1 Georgia,serif;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 3px rgba(0,0,0,.35)}
@@ -312,6 +315,7 @@ export function install(G){
 /* bottom row */
 #seEv .sev-links{position:absolute;right:14px;bottom:10px;display:flex;gap:8px;z-index:4}
 #seEv .sev-links button{padding:7px 14px!important;font-size:clamp(11px,1.8vh,13.5px)!important}
+#seEv .sev-links .sev-wkbtn{display:none}
 #seEv .sev-resume{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:rgba(28,24,50,.92);border:1.5px solid #e8c56a;font:800 13px/1.2 Nunito,system-ui,sans-serif;white-space:nowrap}
 #seEv .sev-resume button{padding:6px 12px!important;font-size:12px!important}
 /* the event page */
@@ -386,7 +390,26 @@ export function install(G){
 @media (max-width:760px){
  #seEv .sev-card{width:94vw;grid-template-columns:40% 60%}
  #seEv .sev-promo,#seEv .sev-arrow{display:none!important}
+ /* the week's card has no room on a phone, so it is a button beside Ladder and All events: without it the weekly prizes
+    could not be seen or claimed from here at all */
+ #seEv .sev-links{left:10px;right:10px;justify-content:center;flex-wrap:wrap}
+ #seEv .sev-links .sev-wkbtn{display:inline-flex}
+ #seEv .sev-links button{padding:7px 11px!important}
  #seEv .sev-name{font-size:14px}
+ /* the badges took the head's whole width and ran into each other and the cup's name: New goes to the ticket's corner,
+    Featured to the far one, and the cup's name (the same for every card in the town) makes room */
+ #seEv .sev-cup{display:none}
+ #seEv .sev-new{left:-6px;right:auto}
+ #seEv .sev-feat{left:auto;right:-6px}
+ /* ring, percentage and gold ribbons stacked down the photo, sized to it, instead of the pill lying across the ring */
+ #seEv .sev-ring{top:1.6vw;transform:translateX(-50%);width:20vw;height:20vw}
+ #seEv .sev-pct{top:22.6vw;font-size:clamp(13px,3.6vw,20px)}
+ #seEv .sev-gold{bottom:auto;top:29.4vw;height:clamp(20px,6vw,28px);padding:0 12px;font-size:clamp(10px,2.7vw,13px)}
+ #seEv .sev-foot{font-size:11.5px;white-space:nowrap;overflow:hidden}
+ /* the dots sit just under the card (the card is centred in the stage), clear of the buttons along the bottom, which
+    wrap to two rows when a special event is on */
+ #seEv .sev-count{bottom:auto;top:calc(50% + 29.4vw + 6px)}
+ #seEv .sev-count i{border-width:8px}
  #seEv .sev-prow{flex-direction:column}
  #seEv .sev-diffs{max-width:none}
  #seEv .sev-fe{grid-template-columns:repeat(2,1fr)}
@@ -400,7 +423,7 @@ export function install(G){
  root.innerHTML='<div class="sev-dim"></div><div class="sev-towns"><span class="sev-tabs" id="sevTabs"></span><span class="sev-point" id="sevPoint"></span></div>'
   +'<div class="sev-stage" id="sevStage"></div>'
   +'<div class="sev-promo wk" id="sevWeek"></div>'
-  +'<div class="sev-links"><button class="se-cream" data-sev="special" id="sevSpecial" style="display:none"></button><button class="se-cream" data-sev="ladder">Ladder</button><button class="se-cream" data-sev="classic">All events</button></div>'
+  +'<div class="sev-links"><button class="se-cream" data-sev="special" id="sevSpecial" style="display:none"></button><button class="se-cream sev-wkbtn" data-sev="week" id="sevWeekBtn">Weekly</button><button class="se-cream" data-sev="ladder">Ladder</button><button class="se-cream" data-sev="classic">All events</button></div>'
   +'<div class="sev-resume" id="sevResume" style="display:none"></div>'
   +'<div class="sev-page" id="sevPage"></div><div class="sev-sheet" id="sevSheet"></div>';
  document.body.appendChild(root);
@@ -444,7 +467,8 @@ export function install(G){
   stage.innerHTML=T0.evs.map((ev,i)=>card(ev,i,cur,T0,s,lk,feat)).join('')
    +'<button class="se-circ sev-arrow l" data-sev="prev" aria-label="Previous"'+(cur>0?'':' hidden')+'>'+K.line('chevl','#fff',2.6)+'</button>'
    +'<button class="se-circ sev-arrow r" data-sev="next" aria-label="Next"'+(cur<T0.evs.length-1?'':' hidden')+'>'+K.line('chev','#fff',2.6)+'</button>'
-   +'<span class="sev-count">'+T0.evs.map((e,i)=>'<i class="'+(i===cur?'on':'')+'"></i>').join('')+'</span>';
+   +'<span class="sev-count">'+T0.evs.map((e,i)=>'<i class="'+(i===cur?'on':'')+'" data-sev="dot:'+i+'" role="button" aria-label="'+esc(e.special?e.name:shortName(e))+'"></i>').join('')+'</span>';
+  stage.style.setProperty('--dw',(T0.evs.length*9+14)+'px');   // the arrows stand clear of however many dots there are
   for(const ev of T0.evs.slice(Math.max(0,cur-1),cur+2))K.snap(venueView(ev));
   paintPromos(s,feat);
   paintResume();
@@ -602,6 +626,7 @@ export function install(G){
   const P=$('eventsPanel');
   const via=sel=>{const x=P&&P.querySelector(sel);if(x){x.click();return true;}return false;};
   if(k==='prev')move(-1); else if(k==='next')move(1);
+  else if(k==='dot'){const T0=TW[st.town];if(T0){const c=clamp(+a,0,T0.evs.length-1);if(c!==st.cur[T0.name]){st.cur[T0.name]=c;paint();}}}
   else if(k==='week'){paintSheet();root.classList.add('sheet');}
   else if(k==='sheetx')root.classList.remove('sheet');
   else if(k==='wk'){via('button[data-wk="'+a+'"]');setTimeout(()=>{if(st.on){paintSheet();paint();}},120);}
@@ -645,7 +670,7 @@ export function install(G){
  });
  G.on('escape',()=>{if(!st.on)return false;if(root.classList.contains('sheet')){root.classList.remove('sheet');return true;}if(st.page){st.page=null;root.classList.remove('page');paint();return true;}return false;});
  G.on('wallet',()=>{if(st.on)strip.paint();});
- G.on('courseStart',()=>{if(st.on)G.hidePanels();});
+ G.on('courseStart',()=>{if(st.on){st.page=null;root.classList.remove('page','sheet');const P=$('eventsPanel');if(P)P.style.display='none';}});   // only this screen closes: a card a discipline opens at the start (the judge's card) stays up
  G.on('state',o=>{o.seEvents={on:st.on,town:st.townName||null,card:st.on&&TW[st.town]?(TW[st.town].evs[st.cur[TW[st.town].name]||0]||{}).id:null,page:st.page,sheet:root.classList.contains('sheet'),
   towns:TW.map(t=>({name:t.name,n:t.evs.length,lock:!!townLock(t.name)}))};});
  G.seEvents={open:()=>{const b=$('eventsBtn');if(b)b.click();},openPage:id=>{const ev=evById(id);if(ev)openPage(ev);},move,paint,ticketSvg,horseSvg,towns,venueView,mapView,state:st};

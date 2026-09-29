@@ -259,26 +259,35 @@ export function install(G){
 
  /* ================================================================= the seasonal trials === */
  /* One loop, four names was the whole of the seasonal programme. Each season now gets its own
-    shape, its own length, its own limit and its own décor, all inside the ground the original
-    loop already proved is ridable — the waypoints are that loop scaled and turned about its own
-    centre, so nothing lands in the river or inside a barn. */
- const GT_BASE=[[-20,-24],[-42,-46],[-72,-54],[-100,-44],[-116,-20],[-108,6],[-84,26],[-54,32],[-30,22],[-18,0]];
- const GT_CX=GT_BASE.reduce((a,p)=>a+p[0],0)/GT_BASE.length, GT_CZ=GT_BASE.reduce((a,p)=>a+p[1],0)/GT_BASE.length;
- function gtLoop(scale,turn,extra){
-  const out=GT_BASE.map(p=>{
-   const dx=p[0]-GT_CX, dz=p[1]-GT_CZ, co=Math.cos(turn), si=Math.sin(turn);
-   return [+(GT_CX+(dx*co-dz*si)*scale).toFixed(1),+(GT_CZ+(dx*si+dz*co)*scale).toFixed(1)];
-  });
-  if(extra){ for(let k=0;k<extra;k++){ const i=Math.floor((k+1)*out.length/(extra+1)); const a=out[i], b=out[(i+1)%out.length];
-   out.splice(i+1,0,[+((a[0]+b[0])/2).toFixed(1),+((a[1]+b[1])/2).toFixed(1)]); } }
-  return out;
- }
+    shape, its own length, its own limit and its own décor.
+    The four loops used to be events-pvp's loop scaled and turned about its own centre, on the
+    promise that nothing would land in the river or inside a barn. The promise was never
+    measured: the Long Sun Trials opened by riding through the Meadowlark timber barn and the
+    ranch arena's south rail, bloom closed through the barn, ember put an element inside the
+    bleachers, frost put one inside the Summoning Stall, and every season crossed the pasture
+    fence six to eight times. So each season is drawn by hand now, inside the west pasture's
+    fence line (x -110..-33, z -45..25), where the only things standing are the run-in shelter,
+    the hay, the trough and three shade trees. Every element is at least 6 m inside the fence and
+    4 m clear of all of those, every leg 3.5 m off the fence and 2.5 m clear, no leg shorter than
+    14 m and no turn sharper than 80 degrees; the start box ten metres behind element one is
+    inside the fence too. They are fixed numbers on purpose, never nudged at runtime round the
+    scenery the valley scatters afresh every boot, because a season's best time is only a record
+    if everybody rode the same loop. tools/qa-events2-disciplines.cjs re-measures them. */
  const GAUNTLET_SEASONS={
-  bloom:{route:'gt_bloom',pts:gtLoop(1,0,2),   limit:165,decor:'petal',twist:'Two extra elements on the soft ground, and a kinder clock.'},
-  sun:  {route:'gt_sun',  pts:gtLoop(1.08,0.5,0),limit:150,decor:'dust', twist:'The long loop, opened out, in the heat.'},
-  ember:{route:'gt_ember',pts:gtLoop(0.94,2.1,1),limit:140,decor:'leaf', twist:'Leaves across the line and a tighter limit.'},
-  frost:{route:'gt_frost',pts:gtLoop(0.85,3.6,0),limit:130,decor:'frost',twist:'Short, hard ground, and the shortest clock of the year.'},
+  /* the whole pasture the other way round, with a dip into the middle of the west side */
+  bloom:{route:'gt_bloom',limit:165,decor:'petal',twist:'Twelve elements, a dip across the soft middle, and a kinder clock.',
+   pts:[[-60,19],[-78,19],[-96,17],[-103,2],[-92,-10],[-102,-24],[-90,-37],[-72,-38],[-56,-38],[-44,-30],[-41,-14],[-44,12]]},
+  /* the widest loop: down the east side past the trough, and all the way round the fence line */
+  sun:  {route:'gt_sun',  limit:150,decor:'dust', twist:'The widest loop, the whole pasture round, in the heat.',
+   pts:[[-42,5],[-41,-22],[-52,-38],[-74,-39],[-96,-36],[-104,-16],[-103,12],[-86,19],[-70,19],[-54,18]]},
+  /* the east half, turning back north between the shelter and the big oak */
+  ember:{route:'gt_ember',limit:140,decor:'leaf', twist:'The east half, leaves across the line, and a tighter limit.',
+   pts:[[-43,9],[-41,-14],[-45,-31],[-58,-39],[-72,-38],[-80,-26],[-80,-10],[-79,6],[-72,19],[-58,19]]},
+  /* the west half, the shortest of the year */
+  frost:{route:'gt_frost',limit:130,decor:'frost',twist:'The short west loop, hard ground, and the shortest clock of the year.',
+   pts:[[-70,-10],[-71,-25],[-80,-37],[-96,-35],[-103,-20],[-103,-4],[-101,12],[-86,18],[-72,17],[-66,4]]},
  };
+ const GT_BASE=GAUNTLET_SEASONS.sun.pts;
  const DECOR_COL={petal:['#ffd1e8','#ffb3d9'],dust:['#d9c49a','#c9ab7a'],leaf:['#c9772f','#a8541f'],frost:['#dff1ff','#bcd9ef']};
  /* events-pvp's GTD is not a copy of the live season's row, it IS GAUNTLETS[whatever season was
     running when the page loaded]. Writing the new season's name through GTD therefore overwrites
@@ -332,12 +341,21 @@ export function install(G){
    for(const dz of[-3.2,-1.6,0])W.box(0.14,1.05,0.14,m,s*3.1,0.52,dz,g);
    for(const dz of[-2.4,-0.8]){const r=W.box(1.7,0.1,0.08,m,s*3.1,0.92,dz,g);r.rotation.y=Math.PI/2;}
   }
-  W.box(6.4,0.05,0.45,m,0,0.04,0.1,g);
-  const sp=G.nameSprite('🏁 START'); sp.position.set(0,1.9,-3.2); sp.scale.set(2.2,0.5,1); g.add(sp);
+  const line=W.box(6.4,0.05,0.45,m,0,0.04,0.1,g); if(line)line.userData.boxLine=true;
+  /* The sign stood over the back rail, 3.2 m behind the rider, which is two metres in front of a
+     camera riding five and a half back: it drew as a blurred plank across the top half of the
+     screen, a phone's whole width, with the countdown numeral sunk in it. It stands on the front
+     corner post now, level with the rider and to her side, where it reads as a sign. */
+  const sp=G.nameSprite('🏁 START'); sp.position.set(3.1,1.55,0); sp.scale.set(SIGN[0],SIGN[1],1); g.add(sp);
   g.traverse(o=>{if(o.isMesh)o.castShadow=true;});
-  g.userData.ev2StartBox=true;
+  g.userData.ev2StartBox=true; g.userData.sign=sp;
   return g;
  }
+ /* Inside a town's railed ring the full box is six metres wide and three deep, and a rider stood
+    a metre inside the rail had its back posts standing out through the fence behind her. There
+    it is drawn at a little over half size: the same box, the same members and the same sign,
+    just not reaching through the rail. The sign is counter-scaled so the word is not squashed. */
+ const BOX_FULL=[1,1,1], BOX_RING=[0.55,1,0.3], SIGN=[1.7,0.4];
  /* One start box for the life of the page, not one a round. It used to be handed to addFx and
     thrown away with the rest of the course furniture, which cost eleven geometries and a 512×128
     canvas sign every time anybody entered anything — and nameSprite keeps a reference to every
@@ -345,11 +363,16 @@ export function install(G){
     the same box is moved to wherever the rider has been lined up and parked out of sight between
     rounds, which is also the only honest reading of 'reuse the mesh, do not build a second one'. */
  let SBOX=null;
- function showBox(x,z,rotY){
+ function showBox(x,z,rotY,small){
   try{
    if(!SBOX)SBOX=buildStartBox(x,z,rotY);
    if(!SBOX.parent)G.scene.add(SBOX);
    SBOX.position.set(x,W.groundH(x,z),z); SBOX.rotation.y=rotY; SBOX.visible=true;
+   const k=small?BOX_RING:BOX_FULL; SBOX.scale.set(k[0],k[1],k[2]);
+   const sg=SBOX.userData.sign; if(sg)sg.scale.set(SIGN[0]/k[0],SIGN[1]/k[1],1);
+   /* in a ring the rider may stand beside another fence: there the box is only its start line and its sign, so no post
+      or rail of it runs up under a fence */
+   for(const ch of SBOX.children)if(ch.isMesh&&!ch.userData.boxLine)ch.visible=!small;
   }catch(e){ console.error('ev2 start box',e); }
   return null;                                           // deliberately not addFx's to dispose
  }
@@ -377,11 +400,23 @@ export function install(G){
   } }catch(e){}
   return false;
  }
- function standable(c,x,z,skip){
+ /* How close she may stand to another obstacle. Five metres from its centre is the rule in the open.
+    Inside a town ring it cannot be: on a nine- to twelve-fence course the last fence stands 6.8 to
+    8.6 m before the first, square on its approach, so no spot behind fence one is five metres from
+    it and the search gave up and stood her on the far side of the rail. What matters is the fence
+    itself, so in a ring she is kept 1.8 m off its rails, her quarters 1.2 m off them, and 2.5 m off
+    its middle: that leaves 7.75 m of run at nine fences, 7 at ten, 6.75 at eleven and 5 at twelve,
+    all square, centred and inside the rail. */
+ function fenceClear(j,x,z,rotY){
+  const rail=(px,pz)=>{const lx=px-j.x,lz=pz-j.z,al=lx*Math.cos(j.rotY||0)-lz*Math.sin(j.rotY||0),ac=lx*Math.sin(j.rotY||0)+lz*Math.cos(j.rotY||0);return Math.hypot(Math.max(0,Math.abs(al)-1.8),ac);};
+  const rx=x-Math.sin(rotY)*1.2, rz=z-Math.cos(rotY)*1.2;
+  return rail(x,z)>=1.8&&rail(rx,rz)>=1.2&&Math.hypot(x-j.x,z-j.z)>=2.5;
+ }
+ function standable(c,x,z,skip,near){
   if(wet(x,z))return false;
   try{ for(const col of (W.colliders||[]))if(Math.hypot(x-col.x,z-col.z)<col.r+1.6)return false; }catch(e){}
   if(onWall(x,z,1.6))return false;
-  try{ for(const j of (c.jumps||[]))if(j!==skip&&Math.hypot(x-j.x,z-j.z)<5)return false; }catch(e){}
+  try{ for(const j of (c.jumps||[]))if(j!==skip&&(near!=null?!fenceClear(j,x,z,near):Math.hypot(x-j.x,z-j.z)<5))return false; }catch(e){}
   try{ const h=W.groundH(x,z);
    for(const d of[[3,0],[-3,0],[0,3],[0,-3]])if(Math.abs(W.groundH(x+d[0],z+d[1])-h)>3)return false; }catch(e){}
   return true;
@@ -428,29 +463,59 @@ export function install(G){
     is handed the opening figure before the judge has looked up. The ideal for a test is 7 m back
     and BACKS reaches -6, which lands exactly there whenever the valley has scattered the venue
     somewhere too cramped to stand further out. Caller's rule, not this function's. */
- function findSpot(c,x,z,rotY,skip,target,minT){
+ /* The town arenas' rails are posts and rails with no collision (world.js never registers them as
+    walls), so clearRun could not see them and a start behind fence one of a big town course landed
+    outside the ring: Coyote's Canyon Jump-Off stood the rider at 1.55 of the rail's radius and the
+    first approach rode straight through the rail. When a course is laid in a town's ring the ring
+    itself is the fence: the rider's centre is kept RING_M inside the rail ellipse, and since the
+    inside of an ellipse is convex, a start inside it and a fence inside it have a run between them
+    that never crosses the rail. */
+ const RING_M=0.9;
+ function ringOf(c){
+  const at=c&&c.ev&&c.ev.at; if(!at)return null;
+  try{ for(const ar of ((G.worldPkg&&G.worldPkg.ARENAS)||[]))
+   if(Math.hypot(ar.x-at[0],ar.z-at[1])<1)return {x:ar.x,z:ar.z,A:ar.A||20,B:ar.B||15}; }catch(e){}   // world.js draws every town ring 20 x 15
+  return null;
+ }
+ function inRing(R,x,z,m){ if(!R)return true; const a=R.A-(m==null?RING_M:m), b=R.B-(m==null?RING_M:m); return ((x-R.x)/a)**2+((z-R.z)/b)**2<1; }
+ /* the last resort when nothing inside the ring was free: walk the spot toward what she is riding
+    at until it is inside, rather than leave her on the far side of the rail */
+ function intoRing(R,p,t){
+  if(!R||inRing(R,p[0],p[1]))return p;
+  const d=Math.hypot(t[0]-p[0],t[1]-p[1]);
+  for(let s=0.5;s<d;s+=0.5){ const x=p[0]+(t[0]-p[0])*s/d, z=p[1]+(t[1]-p[1])*s/d; if(inRing(R,x,z))return [x,z]; }
+  return p;
+ }
+ /* opt.ring keeps every candidate inside a town ring; opt.sides narrows which offsets from the
+    approach line are tried; opt.strict answers null instead of settling, so a caller can try a
+    stricter rule first and a looser one after it. */
+ function findSpot(c,x,z,rotY,skip,target,minT,opt){
+  opt=opt||{};
   const bx=Math.sin(rotY), bz=Math.cos(rotY), ax=Math.cos(rotY), az=-Math.sin(rotY);
   /* Where she is meant to be riding TO. The jumping start line is drawn ten metres back from its
      fence and a test's is seven back from A, so the caller says which rather than this guessing. */
   const tx=target?target[0]:x+bx*10, tz=target?target[1]:z+bz*10;
-  /* Negative setbacks come last and stand the rider CLOSER than the ideal ten metres. Inside a
-     railed arena there is often nowhere further back to go, and a start line six metres out that
-     she can ride from beats a textbook one she cannot. */
-  const BACKS=[0,2,4,6,8,10,12,-2,-4,-6];
-  const tooClose=(px,pz)=>minT>0&&Math.hypot(px-tx,pz-tz)<minT;
-  for(const side of[0,-1.5,1.5,-3,3,-4.5,4.5,-6,6])for(const back of BACKS){
+  /* Negative setbacks come last and stand the rider CLOSER than the ideal. Inside a railed arena
+     there is often nowhere further back to go, and a start line six metres out that she can ride
+     from beats a textbook one she cannot. The odd metres are there for the rings: a town ring
+     leaves six metres behind A and a test must not be handed five for want of a step size. */
+  const BACKS=opt.backs||[0,2,4,6,8,10,12,-1,-2,-3,-4,-5,-6];
+  const SIDES=opt.sides||[0,-1.5,1.5,-3,3,-4.5,4.5,-6,6], R=opt.ring||null, near=opt.fenceRails?rotY:null;
+  const usable=(px,pz)=>!(minT>0&&Math.hypot(px-tx,pz-tz)<minT)&&inRing(R,px,pz);
+  for(const side of SIDES)for(const back of BACKS){
    const px=x-bx*back+ax*side, pz=z-bz*back+az*side;
-   if(tooClose(px,pz))continue;
-   if(standable(c,px,pz,skip)&&clearRun(c,px,pz,tx,tz,skip))return [px,pz];
+   if(!usable(px,pz))continue;
+   if(standable(c,px,pz,skip,near)&&clearRun(c,px,pz,tx,tz,skip))return [px,pz];
   }
+  if(opt.strict)return null;
   /* Nothing had both. Take standable-and-reachable off the table and settle for reachable: being
      able to start the round matters more than the ground being pretty. */
-  for(const side of[0,-1.5,1.5,-3,3])for(const back of BACKS){
+  for(const side of SIDES.slice(0,5))for(const back of BACKS){
    const px=x-bx*back+ax*side, pz=z-bz*back+az*side;
-   if(tooClose(px,pz))continue;
+   if(!usable(px,pz))continue;
    if(clearRun(c,px,pz,tx,tz,skip))return [px,pz];
   }
-  return [x,z];
+  return intoRing(R,[x,z],[tx,tz]);
  }
  /* The three guards the race start has always carried are all still right: a rider who is already
     at the line does not want to be shuffled two metres sideways, a rider in the air is flying on
@@ -460,7 +525,7 @@ export function install(G){
  function aboard(){ try{ return !!(player.veh||(G.worldPkg&&G.worldPkg.veh)); }catch(e){ return !!player.veh; } }
  /* A silent teleport is a glitch; the same teleport with a line of text is a feature. Say where
     she has been taken and what is in front of her, and only when she has actually been moved. */
- function lineUp(c,x,z,rotY,ahead){
+ function lineUp(c,x,z,rotY,ahead,small,tgt,front){
   /* Being near the line is not the same as being ON it: 'already lined up' has to mean pointing
      down the approach as well as standing beside it. Distance alone is what let the seasonal
      trial begin with the rider sitting in the ranch yard — five metres off the approach, turned
@@ -469,7 +534,15 @@ export function install(G){
      metre courtesy. That courtesy is for a rider who has walked up to the line herself, and a
      rider who has walked up to the line is facing down it. */
   const askew=Math.abs(wrapA(player.heading-rotY))>0.35;
-  const moved=(Math.hypot(player.pos.x-x,player.pos.z-z)>12||askew)&&!player.flying&&!aboard();
+  /* ...and it has to mean standing BEHIND the first obstacle. A restart is the case: the last round
+     was given up a stride after gate one rang, so the rider is two metres short of it, facing down
+     the line, well inside the courtesy — and a gate rings at 4.6 m, so the new round counted gate one
+     the frame it began. She is left where she is only with `front` metres or more still to ride to
+     it (six for a gate or a fence, just clear of that ring); closer, level with it, or past it, she
+     is put back on the line. */
+  let short=false;
+  if(tgt){ const al=(player.pos.x-tgt[0])*Math.sin(rotY)+(player.pos.z-tgt[1])*Math.cos(rotY); short=al>-(front||0); }
+  const moved=(Math.hypot(player.pos.x-x,player.pos.z-z)>12||askew||short)&&!player.flying&&!aboard();
   if(moved){
    player.pos.set(x,0,z); player.y=0; player.vy=0; player.speed=0; player.heading=rotY;
    try{ if(W.pushOut)W.pushOut(player,0.7); }catch(e){}    // world.js's own push-out, for anything the search missed
@@ -478,14 +551,38 @@ export function install(G){
   }
   let y=0; try{y=+W.groundH(x,z).toFixed(2);}catch(e){}
   CUR.start={x:+x.toFixed(2),z:+z.toFixed(2),y,heading:+rotY.toFixed(3),moved};
-  return showBox(x,z,rotY);
+  return showBox(x,z,rotY,small);
  }
  const AHEAD={race:'the first gate is ahead.',xc:'the first obstacle is ahead.',
   gauntlet:'the first element is ahead.',jump:'the first fence is ahead.'};
+ /* How much ground she gets in front of the first obstacle. The search used to be allowed to step
+    in to four metres from fence one whenever the scenery crowded the ideal spot — barely a stride,
+    and in first person the fence and the whole guide line were below the bottom of the screen. A
+    fence now keeps eight metres, a gate six (it rings at 4.6, so anything closer is a gate taken
+    before the first stride). The tiers run from best to least bad: dead on the approach with the
+    full run; then, only in a town ring, dead on the approach with the longest run the course
+    leaves (see fenceClear: from nine fences up, fence one sits so near both the rail and the last
+    fence that eight metres square behind it is outside the ring or on top of fence twelve, and
+    square and centred inside the rail beats eight metres through it); then a little to one side
+    with the full run; then anywhere with six and a half, then five; and only then the old search. */
+ const RING_BACKS=[0,-0.5,-1,-1.5,-2,-2.5,-3,-3.5,-4,-4.5,-5,-5.5];
  function marshal(c){
   const j=c.jumps&&c.jumps[0]; if(!j)return null;
-  const at=findSpot(c,j.x-Math.sin(j.rotY)*10,j.z-Math.cos(j.rotY)*10,j.rotY,j,[j.x,j.z]);
-  return lineUp(c,at[0],at[1],j.rotY,AHEAD[discOf(c.ev).k]||AHEAD.jump);
+  const R=ringOf(c), run=j.kind==='gate'?6:8, T=[j.x,j.z];
+  const x0=j.x-Math.sin(j.rotY)*10, z0=j.z-Math.cos(j.rotY)*10;
+  const at=findSpot(c,x0,z0,j.rotY,j,T,run,{ring:R,sides:[0],strict:true})
+   ||(R&&run>6?findSpot(c,x0,z0,j.rotY,j,T,4.5,{ring:R,sides:[0],backs:RING_BACKS,fenceRails:true,strict:true}):null)
+   ||findSpot(c,x0,z0,j.rotY,j,T,run,{ring:R,sides:[-0.75,0.75,-1.5,1.5,-3,3,-4.5,4.5,-6,6],strict:true})
+   ||findSpot(c,x0,z0,j.rotY,j,T,6.5,{ring:R,strict:true})
+   ||findSpot(c,x0,z0,j.rotY,j,T,5,{ring:R,strict:true})
+   ||findSpot(c,x0,z0,j.rotY,j,T,4,{ring:R});
+  /* Six metres to ride is the rule, but never more than the line itself leaves: the ring tiers
+     put some start lines five metres from fence one (Hollowpeak's twelve-fence round is one), and
+     asking for six there moved her off the very spot she was standing on at every restart, with
+     her speed zeroed and the same 'Lined up' line again. Half a metre inside the spot's own run, and
+     for a gate never inside the 4.6 m it rings at. */
+  const alS=-((at[0]-T[0])*Math.sin(j.rotY)+(at[1]-T[1])*Math.cos(j.rotY));
+  return lineUp(c,at[0],at[1],j.rotY,AHEAD[discOf(c.ev).k]||AHEAD.jump,!!R,T,Math.max(j.kind==='gate'?4.7:0,Math.min(6,alS-0.5)));
  }
  /* A test has no first obstacle to line up behind — it has a letter. Every test in the game opens
     'enter at A', the judge sits at C, and the centre line between them is the direction the horse
@@ -504,9 +601,14 @@ export function install(G){
      for 4.5 here cost more than it bought: the ranch's own arena has barely four metres between
      its short-side rail and A, so the search had to step off the centre line to obey, and the
      centre line is the thing a test is ridden down. */
-  const at=findSpot(c,A[0]-dx/d*7,A[1]-dz/d*7,rotY,null,[A[0],A[1]],2.5);
+  /* In a town ring she starts inside the rail, like she does at home where the fence walls already
+     keep her in: the town letters leave six metres of ring behind A for exactly this. */
+  const R=ringOf(c);
+  const at=findSpot(c,A[0]-dx/d*7,A[1]-dz/d*7,rotY,null,[A[0],A[1]],2.5,{ring:R});
+  /* A is the target too: a rider already through it and into the arena has to be walked back out,
+     but anywhere on the centre line short of it is fine, since a figure wants travel to close */
   return lineUp(c,at[0],at[1],rotY,show?'walk in at A — the judge is waiting at C.'
-                                       :'walk in at A and ride the centre line to C.');
+                                       :'walk in at A and ride the centre line to C.',!!R,[A[0],A[1]],0);
  }
 
  /* ================================================================= pace-setters ========== */
@@ -516,8 +618,55 @@ export function install(G){
     drawn from the same deterministic hash the weekly board already uses for their times, labelled
     as what they are. Beating one is worth the placing and nothing else — a ghost can never be a
     PvP win, because c.pvp stays false and no racing point is minted here. */
- const GHOST_COATS=[['#6b4a2f','#3a2a1c'],['#b5895a','#4a3524'],['#8a8f96','#2e3238'],['#d6c4a1','#7a6248'],['#4a3a2e','#241a12']];
- const GH={list:[],cum:[],len:0,laps:1,on:false};
+ /* Each coat has the breed whose own painted model wears it, so a pace-setter is the same horse on
+    screen that the valley rides everywhere else rather than the procedural stand-in, which beside
+    the rigged mounts read as an untextured llama. The colours stay for the stand-in's first moment
+    while the model loads, and for a breed whose model does not come. */
+ const GHOST_COATS=[['#6b4a2f','#3a2a1c','bay'],['#b5895a','#4a3524','chestnut'],['#8a8f96','#2e3238','grey'],['#d6c4a1','#7a6248','haflinger'],['#4a3a2e','#241a12','black']];
+ const GH={list:[],cum:[],len:0,laps:1,on:false,run:0,fin:0,dir:[0,1],lat:[1,0],g0:[0,0]};
+ /* Where the field stands for the countdown. They were built and never placed, so for the whole
+    count they stood at the world origin, in the middle of the ranch's own arena with their name
+    tags stacked, and at GO jumped to gate one, fourteen to seventeen metres up the track from a
+    rider still sitting on the line. They stand on her line now, square to gate one like she is,
+    in lanes either side of the start box (its posts are 3.1 m out, so the first lane is a clear
+    horse-width past them), and a lane that is wet, on a wall or in a tree is passed over for the
+    next one out. `s` is metres of track from gate one, so the whole field starts on the same
+    negative number she does and the run-in is the same ten metres for everybody. */
+ const LANES=[4.4,-4.4,6.6,-6.6,8.8,-8.8,11,-11,13.2,-13.2];
+ function laneFree(x,z){
+  if(wet(x,z)||onWall(x,z,1.0))return false;
+  try{ for(const col of (W.colliders||[]))if(Math.hypot(x-col.x,z-col.z)<col.r+0.9)return false; }catch(e){}
+  return true;
+ }
+ /* `skip` hands out the lanes after the first few, for a second field (events2-ladder's rivals) that
+    has to stand beside this one rather than inside it */
+ function startLanes(c,n,skip){
+  skip=skip|0; if(skip)return startLanes(c,n+skip).slice(skip);
+  const j=c.jumps&&c.jumps[0]; if(!j)return [];
+  const dx=Math.sin(j.rotY), dz=Math.cos(j.rotY), ax=Math.cos(j.rotY), az=-Math.sin(j.rotY);
+  const st=CUR.start||{x:j.x-dx*10,z:j.z-dz*10};
+  const al=(st.x-j.x)*dx+(st.z-j.z)*dz, lat0=(st.x-j.x)*ax+(st.z-j.z)*az;
+  /* A rider who walked up to the line herself is left where she stands (lineUp's twelve-metre
+     courtesy), which can be well behind the box: the field stood on the box's line and started
+     the race ahead of her. When she was not moved, the field is level with whichever of her and
+     the box is further back, and a lane that would put a horse on the spot she is standing on is
+     passed over. */
+  const pa=(player.pos.x-j.x)*dx+(player.pos.z-j.z)*dz, pl=(player.pos.x-j.x)*ax+(player.pos.z-j.z)*az;
+  const s0=st.moved===false?Math.min(-3,al,pa):Math.min(-3,al), out=[], used=new Set();
+  const hers=off=>Math.abs(pa-s0)<3&&Math.abs(lat0+off-pl)<2.4;
+  const give=off=>{ used.add(off); out.push({s0,lat:lat0+off,x:j.x+dx*s0+ax*(lat0+off),z:j.z+dz*s0+az*(lat0+off),h:j.rotY}); };
+  for(const off of LANES){
+   if(out.length>=n)break;
+   if(!hers(off)&&laneFree(j.x+dx*s0+ax*(lat0+off),j.z+dz*s0+az*(lat0+off)))give(off);
+  }
+  /* crowded on both sides: stand them in the nearest lanes nobody has been given yet rather than
+     at the origin, and never two in one lane (it used to start again from the first lane, so a
+     crowded start stood two pace-setters inside each other) */
+  const MORE=LANES.concat([15.4,-15.4,17.6,-17.6,19.8,-19.8,22,-22]);
+  for(const off of MORE){ if(out.length>=n)break; if(!used.has(off)&&!hers(off))give(off); }
+  for(const off of MORE){ if(out.length>=n)break; if(!used.has(off))give(off); }
+  return out;
+ }
  function ghostPace(c,len,nm,str,k){
   const wk=G.time.weekKey(), par=c.par||len/7.2;
   const f=1.0+0.55*hash('gs'+c.ev.id+wk+nm+k);                 // 1.00–1.55 of par before the ranch's own form
@@ -532,56 +681,147 @@ export function install(G){
   GH.cum=[0]; GH.len=0;
   for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];GH.len+=Math.hypot(b[0]-a[0],b[1]-a[1]);GH.cum.push(GH.len);}
   GH.pts=pts; GH.laps=(c.ce&&c.ce.laps)||1;
+  /* The finish is where hers is, the last gate of the last lap, not gate one again: the field used to
+     ride the closing leg as well, a whole extra leg the rider never has to. */
+  GH.fin=(GH.laps-1)*GH.len+GH.cum[pts.length-1];
+  const j=c.jumps&&c.jumps[0]||{x:pts[0][0],z:pts[0][1],rotY:Math.atan2(pts[1][0]-pts[0][0],pts[1][1]-pts[0][1])};
+  GH.g0=[j.x,j.z]; GH.dir=[Math.sin(j.rotY),Math.cos(j.rotY)]; GH.lat=[Math.cos(j.rotY),-Math.sin(j.rotY)]; GH.rot0=j.rotY;
   const wk=G.time.weekKey(), pool=(T.NEIGHBOURS||[]).slice();
-  const n=Math.min(pool.length,2+Math.floor(hash('gn'+c.ev.id+wk)*3));
+  /* This is the race's one field: events2-ladder keeps its standings, pick-ups and result card on
+     these same horses rather than building a second field of its own, so it is the ladder's size
+     (three, four on Elite) whenever the ladder is installed. */
+  const FN=G.ladder&&G.ladder.FIELD_N, dk=(c.ce&&c.ce.diff&&c.ce.diff.k)||'open';
+  const n=Math.min(pool.length,(FN&&FN[dk])||2+Math.floor(hash('gn'+c.ev.id+wk)*3));
+  const lanes=startLanes(c,n); GH.run=lanes.length?-lanes[0].s0:10;
   for(let k=0;k<n;k++){
    const pick=Math.floor(hash('gp'+c.ev.id+wk+k)*pool.length)%pool.length;
    const row=pool.splice(pick,1)[0]; if(!row)break;
    const nm=row[0], str=row[1]||1, col=GHOST_COATS[Math.floor(hash('gc'+nm)*GHOST_COATS.length)%GHOST_COATS.length];
    let parts=null; try{parts=G.horse.makeHorse({colors:{body:col[0],mane:col[1]},seed:Math.floor(hash('gd'+nm)*9)});}catch(e){parts=null;}
    if(!parts||!parts.group)continue;
-   const sp=G.nameSprite('🐴 '+nm+' · pace-setter'); sp.position.y=2.9; sp.scale.set(3.2,0.5,1); parts.group.add(sp);
+   const sp=G.nameSprite(nm);   /* the name alone, big enough to read: the call already says who they are */ sp.position.y=2.9; sp.scale.set(2.3,0.36,1); parts.group.add(sp);   // four metres off the rider now: at the old size a tag filled a quarter of the screen
    G.scene.add(parts.group);
-   GH.list.push({nm,parts,s:0,v:ghostPace(c,GH.len,nm,str,k),phase:hash('gf'+nm)*6,done:false});
+   const ln=lanes[GH.list.length]||{s0:-GH.run,lat:4.4};
+   const g={nm,parts,col,s:ln.s0,lat:ln.lat,v:ghostPace(c,GH.len,nm,str,k),phase:hash('gf'+nm)*6,done:false,rt:0,cool:0,coolTo:5+3.5*GH.list.length,slowT:0,ft:null};
+   GH.list.push(g); placeGhost(g,0,0,0);
   }
   GH.on=GH.list.length>0;
  }
- function ghostAt(s){
+ /* On the loop: s metres of track from gate one, wrapped by the loop's length. */
+ function loopAt(s){
   const pts=GH.pts, cum=GH.cum, L=GH.len; s=((s%L)+L)%L;
   let i=0; while(i<cum.length-2&&cum[i+1]<s)i++;
   const a=pts[i], b=pts[(i+1)%pts.length], seg=Math.max(0.001,cum[i+1]-cum[i]), f=(s-cum[i])/seg;
   return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,Math.atan2(b[0]-a[0],b[1]-a[1])];
  }
+ /* Before gate one (s<0) a pace-setter rides the run-in, straight down gate one's approach, drifting
+    in from her lane to pass the gate a little to her own side of the middle, inside its posts, so a
+    field that reaches it together goes through side by side rather than inside one another. She is
+    on the loop's own line again twelve metres later, by which time the paces have spread them. */
+ function ghostAt(s,lat){
+  const gl=Math.sign(lat)*Math.min(2,Math.abs(lat)*0.22), run=Math.max(1,GH.run);
+  if(s<0){
+   const f=Math.min(1,-s/run), l=gl+(lat-gl)*f, dl=-(lat-gl)/run;
+   return [GH.g0[0]+GH.dir[0]*s+GH.lat[0]*l, GH.g0[1]+GH.dir[1]*s+GH.lat[1]*l,
+    Math.atan2(GH.dir[0]+GH.lat[0]*dl, GH.dir[1]+GH.lat[1]*dl)];
+  }
+  const p=loopAt(s), k=gl*Math.max(0,1-s/12);
+  return [p[0]+Math.cos(p[2])*k, p[1]-Math.sin(p[2])*k, p[2]];
+ }
+ function placeGhost(g,sp,dt,t){
+  const [x,z,rot]=ghostAt(g.s+g.cool,g.lat);
+  let y=0; try{y=W.groundH(x,z);}catch(e){}
+  g.parts.group.position.set(x,y,z); g.parts.group.rotation.y=rot;
+  /* the painted model, as the filly and every horse in the valley wear it: dressWithRig does nothing
+     until the model is in, and nothing once it has been fitted */
+  try{ if(!g.rig&&G.horse.dressWithRig)G.horse.dressWithRig(g,g.parts,{body:g.col[0],mane:g.col[1]},{breed:g.col[2],seed:Math.floor(hash('gd'+g.nm)*9)}); }catch(e){}
+  if(!dt)return;
+  const RS=G.ranchSys, A=G.anim||RS;
+  try{
+   if(g.rig&&A&&A.tickRig)A.tickRig(g,sp,dt,t,0);
+   else if(RS&&RS.animateHorse){ g.phase+=dt*(sp<0.2?0.9:sp<3?1.6:7.5); RS.animateHorse(g.parts,g.phase,sp<0.2?0.05:sp<3?0.25:0.9,(RS.GAITS||{})[sp<3?'walk':'gallop'],true,t,sp<0.2?1:0); }
+  }catch(e){}
+ }
  function tickGhosts(c,dt,t){
-  if(!GH.on||!c.started)return;
-  const total=GH.len*GH.laps, RS=G.ranchSys;
+  if(!GH.on)return;
   for(const g of GH.list){
-   if(!g.done){g.s+=g.v*dt; if(g.s>=total){g.s=total;g.done=true;}}
-   const [x,z,rot]=ghostAt(g.s);
-   g.parts.group.position.set(x,W.groundH(x,z),z); g.parts.group.rotation.y=rot;
-   g.phase+=dt*(g.done?1.6:7.5);
-   try{ if(RS&&RS.animateHorse)RS.animateHorse(g.parts,g.phase,g.done?0.25:0.9,(RS.GAITS||{})[g.done?'walk':'gallop'],true,t,0); }catch(e){}
+   let sp=0;
+   if(c.started&&!g.done){
+    /* from a standstill on the line, into her stride over the first second, like a horse and not a
+       counter being switched on */
+    g.rt+=dt; sp=g.v*Math.min(1,g.rt/1.0);
+    /* the ladder's mud slick and hay bale land on the riders behind her: a horse wading through
+       either goes at a bit under half pace until she is clear of it */
+    if(g.slowT>0){ sp*=0.45; g.slowT=Math.max(0,g.slowT-dt); }
+    g.s+=sp*dt;
+    if(g.s>=GH.fin){g.s=GH.fin;g.done=true;g.ft=+(c.t||0).toFixed(2);}   // her time over the line, for the result card
+   }else if(g.done&&g.cool<g.coolTo){ sp=1.5; g.cool=Math.min(g.coolTo,g.cool+sp*dt); }   // walks on through the finish to her own spot, not left standing in its ring or in another horse
+   placeGhost(g,sp,dt,t);
   }
  }
- function clearGhosts(){ for(const g of GH.list){try{G.scene.remove(g.parts.group);}catch(e){}} GH.list=[]; GH.on=false; }
- /* where the rider is round the loop, so the placing is the same arithmetic for everyone */
+ function clearGhosts(){
+  for(const g of GH.list){
+   try{ if(g.rig&&G.ranchSys&&G.ranchSys.disposeHorseEnt)G.ranchSys.disposeHorseEnt(g); else G.scene.remove(g.parts.group); }catch(e){try{G.scene.remove(g.parts.group);}catch(e2){}}
+  }
+  GH.list=[]; GH.on=false;
+ }
+ /* where the rider is round the loop, so the placing is the same arithmetic for everyone. On the
+    run-in that is how far short of gate one she is along its approach, a negative number like the
+    field's, so a rider still sitting on the line is level with a field still standing on it and
+    behind one that has gone. */
  function playerArc(c){
   const j=c.jumps[c.idx]; if(!j||!GH.cum.length)return 0;
-  const lap=((c.ce&&c.ce.lap)||1)-1, rem=Math.hypot(player.pos.x-j.x,player.pos.z-j.z);
+  const lap=((c.ce&&c.ce.lap)||1)-1;
+  if(lap===0&&c.idx===0)return Math.max(-GH.run-20,(player.pos.x-j.x)*GH.dir[0]+(player.pos.z-j.z)*GH.dir[1]);
+  const rem=Math.hypot(player.pos.x-j.x,player.pos.z-j.z);
   return Math.max(0,lap*GH.len+(GH.cum[Math.min(c.idx,GH.cum.length-1)]||0)-rem);
  }
  function ghostPlace(c){
   if(!GH.on)return null;
   const me=playerArc(c); let ahead=0;
-  for(const g of GH.list)if(g.s>me)ahead++;
+  for(const g of GH.list)if(g.s>me+0.5)ahead++;               // half a metre: level on the line is level
   return {place:ahead+1,field:GH.list.length+1};
  }
 
  /* ================================================================= styles + HUD chips ==== */
  const style=document.createElement('style');
- style.textContent='#ev2Call{position:fixed;top:calc(36% + 62px);left:50%;transform:translateX(-50%);z-index:8;display:none;'
-  +'font-family:var(--display,inherit);font-size:15px;font-weight:700;color:#fff8ea;text-shadow:0 3px 14px rgba(40,25,5,.6);text-align:center;pointer-events:none;line-height:1.4}'
-  +'#ev2Call.on{display:block}'
+ /* The caption was centred at 36% of the height plus 62 px, which is the rider's head and gate one's
+    ring behind it: on a phone it wrapped to four lines and hid the gate for the whole count, and the
+    numeral stood straight on top of it. It lives in the top band now, a dark strip hung under the
+    course readout (the frame hook below measures where that readout actually is, since packages
+    move it), so the whole call sits in the sky over the course rather than across it. It fades out
+    on GO! instead of blinking off. The top here is only the fallback for a frame with no readout to
+    hang it from.
+    The numeral used to hang under the caption at 110 px, and with the riding camera raised gate one
+    stands higher on the screen: the top of the number sat on the top-left of the gold ring and on the
+    arrow bobbing over it. It is drawn at 68 px now, level with the caption and just to the left of it,
+    where there is nothing but sky; a caption pushed too far left to leave room (a narrow window) puts
+    it back under the caption. The caption is one line for the same reason.
+    A phone held upright has no sky under the readout at all: the one-line caption hung there lay
+    across the top of gate one's ring, its number sign and the arrow. There the call goes up into the
+    empty sky right of the map, above the readout, and carries the count itself in gold at its head;
+    the big numeral is not drawn. A phone on its side is shorter still — the readout is already down
+    at the rider's shoulders — so a short screen gets the count in the caption too, one line in the
+    strip of sky across the very top, between the map and the right edge. */
+ style.textContent='#ev2Call{position:fixed;top:calc(106px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:8;display:none;'
+  +'box-sizing:border-box;max-width:min(680px,calc(100vw - 24px));padding:5px 16px;border-radius:14px;background:rgba(34,24,12,.6);border:1px solid rgba(255,248,234,.16);'
+  +'font-family:var(--display,inherit);font-size:14px;font-weight:700;color:#fff8ea;text-shadow:0 1px 3px rgba(0,0,0,.45);text-align:center;pointer-events:none;line-height:1.35;opacity:1;transition:opacity .45s ease}'
+  +'#ev2Call.on{display:block}#ev2Call.go,#ev2Call.fade{opacity:0}'
+  +'#ev2Call .ev2c1,#ev2Call .ev2c2{display:inline}#ev2Call .ev2c2{font-size:12px;font-weight:600;color:#f1e6cf}#ev2Call .ev2c2::before{content:" · "}#ev2Call .ev2nm,#ev2Call .ev2n{display:none}'
+  +'body.ev2Count #countdown{top:var(--ev2cdm,36%)!important;left:auto!important;right:var(--ev2cdr,50%)!important;transform:translate(0,-50%)!important;font-size:68px!important;line-height:1!important}'
+  +'body.ev2Count.ev2cdU #countdown{top:var(--ev2cd,36%)!important;left:50%!important;right:auto!important;transform:translate(-50%,0)!important}'
+  +'@media(max-width:720px){#ev2Call{top:calc(22px + env(safe-area-inset-top));left:var(--ev2mapR,calc(164px + env(safe-area-inset-left)));right:calc(8px + env(safe-area-inset-right));transform:none;max-width:none;'
+  +'text-align:left;font-size:12.5px;line-height:1.3;padding:6px 10px;border-radius:14px}'
+  +'#ev2Call .ev2c2{font-size:12.5px;white-space:nowrap}#ev2Call .ev2names,#ev2Call .ev2ic{display:none}'   // two lines in a narrow strip: no icons, and '3 pace-setters' never split
+  +'#ev2Call.go{opacity:1}#ev2Call.fade{opacity:0}'   // the phone's GO! is in the caption, so it stays up for it
+  +'#ev2Call .ev2n:not(:empty){display:block;float:left;min-width:1em;margin:0 8px 0 0;font-size:28px;line-height:1.15;color:#ffd166;text-align:center}'
+  +'body.ev2Count #countdown{display:none!important}}'
+  +'@media(max-height:500px){#ev2Call{top:calc(12px + env(safe-area-inset-top));left:50%;right:auto;transform:translateX(-50%);max-width:calc(100vw - 2 * var(--ev2mapR,200px));'
+  +'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;font-size:12.5px;line-height:1.35;padding:4px 12px;border-radius:999px}'
+  +'#ev2Call .ev2c2{font-size:12.5px}#ev2Call .ev2names{display:none}'
+  +'#ev2Call.go{opacity:1}#ev2Call.fade{opacity:0}'
+  +'#ev2Call .ev2n:not(:empty){display:inline-block;float:none;min-width:1.2em;margin:0 8px 0 0;font-size:19px;line-height:1;color:#ffd166;vertical-align:-2px}'
+  +'body.ev2Count #countdown{display:none!important}}'
   +'.ev2card{width:100%;font-size:11px;color:#6b5a45;line-height:1.5}.ev2card b{color:#3d2f22}'
   +'.ev2chip{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:999px;background:#f0e7d6;color:#6b5a45;margin-right:5px}'
   +'.ev2chip.jump{background:#dde9f7;color:#24506e}.ev2chip.xc{background:#e2efdc;color:#3f5f2c}.ev2chip.race{background:#ffe9c4;color:#8a6413}'
@@ -591,7 +831,23 @@ export function install(G){
   +'.evrow.ev2hide{display:none!important}'
   +'.ev2sheet{width:100%;font-size:12px;line-height:1.6;color:#4a3526}'
   +'.ev2sheet .r{display:flex;gap:8px;align-items:center;border-bottom:1px dashed #e6d6b8;padding:3px 0}'
-  +'.ev2sheet .r b{flex:1}.ev2sheet .v{font-variant-numeric:tabular-nums;font-weight:800}';
+  +'.ev2sheet .r b{flex:1}.ev2sheet .v{font-variant-numeric:tabular-nums;font-weight:800}'
+  /* The judge's card is written in dark ink for a cream card, and the menu frame draws a panel as
+     a see-through veil over the moving arena: the rows were brown at 12px on a dimmed meadow and
+     could not be read. A sheet that sits straight in a panel body is its own cream card now, so
+     it reads the same whatever frame it is shown in. */
+  +'.mk-panel-body>.ev2sheet,#ev2SheetPanel .ev2sheet,#ev2ResultPanel .ev2sheet{box-sizing:border-box;background:linear-gradient(180deg,#f7f0de,#ece0c3)!important;'
+  +'border:1.5px solid #d6c298!important;border-radius:10px!important;box-shadow:0 3px 8px rgba(0,0,0,.28)!important;padding:6px 12px!important;color:#3b2a17!important;font-size:13px}'
+  +'#ev2SheetPanel .ev2sheet .r b,#ev2ResultPanel .ev2sheet .r b,.mk-panel-body>.ev2sheet .r b{color:#3b2a17!important}'
+  +'#ev2SheetPanel .ev2sheet .r,.mk-panel-body>.ev2sheet .r{border-bottom-color:#d9c79f}'
+  +'#ev2SheetPanel .ev2sheet .v,.mk-panel-body>.ev2sheet .v{color:#2a1d10!important}'
+  +'#ev2SheetPanel .ev2sheet .ev2raise{font-size:12px;color:#5e4e3c!important;margin:-2px 0 4px 22px}'
+  +'#ev2SheetPanel .ev2sheet .ev2w{flex:none;font-size:11px;color:#5e4e3c!important}'
+  +'#ev2SheetPanel .ev2ready{box-sizing:border-box;display:flex;gap:10px;flex-wrap:wrap;align-items:center;width:100%;background:rgba(22,20,44,.82);border-radius:8px;padding:8px 12px}'
+  +'#ev2SheetPanel .ev2ready>span{flex:1;min-width:180px;font-size:12px;line-height:1.45;color:#f1ecff!important}'
+  /* the countdown numeral is drawn straight through a full-screen card; while the class waits on
+     the card there is nothing to count, so it is not drawn */
+  +'body.ev2Reading #countdown{display:none!important}';
  document.head.appendChild(style);
  const callEl=document.createElement('div'); callEl.id='ev2Call'; document.body.appendChild(callEl);
 
@@ -611,12 +867,34 @@ export function install(G){
  /* tickDressage reads ARENA_LETTERS straight out of the inline table every frame, so the honest
     way to hold a class at Cottonwood is to move the letters — the table, the posts standing in
     the world, and the judge's idea of where X is, together — and put them back afterwards. */
+ /* Two of the ranch arena's own letters stood in the scenery: K (-13,-11) was inside the corner of
+    the timber barn's collider (r 4.4 round -16,-14) beside the hay, and M (17,13) was in Loon
+    Lake at 0.4 m of water with swimming depth a metre further on. Both come a few metres in
+    toward X. Only a letter still at its old spot is moved, so if the inline table is ever
+    corrected at source this does nothing. */
+ {const AL=G.course.ARENA_LETTERS||{};
+  const nudge=(L,was,to)=>{const p=AL[L];if(p&&p[0]===was[0]&&p[1]===was[1]){p[0]=to[0];p[1]=to[1];}};
+  nudge('K',[-13,-11],[-11,-8]); nudge('M',[17,13],[14,10]);}
  const ARENA_HOME={}; for(const L in (G.course.ARENA_LETTERS||{}))ARENA_HOME[L]=G.course.ARENA_LETTERS[L].slice();
+ /* A town ring is not the ranch arena. The ranch arena is a 50 x 40 rectangle and its letters sit
+    inside it; carried to town unchanged they stood six of nine outside the town's 20 x 15 rail
+    ellipse (A and C at 1.07 of its radius, the corners at 1.10) with C inside the grandstand
+    collider, and the tests rode through the rail three to thirteen times. So a town has its own
+    layout, as offsets from the ring's centre, which is X: every letter at 0.74 of the rail's
+    radius or less, E and B far enough in that a canter circle round them stays inside the rail,
+    C three metres clear of the grandstand collider (more if the stand moves back), and six
+    metres of ring behind A so the start line stands inside the rail as well. */
+ const TOWN_LETTERS={A:[0,-7.5],K:[-11,-5.5],F:[11,-5.5],E:[-15,0],X:[0,0],B:[15,0],H:[-11,7.5],M:[11,7.5],C:[0,11]};
  let letterShift=null;
  function shiftArena(dx,dz){
   const AL=G.course.ARENA_LETTERS; if(!AL)return;
   for(const L in ARENA_HOME)AL[L]=[+(ARENA_HOME[L][0]+dx).toFixed(2),+(ARENA_HOME[L][1]+dz).toFixed(2)];
   letterShift=[dx,dz];
+ }
+ function townArena(at){
+  const AL=G.course.ARENA_LETTERS; if(!AL)return;
+  for(const L in ARENA_HOME){ const o=TOWN_LETTERS[L]; AL[L]=o?[+(at[0]+o[0]).toFixed(2),+(at[1]+o[1]).toFixed(2)]:ARENA_HOME[L].slice(); }
+  const X=ARENA_HOME.X||[2,1]; letterShift=[+(at[0]-X[0]).toFixed(2),+(at[1]-X[1]).toFixed(2)];
  }
  function homeArena(){
   if(!letterShift)return; const AL=G.course.ARENA_LETTERS;
@@ -655,14 +933,14 @@ export function install(G){
  /* ================================================================= courseStart =========== */
  G.on('courseStart',c=>{
   if(!c)return;
-  clearFx(); clearGhosts(); homeArena(); hideBox(); resetCur(c);
+  clearFx(); clearGhosts(); homeArena(); hideBox(); resetCur(c); endRead();
   try{const sv=G.save.fresh()||{};CUR.goldBefore=!!(sv.ribbonGold||{})[c.ev.id];}catch(e){}
   const S=c.ce||null;
   /* ---- the judged classes ---- */
   if(c.dressage){
    const show=!!(c.show||c.ev.kind==='show');
    try{bendTest(c);}catch(e){console.error('ev2 bendTest',e);}
-   if(c.ev.at){ const X=ARENA_HOME.X||[2,1]; shiftArena(c.ev.at[0]-X[0],c.ev.at[1]-X[1]); placeLetters(c); }
+   if(c.ev.at){ townArena(c.ev.at); placeLetters(c); }
    /* after the arena has travelled, never before: A is wherever the letters have just been put */
    try{addFx(marshalTest(c,show));}catch(e){console.error('ev2 marshalTest',e);}
    if(show){
@@ -701,10 +979,37 @@ export function install(G){
  /* The countdown was a bare 110px numeral over an empty field. Say what is being called. */
  function caption(c){
   const d=discOf(c.ev), S=c.ce, diff=(S&&S.diff)||null;
-  callEl.innerHTML=d.icon+' <b>'+c.ev.name+'</b><br>'+d.label+' · '+c.ev.town
-   +(diff?' · '+diff.icon+' '+diff.label:'')+(c.pvp||c.friendly?' · a field is on the line':'')
-   +(GH.on?'<br>🏁 '+GH.list.length+' pace-setters from the valley: '+GH.list.map(g=>g.nm).join(', '):'');
-  callEl.classList.add('on');
+  /* One line: what is being called, then the field. The event's own name is not repeated (the course
+     readout right above it is already saying it) — as two lines, with the name, the call came down to
+     157 px on a laptop and gate one's gold ring, with the camera raised, stands from 154 px. A phone
+     drops the names too, which the standings carry once the race is on. */
+  callEl.innerHTML='<div class="ev2c1"><b class="ev2n"></b><span class="ev2ic">'+d.icon+' </span><span class="ev2nm"><b>'+c.ev.name+'</b> · </span>'+d.label+' · '+c.ev.town
+   +(diff?' · <span class="ev2ic">'+diff.icon+' </span>'+diff.label:'')+(c.pvp||c.friendly?' · a field is on the line':'')+'</div>'
+   +(GH.on?'<div class="ev2c2">'+GH.list.length+' pace-setters<span class="ev2names">: '+GH.list.map(g=>g.nm).join(', ')+'</span></div>':'');
+  callEl.classList.remove('fade','go'); callEl.classList.add('on');
+ }
+ /* Hang the caption a few pixels under wherever the course readout is standing this frame, and the
+    numeral under the caption. The readout is measured rather than assumed because three packages
+    place it (the inline stylesheet, the phone layout and the HUD skin); if it is not up, or has been
+    put somewhere that is not the top band, the stylesheet's own top stands. */
+ /* On a phone, upright or on its side, the stylesheet puts the call in the sky by the map instead, so
+    it is only told where the map ends. A readout whose top is in the upper half is still the top band
+    (a short screen's readout comes down to 154-196 px, below the old 45% line, and the call used to
+    fall back to 106 px, above it). The numeral is stood level with the caption, just left of it. */
+ const SKYQ=matchMedia('(max-width:720px),(max-height:500px)');
+ function bandCall(){
+  try{
+   const hud=$('courseHud'), B=document.body.style, sky=SKYQ.matches; let top=null;
+   if(!sky&&hud&&hud.style.display!=='none'){ const r=hud.getBoundingClientRect(); if(r.height>0&&(r.bottom<innerHeight*0.45||r.top<innerHeight*0.5))top=Math.round(r.bottom+8); }
+   callEl.style.top=top==null?'':top+'px';
+   if(sky){ const m=$('mini'), mr=m&&m.getBoundingClientRect(); if(mr&&mr.width>0)B.setProperty('--ev2mapR',Math.round(mr.right+12)+'px'); }
+   const cr=callEl.getBoundingClientRect();
+   if(cr.height>0){
+    B.setProperty('--ev2cd',Math.round(cr.bottom+2)+'px'); B.setProperty('--ev2cdm',Math.round((cr.top+cr.bottom)/2)+'px');
+    B.setProperty('--ev2cdr',Math.round(innerWidth-cr.left+12)+'px');
+    document.body.classList.toggle('ev2cdU',cr.left<170);
+   }
+  }catch(e){}
  }
 
  /* ================================================================= hazards =============== */
@@ -781,17 +1086,30 @@ export function install(G){
   h+='<div class="ev2sheet">';
   for(const x of parts){
    const v=Math.round((x.v||0)*100), w=Math.round((x.p.w||0)*100);
-   h+='<div class="r">'+x.p.icon+' <b>'+x.p.label+'</b><span class="v">'+v+'%</span><span style="flex:none;font-size:10px;color:#8c7a63">weight '+w+'%</span></div>';
-   if(v<90)h+='<div style="font-size:11px;color:#8c7a63;margin:-2px 0 4px 22px">to raise it: '+(RAISE[x.p.k]||'ride her better')+'</div>';
+   h+='<div class="r">'+x.p.icon+' <b>'+x.p.label+'</b><span class="v">'+v+'%</span><span class="ev2w">weight '+w+'%</span></div>';
+   if(v<90)h+='<div class="ev2raise">to raise it: '+(RAISE[x.p.k]||'ride her better')+'</div>';
   }
   h+='<div class="r"><b>🧼 Turnout, all told</b><span class="v">'+Math.round(tn*100)+'%</span></div>';
-  h+='<div class="r"><b>🤲 Handling in the ring</b><span class="v">'+(CUR.show?Math.round(hd*100)+'%':'—')+'</span>'
-   +'<span style="flex:none;font-size:10px;color:#8c7a63">stand still, stand square, walk when the pattern says walk</span></div>';
+  h+='<div class="r"><b>🤲 Handling in the ring</b><span class="v">'+(CUR.show?Math.round(hd*100)+'%':'—')+'</span></div>'
+   +'<div class="ev2raise">stand still, stand square, walk when the pattern says walk</div>';
   h+='</div><span class="ev2card">Half the class is how she is presented and half is the pattern. Standing square through a halt and holding a quiet walk between the letters is marked into the pattern figure by figure — a jog at the wrong moment costs the mark, not the clock.</span>';
+  if(READ&&READ.c===c&&!c.started)h+='<div class="ev2ready"><button class="claimBtn" data-fx="ev2:ready">Ready — start the countdown</button>'
+   +'<span>The class waits while you read. Press Ready or close the card, and the countdown begins.</span></div>';
   return h;
  }
  G.ui.panel({id:'ev2SheetPanel',title:'🧼 Judge\'s card',render(){return sheetHtml();}});
- function openJudgeSheet(c){ sheetFor=c; try{G.ui.open('ev2SheetPanel');}catch(e){} }
+ /* The card used to go up full screen at the very moment the class began, with the countdown
+    running underneath it and the first figure marking from GO: reading the rules the game put in
+    front of you halved your first mark (8/10 closing it at once, 4/10 after fourteen seconds of
+    reading). While the card is up before the start, the class waits for you. READ remembers which
+    class is waiting and where she was standing when it opened. */
+ let READ=null;
+ function sheetUp(){ const p=$('ev2SheetPanel'); return !!(p&&p.style.display==='flex'); }
+ function openJudgeSheet(c){ sheetFor=c; READ={c,x:null,z:null}; document.body.classList.add('ev2Reading'); try{G.ui.open('ev2SheetPanel');}catch(e){}
+  /* other packages' courseStart hooks run after this one and may close panels; the card comes back once they have */
+  setTimeout(()=>{try{if(READ&&READ.c===c&&!c.started){const p=$('ev2SheetPanel');if(!p||p.style.display==='none')G.ui.open('ev2SheetPanel');}}catch(e){}},0); }
+ function closeSheet(){ const p=$('ev2SheetPanel'); if(p)p.style.display='none'; }
+ function endRead(){ READ=null; document.body.classList.remove('ev2Reading'); }
 
  /* ================================================================= the result ============ */
  /* There was no results screen. A round ended, #courseHud went to display:none, and the line
@@ -854,7 +1172,8 @@ export function install(G){
    if(S.lineOff>=1)rows.push(['Line','off for '+S.lineOff.toFixed(1)+'s']);
   }
   const rib=(RB&&RB.rib)||CUR.rib||0, gold=CUR.gold&&!dressage?true:!!(RB&&RB.gold);
-  RESULT={id:ev.id,name:ev.name,town:ev.town,disc:d.k,label:d.label,icon:d.icon,diff,
+  RESULT={id:ev.id,name:ev.name,town:ev.town,disc:d.k,label:d.label,icon:d.icon,diff,at:Date.now(),
+   show:!!(dressage&&CUR.show),handling:dressage&&CUR.show?+CUR.handling.toFixed(3):null,turnout:dressage&&CUR.show?+(CUR.turnout0||0).toFixed(3):null,
    stars:starsOf(stars||1),rows,
    figs:dressage&&c.figs?c.figs.map(f=>[f.text,f.score==null?0:f.score]):null,
    ribbons:(rib?'🎀'.repeat(Math.max(0,Math.min(3,rib-(gold?1:0))))+(gold?' 🥇 gold ribbon':''):'none this time')
@@ -954,6 +1273,7 @@ export function install(G){
   const k=a[0];
   if(k==='card'){ cardFor=evById(a[1]); if(cardFor)G.ui.open('ev2CardPanel'); return; }
   if(k==='sheet'){ G.ui.open('ev2SheetPanel'); return; }
+  if(k==='ready'){ closeSheet(); return; }
   if(k==='again'){ const ev=evById(a[1]); G.hidePanels(); if(ev)setTimeout(()=>{try{G.course.startCourse(ev);}catch(e){}},60); return; }
   if(k==='filter'){ FILTER=(a[1]==='all'||FILTER===a[1])?null:a[1]; try{G.ui.openEvents();G.ui.openEvents();}catch(e){} try{fixRows();}catch(e){} return; }
  });
@@ -1190,8 +1510,19 @@ export function install(G){
   RB.faultPoints=CUR.fenceFaults;
   CUR.gold=!!RB.gold; CUR.rib=RB.rib|0;
  });
+ /* Every finish used to put up two cards: this one, and a third of a second later events2-ladder's
+    result card, whose opening hid this one — so the player saw a card flash up and be replaced by
+    a different one, and for a test the card that stayed had no figure marks and no handling row.
+    One card is right, and the ladder's is the one with the field, the purse, the boards and what
+    to ride next, so when the ladder is installed it draws this sheet inside its own card (it reads
+    G.events2.result()) and this panel is only kept up to date, never opened. On its own this
+    package still shows its card, so the result is never lost. */
  function showResult(c,ev,stars,RB,pay,dressage,pct){
-  try{buildResult(c,ev,stars,RB,pay,dressage,pct);G.ui.open('ev2ResultPanel');}catch(e){console.error('ev2 result',e);}
+  try{
+   buildResult(c,ev,stars,RB,pay,dressage,pct);
+   if(G.ladder&&G.ladder.openCard){ try{G.ui.rerender('ev2ResultPanel');}catch(e){} return; }
+   G.ui.open('ev2ResultPanel');
+  }catch(e){console.error('ev2 result',e);}
  }
  G.on('courseFinish',({c,ev,stars,RB,pay,dressage,pct})=>{
   if(!c)return;
@@ -1237,9 +1568,51 @@ export function install(G){
  });
  G.on('tick',(dt,t)=>{
   const c=G.course.get();
-  if(lastCourse&&lastCourse!==c){ clearFx(); clearGhosts(); homeArena(); hideBox(); callEl.classList.remove('on'); if(!c)resetCur(null); }
+  /* A course that ended with nothing after it is tidied here. A course that was replaced in the same
+     frame (cancel and start again, as a restart does) was already tidied by courseStart, which then
+     laid the new one: tidying again here threw the new round's field, box and caption away before a
+     frame of it had been drawn. */
+  if(lastCourse&&lastCourse!==c&&!(c&&CUR.c===c)){ clearFx(); clearGhosts(); homeArena(); hideBox(); callEl.classList.remove('on','fade','go'); if(!c)resetCur(null); }
   lastCourse=c;
-  if(c&&!c.started)callEl.classList.add('on'); else callEl.classList.remove('on');
+  /* The judge's card holds the class. This hook runs before the course countdown in the frame, so
+     pinning the countdown at its opening 3.6 s here means it never gets to GO while the card is up;
+     the inspection beat is held with it, so the horse is shown off after the card, not behind it.
+     The card goes when she presses Ready, closes it (✖, Escape, another menu) or simply rides off
+     from where she was put — a rider who has started walking has finished reading. */
+  if(READ){
+   if(!c||c!==READ.c||c.started)endRead();
+   else{
+    if(READ.x==null){READ.x=player.pos.x;READ.z=player.pos.z;}
+    const up=sheetUp(), moved=Math.hypot(player.pos.x-READ.x,player.pos.z-READ.z)>1.2;
+    if(up&&moved)closeSheet();
+    if(up&&!moved){ c.cd=Math.max(c.cd,3.6); CUR.camT=Math.max(CUR.camT,3.0); }
+    else endRead();
+   }
+  }
+  /* Nothing pointed at the first obstacle until GO: ranch3d positions the floating arrow only once
+     a round is running, so the whole countdown was spent looking at a start box with no idea which
+     way the course went. Put it over the first fence, gate or letter while the count runs. */
+  if(c&&!c.started){
+   try{
+    const f=c.dressage&&c.figs?c.figs[c.fi]:null, j=!c.dressage&&c.jumps?c.jumps[c.idx]:null;
+    const tg=f?G.course.ARENA_LETTERS[f.at]:j?[j.x,j.z]:null, ar=G.course.arrow;
+    if(tg&&ar){ar.visible=true;ar.position.set(tg[0],W.groundH(tg[0],tg[1])+(c.race?3.4:c.dressage?2.4:2.6)+Math.sin(t*4)*0.18,tg[1]);}
+   }catch(e){}
+  }
+  /* The call is up for the count, starts to fade the moment GO! is drawn and is gone as the round
+     begins; the numeral is hung under it for exactly as long as there is a count. */
+  if(c&&!c.started){
+   callEl.classList.add('on'); callEl.classList.remove('fade'); callEl.classList.toggle('go',!READ&&c.cd<=0.6);
+   document.body.classList.add('ev2Count'); bandCall();
+   /* the phone's count: the same number the numeral shows, nothing while the judge's card holds it */
+   const n=callEl.querySelector('.ev2n'), tx=READ?'':c.cd<=0.6?'GO!':String(Math.ceil(c.cd));
+   if(n&&n.textContent!==tx)n.textContent=tx;
+  }else{
+   document.body.classList.remove('ev2Count');
+   if(c&&c.started&&(c.t||0)<0.5&&callEl.classList.contains('on'))callEl.classList.add('fade');
+   else callEl.classList.remove('on','fade','go');
+  }
+  if(c&&!c.started&&GH.on)tickGhosts(c,dt,t);            // the field stands on the line and fidgets through the count
   if(CUR.camT>0&&c&&!c.started)CUR.camT-=dt; else CUR.camT=0;
   /* the Events panel is rebuilt from scratch every time it opens, so the corrections and the
      filter are re-applied whenever it is on screen */
@@ -1258,7 +1631,7 @@ export function install(G){
  G.on('state',o=>{
   const c=G.course.get(), S=c&&c.ce;
   o.ev2={filter:FILTER,gauntlet:{season:seasonKey(),route:(T.EVENTS3.find(e=>e.gauntlet)||{}).route,limit:(T.EVENTS3.find(e=>e.gauntlet)||{}).limit},
-   arenaShift:letterShift?letterShift.slice():null,
+   arenaShift:letterShift?letterShift.slice():null,reading:!!READ,
    pars:T.EVENTS3.filter(e=>e.route).reduce((a,e)=>{a[e.id]=e.par;return a;},{})};
   if(c){
    o.ev2.hud=CUR.hud; o.ev2.disc=discOf(c.ev).k;
@@ -1288,5 +1661,8 @@ export function install(G){
   routeLen,fixPars,rewardLine,allowedLine,SCORE_BANDS,reqLine,openCard(id){cardFor=evById(id);if(cardFor)G.ui.open('ev2CardPanel');},
   openSheet(){G.ui.open('ev2SheetPanel');},setFilter(k){FILTER=k;applyFilter();},filter:()=>FILTER,fixRows,applyFilter,
   state:CUR,shiftArena,homeArena,ARENA_HOME,tidyHazards,marshal,marshalTest,findSpot,standable,wet,onWall,
-  startBox:()=>SBOX,hideBox,ghosts:GH,ghostPlace,playerArc};
+  startBox:()=>SBOX,hideBox,ghosts:GH,ghostPlace,playerArc,startLanes,
+  /* the last finish's sheet, for the ladder's one result card; the town layout and the ring test
+     for anything that wants to know where a class or a start line is allowed to stand */
+  result:()=>RESULT,TOWN_LETTERS,townArena,ringOf,inRing,reading:()=>!!READ};
 }

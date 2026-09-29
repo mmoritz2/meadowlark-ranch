@@ -137,6 +137,8 @@ export function install(G){
   fence:'<path d="M5 20V7l1.5-2L8 7v13M11 20V7l1.5-2L14 7v13M17 20V7l1.5-2L20 7v13M3 10h19M3 16h19"/>',lantern:'<path d="M9 5h6M12 3v2M8 8h8l-1 10H9zM9.5 18v2h5v-2"/><path d="M12 11v4"/>',
   bench:'<path d="M3 11h18M4 11v7M20 11v7M3 15h18M5 7h14v4"/>',sign:'<path d="M12 21V10M5 4h14v6H5z"/>',flower:'<circle cx="12" cy="9" r="2"/><path d="M12 5a2 2 0 1 1 0 0M12 11v10M12 16c-2-2-4-2-5-1M12 18c2-2 4-2 5-1"/><circle cx="12" cy="5" r="2"/><circle cx="16" cy="9" r="2"/><circle cx="8" cy="9" r="2"/>',
   barrel:'<path d="M7 4h10c1.5 3 1.5 13 0 16H7c-1.5-3-1.5-13 0-16zM6 9h12M6 15h12"/>',bucket:'<path d="M5 8h14l-2 12H7zM5 8a7 7 0 0 1 14 0"/>',tent:'<path d="M3 20 12 4l9 16zM12 4v16M9 20l3-5 3 5"/>',
+  /* a die, for the random-name button in the naming dialogs: it fell back to the dot, which says nothing about rolling */
+  dice:'<rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="8.6" cy="8.6" r=".6"/><circle cx="15.4" cy="8.6" r=".6"/><circle cx="12" cy="12" r=".6"/><circle cx="8.6" cy="15.4" r=".6"/><circle cx="15.4" cy="15.4" r=".6"/>',
   dot:'<circle cx="12" cy="12" r="4.5"/>'
  };
  const LINE_OF={
@@ -160,7 +162,7 @@ export function install(G){
   '\u{1F455}':'shirt','\u{1F97C}':'shirt','\u{1F3BD}':'shirt','\u{1F454}':'shirt','\u{1F9E2}':'shirt','\u{1F4EC}':'inbox','\u{1F4EE}':'inbox','\u{1F4E9}':'inbox','✉':'inbox','\u{1F4E5}':'tray','\u{1F4E6}':'tray',
   '\u{1F4A8}':'wind','\u{1FAC0}':'heart','\u{1F300}':'swirl','⤴':'jump','⤵':'jump','\u{1FA9C}':'jump','\u{1F680}':'rocket','⏩':'fast','⏭':'fast','\u{1F3C5}':'medal','\u{1F396}':'medal','✂':'scissors',
   '\u{1FAA8}':'rock','\u{1FAB5}':'log','\u{1F6A7}':'fence','\u{1F9F1}':'fence','\u{1F3EE}':'lantern','\u{1F56F}':'lantern','\u{1FA91}':'bench','\u{1FAA7}':'sign','\u{1F337}':'flower','\u{1F33B}':'flower','\u{1F33C}':'flower','\u{1F338}':'flower','\u{1F339}':'flower','\u{1F490}':'flower','\u{1F3F5}':'flower','\u{1F6E2}':'barrel','\u{1FAA3}':'bucket','\u26FA':'tent',
-  '\u{1F302}':'umbrella','☂':'umbrella','☔':'umbrella','\u{1F514}':'bell','\u{1F4A1}':'lightbulb','\u{1F6E1}':'shield','\u{1F9F0}':'tools','\u{1F9F4}':'bottle','\u{1F9C3}':'bottle'
+  '\u{1F3B2}':'dice','\u{1F302}':'umbrella','☂':'umbrella','☔':'umbrella','\u{1F514}':'bell','\u{1F4A1}':'lightbulb','\u{1F6E1}':'shield','\u{1F9F0}':'tools','\u{1F9F4}':'bottle','\u{1F9C3}':'bottle'
  };
  const uri=svg=>'url("data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)+'")';
  const colorUri={}, lineUri={};

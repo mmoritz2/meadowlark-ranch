@@ -32,13 +32,13 @@ export function install(G){
     with a ranch-level alternative so a builder is never stuck, and a seasonal open week. */
  const REGION_META={
   '🐴 Home Pasture':{id:'pasture',biome:'meadow',ft:'🐴 Pasture'},
-  '🏜️ Coyote Canyon':{id:'coyote',biome:'desert',ft:'🤠 Coyote Canyon',unlock:{story:['Visit Loon Lake',2,8],ranch:3,text:'after book one of the story, or at ranch level 3'},venue:{x:-220,z:130}},
-  '🌾 Barleyfold Farms':{id:'barleyfold',biome:'farm',ft:'🌾 Barleyfold',unlock:{story:['Win Cottonwood Welcome Jump',1,4],ranch:2,text:'after Grandpa Wren\'s fourth errand, or at ranch level 2'},venue:{x:150,z:-122}},
+  '🏜️ Coyote Canyon':{id:'coyote',biome:'desert',ft:'🤠 Coyote Canyon',unlock:{story:['Visit Loon Lake',2,8],ranch:3,text:'after book one of the story, or at ranch level 3'},venue:{x:-238,z:220}},
+  '🌾 Barleyfold Farms':{id:'barleyfold',biome:'farm',ft:'🌾 Barleyfold',unlock:{story:['Win Cottonwood Welcome Jump',1,4],ranch:2,text:'after Grandpa Wren\'s fourth errand, or at ranch level 2'},venue:{x:206,z:-38}},
   '💦 Hollowpeak Falls':{id:'falls',biome:'mountain',ft:'💦 The Falls',unlock:{story:['Win the Championship Final',1,7],ranch:3,text:'once the Championship Final is on the board, or at ranch level 3'}},
-  '🏔️ Hollowpeak Heights':{id:'hollowpeak',biome:'mountain',ft:'🏔️ Hollowpeak',unlock:{story:['Win the Championship Final',1,7],ranch:3,text:'once the Championship Final is on the board, or at ranch level 3'},venue:{x:-110,z:-170}},
+  '🏔️ Hollowpeak Heights':{id:'hollowpeak',biome:'mountain',ft:'🏔️ Hollowpeak',unlock:{story:['Win the Championship Final',1,7],ranch:3,text:'once the Championship Final is on the board, or at ranch level 3'},venue:{x:-92,z:-173}},
   '🌉 Riverside Crossing':{id:'riverside',biome:'river',ft:null},
   '🌊 Loon Lake':{id:'lake',biome:'lake',ft:'🌊 Loon Lake'},
-  '🏘️ Cottonwood Village':{id:'cottonwood',biome:'meadow',ft:'🏘️ Cottonwood',venue:{x:76,z:-28}},
+  '🏘️ Cottonwood Village':{id:'cottonwood',biome:'meadow',ft:'🏘️ Cottonwood',venue:{x:-6,z:-116}},
   '🌲 Hollowpeak Pines':{id:'pines',biome:'forest',ft:null},
   '🏡 Meadowlark Ranch':{id:'ranch',biome:'meadow',ft:'🏠 Ranch',venue:{x:2,z:1}},
   '🌾 Kestrel Basin Meadows':{id:'meadows',biome:'meadow',ft:null},
@@ -73,12 +73,27 @@ export function install(G){
   return news;
  }
  function lockedRegionsAt(x,z){return T.REGIONS.filter(rg=>rg.unlock&&rg.r<999&&hyp(x,z,rg.x,rg.z)<rg.r&&!regionUnlocked(rg));}
+ P.lockedAt=(x,z)=>lockedRegionsAt(x,z).length>0;
  Object.assign(P,{REGION_META,regionUnlocked,ruleTrue,seasonOpen,ensureUnlocks,lockText,ranchLevel,storyIndexOf,lockedRegionsAt,regionById});
 
  /* Jumping events are laid in their own town's arena (startCourse reads ev.at). Dressage keeps
-    the lettered home arena; races already cross the regions. */
+    the lettered home arena; races already cross the regions.
+    Each town arena stands on a fixed, surveyed site (the venue coordinates above). They used to be
+    moved at boot by findClear, before the towns were built and against whatever trees happened to be
+    standing, so from one load to the next the Coyote ring came down among three mesas, the outpost and
+    a field of cacti, Barleyfold's across its own town wall or on Sparrow Creek, Cottonwood's round the
+    windmill, and others on hillsides or across a road. Every site was checked on the built world for
+    open, gently sloping ground, a clear footprint for the ring and its grandstand (seeded mesas, the
+    towns' buildings as authored, walls and fences, roads), distance from the river, the creek and Loon
+    Lake, and room from every race route. The same place on every load, so a course's fences stand in
+    the same place too.
+    Cottonwood's first fixed site, (60,14), stood on the Loon Lake Shore ranch a player can buy: the
+    ring over its pasture, the grandstand over plot k6 and the barn row's end. It now stands on the
+    flattest open ground within reach of the village, south of the ranch: under a metre of fall
+    across the whole ring (every other site near the village, and the old one, fell two), clear of
+    every ranch's pasture, barn row and plot, of the roads and their field boundaries, and of every
+    route (the Grand Loop's south leg swings wide of it). */
  const VENUE_OF={Cottonwood:'cottonwood',Barleyfold:'barleyfold',Coyote:'coyote',Hollowpeak:'hollowpeak'};
- for(const rg of T.REGIONS){if(rg.venue&&rg.id!=='ranch'){const at=findClear(rg.venue.x,rg.venue.z,24,80);rg.venue.x=at[0];rg.venue.z=at[1];}}   // the canyon's mesas were placed before us
  for(const ev of T.EVENTS3){if(ev.race||ev.dressage||ev.kind||ev.at)continue;const rg=regionById(VENUE_OF[ev.town]);if(rg&&rg.venue)ev.at=[rg.venue.x,rg.venue.z];}
  /* A course that starts in another town takes you there: the fences are 250 m away otherwise. */
  G.on('courseStart',c=>{const ev=c&&c.ev;if(!ev||!ev.at||P.veh)return;if(hyp(player.pos.x,player.pos.z,ev.at[0],ev.at[1])>45){player.pos.set(ev.at[0]-22,0,ev.at[1]);player.speed=0;player.heading=Math.PI/2;toast('🧭 Off to the '+ev.town+' arena!');}});
@@ -100,6 +115,29 @@ export function install(G){
     off something that is not a collider. */
  function findClear(cx,cz,need,maxR,ok){const fits=(x,z)=>clear(x,z,need)&&(!ok||ok(x,z));if(fits(cx,cz))return [cx,cz];for(let r=6;r<=(maxR||60);r+=6)for(let k=0;k<10;k++){const a=k/10*Math.PI*2+r*0.3,x=cx+Math.cos(a)*r,z=cz+Math.sin(a)*r;if(fits(x,z))return [x,z];}return [cx,cz];}
  P.findClear=findClear;
+ /* Room from the courses. A town building, a balloon field or a sanctuary settles wherever findClear finds
+    room round what was planted nearby, which differs a little from load to load; this keeps any of them
+    from settling on a race route (the closing leg too) or in a town arena, so a course is never ridden
+    into a building that happened to land on it. */
+ /* The routes are read at the moment of asking, never copied at install: this file installs before events2-disciplines
+    lays the season's gauntlet loop into T.RACE_ROUTES (and a season roll lays the next), so a list taken here would never
+    hold them. Once events2 is up, every season's loop counts, not only this season's, since whatever is placed now is
+    still standing when the next one is ridden. The placements this file makes while installing, before those loops
+    exist, are checked again at boot (recheckPlacements, section 11) against the full set. */
+ function routeLines(){
+  const out=[],R=T.RACE_ROUTES||{};
+  for(const k in R)if(Array.isArray(R[k]))out.push(R[k]);
+  try{const GS=G.events2&&G.events2.GAUNTLET_SEASONS;if(GS)for(const k in GS){const d=GS[k];if(d&&Array.isArray(d.pts)&&!R[d.route])out.push(d.pts);}}catch(e){}
+  return out;
+ }
+ function offCourse(x,z,need){
+  for(const R of routeLines()){
+   for(let i=0;i<R.length;i++){const a=R[i],b=R[(i+1)%R.length];if(!a||!b)continue;const dx=b[0]-a[0],dz=b[1]-a[1],l2=dx*dx+dz*dz||1e-6;let t=((x-a[0])*dx+(z-a[1])*dz)/l2;t=t<0?0:t>1?1:t;if(hyp(x,z,a[0]+dx*t,a[1]+dz*t)<need)return false;}}
+  for(const rg of T.REGIONS){const v=rg.venue;if(!v||rg.id==='ranch')continue;if(((x-v.x)/(20+need))**2+((z-v.z)/(15+need))**2<1||(Math.abs(x-v.x)<8+need&&z>v.z&&z<v.z+26+need))return false;}
+  return true;
+ }
+ P.offCourse=offCourse;
+ const PLACED=[];   // [{id,x,z,need}] what was placed with offCourse, for the boot re-check
  const paintMat=W.mats.paintMat;
  function post(x,z,g,h,c){box(0.18,h||1.25,0.18,c||'#c9b083',x,(h||1.25)/2,z,g);}
  function railRing(g,R,segs,gapFrom,gapTo,col){   // posts and rails round a circle with one mouth
@@ -135,12 +173,18 @@ export function install(G){
   let w=c.measureText(s).width;
   while(w>860&&fs>30){fs-=2;c.font='700 '+fs+'px "Trebuchet MS",sans-serif';w=c.measureText(s).width;}   // something very long shrinks to fit instead of running off the end
   cv.height=128;cv.width=Math.max(256,Math.ceil((w+120)/8)*8);   // setting width resets the context, so the font is set again below
-  c.fillStyle='rgba(255,255,253,0.88)';c.beginPath();c.roundRect(10,12,cv.width-20,104,44);c.fill();
-  c.font='700 '+fs+'px "Trebuchet MS",sans-serif';c.textAlign='center';c.fillStyle='#4a3526';
-  c.fillText(s,cv.width/2,68+fs*0.34);
-  const tx=new THREE.CanvasTexture(cv);tx.minFilter=THREE.LinearFilter;tx.generateMipmaps=false;
+  /* Readable through the colour grade: the plate measured 2.9:1 on screen (brown on a grey pill). The texture carried no
+     colour space, so its sRGB colours were brightened a second time on the way out, tone mapping greyed the white, and the
+     pill was see-through. sRGB texture, no tone mapping, a solid pill with a thin rim, near-black words with a light
+     outline: the same recipe as ranch3d.html's nameSprite, so a plate hung here matches one hung there. */
+  c.fillStyle='#fffdf7';c.beginPath();c.roundRect(10,12,cv.width-20,104,44);c.fill();
+  c.lineWidth=4;c.strokeStyle='#7a6248';c.stroke();
+  c.font='700 '+fs+'px "Trebuchet MS",sans-serif';c.textAlign='center';
+  c.lineJoin='round';c.lineWidth=Math.max(5,fs*0.16);c.strokeStyle='#fffdf7';c.strokeText(s,cv.width/2,68+fs*0.34);
+  c.fillStyle='#1b140e';c.fillText(s,cv.width/2,68+fs*0.34);
+  const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;tx.minFilter=THREE.LinearFilter;tx.generateMipmaps=false;
   try{tx.anisotropy=G.renderer.capabilities.getMaxAnisotropy();}catch(e){}
-  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true}));
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,toneMapped:false}));
   sp.scale.set(0.6*cv.width/cv.height,0.6,1);   // the plate keeps the game's 0.6 m height and grows sideways
   sp.userData.plate=1;
   return sp;
@@ -214,7 +258,7 @@ export function install(G){
  function buildTown(tn){
   const rg=regionById(tn.region);
   for(const b of tn.buildings){
-   const need=b.r+1.5; const at=findClear(b.x,b.z,need,40); b.x=at[0]; b.z=at[1];
+   const need=b.r+1.5; const at=findClear(b.x,b.z,need,40,(x,z)=>offCourse(x,z,need+5)); b.x=at[0]; b.z=at[1]; PLACED.push({id:tn.id+':'+b.id,x:b.x,z:b.z,need:need+5});
    let grp=null;
    /* No label passed to addBuilding: its plate would arrive pre-truncated — "🛍️ Petal & Pail
       general store" came out as "🛍️ Petal & Pail gener". We hang our own at the height the
@@ -259,18 +303,25 @@ export function install(G){
  const ARENAS=[];
  for(const rg of T.REGIONS){
   if(!rg.venue||rg.id==='ranch')continue;
-  const v=rg.venue,g=new THREE.Group(),A=20,B=15;
-  let prev=null;for(let k=0;k<=36;k++){const th=k/36*Math.PI*2,x=Math.cos(th)*A,z=Math.sin(th)*B;if(k%2===0)post(x,z,g,1.1,'#dcd3bd');if(prev){const mx=(x+prev.x)/2,mz=(z+prev.z)/2,len=Math.hypot(x-prev.x,z-prev.z);const rail=box(len,0.09,0.07,'#f2ecdc',mx,0.9,mz,g);rail.rotation.y=Math.atan2(x-prev.x,z-prev.z)+Math.PI/2;}prev={x,z};}
+  const v=rg.venue,g=new THREE.Group(),A=20,B=15,gy=groundH(v.x,v.z);
+  /* Every post and rail stands on the ground under it. The ring used to be one flat hoop at the height
+     of its centre, so on the gentlest slope half the rail floated and the other half was buried. */
+  const dy=(x,z)=>groundH(v.x+x,v.z+z)-gy;
+  let prev=null;for(let k=0;k<=36;k++){const th=k/36*Math.PI*2,x=Math.cos(th)*A,z=Math.sin(th)*B,y=dy(x,z);if(k%2===0)box(0.18,1.1,0.18,'#dcd3bd',x,y+0.55,z,g);if(prev){const mx=(x+prev.x)/2,mz=(z+prev.z)/2,len=Math.hypot(x-prev.x,z-prev.z);const rail=box(len,0.09,0.07,'#f2ecdc',mx,(y+prev.y)/2+0.9,mz,g);rail.rotation.set(0,Math.atan2(x-prev.x,z-prev.z)+Math.PI/2,Math.atan2(prev.y-y,len));}prev={x,z,y};}
   const townName=(rg.name.slice(rg.name.indexOf(' ')+1)).split(' ')[0].toUpperCase();
-  const sg=sign(townName+' ARENA',4.4,0.5);sg.position.set(0,3.1,-B-1.5);g.add(sg);post(-2.3,-B-1.5,g,3.0,'#8a7a62');post(2.3,-B-1.5,g,3.0,'#8a7a62');
+  const sgY=dy(0,-B-1.5);const sg=sign(townName+' ARENA',4.4,0.5);sg.position.set(0,sgY+3.1,-B-1.5);g.add(sg);for(const px of[-2.3,2.3])box(0.18,3.0,0.18,'#8a7a62',px,dy(px,-B-1.5)+1.5,-B-1.5,g);
+  /* The grandstand stands back from the rail. Its round collider (r 5.5 at B+4.5) reached a metre inside
+     the ring, an invisible wall at the C end that a horse cantering round the rail ran into; it sits at
+     B+6 now and its three smaller circles follow the 13 by 4.6 m stand, all of it five metres off the rail. */
+  const SZ=B+6,SC=SZ+1.4;
   const stand=new THREE.Group();for(let r=0;r<3;r++){const b=box(12,0.5,1.2,r%2?'#c9a86a':'#b8935a',0,0.25+r*0.55,-r*1.25,stand);b.castShadow=true;}box(12.4,0.2,4,'#6b4a2a',0,0.05,-1.25,stand);post(-6,-3.6,stand,3.2,'#6b4a2a');post(6,-3.6,stand,3.2,'#6b4a2a');const roof=box(13,0.16,4.6,'#a33a3a',0,3.3,-1.4,stand);roof.rotation.x=0.12;
-  stand.position.set(0,0,B+4.5);stand.rotation.y=Math.PI;g.add(stand);
-  g.position.set(v.x,groundH(v.x,v.z),v.z);
+  stand.position.set(0,dy(0,SC),SZ);stand.rotation.y=Math.PI;g.add(stand);
+  g.position.set(v.x,gy,v.z);
   for(const c of g.children){if(c.isMesh){c.castShadow=true;}}
   scene.add(g);W.followCamera.register(g);
-  W.colliders.push({x:v.x,z:v.z+B+4.5,r:5.5});
+  for(const sx of[-4.3,0,4.3])W.colliders.push({x:v.x+sx,z:v.z+SC,r:2.6,keep:true});   // keep: course-clear clears round the ring and must leave the stand solid
   const lbl=rg.name.slice(rg.name.indexOf(' ')+1).split(' ')[0]+' Arena';
-  door('grandstand:'+rg.id,v.x,v.z+B+4.5,7.5,'🏆 '+lbl+' grandstand — see the events',()=>UI.openEvents());
+  door('grandstand:'+rg.id,v.x,v.z+SC,8,'🏆 '+lbl+' grandstand — see the events',()=>UI.openEvents());
   ARENAS.push({id:rg.id,x:v.x,z:v.z,label:lbl,g});
   P.LANDMARKS.push({id:'arena:'+rg.id,region:rg.id,x:v.x,z:v.z,label:'🏟️ '+lbl,glyph:'🏟️',kind:'arena',grp:g});
  }
@@ -301,15 +352,26 @@ export function install(G){
   'Ilse says the snowfield horses came down the pass a hundred winters ago and simply stayed. So did she, I think.',
   'For the one who reads every note: the toy unicorn was Grandma\'s. She hid it behind the falls for a grandchild who could find it. Look where the mist is thickest.',
  ];
+ /* b8 lay on the arena's north rail at (9,20), a metre from the old River Run finish and off a Loon Lake Crossing leg,
+    so riding through the finish picked it up and its card opened over the result. It lies on the lake's east side now,
+    outside the rail and well off every route; and a card found while a course is running waits (loreCard). */
  function bank(x,off){const z0=riverZ(x);for(const dz of [off,-off]){const z=z0+dz;if(groundH(x,z)>riverLevel(x)+0.35)return [x,z];}return [x,z0+off];}
  const BOTTLES=[
   {id:'b1',pt:bank(-120,7),region:'meadows'},{id:'b2',pt:bank(-70,7),region:'meadows'},{id:'b3',pt:[14,124],region:'riverside'},{id:'b4',pt:bank(60,7),region:'meadows'},
-  {id:'b5',pt:bank(110,7),region:'meadows'},{id:'b6',pt:bank(-190,7),region:'coyote'},{id:'b7',pt:[31,17],region:'lake'},{id:'b8',pt:[9,20],region:'lake'},
+  {id:'b5',pt:bank(110,7),region:'meadows'},{id:'b6',pt:bank(-190,7),region:'coyote'},{id:'b7',pt:[31,17],region:'lake'},{id:'b8',pt:[28,11],region:'lake'},
  ].map((b,i)=>Object.assign(b,{note:BOTTLE_NOTES[i],x:b.pt[0],z:b.pt[1]}));
  P.BOTTLES=BOTTLES;
  const glassMat=new THREE.MeshStandardMaterial({color:0x7fd8c8,emissive:0x3fa898,emissiveIntensity:0.35,roughness:0.15,metalness:0.1,transparent:true,opacity:0.85});
  function mkBottle(b){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.13,0.42,10),glassMat);body.position.y=0.3;g.add(body);const neck=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.08,0.16,8),glassMat);neck.position.y=0.58;g.add(neck);box(0.07,0.08,0.07,'#c9a86a',0,0.68,0,g);const note=box(0.06,0.2,0.02,'#f4e8c8',0,0.3,0,g);note.rotation.y=0.6;g.rotation.z=0.35;g.position.set(b.x,groundH(b.x,b.z),b.z);scene.add(g);return g;}
- function loreCard(title,text,extra){const d=$('dlg');if(!d)return;d.innerHTML='<b>'+title+'</b><p style="font-style:italic">'+text+'</p>'+(extra||'')+'<button id="dlgBtn">Keep it 🍾</button>';d.style.display='block';$('dlgBtn').onclick=()=>{d.style.display='none';};}
+ function showLore(title,text,extra){const d=$('dlg');if(!d)return;d.innerHTML='<b>'+title+'</b><p style="font-style:italic">'+text+'</p>'+(extra||'')+'<button id="dlgBtn">Keep it 🍾</button>';d.style.display='block';$('dlgBtn').onclick=()=>{d.style.display='none';};}
+ /* A card never opens over a course or its result. Picked up mid-course (a bottle lying beside a finish line) it waits in
+    the queue, and tickLore shows it once the course is over, the result card has been opened and
+    closed, and no other dialogue is up. The toast still says what was found at the moment it was found. */
+ const LORE_Q=[]; let courseSeenAt=-1e9;
+ const loreBusy=()=>{if(G.course.get()||performance.now()-courseSeenAt<1500)return true;const rp=$('resultPanel');if(rp&&rp.style.display&&rp.style.display!=='none')return true;const d=$('dlg');return !!(d&&d.style.display==='block');};
+ function loreCard(title,text,extra){if(loreBusy()){LORE_Q.push([title,text,extra]);return;}showLore(title,text,extra);}
+ function tickLore(){if(G.course.get()){courseSeenAt=performance.now();return;}if(LORE_Q.length&&!loreBusy())showLore(...LORE_Q.shift());}
+ P.loreQueue=LORE_Q;
  for(const b of BOTTLES){
   const g=mkBottle(b);
   W.addThing({kind:'bottle',id:b.id,g,x:b.x,z:b.z,reach:0,label:()=>'',
@@ -449,10 +511,10 @@ export function install(G){
      boot the field came down on the auction-house doorstep; the prompt is whichever thing in
      reach is nearest, so E at the door took off in a balloon. If nowhere within fifty metres
      is clear of every prompt, clear of the colliders is still better than the bare centre. */
-  const offSteps=(x,z)=>W.things.every(t=>t.x==null||hyp(x,z,t.x,t.z)>(t.reach||3.2)+5.5);
+  const offSteps=(x,z)=>W.things.every(t=>t.x==null||hyp(x,z,t.x,t.z)>(t.reach||3.2)+5.5)&&offCourse(x,z,9);
   let at=findClear(st.x,st.z,4.5,50,offSteps);
-  if(!offSteps(at[0],at[1])||!clear(at[0],at[1],4.5))at=findClear(st.x,st.z,4.5,50);
-  st.x=at[0];st.z=at[1];
+  if(!offSteps(at[0],at[1])||!clear(at[0],at[1],4.5))at=findClear(st.x,st.z,4.5,50,(x,z)=>offCourse(x,z,9));
+  st.x=at[0];st.z=at[1];PLACED.push({id:'balloon:'+st.id,x:st.x,z:st.z,need:9});
   g.position.set(st.x,groundH(st.x,st.z),st.z);scene.add(g);W.followCamera.register(g);
   labelAt(g,st.label,11.5);
   return {g,burner};
@@ -775,7 +837,7 @@ export function install(G){
  ];
  P.SANCTUARIES=SANCTUARIES;
  for(const sc of SANCTUARIES){
-  const at=findClear(sc.x,sc.z,sc.r+3,60);sc.x=at[0];sc.z=at[1];
+  const at=findClear(sc.x,sc.z,sc.r+3,60,(x,z)=>offCourse(x,z,sc.r+6));sc.x=at[0];sc.z=at[1];PLACED.push({id:'sanctuary:'+sc.id,x:sc.x,z:sc.z,need:sc.r+6});
   const g=new THREE.Group();railRing(g,sc.r,22,-0.25,0.25,'#e2d3ae');
   const sg=sign(sc.label.slice(sc.label.indexOf(' ')+1).toUpperCase(),4.2,0.46);sg.position.set(sc.r+0.4,2.6,-2.6);sg.rotation.y=-Math.PI/2;g.add(sg);post(sc.r+0.4,-4.8,g,2.8,'#8a7a62');post(sc.r+0.4,-0.4,g,2.8,'#8a7a62');
   box(2.2,0.7,0.9,'#8a6a45',0,0.35,-sc.r+2.5,g);box(2.0,0.2,0.7,'#b8a040',0,0.75,-sc.r+2.5,g);   // hay feeder
@@ -959,6 +1021,7 @@ export function install(G){
   tickTownsfolk(dt);
   tickLabels(dt);
   tickFlutters();
+  tickLore();
   followersT+=dt;if(followersT>0.1){followersT=0;tickFollowers(0.1);}
   unlockT+=dt;if(unlockT>3){unlockT=0;ensureUnlocks();}
   companionT+=dt;if(companionT>0.5){companionT=0;findCompanion();}
@@ -981,9 +1044,16 @@ export function install(G){
    companion:s.companion==null?null:s.companion,bottles:(s.bottles||[]).length,badges:((s.sets&&s.sets.badges)||[]).length,toy:!!s.toyUnicorn,
    sanctuary:Object.keys(s.sanctuary||{}).reduce((a,k)=>{a[k]=(s.sanctuary[k]||[]).length;return a;},{}),
    townsfolk:P.townsfolk.length,landmarks:P.LANDMARKS.length,markers:MK.length,
-   labels:LABELS.length,labelsShown:LABELS.reduce((a,L)=>a+(L.sp.visible?1:0),0)};
+   labels:LABELS.length,labelsShown:LABELS.reduce((a,L)=>a+(L.sp.visible?1:0),0),
+   courseConflicts:P.courseConflicts.length,loreQueued:LORE_Q.length};
  });
+ /* The boot re-check promised by offCourse: everything this file placed while installing, against every route that
+    exists now (the season's gauntlet included) and every season's loop. A conflict is reported (state world.courseConflicts,
+    and the console) rather than silently left for a rider to find. */
+ function recheckPlacements(){return PLACED.filter(p=>!offCourse(p.x,p.z,p.need)).map(p=>({id:p.id,x:+p.x.toFixed(1),z:+p.z.toFixed(1)}));}
+ P.courseConflicts=[];
  G.on('boot',()=>{ensureUnlocks();refreshFtLocks();findCompanion();
+  try{P.courseConflicts=recheckPlacements();if(P.courseConflicts.length)console.warn('world: placed on or beside a course',JSON.stringify(P.courseConflicts));}catch(e){console.error('world recheck',e);}
   /* Last in the queue, on purpose: every package has hung its plates by now, so one sweep of
      the scene catches all of them. */
   try{P.labelsFound=scanLabels();P.tagsFixed=fixNpcTags();P.fluttersFixed=fixFlutters();P.buntingFixed=fixBunting();}catch(e){console.error('world labels',e);}

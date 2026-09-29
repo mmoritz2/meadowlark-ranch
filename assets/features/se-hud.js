@@ -176,8 +176,35 @@ body.se-hud #breathBtn.se-act{bottom:calc(222px + env(safe-area-inset-bottom))}
    nothing else. The menus, the market, the wallet, the quest line and the side buttons step out of the way, and
    messages drop below the horse instead of lying across the course readout at the top */
 body.se-course .se-hexbtn,body.se-course #seMenuBtn,body.se-course #seMarketLbl,body.se-course #hud,body.se-course #questTrack,body.se-course #seEmote,
-body.se-course #seWhistle,body.se-course #seMount,body.se-course #photoBtn,body.se-course #seWay,body.se-course #ctx{display:none!important}
+body.se-course #seWhistle,body.se-course #seMount,body.se-course #photoBtn,body.se-course #seWay,body.se-course #ctx,body.se-course #chatBar,body.se-course #chatTabs{display:none!important}
+/* the chat line sat on the thumbstick (bottom 110px, right over the knob). It goes above the stick's zone, gets a close of
+   its own (and Escape, below), and steps out of the way of an event like everything else above */
+body.se-hud #chatBar{bottom:calc(318px + env(safe-area-inset-bottom))!important;align-items:center;width:min(420px,calc(100vw - 32px))!important}
+body.se-hud #chatBar input{min-width:0}
+body.se-hud #chatTabs{bottom:calc(360px + env(safe-area-inset-bottom))!important}
+#seChatX{flex:none;width:34px!important;height:34px!important;min-width:0!important;min-height:0!important;padding:7px!important;border-radius:50%!important;display:flex;align-items:center;justify-content:center;
+ background:var(--se-glass)!important;border:2px solid var(--se-rim)!important;color:var(--se-ink)!important;box-shadow:0 2px 6px rgba(0,0,0,.3)!important;cursor:pointer}
+#seChatX svg{width:100%;height:100%;display:block}
+/* the old touch row (gallop, sprint, trick, jump, emote) was a grid laid over the new jump, emote and whistle. The two it
+   duplicates go; the three toggles only a touch screen has stand in one column up the right edge, clear of everything */
+body.se-hud #tJump,body.se-hud #tEmote,body.se-hud #tEmoteBar{display:none!important}
+body.se-hud.touch:not(.freecam):not(.summoning):not(.posing) #touch{display:flex!important;flex-direction:column-reverse;gap:10px;left:auto!important;top:auto!important;right:calc(18px + env(safe-area-inset-right))!important;bottom:calc(292px + env(safe-area-inset-bottom))!important}
+body.se-hud #touch button{width:52px!important;height:52px!important;min-width:0!important;padding:0!important;font-size:20px!important;border:2px solid var(--se-rim)!important;
+ background:var(--se-glass)!important;color:var(--se-ink)!important;box-shadow:0 2px 6px rgba(0,0,0,.3)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 body.se-course.se-hud #toasts{top:calc(170px + env(safe-area-inset-top))!important;bottom:auto!important;left:calc(14px + env(safe-area-inset-left))!important;transform:none!important;align-items:flex-start!important;width:min(300px,calc(100vw - 32px))!important;opacity:.94}
+/* A phone held upright has the course readout at 212 px, straight under where that lane puts a message, so a two-line one
+   lay across the readout (and the top of gate one's ring behind it). On a phone the messages go up into the empty sky right
+   of the map instead, the same strip the countdown call uses; the frame hook drops them just under the call while it is up */
+@media (max-width:720px){body.se-course.se-hud #toasts{top:calc(20px + env(safe-area-inset-top))!important;left:calc(164px + env(safe-area-inset-left))!important;right:calc(8px + env(safe-area-inset-right))!important;width:auto!important;align-items:stretch!important}}
+/* The course readout on a phone. With the camera up over her head, gate one stands higher in the picture, and the old
+   places for the readout (212 px upright, 154-196 px on its side) lay straight across its ring and the arrow over it.
+   Upright it goes up under the map, in the band between the map and the sky over the gate, a size smaller; on its side it
+   goes up under the call in the top strip; and the messages on a short screen go to the foot of the screen between the
+   stick and the jump button, over the horse's quarters, instead of dropping onto the joystick or the jump button. */
+@media (max-width:720px){body.se-course.se-hud #courseHud{top:calc(128px + env(safe-area-inset-top))!important;font-size:12.5px!important;padding:6px 12px!important;gap:8px!important}
+ body.se-course.se-hud #stamWrap{width:96px!important}}
+@media (max-height:500px) and (min-width:721px){body.se-course.se-hud #courseHud{top:calc(46px + env(safe-area-inset-top))!important;left:50%!important;transform:translateX(-50%)!important;font-size:12.5px!important;padding:5px 12px!important;gap:8px!important}
+ body.se-course.se-hud #toasts{top:auto!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:min(340px,40vw)!important;align-items:stretch!important}}
 /* the objective marker: a white arrow over the distance, floating toward whoever the mission
    wants you to see next, pinned to the screen edge when they are behind you or out of shot */
 #seWay{position:fixed;left:0;top:0;display:none;flex-direction:column;align-items:center;gap:1px;pointer-events:none;z-index:5;
@@ -192,19 +219,45 @@ body.posing #seHudRoot,body.freecam #seHudRoot,body.summoning #seHudRoot,
 body.posing #stickZone,body.summoning #seNorth,body.freecam #seNorth,body.posing #seNorth,
 body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{display:none!important}
 /* a phone: the same layout, a notch smaller, and the stick and actions tucked in */
+@media (max-width:760px){body.se-hud:not(.se-course) #toasts{top:calc(138px + env(safe-area-inset-top))!important}}
 @media (max-width:760px){
+ /* A phone is too narrow for the desktop layout shrunk: the wallet ran over the journal, club and market hexagons, and a
+    300px stick zone took most of the bottom edge, so the jump and the emote sat inside the stick's ring and a thumb on
+    the stick pressed them. Here the stick keeps the bottom-left and nothing else is in its reach; the jump, emote,
+    whistle and photo go to the right half, the touch toggles above them; the two pills stack under the top-right
+    corner with the market beneath, and the journal, club and ranks hexagons sit between them and the map. */
  #seMenuBtn{width:40px;height:40px}
  body.se-hud #mkMiniPlate,body.se-hud #mini{left:calc(50px + env(safe-area-inset-left))!important}
  body.se-hud #mkMiniPlate,body.se-hud #mini{width:104px!important;height:104px!important}
  body.se-hud #seNorth{left:calc(50px + 52px - 9px + env(safe-area-inset-left))}
  .se-hexbtn{width:44px!important;height:38px!important}
- body.se-hud #wallet .w{min-width:74px;font-size:13px!important}
- #seJump{width:118px;height:118px;right:calc(92px + env(safe-area-inset-right));bottom:calc(92px + env(safe-area-inset-bottom))}
- #seEmote{right:calc(212px + env(safe-area-inset-right))}
- body.se-hud #stickBase{width:160px!important;height:160px!important;margin:-80px 0 0 -80px!important}
- body.se-hud #stickBase::before{transform:translate(0,-70px);box-shadow:0 140px 0 rgba(246,236,210,.75)}
- body.se-hud #stickBase::after{transform:translate(-70px,0);box-shadow:140px 0 0 rgba(246,236,210,.75)}
- body.se-hud #stickKnob{width:72px!important;height:72px!important;margin:-36px 0 0 -36px!important}
+ #questBtn.se-hexbtn{left:calc(160px + env(safe-area-inset-left))!important;top:calc(16px + env(safe-area-inset-top))!important}
+ #netBtn.se-hexbtn{left:calc(210px + env(safe-area-inset-left))!important;top:calc(16px + env(safe-area-inset-top))!important}
+ #lbBtn.se-hexbtn{left:calc(185px + env(safe-area-inset-left))!important;top:calc(58px + env(safe-area-inset-top))!important}
+ body.se-hud #wallet{flex-direction:column!important;align-items:flex-end!important;gap:6px!important}
+ body.se-hud #wallet .w{min-width:78px;height:26px;margin-left:14px;font-size:13px!important}
+ body.se-hud #wallet .w>i{width:32px;height:32px;left:-13px;font-size:18px}
+ #shopBtn.se-market{top:calc(82px + env(safe-area-inset-top))!important}
+ body.se-hud #stickZone{width:min(208px,52vw)!important;height:282px!important}
+ body.se-hud #stickBase{left:min(104px,26vw);top:176px;width:150px!important;height:150px!important;margin:-75px 0 0 -75px!important}
+ body.se-hud #stickBase::before{transform:translate(0,-65px);box-shadow:0 130px 0 rgba(246,236,210,.75)}
+ body.se-hud #stickBase::after{transform:translate(-65px,0);box-shadow:130px 0 0 rgba(246,236,210,.75)}
+ body.se-hud #stickKnob{left:min(104px,26vw);top:176px;width:66px!important;height:66px!important;margin:-33px 0 0 -33px!important}
+ #seJump{width:108px;height:108px;right:calc(10px + env(safe-area-inset-right));bottom:calc(100px + env(safe-area-inset-bottom))}
+ #seWhistle{width:56px;height:56px;right:calc(16px + env(safe-area-inset-right));bottom:calc(30px + env(safe-area-inset-bottom))}
+ #seEmote{width:48px;height:48px;right:calc(84px + env(safe-area-inset-right));bottom:calc(34px + env(safe-area-inset-bottom))}
+ body.se-hud #photoBtn.se-act{right:calc(142px + env(safe-area-inset-right));bottom:calc(39px + env(safe-area-inset-bottom))}
+ body.se-hud #flyBtn.se-act,body.se-hud #breathBtn.se-act{width:50px!important;height:50px!important;right:calc(128px + env(safe-area-inset-right))}
+ body.se-hud #flyBtn.se-act{bottom:calc(158px + env(safe-area-inset-bottom))}
+ body.se-hud #breathBtn.se-act{bottom:calc(214px + env(safe-area-inset-bottom))}
+ body.se-hud.touch #touch{gap:8px;right:calc(16px + env(safe-area-inset-right))!important;bottom:calc(222px + env(safe-area-inset-bottom))!important}
+ body.se-hud #touch button{width:48px!important;height:48px!important;font-size:18px!important}
+ /* the bar is narrower than the phone (the touch toggles keep the right edge), so its quick emotes drop to a second row
+    under the words, send and close */
+ body.se-hud #chatBar{bottom:calc(296px + env(safe-area-inset-bottom))!important;width:calc(100vw - 96px)!important;flex-wrap:wrap;row-gap:6px}
+ body.se-hud #chatBar input{flex:1 1 calc(100% - 96px)!important}   /* wide enough that only send and close share its row */
+ body.se-hud #chatBar #chatSend{order:1}body.se-hud #chatBar #seChatX{order:2}body.se-hud #chatBar [data-emote]{order:3}
+ body.se-hud #chatTabs{bottom:calc(384px + env(safe-area-inset-bottom))!important;width:calc(100vw - 96px)!important}
 }`;
  document.head.appendChild(css);
  document.body.classList.add('se-hud');
@@ -303,6 +356,22 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
  act('seWhistle','whistle',k=>roundSvg(k,1.25),'Whistle for your horse').onclick=()=>{ try{ G.ui.dispatch('bpe:whistle'); }catch(e){} };
  act('seEmote','emote',k=>roundSvg(k,1.2),'Emotes').onclick=()=>{ try{ G.ui.open('emotePanel'); }catch(e){} };
 
+ /* ---------------------------------------------------------------- the chat line --------- */
+ /* ranch3d's chat input swallows every key (so typing never steers the horse), Escape included, and the bar had no close:
+    once opened it stayed up until the ☰ Chat tile was found again. A capture listener on the input itself runs before
+    that one: Escape shuts the bar and gives the keys back to the game. */
+ try{
+  const cb=$('chatBar'), ci=$('chatIn');
+  if(cb&&ci&&!$('seChatX')){
+   const shutChat=()=>{cb.style.display='none';const t=$('chatTabs');if(t)t.style.display='none';try{ci.blur();}catch(e){}};
+   ci.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();shutChat();}},true);
+   const x=document.createElement('button'); x.id='seChatX'; x.type='button'; x.title='Close chat'; x.setAttribute('aria-label','Close chat');
+   x.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>';
+   x.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();shutChat();});
+   cb.appendChild(x);
+  }
+ }catch(e){}
+
  /* ---------------------------------------------------------------- the thumbstick -------- */
  /* ranch3d's stick floats to wherever the thumb lands and lives on after release at that spot.
     Here it has a home to go back to, because a control you can see is a control you can find. */
@@ -343,10 +412,21 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
  const way=document.createElement('div'); way.id='seWay'; way.innerHTML='<i></i><b></b>'; document.body.appendChild(way);
  const wayArrow=way.querySelector('i'), wayTxt=way.querySelector('b');
  let wayNpc=null, wayKey='';
+ const wayPlace={position:new G.THREE.Vector3()};   // a spot on the ground, for a mission that names a place
  function wayTarget(){
   try{
    const Q=G.quest, m=Q&&Q.STORY&&Q.STORY[Q.storyIdx()]; if(!m)return null;
    const s=G.save.fresh()||{}, done=Q.storyProg()>=(m.goal||1);
+   /* a mission to open a door or to ride somewhere is about the place, not the person who set it: 'Open the old stall'
+      pointed back at Grandpa Wren (and vanished beside him) while the stall stood out past the arena fence */
+   if(!done&&m.type==='door'&&m.door){
+    const th=((G.world&&G.world.things)||[]).find(t=>t&&t.kind==='sqdoor'&&t.id===m.door);
+    if(th&&th.g){wayKey='door:'+m.door;return th.g;}
+   }
+   if(!done&&m.type==='visit'&&m.x!=null&&m.z!=null){
+    wayKey='visit:'+m.x+','+m.z; let gy=0; try{gy=G.world.groundH(m.x,m.z);}catch(e){}
+    wayPlace.position.set(m.x,gy,m.z); return wayPlace;
+   }
    let id=m.npc||'wren';
    if(!done){
     if(m.talk)id=m.talk;
@@ -389,6 +469,38 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
   way.classList.toggle('on',show);
  }
  G.on('tick',tickWay);
+
+ /* ---------------------------------------------------------------- messages on a course -- */
+ /* On a course a message has one rule: it never lies across the course readout, the countdown call or the count. The
+    lanes above keep it clear on the layouts we know, but three packages move the readout and the call follows it (a
+    phone on its side has the readout down at 154-196 px, right where the lane is), so every few frames the message box
+    is measured against them and, if it would cover one, it drops to just under it. */
+ const lane={t:0,base:null,key:''};
+ function toastLane(dt){
+  const box=$('toasts'); if(!box)return;
+  const on=document.body.classList.contains('se-course')&&!document.body.classList.contains('se-screen-open');
+  const sw=$('stamWrap');
+  if(!on){ if(lane.base!=null){ box.style.removeProperty('top'); lane.base=null; } if(lane.sunk){ lane.sunk=false; box.style.opacity=''; } if(sw)sw.style.removeProperty('top'); return; }
+  lane.t-=dt||0; if(lane.t>0)return; lane.t=0.1;
+  const key=innerWidth+'x'+innerHeight;
+  if(lane.base==null||lane.key!==key){ box.style.removeProperty('top'); lane.base=box.getBoundingClientRect().top; lane.key=key; }
+  /* the stamina bar hangs just under the readout, however many lines the readout has come to (a figure's name, a phone) */
+  { const hr=$('courseHud')&&$('courseHud').getBoundingClientRect(); if(sw&&hr&&hr.height>0)sw.style.setProperty('top',Math.round(hr.bottom+5)+'px','important'); }
+  const b=box.getBoundingClientRect(), H=Math.max(b.height,40), obs=[];
+  for(const id of ['courseHud','ev2Call','countdown']){
+   const e=$(id); if(!e)continue; const cs=getComputedStyle(e); if(cs.display==='none'||+cs.opacity<0.05)continue;
+   const r=e.getBoundingClientRect(); if(r.width>0&&r.height>0)obs.push(r);
+  }
+  let top=lane.base;
+  for(let k=0;k<4;k++){ let moved=false; for(const r of obs)if(r.right>b.left&&r.left<b.right&&r.bottom>top&&r.top<top+H){ top=r.bottom+6; moved=true; } if(!moved)break; }
+  if(Math.abs(top-lane.base)<1)box.style.removeProperty('top'); else box.style.setProperty('top',Math.round(top)+'px','important');
+  /* pushed down past the readout, a message would be lying over the track itself (on an upright phone that is gate one):
+     it waits out of sight instead, and comes back the moment the band above has room for it again */
+  const sunk=top>lane.base+1&&top>innerHeight*0.18;
+  if(sunk!==!!lane.sunk){lane.sunk=sunk;box.style.transition=sunk?'none':'opacity .2s';box.style.opacity=sunk?'0':'';}   // gone at once, back gently
+ }
+ G.on('tick',dt=>toastLane(dt));
+ try{ new MutationObserver(()=>{lane.t=0;}).observe($('toasts'),{childList:true}); }catch(e){}   // a new message is placed the frame it arrives
  G.on('courseStart',()=>document.body.classList.add('se-course'));
  G.on('courseFinish',()=>setTimeout(sync,0));
 

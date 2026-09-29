@@ -72,6 +72,44 @@ export function install(G){
  }
  place();
 
+ /* ---------------------------------------------------------------- the hunt, asked for ---- */
+ /* The ☰ Treasures tile and the menu's "Golden horseshoes" button both ask for 'seTreasures', and nothing answered: the
+    menu closed and nothing happened. Now they say how many are found and point at the nearest one still out there — its
+    hint, how far and which way — and mark it on the big map and the minimap until it is picked up. One at a time, the
+    nearest: marking all twelve would turn the hunt into a list. */
+ let tracked=null;
+ const trackMini={x:0,z:0,col:'#ffd23a',r:3.6,hidden:()=>!tracked||tracked.found};
+ const trackMap={x:0,z:0,glyph:'\u25CF',get label(){return tracked&&!tracked.found?'Golden horseshoe':'';},hidden:()=>!tracked||tracked.found};   // the big map prints any label it is given, hidden or not
+ try{if(W.miniMarkers)W.miniMarkers.push(trackMini);if(W.mapMarkers)W.mapMarkers.push(trackMap);}catch(e){}
+ const COMPASS=['north','north-east','east','south-east','south','south-west','west','north-west'];
+ /* the maps put north at the top, which is -z; east is +x */
+ const heading=(dx,dz)=>COMPASS[((Math.round(Math.atan2(dx,-dz)/(Math.PI/4))%8)+8)%8];
+ function track(){
+  const n=items.filter(i=>i.found).length;
+  if(!TOTAL){toast('No golden horseshoes hidden in this valley yet.');return null;}
+  if(n>=TOTAL){tracked=null;say(n,'You found every one of them! Your prize waits under Achievements in the Journey.');return {found:n,total:TOTAL,next:null};}
+  let best=null,bd=1e18;
+  for(const it of items){if(it.found)continue;const d=(it.x-player.pos.x)**2+(it.z-player.pos.z)**2;if(d<bd){bd=d;best=it;}}
+  tracked=best; trackMini.x=trackMap.x=best.x; trackMini.z=trackMap.z=best.z;
+  const d=Math.round(Math.sqrt(bd)), dir=heading(best.x-player.pos.x,best.z-player.pos.z);
+  const F=G.onFoot, onFoot=!!(F&&F.on);
+  const off=document.body.classList.contains('touch')?'Get off with the walking button':'Get off (F)';
+  const how=onFoot?'':(best.kind==='water'?' '+off+' and swim out to it.':' '+off+' and climb up to it.');
+  say(n,'The nearest is '+best.hint+', '+d+' m '+dir+'. It is marked on your map.'+how);
+  return {found:n,total:TOTAL,next:{id:best.id,kind:best.kind,hint:best.hint,dist:d,dir}};
+ }
+ /* The answer is a small card, straight away: a toast joins the back of the queue, and at the start of a session that
+    queue is several notices long, so a tap on the tile seemed to do nothing for half a minute. */
+ function say(n,line){
+  const d=document.getElementById('dlg');
+  if(!d||d.style.display==='block'){toast('Golden horseshoes: '+n+'/'+TOTAL+' found. '+line);return;}
+  d.innerHTML='<b>Golden horseshoes · '+n+'/'+TOTAL+' found</b><p style="margin:8px 0 0">'+line.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</p>'
+   +'<div style="display:flex;gap:6px;margin-top:12px"><button id="dlgBtn" class="claimBtn" data-ht="map">Show the map</button><button data-ht="x">Off I go</button></div>';
+  d.style.display='block';
+  d.querySelectorAll('[data-ht]').forEach(b=>{b.onclick=e=>{e.stopPropagation();d.style.display='none';if(b.dataset.ht==='map'){const m=document.getElementById('mini');if(m)m.click();}};});
+ }
+ G.on('seTreasures',()=>track()||true);
+
  /* ---------------------------------------------------------------- finding one ----------- */
  const told={}; let hinted=false, hintT=0, swimAcc=0, climbCheck=0;
  function collect(it){
@@ -79,6 +117,7 @@ export function install(G){
   G.save.sync(s=>{const t=s.treasure;if(t.found[it.id])return;t.found[it.id]=Date.now();first=true;n=Object.keys(t.found).length;G.money.payReward(s,REWARD);});
   if(!first)return;
   it.found=true; it.pop=0.001;
+  if(tracked===it)tracked=null;   // its map mark goes with it; the Treasures tile points at the next
   try{G.money.refreshWallet();}catch(e){}
   try{G.sGem&&G.sGem();}catch(e){}
   toast('✨ Golden horseshoe! '+n+'/'+TOTAL+' · +'+REWARD.c+'🪙 +'+REWARD.g+'💎'+(n>=TOTAL?' — that is all of them! Claim your prize under Achievements.':''));
@@ -121,5 +160,6 @@ export function install(G){
   G.quest.addAch({id:'swim100',icon:'🏊',label:'Water baby',desc:'Swim 100 metres on foot',v:s=>Math.floor((s.treasure&&s.treasure.swimM)||0),goal:100,r:{c:300,g:2}});
  }catch(e){}
  G.on('state',o=>{const s=G.save.fresh()||{},t=s.treasure||{};o.treasures={found:Object.keys(t.found||{}).length,total:TOTAL,climbed:Object.keys(t.climbed||{}).length,swimM:Math.floor(t.swimM||0)};});
- G.treasures={spots:()=>items.map(i=>({id:i.id,kind:i.kind,x:+i.x.toFixed(2),y:+i.y.toFixed(2),z:+i.z.toFixed(2),found:i.found})),total:TOTAL,collect:id=>{const it=items.find(i=>i.id===id);if(it)collect(it);}};
+ G.treasures={spots:()=>items.map(i=>({id:i.id,kind:i.kind,x:+i.x.toFixed(2),y:+i.y.toFixed(2),z:+i.z.toFixed(2),found:i.found})),total:TOTAL,collect:id=>{const it=items.find(i=>i.id===id);if(it)collect(it);},
+  track,tracked:()=>tracked&&!tracked.found?{id:tracked.id,x:+tracked.x.toFixed(2),z:+tracked.z.toFixed(2)}:null};
 }

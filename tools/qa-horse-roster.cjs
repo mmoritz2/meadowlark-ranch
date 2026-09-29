@@ -223,22 +223,35 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
       fixed 2.5 s now reads the SECOND leg, where a first-leg trait is correctly doing nothing.
       Stepping and keeping the last reading taken while c.idx is still 0 measures the thing the
       trait actually claims, and it does not care where the start line moves to next. */
-   let last=null;
+   /* Every reading on the leg is kept, not just the last, because the two runs have to be compared at
+      the SAME moment. The trait raises the target speed 12% and the horse closes on its target
+      exponentially, so at any instant after GO the Early Bird is exactly 12% quicker — and for that
+      very reason reaches gate one a step sooner, so 'the last reading on the leg' compared her fifth
+      reading with the plain horse's sixth and saw 2.6%. The caller compares the last step both were
+      still on the leg. */
+   let last=null; const series=[];
    for(let i=0;i<16;i++){
     window.advanceTime(150);
     const st=JSON.parse(render_game_to_text());
     if(!(st.course&&st.course.started)||st.course.index!==0)break;
-    last={speed:st.player.speed,started:true,idx:0};
+    series.push(+st.player.speed.toFixed(3));
+    last={speed:st.player.speed,started:true,idx:0,series};
    }
    window.dispatchEvent(new KeyboardEvent('keyup',{code:'KeyW'}));window.dispatchEvent(new KeyboardEvent('keyup',{code:'ShiftLeft'}));
    G.course.cancelCourse();
    G.hidePanels(); window.advanceTime(700);   // let the result card and the cancel settle before the next start
    return last||{speed:0,started:false,idx:-1};};
-  const a=await run(['earlybird']), b=await run([]); return {a,b};});
+  const a=await run(['earlybird']), b=await run([]);
+  const k=Math.min((a.series||[]).length,(b.series||[]).length)-1;
+  return {a,b,step:k,aAt:k>=0?a.series[k]:0,bAt:k>=0?b.series[k]:0};});
  /* Both runs must actually have started. Without the b.started clause a control run that
     never left the gate reports speed 0, and the comparison passes against nothing — which is
-    exactly what happened the first time this harness was rewritten. */
- check('Early Bird: faster on the first leg of a race',early.a.started&&early.a.idx===0&&early.b.started&&early.b.idx===0&&early.a.speed>early.b.speed*1.05,early);
+    exactly what happened the first time this harness was rewritten. Both runs start from the
+    start box now: a restart used to count gate one at once because the rider was left standing
+    inside it, which is what the three retries above were for, and events2-disciplines now puts a
+    rider who is short of six metres from gate one back on the line. */
+ check('Early Bird: faster on the first leg of a race',early.a.started&&early.a.idx===0&&early.b.started&&early.b.idx===0&&early.step>=1&&early.aAt>early.bAt*1.05,
+  {step:early.step,earlyBird:early.aAt,plain:early.bAt,a:{started:early.a.started,idx:early.a.idx,series:early.a.series},b:{started:early.b.started,idx:early.b.idx,series:early.b.series}});
  /* swimming on the family horse */
  const riverZ=await page.evaluate(()=>window.__features.world.riverZ(40));
  await placeAt(40,riverZ,[],Math.PI/2); const swimS=await sampleRide(3000,true); const swim=swimS[swimS.length-1], swimAll=swimS.every(s=>s.swim), swimMax=Math.max(...swimS.map(s=>s.speed));

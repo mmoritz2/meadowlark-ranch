@@ -121,6 +121,30 @@ export function install(G){
  }
  function dropHorseCols(){for(const c of ST.cols){const k=Wd.colliders.indexOf(c);if(k>=0)Wd.colliders.splice(k,1);}ST.cols=[];}
 
+ /* ---------------------------------------------------------------- fences ---------------- */
+ /* Does the straight line a->b cross a fence rail (G.world.walls, the arena and pasture rails)? The game only keeps a
+    rider out of a rail she walks into; a step that starts on the far side of it is simply on the far side. */
+ function crossWall(ax,az,bx,bz){
+  for(const w of (Wd.walls||[])){
+   const ex=w.x2-w.x1,ez=w.z2-w.z1, fx=bx-ax,fz=bz-az;
+   const d1=ex*(az-w.z1)-ez*(ax-w.x1), d2=ex*(bz-w.z1)-ez*(bx-w.x1);
+   const d3=fx*(w.z1-az)-fz*(w.x1-ax), d4=fx*(w.z2-az)-fz*(w.x2-ax);
+   if(d1*d2<0&&d3*d4<0)return w;
+  }
+  return null;
+ }
+ /* where she steps down: the near side, a metre out, unless a rail or a building is there. Beside the arena's north rail
+    the near side is the far side of the fence, and she used to land outside the arena, the rail between her and her horse. */
+ function stepDownSpot(x,z,hd){
+  const lx=Math.cos(hd),lz=-Math.sin(hd), fx=Math.sin(hd),fz=Math.cos(hd);
+  const solid=(px,pz)=>Wd.colliders.some(c=>!c.onFoot&&!c.climb&&Math.hypot(px-c.x,pz-c.z)<c.r+0.45);
+  for(const [a,b] of [[1.05,0],[-1.05,0],[0.75,0],[-0.75,0],[0,-1.5],[0,1.7]]){
+   const px=x+lx*a+fx*b, pz=z+lz*a+fz*b;
+   if(!crossWall(x,z,px,pz)&&!solid(px,pz))return [px,pz];
+  }
+  return [x+lx*0.45,z+lz*0.45];   // hemmed in on every side: right beside her
+ }
+
  /* ---------------------------------------------------------------- off and on ------------ */
  function why(){
   if(ST.on)return 'already on foot';
@@ -137,9 +161,9 @@ export function install(G){
   player.speed=0; player.vy=0; player.y=0;
   ST.horse=buildHorse(x,z,hd); if(!ST.horse){toast('🐴 One moment…');return false;}
   ST.idx=H.rideIdx();
-  /* she steps down on the near side, the horse's left, a metre out */
-  const lx=Math.cos(hd),lz=-Math.sin(hd);
-  player.pos.x=x+lx*1.05; player.pos.z=z+lz*1.05; player.heading=hd;
+  /* she steps down on the near side, the horse's left, a metre out, or wherever there is room on this side of the fence */
+  const spot=stepDownSpot(x,z,hd);
+  player.pos.x=spot[0]; player.pos.z=spot[1]; player.heading=hd;
   ST.R=player.rider; ST.mesh=player.mesh;
   ST.W=new THREE.Group(); ST.W.name='on-foot rider'; ST.W.scale.setScalar(ST.R.walkScale||RIDER_H); scene.add(ST.W);   // the character is her own size already
   ST.W.add(ST.R.g);
@@ -291,6 +315,11 @@ export function install(G){
   if(Math.abs(ST.target||0)<Math.abs(player.speed||0)){player.speed+=((ST.target||0)-player.speed)*Math.min(1,dt*7);if(Math.abs(player.speed)<0.05&&!ST.target)player.speed=0;}
   const sp=Math.abs(player.speed||0);
   if(ST.fy==null)resetBody();
+  /* Put somewhere, not walked there (fast travel, a quest, a story scene): three metres in one frame is
+     more than she can run. Without this the body kept the height of where she had been (in the air
+     over a meadow, or under a hill), and landing inside a rock's footprint read as walking into its
+     face, which sent her straight back where she came from. She stands on whatever is under her now. */
+  if(ST.prev&&Math.hypot(player.pos.x-ST.prev.x,player.pos.z-ST.prev.z)>3){resetBody();const f0=footing(player.pos.x,player.pos.z);ST.fy=f0.h;ST.mode=f0.kind==='swim'?'swim':f0.kind;}
   const prev=ST.prev||{x:player.pos.x,z:player.pos.z};
   let f=footing(player.pos.x,player.pos.z);
   /* a face of rock where she is stepping: she cannot walk into it, so back she goes — and if she is
@@ -367,9 +396,14 @@ export function install(G){
    let dx=player.pos.x-e.x,dz=player.pos.z-e.z,d=Math.hypot(dx,dz)||0.001;
    if(d>90){e.x=player.pos.x-dx/d*45;e.z=player.pos.z-dz/d*45;dx=player.pos.x-e.x;dz=player.pos.z-e.z;d=Math.hypot(dx,dz)||0.001;}
    if(d>2.4&&ST.call.t>0){
-    e.heading+=angDiff(Math.atan2(dx,dz)-e.heading)*Math.min(1,dt*3.5);
+    if(!e.hop)e.heading+=angDiff(Math.atan2(dx,dz)-e.heading)*Math.min(1,dt*3.5);
     sp=d>18?8.5:d>6?4.4:2.0;
+    /* a rail across her way: she jumps it, as the rider's horse would, instead of walking through it */
+    if(!e.hop&&crossWall(e.x,e.z,e.x+Math.sin(e.heading)*1.9,e.z+Math.cos(e.heading)*1.9))e.hop={t:0,dur:0.8};
+    if(e.hop)sp=Math.max(sp,4.6);
     e.x+=Math.sin(e.heading)*sp*dt; e.z+=Math.cos(e.heading)*sp*dt; ST.call.t-=dt;
+   }else if(e.hop){
+    sp=4.6; e.x+=Math.sin(e.heading)*sp*dt; e.z+=Math.cos(e.heading)*sp*dt;   // a jump already begun is finished, not frozen over the rail
    }else{
     ST.call=null;
     if(ST.mountOnArrive){ST.mountOnArrive=false;mount();return;}
@@ -378,10 +412,18 @@ export function install(G){
   }
   /* keep off the buildings and the trees on the way over */
   if(sp>0)for(const c of Wd.colliders){if(c.onFoot)continue;const ox=e.x-c.x,oz=e.z-c.z,r=c.r+0.9,d2=ox*ox+oz*oz;if(d2<r*r&&d2>1e-6){const d=Math.sqrt(d2);e.x=c.x+ox/d*r;e.z=c.z+oz/d*r;}}
+  /* and out of the rails, the way the game keeps the ridden horse out of them, except in the air over one */
+  let hopY=0;
+  if(e.hop){e.hop.t+=dt;const k=e.hop.t/e.hop.dur;if(k>=1)e.hop=null;else hopY=Math.sin(k*Math.PI)*1.15*(e.sc||1);}
+  else if(sp>0)for(const w of (Wd.walls||[])){
+   const ex=w.x2-w.x1,ez=w.z2-w.z1,tt=clamp(((e.x-w.x1)*ex+(e.z-w.z1)*ez)/(ex*ex+ez*ez||1),0,1);
+   const cx=w.x1+ex*tt,cz=w.z1+ez*tt,ox=e.x-cx,oz=e.z-cz,d2=ox*ox+oz*oz,r=0.7;
+   if(d2<r*r&&d2>1e-6){const d=Math.sqrt(d2);e.x=cx+ox/d*r;e.z=cz+oz/d*r;}
+  }
   e.speed+=(sp-e.speed)*Math.min(1,dt*4);
   /* standing about it grazes now and then */
   if(e.speed<0.3){e.grazeT-=dt;if(e.grazeT<=0){e.graze=e.graze?0:1;e.grazeT=e.graze?5+Math.random()*7:3+Math.random()*6;}}else e.graze=0;
-  e.parts.group.position.set(e.x,Wd.groundH(e.x,e.z),e.z); e.parts.group.rotation.y=e.heading;
+  e.parts.group.position.set(e.x,Wd.groundH(e.x,e.z)+hopY,e.z); e.parts.group.rotation.y=e.heading;
   if(!e.rig)e.dress();
   try{
    const A=G.anim||RS, gait=A.gaitFor?A.gaitFor(e.speed):A.GAITS.walk;
@@ -458,7 +500,8 @@ export function install(G){
    +'#seMount:hover{filter:drop-shadow(0 2px 4px rgba(0,0,0,.35)) brightness(1.15)}#seMount:active{transform:scale(.94)}'
    +'body.on-foot #flyBtn,body.on-foot #breathBtn{display:none!important}'   // the jump button stays: she can jump
    +'body.se-ov-open #seMount,body.posing #seMount{display:none!important}'
-   +'@media (max-width:760px){#seMount{width:52px;height:52px;right:calc(150px + env(safe-area-inset-right));bottom:calc(14px + env(safe-area-inset-bottom))}}';
+   /* on a phone the stick keeps the bottom-left (se-hud): the saddle sits just left of the jump, out of the stick's ring */
+   +'@media (max-width:760px){#seMount{width:52px;height:52px;right:calc(122px + env(safe-area-inset-right));bottom:calc(96px + env(safe-area-inset-bottom))}}';
   document.head.appendChild(st);
  }
  const btn=document.createElement('button'); btn.id='seMount'; btn.type='button';
@@ -479,7 +522,7 @@ export function install(G){
  G.onFoot={get on(){return ST.on;},dismount,mount,toggle,callHorse,pose:(R,ph,amp,run,t,look)=>R&&R.locomote?R.locomote(0.016,{speed:0,look}):pose(R,ph,amp,run,t,look),
   horse:()=>ST.horse?{x:ST.horse.x,z:ST.horse.z,heading:ST.horse.heading,sc:ST.horse.sc,group:ST.horse.parts.group}:null,
   walker:()=>ST.W,footing:(x,z)=>footing(x,z),waterAt:(x,z)=>waterAt(x,z),standingOn:()=>ST.on&&ST.mode==='rock'?ST.rockOn:null,
-  state:()=>({on:ST.on,horse:ST.horse?{x:+ST.horse.x.toFixed(2),z:+ST.horse.z.toFixed(2)}:null,calling:!!ST.call,
+  state:()=>({on:ST.on,horse:ST.horse?{x:+ST.horse.x.toFixed(2),z:+ST.horse.z.toFixed(2),hop:!!ST.horse.hop}:null,calling:!!ST.call,
    mode:ST.mode||null,feet:ST.fy!=null?+(ST.fy-Wd.groundH(player.pos.x,player.pos.z)).toFixed(2):null,climbing:!!ST.climbing,air:!!ST.air,rolling:!!ST.roll})};
  G.on('state',o=>{o.onFoot=G.onFoot.state();});
 }

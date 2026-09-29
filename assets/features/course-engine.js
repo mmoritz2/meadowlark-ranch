@@ -73,9 +73,15 @@ export function install(G){
  for(const ev of T.EVENTS3){const x=EV_EXTRA[ev.id];if(x)Object.assign(ev,x);}
  delete T.EVENTS3.find(e=>e.id==='a2').n;
  if(!T.EVENTS3.some(e=>e.id==='x2'))T.EVENTS3.push({id:'x2',town:'Hollowpeak',name:'Hollowpeak Ridge Chase',lvl:7,xc:true,race:true,route:'xc2',line:true,req:{stamina:7,jump:6},reward:950});
- /* Cross-country loops. Both sit well clear of the river (z≈75–165) and the Barleyfold stream (x≈118±22). */
- T.RACE_ROUTES.xc1=T.RACE_ROUTES.xc1||[[190,-80],[240,-60],[280,-95],[275,-145],[235,-175],[185,-160],[165,-120]];
- T.RACE_ROUTES.xc2=T.RACE_ROUTES.xc2||[[-120,-160],[-150,-190],[-195,-200],[-215,-245],[-180,-270],[-135,-250],[-105,-205]];
+ /* Cross-country loops. Both sit well clear of the river (z≈75–165) and the Barleyfold stream (x≈118±22).
+    The first Barleyfold loop started inside the walled town, rode out through its south wall and set its
+    last fence against the west wall, crossing the roadside hedges five times on the way; the first
+    Hollowpeak loop ran through the hamlet, where the lodge stood on the approach to fence four. Both are
+    now laid in open country: Barleyfold's in the fields east of the walls, Hollowpeak's on the snowfield
+    north-east of the hamlet and behind the falls, well clear of the buildings (which settle a metre or
+    two differently from one load to the next) and of the town arenas. */
+ T.RACE_ROUTES.xc1=T.RACE_ROUTES.xc1||[[272,-60],[318,-46],[340,-84],[348,-130],[300,-160],[270,-128],[270,-92]];
+ T.RACE_ROUTES.xc2=T.RACE_ROUTES.xc2||[[-60,-215],[-35,-250],[-60,-285],[-105,-290],[-140,-278],[-112,-245],[-90,-228]];
 
  /* ---------------------------------------------------------------- save ---------------- */
  G.save.ensure(s=>{ s.bestAcc=s.bestAcc||{}; s.ribbonGold=s.ribbonGold||{}; s.ribbonsBy=s.ribbonsBy||{}; if(s.evDiff==null)s.evDiff=1; s.gradeLog=s.gradeLog||{}; });

@@ -102,7 +102,7 @@ export function install(G){
  /* ================================================================= styles + HUD ========= */
  const style=document.createElement('style');
  style.textContent='#ladHud{display:none;position:fixed;top:96px;right:10px;z-index:9;background:var(--dark,#3b2d1e);color:#fff8ea;padding:6px 10px;border-radius:12px;font-size:11.5px;font-weight:600;max-width:44vw;text-align:right;line-height:1.5}'
-  +'#ladHud.on{display:block}#ladHud .me{color:#ffd166}#ladHud i{font-style:normal;opacity:.65;margin-left:5px}'
+  +'#ladHud.on{display:block}#ladHud.on:empty{display:none}#ladHud .me{color:#ffd166}#ladHud i{font-style:normal;opacity:.65;margin-left:5px}'   // up for the count with nothing in it yet, it was a small dark blob by the sky
   +'#resultPanel{gap:8px}'
   +'.ladCard{width:100%;font-size:11px;color:#6b5a45;line-height:1.5;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}'
   +'.ladCard b{color:#3d2f22}.ladCard button{font-size:10.5px;padding:3px 8px}'
@@ -191,19 +191,51 @@ export function install(G){
   if(!g)return;
   try{ G.scene.remove(g); g.traverse(o=>{ if(o.isMesh&&o.geometry)o.geometry.dispose(); if(o.isSprite&&o.material){if(o.material.map)o.material.map.dispose();o.material.dispose();} }); }catch(e){}
  }
+ /* ONE field. events2-disciplines stands the valley's pace-setters in lanes on her start line, names
+    them in the countdown call and counts them in the course readout; this package used to build a
+    second field of its own as well, so the call said 'Redgate, Silverbirch, Ash Hollow', our toast and
+    standings said 'Willowbrook, Hollypark, Silverbirch' (Silverbirch twice), and our three stood at
+    the world origin for the count and appeared inside gate one's ring at GO. When that field is out
+    it IS the field: the standings, the pick-ups, the placing and the card are all kept here, read off
+    where each pace-setter actually is and how fast she is going. Our own riders are only built when
+    there is no such field (a club rider in the world, or no horse maker), and then they stand in the
+    next lanes along the start line and ride in from there. */
+ const ghostField=()=>{ try{ const GH=G.events2&&G.events2.ghosts; return GH&&GH.on&&GH.list&&GH.list.length?GH:null; }catch(e){ return null; } };
+ const meArc=c=>{ try{ return G.events2.playerArc(c); }catch(e){ return 0; } };
+ /* when a pace-setter will be over the line: her time if she is, otherwise the clock plus what is
+    left at her pace, the part of her first stride still to come and what the mud is still costing */
+ function ghostProj(r,c){
+  const g=r.gh, GH=(FIELD&&FIELD.ghosts)||ghostField(); if(!g||!GH)return r.target;
+  if(g.done)return g.ft!=null?g.ft:(c.t||0);
+  const rt=Math.min(1,g.rt||0);
+  return (c.started?(c.t||0):0)+Math.max(0,GH.fin-g.s)/Math.max(0.1,g.v)+(1-rt)*(1-rt)/2+Math.max(0,g.slowT||0)*0.55;
+ }
  function spawnField(c){
   const ev=c.ev, S=c.ce||{}, dk=(S.diff&&S.diff.k)||'open';
   const n=FIELD_N[dk]||3, wk=G.time.weekKey(), tighten=(FIELD_SPREAD[dk]||1)*(c.ladRematch?REMATCH_TIGHTEN:1);
   const loop=loopOf(c), laps=Math.max(1,S.laps||1), par=Math.max(4,c.par||G.course.eventPar(ev)||40);
-  /* Deterministic per event, per week, per difficulty: the same four ranches turn up for the same
-     race all week, which is what makes beating one of them mean anything. */
-  const pool=T.NEIGHBOURS.slice().sort((a,b)=>hash('fld'+ev.id+wk+a[0])-hash('fld'+ev.id+wk+b[0])).slice(0,n);
-  const rivals=pool.map(([nm,str],i)=>{
-   const h=hash('pace'+ev.id+wk+dk+nm);
-   const target=par*laps*(0.90+0.42*h)/clamp(str,0.78,1.28)*tighten;
-   return {n:nm,str,target:+target.toFixed(1),pen:0,prog:0,slowT:0,done:false,i:0,g:rivalMesh(i,nm),y:hash('bob'+nm)*6};
-  });
-  FIELD={c,loop,laps,rivals,total:c.jumps.length*laps};
+  const GHs=ghostField();
+  if(GHs){
+   /* the grade and the rematch still set how hard the field rides, on the horses that are there */
+   const rivals=GHs.list.map(g=>{ g.v/=tighten; return {n:g.nm,str:1,target:0,pen:0,prog:0,slowT:0,done:false,i:0,g:g.parts&&g.parts.group,gh:g,y:0}; });
+   FIELD={c,loop,laps,rivals,total:c.jumps.length*laps,ghosts:GHs};
+   for(const r of rivals)r.target=+ghostProj(r,c).toFixed(1);
+  }else{
+   /* Deterministic per event, per week, per difficulty: the same four ranches turn up for the same
+      race all week, which is what makes beating one of them mean anything. */
+   const pool=T.NEIGHBOURS.slice().sort((a,b)=>hash('fld'+ev.id+wk+a[0])-hash('fld'+ev.id+wk+b[0])).slice(0,n);
+   let lanes=[]; try{ lanes=G.events2&&G.events2.startLanes?G.events2.startLanes(c,pool.length):[]; }catch(e){}
+   const rivals=pool.map(([nm,str],i)=>{
+    const h=hash('pace'+ev.id+wk+dk+nm);
+    const target=par*laps*(0.90+0.42*h)/clamp(str,0.78,1.28)*tighten;
+    const r={n:nm,str,target:+target.toFixed(1),pen:0,prog:0,slowT:0,done:false,i:0,g:rivalMesh(i,nm),y:hash('bob'+nm)*6};
+    /* on the start line for the count, not at the world origin, and a run-in from there to gate one */
+    const ln=lanes[i];
+    if(ln&&r.g){ r.lane=ln; r.run=Math.max(1,-ln.s0); let y=0; try{y=W.groundH(ln.x,ln.z);}catch(e){} r.g.position.set(ln.x,y,ln.z); r.g.rotation.y=ln.h; }
+    return r;
+   });
+   FIELD={c,loop,laps,rivals,total:c.jumps.length*laps};
+  }
   /* The two aggressive pick-ups are downgraded to carrots when there is nobody to use them on.
      There is somebody now — but events-pvp's own mud and bale talk to the club over chat, so the
      solo race gets its own pair that act on the field that is actually here. */
@@ -219,7 +251,7 @@ export function install(G){
  }
  function clearField(){
   if(!FIELD)return;
-  for(const r of FIELD.rivals)disposeGroup(r.g);
+  for(const r of FIELD.rivals)if(!r.gh)disposeGroup(r.g);   // a pace-setter is events2-disciplines' to put away
   FIELD=null; ladHud.classList.remove('on'); ladHud.innerHTML='';
  }
  function playerProg(c){
@@ -229,7 +261,17 @@ export function install(G){
  }
  function fieldRows(c){
   if(!FIELD)return [];
-  const P=playerProg(c), t=Math.max(0.2,c.t||0.2);
+  const t=Math.max(0.2,c.t||0.2);
+  /* on the pace-setters, in the same metres of track events2-disciplines places the readout with, so
+     the standings and the readout never disagree: level on the line (half a metre) counts as level */
+  if(FIELD.ghosts){
+   const GH=FIELD.ghosts, L=Math.max(1,GH.fin+GH.run), me=meArc(c), f=clamp((me+GH.run)/L,0,1);
+   const rows=FIELD.rivals.map(r=>({n:r.n,proj:ghostProj(r,c),prog:clamp((r.gh.s+GH.run)/L,0,1),arc:r.gh.s,v:r.gh.v,done:!!r.gh.done,slow:(r.gh.slowT||0)>0}));
+   rows.push({n:'You',proj:f>0.02?t/f:Math.max(t,c.par||40),prog:f,arc:me+0.5,me:true});
+   rows.sort((a,b)=>(b.arc-a.arc)||(a.proj-b.proj));
+   return rows;
+  }
+  const P=playerProg(c);
   const mine=P.frac>0.02?t/P.frac:Math.max(t,c.par||40);        // where this pace puts you at the line
   const rows=FIELD.rivals.map(r=>({n:r.n,proj:r.target+r.pen,prog:r.prog,done:r.done,slow:r.slowT>0}));
   rows.push({n:'You',proj:mine,prog:P.frac,me:true});
@@ -247,8 +289,13 @@ export function install(G){
    toast('🥕 Nobody behind you to throw it at — you take the pace instead.');
    return;
   }
-  const c=FIELD.c, P=playerProg(c); let hit=0;
+  const c=FIELD.c, P=playerProg(c), me=FIELD.ghosts?meArc(c):0; let hit=0;
   for(const r of FIELD.rivals){
+   if(r.gh){                                                    // a pace-setter wades through it at under half pace
+    if(r.gh.done||r.gh.s>me)continue;
+    r.gh.slowT=kind==='bale'?(r.gh.slowT||0)+2.7:Math.max(r.gh.slowT||0,2.0);
+    hit++; continue;
+   }
    if(r.done||r.prog>P.frac)continue;                           // it goes backwards, at the riders behind you
    if(kind==='bale'){r.pen+=1.5;}else{r.slowT=2.0;r.pen+=0.6;}
    hit++;
@@ -290,6 +337,15 @@ export function install(G){
   if(!FIELD||FIELD.c!==c||!c.started)return;
   const P=playerProg(c);
   for(const r of FIELD.rivals){
+   if(r.gh){
+    /* events2-disciplines rides her; this only reads where she is */
+    const g=r.gh, GH=FIELD.ghosts;
+    r.g=g.parts&&g.parts.group; r.done=!!g.done; r.slowT=Math.max(0,g.slowT||0);
+    r.prog=clamp((g.s+GH.run)/Math.max(1,GH.fin+GH.run),0,1); r.i=Math.floor(clamp(g.s/Math.max(1,GH.fin),0,1)*FIELD.total);
+    r.target=+ghostProj(r,c).toFixed(1);
+    try{const P2=E().PVP; if(P2&&P2.rivals)P2.rivals[r.n]={n:r.n,i:r.i,t:+(c.t||0).toFixed(1),done:r.done,ai:true};}catch(e){}
+    continue;
+   }
    if(r.done)continue;
    if(r.slowT>0)r.slowT-=dt;
    const span=Math.max(1,r.target+r.pen);
@@ -297,7 +353,9 @@ export function install(G){
    if(r.prog>=1)r.done=true;
    r.i=Math.floor(r.prog*FIELD.total);
    if(r.g){
-    const p=atDist(FIELD.loop,r.prog*FIELD.loop.len*FIELD.laps);
+    /* from her lane on the start line, straight in to gate one, then round the loop */
+    const run=r.lane?r.run:0, d=r.prog*(FIELD.loop.len*FIELD.laps+run)-run, j0=c.jumps[0];
+    const p=d<0&&r.lane?{x:j0.x+(r.lane.x-j0.x)*(-d/run),z:j0.z+(r.lane.z-j0.z)*(-d/run),h:Math.atan2(j0.x-r.lane.x,j0.z-r.lane.z)}:atDist(FIELD.loop,Math.max(0,d));
     let y=0; try{y=W.groundH(p.x,p.z);}catch(e){}
     r.y+=dt*9;
     r.g.position.set(p.x,y+Math.abs(Math.sin(r.y))*0.13,p.z);
@@ -313,11 +371,12 @@ export function install(G){
   /* The list is in track order, so the gap has to be in track order too: how far up or down the
      route a rider is, priced in seconds at the course's own par pace. A projected finish time read
      against a position-ordered list gives a leader who appears to be losing. */
-  const paceSpan=Math.max(4,(c.par||40)*FIELD.laps);
+  const paceSpan=Math.max(4,(c.par||40)*FIELD.laps), myRow=rows[me]||{};
   ladHud.classList.add('on');
   ladHud.innerHTML='🏁 <b>P'+(me+1)+'/'+(FIELD.rivals.length+1)+'</b>'+(c.ladRematch?' · rematch':'')+'<br>'
    +rows.slice(0,5).map((r,i)=>{
-     const gap=clamp((r.prog-P.frac)*paceSpan,-99,99);
+     /* on the pace-setters: the metres between you, in seconds at her own pace */
+     const gap=clamp(FIELD.ghosts?(r.arc-(myRow.arc-0.5))/Math.max(1,r.v||7):(r.prog-P.frac)*paceSpan,-99,99);
      return '<span class="'+(r.me?'me':'')+'">'+(i+1)+' '+esc(r.n)+(r.slow?' 🪣':'')
       +'<i>'+(r.me?'—':(gap>=0?'+':'')+s1(gap)+'s')+'</i></span>';
     }).join('<br>')
@@ -408,7 +467,7 @@ export function install(G){
     else L.wk.times[ev.id]=prev;
    }
   });
-  if(best!=null){try{G.net.publish('lb/wk_'+wk+'_'+ev.id+'/'+G.net.myName(),{v:best},{retain:true});}catch(e){}}
+  if(best!=null){try{G.net.publish('lb/'+(G.course.boardKey?G.course.boardKey(ev,wk):'wk_'+wk+'_'+ev.id)+'/'+G.net.myName(),{v:best},{retain:true});}catch(e){}}   // keyed with the route revision, as events-pvp reads it
   return {best,sc};
  }
 
@@ -511,7 +570,7 @@ export function install(G){
    let place=0, field=0, rows=[];
    if(FIELD&&FIELD.c===c){
     field=FIELD.rivals.length;
-    rows=FIELD.rivals.map(r=>({n:r.n,proj:+(r.target+r.pen).toFixed(1)}));
+    rows=FIELD.rivals.map(r=>({n:r.n,proj:+(r.gh?ghostProj(r,c):r.target+r.pen).toFixed(1)}));
     rows.push({n:'You',proj:+(c.t||0).toFixed(1),me:true});
     rows.sort((a,b)=>a.proj-b.proj);
     place=placeIn(rows);
@@ -590,7 +649,26 @@ export function install(G){
   try{
    const now=G.save.fresh()||{};
    LAST.coins1=now.coins||0; LAST.gems1=now.gems||0; LAST.pts1=(now.racing&&now.racing.pts)||0;
-   LAST.notes=(capture||[]).slice(); capture=null; wasGold=false;
+   /* The recap is every toast of the finish, and a finish says some things twice: two packages
+      both announce a bond level, and our own board line is already the board section. A
+      showmanship class also got events-pvp's one-line summary, which calls the PATTERN mark
+      'handling' — printed under a sheet that shows the judge's real handling mark, that was two
+      different handling numbers on one card. The sheet above carries all three marks. */
+   {const seen=new Set();
+    LAST.notes=(capture||[]).filter(n=>{const k=String(n).trim();if(!k||seen.has(k))return false;seen.add(k);
+     if(LAST.wkNote&&k.indexOf(LAST.wkNote)===0)return false;
+     if(LAST.ev.show&&/^🧼 Turnout \d+% · handling \d+% · final \d+%/.test(k))return false;
+     return true;});}
+   capture=null; wasGold=false;
+   /* This is the round's ONE card. events2-disciplines used to open a card of its own at the finish
+      and this one hid it a third of a second later, so its sheet — the faults a rail, the XC score,
+      the gate line, the figure marks, the handling mark — is drawn in here instead. It is read now
+      rather than on the finish hook so the order the two packages happen to be installed in does
+      not matter, and matched on the event and the moment so a stale sheet is never shown. */
+   try{ const R=G.events2&&G.events2.result&&G.events2.result();
+    if(R&&R.id===LAST.ev.id&&Math.abs((R.at||0)-LAST.at)<15000)
+     LAST.disc={k:R.disc,label:R.label,icon:R.icon,rows:(R.rows||[]).slice(),figs:(R.figs||[]).slice(),handling:R.handling,turnout:R.turnout};
+   }catch(e){}
    CARD={mode:'result'};
    G.ui.open('resultPanel');
    const ros=$('resultPanel')&&$('resultPanel').querySelector('.ladRos');
@@ -609,19 +687,35 @@ export function install(G){
   return Object.keys(cnt).map(k=>'<span class="ladChip'+(k==='perfect'?' on':(k==='fault'||k==='refusal')?' bad':'')+'">'
    +((GRD[k]&&GRD[k].icon)||'•')+' '+((GRD[k]&&GRD[k].text)||k)+' ×'+cnt[k]+'</span>').join('');
  }
+ const figLines=L=>L.figs.map(f=>'<div><span>'+esc(f.at||'')+' · '+esc(f.text||'')+'</span><span>'+(f.score==null?'—':f.score+'/10')+'</span></div>').join('');
+ /* the discipline's own sheet from events2-disciplines, less the lines this card already shows as
+    chips or in its headline (the time, the accuracy, the fence grades, the refusals) */
+ function discSheet(L){
+  const D=L.disc; if(!D||!D.rows||!D.rows.length)return '';
+  const SKIP=/^(⏱ Time|🎯 Accuracy|🎯 Score|Fences|Refusals)$/;
+  const rows=D.rows.filter(r=>!SKIP.test(String(r[0]))&&!(r[0]==='Line'&&L.lineOff>=1));
+  if(!rows.length)return '';
+  return '<div class="ladSheet"><b>'+esc(D.icon||'')+' '+esc(D.label||'')+' — the sheet</b>'
+   +rows.map(r=>'<div><span>'+esc(r[0])+'</span><span>'+esc(r[1])+'</span></div>').join('')+'</div>';
+ }
  function scoreSheet(L){
   if(L.ev.show){
+   /* a showmanship class is judged on three things and the card showed one and a half: the
+      turnout, the handling mark the judge took for standing still and square, and the pattern
+      figure by figure */
+   const hd=L.disc&&L.disc.handling!=null?L.disc.handling:null;
    return '<div class="ladSheet"><b>🧼 Turnout '+pc(L.turnout)+'%</b>'
     +L.turnoutParts.map(p=>'<div><span>'+p.icon+' '+esc(p.label)+'</span><span>'+pc(p.v)+'%</span></div>').join('')
-    +'<div><span>🎽 The pattern</span><span>'+pc(Math.max(0,(L.pct*2)-(L.turnout||0)))+'%</span></div>'
-    +'<div><b>Final mark</b><b>'+pc(L.pct)+'%</b></div></div>';
+    +(hd!=null?'<div><span>Handling in the ring</span><span>'+pc(hd)+'%</span></div>':'')
+    +'<div><span>The pattern</span><span>'+pc(Math.max(0,(L.pct*2)-(L.turnout||0)))+'%</span></div>'
+    +'<div><b>Final mark</b><b>'+pc(L.pct)+'%</b></div></div>'
+    +(L.figs.length?'<div class="ladSheet"><b>The pattern, figure by figure</b>'+figLines(L)+'</div>':'');
   }
   if(L.dressage){
-   return '<div class="ladSheet"><b>🎽 The test, figure by figure</b>'
-    +L.figs.map(f=>'<div><span>'+esc(f.at||'')+' · '+esc(f.text||'')+'</span><span>'+(f.score==null?'—':f.score+'/10')+'</span></div>').join('')
+   return '<div class="ladSheet"><b>🎽 The test, figure by figure</b>'+figLines(L)
     +'<div><b>Final mark</b><b>'+pc(L.pct)+'%</b></div></div>';
   }
-  let h='<div class="ladGrid"><span class="ladChip">🎯 Accuracy '+pc(L.acc)+'%</span>'+gradeLine(L);
+  let h=discSheet(L)+'<div class="ladGrid"><span class="ladChip">🎯 Accuracy '+pc(L.acc)+'%</span>'+gradeLine(L);
   if(L.refusals)h+='<span class="ladChip bad">🛑 Refusals ×'+L.refusals+'</span>';
   if(L.timeFaults)h+='<span class="ladChip bad">⏱ Over time +'+L.timeFaults+' faults</span>';
   if(L.lineOff>=1)h+='<span class="ladChip bad">📏 Off the line '+L.lineOff+'s</span>';
@@ -662,7 +756,6 @@ export function install(G){
  }
  function previewCard(ev,s,h){
   const di=s.evDiff==null?1:s.evDiff, d=DIFFS()[di]||DIFFS()[1]||DIFFS()[0];
-  let gate={ok:true,missing:[]}; try{gate=G.course.eventOk(ev,h)||gate;}catch(e){}
   const feat=featuredNow().some(f=>f.id===ev.id);
   const purse=Math.round((ev.reward||0)*(d.rewMul||1)*(feat?1.5:1));
   const base=Math.max(8,Math.round((ev.reward||0)/7));
@@ -697,9 +790,24 @@ export function install(G){
    +(s.bestAcc&&s.bestAcc[ev.id]?'<span class="ladChip">best 🎯 '+pc(s.bestAcc[ev.id])+'%</span>':'')
    +(s.bestTimes&&s.bestTimes[ev.id]?'<span class="ladChip">best ⏱ '+s1(s.bestTimes[ev.id])+'s</span>':'')
    +(s.trophies&&s.trophies[ev.id]?'<span class="ladChip on">🏆 won</span>':'')+'</div>';
-  if(!gate.ok)html+='<div class="sub">🔒 '+esc(gate.missing.map(m=>(m[0]==='level'?'Lv '+m[1]:(T.STAT_LBL[m[0]]||m[0])+' '+m[1])+' (have '+m[2]+')').join(' · '))+'</div>';
+  const lock=entryLock(ev,s,h);
+  if(lock)html+='<div class="sub ladLock">🔒 '+esc(lock)+'</div>';
   else if(i>=0)html+='<button class="claimBtn" data-fx="lad:again:'+esc(ev.id)+'">Enter · '+purse+'🪙</button>';
   return html;
+ }
+ /* The Enter button used to ask only whether the horse met the event's own level and stats. The
+    difficulty picked on the event page has a level of its own (Elite opens two levels later) and
+    the Final wants four venues signed off, and course-engine and events-pvp refuse both at the
+    gate — so the card offered a gold 'Enter · 338' that closed every menu, started nothing and
+    left a toast. This is every lock the gate will apply, said in words, or null when she can ride. */
+ function entryLock(ev,s,h){
+  s=s||{};
+  let gate={ok:true,missing:[]}; try{gate=G.course.eventOk(ev,h)||gate;}catch(e){}
+  if(!gate.ok)return 'Needs '+gate.missing.map(m=>(m[0]==='level'?'Lv '+m[1]:(T.STAT_LBL[m[0]]||m[0])+' '+m[1])+' (have '+m[2]+')').join(' · ');
+  const di=s.evDiff==null?1:s.evDiff, d=DIFFS()[di]||DIFFS()[1]||DIFFS()[0], lvl=(h&&h.level)||1;
+  if(d.lvlAdd&&lvl<(ev.lvl||1)+d.lvlAdd)return d.label+' '+ev.name+' opens at Lv '+((ev.lvl||1)+d.lvlAdd)+' — this horse is Lv '+lvl+'. Pick another level on the event page to ride it now.';
+  if(ev.champ){ const q=champPath(s); if(q&&!q.ok)return 'The Final takes qualified riders only — '+q.n+' of 4 venues signed off. '+nextVenueHint(s); }
+  return null;
  }
  G.ui.panel({id:'resultPanel',title:'🏅 Round result',sys:true,render(p,s){
   s=s||G.save.fresh()||{};
@@ -715,7 +823,7 @@ export function install(G){
   let h='<div class="ph"><b>'+(L.place===1&&L.field?'🏆 ':'')+esc(L.ev.name)+'</b><button data-fx="close:resultPanel" style="margin-left:auto">✖</button></div>'
    +'<div class="evrow" style="flex-wrap:wrap;gap:10px"><span class="ladRos">'+ros+'</span>'
    +'<span style="flex:1;min-width:120px"><b style="font-size:15px">'+(L.dressage?pc(L.pct)+'%':s1(L.t)+'s')+'</b>'
-   +'<span style="font-size:11px;color:#8c7a63"><br>'+esc(L.ev.town)+' · '+L.diffIcon+' '+esc(L.diffLabel)
+   +'<span style="font-size:11px;color:#8c7a63"><br>'+esc(L.ev.town)+(L.disc&&L.disc.label?' · '+esc(L.disc.label):'')+' · '+L.diffIcon+' '+esc(L.diffLabel)
    +(L.dressage?'':' · allowance '+s1(L.allowed)+'s')+(L.featured?' · featured':'')+'</span></span>'
    +'<span class="ladChip'+(L.gold?' on':'')+'">'+(L.gold?'🥇 Gold ribbon':L.rib+' ribbon'+(L.rib===1?'':'s'))+'</span>'
    +'<span class="ladChip">'+'⭐'.repeat(clamp(L.stars,1,3))+'</span></div>';
@@ -854,9 +962,12 @@ export function install(G){
  /* ================================================================= actions =============== */
  G.ui.action('lad',(a)=>{
   const k=a[0];
-  if(k==='again'){ const ev=evById(a[1]); if(!ev)return; G.hidePanels(); G.course.startCourse(ev); }
+  /* a locked round says why and leaves the menu where it was, rather than closing everything on
+     the way to a refusal */
+  if(k==='again'){ const ev=evById(a[1]); if(!ev)return; const lk=entryLock(ev,G.save.fresh()||{},ridden()); if(lk){toast(lk);return;} G.hidePanels(); G.course.startCourse(ev); }
   else if(k==='rematch'){
    const ev=evById(a[1]); if(!ev)return;
+   const lk=entryLock(ev,G.save.fresh()||{},ridden()); if(lk){toast(lk);return;}   // before the ticket, never after it
    if(!E().spendTicket){toast('🎟️ Tickets are not available just now.');return;}
    if(!E().spendTicket())return;
    pendingRematch={ev:ev.id,at:Date.now()};
@@ -983,5 +1094,5 @@ export function install(G){
  /* handles for QA and sister packages */
  G.ladder={FIELD:()=>FIELD,fieldRows,judgedOfWeek,judgedRows,placeIn,weekLeft,routeLen,goldOf,
   writeWeekly,tallyRibbons,RIB_TIERS,claimRibTier,ribTierReady,finalStandings,champPath,nextVenueHint,
-  resumeRun,dropRun,openCard,last:()=>LAST,FIELD_N,featuredNow};
+  resumeRun,dropRun,openCard,last:()=>LAST,FIELD_N,featuredNow,entryLock};
 }

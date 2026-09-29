@@ -33,6 +33,9 @@ export function install(G){
  const evById=k=>T.EVENTS3.find(e=>e.id===k);
  function hash(str){let h=0x811c9dc5|0;for(let i=0;i<String(str).length;i++){h^=String(str).charCodeAt(i);h=Math.imul(h,0x01000193);}return ((h>>>8)&0xffff)/0xffff;}
  const nowWeek=()=>G.time.weekKey();
+ /* A weekly board row is keyed with the event's route revision (ranch3d's boardKey), so a time ridden on a course since
+    redrawn never ranks against one ridden on the course as it stands. */
+ const wkKey=(ev,wk)=>G.course.boardKey?G.course.boardKey(ev,wk):'wk_'+wk+'_'+ev.id;
 
  /* ================================================================= data ================= */
  /* --- the championship ------------------------------------------------------------------ */
@@ -577,7 +580,7 @@ export function install(G){
    G.save.sync(s=>{ s.showBest=s.showBest||{}; if(!s.showBest[ev.id]||showPct>s.showBest[ev.id])s.showBest[ev.id]=+showPct.toFixed(3);
     if(showPct>=0.98){s.showPerfect=s.showPerfect||{};s.showPerfect[ev.id]=true;} });
    if(showPct>=0.98){G.money.addGems(2);toast('🏵️ A perfect turnout — the judges could not fault her. +2💎');}
-   toast('🧼 Turnout '+Math.round((c.turnout||0)*100)+'% · handling '+Math.round(((showPct*2)-(c.turnout||0))*100)+'% · final '+Math.round(showPct*100)+'%');
+   toast('🧼 Turnout '+Math.round((c.turnout||0)*100)+'% · pattern '+Math.round(((showPct*2)-(c.turnout||0))*100)+'% · final '+Math.round(showPct*100)+'%');
    G.quest.dailyEvt('show',1);
   }
   /* --- the weekly leaderboard: a gold ribbon is the price of a place --- */
@@ -590,7 +593,7 @@ export function install(G){
     if(prev==null||c.t<prev){s.weekly.times[ev.id]=+c.t.toFixed(1);best=+c.t.toFixed(1);} });
    if(best!=null){
     toast('🥇 Gold — '+best.toFixed(1)+'s is on this week\'s '+ev.name+' board.');
-    G.net.publish('lb/wk_'+wk+'_'+ev.id+'/'+G.net.myName(),{v:best},{retain:true});
+    G.net.publish('lb/'+wkKey(ev,wk)+'/'+G.net.myName(),{v:best},{retain:true});
    }
   }else if(featured&&!dressage&&!(RB&&RB.gold)){
    toast('🎀 Featured — but only a 🥇 gold ribbon is ranked on the weekly board.');
@@ -667,7 +670,7 @@ export function install(G){
  function weeklyRows(ev,s){
   const wk=nowWeek(), par=G.course.eventPar(ev)||40;
   const rows=T.NEIGHBOURS.map(([nm,str])=>({n:nm,v:+(par*(0.80+0.50*hash(ev.id+nm+wk))/Math.max(0.75,str)).toFixed(1)}));
-  const club=(G.net.lbData||{})['wk_'+wk+'_'+ev.id]||{};
+  const club=(G.net.lbData||{})[wkKey(ev,wk)]||{};
   for(const nm in club)if(typeof club[nm]==='number')rows.push({n:nm,v:club[nm],club:true});
   const mine=s.weekly&&s.weekly.gold&&s.weekly.gold[ev.id]&&s.weekly.times&&s.weekly.times[ev.id];
   if(mine)rows.push({n:'You',v:s.weekly.times[ev.id],me:true});
@@ -873,7 +876,8 @@ export function install(G){
   /* the ladder itself */
   html+='<div class="bGroup">🏅 The prize ladder</div>'
    +LB_PRIZES.map(p=>'<div class="evrow"><b>'+p.label+'</b><span style="font-size:11px">'+prizeLabel(p)+'</span></div>').join('')
-   +'<div class="sub">Star Equestrian\'s ladder pays three thousand gems for second place. This valley\'s whole economy is smaller than that, so the ladder is printed as it stands and paid at Meadowlark scale ('+Math.round(LB_GEM_SCALE*100)+'% of the gems, '+Math.round(LB_KEY_SCALE*100)+'% of the keys). The exclusive is the real prize.</div></div>';
+   /* (Design note: the printed numbers are the reference game's ladder; LB_GEM_SCALE / LB_KEY_SCALE pay them at this valley's size.) */
+   +'<div class="sub">Gems and keys on this ladder are paid at the valley\'s rate: '+Math.round(LB_GEM_SCALE*100)+'% of the gems and '+Math.round(LB_KEY_SCALE*100)+'% of the keys printed, as each line shows. The exclusive is the real prize.</div></div>';
   /* last week's settlement */
   const L=s.lbLast;
   if(L&&L.prizes&&L.prizes.length&&!L.claimed){

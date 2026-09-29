@@ -276,6 +276,17 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 900 s');try{if(bro
  const fp=await page.evaluate(()=>{
   const G=window.__features,Q=window.__cg,T=G.THREE,p=G.horse.player,CG=G.courseGuide;
   Q.start('a1');
+  /* The rider is measured from a fixed twelve metres out along fence 1's own approach, on the side
+     the marshal put her, instead of from wherever the start box happens to be. Town jump rounds
+     now start INSIDE the arena rail (they used to start on or outside it and ride through it), and
+     inside the rail there is only 6.5-10 m between the start box and fence 1 — less the pad at the
+     fence and the stride kept clear under the horse, that leaves room for two or three chevrons in
+     all, so "three in shot" had turned into a test of where events2-disciplines puts the start
+     line rather than of whether the line reaches into a first-person view. Twelve metres is a
+     real approach: the same distance the rest of this suite and the camera measures ride from. */
+  {const c=G.course.get(), j=c.jumps[c.idx], nx=Math.sin(j.rotY||0), nz=Math.cos(j.rotY||0);
+   const side=((p.pos.x-j.x)*nx+(p.pos.z-j.z)*nz)<0?-1:1;
+   p.pos.set(j.x+nx*side*12,0,j.z+nz*side*12); p.speed=0; p.y=0; p.vy=0;}
   const t=Q.target(); p.heading=Math.atan2(t[0]-p.pos.x,t[1]-p.pos.z);    // harness: face the way a rider would
   G.course.setFP(true); window.advanceTime(1200);
   const cam=G.camera; cam.updateMatrixWorld(true); cam.updateProjectionMatrix();
@@ -288,11 +299,161 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 900 s');try{if(bro
   const out={mode:JSON.parse(render_game_to_text()).camera.mode,count:CG.core.count,inShot:seen,
    nearestInShot:nearest===1e9?null:+nearest.toFixed(2),targetInShot:!!far&&inShot(far),
    camY:+cam.position.y.toFixed(2),riderDist:+Math.hypot(p.pos.x-t[0],p.pos.z-t[1]).toFixed(1)};
+  /* and she really was put on a twelve-metre approach, not left in the start box */
+  out.approach=Math.abs(out.riderDist-12)<0.6;
   G.course.setFP(false); window.advanceTime(300); Q.stop();
   return out;
  });
  check('in first person the line is in shot a stride ahead of the horse and runs all the way to the target',
-  fp.mode==='fp'&&fp.count>0&&fp.inShot>=3&&fp.nearestInShot<=8&&fp.targetInShot,fp);
+  fp.mode==='fp'&&fp.approach&&fp.count>0&&fp.inShot>=3&&fp.nearestInShot<=8&&fp.targetInShot,fp);
+
+ /* ---------------------------------------------------------------- 5b. the circle ------- */
+ /* 'Canter a circle at B' is scored by ranch3d.html only while the horse is 2.5-12 m from the
+    letter, and the guide used to point at B itself with a two-metre ring round it — so a rider who
+    cantered faithfully round the ring she was shown scored nothing. The figure now draws the
+    circle it asks for. Asserted: the big circle is up and the small ring is not, every point of it
+    sits inside the scored band, the chevrons run onto it and then along it, the readout says to
+    ride a big circle, and — the one that matters — cantering round the circle as drawn finishes
+    the figure. */
+ stage('the dressage circle');
+ const circ=await page.evaluate(()=>{
+  const G=window.__features,Q=window.__cg,p=G.horse.player,CG=G.courseGuide;
+  Q.start('d1');
+  const c=G.course.get(), fi=c.figs.findIndex(f=>f.circle), f=c.figs[fi], AL=G.course.ARENA_LETTERS, at=AL[f.at], X=AL.X;
+  c.fi=fi;                                                   // harness: straight to the circle figure
+  /* come at it from the middle of the arena, the way a rider arriving from E would */
+  const ux=(X[0]-at[0]), uz=(X[1]-at[1]), ul=Math.hypot(ux,uz)||1;
+  p.pos.set(at[0]+ux/ul*16,0,at[1]+uz/ul*16+1.5); p.heading=Math.atan2(at[0]-p.pos.x,at[1]-p.pos.z); p.speed=0;
+  window.advanceTime(700);
+  const st=JSON.parse(render_game_to_text()).guide, out={fig:f.text,letter:f.at,circle:st.circle,readout:st.readout,
+   bigRing:!!(CG.bigRing&&CG.bigRing.visible),smallRing:!!CG.ring.visible,approachChevrons:CG.core.count};
+  if(st.circle){
+   const cc=st.circle.centre, r=st.circle.r;
+   /* every point of the drawn circle against the band ranch3d.html scores */
+   let lo=1e9,hi=0;for(let i=0;i<72;i++){const a=i/72*Math.PI*2,d=Math.hypot(cc[0]+Math.cos(a)*r-at[0],cc[1]+Math.sin(a)*r-at[1]);lo=Math.min(lo,d);hi=Math.max(hi,d);}
+   out.band=[+lo.toFixed(2),+hi.toFixed(2)];
+   /* the approach run ends on the circle */
+   const c0=CG.chevronAt(0); out.approachEndsOnCircle=!!c0&&Math.abs(Math.hypot(c0[0]-cc[0],c0[2]-cc[1])-r)<1.4;
+   /* now canter round it as drawn: a lap and a bit at 8.5 m/s, heading along the circle */
+   let a=Math.atan2(p.pos.z-cc[1],p.pos.x-cc[0]), steps=0, onArc=null;
+   p.pos.set(cc[0]+Math.cos(a)*r,0,cc[1]+Math.sin(a)*r);
+   for(;steps<420&&G.course.get()===c&&c.fi===fi;steps++){
+    a+=8.5*0.033/r; p.pos.set(cc[0]+Math.cos(a)*r,0,cc[1]+Math.sin(a)*r); p.heading=Math.atan2(-Math.sin(a),Math.cos(a)); p.speed=8.5;
+    window.advanceTime(33);
+    if(steps===40){const ch=[];for(let i=0;i<CG.core.count;i++)ch.push(CG.chevronAt(i));
+     onArc={n:ch.length,worst:ch.length?+Math.max(...ch.map(q=>Math.abs(Math.hypot(q[0]-cc[0],q[2]-cc[1])-r))).toFixed(2):null};}
+   }
+   out.onArc=onArc; out.steps=steps; out.figureDone=c.fi>fi; out.score=f.score;
+  }
+  Q.stop(); return out;
+ });
+ check('[dressage circle] the figure draws a big circle round its letter instead of a small ring on it',
+  circ.circle&&circ.bigRing&&!circ.smallRing&&circ.band&&circ.band[0]>=2.5&&circ.band[1]<=12,circ);
+ check('[dressage circle] the chevrons run onto the circle, then lie along it once she is riding it',
+  circ.approachChevrons>=3&&circ.approachEndsOnCircle&&circ.onArc&&circ.onArc.n>=3&&circ.onArc.worst<0.35,
+  {approach:circ.approachChevrons,endsOnCircle:circ.approachEndsOnCircle,onArc:circ.onArc});
+ check('[dressage circle] the readout says to ride a big circle, in two words — the line beside it already names the letter',
+  /^· big circle$/.test(circ.readout||'')&&!/[\u{1F300}-\u{1FAFF}]/u.test((circ.readout||'').replace('📍','')),{readout:circ.readout});
+ check('[dressage circle] cantering round the circle as drawn completes the figure, and scores it',
+  circ.figureDone&&circ.score>=7,{steps:circ.steps,done:circ.figureDone,score:circ.score});
+
+ /* The readout used to be '· ride a big circle round B', and #cgDist does not wrap, so on a phone
+    it took the room the course line needed: #courseHudTxt was squeezed to 130 px and went to three
+    or four lines, the last under the stamina bar. Counted at a 390x844 phone's shape during the
+    circle figure, off the text's own line boxes. */
+ await page.setViewportSize({width:390,height:844}); await page.waitForTimeout(400);
+ const circPhone=await page.evaluate(()=>{
+  const G=window.__features,Q=window.__cg,p=G.horse.player;
+  Q.start('d1');
+  const c=G.course.get(), fi=c.figs.findIndex(f=>f.circle), f=c.figs[fi], AL=G.course.ARENA_LETTERS, at=AL[f.at], X=AL.X;
+  c.fi=fi;
+  const ux=(X[0]-at[0]), uz=(X[1]-at[1]), ul=Math.hypot(ux,uz)||1;
+  p.pos.set(at[0]+ux/ul*16,0,at[1]+uz/ul*16+1.5); p.heading=Math.atan2(at[0]-p.pos.x,at[1]-p.pos.z); p.speed=0;
+  window.advanceTime(700);
+  const el=document.getElementById('courseHudTxt'), d=document.getElementById('cgDist');
+  const rg=document.createRange(); rg.selectNodeContents(el);
+  const tops=[...rg.getClientRects()].filter(b=>b.width>0).map(b=>b.top).sort((a,b)=>a-b);
+  let lines=0,last=-1e9; for(const t of tops){if(t-last>6){lines++;last=t;}}   // a line is a run of boxes sharing a top
+  const out={vw:innerWidth,lines,width:Math.round(el.getBoundingClientRect().width),text:el.textContent,readout:d&&d.style.display!=='none'?d.textContent:null};
+  Q.stop(); return out;
+ });
+ await page.setViewportSize({width:1280,height:800}); await page.waitForTimeout(400);
+ check('[dressage circle · 390x844 phone] the course line stays within two lines beside the readout',
+  circPhone.vw===390&&circPhone.lines>=1&&circPhone.lines<=2&&circPhone.readout==='· big circle',circPhone);
+
+ /* Onto the arc inside 2.0 m of the circle, off it only past 2.6 m. With one edge at 2.2 m, riding
+    2.2 m wide with an 8 cm wobble flipped the guide between the two pictures 36 times in three
+    seconds and re-laid it 38 times. Ridden here: that same wobble from outside (stays on the
+    approach line) and after settling onto the circle (stays on the arc), then a slow drift in from
+    3.2 m to 1.4 m and back out, which must change picture once each way and at the two edges. */
+ const hyst=await page.evaluate(()=>{
+  const G=window.__features,Q=window.__cg,p=G.horse.player,CG=G.courseGuide;
+  Q.start('d1');
+  const c=G.course.get(), fi=c.figs.findIndex(f=>f.circle), f=c.figs[fi]; c.fi=fi; window.advanceTime(200);   // f.sweep held at 0 below: this is about the guide, not about finishing the figure
+  const st=JSON.parse(render_game_to_text()).guide; if(!st.circle){Q.stop();return {circle:false};}
+  const cc=st.circle.centre, r=st.circle.r; let a=Math.PI/2;
+  const at=off=>{a+=8*0.033/(r+off); p.pos.set(cc[0]+Math.cos(a)*(r+off),0,cc[1]+Math.sin(a)*(r+off)); p.heading=Math.atan2(-Math.sin(a),Math.cos(a)); p.speed=8; f.sweep=0; window.advanceTime(33); return CG.SP.mode;};
+  const wobble=(n,off)=>{let flips=0,last=CG.SP.mode;const l0=CG.STATS.lays;for(let i=0;i<n;i++){const m=at(off+0.08*Math.sin(i*1.3));if(m!==last)flips++;last=m;}return {flips,lays:CG.STATS.lays-l0,mode:last};};
+  const out={circle:true};
+  for(let i=0;i<20;i++)at(3.4);                                  // well outside: on the approach line
+  out.wideFromOut=wobble(90,2.2);
+  for(let i=0;i<30;i++)at(0.8);                                  // settle onto the circle
+  out.wideFromOn=wobble(90,2.2);
+  const sweep=(o0,o1,n)=>{const sw=[];let last=CG.SP.mode;for(let i=0;i<=n;i++){const off=o0+(o1-o0)*i/n,m=at(off);if(m!==last)sw.push([last,m,+off.toFixed(2)]);last=m;}return sw;};
+  for(let i=0;i<20;i++)at(3.2);
+  out.driftIn=sweep(3.2,1.4,120); out.driftOut=sweep(1.4,3.2,120);
+  Q.stop(); return out;
+ });
+ const one=(sw,from,to,ok)=>!!sw&&sw.length===1&&sw[0][0]===from&&sw[0][1]===to&&ok(sw[0][2]);
+ check('[dressage circle] riding a shade wide with a wobble does not flicker the guide between the approach line and the arc',
+  hyst.circle&&hyst.wideFromOut.flips===0&&hyst.wideFromOut.mode===3&&hyst.wideFromOut.lays<=12&&hyst.wideFromOn.flips===0&&hyst.wideFromOn.mode===4
+  &&one(hyst.driftIn,3,4,o=>o<2.05&&o>1.9)&&one(hyst.driftOut,4,3,o=>o>2.55&&o<2.7),hyst);
+
+ /* ---------------------------------------------------------------- 5c. seeing past her --- */
+ /* The follow camera used to sit at the rider's shoulder, so she stood between the lens and the
+    next fence: a ray from the camera to the next obstacle hit the horse or rider on 60 of 64
+    approaches on a portrait phone. The eye now rides above her head and lifts when she still
+    hides the obstacle. Asserted from the real camera, with a real raycast against the horse and
+    rider meshes, at twelve and twenty metres out on a race and a jump round, at this desktop size
+    and at a 390x844 phone's shape (the rig only reads the aspect, so resizing this page is the
+    same test as booting a phone). At most one sample in a viewport may be hidden: the town arenas
+    move between boots and the odd slope is allowed one miss; the old rig missed nearly all. */
+ stage('the camera sees past her');
+ async function sight(){
+  return page.evaluate(()=>{
+   const G=window.__features,Q=window.__cg,p=G.horse.player,T=G.THREE,W=G.world;
+   const mine=[];p.mesh.traverse(o=>{if(o.isMesh&&!o.isSprite&&o.visible)mine.push(o);});
+   const rc=new T.Raycaster(); let n=0,hid=0,eyeOver=0,own=0; const det=[];
+   for(const id of ['rr','h1']){
+    Q.start(id); const c=G.course.get();
+    for(let i=0;i<Math.min(3,c.jumps.length);i++)for(const d of [12,20]){
+     c.idx=i; for(const q of c.jumps)q.prevSide=0;
+     const j=c.jumps[i], pv=i>0?c.jumps[i-1]:null;
+     let hx=pv?j.x-pv.x:Math.sin(j.rotY), hz=pv?j.z-pv.z:Math.cos(j.rotY); const L=Math.hypot(hx,hz)||1; hx/=L; hz/=L;
+     const dd=Math.min(d,pv?L*0.9:d);
+     p.pos.set(j.x-hx*dd,0,j.z-hz*dd); p.heading=Math.atan2(hx,hz); p.speed=0; p.y=0; p.vy=0;
+     G.followCam.reset(); window.advanceTime(1400);
+     const cam=G.camera; cam.updateMatrixWorld(true); p.mesh.updateMatrixWorld(true);
+     const ty=W.groundH(j.x,j.z)+(j.kind==='gate'?1.6:0.8), tgt=new T.Vector3(j.x,ty,j.z), o=cam.position.clone(), v=tgt.clone().sub(o), dist=v.length();
+     rc.set(o,v.normalize()); rc.near=0.05; rc.far=dist-0.5;
+     const blocked=rc.intersectObjects(mine,false).length>0;
+     const head=new T.Box3().setFromObject(p.rider.g).max.y;
+     n++; if(blocked)hid++; if(o.y>head)eyeOver++; if(G.followCam.isOwner())own++;
+     det.push(id+i+'@'+dd.toFixed(0)+(blocked?' HIDDEN':' ok')+' eye-head '+(o.y-head).toFixed(2));
+    }
+    Q.stop();
+   }
+   return {aspect:+G.camera.aspect.toFixed(2),n,hidden:hid,eyeAboveHead:eyeOver,followOwned:own,det};
+  });
+ }
+ const seeDesk=await sight();
+ await page.setViewportSize({width:390,height:844}); await page.waitForTimeout(400);
+ const seePhone=await sight();
+ await page.setViewportSize({width:1280,height:800}); await page.waitForTimeout(400);
+ check('[camera · 1280x800] the next fence or gate is not hidden behind the horse and rider, and the eye is above her head',
+  seeDesk.n>=10&&seeDesk.followOwned===seeDesk.n&&seeDesk.hidden<=1&&seeDesk.eyeAboveHead>=seeDesk.n-1,seeDesk);
+ check('[camera · 390x844 phone] the next fence or gate is not hidden behind the horse and rider, and the eye is above her head',
+  seePhone.aspect<0.6&&seePhone.n>=10&&seePhone.followOwned===seePhone.n&&seePhone.hidden<=1&&seePhone.eyeAboveHead>=seePhone.n-1,seePhone);
 
  /* ---------------------------------------------------------------- 6. collisions --------- */
  stage('collisions');

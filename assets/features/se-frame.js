@@ -154,7 +154,11 @@ export function install(G){
 .se-pill>svg{position:absolute;left:-12px;top:50%;width:clamp(32px,5vh,40px);height:clamp(32px,5vh,40px);transform:translateY(-50%);filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
 .se-strip{position:fixed;left:0;right:0;top:0;height:${TOP};display:flex;align-items:center;gap:12px;padding:0 14px;z-index:11;font-family:Nunito,system-ui,sans-serif;color:#fff;
  background:linear-gradient(180deg,rgba(40,38,52,.8),rgba(40,38,52,.62));border-bottom:1px solid rgba(255,255,255,.14);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.se-strip .se-ttl{display:flex;align-items:center;gap:10px;min-width:0}
+.se-strip .se-ttl{display:flex;align-items:center;gap:10px;min-width:0;flex:0 1 auto;overflow:hidden}
+/* the words shrink before the coins do: a long event name ends in an ellipsis, never under the coin pill; the pills
+   themselves never shrink (squeezed, the count slid under its own coin: 325 read as 25) */
+.se-strip .se-ttl>span{min-width:0;overflow:hidden}
+.se-strip .se-pill,.se-strip .se-circ{flex:none}
 .se-strip .se-ttl>svg{width:clamp(24px,4vh,32px);height:clamp(24px,4vh,32px);flex:none;color:#fff}
 .se-strip .se-ttl b{display:block;font:800 clamp(17px,3vh,24px)/1.05 Nunito,system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,.4)}
 .se-strip .se-ttl small{display:block;font:700 clamp(10.5px,1.7vh,13px)/1.2 Nunito,system-ui,sans-serif;color:#e4def5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -188,11 +192,13 @@ body.se-screen-open #dlg{z-index:15!important}
  background:transparent!important;border:0!important;box-shadow:none!important;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent}
 .se-fr:not(:has(>.mk-panel-body)){overflow-y:auto!important}
 /* the menu's own head: its chips on a dark strip under the bar; its close goes (the bar has one) */
-.se-fr>.mk-panel-head{position:static!important;margin-bottom:10px!important;padding:7px 14px!important;border-radius:10px!important;min-height:0!important;
+.se-fr>.mk-panel-head{position:static!important;margin-top:0!important;margin-bottom:10px!important;padding:7px 14px!important;border-radius:10px!important;min-height:0!important;
  background:rgba(26,24,52,.72)!important;border:1px solid rgba(255,255,255,.16)!important;color:#f3efff!important;font:800 14px/1.3 Nunito,system-ui,sans-serif!important;
  display:flex!important;align-items:center;gap:8px;flex-wrap:wrap;box-shadow:none!important;backdrop-filter:none!important}
 .se-fr>.mk-panel-head *{color:#f3efff!important;font-family:Nunito,system-ui,sans-serif}
 .se-fr>.mk-panel-head .chip{background:rgba(255,255,255,.14)!important;border:0!important;border-radius:14px!important;padding:3px 10px!important}
+/* a button the head keeps (Rename on the care sheet) is a chip on the dark strip: light ink on its old cream face could not be read */
+.se-fr>.mk-panel-head button{background:rgba(255,255,255,.16)!important;border:1px solid rgba(255,255,255,.3)!important;border-radius:14px!important;box-shadow:none!important;padding:3px 10px!important;min-height:0!important}
 .se-fr>.mk-panel-head>button:last-child,.se-fr .mk-x{display:none!important}
 /* tabs: the dark column down the left, a picture over each name */
 .se-fr .mk-panel-body>.crow.se-tabcol{position:fixed!important;left:0;top:${TOP};bottom:0;width:${SIDE}!important;z-index:2;display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;
@@ -214,22 +220,37 @@ body.se-screen-open #dlg{z-index:15!important}
 .se-fr .mk-panel-body>.crow:has(> .tabbtn):not(.se-tabcol)>.tabbtn{background:linear-gradient(180deg,#fdf8ea,#ecdfc2)!important;color:#3b2a17!important;border:0!important;border-radius:14px!important;padding:4px 12px!important;min-height:0!important;font-weight:800!important}
 .se-fr .mk-panel-body>.crow:has(> .tabbtn):not(.se-tabcol)>.tabbtn.on{background:linear-gradient(180deg,var(--sef-gold1),var(--sef-gold2))!important;color:#3a2a10!important}
 /* rows: cream cards */
-.se-fr .qrow,.se-fr .evrow,.se-fr .c2-blk,.se-fr .passCard,.se-fr .ui2-srow,.se-fr .lbrow,.se-fr .mk-panel-body>.crow:not(:has(> .tabbtn)),.se-fr .mk-card{
+.se-fr .qrow,.se-fr .evrow,.se-fr .c2-blk,.se-fr .passCard,.se-fr .ui2-srow,.se-fr .lbrow,.se-fr .clubRow,.se-fr .mk-panel-body>.crow:not(:has(> .tabbtn)),.se-fr .mk-card{
  background:linear-gradient(180deg,#f7f0de,#ece0c3)!important;border:1.5px solid #d6c298!important;border-radius:10px!important;box-shadow:0 3px 8px rgba(0,0,0,.28)!important;color:var(--sef-ink)!important}
+/* the club ladder's rows were bare brown words on the dimmed world; as cards they read, and your own club keeps its green */
+.se-fr .clubRow{padding:6px 10px!important;font-size:13px}
+.se-fr .clubRow.me{background:linear-gradient(180deg,#e9f5dc,#d3e8bd)!important;border-color:#94c06e!important}
 /* words that sit straight on the world, outside any card, get a dark plate of their own and light ink, whatever colour
    their renderer wrote them in (they were written for a cream panel, and brown on a dimmed meadow cannot be read).
    A class-less wrapper that holds cards of its own is structure, not a note: it stays clear, and its cards keep theirs. */
 .se-fr .mk-panel-body>:is(span,p,small,a,b,strong,.bGroup,.sub,.ladSheet,details,.ev2card,.ladCard),.se-fr .mk-panel-body>div:not([class]):not(:has(> div[class])),#onlinePanel.se-fr .c3-pane>:is(span,p,small,b:not(.c3-sec),details,.c3-note,.sub,div:not([class])){
  background:rgba(22,20,44,.82)!important;border-radius:8px!important;padding:7px 12px!important;color:#f1ecff!important;text-shadow:none!important;box-shadow:0 2px 6px rgba(0,0,0,.25);opacity:1!important}
-:is(.se-fr .mk-panel-body>:is(span,p,small,a,b,strong,.bGroup,.sub,.ladSheet,details,.ev2card,.ladCard),.se-fr .mk-panel-body>div:not([class]):not(:has(> div[class])),#onlinePanel.se-fr .c3-pane>:is(span,p,small,b:not(.c3-sec),details,.c3-note,.sub,div:not([class]))) :is(span,b,i,em,small,strong,p,div,label,summary,td,th,li):not(button *):not(.chip):not(.badge):not(.pip):not(.noe):not(.noe-t):not(.mk-card *):not(.evrow *):not(.qrow *){color:#f1ecff!important}
+:is(.se-fr .mk-panel-body>:is(span,p,small,a,b,strong,.bGroup,.sub,.ladSheet,details,.ev2card,.ladCard),.se-fr .mk-panel-body>div:not([class]):not(:has(> div[class])),#onlinePanel.se-fr .c3-pane>:is(span,p,small,b:not(.c3-sec),details,.c3-note,.sub,div:not([class]))) :is(span,b,i,em,small,strong,p,div,label,summary,td,th,li):not(button *):not(.chip):not(.badge):not(.pip):not(.noe):not(.noe-t):not(.mk-card *):not(.evrow *):not(.qrow *):not(.c3-group *):not(.c3-card *):not(.passCard *):not(.lbrow *):not(.c2-blk *):not(.ui2-srow *):not(.clubRow *){color:#f1ecff!important}
 :is(.se-fr .mk-panel-body>:is(span,p,small,a,b,strong,.bGroup,.sub,.ladSheet,details,.ev2card,.ladCard),.se-fr .mk-panel-body>div:not([class]):not(:has(> div[class])),#onlinePanel.se-fr .c3-pane>:is(span,p,small,b:not(.c3-sec),details,.c3-note,.sub,div:not([class]))) :is(.me,.you,.mine,[data-me]){color:#ffd970!important}
 .se-fr .mk-panel-body>div:not([class]):has(> div[class]){background:transparent!important;padding:0!important;box-shadow:none!important;color:inherit}
 .se-fr .mk-panel-body>:is(b,strong,.bGroup){display:block;font:800 clamp(14px,2.3vh,17px)/1.25 var(--sef-serif)!important;letter-spacing:.5px;text-transform:uppercase;color:#f3d77f!important}
 .se-fr .mk-panel-body>.ph>span,.se-fr .mk-panel-body>.ph>b{color:#fff!important}
 .se-fr .mk-panel-body a,.se-fr .mk-panel-body>div:not([class]) a{color:#ffd970!important;text-decoration-color:rgba(255,217,112,.5)}
 #onlinePanel.se-fr .c3-pane>.crow>span,#onlinePanel.se-fr .c3-pane>.crow>.lbl,#onlinePanel.se-fr #pidOnline{color:#f1ecff!important}
-#onlinePanel.se-fr b.c3-sec{color:#f3d77f!important;font:800 clamp(14px,2.3vh,17px)/1.25 var(--sef-serif)!important;letter-spacing:.5px;text-transform:uppercase;text-shadow:0 1px 2px #000}
-#onlinePanel.se-fr .c3-note>summary,#onlinePanel.se-fr .c3-noteBody{color:#f1ecff!important}
+/* a Build group is a white box of its own inside the plate: its header and the icons on its pieces keep the card's dark ink */
+.se-fr .c3-group{color:var(--sef-ink)!important}
+.se-fr .c3-group>summary,.se-fr .c3-group>summary *{color:var(--sef-ink)!important}
+/* the club's section heads and notes are gold and light only where they sit on the world; inside a cream card they keep dark ink */
+#onlinePanel.se-fr b.c3-sec:not(.evrow *):not(.mk-card *):not(.c3-card *):not(.passCard *){color:#f3d77f!important;font:800 clamp(14px,2.3vh,17px)/1.25 var(--sef-serif)!important;letter-spacing:.5px;text-transform:uppercase;text-shadow:0 1px 2px #000}
+#onlinePanel.se-fr .c3-note:not(.evrow *):not(.mk-card *):not(.c3-card *):not(.passCard *)>summary,#onlinePanel.se-fr .c3-note:not(.evrow *):not(.mk-card *):not(.c3-card *):not(.passCard *) .c3-noteBody{color:#f1ecff!important}
+#onlinePanel.se-fr :is(.evrow,.mk-card,.c3-card,.passCard) :is(b.c3-sec,.c3-note>summary,.c3-noteBody){color:var(--sef-ink)!important;text-shadow:none!important}
+/* the care sheet (More care…) was drawn for a cream page, section heads, meters and all, with no cards of its own: in
+   the frame its words sat brown on the dimmed world. It keeps its page, as one card. Its head's own close goes (the bar has one). */
+#carePanel.se-fr>.mk-panel-body{background:linear-gradient(180deg,#f7f0de,#ece0c3)!important;border:1.5px solid #d6c298!important;border-radius:12px!important;
+ box-shadow:0 3px 10px rgba(0,0,0,.3)!important;padding:14px 16px 20px!important;flex:0 1 auto!important;margin-bottom:18px!important;color:var(--sef-ink)}
+#carePanel.se-fr .mk-panel-body>div:not([class]){background:transparent!important;color:#6b5842!important;box-shadow:none!important;padding:0!important}
+#carePanel.se-fr .mk-panel-body>div:not([class]) *{color:inherit!important}
+.se-fr>.mk-panel-head button[title="Close"],.se-fr>.mk-panel-head button[aria-label^="Close"]{display:none!important}
 /* a locked or not-yet row is shown as a muted card, not a see-through one */
 .se-fr .qrow[style*="opacity"],.se-fr .evrow[style*="opacity"]{opacity:1!important;background:linear-gradient(180deg,#e7ddc8,#d9ccb0)!important;color:#5a4a38!important}
 .se-fr .mk-panel-body>div:not([class]):empty,.se-fr .mk-panel-body>span:empty{display:none!important}
@@ -308,9 +329,27 @@ body.se-frame-open #seFrameTop{display:flex}
  .se-fr.se-fr-tabs{padding-left:0!important;padding-top:calc(${TOP} + 70px)!important}
  .se-fr .mk-panel-body>.crow.se-tabcol{top:${TOP};bottom:auto;right:0;width:auto!important;height:62px;flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important}
  .se-fr .mk-panel-body>.crow.se-tabcol>.tabbtn{width:auto!important;min-width:76px;min-height:62px!important;border-bottom:0!important;border-right:1px solid rgba(255,255,255,.07)!important}
- .se-pill{min-width:0;padding:0 10px 0 28px;margin-left:10px}.se-pill>svg{width:30px;height:30px;left:-10px}
- #seMenu.se-main .sem-util,#seMenu.se-main .sem-promo{display:none}
- #seMenu.se-main .se-tiles{grid-auto-columns:128px!important}}`;
+ /* a phone's strip: the title gives way first (no subtitle, an ellipsis), then the pills come down a size */
+ .se-strip{gap:8px;padding:0 10px}
+ .se-strip .se-ttl{gap:6px}
+ .se-strip .se-ttl small{display:none!important}
+ .se-pill{min-width:0;height:26px;padding:0 8px 0 23px;margin-left:8px;font-size:13px}.se-pill>svg{width:26px;height:26px;left:-9px}
+ /* the promo goes (the Treasures tile does the same job), but Photo, Graphics, Sound and Settings stay, a size down beside
+    the close: hiding them left a phone with no way to mute the game or lower the graphics */
+ #seMenu.se-main .sem-promo{display:none}
+ #seMenu.se-main .se-bar{gap:8px!important;padding:0 10px!important}
+ #seMenu.se-main .sem-util{gap:5px}
+ #seMenu.se-main .sem-util .se-circ{width:32px!important;height:32px!important;padding:6px!important;border-width:2px!important}
+ #seMenu.se-main .sem-badge{flex:1 1 auto;padding-left:22px}
+ #seMenu.se-main .sem-badge>span:last-child{min-width:0;overflow:hidden}
+ #seMenu.se-main #seMenuName,#seMenu.se-main #seMenuSub{overflow:hidden;text-overflow:ellipsis}
+ #seMenu.se-main .sem-lv{width:28px;height:28px;font-size:14px;line-height:24px}
+ #seMenu.se-main .se-tiles{grid-auto-columns:128px!important}
+ /* The frame is a little narrower than the old sheet, and at 390px the Build catalogue fell from two columns of pieces to
+    one: a third longer to scroll. A tighter gutter and a narrower column keep it at two. */
+ .se-fr>*{width:calc(100% - 16px)!important}
+ #buildPanel.se-fr .c3-grid{grid-template-columns:repeat(auto-fill,minmax(136px,1fr))!important}
+ #buildPanel.se-fr .c3-group{padding:2px 6px!important}}`;
   document.head.appendChild(st);
  }
 
@@ -347,8 +386,10 @@ body.se-frame-open #seFrameTop{display:flex}
   questPanel:['journey','My Journey'],eventsPanel:['events','Riding Events'],stablePanel:['horses','My Horses'],lbPanel:['podium','Leaderboards'],
   onlinePanel:['club','Riding Club'],profilePanel:['character','Rider Profile'],buildPanel:['build','Build'],summonPanel:['season','Summon'],moneyPanel:['wallet','Wallet'],
   breedPanel:['foal','Breeding'],catalogPanel:['collection','Collection'],emotePanel:['emotes','Emotes'],inboxPanel:['inbox','Inbox'],pvpPanel:['race','Race Club'],
-  riderPanel:['character','Your Rider'],stylePanel:['style','Horse Style'],treePanel:['studio','Bloodlines'],sheetPanel:['events','Score Sheet'],resultPanel:['podium','Results'],
-  ev2CardPanel:['events','Class'],ev2ResultPanel:['podium','Results'],ev2SheetPanel:['events','Score Sheet']
+  riderPanel:['character','Your Rider'],stylePanel:['style','Horse Style'],treePanel:['studio','Bloodlines'],sheetPanel:['events','Score Sheet'],resultPanel:['podium','Event Card'],
+  ev2CardPanel:['events','Class'],ev2ResultPanel:['podium','Results'],ev2SheetPanel:['events','Score Sheet'],
+  /* More care… and Settings opened the old centred cream card with the whole live HUD still round it */
+  carePanel:['care','Horse Care'],settingsPanel:['gear','Settings']
  };
  let current=null; const backTo={};
  const top=bar({icon:'journey',title:'',close:()=>closePanel(current),back:()=>goBack()}); top.id='seFrameTop'; document.body.appendChild(top);
@@ -547,7 +588,11 @@ body.se-frame-open #seFrameTop{display:flex}
   const THREE=G.THREE, r=G.renderer, cv=r&&r.domElement; if(!THREE||!cv||!cv.width)return;
   const W=v.w||640, H=v.h||400, cw=cv.width, ch=cv.height, ar=W/H;
   let sw=cw, sh=cw/ar; if(sh>ch){sh=ch;sw=ch*ar;}
-  const cam=new THREE.PerspectiveCamera(v.fov||50,cw/ch,0.5,4000);
+  /* The picture is a W:H band cropped out of the middle of the canvas. With the canvas's own vertical field the band
+     only gets sh/ch of it, which on a portrait phone (a 1.6:1 band out of a 390x844 canvas) is a quarter of the view: the
+     course map was a zoomed patch of grass with every fence outside it. Widen the field so the band itself spans v.fov. */
+  const fov=(v.fov||50), full=sh<ch-0.5?2*Math.atan(Math.tan(fov*Math.PI/360)*ch/sh)*180/Math.PI:fov;
+  const cam=new THREE.PerspectiveCamera(full,cw/ch,0.5,4000);
   if(v.up)cam.up.set(v.up[0],v.up[1],v.up[2]);
   cam.position.set(v.pos[0],v.pos[1],v.pos[2]); cam.lookAt(v.look[0],v.look[1],v.look[2]); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
   r.render(G.scene,cam);

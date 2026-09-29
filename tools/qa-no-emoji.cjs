@@ -59,6 +59,9 @@ async function boot(page,url){
   /* a control whose only content was an emoji */
   const b=document.createElement('button'); b.textContent='✏️'; b.style.cssText='position:fixed;left:-200px;top:0'; document.body.appendChild(b); await wait(100);
   out.control={icon:!!b.querySelector('i.noe'),kept:b.textContent==='✏️'}; b.remove();
+  /* the naming dialogs' random-name button: a die, not the meaningless fallback dot */
+  const dz=document.createElement('button'); dz.textContent='🎲'; dz.style.cssText='position:fixed;left:-200px;top:0'; document.body.appendChild(dz); await wait(100);
+  out.dice=(dz.querySelector('i.noe')||{dataset:{}}).dataset.noe||null; dz.remove();
   /* canvas: a label with an emoji draws what the label without it draws; a glyph alone draws a mark */
   const draw=txt=>{const c=document.createElement('canvas');c.width=220;c.height=40;const x=c.getContext('2d');x.font='bold 20px Nunito, sans-serif';x.fillStyle='#000';x.textBaseline='middle';x.fillText(txt,10,20);return c;};
   const px=c=>{const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let s=0,h=0;for(let i=3;i<d.length;i+=4){if(d[i]>0){s++;h=(h*31+i)>>>0;}}return {s,h};};
@@ -81,6 +84,7 @@ async function boot(page,url){
  check('coins and gems in reward lines are drawn icons, and the text the game reads back still holds them',r.coins&&r.coins.coin&&r.coins.gem&&r.coins.textKept,r.coins);
  check('a toast written with emojis arrives as words and icons',r.toast&&!r.toast.emoji&&r.toast.coin&&r.toast.gem&&/Clear round! \+150/.test(r.toast.text),r.toast);
  check('a control whose only content was an emoji gets a drawn icon instead of going blank (its text unchanged)',r.control.icon&&r.control.kept,r.control);
+ check('the random-name die is drawn as a die, not the fallback dot',r.dice==='dice',{icon:r.dice});
  check('canvas text is drawn without emojis, a lone glyph still draws a mark, and measuring agrees',r.canvas.same&&r.canvas.markDrawn&&r.canvas.measure,r.canvas);
  check('riding an event from the new Events screen still works with the cleaning on',r.ride);
  /* a QA run without ?emoji=0 keeps them */

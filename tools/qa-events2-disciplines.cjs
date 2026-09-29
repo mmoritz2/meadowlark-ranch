@@ -34,7 +34,8 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   window.__qa2={
    st:()=>JSON.parse(render_game_to_text()),
    ev:id=>G.tables.EVENTS3.find(e=>e.id===id),
-   go(){window.advanceTime(4200);},                       // past the countdown
+   /* past the countdown — and past the judge's card first: a showmanship class waits while it is up */
+   go(){const r=document.querySelector('#ev2SheetPanel [data-fx="ev2:ready"]');if(r)r.click();window.advanceTime(4200);},
    gate(j){G.horse.player.pos.set(j.x,0,j.z);G.horse.player.speed=6;window.advanceTime(120);},
    cross(j,age){const p=G.horse.player,R=G.horse.RIG();age=age==null?0.7:age;
     for(const d of[-2.4,-1.0,-0.4,0.4,1.0,2.4]){
@@ -66,13 +67,19 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
    G.course.cancelCourse(); window.advanceTime(40);
   }
   out.mismatch=ids.filter(id=>out.course[id]!=null&&Math.abs(out.cards[id]-out.course[id])>0.6);
+  /* what the routes themselves measure, so the check follows a route that is re-drawn */
+  out.fromRoute={r1:+(G.events2.routeLen('r1')/7.2*1.4).toFixed(1),rr:+(G.events2.routeLen('rr')/7.2*1.4).toFixed(1)};
   return out;
  });
  check('package installed with no errors',r1.installed&&!r1.errors.some(e=>e.id==='events2-disciplines'),r1.errors);
  check('the time allowed on the card is the time the course gives you, on every routed event',
   r1.mismatch.length===0,{card:r1.cards,course:r1.course});
- check('the Kestrel Grand Loop advertises its real 200s+ allowance, not the old flat 56s',
-  r1.cards.r1>200&&r1.cards.rr>60&&r1.cards.rr<90,{r1:r1.cards.r1,rr:r1.cards.rr});
+ /* The numbers used to be pinned (Grand Loop over 200 s, River Run 60 to 90) and went stale the day
+    the two routes were re-drawn off the bridge. What the check is about is that the card reads the
+    route's own length rather than the old flat 56 s for every race. */
+ check('the Kestrel Grand Loop advertises its real allowance from its own route, not the old flat 56s',
+  Math.abs(r1.cards.r1-r1.fromRoute.r1)<2&&Math.abs(r1.cards.rr-r1.fromRoute.rr)<2&&r1.cards.r1>r1.cards.rr*2&&Math.round(r1.cards.rr)!==56,
+  {r1:r1.cards.r1,rr:r1.cards.rr,fromRoute:r1.fromRoute});
  check('the gauntlet shows one clock: card, course and hard limit agree',
   r1.cards.gt===r1.course.gt&&r1.cards.gt===r1.pars.gtLimit,{card:r1.cards.gt,course:r1.course.gt,limit:r1.pars.gtLimit});
 
@@ -198,6 +205,26 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   return out;
  });
  check('three refusals at the same fence eliminates the round',r4b.elim&&r4b.mode==='free_roam',r4b);
+
+ /* a town course starts inside the town's rail ring, with a run at fence one. The rails are not
+    walls, so the start used to land outside them — Coyote's Canyon Jump-Off at 1.55 of the rail's
+    radius — and the first approach rode through the rail; and when the scenery crowded the arena
+    the search stepped in to four metres from fence one. (Coyote itself is left out: its ring is
+    full of mesas and cacti until world.js places that venue on clear ground.) */
+ const r4c=await page.evaluate(()=>{
+  const G=window.__features,Q=window.__qa2,out=[];const p=G.horse.player;
+  for(const id of ['h1','h2','a1','w1']){
+   const ev=Q.ev(id); p.pos.set(0,0,0);
+   G.course.startCourse(ev,1); const c=G.course.get(); if(!c){out.push({id,none:true});continue;}
+   const j=c.jumps[0], at=ev.at;
+   let dh=p.heading-j.rotY; while(dh>Math.PI)dh-=2*Math.PI; while(dh<-Math.PI)dh+=2*Math.PI;
+   out.push({id,ringR:+Math.sqrt(((p.pos.x-at[0])/20)**2+((p.pos.z-at[1])/15)**2).toFixed(3),run:+Math.hypot(p.pos.x-j.x,p.pos.z-j.z).toFixed(1),square:+Math.abs(dh).toFixed(3)});
+   G.hidePanels(); G.course.cancelCourse(); window.advanceTime(40);
+  }
+  return out;
+ });
+ check('a town jumping course starts inside the rail ring, square to fence one, with room to get going',
+  r4c.every(r=>!r.none&&r.ringR<1&&r.run>=6&&r.square<0.02),r4c);   // eleven fences leave 6.75 m square and clear; five leave 10
 
  /* ---------------------------------------------------------------- 5. cross country ----- */
  stage('cross country');
@@ -389,6 +416,13 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   out.cott={X:G.course.ARENA_LETTERS.X.slice(),letter0:[+c.letters[0].position.x.toFixed(1),+c.letters[0].position.z.toFixed(1)],
    at:Q.ev('d1').at,player:[+p.pos.x.toFixed(1),+p.pos.z.toFixed(1)]};
   out.cottDist=+Math.hypot(p.pos.x-Q.ev('d1').at[0],p.pos.z-Q.ev('d1').at[1]).toFixed(1);
+  /* the town ring is a 20 x 15 rail ellipse with its grandstand collider at z+19.5, r 5.5 */
+  {const at=Q.ev('d1').at, AL=G.course.ARENA_LETTERS, er=(x,z)=>Math.sqrt(((x-at[0])/20)**2+((z-at[1])/15)**2);
+   out.letterR=+Math.max(...Object.keys(AL).map(L=>er(AL[L][0],AL[L][1]))).toFixed(3);
+   out.cStand=+(Math.hypot(AL.C[0]-at[0],AL.C[1]-(at[1]+19.5))-5.5).toFixed(2);
+   out.startR=+er(p.pos.x,p.pos.z).toFixed(3);
+   /* a canter circle round B or E (3.5 m) stays inside the rail */
+   out.circleR=+Math.max(...['B','E'].map(L=>{let m=0;for(let k=0;k<24;k++){const a=k/24*Math.PI*2;m=Math.max(m,er(AL[L][0]+Math.cos(a)*3.5,AL[L][1]+Math.sin(a)*3.5));}return m;})).toFixed(3);}
   G.course.cancelCourse(); window.advanceTime(40);
   out.backHome=G.course.ARENA_LETTERS.X.slice();
   G.course.startCourse(Q.ev('d5'),1);
@@ -396,6 +430,12 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   out.holl={X:G.course.ARENA_LETTERS.X.slice(),letter0:[+c.letters[0].position.x.toFixed(1),+c.letters[0].position.z.toFixed(1)]};
   G.course.cancelCourse(); window.advanceTime(40);
   out.s1at=!!Q.ev('s1').at; out.danceAt=!!Q.ev('d2').at;
+  /* the ranch arena's own letters: K was inside the barn's collider and M was in Loon Lake */
+  G.course.startCourse(Q.ev('d2'),1);
+  {const AL=G.course.ARENA_LETTERS, wd=G.horse.roster&&G.horse.roster.waterDepth;
+   out.homeKM={K:AL.K.slice(),M:AL.M.slice(),wet:wd?+Math.max(wd(AL.K[0],AL.K[1]),wd(AL.M[0],AL.M[1])).toFixed(2):null,
+    inside:['K','M'].filter(L=>G.world.colliders.some(c=>c.r>=1&&Math.hypot(AL[L][0]-c.x,AL[L][1]-c.z)<c.r+0.6))};}
+  G.course.cancelCourse(); window.advanceTime(40);
   return out;
  });
  check('a Cottonwood test is ridden at Cottonwood, and the rider is taken there',
@@ -408,6 +448,10 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('Hollowpeak is somewhere else again, and a basin class stays at the ranch arena',
   Math.hypot(r8.holl.X[0]-r8.cott.X[0],r8.holl.X[1]-r8.cott.X[1])>40&&r8.s1at&&!r8.danceAt,
   {cott:r8.cott.X,holl:r8.holl.X});
+ check('a town test stands every letter inside the rail, clear of the grandstand, and starts inside the ring',
+  r8.letterR<=0.8&&r8.cStand>=2&&r8.circleR<1&&r8.startR<1,{letterR:r8.letterR,cStand:r8.cStand,circleR:r8.circleR,startR:r8.startR});
+ check('the ranch arena\'s K and M are on dry ground, clear of the barn and the lake',
+  r8.homeKM.wet===0&&r8.homeKM.inside.length===0,r8.homeKM);
 
  /* ---------------------------------------------------------------- 9. showmanship ------- */
  stage('showmanship');
@@ -436,6 +480,15 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
    if(G.course.get())G.course.cancelCourse();
    return {score:(G.save.fresh().bestScore||{}).s1,handling:hand.s1,hud:out.lastHud};
   }
+  /* the judge's card holds the class: fourteen seconds of reading cost nothing */
+  G.course.startCourse(Q.ev('s1'),1);
+  {const c=G.course.get(), sh=document.getElementById('ev2SheetPanel'), AL=G.course.ARENA_LETTERS;
+   window.advanceTime(14000);
+   out.hold={started:c.started,cd:+c.cd.toFixed(2),sheet:sh.style.display,countdown:getComputedStyle(document.getElementById('countdown')).display,
+    fig0:+c.figs[0].total.toFixed(2),arrowOnA:G.course.arrow.visible&&Math.hypot(G.course.arrow.position.x-AL.A[0],G.course.arrow.position.z-AL.A[1])<0.1};
+   const rb=sh.querySelector('[data-fx="ev2:ready"]'); out.hold.ready=!!rb; if(rb)rb.click();
+   window.advanceTime(4200); out.hold.startedAfter=c.started; out.hold.sheetAfter=sh.style.display;}
+  G.course.cancelCourse(); window.advanceTime(40);
   /* the HUD mid-class */
   G.course.startCourse(Q.ev('s1'),1); Q.go(); window.advanceTime(200);
   out.hud=Q.hud();
@@ -444,12 +497,17 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   out.quiet=await ride(true);
   G.save.sync(s=>{s.ev2=s.ev2||{};s.ev2.handling={};});
   out.rough=await ride(false);
-  const res=document.getElementById('ev2ResultPanel');
-  out.resultOpen=res&&res.style.display==='flex';
-  out.finishSheet=res?res.innerText.replace(/\s+/g,' '):'';
+  /* one card: the ladder's, opened on a real timer a moment after the finish */
+  const w0=Date.now(); while(Date.now()-w0<5000&&document.getElementById('resultPanel').style.display!=='flex')await new Promise(r=>setTimeout(r,60));
+  const res=document.getElementById('resultPanel'), ev2=document.getElementById('ev2ResultPanel');
+  out.resultOpen=res&&res.style.display==='flex'; out.ev2Open=!!(ev2&&ev2.style.display==='flex');
+  out.finishSheet=res?res.textContent.replace(/\s+/g,' '):'';   // textContent: the frame's capitals are only paint
   G.hidePanels();
   return out;
  });
+ check('the judge\'s card holds the class: no countdown, no marking, until she is ready',
+  !r9.hold.started&&r9.hold.cd>=3&&r9.hold.sheet==='flex'&&r9.hold.countdown==='none'&&r9.hold.fig0===0&&r9.hold.arrowOnA
+  &&r9.hold.ready&&r9.hold.startedAfter&&r9.hold.sheetAfter==='none',r9.hold);
  check('a showmanship class says it is showmanship and shows both marks while you ride',
   /^🧼 Showmanship/.test(r9.hud||'')&&/turnout/.test(r9.hud||'')&&/handling/.test(r9.hud||''),r9.hud);
  check('the judge\'s card is a card, with the five parts and what would raise them',
@@ -458,9 +516,9 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('standing still and square is judged: a quiet handler scores above a fidgety one',
   r9.quiet.handling>r9.rough.handling+0.1&&r9.quiet.score>r9.rough.score,
   {quiet:{h:r9.quiet.handling,s:r9.quiet.score},rough:{h:r9.rough.handling,s:r9.rough.score}});
- check('the finish puts up a result card with turnout, handling and the figure marks',
-  r9.resultOpen&&/Turnout/.test(r9.finishSheet||'')&&/Handling/.test(r9.finishSheet||'')&&/Figure by figure/.test(r9.finishSheet||''),
-  (r9.finishSheet||'').slice(0,220));
+ check('the finish puts up ONE result card with turnout, handling and the figure marks',
+  r9.resultOpen&&!r9.ev2Open&&/turnout/i.test(r9.finishSheet||'')&&/handling in the ring/i.test(r9.finishSheet||'')&&/figure by figure/i.test(r9.finishSheet||''),
+  {ev2Open:r9.ev2Open,txt:(r9.finishSheet||'').slice(0,260)});
 
  /* ---------------------------------------------------------------- 10. the gauntlet ----- */
  stage('gauntlet');
@@ -478,6 +536,17 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   out.obstacles=c.jumps.length;
   out.decor=JSON.parse(render_game_to_text()).ev2.fx;   // the scenery groups, not the start box
   G.course.cancelCourse(); window.advanceTime(40);
+  /* every season's loop, measured against what stands in the world: the fence walls, the ranch
+     arena, and every building-sized collider (the barn, the shelter, the bleachers, the stalls) */
+  const W=G.world, segD=(px,pz,x1,z1,x2,z2)=>{const dx=x2-x1,dz=z2-z1,l2=dx*dx+dz*dz;let t=l2>0?((px-x1)*dx+(pz-z1)*dz)/l2:0;t=t<0?0:t>1?1:t;return Math.hypot(px-x1-dx*t,pz-z1-dz*t);};
+  out.loopHits={};
+  for(const k in G.events2.GAUNTLET_SEASONS){const pts=G.events2.GAUNTLET_SEASONS[k].pts, hits=[];
+   for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length],L=Math.hypot(b[0]-a[0],b[1]-a[1]);
+    for(const c of W.colliders)if(c.r>=2&&segD(c.x,c.z,a[0],a[1],b[0],b[1])<c.r+2)hits.push('leg'+(i+1)+' collider '+c.x+','+c.z);
+    for(let s=0;s<=L;s+=0.5){const x=a[0]+(b[0]-a[0])*s/L,z=a[1]+(b[1]-a[1])*s/L;
+     if(x>-26&&x<26&&z>-21&&z<21){hits.push('leg'+(i+1)+' ranch arena');break;}
+     if((W.walls||[]).some(w=>segD(x,z,w.x1,w.z1,w.x2,w.z2)<2)){hits.push('leg'+(i+1)+' fence');break;}}}
+   out.loopHits[k]=hits;}
   return out;
  });
  check('the gauntlet keeps one clock — the hard limit — in the row, the course and the HUD',
@@ -488,6 +557,8 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   r10.seasons);
  check('the seasonal trial is dressed and has hazards of its own',r10.hazards>=4&&r10.obstacles>=10,
   {hazards:r10.hazards,obstacles:r10.obstacles});
+ check('no season\'s loop rides through a building, a fence or the ranch arena',
+  Object.values(r10.loopHits).every(h=>h.length===0),r10.loopHits);
 
  /* ---------------------------------------------------------------- 11. the HUDs --------- */
  stage('hud identity');
@@ -513,23 +584,24 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   G.course.startCourse(Q.ev('h1'),1); Q.go();
   let c=G.course.get();
   for(let i=0;i<5&&G.course.get();i++)Q.cross(G.course.get().jumps[G.course.get().idx],0.9);
-  await new Promise(r=>setTimeout(r,150));
-  const p=document.getElementById('ev2ResultPanel');
-  out.open=p&&p.style.display==='flex';
-  out.text=p?p.innerText.replace(/\s+/g,' '):'';
-  out.again=!!(p&&p.querySelector('[data-fx="ev2:again:h1"]'));
+  /* the round's one card is the ladder's, opened on a real timer a moment after the finish */
+  const w0=Date.now(); while(Date.now()-w0<5000&&document.getElementById('resultPanel').style.display!=='flex')await new Promise(r=>setTimeout(r,60));
+  const p=document.getElementById('resultPanel'), ev2=document.getElementById('ev2ResultPanel');
+  out.open=p&&p.style.display==='flex'; out.ev2Open=!!(ev2&&ev2.style.display==='flex');
+  out.text=p?p.textContent.replace(/\s+/g,' '):'';
+  out.again=!!(p&&p.querySelector('[data-fx="lad:again:h1"]'));
   /* it rides again straight from the card */
-  if(out.again)p.querySelector('[data-fx="ev2:again:h1"]').click();
+  if(out.again)p.querySelector('[data-fx="lad:again:h1"]').click();
   await new Promise(r=>setTimeout(r,200));
   out.restarted=JSON.parse(render_game_to_text()).mode;
   if(G.course.get())G.course.cancelCourse();
   window.advanceTime(60);
   return out;
  });
- check('a round ends on a result card, not twenty-six seconds of toast queue',
-  r12.open&&/Show jumping/.test(r12.text)&&/Faults 0 — clear round/.test(r12.text)&&/Accuracy 100%/.test(r12.text)
-  &&/gold ribbon/.test(r12.text)&&/🪙/.test(r12.text),
-  (r12.text||'').slice(0,240));
+ check('a round ends on ONE result card, in the discipline\'s own currency',
+  r12.open&&!r12.ev2Open&&/Show jumping/i.test(r12.text)&&/Faults\s*0 — clear round/i.test(r12.text)&&/Accuracy 100%/i.test(r12.text)
+  &&/gold ribbon/i.test(r12.text)&&/🪙/.test(r12.text),
+  {ev2Open:r12.ev2Open,txt:(r12.text||'').slice(0,300)});
  check('the result card offers the round again and starts it',r12.again&&r12.restarted==='course',
   {again:r12.again,mode:r12.restarted});
 

@@ -148,49 +148,51 @@
      graphics.horseReady, then drive the game (window.advanceTime(ms) steps deterministically).
      Copy tools/qa-features.cjs as tools/qa-<pkg>.cjs.
    ============================================================================================ */
-import * as stats from './stats-progression.js';
-import * as roster from './horse-roster.js';
-import * as bond from './bond-personality-emotes.js?v=2';   // versioned: rider emotes reach the character's own bones
-import * as mastery from './mastery-style.js';
-import * as tack from './tack-wardrobe.js?v=5';   // versioned: the Character screen, then the character herself (outfits, eyes)
-import * as course from './course-engine.js';
-import * as events from './events-pvp.js';
-import * as story from './story-quests.js';
-import * as account from './account-economy.js';
-import * as market from './market-summon-keys-pets.js';
-import * as breeding from './breeding.js';
-import * as ranch from './ranch.js';
-import * as world from './world.js';
-import * as clubs from './clubs-boards.js';
-import * as social from './social-play.js';
-import * as seasons from './seasons.js';
-import * as seasonHunts from './season-hunts.js';
-import * as seasonQuests from './season-quests.js';
-import * as ev2disc from './events2-disciplines.js';
-import * as ev2ladder from './events2-ladder.js';
-import * as courseGuide from './course-guide.js';
-import * as wVistas from './world-vistas.js';
-import * as wFlora from './world-flora.js';
-import * as wWater from './world-water.js';
-import * as wAtmos from './world-atmosphere.js';
-import * as wQuarters from './world-quarters.js';
-import * as wPaths from './world-paths.js';
-import * as wOutcrops from './world-outcrops.js';
-import * as uikit from './ui-kit.js';
-import * as ui2horse from './ui2-horse.js';
-import * as ui2shop from './ui2-shop.js';
-import * as ui2compete from './ui2-compete.js?v=2';
-import * as ui2hud from './ui2-hud.js';
-import * as ui2club from './ui2-club.js?v=2';
-import * as lookGrade from './look-grade.js';
-import * as ui2merge from './ui2-merge.js';
-import * as seHud from './se-hud.js?v=2';   // versioned: the clear view while riding an event
-import * as seCare from './se-care.js?v=4';   // versioned so a browser that cached an earlier cut fetches this one
-import * as onFoot from './on-foot.js?v=6';   // versioned: she walks, runs, jumps, climbs and swims on the animation library's clips, and the view turns round her
-import * as seMarket from './se-market.js?v=2';
-import * as treasures from './hidden-treasures.js';   // golden horseshoes on the rocks and in the water, for on-foot
-import * as courseClear from './course-clear.js?v=1';   // a mown, cleared track on every event course; routes bent round what cannot be cleared
-import * as seFrame from './se-frame.js?v=3';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use
-import * as seEvents from './se-events.js?v=2';   // Riding Events as towns and a carousel of entry tickets, each event's page with its course map
-import * as noEmoji from './no-emoji.js?v=2';   // nothing on the page is an emoji: meaningful ones become drawn icons, the rest go (installed last, so it sees everything)
+/* BUILD STAMP: every import below carries the same ?v= build id, so a normal reload after an update fetches every changed
+   module instead of running a cached mix of old and new ones. Bump it (all of them at once) whenever a feature file changes. */
+import * as stats from './stats-progression.js?v=b20260929a';
+import * as roster from './horse-roster.js?v=b20260929a';
+import * as bond from './bond-personality-emotes.js?v=b20260929a';   // versioned: rider emotes reach the character's own bones
+import * as mastery from './mastery-style.js?v=b20260929a';
+import * as tack from './tack-wardrobe.js?v=b20260929a';   // versioned: the Character screen, then the character herself (outfits, eyes)
+import * as course from './course-engine.js?v=b20260929a';
+import * as events from './events-pvp.js?v=b20260929a';
+import * as story from './story-quests.js?v=b20260929a';
+import * as account from './account-economy.js?v=b20260929a';
+import * as market from './market-summon-keys-pets.js?v=b20260929a';
+import * as breeding from './breeding.js?v=b20260929a';
+import * as ranch from './ranch.js?v=b20260929a';
+import * as world from './world.js?v=b20260929a';
+import * as clubs from './clubs-boards.js?v=b20260929a';
+import * as social from './social-play.js?v=b20260929a';
+import * as seasons from './seasons.js?v=b20260929a';
+import * as seasonHunts from './season-hunts.js?v=b20260929a';
+import * as seasonQuests from './season-quests.js?v=b20260929a';
+import * as ev2disc from './events2-disciplines.js?v=b20260929a';
+import * as ev2ladder from './events2-ladder.js?v=b20260929a';
+import * as courseGuide from './course-guide.js?v=b20260929a';
+import * as wVistas from './world-vistas.js?v=b20260929a';
+import * as wFlora from './world-flora.js?v=b20260929a';
+import * as wWater from './world-water.js?v=b20260929a';
+import * as wAtmos from './world-atmosphere.js?v=b20260929a';
+import * as wQuarters from './world-quarters.js?v=b20260929a';
+import * as wPaths from './world-paths.js?v=b20260929a';
+import * as wOutcrops from './world-outcrops.js?v=b20260929a';
+import * as uikit from './ui-kit.js?v=b20260929a';
+import * as ui2horse from './ui2-horse.js?v=b20260929a';
+import * as ui2shop from './ui2-shop.js?v=b20260929a';
+import * as ui2compete from './ui2-compete.js?v=b20260929a';
+import * as ui2hud from './ui2-hud.js?v=b20260929a';
+import * as ui2club from './ui2-club.js?v=b20260929a';
+import * as lookGrade from './look-grade.js?v=b20260929a';
+import * as ui2merge from './ui2-merge.js?v=b20260929a';
+import * as seHud from './se-hud.js?v=b20260929a';   // versioned: the clear view while riding an event
+import * as seCare from './se-care.js?v=b20260929a';   // versioned so a browser that cached an earlier cut fetches this one
+import * as onFoot from './on-foot.js?v=b20260929a';   // versioned: she walks, runs, jumps, climbs and swims on the animation library's clips, and the view turns round her
+import * as seMarket from './se-market.js?v=b20260929a';
+import * as treasures from './hidden-treasures.js?v=b20260929a';   // golden horseshoes on the rocks and in the water, for on-foot
+import * as courseClear from './course-clear.js?v=b20260929a';   // a mown, cleared track on every event course; routes bent round what cannot be cleared
+import * as seFrame from './se-frame.js?v=b20260929a';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use
+import * as seEvents from './se-events.js?v=b20260929a';   // Riding Events as towns and a carousel of entry tickets, each event's page with its course map
+import * as noEmoji from './no-emoji.js?v=b20260929a';   // nothing on the page is an emoji: meaningful ones become drawn icons, the rest go (installed last, so it sees everything)
 export const FEATURES=[stats,roster,bond,mastery,tack,course,events,story,account,market,breeding,ranch,world,clubs,social,seasons,seasonHunts,seasonQuests,ev2disc,ev2ladder,courseGuide,wVistas,wFlora,wWater,wAtmos,wQuarters,wPaths,wOutcrops,uikit,ui2horse,ui2shop,ui2compete,ui2hud,ui2club,ui2merge,lookGrade,seHud,seCare,onFoot,seMarket,treasures,courseClear,seFrame,seEvents,noEmoji];
