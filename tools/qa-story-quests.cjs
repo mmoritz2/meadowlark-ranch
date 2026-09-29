@@ -64,7 +64,9 @@ const run=(page,code)=>page.evaluate('(()=>{'+H+code+'})()');
     emissive. */
  const r1rig=await page.evaluate(async()=>{
   const SQ=window.__features.storyQuests;
-  for(let i=0;i<300&&SQ.foal()&&!(SQ.foal().rig&&SQ.foal().sized);i++)await new Promise(r=>requestAnimationFrame(r));
+  /* She may wear the ridden horse's body for a moment while the grey downloads (never the procedural stand-in); what
+     the player then sees, and what is asserted, is the grey she changes into. */
+  for(let i=0;i<900&&SQ.foal()&&!(SQ.foal().rig&&SQ.foal().sized&&!SQ.foal().rigStandIn);i++)await new Promise(r=>requestAnimationFrame(r));
   const f=SQ.foal(); if(!f)return {foal:false};
   let skinned=0,standIn=0; f.parts.group.traverse(o=>{if(!o.isMesh||!o.visible)return; if(o.isSkinnedMesh)skinned++;
    if(o.material&&o.material.emissive&&o.material.emissive.getHexString()==='9fb4dc')standIn++;});

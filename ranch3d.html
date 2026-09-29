@@ -650,7 +650,7 @@ import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-3';
-import {FEATURES} from './assets/features/index.js?v=feat-14';
+import {FEATURES} from './assets/features/index.js?v=feat-15';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -5177,17 +5177,35 @@ function hairColourInner(){
 const WORLD_RIG_MAX=quality==='low'?0:quality==='medium'?16:32;
 function rigBudget(){return quality==='low'?8:quality==='medium'?16:32;}   // read live: the tier can change mid-game
 let worldRigCount=0;
+function undressRig(ent){   // take a horse's rigged body off again (to put its own on in place of a borrowed one)
+ const r=ent.rig; if(!r)return;
+ try{ if(r.scene&&r.scene.parent)r.scene.parent.remove(r.scene); if(r.saddle&&r.saddle.parent)r.saddle.parent.remove(r.saddle); if(r.bridle&&r.bridle.parent)r.bridle.parent.remove(r.bridle); disposeMountedRig(r); r.skin?.material?.dispose?.(); }catch(e){}
+ worldRigCount=Math.max(0,worldRigCount-1); ent.rig=null; ent.drg=null; ent.rigTried=false; ent.rigStandIn=null;
+}
 function dressWithRig(ent,parts,colors,opts){
  opts=opts||{};
- if(ent.rig||ent.rigPending||ent.rigTried||!RIG.ready)return;
+ /* A horse wearing a borrowed body (below) changes into its own the moment its breed's model has arrived; while it
+    has not, the download is asked for again every few seconds, so one failed fetch is not the old body for good. */
+ if(ent.rigStandIn){
+  if(!ent.rigPending&&BREED_MODELS.get(ent.rigStandIn))undressRig(ent);
+  else{ if(!ent.rigPending&&performance.now()>(ent.rigRetryAt||0)){const b=ent.rigStandIn;ent.rigPending=true;BREED_MODELS.load(b).then(()=>{ent.rigPending=false;if(parts.group.parent)dressWithRig(ent,parts,colors,opts);}).catch(()=>{ent.rigPending=false;ent.rigRetryAt=performance.now()+6000;});} return; }
+ }
+ if(ent.rig||ent.rigPending||!RIG.ready)return;
+ if(ent.rigTried&&performance.now()<(ent.rigRetryAt||Infinity))return;
  // All visible horses use the approved body; budget affects animation, never anatomy.
  const breed=opts.breed||parts.group.userData.breed||'bay';
- const asset=BREED_MODELS.get(breed);
+ let asset=BREED_MODELS.get(breed);
  if(!asset){
   ent.rigPending=true;
   BREED_MODELS.load(breed).then(()=>{ent.rigPending=false;if(parts.group.parent)dressWithRig(ent,parts,colors,opts);})
-   .catch(e=>{ent.rigPending=false;ent.rigTried=true;console.warn('Breed model unavailable',breed,e);});
-  return;
+   .catch(e=>{ent.rigPending=false;ent.rigTried=true;ent.rigRetryAt=performance.now()+6000;console.warn('Breed model unavailable',breed,e);});
+  /* Each breed is a separate six-megabyte model. Until this one arrives the horse used to stand there in the old
+     procedural body — a foal taken along, the grey filly of the story, every horse whose breed was not loaded yet —
+     for as long as the download took, and for the rest of the session if it failed. It wears the body already
+     loaded for the ridden horse instead, and changes into its own when that is ready. */
+  const stand=RIG.modelKey&&BREED_MODELS.get(RIG.modelKey);
+  if(!stand)return;
+  asset=stand; ent.rigStandIn=breed;
  }
  ent.rigTried=true;
  const inst=instantiateArtistBreed(asset),sc=inst.scene,skin=inst.skin;
@@ -5211,7 +5229,7 @@ function dressWithRig(ent,parts,colors,opts){
  if(opts.saddle){const sd=buildSaddle(undefined,inst);const seat=breedSeat(inst);sd.position.copy(seat);parts.group.add(sd);bridle=buildBridle(opts.dragon?(DRAGON_TINT[opts.coat]||DRAGON_TINT._):null,inst);parts.group.add(bridle);saddle=sd;}
  worldRigCount++;
  ent.rig={...inst,phase:Math.random()*6,hair,saddle,bridle,parts,fantasyMaterial:opts.coat?mat:null,restQ:inst.bones.map(b=>b.quaternion.clone())};
- rigCalibrate(ent.rig);initGameHero(THREE,ent.rig);fitArtistFeatures(ent.rig,parts);configureArtistCustomization(ent.rig,myHorses.find(h=>h.id===opts.seed&&h.breed===breed)||{breed,colors,tailCol:opts.tailCol,mark:opts.mark,markCol:opts.markCol,id:opts.seed});
+ try{rigCalibrate(ent.rig);initGameHero(THREE,ent.rig);fitArtistFeatures(ent.rig,parts);configureArtistCustomization(ent.rig,myHorses.find(h=>h.id===opts.seed&&h.breed===breed)||{breed,colors,tailCol:opts.tailCol,mark:opts.mark,markCol:opts.markCol,id:opts.seed});}catch(e){if(!ent.rigStandIn)throw e;}
 }
 function tickRig(ent,sp,dt,t,graze){ const r=ent.rig; if(!r)return; if(r.heroMotion){tickGameHero(r,sp,dt);if(r.saddle)r.saddle.position.copy(breedSeat(r));if(r.bridle)r.bridle.userData.follow(r.headBone||r.bones[6],r.bones,r.restQ,r.scene,r.scene.parent);fitArtistFeatures(r,r.parts,true);return;} r.phase+=rigPhaseStep(sp,true,dt,ent.parts?.group.scale.x||1); poseRigBones(r.bones,r.phase,sp,true,0,t,dt,graze||0,r); r.hair?.update?.(t,sp); }
 function fitArtistFeatures(rig,parts,animated=false){
@@ -5830,6 +5848,17 @@ async function requestPlayerBreed(breed){
  initGameHero(THREE,RIG);
  if(player.mesh){player.mesh.scale.setScalar(horseScale(myHorses[rideIdx]));attachRig();applyCoat();attachTack();}
  window.__setLoad?.(1,'ready!');
+ if(!requestPlayerBreed.preloaded){requestPlayerBreed.preloaded=true;setTimeout(preloadBreeds,400);}
+}
+/* Straight after the ridden horse, the bodies the player will see next, one at a time: the horse taken along, the grey
+   filly of the story while it is young, then the pasture's own breeds. */
+function preloadBreeds(){
+ try{ const s=freshSave()||{}, want=[], add=b=>{if(b&&!want.includes(b))want.push(b);};
+  const c=s.companion!=null&&myHorses.find(h=>h.id===s.companion); if(c)add(c.breed);
+  if(!s.story||(s.story.era||1)===1)add('grey');
+  for(const h of myHorses)if(h.foal||h.out)add(h.breed);
+  let k=0; const next=()=>{if(k>=want.length)return;BREED_MODELS.load(want[k++]).catch(()=>{}).finally(next);}; next();
+ }catch(e){}
 }
 {
  const setLoad=(f,label)=>{const b=document.querySelector('#loadbar i'),t=document.getElementById('loadpct');if(b)b.style.width=Math.round(f*100)+'%';if(t)t.textContent=label||Math.round(f*100)+'%';};

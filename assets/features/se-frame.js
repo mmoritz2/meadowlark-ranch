@@ -386,7 +386,7 @@ body.se-frame-open #seFrameTop{display:flex}
   questPanel:['journey','My Journey'],eventsPanel:['events','Riding Events'],stablePanel:['horses','My Horses'],lbPanel:['podium','Leaderboards'],
   onlinePanel:['club','Riding Club'],profilePanel:['character','Rider Profile'],buildPanel:['build','Build'],summonPanel:['season','Summon'],moneyPanel:['wallet','Wallet'],
   breedPanel:['foal','Breeding'],catalogPanel:['collection','Collection'],emotePanel:['emotes','Emotes'],inboxPanel:['inbox','Inbox'],pvpPanel:['race','Race Club'],
-  riderPanel:['character','Your Rider'],stylePanel:['style','Horse Style'],treePanel:['studio','Bloodlines'],sheetPanel:['events','Score Sheet'],resultPanel:['podium','Event Card'],
+  riderPanel:['character','Your Rider'],stylePanel:['style','Horse Style'],treePanel:['studio','Bloodlines'],sheetPanel:['collection','Horse Sheet'],resultPanel:['podium','Event Card'],
   ev2CardPanel:['events','Class'],ev2ResultPanel:['podium','Results'],ev2SheetPanel:['events','Score Sheet'],
   /* More care… and Settings opened the old centred cream card with the whole live HUD still round it */
   carePanel:['care','Horse Care'],settingsPanel:['gear','Settings']

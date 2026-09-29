@@ -528,6 +528,8 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   const G=window.__features, THREE=G.THREE, cam=G.camera, c=G.course.get();
   const R=e=>{ if(typeof e==='string')e=document.getElementById(e); if(!e)return null; const cs=getComputedStyle(e);
    if(cs.display==='none'||cs.visibility==='hidden'||+cs.opacity<0.05)return null; const b=e.getBoundingClientRect(); if(!(b.width>0&&b.height>0))return null;
+   /* what is seen: a message inside a message box that has been faded out (se-hud hides the box rather than let a message sit on the track) is not on screen */
+   for(let q=e.parentElement;q&&q!==document.body;q=q.parentElement){const qs=getComputedStyle(q);if(qs.display==='none'||+qs.opacity<0.05)return null;}
    return {l:Math.round(b.left),t:Math.round(b.top),r:Math.round(b.right),b:Math.round(b.bottom),h:Math.round(b.height)}; };
   const P=o=>{ if(!o)return null; o.updateMatrixWorld(true); const bx=new THREE.Box3().setFromObject(o); if(bx.isEmpty())return null; let l=1e9,t=1e9,r=-1e9,b=-1e9;
    for(const X of [bx.min.x,bx.max.x])for(const Y of [bx.min.y,bx.max.y])for(const Z of [bx.min.z,bx.max.z]){ const v=new THREE.Vector3(X,Y,Z).project(cam); if(v.z>1)continue;

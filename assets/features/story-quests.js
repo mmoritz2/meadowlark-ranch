@@ -418,12 +418,12 @@ export function install(G){
     still loading; dressWithRig does nothing until it can, and nothing once it has. */
  function rigFoal(dt,t,sp){
   if(!foal||!H.dressWithRig||!G.anim)return;
-  if(!foal.rig)H.dressWithRig(foal,foal.parts,{body:'#b9bec6',mane:'#787f8a'},{breed:'grey',seed:11});
+  H.dressWithRig(foal,foal.parts,{body:'#b9bec6',mane:'#787f8a'},{breed:'grey',seed:11});   // every frame: it returns at once when dressed, and changes a borrowed body into the grey when that arrives
   if(!foal.rig)return;
   /* A yearling, not a grown mare. dressWithRig sizes every horse to its breed's withers, and when
      the model is still downloading it finishes the job from its own callback, after this call has
      returned, so she is sized the first time she is seen with a rig, not straight after asking. */
-  if(!foal.sized){const w=foal.rig.profile&&foal.rig.profile.withersM;if(w)foal.group.scale.setScalar(w/1.45*0.78);foal.sized=true;}
+  if(foal.sized!==foal.rig){const w=foal.rig.profile&&foal.rig.profile.withersM;if(w)foal.group.scale.setScalar(w/1.45*0.78);foal.sized=foal.rig;}
   G.anim.tickRig(foal,sp,dt,t,0);
  }
  function tickFoal(dt,t){
