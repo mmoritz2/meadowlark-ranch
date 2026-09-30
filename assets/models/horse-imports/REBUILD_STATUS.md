@@ -75,7 +75,12 @@ to replace the public stable as a whole.
   experiment. The [source gait audit](../../../review/mesh2motion-source/README.md)
   found that the source Trot is a lateral pace, and all three gait clips need
   hoof-contact and loop-seam correction. No native Canter or Gallop is supplied
-  by this source.
+  by this source. The [realistic white retarget trial](../../../review/mesh2motion-retarget/README.md)
+  preserved all original meshes, skin weights, binds and 677 joints, and closed
+  the new loop endpoints. It still failed intended contact: the Walk right hind
+  exceeded a 15mm tolerance in 55 of 65 source near-ground samples, and both Run
+  hindfeet failed all corresponding samples. The fitted failed GLB stays in
+  ignored output; no roster asset or manifest uses it.
 
 Open [the private review landing page](../../../review/index.html) through the local
 preview server to compare the source-rig white horse and both dragons. These

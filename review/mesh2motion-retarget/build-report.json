@@ -1,0 +1,124 @@
+{
+  "source": "assets/models/horse-motion-sources/mesh2motion/horse-animations.glb",
+  "target": "assets/models/horse-imports/wildmesh-white-western/game/native-candidate/native-white-western-candidate.glb",
+  "translationScale": 1.2325331668587773,
+  "mapping": {
+    "pelvis_08": "hips",
+    "spine_01_09": "spine_1",
+    "spine_02_010": "spine_2",
+    "spine_03_011": "spine_3",
+    "spine_04_012": "spine_4",
+    "head_019": "head",
+    "clavicle_l_0203": "front_scapula_l",
+    "upperarm_l_0204": "front_humerus_l",
+    "lowerarm_l_0205": "front_leg_upper_l",
+    "hand_l_0206": "front_leg_lower_l",
+    "fingers_01_l_0187": "front_leg_ankle_l",
+    "fingers_02_l_0208": "front_leg_foot_l",
+    "clavicle_r_0269": "front_scapula_r",
+    "upperarm_r_0270": "front_humerus_r",
+    "lowerarm_r_0271": "front_leg_upper_r",
+    "hand_r_0272": "front_leg_lower_r",
+    "fingers_01_r_0273": "front_leg_ankle_r",
+    "fingers_02_r_0274": "front_leg_foot_r",
+    "upperleg_l_0405": "back_leg_upper_l",
+    "lowerleg_l_0406": "back_leg_lower_l",
+    "foot_l_0407": "back_leg_ankle_l",
+    "toes_01_l_0408": "back_leg_foot_l",
+    "toes_02_l_0409": "back_leg_toe_l",
+    "upperleg_r_0474": "back_leg_upper_r",
+    "lowerleg_r_0475": "back_leg_lower_r",
+    "foot_r_0476": "back_leg_ankle_r",
+    "toes_01_r_0477": "back_leg_foot_r",
+    "toes_02_r_0478": "back_leg_toe_r",
+    "tail_01_0367": "tail_1",
+    "tail_02_0368": "tail_2",
+    "tail_03_0369": "tail_3",
+    "tail_04_0370": "tail_4",
+    "tail_05_0371": "tail_leaf"
+  },
+  "neckInterpolation": {
+    "neckOff_01_013": [
+      "spine_4",
+      "spine_5",
+      0.3
+    ],
+    "neck_01_014": [
+      "spine_5",
+      "spine_6",
+      0.12
+    ],
+    "neck_02_015": [
+      "spine_5",
+      "spine_6",
+      0.48
+    ],
+    "neck_03_016": [
+      "spine_5",
+      "spine_6",
+      0.8
+    ],
+    "neck_04_017": [
+      "spine_6",
+      "head",
+      0.28
+    ],
+    "neck_05_018": [
+      "spine_6",
+      "head",
+      0.67
+    ]
+  },
+  "preservedTargetSections": [
+    "nodes",
+    "meshes",
+    "skins",
+    "materials",
+    "textures",
+    "images"
+  ],
+  "gaits": {
+    "Walk": {
+      "duration": 0.9666666388511658,
+      "frames": 97,
+      "targetTracks": 130,
+      "pelvisVerticalDeltaM": [
+        -0.03351268184838587,
+        0.011225392086341027
+      ],
+      "contactFitMaxErrorM": 0.23273868647134427,
+      "maxFitAngleDegrees": 45.83662361039436,
+      "loop": "First source key shifted to t=0; last one-frame interval bridges to first target pose."
+    },
+    "Trot": {
+      "duration": 0.699999988079071,
+      "frames": 97,
+      "targetTracks": 130,
+      "pelvisVerticalDeltaM": [
+        -0.09957197118647582,
+        0.003654046393549163
+      ],
+      "contactFitMaxErrorM": 0.1726339136970197,
+      "maxFitAngleDegrees": 45.83662361045796,
+      "loop": "First source key shifted to t=0; last one-frame interval bridges to first target pose."
+    },
+    "Run": {
+      "duration": 0.4333333373069763,
+      "frames": 97,
+      "targetTracks": 130,
+      "pelvisVerticalDeltaM": [
+        0.03400237624469486,
+        0.13173638538952392
+      ],
+      "contactFitMaxErrorM": 0.19603966591928285,
+      "maxFitAngleDegrees": 45.836623610444015,
+      "loop": "First source key shifted to t=0; last one-frame interval bridges to first target pose."
+    }
+  },
+  "hairDetailJoints": 90,
+  "contactFit": "Sagittal three-joint fit to source sole trajectories; source ground penetration clamped to standing floor; terminal hoof orientation retained.",
+  "targetFloorY": -0.0047147771075021355,
+  "candidateBytes": 28009324,
+  "candidateSha256": "31da5dbf4c32150a7e5fcde7433639e5582e618d07e10c66ab8b67310317eb49",
+  "originalBinaryBytesPreserved": 25640772
+}
