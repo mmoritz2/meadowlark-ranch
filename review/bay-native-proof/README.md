@@ -13,11 +13,12 @@ Browser QA sampled 96 Walk phases plus 16 side/quarter captures: all geometry
 was finite, with 677 bones and zero browser errors. These checks do **not**
 establish a good gait.
 
-The Walk still crouches and folds a foreleg/hock unnaturally. A fixed upper-back
-surface marker is **1.578 m in Idle** and **1.445–1.507 m during Walk**, a
-roughly 6–13 cm drop. This marker is only a same-vertex comparison, not an
-official withers measurement. The same low source motion appears on the white
-horse. Lowest individual hoof points in the Bay proof range down to 9.5 mm
+The Walk still crouches and folds a foreleg/hock unnaturally. In this Bay
+proof, the pelvis joint is **1.365 m in Idle** and **1.254–1.319 m in Walk**
+(5–11 cm lower); a trunk spine joint is **1.283 m in Idle** and
+**1.179–1.199 m in Walk** (8–10 cm lower). The head joint drops about 21–25 cm.
+The same low source motion appears on the white horse. Lowest individual hoof
+points in the Bay proof range down to 9.5 mm
 below ground; these values alone cannot validate foot contact. The native
 source has no Trot, Canter, Gallop or Jump clips.
 
@@ -33,8 +34,10 @@ candidate, Bay rig input, breed profiles, existing asset-generation modules,
 and NumPy. Serve the repository at `127.0.0.1:8577` and run
 `NODE_PATH=/Users/mbphome/.npm-global/lib/node_modules QA_PORT=8577 node review/bay-native-proof/qa.cjs`
 to regenerate the browser report and screenshots. The viewer's internal
-`withers` property labels this fixed upper-back marker; the QA script records
-it as `upperBackMarkerM`.
+`withers` property labels body vertex 1931, but its weights are about 89% on
+the first three neck bones. It is **not** a withers or upper-back measurement;
+the QA script records it as `neckWeightedMarkerM` for traceability. Use the
+pelvis and spine joint measurements above to assess torso drop.
 
 This fitting method may be useful after better motion is authored or licensed.
 It must not be treated as a replacement horse gait.

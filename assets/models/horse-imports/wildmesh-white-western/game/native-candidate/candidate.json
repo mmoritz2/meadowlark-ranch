@@ -19,7 +19,7 @@
   ],
   "conversion": "Only five legacy specular-glossiness materials were expressed as PBR equivalents for browser rendering. Original binary payload, nodes, meshes, skin, animation curves, accessors, buffer views, images, textures, samplers and scene structure are byte-for-byte or JSON-identical to the approved source.",
   "sourceBinaryPayloadUnchanged": true,
-  "visualReview": "Creator Walk reviewed over eight phases from side and quarter cameras in private Breed Studio; no broken limbs or visible tack detachment. User review identified a low crouching body. A scale-matched Bay proof confirms the low withers path is source-authored. This Walk is a motion reference, not a production-approved gait.",
+  "visualReview": "An initial eight-phase side/quarter review found no mesh break or tack detachment. User review and later 96-phase QA identified a low crouching body and overfolded limbs. A scale-matched Bay proof shows source-authored pelvis and trunk-spine drops during Walk, along with a much larger head drop. This Walk is a motion reference, not a production-approved gait.",
   "floorReview": "Skinned bounds over 96 phases of the full Walk cycle: minY -0.00825 to +0.00391 metres after source ground anchoring; every sampled pose remained within 1 cm of the floor.",
   "performanceReview": "Apple M1 Max / ANGLE Metal private Studio preview: one horse 82,828 triangles and eight draw calls, median JS frame 0.9 ms; four overlapping clones 330,106 triangles and 23 draw calls, median JS frame 3.8 ms. Browser frame timing occasionally reached 33 ms; Ranch gameplay and weaker-device performance are not yet verified."
 }

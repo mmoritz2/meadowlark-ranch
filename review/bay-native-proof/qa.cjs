@@ -18,13 +18,13 @@ const out=path.resolve(__dirname,'../../output/native-bay-proof'),url=QA.BASE+'/
     await page.screenshot({path:path.join(out,`fulljoint-${view}-${i}.png`)});
    }
   }
-  const cycle=await page.evaluate(()=>Array.from({length:96},(_,i)=>{const g=nativeReviewSetPhase(i/96),p=bayReviewPose();return {phase:i/96,minY:g.bounds.min[1],maxY:g.bounds.max[1],upperBackMarkerM:p.withers,hoofMinY:p.hoofMinY,bones:p.bones,maneTip:p.maneTip,tailTip:p.tailTip,finite:g.finite};}));
+  const cycle=await page.evaluate(()=>Array.from({length:96},(_,i)=>{const g=nativeReviewSetPhase(i/96),p=bayReviewPose();return {phase:i/96,minY:g.bounds.min[1],maxY:g.bounds.max[1],neckWeightedMarkerM:p.withers,hoofMinY:p.hoofMinY,bones:p.bones,maneTip:p.maneTip,tailTip:p.tailTip,finite:g.finite};}));
   const report={url,asset:JSON.parse(await page.evaluate(()=>render_game_to_text())).asset,rest,rows,cycle,errors};
   fs.writeFileSync(path.join(out,'qa-fulljoint-report.json'),JSON.stringify(report,null,2));
   assert.deepEqual(errors,[]);
   assert.equal(report.asset.nativeJoints,677);
   assert.equal(cycle.length,96);
   assert(cycle.every(x=>x.finite&&Object.values(x.hoofMinY).every(Number.isFinite)));
-  console.log(JSON.stringify({asset:report.asset,minY:[Math.min(...cycle.map(x=>x.minY)),Math.max(...cycle.map(x=>x.minY))],upperBackMarkerM:[Math.min(...cycle.map(x=>x.upperBackMarkerM)),Math.max(...cycle.map(x=>x.upperBackMarkerM))],errors}));
+  console.log(JSON.stringify({asset:report.asset,minY:[Math.min(...cycle.map(x=>x.minY)),Math.max(...cycle.map(x=>x.minY))],neckWeightedMarkerM:[Math.min(...cycle.map(x=>x.neckWeightedMarkerM)),Math.max(...cycle.map(x=>x.neckWeightedMarkerM))],errors}));
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
