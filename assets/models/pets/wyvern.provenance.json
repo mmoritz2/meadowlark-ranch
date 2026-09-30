@@ -1,0 +1,19 @@
+{
+ "schemaVersion": 1,
+ "pets": ["wyvern"],
+ "title": "Prowler Dragon Variant Rig",
+ "creator": "DM-913 (SuperKapoo913)",
+ "creatorUrl": "https://sketchfab.com/SuperKapoo913",
+ "sourceUrl": "https://sketchfab.com/3d-models/prowler-dragon-variant-rig-7ee71aaf323d426bbbdf28d73d55bbd9",
+ "license": "CC-BY-4.0",
+ "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+ "credit": "\"Prowler Dragon Variant Rig\" by DM-913 (https://sketchfab.com/SuperKapoo913), CC BY 4.0, adapted (scaled, retextured to 1024, hidden rig shapes removed, a flight and an idle animated by Meadowlark Ranch) for Meadowlark Ranch.",
+ "approvedBy": "owner",
+ "downloaded": "2026-09-30",
+ "download": {"file": "prowler_dragon_variant_rig.glb", "format": "GLB (Sketchfab auto-converted)", "bytes": 17004720, "sha256": "04483a45971dc5f015763d4d4109ef977852537967eab9e0e89e2ab7be504e4f"},
+ "contents": {"meshes": 17, "triangles": 19766, "materials": 3, "textures": "4 x 2048 PNG", "skeleton": true, "joints": 126, "clips": ["Walk 4.88 s", "PoseLib 0.08 s", "Landing 4.38 s"]},
+ "prepared": {"file": "wyvern.glb", "bytes": 3378012, "sha256": "35edec3d254cf83819bb903f3d235191d7eacd334cec7a8da3c3c2f5d3a6d2fc",
+  "command": "scratch strip-invisible.mjs, opt-glb.mjs (textures, key reduction), author-fly.mjs (Fly and Idle authored on the wing, chest, neck and tail bones), opt-glb.mjs --keep Walk,Fly,Idle",
+  "changes": ["15 invisible rig-shape meshes removed", "Fly clip authored (0.8 s wing flap from the Landing's spread-wing frame, body level from the Walk)", "Idle clip authored (3.2 s breathing, neck and tail sway from the Walk's first frame)", "Landing and PoseLib not shipped", "textures 2048 -> 1024 (colour PNG, others JPEG)"]},
+ "restrictions": []
+}

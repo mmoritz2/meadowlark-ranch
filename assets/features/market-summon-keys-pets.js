@@ -82,9 +82,16 @@ const NEW_PETS=[
  {key:'owl',     name:'Barn Owl',         emoji:'🦉',price:0,  body:'#d6a86a',belly:'#fbf5ea',ear:'point',tail:'puff',kind:'bird',wings:true,rar:'Epic',   src:'pass',  pairs:'pegasus',note:'Rides the rafters, then the wind.'},
  {key:'lamb',    name:'Meadow Lamb',      emoji:'🐑',price:0,  body:'#f7f2e6',belly:'#7a6252',ear:'flop', tail:'puff',kind:'quad',rar:'Common', src:'set:jars',note:'Grandma raised it on a bottle.'},
  {key:'glimmerfox',name:'Glimmer Fox',    emoji:'🦊',price:0,  body:'#bfe9ff',belly:'#ffffff',ear:'point',tail:'bush',kind:'quad',rar:'Epic',   src:'summon',pairs:'lumen',glow:'#8fe8ff',note:'Cold blue light, and it knows exactly what it is.'},
+ /* the fantasy pets (pet-fantasy.js draws them; the Emberling and the fawn have real bodies too). A 'season'
+    pet answers the Pets of the Basin call only during its own season. */
+ {key:'emberling', name:'Emberling',       emoji:'',price:0,  body:'#b8432a',belly:'#f2b05a',ear:'point',tail:'bush',kind:'quad',wings:true,rar:'Epic',src:'summon',glow:'#ff7a2a',note:'Too small to breathe fire. It tries anyway, and mostly sneezes.'},
+ {key:'mossfawn',  name:'Mossglow Fawn',   emoji:'',price:0,  body:'#b98a5a',belly:'#f4ead6',ear:'point',tail:'puff',kind:'quad',rar:'Rare',src:'summon',glow:'#b8ffc8',note:'Its spots glow when it is happy, which is always.'},
+ {key:'wyvern',    name:'Canyon Wyvern',   emoji:'',price:1200,body:'#b99a6a',belly:'#efe0bc',ear:'point',tail:'bush',kind:'quad',wings:true,rar:'Rare',src:'shop',note:'Nests in Coyote Canyon. Hates the wind, loves you.'},
+ {key:'gryphling', name:'Gryphling',       emoji:'',price:0,  body:'#c9a24a',belly:'#f0dca0',ear:'point',tail:'bush',kind:'quad',wings:true,rar:'Epic',src:'pass',note:'Half eagle, half lion, all trouble in the tack room.'},
+ {key:'cinderchick',name:'Cinder Chick',   emoji:'',price:0,  body:'#ff8a1a',belly:'#ffd84a',ear:'point',tail:'puff',kind:'bird',wings:true,rar:'Epic',src:'season',season:'ember',glow:'#ff7a2a',note:'It fell out of the campfire and was fine.'},
 ];
 /* horse breed key → the pet that answers it. Both must be out at once. */
-const PET_PAIRS={lumen:'glimmerfox',pegasus:'owl',frost:'snowhare'};
+const PET_PAIRS={lumen:'glimmerfox',pegasus:'owl',frost:'snowhare',emberdrake:'emberling',dryadwalker:'mossfawn',phoenix:'cinderchick'};
 const PET_ODDS={Common:60,Rare:30,Epic:10};
 const PET_PITY=10;                     // ten calls without an Epic and the next one is Epic
 const PET_DUP_DUST=15;
@@ -170,6 +177,7 @@ export function install(G){
  M.rewardKind('pet',(s,v)=>{s.petList=s.petList||[];if(!s.petList.includes(v))s.petList.push(v);},v=>petName(v));
  if(T.PASS_FREE[13]&&!T.PASS_FREE[13].pet)T.PASS_FREE[13].pet='owl';          // free track, tier 14
  if(T.PASS_GOLD[18]&&!T.PASS_GOLD[18].pet)T.PASS_GOLD[18].pet='fennec';       // gold track, tier 19
+ if(T.PASS_FREE[24]&&!T.PASS_FREE[24].pet)T.PASS_FREE[24].pet='gryphling';    // free track, tier 25: the griffin cub
  if(T.COLL_SETS.jars&&!T.COLL_SETS.jars.reward.pet)T.COLL_SETS.jars.reward.pet='lamb';
 
  /* ---- 3. the stables ------------------------------------------------------------------ */
@@ -309,7 +317,9 @@ export function install(G){
  U.section('summonCard',(t,s)=>chipsFor(t,s));
 
  /* ---- 4. Pets of the Basin: the pet call ---------------------------------------------- */
- const petPool=rar=>PETS3.filter(p=>p.src==='summon'&&(p.rar||'Common')===rar);
+ const seasonId=()=>{try{return G.time.seasonNow().def.id;}catch(e){return null;}};
+ const petCallable=p=>p.src==='summon'||(p.src==='season'&&!!p.season&&p.season===seasonId());   // a season pet answers the call in its own season only
+ const petPool=rar=>PETS3.filter(p=>petCallable(p)&&(p.rar||'Common')===rar);
  function rollPetRarity(force){
   if(force)return 'Epic';
   let tot=0; for(const k in PET_ODDS)tot+=PET_ODDS[k];
@@ -423,6 +433,7 @@ export function install(G){
  const SRC_LBL={shop:'🛍️ On the shelf',summon:'🐾 Pets of the Basin call',pass:'🎟️ Trail Pass'};
  function petSrcLabel(p){
   if(p.src&&p.src.startsWith('set:')){const k=p.src.slice(4);return '🫙 '+((T.COLL_SETS[k]&&T.COLL_SETS[k].label)||k)+' set';}
+  if(p.src==='season'){const nm={bloom:'Bloom',sun:'Long Sun',ember:'Ember',frost:'Frost'}[p.season]||'its';return nm+' season call only';}
   return SRC_LBL[p.src]||'🛍️ On the shelf';
  }
  /* Each row is drawn already in the market's card shape (ui2-shop's s2-row), so the pet's portrait from
@@ -447,7 +458,7 @@ export function install(G){
    let btn,locked=false,cant=false;
    if(have)btn='<button data-petfollow="'+P.key+'"'+(on?' class="claimBtn"':'')+'>'+(on?'Following':'Follow')+'</button>';
    else if(P.src==='shop'&&P.price){cant=s.coins<P.price;btn='<button data-buypet="'+P.key+'"'+(cant?' disabled':'')+'>'+P.price+' 🪙</button>';}
-   else if(P.src==='summon')btn='<button data-fx="shop:summon">'+petCfg(P.key).rar+' · call</button>';
+   else if(petCallable(P))btn='<button data-fx="shop:summon">'+petCfg(P.key).rar+' · call</button>';
    else{locked=true;btn='<span style="font-size:11px;color:#8c7a63">'+petSrcLabel(P)+'</span>';}
    return petCard(P,esc(P.name),have?(on?'following you · ':'owned · ')+note:note+' · '+petSrcLabel(P),btn,{done:have,locked,cant});
   }).join('');

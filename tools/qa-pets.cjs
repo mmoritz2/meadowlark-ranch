@@ -202,16 +202,19 @@ const HOME={x:-100,z:400,h:Math.PI};   // an open meadow, riding south: seven cl
   return out;
  });
  check('pet-models installed with no install error, handles exported',M.installed&&M.errs.length===0&&M.handles,M.errs);
+ /* the fantasy pets (pet-fantasy.js; tools/qa-fantasy-pets.cjs checks them in depth): the cinder chick is a bird, the rest
+    four-legged, and the emberling, the wyvern and the gryphling are four-legged flyers with two wings */
+ const FANT={emberling:['quad',true],mossfawn:['quad',false],cinderchick:['bird',true],wyvern:['quad',true],gryphling:['quad',true]};
  const WING=['duck','chick','owl'],BUN=['bunny','snowhare'];
- const kindOf=k=>WING.includes(k)?'bird':BUN.includes(k)?'bunny':'quad';
- check('fifteen pets, each row marked with its kind and the three birds with wings',M.keys.length===15&&M.rows.every(r=>r.kind===kindOf(r.key)&&r.wings===WING.includes(r.key)),M.rows.filter(r=>r.kind!==kindOf(r.key)||r.wings!==WING.includes(r.key)));
- check('every pet builds as its own animal: birds on two legs with two wings, the rest on four',M.keys.every(k=>{const m=M.models[k];return m.key===k&&m.kind===kindOf(k)&&m.legs===(m.kind==='bird'?2:4)&&m.wings===(m.kind==='bird'?2:0);}),M.models);
+ const kindOf=k=>FANT[k]?FANT[k][0]:WING.includes(k)?'bird':BUN.includes(k)?'bunny':'quad', winged=k=>FANT[k]?FANT[k][1]:WING.includes(k);
+ check('fifteen pets (plus the fantasy ones), each row marked with its kind and the three birds with wings',M.keys.filter(k=>!FANT[k]).length===15&&M.rows.every(r=>r.kind===kindOf(r.key)&&r.wings===winged(r.key)),M.rows.filter(r=>r.kind!==kindOf(r.key)||r.wings!==winged(r.key)));
+ check('every pet builds as its own animal: birds on two legs with two wings, the rest on four',M.keys.every(k=>{const m=M.models[k];return m.key===k&&m.kind===kindOf(k)&&m.legs===(m.kind==='bird'?2:4)&&m.wings===(winged(k)?2:0);}),M.models);
  check('every pet is at most 30 meshes (merged small parts) with at most 3 shadow casters',M.keys.every(k=>M.models[k].meshes<=30&&M.models[k].shadow<=3),Object.fromEntries(M.keys.map(k=>[k,[M.models[k].meshes,M.models[k].shadow]])));
- check('fifteen different body shapes, and two of the same pet share theirs',M.distinctBodies===15&&M.shared,{distinct:M.distinctBodies,shared:M.shared});
+ check('fifteen different body shapes (one for each pet), and two of the same pet share theirs',M.distinctBodies===M.keys.length&&M.keys.length>=15&&M.shared,{distinct:M.distinctBodies,shared:M.shared});
  check('ten rebuilds of the follower leak no geometry or textures',M.mem.after.g-M.mem.before.g<=2&&M.mem.after.t-M.mem.before.t<=1,M.mem);
  const weak=M.paint.filter(q=>q.n09<3||q.cover<0.1);
  check('every painted marking reaches the surface (the duckling\'s cap and back, the tabby\'s bands, the raccoon\'s rings)',M.paint.length>=50&&weak.length===0,{n:M.paint.length,weak,duck:M.paint.filter(q=>q.k==='duck'),cat:M.paint.filter(q=>q.k==='cat').map(q=>q.cover)});
- check('a drawn portrait for every pet, all different, and a paw for an unknown one',M.keys.every(k=>M.portraits[k].ok)&&new Set(M.keys.map(k=>M.portraits[k].h)).size===15&&M.portraitList>=15&&M.pawFallback,M.portraits);
+ check('a drawn portrait for every pet, all different, and a paw for an unknown one',M.keys.every(k=>M.portraits[k].ok)&&new Set(M.keys.map(k=>M.portraits[k].h)).size===M.keys.length&&M.portraitList>=15&&M.pawFallback,M.portraits);
 
  /* the chick's and the duckling's lit yellow, from a close-up at noon: the top of the bird in the picture */
  if(RUN('models')){

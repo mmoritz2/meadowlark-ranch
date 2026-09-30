@@ -1,0 +1,19 @@
+{
+ "schemaVersion": 1,
+ "pets": ["emberling"],
+ "title": "European Dragon",
+ "creator": "Regina Cachoa (ReginaCachoa)",
+ "creatorUrl": "https://sketchfab.com/ReginaCachoa",
+ "sourceUrl": "https://sketchfab.com/3d-models/european-dragon-82f393a2e6c048ad80c171ce3b3a7b87",
+ "license": "CC-BY-4.0",
+ "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+ "credit": "\"European Dragon\" by Regina Cachoa (https://sketchfab.com/ReginaCachoa), CC BY 4.0, adapted (scaled to a baby, retextured to 1024, clips trimmed, ember glow) for Meadowlark Ranch.",
+ "approvedBy": "owner",
+ "downloaded": "2026-09-30",
+ "download": {"file": "european_dragon.glb", "format": "GLB (Sketchfab auto-converted)", "bytes": 28712836, "sha256": "27571241712334db4f05d65623ad627024d57730554a74b7902029c9c95fd5f5"},
+ "contents": {"meshes": 5, "triangles": 42338, "materials": 4, "textures": "6 x 4096 PNG", "skeleton": true, "joints": 169, "clips": ["Fly 3.29 s", "Walk 0.625 s", "Run 0.625 s", "Idle Stand 6.63 s", "Idle Sit 2.46 s"]},
+ "prepared": {"file": "emberling.glb", "bytes": 3132020, "sha256": "54297a07aea0813b56319b8af212ad64508b87e036dd974088af7611116466da",
+  "command": "node tools/prepare-pet-glb.mjs european_dragon.glb --key emberling --trim, then key reduction and JPEG textures (scratch opt-glb.mjs)",
+  "changes": ["textures 4096 -> 1024, stored as JPEG", "constant and linearly redundant animation keys dropped (2509 channels -> 553)", "Idle Stand renamed Idle, Idle Sit renamed Sit", "unused buffer data dropped"]},
+ "restrictions": []
+}

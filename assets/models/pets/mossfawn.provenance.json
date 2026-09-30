@@ -1,0 +1,19 @@
+{
+ "schemaVersion": 1,
+ "pets": ["mossfawn"],
+ "title": "Fawn_A1",
+ "creator": "Assets_Animated",
+ "creatorUrl": "https://sketchfab.com/Assets_Animated",
+ "sourceUrl": "https://sketchfab.com/3d-models/fawn-a1-b6cf4d29b8e2478e9c00f5e17d02c957",
+ "license": "CC-BY-4.0",
+ "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+ "credit": "\"Fawn_A1\" by Assets_Animated (https://sketchfab.com/Assets_Animated), CC BY 4.0, adapted (scaled, retextured to 1024, clips trimmed, glowing spots and fireflies) for Meadowlark Ranch.",
+ "approvedBy": "owner",
+ "downloaded": "2026-09-30",
+ "download": {"file": "fawn_a1.glb", "format": "GLB (Sketchfab auto-converted)", "bytes": 20392576, "sha256": "967be65a9ad8a2578caef196020c7c4f0c88db2c6f9e8c56c69dad9061278638"},
+ "contents": {"meshes": 2, "triangles": 15984, "materials": 2, "textures": "3 x 2048 PNG", "skeleton": true, "joints": 73, "clips": ["Walk", "Swim", "StandUp", "SitDown", "Run", "Lying", "Jump", "Idle", "Atk"]},
+ "prepared": {"file": "mossfawn.glb", "bytes": 2376624, "sha256": "b4ea8ecb9eb03573bdad197a1b82435d2d3b443d572ac3606d26bb8a428679a4",
+  "command": "node tools/prepare-pet-glb.mjs fawn_a1.glb --key mossfawn --trim, then key reduction and texture repack (scratch opt-glb.mjs)",
+  "changes": ["textures 2048 -> 1024 (colour PNG for the alpha cutouts, normal map JPEG)", "emissive map (a copy of the colour map) dropped", "alpha BLEND -> MASK 0.5", "kept Walk, Run, Idle, Swim (renamed from Fawn_A_*)", "constant and linearly redundant animation keys dropped (1118 channels -> 223)"]},
+ "restrictions": []
+}

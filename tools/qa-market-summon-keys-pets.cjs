@@ -253,10 +253,11 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   return {rows:p.querySelectorAll('.evrow').length,pairs:/pairs with/.test(p.textContent),
    buy:p.querySelectorAll('[data-buypet]').length,src:/Pets of the Basin call/.test(p.textContent),
    art:new Set([...p.querySelectorAll('[data-pet-row]')].filter(r=>r.querySelector('svg')).map(r=>r.dataset.petRow)).size,
-   winged:G.tables.PETS3.filter(x=>x.wings).map(x=>x.key).sort().join(','),kinds:G.tables.PETS3.every(x=>['quad','bunny','bird'].includes(x.kind))};
+   pets:G.tables.PETS3.length,winged:G.tables.PETS3.filter(x=>x.wings).map(x=>x.key).sort().join(','),kinds:G.tables.PETS3.every(x=>['quad','bunny','bird'].includes(x.kind))};
  });
  check('the pets tab lists the menagerie, its sources and the pairs',petTab.rows>=12&&petTab.pairs&&petTab.buy>=4&&petTab.src,petTab);
- check('every pet in the tab is shown by its drawn portrait, and the rows know their body plan (the three birds fly)',petTab.art>=petTab.rows-3&&petTab.art>=12&&petTab.winged==='chick,duck,owl'&&petTab.kinds,{art:petTab.art,winged:petTab.winged,kinds:petTab.kinds});
+ const FLYERS=['chick','duck','owl'],FANTASY_FLYERS=['emberling','cinderchick','wyvern','gryphling'],wg=String(petTab.winged||'').split(',');   // the three birds, plus the fantasy flyers (pet-fantasy.js)
+ check('every pet in the tab is shown by its drawn portrait, and the rows know their body plan (the three birds and the fantasy flyers fly)',petTab.art>=petTab.pets&&petTab.art>=12&&FLYERS.every(k=>wg.includes(k))&&wg.every(k=>FLYERS.includes(k)||FANTASY_FLYERS.includes(k))&&petTab.kinds,{art:petTab.art,winged:petTab.winged,kinds:petTab.kinds});
  const petCall=await page.evaluate(async()=>{
   const G=window.__features;
   G.save.sync(s=>{s.gems=300;s.petList=[];s.mk.petPity=0;s.dust=0;});

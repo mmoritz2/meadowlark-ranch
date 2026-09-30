@@ -1,0 +1,22 @@
+{
+ "schemaVersion": 1,
+ "pets": ["fox", "fennec", "glimmerfox"],
+ "title": "Animated Fox",
+ "creator": "igor-lir",
+ "creatorUrl": "https://sketchfab.com/igor-lir",
+ "sourceUrl": "https://sketchfab.com/3d-models/animated-fox-f49753fad99c47b69bdfe80907c7e4f9",
+ "license": "CC-BY-4.0",
+ "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+ "licenseInFile": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/) (asset.extras.license of the download)",
+ "credit": "\"Animated Fox\" by igor-lir (https://sketchfab.com/igor-lir), CC BY 4.0, adapted (scaled, recoloured, re-animated) for Meadowlark Ranch.",
+ "approvedBy": "owner",
+ "downloaded": "2026-09-30",
+ "download": {"file": "animated_fox.glb", "format": "GLB (Sketchfab auto-converted, generator Sketchfab-15.22.0)", "bytes": 17523344, "sha256": "7dc77a9962b9946bcfbc1d994782c55290ae220af75487c6ef881be2200e33f8"},
+ "contents": {"meshes": 1, "triangles": 20120, "materials": 1, "texture": "512x512 PNG", "skeleton": false, "clips": [{"name": "GltfAnimation 0", "seconds": 5.583, "kind": "vertex cache: 134 morph targets, one per frame (24 fps)", "pose": "sitting idle"}]},
+ "prepared": {
+  "file": "fox.glb", "bytes": 3503256, "sha256": "45c3487e105990002ce985a570a430ea4ccb20069ad5edf29ec3af4db00ef421",
+  "command": "node tools/prepare-pet-glb.mjs animated_fox.glb --key fox --morph-every 2 --morph-loop 1 --quantize-morph",
+  "changes": ["134 morph frames -> 66 (every second frame kept)", "loop closed over the last 1 s", "morph offsets as normalised bytes (KHR_mesh_quantization), mesh node scaled x1.1463", "sampler minFilter LINEAR -> LINEAR_MIPMAP_LINEAR", "unused buffer data dropped"]
+ },
+ "restrictions": []
+}

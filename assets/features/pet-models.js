@@ -189,6 +189,7 @@ export function install(G){
   const g=new THREE.ExtrudeGeometry(s,{depth:d,bevelEnabled:true,bevelThickness:b,bevelSize:b,bevelSegments:2,curveSegments:8});g.translate(0,0,-d);return g;});   // faces +z, front at z=0
  const curlTail=()=>geo('curl',()=>{const pts=[];for(let i=0;i<=24;i++){const t=i/24,a=t*TAU*1.5;pts.push(new THREE.Vector3(Math.sin(a)*0.025,Math.cos(a)*0.025*0.9+t*0.01,-t*0.07));}return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),28,0.011,6,false);});
 
+ const KIT={THREE,mat,mat2,SPH,SPL,CONE,DISC,capG,mesh,ell,grp,geo,glowTex:()=>glowTex(),fused:(k,p,K,d)=>fused(k,p,K,d),GLINT,rimify};   // the drawing set, for a package's own parts (G.petModels.kit)
  /* ================================================================ the build sheets ===========
     Metres, pet frame: origin on the ground under the body, +z towards the nose, y up. Prims are
     [x,y,z, r, sx,sy,sz, colour, paint]. Every size here is chosen so that the smallest pet (the
@@ -547,6 +548,7 @@ export function install(G){
   if(S.sparkle){const n=S.sparkle.n,g=geo('spark-'+key,()=>{const b=new THREE.BufferGeometry();b.setAttribute('position',new THREE.BufferAttribute(new Float32Array(n*3),3));return b;});
    const pm=geo('sparkm-'+key,()=>new THREE.PointsMaterial({map:glowTex(),color:S.sparkle.c,size:S.sparkle.size,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,sizeAttenuation:true,opacity:0.95}));
    const pts=new THREE.Points(g,pm);pts.frustumCulled=false;root.add(pts);P.extra.sparks={pts,life:new Float32Array(n).map(()=>Math.random()),n};}
+  if(S.build)try{S.build(P,root,KIT);}catch(e){console.warn('pet models: '+key+' extras ('+e.message+')');}   // a package's own parts and effects (pet-fantasy.js): on bodyPivot they hide with the drawn body, on root they stay with a real one
   P.shadow=contact(root,S.shadow[0]*(S.grow||1),S.shadow[1]*(S.grow||1));
   P.tailChain.forEach(t=>{t.userData.rest=[t.rotation.x,t.rotation.y,t.rotation.z];});
   P.auraY=S.piv;P.size=S.h;
@@ -1001,6 +1003,7 @@ export function install(G){
   if(st.air==='ground'||st.air==='wait')groundStep(c,st,S,R,dt,t);else flyStep(c,st,S,R,dt,t);
   c.airborne=!(st.air==='ground'||st.air==='wait');
   animate(c,st,S,R,dt,t);
+  realTick(c,st,dt);   // the real animal's body, when this pet has one
   return true;
  }
  function freeDir(h,px,pz,look,rad){const x=px+Math.sin(h)*look,z=pz+Math.cos(h)*look;return !blockedAt(x,z,rad+0.15)&&!wallAt(x,z,rad+0.1);}
@@ -1072,7 +1075,7 @@ export function install(G){
   /* the birds skim-fly to keep up: the owl glides a hand's breadth over the grass above a trot; the duckling
      and the chick waddle and scurry up to a canter and only then flap along in short bursts */
   const skimOn=S.wings&&!swim&&st.spd>(S.wings.skim||4.2);
-  st.skim=damp(st.skim,skimOn?(S.walk==='hop'?0.55:0.22):0,skimOn?4:6,dt);
+  st.skim=damp(st.skim,skimOn?(S.wings.skimH||(S.walk==='hop'?0.55:0.22)):0,skimOn?4:6,dt);   // skimH: a flyer whose legs hang low in flight skims higher (the wyvern)
  }
  /* on a phone held upright the flying birds keep above and behind the rider, and the exact spot is
     picked the way the ground spot is: a few candidates projected into the picture, the best kept */
@@ -1175,9 +1178,11 @@ export function install(G){
   const flat=y>gy+0.01;
   const pt=flat?0:clamp(-Math.atan2(gH(x+fx,z+fz)-gH(x-fx,z-fz),S.len),-0.45,0.45),rl=flat?0:clamp(Math.atan2(gH(x+lx,z+lz)-gH(x-lx,z-lz),S.w),-0.35,0.35);
   st.pitch=damp(st.pitch,pt,12,0.016);st.roll=damp(st.roll,rl,12,0.016);
-  const air=st.hopY+st.skim+(st.q?st.q.hopY:0);
+  /* a real body does its own hops and spins in its clips: only the bunny without a hop clip keeps the drawn hop's arc */
+  const real=realShown(P),hq=st.q?st.q.hopY:0;
+  const air=st.hopY+st.skim+(real?(S.kind==='bunny'&&st.hopAir>=0&&!P.real.inst.has('hop')?hq:0):hq);
   root.position.set(x,y+air,z);
-  root.rotation.set(st.pitch,c.heading+(st.q?st.q.spin:0),st.roll+st.lean);
+  root.rotation.set(st.pitch,c.heading+(st.q&&!real?st.q.spin:0),st.roll+st.lean);
   if(P.shadow){P.shadow.visible=true;P.shadow.position.y=0.015-air;}
   c.alt=y+air-gy;
  }
@@ -1205,7 +1210,7 @@ export function install(G){
    if(st.air==='landing'){const h=c.alt;if(h<1.2){hz=Wg.hz*0.9;amp=Wg.amp*1.1;glide=false;}else glide=S.walk!=='scurry';}
    if(S.walk==='scurry'&&st.sag>0){hz*=1.25;}
    q.wOpen=st.air==='takeoff'?clamp(st.airT/0.25,0,1):1;
-   flapPose(q,st,S,dt,hz,amp,glide);
+   flapPose(q,st,S,dt,hz,amp,glide);st.glideNow=glide;st.flapHz=hz;
    if(glide&&desc&&st.air!=='landing')q.wBack=0.45;
    const flare=st.air==='landing'&&c.alt<1.2;
    q.bp=flare?Wg.pitchFly*0.35:Wg.pitchFly;q.hp=q.bp*0.95;
@@ -1259,7 +1264,9 @@ export function install(G){
     const bx=tl?Math.sin(sd)*0.08:Math.sin(sd)*0.3,bz=tl?-0.6*(S.scale||1)+Math.cos(sd)*0.08:Math.cos(sd*1.3)*0.3,by=tl?S.piv+0.02:0.1+Math.abs(Math.sin(sd*0.7))*0.2;
     a.setXYZ(i,bx+Math.sin(t*2+sd)*0.03,by+l*(tl?0.45:0.25),bz);}
    a.needsUpdate=true;sp.pts.material.opacity=0.55+0.4*Math.sin(t*5);}
+  if(S.fx)try{S.fx(P,c,st,dt,t,{flying,spd,real:realShown(P)});}catch(e){}   // a package's own per-frame effects (pet-fantasy.js)
   if(!flying){st.lean=damp(st.lean,0,6,dt);place(c);}
+  if(realShown(P))return;   // the drawn rig is hidden behind a real body: no need to pose it
   apply(P,q,t);
   /* nothing below the ground: a sitting tail, a bowing chest, a landing bunny's belly */
   if(!flying&&!st.swim){const lift=floorLift(P,st.moveW>0.5&&kind!=='bunny');if(lift>0.0005)P.bodyPivot.position.y+=lift;}
@@ -1379,9 +1386,10 @@ export function install(G){
   PORTRAITS._paw='<g fill="#b08a5a" stroke="#7a5a34" stroke-width="1.6"><ellipse cx="32" cy="41" rx="12" ry="10.5"/><ellipse cx="18" cy="27" rx="5" ry="6.5"/><ellipse cx="27" cy="19.5" rx="5" ry="6.5"/><ellipse cx="37" cy="19.5" rx="5" ry="6.5"/><ellipse cx="46" cy="27" rx="5" ry="6.5"/></g>';
   return PORTRAITS;
  }
- function svg(key,size){const P=portraits(),s=Math.max(8,Math.round(size||64)),body=P[key]||P._paw;
+ const EXTRA_ART={};   // portraits a package adds (G.petArt.add, pet-fantasy.js)
+ function svg(key,size){const P=portraits(),s=Math.max(8,Math.round(size||64)),body=P[key]||EXTRA_ART[key]||P._paw;
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="'+s+'" height="'+s+'" role="img" aria-label="'+String(key||'pet').replace(/[^a-z0-9 _-]/gi,'')+'" class="pet-svg">'+body+'</svg>';}
- G.petArt={svg,list:()=>Object.keys(portraits()).filter(k=>k[0]!=='_'),has:k=>!!portraits()[k]};
+ G.petArt={svg,list:()=>Object.keys(portraits()).filter(k=>k[0]!=='_').concat(Object.keys(EXTRA_ART)),has:k=>!!(portraits()[k]||EXTRA_ART[k]),add:(k,body)=>{EXTRA_ART[k]=String(body);}};
  /* the frame a portrait sits in, in the menus */
  try{if(!document.getElementById('petArtCss')){const st=document.createElement('style');st.id='petArtCss';
   st.textContent='.pet-port{display:inline-flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 50% 38%,#fffdf8,#efe3cc);box-shadow:0 0 0 2px #fff,0 1px 4px rgba(0,0,0,.22);overflow:hidden;vertical-align:middle;margin-right:6px}'
@@ -1389,6 +1397,122 @@ export function install(G){
    +'.pet-thumb.s2-glyph,.pet-thumb.mk-thumb{font-size:0!important}'
    +'.evrow .pet-port{flex:0 0 34px!important;width:34px!important;height:34px!important;min-width:34px!important;padding:0!important}';
   document.head.appendChild(st);}}catch(e){}
+
+ /* ================================================================ realistic bodies ===========
+    A pet listed in assets/models/pets/manifest.json with a model file gets a real animal's body: a
+    rigged, animated model (assets/pet-library.js), fitted to the pet's size, feet on the grass, head
+    towards +Z. The drawn pet above stays exactly as it is — it is what you see while the model
+    downloads, and for good if the model is missing or broken — and everything that moves the pet
+    (the follow, the flight, the idles, the camera logic) is unchanged: the real body is swapped into
+    the same group, and its clips are driven from the same speed, gait phase and flight state.
+    Nothing is fetched until a pet first moves, and nothing at all for a pet the manifest does not
+    list, so a pet without a model costs one small JSON read per session. A failed load only warns. */
+ const REAL={url:null,manifest:null,mf:null,lib:null,fail:null};
+ function realURL(){if(REAL.url)return REAL.url;let u=new URL('../models/pets/manifest.json',import.meta.url);
+  try{const q=new URLSearchParams(location.search).get('petManifest');if(q){const v=new URL(q,location.href);if(v.origin===location.origin)u=v;}}catch(e){}   // a same-origin test manifest, for QA and for looking at a model before it ships
+  return REAL.url=u;}
+ function realManifest(){if(!REAL.mf)REAL.mf=fetch(realURL(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+  .catch(e=>{console.warn('pet models: no model list ('+e.message+'), the drawn pets stay');return {pets:{}};}).then(m=>REAL.manifest=m&&m.pets?m:{pets:{}});return REAL.mf;}
+ function realWanted(k){const P=REAL.manifest&&REAL.manifest.pets||{};let e=P[k],n=0;while(e&&e.base&&n++<4){const b=P[e.base];if(!b)return false;e=Object.assign({},b,e,{base:b.base});}return !!(e&&e.available!==false&&e.file);}
+ /* the pet rim and the market's pair glow on a real material too, laid over whatever it already does */
+ function rimReal(m,e){if(!(m.isMeshStandardMaterial||m.isMeshPhysicalMaterial))return m;const L=(+(e&&e.lift)||0).toFixed(3),prev=m.onBeforeCompile,k0=Object.prototype.hasOwnProperty.call(m,'customProgramCacheKey')?m.customProgramCacheKey.bind(m):()=>'';
+  m.onBeforeCompile=(sh,r)=>{if(prev)prev.call(m,sh,r);sh.uniforms.uPetGlow=PETGLOW;sh.fragmentShader='uniform vec3 uPetGlow;\n'+sh.fragmentShader.replace('#include <opaque_fragment>',
+   '{vec3 pV=normalize(vViewPosition);float pF=pow(1.0-clamp(dot(normal,pV),0.0,1.0),2.4);outgoingLight+=mix(diffuseColor.rgb,vec3(1.0,0.97,0.90),0.5)*pF*0.22+diffuseColor.rgb*'+L+'+uPetGlow*(0.25+pF*1.6);}\n#include <opaque_fragment>');};
+  m.customProgramCacheKey=()=>k0()+'|petRealRim'+L;m.userData.petGlow=true;return m;}
+ function realLib(){if(!REAL.lib){REAL.lib=Promise.all([import('../pet-library.js?v=pl3'),import('three/addons/loaders/GLTFLoader.js'),import('three/addons/utils/SkeletonUtils.js')])
+   .then(([L,GL,SU])=>L.createPetLibrary({THREE,GLTFLoader:GL.GLTFLoader,clone:SU.clone,manifest:REAL.manifest,manifestURL:realURL(),patch:rimReal}));REAL.lib.catch(e=>console.warn('pet models: the model loader did not start ('+e.message+')'));}
+  return REAL.lib;}
+ function realLoad(key){const S=SPECIES[key];return realManifest().then(()=>{if(!realWanted(key))return null;if(REAL.fail===key)throw new Error('debugFail');
+  return realLib().then(lib=>lib.load(key,{height:S?S.h*(S.grow||1):0.5,mustFly:!!(S&&S.wings)}));});}
+ /* The state of the real body on a pet's parts: none (not listed), check, loading, swap (ready, waiting
+    for a moment the camera is not on the pet, at most two seconds), ready, failed. */
+ function realTick(c,st,dt){
+  const P=c.parts;let R=P.real;
+  if(R===undefined||R===null){R=P.real={state:'check',t:0};
+   if(!P.group.userData.realHook){P.group.userData.realHook=true;P.group.addEventListener('removed',()=>{const r=P.real;P.real=null;if(r){r.dead=true;if(r.inst)r.inst.dispose();if(r.spec0)P.spec=r.spec0;}P.bodyPivot.visible=true;});}}   // the host never disposes a pet: this frees its skeleton and materials; shared geometry and textures stay cached
+  if(R.state==='check'){if(!REAL.manifest){realManifest();return;}if(!realWanted(P.key)){R.state='none';return;}
+   R.state='loading';realLoad(P.key).then(asset=>{if(R.dead)return;if(!asset){R.state='none';return;}realLib().then(lib=>{if(R.dead)return;try{R.inst=lib.instantiate(asset);R.state='swap';R.t=0;}catch(e){R.state='failed';R.err=e.message;console.warn('pet models: '+P.key+' model could not be set up ('+e.message+'), the drawn pet stays');}});})
+    .catch(e=>{if(R.dead)return;R.state='failed';R.err=String(e&&e.message||e);console.warn('pet models: '+P.key+' model did not load ('+R.err+'), the drawn pet stays');});return;}
+  if(R.state==='swap'){R.t+=dt;const S=P.spec,g=P.group.position;
+   if(R.inst.restOnly||R.t>2||!(inView(g.x,g.y+S.h*0.5,g.z,0.1)))realSwap(P,R);else return;}   // a resting-only body comes in unseen anyway: it dissolves in when the pet next settles
+  if(R.state==='ready')driveReal(c,st,P,R,dt);
+ }
+ /* is the real body what you see (the drawn one hidden)? always, once ready, unless it only rests */
+ function realShown(P){const R=P.real;return !!(R&&R.state==='ready'&&(!R.inst.restOnly||R.hide));}
+ function realSwap(P,R){const inst=R.inst,S=P.spec,gw=S.grow||1,d=inst.dims;
+  if(inst.restOnly){P.group.add(inst.root);inst.fade(0);R.state='ready';R.first=true;R.phase=0;R.w={};R.speed={};R.air='';R.rest=0;R.hide=false;R.lockH=null;R.calm=0;R.hPrev=null;return;}   // the drawn pet keeps moving the pet; the real one sits in when it settles
+  P.group.add(inst.root);P.bodyPivot.visible=false;R.spec0=S;
+  P.spec=Object.assign({},S,{len:+(d.len/gw).toFixed(3),w:+(d.w/gw).toFixed(3),real:true});   // the follow's boxes and the slope tilt use the real animal's length and width
+  R.state='ready';R.first=true;R.phase=0;R.w={};R.speed={};R.air='';}
+ /* the clips, from what the drawn pet would be doing this frame */
+ const IDLE_CLIP={sit:'sit',scratch:'sit',wash:'sit',groom:'sit',periscope:'sit',settle:'sit',lie:'lie',sniff:'eat',graze:'eat',peck:'eat',snuffle:'eat',pounce:'jump',pronk:'jump',boing:'jump',binky:'jump'};
+ /* A body that can only rest (the Animated Fox is a sitting fox with a vertex-cache idle and no skeleton,
+    so nothing can walk it): once the pet has stopped and finished turning to face you it dissolves in,
+    sitting where the drawn pet stood, and plays its artist's idle (breathing, looking round, the tail);
+    the moment the pet moves off it dissolves out and the drawn pet runs on, so it never slides or skates.
+    While it sits it keeps its own heading: if the camera swings far round, it gets up and the drawn pet
+    turns, then it sits again. */
+ const _seat=new THREE.Vector3();
+ function driveRest(c,st,P,R,dt){
+  const I=R.inst,flying=!(st.air==='ground'||st.air==='wait');
+  const turn=R.hPrev==null?0:Math.abs(wrap(c.heading-R.hPrev))/Math.max(1e-3,dt);R.hPrev=c.heading;
+  const still=!flying&&!st.swim&&!st.hop&&st.spd<0.12&&(st.still||0)>0.35&&!(st.hopY>0.01)&&!(st.skim>0.01);
+  R.calm=still&&turn<0.25&&(st.still||0)>1.1?R.calm+dt:0;   // after the turn it makes to face you, a second after stopping
+  let want=R.rest>0.02?(still?1:0):(R.calm>0.3?1:0);
+  if(want&&R.lockH==null){R.lockH=c.heading;R.seat=(R.seat||new THREE.Vector3()).copy(P.group.position);}
+  const off=R.lockH==null?0:wrap(R.lockH-c.heading);
+  if(Math.abs(off)>0.7)want=0;   // swung too far round: up it gets
+  R.rest=clamp(R.rest+(want?dt/0.35:-dt/0.15),0,1);
+  if(R.lockH!=null&&Math.hypot(P.group.position.x-R.seat.x,P.group.position.z-R.seat.z)>1)R.rest=0;   // carried off at once (a fast travel, a course start): it goes with the pet, not left sitting behind
+  if(R.rest<=0)R.lockH=null;
+  /* it stays exactly where it sat, facing the way it sat, while the drawn pet runs on out of it */
+  I.root.rotation.y=R.lockH==null?0:off;
+  if(R.lockH==null)I.root.position.set(0,0,0);else{P.group.updateMatrixWorld();I.root.position.copy(P.group.worldToLocal(_seat.copy(R.seat)));}
+  R.hide=R.rest>0.55;P.bodyPivot.visible=!R.hide;
+  I.fade(R.rest);
+  if(R.rest>0){for(const k in R.w)R.w[k]=0;const k=I.pick('sit');if(k)R.w[k]=1;I.update(dt,{w:R.w,snap:R.first});R.first=false;}
+  R.clip=R.rest>0?I.state:null;
+ }
+ function driveReal(c,st,P,R,dt){
+  if(R.inst.restOnly){driveRest(c,st,P,R,dt);return;}
+  const I=R.inst,S=P.spec,w=R.w,sp=R.speed,flying=!(st.air==='ground'||st.air==='wait');let restart=null,phase=null,phased=null,air='';
+  for(const k in w)w[k]=0;
+  const add=(s,v)=>{const k=I.pick(s);if(k)w[k]=(w[k]||0)+v;return k;};
+  if(flying){const Wg=S.wings||{};
+   if(st.air==='takeoff'&&I.has('takeoff')){air='takeoff';if(R.air!=='takeoff')restart='takeoff';w.takeoff=1;sp.takeoff=clamp(I.dur('takeoff')/0.7,0.4,3);}
+   else if(st.air==='landing'&&(c.alt||0)<1.2&&I.has('land')){air='land';if(R.air!=='land')restart='land';w.land=1;sp.land=clamp(I.dur('land')/0.6,0.4,3);}
+   else if(st.glideNow){air='glide';add('glide',1);}
+   else{air='fly';const k=add('fly',1);if(k)sp[k]=clamp((st.flapHz||Wg.hz||3)/I.hz(k),0.5,2.5);}
+  }else if(st.swim){const k=add('swim',1);if(k!=='swim'&&k!=='idle'){phased=[k];R.phase+=dt*clamp(st.spd/Math.max(0.1,I.stride(k)||S.len*1.2),0.3,1.5)*0.6;phase=R.phase;}}
+  else if(S.kind==='bunny'&&st.hopAir>=0){const k=add('hop',1);phased=[k];phase=((st.ph%1)+1)%1;}   // the clip's crouch and push in step with the game's own hop
+  else{
+   /* turning on the spot takes steps too (a bone-walked body would otherwise pivot on planted feet) */
+   const spin=R.hPrev==null?0:Math.abs(wrap(c.heading-R.hPrev))/Math.max(1e-3,dt),turnStep=I.gait?clamp((spin-0.5)/1.0,0,1):0;
+   const spd=Math.max(st.spd,turnStep*0.5),m=Math.max(sstep(0.12,0.55,spd),turnStep*0.8),trot=I.has('trot');
+   const GT=S.realGait||{};   // a species' own gait speeds and top cadence (pet-fantasy.js: the fawn bounds early, its walk is slow)
+   let wW=1,wT=0,wR=0;if(trot){const a=sstep(GT.trot?GT.trot[0]:1.3,GT.trot?GT.trot[1]:2.2,spd),b=sstep(GT.run?GT.run[0]:4.6,GT.run?GT.run[1]:6.4,spd);wW=1-a;wT=a*(1-b);wR=a*b;}else{const a=sstep(GT.run?GT.run[0]:1.8,GT.run?GT.run[1]:3.4,spd);wW=1-a;wR=a;}
+   phased=[...new Set([I.pick('walk'),trot?I.pick('trot'):null,I.pick('run')].filter(Boolean))];   // every gait clip stays on the one stride phase, even while it fades out
+   if(m>0){const kW=add('walk',m*wW),kT=wT?add('trot',m*wT):null,kR=wR?add('run',m*wR):null;
+    /* one stride phase for every gait clip, advanced at the pet's speed over the blended stride */
+    const sW=I.stride(kW)||S.len*1.3,sT=kT?(I.stride(kT)||S.len*1.9):0,sR=kR?(I.stride(kR)||S.len*2.8):0,str=(sW*wW+sT*wT+sR*wR)/Math.max(1e-3,wW+wT+wR);
+    const dom=wR>0.5?kR:wT>0.5?kT:kW,nat=1/Math.max(0.1,I.dur(dom));R.phase+=dt*clamp(spd/Math.max(0.05,str),nat*0.5,nat*(GT.rateHi||2.6));}
+   phase=R.phase;   // held while it stands, so a gait clip fading out keeps its step
+   const id=st.idle&&!st.idle.out?IDLE_CLIP[st.idle.name]:null;
+   add(id&&I.has(id)?id:'idle',1-m);
+   if(id==='jump'&&I.has('jump')&&R.idleName!==st.idle.name)restart='jump';R.idleName=st.idle?st.idle.name:null;
+   if(S.wings&&st.skim>0.08&&I.has('fly')){const k=clamp(st.skim/(S.walk==='hop'?0.45:0.18),0,1);for(const s in w)w[s]*=1-k;w.fly=(w.fly||0)+k;sp.fly=clamp((S.wings.hz||3)/I.hz('fly'),0.5,2.5);}
+  }
+  if(phase!=null)R.phase=((phase%1)+1)%1;
+  const turnRate=R.hPrev==null?0:wrap(c.heading-R.hPrev)/Math.max(1e-3,dt);R.hPrev=c.heading;
+  /* a bone-walked body steps at the speed the pet really covers the ground (not the speed it wants), so a
+     planted foot stays put; a jump of the pet (a fast travel) is not a speed */
+  let mps=st.spd||0;
+  if(I.gait){const gp=P.group.position;if(R.pPrev&&dt>0){const d=Math.hypot(gp.x-R.pPrev.x,gp.z-R.pPrev.z)/dt;if(d<25)R.mv=R.mv==null?d:R.mv+(d-R.mv)*Math.min(1,dt/0.035);}R.pPrev=(R.pPrev||new THREE.Vector3()).copy(gp);
+   mps=Math.max(R.mv!=null?R.mv:mps,Math.min(0.5,Math.abs(turnRate)*0.25));}
+  I.update(dt,{w,phase,phased,speed:sp,restart,snap:R.first,mps,turn:turnRate});R.first=false;R.air=air;
+  I.look(st.lookY||0,st.lookP||0);
+  R.clip=I.state;
+ }
 
  /* ================================================================ the handles ================ */
  /* glow(amount,colour): the pair glow (market-summon-keys-pets.js) lights the pet's own rim, 0..1.
@@ -1408,11 +1532,23 @@ export function install(G){
   folDebug:(x,z,y,h)=>{const cam=G.camera.position,out=[];if(!FOL.list)return out;for(const F of FOL.list){if(!F.grid)continue;const C=FOL.cell;for(let i=Math.floor((x-5)/C);i<=Math.floor((x+5)/C);i++)for(let j=Math.floor((z-5)/C);j<=Math.floor((z+5)/C);j++){const a=F.grid.get(i*73856093^j*19349663);if(!a)continue;
    for(let k=0;k<a.length;k+=6){for(const fy of FY){const ty=y+h*fy,sx=x-cam.x,sy=ty-cam.y,sz=z-cam.z,L2=sx*sx+sz*sz,L=Math.sqrt(L2);let t=((a[k]-cam.x)*sx+(a[k+1]-cam.z)*sz)/L2;if(t<Math.max(0,1-4/L)||t>1.05)continue;t=Math.min(t,1);const qx=cam.x+sx*t-a[k],qz=cam.z+sz*t-a[k+1];if(qx*qx+qz*qz>a[k+2]*a[k+2])continue;const hy=cam.y+sy*t;if(hy<a[k+3]||hy>a[k+4])continue;
      out.push({mesh:F.im.name||('#'+F.im.count+':'+F.im.geometry.type),w:a[k+5],fy,r:+a[k+2].toFixed(2),bot:+(a[k+3]-y).toFixed(2),top:+(a[k+4]-y).toFixed(2),d:+Math.hypot(a[k]-x,a[k+1]-z).toFixed(2)});}}}}return out;}};
+ /* the real bodies: real(comp) -> {state, clip, info} for QA and debugging; loadReal(key) loads a model
+    without showing it; useManifest(url) points at another model list (QA's test fixtures) and forgets
+    what was loaded; debugFail=key makes that pet's model fail, to see the drawn pet stay */
+ Object.defineProperty(G.petModels,'debugFail',{get:()=>REAL.fail,set:v=>{REAL.fail=v||null;},enumerable:true});
+ G.petModels.real=c=>{const R=c&&c.parts&&c.parts.real;return R?{state:R.state,clip:R.clip||null,err:R.err||null,info:R.inst&&R.state==='ready'?R.inst.info():null}:{state:c&&c.parts?'none':null,clip:null};};
+ G.petModels.loadReal=k=>realLoad(k).then(a=>a?{key:a.key,dims:a.dims,clips:a.src,stats:a.stats}:null);
+ G.petModels.useManifest=u=>{REAL.url=u?new URL(u,location.href):new URL('../models/pets/manifest.json',import.meta.url);REAL.manifest=null;REAL.mf=null;REAL.lib=null;return realManifest().then(m=>Object.keys(m.pets||{}));};
+ G.petModels.realList=()=>realManifest().then(m=>Object.keys(m.pets||{}).filter(realWanted));
+ /* a package's own species (pet-fantasy.js): addSpecies(key, sheet) with the same fields as SPECIES, plus
+    build(P,root,kit) for extra parts and fx(P,comp,st,dt,t,o) for per-frame effects; kit is the drawing set */
+ G.petModels.addSpecies=(k,spec)=>{SPECIES[k]=spec;try{tagRows();}catch(e){}return spec;};
+ G.petModels.kit=KIT;
  try{if(G.pets){G.pets.portrait=(k,s)=>svg(k,s);}}catch(e){}
  /* the rows of PETS3 learn their kind and wings, for anything that lists them */
  const tagRows=()=>{try{for(const r of (G.tables&&G.tables.PETS3)||[]){const s=SPECIES[r.key];if(s){if(!r.kind)r.kind=s.kind;if(s.wings)r.wings=true;}}}catch(e){}};
  tagRows();G.on('boot',tagRows);
  G.on('state',o=>{let c=null;try{c=G.pets&&G.pets.comp();}catch(e){}
   o.pet=c&&c.parts?{key:c.key,model:c.parts.key||null,kind:c.parts.spec?c.parts.spec.kind:null,air:c.st?c.st.air:'ground',alt:+(c.alt||0).toFixed(2),
-   x:+c.pos.x.toFixed(2),z:+c.pos.z.toFixed(2),slot:c.st&&c.st.slot?c.st.slot.map(v=>+v.toFixed(2)):null,idle:c.st&&c.st.idle?c.st.idle.name:null}:null;});
+   x:+c.pos.x.toFixed(2),z:+c.pos.z.toFixed(2),slot:c.st&&c.st.slot?c.st.slot.map(v=>+v.toFixed(2)):null,idle:c.st&&c.st.idle?c.st.idle.name:null,real:c.parts.real?c.parts.real.state:'none',clip:c.parts.real&&c.parts.real.clip||null}:null;});
 }

@@ -1,0 +1,16 @@
+{
+ "schemaVersion": 1,
+ "about": "QA only (tools/qa-pet-library.cjs, or ranch3d.html?petManifest=tools/fixtures/pets/manifest.test.json to look at the fixtures in the game). The shipped list is assets/models/pets/manifest.json. The fixtures are made here by make-fixtures.mjs: no third-party art.",
+ "pets": {
+  "fox": {"available": true, "file": "fixture-quad.glb", "license": "made here (test fixture)", "creator": "Meadowlark Ranch",
+          "clips": {"idle": "Idle", "walk": {"name": "Walk"}, "run": "Run", "sit": "Sit"},
+          "materials": {"roughness": 0.85, "sheen": 0.4, "sheenRoughness": 0.6, "envMapIntensity": 0.5}},
+  "glimmerfox": {"base": "fox", "tint": {"dark": "#7b7ff0", "mid": "#bfe9ff", "light": "#ffffff", "emissive": "#8fe8ff", "emissiveIntensity": 0.3}},
+  "owl": {"available": true, "file": "fixture-bird.glb", "license": "made here (test fixture)", "creator": "Meadowlark Ranch",
+          "clips": {"idle": "Idle", "walk": "Walk", "fly": {"name": "Fly", "glideAt": 0.3}, "takeoff": "TakeOff"}},
+  "bunny": {"available": true, "file": "fixture-quad.glb", "clips": {"idle": "Idle", "walk": "Walk"}},
+  "duck": {"available": true, "file": "fixture-quad.glb", "clips": {"idle": "Idle", "walk": "Walk"}},
+  "dog": {"available": true, "file": "broken.glb", "clips": {"idle": "Idle"}},
+  "cat": {"available": false, "file": "not-downloaded-yet.glb", "clips": {"idle": "Idle"}}
+ }
+}
