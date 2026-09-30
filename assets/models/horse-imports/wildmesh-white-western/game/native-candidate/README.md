@@ -1,8 +1,10 @@
 # White Western native-rig candidate
 
-This private Breed Studio review keeps WildMesh 3D's original 677-joint skin, body, hair, Western tack, and creator Idle/Walk animation curves. The GLB's legacy specular-glossiness material declarations were translated to equivalent PBR declarations so the bundled browser renderer displays the original white coat and tack. No geometry, skin weights, joint transforms, animation curves, textures, or binary payload were changed. [candidate.json](candidate.json) records hashes, license, validation, and release status.
+This private Breed Studio review keeps WildMesh 3D's original 677-joint skin, body, hair, Western tack, and creator Idle/Walk animation curves. The GLB's legacy specular-glossiness material declarations were translated to equivalent PBR declarations so the bundled browser renderer displays the original white coat and tack. No geometry, skin weights, joint transforms, animation curves, textures, or binary payload were changed. [candidate.json](candidate.json) records hashes, license, validation, and release status. The creator Walk moves the body, neck, and head, but lowers the torso too far for the user's game standard; it remains a motion reference, not an approved gait.
 
 Serve this checkout locally and open [review.html](review.html). The review shows only creator Idle and Walk. It is not connected to the game roster or Ranch and has no mounted rider or faster gaits. Review images and measurements can be regenerated with `node tools/qa-native-white-western-candidate.cjs` while the local server runs; set `QA_PORT` or `QA_URL` for a non-default server.
+
+[The side-by-side hair study](../../../../../../review/horse-secondary-motion.html?horse=white) adds small delayed motion to the original mane and tail strands for comparison. It does not correct the Walk's low body path.
 
 The 25 WildMesh breed derivatives keep exactly the original five mesh vertex counts, triangle indices, and UV layouts, but their weights were merged into a 40-joint game rig. A full-rig conversion should first pilot one Bay shape, then batch the rest only after visual acceptance:
 

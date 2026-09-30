@@ -25,6 +25,16 @@ to replace the public stable as a whole.
   identities, weak Arabian/Fjord/pastel foundations, and flat feather wings.
   See [the visual review](../../../tools/qa-roster-visual-review.md) for family
   counts, representative frames, and the limits of the capture.
+- User review of the experimental Bay also identified a low crouching torso,
+  rigid mane and tail at speed, and nearly still torso, head and neck. These
+  are release blockers in addition to leg geometry. The current imported groom
+  facade has no independent update and the 40-joint solver uses very small
+  secondary joint angles; both need a full-cycle visual check at each gait.
+- A full-rig Bay proof kept the creator Walk and all 677 joints, restoring
+  visible body/head movement, but reproduced the low posture. At matched Bay
+  scale, the intact white source and Bay proof both moved their withers from
+  roughly 1.58 m at rest to about 1.44–1.52 m during Walk. This is a source
+  motion issue as well as a conversion issue; the native clip needs correction.
 - The original 3DHaupt dragon has a 232-joint skin and a creator idle clip, but
   no source walk, run or flight clips. The earlier 68-joint horse conversion
   discarded source animation and folded the wings poorly.
@@ -33,8 +43,11 @@ to replace the public stable as a whole.
 
 - The intact [white Western horse](wildmesh-white-western/game/native-candidate/README.md)
   is available for private review with its 677-joint source rig, materials,
-  tack and creator Idle/Walk. Faster gaits are unsupported until authored and
-  approved; rider mounting and Ranch performance are untested.
+  tack and creator Idle/Walk. Its Walk crouches too low and is not approved for
+  gameplay. Faster gaits are unsupported until authored and approved; rider
+  mounting and Ranch performance are untested. A separate
+  [mane/tail study](../../../review/horse-secondary-motion.md) tests 51 detail
+  joints without changing the creator body motion.
 - The original 3DHaupt dragon is available for private review with its 232-joint
   native rig and sole creator idle. Its 2K display candidate preserves the source
   rig and animation; the charcoal material treatment is only an in-memory preview.
@@ -51,8 +64,12 @@ to replace the public stable as a whole.
 Open [the private review landing page](../../../review/index.html) through the local
 preview server to compare the source-rig white horse and both dragons. These
 preview files are not the public stable and do not offer approved ride movement.
+The [motion source shortlist](MOTION_SOURCE_SHORTLIST.md) records other free
+gait references shown to the user and whether they have been downloaded.
 
 Before release, each claimed gait needs a complete multi-angle cycle review,
-hoof-contact and rider/tack checks, acceptable browser performance, accurate
+hoof-contact and torso-height checks, visibly responsive but anatomically
+believable mane/tail and head/neck/torso motion, rider/tack checks, acceptable
+browser performance, accurate
 breed-specific silhouettes, and source/credit verification. Do not infer those
 conditions from clip presence or automated numerical checks alone.
