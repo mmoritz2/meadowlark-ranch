@@ -34,3 +34,13 @@ contact checks. The separate mane/tail prototype was not validated on this
 failed body correction. Its per-frame solver also required hundreds of
 677-joint matrix updates; any future fix should be baked offline and checked
 for browser performance before integration.
+
+A second private test removed part of the source Walk's constant pelvis,
+spine, and neck pose bias while keeping its cyclic motion. The head and trunk
+posture improved, but a one-pass offline solve of three leg joints against
+actual skinned hoof soles still left **164 of 278** source-planted samples more
+than 1 cm high (worst 3.23 cm). The trunk marker remained 1.423–1.451 m against
+1.481 m in Idle. The [side view at phase 0](curve-stance-0.png) and
+[half-cycle](curve-stance-half.png) still show unsupported hooves, especially
+behind. Its full ignored report is under `output/native-curve-repair/`.
+This second trial is blocked too; neither pose is ready to become a Ranch gait.

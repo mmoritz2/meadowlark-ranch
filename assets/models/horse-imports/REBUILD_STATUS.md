@@ -37,7 +37,10 @@ to replace the public stable as a whole.
   appears in the intact white source. A previously cited body vertex is mostly
   neck-weighted and must not be used as a withers measurement. A private global
   lift and leg IK trial then left planted hooves hovering or penetrating the
-  ground, so the source motion needs a deeper correction; see the
+  ground. A second pelvis/spine/neck curve-bias correction improved posture,
+  but 164 of 278 source-planted hoof samples still hovered more than 1 cm
+  after an offline stance solve. The source motion needs a deeper correction;
+  see the
   [Bay rig proof](../../../review/bay-native-proof/README.md) and
   [Walk correction failure](../../../review/walk-correction-failure/README.md).
 - The original 3DHaupt dragon has a 232-joint skin and a creator idle clip, but
