@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "checkedLocalDate": "2026-09-30",
-  "scope": "Acquisition, source-derived conversion and protected publication requirements for the final three approved models; complete 80 activation remains a separate gate.",
+  "scope": "Registered source acquisition, adaptations, protected delivery, complete 80-horse activation and verified live publication.",
   "browserUnlocked": true,
   "sourceAccess": [
     {
       "id": "arabian-sculpt",
       "site": "Pinshape",
-      "observed": "Exact horse and separate base OBJ originals registered and preserved. Same-sculpt standing-limb adaptation, ordinary voxel joining/fairing, new paint/groom and canonical 40 nine 120 Hz clips recorded; final complete-roster integration remains separate.",
+      "observed": "Exact horse and separate base OBJ originals registered and preserved. Same-sculpt standing-limb adaptation, ordinary voxel joining/fairing, new paint/groom and canonical 40 nine 120 Hz clips recorded; complete-roster Ranch and Studio checks pass and the adaptation is published.",
       "sourceAcquired": true
     },
     {
@@ -44,7 +44,9 @@
       "resolved": true,
       "protectedDeliveryFile": "fjord-sculpt/game/fjord-animated.mkr",
       "protectedDeliverySha256": "86cf8ca1b5243b40b604f77eaff7e5bda6f3d82da698d8265c51209e3ef7af31",
-      "finalPublicationAuditPending": true
+      "finalPublicationAuditPending": false,
+      "publishedCommit": "31f3b1e3171758ab615090c37e5d1dab591152d6",
+      "publicationEvidence": "deployment-closure-validation.json; public GitHub Pages build status built and live manifest/Ranch/default loader SHA-256 matches"
     },
     "pastel-unicorn": {
       "status": "protected-incorporation-implemented-local-runtime-validated",
@@ -66,7 +68,9 @@
       "resolved": true,
       "protectedDeliveryFile": "pastel-unicorn/game/pastel-unicorn-animated.mkr",
       "protectedDeliverySha256": "2b62831a501c65413390df70be884a811a530a6062625efe8fe0a6a6f4a7c0f5",
-      "finalPublicationAuditPending": true
+      "finalPublicationAuditPending": false,
+      "publishedCommit": "31f3b1e3171758ab615090c37e5d1dab591152d6",
+      "publicationEvidence": "deployment-closure-validation.json; public GitHub Pages build status built and live manifest/Ranch/default loader SHA-256 matches"
     }
   },
   "siteActivated": true,
@@ -132,5 +136,14 @@
   },
   "complete80Prepared": true,
   "complete80LocalRanchAndStudioChecksPass": true,
-  "shippingDefaultRanchAndStudioChecksPass": true
+  "shippingDefaultRanchAndStudioChecksPass": true,
+  "livePublication": {
+    "commit": "31f3b1e3171758ab615090c37e5d1dab591152d6",
+    "githubPagesBuild": "built",
+    "publicManifestIdentityCount": 80,
+    "publicManifestPendingIdentities": 0,
+    "publicRanchAndDefaultLoaderMatchCommittedSha256": true,
+    "publicStudioDisplayedIdentityCount": 80,
+    "checkedLocalDate": "2026-09-30"
+  }
 }

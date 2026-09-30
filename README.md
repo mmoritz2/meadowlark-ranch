@@ -227,7 +227,7 @@ resemblance is genre admiration. No models or textures were extracted from eithe
 
 - Replacement horse foundation: [Horse by b2przemo](https://blendswap.com/blend/13903), [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). Adapted materials, grooming and presentation. Original license and acquisition details: `assets/models/horse-candidates/b2przemo/SOURCE.md`.
 - Comparison horse: [Realtime Ranchers by Lyndon Daniels](https://opengameart.org/content/realtime-ranchers-3d-model-pack), [CC0](https://creativecommons.org/publicdomain/zero/1.0/). Material paths and presentation adapted. Details: `assets/models/horse-candidates/lyndon-daniels/SOURCE.md`.
-- Prepared imported horse assets: [creator credits, licenses and adaptation statements](assets/models/horse-imports/ATTRIBUTION.md) for WildMesh 3D, BlueMesh, ikkiz, CG Cookie / David Ward, Diego Luján García and 3DHaupt. Noncommercial and NoAI restrictions are identified per source; the prepared catalog's publication status is tracked separately.
+- Imported horse assets: [creator credits, licenses and adaptation statements](assets/models/horse-imports/ATTRIBUTION.md) for all nine approved sources. Noncommercial and NoAI restrictions are identified per source.
 
 `DEVELOPMENT.md` is the full build log, including what didn't work the first time.
 

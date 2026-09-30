@@ -22,8 +22,8 @@
   "validatedIndexFileComparisons": [
     {
       "file": "README.md",
-      "workingSha256": "c83861e6c47c06b224df2ee8b6c6ed623b74baa9a0bec67aeb42c01fac1104d3",
-      "indexedSha256": "c83861e6c47c06b224df2ee8b6c6ed623b74baa9a0bec67aeb42c01fac1104d3",
+      "workingSha256": "2bed5dfb87fa75b57bce9164a91676b83a3558aa5699d60bd1db9ed5bc8b1e77",
+      "indexedSha256": "2bed5dfb87fa75b57bce9164a91676b83a3558aa5699d60bd1db9ed5bc8b1e77",
       "matchesValidatedWorkingBytes": true
     },
     {
@@ -124,8 +124,8 @@
     },
     {
       "file": "assets/horse-import-review.js",
-      "workingSha256": "87e67df1bc9a282bea4005b4c1929e5d43add32a09a0f15f5791c7106f6650a7",
-      "indexedSha256": "87e67df1bc9a282bea4005b4c1929e5d43add32a09a0f15f5791c7106f6650a7",
+      "workingSha256": "d59005a63593b20733c9b7bd8fd51f73b3002477c49ffdc1aac6bed4e8261137",
+      "indexedSha256": "d59005a63593b20733c9b7bd8fd51f73b3002477c49ffdc1aac6bed4e8261137",
       "matchesValidatedWorkingBytes": true
     },
     {
@@ -136,8 +136,8 @@
     },
     {
       "file": "assets/models/horse-imports/README.md",
-      "workingSha256": "ae28166492794c8c33d678df004fc435e2100890836bbea0f3fd4197080ffda7",
-      "indexedSha256": "ae28166492794c8c33d678df004fc435e2100890836bbea0f3fd4197080ffda7",
+      "workingSha256": "5c3a35526d9fc5c527b2f933c0cf98a5068777ec57aed0b1278cf6764fa01e21",
+      "indexedSha256": "5c3a35526d9fc5c527b2f933c0cf98a5068777ec57aed0b1278cf6764fa01e21",
       "matchesValidatedWorkingBytes": true
     },
     {
@@ -1438,8 +1438,8 @@
     },
     {
       "file": "horse-import-review.html",
-      "workingSha256": "4d325b358fde47596ac0e3f5b05bcb7f241472ec7f641695ff088fab272d0f6f",
-      "indexedSha256": "4d325b358fde47596ac0e3f5b05bcb7f241472ec7f641695ff088fab272d0f6f",
+      "workingSha256": "8029a00aafb968f899d6f83bf923c582d67f3022be43bc1f4000af36f7a957b4",
+      "indexedSha256": "8029a00aafb968f899d6f83bf923c582d67f3022be43bc1f4000af36f7a957b4",
       "matchesValidatedWorkingBytes": true
     },
     {
@@ -1455,8 +1455,8 @@
       "matchesValidatedWorkingBytes": true
     }
   ],
-  "publicHorseFileCount": 469,
-  "publicHorseBytes": 634170503,
-  "conservativeIndexedSiteBytes": 918002973,
+  "publicHorseFileCount": 470,
+  "publicHorseBytes": 634248636,
+  "conservativeIndexedSiteBytes": 918081138,
   "scope": "Actual Git index bytes and complete runtime dependencies; no strong client DRM or legal certification is implied."
 }
