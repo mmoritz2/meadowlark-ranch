@@ -30,21 +30,23 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
      natural wood. Multiplying the photo by a honey-oak tint keeps every board line and scuff and
      turns the paint into stain; the joinery stays white, which is the classic ranch pairing. */
   const siding = material('Ranch | weathered timber siding', {
-    color: '#d9a673', map: map('siding_albedo.jpg', true),
-    normalMap: map('siding_normal.jpg'), normalScale: new THREE.Vector2(.22,.22),
+    color: '#b39578', map: map('siding_albedo.jpg', true),
+    normalMap: map('siding_normal.jpg'), normalScale: new THREE.Vector2(.48,.48),
     roughnessMap: map('siding_roughness.jpg'), roughness: 1, envMapIntensity: .55,
   }, 2.4);
   const roof = material('Ranch | aged cedar shingles', {
-    color: '#e6c3a0', map: map('roof_albedo.jpg', true),   // warmed to sit on the timber rather than read as grey slate
-    normalMap: map('roof_normal.jpg'), normalScale: new THREE.Vector2(.24,.24),
+    color: '#b9b4a6', map: map('roof_albedo.jpg', true),
+    normalMap: map('roof_normal.jpg'), normalScale: new THREE.Vector2(.52,.52),
     roughnessMap: map('roof_roughness.jpg'), roughness: 1, envMapIntensity: .45,
   }, 1.8);
   const trim = material('Ranch | warm painted joinery', {color:'#dcdad0',roughness:.83});
   const wood = material('Ranch | oiled oak doors', {color:'#69513d',roughness:.8,
     map:map('siding_albedo.jpg',true)},2.4);
   const metal = material('Ranch | dark ironwork', {color:'#333a38',roughness:.66,metalness:.58});
-  const stone = material('Ranch | foundation stone', {color:'#72716a',roughness:1});
-  const stoneLight = material('Ranch | dressed limestone', {color:'#939087',roughness:.97});
+  const stone = material('Ranch | foundation stone', {color:'#949084',roughness:1,
+    map:map('rock_albedo.jpg',true),normalMap:map('rock_normal.jpg'),normalScale:new THREE.Vector2(.42,.42)},1.6);
+  const stoneLight = material('Ranch | dressed limestone', {color:'#bbb5a5',roughness:.97,
+    map:map('rock_albedo.jpg',true),normalMap:map('rock_normal.jpg'),normalScale:new THREE.Vector2(.24,.24)},1.6);
   const mortar = material('Ranch | stone mortar', {color:'#555954',roughness:1});
   const brick = material('Ranch | chimney brick', {color:'#756353',roughness:.98});
   const dark = material('Ranch | window recess', {color:'#161f22',roughness:1});
@@ -133,7 +135,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
         b.box(right-left,high-low,.18,siding,mid,(low+high)/2,0,null,frame);
         // Slim batten strips catch grazing light. Stay within this wall rectangle.
         for(let u=Math.ceil(left/.30)*.30;u<right-.025;u+=.30)
-          if(u>left+.025)b.box(.029,high-low,.029,trim,u,(low+high)/2,.102,null,frame);
+          if(u>left+.025)b.box(.038,high-low,.029,siding,u,(low+high)/2,.102,null,frame);
       };
       for(const o of cuts){panel(bottom,o.y-o.h/2);bottom=o.y+o.h/2;}
       panel(bottom,height);

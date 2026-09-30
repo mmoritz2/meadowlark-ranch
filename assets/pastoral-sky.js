@@ -34,11 +34,21 @@ export function createPastoralSky(THREE) {
         vec2 cloudUV=d.xz/max(d.y+0.19,0.08)*1.8+vec2(time*0.014,time*0.004);
         float cn=cloudNoise(cloudUV)*.88+noise2(cloudUV*16.4)*.08+noise2(cloudUV*32.7)*.04;
         float cloud=smoothstep(0.54,0.70,cn)*smoothstep(0.015,0.13,d.y);
-        float thickness=cloudNoise(cloudUV+vec2(.17,.26));
-        vec3 cloudColor=mix(vec3(0.55,0.64,0.70),vec3(0.96,0.97,0.95),smoothstep(.39,.67,thickness));
-        cloudColor=mix(cloudColor,vec3(0.95,0.66,0.42),golden*0.45);
+        vec3 sd=normalize(sunPosition);
+        float thickness=smoothstep(.51,.75,cn);
+        float towardsSun=cloudNoise(cloudUV+sd.xz*.28);
+        float litEdge=clamp((cn-towardsSun)*6.0+.48,.0,1.0);
+        vec3 cloudColor=mix(vec3(.36,.45,.54),vec3(.95,.96,.94),litEdge);
+        cloudColor=mix(cloudColor,cloudColor*.77,thickness*.42);
+        float silver=pow(max(dot(d,sd),0.0),9.0)*(1.0-thickness)*.28;
+        cloudColor+=vec3(1.0,.92,.76)*silver;
+        cloudColor=mix(cloudColor,cloudColor*vec3(1.22,.84,.62),golden*.64);
         cloudColor=mix(vec3(0.035,0.047,0.075),cloudColor,daylight);
         sky=mix(sky,cloudColor,cloud*(1.0-rain*0.3));
+        // High cirrus travels independently above the lower cloud bank.
+        vec2 cirrusUV=d.xz/max(d.y+.12,.08)*vec2(1.3,6.0)+vec2(time*.003,9.0);
+        float cirrus=smoothstep(.62,.84,cloudNoise(cirrusUV))*smoothstep(.10,.48,d.y)*.14;
+        sky=mix(sky,mix(vec3(.08,.10,.15),vec3(.79,.85,.88),daylight),cirrus*(1.0-cloud));
         float sunDot=max(dot(d,normalize(sunPosition)),0.0);
         sky+=vec3(0.18,0.14,0.09)*pow(sunDot,18.0)*day*(1.0-rain);
         sky=mix(sky,vec3(1.0,0.91,0.68),smoothstep(0.99976,0.99987,sunDot)*day*(1.0-rain));

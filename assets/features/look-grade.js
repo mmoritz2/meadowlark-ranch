@@ -1,107 +1,20 @@
-/* Feature package 'look-grade'. Owned by that package: edit only this file and the inline hot
-   spots assigned to it. See index.js for the contract. Nothing runs at import time.
-
-   ============================================================================================
-   THE GRADE AND THE LIGHT — why this file exists
-   ============================================================================================
-   Star Equestrian's store shots hold a very tight band: mean HSV saturation around 0.50, mean
-   value around 0.58, and about 55% of the pixels vivid (S>0.45). They hold it everywhere —
-   open clay yard, shaded wood, autumn hillside. This game did the opposite. Measured the same
-   way, the open ranch yard came out 0.24 / 0.67 / 14% (pale, washed, colourless) and deep
-   woodland came out 0.47 / 0.28 / 78% (nearly black). The average was not the problem; the
-   SPREAD was. The open half of the world was blowing out to grey and the shaded half was
-   crushing to black, and no single exposure number can fix both at once.
-
-   Three things cause it, and this package answers each one.
-
-   1. ACES. renderer.toneMapping was ACESFilmicToneMapping, which is a film-print emulation:
-      it deliberately desaturates on the way to white and it deliberately toes into black. On a
-      stylised cartoon world lit by one hard sun that is precisely the wrong curve — ranch3d.html
-      already carries a comment at :2448 saying the same thing about the sky shader. It is
-      replaced with Cineon, which was the only one of the five curves three.js offers that beat
-      it on every part of the measure. See the note on DEF.tone for the whole table.
-
-   2. The fill. The day cycle settles on sun 2.65 against a hemisphere fill of 1.24 at noon.
-      Better than two to one means anything the sun cannot reach falls off a cliff. Star
-      Equestrian's shade is open and blue-grey, never black. So a fraction of the key is handed
-      to the fill — the same total light, redistributed.
-
-   3. Nothing was grading the final picture at all. There is a composer with a bloom pass on
-      it and nowhere in the chain did anybody touch saturation.
-
-   ---- Where each lever lands, which is the thing to know before changing anything ----------
-     renderer.toneMapping / .toneMappingExposure   flat screen AND VR AND the Low tier
-     the lights (borrowed per draw, below)         flat screen AND VR AND the Low tier
-     the grade pass on G.composer                  flat screen only
-   ranch3d.html:2350 sets useBloom=false when an XR session starts, because EffectComposer
-   cannot drive the XR framebuffer, and applyQuality does the same on the Low tier. Both then
-   call renderer.render directly and the composer — and therefore the pass — is skipped
-   entirely. That is why the exposure and the fill carry most of the correction and the pass
-   only finishes it: a headset and a cheap laptop get the large half of the change, and the
-   flat screen on High gets all of it.
-   ============================================================================================ */
+/* World presentation. The former preset chased the reference game's saturated
+   cartoon palette. The realistic preset preserves material colour and directional
+   light, with a restrained photographic finish after scene-linear bloom. */
 export const id='look-grade';
 
-/* Everything the grade does, in one table, because a look that lives in scattered magic
-   numbers cannot be tuned and cannot be explained. Every one of these was swept against the
-   metric rather than chosen by eye — and then the eye overruled the metric twice, on the
-   shadow gain and on the vibrance ceiling, both noted where they sit. A number in the band
-   with an ugly picture is not the job. */
 const DEF={
  on:true,
- /* Cineon, not ACES. Swept against the metric with everything else held still and neutral:
-    ACES 0.302/0.604/29%, Cineon 0.341/0.550/34%, and every other curve three offers was far
-    worse — AgX, Reinhard, Linear and no tone mapping at all each collapsed the vivid fraction
-    to between 1% and 7%, because they all desaturate or clip on their way to white and this
-    world is authored bright. Cineon also came in with the narrowest value spread of the five,
-    which is the defect this package exists to fix. */
- tone:'cineon',
- exposure:0.62,        // Cineon is a much hotter curve than ACES; 1.05 through it blows the yard out
- /* The light, as a redistribution rather than a boost. shift is the fraction of the key light
-    handed over to the fill; the total the day cycle asked for is left alone. See the note by
-    the render wrapper for why it has to work this way and not by multiplying the fill. */
- shift:0.45, fillGain:1.00, keyGain:1.00,
- /* Neither half of the hemisphere fill has its HUE touched, and both of those 1.00s were
-    bought the hard way. Saturating the fill is the obvious second move after redistributing
-    it — SE's shade is a distinct blue — and it is a trap at both ends of the day. The
-    ground side, C_GROUND_DAY 0x898467, is an olive, so pushing it off grey pushes it green.
-    The sky side is worse: after dark the cycle settles it on C_HEMI_NIGHT 0x65789c and the
-    fill is then five times the key, so saturating it at 1.30 painted the entire arena floor
-    mint green at dusk and dawn and lifted the frame's value from 0.19 to 0.25 — a dusk that
-    reads as an overcast afternoon. The metric PREFERRED that version, by a wide margin, which
-    is the clearest single reminder in this file that the number is the guide and not the job.
-    What was actually wanted from the fill was warmth, and warmth has no hue to get wrong. */
- skySat:1.00, gndSat:1.00, gndWarm:0.12,
- sunSat:1.20,          // #fff0d2 is very nearly white; SE's key light is unmistakably warm
- /* The grade pass, in display space, after the tone map. See the shader for what each does.
-    lift and liftKnee are deliberately half of what the metric wanted: at lift 1.4 / knee 0.65
-    the value spread across six cameras fell to 0.047, which is a better number than anything
-    here, and the wood turned into a flat lime wall with no depth in it, because the shading
-    inside a tree IS the darkness the gain was eating. This is the setting where the spread
-    comes down and the wood is still a wood. */
- /* Lift down from 1.20. Opening the shade closes the gap between a sunlit frame and a shaded
-    one, which was the point — but it also closes the gap WITHIN a frame, and that spread is the
-    modelling: the shading inside a tree, the roundness of a horse's barrel. The reference holds a
-    within-frame value spread of 0.232 and the first cut of this grade fell to 0.136. Cross-camera
-    consistency is worth having; paying for it by flattening every individual picture is not. */
- lift:0.75, liftKnee:0.48,
- gamma:1.00,
- /* Retuned after an independent review scored the first cut on an UNBIASED camera set — the
-    original six vantages had four of them pointed at the same pale arena sand, which flattered
-    the numbers. On six real landscapes it came out at saturation 0.548 against the reference's
-    0.502, with 67% of pixels vivid against 55%: over the band, not inside it. Worse, within-frame
-    value spread fell to 0.122 where the reference holds 0.244 — the grade was buying colour by
-    eating the modelling, which is the opposite of what the reference does.
-    So: less saturation, more contrast, and a tighter chroma ceiling. The ceiling matters because
-    at 0.34 it was compressing the worst offender by only 7% and every tree trunk in frame was
-    going fluorescent orange — measured at #4c3b24 to #7f5517, saturation 0.540 to 0.814 — along
-    with the bay horse's own coat. */
- contrast:1.22, pivot:0.44,
- sat:1.20, vib:0.80, cap:0.26,
- lo:0.030, hi:0.16,   // the floor guard: no grade below lo, all of it above hi
- warm:0.015, split:0.012, tint:0.045,   // tint: the green-axis pull, see step 6 of the shader
- mix:1.0,
- bloom:0.060,          // up from 0.045; SE has a soft glow on the sunlit edges and this is it
+ tone:'aces', exposure:1.0,
+ // Preserve the atmosphere's sun/sky ratio so geometry retains its modelling.
+ shift:0, fillGain:1, keyGain:1,
+ skySat:1, gndSat:1, gndWarm:0, sunSat:1,
+ lift:.12, liftKnee:.35, gamma:1,
+ contrast:1.04, pivot:.44,
+ sat:.97, vib:.04, cap:.48,
+ lo:.03, hi:.16,
+ warm:.004, split:.005, tint:.006,
+ mix:1, bloom:.035,
 };
 
 /* The grade, in display space, applied after OutputPass has tone-mapped and sRGB-encoded.
@@ -359,11 +272,9 @@ export function install(G){
       midnight — so when the sun is down it simply stops, and the night is exactly what the
       renderer drew. Measured on horse close-ups at midnight, where a rider has to be able to see
       their own horse: crushed-to-black went 69% ungraded to 88% graded before this. */
-   let day=1; try{const d=G.time&&G.time.dayT&&G.time.dayT(); if(typeof d==='number'){
-    const h=Math.abs(((d%1)+1)%1-0.5)*2;            // 1 at noon, 0 at midnight
-    day=Math.max(0,Math.min(1,(h-0.18)/0.22));      // full grade by mid-morning, none after dusk
-   }}catch(e){}
-   u.uMix.value=P.mix*day;
+   const d=G.time?.dayT?.()??.5;
+   const elevation=-12+66*(.5-.5*Math.cos(d*Math.PI*2));
+   u.uMix.value=P.mix*THREE.MathUtils.smoothstep(elevation,0,14);
    u.uContrast.value=P.contrast; u.uPivot.value=P.pivot;
    u.uSat.value=P.sat; u.uVib.value=P.vib; u.uCap.value=P.cap;
    u.uWarm.value=P.warm; u.uSplit.value=P.split; u.uTint.value=P.tint;   // uMix is set above, gated by daylight
@@ -371,6 +282,13 @@ export function install(G){
   if(bloomPass)bloomPass.strength=P.on?P.bloom:bloomWas;
  };
  sync();
+ // The sun moves continuously; the grade must follow it after boot as well.
+ G.on('tick',()=>{
+  if(!gradeMat)return;
+  const d=G.time?.dayT?.()??.5;
+  const elevation=-12+66*(.5-.5*Math.cos(d*Math.PI*2));
+  gradeMat.uniforms.uMix.value=P.mix*THREE.MathUtils.smoothstep(elevation,0,14);
+ });
 
  /* ---- 4. the player's way out -----------------------------------------------------------
     On by default, and behind the Graphics tab the settings screen already has rather than a
@@ -394,7 +312,7 @@ export function install(G){
    if(typeof h!=='string')return h;
    const i=h.indexOf('acct:bloom'); if(i<0)return h;
    const j=h.indexOf('</div>',i); if(j<0)return h;
-   const row='<div class="setRow"><span class="lbl">Colour grade<span class="sub">Warmer, brighter shade, stronger colour</span></span>'
+   const row='<div class="setRow"><span class="lbl">Colour grade<span class="sub">Natural colour, soft highlights and detailed shade</span></span>'
     +'<button data-fx="look:toggle">'+(P.on?'🎨 On — turn off':'Off — turn on')+'</button></div>';
    return h.slice(0,j+6)+row+h.slice(j+6);
   };

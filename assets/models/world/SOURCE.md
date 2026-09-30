@@ -1,5 +1,11 @@
 # World models — sourced from Poly Haven, not generated
 
+The **2026-09-30** additions have their own [asset manifest and integration notes](realism/README.md).
+They retain original PBR channels, use a larger near-tree geometry budget, and
+bake eight lightweight distant views of the same tree. The older tree rejection
+notes below describe the earlier single-mesh, ~8k-triangle pipeline; they do not
+describe the current multi-material tree integration.
+
 Every file here is a **photoscan from [Poly Haven](https://polyhaven.com/)**, licensed **CC0 1.0
 Universal**, adapted for this game by decimation and texture compression. They are kept apart from
 `../` deliberately: everything in the parent directory was generated locally by this project's own

@@ -1,0 +1,148 @@
+[
+  {
+    "id": "leafy_grass",
+    "page": "https://polyhaven.com/a/leafy_grass",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "Charlotte Baglioni": "All"
+    },
+    "files": [
+      {
+        "file": "leafy_grass_diff.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/leafy_grass/leafy_grass_diff_2k.jpg",
+        "bytes": 4766204,
+        "sha256": "8e1c6d21365d4b89bc5a35ab664da98a78dbc3ab9ba6100474881c8619a5b113",
+        "output": {
+          "file": "leafy_grass_diff.webp",
+          "bytes": 1930770,
+          "sha256": "a173dbd69a634d578a50574854ac5b94d2e688acbbedc8c84b49210d461db104",
+          "processing": "WebP 90, 2048px; no recoloring"
+        }
+      },
+      {
+        "file": "leafy_grass_nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/leafy_grass/leafy_grass_nor_gl_2k.jpg",
+        "bytes": 6047262,
+        "sha256": "df0cf0ce96e653f033e5b934d5b12995464bda027aa53bd12e329be889aa9f45",
+        "output": {
+          "file": "leafy_grass_nor_gl.webp",
+          "bytes": 788472,
+          "sha256": "e62950ab9b0344d5d01a92e5e4d16ce8761f7df813176800a44037a7cc576a09",
+          "processing": "WebP 96, 1024px; no recoloring"
+        }
+      },
+      {
+        "file": "leafy_grass_arm.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/leafy_grass/leafy_grass_arm_2k.jpg",
+        "bytes": 4116600,
+        "sha256": "70d61c669fe9d186a84f5bb50e8a337083014d7e46534306a89d47d48fd5eb0e",
+        "output": {
+          "file": "leafy_grass_arm.webp",
+          "bytes": 86414,
+          "sha256": "d431d9730a3ce324f63e86bc0eb1919ba193c3ae7b9dc607962d4da58d177b88",
+          "processing": "WebP 90, 512px; no recoloring"
+        }
+      }
+    ]
+  },
+  {
+    "id": "forest_ground_04",
+    "page": "https://polyhaven.com/a/forest_ground_04",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "Rob Tuytel": "Photography, Processing",
+      "Rico Cilliers": "Minor adjustment"
+    },
+    "files": [
+      {
+        "file": "forest_ground_04_diff.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forest_ground_04/forest_ground_04_diff_2k.jpg",
+        "bytes": 4529321,
+        "sha256": "24b8aaf4c8547305d80b0e029ec365219ab1b90748d4ca5651bdc9e75bfde5e6",
+        "output": {
+          "file": "forest_ground_04_diff.webp",
+          "bytes": 1866100,
+          "sha256": "a9f2794849e723abd52dc5ccc91f4b5e7fd0edc65d304281558f25a8bd3290d5",
+          "processing": "WebP 90, 2048px; no recoloring"
+        }
+      },
+      {
+        "file": "forest_ground_04_nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forest_ground_04/forest_ground_04_nor_gl_2k.jpg",
+        "bytes": 5288849,
+        "sha256": "b37ac799ed410976541e0011c246fca254e74eaa3f096ae7a7d74178db5a6d9b",
+        "output": {
+          "file": "forest_ground_04_nor_gl.webp",
+          "bytes": 716860,
+          "sha256": "6fae64d309e37973bbc61a85b56e3a42bad7e922b692a6da134e83611d2a2a50",
+          "processing": "WebP 96, 1024px; no recoloring"
+        }
+      },
+      {
+        "file": "forest_ground_04_arm.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forest_ground_04/forest_ground_04_arm_2k.jpg",
+        "bytes": 3418726,
+        "sha256": "a6086cb5611fabcc3dd4c9ac74bcf6cf8ed5d07e136ebe51255a5a3bea9e42c6",
+        "output": {
+          "file": "forest_ground_04_arm.webp",
+          "bytes": 69024,
+          "sha256": "e894d3f9ce6e02c6bbbc51d9ffade70255a0793e4282c72ee7695c3442a3ddd0",
+          "processing": "WebP 90, 512px; no recoloring"
+        }
+      }
+    ]
+  },
+  {
+    "id": "rock_boulder_cracked",
+    "page": "https://polyhaven.com/a/rock_boulder_cracked",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "Dario Barresi": "Processing",
+      "Dimitrios Savva": "Photography"
+    },
+    "files": [
+      {
+        "file": "rock_boulder_cracked_diff.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rock_boulder_cracked/rock_boulder_cracked_diff_2k.jpg",
+        "bytes": 3962095,
+        "sha256": "d7010ebf5157dc707f4bb555c74f589e1b794a308c186f6de2271f3ad0ff0da4",
+        "output": {
+          "file": "rock_boulder_cracked_diff.webp",
+          "bytes": 1520064,
+          "sha256": "7ecf10c4d51a2fc58c7ddb794436674b7b73064a9230174817df02d1397401b7",
+          "processing": "WebP 90, 2048px; no recoloring"
+        }
+      },
+      {
+        "file": "rock_boulder_cracked_nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rock_boulder_cracked/rock_boulder_cracked_nor_gl_2k.jpg",
+        "bytes": 4144084,
+        "sha256": "03a9815ebb58cc9ab5a59ab333f1bc50fa2539571aa6868bfb30d76b21601b30",
+        "output": {
+          "file": "rock_boulder_cracked_nor_gl.webp",
+          "bytes": 544674,
+          "sha256": "919f95347b05fa95576802a86cc8f0ad7bc57950397b8960a5e0ad8e005308a8",
+          "processing": "WebP 96, 1024px; no recoloring"
+        }
+      },
+      {
+        "file": "rock_boulder_cracked_arm.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rock_boulder_cracked/rock_boulder_cracked_arm_2k.jpg",
+        "bytes": 2027858,
+        "sha256": "6bcc1431e4ebdfc188789b677d4da4659315baf67f4fcc41c89265f4956a4567",
+        "output": {
+          "file": "rock_boulder_cracked_arm.webp",
+          "bytes": 22100,
+          "sha256": "e23c3365625f5d90cff871d70689d8c21d77bfbe5a352a83c87f93893f288eb0",
+          "processing": "WebP 90, 512px; no recoloring"
+        }
+      }
+    ]
+  }
+]

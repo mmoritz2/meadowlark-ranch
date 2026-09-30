@@ -2,7 +2,8 @@
 export function createTerrainSurface({THREE, renderer, grass, bump}) {
   const loader = new THREE.TextureLoader();
   function load(name) {
-    const t = loader.load(`./assets/textures/realism/${name}_albedo.jpg`);
+    const source={rock:'rock_boulder_cracked',forest_floor:'forest_ground_04'}[name];
+    const t = loader.load(`./assets/textures/scanned/${source}_diff.webp`);
     t.colorSpace = THREE.SRGBColorSpace;
     t.wrapS = t.wrapT = THREE.RepeatWrapping;
     t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
@@ -53,13 +54,26 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
     forest.needsUpdate=true;
   }
   redrawMask();
-  const uniforms = {terrainRock:{value:load('rock')}, terrainForest:{value:load('forest_floor')}, forestMask:{value:forest}};
+  function detail(path) {
+    const t=loader.load(path);t.wrapS=t.wrapT=THREE.RepeatWrapping;
+    t.colorSpace=THREE.NoColorSpace;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+    return {value:t};
+  }
+  const wetWeather={value:0};
+  const uniforms = {terrainRock:{value:load('rock')}, terrainForest:{value:load('forest_floor')}, forestMask:{value:forest},
+    meadowDetail:detail('./assets/textures/scanned/leafy_grass_nor_gl.webp'),
+    stoneDetail:detail('./assets/textures/scanned/rock_boulder_cracked_nor_gl.webp'),
+    litterDetail:detail('./assets/textures/scanned/forest_ground_04_nor_gl.webp'),
+    meadowARM:detail('./assets/textures/scanned/leafy_grass_arm.webp'),
+    stoneARM:detail('./assets/textures/scanned/rock_boulder_cracked_arm.webp'),
+    litterARM:detail('./assets/textures/scanned/forest_ground_04_arm.webp'),wetWeather};
   for(const [key,path] of [['terrainSoil','./assets/textures/ground_sand.jpg'],['terrainSnow','./assets/textures/ground_snow.jpg']]){
     const t=loader.load(path);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;uniforms[key]={value:t};
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v4';
+  material.customProgramCacheKey = () => 'terrain-biomes-v5-relief';
+  material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
     sh.vertexShader = 'varying vec3 terrainPosition; varying vec3 terrainNormal;\n' + sh.vertexShader;
@@ -69,6 +83,9 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
     sh.fragmentShader = `varying vec3 terrainPosition; varying vec3 terrainNormal;
       uniform sampler2D terrainRock; uniform sampler2D terrainForest; uniform sampler2D forestMask;
       uniform sampler2D terrainSoil; uniform sampler2D terrainSnow;
+      uniform sampler2D meadowDetail, stoneDetail, litterDetail;
+      uniform sampler2D meadowARM, stoneARM, litterARM;
+      uniform float wetWeather;
       /* A multiply-and-fract hash rather than fract(sin(dot(...))). It is a handful of cheap
          arithmetic ops instead of a transcendental, which matters once the ground asks for eight
          noise lookups a pixel and the ground is most of the screen; it is also better behaved
@@ -79,7 +96,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       ` + sh.fragmentShader;
     sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>',`
       vec2 p = terrainPosition.xz;
-      vec2 uv = p / 4.2;
+      vec2 uv = p / 2.0;
       vec3 turf;
       #ifdef CHEAP_GROUND
         turf = texture2D(map,uv).rgb;
@@ -154,6 +171,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       tint = mix(tint, tint*vec3(.67,.85,.70), damp*0.55);
       tint = mix(tint, tint*vec3(1.18,1.11,0.90), dry*0.45);
       turf *= tint;
+      turf=mix(vec3(dot(turf,vec3(.2126,.7152,.0722))),turf,.80);
 
       /* One fetch, two fields — see the mask canvas above. The canopy edge is pushed around by
          stand so the treeline on the ground is ragged rather than a set of soft circles. */
@@ -206,7 +224,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
          picks its mip level out of a hat. Ordinary pasture now costs five fetches, not fifteen. */
       vec2 rockUVy = p/3.2, rockUVx = terrainPosition.yz/3.2, rockUVz = terrainPosition.xy/3.2;
       vec2 soilUV  = mat2(.819,-.574,.574,.819)*p/3.7 + tHash2(floor(p/21.0))*.014;
-      vec2 earthUV = p/2.0, snowUV = p/7.1, amberUV = p/2.9, marshUV = p/3.6, ochreUV = soilUV*1.24;
+      vec2 earthUV = p/3.2, snowUV = p/7.1, amberUV = p/2.9, marshUV = p/3.6, ochreUV = soilUV*1.24;
       vec3 earth=vec3(0.0), rock=vec3(0.0), sand=vec3(0.0), snowTex=vec3(0.0);
       if(canopy>0.003||bank>0.003||wear>0.004) earth=texture2D(terrainForest,earthUV).rgb;
       if(rocky>0.003||canyon>0.003||tundra>0.003||ochre>0.003){
@@ -296,8 +314,41 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
           surface=mix(surface,mix(c,rock*vec3(1.18,.80,.62),stone),ochre*0.94);
         }
       }
+      // Moist ground darkens before it becomes glossy. Hollows retain rain
+      // while exposed slopes drain; snow keeps its powder response.
+      float rainWet=wetWeather*(1.0-snow)*mix(.30,.72,damp);
+      surface*=1.0-rainWet*.26;
       diffuseColor.rgb*=surface;
     `);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
+      #ifndef CHEAP_GROUND
+        vec3 groundARM=texture2D(meadowARM,uv).rgb;
+        if(canopy>.1)groundARM=mix(groundARM,texture2D(litterARM,earthUV).rgb,canopy);
+        if(rocky>.1)groundARM=mix(groundARM,texture2D(stoneARM,rockUVy).rgb,rocky);
+        roughnessFactor=mix(roughnessFactor,clamp(groundARM.g,.65,1.0),upClose*(1.0-snow));
+        diffuseColor.rgb*=mix(1.0,groundARM.r,.22*upClose*(1.0-snow));
+      #endif
+      roughnessFactor=mix(roughnessFactor,.43,clamp(wet*.42+rainWet,0.0,.85));`);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+      #ifndef CHEAP_GROUND
+        if(upClose>.005){
+          vec3 detailN=vec3(0.0);
+          // Match the albedo's offset blend so photographed relief lines up.
+          for(int y=0;y<=1;y++)for(int x=0;x<=1;x++){
+            vec2 corner=vec2(float(x),float(y));
+            float w=(x==1?f.x:1.0-f.x)*(y==1?f.y:1.0-f.y);
+            detailN+=(texture2D(meadowDetail,uv+tHash2(cell+corner)*61.7).xyz*2.0-1.0)*w;
+          }
+          if(canopy>.1)detailN=mix(detailN,texture2D(litterDetail,earthUV).xyz*2.0-1.0,canopy);
+          if(rocky>.1)detailN=mix(detailN,texture2D(stoneDetail,rockUVy).xyz*2.0-1.0,rocky);
+          // Orthogonal world-space tangents follow the terrain slope, including
+          // bank faces. Relief fades before its texels become subpixel noise.
+          vec3 tangent=normalize(cross(vec3(0.0,0.0,1.0),wn));
+          vec3 bitangent=normalize(cross(wn,tangent));
+          vec3 relief=normalize(wn+(.34*detailN.x*tangent+.34*detailN.y*bitangent)*upClose*(1.0-snow*.82));
+          normal=normalize(mat3(viewMatrix)*relief);
+        }
+      #endif`);
   };
   function setTrees(trees) { treeList = trees || []; redrawMask(); }
   /* For whoever lays out the tracks. Give it the polylines in world metres — the same shape
@@ -316,31 +367,62 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
 
 export function createRiverMaterial({THREE, map}) {
   const time={value:0};
-  const material=new THREE.MeshStandardMaterial({map,color:0x54756d,roughness:.18,metalness:.04,side:THREE.DoubleSide,transparent:true,opacity:.97,depthWrite:false});
-  material.envMapIntensity=1.3;
+  const reflection={map:{value:null},matrix:{value:new THREE.Matrix4()},amount:{value:0},level:{value:0}};
+  const material=new THREE.MeshPhysicalMaterial({map,color:0x45675e,roughness:.14,metalness:0,
+    ior:1.333,clearcoat:.55,clearcoatRoughness:.18,side:THREE.DoubleSide,transparent:true,opacity:.94,depthWrite:false});
+  material.envMapIntensity=1.15;
   const shader=fade=>sh=>{
     sh.uniforms.waterTime=time;
-    sh.vertexShader='varying vec3 waterWorld;\n'+sh.vertexShader;
+    sh.uniforms.waterReflection=reflection.map;sh.uniforms.waterReflectionMatrix=reflection.matrix;
+    sh.uniforms.waterReflectionAmount=reflection.amount;
+    sh.uniforms.waterReflectionLevel=reflection.level;
+    sh.vertexShader='varying vec3 waterWorld; varying vec2 waterBankUV;\n'+sh.vertexShader;
     sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
-      waterWorld=(modelMatrix*vec4(position,1.0)).xyz;`);
-    sh.fragmentShader='varying vec3 waterWorld; uniform float waterTime;\n'+sh.fragmentShader;
+      waterWorld=(modelMatrix*vec4(position,1.0)).xyz;waterBankUV=uv;`);
+    sh.fragmentShader='varying vec3 waterWorld; varying vec2 waterBankUV; uniform float waterTime; uniform sampler2D waterReflection; uniform mat4 waterReflectionMatrix; uniform float waterReflectionAmount,waterReflectionLevel;\n'+sh.fragmentShader;
     sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`
       // Two advecting wave fields produce moving specular reflections at real world scale.
       float wx=waterWorld.x, wz=waterWorld.z, wt=waterTime;
       float rip=sin(wx*2.7+wz*1.4-wt*1.8)*sin(wx*.7-wz*3.2-wt*.85);
-      diffuseColor.rgb*=.90+rip*.045;
+      float swell=sin(wx*.48+wz*.63-wt*.55);
+      float fresnel=pow(1.0-abs(dot(normalize(cameraPosition-waterWorld),vec3(0,1,0))),4.0);
+      diffuseColor.rgb*=.86+rip*.025+swell*.035;
+      diffuseColor.a*=mix(.72,1.0,fresnel);
+      ${fade?`float bankDepth=smoothstep(0.0,.32,min(waterBankUV.y,1.0-waterBankUV.y));
+      diffuseColor.rgb=mix(diffuseColor.rgb*vec3(1.28,1.13,.85),diffuseColor.rgb,bankDepth);
+      diffuseColor.a*=mix(.45,1.0,bankDepth);`:''}
     `);
     sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
-      float dx=.045*cos(wx*2.7+wz*1.4-wt*1.8)+.025*cos(wx*6.7-wz*3.1+wt*2.1);
-      float dz=.038*cos(wx*1.2+wz*4.1-wt*1.3)+.018*sin(wx*4.3+wz*7.1-wt*2.4);
+      float micro=1.0-smoothstep(16.0,85.0,length(vViewPosition));
+      float dx=.032*cos(wx*.48+wz*.63-wt*.55)+micro*(.045*cos(wx*2.7+wz*1.4-wt*1.8)+.025*cos(wx*6.7-wz*3.1+wt*2.1));
+      float dz=.024*cos(wx*.48+wz*.63-wt*.55)+micro*(.038*cos(wx*1.2+wz*4.1-wt*1.3)+.018*sin(wx*4.3+wz*7.1-wt*2.4));
       normal=normalize(mat3(viewMatrix)*vec3(-dx,1.0,-dz));
     `);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <clearcoat_normal_fragment_maps>',`#include <clearcoat_normal_fragment_maps>
+      #ifdef USE_CLEARCOAT
+        clearcoatNormal=normal;
+      #endif`);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <opaque_fragment>',`
+      if(waterReflectionAmount>.5){
+        vec4 projected=waterReflectionMatrix*vec4(waterWorld,1.0);
+        vec2 reflectionUV=projected.xy/max(projected.w,.001)+vec2(dx,dz)*.009;
+        float edge=smoothstep(0.0,.06,reflectionUV.x)*smoothstep(0.0,.06,reflectionUV.y)
+          *(1.0-smoothstep(.94,1.0,reflectionUV.x))*(1.0-smoothstep(.94,1.0,reflectionUV.y));
+        vec3 reflected=texture2D(waterReflection,clamp(reflectionUV,0.0,1.0)).rgb;
+        float localReflection=(1.0-smoothstep(.12,.65,abs(waterWorld.y-waterReflectionLevel)))
+          *(1.0-smoothstep(55.0,110.0,length(cameraPosition-waterWorld)));
+        outgoingLight=mix(outgoingLight,reflected,edge*(.20+.56*fresnel)*localReflection);
+      }
+      #include <opaque_fragment>`);
     if(fade) sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>',`#include <alphatest_fragment>
-      diffuseColor.a*=smoothstep(0.0,.14,vMapUv.y)*(1.0-smoothstep(1.86,2.0,vMapUv.y));`);
+      diffuseColor.a*=smoothstep(0.0,.055,waterBankUV.y)*(1.0-smoothstep(.945,1.0,waterBankUV.y));`);
   };
   material.onBeforeCompile=shader(true);
   material.userData.plainShader=shader(false);
   material.userData.waterTime=time;
-  material.customProgramCacheKey=()=> 'ripple-water-v2';
+  // Uniform objects cannot go in userData: Material.clone JSON-serializes it.
+  // Share the live reflection through the shader closure and a non-enumerable key.
+  Object.defineProperty(material.userData,'reflection',{value:reflection});
+  material.customProgramCacheKey=()=> 'ripple-water-v3-fresnel';
   return material;
 }

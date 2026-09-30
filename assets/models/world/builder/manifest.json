@@ -1,0 +1,409 @@
+[
+  {
+    "id": "wine_barrel_01",
+    "page": "https://polyhaven.com/a/wine_barrel_01",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "James Ray Cock": "All"
+    },
+    "sourceFiles": [
+      {
+        "file": "wine_barrel_01.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wine_barrel_01/wine_barrel_01_1k.gltf",
+        "bytes": 6673,
+        "sha256": "503d3339677217c3241a3cdbc1c803ed1eb82d1a48f51436d1545ec5745ae8d8"
+      },
+      {
+        "file": "wine_barrel_01.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/wine_barrel_01/wine_barrel_01.bin",
+        "bytes": 385912,
+        "sha256": "d827c31afed824b923ea9168462c93ab3ad3a88c4a68b155bd35efb1a02cbf00"
+      },
+      {
+        "file": "textures/wine_barrel_01_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wine_barrel_01/wine_barrel_01_diff_1k.jpg",
+        "bytes": 195980,
+        "sha256": "6bea25b4fadda0636b6b7e46e0cc15153eda21ef62c823d5ee2e06a5a7589214"
+      },
+      {
+        "file": "textures/wine_barrel_01_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wine_barrel_01/wine_barrel_01_arm_1k.jpg",
+        "bytes": 172531,
+        "sha256": "be658e1389dbe8669e847b8fc7df8affdce46d6582f01ac701555b6446a40b9d"
+      },
+      {
+        "file": "textures/wine_barrel_01_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wine_barrel_01/wine_barrel_01_nor_gl_1k.jpg",
+        "bytes": 163587,
+        "sha256": "86cdb0729b44d1687c75d895e6d0ef650f7580d70f3bcb52bce6fedc5fd79b6f"
+      }
+    ],
+    "output": {
+      "file": "wine_barrel_01.glb",
+      "bytes": 847428,
+      "sha256": "68b7f59be1f8171c733f06b68baaaa714ba5dca5cb72d4978221a9922d3a1c43",
+      "trianglesBefore": 10820,
+      "triangles": 10820,
+      "materials": 1
+    },
+    "processing": "Preserved original albedo, normal, metallic, roughness and AO. 1K color/normal, 512px ARM WebP; simplified to about 14K triangles. No color grading."
+  },
+  {
+    "id": "wooden_picnic_table",
+    "page": "https://polyhaven.com/a/wooden_picnic_table",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "Ulan Cabanilla": "All"
+    },
+    "sourceFiles": [
+      {
+        "file": "wooden_picnic_table.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_picnic_table/wooden_picnic_table_1k.gltf",
+        "bytes": 5099,
+        "sha256": "6b0dd9916fd87dba2e5baad06e20c0badf68bc68a5761a13854fa9a215c6bd50"
+      },
+      {
+        "file": "textures/wooden_picnic_table_top_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_picnic_table/wooden_picnic_table_top_arm_1k.jpg",
+        "bytes": 747432,
+        "sha256": "50d2b7a0b15c56bf82bc0c918e6eaa5f590a6fd61d32311c8da85c414ace297d"
+      },
+      {
+        "file": "textures/wooden_picnic_table_top_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_picnic_table/wooden_picnic_table_top_nor_gl_1k.jpg",
+        "bytes": 625681,
+        "sha256": "1e65787457f9edfdd04f1ee3f777ac2d2a9d43bfbbd3cb40c1e086f939bba419"
+      },
+      {
+        "file": "wooden_picnic_table.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/wooden_picnic_table/wooden_picnic_table.bin",
+        "bytes": 279116,
+        "sha256": "1efd51c292843194fbd709452d56d06c9ddc770f43a013db57ca79bfc2731b01"
+      },
+      {
+        "file": "textures/wooden_picnic_table_bottom_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_picnic_table/wooden_picnic_table_bottom_arm_1k.jpg",
+        "bytes": 699984,
+        "sha256": "555226136c1d754d4aa5da42385a9152a146c5175382c77cced611a6880efd35"
+      },
+      {
+        "file": "textures/wooden_picnic_table_top_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_picnic_table/wooden_picnic_table_top_diff_1k.jpg",
+        "bytes": 722582,
+        "sha256": "4aefdef35bf343410dbebd8577dfc968f1d6420ccddc601b19912e84b2accc0a"
+      },
+      {
+        "file": "textures/wooden_picnic_table_bottom_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_picnic_table/wooden_picnic_table_bottom_nor_gl_1k.jpg",
+        "bytes": 548315,
+        "sha256": "c5d6eb388eceb6d98e92ff31d3f3346d411b1bbcb15c05dc9da71e4a7e398539"
+      },
+      {
+        "file": "textures/wooden_picnic_table_bottom_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_picnic_table/wooden_picnic_table_bottom_diff_1k.jpg",
+        "bytes": 680087,
+        "sha256": "887b9a57213f87196fb090419e14d00095af8fa56c93ca6cd7d0d70ef4e5fd27"
+      }
+    ],
+    "output": {
+      "file": "wooden_picnic_table.glb",
+      "bytes": 1407140,
+      "sha256": "f80739c794333060c8a8737c0be897cecca1d082998ef97d2ddd9bddef12e7b2",
+      "trianglesBefore": 10210,
+      "triangles": 10210,
+      "materials": 2
+    },
+    "processing": "Preserved original albedo, normal, metallic, roughness and AO. 1K color/normal, 512px ARM WebP; simplified to about 14K triangles. No color grading."
+  },
+  {
+    "id": "planter_box_01",
+    "page": "https://polyhaven.com/a/planter_box_01",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "James Ray Cock": "All"
+    },
+    "sourceFiles": [
+      {
+        "file": "planter_box_01.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/planter_box_01/planter_box_01_1k.gltf",
+        "bytes": 2787,
+        "sha256": "15c7ff7396d872e5cad6743c796ff0f42e1f3f831fd334a26aa1fdbd11834a1f"
+      },
+      {
+        "file": "textures/planter_box_01_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/planter_box_01/planter_box_01_nor_gl_1k.jpg",
+        "bytes": 707323,
+        "sha256": "7d2ad01fdfc8ea9e39af0ddc1db710380afad859dc3848302ff72d21a6e21a27"
+      },
+      {
+        "file": "textures/planter_box_01_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/planter_box_01/planter_box_01_arm_1k.jpg",
+        "bytes": 745610,
+        "sha256": "b80b08f88166360af32a076082daaed820f0d364a5bef0acea651485017ccbd6"
+      },
+      {
+        "file": "planter_box_01.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/planter_box_01/planter_box_01.bin",
+        "bytes": 250580,
+        "sha256": "cc97bc9ee05a90c78e27ca575a83eba86955e863dea8a12826f6ff02c2c11db3"
+      },
+      {
+        "file": "textures/planter_box_01_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/planter_box_01/planter_box_01_diff_1k.jpg",
+        "bytes": 633117,
+        "sha256": "5ad77068bf07ca371e18322c04641754a7758f4479e2835b93f671b4a5143bee"
+      }
+    ],
+    "output": {
+      "file": "planter_box_01.glb",
+      "bytes": 865688,
+      "sha256": "9e260c3a309189d8ba102bdd431bf26f81379ec0583555560208fd678fe7bd3f",
+      "trianglesBefore": 8094,
+      "triangles": 8094,
+      "materials": 1
+    },
+    "processing": "Preserved original albedo, normal, metallic, roughness and AO. 1K color/normal, 512px ARM WebP; simplified to about 14K triangles. No color grading."
+  },
+  {
+    "id": "wooden_lantern_01",
+    "page": "https://polyhaven.com/a/wooden_lantern_01",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "James Ray Cock": "All"
+    },
+    "sourceFiles": [
+      {
+        "file": "wooden_lantern_01.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wooden_lantern_01/wooden_lantern_01_1k.gltf",
+        "bytes": 9540,
+        "sha256": "2380275a5c90bf3442c426f3363e826e6b1ceff12a7e65f83b03cc8fac70a099"
+      },
+      {
+        "file": "textures/wooden_lantern_01_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_lantern_01/wooden_lantern_01_nor_gl_1k.jpg",
+        "bytes": 747945,
+        "sha256": "06a7d3bb7342b5aa96d8c22d46883153df8948b59cab26e19f0e91ba82dba9ef"
+      },
+      {
+        "file": "textures/wooden_lantern_01_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_lantern_01/wooden_lantern_01_diff_1k.jpg",
+        "bytes": 712250,
+        "sha256": "5a346e7e3335e9502eb4e25178d16ba29ae49786b75853d7bd36b386edf7a30d"
+      },
+      {
+        "file": "textures/wooden_lantern_01_glass_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_lantern_01/wooden_lantern_01_glass_nor_gl_1k.jpg",
+        "bytes": 216436,
+        "sha256": "0aaab86f76172aeb7ccfa5f5c7f047f616726e6b3ce6636e162caf633f173c0a"
+      },
+      {
+        "file": "textures/wooden_lantern_01_glass_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_lantern_01/wooden_lantern_01_glass_arm_1k.jpg",
+        "bytes": 561615,
+        "sha256": "2d549dde55d65c690872f148581d81b3468100e8a0eb22847f31273e47d8f1fb"
+      },
+      {
+        "file": "textures/wooden_lantern_01_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_lantern_01/wooden_lantern_01_arm_1k.jpg",
+        "bytes": 842111,
+        "sha256": "6bbe63887f60d20445df75dcaef75653b86cb47fe9e139baab717de542cab429"
+      },
+      {
+        "file": "textures/wooden_lantern_01_glass_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wooden_lantern_01/wooden_lantern_01_glass_diff_1k.jpg",
+        "bytes": 410747,
+        "sha256": "1bfced8c9470ea01e73085439e8cee0c44c8ee8199b806a22cc4f2434ae2f151"
+      },
+      {
+        "file": "wooden_lantern_01.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/wooden_lantern_01/wooden_lantern_01.bin",
+        "bytes": 268136,
+        "sha256": "65c6b1a776c66d4170dab3657f0809b1a8a88219507589d6c9aad70ffbe687a3"
+      }
+    ],
+    "output": {
+      "file": "wooden_lantern_01.glb",
+      "bytes": 1136644,
+      "sha256": "d02eef6dea27a4f59fd5163cd51d83859af01215e77e7dd3723a482e4e0413d9",
+      "trianglesBefore": 8321,
+      "triangles": 8321,
+      "materials": 2
+    },
+    "processing": "Preserved original albedo, normal, metallic, roughness and AO. 1K color/normal, 512px ARM WebP; simplified to about 14K triangles. No color grading."
+  },
+  {
+    "id": "tree_stump_01",
+    "page": "https://polyhaven.com/a/tree_stump_01",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "Rob Tuytel": "All"
+    },
+    "sourceFiles": [
+      {
+        "file": "tree_stump_01.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/tree_stump_01/tree_stump_01_1k.gltf",
+        "bytes": 2793,
+        "sha256": "9c66ba87d693f35eb404acaa96e0eeff831c295b61a0a903795584cbcc3527c9"
+      },
+      {
+        "file": "tree_stump_01.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/tree_stump_01/tree_stump_01.bin",
+        "bytes": 965380,
+        "sha256": "b4d9ca70b3c908c4a638fbd6a23ed96c84055bbbf14cf44b89e31ad59fa21e0a"
+      },
+      {
+        "file": "textures/tree_stump_01_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_stump_01/tree_stump_01_diff_1k.jpg",
+        "bytes": 907451,
+        "sha256": "781ebe420ac4d84f2e44b9e9937a596e3d5d90711d978a1392f8bf3771b5bf31"
+      },
+      {
+        "file": "textures/tree_stump_01_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_stump_01/tree_stump_01_nor_gl_1k.jpg",
+        "bytes": 1238404,
+        "sha256": "425117514b0386bb6df41cb64a61a624d2596472e05777483d4021b3285e3ceb"
+      },
+      {
+        "file": "textures/tree_stump_01_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_stump_01/tree_stump_01_arm_1k.jpg",
+        "bytes": 825646,
+        "sha256": "d845cd6ab45288c546267d059ebe1f8a737e174330fe9375e5f99e753f2f95d8"
+      }
+    ],
+    "output": {
+      "file": "tree_stump_01.glb",
+      "bytes": 1459296,
+      "sha256": "6af2dee38a7246c3b198842ec45550ec2ca6ae3fe7cff64a8b79c700c9edfd1c",
+      "trianglesBefore": 41046,
+      "triangles": 14000,
+      "materials": 1
+    },
+    "processing": "Preserved original albedo, normal, metallic, roughness and AO. 1K color/normal, 512px ARM WebP; simplified to about 14K triangles. No color grading."
+  },
+  {
+    "id": "flower_gazania",
+    "page": "https://polyhaven.com/a/flower_gazania",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "James Ray Cock": "modeling",
+      "Jenelle van Heerden": "Photography"
+    },
+    "sourceFiles": [
+      {
+        "file": "flower_gazania.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/flower_gazania/flower_gazania_1k.gltf",
+        "bytes": 19686,
+        "sha256": "73c7f4094f2ad78ddfbe6373f8372ddb736a5d9fc6485db08ae32301edc95a24"
+      },
+      {
+        "file": "flower_gazania.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/flower_gazania/flower_gazania.bin",
+        "bytes": 848136,
+        "sha256": "a3864c51fce2dacb01629a0c364730e5988ac5a7a937acc0e2635c946d786797"
+      },
+      {
+        "file": "textures/flower_gazania_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/flower_gazania/flower_gazania_nor_gl_1k.jpg",
+        "bytes": 874324,
+        "sha256": "802d0f9234ccd778c537b3b5ea3714f219d73a80ab794ea77271ab47dbbc9789"
+      },
+      {
+        "file": "textures/flower_gazania_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/flower_gazania/flower_gazania_diff_1k.jpg",
+        "bytes": 435784,
+        "sha256": "9d3022ebe7bfe0493a3e46aad87ea4746ea51df8c8b3e19294f1bb718a3147bb"
+      },
+      {
+        "file": "textures/flower_gazania_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/flower_gazania/flower_gazania_arm_1k.jpg",
+        "bytes": 670914,
+        "sha256": "80800dca73ad66b8c51b089db771b7a15c9e57dfd959e0da5cde434b3d8151b4"
+      },
+      {
+        "file": "textures/flower_gazania_alpha_1k.png",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/flower_gazania/flower_gazania_alpha_1k.png",
+        "bytes": 110222,
+        "sha256": "b6e4db1c4925217bfbb7da0c030f88acb15cc28fbfbf977a585f6b35fb2cf711"
+      }
+    ],
+    "output": {
+      "file": "flower_gazania.glb",
+      "bytes": 1264540,
+      "sha256": "27d950898e8c51a59d1056907e6a85e41b78a01a5697c81bcc63cb0515fb68d4",
+      "trianglesBefore": 14340,
+      "triangles": 10926,
+      "materials": 1
+    },
+    "processing": "Preserved original albedo, normal, metallic, roughness and AO. 1K color/normal, 512px ARM WebP; simplified to about 14K triangles. No color grading."
+  },
+  {
+    "id": "wild_rooibos_bush",
+    "page": "https://polyhaven.com/a/wild_rooibos_bush",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "James Ray Cock": "modeling",
+      "Jenelle van Heerden": "photography"
+    },
+    "sourceFiles": [
+      {
+        "file": "wild_rooibos_bush.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wild_rooibos_bush/wild_rooibos_bush_1k.gltf",
+        "bytes": 23122,
+        "sha256": "7f3fb17e4606e33d0bc4239c4901c9610b4bd17fe26b6780ba11ab4493f25d29"
+      },
+      {
+        "file": "textures/wild_rooibos_bush_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wild_rooibos_bush/wild_rooibos_bush_nor_gl_1k.jpg",
+        "bytes": 463170,
+        "sha256": "ffd557b4cb732d24988d41741398df150567f3ac9d1433f11b88d60158c953d4"
+      },
+      {
+        "file": "textures/wild_rooibos_bush_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wild_rooibos_bush/wild_rooibos_bush_diff_1k.jpg",
+        "bytes": 374003,
+        "sha256": "d963cdaf769bc39bb57295d518b37cd9456168cf5e3b82fd59f58c98d3faf596"
+      },
+      {
+        "file": "textures/wild_rooibos_bush_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wild_rooibos_bush/wild_rooibos_bush_arm_1k.jpg",
+        "bytes": 367273,
+        "sha256": "e0e512f263b8f1fe1c485e61912ba1ce5d42b397cf9a4e2b1786677e732bb84b"
+      },
+      {
+        "file": "wild_rooibos_bush.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/wild_rooibos_bush/wild_rooibos_bush.bin",
+        "bytes": 1236928,
+        "sha256": "7a3471b4d110fe9927f4a200191eae86fa3c0a08f8e8e797d22e94a1703322e1"
+      },
+      {
+        "file": "textures/wild_rooibos_bush_alpha_1k.png",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/wild_rooibos_bush/wild_rooibos_bush_alpha_1k.png",
+        "bytes": 90888,
+        "sha256": "6a9fcd7a62aab1366b0ae50273c4a638591e932049a647ccadce6687ce657b72"
+      }
+    ],
+    "output": {
+      "file": "wild_rooibos_bush.glb",
+      "bytes": 1559720,
+      "sha256": "2eb7176c13737e47db3a244634c5577b3d790970a5b99b1a08a924dd100e9000",
+      "trianglesBefore": 27519,
+      "triangles": 23397,
+      "materials": 1
+    },
+    "processing": "Preserved original albedo, normal, metallic, roughness and AO. 1K color/normal, 512px ARM WebP; simplified to about 14K triangles. No color grading."
+  }
+]

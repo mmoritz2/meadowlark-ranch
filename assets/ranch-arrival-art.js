@@ -154,11 +154,21 @@ export function createArrivalArt({THREE,anisotropy=8}={}) {
     // out by 26 m, where it would only shimmer.
     float churnNear=1.0-smoothstep(7.0,26.0,length(vViewPosition));
     float churn=churnNear>0.004?smoothstep(.30,.72,arrivalNoise(ap*2.7+vec2(3.0,11.0))*.6+arrivalNoise(ap*6.1)*.4):0.0;
-    diffuseColor.rgb*=vec3(.90,.80,.66)*(.94+.14*coarse+.05*grain-rake)*(1.0-.13*churn*churnNear);
+    diffuseColor.rgb*=vec3(.89,.86,.78)*(.91+.17*coarse+.08*grain-rake)*(1.0-.18*churn*churnNear);
     diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(.49,.51,.49),worn*.88+damp*.24+footprint);
    `);
+  shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+    // Centimetre-scale churn and shallow ruts catch grazing sun. Screen-space
+    // derivatives are limited to nearby footing so the arena stays stable afar.
+    float footingHeight=(grain*.018+churn*.011-trackBand*.016)*churnNear;
+    vec3 dpdx=dFdx(-vViewPosition),dpdy=dFdy(-vViewPosition);
+    vec3 sx=cross(dpdy,normal),sy=cross(normal,dpdx);
+    float determinant=dot(dpdx,sx);
+    vec3 reliefGradient=sign(determinant)*(dFdx(footingHeight)*sx+dFdy(footingHeight)*sy);
+    normal=normalize(abs(determinant)*normal-reliefGradient);
+  `);
   };
-  material.customProgramCacheKey=()=>oldKey()+'|arrival-footing-2';material.needsUpdate=true;return material;
+  material.customProgramCacheKey=()=>oldKey()+'|arrival-footing-3';material.needsUpdate=true;return material;
  }
  return {buildPlanter,buildNoticeboard,buildPracticeJump,buildSign,buildHayStack,enhanceArenaMaterial,materials:{timber,darkTimber,soil,botanical,iron}};
 }

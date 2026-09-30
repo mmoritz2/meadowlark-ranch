@@ -1,0 +1,245 @@
+[
+  {
+    "id": "coated_pine",
+    "page": "https://polyhaven.com/a/coated_pine",
+    "authors": {
+      "Charlotte Baglioni": "Scanning ",
+      "Rico Cilliers": "Processing "
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "files": [
+      {
+        "file": "coated_pine_diff.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/coated_pine/coated_pine_diff_2k.jpg",
+        "bytes": 2993766,
+        "sha256": "377fa07523a1d2a52fb4a3b099eba0e81a6167038210cdd9791c07a0f1d39497",
+        "output": {
+          "file": "coated_pine_diff.webp",
+          "bytes": 1128362,
+          "sha256": "e05206e34d5e3cb8c964d266bcd55f82f07caa5daf35fbd6c01e58f8d58dfe68",
+          "size": 2048
+        }
+      },
+      {
+        "file": "coated_pine_nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coated_pine/coated_pine_nor_gl_1k.jpg",
+        "bytes": 443383,
+        "sha256": "91eb707d7b0dd44133502878f37ede93e6be23c2019e64df72dffe46f6985b3a",
+        "output": {
+          "file": "coated_pine_nor_gl.webp",
+          "bytes": 157924,
+          "sha256": "0d71dec4655fe44638e395f97f4571823f1d1c9450a7abe4e9906057f4cb036e",
+          "size": 1024
+        }
+      },
+      {
+        "file": "coated_pine_arm.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coated_pine/coated_pine_arm_1k.jpg",
+        "bytes": 616098,
+        "sha256": "1df6001b7920389729415068ffe3ac473570f37be35ec628e895da2daa68d8f0",
+        "output": {
+          "file": "coated_pine_arm.webp",
+          "bytes": 33908,
+          "sha256": "ccd33919ade9f5e199a997cfd6a2af0c8996ecb8ab197c1eac0ef87ba6d351ec",
+          "size": 512
+        }
+      }
+    ]
+  },
+  {
+    "id": "weathered_brown_planks",
+    "page": "https://polyhaven.com/a/weathered_brown_planks",
+    "authors": {
+      "Dimitrios Savva": "Photography",
+      "Rico Cilliers": "Processing"
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "files": [
+      {
+        "file": "weathered_brown_planks_diff.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/weathered_brown_planks/weathered_brown_planks_diff_2k.jpg",
+        "bytes": 911358,
+        "sha256": "070ebc4c56a6729ca73a791f7cd3bab7670eb03bfa9ac0218864a554228bcc30",
+        "output": {
+          "file": "weathered_brown_planks_diff.webp",
+          "bytes": 1111378,
+          "sha256": "571184f092aa9ba7e935ce68504927cc3f8f590bcb1295c28f6deefce436754a",
+          "size": 2048
+        }
+      },
+      {
+        "file": "weathered_brown_planks_nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/weathered_brown_planks/weathered_brown_planks_nor_gl_1k.jpg",
+        "bytes": 223250,
+        "sha256": "8d38f02f121c0e58eaedc19cd668faea21381ae3ff4d5332cd90de75e6683393",
+        "output": {
+          "file": "weathered_brown_planks_nor_gl.webp",
+          "bytes": 339070,
+          "sha256": "f04f891c63cf13315962cec132f08183e38761ec3a9ae4bafd9975cb1fdbc286",
+          "size": 1024
+        }
+      },
+      {
+        "file": "weathered_brown_planks_arm.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/weathered_brown_planks/weathered_brown_planks_arm_1k.jpg",
+        "bytes": 204214,
+        "sha256": "a428a3a6f89f7bb5c945c9668f2ac6ec268736fda7a4a421fd3ec80d3946929c",
+        "output": {
+          "file": "weathered_brown_planks_arm.webp",
+          "bytes": 67928,
+          "sha256": "776f2f109d796059c57d12788d01f593f202e87bc5b6f6170fbf2c51618b0024",
+          "size": 512
+        }
+      }
+    ]
+  },
+  {
+    "id": "brown_leather",
+    "page": "https://polyhaven.com/a/brown_leather",
+    "authors": {
+      "Rob Tuytel": "All"
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "files": [
+      {
+        "file": "brown_leather_diff.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/brown_leather/brown_leather_albedo_2k.jpg",
+        "bytes": 2137518,
+        "sha256": "b0de2403a31efa31e501b0028c0bd8e504d5bd6318f4a5ce90c550c3067f96d8",
+        "output": {
+          "file": "brown_leather_diff.webp",
+          "bytes": 1409454,
+          "sha256": "1523538573c97b28d4432c0cc41934d7c43bfcaed85d6ebc89841505d285e38c",
+          "size": 2048
+        }
+      },
+      {
+        "file": "brown_leather_nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_leather/brown_leather_nor_gl_1k.jpg",
+        "bytes": 863280,
+        "sha256": "506a0b7650c2dea285e247f26ed2d0d6ec38fc10dd584359f0d203e9c082236d",
+        "output": {
+          "file": "brown_leather_nor_gl.webp",
+          "bytes": 501658,
+          "sha256": "f8080d599b55a3cc33865c3afbc5c12dde7a937f5c4b2b8ab8157db7c4c3d38f",
+          "size": 1024
+        }
+      },
+      {
+        "file": "brown_leather_arm.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_leather/brown_leather_arm_1k.jpg",
+        "bytes": 436931,
+        "sha256": "8f40d242830b2c1310470abfaf2df15f52658d01c21d97dd96f0679589677de1",
+        "output": {
+          "file": "brown_leather_arm.webp",
+          "bytes": 148828,
+          "sha256": "1ec795dd97b18e14d7566e572116fe9073e3c6d82d5b664bf016668dfd58a89f",
+          "size": 512
+        }
+      }
+    ]
+  },
+  {
+    "id": "rough_linen",
+    "page": "https://polyhaven.com/a/rough_linen",
+    "authors": {
+      "colormass": "Photography",
+      "Rico Cilliers": "Processing"
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "files": [
+      {
+        "file": "rough_linen_diff.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rough_linen/rough_linen_diff_2k.jpg",
+        "bytes": 3607181,
+        "sha256": "e71016e08dfebea1dd4e8a2a675e3b617a889a782af782f1abb795906f4db1b4",
+        "output": {
+          "file": "rough_linen_diff.webp",
+          "bytes": 1621212,
+          "sha256": "37920de2051030f7d4b983b39475ec9e4a922bdefa3fcda8dfd089321604c196",
+          "size": 2048
+        }
+      },
+      {
+        "file": "rough_linen_nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rough_linen/rough_linen_nor_gl_1k.jpg",
+        "bytes": 916843,
+        "sha256": "e2402166d1a489f7414814e69e1836ab672aa24e30bec2d41fea356f81687e53",
+        "output": {
+          "file": "rough_linen_nor_gl.webp",
+          "bytes": 517346,
+          "sha256": "cc1f4a6ab5e0326bf185955f4ccd66fbe3b9adfe4e5d1180e438d76720f66fa0",
+          "size": 1024
+        }
+      },
+      {
+        "file": "rough_linen_arm.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rough_linen/rough_linen_arm_1k.jpg",
+        "bytes": 1191393,
+        "sha256": "e1ca6b51ed62834063253e08f8f2e23836aa00d72675b960ddd8e608d9f0c7e6",
+        "output": {
+          "file": "rough_linen_arm.webp",
+          "bytes": 110596,
+          "sha256": "81349a226f063eed4ae3f041c798a7e5799ad2ce26f48115a750a1a09d69d386",
+          "size": 512
+        }
+      }
+    ]
+  },
+  {
+    "id": "riet_01",
+    "page": "https://polyhaven.com/a/riet_01",
+    "authors": {
+      "Rob Tuytel": "All"
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "files": [
+      {
+        "file": "riet_01_diff.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/riet_01/riet_01_diff_2k.jpg",
+        "bytes": 2630988,
+        "sha256": "75aa1978e4a675d693de0e834689c6dae28bad35af92f32426873a50129864de",
+        "output": {
+          "file": "riet_01_diff.webp",
+          "bytes": 1886928,
+          "sha256": "99354079af3e89a0bbd518e20a917952d92e3b610966862b2781a0a84beb6af1",
+          "size": 2048
+        }
+      },
+      {
+        "file": "riet_01_nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/riet_01/riet_01_nor_gl_1k.jpg",
+        "bytes": 607046,
+        "sha256": "f2c73d4647d8ee73601b11fe82441251b379442240c631580dcbb2b79d028070",
+        "output": {
+          "file": "riet_01_nor_gl.webp",
+          "bytes": 332344,
+          "sha256": "db16a6a643a39b54dbaae38cce1622df3147ac72b4a7fe459bffaf4f673bc1a4",
+          "size": 1024
+        }
+      },
+      {
+        "file": "riet_01_arm.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/riet_01/riet_01_arm_1k.jpg",
+        "bytes": 396332,
+        "sha256": "f6ad4b6e40691c96dee34e08da7968309ea6a1fd561715797e7640b6812d799f",
+        "output": {
+          "file": "riet_01_arm.webp",
+          "bytes": 141264,
+          "sha256": "82859fd60512cbc838083c5e77531cf54b30fdbbad34cff9021c30c4f84c7078",
+          "size": 512
+        }
+      }
+    ]
+  }
+]

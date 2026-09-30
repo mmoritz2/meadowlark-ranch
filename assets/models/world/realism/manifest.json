@@ -1,0 +1,486 @@
+[
+  {
+    "id": "tree_small_02",
+    "page": "https://polyhaven.com/a/tree_small_02",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "Rico Cilliers": "All"
+    },
+    "sourceFiles": [
+      {
+        "file": "tree_small_02.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/tree_small_02/tree_small_02_1k.gltf",
+        "bytes": 9075,
+        "sha256": "3062a709614c05b80fdc1e56583998bc3cb1027b0d52f956c8ecfb882ff8ca6d"
+      },
+      {
+        "file": "textures/tree_small_02_branch_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_branch_nor_gl_1k.jpg",
+        "bytes": 581596,
+        "sha256": "a2efae9e7fede259601188cd5cb7e561fc502bd87e04d862a9532b2d8e647a62"
+      },
+      {
+        "file": "textures/tree_small_02_branch_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_branch_diff_1k.jpg",
+        "bytes": 449977,
+        "sha256": "a71b768e330c0c6cca097e30314f6b4e842ef724a1370f6aab14b4434eec64cb"
+      },
+      {
+        "file": "textures/tree_small_02_branch_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_branch_arm_1k.jpg",
+        "bytes": 375732,
+        "sha256": "8968b46d76c67da09ebbf4eed04b8123c9e0ddf5b55d123968b35b32aa76d27a"
+      },
+      {
+        "file": "textures/tree_small_02_leaves_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_leaves_nor_gl_1k.jpg",
+        "bytes": 681604,
+        "sha256": "8c72e04fb23e16ae1df79c01385a638473d1dd4dede3d51e83d70153c129f09b"
+      },
+      {
+        "file": "textures/tree_small_02_leaves_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_leaves_diff_1k.jpg",
+        "bytes": 340003,
+        "sha256": "261e7d7a5ac7d2e16ea8823ff8510be8f3f615999724232994039ad2885e5c36"
+      },
+      {
+        "file": "textures/tree_small_02_leaves_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_leaves_arm_1k.jpg",
+        "bytes": 633698,
+        "sha256": "71f81374daf5a8f3e6eb2c694264a1769fdb0bea508178e4105618eecea83c3e"
+      },
+      {
+        "file": "textures/tree_small_02_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_nor_gl_1k.jpg",
+        "bytes": 1228646,
+        "sha256": "9c83be074c950ea1b94c732c0c0291b53b9ba357f932d378bafe3ca3b4418871"
+      },
+      {
+        "file": "textures/tree_small_02_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_diff_1k.jpg",
+        "bytes": 863246,
+        "sha256": "4e0093f407b3a1120a36de49a48ebe5a465a9a9b77e361c7a3e66866e115e404"
+      },
+      {
+        "file": "textures/tree_small_02_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_arm_1k.jpg",
+        "bytes": 708242,
+        "sha256": "891c5a1bb124292984b01558e9f2b0302d27d2fa3ccf9dfc6c34f9ea4ca24e6c"
+      },
+      {
+        "file": "tree_small_02.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/tree_small_02/tree_small_02.bin",
+        "bytes": 95102324,
+        "sha256": "8da6c3c389ad8748286d1b7488cd827f75ebdad9d8f59ef7dfb0916df5edc634"
+      },
+      {
+        "file": "textures/tree_small_02_leaves_alpha_1k.png",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/tree_small_02/tree_small_02_leaves_alpha_1k.png",
+        "bytes": 264711,
+        "sha256": "4f143e2dda8a6a572f427ac378b92255d21761e4611de0d26e21816c01aa533b"
+      }
+    ],
+    "output": {
+      "file": "tree_small_02.glb",
+      "bytes": 8079340,
+      "sha256": "863d7bddbca4d46df85c32531acd56102ebb91315eec0bed066b7d5e029bf1a2",
+      "trianglesBefore": 2062487,
+      "triangles": 123891,
+      "primitives": [
+        {
+          "material": "tree_small_02_branches",
+          "before": 94814,
+          "after": 6893
+        },
+        {
+          "material": "tree_small_02_leaves",
+          "before": 1939380,
+          "after": 110000
+        },
+        {
+          "material": "tree_small_02_trunk",
+          "before": 28293,
+          "after": 6998
+        }
+      ],
+      "materials": 3,
+      "textures": 9
+    },
+    "processing": "Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading."
+  },
+  {
+    "id": "pine_sapling_small",
+    "page": "https://polyhaven.com/a/pine_sapling_small",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "Rob Tuytel": "photography",
+      "Rico Cilliers": "modeling"
+    },
+    "sourceFiles": [
+      {
+        "file": "pine_sapling_small.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/pine_sapling_small/pine_sapling_small_1k.gltf",
+        "bytes": 11442,
+        "sha256": "f358c01926861dd082f32dba60f7c9fba232b585a985cf38c0d2229eecf4bc48"
+      },
+      {
+        "file": "textures/pine_sapling_small_twig_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_twig_arm_1k.jpg",
+        "bytes": 394056,
+        "sha256": "2eb0aa44124b5a4ae9401e00b23b3c916f4c3f421616ce1bb932f248fc061288"
+      },
+      {
+        "file": "textures/pine_sapling_small_twig_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_twig_diff_1k.jpg",
+        "bytes": 477942,
+        "sha256": "54af7d6fb664b5a38bcb118b557bc50e01e86ec54d6f1a573c3e32c649a53362"
+      },
+      {
+        "file": "textures/pine_sapling_small_bark_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_bark_nor_gl_1k.jpg",
+        "bytes": 1016849,
+        "sha256": "05c46455531781b6cf18cae0648cf627f60ee942adaa8bcbfd1592fc2506a9e0"
+      },
+      {
+        "file": "pine_sapling_small.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/pine_sapling_small/pine_sapling_small.bin",
+        "bytes": 17771796,
+        "sha256": "b4d2fc73d53f1d8717eb5ef9a2c66957d2a53152787e543aace88fcd6fca94ef"
+      },
+      {
+        "file": "textures/pine_sapling_small_bark_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_bark_diff_1k.jpg",
+        "bytes": 725265,
+        "sha256": "5c76836b01c3536fa0e24207b67bf4f3315b53ebe2b4ecc6f08dfcf3f8d74929"
+      },
+      {
+        "file": "textures/pine_sapling_small_bark_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_bark_arm_1k.jpg",
+        "bytes": 801278,
+        "sha256": "336a4680cd571b6076b67afee2310b290b8900d9d126eb39ec1ae92e95be2ea9"
+      },
+      {
+        "file": "textures/pine_sapling_small_twig_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_twig_nor_gl_1k.jpg",
+        "bytes": 692711,
+        "sha256": "76af87821d7ff00e25768d5d97a449394fe64a21ae55d099da7f5ed46d9098c8"
+      },
+      {
+        "file": "textures/pine_sapling_small_twig_alpha_1k.png",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_twig_alpha_1k.png",
+        "bytes": 159896,
+        "sha256": "b875969b9df9f9cbf56dca4e2809d8ed1916f5172f173b0389f050c834c5cbed"
+      }
+    ],
+    "output": {
+      "file": "pine_sapling_small.glb",
+      "bytes": 4222348,
+      "sha256": "94da778a7b39038782dbc4eccb247d81f8b1c571a8cdf8bfa3dd73a3b22f16a9",
+      "trianglesBefore": 398144,
+      "triangles": 49410,
+      "primitives": [
+        {
+          "material": "pine_sapling_small_bark",
+          "before": 486,
+          "after": 486
+        },
+        {
+          "material": "pine_sapling_small_twig",
+          "before": 121749,
+          "after": 15966
+        },
+        {
+          "material": "pine_sapling_small_bark",
+          "before": 540,
+          "after": 540
+        },
+        {
+          "material": "pine_sapling_small_twig",
+          "before": 141966,
+          "after": 15953
+        },
+        {
+          "material": "pine_sapling_small_bark",
+          "before": 528,
+          "after": 528
+        },
+        {
+          "material": "pine_sapling_small_twig",
+          "before": 132875,
+          "after": 15937
+        }
+      ],
+      "materials": 2,
+      "textures": 6
+    },
+    "processing": "Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading."
+  },
+  {
+    "id": "rock_moss_set_01",
+    "page": "https://polyhaven.com/a/rock_moss_set_01",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "Kless Gyzen": "All"
+    },
+    "sourceFiles": [
+      {
+        "file": "rock_moss_set_01.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_moss_set_01/rock_moss_set_01_1k.gltf",
+        "bytes": 9987,
+        "sha256": "c36675aca9c6b2be7785c2534cf413b03ec82a5a2a5407a2b1c0cdb0346c9727"
+      },
+      {
+        "file": "textures/rock_moss_set_01_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_01/rock_moss_set_01_nor_gl_1k.jpg",
+        "bytes": 209975,
+        "sha256": "eb4aad3f207f1dc5b624d74ae240372171626a66912bd71adf7bd3e518181d6e"
+      },
+      {
+        "file": "rock_moss_set_01.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/rock_moss_set_01/rock_moss_set_01.bin",
+        "bytes": 1466380,
+        "sha256": "de8360e6175879aaf02c171911069cf5f1852547f9ca7f10e440085dbcc3315e"
+      },
+      {
+        "file": "textures/rock_moss_set_01_rough_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_01/rock_moss_set_01_rough_1k.jpg",
+        "bytes": 82624,
+        "sha256": "4d6ec46623abd8e2cdb855f59c7ce31873ad61b36b60e4de579e9e776a497c6b"
+      },
+      {
+        "file": "textures/rock_moss_set_01_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_01/rock_moss_set_01_diff_1k.jpg",
+        "bytes": 168099,
+        "sha256": "40cea65d8aa4ee73a93b04af19963834d061eee9779c3fc2c1cba76eef812ccc"
+      }
+    ],
+    "output": {
+      "file": "rock_moss_set_01.glb",
+      "bytes": 1185868,
+      "sha256": "0d03a00efdf2ac68c5bd3a604e952afd0ccbd7ca8452ece076d91cc578f88f84",
+      "trianglesBefore": 63127,
+      "triangles": 26993,
+      "primitives": [
+        {
+          "material": "rock_moss_set_01",
+          "before": 11000,
+          "after": 4498
+        },
+        {
+          "material": "rock_moss_set_01",
+          "before": 10996,
+          "after": 4496
+        },
+        {
+          "material": "rock_moss_set_01",
+          "before": 5000,
+          "after": 4500
+        },
+        {
+          "material": "rock_moss_set_01",
+          "before": 10589,
+          "after": 4499
+        },
+        {
+          "material": "rock_moss_set_01",
+          "before": 16548,
+          "after": 4500
+        },
+        {
+          "material": "rock_moss_set_01",
+          "before": 8994,
+          "after": 4500
+        }
+      ],
+      "materials": 1,
+      "textures": 3
+    },
+    "processing": "Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading."
+  },
+  {
+    "id": "rock_face_02",
+    "page": "https://polyhaven.com/a/rock_face_02",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "Dario Barresi": "All",
+      "Rico Cilliers": "processing"
+    },
+    "sourceFiles": [
+      {
+        "file": "rock_face_02.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_face_02/rock_face_02_1k.gltf",
+        "bytes": 2794,
+        "sha256": "ebeab82d463c89eb5f894b85807da111280a73b552d694257118f3f2d47bf760"
+      },
+      {
+        "file": "textures/rock_face_02_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_face_02/rock_face_02_nor_gl_1k.jpg",
+        "bytes": 1082942,
+        "sha256": "a9dc200810f5488395fdc928b5a9441c007c33047d0375d946f33dcd2ff1c853"
+      },
+      {
+        "file": "textures/rock_face_02_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_face_02/rock_face_02_arm_1k.jpg",
+        "bytes": 820389,
+        "sha256": "0f3f64b9f56e3c5cecbb99e45d8fa0d4cbf025d4455439d1c5f6672a408365ee"
+      },
+      {
+        "file": "rock_face_02.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/rock_face_02/rock_face_02.bin",
+        "bytes": 702068,
+        "sha256": "cfa3dea8f0f91525b5dfe93d889acacf961d20f7174aae100eae2c6e101edf31"
+      },
+      {
+        "file": "textures/rock_face_02_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_face_02/rock_face_02_diff_1k.jpg",
+        "bytes": 920193,
+        "sha256": "d777f2c9b598773c2143751c34913cf5eef0ae392af31fb73c28b98afab6fb7b"
+      }
+    ],
+    "output": {
+      "file": "rock_face_02.glb",
+      "bytes": 1191128,
+      "sha256": "6761e42c9e28bdd3c04e6c840670b27c39f88f62e3bc003015eaa68a9b5d5ffc",
+      "trianglesBefore": 29566,
+      "triangles": 8496,
+      "primitives": [
+        {
+          "material": "rock_face_02",
+          "before": 29566,
+          "after": 8496
+        }
+      ],
+      "materials": 1,
+      "textures": 3
+    },
+    "processing": "Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading."
+  },
+  {
+    "id": "dead_tree_trunk_02",
+    "page": "https://polyhaven.com/a/dead_tree_trunk_02",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "Jenelle van Heerden": "Photography",
+      "Rico Cilliers": "processing"
+    },
+    "sourceFiles": [
+      {
+        "file": "dead_tree_trunk_02.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/dead_tree_trunk_02/dead_tree_trunk_02_1k.gltf",
+        "bytes": 2849,
+        "sha256": "b486ab1f0c7f4972e0eec97b19de53b26a34d09f07da5f9c2a70f8621f9e574c"
+      },
+      {
+        "file": "textures/dead_tree_trunk_02_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_tree_trunk_02/dead_tree_trunk_02_diff_1k.jpg",
+        "bytes": 932059,
+        "sha256": "fac23e81ab5639dcde93db605e5dd94c65e0aa2b1fb4a303f37de9afbb9af5b4"
+      },
+      {
+        "file": "textures/dead_tree_trunk_02_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_tree_trunk_02/dead_tree_trunk_02_arm_1k.jpg",
+        "bytes": 805609,
+        "sha256": "ea15561ce36572ebd0db3c997f70d68a76d4bcbfef7efb4f91c8fd3b5f766e62"
+      },
+      {
+        "file": "textures/dead_tree_trunk_02_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_tree_trunk_02/dead_tree_trunk_02_nor_gl_1k.jpg",
+        "bytes": 1192056,
+        "sha256": "9b26c29b89afced0ddb91dbe6f917e59038bed5ba6076dfceb8d1b4b00ca04f7"
+      },
+      {
+        "file": "dead_tree_trunk_02.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/dead_tree_trunk_02/dead_tree_trunk_02.bin",
+        "bytes": 1974352,
+        "sha256": "2b1b7ca07d98396ddc1987e367dcff9734df16b62e997c14837512d134687ded"
+      }
+    ],
+    "output": {
+      "file": "dead_tree_trunk_02.glb",
+      "bytes": 1303340,
+      "sha256": "33d5e3d03a56cbf44f3b4791eac3703f35545641da84c8f0be484a2008bf2594",
+      "trianglesBefore": 83128,
+      "triangles": 8498,
+      "primitives": [
+        {
+          "material": "dead_tree_trunk_02",
+          "before": 83128,
+          "after": 8498
+        }
+      ],
+      "materials": 1,
+      "textures": 3
+    },
+    "processing": "Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading."
+  },
+  {
+    "id": "namaqualand_cliff_02",
+    "page": "https://polyhaven.com/a/namaqualand_cliff_02",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-09-30",
+    "authors": {
+      "Dario Barresi": "Photography",
+      "Rico Cilliers": "modeling"
+    },
+    "sourceFiles": [
+      {
+        "file": "namaqualand_cliff_02.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/namaqualand_cliff_02/namaqualand_cliff_02_1k.gltf",
+        "bytes": 2857,
+        "sha256": "025d245c7bbd0dfeb061c95a03a79699b5e39c9b3b04e7f0c8f729d2b99830cf"
+      },
+      {
+        "file": "textures/namaqualand_cliff_02_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/namaqualand_cliff_02/namaqualand_cliff_02_diff_1k.jpg",
+        "bytes": 793208,
+        "sha256": "872afb18d20b90da0fb24946f2fe6b55a09fffae3fe803ae86bb153fcd3aacd7"
+      },
+      {
+        "file": "textures/namaqualand_cliff_02_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/namaqualand_cliff_02/namaqualand_cliff_02_nor_gl_1k.jpg",
+        "bytes": 1071907,
+        "sha256": "bb4ead8fcfea7063d64df2cb08d655498d6730d46ea7381f5a55bf510cb10f74"
+      },
+      {
+        "file": "namaqualand_cliff_02.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/namaqualand_cliff_02/namaqualand_cliff_02.bin",
+        "bytes": 5697152,
+        "sha256": "da05a038b3a1f3b46cd8cf074d20b8d3e2b2148d30806e1feb0309e941200595"
+      },
+      {
+        "file": "textures/namaqualand_cliff_02_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/namaqualand_cliff_02/namaqualand_cliff_02_arm_1k.jpg",
+        "bytes": 813799,
+        "sha256": "c48be80f40db3c64500b9289c92fd2492e51069270f9e041e540aaa0af207667"
+      }
+    ],
+    "output": {
+      "file": "namaqualand_cliff_02.glb",
+      "bytes": 1522120,
+      "sha256": "168a8897fb36a01fec2a6d3b6427f931cf292885adbb762a9f1d667c7fc4d80e",
+      "trianglesBefore": 194080,
+      "triangles": 23998,
+      "primitives": [
+        {
+          "material": "drone_rock_02",
+          "before": 194080,
+          "after": 23998
+        }
+      ],
+      "materials": 1,
+      "textures": 3
+    },
+    "processing": "Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading."
+  }
+]

@@ -649,8 +649,13 @@ import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
+import {createRanchBuilderArt} from './assets/ranch-builder-art.js';
+import {createWorldFinish} from './assets/world-rendering.js';
+import {installRanchWorldDetails} from './assets/ranch-world-details.js';
+import {installWorldPhotoscans} from './assets/world-photoscans.js';
+import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-3';
-import {FEATURES} from './assets/features/index.js?v=feat-20';
+import {FEATURES} from './assets/features/index.js?v=world-20260930';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -2554,6 +2559,7 @@ const composer=new EffectComposer(renderer);
 for(const rt of [composer.renderTarget1,composer.renderTarget2])rt.samples=Math.min(4,renderer.capabilities.maxSamples);
 composer.setPixelRatio(Math.min(devicePixelRatio,1.75));
 composer.addPass(new RenderPass(scene,camera));
+const worldFinish=createWorldFinish({composer,camera});
 const bloomPass=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.045,0.85,0.72);
 composer.addPass(bloomPass);
 composer.addPass(new OutputPass());
@@ -2627,6 +2633,8 @@ const moonS=(()=>{
 /* window panes & lamps that switch on at dusk (day colour -> HDR warm glow the bloom picks up) */
 const glowPanes=[];
 const ranchArchitecture=createRanchArchitecture({THREE,glowPanes});
+const ranchBuilderArt=createRanchBuilderArt({THREE,GLTFLoader,architecture:ranchArchitecture,
+ anisotropy:renderer.capabilities.getMaxAnisotropy(),getRanchName:()=>freshSave()?.ranchName||'Meadowlark Ranch'});
 const arrivalArt=createArrivalArt({THREE,anisotropy:renderer.capabilities.getMaxAnisotropy()});
 const geology=createGeology({THREE,scene,groundH:terrainH});
 /* fireflies: drifting HDR embers over the meadows, only alive at night */
@@ -2650,6 +2658,7 @@ let quality=(save&&save.quality)||'high';
 const QUAL_LABEL={low:'🎚️ Graphics: Low — smoothest',medium:'🎚️ Graphics: Medium',high:'🎚️ Graphics: High — prettiest'};
 function applyQuality(q){
  quality=q;
+ worldFinish.setQuality(q);
  const samples=q==='high'?Math.min(4,renderer.capabilities.maxSamples):q==='medium'?Math.min(2,renderer.capabilities.maxSamples):0;
  for(const rt of [composer.renderTarget1,composer.renderTarget2])if(rt.samples!==samples){rt.samples=samples;rt.dispose();}
  const pr=q==='high'?Math.min(devicePixelRatio,1.75):q==='medium'?Math.min(devicePixelRatio,1.25):1;
@@ -2728,7 +2737,7 @@ bumpTexture.repeat.set(130,130);
 const texLoad=(path,rep)=>{const t=new THREE.TextureLoader().load(path);
  t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rep,rep);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;};
 const texData=(path,rep)=>{const t=texLoad(path,rep);t.colorSpace=THREE.NoColorSpace;return t;};
-const grassLoad=rep=>texLoad('assets/textures/pastoral/meadow_albedo.jpg',rep);
+const grassLoad=rep=>texLoad('assets/textures/scanned/leafy_grass_diff.webp',rep);
 const groundTex=grassLoad(240);
 const sandTex=texLoad('assets/textures/pastoral/arena_albedo.jpg',10);   // generated tile, same repeat and wrap as the canvas it replaces
 // Tapered blades with curved tips; silhouettes stay soft at riding distance.
@@ -2872,7 +2881,7 @@ const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:b
      ground'. A riding game's meadow has no soil showing: tint the pasture toward green here,
      and leave Coyote's sand and Hollowpeak's snow exactly as they were. */
   const sand=Math.hypot(x+220,z-130)<150, snow=Math.hypot(x+160,z+210)<140;
-  if(sand||snow)col.setScalar(lum); else col.setRGB(lum*.80,lum*1.0,lum*.66);
+  if(sand||snow)col.setScalar(lum); else col.setRGB(lum*.94,lum*.98,lum*.89);
   colors.push(col.r,col.g,col.b);
  }
  geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
@@ -3639,7 +3648,10 @@ function paintMat(hex){
  }
  return paintCache[hex];
 }
-const plankBrownMat=new THREE.MeshStandardMaterial({map:grainTex('#9a7448','#6e4f30',0.7),roughness:0.95});
+const plankBrownMat=new THREE.MeshStandardMaterial({
+ map:texLoad('assets/textures/realism/siding_albedo.jpg',1),color:'#9b8367',
+ normalMap:texData('assets/textures/realism/siding_normal.jpg',1),normalScale:new THREE.Vector2(.32,.32),
+ roughnessMap:texData('assets/textures/realism/siding_roughness.jpg',1),roughness:.92,envMapIntensity:.5});
 const hayMat=new THREE.MeshStandardMaterial({map:canvasTex(128,128,(c,w,h)=>{
  c.fillStyle='#d8b35a';c.fillRect(0,0,w,h);
  for(let i=0;i<260;i++){
@@ -4139,6 +4151,9 @@ function placeSeedTrees(){
    const minY=bg.boundingBox.min.y,hh=(bg.boundingBox.max.y-minY)||1;
    const bInst=new THREE.InstancedMesh(bg,cfg.bark,sub.length);
    const lInst=new THREE.InstancedMesh(lg,cfg.mat,sub.length);
+   bInst.userData.treePoints=lInst.userData.treePoints=sub;
+   bInst.userData.treeSpecies=lInst.userData.treeSpecies=name;
+   bInst.userData.treeLayer='wood';lInst.userData.treeLayer='leaves';
    bInst.castShadow=true;bInst.receiveShadow=true;bInst.frustumCulled=false;
    lInst.castShadow=true;lInst.receiveShadow=true;lInst.frustumCulled=false;
    lInst.customDepthMaterial=cfg.mat.userData.depthMat;   // alpha-tested leaf shadows
@@ -4249,12 +4264,14 @@ for(let i=0;i<44;i++){                                       // stumps: where tr
 const PROP_SRC={};
 function placeFoliage(name){
  const list=FOLIAGE[name]; if(!list.length)return;
- new GLTFLoader().load('assets/models/'+name+'_textured.glb',g=>{
+ const scan={barrel:'props/wine_barrel_01',stump:'tree_stump_01'}[name];
+ new GLTFLoader().load(scan?'assets/models/world/'+scan+'.glb':'assets/models/'+name+'_textured.glb',g=>{
+  g.scene.updateMatrixWorld(true);
   let src=null; g.scene.traverse(o=>{if(o.isMesh&&!src)src=o;});
   if(!src)return;
-  const geo=src.geometry; geo.computeBoundingBox();
+  const geo=scan?src.geometry.clone().applyMatrix4(src.matrixWorld):src.geometry; geo.computeBoundingBox();
   const minY=geo.boundingBox.min.y, h=(geo.boundingBox.max.y-minY)||1;
-  const mat=src.material; mat.roughness=0.9; mat.metalness=0;
+  const mat=src.material;if(!scan){mat.roughness=0.9;mat.metalness=0;}
   PROP_SRC[name]={geo,mat,minY,h};
   const inst=new THREE.InstancedMesh(geo,mat,list.length);
   inst.name='foliage_'+name;
@@ -4283,11 +4300,12 @@ function placeFoliage(name){
  const pollRig=setInterval(()=>{ if(RIG.ready){clearInterval(pollRig);startFoliage();} },200);
  setTimeout(()=>{clearInterval(pollRig);startFoliage();},7000);
 }
+const scannedRockTargets=[];
 FOLIAGE.boulder.forEach((p,i)=>{
  const rock=geology.makeBoulder(p.s*.9,i+2501);rock.position.set(p.x,terrainH(p.x,p.z)-.06,p.z);
- rock.rotation.y=p.r;scene.add(rock);
+ rock.rotation.y=p.r;rock.userData.scanPlacement=p;scannedRockTargets.push(rock);scene.add(rock);
 });
-plantNaturalShrubs({THREE,scene,placements:FOLIAGE.bush,groundH});
+// Non-flowering understory is placed from the local photoscan library after the horse loads.
 plantNaturalShrubs({THREE,scene,placements:FOLIAGE.flowerbush,groundH,flowering:true});
 terrainSurface.setTrees([].concat(FOLIAGE.oak,FOLIAGE.birch,FOLIAGE.blossom,FOLIAGE.pine,FOLIAGE.snowpine));
 seedTreeInsts=placeSeedTrees();                                    // trees are Weber–Penn generated
@@ -6289,6 +6307,7 @@ waterAnims.push({tex:pondTex,sx:0.01,sy:0.013});
 const pondMat=waterMat.clone();
 pondMat.map=pondTex;                 // same water response, its own ripple scale
 pondMat.onBeforeCompile=waterMat.userData.plainShader;   // no ribbon-edge fade on a disc
+pondMat.customProgramCacheKey=()=> 'ripple-water-v3-pond';
 pondMat.needsUpdate=true;
 const pond=new THREE.Mesh(new THREE.CircleGeometry(4.5,28),pondMat);
 pond.rotation.x=-Math.PI/2;
@@ -9484,6 +9503,7 @@ uiAction('rerender',a=>{if(a[0])uiRender(a[0]);});
    slowly, XP comes faster, forage grows back sooner. Nothing here costs anything but coins. */
 const decorObjs=[];   // {d, g, coll}
 function buildDecorMesh(t,forGhost){
+ const detailed=ranchBuilderArt.create(t,forGhost); if(detailed)return detailed;
  const c=DECOR_CAT[t]; if(!c)return null; const g=new THREE.Group();
  if(c.mk){ c.mk(g,forGhost,{box,tube,blob,THREE,nameSprite,smat}); }
  else if(c.prop){
@@ -13600,6 +13620,7 @@ function tick(stepSeconds){
  for(const tw of treeWinds)tw.uniforms.uTime.value=t;
  for(const r of ripples)r.m.rotation.z+=dt*0.13*r.dir;
  if(waterMat?.userData.waterTime)waterMat.userData.waterTime.value=t;
+ if(groundMat?.userData.wetWeather){const w=groundMat.userData.wetWeather;w.value+=((weather.mode==='rain'?1:0)-w.value)*Math.min(1,dt*.18);}
  for(const wa of waterAnims){wa.tex.offset.x+=dt*wa.sx;wa.tex.offset.y+=dt*(wa.sy<-0.5?wa.sy:wa.sy*Math.sin(t*0.5));}
  tickFalls(dt,t);
  tickSummon(dt);
@@ -14057,6 +14078,7 @@ function tick(stepSeconds){
   mc.restore();
  }
  renderer.info.reset();
+ waterReflections.update();
  if(renderer.xr.isPresenting)renderer.render(scene,camera);
  else if(useBloom)composer.render();
  else renderer.render(scene,camera);
@@ -14147,7 +14169,7 @@ function installFeatures(){
   horse:{myHorses,rideIdx:()=>rideIdx,ridden:()=>myHorses[rideIdx],RIG:()=>RIG,TACK:()=>TACK,player,herd:()=>herd,remotes,
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,arrivalArt,geology,box,tube,blob,
+  world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},
@@ -14195,6 +14217,16 @@ function installFeatures(){
  if(location.search.includes('qa'))window.__features=G;   // headless verification without touching the MERGE_STATS injection
 }
 installFeatures();
+installRanchWorldDetails(G,{shrubs:FOLIAGE.bush});
+installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
+const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,
+ levelAt(x,z){
+  const planes=[{distance:Math.abs(z-riverZ(x)),level:riverLevel(x)},
+   {distance:Math.hypot(x-20,z-16),level:.04}];
+  if(z<STREAM_JOIN)planes.push({distance:Math.abs(x-streamX(z)),level:streamLevel(z)});
+  return planes.sort((a,b)=>a.distance-b.distance)[0];
+ }});
+G.waterReflections=waterReflections;
 const MERGE_STATS=mergeStatics();
 renderer.setAnimationLoop(tick);   // drives rAF when flat, the XR frame loop when presenting
 addEventListener('resize',()=>{

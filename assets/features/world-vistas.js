@@ -213,6 +213,10 @@ export function install(G){
  const SKY_BASE=-18;
  const rockMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,metalness:0,side:THREE.DoubleSide});
  rockMat.envMapIntensity=0.5;
+ const massifTexture=new THREE.TextureLoader().load('./assets/textures/realism/rock_albedo.jpg');
+ massifTexture.colorSpace=THREE.SRGBColorSpace;
+ massifTexture.wrapS=massifTexture.wrapT=THREE.RepeatWrapping;
+ massifTexture.anisotropy=Math.min(8,G.renderer.capabilities.getMaxAnisotropy());
  /* FogExp2 at 0.00125 leaves a peak at 900 m seventy per cent washed toward the sky colour,
     which is not aerial perspective, it is erasure — world-art.js had to soften the same fog
     for the rings standing behind these, for the same reason. This is that cheat with a weaker
@@ -220,24 +224,38 @@ export function install(G){
     colour, by 1300 m it is two thirds sky, and the far rings stay hazier still, so the depth
     ordering of the whole skyline comes out in the right order. */
  rockMat.onBeforeCompile=sh=>{
+  sh.uniforms.massifTexture={value:massifTexture};
+  sh.vertexShader='varying vec3 massifPosition; varying vec3 massifNormal;\n'+sh.vertexShader;
+  sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+    massifPosition=(modelMatrix*vec4(position,1.0)).xyz;
+    massifNormal=normalize(mat3(modelMatrix)*normal);`);
+  sh.fragmentShader='uniform sampler2D massifTexture; varying vec3 massifPosition; varying vec3 massifNormal;\n'+sh.fragmentShader;
+  sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+    vec3 mw=pow(abs(normalize(massifNormal)),vec3(4.0));mw/=max(dot(mw,vec3(1.0)),.001);
+    vec3 mp=massifPosition*.065;
+    vec3 mineral=texture2D(massifTexture,mp.yz).rgb*mw.x+texture2D(massifTexture,mp.xz).rgb*mw.y+texture2D(massifTexture,mp.xy).rgb*mw.z;
+    float grain=dot(mineral,vec3(.2126,.7152,.0722));
+    float fold=sin(massifPosition.x*.027+sin(massifPosition.z*.018)*3.0+massifPosition.y*.035);
+    float ledge=sin(massifPosition.y*.19+sin(massifPosition.x*.009)*5.0);
+    diffuseColor.rgb*=clamp(.73+grain*.78+fold*.08+ledge*.025,.60,1.18);`);
   sh.fragmentShader=sh.fragmentShader.replace('#include <fog_fragment>',`
 #ifdef USE_FOG
  #ifdef FOG_EXP2
-  float vistaFog = 1.0 - exp(-fogDensity*fogDensity*vFogDepth*vFogDepth*0.19);
+  float vistaFog = 1.0 - exp(-fogDensity*fogDensity*vFogDepth*vFogDepth*0.34);
  #else
   float vistaFog = smoothstep(fogNear,fogFar,vFogDepth)*0.6;
  #endif
  gl_FragColor.rgb = mix(gl_FragColor.rgb, fogColor, min(0.66, vistaFog));
 #endif`);
  };
- rockMat.customProgramCacheKey=()=>'vista-massif-v1';
+ rockMat.customProgramCacheKey=()=>'vista-massif-v2-mineral';
 
  /* A massif is a patch of heightfield laid along a bearing: u runs along the range, v across
     it, and the summits are named points on that ridgeline rather than wherever the noise
     happened to pile up. Placing the peaks by hand is the entire point — a skyline you can
     steer by needs the sharp one to be in the same place as the word "north". */
  function massif(cfg){
-  const nu=cfg.nu||108,nv=cfg.nv||14,b=cfg.bearing,dist=cfg.dist,span=cfg.span,depth=cfg.depth;
+  const nu=Math.max(cfg.nu||108,160),nv=Math.max(cfg.nv||14,40),b=cfg.bearing,dist=cfg.dist,span=cfg.span,depth=cfg.depth;
   const ax=Math.cos(b),az=-Math.sin(b);                   // along the range
   const ox=Math.sin(b),oz=Math.cos(b);                    // outward, away from the basin
   const rock=new THREE.Color(cfg.rock),high=new THREE.Color(cfg.high||cfg.rock);
@@ -309,20 +327,20 @@ export function install(G){
     snow all the way down the year. */
  const MASSIFS=[
   {id:'horn',label:'⛰️ The Kestrel Horn',bearing:2.98,dist:920,span:780,depth:440,seed:11,nu:150,nv:16,
-   rock:'#47566a',high:'#6b7a8e',foot:'#2c3c44',snow:'#f0f5f8',snowAt:205,snowBand:55,
-   summits:[{u:0,h:338,w:150,k:2.0},{u:-255,h:208,w:185,k:1.4},{u:250,h:162,w:155,k:1.6}]},
+   rock:'#66675f',high:'#98988a',foot:'#424c43',snow:'#e2e8e7',snowAt:185,snowBand:65,
+   summits:[{u:0,h:268,w:218,k:1.45},{u:-255,h:194,w:190,k:1.4},{u:250,h:162,w:175,k:1.6}]},
   {id:'sisters',label:'⛰️ The Sisters’ Wall',bearing:-1.52,dist:810,span:1020,depth:380,seed:29,nu:152,nv:16,
-   rock:'#3e5251',high:'#5c6f66',foot:'#293a2f',snow:'#eaf1f2',snowAt:190,snowBand:48,
-   summits:[{u:-335,h:238,w:152},{u:-40,h:292,w:162,k:1.6},{u:292,h:224,w:150}]},
+   rock:'#62675d',high:'#919183',foot:'#3e4938',snow:'#e1e7e4',snowAt:180,snowBand:58,
+   summits:[{u:-335,h:218,w:190},{u:-40,h:245,w:210,k:1.4},{u:292,h:206,w:180}]},
   {id:'ambersgate',label:'⛰️ Ambersgate',bearing:1.66,dist:850,span:820,depth:420,seed:47,nu:140,nv:16,
    rock:'#6e4a37',high:'#95684c',foot:'#4a352b',backfall:0.35,
    summits:[{u:-235,h:170,w:215,flat:0.55},{u:155,h:198,w:235,flat:0.50}]},
   {id:'longgrey',label:'⛰️ The Long Grey',bearing:0.10,dist:1120,span:1120,depth:460,seed:71,nu:144,nv:16,
-   rock:'#41526a',high:'#5f7089',foot:'#32435a',snow:'#e8eff4',snowAt:165,snowBand:45,
+   rock:'#666d70',high:'#939a98',foot:'#454e4f',snow:'#e2e8e8',snowAt:165,snowBand:45,
    summits:[{u:-390,h:180,w:235},{u:0,h:216,w:255},{u:405,h:170,w:230}]},
   {id:'wolftooth',label:'⛰️ The Wolf Tooth',bearing:2.30,dist:1180,span:380,depth:240,seed:97,nu:96,nv:16,
-   rock:'#3b4759',high:'#5c6a80',foot:'#2e3847',snow:'#eef4f8',snowAt:215,snowBand:55,
-   summits:[{u:0,h:322,w:98,k:2.1},{u:-128,h:158,w:92}]},
+   rock:'#656762',high:'#91938b',foot:'#414c46',snow:'#e4eae7',snowAt:200,snowBand:65,
+   summits:[{u:0,h:266,w:140,k:1.7},{u:-128,h:158,w:102}]},
   {id:'barrowback',label:'⛰️ Barrowback Down',bearing:-0.89,dist:840,span:920,depth:300,seed:131,nu:132,nv:16,
    rock:'#3e5238',high:'#5b6c45',foot:'#2c3a2a',backfall:0.45,
    summits:[{u:-265,h:98,w:215},{u:125,h:126,w:245},{u:385,h:90,w:185}]},

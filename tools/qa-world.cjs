@@ -35,6 +35,7 @@ const out=path.resolve('output/world-validation');fs.mkdirSync(out,{recursive:tr
  if(await charOn())await page.keyboard.press('Escape');
  if(await charOn())await page.evaluate(()=>document.getElementById('seChar').classList.remove('on'));
  const charClosed=!(await charOn());
+ await page.evaluate(async()=>{await window.__features?.photoscans?.ready;});
  await page.evaluate(()=>{__qa.day(.38);advanceTime(500);});
  const terrain=await page.evaluate(()=>{
   const q=__qa,T=q.THREE,mesh=q.scene.getObjectByName('Pasture terrain');

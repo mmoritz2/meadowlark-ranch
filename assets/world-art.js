@@ -321,7 +321,7 @@ export function tuneFoliage({ THREE, material, geometry, species = 'oak' }) {
       n.setXYZ(i, v.x, v.y, v.z);
       const radial = Math.hypot(p.getX(i) - center.x, p.getZ(i) - center.z) / Math.max(0.1, radius);
       const upper = (p.getY(i) - box.min.y) / Math.max(0.1, box.max.y - box.min.y);
-      const shade = 0.57 + 0.25 * clamp(radial) + 0.18 * clamp(upper);
+      const shade = 0.43 + 0.31 * clamp(radial) + 0.26 * clamp(upper);
       const variation = hash2(Math.floor(p.getX(i) * 4),Math.floor(p.getZ(i) * 4));
       colors[i * 3] = shade * (0.94 + variation * 0.06);
       colors[i * 3 + 1] = shade;
@@ -337,7 +337,7 @@ export function tuneFoliage({ THREE, material, geometry, species = 'oak' }) {
   material.userData.pastoralFoliage = true;
   material.roughness = 1;
   material.vertexColors = true;
-  material.envMapIntensity = 0.85;
+  material.envMapIntensity = 0.64;
   material.alphaTest = pine ? 0.20 : 0.34;
   material.alphaToCoverage = true;
   material.map = getFoliageTexture(THREE, species);
@@ -382,7 +382,15 @@ export function tuneFoliage({ THREE, material, geometry, species = 'oak' }) {
       // dissolves just the nearest cards while keeping opaque depth ordering.
       'diffuseColor.a *= smoothstep(0.5, 2.6, length(vViewPosition));\n#include <alphatest_fragment>'
     );
+    shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>',`
+      #if NUM_DIR_LIGHTS > 0
+        // Thin leaves transmit a little light when viewed toward the sun.
+        // Key-light colour and intensity keep this dark after sunset.
+        float leafTransmission=pow(max(dot(normalize(vViewPosition),-directionalLights[0].direction),0.0),4.0);
+        outgoingLight+=diffuseColor.rgb*directionalLights[0].color*leafTransmission*.045;
+      #endif
+      #include <opaque_fragment>`);
   };
-  material.customProgramCacheKey = () => key + '|botanical-foliage-v5-' + (pine ? 'needle' : 'leaf');
+  material.customProgramCacheKey = () => key + '|botanical-foliage-v6-' + (pine ? 'needle' : 'leaf');
   material.needsUpdate = true;
 }

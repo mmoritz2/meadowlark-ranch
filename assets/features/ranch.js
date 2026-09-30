@@ -197,9 +197,7 @@ export function install(G){
   if(t==='stable'){ for(const lz of[-1.65,1.65]){const st=A.buildOpenStall();st.position.set(0,0,lz);g.add(st);const [wx,wz]=rotXZ(-0.1,lz,ry);rec.stalls.push({x:sl.x+wx,z:sl.z+wz,ry:ry-Math.PI/2});} }
   else if(t==='house'){ g.add(A.buildCottage({variant:Math.abs(Math.round(sl.x+sl.z))%4})); }
   else if(t==='shed'){ g.add(A.buildOutbuilding({width:3.2,depth:2.6,height:2.4,animatedDoorOpening:{width:.9,height:1.7}})); }
-  else if(t==='paddock'){ fenceRing(g,-5,-5,5,5,2.5); blob(0.5,0.25,0.4,'#d9b56a',2,0.25,2,g); }
-  else if(t==='ring'){ const n=14; for(let i=0;i<n;i++){const a=i/n*Math.PI*2;box(0.14,1.15,0.14,'#f4f0e6',Math.sin(a)*5,0.57,Math.cos(a)*5,g);const b=i/n*Math.PI*2,c=(i+1)/n*Math.PI*2;for(const y of[0.55,0.98]){const m=box(Math.hypot(Math.sin(c)-Math.sin(b),Math.cos(c)-Math.cos(b))*5,0.08,0.06,'#f4f0e6',Math.sin((b+c)/2)*5,y,Math.cos((b+c)/2)*5,g);m.rotation.y=-(b+c)/2;}} box(3,0.1,3,'#c9a273',0,0.05,0,g); for(const [x,z] of[[-2,0],[2,0]])tube(0.2,0.3,0.6,'#e8871e',x,0.3,z,g); }
-  else if(t==='well'){ tube(0.8,0.85,0.9,'#8c8074',0,0.45,0,g); for(const x of[-0.7,0.7])box(0.12,2.0,0.12,WD,x,1.0,0,g); box(2,0.1,1.4,'#7a5236',0,2.05,0,g); box(0.06,0.06,1.2,WD,0,1.75,0,g); blob(0.25,0.2,0.25,WL,0.4,1.7,0,g); }
+  else if(['paddock','ring','well'].includes(t)){ g.add(W.ranchBuilderArt.create(t)); }
   g.position.set(sl.x,W.groundH(sl.x,sl.z),sl.z); g.rotation.y=ry;
   g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
   const sp=G.nameSprite(def.emoji+' '+def.label); sp.position.y=(g.children[0]&&g.children[0].userData.architecture&&g.children[0].userData.architecture.suggestedLabelY)||3.2; g.add(sp);

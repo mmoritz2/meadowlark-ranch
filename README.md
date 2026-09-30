@@ -181,6 +181,58 @@ still requires an authored sculpt, rider rig, and animation library.
 
 ## World realism
 
+The ranch builder uses detailed replacements for all 55 decor pieces. Individual
+boards, shaped furniture, iron fittings, stone courses, water basins, and fabric
+surfaces share photographed PBR maps. Seven original CC0 Poly Haven models add
+barrels, picnic tables, planters, lanterns, stumps, flowers, and hedges. Previews
+use the same geometry as placed pieces; loaded scans upgrade both in place.
+Saved items receive the new artwork without changing prices, positions, rotation,
+or IDs. Paddocks, training rings, and wells also use the new builder models.
+See `assets/models/world/builder/README.md` and `assets/textures/builder/README.md`
+for sources and reproduction. `tools/qa-builder-art.cjs` renders the catalogue,
+checks preview/placed parity, and verifies real placement and saved reloads;
+`tools/qa-ranch.cjs` covers the existing building controls and economy.
+
+The September 30 environment pass replaces the saturated cartoon grade with a
+restrained photographic finish and adds contact shading from the scene's depth
+buffer, nearby planar water reflections on High, and PBR water with moving
+ripples and translucent shallows. Reflections refresh at most 15 times per
+second; Medium uses fewer contact-shading samples, and Low and VR retain the
+lighter direct rendering path.
+
+Terrain now uses meadow, forest-litter and rock normal maps, with wet surface
+response during rain. The ranch has matching timber battens, textured stone
+foundations and weathered bridge timber. Finer grass, light transmission through
+leaves, layered clouds, and broader textured mountain silhouettes complete the
+lighting and materials pass. Local CC0 Poly Haven shrubs, ferns, stumps, barrels
+and selected yard props are integrated from `assets/models/world/`; provenance
+is retained in that directory's `SOURCE.md`. The understory is instanced in
+spatial patches and culled by distance.
+
+The downloadable-asset pass adds six **verified CC0 Poly Haven model assets**:
+a detailed broadleaf tree, three pine saplings, six mossy rock variants, two rock
+faces/cliffs and fallen timber. Scans replace the 74 scattered boulders and 30
+meadow outcrops. Detailed trees replace nearby oak/birch placements and biome copses, capped at
+12 on High and 6 on Medium; spatial batches cull off-screen crowns and shadows.
+Distant trees and Low/VR use lightweight, live-lit views baked from the same tree
+model to retain its silhouette. New saplings and logs stay clear of routes,
+water, interactables and colliders. Original PBR maps and leaf transparency are
+preserved. See `assets/models/world/realism/README.md` and its source/hash manifest.
+
+Three photographed ground materials replace the generated pasture, forest-soil
+and exposed-rock surfaces, with matched color/normal maps, roughness, and ambient
+occlusion. Their sources, licenses and compressed output hashes are recorded in
+`assets/textures/scanned/`. Models and ground textures add about 24 MiB; all
+assets are served locally, with no third-party model requests during play.
+
+Run `node tools/qa-world-finish.cjs` with the preview server running for actual
+WebGL shader, contact-shading, reflection, asset-loading, resize and quality-tier
+checks, imported-model checks and a frame-time sample. It saves ranch, stable,
+meadow, river, scanned woodland/outcrop, golden-hour, night and rain captures
+in `output/world-finish/`. These improvements do not establish AAA or commercial
+reference parity: several characters, landmarks and props still use stylized
+geometry, and reflections approximate one nearby horizontal water surface.
+
 The world uses a denser terrain mesh with matching riding collision, continuous
 downhill river and creek channels, an arched bridge at the actual crossing, and
 surface materials that blend with slope, tree cover, riverbanks and climate.
@@ -188,8 +240,8 @@ Botanical trees and shrubs, curved grass blades, photographed-style generated
 leaf and needle textures, and distant forest textures baked from the actual tree
 meshes replace the earlier sphere/cone scenery.
 
-Original ComfyUI materials supply weathered timber, cedar shingles, forest
-litter and sedimentary rock. Detailed barns and cottages have recessed windows,
+Original ComfyUI materials still supply weathered timber and cedar shingles;
+the main ground now uses photographed scans. Detailed barns and cottages have recessed windows,
 door joinery, foundations and gutters. Canyon formations and the waterfall cliff
 have eroded silhouettes, physical depth and rubble at their bases; riverbanks
 have clustered sedges, reeds, gravel and driftwood. The sources and reproduction
