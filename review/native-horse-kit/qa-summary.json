@@ -1,0 +1,49 @@
+{
+  "url": "http://127.0.0.1:8577/review/native-horse-kit/review.html",
+  "errors": [],
+  "gaits": {
+    "walk": {
+      "clip": "Target Native Walk Rollover",
+      "duration": 1.1200000047683716,
+      "nativeBones": 677,
+      "modelSha256": "552dd455873020cba95f7087d513358fd7dd26b27406e8cc36ce7c6b0da8d3e4",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0009233334608878818,
+        0.00101942839046118
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0009233334608878818,
+        0.001169072337213889
+      ]
+    },
+    "trot": {
+      "clip": "Target Native Trot",
+      "duration": 0.7200000286102295,
+      "nativeBones": 677,
+      "modelSha256": "552dd455873020cba95f7087d513358fd7dd26b27406e8cc36ce7c6b0da8d3e4",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0009407939819809762,
+        0.015451913190767027
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0009407939819809762,
+        0.004424105315629451
+      ]
+    },
+    "stand": {
+      "clip": "Horse|Horse_Idle",
+      "duration": 13.958333015441895,
+      "nativeBones": 677,
+      "modelSha256": "552dd455873020cba95f7087d513358fd7dd26b27406e8cc36ce7c6b0da8d3e4",
+      "allFinite": true,
+      "bodyMinRange": [
+        -0.0008706650484685699,
+        0.0005945017791581806
+      ],
+      "stanceWholeHoofMinimum": null
+    }
+  },
+  "pass": true
+}

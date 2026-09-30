@@ -1,0 +1,138 @@
+{
+  "duration": 0.72,
+  "authorBoundsDegrees": {
+    "fore": [
+      [
+        -14,
+        14
+      ],
+      [
+        -35,
+        35
+      ],
+      [
+        -45,
+        45
+      ],
+      [
+        -15,
+        70
+      ]
+    ],
+    "hind": [
+      [
+        -35,
+        35
+      ],
+      [
+        -50,
+        50
+      ],
+      [
+        -50,
+        20
+      ]
+    ]
+  },
+  "plateau": {
+    "FL": {
+      "authorCapOrBoundSampleCount128": 12,
+      "samplePhaseRanges": [
+        [
+          0.625,
+          0.7109375
+        ]
+      ],
+      "sampledDurationFraction": 0.09375,
+      "sampledDurationSec": 0.0675,
+      "actualGeometryFlexRangeDuringPlateau": [
+        79.02542424618457,
+        79.6346829978943
+      ],
+      "maxAdjacentLocalAngularStepDegrees256": 2.9246327394608467,
+      "loopAdjacentLocalAngularStepDegrees256": 0.4825172218635534,
+      "firstLastLocalOrientationSeamDegrees": 2.4148365394514667e-06
+    },
+    "FR": {
+      "authorCapOrBoundSampleCount128": 9,
+      "samplePhaseRanges": [
+        [
+          0.15625,
+          0.21875
+        ]
+      ],
+      "sampledDurationFraction": 0.0703125,
+      "sampledDurationSec": 0.050624999999999996,
+      "actualGeometryFlexRangeDuringPlateau": [
+        77.62277030676714,
+        78.07632380655306
+      ],
+      "maxAdjacentLocalAngularStepDegrees256": 2.283888730415441,
+      "loopAdjacentLocalAngularStepDegrees256": 1.501327754915596,
+      "firstLastLocalOrientationSeamDegrees": 5.399738656763832e-06
+    },
+    "HL": {
+      "authorCapOrBoundSampleCount128": 14,
+      "samplePhaseRanges": [
+        [
+          0.1640625,
+          0.265625
+        ]
+      ],
+      "sampledDurationFraction": 0.109375,
+      "sampledDurationSec": 0.07875,
+      "actualGeometryFlexRangeDuringPlateau": [
+        83.50663515680745,
+        83.88937797696519
+      ],
+      "maxAdjacentLocalAngularStepDegrees256": 2.0195837304617443,
+      "loopAdjacentLocalAngularStepDegrees256": 1.0975594406139728,
+      "firstLastLocalOrientationSeamDegrees": 4.182619578303746e-06
+    },
+    "HR": {
+      "authorCapOrBoundSampleCount128": 5,
+      "samplePhaseRanges": [
+        [
+          0.0,
+          0.015625
+        ],
+        [
+          0.984375,
+          0.9921875
+        ]
+      ],
+      "sampledDurationFraction": 0.0390625,
+      "sampledDurationSec": 0.028124999999999997,
+      "actualGeometryFlexRangeDuringPlateau": [
+        19.118449297609317,
+        19.65367501942174
+      ],
+      "maxAdjacentLocalAngularStepDegrees256": 2.3972080654252395,
+      "loopAdjacentLocalAngularStepDegrees256": 0.0,
+      "firstLastLocalOrientationSeamDegrees": 0.0
+    }
+  },
+  "loop": {
+    "FL": {
+      "firstLastCentroidM": 1.4167264221067751e-08,
+      "adjacentLoopCentroidDistanceM": 0.003931068814878127,
+      "maxAdjacentCentroidDistanceM": 0.013287435326460364
+    },
+    "FR": {
+      "firstLastCentroidM": 1.670017580089457e-08,
+      "adjacentLoopCentroidDistanceM": 0.004315480876616519,
+      "maxAdjacentCentroidDistanceM": 0.013234313193678652
+    },
+    "HL": {
+      "firstLastCentroidM": 1.3021348528156545e-08,
+      "adjacentLoopCentroidDistanceM": 0.0036210803590043987,
+      "maxAdjacentCentroidDistanceM": 0.011255225295046854
+    },
+    "HR": {
+      "firstLastCentroidM": 1.4015329435185e-08,
+      "adjacentLoopCentroidDistanceM": 0.003941973584271744,
+      "maxAdjacentCentroidDistanceM": 0.011237029261172241
+    }
+  },
+  "headRelativeUpperTrunkYRangeM": 0.06051870982204499
+}
