@@ -1,0 +1,25 @@
+{
+  "status": "private pre-release candidate",
+  "rosterIntegrated": false,
+  "ranchIntegrated": false,
+  "riderMountedReview": "pending",
+  "fasterGaits": "unavailable from this approved creator source; hidden in review",
+  "creator": "WildMesh 3D",
+  "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+  "license": "CC BY-NC 4.0",
+  "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+  "candidateFile": "native-white-western-candidate.glb",
+  "candidateSha256": "fd18d9b9b22e00dc30a6fa1cfe2e135bb20f7c871df0a976706aaea2f4dff655",
+  "candidateBytes": 27314828,
+  "skinnedMeshes": 5,
+  "skinJoints": 677,
+  "clips": [
+    {"name": "Horse|Horse_Idle", "durationSeconds": 13.958333},
+    {"name": "Horse|Horse_Walk", "durationSeconds": 1.458333}
+  ],
+  "conversion": "Only five legacy specular-glossiness materials were expressed as PBR equivalents for browser rendering. Original binary payload, nodes, meshes, skin, animation curves, accessors, buffer views, images, textures, samplers and scene structure are byte-for-byte or JSON-identical to the approved source.",
+  "sourceBinaryPayloadUnchanged": true,
+  "visualReview": "Creator Walk reviewed over eight phases from side and quarter cameras in private Breed Studio; no broken limbs or visible tack detachment. Human acceptance remains pending.",
+  "floorReview": "Skinned bounds over 96 phases of the full Walk cycle: minY -0.00825 to +0.00391 metres after source ground anchoring; every sampled pose remained within 1 cm of the floor.",
+  "performanceReview": "Apple M1 Max / ANGLE Metal private Studio preview: one horse 82,828 triangles and eight draw calls, median JS frame 0.9 ms; four overlapping clones 330,106 triangles and 23 draw calls, median JS frame 3.8 ms. Browser frame timing occasionally reached 33 ms; Ranch gameplay and weaker-device performance are not yet verified."
+}

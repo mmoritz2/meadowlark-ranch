@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+ <title>Meadowlark Ranch — private dragon motion review</title>
+ <script type="importmap">{"imports":{"three":"../assets/vendor/three/build/three.module.js","three/addons/":"../assets/vendor/three/examples/jsm/"}}</script>
+ <style>
+  :root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#183027;background:#deded8}
+  *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;grid-template-columns:minmax(270px,330px) 1fr}
+  aside{background:#102a24;color:#f5f2e7;padding:26px 24px;display:flex;flex-direction:column;gap:20px}
+  h1{font:600 35px/1.05 Georgia,serif;margin:0}h2{font:600 27px/1.05 Georgia,serif;margin:0 0 11px}
+  p{line-height:1.55;margin:0}.eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:11px;color:#bdcfc5}
+  .note{color:#c6d4cc;font-size:14px}.sources{margin-top:auto;font-size:12px;line-height:1.5;color:#baccc0}
+  a{color:#e8ce97}main{position:relative;min-height:100vh;overflow:hidden}
+  #stage{position:absolute;inset:0}canvas{display:block;width:100%;height:100%}
+  .panel{background:#f8f7f0;border-radius:15px;padding:19px 18px;color:#183027}
+  .detail{font-size:13px;color:#334b40}.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px;align-items:center}
+  .controls label{width:100%}.controls select{width:100%}
+  label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:650;color:#395145}
+  select,button{font:inherit;font-size:14px;border:1px solid #afc1b5;border-radius:8px;background:#fff;color:#183027;padding:9px 10px;min-height:40px}
+  button{cursor:pointer}button:hover{background:#edf3ec}select{max-width:100%}#status{font-size:13px;color:#395145;margin-top:11px}
+  .hint{position:absolute;right:22px;bottom:20px;font-size:13px;color:#345044;background:#f8f7f0c9;padding:7px 11px;border-radius:7px}
+  @media(max-width:700px){body{display:block}aside{padding:18px;gap:8px}h1{font-size:28px}aside .note,aside .sources{display:none}main{min-height:75vh}.panel{padding:14px}.hint{font-size:11px}}
+ </style>
+</head>
+<body>
+ <aside>
+  <a href="index.html" style="font-size:13px">← All three review candidates</a>
+  <div class="eyebrow">Meadowlark Ranch · local review</div>
+  <h1>Two dragons, original motion</h1>
+  <p class="note">Switch between the creator rigs and their actual included animations. This private preview is separate from the ranch roster.</p>
+  <p class="note">Drag the scene to turn the dragon; scroll to zoom. The black dragon offers only its creator idle. The European Dragon has five creator clips.</p>
+  <div class="panel">
+   <div class="eyebrow" style="color:#53745f">Original skeletons and animation clips</div>
+   <h2 id="title">Loading dragon…</h2>
+   <p class="detail" id="details"></p>
+   <div class="controls">
+    <label>Dragon<select id="dragon"><option value="black">Black Dragon — 3DHaupt</option><option value="european">European Dragon — Regina Cachoa listing</option></select></label>
+    <label>Creator animation<select id="clip"></select></label>
+    <button type="button" id="play">Pause</button>
+    <button type="button" id="view">Reset view</button>
+   </div>
+   <p id="status" role="status">Loading original rig…</p>
+  </div>
+  <div class="sources">Both display files are 2K review candidates. Their creator originals remain unchanged and are not loaded by this page.</div>
+ </aside>
+ <main>
+  <div id="stage" aria-label="Animated dragon preview"></div>
+  <div class="hint">Drag to orbit · Scroll to zoom</div>
+ </main>
+ <script type="module">
+ import * as THREE from 'three';
+ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+ import {loadNativeDragonPreview} from '../assets/native-dragon-preview.js';
+ import {loadEuropeanDragonPreview,EUROPEAN_DRAGON_CLIPS} from '../assets/european-dragon-preview.js';
+
+ const $=id=>document.getElementById(id),stage=$('stage');
+ const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
+ renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+ renderer.outputColorSpace=THREE.SRGBColorSpace;
+ renderer.toneMapping=THREE.ACESFilmicToneMapping;
+ renderer.toneMappingExposure=1.08;
+ renderer.shadowMap.enabled=true;
+ renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ stage.append(renderer.domElement);
+ const scene=new THREE.Scene();scene.background=new THREE.Color('#deded8');
+ const camera=new THREE.PerspectiveCamera(38,1,.05,100);
+ scene.add(new THREE.HemisphereLight('#ffffff','#b0a89a',2.25));
+ const key=new THREE.DirectionalLight('#fff8e7',2.2);key.position.set(-4,9,7);key.castShadow=true;
+ key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-18;key.shadow.camera.right=18;key.shadow.camera.top=18;key.shadow.camera.bottom=-18;key.shadow.normalBias=.02;scene.add(key);
+ const fill=new THREE.DirectionalLight('#e4e9ff',.65);fill.position.set(5,5,-4);scene.add(fill);
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardMaterial({color:'#deded8',roughness:1}));
+ ground.rotation.x=-Math.PI/2;ground.position.y=-.018;ground.receiveShadow=true;scene.add(ground);
+ const ring=new THREE.Mesh(new THREE.RingGeometry(2.3,2.32,96),new THREE.MeshBasicMaterial({color:'#c8c7ad',side:THREE.DoubleSide}));
+ ring.rotation.x=-Math.PI/2;ring.position.y=-.008;scene.add(ring);
+
+ let current=null,currentKind='black',request=0,playing=true,yaw=-.8,pitch=.13,radius=24.5,targetY=1.6;
+ const positions={black:{radius:24.5,targetY:1.6},european:{radius:5.6,targetY:1.0}};
+ const europeanClipRadius={'Idle Stand':5.6,'Idle Sit':5.1,Walk:5.8,Run:6.5,Fly:12.5};
+ function moveCamera(){
+  const flat=radius*Math.cos(pitch);
+  camera.position.set(flat*Math.sin(yaw),targetY+radius*Math.sin(pitch),flat*Math.cos(yaw));
+  camera.lookAt(0,targetY,0);
+ }
+ function resetView(){
+  yaw=-.8;pitch=.13;
+  const preset=positions[currentKind];radius=currentKind==='european'?(europeanClipRadius[$('clip').value]||preset.radius):preset.radius;
+  targetY=preset.targetY;moveCamera();
+ }
+ function disposeCurrent(){
+  if(!current)return;
+  current.motion.dispose();scene.remove(current.scene);
+  const geometries=new Set(),materials=new Set(),textures=new Set();
+  current.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});
+  for(const m of materials){for(const value of Object.values(m))if(value?.isTexture)textures.add(value);m.dispose();}
+  for(const t of textures)t.dispose();for(const g of geometries)g.dispose();current=null;
+ }
+ function setClip(value){
+  if(!current)return;
+  current.motion.set(value);
+  if(currentKind==='european'){radius=europeanClipRadius[value]||5.6;moveCamera();}
+  $('status').textContent=currentKind==='black'?'Playing creator Scene idle (22.47 s). No original walk or flight clip exists.':`Playing original “${value}” clip (${current.sourceAnimations.find(c=>c.name===value).duration.toFixed(2)} s).`;
+ }
+ async function setDragon(kind){
+  const ticket=++request;currentKind=kind;$('dragon').value=kind;
+  $('status').textContent='Loading creator model…';$('clip').disabled=true;$('play').disabled=true;
+  disposeCurrent();
+  try{
+   const next=kind==='black'
+    ?await loadNativeDragonPreview({THREE,GLTFLoader,url:'../assets/models/horse-imports/black-dragon/game/black-dragon-native-2k-candidate.glb',darkAppearance:true})
+    :await loadEuropeanDragonPreview({THREE,GLTFLoader,url:'../assets/models/horse-imports/european-dragon/game/european-dragon-2k-candidate.glb'});
+   if(ticket!==request){next.motion.dispose();return;}
+   current=next;scene.add(next.scene);
+   const options=kind==='black'?[['stand','Creator idle — Scene']]:EUROPEAN_DRAGON_CLIPS.map(name=>[name,name]);
+   $('clip').replaceChildren(...options.map(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;return option;}));
+   $('clip').disabled=false;$('play').disabled=false;playing=true;$('play').textContent='Pause';
+   if(kind==='black'){
+    $('title').textContent='Black Dragon';
+    $('details').innerHTML='3DHaupt · <a href="https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36" target="_blank" rel="noopener">source model</a> · CC BY-NC 4.0 · Original 232-joint skin and Scene idle. Six textures downsampled to 2K; local charcoal tint preserves their detail maps.';
+   }else{
+    $('title').textContent='European Dragon';
+    $('details').innerHTML='Current <a href="https://sketchfab.com/3d-models/european-dragon-82f393a2e6c048ad80c171ce3b3a7b87" target="_blank" rel="noopener">Sketchfab listing</a>: Regina Cachoa, CC BY 4.0. Original GLB: Nonexistent 101. Native 169-joint rig and five clips; six display textures downsampled to 2K. <a href="https://blenderartists.org/t/nonexistent-101s-sketchbook/1373603/6" target="_blank" rel="noopener">Creator process post</a> identifies Walk as weak.';
+   }
+   resetView();setClip(options[0][0]);
+  }catch(error){
+   console.error(error);$('status').textContent=`Could not load this local model: ${error.message}`;
+  }
+ }
+ $('dragon').addEventListener('change',event=>setDragon(event.target.value));
+ $('clip').addEventListener('change',event=>setClip(event.target.value));
+ $('play').addEventListener('click',()=>{playing=!playing;$('play').textContent=playing?'Pause':'Play';});
+ $('view').addEventListener('click',resetView);
+ let dragging=false,lastX=0,lastY=0;
+ renderer.domElement.addEventListener('pointerdown',event=>{dragging=true;lastX=event.clientX;lastY=event.clientY;renderer.domElement.setPointerCapture(event.pointerId);});
+ renderer.domElement.addEventListener('pointerup',()=>dragging=false);
+ renderer.domElement.addEventListener('pointercancel',()=>dragging=false);
+ renderer.domElement.addEventListener('pointermove',event=>{if(!dragging)return;yaw-=(event.clientX-lastX)*.006;pitch=Math.max(-.35,Math.min(1.25,pitch+(event.clientY-lastY)*.006));lastX=event.clientX;lastY=event.clientY;moveCamera();});
+ renderer.domElement.addEventListener('wheel',event=>{event.preventDefault();radius=Math.max(currentKind==='black'?7:2,Math.min(currentKind==='black'?50:25,radius*Math.exp(event.deltaY*.001)));moveCamera();},{passive:false});
+ function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+ new ResizeObserver(resize).observe(stage);resize();moveCamera();
+ const clock=new THREE.Clock();
+ function frame(){requestAnimationFrame(frame);const dt=Math.min(clock.getDelta(),.1);if(current&&playing)current.motion.update(dt);renderer.render(scene,camera);}
+ frame();setDragon(new URLSearchParams(location.search).get('dragon')==='european'?'european':'black');
+ window.__dragonReviewState=()=>({kind:currentKind,ready:!!current,clip:current?.motion.clip,mode:current?.motion.mode,time:current?.motion.time,joints:current?.joints,playing,status:$('status').textContent});
+ window.__dragonReviewSeek=seconds=>{if(!current)return false;current.motion.seek(seconds);renderer.render(scene,camera);return window.__dragonReviewState();};
+ </script>
+</body>
+</html>

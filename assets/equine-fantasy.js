@@ -58,15 +58,19 @@ export function registerFantasyTheme(key,cfg,fx,appearance){
 }
 export function registerFantasyAppearance(key,appearance){if(key&&appearance)EQUINE_FANTASY_APPEARANCE[key]=appearance;return EQUINE_FANTASY_APPEARANCE[key];}
 export function fantasyThemes(){return Object.keys(FANTASY_CFG);}
-export function createEquineFantasyCoat(THREE, baseMat, type, scaly=false){
+export function createEquineFantasyCoat(THREE, baseMat, type, scaly=false, sourceBlend){
  const cfg=FANTASY_CFG[type]||FANTASY_CFG.galaxy;
  const fx=FANTASY_FX[type]||FANTASY_FX.galaxy;
- const m=baseMat.clone(); m.color.set(0xffffff); m.roughness=cfg.rough; m.metalness=0;
+ const m=baseMat.clone();
+ const blend=m.map?Math.max(0,Math.min(1,sourceBlend??0.4)):1;
+ // An imported coat's map and material color are artwork, including the dark scales
+ // on the black dragon. Keep both and lay the fantasy palette over them lightly.
+ if(!m.map){m.color.set(0xffffff);m.roughness=cfg.rough;m.metalness=0;}
  const C0=new THREE.Color(cfg.ramp[0]),C1=new THREE.Color(cfg.ramp[1]),C2=new THREE.Color(cfg.ramp[2]);
  const time={value:0};
  m.name='EquineFantasy_'+type+(scaly?'_scales':'');
  m.userData.update=t=>{time.value=t;};
- m.customProgramCacheKey=()=>m.name+'_source_uv_v2';
+ m.customProgramCacheKey=()=>m.name+'_source_uv_v3_'+blend;
  m.onBeforeCompile=sh=>{
   sh.uniforms.uC0={value:C0};sh.uniforms.uC1={value:C1};sh.uniforms.uC2={value:C2};
   sh.uniforms.uGlow={value:cfg.glow};sh.uniforms.uTime=time;
@@ -76,12 +80,13 @@ export function createEquineFantasyCoat(THREE, baseMat, type, scaly=false){
    sh.fragmentShader
    .replace('#include <map_fragment>',
     `#include <map_fragment>
+     vec3 _sourceCoat=diffuseColor.rgb;
      float _l=clamp(dot(diffuseColor.rgb,vec3(0.299,0.587,0.114))*1.15,0.0,1.0);
      vec3 _ramp = _l<0.5 ? mix(uC0,uC1,_l*2.0) : mix(uC1,uC2,(_l-0.5)*2.0);
      float _fres = pow(1.0-abs(dot(normalize(vNormal),normalize(vViewPosition))),2.5);
      vec3 _emis = _ramp*uGlow*(0.14+_l);
      ${fx.replaceAll('vMapUv','equineFantasyUv')}
-     diffuseColor.rgb=_ramp;
+     diffuseColor.rgb=mix(_sourceCoat,_ramp,${blend.toFixed(3)});
      ${scaly?`
      /* Overlapping plates, rows offset by half a scale, dark in the seams and catching a
         highlight along the top edge of each one. This is most of what separates a dragon
@@ -95,7 +100,7 @@ export function createEquineFantasyCoat(THREE, baseMat, type, scaly=false){
       _emis*=mix(1.1,0.55,_seam);}`:''}`)
    .replace('#include <emissivemap_fragment>',
     `#include <emissivemap_fragment>
-     totalEmissiveRadiance=_emis;`);
+     ${blend===1?'totalEmissiveRadiance=_emis;':`totalEmissiveRadiance+=_emis*${(blend*0.45).toFixed(3)};`}`);
  };
  m.needsUpdate=true; return m;
 }
@@ -499,7 +504,7 @@ export const EQUINE_FANTASY_APPEARANCE={
 export function applyEquineFantasyAppearance(THREE,inst,key){
  const appearance=EQUINE_FANTASY_APPEARANCE[key]||inst?.profile?.fantasyAppearance;if(!appearance||!inst?.skin)return null;
  const original=inst.skin.material;
- let body=appearance.theme?createEquineFantasyCoat(THREE,original,appearance.theme,!!appearance.dragon&&!inst.profile?.nativeDragonBody):original.clone();
+ let body=appearance.theme?createEquineFantasyCoat(THREE,original,appearance.theme,!!appearance.dragon&&!inst.profile?.nativeDragonBody,inst.profile?.nativeDragonBody?0.16:undefined):original.clone();
  if(appearance.body){
   body.name='PearlCoat_'+key;body.color.set(0xffffff);body.roughness=.52;body.metalness=.035;
   const tint=new THREE.Color(appearance.body),hoofTop=(inst.profile?.withersM||1.55)*.054;
@@ -515,7 +520,7 @@ export function applyEquineFantasyAppearance(THREE,inst,key){
   };body.needsUpdate=true;
  }
  inst.skin.material=body;inst.materials?.push(body);
- if(inst.profile?.nativeDragonBody&&appearance.theme)inst.scene.traverse(mesh=>{if(mesh.isMesh&&mesh.name==='DragonWingMembrane'){const theme=base=>{const m=createEquineFantasyCoat(THREE,base,appearance.theme,false);inst.materials?.push(m);return m;};mesh.material=Array.isArray(mesh.material)?mesh.material.map(theme):theme(mesh.material);}});
+ if(inst.profile?.nativeDragonBody&&appearance.theme)inst.scene.traverse(mesh=>{if(mesh.isMesh&&mesh.name==='DragonWingMembrane'){const theme=base=>{const m=createEquineFantasyCoat(THREE,base,appearance.theme,false,0.16);inst.materials?.push(m);return m;};mesh.material=Array.isArray(mesh.material)?mesh.material.map(theme):theme(mesh.material);}});
  if(appearance.spectral){body.transparent=true;body.opacity=.84;body.emissive.set(appearance.body||'#c6eaff');body.userData.update=t=>{body.emissiveIntensity=.32+.06*Math.sin(t*1.7);};body.needsUpdate=true;}
  const hair=new Set();inst.scene.traverse(object=>{if(/groom|mane|forelock|tailhair|feather/i.test(object.name))object.traverse(child=>{if(child.isMesh)hair.add(child);});});
  const tinted=new Set();for(const mesh of hair)for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material])if(!tinted.has(material)){tinted.add(material);if(appearance.mane)material.color.set(appearance.mane);material.roughness=Math.max(.38,material.roughness||.5);if(mesh.userData.nativeFeatherWing&&appearance.theme){material.emissive.copy(material.color);material.emissiveIntensity=.13;}material.needsUpdate=true;}

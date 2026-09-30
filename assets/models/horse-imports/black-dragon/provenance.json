@@ -15,5 +15,15 @@
     "NoAI"
   ],
   "verification": "SHA-256 and byte count checked against the preserved original and its private registration receipt.",
-  "scope": "Source acquisition evidence; adapted game rigs have separate validation reports."
+  "scope": "Source acquisition evidence; adapted game rigs have separate validation reports.",
+  "nativeReviewCandidate": {
+    "file": "assets/models/horse-imports/black-dragon/game/black-dragon-native-2k-candidate.glb",
+    "sha256": "66ef96b2407b64c8ffa749f1edf5f4731a314b39b350e128789b15476a9ac999",
+    "bytes": 31011512,
+    "textureChange": "Six embedded 4096x4096 images downsampled to 2048x2048; three existing 2048x2048 images retained. The 65 MB creator original remains unchanged.",
+    "skeletonJoints": 232,
+    "nativeClips": ["Scene"],
+    "geometrySkinAnimationPayloadsIdentical": true,
+    "status": "Private review candidate only; creator idle is the sole native clip; not connected to public roster"
+  }
 }

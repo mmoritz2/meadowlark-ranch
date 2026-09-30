@@ -1,4 +1,12 @@
-# Approved horse imports
+# Experimental horse imports — visual rebuild in progress
+
+**Current status:** The imported 80-identity release described below failed
+visual review and was rolled back from the public site. Its numerical checks
+verified file loading, joint lengths and sampled ground envelopes, but did not
+verify believable horse motion or accurate breed appearance. Treat the
+publication claims and "passing" results below as historical records, not
+approval to redeploy. See [REBUILD_STATUS.md](REBUILD_STATUS.md) for current
+findings and candidates.
 
 User approved starting the shortlisted horses on 29 September 2026. The preferred
 appearance is **WildMesh 3D's white horse with brown western tack**, not the

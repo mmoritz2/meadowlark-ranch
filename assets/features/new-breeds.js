@@ -183,9 +183,10 @@ const FIREFLY_FX=`float _ff=0.0,_hal=0.0;
 const OPAL_FX=`float _oa=sin(vMapUv.x*13.0+vMapUv.y*8.0+uTime*0.5)*0.5+0.5;
    vec3 _oc=0.5+0.5*cos(6.2832*(vec3(0.0,0.33,0.67)+_oa*0.7+_fres*0.8));
    _ramp=mix(_ramp,_ramp*(0.8+0.4*_oc),0.45+0.35*_fres);
-   float _og=step(0.992,_hash(floor(vMapUv*150.0)))*(0.5+0.5*sin(uTime*3.0+vMapUv.x*50.0));
-   _ramp+=vec3(1.0)*_og*0.5;
-   _emis=_ramp*uGlow*(0.08+0.3*_l)+_oc*_fres*0.4+vec3(1.0)*_og*0.7;`;
+   vec2 _ogp=vMapUv*70.0;
+   float _og=step(0.995,_hash(floor(_ogp)))*(1.0-smoothstep(0.03,0.20,length(fract(_ogp)-0.5)))*(0.5+0.5*sin(uTime*3.0+vMapUv.x*50.0));
+   _ramp+=vec3(1.0)*_og*0.25;
+   _emis=_ramp*uGlow*(0.08+0.3*_l)+_oc*_fres*0.4+vec3(1.0)*_og*0.28;`;
 /* Dawn: a sunrise on the horse, rose along the belly and legs rising to warm gold along the back, a rim
    of morning light that breathes slowly, and a ray passing now and then. */
 const DAWN_FX=`float _br=0.62+0.38*sin(uTime*0.8);
