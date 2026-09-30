@@ -650,7 +650,7 @@ import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-3';
-import {FEATURES} from './assets/features/index.js?v=feat-16';
+import {FEATURES} from './assets/features/index.js?v=feat-17';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -1318,6 +1318,7 @@ function showNextToast(){
 }
 function toast(msg){
  msg=String(msg);
+ {const NE=window.__noEmoji; if(NE&&NE.on&&/\S/.test(msg)&&!NE.clean(msg).trim())return;}   // a notice that was only emoji would be an empty pill with emoji off
  // Rewards are credited by their callers immediately; only their notices wait.
  if(msg!==activeToast&&!toastQueue.includes(msg)){toastQueue.push(msg);showNextToast();}
  /* In a headset the DOM is not on screen at all, so every one of these — found a gem,
@@ -10622,9 +10623,22 @@ function netStatus(s){
  const nm=(freshSave()||{}).playerName;
  $('netBtn').textContent=(s==='online'?'🟢 ':'🌐 ')+(nm?nm:'Club');
 }
+/* With emoji switched off, a chat line that was only an emoji (the chat bar's wave, heart, laugh and cheer buttons) read
+   "Rider:" and nothing after it, and a speaker whose name was only an emoji (the nearby-rider notice) left a bare colon.
+   An emote is said in words instead, a line with nothing left to say is not shown, and an emoji-only name is dropped. */
+const EMOTE_WORDS={'👋':'waves','❤️':'sends a heart','❤':'sends a heart','😂':'laughs','🎉':'cheers','🐴':'neighs','👍':'gives a thumbs up','😊':'smiles','🥕':'offers a carrot'};
+function chatWords(name,text){
+ const NE=window.__noEmoji; name=String(name==null?'':name); text=String(text==null?'':text);
+ if(!(NE&&NE.on))return {name,text,emote:null};
+ const nm=NE.clean(name).trim(), tx=NE.clean(text).trim();
+ if(tx)return {name:nm,text:text,emote:null};
+ const w=EMOTE_WORDS[text.trim()]; return {name:nm,text:'',emote:w||null};
+}
 function chatMsg(name,text){
+ const cw=chatWords(name,text);
+ if(!cw.text&&!cw.emote)return;
  const d=document.createElement('div');
- d.textContent=name+': '+text;
+ d.textContent=cw.emote?(cw.name?cw.name+' ':'')+cw.emote:(cw.name?cw.name+': ':'')+cw.text;
  const feed=$('chatFeed');
  feed.appendChild(d);
  while(feed.children.length>(G.chatLines||8))feed.removeChild(feed.firstChild);
@@ -10660,6 +10674,7 @@ function makeBubbleSprite(text){
 function showBubble(holder,text){
  const parent=holder.parts?holder.parts.group:null;
  if(!parent)return;
+ {const cw=chatWords('',text); if(!cw.text&&!cw.emote)return; if(cw.emote)text='*'+cw.emote+'*';}   // an emoji-only bubble would draw empty with emoji off
  if(holder.bub&&holder.bubParent)holder.bubParent.remove(holder.bub);
  const sp=makeBubbleSprite(text);
  parent.add(sp);
@@ -11741,14 +11756,20 @@ let companionId=(freshSave()||{}).companion||null;
 function breedLabel(key){const b=BREEDS3.find(b=>b[0]===key);return b?b[1]:'Ranch Horse';}
 
 /* ================= pets — companions that trot alongside you ================= */
+/* Each pet is drawn as its own animal by assets/features/pet-models.js (G.petModels), which also walks it
+   where the camera can see it and flies the winged ones with you. kind is the body plan, wings marks
+   the ones that fly; body/belly/ear/tail stay for anything that still reads them. */
 const PETS3=[
- {key:'dog',name:'Puppy',emoji:'🐶',price:300,body:'#caa06a',belly:'#ede0c8',ear:'flop',tail:'curl'},
- {key:'fox',name:'Fox Kit',emoji:'🦊',price:450,body:'#d9711f',belly:'#f5ede0',ear:'point',tail:'bush'},
- {key:'cat',name:'Kitten',emoji:'🐱',price:350,body:'#8b8b94',belly:'#dadae0',ear:'point',tail:'long'},
- {key:'bunny',name:'Bunny',emoji:'🐰',price:300,body:'#e8e4dc',belly:'#fbf8f3',ear:'long',tail:'puff'},
+ {key:'dog',name:'Puppy',emoji:'🐶',price:300,body:'#d9a45e',belly:'#f3e3c4',ear:'flop',tail:'curl',kind:'quad'},
+ {key:'fox',name:'Fox Kit',emoji:'🦊',price:450,body:'#e2711d',belly:'#fdf6ea',ear:'point',tail:'bush',kind:'quad'},
+ {key:'cat',name:'Kitten',emoji:'🐱',price:350,body:'#85858f',belly:'#f3f3f6',ear:'point',tail:'long',kind:'quad'},
+ {key:'bunny',name:'Bunny',emoji:'🐰',price:300,body:'#f4ecdd',belly:'#fffaf2',ear:'long',tail:'puff',kind:'bunny'},
 ];
 function petCfg(key){return PETS3.find(p=>p.key===key)||PETS3[0];}
+/* The blob below only draws if the pet-models package failed to install. */
 function makePet(key){
+ const M=G.petModels;
+ if(M&&M.make){try{const parts=M.make(key,petCfg(key));if(parts)return parts;}catch(e){console.error('pet model '+key,e);}}
  const P=petCfg(key);
  const g=new THREE.Group();
  blob(0.15,0.13,0.24,P.body,0,0.30,0,g);          // torso
@@ -11787,17 +11808,27 @@ function makePet(key){
  contactShadow(g);
  return {group:g,legs,tail,head};
 }
-let petComp=null;  // {key,parts,pos,heading,phase}
+let petComp=null;  // {key,parts,pos,heading,phase} (+ st, airborne, alt, framed, place from pet-models)
 G.petComp=()=>petComp;   // world package: the follower push-out keeps the pet out of the barn
 let activePet=(freshSave()||{}).activePet||null;
 function ownedPets(){const s=freshSave();return (s&&s.petList)||[];}
+/* The pet a save names is often one the market package adds, and the save is read long before any
+   package installs — drawing it then built a puppy in its place. So nothing is drawn before boot, and
+   the model is rebuilt whenever what it was built from changes: the pet itself, the model package
+   arriving, or its row turning up in PETS3. After boot a key nobody knows falls back to the first pet. */
+let petBooted=false,petBuiltFor='',petMoveBroken=false;
+const petTag=()=>activePet+'|'+(G.petModels?1:0)+'|'+(PETS3.some(p=>p.key===activePet)?1:0)+'|'+(petBooted?1:0);
+G.on('boot',()=>{petBooted=true;rebuildPet();});
 function rebuildPet(){
- if(petComp){scene.remove(petComp.parts.group);petComp=null;}
- if(!activePet)return;
+ const old=petComp;
+ if(old){scene.remove(old.parts.group);petComp=null;}
+ petBuiltFor=petTag();
+ if(!activePet||!petBooted)return;
  const parts=makePet(activePet);
  scene.add(parts.group);
- const px=player?player.pos.x+2:0,pz=player?player.pos.z-2:0;
- petComp={key:activePet,parts,pos:new THREE.Vector3(px,0,pz),heading:0,phase:0};
+ const keep=old&&old.key===activePet;   // the same pet redrawn stays where it stood; a new one comes running from out of sight
+ const px=keep?old.pos.x:(player?player.pos.x+2:0),pz=keep?old.pos.z:(player?player.pos.z-2:0);
+ petComp={key:activePet,parts,pos:new THREE.Vector3(px,0,pz),heading:keep?old.heading:(player?player.heading:0),phase:0,fresh:!keep};
 }
 function setActivePet(key){
  activePet=(activePet===key)?null:key;
@@ -11817,7 +11848,10 @@ function buyPet(key){
  else toast(msg);
 }
 function updatePet(dt,t){
+ if(petBuiltFor!==petTag())rebuildPet();
  if(!petComp)return;
+ const M=G.petModels;
+ if(M&&M.move&&!petMoveBroken){try{if(M.move(petComp,dt,t))return;}catch(e){petMoveBroken=true;console.error('pet move',e);}}
  const off=2.2;
  const bx=player.pos.x-Math.sin(player.heading)*off+Math.cos(player.heading)*0.9;
  const bz=player.pos.z-Math.cos(player.heading)*off-Math.sin(player.heading)*0.9;
@@ -11837,8 +11871,8 @@ function updatePet(dt,t){
  petComp.parts.group.position.set(petComp.pos.x,groundH(petComp.pos.x,petComp.pos.z)+hop,petComp.pos.z);
  petComp.parts.group.rotation.y=petComp.heading;
  const L=petComp.parts.legs;
- for(let i=0;i<4;i++){const o=i<2?0:Math.PI;L[i].rotation.x=Math.sin(petComp.phase+(i%2?Math.PI:0)+o)*0.5*Math.min(1,sp/3);}
- petComp.parts.tail.rotation.z=Math.sin(t*6)*0.25;  // happy wag
+ for(let i=0;i<L.length;i++){const o=i<2?0:Math.PI;L[i].rotation.x=Math.sin(petComp.phase+(i%2?Math.PI:0)+o)*0.5*Math.min(1,sp/3);}
+ if(petComp.parts.tail)petComp.parts.tail.rotation.z=Math.sin(t*6)*0.25;  // happy wag
 }
 function openStable(){
  const p=$('stablePanel');
@@ -11881,9 +11915,11 @@ function renderStable(){
  +'<span style="font-size:11px;color:#8c7a63">⚠️ means a horse needs care · 🍼 Equip a foal so it follows you on rides!</span>'
  +(function(){
   const pets=s.petList||[];
-  if(!pets.length)return '<div class="ph" style="font-size:14px;margin-top:6px">🐾 Pets</div><span style="font-size:12px;color:#8c7a63">No pets yet — adopt a 🐶 🦊 🐱 🐰 in the 🛍️ Shop → Pets tab. They trot along beside you!</span>';
+  /* each pet is shown by its drawn portrait (G.petArt, pet-models.js); the emoji is only the fallback */
+  const pic=(k,n)=>G.petArt?'<span class="pet-port" data-petart="'+k+'">'+G.petArt.svg(k,n||30)+'</span>':petCfg(k).emoji+' ';
+  if(!pets.length)return '<div class="ph" style="font-size:14px;margin-top:6px">🐾 Pets</div><span style="font-size:12px;color:#8c7a63">No pets yet. Adopt one in the Shop, Pets tab: '+['dog','fox','cat','bunny'].map(k=>pic(k,24)).join('')+' They walk beside you, and the birds fly with a winged horse.</span>';
   return '<div class="ph" style="font-size:14px;margin-top:6px">🐾 Pets <span style="color:#8c7a63;font-size:12px;font-weight:600">pick who follows</span></div>'
-  +pets.map(k=>{const P=petCfg(k);const active=activePet===k;return '<div class="evrow">'+P.emoji+' <b>'+P.name+'</b><span>'+(active?'following you ✓':'at the ranch')+'</span><button data-pet="'+k+'"'+(active?' class="claimBtn"':'')+'>'+(active?'🐾 Following':'🐾 Follow')+'</button></div>';}).join('');
+  +pets.map(k=>{const P=petCfg(k);const active=activePet===k;return '<div class="evrow pet-row">'+pic(k)+'<b>'+P.name+'</b><span>'+(active?'following you':'at the ranch')+(P.wings?' · flies when you fly':'')+'</span><button data-pet="'+k+'"'+(active?' class="claimBtn"':'')+'>'+(active?'Following':'Follow')+'</button></div>';}).join('');
  })();
  bindFx(p);
  p.querySelectorAll('[data-pet]').forEach(b=>{b.onclick=()=>{setActivePet(b.dataset.pet);renderStable();};});

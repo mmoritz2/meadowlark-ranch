@@ -408,8 +408,12 @@ html body.se-screen-open.shs-open.shs-drw #toasts{left:calc((100vw - clamp(260px
    const ent={parts}; job.ent=ent;
    G.horse.dressWithRig(ent,parts,h.colors,{breed:h.breed,mine:true,foal:h.foal,coat:h.coat,dragon:h.dragon,tailCol:h.tailCol,mark:h.mark,markCol:h.markCol,mark2:h.mark2,seed:h.id});
    job.tb=performance.now();
-   for(let t=0;!ent.rig&&ent.rigPending&&t<8000;t+=50)await new Promise(r=>setTimeout(r,50));   // a breed's model may still be loading
+   /* a breed's model may still be loading. While it does, the game dresses a horse in the ridden horse's body and swaps
+      it for its own when that arrives: a picture taken then would be of the wrong horse (and kept all session), and the
+      swap disposing that borrowed body under three.js's compileAsync threw. So the picture waits for the horse's own body. */
+   for(let t=0;((!ent.rig&&ent.rigPending)||ent.rigStandIn)&&t<12000;t+=50)await new Promise(r=>setTimeout(r,50));
    if(job.dead){finish(job);return;}                            // the screen closed meanwhile (put away here, never under a compile)
+   if(ent.rigStandIn){finish(job);if(st.on)setTimeout(pump,1500);return;}   // its own body has not come yet: no picture of a borrowed one; try again shortly
    job.tr=performance.now();
    try{if(ent.rig&&G.mastery&&G.mastery.applyLook)G.mastery.applyLook(ent.rig,parts.group,h);}catch(e){}   // mane styles and accessories
    ps.scene.background=bgTex(starsOf(h));

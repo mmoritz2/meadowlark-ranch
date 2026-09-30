@@ -67,19 +67,21 @@ const SEASON_BANNER_DEF={
 /* The Painted Stable's palette: whatever the grooming parlour can mix, rolled at birth. */
 const PAINT_TAIL=0.55;                 // how often a painted horse gets a tail of its own colour
 
-/* Twelve companions. ear/tail/body/belly are read straight by makePet. */
+/* Twelve companions. Each is drawn as its own animal by pet-models.js; kind is its body plan and wings
+   marks the three that take off and fly beside you when you fly a winged horse. body/belly/ear/tail are
+   kept for anything that still reads them (the fallback blob). */
 const NEW_PETS=[
- {key:'corgi',   name:'Barn Corgi',       emoji:'🐕',price:400,body:'#d9a441',belly:'#f6e7c8',ear:'point',tail:'puff',rar:'Rare',   src:'shop',  note:'Herds the chickens whether they like it or not.'},
- {key:'duck',    name:'Loon Lake Duckling',emoji:'🦆',price:0,  body:'#f2d98a',belly:'#fff6d8',ear:'point',tail:'puff',rar:'Common', src:'summon',note:'Follows you all the way to the lake and no further.'},
- {key:'chick',   name:'Barnyard Chick',    emoji:'🐤',price:0,  body:'#f7e07a',belly:'#fff8d0',ear:'point',tail:'puff',rar:'Common', src:'summon',note:'Grandma counts them twice a day and always gets a different answer.'},
- {key:'piglet',  name:'Barleyfold Piglet', emoji:'🐷',price:0,  body:'#eab7b7',belly:'#f9dede',ear:'flop', tail:'curl',rar:'Rare',   src:'summon',note:'Theo swears it can open gates.'},
- {key:'goat',    name:'Barleyfold Kid',   emoji:'🐐',price:500,body:'#cfc3b0',belly:'#f2ece0',ear:'long', tail:'curl',rar:'Rare',   src:'shop',  note:'Eats fence posts. Ada says she is sorry.'},
- {key:'raccoon', name:'Cottonwood Raccoon',emoji:'🦝',price:0, body:'#8a8f98',belly:'#dfe3ea',ear:'point',tail:'bush',rar:'Rare',   src:'summon',note:'Turned up at the feed store and stayed.'},
- {key:'fennec',  name:'Canyon Fennec',    emoji:'🦊',price:0,  body:'#e3c089',belly:'#fbf3e2',ear:'long', tail:'bush',rar:'Epic',   src:'summon',note:'All ears, out of Coyote Canyon.'},
- {key:'snowhare',name:'Hollowpeak Hare',  emoji:'🐇',price:0,  body:'#eef3ff',belly:'#ffffff',ear:'long', tail:'puff',rar:'Epic',   src:'summon',pairs:'frost',note:'White on white; you only see it move.'},
- {key:'owl',     name:'Barn Owl',         emoji:'🦉',price:0,  body:'#b99a72',belly:'#f0e6d2',ear:'point',tail:'puff',rar:'Epic',   src:'pass',  pairs:'pegasus',note:'Rides the rafters, then the wind.'},
- {key:'lamb',    name:'Meadow Lamb',      emoji:'🐑',price:0,  body:'#f2ece0',belly:'#ffffff',ear:'flop', tail:'puff',rar:'Common', src:'set:jars',note:'Grandma raised it on a bottle.'},
- {key:'glimmerfox',name:'Glimmer Fox',    emoji:'🦊',price:0,  body:'#c9f0ff',belly:'#ffffff',ear:'point',tail:'bush',rar:'Epic',   src:'summon',pairs:'lumen',glow:'#8fe8ff',note:'Cold blue light, and it knows exactly what it is.'},
+ {key:'corgi',   name:'Barn Corgi',       emoji:'🐕',price:400,body:'#d98a33',belly:'#fbf1e0',ear:'point',tail:'puff',kind:'quad',rar:'Rare',   src:'shop',  note:'Herds the chickens whether they like it or not.'},
+ {key:'duck',    name:'Loon Lake Duckling',emoji:'🦆',price:0,  body:'#f7d34a',belly:'#fbe58f',ear:'point',tail:'puff',kind:'bird',wings:true,rar:'Common', src:'summon',note:'Follows you all the way to the lake and no further.'},
+ {key:'chick',   name:'Barnyard Chick',    emoji:'🐤',price:0,  body:'#ffd52e',belly:'#ffe98a',ear:'point',tail:'puff',kind:'bird',wings:true,rar:'Common', src:'summon',note:'Grandma counts them twice a day and always gets a different answer.'},
+ {key:'piglet',  name:'Barleyfold Piglet', emoji:'🐷',price:0,  body:'#f4aab4',belly:'#f9c9cf',ear:'flop', tail:'curl',kind:'quad',rar:'Rare',   src:'summon',note:'Theo swears it can open gates.'},
+ {key:'goat',    name:'Barleyfold Kid',   emoji:'🐐',price:500,body:'#c49f76',belly:'#f4ede0',ear:'long', tail:'curl',kind:'quad',rar:'Rare',   src:'shop',  note:'Eats fence posts. Ada says she is sorry.'},
+ {key:'raccoon', name:'Cottonwood Raccoon',emoji:'🦝',price:0, body:'#8e8a86',belly:'#b8b3ab',ear:'point',tail:'bush',kind:'quad',rar:'Rare',   src:'summon',note:'Turned up at the feed store and stayed.'},
+ {key:'fennec',  name:'Canyon Fennec',    emoji:'🦊',price:0,  body:'#eac68e',belly:'#fbf3e2',ear:'long', tail:'bush',kind:'quad',rar:'Epic',   src:'summon',note:'All ears, out of Coyote Canyon.'},
+ {key:'snowhare',name:'Hollowpeak Hare',  emoji:'🐇',price:0,  body:'#f6f9ff',belly:'#d8e0ee',ear:'long', tail:'puff',kind:'bunny',rar:'Epic',   src:'summon',pairs:'frost',note:'White on white; you only see it move.'},
+ {key:'owl',     name:'Barn Owl',         emoji:'🦉',price:0,  body:'#d6a86a',belly:'#fbf5ea',ear:'point',tail:'puff',kind:'bird',wings:true,rar:'Epic',   src:'pass',  pairs:'pegasus',note:'Rides the rafters, then the wind.'},
+ {key:'lamb',    name:'Meadow Lamb',      emoji:'🐑',price:0,  body:'#f7f2e6',belly:'#7a6252',ear:'flop', tail:'puff',kind:'quad',rar:'Common', src:'set:jars',note:'Grandma raised it on a bottle.'},
+ {key:'glimmerfox',name:'Glimmer Fox',    emoji:'🦊',price:0,  body:'#bfe9ff',belly:'#ffffff',ear:'point',tail:'bush',kind:'quad',rar:'Epic',   src:'summon',pairs:'lumen',glow:'#8fe8ff',note:'Cold blue light, and it knows exactly what it is.'},
 ];
 /* horse breed key → the pet that answers it. Both must be out at once. */
 const PET_PAIRS={lumen:'glimmerfox',pegasus:'owl',frost:'snowhare'};
@@ -423,24 +425,36 @@ export function install(G){
   if(p.src&&p.src.startsWith('set:')){const k=p.src.slice(4);return '🫙 '+((T.COLL_SETS[k]&&T.COLL_SETS[k].label)||k)+' set';}
   return SRC_LBL[p.src]||'🛍️ On the shelf';
  }
+ /* Each row is drawn already in the market's card shape (ui2-shop's s2-row), so the pet's portrait from
+    pet-models.js (G.petArt) fills the picture slot instead of an emoji the no-emoji pass would hide.
+    data-s2 tells ui2-shop the row is finished. */
+ const RAR_CARD={Common:['#9a8770','#5c4c3a','•'],Uncommon:['#5fa86b','#2e6b39','◆'],Rare:['#4a8fd4','#215a92','◆◆'],Epic:['#9a6ae0','#5f3aa0','★'],Legendary:['#e0a93c','#8a6110','★★']};
+ const petPic=P=>G.petArt?'<span class="mk-thumb pet-thumb" data-petart="'+P.key+'">'+G.petArt.svg(P.key,56)+'</span>':'<span class="s2-glyph">'+P.emoji+'</span>';
+ function petCard(P,title,meta,btn,o){
+  o=o||{};const rar=P.rar||'Common',rc=RAR_CARD[rar]||RAR_CARD.Common;
+  return '<div class="evrow s2-row'+(o.done?' done':'')+(rar==='Epic'||rar==='Legendary'?' s2-hi':'')+(o.locked?' s2-locked':'')+(o.cant?' s2-cant':'')+'" data-s2="1" data-s2rar="'+rar+'" data-pet-row="'+P.key+'" style="--rar:'+rc[0]+';--rar-ink:'+rc[1]+'">'
+   +petPic(P)
+   +'<div class="s2-copy"><div class="s2-title"><b>'+title+'</b>'+(o.noRar?'':'<span class="s2-rar"><span aria-hidden="true">'+rc[2]+'</span>'+rar+'</span>')+'</div><div class="s2-meta">'+meta+'</div></div>'
+   +'<div class="s2-trail"><div class="s2-trail-row">'+(btn||'')+'</div></div></div>';
+ }
  U.shopTab({id:'pets',label:'🐾 Pets',render(s){
   const owned=s.petList||[], active=(()=>{try{return G.pets.active();}catch(e){return null;}})();
-  let html='<span style="font-size:12px;color:#8c7a63">Adopt a companion — one follows you at a time, and a pet that matches your horse makes them both glow. 🐾 '+owned.length+'/'+PETS3.length+' found.</span>';
+  let html='<span style="font-size:12px;color:#8c7a63">Adopt a companion. One follows you at a time, the birds fly beside you on a winged horse, and a pet that matches your horse makes them both glow. '+owned.length+'/'+PETS3.length+' found.</span>';
   html+=PETS3.map(P=>{
    const have=owned.includes(P.key), on=active===P.key;
    const pair=P.pairs&&byKey(P.pairs);
-   const note=esc(P.note||'')+(pair?' · 💞 pairs with '+esc(pair[1]):'');
-   let btn;
-   if(have)btn='<button data-petfollow="'+P.key+'"'+(on?' class="claimBtn"':'')+'>'+(on?'🐾 Following':'🐾 Follow')+'</button>';
-   else if(P.src==='shop'&&P.price)btn='<button data-buypet="'+P.key+'"'+(s.coins<P.price?' disabled':'')+'>'+P.price+' 🪙</button>';
+   const note=esc(P.note||'')+(pair?' · pairs with '+esc(pair[1]):'')+(P.wings?' · flies with a winged horse':'');
+   let btn,locked=false,cant=false;
+   if(have)btn='<button data-petfollow="'+P.key+'"'+(on?' class="claimBtn"':'')+'>'+(on?'Following':'Follow')+'</button>';
+   else if(P.src==='shop'&&P.price){cant=s.coins<P.price;btn='<button data-buypet="'+P.key+'"'+(cant?' disabled':'')+'>'+P.price+' 🪙</button>';}
    else if(P.src==='summon')btn='<button data-fx="shop:summon">'+petCfg(P.key).rar+' · call</button>';
-   else btn='<span style="font-size:11px;color:#8c7a63">'+petSrcLabel(P)+'</span>';
-   return '<div class="evrow'+(have?' done':'')+'">'+P.emoji+' <b>'+esc(P.name)+'</b><span>'+(have?(on?'· following you ✓ · ':'· owned · ')+note:note+' · '+petSrcLabel(P))+'</span>'+btn+'</div>';
+   else{locked=true;btn='<span style="font-size:11px;color:#8c7a63">'+petSrcLabel(P)+'</span>';}
+   return petCard(P,esc(P.name),have?(on?'following you · ':'owned · ')+note:note+' · '+petSrcLabel(P),btn,{done:have,locked,cant});
   }).join('');
-  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">💞 Pairs</div>'
+  html+='<div style="font-size:12px;color:#8c7a63;margin:8px 0 2px">Pairs</div>'
    +Object.keys(PET_PAIRS).map(k=>{const b=byKey(k),p=PETS3.find(x=>x.key===PET_PAIRS[k]);if(!b||!p)return '';
      const got=s.horses.some(h=>h.breed===k)&&(s.petList||[]).includes(p.key);
-     return '<div class="evrow'+(got?' done':'')+'">'+p.emoji+' <b>'+esc(p.name)+' + '+esc(b[1])+'</b><span>'+(got?'ride the one with the other beside you and both of them light up':'find both and they transform side by side')+'</span></div>';}).join('')
+     return petCard(p,esc(p.name)+' + '+esc(b[1]),got?'ride the one with the other beside you and both of them light up':'find both and they transform side by side','',{done:got,noRar:true});}).join('')
    +'<span style="font-size:11px;color:#8c7a63">A paired pet also makes your horse bond 15% faster while it is out.</span>';
   return html;
  }});
@@ -659,12 +673,18 @@ export function install(G){
 
  /* ---- 12. the pair that lights up ------------------------------------------------------ */
  let aura=null, ring=null, comboT=0, toldCombo=false;
+ /* The pair's light: a soft additive glow behind the pet (never a solid bubble round it, which hid the
+    owl's face whenever it was near the pegasus), and the pet's own outline pulsing through its rim light
+    (G.petModels.glow). */
  function mkAura(){
   const g=new THREE.Group();
-  const m=new THREE.MeshBasicMaterial({color:0x8fe8ff,transparent:true,opacity:0,depthWrite:false});
-  const s1=new THREE.Mesh(new THREE.SphereGeometry(0.42,12,10),m); s1.position.y=0.34; g.add(s1);
+  let tex=null;try{tex=G.petModels&&G.petModels.glowTex?G.petModels.glowTex():null;}catch(e){}
+  if(!tex){const cv=document.createElement('canvas');cv.width=cv.height=64;const c=cv.getContext('2d');const gr=c.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(0.35,'rgba(255,255,255,0.55)');gr.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=gr;c.fillRect(0,0,64,64);tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;}
+  const m=new THREE.SpriteMaterial({map:tex,color:0x8fe8ff,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false});
+  const s1=new THREE.Sprite(m); s1.position.y=0.34; s1.renderOrder=2; g.add(s1);
   return {group:g,mat:m};
  }
+ const petGlow=(a,c)=>{try{if(G.petModels&&G.petModels.glow)G.petModels.glow(a,c);}catch(e){}};
  function mkRing(){
   const m=new THREE.MeshBasicMaterial({color:0x8fe8ff,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide});
   const r=new THREE.Mesh(new THREE.RingGeometry(0.9,1.6,24),m); r.rotation.x=-Math.PI/2;
@@ -676,20 +696,24 @@ export function install(G){
   let P=null; try{P=G.pets.comp();}catch(e){}
   const h=G.horse.ridden();
   const want=P&&h&&PET_PAIRS[h.breed]===P.key;
-  if(!P){ if(aura&&aura.group.parent)aura.group.parent.remove(aura.group); if(ring)ring.mat.opacity=0; toldCombo=false; return; }
-  if(!want&&(!P.combo||P.combo<0.01)){ if(ring)ring.mat.opacity=0; if(aura)aura.mat.opacity=0; return; }
-  const px=G.horse.player.pos, d=Math.hypot(px.x-P.pos.x,px.z-P.pos.z);
-  const near=want&&d<3.4?1:0;
+  if(!P){ if(aura&&aura.group.parent)aura.group.parent.remove(aura.group); if(ring)ring.mat.opacity=0; petGlow(0); toldCombo=false; return; }
+  if(!want&&(!P.combo||P.combo<0.01)){ if(ring)ring.mat.opacity=0; if(aura)aura.mat.opacity=0; petGlow(0); return; }
+  /* measured in 3D, from the horse's middle to the pet's: a bird flying beside a pegasus is close, a dog
+     left on the ground under it is not; the pet walks beside the shoulder, so a trot or a gallop keeps it on */
+  const pl=G.horse.player, px=pl.pos, ry=G.world.groundH(px.x,px.z)+(pl.y||0), pg=P.parts.group.position;
+  const d=Math.hypot(px.x-pg.x,(ry+1.0)-(pg.y+(P.parts.auraY||0.34)),px.z-pg.z);
+  const near=want&&d<4.8?1:0;
   P.combo=(P.combo||0)+(near-(P.combo||0))*Math.min(1,dt*2.2);
   comboT+=dt;
   if(!aura)aura=mkAura();
-  if(aura.group.parent!==P.parts.group){try{P.parts.group.add(aura.group);}catch(e){}}
-  const pulse=0.6+0.4*Math.sin(comboT*3.2);
-  aura.mat.opacity=P.combo*0.55*pulse;
-  aura.mat.color.set((petCfg(P.key).glow)||'#8fe8ff');
+  if(aura.group.parent!==P.parts.group){try{P.parts.group.add(aura.group);const s1=aura.group.children[0];s1.position.y=P.parts.auraY||0.34;s1.scale.setScalar(1.6*(P.parts.size||0.6));}catch(e){}}
+  const pulse=0.6+0.4*Math.sin(comboT*3.2), gc=(petCfg(P.key).glow)||'#8fe8ff';
+  aura.mat.opacity=P.combo*0.35*pulse;
+  aura.mat.color.set(gc);
+  petGlow(P.combo*(0.55+0.45*pulse),gc);
   if(!ring)ring=mkRing();
   ring.mat.opacity=P.combo*0.42*pulse;
-  ring.mesh.position.set(px.x,G.world.groundH(px.x,px.z)+0.06,px.z);
+  ring.mesh.position.set(px.x,ry+0.06,px.z);   // under the hooves, in the air too
   if(P.combo>0.85&&!toldCombo){
    toldCombo=true;
    const b=byKey(h.breed);

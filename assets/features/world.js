@@ -668,7 +668,12 @@ export function install(G){
     and out of the camera. */
  function tickFollowers(dt){
   if(P.companionEntry&&P.companionEntry.idx!=null){const a=P.companionEntry;if(H.myHorses[a.idx]&&H.myHorses[a.idx].id===P.companionId){const h0=a.heading;a.heading=avoid(a,a.heading,2.4);if(a.heading!==h0){a.pos.x+=Math.sin(a.heading)*dt*1.5;a.pos.z+=Math.cos(a.heading)*dt*1.5;}pushOut(a,0.55);clearOfCamera(a,dt,4.2);a.parts.group.position.set(a.pos.x,groundH(a.pos.x,a.pos.z),a.pos.z);a.parts.group.rotation.y=a.heading;}}
-  const pet=G.petComp&&G.petComp();if(pet&&pet.pos){const before=pet.pos.x+':'+pet.pos.z;pushOut(pet,0.4);clearOfCamera(pet,dt,2.4);if(before!==pet.pos.x+':'+pet.pos.z)pet.parts.group.position.set(pet.pos.x,groundH(pet.pos.x,pet.pos.z),pet.pos.z);}
+  /* The pet (pet-models.js) steers round buildings every frame and picks its own spot in the picture, so
+     here it only gets the barn push-out as a safety net: never the camera push (that shoved it away from
+     where it had chosen to be seen), never while a bird is in the air (a flat push-out at twenty metres
+     up means nothing, and re-seating it on the ground slammed it out of the sky), and it re-seats itself
+     through place(), which keeps its height, its hop and its float on water. */
+  const pet=G.petComp&&G.petComp();if(pet&&pet.pos&&!pet.airborne){const before=pet.pos.x+':'+pet.pos.z;pushOut(pet,0.4);if(!pet.framed)clearOfCamera(pet,dt,2.4);if(before!==pet.pos.x+':'+pet.pos.z){if(pet.place)pet.place();else pet.parts.group.position.set(pet.pos.x,groundH(pet.pos.x,pet.pos.z),pet.pos.z);}}
  }
  P.companionEntry=null;
  const findCompanion=()=>{const cid=(S.fresh()||{}).companion;P.companionEntry=null;P.companionId=cid;if(cid==null)return;for(const a of H.herd()){const hh=H.myHorses[a.idx];if(hh&&hh.id===cid){P.companionEntry=a;break;}}};
