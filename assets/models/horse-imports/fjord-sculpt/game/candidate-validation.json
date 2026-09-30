@@ -1,0 +1,38 @@
+{
+  "candidate": "fjord-sculpt",
+  "sourceSha256": "c652933791dc85ea7ec9a1c9b4707b04b4c4a1f1bb28c27a99b58a0f978c2178",
+  "rigSha256": "787fb2a4c26ae7d43902502d31909b46335b03d75de23b6d0ec6fa349f56f29c",
+  "animatedSha256": "43be3aa22174a81aa23910df9ed53354a63cd7c03482cb82ab922cf11618ef7c",
+  "profileSha256": "fb816fb3ce1af3f6ad78b274b211039a1c86e48b2a209c1be149413522aeca31",
+  "candidateMotionModuleSha256": "c3658a622ab6f685218a111c8069aabca8c07267b6ca1b24caf9c8c1afa776cf",
+  "sharedMotionModuleSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+  "withersM": 1.42,
+  "bodyHeightM": 1.8831972801561654,
+  "overallHeightM": 1.8956876310609414,
+  "triangles": 109999,
+  "joints": 40,
+  "clips": [
+    "Rest",
+    "Idle",
+    "Walk",
+    "Trot",
+    "Canter_Left",
+    "Canter_Right",
+    "Gallop_Left",
+    "Gallop_Right",
+    "Jump"
+  ],
+  "fps": 120,
+  "minStoredLowerBodyY": -0.0015251947700050147,
+  "minStoredGroomY": 0.00269412836861551,
+  "minIndependentHoofY": -0.0015251947700050147,
+  "allCandidateChecksPassed": true,
+  "ordinaryRenderReviewed": true,
+  "sourceOriginalAndReceiptHashMatches": true,
+  "protectedPackagingRequired": true,
+  "pendingIntegration": [
+    "protected delivery package",
+    "final mounted tack/rider and Studio checks",
+    "root catalog activation/publication"
+  ]
+}

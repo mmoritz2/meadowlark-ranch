@@ -1,0 +1,407 @@
+{
+  "id": "haflinger",
+  "status": "distinct regional body built; motion and visual review pending",
+  "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+  "rigSha256": "23317e3d610e4c5b4b3c5e607c084172538b7566ddde3ec272f67042780d7f9b",
+  "bodyGeometrySha256": "81bdc1a9e938a0256dd20a5047e83e0e0ce862a8fffd9f8e4118a5e3d515167f",
+  "targetWithersM": 1.45,
+  "measuredWithersM": 1.45,
+  "groundY": 0.0,
+  "sculptTargets": {
+    "body_length": 1,
+    "barrel_width": 1.11,
+    "body_depth": 1.07,
+    "neck_length": 0.96,
+    "neck_thickness": 1.08,
+    "head_length": 0.95,
+    "head_width": 1.03,
+    "ear_length": 0.87,
+    "limb_length": 0.94,
+    "hoof_width": 1.05,
+    "hindquarter_width": 1.08,
+    "face_profile_depth_per_withers": -0.003,
+    "neck_arch_rise_per_withers": 0.025
+  },
+  "morphology": {
+    "build": "Small athletic muscular horse, harmonious rounded barrel",
+    "neck": "Strong well-shaped neck, moderate crest",
+    "head_face": "Refined expressive head, broad forehead, gentle taper",
+    "ears": "Small neat forward ears",
+    "limbs": "Defined joints with sturdy clean bone",
+    "hooves": "Round supporting feet",
+    "mane_tail": "Abundant flaxen falling mane and full tail",
+    "feathering": "Little; do not create draft boots"
+  },
+  "artDecision": null,
+  "primaryConformationSourceIds": [
+    "haflinger"
+  ],
+  "sourceMaterialUVsPreserved": true,
+  "sourceCoreWeightsPreserved": true,
+  "allTackAndAnchorsFitWithSameCage": true,
+  "preferredUnmodifiedWhiteFoundationPreserved": "../../white-western-animated.glb",
+  "compactBINOnlyReferencedViews": true,
+  "meshes": [
+    {
+      "name": "HorseBody",
+      "vertices": 16159,
+      "triangles": 28326,
+      "cageJacobianMin": 0.365860400332987,
+      "bounds": [
+        [
+          -0.30618486364761455,
+          0.0,
+          -0.8741245272127741
+        ],
+        [
+          0.295425531186009,
+          1.7442466409208681,
+          1.146946900602389
+        ]
+      ]
+    },
+    {
+      "name": "HorseEyes",
+      "vertices": 2028,
+      "triangles": 3854,
+      "cageJacobianMin": 0.47784379918857056,
+      "bounds": [
+        [
+          -0.14310561487500084,
+          1.5563231704127067,
+          0.9387439979357127
+        ],
+        [
+          0.06977162743567177,
+          1.5937499863229714,
+          0.9928786979858029
+        ]
+      ]
+    },
+    {
+      "name": "HorseGroom",
+      "vertices": 23514,
+      "triangles": 26588,
+      "cageJacobianMin": 0.36585705059254275,
+      "bounds": [
+        [
+          -0.24727988379360066,
+          0.15234174154190994,
+          -0.9811655616145839
+        ],
+        [
+          0.1065875293785236,
+          1.70945153059955,
+          1.0776041651816963
+        ]
+      ]
+    },
+    {
+      "name": "HorseWesternTack",
+      "vertices": 13895,
+      "triangles": 17194,
+      "cageJacobianMin": 0.3814058652897346,
+      "bounds": [
+        [
+          -0.41658696218709756,
+          0.7096437191707547,
+          -0.34410655317490474
+        ],
+        [
+          0.40415917034059434,
+          1.6981233872148158,
+          1.1183169066075525
+        ]
+      ]
+    },
+    {
+      "name": "HorseWesternSaddle",
+      "vertices": 5092,
+      "triangles": 6464,
+      "cageJacobianMin": 0.6205453281947216,
+      "bounds": [
+        [
+          -0.3194556906433672,
+          0.93389313685286,
+          -0.27102615135600217
+        ],
+        [
+          0.2969589674725354,
+          1.483014673359966,
+          0.3044013619752447
+        ]
+      ]
+    },
+    {
+      "name": "HorseFeather",
+      "vertices": 1000,
+      "triangles": 960,
+      "source": "Original alpha-card topology/UV sample with new fetlock placement and anatomical weights"
+    }
+  ],
+  "groom": {
+    "originalComponents": 548,
+    "keptComponents": 548,
+    "regionalLengthFactors": [
+      1.6,
+      1.1,
+      1
+    ],
+    "featherFactor": 0.025
+  },
+  "textureProvenance": {
+    "file": "coat-haflinger.png",
+    "sha256": "ac70932ea642fd27fdd8ac8309182aaefbdc9ef72a3c0cc006f04bdf9f8a5958",
+    "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+    "resolution": [
+      2048,
+      2048
+    ],
+    "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+    "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+  },
+  "jointPositions": [
+    [
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.007216617589935571,
+      1.2912224336596068,
+      -0.3962348706607988
+    ],
+    [
+      0.008961749557403732,
+      1.2370731385295886,
+      -0.08107046375148869
+    ],
+    [
+      0.0031645501506658417,
+      1.2089623007286472,
+      0.19512555379128635
+    ],
+    [
+      0.0001208740116392636,
+      1.199432151189072,
+      0.2704428915453111
+    ],
+    [
+      -0.016659236636637195,
+      1.4480115924574863,
+      0.6548543107484652
+    ],
+    [
+      -0.0239965373799745,
+      1.6397475644029567,
+      0.8429560982360372
+    ],
+    [
+      -0.026370326114950438,
+      1.549682970549189,
+      0.8692697223377707
+    ],
+    [
+      -0.08951182199385502,
+      1.672760385077073,
+      0.8906755273452561
+    ],
+    [
+      0.029857965615021655,
+      1.6727560366339675,
+      0.9005862349241978
+    ],
+    [
+      -0.0042731828668988985,
+      1.237358414515591,
+      -0.739713923084564
+    ],
+    [
+      -0.014877400386093805,
+      0.9519454294312346,
+      -0.8973794363419002
+    ],
+    [
+      -0.01649302097161513,
+      0.683030617918964,
+      -0.8472156644878144
+    ],
+    [
+      -0.02518232059152449,
+      0.35703757311480244,
+      -0.848305383621394
+    ],
+    [
+      -0.06729046067469871,
+      1.2668333382129946,
+      0.3292384349449919
+    ],
+    [
+      -0.17555082952497697,
+      0.9999787899847145,
+      0.4756604173618145
+    ],
+    [
+      -0.14408260696561007,
+      0.7679792555730731,
+      0.3341160018692924
+    ],
+    [
+      -0.1437932805455773,
+      0.43515757898066804,
+      0.31048704527057236
+    ],
+    [
+      -0.13779991686751542,
+      0.157973673369597,
+      0.24901043289523594
+    ],
+    [
+      -0.14150557789560747,
+      0.07507221091169253,
+      0.29785925377451505
+    ],
+    [
+      0.048575268397803496,
+      1.2763654630348966,
+      0.3337404397326393
+    ],
+    [
+      0.11997931621913481,
+      1.0110404942651556,
+      0.4998574809894671
+    ],
+    [
+      0.12641947963394348,
+      0.76751476842008,
+      0.3749376309674604
+    ],
+    [
+      0.1173213630821827,
+      0.43491454337095015,
+      0.40153283907662735
+    ],
+    [
+      0.10309777420312188,
+      0.15340079789788097,
+      0.3718324416182763
+    ],
+    [
+      0.09908179678675474,
+      0.076239603595948,
+      0.43066122455997236
+    ],
+    [
+      -0.1752761300889668,
+      1.0879890083656434,
+      -0.6333579595009818
+    ],
+    [
+      -0.22162651510856426,
+      0.7368358704193186,
+      -0.5335683193406033
+    ],
+    [
+      -0.1874143750387296,
+      0.4788748364680604,
+      -0.6672724700622393
+    ],
+    [
+      -0.21508605620877422,
+      0.1514271863324522,
+      -0.5970906662635166
+    ],
+    [
+      -0.22645054152422542,
+      0.08017228502056441,
+      -0.5512326855188576
+    ],
+    [
+      0.16647387336965289,
+      1.0810581865672908,
+      -0.642105441961121
+    ],
+    [
+      0.21523672030352495,
+      0.725389603886135,
+      -0.5718479499983861
+    ],
+    [
+      0.16462341868444022,
+      0.49169500053112686,
+      -0.7489833640800811
+    ],
+    [
+      0.192472779918146,
+      0.1576331111759438,
+      -0.7555708940366169
+    ],
+    [
+      0.19830317898327035,
+      0.07938966656646601,
+      -0.7243833867466415
+    ],
+    [
+      -0.13779991686751542,
+      0.157973673369597,
+      0.24901043289523594
+    ],
+    [
+      0.10309777420312188,
+      0.15340079789788097,
+      0.3718324416182763
+    ],
+    [
+      -0.21508605620877422,
+      0.1514271863324522,
+      -0.5970906662635166
+    ],
+    [
+      0.192472779918146,
+      0.1576331111759438,
+      -0.7555708940366169
+    ]
+  ],
+  "jointNames": [
+    "ROOT",
+    "pelvis",
+    "spine",
+    "chest",
+    "neck.lower",
+    "neck.upper",
+    "head",
+    "jaw",
+    "ear.L",
+    "ear.R",
+    "tail.1",
+    "tail.2",
+    "tail.3",
+    "tail.4",
+    "FL.scapula",
+    "FL.upperarm",
+    "FL.forearm",
+    "FL.cannon",
+    "FL.pastern",
+    "FL.hoof",
+    "FR.scapula",
+    "FR.upperarm",
+    "FR.forearm",
+    "FR.cannon",
+    "FR.pastern",
+    "FR.hoof",
+    "HL.thigh",
+    "HL.shin",
+    "HL.cannon",
+    "HL.pastern",
+    "HL.hoof",
+    "HR.thigh",
+    "HR.shin",
+    "HR.cannon",
+    "HR.pastern",
+    "HR.hoof",
+    "FL.IK",
+    "FR.IK",
+    "HL.IK",
+    "HR.IK"
+  ]
+}

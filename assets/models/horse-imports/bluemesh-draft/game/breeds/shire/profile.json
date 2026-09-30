@@ -1,0 +1,253 @@
+{
+  "id": "shire",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "sourceAuthor": "BlueMesh",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+  "withersM": 1.82,
+  "heightM": 2.3406851905408774,
+  "fitScale": 1,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0,
+        1.736552222251892,
+        -0.3267419807547149
+      ]
+    ],
+    "withers": [
+      [
+        7.725712697294561e-08,
+        1.82,
+        0.11398529681349442
+      ]
+    ],
+    "head": [
+      [
+        0,
+        2.0407263162503675,
+        0.9744031796811956
+      ]
+    ],
+    "poll": [
+      [
+        0,
+        2.213134712623204,
+        0.9975468165356464
+      ]
+    ],
+    "muzzle": [
+      [
+        0,
+        1.7753201847809073,
+        1.3834545562066372
+      ]
+    ],
+    "crest": [
+      [
+        0,
+        2.1062366415587275,
+        0.691925207011742
+      ]
+    ],
+    "tail": [
+      [
+        0,
+        1.6217171272597537,
+        -1.1916472239289602
+      ]
+    ],
+    "eyes": [
+      [
+        -0.10667164665815691,
+        2.049344024294693,
+        1.1686391239996734
+      ],
+      [
+        0.10667164665815691,
+        2.049344024294693,
+        1.1686391239996734
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.10571064083240775,
+        1.8033886460160355,
+        1.3669441848240043
+      ],
+      [
+        0.10571064083240775,
+        1.8033886460160355,
+        1.3669441848240043
+      ]
+    ],
+    "stirrups": [
+      [
+        -0.4052934284420774,
+        1.224552222251892,
+        -0.12674198075471488
+      ],
+      [
+        0.405294256062393,
+        1.224552222251892,
+        -0.12674198075471488
+      ]
+    ]
+  },
+  "jointCount": 40,
+  "triangles": {
+    "HorseBody": 23152,
+    "HorseGroom_1": 34051,
+    "HorseGroom_2": 32956,
+    "HorseGroom_3": 28192,
+    "HorseGroom_4": 32766,
+    "HorseGroom_5": 32988,
+    "HorseGroom_6": 10439,
+    "HorseEyes": 960
+  },
+  "file": "shire-animated.glb",
+  "sha256": "0541e816ed9c15f6a3f4827120760a07dc14a23518b952bdc35709d9cecfa85f",
+  "rigSha256": "1af54a5c0ff09cbe840b5159f445db72602e08ac907a83563df5ed15a601f0fd",
+  "clips": [
+    "Rest",
+    "Idle",
+    "Walk",
+    "Trot",
+    "Canter_Left",
+    "Canter_Right",
+    "Gallop_Left",
+    "Gallop_Right",
+    "Jump"
+  ],
+  "motionStatus": "all six live gait modes validated; nine own baked anatomical clips",
+  "sourceAppearancePreserved": false,
+  "preserveAuthoredHair": true,
+  "authoredCoat": true,
+  "breed": "Shire",
+  "physicalScale": true,
+  "sourceCoatAppearancePreserved": false,
+  "sourceDetailedTopologyRetained": true,
+  "sourceSurfaceCoordinatesSculpted": true,
+  "bodyTriangleCount": 23152,
+  "coat": "black, white blaze and stockings",
+  "groomStyle": {
+    "mane": 1.11,
+    "tail_width": 1.15,
+    "feather_length": 1.2,
+    "feather_width": 1.15,
+    "coat": "black, white blaze and stockings",
+    "hair": "black; silky rear feather"
+  },
+  "conformation": {
+    "game_id": "shire",
+    "canonical_breed": "Shire",
+    "classification": "breed",
+    "height": {
+      "target_m": 1.82,
+      "reference_range_m": [
+        1.68,
+        1.93
+      ],
+      "range_basis": "Artist mature envelope within SHSA description; stallion/mare/gelding height guidance differs and larger horses exist."
+    },
+    "morphology": {
+      "build": "Largest substantial draft exemplar, deep ribs and long quarters",
+      "neck": "Long commanding arch over broad shoulders",
+      "head_face": "Long lean head, mild Roman nose; avoid block jaw",
+      "ears": "Long alert ears",
+      "limbs": "Substantial flat bone and high hocks",
+      "hooves": "Very broad deep feet",
+      "mane_tail": "Long full mane and tail",
+      "feathering": "Fine silky rear-cannon and pastern fringe; avoid solid front boots"
+    },
+    "sculpt_targets": {
+      "body_length": 1.05,
+      "barrel_width": 1.23,
+      "body_depth": 1.16,
+      "neck_length": 1.07,
+      "neck_thickness": 1.18,
+      "head_length": 1.1,
+      "head_width": 1.08,
+      "ear_length": 1.15,
+      "limb_length": 1.07,
+      "hoof_width": 1.25,
+      "hindquarter_width": 1.23,
+      "face_profile_depth_per_withers": 0.012,
+      "neck_arch_rise_per_withers": 0.055
+    },
+    "silhouette_acceptance": "Tallest exemplar; long convex face plus back-of-leg feather, not enlarged Percheron",
+    "source_ids": [
+      "shire"
+    ]
+  },
+  "conformationScope": "Regional original art sculpt ratios are calibrated relative to the source draft/Clydesdale exemplar. All body, bones, eyes and anchors share one cage, with actual final measured breed metres. Association references are type/height guidance, not exact measured proportional averages.",
+  "withersMeasurement": "Actual shoulder crest vertex region on the conformed body; all geometry physically calibrated to target metres; no loader scale duplication.",
+  "motionValidation": "motion-validation.json",
+  "visualReview": "passed actual Rest/Walk/Gallop/Jump PNG inspection; runtime mounted/browser review pending",
+  "sourceCandidate": "bluemesh-draft",
+  "neutralCoatFile": "../../shared/neutral-coat-detail.png",
+  "neutralCoatLuminance": 0.5088813208549336,
+  "coatLuminance": 0.016831748301632483,
+  "preserveSaddleAnchor": true,
+  "mountAttachments": {
+    "coordinateSpace": "HorseBody raw physical metres, +Y up/+Z forward; fitScale1/fitY0",
+    "saddle": {
+      "anchor": [
+        0,
+        1.736552222251892,
+        -0.3267419807547149
+      ],
+      "attachmentJoint": "spine",
+      "sampledTopSurfaceY": 1.728552222251892,
+      "surfaceGapM": 0.008
+    },
+    "stirrups": {
+      "runtimeOriginalRelativePosition": [
+        [
+          -0.27,
+          -0.512,
+          0.2
+        ],
+        [
+          0.27,
+          -0.512,
+          0.2
+        ]
+      ],
+      "bodySurfaceXAtTreadYAndZ": [
+        -0.37029342844207735,
+        0.370294256062393
+      ],
+      "runtimeOriginalSideClearanceM": [
+        -0.10029342844207734,
+        -0.100294256062393
+      ],
+      "recommendedRawAnchors": [
+        [
+          -0.4052934284420774,
+          1.224552222251892,
+          -0.12674198075471488
+        ],
+        [
+          0.405294256062393,
+          1.224552222251892,
+          -0.12674198075471488
+        ]
+      ],
+      "recommendedClearanceM": 0.035,
+      "attachmentJoint": "spine",
+      "measurement": "Exact HorseBody triangle intersections for the Y/Z tread ray; recommended lateral anchors clear the measured barrel by35mm. Shared tack/rider runtime must consume them; offline geometry does not certify final mounted appearance."
+    }
+  },
+  "actualPlaybackSkinValidation": "actual-playback-skin-validation.json",
+  "attachmentCoatCalibration": "attachment-coat-calibration.json",
+  "finalMotionModuleSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+  "runtimeBrowserReview": "pending integrated site QA",
+  "mountedTackReview": "pending integrated runtime/rider visual verification of measured saddle/stirrup anchors",
+  "animationBakeFPS": 120,
+  "bakedHoofPlaybackValidation": "../baked-ground-validation.json"
+}

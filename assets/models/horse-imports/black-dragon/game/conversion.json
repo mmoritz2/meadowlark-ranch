@@ -1,0 +1,447 @@
+{
+  "schemaVersion": 1,
+  "sourceSha256": "3abf7ed79e40406236d8b0e365f4690174daf8cfec39b32bfb2ab3ba48d5a1e7",
+  "gameSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+  "sourcePoseBounds": {
+    "min": [
+      -13.368115885447004,
+      -0.018128234421366084,
+      -13.933331787482752
+    ],
+    "max": [
+      13.407010622873562,
+      5.686024190551983,
+      3.486745696665962
+    ],
+    "size": [
+      26.775126508320568,
+      5.704152424973349,
+      17.420077484148713
+    ]
+  },
+  "sourcePoseMatchesIndependentThreeBounds": true,
+  "coordinateSystem": "+Z forward,+Y up,metres",
+  "scale": 0.5593713739001184,
+  "groundOffset": [
+    0,
+    0.010140415394662964,
+    0
+  ],
+  "withersSource": 3.2891557745925395,
+  "withersM": 1.85,
+  "heightM": 3.1907395788930337,
+  "coreJointCount": 40,
+  "jointCount": 68,
+  "saddleSurface": {
+    "method": "central torso vertical triangle intersection",
+    "surfaceY": 1.932950765348511,
+    "clearanceM": 0.025
+  },
+  "removedGeometry": {
+    "name": "Plane_Material_0",
+    "triangles": 12,
+    "reason": "decorative source showcase floor"
+  },
+  "preservedSourceTriangleCount": 37986,
+  "materialDefinitionsPreserved": true,
+  "materialCount": 4,
+  "images": [
+    {
+      "name": null,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "gameSize": [
+        2048,
+        2048
+      ],
+      "encoding": "image/jpeg"
+    },
+    {
+      "name": null,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "gameSize": [
+        2048,
+        2048
+      ],
+      "encoding": "image/png"
+    },
+    {
+      "name": null,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "gameSize": [
+        2048,
+        2048
+      ],
+      "encoding": "image/png"
+    },
+    {
+      "name": null,
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "gameSize": [
+        2048,
+        2048
+      ],
+      "encoding": "image/jpeg"
+    },
+    {
+      "name": null,
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "gameSize": [
+        2048,
+        2048
+      ],
+      "encoding": "image/png"
+    },
+    {
+      "name": null,
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "gameSize": [
+        2048,
+        2048
+      ],
+      "encoding": "image/png"
+    },
+    {
+      "name": null,
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "gameSize": [
+        2048,
+        2048
+      ],
+      "encoding": "image/jpeg"
+    },
+    {
+      "name": null,
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "gameSize": [
+        2048,
+        2048
+      ],
+      "encoding": "image/png"
+    },
+    {
+      "name": null,
+      "sourceSize": [
+        4096,
+        4096
+      ],
+      "gameSize": [
+        2048,
+        2048
+      ],
+      "encoding": "image/png"
+    }
+  ],
+  "sourceUVsAndTopologyPreserved": true,
+  "sourceSkinOwnershipCollapsedByAnatomy": true,
+  "sourceWingOwnershipPreserved": true,
+  "derivedClawWeightAdaptation": {
+    "method": "Lowest anatomical claw/palm fully follows terminal hoof; quintic taper preserves higher hand/ankle source blend; rest geometry unchanged",
+    "limbs": [
+      {
+        "leg": "FL",
+        "changedVertices": 352,
+        "fullyRigidLowClawVertices": 197,
+        "lowestSourceSurfaceY": 4.6193654529291805e-07,
+        "rigidBandAboveLowestM": 0.06,
+        "smoothTaperEndAboveLowestM": 0.16,
+        "candidateRadiusM": 0.65,
+        "candidateAboveTerminalM": 0.14,
+        "terminalJoint": "FL.hoof"
+      },
+      {
+        "leg": "FR",
+        "changedVertices": 352,
+        "fullyRigidLowClawVertices": 197,
+        "lowestSourceSurfaceY": 0,
+        "rigidBandAboveLowestM": 0.06,
+        "smoothTaperEndAboveLowestM": 0.16,
+        "candidateRadiusM": 0.65,
+        "candidateAboveTerminalM": 0.14,
+        "terminalJoint": "FR.hoof"
+      },
+      {
+        "leg": "HL",
+        "changedVertices": 161,
+        "fullyRigidLowClawVertices": 87,
+        "lowestSourceSurfaceY": 0.013097768716955388,
+        "rigidBandAboveLowestM": 0.06,
+        "smoothTaperEndAboveLowestM": 0.16,
+        "candidateRadiusM": 0.65,
+        "candidateAboveTerminalM": 0.14,
+        "terminalJoint": "HL.hoof"
+      },
+      {
+        "leg": "HR",
+        "changedVertices": 161,
+        "fullyRigidLowClawVertices": 87,
+        "lowestSourceSurfaceY": 0.013088405577491254,
+        "rigidBandAboveLowestM": 0.06,
+        "smoothTaperEndAboveLowestM": 0.16,
+        "candidateRadiusM": 0.65,
+        "candidateAboveTerminalM": 0.14,
+        "terminalJoint": "HR.hoof"
+      }
+    ]
+  },
+  "contactEnvelope": {
+    "radiusM": 0.65,
+    "aboveTerminalM": 0.14,
+    "bottomBandM": 0.009,
+    "sampleAllCandidates": true,
+    "skinnedCorrection": true
+  },
+  "contactMeasurement": "Actual broad claw skin samples, default sole marker retained; opt-in post-skin target lift and anatomical resolve",
+  "animations": "Source Scene retained in immutable original; twelve independently baked game clips from anatomical and dragon flight motion",
+  "originalSourcePreserved": true,
+  "originalReceiptPreserved": true,
+  "validation": [
+    {
+      "mesh": "DragonEyes",
+      "vertices": 578,
+      "triangles": 1104,
+      "maxWeightError": 0,
+      "maxInfluences": 1,
+      "finite": true
+    },
+    {
+      "mesh": "DragonWingMembrane",
+      "vertices": 272,
+      "triangles": 226,
+      "maxWeightError": 2.220446049250313e-16,
+      "maxInfluences": 4,
+      "finite": true
+    },
+    {
+      "mesh": "HorseBody",
+      "vertices": 22292,
+      "triangles": 36656,
+      "maxWeightError": 2.220446049250313e-16,
+      "maxInfluences": 4,
+      "finite": true
+    }
+  ],
+  "runtimeVisualReview": "Ordinary final source-material render review inspected; parent browser integration tracked separately",
+  "gameIntegration": "pending",
+  "license": "CC BY-NC4.0",
+  "creator": "3DHaupt",
+  "noAI": true,
+  "generativeToolsUsed": false,
+  "bakedClips": {
+    "motionCodeSha256": "7703367ce738b6428d9cd26a8aa8b592e007d87ef327a1c4684923ecd05194aa",
+    "clips": [
+      {
+        "name": "Rest",
+        "duration": 1,
+        "frames": 61,
+        "joints": 68,
+        "loop": true,
+        "sampleHz": 60,
+        "loopAnatomicalDelta": 0,
+        "maxQuaternionNormError": 0,
+        "finite": true
+      },
+      {
+        "name": "Idle",
+        "duration": 8,
+        "frames": 481,
+        "joints": 68,
+        "loop": true,
+        "sampleHz": 60,
+        "loopAnatomicalDelta": 6.661338147750939e-16,
+        "maxQuaternionNormError": 2.220446049250313e-16,
+        "finite": true
+      },
+      {
+        "name": "Walk",
+        "duration": 1.9607843137254901,
+        "frames": 472,
+        "joints": 68,
+        "loop": true,
+        "sampleHz": 240,
+        "loopAnatomicalDelta": 2.220446049250313e-16,
+        "maxQuaternionNormError": 2.220446049250313e-16,
+        "finite": true
+      },
+      {
+        "name": "Trot",
+        "duration": 1.2903225806451613,
+        "frames": 311,
+        "joints": 68,
+        "loop": true,
+        "sampleHz": 240,
+        "loopAnatomicalDelta": 8.881784197001252e-16,
+        "maxQuaternionNormError": 3.3306690738754696e-16,
+        "finite": true
+      },
+      {
+        "name": "Canter_Left",
+        "duration": 1.1363636363636365,
+        "frames": 274,
+        "joints": 68,
+        "loop": true,
+        "sampleHz": 240,
+        "loopAnatomicalDelta": 1.1102230246251565e-15,
+        "maxQuaternionNormError": 4.440892098500626e-16,
+        "finite": true
+      },
+      {
+        "name": "Canter_Right",
+        "duration": 1.1363636363636365,
+        "frames": 274,
+        "joints": 68,
+        "loop": true,
+        "sampleHz": 240,
+        "loopAnatomicalDelta": 8.881784197001252e-16,
+        "maxQuaternionNormError": 2.220446049250313e-16,
+        "finite": true
+      },
+      {
+        "name": "Gallop_Left",
+        "duration": 0.9433962264150942,
+        "frames": 228,
+        "joints": 68,
+        "loop": true,
+        "sampleHz": 240,
+        "loopAnatomicalDelta": 1.7763568394002505e-15,
+        "maxQuaternionNormError": 4.440892098500626e-16,
+        "finite": true
+      },
+      {
+        "name": "Gallop_Right",
+        "duration": 0.9433962264150942,
+        "frames": 228,
+        "joints": 68,
+        "loop": true,
+        "sampleHz": 240,
+        "loopAnatomicalDelta": 1.3322676295501878e-15,
+        "maxQuaternionNormError": 2.220446049250313e-16,
+        "finite": true
+      },
+      {
+        "name": "Jump",
+        "duration": 1.75,
+        "frames": 421,
+        "joints": 68,
+        "loop": false,
+        "sampleHz": 240,
+        "loopAnatomicalDelta": 0,
+        "maxQuaternionNormError": 2.220446049250313e-16,
+        "finite": true
+      },
+      {
+        "name": "Takeoff",
+        "duration": 1.15,
+        "frames": 70,
+        "joints": 68,
+        "loop": false,
+        "sampleHz": 60,
+        "loopAnatomicalDelta": 0,
+        "maxQuaternionNormError": 2.220446049250313e-16,
+        "finite": true
+      },
+      {
+        "name": "Fly",
+        "duration": 1.4814814814814814,
+        "frames": 90,
+        "joints": 68,
+        "loop": true,
+        "sampleHz": 60,
+        "loopAnatomicalDelta": 0.0035840358356644675,
+        "maxQuaternionNormError": 3.3306690738754696e-16,
+        "finite": true
+      },
+      {
+        "name": "Land",
+        "duration": 2,
+        "frames": 121,
+        "joints": 68,
+        "loop": false,
+        "sampleHz": 60,
+        "loopAnatomicalDelta": 0,
+        "maxQuaternionNormError": 3.3306690738754696e-16,
+        "finite": true
+      }
+    ]
+  },
+  "ordinaryRenderReview": "render-review.json",
+  "physicalScale": {
+    "rawTorsoWithersM": 1.85,
+    "fitScale": 1,
+    "fitY": 0
+  },
+  "appendageClearance": "All actual wing and tail skin samples checked; genuine shoulder/tail1 rotations preserve floor clearance without changing source geometry",
+  "completeSurfaceGroundPlayback": {
+    "sampleHz": 240,
+    "minimumY": -0.00011118234549427385,
+    "passed": true
+  },
+  "stirrupSurface": {
+    "gameSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+    "sourceSha256": "3abf7ed79e40406236d8b0e365f4690174daf8cfec39b32bfb2ab3ba48d5a1e7",
+    "method": "Exact horizontal ray through source torso triangles; all three vertices have source pelvis/spine/chest ownership greater than .55; preserve English saddle tread Y/Z at seatY-.512,seatZ+.200; X clears source surface by at least .035m",
+    "barrelStationYZ": [
+      1.4459507653485109,
+      -0.27546566781510057
+    ],
+    "barrelSurfaceMinMaxX": [
+      -0.373979228034111,
+      0.374136789734724
+    ],
+    "torsoWidthM": 0.748116017768835,
+    "minimumSideClearanceM": 0.035,
+    "defaultStirrupX": [
+      -0.27,
+      0.27
+    ],
+    "defaultSideClearanceM": [
+      -0.10397922803411097,
+      -0.10413678973472396
+    ],
+    "stirrupAnchors": [
+      [
+        -0.408979228034111,
+        1.4459507653485109,
+        -0.27546566781510057
+      ],
+      [
+        0.409136789734724,
+        1.4459507653485109,
+        -0.27546566781510057
+      ]
+    ],
+    "selectedSideClearanceM": [
+      0.03500000000000003,
+      0.03500000000000003
+    ],
+    "intersections": [
+      0.374136789734724,
+      -0.373979228034111
+    ],
+    "noAI": true,
+    "generativeToolsUsed": false
+  }
+}

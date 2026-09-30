@@ -1,0 +1,328 @@
+{
+  "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+  "originalImages": [
+    {
+      "imageIndex": 0,
+      "file": "source-0-0e43d3fa2c5a5497.png",
+      "sha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a",
+      "originalPNGBytesUnchanged": true,
+      "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+      "author": "WildMesh 3D",
+      "license": "CC BY-NC 4.0"
+    },
+    {
+      "imageIndex": 1,
+      "file": "source-1-2f3995965d9cf278.png",
+      "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+      "originalPNGBytesUnchanged": true,
+      "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+      "author": "WildMesh 3D",
+      "license": "CC BY-NC 4.0"
+    },
+    {
+      "imageIndex": 2,
+      "file": "source-2-890ce50e9e23dffe.png",
+      "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+      "originalPNGBytesUnchanged": true,
+      "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+      "author": "WildMesh 3D",
+      "license": "CC BY-NC 4.0"
+    },
+    {
+      "imageIndex": 3,
+      "file": "source-3-3664d2c4c64188bc.png",
+      "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+      "originalPNGBytesUnchanged": true,
+      "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+      "author": "WildMesh 3D",
+      "license": "CC BY-NC 4.0"
+    },
+    {
+      "imageIndex": 4,
+      "file": "source-4-b0d88da3be1a35e5.png",
+      "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+      "originalPNGBytesUnchanged": true,
+      "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+      "author": "WildMesh 3D",
+      "license": "CC BY-NC 4.0"
+    }
+  ],
+  "coatVariants": [
+    {
+      "file": "coat-akhal.png",
+      "sha256": "3cafb19ddb9573d34dba30e589dbc99631097135b5392ae6743a35775bc7d071",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-bay.png",
+      "sha256": "84e399daee275928a0de902b061c26edcd4b094bd5503af46927ec5ae1185219",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-black.png",
+      "sha256": "a9f497119ddca66feb1141ffebea11d30f998b71eda48a2cea19dedd4c23ccff",
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "coat-chestnut.png",
+      "sha256": "3ec643229251c63fda417fb088bc70b6867da93ce86ad97ef0f0cbca696fe814",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-marwari.png",
+      "sha256": "15f7ced467e4e55aeae137e4b90377c769c0bcc545ddd478f64578307b1216c1",
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "coat-thoro.png",
+      "sha256": "54782cceacabee1c7f3201562c038f279657bf15eeb5b80ec8be18e55373773d",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-appaloosa.png",
+      "sha256": "847d6d26d2f39ec6cecc3fabdffb9a386d4828d14eee22e8bc8ec8614b6b42eb",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-bay-sporthorse.png",
+      "sha256": "3b46a6267a559152a2af357eb6b8bd7dc7bcdc21faf7fd30d71ff5efc958819d",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-camargue.png",
+      "sha256": "cece490c71a0a5a108a4a86ce93bb845e7ebb5bdcf738f46f6108821ad67bdb7",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-connemara.png",
+      "sha256": "3fd3afa47637af947325908751147a30ecee3e6697f693ad0744811d36e43ca6",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-grey.png",
+      "sha256": "9d6a9af8605023d0d37b64665b3d286bd1a5186f7c23a510a883c56d7d3d439f",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-haflinger.png",
+      "sha256": "ac70932ea642fd27fdd8ac8309182aaefbdc9ef72a3c0cc006f04bdf9f8a5958",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-hanover.png",
+      "sha256": "ac97c7f31775ee79061284fd84292df395df7025c961f54fba4ed292f074e296",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-iceland.png",
+      "sha256": "90df56ec9984bc7ac5ad3444c222835f3312c3831674a549a5d1b64e8cbc956f",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-knab.png",
+      "sha256": "306137fb49b6e29ccd7c6952615d24bff55aa82c9b12d321eafea6328af190da",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-lipiz.png",
+      "sha256": "03d64a7258f813d8279a1fd2b4347067a18046f0f5bd91ea77f71790d22cd843",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-lusitano.png",
+      "sha256": "1b49e8ff42f9947cef128c93f06f91ef1b629bed6824a9369441ff263c2688d3",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-morgan.png",
+      "sha256": "218da93a550ac6eca6f3f9d401d8e53efc48c0c1e6101ac7067f114eec307475",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-palomino.png",
+      "sha256": "2fc37360a28e2d9904b23e96e7a46d27554a993af9168f9e5bec1af9644920e1",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-pinto.png",
+      "sha256": "8d0035acc04ae9d1d3823f7dba4c1293feb96288290dde08ec4379813c51ab8b",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-rockymtn.png",
+      "sha256": "6183c85f500e3ea2e05ac295ca0f069b0975ad1274c683d8d32958bb92bad07c",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-sport.png",
+      "sha256": "3c7cb180ecf140a40a45e039b0b5d5e2243faf9767c57a0debba84caa2723f6d",
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "coat-stock.png",
+      "sha256": "545c32e36cc3996035fc1869bb0abc2654fb21ecdb091091aefdf5a014571ca5",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-sunset.png",
+      "sha256": "436ab19ded6cb1c8abf81300ea0f14d8be2374befa255ded7580c56a74ea2f2d",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    },
+    {
+      "file": "coat-welsh.png",
+      "sha256": "6c0468e49cb2a48c544c315d0b37d9cc686536f1f9a7ed101fde5165ffdb7851",
+      "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+      "resolution": [
+        2048,
+        2048
+      ],
+      "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+      "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+    }
+  ],
+  "UVRasterSize": 1024,
+  "license": "CC BY-NC 4.0",
+  "creator": "WildMesh 3D",
+  "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4"
+}

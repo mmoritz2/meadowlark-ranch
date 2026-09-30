@@ -1,0 +1,113 @@
+{
+  "sourceSha256": "9a6888256be7f7be2f8773be30cc1245b58b2bbe9c370c166388098c326c333c",
+  "animatedSha256": "1081bd8d00b0838f07aacf047055773bea8775a40a45e47cd303a111f7b69b30",
+  "checks": {
+    "registeredSourceHash": true,
+    "profileAnimatedHash": true,
+    "allSourceBodyEyesHornVerticesPreserved": true,
+    "sourceUVNormalsTangentsIndicesExact": true,
+    "originalMaterialsExact": true,
+    "all14OriginalEncodedImagesExact": true,
+    "allBuffersImagesEmbedded": true,
+    "canonical40Ordered": true,
+    "canonicalLeftNegativeX": true,
+    "everyBodyAndGroomVertexRestSkinIdentity": true,
+    "fourWeightsNormalized": true,
+    "allNativeSampledGroomCentrelinesRetained": true,
+    "allGroomSourceRootUVsExact": true,
+    "rigAndBakedMeshAttributesExact": true
+  },
+  "metrics": {
+    "maxSourceNormalizedVertexErrorM": 1.3024074259641511e-07,
+    "originalImageHashes": [
+      "ab94c4a321a3f71c3c33434364291189e799640927072c5c24db0e3ed6f24bd3",
+      "79889434245ca181ef5054adeb638ce810ec433536f1f7c5ad82e4d1ad77392c",
+      "aad3f492a99312a9bffb2c8c61e809453ffe66aa87c4114a7597e8fe6865faa3",
+      "f7851fc702aec8a7a36cd875b67bf528b842eafb75f70e511ff7259ff4ea6669",
+      "6db4a45603e0ec77e7febcef23f31f218859bc1f472646b6e5f22c3ea47e62b4",
+      "5ee0c0ae24c710bbb5fed759be86d505971d9055baf0c1cfc02081712589059d",
+      "13e8aa0cebac5ae070998424be337f9f3b37264f1a31fa8e90d1868dd5890bb0",
+      "3dc8dd1a184c2f87a3d12acfa145894af487f9c9bee389813f46d1e8c0dbca39",
+      "518af42f7e66396376ef8439db7b37dced5b1f9dabe0601db1d0ba5be5c89253",
+      "2d9bb7e60f930d919a499679f50afa4eedac15e8078708476d40fef8941587d8",
+      "09b272d1bcacfe92bdb5a2fdcea9d85ab91d0d83def2a1ce220e5b2b736f2561",
+      "2d9bb7e60f930d919a499679f50afa4eedac15e8078708476d40fef8941587d8",
+      "85804f42c011a997c4a60293b5270c9eb2f1d9e5791a8f1f1c7aab4531ba96f1",
+      "9562de86f4f537925af0af207a029c3f7d9b46c6fbbb0702d0b8048f780f8f7e"
+    ],
+    "totalSkinVertices": 895364,
+    "maxBindSkinErrorM": 1.6107453947770705e-07,
+    "maxWeightSumError": 5.960464477539063e-08,
+    "groom": [
+      {
+        "name": "head",
+        "nativePaths": 8748,
+        "sampledPointsPerPath": 5,
+        "maxCentrelineErrorM": 2.5720420511251976e-07,
+        "maxHorizontalCentrelineErrorM": 1.18643164848109e-07,
+        "rootUVExact": true
+      },
+      {
+        "name": "neck hair",
+        "nativePaths": 20040,
+        "sampledPointsPerPath": 17,
+        "maxCentrelineErrorM": 2.514637304503406e-07,
+        "maxHorizontalCentrelineErrorM": 1.1767589924716049e-07,
+        "rootUVExact": true
+      },
+      {
+        "name": "tail",
+        "nativePaths": 1500,
+        "sampledPointsPerPath": 17,
+        "maxCentrelineErrorM": 1.6130223933591682e-07,
+        "maxHorizontalCentrelineErrorM": 1.1894583940019743e-07,
+        "rootUVExact": true
+      },
+      {
+        "name": "ears",
+        "nativePaths": 350,
+        "sampledPointsPerPath": 5,
+        "maxCentrelineErrorM": 2.526062355045338e-07,
+        "maxHorizontalCentrelineErrorM": 1.173594126324673e-07,
+        "rootUVExact": true
+      },
+      {
+        "name": "neck",
+        "nativePaths": 1994,
+        "sampledPointsPerPath": 5,
+        "maxCentrelineErrorM": 2.2158345146872358e-07,
+        "maxHorizontalCentrelineErrorM": 1.1227413709846701e-07,
+        "rootUVExact": true
+      },
+      {
+        "name": "body",
+        "nativePaths": 1746,
+        "sampledPointsPerPath": 5,
+        "maxCentrelineErrorM": 1.220873418000981e-07,
+        "maxHorizontalCentrelineErrorM": 5.8447936823746716e-08,
+        "rootUVExact": true
+      },
+      {
+        "name": "legs",
+        "nativePaths": 1131,
+        "sampledPointsPerPath": 5,
+        "maxCentrelineErrorM": 0.0027624441199953,
+        "maxHorizontalCentrelineErrorM": 5.850452577949028e-08,
+        "rootUVExact": true
+      },
+      {
+        "name": "hoewes",
+        "nativePaths": 500,
+        "sampledPointsPerPath": 5,
+        "maxCentrelineErrorM": 5.967106207359708e-08,
+        "maxHorizontalCentrelineErrorM": 5.910149425414346e-08,
+        "rootUVExact": true
+      }
+    ]
+  },
+  "passed": true,
+  "sourceScriptsDriversExecuted": false,
+  "externalAlembicRead": false,
+  "generativeToolsUsed": false,
+  "nativeGroomAdaptation": "Source-native sampled particle paths; explicit selected child density and documented <=2.77mm lower-fur floor clearance. No procedural replacement flow."
+}

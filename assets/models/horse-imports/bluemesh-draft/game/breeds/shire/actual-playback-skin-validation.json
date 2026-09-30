@@ -1,0 +1,445 @@
+{
+  "breed": "shire",
+  "animatedSha256": "0541e816ed9c15f6a3f4827120760a07dc14a23518b952bdc35709d9cecfa85f",
+  "method": "Actual site-vendored GLTFLoader + AnimationMixer every skin vertex in6 baked clip poses versus independent Python float64 glTF skin and actual PNG geometry; duplicated material primitives each checked; all802 source body UV seams remain closed within20µm.",
+  "passed": true,
+  "clipCount": 9,
+  "poseCount": 6,
+  "maxVertexErrorM": 4.3519158753192087e-7,
+  "bodyUVSeamGroups": 802,
+  "maxBodyUVSeamGapM": 0,
+  "poses": [
+    {
+      "clip": "Rest",
+      "time": 1,
+      "loadedVertexInstances": 427020,
+      "maxVertexErrorM": 3.378795646470826e-7,
+      "maxBodyUVSeamGapM": 0,
+      "meshes": [
+        {
+          "mesh": "HorseBody",
+          "sourceMeshIndex": 0,
+          "primitive": 0,
+          "vertices": 12426,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.378795646470826e-7
+        },
+        {
+          "mesh": "HorseGroom_1",
+          "sourceMeshIndex": 1,
+          "primitive": 0,
+          "vertices": 65532,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.132031898418133e-7
+        },
+        {
+          "mesh": "HorseGroom_2",
+          "sourceMeshIndex": 2,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.199527190108107e-7
+        },
+        {
+          "mesh": "HorseGroom_3_1",
+          "sourceMeshIndex": 3,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.2239822684043774e-7
+        },
+        {
+          "mesh": "HorseGroom_3_2",
+          "sourceMeshIndex": 3,
+          "primitive": 1,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.2239822684043774e-7
+        },
+        {
+          "mesh": "HorseGroom_4",
+          "sourceMeshIndex": 4,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.2120064901043277e-7
+        },
+        {
+          "mesh": "HorseGroom_5",
+          "sourceMeshIndex": 5,
+          "primitive": 0,
+          "vertices": 65533,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.1217502892056708e-7
+        },
+        {
+          "mesh": "HorseGroom_6",
+          "sourceMeshIndex": 6,
+          "primitive": 0,
+          "vertices": 20879,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 1.72342871302267e-7
+        },
+        {
+          "mesh": "HorseEyes",
+          "sourceMeshIndex": 7,
+          "primitive": 0,
+          "vertices": 514,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.0744280182592148e-7
+        }
+      ]
+    },
+    {
+      "clip": "Walk",
+      "time": 0.275,
+      "loadedVertexInstances": 427020,
+      "maxVertexErrorM": 4.3350625781535015e-7,
+      "maxBodyUVSeamGapM": 0,
+      "meshes": [
+        {
+          "mesh": "HorseBody",
+          "sourceMeshIndex": 0,
+          "primitive": 0,
+          "vertices": 12426,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 4.3350625781535015e-7
+        },
+        {
+          "mesh": "HorseGroom_1",
+          "sourceMeshIndex": 1,
+          "primitive": 0,
+          "vertices": 65532,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.437738622875477e-7
+        },
+        {
+          "mesh": "HorseGroom_2",
+          "sourceMeshIndex": 2,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.442237420307788e-7
+        },
+        {
+          "mesh": "HorseGroom_3_1",
+          "sourceMeshIndex": 3,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.5796802609425434e-7
+        },
+        {
+          "mesh": "HorseGroom_3_2",
+          "sourceMeshIndex": 3,
+          "primitive": 1,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.5796802609425434e-7
+        },
+        {
+          "mesh": "HorseGroom_4",
+          "sourceMeshIndex": 4,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.619383524043393e-7
+        },
+        {
+          "mesh": "HorseGroom_5",
+          "sourceMeshIndex": 5,
+          "primitive": 0,
+          "vertices": 65533,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.3166402996295057e-7
+        },
+        {
+          "mesh": "HorseGroom_6",
+          "sourceMeshIndex": 6,
+          "primitive": 0,
+          "vertices": 20879,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.2443869544369094e-7
+        },
+        {
+          "mesh": "HorseEyes",
+          "sourceMeshIndex": 7,
+          "primitive": 0,
+          "vertices": 514,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.359555941685235e-7
+        }
+      ]
+    },
+    {
+      "clip": "Trot",
+      "time": 0.18333333333333332,
+      "loadedVertexInstances": 427020,
+      "maxVertexErrorM": 3.490348583159478e-7,
+      "maxBodyUVSeamGapM": 0,
+      "meshes": [
+        {
+          "mesh": "HorseBody",
+          "sourceMeshIndex": 0,
+          "primitive": 0,
+          "vertices": 12426,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.490348583159478e-7
+        },
+        {
+          "mesh": "HorseGroom_1",
+          "sourceMeshIndex": 1,
+          "primitive": 0,
+          "vertices": 65532,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.2461957587994513e-7
+        },
+        {
+          "mesh": "HorseGroom_2",
+          "sourceMeshIndex": 2,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.4029495770184295e-7
+        },
+        {
+          "mesh": "HorseGroom_3_1",
+          "sourceMeshIndex": 3,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.371666215643646e-7
+        },
+        {
+          "mesh": "HorseGroom_3_2",
+          "sourceMeshIndex": 3,
+          "primitive": 1,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.371666215643646e-7
+        },
+        {
+          "mesh": "HorseGroom_4",
+          "sourceMeshIndex": 4,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.206801465042819e-7
+        },
+        {
+          "mesh": "HorseGroom_5",
+          "sourceMeshIndex": 5,
+          "primitive": 0,
+          "vertices": 65533,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.0305726661850092e-7
+        },
+        {
+          "mesh": "HorseGroom_6",
+          "sourceMeshIndex": 6,
+          "primitive": 0,
+          "vertices": 20879,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 1.7640425946627587e-7
+        },
+        {
+          "mesh": "HorseEyes",
+          "sourceMeshIndex": 7,
+          "primitive": 0,
+          "vertices": 514,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.2073583629186094e-7
+        }
+      ]
+    },
+    {
+      "clip": "Canter_Left",
+      "time": 0.15833333333333333,
+      "loadedVertexInstances": 427020,
+      "maxVertexErrorM": 4.024740279107618e-7,
+      "maxBodyUVSeamGapM": 0,
+      "meshes": [
+        {
+          "mesh": "HorseBody",
+          "sourceMeshIndex": 0,
+          "primitive": 0,
+          "vertices": 12426,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 4.024740279107618e-7
+        },
+        {
+          "mesh": "HorseGroom_1",
+          "sourceMeshIndex": 1,
+          "primitive": 0,
+          "vertices": 65532,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.434615007787019e-7
+        },
+        {
+          "mesh": "HorseGroom_2",
+          "sourceMeshIndex": 2,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.528919308798019e-7
+        },
+        {
+          "mesh": "HorseGroom_3_1",
+          "sourceMeshIndex": 3,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.535549840238396e-7
+        },
+        {
+          "mesh": "HorseGroom_3_2",
+          "sourceMeshIndex": 3,
+          "primitive": 1,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.535549840238396e-7
+        },
+        {
+          "mesh": "HorseGroom_4",
+          "sourceMeshIndex": 4,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.528654509459983e-7
+        },
+        {
+          "mesh": "HorseGroom_5",
+          "sourceMeshIndex": 5,
+          "primitive": 0,
+          "vertices": 65533,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.385762112642653e-7
+        },
+        {
+          "mesh": "HorseGroom_6",
+          "sourceMeshIndex": 6,
+          "primitive": 0,
+          "vertices": 20879,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.387568233583573e-7
+        },
+        {
+          "mesh": "HorseEyes",
+          "sourceMeshIndex": 7,
+          "primitive": 0,
+          "vertices": 514,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.239890350115597e-7
+        }
+      ]
+    },
+    {
+      "clip": "Gallop_Left",
+      "time": 0.13333333333333333,
+      "loadedVertexInstances": 427020,
+      "maxVertexErrorM": 2.531720437213349e-7,
+      "maxBodyUVSeamGapM": 0,
+      "meshes": [
+        {
+          "mesh": "HorseBody",
+          "sourceMeshIndex": 0,
+          "primitive": 0,
+          "vertices": 12426,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.531720437213349e-7
+        },
+        {
+          "mesh": "HorseGroom_1",
+          "sourceMeshIndex": 1,
+          "primitive": 0,
+          "vertices": 65532,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 1.5654153399496985e-7
+        },
+        {
+          "mesh": "HorseGroom_2",
+          "sourceMeshIndex": 2,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 8.940888148864174e-8
+        },
+        {
+          "mesh": "HorseGroom_3_1",
+          "sourceMeshIndex": 3,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.448064486700352e-7
+        },
+        {
+          "mesh": "HorseGroom_3_2",
+          "sourceMeshIndex": 3,
+          "primitive": 1,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 2.448064486700352e-7
+        },
+        {
+          "mesh": "HorseGroom_4",
+          "sourceMeshIndex": 4,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 8.743536530126428e-8
+        },
+        {
+          "mesh": "HorseGroom_5",
+          "sourceMeshIndex": 5,
+          "primitive": 0,
+          "vertices": 65533,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 1.207588277166396e-7
+        },
+        {
+          "mesh": "HorseGroom_6",
+          "sourceMeshIndex": 6,
+          "primitive": 0,
+          "vertices": 20879,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 8.342975298827282e-8
+        },
+        {
+          "mesh": "HorseEyes",
+          "sourceMeshIndex": 7,
+          "primitive": 0,
+          "vertices": 514,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 7.211487085714821e-8
+        }
+      ]
+    },
+    {
+      "clip": "Jump",
+      "time": 0.7833333333333333,
+      "loadedVertexInstances": 427020,
+      "maxVertexErrorM": 4.3519158753192087e-7,
+      "maxBodyUVSeamGapM": 0,
+      "meshes": [
+        {
+          "mesh": "HorseBody",
+          "sourceMeshIndex": 0,
+          "primitive": 0,
+          "vertices": 12426,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 4.3519158753192087e-7
+        },
+        {
+          "mesh": "HorseGroom_1",
+          "sourceMeshIndex": 1,
+          "primitive": 0,
+          "vertices": 65532,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.2953476500840367e-7
+        },
+        {
+          "mesh": "HorseGroom_2",
+          "sourceMeshIndex": 2,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.274851559191891e-7
+        },
+        {
+          "mesh": "HorseGroom_3_1",
+          "sourceMeshIndex": 3,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.390522285345813e-7
+        },
+        {
+          "mesh": "HorseGroom_3_2",
+          "sourceMeshIndex": 3,
+          "primitive": 1,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.390522285345813e-7
+        },
+        {
+          "mesh": "HorseGroom_4",
+          "sourceMeshIndex": 4,
+          "primitive": 0,
+          "vertices": 65534,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.381755316141836e-7
+        },
+        {
+          "mesh": "HorseGroom_5",
+          "sourceMeshIndex": 5,
+          "primitive": 0,
+          "vertices": 65533,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.361472883198374e-7
+        },
+        {
+          "mesh": "HorseGroom_6",
+          "sourceMeshIndex": 6,
+          "primitive": 0,
+          "vertices": 20879,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.1195570613600325e-7
+        },
+        {
+          "mesh": "HorseEyes",
+          "sourceMeshIndex": 7,
+          "primitive": 0,
+          "vertices": 514,
+          "maxActualThreeVsRenderedGLTFSkinErrorM": 3.160148346006543e-7
+        }
+      ]
+    }
+  ]
+}

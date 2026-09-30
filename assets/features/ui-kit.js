@@ -2,10 +2,9 @@
    The design lead owns the .mk-* stylesheet in ranch3d.html; this file owns everything that
    has to happen at runtime, and it touches no other file.  Three jobs:
 
-   1. PORTRAITS.  assets/breed-thumbnails/ holds 47 .webp paintings and an index.json of the
-      keys.  Until now only breeds.html used them and every horse in every list was the same
-      🐴.  G.ui.k.thumb(breedKey,{size,rarity}) resolves a breed key to its portrait — exact
-      key, then an alias, then a prefix/token match — and returns markup with loading="lazy",
+   1. PORTRAITS.  The active model catalog selects its collection portraits.
+      G.ui.k.thumb(breedKey,{size,rarity}) resolves a breed key to its portrait and
+      returns markup with loading="lazy",
       a rarity ring class and the emoji painted underneath, so a missing file degrades to the
       old glyph instead of a broken image.  It never throws: an unknown breed, a null key or
       an index that failed to load all come back as the emoji.
@@ -20,10 +19,10 @@
       the leading 🐴 in a horse row for the real portrait wherever a breed key is discoverable
       from the row's own data attributes (data-buyh → BREEDS3, data-st/data-mktsell → the
       save's horses).  Every step is wrapped: a panel that does not match is left alone. */
+import {createBreedPortraits} from '../breed-portraits.js';
 export const id='uikit';
 export function install(G){
  const S=G.save, T=G.tables||{};
- const DIR='assets/breed-thumbnails/', VER='?v=artist-breeds-1';
  const EMOJI_FALLBACK='🐴';
 
  /* ================= 0. baseline css =================
@@ -67,17 +66,6 @@ export function install(G){
   dragon:'mythic',fantasy:'mythic',myth:'mythic',unique:'legendary',hero:'legendary',special:'epic'};
  const rarKey=v=>RAR[slug(v)]||(slug(v)?'common':'common');
 
- /* Breed keys the game uses that are spelled differently in the thumbnail set, plus the
-    common long forms a caller might hand us. */
- const ALIAS={thoroughbred:'thoro',thorobred:'thoro',clydesdale:'clyde',gypsy:'vanner','gypsy-vanner':'vanner',
-  'akhal-teke':'akhal',lipizzaner:'lipiz','icelandic':'iceland','icelandic-horse':'iceland',
-  'quarter-horse':'stock','shetland':'chestnut','shetland-pony':'chestnut','sport-horse':'sport',
-  'bay-sport':'bay-sporthorse','starter':'bay-sporthorse','hero':'bay-sporthorse',
-  unicorn3:'unicorn',pegasus3:'pegasus','dapple-grey':'grey','grey-andalusian':'grey'};
-
- let KEYS=null;                       // Set of index.json keys, or null until it loads
- const CACHE=new Map();               // resolved breed key -> file key | '' (known-missing)
-
  /* Thirteen mythic breeds — ashwing, cinderlark, dryadwalker, duskmustang, harvestmoon,
     kilnfriesian, larkunicorn, noonshade, petalmane, rimewalker, snowlark, sunflare, tidewalker —
     have no portrait of their own, so each one asked for <key>.webp, got a 404, and fell back to
@@ -99,32 +87,18 @@ export function install(G){
   }
   return BODY.get(k)||'';
  }
- function resolve(key){
-  const k=slug(key); if(!k)return '';
-  if(CACHE.has(k))return CACHE.get(k);
-  let hit='';
-  if(!KEYS)hit=ALIAS[k]||bodyOf(k)||k;                         // optimistic before the index lands
-  else if(KEYS.has(k))hit=k;
-  else if(ALIAS[k]&&KEYS.has(ALIAS[k]))hit=ALIAS[k];
-  else if(bodyOf(k)&&KEYS.has(bodyOf(k)))hit=bodyOf(k);        // a fantasy breed wears its body's face
-  else{
-   let best='';
-   for(const c of KEYS){                                       // prefix either way, longest wins
-    if((k.startsWith(c)||c.startsWith(k))&&c.length>best.length)best=c;
-   }
-   if(!best){const head=k.split('-')[0];if(head&&KEYS.has(head))best=head;}
-   hit=best;
+ const portraits=createBreedPortraits({manifestReady:G.horse?.breedModels?.manifestReady||Promise.resolve({breeds:{}}),bodyOf});
+ /* Panels can render before the async catalog. Update their existing spans once
+    the actual portrait URLs are known, as well as handling newly rendered rows. */
+ function refreshPortraits(){
+  for(const holder of document.querySelectorAll('.mk-thumb[data-mkbreed]')){
+   const url=portraits.url(holder.dataset.mkbreed);let img=holder.querySelector('.mk-thumb-img');
+   if(!url){img?.remove();continue;}
+   if(!img){img=document.createElement('img');img.className='mk-thumb-img';img.loading='lazy';img.decoding='async';img.alt='';img.onerror=()=>img.remove();holder.append(img);}
+   if(img.src!==url)img.src=url;
   }
-  if(KEYS)CACHE.set(k,hit);                                    // only cache once the index is truth
-  return hit;
  }
-
- /* index.json once, then repaint whatever is already on screen. */
- try{
-  fetch(DIR+'index.json',{cache:'force-cache'}).then(r=>r.json()).then(list=>{
-   if(Array.isArray(list)){KEYS=new Set(list.map(slug));CACHE.clear();sweepSoon();}
-  }).catch(()=>{});
- }catch(e){}
+ portraits.ready.then(()=>{refreshPortraits();sweepSoon();}).catch(()=>{});
 
  /* ================= 2. the kit ================= */
  const K={
@@ -135,7 +109,7 @@ export function install(G){
     o=o||{};
     const size=clamp(+o.size||40,20,160);
     const glyph=o.emoji||EMOJI_FALLBACK;
-    const file=resolve(breedKey);
+    const url=portraits.url(breedKey);
     const cls='mk-thumb mk-rar-'+rarKey(o.rarity)+(o.className?' '+o.className:'');
     /* flex:none and the min-width go inline on purpose: a portrait dropped into an old
        .evrow inherits `.evrow span{flex:1}` from the legacy sheet, which collapses it to
@@ -144,9 +118,9 @@ export function install(G){
       +'min-width:var(--mk-thumb);min-height:var(--mk-thumb)"'
       +(breedKey?' data-mkbreed="'+esc(slug(breedKey))+'"':'')+'>'
       +'<i class="mk-thumb-fb" aria-hidden="true">'+glyph+'</i>';
-    if(!file)return head+'</span>';
+    if(!url)return head+'</span>';
     return head+'<img class="mk-thumb-img" loading="lazy" decoding="async" alt="'+esc(o.alt||'')+'"'
-      +' src="'+DIR+encodeURIComponent(file)+'.webp'+VER+'" onerror="this.remove()">'
+      +' src="'+esc(url)+'" onerror="this.remove()">'
       +'</span>';
    }catch(e){
     return '<span class="mk-thumb mk-rar-common"><i class="mk-thumb-fb">'+EMOJI_FALLBACK+'</i></span>';

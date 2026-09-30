@@ -1,0 +1,324 @@
+{
+  "method": "Direct visual inspection of final actual local Chromium renders of all25 source-textured physical bodies: quarter Rest, side Rest and side Gallop_Left at30%, plus browser8 sampled modes/leads/Jump and Marwari close head view. Source models/photos were not replaced by generated images.",
+  "motionModuleSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+  "bakeRateHz": 120,
+  "bodies": [
+    {
+      "id": "akhal",
+      "modelSha256": "145a680a67f1bab9604f806a5bc282a0c9dcb8636009c8efef99a3e00dc80faf",
+      "bodyGeometrySha256": "b297f49c0e0629d2caccc06be08b783428c56fbe7f2f356dd3e06f8eabb84fd4",
+      "images": [
+        "akhal/preview-quarter-rest.png",
+        "akhal/preview-side-rest.png",
+        "akhal/preview-side-gallop_left.png",
+        "akhal/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "appaloosa",
+      "modelSha256": "7c386bb61bff5d867c7af7f16e20245ea22677a9893f7392acaaf51e3f8c1ee2",
+      "bodyGeometrySha256": "33559ba87a3823a28625fc51d97a750ca3081725824a4c45951872d97afd9d5b",
+      "images": [
+        "appaloosa/preview-quarter-rest.png",
+        "appaloosa/preview-side-rest.png",
+        "appaloosa/preview-side-gallop_left.png",
+        "appaloosa/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "bay",
+      "modelSha256": "eb9d459a5fce333ba25468e257cdd9faed26a2c1b82182fd11870ec99b8e9c66",
+      "bodyGeometrySha256": "8b922d059c83835ef35ee2107c04d53004bd149d83634fa40751f0779096353d",
+      "images": [
+        "bay/preview-quarter-rest.png",
+        "bay/preview-side-rest.png",
+        "bay/preview-side-gallop_left.png",
+        "bay/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "bay-sporthorse",
+      "modelSha256": "c4bf68a055b285dbd7e23ca6ee2bd5396222f48fd91ab3ea46bac503818f7d1a",
+      "bodyGeometrySha256": "47bde6ef90023be276b70473302d1cdaf392e9d3638ee8faa3429fd6991604b4",
+      "images": [
+        "bay-sporthorse/preview-quarter-rest.png",
+        "bay-sporthorse/preview-side-rest.png",
+        "bay-sporthorse/preview-side-gallop_left.png",
+        "bay-sporthorse/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "black",
+      "modelSha256": "2a4742c45f10008022a88114d08bef7373370aaab00a604baf53570cf3f1637d",
+      "bodyGeometrySha256": "782f2db928204057ced2f9acbb186f4fe988498d7978d7210a6bed103d2a21b0",
+      "images": [
+        "black/preview-quarter-rest.png",
+        "black/preview-side-rest.png",
+        "black/preview-side-gallop_left.png",
+        "black/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "camargue",
+      "modelSha256": "113f7f381495c8b0d9b5c0ad46fbb1274c855bf7a08ad115f5536e297c482bc3",
+      "bodyGeometrySha256": "267226e43e165c03efc7b6a3f42de46b2650a11cf61941544a619c775b2ee076",
+      "images": [
+        "camargue/preview-quarter-rest.png",
+        "camargue/preview-side-rest.png",
+        "camargue/preview-side-gallop_left.png",
+        "camargue/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "chestnut",
+      "modelSha256": "51d6246a31dd8c951bb2855a729396505a6067c68a590438618b4c734e0c80a6",
+      "bodyGeometrySha256": "b14ea611295b27e30e5776ab97f089619554758a737a7005bc91364ee9195551",
+      "images": [
+        "chestnut/preview-quarter-rest.png",
+        "chestnut/preview-side-rest.png",
+        "chestnut/preview-side-gallop_left.png",
+        "chestnut/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "connemara",
+      "modelSha256": "67981ad70df71fe218b5c1408cacbcea01e951e1a05235b4bb89265941c81455",
+      "bodyGeometrySha256": "ab0ce9e94e6c7a6bf4e112b2e0d29b9ed72a0538c6890c1ed7fd15da2a6f43bc",
+      "images": [
+        "connemara/preview-quarter-rest.png",
+        "connemara/preview-side-rest.png",
+        "connemara/preview-side-gallop_left.png",
+        "connemara/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "grey",
+      "modelSha256": "6155df8bff1d27192858b18749c1aebabb39ac698f82e896cef104ae8dbfd1fd",
+      "bodyGeometrySha256": "25bc5e2b78715f48f9ed63957ad8aef4ca0b6b6634b4d855d1337a7713f6a3e1",
+      "images": [
+        "grey/preview-quarter-rest.png",
+        "grey/preview-side-rest.png",
+        "grey/preview-side-gallop_left.png",
+        "grey/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "haflinger",
+      "modelSha256": "d49c6946f70b030b4222fb7322d975506c16c0c704059a7f2d06a827077f3f28",
+      "bodyGeometrySha256": "81bdc1a9e938a0256dd20a5047e83e0e0ce862a8fffd9f8e4118a5e3d515167f",
+      "images": [
+        "haflinger/preview-quarter-rest.png",
+        "haflinger/preview-side-rest.png",
+        "haflinger/preview-side-gallop_left.png",
+        "haflinger/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "hanover",
+      "modelSha256": "b934fda2a0c5cceb3a81380cd1bb15cbf26d9461d22feecb44d0f4ade6900f54",
+      "bodyGeometrySha256": "d1eee6bd28aa7550c5d6fbd0e7d79a27eab34f746cb9ad5093424144ec1d1a3b",
+      "images": [
+        "hanover/preview-quarter-rest.png",
+        "hanover/preview-side-rest.png",
+        "hanover/preview-side-gallop_left.png",
+        "hanover/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "iceland",
+      "modelSha256": "e1c9a8a5511733ac03a510c3c4c1bc5de026cc308015fe9207a7a900d6be5798",
+      "bodyGeometrySha256": "6e12dc545812af2072c278d318a84dedac31592cff3864e0324b4f702de47b4e",
+      "images": [
+        "iceland/preview-quarter-rest.png",
+        "iceland/preview-side-rest.png",
+        "iceland/preview-side-gallop_left.png",
+        "iceland/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "knab",
+      "modelSha256": "392a8176136e8dab493c90c9452b967c187f935ade66556be641f927ee604254",
+      "bodyGeometrySha256": "08664ff40521ac17439b09f4599a369ed04a652804beae065abe1373c87b6dc3",
+      "images": [
+        "knab/preview-quarter-rest.png",
+        "knab/preview-side-rest.png",
+        "knab/preview-side-gallop_left.png",
+        "knab/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "lipiz",
+      "modelSha256": "b7e0e47468b7913f2d9740e6fffbfadb0875c9089f50637ea104cf7f0c8345b2",
+      "bodyGeometrySha256": "deba418157ea3d4df0ebffb37d8f40cb2f5f86ef19184f8f1bd9860f51b1b9cd",
+      "images": [
+        "lipiz/preview-quarter-rest.png",
+        "lipiz/preview-side-rest.png",
+        "lipiz/preview-side-gallop_left.png",
+        "lipiz/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "lusitano",
+      "modelSha256": "43f234344f660d7dfa735a7b02ad36e740262e728be31438dd3c82ae246bac28",
+      "bodyGeometrySha256": "86e8856fdcdc5003faf76c680a50aa9b26788a1d9701007d86a62784b8433411",
+      "images": [
+        "lusitano/preview-quarter-rest.png",
+        "lusitano/preview-side-rest.png",
+        "lusitano/preview-side-gallop_left.png",
+        "lusitano/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "marwari",
+      "modelSha256": "c71128f8ecd6bc206fc921ad47ef9c062852e9fbd526e478a9068d1f2413bff1",
+      "bodyGeometrySha256": "93bf187533f60c065f73488f0a843e33bcfef4ba10c1627a67f06c393957ad69",
+      "images": [
+        "marwari/preview-quarter-rest.png",
+        "marwari/preview-side-rest.png",
+        "marwari/preview-side-gallop_left.png",
+        "marwari/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "morgan",
+      "modelSha256": "7dba9827bcc014756aa04284282ae4d053fbb7a00d3efdc8aaf69e96720837dd",
+      "bodyGeometrySha256": "5aba62d6fefd50f9652e9c18eef3aef9da4af907c728dacfde35731a94e7c674",
+      "images": [
+        "morgan/preview-quarter-rest.png",
+        "morgan/preview-side-rest.png",
+        "morgan/preview-side-gallop_left.png",
+        "morgan/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "palomino",
+      "modelSha256": "ba14bf3167bd3f7741c255a4aa328e13b34c6434194870b60d3d19e9bf7e2b16",
+      "bodyGeometrySha256": "a9256ae5a308b87f3613ca8dea719bfae023c474cce43c6d82051016b29e7736",
+      "images": [
+        "palomino/preview-quarter-rest.png",
+        "palomino/preview-side-rest.png",
+        "palomino/preview-side-gallop_left.png",
+        "palomino/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "pinto",
+      "modelSha256": "950065d318b9814f0223a1a7fca707ad57dac618ff2e6ee9d60eac21a95e130c",
+      "bodyGeometrySha256": "e50f7283fcfd7e53175be4f7bc0264798dc147d621b6ecd64512cf30ed3e005c",
+      "images": [
+        "pinto/preview-quarter-rest.png",
+        "pinto/preview-side-rest.png",
+        "pinto/preview-side-gallop_left.png",
+        "pinto/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "rockymtn",
+      "modelSha256": "97069859197c6dbec49a26ad7798dfb825acb65acfb631db680aa6719f35feb1",
+      "bodyGeometrySha256": "dd67297cd23578a8ee49dfadcfc2833df35c17e358bb7b9d5ba5087424a33427",
+      "images": [
+        "rockymtn/preview-quarter-rest.png",
+        "rockymtn/preview-side-rest.png",
+        "rockymtn/preview-side-gallop_left.png",
+        "rockymtn/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "sport",
+      "modelSha256": "70c45ce7b6d7274c6f10ffb79584e217b3bd608d44003ff9efab31b8ae6a2dba",
+      "bodyGeometrySha256": "78eb879594b0205b67897ec043662734189bc7f6f32e4f3712d66a02dfe19338",
+      "images": [
+        "sport/preview-quarter-rest.png",
+        "sport/preview-side-rest.png",
+        "sport/preview-side-gallop_left.png",
+        "sport/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "stock",
+      "modelSha256": "2cac7e0a79ce8930189819c62b268cebc35ddad887656c6491b43485abfd1bc1",
+      "bodyGeometrySha256": "fa6597ec2f8dda2382027392403ecba585a671d5a1507bd249cdb753e586dc30",
+      "images": [
+        "stock/preview-quarter-rest.png",
+        "stock/preview-side-rest.png",
+        "stock/preview-side-gallop_left.png",
+        "stock/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "sunset",
+      "modelSha256": "53b93ac141c9825b042951ac61a4edf859f11efa1912073ef709c57f2e056076",
+      "bodyGeometrySha256": "2ca0c31157f22092947b38831ea0fa38f744b6f1c3b05ba1632236379abab0ff",
+      "images": [
+        "sunset/preview-quarter-rest.png",
+        "sunset/preview-side-rest.png",
+        "sunset/preview-side-gallop_left.png",
+        "sunset/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "thoro",
+      "modelSha256": "af191f8e4738eabf67c61e72a256dc0574fecac7d3054dd3db07e99220cfcf2f",
+      "bodyGeometrySha256": "65551964f5ef346b329dce7c72480aa1eeb7df209cef5dd04c41163d407cd57f",
+      "images": [
+        "thoro/preview-quarter-rest.png",
+        "thoro/preview-side-rest.png",
+        "thoro/preview-side-gallop_left.png",
+        "thoro/preview-side-jump.png"
+      ]
+    },
+    {
+      "id": "welsh",
+      "modelSha256": "569e14c4600e52169af9944938cba275f9407242abf9df11d47f71cda190cf97",
+      "bodyGeometrySha256": "0c3b43262563609436665f0d42503d3d09eb06721acd51c28db953e703370c17",
+      "images": [
+        "welsh/preview-quarter-rest.png",
+        "welsh/preview-side-rest.png",
+        "welsh/preview-side-gallop_left.png",
+        "welsh/preview-side-jump.png"
+      ]
+    }
+  ],
+  "contactSheets": [
+    {
+      "file": "visual-sheet-1.png",
+      "sha256": "594f87e3601b5662c13e51a546c7bb47d373ee57a589f3f0536e376eee84e94d"
+    },
+    {
+      "file": "visual-sheet-2.png",
+      "sha256": "979ea51af6f105fbd4cc1fd266cfa1953a7a43df238d76c3b9f5ba38c0a6da62"
+    },
+    {
+      "file": "visual-sheet-3.png",
+      "sha256": "3e44e3bc03e72c93d4af8df73bcc0f76e97c004787afe7f7a59c4bc11c934201"
+    },
+    {
+      "file": "visual-sheet-4.png",
+      "sha256": "0abc096101b408cedf8c2764893799c6677f235e1175e69c007f5c9ca0d62cb7"
+    },
+    {
+      "file": "visual-sheet-5.png",
+      "sha256": "f9c1fa7df13a9e0a20350fa27d4ceb271c57dbff32c53ddd92f4cea5edad6e60"
+    }
+  ],
+  "findings": [
+    "Body/head/neck/barrel/limb/hoof/ear regional differences and true heights remain visible; miniatureShetland differs substantially from Welsh/Connemara and tall warmbloods; slimAkhal/TB differ from compact stock/baroque bodies.",
+    "Original maps and UV detail, Western tack, eyes and source card groom remain coherent in reviewed snapshots. No disconnected eyes, exploded cards or gross stretched mesh seams were visible.",
+    "Longer Friesian/pony groom, sparseAkhal/TB mane and fitted fetlock fringe distinguish the regional art direction. Marwari tip intersection was corrected; close view now shows separated inward tips.",
+    "Black/Sport remain deliberately dark with modest authored nonmetallic fur reflection; source preferred White remains unchanged. Coat patterns were authored on copied sourceUV pixels, not the unrelated B2 UVs.",
+    "Actual240Hz AnimationMixer full-hoof-surface check passes all25+preferred White; worstfloor\u22123.432mm. Failed60Hz interpolation remains a historical report."
+  ],
+  "limits": [
+    "These are selected game-individual interpretations, not official breed registration or source artist assertions. Five new breed rows use explicitly recorded art decisions.",
+    "Fantasy aliases share their declared physical foundation; CGCookie wing attachment is separate and has not been certified by this visual review.",
+    "Mounted rider, English/bareback/wild equipment variants, customization controls, and full game interactions are root-owned integration QA.",
+    "Finite sampled poses and dense-key interpolation checks do not certify proprietary Star Equestrian rig or biomechanical equivalence."
+  ],
+  "checks": {
+    "all25PhysicalBodiesDirectlyReviewed": true,
+    "all44IdentitiesBrowserLoaded": true,
+    "actualBakedHoofSurfacesPass": true,
+    "originalFavoriteWhitePreserved": true
+  },
+  "preferredSourceFavoriteFile": "../white-western-animated.glb"
+}

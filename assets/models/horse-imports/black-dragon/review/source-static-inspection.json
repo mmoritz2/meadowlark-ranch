@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "black-dragon",
+  "inspectedAtUtc": "2026-09-30T01:03:17+00:00",
+  "sourcePath": "assets/models/horse-imports/black-dragon/source/black_dragon_with_idle_animation.glb",
+  "reviewPath": "assets/models/horse-imports/black-dragon/review/model.glb",
+  "sourceSha256": "3abf7ed79e40406236d8b0e365f4690174daf8cfec39b32bfb2ab3ba48d5a1e7",
+  "reviewSha256": "3abf7ed79e40406236d8b0e365f4690174daf8cfec39b32bfb2ab3ba48d5a1e7",
+  "bytes": 67688656,
+  "originalBytesPreserved": true,
+  "sourceReceiptPreserved": true,
+  "embeddedAssetMetadata": {
+    "extras": {
+      "author": "3DHaupt (https://sketchfab.com/dennish2010)",
+      "license": "CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)",
+      "source": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "title": "Black Dragon with Idle Animation"
+    },
+    "generator": "Sketchfab-14.90.0",
+    "version": "2.0"
+  },
+  "restrictions": {
+    "credit": "3DHaupt",
+    "license": "CC BY-NC 4.0",
+    "licenseEvidence": "Source asset.extras.license and approved catalog.",
+    "commercialUse": false,
+    "noAI": true,
+    "noAIEvidence": "Approved creator listing/catalog, separately from embedded glTF license metadata."
+  },
+  "staticInspection": {
+    "meshCount": 4,
+    "totalTriangles": 37998,
+    "dragonMeshTriangles": 37986,
+    "sourceGroundTriangles": 12,
+    "skinJointCounts": [
+      232
+    ],
+    "embeddedImageCount": 9,
+    "embeddedImageFormats": {
+      "jpeg": 3,
+      "png": 6
+    },
+    "materialExtensionNames": [
+      "KHR_materials_emissive_strength",
+      "KHR_materials_clearcoat",
+      "KHR_materials_transmission",
+      "KHR_materials_specular"
+    ],
+    "requiredExtensions": [],
+    "materialAdapter": "original-gltf-materials",
+    "selfContained": true,
+    "animations": [
+      {
+        "name": "Scene",
+        "startSeconds": 0.0,
+        "endSeconds": 22.46666717529297,
+        "durationSeconds": 22.46666717529297,
+        "timeEvidence": "Decoded finite FLOAT SCALAR input values; strict ordering checked.",
+        "channelCount": 708,
+        "samplerCount": 708,
+        "targetNodeCount": 236,
+        "targetPaths": [
+          "rotation",
+          "scale",
+          "translation"
+        ],
+        "interpolations": {
+          "LINEAR": 708
+        },
+        "varyingChannelCount": 364,
+        "meaning": "Varying source data does not certify behavior; browser motion review remains pending."
+      }
+    ],
+    "unskinnedSceneGeometry": [
+      {
+        "nodeIndex": 8,
+        "nodeName": "Plane_Material_0",
+        "meshIndex": 0,
+        "meshName": "Plane_Material_0",
+        "triangleCount": 12,
+        "skinned": false,
+        "sceneRestBounds": {
+          "min": [
+            -17.68653397448361,
+            -0.08511756157541583,
+            -17.686533365989803
+          ],
+          "max": [
+            17.68653397448361,
+            -0.023140226301818053,
+            17.686533380535195
+          ],
+          "size": [
+            35.37306794896722,
+            0.06197733527359778,
+            35.373066746525
+          ],
+          "space": "source glTF scene coordinates after ancestor transforms",
+          "method": "decoded vertices; source node matrices composed; no animation applied"
+        },
+        "retainedInReview": true
+      }
+    ],
+    "threeRestPoseGeometryAudit": {
+      "method": "Trusted vendored Three GLTFLoader in Node; texture loads replaced with empty Texture objects solely for geometry audit. Skeleton skinning included in rest-pose Box3 evaluation.",
+      "sourceSha256Verified": true,
+      "texturesAssessed": false,
+      "animationsEvaluated": false,
+      "skinnedDragon": {
+        "meshCount": 3,
+        "skinJointCount": 232,
+        "min": [
+          -13.368116,
+          -0.018138,
+          -13.933335
+        ],
+        "max": [
+          13.407011,
+          5.686025,
+          3.486749
+        ],
+        "size": [
+          26.77513,
+          5.70416,
+          17.42008
+        ]
+      },
+      "entireSceneSize": [
+        35.37307,
+        5.77114,
+        35.37307
+      ],
+      "units": "source glTF scene coordinates, rounded to shown precision; no physical-unit claim"
+    }
+  },
+  "reviewStatus": {
+    "browserAppearance": "pending",
+    "rigMotion": "pending",
+    "rigRetargeted": false,
+    "animationsModified": false,
+    "gameCompatibility": "not-assessed"
+  },
+  "framingNote": "The retained 12-triangle source ground Plane enlarges the complete-scene camera frame. Source rest-pose bounds are approximately 35.37307 x 5.77114 x 35.37307 for the scene versus 26.77513 x 5.70416 x 17.42008 for the skinned dragon alone. No source geometry was removed. Displayed appearance and animation motion remain pending browser review.",
+  "nativeBlenderImportDiagnostic": {
+    "fidelity": "unresolved",
+    "comparison": {
+      "status": "mismatch",
+      "sourceClip": "Scene",
+      "sourceTimeSeconds": 0,
+      "method": "Exact evaluated world vertex bounds in Blender; Three AnimationMixer Scene at0 and0.000001 followed by skeleton/world update and exact skinned vertex bounds. Three coordinates mapped to Blender(X,-Z,Y).",
+      "threeSizeBlenderAxes": [
+        26.7751236009,
+        17.42006838795,
+        5.70415252994
+      ],
+      "blenderSize": [
+        47.63522720336914,
+        22.25615119934082,
+        5.7268805503845215
+      ],
+      "conclusion": "The native Blender-imported first frame does not match the original Three source pose. Its broad wing spread cannot be certified as the original animation pose. Native PNGs are import diagnostic evidence; browser animation review remains pending."
+    },
+    "diagnosticImages": [
+      "preview.png",
+      "front-quarter.png"
+    ],
+    "originalSourcePreserved": true
+  }
+}

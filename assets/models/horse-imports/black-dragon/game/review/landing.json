@@ -1,0 +1,53 @@
+{
+  "sourceSha256": "3abf7ed79e40406236d8b0e365f4690174daf8cfec39b32bfb2ab3ba48d5a1e7",
+  "gameSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+  "reviewPose": "landing",
+  "input": "offline-review/dragon-rig-qa/landing.glb",
+  "inputSha256": "c0559f2a38c5b20ffead036ccf33c44bb365144c9519f5aacb293809e4fc67e5",
+  "image": "assets/models/horse-imports/black-dragon/game/review/landing.png",
+  "ordinaryRender": true,
+  "generativeToolsUsed": false,
+  "NoAI": true,
+  "geometry": "Exact Three evaluated game rig pose baked to static glTF before Blender",
+  "blenderBounds": {
+    "min": [
+      -7.011434555053711,
+      -1.9135249853134155,
+      0.10446332395076752
+    ],
+    "max": [
+      7.0481767654418945,
+      7.76853609085083,
+      4.391415596008301
+    ],
+    "size": [
+      14.059611320495605,
+      9.682061195373535,
+      4.286952495574951
+    ]
+  },
+  "sourceMaterials": true,
+  "studioChoices": {
+    "engine": "Cycles CPU",
+    "samples": 32,
+    "viewTransform": "AgX",
+    "camera": [
+      -12.158105850219727,
+      -16.13132667541504,
+      11.247943878173828
+    ],
+    "target": [
+      0.018371105194091797,
+      2.9275054931640625,
+      2.247939348220825
+    ],
+    "floor": true
+  },
+  "sourcePreserved": true,
+  "gamePreserved": true,
+  "visualReview": "inspected: actual approved dragon body, materials and real membranes preserved; rotations articulate folding/flight/landing; source body/skin look coherent",
+  "browserIntegration": "pending",
+  "imageSha256": "6f01d882ff07b03b876ab1faa0aff36adea69dd3caa536706511489278a38254",
+  "profileFitScale": 1,
+  "profileRawWithersM": 1.85
+}

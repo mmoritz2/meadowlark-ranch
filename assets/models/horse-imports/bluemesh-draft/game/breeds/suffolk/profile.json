@@ -1,0 +1,257 @@
+{
+  "id": "suffolk",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "sourceAuthor": "BlueMesh",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+  "withersM": 1.67,
+  "heightM": 2.119524588528051,
+  "fitScale": 1,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0,
+        1.5840369300842285,
+        -0.3304669681209757
+      ]
+    ],
+    "withers": [
+      [
+        7.993995481868909e-08,
+        1.67,
+        0.08502881316034096
+      ]
+    ],
+    "head": [
+      [
+        0,
+        1.8652351179028106,
+        0.8650169952523716
+      ]
+    ],
+    "poll": [
+      [
+        0,
+        2.03530277037808,
+        0.8858311962678799
+      ]
+    ],
+    "muzzle": [
+      [
+        0,
+        1.638417017135426,
+        1.200147568230905
+      ]
+    ],
+    "crest": [
+      [
+        0,
+        1.9300907485383683,
+        0.6146757848438988
+      ]
+    ],
+    "tail": [
+      [
+        0,
+        1.466263363722212,
+        -1.1458566615609806
+      ]
+    ],
+    "eyes": [
+      [
+        -0.11273625358044512,
+        1.8816111563223004,
+        1.0261314959566668
+      ],
+      [
+        0.11273625358044512,
+        1.8816111563223004,
+        1.0261314959566668
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.11172061165629697,
+        1.6633689577735473,
+        1.1857518467277512
+      ],
+      [
+        0.11172061165629697,
+        1.6633689577735473,
+        1.1857518467277512
+      ]
+    ],
+    "stirrups": [
+      [
+        -0.41707097800807,
+        1.0720369300842285,
+        -0.1304669681209757
+      ],
+      [
+        0.41707203404729665,
+        1.0720369300842285,
+        -0.1304669681209757
+      ]
+    ]
+  },
+  "jointCount": 40,
+  "triangles": {
+    "HorseBody": 23152,
+    "HorseGroom_1": 34051,
+    "HorseGroom_2": 32956,
+    "HorseGroom_3": 16960,
+    "HorseGroom_4": 32766,
+    "HorseGroom_5": 32988,
+    "HorseGroom_6": 10439,
+    "HorseEyes": 960
+  },
+  "file": "suffolk-animated.glb",
+  "sha256": "b14de26e71571a533b02bf7197a9a2d124ff89c11fda383cb05c8500a559284e",
+  "rigSha256": "6ec1daceed209ff506bf4a14920486f8ff64530fba1a1935bc010be9dc37a06a",
+  "clips": [
+    "Rest",
+    "Idle",
+    "Walk",
+    "Trot",
+    "Canter_Left",
+    "Canter_Right",
+    "Gallop_Left",
+    "Gallop_Right",
+    "Jump"
+  ],
+  "motionStatus": "all six live gait modes validated; nine own baked anatomical clips",
+  "sourceAppearancePreserved": false,
+  "preserveAuthoredHair": true,
+  "authoredCoat": true,
+  "breed": "Suffolk Punch",
+  "physicalScale": true,
+  "sourceCoatAppearancePreserved": false,
+  "sourceDetailedTopologyRetained": true,
+  "sourceSurfaceCoordinatesSculpted": true,
+  "bodyTriangleCount": 23152,
+  "coat": "whole chestnut, clean legs",
+  "groomStyle": {
+    "mane": 0.74,
+    "tail_width": 0.9,
+    "feather_length": 0,
+    "feather_width": 1,
+    "coat": "whole chestnut, clean legs",
+    "hair": "chestnut"
+  },
+  "conformation": {
+    "game_id": "suffolk",
+    "canonical_breed": "Suffolk Punch",
+    "classification": "breed",
+    "height": {
+      "target_m": 1.67,
+      "reference_range_m": [
+        1.6002,
+        1.7272
+      ],
+      "range_basis": "Suffolk Horse Society mature15\u00be\u201317 hands; some individuals exceed17 hands."
+    },
+    "morphology": {
+      "build": "Compact deep round-ribbed draft with broad quarters and relatively short legs",
+      "neck": "Deep muscular collar neck, gracefully tapered",
+      "head_face": "Broad shapely head, proportionate length",
+      "ears": "Medium alert ears",
+      "limbs": "Short strong clean legs, short cannons, long clean hocks",
+      "hooves": "Large round wide-coronet feet",
+      "mane_tail": "Moderate full chestnut mane and tail",
+      "feathering": "Clean legs with minimal heel hair",
+      "coat": "Whole chestnut; this exemplar has no white markings"
+    },
+    "sculpt_targets": {
+      "body_length": 0.98,
+      "barrel_width": 1.26,
+      "body_depth": 1.18,
+      "neck_length": 1.01,
+      "neck_thickness": 1.25,
+      "head_length": 1.03,
+      "head_width": 1.13,
+      "ear_length": 0.95,
+      "limb_length": 0.91,
+      "hoof_width": 1.2,
+      "hindquarter_width": 1.25,
+      "face_profile_depth_per_withers": 0.005,
+      "neck_arch_rise_per_withers": 0.04
+    },
+    "source_ids": [
+      "suffolk-official"
+    ],
+    "source_urls": [
+      "https://suffolkhorsesociety.org.uk/about/breed-characteristics/"
+    ],
+    "numeric_scope": "Height uses the official envelope; proportional sculpt values are original art choices, not breed association measured averages."
+  },
+  "conformationScope": "Regional original art sculpt ratios are calibrated relative to the source draft/Clydesdale exemplar. All body, bones, eyes and anchors share one cage, with actual final measured breed metres. Association references are type/height guidance, not exact measured proportional averages.",
+  "withersMeasurement": "Actual shoulder crest vertex region on the conformed body; all geometry physically calibrated to target metres; no loader scale duplication.",
+  "motionValidation": "motion-validation.json",
+  "visualReview": "passed actual Rest/Walk/Gallop/Jump PNG inspection; runtime mounted/browser review pending",
+  "sourceCandidate": "bluemesh-draft",
+  "neutralCoatFile": "../../shared/neutral-coat-detail.png",
+  "neutralCoatLuminance": 0.5088813208549336,
+  "coatLuminance": 0.11770078476465069,
+  "preserveSaddleAnchor": true,
+  "mountAttachments": {
+    "coordinateSpace": "HorseBody raw physical metres, +Y up/+Z forward; fitScale1/fitY0",
+    "saddle": {
+      "anchor": [
+        0,
+        1.5840369300842285,
+        -0.3304669681209757
+      ],
+      "attachmentJoint": "spine",
+      "sampledTopSurfaceY": 1.5760369300842285,
+      "surfaceGapM": 0.008
+    },
+    "stirrups": {
+      "runtimeOriginalRelativePosition": [
+        [
+          -0.27,
+          -0.512,
+          0.2
+        ],
+        [
+          0.27,
+          -0.512,
+          0.2
+        ]
+      ],
+      "bodySurfaceXAtTreadYAndZ": [
+        -0.38207097800807,
+        0.3820720340472966
+      ],
+      "runtimeOriginalSideClearanceM": [
+        -0.11207097800806998,
+        -0.1120720340472966
+      ],
+      "recommendedRawAnchors": [
+        [
+          -0.41707097800807,
+          1.0720369300842285,
+          -0.1304669681209757
+        ],
+        [
+          0.41707203404729665,
+          1.0720369300842285,
+          -0.1304669681209757
+        ]
+      ],
+      "recommendedClearanceM": 0.035,
+      "attachmentJoint": "spine",
+      "measurement": "Exact HorseBody triangle intersections for the Y/Z tread ray; recommended lateral anchors clear the measured barrel by35mm. Shared tack/rider runtime must consume them; offline geometry does not certify final mounted appearance."
+    }
+  },
+  "actualPlaybackSkinValidation": "actual-playback-skin-validation.json",
+  "attachmentCoatCalibration": "attachment-coat-calibration.json",
+  "finalMotionModuleSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+  "runtimeBrowserReview": "pending integrated site QA",
+  "mountedTackReview": "pending integrated runtime/rider visual verification of measured saddle/stirrup anchors",
+  "animationBakeFPS": 120,
+  "bakedHoofPlaybackValidation": "../baked-ground-validation.json"
+}

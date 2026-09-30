@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "animatedSha256": "43be3aa22174a81aa23910df9ed53354a63cd7c03482cb82ab922cf11618ef7c",
+  "candidateMotionModuleSha256": "c3658a622ab6f685218a111c8069aabca8c07267b6ca1b24caf9c8c1afa776cf",
+  "sharedMotionModuleSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+  "method": "Actual vendored Three skin evaluation independent of optimized wrapper Y-row scan. Live120Hz, all lower HorseBody vertices below35cm and every groom vertex independently sampled40Hz over3s per gait/lead/jump. Dense stored playback separately tested240Hz.",
+  "selectedSurfaces": [
+    {
+      "mesh": "HorseBody",
+      "vertices": 5290
+    },
+    {
+      "mesh": "HorseGroom",
+      "vertices": 12047
+    }
+  ],
+  "rows": [
+    {
+      "gait": "stand",
+      "lead": "left",
+      "liveHz": 120,
+      "actualSurfaceSampleHz": 40,
+      "samples": 120,
+      "minLowerBodyY": 1.2696195240968766e-9,
+      "minGroomY": 0.10358802059028425,
+      "maxTailLiftAngle": 0,
+      "maxExactScannerDifference": 1.7616650777041443e-9,
+      "finite": true,
+      "wallTimeMs": 1630.171
+    },
+    {
+      "gait": "walk",
+      "lead": "left",
+      "liveHz": 120,
+      "actualSurfaceSampleHz": 40,
+      "samples": 120,
+      "minLowerBodyY": -0.0013257503915230714,
+      "minGroomY": 0.0050156523807632,
+      "maxTailLiftAngle": 0.1777734375,
+      "maxExactScannerDifference": 1.5196885416735029e-9,
+      "finite": true,
+      "wallTimeMs": 1959.5679999999998
+    },
+    {
+      "gait": "trot",
+      "lead": "left",
+      "liveHz": 120,
+      "actualSurfaceSampleHz": 40,
+      "samples": 120,
+      "minLowerBodyY": -0.0002934267744292302,
+      "minGroomY": 0.00500230472447174,
+      "maxTailLiftAngle": 0.31796874999999997,
+      "maxExactScannerDifference": 1.520998285653441e-9,
+      "finite": true,
+      "wallTimeMs": 2359.110417
+    },
+    {
+      "gait": "canter",
+      "lead": "left",
+      "liveHz": 120,
+      "actualSurfaceSampleHz": 40,
+      "samples": 120,
+      "minLowerBodyY": -0.00013500718459525697,
+      "minGroomY": 0.005000439368078113,
+      "maxTailLiftAngle": 0.5651171875000001,
+      "maxExactScannerDifference": 1.5791263852094062e-9,
+      "finite": true,
+      "wallTimeMs": 2301.9757499999996
+    },
+    {
+      "gait": "canter",
+      "lead": "right",
+      "liveHz": 120,
+      "actualSurfaceSampleHz": 40,
+      "samples": 120,
+      "minLowerBodyY": -0.00013500718459538014,
+      "minGroomY": 0.005000607919111541,
+      "maxTailLiftAngle": 0.55572265625,
+      "maxExactScannerDifference": 1.5134851150122586e-9,
+      "finite": true,
+      "wallTimeMs": 2283.058665999999
+    },
+    {
+      "gait": "gallop",
+      "lead": "left",
+      "liveHz": 120,
+      "actualSurfaceSampleHz": 40,
+      "samples": 120,
+      "minLowerBodyY": -0.00012247265165755625,
+      "minGroomY": 0.005003491533911198,
+      "maxTailLiftAngle": 0.5680078124999999,
+      "maxExactScannerDifference": 1.6735980379323223e-9,
+      "finite": true,
+      "wallTimeMs": 2315.945458
+    },
+    {
+      "gait": "gallop",
+      "lead": "right",
+      "liveHz": 120,
+      "actualSurfaceSampleHz": 40,
+      "samples": 120,
+      "minLowerBodyY": -0.00012768632978213054,
+      "minGroomY": 0.005022685040877609,
+      "maxTailLiftAngle": 0.557890625,
+      "maxExactScannerDifference": 1.6025763355242972e-9,
+      "finite": true,
+      "wallTimeMs": 2282.3764169999995
+    },
+    {
+      "gait": "jump",
+      "lead": "left",
+      "liveHz": 120,
+      "actualSurfaceSampleHz": 40,
+      "samples": 120,
+      "minLowerBodyY": -0.0004440308576711821,
+      "minGroomY": 0.00502892546554986,
+      "maxTailLiftAngle": 0.268828125,
+      "maxExactScannerDifference": 8.842570453637677e-9,
+      "finite": true,
+      "wallTimeMs": 1567.2643329999992
+    }
+  ],
+  "restErrors": [
+    {
+      "mesh": "HorseBody",
+      "maxRestShapeErrorM": 1.0892711105149128e-7
+    },
+    {
+      "mesh": "HorseGroom",
+      "maxRestShapeErrorM": 1.1142127586290028e-7
+    },
+    {
+      "mesh": "HorseEyes",
+      "maxRestShapeErrorM": 8.103664558576957e-8
+    }
+  ],
+  "checks": {
+    "allEightLiveModesChecked": true,
+    "allActualLowerBodyWithin6mm": true,
+    "allGroomWithin6mm": true,
+    "allFinite": true,
+    "optimizedClearanceMatchesExactThree": true,
+    "exactSourceDerivedRestShapeUnchanged": true
+  },
+  "passed": true
+}

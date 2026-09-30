@@ -1,0 +1,28 @@
+{
+  "animatedSha256": "69f206e1e03d61b743a3a9b3e7db0b5db9f83bd754abcdeee5607cbad6ad883a",
+  "clip": "Walk",
+  "time": 0.19,
+  "image": "assets/models/horse-imports/ikkiz-unicorn/game/review/walk.png",
+  "imageSha256": "18f451c49d903cb34192eba2cc485752e4f78ad8ef22e817b8045881b33a61bb",
+  "actualDeformedGeometry": true,
+  "ordinaryRender": true,
+  "generativeToolsUsed": false,
+  "sourceUvsAndMaterialsPreserved": true,
+  "boundsBlender": {
+    "min": [
+      -0.40650662779808044,
+      -1.8024579286575317,
+      -1.439509287592955e-05
+    ],
+    "max": [
+      0.3274350166320801,
+      1.4638298749923706,
+      2.072437286376953
+    ]
+  },
+  "animatedAssetPreserved": true,
+  "visualReview": {
+    "status": "reviewed actual saved-clip deformation",
+    "observations": "Original artist body arch and flowing source groom retained; ears, horn and lower-leg feathering remain attached; tail ends clear the floor in these poses. Source eye appearance is a documented simplified dark glossy material."
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "id": "spectral-skeleton",
+  "name": "Spectral skeleton horse",
+  "file": "skeleton-animated.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": null,
+  "withersM": 1.68,
+  "heightM": 2.146925687789917,
+  "fitScale": 1,
+  "fitY": 0,
+  "physicalScale": true,
+  "preserveSaddleAnchor": true,
+  "preserveSourceGroom": true,
+  "anchors": {
+    "saddle": [
+      [
+        0,
+        1.6586666107177734,
+        0.01777784526348114
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.6799999475479126,
+        0.46222397685050964
+      ]
+    ],
+    "head": [
+      [
+        0,
+        1.936000943183899,
+        1.3866719007492065
+      ]
+    ],
+    "poll": [
+      [
+        0,
+        2.078223705291748,
+        1.2088934183120728
+      ]
+    ],
+    "muzzle": [
+      [
+        0,
+        1.8080004453659058,
+        1.6391172409057617
+      ]
+    ],
+    "crest": [
+      [
+        0,
+        1.8080004453659058,
+        0.8888922333717346
+      ]
+    ],
+    "tail": [
+      [
+        0,
+        1.5377771854400635,
+        -0.7111138105392456
+      ]
+    ],
+    "eyes": [
+      [
+        -0.09244479238986969,
+        1.9928901195526123,
+        1.3475606441497803
+      ],
+      [
+        0.09244479238986969,
+        1.9928901195526123,
+        1.3475606441497803
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.0604446716606617,
+        1.832889437675476,
+        1.6035616397857666
+      ],
+      [
+        0.0604446716606617,
+        1.832889437675476,
+        1.6035616397857666
+      ]
+    ]
+  },
+  "jointCount": 40,
+  "sha256": "733faced843a113e7c14731a9fcb0e2b7bb4b3d80d0d1e04963e2e28efa1fa14",
+  "sourceCandidate": "horse-skeleton",
+  "sourceBasis": "Horse Skeleton by Diego Luj\u00e1n Garc\u00eda, CC BY 4.0; anatomical rig, metre normalization and spectral adaptation by Meadowlark Ranch.",
+  "license": "CC BY 4.0",
+  "sourceSha256": "9a28a22d9e194454f1557409cdc1aa99e2f3af4696ce6ad151fcbec73c8ebdc0",
+  "gameCompatibility": "live and stored anatomical motion validated; actual rendered joint repair reviewed; mounted finalization pending",
+  "rigSha256": "fc59694988e917ba7294a9f54463fa3b2e61f747aa880e930e0001455234b983",
+  "clips": [
+    "Rest",
+    "Idle",
+    "Walk",
+    "Trot",
+    "Canter_Left",
+    "Canter_Right",
+    "Gallop_Left",
+    "Gallop_Right",
+    "Jump"
+  ],
+  "animationBakeFPS": 120,
+  "motionStatus": "all six live gait modes validated; nine own baked anatomical clips",
+  "motionValidation": "motion-validation.json"
+}

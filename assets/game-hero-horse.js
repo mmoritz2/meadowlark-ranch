@@ -1,4 +1,7 @@
 import {createArtistMotion,ARTIST_GAITS} from './artist-horse-motion.js?v=gaits-2';
+import {createDragonMotion} from './dragon-horse-motion.js?v=imported-dragon-1';
+import {createFjordMotion} from './fjord-horse-motion.js?v=imported-fjord-1';
+import {createFeatherWingMotion,createFeatheredHorseMotion} from './feather-wing-motion.js?v=imported-feathers-1';
 import {finishHeroCoat} from './hero-horse-coat.js?v=hero-ranch-1';
 import {createHeroHorseGroom} from './hero-horse-groom.js?v=hero-ranch-1';
 import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-20260908-4';
@@ -6,7 +9,7 @@ import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-
 // Adapts the approved raw-space hero to the ranch's +Z-forward mount space.
 // Existing horse models continue using their own renderer and animation path.
 export function initGameHero(THREE,rig){
-  if(rig.profile?.artistBreed){rig.heroMotion=createArtistMotion({THREE,root:rig.scene,skin:rig.skin,heightM:rig.profile.heightM});rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroSeat=new THREE.Vector3();rig.artistClock=0;rig.artistWorldScale=new THREE.Vector3();return;}
+  if(rig.profile?.artistBreed){const createMotion=rig.profile.motionKind==='dragon'?createDragonMotion:rig.profile.motionKind==='feathered'?createFeatheredHorseMotion:rig.profile.motionKind==='fjord'?createFjordMotion:createArtistMotion;rig.heroMotion=createMotion({THREE,root:rig.scene,skin:rig.skin,heightM:rig.profile.heightM,profile:rig.profile});rig.wingMotions=(rig.components||[]).filter(c=>c.kind==='featherWings').map(c=>({...c,motion:createFeatherWingMotion({THREE,root:c.scene,profile:c.profile})}));rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroSeat=new THREE.Vector3();rig.artistClock=0;rig.artistWorldScale=new THREE.Vector3();return;}
   if(!rig.profile?.hero)return;
   rig.heroMaterial=finishHeroCoat({THREE,scene:rig.scene});
   rig.heroMotion=createHeroMotion({THREE,root:rig.scene,skin:rig.skin,heightM:rig.profile.heightM});
@@ -15,10 +18,11 @@ export function initGameHero(THREE,rig){
 }
 export function disposeMountedRig(rig){
   (rig.groom||rig.hair)?.dispose?.();
+  const componentMaterials=new Set();for(const component of rig.components||[]){for(const material of component.appearance?.materials||[])componentMaterials.add(material);component.appearance?.dispose();}
   const skeletons=new Set();rig.scene?.traverse(o=>{if(o.isSkinnedMesh&&o.skeleton)skeletons.add(o.skeleton);});
   for(const skeleton of skeletons)skeleton.dispose();
   rig.heroMaterial?.dispose();
-  for(const material of rig.materials||[])material.dispose();
+  for(const material of rig.materials||[])if(!componentMaterials.has(material))material.dispose();
   rig.fantasyMaterial?.dispose();
   rig.scene?.traverse(o=>{if(o.name==='ArtistDragonCrest'){o.geometry.dispose();o.material.dispose();}});
 }
@@ -48,9 +52,15 @@ export function startGameHeroJump(rig){
    then crossfading through 'stand'. */
 const JUMP_GATHER_RATE=2.4,JUMP_LAND_RATE=1.6,JUMP_RELEASE=1.18,JUMP_GRACE=0.35;
 function jumpClockRate(age){return age<.38?JUMP_GATHER_RATE:age<1.16?1:JUMP_LAND_RATE;}
-export function tickGameHero(rig,speed,dt,turn=0){
+export function tickGameHero(rig,speed,dt,turn=0,flight=null){
   const motion=rig.heroMotion;if(!motion)return null;
-  rig.artistClock=(rig.artistClock||0)+dt;rig.skin.material.userData.update?.(rig.artistClock);
+  rig.artistClock=(rig.artistClock||0)+dt;
+  for(const material of rig.materials||[])material.userData.update?.(rig.artistClock);
+  for(const material of Array.isArray(rig.skin.material)?rig.skin.material:[rig.skin.material])material.userData.update?.(rig.artistClock);
+  const flightInput={...flight,flying:!!flight?.flying,speedMps:speed};
+  if(motion.setFlight)motion.setFlight(flightInput);
+  const flying=!!flight?.flying;
+  if(flying){rig.heroJumpAge=null;rig.heroJumpExtra=0;}
   let rate=1;
   if(rig.heroJumpGrace>0)rig.heroJumpGrace=Math.max(0,rig.heroJumpGrace-dt);
   if(rig.heroJumpAge!==null){
@@ -74,7 +84,7 @@ export function tickGameHero(rig,speed,dt,turn=0){
     const lead=rig.heroLead||'left';
     rig.heroLead=turn<-.32?'right':turn>-.08?'left':lead;
     motion.set(gait,{lead:rig.heroLead});
-    if(gait!=='stand'){const scale=rig.profile.artistBreed?Math.max(.1,rig.scene.getWorldScale(rig.artistWorldScale).x):1;rate=Math.max(.3,Math.min(rig.profile.artistBreed?3:1.75,speed/((motion.gaits||HERO_GAITS)[gait].speed*scale)));}
+    if(gait!=='stand'){const scale=rig.profile.artistBreed?Math.max(.1,rig.scene.getWorldScale(rig.artistWorldScale).x):1;rate=Math.max(.3,Math.min(rig.profile.motionKind==='dragon'?4:rig.profile.artistBreed?3:1.75,speed/((motion.gaits||HERO_GAITS)[gait].speed*scale)));}
     /* The animation clock is the actual speed over the gait's nominal speed, and it used to
        jump at every gait change — walk to trot at 2.1 m/s took it from 1.76x to 0.68x in one
        frame, so the outgoing legs stalled mid-swing while the blend had barely begun. The
@@ -82,7 +92,8 @@ export function tickGameHero(rig,speed,dt,turn=0){
     rig.heroRate=rig.heroRate===undefined?rate:rig.heroRate+(rate-rig.heroRate)*Math.min(1,dt*7);
     rate=rig.heroRate;
   }
-  motion.setTurn(turn);motion.update(dt*rate);
+  motion.setTurn(turn);motion.update(dt*(flying&&motion.setFlight?1:rate));
+  for(const wing of rig.wingMotions||[]){wing.follow();wing.motion.setFlight(flightInput);wing.motion.update(dt);}
   const state=motion.state;
   /* The legs re-phase at a gait change (the left fore is carried, the rest jump to the new
      pattern), so phase01 steps. Everything that rides on rig.phase — the rider's posting,
@@ -99,17 +110,41 @@ export function tickGameHero(rig,speed,dt,turn=0){
 }
 export function gameHeroSeat(rig,mount){
   if(!rig.heroMotion||!mount)return null;
-  const v=rig.heroSeat,skin=rig.skin,bone=rig.profile.artistBreed?rig.bones.find(b=>b.name==='spine'):rig.bones[2],index=rig.bones.indexOf(bone),a=rig.profile.anchors.saddle[0];
+  const v=rig.heroSeat,skin=rig.skin,bone=rig.profile.artistBreed?rig.bones.find(b=>b.name==='spine'):rig.bones[2],index=rig.bones.indexOf(bone),a=rig.nativeTack?.enabled&&rig.profile.sourceTackAnchors?.saddleSeat||rig.profile.anchors.saddle[0];
   rig.scene.updateWorldMatrix(true,true);
   v.fromArray(a).applyMatrix4(skin.bindMatrix).applyMatrix4(skin.skeleton.boneInverses[index]).applyMatrix4(bone.matrixWorld);
   return mount.worldToLocal(v);
+}
+
+export function configureSourceTack(THREE,rig,{saddle=null,bridle=null,enabled=false,style='english'}={}){
+  if(!rig.profile?.preserveSourceTack)return false;
+  const native=enabled&&style==='western',names=new Set(rig.profile.sourceTackMeshes||[]);
+  rig.scene.traverse(o=>{if(o.isMesh&&names.has(o.name))o.visible=native;});
+  for(const proxy of [saddle,bridle])if(proxy){proxy.userData.sourceTack=native;proxy.traverse(o=>{if(o.isMesh)o.visible=!native;});}
+  rig.nativeTack={enabled:native,saddle,bridle};return native;
+}
+
+// Source equipment stays skinned to its original mesh. These invisible contacts
+// let the existing rider IK and reins follow that exact equipment.
+export function sourceTackPoint(THREE,rig,point,boneName,mount){
+  if(!point||!rig.nativeTack?.enabled)return null;
+  const bone=rig.boneMap?.[boneName]||rig.bones.find(b=>b.name===boneName),index=rig.bones.indexOf(bone);
+  if(index<0)return null;
+  rig.scene.updateWorldMatrix(true,true);
+  const p=new THREE.Vector3().fromArray(point).applyMatrix4(rig.skin.bindMatrix).applyMatrix4(rig.skin.skeleton.boneInverses[index]).applyMatrix4(bone.matrixWorld);
+  return mount.worldToLocal(p);
+}
+export function updateSourceStirrups(THREE,rig,saddle){
+  const anchors=rig.profile?.sourceTackAnchors?.stirrups;if(!anchors||!saddle)return;
+  saddle.updateWorldMatrix(true,true);
+  for(const [index,name]of [[0,'L'],[1,'R']]){const p=sourceTackPoint(THREE,rig,anchors[index],'spine',saddle),contact=saddle.userData.stir?.[name];if(p&&contact)contact.position.copy(p);}
 }
 
 // The approved groom is already skinned into each GLB; never overlay the old
 // generated hair cards or recolour the natural breed's authored groom.
 export function artistGroomFacade({THREE,skin,mount}){
   let scene=skin;while(scene.parent&&scene.parent!==mount)scene=scene.parent;
-  const meshes=[];scene.traverse(o=>{if(o.isMesh&&(/HorseGroom|Groom|Feather/i.test(o.name)||/HorseGroom|Groom/.test(o.parent?.name||'')))meshes.push(o);});
+  const meshes=[];scene.traverse(o=>{if(o.isSkinnedMesh&&!o.userData.nativeFeatherWing&&(/HorseGroom|Groom|Feather/i.test(o.name)||/HorseGroom|Groom/.test(o.parent?.name||'')))meshes.push(o);});
   const group={get visible(){return meshes.some(m=>m.visible);},set visible(v){for(const m of meshes)m.visible=v;}};
   function setColors({maneColor,tailColor,maneOverride=false,tailOverride=false}={}){
     for(const mesh of meshes){

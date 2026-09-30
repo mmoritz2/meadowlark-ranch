@@ -227,18 +227,21 @@ resemblance is genre admiration. No models or textures were extracted from eithe
 
 - Replacement horse foundation: [Horse by b2przemo](https://blendswap.com/blend/13903), [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). Adapted materials, grooming and presentation. Original license and acquisition details: `assets/models/horse-candidates/b2przemo/SOURCE.md`.
 - Comparison horse: [Realtime Ranchers by Lyndon Daniels](https://opengameart.org/content/realtime-ranchers-3d-model-pack), [CC0](https://creativecommons.org/publicdomain/zero/1.0/). Material paths and presentation adapted. Details: `assets/models/horse-candidates/lyndon-daniels/SOURCE.md`.
+- Prepared imported horse assets: [creator credits, licenses and adaptation statements](assets/models/horse-imports/ATTRIBUTION.md) for WildMesh 3D, BlueMesh, ikkiz, CG Cookie / David Ward, Diego Luján García and 3DHaupt. Noncommercial and NoAI restrictions are identified per source; the prepared catalog's publication status is tracked separately.
 
 `DEVELOPMENT.md` is the full build log, including what didn't work the first time.
 
 ## Breed models and studio
 
-Open `breeds.html` to see the new **Bay horse study** by default (`?horse=artist-study`). The existing game **Bay sporthorse** remains available at `?horse=hero`, with its revised rig, eight animation clips, gait/lead selection, pause and slow playback. The 24 earlier breed models are listed separately and retain their own names and shapes. Orbit, side/head views, clay, wireframe and hair controls work across the catalog.
+Open `breeds.html` to see the available **Bay sporthorse** by default. Legacy `hero` and `artist-study` queries, and unknown horse queries, resolve to that available entry. Orbit, side/head views, clay, wireframe, hair, gait and flight controls work across the loaded catalog. The absent older study is no longer listed.
 
-The user rejected the horse artwork again on 9 September 2026. `horse-art-review.html` compares the actual artist-authored replacement studies and existing horse at the same scale and lighting. These are development studies; an anatomy comparison does not certify finished animation or commercial-reference parity.
+`horse-import-review.html` shows all nine acquired approved sources and their creator/license records. The imported catalog now supplies all 80 horse identities from 38 rigged game resources, plus the preferred white horse with Western tack. The Arabian, Fjord and pastel unicorn conversions complete the roster; their source-fidelity limits and validation evidence are recorded in `assets/models/horse-imports/README.md`. The Studio and Ranch load the imported catalog by default.
 
 For local preview, run `python tools/serve-preview.py` from this project and open `http://127.0.0.1:8431/breeds.html`. This serves fresh project files on localhost. The server must be running for the studio and uncached game assets to load.
 
-The existing sporthorse's GLB, editable Blender rig/actions, source hashes and animation notes are in `assets/models/hero-horse/`. It is distinct from the earlier breed library; the same model is not relabeled as every breed.
+Prepared collection thumbnails are ordinary renders of the actual converted models under `assets/models/horse-imports/thumbnails/`. Generate them with `tools/render-imported-breed-thumbnails.cjs`; missing source identities receive no substitute thumbnail.
+
+Studio and the game's list portraits follow the active model catalog through `assets/breed-portraits.js`. Prepared entries use their exact rendered identity and image hash; the current shipping catalog retains its earlier portraits. `tools/qa-breed-portraits.cjs` verifies both catalogs. The service worker preserves exact model/portrait build queries during offline fallback and revalidates JSON metadata; `tools/qa-imported-cache.cjs` checks that policy.
 
 Choose **Bay sporthorse → Ride this horse** in the studio, or **Stable → Adopt & ride · Free** in the ranch. Adoption reuses an existing sporthorse and preserves earlier horses; the selected horse persists across reloads. **Breed Studio** is also available directly in the ranch toolbar. New saves begin with a Bay sporthorse. Its runtime adapter is `assets/game-hero-horse.js`; other breeds and dragons retain their own model paths.
 

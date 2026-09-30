@@ -1,0 +1,107 @@
+{
+  "id": "fjord-sculpt",
+  "animatedSha256": "43be3aa22174a81aa23910df9ed53354a63cd7c03482cb82ab922cf11618ef7c",
+  "sampleHz": 240,
+  "checks": {
+    "allNineStoredClips": true,
+    "finite": true,
+    "lowerLegWithin6mm": true,
+    "longTailWithin6mm": true
+  },
+  "passed": true,
+  "selectedSurfaces": [
+    {
+      "mesh": "HorseBody",
+      "vertices": 5290,
+      "selection": "Original raw lower-leg surfaces below .35m."
+    },
+    {
+      "mesh": "HorseGroom",
+      "vertices": 12047,
+      "selection": "Every actual source-derived groom vertex."
+    }
+  ],
+  "rows": [
+    {
+      "clip": "Rest",
+      "duration": 1,
+      "frames": 241,
+      "minLowerLegY": 6.705522515026985e-8,
+      "minTailY": 0.1259697522760299,
+      "worstTime": 0.05,
+      "nonfinite": false
+    },
+    {
+      "clip": "Idle",
+      "duration": 8,
+      "frames": 1921,
+      "minLowerLegY": 5.9312539602441455e-8,
+      "minTailY": 0.10153647472719984,
+      "worstTime": 2.25,
+      "nonfinite": false
+    },
+    {
+      "clip": "Walk",
+      "duration": 0.9803921580314636,
+      "frames": 237,
+      "minLowerLegY": -0.0013251279593841717,
+      "minTailY": 0.004928366210356485,
+      "worstTime": 0.09166666666666666,
+      "nonfinite": false
+    },
+    {
+      "clip": "Trot",
+      "duration": 0.6451612710952759,
+      "frames": 156,
+      "minLowerLegY": -0.0007619569151007593,
+      "minTailY": 0.004434522516364645,
+      "worstTime": 0.5958333333333333,
+      "nonfinite": false
+    },
+    {
+      "clip": "Canter_Left",
+      "duration": 0.5681818127632141,
+      "frames": 138,
+      "minLowerLegY": -0.0014730634316447626,
+      "minTailY": 0.004536544469490357,
+      "worstTime": 0.0125,
+      "nonfinite": false
+    },
+    {
+      "clip": "Canter_Right",
+      "duration": 0.5681818127632141,
+      "frames": 138,
+      "minLowerLegY": -0.0015251947700050147,
+      "minTailY": 0.00269412836861551,
+      "worstTime": 0.32083333333333336,
+      "nonfinite": false
+    },
+    {
+      "clip": "Gallop_Left",
+      "duration": 0.4716981053352356,
+      "frames": 115,
+      "minLowerLegY": -0.0011561429787765073,
+      "minTailY": 0.00416190994450151,
+      "worstTime": 0.17083333333333334,
+      "nonfinite": false
+    },
+    {
+      "clip": "Gallop_Right",
+      "duration": 0.4716981053352356,
+      "frames": 115,
+      "minLowerLegY": -0.0012275747411496477,
+      "minTailY": 0.004302645008264159,
+      "worstTime": 0.4625,
+      "nonfinite": false
+    },
+    {
+      "clip": "Jump",
+      "duration": 1.7200000286102295,
+      "frames": 414,
+      "minLowerLegY": -0.0010841557335530489,
+      "minTailY": 0.004924891968172734,
+      "worstTime": 1.1125,
+      "nonfinite": false
+    }
+  ]
+}

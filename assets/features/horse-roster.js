@@ -9,7 +9,8 @@
    (assets/equine-fantasy.js), TIER_STARS/MARKS2 and the second marking layer of makeCoatMat.
    Also, since section 6b, how a horse actually LOOKS once it is standing in the yard: the
    lightness the coat palette is allowed to reach, the moonlit coat's one true silver, and the
-   finish on the mane and tail. Nothing here runs at import time — everything happens in install(G). */
+   finish on the mane and tail. Nothing registers at import time; install(G) or the explicit artwork
+   registration below supplies the shared artwork registry. */
 import {registerFantasyTheme,registerFantasyAppearance} from '../equine-fantasy.js?v=artist-breeds-1';
 export const id='horse-roster';
 
@@ -256,6 +257,13 @@ const NEW_BREEDS=[
 ];
 const SEASON_CALL_GEMS=30, SEASON_CALL_PITY=3;
 
+/* Shared artwork registration also serves the standalone breed Studio. No gameplay tables or hooks. */
+export function registerRosterFantasyArtwork(){
+ for(const k in NEW_THEMES){const th=NEW_THEMES[k];registerFantasyTheme(k,th.cfg,th.fx);}
+ for(const row of NEW_BREEDS){const o=row[7]||{};
+  registerFantasyAppearance(row[0],Object.assign({mane:row[6]},o.coat?{theme:o.coat}:{body:row[5]},o.horn?{horn:true}:{},o.wings?{wings:true}:{},o.dragon?{dragon:true}:{}));}
+}
+
 /* ---------------------------------------------------------------------------------------
    INSTALL
    --------------------------------------------------------------------------------------- */
@@ -279,8 +287,8 @@ export function install(G){
  try{for(const row of NEW_BREEDS){const o=row[7]||{};if(o.body&&G.horse.breedModels&&G.horse.breedModels.alias)G.horse.breedModels.alias(row[0],o.body);}}catch(e){}
 
  /* ---- 2. fantasy themes: shared shader module + the inline mirrors --------------------- */
+ registerRosterFantasyArtwork();
  for(const k in NEW_THEMES){const th=NEW_THEMES[k];
-  registerFantasyTheme(k,th.cfg,th.fx);
   if(T.FANTASY_CFG&&!T.FANTASY_CFG[k]){T.FANTASY_CFG[k]=th.cfg;T.FANTASY_FX[k]=th.fx;}
   if(T.FANTASY_COAT&&!T.FANTASY_COAT[k])T.FANTASY_COAT[k]=th.coat;
   if(T.COAT_BASE&&!T.COAT_BASE[k])T.COAT_BASE[k]=th.base;
@@ -302,8 +310,6 @@ export function install(G){
  if(T.FANTASY_COAT&&T.FANTASY_COAT.moonlit){T.FANTASY_COAT.moonlit.ei=0.12;T.FANTASY_COAT.moonlit.rough=0.62;}
  if(T.DRAGON_TINT&&!T.DRAGON_TINT.eclipse)T.DRAGON_TINT.eclipse={web:'#ffb44a',root:'#1a1008',bone:'#0d0a12',glow:'#ffd080',head:'#2a1a08',ridge:'#ffd080'};
  if(T.WING_TINT&&!T.WING_TINT.eclipse)T.WING_TINT.eclipse={a:'#ffd080',b:'#2a1a08',e:'#ffb44a',ei:0.4};
- for(const row of NEW_BREEDS){const o=row[7]||{};
-  registerFantasyAppearance(row[0],Object.assign({mane:row[6]},o.coat?{theme:o.coat}:{body:row[5]},o.horn?{horn:true}:{},o.wings?{wings:true}:{},o.dragon?{dragon:true}:{}));}
 
  /* ---- 3. stars, coats, traits: the helpers -------------------------------------------- */
  function rarityOf(h){const b=h&&byKey(h.breed);return b?b[2]:'Common';}

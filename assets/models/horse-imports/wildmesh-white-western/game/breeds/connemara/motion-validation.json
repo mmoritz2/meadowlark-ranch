@@ -1,0 +1,907 @@
+{
+  "rigSha256": "c5da05966806c478b0947a4a61a2cb3a9b785af6a2a6de40aeb77b22cbab249c",
+  "motionModuleSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+  "method": "CPU site-vendored GLTFLoader + unchanged createArtistMotion; actual HorseBody skin and soles; 120Hz stand/walk/trot/both canter leads/both gallop leads/jump",
+  "checks": {
+    "allTransformsFinite": true,
+    "quaternionsNormalized": true,
+    "weightsNormalized": true,
+    "allNamed40": true,
+    "allFourSolesRecognized": true,
+    "allSourceMeshNodesSkinned": true,
+    "soleFollowsTarget": true,
+    "noHoofGroundPenetration": true,
+    "targetReachErrorWithin6mm": true,
+    "limbLengthVariationWithin6mm": true,
+    "stanceFeetPlanted": true,
+    "allFourFeetCycleStanceAndSwing": true,
+    "walkAlwaysSupported": true,
+    "trotUsesDiagonalSupport": true,
+    "gallopHasSuspension": true,
+    "jumpHasFlight": true
+  },
+  "failures": [],
+  "maxSkinWeightError": 4.470348358154297e-8,
+  "maxQuaternionNormError": 4.440892098500626e-16,
+  "sourceMeshNodeCount": 5,
+  "sourceSkinnedPrimitiveCount": 5,
+  "skinnedMeshCount": 5,
+  "gaits": [
+    {
+      "gait": "stand",
+      "lead": "left",
+      "samples": 360,
+      "maxSoleTargetErrorM": 2.684332122178732e-8,
+      "maxReachErrorM": 0,
+      "minSoleY": -1.6960446004601547e-10,
+      "maxLimbBoneLengthDeltaM": 6.661338147750939e-16,
+      "contactStates": [
+        {
+          "t": 0.008333333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 0.25833333333333336,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 0.5083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 0.7583333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.0083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.2583333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.5083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.7583333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.0083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.2583333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.5083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.7583333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        }
+      ],
+      "maxWorldStanceDriftM": 7.264329320467944e-16,
+      "contactCounts": {
+        "LF": 294,
+        "RF": 294,
+        "LH": 294,
+        "RH": 294
+      },
+      "contactPatterns": [
+        "LF,LH,RF,RH"
+      ]
+    },
+    {
+      "gait": "walk",
+      "lead": "left",
+      "samples": 360,
+      "maxSoleTargetErrorM": 2.684332130968685e-8,
+      "maxReachErrorM": 0,
+      "minSoleY": -1.6960441949685468e-10,
+      "maxLimbBoneLengthDeltaM": 8.326672684688674e-16,
+      "contactStates": [
+        {
+          "t": 0.008333333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH"
+          ]
+        },
+        {
+          "t": 0.25833333333333336,
+          "feet": [
+            "LF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 0.5083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "RH"
+          ]
+        },
+        {
+          "t": 0.7583333333333333,
+          "feet": [
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.0083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH"
+          ]
+        },
+        {
+          "t": 1.2583333333333333,
+          "feet": [
+            "LF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.5083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.7583333333333333,
+          "feet": [
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.0083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH"
+          ]
+        },
+        {
+          "t": 2.2583333333333333,
+          "feet": [
+            "LF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.5083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.7583333333333333,
+          "feet": [
+            "RF",
+            "LH",
+            "RH"
+          ]
+        }
+      ],
+      "maxWorldStanceDriftM": 1.4043333874306805e-15,
+      "contactCounts": {
+        "LF": 167,
+        "RF": 209,
+        "LH": 188,
+        "RH": 189
+      },
+      "contactPatterns": [
+        "LF,LH",
+        "LF,LH,RF",
+        "LF,LH,RH",
+        "LF,RF,RH",
+        "LF,RH",
+        "LH,RF",
+        "LH,RF,RH",
+        "RF,RH"
+      ]
+    },
+    {
+      "gait": "trot",
+      "lead": "left",
+      "samples": 360,
+      "maxSoleTargetErrorM": 2.6843321323001106e-8,
+      "maxReachErrorM": 0,
+      "minSoleY": -1.6960443901249355e-10,
+      "maxLimbBoneLengthDeltaM": 9.43689570931383e-16,
+      "contactStates": [
+        {
+          "t": 0.008333333333333333,
+          "feet": [
+            "LF",
+            "RH"
+          ]
+        },
+        {
+          "t": 0.25833333333333336,
+          "feet": [
+            "LF",
+            "RH"
+          ]
+        },
+        {
+          "t": 0.5083333333333333,
+          "feet": [
+            "RF",
+            "LH"
+          ]
+        },
+        {
+          "t": 0.7583333333333333,
+          "feet": [
+            "LF",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.0083333333333333,
+          "feet": [
+            "RF",
+            "LH"
+          ]
+        },
+        {
+          "t": 1.2583333333333333,
+          "feet": []
+        },
+        {
+          "t": 1.5083333333333333,
+          "feet": [
+            "LF",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.7583333333333333,
+          "feet": [
+            "RF",
+            "LH"
+          ]
+        },
+        {
+          "t": 2.0083333333333333,
+          "feet": [
+            "LF",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.2583333333333333,
+          "feet": [
+            "RF",
+            "LH"
+          ]
+        },
+        {
+          "t": 2.5083333333333333,
+          "feet": [
+            "RF",
+            "LH"
+          ]
+        },
+        {
+          "t": 2.7583333333333333,
+          "feet": [
+            "LF",
+            "RH"
+          ]
+        }
+      ],
+      "maxWorldStanceDriftM": 2.808666774861361e-15,
+      "contactCounts": {
+        "LF": 130,
+        "RF": 115,
+        "LH": 115,
+        "RH": 130
+      },
+      "contactPatterns": [
+        "",
+        "LF,RH",
+        "LH,RF"
+      ]
+    },
+    {
+      "gait": "canter",
+      "lead": "left",
+      "samples": 360,
+      "maxSoleTargetErrorM": 2.6843321506877705e-8,
+      "maxReachErrorM": 0,
+      "minSoleY": -1.6960453572332623e-10,
+      "maxLimbBoneLengthDeltaM": 9.43689570931383e-16,
+      "contactStates": [
+        {
+          "t": 0.008333333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH"
+          ]
+        },
+        {
+          "t": 0.25833333333333336,
+          "feet": []
+        },
+        {
+          "t": 0.5083333333333333,
+          "feet": [
+            "RF",
+            "LH"
+          ]
+        },
+        {
+          "t": 0.7583333333333333,
+          "feet": [
+            "LF"
+          ]
+        },
+        {
+          "t": 1.0083333333333333,
+          "feet": [
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.2583333333333333,
+          "feet": [
+            "LF"
+          ]
+        },
+        {
+          "t": 1.5083333333333333,
+          "feet": [
+            "RH"
+          ]
+        },
+        {
+          "t": 1.7583333333333333,
+          "feet": [
+            "LF"
+          ]
+        },
+        {
+          "t": 2.0083333333333333,
+          "feet": [
+            "RH"
+          ]
+        },
+        {
+          "t": 2.2583333333333333,
+          "feet": [
+            "RF",
+            "LH"
+          ]
+        },
+        {
+          "t": 2.5083333333333333,
+          "feet": []
+        },
+        {
+          "t": 2.7583333333333333,
+          "feet": [
+            "RF",
+            "LH"
+          ]
+        }
+      ],
+      "maxWorldStanceDriftM": 3.552713678800501e-15,
+      "contactCounts": {
+        "LF": 118,
+        "RF": 106,
+        "LH": 106,
+        "RH": 99
+      },
+      "contactPatterns": [
+        "",
+        "LF",
+        "LF,LH,RF",
+        "LH,RF",
+        "LH,RF,RH",
+        "RH"
+      ]
+    },
+    {
+      "gait": "canter",
+      "lead": "right",
+      "samples": 360,
+      "maxSoleTargetErrorM": 2.6843321436349897e-8,
+      "maxReachErrorM": 0,
+      "minSoleY": -1.6960464349302096e-10,
+      "maxLimbBoneLengthDeltaM": 8.881784197001252e-16,
+      "contactStates": [
+        {
+          "t": 0.008333333333333333,
+          "feet": [
+            "LF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 0.25833333333333336,
+          "feet": [
+            "RF"
+          ]
+        },
+        {
+          "t": 0.5083333333333333,
+          "feet": [
+            "LH"
+          ]
+        },
+        {
+          "t": 0.7583333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.0083333333333333,
+          "feet": [
+            "LH"
+          ]
+        },
+        {
+          "t": 1.2583333333333333,
+          "feet": [
+            "LF",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.5083333333333333,
+          "feet": []
+        },
+        {
+          "t": 1.7583333333333333,
+          "feet": [
+            "LF",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.0083333333333333,
+          "feet": [
+            "RF"
+          ]
+        },
+        {
+          "t": 2.2583333333333333,
+          "feet": [
+            "LH"
+          ]
+        },
+        {
+          "t": 2.5083333333333333,
+          "feet": [
+            "RF"
+          ]
+        },
+        {
+          "t": 2.7583333333333333,
+          "feet": [
+            "LH"
+          ]
+        }
+      ],
+      "maxWorldStanceDriftM": 3.552713678800501e-15,
+      "contactCounts": {
+        "LF": 118,
+        "RF": 100,
+        "LH": 106,
+        "RH": 118
+      },
+      "contactPatterns": [
+        "",
+        "LF,LH,RH",
+        "LF,RF,RH",
+        "LF,RH",
+        "LH",
+        "RF"
+      ]
+    },
+    {
+      "gait": "gallop",
+      "lead": "left",
+      "samples": 360,
+      "maxSoleTargetErrorM": 2.684332142694011e-8,
+      "maxReachErrorM": 0,
+      "minSoleY": -1.696043919581198e-10,
+      "maxLimbBoneLengthDeltaM": 7.771561172376096e-16,
+      "contactStates": [
+        {
+          "t": 0.008333333333333333,
+          "feet": [
+            "LF",
+            "RF"
+          ]
+        },
+        {
+          "t": 0.25833333333333336,
+          "feet": [
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 0.5083333333333333,
+          "feet": [
+            "LF",
+            "RF"
+          ]
+        },
+        {
+          "t": 0.7583333333333333,
+          "feet": [
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.0083333333333333,
+          "feet": [
+            "LF"
+          ]
+        },
+        {
+          "t": 1.2583333333333333,
+          "feet": [
+            "LH"
+          ]
+        },
+        {
+          "t": 1.5083333333333333,
+          "feet": [
+            "LF"
+          ]
+        },
+        {
+          "t": 1.7583333333333333,
+          "feet": [
+            "LH"
+          ]
+        },
+        {
+          "t": 2.0083333333333333,
+          "feet": [
+            "LF"
+          ]
+        },
+        {
+          "t": 2.2583333333333333,
+          "feet": [
+            "LH"
+          ]
+        },
+        {
+          "t": 2.5083333333333333,
+          "feet": []
+        },
+        {
+          "t": 2.7583333333333333,
+          "feet": [
+            "RF"
+          ]
+        }
+      ],
+      "maxWorldStanceDriftM": 5.617333549722722e-15,
+      "contactCounts": {
+        "LF": 81,
+        "RF": 76,
+        "LH": 76,
+        "RH": 76
+      },
+      "contactPatterns": [
+        "",
+        "LF",
+        "LF,RF",
+        "LH",
+        "LH,RH",
+        "RF",
+        "RH"
+      ]
+    },
+    {
+      "gait": "gallop",
+      "lead": "right",
+      "samples": 360,
+      "maxSoleTargetErrorM": 2.684332165461836e-8,
+      "maxReachErrorM": 0,
+      "minSoleY": -1.69604404101184e-10,
+      "maxLimbBoneLengthDeltaM": 8.326672684688674e-16,
+      "contactStates": [
+        {
+          "t": 0.008333333333333333,
+          "feet": [
+            "LF"
+          ]
+        },
+        {
+          "t": 0.25833333333333336,
+          "feet": []
+        },
+        {
+          "t": 0.5083333333333333,
+          "feet": [
+            "LF"
+          ]
+        },
+        {
+          "t": 0.7583333333333333,
+          "feet": [
+            "LH"
+          ]
+        },
+        {
+          "t": 1.0083333333333333,
+          "feet": [
+            "LF"
+          ]
+        },
+        {
+          "t": 1.2583333333333333,
+          "feet": [
+            "LH"
+          ]
+        },
+        {
+          "t": 1.5083333333333333,
+          "feet": [
+            "LF",
+            "RF"
+          ]
+        },
+        {
+          "t": 1.7583333333333333,
+          "feet": [
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.0083333333333333,
+          "feet": [
+            "LF",
+            "RF"
+          ]
+        },
+        {
+          "t": 2.2583333333333333,
+          "feet": [
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.5083333333333333,
+          "feet": [
+            "RF"
+          ]
+        },
+        {
+          "t": 2.7583333333333333,
+          "feet": [
+            "RH"
+          ]
+        }
+      ],
+      "maxWorldStanceDriftM": 5.0242958677880805e-15,
+      "contactCounts": {
+        "LF": 81,
+        "RF": 88,
+        "LH": 76,
+        "RH": 77
+      },
+      "contactPatterns": [
+        "",
+        "LF",
+        "LF,RF",
+        "LH",
+        "LH,RH",
+        "RF",
+        "RH"
+      ]
+    },
+    {
+      "gait": "jump",
+      "lead": "left",
+      "samples": 360,
+      "maxSoleTargetErrorM": 2.6843321228015473e-8,
+      "maxReachErrorM": 0,
+      "minSoleY": -1.6960455415476295e-10,
+      "maxLimbBoneLengthDeltaM": 7.216449660063518e-16,
+      "contactStates": [
+        {
+          "t": 0.008333333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 0.25833333333333336,
+          "feet": [
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 0.5083333333333333,
+          "feet": []
+        },
+        {
+          "t": 0.7583333333333333,
+          "feet": []
+        },
+        {
+          "t": 1.0083333333333333,
+          "feet": []
+        },
+        {
+          "t": 1.2583333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.5083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 1.7583333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.0083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.2583333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.5083333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        },
+        {
+          "t": 2.7583333333333333,
+          "feet": [
+            "LF",
+            "RF",
+            "LH",
+            "RH"
+          ]
+        }
+      ],
+      "maxWorldStanceDriftM": 8.252325904466732e-16,
+      "contactCounts": {
+        "LF": 187,
+        "RF": 187,
+        "LH": 176,
+        "RH": 176
+      },
+      "contactPatterns": [
+        "",
+        "LF,LH,RF,RH",
+        "LF,RF"
+      ]
+    }
+  ]
+}

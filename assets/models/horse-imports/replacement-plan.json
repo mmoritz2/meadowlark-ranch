@@ -1,0 +1,766 @@
+{
+  "schemaVersion": 1,
+  "objective": "Rig all approved horse and fantasy sources to match Star Equestrian visible rigging quality, replace all current site horses, then commit and push the verified site.",
+  "identityCount": 80,
+  "approvedSourceCount": 9,
+  "reference": "Visible movement/rigging benchmark; no public Star Equestrian exact internal skeleton schema has been established.",
+  "requirements": [
+    "Acquire and preserve all nine approved sources, verified receipts and license/credit restrictions.",
+    "Convert genuine source anatomy/materials/groom; resolve import differences before certifying source fidelity.",
+    "Give each real breed distinct authored conformation and groom, preserving existing roster ids, gameplay and saves.",
+    "Replace all 80 identities across player, herd, wild, NPC, remote, barn and Studio paths with new sourced bodies; actual dragons must have actual dragon anatomy.",
+    "Provide complete anatomical deformation with appropriate jaw/ears/head/neck/tail, consistent skinning and rider/tack anchors.",
+    "Verify rest/idle/walk/trot/canter/gallop/jump/landing, both leads, foals and transformed parents, gait blending, mounted rider and tack fit.",
+    "Verify wing folding/flapping, takeoff/flight/landing on applicable horses and dragons; preserve fantasy/customization/foal appearance.",
+    "Verify every identity and all distinct body models visually and numerically, browser errors, resources/performance and saved-state invariants.",
+    "Update public source attribution, licenses and asset integrity records; commit only task-related changes and push the site deployment branch after final verification."
+  ],
+  "identityMapping": [
+    {
+      "id": "bay",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Quarter Horse",
+      "currentFoundation": "bay",
+      "family": "breed"
+    },
+    {
+      "id": "chestnut",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Shetland Pony",
+      "currentFoundation": "chestnut",
+      "family": "breed"
+    },
+    {
+      "id": "palomino",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Palomino Mustang",
+      "currentFoundation": "palomino",
+      "family": "breed"
+    },
+    {
+      "id": "haflinger",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Haflinger",
+      "currentFoundation": "haflinger",
+      "family": "breed"
+    },
+    {
+      "id": "grey",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Dapple Grey Andalusian",
+      "currentFoundation": "grey",
+      "family": "breed"
+    },
+    {
+      "id": "black",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Friesian",
+      "currentFoundation": "black",
+      "family": "breed"
+    },
+    {
+      "id": "pinto",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Paint Horse",
+      "currentFoundation": "pinto",
+      "family": "breed"
+    },
+    {
+      "id": "appaloosa",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Appaloosa",
+      "currentFoundation": "appaloosa",
+      "family": "breed"
+    },
+    {
+      "id": "sunset",
+      "bodySource": "arabian-sculpt",
+      "componentSources": [],
+      "status": "approved-source-download-pending",
+      "name": "Sunset Arabian",
+      "currentFoundation": "sunset",
+      "family": "breed"
+    },
+    {
+      "id": "iceland",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Icelandic Horse",
+      "currentFoundation": "iceland",
+      "family": "breed"
+    },
+    {
+      "id": "welsh",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Welsh Mountain Pony",
+      "currentFoundation": "welsh",
+      "family": "breed"
+    },
+    {
+      "id": "stock",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Australian Stock Horse",
+      "currentFoundation": "stock",
+      "family": "breed"
+    },
+    {
+      "id": "fjord",
+      "bodySource": "fjord-sculpt",
+      "componentSources": [],
+      "status": "approved-source-download-pending",
+      "name": "Norwegian Fjord",
+      "currentFoundation": "fjord",
+      "family": "breed"
+    },
+    {
+      "id": "morgan",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Morgan",
+      "currentFoundation": "morgan",
+      "family": "breed"
+    },
+    {
+      "id": "thoro",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Thoroughbred",
+      "currentFoundation": "thoro",
+      "family": "breed"
+    },
+    {
+      "id": "knab",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Knabstrupper",
+      "currentFoundation": "knab",
+      "family": "breed"
+    },
+    {
+      "id": "vanner",
+      "bodySource": "bluemesh-draft",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Gypsy Vanner",
+      "currentFoundation": "vanner",
+      "family": "breed"
+    },
+    {
+      "id": "marwari",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Marwari",
+      "currentFoundation": "marwari",
+      "family": "breed"
+    },
+    {
+      "id": "lipiz",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Lipizzaner",
+      "currentFoundation": "lipiz",
+      "family": "breed"
+    },
+    {
+      "id": "sport",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Friesian Sporthorse",
+      "currentFoundation": "sport",
+      "family": "breed"
+    },
+    {
+      "id": "akhal",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Akhal-Teke",
+      "currentFoundation": "akhal",
+      "family": "breed"
+    },
+    {
+      "id": "percheron",
+      "bodySource": "bluemesh-draft",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Percheron",
+      "currentFoundation": "percheron",
+      "family": "breed"
+    },
+    {
+      "id": "shire",
+      "bodySource": "bluemesh-draft",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Shire",
+      "currentFoundation": "shire",
+      "family": "breed"
+    },
+    {
+      "id": "clyde",
+      "bodySource": "bluemesh-draft",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Clydesdale",
+      "currentFoundation": "clyde",
+      "family": "breed"
+    },
+    {
+      "id": "bay-sporthorse",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Bay Sporthorse",
+      "currentFoundation": "bay-sporthorse",
+      "family": "breed"
+    },
+    {
+      "id": "aether",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Aether Friesian",
+      "currentFoundation": "black",
+      "family": "fantasy"
+    },
+    {
+      "id": "sunspear",
+      "bodySource": "arabian-sculpt",
+      "componentSources": [],
+      "status": "approved-source-download-pending",
+      "name": "Sunspear Arabian",
+      "currentFoundation": "sunset",
+      "family": "fantasy"
+    },
+    {
+      "id": "meadowlight",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Meadowlight Quarter Horse",
+      "currentFoundation": "bay",
+      "family": "fantasy"
+    },
+    {
+      "id": "tempest",
+      "bodySource": "bluemesh-draft",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Tempest Clydesdale",
+      "currentFoundation": "clyde",
+      "family": "fantasy"
+    },
+    {
+      "id": "eclipse",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Eclipse Thoroughbred",
+      "currentFoundation": "thoro",
+      "family": "fantasy"
+    },
+    {
+      "id": "glacier",
+      "bodySource": "bluemesh-draft",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Glacier Percheron",
+      "currentFoundation": "percheron",
+      "family": "fantasy"
+    },
+    {
+      "id": "unicorn",
+      "bodySource": "ikkiz-unicorn",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Unicorn",
+      "currentFoundation": "grey",
+      "family": "fantasy"
+    },
+    {
+      "id": "pegasus",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [
+        "cgcookie-wings"
+      ],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Pegasus",
+      "currentFoundation": "sport",
+      "family": "fantasy"
+    },
+    {
+      "id": "celestial",
+      "bodySource": "pastel-unicorn",
+      "componentSources": [],
+      "status": "approved-source-download-pending",
+      "name": "Celestial Unicorn",
+      "currentFoundation": "grey",
+      "family": "fantasy"
+    },
+    {
+      "id": "ember",
+      "bodySource": "arabian-sculpt",
+      "componentSources": [],
+      "status": "approved-source-download-pending",
+      "name": "Ember Runner",
+      "currentFoundation": "sunset",
+      "family": "fantasy"
+    },
+    {
+      "id": "frost",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Frost Stallion",
+      "currentFoundation": "lipiz",
+      "family": "fantasy"
+    },
+    {
+      "id": "aurora",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [
+        "cgcookie-wings"
+      ],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Aurora Pegasus",
+      "currentFoundation": "sport",
+      "family": "fantasy"
+    },
+    {
+      "id": "phoenix",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [
+        "cgcookie-wings"
+      ],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Phoenix Steed",
+      "currentFoundation": "sunset",
+      "family": "fantasy"
+    },
+    {
+      "id": "frostdrake",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Frostwing Dragon",
+      "currentFoundation": "percheron",
+      "family": "fantasy"
+    },
+    {
+      "id": "emberdrake",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Emberflight Dragon",
+      "currentFoundation": "thoro",
+      "family": "fantasy"
+    },
+    {
+      "id": "amethyst",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Amethyst Dragon",
+      "currentFoundation": "black",
+      "family": "fantasy"
+    },
+    {
+      "id": "stormdrake",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Storm Dragon",
+      "currentFoundation": "clyde",
+      "family": "fantasy"
+    },
+    {
+      "id": "verdant",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Verdant Dragon",
+      "currentFoundation": "stock",
+      "family": "fantasy"
+    },
+    {
+      "id": "shadowmare",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Shadow Mare",
+      "currentFoundation": "black",
+      "family": "fantasy"
+    },
+    {
+      "id": "kestrel",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Silver Kestrel",
+      "currentFoundation": "morgan",
+      "family": "fantasy"
+    },
+    {
+      "id": "tidewalker",
+      "bodySource": "arabian-sculpt",
+      "componentSources": [],
+      "status": "approved-source-download-pending",
+      "name": "Tidewalker Arabian",
+      "currentFoundation": "sunset",
+      "family": "fantasy"
+    },
+    {
+      "id": "glimmerdrake",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Glimmerflight Dragon",
+      "currentFoundation": "akhal",
+      "family": "fantasy"
+    },
+    {
+      "id": "thorndrake",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Thornflight Dragon",
+      "currentFoundation": "stock",
+      "family": "fantasy"
+    },
+    {
+      "id": "tidedrake",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Tideflight Dragon",
+      "currentFoundation": "sunset",
+      "family": "fantasy"
+    },
+    {
+      "id": "gloomdrake",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Gloomflight Dragon",
+      "currentFoundation": "clyde",
+      "family": "fantasy"
+    },
+    {
+      "id": "alicorn",
+      "bodySource": "ikkiz-unicorn",
+      "componentSources": [
+        "cgcookie-wings"
+      ],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Alicorn",
+      "currentFoundation": "grey",
+      "family": "fantasy"
+    },
+    {
+      "id": "ancientdrake",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Elder Dragon",
+      "currentFoundation": "clyde",
+      "family": "fantasy"
+    },
+    {
+      "id": "duskmustang",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Dusk Mustang",
+      "currentFoundation": "palomino",
+      "family": "fantasy"
+    },
+    {
+      "id": "kilnfriesian",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Kiln Friesian",
+      "currentFoundation": "black",
+      "family": "fantasy"
+    },
+    {
+      "id": "larkunicorn",
+      "bodySource": "ikkiz-unicorn",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Meadowlark Unicorn",
+      "currentFoundation": "grey",
+      "family": "fantasy"
+    },
+    {
+      "id": "petalmane",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Petalmane Quarter Horse",
+      "currentFoundation": "bay",
+      "family": "fantasy"
+    },
+    {
+      "id": "dryadwalker",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Dryad Walker",
+      "currentFoundation": "sport",
+      "family": "fantasy"
+    },
+    {
+      "id": "blossomdrake",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Blossom Dragon",
+      "currentFoundation": "thoro",
+      "family": "fantasy"
+    },
+    {
+      "id": "sunflare",
+      "bodySource": "arabian-sculpt",
+      "componentSources": [],
+      "status": "approved-source-download-pending",
+      "name": "Sunflare Arabian",
+      "currentFoundation": "sunset",
+      "family": "fantasy"
+    },
+    {
+      "id": "noonshade",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Noonshade Mustang",
+      "currentFoundation": "palomino",
+      "family": "fantasy"
+    },
+    {
+      "id": "heliosdrake",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Helios Dragon",
+      "currentFoundation": "thoro",
+      "family": "fantasy"
+    },
+    {
+      "id": "harvestmoon",
+      "bodySource": "fjord-sculpt",
+      "componentSources": [],
+      "status": "approved-source-download-pending",
+      "name": "Harvest Moon Fjord",
+      "currentFoundation": "fjord",
+      "family": "fantasy"
+    },
+    {
+      "id": "cinderlark",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Cinderlark Morgan",
+      "currentFoundation": "morgan",
+      "family": "fantasy"
+    },
+    {
+      "id": "ashwing",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [
+        "cgcookie-wings"
+      ],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Ashwing Pegasus",
+      "currentFoundation": "sport",
+      "family": "fantasy"
+    },
+    {
+      "id": "snowlark",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Snowlark Icelandic",
+      "currentFoundation": "iceland",
+      "family": "fantasy"
+    },
+    {
+      "id": "rimewalker",
+      "bodySource": "bluemesh-draft",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Rimewalker Percheron",
+      "currentFoundation": "percheron",
+      "family": "fantasy"
+    },
+    {
+      "id": "polarisdrake",
+      "bodySource": "black-dragon",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Polaris Dragon",
+      "currentFoundation": "percheron",
+      "family": "fantasy"
+    },
+    {
+      "id": "chameleon",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Chameleon Mustang",
+      "currentFoundation": "palomino",
+      "family": "fantasy"
+    },
+    {
+      "id": "connemara",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Connemara Pony",
+      "currentFoundation": "iceland",
+      "family": "breed"
+    },
+    {
+      "id": "suffolk",
+      "bodySource": "bluemesh-draft",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Suffolk Punch",
+      "currentFoundation": "percheron",
+      "family": "breed"
+    },
+    {
+      "id": "rockymtn",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Rocky Mountain Horse",
+      "currentFoundation": "morgan",
+      "family": "breed"
+    },
+    {
+      "id": "hanover",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Hanoverian",
+      "currentFoundation": "thoro",
+      "family": "breed"
+    },
+    {
+      "id": "camargue",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Camargue Horse",
+      "currentFoundation": "lipiz",
+      "family": "breed"
+    },
+    {
+      "id": "lusitano",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Lusitano",
+      "currentFoundation": "grey",
+      "family": "breed"
+    },
+    {
+      "id": "firefly",
+      "bodySource": "arabian-sculpt",
+      "componentSources": [],
+      "status": "approved-source-download-pending",
+      "name": "Firefly Arabian",
+      "currentFoundation": "sunset",
+      "family": "fantasy"
+    },
+    {
+      "id": "opaline",
+      "bodySource": "pastel-unicorn",
+      "componentSources": [],
+      "status": "approved-source-download-pending",
+      "name": "Opaline Unicorn",
+      "currentFoundation": "lipiz",
+      "family": "fantasy"
+    },
+    {
+      "id": "daybreak",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Daybreak Haflinger",
+      "currentFoundation": "haflinger",
+      "family": "fantasy"
+    },
+    {
+      "id": "emberfriesian",
+      "bodySource": "wildmesh-white-western",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Ember Friesian",
+      "currentFoundation": "black",
+      "family": "fantasy"
+    },
+    {
+      "id": "larksong",
+      "bodySource": "ikkiz-unicorn",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Larksong Unicorn",
+      "currentFoundation": "grey",
+      "family": "fantasy"
+    },
+    {
+      "id": "lumen",
+      "bodySource": "horse-skeleton",
+      "componentSources": [],
+      "status": "converted-local-review-pending-site-activation",
+      "name": "Luminous Spirit",
+      "currentFoundation": "lipiz",
+      "family": "fantasy"
+    }
+  ],
+  "pendingSourceIds": [
+    "arabian-sculpt",
+    "fjord-sculpt",
+    "pastel-unicorn"
+  ],
+  "completionStatus": "70 prepared identities pass local mounted movement, flight, context and Studio checks; three original downloads and ten identities remain pending; shipping activation and commit/push pending",
+  "gameRuntimeReplaced": false,
+  "committed": false,
+  "pushed": false,
+  "editorialChoices": {
+    "lumen": "Preserve existing spirit identity/gameplay and give it a spectral skeletal body.",
+    "dragonIdentities": "All13existing dragon:true identities use the actual black-dragon anatomy, with their individual elemental appearances."
+  },
+  "preparedIdentityCount": 70,
+  "siteReplacementComplete": false,
+  "commitPushComplete": false
+}

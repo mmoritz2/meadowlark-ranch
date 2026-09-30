@@ -1,0 +1,141 @@
+{
+  "gameSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+  "motionCodeSha256": "7703367ce738b6428d9cd26a8aa8b592e007d87ef327a1c4684923ecd05194aa",
+  "clips": [
+    {
+      "name": "Rest",
+      "duration": 1,
+      "frames": 61,
+      "joints": 68,
+      "loop": true,
+      "sampleHz": 60,
+      "loopAnatomicalDelta": 0,
+      "maxQuaternionNormError": 0,
+      "finite": true
+    },
+    {
+      "name": "Idle",
+      "duration": 8,
+      "frames": 481,
+      "joints": 68,
+      "loop": true,
+      "sampleHz": 60,
+      "loopAnatomicalDelta": 6.661338147750939e-16,
+      "maxQuaternionNormError": 2.220446049250313e-16,
+      "finite": true
+    },
+    {
+      "name": "Walk",
+      "duration": 1.9607843137254901,
+      "frames": 472,
+      "joints": 68,
+      "loop": true,
+      "sampleHz": 240,
+      "loopAnatomicalDelta": 2.220446049250313e-16,
+      "maxQuaternionNormError": 2.220446049250313e-16,
+      "finite": true
+    },
+    {
+      "name": "Trot",
+      "duration": 1.2903225806451613,
+      "frames": 311,
+      "joints": 68,
+      "loop": true,
+      "sampleHz": 240,
+      "loopAnatomicalDelta": 8.881784197001252e-16,
+      "maxQuaternionNormError": 3.3306690738754696e-16,
+      "finite": true
+    },
+    {
+      "name": "Canter_Left",
+      "duration": 1.1363636363636365,
+      "frames": 274,
+      "joints": 68,
+      "loop": true,
+      "sampleHz": 240,
+      "loopAnatomicalDelta": 1.1102230246251565e-15,
+      "maxQuaternionNormError": 4.440892098500626e-16,
+      "finite": true
+    },
+    {
+      "name": "Canter_Right",
+      "duration": 1.1363636363636365,
+      "frames": 274,
+      "joints": 68,
+      "loop": true,
+      "sampleHz": 240,
+      "loopAnatomicalDelta": 8.881784197001252e-16,
+      "maxQuaternionNormError": 2.220446049250313e-16,
+      "finite": true
+    },
+    {
+      "name": "Gallop_Left",
+      "duration": 0.9433962264150942,
+      "frames": 228,
+      "joints": 68,
+      "loop": true,
+      "sampleHz": 240,
+      "loopAnatomicalDelta": 1.7763568394002505e-15,
+      "maxQuaternionNormError": 4.440892098500626e-16,
+      "finite": true
+    },
+    {
+      "name": "Gallop_Right",
+      "duration": 0.9433962264150942,
+      "frames": 228,
+      "joints": 68,
+      "loop": true,
+      "sampleHz": 240,
+      "loopAnatomicalDelta": 1.3322676295501878e-15,
+      "maxQuaternionNormError": 2.220446049250313e-16,
+      "finite": true
+    },
+    {
+      "name": "Jump",
+      "duration": 1.75,
+      "frames": 421,
+      "joints": 68,
+      "loop": false,
+      "sampleHz": 240,
+      "loopAnatomicalDelta": 0,
+      "maxQuaternionNormError": 2.220446049250313e-16,
+      "finite": true
+    },
+    {
+      "name": "Takeoff",
+      "duration": 1.15,
+      "frames": 70,
+      "joints": 68,
+      "loop": false,
+      "sampleHz": 60,
+      "loopAnatomicalDelta": 0,
+      "maxQuaternionNormError": 2.220446049250313e-16,
+      "finite": true
+    },
+    {
+      "name": "Fly",
+      "duration": 1.4814814814814814,
+      "frames": 90,
+      "joints": 68,
+      "loop": true,
+      "sampleHz": 60,
+      "loopAnatomicalDelta": 0.0035840358356644675,
+      "maxQuaternionNormError": 3.3306690738754696e-16,
+      "finite": true
+    },
+    {
+      "name": "Land",
+      "duration": 2,
+      "frames": 121,
+      "joints": 68,
+      "loop": false,
+      "sampleHz": 60,
+      "loopAnatomicalDelta": 0,
+      "maxQuaternionNormError": 3.3306690738754696e-16,
+      "finite": true
+    }
+  ],
+  "originalSourceModified": false,
+  "generativeToolsUsed": false,
+  "noAI": true
+}

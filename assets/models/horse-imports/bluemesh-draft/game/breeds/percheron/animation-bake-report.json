@@ -1,0 +1,82 @@
+{
+  "sourceRigSha256": "7a911d8a75a165f13fae644419231085b886f1fcc4bf0bc448e4d326feaf7831",
+  "animatedSha256": "b5fe84133528886faa1b5690e55e824f4b2dba850a668894c43afe9be5e0262d",
+  "sourceBINPrefixPreserved": true,
+  "geometryMaterialsTexturesSkinsAndNodeDefinitionsUnchanged": true,
+  "motionModuleSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+  "fps": 120,
+  "clips": [
+    {
+      "name": "Rest",
+      "duration": 1,
+      "loop": true,
+      "frames": 2,
+      "endpointMaxQuaternionDifferenceBeforeClosure": 0,
+      "loopEndpointForcedEquivalent": true
+    },
+    {
+      "name": "Idle",
+      "duration": 8,
+      "loop": true,
+      "frames": 961,
+      "endpointMaxQuaternionDifferenceBeforeClosure": 0.010509375962818243,
+      "loopEndpointForcedEquivalent": true
+    },
+    {
+      "name": "Walk",
+      "duration": 0.9803921568627451,
+      "loop": true,
+      "frames": 119,
+      "endpointMaxQuaternionDifferenceBeforeClosure": 0.010811866717519908,
+      "loopEndpointForcedEquivalent": true
+    },
+    {
+      "name": "Trot",
+      "duration": 0.6451612903225806,
+      "loop": true,
+      "frames": 79,
+      "endpointMaxQuaternionDifferenceBeforeClosure": 0.010878810420413665,
+      "loopEndpointForcedEquivalent": true
+    },
+    {
+      "name": "Canter_Left",
+      "duration": 0.5681818181818182,
+      "loop": true,
+      "frames": 70,
+      "endpointMaxQuaternionDifferenceBeforeClosure": 0.010701072371571071,
+      "loopEndpointForcedEquivalent": true
+    },
+    {
+      "name": "Canter_Right",
+      "duration": 0.5681818181818182,
+      "loop": true,
+      "frames": 70,
+      "endpointMaxQuaternionDifferenceBeforeClosure": 0.01054754113529896,
+      "loopEndpointForcedEquivalent": true
+    },
+    {
+      "name": "Gallop_Left",
+      "duration": 0.4716981132075471,
+      "loop": true,
+      "frames": 58,
+      "endpointMaxQuaternionDifferenceBeforeClosure": 0.009351983221701013,
+      "loopEndpointForcedEquivalent": true
+    },
+    {
+      "name": "Gallop_Right",
+      "duration": 0.4716981132075471,
+      "loop": true,
+      "frames": 58,
+      "endpointMaxQuaternionDifferenceBeforeClosure": 0.00939650972171531,
+      "loopEndpointForcedEquivalent": true
+    },
+    {
+      "name": "Jump",
+      "duration": 1.72,
+      "loop": false,
+      "frames": 208,
+      "endpointMaxQuaternionDifferenceBeforeClosure": 0.02263313721234278,
+      "loopEndpointForcedEquivalent": false
+    }
+  ]
+}

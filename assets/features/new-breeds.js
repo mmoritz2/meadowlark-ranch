@@ -213,6 +213,13 @@ const SHIFT=0.14;           // how far the palette must move (linear RGB, base c
 const SHIM_S=1.3, SHIM_GLOW=0.85, SHIM_COOL=2.5;
 const PATH_W=2.9;           // ranch3d.html's road width
 
+/* Shared artwork registration also serves the standalone breed Studio. No gameplay tables or hooks. */
+export function registerNewBreedFantasyArtwork(){
+ for(const k in THEMES){const th=THEMES[k];registerFantasyTheme(k,th.cfg,th.fx);}
+ for(const r of ROWS){const o=r[7];if(!o.coat)continue;
+  registerFantasyAppearance(r[0],Object.assign({theme:o.coat,mane:o.maneCol||r[6]},o.horn?{horn:true}:{}));}
+}
+
 /* ---------------------------------------------------------------------------------------
    INSTALL
    --------------------------------------------------------------------------------------- */
@@ -248,8 +255,8 @@ export function install(G){
  if(T.WILD_BREEDS&&!T.WILD_BREEDS.some(w=>w.breed==='camargue'))T.WILD_BREEDS.push({breed:'camargue',variant:'Camargue',body:'#c9cac5',mane:'#e6e4de',base:5,region:'meadows'});
 
  /* ---- 2. coat themes and appearances --------------------------------------------------------- */
+ registerNewBreedFantasyArtwork();
  for(const k in THEMES){const th=THEMES[k];
-  registerFantasyTheme(k,th.cfg,th.fx);
   if(T.FANTASY_CFG&&!T.FANTASY_CFG[k]){T.FANTASY_CFG[k]=th.cfg;T.FANTASY_FX[k]=th.fx;}
   if(T.FANTASY_COAT&&!T.FANTASY_COAT[k])T.FANTASY_COAT[k]=th.coat;
   if(T.COAT_BASE&&!T.COAT_BASE[k])T.COAT_BASE[k]=th.base;
@@ -257,8 +264,6 @@ export function install(G){
   if(T.DRAGON_TINT&&!T.DRAGON_TINT[k])T.DRAGON_TINT[k]=th.drg;
   if(T.ELEM_OF&&!T.ELEM_OF[k])T.ELEM_OF[k]=th.elem;
  }
- for(const r of ROWS){const o=r[7];if(!o.coat)continue;
-  registerFantasyAppearance(r[0],Object.assign({theme:o.coat,mane:o.maneCol||r[6]},o.horn?{horn:true}:{}));}
 
  /* the breeding package installs after this one, so its gene table and its wild coats are met at boot
     (G.breeding.WILD_COATS is the very object its taming hook reads) */

@@ -1,0 +1,3293 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "wildmesh-white-western",
+  "status": "anatomical-foundation-functional-and-sampled-visual-review-passed",
+  "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+  "gameSha256": "477bd0fc9c231ab7bbcdd45dc8f7f9002b553f177f4766acbaa18f705ec47608",
+  "originalSourcePreserved": true,
+  "sourceReceiptPreserved": true,
+  "axes": "+Z forward, +Y up",
+  "offset": [
+    0,
+    0.0047147771075021355,
+    -1.6744842760441556
+  ],
+  "riggingMethod": "Original default glTF skin pose baked in world space; original four weights merged by anatomical source joint ancestry. No surface replacement or geometric simplification.",
+  "sourceJointCount": 677,
+  "gameJointCount": 40,
+  "canonicalLeftAxis": "-X",
+  "sourceSideLabelsReversed": true,
+  "canonicalJointSource": [
+    {
+      "joint": "ROOT",
+      "parent": null,
+      "source": null,
+      "position": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "joint": "pelvis",
+      "parent": "ROOT",
+      "source": "pelvis",
+      "position": [
+        0.007946343553357996,
+        1.6137199467812486,
+        -0.47908493089923954
+      ]
+    },
+    {
+      "joint": "spine",
+      "parent": "pelvis",
+      "source": "spine_02",
+      "position": [
+        0.009761794078001979,
+        1.552531581895723,
+        -0.09802175527756707
+      ]
+    },
+    {
+      "joint": "chest",
+      "parent": "spine",
+      "source": "spine_04",
+      "position": [
+        0.0034533967013579093,
+        1.521258167202177,
+        0.23569155506587824
+      ]
+    },
+    {
+      "joint": "neck.lower",
+      "parent": "chest",
+      "source": "neckOff_01",
+      "position": [
+        0.00013293735749632992,
+        1.5125805114613802,
+        0.3270674156912916
+      ]
+    },
+    {
+      "joint": "neck.upper",
+      "parent": "neck.lower",
+      "source": "neck_03",
+      "position": [
+        -0.018708169062647557,
+        1.7981027308442692,
+        0.8105884084650317
+      ]
+    },
+    {
+      "joint": "head",
+      "parent": "neck.upper",
+      "source": "head",
+      "position": [
+        -0.02816898328615304,
+        2.0638211387549976,
+        1.0492839654573536
+      ]
+    },
+    {
+      "joint": "jaw",
+      "parent": "head",
+      "source": "jaw",
+      "position": [
+        -0.030955519282642143,
+        1.9460422266794937,
+        1.0854237284185504
+      ]
+    },
+    {
+      "joint": "ear.L",
+      "parent": "head",
+      "source": "ear_01_r",
+      "position": [
+        -0.10507586897775528,
+        2.1111008228579218,
+        1.112668723128976
+      ]
+    },
+    {
+      "joint": "ear.R",
+      "parent": "head",
+      "source": "ear_01_l",
+      "position": [
+        0.03504957907260247,
+        2.111832674950704,
+        1.1258659995105753
+      ]
+    },
+    {
+      "joint": "tail.1",
+      "parent": "pelvis",
+      "source": "tail_01",
+      "position": [
+        -0.004783960011482908,
+        1.5528539419759912,
+        -0.8943831549584882
+      ]
+    },
+    {
+      "joint": "tail.2",
+      "parent": "tail.1",
+      "source": "tail_04",
+      "position": [
+        -0.0166557085757353,
+        1.2303390536016214,
+        -1.0850154720943184
+      ]
+    },
+    {
+      "joint": "tail.3",
+      "parent": "tail.2",
+      "source": "dyn_tail_06",
+      "position": [
+        -0.014026567194534722,
+        0.8876324838203069,
+        -1.024362791192507
+      ]
+    },
+    {
+      "joint": "tail.4",
+      "parent": "tail.3",
+      "source": "dyn_tail_08",
+      "position": [
+        -0.022833075980170307,
+        0.45924653266638793,
+        -1.025680363305582
+      ]
+    },
+    {
+      "joint": "FL.scapula",
+      "parent": "chest",
+      "source": "clavicle_r",
+      "position": [
+        -0.0747567461338807,
+        1.5932314304077309,
+        0.40035332833504755
+      ]
+    },
+    {
+      "joint": "FL.upperarm",
+      "parent": "FL.scapula",
+      "source": "upperarm_r",
+      "position": [
+        -0.1912228228504213,
+        1.2846164506603879,
+        0.575117827977258
+      ]
+    },
+    {
+      "joint": "FL.forearm",
+      "parent": "FL.upperarm",
+      "source": "lowerarm_r",
+      "position": [
+        -0.15872147003732745,
+        1.0070368454252079,
+        0.40397742228222455
+      ]
+    },
+    {
+      "joint": "FL.cannon",
+      "parent": "FL.forearm",
+      "source": "hand_r",
+      "position": [
+        -0.16136835230528088,
+        0.5597299118043054,
+        0.3754078089606101
+      ]
+    },
+    {
+      "joint": "FL.pastern",
+      "parent": "FL.cannon",
+      "source": "fingers_01_r",
+      "position": [
+        -0.15439335322106074,
+        0.20319671432516834,
+        0.3014318078874969
+      ]
+    },
+    {
+      "joint": "FL.hoof",
+      "parent": "FL.pastern",
+      "source": "fingers_02_r",
+      "position": [
+        -0.1586963604515261,
+        0.09656309351427528,
+        0.36013963075557376
+      ]
+    },
+    {
+      "joint": "FR.scapula",
+      "parent": "chest",
+      "source": "clavicle_l",
+      "position": [
+        0.053998474681152916,
+        1.6039262294891794,
+        0.4060367759533574
+      ]
+    },
+    {
+      "joint": "FR.upperarm",
+      "parent": "FR.scapula",
+      "source": "upperarm_l",
+      "position": [
+        0.13069025987041574,
+        1.297116107325211,
+        0.6043743357063374
+      ]
+    },
+    {
+      "joint": "FR.forearm",
+      "parent": "FR.upperarm",
+      "source": "lowerarm_l",
+      "position": [
+        0.13896976782729825,
+        1.006402563486024,
+        0.45333458088635004
+      ]
+    },
+    {
+      "joint": "FR.cannon",
+      "parent": "FR.forearm",
+      "source": "hand_l",
+      "position": [
+        0.13044967158583035,
+        0.559417302517547,
+        0.485490669061988
+      ]
+    },
+    {
+      "joint": "FR.pastern",
+      "parent": "FR.cannon",
+      "source": "fingers_01_l",
+      "position": [
+        0.11379375085318477,
+        0.197314764180875,
+        0.4502556664486561
+      ]
+    },
+    {
+      "joint": "FR.hoof",
+      "parent": "FR.pastern",
+      "source": "fingers_02_l",
+      "position": [
+        0.10914621566770843,
+        0.0980646750924473,
+        0.5207096050511959
+      ]
+    },
+    {
+      "joint": "HL.thigh",
+      "parent": "pelvis",
+      "source": "upperleg_r",
+      "position": [
+        -0.19615683148319987,
+        1.3840674470771763,
+        -0.7657888710198042
+      ]
+    },
+    {
+      "joint": "HL.shin",
+      "parent": "HL.thigh",
+      "source": "lowerleg_r",
+      "position": [
+        -0.2496663770245078,
+        0.9639496675140752,
+        -0.645133884796693
+      ]
+    },
+    {
+      "joint": "HL.cannon",
+      "parent": "HL.shin",
+      "source": "foot_r",
+      "position": [
+        -0.212316935653342,
+        0.6159620857562415,
+        -0.8067946788166419
+      ]
+    },
+    {
+      "joint": "HL.pastern",
+      "parent": "HL.cannon",
+      "source": "toes_01_r",
+      "position": [
+        -0.24478010932998054,
+        0.19477616786355684,
+        -0.7213193603416118
+      ]
+    },
+    {
+      "joint": "HL.hoof",
+      "parent": "HL.pastern",
+      "source": "toes_02_r",
+      "position": [
+        -0.25791041295793576,
+        0.10312316317419287,
+        -0.6664917517501354
+      ]
+    },
+    {
+      "joint": "HR.thigh",
+      "parent": "pelvis",
+      "source": "upperleg_l",
+      "position": [
+        0.1863372144404503,
+        1.3762356617854956,
+        -0.7763653935327499
+      ]
+    },
+    {
+      "joint": "HR.shin",
+      "parent": "HR.thigh",
+      "source": "lowerleg_l",
+      "position": [
+        0.2428945375898648,
+        0.9478614153320541,
+        -0.6914175300951193
+      ]
+    },
+    {
+      "joint": "HR.cannon",
+      "parent": "HR.shin",
+      "source": "foot_l",
+      "position": [
+        0.18569754535856575,
+        0.6324522714888349,
+        -0.9055907740441227
+      ]
+    },
+    {
+      "joint": "HR.pastern",
+      "parent": "HR.cannon",
+      "source": "toes_01_l",
+      "position": [
+        0.21826617058995934,
+        0.20275865957023587,
+        -0.9133200653816003
+      ]
+    },
+    {
+      "joint": "HR.hoof",
+      "parent": "HR.pastern",
+      "source": "toes_02_l",
+      "position": [
+        0.22503484522840372,
+        0.10211650494405235,
+        -0.8758471060492812
+      ]
+    },
+    {
+      "joint": "FL.IK",
+      "parent": "ROOT",
+      "source": null,
+      "position": [
+        -0.15439335322106074,
+        0.20319671432516834,
+        0.3014318078874969
+      ]
+    },
+    {
+      "joint": "FR.IK",
+      "parent": "ROOT",
+      "source": null,
+      "position": [
+        0.11379375085318477,
+        0.197314764180875,
+        0.4502556664486561
+      ]
+    },
+    {
+      "joint": "HL.IK",
+      "parent": "ROOT",
+      "source": null,
+      "position": [
+        -0.24478010932998054,
+        0.19477616786355684,
+        -0.7213193603416118
+      ]
+    },
+    {
+      "joint": "HR.IK",
+      "parent": "ROOT",
+      "source": null,
+      "position": [
+        0.21826617058995934,
+        0.20275865957023587,
+        -0.9133200653816003
+      ]
+    }
+  ],
+  "sourceJointOwnership": [
+    {
+      "source": "_rootJoint",
+      "target": "ROOT"
+    },
+    {
+      "source": "root_07",
+      "target": "ROOT"
+    },
+    {
+      "source": "pelvis_08",
+      "target": "pelvis"
+    },
+    {
+      "source": "spine_01_09",
+      "target": "spine"
+    },
+    {
+      "source": "spine_02_010",
+      "target": "spine"
+    },
+    {
+      "source": "spine_03_011",
+      "target": "spine"
+    },
+    {
+      "source": "spine_04_012",
+      "target": "chest"
+    },
+    {
+      "source": "neckOff_01_013",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_01_014",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_02_015",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_03_016",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_04_017",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_05_018",
+      "target": "neck.upper"
+    },
+    {
+      "source": "head_019",
+      "target": "head"
+    },
+    {
+      "source": "jaw_020",
+      "target": "jaw"
+    },
+    {
+      "source": "jaw_end_021",
+      "target": "jaw"
+    },
+    {
+      "source": "jaw_end_end_022",
+      "target": "jaw"
+    },
+    {
+      "source": "jaw_end_end_end_023",
+      "target": "jaw"
+    },
+    {
+      "source": "jaw_end_end_end_end_0549",
+      "target": "jaw"
+    },
+    {
+      "source": "bottomlip_024",
+      "target": "jaw"
+    },
+    {
+      "source": "bottomlip_end_025",
+      "target": "jaw"
+    },
+    {
+      "source": "bottomlip_end_end_026",
+      "target": "jaw"
+    },
+    {
+      "source": "bottomlip_end_end_end_0550",
+      "target": "jaw"
+    },
+    {
+      "source": "head_end_027",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_right_01_028",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_right_02_029",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_right_03_030",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_right_03_end_031",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_right_03_end_end_032",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_right_03_end_end_end_0551",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_left_01_033",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_left_02_034",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_left_03_035",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_left_03_end_036",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_left_03_end_end_037",
+      "target": "head"
+    },
+    {
+      "source": "dyn_head_end_left_03_end_end_end_0552",
+      "target": "head"
+    },
+    {
+      "source": "head_correctiveRoot_038",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_00_039",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_00_end_040",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_00_end_end_041",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_00_end_end_end_0553",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_01_r_042",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_01_r_end_043",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_01_r_end_end_044",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_01_r_end_end_end_0554",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_02_045",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_02_end_046",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_02_end_end_047",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_02_end_end_end_0555",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_01_l_048",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_01_l_end_049",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_01_l_end_end_050",
+      "target": "head"
+    },
+    {
+      "source": "head_middleslider_01_l_end_end_end_0556",
+      "target": "head"
+    },
+    {
+      "source": "ear_01_l_051",
+      "target": "ear.R"
+    },
+    {
+      "source": "ear_02_l_052",
+      "target": "ear.R"
+    },
+    {
+      "source": "ear_02_l_end_053",
+      "target": "ear.R"
+    },
+    {
+      "source": "ear_02_l_end_end_054",
+      "target": "ear.R"
+    },
+    {
+      "source": "ear_02_l_end_end_end_0557",
+      "target": "ear.R"
+    },
+    {
+      "source": "ear_01_r_055",
+      "target": "ear.L"
+    },
+    {
+      "source": "ear_02_r_056",
+      "target": "ear.L"
+    },
+    {
+      "source": "ear_02_r_end_057",
+      "target": "ear.L"
+    },
+    {
+      "source": "ear_02_r_end_end_058",
+      "target": "ear.L"
+    },
+    {
+      "source": "ear_02_r_end_end_end_0558",
+      "target": "ear.L"
+    },
+    {
+      "source": "eye_l_059",
+      "target": "head"
+    },
+    {
+      "source": "eyeend_l_060",
+      "target": "head"
+    },
+    {
+      "source": "eyeend_l_end_061",
+      "target": "head"
+    },
+    {
+      "source": "eyeend_l_end_end_062",
+      "target": "head"
+    },
+    {
+      "source": "eyeend_l_end_end_end_0559",
+      "target": "head"
+    },
+    {
+      "source": "eye_r_063",
+      "target": "head"
+    },
+    {
+      "source": "eyeend_r_064",
+      "target": "head"
+    },
+    {
+      "source": "eyeend_r_end_065",
+      "target": "head"
+    },
+    {
+      "source": "eyeend_r_end_end_066",
+      "target": "head"
+    },
+    {
+      "source": "eyeend_r_end_end_end_0560",
+      "target": "head"
+    },
+    {
+      "source": "reins_04_l_067",
+      "target": "head"
+    },
+    {
+      "source": "reins_04_l_end_068",
+      "target": "head"
+    },
+    {
+      "source": "reins_04_l_end_end_069",
+      "target": "head"
+    },
+    {
+      "source": "reins_04_l_end_end_end_0540",
+      "target": "head"
+    },
+    {
+      "source": "reins_04_r_070",
+      "target": "head"
+    },
+    {
+      "source": "reins_04_r_end_071",
+      "target": "head"
+    },
+    {
+      "source": "reins_04_r_end_end_072",
+      "target": "head"
+    },
+    {
+      "source": "reins_04_r_end_end_end_0541",
+      "target": "head"
+    },
+    {
+      "source": "dyn_new_head_neck_01_073",
+      "target": "head"
+    },
+    {
+      "source": "dyn_new_head_neck_02_074",
+      "target": "head"
+    },
+    {
+      "source": "dyn_new_head_neck_03_075",
+      "target": "head"
+    },
+    {
+      "source": "dyn_new_head_neck_03_end_076",
+      "target": "head"
+    },
+    {
+      "source": "dyn_new_head_neck_03_end_end_077",
+      "target": "head"
+    },
+    {
+      "source": "dyn_new_head_neck_03_end_end_end_0563",
+      "target": "head"
+    },
+    {
+      "source": "innernostril_l_078",
+      "target": "head"
+    },
+    {
+      "source": "outernostril_l_079",
+      "target": "head"
+    },
+    {
+      "source": "outernostril_l_end_080",
+      "target": "head"
+    },
+    {
+      "source": "outernostril_l_end_end_081",
+      "target": "head"
+    },
+    {
+      "source": "outernostril_l_end_end_end_0564",
+      "target": "head"
+    },
+    {
+      "source": "innernostril_r_082",
+      "target": "head"
+    },
+    {
+      "source": "outernostril_r_083",
+      "target": "head"
+    },
+    {
+      "source": "outernostril_r_end_084",
+      "target": "head"
+    },
+    {
+      "source": "outernostril_r_end_end_085",
+      "target": "head"
+    },
+    {
+      "source": "outernostril_r_end_end_end_0565",
+      "target": "head"
+    },
+    {
+      "source": "uppereyelid_l_086",
+      "target": "head"
+    },
+    {
+      "source": "uppereyelid_l_end_087",
+      "target": "head"
+    },
+    {
+      "source": "uppereyelid_l_end_end_088",
+      "target": "head"
+    },
+    {
+      "source": "uppereyelid_l_end_end_end_0566",
+      "target": "head"
+    },
+    {
+      "source": "lowereyelid_l_089",
+      "target": "head"
+    },
+    {
+      "source": "lowereyelid_l_end_090",
+      "target": "head"
+    },
+    {
+      "source": "lowereyelid_l_end_end_091",
+      "target": "head"
+    },
+    {
+      "source": "lowereyelid_l_end_end_end_0567",
+      "target": "head"
+    },
+    {
+      "source": "uppereyelid_r_092",
+      "target": "head"
+    },
+    {
+      "source": "uppereyelid_r_end_093",
+      "target": "head"
+    },
+    {
+      "source": "uppereyelid_r_end_end_094",
+      "target": "head"
+    },
+    {
+      "source": "uppereyelid_r_end_end_end_0568",
+      "target": "head"
+    },
+    {
+      "source": "lowereyelid_r_095",
+      "target": "head"
+    },
+    {
+      "source": "lowereyelid_r_end_096",
+      "target": "head"
+    },
+    {
+      "source": "lowereyelid_r_end_end_097",
+      "target": "head"
+    },
+    {
+      "source": "lowereyelid_r_end_end_end_0569",
+      "target": "head"
+    },
+    {
+      "source": "mouthcorner_r_098",
+      "target": "head"
+    },
+    {
+      "source": "mouthcorner_r_end_099",
+      "target": "head"
+    },
+    {
+      "source": "mouthcorner_r_end_end_0100",
+      "target": "head"
+    },
+    {
+      "source": "mouthcorner_r_end_end_end_0570",
+      "target": "head"
+    },
+    {
+      "source": "mouthcorner_l_0101",
+      "target": "head"
+    },
+    {
+      "source": "mouthcorner_l_end_0102",
+      "target": "head"
+    },
+    {
+      "source": "mouthcorner_l_end_end_0103",
+      "target": "head"
+    },
+    {
+      "source": "mouthcorner_l_end_end_end_0571",
+      "target": "head"
+    },
+    {
+      "source": "upperlip_0104",
+      "target": "head"
+    },
+    {
+      "source": "upperlip_end_0105",
+      "target": "head"
+    },
+    {
+      "source": "upperlip_end_end_0106",
+      "target": "head"
+    },
+    {
+      "source": "upperlip_end_end_end_0572",
+      "target": "head"
+    },
+    {
+      "source": "dyn_new_neck_05_01_0107",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_05_02_0108",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_05_03_0109",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_05_03_end_0110",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_05_03_end_end_0111",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_05_03_end_end_end_0573",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_03_l_0112",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_03_l_end_0113",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_03_l_end_end_0114",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_03_l_end_end_end_0574",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_03_r_0115",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_03_r_end_0116",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_03_r_end_end_0117",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_03_r_end_end_end_0575",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_041_01_0118",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_041_02_0119",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_041_03_0120",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_041_04_0121",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_041_04_end_0122",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_041_04_end_end_0123",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_041_04_end_end_end_0576",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_04_middleslider_01_0124",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_04_middleslider_01_end_0125",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_04_middleslider_01_end_end_0126",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_04_middleslider_01_end_end_end_0577",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_04_01_0127",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_04_02_0128",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_04_03_0129",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_04_04_0130",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_04_04_end_0131",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_04_04_end_end_0132",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_04_04_end_end_end_0578",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_rivet_neck_04_01_0133",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_rivet_neck_04_02_0134",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_rivet_neck_04_03_0135",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_rivet_neck_04_04_0136",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_rivet_neck_04_04_end_0137",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_rivet_neck_04_04_end_end_0138",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_rivet_neck_04_04_end_end_end_0579",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_03_middleslider_00_0139",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_03_middleslider_00_end_0140",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_03_middleslider_00_end_end_0141",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_03_middleslider_00_end_end_end_0580",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_03_middleslider_01_0142",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_03_middleslider_01_end_0143",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_03_middleslider_01_end_end_0144",
+      "target": "neck.upper"
+    },
+    {
+      "source": "neck_03_middleslider_01_end_end_end_0561",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_02_l_0145",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_02_l_end_0146",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_02_l_end_end_0147",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_02_l_end_end_end_0562",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_02_r_0148",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_02_r_end_0149",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_02_r_end_end_0150",
+      "target": "neck.upper"
+    },
+    {
+      "source": "reins_02_r_end_end_end_0583",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_03_01_0151",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_03_02_0152",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_03_03_0153",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_03_04_0154",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_03_04_end_0155",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_03_04_end_end_0156",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_03_04_end_end_end_0584",
+      "target": "neck.upper"
+    },
+    {
+      "source": "dyn_new_neck_02_01_0157",
+      "target": "neck.lower"
+    },
+    {
+      "source": "dyn_new_neck_02_02_0158",
+      "target": "neck.lower"
+    },
+    {
+      "source": "dyn_new_neck_02_03_0159",
+      "target": "neck.lower"
+    },
+    {
+      "source": "dyn_new_neck_02_04_0160",
+      "target": "neck.lower"
+    },
+    {
+      "source": "dyn_new_neck_02_04_end_0161",
+      "target": "neck.lower"
+    },
+    {
+      "source": "dyn_new_neck_02_04_end_end_0162",
+      "target": "neck.lower"
+    },
+    {
+      "source": "dyn_new_neck_02_04_end_end_end_0585",
+      "target": "neck.lower"
+    },
+    {
+      "source": "reins_01_outer_r_0163",
+      "target": "neck.lower"
+    },
+    {
+      "source": "reins_01_outer_r_end_0164",
+      "target": "neck.lower"
+    },
+    {
+      "source": "reins_01_outer_r_end_end_0165",
+      "target": "neck.lower"
+    },
+    {
+      "source": "reins_01_outer_r_end_end_end_0586",
+      "target": "neck.lower"
+    },
+    {
+      "source": "reins_01_outer_l_0167",
+      "target": "neck.lower"
+    },
+    {
+      "source": "reins_01_outer_l_end_0168",
+      "target": "neck.lower"
+    },
+    {
+      "source": "reins_01_outer_l_end_end_0169",
+      "target": "neck.lower"
+    },
+    {
+      "source": "reins_01_outer_l_end_end_end_0587",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_01_middleslider_00_0170",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_01_middleslider_01_0171",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_01_middleslider_01_end_0172",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_01_middleslider_01_end_end_0173",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_01_middleslider_01_end_end_end_0588",
+      "target": "neck.lower"
+    },
+    {
+      "source": "dynamic_sim_space_0174",
+      "target": "neck.lower"
+    },
+    {
+      "source": "dynamic_sim_space_end_0175",
+      "target": "neck.lower"
+    },
+    {
+      "source": "dynamic_sim_space_end_end_0176",
+      "target": "neck.lower"
+    },
+    {
+      "source": "dynamic_sim_space_end_end_end_0589",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_02_middleslider_02_0177",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_02_middleslider_02_end_0178",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_02_middleslider_02_end_end_0179",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_02_middleslider_02_end_end_end_0590",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neck_correctiveRoot_0180",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_01_l_0181",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_01_l_end_0182",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_01_l_end_end_0183",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_01_l_end_end_end_0591",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_01_r_0184",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_01_r_end_0185",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_01_r_end_end_0186",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_01_r_end_end_end_0592",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_00_0166",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_00_end_0188",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_00_end_end_0189",
+      "target": "neck.lower"
+    },
+    {
+      "source": "neckOff_middleslider_00_end_end_end_0593",
+      "target": "neck.lower"
+    },
+    {
+      "source": "chest_correctiveRoot_0190",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_00_0191",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_00_end_0192",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_00_end_end_0193",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_00_end_end_end_0594",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_01_r_0194",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_01_r_end_0195",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_01_r_end_end_0196",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_01_r_end_end_end_0595",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_02_0197",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_02_end_0198",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_02_end_end_0199",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_02_end_end_end_0596",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_01_l_0200",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_01_l_end_0201",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_01_l_end_end_0202",
+      "target": "chest"
+    },
+    {
+      "source": "chestiddleslider_01_l_end_end_end_0597",
+      "target": "chest"
+    },
+    {
+      "source": "clavicle_l_0203",
+      "target": "FR.scapula"
+    },
+    {
+      "source": "upperarm_l_0204",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "lowerarm_l_0205",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "hand_l_0206",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "fingers_01_l_0187",
+      "target": "FR.pastern"
+    },
+    {
+      "source": "fingers_02_l_0208",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_end_l_0209",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_end_l_end_0210",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_end_l_end_end_0211",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_end_l_end_end_end_0598",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_02_correctiveRoot_l_0212",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_00_l_0213",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_00_out_l_0214",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_00_out_l_end_0215",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_00_out_l_end_end_0216",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_00_out_l_end_end_end_0599",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_02_l_0217",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_02_out_l_0218",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_02_out_l_end_0219",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_02_out_l_end_end_0220",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_02_out_l_end_end_end_0600",
+      "target": "FR.hoof"
+    },
+    {
+      "source": "wrist_middleslider_01_l_0221",
+      "target": "FR.pastern"
+    },
+    {
+      "source": "wrist_middleslider_01_out_l_0222",
+      "target": "FR.pastern"
+    },
+    {
+      "source": "wrist_middleslider_01_out_l_end_0223",
+      "target": "FR.pastern"
+    },
+    {
+      "source": "wrist_middleslider_01_out_l_end_end_0224",
+      "target": "FR.pastern"
+    },
+    {
+      "source": "wrist_middleslider_01_out_l_end_end_end_0581",
+      "target": "FR.pastern"
+    },
+    {
+      "source": "wrist_middleslider_00_l_0225",
+      "target": "FR.pastern"
+    },
+    {
+      "source": "wrist_middleslider_00_out_l_0226",
+      "target": "FR.pastern"
+    },
+    {
+      "source": "wrist_middleslider_00_out_l_end_0207",
+      "target": "FR.pastern"
+    },
+    {
+      "source": "wrist_middleslider_00_out_l_end_end_0228",
+      "target": "FR.pastern"
+    },
+    {
+      "source": "wrist_middleslider_00_out_l_end_end_end_0582",
+      "target": "FR.pastern"
+    },
+    {
+      "source": "elbow_middleslider_l_0229",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "elbow_middleslider_00_l_0230",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "elbow_middleslider_00_out_l_0231",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "elbow_middleslider_00_out_l_end_0232",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "elbow_middleslider_00_out_l_end_end_0233",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "elbow_middleslider_00_out_l_end_end_end_0603",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "elbow_middleslider_01_l_0234",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "elbow_middleslider_01_out_l_0235",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "elbow_middleslider_01_out_l_end_0236",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "elbow_middleslider_01_out_l_end_end_0237",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "elbow_middleslider_01_out_l_end_end_end_0604",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "hand_twist_l_0238",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "hand_twist_l_end_0239",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "hand_twist_l_end_end_0240",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "hand_twist_l_end_end_end_0605",
+      "target": "FR.cannon"
+    },
+    {
+      "source": "lowerarm_correctiveRoot_l_0241",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_00_l_0242",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_00_out_l_0243",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_00_out_l_end_0244",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_00_out_l_end_end_0245",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_00_out_l_end_end_end_0606",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_01_l_0246",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_01_out_l_0227",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_01_out_l_end_0248",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_01_out_l_end_end_0249",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_01_out_l_end_end_end_0607",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_twist_01_l_0250",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_twist_01_l_end_0251",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_twist_01_l_end_end_0252",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_twist_01_l_end_end_end_0608",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_twist_02_l_0253",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_twist_02_l_end_0255",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_twist_02_l_end_end_0256",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "lowerarm_twist_02_l_end_end_end_0609",
+      "target": "FR.forearm"
+    },
+    {
+      "source": "upperarm_twist_01_l_0257",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_twist_01_l_end_0258",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_twist_01_l_end_end_0259",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_twist_01_l_end_end_end_0610",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_correctiveRoot_l_0260",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_00_l_0261",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_00_out_l_0262",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_00_out_l_end_0263",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_00_out_l_end_end_0264",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_00_out_l_end_end_end_0611",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_01_l_0265",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_01_out_l_0266",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_01_out_l_end_0267",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_01_out_l_end_end_0247",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_01_out_l_end_end_end_0612",
+      "target": "FR.upperarm"
+    },
+    {
+      "source": "clavicle_r_0269",
+      "target": "FL.scapula"
+    },
+    {
+      "source": "upperarm_r_0270",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "lowerarm_r_0271",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "hand_r_0272",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "fingers_01_r_0273",
+      "target": "FL.pastern"
+    },
+    {
+      "source": "fingers_02_r_0274",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_end_r_0275",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_end_r_end_0276",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_end_r_end_end_0277",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_end_r_end_end_end_0613",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_02_correctiveRoot_r_0278",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_00_r_0279",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_00_out_r_0280",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_00_out_r_end_0281",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_00_out_r_end_end_0282",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_00_out_r_end_end_end_0614",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_02_r_0283",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_02_out_r_0284",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_02_out_r_end_0285",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_02_out_r_end_end_0286",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "fingers_02_middleslider_02_out_r_end_end_end_0615",
+      "target": "FL.hoof"
+    },
+    {
+      "source": "wrist_middleslider_01_r_0287",
+      "target": "FL.pastern"
+    },
+    {
+      "source": "wrist_middleslider_01_out_r_0268",
+      "target": "FL.pastern"
+    },
+    {
+      "source": "wrist_middleslider_01_out_r_end_0289",
+      "target": "FL.pastern"
+    },
+    {
+      "source": "wrist_middleslider_01_out_r_end_end_0290",
+      "target": "FL.pastern"
+    },
+    {
+      "source": "wrist_middleslider_01_out_r_end_end_end_0616",
+      "target": "FL.pastern"
+    },
+    {
+      "source": "wrist_middleslider_00_r_0291",
+      "target": "FL.pastern"
+    },
+    {
+      "source": "wrist_middleslider_00_out_r_0292",
+      "target": "FL.pastern"
+    },
+    {
+      "source": "wrist_middleslider_00_out_r_end_0293",
+      "target": "FL.pastern"
+    },
+    {
+      "source": "wrist_middleslider_00_out_r_end_end_0294",
+      "target": "FL.pastern"
+    },
+    {
+      "source": "wrist_middleslider_00_out_r_end_end_end_0617",
+      "target": "FL.pastern"
+    },
+    {
+      "source": "elbow_middleslider_r_0295",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "elbow_middleslider_00_r_0296",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "elbow_middleslider_00_out_r_0297",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "elbow_middleslider_00_out_r_end_0298",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "elbow_middleslider_00_out_r_end_end_0299",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "elbow_middleslider_00_out_r_end_end_end_0618",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "elbow_middleslider_01_r_0300",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "elbow_middleslider_01_out_r_0301",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "elbow_middleslider_01_out_r_end_0302",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "elbow_middleslider_01_out_r_end_end_0303",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "elbow_middleslider_01_out_r_end_end_end_0619",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "hand_twist_r_0304",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "hand_twist_r_end_0305",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "hand_twist_r_end_end_0306",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "hand_twist_r_end_end_end_0620",
+      "target": "FL.cannon"
+    },
+    {
+      "source": "lowerarm_correctiveRoot_r_0307",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_00_r_0288",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_00_out_r_0309",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_00_out_r_end_0310",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_00_out_r_end_end_0311",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_00_out_r_end_end_end_0601",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_01_r_0312",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_01_out_r_0313",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_01_out_r_end_0314",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_01_out_r_end_end_0315",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_middleslider_01_out_r_end_end_end_0602",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_twist_01_r_0316",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_twist_01_r_end_0317",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_twist_01_r_end_end_0318",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_twist_01_r_end_end_end_0623",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_twist_02_r_0319",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_twist_02_r_end_0320",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_twist_02_r_end_end_0321",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "lowerarm_twist_02_r_end_end_end_0624",
+      "target": "FL.forearm"
+    },
+    {
+      "source": "upperarm_twist_01_r_0322",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_twist_01_r_end_0323",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_twist_01_r_end_end_0324",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_twist_01_r_end_end_end_0625",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_correctiveRoot_r_0325",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_00_r_0326",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_00_out_r_0327",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_00_out_r_end_0308",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_00_out_r_end_end_0329",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_00_out_r_end_end_end_0626",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_01_r_0330",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_01_out_r_0331",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_01_out_r_end_00",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_01_out_r_end_end_0332",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "upperarm_middleslider_01_out_r_end_end_end_0627",
+      "target": "FL.upperarm"
+    },
+    {
+      "source": "saddle_0333",
+      "target": "spine"
+    },
+    {
+      "source": "stirrup_01_l_0334",
+      "target": "spine"
+    },
+    {
+      "source": "stirrup_02_l_0335",
+      "target": "spine"
+    },
+    {
+      "source": "stirrup_02_l_end_0336",
+      "target": "spine"
+    },
+    {
+      "source": "stirrup_02_l_end_end_0337",
+      "target": "spine"
+    },
+    {
+      "source": "stirrup_02_l_end_end_end_0628",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_l_0338",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_inner_l_0339",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_inner_l_end_0340",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_inner_l_end_end_0341",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_inner_l_end_end_end_0629",
+      "target": "spine"
+    },
+    {
+      "source": "stirrup_01_r_0342",
+      "target": "spine"
+    },
+    {
+      "source": "stirrup_02_r_0343",
+      "target": "spine"
+    },
+    {
+      "source": "stirrup_02_r_end_0344",
+      "target": "spine"
+    },
+    {
+      "source": "stirrup_02_r_end_end_0345",
+      "target": "spine"
+    },
+    {
+      "source": "stirrup_02_r_end_end_end_0630",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_r_0346",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_inner_r_0328",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_inner_r_end_0348",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_inner_r_end_end_0349",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_inner_r_end_end_end_0631",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_posFix_r_0350",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_posFix_r_end_01",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_posFix_r_end_end_02",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_posFix_r_end_end_end_0632",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_posFix_l_03",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_posFix_l_end_04",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_posFix_l_end_end_05",
+      "target": "spine"
+    },
+    {
+      "source": "reins_01_posFix_l_end_end_end_0633",
+      "target": "spine"
+    },
+    {
+      "source": "mountpoint_01_06",
+      "target": "spine"
+    },
+    {
+      "source": "mountpoint_01_end_0351",
+      "target": "spine"
+    },
+    {
+      "source": "mountpoint_01_end_end_0352",
+      "target": "spine"
+    },
+    {
+      "source": "mountpoint_01_end_end_end_0634",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_correctiveRoot_0353",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_00_0354",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_00_end_0355",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_00_end_end_0356",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_00_end_end_end_0635",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_02_0357",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_02_end_0358",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_02_end_end_0359",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_02_end_end_end_0636",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_01_l_0360",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_01_l_end_0347",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_01_l_end_end_0362",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_01_l_end_end_end_0637",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_01_r_0363",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_01_r_end_0364",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_01_r_end_end_0365",
+      "target": "spine"
+    },
+    {
+      "source": "spine_01_middleslider_01_r_end_end_end_0638",
+      "target": "spine"
+    },
+    {
+      "source": "hips_0366",
+      "target": "pelvis"
+    },
+    {
+      "source": "tail_01_0367",
+      "target": "tail.1"
+    },
+    {
+      "source": "tail_02_0368",
+      "target": "tail.1"
+    },
+    {
+      "source": "tail_03_0369",
+      "target": "tail.2"
+    },
+    {
+      "source": "tail_04_0370",
+      "target": "tail.2"
+    },
+    {
+      "source": "tail_05_0371",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_tail_06_0372",
+      "target": "tail.3"
+    },
+    {
+      "source": "dyn_tail_07_0373",
+      "target": "tail.3"
+    },
+    {
+      "source": "dyn_tail_08_0374",
+      "target": "tail.4"
+    },
+    {
+      "source": "dyn_tail_08_end_0375",
+      "target": "tail.4"
+    },
+    {
+      "source": "dyn_tail_08_end_end_0376",
+      "target": "tail.4"
+    },
+    {
+      "source": "dyn_tail_08_end_end_end_0639",
+      "target": "tail.4"
+    },
+    {
+      "source": "dyn_bounce_tail_04_left_0377",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_05_left_0378",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_06_left_0379",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_07_left_0380",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_left_0361",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_left_end_0382",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_left_end_end_0383",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_left_end_end_end_0640",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_04_right_0384",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_05_right_0385",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_06_right_0386",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_07_right_0387",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_right_0388",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_right_end_0389",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_right_end_end_0390",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_right_end_end_end_0621",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_04_front_0391",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_05_front_0392",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_06_front_0393",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_07_front_0394",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_front_0395",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_front_end_0396",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_front_end_end_0397",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_front_end_end_end_0622",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_04_back_0398",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_05_back_0399",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_06_back_0400",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_07_back_0381",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_back_0402",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_back_end_0403",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_back_end_end_0404",
+      "target": "tail.2"
+    },
+    {
+      "source": "dyn_bounce_tail_08_back_end_end_end_0643",
+      "target": "tail.2"
+    },
+    {
+      "source": "upperleg_l_0405",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "lowerleg_l_0406",
+      "target": "HR.shin"
+    },
+    {
+      "source": "foot_l_0407",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "toes_01_l_0408",
+      "target": "HR.pastern"
+    },
+    {
+      "source": "toes_02_l_0409",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_end_l_0410",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_end_l_end_0411",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_end_l_end_end_0412",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_end_l_end_end_end_0644",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_02_correctiveRoot_l_0413",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_00_l_0414",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_00_out_l_0415",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_00_out_l_end_0416",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_00_out_l_end_end_0417",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_00_out_l_end_end_end_0645",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_02_l_0418",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_02_out_l_0419",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_02_out_l_end_0420",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_02_out_l_end_end_0401",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_02_out_l_end_end_end_0646",
+      "target": "HR.hoof"
+    },
+    {
+      "source": "toes_01_middleslider_00_l_0422",
+      "target": "HR.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_00_out_l_0423",
+      "target": "HR.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_00_out_l_end_0424",
+      "target": "HR.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_00_out_l_end_end_0425",
+      "target": "HR.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_00_out_l_end_end_end_0647",
+      "target": "HR.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_01_l_0426",
+      "target": "HR.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_01_out_l_0427",
+      "target": "HR.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_01_out_l_end_0428",
+      "target": "HR.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_01_out_l_end_end_0429",
+      "target": "HR.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_01_out_l_end_end_end_0648",
+      "target": "HR.pastern"
+    },
+    {
+      "source": "ankle_middleslider_l_0430",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "ankle_middleslider_00_l_0431",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "ankle_middleslider_00_out_l_0432",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "ankle_middleslider_00_out_l_end_0433",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "ankle_middleslider_00_out_l_end_end_0434",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "ankle_middleslider_00_out_l_end_end_end_0649",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "ankle_middleslider_01_l_0435",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "ankle_middleslider_01_out_l_0436",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "ankle_middleslider_01_out_l_end_0437",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "ankle_middleslider_01_out_l_end_end_0438",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "ankle_middleslider_01_out_l_end_end_end_0650",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "foot_twist_l_0439",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "foot_twist_l_end_0440",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "foot_twist_l_end_end_0421",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "foot_twist_l_end_end_end_0651",
+      "target": "HR.cannon"
+    },
+    {
+      "source": "lowerleg_twist_l_0442",
+      "target": "HR.shin"
+    },
+    {
+      "source": "lowerleg_twist_l_end_0443",
+      "target": "HR.shin"
+    },
+    {
+      "source": "lowerleg_twist_l_end_end_0444",
+      "target": "HR.shin"
+    },
+    {
+      "source": "lowerleg_twist_l_end_end_end_0652",
+      "target": "HR.shin"
+    },
+    {
+      "source": "knee_middleslider_l_0445",
+      "target": "HR.shin"
+    },
+    {
+      "source": "knee_middleslider_01_l_0446",
+      "target": "HR.shin"
+    },
+    {
+      "source": "knee_middleslider_01_out_l_0447",
+      "target": "HR.shin"
+    },
+    {
+      "source": "knee_middleslider_01_out_l_end_0448",
+      "target": "HR.shin"
+    },
+    {
+      "source": "knee_middleslider_01_out_l_end_end_0449",
+      "target": "HR.shin"
+    },
+    {
+      "source": "knee_middleslider_01_out_l_end_end_end_0653",
+      "target": "HR.shin"
+    },
+    {
+      "source": "knee_middleslider_00_l_0450",
+      "target": "HR.shin"
+    },
+    {
+      "source": "knee_middleslider_00_out_l_0451",
+      "target": "HR.shin"
+    },
+    {
+      "source": "knee_middleslider_00_out_l_end_0452",
+      "target": "HR.shin"
+    },
+    {
+      "source": "knee_middleslider_00_out_l_end_end_0453",
+      "target": "HR.shin"
+    },
+    {
+      "source": "knee_middleslider_00_out_l_end_end_end_0654",
+      "target": "HR.shin"
+    },
+    {
+      "source": "upperleg_twist_l_0454",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "upperleg_twist_01_l_0455",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "upperleg_twist_01_l_end_0456",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "upperleg_twist_01_l_end_end_0457",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "upperleg_twist_01_l_end_end_end_0655",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "upperleg_twist_00_l_0458",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "upperleg_twist_00_l_end_0459",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "upperleg_twist_00_l_end_end_0460",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "upperleg_twist_00_l_end_end_end_0656",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_correctiveRoot_l_0441",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_00_l_0462",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_00_out_l_0463",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_00_out_l_end_0464",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_00_out_l_end_end_0465",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_00_out_l_end_end_end_0657",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_01_l_0466",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_01_out_l_0467",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_01_out_l_end_0468",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_01_out_l_end_end_0469",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_01_out_l_end_end_end_0658",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_02_l_0470",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_02_out_l_0471",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_02_out_l_end_0472",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_02_out_l_end_end_0473",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "hip_middleslider_02_out_l_end_end_end_0659",
+      "target": "HR.thigh"
+    },
+    {
+      "source": "upperleg_r_0474",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "lowerleg_r_0475",
+      "target": "HL.shin"
+    },
+    {
+      "source": "foot_r_0476",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "toes_01_r_0477",
+      "target": "HL.pastern"
+    },
+    {
+      "source": "toes_02_r_0478",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_end_r_0479",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_end_r_end_0480",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_end_r_end_end_0461",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_end_r_end_end_end_0660",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_02_correctiveRoot_r_0482",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_00_r_0483",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_00_out_r_0484",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_00_out_r_end_0485",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_00_out_r_end_end_0486",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_00_out_r_end_end_end_0641",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_02_r_0487",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_02_out_r_0488",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_02_out_r_end_0489",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_02_out_r_end_end_0490",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_02_middleslider_02_out_r_end_end_end_0642",
+      "target": "HL.hoof"
+    },
+    {
+      "source": "toes_01_middleslider_00_r_0491",
+      "target": "HL.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_00_out_r_0492",
+      "target": "HL.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_00_out_r_end_0493",
+      "target": "HL.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_00_out_r_end_end_0494",
+      "target": "HL.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_00_out_r_end_end_end_0661",
+      "target": "HL.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_01_r_0495",
+      "target": "HL.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_01_out_r_0496",
+      "target": "HL.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_01_out_r_end_0497",
+      "target": "HL.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_01_out_r_end_end_0498",
+      "target": "HL.pastern"
+    },
+    {
+      "source": "toes_01_middleslider_01_out_r_end_end_end_0662",
+      "target": "HL.pastern"
+    },
+    {
+      "source": "ankle_middleslider_r_0499",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "ankle_middleslider_00_r_0500",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "ankle_middleslider_00_out_r_0481",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "ankle_middleslider_00_out_r_end_0502",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "ankle_middleslider_00_out_r_end_end_0503",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "ankle_middleslider_00_out_r_end_end_end_0663",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "ankle_middleslider_01_r_0254",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "ankle_middleslider_01_out_r_0504",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "ankle_middleslider_01_out_r_end_0505",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "ankle_middleslider_01_out_r_end_end_0506",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "ankle_middleslider_01_out_r_end_end_end_0664",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "foot_twist_r_0507",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "foot_twist_r_end_0508",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "foot_twist_r_end_end_0509",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "foot_twist_r_end_end_end_0665",
+      "target": "HL.cannon"
+    },
+    {
+      "source": "lowerleg_twist_r_0510",
+      "target": "HL.shin"
+    },
+    {
+      "source": "lowerleg_twist_r_end_0511",
+      "target": "HL.shin"
+    },
+    {
+      "source": "lowerleg_twist_r_end_end_0512",
+      "target": "HL.shin"
+    },
+    {
+      "source": "lowerleg_twist_r_end_end_end_0666",
+      "target": "HL.shin"
+    },
+    {
+      "source": "knee_middleslider_r_0513",
+      "target": "HL.shin"
+    },
+    {
+      "source": "knee_middleslider_01_r_0514",
+      "target": "HL.shin"
+    },
+    {
+      "source": "knee_middleslider_01_out_r_0515",
+      "target": "HL.shin"
+    },
+    {
+      "source": "knee_middleslider_01_out_r_end_0516",
+      "target": "HL.shin"
+    },
+    {
+      "source": "knee_middleslider_01_out_r_end_end_0517",
+      "target": "HL.shin"
+    },
+    {
+      "source": "knee_middleslider_01_out_r_end_end_end_0667",
+      "target": "HL.shin"
+    },
+    {
+      "source": "knee_middleslider_00_r_0518",
+      "target": "HL.shin"
+    },
+    {
+      "source": "knee_middleslider_00_out_r_0519",
+      "target": "HL.shin"
+    },
+    {
+      "source": "knee_middleslider_00_out_r_end_0501",
+      "target": "HL.shin"
+    },
+    {
+      "source": "knee_middleslider_00_out_r_end_end_0521",
+      "target": "HL.shin"
+    },
+    {
+      "source": "knee_middleslider_00_out_r_end_end_end_0668",
+      "target": "HL.shin"
+    },
+    {
+      "source": "upperleg_twist_r_0522",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "upperleg_twist_01_r_0523",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "upperleg_twist_01_r_end_0524",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "upperleg_twist_01_r_end_end_0525",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "upperleg_twist_01_r_end_end_end_0669",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "upperleg_twist_00_r_0526",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "upperleg_twist_00_r_end_0527",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "upperleg_twist_00_r_end_end_0528",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "upperleg_twist_00_r_end_end_end_0670",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_correctiveRoot_r_0529",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_00_r_0530",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_00_out_r_0531",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_00_out_r_end_0532",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_00_out_r_end_end_0533",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_00_out_r_end_end_end_0671",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_01_r_0534",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_01_out_r_0535",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_01_out_r_end_0536",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_01_out_r_end_end_0537",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_01_out_r_end_end_end_0672",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_02_r_0538",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_02_out_r_0539",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_02_out_r_end_0520",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_02_out_r_end_end_0542",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "hip_middleslider_02_out_r_end_end_end_0673",
+      "target": "HL.thigh"
+    },
+    {
+      "source": "breeching_0543",
+      "target": "pelvis"
+    },
+    {
+      "source": "breeching_end_0544",
+      "target": "pelvis"
+    },
+    {
+      "source": "breeching_end_end_0545",
+      "target": "pelvis"
+    },
+    {
+      "source": "breeching_end_end_end_0674",
+      "target": "pelvis"
+    },
+    {
+      "source": "rootmountpoint_01_0546",
+      "target": "ROOT"
+    },
+    {
+      "source": "rootmountpoint_01_end_0547",
+      "target": "ROOT"
+    },
+    {
+      "source": "rootmountpoint_01_end_end_0548",
+      "target": "ROOT"
+    },
+    {
+      "source": "rootmountpoint_01_end_end_end_0675",
+      "target": "ROOT"
+    }
+  ],
+  "meshWeights": [
+    {
+      "mesh": "HorseBody",
+      "vertices": 16159,
+      "maxWeightError": 2.220446049250313e-16,
+      "maxInfluences": 4,
+      "restPoseBakingMaxFloatError": 1.1913545838737605e-7
+    },
+    {
+      "mesh": "HorseEyes",
+      "vertices": 2028,
+      "maxWeightError": 0,
+      "maxInfluences": 1,
+      "restPoseBakingMaxFloatError": 1.1857668669179589e-7
+    },
+    {
+      "mesh": "HorseGroom",
+      "vertices": 23514,
+      "maxWeightError": 2.220446049250313e-16,
+      "maxInfluences": 4,
+      "restPoseBakingMaxFloatError": 1.1919655173997512e-7
+    },
+    {
+      "mesh": "HorseWesternTack",
+      "vertices": 13895,
+      "maxWeightError": 2.220446049250313e-16,
+      "maxInfluences": 4,
+      "restPoseBakingMaxFloatError": 1.191051368643059e-7
+    },
+    {
+      "mesh": "HorseWesternSaddle",
+      "vertices": 5092,
+      "maxWeightError": 1.1102230246251565e-16,
+      "maxInfluences": 3,
+      "restPoseBakingMaxFloatError": 5.958356430468825e-8
+    }
+  ],
+  "hoofSoleDetection": [
+    {
+      "leg": "FL",
+      "samples": 299,
+      "minY": 0.0020376417004229694,
+      "maxOwnership": 1.0000000596046448
+    },
+    {
+      "leg": "FR",
+      "samples": 305,
+      "minY": 0.003751199530106438,
+      "maxOwnership": 1.0000000596046448
+    },
+    {
+      "leg": "HL",
+      "samples": 275,
+      "minY": 0.0004916627297992977,
+      "maxOwnership": 1.0000000596046448
+    },
+    {
+      "leg": "HR",
+      "samples": 250,
+      "minY": 0,
+      "maxOwnership": 1.0000000596046448
+    }
+  ],
+  "materials": [
+    {
+      "material": "M_Body",
+      "diffuseMapPreserved": true,
+      "specularFactor": 0,
+      "roughnessFactor": 1,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": null
+    },
+    {
+      "material": "M_Eye",
+      "diffuseMapPreserved": true,
+      "specularFactor": 0,
+      "roughnessFactor": 0.8211145618000169,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": null
+    },
+    {
+      "material": "M_Hair",
+      "diffuseMapPreserved": true,
+      "specularFactor": 0,
+      "roughnessFactor": 1,
+      "alphaMode": "MASK",
+      "alphaCutoff": 0.6309187442990666
+    },
+    {
+      "material": "M_Saddle2",
+      "diffuseMapPreserved": true,
+      "specularFactor": 0,
+      "roughnessFactor": 1,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": null
+    },
+    {
+      "material": "M_Saddle1",
+      "diffuseMapPreserved": true,
+      "specularFactor": 0,
+      "roughnessFactor": 1,
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": null
+    }
+  ],
+  "preserved": [
+    "Body and eye topology",
+    "Every source alpha groom card",
+    "Western tack, saddle, bridle and reins",
+    "Original indices and both UV channels",
+    "All five original embedded PNG bytes",
+    "Original author/license/source metadata"
+  ],
+  "sourceAnimationNote": "Original source Idle/Walk clips remain in the preserved original. Game locomotion is fitted to the new anatomical rig using the actual live game solver; baked clips and QA are separate.",
+  "integrationRequirements": [
+    "Respect preserveSourceTack to avoid duplicate procedural saddle/bridle.",
+    "Respect preserveSaddleAnchor; the native seat is above the leather saddle, not the bare body.",
+    "Do not run geometry-spreading groom helpers over this original alpha-card groom."
+  ],
+  "motionReview": {
+    "report": "motion-validation.json",
+    "checks": {
+      "allTransformsFinite": true,
+      "weightsNormalized": true,
+      "allNamed40": true,
+      "allFourSolesRecognized": true,
+      "allFiveOriginalMeshes": true,
+      "soleFollowsTarget": true,
+      "noHoofGroundPenetration": true,
+      "noUnreachableTargets": true,
+      "stanceFeetPlanted": true,
+      "limbLengthsStable": true,
+      "quaternionsNormalized": true,
+      "locomotionCyclesAllFourFeet": true,
+      "walkAlwaysSupported": true,
+      "trotDiagonalSupport": true,
+      "gallopHasSuspension": true
+    },
+    "sourceMotionModuleSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+    "authorship": "Own clips sampled from the live Meadowlark solver; preserved source author Idle/Walk remain original"
+  },
+  "visualReview": {
+    "report": "browser-motion-validation.json",
+    "reviewer": "Codex direct inspection of actual local real-texture PNGs",
+    "poses": [
+      "Rest quarter",
+      "Walk side",
+      "Trot side",
+      "Canter_Left side",
+      "Gallop_Left side",
+      "Jump airborne side"
+    ],
+    "findings": "White coat, source eye/mane/tail maps, leather western saddle, bridle/reins retained. Full anatomy stays framed and bends without gross seam/explosion artifacts in inspected poses.",
+    "limits": [
+      "Sampled poses and CPU full-cycle contact tests; no proprietary Star Equestrian skeleton equivalence.",
+      "Mounted rider/scene placement still needs shared game integration QA."
+    ]
+  },
+  "comparisonToStarEquestrian": "No exact proprietary skeleton equivalence claimed.",
+  "animatedGameFile": "white-western-animated.glb",
+  "animatedGameSha256": "3b3e3d70e3efac71976922f01e733d508dccbfa36e5183a444820abd8ef7fdc2"
+}

@@ -1,0 +1,82 @@
+{
+  "breed": "shire",
+  "rigSha256": "1af54a5c0ff09cbe840b5159f445db72602e08ac907a83563df5ed15a601f0fd",
+  "withersM": 1.82,
+  "physicalScale": true,
+  "fitScale": 1,
+  "fitY": 0,
+  "maxActualThreeBindVsRawVertexErrorM": 1.6037185920999749e-7,
+  "maxWeightError": 4.7031790018081665e-8,
+  "skinnedPrimitiveCount": 9,
+  "loadedVertexInstances": 427020,
+  "meshRows": [
+    {
+      "mesh": "HorseBody",
+      "vertices": 12426,
+      "maxActualThreeBindVsRawVertexErrorM": 1.6037185920999749e-7
+    },
+    {
+      "mesh": "HorseGroom_1",
+      "vertices": 65532,
+      "maxActualThreeBindVsRawVertexErrorM": 1.4194562260218478e-7
+    },
+    {
+      "mesh": "HorseGroom_2",
+      "vertices": 65534,
+      "maxActualThreeBindVsRawVertexErrorM": 1.3781369628976036e-7
+    },
+    {
+      "mesh": "HorseGroom_3_1",
+      "vertices": 65534,
+      "maxActualThreeBindVsRawVertexErrorM": 1.477052654139207e-7
+    },
+    {
+      "mesh": "HorseGroom_3_2",
+      "vertices": 65534,
+      "maxActualThreeBindVsRawVertexErrorM": 1.477052654139207e-7
+    },
+    {
+      "mesh": "HorseGroom_4",
+      "vertices": 65534,
+      "maxActualThreeBindVsRawVertexErrorM": 1.4424941863949716e-7
+    },
+    {
+      "mesh": "HorseGroom_5",
+      "vertices": 65533,
+      "maxActualThreeBindVsRawVertexErrorM": 1.1612126487950344e-7
+    },
+    {
+      "mesh": "HorseGroom_6",
+      "vertices": 20879,
+      "maxActualThreeBindVsRawVertexErrorM": 1.1626846756590321e-7
+    },
+    {
+      "mesh": "HorseEyes",
+      "vertices": 514,
+      "maxActualThreeBindVsRawVertexErrorM": 6.572067185307386e-8
+    }
+  ],
+  "localTextures": [
+    {
+      "uri": "../../shared/source-body-basecolor-179fb45dd17e0054.png",
+      "bytes": 10205740,
+      "sha256": "179fb45dd17e00544c099a59797ff51e1a4d3de09175cf48b534ed8e8b6959b6"
+    },
+    {
+      "uri": "../../shared/source-body-metalrough-63eb7c7fa4ccb65e.png",
+      "bytes": 8782146,
+      "sha256": "63eb7c7fa4ccb65e2b37fe8a14fb4ff509aeadd9b1188c17d7eaa26dcb71c938"
+    },
+    {
+      "uri": "../../shared/source-body-normal-4b36423c07848414.png",
+      "bytes": 12827160,
+      "sha256": "4b36423c078484148e95852c7e6a2d07ec075ffa4861a96f96471d48e1606593"
+    },
+    {
+      "uri": "coat-basecolor.png",
+      "bytes": 2755941,
+      "sha256": "2c604387148a9ccef053e9663a0903d86e01d2d1a0eb39f53d371a59d4ebc0e2"
+    }
+  ],
+  "passed": true
+}

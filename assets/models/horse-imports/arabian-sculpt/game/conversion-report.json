@@ -1,0 +1,299 @@
+{
+  "sourceSha256": "c4359189a30dddf92cc31745e756e6cfc6e30505c3b67c6ca879d6d69d7176c3",
+  "sourceVertices": 96639,
+  "sourceTriangles": 193274,
+  "derivativeVertices": 47502,
+  "derivativeTriangles": 95000,
+  "remeshVoxelSourceUnits": 0.0065,
+  "sourceFrontRemovedVertices": 20062,
+  "sourceHindRemovedVertices": 13692,
+  "sameSculptPlantedForelimbMirrored": true,
+  "sameSculptPlantedHindlimbMirrored": true,
+  "bodyHeadTorsoAndHighTailMorphologySourceDerived": true,
+  "allOriginalVerticesOrTopologyPreserved": false,
+  "generativeToolsUsed": false,
+  "originalShaPreserved": true,
+  "method": "The game derivative replaces the raised forequarter below the upper neck and the folded hind branch using the same approved sculpture\u2019s clean planted-side forequarter/limb surfaces, mirrored to provide a standing bind. Ordinary capped voxel union, small join fairing and topology reduction preserve this source\u2019s head, torso and high-tail morphology; tiny detached cut fragments are excluded. Original OBJ bytes and receipts remain untouched. Final unsigned actual-surface voxel occupancy union and three-cell closing/fill repair overlapping cut caps and neck/hip seams; the derivative is reduced to game topology. Source morphology is retained within the explicit voxel/join-fairing limit, not exact original vertices.",
+  "sourceForequarterFromSameSculptPlantedSideMirrored": true,
+  "completeOriginalHeadSurfaceGrafted": true,
+  "sourceHeadSurfaceVertices": 14651,
+  "sourceHeadSurfaceTriangles": 29021,
+  "headJoin": "Final unsigned union removes overlapping head/body caps and joins the actual source-derived surfaces into continuous game geometry.",
+  "detachedCutFragmentsVerticesRemoved": 2543,
+  "sourceTopologyRetained": false,
+  "rawOriginalsEdited": false,
+  "unsignedSurfaceOccupancyUnion": true,
+  "voxelPitchSourceUnits": 0.0065,
+  "ordinaryMorphologicalClosingIterations": 3,
+  "sourceHeadGraftSeamsRepaired": true,
+  "sourceDetailedTopologyPreserved": false,
+  "sourceHeadSurfaceExactlyPreservedAfterUnion": false,
+  "ordinaryLocalTaubinFairing": {
+    "iterations": 80,
+    "lambda": 0.46,
+    "mu": -0.47,
+    "solesProtected": true,
+    "faceStrength": 0.25,
+    "maximumDisplacementSourceUnits": 0.09971602070226222,
+    "meanDisplacementSourceUnits": 0.008836303591644492
+  },
+  "rigSha256": "e41a2b73071475687e443b3f74a44c05c71b4a3f46a08dbe2baff92961701ca9",
+  "displayBaseSha256": "405cd3764e2d0415edd85fa546e4c934d3e1600027bf46c24f60f298ecb1854e",
+  "displayBaseEntirelyExcluded": true,
+  "physicalWithersM": 1.5,
+  "normalizationScale": 0.6996305591436783,
+  "sourceFrameCenter": [
+    0.43,
+    1.92,
+    -0.04224738851189613
+  ],
+  "sourceWithersPoint": [
+    0.4441829531988443,
+    1.669309275587582,
+    2.101741292937273
+  ],
+  "neutralJointsCanonical": {
+    "ROOT": [
+      0.0,
+      0.0,
+      -0.0
+    ],
+    "pelvis": [
+      0.0,
+      1.3658519320113636,
+      -0.5597044473149428
+    ],
+    "spine": [
+      0.0,
+      1.3518593208284901,
+      -0.09794827828011506
+    ],
+    "chest": [
+      0.0,
+      1.3938371543771109,
+      0.35681158516327593
+    ],
+    "neck.lower": [
+      0.0,
+      1.4847891270657891,
+      0.47574878021770123
+    ],
+    "neck.upper": [
+      0.0,
+      1.8555933234119384,
+      0.6646490311864944
+    ],
+    "head": [
+      0.07695936150580465,
+      2.0095120464235476,
+      0.8605455877467243
+    ],
+    "jaw": [
+      0.09095197268867823,
+      1.7506487395403867,
+      0.9375049492525289
+    ],
+    "ear.L": [
+      -0.055970444731494276,
+      2.0864714079293525,
+      0.8115714486066669
+    ],
+    "ear.R": [
+      0.1329298062372989,
+      2.0864714079293525,
+      0.8115714486066669
+    ],
+    "tail.1": [
+      0.0,
+      1.4568039047000418,
+      -0.7346120871008625
+    ],
+    "tail.2": [
+      0.03498152795718391,
+      1.4987817382486626,
+      -0.9095197268867821
+    ],
+    "tail.3": [
+      0.06296675032293107,
+      1.3098814872798694,
+      -1.0144643107583338
+    ],
+    "tail.4": [
+      0.09095197268867823,
+      1.030029263622398,
+      -0.9794827828011496
+    ],
+    "FL.scapula": [
+      -0.1329298062372989,
+      1.4568039047000418,
+      0.46875247462626446
+    ],
+    "FL.upperarm": [
+      -0.1329298062372989,
+      1.127977541902513,
+      0.6016822808635632
+    ],
+    "FL.forearm": [
+      -0.1329298062372989,
+      0.8901031517936624,
+      0.5597044473149425
+    ],
+    "FL.cannon": [
+      -0.13642795903301727,
+      0.5192989554475129,
+      0.5667007529063793
+    ],
+    "FL.pastern": [
+      -0.13712758959216093,
+      0.18347628705854732,
+      0.5667007529063793
+    ],
+    "FL.hoof": [
+      -0.1378272201513046,
+      0.10301877275702431,
+      0.6226711976378736
+    ],
+    "FR.scapula": [
+      0.1329298062372989,
+      1.4568039047000418,
+      0.46875247462626446
+    ],
+    "FR.upperarm": [
+      0.1329298062372989,
+      1.127977541902513,
+      0.6016822808635632
+    ],
+    "FR.forearm": [
+      0.1329298062372989,
+      0.8901031517936624,
+      0.5597044473149425
+    ],
+    "FR.cannon": [
+      0.13642795903301727,
+      0.5192989554475129,
+      0.5667007529063793
+    ],
+    "FR.pastern": [
+      0.13712758959216095,
+      0.18347628705854732,
+      0.5667007529063793
+    ],
+    "FR.hoof": [
+      0.13782722015130464,
+      0.10301877275702431,
+      0.6226711976378736
+    ],
+    "HL.thigh": [
+      -0.1329298062372989,
+      1.3168777928713062,
+      -0.6926342535522417
+    ],
+    "HL.shin": [
+      -0.13992611182873568,
+      0.869114235019352,
+      -0.5527081417235059
+    ],
+    "HL.cannon": [
+      -0.13992611182873568,
+      0.5472841778132601,
+      -0.9235123380696556
+    ],
+    "HL.pastern": [
+      -0.13852685071044832,
+      0.18347628705854732,
+      -0.9095197268867821
+    ],
+    "HL.hoof": [
+      -0.13782722015130464,
+      0.09252431436986915,
+      -0.8605455877467243
+    ],
+    "HR.thigh": [
+      0.1329298062372989,
+      1.3168777928713062,
+      -0.6926342535522417
+    ],
+    "HR.shin": [
+      0.13992611182873568,
+      0.869114235019352,
+      -0.5527081417235059
+    ],
+    "HR.cannon": [
+      0.13992611182873568,
+      0.5472841778132601,
+      -0.9235123380696556
+    ],
+    "HR.pastern": [
+      0.13852685071044832,
+      0.18347628705854732,
+      -0.9095197268867821
+    ],
+    "HR.hoof": [
+      0.13782722015130464,
+      0.09252431436986915,
+      -0.8605455877467243
+    ],
+    "FL.IK": [
+      -0.13712758959216093,
+      0.18347628705854732,
+      0.5667007529063793
+    ],
+    "FR.IK": [
+      0.13712758959216095,
+      0.18347628705854732,
+      0.5667007529063793
+    ],
+    "HL.IK": [
+      -0.13852685071044832,
+      0.18347628705854732,
+      -0.9095197268867821
+    ],
+    "HR.IK": [
+      0.13852685071044832,
+      0.18347628705854732,
+      -0.9095197268867821
+    ]
+  },
+  "sourceOriginalsBothPreserved": true,
+  "receiptUnchanged": true,
+  "sourceTextures": false,
+  "sourceUVs": false,
+  "sourceSeparateGroom": false,
+  "newlyAuthoredCoatAndFineManeTail": true,
+  "newGroomStrands": 630,
+  "newGroomTriangles": 22680,
+  "sourceSpecificLimbAdaptation": true,
+  "motionCertification": "16 native gait checks and all 9 actual AnimationMixer clips at 240 Hz passed; lower leg and every fine groom vertex audited.",
+  "animatedSha256": "8d104a669666f357f9af4e33495ac5bf278679fbbcd1d8f583899c29e44184e8",
+  "sourceFiles": [
+    {
+      "path": "assets/models/horse-imports/arabian-sculpt/source/CABALLO_ARABE (1).obj",
+      "bytes": 7148701,
+      "sha256": "c4359189a30dddf92cc31745e756e6cfc6e30505c3b67c6ca879d6d69d7176c3"
+    },
+    {
+      "path": "assets/models/horse-imports/arabian-sculpt/source/BASE.obj",
+      "bytes": 1468654,
+      "sha256": "405cd3764e2d0415edd85fa546e4c934d3e1600027bf46c24f60f298ecb1854e"
+    }
+  ],
+  "storedClipCertification": {
+    "sampleHz": 240,
+    "allNineClipsPassed": true,
+    "worstLowerLegY": -0.002493652932640302,
+    "minimumFineGroomY": 0.5774087797191189,
+    "file": "baked-ground-validation.json"
+  },
+  "visualReview": {
+    "actualAnimatedAssetSha256": "8d104a669666f357f9af4e33495ac5bf278679fbbcd1d8f583899c29e44184e8",
+    "poses": [
+      "Rest",
+      "Walk",
+      "Gallop_Left",
+      "Jump"
+    ],
+    "jointContinuityReviewed": true,
+    "largeStretchSpikesOrOpenLimbSeamsObserved": false,
+    "limitations": "Source-specific standing adaptation retains a rounded upper-hip depression and sculpted surface relief. Head, torso and high-tail morphology is source-derived; voxel joining/fairing changes local surfaces and original topology. Exact original vertex/facial detail retention is not claimed. New copper coat, dark carved-tail pigment and 630 fine hair strands are authored because the original OBJ has no UV/maps or separate groom."
+  }
+}

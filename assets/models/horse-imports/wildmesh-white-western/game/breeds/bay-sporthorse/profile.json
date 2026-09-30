@@ -1,0 +1,198 @@
+{
+  "id": "bay-sporthorse",
+  "name": "Bay Sporthorse",
+  "file": "model.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.64,
+  "heightM": 2.0176681707646766,
+  "fitScale": 1,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0,
+        1.582686608622268,
+        0
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.6364486256125508,
+        0.33388409894918797
+      ]
+    ],
+    "head": [
+      [
+        -0.02526506894183312,
+        1.875689697530183,
+        0.95523096909109
+      ]
+    ],
+    "poll": [
+      [
+        -0.02526506894183312,
+        1.875689697530183,
+        0.95523096909109
+      ]
+    ],
+    "muzzle": [
+      [
+        -0.049197933882646656,
+        1.4422235661007383,
+        1.2372931672254965
+      ]
+    ],
+    "crest": [
+      [
+        -0.016779561276377555,
+        1.659884019470215,
+        0.7379309857408913
+      ]
+    ],
+    "tail": [
+      [
+        -0.004290786013725344,
+        1.4123250805381766,
+        -0.8142147559429815
+      ]
+    ],
+    "eyes": [
+      [
+        -0.13272444011824935,
+        1.7971915760311925,
+        1.0981555578874174
+      ],
+      [
+        0.05473124624847818,
+        1.7981132279332879,
+        1.1161182077356437
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.09583730214203057,
+        1.4798938250794715,
+        1.2054304065059849
+      ],
+      [
+        -0.002558565623262735,
+        1.4798938250794715,
+        1.2054304065059849
+      ]
+    ]
+  },
+  "preserveSourceTack": true,
+  "preserveSaddleAnchor": true,
+  "sourceTackMeshes": [
+    "HorseWesternTack",
+    "HorseWesternSaddle"
+  ],
+  "preserveSourceMaterials": true,
+  "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+  "sha256": "c4bf68a055b285dbd7e23ca6ee2bd5396222f48fd91ab3ea46bac503818f7d1a",
+  "creator": "WildMesh 3D",
+  "license": "CC BY-NC 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+  "family": "riding",
+  "jointCount": 40,
+  "triangles": 82426,
+  "clips": [
+    "Rest",
+    "Idle",
+    "Walk",
+    "Trot",
+    "Canter_Left",
+    "Canter_Right",
+    "Gallop_Left",
+    "Gallop_Right",
+    "Jump"
+  ],
+  "gaitImplementation": "assets/artist-horse-motion.js, baked clips appended separately",
+  "motionStatus": "all six live gait modes validated; nine own baked anatomical clips",
+  "preserveSourceGroom": true,
+  "visualReview": "Actual final source-textured breed snapshots directly inspected",
+  "physicalScale": true,
+  "preferredWhiteWesternFile": "../../white-western-animated.glb",
+  "conformation": "Chosen taller athletic cross with less bulk",
+  "morphology": {
+    "build": "Chosen taller athletic cross with less bulk",
+    "neck": "Long arched but lighter neck than Friesian",
+    "head_face": "Refined straight head with open throat",
+    "ears": "Medium neat ears",
+    "limbs": "Long clean athletic limbs",
+    "hooves": "Proportional sports feet",
+    "mane_tail": "Long but reduced-density mane/tail",
+    "feathering": "Light fetlock fringe"
+  },
+  "sculptTargets": {
+    "body_length": 1.015,
+    "barrel_width": 1,
+    "body_depth": 1,
+    "neck_length": 1,
+    "neck_thickness": 1,
+    "head_length": 1,
+    "head_width": 1,
+    "ear_length": 1,
+    "limb_length": 1.02,
+    "hoof_width": 1,
+    "hindquarter_width": 1,
+    "face_profile_depth_per_withers": 0,
+    "neck_arch_rise_per_withers": 0.022
+  },
+  "coat": [
+    0.48,
+    0.29,
+    0.16
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "tailLengthFactor": 1,
+    "sourceCardDensityFactor": 1,
+    "feathering": 0
+  },
+  "textureProvenance": "../texture-provenance.json",
+  "rigSha256": "fdc96ed02a7951ca8806b1352e0fae53856fc2366c6b5dc35160a285709990d5",
+  "bodyGeometrySha256": "47bde6ef90023be276b70473302d1cdaf392e9d3638ee8faa3429fd6991604b4",
+  "motionValidation": "motion-validation.json",
+  "neutralCoatFile": "../textures/source-0-0e43d3fa2c5a5497.png",
+  "neutralCoatLuminance": 0.365378901748634,
+  "coatLuminance": 0.0418494112884985,
+  "sourceTackAnchors": {
+    "saddleSeat": [
+      0,
+      1.582686608622268,
+      0
+    ],
+    "stirrups": [
+      [
+        -0.3562369989048947,
+        0.9791324897195702,
+        0.19922447492899226
+      ],
+      [
+        0.34273018178738474,
+        0.9809547484770399,
+        0.18406440280081204
+      ]
+    ],
+    "bit": [
+      [
+        -0.10824186766323433,
+        1.5265284862919386,
+        1.2115439626802609
+      ],
+      [
+        0.012638438677366758,
+        1.5271633779319882,
+        1.2231059921928573
+      ]
+    ]
+  },
+  "visualReviewReport": "../batch-visual-review.json",
+  "bakedGroundValidation": "../baked-ground-validation.json",
+  "animationBakeFPS": 120
+}

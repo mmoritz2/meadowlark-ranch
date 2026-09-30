@@ -1,0 +1,42 @@
+{
+  "host": "wildmesh-white-western",
+  "pose": "ground-folded",
+  "gameSha256": "3c44f5fe53421b6207adb323bc683f431008f24740229ebb07841c1a2666d3b4",
+  "hostFile": "assets/models/horse-imports/wildmesh-white-western/game/white-western-animated.glb",
+  "hostSha256": "3b3e3d70e3efac71976922f01e733d508dccbfa36e5183a444820abd8ef7fdc2",
+  "poseSha256": "351396137365486942fe69b0a5ad91fa187cf3e07734547303bc65538568cc3b",
+  "image": "assets/models/horse-imports/cgcookie-wings/game/review/wildmesh-white-western-ground-folded.png",
+  "ordinaryRender": true,
+  "generativeToolsUsed": false,
+  "sourceLongFeathersPerSide": 48,
+  "neutralFeatherMaterials": true,
+  "originalMapsAbsent": true,
+  "unverifiedDownStrandsOmitted": true,
+  "bodyPose": "exact live40-joint host and chest-mounted wing pose evaluated by Three",
+  "wingScale": 1.0,
+  "mountWithers": [
+    0,
+    1.7869539753502213,
+    0.3667586611873671
+  ],
+  "bounds": {
+    "min": [
+      -0.6661621332168579,
+      -1.453808307647705,
+      -2.492864137337847e-09
+    ],
+    "max": [
+      0.6661621332168579,
+      2.3822953701019287,
+      2.2174272537231445
+    ],
+    "size": [
+      1.3323242664337158,
+      3.836103677749634,
+      2.2174272537231445
+    ]
+  },
+  "visualReview": "inspected: genuine source body and48 longfeathers per side; rearward fold and40-joint flight gather visible; uncovered shaft/card geometry and missing maps/down remain explicit",
+  "mountedRiderIntegration": "pending",
+  "imageSha256": "a5c1a32c8c5517d29803e51c2f6ac3007fbb230fcab118e7421d0e35ffbae6ac"
+}

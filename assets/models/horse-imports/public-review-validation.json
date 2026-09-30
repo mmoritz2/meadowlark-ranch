@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "scope": "Public original-source review only; no game rig or source Scene animation certification.",
+  "privateSourceUrlsUnavailable": true,
+  "privateSourceRequests": 0,
+  "externalRequests": 0,
+  "freshIsolatedProfile": true,
+  "browserErrors": [],
+  "warnings": [],
+  "cases": [
+    {
+      "case": "public-catalog-private-sources-unavailable",
+      "passed": true,
+      "sources": 6,
+      "previews": 5,
+      "pending": 3,
+      "ordinaryUrlAutoSelected": false
+    },
+    {
+      "case": "white-original-source-deep-link-and-original-clip",
+      "passed": true,
+      "triangles": 82428,
+      "clips": [
+        "Horse|Horse_Idle",
+        "Horse|Horse_Walk"
+      ],
+      "clipTime": 0.5074
+    },
+    {
+      "case": "wing-original-preview-no-clips",
+      "passed": true,
+      "triangles": 3250,
+      "clipControlsDisabled": true
+    },
+    {
+      "case": "mismatched-public-hash-fails-closed",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "preservedSourceAndPrivateReceiptFilesUnchanged": true,
+  "preservedFilesChecked": 27
+}

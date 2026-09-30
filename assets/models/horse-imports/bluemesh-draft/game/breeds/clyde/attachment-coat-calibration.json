@@ -1,0 +1,60 @@
+{
+  "breed": "clyde",
+  "rigSha256": "a253701dde03e0ff5730ee57a06a34cbe9a4196682eae34c7c977f0a1274ef94",
+  "coatFile": "shared/source-body-basecolor-179fb45dd17e0054.png",
+  "coatSha256": "179fb45dd17e00544c099a59797ff51e1a4d3de09175cf48b534ed8e8b6959b6",
+  "coatLuminance": 0.087253312613608,
+  "neutralCoatFile": "../../shared/neutral-coat-detail.png",
+  "neutralCoatSha256": "a4897133ebb689fbcc4385caad701542dfa38144dc39c865f6d324fbe9f38715",
+  "neutralCoatLuminance": 0.5088813208549336,
+  "mountAttachments": {
+    "coordinateSpace": "HorseBody raw physical metres, +Y up/+Z forward; fitScale1/fitY0",
+    "saddle": {
+      "anchor": [
+        0.0,
+        1.7045889930725098,
+        -0.31428245743233574
+      ],
+      "attachmentJoint": "spine",
+      "sampledTopSurfaceY": 1.6965889930725098,
+      "surfaceGapM": 0.008
+    },
+    "stirrups": {
+      "runtimeOriginalRelativePosition": [
+        [
+          -0.27,
+          -0.512,
+          0.2
+        ],
+        [
+          0.27,
+          -0.512,
+          0.2
+        ]
+      ],
+      "bodySurfaceXAtTreadYAndZ": [
+        -0.3230981433175623,
+        0.323098794712898
+      ],
+      "runtimeOriginalSideClearanceM": [
+        -0.053098143317562296,
+        -0.05309879471289797
+      ],
+      "recommendedRawAnchors": [
+        [
+          -0.3580981433175623,
+          1.1925889930725098,
+          -0.11428245743233573
+        ],
+        [
+          0.35809879471289796,
+          1.1925889930725098,
+          -0.11428245743233573
+        ]
+      ],
+      "recommendedClearanceM": 0.035,
+      "attachmentJoint": "spine",
+      "measurement": "Exact HorseBody triangle intersections for the Y/Z tread ray; recommended lateral anchors clear the measured barrel by35mm. Shared tack/rider runtime must consume them; offline geometry does not certify final mounted appearance."
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "breed": "clyde",
+  "rigSha256": "a253701dde03e0ff5730ee57a06a34cbe9a4196682eae34c7c977f0a1274ef94",
+  "withersM": 1.78,
+  "physicalScale": true,
+  "fitScale": 1,
+  "fitY": 0,
+  "maxActualThreeBindVsRawVertexErrorM": 1.8522391989436397e-7,
+  "maxWeightError": 4.7031790018081665e-8,
+  "skinnedPrimitiveCount": 9,
+  "loadedVertexInstances": 427020,
+  "meshRows": [
+    {
+      "mesh": "HorseBody",
+      "vertices": 12426,
+      "maxActualThreeBindVsRawVertexErrorM": 1.8522391989436397e-7
+    },
+    {
+      "mesh": "HorseGroom_1",
+      "vertices": 65532,
+      "maxActualThreeBindVsRawVertexErrorM": 1.4931540682957195e-7
+    },
+    {
+      "mesh": "HorseGroom_2",
+      "vertices": 65534,
+      "maxActualThreeBindVsRawVertexErrorM": 1.8171831921297794e-7
+    },
+    {
+      "mesh": "HorseGroom_3_1",
+      "vertices": 65534,
+      "maxActualThreeBindVsRawVertexErrorM": 1.8441632507205645e-7
+    },
+    {
+      "mesh": "HorseGroom_3_2",
+      "vertices": 65534,
+      "maxActualThreeBindVsRawVertexErrorM": 1.8441632507205645e-7
+    },
+    {
+      "mesh": "HorseGroom_4",
+      "vertices": 65534,
+      "maxActualThreeBindVsRawVertexErrorM": 1.7426086658744474e-7
+    },
+    {
+      "mesh": "HorseGroom_5",
+      "vertices": 65533,
+      "maxActualThreeBindVsRawVertexErrorM": 9.241701545812731e-8
+    },
+    {
+      "mesh": "HorseGroom_6",
+      "vertices": 20879,
+      "maxActualThreeBindVsRawVertexErrorM": 1.4667057029948134e-7
+    },
+    {
+      "mesh": "HorseEyes",
+      "vertices": 514,
+      "maxActualThreeBindVsRawVertexErrorM": 9.62218866574082e-8
+    }
+  ],
+  "localTextures": [
+    {
+      "uri": "../../shared/source-body-basecolor-179fb45dd17e0054.png",
+      "bytes": 10205740,
+      "sha256": "179fb45dd17e00544c099a59797ff51e1a4d3de09175cf48b534ed8e8b6959b6"
+    },
+    {
+      "uri": "../../shared/source-body-metalrough-63eb7c7fa4ccb65e.png",
+      "bytes": 8782146,
+      "sha256": "63eb7c7fa4ccb65e2b37fe8a14fb4ff509aeadd9b1188c17d7eaa26dcb71c938"
+    },
+    {
+      "uri": "../../shared/source-body-normal-4b36423c07848414.png",
+      "bytes": 12827160,
+      "sha256": "4b36423c078484148e95852c7e6a2d07ec075ffa4861a96f96471d48e1606593"
+    }
+  ],
+  "passed": true
+}

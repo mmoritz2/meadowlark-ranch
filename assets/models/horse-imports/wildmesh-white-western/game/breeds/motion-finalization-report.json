@@ -1,0 +1,241 @@
+{
+  "motionModuleSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+  "changes": [
+    "Crossfade secondary neck/head/tail/ear angles from old/new gait states; interrupted fades hold sampled angles, preventing phase-carry FK pose resets.",
+    "Store held torso height before its support correction, preventing the same support offset being subtracted twice on interrupted commands.",
+    "Use a feasible .18rad shoulder/elbow triangle angle margin on the true upperarm sphere; exact original lengths and hoof targets remain authoritative.",
+    "Optional large-claw contactEnvelope expands actual owned surfaces and corrects genuine blended skin; all26 default120Hz GLB hashes remain identical."
+  ],
+  "hardChecks": {
+    "all25BodiesChecked": true,
+    "allParentFoalAndTransitionChecksPass": true,
+    "allFinite": true,
+    "soleGroundTolerance4mm": true,
+    "reachTolerance6mm": true
+  },
+  "convergence": [
+    {
+      "scenario": "steady-gallop-left",
+      "rates": [
+        {
+          "rateHz": 120,
+          "maxJointStepM": 0.11602815060223366,
+          "peakJointSpeedMps": 13.92337807226804,
+          "peakRootSpeedMps": 7.128300312522525,
+          "maxLocalRotationStepRad": 0.455524898679552
+        },
+        {
+          "rateHz": 240,
+          "maxJointStepM": 0.07210891768095107,
+          "peakJointSpeedMps": 17.306140243428256,
+          "peakRootSpeedMps": 7.21986142388674,
+          "maxLocalRotationStepRad": 0.314070570827225
+        },
+        {
+          "rateHz": 480,
+          "maxJointStepM": 0.04116703678113052,
+          "peakJointSpeedMps": 19.760177654942648,
+          "peakRootSpeedMps": 7.24312548861227,
+          "maxLocalRotationStepRad": 0.21963134410136206
+        },
+        {
+          "rateHz": 960,
+          "maxJointStepM": 0.024904283224635906,
+          "peakJointSpeedMps": 23.90811189565047,
+          "peakRootSpeedMps": 7.248468478903458,
+          "maxLocalRotationStepRad": 0.1333175757736152
+        }
+      ],
+      "matchingTimes": [
+        {
+          "coarserRateHz": 120,
+          "finerRateHz": 240,
+          "maxJointPositionDifferenceM": 0.005752067303749279
+        },
+        {
+          "coarserRateHz": 240,
+          "finerRateHz": 480,
+          "maxJointPositionDifferenceM": 0.001627154318671294
+        },
+        {
+          "coarserRateHz": 480,
+          "finerRateHz": 960,
+          "maxJointPositionDifferenceM": 0.0005576071009261755
+        }
+      ]
+    },
+    {
+      "scenario": "rapid-commands",
+      "rates": [
+        {
+          "rateHz": 120,
+          "maxJointStepM": 0.11272702174591617,
+          "peakJointSpeedMps": 13.52724260950994,
+          "peakRootSpeedMps": 7.198134382056099,
+          "maxLocalRotationStepRad": 0.4636563361997373
+        },
+        {
+          "rateHz": 240,
+          "maxJointStepM": 0.06302724609584565,
+          "peakJointSpeedMps": 15.126539063002955,
+          "peakRootSpeedMps": 7.311229336297167,
+          "maxLocalRotationStepRad": 0.30383431282376516
+        },
+        {
+          "rateHz": 480,
+          "maxJointStepM": 0.051195730411166235,
+          "peakJointSpeedMps": 24.573950597359794,
+          "peakRootSpeedMps": 7.339288487353324,
+          "maxLocalRotationStepRad": 0.27368998319934396
+        },
+        {
+          "rateHz": 960,
+          "maxJointStepM": 0.035286154002945797,
+          "peakJointSpeedMps": 33.874707842827966,
+          "peakRootSpeedMps": 7.346594432977405,
+          "maxLocalRotationStepRad": 0.1841951955088673
+        }
+      ],
+      "matchingTimes": [
+        {
+          "coarserRateHz": 120,
+          "finerRateHz": 240,
+          "maxJointPositionDifferenceM": 0.005061952532080365
+        },
+        {
+          "coarserRateHz": 240,
+          "finerRateHz": 480,
+          "maxJointPositionDifferenceM": 0.0030464769611324447
+        },
+        {
+          "coarserRateHz": 480,
+          "finerRateHz": 960,
+          "maxJointPositionDifferenceM": 0.0037796733035083334
+        }
+      ]
+    },
+    {
+      "scenario": "gallop-left-to-right-transition",
+      "rates": [
+        {
+          "rateHz": 120,
+          "maxJointStepM": 0.11272702174591617,
+          "peakJointSpeedMps": 13.52724260950994,
+          "peakRootSpeedMps": 7.198134382056099,
+          "maxLocalRotationStepRad": 0.4181864980560624
+        },
+        {
+          "rateHz": 240,
+          "maxJointStepM": 0.06302724609584565,
+          "peakJointSpeedMps": 15.126539063002955,
+          "peakRootSpeedMps": 7.311229336297167,
+          "maxLocalRotationStepRad": 0.24829249663478326
+        },
+        {
+          "rateHz": 480,
+          "maxJointStepM": 0.034196399104953805,
+          "peakJointSpeedMps": 16.414271570377828,
+          "peakRootSpeedMps": 7.339288487353324,
+          "maxLocalRotationStepRad": 0.14018980944131848
+        },
+        {
+          "rateHz": 960,
+          "maxJointStepM": 0.021897292446840338,
+          "peakJointSpeedMps": 21.021400748966723,
+          "peakRootSpeedMps": 7.346594432977405,
+          "maxLocalRotationStepRad": 0.11716945169382975
+        }
+      ],
+      "matchingTimes": [
+        {
+          "coarserRateHz": 120,
+          "finerRateHz": 240,
+          "maxJointPositionDifferenceM": 0.005061952532080365
+        },
+        {
+          "coarserRateHz": 240,
+          "finerRateHz": 480,
+          "maxJointPositionDifferenceM": 0.0030464769611324447
+        },
+        {
+          "coarserRateHz": 480,
+          "finerRateHz": 960,
+          "maxJointPositionDifferenceM": 0.0037796733035083334
+        }
+      ]
+    },
+    {
+      "scenario": "interrupted-crossfade",
+      "rates": [
+        {
+          "rateHz": 120,
+          "maxJointStepM": 0.08569091627141695,
+          "peakJointSpeedMps": 10.282909952570034,
+          "peakRootSpeedMps": 7.455248047399742,
+          "maxLocalRotationStepRad": 0.27991792896620526
+        },
+        {
+          "rateHz": 240,
+          "maxJointStepM": 0.05395342507033848,
+          "peakJointSpeedMps": 12.948822016881234,
+          "peakRootSpeedMps": 7.786880681124515,
+          "maxLocalRotationStepRad": 0.2778773831656848
+        },
+        {
+          "rateHz": 480,
+          "maxJointStepM": 0.03969213507043814,
+          "peakJointSpeedMps": 19.052224833810307,
+          "peakRootSpeedMps": 7.867362455985845,
+          "maxLocalRotationStepRad": 0.21681397828935922
+        },
+        {
+          "rateHz": 960,
+          "maxJointStepM": 0.024755708177149824,
+          "peakJointSpeedMps": 23.76547985006383,
+          "peakRootSpeedMps": 7.885863990504252,
+          "maxLocalRotationStepRad": 0.13258704702166166
+        }
+      ],
+      "matchingTimes": [
+        {
+          "coarserRateHz": 120,
+          "finerRateHz": 240,
+          "maxJointPositionDifferenceM": 0.003623894747768246
+        },
+        {
+          "coarserRateHz": 240,
+          "finerRateHz": 480,
+          "maxJointPositionDifferenceM": 3.200779911660231e-14
+        },
+        {
+          "coarserRateHz": 480,
+          "finerRateHz": 960,
+          "maxJointPositionDifferenceM": 0.00024009262478975026
+        }
+      ]
+    }
+  ],
+  "interpretation": "Through960Hz the observed carpal/forearm displacements shrink with the timestep; this test does not show a fixed IK branch jump. The gait-command secondary-pose step also shrinks after the blend fix. High finite-difference joint speeds remain during rapid gathering and are reported rather than hidden behind an arbitrary8cm/frame pass threshold.",
+  "measurementSpace": "Scene-space metres for bone positions and speed; bone-local radians for quaternion changes. ROOT speed is the in-place torso motion, separate from forward locomotion speed.",
+  "limits": [
+    "Finite sampled timestep convergence is evidence against a fixed pose jump, not a proof of globally smooth derivatives or equestrian biomechanical accuracy.",
+    "The8cm at120Hz threshold is a diagnostic heuristic, separated from ground/contact/reach/finite/limb-length assertions.",
+    "Baked clips are newly authored on the converted rigs; no proprietary Star Equestrian skeleton or motion equivalence is claimed.",
+    "Mounted rider, wing assembly and full game integration QA remain separate."
+  ],
+  "reports": [
+    "motion-convergence-validation.json",
+    "batch-transform-validation.json",
+    "batch-motion-validation.json",
+    "browser-batch-validation.json"
+  ],
+  "bakeRateHz": 120,
+  "actualBakedInterpolationChecks": {
+    "all25BodiesChecked": true,
+    "preferredWhiteFoundationChecked": true,
+    "everyBakedHoofPasses6mm": true
+  },
+  "actualBakedWorstHoofY": -0.0034318125289004952,
+  "defaultEnvelopeEquivalence": "default-motion-equivalence.json",
+  "historical60HzReport": "baked-ground-validation-60hz-historical.json"
+}

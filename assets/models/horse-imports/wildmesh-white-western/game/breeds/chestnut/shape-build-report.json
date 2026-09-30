@@ -1,0 +1,407 @@
+{
+  "id": "chestnut",
+  "status": "distinct regional body built; motion and visual review pending",
+  "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+  "rigSha256": "0e871c92eaffdd048509d99d1ac6377cc114f7e8b78c5b1ab99379cfb434b07b",
+  "bodyGeometrySha256": "b14ea611295b27e30e5776ab97f089619554758a737a7005bc91364ee9195551",
+  "targetWithersM": 1.02,
+  "measuredWithersM": 1.02,
+  "groundY": 0.0,
+  "sculptTargets": {
+    "body_length": 0.98,
+    "barrel_width": 1.18,
+    "body_depth": 1.12,
+    "neck_length": 0.84,
+    "neck_thickness": 1.11,
+    "head_length": 0.9,
+    "head_width": 1.13,
+    "ear_length": 0.78,
+    "limb_length": 0.76,
+    "hoof_width": 1.12,
+    "hindquarter_width": 1.07,
+    "face_profile_depth_per_withers": 0,
+    "neck_arch_rise_per_withers": 0.025
+  },
+  "morphology": {
+    "build": "Deep compact pony, rounded ribs",
+    "neck": "Short strong neck merging smoothly into shoulder",
+    "head_face": "Short broad face, large muzzle, prominent eyes",
+    "ears": "Very small, broad-set, upright",
+    "limbs": "Very short cannons, substantial joints",
+    "hooves": "Small but stout round feet",
+    "mane_tail": "Profuse long forelock, thick mane and tail",
+    "feathering": "Light fetlock hair; no draft boots"
+  },
+  "artDecision": null,
+  "primaryConformationSourceIds": [
+    "shetland"
+  ],
+  "sourceMaterialUVsPreserved": true,
+  "sourceCoreWeightsPreserved": true,
+  "allTackAndAnchorsFitWithSameCage": true,
+  "preferredUnmodifiedWhiteFoundationPreserved": "../../white-western-animated.glb",
+  "compactBINOnlyReferencedViews": true,
+  "meshes": [
+    {
+      "name": "HorseBody",
+      "vertices": 16159,
+      "triangles": 28326,
+      "cageJacobianMin": 0.08699705829751576,
+      "bounds": [
+        [
+          -0.2604888391012536,
+          0.0,
+          -0.6855604519124676
+        ],
+        [
+          0.24281856004233493,
+          1.1964863846031146,
+          0.7960385562696317
+        ]
+      ]
+    },
+    {
+      "name": "HorseEyes",
+      "vertices": 2028,
+      "triangles": 3854,
+      "cageJacobianMin": 0.17458315160288274,
+      "bounds": [
+        [
+          -0.1256447270301449,
+          1.0837439814395042,
+          0.6641823577031502
+        ],
+        [
+          0.06125851240191525,
+          1.1081007451401936,
+          0.698852656027545
+        ]
+      ]
+    },
+    {
+      "name": "HorseGroom",
+      "vertices": 23514,
+      "triangles": 26588,
+      "cageJacobianMin": 0.08699695806709094,
+      "bounds": [
+        [
+          -0.20405261415439438,
+          0.0707934362648095,
+          -0.7698080429885297
+        ],
+        [
+          0.09876025627214192,
+          1.1863934877213684,
+          0.7531182055527567
+        ]
+      ]
+    },
+    {
+      "name": "HorseWesternTack",
+      "vertices": 13895,
+      "triangles": 17194,
+      "cageJacobianMin": 0.09877240736105256,
+      "bounds": [
+        [
+          -0.352064972719634,
+          0.4519718128696348,
+          -0.2698767014956514
+        ],
+        [
+          0.34165352733899174,
+          1.174566193835881,
+          0.7785538532798587
+        ]
+      ]
+    },
+    {
+      "name": "HorseWesternSaddle",
+      "vertices": 5092,
+      "triangles": 6464,
+      "cageJacobianMin": 0.2851270371552959,
+      "bounds": [
+        [
+          -0.2717790847288615,
+          0.6102472278279055,
+          -0.21256103108806848
+        ],
+        [
+          0.2526398456674014,
+          1.0702379755758116,
+          0.2367620730526924
+        ]
+      ]
+    },
+    {
+      "name": "HorseFeather",
+      "vertices": 1000,
+      "triangles": 960,
+      "source": "Original alpha-card topology/UV sample with new fetlock placement and anatomical weights"
+    }
+  ],
+  "groom": {
+    "originalComponents": 548,
+    "keptComponents": 548,
+    "regionalLengthFactors": [
+      1.7,
+      1.13,
+      1
+    ],
+    "featherFactor": 0.055
+  },
+  "textureProvenance": {
+    "file": "coat-chestnut.png",
+    "sha256": "3ec643229251c63fda417fb088bc70b6867da93ce86ad97ef0f0cbca696fe814",
+    "method": "Multiply original source RGBA detail with anatomical color/mark masks rasterized in unchanged original UVs; no b2 images",
+    "resolution": [
+      2048,
+      2048
+    ],
+    "originalBodyPixelSha256": "bd2770dd74de5f40d469627290285e369307f6b7c4c7d3a92ab9b1f7cda01bfd",
+    "originalBodyPNGsha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a"
+  },
+  "jointPositions": [
+    [
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.005976083861133812,
+      0.9095765374665228,
+      -0.31076002164114275
+    ],
+    [
+      0.007624268916215769,
+      0.8642164976558153,
+      -0.06358213508027473
+    ],
+    [
+      0.0026863484091707674,
+      0.8404451330168117,
+      0.15350016957847679
+    ],
+    [
+      0.00010164677170019109,
+      0.8317783029225243,
+      0.21195022411591438
+    ],
+    [
+      -0.013761357206016126,
+      1.005719304065107,
+      0.475006003997425
+    ],
+    [
+      -0.02106862397683785,
+      1.138829895241291,
+      0.6027128012641373
+    ],
+    [
+      -0.023152777263861564,
+      1.080004928808181,
+      0.6199356248324821
+    ],
+    [
+      -0.07859012695073171,
+      1.1599058817353012,
+      0.6329195433358205
+    ],
+    [
+      0.026214875933775812,
+      1.1598144120306775,
+      0.6392088585963277
+    ],
+    [
+      -0.0033881129106152394,
+      0.8644554690043996,
+      -0.5801445853633599
+    ],
+    [
+      -0.011795964248330206,
+      0.6253693583757447,
+      -0.7037988670529071
+    ],
+    [
+      -0.0155634963259093,
+      0.43683711553713167,
+      -0.664456305402592
+    ],
+    [
+      -0.023360449781212718,
+      0.23101811444366194,
+      -0.665310952902367
+    ],
+    [
+      -0.05588613364564534,
+      0.8812092442078467,
+      0.25367169462206524
+    ],
+    [
+      -0.14935105296012435,
+      0.6656061729402997,
+      0.3730520772860805
+    ],
+    [
+      -0.12183113384536834,
+      0.4860893755418702,
+      0.262041288285397
+    ],
+    [
+      -0.12033736692538215,
+      0.28156499750142117,
+      0.24350951431070847
+    ],
+    [
+      -0.11541342680253895,
+      0.10221551708186365,
+      0.19496086998460968
+    ],
+    [
+      -0.11846692973793703,
+      0.04857483334494771,
+      0.2336057601255955
+    ],
+    [
+      0.04031152486140248,
+      0.8881391042319702,
+      0.2567225915081388
+    ],
+    [
+      0.10207321297911627,
+      0.6748723941409692,
+      0.3920294075852569
+    ],
+    [
+      0.10701965153259246,
+      0.48580958666138757,
+      0.2940569721165991
+    ],
+    [
+      0.09869379412663429,
+      0.2814077433844108,
+      0.31491512484246187
+    ],
+    [
+      0.08710517230763437,
+      0.09925667703641604,
+      0.29098668801634897
+    ],
+    [
+      0.08378103302881919,
+      0.049330184817845235,
+      0.3377600039114847
+    ],
+    [
+      -0.1391068836091596,
+      0.7393309924402102,
+      -0.4967314786628333
+    ],
+    [
+      -0.18126390558290548,
+      0.46764497350608575,
+      -0.41846822362905806
+    ],
+    [
+      -0.15600219307668475,
+      0.30985187584108,
+      -0.5233300312293675
+    ],
+    [
+      -0.17849146213611256,
+      0.09797966851736317,
+      -0.4688694401410402
+    ],
+    [
+      -0.18791835903939505,
+      0.051874792769037996,
+      -0.4323220745197602
+    ],
+    [
+      0.1320612363960761,
+      0.733525148579467,
+      -0.5035919748985254
+    ],
+    [
+      0.17592309524978636,
+      0.4610081658439834,
+      -0.44849026291042915
+    ],
+    [
+      0.13736819258581545,
+      0.3181470535806947,
+      -0.5874144444738523
+    ],
+    [
+      0.16009913765193384,
+      0.10199515922108673,
+      -0.5928024092766141
+    ],
+    [
+      0.1649049339223696,
+      0.05136840617779684,
+      -0.5681211160604235
+    ],
+    [
+      -0.11541342680253895,
+      0.10221551708186365,
+      0.19496086998460968
+    ],
+    [
+      0.08710517230763437,
+      0.09925667703641604,
+      0.29098668801634897
+    ],
+    [
+      -0.17849146213611256,
+      0.09797966851736317,
+      -0.4688694401410402
+    ],
+    [
+      0.16009913765193384,
+      0.10199515922108673,
+      -0.5928024092766141
+    ]
+  ],
+  "jointNames": [
+    "ROOT",
+    "pelvis",
+    "spine",
+    "chest",
+    "neck.lower",
+    "neck.upper",
+    "head",
+    "jaw",
+    "ear.L",
+    "ear.R",
+    "tail.1",
+    "tail.2",
+    "tail.3",
+    "tail.4",
+    "FL.scapula",
+    "FL.upperarm",
+    "FL.forearm",
+    "FL.cannon",
+    "FL.pastern",
+    "FL.hoof",
+    "FR.scapula",
+    "FR.upperarm",
+    "FR.forearm",
+    "FR.cannon",
+    "FR.pastern",
+    "FR.hoof",
+    "HL.thigh",
+    "HL.shin",
+    "HL.cannon",
+    "HL.pastern",
+    "HL.hoof",
+    "HR.thigh",
+    "HR.shin",
+    "HR.cannon",
+    "HR.pastern",
+    "HR.hoof",
+    "FL.IK",
+    "FR.IK",
+    "HL.IK",
+    "HR.IK"
+  ]
+}

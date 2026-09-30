@@ -66,11 +66,12 @@ export function createEquineFantasyCoat(THREE, baseMat, type, scaly=false){
  const time={value:0};
  m.name='EquineFantasy_'+type+(scaly?'_scales':'');
  m.userData.update=t=>{time.value=t;};
- m.customProgramCacheKey=()=>m.name;
+ m.customProgramCacheKey=()=>m.name+'_source_uv_v2';
  m.onBeforeCompile=sh=>{
   sh.uniforms.uC0={value:C0};sh.uniforms.uC1={value:C1};sh.uniforms.uC2={value:C2};
   sh.uniforms.uGlow={value:cfg.glow};sh.uniforms.uTime=time;
-  sh.fragmentShader='uniform vec3 uC0;uniform vec3 uC1;uniform vec3 uC2;uniform float uGlow;uniform float uTime;\n'+
+  sh.vertexShader='varying vec2 equineFantasyUv;\n'+sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>\nequineFantasyUv=${m.map?'uv':'position.xz*.25+vec2(.5)'};`);
+  sh.fragmentShader='varying vec2 equineFantasyUv;\nuniform vec3 uC0;uniform vec3 uC1;uniform vec3 uC2;uniform float uGlow;uniform float uTime;\n'+
    'float _hash(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}\n'+
    sh.fragmentShader
    .replace('#include <map_fragment>',
@@ -79,13 +80,13 @@ export function createEquineFantasyCoat(THREE, baseMat, type, scaly=false){
      vec3 _ramp = _l<0.5 ? mix(uC0,uC1,_l*2.0) : mix(uC1,uC2,(_l-0.5)*2.0);
      float _fres = pow(1.0-abs(dot(normalize(vNormal),normalize(vViewPosition))),2.5);
      vec3 _emis = _ramp*uGlow*(0.14+_l);
-     ${fx}
+     ${fx.replaceAll('vMapUv','equineFantasyUv')}
      diffuseColor.rgb=_ramp;
      ${scaly?`
      /* Overlapping plates, rows offset by half a scale, dark in the seams and catching a
         highlight along the top edge of each one. This is most of what separates a dragon
         from a horse painted an odd colour. */
-     {vec2 _s=vMapUv*vec2(52.0,34.0); float _row=floor(_s.y); _s.x+=mod(_row,2.0)*0.5;
+     {vec2 _s=equineFantasyUv*vec2(52.0,34.0); float _row=floor(_s.y); _s.x+=mod(_row,2.0)*0.5;
       vec2 _f=fract(_s)-0.5; float _d=length(vec2(_f.x,_f.y*1.28));
       float _seam=smoothstep(0.30,0.47,_d);
       float _lip=1.0-smoothstep(0.0,0.30,length(vec2(_f.x,(_f.y+0.20)*1.5)));
@@ -496,9 +497,9 @@ export const EQUINE_FANTASY_APPEARANCE={
  frostdrake:{theme:'ice',mane:'#8fd0ec',dragon:true,wings:true},emberdrake:{theme:'fire',mane:'#ff8a3a',dragon:true,wings:true},amethyst:{theme:'galaxy',mane:'#b79dff',dragon:true,wings:true},stormdrake:{theme:'shadow',mane:'#a07ce0',dragon:true,wings:true},verdant:{theme:'aurora',mane:'#7df0c4',dragon:true,wings:true},
 };
 export function applyEquineFantasyAppearance(THREE,inst,key){
- const appearance=EQUINE_FANTASY_APPEARANCE[key];if(!appearance||!inst?.skin)return null;
+ const appearance=EQUINE_FANTASY_APPEARANCE[key]||inst?.profile?.fantasyAppearance;if(!appearance||!inst?.skin)return null;
  const original=inst.skin.material;
- let body=appearance.theme?createEquineFantasyCoat(THREE,original,appearance.theme,!!appearance.dragon):original.clone();
+ let body=appearance.theme?createEquineFantasyCoat(THREE,original,appearance.theme,!!appearance.dragon&&!inst.profile?.nativeDragonBody):original.clone();
  if(appearance.body){
   body.name='PearlCoat_'+key;body.color.set(0xffffff);body.roughness=.52;body.metalness=.035;
   const tint=new THREE.Color(appearance.body),hoofTop=(inst.profile?.withersM||1.55)*.054;
@@ -514,7 +515,9 @@ export function applyEquineFantasyAppearance(THREE,inst,key){
   };body.needsUpdate=true;
  }
  inst.skin.material=body;inst.materials?.push(body);
+ if(inst.profile?.nativeDragonBody&&appearance.theme)inst.scene.traverse(mesh=>{if(mesh.isMesh&&mesh.name==='DragonWingMembrane'){const theme=base=>{const m=createEquineFantasyCoat(THREE,base,appearance.theme,false);inst.materials?.push(m);return m;};mesh.material=Array.isArray(mesh.material)?mesh.material.map(theme):theme(mesh.material);}});
+ if(appearance.spectral){body.transparent=true;body.opacity=.84;body.emissive.set(appearance.body||'#c6eaff');body.userData.update=t=>{body.emissiveIntensity=.32+.06*Math.sin(t*1.7);};body.needsUpdate=true;}
  const hair=new Set();inst.scene.traverse(object=>{if(/groom|mane|forelock|tailhair|feather/i.test(object.name))object.traverse(child=>{if(child.isMesh)hair.add(child);});});
- const tinted=new Set();for(const mesh of hair)for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material])if(!tinted.has(material)){tinted.add(material);material.color.set(appearance.mane);material.roughness=Math.max(.38,material.roughness||.5);material.needsUpdate=true;}
+ const tinted=new Set();for(const mesh of hair)for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material])if(!tinted.has(material)){tinted.add(material);if(appearance.mane)material.color.set(appearance.mane);material.roughness=Math.max(.38,material.roughness||.5);if(mesh.userData.nativeFeatherWing&&appearance.theme){material.emissive.copy(material.color);material.emissiveIntensity=.13;}material.needsUpdate=true;}
  return{...appearance,material:body,update(time){body.userData.update?.(time);}};
 }

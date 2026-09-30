@@ -1,0 +1,201 @@
+{
+  "method": "Independent current site GLTFLoader; every original and canonical rest vertex after actual bone transform, source-to-game normalization; appended clips played by AnimationMixer",
+  "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+  "baseSha256": "477bd0fc9c231ab7bbcdd45dc8f7f9002b553f177f4766acbaa18f705ec47608",
+  "animatedSha256": "3b3e3d70e3efac71976922f01e733d508dccbfa36e5183a444820abd8ef7fdc2",
+  "meshes": [
+    {
+      "sourceMesh": "Object_684",
+      "gameMesh": "HorseBody",
+      "vertices": 16159,
+      "maxPositionDifferenceM": 4.987847794022705e-7,
+      "rmsPositionDifferenceM": 1.1159940205474957e-7
+    },
+    {
+      "sourceMesh": "Object_685",
+      "gameMesh": "HorseEyes",
+      "vertices": 2028,
+      "maxPositionDifferenceM": 3.874439337498473e-7,
+      "rmsPositionDifferenceM": 8.832084674149936e-8
+    },
+    {
+      "sourceMesh": "Object_686",
+      "gameMesh": "HorseGroom",
+      "vertices": 23514,
+      "maxPositionDifferenceM": 4.850857011005955e-7,
+      "rmsPositionDifferenceM": 1.1675902154121779e-7
+    },
+    {
+      "sourceMesh": "Object_687",
+      "gameMesh": "HorseWesternTack",
+      "vertices": 13895,
+      "maxPositionDifferenceM": 3.623279769845897e-7,
+      "rmsPositionDifferenceM": 1.0195112567657985e-7
+    },
+    {
+      "sourceMesh": "Object_688",
+      "gameMesh": "HorseWesternSaddle",
+      "vertices": 5092,
+      "maxPositionDifferenceM": 3.2883773314454983e-7,
+      "rmsPositionDifferenceM": 8.514317835375355e-8
+    }
+  ],
+  "embeddedImages": [
+    {
+      "index": 0,
+      "sha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a",
+      "unchanged": true
+    },
+    {
+      "index": 1,
+      "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+      "unchanged": true
+    },
+    {
+      "index": 2,
+      "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+      "unchanged": true
+    },
+    {
+      "index": 3,
+      "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+      "unchanged": true
+    },
+    {
+      "index": 4,
+      "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+      "unchanged": true
+    }
+  ],
+  "originalIndexAndUVAccessorChecks": [
+    {
+      "mesh": "HorseBody",
+      "indices": true,
+      "TEXCOORD_0": true,
+      "TEXCOORD_1": true
+    },
+    {
+      "mesh": "HorseEyes",
+      "indices": true,
+      "TEXCOORD_0": true,
+      "TEXCOORD_1": true
+    },
+    {
+      "mesh": "HorseGroom",
+      "indices": true,
+      "TEXCOORD_0": true,
+      "TEXCOORD_1": true
+    },
+    {
+      "mesh": "HorseWesternTack",
+      "indices": true,
+      "TEXCOORD_0": true,
+      "TEXCOORD_1": true
+    },
+    {
+      "mesh": "HorseWesternSaddle",
+      "indices": true,
+      "TEXCOORD_0": true,
+      "TEXCOORD_1": true
+    }
+  ],
+  "clips": [
+    {
+      "name": "Rest",
+      "duration": 1,
+      "tracks": 80,
+      "allFinite": true,
+      "sampledBodyY": [
+        -2.9802322387695312e-8,
+        2.2277739513665438
+      ]
+    },
+    {
+      "name": "Idle",
+      "duration": 4,
+      "tracks": 80,
+      "allFinite": true,
+      "sampledBodyY": [
+        -2.8393332197638335e-8,
+        2.224168159839569
+      ]
+    },
+    {
+      "name": "Walk",
+      "duration": 0.9803921580314636,
+      "tracks": 80,
+      "allFinite": true,
+      "sampledBodyY": [
+        -0.00004640073703892603,
+        2.193197747828789
+      ]
+    },
+    {
+      "name": "Trot",
+      "duration": 0.6451612710952759,
+      "tracks": 80,
+      "allFinite": true,
+      "sampledBodyY": [
+        -0.0004559822525971144,
+        2.1008106368630335
+      ]
+    },
+    {
+      "name": "Canter_Left",
+      "duration": 0.5681818127632141,
+      "tracks": 80,
+      "allFinite": true,
+      "sampledBodyY": [
+        -0.0008159526489154318,
+        2.0157942248728915
+      ]
+    },
+    {
+      "name": "Canter_Right",
+      "duration": 0.5681818127632141,
+      "tracks": 80,
+      "allFinite": true,
+      "sampledBodyY": [
+        -0.00011101977829379613,
+        2.0751318255050806
+      ]
+    },
+    {
+      "name": "Gallop_Left",
+      "duration": 0.4716981053352356,
+      "tracks": 80,
+      "allFinite": true,
+      "sampledBodyY": [
+        -0.0010121084903652409,
+        1.9365438025374198
+      ]
+    },
+    {
+      "name": "Gallop_Right",
+      "duration": 0.4716981053352356,
+      "tracks": 80,
+      "allFinite": true,
+      "sampledBodyY": [
+        -0.0006938703433369375,
+        1.9674450061414768
+      ]
+    },
+    {
+      "name": "Jump",
+      "duration": 1.7200000286102295,
+      "tracks": 80,
+      "allFinite": true,
+      "sampledBodyY": [
+        -0.000008465040533458342,
+        2.7441795691727378
+      ]
+    }
+  ],
+  "checks": {
+    "allFiveMeshes": true,
+    "originalSourceRestPoseMatches": true,
+    "allEmbeddedImageBytesIdentical": true,
+    "allOriginalIndexAndUVAccessorsPreserved": true,
+    "allNineClipsPlayableFinite": true
+  }
+}

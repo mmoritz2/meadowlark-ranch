@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "horse-skeleton",
+  "status": "offline-render-prepared",
+  "blenderVersion": "4.5.14 LTS",
+  "renderEngine": "Cycles CPU",
+  "samples": 48,
+  "renderedFile": "assets/models/horse-imports/horse-skeleton/review/model.glb",
+  "renderedFileSha256": "9a28a22d9e194454f1557409cdc1aa99e2f3af4696ce6ad151fcbec73c8ebdc0",
+  "pngPath": "assets/models/horse-imports/horse-skeleton/review/preview.png",
+  "pngBytes": 852747,
+  "pngSha256": "b7688b0ff878847818aa72d7d371f2a5493cad45289bd2fb45f47e7f4cc46d81",
+  "originalSourceAndReceiptPreserved": true,
+  "originalReviewBytesPreserved": true,
+  "sourceMaterialsPreserved": true,
+  "sourceGeometryRigAndScalePreserved": true,
+  "onlyViewCameraLightingAndBackgroundAdded": true,
+  "embeddedScriptsExecuted": false,
+  "materialNames": [
+    "material_0"
+  ],
+  "evaluatedMeshObjectCount": 47,
+  "evaluatedWorldBounds": {
+    "min": [
+      -0.846116840839386,
+      -3.9522323608398438,
+      -3.024982213973999
+    ],
+    "max": [
+      0.8470527529716492,
+      3.43371319770813,
+      3.01322340965271
+    ]
+  },
+  "cameraView": "three quarter, framed from evaluated imported mesh vertices",
+  "visualReview": "offline PNG viewed and checked for framing and visible geometry",
+  "browserReview": "pending",
+  "gameCompatibility": "not-assessed",
+  "note": "Genuine render of the acquired unchanged GLB. Studio lighting and camera are for viewing; this does not certify motion or game readiness.",
+  "creator": "Diego Luján García",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "sourceGlbMeshCount": 47,
+  "renderedPose": "Blender default imported static pose; no armature rest override, bone transform changes, animation frame changes or clip playback.",
+  "renderOnlyRestPoseForced": false,
+  "rigMotionReview": "pending",
+  "framingReview": "complete horse/skull and feet visible",
+  "blenderGeneratedBoneShapesDisabled": false,
+  "generativeToolsUsed": false,
+  "visibleLimitations": [
+    "No detached geometry was visible in this view. This is a static anatomy model; no skin or animation clips are present."
+  ]
+}

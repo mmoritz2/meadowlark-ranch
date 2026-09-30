@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Imported model review · Meadowlark Ranch</title>
+  <style>
+    :root{color-scheme:light;--ink:#233b31;--muted:#65736a;--paper:#faf9f3;--line:#d9ded5;--green:#294f3b}
+    *{box-sizing:border-box}body{margin:0;background:#e2e6dc;color:var(--ink);font:14px/1.5 system-ui,sans-serif}button,select,input{font:inherit}button,select{border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);padding:9px 12px}button{cursor:pointer}button:hover:not(:disabled){background:#e7eddf}button:disabled,select:disabled,input:disabled{cursor:default;opacity:.5}button[aria-pressed=true]{background:var(--green);color:white;border-color:var(--green)}a{color:var(--green)}button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #a37839;outline-offset:3px}
+    .layout{display:grid;grid-template-columns:330px minmax(0,1fr);min-height:100dvh}.sidebar{background:var(--paper);border-right:1px solid var(--line);padding:26px 23px;overflow:auto;max-height:100dvh}.eyebrow{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin:0 0 9px}h1{font:32px/1.14 Georgia,serif;font-weight:400;margin:0 0 13px}.intro{color:var(--muted);margin:0 0 18px}.summary{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;margin-bottom:20px}.summary span{padding:5px 9px;background:#edf1e7;border-radius:20px}.candidates{display:grid;gap:10px}.candidate{border:1px solid var(--line);padding:12px;border-radius:12px;background:white}.candidate[data-selected=true]{border-color:var(--green);box-shadow:0 0 0 1px var(--green)}.candidate h2{font-size:14px;margin:0 0 3px}.credit{font-size:12px;color:var(--muted);margin:0 0 8px}.stages{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}.tag{font-size:10px;border-radius:4px;padding:3px 6px;background:#eff1eb;color:#677063}.tag.acquired{background:#e3eedf;color:#3e6238}.tag.ready{background:#294f3b;color:white}.candidate .note{font-size:11px;color:var(--muted);margin:0 0 10px}.candidate .actions{display:flex;align-items:center;justify-content:space-between;gap:8px}.candidate a{font-size:12px}.candidate button{font-size:12px;padding:6px 10px}.sidebar footer{font-size:11px;color:var(--muted);margin:23px 0 0}
+    .studio{min-width:0;display:grid;grid-template-rows:auto minmax(320px,1fr) auto;height:100dvh}.studio-header{padding:25px 28px 12px;display:flex;align-items:start;justify-content:space-between;gap:14px}.studio-header h2{font:27px/1.15 Georgia,serif;font-weight:400;margin:0 0 6px}.studio-header p{color:var(--muted);margin:0;font-size:12px;max-width:680px}.stage{position:relative;min-height:0;overflow:hidden}.stage canvas{display:block;width:100%;height:100%;touch-action:none}.empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;pointer-events:none}.empty p{max-width:390px;text-align:center;background:#faf9f3ec;border:1px solid #d9ded588;border-radius:14px;padding:22px;color:var(--muted);margin:0}.empty[hidden]{display:none}.status{position:absolute;top:12px;left:18px;right:18px;font-size:12px;color:var(--muted);pointer-events:none}.status:empty{display:none}.inspect{padding:14px 23px 18px;background:#f5f6f0d9;border-top:1px solid #d9ded5}.views{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.views .spacer{flex:1}.animation{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.animation label{font-size:12px;color:var(--muted)}#clip{max-width:240px}.timeline{display:flex;align-items:center;gap:9px;flex:1;min-width:180px}#timeline{width:100%;accent-color:var(--green)}#time{font:11px/1.3 ui-monospace,monospace;white-space:nowrap;color:var(--muted)}.details{margin:12px 0 0;color:var(--muted);font-size:11px}.instructions{font-size:11px;color:var(--muted);margin:7px 0 0}
+    @media(max-width:900px){.layout{grid-template-columns:270px minmax(0,1fr)}.sidebar{padding:23px 16px}.studio-header{padding:22px 18px 8px}.inspect{padding:12px 15px 16px}.views button,.views select,.animation button,.animation select{font-size:12px;padding:8px 9px}.views .spacer{display:none}}
+    @media(max-width:650px){.layout{display:flex;flex-direction:column}.sidebar{border-right:0;border-bottom:1px solid var(--line);max-height:none;padding:18px}.sidebar h1{font-size:27px}.intro{font-size:12px;margin-bottom:12px}.summary{margin-bottom:12px}.candidates{display:flex;overflow-x:auto;gap:8px;padding:2px 1px 8px}.candidate{flex:0 0 236px}.sidebar footer{margin-top:10px}.studio{height:720px;min-height:70dvh}.studio-header{padding-top:20px}.studio-header h2{font-size:23px}.stage{min-height:300px}.timeline{flex-basis:100%}}
+  [data-source-overview="true"] .layout{display:block;max-width:1300px;margin:auto}[data-source-overview="true"] .sidebar{max-height:none;border-right:0}[data-source-overview="true"] .studio{display:none}[data-source-overview="true"] .candidates{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}[data-source-overview="true"] .candidate .actions{gap:12px;flex-wrap:wrap}</style>
+  <script type="importmap">{"imports":{"three":"./assets/vendor/three/build/three.module.js","three/addons/":"./assets/vendor/three/examples/jsm/"}}</script>
+</head>
+<body>
+  <main class="layout">
+    <aside class="sidebar">
+      <p class="eyebrow">Source evaluation</p>
+      <h1>Imported model review</h1>
+      <p class="intro">Explore the approved creator sources, credits and licenses. View horse opens each adapted model and its movement in the Breed Studio.</p>
+      <div class="summary" aria-live="polite"><span id="acquired-count">Sources: checking</span><span id="review-count">Previews: checking</span></div>
+      <div id="candidates" class="candidates" aria-label="Model candidates"></div>
+      <footer id="catalog-note">Loading the approved source catalog…</footer>
+    </aside>
+    <section class="studio" aria-label="3D model review">
+      <header class="studio-header"><div><p class="eyebrow">Original model preview</p><h2 id="model-name">Choose an available preview</h2><p id="model-description">Source files must be inspected and prepared before they appear here.</p></div><button id="reload" type="button">Refresh</button></header>
+      <div id="stage" class="stage">
+        <div id="status" class="status" role="status"></div>
+        <div id="empty" class="empty"><p id="empty-message">Checking for prepared previews…</p></div>
+      </div>
+      <div class="inspect">
+        <nav class="views" aria-label="Camera and surface"><button data-view="quarter" aria-pressed="true" disabled>Three-quarter</button><button data-view="side" aria-pressed="false" disabled>Side</button><button data-view="front" aria-pressed="false" disabled>Front</button><button id="fit" disabled>Fit model</button><span class="spacer"></span><select id="surface" aria-label="Surface" disabled><option value="original">Original materials</option><option value="clay">Neutral clay</option><option value="wire">Topology</option></select><button id="bones" aria-pressed="false" disabled>Skeleton</button></nav>
+        <div class="animation" aria-label="Original animation playback"><label for="clip">Animation</label><select id="clip" disabled><option value="">Original pose</option></select><button id="play" aria-pressed="false" disabled>Pause</button><button id="reset" disabled>Restart</button><select id="speed" aria-label="Playback speed" disabled><option value="1">1× speed</option><option value="0.5">0.5× speed</option><option value="0.25">0.25× speed</option><option value="2">2× speed</option></select><div class="timeline"><input id="timeline" type="range" min="0" max="1" step="0.001" value="0" aria-label="Animation time" disabled><output id="time">0.00 / 0.00 s</output></div></div>
+        <p id="details" class="details">Source previews retain their creator credit and license. Public provenance verifies the preserved originals.</p>
+        <p class="instructions">Drag to orbit · Scroll or pinch to zoom · Clips retain original root motion</p>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="./assets/horse-import-review.js"></script>
+</body>
+</html>

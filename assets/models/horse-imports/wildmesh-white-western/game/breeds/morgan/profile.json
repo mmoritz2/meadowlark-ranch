@@ -1,0 +1,198 @@
+{
+  "id": "morgan",
+  "name": "Morgan",
+  "file": "model.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.52,
+  "heightM": 1.8189402220916389,
+  "fitScale": 1,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0,
+        1.4400761833577471,
+        0
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.5123025894682576,
+        0.28584692577554405
+      ]
+    ],
+    "head": [
+      [
+        -0.024738455123947876,
+        1.715508800945322,
+        0.8219245975321934
+      ]
+    ],
+    "poll": [
+      [
+        -0.024738455123947876,
+        1.715508800945322,
+        0.8219245975321934
+      ]
+    ],
+    "muzzle": [
+      [
+        -0.04817247411233476,
+        1.3328817163830828,
+        1.0453093954331492
+      ]
+    ],
+    "crest": [
+      [
+        -0.01657449878358513,
+        1.5371802537805328,
+        0.6362009847464406
+      ]
+    ],
+    "tail": [
+      [
+        -0.004240986170369766,
+        1.2795603340968826,
+        -0.6965415089116304
+      ]
+    ],
+    "eyes": [
+      [
+        -0.12995799114087792,
+        1.6411034732590732,
+        0.9333825945407782
+      ],
+      [
+        0.053590452585461266,
+        1.6419037514828705,
+        0.9476223064774799
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.09383971220103218,
+        1.3655911242158436,
+        1.0180636267235275
+      ],
+      [
+        -0.0025052360236373253,
+        1.3655911242158436,
+        1.0180636267235275
+      ]
+    ]
+  },
+  "preserveSourceTack": true,
+  "preserveSaddleAnchor": true,
+  "sourceTackMeshes": [
+    "HorseWesternTack",
+    "HorseWesternSaddle"
+  ],
+  "preserveSourceMaterials": true,
+  "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+  "sha256": "7dba9827bcc014756aa04284282ae4d053fbb7a00d3efdc8aaf69e96720837dd",
+  "creator": "WildMesh 3D",
+  "license": "CC BY-NC 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+  "family": "riding",
+  "jointCount": 40,
+  "triangles": 82426,
+  "clips": [
+    "Rest",
+    "Idle",
+    "Walk",
+    "Trot",
+    "Canter_Left",
+    "Canter_Right",
+    "Gallop_Left",
+    "Gallop_Right",
+    "Jump"
+  ],
+  "gaitImplementation": "assets/artist-horse-motion.js, baked clips appended separately",
+  "motionStatus": "all six live gait modes validated; nine own baked anatomical clips",
+  "preserveSourceGroom": true,
+  "visualReview": "Actual final source-textured breed snapshots directly inspected",
+  "physicalScale": true,
+  "preferredWhiteWesternFile": "../../white-western-animated.glb",
+  "conformation": "Compact strong short-backed horse",
+  "morphology": {
+    "build": "Compact strong short-backed horse",
+    "neck": "Neck rises over withers with proud smooth crest",
+    "head_face": "Short straight/slightly dished face, rounded jaw",
+    "ears": "Small shapely upright ears",
+    "limbs": "Strong clean legs and short coupling",
+    "hooves": "Round feet open at heels",
+    "mane_tail": "Full groomed mane and tail",
+    "feathering": "None"
+  },
+  "sculptTargets": {
+    "body_length": 0.94,
+    "barrel_width": 1.04,
+    "body_depth": 1.02,
+    "neck_length": 1.01,
+    "neck_thickness": 1.07,
+    "head_length": 0.93,
+    "head_width": 1.06,
+    "ear_length": 0.87,
+    "limb_length": 0.99,
+    "hoof_width": 1.02,
+    "hindquarter_width": 1.07,
+    "face_profile_depth_per_withers": -0.006,
+    "neck_arch_rise_per_withers": 0.05
+  },
+  "coat": [
+    0.38,
+    0.13,
+    0.06
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "tailLengthFactor": 1,
+    "sourceCardDensityFactor": 1,
+    "feathering": 0
+  },
+  "textureProvenance": "../texture-provenance.json",
+  "rigSha256": "c2f034ff200a856cc2132ee999ab78b7ba8a98073b596ba080d17cc7a1a19b12",
+  "bodyGeometrySha256": "5aba62d6fefd50f9652e9c18eef3aef9da4af907c728dacfde35731a94e7c674",
+  "motionValidation": "motion-validation.json",
+  "neutralCoatFile": "../textures/source-0-0e43d3fa2c5a5497.png",
+  "neutralCoatLuminance": 0.365378901748634,
+  "coatLuminance": 0.01961021579987348,
+  "sourceTackAnchors": {
+    "saddleSeat": [
+      0,
+      1.4400761833577471,
+      0
+    ],
+    "stirrups": [
+      [
+        -0.34087495017420016,
+        0.8730710123463113,
+        0.17043183676824117
+      ],
+      [
+        0.3280014074902684,
+        0.8746992322505808,
+        0.1574627528277982
+      ]
+    ],
+    "bit": [
+      [
+        -0.10598572249630847,
+        1.4060843991254317,
+        1.0214069839789415
+      ],
+      [
+        0.012375008703780716,
+        1.4066356809628013,
+        1.0309019700506012
+      ]
+    ]
+  },
+  "visualReviewReport": "../batch-visual-review.json",
+  "bakedGroundValidation": "../baked-ground-validation.json",
+  "animationBakeFPS": 120
+}

@@ -1,0 +1,116 @@
+{
+  "sourceZipSha256": "cf713fa956ec331b5c7e63425e38f7a4666e8a5e9754b2d5d4bd1c778ae2aecb",
+  "sourceBlendSha256": "f43fd99185b2e0d3877dc5b42c4c8004a6071ac420cb774d4d466ffd3fe0e258",
+  "sourcePreviewSha256": "32dd148f6da8fabf04ff2f33ec6694299265d5338f95583408ce860fdc17b5c2",
+  "gameSha256": "3c44f5fe53421b6207adb323bc683f431008f24740229ebb07841c1a2666d3b4",
+  "scale": 0.22465968688838725,
+  "basis": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      -1,
+      0
+    ]
+  ],
+  "sourceWingRoot": [
+    -0.8360611498355865,
+    2.4608535766601562,
+    0.0077423942275345325
+  ],
+  "mountingRoot": [
+    0.39,
+    -0.1,
+    -0.12
+  ],
+  "sourceWingTrianglesPerSide": 3248,
+  "sourceLongFeathersPerSide": 48,
+  "sourceLongFeatherTopologyPreserved": true,
+  "sourceWingBodySkinOwnershipPreserved": true,
+  "sourceLongFeatherBinding": "rigid individual feather joints attached to nearest basal source-wing dominant skin joint",
+  "jointCount": 105,
+  "missingMaps": [
+    "wing_alphamap.png",
+    "wing_texturemap.jpg"
+  ],
+  "omittedDownStrands": 1000,
+  "generativeToolsUsed": false,
+  "originalSourcePreserved": true,
+  "originalBlendPreserved": true,
+  "originalReceiptPreserved": true,
+  "gameIntegration": "pending",
+  "bakedClips": {
+    "motionCodeSha256": "528e5cb63edaec0f0c587710dc454d7e8ea06d5b323b2946899be6b57dd4cfa8",
+    "clips": [
+      {
+        "name": "Rest",
+        "duration": 1,
+        "frames": 31,
+        "joints": 105,
+        "loop": true,
+        "maxQuaternionNormError": 0,
+        "finite": true
+      },
+      {
+        "name": "Folded_Idle",
+        "duration": 4,
+        "frames": 121,
+        "joints": 105,
+        "loop": true,
+        "maxQuaternionNormError": 3.3306690738754696e-16,
+        "finite": true
+      },
+      {
+        "name": "Takeoff",
+        "duration": 1.15,
+        "frames": 36,
+        "joints": 105,
+        "loop": false,
+        "maxQuaternionNormError": 4.440892098500626e-16,
+        "finite": true
+      },
+      {
+        "name": "Fly",
+        "duration": 1.5267175572519083,
+        "frames": 47,
+        "joints": 105,
+        "loop": true,
+        "maxQuaternionNormError": 5.551115123125783e-16,
+        "finite": true
+      },
+      {
+        "name": "Land",
+        "duration": 2,
+        "frames": 61,
+        "joints": 105,
+        "loop": false,
+        "maxQuaternionNormError": 4.440892098500626e-16,
+        "finite": true
+      }
+    ]
+  },
+  "animations": "Original source has no actions; five independently baked articulated wing component clips",
+  "ordinaryRenderReview": "render-review.json",
+  "offlineHostMotionReview": {
+    "passed": true,
+    "hosts": [
+      {
+        "id": "wildmesh-white-western",
+        "sha256": "3b3e3d70e3efac71976922f01e733d508dccbfa36e5183a444820abd8ef7fdc2"
+      },
+      {
+        "id": "ikkiz-unicorn",
+        "sha256": "69f206e1e03d61b743a3a9b3e7db0b5db9f83bd754abcdeee5607cbad6ad883a"
+      }
+    ],
+    "groundCoreCodeSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594"
+  }
+}

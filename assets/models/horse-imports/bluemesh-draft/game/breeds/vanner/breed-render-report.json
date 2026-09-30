@@ -1,0 +1,613 @@
+{
+  "breed": "vanner",
+  "renderedGlbSha256": "79889a98e8543ecb2124b05c43e2d01c90b085529e843527899bc5624a977a4e",
+  "method": "Actual candidate GLB vertex attributes weighted by exact nodeWorld*inverseBind skin; source/explicit derivative PBR shaders supplied by local material-only Blender import; original source files unchanged.",
+  "geometryPoseIsDirectGLTFSkin": true,
+  "materialsImages": [
+    {
+      "name": "source-body-basecolor-179fb45dd17e0054.png",
+      "bytes": 10205740
+    },
+    {
+      "name": "source-body-metalrough-63eb7c7fa4ccb65e.png",
+      "bytes": 8782146
+    },
+    {
+      "name": "source-body-normal-4b36423c07848414.png",
+      "bytes": 12827160
+    },
+    {
+      "name": "vanner authored coat atlas",
+      "bytes": 3512173
+    }
+  ],
+  "studioOnlyCameraLightingFloor": true,
+  "poseBounds": [
+    {
+      "pose": "Rest",
+      "time": 1,
+      "meshes": [
+        {
+          "mesh": "HorseBody",
+          "referencedVertices": 12426,
+          "triangles": 23152,
+          "min": [
+            -0.35165266360270075,
+            -1.024978743262996,
+            5.711562220410732e-09
+          ],
+          "max": [
+            0.35165690476392275,
+            1.206876378742924,
+            1.8605137920367318
+          ]
+        },
+        {
+          "mesh": "HorseGroom_1",
+          "referencedVertices": 65532,
+          "triangles": 34051,
+          "min": [
+            -0.19979943543786666,
+            -0.8898899147322431,
+            0.3515237475105207
+          ],
+          "max": [
+            0.20368084035616327,
+            1.4086406014689374,
+            1.8276726259538747
+          ]
+        },
+        {
+          "mesh": "HorseGroom_2",
+          "referencedVertices": 65534,
+          "triangles": 32956,
+          "min": [
+            -0.20460791970566958,
+            -0.9844009723916994,
+            1.273839440365223
+          ],
+          "max": [
+            0.07479821235691306,
+            -0.43793307115147756,
+            1.827853113531351
+          ]
+        },
+        {
+          "mesh": "HorseGroom_3",
+          "referencedVertices": 65534,
+          "triangles": 32768,
+          "min": [
+            -0.3387062939326757,
+            -0.9771598799958039,
+            0.05148501472627819
+          ],
+          "max": [
+            0.3439832747279307,
+            1.2584011180879087,
+            1.8512595598351045
+          ]
+        },
+        {
+          "mesh": "HorseGroom_4",
+          "referencedVertices": 65534,
+          "triangles": 32766,
+          "min": [
+            -0.24349222794854047,
+            -0.8081182117541447,
+            1.1870121913938196
+          ],
+          "max": [
+            0.11548226005513303,
+            -0.24795551631402027,
+            1.8527145521276478
+          ]
+        },
+        {
+          "mesh": "HorseGroom_5",
+          "referencedVertices": 65533,
+          "triangles": 32988,
+          "min": [
+            -0.34315114734017654,
+            -0.3354184375064839,
+            0.9471144467101364
+          ],
+          "max": [
+            0.0453806177470042,
+            -0.014567307256079617,
+            1.733000484090256
+          ]
+        },
+        {
+          "mesh": "HorseGroom_6",
+          "referencedVertices": 20879,
+          "triangles": 10439,
+          "min": [
+            -0.2515718057786803,
+            -0.49400829951679176,
+            1.1857414473509593
+          ],
+          "max": [
+            0.038478340036416446,
+            -0.21970515711626037,
+            1.7789074179133815
+          ]
+        },
+        {
+          "mesh": "HorseEyes",
+          "referencedVertices": 514,
+          "triangles": 960,
+          "min": [
+            -0.10160044580697228,
+            -0.8694533414797789,
+            1.6674925529571252
+          ],
+          "max": [
+            0.1016005799174414,
+            -0.8427883692281668,
+            1.695884271752517
+          ]
+        }
+      ],
+      "min": [
+        -0.35165266360270075,
+        -1.024978743262996,
+        5.711562220410732e-09
+      ],
+      "max": [
+        0.35165690476392275,
+        1.4086406014689374,
+        1.8605137920367318
+      ]
+    },
+    {
+      "pose": "Walk",
+      "time": 0.275,
+      "meshes": [
+        {
+          "mesh": "HorseBody",
+          "referencedVertices": 12426,
+          "triangles": 23152,
+          "min": [
+            -0.351240605309607,
+            -1.0325224506020174,
+            -1.3763395598257022e-09
+          ],
+          "max": [
+            0.35125933519198754,
+            1.5289914500840192,
+            1.6888738976829367
+          ]
+        },
+        {
+          "mesh": "HorseGroom_1",
+          "referencedVertices": 65532,
+          "triangles": 34051,
+          "min": [
+            -0.19940114788769178,
+            -0.8989312840420098,
+            0.19232359335140664
+          ],
+          "max": [
+            0.23661789970286407,
+            1.4059097112158316,
+            1.6568998851254395
+          ]
+        },
+        {
+          "mesh": "HorseGroom_2",
+          "referencedVertices": 65534,
+          "triangles": 32956,
+          "min": [
+            -0.20418780879998694,
+            -0.9930028351230619,
+            1.1047902347524632
+          ],
+          "max": [
+            0.07355227130506857,
+            -0.4437181403770264,
+            1.657195667421304
+          ]
+        },
+        {
+          "mesh": "HorseGroom_3",
+          "referencedVertices": 65534,
+          "triangles": 32768,
+          "min": [
+            -0.3505906875623553,
+            -0.9833357862740699,
+            -0.044976165139426816
+          ],
+          "max": [
+            0.35956468312549345,
+            1.5761527133995177,
+            1.679654744067445
+          ]
+        },
+        {
+          "mesh": "HorseGroom_4",
+          "referencedVertices": 65534,
+          "triangles": 32766,
+          "min": [
+            -0.24349222794854264,
+            -0.8190852350613278,
+            1.0215628552057954
+          ],
+          "max": [
+            0.11544943492534412,
+            -0.25506852688137827,
+            1.681130708542037
+          ]
+        },
+        {
+          "mesh": "HorseGroom_5",
+          "referencedVertices": 65533,
+          "triangles": 32988,
+          "min": [
+            -0.34315114734017793,
+            -0.345249268149994,
+            0.7822064386173854
+          ],
+          "max": [
+            0.04538061774700218,
+            -0.020746381971680057,
+            1.5671225971247642
+          ]
+        },
+        {
+          "mesh": "HorseGroom_6",
+          "referencedVertices": 20879,
+          "triangles": 10439,
+          "min": [
+            -0.25157180577868243,
+            -0.5048813311425493,
+            1.0205675520663364
+          ],
+          "max": [
+            0.03847834003641416,
+            -0.2269010499711606,
+            1.6111789891291424
+          ]
+        },
+        {
+          "mesh": "HorseEyes",
+          "referencedVertices": 514,
+          "triangles": 960,
+          "min": [
+            -0.10250042873333913,
+            -0.8796858538728656,
+            1.4954507730821787
+          ],
+          "max": [
+            0.10069528545262353,
+            -0.8518352430004327,
+            1.5238476991522896
+          ]
+        }
+      ],
+      "min": [
+        -0.351240605309607,
+        -1.0325224506020174,
+        -0.044976165139426816
+      ],
+      "max": [
+        0.35956468312549345,
+        1.5761527133995177,
+        1.6888738976829367
+      ]
+    },
+    {
+      "pose": "Gallop_Left",
+      "time": 0.13333333333333333,
+      "meshes": [
+        {
+          "mesh": "HorseBody",
+          "referencedVertices": 12426,
+          "triangles": 23152,
+          "min": [
+            -0.3512336752052488,
+            -0.9896373820334032,
+            5.711561919376786e-09
+          ],
+          "max": [
+            0.35124998863061674,
+            1.458374625315901,
+            1.6744970297861248
+          ]
+        },
+        {
+          "mesh": "HorseGroom_1",
+          "referencedVertices": 65532,
+          "triangles": 34051,
+          "min": [
+            -0.20011168398359136,
+            -0.8454645447957222,
+            0.11482367175187314
+          ],
+          "max": [
+            0.25045002111030856,
+            1.4227702056343667,
+            1.637762690231433
+          ]
+        },
+        {
+          "mesh": "HorseGroom_2",
+          "referencedVertices": 65534,
+          "triangles": 32956,
+          "min": [
+            -0.20496874102026613,
+            -0.9440227668019634,
+            1.0787787772928934
+          ],
+          "max": [
+            0.07618169506623294,
+            -0.3966205682582826,
+            1.6376188437964216
+          ]
+        },
+        {
+          "mesh": "HorseGroom_3",
+          "referencedVertices": 65534,
+          "triangles": 32768,
+          "min": [
+            -0.354346299723973,
+            -0.9476742949533074,
+            0.019237814853196283
+          ],
+          "max": [
+            0.3723134639947977,
+            1.5175601174855151,
+            1.665083974023285
+          ]
+        },
+        {
+          "mesh": "HorseGroom_4",
+          "referencedVertices": 65534,
+          "triangles": 32766,
+          "min": [
+            -0.24349222794854242,
+            -0.7570682563310038,
+            0.9806181548520294
+          ],
+          "max": [
+            0.11491358268664426,
+            -0.21118983635546829,
+            1.6664536076944552
+          ]
+        },
+        {
+          "mesh": "HorseGroom_5",
+          "referencedVertices": 65533,
+          "triangles": 32988,
+          "min": [
+            -0.34315114734017793,
+            -0.2904149331328167,
+            0.7368683799913376
+          ],
+          "max": [
+            0.04538061774700246,
+            0.018464318316037353,
+            1.5275186826659677
+          ]
+        },
+        {
+          "mesh": "HorseGroom_6",
+          "referencedVertices": 20879,
+          "triangles": 10439,
+          "min": [
+            -0.2515718057786822,
+            -0.44666252089420905,
+            0.97839769503433
+          ],
+          "max": [
+            0.03847834003641445,
+            -0.18330309972965372,
+            1.5791168330783754
+          ]
+        },
+        {
+          "mesh": "HorseEyes",
+          "referencedVertices": 514,
+          "triangles": 960,
+          "min": [
+            -0.10059130644829212,
+            -0.8253125445872613,
+            1.4835139891071363
+          ],
+          "max": [
+            0.10260303391948893,
+            -0.7973467997857739,
+            1.5118495736959408
+          ]
+        }
+      ],
+      "min": [
+        -0.354346299723973,
+        -0.9896373820334032,
+        5.711561919376786e-09
+      ],
+      "max": [
+        0.3723134639947977,
+        1.5175601174855151,
+        1.6744970297861248
+      ]
+    },
+    {
+      "pose": "Jump",
+      "time": 0.7833333333333333,
+      "meshes": [
+        {
+          "mesh": "HorseBody",
+          "referencedVertices": 12426,
+          "triangles": 23152,
+          "min": [
+            -0.35124413633801826,
+            -1.0315950193432544,
+            0.6143786866317246
+          ],
+          "max": [
+            0.35124836014267297,
+            1.3297673623315664,
+            2.337513856799904
+          ]
+        },
+        {
+          "mesh": "HorseGroom_1",
+          "referencedVertices": 65532,
+          "triangles": 34051,
+          "min": [
+            -0.1998073940916038,
+            -0.8903546560985134,
+            0.8226514006555213
+          ],
+          "max": [
+            0.19489853613937802,
+            1.4044207998886635,
+            2.302200738793493
+          ]
+        },
+        {
+          "mesh": "HorseGroom_2",
+          "referencedVertices": 65534,
+          "triangles": 32956,
+          "min": [
+            -0.2046376772202216,
+            -0.9879029197859135,
+            1.744826579456394
+          ],
+          "max": [
+            0.0747981912718984,
+            -0.4420022614461696,
+            2.302150177129397
+          ]
+        },
+        {
+          "mesh": "HorseGroom_3",
+          "referencedVertices": 65534,
+          "triangles": 32768,
+          "min": [
+            -0.34425005175250906,
+            -0.9875296263270747,
+            0.6740628721829501
+          ],
+          "max": [
+            0.3614984997163267,
+            1.3914356075278835,
+            2.3281587837707205
+          ]
+        },
+        {
+          "mesh": "HorseGroom_4",
+          "referencedVertices": 65534,
+          "triangles": 32766,
+          "min": [
+            -0.24349222794854233,
+            -0.8046455727884868,
+            1.649267110931101
+          ],
+          "max": [
+            0.11530235628109486,
+            -0.2553107043278914,
+            2.3295581435739243
+          ]
+        },
+        {
+          "mesh": "HorseGroom_5",
+          "referencedVertices": 65533,
+          "triangles": 32988,
+          "min": [
+            -0.3431511473401777,
+            -0.33631112097708615,
+            1.4112624839590207
+          ],
+          "max": [
+            0.04538061774700268,
+            -0.02409010444445714,
+            2.1959435328828065
+          ]
+        },
+        {
+          "mesh": "HorseGroom_6",
+          "referencedVertices": 20879,
+          "triangles": 10439,
+          "min": [
+            -0.2515718057786821,
+            -0.4915699730056182,
+            1.6474328682814636
+          ],
+          "max": [
+            0.03847834003641469,
+            -0.2270424042963199,
+            2.2466193395459344
+          ]
+        },
+        {
+          "mesh": "HorseEyes",
+          "referencedVertices": 514,
+          "triangles": 960,
+          "min": [
+            -0.10160044580697483,
+            -0.8701032357256837,
+            2.1457431482540996
+          ],
+          "max": [
+            0.1016005799174389,
+            -0.843451038363377,
+            2.1741055169964505
+          ]
+        }
+      ],
+      "min": [
+        -0.35124413633801826,
+        -1.0315950193432544,
+        0.6143786866317246
+      ],
+      "max": [
+        0.3614984997163267,
+        1.4044207998886635,
+        2.337513856799904
+      ]
+    }
+  ],
+  "renders": [
+    {
+      "pose": "Rest",
+      "time": 1,
+      "png": "assets/models/horse-imports/bluemesh-draft/game/breeds/vanner/rest-breed-preview.png",
+      "sha256": "333693299b6bde581d18c8a7f990274c2e7180f63f1f9b01627f0c9220207428",
+      "bytes": 1207069,
+      "renderedGlbSha256": "79889a98e8543ecb2124b05c43e2d01c90b085529e843527899bc5624a977a4e"
+    },
+    {
+      "pose": "Walk",
+      "time": 0.275,
+      "png": "assets/models/horse-imports/bluemesh-draft/game/breeds/vanner/walk-breed-preview.png",
+      "sha256": "4b8aa7b1b7c708a78d7616f58848284dbbc56f464dbad651deccf061c0d93284",
+      "bytes": 1199025,
+      "renderedGlbSha256": "79889a98e8543ecb2124b05c43e2d01c90b085529e843527899bc5624a977a4e"
+    },
+    {
+      "pose": "Gallop_Left",
+      "time": 0.13333333333333333,
+      "png": "assets/models/horse-imports/bluemesh-draft/game/breeds/vanner/gallop_left-breed-preview.png",
+      "sha256": "0f516b0996775277c6bc8c0903775206c5b87b56ae5371489f79aa41419afe7c",
+      "bytes": 1199476,
+      "renderedGlbSha256": "79889a98e8543ecb2124b05c43e2d01c90b085529e843527899bc5624a977a4e"
+    },
+    {
+      "pose": "Jump",
+      "time": 0.7833333333333333,
+      "png": "assets/models/horse-imports/bluemesh-draft/game/breeds/vanner/jump-breed-preview.png",
+      "sha256": "6c35864b53119dfe605a5f10a199af6b4b0f65b92f15b9a9d029feee030250fd",
+      "bytes": 1192062,
+      "renderedGlbSha256": "79889a98e8543ecb2124b05c43e2d01c90b085529e843527899bc5624a977a4e"
+    }
+  ],
+  "visualReview": "passed actual Rest/Walk/Gallop_Left/Jump PNG inspection: fully framed actual source-derived PBR geometry, attached eyes, coherent body/groom placements, no separating UV seam cracks; Distinct shorter compact piebald body, full mixed mane and profuse white feathering.",
+  "runtimeBrowserReview": "pending",
+  "motionStatus": "all six live gait modes validated; nine own baked anatomical clips",
+  "visualLimitations": [
+    "Four sampled offline poses do not certify continuous gait transitions, mounted rider/tack placement, or integrated browser material behavior.",
+    "Source strand geometry retains fine sparse feather wisps; it has not been replaced with a new simulated groom.",
+    "Rapid folded-limb poses show compressed shoulder/armpit folds inherent to this detailed source skin; continuous motion review remains separate."
+  ]
+}

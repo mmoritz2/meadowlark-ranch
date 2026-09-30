@@ -423,7 +423,7 @@ export function install(G){
   /* A yearling, not a grown mare. dressWithRig sizes every horse to its breed's withers, and when
      the model is still downloading it finishes the job from its own callback, after this call has
      returned, so she is sized the first time she is seen with a rig, not straight after asking. */
-  if(foal.sized!==foal.rig){const w=foal.rig.profile&&foal.rig.profile.withersM;if(w)foal.group.scale.setScalar(w/1.45*0.78);foal.sized=foal.rig;}
+  if(foal.sized!==foal.rig){const w=foal.rig.profile&&foal.rig.profile.withersM;if(w)foal.group.scale.setScalar((foal.rig.profile.physicalScale?1:w/1.45)*0.78);foal.sized=foal.rig;}
   G.anim.tickRig(foal,sp,dt,t,0);
  }
  function tickFoal(dt,t){

@@ -18,7 +18,7 @@ const ORDER=[
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),wrap=x=>x-Math.floor(x),TAU=Math.PI*2;
 const ease=x=>{x=clamp(x);return x*x*x*(10+x*(-15+6*x));};
 
-export function createArtistMotion({THREE,root,skin,heightM=null}){
+export function createArtistMotion({THREE,root,skin,heightM=null,profile=null,contactEnvelope=null}){
   if(!skin?.isSkinnedMesh)return null;
   const V=()=>new THREE.Vector3(),Q=()=>new THREE.Quaternion(),bones=skin.skeleton.bones,n=bones.length;
   const jointName=name=>name.replace(/[.\s]/g,'');
@@ -36,6 +36,8 @@ export function createArtistMotion({THREE,root,skin,heightM=null}){
   const rawToRoot=new THREE.Matrix4().multiplyMatrices(worldToRoot,skin.matrixWorld);let groundY=Infinity,topY=-Infinity;
   for(let i=0;i<pos.count;i++){temp.fromBufferAttribute(pos,i).applyMatrix4(rawToRoot);groundY=Math.min(groundY,temp.y);topY=Math.max(topY,temp.y);}
   const metres=heightM ? heightM/(topY-groundY) : 1;
+  const envelope=contactEnvelope??profile?.contactEnvelope;
+  if(envelope)for(const key of ['radiusM','aboveTerminalM','bottomBandM'])if(envelope[key]!==undefined&&(!Number.isFinite(envelope[key])||envelope[key]<0))throw new Error('Invalid contact envelope '+key);
   const size=clamp((topY-groundY)/2.2,.42,1.4);
   const gaits=Object.fromEntries(Object.entries(ARTIST_GAITS).map(([key,g])=>[key,{...g,speed:g.speed*size,lift:g.lift*size,drop:g.drop*size,bob:g.bob*size}]));
   const legs=ORDER.map(spec=>{
@@ -49,13 +51,26 @@ export function createArtistMotion({THREE,root,skin,heightM=null}){
     const center=bottom.reduce((v,c)=>v.add(c.point),V()).multiplyScalar(1/bottom.length);center.y=low;
     const soleVertex=bottom.reduce((a,b)=>a.point.distanceToSquared(center)<b.point.distanceToSquared(center)?a:b).index,samples=[soleVertex];
     for(const direction of [new THREE.Vector3(1,0,0),new THREE.Vector3(-1,0,0),new THREE.Vector3(0,0,1),new THREE.Vector3(0,0,-1),new THREE.Vector3(0,-1,0)]){const v=bottom.reduce((a,b)=>a.point.dot(direction)>b.point.dot(direction)?a:b);if(!samples.includes(v.index))samples.push(v.index);}
+    // Keep the ordinary horse's sole centre and default contact path intact.
+    // An opted-in large claw can extend well beyond that small hoof envelope;
+    // measure those actual source points separately without relocating it.
+    if(envelope){
+      const radius=(envelope.radiusM??.15)/metres,above=(envelope.aboveTerminalM??.01)/metres,band=(envelope.bottomBandM??.009)/metres,expanded=[];let minimum=Infinity;
+      for(let i=0;i<pos.count;i++){
+        temp.fromBufferAttribute(pos,i).applyMatrix4(rawToRoot);if(temp.y>restP[terminal].y+above||Math.hypot(temp.x-restP[terminal].x,temp.z-restP[terminal].z)>radius)continue;
+        let ownership=0;for(let j=0;j<4;j++)if(ids.includes(si.getComponent(i,j)))ownership+=sw.getComponent(i,j);if(ownership<.75)continue;
+        minimum=Math.min(minimum,temp.y);expanded.push({index:i,y:temp.y});
+      }
+      const selected=envelope.sampleAllCandidates?expanded:expanded.filter(v=>v.y<minimum+band),unique=new Set(samples);for(const vertex of selected)unique.add(vertex.index);samples.splice(0,samples.length,...unique);
+    }
     const restSole=V().fromBufferAttribute(pos,soleVertex).applyMatrix4(rawToRoot);
     return {...spec,ids,terminal,fetlock,restSole,soleVertex,samples,soleOffset:restSole.clone().sub(restP[terminal]),pastern:restP[terminal].clone().sub(restP[fetlock]),target:V(),oldTarget:V(),nextTarget:V(),foot:V(),ankle:V(),hinge:V(),middle:V(),contact:true,pitch:0,reachError:0};
   });
   let restMode=false;
   let current={gait:'stand',phase:0,age:0,lead:'left',speed:0},previous=null,transitionAge=1;
-  let time=0,distanceRaw=0,speedMps=0,bodyY=0,bodyPitch=0,phase01=0,grounded=true,turn=0;
+  let time=0,distanceRaw=0,speedMps=0,bodyY=0,bodyPitch=0,phase01=0,grounded=true,turn=0,supportOffset=0;
   const fadeDuration=.32,bodyScratch={y:0,pitch:0,speed:0,phase:0,grounded:true};
+  const secondaryAngles=new Float64Array(n*3),nextSecondary=new Float64Array(n*3),oldSecondary=new Float64Array(n*3);
   const params=state=>gaits[state.gait]||gaits.stand;
   function strikes(state){
     const left=state.lead!=='right';
@@ -90,14 +105,24 @@ export function createArtistMotion({THREE,root,skin,heightM=null}){
     else{const u=(phase-duty)/(1-duty),s=ease(u),derivative=-stride*(1-duty),arc=Math.sin(Math.PI*u)**(state.gait==='walk'?2.2:1.7),tangent=u*(1+16*u)*(1-u)**16-(1-u)*(1+16*(1-u))*u**16;out.x+=-span*.5+span*s+derivative*tangent;out.y+=(leg.front?1:.84)*g.lift*arc;out.z+=(index===0||index===2?1:-1)*.012*arc*size;pitch=-(leg.front?.56:.38)*arc;}
     return {pitch,contact:stance};
   }
+  function sampleSecondary(state,out){
+    const ph=state.phase*TAU,intensity=clamp(state.speed/5),air=state.gait==='jump'?ease((state.age-.30)/.16)*(1-ease((state.age-1.10)/.18)):0,secondary=state.gait==='stand'?time*TAU/8:ph;
+    out.fill(0);
+    for(let i=0;i<n;i++){
+      const name=jointName(bones[i].name),offset=i*3;
+      if(name==='necklower')out[offset]=(.006+.016*intensity)*Math.sin(ph+.55)+air*.035;
+      if(name==='neckupper')out[offset]=-.007*Math.sin(ph+.9)+.008*Math.sin(secondary);
+      if(name==='head'){out[offset]=.003*Math.sin(secondary*2);out[offset+1]=.009*Math.sin(secondary);}
+      if(name.startsWith('tail')){const lag=(Number(name.slice(-1))-1)*.44;out[offset+2]=.025*Math.sin(secondary*2-lag)+.013*intensity*Math.sin(ph-lag)+turn*.022;}
+      if(name.startsWith('ear'))out[offset+1]=.025*Math.sin(time*1.7+(name==='earL'?0:2));
+    }
+  }
   function fk(){
-    const ph=phase01*TAU,intensity=clamp(speedMps/5),air=current.gait==='jump'?ease((current.age-.30)/.16)*(1-ease((current.age-1.10)/.18)):0,secondary=current.gait==='stand'?time*TAU/8:ph;
     for(let i=0;i<n;i++){
       const parent=parents[i];if(parent<0){p[i].copy(localP[i]);p[i].y+=bodyY;q[i].copy(localQ[i]);}else{p[i].copy(localP[i]).applyQuaternion(q[parent]).add(p[parent]);q[i].copy(q[parent]).multiply(localQ[i]);}
-      const name=jointName(bones[i].name);let pitch=0;if(name==='ROOT')pitch=bodyPitch;if(name==='spine')pitch=-bodyPitch*.25;if(name==='necklower')pitch=(.006+.016*intensity)*Math.sin(ph+.55)+air*.035;if(name==='neckupper')pitch=-.007*Math.sin(ph+.9)+.008*Math.sin(secondary);if(name==='head')pitch=.003*Math.sin(secondary*2);
-      if(pitch)q[i].premultiply(delta.setFromAxisAngle(axisZ,pitch));if(name==='head')q[i].premultiply(delta.setFromAxisAngle(axisY,.009*Math.sin(secondary)));
-      if(name.startsWith('tail')){const lag=(Number(name.slice(-1))-1)*.44;q[i].premultiply(delta.setFromAxisAngle(axisX,.025*Math.sin(secondary*2-lag)+.013*intensity*Math.sin(ph-lag)+turn*.022));}
-      if(name.startsWith('ear'))q[i].premultiply(delta.setFromAxisAngle(axisY,.025*Math.sin(time*1.7+(name==='earL'?0:2))));
+      const name=jointName(bones[i].name),offset=i*3;let pitch=secondaryAngles[offset];if(name==='ROOT')pitch=bodyPitch;if(name==='spine')pitch=-bodyPitch*.25;
+      if(pitch)q[i].premultiply(delta.setFromAxisAngle(axisZ,pitch));if(secondaryAngles[offset+1])q[i].premultiply(delta.setFromAxisAngle(axisY,secondaryAngles[offset+1]));
+      if(secondaryAngles[offset+2])q[i].premultiply(delta.setFromAxisAngle(axisX,secondaryAngles[offset+2]));
     }
   }
   function hinge(a,b,l1,l2,pole,out){
@@ -113,6 +138,29 @@ export function createArtistMotion({THREE,root,skin,heightM=null}){
     // anatomical joint. Carpal flexion happens below it, at the knee.
     const swing=clamp((leg.target.x-leg.restSole.x)*.95/size,-.42,.42);
     elbow.sub(shoulder).applyQuaternion(delta.setFromAxisAngle(axisZ,swing)).add(shoulder);
+    // A gathered hoof must also fold the upper arm. Holding the elbow at its
+    // resting swing while shortening only forearm/cannon drove the carpus
+    // through the fully folded two-link singularity. Move the elbow on its
+    // actual upper-arm sphere, keeping the lower chain away from that limit.
+    footTargets(leg);
+    const upper=restP[ids[1]].distanceTo(restP[ids[2]]),a=restP[ids[2]].distanceTo(restP[ids[3]]),b=restP[ids[3]].distanceTo(restP[leg.fetlock]);
+    const lowerMin=Math.max(Math.abs(a-b)+.012*size,(a+b)*.40),lowerMax=a+b-.030*size;
+    const preferred=elbow.distanceTo(leg.ankle);
+    {
+      temp.copy(leg.ankle).sub(shoulder);const distance=Math.max(1e-7,temp.length());temp.multiplyScalar(1/distance);
+      let low=Math.max(lowerMin,Math.abs(distance-upper)+1e-5),high=Math.min(lowerMax,distance+upper-1e-5);
+      if(low>high){elbow.copy(shoulder).addScaledVector(temp,upper);return;}
+      // Keep the shoulder/elbow triangle away from both tangent limits, where
+      // a millimetre of hoof movement otherwise rotates the elbow sharply.
+      // Apply only when feasible; exact limb length and hoof targets take
+      // precedence for an unusually short or extended source conformation.
+      const cosine=Math.cos(.18),angleLow=Math.sqrt((distance-upper)**2+2*distance*upper*(1-cosine)),angleHigh=Math.sqrt(Math.max(0,(distance+upper)**2-2*distance*upper*(1-cosine)));
+      if(Math.max(low,angleLow)<=Math.min(high,angleHigh)){low=Math.max(low,angleLow);high=Math.min(high,angleHigh);}
+      const lower=clamp(preferred,low,high);
+      const along=(upper*upper-lower*lower+distance*distance)/(2*distance),height=Math.sqrt(Math.max(0,upper*upper-along*along));
+      temp2.set(temp.y,-temp.x,0);
+      temp2.normalize();elbow.copy(shoulder).addScaledVector(temp,along).addScaledVector(temp2,height);
+    }
   }
   function solveLeg(leg){
     const ids=leg.ids;footTargets(leg);
@@ -138,6 +186,11 @@ export function createArtistMotion({THREE,root,skin,heightM=null}){
     time+=dt;current.age+=dt;current.phase=wrap(current.phase+dt*params(current).hz);if(previous&&!previous.hold){previous.age+=dt;previous.phase=wrap(previous.phase+dt*params(previous).hz);}transitionAge+=dt;const blend=ease(transitionAge/fadeDuration);
     sampleBody(current,bodyScratch);bodyY=bodyScratch.y;bodyPitch=bodyScratch.pitch;speedMps=bodyScratch.speed;phase01=current.phase;grounded=bodyScratch.grounded;
     if(previous){const by=bodyY,bp=bodyPitch,sp=speedMps;if(previous.hold){bodyY=previous.y;bodyPitch=previous.pitch;speedMps=previous.speed;}else{sampleBody(previous,bodyScratch);bodyY=bodyScratch.y;bodyPitch=bodyScratch.pitch;speedMps=bodyScratch.speed;}bodyY+=(by-bodyY)*blend;bodyPitch+=(bp-bodyPitch)*blend;speedMps+=(sp-speedMps)*blend;}
+    // Carrying the forefoot phase must not reset the neck/head/tail pose. Sample
+    // those angles from each gait and crossfade them, including an interrupted
+    // blend's held values. Both FK passes use the same sampled secondary pose.
+    sampleSecondary(current,nextSecondary);
+    if(previous){if(previous.hold)oldSecondary.set(previous.secondary);else sampleSecondary(previous,oldSecondary);for(let i=0;i<secondaryAngles.length;i++)secondaryAngles[i]=oldSecondary[i]+(nextSecondary[i]-oldSecondary[i])*blend;}else secondaryAngles.set(nextSecondary);
     distanceRaw+=speedMps/metres*dt;
     for(let i=0;i<legs.length;i++){
       const leg=legs[i],next=targetFor(current,leg,i,leg.nextTarget);leg.pitch=next.pitch;leg.contact=next.contact;
@@ -148,9 +201,26 @@ export function createArtistMotion({THREE,root,skin,heightM=null}){
     fk();for(const leg of legs)if(leg.front)placeFrontElbow(leg);let supportDrop=0;
     // Retain a slight joint bend instead of passing through the straight-leg
     // singularity, where small hoof movement otherwise snaps the knee/hock.
-    for(const leg of legs){footTargets(leg);const ids=leg.ids,hip=p[ids[leg.front?2:0]],reach=leg.front?restP[ids[2]].distanceTo(restP[ids[3]])+restP[ids[3]].distanceTo(restP[leg.fetlock])-.006*size:upperReach(leg)+restP[ids[2]].distanceTo(restP[leg.fetlock])-.014*size,horizontal=(hip.x-leg.ankle.x)**2+(hip.z-leg.ankle.z)**2;const allowed=Math.sqrt(Math.max(.001,reach*reach-horizontal));supportDrop=Math.max(supportDrop,hip.y-leg.ankle.y-allowed);}
-    if(supportDrop>0){bodyY-=supportDrop;fk();for(const leg of legs)if(leg.front)placeFrontElbow(leg);}
-    for(const leg of legs)solveLeg(leg);apply();if(previous&&blend>=1)previous=null;if(current.gait==='jump'&&current.age>1.72)set('stand');
+    for(const leg of legs){footTargets(leg);const ids=leg.ids,hip=p[ids[leg.front?2:0]],reach=leg.front?restP[ids[2]].distanceTo(restP[ids[3]])+restP[ids[3]].distanceTo(restP[leg.fetlock])-.030*size:upperReach(leg)+restP[ids[2]].distanceTo(restP[leg.fetlock])-.014*size,horizontal=(hip.x-leg.ankle.x)**2+(hip.z-leg.ankle.z)**2;const allowed=Math.sqrt(Math.max(.001,reach*reach-horizontal));supportDrop=Math.max(supportDrop,hip.y-leg.ankle.y-allowed);}
+    // Reach constraints may lower the torso immediately; releasing that support
+    // cannot spring it upward in one frame. A bounded rise keeps the carpal IK
+    // away from a rapid extension while every planted sole still follows its
+    // exact ground target. Store this physical offset separately from gait bob.
+    supportOffset=Math.max(Math.max(0,supportDrop),supportOffset-dt*.55*size);
+    if(supportOffset>0){bodyY-=supportOffset;fk();for(const leg of legs)if(leg.front)placeFrontElbow(leg);}
+    for(const leg of legs)solveLeg(leg);apply();
+    // A claw surface may blend cannon and hoof skin weights, so rigid-foot
+    // clearance alone cannot certify its floor contact. The explicit opt-in
+    // scans the actual blended skin and resolves raised targets on the same
+    // exact-length rig. Ordinary horses never enter this correction path.
+    if(envelope?.skinnedCorrection){
+      for(let pass=0;pass<6;pass++){
+        let corrected=false;
+        for(const leg of legs){let minimum=Infinity;for(const index of leg.samples)minimum=Math.min(minimum,actualPoint(index,temp3).y);if(minimum<-.0001){leg.target.y+=(-minimum+.0001)/metres;corrected=true;}}
+        if(!corrected)break;fk();for(const leg of legs)if(leg.front)placeFrontElbow(leg);for(const leg of legs)solveLeg(leg);apply();
+      }
+    }
+    if(previous&&blend>=1)previous=null;if(current.gait==='jump'&&current.age>1.72)set('stand');
   }
   function set(gait,{lead=current.lead,speed}={}){
     if(gait==='rest'){restMode=true;for(let i=0;i<n;i++){bones[i].position.copy(originalP[i]);bones[i].quaternion.copy(originalQ[i]);}root.updateMatrixWorld(true);skin.skeleton.update();return;}restMode=false;
@@ -160,9 +230,12 @@ export function createArtistMotion({THREE,root,skin,heightM=null}){
        same point of its own cycle it was a moment ago. The other three still re-phase to the
        new pattern, but one leg stays planted through the crossfade instead of none. */
     const carried=wrap(current.phase-strikes(current)[0]+strikes({gait,lead})[0]);
-    previous=previous?{hold:true,targets:legs.map(l=>({target:l.target.clone(),pitch:l.pitch,contact:l.contact})),y:bodyY,pitch:bodyPitch,speed:speedMps}:{...current};current={gait,lead,phase:carried,age:0,speed:requestedSpeed};transitionAge=0;
+    // bodyY is the displayed torso offset after support correction. Store the
+    // gait's offset before that correction; otherwise an interrupted fade
+    // applies the same support drop twice on its first frame.
+    previous=previous?{hold:true,targets:legs.map(l=>({target:l.target.clone(),pitch:l.pitch,contact:l.contact})),y:bodyY+supportOffset,pitch:bodyPitch,speed:speedMps,secondary:secondaryAngles.slice()}:{...current};current={gait,lead,phase:carried,age:0,speed:requestedSpeed};transitionAge=0;
   }
-  function reset(){current={gait:'stand',lead:'left',phase:0,age:0,speed:0};previous=null;transitionAge=1;time=0;distanceRaw=0;speedMps=0;bodyY=0;bodyPitch=0;phase01=0;grounded=true;step(0);}
+  function reset(){current={gait:'stand',lead:'left',phase:0,age:0,speed:0};previous=null;transitionAge=1;time=0;distanceRaw=0;speedMps=0;bodyY=0;bodyPitch=0;phase01=0;grounded=true;supportOffset=0;step(0);}
   function actualPoint(index,out){out.fromBufferAttribute(pos,index);skin.applyBoneTransform(index,out);out.applyMatrix4(rawToRoot);out.y-=groundY;out.multiplyScalar(metres);return out;}
   function snapshot(){return {gait:current.gait,requestedGait:current.gait,lead:current.lead,phase01,cycleHz:params(current).hz,speedMps,distanceM:distanceRaw*metres,transitioning:!!previous,grounded,time,age:current.age,metresPerUnit:metres,
     feet:legs.map(leg=>{const sole=actualPoint(leg.soleVertex,V()),target=leg.target.clone();target.y-=groundY;target.multiplyScalar(metres);let minimum=Infinity;for(const index of leg.samples)minimum=Math.min(minimum,actualPoint(index,temp3).y);return{id:leg.id,contact:leg.contact,sole:sole.clone().applyQuaternion(unbasis).toArray(),worldSole:new THREE.Vector3(sole.x+distanceRaw*metres,sole.y,sole.z).applyQuaternion(unbasis).toArray(),targetSole:target.applyQuaternion(unbasis).toArray(),soleMinY:minimum,reachError:leg.reachError*metres};}),

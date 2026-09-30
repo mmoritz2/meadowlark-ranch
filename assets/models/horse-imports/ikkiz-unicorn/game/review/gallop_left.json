@@ -1,0 +1,28 @@
+{
+  "animatedSha256": "69f206e1e03d61b743a3a9b3e7db0b5db9f83bd754abcdeee5607cbad6ad883a",
+  "clip": "Gallop_Left",
+  "time": 0.22,
+  "image": "assets/models/horse-imports/ikkiz-unicorn/game/review/gallop_left.png",
+  "imageSha256": "aa4541b05b8e6b4e1292f6ab98c4f9d1b731104b8452e56af270f6c3d4c7ff63",
+  "actualDeformedGeometry": true,
+  "ordinaryRender": true,
+  "generativeToolsUsed": false,
+  "sourceUvsAndMaterialsPreserved": true,
+  "boundsBlender": {
+    "min": [
+      -0.40650641918182373,
+      -1.7542170286178589,
+      -0.0007139041554182768
+    ],
+    "max": [
+      0.3270360231399536,
+      1.4729490280151367,
+      1.984130620956421
+    ]
+  },
+  "animatedAssetPreserved": true,
+  "visualReview": {
+    "status": "reviewed actual saved-clip deformation",
+    "observations": "Original artist body arch and flowing source groom retained; ears, horn and lower-leg feathering remain attached; tail ends clear the floor in these poses. Source eye appearance is a documented simplified dark glossy material."
+  }
+}

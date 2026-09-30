@@ -1,0 +1,5451 @@
+{
+  "schemaVersion": 1,
+  "checks": {
+    "all44IdentitiesExactlyCovered": true,
+    "all25PhysicalBodiesAudited": true,
+    "everyBodyPasses": true,
+    "allShapePairsDifferAfterHeightNormalization": true,
+    "allOriginalSharedPNGsByteIdentical": true,
+    "originalSourceHashAndSizeUnchanged": true
+  },
+  "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+  "method": "Independent current GLB accessor/world-matrix decoding, every body vertex, sole ownership, normalized pairwise body differences, actual local image hashes, exact replacement-plan identity set",
+  "bodies": [
+    {
+      "id": "akhal",
+      "sha256": "145a680a67f1bab9604f806a5bc282a0c9dcb8636009c8efef99a3e00dc80faf",
+      "bytes": 6100912,
+      "withersM": 1.59,
+      "heightM": 2.0459695717989708,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "b297f49c0e0629d2caccc06be08b783428c56fbe7f2f356dd3e06f8eabb84fd4",
+      "normalizedBounds": [
+        [
+          -0.16423100233078003,
+          0.0,
+          -0.6084615588188171
+        ],
+        [
+          0.164340078830719,
+          1.2867732048034668,
+          0.9500476121902466
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.12504835426807404,
+              1.3689247369766235,
+              0.9742799997329712
+            ],
+            [
+              0.06464316695928574,
+              1.9567300081253052,
+              1.510575771331787
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.12479618191719055,
+              1.1514997482299805,
+              0.38451287150382996
+            ],
+            [
+              0.1121344342827797,
+              1.9065181016921997,
+              1.00359046459198
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.10659688711166382,
+              1.9026544094085693,
+              1.1096670627593994
+            ],
+            [
+              0.04852152243256569,
+              2.0459694862365723,
+              1.2364215850830078
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.24145948886871338,
+              0.8668038845062256,
+              -0.8715724945068359
+            ],
+            [
+              0.23889853060245514,
+              1.54677414894104,
+              0.489706426858902
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 301,
+          "minY": 0.001831285422667861
+        },
+        "FR": {
+          "vertices": 307,
+          "minY": 0.0033713076263666153
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.00044187100138515234
+        },
+        "HR": {
+          "vertices": 252,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-akhal.png",
+          "sha256": "3cafb19ddb9573d34dba30e589dbc99631097135b5392ae6743a35775bc7d071",
+          "bytes": 3895120
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.48,
+        "tailLengthFactor": 0.82,
+        "sourceCardDensityFactor": 0.48,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "appaloosa",
+      "sha256": "7c386bb61bff5d867c7af7f16e20245ea22677a9893f7392acaaf51e3f8c1ee2",
+      "bytes": 6881512,
+      "withersM": 1.54,
+      "heightM": 1.88976686964902,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "33559ba87a3823a28625fc51d97a750ca3081725824a4c45951872d97afd9d5b",
+      "normalizedBounds": [
+        [
+          -0.19731414318084717,
+          0.0,
+          -0.5878753662109375
+        ],
+        [
+          0.19613289833068848,
+          1.227121353149414,
+          0.8013320565223694
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.1446293145418167,
+              1.3390744924545288,
+              0.8217803239822388
+            ],
+            [
+              0.07503534108400345,
+              1.8238779306411743,
+              1.2340513467788696
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.15803779661655426,
+              1.0955218076705933,
+              0.350265234708786
+            ],
+            [
+              0.13966134190559387,
+              1.7904629707336426,
+              0.8445332646369934
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.1232885867357254,
+              1.781834363937378,
+              0.9260809421539307
+            ],
+            [
+              0.056119367480278015,
+              1.889766812324524,
+              1.023451328277588
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.2971164882183075,
+              0.808817982673645,
+              -0.8156037330627441
+            ],
+            [
+              0.28140854835510254,
+              1.5087634325027466,
+              0.43772023916244507
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 305,
+          "minY": 0.0017279685707762837
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.00318110641092062
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.00041694167884998024
+        },
+        "HR": {
+          "vertices": 254,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-appaloosa.png",
+          "sha256": "847d6d26d2f39ec6cecc3fabdffb9a386d4828d14eee22e8bc8ec8614b6b42eb",
+          "bytes": 3194907
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "tailLengthFactor": 1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "bay",
+      "sha256": "eb9d459a5fce333ba25468e257cdd9faed26a2c1b82182fd11870ec99b8e9c66",
+      "bytes": 6881508,
+      "withersM": 1.52,
+      "heightM": 1.830306405981685,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "8b922d059c83835ef35ee2107c04d53004bd149d83634fa40751f0779096353d",
+      "normalizedBounds": [
+        [
+          -0.21390661597251892,
+          0.0,
+          -0.5802556872367859
+        ],
+        [
+          0.21290867030620575,
+          1.2041490077972412,
+          0.7477359771728516
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.1539740264415741,
+              1.3521853685379028,
+              0.7808090448379517
+            ],
+            [
+              0.07980307191610336,
+              1.782056450843811,
+              1.1365586519241333
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.16445426642894745,
+              1.0826879739761353,
+              0.3388803005218506
+            ],
+            [
+              0.14631445705890656,
+              1.7564148902893066,
+              0.8005881905555725
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.13125444948673248,
+              1.7477778196334839,
+              0.8715405464172363
+            ],
+            [
+              0.05974532291293144,
+              1.8303064107894897,
+              0.9557138681411743
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.31275564432144165,
+              0.7976313233375549,
+              -0.7945773601531982
+            ],
+            [
+              0.30067259073257446,
+              1.491384506225586,
+              0.4213738441467285
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 305,
+          "minY": 0.0017004256369546056
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.003130401251837611
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.00041029584826901555
+        },
+        "HR": {
+          "vertices": 254,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-bay.png",
+          "sha256": "84e399daee275928a0de902b061c26edcd4b094bd5503af46927ec5ae1185219",
+          "bytes": 2630074
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "tailLengthFactor": 1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "bay-sporthorse",
+      "sha256": "c4bf68a055b285dbd7e23ca6ee2bd5396222f48fd91ab3ea46bac503818f7d1a",
+      "bytes": 6881568,
+      "withersM": 1.64,
+      "heightM": 2.0176681707646766,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "47bde6ef90023be276b70473302d1cdaf392e9d3638ee8faa3429fd6991604b4",
+      "normalizedBounds": [
+        [
+          -0.18240049481391907,
+          0.0,
+          -0.58668452501297
+        ],
+        [
+          0.1804821640253067,
+          1.2302855253219604,
+          0.8076443076133728
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.15143728256225586,
+              1.4410537481307983,
+              0.8862242698669434
+            ],
+            [
+              0.07856739312410355,
+              1.9483070373535156,
+              1.324536681175232
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.1640210896730423,
+              1.181240200996399,
+              0.37348175048828125
+            ],
+            [
+              0.14511124789714813,
+              1.9116171598434448,
+              0.9105325937271118
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.1290920078754425,
+              1.9044076204299927,
+              0.9972325563430786
+            ],
+            [
+              0.05876100808382034,
+              2.0176682472229004,
+              1.1007156372070312
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.29913681745529175,
+              0.8805255889892578,
+              -0.8668056130409241
+            ],
+            [
+              0.2788448631763458,
+              1.6037496328353882,
+              0.46783801913261414
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 301,
+          "minY": 0.0018641346832737327
+        },
+        "FR": {
+          "vertices": 307,
+          "minY": 0.0034317816607654095
+        },
+        "HL": {
+          "vertices": 276,
+          "minY": 0.0004497971967794001
+        },
+        "HR": {
+          "vertices": 252,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-bay-sporthorse.png",
+          "sha256": "3b46a6267a559152a2af357eb6b8bd7dc7bcdc21faf7fd30d71ff5efc958819d",
+          "bytes": 2977329
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "tailLengthFactor": 1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "black",
+      "sha256": "2a4742c45f10008022a88114d08bef7373370aaab00a604baf53570cf3f1637d",
+      "bytes": 7044800,
+      "withersM": 1.64,
+      "heightM": 1.9590518997353215,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "782f2db928204057ced2f9acbb186f4fe988498d7978d7210a6bed103d2a21b0",
+      "normalizedBounds": [
+        [
+          -0.19021543860435486,
+          0.0,
+          -0.5644205808639526
+        ],
+        [
+          0.18745030462741852,
+          1.1945438385009766,
+          0.8223692178726196
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.1435687243938446,
+              1.3924875259399414,
+              0.9034844040870667
+            ],
+            [
+              0.07490899413824081,
+              1.9050127267837524,
+              1.3486855030059814
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.1783081740140915,
+              1.122278094291687,
+              0.36446842551231384
+            ],
+            [
+              0.1583585888147354,
+              1.9191170930862427,
+              0.9280000925064087
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12238448858261108,
+              1.8606301546096802,
+              1.0169252157211304
+            ],
+            [
+              0.05570783466100693,
+              1.9590518474578857,
+              1.1223851442337036
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.3119533061981201,
+              0.8319553732872009,
+              -0.8339114189147949
+            ],
+            [
+              0.29079192876815796,
+              1.5823415517807007,
+              0.46117472648620605
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 304,
+          "minY": 0.0017846020637080073
+        },
+        "FR": {
+          "vertices": 307,
+          "minY": 0.00328536587767303
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.00043060677126049995
+        },
+        "HR": {
+          "vertices": 253,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-black.png",
+          "sha256": "a9f497119ddca66feb1141ffebea11d30f998b71eda48a2cea19dedd4c23ccff",
+          "bytes": 2261915
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 2.05,
+        "tailLengthFactor": 1.18,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0.45
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "camargue",
+      "sha256": "113f7f381495c8b0d9b5c0ad46fbb1274c855bf7a08ad115f5536e297c482bc3",
+      "bytes": 6881580,
+      "withersM": 1.42,
+      "heightM": 1.72042696506299,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "267226e43e165c03efc7b6a3f42de46b2650a11cf61941544a619c775b2ee076",
+      "normalizedBounds": [
+        [
+          -0.21088729798793793,
+          0.0,
+          -0.5957127809524536
+        ],
+        [
+          0.20349542796611786,
+          1.2115682363510132,
+          0.7885088324546814
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.14474110305309296,
+              1.2178174257278442,
+              0.7438951730728149
+            ],
+            [
+              0.07513131201267242,
+              1.663167119026184,
+              1.1196825504302979
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.16015148162841797,
+              0.9916504621505737,
+              0.32479581236839294
+            ],
+            [
+              0.1413491815328598,
+              1.6375559568405151,
+              0.7652015089988708
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12338387966156006,
+              1.6253501176834106,
+              0.8378866910934448
+            ],
+            [
+              0.056162744760513306,
+              1.7204269170761108,
+              0.9258960485458374
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.29945996403694153,
+              0.7228837013244629,
+              -0.7620763778686523
+            ],
+            [
+              0.27914607524871826,
+              1.3927829265594482,
+              0.4036586284637451
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 309,
+          "minY": 0.0015563654014840722
+        },
+        "FR": {
+          "vertices": 310,
+          "minY": 0.002865193411707878
+        },
+        "HL": {
+          "vertices": 280,
+          "minY": 0.00037553554284386337
+        },
+        "HR": {
+          "vertices": 257,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-camargue.png",
+          "sha256": "cece490c71a0a5a108a4a86ce93bb845e7ebb5bdcf738f46f6108821ad67bdb7",
+          "bytes": 4789647
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.5,
+        "tailLengthFactor": 1.11,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "chestnut",
+      "sha256": "51d6246a31dd8c951bb2855a729396505a6067c68a590438618b4c734e0c80a6",
+      "bytes": 6950280,
+      "withersM": 1.02,
+      "heightM": 1.1964863846031146,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "b14ea611295b27e30e5776ab97f089619554758a737a7005bc91364ee9195551",
+      "normalizedBounds": [
+        [
+          -0.2553812265396118,
+          0.0,
+          -0.6721181273460388
+        ],
+        [
+          0.23805741965770721,
+          1.1730258464813232,
+          0.7804299592971802
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.12628404796123505,
+              0.8999932408332825,
+              0.5660073757171631
+            ],
+            [
+              0.06547635793685913,
+              1.173612117767334,
+              0.7960385680198669
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.13657744228839874,
+              0.6734583973884583,
+              0.2589729428291321
+            ],
+            [
+              0.12171287089586258,
+              1.1673529148101807,
+              0.5791941285133362
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.10765025019645691,
+              1.1534535884857178,
+              0.6246999502182007
+            ],
+            [
+              0.049000997096300125,
+              1.1964863538742065,
+              0.678871750831604
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.2604888379573822,
+              0.46703457832336426,
+              -0.617616593837738
+            ],
+            [
+              0.24281856417655945,
+              1.0051716566085815,
+              0.3179965317249298
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 318,
+          "minY": 0.0010250096675008535
+        },
+        "FR": {
+          "vertices": 321,
+          "minY": 0.001886993064545095
+        },
+        "HL": {
+          "vertices": 293,
+          "minY": 0.00024732467136345804
+        },
+        "HR": {
+          "vertices": 265,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-chestnut.png",
+          "sha256": "3ec643229251c63fda417fb088bc70b6867da93ce86ad97ef0f0cbca696fe814",
+          "bytes": 3389759
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.7,
+        "tailLengthFactor": 1.13,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0.055
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "connemara",
+      "sha256": "67981ad70df71fe218b5c1408cacbcea01e951e1a05235b4bb89265941c81455",
+      "bytes": 6789676,
+      "withersM": 1.43,
+      "heightM": 1.7285939257393368,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "ab0ce9e94e6c7a6bf4e112b2e0d29b9ed72a0538c6890c1ed7fd15da2a6f43bc",
+      "normalizedBounds": [
+        [
+          -0.19953137636184692,
+          0.0,
+          -0.5881868004798889
+        ],
+        [
+          0.19542725384235382,
+          1.2088069915771484,
+          0.7932643294334412
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.1397445797920227,
+              1.2500417232513428,
+              0.7682350277900696
+            ],
+            [
+              0.0724886879324913,
+              1.6791185140609741,
+              1.1343679428100586
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.1519208550453186,
+              1.0042622089385986,
+              0.32568687200546265
+            ],
+            [
+              0.1341690570116043,
+              1.6605464220046997,
+              0.7886952757835388
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.11912462115287781,
+              1.6434613466262817,
+              0.8611195683479309
+            ],
+            [
+              0.054223984479904175,
+              1.7285939455032349,
+              0.9475119709968567
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.2853298485279083,
+              0.7390954494476318,
+              -0.75774747133255
+            ],
+            [
+              0.2659744620323181,
+              1.396870732307434,
+              0.40724650025367737
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 308,
+          "minY": 0.0015810681506991386
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.002910669893026352
+        },
+        "HL": {
+          "vertices": 279,
+          "minY": 0.00038149606552906334
+        },
+        "HR": {
+          "vertices": 257,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-connemara.png",
+          "sha256": "3fd3afa47637af947325908751147a30ecee3e6697f693ad0744811d36e43ca6",
+          "bytes": 4827211
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.05,
+        "tailLengthFactor": 1.03,
+        "sourceCardDensityFactor": 0.92,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "grey",
+      "sha256": "6155df8bff1d27192858b18749c1aebabb39ac698f82e896cef104ae8dbfd1fd",
+      "bytes": 6881492,
+      "withersM": 1.6,
+      "heightM": 1.9275275554972657,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "25bc5e2b78715f48f9ed63957ad8aef4ca0b6b6634b4d855d1337a7713f6a3e1",
+      "normalizedBounds": [
+        [
+          -0.19027653336524963,
+          0.0,
+          -0.5631539225578308
+        ],
+        [
+          0.1877991259098053,
+          1.2047046422958374,
+          0.7900072336196899
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.1453992873430252,
+              1.3572947978973389,
+              0.8361255526542664
+            ],
+            [
+              0.07575678825378418,
+              1.8627705574035645,
+              1.2640116214752197
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.17428243160247803,
+              1.1118979454040527,
+              0.3503389060497284
+            ],
+            [
+              0.15480470657348633,
+              1.8553606271743774,
+              0.8611219525337219
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12394494563341141,
+              1.8173224925994873,
+              0.9422714710235596
+            ],
+            [
+              0.05641813576221466,
+              1.9275275468826294,
+              1.0416946411132812
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.30444246530532837,
+              0.8232695460319519,
+              -0.81174635887146
+            ],
+            [
+              0.28379058837890625,
+              1.551791787147522,
+              0.4393690824508667
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 305,
+          "minY": 0.001754714990966022
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.0032303454354405403
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.0004233953368384391
+        },
+        "HR": {
+          "vertices": 254,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-grey.png",
+          "sha256": "9d6a9af8605023d0d37b64665b3d286bd1a5186f7c23a510a883c56d7d3d439f",
+          "bytes": 4770580
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.4,
+        "tailLengthFactor": 1.08,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "haflinger",
+      "sha256": "d49c6946f70b030b4222fb7322d975506c16c0c704059a7f2d06a827077f3f28",
+      "bytes": 6950236,
+      "withersM": 1.45,
+      "heightM": 1.7442466409208681,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "81bdc1a9e938a0256dd20a5047e83e0e0ce862a8fffd9f8e4118a5e3d515167f",
+      "normalizedBounds": [
+        [
+          -0.21116197109222412,
+          0.0,
+          -0.6028444766998291
+        ],
+        [
+          0.20374174416065216,
+          1.2029286623001099,
+          0.7909978628158569
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.14383378624916077,
+              1.273970127105713,
+              0.7854467034339905
+            ],
+            [
+              0.07475145906209946,
+              1.6971018314361572,
+              1.146946907043457
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.16435502469539642,
+              1.0093525648117065,
+              0.3370774984359741
+            ],
+            [
+              0.1451112926006317,
+              1.676993727684021,
+              0.8054325580596924
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.1226104348897934,
+              1.66315758228302,
+              0.877778947353363
+            ],
+            [
+              0.055810682475566864,
+              1.7442466020584106,
+              0.9634336829185486
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.306184858083725,
+              0.7357879877090454,
+              -0.7874926924705505
+            ],
+            [
+              0.28541478514671326,
+              1.420381784439087,
+              0.42023634910583496
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 308,
+          "minY": 0.0015841482672840357
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.0029163402505218983
+        },
+        "HL": {
+          "vertices": 279,
+          "minY": 0.0003822392609436065
+        },
+        "HR": {
+          "vertices": 257,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-haflinger.png",
+          "sha256": "ac70932ea642fd27fdd8ac8309182aaefbdc9ef72a3c0cc006f04bdf9f8a5958",
+          "bytes": 3683307
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.6,
+        "tailLengthFactor": 1.1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0.025
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "hanover",
+      "sha256": "b934fda2a0c5cceb3a81380cd1bb15cbf26d9461d22feecb44d0f4ade6900f54",
+      "bytes": 6766244,
+      "withersM": 1.7,
+      "heightM": 2.085846326657583,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "d1eee6bd28aa7550c5d6fbd0e7d79a27eab34f746cb9ad5093424144ec1d1a3b",
+      "normalizedBounds": [
+        [
+          -0.18481992185115814,
+          0.0,
+          -0.573098361492157
+        ],
+        [
+          0.18366549909114838,
+          1.2269684076309204,
+          0.8441448211669922
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.15121673047542572,
+              1.453947901725769,
+              0.9410439729690552
+            ],
+            [
+              0.07850741595029831,
+              2.0102455615997314,
+              1.4350461959838867
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.16733253002166748,
+              1.2062028646469116,
+              0.3828933835029602
+            ],
+            [
+              0.1479368954896927,
+              1.983185052871704,
+              0.9682139754295349
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12890399992465973,
+              1.9606257677078247,
+              1.0659271478652954
+            ],
+            [
+              0.058675434440374374,
+              2.085846424102783,
+              1.1826307773590088
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.30744364857673645,
+              0.902097761631012,
+              -0.8777105212211609
+            ],
+            [
+              0.29109683632850647,
+              1.6540553569793701,
+              0.48385387659072876
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 300,
+          "minY": 0.0019317461410537362
+        },
+        "FR": {
+          "vertices": 307,
+          "minY": 0.003556251060217619
+        },
+        "HL": {
+          "vertices": 276,
+          "minY": 0.00046611117431893945
+        },
+        "HR": {
+          "vertices": 252,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-hanover.png",
+          "sha256": "ac97c7f31775ee79061284fd84292df395df7025c961f54fba4ed292f074e296",
+          "bytes": 2806337
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.82,
+        "tailLengthFactor": 1.03,
+        "sourceCardDensityFactor": 0.9,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "iceland",
+      "sha256": "e1c9a8a5511733ac03a510c3c4c1bc5de026cc308015fe9207a7a900d6be5798",
+      "bytes": 6881512,
+      "withersM": 1.38,
+      "heightM": 1.6657702544146897,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "6e12dc545812af2072c278d318a84dedac31592cff3864e0324b4f702de47b4e",
+      "normalizedBounds": [
+        [
+          -0.20882238447666168,
+          0.0,
+          -0.6311071515083313
+        ],
+        [
+          0.19914844632148743,
+          1.2070798873901367,
+          0.8228062987327576
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.14318621158599854,
+              1.194510579109192,
+              0.7656857967376709
+            ],
+            [
+              0.07431156933307648,
+              1.6147472858428955,
+              1.1354726552963257
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.15687209367752075,
+              0.9632282257080078,
+              0.3342913091182709
+            ],
+            [
+              0.13869120180606842,
+              1.5948508977890015,
+              0.7861937880516052
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12205842137336731,
+              1.5794661045074463,
+              0.8593391180038452
+            ],
+            [
+              0.05555941164493561,
+              1.6657702922821045,
+              0.9466437101364136
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.28817489743232727,
+              0.703245997428894,
+              -0.7846128344535828
+            ],
+            [
+              0.26862654089927673,
+              1.3498269319534302,
+              0.41536039113998413
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 312,
+          "minY": 0.0014997797552496195
+        },
+        "FR": {
+          "vertices": 310,
+          "minY": 0.0027610217221081257
+        },
+        "HL": {
+          "vertices": 280,
+          "minY": 0.0003618819755502045
+        },
+        "HR": {
+          "vertices": 259,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-iceland.png",
+          "sha256": "90df56ec9984bc7ac5ad3444c222835f3312c3831674a549a5d1b64e8cbc956f",
+          "bytes": 3358620
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.75,
+        "tailLengthFactor": 1.1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "knab",
+      "sha256": "392a8176136e8dab493c90c9452b967c187f935ade66556be641f927ee604254",
+      "bytes": 6881492,
+      "withersM": 1.64,
+      "heightM": 2.0100005002306776,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "08664ff40521ac17439b09f4599a369ed04a652804beae065abe1373c87b6dc3",
+      "normalizedBounds": [
+        [
+          -0.18348634243011475,
+          0.0,
+          -0.5831750631332397
+        ],
+        [
+          0.1823304295539856,
+          1.2256100177764893,
+          0.8304902911186218
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.1484239548444748,
+              1.41715669631958,
+              0.8962874412536621
+            ],
+            [
+              0.0769771933555603,
+              1.9396915435791016,
+              1.362004041671753
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.15988075733184814,
+              1.1773748397827148,
+              0.3729908764362335
+            ],
+            [
+              0.14124305546283722,
+              1.9073114395141602,
+              0.9222366809844971
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12652331590652466,
+              1.8941394090652466,
+              1.0134824514389038
+            ],
+            [
+              0.05759177356958389,
+              2.010000467300415,
+              1.1230981349945068
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.29605892300605774,
+              0.8801231384277344,
+              -0.8616204261779785
+            ],
+            [
+              0.27887967228889465,
+              1.6021978855133057,
+              0.4687863886356354
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 301,
+          "minY": 0.0018790222238749266
+        },
+        "FR": {
+          "vertices": 307,
+          "minY": 0.003459189087152481
+        },
+        "HL": {
+          "vertices": 276,
+          "minY": 0.0004533894534688443
+        },
+        "HR": {
+          "vertices": 252,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-knab.png",
+          "sha256": "306137fb49b6e29ccd7c6952615d24bff55aa82c9b12d321eafea6328af190da",
+          "bytes": 4989262
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "tailLengthFactor": 1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "lipiz",
+      "sha256": "b7e0e47468b7913f2d9740e6fffbfadb0875c9089f50637ea104cf7f0c8345b2",
+      "bytes": 6881508,
+      "withersM": 1.56,
+      "heightM": 1.854712202940012,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "deba418157ea3d4df0ebffb37d8f40cb2f5f86ef19184f8f1bd9860f51b1b9cd",
+      "normalizedBounds": [
+        [
+          -0.1994120329618454,
+          0.0,
+          -0.5623531341552734
+        ],
+        [
+          0.19521662592887878,
+          1.188918113708496,
+          0.7741063237190247
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.15170560777187347,
+              1.3143106698989868,
+              0.8033700585365295
+            ],
+            [
+              0.07899988442659378,
+              1.8005311489105225,
+              1.2076058387756348
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.1790946125984192,
+              1.0641200542449951,
+              0.3399524390697479
+            ],
+            [
+              0.15916010737419128,
+              1.8078036308288574,
+              0.8269882202148438
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12932074069976807,
+              1.7584558725357056,
+              0.9037709832191467
+            ],
+            [
+              0.058865126222372055,
+              1.8547122478485107,
+              0.9977381229400635
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.31108275055885315,
+              0.7795922756195068,
+              -0.7903271913528442
+            ],
+            [
+              0.289980411529541,
+              1.5126522779464722,
+              0.42532050609588623
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 307,
+          "minY": 0.0016738937702029943
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.0030815573409199715
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.0004038939659949392
+        },
+        "HR": {
+          "vertices": 255,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-lipiz.png",
+          "sha256": "03d64a7258f813d8279a1fd2b4347067a18046f0f5bd91ea77f71790d22cd843",
+          "bytes": 4483976
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.3,
+        "tailLengthFactor": 1.08,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "lusitano",
+      "sha256": "43f234344f660d7dfa735a7b02ad36e740262e728be31438dd3c82ae246bac28",
+      "bytes": 6881588,
+      "withersM": 1.58,
+      "heightM": 1.888806963439815,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "86e8856fdcdc5003faf76c680a50aa9b26788a1d9701007d86a62784b8433411",
+      "normalizedBounds": [
+        [
+          -0.1978664994239807,
+          0.0,
+          -0.5525836944580078
+        ],
+        [
+          0.19434982538223267,
+          1.1954474449157715,
+          0.7888621091842651
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.15104086697101593,
+              1.3113940954208374,
+              0.8182569742202759
+            ],
+            [
+              0.07874847203493118,
+              1.8282616138458252,
+              1.2464021444320679
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.18299099802970886,
+              1.0686169862747192,
+              0.34034642577171326
+            ],
+            [
+              0.16286233067512512,
+              1.839948058128357,
+              0.8434052467346191
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12875407934188843,
+              1.7824897766113281,
+              0.9240480661392212
+            ],
+            [
+              0.05860719457268715,
+              1.888806939125061,
+              1.0232977867126465
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.3126290738582611,
+              0.7830865979194641,
+              -0.786553680896759
+            ],
+            [
+              0.2914218604564667,
+              1.5273375511169434,
+              0.4276254177093506
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 307,
+          "minY": 0.0016832546098157763
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.003098790068179369
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.0004061526560690254
+        },
+        "HR": {
+          "vertices": 254,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-lusitano.png",
+          "sha256": "1b49e8ff42f9947cef128c93f06f91ef1b629bed6824a9369441ff263c2688d3",
+          "bytes": 4724555
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.5,
+        "tailLengthFactor": 1.13,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "marwari",
+      "sha256": "c71128f8ecd6bc206fc921ad47ef9c062852e9fbd526e478a9068d1f2413bff1",
+      "bytes": 6881512,
+      "withersM": 1.58,
+      "heightM": 1.9726297846695002,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "93bf187533f60c065f73488f0a843e33bcfef4ba10c1627a67f06c393957ad69",
+      "normalizedBounds": [
+        [
+          -0.17604537308216095,
+          0.0,
+          -0.5714691877365112
+        ],
+        [
+          0.17522233724594116,
+          1.248499870300293,
+          0.8477224111557007
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.13717401027679443,
+              1.3526278734207153,
+              0.8749920725822449
+            ],
+            [
+              0.07111525535583496,
+              1.8901666402816772,
+              1.3394014835357666
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.14618900418281555,
+              1.1213358640670776,
+              0.35500389337539673
+            ],
+            [
+              0.12913557887077332,
+              1.8618483543395996,
+              0.901870608329773
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.11678673326969147,
+              1.8387619256973267,
+              0.990338921546936
+            ],
+            [
+              0.05322654917836189,
+              1.9726297855377197,
+              1.1159037351608276
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.27096232771873474,
+              0.8383830189704895,
+              -0.8134355545043945
+            ],
+            [
+              0.2570527195930481,
+              1.5330781936645508,
+              0.4487432837486267
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 305,
+          "minY": 0.001774915843270719
+        },
+        "FR": {
+          "vertices": 307,
+          "minY": 0.003267534077167511
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.00042826958815567195
+        },
+        "HR": {
+          "vertices": 253,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-marwari.png",
+          "sha256": "15f7ced467e4e55aeae137e4b90377c769c0bcc545ddd478f64578307b1216c1",
+          "bytes": 3399000
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "tailLengthFactor": 1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "morgan",
+      "sha256": "7dba9827bcc014756aa04284282ae4d053fbb7a00d3efdc8aaf69e96720837dd",
+      "bytes": 6881496,
+      "withersM": 1.52,
+      "heightM": 1.8189402220916389,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "5aba62d6fefd50f9652e9c18eef3aef9da4af907c728dacfde35731a94e7c674",
+      "normalizedBounds": [
+        [
+          -0.1920805722475052,
+          0.0,
+          -0.5415180325508118
+        ],
+        [
+          0.19083715975284576,
+          1.1966711282730103,
+          0.7335737943649292
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.1482807844877243,
+              1.3318660259246826,
+              0.7659575939178467
+            ],
+            [
+              0.07695558667182922,
+              1.772569179534912,
+              1.1150321960449219
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.1611088067293167,
+              1.0618305206298828,
+              0.32006344199180603
+            ],
+            [
+              0.14283064007759094,
+              1.7666003704071045,
+              0.7850303053855896
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12640127539634705,
+              1.735772728919983,
+              0.8557601571083069
+            ],
+            [
+              0.05753622204065323,
+              1.8189401626586914,
+              0.9388404488563538
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.2873753011226654,
+              0.7858738899230957,
+              -0.7415317296981812
+            ],
+            [
+              0.27065548300743103,
+              1.4762669801712036,
+              0.4014250934123993
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 307,
+          "minY": 0.0016713158693164587
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.0030768115539103746
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.00040327192982658744
+        },
+        "HR": {
+          "vertices": 255,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-morgan.png",
+          "sha256": "218da93a550ac6eca6f3f9d401d8e53efc48c0c1e6101ac7067f114eec307475",
+          "bytes": 2428506
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "tailLengthFactor": 1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "palomino",
+      "sha256": "ba14bf3167bd3f7741c255a4aa328e13b34c6434194870b60d3d19e9bf7e2b16",
+      "bytes": 6881492,
+      "withersM": 1.45,
+      "heightM": 1.7754635388491822,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "a9256ae5a308b87f3613ca8dea719bfae023c474cce43c6d82051016b29e7736",
+      "normalizedBounds": [
+        [
+          -0.1943165361881256,
+          0.0,
+          -0.6075880527496338
+        ],
+        [
+          0.19296470284461975,
+          1.2244576215744019,
+          0.801213800907135
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.1477804183959961,
+              1.2684684991836548,
+              0.7789057493209839
+            ],
+            [
+              0.07656627893447876,
+              1.7155174016952515,
+              1.1617600917816162
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.15396280586719513,
+              1.0319807529449463,
+              0.33860576152801514
+            ],
+            [
+              0.1362125724554062,
+              1.6821792125701904,
+              0.8005290031433105
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12597472965717316,
+              1.6773477792739868,
+              0.8751334547996521
+            ],
+            [
+              0.05734206363558769,
+              1.775463581085205,
+              0.9650132656097412
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.28079283237457275,
+              0.7585892081260681,
+              -0.7936891317367554
+            ],
+            [
+              0.26174524426460266,
+              1.4229347705841064,
+              0.42112696170806885
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 307,
+          "minY": 0.0016135985497385263
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.002970556728541851
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.0003893453103955835
+        },
+        "HR": {
+          "vertices": 255,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-palomino.png",
+          "sha256": "2fc37360a28e2d9904b23e96e7a46d27554a993af9168f9e5bec1af9644920e1",
+          "bytes": 3843811
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "tailLengthFactor": 1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "pinto",
+      "sha256": "950065d318b9814f0223a1a7fca707ad57dac618ff2e6ee9d60eac21a95e130c",
+      "bytes": 6881504,
+      "withersM": 1.55,
+      "heightM": 1.8867456718462785,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "e50f7283fcfd7e53175be4f7bc0264798dc147d621b6ecd64512cf30ed3e005c",
+      "normalizedBounds": [
+        [
+          -0.19785043597221375,
+          0.0,
+          -0.5847060680389404
+        ],
+        [
+          0.19659781455993652,
+          1.2172553539276123,
+          0.7964205741882324
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.1490841954946518,
+              1.3582748174667358,
+              0.8296911120414734
+            ],
+            [
+              0.07734658569097519,
+              1.8277746438980103,
+              1.2344518899917603
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.16216151416301727,
+              1.1066234111785889,
+              0.3512229919433594
+            ],
+            [
+              0.14326390624046326,
+              1.7994924783706665,
+              0.8521938323974609
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12708613276481628,
+              1.7883809804916382,
+              0.9322577714920044
+            ],
+            [
+              0.05784796178340912,
+              1.8867456912994385,
+              1.0278018712997437
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.3001519739627838,
+              0.82166987657547,
+              -0.8164742588996887
+            ],
+            [
+              0.2841632068157196,
+              1.5153989791870117,
+              0.4394424855709076
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 305,
+          "minY": 0.0017472858307883143
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.0032166684977710247
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.0004216027446091175
+        },
+        "HR": {
+          "vertices": 254,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-pinto.png",
+          "sha256": "8d0035acc04ae9d1d3823f7dba4c1293feb96288290dde08ec4379813c51ab8b",
+          "bytes": 4908391
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "tailLengthFactor": 1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "rockymtn",
+      "sha256": "97069859197c6dbec49a26ad7798dfb825acb65acfb631db680aa6719f35feb1",
+      "bytes": 6881592,
+      "withersM": 1.54,
+      "heightM": 1.8731397146899795,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "dd67297cd23578a8ee49dfadcfc2833df35c17e358bb7b9d5ba5087424a33427",
+      "normalizedBounds": [
+        [
+          -0.18892040848731995,
+          0.0,
+          -0.5855687856674194
+        ],
+        [
+          0.18752546608448029,
+          1.2163245677947998,
+          0.7955799102783203
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.1469005048274994,
+              1.3429445028305054,
+              0.8196633458137512
+            ],
+            [
+              0.07617437839508057,
+              1.8117120265960693,
+              1.2251930236816406
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.15731309354305267,
+              1.098569393157959,
+              0.3489079475402832
+            ],
+            [
+              0.1390264928340912,
+              1.7844135761260986,
+              0.8423504829406738
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12522464990615845,
+              1.771257996559143,
+              0.9219983220100403
+            ],
+            [
+              0.05700064077973366,
+              1.87313973903656,
+              1.017484426498413
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.29017525911331177,
+              0.8148719072341919,
+              -0.8124036192893982
+            ],
+            [
+              0.27049118280410767,
+              1.5067594051361084,
+              0.43603935837745667
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 305,
+          "minY": 0.0017385744722560048
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.00320063135586679
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.00041950077866204083
+        },
+        "HR": {
+          "vertices": 254,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-rockymtn.png",
+          "sha256": "6183c85f500e3ea2e05ac295ca0f069b0975ad1274c683d8d32958bb92bad07c",
+          "bytes": 3120164
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.35,
+        "tailLengthFactor": 1.1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "sport",
+      "sha256": "70c45ce7b6d7274c6f10ffb79584e217b3bd608d44003ff9efab31b8ae6a2dba",
+      "bytes": 6911888,
+      "withersM": 1.68,
+      "heightM": 2.0512393443609054,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "78eb879594b0205b67897ec043662734189bc7f6f32e4f3712d66a02dfe19338",
+      "normalizedBounds": [
+        [
+          -0.17828324437141418,
+          0.0,
+          -0.5743370056152344
+        ],
+        [
+          0.17698179185390472,
+          1.2209757566452026,
+          0.8419007062911987
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.14533570408821106,
+              1.4407635927200317,
+              0.9331306219100952
+            ],
+            [
+              0.0755101889371872,
+              1.9839999675750732,
+              1.4143931865692139
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.1637725979089737,
+              1.190149188041687,
+              0.379228800535202
+            ],
+            [
+              0.1448914110660553,
+              1.9649678468704224,
+              0.9597080945968628
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12389075011014938,
+              1.936453104019165,
+              1.0549025535583496
+            ],
+            [
+              0.05639346316456795,
+              2.051239252090454,
+              1.1685619354248047
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.29868364334106445,
+              0.8916761875152588,
+              -0.8692591786384583
+            ],
+            [
+              0.27842241525650024,
+              1.6296067237854004,
+              0.4792426824569702
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 301,
+          "minY": 0.0018956807907670736
+        },
+        "FR": {
+          "vertices": 307,
+          "minY": 0.003489856608211994
+        },
+        "HL": {
+          "vertices": 276,
+          "minY": 0.0004574089834932238
+        },
+        "HR": {
+          "vertices": 252,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-sport.png",
+          "sha256": "3c7cb180ecf140a40a45e039b0b5d5e2243faf9767c57a0debba84caa2723f6d",
+          "bytes": 2280289
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1.05,
+        "tailLengthFactor": 1.02,
+        "sourceCardDensityFactor": 0.88,
+        "feathering": 0.12
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "stock",
+      "sha256": "2cac7e0a79ce8930189819c62b268cebc35ddad887656c6491b43485abfd1bc1",
+      "bytes": 6814632,
+      "withersM": 1.55,
+      "heightM": 1.9122346466791744,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "fa6597ec2f8dda2382027392403ecba585a671d5a1507bd249cdb753e586dc30",
+      "normalizedBounds": [
+        [
+          -0.18530888855457306,
+          0.0,
+          -0.5827237963676453
+        ],
+        [
+          0.18424172699451447,
+          1.2336997985839844,
+          0.814565122127533
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.14143556356430054,
+              1.3605902194976807,
+              0.8429661393165588
+            ],
+            [
+              0.07332566380500793,
+              1.8482667207717896,
+              1.2625758647918701
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.15112362802028656,
+              1.1132317781448364,
+              0.35174375772476196
+            ],
+            [
+              0.13339851796627045,
+              1.8137929439544678,
+              0.866237223148346
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12056608498096466,
+              1.8066545724868774,
+              0.9492377638816833
+            ],
+            [
+              0.05488012358546257,
+              1.9122346639633179,
+              1.0483052730560303
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.28220227360725403,
+              0.8288530111312866,
+              -0.8137062788009644
+            ],
+            [
+              0.2659633457660675,
+              1.5152018070220947,
+              0.44163137674331665
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 305,
+          "minY": 0.0017586033791303635
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.0032375038135796785
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.00042433355702087283
+        },
+        "HR": {
+          "vertices": 254,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-stock.png",
+          "sha256": "545c32e36cc3996035fc1869bb0abc2654fb21ecdb091091aefdf5a014571ca5",
+          "bytes": 2406665
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.84,
+        "tailLengthFactor": 0.96,
+        "sourceCardDensityFactor": 0.94,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "sunset",
+      "sha256": "53b93ac141c9825b042951ac61a4edf859f11efa1912073ef709c57f2e056076",
+      "bytes": 6881512,
+      "withersM": 1.5,
+      "heightM": 1.8211193249908095,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "2ca0c31157f22092947b38831ea0fa38f744b6f1c3b05ba1632236379abab0ff",
+      "normalizedBounds": [
+        [
+          -0.17688488960266113,
+          0.0,
+          -0.5381935238838196
+        ],
+        [
+          0.17600266635417938,
+          1.21407949924469,
+          0.763333261013031
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.1426873803138733,
+              1.3265225887298584,
+              0.7877673506736755
+            ],
+            [
+              0.07364807277917862,
+              1.7824609279632568,
+              1.1449998617172241
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.13516119122505188,
+              1.0524669885635376,
+              0.31774812936782837
+            ],
+            [
+              0.12108872830867767,
+              1.775209665298462,
+              0.8061031103134155
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.12163319438695908,
+              1.7443345785140991,
+              0.8817057013511658
+            ],
+            [
+              0.055365853011608124,
+              1.8211193084716797,
+              0.968222439289093
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.2601719796657562,
+              0.782098114490509,
+              -0.7272821664810181
+            ],
+            [
+              0.2453804612159729,
+              1.452877402305603,
+              0.40195441246032715
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 307,
+          "minY": 0.0016557567287236452
+        },
+        "FR": {
+          "vertices": 308,
+          "minY": 0.0030481680296361446
+        },
+        "HL": {
+          "vertices": 278,
+          "minY": 0.0003995176812168211
+        },
+        "HR": {
+          "vertices": 255,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-sunset.png",
+          "sha256": "436ab19ded6cb1c8abf81300ea0f14d8be2374befa255ded7580c56a74ea2f2d",
+          "bytes": 3447621
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "tailLengthFactor": 1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "thoro",
+      "sha256": "af191f8e4738eabf67c61e72a256dc0574fecac7d3054dd3db07e99220cfcf2f",
+      "bytes": 6724800,
+      "withersM": 1.66,
+      "heightM": 2.087491114721873,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "65551964f5ef346b329dce7c72480aa1eeb7df209cef5dd04c41163d407cd57f",
+      "normalizedBounds": [
+        [
+          -0.1696104258298874,
+          0.0,
+          -0.5731289982795715
+        ],
+        [
+          0.16934211552143097,
+          1.2575247287750244,
+          0.8530776500701904
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.13737425208091736,
+              1.4509456157684326,
+              0.9247390031814575
+            ],
+            [
+              0.07110951840877533,
+              2.009127616882324,
+              1.4161088466644287
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.14073629677295685,
+              1.2142586708068848,
+              0.3745540678501129
+            ],
+            [
+              0.12466011196374893,
+              1.9594957828521729,
+              0.9517090320587158
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.11710403859615326,
+              1.960456371307373,
+              1.048900842666626
+            ],
+            [
+              0.053304240107536316,
+              2.087491035461426,
+              1.165000319480896
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.2655842900276184,
+              0.914520800113678,
+              -0.8571043014526367
+            ],
+            [
+              0.25866034626960754,
+              1.6233922243118286,
+              0.47389134764671326
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 300,
+          "minY": 0.0019400569144636393
+        },
+        "FR": {
+          "vertices": 307,
+          "minY": 0.003571550827473402
+        },
+        "HL": {
+          "vertices": 276,
+          "minY": 0.0004681164864450693
+        },
+        "HR": {
+          "vertices": 252,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-thoro.png",
+          "sha256": "54782cceacabee1c7f3201562c038f279657bf15eeb5b80ec8be18e55373773d",
+          "bytes": 2248067
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 0.7,
+        "tailLengthFactor": 0.9,
+        "sourceCardDensityFactor": 0.86,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    },
+    {
+      "id": "welsh",
+      "sha256": "569e14c4600e52169af9944938cba275f9407242abf9df11d47f71cda190cf97",
+      "bytes": 6881496,
+      "withersM": 1.19,
+      "heightM": 1.4457830677167929,
+      "groundY": 0.0,
+      "bodyVertexCount": 16159,
+      "bodyGeometrySha256": "0c3b43262563609436665f0d42503d3d09eb06721acd51c28db953e703370c17",
+      "normalizedBounds": [
+        [
+          -0.200063556432724,
+          0.0,
+          -0.5909007787704468
+        ],
+        [
+          0.19624711573123932,
+          1.2149436473846436,
+          0.7972174286842346
+        ]
+      ],
+      "anatomyRegions": {
+        "head": {
+          "vertices": 7186,
+          "bounds": [
+            [
+              -0.12052521109580994,
+              1.0595946311950684,
+              0.6601278781890869
+            ],
+            [
+              0.062400296330451965,
+              1.413796305656433,
+              0.948688805103302
+            ]
+          ]
+        },
+        "neck": {
+          "vertices": 717,
+          "bounds": [
+            [
+              -0.1249159425497055,
+              0.8183605670928955,
+              0.2738841474056244
+            ],
+            [
+              0.11127462983131409,
+              1.402570128440857,
+              0.6759788393974304
+            ]
+          ]
+        },
+        "ears": {
+          "vertices": 830,
+          "bounds": [
+            [
+              -0.10274115204811096,
+              1.3863306045532227,
+              0.7346997857093811
+            ],
+            [
+              0.04676644504070282,
+              1.445783019065857,
+              0.8034363389015198
+            ]
+          ]
+        },
+        "barrel": {
+          "vertices": 1375,
+          "bounds": [
+            [
+              -0.2380756437778473,
+              0.5943543910980225,
+              -0.6334826946258545
+            ],
+            [
+              0.2219257652759552,
+              1.1594740152359009,
+              0.3439161777496338
+            ]
+          ]
+        }
+      },
+      "sole": {
+        "FL": {
+          "vertices": 314,
+          "minY": 0.0012709471629932523
+        },
+        "FR": {
+          "vertices": 316,
+          "minY": 0.002339752158150077
+        },
+        "HL": {
+          "vertices": 288,
+          "minY": 0.0003066669451072812
+        },
+        "HR": {
+          "vertices": 260,
+          "minY": 0.0
+        }
+      },
+      "images": [
+        {
+          "uri": "../textures/coat-welsh.png",
+          "sha256": "6c0468e49cb2a48c544c315d0b37d9cc686536f1f9a7ed101fde5165ffdb7851",
+          "bytes": 4761350
+        },
+        {
+          "uri": "../textures/source-1-2f3995965d9cf278.png",
+          "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+          "bytes": 670068
+        },
+        {
+          "uri": "../textures/source-2-890ce50e9e23dffe.png",
+          "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+          "bytes": 2229362
+        },
+        {
+          "uri": "../textures/source-3-3664d2c4c64188bc.png",
+          "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+          "bytes": 2213544
+        },
+        {
+          "uri": "../textures/source-4-b0d88da3be1a35e5.png",
+          "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+          "bytes": 2049672
+        }
+      ],
+      "clips": [
+        "Rest",
+        "Idle",
+        "Walk",
+        "Trot",
+        "Canter_Left",
+        "Canter_Right",
+        "Gallop_Left",
+        "Gallop_Right",
+        "Jump"
+      ],
+      "groom": {
+        "maneLengthFactor": 1,
+        "tailLengthFactor": 1,
+        "sourceCardDensityFactor": 1,
+        "feathering": 0
+      },
+      "checks": {
+        "finitePositions": true,
+        "canonical40": true,
+        "weightsNormalized": true,
+        "noGroundOffset": true,
+        "physicalScale": true,
+        "nineClips": true,
+        "referencedImageFilesExist": true,
+        "allMotionChecksPass": true
+      }
+    }
+  ],
+  "pairwiseDifferences": [
+    {
+      "a": "akhal",
+      "b": "appaloosa",
+      "normalizedBodyRMSError": 0.09024839103221893
+    },
+    {
+      "a": "akhal",
+      "b": "bay",
+      "normalizedBodyRMSError": 0.12015891075134277
+    },
+    {
+      "a": "akhal",
+      "b": "bay-sporthorse",
+      "normalizedBodyRMSError": 0.0846746489405632
+    },
+    {
+      "a": "akhal",
+      "b": "black",
+      "normalizedBodyRMSError": 0.08449865132570267
+    },
+    {
+      "a": "akhal",
+      "b": "camargue",
+      "normalizedBodyRMSError": 0.10046190768480301
+    },
+    {
+      "a": "akhal",
+      "b": "chestnut",
+      "normalizedBodyRMSError": 0.11123066395521164
+    },
+    {
+      "a": "akhal",
+      "b": "connemara",
+      "normalizedBodyRMSError": 0.09409565478563309
+    },
+    {
+      "a": "akhal",
+      "b": "grey",
+      "normalizedBodyRMSError": 0.10109617561101913
+    },
+    {
+      "a": "akhal",
+      "b": "haflinger",
+      "normalizedBodyRMSError": 0.0955868512392044
+    },
+    {
+      "a": "akhal",
+      "b": "hanover",
+      "normalizedBodyRMSError": 0.06837229430675507
+    },
+    {
+      "a": "akhal",
+      "b": "iceland",
+      "normalizedBodyRMSError": 0.0796954408288002
+    },
+    {
+      "a": "akhal",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.07378213107585907
+    },
+    {
+      "a": "akhal",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.11279622465372086
+    },
+    {
+      "a": "akhal",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.10819555073976517
+    },
+    {
+      "a": "akhal",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.06333404034376144
+    },
+    {
+      "a": "akhal",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.13182635605335236
+    },
+    {
+      "a": "akhal",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.08866177499294281
+    },
+    {
+      "a": "akhal",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.09215284883975983
+    },
+    {
+      "a": "akhal",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.09300479292869568
+    },
+    {
+      "a": "akhal",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.0685642808675766
+    },
+    {
+      "a": "akhal",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.0807625949382782
+    },
+    {
+      "a": "akhal",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.11426573246717453
+    },
+    {
+      "a": "akhal",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.06017668545246124
+    },
+    {
+      "a": "akhal",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.0899953618645668
+    },
+    {
+      "a": "appaloosa",
+      "b": "bay",
+      "normalizedBodyRMSError": 0.03106696903705597
+    },
+    {
+      "a": "appaloosa",
+      "b": "bay-sporthorse",
+      "normalizedBodyRMSError": 0.009456079453229904
+    },
+    {
+      "a": "appaloosa",
+      "b": "black",
+      "normalizedBodyRMSError": 0.026849694550037384
+    },
+    {
+      "a": "appaloosa",
+      "b": "camargue",
+      "normalizedBodyRMSError": 0.015365197323262691
+    },
+    {
+      "a": "appaloosa",
+      "b": "chestnut",
+      "normalizedBodyRMSError": 0.052727460861206055
+    },
+    {
+      "a": "appaloosa",
+      "b": "connemara",
+      "normalizedBodyRMSError": 0.007119455374777317
+    },
+    {
+      "a": "appaloosa",
+      "b": "grey",
+      "normalizedBodyRMSError": 0.021361857652664185
+    },
+    {
+      "a": "appaloosa",
+      "b": "haflinger",
+      "normalizedBodyRMSError": 0.013721504248678684
+    },
+    {
+      "a": "appaloosa",
+      "b": "hanover",
+      "normalizedBodyRMSError": 0.026604145765304565
+    },
+    {
+      "a": "appaloosa",
+      "b": "iceland",
+      "normalizedBodyRMSError": 0.02613285556435585
+    },
+    {
+      "a": "appaloosa",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.018418220803141594
+    },
+    {
+      "a": "appaloosa",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.03163624554872513
+    },
+    {
+      "a": "appaloosa",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.03491099178791046
+    },
+    {
+      "a": "appaloosa",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.030782120302319527
+    },
+    {
+      "a": "appaloosa",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.044094569981098175
+    },
+    {
+      "a": "appaloosa",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.0090877003967762
+    },
+    {
+      "a": "appaloosa",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.004551814869046211
+    },
+    {
+      "a": "appaloosa",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.004801311995834112
+    },
+    {
+      "a": "appaloosa",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.026356346905231476
+    },
+    {
+      "a": "appaloosa",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.012122323736548424
+    },
+    {
+      "a": "appaloosa",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.03220178559422493
+    },
+    {
+      "a": "appaloosa",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.03560657799243927
+    },
+    {
+      "a": "appaloosa",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.018473176285624504
+    },
+    {
+      "a": "bay",
+      "b": "bay-sporthorse",
+      "normalizedBodyRMSError": 0.035970497876405716
+    },
+    {
+      "a": "bay",
+      "b": "black",
+      "normalizedBodyRMSError": 0.0507284551858902
+    },
+    {
+      "a": "bay",
+      "b": "camargue",
+      "normalizedBodyRMSError": 0.028606411069631577
+    },
+    {
+      "a": "bay",
+      "b": "chestnut",
+      "normalizedBodyRMSError": 0.0584719218313694
+    },
+    {
+      "a": "bay",
+      "b": "connemara",
+      "normalizedBodyRMSError": 0.028413010761141777
+    },
+    {
+      "a": "bay",
+      "b": "grey",
+      "normalizedBodyRMSError": 0.034250352531671524
+    },
+    {
+      "a": "bay",
+      "b": "haflinger",
+      "normalizedBodyRMSError": 0.029894810169935226
+    },
+    {
+      "a": "bay",
+      "b": "hanover",
+      "normalizedBodyRMSError": 0.05654531344771385
+    },
+    {
+      "a": "bay",
+      "b": "iceland",
+      "normalizedBodyRMSError": 0.051024921238422394
+    },
+    {
+      "a": "bay",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.04851134121417999
+    },
+    {
+      "a": "bay",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.034302543848752975
+    },
+    {
+      "a": "bay",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.04382437840104103
+    },
+    {
+      "a": "bay",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.06074889749288559
+    },
+    {
+      "a": "bay",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.021974707022309303
+    },
+    {
+      "a": "bay",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.03367380052804947
+    },
+    {
+      "a": "bay",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.02866271696984768
+    },
+    {
+      "a": "bay",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.028732169419527054
+    },
+    {
+      "a": "bay",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.05616983398795128
+    },
+    {
+      "a": "bay",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.03974968194961548
+    },
+    {
+      "a": "bay",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.02336728572845459
+    },
+    {
+      "a": "bay",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.06308581680059433
+    },
+    {
+      "a": "bay",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.0358242392539978
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "black",
+      "normalizedBodyRMSError": 0.0300437081605196
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "camargue",
+      "normalizedBodyRMSError": 0.024444494396448135
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "chestnut",
+      "normalizedBodyRMSError": 0.05828529968857765
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "connemara",
+      "normalizedBodyRMSError": 0.014675570651888847
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "grey",
+      "normalizedBodyRMSError": 0.028090300038456917
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "haflinger",
+      "normalizedBodyRMSError": 0.020402872934937477
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "hanover",
+      "normalizedBodyRMSError": 0.02415650151669979
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "iceland",
+      "normalizedBodyRMSError": 0.028331834822893143
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.014649461954832077
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.03951403871178627
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.042121581733226776
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.027077365666627884
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.049237314611673355
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.012407909147441387
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.00918659195303917
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.010572132654488087
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.023593928664922714
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.004769857972860336
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.03468999266624451
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.02822156809270382
+    },
+    {
+      "a": "bay-sporthorse",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.020654501393437386
+    },
+    {
+      "a": "black",
+      "b": "camargue",
+      "normalizedBodyRMSError": 0.028312241658568382
+    },
+    {
+      "a": "black",
+      "b": "chestnut",
+      "normalizedBodyRMSError": 0.05904234200716019
+    },
+    {
+      "a": "black",
+      "b": "connemara",
+      "normalizedBodyRMSError": 0.025979788973927498
+    },
+    {
+      "a": "black",
+      "b": "grey",
+      "normalizedBodyRMSError": 0.02079729363322258
+    },
+    {
+      "a": "black",
+      "b": "haflinger",
+      "normalizedBodyRMSError": 0.02970390021800995
+    },
+    {
+      "a": "black",
+      "b": "hanover",
+      "normalizedBodyRMSError": 0.020229468122124672
+    },
+    {
+      "a": "black",
+      "b": "iceland",
+      "normalizedBodyRMSError": 0.03088659979403019
+    },
+    {
+      "a": "black",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.02338349260389805
+    },
+    {
+      "a": "black",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.03011155128479004
+    },
+    {
+      "a": "black",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.025262579321861267
+    },
+    {
+      "a": "black",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.025692567229270935
+    },
+    {
+      "a": "black",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.055314790457487106
+    },
+    {
+      "a": "black",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.031129714101552963
+    },
+    {
+      "a": "black",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.028496913611888885
+    },
+    {
+      "a": "black",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.027502944692969322
+    },
+    {
+      "a": "black",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.01982894167304039
+    },
+    {
+      "a": "black",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.02899518795311451
+    },
+    {
+      "a": "black",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.044955480843782425
+    },
+    {
+      "a": "black",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.04035589471459389
+    },
+    {
+      "a": "black",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.03160584717988968
+    },
+    {
+      "a": "camargue",
+      "b": "chestnut",
+      "normalizedBodyRMSError": 0.04425796493887901
+    },
+    {
+      "a": "camargue",
+      "b": "connemara",
+      "normalizedBodyRMSError": 0.011791548691689968
+    },
+    {
+      "a": "camargue",
+      "b": "grey",
+      "normalizedBodyRMSError": 0.017443330958485603
+    },
+    {
+      "a": "camargue",
+      "b": "haflinger",
+      "normalizedBodyRMSError": 0.01214846596121788
+    },
+    {
+      "a": "camargue",
+      "b": "hanover",
+      "normalizedBodyRMSError": 0.03594743460416794
+    },
+    {
+      "a": "camargue",
+      "b": "iceland",
+      "normalizedBodyRMSError": 0.02727588452398777
+    },
+    {
+      "a": "camargue",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.030062992125749588
+    },
+    {
+      "a": "camargue",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.021784178912639618
+    },
+    {
+      "a": "camargue",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.026906471699476242
+    },
+    {
+      "a": "camargue",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.04123857244849205
+    },
+    {
+      "a": "camargue",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.040106914937496185
+    },
+    {
+      "a": "camargue",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.017058316618204117
+    },
+    {
+      "a": "camargue",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.01681143045425415
+    },
+    {
+      "a": "camargue",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.01537417247891426
+    },
+    {
+      "a": "camargue",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.03592425957322121
+    },
+    {
+      "a": "camargue",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.027070680633187294
+    },
+    {
+      "a": "camargue",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.03526374697685242
+    },
+    {
+      "a": "camargue",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.04953326657414436
+    },
+    {
+      "a": "camargue",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.024039527401328087
+    },
+    {
+      "a": "chestnut",
+      "b": "connemara",
+      "normalizedBodyRMSError": 0.0483463853597641
+    },
+    {
+      "a": "chestnut",
+      "b": "grey",
+      "normalizedBodyRMSError": 0.05851594731211662
+    },
+    {
+      "a": "chestnut",
+      "b": "haflinger",
+      "normalizedBodyRMSError": 0.0401705801486969
+    },
+    {
+      "a": "chestnut",
+      "b": "hanover",
+      "normalizedBodyRMSError": 0.06582506000995636
+    },
+    {
+      "a": "chestnut",
+      "b": "iceland",
+      "normalizedBodyRMSError": 0.03871706500649452
+    },
+    {
+      "a": "chestnut",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.06191601976752281
+    },
+    {
+      "a": "chestnut",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.057229235768318176
+    },
+    {
+      "a": "chestnut",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.061195388436317444
+    },
+    {
+      "a": "chestnut",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.06981028616428375
+    },
+    {
+      "a": "chestnut",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.07286227494478226
+    },
+    {
+      "a": "chestnut",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.046688295900821686
+    },
+    {
+      "a": "chestnut",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.0539066456258297
+    },
+    {
+      "a": "chestnut",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.05412725359201431
+    },
+    {
+      "a": "chestnut",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.06553376466035843
+    },
+    {
+      "a": "chestnut",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.05976622551679611
+    },
+    {
+      "a": "chestnut",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.07126180827617645
+    },
+    {
+      "a": "chestnut",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.07773147523403168
+    },
+    {
+      "a": "chestnut",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.04558306932449341
+    },
+    {
+      "a": "connemara",
+      "b": "grey",
+      "normalizedBodyRMSError": 0.019382283091545105
+    },
+    {
+      "a": "connemara",
+      "b": "haflinger",
+      "normalizedBodyRMSError": 0.008555489592254162
+    },
+    {
+      "a": "connemara",
+      "b": "hanover",
+      "normalizedBodyRMSError": 0.03001684881746769
+    },
+    {
+      "a": "connemara",
+      "b": "iceland",
+      "normalizedBodyRMSError": 0.025788897648453712
+    },
+    {
+      "a": "connemara",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.022930223494768143
+    },
+    {
+      "a": "connemara",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.027859287336468697
+    },
+    {
+      "a": "connemara",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.0320708304643631
+    },
+    {
+      "a": "connemara",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.034665174782276154
+    },
+    {
+      "a": "connemara",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.041169650852680206
+    },
+    {
+      "a": "connemara",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.010770156979560852
+    },
+    {
+      "a": "connemara",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.007193791680037975
+    },
+    {
+      "a": "connemara",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.007253243122249842
+    },
+    {
+      "a": "connemara",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.029554268345236778
+    },
+    {
+      "a": "connemara",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.01723652146756649
+    },
+    {
+      "a": "connemara",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.030755184590816498
+    },
+    {
+      "a": "connemara",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.040861424058675766
+    },
+    {
+      "a": "connemara",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.015683192759752274
+    },
+    {
+      "a": "grey",
+      "b": "haflinger",
+      "normalizedBodyRMSError": 0.024921704083681107
+    },
+    {
+      "a": "grey",
+      "b": "hanover",
+      "normalizedBodyRMSError": 0.03320494294166565
+    },
+    {
+      "a": "grey",
+      "b": "iceland",
+      "normalizedBodyRMSError": 0.037367336452007294
+    },
+    {
+      "a": "grey",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.030144160613417625
+    },
+    {
+      "a": "grey",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.013285430148243904
+    },
+    {
+      "a": "grey",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.01487482339143753
+    },
+    {
+      "a": "grey",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.038541845977306366
+    },
+    {
+      "a": "grey",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.036706723272800446
+    },
+    {
+      "a": "grey",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.02783917263150215
+    },
+    {
+      "a": "grey",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.021966509521007538
+    },
+    {
+      "a": "grey",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.019747436046600342
+    },
+    {
+      "a": "grey",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.032990120351314545
+    },
+    {
+      "a": "grey",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.029779866337776184
+    },
+    {
+      "a": "grey",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.03108622506260872
+    },
+    {
+      "a": "grey",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.04891187325119972
+    },
+    {
+      "a": "grey",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.031669456511735916
+    },
+    {
+      "a": "haflinger",
+      "b": "hanover",
+      "normalizedBodyRMSError": 0.03449889272451401
+    },
+    {
+      "a": "haflinger",
+      "b": "iceland",
+      "normalizedBodyRMSError": 0.022301912307739258
+    },
+    {
+      "a": "haflinger",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.027855733409523964
+    },
+    {
+      "a": "haflinger",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.030730560421943665
+    },
+    {
+      "a": "haflinger",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.03544161841273308
+    },
+    {
+      "a": "haflinger",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.03915127366781235
+    },
+    {
+      "a": "haflinger",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.04460130259394646
+    },
+    {
+      "a": "haflinger",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.011691063642501831
+    },
+    {
+      "a": "haflinger",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.014251983724534512
+    },
+    {
+      "a": "haflinger",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.01477907970547676
+    },
+    {
+      "a": "haflinger",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.03405727818608284
+    },
+    {
+      "a": "haflinger",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.022685687988996506
+    },
+    {
+      "a": "haflinger",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.03626401349902153
+    },
+    {
+      "a": "haflinger",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.04553917050361633
+    },
+    {
+      "a": "haflinger",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.014521746896207333
+    },
+    {
+      "a": "hanover",
+      "b": "iceland",
+      "normalizedBodyRMSError": 0.02928195521235466
+    },
+    {
+      "a": "hanover",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.010333048179745674
+    },
+    {
+      "a": "hanover",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.04549826309084892
+    },
+    {
+      "a": "hanover",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.042248040437698364
+    },
+    {
+      "a": "hanover",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.008116437122225761
+    },
+    {
+      "a": "hanover",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.06532523036003113
+    },
+    {
+      "a": "hanover",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.029300810769200325
+    },
+    {
+      "a": "hanover",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.028524670749902725
+    },
+    {
+      "a": "hanover",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.028478944674134254
+    },
+    {
+      "a": "hanover",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.002765500219538808
+    },
+    {
+      "a": "hanover",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.02102014236152172
+    },
+    {
+      "a": "hanover",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.050948623567819595
+    },
+    {
+      "a": "hanover",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.021730151027441025
+    },
+    {
+      "a": "hanover",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.033554188907146454
+    },
+    {
+      "a": "iceland",
+      "b": "knab",
+      "normalizedBodyRMSError": 0.025809146463871002
+    },
+    {
+      "a": "iceland",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.04485636577010155
+    },
+    {
+      "a": "iceland",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.0455135703086853
+    },
+    {
+      "a": "iceland",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.03320775926113129
+    },
+    {
+      "a": "iceland",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.06558175384998322
+    },
+    {
+      "a": "iceland",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.02031666412949562
+    },
+    {
+      "a": "iceland",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.0284743532538414
+    },
+    {
+      "a": "iceland",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.028575414791703224
+    },
+    {
+      "a": "iceland",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.02902757003903389
+    },
+    {
+      "a": "iceland",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.02833528257906437
+    },
+    {
+      "a": "iceland",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.05600206181406975
+    },
+    {
+      "a": "iceland",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.041484035551548004
+    },
+    {
+      "a": "iceland",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.02681673690676689
+    },
+    {
+      "a": "knab",
+      "b": "lipiz",
+      "normalizedBodyRMSError": 0.04274541512131691
+    },
+    {
+      "a": "knab",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.04191502556204796
+    },
+    {
+      "a": "knab",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.014598501846194267
+    },
+    {
+      "a": "knab",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.059409476816654205
+    },
+    {
+      "a": "knab",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.02070656418800354
+    },
+    {
+      "a": "knab",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.02007540874183178
+    },
+    {
+      "a": "knab",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.02015397511422634
+    },
+    {
+      "a": "knab",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.010183540172874928
+    },
+    {
+      "a": "knab",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.012135401368141174
+    },
+    {
+      "a": "knab",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.045155398547649384
+    },
+    {
+      "a": "knab",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.021114692091941833
+    },
+    {
+      "a": "knab",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.02813396044075489
+    },
+    {
+      "a": "lipiz",
+      "b": "lusitano",
+      "normalizedBodyRMSError": 0.010728476569056511
+    },
+    {
+      "a": "lipiz",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.05094973370432854
+    },
+    {
+      "a": "lipiz",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.03239886462688446
+    },
+    {
+      "a": "lipiz",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.03669773414731026
+    },
+    {
+      "a": "lipiz",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.03196804225444794
+    },
+    {
+      "a": "lipiz",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.029907042160630226
+    },
+    {
+      "a": "lipiz",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.04533986374735832
+    },
+    {
+      "a": "lipiz",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.04163673520088196
+    },
+    {
+      "a": "lipiz",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.03404458612203598
+    },
+    {
+      "a": "lipiz",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.06186512112617493
+    },
+    {
+      "a": "lipiz",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.038723528385162354
+    },
+    {
+      "a": "lusitano",
+      "b": "marwari",
+      "normalizedBodyRMSError": 0.04749558866024017
+    },
+    {
+      "a": "lusitano",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.041154734790325165
+    },
+    {
+      "a": "lusitano",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.04038278013467789
+    },
+    {
+      "a": "lusitano",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.035958629101514816
+    },
+    {
+      "a": "lusitano",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.033949777483940125
+    },
+    {
+      "a": "lusitano",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.0422770157456398
+    },
+    {
+      "a": "lusitano",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.04324685037136078
+    },
+    {
+      "a": "lusitano",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.040172480046749115
+    },
+    {
+      "a": "lusitano",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.06040571257472038
+    },
+    {
+      "a": "lusitano",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.04182923585176468
+    },
+    {
+      "a": "marwari",
+      "b": "morgan",
+      "normalizedBodyRMSError": 0.06950537860393524
+    },
+    {
+      "a": "marwari",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.03309231624007225
+    },
+    {
+      "a": "marwari",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.032801978290081024
+    },
+    {
+      "a": "marwari",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.0329999178647995
+    },
+    {
+      "a": "marwari",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.008130757138133049
+    },
+    {
+      "a": "marwari",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.023249004036188126
+    },
+    {
+      "a": "marwari",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.053758397698402405
+    },
+    {
+      "a": "marwari",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.017457609996199608
+    },
+    {
+      "a": "marwari",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.035978347063064575
+    },
+    {
+      "a": "morgan",
+      "b": "palomino",
+      "normalizedBodyRMSError": 0.0493549220263958
+    },
+    {
+      "a": "morgan",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.042039476335048676
+    },
+    {
+      "a": "morgan",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.04122073948383331
+    },
+    {
+      "a": "morgan",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.0648895800113678
+    },
+    {
+      "a": "morgan",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.05237119644880295
+    },
+    {
+      "a": "morgan",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.02131159044802189
+    },
+    {
+      "a": "morgan",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.07390639185905457
+    },
+    {
+      "a": "morgan",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.04905864968895912
+    },
+    {
+      "a": "palomino",
+      "b": "pinto",
+      "normalizedBodyRMSError": 0.010677134618163109
+    },
+    {
+      "a": "palomino",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.011284306645393372
+    },
+    {
+      "a": "palomino",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.02895110286772251
+    },
+    {
+      "a": "palomino",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.014991996809840202
+    },
+    {
+      "a": "palomino",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.03845091909170151
+    },
+    {
+      "a": "palomino",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.03709647059440613
+    },
+    {
+      "a": "palomino",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.017416998744010925
+    },
+    {
+      "a": "pinto",
+      "b": "rockymtn",
+      "normalizedBodyRMSError": 0.003679225454106927
+    },
+    {
+      "a": "pinto",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.028141222894191742
+    },
+    {
+      "a": "pinto",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.012630628421902657
+    },
+    {
+      "a": "pinto",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.02997867949306965
+    },
+    {
+      "a": "pinto",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.03659801185131073
+    },
+    {
+      "a": "pinto",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.018766626715660095
+    },
+    {
+      "a": "rockymtn",
+      "b": "sport",
+      "normalizedBodyRMSError": 0.028074961155653
+    },
+    {
+      "a": "rockymtn",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.014152257703244686
+    },
+    {
+      "a": "rockymtn",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.029964184388518333
+    },
+    {
+      "a": "rockymtn",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.037579797208309174
+    },
+    {
+      "a": "rockymtn",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.020673247054219246
+    },
+    {
+      "a": "sport",
+      "b": "stock",
+      "normalizedBodyRMSError": 0.02049339935183525
+    },
+    {
+      "a": "sport",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.0502953864634037
+    },
+    {
+      "a": "sport",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.0216234028339386
+    },
+    {
+      "a": "sport",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.03277244418859482
+    },
+    {
+      "a": "stock",
+      "b": "sunset",
+      "normalizedBodyRMSError": 0.03678983822464943
+    },
+    {
+      "a": "stock",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.02430502139031887
+    },
+    {
+      "a": "stock",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.020703166723251343
+    },
+    {
+      "a": "sunset",
+      "b": "thoro",
+      "normalizedBodyRMSError": 0.05613318830728531
+    },
+    {
+      "a": "sunset",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.035523030906915665
+    },
+    {
+      "a": "thoro",
+      "b": "welsh",
+      "normalizedBodyRMSError": 0.04066932201385498
+    }
+  ],
+  "closestNormalizedPair": {
+    "a": "hanover",
+    "b": "sport",
+    "normalizedBodyRMSError": 0.002765500219538808
+  },
+  "sharedOriginalImages": [
+    {
+      "file": "source-0-0e43d3fa2c5a5497.png",
+      "sha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a",
+      "matchesOriginalPNG": true
+    },
+    {
+      "file": "source-1-2f3995965d9cf278.png",
+      "sha256": "2f3995965d9cf278b4f359d0dece6ce1416e46e8aa725221128bdf5a62d45df7",
+      "matchesOriginalPNG": true
+    },
+    {
+      "file": "source-2-890ce50e9e23dffe.png",
+      "sha256": "890ce50e9e23dffe1795af24a6c707d028698001c29e759f6c72a6220796f4d5",
+      "matchesOriginalPNG": true
+    },
+    {
+      "file": "source-3-3664d2c4c64188bc.png",
+      "sha256": "3664d2c4c64188bceac1d3daebc9712aa47da18a07ec2e1394db9d2590016120",
+      "matchesOriginalPNG": true
+    },
+    {
+      "file": "source-4-b0d88da3be1a35e5.png",
+      "sha256": "b0d88da3be1a35e5557f5ecc9008f8c3a00b9a7d96c9682387fdc9de107d3911",
+      "matchesOriginalPNG": true
+    }
+  ],
+  "uniqueReferencedTextureBytes": 96789109,
+  "allBodyGLBBytes": 171157832
+}

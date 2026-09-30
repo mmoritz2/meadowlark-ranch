@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "ikkiz-unicorn",
+  "sourceArchiveSha256": "7becb0fbd08d90c11ddd82386707ef1051a12a8cdadaf29258598ee55a4e7b1b",
+  "sourceBlendSha256": "2712c699a967d6261028f7015f45e2f87c876291d9bab6a9d0156d9b255ef60e",
+  "blenderVersion": "4.5.14 LTS",
+  "status": "source-render-preview-only",
+  "embeddedTextLoaded": false,
+  "embeddedScriptsExecuted": false,
+  "driversRemovedBeforeSceneLink": true,
+  "gameCompatibility": "not-assessed",
+  "objects": [
+    {
+      "name": "kon_oczy",
+      "type": "MESH",
+      "modifiers": [],
+      "vertices": 2058,
+      "polygons": 2176,
+      "shapeKeys": []
+    },
+    {
+      "name": "kon",
+      "type": "MESH",
+      "modifiers": [
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        },
+        {
+          "name": "Multires",
+          "type": "MULTIRES",
+          "viewportLevel": 1,
+          "renderLevel": 3,
+          "totalLevels": 3
+        },
+        {
+          "name": "grzywamod",
+          "type": "PARTICLE_SYSTEM"
+        },
+        {
+          "name": "ogonmod",
+          "type": "PARTICLE_SYSTEM"
+        },
+        {
+          "name": "uszy",
+          "type": "PARTICLE_SYSTEM"
+        },
+        {
+          "name": "peciny",
+          "type": "PARTICLE_SYSTEM"
+        },
+        {
+          "name": "ParticleSystem 5",
+          "type": "PARTICLE_SYSTEM"
+        }
+      ],
+      "vertices": 9818,
+      "polygons": 9753,
+      "shapeKeys": [
+        "Basis",
+        "nadg.L",
+        "nadg.R"
+      ]
+    },
+    {
+      "name": "horse_Armature",
+      "type": "ARMATURE",
+      "modifiers": [],
+      "boneCount": 45
+    }
+  ],
+  "particleSystems": [
+    {
+      "object": "kon",
+      "name": "grzywa",
+      "type": "HAIR",
+      "parentCount": 46,
+      "viewportChildren": 5,
+      "renderChildren": 200
+    },
+    {
+      "object": "kon",
+      "name": "ogon",
+      "type": "HAIR",
+      "parentCount": 18,
+      "viewportChildren": 5,
+      "renderChildren": 200
+    },
+    {
+      "object": "kon",
+      "name": "uszy",
+      "type": "HAIR",
+      "parentCount": 287,
+      "viewportChildren": 30,
+      "renderChildren": 30
+    },
+    {
+      "object": "kon",
+      "name": "peciny",
+      "type": "HAIR",
+      "parentCount": 338,
+      "viewportChildren": 80,
+      "renderChildren": 80
+    },
+    {
+      "object": "kon",
+      "name": "rzesy",
+      "type": "HAIR",
+      "parentCount": 40,
+      "viewportChildren": 5,
+      "renderChildren": 5
+    }
+  ],
+  "materials": [
+    {
+      "name": "grzywa_biała.001",
+      "nodes": [
+        "ShaderNodeBsdfDiffuse",
+        "ShaderNodeBsdfHair",
+        "ShaderNodeMixShader",
+        "ShaderNodeOutputMaterial"
+      ]
+    },
+    {
+      "name": "grzywa_pęciny.001",
+      "nodes": [
+        "ShaderNodeBsdfDiffuse",
+        "ShaderNodeBsdfHair",
+        "ShaderNodeMixShader",
+        "ShaderNodeOutputMaterial"
+      ]
+    },
+    {
+      "name": "koskie_rogowka.001",
+      "nodes": [
+        "ShaderNodeBsdfAnisotropic",
+        "ShaderNodeBsdfRefraction",
+        "ShaderNodeBsdfTransparent",
+        "ShaderNodeLightPath",
+        "ShaderNodeMixShader",
+        "ShaderNodeOutputMaterial"
+      ]
+    },
+    {
+      "name": "Material.000",
+      "nodes": [
+        "NodeReroute",
+        "ShaderNodeAttribute",
+        "ShaderNodeBsdfAnisotropic",
+        "ShaderNodeBsdfDiffuse",
+        "ShaderNodeBsdfSheen",
+        "ShaderNodeBump",
+        "ShaderNodeLayerWeight",
+        "ShaderNodeMix",
+        "ShaderNodeMixShader",
+        "ShaderNodeOutputMaterial",
+        "ShaderNodeRGB",
+        "ShaderNodeSeparateColor",
+        "ShaderNodeTexImage"
+      ]
+    },
+    {
+      "name": "material_rogu.001",
+      "nodes": [
+        "ShaderNodeAttribute",
+        "ShaderNodeBsdfAnisotropic",
+        "ShaderNodeBsdfDiffuse",
+        "ShaderNodeBump",
+        "ShaderNodeMix",
+        "ShaderNodeMixShader",
+        "ShaderNodeOutputMaterial",
+        "ShaderNodeTexImage",
+        "ShaderNodeTexNoise",
+        "ShaderNodeValToRGB"
+      ]
+    },
+    {
+      "name": "okotemp.001",
+      "nodes": [
+        "ShaderNodeAttribute",
+        "ShaderNodeBsdfAnisotropic",
+        "ShaderNodeBsdfDiffuse",
+        "ShaderNodeOutputMaterial"
+      ]
+    },
+    {
+      "name": "skora_skalp",
+      "nodes": [
+        "NodeReroute",
+        "ShaderNodeAttribute",
+        "ShaderNodeBsdfAnisotropic",
+        "ShaderNodeBsdfDiffuse",
+        "ShaderNodeBsdfSheen",
+        "ShaderNodeBump",
+        "ShaderNodeEmission",
+        "ShaderNodeHueSaturation",
+        "ShaderNodeLayerWeight",
+        "ShaderNodeMath",
+        "ShaderNodeMixShader",
+        "ShaderNodeOutputMaterial",
+        "ShaderNodeSubsurfaceScattering",
+        "ShaderNodeTexImage",
+        "ShaderNodeValToRGB"
+      ]
+    }
+  ],
+  "images": [
+    {
+      "name": "_bump.png.000",
+      "packed": true,
+      "size": [
+        3072,
+        3072
+      ],
+      "source": "FILE"
+    },
+    {
+      "name": "_flowww.png.000",
+      "packed": true,
+      "size": [
+        3072,
+        3072
+      ],
+      "source": "FILE"
+    }
+  ],
+  "actions": [],
+  "removedDrivers": [
+    {
+      "id": "Key.002",
+      "dataPath": "key_blocks[\"nadg.L\"].value",
+      "arrayIndex": 0
+    },
+    {
+      "id": "Key.002",
+      "dataPath": "key_blocks[\"nadg.R\"].value",
+      "arrayIndex": 0
+    }
+  ],
+  "conversionRequirements": [
+    "Material.000: bake/translate the legacy Cycles network to glTF-compatible Principled materials",
+    "grzywa_biała.001: bake/translate the legacy Cycles network to glTF-compatible Principled materials",
+    "grzywa_pęciny.001: bake/translate the legacy Cycles network to glTF-compatible Principled materials",
+    "kon/grzywa: legacy hair must become curves/mesh with materials before glTF export",
+    "kon/ogon: legacy hair must become curves/mesh with materials before glTF export",
+    "kon/peciny: legacy hair must become curves/mesh with materials before glTF export",
+    "kon/rzesy: legacy hair must become curves/mesh with materials before glTF export",
+    "kon/uszy: legacy hair must become curves/mesh with materials before glTF export",
+    "koskie_rogowka.001: bake/translate the legacy Cycles network to glTF-compatible Principled materials",
+    "material_rogu.001: bake/translate the legacy Cycles network to glTF-compatible Principled materials",
+    "okotemp.001: bake/translate the legacy Cycles network to glTF-compatible Principled materials",
+    "skora_skalp: bake/translate the legacy Cycles network to glTF-compatible Principled materials"
+  ],
+  "previewFile": "source-preview.png",
+  "previewQualityChanges": [
+    {
+      "object": "kon",
+      "modifier": "Multires",
+      "originalRenderLevel": 3,
+      "previewRenderLevel": 1
+    },
+    {
+      "object": "kon",
+      "hairSystem": "grzywa",
+      "originalRenderChildren": 200,
+      "previewRenderChildren": 5
+    },
+    {
+      "object": "kon",
+      "hairSystem": "ogon",
+      "originalRenderChildren": 200,
+      "previewRenderChildren": 5
+    },
+    {
+      "object": "kon",
+      "hairSystem": "uszy",
+      "originalRenderChildren": 30,
+      "previewRenderChildren": 30
+    },
+    {
+      "object": "kon",
+      "hairSystem": "peciny",
+      "originalRenderChildren": 80,
+      "previewRenderChildren": 80
+    },
+    {
+      "object": "kon",
+      "hairSystem": "rzesy",
+      "originalRenderChildren": 5,
+      "previewRenderChildren": 5
+    }
+  ],
+  "observedRigLimitations": [
+    "No original action clips or gait library are stored in this source.",
+    "Blender 4.5 reports a dependency cycle in the original DEF-szyja.002/003/004 neck copy-rotation/parent chain."
+  ],
+  "note": "Original Cycles/particle appearance rendered after removing drivers; this PNG does not certify glTF or game compatibility.",
+  "sourceBlendUnchanged": true
+}

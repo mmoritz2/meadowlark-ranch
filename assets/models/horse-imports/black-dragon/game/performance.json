@@ -1,0 +1,59 @@
+{
+  "gameSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+  "motionCodeSha256": "7703367ce738b6428d9cd26a8aa8b592e007d87ef327a1c4684923ecd05194aa",
+  "groundCoreCodeSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+  "nodeVersion": "v22.14.0",
+  "scope": "1000 positive 1/60 s updates after 120 warmup steps; parsing and adapter construction excluded; control removes appendage guard only and retains the same full claw core",
+  "results": [
+    {
+      "kind": "withoutAppendageGuard",
+      "gait": "stand",
+      "steps": 1000,
+      "dt": 0.016666666666666666,
+      "totalMs": 2836.764125,
+      "meanUpdateMs": 2.836764125
+    },
+    {
+      "kind": "withoutAppendageGuard",
+      "gait": "gallop",
+      "steps": 1000,
+      "dt": 0.016666666666666666,
+      "totalMs": 2228.8245420000003,
+      "meanUpdateMs": 2.2288245420000004
+    },
+    {
+      "kind": "withoutAppendageGuard",
+      "gait": "flight",
+      "steps": 1000,
+      "dt": 0.016666666666666666,
+      "totalMs": 2148.429582999999,
+      "meanUpdateMs": 2.148429582999999
+    },
+    {
+      "kind": "current",
+      "gait": "stand",
+      "steps": 1000,
+      "dt": 0.016666666666666666,
+      "totalMs": 2585.5032920000012,
+      "meanUpdateMs": 2.585503292000001
+    },
+    {
+      "kind": "current",
+      "gait": "gallop",
+      "steps": 1000,
+      "dt": 0.016666666666666666,
+      "totalMs": 2773.366291999999,
+      "meanUpdateMs": 2.7733662919999986
+    },
+    {
+      "kind": "current",
+      "gait": "flight",
+      "steps": 1000,
+      "dt": 0.016666666666666666,
+      "totalMs": 2480.7810420000005,
+      "meanUpdateMs": 2.4807810420000007
+    }
+  ],
+  "interpretation": "Single-process Node CPU timing, not a browser GPU/frame budget guarantee. Order/JIT noise affects the stand control; gallop guard increment is about .54 ms, flight about .33 ms. The complete exact-surface adapter averages 2.48\u20132.77 ms per update in this run.",
+  "fixture": "tools/benchmark-imported-dragon.mjs"
+}

@@ -1,0 +1,110 @@
+{
+  "sourceSha256": "3abf7ed79e40406236d8b0e365f4690174daf8cfec39b32bfb2ab3ba48d5a1e7",
+  "bodyGeometrySha256": "c5dc5cdc73205facf8c82f8e20d324ccbf6a88da2000aec8514586f90ba7710e",
+  "units": "physical metres at raw 1.85m torso withers",
+  "candidateSelection": "All actual source body vertices owned >=.75 by the corresponding canonical limb, radius<=.65m, y<=terminal+.14m; lower patch measured separately. Preserve existing sole marker; append all candidates for clearance.",
+  "limbs": {
+    "FL": {
+      "terminal": [
+        0.40815480178894,
+        0.022375316892550026,
+        1.0984769235379688
+      ],
+      "selectedCount": 1940,
+      "baselineBottomCount": 86,
+      "actualMaxRadiusM": 0.4200214304024257,
+      "actualMaxAboveTerminalM": 0.1399319157257819,
+      "minY": 4.619365370217565e-07,
+      "bounds": {
+        "min": [
+          0.14690518379211426,
+          4.619365370217565e-07,
+          0.8123781681060791
+        ],
+        "max": [
+          0.6078477501869202,
+          0.1623072326183319,
+          1.5167725086212158
+        ]
+      },
+      "ownership": ">=.75 all canonical leg joints, excluding IK"
+    },
+    "FR": {
+      "terminal": [
+        -0.4078444816408558,
+        0.022374854956004733,
+        1.098484234741606
+      ],
+      "selectedCount": 1940,
+      "baselineBottomCount": 85,
+      "actualMaxRadiusM": 0.4200312125429248,
+      "actualMaxAboveTerminalM": 0.13995165976491203,
+      "minY": 0.0,
+      "bounds": {
+        "min": [
+          -0.6075856685638428,
+          0.0,
+          0.8123790621757507
+        ],
+        "max": [
+          -0.1466141641139984,
+          0.16232651472091675,
+          1.5167837142944336
+        ]
+      },
+      "ownership": ">=.75 all canonical leg joints, excluding IK"
+    },
+    "HL": {
+      "terminal": [
+        0.4077552255178306,
+        0.035735926097261714,
+        -0.7933644236849867
+      ],
+      "selectedCount": 1495,
+      "baselineBottomCount": 46,
+      "actualMaxRadiusM": 0.6086138818073795,
+      "actualMaxAboveTerminalM": 0.139649265939367,
+      "minY": 0.013097768649458885,
+      "bounds": {
+        "min": [
+          0.07421238720417023,
+          0.013097768649458885,
+          -1.3897607326507568
+        ],
+        "max": [
+          0.6227585673332214,
+          0.17538519203662872,
+          -0.43511301279067993
+        ]
+      },
+      "ownership": ">=.75 all canonical leg joints, excluding IK"
+    },
+    "HR": {
+      "terminal": [
+        -0.4075116012335971,
+        0.03573956649438058,
+        -0.7933635746021556
+      ],
+      "selectedCount": 1495,
+      "baselineBottomCount": 46,
+      "actualMaxRadiusM": 0.6086138447764633,
+      "actualMaxAboveTerminalM": 0.13966258306368673,
+      "minY": 0.013088405132293701,
+      "bounds": {
+        "min": [
+          -0.6225112676620483,
+          0.013088405132293701,
+          -1.3897606134414673
+        ],
+        "max": [
+          -0.07398403435945511,
+          0.17540214955806732,
+          -0.4351133704185486
+        ]
+      },
+      "ownership": ">=.75 all canonical leg joints, excluding IK"
+    }
+  },
+  "originalSourceModified": false,
+  "generativeToolsUsed": false
+}

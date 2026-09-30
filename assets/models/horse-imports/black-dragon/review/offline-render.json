@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "black-dragon",
+  "renderedAtUtc": "2026-09-30T01:14:14+00:00",
+  "sourceSha256": "3abf7ed79e40406236d8b0e365f4690174daf8cfec39b32bfb2ab3ba48d5a1e7",
+  "reviewSha256": "3abf7ed79e40406236d8b0e365f4690174daf8cfec39b32bfb2ab3ba48d5a1e7",
+  "creator": "3DHaupt",
+  "license": "CC BY-NC 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+  "noAI": true,
+  "generativeToolsUsed": false,
+  "originalBytesPreserved": true,
+  "sourceReceiptPreserved": true,
+  "renderOnlyChoices": {
+    "engine": "Cycles CPU",
+    "blenderVersion": "4.5.14 LTS",
+    "samples": 32,
+    "denoising": true,
+    "resolution": [
+      1200,
+      900
+    ],
+    "viewTransform": "AgX",
+    "animationDisplay": "source action first frame, render only",
+    "sourceAnimationFrame": 0,
+    "importerBoneControlShapesDisabled": true,
+    "animationPlaybackAssessed": false,
+    "cameraFitExcludedMeshes": [
+      "Plane_Material_0"
+    ],
+    "excludedGeometryHidden": false,
+    "sourceGeometryRetained": true,
+    "camera": {
+      "location": [
+        -51.92292785644531,
+        -68.87415313720703,
+        36.6822395324707
+      ],
+      "target": [
+        -0.1571941375732422,
+        2.801478862762451,
+        2.835414409637451
+      ],
+      "lensMm": 55
+    },
+    "frameBoundsBlenderCoordinates": {
+      "min": [
+        -23.974807739257812,
+        -8.326598167419434,
+        -0.028032582253217697
+      ],
+      "max": [
+        23.660419464111328,
+        13.929555892944336,
+        5.698861598968506
+      ],
+      "size": [
+        47.63522720336914,
+        22.256153106689453,
+        5.726894378662109
+      ]
+    },
+    "studioLights": [
+      {
+        "name": "Key",
+        "location": [
+          -62.082984924316406,
+          -82.94193267822266,
+          98.10586547851562
+        ],
+        "energy": 90764.59375,
+        "size": 57.16227340698242
+      },
+      {
+        "name": "Fill",
+        "location": [
+          85.58621215820312,
+          -21.01613426208496,
+          59.99768829345703
+        ],
+        "energy": 49920.52734375,
+        "size": 57.16227340698242
+      },
+      {
+        "name": "Rim",
+        "location": [
+          23.660419464111328,
+          83.78136444091797,
+          88.57881927490234
+        ],
+        "energy": 79419.0234375,
+        "size": 57.16227340698242
+      }
+    ],
+    "studioWorldStrength": 0.6
+  },
+  "importedSource": {
+    "meshCount": 4,
+    "meshes": [
+      {
+        "object": "Plane_Material_0",
+        "mesh": "Plane_Material_0",
+        "polygons": 12
+      },
+      {
+        "object": "Object_244",
+        "mesh": "Dragon_EYES_0",
+        "polygons": 1104
+      },
+      {
+        "object": "Object_245",
+        "mesh": "Dragon_Game_dragon_0",
+        "polygons": 226
+      },
+      {
+        "object": "Object_246",
+        "mesh": "Dragon_Game_dragon.001_0",
+        "polygons": 36655
+      }
+    ],
+    "armatureBoneCounts": [
+      232
+    ],
+    "importerBoneControlMeshesExcluded": [],
+    "imageCount": 9,
+    "images": [
+      {
+        "name": "Image_0",
+        "size": [
+          2048,
+          2048
+        ],
+        "packed": true
+      },
+      {
+        "name": "Image_1",
+        "size": [
+          2048,
+          2048
+        ],
+        "packed": true
+      },
+      {
+        "name": "Image_2",
+        "size": [
+          2048,
+          2048
+        ],
+        "packed": true
+      },
+      {
+        "name": "Image_3",
+        "size": [
+          4096,
+          4096
+        ],
+        "packed": true
+      },
+      {
+        "name": "Image_4",
+        "size": [
+          4096,
+          4096
+        ],
+        "packed": true
+      },
+      {
+        "name": "Image_5",
+        "size": [
+          4096,
+          4096
+        ],
+        "packed": true
+      },
+      {
+        "name": "Image_6",
+        "size": [
+          4096,
+          4096
+        ],
+        "packed": true
+      },
+      {
+        "name": "Image_7",
+        "size": [
+          4096,
+          4096
+        ],
+        "packed": true
+      },
+      {
+        "name": "Image_8",
+        "size": [
+          4096,
+          4096
+        ],
+        "packed": true
+      }
+    ],
+    "materialCount": 4,
+    "actionNames": [
+      "Scene"
+    ]
+  },
+  "rigRetargeted": false,
+  "animationsModified": false,
+  "motionReview": "pending",
+  "gameCompatibility": "not-assessed",
+  "note": "Ordinary non-generative Blender rendering of the actual original GLB, preserving all source bytes and receipt. The native import has a verified first-frame pose mismatch with Three; these PNGs are diagnostic evidence. Camera, lighting and render settings do not resolve that mismatch.",
+  "previewFile": "assets/models/horse-imports/black-dragon/review/preview.png",
+  "previewSha256": "f05f2b5e96c5088f8a32478ff5b6945420115d66f1228f3d8a6c3e9eca9ce9a9",
+  "visualInspection": {
+    "reviewed": true,
+    "originalTextureImagesImported": true,
+    "sourcePoseFidelity": "unresolved: native imported geometry differs from Three source pose",
+    "use": "Import diagnostic evidence; not a certified preview of the source Scene pose."
+  },
+  "status": "native-import-diagnostic",
+  "crossRendererPoseFidelity": "unresolved",
+  "crossRendererComparison": {
+    "status": "mismatch",
+    "sourceClip": "Scene",
+    "sourceTimeSeconds": 0,
+    "method": "Exact evaluated world vertex bounds in Blender; Three AnimationMixer Scene at0 and0.000001 followed by skeleton/world update and exact skinned vertex bounds. Three coordinates mapped to Blender(X,-Z,Y).",
+    "threeSizeBlenderAxes": [
+      26.7751236009,
+      17.42006838795,
+      5.70415252994
+    ],
+    "blenderSize": [
+      47.63522720336914,
+      22.25615119934082,
+      5.7268805503845215
+    ],
+    "conclusion": "The native Blender-imported first frame does not match the original Three source pose. Its broad wing spread cannot be certified as the original animation pose. Native PNGs are import diagnostic evidence; browser animation review remains pending."
+  }
+}

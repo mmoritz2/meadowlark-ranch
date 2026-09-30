@@ -1,0 +1,1571 @@
+{
+  "schemaVersion": 1,
+  "scope": "Ordinary Three.js renders of prepared source models, with authored game adaptation materials. No generative image tools.",
+  "preparedManifestSha256": "b2e617e417d5fffdff3642f614ee482c6b4296693805c8aab01b8eb78dca0ee3",
+  "runtimeSourceSha256": {
+    "breeds.html": "09769b548cb65f681766ddec1db8847404cac93db7df56c0bc329c09deb2df8b",
+    "assets/breed-models.js": "fcc007bc0b20493780bae3bf8ca0f888cd88825efd338233ede9e07585aad373",
+    "assets/equine-fantasy.js": "d3c2f673c6b8b8f631958d6f3da7061b1691d936649fa0af9f0387d7f3eb83e8",
+    "assets/features/horse-roster.js": "e1c17df38af8ba7b46928a2ab98b97b78692b7a5fa6db90a3ba43d337d4f440b",
+    "assets/features/new-breeds.js": "87979f7465e315b51c481ab1a7f73692f6e26fdddd380bbab580542c84ab54a4",
+    "assets/feather-wing-material.js": "68bbe05b8160ba0338c77b840434560053a9b6c4d61e87fc5266762e7c0114f0",
+    "assets/game-hero-horse.js": "58a03d2501c4cda68413938e46c5d10395b4cc3f83ce7b806941d7f1f8cabae3",
+    "assets/artist-horse-motion.js": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+    "assets/dragon-horse-motion.js": "7703367ce738b6428d9cd26a8aa8b592e007d87ef327a1c4684923ecd05194aa",
+    "assets/feather-wing-motion.js": "528e5cb63edaec0f0c587710dc454d7e8ea06d5b323b2946899be6b57dd4cfa8",
+    "assets/hero-horse-coat.js": "c9772922c9071a1e972a18f5d52d87b590a45530d8c49c96d24f4044e19e58c0",
+    "assets/artist-horse-features.js": "db77354c8d43c70405cdc4025b25d1d56fd00e8661a3072cdfbd20ee7d2b2f60",
+    "assets/protected-horse-resource.js": "436dcfd19e78e041aebeb0ce0ff5346ba63da72da6b4bb21ca92ef969080ae17",
+    "assets/fjord-horse-motion.js": "c3658a622ab6f685218a111c8069aabca8c07267b6ca1b24caf9c8c1afa776cf"
+  },
+  "pose": "Standing idle; native folded wings and source western tack on the preferred white horse.",
+  "siteActivated": false,
+  "completeAvailableCatalog": true,
+  "availableIdentityCount": 80,
+  "pendingIdentities": [],
+  "preferredWhiteWesternIncluded": true,
+  "errors": [],
+  "blockedExternalRequests": [],
+  "records": [
+    {
+      "key": "bay",
+      "file": "bay.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 11468,
+      "sha256": "04ab98d4f687d4a59abdbe64d027ee07287af9257354d345d926d0ecf05caf61",
+      "modelSha256": "eb9d459a5fce333ba25468e257cdd9faed26a2c1b82182fd11870ec99b8e9c66",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.42169913509942836,
+        "top": 0.8337594937883471,
+        "right": 0.5764161259661238,
+        "bottom": -0.8213262748342095
+      }
+    },
+    {
+      "key": "chestnut",
+      "file": "chestnut.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 17820,
+      "sha256": "43086c90096caa64597dad6bb62b33bef134831838158ed63fe010189e568ac5",
+      "modelSha256": "51d6246a31dd8c951bb2855a729396505a6067c68a590438618b4c734e0c80a6",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4469853819297788,
+        "top": 0.8159444306360031,
+        "right": 0.6498950363427733,
+        "bottom": -0.8369252265526476
+      }
+    },
+    {
+      "key": "palomino",
+      "file": "palomino.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 15686,
+      "sha256": "b8101abcda0ce28213557e6317673edf0c43ac4a7e32fa7bb3d2f8351e0fcdc5",
+      "modelSha256": "ba14bf3167bd3f7741c255a4aa328e13b34c6434194870b60d3d19e9bf7e2b16",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4285369470588763,
+        "top": 0.8336518086953756,
+        "right": 0.6053388615221393,
+        "bottom": -0.8164638192775646
+      }
+    },
+    {
+      "key": "haflinger",
+      "file": "haflinger.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 18250,
+      "sha256": "0f5b09a0febf8de889c1e581d1e5378bf1ed4c669b0811092dc9892d03533707",
+      "modelSha256": "d49c6946f70b030b4222fb7322d975506c16c0c704059a7f2d06a827077f3f28",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.43139664797442856,
+        "top": 0.8335816907000447,
+        "right": 0.6124393914621784,
+        "bottom": -0.819992207074883
+      }
+    },
+    {
+      "key": "grey",
+      "file": "grey.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 13820,
+      "sha256": "d274625ced95898ecd92aa560e80b25442cb26a3948ab536a3b1f513b4402a93",
+      "modelSha256": "6155df8bff1d27192858b18749c1aebabb39ac698f82e896cef104ae8dbfd1fd",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4217113841828008,
+        "top": 0.8338907610303338,
+        "right": 0.5905962579593298,
+        "bottom": -0.807233937661932
+      }
+    },
+    {
+      "key": "black",
+      "file": "black.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 11074,
+      "sha256": "1eb767375e98d4f550d5e41612d5ecd684342f0796c945d63342b23379120eee",
+      "modelSha256": "2a4742c45f10008022a88114d08bef7373370aaab00a604baf53570cf3f1637d",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.43261207367616533,
+        "top": 0.8337920264707969,
+        "right": 0.6143181923404846,
+        "bottom": -0.8052316316808711
+      }
+    },
+    {
+      "key": "pinto",
+      "file": "pinto.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14872,
+      "sha256": "399b823760363d06ce907db8ce7075fc18829db28da068b8424d68c0fc8602e6",
+      "modelSha256": "950065d318b9814f0223a1a7fca707ad57dac618ff2e6ee9d60eac21a95e130c",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.426290096901279,
+        "top": 0.8337494289426767,
+        "right": 0.5955712452169707,
+        "bottom": -0.8112973687545604
+      }
+    },
+    {
+      "key": "appaloosa",
+      "file": "appaloosa.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 13588,
+      "sha256": "6a6cc3d7a94702da26f4eda24d6081e12d3b1401c337e19aa1b88c7b28b2b766",
+      "modelSha256": "7c386bb61bff5d867c7af7f16e20245ea22677a9893f7392acaaf51e3f8c1ee2",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4252364281698511,
+        "top": 0.8337958871276961,
+        "right": 0.5941767070247961,
+        "bottom": -0.8113668627774493
+      }
+    },
+    {
+      "key": "sunset",
+      "file": "sunset.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 10842,
+      "sha256": "25c2f387f2066127fbe09166e8d1a1cbc998c844db83942a09e4c711904a3620",
+      "modelSha256": "8d104a669666f357f9af4e33495ac5bf278679fbbcd1d8f583899c29e44184e8",
+      "sourceCandidate": "arabian-sculpt",
+      "sourceUrl": "https://pinshape.com/items/114373-3d-printed-arabian-horse",
+      "creator": "jesusrhino",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.3681380864009565,
+        "top": 0.768965491197833,
+        "right": 0.5062235612661293,
+        "bottom": -0.8367825934598685
+      }
+    },
+    {
+      "key": "iceland",
+      "file": "iceland.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 15888,
+      "sha256": "a8aa1e077e63c8303cea88e0a9a72e446f87b265448310d5ad8ba9cb99f77cbe",
+      "modelSha256": "e1c9a8a5511733ac03a510c3c4c1bc5de026cc308015fe9207a7a900d6be5798",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4409335268426695,
+        "top": 0.8334202531351281,
+        "right": 0.6408890284989543,
+        "bottom": -0.8213318431684842
+      }
+    },
+    {
+      "key": "welsh",
+      "file": "welsh.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 13188,
+      "sha256": "d82e1889b694146cf694ef9a95c21d7c8312aeef91dc7623f149695a05c8ad21",
+      "modelSha256": "569e14c4600e52169af9944938cba275f9407242abf9df11d47f71cda190cf97",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4257573738742266,
+        "top": 0.8336028795940867,
+        "right": 0.5996945289109371,
+        "bottom": -0.8110316547213037
+      }
+    },
+    {
+      "key": "stock",
+      "file": "stock.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 11156,
+      "sha256": "84ca74dcbb5a9dcb29f431b54948474855f600ea21f881ca38fd46c3449929ac",
+      "modelSha256": "2cac7e0a79ce8930189819c62b268cebc35ddad887656c6491b43485abfd1bc1",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4227241332636031,
+        "top": 0.8338199455788754,
+        "right": 0.5943851573809816,
+        "bottom": -0.8043487621201062
+      }
+    },
+    {
+      "key": "fjord",
+      "file": "fjord.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 11978,
+      "sha256": "4e568d5b7c35e76dc2106d0554af1062ee22ae7fccffc6f4ad0f72ab392b9ecc",
+      "modelSha256": "86cf8ca1b5243b40b604f77eaff7e5bda6f3d82da698d8265c51209e3ef7af31",
+      "sourceCandidate": "fjord-sculpt",
+      "sourceUrl": "https://www.cgtrader.com/free-3d-print-models/art/sculpture/fjord-pony-horse",
+      "creator": "TheBigWolfy",
+      "license": "CGTrader Royalty Free License (NoAI)",
+      "projectedBounds": {
+        "left": -0.4128447629241473,
+        "top": 0.7859507058282806,
+        "right": 0.6398951248816317,
+        "bottom": -0.8368212178048707
+      }
+    },
+    {
+      "key": "morgan",
+      "file": "morgan.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 10958,
+      "sha256": "25ce2a4c41e5103a0d92c043a3e3adf962e4d06be3b616b19495c723db0b1ea5",
+      "modelSha256": "7dba9827bcc014756aa04284282ae4d053fbb7a00d3efdc8aaf69e96720837dd",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.40701316956175965,
+        "top": 0.8339494892583709,
+        "right": 0.5533230345718968,
+        "bottom": -0.8108796330312311
+      }
+    },
+    {
+      "key": "thoro",
+      "file": "thoro.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 10580,
+      "sha256": "888bf1ae4abf6c8eb263d41bbdf26100e6141967a9da515d304e3e6d3fd17177",
+      "modelSha256": "af191f8e4738eabf67c61e72a256dc0574fecac7d3054dd3db07e99220cfcf2f",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4206084700016445,
+        "top": 0.8339521658997652,
+        "right": 0.5950654236995166,
+        "bottom": -0.7907276316452726
+      }
+    },
+    {
+      "key": "knab",
+      "file": "knab.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 17364,
+      "sha256": "be9728f450df5d321158d5d897d5b8835d2c5efe3ae93adc94fa97d9360745fc",
+      "modelSha256": "392a8176136e8dab493c90c9452b967c187f935ade66556be641f927ee604254",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.42842206405873107,
+        "top": 0.833787220132448,
+        "right": 0.6072918172532045,
+        "bottom": -0.8022771073507684
+      }
+    },
+    {
+      "key": "vanner",
+      "file": "vanner.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 21440,
+      "sha256": "c190947c1f8f98ab44325cd0d1cb6c441cedd3a0719f8e4659d5f84b1cb068b8",
+      "modelSha256": "79889a98e8543ecb2124b05c43e2d01c90b085529e843527899bc5624a977a4e",
+      "sourceCandidate": "bluemesh-draft",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+      "creator": "BlueMesh",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.4458811203215166,
+        "top": 0.7584298264637278,
+        "right": 0.6197223338882196,
+        "bottom": -0.8360512734218883
+      }
+    },
+    {
+      "key": "marwari",
+      "file": "marwari.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14720,
+      "sha256": "1db7ae81ffa003f3718d0b7e347b9981f572e1f9fbff30ffc7e8953a7e24fe1a",
+      "modelSha256": "c71128f8ecd6bc206fc921ad47ef9c062852e9fbd526e478a9068d1f2413bff1",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.42254517847207473,
+        "top": 0.8339813810795815,
+        "right": 0.5981539937669264,
+        "bottom": -0.794659029233361
+      }
+    },
+    {
+      "key": "lipiz",
+      "file": "lipiz.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 11490,
+      "sha256": "4a3d54fe9b07f655bedcbb138bd17865a0138b33f25d10f6eb879f9ea96f5342",
+      "modelSha256": "b7e0e47468b7913f2d9740e6fffbfadb0875c9089f50637ea104cf7f0c8345b2",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.42303959048980705,
+        "top": 0.8338305955122784,
+        "right": 0.5910127660531391,
+        "bottom": -0.8121919105219426
+      }
+    },
+    {
+      "key": "sport",
+      "file": "sport.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 9620,
+      "sha256": "d5802cca751f4520bad7cb7ca7ff64f8631a8dfd703e715bf51e253392e554ba",
+      "modelSha256": "70c45ce7b6d7274c6f10ffb79584e217b3bd608d44003ff9efab31b8ae6a2dba",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4290485370517663,
+        "top": 0.8337883012784142,
+        "right": 0.6109695214428353,
+        "bottom": -0.7972052870472416
+      }
+    },
+    {
+      "key": "akhal",
+      "file": "akhal.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14154,
+      "sha256": "fb7beee32d8b948f71ea260100bd5ebf65327b924c7c515ec81d1529f08633b5",
+      "modelSha256": "145a680a67f1bab9604f806a5bc282a0c9dcb8636009c8efef99a3e00dc80faf",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4389509133332216,
+        "top": 0.8337465022727886,
+        "right": 0.6415533220963189,
+        "bottom": -0.7798040411612237
+      }
+    },
+    {
+      "key": "percheron",
+      "file": "percheron.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 17130,
+      "sha256": "7835e07d723b2a8a8723cf33f6ebbf2b4d06d73f6985e2343b5f6b8accf0abbb",
+      "modelSha256": "b5fe84133528886faa1b5690e55e824f4b2dba850a668894c43afe9be5e0262d",
+      "sourceCandidate": "bluemesh-draft",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+      "creator": "BlueMesh",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.43658757146192956,
+        "top": 0.7648367107199306,
+        "right": 0.636543196860774,
+        "bottom": -0.8361518967442939
+      }
+    },
+    {
+      "key": "shire",
+      "file": "shire.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 13248,
+      "sha256": "90933ad89003f75188520e64c2f38a83ada9ece3b9a502ea79cb2414a8700b8e",
+      "modelSha256": "0541e816ed9c15f6a3f4827120760a07dc14a23518b952bdc35709d9cecfa85f",
+      "sourceCandidate": "bluemesh-draft",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+      "creator": "BlueMesh",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.4517809533828226,
+        "top": 0.7815210137203918,
+        "right": 0.6508586996674005,
+        "bottom": -0.8364596530588183
+      }
+    },
+    {
+      "key": "clyde",
+      "file": "clyde.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 16764,
+      "sha256": "6b3add6460121d374586aefa5ad32ed8e13a7ac4ed5903290c1f6408cc331cd8",
+      "modelSha256": "2782f5f66568a7a7f79147cc195442dd4bfc95b9775418f463da7dbd5223aca1",
+      "sourceCandidate": "bluemesh-draft",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+      "creator": "BlueMesh",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.4442250229321294,
+        "top": 0.7886394706964516,
+        "right": 0.6412375223302822,
+        "bottom": -0.8365875453731048
+      }
+    },
+    {
+      "key": "bay-sporthorse",
+      "file": "bay-sporthorse.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 13160,
+      "sha256": "a0fe2369f038a072a06baa65083c9dcd0de71185bcf1d868eeda652e4219958e",
+      "modelSha256": "c4bf68a055b285dbd7e23ca6ee2bd5396222f48fd91ab3ea46bac503818f7d1a",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.42168290256941365,
+        "top": 0.8337981135637463,
+        "right": 0.5953784972627338,
+        "bottom": -0.8067389668802699
+      }
+    },
+    {
+      "key": "aether",
+      "file": "aether.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 19714,
+      "sha256": "d83cf63d6b1f54ae2061c9a0c086e204a558afbe48c4cf5fa6430bce4bfec865",
+      "modelSha256": "2a4742c45f10008022a88114d08bef7373370aaab00a604baf53570cf3f1637d",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.43261207367616533,
+        "top": 0.8337920264707969,
+        "right": 0.6143181923404846,
+        "bottom": -0.8052316316808711
+      }
+    },
+    {
+      "key": "sunspear",
+      "file": "sunspear.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 7130,
+      "sha256": "d75e2cca774aaef43633e0112e24cb6d375ef66ad81bf7782ad62935338bc07d",
+      "modelSha256": "8d104a669666f357f9af4e33495ac5bf278679fbbcd1d8f583899c29e44184e8",
+      "sourceCandidate": "arabian-sculpt",
+      "sourceUrl": "https://pinshape.com/items/114373-3d-printed-arabian-horse",
+      "creator": "jesusrhino",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.3681380864009565,
+        "top": 0.768965491197833,
+        "right": 0.5062235612661293,
+        "bottom": -0.8367825934598685
+      }
+    },
+    {
+      "key": "meadowlight",
+      "file": "meadowlight.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 10436,
+      "sha256": "c3354dee745361db6efe4b038b88bf930f5a249fc92f3b1e1e110128af0a7e99",
+      "modelSha256": "eb9d459a5fce333ba25468e257cdd9faed26a2c1b82182fd11870ec99b8e9c66",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.42169913509942836,
+        "top": 0.8337594937883471,
+        "right": 0.5764161259661238,
+        "bottom": -0.8213262748342095
+      }
+    },
+    {
+      "key": "tempest",
+      "file": "tempest.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 19716,
+      "sha256": "125d2bdc5d382dd2b8efea747ada694d57a6535d4065c1736aa9cece5d5e6ab0",
+      "modelSha256": "2782f5f66568a7a7f79147cc195442dd4bfc95b9775418f463da7dbd5223aca1",
+      "sourceCandidate": "bluemesh-draft",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+      "creator": "BlueMesh",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.4442250229321294,
+        "top": 0.7886394706964516,
+        "right": 0.6412375223302822,
+        "bottom": -0.8365875453731048
+      }
+    },
+    {
+      "key": "eclipse",
+      "file": "eclipse.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 15300,
+      "sha256": "b38ca669bbe956470175839bbd37aa579d011e4bdf93df0e9450333f48050411",
+      "modelSha256": "af191f8e4738eabf67c61e72a256dc0574fecac7d3054dd3db07e99220cfcf2f",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4206084700016445,
+        "top": 0.8339521658997652,
+        "right": 0.5950654236995166,
+        "bottom": -0.7907276316452726
+      }
+    },
+    {
+      "key": "glacier",
+      "file": "glacier.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14118,
+      "sha256": "38b2154d4ded3c02c53123b01085f791579d42fe96b9aa940a73ff61b4041c25",
+      "modelSha256": "b5fe84133528886faa1b5690e55e824f4b2dba850a668894c43afe9be5e0262d",
+      "sourceCandidate": "bluemesh-draft",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+      "creator": "BlueMesh",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.43658757146192956,
+        "top": 0.7648367107199306,
+        "right": 0.636543196860774,
+        "bottom": -0.8361518967442939
+      }
+    },
+    {
+      "key": "unicorn",
+      "file": "unicorn.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14608,
+      "sha256": "e8e3fd0641556b5f9f0e241a030a5b06c88027bb45b07619f42b4a5b5549c4db",
+      "modelSha256": "69f206e1e03d61b743a3a9b3e7db0b5db9f83bd754abcdeee5607cbad6ad883a",
+      "sourceCandidate": "ikkiz-unicorn",
+      "sourceUrl": "https://blendswap.com/blend/11586",
+      "creator": "ikkiz",
+      "license": "CC BY 3.0",
+      "projectedBounds": {
+        "left": -0.5167924734780774,
+        "top": 0.8317702413030796,
+        "right": 0.8064218794317668,
+        "bottom": -0.788471214006471
+      }
+    },
+    {
+      "key": "pegasus",
+      "file": "pegasus.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 11066,
+      "sha256": "e0b9891e1e16eea187eaa2d223f161c795e22bc1cf76e589fddd5b18557fbbfe",
+      "modelSha256": "70c45ce7b6d7274c6f10ffb79584e217b3bd608d44003ff9efab31b8ae6a2dba",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.6761676352207413,
+        "top": 0.742778518660468,
+        "right": 0.8506007674778238,
+        "bottom": -0.7975992843735781
+      }
+    },
+    {
+      "key": "celestial",
+      "file": "celestial.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 24546,
+      "sha256": "bb9cecbb605d4c9fcbd27fb4a36ae248243c9cd03c5709fca1a2d4870f370548",
+      "modelSha256": "2b62831a501c65413390df70be884a811a530a6062625efe8fe0a6a6f4a7c0f5",
+      "sourceCandidate": "pastel-unicorn",
+      "sourceUrl": "https://www.cgtrader.com/free-3d-models/animal/mammal/unicorn-3f699121-8562-436d-a0a3-9c130380790c",
+      "creator": "maryna287887",
+      "license": "CGTrader Royalty Free License (NoAI)",
+      "projectedBounds": {
+        "left": -0.4374085705471795,
+        "top": 0.8315517244271513,
+        "right": 0.6066086367209544,
+        "bottom": -0.8372589541041859
+      }
+    },
+    {
+      "key": "ember",
+      "file": "ember.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 7432,
+      "sha256": "52f743b041b90d9bf1c480b129796bdbb0d5497266db6547a8dbbc8ba8eecb18",
+      "modelSha256": "8d104a669666f357f9af4e33495ac5bf278679fbbcd1d8f583899c29e44184e8",
+      "sourceCandidate": "arabian-sculpt",
+      "sourceUrl": "https://pinshape.com/items/114373-3d-printed-arabian-horse",
+      "creator": "jesusrhino",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.3681380864009565,
+        "top": 0.768965491197833,
+        "right": 0.5062235612661293,
+        "bottom": -0.8367825934598685
+      }
+    },
+    {
+      "key": "frost",
+      "file": "frost.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14574,
+      "sha256": "05443abc7a1f79af36e4568d3415b401f918a503b668b6b983b6cf6781035fd6",
+      "modelSha256": "b7e0e47468b7913f2d9740e6fffbfadb0875c9089f50637ea104cf7f0c8345b2",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.42303959048980705,
+        "top": 0.8338305955122784,
+        "right": 0.5910127660531391,
+        "bottom": -0.8121919105219426
+      }
+    },
+    {
+      "key": "aurora",
+      "file": "aurora.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14584,
+      "sha256": "5aadadb4619fb11d93dd4faa41eb71c3da58ba219187815a336b8b91faadbe60",
+      "modelSha256": "70c45ce7b6d7274c6f10ffb79584e217b3bd608d44003ff9efab31b8ae6a2dba",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.6761676352207413,
+        "top": 0.742778518660468,
+        "right": 0.8506007674778238,
+        "bottom": -0.7975992843735781
+      }
+    },
+    {
+      "key": "phoenix",
+      "file": "phoenix.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 22376,
+      "sha256": "b6bd2141620a9675ffbfaa1c4715cfe795dce3140a54cf6028e3e31d354b944d",
+      "modelSha256": "53b93ac141c9825b042951ac61a4edf859f11efa1912073ef709c57f2e056076",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.6815025319611018,
+        "top": 0.7686812418632504,
+        "right": 0.8505190622451513,
+        "bottom": -0.8285570779614311
+      }
+    },
+    {
+      "key": "frostdrake",
+      "file": "frostdrake.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 17494,
+      "sha256": "deae3aa6976aa8f2cbc090b2e408c4ee85a1d3d80cf57fb5d1fac43be094c8a3",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "emberdrake",
+      "file": "emberdrake.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 22248,
+      "sha256": "a29cb4dc79d3721a180e0d8bc14c1507a1b4144fa660b9f985ddf45ff55152b1",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "amethyst",
+      "file": "amethyst.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 18960,
+      "sha256": "c59450f970e512a07bcac5b9e3a03ba70c9893b2f85ade6ea0481fc1439a933a",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "stormdrake",
+      "file": "stormdrake.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 18342,
+      "sha256": "da2653c39820d5637672575130e6b614ab6f914cfd040962d9078718fc6764a7",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "verdant",
+      "file": "verdant.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 12980,
+      "sha256": "1c4f80a878fb450ab0dc03f51ced03914cd438dfbccfeadb2975e7c433744220",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "shadowmare",
+      "file": "shadowmare.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 19572,
+      "sha256": "92cb7a57b55fd78f7139cba43b3fc081d28cfb83a522bc0233054cdc9f8f1111",
+      "modelSha256": "2a4742c45f10008022a88114d08bef7373370aaab00a604baf53570cf3f1637d",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.43261207367616533,
+        "top": 0.8337920264707969,
+        "right": 0.6143181923404846,
+        "bottom": -0.8052316316808711
+      }
+    },
+    {
+      "key": "kestrel",
+      "file": "kestrel.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14510,
+      "sha256": "90c23776368dce36dc685776306e7733ebd0f2bf6b558938e6740f0ee3429ef4",
+      "modelSha256": "7dba9827bcc014756aa04284282ae4d053fbb7a00d3efdc8aaf69e96720837dd",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.40701316956175965,
+        "top": 0.8339494892583709,
+        "right": 0.5533230345718968,
+        "bottom": -0.8108796330312311
+      }
+    },
+    {
+      "key": "tidewalker",
+      "file": "tidewalker.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 5088,
+      "sha256": "d8b9df980962b101d1367a7b154130a5e79a46f5a399d5366c0611524d8d72e8",
+      "modelSha256": "8d104a669666f357f9af4e33495ac5bf278679fbbcd1d8f583899c29e44184e8",
+      "sourceCandidate": "arabian-sculpt",
+      "sourceUrl": "https://pinshape.com/items/114373-3d-printed-arabian-horse",
+      "creator": "jesusrhino",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.3681380864009565,
+        "top": 0.768965491197833,
+        "right": 0.5062235612661293,
+        "bottom": -0.8367825934598685
+      }
+    },
+    {
+      "key": "glimmerdrake",
+      "file": "glimmerdrake.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 22758,
+      "sha256": "ad752b126d431e66116b2ae68224802c4afda6caa3b8ebac2adb56fadf874477",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "thorndrake",
+      "file": "thorndrake.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 20122,
+      "sha256": "8f3f5672bcc567165250ded7f1c964333d1e25a9b17c40aeaa1ddbeed9e6bf9f",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "tidedrake",
+      "file": "tidedrake.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 21414,
+      "sha256": "9f85a781d79db045f4f9fcfb1ef1116692b3166f9181d85ff951b8041f2405d2",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "gloomdrake",
+      "file": "gloomdrake.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 17078,
+      "sha256": "a0c14b6389104d2ebb78d4b270c08c3fadc7a2a2c7b4cff0fd584ebd511b7bf1",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "alicorn",
+      "file": "alicorn.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 13708,
+      "sha256": "84046e29684d55a0114e367fd49bc639d8d2def26394f213a795d85e7e1b8c58",
+      "modelSha256": "69f206e1e03d61b743a3a9b3e7db0b5db9f83bd754abcdeee5607cbad6ad883a",
+      "sourceCandidate": "ikkiz-unicorn",
+      "sourceUrl": "https://blendswap.com/blend/11586",
+      "creator": "ikkiz",
+      "license": "CC BY 3.0",
+      "projectedBounds": {
+        "left": -0.6396708968187941,
+        "top": 0.6960412423339827,
+        "right": 0.8505114773903819,
+        "bottom": -0.7314182828142286
+      }
+    },
+    {
+      "key": "ancientdrake",
+      "file": "ancientdrake.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 18976,
+      "sha256": "b737cffd1ca781cb9001b2d0e292ea006f2070d2955bed86f1d6a13ba4f4a207",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "duskmustang",
+      "file": "duskmustang.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 15556,
+      "sha256": "839a691ef024f6970e32976a92d996c57829e31681203116743d95fa5ad8349d",
+      "modelSha256": "ba14bf3167bd3f7741c255a4aa328e13b34c6434194870b60d3d19e9bf7e2b16",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4285369470588763,
+        "top": 0.8336518086953756,
+        "right": 0.6053388615221393,
+        "bottom": -0.8164638192775646
+      }
+    },
+    {
+      "key": "kilnfriesian",
+      "file": "kilnfriesian.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 21286,
+      "sha256": "eee28659dc1ff4519e6d5c62bd1caa269fbb4fb2dac3db898719f267f719592b",
+      "modelSha256": "2a4742c45f10008022a88114d08bef7373370aaab00a604baf53570cf3f1637d",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.43261207367616533,
+        "top": 0.8337920264707969,
+        "right": 0.6143181923404846,
+        "bottom": -0.8052316316808711
+      }
+    },
+    {
+      "key": "larkunicorn",
+      "file": "larkunicorn.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 15882,
+      "sha256": "07e3422f512919918ecc593b3bec2ffcc8e47448c749a13de0e4db6b203d0daa",
+      "modelSha256": "69f206e1e03d61b743a3a9b3e7db0b5db9f83bd754abcdeee5607cbad6ad883a",
+      "sourceCandidate": "ikkiz-unicorn",
+      "sourceUrl": "https://blendswap.com/blend/11586",
+      "creator": "ikkiz",
+      "license": "CC BY 3.0",
+      "projectedBounds": {
+        "left": -0.5167924734780774,
+        "top": 0.8317702413030796,
+        "right": 0.8064218794317668,
+        "bottom": -0.788471214006471
+      }
+    },
+    {
+      "key": "petalmane",
+      "file": "petalmane.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 15528,
+      "sha256": "3e0a9833c22079d8ab2c97f4f7b89c85d755da18a50d8453fc87eb6eb257eebd",
+      "modelSha256": "eb9d459a5fce333ba25468e257cdd9faed26a2c1b82182fd11870ec99b8e9c66",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.42169913509942836,
+        "top": 0.8337594937883471,
+        "right": 0.5764161259661238,
+        "bottom": -0.8213262748342095
+      }
+    },
+    {
+      "key": "dryadwalker",
+      "file": "dryadwalker.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 15794,
+      "sha256": "cd327fa2785408dd2b4b33fc93fd584069cc883da1aa2f051c887ae9c9da3984",
+      "modelSha256": "70c45ce7b6d7274c6f10ffb79584e217b3bd608d44003ff9efab31b8ae6a2dba",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4290485370517663,
+        "top": 0.8337883012784142,
+        "right": 0.6109695214428353,
+        "bottom": -0.7972052870472416
+      }
+    },
+    {
+      "key": "blossomdrake",
+      "file": "blossomdrake.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 20434,
+      "sha256": "8b8dd1aaa26d7594e3d51247d59a03b285847ad779fcad4e4047f56c700838a7",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "sunflare",
+      "file": "sunflare.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 4658,
+      "sha256": "3a59e2bf0decb4fce1c9ef04d670e21e05e0941ee80ec71abe95239b1d1e3769",
+      "modelSha256": "8d104a669666f357f9af4e33495ac5bf278679fbbcd1d8f583899c29e44184e8",
+      "sourceCandidate": "arabian-sculpt",
+      "sourceUrl": "https://pinshape.com/items/114373-3d-printed-arabian-horse",
+      "creator": "jesusrhino",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.3681380864009565,
+        "top": 0.768965491197833,
+        "right": 0.5062235612661293,
+        "bottom": -0.8367825934598685
+      }
+    },
+    {
+      "key": "noonshade",
+      "file": "noonshade.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 17948,
+      "sha256": "377b1464bf2911785b480389df5dad1279e8ada99bca1a364c55e755d9fc2c31",
+      "modelSha256": "ba14bf3167bd3f7741c255a4aa328e13b34c6434194870b60d3d19e9bf7e2b16",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4285369470588763,
+        "top": 0.8336518086953756,
+        "right": 0.6053388615221393,
+        "bottom": -0.8164638192775646
+      }
+    },
+    {
+      "key": "heliosdrake",
+      "file": "heliosdrake.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 21516,
+      "sha256": "a1e0aac9f54ed096232eafb48229fdb849ab617f4dfeca5f6c51c11742be6fb2",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "harvestmoon",
+      "file": "harvestmoon.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14542,
+      "sha256": "c78138ad84a1766427782ecbca7784e84cbccaed3987d8d744373904dd2a8500",
+      "modelSha256": "86cf8ca1b5243b40b604f77eaff7e5bda6f3d82da698d8265c51209e3ef7af31",
+      "sourceCandidate": "fjord-sculpt",
+      "sourceUrl": "https://www.cgtrader.com/free-3d-print-models/art/sculpture/fjord-pony-horse",
+      "creator": "TheBigWolfy",
+      "license": "CGTrader Royalty Free License (NoAI)",
+      "projectedBounds": {
+        "left": -0.4128447629241473,
+        "top": 0.7859507058282806,
+        "right": 0.6398951248816317,
+        "bottom": -0.8368212178048707
+      }
+    },
+    {
+      "key": "cinderlark",
+      "file": "cinderlark.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 16806,
+      "sha256": "98ece8fad67c70084c6a3a77f368414d0bb49d5f3ed250fe4dba4074fb44f75b",
+      "modelSha256": "7dba9827bcc014756aa04284282ae4d053fbb7a00d3efdc8aaf69e96720837dd",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.40701316956175965,
+        "top": 0.8339494892583709,
+        "right": 0.5533230345718968,
+        "bottom": -0.8108796330312311
+      }
+    },
+    {
+      "key": "ashwing",
+      "file": "ashwing.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 20482,
+      "sha256": "ca245d4be4c25675e56d0ca27807ff500917f09676b2675136abedadc41bb23d",
+      "modelSha256": "70c45ce7b6d7274c6f10ffb79584e217b3bd608d44003ff9efab31b8ae6a2dba",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.6761676352207413,
+        "top": 0.742778518660468,
+        "right": 0.8506007674778238,
+        "bottom": -0.7975992843735781
+      }
+    },
+    {
+      "key": "snowlark",
+      "file": "snowlark.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 17732,
+      "sha256": "8f117b628b26128b5a2b4f40dcc9b2e75eeb5d13757dfbc2b3ccd53a037c625e",
+      "modelSha256": "e1c9a8a5511733ac03a510c3c4c1bc5de026cc308015fe9207a7a900d6be5798",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4409335268426695,
+        "top": 0.8334202531351281,
+        "right": 0.6408890284989543,
+        "bottom": -0.8213318431684842
+      }
+    },
+    {
+      "key": "rimewalker",
+      "file": "rimewalker.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14118,
+      "sha256": "38b2154d4ded3c02c53123b01085f791579d42fe96b9aa940a73ff61b4041c25",
+      "modelSha256": "b5fe84133528886faa1b5690e55e824f4b2dba850a668894c43afe9be5e0262d",
+      "sourceCandidate": "bluemesh-draft",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+      "creator": "BlueMesh",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.43658757146192956,
+        "top": 0.7648367107199306,
+        "right": 0.636543196860774,
+        "bottom": -0.8361518967442939
+      }
+    },
+    {
+      "key": "polarisdrake",
+      "file": "polarisdrake.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 19802,
+      "sha256": "40d171e15379ada8bbe3765c97f94585153b5ef638904ecf915140d2cc492753",
+      "modelSha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+      "sourceCandidate": "black-dragon",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creator": "3DHaupt",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.5168493960936777,
+        "top": 0.3555516700436948,
+        "right": 0.8509207888092312,
+        "bottom": -0.6061324843364786
+      }
+    },
+    {
+      "key": "chameleon",
+      "file": "chameleon.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 18466,
+      "sha256": "17e2f40a74f99b429392cea3707a2a60b6cfdd1f1bc88a32e5f09aaafe07ff82",
+      "modelSha256": "ba14bf3167bd3f7741c255a4aa328e13b34c6434194870b60d3d19e9bf7e2b16",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4285369470588763,
+        "top": 0.8336518086953756,
+        "right": 0.6053388615221393,
+        "bottom": -0.8164638192775646
+      }
+    },
+    {
+      "key": "connemara",
+      "file": "connemara.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 12974,
+      "sha256": "b2cc5bc37925b3081839d8413f1a572df424b3b3073ca8f901c9c65e9200f77c",
+      "modelSha256": "67981ad70df71fe218b5c1408cacbcea01e951e1a05235b4bb89265941c81455",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4268692212009737,
+        "top": 0.8336924175654669,
+        "right": 0.6014842844049938,
+        "bottom": -0.8134824428025393
+      }
+    },
+    {
+      "key": "suffolk",
+      "file": "suffolk.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 19338,
+      "sha256": "727538dbf3eee354e23d3c8255387a3fecde8913a9310adff1646407d8e159d1",
+      "modelSha256": "b14de26e71571a533b02bf7197a9a2d124ff89c11fda383cb05c8500a559284e",
+      "sourceCandidate": "bluemesh-draft",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+      "creator": "BlueMesh",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.4413964520624115,
+        "top": 0.7650482697709373,
+        "right": 0.6446079065666108,
+        "bottom": -0.836156307230181
+      }
+    },
+    {
+      "key": "rockymtn",
+      "file": "rockymtn.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14510,
+      "sha256": "16dc0c4f93e91f009bc5d67f7a7acc2865aff4120d05df6db46970f837ae9c7c",
+      "modelSha256": "97069859197c6dbec49a26ad7798dfb825acb65acfb631db680aa6719f35feb1",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.42434311141876563,
+        "top": 0.8337587767887632,
+        "right": 0.5968748673051985,
+        "bottom": -0.8112774341112626
+      }
+    },
+    {
+      "key": "hanover",
+      "file": "hanover.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 12656,
+      "sha256": "00217e5b932488f9ea132588ef2db9c7fc8061352c3d0e547adda521e6bf7d30",
+      "modelSha256": "b934fda2a0c5cceb3a81380cd1bb15cbf26d9461d22feecb44d0f4ade6900f54",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4293556229850709,
+        "top": 0.8338135642345047,
+        "right": 0.6075955471021475,
+        "bottom": -0.7977226567556286
+      }
+    },
+    {
+      "key": "camargue",
+      "file": "camargue.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 11676,
+      "sha256": "afaec57ae30114cf4396478d9e604dc3511988e739e5cde96855738f7802f861",
+      "modelSha256": "113f7f381495c8b0d9b5c0ad46fbb1274c855bf7a08ad115f5536e297c482bc3",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4274267323469046,
+        "top": 0.833725940403751,
+        "right": 0.6030323625912568,
+        "bottom": -0.8211682196518497
+      }
+    },
+    {
+      "key": "lusitano",
+      "file": "lusitano.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 13648,
+      "sha256": "064de7d51b107e11d82aa5bd365e146bb47705fddaa4dd81e8030ac6a02de48d",
+      "modelSha256": "43f234344f660d7dfa735a7b02ad36e740262e728be31438dd3c82ae246bac28",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4227407818761812,
+        "top": 0.83390159578369,
+        "right": 0.5895681636742369,
+        "bottom": -0.8070549310207349
+      }
+    },
+    {
+      "key": "firefly",
+      "file": "firefly.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 9680,
+      "sha256": "ead7b40a86e1589362c51933cf2e6a873e89ede7a6b61db7979a32c17b8d410a",
+      "modelSha256": "8d104a669666f357f9af4e33495ac5bf278679fbbcd1d8f583899c29e44184e8",
+      "sourceCandidate": "arabian-sculpt",
+      "sourceUrl": "https://pinshape.com/items/114373-3d-printed-arabian-horse",
+      "creator": "jesusrhino",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.3681380864009565,
+        "top": 0.768965491197833,
+        "right": 0.5062235612661293,
+        "bottom": -0.8367825934598685
+      }
+    },
+    {
+      "key": "opaline",
+      "file": "opaline.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 14428,
+      "sha256": "9ded6468305611733132a5f60ccbd80f8e3dfc90e22dcdf8d07052c921dc81b2",
+      "modelSha256": "2b62831a501c65413390df70be884a811a530a6062625efe8fe0a6a6f4a7c0f5",
+      "sourceCandidate": "pastel-unicorn",
+      "sourceUrl": "https://www.cgtrader.com/free-3d-models/animal/mammal/unicorn-3f699121-8562-436d-a0a3-9c130380790c",
+      "creator": "maryna287887",
+      "license": "CGTrader Royalty Free License (NoAI)",
+      "projectedBounds": {
+        "left": -0.4374085705471795,
+        "top": 0.8315517244271513,
+        "right": 0.6066086367209544,
+        "bottom": -0.8372589541041859
+      }
+    },
+    {
+      "key": "daybreak",
+      "file": "daybreak.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 16088,
+      "sha256": "915876a0c43510d0fc1e5b9b00fb67275c0cb1d5faf33c65d51d321fd5667f37",
+      "modelSha256": "d49c6946f70b030b4222fb7322d975506c16c0c704059a7f2d06a827077f3f28",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.43139664797442856,
+        "top": 0.8335816907000447,
+        "right": 0.6124393914621784,
+        "bottom": -0.819992207074883
+      }
+    },
+    {
+      "key": "emberfriesian",
+      "file": "emberfriesian.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 11074,
+      "sha256": "1eb767375e98d4f550d5e41612d5ecd684342f0796c945d63342b23379120eee",
+      "modelSha256": "2a4742c45f10008022a88114d08bef7373370aaab00a604baf53570cf3f1637d",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.43261207367616533,
+        "top": 0.8337920264707969,
+        "right": 0.6143181923404846,
+        "bottom": -0.8052316316808711
+      }
+    },
+    {
+      "key": "larksong",
+      "file": "larksong.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 13584,
+      "sha256": "bc859e4f0cce068fc9f97193fbe7b6a0f9d7bda6944a4726355ec6ad1cfb6317",
+      "modelSha256": "69f206e1e03d61b743a3a9b3e7db0b5db9f83bd754abcdeee5607cbad6ad883a",
+      "sourceCandidate": "ikkiz-unicorn",
+      "sourceUrl": "https://blendswap.com/blend/11586",
+      "creator": "ikkiz",
+      "license": "CC BY 3.0",
+      "projectedBounds": {
+        "left": -0.5167924734780774,
+        "top": 0.8317702413030796,
+        "right": 0.8064218794317668,
+        "bottom": -0.788471214006471
+      }
+    },
+    {
+      "key": "lumen",
+      "file": "lumen.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 6854,
+      "sha256": "8584082cc2b5fb312c11358ce35bcd4d31bdf5e2051c503a5274ad52785c8a3b",
+      "modelSha256": "733faced843a113e7c14731a9fcb0e2b7bb4b3d80d0d1e04963e2e28efa1fa14",
+      "sourceCandidate": "horse-skeleton",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-skeleton-eaca504567604e879b8ab2cf2763025e",
+      "creator": "Diego Luján García",
+      "license": "CC BY 4.0",
+      "projectedBounds": {
+        "left": -0.45637370186972565,
+        "top": 0.8347774232114623,
+        "right": 0.6456097075870668,
+        "bottom": -0.837341023014297
+      }
+    },
+    {
+      "key": "white-western",
+      "file": "white-western.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 17558,
+      "sha256": "424300e1e36afe67b9022e98dbe6c1a249b68d27506fd20722219b9a1b06fd34",
+      "modelSha256": "3b3e3d70e3efac71976922f01e733d508dccbfa36e5183a444820abd8ef7fdc2",
+      "sourceCandidate": "wildmesh-white-western",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "creator": "WildMesh 3D",
+      "license": "CC BY-NC 4.0",
+      "projectedBounds": {
+        "left": -0.4187481253646193,
+        "top": 0.8338397919871168,
+        "right": 0.5936696502587436,
+        "bottom": -0.8065314342786445
+      }
+    }
+  ],
+  "visualReview": "Rendered files require visual inspection; geometric framing and exact model hashes passed."
+}

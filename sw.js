@@ -1,7 +1,7 @@
 /* Service worker for the installable build.
 
-   NETWORK FIRST, deliberately. The obvious choice for a game with ~18MB of
-   assets is cache-first, and it would load faster — but it also means someone
+   NETWORK FIRST, deliberately. The game includes large model assets.
+   Cache-first would load faster — but it also means someone
    who opened the link once gets the old build forever until the cache is
    cleared. This link is out with a studio, so a stale copy is a much worse
    failure than a slower second load.
@@ -10,7 +10,7 @@
    only when the network is actually unavailable. Result — the live version is
    always what you see, and the game still runs on a plane. */
 
-const CACHE = 'meadowlark-v3';
+const CACHE = 'meadowlark-v4';
 
 self.addEventListener('install', e => {
   self.skipWaiting();                       // a new build takes over immediately
@@ -39,7 +39,7 @@ self.addEventListener('fetch', e => {
       const path = url.pathname;
       /* The game's code is revalidated too (a feature file edited in place kept running from the HTTP cache on a normal
          reload, mixed with newer modules): scripts are small next to the models and textures. */
-      const revalidate = /\.(html|webmanifest|js|mjs)$/.test(path) || path.endsWith('/') || path.endsWith('sw.js');
+      const revalidate = /\.(html|webmanifest|js|mjs|json)$/.test(path) || path.endsWith('/') || path.endsWith('sw.js');
       const fresh = await fetch(revalidate ? new Request(req, { cache: 'no-cache' }) : req);
       if (fresh && fresh.status === 200 && fresh.type === 'basic') {
         const copy = fresh.clone();
@@ -47,7 +47,9 @@ self.addEventListener('fetch', e => {
       }
       return fresh;
     } catch (err) {
-      const hit = await caches.match(req, { ignoreSearch: true });
+      /* Model and portrait query values identify exact derived builds. An
+         offline request must keep that identity rather than mixing revisions. */
+      const hit = await caches.match(req);
       if (hit) return hit;
       throw err;
     }

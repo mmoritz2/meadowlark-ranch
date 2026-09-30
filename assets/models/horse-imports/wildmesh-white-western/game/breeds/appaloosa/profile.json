@@ -1,0 +1,198 @@
+{
+  "id": "appaloosa",
+  "name": "Appaloosa",
+  "file": "model.glb",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "withersM": 1.54,
+  "heightM": 1.88976686964902,
+  "fitScale": 1,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0,
+        1.4942568091412742,
+        0
+      ]
+    ],
+    "withers": [
+      [
+        0,
+        1.5391835858573808,
+        0.31371306500292123
+      ]
+    ],
+    "head": [
+      [
+        -0.024129260865028233,
+        1.7548317492423595,
+        0.8865603433861856
+      ]
+    ],
+    "poll": [
+      [
+        -0.024129260865028233,
+        1.7548317492423595,
+        0.8865603433861856
+      ]
+    ],
+    "muzzle": [
+      [
+        -0.04698620785115741,
+        1.3401917621646002,
+        1.1519612333521974
+      ]
+    ],
+    "crest": [
+      [
+        -0.016025224873542892,
+        1.5557687948673882,
+        0.685707827878289
+      ]
+    ],
+    "tail": [
+      [
+        -0.004425722126542357,
+        1.3250458850607354,
+        -0.7661193959346327
+      ]
+    ],
+    "eyes": [
+      [
+        -0.1267577241190657,
+        1.6792019477323112,
+        1.0210424303707604
+      ],
+      [
+        0.052270766457754594,
+        1.6800821661565557,
+        1.0379440332349463
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.09152887210834587,
+        1.3761685294492527,
+        1.121980593948321
+      ],
+      [
+        -0.0024435435939689455,
+        1.3761685294492527,
+        1.121980593948321
+      ]
+    ]
+  },
+  "preserveSourceTack": true,
+  "preserveSaddleAnchor": true,
+  "sourceTackMeshes": [
+    "HorseWesternTack",
+    "HorseWesternSaddle"
+  ],
+  "preserveSourceMaterials": true,
+  "sourceSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+  "sha256": "7c386bb61bff5d867c7af7f16e20245ea22677a9893f7392acaaf51e3f8c1ee2",
+  "creator": "WildMesh 3D",
+  "license": "CC BY-NC 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+  "family": "riding",
+  "jointCount": 40,
+  "triangles": 82426,
+  "clips": [
+    "Rest",
+    "Idle",
+    "Walk",
+    "Trot",
+    "Canter_Left",
+    "Canter_Right",
+    "Gallop_Left",
+    "Gallop_Right",
+    "Jump"
+  ],
+  "gaitImplementation": "assets/artist-horse-motion.js, baked clips appended separately",
+  "motionStatus": "all six live gait modes validated; nine own baked anatomical clips",
+  "preserveSourceGroom": true,
+  "visualReview": "Actual final source-textured breed snapshots directly inspected",
+  "physicalScale": true,
+  "preferredWhiteWesternFile": "../../white-western-animated.glb",
+  "conformation": "Smooth athletic stock build, deep chest, strong loin",
+  "morphology": {
+    "build": "Smooth athletic stock build, deep chest, strong loin",
+    "neck": "Clean medium neck",
+    "head_face": "Straight lean head with prominent eye",
+    "ears": "Medium pointed ears",
+    "limbs": "Long forearm, flat cannon and broad joints",
+    "hooves": "Rounded feet; optional vertical striping",
+    "mane_tail": "Chosen shorter moderate-density mane, never assume every Appaloosa is sparse",
+    "feathering": "None"
+  },
+  "sculptTargets": {
+    "body_length": 1,
+    "barrel_width": 1.04,
+    "body_depth": 1.04,
+    "neck_length": 0.98,
+    "neck_thickness": 1,
+    "head_length": 1.02,
+    "head_width": 1,
+    "ear_length": 1,
+    "limb_length": 0.99,
+    "hoof_width": 1.03,
+    "hindquarter_width": 1.08,
+    "face_profile_depth_per_withers": 0,
+    "neck_arch_rise_per_withers": 0.025
+  },
+  "coat": [
+    0.48,
+    0.23,
+    0.11
+  ],
+  "groom": {
+    "maneLengthFactor": 1,
+    "tailLengthFactor": 1,
+    "sourceCardDensityFactor": 1,
+    "feathering": 0
+  },
+  "textureProvenance": "../texture-provenance.json",
+  "rigSha256": "41a15ce00d15bb08c69257ab7ece9762d48a3b6f46a8ae2ec07200e1b8279cc3",
+  "bodyGeometrySha256": "33559ba87a3823a28625fc51d97a750ca3081725824a4c45951872d97afd9d5b",
+  "motionValidation": "motion-validation.json",
+  "neutralCoatFile": "../textures/source-0-0e43d3fa2c5a5497.png",
+  "neutralCoatLuminance": 0.365378901748634,
+  "coatLuminance": 0.046977914799122555,
+  "sourceTackAnchors": {
+    "saddleSeat": [
+      0,
+      1.4942568091412742,
+      0
+    ],
+    "stirrups": [
+      [
+        -0.35242961563809394,
+        0.8977195874379941,
+        0.1874563599762154
+      ],
+      [
+        0.3391196974476253,
+        0.8993972595600938,
+        0.17319178761813325
+      ]
+    ],
+    "bit": [
+      [
+        -0.1033757820877945,
+        1.4207066982679672,
+        1.1277330246541781
+      ],
+      [
+        0.012070269211413388,
+        1.421313047929591,
+        1.1386120894234109
+      ]
+    ]
+  },
+  "visualReviewReport": "../batch-visual-review.json",
+  "bakedGroundValidation": "../baked-ground-validation.json",
+  "animationBakeFPS": 120
+}

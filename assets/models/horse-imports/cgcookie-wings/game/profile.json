@@ -1,0 +1,1038 @@
+{
+  "id": "cgcookie-wings",
+  "file": "wings.glb",
+  "sha256": "3c44f5fe53421b6207adb323bc683f431008f24740229ebb07841c1a2666d3b4",
+  "componentKind": "paired-articulated-source-feather-wings",
+  "creator": "CG Cookie / David Ward",
+  "license": "CC BY3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+  "sourceCandidateId": "cgcookie-wings",
+  "sourceSha256": "cf713fa956ec331b5c7e63425e38f7a4666e8a5e9754b2d5d4bd1c778ae2aecb",
+  "jointCount": 105,
+  "featherInstances": 96,
+  "triangles": 6496,
+  "coordinateSystem": "+Z forward,+Y up,metres",
+  "halfSpanM": 3.04,
+  "mountOrigin": [
+    0,
+    0,
+    0
+  ],
+  "mountReference": "horse raw withers anchor, followed through chest bind transform",
+  "referenceWithersM": 1.7869539753502213,
+  "physicalScale": true,
+  "featherWingRig": {
+    "version": 1,
+    "chains": {
+      "L": [
+        "featherWing.L.shoulder",
+        "featherWing.L.elbow",
+        "featherWing.L.wrist",
+        "featherWing.L.tip"
+      ],
+      "R": [
+        "featherWing.R.shoulder",
+        "featherWing.R.elbow",
+        "featherWing.R.wrist",
+        "featherWing.R.tip"
+      ]
+    },
+    "feathers": {
+      "L": [
+        {
+          "name": "featherWing.L.feather.0",
+          "parent": "featherWing.L.wrist",
+          "index": 0,
+          "fanAxis": [
+            0.3370574746559153,
+            -0.037602255175486474,
+            0.9407328681322314
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.1",
+          "parent": "featherWing.L.wrist",
+          "index": 1,
+          "fanAxis": [
+            0.5340745762961837,
+            -0.09535196848796637,
+            0.8400430638125177
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.2",
+          "parent": "featherWing.L.wrist",
+          "index": 2,
+          "fanAxis": [
+            0.6098881318595968,
+            -0.07078910182421194,
+            0.7893195611916206
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.3",
+          "parent": "featherWing.L.wrist",
+          "index": 3,
+          "fanAxis": [
+            0.6452154228929224,
+            -0.10901972440348871,
+            0.7561823574721211
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.4",
+          "parent": "featherWing.L.wrist",
+          "index": 4,
+          "fanAxis": [
+            -0.8845272773021716,
+            0.1334213026951672,
+            -0.44700140010466594
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.5",
+          "parent": "featherWing.L.wrist",
+          "index": 5,
+          "fanAxis": [
+            0.8808702871257053,
+            -0.10748050269358857,
+            0.4609940116745673
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.6",
+          "parent": "featherWing.L.wrist",
+          "index": 6,
+          "fanAxis": [
+            0.6317416100151005,
+            -0.10970575964154353,
+            0.7673768203933453
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.7",
+          "parent": "featherWing.L.wrist",
+          "index": 7,
+          "fanAxis": [
+            0.5387725947808581,
+            -0.06388353990101757,
+            0.8400255855882107
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.8",
+          "parent": "featherWing.L.tip",
+          "index": 8,
+          "fanAxis": [
+            -0.7547311069356947,
+            0.09408530734809765,
+            -0.6492525788665263
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.9",
+          "parent": "featherWing.L.tip",
+          "index": 9,
+          "fanAxis": [
+            -0.7162465392837286,
+            0.12251013117972791,
+            -0.6870095797894001
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.10",
+          "parent": "featherWing.L.tip",
+          "index": 10,
+          "fanAxis": [
+            -0.7259802796578976,
+            0.09023673189607957,
+            -0.6817697307482607
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.11",
+          "parent": "featherWing.L.tip",
+          "index": 11,
+          "fanAxis": [
+            -0.8124740058731925,
+            0.13402075686160694,
+            -0.567383844069083
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.12",
+          "parent": "featherWing.L.tip",
+          "index": 12,
+          "fanAxis": [
+            -0.7706345643014999,
+            0.12624306996194212,
+            -0.6246479453183382
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.13",
+          "parent": "featherWing.L.wrist",
+          "index": 13,
+          "fanAxis": [
+            -0.7409648511239215,
+            0.09275860281338487,
+            -0.6651067064787526
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.14",
+          "parent": "featherWing.L.wrist",
+          "index": 14,
+          "fanAxis": [
+            -0.8659848517076865,
+            0.13482866504808055,
+            -0.48155110600451206
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.15",
+          "parent": "featherWing.L.wrist",
+          "index": 15,
+          "fanAxis": [
+            -0.83683232446391,
+            0.10350307098896057,
+            -0.5375860629035908
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.16",
+          "parent": "featherWing.L.wrist",
+          "index": 16,
+          "fanAxis": [
+            -0.8405982299803455,
+            0.026183992314352377,
+            -0.541025890600803
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.17",
+          "parent": "featherWing.L.wrist",
+          "index": 17,
+          "fanAxis": [
+            -0.7972270137285727,
+            0.04721244688109571,
+            -0.6018306019478589
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.18",
+          "parent": "featherWing.L.wrist",
+          "index": 18,
+          "fanAxis": [
+            -0.789297912633978,
+            0.015883199644529084,
+            -0.6138049601304125
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.19",
+          "parent": "featherWing.L.wrist",
+          "index": 19,
+          "fanAxis": [
+            -0.7750872585726025,
+            0.042241794975294254,
+            -0.6304406176283955
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.20",
+          "parent": "featherWing.L.tip",
+          "index": 20,
+          "fanAxis": [
+            -0.8178877475791696,
+            0.05129942182458677,
+            -0.573086382389545
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.21",
+          "parent": "featherWing.L.tip",
+          "index": 21,
+          "fanAxis": [
+            -0.7297198949349237,
+            0.0009781377865277524,
+            -0.6837455068829589
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.22",
+          "parent": "featherWing.L.tip",
+          "index": 22,
+          "fanAxis": [
+            -0.7210319719054515,
+            0.033028112379133584,
+            -0.6921141808132584
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.23",
+          "parent": "featherWing.L.tip",
+          "index": 23,
+          "fanAxis": [
+            -0.743598009663618,
+            0.005470128299554972,
+            -0.6686045750073001
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.24",
+          "parent": "featherWing.L.wrist",
+          "index": 24,
+          "fanAxis": [
+            0.6598000980069544,
+            0.012047130758825188,
+            0.7513445929202479
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.25",
+          "parent": "featherWing.L.wrist",
+          "index": 25,
+          "fanAxis": [
+            0.721254334795822,
+            -0.03170103461350253,
+            0.6919445273594335
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.26",
+          "parent": "featherWing.L.wrist",
+          "index": 26,
+          "fanAxis": [
+            0.8485376553435772,
+            -0.026656865146863235,
+            0.5284631103535673
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.27",
+          "parent": "featherWing.L.wrist",
+          "index": 27,
+          "fanAxis": [
+            0.8383339357109622,
+            -0.05239771670194589,
+            0.5426331094946113
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.28",
+          "parent": "featherWing.L.wrist",
+          "index": 28,
+          "fanAxis": [
+            0.6438741358337324,
+            -0.017469460656470242,
+            0.764931967660351
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.29",
+          "parent": "featherWing.L.wrist",
+          "index": 29,
+          "fanAxis": [
+            0.6049194145376695,
+            0.023036467267584602,
+            0.7959534051005954
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.30",
+          "parent": "featherWing.L.wrist",
+          "index": 30,
+          "fanAxis": [
+            0.4198758875510037,
+            0.013918057751230532,
+            0.9074748077614553
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.31",
+          "parent": "featherWing.L.wrist",
+          "index": 31,
+          "fanAxis": [
+            0.45351711332142874,
+            0.04499264132421072,
+            0.8901111672994948
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.32",
+          "parent": "featherWing.L.wrist",
+          "index": 32,
+          "fanAxis": [
+            0.23814722983258016,
+            0.070979538063475,
+            0.9686319229198281
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.33",
+          "parent": "featherWing.L.wrist",
+          "index": 33,
+          "fanAxis": [
+            0.5918931785650531,
+            -0.008183970382913448,
+            0.8059748679685551
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.34",
+          "parent": "featherWing.L.wrist",
+          "index": 34,
+          "fanAxis": [
+            -0.4366697736865243,
+            -0.047241668732264264,
+            -0.8983806172686222
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.35",
+          "parent": "featherWing.L.wrist",
+          "index": 35,
+          "fanAxis": [
+            -0.7542214782989208,
+            0.03396766375624558,
+            -0.6557409240634087
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.36",
+          "parent": "featherWing.L.wrist",
+          "index": 36,
+          "fanAxis": [
+            -0.8091133671295082,
+            0.04613219554770448,
+            -0.5858390390425496
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.37",
+          "parent": "featherWing.L.wrist",
+          "index": 37,
+          "fanAxis": [
+            -0.8886417062640815,
+            0.036592848879198565,
+            -0.45713989248255943
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.38",
+          "parent": "featherWing.L.wrist",
+          "index": 38,
+          "fanAxis": [
+            0.619239562938481,
+            -0.015275381801397462,
+            0.7850535181773154
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.39",
+          "parent": "featherWing.L.wrist",
+          "index": 39,
+          "fanAxis": [
+            0.5238924173830282,
+            0.033769869937101675,
+            0.8511147577694786
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.40",
+          "parent": "featherWing.L.wrist",
+          "index": 40,
+          "fanAxis": [
+            -0.7529214841502977,
+            0.007778046929990189,
+            -0.6580643894717809
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.41",
+          "parent": "featherWing.L.tip",
+          "index": 41,
+          "fanAxis": [
+            -0.718368210036185,
+            0.03236146406560411,
+            -0.6949099585219211
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.42",
+          "parent": "featherWing.L.tip",
+          "index": 42,
+          "fanAxis": [
+            -0.7153093912324369,
+            -0.0014073391336640424,
+            -0.6988064783695436
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.43",
+          "parent": "featherWing.L.tip",
+          "index": 43,
+          "fanAxis": [
+            -0.7892929392645591,
+            0.04842437957622016,
+            -0.612104350164064
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.44",
+          "parent": "featherWing.L.wrist",
+          "index": 44,
+          "fanAxis": [
+            -0.7605312586128533,
+            0.03899474125620478,
+            -0.6481293195243608
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.45",
+          "parent": "featherWing.L.wrist",
+          "index": 45,
+          "fanAxis": [
+            -0.7866474577188829,
+            0.015017665740383478,
+            -0.6172197720262439
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.46",
+          "parent": "featherWing.L.wrist",
+          "index": 46,
+          "fanAxis": [
+            -0.8051994680074979,
+            0.047907642303342234,
+            -0.5910657108388013
+          ]
+        },
+        {
+          "name": "featherWing.L.feather.47",
+          "parent": "featherWing.L.wrist",
+          "index": 47,
+          "fanAxis": [
+            -0.7686060357572152,
+            0.010157582975427088,
+            -0.6396417632594636
+          ]
+        }
+      ],
+      "R": [
+        {
+          "name": "featherWing.R.feather.0",
+          "parent": "featherWing.R.wrist",
+          "index": 0,
+          "fanAxis": [
+            -0.3370574746559153,
+            -0.037602255175486474,
+            0.9407328681322314
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.1",
+          "parent": "featherWing.R.wrist",
+          "index": 1,
+          "fanAxis": [
+            -0.5340745762961837,
+            -0.09535196848796637,
+            0.8400430638125177
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.2",
+          "parent": "featherWing.R.wrist",
+          "index": 2,
+          "fanAxis": [
+            -0.6098881318595968,
+            -0.07078910182421194,
+            0.7893195611916206
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.3",
+          "parent": "featherWing.R.wrist",
+          "index": 3,
+          "fanAxis": [
+            -0.6452154228929224,
+            -0.10901972440348871,
+            0.7561823574721211
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.4",
+          "parent": "featherWing.R.wrist",
+          "index": 4,
+          "fanAxis": [
+            0.8845272773021716,
+            0.1334213026951672,
+            -0.44700140010466594
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.5",
+          "parent": "featherWing.R.wrist",
+          "index": 5,
+          "fanAxis": [
+            -0.8808702871257053,
+            -0.10748050269358857,
+            0.4609940116745673
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.6",
+          "parent": "featherWing.R.wrist",
+          "index": 6,
+          "fanAxis": [
+            -0.6317416100151005,
+            -0.10970575964154353,
+            0.7673768203933453
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.7",
+          "parent": "featherWing.R.wrist",
+          "index": 7,
+          "fanAxis": [
+            -0.5387725947808581,
+            -0.06388353990101757,
+            0.8400255855882107
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.8",
+          "parent": "featherWing.R.tip",
+          "index": 8,
+          "fanAxis": [
+            0.7547311069356947,
+            0.09408530734809765,
+            -0.6492525788665263
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.9",
+          "parent": "featherWing.R.tip",
+          "index": 9,
+          "fanAxis": [
+            0.7162465392837286,
+            0.12251013117972791,
+            -0.6870095797894001
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.10",
+          "parent": "featherWing.R.tip",
+          "index": 10,
+          "fanAxis": [
+            0.7259802796578976,
+            0.09023673189607957,
+            -0.6817697307482607
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.11",
+          "parent": "featherWing.R.tip",
+          "index": 11,
+          "fanAxis": [
+            0.8124740058731925,
+            0.13402075686160694,
+            -0.567383844069083
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.12",
+          "parent": "featherWing.R.tip",
+          "index": 12,
+          "fanAxis": [
+            0.7706345643014999,
+            0.12624306996194212,
+            -0.6246479453183382
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.13",
+          "parent": "featherWing.R.wrist",
+          "index": 13,
+          "fanAxis": [
+            0.7409648511239215,
+            0.09275860281338487,
+            -0.6651067064787526
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.14",
+          "parent": "featherWing.R.wrist",
+          "index": 14,
+          "fanAxis": [
+            0.8659848517076865,
+            0.13482866504808055,
+            -0.48155110600451206
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.15",
+          "parent": "featherWing.R.wrist",
+          "index": 15,
+          "fanAxis": [
+            0.83683232446391,
+            0.10350307098896057,
+            -0.5375860629035908
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.16",
+          "parent": "featherWing.R.wrist",
+          "index": 16,
+          "fanAxis": [
+            0.8405982299803455,
+            0.026183992314352377,
+            -0.541025890600803
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.17",
+          "parent": "featherWing.R.wrist",
+          "index": 17,
+          "fanAxis": [
+            0.7972270137285727,
+            0.04721244688109571,
+            -0.6018306019478589
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.18",
+          "parent": "featherWing.R.wrist",
+          "index": 18,
+          "fanAxis": [
+            0.789297912633978,
+            0.015883199644529084,
+            -0.6138049601304125
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.19",
+          "parent": "featherWing.R.wrist",
+          "index": 19,
+          "fanAxis": [
+            0.7750872585726025,
+            0.042241794975294254,
+            -0.6304406176283955
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.20",
+          "parent": "featherWing.R.tip",
+          "index": 20,
+          "fanAxis": [
+            0.8178877475791696,
+            0.05129942182458677,
+            -0.573086382389545
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.21",
+          "parent": "featherWing.R.tip",
+          "index": 21,
+          "fanAxis": [
+            0.7297198949349237,
+            0.0009781377865277524,
+            -0.6837455068829589
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.22",
+          "parent": "featherWing.R.tip",
+          "index": 22,
+          "fanAxis": [
+            0.7210319719054515,
+            0.033028112379133584,
+            -0.6921141808132584
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.23",
+          "parent": "featherWing.R.tip",
+          "index": 23,
+          "fanAxis": [
+            0.743598009663618,
+            0.005470128299554972,
+            -0.6686045750073001
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.24",
+          "parent": "featherWing.R.wrist",
+          "index": 24,
+          "fanAxis": [
+            -0.6598000980069544,
+            0.012047130758825188,
+            0.7513445929202479
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.25",
+          "parent": "featherWing.R.wrist",
+          "index": 25,
+          "fanAxis": [
+            -0.721254334795822,
+            -0.03170103461350253,
+            0.6919445273594335
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.26",
+          "parent": "featherWing.R.wrist",
+          "index": 26,
+          "fanAxis": [
+            -0.8485376553435772,
+            -0.026656865146863235,
+            0.5284631103535673
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.27",
+          "parent": "featherWing.R.wrist",
+          "index": 27,
+          "fanAxis": [
+            -0.8383339357109622,
+            -0.05239771670194589,
+            0.5426331094946113
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.28",
+          "parent": "featherWing.R.wrist",
+          "index": 28,
+          "fanAxis": [
+            -0.6438741358337324,
+            -0.017469460656470242,
+            0.764931967660351
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.29",
+          "parent": "featherWing.R.wrist",
+          "index": 29,
+          "fanAxis": [
+            -0.6049194145376695,
+            0.023036467267584602,
+            0.7959534051005954
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.30",
+          "parent": "featherWing.R.wrist",
+          "index": 30,
+          "fanAxis": [
+            -0.4198758875510037,
+            0.013918057751230532,
+            0.9074748077614553
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.31",
+          "parent": "featherWing.R.wrist",
+          "index": 31,
+          "fanAxis": [
+            -0.45351711332142874,
+            0.04499264132421072,
+            0.8901111672994948
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.32",
+          "parent": "featherWing.R.wrist",
+          "index": 32,
+          "fanAxis": [
+            -0.23814722983258016,
+            0.070979538063475,
+            0.9686319229198281
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.33",
+          "parent": "featherWing.R.wrist",
+          "index": 33,
+          "fanAxis": [
+            -0.5918931785650531,
+            -0.008183970382913448,
+            0.8059748679685551
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.34",
+          "parent": "featherWing.R.wrist",
+          "index": 34,
+          "fanAxis": [
+            0.4366697736865243,
+            -0.047241668732264264,
+            -0.8983806172686222
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.35",
+          "parent": "featherWing.R.wrist",
+          "index": 35,
+          "fanAxis": [
+            0.7542214782989208,
+            0.03396766375624558,
+            -0.6557409240634087
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.36",
+          "parent": "featherWing.R.wrist",
+          "index": 36,
+          "fanAxis": [
+            0.8091133671295082,
+            0.04613219554770448,
+            -0.5858390390425496
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.37",
+          "parent": "featherWing.R.wrist",
+          "index": 37,
+          "fanAxis": [
+            0.8886417062640815,
+            0.036592848879198565,
+            -0.45713989248255943
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.38",
+          "parent": "featherWing.R.wrist",
+          "index": 38,
+          "fanAxis": [
+            -0.619239562938481,
+            -0.015275381801397462,
+            0.7850535181773154
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.39",
+          "parent": "featherWing.R.wrist",
+          "index": 39,
+          "fanAxis": [
+            -0.5238924173830282,
+            0.033769869937101675,
+            0.8511147577694786
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.40",
+          "parent": "featherWing.R.wrist",
+          "index": 40,
+          "fanAxis": [
+            0.7529214841502977,
+            0.007778046929990189,
+            -0.6580643894717809
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.41",
+          "parent": "featherWing.R.tip",
+          "index": 41,
+          "fanAxis": [
+            0.718368210036185,
+            0.03236146406560411,
+            -0.6949099585219211
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.42",
+          "parent": "featherWing.R.tip",
+          "index": 42,
+          "fanAxis": [
+            0.7153093912324369,
+            -0.0014073391336640424,
+            -0.6988064783695436
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.43",
+          "parent": "featherWing.R.tip",
+          "index": 43,
+          "fanAxis": [
+            0.7892929392645591,
+            0.04842437957622016,
+            -0.612104350164064
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.44",
+          "parent": "featherWing.R.wrist",
+          "index": 44,
+          "fanAxis": [
+            0.7605312586128533,
+            0.03899474125620478,
+            -0.6481293195243608
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.45",
+          "parent": "featherWing.R.wrist",
+          "index": 45,
+          "fanAxis": [
+            0.7866474577188829,
+            0.015017665740383478,
+            -0.6172197720262439
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.46",
+          "parent": "featherWing.R.wrist",
+          "index": 46,
+          "fanAxis": [
+            0.8051994680074979,
+            0.047907642303342234,
+            -0.5910657108388013
+          ]
+        },
+        {
+          "name": "featherWing.R.feather.47",
+          "parent": "featherWing.R.wrist",
+          "index": 47,
+          "fanAxis": [
+            0.7686060357572152,
+            0.010157582975427088,
+            -0.6396417632594636
+          ]
+        }
+      ]
+    },
+    "fold": {
+      "tip": 0.1,
+      "shoulder": 0.5,
+      "elbow": 1.8040366243191712,
+      "wrist": 2.4820536457938283,
+      "shoulderRoll": -0.8,
+      "elbowRoll": 0.22963289678006396,
+      "wristRoll": 0.027288037216170458,
+      "shoulderPitch": 0.07520668829006222,
+      "elbowPitch": -0.1641033142837761,
+      "wristPitch": 0.6068108591322788
+    }
+  },
+  "limitations": [
+    "Original wing color/alpha maps unavailable; neutral feather material is used.",
+    "Unverified legacy down strands omitted; the genuine48 long-feather instances are preserved per side.",
+    "Original long-feather preview has no texture coordinates; no new source texture fidelity is claimed."
+  ],
+  "clips": [
+    "Rest",
+    "Folded_Idle",
+    "Takeoff",
+    "Fly",
+    "Land"
+  ],
+  "gameCompatibility": "offline component motion and source host review passed; runtime integration tracked separately",
+  "gaitImplementation": "assets/feather-wing-motion.js: source wing chains and96 real feather fan joints, chest-mounted component",
+  "motionStatus": "Live folding, feather fanning and flight stages with five playable component clips; body flight wrapper provided; mounted host and rider review tracked separately",
+  "motionValidation": "motion-qa.json",
+  "clipValidation": "clip-validation.json",
+  "hostMotionValidation": "host-motion-qa.json",
+  "ordinaryRenderReview": "render-review.json"
+}

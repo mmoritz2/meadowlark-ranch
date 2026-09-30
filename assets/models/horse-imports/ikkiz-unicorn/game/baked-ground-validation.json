@@ -1,0 +1,107 @@
+{
+  "id": "ikkiz-unicorn",
+  "animatedSha256": "69f206e1e03d61b743a3a9b3e7db0b5db9f83bd754abcdeee5607cbad6ad883a",
+  "sampleHz": 240,
+  "checks": {
+    "allNineStoredClips": true,
+    "finite": true,
+    "lowerLegWithin6mm": true,
+    "longTailWithin6mm": true
+  },
+  "passed": true,
+  "selectedSurfaces": [
+    {
+      "mesh": "HorseBody",
+      "vertices": 5780,
+      "selection": "Original raw lower-leg surfaces below.35m; actual tail fibers below.60m."
+    },
+    {
+      "mesh": "HorseGroom_ogon",
+      "vertices": 14659,
+      "selection": "Original raw lower-leg surfaces below.35m; actual tail fibers below.60m."
+    }
+  ],
+  "rows": [
+    {
+      "clip": "Rest",
+      "duration": 1,
+      "frames": 241,
+      "minLowerLegY": 7.75701926832467e-8,
+      "minTailY": 0.27934908028417843,
+      "worstTime": 0.23333333333333334,
+      "nonfinite": false
+    },
+    {
+      "clip": "Idle",
+      "duration": 8,
+      "frames": 1921,
+      "minLowerLegY": 1.2853719639051644e-7,
+      "minTailY": 0.27086517811549704,
+      "worstTime": 6.625,
+      "nonfinite": false
+    },
+    {
+      "clip": "Walk",
+      "duration": 0.9803921580314636,
+      "frames": 237,
+      "minLowerLegY": -0.001900445151108373,
+      "minTailY": 0.15103198062233686,
+      "worstTime": 0.5458333333333333,
+      "nonfinite": false
+    },
+    {
+      "clip": "Trot",
+      "duration": 0.6451612710952759,
+      "frames": 156,
+      "minLowerLegY": -0.0006023510845534199,
+      "minTailY": 0.10491354159460925,
+      "worstTime": 0.25416666666666665,
+      "nonfinite": false
+    },
+    {
+      "clip": "Canter_Left",
+      "duration": 0.5681818127632141,
+      "frames": 138,
+      "minLowerLegY": -0.002295686455882163,
+      "minTailY": 0.06028803057043819,
+      "worstTime": 0.15416666666666667,
+      "nonfinite": false
+    },
+    {
+      "clip": "Canter_Right",
+      "duration": 0.5681818127632141,
+      "frames": 138,
+      "minLowerLegY": -0.001965629373738962,
+      "minTailY": 0.05852751227380193,
+      "worstTime": 0.30416666666666664,
+      "nonfinite": false
+    },
+    {
+      "clip": "Gallop_Left",
+      "duration": 0.4716981053352356,
+      "frames": 115,
+      "minLowerLegY": -0.002827884389627921,
+      "minTailY": 0.0408948353228244,
+      "worstTime": 0.3625,
+      "nonfinite": false
+    },
+    {
+      "clip": "Gallop_Right",
+      "duration": 0.4716981053352356,
+      "frames": 115,
+      "minLowerLegY": -0.0031490489532957594,
+      "minTailY": 0.03969285323207267,
+      "worstTime": 0.07916666666666666,
+      "nonfinite": false
+    },
+    {
+      "clip": "Jump",
+      "duration": 1.7200000286102295,
+      "frames": 414,
+      "minLowerLegY": -0.0018346542697480752,
+      "minTailY": 0.14194498770577102,
+      "worstTime": 1.1041666666666667,
+      "nonfinite": false
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "scope": "Focused presentation/cache readiness after prior full mounted tests. No new source downloads or partial catalog activation.",
+  "availableIdentityCount": 70,
+  "pendingIdentities": [
+    "sunset",
+    "fjord",
+    "sunspear",
+    "celestial",
+    "ember",
+    "tidewalker",
+    "sunflare",
+    "harvestmoon",
+    "firefly",
+    "opaline"
+  ],
+  "pendingSourceIds": [
+    "arabian-sculpt",
+    "fjord-sculpt",
+    "pastel-unicorn"
+  ],
+  "siteActivated": false,
+  "commitPushComplete": false,
+  "portraitRouting": {
+    "checks": {
+      "fourFocusedActualUiCases": true,
+      "allCaseChecksPass": true,
+      "localhostOnly": true,
+      "shippingDefaultsAndInputsUnmodified": true
+    },
+    "cases": [
+      {
+        "kind": "kit",
+        "catalog": "current",
+        "checks": {
+          "actualUiKitInstalled": true,
+          "asynchronousCatalogGated": true,
+          "existingSpansRefreshedInPlace": true,
+          "allPresentImagesLoaded": true,
+          "repeatThumbMatchesExistingSpans": true,
+          "noMissingImages": true,
+          "noPageErrors": true,
+          "noExternalRequests": true,
+          "currentExactLongformAndBodyFallbackRetained": true,
+          "unknownWithoutImage": true
+        }
+      },
+      {
+        "kind": "kit",
+        "catalog": "prepared",
+        "checks": {
+          "actualUiKitInstalled": true,
+          "asynchronousCatalogGated": true,
+          "existingSpansRefreshedInPlace": true,
+          "allPresentImagesLoaded": true,
+          "repeatThumbMatchesExistingSpans": true,
+          "noMissingImages": true,
+          "noPageErrors": true,
+          "noExternalRequests": true,
+          "noPrematureSubstitute": true,
+          "all70ExactModelAndImageHashes": true,
+          "all10PendingWithoutSubstitutes": true,
+          "unknownBodyAliasWithoutSubstitute": true
+        }
+      },
+      {
+        "kind": "studio",
+        "catalog": "current",
+        "checks": {
+          "actualStudioSidebar": true,
+          "modelReady": true,
+          "sidebarIncludesExactCatalog": true,
+          "pendingRowsPreserved": true,
+          "allPresentImagesLoaded": true,
+          "noMissingAssets": true,
+          "noPageErrors": true,
+          "noExternalRequests": true,
+          "currentExactPortraitsRetained": true
+        }
+      },
+      {
+        "kind": "studio",
+        "catalog": "prepared",
+        "checks": {
+          "actualStudioSidebar": true,
+          "modelReady": true,
+          "sidebarIncludesExactCatalog": true,
+          "pendingRowsPreserved": true,
+          "allPresentImagesLoaded": true,
+          "noMissingAssets": true,
+          "noPageErrors": true,
+          "noExternalRequests": true,
+          "all70ExactPreparedPortraits": true,
+          "all10PendingPortraitsAbsent": true
+        }
+      }
+    ],
+    "testedInputSha256": {
+      "assets/breed-portraits.js": "8021483af25faa3f86db3833f1b5840fe42cca251be285f8b51bd8512429d198",
+      "assets/features/ui-kit.js": "e8f5cbfb9eafc163da4e1f84245398f21db4e848aacc45f6e2f1d3fa99cb5ec5",
+      "breeds.html": "09769b548cb65f681766ddec1db8847404cac93db7df56c0bc329c09deb2df8b",
+      "assets/models/artist-breeds/manifest.json": "c3a21bc4219563d142fbc602ebb58331ea653d371aed9b40bdcdba60a0899a74",
+      "assets/models/horse-imports/prepared-manifest.json": "0c3f6b1ec7a3a6f3f4b5e9c5cdfabad34446a2e8cebcc0901352eb7b18fa9d43",
+      "assets/models/horse-imports/thumbnails/render-validation.json": "64324ca41d2d4fdfdafd851effc77334e4e4d38b0ec01ab54cda15c87562d815"
+    },
+    "freshIsolatedProfile": true,
+    "defaultCatalogActivated": false
+  },
+  "serviceWorker": {
+    "sourceSha256": "be6849ce8e6c29cd9d3d135f23e0fb308680a2e31afd9dac0787dfab5258933e",
+    "cacheName": "meadowlark-v4",
+    "checks": {
+      "cacheRevisionIsV4": true,
+      "glbDifferentRevisionNeverFallsBack": true,
+      "glbExactRevisionLoadsOffline": true,
+      "mkrDifferentRevisionNeverFallsBack": true,
+      "mkrExactRevisionLoadsOffline": true,
+      "webpDifferentRevisionNeverFallsBack": true,
+      "webpExactRevisionLoadsOffline": true,
+      "ordinaryOfflinePageLoads": true,
+      "jsonNoCache:prepared-manifest.json": true,
+      "jsonNoCache:thumbnails/index.json": true,
+      "jsonNoCache:thumbnails/render-validation.json": true,
+      "jsonNoCache:candidates/example/game/profile.json": true,
+      "glbNetworkSuccessCachedExactURL": true,
+      "glbNetworkCacheLoadsOffline": true,
+      "mkrNetworkSuccessCachedExactURL": true,
+      "mkrNetworkCacheLoadsOffline": true,
+      "webpNetworkSuccessCachedExactURL": true,
+      "webpNetworkCacheLoadsOffline": true,
+      "crossOriginAndMutationsUnintercepted": true,
+      "activationPurgesOlderCaches": true,
+      "savedWorkerUnmodified": true
+    },
+    "allChecksPass": true,
+    "scope": "Actual saved service-worker handlers in Node VM; native Request/Response bodies and clones, finite browser Cache/fetch substitutes. No real network/browser/model QA."
+  },
+  "priorMountedRuntimeFilesUnchanged": {
+    "ranch3d.html": true,
+    "assets/breed-models.js": true,
+    "assets/game-hero-horse.js": true,
+    "assets/rider-model.js": true,
+    "assets/artist-horse-motion.js": true,
+    "assets/dragon-horse-motion.js": true,
+    "assets/feather-wing-motion.js": true,
+    "assets/feather-wing-material.js": true,
+    "assets/equine-fantasy.js": true
+  },
+  "completeActivationGate": {
+    "passed": false,
+    "verifiedRefusalReason": "Three approved source originals are missing; ten identities remain pending.",
+    "requiresAll80Identities": true,
+    "requiresUniqueExactPortraitAndIndexCoverage": true,
+    "requiresCurrentCatalogImageModelAndRenderInputHashes": true,
+    "futureRenderInputFiles": [
+      "assets/artist-horse-features.js",
+      "assets/artist-horse-motion.js",
+      "assets/breed-models.js",
+      "assets/dragon-horse-motion.js",
+      "assets/equine-fantasy.js",
+      "assets/feather-wing-material.js",
+      "assets/feather-wing-motion.js",
+      "assets/features/horse-roster.js",
+      "assets/features/new-breeds.js",
+      "assets/game-hero-horse.js",
+      "assets/hero-horse-coat.js",
+      "breeds.html"
+    ],
+    "builderDerivesActualPendingSourceIds": true
+  },
+  "subsequentWork": {
+    "allApprovedSourcesAcquired": true,
+    "sourceAcquisitionEvidence": "remaining-source-review.json",
+    "protectedDeliveryChecksPassed": 35,
+    "protectedDeliveryEvidence": "protected-resource-prototype-validation.json",
+    "full80ConvertedAndMountedValidationPending": true,
+    "priorMountedShaRecordsAreHistorical": true,
+    "changesSinceMountedSnapshot": [
+      "assets/breed-models.js protected loader and in-memory neutral coat",
+      "ranch3d.html custom-coat embedded texture selection"
+    ]
+  }
+}

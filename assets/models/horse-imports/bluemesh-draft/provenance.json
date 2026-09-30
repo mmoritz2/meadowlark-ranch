@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "bluemesh-draft",
+  "status": "source-acquired",
+  "filename": "horse_draft_horse.glb",
+  "bytes": 43540368,
+  "sha256": "b5a33b0dd0e5e921d95a6b593223e2d098c68d00b57d15a90228ca5f6aa7c564",
+  "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+  "creator": "BlueMesh",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "restrictions": [
+    "attribution-required"
+  ],
+  "verification": "SHA-256 and byte count checked against the preserved original and its private registration receipt.",
+  "scope": "Source acquisition evidence; adapted game rigs have separate validation reports."
+}

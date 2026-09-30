@@ -1,0 +1,42 @@
+{
+  "host": "ikkiz-unicorn",
+  "pose": "flight",
+  "gameSha256": "3c44f5fe53421b6207adb323bc683f431008f24740229ebb07841c1a2666d3b4",
+  "hostFile": "assets/models/horse-imports/ikkiz-unicorn/game/unicorn-animated.glb",
+  "hostSha256": "69f206e1e03d61b743a3a9b3e7db0b5db9f83bd754abcdeee5607cbad6ad883a",
+  "poseSha256": "35c1f08151af8ed1b84c9de0ff942362aae480772d698ce2d4c76342c354ba25",
+  "image": "assets/models/horse-imports/cgcookie-wings/game/review/ikkiz-unicorn-flight.png",
+  "ordinaryRender": true,
+  "generativeToolsUsed": false,
+  "sourceLongFeathersPerSide": 48,
+  "neutralFeatherMaterials": true,
+  "originalMapsAbsent": true,
+  "unverifiedDownStrandsOmitted": true,
+  "bodyPose": "exact live40-joint host and chest-mounted wing pose evaluated by Three",
+  "wingScale": 0.8953784048559055,
+  "mountWithers": [
+    0,
+    1.600000023841858,
+    0.22427253425121307
+  ],
+  "bounds": {
+    "min": [
+      -2.6917991638183594,
+      -1.715967059135437,
+      0.2568075358867645
+    ],
+    "max": [
+      2.6917994022369385,
+      1.4779363870620728,
+      2.2339487075805664
+    ],
+    "size": [
+      5.383598327636719,
+      3.1939034461975098,
+      1.9771411418914795
+    ]
+  },
+  "visualReview": "inspected: genuine source body and48 longfeathers per side; rearward fold and40-joint flight gather visible; uncovered shaft/card geometry and missing maps/down remain explicit",
+  "mountedRiderIntegration": "pending",
+  "imageSha256": "b69c8d1476092411d5cdd1c23e29f5c0b6003c7c2ee3227b42ff3090281fd66f"
+}

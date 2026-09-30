@@ -1,0 +1,253 @@
+{
+  "id": "percheron",
+  "artistBreed": true,
+  "bodyMesh": "HorseBody",
+  "hairMesh": "HorseGroom",
+  "sourceAuthor": "BlueMesh",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+  "withersM": 1.73,
+  "heightM": 2.150184961340474,
+  "fitScale": 1,
+  "fitY": 0,
+  "anchors": {
+    "saddle": [
+      [
+        0,
+        1.6503225402832031,
+        -0.318884980804751
+      ]
+    ],
+    "withers": [
+      [
+        7.414586719057124e-08,
+        1.73,
+        0.10289502925880088
+      ]
+    ],
+    "head": [
+      [
+        0,
+        1.9197508017468132,
+        0.8827129283860964
+      ]
+    ],
+    "poll": [
+      [
+        0,
+        2.069203850075442,
+        0.903453879972413
+      ]
+    ],
+    "muzzle": [
+      [
+        0,
+        1.7142420972544914,
+        1.2039176568704915
+      ]
+    ],
+    "crest": [
+      [
+        0,
+        1.9588164728583104,
+        0.6347175748693391
+      ]
+    ],
+    "tail": [
+      [
+        0,
+        1.5398920840563153,
+        -1.1466071589801048
+      ]
+    ],
+    "eyes": [
+      [
+        -0.10503157502727622,
+        1.9341267235232376,
+        1.0380147052621695
+      ],
+      [
+        0.10503157502727622,
+        1.9341267235232376,
+        1.0380147052621695
+      ]
+    ],
+    "nostrils": [
+      [
+        -0.10408534462162508,
+        1.7367888879564202,
+        1.189779743877067
+      ],
+      [
+        0.10408534462162508,
+        1.7367888879564202,
+        1.189779743877067
+      ]
+    ],
+    "stirrups": [
+      [
+        -0.3844570470561034,
+        1.1383225402832031,
+        -0.11888498080475096
+      ],
+      [
+        0.38445784108344583,
+        1.1383225402832031,
+        -0.11888498080475096
+      ]
+    ]
+  },
+  "jointCount": 40,
+  "triangles": {
+    "HorseBody": 23152,
+    "HorseGroom_1": 34051,
+    "HorseGroom_2": 32956,
+    "HorseGroom_3": 18304,
+    "HorseGroom_4": 32766,
+    "HorseGroom_5": 32988,
+    "HorseGroom_6": 10439,
+    "HorseEyes": 960
+  },
+  "file": "percheron-animated.glb",
+  "sha256": "b5fe84133528886faa1b5690e55e824f4b2dba850a668894c43afe9be5e0262d",
+  "rigSha256": "7a911d8a75a165f13fae644419231085b886f1fcc4bf0bc448e4d326feaf7831",
+  "clips": [
+    "Rest",
+    "Idle",
+    "Walk",
+    "Trot",
+    "Canter_Left",
+    "Canter_Right",
+    "Gallop_Left",
+    "Gallop_Right",
+    "Jump"
+  ],
+  "motionStatus": "all six live gait modes validated; nine own baked anatomical clips",
+  "sourceAppearancePreserved": false,
+  "preserveAuthoredHair": true,
+  "authoredCoat": true,
+  "breed": "Percheron",
+  "physicalScale": true,
+  "sourceCoatAppearancePreserved": false,
+  "sourceDetailedTopologyRetained": true,
+  "sourceSurfaceCoordinatesSculpted": true,
+  "bodyTriangleCount": 23152,
+  "coat": "dapple steel gray",
+  "groomStyle": {
+    "mane": 0.83,
+    "tail_width": 0.9,
+    "feather_length": 0.25,
+    "feather_width": 0.8,
+    "coat": "dapple steel gray",
+    "hair": "charcoal gray"
+  },
+  "conformation": {
+    "game_id": "percheron",
+    "canonical_breed": "Percheron",
+    "classification": "breed",
+    "height": {
+      "target_m": 1.73,
+      "reference_range_m": [
+        1.676,
+        1.803
+      ],
+      "range_basis": "PHAOA says most 16.2\u201317.3 hands; full population 15\u201319."
+    },
+    "morphology": {
+      "build": "Deep powerful draft frame and broad muscular quarters",
+      "neck": "Thick strong moderately arched neck",
+      "head_face": "Relatively refined broad straight/slight convex head",
+      "ears": "Medium attentive ears",
+      "limbs": "Massive but defined clean bone and joints",
+      "hooves": "Large wide feet",
+      "mane_tail": "Substantial mane and full tail, less than Vanner",
+      "feathering": "None to very slight pastern hair"
+    },
+    "sculpt_targets": {
+      "body_length": 1.03,
+      "barrel_width": 1.21,
+      "body_depth": 1.14,
+      "neck_length": 0.98,
+      "neck_thickness": 1.16,
+      "head_length": 1,
+      "head_width": 1.09,
+      "ear_length": 0.98,
+      "limb_length": 1.03,
+      "hoof_width": 1.2,
+      "hindquarter_width": 1.2,
+      "face_profile_depth_per_withers": 0.003,
+      "neck_arch_rise_per_withers": 0.04
+    },
+    "silhouette_acceptance": "Clean leg silhouette and shorter stronger neck separate from feathered drafts",
+    "source_ids": [
+      "percheron"
+    ]
+  },
+  "conformationScope": "Regional original art sculpt ratios are calibrated relative to the source draft/Clydesdale exemplar. All body, bones, eyes and anchors share one cage, with actual final measured breed metres. Association references are type/height guidance, not exact measured proportional averages.",
+  "withersMeasurement": "Actual shoulder crest vertex region on the conformed body; all geometry physically calibrated to target metres; no loader scale duplication.",
+  "motionValidation": "motion-validation.json",
+  "visualReview": "passed actual Rest/Walk/Gallop/Jump PNG inspection; runtime mounted/browser review pending",
+  "sourceCandidate": "bluemesh-draft",
+  "neutralCoatFile": "../../shared/neutral-coat-detail.png",
+  "neutralCoatLuminance": 0.5088813208549336,
+  "coatLuminance": 0.3057360078281971,
+  "preserveSaddleAnchor": true,
+  "mountAttachments": {
+    "coordinateSpace": "HorseBody raw physical metres, +Y up/+Z forward; fitScale1/fitY0",
+    "saddle": {
+      "anchor": [
+        0,
+        1.6503225402832031,
+        -0.318884980804751
+      ],
+      "attachmentJoint": "spine",
+      "sampledTopSurfaceY": 1.6423225402832031,
+      "surfaceGapM": 0.008
+    },
+    "stirrups": {
+      "runtimeOriginalRelativePosition": [
+        [
+          -0.27,
+          -0.512,
+          0.2
+        ],
+        [
+          0.27,
+          -0.512,
+          0.2
+        ]
+      ],
+      "bodySurfaceXAtTreadYAndZ": [
+        -0.34945704705610336,
+        0.34945784108344585
+      ],
+      "runtimeOriginalSideClearanceM": [
+        -0.07945704705610335,
+        -0.07945784108344583
+      ],
+      "recommendedRawAnchors": [
+        [
+          -0.3844570470561034,
+          1.1383225402832031,
+          -0.11888498080475096
+        ],
+        [
+          0.38445784108344583,
+          1.1383225402832031,
+          -0.11888498080475096
+        ]
+      ],
+      "recommendedClearanceM": 0.035,
+      "attachmentJoint": "spine",
+      "measurement": "Exact HorseBody triangle intersections for the Y/Z tread ray; recommended lateral anchors clear the measured barrel by35mm. Shared tack/rider runtime must consume them; offline geometry does not certify final mounted appearance."
+    }
+  },
+  "actualPlaybackSkinValidation": "actual-playback-skin-validation.json",
+  "attachmentCoatCalibration": "attachment-coat-calibration.json",
+  "finalMotionModuleSha256": "2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594",
+  "runtimeBrowserReview": "pending integrated site QA",
+  "mountedTackReview": "pending integrated runtime/rider visual verification of measured saddle/stirrup anchors",
+  "animationBakeFPS": 120,
+  "bakedHoofPlaybackValidation": "../baked-ground-validation.json"
+}

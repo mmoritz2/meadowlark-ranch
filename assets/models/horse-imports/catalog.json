@@ -1,0 +1,847 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-09-29",
+  "preferredCandidate": "wildmesh-white-western",
+  "runtimeManifest": "assets/models/artist-breeds/manifest.json",
+  "candidates": [
+    {
+      "id": "wildmesh-white-western",
+      "name": "White horse with western tack",
+      "creator": "WildMesh 3D",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+      "previewUrl": "https://media.sketchfab.com/models/65d6a70a6721495f938c93e80a5998e4/thumbnails/04bc4ef3037b47709b837c225468f1c1/947b72724a18442383306a610adfa6f4.jpeg",
+      "sourceDir": "assets/models/horse-imports/wildmesh-white-western/source",
+      "license": "CC BY-NC 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+      "commercialUse": false,
+      "userApproved": true,
+      "priority": 1,
+      "acquisitionStatus": "source-acquired",
+      "receiptPath": "assets/models/horse-imports/wildmesh-white-western/source/receipt.json",
+      "acquiredSource": {
+        "filename": "horse_-_realistic_3d_model_demo_free.glb",
+        "bytes": 27314652,
+        "sha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+        "format": "glb",
+        "meshCount": 5,
+        "trianglesFromAccessorCounts": 82426,
+        "skinJointCounts": [
+          677
+        ],
+        "animationNames": [
+          "Horse|Horse_Idle",
+          "Horse|Horse_Walk"
+        ],
+        "embeddedPngImages": 5,
+        "gameCompatibility": "not-assessed"
+      },
+      "claimedRigged": true,
+      "claimedTriangles": 82400,
+      "purpose": "Preferred realistic horse and western tack appearance; generic foundation, not an exact breed library.",
+      "workNeeded": [
+        "Assess the reviewed Idle and Walk clips for mount motion and runtime rig compatibility",
+        "Inspect skinning, hair, textures and tack",
+        "Create a runtime adapter or retarget to the game's anatomical rig",
+        "Create missing mount motions and review breed-specific adaptations"
+      ],
+      "notes": "The acquired GLB contains Horse|Horse_Idle and Horse|Horse_Walk, both visually reviewed in the local preview. Breed adaptation, rig retargeting and game compatibility remain unassessed. The paid full version's advertised 100+ animations are not included in this acquisition. Noncommercial use with attribution only.",
+      "reviewFacts": {
+        "status": "idle-and-walk-visually-reviewed",
+        "reviewManifestPath": "assets/models/horse-imports/review.json",
+        "previewPath": "assets/models/horse-imports/wildmesh-white-western/review/preview.png",
+        "reviewedAnimationNames": [
+          "Horse|Horse_Idle",
+          "Horse|Horse_Walk"
+        ],
+        "originalBytesPreserved": true,
+        "rigRetargeted": false,
+        "animationsModified": false,
+        "gameCompatibility": "not-assessed",
+        "scope": "original acquired-source preview; converted game rig is tracked separately in gameDerivative"
+      },
+      "gameDerivative": {
+        "profile": "assets/models/horse-imports/wildmesh-white-western/game/profile.json",
+        "file": "assets/models/horse-imports/wildmesh-white-western/game/white-western-animated.glb",
+        "sha256": "3b3e3d70e3efac71976922f01e733d508dccbfa36e5183a444820abd8ef7fdc2",
+        "sourcePreserved": true,
+        "status": "rig and stored/live motion checked; prepared catalog integration verified locally; final review and remaining sources pending",
+        "jointCount": 40,
+        "motionKind": "anatomical",
+        "physicalScale": false,
+        "clips": [
+          "Rest",
+          "Idle",
+          "Walk",
+          "Trot",
+          "Canter_Left",
+          "Canter_Right",
+          "Gallop_Left",
+          "Gallop_Right",
+          "Jump"
+        ],
+        "breedBatchManifest": "assets/models/horse-imports/wildmesh-white-western/game/breeds/manifest.json"
+      },
+      "gamePreviewIdentity": "bay-sporthorse",
+      "downloadStatus": "source acquired and rigged adaptation validated locally"
+    },
+    {
+      "id": "bluemesh-draft",
+      "name": "Draft horse",
+      "creator": "BlueMesh",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+      "previewUrl": "https://media.sketchfab.com/models/725065392aad4b04b7a172f8cd965497/thumbnails/39d597a0909040e1892d0f24f03d3961/c9fdfe83ee0547baac5c007a62c50dda.jpeg",
+      "sourceDir": "assets/models/horse-imports/bluemesh-draft/source",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "commercialUse": true,
+      "userApproved": true,
+      "priority": 2,
+      "acquisitionStatus": "source-acquired",
+      "claimedRigged": null,
+      "claimedTriangles": 200100,
+      "purpose": "Detailed draft foundation for separately authored breed adaptations.",
+      "workNeeded": [
+        "Review the acquired skinned source and embedded texture/material appearance",
+        "Optimize geometry and assess the 60-joint skin",
+        "Adapt the source rig and weights; create mount anchors and locomotion",
+        "Author distinct draft breed proportions, feathering and coats"
+      ],
+      "notes": "The acquired GLB contains a 60-joint skin, eight meshes and no animation clips. Its three PNG images are embedded; the source has no declared extensions or external dependencies. The rig still needs behavior and compatibility review. It is not already an exact Shire, Clydesdale, Percheron or Gypsy Vanner.",
+      "downloadAccessEvidence": "The official Sketchfab GLB completed on 2026-09-29, was registered with its SHA-256 receipt, and its original byte count and hash were independently verified. Source acquisition does not certify browser appearance, animation behavior or game compatibility.",
+      "receiptPath": "assets/models/horse-imports/bluemesh-draft/source/receipt.json",
+      "acquiredSource": {
+        "filename": "horse_draft_horse.glb",
+        "bytes": 43540368,
+        "sha256": "b5a33b0dd0e5e921d95a6b593223e2d098c68d00b57d15a90228ca5f6aa7c564",
+        "format": "glb",
+        "meshCount": 8,
+        "trianglesFromAccessorCounts": 200080,
+        "skinCount": 1,
+        "skinJointCounts": [
+          60
+        ],
+        "animationNames": [],
+        "embeddedImageCount": 3,
+        "embeddedImageFormats": {
+          "png": 3
+        },
+        "extensionsUsed": [],
+        "extensionsRequired": [],
+        "externalDependencies": [],
+        "embeddedAssetExtras": {
+          "author": "BlueMesh (https://sketchfab.com/VapTor)",
+          "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+          "source": "https://sketchfab.com/3d-models/horse-draft-horse-725065392aad4b04b7a172f8cd965497",
+          "title": "HORSE [DRAFT HORSE]"
+        },
+        "gameCompatibility": "not-assessed",
+        "embeddedImageResolution": [
+          4096,
+          4096
+        ],
+        "skinnedMeshNodeCount": 2
+      },
+      "reviewFacts": {
+        "status": "offline-source-render-reviewed-browser-pending",
+        "browserAppearance": "pending",
+        "rigMotion": "pending",
+        "rigRetargeted": false,
+        "animationsModified": false,
+        "gameCompatibility": "not-assessed",
+        "reviewGlbPath": "assets/models/horse-imports/bluemesh-draft/review/model.glb",
+        "sourceSha256": "b5a33b0dd0e5e921d95a6b593223e2d098c68d00b57d15a90228ca5f6aa7c564",
+        "reviewSha256": "b5a33b0dd0e5e921d95a6b593223e2d098c68d00b57d15a90228ca5f6aa7c564",
+        "originalBytesPreserved": true,
+        "previewPath": "assets/models/horse-imports/bluemesh-draft/review/preview.png",
+        "offlineRenderReportPath": "assets/models/horse-imports/bluemesh-draft/review/offline-render-report.json",
+        "offlineRenderReviewed": true,
+        "crossRendererFidelity": "not-assessed",
+        "nativeRenderLimitations": [
+          "Two detached dark spheres from the original Sphere mesh are visible below the horse in the imported Blender pose. They remain unmodified. Browser pose comparison and rig/motion review are pending."
+        ],
+        "scope": "original acquired-source preview; converted game rig is tracked separately in gameDerivative"
+      },
+      "metadataInspectionPath": "assets/models/horse-imports/bluemesh-draft/review/source-metadata-inspection.json",
+      "gameDerivative": {
+        "profile": "assets/models/horse-imports/bluemesh-draft/game/breeds/vanner/profile.json",
+        "file": "assets/models/horse-imports/bluemesh-draft/game/breeds/vanner/vanner-animated.glb",
+        "sha256": "79889a98e8543ecb2124b05c43e2d01c90b085529e843527899bc5624a977a4e",
+        "sourcePreserved": true,
+        "status": "rig and stored/live motion checked; prepared catalog integration verified locally; final review and remaining sources pending",
+        "jointCount": 40,
+        "motionKind": "anatomical",
+        "physicalScale": true,
+        "clips": [
+          "Rest",
+          "Idle",
+          "Walk",
+          "Trot",
+          "Canter_Left",
+          "Canter_Right",
+          "Gallop_Left",
+          "Gallop_Right",
+          "Jump"
+        ],
+        "breedBatchManifest": "assets/models/horse-imports/bluemesh-draft/game/breeds/manifest.json"
+      },
+      "gamePreviewIdentity": "shire",
+      "downloadStatus": "source acquired and rigged adaptation validated locally"
+    },
+    {
+      "id": "arabian-sculpt",
+      "name": "Arabian horse sculpture",
+      "creator": "jesusrhino",
+      "sourceUrl": "https://pinshape.com/items/114373-3d-printed-arabian-horse",
+      "downloadPageUrl": "https://pinshape.com/download/114373",
+      "previewUrl": "https://assets.pinshape.com/uploads/image/file/505142/large_arabian-horse-3d-printing-505142.jpg",
+      "sourceDir": "assets/models/horse-imports/arabian-sculpt/source",
+      "license": "CC BY 4.0",
+      "commercialUse": true,
+      "userApproved": true,
+      "priority": 6,
+      "acquisitionStatus": "sign-in-required",
+      "claimedRigged": false,
+      "purpose": "Anatomy/sculpture study for Arabian adaptations.",
+      "workNeeded": [
+        "Separate horse and display base",
+        "Retopologize, unwrap and texture",
+        "Repose and rig",
+        "Create and review locomotion"
+      ],
+      "notes": "Printable posed OBJ sculpture, not a finished animated game asset. Listing links CC BY4.0 and supplies separate horse/base OBJs. Retain the original files and notices, inspect actual geometry before conversion.",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceListingEvidence": {
+        "checkedLocalDate": "2026-09-30",
+        "sourceUrl": "https://pinshape.com/items/114373-3d-printed-arabian-horse",
+        "linkedLicenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "listedFiles": [
+          {
+            "file": "BASE.obj",
+            "listedSize": "1.4 MB"
+          },
+          {
+            "file": "CABALLO_ARABE.obj",
+            "listedSize": "6.8 MB"
+          }
+        ],
+        "finding": "The listing links its CC BY label to version4.0 and provides the base and horse as separate OBJ files. Actual downloaded topology and bundled notices remain uninspected."
+      },
+      "acquiredSource": {
+        "filename": "CABALLO_ARABE (1).obj",
+        "bytes": 7148701,
+        "sha256": "c4359189a30dddf92cc31745e756e6cfc6e30505c3b67c6ca879d6d69d7176c3",
+        "path": "assets/models/horse-imports/arabian-sculpt/source/CABALLO_ARABE (1).obj",
+        "files": [
+          {
+            "filename": "CABALLO_ARABE (1).obj",
+            "bytes": 7148701,
+            "sha256": "c4359189a30dddf92cc31745e756e6cfc6e30505c3b67c6ca879d6d69d7176c3",
+            "path": "assets/models/horse-imports/arabian-sculpt/source/CABALLO_ARABE (1).obj"
+          },
+          {
+            "filename": "BASE.obj",
+            "bytes": 1468654,
+            "sha256": "405cd3764e2d0415edd85fa546e4c934d3e1600027bf46c24f60f298ecb1854e",
+            "path": "assets/models/horse-imports/arabian-sculpt/source/BASE.obj"
+          }
+        ]
+      },
+      "downloadStatus": "source acquired and rigged adaptation validated locally",
+      "gamePreviewIdentity": "sunset"
+    },
+    {
+      "id": "fjord-sculpt",
+      "name": "Fjord pony horse sculpture",
+      "creator": "TheBigWolfy",
+      "sourceUrl": "https://www.cgtrader.com/free-3d-print-models/art/sculpture/fjord-pony-horse",
+      "previewUrl": "https://img-new.cgtrader.com/items/5464214/344a6f89a4/fjord-pony-horse-3d-model-344a6f89a4.webp",
+      "sourceDir": "assets/models/horse-imports/fjord-sculpt/source",
+      "license": "CGTrader Royalty Free License (NoAI)",
+      "commercialUse": true,
+      "noAI": true,
+      "userApproved": true,
+      "priority": 7,
+      "acquisitionStatus": "sign-in-required",
+      "claimedRigged": false,
+      "purpose": "Recognizable Fjord sculpture for conversion/reference.",
+      "workNeeded": [
+        "Optimize or retopologize STL",
+        "Unwrap and author textures",
+        "Create rig, groom and animations"
+      ],
+      "notes": "Large static untextured print source. Retain the actual download license and restrictions.",
+      "downloadAccessEvidence": "Free Download on the original CGTrader Fjord listing opens the Log in to CGTrader modal with Email, Google and Facebook options on 2026-09-29. No file acquired.",
+      "publicationDeliveryReview": {
+        "status": "protected-incorporation-delivery-verified-locally",
+        "directPublicGlbCleared": false,
+        "termsUrl": "https://www.cgtrader.com/pages/terms-and-conditions",
+        "guidanceUrl": "https://help.cgtrader.com/hc/en-us/articles/360015124437-Royalty-Free-License",
+        "clauses": [
+          "definition 8",
+          "21A.2",
+          "21A.3",
+          "21A.5",
+          "21A.6",
+          "21B.1",
+          "24"
+        ],
+        "finding": "The derived game resource is AES-GCM packed with embedded buffers and images, and actual Ranch and Studio loads passed without plaintext source/map requests. Runtime keys remain discoverable; this is an extraction safeguard, not strong DRM or legal certification.",
+        "findingType": "Verified local implementation and mounted runtime behavior; license application remains an interpretation of the cited primary terms.",
+        "localAcquisitionAndConversionDistinct": true,
+        "resolved": true,
+        "evidence": "game/protected-delivery-validation.json and output/imported-{site,studio}-fjord-qa/report.json"
+      },
+      "acquiredSource": {
+        "filename": "Fjord_Final.stl",
+        "bytes": 648187484,
+        "sha256": "c652933791dc85ea7ec9a1c9b4707b04b4c4a1f1bb28c27a99b58a0f978c2178",
+        "path": "assets/models/horse-imports/fjord-sculpt/source/Fjord_Final.stl",
+        "files": [
+          {
+            "filename": "Fjord_Final.stl",
+            "bytes": 648187484,
+            "sha256": "c652933791dc85ea7ec9a1c9b4707b04b4c4a1f1bb28c27a99b58a0f978c2178",
+            "path": "assets/models/horse-imports/fjord-sculpt/source/Fjord_Final.stl"
+          }
+        ]
+      },
+      "downloadStatus": "source acquired and rigged adaptation validated locally",
+      "licenseUrl": "https://www.cgtrader.com/pages/terms-and-conditions",
+      "gamePreviewIdentity": "fjord"
+    },
+    {
+      "id": "ikkiz-unicorn",
+      "name": "Realistic white unicorn",
+      "creator": "ikkiz",
+      "sourceUrl": "https://blendswap.com/blend/11586",
+      "downloadPageUrl": "https://blendswap.com/blend/11586/download",
+      "previewUrl": "https://blendswap.com/blend_previews/11586/0/0?v=7f118fe8",
+      "sourceDir": "assets/models/horse-imports/ikkiz-unicorn/source",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "licenseEvidencePath": "assets/models/horse-imports/ikkiz-unicorn/source/license-evidence.json",
+      "attribution": "Unicorn (of Jill Janus) by ikkiz, sourced from BlendSwap, licensed under CC BY 3.0. Identify changes when adapted.",
+      "commercialUse": true,
+      "userApproved": true,
+      "priority": 3,
+      "acquisitionStatus": "source-acquired",
+      "receiptPath": "assets/models/horse-imports/ikkiz-unicorn/source/receipt.json",
+      "acquiredSource": {
+        "filename": "Unicorn of Jill Janus.zip",
+        "bytes": 18800692,
+        "sha256": "7becb0fbd08d90c11ddd82386707ef1051a12a8cdadaf29258598ee55a4e7b1b",
+        "format": "zip",
+        "extractedModelFilename": "Jill_Janus's _unocorn1.blend",
+        "extractedModelSha256": "2712c699a967d6261028f7015f45e2f87c876291d9bab6a9d0156d9b255ef60e",
+        "blendVersionHeader": "269",
+        "compressedBlend": true,
+        "extractionReportPath": "assets/models/horse-imports/ikkiz-unicorn/work/extraction-report-7becb0fbd08d90c1-ae9616ca1f21.json",
+        "bundledLicensePath": "assets/models/horse-imports/ikkiz-unicorn/source/LICENSE-BUNDLED.html",
+        "bundledLicenseSha256": "563b8fa3da414eeee173c259938a59020ae90b98a9c6aa87a59fab0655d5a03b",
+        "gameCompatibility": "not-assessed",
+        "sourceOpened": true,
+        "embeddedScriptsExecuted": false,
+        "sourceBlendUnchanged": true
+      },
+      "claimedRigged": true,
+      "purpose": "Unicorn foundation and optional horn-free horse adaptation.",
+      "workNeeded": [
+        "Convert the five legacy particle hair systems and seven Cycles material networks for glTF",
+        "Resolve the observed neck constraint dependency cycle and preserve shape-key behavior without embedded drivers",
+        "Create or retarget a gait library; no original action clips are stored",
+        "Review converted appearance, skinning, mount anchors and game motion"
+      ],
+      "notes": "BlendSwap Staff Pick. The acquired ZIP's bundled license establishes CC BY 3.0 and attribution to ikkiz. Inspection verifies 9,753 body base polygons, a 45-bone rig and no original actions. A genuine source Cycles render has been reviewed with reduced subdivision and mane/tail density; no GLB has been produced. Five legacy hair systems, seven shader networks and a neck constraint dependency cycle require work. Embedded text was not loaded, the two shape-key drivers were removed before linking the review scene, and the original source is unchanged.",
+      "downloadAccessEvidence": "The original BlendSwap ZIP completed on 2026-09-29, was registered with its SHA-256 receipt, and was safely extracted into the work directory. The bundled HTML license was separately preserved and read as untrusted text without execution.",
+      "staticInspectionPath": "assets/models/horse-imports/ikkiz-unicorn/review/source-static-inspection.json",
+      "blenderInspectionPath": "assets/models/horse-imports/ikkiz-unicorn/review/blender-inspection.json",
+      "inspectedFacts": {
+        "blenderVersion": "4.5.14 LTS",
+        "armatureBoneCount": 45,
+        "bodyBaseVertices": 9818,
+        "bodyBasePolygons": 9753,
+        "actionCount": 0,
+        "legacyHairSystemCount": 5,
+        "legacyMaterialCount": 7,
+        "packedImageCount": 2,
+        "packedImageResolution": [
+          3072,
+          3072
+        ],
+        "sourceShapeKeyDriverCount": 2,
+        "embeddedTextLoaded": false,
+        "embeddedScriptsExecuted": false,
+        "driversRemovedBeforeSceneLink": true,
+        "sourceBlendUnchanged": true,
+        "observedRigLimitations": [
+          "No original action clips or gait library are stored in the source.",
+          "Blender 4.5 reports a dependency cycle in the original DEF-szyja.002/003/004 neck copy-rotation/parent chain."
+        ],
+        "gameCompatibility": "not-assessed"
+      },
+      "reviewFacts": {
+        "status": "source-render-preview-reviewed",
+        "previewPath": "assets/models/horse-imports/ikkiz-unicorn/review/source-preview.png",
+        "previewRenderMultiresLevel": 1,
+        "sourceRenderMultiresLevel": 3,
+        "previewManeAndTailRenderChildren": 5,
+        "sourceManeAndTailRenderChildren": 200,
+        "glbProduced": false,
+        "gameCompatibility": "not-assessed",
+        "note": "Reviewed source Cycles render with reduced subdivision and mane/tail density; this does not establish glTF material/hair fidelity or runtime compatibility.",
+        "scope": "original acquired-source preview; converted game rig is tracked separately in gameDerivative"
+      },
+      "gameDerivative": {
+        "profile": "assets/models/horse-imports/ikkiz-unicorn/game/profile.json",
+        "file": "assets/models/horse-imports/ikkiz-unicorn/game/unicorn-animated.glb",
+        "sha256": "69f206e1e03d61b743a3a9b3e7db0b5db9f83bd754abcdeee5607cbad6ad883a",
+        "sourcePreserved": true,
+        "status": "rig and stored/live motion checked; prepared catalog integration verified locally; final review and remaining sources pending",
+        "jointCount": 40,
+        "motionKind": "anatomical",
+        "physicalScale": true,
+        "clips": [
+          "Rest",
+          "Idle",
+          "Walk",
+          "Trot",
+          "Canter_Left",
+          "Canter_Right",
+          "Gallop_Left",
+          "Gallop_Right",
+          "Jump"
+        ]
+      },
+      "gamePreviewIdentity": "unicorn",
+      "downloadStatus": "source acquired and rigged adaptation validated locally"
+    },
+    {
+      "id": "pastel-unicorn",
+      "name": "Pastel unicorn",
+      "creator": "maryna287887",
+      "sourceUrl": "https://www.cgtrader.com/free-3d-models/animal/mammal/unicorn-3f699121-8562-436d-a0a3-9c130380790c",
+      "previewUrl": "https://img-new.cgtrader.com/items/4648500/f6d67861eb/unicorn-3d-model-f6d67861eb.webp",
+      "sourceDir": "assets/models/horse-imports/pastel-unicorn/source",
+      "license": "CGTrader Royalty Free License (NoAI)",
+      "commercialUse": true,
+      "noAI": true,
+      "userApproved": true,
+      "priority": 5,
+      "acquisitionStatus": "sign-in-required",
+      "claimedRigged": true,
+      "purpose": "Alternative pastel fantasy appearance.",
+      "workNeeded": [
+        "Inspect the smaller glTF package and included textures/rig",
+        "Convert or replace heavy hair",
+        "Review topology and material appearance",
+        "Create or retarget gait clips"
+      ],
+      "notes": "Creator lists 16,820 polygons. CGTrader's file verification does not independently certify authorship. Retain actual download license.",
+      "downloadAccessEvidence": "Free Download opens the Log in to CGTrader modal on 2026-09-29. No file acquired.",
+      "publicationDeliveryReview": {
+        "status": "protected-incorporation-delivery-verified-locally",
+        "directPublicGlbCleared": false,
+        "termsUrl": "https://www.cgtrader.com/pages/terms-and-conditions",
+        "guidanceUrl": "https://help.cgtrader.com/hc/en-us/articles/360015124437-Royalty-Free-License",
+        "clauses": [
+          "definition 8",
+          "21A.2",
+          "21A.3",
+          "21A.5",
+          "21A.6",
+          "21B.1",
+          "24"
+        ],
+        "finding": "The derived game resource is AES-GCM packed with embedded buffers and images, and actual Ranch and Studio loads passed without plaintext source/map requests. Runtime keys remain discoverable; this is an extraction safeguard, not strong DRM or legal certification.",
+        "findingType": "Verified local implementation and mounted runtime behavior; license application remains an interpretation of the cited primary terms.",
+        "localAcquisitionAndConversionDistinct": true,
+        "resolved": true,
+        "evidence": "game/protected-delivery-validation.json and output/imported-{site,studio}-pastel-qa/report.json"
+      },
+      "acquiredSource": {
+        "filename": "unicorn.glb",
+        "bytes": 28022984,
+        "sha256": "9a6888256be7f7be2f8773be30cc1245b58b2bbe9c370c166388098c326c333c",
+        "path": "assets/models/horse-imports/pastel-unicorn/source/unicorn.glb",
+        "files": [
+          {
+            "filename": "unicorn.glb",
+            "bytes": 28022984,
+            "sha256": "9a6888256be7f7be2f8773be30cc1245b58b2bbe9c370c166388098c326c333c",
+            "path": "assets/models/horse-imports/pastel-unicorn/source/unicorn.glb"
+          },
+          {
+            "filename": "blend.zip",
+            "bytes": 439759908,
+            "sha256": "17fb0f18cb9b80441ea5f7fbd7ada82339e92507acefcfe1960d5510cf3b1045",
+            "path": "assets/models/horse-imports/pastel-unicorn/source/blend.zip"
+          },
+          {
+            "filename": "tex.zip",
+            "bytes": 18696063,
+            "sha256": "f1f60d9c874a0a2810adf8c300e56d99adc3d1475fb4280fa27c4e0bc42ea3b8",
+            "path": "assets/models/horse-imports/pastel-unicorn/source/tex.zip"
+          },
+          {
+            "filename": "abc.zip",
+            "bytes": 398556039,
+            "sha256": "fdba85fd08b4215bb12a175c3dbe987b737f3cf11af6f966eb7a3df284937621",
+            "path": "assets/models/horse-imports/pastel-unicorn/source/abc.zip"
+          }
+        ]
+      },
+      "downloadStatus": "source acquired and rigged adaptation validated locally",
+      "licenseUrl": "https://www.cgtrader.com/pages/terms-and-conditions",
+      "gamePreviewIdentity": "opaline"
+    },
+    {
+      "id": "cgcookie-wings",
+      "name": "Feathery wing",
+      "creator": "CG Cookie / David Ward",
+      "sourceUrl": "https://blendswap.com/blend/21839",
+      "downloadPageUrl": "https://blendswap.com/blend/21839/download",
+      "previewUrl": "https://blendswap.com/blend_previews/21839/0/0?v=e27adad3",
+      "sourceDir": "assets/models/horse-imports/cgcookie-wings/source",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "licenseEvidencePath": "assets/models/horse-imports/cgcookie-wings/source/LICENSE-EVIDENCE.json",
+      "commercialUse": true,
+      "userApproved": true,
+      "priority": 4,
+      "acquisitionStatus": "source-acquired",
+      "receiptPath": "assets/models/horse-imports/cgcookie-wings/source/receipt.json",
+      "extractionReportPath": "assets/models/horse-imports/cgcookie-wings/work/extraction-report-cf713fa956ec331b-d267fe78360d.json",
+      "acquiredSource": {
+        "filename": "CGC Classic Feathery Wing.zip",
+        "bytes": 699303,
+        "sha256": "cf713fa956ec331b5c7e63425e38f7a4666e8a5e9754b2d5d4bd1c778ae2aecb",
+        "format": "zip",
+        "modelFilename": "wing_042810.blend",
+        "modelBytes": 702289,
+        "modelSha256": "f43fd99185b2e0d3877dc5b42c4c8004a6071ac420cb774d4d466ffd3fe0e258",
+        "blendVersionHeader": "252",
+        "compressed": true,
+        "embeddedScriptsExecuted": false,
+        "gameCompatibility": "not-assessed"
+      },
+      "staticInspectionPath": "assets/models/horse-imports/cgcookie-wings/work/static-inspection.json",
+      "inspectedFacts": {
+        "blenderVersion": "4.5.14 LTS",
+        "embeddedScriptsExecuted": false,
+        "armatureBoneCount": 4,
+        "meshObjectCount": 3,
+        "baseMeshPolygonsIncludingInstanceEmitter": 920,
+        "faceInstanceEmitterPolygons": 48,
+        "particleHairStrandCount": 1000,
+        "actionCount": 0,
+        "animationDriverCount": 0,
+        "missingUnpackedImageReferences": [
+          "wing_alphamap.png",
+          "wing_texturemap.jpg"
+        ],
+        "gameCompatibility": "not-assessed"
+      },
+      "claimedRigged": true,
+      "purpose": "Wing component for Pegasus/alicorn adaptations.",
+      "workNeeded": [
+        "Recover or replace the two absent feather texture maps",
+        "Convert old particle/dupliface feather setup and materials",
+        "Fit and mirror wings on the chosen horse",
+        "Create a compatible folding/flapping adapter and flight motion"
+      ],
+      "notes": "Original CG Cookie tutorial wing component; not a complete winged horse. Bundled license establishes CC BY 3.0 and describes David Ward's tutorial. Safe inspection confirms four wing bones, no actions or animation drivers, face-instanced feathers and particle down. The bundle omits both unpacked image maps.",
+      "reviewFacts": {
+        "status": "neutral-component-preview-reviewed",
+        "conversionReportPath": "assets/models/horse-imports/cgcookie-wings/review/preview-conversion.json",
+        "previewGlbPath": "assets/models/horse-imports/cgcookie-wings/review/model.glb",
+        "previewImagePath": "assets/models/horse-imports/cgcookie-wings/review/preview.png",
+        "previewBytes": 145644,
+        "previewSha256": "32dd148f6da8fabf04ff2f33ec6694299265d5338f95583408ce860fdc17b5c2",
+        "meshCount": 2,
+        "trianglesFromAccessorCounts": 3248,
+        "skinJointCount": 4,
+        "animationCount": 0,
+        "bakedLongFeatherInstances": 48,
+        "legacyDownyStrandsOmitted": 1000,
+        "sourceScalePreserved": true,
+        "sourceSavedOrModified": false,
+        "limitations": [
+          "Neutral untextured materials replace missing original color and alpha maps.",
+          "Long feathers are baked for static shape review; their motion binding needs conversion.",
+          "Legacy downy hair is omitted: migrated cache coordinates are zero and object-coordinate queries do not include verified emitter placement.",
+          "This is a single wing component; it has not been fitted to a horse or reviewed for flight."
+        ],
+        "gameCompatibility": "not-assessed",
+        "browserReview": "static-preview-reviewed",
+        "scope": "original acquired-source preview; converted game rig is tracked separately in gameDerivative"
+      },
+      "gameDerivative": {
+        "profile": "assets/models/horse-imports/cgcookie-wings/game/profile.json",
+        "file": "assets/models/horse-imports/cgcookie-wings/game/wings.glb",
+        "sha256": "3c44f5fe53421b6207adb323bc683f431008f24740229ebb07841c1a2666d3b4",
+        "sourcePreserved": true,
+        "status": "rig and stored/live motion checked; prepared catalog integration verified locally; final review and remaining sources pending",
+        "jointCount": 105,
+        "motionKind": "anatomical",
+        "physicalScale": true,
+        "clips": [
+          "Rest",
+          "Folded_Idle",
+          "Takeoff",
+          "Fly",
+          "Land"
+        ]
+      },
+      "gamePreviewIdentity": "pegasus",
+      "downloadStatus": "source acquired and rigged adaptation validated locally"
+    },
+    {
+      "id": "horse-skeleton",
+      "name": "Horse skeleton",
+      "creator": "Diego Luj\u00e1n Garc\u00eda",
+      "sourceUrl": "https://sketchfab.com/3d-models/horse-skeleton-eaca504567604e879b8ab2cf2763025e",
+      "previewUrl": "https://media.sketchfab.com/models/eaca504567604e879b8ab2cf2763025e/thumbnails/c49766fdddbc40c5a2173abb6b98b51e/1024x576.jpeg",
+      "sourceDir": "assets/models/horse-imports/horse-skeleton/source",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "commercialUse": true,
+      "userApproved": true,
+      "priority": 8,
+      "acquisitionStatus": "source-acquired",
+      "claimedRigged": null,
+      "claimedTriangles": 135500,
+      "purpose": "Skeletal/spectral steed foundation.",
+      "workNeeded": [
+        "Optimize geometry",
+        "Create bone motion/rig and animations",
+        "Add original spectral materials and effects"
+      ],
+      "notes": "The acquired GLB is an anatomy sculpt with 47 meshes, no skins, no animation clips and no embedded images. It declares no extensions or external dependencies. Bone rigging, animation and spectral effects remain work; it is not an animated mount.",
+      "downloadAccessEvidence": "The official Sketchfab GLB completed on 2026-09-29, was registered with its SHA-256 receipt, and its original byte count and hash were independently verified. Source acquisition does not certify browser appearance, animation behavior or game compatibility.",
+      "receiptPath": "assets/models/horse-imports/horse-skeleton/source/receipt.json",
+      "acquiredSource": {
+        "filename": "horse_skeleton.glb",
+        "bytes": 3515808,
+        "sha256": "9a28a22d9e194454f1557409cdc1aa99e2f3af4696ce6ad151fcbec73c8ebdc0",
+        "format": "glb",
+        "meshCount": 47,
+        "trianglesFromAccessorCounts": 135451,
+        "skinCount": 0,
+        "skinJointCounts": [],
+        "animationNames": [],
+        "embeddedImageCount": 0,
+        "embeddedImageFormats": {},
+        "extensionsUsed": [],
+        "extensionsRequired": [],
+        "externalDependencies": [],
+        "embeddedAssetExtras": {
+          "author": "Diego Luj\u00e1n Garc\u00eda (https://sketchfab.com/diegoluga)",
+          "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+          "source": "https://sketchfab.com/3d-models/horse-skeleton-eaca504567604e879b8ab2cf2763025e",
+          "title": "Horse Skeleton"
+        },
+        "gameCompatibility": "not-assessed"
+      },
+      "reviewFacts": {
+        "status": "offline-source-render-reviewed-browser-pending",
+        "browserAppearance": "pending",
+        "rigMotion": "not-available-no-skin-or-clips",
+        "rigRetargeted": false,
+        "animationsModified": false,
+        "gameCompatibility": "not-assessed",
+        "reviewGlbPath": "assets/models/horse-imports/horse-skeleton/review/model.glb",
+        "sourceSha256": "9a28a22d9e194454f1557409cdc1aa99e2f3af4696ce6ad151fcbec73c8ebdc0",
+        "reviewSha256": "9a28a22d9e194454f1557409cdc1aa99e2f3af4696ce6ad151fcbec73c8ebdc0",
+        "originalBytesPreserved": true,
+        "previewPath": "assets/models/horse-imports/horse-skeleton/review/preview.png",
+        "offlineRenderReportPath": "assets/models/horse-imports/horse-skeleton/review/offline-render-report.json",
+        "offlineRenderReviewed": true,
+        "crossRendererFidelity": "not-assessed",
+        "nativeRenderLimitations": [
+          "No detached geometry was visible in this view. This is a static anatomy model; no skin or animation clips are present."
+        ],
+        "scope": "original acquired-source preview; converted game rig is tracked separately in gameDerivative"
+      },
+      "metadataInspectionPath": "assets/models/horse-imports/horse-skeleton/review/source-metadata-inspection.json",
+      "gameDerivative": {
+        "profile": "assets/models/horse-imports/horse-skeleton/game/profile.json",
+        "file": "assets/models/horse-imports/horse-skeleton/game/skeleton-animated.glb",
+        "sha256": "733faced843a113e7c14731a9fcb0e2b7bb4b3d80d0d1e04963e2e28efa1fa14",
+        "sourcePreserved": true,
+        "status": "rig and stored/live motion checked; prepared catalog integration verified locally; final review and remaining sources pending",
+        "jointCount": 40,
+        "motionKind": "anatomical",
+        "physicalScale": true,
+        "clips": [
+          "Rest",
+          "Idle",
+          "Walk",
+          "Trot",
+          "Canter_Left",
+          "Canter_Right",
+          "Gallop_Left",
+          "Gallop_Right",
+          "Jump"
+        ]
+      },
+      "gamePreviewIdentity": "lumen",
+      "downloadStatus": "source acquired and rigged adaptation validated locally"
+    },
+    {
+      "id": "black-dragon",
+      "name": "Black dragon with idle animation",
+      "creator": "3DHaupt",
+      "sourceUrl": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+      "creatorPageUrl": "https://3dhaupt.com/black-dragon-rigged-and-game-ready-download/",
+      "previewUrl": "https://media.sketchfab.com/models/fb0053a2e59b43868e934c239bf4eb36/thumbnails/8675120768994ecbb4c552505320d620/7de7329a4e0a480a8f78d6db97c25a1b.jpeg",
+      "sourceDir": "assets/models/horse-imports/black-dragon/source",
+      "license": "CC BY-NC 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+      "commercialUse": false,
+      "noAI": true,
+      "userApproved": true,
+      "priority": 9,
+      "acquisitionStatus": "source-acquired",
+      "claimedRigged": true,
+      "claimedTriangles": 38000,
+      "purpose": "User-favorite standalone fantasy dragon candidate.",
+      "workNeeded": [
+        "Review the acquired Scene clip, materials, skinning and ground-plane framing in the browser",
+        "Create a dragon-specific mount, rider and motion adapter",
+        "Create or review missing ground/flight motions and performance"
+      ],
+      "notes": "Sketchfab Staff Pick. The acquired source contains a 232-joint skin and one Scene clip lasting approximately 22.4667 seconds; the listing calls it idle, but its behavior remains pending browser review. This is not the creator's full animation pack. Embedded metadata confirms 3DHaupt, the original title/source and CC BY-NC 4.0. Attribution, noncommercial use and the creator listing's separate NoAI restriction remain attached. It does not automatically replace the existing horse-shaped dragon breeds.",
+      "downloadAccessEvidence": "The official Sketchfab GLB completed on 2026-09-29, was registered with its SHA-256 receipt, and its original byte count and hash were independently verified. Source acquisition does not certify browser appearance, animation behavior or game compatibility.",
+      "receiptPath": "assets/models/horse-imports/black-dragon/source/receipt.json",
+      "acquiredSource": {
+        "filename": "black_dragon_with_idle_animation.glb",
+        "bytes": 67688656,
+        "sha256": "3abf7ed79e40406236d8b0e365f4690174daf8cfec39b32bfb2ab3ba48d5a1e7",
+        "format": "glb",
+        "meshCount": 4,
+        "trianglesFromAccessorCounts": 37998,
+        "skinCount": 1,
+        "skinJointCounts": [
+          232
+        ],
+        "animationNames": [
+          "Scene"
+        ],
+        "embeddedImageCount": 9,
+        "embeddedImageFormats": {
+          "jpeg": 3,
+          "png": 6
+        },
+        "extensionsUsed": [
+          "KHR_materials_emissive_strength",
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [],
+        "externalDependencies": [],
+        "embeddedAssetExtras": {
+          "author": "3DHaupt (https://sketchfab.com/dennish2010)",
+          "license": "CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)",
+          "source": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+          "title": "Black Dragon with Idle Animation"
+        },
+        "gameCompatibility": "not-assessed",
+        "animationDetails": [
+          {
+            "name": "Scene",
+            "startSeconds": 0.0,
+            "endSeconds": 22.46666717529297,
+            "durationSeconds": 22.46666717529297
+          }
+        ],
+        "dragonMeshTriangles": 37986,
+        "sourceGroundTriangles": 12
+      },
+      "reviewFacts": {
+        "status": "prepared-awaiting-browser-review",
+        "browserAppearance": "pending",
+        "rigMotion": "pending",
+        "rigRetargeted": false,
+        "animationsModified": false,
+        "gameCompatibility": "not-assessed",
+        "reviewGlbPath": "assets/models/horse-imports/black-dragon/review/model.glb",
+        "sourceSha256": "3abf7ed79e40406236d8b0e365f4690174daf8cfec39b32bfb2ab3ba48d5a1e7",
+        "reviewSha256": "3abf7ed79e40406236d8b0e365f4690174daf8cfec39b32bfb2ab3ba48d5a1e7",
+        "originalBytesPreserved": true,
+        "materialAdapter": "original-gltf-materials",
+        "sourceGroundRetained": true,
+        "browserReview": "static-appearance-reviewed",
+        "animationPlaybackReview": "pending",
+        "nativeImportRenderStatus": "diagnostic-pose-mismatch",
+        "nativeRenderPoseFidelity": "unresolved",
+        "nativeRenderReportPath": "assets/models/horse-imports/black-dragon/review/offline-render.json",
+        "nativeRenderPreviewPath": "assets/models/horse-imports/black-dragon/review/preview.png",
+        "nativeRenderReviewed": true,
+        "nativeRenderLimitation": "Exact Blender imported vertex bounds disagree with Three Scene time 0. The native PNG is diagnostic evidence and does not certify the original animated pose.",
+        "scope": "original acquired-source preview; converted game rig is tracked separately in gameDerivative"
+      },
+      "staticInspectionPath": "assets/models/horse-imports/black-dragon/review/source-static-inspection.json",
+      "licenseEvidence": {
+        "embeddedGltfExtras": {
+          "author": "3DHaupt (https://sketchfab.com/dennish2010)",
+          "license": "CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)",
+          "source": "https://sketchfab.com/3d-models/black-dragon-with-idle-animation-fb0053a2e59b43868e934c239bf4eb36",
+          "title": "Black Dragon with Idle Animation"
+        },
+        "noAIEvidence": "Approved creator listing/catalog, separately from embedded glTF license metadata.",
+        "note": "Embedded glTF metadata confirms the named author, title, source and CC BY-NC 4.0; NoAI is retained from the approved creator listing separately."
+      },
+      "gameDerivative": {
+        "profile": "assets/models/horse-imports/black-dragon/game/profile.json",
+        "file": "assets/models/horse-imports/black-dragon/game/dragon.glb",
+        "sha256": "57b7550febb1f5256947dd8ffa9e1dd2333702b53fafc8aa23d78e9b64842e32",
+        "sourcePreserved": true,
+        "status": "rig and stored/live motion checked; prepared catalog integration verified locally; final review and remaining sources pending",
+        "jointCount": 68,
+        "motionKind": "dragon",
+        "physicalScale": true,
+        "clips": [
+          "Rest",
+          "Idle",
+          "Walk",
+          "Trot",
+          "Canter_Left",
+          "Canter_Right",
+          "Gallop_Left",
+          "Gallop_Right",
+          "Jump",
+          "Takeoff",
+          "Fly",
+          "Land"
+        ]
+      },
+      "gamePreviewIdentity": "emberdrake",
+      "downloadStatus": "source acquired and rigged adaptation validated locally"
+    }
+  ],
+  "heldCandidates": [
+    {
+      "id": "fdoss-all-gaits",
+      "sourceUrl": "https://blendswap.com/blend/28627",
+      "baseSourceUrl": "https://blendswap.com/blend/17172",
+      "reason": "The fdoss001 upload declares CC0. Two comments attribute the underlying mesh to Tarnyloo, whose original listing displays CC-BY without a version. That base-mesh match, creator confirmation and any component-specific CC BY/CC0 split remain unverified. Retain the source and attribution evidence and hold the package for provenance review. This is not the preferred white western-tack horse.",
+      "provenanceEvidence": {
+        "uploadCreator": "fdoss001",
+        "declaredUploadLicense": "CC0",
+        "reportedBaseCreator": "Tarnyloo",
+        "declaredBaseLicense": "CC BY (version not established)",
+        "commentAuthor": "Ailuros",
+        "commentsUrl": "https://blendswap.com/blend/28627#comments",
+        "creatorConfirmationFoundOnReviewedListings": false,
+        "baseMeshMatchVerified": false,
+        "componentLicenseSplitVerified": false,
+        "platformLicenseDeclarationUrl": "https://blendswap.com/3d-mcp-api/docs",
+        "platformLicensesVerified": false,
+        "reviewedOn": "2026-09-29"
+      }
+    }
+  ],
+  "preparedRuntimeManifest": "assets/models/horse-imports/prepared-manifest.json",
+  "siteReplacementStatus": "pending three approved source downloads and final integrated reviews"
+}
