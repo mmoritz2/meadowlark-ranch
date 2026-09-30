@@ -1,0 +1,133 @@
+{
+  "scope": "Private measured native gait integration; instantaneous transitions remain unreviewed",
+  "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+  "nativeBones": 677,
+  "gaits": {
+    "walk": {
+      "clip": "Target Native Walk Rollover",
+      "nominalSpeedMps": 0.5494505494505494,
+      "maxPose": {
+        "positionMax": 0,
+        "quaternionDotMax": 7.21623335531163e-8,
+        "scaleMax": 0
+      },
+      "travelError": 2.220446049250313e-16,
+      "distanceError": 2.220446049250313e-16,
+      "idle": {
+        "positionMax": 0,
+        "quaternionDotMax": 7.271195745506276e-8,
+        "scaleMax": 0
+      },
+      "standTravel": 0,
+      "restored": {
+        "positionMax": 0,
+        "quaternionDotMax": 4.990675683824719e-8,
+        "scaleMax": 0
+      }
+    },
+    "trot": {
+      "clip": "Target Native Trot",
+      "nominalSpeedMps": 1.388888888888889,
+      "maxPose": {
+        "positionMax": 0,
+        "quaternionDotMax": 7.382276878686866e-8,
+        "scaleMax": 0
+      },
+      "travelError": 4.884981308350689e-15,
+      "distanceError": 4.884981308350689e-15,
+      "idle": {
+        "positionMax": 0,
+        "quaternionDotMax": 7.271195745506276e-8,
+        "scaleMax": 0
+      },
+      "standTravel": 0,
+      "restored": {
+        "positionMax": 0,
+        "quaternionDotMax": 4.990675683824719e-8,
+        "scaleMax": 0
+      }
+    },
+    "canterLeft": {
+      "clip": "Target Native Canter Left",
+      "nominalSpeedMps": 1.953125,
+      "maxPose": {
+        "positionMax": 0,
+        "quaternionDotMax": 6.871351265758108e-8,
+        "scaleMax": 0
+      },
+      "travelError": 2.220446049250313e-15,
+      "distanceError": 2.220446049250313e-15,
+      "idle": {
+        "positionMax": 0,
+        "quaternionDotMax": 7.271195745506276e-8,
+        "scaleMax": 0
+      },
+      "standTravel": 0,
+      "restored": {
+        "positionMax": 0,
+        "quaternionDotMax": 4.990675683824719e-8,
+        "scaleMax": 0
+      }
+    },
+    "canterRight": {
+      "clip": "Target Native Canter Right",
+      "nominalSpeedMps": 1.953125,
+      "maxPose": {
+        "positionMax": 0,
+        "quaternionDotMax": 6.871351265758108e-8,
+        "scaleMax": 0
+      },
+      "travelError": 2.220446049250313e-15,
+      "distanceError": 2.220446049250313e-15,
+      "idle": {
+        "positionMax": 0,
+        "quaternionDotMax": 7.271195745506276e-8,
+        "scaleMax": 0
+      },
+      "standTravel": 0,
+      "restored": {
+        "positionMax": 0,
+        "quaternionDotMax": 4.990675683824719e-8,
+        "scaleMax": 0
+      }
+    }
+  },
+  "unsupported": [
+    {
+      "name": "gallop",
+      "rejected": true
+    },
+    {
+      "name": "jump",
+      "rejected": true
+    },
+    {
+      "name": "canter",
+      "rejected": true
+    }
+  ],
+  "rotated": {
+    "error": 2.220446049250313e-16,
+    "speedError": 0
+  },
+  "inherited": {
+    "error": 0,
+    "distanceError": 0,
+    "speedError": 0
+  },
+  "invalidDeltasRejected": [
+    true,
+    true,
+    true
+  ],
+  "wrongMetadataRejected": true,
+  "missingClipRejected": true,
+  "disposedPose": {
+    "positionMax": 0,
+    "quaternionDotMax": 4.990675683824719e-8,
+    "scaleMax": 0
+  },
+  "disposedRejected": true,
+  "failures": [],
+  "browserErrors": []
+}

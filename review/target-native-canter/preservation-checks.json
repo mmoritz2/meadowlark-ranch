@@ -1,0 +1,19 @@
+{
+  "nodes": true,
+  "meshes": true,
+  "skins": true,
+  "materials": true,
+  "textures": true,
+  "images": true,
+  "samplers": true,
+  "scenes": true,
+  "originalBinaryPrefix": true,
+  "originalAnimations": true,
+  "originalAccessors": true,
+  "originalBufferViews": true,
+  "candidateSha256": "81039eb4d4c2e75ae992b78b4e6382d41bd7b302c5c4fdce75388a71901045d2",
+  "addedClips": [
+    "Target Native Canter Left",
+    "Target Native Canter Right"
+  ]
+}

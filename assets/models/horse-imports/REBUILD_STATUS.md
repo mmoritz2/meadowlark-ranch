@@ -5,13 +5,16 @@ after the imported roster failed visual review. Nothing in this branch is ready
 to replace the public stable as a whole.
 
 The latest [white-horse motion kit](../../../review/native-horse-kit/README.md)
-preserves two independently checked private studies: refined slow Walk with
-hoof rollover and a true diagonal slow Trot. Both retain the native 677-joint
+preserves independently checked private studies: refined slow Walk with
+hoof rollover, true diagonal slow Trot, and both three-beat Canter leads. All retain the native 677-joint
 skin and upright proportions with responsive body/head/groom. Walk's folded
 apex remains held too long; Trot's head response remains conspicuous. Full
-naturalism, faster gaits, rider/rein fit and the remaining roster are still open.
+naturalism, gallop, jumping, transitions and the remaining roster are still open.
+The [mounted rollover Walk](../../../review/native-rider-reins/README.md) now
+checks traveled heel/flat/toe contact, relaxed rider hands, original bit rings,
+replacement leather split reins and real stirrup treads. It covers only slow Walk.
 The [native travel study](../../../review/native-horse-travel/README.md) and
-[clip controller](../../../review/native-horse-controller/README.md) preserve
+[four-gait controller](../../../review/native-gait-controller/README.md) preserve
 measured speed and rider/stirrup integration evidence without activating it in
 the game.
 

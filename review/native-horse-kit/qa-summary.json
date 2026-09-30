@@ -6,7 +6,7 @@
       "clip": "Target Native Walk Rollover",
       "duration": 1.1200000047683716,
       "nativeBones": 677,
-      "modelSha256": "552dd455873020cba95f7087d513358fd7dd26b27406e8cc36ce7c6b0da8d3e4",
+      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
       "allFinite": true,
       "bodyMinRange": [
         0.0009233334608878818,
@@ -21,7 +21,7 @@
       "clip": "Target Native Trot",
       "duration": 0.7200000286102295,
       "nativeBones": 677,
-      "modelSha256": "552dd455873020cba95f7087d513358fd7dd26b27406e8cc36ce7c6b0da8d3e4",
+      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
       "allFinite": true,
       "bodyMinRange": [
         0.0009407939819809762,
@@ -32,11 +32,41 @@
         0.004424105315629451
       ]
     },
+    "canterLeft": {
+      "clip": "Target Native Canter Left",
+      "duration": 0.6399999856948853,
+      "nativeBones": 677,
+      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0008887063907335739,
+        0.04637897811619978
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0008887063907335739,
+        0.004297040502651825
+      ]
+    },
+    "canterRight": {
+      "clip": "Target Native Canter Right",
+      "duration": 0.6399999856948853,
+      "nativeBones": 677,
+      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0008578205660432769,
+        0.04613103003291911
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0008578205660432769,
+        0.0017711760176388623
+      ]
+    },
     "stand": {
       "clip": "Horse|Horse_Idle",
       "duration": 13.958333015441895,
       "nativeBones": 677,
-      "modelSha256": "552dd455873020cba95f7087d513358fd7dd26b27406e8cc36ce7c6b0da8d3e4",
+      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
       "allFinite": true,
       "bodyMinRange": [
         -0.0008706650484685699,
