@@ -32,9 +32,10 @@ to replace the public stable as a whole.
   secondary joint angles; both need a full-cycle visual check at each gait.
 - A full-rig Bay proof kept the creator Walk and all 677 joints, restoring
   visible body/head movement, but reproduced the low posture. At matched Bay
-  scale, the intact white source and Bay proof both moved their withers from
-  roughly 1.58 m at rest to about 1.44–1.52 m during Walk. This is a source
-  motion issue as well as a conversion issue; the native clip needs correction.
+  scale, a fixed upper-back surface marker measured about 1.58 m at rest and
+  1.44–1.51 m during Walk. This marker is not an official withers measurement.
+  The same low carriage appears in the intact white source, so the native clip
+  needs correction; see the [Bay rig proof](../../../review/bay-native-proof/README.md).
 - The original 3DHaupt dragon has a 232-joint skin and a creator idle clip, but
   no source walk, run or flight clips. The earlier 68-joint horse conversion
   discarded source animation and folded the wings poorly.
