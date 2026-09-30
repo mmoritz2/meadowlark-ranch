@@ -62,31 +62,6 @@ assets/models/saddle_en.glb
 assets/models/breeds/
 assets/models/hero-horse/
 assets/models/horse-candidates/
-assets/models/horse-imports/*/source/
-# Reproducible import/rig intermediates stay local; only final game exports,
-# review previews, public provenance and validation reports belong in the site.
-assets/models/horse-imports/*/work/
-assets/models/horse-imports/*/game/*-rigged.glb
-assets/models/horse-imports/wildmesh-white-western/game/white-western.glb
-assets/models/horse-imports/wildmesh-white-western/game/breeds/*/rig.glb
-assets/models/horse-imports/bluemesh-draft/game/breeds/*/*-rigged.glb
-assets/models/horse-imports/bluemesh-draft/game/breeds/*/*-rig.glb
-assets/models/horse-imports/bluemesh-draft/game/breeds/body-uv-position-map.npz
-# CGTrader derivatives require protected incorporated delivery. Plaintext model
-# and texture build outputs stay local; only the runtime package and its public
-# profile/validation metadata can enter the repository.
-assets/models/horse-imports/fjord-sculpt/game/**
-!assets/models/horse-imports/fjord-sculpt/game/profile.json
-!assets/models/horse-imports/fjord-sculpt/game/*.mkr
-!assets/models/horse-imports/fjord-sculpt/game/*-validation.json
-assets/models/horse-imports/pastel-unicorn/game/**
-!assets/models/horse-imports/pastel-unicorn/game/profile.json
-!assets/models/horse-imports/pastel-unicorn/game/*.mkr
-!assets/models/horse-imports/pastel-unicorn/game/*-validation.json
-assets/models/horse-imports/fjord-sculpt/review/*.glb
-assets/models/horse-imports/fjord-sculpt/review/*.gltf
-assets/models/horse-imports/pastel-unicorn/review/*.glb
-assets/models/horse-imports/pastel-unicorn/review/*.gltf
 !assets/models/horse-candidates/b2przemo/
 !assets/models/horse-candidates/b2przemo/bay-study-albedo.png
 # Full-resolution sources for the tiling materials; the tiles themselves are tracked.
@@ -95,10 +70,3 @@ assets/textures/realism/source/
 # GLB recompression tooling (gltf-transform + sharp) is a build-time dependency only;
 # nothing from it ships. See tools/asset-gen/ASSET_PIPELINE.md.
 tools/asset-gen/node_modules/
-
-# Transient offline pose exports are regenerated for review, not game delivery.
-assets/models/horse-imports/**/actual-deformed-review-poses.json
-
-# Original 3D source previews stay local; public review links to game adaptations.
-assets/models/horse-imports/**/review/*.glb
-assets/models/horse-imports/**/review/*.gltf

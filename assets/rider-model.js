@@ -121,7 +121,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   if(brows)thinBrows(brows.geometry);
   /* ---- the seat, from the sculpt's joint directions ---- */
   const grip=gAnim.animations.find(c=>c.name===CLIP.drive)||gAnim.animations.find(c=>c.name===CLIP.idle);
-  const seat=buildSeat(scene,bones,grip,skin);
+  const seat=buildSeat(scene,bones,grip);
   /* ---- clips: her bones by name; the pelvis track moved onto her own hip height ---- */
   const clips={};
   let ualPelvis=null; gAnim.scene.traverse(o=>{if(o.name==='pelvis')ualPelvis=o.position.clone();});
@@ -200,7 +200,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
  }
 
  /* ---- the seat: her skeleton aimed, bone by bone, along the sculpt's own joint directions -------- */
- function buildSeat(scene,bones,grip,skin){
+ function buildSeat(scene,bones,grip){
   const rest=new Map();
   scene.traverse(o=>{if(o.isBone)rest.set(o.name,{q:o.quaternion.clone(),p:o.position.clone()});});
   const P=n=>bones[n].getWorldPosition(new THREE.Vector3());
@@ -235,34 +235,20 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
    aim(bones['foot_'+sd],P('ball_'+sd).sub(P('foot_'+sd)),d('ankle','ball',s));
   }
   scene.updateMatrixWorld(true);
-  skin.skeleton.update();
-  const local=new Map(),world=new Map(),footContacts={};
+  const local=new Map(),world=new Map();
   scene.traverse(o=>{if(!o.isBone)return;local.set(o.name,{q:o.quaternion.clone(),p:o.position.clone()});world.set(o.name,{q:o.getWorldQuaternion(new THREE.Quaternion()),p:o.getWorldPosition(new THREE.Vector3())});});
   /* the role rig's joints: where each role bone stands in the seat */
   const jp={hips:P('pelvis'),spine:P('spine_01'),chest:P('spine_03'),neck:P('neck_01'),head:P('Head')};
   for(const s of [1,-1]){const S=s>0?'R':'L',sd=s>0?'l':'r';
    jp['arm'+S]=P('upperarm_'+sd);jp['fore'+S]=P('lowerarm_'+sd);jp['hand'+S]=P('hand_'+sd);
    jp['thigh'+S]=P('thigh_'+sd);jp['shin'+S]=P('calf_'+sd);jp['foot'+S]=P('foot_'+sd);
-   // Measure the actual boot sole at the ball of this character's foot. The
-   // legacy sculpt's ankle offset is not the new character's contact point.
-   const ankle=jp['foot'+S],ball=P('ball_'+sd),forward=ball.clone().sub(ankle).normalize(),
-    up=V(0,1,0).addScaledVector(forward,-forward.y).normalize(),right=V().crossVectors(forward,up).normalize(),
-    indices=skin.geometry.attributes.skinIndex,weights=skin.geometry.attributes.skinWeight,near=[];
-   for(let i=0;i<indices.count;i++){
-    let owned=0;for(const getter of ['getX','getY','getZ','getW'])if(['foot_'+sd,'ball_'+sd].includes(skin.skeleton.bones[indices[getter](i)]?.name))owned+=weights[getter](i);
-    if(owned<.65)continue;
-    const p=skin.getVertexPosition(i,new THREE.Vector3());skin.localToWorld(p);
-    const delta=p.clone().sub(ball);if(Math.abs(delta.dot(forward))<.045&&Math.abs(delta.dot(right))<.04)near.push({p,height:delta.dot(up),index:i});
-   }
-   if(near.length){const lowest=Math.min(...near.map(p=>p.height)),sole=near.filter(p=>p.height<=lowest+.008),contact=V();for(const p of sole)contact.add(p.p);contact.multiplyScalar(1/sole.length);
-    footContacts[S]={point:contact.sub(ankle),forward:ball.sub(ankle),samples:sole.length,vertices:sole.map(p=>p.index)};}
    /* the middle of her fist, for the rein to leave from */
    jp['fist'+S]=P('hand_'+sd).lerp(P('middle_02_'+sd),0.62);
   }
   /* back to the T-pose: the kit is what every rider is cloned from */
   scene.traverse(o=>{if(o.isBone){const r=rest.get(o.name);o.quaternion.copy(r.q);o.position.copy(r.p);}});
   scene.updateMatrixWorld(true);
-  return {local,world,joints:jp,restLocal:rest,relax,footContacts};
+  return {local,world,joints:jp,restLocal:rest,relax};
  }
 
  /* ---- hair for this head --------------------------------------------------------------------------
@@ -714,7 +700,6 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    by[r]=b;list.push(b);
   }
   R.sk={root:by.hips,by,list,ubc:true};
-  for(const S of ['L','R'])if(kit.seat.footContacts[S])by['foot'+S].userData.soleContact=kit.seat.footContacts[S];
   R.rig=rig; R.mesh=rig.body; R.walkScale=1;
   /* the legacy uniform bag some callers still poke (tack-wardrobe's old recolour): harmless here */
   rig.body.material.userData.u=rig.body.material.userData.u||{};

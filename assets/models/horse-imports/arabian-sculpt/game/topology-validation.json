@@ -1,9 +1,0 @@
-{
-  "vertices": 47502,
-  "triangles": 95000,
-  "allEdgesTwoFaces": true,
-  "boundaryEdges": 0,
-  "nonManifoldEdges": 0,
-  "eulerCharacteristic": 2,
-  "finite": true
-}
