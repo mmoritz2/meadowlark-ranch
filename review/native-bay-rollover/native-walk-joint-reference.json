@@ -1,0 +1,58 @@
+{
+  "hand_l_0206": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 58.14119725555356,
+    "rangeFromFirstWalkFrameDegrees": 59.64183049621173
+  },
+  "lowerarm_l_0205": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 38.28206010252158,
+    "rangeFromFirstWalkFrameDegrees": 21.868271458368106
+  },
+  "upperarm_l_0204": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 32.68551106886655,
+    "rangeFromFirstWalkFrameDegrees": 20.418363545168813
+  },
+  "clavicle_l_0203": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 19.877386140932,
+    "rangeFromFirstWalkFrameDegrees": 22.839796291392847
+  },
+  "hand_r_0272": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 51.87105349818832,
+    "rangeFromFirstWalkFrameDegrees": 57.79535652098314
+  },
+  "lowerarm_r_0271": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 40.96157956956281,
+    "rangeFromFirstWalkFrameDegrees": 29.23556429817443
+  },
+  "upperarm_r_0270": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 29.041047790817377,
+    "rangeFromFirstWalkFrameDegrees": 23.335887006157783
+  },
+  "clavicle_r_0269": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 17.959413594794366,
+    "rangeFromFirstWalkFrameDegrees": 17.770003521257397
+  },
+  "foot_l_0407": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 32.92006310560223,
+    "rangeFromFirstWalkFrameDegrees": 30.731209975584132
+  },
+  "lowerleg_l_0406": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 31.078386768668008,
+    "rangeFromFirstWalkFrameDegrees": 38.06179849587699
+  },
+  "upperleg_l_0405": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 31.981777491417446,
+    "rangeFromFirstWalkFrameDegrees": 25.591319354743288
+  },
+  "foot_r_0476": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 37.37396762449818,
+    "rangeFromFirstWalkFrameDegrees": 42.059671020157566
+  },
+  "lowerleg_r_0475": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 39.16251253652654,
+    "rangeFromFirstWalkFrameDegrees": 39.26052048193036
+  },
+  "upperleg_r_0474": {
+    "maxLocalQuaternionAngleFromDefaultRestDegrees": 42.51736377261143,
+    "rangeFromFirstWalkFrameDegrees": 38.894572914252976
+  }
+}

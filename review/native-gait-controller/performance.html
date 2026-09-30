@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href="data:,"><title>Native horse rendering study</title><script type="importmap">{"imports":{"three":"../../assets/vendor/three/build/three.module.js","three/addons/":"../../assets/vendor/three/examples/jsm/"}}</script></head><body style="margin:0"><script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {clone} from 'three/addons/utils/SkeletonUtils.js';
+const [asset,kit]=await Promise.all([new GLTFLoader().loadAsync('../native-horse-kit/model.glb'),fetch('../native-horse-kit/preservation.json').then(r=>r.json())]);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(1);renderer.setSize(1440,900);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;document.body.append(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#cbd1c5');scene.add(new THREE.HemisphereLight(0xffffff,0x65735b,2));
+const light=new THREE.DirectionalLight(0xffffff,2.5);light.position.set(-5,8,6);light.castShadow=true;light.shadow.mapSize.set(2048,2048);Object.assign(light.shadow.camera,{left:-6,right:6,top:5,bottom:-5,near:.1,far:22});scene.add(light);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(60,60),new THREE.MeshStandardMaterial({color:'#aeb7a3',roughness:1}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+const camera=new THREE.PerspectiveCamera(35,1440/900,.05,60);camera.position.set(-6,4.4,12);camera.lookAt(0,1.1,0);
+const actors=[],mixers=[];
+for(let i=0;i<4;i++){const actor=new THREE.Group(),model=clone(asset.scene);actor.add(model);scene.add(actor);model.position.set(0,.004714777,-1.67448427);model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=false;}});const mixer=new THREE.AnimationMixer(model);mixer.clipAction(THREE.AnimationClip.findByName(asset.animations,['Target Native Walk Rollover','Target Native Trot','Target Native Canter Left','Target Native Canter Right'][i])).play();actors.push(actor);mixers.push(mixer);}
+const gl=renderer.getContext(),debug=gl.getExtension('WEBGL_debug_renderer_info');
+const hardware={vendor:debug?gl.getParameter(debug.UNMASKED_VENDOR_WEBGL):gl.getParameter(gl.VENDOR),renderer:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),webglVersion:gl.getParameter(gl.VERSION),gpuTimerAvailable:!!gl.getExtension('EXT_disjoint_timer_query_webgl2')};
+const stats=rows=>{const s=[...rows].sort((a,b)=>a-b),q=p=>s[Math.min(s.length-1,Math.floor(p*s.length))];return {samples:rows.length,medianMs:q(.5),p95Ms:q(.95),maxMs:s.at(-1),meanMs:rows.reduce((a,b)=>a+b,0)/rows.length};};
+window.nativePerformance=async count=>{
+ actors.forEach((a,i)=>{a.visible=i<count;a.position.x=count===1?0:(i-1.5)*2.15;});
+ const intervals=[],submit=[],drawCalls=[],triangles=[];let frame=0,last=null;
+ await new Promise(resolve=>{function render(now){const dt=last==null?1/60:Math.min(.1,(now-last)/1000);for(let i=0;i<count;i++)mixers[i].update(dt);const start=performance.now();renderer.render(scene,camera);const cost=performance.now()-start;if(frame>=45&&last!=null){intervals.push(now-last);submit.push(cost);drawCalls.push(renderer.info.render.calls);triangles.push(renderer.info.render.triangles);}last=now;frame++;if(frame<285)requestAnimationFrame(render);else resolve();}requestAnimationFrame(render);});
+ return {count,modelSha256:kit.targetSha256,resolution:[1440,900],pixelRatio:1,shadows:'2048px PCFSoft',warmupFrames:45,hardware,frameInterval:stats(intervals),cpuRenderSubmission:stats(submit),mainPassDrawCalls:Math.max(...drawCalls),mainPassTriangles:Math.max(...triangles),nativeBodyJointsPerHorse:677,scope:'Headless local isolated scene, mixed gaits in place; not full Ranch, mobile, GPU time or transitions approval'};
+};
+window.nativePerformanceReady=true;
+</script></body></html>

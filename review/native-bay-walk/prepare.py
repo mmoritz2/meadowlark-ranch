@@ -24,7 +24,9 @@ import rig_hero_horse as glb  # noqa: E402
 SOURCE = ROOT / 'output/native-bay-proof/native-bay-fulljoint.glb'
 ORIGINAL = ROOT / 'assets/models/horse-imports/wildmesh-white-western/game/native-candidate/native-white-western-candidate.glb'
 OUT = HERE / 'native-bay-rest.glb'
-PROOF = ROOT / 'output/native-bay-proof/review-fulljoint.html'
+# Legacy camera-labelled masks are archived in the tracked proof viewer.
+# The refined gait derives its own anatomical masks from the prepared skin.
+PROOF = ROOT / 'review/bay-native-proof/review.html'
 LICENSE = ROOT / 'assets/models/horse-imports/wildmesh-white-western/provenance.json'
 
 CHAINS = {

@@ -16,7 +16,11 @@ replacement leather split reins and real stirrup treads. It covers only slow Wal
 The [native travel study](../../../review/native-horse-travel/README.md) and
 [four-gait controller](../../../review/native-gait-controller/README.md) preserve
 measured speed and rider/stirrup integration evidence without activating it in
-the game.
+the game. A [refined Bay slow Walk](../../../review/native-bay-rollover/README.md)
+now solves its own 677-joint target and preserves its appearance. Independent
+256-phase checks found +0.894–1.207 mm stance height and ≤0.0353 mm regional
+travel drift, with upright torso and visible heel/toe rollover. Its folded-leg
+plateaus, artwork, riding and faster gaits remain unfinished.
 
 ## What failed
 

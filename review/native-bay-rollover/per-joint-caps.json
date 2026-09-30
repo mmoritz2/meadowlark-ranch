@@ -1,0 +1,220 @@
+{
+  "HL": [
+    {
+      "joint": "upperleg_l_0405",
+      "boundsDegrees": [
+        -30,
+        30
+      ],
+      "rangeDegrees": [
+        -9.804262627824796,
+        6.392684379532557
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0
+    },
+    {
+      "joint": "lowerleg_l_0406",
+      "boundsDegrees": [
+        -40,
+        40
+      ],
+      "rangeDegrees": [
+        -4.192275480735045,
+        30.322260834558733
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0
+    },
+    {
+      "joint": "foot_l_0407",
+      "boundsDegrees": [
+        -35,
+        20
+      ],
+      "rangeDegrees": [
+        -34.99999999999999,
+        4.365429626040709
+      ],
+      "lowerHitCount128": 17,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 148.75000000000003,
+      "upperSampledDurationMs": 0.0
+    }
+  ],
+  "FL": [
+    {
+      "joint": "clavicle_l_0203",
+      "boundsDegrees": [
+        -10,
+        10
+      ],
+      "rangeDegrees": [
+        -9.999999999999998,
+        4.296567993159938
+      ],
+      "lowerHitCount128": 34,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 297.50000000000006,
+      "upperSampledDurationMs": 0.0
+    },
+    {
+      "joint": "upperarm_l_0204",
+      "boundsDegrees": [
+        -30,
+        30
+      ],
+      "rangeDegrees": [
+        -10.536485854439047,
+        21.749063873661008
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0
+    },
+    {
+      "joint": "lowerarm_l_0205",
+      "boundsDegrees": [
+        -38,
+        38
+      ],
+      "rangeDegrees": [
+        -36.17566286831323,
+        4.4375247838700425
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0
+    },
+    {
+      "joint": "hand_l_0206",
+      "boundsDegrees": [
+        -12,
+        45
+      ],
+      "rangeDegrees": [
+        -1.7698461927797131,
+        44.99999999999999
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 22,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 192.5
+    }
+  ],
+  "HR": [
+    {
+      "joint": "upperleg_r_0474",
+      "boundsDegrees": [
+        -30,
+        30
+      ],
+      "rangeDegrees": [
+        -8.710771586529539,
+        3.441122414599007
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0
+    },
+    {
+      "joint": "lowerleg_r_0475",
+      "boundsDegrees": [
+        -40,
+        40
+      ],
+      "rangeDegrees": [
+        -10.974659092619596,
+        32.61958534517983
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0
+    },
+    {
+      "joint": "foot_r_0476",
+      "boundsDegrees": [
+        -35,
+        20
+      ],
+      "rangeDegrees": [
+        -34.99999999999999,
+        6.948013813376164
+      ],
+      "lowerHitCount128": 19,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 166.25,
+      "upperSampledDurationMs": 0.0
+    }
+  ],
+  "FR": [
+    {
+      "joint": "clavicle_r_0269",
+      "boundsDegrees": [
+        -10,
+        10
+      ],
+      "rangeDegrees": [
+        -9.999999999999998,
+        7.325666477464715
+      ],
+      "lowerHitCount128": 36,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 315.00000000000006,
+      "upperSampledDurationMs": 0.0
+    },
+    {
+      "joint": "upperarm_r_0270",
+      "boundsDegrees": [
+        -30,
+        30
+      ],
+      "rangeDegrees": [
+        -4.253546306466043,
+        21.447083700717442
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0
+    },
+    {
+      "joint": "lowerarm_r_0271",
+      "boundsDegrees": [
+        -38,
+        38
+      ],
+      "rangeDegrees": [
+        -37.539417620125576,
+        4.995320225851559
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0
+    },
+    {
+      "joint": "hand_r_0272",
+      "boundsDegrees": [
+        -12,
+        45
+      ],
+      "rangeDegrees": [
+        -0.9135019800213485,
+        44.99999999999999
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 22,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 192.5
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "url": "http://127.0.0.1:8577/review/native-bay-rollover/review.html",
+  "errors": [],
+  "ignoredOutputRequests": [],
+  "walk": {
+    "clip": "Target Native Walk Rollover",
+    "bones": 677,
+    "finite": true,
+    "leftClip": "Rest"
+  },
+  "rest": {
+    "clip": "Rest",
+    "bones": 677,
+    "finite": true
+  },
+  "restoredClip": "Target Native Walk Rollover",
+  "seamMaxComponentDelta": 0,
+  "pass": true
+}
