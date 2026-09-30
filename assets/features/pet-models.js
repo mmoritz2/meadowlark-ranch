@@ -258,7 +258,7 @@ export function install(G){
    shadow:[.2,.5],idles:[['bow',2],['lie',2],['spin',2],['sit',1],['tilt',1]]},
   /* a mallard duckling: bright yellow, with an olive cap and back and a dark stripe through the eye — the
      paint prims reach well outside the surface so the markings actually cover the top of the bird */
-  duck:{kind:'bird',walk:'waddle',h:.45,len:.36,w:.28,piv:.21,K:.04,lift:.8,
+  duck:{kind:'bird',walk:'waddle',h:.45,len:.36,w:.28,piv:.21,K:.04,grow:1.1,lift:.8,   // grow: a touch larger, so the duckling reads from the saddle as well as the chick does
    body:[[0,.20,0,.15,.95,.9,1.2,'#ffb82e'],[0,.24,-.17,.05,1,.6,1.2,'#5e4f1e'],[0,.31,.08,.07,1,1,1,'#ffb82e'],[0,.305,-.045,.13,.95,.5,1.35,'#5e4f1e',1],[0,.1,.04,.13,1,.6,1.2,'#ffe487',1]],
    head:{at:[0,.37,.11],pivot:[0,-.05,-.03],prims:[[0,0,0,.10,1,1,1,'#ffb82e'],[0,.07,-.015,.10,1.1,.6,1.12,'#5e4f1e',1],[0,.014,.03,.106,1.3,.2,.72,'#3a3012',1]]},
    eyes:{r:.025,yaw:.62,pitch:.12,o:[0,.01,0]},
