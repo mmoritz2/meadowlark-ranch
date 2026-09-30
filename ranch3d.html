@@ -650,7 +650,7 @@ import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-3';
-import {FEATURES} from './assets/features/index.js?v=feat-19';
+import {FEATURES} from './assets/features/index.js?v=feat-20';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -1228,7 +1228,11 @@ _ranchLvlCache=ranchLevel(save);   // the real level, so being away decays at th
 tackInv=save.tack||[];
 let rideIdx=Math.max(0,myHorses.findIndex(h=>h.id===save.ridingHorseId));
 // the 3D world now owns the ranch: needs decay (even while away) & the daily gift
-const DECAY3={hunger:100/(8*3600),thirst:100/(6*3600),clean:100/(12*3600),happy:100/(16*3600)};
+/* Horses no longer get hungry, thirsty, dirty or bored: the owner asked for no chores. Nothing decays, and every
+   horse starts each session full, clean and happy. Feeding still trains stats and builds bond; grooming, water
+   and petting still build bond and count for the quests that ask for them. */
+const DECAY3={hunger:0,thirst:0,clean:0,happy:0};
+for(const h of save.horses){h.needs={hunger:100,thirst:100,clean:100,happy:100};}
 {
  const sec=Math.min(24*3600,(Date.now()-(save.lastSeen||Date.now()))/1000);
  if(sec>60){
@@ -9853,7 +9857,6 @@ function careAct(k){
   const N=h.needs;
   if(FOODS3[k]){
    if((s.items[k]||0)<=0){msg='None left — stock up in the 🛍️ Shop!';ok=false;return;}
-   if(N.hunger>=98){msg=h.name+' is full!';ok=false;return;}
    s.items[k]--;
    const f=FOODS3[k];
    N.hunger=Math.min(100,N.hunger+f.hunger);
@@ -9866,12 +9869,10 @@ function careAct(k){
     else{ msg+=R.up?' · '+STAT_LBL[sk]+' → '+h.stats[sk]+'!':' · +'+f.sxp+' '+short+' XP'; if(R.up)statUp=sk; }
    }
   }else if(k==='water'){
-   if(N.thirst>=98){msg=h.name+" isn't thirsty right now!";ok=false;return;}
    N.thirst=Math.min(100,N.thirst+50);
    h.bond=Math.min(100,h.bond+bondGain(h,1,'water'));
    msg=h.name+' drinks deep 💧';ok=true;
   }else if(k==='groom'){
-   if(N.clean>=98){msg='Already sparkling ✨';ok=false;return;}
    N.clean=Math.min(100,N.clean+50);
    N.happy=Math.min(100,N.happy+5);
    {const bg=bondGain(h,3,'groom'); h.bond=Math.min(100,h.bond+bg); msg=h.name+' is shiny and clean! +'+bg+' bond';} ok=true;
@@ -11997,13 +11998,11 @@ function inspectBreedAtRanch(key){
 const DAILYQ=[
  {type:'gallop',icon:'💨',label:'Gallop 800 m',goal:800,r:{c:120,g:2,p:15}},
  {type:'feed',icon:'🥕',label:'Feed 3 treats',goal:3,r:{c:80,g:1,p:10}},
- {type:'groom',icon:'🧼',label:'Groom twice',goal:2,r:{c:80,g:1,p:10}},
  {type:'cleanjump',icon:'⤴️',label:'Land 5 clean jumps',goal:5,r:{c:140,g:2,p:15}},
  {type:'event',icon:'🏆',label:'Finish any event',goal:1,r:{c:150,g:3,p:20,k:1}},
  {type:'pet',icon:'💗',label:'Pet horses 3 times',goal:3,r:{c:60,g:1,p:10}},
  {type:'photo',icon:'📷',label:'Take a photo',goal:1,r:{c:60,g:1,p:10}},
  {type:'carrots',icon:'🌼',label:'Collect 5 meadow carrots',goal:5,r:{c:100,g:1,p:10}},
- {type:'water',icon:'💧',label:'Water a horse twice',goal:2,r:{c:60,g:1,p:10}},
  {type:'tame',icon:'🦄',label:'Tame a wild horse',goal:1,r:{c:200,g:3,p:25,k:1}},
  {type:'breed',icon:'💞',label:'Breed a new foal',goal:1,r:{c:200,g:3,p:25,k:1}},
  {type:'ft',icon:'🧭',label:'Fast travel somewhere',goal:1,r:{c:50,g:1,p:5}},

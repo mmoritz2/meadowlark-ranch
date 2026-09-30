@@ -193,7 +193,9 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('rider wave lifts the right hand > 0.2 m and clears; thumbs locked then owned',r.rider.wave&&r.rider.lift>0.2&&r.rider.state==='wave'&&r.rider.after===null&&r.rider.thumbs0===false&&r.rider.thumbs1===true&&r.rider.n>=16,r.rider);
  check('guitar: locked until the pass reward kind pays it, prop shows while strumming, campfire thing',r.guitar.g0===false&&r.guitar.gToast&&r.guitar.g1===true&&r.guitar.gVis&&r.guitar.gState==='guitar'&&r.guitar.after===null&&r.guitar.hidden&&r.guitar.pass==='guitar'&&r.guitar.camp,r.guitar);
  check('emote panel: dock button, hotkey, 24 buttons, locks',r.panel.shown==='flex'&&r.panel.btns>=24&&r.panel.locks>=2&&r.panel.dock&&r.panel.hotkey==='KeyY',r.panel);
- check('coat dirt darkens at clean 10 and lightens after a groom; no chore gate on courses',r.dirt.dirt0>0.8&&r.dirt.dirt1<0.5&&r.dirt.lum1>r.dirt.lum0&&r.dirt.clean1>=60&&r.dirt.courseOn,r.dirt);
+ /* Horses no longer get dirty (the owner asked for no chores): a save that says clean 10 starts the session clean,
+    the coat shows no dirt, grooming still works, and courses are never gated. */
+ check('no chores: a dirty save starts clean, the coat shows no dirt, grooming still works, no gate on courses',r.dirt.dirt0<0.2&&r.dirt.dirt1<0.2&&r.dirt.clean1>=99&&r.dirt.stateClean>=99&&r.dirt.courseOn,r.dirt);
  check('remote rider mirrors horse + rider emotes from /pos; netPos adds em/rem',r.remote.exists&&r.remote.em==='rear'&&r.remote.rem==='wave'&&r.netPos.hasEm&&r.netPos.hasRem,{remote:r.remote,netPos:r.netPos});
  check('achievements, dailies, kick emote, pose bar button',r.tables.achs.length===0&&r.tables.dailies.length===0&&r.tables.kick&&r.tables.pose,r.tables);
  check('stable rows carry the bond level name and a personality trait tooltip; template helpers exposed',r.stable.traitTip&&r.stable.lvName&&r.stable.helpers,r.stable);

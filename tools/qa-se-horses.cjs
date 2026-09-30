@@ -287,9 +287,9 @@ const BOOT=async(page,url)=>{
   if(H()[i].out){chip('out').click();await wait(500);}
   out.hitch={chip:chip('hitch')&&chip('hitch').textContent.trim()};
   if(chip('hitch')){chip('hitch').click();await wait(600);out.hitch.saved=H()[i].hitch||null;out.hitch.label=chip('hitch')&&chip('hitch').textContent.trim();chip('hitch').click();await wait(600);out.hitch.after=H()[i].hitch||null;}
-  /* a foal's gold button: Follow me, then Following, then off */
+  /* a foal's gold button: Follow me, then Following, then off (the follow rebuilds the world with the foal in it, so the label can take a little over half a second) */
   const foal=H().find(h=>h.foal&&!h.egg); await sel(foal.id);
-  out.foal={pri0:pri().textContent}; pri().click(); await wait(500); out.foal.comp=sv().companion===foal.id; out.foal.pri1=pri()&&pri().textContent; if(pri())pri().click(); await wait(500); out.foal.off=sv().companion!==foal.id;
+  out.foal={pri0:pri().textContent}; pri().click(); await until(()=>pri()&&pri().textContent==='Following',2000); out.foal.comp=sv().companion===foal.id; out.foal.pri1=pri()&&pri().textContent; if(pri())pri().click(); await wait(500); out.foal.off=sv().companion!==foal.id;
   /* an egg: no pasture, take along, tack, whistle or hitch; its gold button warms */
   const egg=H().find(h=>h.egg&&h.foal); await sel(egg.id);
   out.egg={chips:[...$('shsDr').querySelectorAll('[data-shs^="act:"]')].map(b=>b.dataset.shs),pri:pri().textContent};

@@ -37,6 +37,7 @@ export function install(G){
  if(!$('seCareCss')){
   const st=document.createElement('style'); st.id='seCareCss';
   st.textContent=`
+#statusCard .scbars,#statusCard .scb,#statusCard .mk-scb-lbl{display:none!important}   /* no needs to show: horses no longer get hungry, thirsty or dirty */
 #seOv{position:fixed;inset:0;z-index:40;display:none;font-family:Nunito,system-ui,sans-serif;color:#fff;pointer-events:none}
 #seOv.on{display:block}
 #seOv button{font-family:inherit;cursor:pointer;border:0;box-shadow:none}
@@ -194,10 +195,9 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   return {body:x,btns:'<button class="sv-b" data-se="open:stable">🏠 Stable</button><button class="sv-b" data-se="open:tack">🐎 Tack</button>'};
  }
  function feedingTab(s,h){
-  const N=h.needs||{};
-  const needs=[['Fed','hunger','#f0a040'],['Water','thirst','#52b4ee'],['Clean','clean','#a596f5'],['Happy','happy','#72cc72']];
-  let x='<div class="sv-head">Needs</div><div class="sv-need">'+needs.map(n=>{const v=clamp(Math.round(N[n[1]]||0),0,100);
-   return '<div class="sv-meter" style="--c:'+n[2]+'"><div class="lb"><span>'+n[0]+'</span><small>'+v+'/100</small></div><div class="sv-bar"><i style="width:'+v+'%"></i></div></div>';}).join('')+'</div>';
+  /* No needs meters: horses no longer get hungry, thirsty or dirty (the owner asked for no chores). Petting,
+     grooming and water are there for bond and for the quests that ask for them; food trains stats. */
+  let x='<div class="sv-head">Bonding</div>';
   x+='<div class="sv-grid" style="margin-bottom:10px">'
    +'<button class="sv-item" data-se="care:water"><big>💧</big>Water</button>'
    +'<button class="sv-item" data-se="care:groom"><big>🧼</big>Groom</button>'
@@ -207,7 +207,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   x+='<div class="sv-head">Food</div><div class="sv-grid">'+keys.map(k=>{const f=F[k],n=items[k]|0;
    const trains=f.stat?((T.STAT_LBL||{})[f.stat]||f.stat).replace(/^\S+\s/,''):'';
    return '<button class="sv-item'+(n?'':' none')+'" data-se="care:'+esc(k)+'" title="'+esc(f.label||k)+'"><big>'+(f.emoji||'🥕')+'</big>'+esc(f.label||k)+'<small>×'+n+(trains?' · '+esc(trains):'')+'</small></button>';}).join('')+'</div>';
-  x+='<p class="sv-p" style="margin-top:10px">Each food trains one stat. Forage grows all over the Basin, and the Market sells the rest.</p>';
+  x+='<p class="sv-p" style="margin-top:10px">Feed as often as you like: each food trains one stat and builds bond. Forage grows all over the Basin, and the Market sells the rest.</p>';
   return {body:x,btns:'<button class="sv-b" data-se="open:shop">🛍️ Market</button>'};
  }
  function myHorsesTab(s){
