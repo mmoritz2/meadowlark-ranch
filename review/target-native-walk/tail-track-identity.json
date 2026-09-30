@@ -1,0 +1,14 @@
+{
+  "contactInputSHA256": "fbca0c840e48abebcd328fd57eeafc49f3b33c1489f78d5fad224ac6646fbb0f",
+  "finalSHA256": "dcec158d30a7bab814b4aaaeeb07dff95fc54d4dbe71db704858928fe2c904ec",
+  "unchangedOriginalAuthoredTrackCount": 81,
+  "allPreviousAuthoredTracksIdentical": true,
+  "addedTracks": [
+    [
+      "tail_01_0367",
+      "rotation"
+    ]
+  ],
+  "nodesSkinsMeshesUnchanged": true,
+  "allPreviousBufferBytesUnchanged": true
+}

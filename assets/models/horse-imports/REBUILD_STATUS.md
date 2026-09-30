@@ -94,3 +94,14 @@ believable mane/tail and head/neck/torso motion, rider/tack checks, acceptable
 browser performance, accurate
 breed-specific silhouettes, and source/credit verification. Do not infer those
 conditions from clip presence or automated numerical checks alone.
+
+## Target-authored slow Walk milestone
+
+The [white Western horse slow Walk](../../../review/target-native-walk/README.md)
+now uses its original standing proportions, all 677 skin joints, and separate
+body/head/neck/groom/tail motion. In 256-phase independent checks every stance
+sole stays within −1.23 to +6.83mm of its fixed ground; the trunk remains upright.
+This is a private 0.55m/s Walk proof. Its fore swing stays rather straight, hoof
+rollover is missing, some IK bounds are touched, and rider/game travel/faster
+gaits are untested. A Bay pilot also passes contact but still has mechanical
+limb poses. Neither proof is approval for the full 80-identity roster.
