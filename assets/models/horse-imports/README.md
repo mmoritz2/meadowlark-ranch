@@ -17,23 +17,19 @@ mappings, and the Ranch and Studio now use the imported catalog by default.
 The complete local 80-identity Ranch and Studio runs pass, with no page errors or
 startup warnings. The resource preflight confirms 38 unique animated resources
 and 81 actual-model portraits, including the preferred white western horse.
-Commit `31f3b1e` reached GitHub Pages on 30 September 2026. The live Ranch,
-imported manifest and default model loader matched their committed SHA-256
-hashes; the live Studio displayed all 80 game horses, and the protected pastel
-unicorn package returned HTTP 200. `deployment-closure-validation.json` records
-the staged file/privacy/size audit performed before publication.
+Commit/push and live publication are tracked separately from these local checks.
 
 | Source | Current derivative | Remaining work |
 | --- | --- | --- |
-| WildMesh western horse | Preserved source art on a 40-joint rig; 25 distinct body variants for 44 identities; nine clips baked at 120 Hz | Published; local mounted checks pass |
-| BlueMesh draft | Corrected eyes, source body/groom, five distinct bodies on 40-joint rigs and nine clips baked at 120 Hz | Published; local mounted checks pass |
-| ikkiz unicorn | Source body/horn, five actual legacy groom path sets, source diffuse colour bakes, 40-joint rig and nine clips baked at 120 Hz | Published; local mounted checks pass |
-| Diego Luján García skeleton | Actual source bone surfaces on a 40-joint anatomical rig, corrected rib/fetlock/hock attachments and nine clips baked at 120 Hz | Published; local mounted spectral checks pass |
-| 3DHaupt dragon | Genuine dragon anatomy, 68 joints, twelve clips and articulated wing fold/flight | Published; local mounted/flight checks pass |
+| WildMesh western horse | Preserved source art on a 40-joint rig; 25 distinct body variants for 44 identities; nine clips baked at 120 Hz | Local mounted and site checks pass; live publication verification |
+| BlueMesh draft | Corrected eyes, source body/groom, five distinct bodies on 40-joint rigs and nine clips baked at 120 Hz | Local mounted and site checks pass; live publication verification |
+| ikkiz unicorn | Source body/horn, five actual legacy groom path sets, source diffuse colour bakes, 40-joint rig and nine clips baked at 120 Hz | Local mounted and site checks pass; live publication verification |
+| Diego Luján García skeleton | Actual source bone surfaces on a 40-joint anatomical rig, corrected rib/fetlock/hock attachments and nine clips baked at 120 Hz | Current rendered poses and local mounted spectral checks pass; live publication verification |
+| 3DHaupt dragon | Genuine dragon anatomy, 68 joints, twelve clips and articulated wing fold/flight | Live and stored motion, whole-surface floor clearance and local mounted/flight checks pass; live publication verification |
 | CG Cookie/David Ward wings | Genuine long feathers on a paired 105-joint component with newly authored feather materials | Local mounted fold/flight and cleanup checks pass; original maps and verified down feathers remain absent |
-| jesusrhino Arabian | Same-sculpt standing-limb adaptation, continuous voxel/fairing joins, source head/torso/high-tail morphology, new paint and fine groom, 40 joints and nine 120 Hz clips | Published; floor/pose and complete-roster local mounted/Studio checks pass |
-| TheBigWolfy Fjord | Actual sculpture LOD, original upright mane/tail, new dun paint, 40 joints, nine 120 Hz clips and source-rest-preserving tail clearance | Published; protected Ranch/Studio and dense ground checks pass |
-| maryna287887 pastel unicorn | Original body/horn/maps and source-native sampled groom on a 40-joint rig with nine 120 Hz clips | Published; protected Ranch/Studio and dense ground checks pass |
+| jesusrhino Arabian | Same-sculpt standing-limb adaptation, continuous voxel/fairing joins, source head/torso/high-tail morphology, new paint and fine groom, 40 joints and nine 120 Hz clips | Candidate floor/pose and complete-roster local mounted/Studio checks pass; live publication verification |
+| TheBigWolfy Fjord | Actual sculpture LOD, original upright mane/tail, new dun paint, 40 joints, nine 120 Hz clips and source-rest-preserving tail clearance | Actual lowerbody/allgroom/whole-hoof and protected Ranch/Studio checks pass; live publication verification |
+| maryna287887 pastel unicorn | Original body/horn/maps and source-native sampled groom on a 40-joint rig with nine 120 Hz clips | Source-fidelity/dense floor/pose and protected Ranch/Studio checks pass; live publication verification |
 
 The shared motion solver is frozen at SHA-256
 `2e8f59448248aa947261f2587d47786eb3ef15ceef1a93281d970af4280b3594`.
@@ -343,4 +339,4 @@ adaptations are documented with their source-specific limits. Fantasy appearance
 rider/tack fit and final integrated gameplay
 are reviewed separately from source acquisition and numerical rig checks.
 
-Public deployment includes the complete runtime resource closure, portraits, credit and validation metadata. Original source previews and diagnostic PNGs remain local and are excluded from the publication file list to keep the existing GitHub Pages build within its hosting limit. `horse-import-review.html` links the nine approved sources to their rigged game adaptations in the Breed Studio and directly shows the preferred white Western portrait. The preferred white Western source is an additional rigged asset and portrait, not a separate selectable game identity. Its original-source review descriptors are preserved locally in `work/offline-source-review.json`.
+Public deployment includes the complete runtime resource closure, portraits, credit and validation metadata. Original source previews and diagnostic PNGs remain local and are excluded from the publication file list to keep the existing GitHub Pages build within its hosting limit. `horse-import-review.html` links the nine approved sources to their rigged game adaptations in the Breed Studio. Its original-source review descriptors are preserved locally in `work/offline-source-review.json`.

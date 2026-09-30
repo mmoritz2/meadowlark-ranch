@@ -141,7 +141,6 @@ function renderCandidates(){
     if(row.note){const note=document.createElement('p');note.className='note';note.textContent=row.note;card.append(note);}
     const actions=document.createElement('div');actions.className='actions';link(actions,'Creator’s page',candidate.sourceUrl);if(row.receipt)link(actions,'Provenance',new URL(`${importsPath}${candidate.id}/provenance.json`,base).href);
     if(candidate.gamePreviewIdentity&&/^[a-z0-9-]+$/.test(candidate.gamePreviewIdentity))link(actions,'View horse',new URL('breeds.html?horse='+candidate.gamePreviewIdentity,base).href);
-    if(candidate.id==='wildmesh-white-western')link(actions,'White Western portrait',new URL(`${importsPath}thumbnails/white-western.webp`,base).href);
     if(row.ready){const button=document.createElement('button');button.textContent='Original preview';button.disabled=!renderer;button.dataset.open=candidate.id;button.onclick=()=>select(candidate.id);actions.append(button);}
     card.append(actions);$('candidates').append(card);
   }
