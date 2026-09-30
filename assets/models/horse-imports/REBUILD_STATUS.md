@@ -12,8 +12,7 @@ to replace the public stable as a whole.
   are visibly poor, especially in faster gaits. Passing numerical joint and
   ground checks did not make the animation believable.
 - The approved WildMesh white Western source has a much richer 677-joint rig and
-  creator-authored Idle and Walk. Its source Walk keeps a hoof on the floor over
-  16 measured phases. The converted 40-joint variants discarded that animation
+  creator-authored Idle and Walk. Its source Walk still fails the low-posture review. The converted 40-joint variants discarded that animation
   and merged the source skin weights. Restoring native motion to breed variants
   requires rebuilding their skins against the full rig, then visual review.
 - The current Fjord, Arabian and pastel unicorn foundations also need static art
@@ -68,6 +67,15 @@ to replace the public stable as a whole.
   [provenance.json](european-dragon/provenance.json).
 - The Studio now exposes the approved native Western tack on eligible horses;
   the white Lipizzaner derivative shows it by default in this branch.
+- The previously shown Mesh2Motion horse motion source is acquired for private
+  evaluation: 56-joint source rig, 14 clips including Walk, Trot and Run, with
+  its pinned CC0 license and hash preserved in
+  [the source record](../horse-motion-sources/mesh2motion/README.md). Its sample
+  model is stylized; a realistic-white-horse retarget is a separate unapproved
+  experiment. The [source gait audit](../../../review/mesh2motion-source/README.md)
+  found that the source Trot is a lateral pace, and all three gait clips need
+  hoof-contact and loop-seam correction. No native Canter or Gallop is supplied
+  by this source.
 
 Open [the private review landing page](../../../review/index.html) through the local
 preview server to compare the source-rig white horse and both dragons. These
