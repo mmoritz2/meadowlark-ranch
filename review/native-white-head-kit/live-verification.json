@@ -1,0 +1,55 @@
+{
+  "verdict": "pass: published White head-kit model and narrow unrouted Studio/Ranch smoke",
+  "reviewedCommit": "99424f6",
+  "liveBase": "https://mmoritz2.github.io/meadowlark-ranch",
+  "requestRouting": "none; Ranch uses ?qa=native-game solely to expose its existing inspector",
+  "model": {
+    "url": "https://mmoritz2.github.io/meadowlark-ranch/review/native-white-head-kit/model.glb",
+    "status": 200,
+    "bytes": 28443316,
+    "sha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+    "matchesReviewedArtifact": true
+  },
+  "studio": {
+    "url": "https://mmoritz2.github.io/meadowlark-ranch/breeds.html?horse=white-western",
+    "ready": true,
+    "bones": 677,
+    "finite": true,
+    "walkClip": "Target Native Walk Rollover",
+    "walkActive": true
+  },
+  "ranch": {
+    "url": "https://mmoritz2.github.io/meadowlark-ranch/ranch3d.html?qa=native-game",
+    "ready": true,
+    "horseBones": 677,
+    "riderBones": 65,
+    "visibleNativeTack": true,
+    "nativeSeatFollower": true,
+    "reinComponentsIntact": true,
+    "walkClip": "Target Native Walk Rollover",
+    "headRelativeToSpineVerticalSpanM": 0.07155611313356403,
+    "headSamples": 8,
+    "headRelativeYRangeM": [
+      0.5066600423396324,
+      0.5782161554731964
+    ]
+  },
+  "browserErrors": [],
+  "checks": {
+    "exactLiveModel": true,
+    "studioReady": true,
+    "studioWalk": true,
+    "ranchReady": true,
+    "headMoves": true,
+    "noConsoleErrors": true
+  },
+  "scope": "read-only smoke; no gait naturalism, full-cycle contact, gameplay transition, or other-breed certification",
+  "fullEvidence": "output/native-white-head-live-99424f6/report.json",
+  "actions": [
+    "Fetched the published model with Playwright APIRequestContext.get and SHA-256 hashed its complete response body.",
+    "Opened the published Breed Studio without request interception; selected White Western Walk through its motion menu and inspected the live 677-bone model.",
+    "Opened the published Ranch with its built-in ?qa=native-game inspector flag in a disposable browser context; added the free White Western model to that test stable and mounted it.",
+    "Inspected the mounted 677-bone horse, 65-bone rider, visible native tack, seat follower and rein-component status.",
+    "Set the live loaded native motion controller to Walk and advanced eight 0.14-second samples; measured head_019 height relative to spine_04_012 to exclude actor travel."
+  ]
+}

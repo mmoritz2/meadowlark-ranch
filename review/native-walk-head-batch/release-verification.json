@@ -1,5 +1,5 @@
 {
-  "status": "Passed local release checks; pending published-site confirmation",
+  "status": "Passed parent visual review, local release checks and published-site checks",
   "base": "http://127.0.0.1:8584",
   "unrouted": true,
   "checks": {
@@ -49,5 +49,7 @@
   "sourceHashesVerified": true,
   "registeredNativeChoices": 5,
   "visualReview": "Parent inspected paired side/quarter phases and actual rendered mounted Ranch captures. Accept narrow gradual Walk head/neck nod; high carriage, four-cycle torso ripple and groom/limb limitations remain.",
-  "scope": "Only Bay Western and Bay Sporthorse six Walk neck/head curves; no Iceland registration, faster gait edits, root lift or new source download."
+  "scope": "Only Bay Western and Bay Sporthorse six Walk neck/head curves; no Iceland registration, faster gait edits, root lift or new source download.",
+  "publishedCommit": "2c7f470647fb613181e4f525a8932d66a8e38fe0",
+  "liveEvidence": "live-verification.json"
 }

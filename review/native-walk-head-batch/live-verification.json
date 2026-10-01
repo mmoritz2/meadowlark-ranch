@@ -1,0 +1,117 @@
+{
+  "status": "PASS",
+  "commit": "2c7f470647fb613181e4f525a8932d66a8e38fe0",
+  "pagesBuildConfirmation": "Parent confirmed GitHub Pages API status built, error null for this exact commit before live checks began.",
+  "verifiedAt": "2026-10-01T16:47:16.289680+00:00",
+  "base": "https://mmoritz2.github.io/meadowlark-ranch",
+  "unrouted": true,
+  "qaScript": "tools/qa-native-game.cjs",
+  "qaScriptSha256": "623d94c495a524fb9a30ec1d58cfc8c49cf0e7ce18a35bb08d4607aa88801042",
+  "qaExitCode": 0,
+  "checkCount": 18,
+  "checks": {
+    "white-westernStudio": true,
+    "bay-westernStudio": true,
+    "bay-sporthorse-nativeStudio": true,
+    "black-dragon-nativeStudio": true,
+    "european-dragonStudio": true,
+    "studioSwitchBack": true,
+    "freeOptIn": true,
+    "white-westernRanch": true,
+    "white-westernContacts": true,
+    "bay-westernRanch": true,
+    "bay-westernContacts": true,
+    "bay-sporthorse-nativeRanch": true,
+    "bay-sporthorse-nativeContacts": true,
+    "black-dragon-nativeRanch": true,
+    "european-dragonRanch": true,
+    "legacyBay": true,
+    "nativeWorld": true,
+    "noUnexpectedErrors": true
+  },
+  "errors": [],
+  "liveModelHTTPHashes": [
+    {
+      "id": "bay-western",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/review/native-bay-head-kit/model.glb",
+      "method": "HTTP GET without replacement route; response bytes hashed in memory",
+      "status": 200,
+      "bytes": 16367600,
+      "sha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+      "expectedSha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+      "match": true,
+      "etag": "W/\"6abe8d21-f9bff0\"",
+      "lastModified": "Thu, 01 Oct 2026 16:41:05 GMT"
+    },
+    {
+      "id": "bay-sporthorse-native",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/review/native-bay-sporthorse-head-kit/model.glb",
+      "method": "HTTP GET without replacement route; response bytes hashed in memory",
+      "status": 200,
+      "bytes": 33940296,
+      "sha256": "a83db5e4fda2ca1fa83478c94fda891bd385a24f7db3cecf2af2cb85e5e6b034",
+      "expectedSha256": "a83db5e4fda2ca1fa83478c94fda891bd385a24f7db3cecf2af2cb85e5e6b034",
+      "match": true,
+      "etag": "W/\"6abe8d20-205e348\"",
+      "lastModified": "Thu, 01 Oct 2026 16:41:04 GMT"
+    }
+  ],
+  "liveRanchProfileHashesMatchGETBytes": true,
+  "ranch": [
+    {
+      "id": "white-western",
+      "bones": 677,
+      "finite": true,
+      "profileHash": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+      "travelErrorM": 1.3322676295501878e-15,
+      "modelLocalTravelM": 0,
+      "maxGroundSpeedMps": 1.9511599960857737,
+      "maxSampledActualSkinnedBootErrorM": 5.777884677347632e-07
+    },
+    {
+      "id": "bay-western",
+      "bones": 677,
+      "finite": true,
+      "profileHash": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+      "travelErrorM": 0.0,
+      "modelLocalTravelM": 0,
+      "maxGroundSpeedMps": 1.65859160536791,
+      "maxSampledActualSkinnedBootErrorM": 3.569442384919015e-06
+    },
+    {
+      "id": "bay-sporthorse-native",
+      "bones": 677,
+      "finite": true,
+      "profileHash": "a83db5e4fda2ca1fa83478c94fda891bd385a24f7db3cecf2af2cb85e5e6b034",
+      "travelErrorM": 2.220446049250313e-16,
+      "modelLocalTravelM": 0,
+      "maxGroundSpeedMps": 1.7801160599525414,
+      "maxSampledActualSkinnedBootErrorM": 2.8147764417925354e-06
+    },
+    {
+      "id": "black-dragon-native",
+      "bones": 232,
+      "finite": true,
+      "profileHash": "66ef96b2407b64c8ffa749f1edf5f4731a314b39b350e128789b15476a9ac999",
+      "travelErrorM": 0,
+      "modelLocalTravelM": 0,
+      "maxGroundSpeedMps": 0,
+      "maxSampledActualSkinnedBootErrorM": 1.1540720019149786
+    },
+    {
+      "id": "european-dragon",
+      "bones": 169,
+      "finite": true,
+      "profileHash": "cd7ac607ff273ea9fef46cbb924bea7300eae2d4e625f160891c981c77c16108",
+      "travelErrorM": 4.440892098500626e-16,
+      "modelLocalTravelM": 0,
+      "maxGroundSpeedMps": 1.9987591016048711,
+      "maxSampledActualSkinnedBootErrorM": 1.5324256463759092
+    }
+  ],
+  "fullReport": "output/native-head-batch-live/report.json",
+  "hashReport": "output/native-head-batch-live/model-hashes.json",
+  "scope": "Actual live five-model Studio/Ranch regression and exact two model bytes. Does not certify every breed/gait or resolve unchanged torso4-cycle, short-stride and source-groom limitations.",
+  "gameFilesChangedByThisVerification": false,
+  "commitOrPushBySubagent": false
+}

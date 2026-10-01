@@ -1,5 +1,5 @@
 {
-  "status": "Passed parent visual review and actual unrouted all-five Studio/Ranch checks; pending publication",
+  "status": "Published at 2c7f470; parent visual review and actual local/live all-five Studio/Ranch checks pass",
   "runtimeProfiles": [
     {
       "id": "bay-western",
