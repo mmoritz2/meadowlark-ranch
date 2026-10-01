@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "pets": [
+  "raccoon"
+ ],
+ "title": "Realistic Raccoon 3D Model",
+ "creator": "Pigcraft",
+ "creatorUrl": "https://sketchfab.com/s8819296",
+ "sourceUrl": "https://sketchfab.com/3d-models/9adf6992732941c3bd1b2c591211749c",
+ "license": "CC-BY-4.0",
+ "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+ "credit": "\"Realistic Raccoon 3D Model\" by Pigcraft (https://sketchfab.com/s8819296), CC BY 4.0, adapted (simplified from 1.89 million to 20,000 triangles, 19 pieces joined, turned to face along its body, textures to 2048 and 1024, given a skeleton, a walk, trot, gallop and sit by Meadowlark Ranch's autorig, scaled) for Meadowlark Ranch.",
+ "notes": "The creator describes the model as AI-assisted; the CC BY 4.0 grant on Sketchfab was live when it was checked on 2026-10-01.",
+ "approvedBy": "owner",
+ "downloaded": "2026-10-01",
+ "download": {
+  "file": "realistic_raccoon_3d_model.glb",
+  "format": "GLB (Sketchfab download)",
+  "bytes": 120549996,
+  "sha256": "cd8bd77fc54b633fc579f08ff99edc45ec2e32c9df69c64e819b3bb09d098e8b"
+ },
+ "contents": {
+  "meshes": 19,
+  "triangles": 1887699,
+  "textures": ["4096x4096 colour (JPEG)", "4096x4096 normal (PNG)", "4096x4096 occlusion-roughness-metallic (PNG)"],
+  "skeleton": false,
+  "clips": [],
+  "pose": "standing mid-stride, head turned a little to its right"
+ },
+ "prepared": {
+  "file": "raccoon.glb",
+  "bytes": 1939748,
+  "sha256": "59b72272e522d2808a07b19825657c27af3c8408da6efec143fcbf48250c58f7",
+  "changes": [
+   "the 19 pieces joined into one mesh, welded on position and texture coordinate, simplified with meshoptimizer (normals and texture coordinates weighted) to 19,999 triangles and 21,562 vertices",
+   "turned 13 degrees about the vertical (and moved 1.9 cm sideways) so the body's long axis lies along +Z with the hips over x = 0",
+   "colour texture 4096 -> 2048 JPEG; normal map 4096 PNG -> 1024 JPEG on the same texture coordinates; the roughness-metallic map dropped (roughness 0.84, metallic 0); tangents and the duplicate texture coordinate sets dropped",
+   "the normal map's strength set to 0.25 (normalTexture.scale): at full strength its noisy normals, from a texture atlas of thousands of small pieces, caught the game's rim light and frosted the fur with white flecks",
+   "nothing else in the file; at load assets/pet-autorig.js builds the skeleton and skin weights and bakes the clips"
+  ]
+ },
+ "restrictions": []
+}

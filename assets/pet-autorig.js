@@ -38,18 +38,30 @@ const BONES=[['root',null,null],['hips','root','spine'],['spine','hips','chest']
 const GROUP={hips:'torso',spine:'torso',chest:'torso',neck:'neck',head:'head',shoulderL:'upper',shoulderR:'upper',hipL:'thigh',hipR:'thigh',elbowL:'lower',elbowR:'lower',kneeL:'shank',kneeR:'shank',
  wristL:'foot',wristR:'foot',hockL:'foot',hockR:'foot',tail1:'tail',tail2:'tail',tail3:'tail'};
 /* bone thickness as a share of the torso's length (hips to the base of the neck) */
-const RADII={quadruped:{torso:0.36,neck:0.26,head:0.24,upper:0.15,thigh:0.2,lower:0.085,shank:0.085,foot:0.06,tail:0.1},hare:{torso:0.4,neck:0.3,head:0.3,upper:0.12,thigh:0.26,lower:0.1,shank:0.1,foot:0.07,tail:0.12}};
+const RADII={quadruped:{torso:0.36,neck:0.26,head:0.24,upper:0.15,thigh:0.2,lower:0.085,shank:0.085,foot:0.06,tail:0.1},hare:{torso:0.4,neck:0.3,head:0.3,upper:0.12,thigh:0.26,lower:0.1,shank:0.1,foot:0.07,tail:0.12},
+ /* the raccoon: a deep, low, furry body on short legs, a big round head that turns as one piece (the mask does not stretch), a thick tail */
+ raccoon:{torso:0.42,neck:0.3,head:0.34,upper:0.13,thigh:0.19,lower:0.075,shank:0.075,foot:0.055,tail:0.12}};
 const GAITS={
  quadruped:{
   walk:{T:0.8,off:{hL:0,fL:0.25,hR:0.5,fR:0.75},duty:0.64,stride:1.3,lift:0.13,bob:0.018,sway:0.012,pitch:0,flex:0.02,tailSwing:0.1,neckBob:0.03},
   trot:{T:0.42,off:{hL:0,fR:0,hR:0.5,fL:0.5},duty:0.42,stride:2.3,lift:0.2,bob:0.03,sway:0.006,pitch:0,flex:0.03,tailSwing:0.06,neckBob:0.04},
   run:{T:0.3,off:{hL:0,hR:0.08,fR:0.42,fL:0.52},duty:0.26,stride:3.9,lift:0.3,bob:0.05,sway:0,pitch:0.06,flex:0.16,tailSwing:0.05,neckBob:0.06,crouch:0.06}},
- hare:{walk:null,trot:null,run:null}};
+ hare:{walk:null,trot:null,run:null},
+ /* the raccoon's: an unhurried plantigrade walk on short legs (whole soles down, short quick steps, the head low and nodding, the
+    hunched back rolling), a trot, and a bounding gallop where the long back folds and stretches and the hind feet land together.
+    The trot and gallop strides are long for the legs (1.7 and 3.0 leg lengths a cycle), so the planted paws keep up with a pet that
+    runs beside a horse (its entry's "game": {"realGait"} lets it step faster); the crouch, the gallop's pitch and back flex are
+    kept small and the front paws step a little back under the chest (backF), so the low shoulders never drop far enough for a
+    reaching foreleg to lie flat along the grass */
+ raccoon:{
+  walk:{T:0.72,off:{hL:0,fL:0.22,hR:0.5,fR:0.72},duty:0.66,stride:0.78,lift:0.11,bob:0.012,sway:0.014,pitch:0.01,flex:0.025,tailSwing:0.12,neckBob:0.035,crouch:0.045},
+  trot:{T:0.4,off:{hL:0,fR:0,hR:0.5,fL:0.5},duty:0.46,stride:1.7,lift:0.16,bob:0.02,sway:0.008,pitch:0,flex:0.03,tailSwing:0.08,neckBob:0.04,crouch:0.02,backF:0.05},
+  run:{T:0.32,off:{hL:0,hR:0.06,fL:0.48,fR:0.56},duty:0.3,stride:3.0,lift:0.22,bob:0.035,sway:0,pitch:0.03,flex:0.07,tailSwing:0.06,neckBob:0.05,crouch:0.015,backF:0.1}}};
 export function autorig({THREE,scene,animations,entry,key,options}){
  /* ---- bird template (owl lane): a bird is rigged, winged and given its flight clips by assets/pet-bird-rig.js ---- */
  if(options&&options.template==='bird')return import('./pet-bird-rig.js'+new URL(import.meta.url).search).then(M=>(M.birdRig||M.default)({THREE,scene,animations,entry,key,options}));
  /* ---- end bird template ---- */
- const O=options||{},tpl=O.template==='hare'?'hare':'quadruped';
+ const O=options||{},tpl=O.template==='hare'?'hare':'quadruped',kind=O.template==='raccoon'?'raccoon':tpl;   // a raccoon is a quadruped with its own proportions, gaits and sit
  const V=(x,y,z)=>new THREE.Vector3(x,y,z),arr=a=>V(+a[0]||0,+a[1]||0,+a[2]||0);
  scene.updateMatrixWorld(true);
  /* ---------------------------------------------------------------- 1. the meshes in one frame -------- */
@@ -279,7 +291,7 @@ export function autorig({THREE,scene,animations,entry,key,options}){
     half with the hips and half with the thigh, so a swinging leg bends the flank instead of folding it like a flap) */
  const BL=O.blend||{},ssW=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
  const torsoL=J.hips.distanceTo(J.spine)+J.spine.distanceTo(J.chest)+J.chest.distanceTo(J.neck);
- const RD=Object.assign({},RADII[tpl],O.radii||{});for(const s of segs)s.r=Math.max(1e-6,(RD[GROUP[s.n]]||0.1)*torsoL);
+ const RD=Object.assign({},RADII[kind],O.radii||{});for(const s of segs)s.r=Math.max(1e-6,(RD[GROUP[s.n]]||0.1)*torsoL);
  const cB=toB(J.hips).x,hipZ=toB(J.hips).z;
  const sideL=Math.sign(toB(J.shoulderL).x+toB(J.hipL).x-2*cB)||1,side=n=>/L$/.test(n)?sideL:/R$/.test(n)?-sideL:0;
  const out=new THREE.Group();out.name='autorig';out.add(bones.root);
@@ -305,6 +317,11 @@ export function autorig({THREE,scene,animations,entry,key,options}){
    const nbr=[];for(let w=0;w<nw;w++)nbr.push(adj.has(w)?[...adj.get(w)]:[]);let A=W,B=new Float32Array(W.length);
    for(let it=0;it<(O.smooth!=null?O.smooth:4);it++){for(let w=0;w<nw;w++){const L=nbr[w];if(!L.length){for(let k=0;k<nb;k++)B[w*nb+k]=A[w*nb+k];continue;}for(let k=0;k<nb;k++){let s=0;for(const o of L)s+=A[o*nb+k];B[w*nb+k]=0.5*A[w*nb+k]+0.5*s/L.length;}}const T=A;A=B;B=T;}
    if(A!==W)W.set(A);}
+  /* tailChain (the raccoon's default): the tail is its own chain, so the thick tail never drags the haunch and a stepping hind leg
+     never pulls the tail: each vertex is held by the tail bones or by the hind leg bones, whichever holds more of it, never both */
+  if(O.tailChain!=null?O.tailChain:kind==='raccoon'){const tb=['tail1','tail2','tail3'].map(x=>list.indexOf(bones[x])),lb=['hipL','kneeL','hockL','hipR','kneeR','hockR'].map(x=>list.indexOf(bones[x]));
+   for(let w=0;w<nw;w++){let ts=0,ls=0;for(const k of tb)ts+=W[w*nb+k];for(const k of lb)ls+=W[w*nb+k];if(ts<=0||ls<=0)continue;const drop=ts>ls?lb:tb;let s2=0;for(const k of drop){s2+=W[w*nb+k];W[w*nb+k]=0;}
+    const left=1-s2;if(left>1e-6)for(let k=0;k<nb;k++)W[w*nb+k]/=left;}}
   const si=new Uint16Array(n*4),sw=new Float32Array(n*4);
   for(let i=0;i<n;i++){const w=wid[i],row=[];for(let k=0;k<nb;k++){const v=W[w*nb+k];if(v>0.004)row.push([k,v]);}row.sort((a,b)=>b[1]-a[1]);const top=row.slice(0,4);let s=0;for(const r of top)s+=r[1];
    if(!top.length){top.push([list.indexOf(bones.hips),1]);s=1;}for(let k=0;k<top.length;k++){si[4*i+k]=top[k][0];sw[4*i+k]=top[k][1]/s;}}
@@ -372,14 +389,25 @@ export function autorig({THREE,scene,animations,entry,key,options}){
  const home={};for(const L in LEGS){const n=LEGS[L];if(standing){home[L]=toB(rest[n[3]]).sub(toB(rest.root));}
   else{const top=toB(s0.P[n[0]]).sub(toB(rest.root));home[L]=V(top.x*0.95,0,top.z+(L[0]==='f'?0.04:0.02)*Lleg);}}
  const fdirHome={};for(const L in LEGS){const n=LEGS[L];fdirHome[L]=standing?rest[n[3]].clone().sub(rest[n[2]]).normalize():(L[0]==='f'?dirB(0.18,-1):dirB(0.42,-1));}
+ /* stance (the raccoon's default): a scan caught mid-stride stands square, each pair of paws side by side at the pair's mean place
+    along the body, as far either side of the hips as the pair stood on average, both feet pointing the pair's mean way straight
+    ahead; stance:{dzF, dzH (a pair moved along the body, scan units), width (a factor)} */
+ const ST=O.stance!=null?O.stance:kind==='raccoon';
+ if(ST&&standing){const so=typeof ST==='object'?ST:{};
+  for(const [a,b,dz] of [['fL','fR',+so.dzF||0],['hL','hR',+so.dzH||0]]){const A=home[a],C=home[b],z=(A.z+C.z)/2+dz,w=(Math.abs(A.x)+Math.abs(C.x))/2*(so.width!=null?+so.width:1);
+   home[a]=V((Math.sign(A.x)||1)*w,A.y,z);home[b]=V((Math.sign(C.x)||-1)*w,C.y,z);
+   const da=toB(fdirHome[a]),db=toB(fdirHome[b]),m=fromB(0,(da.y+db.y)/2,(da.z+db.z)/2).normalize();fdirHome[a]=m.clone();fdirHome[b]=m.clone();}}
  /* headYawDeg: a scan whose head is turned to one side faces forward (the neck takes half of the turn); + turns it to the animal's left */
  const tilt=deg(+O.headTilt||0),yawH=deg(+O.headYawDeg||0),neckDir=rot(standing?rot(restDir('neck'),Rt,tilt*0.5):dirB(Math.cos(neckA),Math.sin(neckA)),U,yawH*0.5),headDir=rot(standing?rot(restDir('head'),Rt,tilt):dirB(Math.cos(headA),Math.sin(headA)),U,yawH);
  const tailDir=k=>standing?restDir('tail'+k):dirB(-Math.cos(tailA-(k-1)*0.12),Math.sin(tailA-(k-1)*0.12));
  const ss=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
  /* which way each knee and elbow bends: a standing bind keeps its own bend (so the idle is the bind), a model
     stood up bends like a four-legged animal (elbows back, knees forward) */
+ /* poles:'quadruped' (the raccoon's default): elbows back and knees forward whatever the bind shows (a leg caught nearly straight
+    in a stride has no bend of its own to keep) */
+ const quadPoles=O.poles==='quadruped'||(O.poles==null&&kind==='raccoon');
  const poles={};for(const L in LEGS){const n=LEGS[L],a=rest[n[0]],m=rest[n[1]],c=rest[n[2]],ax=c.clone().sub(a).normalize(),pm=m.clone().sub(a);pm.addScaledVector(ax,-pm.dot(ax));
-  poles[L]=standing&&pm.length()>1e-6*torsoL?pm.normalize():(L[0]==='f'?F.clone().negate():F.clone());}
+  poles[L]=!quadPoles&&standing&&pm.length()>1e-6*torsoL?pm.normalize():(L[0]==='f'?F.clone().negate():F.clone());}
  const poleFor=L=>poles[L].clone();
  /* one frame of a gait at phase ph (0..1), travel is the root's forward distance so far */
  function gaitPose(G,ph,travel){
@@ -389,6 +417,7 @@ export function autorig({THREE,scene,animations,entry,key,options}){
   for(const L in LEGS){const u=(((ph+G.off[L])%1)+1)%1,h=home[L],front=L[0]==='f';let z,y=0,fd=fdirHome[L].clone();
    if(u<G.duty){z=h.z+S*G.duty*(0.5-u/G.duty);const k=u/G.duty;if(k>0.7)fd=rot(fd,Rt,(front?-1:-0.6)*0.6*ss(0.7,1,k));}
    else{const s=(u-G.duty)/(1-G.duty);z=h.z+S*G.duty*(-0.5+ss(0,1,s));y=G.lift*Lleg*Math.sin(Math.PI*s)*(front?1:0.85);fd=rot(fd,Rt,(front?-1.2:-0.7)*Math.sin(Math.PI*Math.min(1,s*1.3)));}
+   if(front&&G.backF)z-=G.backF*Lleg;   // backF (the raccoon's trot and gallop): the front paws' whole step moved back under the chest, so a short foreleg lands under the shoulder instead of reaching flat along the grass
    const toe=rest.root.clone().addScaledVector(F,travel+z).addScaledVector(Rt,h.x).add(U.clone().multiplyScalar(y+h.y));
    legs[L]={toe,fdir:fd,pole:poleFor(L)};}
   const nb=(G.neckBob||0)*Math.sin(TAU*2*ph+0.6);
@@ -403,6 +432,23 @@ export function autorig({THREE,scene,animations,entry,key,options}){
  /* the bind pose itself, breathing (a model that sits in its bind pose sits like this) */
  function bindPose(ph){const TAU=Math.PI*2,br=Math.sin(TAU*ph*2);const dir={chest:rot(restDir('chest'),Rt,-0.015*br),neck:rot(restDir('neck'),U,0.1*Math.sin(TAU*ph)),head:rot(rot(restDir('head'),U,0.14*Math.sin(TAU*ph-0.5)),Rt,0.04*br+deg(O.sitHeadTilt!=null?+O.sitHeadTilt:-18))};   // the head a little lower than the bind's, so looking up at the rider stays natural
   for(let k=1;k<=3;k++)dir['tail'+k]=rot(restDir('tail'+k),U,0.06*Math.sin(TAU*ph-k*0.6)*k);return {root:rest.root.clone(),dir};}
+ /* a standing bind's sit (sit:{hipK, flexK, frontK, hindZ}; the raccoon's by default): the haunches down on the grass (the hips
+    joint at hipK of its standing height), the back raised, curled by flexK, until the front legs stand nearly straight (frontK of
+    their reach) under the chest, the hind feet flat and forward beside the belly (hindZ leg lengths in front of the hips), the tail
+    laid out behind on the grass, the head level and looking about. Baked over the grass like the hare's clips (nothing sinks) */
+ const SIT=O.sit!=null?O.sit:(kind==='raccoon'?{}:null);let sitCfg=null;
+ if(standing&&SIT){const so=typeof SIT==='object'?SIT:{},hipS=(so.hipK!=null?+so.hipK:0.5)*hipH,bob=-(hipH-hipS),fl=so.flexK!=null?+so.flexK:-0.35;
+  const target=Lf*(so.frontK!=null?+so.frontK:0.86);let lo=0,hi=1.4;
+  for(let it=0;it<24;it++){const m=(lo+hi)/2,t=torso(m,bob,{flex:fl*m}),s=solve({root:t.root,dir:t.dir});const y=(s.P.shoulderL.y+s.P.shoulderR.y)/2-ground;if(y<target)lo=m;else hi=m;}
+  sitCfg={th:(lo+hi)/2,bob,fl,hindZ:so.hindZ!=null?+so.hindZ:0.12};}
+ function sitPose(ph){const TAU=Math.PI*2,br=Math.sin(TAU*ph*2),C=sitCfg,t=torso(C.th+0.008*br,C.bob,{flex:C.fl*C.th}),s=solve({root:t.root,dir:t.dir}),r0=toB(rest.root),legs={};
+  for(const L in LEGS){const n=LEGS[L],h=home[L],top=toB(s.P[n[0]]).sub(r0),ll=legLen[L];let z,fd;
+   if(L[0]==='f'){z=top.z+ll.l3*0.85+0.03*Lleg;fd=fdirHome[L].clone();}   // the wrist under the shoulder, the paw ahead of it
+   else{z=top.z+C.hindZ*Lleg+ll.l3;fd=fdirHome[L].clone();}   // the heel just ahead of the hip, the sole flat on the grass as it stands
+   legs[L]={toe:rest.root.clone().addScaledVector(F,z).addScaledVector(Rt,h.x*(L[0]==='h'?1.08:1)).add(U.clone().multiplyScalar(h.y)),fdir:fd,pole:poleFor(L)};}
+  t.dir.neck=rot(rot(neckDir,U,0.16*Math.sin(TAU*ph)),Rt,0.06+0.03*br);t.dir.head=rot(rot(headDir,U,0.22*Math.sin(TAU*ph-0.5)),Rt,0.1+0.04*Math.sin(TAU*ph*2+1));
+  const tl=[-0.3,-0.12,-0.02];for(let k=1;k<=3;k++)t.dir['tail'+k]=rot(dirB(-1,tl[k-1]),U,0.05*Math.sin(TAU*ph-k*0.6)*k);
+  return {root:t.root,dir:t.dir,legs};}
  /* the hare's hop, phased like the game's (it adds the flight's height): 0-0.16 the push, 0.16-0.86 in the air, then
     the landing; the game counts 0.86 to 1.16 as on the ground. Both hind feet push together from under the body while
     the back stretches out and the heels lift a little; in the air the hind legs trail, then swing forward as the back
@@ -452,13 +498,13 @@ export function autorig({THREE,scene,animations,entry,key,options}){
    const lf=floor?lift(s):0;if(floor)(lifts[name]=lifts[name]||[]).push(+lf.toFixed(4));pv.set([s.P.root.x,s.P.root.y+lf,s.P.root.z],3*i);}
   const tracks=[new THREE.VectorKeyframeTrack('ar_root.position',times,pv)];for(const n of names)if(n!=='root')tracks.push(new THREE.QuaternionKeyframeTrack('ar_'+n+'.quaternion',times,qv[n]));
   return new THREE.AnimationClip(name,T,tracks);}
- const clips=[];const GS=Object.assign({},GAITS.quadruped);if(O.gait)for(const g in O.gait)GS[g]=Object.assign({},GS[g]||GAITS.quadruped.walk,O.gait[g]);
+ const clips=[];const GS=Object.assign({},GAITS[kind==='raccoon'?'raccoon':'quadruped']);if(O.gait)for(const g in O.gait)GS[g]=Object.assign({},GS[g]||GAITS.quadruped.walk,O.gait[g]);
  if(tpl==='hare'){clips.push(bake('autorig.idle',3.2,48,idlePose,0));clips.push(bake('autorig.hop',0.5,30,ph=>hopPose(ph,HOP),0,true));clips.push(bake('autorig.bound',0.3,30,ph=>hopPose(ph,BOUND),0,true));if(!standing)clips.push(bake('autorig.sit',4,32,bindPose,0));}
  else{clips.push(bake('autorig.idle',3.2,48,idlePose,0));
   for(const g of ['walk','trot','run']){const G=GS[g];if(!G)continue;clips.push(bake('autorig.'+g,G.T,g==='walk'?32:24,(ph,tr)=>gaitPose(G,ph,tr),G.stride*Lleg));}
-  if(!standing)clips.push(bake('autorig.sit',4,32,bindPose,0));}
- out.userData.autorig={template:tpl,bones:list.length,joints:Object.fromEntries(Object.entries(J).map(([k,v])=>[k,v.toArray().map(x=>+x.toFixed(4))])),standingBind:standing,
-  ground:+ground.toFixed(4),hopSweep:tpl==='hare'?+(HOP.R*HOP.S).toFixed(5):undefined,boundSweep:tpl==='hare'?+(BOUND.R*BOUND.S).toFixed(5):undefined,hopGround:[0.86,0.16],lifts,toesAboveGround:['toeL','toeR','toeHL','toeHR'].map(n=>+(J[n].y-ground).toFixed(4)),legLength:+Lleg.toFixed(4),torsoLength:+torsoL.toFixed(4),pitchDeg:+(pitch0*180/Math.PI).toFixed(1),clips:clips.map(c=>c.name),vertices:meshes.reduce((a,m)=>a+m.geometry.attributes.position.count,0),
+  if(!standing)clips.push(bake('autorig.sit',4,32,bindPose,0));else if(sitCfg)clips.push(bake('autorig.sit',4,32,sitPose,0,true));}
+ out.userData.autorig={template:kind,bones:list.length,joints:Object.fromEntries(Object.entries(J).map(([k,v])=>[k,v.toArray().map(x=>+x.toFixed(4))])),standingBind:standing,
+  ground:+ground.toFixed(4),hopSweep:tpl==='hare'?+(HOP.R*HOP.S).toFixed(5):undefined,boundSweep:tpl==='hare'?+(BOUND.R*BOUND.S).toFixed(5):undefined,hopGround:[0.86,0.16],lifts,toesAboveGround:['toeL','toeR','toeHL','toeHR'].map(n=>+(J[n].y-ground).toFixed(4)),legLength:+Lleg.toFixed(4),torsoLength:+torsoL.toFixed(4),pitchDeg:+(pitch0*180/Math.PI).toFixed(1),sitPitchDeg:sitCfg?+(sitCfg.th*180/Math.PI).toFixed(1):undefined,clips:clips.map(c=>c.name),vertices:meshes.reduce((a,m)=>a+m.geometry.attributes.position.count,0),
   soles:meshes.reduce((a,m)=>a.concat(m.geometry.userData.soleLoops||[]),[])};
  return {scene:out,animations:clips};
 }

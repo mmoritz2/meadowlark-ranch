@@ -9,7 +9,8 @@
         reach the ground and never go under it, the head leads (it faces the way it walks), the idle stands
         on four legs (no T-pose, not the sitting bind pose), the fox's sit clip sits;
      3. in the real game each one replaces the drawn pet and stays the real body while it walks, gallops and
-        stops (no flip to the drawn pet), with the clip that fits its speed; the hares hop with their hop;
+        stops (no flip to the drawn pet), with the clip that fits its speed; the hares hop with their hop; the paws
+        hold the grass as the game drives them beside a walking and a galloping horse (the hares per hop, the rest per stride);
      4. no page errors.
    Usage:  QA_PORT=8432 QA_URL=http://127.0.0.1:8432 NODE_PATH=$(npm root -g) node tools/qa-pet-autorig.cjs
    PETS=fox,lamb limits the list; an entry with "available": false (parked, the drawn pet shows) is skipped unless PETS names it and QA_PARKED=1. */
@@ -21,7 +22,7 @@ const checks=[];
 function check(name,ok,detail){checks.push({name,ok:!!ok,detail});console.log((ok?'PASS ':'FAIL ')+name+(detail!==undefined?' — '+JSON.stringify(detail):''));}
 const t0=Date.now(),stage=s=>console.log('… '+s+' @'+((Date.now()-t0)/1000).toFixed(0)+'s');
 let browser=null;
-setTimeout(async()=>{console.error('WATCHDOG: no result after 900 s');try{if(browser)await browser.close();}catch(e){}process.exit(3);},900000).unref();
+setTimeout(async()=>{console.error('WATCHDOG: no result after 1500 s');try{if(browser)await browser.close();}catch(e){}process.exit(3);},1500000).unref();   // seven pets with their paws tracked frame by frame take 5 to 14 minutes on a busy machine
 const manifest=JSON.parse(fs.readFileSync(path.join(ROOT,'assets/models/pets/manifest.json'),'utf8'));
 const entry=k=>{const P=manifest.pets;let e=P[k],out={};const chain=[];while(e){chain.unshift(e);e=e.base?P[e.base]:null;}for(const c of chain)for(const x in c)out[x]=c[x]&&typeof c[x]==='object'&&!Array.isArray(c[x])&&out[x]&&typeof out[x]==='object'?Object.assign({},out[x],c[x]):c[x];return out;};
 /* the four-legged autorigs (quadruped, hare); a bird (the owl) has its own rig and its own check, tools/qa-pet-owl.cjs */
@@ -29,7 +30,7 @@ const isQuad=k=>{const a=entry(k).autorig;return !!a&&a.template!=='bird';};
 const ALL=Object.keys(manifest.pets).filter(k=>isQuad(k)&&entry(k).available!==false);
 const PARKED=Object.keys(manifest.pets).filter(k=>isQuad(k)&&entry(k).available===false);
 const PETS=(process.env.PETS?process.env.PETS.split(','):ALL).filter(k=>ALL.includes(k)||(process.env.QA_PARKED&&PARKED.includes(k)));
-const HEIGHT={fox:.52,fennec:.40,glimmerfox:.562,lamb:.60,snowhare:.42,bunny:.38,owl:.50};
+const HEIGHT={fox:.52,fennec:.40,glimmerfox:.562,lamb:.60,snowhare:.42,bunny:.38,owl:.50,raccoon:.44};
 const errors=[];
 (async()=>{
  check('the manifest lists autorigged pets',PETS.length>0,{autorigged:ALL,parked:PARKED});
@@ -78,6 +79,16 @@ const errors=[];
      for(let i=0;i<si.count;i+=2){let best=-1,bw=0;for(let c=0;c<4;c++)if(sw.getComponent(i,c)>bw){bw=sw.getComponent(i,c);best=si.getComponent(i,c);}const nm=bn[best];const L2=Object.keys(chains).find(k=>chains[k].includes(nm));if(!L2)continue;o.getVertexPosition(i,v).applyMatrix4(o.matrixWorld);if(out[L2]==null||v.y<out[L2])out[L2]=v.y;}});for(const k in out)out[k]=+out[k].toFixed(3);return out;};
     pose('idle',0);const pi=pawMesh();const bi=body();r.idle={paws:pi,hipsY:+bi.hips.y.toFixed(3),headY:+bi.head.y.toFixed(3),headZ:+bi.head.z.toFixed(3),hipsZ:+bi.hips.z.toFixed(3)};
     if(a.clips.sit){pose('sit',0.3);const b=body();r.sit={hipsY:+b.hips.y.toFixed(3)};}
+    /* the raccoon: a low, long body with an arched back, the tail on its own chain of bones, and a sit with every paw on the grass */
+    if(ar.template==='raccoon'){const P=nm=>B(nm).getWorldPosition(new THREE.Vector3());pose('idle',0);const hp=P('hips'),sp=P('spine'),ch=P('chest');
+     const rc=r.raccoon={arch:+(sp.y-(hp.y+ch.y)/2).toFixed(4),lengthToHeight:+(I.dims.len/I.dims.h).toFixed(2),legShare:+(((P('shoulderL').y+P('hipL').y)/2)/I.dims.h).toFixed(2)};
+     /* skin: every vertex held mostly by a tail bone lies behind the hips, and no vertex held mostly by a thigh or shank leans on the tail */
+     let tailV=0,tailFront=0,legOnTail=0;const hz=hp.z;I.model.traverse(o=>{if(!o.isSkinnedMesh)return;const bn=o.skeleton.bones.map(b=>b.name.replace(/^ar_/,'')),si=o.geometry.attributes.skinIndex,sw=o.geometry.attributes.skinWeight,v=new THREE.Vector3();
+      for(let i=0;i<si.count;i++){let best=-1,bw=0,tw=0;for(let c=0;c<4;c++){const w=sw.getComponent(i,c),nm=bn[si.getComponent(i,c)];if(/^tail/.test(nm))tw+=w;if(w>bw){bw=w;best=nm;}}
+       if(/^tail/.test(best)){tailV++;o.getVertexPosition(i,v).applyMatrix4(o.matrixWorld);if(v.z>hz)tailFront++;}else if(/^(hip[LR]|knee|hock)/.test(best)&&tw>0.1)legOnTail++;}});
+     Object.assign(rc,{tailVerts:tailV,tailInFrontOfHips:tailFront,legVertsOnTail:legOnTail});
+     if(a.clips.sit){pose('sit',0.3);const pm=pawMesh();let lo=Infinity;I.model.traverse(o=>{if(!o.isSkinnedMesh)return;const v=new THREE.Vector3();for(let j=0;j<o.geometry.attributes.position.count;j+=3){o.getVertexPosition(j,v).applyMatrix4(o.matrixWorld);lo=Math.min(lo,v.y);}});
+      const b=body();rc.sit={paws:pm,skinMin:+lo.toFixed(4),headY:+b.head.y.toFixed(3),hipsY:+b.hips.y.toFixed(3)};}}
     r.gaits={};
     const hareT=ar.template==='hare';
     for(const s of (hareT?[]:['walk','trot','run'])){if(!a.clips[s])continue;const S=I.stride(s),N=48,tr={};for(const L2 in legs)tr[L2]=[];let headLead=0,minY=Infinity,maxLiftY=0;
@@ -110,6 +121,11 @@ const errors=[];
   const pY=Object.values(r.idle.paws);check(k+': idle stands on four paws on the grass (each paw\'s underside within 3.5 cm of the grass, none under it)',pY.length===4&&pY.every(y=>y>-0.012&&y<0.035),r.idle);
   if(!hare)check(k+': idle stands up (hips well off the ground, head in front of the hips)',r.idle.hipsY>0.3*r.dims.h&&r.idle.headZ>r.idle.hipsZ,r.idle);
   if(r.sit)check(k+': its sit clip sits (hips lower than standing)',r.sit.hipsY<r.idle.hipsY-0.05*r.dims.h,{sit:r.sit,idleHips:r.idle.hipsY});
+  if(r.raccoon){const rc=r.raccoon;
+   check(k+': a raccoon\'s build: low and long (body over 1.5 times as long as tall), short legs (shoulders and hips under 60% of its height), the back arched up between hips and chest',rc.lengthToHeight>1.5&&rc.legShare<0.6&&rc.arch>0.004,rc);
+   check(k+': its thick tail moves on its own chain (every tail-held vertex behind the hips, no leg vertex leaning on the tail)',rc.tailVerts>200&&rc.tailInFrontOfHips===0&&rc.legVertsOnTail===0,rc);
+   if(rc.sit){const pY=Object.values(rc.sit.paws);check(k+': it sits with all four paws on the grass (each within 3.5 cm, none under it), no skin under the grass, the head held up',pY.length===4&&pY.every(y=>y>-0.012&&y<0.035)&&rc.sit.skinMin>-0.006&&rc.sit.headY>r.idle.hipsY,rc.sit);}
+   else check(k+': has a sit clip',false,r.clips);}
   for(const s in r.gaits){const g=r.gaits[s];
    check(k+' '+s+': the paws on the ground stay put over a stride (skating under 15% of the stride)',g.skate<0.15&&g.stride>0,g);
    check(k+' '+s+': paws reach the ground, never under it, and lift in the swing',g.minY>-0.015&&g.minY<0.02&&g.lift>0.01,g);
@@ -149,6 +165,28 @@ const errors=[];
     const bin=(a,b)=>{const s=cont.filter(x=>x.spd>=a&&x.spd<b).map(x=>x.slide).sort((x,y)=>x-y);return {n:s.length,median:+(s[Math.floor(s.length/2)]||0).toFixed(3),p90:+(s[Math.floor(s.length*0.9)]||0).toFixed(3),max:+(s[s.length-1]||0).toFixed(3)};};
     return {slow:bin(0.3,2),mid:bin(2,7),fast:bin(7,20)};});
    check(k+' in game: its paws hold the grass while it hops (at 2-7 m/s each paw slides under 3 cm per touch, 90% of touches)',sl&&sl.mid.n>=8&&sl.mid.p90<0.03,sl);}
+  /* every other autorigged pet's paws on the grass, the same way, beside a walking and then a galloping horse (4-6 m/s, then
+     10-16 m/s, far faster than the clips' own pace: the game steps a real body no faster than its gait's top cadence, so a
+     stride too short for the legs skates here even when the clip itself plants its paws): on consecutive frames with a paw
+     down (its tip under 12 mm up) how fast it moves over the ground as a share of the body's speed (0 planted, 1 skating),
+     and how far each paw slides per touch */
+  else{const sl=await page.evaluate(()=>{const A=window.__AR,G=A.G,T=G.THREE;A.reset(-100,400,Math.PI);window.advanceTime(1500);
+    const c0=G.pets.comp(),I=c0.parts.real&&c0.parts.real.inst;if(!I)return null;const J=I.asset.scene.userData.autorig.joints,legs={fL:['wristL','toeL'],fR:['wristR','toeR'],hL:['hockL','toeHL'],hR:['hockR','toeHR']},bone={},off={};
+    for(const L in legs){bone[L]=I.model.getObjectByName('ar_'+legs[L][0]);off[L]=new T.Vector3().fromArray(J[legs[L][1]]).sub(new T.Vector3().fromArray(J[legs[L][0]]));}
+    const tr=[];const step=n=>{for(let i=0;i<n;i++){window.advanceTime(1000/60);const c=G.pets.comp(),g=c.parts.group.position,w=I.info().weights||{},top=Math.max(w.walk||0,w.trot||0,w.run||0);const f={spd:c.st.spd||0,b:[g.x,g.z],p:{},pure:top>=0.9?['walk','trot','run'].find(k=>(w[k]||0)===top):null};for(const L in legs){const v=bone[L].localToWorld(off[L].clone());f.p[L]=[v.x,v.y-G.petModels.standY(v.x,v.z),v.z];}tr.push(f);}};
+    A.key('KeyW',true);step(90);const w0=tr.length;step(300);A.key('ShiftLeft',true);step(120);const s0=tr.length;step(300);A.key('ShiftLeft',false);A.key('KeyW',false);step(60);
+    const down=(f,L)=>f.p[L][1]<0.012;
+    const slip=(a,b,lo,hi)=>{const v=[];for(let j=Math.max(1,a);j<b;j++){const f0=tr[j-1],f1=tr[j],bd=Math.hypot(f1.b[0]-f0.b[0],f1.b[1]-f0.b[1]);if(bd<1e-4||f1.spd<(lo||0.3)||f1.spd>=(hi||99)||(lo&&!(f0.pure&&f0.pure===f1.pure)))continue;for(const L in legs)if(down(f0,L)&&down(f1,L))v.push(Math.hypot(f1.p[L][0]-f0.p[L][0],f1.p[L][2]-f0.p[L][2])/bd);}
+     v.sort((x,y)=>x-y);const sp=tr.slice(a,b).map(f=>f.spd).sort((x,y)=>x-y);return {n:v.length,median:+(v[v.length>>1]||0).toFixed(2),p75:+(v[Math.floor(v.length*0.75)]||0).toFixed(2),spd:[+(sp[0]||0).toFixed(1),+(sp[sp.length-1]||0).toFixed(1)]};};
+    const touch=(a,b,lo,hi)=>{const s=[];for(const L in legs){let run=[];const flush=()=>{const m=run.length?run.reduce((x,f)=>x+f.spd,0)/run.length:0;if(run.length>=2&&m>=(lo||0)&&m<(hi||99)){const p0=run[0].p[L];let mx=0;for(const f of run)mx=Math.max(mx,Math.hypot(f.p[L][0]-p0[0],f.p[L][2]-p0[2]));s.push(mx);}run=[];};
+      for(let j=a;j<b;j++){const f=tr[j];if(down(f,L)&&f.spd>0.3&&(!lo||(f.pure&&(!run.length||run[0].pure===f.pure))))run.push(f);else flush();}flush();}
+     s.sort((x,y)=>x-y);return {n:s.length,median:+(s[s.length>>1]||0).toFixed(3),p75:+(s[Math.floor(s.length*0.75)]||0).toFixed(3)};};
+    return {all:{slip:slip(w0,tr.length,2,20),touch:touch(w0,tr.length,2,20)},walkHorse:{slip:slip(w0,w0+300),touch:touch(w0,w0+300)},gallopHorse:{slip:slip(s0,s0+300),touch:touch(s0,s0+300)}};});
+   /* "all": every frame at 2-20 m/s while one gait clip shows on its own (weight 0.9 or more): a body whose strides are too short
+      for the speed the game runs it at slides in every gait (the raccoon's first gaits: half its speed, 15-21 cm a touch); the
+      frames where one gait blends into the next slide for every pet, a limit of the blend, and are reported, not judged */
+   check(k+' in game: its paws hold the grass beside a walking and a galloping horse (at 2-20 m/s, in a gait on its own, a planted paw moves under 30% of the body\'s speed and slides under 6 cm per touch, medians)',
+    sl&&sl.all.slip.n>=40&&sl.all.slip.median<0.3&&sl.all.touch.median<0.06,sl);}
   const flips=run.filter(o=>o.drawn||o.real!=='ready').length,clips=[...new Set(run.map(o=>o.clip))],fast=run.filter(o=>o.spd>7),last=run[run.length-1];
   check(k+' in game: stays the real body through walk, gallop and stop (never the drawn pet)',flips===0,{flips,clips});
   const hare=lib[k]&&lib[k].autorig&&lib[k].autorig.template==='hare';

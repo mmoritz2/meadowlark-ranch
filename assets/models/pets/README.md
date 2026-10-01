@@ -174,6 +174,42 @@ Other fields added with it:
   `--keep "0|sitting_0,0|standing_0" --jpeg 85 --lean`, the goat from 29.9 MB to
   3.7 MB with `--jpeg 74 --lean`.
 
+## The raccoon (`"autorig": {"template": "raccoon"}`)
+
+`raccoon.glb` is Pigcraft's 1.89-million-triangle scan of a walking raccoon, cut down to
+20,000 triangles: the 19 pieces joined, welded on position and texture coordinate and
+simplified with meshoptimizer (normals and texture coordinates counted, so the texture's
+many small charts keep their shape), turned 13 degrees so the body lies along +Z, the
+colour texture at 2048 and the normal map at 1024 (JPEG), the roughness map replaced by one
+value, the normal map's strength at 0.25 (at full strength its noisy normals, from a texture atlas
+of thousands of small pieces, caught the game's rim light and frosted the fur with white flecks).
+`tools/shrink-raccoon.mjs` makes it again from the original download (it needs
+`@gltf-transform/core`, `meshoptimizer` and ImageMagick; see its header).
+
+The `raccoon` template is the quadruped one with the raccoon's own defaults (each can be
+set on any quadruped): `radii` for a deep furry body, short legs and a big head that turns
+as one piece (the mask does not stretch); its own `gait` (a short-stepping plantigrade walk
+with a crouch, a trot, a bounding gallop with a working back; the trot and gallop strides are
+long for the short legs, 1.7 and 3.0 leg lengths a cycle, and the gallop's crouch, pitch and
+back flex small, with `backF` moving the front paws' step back under the chest, so the low
+shoulders never drop far enough for a reaching foreleg to lie flat); `stance` (a scan caught
+mid-stride stands square: each pair of paws side by side at the pair's mean place, both
+feet pointing straight ahead; `{dzF, dzH, width}` adjust it); `poles: "quadruped"` (elbows
+back and knees forward whatever the bind shows); `tailChain` (each vertex is held by the
+tail bones or the hind leg bones, never both, so the thick tail and the haunch do not drag
+each other); and `sit` for a standing bind (`{hipK, flexK, frontK, hindZ}`: the hips joint
+at `hipK` of its standing height, the back raised and curled until the front legs stand
+straight under the chest, the hind feet flat beside the belly, the tail laid behind on the
+grass, baked over the grass so nothing sinks). Its clips are baked with their own contact
+with the grass, so its entry has `"groundCurves": false`. It runs beside a horse at 4 to 16
+m/s, far faster than a raccoon's own pace, so its entry also has `"game": {"realGait":
+{"trot": [1.0, 1.8], "run": [2.6, 3.8], "rateHi": 4.2}}`: it gallops from 2.6 m/s and may
+step up to 4.2 times its clip's own rate (the game's default, 2.6, let its legs keep up with
+only 5.6 m/s, and its planted paws slid about half the body's speed). `tools/qa-pet-autorig.cjs`
+checks its build (low and long, short legs, arched back), its tail chain and its sit as well
+as the checks every autorigged pet gets, among them, for every autorigged pet that is not a
+hare, how well its paws hold the grass in the game beside a walking and a galloping horse.
+
 ## Birds (`"autorig": {"template": "bird"}`), the owl
 
 `assets/pet-autorig.js` hands a bird to `assets/pet-bird-rig.js`, which turns a static
@@ -206,3 +242,80 @@ on top of the idle's own head turns.
 `tools/qa-pet-owl.cjs` checks it (it switches a parked owl on in its own copy of the
 manifest; `QA_OWL_SHIPPED=1` tests the manifest as shipped; `SHOTS=<dir>` saves
 pictures and every measured frame).
+
+## Small birds: the duckling and the chick
+
+The duckling (`duck`, a static AI scan lying on its belly) goes through the same bird rig
+with these extra options: `meshName` (its meshes are `duck-body`, `duck-wings`,
+`duck-legs`, `duck-eyes`); `stand: {lift, round}` (the cut belly rounded and the body
+lifted onto drawn legs); `legs: {drawn, r, toes, spread, colors}` (legs and three-toed
+webbed feet drawn and skinned by the rig); `tint` (the scan repainted by place on the bird,
+the texture's detail kept: yellow, olive crown, `nape`, eye stripe, back, spots, bill);
+`eyes: {at, r, sink}` (glossy eyes set on the scan's surface); `headRound: {c, ext, k, front}`
+(a boxy head rounded off behind); `neckFill: {y, w, z}` (a neck pinched thinner than the
+head widened between two heights, so the head sits on a short thick neck);
+`wing.style: "stub"` (a short downy paddle painted olive with a pale patch, instead of
+flight feathers; `wing.chord` its width, `wing.flyScale` how much larger it opens in the
+air); `tint.backFront` (the olive back stops at the shoulders, never wrapping onto the
+breast) and `tint.detail: {all, under, front, back, flatBelow}` (how much of the scan's
+own light and dark is kept over the new colour: the streaked belly, breast and back are
+laid on nearly flat); `walk: "waddle"` with `waddle: {T, stride, roll, yaw, lift, bob,
+crouch, lean}` (the clip `bird.waddle`) and `run` (the same, quicker and lower: `bird.run`,
+mapped to the game's `run`). Each foot of the waddle and the run is put on the ground in
+three dimensions: the target is a point of the bird's own unturned frame, carried into the
+rolled, swayed and pitched body, the leg swung out to it at the hip and bent in its own
+plane, and the foot turned back flat and pointing ahead, so the body's roll never moves a
+planted sole or twists its toes. Each foot is down half the cycle, the stride is centred
+under the hip, and the swing lifts the foot before it reaches forward. `idle.look` (a
+smaller head turn than the owl's); `down` (a soft light at the silhouette).
+
+The bird rig's root bone is never turned: a pose's `root` entry is the root's offset only.
+(It was once baked as a rotation too, which rolled the duckling a little further each
+step of the waddle and snapped it back at the loop: that, not the game, was the waddle's
+skating. The owl's hop and flight had the same small roll and yaw; both are gone.)
+
+The chick (`chick`, kenchoo's rigged chick) uses `"rigged": true`: its own skeleton and its
+own idle are kept, and `bird.scurry`, `bird.run`, `bird.takeoff`, `bird.fly` and
+`bird.land` are posed on its own bones (`bones` names them, left side only; `scurry` and
+`run: {T, stride, lift, bob, lean, crouch}`; `fly: {hz, amp, raise, scap, pitch,
+wingScale}`: `pitch` + tips the body forward and the stubs then beat about the tipped
+body's own long axis, `scap` is the share of the raise the scapula takes, the legs are
+tucked). `reweight: [{from, to, above, xBelow}]` mends the file's skin weights: kenchoo's
+chick has about 260 vertices high on the rump weighted to the left knee and hip, which
+pulled a thin spike out of the rump on every left stride and in any forward tilt; they go
+to `Root_M`. Its skin is repainted as yellow down with a sheen (`down`), and
+`down.shells: {n, len, density, droop, far}` draws fine strands of down standing off the
+skin: `n` copies of the skin pushed out along the normal, cut to strands by a cellular
+pattern fixed to the bind pose, none on the legs, beak or eyes, and dropped beyond `far`
+metres from the camera (the outer layers first).
+
+`"game"` for both: `skim` 4.0 (they walk, then run, beside a walking horse, Ctrl+W at
+2.2 m/s, and take to the air only above 4 m/s: a trot, or a quick dash back to their spot)
+and `realGait` (the duckling's run from 1.0 to 1.8 m/s with `rateHi` 3.5, the chick's from
+0.7 to 1.3 m/s with 3.0). The walk clips are long (`T` 0.5 and 0.4) so the game's slowest
+cadence, half the clip's own, still matches a slow walk of about 0.2 m/s without the feet
+sliding; the clips are driven by the stride, so `T` does not change how fast they step.
+
+`tools/qa-pet-birds.cjs` checks both (`PETS=duck` or `PETS=chick` for one; a parked bird is
+switched on in the page's copy of the manifest, `QA_BIRDS_SHIPPED=1` tests it as shipped;
+`SHOTS=<dir>` saves pictures and the measured frames). Its gait checks measure the soles
+(each foot's lowest vertices), not the ankle bone: in the library each foot must be down at
+least 35% of the walk and the run cycle, a planted sole must slide under 15% of the travel
+and wander under 10% of the stride, and the swing must lift it 6% to 20% of the hip's
+height; in the game each sole within 8 mm of the terrain under it must slide under 15% of
+the body's travel, on flat ground and on a slope. A stretch check poses every clip at 8
+phases and fails on any skin edge over 4 times its idle length (the chick's old rump spike
+measured 66 to 99 times).
+
+Status: both stay parked (`"available": false`).
+- The chick looks right (downy close up, a chick at riding distance) and its clips pass
+  every check, but in the game its feet still slide at times: the follow logic sometimes
+  moves the pet faster than the speed that drives its stride (bursts of 1 to 1.3 m/s while
+  the declared speed stays at 0.6), and a dash over 4 m/s flaps it up for a moment. Two
+  of the last three runs failed the in-game slide check (20% and 25%; the third 11.5%).
+  The fix is in `assets/features/pet-models.js` `driveReal`: advance a clip gait's phase by
+  the distance the pet really covers (as bone-walked bodies already do with `R.mv`).
+- The duckling's rig passes every check, but the AI scan's head is flat-topped and
+  box-like seen head on and from behind, there is still a faint ledge where the chin meets
+  the neck, and the body's texture is smeared in places. Rig work cannot fix that; a
+  better duckling scan can. It has the same in-game slide bursts as the chick.
