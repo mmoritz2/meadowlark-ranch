@@ -1,0 +1,14 @@
+const fs=require('node:fs'),path=require('node:path');
+const QA=require('../../tools/qa-platform.cjs'),{chromium}=QA;
+const HERE=__dirname,OUT=path.resolve(HERE,'../../output/native-rider-reins-review-qa'),URL=QA.BASE+'/review/native-rider-reins/review.html';fs.mkdirSync(OUT,{recursive:true});
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.QA_CHROMIUM,args:QA.gpuArgs(['--no-sandbox'])});try{
+ const page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto(URL);await page.waitForFunction(()=>window.nativeReinsInspect?.()?.sides?.left?.hand,{timeout:60000});
+ const data=await page.evaluate(()=>{const rows=[],dist=(a,b)=>Math.hypot(...a.map((x,i)=>x-b[i])),length=pts=>pts.slice(1).reduce((sum,p,i)=>sum+dist(p,pts[i]),0);
+  for(let i=0;i<=128;i++){const travel=nativeTravelSetCycle(i/128,true),rein=nativeReinsInspect(),sides={};for(const side of ['left','right']){const r=rein.sides[side];sides[side]={bitGapM:dist(r.bit,r.mainStart),fistGapM:dist(r.hand,r.mainEnd),continuationGapM:dist(r.mainEnd,r.looseStart),mainLengthM:length(r.mainCenterline),looseLengthM:length(r.looseCenterline),maxMainSegmentM:Math.max(...r.mainCenterline.slice(1).map((p,j)=>dist(p,r.mainCenterline[j]))),mainPoints:r.mainCenterline,loosePoints:r.looseCenterline};}rows.push({phase:i/128,actorZ:travel.actorZ,sides});}
+  const seam={};for(const side of ['left','right']){const a=rows[0].sides[side],b=rows.at(-1).sides[side],travel=rows.at(-1).actorZ-rows[0].actorZ;seam[side]=Math.max(...a.mainPoints.map((p,j)=>dist(p,[b.mainPoints[j][0],b.mainPoints[j][1],b.mainPoints[j][2]-travel])),...a.loosePoints.map((p,j)=>dist(p,[b.loosePoints[j][0],b.loosePoints[j][1],b.loosePoints[j][2]-travel])));}
+  return {rows,seam};});
+ const summary={phases:data.rows.length,cycleTravelM:data.rows.at(-1).actorZ-data.rows[0].actorZ,errors,seam:data.seam,sides:{}};
+ for(const side of ['left','right']){const r=data.rows.map(x=>x.sides[side]);summary.sides[side]={maxBitGapM:Math.max(...r.map(x=>x.bitGapM)),maxFistGapM:Math.max(...r.map(x=>x.fistGapM)),maxContinuationGapM:Math.max(...r.map(x=>x.continuationGapM)),mainLengthRangeM:[Math.min(...r.map(x=>x.mainLengthM)),Math.max(...r.map(x=>x.mainLengthM))],looseLengthRangeM:[Math.min(...r.map(x=>x.looseLengthM)),Math.max(...r.map(x=>x.looseLengthM))],maxMainSegmentM:Math.max(...r.map(x=>x.maxMainSegmentM))};}
+ summary.technicalPass=errors.length===0&&Object.values(summary.seam).every(x=>x<1e-5)&&Object.values(summary.sides).every(s=>s.maxBitGapM<1e-5&&s.maxFistGapM<1e-5&&s.maxContinuationGapM<1e-5&&s.maxMainSegmentM<.1);
+ fs.writeFileSync(path.join(OUT,'motion-summary.json'),JSON.stringify(summary,null,2)+'\n');console.log(JSON.stringify(summary,null,2));if(!summary.technicalPass)process.exitCode=1;
+}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

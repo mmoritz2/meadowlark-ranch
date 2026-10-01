@@ -1,0 +1,157 @@
+{
+  "M2M Walk": {
+    "contacts": {
+      "frontL": {
+        "sourceNearGroundFrames": 57,
+        "targetOutside15mmInThoseFrames": 1,
+        "targetNearGroundYRangeM": [
+          -4.190283793803831e-05,
+          0.026050414447262974
+        ],
+        "trajectoryVerticalMaxErrorM": 0.005516582458999328
+      },
+      "frontR": {
+        "sourceNearGroundFrames": 52,
+        "targetOutside15mmInThoseFrames": 20,
+        "targetNearGroundYRangeM": [
+          -3.8379395326530036e-05,
+          0.0735885456629155
+        ],
+        "trajectoryVerticalMaxErrorM": 0.056606700557050964
+      },
+      "hindL": {
+        "sourceNearGroundFrames": 52,
+        "targetOutside15mmInThoseFrames": 26,
+        "targetNearGroundYRangeM": [
+          0.004936308835045305,
+          0.13176438900054685
+        ],
+        "trajectoryVerticalMaxErrorM": 0.10996631487591205
+      },
+      "hindR": {
+        "sourceNearGroundFrames": 65,
+        "targetOutside15mmInThoseFrames": 55,
+        "targetNearGroundYRangeM": [
+          2.3325619005643873e-05,
+          0.23603630559368166
+        ],
+        "trajectoryVerticalMaxErrorM": 0.2327388968843586
+      }
+    },
+    "localRotationExcursionDegreesFromFirstFrame": {
+      "pelvis_08": 4.858844699827328,
+      "spine_01_09": 6.331877945004978,
+      "spine_04_012": 4.238948731076886,
+      "neck_01_014": 3.476002343727739,
+      "neck_03_016": 1.3568461575174036,
+      "head_019": 0.4015802010131047,
+      "saddle_0333": 7.120208967053118e-16
+    }
+  },
+  "M2M Trot": {
+    "contacts": {
+      "frontL": {
+        "sourceNearGroundFrames": 32,
+        "targetOutside15mmInThoseFrames": 1,
+        "targetNearGroundYRangeM": [
+          -1.6407200061296923e-05,
+          0.020923830810303135
+        ],
+        "trajectoryVerticalMaxErrorM": 5.745007419141767e-05
+      },
+      "frontR": {
+        "sourceNearGroundFrames": 35,
+        "targetOutside15mmInThoseFrames": 1,
+        "targetNearGroundYRangeM": [
+          -4.7200989300417474e-05,
+          0.020656684388419395
+        ],
+        "trajectoryVerticalMaxErrorM": 0.00011477429351496385
+      },
+      "hindL": {
+        "sourceNearGroundFrames": 43,
+        "targetOutside15mmInThoseFrames": 18,
+        "targetNearGroundYRangeM": [
+          9.015612010776497e-06,
+          0.13567975733812382
+        ],
+        "trajectoryVerticalMaxErrorM": 0.13567975733812382
+      },
+      "hindR": {
+        "sourceNearGroundFrames": 35,
+        "targetOutside15mmInThoseFrames": 13,
+        "targetNearGroundYRangeM": [
+          3.4054010999984285e-06,
+          0.17613030810353128
+        ],
+        "trajectoryVerticalMaxErrorM": 0.17263397386566004
+      }
+    },
+    "localRotationExcursionDegreesFromFirstFrame": {
+      "pelvis_08": 6.281444385846543,
+      "spine_01_09": 4.081221691196513,
+      "spine_04_012": 9.776846684784625e-07,
+      "neck_01_014": 3.246068107500159e-06,
+      "neck_03_016": 8.485094281067842e-07,
+      "head_019": 2.4901414611597814,
+      "saddle_0333": 7.120208967053118e-16
+    }
+  },
+  "M2M Run": {
+    "contacts": {
+      "frontL": {
+        "sourceNearGroundFrames": 28,
+        "targetOutside15mmInThoseFrames": 6,
+        "targetNearGroundYRangeM": [
+          2.6000307484674856e-05,
+          0.0373257259805749
+        ],
+        "trajectoryVerticalMaxErrorM": 0.019626372012660362
+      },
+      "frontR": {
+        "sourceNearGroundFrames": 25,
+        "targetOutside15mmInThoseFrames": 1,
+        "targetNearGroundYRangeM": [
+          2.7125500227324212e-05,
+          0.021851357513796004
+        ],
+        "trajectoryVerticalMaxErrorM": 8.616791293929171e-05
+      },
+      "hindL": {
+        "sourceNearGroundFrames": 18,
+        "targetOutside15mmInThoseFrames": 18,
+        "targetNearGroundYRangeM": [
+          0.04822032692647683,
+          0.20212418273841593
+        ],
+        "trajectoryVerticalMaxErrorM": 0.1960397322663156
+      },
+      "hindR": {
+        "sourceNearGroundFrames": 24,
+        "targetOutside15mmInThoseFrames": 24,
+        "targetNearGroundYRangeM": [
+          0.029063950723403342,
+          0.16423364643124466
+        ],
+        "trajectoryVerticalMaxErrorM": 0.15306573502036633
+      }
+    },
+    "localRotationExcursionDegreesFromFirstFrame": {
+      "pelvis_08": 1.6944913735766476e-15,
+      "spine_01_09": 5.84462900130504e-17,
+      "spine_04_012": 1.8550564570700542e-06,
+      "neck_01_014": 15.21477170287526,
+      "neck_03_016": 4.244826316701833,
+      "head_019": 3.111504510664006,
+      "saddle_0333": 7.120208967053118e-16
+    }
+  },
+  "_sampling": {
+    "phases": 96,
+    "sourceNearGroundThresholdM": 0.025,
+    "targetToleranceM": 0.015,
+    "sourceTime": "target time + 1/30s, clamped to source duration; final 1/30s bridges source last to first",
+    "floor": "fixed target floor at zero; source sole values are relative to fixed source Rest_Pose floor",
+    "caveat": "Near-ground is a proxy, not proof of planted contact."
+  }
+}

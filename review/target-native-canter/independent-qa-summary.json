@@ -1,0 +1,38 @@
+{
+  "candidateSha256": "81039eb4d4c2e75ae992b78b4e6382d41bd7b302c5c4fdce75388a71901045d2",
+  "errors": [],
+  "results": [
+    {
+      "lead": "left",
+      "clip": "Target Native Canter Left",
+      "phases": 256,
+      "intent": {
+        "duration": 0.64,
+        "stanceFraction": 0.4,
+        "footOffsets": {
+          "HR": 0,
+          "HL": 0.24,
+          "FR": 0.24,
+          "FL": 0.48
+        }
+      },
+      "floor": -0.004714777107501428
+    },
+    {
+      "lead": "right",
+      "clip": "Target Native Canter Right",
+      "phases": 256,
+      "intent": {
+        "duration": 0.64,
+        "stanceFraction": 0.4,
+        "footOffsets": {
+          "HL": 0,
+          "HR": 0.24,
+          "FL": 0.24,
+          "FR": 0.48
+        }
+      },
+      "floor": -0.004714777107501428
+    }
+  ]
+}

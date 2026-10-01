@@ -1,0 +1,20 @@
+{
+  "candidateSha256": "8f622bf3b22244ba1b6a39c72e3cb1ce6f2e378bb7eb731a22caba33b2459814",
+  "originalSourceSha256": "6110fb3bcfe6ba6660c9c05d67269bc800d19706fab54db29633003d87f0a6a3",
+  "clip": "Target Native Walk Rollover",
+  "ready": true,
+  "bones": 677,
+  "finite": true,
+  "intent": {
+    "stanceFraction": 0.65,
+    "duration": 1.12,
+    "footOffsets": {
+      "HL": 0,
+      "FL": 0.25,
+      "HR": 0.5,
+      "FR": 0.75
+    }
+  },
+  "floor": -1.7011519137799525e-9,
+  "errors": []
+}

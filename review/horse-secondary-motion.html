@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="data:,">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Horse hair motion comparison · Private review</title>
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;font:14px/1.45 system-ui,sans-serif;background:#182921;color:#eef0e9}
+    main{display:grid;grid-template-rows:auto 1fr auto;height:100dvh}
+    header{padding:16px 22px;background:#12251c;border-bottom:1px solid #ffffff24;display:flex;align-items:start;justify-content:space-between;gap:24px}
+    h1{font:29px/1.1 Georgia,serif;margin:0 0 6px;font-weight:400}
+    p{margin:0;color:#c5cfc3;max-width:850px}
+    a{color:#e4d29e}
+    #stage{position:relative;min-height:0}
+    #stage canvas{display:block;width:100%;height:100%;touch-action:none}
+    .labels{position:absolute;inset:12px 0 auto;display:grid;grid-template-columns:1fr 1fr;pointer-events:none}
+    .labels div{text-align:center;padding:0 18px;font-weight:700;text-shadow:0 1px 3px #000c}
+    .labels div+div{border-left:1px solid #ffffff55}
+    #status{position:absolute;left:18px;bottom:15px;background:#17281eda;padding:7px 10px;border-radius:6px}
+    footer{display:flex;align-items:center;gap:10px;padding:12px 18px;background:#12251c;flex-wrap:wrap}
+    button,select,input{font:inherit}button,select{color:#f2f2e9;background:#284436;border:1px solid #637966;border-radius:6px;padding:7px 11px;cursor:pointer}
+    button[aria-pressed="true"]{background:#dfcca0;color:#1a2e22}
+    input[type=range]{width:min(240px,40vw)}
+    small{color:#b6c2b5}
+    @media(max-width:700px){header{padding:12px 14px}h1{font-size:23px}header p{font-size:12px}footer{padding:8px;gap:5px}.labels{font-size:12px}}
+  </style>
+  <script type="importmap">{"imports":{"three":"../assets/vendor/three/build/three.module.js","three/addons/":"../assets/vendor/three/examples/jsm/"}}</script>
+</head>
+<body>
+<main>
+  <header>
+    <div><h1 id="title">White Western horse: hair motion study</h1><p id="description">Both sides use the same original 677-joint horse, Western tack, and creator Walk. The right side adds review-only movement to individually skinned mane and tail strands after each walk frame. Body, head, neck, legs, and tack retain the creator animation, including its low crouch.</p></div>
+    <a href="../assets/models/horse-imports/wildmesh-white-western/game/native-candidate/review.html">Full horse preview</a>
+  </header>
+  <div id="stage">
+    <div class="labels"><div>Original creator Walk</div><div>Same Walk + strand motion</div></div>
+    <div id="status" role="status">Loading local horse…</div>
+  </div>
+  <footer>
+    <button id="play" aria-pressed="true">Pause</button>
+    <label for="speed">Playback</label><select id="speed"><option value="0.5">½× Walk</option><option value="1" selected>1× Walk</option><option value="2">2× Walk</option></select>
+    <label for="phase">Cycle</label><input id="phase" type="range" min="0" max="1000" value="0">
+    <button id="side" aria-pressed="false">Side view</button><button id="quarter" aria-pressed="true">Quarter view</button><button id="head" aria-pressed="false">Mane close-up</button><button id="tail" aria-pressed="false">Tail close-up</button>
+    <small>2× is sped-up Walk, not a trot or canter. Private preview; no roster or gameplay change.</small>
+  </footer>
+</main>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {clone} from 'three/addons/utils/SkeletonUtils.js';
+
+const $=id=>document.getElementById(id),stage=$('stage');
+const variant=new URLSearchParams(location.search).get('horse')==='bay'?'bay':'white';
+const modelUrl=variant==='bay'?'../output/native-bay-proof/native-bay-prototype.glb':'../assets/models/horse-imports/wildmesh-white-western/game/native-candidate/native-white-western-candidate.glb';
+if(variant==='bay'){$('title').textContent='Bay horse: hair motion study';$('description').textContent='Experimental Bay body on the original 677-joint WildMesh rig and creator Walk. Both sides show the same unfinished Bay geometry; the right side changes only the mane and tail strands. Its walk and body fit still need separate review.';}
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(2,devicePixelRatio));renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.14;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;stage.prepend(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(37,1,.03,50),target=new THREE.Vector3(0,1.0,0),view={yaw:-.72,pitch:.13,distance:6.9};
+const modes={quarter:{yaw:-.72,pitch:.13,distance:6.9,target:[0,1,0]},side:{yaw:-Math.PI/2,pitch:.08,distance:7.3,target:[0,1,0]},head:{yaw:-.88,pitch:.12,distance:2.7,focus:'neck_03_016'},tail:{yaw:-1.18,pitch:.13,distance:2.7,focus:'tail_03_0369'}};
+let left=null,right=null,walk=null,duration=0,time=0,playing=true,last=performance.now(),strandBones=[],leftHair=null;
+function scene(){
+  const s=new THREE.Scene();s.background=new THREE.Color('#cdd2c9');s.add(new THREE.HemisphereLight(0xf4f7ff,0x7d806d,2.1));
+  const sun=new THREE.DirectionalLight(0xfff0db,2.6);sun.position.set(-3,7,4);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-4,right:4,top:4,bottom:-4,near:.1,far:15});sun.shadow.normalBias=.014;s.add(sun);
+  const fill=new THREE.DirectionalLight(0xe2edff,.8);fill.position.set(3,3,-3);s.add(fill);
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshStandardMaterial({color:'#aeb5a9',roughness:1}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;s.add(floor);
+  return s;
+}
+function skinnedBounds(root){
+  root.updateMatrixWorld(true);const bounds=new THREE.Box3(),p=new THREE.Vector3();
+  root.traverse(o=>{if(!o.isSkinnedMesh)return;o.skeleton.update();const a=o.geometry.attributes.position;for(let i=0;i<a.count;i++){o.getVertexPosition(i,p);bounds.expandByPoint(p.applyMatrix4(o.matrixWorld));}});
+  return bounds;
+}
+function makePanel(asset){
+  const s=scene(),model=clone(asset.scene);s.add(model);const mixer=new THREE.AnimationMixer(model);mixer.clipAction(walk).play();mixer.update(0);
+  const bounds=skinnedBounds(model),center=bounds.getCenter(new THREE.Vector3());model.position.set(-center.x,-bounds.min.y,-center.z);model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=false;}});
+  return {scene:s,model,mixer};
+}
+function numericSuffix(name){const match=name.match(/_(\d{2,4})$/);return match?Number(match[1]):0;}
+function strandKind(name){if(/^dyn_(?:new_(?:head_)?neck|head_end)/.test(name))return 'mane';if(/^dyn_(?:bounce_)?tail/.test(name))return 'tail';return null;}
+function hairMesh(model){
+  const hair=[];model.traverse(o=>{if(o.isSkinnedMesh&&(/hair/i.test(o.name)||/hair/i.test(o.material?.name||'')||o.geometry.attributes.position.count===23514))hair.push(o);});
+  if(hair.length!==1)throw Error('Expected one original skinned hair mesh, found '+hair.length);
+  return hair[0];
+}
+function inspectStrands(model){
+  const mesh=hairMesh(model),index=mesh.geometry.attributes.skinIndex,weight=mesh.geometry.attributes.skinWeight,impact=new Float64Array(mesh.skeleton.bones.length);
+  for(let i=0;i<index.count;i++)for(let c=0;c<4;c++)impact[index.getComponent(i,c)]+=weight.getComponent(i,c);
+  return mesh.skeleton.bones.map((bone,i)=>({bone,index:i,name:bone.name,kind:strandKind(bone.name),weight:impact[i],baseRotation:bone.quaternion.clone()})).filter(row=>row.kind&&row.weight>5);
+}
+// Apply only after AnimationMixer writes the creator pose. The clip animates these
+// strands at almost constant local rotation, so this is an additive hair layer.
+// Individual phase lags and low root/high tip amplitudes avoid a rigid wiggle.
+function addStrandMotion(t,playback){
+  const speedGain=Math.min(1.45,.72+.29*playback),omega=2*Math.PI/duration;
+  for(const strand of strandBones){
+    const {bone,name,kind}=strand,serial=numericSuffix(name),tip=/_0[3-8]_|_0[3-8]$/.test(name)||/_end/.test(name),hash=(serial*47)%19/19;
+    // A few strand nodes are not keyed by the creator clip. Reset those as well
+    // as the keyed ones so the additive angle never piles up frame by frame.
+    bone.quaternion.copy(strand.baseRotation);
+    // Integer cycle harmonics keep the additive pose continuous when Walk loops.
+    const phase=omega*t*(kind==='tail'?1:2)-hash*1.2-(tip?.43:.08);
+    const amp=speedGain*(kind==='tail'?(tip?.065:.027):(tip?.045:.019));
+    const x=amp*Math.sin(phase),z=amp*.58*Math.sin(omega*t+hash*6.28);
+    bone.quaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(x,0,z,'XYZ'))).normalize();
+  }
+  right.model.updateMatrixWorld(true);
+}
+function setView(mode){
+  const m=modes[mode];Object.assign(view,{yaw:m.yaw,pitch:m.pitch,distance:m.distance});if(m.target)target.fromArray(m.target);
+  if(m.focus){const bone=left?.model.getObjectByName(m.focus);if(bone){bone.updateWorldMatrix(true,false);bone.getWorldPosition(target);target.y+=mode==='head'?.05:-.15;}}
+  for(const id of Object.keys(modes))$(id).setAttribute('aria-pressed',String(id===mode));render();
+}
+for(const id of Object.keys(modes))$(id).onclick=()=>setView(id);
+function render(){
+  if(!left||!right)return;
+  const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight),half=w/2;
+  renderer.setSize(w,h,false);camera.aspect=half/h;camera.updateProjectionMatrix();
+  camera.position.copy(target).add(new THREE.Vector3(Math.sin(view.yaw)*Math.cos(view.pitch),Math.sin(view.pitch),Math.cos(view.yaw)*Math.cos(view.pitch)).multiplyScalar(view.distance));camera.lookAt(target);
+  renderer.setScissorTest(true);
+  for(const [i,panel]of [left,right].entries()){renderer.setViewport(i*half,0,half,h);renderer.setScissor(i*half,0,half,h);renderer.render(panel.scene,camera);}
+  renderer.setScissorTest(false);
+}
+function setTime(t){
+  time=((t%duration)+duration)%duration;left.mixer.setTime(time);right.mixer.setTime(time);addStrandMotion(time,Number($('speed').value));$('phase').value=String(Math.round(time/duration*1000));render();
+}
+function inspect(){
+  const rows=[];
+  for(const strand of strandBones){const a=leftHair.skeleton.bones[strand.index],b=strand.bone;if(!a||a.name!==strand.name)throw Error('Native skin index mismatch at '+strand.index);rows.push({name:strand.name,kind:strand.kind,weight:strand.weight,deltaDegrees:THREE.MathUtils.radToDeg(a.quaternion.angleTo(b.quaternion))});}
+  const bodyNames=['pelvis_08','spine_01_09','spine_02_010','spine_03_011','spine_04_012','neck_01_014','neck_05_018','head_019','tail_01_0367'];
+  const bodyQuaternionMaxComponentDelta=left&&right?Math.max(...bodyNames.map(name=>{const a=left.model.getObjectByName(name),b=right.model.getObjectByName(name);if(!a||!b)throw Error('Missing original body joint '+name);return Math.max(...['x','y','z','w'].map(c=>Math.abs(a.quaternion[c]-b.quaternion[c])));})):0;
+  return {ready:!!left,variant,clip:walk?.name||null,duration,phase:duration?time/duration:0,playback:Number($('speed').value),originalBones:leftHair?.skeleton.bones.length||null,strandCount:strandBones.length,maneStrands:rows.filter(x=>x.kind==='mane').length,tailStrands:rows.filter(x=>x.kind==='tail').length,maxDeltaDegrees:Math.max(0,...rows.map(x=>x.deltaDegrees)),nonzeroStrands:rows.filter(x=>x.deltaDegrees>.05).length,bodyQuaternionMaxComponentDelta,rows};
+}
+window.secondaryReviewInspect=inspect;
+window.secondaryReviewSetPhase=f=>{playing=false;$('play').textContent='Play';$('play').setAttribute('aria-pressed','false');setTime(f*duration);return inspect();};
+$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'Pause':'Play';$('play').setAttribute('aria-pressed',String(playing));};
+$('phase').oninput=()=>{playing=false;$('play').textContent='Play';$('play').setAttribute('aria-pressed','false');setTime(Number($('phase').value)/1000*duration);};
+$('speed').onchange=()=>setTime(time);
+let drag=null;renderer.domElement.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};renderer.domElement.setPointerCapture(e.pointerId);});renderer.domElement.addEventListener('pointermove',e=>{if(!drag)return;view.yaw-=(e.clientX-drag.x)*.005;view.pitch=Math.max(-.2,Math.min(.55,view.pitch+(e.clientY-drag.y)*.005));drag={x:e.clientX,y:e.clientY};render();});renderer.domElement.addEventListener('pointerup',()=>drag=null);renderer.domElement.addEventListener('pointercancel',()=>drag=null);renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();view.distance=Math.max(1.4,Math.min(10,view.distance*Math.exp(e.deltaY*.001)));render();},{passive:false});
+new ResizeObserver(render).observe(stage);
+try{
+  const asset=await new GLTFLoader().loadAsync(modelUrl);
+  walk=THREE.AnimationClip.findByName(asset.animations,'Horse|Horse_Walk');if(!walk)throw Error('Creator Walk clip missing');duration=walk.duration;
+  left=makePanel(asset);right=makePanel(asset);leftHair=hairMesh(left.model);strandBones=inspectStrands(right.model);if(strandBones.length<20)throw Error('Original mane/tail detail rig unavailable');
+  setTime(0);$('status').textContent=`${strandBones.length} skinned hair joints have independent review-only motion. Drag to orbit; scroll to zoom.`;
+}catch(e){$('status').textContent='Could not load private motion comparison: '+e.message;console.error(e);}
+function tick(now){const dt=Math.min(.1,(now-last)/1000);last=now;if(playing&&left)setTime(time+dt*Number($('speed').value));requestAnimationFrame(tick);}requestAnimationFrame(tick);
+</script>
+</body>
+</html>

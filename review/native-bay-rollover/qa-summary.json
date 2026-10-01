@@ -1,0 +1,83 @@
+{
+  "errors": [],
+  "contacts": {
+    "FL": {
+      "maskVertices": 121,
+      "intendedStanceSamples": 42,
+      "minY": 0.0009470683423678915,
+      "highestRaisedPatchY": 0.1822781820861164,
+      "maxContactMinY": 0.0011361029828339192,
+      "outside10mm": 0,
+      "finite": true
+    },
+    "FR": {
+      "maskVertices": 115,
+      "intendedStanceSamples": 42,
+      "minY": 0.0009517125027506111,
+      "highestRaisedPatchY": 0.18689923814851053,
+      "maxContactMinY": 0.0010876921019970982,
+      "outside10mm": 0,
+      "finite": true
+    },
+    "HL": {
+      "maskVertices": 84,
+      "intendedStanceSamples": 42,
+      "minY": 0.0009149460381739699,
+      "highestRaisedPatchY": 0.1887834789181512,
+      "maxContactMinY": 0.0011060582452254294,
+      "outside10mm": 0,
+      "finite": true
+    },
+    "HR": {
+      "maskVertices": 78,
+      "intendedStanceSamples": 42,
+      "minY": 0.0008978499385453851,
+      "highestRaisedPatchY": 0.19124605025124716,
+      "maxContactMinY": 0.0012064663176758871,
+      "outside10mm": 0,
+      "finite": true
+    }
+  },
+  "seamMaxComponentDelta": 0,
+  "upperBackYRange": [
+    1.472399914964592,
+    1.4887129210556913
+  ],
+  "marker": {
+    "vertex": 1998,
+    "weights": [
+      {
+        "bone": "spine_04_012",
+        "weight": 0.7607843279838562
+      },
+      {
+        "bone": "chestiddleslider_00_0191",
+        "weight": 0.12156862765550613
+      },
+      {
+        "bone": "spine_03_011",
+        "weight": 0.062745101749897
+      },
+      {
+        "bone": "neck_02_middleslider_02_0177",
+        "weight": 0.054901961237192154
+      }
+    ]
+  },
+  "originalWalkUpperBackYRange": [
+    1.47234527537174,
+    1.4887532704065858
+  ],
+  "bones": 677,
+  "wholeBodyMinY": 0.0008978499385453851,
+  "intendedSupportCounts": {
+    "FR,HL,HR": 10,
+    "FR,HL": 6,
+    "FL,FR,HL": 10,
+    "FL,HL": 6,
+    "FL,HL,HR": 10,
+    "FL,HR": 6,
+    "FL,FR,HR": 10,
+    "FR,HR": 6
+  }
+}

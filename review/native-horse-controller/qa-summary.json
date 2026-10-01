@@ -1,0 +1,110 @@
+{
+  "scope": "Private clip controller; contact travel and rider tested separately",
+  "nativeBones": 677,
+  "nominalSpeedMps": 0.5494505494505494,
+  "maxPose": {
+    "positionMax": 0,
+    "quaternionDotMax": 6.999344970282095e-8,
+    "scaleMax": 0
+  },
+  "travel": {
+    "actual": [
+      0,
+      0,
+      1.0989010989010974
+    ],
+    "expected": [
+      0,
+      0,
+      1.0989010989010977
+    ],
+    "error": 2.220446049250313e-16,
+    "distanceError": 2.220446049250313e-16
+  },
+  "unsupported": [
+    {
+      "name": "trot",
+      "rejected": true,
+      "message": "Native gait is not available: trot"
+    },
+    {
+      "name": "canter",
+      "rejected": true,
+      "message": "Native gait is not available: canter"
+    },
+    {
+      "name": "gallop",
+      "rejected": true,
+      "message": "Native gait is not available: gallop"
+    },
+    {
+      "name": "jump",
+      "rejected": true,
+      "message": "Native gait is not available: jump"
+    }
+  ],
+  "afterUnsupported": {
+    "mode": "walk",
+    "phase01": 0.7857142781116543,
+    "speedMps": 0.5494505494505494,
+    "distanceM": 1.0989010989010974,
+    "nominalSpeedMps": 0.5494505494505494,
+    "supportedModes": [
+      "rest",
+      "stand",
+      "walk"
+    ],
+    "transitionsReviewed": false
+  },
+  "idle": {
+    "bones": 677,
+    "positionMax": 0,
+    "quaternionDotMax": 7.271195745506276e-8,
+    "scaleMax": 0
+  },
+  "standTravelError": 2.220446049250313e-16,
+  "restored": {
+    "bones": 677,
+    "positionMax": 0,
+    "quaternionDotMax": 4.990675683824719e-8,
+    "scaleMax": 0
+  },
+  "rotatedTravel": {
+    "actual": [
+      0.6153846153846154,
+      0,
+      1.1102230246251565e-16
+    ],
+    "expected": [
+      0.6153846153846154,
+      0,
+      0
+    ],
+    "error": 1.1102230246251565e-16,
+    "speedError": 0
+  },
+  "inheritedScale": {
+    "actual": [
+      0,
+      0,
+      0.9230769230769231
+    ],
+    "expected": [
+      0,
+      0,
+      0.9230769230769231
+    ],
+    "distanceError": 0,
+    "speedError": 0
+  },
+  "invalidDeltaRejected": true,
+  "disposedPose": {
+    "bones": 677,
+    "positionMax": 0,
+    "quaternionDotMax": 4.990675683824719e-8,
+    "scaleMax": 0
+  },
+  "disposedRejected": true,
+  "failures": [],
+  "browserErrors": []
+}

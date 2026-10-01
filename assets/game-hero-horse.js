@@ -2,10 +2,13 @@ import {createArtistMotion,ARTIST_GAITS} from './artist-horse-motion.js?v=gaits-
 import {finishHeroCoat} from './hero-horse-coat.js?v=hero-ranch-1';
 import {createHeroHorseGroom} from './hero-horse-groom.js?v=hero-ranch-1';
 import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-20260908-4';
+import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities} from './native-horse-motion.js';
+export {getNativeHorseCapabilities} from './native-horse-motion.js';
 
 // Adapts the approved raw-space hero to the ranch's +Z-forward mount space.
 // Existing horse models continue using their own renderer and animation path.
 export function initGameHero(THREE,rig){
+  if(rig.profile?.nativeBreed){rig.heroMotion=createNativeHorseMotion({THREE,root:rig.nativeRoot,clips:rig.animations,profile:rig.profile});rig.nativeMotion=rig.heroMotion;rig.heroMotion.set('stand');rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroSeat=new THREE.Vector3();return;}
   if(rig.profile?.artistBreed){rig.heroMotion=createArtistMotion({THREE,root:rig.scene,skin:rig.skin,heightM:rig.profile.heightM});rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroSeat=new THREE.Vector3();rig.artistClock=0;rig.artistWorldScale=new THREE.Vector3();return;}
   if(!rig.profile?.hero)return;
   rig.heroMaterial=finishHeroCoat({THREE,scene:rig.scene});
@@ -14,6 +17,7 @@ export function initGameHero(THREE,rig){
   rig.heroSeat=new THREE.Vector3();
 }
 export function disposeMountedRig(rig){
+  if(rig.profile?.nativeBreed){rig.nativeRider?.dispose?.();rig.nativeMotion?.dispose?.();}
   (rig.groom||rig.hair)?.dispose?.();
   const skeletons=new Set();rig.scene?.traverse(o=>{if(o.isSkinnedMesh&&o.skeleton)skeletons.add(o.skeleton);});
   for(const skeleton of skeletons)skeleton.dispose();
@@ -35,6 +39,7 @@ export function heroGroomFacade({THREE,skin,bones,mount,profile}){
   return facade;
 }
 export function startGameHeroJump(rig){
+  if(rig.profile?.nativeBreed)return false;
   if(!rig.heroMotion||rig.heroJumpAge!==null)return false;
   rig.heroJumpAge=0;rig.heroMotion.set('jump');return true;
 }
@@ -49,6 +54,7 @@ export function startGameHeroJump(rig){
 const JUMP_GATHER_RATE=2.4,JUMP_LAND_RATE=1.6,JUMP_RELEASE=1.18,JUMP_GRACE=0.35;
 function jumpClockRate(age){return age<.38?JUMP_GATHER_RATE:age<1.16?1:JUMP_LAND_RATE;}
 export function tickGameHero(rig,speed,dt,turn=0){
+  if(rig.profile?.nativeBreed)return tickNativeHorse(rig,speed,dt,turn);
   const motion=rig.heroMotion;if(!motion)return null;
   rig.artistClock=(rig.artistClock||0)+dt;rig.skin.material.userData.update?.(rig.artistClock);
   let rate=1;
@@ -98,11 +104,20 @@ export function tickGameHero(rig,speed,dt,turn=0){
   return state;
 }
 export function gameHeroSeat(rig,mount){
+  if(rig.profile?.nativeBreed&&rig.nativeSeatFollower&&mount){rig.scene.updateWorldMatrix(true,true);return mount.worldToLocal(rig.nativeSeatFollower.getWorldPosition(rig.heroSeat||mount.position.clone().set(0,0,0)));}
   if(!rig.heroMotion||!mount)return null;
   const v=rig.heroSeat,skin=rig.skin,bone=rig.profile.artistBreed?rig.bones.find(b=>b.name==='spine'):rig.bones[2],index=rig.bones.indexOf(bone),a=rig.profile.anchors.saddle[0];
   rig.scene.updateWorldMatrix(true,true);
   v.fromArray(a).applyMatrix4(skin.bindMatrix).applyMatrix4(skin.skeleton.boneInverses[index]).applyMatrix4(bone.matrixWorld);
   return mount.worldToLocal(v);
+}
+
+// The native groom is already skinned and animated in the preserved source.
+export function nativeGroomFacade({scene,skin,mount,profile}={}){
+  let root=scene||skin;if(!scene)while(root?.parent&&root.parent!==mount)root=root.parent;
+  const meshes=[];root?.traverse(o=>{if(o.isSkinnedMesh&&profile?.hairVertexCount&&o.geometry.attributes.position.count===profile.hairVertexCount)meshes.push(o);});
+  const group={get visible(){return meshes.some(m=>m.visible);},set visible(v){for(const mesh of meshes)mesh.visible=v;}};
+  return {mane:group,tail:group,meshes,setColors(){},update(){},reset(){},dispose(){},stats:{native:true,meshes:meshes.length}};
 }
 
 // The approved groom is already skinned into each GLB; never overlay the old

@@ -1,0 +1,140 @@
+{
+  "url": "http://127.0.0.1:8577/review/native-horse-travel/travel.html",
+  "modelSha256": "dcec158d30a7bab814b4aaaeeb07dff95fc54d4dbe71db704858928fe2c904ec",
+  "horseBones": 677,
+  "riderBones": 65,
+  "clip": "Target Native Walk",
+  "speedMps": 0.5494505494505494,
+  "stanceDurationS": 0.7280000000000001,
+  "stance": {
+    "HL": {
+      "samples": 257,
+      "soleVertices": 74,
+      "centroidXRangeM": 0.00979045575920029,
+      "centroidZRangeM": 0.0001364617653707434,
+      "centroidEndXZDriftM": 0.004377344351220366,
+      "maximumVertexXZDriftM": 0.005415199040858354,
+      "maximumVertexXDriftM": 0.005415199002496485,
+      "maximumVertexZDriftM": 0.00013513627060524058,
+      "stanceMinY": -0.0005991187205037921,
+      "stanceMaxY": 0.00649956786958765,
+      "actorStanceTravelM": 0.4000000017029898,
+      "centroidStart": [
+        0.2359205973224823,
+        0.0029909882762428294,
+        -0.6458167560235679
+      ],
+      "centroidEnd": [
+        0.23154533915830333,
+        0.0031097148945475874,
+        -0.6456816280621901
+      ],
+      "finite": true
+    },
+    "FL": {
+      "samples": 257,
+      "soleVertices": 115,
+      "centroidXRangeM": 0.004919576605510262,
+      "centroidZRangeM": 0.00012111977809581287,
+      "centroidEndXZDriftM": 0.0027515298275403834,
+      "maximumVertexXZDriftM": 0.004919578607192674,
+      "maximumVertexXDriftM": 0.004919577916991491,
+      "maximumVertexZDriftM": 0.00012112725047463968,
+      "stanceMinY": -0.00013850790417319417,
+      "stanceMaxY": 0.006760470102743412,
+      "actorStanceTravelM": 0.4000000017029899,
+      "centroidStart": [
+        0.11869624620429244,
+        0.0030127765280866326,
+        0.9156227575845218
+      ],
+      "centroidEnd": [
+        0.11594738345922886,
+        0.003068460702810361,
+        0.9157438773626176
+      ],
+      "finite": true
+    },
+    "HR": {
+      "samples": 257,
+      "soleVertices": 65,
+      "centroidXRangeM": 0.009849166481436522,
+      "centroidZRangeM": 0.00012495285601404893,
+      "centroidEndXZDriftM": 0.004405547745758936,
+      "maximumVertexXZDriftM": 0.005445397288502536,
+      "maximumVertexXDriftM": 0.005445393702367796,
+      "maximumVertexZDriftM": 0.00012495008737145596,
+      "stanceMinY": -0.001225742838068252,
+      "stanceMaxY": 0.00570106517945208,
+      "actorStanceTravelM": 0.40000000170298977,
+      "centroidStart": [
+        -0.2682452094054993,
+        0.0030267144993709016,
+        -0.13161712830899147
+      ],
+      "centroidEnd": [
+        -0.26384143381664965,
+        0.003066962101631538,
+        -0.13149218230780016
+      ],
+      "finite": true
+    },
+    "FR": {
+      "samples": 257,
+      "soleVertices": 104,
+      "centroidXRangeM": 0.0049018549958398105,
+      "centroidZRangeM": 0.00035186254659635985,
+      "centroidEndXZDriftM": 0.002761793115624407,
+      "maximumVertexXZDriftM": 0.004901857733353403,
+      "maximumVertexXDriftM": 0.0049018575235572626,
+      "maximumVertexZDriftM": 0.00034821819064867476,
+      "stanceMinY": -0.0007660023245205858,
+      "stanceMaxY": 0.006872260160915672,
+      "actorStanceTravelM": 0.4000000017029897,
+      "centroidStart": [
+        -0.17707003373608735,
+        0.002996857106601027,
+        1.0558159204476067
+      ],
+      "centroidEnd": [
+        -0.17433028070232856,
+        0.0036519600136687633,
+        1.0561641366556154
+      ],
+      "finite": true
+    }
+  },
+  "visualSamples": 16,
+  "riderMaxSoleToTreadM": 5.357231775250337e-7,
+  "riderFinite": true,
+  "reinGripStudy": {
+    "nativeReinVertices": [
+      12,
+      10
+    ],
+    "baselineHandDistanceM": [
+      0.19364293440520822,
+      0.20938267640280428
+    ],
+    "reachHandDistanceM": [
+      0.0020217772428328066,
+      0.011207878398439041
+    ],
+    "reachElbowDegrees": [
+      161.6128991552397,
+      172.75016897525913
+    ],
+    "approved": false,
+    "reason": "The unchanged low source reins require near-straight elbows; optional study stays off by default."
+  },
+  "startPause": {
+    "afterStart": 0.5804464261001925,
+    "atPause": 0.6101785688307517,
+    "afterPause": 0.6101785688307517,
+    "advanced": true,
+    "paused": true
+  },
+  "errors": [],
+  "travelContactPass": true,
+  "technicalPass": true
+}

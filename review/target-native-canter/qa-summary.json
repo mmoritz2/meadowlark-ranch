@@ -1,0 +1,108 @@
+{
+  "errors": [],
+  "leads": {
+    "Left": {
+      "contacts": {
+        "FL": {
+          "stanceSamples": 26,
+          "minY": 0.0009926033185602978,
+          "maxMinY": 0.0012127960684904446,
+          "outside10mm": 0,
+          "finite": true
+        },
+        "FR": {
+          "stanceSamples": 25,
+          "minY": 0.0008953389657548488,
+          "maxMinY": 0.0010849113582357202,
+          "outside10mm": 0,
+          "finite": true
+        },
+        "HL": {
+          "stanceSamples": 25,
+          "minY": 0.0009448991824502133,
+          "maxMinY": 0.0010365462713614534,
+          "outside10mm": 0,
+          "finite": true
+        },
+        "HR": {
+          "stanceSamples": 26,
+          "minY": 0.0008818173094522486,
+          "maxMinY": 0.004297040502651825,
+          "outside10mm": 0,
+          "finite": true
+        }
+      },
+      "supportPatterns": {
+        "HR": 16,
+        "FR,HL,HR": 10,
+        "FR,HL": 5,
+        "FL,FR,HL": 10,
+        "FL": 16,
+        "suspension": 7
+      },
+      "bones": 677,
+      "wholeBodyMinY": 0.0008818173094522486,
+      "upperBackYRange": [
+        1.7216822303363966,
+        1.7760330079429938
+      ],
+      "headYRange": [
+        2.008452901911093,
+        2.1328186260713773
+      ],
+      "allFinite": true
+    },
+    "Right": {
+      "contacts": {
+        "FL": {
+          "stanceSamples": 25,
+          "minY": 0.0009353511168074089,
+          "maxMinY": 0.0010357064858746265,
+          "outside10mm": 0,
+          "finite": true
+        },
+        "FR": {
+          "stanceSamples": 26,
+          "minY": 0.0009546607267389229,
+          "maxMinY": 0.0012581484668631533,
+          "outside10mm": 0,
+          "finite": true
+        },
+        "HL": {
+          "stanceSamples": 26,
+          "minY": 0.001007528064474572,
+          "maxMinY": 0.0012158350536429219,
+          "outside10mm": 0,
+          "finite": true
+        },
+        "HR": {
+          "stanceSamples": 25,
+          "minY": 0.0008578205660432769,
+          "maxMinY": 0.0017711760176388623,
+          "outside10mm": 0,
+          "finite": true
+        }
+      },
+      "supportPatterns": {
+        "HL": 16,
+        "FL,HL,HR": 10,
+        "FL,HR": 5,
+        "FL,FR,HR": 10,
+        "FR": 16,
+        "suspension": 7
+      },
+      "bones": 677,
+      "wholeBodyMinY": 0.0008578205660432769,
+      "upperBackYRange": [
+        1.7216822303363966,
+        1.7760330079429938
+      ],
+      "headYRange": [
+        2.008452901911093,
+        2.1328186260713773
+      ],
+      "allFinite": true
+    }
+  },
+  "seamMaxComponentDelta": 0
+}

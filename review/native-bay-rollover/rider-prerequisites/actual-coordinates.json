@@ -1,0 +1,332 @@
+{
+  "status": "static prerequisite only; Bay motion and mounted rein fit not approved",
+  "bayModel": "output/native-bay-preparation/native-bay-rest.glb",
+  "baySha256": "6110fb3bcfe6ba6660c9c05d67269bc800d19706fab54db29633003d87f0a6a3",
+  "coordinateFrame": {
+    "units": "meters",
+    "up": "+Y",
+    "forward": "+Z",
+    "floorY": 0,
+    "sourceToGameTranslationM": [
+      -0.000723,
+      0.0,
+      0.0
+    ]
+  },
+  "topology": {
+    "horseNativeJoints": 677,
+    "sameNodeNamesAndIds": true,
+    "sameSkinJointSequence": true,
+    "allFiveMeshIndicesJointIndicesWeightsIdentical": true,
+    "tackConnectedComponents": 300,
+    "sourceReinComponentIds": [
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      72,
+      73,
+      74,
+      75,
+      103,
+      104,
+      141,
+      142,
+      143,
+      153,
+      163,
+      164,
+      244,
+      245,
+      254,
+      255,
+      278,
+      283
+    ],
+    "preservedBitAndTreadComponentIds": [
+      89,
+      91,
+      205,
+      209
+    ],
+    "outerNeckGuideComponentIds": [
+      72,
+      141
+    ]
+  },
+  "bayContacts": {
+    "saddleSeatGameM": [
+      0.0,
+      1.478879,
+      0.0
+    ],
+    "saddleBoneNodeId": 411,
+    "saddleBoneGameM": [
+      0.00706,
+      1.468618,
+      0.0
+    ],
+    "trunkVertex1998GameM": [
+      -0.015678,
+      1.479197,
+      0.251941
+    ],
+    "contacts": {
+      "leftStirrupTread": {
+        "componentId": 91,
+        "vertexCount": 54,
+        "gameM": [
+          -0.369247,
+          0.885693,
+          0.182624
+        ],
+        "sourceM": [
+          -0.368524,
+          0.885693,
+          0.182624
+        ]
+      },
+      "rightStirrupTread": {
+        "componentId": 89,
+        "vertexCount": 54,
+        "gameM": [
+          0.354162,
+          0.887347,
+          0.168727
+        ],
+        "sourceM": [
+          0.354885,
+          0.887347,
+          0.168727
+        ]
+      },
+      "leftBitRing": {
+        "componentId": 209,
+        "vertexCount": 231,
+        "gameM": [
+          -0.110778,
+          1.425154,
+          1.043684
+        ],
+        "sourceM": [
+          -0.110055,
+          1.425154,
+          1.043684
+        ]
+      },
+      "rightBitRing": {
+        "componentId": 205,
+        "vertexCount": 231,
+        "gameM": [
+          0.012127,
+          1.425696,
+          1.053157
+        ],
+        "sourceM": [
+          0.01285,
+          1.425696,
+          1.053157
+        ]
+      }
+    },
+    "originalNearSaddleReinGrips": {
+      "right": {
+        "bone": "reins_01_inner_l_0339",
+        "vertexIds": [
+          1093,
+          1096,
+          1097,
+          1098,
+          1235,
+          1237,
+          1238,
+          1308,
+          1475,
+          1479
+        ],
+        "gameM": [
+          0.064201,
+          1.56768,
+          0.207013
+        ]
+      },
+      "left": {
+        "bone": "reins_01_inner_r_0328",
+        "vertexIds": [
+          1917,
+          1918,
+          1919,
+          1920,
+          1981,
+          1982,
+          2267,
+          2269,
+          2270,
+          4861,
+          4863,
+          4864
+        ],
+        "gameM": [
+          -0.050333,
+          1.566222,
+          0.186392
+        ]
+      }
+    },
+    "outerNeckReinGuides": {
+      "left": {
+        "componentId": 72,
+        "pairedWidthMedianM": 0.01549,
+        "sampleGameCentersM": {
+          "0": [
+            -0.204925,
+            1.302995,
+            0.58915
+          ],
+          "6": [
+            -0.19395,
+            1.302876,
+            0.689725
+          ],
+          "15": [
+            -0.172366,
+            1.347443,
+            0.834605
+          ],
+          "24": [
+            -0.129513,
+            1.392498,
+            0.968981
+          ],
+          "27": [
+            -0.106329,
+            1.41919,
+            1.025171
+          ]
+        }
+      },
+      "right": {
+        "componentId": 141,
+        "pairedWidthMedianM": 0.015406,
+        "sampleGameCentersM": {
+          "0": [
+            0.180515,
+            1.308666,
+            0.596518
+          ],
+          "6": [
+            0.163967,
+            1.308583,
+            0.698928
+          ],
+          "15": [
+            0.12808,
+            1.349455,
+            0.847013
+          ],
+          "24": [
+            0.050914,
+            1.393389,
+            0.982073
+          ],
+          "27": [
+            0.012155,
+            1.419679,
+            1.034221
+          ]
+        }
+      }
+    }
+  },
+  "riderStaticFit": {
+    "bones": 65,
+    "legs": {
+      "L": {
+        "hip": [
+          -0.104716,
+          1.522625,
+          -0.116146
+        ],
+        "knee": [
+          -0.317226,
+          1.317133,
+          0.130931
+        ],
+        "ankle": [
+          -0.342883,
+          0.885597,
+          0.059662
+        ],
+        "tread": [
+          -0.369247,
+          0.885693,
+          0.182624
+        ],
+        "upperLegM": 0.385272,
+        "lowerLegM": 0.438134,
+        "targetDistanceM": 0.615461,
+        "maxReachM": 0.823407,
+        "maxReachMarginM": 0.207945,
+        "bootSole": [
+          -0.369244,
+          0.885692,
+          0.182624
+        ],
+        "bootTreadGapM": 3e-06,
+        "kneeInteriorDegrees": 116.956726
+      },
+      "R": {
+        "hip": [
+          0.104716,
+          1.522625,
+          -0.116146
+        ],
+        "knee": [
+          0.316217,
+          1.316911,
+          0.131611
+        ],
+        "ankle": [
+          0.328294,
+          0.887459,
+          0.04566
+        ],
+        "tread": [
+          0.354162,
+          0.887347,
+          0.168727
+        ],
+        "upperLegM": 0.385272,
+        "lowerLegM": 0.438134,
+        "targetDistanceM": 0.605348,
+        "maxReachM": 0.823407,
+        "maxReachMarginM": 0.218059,
+        "bootSole": [
+          0.354159,
+          0.887346,
+          0.168728
+        ],
+        "bootTreadGapM": 3e-06,
+        "kneeInteriorDegrees": 114.351982
+      }
+    },
+    "relaxedHandToOriginalReinGapM": {
+      "left": 0.230204,
+      "right": 0.21926
+    },
+    "relaxedHandsGameM": {
+      "left": [
+        -0.073344,
+        1.770093,
+        0.290799
+      ],
+      "right": [
+        0.073344,
+        1.770093,
+        0.290799
+      ]
+    }
+  }
+}

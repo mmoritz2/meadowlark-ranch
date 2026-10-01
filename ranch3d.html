@@ -632,12 +632,13 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from './assets/breed-models.js?v=artist-breeds-3';
+import {createBreedLibrary} from './assets/breed-models.js?v=native-breeds-1';
 import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig} from './assets/game-hero-horse.js?v=gaits-2';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade} from './assets/game-hero-horse.js?v=native-gaits-1';
+import {createNativeRiderBridge} from './assets/native-rider.js?v=native-rider-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js';
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js';
@@ -654,8 +655,8 @@ import {createWorldFinish} from './assets/world-rendering.js';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js';
 import {installWorldPhotoscans} from './assets/world-photoscans.js';
 import {createWaterReflections} from './assets/water-reflections.js';
-import {createRiderLibrary} from './assets/rider-model.js?v=rider-3';
-import {FEATURES} from './assets/features/index.js?v=world-20260930';
+import {createRiderLibrary} from './assets/rider-model.js?v=native-rider-1';
+import {FEATURES} from './assets/features/index.js?v=native-gaits-1';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -4855,6 +4856,7 @@ let USE_GEN_HORSE=true, USE_GEN_TACK=true;   // textured horse + generated saddl
 const BREED_MODELS=createBreedLibrary({THREE,GLTFLoader,clone:skeletonClone});
 const RIG={ready:false,scene:null,skin:null,bones:null,attachedTo:null,phase:0,_q:null,
   legs:[],neck:[],tail:[]};
+let nativeRiderBridge=null;
 const RIG_LEGS=[                       // 4-beat walk phasing; indices = textured-rigged horse (33 bones)
  {n:'HL',top:23,knee:25,front:false,ph:0.00},
  {n:'FL',top:7, knee:9, front:true, ph:0.25},
@@ -4864,10 +4866,12 @@ const RIG_LEGS=[                       // 4-beat walk phasing; indices = texture
 const RIG_NECK=[4,5], RIG_TAIL=[19,20,21];
 function instantiateArtistBreed(asset){
  const inst=BREED_MODELS.instantiate(asset);
+ if(inst.profile?.nativeBreed)return inst; // Keep creator geometry/materials and verified native hierarchy intact.
  inst.fantasyAppearance=applyEquineFantasyAppearance(THREE,inst,inst.key);
  return inst;
 }
 function rigCalibrate(rig=RIG){
+ if(rig.profile?.nativeBreed){rig.legs=[];rig.neck=[];rig.tail=[];rig.headBone=rig.profile.nativeKind==='horse'?rig.bones.find(b=>b.name==='head_019'):null;rig.headIdx=rig.bones.indexOf(rig.headBone);return;}
  if(rig.profile?.artistBreed){rig.legs=[];rig.neck=[];rig.tail=[];rig.headBone=rig.bones.find(b=>b.name==='head');rig.headIdx=rig.bones.indexOf(rig.headBone);return;}
  // Compute each driven bone's local axis that corresponds to the model's z
  // (left-right) axis, so rotating about it swings the limb forward/back. Done in
@@ -4976,6 +4980,7 @@ function breedHair(skin,bones,mount,profile,colors,tailCol,seed){
  return createBreedGroom({THREE,skin,bones,mount,profile,maneColor:colors?.mane||'#332214',tailColor:tailCol||colors?.mane||'#332214',seed:seed||0});
 }
 function buildHair(){
+ if(RIG.profile?.nativeBreed)return; // The native clips already drive their skinned mane/tail joints.
  if(RIG.hairBuilt||!RIG.skin||!RIG.bones||!RIG.fitScale)return;
  const horse=myHorses[rideIdx]; const h=breedHair(RIG.skin,RIG.bones,player.mesh,RIG.profile,horse?.colors,horse?.tailCol,horse?.id); RIG.groom=h; RIG.hairMane=h.mane; RIG.hairTail=h.tail; RIG.hairBuilt=true; hairColour();
 }
@@ -5236,6 +5241,17 @@ function dressWithRig(ent,parts,colors,opts){
  const keep=new Set(); if(parts.wings)parts.wings.forEach(w=>w.traverse(o=>keep.add(o))); if(parts.crest)parts.crest.traverse(o=>keep.add(o)); (opts.keep||[]).forEach(g=>{if(g)g.traverse(o=>keep.add(o));});
  parts.group.traverse(o=>{if(o.isMesh&&!keep.has(o))o.visible=false;});
  parts.group.add(sc);
+ if(inst.profile.nativeBreed){
+  // These opt-in rigs already contain their authored coat, hair, wings and (on
+  // the Western horses) skinned tack. The procedural add-ons would duplicate it.
+  parts.group.scale.setScalar(opts.foal ? .65 : 1);
+  if(parts.horn)parts.horn.visible=false;
+  if(parts.wings)for(const wing of parts.wings)wing.visible=false;
+  if(parts.crest)parts.crest.visible=false;
+  ent.rig={...inst,phase:0,hair:null,saddle:null,bridle:null,parts,restQ:inst.bones.map(b=>b.quaternion.clone())};
+  rigCalibrate(ent.rig);initGameHero(THREE,ent.rig);worldRigCount++;
+  return;
+ }
  if(inst.profile.withersM)parts.group.scale.setScalar(inst.profile.withersM/1.45*(opts.foal?.65:1));
  if(parts.horn){parts.group.add(parts.horn);parts.horn.position.set(0,1.72,0.82);parts.horn.rotation.set(-0.4,0,0);parts.horn.scale.setScalar(1.2);parts.horn.visible=true;}
  if(parts.wings)parts.wings.forEach(w=>{const D=w.userData.kind==='dragon';w.position.set(w.userData.sgn*(D?0.19:0.21),D?1.60:1.49,D?0.02:0.18);});
@@ -5255,8 +5271,9 @@ function dressWithRig(ent,parts,colors,opts){
  ent.rig={...inst,phase:Math.random()*6,hair,saddle,bridle,parts,fantasyMaterial:opts.coat?mat:null,restQ:inst.bones.map(b=>b.quaternion.clone())};
  try{rigCalibrate(ent.rig);initGameHero(THREE,ent.rig);fitArtistFeatures(ent.rig,parts);configureArtistCustomization(ent.rig,myHorses.find(h=>h.id===opts.seed&&h.breed===breed)||{breed,colors,tailCol:opts.tailCol,mark:opts.mark,markCol:opts.markCol,id:opts.seed});}catch(e){if(!ent.rigStandIn)throw e;}
 }
-function tickRig(ent,sp,dt,t,graze){ const r=ent.rig; if(!r)return; if(r.heroMotion){tickGameHero(r,sp,dt);if(r.saddle)r.saddle.position.copy(breedSeat(r));if(r.bridle)r.bridle.userData.follow(r.headBone||r.bones[6],r.bones,r.restQ,r.scene,r.scene.parent);fitArtistFeatures(r,r.parts,true);return;} r.phase+=rigPhaseStep(sp,true,dt,ent.parts?.group.scale.x||1); poseRigBones(r.bones,r.phase,sp,true,0,t,dt,graze||0,r); r.hair?.update?.(t,sp); }
+function tickRig(ent,sp,dt,t,graze){ const r=ent.rig; if(!r)return; if(r.heroMotion){tickGameHero(r,sp,dt);if(r.profile?.nativeBreed)return;if(r.saddle)r.saddle.position.copy(breedSeat(r));if(r.bridle)r.bridle.userData.follow(r.headBone||r.bones[6],r.bones,r.restQ,r.scene,r.scene.parent);fitArtistFeatures(r,r.parts,true);return;} r.phase+=rigPhaseStep(sp,true,dt,ent.parts?.group.scale.x||1); poseRigBones(r.bones,r.phase,sp,true,0,t,dt,graze||0,r); r.hair?.update?.(t,sp); }
 function fitArtistFeatures(rig,parts,animated=false){
+ if(rig.profile?.nativeBreed)return;
  if(!rig.profile?.artistBreed||!parts)return;
  const A=rig.profile.anchors,mount=parts.group;
  if(parts.horn&&A.poll&&A.muzzle){
@@ -5273,6 +5290,16 @@ function attachRig(){
  if(!RIG.ready||!player.mesh||RIG.attachedTo===player.mesh)return;
  const riderG=player.rider&&player.rider.g;
  hideProceduralBody();   // hide the procedural horse body (keeps rig, wings, horn, tack, shadow)
+ if(RIG.profile?.nativeBreed){
+  // BreedLibrary supplies a canonical outer wrapper: +Z forward, floor aligned.
+  // Leave the original clip root, its scale, and all skin binds unchanged.
+  if(player.parts?.horn)player.parts.horn.visible=false;
+  if(player.parts?.wings)for(const wing of player.parts.wings)wing.visible=false;
+  if(player.parts?.crest)player.parts.crest.visible=false;
+  RIG.scene.visible=true;player.mesh.add(RIG.scene);RIG.attachedTo=player.mesh;
+  if(riderG){const seat=riderSeat();riderG.position.set(0,seat.y,seat.z);}
+  return;
+ }
  // place the unicorn horn on the rig's forehead (procedural head sits differently than the rig head)
  if(player.parts&&player.parts.horn){const hn=player.parts.horn;
   player.mesh.add(hn); hn.position.set(0,1.72,0.82); hn.rotation.set(-0.4,0,0); hn.scale.setScalar(1.2);}
@@ -5320,6 +5347,7 @@ const EMOTES={
 function emEnv(em){const p=Math.min(1,em.t/em.dur);const e=p<0.22?p/0.22:p>0.78?(1-p)/0.22:1;return e*e*(3-2*e);}
 function horseEmote(type,opts){
  const E=EMOTES[type]; if(!E)return false; opts=opts||{};
+ if(RIG.profile?.nativeBreed){toast('This model has no '+type+' animation yet.');return false;}
  if(RIG.emote||!RIG.ready||RIG.attachedTo!==player.mesh)return false;
  if(!opts.force&&G.run('emoteGate',type,myHorses[rideIdx]))return false;   // bond-personality-emotes: locked tricks toast their unlock
  if(!opts.force&&(Math.abs(player.speed)>0.6||player.y>0||player.flying)){toast('Come to a halt first.');return false;}
@@ -5409,11 +5437,12 @@ function rigPhaseStep(sp,grounded,dt,scale=1){
 function driveRig(sp,grounded,t,dt){
  if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
  if(RIG.heroMotion){
+  if(RIG.profile?.nativeBreed)RIG.nativeFlying=!!player.flying;
   const state=tickGameHero(RIG,sp,dt,player.turnSm||0);
   if(!player.flying){if(RIG.heroJumpAge!==null){player.y=Math.max(0,state.bodyLiftM+RIG.heroJumpExtra);player.vy=0;}else{player.y=0;player.vy=0;}}
   if(RIG._hideFor!==player.mesh){hideProceduralBody();RIG._hideFor=player.mesh;}
-  if(RIG.emote){RIG.emote.t+=dt;if(RIG.emote.t>=RIG.emote.dur)RIG.emote=null;else G.run('rigEmote',RIG,RIG.emote,dt,t);}   // bond-personality-emotes poses the artist bones additively
-  if(TACK.saddle)TACK.saddle.position.copy(breedSeat());
+  if(RIG.emote&&!RIG.profile?.nativeBreed){RIG.emote.t+=dt;if(RIG.emote.t>=RIG.emote.dur)RIG.emote=null;else G.run('rigEmote',RIG,RIG.emote,dt,t);}   // bond-personality-emotes poses the artist bones additively
+  if(TACK.saddle&&!RIG.profile?.nativeBreed)TACK.saddle.position.copy(breedSeat());
   return;
  }
  if(RIG.emote){RIG.emote.t+=dt;if(RIG.emote.t>=RIG.emote.dur)RIG.emote=null;}
@@ -5454,6 +5483,7 @@ function driveRig(sp,grounded,t,dt){
    variants this used to download were 8.9 MB of dead weight on every single load. */
 let artistNeutralMap=null;
 function configureArtistCustomization(rig,h){
+ if(rig.profile?.nativeBreed)return;
  if(!rig.profile?.artistBreed||!h)return;
  const def=BREEDS3.find(b=>b[0]===h.breed),opts=def?.[7]||{};
  const same=(a,b)=>new THREE.Color(a||'#332214').equals(new THREE.Color(b||'#332214'));
@@ -5805,6 +5835,7 @@ function applyCoat(){applyCoatInner();G.run('coat',myHorses[rideIdx]);}
 function applyCoatInner(){
  const selected=myHorses[rideIdx]?.breed||'bay';if(RIG.requestedBreed!==selected)requestPlayerBreed(selected);
  if(!RIG.ready||!RIG.skin||!RIG.baseMat) return;
+ if(RIG.profile?.nativeBreed)return; // Preserve the source material, texture, and authored hair.
  const h=myHorses[rideIdx];
  if(RIG.profile?.hero){hairColourInner();return;}
  if(RIG.profile?.artistBreed){
@@ -5852,7 +5883,9 @@ function breedSeat(rig=RIG){
  const live=gameHeroSeat(rig,rig.scene?.parent);if(live)return live.clone();
  return BREED_MODELS.mountPoint(rig,rig.profile?.anchors?.saddle)||new THREE.Vector3(0,1.39,-.30);
 }
-function riderSeat(){const seat=breedSeat(),scale=player.mesh?.scale.x||1;const o={y:seat.y+((RIG.profile?.hero||RIG.profile?.artistBreed)?.14:.18)/scale,z:seat.z+.02/scale};
+function riderSeat(){const seat=RIG.profile?.nativeBreed?(nativeRiderBridge?.seatLocal()||breedSeat()):breedSeat(),scale=player.mesh?.scale.x||1;
+ if(RIG.profile?.nativeBreed)return {y:seat.y+(.11-(myHorses[rideIdx]?.bareback ? .09 : 0))/scale,z:seat.z-.02/scale};
+ const o={y:seat.y+((RIG.profile?.hero||RIG.profile?.artistBreed)?.14:.18)/scale,z:seat.z+.02/scale};
  if(myHorses[rideIdx]&&myHorses[rideIdx].bareback){o.y-=.10/scale;o.z+=.03/scale;}   // mastery-style: bareback, she sits on the back, not on a saddle that is not there
  if(TACK.saddle&&TACK.saddle.userData.style==='western'){o.y-=WESTERN_SEAT.dy/scale;o.z+=WESTERN_SEAT.dz/scale;}   // tack-wardrobe: a Western seat sits deeper and a touch further back
  return o;}
@@ -5863,6 +5896,7 @@ async function requestPlayerBreed(breed){
  catch(e){console.error('Approved horse model unavailable',breed,e);RIG.loadingBreed=false;RIG.requestedBreed=null;window.__setLoad?.(1,'Horse model unavailable — reload to retry');return;}
  if(ticket!==breedRequest)return;
  const inst=instantiateArtistBreed(asset);
+ nativeRiderBridge?.dispose();nativeRiderBridge=null;
  if(RIG.scene?.parent)RIG.scene.parent.remove(RIG.scene);
  disposeMountedRig(RIG);
  if(RIG.coatMat)RIG.coatMat.dispose();
@@ -6124,9 +6158,35 @@ function buildBridle(dragon,rig=RIG){
  g.position.copy(head||H0);g.userData.modelKey=rig.key||rig.modelKey;
  return g;
 }
+function attachNativeTack(){
+ const horse=RIG.profile.nativeKind==='horse',h=myHorses[rideIdx],bareback=!!h?.bareback;
+ nativeRiderBridge?.dispose();nativeRiderBridge=null;
+ if(TACK.saddle?.parent)TACK.saddle.parent.remove(TACK.saddle);
+ // A mesh-free carrier keeps the game's existing leg IK API, while the native
+ // saddle and stirrups stay in the skinned GLB at their measured positions.
+ const carrier=new THREE.Group();carrier.name='Native saddle contact carrier';
+ carrier.userData={nativeAnchorCarrier:true,proc:true,style:'western',stir:{L:new THREE.Object3D(),R:new THREE.Object3D()}};
+ carrier.add(carrier.userData.stir.L,carrier.userData.stir.R);carrier.visible=horse&&!bareback;
+ player.mesh.add(carrier);TACK.saddle=carrier;
+ if(TACK.bridle?.parent)TACK.bridle.parent.remove(TACK.bridle);TACK.bridle=null;
+ if(horse){
+  if(!TACK.bitL){TACK.bitL=new THREE.Object3D();TACK.bitR=new THREE.Object3D();}
+  if(TACK.bitL.parent!==player.mesh){player.mesh.add(TACK.bitL,TACK.bitR);}
+  nativeRiderBridge=createNativeRiderBridge({THREE,scene,mount:player.mesh,rig:RIG,rider:player.rider,saddleProxy:carrier,bitL:TACK.bitL,bitR:TACK.bitR});
+  nativeRiderBridge.setTackVisible(!bareback);nativeRiderBridge.updateContacts();
+ }else{
+  TACK.bitL?.removeFromParent();TACK.bitR?.removeFromParent();TACK.bitL=null;TACK.bitR=null;
+ }
+ const rider=player.rider;
+ if(rider?.g){rider._setHero?.(true);rider.g.visible=true;rider.g.traverse(o=>{if(o.isMesh)o.visible=true;});
+  const seat=riderSeat();rider.g.position.set(0,seat.y,seat.z);rider.g.scale.setScalar(1/(player.mesh.scale.x||1));rider._handHome=null;}
+ G.run('attachTack',h);
+}
 function attachTack(){   // idempotent: places whatever has loaded so far onto the current mount
  if(!USE_GEN_HORSE||!USE_GEN_TACK)return;
  if(!player.mesh||!TACK.saddle)return;
+ if(RIG.profile?.nativeBreed){attachNativeTack();return;}
+ if(TACK.saddle.userData.nativeAnchorCarrier){TACK.saddle.removeFromParent();TACK.saddle=buildSaddle();}
  {const want=saddleStyleOf(myHorses[rideIdx]); if(TACK.saddle.userData.style!==want||!!TACK.saddle.userData.hero!==!!(RIG.profile?.hero||RIG.profile?.artistBreed)||(RIG.profile?.artistBreed&&TACK.saddle.userData.modelKey!==(RIG.key||RIG.modelKey))||(!RIG.profile?.hero&&!RIG.profile?.artistBreed&&!TACK.saddle.userData.glb&&SADDLE_GLB[want])){ if(TACK.saddle.parent)TACK.saddle.parent.remove(TACK.saddle); TACK.saddle=buildSaddle(want); }}   // the saddle this horse wears, generated when its file is in
  if(player.rider&&player.rider.g)player.rider.g.visible=false;   // hide procedural rider
  if(TACK.saddle){
@@ -6184,6 +6244,21 @@ function riderLegs(R,F,U,Rt){
   _rdE.sub(_rdT);                                // where the toe points now
   _rdT.copy(F).multiplyScalar(Math.cos(0.22)).addScaledVector(U,Math.sin(0.22)).addScaledVector(Rt,s*0.115);
   boneAim(foot,_rdE,_rdT);                       // toe up a few degrees and turned a little out
+  // The 65-joint rider kit records a skinned boot-sole contact in foot-bone
+  // coordinates. Solve the tread against that actual sole, not the ankle.
+  if(RIG.profile?.nativeKind==='horse'){
+   const sole=foot.userData.soleContact||R.rig?.kit?.seat?.footContacts?.[S];
+   if(sole){foot.userData.soleContact=sole;
+    for(let j=0;j<3;j++){
+     foot.updateWorldMatrix(true,true);
+     boneAim(foot,_rdE.copy(sole.forward).transformDirection(foot.matrixWorld),_rdT);
+     _rdE.copy(sole.point).applyMatrix4(foot.matrixWorld);
+     _rdB.setFromMatrixPosition(foot.matrixWorld).add(_rdA).sub(_rdE);
+     ikChain(thigh,B['shin'+S],foot,RIDER_HINGE['knee'+S],_rdB,_rdD);
+     boneAim(foot,_rdE.copy(sole.forward).transformDirection(foot.matrixWorld),_rdT);
+    }
+   }
+  }
  }
 }
 /* hands to the horse's mouth */
@@ -6280,6 +6355,8 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
   const rightIsZero=vrCtrls[0].position.x>vrCtrls[1].position.x;
   hL=rightIsZero?vrCtrls[0]:vrCtrls[1]; hR=rightIsZero?vrCtrls[1]:vrCtrls[0];
  }
+ if(RIG.profile?.nativeBreed){reinL.visible=false;reinR.visible=false;return;}
+ reinL.visible=true;reinR.visible=true;
  if(TACK.bitL){updateRein(reinL,hL,TACK.bitL);updateRein(reinR,hR,TACK.bitR);}
 }
 const _hv=new THREE.Vector3();
@@ -6289,6 +6366,7 @@ const _hv=new THREE.Vector3();
    done inside the procedural-mount drive, which never runs for this mount. */
 function trackHead(){
  if(RIG.attachedTo!==player.mesh||!RIG.bones)return;
+ if(RIG.profile?.nativeBreed){nativeRiderBridge?.updateContacts();return;}
  if(RIG.profile?.artistBreed)RIG.headBone=RIG.bones.find(b=>b.name==='head');else if(RIG.profile?.hero)RIG.headBone=RIG.bones[6];
  if(!RIG.headBone){                                  // the muzzle bone = the one furthest forward
   let best=null,bz=-1e9;
@@ -10450,6 +10528,7 @@ function dressBridle(){
 function dressSaddle(){
  const sd=TACK.saddle; if(!sd)return;
  const h=myHorses[rideIdx]; if(!h)return;
+ if(RIG.profile?.nativeBreed){sd.visible=RIG.profile.nativeKind==='horse'&&!h.bareback;nativeRiderBridge?.setTackVisible(sd.visible);return;}
  dressBridle();
  if(!sd.userData.mats){ sd.visible=!h.bareback; return; }
  const padIt=h.gear&&tackInv.find(t=>t.id===h.gear.pad);
@@ -10807,7 +10886,7 @@ function remoteUpdate(m){
  if(typeof m.x!=='number'||typeof m.z!=='number')return;
  let r=remotes[m.id];
  const breed=m.b||'bay';
- if(r&&r.breed!==breed){scene.remove(r.parts.group);if(r.rig){disposeMountedRig(r.rig);r.rig.skin?.material?.dispose();remoteRigCount=Math.max(0,remoteRigCount-1);}delete remotes[m.id];r=null;}
+ if(r&&r.breed!==breed){scene.remove(r.parts.group);if(r.rig){disposeMountedRig(r.rig);if(!r.rig.profile?.nativeBreed)r.rig.skin?.material?.dispose();remoteRigCount=Math.max(0,remoteRigCount-1);}delete remotes[m.id];r=null;}
  if(!r&&!BREED_MODELS.get(breed)){
   if(remoteBreedPending.has(m.id)){remoteBreedPending.set(m.id,m);return;}
   remoteBreedPending.set(m.id,m);
@@ -10832,6 +10911,13 @@ function remoteUpdate(m){
    rider.g.traverse(o=>keep.add(o));
    parts.group.traverse(o=>{ if(o.isMesh&&!keep.has(o))o.visible=false; });
    parts.group.add(rrig.scene);
+   if(rrig.profile.nativeBreed){
+    if(parts.wings)for(const wing of parts.wings)wing.visible=false;
+    if(parts.horn)parts.horn.visible=false;
+    if(parts.crest)parts.crest.visible=false;
+    const seat=gameHeroSeat(rrig,parts.group);rider.g.position.set(0,seat.y+.11,seat.z-.02);
+    parts.group.scale.setScalar(1);
+   }else{
    if(rrig.profile.artistBreed&&m.ct&&m.ct!==rrig.fantasyAppearance?.theme){rrig.fantasyMaterial=createEquineFantasyCoat(THREE,rrig.baseMat,m.ct,!!rrig.fantasyAppearance?.dragon);rrig.skin.material=rrig.fantasyMaterial;}
    if(rrig.fantasyAppearance?.dragon)rrig.drg=buildDragonBody(rrig.skin,rrig.bones,parts.group,DRAGON_TINT[m.ct||rrig.fantasyAppearance.theme]||DRAGON_TINT._);
    fitArtistFeatures(rrig,parts);
@@ -10844,13 +10930,14 @@ function remoteUpdate(m){
    // The rider was still sitting where the PROCEDURAL horse's back was, which is
    // higher and further forward than the rig's — that is the "floating up high".
    const seat=breedSeat(rrig);rider.g.position.set(0,seat.y+.18,seat.z+.02);parts.group.scale.setScalar(rrig.profile.withersM?rrig.profile.withersM/1.45:1);
+   }
   }
   const nm=String(m.n||'Rider').slice(0,14);
   const tag=nameSprite((isFriend(nm)?'💚':'🌐')+nm);
   tag.position.y=3.15;
   parts.group.add(tag);
   scene.add(parts.group);
-  if(rrig&&rrig.skin){try{rrig.hair=breedHair(rrig.skin,rrig.bones,parts.group,rrig.profile,m.c,null,5);if(rrig.fantasyAppearance?.dragon){rrig.hair.mane.visible=false;rrig.hair.tail.visible=false;}configureArtistCustomization(rrig,{breed,colors:m.c,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,id:m.id});}catch(e){console.warn('Remote groom',e);}}
+  if(rrig&&rrig.skin&&!rrig.profile.nativeBreed){try{rrig.hair=breedHair(rrig.skin,rrig.bones,parts.group,rrig.profile,m.c,null,5);if(rrig.fantasyAppearance?.dragon){rrig.hair.mane.visible=false;rrig.hair.tail.visible=false;}configureArtistCustomization(rrig,{breed,colors:m.c,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,id:m.id});}catch(e){console.warn('Remote groom',e);}}
   r=remotes[m.id]={parts,rider,breed,rig:rrig,bridle:r_bridle,name:nm,x:m.x,z:m.z,tx:m.x,tz:m.z,heading:m.h||0,sp:0,phase:Math.random()*6,lastSeen:0};
   chatMsg('🌐',nm+' is riding nearby!');
  }
@@ -10890,7 +10977,7 @@ function netTick(dt,t){
   r.lastSeen+=dt;
   if(r.lastSeen>7){
    scene.remove(r.parts.group);
-   if(r.rig){disposeMountedRig(r.rig);r.rig.skin?.material?.dispose();remoteRigCount=Math.max(0,remoteRigCount-1);}   // free the slot for the next rider
+   if(r.rig){disposeMountedRig(r.rig);if(!r.rig.profile?.nativeBreed)r.rig.skin?.material?.dispose();remoteRigCount=Math.max(0,remoteRigCount-1);}   // free the slot for the next rider
    delete remotes[id];
    continue;
   }
@@ -10904,7 +10991,7 @@ function netTick(dt,t){
   }
   if(r.rig){
    // the good horse: same gait code the player's mount runs
-   if(r.rig.heroMotion){tickGameHero(r.rig,r.sp,dt);if(r.rig.saddle)r.rig.saddle.position.copy(breedSeat(r.rig));fitArtistFeatures(r.rig,r.parts,true);}
+   if(r.rig.heroMotion){tickGameHero(r.rig,r.sp,dt);if(r.rig.profile?.nativeBreed){const seat=gameHeroSeat(r.rig,r.parts.group);r.rider.g.position.set(0,seat.y+.11,seat.z-.02);}else{if(r.rig.saddle)r.rig.saddle.position.copy(breedSeat(r.rig));fitArtistFeatures(r.rig,r.parts,true);}}
    else{r.rig.phase+=rigPhaseStep(r.sp,true,dt,r.parts.group.scale.x);poseRigBones(r.rig.bones,r.rig.phase,r.sp,true,0,t,dt,0,r.rig);r.rig.hair?.update?.(t,r.sp);}
    if(r.bridle)r.bridle.userData.follow(r.rig.headBone||r.rig.bones[6],r.rig.bones,r.rig.restQ,r.rig.scene,r.parts.group);
   }
@@ -11708,7 +11795,7 @@ function tickSummon(dt){
  }
  if(T>OPEN_AT+1.6&&!SUMMON.reared){                        // and up
   SUMMON.reared=true;
-  try{ RIG.emote={type:'rear',t:0,dur:EMOTES.rear.dur}; sNeigh(); }catch(e){}
+  try{ if(!RIG.profile?.nativeBreed){RIG.emote={type:'rear',t:0,dur:EMOTES.rear.dur};sNeigh();} }catch(e){}
   $('sfxName').style.opacity=1; $('sfxBreed').style.opacity=1;
  }
  if(T>OPEN_AT+4.6&&!SUMMON.done){
@@ -12000,6 +12087,7 @@ function inspectBreedAtRanch(key){
  const owned=myHorses.findIndex(h=>h.breed===key&&!h.foal);
  if(owned>=0){player.speed=0;sel.value=String(owned);sel.onchange();hidePanels();toast('Now riding '+myHorses[owned].name+'.');return;}
  const breed=BREEDS3[catalogIndex];
+ if(breed[7]?.nativeModelChoice){openShop('native-models');return;}
  if(breed[7]?.story){
   hidePanels();renderStable();$('stablePanel').style.display='flex';
   const note=document.createElement('p');note.textContent=breed[1]+' is earned as a story reward.';note.setAttribute('role','status');$('stablePanel').prepend(note);return;
@@ -12962,7 +13050,9 @@ function animateHorse(parts,phase,amp,gait,grounded,t,grazing,dt){
 const clock=new THREE.Clock();
 function setFlying(on){
  const winged=myHorses[rideIdx]&&myHorses[rideIdx].wings;
- if(on&&!winged){toast('🪽 Only a Pegasus can fly! Get one in the 🛍️ Shop.');return;}
+ const nativeCap=RIG.attachedTo===player.mesh?getNativeHorseCapabilities(RIG):null;
+ if(on&&nativeCap?.native&&!nativeCap.canFly){toast('This native mount has no flight animation.');return;}
+ if(on&&!winged&&!nativeCap?.canFly){toast('🪽 Only a Pegasus can fly! Get one in the 🛍️ Shop.');return;}
  player.flying=!!on;
  if(on){
   player.flyT=0;                                   // the push-off is timed from here
@@ -13058,9 +13148,16 @@ function tick(stepSeconds){
  if(player.stam<=0.12)player.blown=true; if(player.blown&&player.stam>0.35)player.blown=false;
  if(player.blown&&target>5.5)target=5.5;
  if(player.boostT>0){player.boostT-=dt;target*=1.22;}
+ const nativeCap=RIG.attachedTo===player.mesh?getNativeHorseCapabilities(RIG):null;
+ if(nativeCap?.native){
+  if(player.flying&&!nativeCap.canFly){setFlying(false);player.y=0;player.vy=0;}
+  const max=player.flying&&nativeCap.canFly?nativeCap.flightMaxSpeedMps:nativeCap.maxSpeedMps;
+  target=THREE.MathUtils.clamp(target,0,max);
+ }
  {const sw=$('stamWrap'); if(sw){const show=(course&&course.started)||player.stam<0.98||player.blown; sw.style.display=show?'block':'none'; if(show){$('stamFill').style.width=Math.round(player.stam*100)+'%'; sw.classList.toggle('blown',!!player.blown);}}}
  const accel=target>player.speed?1.7*acMul:(touch.brake?5.2:2.8);
  player.speed+=(target-player.speed)*Math.min(1,dt*accel);
+ if(nativeCap?.native)player.speed=THREE.MathUtils.clamp(player.speed,0,player.flying&&nativeCap.canFly?nativeCap.flightMaxSpeedMps:nativeCap.maxSpeedMps);
  if(Math.abs(player.speed)<0.05&&!fwd&&!back)player.speed=0;
  /* Steering. In VR the thumbstick drives this as a continuous value; on the keyboard a key
     is still all-or-nothing. Either way the input is ramped rather than applied raw, because
@@ -13135,7 +13232,7 @@ function tick(stepSeconds){
    }
   }
  }
- const winged=myHorses[rideIdx]&&myHorses[rideIdx].wings;
+ const winged=!!(myHorses[rideIdx]&&myHorses[rideIdx].wings)||!!nativeCap?.canFly;
  if(!winged&&player.flying)player.flying=false;
  if(player.flying){
   /* ===== Pegasus flight — sustained, altitude-holding ===== */
@@ -13157,7 +13254,14 @@ function tick(stepSeconds){
   }
  }else{
   if(player.parts)player.parts.wingFly=false;
-  if(RIG.heroMotion){
+  if(nativeCap?.native){
+   const pressed=!!(keys.Space||touch.jump)&&!RIDE.noJump;
+   if(pressed&&!RIG.heroJumpHeld){
+    if(nativeCap.canFly)setFlying(true);
+    else toast('This native mount has no jump animation yet.');
+   }
+   RIG.heroJumpHeld=pressed;RIG.heroJumpWant=0;
+  }else if(RIG.heroMotion){
    /* A press is remembered for a third of a second, so asking a shade early — while the
       last jump is still landing — is honoured the moment the horse is free instead of
       being thrown away. And a held key jumps again on landing: holding jump for three
@@ -13232,6 +13336,13 @@ function tick(stepSeconds){
   const ez=pr<0.5?2*pr*pr:1-Math.pow(-2*pr+2,2)/2, ang=ez*Math.PI*2*tr.dir;
   if(tr.type==='roll')player.mesh.rotation.z+=ang; else if(tr.type==='spin')player.mesh.rotation.y+=ang; else player.mesh.rotation.x+=ang;
   if(pr>=1)player.trick=null;}
+ if(RIG.profile?.nativeBreed&&nativeRiderBridge){
+  // Ribbons live in world space. The game's final travel, heading and terrain
+  // pitch must be applied before sampling the skinned bit and rider fists.
+  player.mesh.updateMatrixWorld(true);
+  nativeRiderBridge.showReins(!player.onFoot&&!myHorses[rideIdx]?.bareback&&!!player.rider?.g?.visible);
+  nativeRiderBridge.updateReins();
+ }
  player.parts.shadowM.position.y=0.02-player.y-bob;
  const neckTarget=drinkT>0?0.42:(sp>7?-0.92:(sp>0.2?-0.58+Math.sin(player.phase)*0.05:-0.53+Math.sin(t*1.4)*0.025));
  player.parts.neck.rotation.x+=(neckTarget-player.parts.neck.rotation.x)*Math.min(1,dt*5);
@@ -13342,7 +13453,9 @@ function tick(stepSeconds){
     while(dh>Math.PI)dh-=Math.PI*2;
     while(dh<-Math.PI)dh+=Math.PI*2;
     a.heading+=dh*Math.min(1,dt*3);
-    const wsp=(fl||a.called)?Math.min(9.5,1.6+d*0.55):1.2;
+    const pastureHorse=myHorses[a.idx],nativeProfile=BREED_MODELS.profile(pastureHorse?.breed);
+    const nativeLimit=nativeProfile?.nativeBreed?(a.rig?.profile?.nativeBreed?getNativeHorseCapabilities(a.rig).maxSpeedMps:nativeProfile.nativeMaxSpeedMps*(pastureHorse?.foal ? .65 : 1)):Infinity;
+    const wsp=Math.min((fl||a.called)?Math.min(9.5,1.6+d*0.55):1.2,nativeLimit);
     a.wsp=wsp;
     a.pos.x+=Math.sin(a.heading)*wsp*dt;
     a.pos.z+=Math.cos(a.heading)*wsp*dt;
@@ -14167,6 +14280,8 @@ function installFeatures(){
    EMOTES,MASTERY_UNLOCKS,TAIL_COLS,STUD_COLS,DYE_HAIR,DYE_BODY,DYE_MARK,MARKS,STAT_KEYS,STAT_LBL,CHESTS,COLL_SETS,FT,REGIONS,TRAIL_STOPS,TACK_ROOM,NAMES3,
    TRAITS,BREED_CEIL,HAIR_STYLES,KEYMAP,REWARD_KINDS,TIER_STARS,MARKS2,FANTASY_CFG,FANTASY_FX,FANTASY_COAT,COAT_BASE,DRAGON_TINT,WING_TINT,ELEM_OF},
   horse:{myHorses,rideIdx:()=>rideIdx,ridden:()=>myHorses[rideIdx],RIG:()=>RIG,TACK:()=>TACK,player,herd:()=>herd,remotes,
+   registerBreed(row){if(!Array.isArray(row)||typeof row[0]!=='string'||row.length<8)throw Error('Invalid breed row');const found=BREEDS3.find(b=>b[0]===row[0]);if(found)return found;BREEDS3.push(row);return row;},
+   nativeRiderInspect(){return nativeRiderBridge?.inspect()||null;},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
   world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,geology,box,tube,blob,

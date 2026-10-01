@@ -1,0 +1,79 @@
+{
+  "url": "http://127.0.0.1:8577/review/native-horse-kit/review.html",
+  "errors": [],
+  "gaits": {
+    "walk": {
+      "clip": "Target Native Walk Rollover",
+      "duration": 1.1200000047683716,
+      "nativeBones": 677,
+      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0009233334608878818,
+        0.00101942839046118
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0009233334608878818,
+        0.001169072337213889
+      ]
+    },
+    "trot": {
+      "clip": "Target Native Trot",
+      "duration": 0.7200000286102295,
+      "nativeBones": 677,
+      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0009407939819809762,
+        0.015451913190767027
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0009407939819809762,
+        0.004424105315629451
+      ]
+    },
+    "canterLeft": {
+      "clip": "Target Native Canter Left",
+      "duration": 0.6399999856948853,
+      "nativeBones": 677,
+      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0008887063907335739,
+        0.04637897811619978
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0008887063907335739,
+        0.004297040502651825
+      ]
+    },
+    "canterRight": {
+      "clip": "Target Native Canter Right",
+      "duration": 0.6399999856948853,
+      "nativeBones": 677,
+      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0008578205660432769,
+        0.04613103003291911
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0008578205660432769,
+        0.0017711760176388623
+      ]
+    },
+    "stand": {
+      "clip": "Horse|Horse_Idle",
+      "duration": 13.958333015441895,
+      "nativeBones": 677,
+      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "allFinite": true,
+      "bodyMinRange": [
+        -0.0008706650484685699,
+        0.0005945017791581806
+      ],
+      "stanceWholeHoofMinimum": null
+    }
+  },
+  "pass": true
+}

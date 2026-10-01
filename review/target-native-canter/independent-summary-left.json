@@ -1,0 +1,433 @@
+{
+  "candidateSha256": "81039eb4d4c2e75ae992b78b4e6382d41bd7b302c5c4fdce75388a71901045d2",
+  "errors": [],
+  "clip": "Target Native Canter Left",
+  "phaseCount": 256,
+  "intent": {
+    "duration": 0.64,
+    "stanceFraction": 0.4,
+    "footOffsets": {
+      "HR": 0,
+      "HL": 0.24,
+      "FR": 0.24,
+      "FL": 0.48
+    }
+  },
+  "fixedFloorY": -0.004714777107501428,
+  "feet": {
+    "FL": {
+      "fullHoofCount": 316,
+      "strictSoleCount": 115,
+      "stanceSamples": 103,
+      "stanceFullHoofMinRange": [
+        0.0009755274739569604,
+        0.0013246811453211378
+      ],
+      "stanceToeMinRange": [
+        0.0009755274739569604,
+        0.016417609301636146
+      ],
+      "stanceHeelMinRange": [
+        0.001047442734572353,
+        0.04825173245156614
+      ],
+      "flatToeHeelGapRange": [
+        -0.00024904623433540845,
+        -0.0002436740086473213
+      ],
+      "lateRollHeelAboveToeRange": [
+        0.012222469073919948,
+        0.046927051306245
+      ],
+      "strikeToeAboveHeelRange": [
+        0.004291293007177628,
+        0.015269467194166761
+      ],
+      "allCycleFullHoofMinRange": [
+        0.0009755274739569604,
+        0.15083913882534455
+      ],
+      "stanceGeometricFlexDegrees": [
+        7.927640753722727,
+        11.06955225158373
+      ],
+      "swingGeometricFlexDegrees": [
+        8.489348892161843,
+        79.63468257838454
+      ],
+      "signedSagittalFlexAllDegrees": [
+        7.782507201179309,
+        79.67250544524425
+      ]
+    },
+    "FR": {
+      "fullHoofCount": 317,
+      "strictSoleCount": 104,
+      "stanceSamples": 102,
+      "stanceFullHoofMinRange": [
+        0.0008782414277334373,
+        0.0011407342973858178
+      ],
+      "stanceToeMinRange": [
+        0.0009856170294668398,
+        0.017914751430798855
+      ],
+      "stanceHeelMinRange": [
+        0.0008782414277334373,
+        0.04759173804541214
+      ],
+      "flatToeHeelGapRange": [
+        -0.002833525299504986,
+        -0.00271203779169275
+      ],
+      "lateRollHeelAboveToeRange": [
+        0.01105882143389126,
+        0.04657702146676426
+      ],
+      "strikeToeAboveHeelRange": [
+        0.0074414286529349005,
+        0.016993885995632917
+      ],
+      "allCycleFullHoofMinRange": [
+        0.0008782414277334373,
+        0.1508843718606454
+      ],
+      "stanceGeometricFlexDegrees": [
+        7.576270402702164,
+        9.478807752184736
+      ],
+      "swingGeometricFlexDegrees": [
+        8.333293261018554,
+        67.45463043148386
+      ],
+      "signedSagittalFlexAllDegrees": [
+        7.439345569616807,
+        67.44283397098833
+      ]
+    },
+    "HL": {
+      "fullHoofCount": 257,
+      "strictSoleCount": 74,
+      "stanceSamples": 102,
+      "stanceFullHoofMinRange": [
+        0.0009225258993697805,
+        0.0010384028020147397
+      ],
+      "stanceToeMinRange": [
+        0.0009225258993697805,
+        0.01565477249821741
+      ],
+      "stanceHeelMinRange": [
+        0.0009328393219308756,
+        0.04495698267282564
+      ],
+      "flatToeHeelGapRange": [
+        -0.000204192162777173,
+        -8.060801002251431e-05
+      ],
+      "lateRollHeelAboveToeRange": [
+        0.01331438486405448,
+        0.04400877421606709
+      ],
+      "strikeToeAboveHeelRange": [
+        0.0051613700073582895,
+        0.014616369696202669
+      ],
+      "allCycleFullHoofMinRange": [
+        0.0009225258993697805,
+        0.1408159483258311
+      ],
+      "stanceGeometricFlexDegrees": [
+        33.188906712212514,
+        39.76367097028415
+      ],
+      "swingGeometricFlexDegrees": [
+        34.17815829630911,
+        83.8893764547573
+      ],
+      "signedSagittalFlexAllDegrees": [
+        -83.14728075653552,
+        -30.67988408191617
+      ]
+    },
+    "HR": {
+      "fullHoofCount": 278,
+      "strictSoleCount": 65,
+      "stanceSamples": 103,
+      "stanceFullHoofMinRange": [
+        0.0008629832625483831,
+        0.004297040502651908
+      ],
+      "stanceToeMinRange": [
+        0.0008629832625483831,
+        0.020758136673269922
+      ],
+      "stanceHeelMinRange": [
+        0.0010760181539382833,
+        0.04425727773660119
+      ],
+      "flatToeHeelGapRange": [
+        -0.0024992718957380644,
+        -0.002491675021596706
+      ],
+      "lateRollHeelAboveToeRange": [
+        0.009803648285153524,
+        0.043374466185789946
+      ],
+      "strikeToeAboveHeelRange": [
+        0.006586001166609271,
+        0.016461096170618014
+      ],
+      "allCycleFullHoofMinRange": [
+        0.0008629832625483831,
+        0.14069472252780182
+      ],
+      "stanceGeometricFlexDegrees": [
+        19.118449671964413,
+        42.155166589123866
+      ],
+      "swingGeometricFlexDegrees": [
+        19.118449325155723,
+        86.83550131204554
+      ],
+      "signedSagittalFlexAllDegrees": [
+        -86.38944743727075,
+        -16.389434077388422
+      ]
+    }
+  },
+  "support": {
+    "intentPatterns": {
+      "FL,FR,HL": 41,
+      "FR,HL": 20,
+      "HR": 62,
+      "FL": 62,
+      "FR,HL,HR": 41,
+      "suspension": 30
+    },
+    "suspensionSampleCount": 30,
+    "suspensionFraction": 0.1171875,
+    "suspensionActualBodyMinRange": [
+      0.0017014412553282006,
+      0.04813687729601148
+    ],
+    "wholeBodyMinRange": [
+      0.0008629832625483831,
+      0.04813687729601148
+    ]
+  },
+  "markers": {
+    "neckCrest1931": {
+      "min": [
+        -0.014830247667558671,
+        1.8265030627798782,
+        2.1573235639681863
+      ],
+      "max": [
+        -0.014830162787791621,
+        1.8845822104852097,
+        2.1880351862023364
+      ],
+      "yMinPhase": 0.328125,
+      "yMaxPhase": 0.8359375
+    },
+    "upperTrunk1998": {
+      "min": [
+        -0.016213952472556498,
+        1.716942114679498,
+        1.970748465019395
+      ],
+      "max": [
+        -0.01621389538919351,
+        1.7713355768645853,
+        1.9807491876943817
+      ],
+      "yMinPhase": 0.3515625,
+      "yMaxPhase": 0.8515625
+    }
+  },
+  "joints": {
+    "pelvis_08": {
+      "worldMin": [
+        0.00794634327238425,
+        1.599005169396613,
+        1.1953993372682952
+      ],
+      "worldMax": [
+        0.007946343849436049,
+        1.6350052314294543,
+        1.1953993481743779
+      ],
+      "maxLocalAngularExcursionDegrees": 2.599983508214805,
+      "loopSeamDegrees": 1.7075472925031877e-06
+    },
+    "spine_04_012": {
+      "worldMin": [
+        0.0034534114969228267,
+        1.4985548130020674,
+        1.9074633692871388
+      ],
+      "worldMax": [
+        0.003453429104046477,
+        1.5505675603510252,
+        1.9123412017026284
+      ],
+      "maxLocalAngularExcursionDegrees": 0.4201653864486176,
+      "loopSeamDegrees": 0.0
+    },
+    "neck_01_014": {
+      "worldMin": [
+        -0.007778894291566894,
+        1.45026309364225,
+        2.2378282404588097
+      ],
+      "worldMax": [
+        -0.007778866875529031,
+        1.5162790926221918,
+        2.245353093401349
+      ],
+      "maxLocalAngularExcursionDegrees": 1.881278124755842,
+      "loopSeamDegrees": 0.0
+    },
+    "neck_03_016": {
+      "worldMin": [
+        -0.01870817328448452,
+        1.7570573903651319,
+        2.470367720568399
+      ],
+      "worldMax": [
+        -0.018708083278236996,
+        1.8450059969683947,
+        2.498209533811629
+      ],
+      "maxLocalAngularExcursionDegrees": 1.6071171167201408,
+      "loopSeamDegrees": 0.0
+    },
+    "neck_05_018": {
+      "worldMin": [
+        -0.025802518312324923,
+        1.9571187694898942,
+        2.6070878957423735
+      ],
+      "worldMax": [
+        -0.02580238466017725,
+        2.067039319568353,
+        2.667431236337546
+      ],
+      "maxLocalAngularExcursionDegrees": 0.8055303561221616,
+      "loopSeamDegrees": 0.0
+    },
+    "head_019": {
+      "worldMin": [
+        -0.028169008119579134,
+        2.0037381248035917,
+        2.6872136875726667
+      ],
+      "worldMax": [
+        -0.028168861558977812,
+        2.1281559741323535,
+        2.757162024990628
+      ],
+      "maxLocalAngularExcursionDegrees": 5.703752039545714,
+      "loopSeamDegrees": 0.0
+    },
+    "tail_01_0367": {
+      "worldMin": [
+        -0.004783985025966582,
+        1.537559754177057,
+        0.7788271378071183
+      ],
+      "worldMax": [
+        -0.004783961730334555,
+        1.5747220744478618,
+        0.7815888921191221
+      ],
+      "maxLocalAngularExcursionDegrees": 9.459270581098416,
+      "loopSeamDegrees": 0.0
+    },
+    "tail_03_0369": {
+      "worldMin": [
+        -0.02612386969645535,
+        1.3552736922989284,
+        0.6082261608623196
+      ],
+      "worldMax": [
+        -0.000447862764403076,
+        1.3945733133220035,
+        0.626156752801213
+      ],
+      "maxLocalAngularExcursionDegrees": 0.0,
+      "loopSeamDegrees": 0.0
+    },
+    "dyn_tail_06_0372": {
+      "worldMin": [
+        -0.02526874275475917,
+        0.8717704200596472,
+        0.6196933481649604
+      ],
+      "worldMax": [
+        -0.004854088965924917,
+        0.9101679117987016,
+        0.6818047071162381
+      ],
+      "maxLocalAngularExcursionDegrees": 7.484217465131754,
+      "loopSeamDegrees": 0.0
+    },
+    "dyn_tail_08_0374": {
+      "worldMin": [
+        -0.03854535602037601,
+        0.4434186383980413,
+        0.5775033918020689
+      ],
+      "worldMax": [
+        -0.015586956673045042,
+        0.4827814942647667,
+        0.7215692318471765
+      ],
+      "maxLocalAngularExcursionDegrees": 7.233217861170786,
+      "loopSeamDegrees": 0.0
+    },
+    "dyn_new_neck_03_02_0152": {
+      "worldMin": [
+        -0.12236120681034805,
+        1.7832112010923433,
+        2.2036165810080175
+      ],
+      "worldMax": [
+        -0.11783592306569844,
+        1.8460122145906142,
+        2.233769072723554
+      ],
+      "maxLocalAngularExcursionDegrees": 5.2563662737083545,
+      "loopSeamDegrees": 2.4148365394514667e-06
+    },
+    "dyn_new_neck_04_01_0127": {
+      "worldMin": [
+        -0.031744847511717286,
+        1.947431608280458,
+        2.3424625575421687
+      ],
+      "worldMax": [
+        -0.031744729540223754,
+        2.0204816752150774,
+        2.3971379924788945
+      ],
+      "maxLocalAngularExcursionDegrees": 5.159393237657787,
+      "loopSeamDegrees": 0.0
+    },
+    "dyn_new_head_neck_01_073": {
+      "worldMin": [
+        -0.044740661440231644,
+        2.0807926112974227,
+        2.6788683873710437
+      ],
+      "worldMax": [
+        -0.0447405000845109,
+        2.204728922933482,
+        2.755532040846634
+      ],
+      "maxLocalAngularExcursionDegrees": 5.370441212971328,
+      "loopSeamDegrees": 0.0
+    }
+  }
+}

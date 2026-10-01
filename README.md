@@ -27,6 +27,8 @@ coat and groom, and a named 40-joint rig. Original horse mesh and UVs by
 [b2przemo](https://blendswap.com/blend/13903), licensed CC BY 3.0; see the
 [asset provenance and rebuild instructions](assets/models/artist-breeds/SOURCE.md).
 
+The native model collection adds selectable White Western and Bay Western horses, the original Black Dragon, and the European Dragon. Their available gaits and source credits are listed in [the native asset record](assets/models/horse-imports/README.md). The White Western has rebuilt Walk, Trot and both Canter leads; Bay Western has a rebuilt Walk. Native horse Gallop/Jump and complete breed-roster rebuilding remain unfinished.
+
 For VR, serve over HTTPS (WebXR requires a secure origin) and press **Ride in VR**:
 
 ```bash

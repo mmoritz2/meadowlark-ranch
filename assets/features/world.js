@@ -656,18 +656,19 @@ export function install(G){
     across a third of the frame, and you cannot see the horse you are actually riding. Push it
     out of a cylinder round the camera at a couple of metres a second, so it reads as the foal
     stepping aside rather than as a teleport. */
- function clearOfCamera(a,dt,r){
+ function clearOfCamera(a,dt,r,maxSpeed=2.5){
+  if(maxSpeed<=0)return false;
   const cx=G.camera.position.x,cz=G.camera.position.z;
   const dx=a.pos.x-cx,dz=a.pos.z-cz,d=Math.hypot(dx,dz);
   if(d>=r)return false;
-  if(d<0.05){a.pos.x+=Math.min(r,dt*2.5);return true;}   // dead on the lens: any direction will do
-  const push=Math.min(r-d,dt*2.5);a.pos.x+=dx/d*push;a.pos.z+=dz/d*push;return true;
+  if(d<0.05){a.pos.x+=Math.min(r,dt*maxSpeed);return true;}   // dead on the lens: any direction will do
+  const push=Math.min(r-d,dt*maxSpeed);a.pos.x+=dx/d*push;a.pos.z+=dz/d*push;return true;
  }
  /* The companion foal (or any horse you take along) and the pet: the built-in loops integrate
     them straight at their targets; this pass runs right after and keeps them out of the barn
     and out of the camera. */
  function tickFollowers(dt){
-  if(P.companionEntry&&P.companionEntry.idx!=null){const a=P.companionEntry;if(H.myHorses[a.idx]&&H.myHorses[a.idx].id===P.companionId){const h0=a.heading;a.heading=avoid(a,a.heading,2.4);if(a.heading!==h0){a.pos.x+=Math.sin(a.heading)*dt*1.5;a.pos.z+=Math.cos(a.heading)*dt*1.5;}pushOut(a,0.55);clearOfCamera(a,dt,4.2);a.parts.group.position.set(a.pos.x,groundH(a.pos.x,a.pos.z),a.pos.z);a.parts.group.rotation.y=a.heading;}}
+  if(P.companionEntry&&P.companionEntry.idx!=null){const a=P.companionEntry;if(H.myHorses[a.idx]&&H.myHorses[a.idx].id===P.companionId){const nativeProfile=H.breedModels?.profile(H.myHorses[a.idx].breed),native=!!nativeProfile?.nativeBreed,scale=a.parts.group.getWorldScale(new THREE.Vector3()).z,limit=native?nativeProfile.nativeMaxSpeedMps*Math.abs(scale):Infinity,budget=Math.max(0,limit-(a.rest>0?0:a.wsp||0)),h0=a.heading,start=a.pos.clone();a.heading=avoid(a,a.heading,2.4);if(a.heading!==h0){const step=dt*Math.min(1.5,budget);a.pos.x+=Math.sin(a.heading)*step;a.pos.z+=Math.cos(a.heading)*step;}pushOut(a,0.55);clearOfCamera(a,dt,4.2,Math.min(2.5,budget));if(native){const offset=a.pos.clone().sub(start),max=budget*dt;if(offset.length()>max)a.pos.copy(start).add(offset.setLength(max));pushOut(a,0.55);}a.parts.group.position.set(a.pos.x,groundH(a.pos.x,a.pos.z),a.pos.z);a.parts.group.rotation.y=a.heading;}}
   /* The pet (pet-models.js) steers round buildings every frame and picks its own spot in the picture, so
      here it only gets the barn push-out as a safety net: never the camera push (that shoved it away from
      where it had chosen to be seen), never while a bird is in the air (a flat push-out at twenty metres

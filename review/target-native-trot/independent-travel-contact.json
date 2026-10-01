@@ -1,0 +1,256 @@
+{
+  "nominalTravelSpeedMps": 1.3888888888888888,
+  "duration": 0.72,
+  "stanceDurationSec": 0.31679999999999997,
+  "maskNote": "Fixed independent strict sole toe/heel quartiles, all strict-sole vertices identical to author; toe/heel quartiles differ slightly when author quantile includes tied Z vertices. centroid is not an exact single contact vertex. Actor translates +Z at nominal speed. Drift computed within each contact regime; do not count toe/heel anchor-switch displacement as sole sliding.",
+  "feet": {
+    "FL": {
+      "heelStrike": {
+        "samples": 17,
+        "xRangeM": 2.149108818683132e-07,
+        "zRangeM": 3.2933128312873095e-05,
+        "xzRangeDiagonalM": 3.2933829524659125e-05,
+        "endpointDriftXZ": [
+          9.436842529630951e-09,
+          3.2734415846391585e-05
+        ],
+        "pathLengthXZ": 6.90678659050806e-05
+      },
+      "flat": {
+        "samples": 62,
+        "xRangeM": 2.3760740669453995e-07,
+        "zRangeM": 4.007363110858364e-05,
+        "xzRangeDiagonalM": 4.0074335521709635e-05,
+        "endpointDriftXZ": [
+          -3.130912261395391e-08,
+          3.73280754453198e-05
+        ],
+        "pathLengthXZ": 0.00011427790389868766
+      },
+      "toeBreakover": {
+        "samples": 34,
+        "xRangeM": 1.8854615753405302e-07,
+        "zRangeM": 5.182060450659165e-05,
+        "xzRangeDiagonalM": 5.1820947512392204e-05,
+        "endpointDriftXZ": [
+          -1.646073555239269e-11,
+          -2.897898299147883e-05
+        ],
+        "pathLengthXZ": 0.00041284146185905046
+      },
+      "wholeStanceToe": {
+        "samples": 113,
+        "xRangeM": 2.5179526996765844e-07,
+        "zRangeM": 0.00115469629010434,
+        "xzRangeDiagonalM": 0.0011546963175578177,
+        "endpointDriftXZ": [
+          1.2143547331588955e-07,
+          0.0011028756855977484
+        ],
+        "pathLengthXZ": 0.0016282070397466218
+      },
+      "wholeStanceHeel": {
+        "samples": 113,
+        "xRangeM": 2.5577297393941656e-07,
+        "zRangeM": 0.0095880117345164,
+        "xzRangeDiagonalM": 0.009588011737927941,
+        "endpointDriftXZ": [
+          1.1929237564434203e-07,
+          0.0095880117345164
+        ],
+        "pathLengthXZ": 0.00970432980559299
+      }
+    },
+    "FR": {
+      "heelStrike": {
+        "samples": 17,
+        "xRangeM": 1.7068250796059559e-07,
+        "zRangeM": 7.439465885994423e-06,
+        "xzRangeDiagonalM": 7.4414235995136376e-06,
+        "endpointDriftXZ": [
+          1.9780116822243343e-08,
+          9.402734608698893e-07
+        ],
+        "pathLengthXZ": 5.5994035373503266e-05
+      },
+      "flat": {
+        "samples": 62,
+        "xRangeM": 2.516036094191154e-07,
+        "zRangeM": 5.5145664413114304e-05,
+        "xzRangeDiagonalM": 5.51462383843186e-05,
+        "endpointDriftXZ": [
+          -4.916816601086005e-08,
+          5.2602994730310826e-05
+        ],
+        "pathLengthXZ": 0.0001590599429031971
+      },
+      "toeBreakover": {
+        "samples": 34,
+        "xRangeM": 1.9059924197262212e-07,
+        "zRangeM": 3.961691028964154e-05,
+        "xzRangeDiagonalM": 3.961736877896545e-05,
+        "endpointDriftXZ": [
+          3.5632786776762515e-08,
+          -2.383532213423578e-05
+        ],
+        "pathLengthXZ": 0.0003390931896661451
+      },
+      "wholeStanceToe": {
+        "samples": 113,
+        "xRangeM": 2.5463701372463454e-07,
+        "zRangeM": 0.0012892914350626228,
+        "xzRangeDiagonalM": 0.0012892914602082206,
+        "endpointDriftXZ": [
+          1.591703241987652e-07,
+          0.00124986091172552
+        ],
+        "pathLengthXZ": 0.001719985601764392
+      },
+      "wholeStanceHeel": {
+        "samples": 113,
+        "xRangeM": 2.588114980939249e-07,
+        "zRangeM": 0.008908785501396288,
+        "xzRangeDiagonalM": 0.008908785505155689,
+        "endpointDriftXZ": [
+          1.6105408065514304e-07,
+          0.008906898772059968
+        ],
+        "pathLengthXZ": 0.009073983802425769
+      }
+    },
+    "HL": {
+      "heelStrike": {
+        "samples": 17,
+        "xRangeM": 3.3848198296992926e-07,
+        "zRangeM": 4.495393878367615e-06,
+        "xzRangeDiagonalM": 4.508118917515407e-06,
+        "endpointDriftXZ": [
+          -2.086824185676406e-09,
+          4.035403106006363e-06
+        ],
+        "pathLengthXZ": 1.3803320476052757e-05
+      },
+      "flat": {
+        "samples": 62,
+        "xRangeM": 2.870849155067745e-07,
+        "zRangeM": 5.062297372027125e-05,
+        "xzRangeDiagonalM": 5.062378774876476e-05,
+        "endpointDriftXZ": [
+          -3.6223167104720844e-08,
+          5.062297372027125e-05
+        ],
+        "pathLengthXZ": 0.0001299292779921719
+      },
+      "toeBreakover": {
+        "samples": 34,
+        "xRangeM": 2.2649630970761336e-07,
+        "zRangeM": 3.9398510021548816e-05,
+        "xzRangeDiagonalM": 3.9399161063357604e-05,
+        "endpointDriftXZ": [
+          4.166277614570113e-08,
+          -1.2613413973072696e-05
+        ],
+        "pathLengthXZ": 0.0002202602890376705
+      },
+      "wholeStanceToe": {
+        "samples": 113,
+        "xRangeM": 3.338868511948423e-07,
+        "zRangeM": 0.0009406696105700441,
+        "xzRangeDiagonalM": 0.0009406696698259319,
+        "endpointDriftXZ": [
+          1.692125166374847e-07,
+          0.0009050208787031444
+        ],
+        "pathLengthXZ": 0.0012514706917846684
+      },
+      "wholeStanceHeel": {
+        "samples": 113,
+        "xRangeM": 3.3848198296992926e-07,
+        "zRangeM": 0.009571559101449023,
+        "xzRangeDiagonalM": 0.009571559107433944,
+        "endpointDriftXZ": [
+          1.6701462898782715e-07,
+          0.009571099110676662
+        ],
+        "pathLengthXZ": 0.00966549245551291
+      }
+    },
+    "HR": {
+      "heelStrike": {
+        "samples": 17,
+        "xRangeM": 2.478612944889491e-07,
+        "zRangeM": 0.0006058548818350662,
+        "xzRangeDiagonalM": 0.000605854932536332,
+        "endpointDriftXZ": [
+          -2.521900271945654e-08,
+          0.0006058548818350662
+        ],
+        "pathLengthXZ": 0.0006058567031219529
+      },
+      "flat": {
+        "samples": 62,
+        "xRangeM": 2.2144792005684977e-07,
+        "zRangeM": 8.557049385515825e-05,
+        "xzRangeDiagonalM": 8.557078039726512e-05,
+        "endpointDriftXZ": [
+          -3.9907074533829245e-08,
+          8.462198834902068e-05
+        ],
+        "pathLengthXZ": 0.00018338277480553137
+      },
+      "toeBreakover": {
+        "samples": 34,
+        "xRangeM": 2.3287589906439976e-07,
+        "zRangeM": 6.011579981435311e-05,
+        "xzRangeDiagonalM": 6.011625086866065e-05,
+        "endpointDriftXZ": [
+          -1.8134699297789325e-09,
+          -4.829850427601201e-05
+        ],
+        "pathLengthXZ": 0.0002499121595297238
+      },
+      "wholeStanceToe": {
+        "samples": 113,
+        "xRangeM": 2.988906643852651e-07,
+        "zRangeM": 0.0017408592913579213,
+        "xzRangeDiagonalM": 0.0017408593170164077,
+        "endpointDriftXZ": [
+          9.059186989457402e-08,
+          0.0016807434915435682
+        ],
+        "pathLengthXZ": 0.0020777605692589842
+      },
+      "wholeStanceHeel": {
+        "samples": 113,
+        "xRangeM": 3.047075237128105e-07,
+        "zRangeM": 0.009583880751910856,
+        "xzRangeDiagonalM": 0.009583880756754754,
+        "endpointDriftXZ": [
+          8.726054184782228e-08,
+          0.009583880751910856
+        ],
+        "pathLengthXZ": 0.009683300038240025
+      }
+    }
+  },
+  "bodyPhase": {
+    "pelvis_08": {
+      "yRangeM": 0.03599548423996679,
+      "firstHalfMinPhase": 0.21875,
+      "firstHalfMaxPhase": 0.46875,
+      "intendedDiagonalMidstancePhase": 0.22
+    },
+    "head_019": {
+      "yRangeM": 0.10117485714715624,
+      "firstHalfMinPhase": 0.15625,
+      "firstHalfMaxPhase": 0.40625,
+      "intendedDiagonalMidstancePhase": 0.22
+    },
+    "neck_01_014": {
+      "yRangeM": 0.04283642090157058,
+      "firstHalfMinPhase": 0.1484375,
+      "firstHalfMaxPhase": 0.3984375,
+      "intendedDiagonalMidstancePhase": 0.22
+    }
+  }
+}

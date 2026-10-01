@@ -1,0 +1,207 @@
+{
+  "status": "private review candidate; no roster integration or deployment",
+  "model": {
+    "path": "review/native-horse-kit/model.glb",
+    "initialCheckedKitSha256": "552dd455873020cba95f7087d513358fd7dd26b27406e8cc36ce7c6b0da8d3e4",
+    "currentSmokeSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+    "preservationRecord": "review/native-horse-kit/preservation.json",
+    "sceneAndOriginalDataUnchanged": true,
+    "walkRolloverChannels": 82,
+    "walkCurveValuesIdenticalAfterCanterAddition": true
+  },
+  "originalReinRotationBound": {
+    "sourceModelSha256": "dcec158d30a7bab814b4aaaeeb07dff95fc54d4dbe71db704858928fe2c904ec",
+    "restSelectedGripVerticalShortfallM": {
+      "left": 0.12401894771928923,
+      "right": 0.10843416347870383
+    },
+    "originalMeanHandGapM": 0.20163966221424212,
+    "bestTestedMeanHandGapM": 0.1823374043507454,
+    "bestTestedDegrees": {
+      "parentDegrees": -25,
+      "innerDegrees": -15,
+      "meanHandGapM": 0.1823374043507454
+    },
+    "maxSaddleEndVertexDisplacementM": 0.013967226768395022,
+    "maxOriginalRopeEdgeStretchFactor": 1.7718836050586266,
+    "conclusion": "Original fixed-length rein branch rotations cannot meet relaxed fists; bounded test also distorts saddle end and rope edges."
+  },
+  "replacement": {
+    "sourceTackComponents": 300,
+    "originalTriangles": 17194,
+    "removedDisplayReinAndStitchTriangles": 1640,
+    "retainedTriangles": 15554,
+    "protectedComponents": [
+      89,
+      91,
+      205,
+      209
+    ],
+    "allOtherComponentsIntact": true,
+    "measuredSourceWideReinMedianM": [
+      0.0191,
+      0.0199
+    ],
+    "newLeatherRibbonWidthM": 0.019
+  },
+  "mountedEightPhase": {
+    "clip": "Target Native Walk Rollover",
+    "horseBones": 677,
+    "riderBones": 65,
+    "visualSamples": 16,
+    "maxBitFistLooseJoinGapM": 8.960581419835649e-16,
+    "minOutsideSkinnedNeckBodyM": 0.04067531776857279,
+    "insideNeckSamples": 0,
+    "maxBootToStirrupTreadGapM": 5.426039893005526e-07,
+    "relaxedElbowDegrees": [
+      115.17740141602538,
+      115.17740141602901
+    ],
+    "browserErrors": []
+  },
+  "rolloverTravel512Phase": {
+    "speedMps": 0.5494505494505494,
+    "cycleTravelM": 0.6153846153846154,
+    "minSupportingHooves": 2,
+    "supportCountHistogram": {
+      "2": 204,
+      "3": 308
+    },
+    "eightPhaseWholeBodyMinYRangeM": [
+      0.0009233334608887696,
+      0.001013965483221468
+    ],
+    "allStanceWholeHoofMinYRangeM": [
+      0.000911376037804917,
+      0.0012195687006456841
+    ],
+    "maxRegionalXRangeM": 3.178995918590166e-07,
+    "maxRegionalZRangeM": 2.4082251522561382e-05,
+    "maxActiveAnchorMinYAcrossRegimesM": 0.0037767681386004608,
+    "regimes": {
+      "HL": {
+        "heel": {
+          "xRangeM": 2.506487389586365e-07,
+          "zRangeM": 1.6992343144783817e-06,
+          "activeMinYRangeM": [
+            0.0009387977178658955,
+            0.000966314629328321
+          ]
+        },
+        "flat": {
+          "xRangeM": 2.719846777521351e-07,
+          "zRangeM": 2.1408162024783017e-05,
+          "activeMinYRangeM": [
+            0.0009263247290638428,
+            0.0010383483792886427
+          ]
+        },
+        "toe": {
+          "xRangeM": 2.577218100874301e-07,
+          "zRangeM": 1.6165139498758307e-05,
+          "activeMinYRangeM": [
+            0.0010246763102831615,
+            0.0011556022612718223
+          ]
+        }
+      },
+      "FL": {
+        "heel": {
+          "xRangeM": 2.2428849424938058e-07,
+          "zRangeM": 6.2920367507324215e-06,
+          "activeMinYRangeM": [
+            0.0010734237707236242,
+            0.0011235712658971705
+          ]
+        },
+        "flat": {
+          "xRangeM": 2.700235703367859e-07,
+          "zRangeM": 1.2097016529821758e-05,
+          "activeMinYRangeM": [
+            0.000985998561343199,
+            0.0010706704489483803
+          ]
+        },
+        "toe": {
+          "xRangeM": 3.178995918590166e-07,
+          "zRangeM": 1.3600627546517252e-05,
+          "activeMinYRangeM": [
+            0.000950825029992052,
+            0.0012379490358935988
+          ]
+        }
+      },
+      "HR": {
+        "heel": {
+          "xRangeM": 2.060856659213961e-07,
+          "zRangeM": 1.2432271685181018e-05,
+          "activeMinYRangeM": [
+            0.0011082630515518404,
+            0.0011694792046206643
+          ]
+        },
+        "flat": {
+          "xRangeM": 2.437678622291273e-07,
+          "zRangeM": 2.4082251522561382e-05,
+          "activeMinYRangeM": [
+            0.000965037811583767,
+            0.0011034494484544917
+          ]
+        },
+        "toe": {
+          "xRangeM": 2.519486551610939e-07,
+          "zRangeM": 1.2957668161214797e-05,
+          "activeMinYRangeM": [
+            0.000911376037804917,
+            0.003453592279235043
+          ]
+        }
+      },
+      "FR": {
+        "heel": {
+          "xRangeM": 2.2637877328257616e-07,
+          "zRangeM": 1.5568123057363437e-06,
+          "activeMinYRangeM": [
+            0.0009856817554294915,
+            0.0010100437042767328
+          ]
+        },
+        "flat": {
+          "xRangeM": 2.6860598870137586e-07,
+          "zRangeM": 1.365187497848197e-05,
+          "activeMinYRangeM": [
+            0.0009562731307556646,
+            0.001028928400409712
+          ]
+        },
+        "toe": {
+          "xRangeM": 2.5276748868985344e-07,
+          "zRangeM": 1.7589289577957246e-05,
+          "activeMinYRangeM": [
+            0.0010041680877177213,
+            0.0037767681386004608
+          ]
+        }
+      }
+    }
+  },
+  "reinMotion129Phase": {
+    "clip": "Target Native Walk Rollover",
+    "maxTranslatedLoopSeamM": 2.292486334098954e-08,
+    "mainLengthRangeM": {
+      "left": [
+        1.3215286869059353,
+        1.3469510205553985
+      ],
+      "right": [
+        1.3393910984873938,
+        1.3630398826215013
+      ]
+    }
+  },
+  "limitations": [
+    "Display ribbons do not simulate leather tension or cloth.",
+    "Far rein is occluded behind mane from the left-quarter camera.",
+    "Mane strand collisions, other gait rider fit, transitions, and four-horse performance are untested."
+  ]
+}

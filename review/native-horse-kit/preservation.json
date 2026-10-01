@@ -1,0 +1,91 @@
+{
+  "status": "Private combined review kit; no production activation",
+  "inputs": {
+    "assets/models/horse-imports/wildmesh-white-western/game/native-candidate/native-white-western-candidate.glb": "fd18d9b9b22e00dc30a6fa1cfe2e135bb20f7c871df0a976706aaea2f4dff655",
+    "output/target-native-walk-rollover/target-native-walk-rollover.glb": "73053f039395f3dc5b728ebf8f89b1f9676da018745dca46b1104fc59a5a80b7",
+    "output/target-native-trot/target-native-trot.glb": "64c2c8a0501d90573065465db4ff4f14c958d0dd2f655521a02c8e7b2f635113",
+    "output/target-native-canter/target-native-canter.glb": "81039eb4d4c2e75ae992b78b4e6382d41bd7b302c5c4fdce75388a71901045d2"
+  },
+  "targetSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+  "targetBytes": 28067576,
+  "sourceDataUnchanged": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "images": true,
+    "textures": true,
+    "samplers": true,
+    "scenes": true
+  },
+  "originalBinaryPrefixIdentical": true,
+  "originalClipsIdentical": true,
+  "curveChecks": {
+    "Target Native Walk Rollover": {
+      "channels": 82,
+      "allInputAndOutputValuesIdentical": true
+    },
+    "Target Native Trot": {
+      "channels": 82,
+      "allInputAndOutputValuesIdentical": true
+    },
+    "Target Native Canter Left": {
+      "channels": 82,
+      "allInputAndOutputValuesIdentical": true
+    },
+    "Target Native Canter Right": {
+      "channels": 82,
+      "allInputAndOutputValuesIdentical": true
+    }
+  },
+  "clipNames": [
+    "Horse|Horse_Idle",
+    "Horse|Horse_Walk",
+    "Target Native Walk Rollover",
+    "Target Native Trot",
+    "Target Native Canter Left",
+    "Target Native Canter Right"
+  ],
+  "gaits": {
+    "walk": {
+      "clip": "Target Native Walk Rollover",
+      "durationS": 1.12,
+      "stanceFraction": 0.65,
+      "strokeM": 0.4,
+      "nominalSpeedMps": 0.5494505494505494
+    },
+    "trot": {
+      "clip": "Target Native Trot",
+      "durationS": 0.72,
+      "stanceFraction": 0.44,
+      "strokeM": 0.44,
+      "nominalSpeedMps": 1.388888888888889
+    },
+    "canterLeft": {
+      "clip": "Target Native Canter Left",
+      "durationS": 0.64,
+      "stanceFraction": 0.4,
+      "strokeM": 0.5,
+      "nominalSpeedMps": 1.953125,
+      "offsets": {
+        "HR": 0,
+        "HL": 0.24,
+        "FR": 0.24,
+        "FL": 0.48
+      }
+    },
+    "canterRight": {
+      "clip": "Target Native Canter Right",
+      "durationS": 0.64,
+      "stanceFraction": 0.4,
+      "strokeM": 0.5,
+      "nominalSpeedMps": 1.953125,
+      "offsets": {
+        "HL": 0,
+        "HR": 0.24,
+        "FL": 0.24,
+        "FR": 0.48
+      }
+    }
+  }
+}

@@ -1,0 +1,1424 @@
+{
+  "nominalTravelSpeedMps": 1.953125,
+  "duration": 0.64,
+  "stanceDurationSec": 0.256,
+  "nominalTravelPerCycleM": 1.25,
+  "travelFormula": "XYZ_world = XYZ_inplace + [0,0,speed*duration*unwrapped_limb_phase]. Fixed centroid proxies evaluated within contact regime; whole-stance heel travel after lift is not planted sliding. Y centroid range is not the minimum contact height.",
+  "leads": {
+    "left": {
+      "candidateSha256": "81039eb4d4c2e75ae992b78b4e6382d41bd7b302c5c4fdce75388a71901045d2",
+      "contact": {
+        "FL": {
+          "heelStrike": {
+            "samples": 16,
+            "xyzRangeM": [
+              1.99265183395414e-07,
+              0.000372432203371873,
+              0.00017203576630198114
+            ],
+            "xzRangeDiagonalM": 0.00017203588170414678,
+            "endpointDriftXYZ": [
+              -6.885949928314705e-08,
+              0.00031151245150403415,
+              -0.00015909429078586612
+            ],
+            "pathLengthXZ": 0.00022714624238010694
+          },
+          "flat": {
+            "samples": 56,
+            "xyzRangeM": [
+              2.002261478700751e-07,
+              0.0001546792822005455,
+              2.7361706829154286e-05
+            ],
+            "xzRangeDiagonalM": 2.7362439421858553e-05,
+            "endpointDriftXYZ": [
+              -2.313950714372126e-08,
+              0.00015455988341520066,
+              2.705153177062769e-05
+            ],
+            "pathLengthXZ": 8.223475888325348e-05
+          },
+          "toeBreakover": {
+            "samples": 31,
+            "xyzRangeM": [
+              2.2747900980946145e-07,
+              0.002703225661456714,
+              0.002508870620569148
+            ],
+            "xzRangeDiagonalM": 0.0025088706308818956,
+            "endpointDriftXYZ": [
+              -6.768316258842777e-08,
+              0.0020808764221590106,
+              -0.0024799737066767413
+            ],
+            "pathLengthXZ": 0.0028913764192678316
+          },
+          "wholeStanceToe": {
+            "samples": 103,
+            "xyzRangeM": [
+              2.488650961141037e-07,
+              0.017652278294627486,
+              0.002508870620569148
+            ],
+            "xzRangeDiagonalM": 0.0025088706329121193,
+            "endpointDriftXYZ": [
+              -5.0145389993150324e-08,
+              -0.014949052633170774,
+              -0.001552610610593863
+            ],
+            "pathLengthXZ": 0.004197885729243893
+          },
+          "wholeStanceHeel": {
+            "samples": 103,
+            "xyzRangeM": [
+              2.480202883486937e-07,
+              0.04956067289901208,
+              0.009502761545508775
+            ],
+            "xzRangeDiagonalM": 0.009502761548745417,
+            "endpointDriftXYZ": [
+              -4.845803265596249e-08,
+              0.04949975314714424,
+              0.006930178298282019
+            ],
+            "pathLengthXZ": 0.012174917968038839
+          }
+        },
+        "FR": {
+          "heelStrike": {
+            "samples": 15,
+            "xyzRangeM": [
+              1.8765605927506535e-07,
+              0.00018502284421383476,
+              7.497215128715595e-06
+            ],
+            "xzRangeDiagonalM": 7.499563286140377e-06,
+            "endpointDriftXYZ": [
+              -1.1792968546142646e-09,
+              0.00017946877191468984,
+              -2.8985881801446567e-06
+            ],
+            "pathLengthXZ": 4.417319004460861e-05
+          },
+          "flat": {
+            "samples": 57,
+            "xyzRangeM": [
+              1.8906036111654423e-07,
+              0.0001699127442927051,
+              6.576391250900926e-05
+            ],
+            "xzRangeDiagonalM": 6.576418426706721e-05,
+            "endpointDriftXYZ": [
+              8.35994091175074e-08,
+              0.00012677489346319543,
+              6.576391250900926e-05
+            ],
+            "pathLengthXZ": 0.00015300113565448254
+          },
+          "toeBreakover": {
+            "samples": 30,
+            "xyzRangeM": [
+              2.3934803544678473e-07,
+              0.0035096321509727737,
+              0.002385367205353983
+            ],
+            "xzRangeDiagonalM": 0.0023853672173620886,
+            "endpointDriftXYZ": [
+              -1.0225771834848629e-07,
+              0.0007542667455754146,
+              -0.0023628858262019214
+            ],
+            "pathLengthXZ": 0.0027175160751736
+          },
+          "wholeStanceToe": {
+            "samples": 102,
+            "xyzRangeM": [
+              2.3934803544678473e-07,
+              0.019645338274341666,
+              0.002385367205353983
+            ],
+            "xzRangeDiagonalM": 0.0023853672173620886,
+            "endpointDriftXYZ": [
+              -2.0483636870016753e-08,
+              -0.01613570612336889,
+              -0.0011142796477865424
+            ],
+            "pathLengthXZ": 0.004059961906437133
+          },
+          "wholeStanceHeel": {
+            "samples": 102,
+            "xyzRangeM": [
+              2.3333363607935809e-07,
+              0.04708817267394788,
+              0.00875157766346657
+            ],
+            "xzRangeDiagonalM": 0.008751577666577127,
+            "endpointDriftXYZ": [
+              -1.668401755638982e-08,
+              0.04708261860164873,
+              0.006480078564177649
+            ],
+            "pathLengthXZ": 0.011152989009207302
+          }
+        },
+        "HL": {
+          "heelStrike": {
+            "samples": 15,
+            "xyzRangeM": [
+              2.7524004150847325e-07,
+              0.0005619262348892308,
+              6.6097973370204954e-06
+            ],
+            "xzRangeDiagonalM": 6.615525520843588e-06,
+            "endpointDriftXYZ": [
+              2.3457614600763677e-08,
+              0.0005619262348892308,
+              4.679955966313543e-06
+            ],
+            "pathLengthXZ": 1.756081491920064e-05
+          },
+          "flat": {
+            "samples": 57,
+            "xyzRangeM": [
+              2.7717017817008305e-07,
+              8.980918674549726e-05,
+              5.7398516999151994e-05
+            ],
+            "xzRangeDiagonalM": 5.7399186205116244e-05,
+            "endpointDriftXYZ": [
+              7.107854757548715e-08,
+              2.4704614546955384e-05,
+              5.7398516999151994e-05
+            ],
+            "pathLengthXZ": 9.898010779145769e-05
+          },
+          "toeBreakover": {
+            "samples": 30,
+            "xyzRangeM": [
+              2.672339399212298e-07,
+              0.0018409426784457682,
+              0.0024073872429637433
+            ],
+            "xzRangeDiagonalM": 0.0024073872577960015,
+            "endpointDriftXYZ": [
+              -6.578524261446894e-08,
+              0.0018337446421139323,
+              -0.002396331329380219
+            ],
+            "pathLengthXZ": 0.002547250014186072
+          },
+          "wholeStanceToe": {
+            "samples": 102,
+            "xyzRangeM": [
+              2.900686445761469e-07,
+              0.01623037166817132,
+              0.0024073872429637433
+            ],
+            "xzRangeDiagonalM": 0.0024073872604390826,
+            "endpointDriftXYZ": [
+              2.7154175463728336e-08,
+              -0.014396627026057388,
+              -0.0014971251804707375
+            ],
+            "pathLengthXZ": 0.0035225037541336463
+          },
+          "wholeStanceHeel": {
+            "samples": 102,
+            "xyzRangeM": [
+              2.937195319463459e-07,
+              0.04718149037347089,
+              0.009373559328035519
+            ],
+            "xzRangeDiagonalM": 0.009373559332637355,
+            "endpointDriftXYZ": [
+              2.6483749637762344e-08,
+              0.04718149037347089,
+              0.007103122264295214
+            ],
+            "pathLengthXZ": 0.011698935474967398
+          }
+        },
+        "HR": {
+          "heelStrike": {
+            "samples": 16,
+            "xyzRangeM": [
+              1.4433927586487982e-07,
+              0.0022248350112172577,
+              0.0005953123935669158
+            ],
+            "xzRangeDiagonalM": 0.0005953124110651456,
+            "endpointDriftXYZ": [
+              6.63993612870506e-08,
+              -0.00199240956123585,
+              0.0005953123935669158
+            ],
+            "pathLengthXZ": 0.0005953140623978109
+          },
+          "flat": {
+            "samples": 56,
+            "xyzRangeM": [
+              2.3058260428809874e-07,
+              0.0003784338889989691,
+              8.752944674750296e-05
+            ],
+            "xzRangeDiagonalM": 8.752975046383576e-05,
+            "endpointDriftXYZ": [
+              -1.4184310281883938e-08,
+              -0.0003784338889989691,
+              8.752944674750296e-05
+            ],
+            "pathLengthXZ": 0.00011813168215326675
+          },
+          "toeBreakover": {
+            "samples": 31,
+            "xyzRangeM": [
+              1.9290417563322393e-07,
+              0.002700654330937356,
+              6.923862726981866e-05
+            ],
+            "xzRangeDiagonalM": 6.923889599228063e-05,
+            "endpointDriftXYZ": [
+              4.9066013085852234e-08,
+              0.00038134593422547454,
+              -6.582144217359698e-05
+            ],
+            "pathLengthXZ": 0.00014072441439632086
+          },
+          "wholeStanceToe": {
+            "samples": 103,
+            "xyzRangeM": [
+              2.596488153372434e-07,
+              0.021320014687375252,
+              0.0017499478135074575
+            ],
+            "xzRangeDiagonalM": 0.0017499478327701768,
+            "endpointDriftXYZ": [
+              -2.2973761226730005e-08,
+              -0.018619360356437898,
+              0.0016807091862376389
+            ],
+            "pathLengthXZ": 0.001919070519020045
+          },
+          "wholeStanceHeel": {
+            "samples": 103,
+            "xyzRangeM": [
+              2.6037854439220354e-07,
+              0.045046525111239376,
+              0.00959355691506425
+            ],
+            "xzRangeDiagonalM": 0.009593556918597715,
+            "endpointDriftXYZ": [
+              -2.156196443614533e-08,
+              0.042681716280982177,
+              0.00959355691506425
+            ],
+            "pathLengthXZ": 0.009625307072531045
+          }
+        }
+      },
+      "caps": {
+        "FL": [
+          {
+            "joint": "clavicle_l_0203",
+            "boundsDegrees": [
+              -18,
+              18
+            ],
+            "lowerHitCount128": 48,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [
+              0.5121875,
+              0.52,
+              0.5278125,
+              0.535625,
+              0.5434375,
+              0.55125,
+              0.5590625,
+              0.566875,
+              0.5746875,
+              0.5825,
+              0.5903125,
+              0.598125,
+              0.6059375,
+              0.61375,
+              0.6215625,
+              0.629375,
+              0.6371875,
+              0.645,
+              0.6528125,
+              0.660625,
+              0.6684375,
+              0.67625,
+              0.6840625,
+              0.691875,
+              0.6996875,
+              0.7075,
+              0.7153125,
+              0.723125,
+              0.7309375,
+              0.73875,
+              0.7465625,
+              0.754375,
+              0.7621875,
+              0.77,
+              0.7778125,
+              0.785625,
+              0.7934375,
+              0.80125,
+              0.8090625,
+              0.816875,
+              0.8246875,
+              0.8325,
+              0.8403125,
+              0.848125,
+              0.8559375,
+              0.86375,
+              0.8715625,
+              0.879375
+            ],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.24,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "upperarm_l_0204",
+            "boundsDegrees": [
+              -38,
+              38
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "lowerarm_l_0205",
+            "boundsDegrees": [
+              -48,
+              48
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "hand_l_0206",
+            "boundsDegrees": [
+              -15,
+              70
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 8,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [
+              0.660625,
+              0.6684375,
+              0.67625,
+              0.6840625,
+              0.691875,
+              0.6996875,
+              0.7075,
+              0.7153125
+            ],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.04
+          }
+        ],
+        "FR": [
+          {
+            "joint": "clavicle_r_0269",
+            "boundsDegrees": [
+              -18,
+              18
+            ],
+            "lowerHitCount128": 39,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [
+              0.619375,
+              0.6271875000000001,
+              0.6350000000000001,
+              0.6428125000000001,
+              0.6506250000000001,
+              0.6584375000000001,
+              0.6662499999999999,
+              0.6740624999999999,
+              0.6818749999999999,
+              0.6896874999999999,
+              0.6975,
+              0.7053125,
+              0.713125,
+              0.7209375,
+              0.72875,
+              0.7365625,
+              0.744375,
+              0.7521875,
+              0.76,
+              0.7678125,
+              0.775625,
+              0.7834375,
+              0.79125,
+              0.7990625,
+              0.806875,
+              0.8146875,
+              0.8225,
+              0.8303125,
+              0.838125,
+              0.8459375,
+              0.85375,
+              0.8615625,
+              0.869375,
+              0.8771875,
+              0.885,
+              0.8928125,
+              0.900625,
+              0.9084375,
+              0.91625
+            ],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.195,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "upperarm_r_0270",
+            "boundsDegrees": [
+              -38,
+              38
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "lowerarm_r_0271",
+            "boundsDegrees": [
+              -48,
+              48
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "hand_r_0272",
+            "boundsDegrees": [
+              -15,
+              70
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          }
+        ],
+        "HL": [
+          {
+            "joint": "upperleg_l_0405",
+            "boundsDegrees": [
+              -38,
+              38
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "lowerleg_l_0406",
+            "boundsDegrees": [
+              -50,
+              50
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "foot_l_0407",
+            "boundsDegrees": [
+              -50,
+              20
+            ],
+            "lowerHitCount128": 6,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [
+              0.6428125000000001,
+              0.6506250000000001,
+              0.6584375000000001,
+              0.6662499999999999,
+              0.6740624999999999,
+              0.6818749999999999
+            ],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.03,
+            "upperDurationSec": 0.0
+          }
+        ],
+        "HR": [
+          {
+            "joint": "upperleg_r_0474",
+            "boundsDegrees": [
+              -38,
+              38
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "lowerleg_r_0475",
+            "boundsDegrees": [
+              -50,
+              50
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "foot_r_0476",
+            "boundsDegrees": [
+              -50,
+              20
+            ],
+            "lowerHitCount128": 22,
+            "upperHitCount128": 5,
+            "lowerLimbPhases": [
+              0.53125,
+              0.5390625,
+              0.546875,
+              0.5546875,
+              0.5625,
+              0.5703125,
+              0.578125,
+              0.5859375,
+              0.59375,
+              0.6015625,
+              0.609375,
+              0.6171875,
+              0.625,
+              0.6328125,
+              0.640625,
+              0.6484375,
+              0.65625,
+              0.6640625,
+              0.671875,
+              0.6796875,
+              0.6875,
+              0.6953125
+            ],
+            "upperLimbPhases": [
+              0.0,
+              0.0078125,
+              0.015625,
+              0.984375,
+              0.9921875
+            ],
+            "lowerDurationSec": 0.11,
+            "upperDurationSec": 0.025
+          }
+        ]
+      },
+      "loop": {
+        "FL": {
+          "firstLastLocalAngleDegrees": 5.663293681020316e-06,
+          "maxLocalAdjacentStepDegrees": 2.410028402809299,
+          "loopLocalAdjacentStepDegrees": 1.5205796571803238,
+          "firstLastHoofCentroidDistanceM": 2.13345740809846e-08
+        },
+        "FR": {
+          "firstLastLocalAngleDegrees": 0.0,
+          "maxLocalAdjacentStepDegrees": 1.6664312523654823,
+          "loopLocalAdjacentStepDegrees": 0.1812663186010958,
+          "firstLastHoofCentroidDistanceM": 3.050169717847537e-08
+        },
+        "HL": {
+          "firstLastLocalAngleDegrees": 0.0,
+          "maxLocalAdjacentStepDegrees": 1.442854013596221,
+          "loopLocalAdjacentStepDegrees": 0.4156261306710212,
+          "firstLastHoofCentroidDistanceM": 2.6519734150312303e-08
+        },
+        "HR": {
+          "firstLastLocalAngleDegrees": 0.0,
+          "maxLocalAdjacentStepDegrees": 1.9004057658164855,
+          "loopLocalAdjacentStepDegrees": 0.0,
+          "firstLastHoofCentroidDistanceM": 1.9471146957612592e-08
+        }
+      },
+      "body": {
+        "upperTrunk1998": {
+          "xyzRangeM": [
+            5.708336298787531e-08,
+            0.05439346218508723,
+            0.01000072267498675
+          ],
+          "yMinPhase": 0.3515625,
+          "yMaxPhase": 0.8515625
+        },
+        "neckCrest1931": {
+          "xyzRangeM": [
+            8.487976705003064e-08,
+            0.05807914770533151,
+            0.030711622234150138
+          ],
+          "yMinPhase": 0.328125,
+          "yMaxPhase": 0.8359375
+        },
+        "head_019": {
+          "xyzRangeM": [
+            1.4656060132178794e-07,
+            0.12441784932876176,
+            0.06994833741796125
+          ],
+          "yMinPhase": 0.265625,
+          "yMaxPhase": 0.7734375
+        },
+        "pelvis_08": {
+          "xyzRangeM": [
+            5.770517987058188e-10,
+            0.03600006203284134,
+            1.090608270359894e-08
+          ],
+          "yMinPhase": 0.5,
+          "yMaxPhase": 0
+        },
+        "headRelativeUpperTrunkYRangeM": 0.08175384342640268
+      }
+    },
+    "right": {
+      "candidateSha256": "81039eb4d4c2e75ae992b78b4e6382d41bd7b302c5c4fdce75388a71901045d2",
+      "contact": {
+        "FL": {
+          "heelStrike": {
+            "samples": 15,
+            "xyzRangeM": [
+              2.728325019102362e-07,
+              0.00035044988185932994,
+              1.4943424136326655e-05
+            ],
+            "xzRangeDiagonalM": 1.49459145753028e-05,
+            "endpointDriftXYZ": [
+              -3.243375062966791e-08,
+              0.00032453626798034,
+              1.203494422741258e-05
+            ],
+            "pathLengthXZ": 6.351463297704658e-05
+          },
+          "flat": {
+            "samples": 57,
+            "xyzRangeM": [
+              2.653739794716836e-07,
+              9.847697421742213e-05,
+              4.42585902646897e-05
+            ],
+            "xzRangeDiagonalM": 4.425938584714735e-05,
+            "endpointDriftXYZ": [
+              8.884842161993589e-08,
+              7.380945044056092e-05,
+              4.42585902646897e-05
+            ],
+            "pathLengthXZ": 0.00010204950722664335
+          },
+          "toeBreakover": {
+            "samples": 30,
+            "xyzRangeM": [
+              2.8576317771811244e-07,
+              0.0024460936859843937,
+              0.002530350052166064
+            ],
+            "xzRangeDiagonalM": 0.0025303500683022885,
+            "endpointDriftXYZ": [
+              -6.516100380105083e-08,
+              0.001867094416952162,
+              -0.0025010312369611043
+            ],
+            "pathLengthXZ": 0.0029079127284893855
+          },
+          "wholeStanceToe": {
+            "samples": 102,
+            "xyzRangeM": [
+              3.1190655308543924e-07,
+              0.017724021789997012,
+              0.002530350052166064
+            ],
+            "xzRangeDiagonalM": 0.0025303500713898266,
+            "endpointDriftXYZ": [
+              1.1470811814295878e-08,
+              -0.01527792810401262,
+              -0.0014148681490726567
+            ],
+            "pathLengthXZ": 0.0040668699550667105
+          },
+          "wholeStanceHeel": {
+            "samples": 102,
+            "xyzRangeM": [
+              3.1569597631897484e-07,
+              0.04914726069698639,
+              0.009388908290069331
+            ],
+            "xzRangeDiagonalM": 0.009388908295376867,
+            "endpointDriftXYZ": [
+              1.0401324246345212e-08,
+              0.0491213470831074,
+              0.0070037050476732254
+            ],
+            "pathLengthXZ": 0.011887622932320645
+          }
+        },
+        "FR": {
+          "heelStrike": {
+            "samples": 16,
+            "xyzRangeM": [
+              2.3136070914642204e-07,
+              0.00020912475268197416,
+              0.00018021130853052014
+            ],
+            "xzRangeDiagonalM": 0.00018021145704438457,
+            "endpointDriftXYZ": [
+              -3.5182168650615964e-08,
+              0.00016241207970115666,
+              -0.00018021130853052014
+            ],
+            "pathLengthXZ": 0.00022446600632434444
+          },
+          "flat": {
+            "samples": 56,
+            "xyzRangeM": [
+              2.2046411599085936e-07,
+              0.00027711504218939226,
+              4.517482943100504e-05
+            ],
+            "xzRangeDiagonalM": 4.5175367386960325e-05,
+            "endpointDriftXYZ": [
+              1.2134444615785611e-08,
+              0.00027711504218939226,
+              4.48430879691486e-05
+            ],
+            "pathLengthXZ": 0.00013780557869838382
+          },
+          "toeBreakover": {
+            "samples": 31,
+            "xyzRangeM": [
+              2.2565047105849168e-07,
+              0.003766200662083335,
+              0.002373563152212821
+            ],
+            "xzRangeDiagonalM": 0.0023735631629389175,
+            "endpointDriftXYZ": [
+              -6.990346276825044e-08,
+              0.0010214843358194664,
+              -0.0023580649910392992
+            ],
+            "pathLengthXZ": 0.0026750342978330613
+          },
+          "wholeStanceToe": {
+            "samples": 103,
+            "xyzRangeM": [
+              2.6002742414821256e-07,
+              0.019515326217658106,
+              0.002373563152212821
+            ],
+            "xzRangeDiagonalM": 0.002373563166456019,
+            "endpointDriftXYZ": [
+              -5.374761460896771e-08,
+              -0.015749125555574773,
+              -0.001274648164437231
+            ],
+            "pathLengthXZ": 0.004183152259881342
+          },
+          "wholeStanceHeel": {
+            "samples": 103,
+            "xyzRangeM": [
+              2.637211361233849e-07,
+              0.04756510549237244,
+              0.008842442601010525
+            ],
+            "xzRangeDiagonalM": 0.008842442604943197,
+            "endpointDriftXYZ": [
+              -5.202536565440674e-08,
+              0.047518392819391624,
+              0.0063821563739034914
+            ],
+            "pathLengthXZ": 0.011443137099227063
+          }
+        },
+        "HL": {
+          "heelStrike": {
+            "samples": 16,
+            "xyzRangeM": [
+              2.335238675765794e-07,
+              0.0005960662932440223,
+              4.8915754815581636e-06
+            ],
+            "xzRangeDiagonalM": 4.897146525121431e-06,
+            "endpointDriftXYZ": [
+              1.2649104033646275e-07,
+              0.0005936448494638588,
+              4.8915754815581636e-06
+            ],
+            "pathLengthXZ": 1.0288157215442927e-05
+          },
+          "flat": {
+            "samples": 56,
+            "xyzRangeM": [
+              2.7531304017114344e-07,
+              0.000137984461593757,
+              5.9604072599750424e-05
+            ],
+            "xzRangeDiagonalM": 5.9604708436048974e-05,
+            "endpointDriftXYZ": [
+              8.138658955103573e-08,
+              0.00012124419736483233,
+              5.9604072599750424e-05
+            ],
+            "pathLengthXZ": 5.980571146131251e-05
+          },
+          "toeBreakover": {
+            "samples": 31,
+            "xyzRangeM": [
+              2.522925749148808e-07,
+              0.0017144982073161957,
+              6.876906050234943e-05
+            ],
+            "xzRangeDiagonalM": 6.87695232928014e-05,
+            "endpointDriftXYZ": [
+              8.845573790106087e-08,
+              0.001631463254103678,
+              -6.368885249763423e-05
+            ],
+            "pathLengthXZ": 0.0001168101466206162
+          },
+          "wholeStanceToe": {
+            "samples": 103,
+            "xyzRangeM": [
+              2.8523307110672746e-07,
+              0.016214316799509944,
+              0.0009532629118398361
+            ],
+            "xzRangeDiagonalM": 0.0009532629545132172,
+            "endpointDriftXYZ": [
+              8.286096231380213e-08,
+              -0.014445782454865403,
+              0.0008857671824793467
+            ],
+            "pathLengthXZ": 0.0010997610659545859
+          },
+          "wholeStanceHeel": {
+            "samples": 103,
+            "xyzRangeM": [
+              2.8623574038766364e-07,
+              0.04739576091250262,
+              0.009561953535585088
+            ],
+            "xzRangeDiagonalM": 0.009561953539869302,
+            "endpointDriftXYZ": [
+              8.66794331033649e-08,
+              0.04739576091250262,
+              0.009561953535585088
+            ],
+            "pathLengthXZ": 0.009567577574983235
+          }
+        },
+        "HR": {
+          "heelStrike": {
+            "samples": 15,
+            "xyzRangeM": [
+              2.4824913991139397e-07,
+              0.0009915010479011807,
+              0.00035665526219097465
+            ],
+            "xzRangeDiagonalM": 0.00035665534858760826,
+            "endpointDriftXYZ": [
+              -2.7759857967879498e-08,
+              -0.0006464524171547193,
+              0.00035665526219097465
+            ],
+            "pathLengthXZ": 0.0003566573732298316
+          },
+          "flat": {
+            "samples": 57,
+            "xyzRangeM": [
+              2.0733621136637126e-07,
+              0.00029543205805172834,
+              9.849085598045981e-05
+            ],
+            "xzRangeDiagonalM": 9.849107421522125e-05,
+            "endpointDriftXYZ": [
+              5.268675346004059e-08,
+              -0.00029543205805172834,
+              9.849085598045981e-05
+            ],
+            "pathLengthXZ": 0.00017497277637044218
+          },
+          "toeBreakover": {
+            "samples": 30,
+            "xyzRangeM": [
+              2.3628066753156318e-07,
+              0.0027241984022339173,
+              0.002387694901854198
+            ],
+            "xzRangeDiagonalM": 0.0023876949135450873,
+            "endpointDriftXYZ": [
+              -9.986249649429624e-08,
+              0.0005470109683280316,
+              -0.0023802873654161782
+            ],
+            "pathLengthXZ": 0.0025338527319916423
+          },
+          "wholeStanceToe": {
+            "samples": 102,
+            "xyzRangeM": [
+              2.9406485613225897e-07,
+              0.019787578479771667,
+              0.002387694901854198
+            ],
+            "xzRangeDiagonalM": 0.0023876949199624874,
+            "endpointDriftXYZ": [
+              -8.732775930164749e-08,
+              -0.01706338007753775,
+              -0.000915142641593647
+            ],
+            "pathLengthXZ": 0.004075483466921742
+          },
+          "wholeStanceHeel": {
+            "samples": 102,
+            "xyzRangeM": [
+              2.951570588494157e-07,
+              0.044967644133887937,
+              0.009159979394998352
+            ],
+            "xzRangeDiagonalM": 0.009159979399753696,
+            "endpointDriftXYZ": [
+              -8.645674959284477e-08,
+              0.043976143085986755,
+              0.006925429140293815
+            ],
+            "pathLengthXZ": 0.011471012678868209
+          }
+        }
+      },
+      "caps": {
+        "FL": [
+          {
+            "joint": "clavicle_l_0203",
+            "boundsDegrees": [
+              -18,
+              18
+            ],
+            "lowerHitCount128": 38,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [
+              0.5725,
+              0.5803125,
+              0.588125,
+              0.5959375,
+              0.60375,
+              0.6115625,
+              0.619375,
+              0.6271875000000001,
+              0.6350000000000001,
+              0.6428125000000001,
+              0.6506250000000001,
+              0.6584375000000001,
+              0.6662499999999999,
+              0.6740624999999999,
+              0.6818749999999999,
+              0.6896874999999999,
+              0.6975,
+              0.7053125,
+              0.713125,
+              0.7209375,
+              0.72875,
+              0.7365625,
+              0.744375,
+              0.7521875,
+              0.76,
+              0.7678125,
+              0.775625,
+              0.7834375,
+              0.79125,
+              0.7990625,
+              0.806875,
+              0.8146875,
+              0.8225,
+              0.8303125,
+              0.838125,
+              0.8459375,
+              0.85375,
+              0.8615625
+            ],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.19,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "upperarm_l_0204",
+            "boundsDegrees": [
+              -38,
+              38
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "lowerarm_l_0205",
+            "boundsDegrees": [
+              -48,
+              48
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "hand_l_0206",
+            "boundsDegrees": [
+              -15,
+              70
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          }
+        ],
+        "FR": [
+          {
+            "joint": "clavicle_r_0269",
+            "boundsDegrees": [
+              -18,
+              18
+            ],
+            "lowerHitCount128": 49,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [
+              0.55125,
+              0.5590625,
+              0.566875,
+              0.5746875,
+              0.5825,
+              0.5903125,
+              0.598125,
+              0.6059375,
+              0.61375,
+              0.6215625,
+              0.629375,
+              0.6371875,
+              0.645,
+              0.6528125,
+              0.660625,
+              0.6684375,
+              0.67625,
+              0.6840625,
+              0.691875,
+              0.6996875,
+              0.7075,
+              0.7153125,
+              0.723125,
+              0.7309375,
+              0.73875,
+              0.7465625,
+              0.754375,
+              0.7621875,
+              0.77,
+              0.7778125,
+              0.785625,
+              0.7934375,
+              0.80125,
+              0.8090625,
+              0.816875,
+              0.8246875,
+              0.8325,
+              0.8403125,
+              0.848125,
+              0.8559375,
+              0.86375,
+              0.8715625,
+              0.879375,
+              0.8871875,
+              0.895,
+              0.9028125,
+              0.910625,
+              0.9184375,
+              0.92625
+            ],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.245,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "upperarm_r_0270",
+            "boundsDegrees": [
+              -38,
+              38
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "lowerarm_r_0271",
+            "boundsDegrees": [
+              -48,
+              48
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "hand_r_0272",
+            "boundsDegrees": [
+              -15,
+              70
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 13,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [
+              0.6684375,
+              0.67625,
+              0.6840625,
+              0.691875,
+              0.6996875,
+              0.7075,
+              0.7153125,
+              0.723125,
+              0.7309375,
+              0.73875,
+              0.7465625,
+              0.754375,
+              0.7621875
+            ],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.065
+          }
+        ],
+        "HL": [
+          {
+            "joint": "upperleg_l_0405",
+            "boundsDegrees": [
+              -38,
+              38
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "lowerleg_l_0406",
+            "boundsDegrees": [
+              -50,
+              50
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "foot_l_0407",
+            "boundsDegrees": [
+              -50,
+              20
+            ],
+            "lowerHitCount128": 19,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [
+              0.6171875,
+              0.625,
+              0.6328125,
+              0.640625,
+              0.6484375,
+              0.65625,
+              0.6640625,
+              0.671875,
+              0.6796875,
+              0.6875,
+              0.6953125,
+              0.703125,
+              0.7109375,
+              0.71875,
+              0.7265625,
+              0.734375,
+              0.7421875,
+              0.75,
+              0.7578125
+            ],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.095,
+            "upperDurationSec": 0.0
+          }
+        ],
+        "HR": [
+          {
+            "joint": "upperleg_r_0474",
+            "boundsDegrees": [
+              -38,
+              38
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "lowerleg_r_0475",
+            "boundsDegrees": [
+              -50,
+              50
+            ],
+            "lowerHitCount128": 0,
+            "upperHitCount128": 0,
+            "lowerLimbPhases": [],
+            "upperLimbPhases": [],
+            "lowerDurationSec": 0.0,
+            "upperDurationSec": 0.0
+          },
+          {
+            "joint": "foot_r_0476",
+            "boundsDegrees": [
+              -50,
+              20
+            ],
+            "lowerHitCount128": 12,
+            "upperHitCount128": 4,
+            "lowerLimbPhases": [
+              0.54125,
+              0.5490625,
+              0.556875,
+              0.5646875,
+              0.5725,
+              0.5803125,
+              0.588125,
+              0.5959375,
+              0.60375,
+              0.6115625,
+              0.619375,
+              0.6271875000000001
+            ],
+            "upperLimbPhases": [
+              0.002187500000000009,
+              0.97875,
+              0.9865625,
+              0.994375
+            ],
+            "lowerDurationSec": 0.06,
+            "upperDurationSec": 0.02
+          }
+        ]
+      },
+      "loop": {
+        "FL": {
+          "firstLastLocalAngleDegrees": 0.0,
+          "maxLocalAdjacentStepDegrees": 2.05932142525702,
+          "loopLocalAdjacentStepDegrees": 0.40219722587728945,
+          "firstLastHoofCentroidDistanceM": 3.0324105680287674e-08
+        },
+        "FR": {
+          "firstLastLocalAngleDegrees": 3.818191820832845e-06,
+          "maxLocalAdjacentStepDegrees": 2.001557323168149,
+          "loopLocalAdjacentStepDegrees": 1.027637668814571,
+          "firstLastHoofCentroidDistanceM": 2.100038480711362e-08
+        },
+        "HL": {
+          "firstLastLocalAngleDegrees": 0.0,
+          "maxLocalAdjacentStepDegrees": 1.61185036040488,
+          "loopLocalAdjacentStepDegrees": 0.3680245195172337,
+          "firstLastHoofCentroidDistanceM": 1.9400832669395556e-08
+        },
+        "HR": {
+          "firstLastLocalAngleDegrees": 2.4148365394514667e-06,
+          "maxLocalAdjacentStepDegrees": 1.8289943419712542,
+          "loopLocalAdjacentStepDegrees": 0.693904763868476,
+          "firstLastHoofCentroidDistanceM": 2.6409243364595958e-08
+        }
+      },
+      "body": {
+        "upperTrunk1998": {
+          "xyzRangeM": [
+            5.708336298787531e-08,
+            0.05439346218508723,
+            0.01000072267498675
+          ],
+          "yMinPhase": 0.3515625,
+          "yMaxPhase": 0.8515625
+        },
+        "neckCrest1931": {
+          "xyzRangeM": [
+            8.487976705003064e-08,
+            0.05807914770533151,
+            0.030711622234150138
+          ],
+          "yMinPhase": 0.328125,
+          "yMaxPhase": 0.8359375
+        },
+        "head_019": {
+          "xyzRangeM": [
+            1.4656060132178794e-07,
+            0.12441784932876176,
+            0.06994833741796125
+          ],
+          "yMinPhase": 0.265625,
+          "yMaxPhase": 0.7734375
+        },
+        "pelvis_08": {
+          "xyzRangeM": [
+            5.770517987058188e-10,
+            0.03600006203284134,
+            1.090608270359894e-08
+          ],
+          "yMinPhase": 0.5,
+          "yMaxPhase": 0
+        },
+        "headRelativeUpperTrunkYRangeM": 0.08175384342640268
+      }
+    }
+  }
+}

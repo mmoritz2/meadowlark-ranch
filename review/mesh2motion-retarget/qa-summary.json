@@ -1,0 +1,225 @@
+{
+  "errors": [],
+  "clips": {
+    "M2M Walk": {
+      "finite": true,
+      "soleCounts": {
+        "frontL": 316,
+        "frontR": 317,
+        "hindL": 257,
+        "hindR": 278
+      },
+      "marker": {
+        "vertex": 1998,
+        "description": "Fixed trunk-weighted upper-back skin vertex, not anatomically verified withers",
+        "weights": [
+          {
+            "bone": "spine_04_012",
+            "weight": 0.7607843279838562
+          },
+          {
+            "bone": "chestiddleslider_00_0191",
+            "weight": 0.12156862765550613
+          },
+          {
+            "bone": "spine_03_011",
+            "weight": 0.062745101749897
+          },
+          {
+            "bone": "neck_02_middleslider_02_0177",
+            "weight": 0.054901961237192154
+          }
+        ]
+      },
+      "seamMaxComponentDelta": 0,
+      "bones": 677,
+      "upperBackYRange": [
+        1.67332215521493,
+        1.7178223516124975
+      ],
+      "lowestSoleYByFoot": {
+        "frontL": [
+          -0.00004190283793803831,
+          0.16410502678599104
+        ],
+        "frontR": [
+          -0.000038379395326530036,
+          0.22066108238946675
+        ],
+        "hindL": [
+          0.004936308835045305,
+          0.17498245089577963
+        ],
+        "hindR": [
+          0.000023325619005643873,
+          0.23603630559368166
+        ]
+      }
+    },
+    "M2M Trot": {
+      "finite": true,
+      "soleCounts": {
+        "frontL": 316,
+        "frontR": 317,
+        "hindL": 257,
+        "hindR": 278
+      },
+      "marker": {
+        "vertex": 1998,
+        "description": "Fixed trunk-weighted upper-back skin vertex, not anatomically verified withers",
+        "weights": [
+          {
+            "bone": "spine_04_012",
+            "weight": 0.7607843279838562
+          },
+          {
+            "bone": "chestiddleslider_00_0191",
+            "weight": 0.12156862765550613
+          },
+          {
+            "bone": "spine_03_011",
+            "weight": 0.062745101749897
+          },
+          {
+            "bone": "neck_02_middleslider_02_0177",
+            "weight": 0.054901961237192154
+          }
+        ]
+      },
+      "seamMaxComponentDelta": 0,
+      "bones": 677,
+      "upperBackYRange": [
+        1.6487741887867209,
+        1.720306111789493
+      ],
+      "lowestSoleYByFoot": {
+        "frontL": [
+          -0.000016407200061296923,
+          0.18707187055174437
+        ],
+        "frontR": [
+          -0.000047200989300417474,
+          0.2921063498676182
+        ],
+        "hindL": [
+          0.000009015612010776497,
+          0.13567975733812382
+        ],
+        "hindR": [
+          0.0000034054010999984285,
+          0.19332644266767737
+        ]
+      }
+    },
+    "M2M Run": {
+      "finite": true,
+      "soleCounts": {
+        "frontL": 316,
+        "frontR": 317,
+        "hindL": 257,
+        "hindR": 278
+      },
+      "marker": {
+        "vertex": 1998,
+        "description": "Fixed trunk-weighted upper-back skin vertex, not anatomically verified withers",
+        "weights": [
+          {
+            "bone": "spine_04_012",
+            "weight": 0.7607843279838562
+          },
+          {
+            "bone": "chestiddleslider_00_0191",
+            "weight": 0.12156862765550613
+          },
+          {
+            "bone": "spine_03_011",
+            "weight": 0.062745101749897
+          },
+          {
+            "bone": "neck_02_middleslider_02_0177",
+            "weight": 0.054901961237192154
+          }
+        ]
+      },
+      "seamMaxComponentDelta": 0,
+      "bones": 677,
+      "upperBackYRange": [
+        1.655725734833517,
+        1.7492202797513754
+      ],
+      "lowestSoleYByFoot": {
+        "frontL": [
+          0.000026000307484674856,
+          0.31423947679837305
+        ],
+        "frontR": [
+          0.000027125500227324212,
+          0.22858999187169166
+        ],
+        "hindL": [
+          0.04822032692647683,
+          0.5016540799034493
+        ],
+        "hindR": [
+          0.029063950723403342,
+          0.6216263328593212
+        ]
+      }
+    },
+    "Horse|Horse_Idle": {
+      "finite": true,
+      "soleCounts": {
+        "frontL": 316,
+        "frontR": 317,
+        "hindL": 257,
+        "hindR": 278
+      },
+      "marker": {
+        "vertex": 1998,
+        "description": "Fixed trunk-weighted upper-back skin vertex, not anatomically verified withers",
+        "weights": [
+          {
+            "bone": "spine_04_012",
+            "weight": 0.7607843279838562
+          },
+          {
+            "bone": "chestiddleslider_00_0191",
+            "weight": 0.12156862765550613
+          },
+          {
+            "bone": "spine_03_011",
+            "weight": 0.062745101749897
+          },
+          {
+            "bone": "neck_02_middleslider_02_0177",
+            "weight": 0.054901961237192154
+          }
+        ]
+      },
+      "seamMaxComponentDelta": 0,
+      "bones": 677,
+      "upperBackYRange": [
+        1.7395700874297513,
+        1.7428672358573973
+      ],
+      "lowestSoleYByFoot": {
+        "frontL": [
+          0.0032042082852655578,
+          0.005349718883096725
+        ],
+        "frontR": [
+          0.0013230142773709716,
+          0.0033434123969474875
+        ],
+        "hindL": [
+          -0.000917728057643015,
+          0.0008697483778723415
+        ],
+        "hindR": [
+          -0.00043760264726968104,
+          0.0006771657446801938
+        ]
+      }
+    }
+  }
+}

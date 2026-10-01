@@ -1,0 +1,73 @@
+{
+  "one": {
+    "count": 1,
+    "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+    "resolution": [
+      1440,
+      900
+    ],
+    "pixelRatio": 1,
+    "shadows": "2048px PCFSoft",
+    "warmupFrames": 45,
+    "hardware": {
+      "vendor": "Google Inc. (Apple)",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Max, Unspecified Version)",
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "gpuTimerAvailable": true
+    },
+    "frameInterval": {
+      "samples": 240,
+      "medianMs": 16.699999999999818,
+      "p95Ms": 16.700000000000728,
+      "maxMs": 16.800000000000182,
+      "meanMs": 16.66625
+    },
+    "cpuRenderSubmission": {
+      "samples": 240,
+      "medianMs": 0.9000000022351742,
+      "p95Ms": 1.2000000029802322,
+      "maxMs": 1.5999999977648258,
+      "meanMs": 0.949166666638727
+    },
+    "mainPassDrawCalls": 6,
+    "mainPassTriangles": 82428,
+    "nativeBodyJointsPerHorse": 677,
+    "scope": "Headless local isolated scene, mixed gaits in place; not full Ranch, mobile, GPU time or transitions approval"
+  },
+  "four": {
+    "count": 4,
+    "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+    "resolution": [
+      1440,
+      900
+    ],
+    "pixelRatio": 1,
+    "shadows": "2048px PCFSoft",
+    "warmupFrames": 45,
+    "hardware": {
+      "vendor": "Google Inc. (Apple)",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Max, Unspecified Version)",
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "gpuTimerAvailable": true
+    },
+    "frameInterval": {
+      "samples": 240,
+      "medianMs": 16.699999999999818,
+      "p95Ms": 16.700000000000728,
+      "maxMs": 16.80000000000109,
+      "meanMs": 16.665833333333335
+    },
+    "cpuRenderSubmission": {
+      "samples": 240,
+      "medianMs": 1.800000000745058,
+      "p95Ms": 2.300000000745058,
+      "maxMs": 4.199999999254942,
+      "meanMs": 1.8325000000496705
+    },
+    "mainPassDrawCalls": 21,
+    "mainPassTriangles": 329706,
+    "nativeBodyJointsPerHorse": 677,
+    "scope": "Headless local isolated scene, mixed gaits in place; not full Ranch, mobile, GPU time or transitions approval"
+  },
+  "errors": []
+}

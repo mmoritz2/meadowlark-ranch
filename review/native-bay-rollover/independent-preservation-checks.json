@@ -1,0 +1,57 @@
+{
+  "nodes": true,
+  "meshes": true,
+  "skins": true,
+  "materials": true,
+  "images": true,
+  "textures": true,
+  "samplers": true,
+  "scenes": true,
+  "binaryPrefixIdentical": true,
+  "strictSoleSetsEqual": {
+    "FL": true,
+    "FR": true,
+    "HL": true,
+    "HR": true
+  },
+  "toeSetsDifferences": {
+    "FL": {
+      "independentOnly": [],
+      "authorOnly": [
+        3860
+      ]
+    },
+    "FR": {
+      "independentOnly": [],
+      "authorOnly": [
+        14264
+      ]
+    },
+    "HL": {
+      "independentOnly": [],
+      "authorOnly": []
+    },
+    "HR": {
+      "independentOnly": [],
+      "authorOnly": []
+    }
+  },
+  "heelSetsDifferences": {
+    "FL": {
+      "independentOnly": [],
+      "authorOnly": []
+    },
+    "FR": {
+      "independentOnly": [],
+      "authorOnly": []
+    },
+    "HL": {
+      "independentOnly": [],
+      "authorOnly": []
+    },
+    "HR": {
+      "independentOnly": [],
+      "authorOnly": []
+    }
+  }
+}

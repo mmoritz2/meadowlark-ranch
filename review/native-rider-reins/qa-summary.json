@@ -1,0 +1,64 @@
+{
+  "url": "http://127.0.0.1:8577/review/native-rider-reins/review.html",
+  "phases": 8,
+  "sideAndQuarterImages": 16,
+  "initialCheckedKitSha256": "552dd455873020cba95f7087d513358fd7dd26b27406e8cc36ce7c6b0da8d3e4",
+  "horseBones": 677,
+  "riderBones": 65,
+  "clip": "Target Native Walk Rollover",
+  "triangles": {
+    "original": 17194,
+    "removed": 1640,
+    "retained": 15554
+  },
+  "hiddenComponents": [
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    72,
+    73,
+    74,
+    75,
+    103,
+    104,
+    141,
+    142,
+    143,
+    153,
+    163,
+    164,
+    244,
+    245,
+    254,
+    255,
+    278,
+    283
+  ],
+  "protectedComponents": [
+    89,
+    91,
+    205,
+    209
+  ],
+  "allOtherComponentsIntact": true,
+  "leatherWidthM": [
+    0.019,
+    0.019
+  ],
+  "maxAttachmentGapM": 8.960581419835649e-16,
+  "minOutsideBodyM": 0.04067531776857279,
+  "insideNeckSamples": 0,
+  "minimumValidNeckSurfaceSamples": 16,
+  "maxBootTreadGapM": 5.426039893005526e-07,
+  "elbowDegrees": [
+    115.17740141602538,
+    115.17740141602901
+  ],
+  "errors": [],
+  "technicalPass": true,
+  "currentCombinedKitSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+  "walkScenePreservedFromInitialKit": true
+}

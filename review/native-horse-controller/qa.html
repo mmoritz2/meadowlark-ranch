@@ -1,0 +1,49 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href="data:,"><title>Native horse controller integration check</title><script type="importmap">{"imports":{"three":"../../assets/vendor/three/build/three.module.js","three/addons/":"../../assets/vendor/three/examples/jsm/"}}</script></head><body><pre id="status">Loading native horse…</pre><script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {clone} from 'three/addons/utils/SkeletonUtils.js';
+import {createNativeHorseController} from './controller.mjs';
+const asset=await new GLTFLoader().loadAsync('../../review/target-native-walk/model.glb');
+const scene=new THREE.Scene(),actor=new THREE.Group(),model=clone(asset.scene);
+scene.add(actor);actor.add(model);
+const control=createNativeHorseController({THREE,mixerRoot:model,actor,clips:asset.animations});
+const bones=root=>{const a=[];root.traverse(o=>{if(o.isBone)a.push(o);});return a;};
+const own=bones(model),rest=own.map(b=>({name:b.name,p:b.position.clone(),q:b.quaternion.clone(),s:b.scale.clone()}));
+function differences(reference){
+ const other=bones(reference),rows=own.map((b,i)=>({name:b.name,p:b.position.distanceTo(other[i].position),q:1-Math.abs(b.quaternion.dot(other[i].quaternion)),s:b.scale.distanceTo(other[i].scale)}));
+ return {bones:rows.length,positionMax:Math.max(...rows.map(x=>x.p)),quaternionDotMax:Math.max(...rows.map(x=>x.q)),scaleMax:Math.max(...rows.map(x=>x.s))};
+}
+window.controllerQA=async()=>{
+ const failures=[],reference=clone(asset.scene),refMixer=new THREE.AnimationMixer(reference),nominal=.40/(.65*1.12);
+ control.set('walk');refMixer.clipAction(THREE.AnimationClip.findByName(asset.animations,'Target Native Walk')).play();
+ let maxPose={positionMax:0,quaternionDotMax:0,scaleMax:0},time=0;
+ for(let i=0;i<120;i++){const dt=1/60;time+=dt;control.update(dt);refMixer.update(dt);const d=differences(reference);for(const k of Object.keys(maxPose))maxPose[k]=Math.max(maxPose[k],d[k]);}
+ const travel={actual:actor.position.toArray(),expected:[0,0,nominal*time],error:actor.position.distanceTo(new THREE.Vector3(0,0,nominal*time)),distanceError:Math.abs(control.snapshot().distanceM-nominal*time)};
+ const unsupported=[];
+ for(const name of ['trot','canter','gallop','jump']){try{control.set(name);unsupported.push({name,rejected:false});}catch(e){unsupported.push({name,rejected:true,message:e.message});}}
+ const afterUnsupported=control.snapshot();
+ control.set('stand');refMixer.stopAllAction();
+ bones(reference).forEach((b,i)=>{b.position.copy(rest[i].p);b.quaternion.copy(rest[i].q);b.scale.copy(rest[i].s);});
+ refMixer.clipAction(THREE.AnimationClip.findByName(asset.animations,'Horse|Horse_Idle')).reset().play();
+ for(let i=0;i<90;i++){control.update(1/60);refMixer.update(1/60);}
+ const idle=differences(reference),standTravelError=actor.position.distanceTo(new THREE.Vector3(0,0,nominal*time));
+ control.set('rest');bones(reference).forEach((b,i)=>{b.position.copy(rest[i].p);b.quaternion.copy(rest[i].q);b.scale.copy(rest[i].s);});
+ const restored=differences(reference);
+ // A rotated and uniformly scaled horse travels along its own forward axis.
+ actor.position.set(0,0,0);actor.rotation.y=Math.PI/2;actor.scale.setScalar(2);control.reset();control.set('walk');control.update(.56);
+ const rotatedTravel={actual:actor.position.toArray(),expected:[2*nominal*.56,0,0],error:actor.position.distanceTo(new THREE.Vector3(2*nominal*.56,0,0)),speedError:Math.abs(control.snapshot().speedMps-2*nominal)};
+ actor.position.set(0,0,0);actor.rotation.y=0;actor.scale.setScalar(1);scene.scale.setScalar(3);control.reset();control.set('walk');control.update(.56);scene.updateMatrixWorld(true);
+ const inheritedScale={actual:actor.getWorldPosition(new THREE.Vector3()).toArray(),expected:[0,0,3*nominal*.56],distanceError:Math.abs(control.snapshot().distanceM-3*nominal*.56),speedError:Math.abs(control.snapshot().speedMps-3*nominal)};
+ let invalidDeltaRejected=false;try{control.update(NaN);}catch(e){invalidDeltaRejected=true;}
+ control.dispose();const disposedPose=differences(reference);let disposedRejected=false;try{control.update(.1);}catch(e){disposedRejected=true;}
+ if(own.length!==677)failures.push('Wrong native joint count');
+ if(maxPose.positionMax>1e-7||maxPose.quaternionDotMax>1e-7||maxPose.scaleMax>1e-7)failures.push('Native Walk curves differ from original mixer');
+ for(const [name,d] of Object.entries({idle,restored,disposedPose})){if(d.positionMax>1e-7||d.quaternionDotMax>1e-7||d.scaleMax>1e-7)failures.push(name+' pose is contaminated');}
+ if(travel.error>1e-8||travel.distanceError>1e-8||standTravelError>1e-8||rotatedTravel.error>1e-8||rotatedTravel.speedError>1e-8||inheritedScale.distanceError>1e-8||inheritedScale.speedError>1e-8)failures.push('Travel speed or direction mismatch');
+ if(unsupported.some(r=>!r.rejected)||afterUnsupported.mode!=='walk')failures.push('Unsupported gait changed valid mode');
+ if(!invalidDeltaRejected||!disposedRejected)failures.push('Invalid controller state accepted');
+ const result={scope:'Private clip controller; contact travel and rider tested separately',nativeBones:own.length,nominalSpeedMps:nominal,maxPose,travel,unsupported,afterUnsupported,idle,standTravelError,restored,rotatedTravel,inheritedScale,invalidDeltaRejected,disposedPose,disposedRejected,failures};
+ document.getElementById('status').textContent=JSON.stringify(result,null,2);return result;
+};
+document.getElementById('status').textContent='Ready';
+</script></body></html>
