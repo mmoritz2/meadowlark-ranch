@@ -1,0 +1,26 @@
+{
+  "unrouted": true,
+  "checks": {
+    "white-westernStudio": true,
+    "bay-westernStudio": true,
+    "bay-sporthorse-nativeStudio": true,
+    "black-dragon-nativeStudio": true,
+    "european-dragonStudio": true,
+    "studioSwitchBack": true,
+    "freeOptIn": true,
+    "white-westernRanch": true,
+    "white-westernContacts": true,
+    "bay-westernRanch": true,
+    "bay-westernContacts": true,
+    "bay-sporthorse-nativeRanch": true,
+    "bay-sporthorse-nativeContacts": true,
+    "black-dragon-nativeRanch": true,
+    "european-dragonRanch": true,
+    "legacyBay": true,
+    "nativeWorld": true,
+    "noUnexpectedErrors": true
+  },
+  "errors": [],
+  "whiteRuntimeHash": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+  "ranchHtmlSha256": "28098f14b309fc8d6cf26d9f8cf4938f8131bf4c004b5549a5eb09da463a9494"
+}

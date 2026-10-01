@@ -1,0 +1,84 @@
+{
+  "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+  "candidateSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+  "candidateBytes": 28443316,
+  "clip": "Target Native Walk Rollover",
+  "durationS": 1.1200000047683716,
+  "nominalSpeedMps": 0.5494505494505494,
+  "changedTracks": [
+    {
+      "node": 14,
+      "name": "neck_01_014",
+      "path": "rotation",
+      "oldOutputAccessor": 6522,
+      "newOutputAccessor": 6848,
+      "globalPitchFraction": 0.45
+    },
+    {
+      "node": 15,
+      "name": "neck_02_015",
+      "path": "rotation",
+      "oldOutputAccessor": 6523,
+      "newOutputAccessor": 6849,
+      "globalPitchFraction": 0.6
+    },
+    {
+      "node": 16,
+      "name": "neck_03_016",
+      "path": "rotation",
+      "oldOutputAccessor": 6524,
+      "newOutputAccessor": 6850,
+      "globalPitchFraction": 0.75
+    },
+    {
+      "node": 17,
+      "name": "neck_04_017",
+      "path": "rotation",
+      "oldOutputAccessor": 6525,
+      "newOutputAccessor": 6851,
+      "globalPitchFraction": 0.9
+    },
+    {
+      "node": 18,
+      "name": "neck_05_018",
+      "path": "rotation",
+      "oldOutputAccessor": 6526,
+      "newOutputAccessor": 6852,
+      "globalPitchFraction": 1.0
+    },
+    {
+      "node": 19,
+      "name": "head_019",
+      "path": "rotation",
+      "oldOutputAccessor": 6527,
+      "newOutputAccessor": 6853,
+      "globalPitchFraction": 0.85
+    }
+  ],
+  "unchangedTracksAllClips": 3562,
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "textures": true,
+    "images": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "originalBinaryPrefix": true,
+    "originalAccessorPrefix": true,
+    "originalBufferViewPrefix": true
+  },
+  "originalHeadYSpanM": 0.041407530349645505,
+  "originalTrunkYSpanM": 0.018910119281306148,
+  "trunkSecondHarmonicPhaseRadians": 2.0392940189247524,
+  "targetHeadSpanM": 0.07,
+  "neckCommonPitchRangeDegrees": [
+    -6.897609039802601,
+    7.766493489395729
+  ],
+  "method": "Reconstruct every original Walk key pose, retain static native world-rest orientations, solve one bounded sagittal neck common-pitch variable against desired head-origin Y; recompute only native neck1..5/head local quaternion rotations with exact current parent transforms; periodic normalized cubic tangents. No limb/body/hair/tack track edits.",
+  "bodyLimitation": "Original unchanged pelvis translation has four cycles per stride. Head proxy two-cycle target does not fix trunk gait dynamics. Proxies are not the paper optical markers.",
+  "noMotionOrProductionApproval": true
+}

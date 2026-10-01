@@ -1,0 +1,142 @@
+{
+  "candidateSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+  "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+  "phaseCount": 256,
+  "finite": true,
+  "errors": [],
+  "landmarks": "World origins head_019/spine_04_012; proxies, not the paper optical markers",
+  "curves": {
+    "left": {
+      "head": {
+        "min": 2.0418190565461782,
+        "max": 2.0832265880186593,
+        "span": 0.04140753147248111,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 8.21301827864841e-11,
+            "phaseRadians": -2.6572595043846787
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.017798700348169817,
+            "phaseRadians": 1.4214851437266196
+          },
+          {
+            "n": 4,
+            "amplitudeM": 0.006108091934790975,
+            "phaseRadians": -1.5617690836235956
+          }
+        ]
+      },
+      "trunk": {
+        "min": 1.5132122384111555,
+        "max": 1.5321482279267344,
+        "span": 0.018935989515578955,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 1.380410516342234e-10,
+            "phaseRadians": -2.3771718111117037
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.005098783228074179,
+            "phaseRadians": 2.039294060618727
+          },
+          {
+            "n": 4,
+            "amplitudeM": 0.0060006801582830425,
+            "phaseRadians": -1.5709193753987898
+          }
+        ]
+      },
+      "n2PhaseDifferenceDeg": -35.39784348346638,
+      "n2StrideOffset": 0.04916367150481442
+    },
+    "right": {
+      "head": {
+        "min": 2.02870705445944,
+        "max": 2.098689554841307,
+        "span": 0.06998250038186704,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 1.183000408370901e-9,
+            "phaseRadians": -0.17826601491067326
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.03499995980369899,
+            "phaseRadians": -1.1022987070070074
+          },
+          {
+            "n": 4,
+            "amplitudeM": 1.957675659773377e-8,
+            "phaseRadians": 0.9283945310701509
+          }
+        ]
+      },
+      "trunk": {
+        "min": 1.5132122384111555,
+        "max": 1.5321482279267344,
+        "span": 0.018935989515578955,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 1.380410516342234e-10,
+            "phaseRadians": -2.3771718111117037
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.005098783228074179,
+            "phaseRadians": 2.039294060618727
+          },
+          {
+            "n": 4,
+            "amplitudeM": 0.0060006801582830425,
+            "phaseRadians": -1.5709193753987898
+          }
+        ]
+      },
+      "n2PhaseDifferenceDeg": 179.99999346622184,
+      "n2StrideOffset": 0.2499999909253081
+    }
+  },
+  "maxHoofWorldDifferenceM": 0,
+  "maxTrunkWorldDifferenceM": 0,
+  "stanceContacts": {
+    "FL": {
+      "min": 0.0008109673604612057,
+      "max": 0.0011688923939943215,
+      "span": 0.0003579250335331158
+    },
+    "FR": {
+      "min": 0.0008361670319504155,
+      "max": 0.0012975936924115414,
+      "span": 0.0004614266604611259
+    },
+    "HL": {
+      "min": 0.0008275870841090369,
+      "max": 0.0013113368882070944,
+      "span": 0.00048374980409805757
+    },
+    "HR": {
+      "min": 0.0007408630292187468,
+      "max": 0.001167051139551158,
+      "span": 0.00042618811033241126
+    }
+  },
+  "wholeBodyFloor": {
+    "min": 0.0007408630292187468,
+    "max": 0.0011567750851196185,
+    "span": 0.00041591205590087166
+  },
+  "groomVertexCount": 23514,
+  "groomSampleCount": 243,
+  "maxGroomChangeFromCurrentWalkM": 0.10296930875943366,
+  "originalManeTailChannelsPreserved": true,
+  "sourceTackPreserved": true,
+  "limitation": "Trunk n4 dominance and source high carried posture unchanged. This only tests neck/head motion and contact preservation.",
+  "noMotionOrProductionApproval": true
+}

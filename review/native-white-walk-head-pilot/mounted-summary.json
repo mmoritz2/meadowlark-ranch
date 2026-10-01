@@ -1,0 +1,48 @@
+{
+  "candidateSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+  "routedPrivateCandidate": true,
+  "actualRanchControls": true,
+  "controlledPlayerSpeed": true,
+  "actualControllerResponses": [
+    {
+      "url": "http://127.0.0.1:8584/assets/native-horse-motion.js?v=native-transitions-1",
+      "sha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6"
+    }
+  ],
+  "expectedControllerSha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6",
+  "privateProfileRoutes": [
+    {
+      "url": "http://127.0.0.1:8584/assets/native-breed-profiles.js?v=native-sporthorse-1",
+      "originalHash": "a8919e9477c851b7656f1c2d6695d7f48c18e906a0b18255da771e3aaa04511a",
+      "fixtureHash": "33f39784c5aa7600e7acab0bb59e794faa8d6aeb02443e9b9a517b15023b1ac0"
+    }
+  ],
+  "phaseSamples": 64,
+  "coveredCycles": 0.999999995742487,
+  "actualClips": [
+    "Target Native Walk Rollover"
+  ],
+  "allFinite": true,
+  "maxActualSkinnedBootResidualM": 5.652878834205641e-7,
+  "maxReinEndpointResidualM": 2.6272671962866384e-15,
+  "nonReinComponentsIntact": true,
+  "clearance": {
+    "left": {
+      "neckTriangles": 1405,
+      "phasesWithSegmentIntersection": 0,
+      "totalSegmentIntersections": 0,
+      "minimumNearestSampleGapM": 0.08329044397961125,
+      "minimumSignedNearestSampleGapM": 0.08257798260191078
+    },
+    "right": {
+      "neckTriangles": 1405,
+      "phasesWithSegmentIntersection": 0,
+      "totalSegmentIntersections": 0,
+      "minimumNearestSampleGapM": 0.08406719084969953,
+      "minimumSignedNearestSampleGapM": 0.08374365720833266
+    }
+  },
+  "clearanceMethod": "Fixed majority-neck-weight body triangles; actual rendered rein outer-edge and inspect centerline segments versus current skinned triangles. Nearest sampled gap uses vertex samples and triangle winding; not exhaustive volume, full rein triangle collision, hair collisions or contact force.",
+  "errors": [],
+  "noMotionOrProductionApproval": true
+}
