@@ -1,0 +1,660 @@
+{
+  "candidateSha256": "cef9cff0741bc98d5602c336a6f57108ab578b725f3e83646de49d7263e2cac3",
+  "note": "Exact original failed candidate float32 keyed interval measurements, preserved without requiring its binary.",
+  "tracks": [
+    {
+      "joint": "pelvis_08",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.07842735372388836,
+      "lastIntervalDegrees": 0.07761593712682482,
+      "firstIntervalDegrees": 0.0760853545214144
+    },
+    {
+      "joint": "spine_01_09",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.039141187569296736,
+      "lastIntervalDegrees": 0.02836227096282884,
+      "firstIntervalDegrees": 0.025579921414076157
+    },
+    {
+      "joint": "spine_02_010",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.027937569057752933,
+      "lastIntervalDegrees": 0.016939745103851527,
+      "firstIntervalDegrees": 0.01903801538258414
+    },
+    {
+      "joint": "spine_03_011",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.01827017593322266,
+      "lastIntervalDegrees": 0.01729500481557225,
+      "firstIntervalDegrees": 0.017792491747157347
+    },
+    {
+      "joint": "spine_04_012",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.022771095920345107,
+      "lastIntervalDegrees": 0.009031617931979131,
+      "firstIntervalDegrees": 0.011037243310560501
+    },
+    {
+      "joint": "neck_01_014",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.22237014907439265,
+      "lastIntervalDegrees": 0.14938614466747216,
+      "firstIntervalDegrees": 0.16484656946532145
+    },
+    {
+      "joint": "neck_02_015",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.08270482354484293,
+      "lastIntervalDegrees": 0.06195719320916703,
+      "firstIntervalDegrees": 0.06703623480064302
+    },
+    {
+      "joint": "neck_03_016",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.11118105550263166,
+      "lastIntervalDegrees": 0.05823082194209675,
+      "firstIntervalDegrees": 0.06724270917836277
+    },
+    {
+      "joint": "neck_04_017",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.07294566342194235,
+      "lastIntervalDegrees": 0.020758789666784332,
+      "firstIntervalDegrees": 0.027513264906798115
+    },
+    {
+      "joint": "neck_05_018",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.037832492629495465,
+      "lastIntervalDegrees": 0.006282120100461113,
+      "firstIntervalDegrees": 0.009913232842272626
+    },
+    {
+      "joint": "head_019",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.07103906031295312,
+      "lastIntervalDegrees": 0.002730685193630303,
+      "firstIntervalDegrees": 0.004237518679309207
+    },
+    {
+      "joint": "dyn_head_end_right_01_028",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3448045640692024,
+      "lastIntervalDegrees": 0.1321093588351119,
+      "firstIntervalDegrees": 0.1281179407239591
+    },
+    {
+      "joint": "dyn_head_end_right_02_029",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34364032100115227,
+      "lastIntervalDegrees": 0.15766453197877028,
+      "firstIntervalDegrees": 0.1349074935337869
+    },
+    {
+      "joint": "dyn_head_end_right_03_030",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3401302364326367,
+      "lastIntervalDegrees": 0.18870745242766448,
+      "firstIntervalDegrees": 0.155302935104022
+    },
+    {
+      "joint": "dyn_head_end_left_01_033",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.33878452929626685,
+      "lastIntervalDegrees": 0.2754109061946003,
+      "firstIntervalDegrees": 0.24429083314469868
+    },
+    {
+      "joint": "dyn_head_end_left_02_034",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34354538031495063,
+      "lastIntervalDegrees": 0.29595122167671445,
+      "firstIntervalDegrees": 0.2716066934819948
+    },
+    {
+      "joint": "dyn_head_end_left_03_035",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34378649024861474,
+      "lastIntervalDegrees": 0.31068319132638444,
+      "firstIntervalDegrees": 0.29449738673904136
+    },
+    {
+      "joint": "dyn_new_head_neck_01_073",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34342891532195846,
+      "lastIntervalDegrees": 0.34188613820497277,
+      "firstIntervalDegrees": 0.333483356417901
+    },
+    {
+      "joint": "dyn_new_head_neck_02_074",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3403144200324111,
+      "lastIntervalDegrees": 0.33789161844316984,
+      "firstIntervalDegrees": 0.3363252174548366
+    },
+    {
+      "joint": "dyn_new_head_neck_03_075",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34454660787935243,
+      "lastIntervalDegrees": 0.3238612657862342,
+      "firstIntervalDegrees": 0.32966892348708315
+    },
+    {
+      "joint": "dyn_new_neck_05_01_0107",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3446129232606378,
+      "lastIntervalDegrees": 0.2670586776168696,
+      "firstIntervalDegrees": 0.2380491001185503
+    },
+    {
+      "joint": "dyn_new_neck_05_02_0108",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34145443273066467,
+      "lastIntervalDegrees": 0.29364162419446244,
+      "firstIntervalDegrees": 0.27267171526991985
+    },
+    {
+      "joint": "dyn_new_neck_05_03_0109",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3426957293233531,
+      "lastIntervalDegrees": 0.3141186094281309,
+      "firstIntervalDegrees": 0.30147104308467304
+    },
+    {
+      "joint": "dyn_new_neck_041_01_0118",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.340180284841465,
+      "lastIntervalDegrees": 0.12862078632651097,
+      "firstIntervalDegrees": 0.15771558208951056
+    },
+    {
+      "joint": "dyn_new_neck_041_02_0119",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34419658932728797,
+      "lastIntervalDegrees": 0.07884666720165999,
+      "firstIntervalDegrees": 0.10206118948752904
+    },
+    {
+      "joint": "dyn_new_neck_041_03_0120",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3434257076270708,
+      "lastIntervalDegrees": 0.047447669679430066,
+      "firstIntervalDegrees": 0.04410243151447061
+    },
+    {
+      "joint": "dyn_new_neck_041_04_0121",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.33888327149969627,
+      "lastIntervalDegrees": 0.07292909867764949,
+      "firstIntervalDegrees": 0.024724789391717666
+    },
+    {
+      "joint": "dyn_new_neck_04_01_0127",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3407328097516126,
+      "lastIntervalDegrees": 0.3257774175148259,
+      "firstIntervalDegrees": 0.3103277282155962
+    },
+    {
+      "joint": "dyn_new_neck_04_02_0128",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34342323583386,
+      "lastIntervalDegrees": 0.3407190235537534,
+      "firstIntervalDegrees": 0.3312692020065664
+    },
+    {
+      "joint": "dyn_new_neck_04_03_0129",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34493623933535683,
+      "lastIntervalDegrees": 0.3449362312645669,
+      "firstIntervalDegrees": 0.3417693830330987
+    },
+    {
+      "joint": "dyn_new_neck_04_04_0130",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3416434759557289,
+      "lastIntervalDegrees": 0.3382969330385152,
+      "firstIntervalDegrees": 0.34164346968085524
+    },
+    {
+      "joint": "dyn_new_neck_03_01_0151",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3447500281461638,
+      "lastIntervalDegrees": 0.2634473146340634,
+      "firstIntervalDegrees": 0.2887376500804631
+    },
+    {
+      "joint": "dyn_new_neck_03_02_0152",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.341329180702862,
+      "lastIntervalDegrees": 0.23304905276068646,
+      "firstIntervalDegrees": 0.26543077271149673
+    },
+    {
+      "joint": "dyn_new_neck_03_03_0153",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34251127146207533,
+      "lastIntervalDegrees": 0.20061775250650918,
+      "firstIntervalDegrees": 0.2379524926826767
+    },
+    {
+      "joint": "dyn_new_neck_03_04_0154",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34446677765590294,
+      "lastIntervalDegrees": 0.1690802863493617,
+      "firstIntervalDegrees": 0.20784661683579345
+    },
+    {
+      "joint": "dyn_new_neck_02_01_0157",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3443931722241991,
+      "lastIntervalDegrees": 0.12935286392953077,
+      "firstIntervalDegrees": 0.13113438077378461
+    },
+    {
+      "joint": "dyn_new_neck_02_02_0158",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3425328941279938,
+      "lastIntervalDegrees": 0.14624881799002853,
+      "firstIntervalDegrees": 0.1269603973426386
+    },
+    {
+      "joint": "dyn_new_neck_02_03_0159",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3411869015339893,
+      "lastIntervalDegrees": 0.17267327462795617,
+      "firstIntervalDegrees": 0.1395136676397692
+    },
+    {
+      "joint": "dyn_new_neck_02_04_0160",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34469139518252034,
+      "lastIntervalDegrees": 0.202944420936993,
+      "firstIntervalDegrees": 0.1644049203495705
+    },
+    {
+      "joint": "clavicle_l_0203",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 4.746753239154705,
+      "lastIntervalDegrees": 0.1632839984573192,
+      "firstIntervalDegrees": 0.5895555561409485
+    },
+    {
+      "joint": "upperarm_l_0204",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 10.186773277763216,
+      "lastIntervalDegrees": 0.9558075528913671,
+      "firstIntervalDegrees": 1.5240486994581013
+    },
+    {
+      "joint": "lowerarm_l_0205",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 16.773241398390727,
+      "lastIntervalDegrees": 0.15221822986146902,
+      "firstIntervalDegrees": 0.74305702672879
+    },
+    {
+      "joint": "hand_l_0206",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 5.396822162991587,
+      "lastIntervalDegrees": 0.9500200593979529,
+      "firstIntervalDegrees": 0.15908534639143224
+    },
+    {
+      "joint": "fingers_01_l_0187",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 7.45567720123669,
+      "lastIntervalDegrees": 0.16022352091994618,
+      "firstIntervalDegrees": 0.09457493969819247
+    },
+    {
+      "joint": "clavicle_r_0269",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 4.831910126439955,
+      "lastIntervalDegrees": 1.1846155975992487,
+      "firstIntervalDegrees": 1.0788027907327458
+    },
+    {
+      "joint": "upperarm_r_0270",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 9.108821501784487,
+      "lastIntervalDegrees": 0.04876048985670553,
+      "firstIntervalDegrees": 0.0610399548612012
+    },
+    {
+      "joint": "lowerarm_r_0271",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 14.993231603748201,
+      "lastIntervalDegrees": 0.4569176729534227,
+      "firstIntervalDegrees": 0.3973812569952059
+    },
+    {
+      "joint": "hand_r_0272",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 4.727945356642652,
+      "lastIntervalDegrees": 2.95222762522858,
+      "firstIntervalDegrees": 2.8520529929182175
+    },
+    {
+      "joint": "fingers_01_r_0273",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 5.65408693793863,
+      "lastIntervalDegrees": 1.1394402596384154,
+      "firstIntervalDegrees": 0.8680843073385104
+    },
+    {
+      "joint": "tail_01_0367",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.23295452703629665,
+      "lastIntervalDegrees": 0.185108910530368,
+      "firstIntervalDegrees": 0.19376052379962486
+    },
+    {
+      "joint": "dyn_tail_06_0372",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34962034775260475,
+      "lastIntervalDegrees": 0.33318892003150413,
+      "firstIntervalDegrees": 0.3417488697904788
+    },
+    {
+      "joint": "dyn_tail_07_0373",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.331481357347642,
+      "lastIntervalDegrees": 0.3058062024147617,
+      "firstIntervalDegrees": 0.31587894538300243
+    },
+    {
+      "joint": "dyn_tail_08_0374",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3133445787780608,
+      "lastIntervalDegrees": 0.2678139628665401,
+      "firstIntervalDegrees": 0.27916012919357747
+    },
+    {
+      "joint": "dyn_bounce_tail_04_left_0377",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3474216019378854,
+      "lastIntervalDegrees": 0.10388865688612316,
+      "firstIntervalDegrees": 0.11961177129546072
+    },
+    {
+      "joint": "dyn_bounce_tail_05_left_0378",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3585351020984373,
+      "lastIntervalDegrees": 0.03895542126698825,
+      "firstIntervalDegrees": 0.05947233083458257
+    },
+    {
+      "joint": "dyn_bounce_tail_06_left_0379",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3595753022993141,
+      "lastIntervalDegrees": 0.027758541712343668,
+      "firstIntervalDegrees": 0.0333343226733324
+    },
+    {
+      "joint": "dyn_bounce_tail_07_left_0380",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3504765108261291,
+      "lastIntervalDegrees": 0.09313000479653157,
+      "firstIntervalDegrees": 0.08503623561830351
+    },
+    {
+      "joint": "dyn_bounce_tail_08_left_0361",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3491562013516827,
+      "lastIntervalDegrees": 0.1342085773461093,
+      "firstIntervalDegrees": 0.11256722052674466
+    },
+    {
+      "joint": "dyn_bounce_tail_04_right_0384",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.32753229434980097,
+      "lastIntervalDegrees": 0.3008822884673466,
+      "firstIntervalDegrees": 0.2888802905160737
+    },
+    {
+      "joint": "dyn_bounce_tail_05_right_0385",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3464644350858974,
+      "lastIntervalDegrees": 0.3303060820490452,
+      "firstIntervalDegrees": 0.3190726795460817
+    },
+    {
+      "joint": "dyn_bounce_tail_06_right_0386",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3580510358459514,
+      "lastIntervalDegrees": 0.34842069511280477,
+      "firstIntervalDegrees": 0.3386123576826736
+    },
+    {
+      "joint": "dyn_bounce_tail_07_right_0387",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.35989147697933466,
+      "lastIntervalDegrees": 0.35487492677391574,
+      "firstIntervalDegrees": 0.34723862386965537
+    },
+    {
+      "joint": "dyn_bounce_tail_08_right_0388",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.35127271086298684,
+      "lastIntervalDegrees": 0.3498249809383959,
+      "firstIntervalDegrees": 0.3451938916272563
+    },
+    {
+      "joint": "dyn_bounce_tail_04_front_0391",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3104800214238704,
+      "lastIntervalDegrees": 0.2750951430191832,
+      "firstIntervalDegrees": 0.28501896726241366
+    },
+    {
+      "joint": "dyn_bounce_tail_05_front_0392",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.32649645046314346,
+      "lastIntervalDegrees": 0.2363588829730659,
+      "firstIntervalDegrees": 0.2528916683418044
+    },
+    {
+      "joint": "dyn_bounce_tail_06_front_0393",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.34544749599263025,
+      "lastIntervalDegrees": 0.19571755368621097,
+      "firstIntervalDegrees": 0.21926181888552423
+    },
+    {
+      "joint": "dyn_bounce_tail_07_front_0394",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3575454235292668,
+      "lastIntervalDegrees": 0.15847008296658335,
+      "firstIntervalDegrees": 0.18818234662221778
+    },
+    {
+      "joint": "dyn_bounce_tail_08_front_0395",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.36014754623979756,
+      "lastIntervalDegrees": 0.13287105903606075,
+      "firstIntervalDegrees": 0.16481984001202812
+    },
+    {
+      "joint": "dyn_bounce_tail_04_back_0398",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.31571194941176844,
+      "lastIntervalDegrees": 0.17433001686252014,
+      "firstIntervalDegrees": 0.17516390374788646
+    },
+    {
+      "joint": "dyn_bounce_tail_05_back_0399",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.31012831882674197,
+      "lastIntervalDegrees": 0.20714938583517736,
+      "firstIntervalDegrees": 0.19763158483683554
+    },
+    {
+      "joint": "dyn_bounce_tail_06_back_0400",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.32540057234064734,
+      "lastIntervalDegrees": 0.2383181400473234,
+      "firstIntervalDegrees": 0.22169164638703964
+    },
+    {
+      "joint": "dyn_bounce_tail_07_back_0381",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3327252427050332,
+      "lastIntervalDegrees": 0.15527468113605858,
+      "firstIntervalDegrees": 0.14452084201597995
+    },
+    {
+      "joint": "dyn_bounce_tail_08_back_0402",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 0.3572543191260258,
+      "lastIntervalDegrees": 0.28641149558158563,
+      "firstIntervalDegrees": 0.26441073122978637
+    },
+    {
+      "joint": "upperleg_l_0405",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 2.473289072870687,
+      "lastIntervalDegrees": 0.5128235700914912,
+      "firstIntervalDegrees": 0.4619400614422142
+    },
+    {
+      "joint": "lowerleg_l_0406",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 6.773309805172007,
+      "lastIntervalDegrees": 1.7607512136606398,
+      "firstIntervalDegrees": 1.620879790244095
+    },
+    {
+      "joint": "foot_l_0407",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 4.028674123254615,
+      "lastIntervalDegrees": 2.151737680214435,
+      "firstIntervalDegrees": 2.2149797134579456
+    },
+    {
+      "joint": "toes_01_l_0408",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 3.5456830866602513,
+      "lastIntervalDegrees": 2.022752972614076,
+      "firstIntervalDegrees": 2.2752657694303533
+    },
+    {
+      "joint": "upperleg_r_0474",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 2.051111424400499,
+      "lastIntervalDegrees": 0.1703581978184037,
+      "firstIntervalDegrees": 0.5402539320637728
+    },
+    {
+      "joint": "lowerleg_r_0475",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 6.1116105715657785,
+      "lastIntervalDegrees": 0.17860921656680553,
+      "firstIntervalDegrees": 1.1829496111227793
+    },
+    {
+      "joint": "foot_r_0476",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 4.715032943656501,
+      "lastIntervalDegrees": 1.6867271776751684e-06,
+      "firstIntervalDegrees": 1.5278523970920391e-15
+    },
+    {
+      "joint": "toes_01_r_0477",
+      "path": "rotation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalDegrees": 3.8305856258089666,
+      "lastIntervalDegrees": 0.5133628155989955,
+      "firstIntervalDegrees": 0.40903523513690343
+    },
+    {
+      "joint": "pelvis_08",
+      "path": "translation",
+      "firstLastComponentDifference": 0.0,
+      "maximumOneIntervalM": 0.1763458251953125
+    }
+  ]
+}

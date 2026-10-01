@@ -1,0 +1,2896 @@
+{
+  "candidateSha256": "39a19a52bc45bb3dabb15e37b1f08c9deb35c3ee17cbe2834d1f9200a23cc4c4",
+  "note": "Float32 authored values retain128 intervals; cubic curves are normalized and densely sampled8\u00d7 per interval. Speed/acceleration are local kinematic finite differences, not force measurements. Analytic normalized quaternion tangent joins establish C1 separately from copied values.",
+  "groups": {
+    "limbs": {
+      "joint": "hand_r_0272",
+      "maximumConsecutiveDegrees": 4.514864277592252,
+      "maximumStepPhase": 0.07812499482598591,
+      "maximumDenseSpeedDegreesPerSecond": 862.1303290587005,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 124947.27107162432,
+      "maximumFinalLoopIntervalDegrees": 1.5208044223913315,
+      "maximumAnalyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticInternalKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    "torsoNeckHead": {
+      "joint": "neck_01_014",
+      "maximumConsecutiveDegrees": 0.22237014907439265,
+      "maximumStepPhase": 0.31249997930394363,
+      "maximumDenseSpeedDegreesPerSecond": 39.59443287932153,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 693.6951425152705,
+      "maximumFinalLoopIntervalDegrees": 0.1493861446674722,
+      "maximumAnalyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticInternalKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    "groom": {
+      "joint": "dyn_bounce_tail_08_front_0395",
+      "maximumConsecutiveDegrees": 0.36014754623979767,
+      "maximumStepPhase": 0.3359374767169366,
+      "maximumDenseSpeedDegreesPerSecond": 64.1056035170516,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1557.7064184913772,
+      "maximumFinalLoopIntervalDegrees": 0.3548749267739158,
+      "maximumAnalyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticInternalKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    }
+  },
+  "authoredIntervalUnder5Degrees": true,
+  "analyticC1Pass": true,
+  "uncopiedCycleClosure": {
+    "jointAngleDifferenceDegrees": {
+      "clavicle_l_0203": 5.569124502893112e-07,
+      "upperarm_l_0204": 7.936152050055474e-08,
+      "lowerarm_l_0205": 8.446002180074004e-07,
+      "hand_l_0206": 1.5252472554413294e-07,
+      "fingers_01_l_0187": 5.195740178234875e-07,
+      "clavicle_r_0269": 1.946318052230408e-07,
+      "upperarm_r_0270": 3.3719348273405876e-07,
+      "lowerarm_r_0271": 6.23510788655194e-07,
+      "hand_r_0272": 3.9416845171903476e-07,
+      "fingers_01_r_0273": 4.858539811866987e-07,
+      "upperleg_l_0405": 1.664742019806108e-07,
+      "lowerleg_l_0406": 9.929535564082975e-08,
+      "foot_l_0407": 2.8683398398583457e-07,
+      "toes_01_l_0408": 2.196551561056999e-07,
+      "upperleg_r_0474": 4.9111119579572814e-06,
+      "lowerleg_r_0475": 7.674836472566629e-06,
+      "foot_r_0476": 9.176384201528242e-15,
+      "toes_01_r_0477": 2.76372450078225e-06
+    },
+    "maximumJointAngleDifferenceDegrees": 7.674836472566629e-06,
+    "feet": {
+      "HL": {
+        "stance": false,
+        "limbPhase": 0.5,
+        "swingPhase": 0.10714285714285712,
+        "footPitchDegrees": 24.36151603498542,
+        "anchor": "swing blend",
+        "anchorWeights": {
+          "toe": 0.6064139941690962,
+          "sole": 0.3935860058309037
+        },
+        "goal": [
+          0.013441398504769532,
+          -0.8866303176050085
+        ],
+        "minY": 0.013362508200160605,
+        "maxY": 0.21631163658929417,
+        "centroid": [
+          0.20237462482872903,
+          0.1038490513931822,
+          -0.9150983458080063
+        ],
+        "contactVerticalError": -7.889030460892649e-05,
+        "strideAnchorError": -2.095470734886362e-05,
+        "correctionDegrees": [
+          8.369503551862293,
+          -1.5765175350536116,
+          0.8192866997747191
+        ],
+        "biasDegrees": [
+          0.0,
+          2.6422324956413363,
+          -7.266139363013675
+        ],
+        "hitBound": false
+      },
+      "FL": {
+        "stance": true,
+        "limbPhase": 0.0,
+        "swingPhase": 0.0,
+        "footPitchDegrees": -8.0,
+        "anchor": "heel",
+        "anchorWeights": {
+          "heel": 1.0
+        },
+        "goal": [
+          0.0009999982988472466,
+          0.605624510216605
+        ],
+        "minY": 0.0010109054253219334,
+        "maxY": 0.15643602909586615,
+        "centroid": [
+          0.10275911044654577,
+          0.056460430689822115,
+          0.6188100647505212
+        ],
+        "contactVerticalError": 1.090712647468673e-05,
+        "strideAnchorError": -9.020169623341623e-06,
+        "correctionDegrees": [
+          3.9687509960852347,
+          -18.507416973531356,
+          3.6108859227735515,
+          -1.8077799940973323
+        ],
+        "biasDegrees": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hitBound": false
+      },
+      "HR": {
+        "stance": true,
+        "limbPhase": 0.0,
+        "swingPhase": 0.0,
+        "footPitchDegrees": -8.0,
+        "anchor": "heel",
+        "anchorWeights": {
+          "heel": 1.0
+        },
+        "goal": [
+          0.0009999982988472466,
+          -0.39535322883152346
+        ],
+        "minY": 0.0045944803929745676,
+        "maxY": 0.16373492807257453,
+        "centroid": [
+          -0.23060236019297603,
+          0.06832226759441583,
+          -0.3838625804366453
+        ],
+        "contactVerticalError": 0.003594482094127321,
+        "strideAnchorError": -0.000714341455687606,
+        "correctionDegrees": [
+          3.425284195673559,
+          -30.718125589889475,
+          19.999999999999996
+        ],
+        "biasDegrees": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hitBound": true
+      },
+      "FR": {
+        "stance": false,
+        "limbPhase": 0.5,
+        "swingPhase": 0.10714285714285712,
+        "footPitchDegrees": 24.36151603498542,
+        "anchor": "swing blend",
+        "anchorWeights": {
+          "toe": 0.6064139941690962,
+          "sole": 0.3935860058309037
+        },
+        "goal": [
+          0.014685538525361759,
+          0.15313226332593016
+        ],
+        "minY": 0.014529878267843216,
+        "maxY": 0.22265494190807694,
+        "centroid": [
+          -0.1485408755851488,
+          0.09940466958240468,
+          0.1219778307842725
+        ],
+        "contactVerticalError": -0.00015566025751854312,
+        "strideAnchorError": -3.939904047853271e-05,
+        "correctionDegrees": [
+          -0.15516278119030283,
+          6.374139688256376,
+          0.4343045643869347,
+          2.85874441358397
+        ],
+        "biasDegrees": [
+          0.0,
+          0.0,
+          0.0,
+          10.568929982565345
+        ],
+        "hitBound": false
+      }
+    }
+  },
+  "oldMaximumLimbStepDegrees": 16.773241398390727,
+  "limbMaximumReductionPercent": 73.08293507285109,
+  "tracks": [
+    {
+      "joint": "pelvis_08",
+      "group": "torsoNeckHead",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.07842735372388834,
+      "maximumStepPhase": 0.22656248189095066,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 13.942617023418801,
+      "maximumDenseSpeedDegreesPerSecond": 13.963707687378024,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 244.63699042969708,
+      "firstIntervalDegrees": 0.07608535452141443,
+      "lastIntervalDegrees": 0.07761593712682484,
+      "analyticFirstVelocityDegreesPerSecond": [
+        0.11626985502418909,
+        0.806162627092756,
+        -13.638037612704643
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        0.11626985502418909,
+        0.806162627092756,
+        -13.638037612704643
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "spine_01_09",
+      "group": "torsoNeckHead",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.039141187569296736,
+      "maximumStepPhase": 0.42968746636890837,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 6.958421548198685,
+      "maximumDenseSpeedDegreesPerSecond": 6.967330234122095,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 122.03649744410815,
+      "firstIntervalDegrees": 0.02557992141407616,
+      "lastIntervalDegrees": 0.028362270962828832,
+      "analyticFirstVelocityDegreesPerSecond": [
+        0.005364527134493627,
+        0.476678208570117,
+        -4.771100761669522
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        0.005364527134493627,
+        0.476678208570117,
+        -4.771100761669522
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "spine_02_010",
+      "group": "torsoNeckHead",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.027937569057752933,
+      "maximumStepPhase": 0.31249997930394363,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 4.966673831606112,
+      "maximumDenseSpeedDegreesPerSecond": 4.973382899244453,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 87.10040557480426,
+      "firstIntervalDegrees": 0.01903801538258414,
+      "lastIntervalDegrees": 0.016939745103851524,
+      "analyticFirstVelocityDegreesPerSecond": [
+        0.09599406182218707,
+        -0.32501109270386963,
+        3.1800176765856714
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        0.09599406182218707,
+        -0.32501109270386963,
+        3.1800176765856714
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "spine_03_011",
+      "group": "torsoNeckHead",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.018270175933222655,
+      "maximumStepPhase": 0.2656249844779577,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 3.248025770246239,
+      "maximumDenseSpeedDegreesPerSecond": 3.252408417381,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 56.97560140415665,
+      "firstIntervalDegrees": 0.017792491747157343,
+      "lastIntervalDegrees": 0.017295004815572255,
+      "analyticFirstVelocityDegreesPerSecond": [
+        0.027621629406355413,
+        -0.04274816688498546,
+        3.1184545626520226
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        0.027621629406355413,
+        -0.04274816688498546,
+        3.1184545626520226
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "spine_04_012",
+      "group": "torsoNeckHead",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.022771095920345107,
+      "maximumStepPhase": 0.08593749741299295,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 4.048193328916573,
+      "maximumDenseSpeedDegreesPerSecond": 4.0531391923408595,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 70.98467420846536,
+      "firstIntervalDegrees": 0.011037243310560503,
+      "lastIntervalDegrees": 0.009031617931979133,
+      "analyticFirstVelocityDegreesPerSecond": [
+        0.06449133527369948,
+        0.15280096289396145,
+        1.776170887978879
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        0.06449133527369948,
+        0.15280096289396145,
+        1.776170887978879
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "neck_01_014",
+      "group": "torsoNeckHead",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.22237014907439265,
+      "maximumStepPhase": 0.31249997930394363,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 39.53240392249063,
+      "maximumDenseSpeedDegreesPerSecond": 39.59443287932153,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 693.6951425152705,
+      "firstIntervalDegrees": 0.16484656946532142,
+      "lastIntervalDegrees": 0.1493861446674722,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -0.8441446543960905,
+        -0.2313849036027172,
+        -27.917959154985578
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -0.8441446543960905,
+        -0.2313849036027172,
+        -27.917959154985578
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "neck_02_015",
+      "group": "torsoNeckHead",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.08270482354484295,
+      "maximumStepPhase": 0.046875,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 14.70313271330556,
+      "maximumDenseSpeedDegreesPerSecond": 14.723314011937225,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 258.0446697311284,
+      "firstIntervalDegrees": 0.067036234800643,
+      "lastIntervalDegrees": 0.06195719320916703,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -0.25888495993121163,
+        0.18568116910950974,
+        -11.461663854241152
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -0.25888495993121163,
+        0.18568116910950974,
+        -11.461663854241152
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "neck_03_016",
+      "group": "torsoNeckHead",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.11118105550263165,
+      "maximumStepPhase": 0.07031249741299295,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 19.765592189121076,
+      "maximumDenseSpeedDegreesPerSecond": 19.792869028203874,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 346.6586667076875,
+      "firstIntervalDegrees": 0.06724270917836278,
+      "lastIntervalDegrees": 0.05823082194209676,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -0.3439496042586385,
+        0.3851329635585237,
+        -11.141283217105194
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -0.3439496042586385,
+        0.3851329635585237,
+        -11.141283217105194
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "neck_04_017",
+      "group": "torsoNeckHead",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.07294566342194235,
+      "maximumStepPhase": 0.3437499896519718,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 12.968145436624507,
+      "maximumDenseSpeedDegreesPerSecond": 12.983268884043493,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 227.34025704720386,
+      "firstIntervalDegrees": 0.02751326490679811,
+      "lastIntervalDegrees": 0.020758789666784332,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -0.09441960913803046,
+        0.23320421748153164,
+        -4.283473665649991
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -0.09441960913803046,
+        0.23320421748153164,
+        -4.283473665649991
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "neck_05_018",
+      "group": "torsoNeckHead",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.037832492629495465,
+      "maximumStepPhase": 0.35156250258700705,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 6.725836333867961,
+      "maximumDenseSpeedDegreesPerSecond": 6.734806127078144,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 117.98127718474092,
+      "firstIntervalDegrees": 0.009913232842272628,
+      "lastIntervalDegrees": 0.0062821201004611155,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -0.03373206662663103,
+        0.1903227512119416,
+        -1.4265900450168907
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -0.03373206662663103,
+        0.1903227512119416,
+        -1.4265900450168907
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "head_019",
+      "group": "torsoNeckHead",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.07103906031295312,
+      "maximumStepPhase": 0.11718749741299295,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 12.629211777999101,
+      "maximumDenseSpeedDegreesPerSecond": 12.646785133975223,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 221.84771167983556,
+      "firstIntervalDegrees": 0.004237518679309207,
+      "lastIntervalDegrees": 0.002730685193630303,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -0.003024533391370752,
+        -0.01219586238865098,
+        -0.1331642418969562
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -0.003024533391370752,
+        -0.01219586238865098,
+        -0.1331642418969562
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_head_end_right_01_028",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3448045640692024,
+      "maximumStepPhase": 0.25,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.29907599289693,
+      "maximumDenseSpeedDegreesPerSecond": 61.451833562913855,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1548.993869370802,
+      "firstIntervalDegrees": 0.12811794072395907,
+      "lastIntervalDegrees": 0.1321093588351119,
+      "analyticFirstVelocityDegreesPerSecond": [
+        2.7030066746730967,
+        0.8526562582487899,
+        22.57479540791219
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        2.7030066746730967,
+        0.8526562582487899,
+        22.57479540791219
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_head_end_right_02_029",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3436403210011523,
+      "maximumStepPhase": 0.25781249223897884,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.09167088398455,
+      "maximumDenseSpeedDegreesPerSecond": 61.249283439664154,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1553.7682850844137,
+      "firstIntervalDegrees": 0.13490749353378692,
+      "lastIntervalDegrees": 0.15766453197877028,
+      "analyticFirstVelocityDegreesPerSecond": [
+        12.26172374047195,
+        0.8358488436892858,
+        22.641362308796317
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        12.26172374047195,
+        0.8358488436892858,
+        22.641362308796317
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_head_end_right_03_030",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3401302364326368,
+      "maximumStepPhase": 0.43749997930394363,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.46749507016294,
+      "maximumDenseSpeedDegreesPerSecond": 60.62987483431418,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1557.630381202848,
+      "firstIntervalDegrees": 0.15530293510402196,
+      "lastIntervalDegrees": 0.18870745242766454,
+      "analyticFirstVelocityDegreesPerSecond": [
+        21.46692830478899,
+        0.7563421530407558,
+        21.617274174815446
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        21.46692830478899,
+        0.7563421530407558,
+        21.617274174815446
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_head_end_left_01_033",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3387845292962669,
+      "maximumStepPhase": 0.13281249223897884,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.22833842669543,
+      "maximumDenseSpeedDegreesPerSecond": 60.41259448086241,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1556.6514935290356,
+      "firstIntervalDegrees": 0.24429083314469868,
+      "lastIntervalDegrees": 0.2754109061946003,
+      "analyticFirstVelocityDegreesPerSecond": [
+        44.40391806965631,
+        0.2981546427666357,
+        12.73635767024345
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        44.40391806965631,
+        0.2981546427666357,
+        12.73635767024345
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_head_end_left_02_034",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34354538031495074,
+      "maximumStepPhase": 0.6406249844779577,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.07495431720463,
+      "maximumDenseSpeedDegreesPerSecond": 61.26613387632343,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1551.6442595891565,
+      "firstIntervalDegrees": 0.2716066934819949,
+      "lastIntervalDegrees": 0.29595122167671445,
+      "analyticFirstVelocityDegreesPerSecond": [
+        49.75456715082878,
+        0.14900990102844228,
+        8.314670657376865
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        49.75456715082878,
+        0.14900990102844228,
+        8.314670657376865
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_head_end_left_03_035",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3437864902486148,
+      "maximumStepPhase": 0.1406249948259859,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.117818331537194,
+      "maximumDenseSpeedDegreesPerSecond": 61.3118480607903,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1550.3892533575604,
+      "firstIntervalDegrees": 0.2944973867390413,
+      "lastIntervalDegrees": 0.31068319132638444,
+      "analyticFirstVelocityDegreesPerSecond": [
+        53.67076291203399,
+        0.04024307092030924,
+        3.4910663210225663
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        53.67076291203399,
+        0.04024307092030924,
+        3.4910663210225663
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_head_neck_01_073",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3434289153219584,
+      "maximumStepPhase": 0.9843749741299295,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.05392587846189,
+      "maximumDenseSpeedDegreesPerSecond": 61.218354271210366,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1554.2095813862788,
+      "firstIntervalDegrees": 0.33348335641790106,
+      "lastIntervalDegrees": 0.3418861382049727,
+      "analyticFirstVelocityDegreesPerSecond": [
+        56.10115856824873,
+        -0.12470233218875613,
+        -21.366918473512982
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        56.10115856824873,
+        -0.12470233218875613,
+        -21.366918473512982
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_head_neck_02_074",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3403144200324112,
+      "maximumStepPhase": 0.6640624818909506,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.50055930867359,
+      "maximumDenseSpeedDegreesPerSecond": 60.66001233202408,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1557.5920827348061,
+      "firstIntervalDegrees": 0.3363252174548366,
+      "lastIntervalDegrees": 0.3378916184431698,
+      "analyticFirstVelocityDegreesPerSecond": [
+        56.78883116155162,
+        0.01154624402944996,
+        -19.139381879810884
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        56.78883116155162,
+        0.01154624402944996,
+        -19.139381879810884
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_head_neck_03_075",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34454660787935243,
+      "maximumStepPhase": 0.1718749948259859,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.25278870487405,
+      "maximumDenseSpeedDegreesPerSecond": 61.4095174162178,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1550.123024596465,
+      "firstIntervalDegrees": 0.3296689234870831,
+      "lastIntervalDegrees": 0.3238612657862343,
+      "analyticFirstVelocityDegreesPerSecond": [
+        55.83926207212147,
+        0.11252356502372952,
+        -15.988482169138562
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        55.83926207212147,
+        0.11252356502372952,
+        -15.988482169138562
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_05_01_0107",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34461292326063775,
+      "maximumStepPhase": 0.6249999586078873,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.2645536007602,
+      "maximumDenseSpeedDegreesPerSecond": 61.432042534157006,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1548.1059012536437,
+      "firstIntervalDegrees": 0.23804910011855038,
+      "lastIntervalDegrees": 0.2670586776168696,
+      "analyticFirstVelocityDegreesPerSecond": [
+        44.88240328931458,
+        -0.009104271039160417,
+        -0.49942220285709227
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        44.88240328931458,
+        -0.009104271039160417,
+        -0.49942220285709227
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_05_02_0108",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3414544327306648,
+      "maximumStepPhase": 0.6328124715429224,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.702986882915795,
+      "maximumDenseSpeedDegreesPerSecond": 60.86631414031569,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1557.0004597120974,
+      "firstIntervalDegrees": 0.27267171526991985,
+      "lastIntervalDegrees": 0.29364162419446244,
+      "analyticFirstVelocityDegreesPerSecond": [
+        50.12320568408686,
+        0.08229427946020343,
+        4.478220606572021
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        50.12320568408686,
+        0.08229427946020343,
+        4.478220606572021
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_05_03_0109",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3426957293233532,
+      "maximumStepPhase": 0.31249997930394363,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.923581921919954,
+      "maximumDenseSpeedDegreesPerSecond": 61.08260798106658,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1555.5213898044126,
+      "firstIntervalDegrees": 0.3014710430846731,
+      "lastIntervalDegrees": 0.314118609428131,
+      "analyticFirstVelocityDegreesPerSecond": [
+        53.91892980133234,
+        0.11242602662139593,
+        9.240852504936758
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        53.91892980133234,
+        0.11242602662139593,
+        9.240852504936758
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_041_01_0118",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3401802848414651,
+      "maximumStepPhase": 0.898437497412993,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.47703338659955,
+      "maximumDenseSpeedDegreesPerSecond": 60.645943968140855,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1557.2000676461337,
+      "firstIntervalDegrees": 0.15771558208951056,
+      "lastIntervalDegrees": 0.128620786326511,
+      "analyticFirstVelocityDegreesPerSecond": [
+        20.02584882122788,
+        -0.5456440344125814,
+        15.398777346427314
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        20.02584882122788,
+        -0.5456440344125814,
+        15.398777346427314
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_041_02_0119",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34419658932728797,
+      "maximumStepPhase": 0.4062499689559154,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.19040102580432,
+      "maximumDenseSpeedDegreesPerSecond": 61.362341242177735,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1550.2794765350636,
+      "firstIntervalDegrees": 0.10206118948752906,
+      "lastIntervalDegrees": 0.07884666720166,
+      "analyticFirstVelocityDegreesPerSecond": [
+        10.74573288544966,
+        -0.42276276292437975,
+        11.372631971934391
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        10.74573288544966,
+        -0.42276276292437975,
+        11.372631971934391
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_041_03_0120",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3434257076270708,
+      "maximumStepPhase": 0.4140624818909507,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.05335562255981,
+      "maximumDenseSpeedDegreesPerSecond": 61.240651198651165,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1551.2768669489833,
+      "firstIntervalDegrees": 0.04410243151447061,
+      "lastIntervalDegrees": 0.04744766967943007,
+      "analyticFirstVelocityDegreesPerSecond": [
+        1.1558099582240937,
+        -0.2570962019875136,
+        6.799070887189654
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        1.1558099582240937,
+        -0.2570962019875136,
+        6.799070887189654
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_041_04_0121",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.33888327149969627,
+      "maximumStepPhase": 0.5859374767169365,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.24589063366849,
+      "maximumDenseSpeedDegreesPerSecond": 60.44101682285118,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1555.7631591770344,
+      "firstIntervalDegrees": 0.024724789391717662,
+      "lastIntervalDegrees": 0.0729290986776495,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -8.467437952891476,
+        -0.07050440196706473,
+        1.8980779382691277
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -8.467437952891476,
+        -0.07050440196706473,
+        1.8980779382691277
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_04_01_0127",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3407328097516125,
+      "maximumStepPhase": 0.30468748706496473,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.57514363518229,
+      "maximumDenseSpeedDegreesPerSecond": 60.73194763882072,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1557.7064184913772,
+      "firstIntervalDegrees": 0.3103277282155962,
+      "lastIntervalDegrees": 0.325777417514826,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -52.28540243404391,
+        0.3182647863364156,
+        -21.500531940488298
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -52.28540243404391,
+        0.3182647863364156,
+        -21.500531940488298
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_04_02_0128",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3434232358338599,
+      "maximumStepPhase": 0.9843749741299295,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.05291619340067,
+      "maximumDenseSpeedDegreesPerSecond": 61.20466220406369,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1554.670233761245,
+      "firstIntervalDegrees": 0.33126920200656645,
+      "lastIntervalDegrees": 0.34071902355375344,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -55.28359869021053,
+        0.1961535202927507,
+        -22.61383085036382
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -55.28359869021053,
+        0.1961535202927507,
+        -22.61383085036382
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_04_03_0129",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3449362393353568,
+      "maximumStepPhase": 0.49218748706496473,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.32189413763592,
+      "maximumDenseSpeedDegreesPerSecond": 61.4687249116151,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1548.114078610404,
+      "firstIntervalDegrees": 0.34176938303309873,
+      "lastIntervalDegrees": 0.3449362312645671,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -56.687948534770584,
+        0.051953337060200784,
+        -22.63627722377555
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -56.687948534770584,
+        0.051953337060200784,
+        -22.63627722377555
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_04_04_0130",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3416434759557289,
+      "maximumStepPhase": 0.5,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.73683676851667,
+      "maximumDenseSpeedDegreesPerSecond": 60.88127254405871,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1557.1480755209632,
+      "firstIntervalDegrees": 0.34164346968085524,
+      "lastIntervalDegrees": 0.33829693303851527,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -56.45796394927928,
+        -0.08954139150396702,
+        -21.566625110534297
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -56.45796394927928,
+        -0.08954139150396702,
+        -21.566625110534297
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_03_01_0151",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34475002814616384,
+      "maximumStepPhase": 0.8593749327378167,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.28878998234932,
+      "maximumDenseSpeedDegreesPerSecond": 61.45016362469182,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1546.9949105873582,
+      "firstIntervalDegrees": 0.28873765008046304,
+      "lastIntervalDegrees": 0.26344731463406335,
+      "analyticFirstVelocityDegreesPerSecond": [
+        48.792692485397566,
+        0.0991705103847204,
+        -5.261198995010296
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        48.792692485397566,
+        0.0991705103847204,
+        -5.261198995010296
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_03_02_0152",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3413291807028619,
+      "maximumStepPhase": 0.36718748706496473,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.68064035683196,
+      "maximumDenseSpeedDegreesPerSecond": 60.845578560422226,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1556.4823545575669,
+      "firstIntervalDegrees": 0.26543077271149673,
+      "lastIntervalDegrees": 0.23304905276068646,
+      "analyticFirstVelocityDegreesPerSecond": [
+        43.171840656135835,
+        0.24263894079375586,
+        -9.965434004082823
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        43.171840656135835,
+        0.24263894079375586,
+        -9.965434004082823
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_03_03_0153",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3425112714620753,
+      "maximumStepPhase": 0.046875,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.89111072278167,
+      "maximumDenseSpeedDegreesPerSecond": 61.060504237732154,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1555.4336482397123,
+      "firstIntervalDegrees": 0.23795249268267668,
+      "lastIntervalDegrees": 0.20061775250650915,
+      "analyticFirstVelocityDegreesPerSecond": [
+        36.30631970189661,
+        0.4109147280399003,
+        -14.188170799959698
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        36.30631970189661,
+        0.4109147280399003,
+        -14.188170799959698
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_03_04_0154",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34446677765590294,
+      "maximumStepPhase": 0.5546874663689083,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.23851537640527,
+      "maximumDenseSpeedDegreesPerSecond": 61.41694321659276,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1544.8994500814463,
+      "firstIntervalDegrees": 0.20784661683579342,
+      "lastIntervalDegrees": 0.16908028634936173,
+      "analyticFirstVelocityDegreesPerSecond": [
+        28.394070289214802,
+        0.5794428304327082,
+        -17.72616010549225
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        28.394070289214802,
+        0.5794428304327082,
+        -17.72616010549225
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_02_01_0157",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34439317222419913,
+      "maximumStepPhase": 0.7421874870649647,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.22534903711471,
+      "maximumDenseSpeedDegreesPerSecond": 61.40914380812641,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1545.3965001917204,
+      "firstIntervalDegrees": 0.13113438077378461,
+      "lastIntervalDegrees": 0.12935286392953083,
+      "analyticFirstVelocityDegreesPerSecond": [
+        0.7688307087596918,
+        0.8599112459394198,
+        -22.743644247568337
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        0.7688307087596918,
+        0.8599112459394198,
+        -22.743644247568337
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_02_02_0158",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34253289412799387,
+      "maximumStepPhase": 0.25,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.89527565189354,
+      "maximumDenseSpeedDegreesPerSecond": 61.06652981149295,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1555.1518297401553,
+      "firstIntervalDegrees": 0.1269603973426386,
+      "lastIntervalDegrees": 0.14624881799002856,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -8.849942514411854,
+        0.8321661382715889,
+        -22.28281221558013
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -8.849942514411854,
+        0.8321661382715889,
+        -22.28281221558013
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_02_03_0159",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34118690153398923,
+      "maximumStepPhase": 0.42968746636890837,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 60.655346325249745,
+      "maximumDenseSpeedDegreesPerSecond": 60.82198823749619,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1556.3940860259763,
+      "firstIntervalDegrees": 0.13951366763976922,
+      "lastIntervalDegrees": 0.17267327462795617,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -18.21356654909757,
+        0.7426693581787907,
+        -20.748612256403838
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -18.21356654909757,
+        0.7426693581787907,
+        -20.748612256403838
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_new_neck_02_04_0160",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34469139518252034,
+      "maximumStepPhase": 0.43749997930394363,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.27836636204068,
+      "maximumDenseSpeedDegreesPerSecond": 61.44147239021316,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1547.0150077758678,
+      "firstIntervalDegrees": 0.16440492034957052,
+      "lastIntervalDegrees": 0.20294442093699297,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -27.052084851614662,
+        0.6046317785561759,
+        -18.214588218024982
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -27.052084851614662,
+        0.6046317785561759,
+        -18.214588218024982
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "clavicle_l_0203",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 1.9370114451610712,
+      "maximumStepPhase": 0.9140624404988379,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 344.35700642075454,
+      "maximumDenseSpeedDegreesPerSecond": 349.62996364769623,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 38190.00090365211,
+      "firstIntervalDegrees": 0.9319839344047006,
+      "lastIntervalDegrees": 0.702603760544657,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -29.849925295191323,
+        -59.57008999731514,
+        129.1167786485243
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -29.849925295191323,
+        -59.57008999731514,
+        129.1167786485243
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "upperarm_l_0204",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 2.1098322600050174,
+      "maximumStepPhase": 0.9140624404988379,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 375.0806547479373,
+      "maximumDenseSpeedDegreesPerSecond": 382.6089128874211,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 39692.164326230144,
+      "firstIntervalDegrees": 1.596463563848759,
+      "lastIntervalDegrees": 1.2844712653336248,
+      "analyticFirstVelocityDegreesPerSecond": [
+        6.469605482200837,
+        -16.10956319569001,
+        -255.48686312553718
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        6.469605482200837,
+        -16.10956319569001,
+        -255.48686312553718
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "lowerarm_l_0205",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 2.933374825211229,
+      "maximumStepPhase": 0.5624999793039436,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 521.4879736736641,
+      "maximumDenseSpeedDegreesPerSecond": 558.3908136498522,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 83003.55680501468,
+      "firstIntervalDegrees": 0.2171943496570085,
+      "lastIntervalDegrees": 0.06814852841198091,
+      "analyticFirstVelocityDegreesPerSecond": [
+        0.4810531881081979,
+        1.0271253707599848,
+        25.33846571012949
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        0.4810531881081979,
+        1.0271253707599848,
+        25.33846571012949
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "hand_l_0206",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 4.503991023434121,
+      "maximumStepPhase": 0.5546874663689083,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 800.7081577397461,
+      "maximumDenseSpeedDegreesPerSecond": 830.7290510108228,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 60126.609377624765,
+      "firstIntervalDegrees": 0.1658153670646517,
+      "lastIntervalDegrees": 0.030769705995612823,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -0.5489646478751397,
+        -0.1413249719659021,
+        -11.990695448475966
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -0.5489646478751397,
+        -0.1413249719659021,
+        -11.990695448475966
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "fingers_01_l_0187",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 1.5174837780268362,
+      "maximumStepPhase": 0.3828124715429225,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 269.7744364901908,
+      "maximumDenseSpeedDegreesPerSecond": 270.9329390058353,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 17920.60971445775,
+      "firstIntervalDegrees": 0.35715414871008916,
+      "lastIntervalDegrees": 0.6602638542534244,
+      "analyticFirstVelocityDegreesPerSecond": [
+        3.4506863963201493,
+        -0.8646487867012381,
+        90.36672425864266
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        3.4506863963201493,
+        -0.8646487867012381,
+        90.36672425864266
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "clavicle_r_0269",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 1.6059291984645034,
+      "maximumStepPhase": 0.0234375,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 285.49851282677565,
+      "maximumDenseSpeedDegreesPerSecond": 286.06102529236506,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 68728.64873647617,
+      "firstIntervalDegrees": 1.4714109579135342,
+      "lastIntervalDegrees": 1.3586640248930122,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -78.48373431333627,
+        -74.0226466172406,
+        227.24714771844273
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -78.48373431333627,
+        -74.0226466172406,
+        227.24714771844273
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "upperarm_r_0270",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 1.4411148530381326,
+      "maximumStepPhase": 0.16406249223897884,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 256.1981010786212,
+      "maximumDenseSpeedDegreesPerSecond": 256.817665274412,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 44999.279839909155,
+      "firstIntervalDegrees": 1.2541987117483726,
+      "lastIntervalDegrees": 1.2570957906981564,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -22.138476708670197,
+        25.33675598393544,
+        -220.67122815225
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -22.138476708670197,
+        25.33675598393544,
+        -220.67122815225
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "lowerarm_r_0271",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 2.8520007980858666,
+      "maximumStepPhase": 0.08593749741299295,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 507.0221760631435,
+      "maximumDenseSpeedDegreesPerSecond": 526.2508440087812,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 106164.29928174296,
+      "firstIntervalDegrees": 0.012613019071803544,
+      "lastIntervalDegrees": 0.05136828767813371,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -0.033583751799965415,
+        -0.9764399028771852,
+        5.602754437803769
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -0.033583751799965415,
+        -0.9764399028771852,
+        5.602754437803769
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "hand_r_0272",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 4.514864277592252,
+      "maximumStepPhase": 0.07812499482598591,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 802.6422405600097,
+      "maximumDenseSpeedDegreesPerSecond": 862.1303290587005,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 124947.27107162432,
+      "firstIntervalDegrees": 1.4405812557408286,
+      "lastIntervalDegrees": 1.2242565181971992,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -4.536972219465793,
+        39.388011099793246,
+        -233.52715381506565
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -4.536972219465793,
+        39.388011099793246,
+        -233.52715381506565
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "fingers_01_r_0273",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 1.5721933825303758,
+      "maximumStepPhase": 0.8828124715429224,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 279.50057191203683,
+      "maximumDenseSpeedDegreesPerSecond": 280.5986660296306,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 41962.699424803315,
+      "firstIntervalDegrees": 0.675002420830073,
+      "lastIntervalDegrees": 0.5978600026627112,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -3.99743476473386,
+        -26.629483068689613,
+        109.89146697491941
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -3.99743476473386,
+        -26.629483068689613,
+        109.89146697491941
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "tail_01_0367",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.23295452703629665,
+      "maximumStepPhase": 0.5703124922389788,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 41.41428734592317,
+      "maximumDenseSpeedDegreesPerSecond": 41.439028163362124,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 470.468219079974,
+      "firstIntervalDegrees": 0.19376052379962488,
+      "lastIntervalDegrees": 0.185108910530368,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -16.055483640444248,
+        25.41805798879698,
+        15.167663322523513
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -16.055483640444248,
+        25.41805798879698,
+        15.167663322523513
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_tail_06_0372",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34962034775260475,
+      "maximumStepPhase": 0.015625,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 62.154726019545045,
+      "maximumDenseSpeedDegreesPerSecond": 62.23389567597335,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1089.8883861476827,
+      "firstIntervalDegrees": 0.34174886979047886,
+      "lastIntervalDegrees": 0.33318892003150413,
+      "analyticFirstVelocityDegreesPerSecond": [
+        50.40101184507443,
+        -0.709071481409296,
+        32.52571379515927
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        50.40101184507443,
+        -0.709071481409296,
+        32.52571379515927
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_tail_07_0373",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.33148135734764206,
+      "maximumStepPhase": 0.03125,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 58.930070960961636,
+      "maximumDenseSpeedDegreesPerSecond": 59.014150180321025,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1033.5896646368358,
+      "firstIntervalDegrees": 0.3158789453830025,
+      "lastIntervalDegrees": 0.30580620241476175,
+      "analyticFirstVelocityDegreesPerSecond": [
+        45.98717374574579,
+        -0.919126514077764,
+        30.60002356999587
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        45.98717374574579,
+        -0.919126514077764,
+        30.60002356999587
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_tail_08_0374",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3133445787780608,
+      "maximumStepPhase": 0.046875,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 55.70590358941568,
+      "maximumDenseSpeedDegreesPerSecond": 55.77004223760766,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 976.5827454275872,
+      "firstIntervalDegrees": 0.2791601291935774,
+      "lastIntervalDegrees": 0.2678139628665401,
+      "analyticFirstVelocityDegreesPerSecond": [
+        40.24750225910392,
+        -1.017505262051572,
+        27.199444358996132
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        40.24750225910392,
+        -1.017505262051572,
+        27.199444358996132
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_04_left_0377",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3474216019378855,
+      "maximumStepPhase": 0.10937499482598591,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.76381743795939,
+      "maximumDenseSpeedDegreesPerSecond": 61.839478697053266,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1082.9366078223454,
+      "firstIntervalDegrees": 0.11961177129546073,
+      "lastIntervalDegrees": 0.10388865688612314,
+      "analyticFirstVelocityDegreesPerSecond": [
+        16.889770432899883,
+        -0.5293741241309484,
+        10.106083204613713
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        16.889770432899883,
+        -0.5293741241309484,
+        10.106083204613713
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_05_left_0378",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3585351020984373,
+      "maximumStepPhase": 0.11718749741299295,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 63.739803346217194,
+      "maximumDenseSpeedDegreesPerSecond": 63.824403840936924,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1117.8400797506326,
+      "firstIntervalDegrees": 0.059472330834582574,
+      "lastIntervalDegrees": 0.03895542126698825,
+      "analyticFirstVelocityDegreesPerSecond": [
+        7.806580559983753,
+        -0.16529068908887132,
+        3.0290807872469787
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        7.806580559983753,
+        -0.16529068908887132,
+        3.0290807872469787
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_06_left_0379",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.359575302299314,
+      "maximumStepPhase": 0.11718749741299295,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 63.924728492615756,
+      "maximumDenseSpeedDegreesPerSecond": 64.01097554581476,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1121.080862172675,
+      "firstIntervalDegrees": 0.0333343226733324,
+      "lastIntervalDegrees": 0.027758541712343668,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -1.5016805794695784,
+        0.23030563296977413,
+        -4.19268146831921
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -1.5016805794695784,
+        0.23030563296977413,
+        -4.19268146831921
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_07_left_0380",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.35047651082612913,
+      "maximumStepPhase": 0.125,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 62.30715973435527,
+      "maximumDenseSpeedDegreesPerSecond": 62.383027094852544,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1092.4380493291044,
+      "firstIntervalDegrees": 0.08503623561830351,
+      "lastIntervalDegrees": 0.09313000479653158,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -10.766645430794995,
+        0.6046701553034866,
+        -11.212884012499773
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -10.766645430794995,
+        0.6046701553034866,
+        -11.212884012499773
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_08_left_0361",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3491562013516828,
+      "maximumStepPhase": 0.1406249948259859,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 62.07243720632473,
+      "maximumDenseSpeedDegreesPerSecond": 62.14428904541287,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1088.2140248223468,
+      "firstIntervalDegrees": 0.11256722052674469,
+      "lastIntervalDegrees": 0.1342085773461093,
+      "analyticFirstVelocityDegreesPerSecond": [
+        5.970428511294364,
+        -1.1437772382955123,
+        -20.956369902546196
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        5.970428511294364,
+        -1.1437772382955123,
+        -20.956369902546196
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_04_right_0384",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.32753229434980097,
+      "maximumStepPhase": 0.2031249844779577,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 58.22848172936803,
+      "maximumDenseSpeedDegreesPerSecond": 58.30284033442298,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1021.053366547753,
+      "firstIntervalDegrees": 0.28888029051607367,
+      "lastIntervalDegrees": 0.30088228846734666,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -42.229652392011175,
+        1.089074633005409,
+        -31.00863518415332
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -42.229652392011175,
+        1.089074633005409,
+        -31.00863518415332
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_05_right_0385",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.34646443508589747,
+      "maximumStepPhase": 0.4687499896519718,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.593899257234234,
+      "maximumDenseSpeedDegreesPerSecond": 61.67312865064395,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1080.124282222141,
+      "firstIntervalDegrees": 0.3190726795460817,
+      "lastIntervalDegrees": 0.3303060820490452,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -47.559016562303036,
+        0.8971429865972845,
+        -32.68568048290036
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -47.559016562303036,
+        0.8971429865972845,
+        -32.68568048290036
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_06_right_0386",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.35805103584595144,
+      "maximumStepPhase": 0.47656246119489426,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 63.65340956439696,
+      "maximumDenseSpeedDegreesPerSecond": 63.744265176486785,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1116.393932399576,
+      "firstIntervalDegrees": 0.3386123576826737,
+      "lastIntervalDegrees": 0.3484206951128047,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -51.51723586234688,
+        0.6223344965372264,
+        -32.78611624367947
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -51.51723586234688,
+        0.6223344965372264,
+        -32.78611624367947
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_07_right_0387",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.35989147697933477,
+      "maximumStepPhase": 0.22656248189095066,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 63.980598544497596,
+      "maximumDenseSpeedDegreesPerSecond": 64.06333163817477,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1121.9474901502513,
+      "firstIntervalDegrees": 0.3472386238696555,
+      "lastIntervalDegrees": 0.3548749267739158,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -53.990199653081795,
+        0.3119883976906332,
+        -31.303764875613222
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -53.990199653081795,
+        0.3119883976906332,
+        -31.303764875613222
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_08_right_0388",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.35127271086298684,
+      "maximumStepPhase": 0.4843749741299295,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 62.44854088144026,
+      "maximumDenseSpeedDegreesPerSecond": 62.520896435142475,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1094.8405991252207,
+      "firstIntervalDegrees": 0.3451938916272563,
+      "lastIntervalDegrees": 0.34982498093839587,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -54.90660762021866,
+        0.01865264666622499,
+        -28.30954011183336
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -54.90660762021866,
+        0.01865264666622499,
+        -28.30954011183336
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_04_front_0391",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.31048002142387043,
+      "maximumStepPhase": 0.039062497412992954,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 55.196427782248705,
+      "maximumDenseSpeedDegreesPerSecond": 55.26426355488312,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 967.7999384390207,
+      "firstIntervalDegrees": 0.28501896726241366,
+      "lastIntervalDegrees": 0.2750951430191832,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -48.27991485477979,
+        -0.3180024467713374,
+        -12.026489192752992
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -48.27991485477979,
+        -0.3180024467713374,
+        -12.026489192752992
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_05_front_0392",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3264964504631435,
+      "maximumStepPhase": 0.0625,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 58.0438303296703,
+      "maximumDenseSpeedDegreesPerSecond": 58.11323983798643,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1017.66000960313,
+      "firstIntervalDegrees": 0.25289166834180443,
+      "lastIntervalDegrees": 0.2363588829730659,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -43.15818096277608,
+        -0.17457371355035964,
+        -5.044201378868775
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -43.15818096277608,
+        -0.17457371355035964,
+        -5.044201378868775
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_06_front_0393",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3454474959926303,
+      "maximumStepPhase": 0.3281249844779577,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 61.41294674441762,
+      "maximumDenseSpeedDegreesPerSecond": 61.495524350343096,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1077.0561785822501,
+      "firstIntervalDegrees": 0.21926181888552426,
+      "lastIntervalDegrees": 0.19571755368621097,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -36.79216947002429,
+        0.08583539735178063,
+        2.177873817427638
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -36.79216947002429,
+        0.08583539735178063,
+        2.177873817427638
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_07_front_0394",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.35754542352926694,
+      "maximumStepPhase": 0.07812499482598591,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 63.563689410052405,
+      "maximumDenseSpeedDegreesPerSecond": 63.662218190166,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1114.967942545195,
+      "firstIntervalDegrees": 0.1881823466222178,
+      "lastIntervalDegrees": 0.15847008296658333,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -29.36541367852561,
+        0.4288433236675522,
+        9.291396935702963
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -29.36541367852561,
+        0.4288433236675522,
+        9.291396935702963
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_08_front_0395",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.36014754623979767,
+      "maximumStepPhase": 0.3359374767169366,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 64.02620536836048,
+      "maximumDenseSpeedDegreesPerSecond": 64.1056035170516,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1122.706187389645,
+      "firstIntervalDegrees": 0.16481984001202818,
+      "lastIntervalDegrees": 0.13287105903606078,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -21.092037557201113,
+        0.8074431117552058,
+        15.954229748566885
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -21.092037557201113,
+        0.8074431117552058,
+        15.954229748566885
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_04_back_0398",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3157119494117685,
+      "maximumStepPhase": 0.36718748706496473,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 56.126767401118734,
+      "maximumDenseSpeedDegreesPerSecond": 56.19718696629931,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 984.1917516056624,
+      "firstIntervalDegrees": 0.17516390374788646,
+      "lastIntervalDegrees": 0.17433001686252017,
+      "analyticFirstVelocityDegreesPerSecond": [
+        6.342271169778058,
+        1.650030396615987,
+        30.241953213496544
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        6.342271169778058,
+        1.650030396615987,
+        30.241953213496544
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_05_back_0399",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.31012831882674197,
+      "maximumStepPhase": 0.39843749741299295,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 55.13441409620664,
+      "maximumDenseSpeedDegreesPerSecond": 55.197747692389,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 966.5669373575319,
+      "firstIntervalDegrees": 0.19763158483683554,
+      "lastIntervalDegrees": 0.20714938583517734,
+      "analyticFirstVelocityDegreesPerSecond": [
+        15.478746638102553,
+        1.7043871437251354,
+        32.34237076596029
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        15.478746638102553,
+        1.7043871437251354,
+        32.34237076596029
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_06_back_0400",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3254005723406474,
+      "maximumStepPhase": 0.4218749948259859,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 57.849199055675356,
+      "maximumDenseSpeedDegreesPerSecond": 57.91580490374977,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1014.226591184831,
+      "firstIntervalDegrees": 0.22169164638703961,
+      "lastIntervalDegrees": 0.23831814004732343,
+      "analyticFirstVelocityDegreesPerSecond": [
+        24.168961651792767,
+        1.6214613441821462,
+        32.886380081359775
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        24.168961651792767,
+        1.6214613441821462,
+        32.886380081359775
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_07_back_0381",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.3327252427050332,
+      "maximumStepPhase": 0.13281249223897884,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 59.151132321094245,
+      "maximumDenseSpeedDegreesPerSecond": 59.22904761972017,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1037.3982936834032,
+      "firstIntervalDegrees": 0.14452084201597992,
+      "lastIntervalDegrees": 0.1552746811360586,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -19.72119634734168,
+        0.9082092925566411,
+        -17.69474689499081
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -19.72119634734168,
+        0.9082092925566411,
+        -17.69474689499081
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "dyn_bounce_tail_08_back_0402",
+      "group": "groom",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 0.35725431912602584,
+      "maximumStepPhase": 0.1875,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 63.51193952544344,
+      "maximumDenseSpeedDegreesPerSecond": 63.59985571085558,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1113.9642068515843,
+      "firstIntervalDegrees": 0.2644107312297863,
+      "lastIntervalDegrees": 0.28641149558158563,
+      "analyticFirstVelocityDegreesPerSecond": [
+        39.228528241800824,
+        1.122965047817068,
+        29.271829501038695
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        39.228528241800824,
+        1.122965047817068,
+        29.271829501038695
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "upperleg_l_0405",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 1.0709853324666774,
+      "maximumStepPhase": 0.039062497412992954,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 190.39732182522874,
+      "maximumDenseSpeedDegreesPerSecond": 190.69100068437777,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 15685.110477300685,
+      "firstIntervalDegrees": 0.8452393336031327,
+      "lastIntervalDegrees": 0.7293963706705593,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -17.97625064518249,
+        -42.243477301863955,
+        132.22312838235797
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -17.97625064518249,
+        -42.243477301863955,
+        132.22312838235797
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "lowerleg_l_0406",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 2.097794313514486,
+      "maximumStepPhase": 0.039062497412992954,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 372.94107297756085,
+      "maximumDenseSpeedDegreesPerSecond": 373.4395773694852,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 39392.36865937327,
+      "firstIntervalDegrees": 1.7189571149320082,
+      "lastIntervalDegrees": 1.5208044223913315,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -42.724054185343945,
+        93.2044454564063,
+        -269.0979747525823
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -42.724054185343945,
+        93.2044454564063,
+        -269.0979747525823
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "foot_l_0407",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 3.39608451348004,
+      "maximumStepPhase": 0.4140624818909507,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 603.7473343460936,
+      "maximumDenseSpeedDegreesPerSecond": 615.8874805420933,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 44032.382495307545,
+      "firstIntervalDegrees": 1.1333172944021057,
+      "lastIntervalDegrees": 0.9859575522866217,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -14.23502802774655,
+        -42.51766031494078,
+        182.9636409266442
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -14.23502802774655,
+        -42.51766031494078,
+        182.9636409266442
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "toes_01_l_0408",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 3.6767990238381354,
+      "maximumStepPhase": 0.39843749741299295,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 653.6555147636898,
+      "maximumDenseSpeedDegreesPerSecond": 654.5347126943809,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 22685.170247284274,
+      "firstIntervalDegrees": 0.773067666078478,
+      "lastIntervalDegrees": 0.653106000032388,
+      "analyticFirstVelocityDegreesPerSecond": [
+        5.192348486917698,
+        28.136562955046887,
+        -123.49917208698776
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        5.192348486917698,
+        28.136562955046887,
+        -123.49917208698776
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "upperleg_r_0474",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 1.7865938839599358,
+      "maximumStepPhase": 0.9609374353248238,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 317.61615198867014,
+      "maximumDenseSpeedDegreesPerSecond": 325.89401244659587,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 29106.64107427537,
+      "firstIntervalDegrees": 0.3028311974423919,
+      "lastIntervalDegrees": 0.08982975581193275,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -2.3005830767014106,
+        -4.335558895664226,
+        18.28595235483455
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -2.3005830767014106,
+        -4.335558895664226,
+        18.28595235483455
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "lowerleg_r_0475",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 2.9206453291663235,
+      "maximumStepPhase": 0.9140624404988379,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 519.2249559913375,
+      "maximumDenseSpeedDegreesPerSecond": 537.939728042455,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 34129.58718324767,
+      "firstIntervalDegrees": 0.812473286548143,
+      "lastIntervalDegrees": 0.26051324249337127,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -9.24014265729638,
+        22.537831827422224,
+        -92.21299499575414
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -9.24014265729638,
+        22.537831827422224,
+        -92.21299499575414
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "foot_r_0476",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 4.431677006969441,
+      "maximumStepPhase": 0.9140624404988379,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 787.8523543864686,
+      "maximumDenseSpeedDegreesPerSecond": 810.4108459127593,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 74357.11113725152,
+      "firstIntervalDegrees": 1.527852397092039e-15,
+      "lastIntervalDegrees": 1.527852397092039e-15,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -5.922111563707873e-12,
+        -1.0865564095694369e-11,
+        6.842169044505764e-11
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -5.922111563707873e-12,
+        -1.0865564095694369e-11,
+        6.842169044505764e-11
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "toes_01_r_0477",
+      "group": "limbs",
+      "path": "rotation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveDegrees": 4.097260291112095,
+      "maximumStepPhase": 0.8906249844779577,
+      "maximumKeyIntervalSpeedDegreesPerSecond": 728.4005945853695,
+      "maximumDenseSpeedDegreesPerSecond": 729.7307343370364,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 54728.13406833464,
+      "firstIntervalDegrees": 0.2759824040210482,
+      "lastIntervalDegrees": 0.5425660773096103,
+      "analyticFirstVelocityDegreesPerSecond": [
+        -8.579340191550962,
+        -3.4254486627987206,
+        72.17086282096875
+      ],
+      "analyticLastVelocityDegreesPerSecond": [
+        -8.579340191550962,
+        -3.4254486627987206,
+        72.17086282096875
+      ],
+      "analyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    {
+      "joint": "pelvis_08",
+      "group": "torsoNeckHead",
+      "path": "translation",
+      "interpolation": "CUBICSPLINE",
+      "firstLastComponentDifference": 0.0,
+      "denseSamples": 1025,
+      "maximumConsecutiveLocalTranslationM": 0.1763458251953125,
+      "maximumDenseLocalSpeedMps": 31.391672539747216,
+      "maximumDenseLocalAccelerationMps2": 550.0238200595815,
+      "analyticLoopLocalVelocityDifferenceMps": 0.0
+    }
+  ],
+  "comparison": [
+    {
+      "joint": "pelvis_08",
+      "group": "torsoNeckHead",
+      "oldMaximumDegrees": 0.07842735372388836,
+      "newMaximumDegrees": 0.07842735372388834
+    },
+    {
+      "joint": "spine_01_09",
+      "group": "torsoNeckHead",
+      "oldMaximumDegrees": 0.039141187569296736,
+      "newMaximumDegrees": 0.039141187569296736
+    },
+    {
+      "joint": "spine_02_010",
+      "group": "torsoNeckHead",
+      "oldMaximumDegrees": 0.027937569057752933,
+      "newMaximumDegrees": 0.027937569057752933
+    },
+    {
+      "joint": "spine_03_011",
+      "group": "torsoNeckHead",
+      "oldMaximumDegrees": 0.01827017593322266,
+      "newMaximumDegrees": 0.018270175933222655
+    },
+    {
+      "joint": "spine_04_012",
+      "group": "torsoNeckHead",
+      "oldMaximumDegrees": 0.022771095920345107,
+      "newMaximumDegrees": 0.022771095920345107
+    },
+    {
+      "joint": "neck_01_014",
+      "group": "torsoNeckHead",
+      "oldMaximumDegrees": 0.22237014907439265,
+      "newMaximumDegrees": 0.22237014907439265
+    },
+    {
+      "joint": "neck_02_015",
+      "group": "torsoNeckHead",
+      "oldMaximumDegrees": 0.08270482354484293,
+      "newMaximumDegrees": 0.08270482354484295
+    },
+    {
+      "joint": "neck_03_016",
+      "group": "torsoNeckHead",
+      "oldMaximumDegrees": 0.11118105550263166,
+      "newMaximumDegrees": 0.11118105550263165
+    },
+    {
+      "joint": "neck_04_017",
+      "group": "torsoNeckHead",
+      "oldMaximumDegrees": 0.07294566342194235,
+      "newMaximumDegrees": 0.07294566342194235
+    },
+    {
+      "joint": "neck_05_018",
+      "group": "torsoNeckHead",
+      "oldMaximumDegrees": 0.037832492629495465,
+      "newMaximumDegrees": 0.037832492629495465
+    },
+    {
+      "joint": "head_019",
+      "group": "torsoNeckHead",
+      "oldMaximumDegrees": 0.07103906031295312,
+      "newMaximumDegrees": 0.07103906031295312
+    },
+    {
+      "joint": "dyn_head_end_right_01_028",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3448045640692024,
+      "newMaximumDegrees": 0.3448045640692024
+    },
+    {
+      "joint": "dyn_head_end_right_02_029",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34364032100115227,
+      "newMaximumDegrees": 0.3436403210011523
+    },
+    {
+      "joint": "dyn_head_end_right_03_030",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3401302364326367,
+      "newMaximumDegrees": 0.3401302364326368
+    },
+    {
+      "joint": "dyn_head_end_left_01_033",
+      "group": "groom",
+      "oldMaximumDegrees": 0.33878452929626685,
+      "newMaximumDegrees": 0.3387845292962669
+    },
+    {
+      "joint": "dyn_head_end_left_02_034",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34354538031495063,
+      "newMaximumDegrees": 0.34354538031495074
+    },
+    {
+      "joint": "dyn_head_end_left_03_035",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34378649024861474,
+      "newMaximumDegrees": 0.3437864902486148
+    },
+    {
+      "joint": "dyn_new_head_neck_01_073",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34342891532195846,
+      "newMaximumDegrees": 0.3434289153219584
+    },
+    {
+      "joint": "dyn_new_head_neck_02_074",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3403144200324111,
+      "newMaximumDegrees": 0.3403144200324112
+    },
+    {
+      "joint": "dyn_new_head_neck_03_075",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34454660787935243,
+      "newMaximumDegrees": 0.34454660787935243
+    },
+    {
+      "joint": "dyn_new_neck_05_01_0107",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3446129232606378,
+      "newMaximumDegrees": 0.34461292326063775
+    },
+    {
+      "joint": "dyn_new_neck_05_02_0108",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34145443273066467,
+      "newMaximumDegrees": 0.3414544327306648
+    },
+    {
+      "joint": "dyn_new_neck_05_03_0109",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3426957293233531,
+      "newMaximumDegrees": 0.3426957293233532
+    },
+    {
+      "joint": "dyn_new_neck_041_01_0118",
+      "group": "groom",
+      "oldMaximumDegrees": 0.340180284841465,
+      "newMaximumDegrees": 0.3401802848414651
+    },
+    {
+      "joint": "dyn_new_neck_041_02_0119",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34419658932728797,
+      "newMaximumDegrees": 0.34419658932728797
+    },
+    {
+      "joint": "dyn_new_neck_041_03_0120",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3434257076270708,
+      "newMaximumDegrees": 0.3434257076270708
+    },
+    {
+      "joint": "dyn_new_neck_041_04_0121",
+      "group": "groom",
+      "oldMaximumDegrees": 0.33888327149969627,
+      "newMaximumDegrees": 0.33888327149969627
+    },
+    {
+      "joint": "dyn_new_neck_04_01_0127",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3407328097516126,
+      "newMaximumDegrees": 0.3407328097516125
+    },
+    {
+      "joint": "dyn_new_neck_04_02_0128",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34342323583386,
+      "newMaximumDegrees": 0.3434232358338599
+    },
+    {
+      "joint": "dyn_new_neck_04_03_0129",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34493623933535683,
+      "newMaximumDegrees": 0.3449362393353568
+    },
+    {
+      "joint": "dyn_new_neck_04_04_0130",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3416434759557289,
+      "newMaximumDegrees": 0.3416434759557289
+    },
+    {
+      "joint": "dyn_new_neck_03_01_0151",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3447500281461638,
+      "newMaximumDegrees": 0.34475002814616384
+    },
+    {
+      "joint": "dyn_new_neck_03_02_0152",
+      "group": "groom",
+      "oldMaximumDegrees": 0.341329180702862,
+      "newMaximumDegrees": 0.3413291807028619
+    },
+    {
+      "joint": "dyn_new_neck_03_03_0153",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34251127146207533,
+      "newMaximumDegrees": 0.3425112714620753
+    },
+    {
+      "joint": "dyn_new_neck_03_04_0154",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34446677765590294,
+      "newMaximumDegrees": 0.34446677765590294
+    },
+    {
+      "joint": "dyn_new_neck_02_01_0157",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3443931722241991,
+      "newMaximumDegrees": 0.34439317222419913
+    },
+    {
+      "joint": "dyn_new_neck_02_02_0158",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3425328941279938,
+      "newMaximumDegrees": 0.34253289412799387
+    },
+    {
+      "joint": "dyn_new_neck_02_03_0159",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3411869015339893,
+      "newMaximumDegrees": 0.34118690153398923
+    },
+    {
+      "joint": "dyn_new_neck_02_04_0160",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34469139518252034,
+      "newMaximumDegrees": 0.34469139518252034
+    },
+    {
+      "joint": "clavicle_l_0203",
+      "group": "limbs",
+      "oldMaximumDegrees": 4.746753239154705,
+      "newMaximumDegrees": 1.9370114451610712
+    },
+    {
+      "joint": "upperarm_l_0204",
+      "group": "limbs",
+      "oldMaximumDegrees": 10.186773277763216,
+      "newMaximumDegrees": 2.1098322600050174
+    },
+    {
+      "joint": "lowerarm_l_0205",
+      "group": "limbs",
+      "oldMaximumDegrees": 16.773241398390727,
+      "newMaximumDegrees": 2.933374825211229
+    },
+    {
+      "joint": "hand_l_0206",
+      "group": "limbs",
+      "oldMaximumDegrees": 5.396822162991587,
+      "newMaximumDegrees": 4.503991023434121
+    },
+    {
+      "joint": "fingers_01_l_0187",
+      "group": "limbs",
+      "oldMaximumDegrees": 7.45567720123669,
+      "newMaximumDegrees": 1.5174837780268362
+    },
+    {
+      "joint": "clavicle_r_0269",
+      "group": "limbs",
+      "oldMaximumDegrees": 4.831910126439955,
+      "newMaximumDegrees": 1.6059291984645034
+    },
+    {
+      "joint": "upperarm_r_0270",
+      "group": "limbs",
+      "oldMaximumDegrees": 9.108821501784487,
+      "newMaximumDegrees": 1.4411148530381326
+    },
+    {
+      "joint": "lowerarm_r_0271",
+      "group": "limbs",
+      "oldMaximumDegrees": 14.993231603748201,
+      "newMaximumDegrees": 2.8520007980858666
+    },
+    {
+      "joint": "hand_r_0272",
+      "group": "limbs",
+      "oldMaximumDegrees": 4.727945356642652,
+      "newMaximumDegrees": 4.514864277592252
+    },
+    {
+      "joint": "fingers_01_r_0273",
+      "group": "limbs",
+      "oldMaximumDegrees": 5.65408693793863,
+      "newMaximumDegrees": 1.5721933825303758
+    },
+    {
+      "joint": "tail_01_0367",
+      "group": "groom",
+      "oldMaximumDegrees": 0.23295452703629665,
+      "newMaximumDegrees": 0.23295452703629665
+    },
+    {
+      "joint": "dyn_tail_06_0372",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34962034775260475,
+      "newMaximumDegrees": 0.34962034775260475
+    },
+    {
+      "joint": "dyn_tail_07_0373",
+      "group": "groom",
+      "oldMaximumDegrees": 0.331481357347642,
+      "newMaximumDegrees": 0.33148135734764206
+    },
+    {
+      "joint": "dyn_tail_08_0374",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3133445787780608,
+      "newMaximumDegrees": 0.3133445787780608
+    },
+    {
+      "joint": "dyn_bounce_tail_04_left_0377",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3474216019378854,
+      "newMaximumDegrees": 0.3474216019378855
+    },
+    {
+      "joint": "dyn_bounce_tail_05_left_0378",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3585351020984373,
+      "newMaximumDegrees": 0.3585351020984373
+    },
+    {
+      "joint": "dyn_bounce_tail_06_left_0379",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3595753022993141,
+      "newMaximumDegrees": 0.359575302299314
+    },
+    {
+      "joint": "dyn_bounce_tail_07_left_0380",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3504765108261291,
+      "newMaximumDegrees": 0.35047651082612913
+    },
+    {
+      "joint": "dyn_bounce_tail_08_left_0361",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3491562013516827,
+      "newMaximumDegrees": 0.3491562013516828
+    },
+    {
+      "joint": "dyn_bounce_tail_04_right_0384",
+      "group": "groom",
+      "oldMaximumDegrees": 0.32753229434980097,
+      "newMaximumDegrees": 0.32753229434980097
+    },
+    {
+      "joint": "dyn_bounce_tail_05_right_0385",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3464644350858974,
+      "newMaximumDegrees": 0.34646443508589747
+    },
+    {
+      "joint": "dyn_bounce_tail_06_right_0386",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3580510358459514,
+      "newMaximumDegrees": 0.35805103584595144
+    },
+    {
+      "joint": "dyn_bounce_tail_07_right_0387",
+      "group": "groom",
+      "oldMaximumDegrees": 0.35989147697933466,
+      "newMaximumDegrees": 0.35989147697933477
+    },
+    {
+      "joint": "dyn_bounce_tail_08_right_0388",
+      "group": "groom",
+      "oldMaximumDegrees": 0.35127271086298684,
+      "newMaximumDegrees": 0.35127271086298684
+    },
+    {
+      "joint": "dyn_bounce_tail_04_front_0391",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3104800214238704,
+      "newMaximumDegrees": 0.31048002142387043
+    },
+    {
+      "joint": "dyn_bounce_tail_05_front_0392",
+      "group": "groom",
+      "oldMaximumDegrees": 0.32649645046314346,
+      "newMaximumDegrees": 0.3264964504631435
+    },
+    {
+      "joint": "dyn_bounce_tail_06_front_0393",
+      "group": "groom",
+      "oldMaximumDegrees": 0.34544749599263025,
+      "newMaximumDegrees": 0.3454474959926303
+    },
+    {
+      "joint": "dyn_bounce_tail_07_front_0394",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3575454235292668,
+      "newMaximumDegrees": 0.35754542352926694
+    },
+    {
+      "joint": "dyn_bounce_tail_08_front_0395",
+      "group": "groom",
+      "oldMaximumDegrees": 0.36014754623979756,
+      "newMaximumDegrees": 0.36014754623979767
+    },
+    {
+      "joint": "dyn_bounce_tail_04_back_0398",
+      "group": "groom",
+      "oldMaximumDegrees": 0.31571194941176844,
+      "newMaximumDegrees": 0.3157119494117685
+    },
+    {
+      "joint": "dyn_bounce_tail_05_back_0399",
+      "group": "groom",
+      "oldMaximumDegrees": 0.31012831882674197,
+      "newMaximumDegrees": 0.31012831882674197
+    },
+    {
+      "joint": "dyn_bounce_tail_06_back_0400",
+      "group": "groom",
+      "oldMaximumDegrees": 0.32540057234064734,
+      "newMaximumDegrees": 0.3254005723406474
+    },
+    {
+      "joint": "dyn_bounce_tail_07_back_0381",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3327252427050332,
+      "newMaximumDegrees": 0.3327252427050332
+    },
+    {
+      "joint": "dyn_bounce_tail_08_back_0402",
+      "group": "groom",
+      "oldMaximumDegrees": 0.3572543191260258,
+      "newMaximumDegrees": 0.35725431912602584
+    },
+    {
+      "joint": "upperleg_l_0405",
+      "group": "limbs",
+      "oldMaximumDegrees": 2.473289072870687,
+      "newMaximumDegrees": 1.0709853324666774
+    },
+    {
+      "joint": "lowerleg_l_0406",
+      "group": "limbs",
+      "oldMaximumDegrees": 6.773309805172007,
+      "newMaximumDegrees": 2.097794313514486
+    },
+    {
+      "joint": "foot_l_0407",
+      "group": "limbs",
+      "oldMaximumDegrees": 4.028674123254615,
+      "newMaximumDegrees": 3.39608451348004
+    },
+    {
+      "joint": "toes_01_l_0408",
+      "group": "limbs",
+      "oldMaximumDegrees": 3.5456830866602513,
+      "newMaximumDegrees": 3.6767990238381354
+    },
+    {
+      "joint": "upperleg_r_0474",
+      "group": "limbs",
+      "oldMaximumDegrees": 2.051111424400499,
+      "newMaximumDegrees": 1.7865938839599358
+    },
+    {
+      "joint": "lowerleg_r_0475",
+      "group": "limbs",
+      "oldMaximumDegrees": 6.1116105715657785,
+      "newMaximumDegrees": 2.9206453291663235
+    },
+    {
+      "joint": "foot_r_0476",
+      "group": "limbs",
+      "oldMaximumDegrees": 4.715032943656501,
+      "newMaximumDegrees": 4.431677006969441
+    },
+    {
+      "joint": "toes_01_r_0477",
+      "group": "limbs",
+      "oldMaximumDegrees": 3.8305856258089666,
+      "newMaximumDegrees": 4.097260291112095
+    }
+  ]
+}

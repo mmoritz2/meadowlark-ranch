@@ -1,72 +1,72 @@
 {
-  "url": "http://127.0.0.1:8577/review/native-horse-kit/review.html",
+  "url": "http://127.0.0.1:8584/review/native-horse-kit/review.html",
   "errors": [],
   "gaits": {
     "walk": {
       "clip": "Target Native Walk Rollover",
       "duration": 1.1200000047683716,
       "nativeBones": 677,
-      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "modelSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
       "allFinite": true,
       "bodyMinRange": [
-        0.0009233334608878818,
-        0.00101942839046118
+        0.0007417989073054965,
+        0.00110426440681388
       ],
       "stanceWholeHoofMinimum": [
-        0.0009233334608878818,
-        0.001169072337213889
+        0.0007417989073054965,
+        0.0012513696419178756
       ]
     },
     "trot": {
       "clip": "Target Native Trot",
       "duration": 0.7200000286102295,
       "nativeBones": 677,
-      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "modelSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
       "allFinite": true,
       "bodyMinRange": [
-        0.0009407939819809762,
-        0.015451913190767027
+        -0.0008128491960569355,
+        0.00538352792558361
       ],
       "stanceWholeHoofMinimum": [
-        0.0009407939819809762,
-        0.004424105315629451
+        -0.0008128491960569355,
+        0.004937310024826309
       ]
     },
     "canterLeft": {
       "clip": "Target Native Canter Left",
       "duration": 0.6399999856948853,
       "nativeBones": 677,
-      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "modelSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
       "allFinite": true,
       "bodyMinRange": [
-        0.0008887063907335739,
-        0.04637897811619978
+        0.0008335480181360104,
+        0.030322200670993536
       ],
       "stanceWholeHoofMinimum": [
-        0.0008887063907335739,
-        0.004297040502651825
+        0.0008335480181360104,
+        0.004270633672750061
       ]
     },
     "canterRight": {
       "clip": "Target Native Canter Right",
       "duration": 0.6399999856948853,
       "nativeBones": 677,
-      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "modelSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
       "allFinite": true,
       "bodyMinRange": [
-        0.0008578205660432769,
-        0.04613103003291911
+        0.0008172207800342668,
+        0.029807960049461305
       ],
       "stanceWholeHoofMinimum": [
-        0.0008578205660432769,
-        0.0017711760176388623
+        0.0008172207800342668,
+        0.001439423455186648
       ]
     },
     "stand": {
       "clip": "Horse|Horse_Idle",
       "duration": 13.958333015441895,
       "nativeBones": 677,
-      "modelSha256": "49ade015b21fa531be05bc92ed042ec0dc4c2f96aabfc40b48f1fe280f292206",
+      "modelSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
       "allFinite": true,
       "bodyMinRange": [
         -0.0008706650484685699,

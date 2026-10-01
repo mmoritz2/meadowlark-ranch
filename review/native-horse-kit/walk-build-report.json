@@ -1,10 +1,10 @@
 {
-  "verdict": "Independent review complete: useful narrow private motion study; final naturalism and production approval remain open.",
+  "verdict": "pending browser and independent visual review",
   "duration": 1.12,
   "stanceFraction": 0.65,
   "strideHalfM": 0.2,
-  "foreSwingLiftM": 0.09,
-  "hindSwingLiftM": 0.09,
+  "foreSwingLiftM": 0.045,
+  "hindSwingLiftM": 0.045,
   "impliedSpeedMps": 0.5494505494505494,
   "phaseOrder": "LH, LF, RH, RF",
   "suspensionWindows": [],
@@ -52,6 +52,9 @@
         "swingPhase": 0.0,
         "footPitchDegrees": 0.0,
         "anchor": "sole",
+        "anchorWeights": {
+          "sole": 1.0
+        },
         "goal": [
           -0.0037147771075021355,
           0.8286684253702878
@@ -83,6 +86,9 @@
         "swingPhase": 0.0,
         "footPitchDegrees": 0.0,
         "anchor": "sole",
+        "anchorWeights": {
+          "sole": 1.0
+        },
         "goal": [
           -0.0037147771075021355,
           2.236263013001226
@@ -116,6 +122,9 @@
         "swingPhase": 0.0,
         "footPitchDegrees": 0.0,
         "anchor": "sole",
+        "anchorWeights": {
+          "sole": 1.0
+        },
         "goal": [
           -0.0037147771075021355,
           1.0351809921919495
@@ -147,6 +156,9 @@
         "swingPhase": 0.0,
         "footPitchDegrees": 0.0,
         "anchor": "sole",
+        "anchorWeights": {
+          "sole": 1.0
+        },
         "goal": [
           -0.0037147771075021355,
           2.068762123089404
@@ -2433,9 +2445,10 @@
       "rangeFromFirstWalkFrameDegrees": 38.894572914252976
     }
   },
+  "uncopiedClosureMaxDegrees": 1.0384713386617772e-06,
   "hairDetailJoints": 51,
-  "candidateBytes": 27503052,
-  "candidateSha256": "73053f039395f3dc5b728ebf8f89b1f9676da018745dca46b1104fc59a5a80b7",
+  "candidateBytes": 27840924,
+  "candidateSha256": "a6c048b0607388df079e4d69b7a226a86df073e7978fb9b563c4cd862e94bc22",
   "preservation": {
     "nodes": true,
     "meshes": true,
@@ -2447,13 +2460,13 @@
     "originalBinaryPrefix": true
   },
   "authoredGridPass": true,
-  "worstVerticalErrorM": 0.00045852393333294106,
-  "worstStrideErrorM": 0.00014419717026936674,
-  "maxCorrectionDegrees": 44.99999999999999,
+  "worstVerticalErrorM": 0.004445992380847724,
+  "worstStrideErrorM": 0.0015573936952528733,
+  "maxCorrectionDegrees": 38.84881188027496,
   "capHits": {
-    "HL": 18,
-    "FL": 34,
-    "HR": 18,
-    "FR": 36
+    "HL": 0,
+    "FL": 18,
+    "HR": 0,
+    "FR": 18
   }
 }

@@ -1,0 +1,43 @@
+{
+  "candidateSha256": "83a424e5b3b10a59a146452037ac3cf06c69a12dfe66edfe6a841e09a66f0d74",
+  "sourceSha256": "fd18d9b9b22e00dc30a6fa1cfe2e135bb20f7c871df0a976706aaea2f4dff655",
+  "duration": 0.72,
+  "stanceFraction": 0.44,
+  "strideHalfM": 0.22000000000000006,
+  "impliedSpeedMps": 1.3888888888888893,
+  "footOffsets": {
+    "Trot": {
+      "FL": 0.0,
+      "HR": 0.0,
+      "FR": 0.5,
+      "HL": 0.5
+    }
+  },
+  "floorY": -0.0047147771075021355,
+  "bodyHeightRatio": 1.0000000000000002,
+  "jointCount": 677,
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "images": true,
+    "textures": true,
+    "scenes": true,
+    "originalBinaryPrefix": true
+  },
+  "leads": {
+    "Trot": {
+      "authoredGridPass": false,
+      "worstVerticalErrorM": 0.0064053508157355665,
+      "worstStrideErrorM": 0.0016300709380878686,
+      "uncopiedClosureMaxDegrees": 1.4957432833427734e-06,
+      "capHits": {
+        "HL": 0,
+        "FL": 25,
+        "HR": 6,
+        "FR": 27
+      }
+    }
+  }
+}

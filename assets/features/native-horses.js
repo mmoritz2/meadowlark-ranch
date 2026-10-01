@@ -1,9 +1,9 @@
-import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=native-gaits-1';
+import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=native-continuity-1';
 
 export const id='native-horses';
 export const NATIVE_MODEL_CHOICES=Object.freeze({
  'white-western':{body:'#f0eee5',mane:'#e7ded1',description:'White horse with Western tack. Idle, walk, trot and both canter leads. No gallop or jump yet.'},
- 'bay-western':{body:'#815638',mane:'#241b18',description:'Bay horse with Western tack. Standing pose and slow walk. Faster gaits and jumps are not available yet.'},
+ 'bay-western':{body:'#815638',mane:'#241b18',description:'Bay horse with Western tack. Standing pose, walk, trot and both canter leads. No gallop or jump yet.'},
  'black-dragon-native':{body:'#24242a',mane:'#24242a',description:'The original Black Dragon, with its idle animation. A stationary companion for now; walking and flight are not available.'},
  'european-dragon':{body:'#665f52',mane:'#665f52',description:'European Dragon with standing and sitting idles, walk, run and flight. No jumping animation.'}
 });

@@ -1,0 +1,59 @@
+{
+  "selectedBayVsWhiteCurveMaxAbsDifference": {
+    "Left": {
+      "pelvis_08": 1.6289329528808594,
+      "clavicle_l_0203": 0.05583983659744263,
+      "hand_l_0206": 0.08338728547096252,
+      "foot_l_0407": 0.09968915581703186
+    },
+    "Right": {
+      "pelvis_08": 1.6289329528808594,
+      "clavicle_l_0203": 0.054897814989089966,
+      "hand_l_0206": 0.07474270462989807,
+      "foot_l_0407": 0.10979562997817993
+    }
+  },
+  "sourceSha256": "6110fb3bcfe6ba6660c9c05d67269bc800d19706fab54db29633003d87f0a6a3",
+  "candidateSha256": "ce92a044fbc6e193dd7c3d830ebba555c29ea7695830f7b78495a242f73702b4",
+  "originalBinaryBytes": 14709196,
+  "candidateBinaryBytes": 15047692,
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "images": true,
+    "textures": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "accessorsSourcePrefix": true,
+    "bufferViewsSourcePrefix": true,
+    "binarySourcePrefix": true
+  },
+  "jointCount": 677,
+  "skinnedMeshVertexCounts": [
+    2028,
+    5092,
+    13895,
+    16159,
+    23514
+  ],
+  "clips": [
+    {
+      "name": "Target Native Canter Left",
+      "channels": 82,
+      "samplers": 82,
+      "allCurveValuesFinite": true,
+      "nodePathsUnique": true
+    },
+    {
+      "name": "Target Native Canter Right",
+      "channels": 82,
+      "samplers": 82,
+      "allCurveValuesFinite": true,
+      "nodePathsUnique": true
+    }
+  ],
+  "verdict": "original meshes, skin, binds, materials, node hierarchy, original binary and all original accessors retained; two finite Bay-native Canter clips appended"
+}

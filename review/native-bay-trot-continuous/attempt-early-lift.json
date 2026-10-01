@@ -1,0 +1,50 @@
+{
+  "candidateSha256": "8807a2f8d3a66b9cbd30f8a3270ccf838d04c0f5cc1971db970372b65b50614f",
+  "parameters": {
+    "warmupCycles": 2,
+    "recordedCycles": 1,
+    "temporalAnglePenaltyWeight": 2.0,
+    "actualQuaternionSecondDifferenceWeight": 4.0,
+    "interpolation": "periodic CUBICSPLINE with verified recurring solve",
+    "contactResidualWeight": 100,
+    "biasResidualWeight": 0.9,
+    "initialization": "previous bounded limb correction angles",
+    "closureProbe": "uncopied next phase-zero solution"
+  },
+  "lift": "sin(pi*u^.65) with .12 endpoint taper",
+  "verdict": "fails<5deg author interval; early-swing lift still drives rapid articulation",
+  "authoredGridPass": false,
+  "worstVerticalErrorM": 0.00505209633483385,
+  "groups": {
+    "limbs": {
+      "joint": "lowerarm_l_0205",
+      "maximumConsecutiveDegrees": 8.454944135786452,
+      "maximumStepPhase": 0.49218748706496473,
+      "maximumDenseSpeedDegreesPerSecond": 1663.1574890477623,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 307616.89540121047,
+      "maximumFinalLoopIntervalDegrees": 3.942068048167293,
+      "maximumAnalyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticInternalKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    "torsoNeckHead": {
+      "joint": "neck_01_014",
+      "maximumConsecutiveDegrees": 0.22237014907439265,
+      "maximumStepPhase": 0.31249997930394363,
+      "maximumDenseSpeedDegreesPerSecond": 39.59443287932153,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 693.6951425152705,
+      "maximumFinalLoopIntervalDegrees": 0.1493861446674722,
+      "maximumAnalyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticInternalKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    "groom": {
+      "joint": "dyn_bounce_tail_08_front_0395",
+      "maximumConsecutiveDegrees": 0.36014754623979767,
+      "maximumStepPhase": 0.3359374767169366,
+      "maximumDenseSpeedDegreesPerSecond": 64.1056035170516,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1557.7064184913772,
+      "maximumFinalLoopIntervalDegrees": 0.3548749267739158,
+      "maximumAnalyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticInternalKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    }
+  }
+}

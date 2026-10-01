@@ -1,0 +1,151 @@
+{
+  "sourceSha256": "fd18d9b9b22e00dc30a6fa1cfe2e135bb20f7c871df0a976706aaea2f4dff655",
+  "gaits": {
+    "trot": {
+      "candidateSha256": "83a424e5b3b10a59a146452037ac3cf06c69a12dfe66edfe6a841e09a66f0d74",
+      "periodS": 0.72,
+      "stanceFraction": 0.44,
+      "halfStrokeM": 0.22000000000000006,
+      "nominalSpeedMps": 1.3888888888888893,
+      "footOffsets": {
+        "Trot": {
+          "FL": 0.0,
+          "HR": 0.0,
+          "FR": 0.5,
+          "HL": 0.5
+        }
+      },
+      "fixedFloorY": -0.0047147771075021355,
+      "standingProbePass": true,
+      "browserErrors": [],
+      "clips": {
+        "Target Native Trot": {
+          "lead": "Trot",
+          "browserPhases": 128,
+          "all677BoneTransformsFinite": true,
+          "wholeHoofStanceContact": {
+            "FL": {
+              "samples": 57,
+              "minM": -0.0008488283679499824,
+              "maxM": 0.0018524211740142162,
+              "above10mm": 0,
+              "belowMinus10mm": 0
+            },
+            "FR": {
+              "samples": 57,
+              "minM": -0.0001334239012397839,
+              "maxM": 0.002617737266509434,
+              "above10mm": 0,
+              "belowMinus10mm": 0
+            },
+            "HL": {
+              "samples": 57,
+              "minM": 0.0005931006844673769,
+              "maxM": 0.0018513919869116778,
+              "above10mm": 0,
+              "belowMinus10mm": 0
+            },
+            "HR": {
+              "samples": 57,
+              "minM": -0.0004972842479395948,
+              "maxM": 0.004937310024826391,
+              "above10mm": 0,
+              "belowMinus10mm": 0
+            }
+          },
+          "allStanceWithin10mm": true,
+          "bodyMinimumAboveFloorM": -0.0008488283679499824,
+          "suspensionPhases": 14,
+          "seamPositionM": 1.3979745581708426e-08,
+          "authoredStanceVerticalErrorMaxM": 0.003937232651370652,
+          "authoredSwingHeightErrorMaxM": 0.0064053508157355665,
+          "authoredGridPass": false,
+          "capFramesAnyJointByFoot": {
+            "HL": 0,
+            "FL": 25,
+            "HR": 6,
+            "FR": 27
+          },
+          "uncopiedClosureMaxDegrees": 1.4957432833427734e-06,
+          "regionalPlantSpanXZ": {
+            "FL": {
+              "heel": {
+                "samples": 9,
+                "spanXM": 2.4976438736667994e-07,
+                "spanZM": 0.00011330602341441676
+              },
+              "flat": {
+                "samples": 31,
+                "spanXM": 2.379145919995107e-07,
+                "spanZM": 0.00011927196290484332
+              },
+              "toe": {
+                "samples": 17,
+                "spanXM": 2.5906967002220505e-07,
+                "spanZM": 0.00021157289451201322
+              }
+            },
+            "FR": {
+              "heel": {
+                "samples": 9,
+                "spanXM": 2.002874616713335e-07,
+                "spanZM": 2.533594234144232e-05
+              },
+              "flat": {
+                "samples": 31,
+                "spanXM": 2.6125312380109733e-07,
+                "spanZM": 0.0002345939208932002
+              },
+              "toe": {
+                "samples": 17,
+                "spanXM": 2.0614349380276842e-07,
+                "spanZM": 0.0006278256689515871
+              }
+            },
+            "HL": {
+              "heel": {
+                "samples": 9,
+                "spanXM": 2.754417065820025e-07,
+                "spanZM": 5.573379124212963e-06
+              },
+              "flat": {
+                "samples": 31,
+                "spanXM": 2.9115224214892876e-07,
+                "spanZM": 0.00013373813313299898
+              },
+              "toe": {
+                "samples": 17,
+                "spanXM": 2.5437288117546863e-07,
+                "spanZM": 0.00028174693306826093
+              }
+            },
+            "HR": {
+              "heel": {
+                "samples": 9,
+                "spanXM": 2.3491933537345133e-07,
+                "spanZM": 0.0010076343770772933
+              },
+              "flat": {
+                "samples": 31,
+                "spanXM": 2.2815218703176043e-07,
+                "spanZM": 0.0002168676433178529
+              },
+              "toe": {
+                "samples": 17,
+                "spanXM": 1.955208242532258e-07,
+                "spanZM": 7.382515231912912e-05
+              }
+            }
+          },
+          "upperTrunk1998RangeYM": 0.04084647577504952,
+          "headPivotRangeYM": 0.10117485714715624,
+          "maxLimbStepDegrees": 4.735275858049802,
+          "stepDurationMs": 5.625,
+          "above5DegreeLimbSteps": 0,
+          "maxLimbStepVectorChangeDegrees": 2.500958104542082,
+          "maxLimbSeamVelocityVectorJumpDegreesPerStep": 0.4250808269596051
+        }
+      }
+    }
+  }
+}

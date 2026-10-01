@@ -1,0 +1,16 @@
+{
+  "nodes": true,
+  "meshes": true,
+  "skins": true,
+  "materials": true,
+  "images": true,
+  "textures": true,
+  "samplers": true,
+  "scenes": true,
+  "originalBinaryPrefix": true,
+  "originalAnimations": true,
+  "originalAccessors": true,
+  "originalBufferViews": true,
+  "sourceSha256": "6110fb3bcfe6ba6660c9c05d67269bc800d19706fab54db29633003d87f0a6a3",
+  "candidateSha256": "39a19a52bc45bb3dabb15e37b1f08c9deb35c3ee17cbe2834d1f9200a23cc4c4"
+}

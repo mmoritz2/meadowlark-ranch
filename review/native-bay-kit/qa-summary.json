@@ -1,0 +1,79 @@
+{
+  "url": "http://127.0.0.1:8584/review/native-bay-kit/review.html",
+  "errors": [],
+  "gaits": {
+    "walk": {
+      "clip": "Target Native Walk Rollover",
+      "duration": 1.1200000047683716,
+      "nativeBones": 677,
+      "modelSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0006885642021691707,
+        0.0011906281180020573
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0006885642021691707,
+        0.0013452774218317425
+      ]
+    },
+    "trot": {
+      "clip": "Target Native Trot",
+      "duration": 0.7200000286102295,
+      "nativeBones": 677,
+      "modelSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0008407397052641861,
+        0.00422740988580994
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0008407397052641861,
+        0.004594489548105788
+      ]
+    },
+    "canterLeft": {
+      "clip": "Target Native Canter Left",
+      "duration": 0.6399999856948853,
+      "nativeBones": 677,
+      "modelSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0007987532972956717,
+        0.026153138503968117
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0007987532972956717,
+        0.004707736019175927
+      ]
+    },
+    "canterRight": {
+      "clip": "Target Native Canter Right",
+      "duration": 0.6399999856948853,
+      "nativeBones": 677,
+      "modelSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+      "allFinite": true,
+      "bodyMinRange": [
+        0.0007799054854037957,
+        0.02552437179413191
+      ],
+      "stanceWholeHoofMinimum": [
+        0.0007799054854037957,
+        0.0016571840220591513
+      ]
+    },
+    "rest": {
+      "clip": "Rest",
+      "duration": 0,
+      "nativeBones": 677,
+      "modelSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+      "allFinite": true,
+      "bodyMinRange": [
+        -2.862293735361732e-17,
+        -2.862293735361732e-17
+      ],
+      "stanceWholeHoofMinimum": null
+    }
+  },
+  "pass": true
+}

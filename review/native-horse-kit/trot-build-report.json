@@ -1,12 +1,20 @@
 {
-  "verdict": "Independent review complete: useful narrow private motion study; final naturalism and production approval remain open.",
+  "verdict": "pending browser and independent visual review",
   "duration": 0.72,
   "stanceFraction": 0.44,
-  "strideHalfM": 0.22,
-  "foreSwingLiftM": 0.14,
-  "hindSwingLiftM": 0.12,
-  "impliedSpeedMps": 1.388888888888889,
+  "strideHalfM": 0.22000000000000006,
+  "foreSwingLiftM": 0.14000000000000004,
+  "hindSwingLiftM": 0.12000000000000002,
+  "impliedSpeedMps": 1.3888888888888893,
   "phaseOrder": "FL+HR, FR+HL",
+  "footOffsets": {
+    "Trot": {
+      "FL": 0.0,
+      "HR": 0.0,
+      "FR": 0.5,
+      "HL": 0.5
+    }
+  },
   "suspensionWindows": [
     [
       0.44,
@@ -18,6 +26,10 @@
     ]
   ],
   "floorY": -0.0047147771075021355,
+  "sourceSha256": "fd18d9b9b22e00dc30a6fa1cfe2e135bb20f7c871df0a976706aaea2f4dff655",
+  "bodyHeightRatio": 1.0000000000000002,
+  "bodyVertexCount": 16159,
+  "jointCount": 677,
   "boundsDegrees": {
     "fore": [
       [
@@ -61,6 +73,9 @@
         "swingPhase": 0.0,
         "footPitchDegrees": 0.0,
         "anchor": "sole",
+        "anchorWeights": {
+          "sole": 1.0
+        },
         "goal": [
           -0.0037147771075021355,
           0.8286684253702878
@@ -92,6 +107,9 @@
         "swingPhase": 0.0,
         "footPitchDegrees": 0.0,
         "anchor": "sole",
+        "anchorWeights": {
+          "sole": 1.0
+        },
         "goal": [
           -0.0037147771075021355,
           2.236263013001226
@@ -125,6 +143,9 @@
         "swingPhase": 0.0,
         "footPitchDegrees": 0.0,
         "anchor": "sole",
+        "anchorWeights": {
+          "sole": 1.0
+        },
         "goal": [
           -0.0037147771075021355,
           1.0351809921919495
@@ -156,6 +177,9 @@
         "swingPhase": 0.0,
         "footPitchDegrees": 0.0,
         "anchor": "sole",
+        "anchorWeights": {
+          "sole": 1.0
+        },
         "goal": [
           -0.0037147771075021355,
           2.068762123089404
@@ -2384,6 +2408,248 @@
       "terminal": "fingers_01_r_0273"
     }
   },
+  "leads": {
+    "Trot": {
+      "uncopiedClosureMaxDegrees": 1.4957432833427734e-06,
+      "uncopiedClosureByJointDegrees": {
+        "pelvis_08": 3.1993010756792605e-15,
+        "spine_01_09": 1.196852891543603e-15,
+        "spine_02_010": 7.982666345254272e-15,
+        "spine_03_011": 1.963679877890115e-14,
+        "spine_04_012": 4.259846005816967e-14,
+        "neck_01_014": 4.348270894682973e-14,
+        "neck_02_015": 5.3497931836479294e-14,
+        "neck_03_016": 6.31736156751633e-14,
+        "neck_04_017": 1.2239946865667414e-14,
+        "neck_05_018": 2.3534474902427714e-14,
+        "head_019": 6.592836115102738e-14,
+        "dyn_head_end_right_01_028": 2.049995079493862e-15,
+        "dyn_head_end_right_02_029": 1.805644209467246e-15,
+        "dyn_head_end_right_03_030": 2.3806481005123077e-15,
+        "dyn_head_end_left_01_033": 3.584222317210913e-15,
+        "dyn_head_end_left_02_034": 2.9087170876255498e-15,
+        "dyn_head_end_left_03_035": 4.589433271956976e-16,
+        "dyn_new_head_neck_01_073": 2.5716887088025277e-15,
+        "dyn_new_head_neck_02_074": 1.6982480870134468e-15,
+        "dyn_new_head_neck_03_075": 1.6201346785824459e-15,
+        "dyn_new_neck_05_01_0107": 1.2559604871385926e-15,
+        "dyn_new_neck_05_02_0108": 1.5216255415935083e-15,
+        "dyn_new_neck_05_03_0109": 2.231460792597054e-15,
+        "dyn_new_neck_041_01_0118": 4.829802332047243e-16,
+        "dyn_new_neck_041_02_0119": 5.342220834379949e-16,
+        "dyn_new_neck_041_03_0120": 2.4130520502654955e-16,
+        "dyn_new_neck_041_04_0121": 5.804154677652608e-16,
+        "dyn_new_neck_04_01_0127": 2.9842377322739505e-15,
+        "dyn_new_neck_04_02_0128": 5.44650738779995e-15,
+        "dyn_new_neck_04_03_0129": 5.5222076399170464e-15,
+        "dyn_new_neck_04_04_0130": 1.6796761391002898e-15,
+        "dyn_new_neck_03_01_0151": 8.132449832276544e-15,
+        "dyn_new_neck_03_02_0152": 1.223629728864962e-15,
+        "dyn_new_neck_03_03_0153": 9.692539001157622e-16,
+        "dyn_new_neck_03_04_0154": 7.751297405997226e-16,
+        "dyn_new_neck_02_01_0157": 6.55231971039115e-16,
+        "dyn_new_neck_02_02_0158": 7.880235855351189e-16,
+        "dyn_new_neck_02_03_0159": 1.0646233339249176e-15,
+        "dyn_new_neck_02_04_0160": 8.700332073104643e-16,
+        "clavicle_l_0203": 3.1206478874859047e-07,
+        "upperarm_l_0204": 7.59438563993278e-07,
+        "lowerarm_l_0205": 9.506750437102979e-07,
+        "hand_l_0206": 1.4957432833427734e-06,
+        "fingers_01_l_0187": 1.3749149129194327e-06,
+        "clavicle_r_0269": 3.425333988817228e-08,
+        "upperarm_r_0270": 6.625173906094423e-07,
+        "lowerarm_r_0271": 3.920780506842558e-07,
+        "hand_r_0272": 1.0601911001610643e-06,
+        "fingers_01_r_0273": 8.240050912704614e-07,
+        "tail_01_0367": 1.2784041331615347e-16,
+        "dyn_tail_06_0372": 1.7368837094777215e-15,
+        "dyn_tail_07_0373": 1.578803699516883e-15,
+        "dyn_tail_08_0374": 1.7448608894002838e-15,
+        "dyn_bounce_tail_04_left_0377": 6.468711128981348e-16,
+        "dyn_bounce_tail_05_left_0378": 5.565324811667032e-16,
+        "dyn_bounce_tail_06_left_0379": 5.092555042246176e-16,
+        "dyn_bounce_tail_07_left_0380": 3.7212317521106106e-16,
+        "dyn_bounce_tail_08_left_0361": 4.693209235209629e-16,
+        "dyn_bounce_tail_04_right_0384": 1.4454937037747435e-15,
+        "dyn_bounce_tail_05_right_0385": 1.4547785404020256e-15,
+        "dyn_bounce_tail_06_right_0386": 1.6328635324277417e-15,
+        "dyn_bounce_tail_07_right_0387": 1.7282880213814158e-15,
+        "dyn_bounce_tail_08_right_0388": 1.858002433942526e-15,
+        "dyn_bounce_tail_04_front_0391": 1.4108027041397329e-15,
+        "dyn_bounce_tail_05_front_0392": 1.242789760920458e-15,
+        "dyn_bounce_tail_06_front_0393": 1.0818723244859445e-15,
+        "dyn_bounce_tail_07_front_0394": 9.08826543546143e-16,
+        "dyn_bounce_tail_08_front_0395": 6.496371271676117e-16,
+        "dyn_bounce_tail_04_back_0398": 9.64328353535887e-16,
+        "dyn_bounce_tail_05_back_0399": 9.909238878916346e-16,
+        "dyn_bounce_tail_06_back_0400": 1.335852588893523e-15,
+        "dyn_bounce_tail_07_back_0381": 9.558948266058504e-16,
+        "dyn_bounce_tail_08_back_0402": 1.3973647858561135e-15,
+        "upperleg_l_0405": 1.59695352890885e-07,
+        "lowerleg_l_0406": 1.1846847301838283e-07,
+        "foot_l_0407": 2.1682388712232672e-07,
+        "toes_01_l_0408": 1.755970313857401e-07,
+        "upperleg_r_0474": 5.290479942820453e-07,
+        "lowerleg_r_0475": 8.14383823828774e-07,
+        "foot_r_0476": 1.85790766789385e-14,
+        "toes_01_r_0477": 2.853358124616424e-07
+      },
+      "uncopiedEndpointFeet": {
+        "HL": {
+          "stance": false,
+          "limbPhase": 0.5,
+          "swingPhase": 0.10714285714285712,
+          "footPitchDegrees": 27.422638511593583,
+          "anchor": "swing blend",
+          "anchorWeights": {
+            "toe": 0.6064139941690962,
+            "sole": 0.3935860058309037
+          },
+          "goal": [
+            0.013856026724234641,
+            0.6164367054393939
+          ],
+          "minY": 0.01282117829276641,
+          "maxY": 0.2585389891873302,
+          "centroid": [
+            0.22378274069366527,
+            0.11957257223968794,
+            0.5868468964390433
+          ],
+          "contactVerticalError": -0.0010348484314682306,
+          "strideAnchorError": -0.00030569333234109486,
+          "correctionDegrees": [
+            5.44679353877891,
+            1.3918800501777213,
+            1.7049584235966209
+          ],
+          "biasDegrees": [
+            0.0,
+            3.3027906195516703,
+            -9.247813734744676
+          ],
+          "hitBound": false
+        },
+        "FL": {
+          "stance": true,
+          "limbPhase": 0.0,
+          "swingPhase": 0.0,
+          "footPitchDegrees": -8.0,
+          "anchor": "heel",
+          "anchorWeights": {
+            "heel": 1.0
+          },
+          "goal": [
+            -0.0037147771075021355,
+            2.397651574989838
+          ],
+          "minY": -0.004595112990569715,
+          "maxY": 0.17943650709719164,
+          "centroid": [
+            0.11070919522767304,
+            0.061486159593908345,
+            2.411993516960569
+          ],
+          "contactVerticalError": -0.0008803358830675794,
+          "strideAnchorError": 0.00012862645637756742,
+          "correctionDegrees": [
+            8.706703455993242,
+            -25.882383782395507,
+            -1.1530723431091825,
+            12.959222799420735
+          ],
+          "biasDegrees": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "hitBound": false
+        },
+        "HR": {
+          "stance": true,
+          "limbPhase": 0.0,
+          "swingPhase": 0.0,
+          "footPitchDegrees": -8.0,
+          "anchor": "heel",
+          "anchorWeights": {
+            "heel": 1.0
+          },
+          "goal": [
+            -0.0037147771075021355,
+            1.1972164816314612
+          ],
+          "minY": 0.00022245584693099396,
+          "maxY": 0.19058944848596193,
+          "centroid": [
+            -0.2552861241898732,
+            0.0754218978612408,
+            1.2114250442207157
+          ],
+          "contactVerticalError": 0.0039372329544331295,
+          "strideAnchorError": -0.0007415509335781945,
+          "correctionDegrees": [
+            1.9964259313070858,
+            -27.947410745202134,
+            19.999999999999996
+          ],
+          "biasDegrees": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "hitBound": true
+        },
+        "FR": {
+          "stance": false,
+          "limbPhase": 0.5,
+          "swingPhase": 0.10714285714285712,
+          "footPitchDegrees": 27.422638511593583,
+          "anchor": "swing blend",
+          "anchorWeights": {
+            "toe": 0.6064139941690962,
+            "sole": 0.3935860058309037
+          },
+          "goal": [
+            0.016784494029524102,
+            1.8621863195569353
+          ],
+          "minY": 0.0154264852659865,
+          "maxY": 0.271076799011645,
+          "centroid": [
+            -0.16238095182627635,
+            0.11997346935008932,
+            1.8291014867211965
+          ],
+          "contactVerticalError": -0.001358008763537602,
+          "strideAnchorError": -0.0003903402337301909,
+          "correctionDegrees": [
+            -0.8335157730951225,
+            2.7138531866571407,
+            -0.8588342230717974,
+            17.40494788783504
+          ],
+          "biasDegrees": [
+            0.0,
+            0.0,
+            0.0,
+            13.871720602117017
+          ],
+          "hitBound": false
+        }
+      },
+      "authoredGridPass": false,
+      "worstVerticalErrorM": 0.0064053508157355665,
+      "worstStrideErrorM": 0.0016300709380878686,
+      "maxCorrectionDegrees": 69.99999999999999,
+      "capHits": {
+        "HL": 0,
+        "FL": 25,
+        "HR": 6,
+        "FR": 27
+      }
+    }
+  },
   "nativeCurveReference": {
     "hand_l_0206": {
       "maxLocalQuaternionAngleFromDefaultRestDegrees": 58.14119725555356,
@@ -2443,8 +2709,8 @@
     }
   },
   "hairDetailJoints": 51,
-  "candidateBytes": 27503036,
-  "candidateSha256": "64c2c8a0501d90573065465db4ff4f14c958d0dd2f655521a02c8e7b2f635113",
+  "candidateBytes": 27503024,
+  "candidateSha256": "83a424e5b3b10a59a146452037ac3cf06c69a12dfe66edfe6a841e09a66f0d74",
   "preservation": {
     "nodes": true,
     "meshes": true,
@@ -2454,15 +2720,5 @@
     "textures": true,
     "scenes": true,
     "originalBinaryPrefix": true
-  },
-  "authoredGridPass": true,
-  "worstVerticalErrorM": 0.0037899182315840824,
-  "worstStrideErrorM": 0.0007619813881030169,
-  "maxCorrectionDegrees": 69.99999999999999,
-  "capHits": {
-    "HL": 14,
-    "FL": 46,
-    "HR": 5,
-    "FR": 47
   }
 }

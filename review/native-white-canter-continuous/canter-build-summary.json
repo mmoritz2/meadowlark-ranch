@@ -1,0 +1,61 @@
+{
+  "candidateSha256": "a63cf46de007b0906aff307cdee82e044c3441b8fa5c56fbd809d2a0f95dd820",
+  "sourceSha256": "fd18d9b9b22e00dc30a6fa1cfe2e135bb20f7c871df0a976706aaea2f4dff655",
+  "duration": 0.64,
+  "stanceFraction": 0.4,
+  "strideHalfM": 0.25000000000000006,
+  "impliedSpeedMps": 1.9531250000000004,
+  "footOffsets": {
+    "Left": {
+      "HR": 0.0,
+      "HL": 0.24,
+      "FR": 0.24,
+      "FL": 0.48
+    },
+    "Right": {
+      "HL": 0.0,
+      "HR": 0.24,
+      "FL": 0.24,
+      "FR": 0.48
+    }
+  },
+  "floorY": -0.0047147771075021355,
+  "bodyHeightRatio": 1.0000000000000002,
+  "jointCount": 677,
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "images": true,
+    "textures": true,
+    "scenes": true,
+    "originalBinaryPrefix": true
+  },
+  "leads": {
+    "Left": {
+      "authoredGridPass": true,
+      "worstVerticalErrorM": 0.004968299986920097,
+      "worstStrideErrorM": 0.0010926230442971363,
+      "uncopiedClosureMaxDegrees": 4.7045307972273574e-06,
+      "capHits": {
+        "HL": 0,
+        "FL": 46,
+        "HR": 7,
+        "FR": 37
+      }
+    },
+    "Right": {
+      "authoredGridPass": false,
+      "worstVerticalErrorM": 0.0068284810581425905,
+      "worstStrideErrorM": 0.0017571115122962944,
+      "uncopiedClosureMaxDegrees": 6.756412126570065e-07,
+      "capHits": {
+        "HL": 0,
+        "FL": 39,
+        "HR": 7,
+        "FR": 47
+      }
+    }
+  }
+}

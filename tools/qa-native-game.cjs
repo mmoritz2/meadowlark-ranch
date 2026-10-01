@@ -5,7 +5,7 @@ const QA=require('./qa-platform.cjs'),fs=require('node:fs'),path=require('node:p
 const out=path.resolve(process.argv[2]||'output/native-game-qa');fs.mkdirSync(out,{recursive:true});
 const models={
  'white-western':{bones:677,body:16159,modes:['rest','stand','walk','trot','canter']},
- 'bay-western':{bones:677,body:16159,modes:['rest','walk']},
+ 'bay-western':{bones:677,body:16159,modes:['rest','walk','trot','canter']},
  'black-dragon-native':{bones:232,body:22292,modes:['rest','stand']},
  'european-dragon':{bones:169,body:21050,modes:['rest','stand','sit','walk','run','fly']}
 };

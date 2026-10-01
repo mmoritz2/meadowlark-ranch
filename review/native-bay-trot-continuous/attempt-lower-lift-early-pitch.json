@@ -1,0 +1,55 @@
+{
+  "candidateSha256": "3e24e18b68195bae1c76b5773dc2ee28a54a2061c3c82db2795183e4bf610b7b",
+  "parameters": {
+    "warmupCycles": 2,
+    "recordedCycles": 1,
+    "temporalAnglePenaltyWeight": 2.0,
+    "actualQuaternionSecondDifferenceWeight": 4.0,
+    "interpolation": "periodic CUBICSPLINE with verified recurring solve",
+    "liftCurve": "symmetric quartic16u\u00b2(1-u)\u00b2, zero endpoint velocity",
+    "foreSwingBiasDegrees": 32,
+    "hindSwingBiasDegrees": -22,
+    "stifleSwingBiasDegrees": 8,
+    "contactResidualWeight": 100,
+    "biasResidualWeight": 0.9,
+    "initialization": "previous bounded limb correction angles",
+    "closureProbe": "uncopied next phase-zero solution"
+  },
+  "foreLiftM": 0.09346554903853897,
+  "hindLiftM": 0.08496868094412635,
+  "verdict": "contact grid passes;5.835deg FRcarpus interval still exceeds gate",
+  "authoredGridPass": true,
+  "worstVerticalErrorM": 0.004818684059346088,
+  "groups": {
+    "limbs": {
+      "joint": "hand_r_0272",
+      "maximumConsecutiveDegrees": 5.835359233901565,
+      "maximumStepPhase": 0.0625,
+      "maximumDenseSpeedDegreesPerSecond": 1072.122578127217,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 161242.84978991904,
+      "maximumFinalLoopIntervalDegrees": 1.7883635737723524,
+      "maximumAnalyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticInternalKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    "torsoNeckHead": {
+      "joint": "neck_01_014",
+      "maximumConsecutiveDegrees": 0.22237014907439265,
+      "maximumStepPhase": 0.31249997930394363,
+      "maximumDenseSpeedDegreesPerSecond": 39.59443287932153,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 693.6951425152705,
+      "maximumFinalLoopIntervalDegrees": 0.1493861446674722,
+      "maximumAnalyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticInternalKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    },
+    "groom": {
+      "joint": "dyn_bounce_tail_08_front_0395",
+      "maximumConsecutiveDegrees": 0.36014754623979767,
+      "maximumStepPhase": 0.3359374767169366,
+      "maximumDenseSpeedDegreesPerSecond": 64.1056035170516,
+      "maximumDenseAccelerationDegreesPerSecondSquared": 1557.7064184913772,
+      "maximumFinalLoopIntervalDegrees": 0.3548749267739158,
+      "maximumAnalyticLoopVelocityDifferenceDegreesPerSecond": 0.0,
+      "maximumAnalyticInternalKeyVelocityJoinDifferenceDegreesPerSecond": 0.0
+    }
+  }
+}
