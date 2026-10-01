@@ -1,0 +1,2186 @@
+{
+  "controllerSha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6",
+  "baselineSha256": "7abe98c83c8173e198c55fedd845e6823fb5be0fd2be040b63cc9743ed0820d4",
+  "errors": [],
+  "actualFadeSeconds": 0.2,
+  "frameSeconds": 0.008333333333333333,
+  "allFinite": true,
+  "allActorTransformsUnchanged": true,
+  "maxInstantBefore": 105.19805767559134,
+  "maxInstantAfter": 105.19805767559134,
+  "maxHorseInstantAfter": 0,
+  "creatorDragonBehaviorPreserved": true,
+  "worstHorseFloorM": -0.0076128723631682035,
+  "rows": [
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "stand",
+        "to": "walk",
+        "phase": 0.2,
+        "rate": 0.12
+      },
+      "before": {
+        "version": "before",
+        "breed": "white-western",
+        "scenario": {
+          "from": "stand",
+          "to": "walk",
+          "phase": 0.2,
+          "rate": 0.12
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 25.946310200116866,
+        "maxFrameJointStep": 0.2603235709000618,
+        "minimumFloorM": 0.00005437905870687293,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0008340866230515387,
+          "maxJointStep": 0.09242656053341457,
+          "finite": true,
+          "seat": [
+            4.000000009736761,
+            1.7453677785262176,
+            -2.9990137124581837
+          ],
+          "state": {
+            "gait": "walk",
+            "lead": "left",
+            "phase01": 0.042857142674679695,
+            "bodyLiftM": 0,
+            "speedMps": 0.5494505494505494,
+            "grounded": true,
+            "intensity": 0.28131868131868126,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Walk Rollover",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "white-western",
+        "scenario": {
+          "from": "stand",
+          "to": "walk",
+          "phase": 0.2,
+          "rate": 0.12
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 2.329328907575785,
+        "minimumFloorM": -0.0035951464514469046,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0008340866230515387,
+          "maxJointStep": 0.09242656053341457,
+          "finite": true,
+          "seat": [
+            4.000000009736761,
+            1.7453677785262176,
+            -2.9990137124581837
+          ],
+          "state": {
+            "gait": "walk",
+            "lead": "left",
+            "phase01": 0.04285714267467977,
+            "bodyLiftM": 0,
+            "speedMps": 0.5494505494505494,
+            "grounded": true,
+            "intensity": 0.28131868131868126,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Walk Rollover",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "walk",
+        "to": "stand",
+        "phase": 0.35,
+        "rate": 0.12
+      },
+      "before": {
+        "version": "before",
+        "breed": "white-western",
+        "scenario": {
+          "from": "walk",
+          "to": "stand",
+          "phase": 0.35,
+          "rate": 0.12
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 33.47352744957155,
+        "maxFrameJointStep": 0.008476166897291007,
+        "minimumFloorM": 0.00022047029704305634,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.00022047029704305634,
+          "maxJointStep": 0.008476166553300869,
+          "finite": true,
+          "seat": [
+            4.000442908333706,
+            1.7430312960951166,
+            -2.9984316742704946
+          ],
+          "state": {
+            "gait": "stand",
+            "lead": "left",
+            "phase01": 0.0034388060484656984,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Horse|Horse_Idle",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "white-western",
+        "scenario": {
+          "from": "walk",
+          "to": "stand",
+          "phase": 0.35,
+          "rate": 0.12
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 2.5717185064369077,
+        "minimumFloorM": -0.00014063923575401843,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": -0.000011069993816442171,
+          "maxJointStep": 0.067930963873142,
+          "finite": true,
+          "seat": [
+            4.00005700885668,
+            1.742794905078063,
+            -3.00007477044627
+          ],
+          "state": {
+            "gait": "stand",
+            "lead": "left",
+            "phase01": 0.0286567170705474,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Horse|Horse_Idle",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "walk",
+        "to": "trot",
+        "phase": 0.43,
+        "rate": 1
+      },
+      "before": {
+        "version": "before",
+        "breed": "white-western",
+        "scenario": {
+          "from": "walk",
+          "to": "trot",
+          "phase": 0.43,
+          "rate": 1
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 28.933497322709876,
+        "maxFrameJointStep": 6.601218906251602,
+        "minimumFloorM": -0.000849543502028976,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.00016276552036948843,
+          "maxJointStep": 6.184221411150611,
+          "finite": true,
+          "seat": [
+            4.000000026126562,
+            1.7538888998076512,
+            -2.9976150953538263
+          ],
+          "state": {
+            "gait": "trot",
+            "lead": "left",
+            "phase01": 0.5555555334797626,
+            "bodyLiftM": 0,
+            "speedMps": 1.388888888888889,
+            "grounded": true,
+            "intensity": 0.7111111111111112,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Trot",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "white-western",
+        "scenario": {
+          "from": "walk",
+          "to": "trot",
+          "phase": 0.43,
+          "rate": 1
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 6.416096027583705,
+        "minimumFloorM": -0.0076128723631682035,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0012064922537167728,
+          "maxJointStep": 1.272276438538621,
+          "finite": true,
+          "seat": [
+            4.000000021675469,
+            1.7368104288790673,
+            -3.001837553788275
+          ],
+          "state": {
+            "gait": "trot",
+            "lead": "left",
+            "phase01": 0.735555533479763,
+            "bodyLiftM": 0,
+            "speedMps": 1.388888888888889,
+            "grounded": true,
+            "intensity": 0.7111111111111112,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Trot",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "trot",
+        "to": "canter",
+        "phase": 0.3,
+        "rate": 1
+      },
+      "before": {
+        "version": "before",
+        "breed": "white-western",
+        "scenario": {
+          "from": "trot",
+          "to": "canter",
+          "phase": 0.3,
+          "rate": 1
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 32.25165471972726,
+        "maxFrameJointStep": 7.130895376517761,
+        "minimumFloorM": 0.0007882940119087736,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0009729260537274516,
+          "maxJointStep": 3.603500644851512,
+          "finite": true,
+          "seat": [
+            3.999999999249664,
+            1.7463093510091896,
+            -3.0042326213259094
+          ],
+          "state": {
+            "gait": "canter",
+            "lead": "left",
+            "phase01": 0.6250000139698396,
+            "bodyLiftM": 0,
+            "speedMps": 1.953125,
+            "grounded": true,
+            "intensity": 1,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Canter Left",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "white-western",
+        "scenario": {
+          "from": "trot",
+          "to": "canter",
+          "phase": 0.3,
+          "rate": 1
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 6.481009286967392,
+        "minimumFloorM": -0.007508070507645294,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0009458745336130342,
+          "maxJointStep": 3.5863485335659857,
+          "finite": true,
+          "seat": [
+            4.000000008993134,
+            1.728374183767813,
+            -2.9988761855091908
+          ],
+          "state": {
+            "gait": "canter",
+            "lead": "left",
+            "phase01": 0.4050000139698382,
+            "bodyLiftM": 0,
+            "speedMps": 1.953125,
+            "grounded": true,
+            "intensity": 1,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Canter Left",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "canter",
+        "fromLead": "left",
+        "to": "canter",
+        "toLead": "right",
+        "phase": 0.58,
+        "rate": 1
+      },
+      "before": {
+        "version": "before",
+        "breed": "white-western",
+        "scenario": {
+          "from": "canter",
+          "fromLead": "left",
+          "to": "canter",
+          "toLead": "right",
+          "phase": 0.58,
+          "rate": 1
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 56.12147525670515,
+        "maxFrameJointStep": 7.57833081065449,
+        "minimumFloorM": 0.0007805705803001209,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.000850717695403568,
+          "maxJointStep": 3.3464019448903994,
+          "finite": true,
+          "seat": [
+            3.999999999249664,
+            1.7463093510091896,
+            -3.0042326213259094
+          ],
+          "state": {
+            "gait": "canter",
+            "lead": "right",
+            "phase01": 0.6250000139698396,
+            "bodyLiftM": 0,
+            "speedMps": 1.953125,
+            "grounded": true,
+            "intensity": 1,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Canter Right",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "white-western",
+        "scenario": {
+          "from": "canter",
+          "fromLead": "left",
+          "to": "canter",
+          "toLead": "right",
+          "phase": 0.58,
+          "rate": 1
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 6.612701209459227,
+        "minimumFloorM": -0.00193905952036657,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0011420990065666775,
+          "maxJointStep": 4.651094117587272,
+          "finite": true,
+          "seat": [
+            4.0000000226877575,
+            1.7440095861252862,
+            -2.9955419541943447
+          ],
+          "state": {
+            "gait": "canter",
+            "lead": "right",
+            "phase01": 0.2050000139698387,
+            "bodyLiftM": 0,
+            "speedMps": 1.953125,
+            "grounded": true,
+            "intensity": 1,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Canter Right",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "trot",
+        "to": "rest",
+        "phase": 0.15,
+        "rate": 0.5
+      },
+      "before": {
+        "version": "before",
+        "breed": "white-western",
+        "scenario": {
+          "from": "trot",
+          "to": "rest",
+          "phase": 0.15,
+          "rate": 0.5
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 65.29513457884514,
+        "maxFrameJointStep": 0,
+        "minimumFloorM": 8.049116928532385e-16,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 8.049116928532385e-16,
+          "maxJointStep": 0,
+          "finite": true,
+          "seat": [
+            3.9999999999999996,
+            1.74279648933457,
+            -3.0000000000000004
+          ],
+          "state": {
+            "gait": "rest",
+            "lead": "left",
+            "phase01": 0,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": null,
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "white-western",
+        "scenario": {
+          "from": "trot",
+          "to": "rest",
+          "phase": 0.15,
+          "rate": 0.5
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 5.44348456296827,
+        "minimumFloorM": -0.0012842356719572762,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": 2.3592239273284576e-16,
+          "maxJointStep": 0,
+          "finite": true,
+          "seat": [
+            3.9999999999999996,
+            1.74279648933457,
+            -3.0000000000000004
+          ],
+          "state": {
+            "gait": "rest",
+            "lead": "left",
+            "phase01": 0,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": true,
+            "transitionsReviewed": false
+          },
+          "clip": null,
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "walk",
+        "to": "trot",
+        "interrupt": "stand",
+        "phase": 0.8,
+        "rate": 0.25
+      },
+      "before": {
+        "version": "before",
+        "breed": "white-western",
+        "scenario": {
+          "from": "walk",
+          "to": "trot",
+          "interrupt": "stand",
+          "phase": 0.8,
+          "rate": 0.25
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 26.16439201465583,
+        "maxFrameJointStep": 26.27584487917638,
+        "minimumFloorM": -0.0008699494438534393,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.00015362231107407445,
+          "maxJointStep": 0.017654333869411197,
+          "finite": true,
+          "seat": [
+            4.000451189951526,
+            1.7430384011088198,
+            -2.9986031330766694
+          ],
+          "state": {
+            "gait": "stand",
+            "lead": "left",
+            "phase01": 0.005820895654954957,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Horse|Horse_Idle",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "white-western",
+        "scenario": {
+          "from": "walk",
+          "to": "trot",
+          "interrupt": "stand",
+          "phase": 0.8,
+          "rate": 0.25
+        },
+        "sourceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 3.33819489291615,
+        "minimumFloorM": -0.006035761897504393,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.275,
+        "final": {
+          "timeS": 0.4,
+          "floor": -0.000026680060055524202,
+          "maxJointStep": 0.06262358295568192,
+          "finite": true,
+          "seat": [
+            4.000166797859719,
+            1.7428177320545963,
+            -2.9998289247965477
+          ],
+          "state": {
+            "gait": "stand",
+            "lead": "left",
+            "phase01": 0.023283582619819887,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Horse|Horse_Idle",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "stand",
+        "to": "walk",
+        "phase": 0.2,
+        "rate": 0.12
+      },
+      "before": {
+        "version": "before",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "stand",
+          "to": "walk",
+          "phase": 0.2,
+          "rate": 0.12
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 25.158931778358415,
+        "maxFrameJointStep": 0.2884799511073546,
+        "minimumFloorM": -1.7011519137799525e-9,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0008043243214458646,
+          "maxJointStep": 0.09996348960898027,
+          "finite": true,
+          "seat": [
+            4.000000007607747,
+            1.4811044413733847,
+            -2.999128482600862
+          ],
+          "state": {
+            "gait": "walk",
+            "lead": "left",
+            "phase01": 0.042857142674679695,
+            "bodyLiftM": 0,
+            "speedMps": 0.4668608843083865,
+            "grounded": true,
+            "intensity": 0.2813186813186814,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Walk Rollover",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "stand",
+          "to": "walk",
+          "phase": 0.2,
+          "rate": 0.12
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 2.2620721330151,
+        "minimumFloorM": -0.003155919954901787,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0008043243214458646,
+          "maxJointStep": 0.09996348960898027,
+          "finite": true,
+          "seat": [
+            4.000000007607747,
+            1.4811044413733847,
+            -2.999128482600862
+          ],
+          "state": {
+            "gait": "walk",
+            "lead": "left",
+            "phase01": 0.04285714267467977,
+            "bodyLiftM": 0,
+            "speedMps": 0.4668608843083865,
+            "grounded": true,
+            "intensity": 0.2813186813186814,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Walk Rollover",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "walk",
+        "to": "stand",
+        "phase": 0.35,
+        "rate": 0.12
+      },
+      "before": {
+        "version": "before",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "walk",
+          "to": "stand",
+          "phase": 0.35,
+          "rate": 0.12
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 32.63954139206869,
+        "maxFrameJointStep": 0,
+        "minimumFloorM": -1.7011519137799525e-9,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": -1.7011519137799525e-9,
+          "maxJointStep": 0,
+          "finite": true,
+          "seat": [
+            4,
+            1.4788786130000002,
+            -2.9999999999999996
+          ],
+          "state": {
+            "gait": "stand",
+            "lead": "left",
+            "phase01": 0,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": null,
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "walk",
+          "to": "stand",
+          "phase": 0.35,
+          "rate": 0.12
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 2.515266024037094,
+        "minimumFloorM": -0.0003909927596377734,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": 5.025673274761111e-8,
+          "maxJointStep": 0,
+          "finite": true,
+          "seat": [
+            3.9999999996147033,
+            1.478878664957885,
+            -2.9999999906238486
+          ],
+          "state": {
+            "gait": "stand",
+            "lead": "left",
+            "phase01": 0,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": true,
+            "transitionsReviewed": false
+          },
+          "clip": null,
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "walk",
+        "to": "trot",
+        "phase": 0.43,
+        "rate": 1
+      },
+      "before": {
+        "version": "before",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "walk",
+          "to": "trot",
+          "phase": 0.43,
+          "rate": 1
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 32.13563325233251,
+        "maxFrameJointStep": 6.704199073986555,
+        "minimumFloorM": 0.0007571338300153547,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0009376701709281868,
+          "maxJointStep": 4.863115924401616,
+          "finite": true,
+          "seat": [
+            4.000000017306503,
+            1.4884164828429982,
+            -2.9978899909449517
+          ],
+          "state": {
+            "gait": "trot",
+            "lead": "left",
+            "phase01": 0.5555555334797626,
+            "bodyLiftM": 0,
+            "speedMps": 1.1801205686684215,
+            "grounded": true,
+            "intensity": 0.7111111111111112,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Trot",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "walk",
+          "to": "trot",
+          "phase": 0.43,
+          "rate": 1
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 6.577328200943173,
+        "minimumFloorM": -0.007213843186250431,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0010234506240964299,
+          "maxJointStep": 2.193887210587972,
+          "finite": true,
+          "seat": [
+            4.00000001911,
+            1.4737581930904207,
+            -3.0016247222500714
+          ],
+          "state": {
+            "gait": "trot",
+            "lead": "left",
+            "phase01": 0.735555533479763,
+            "bodyLiftM": 0,
+            "speedMps": 1.1801205686684215,
+            "grounded": true,
+            "intensity": 0.7111111111111112,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Trot",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "trot",
+        "to": "canter",
+        "phase": 0.3,
+        "rate": 1
+      },
+      "before": {
+        "version": "before",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "trot",
+          "to": "canter",
+          "phase": 0.3,
+          "rate": 1
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 44.965219341882936,
+        "maxFrameJointStep": 7.305339962450946,
+        "minimumFloorM": 0.0007622435020640528,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0009692279355832394,
+          "maxJointStep": 3.8774240251806447,
+          "finite": true,
+          "seat": [
+            3.999999998512555,
+            1.4817353415380898,
+            -3.0037353919191063
+          ],
+          "state": {
+            "gait": "canter",
+            "lead": "left",
+            "phase01": 0.6250000139698396,
+            "bodyLiftM": 0,
+            "speedMps": 1.6595445496899675,
+            "grounded": true,
+            "intensity": 1,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Canter Left",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "trot",
+          "to": "canter",
+          "phase": 0.3,
+          "rate": 1
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 7.569041083297264,
+        "minimumFloorM": -0.006116365744502167,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0009359316193055319,
+          "maxJointStep": 3.635722896548262,
+          "finite": true,
+          "seat": [
+            4.000000007376954,
+            1.4667383644810306,
+            -2.9990060525539337
+          ],
+          "state": {
+            "gait": "canter",
+            "lead": "left",
+            "phase01": 0.4050000139698382,
+            "bodyLiftM": 0,
+            "speedMps": 1.6595445496899675,
+            "grounded": true,
+            "intensity": 1,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Canter Left",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "canter",
+        "fromLead": "left",
+        "to": "canter",
+        "toLead": "right",
+        "phase": 0.58,
+        "rate": 1
+      },
+      "before": {
+        "version": "before",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "canter",
+          "fromLead": "left",
+          "to": "canter",
+          "toLead": "right",
+          "phase": 0.58,
+          "rate": 1
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 56.57251716573273,
+        "maxFrameJointStep": 7.6243847996086975,
+        "minimumFloorM": 0.0007510309533036576,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0008208389429565921,
+          "maxJointStep": 3.3207120583266017,
+          "finite": true,
+          "seat": [
+            3.999999998512555,
+            1.4817353415380898,
+            -3.0037353919191063
+          ],
+          "state": {
+            "gait": "canter",
+            "lead": "right",
+            "phase01": 0.6250000139698396,
+            "bodyLiftM": 0,
+            "speedMps": 1.6595445496899675,
+            "grounded": true,
+            "intensity": 1,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Canter Right",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "canter",
+          "fromLead": "left",
+          "to": "canter",
+          "toLead": "right",
+          "phase": 0.58,
+          "rate": 1
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 6.781473519795381,
+        "minimumFloorM": -0.00151907421783276,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.0011690681066309286,
+          "maxJointStep": 4.121019007348291,
+          "finite": true,
+          "seat": [
+            4.000000018938502,
+            1.4800848251267977,
+            -2.9960554764419207
+          ],
+          "state": {
+            "gait": "canter",
+            "lead": "right",
+            "phase01": 0.2050000139698387,
+            "bodyLiftM": 0,
+            "speedMps": 1.6595445496899675,
+            "grounded": true,
+            "intensity": 1,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Target Native Canter Right",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "trot",
+        "to": "rest",
+        "phase": 0.15,
+        "rate": 0.5
+      },
+      "before": {
+        "version": "before",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "trot",
+          "to": "rest",
+          "phase": 0.15,
+          "rate": 0.5
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 56.54015528548099,
+        "maxFrameJointStep": 0,
+        "minimumFloorM": -1.7011519137799525e-9,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": -1.7011519137799525e-9,
+          "maxJointStep": 0,
+          "finite": true,
+          "seat": [
+            4,
+            1.4788786130000002,
+            -2.9999999999999996
+          ],
+          "state": {
+            "gait": "rest",
+            "lead": "left",
+            "phase01": 0,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": null,
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "trot",
+          "to": "rest",
+          "phase": 0.15,
+          "rate": 0.5
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 5.112170690693014,
+        "minimumFloorM": -0.006286524106796034,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.2,
+        "final": {
+          "timeS": 0.4,
+          "floor": 5.025673274761111e-8,
+          "maxJointStep": 0,
+          "finite": true,
+          "seat": [
+            3.9999999996147033,
+            1.478878664957885,
+            -2.9999999906238486
+          ],
+          "state": {
+            "gait": "rest",
+            "lead": "left",
+            "phase01": 0,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": true,
+            "transitionsReviewed": false
+          },
+          "clip": null,
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "walk",
+        "to": "trot",
+        "interrupt": "stand",
+        "phase": 0.8,
+        "rate": 0.25
+      },
+      "before": {
+        "version": "before",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "walk",
+          "to": "trot",
+          "interrupt": "stand",
+          "phase": 0.8,
+          "rate": 0.25
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 27.942837018868058,
+        "maxFrameJointStep": 25.427658003177438,
+        "minimumFloorM": -1.7011519137799525e-9,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": -1.7011519137799525e-9,
+          "maxJointStep": 0,
+          "finite": true,
+          "seat": [
+            4,
+            1.4788786130000002,
+            -2.9999999999999996
+          ],
+          "state": {
+            "gait": "stand",
+            "lead": "left",
+            "phase01": 0,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": null,
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "bay-western",
+        "scenario": {
+          "from": "walk",
+          "to": "trot",
+          "interrupt": "stand",
+          "phase": 0.8,
+          "rate": 0.25
+        },
+        "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+        "bones": 677,
+        "instantJointStep": 0,
+        "maxFrameJointStep": 2.3393000918530396,
+        "minimumFloorM": -0.001463080554396529,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.275,
+        "final": {
+          "timeS": 0.4,
+          "floor": 5.025673274761111e-8,
+          "maxJointStep": 0,
+          "finite": true,
+          "seat": [
+            3.9999999996147033,
+            1.478878664957885,
+            -2.9999999906238486
+          ],
+          "state": {
+            "gait": "stand",
+            "lead": "left",
+            "phase01": 0,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitioning": false,
+            "transitionElapsedS": 0,
+            "transitionDurationS": 0.2,
+            "activeActions": 1,
+            "restFallback": true,
+            "transitionsReviewed": false
+          },
+          "clip": null,
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "black-dragon-native",
+      "scenario": {
+        "from": "stand",
+        "to": "rest",
+        "phase": 0.3,
+        "rate": 1
+      },
+      "before": {
+        "version": "before",
+        "breed": "black-dragon-native",
+        "scenario": {
+          "from": "stand",
+          "to": "rest",
+          "phase": 0.3,
+          "rate": 1
+        },
+        "sourceSha256": "66ef96b2407b64c8ffa749f1edf5f4731a314b39b350e128789b15476a9ac999",
+        "bones": 232,
+        "instantJointStep": 52.51403961831024,
+        "maxFrameJointStep": 0,
+        "minimumFloorM": -0.00005598178315413885,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": -0.000055889060902529486,
+          "maxJointStep": 0,
+          "finite": true,
+          "seat": [
+            4,
+            1.9326040727892733,
+            -3.3228488015687083
+          ],
+          "state": {
+            "gait": "rest",
+            "lead": "left",
+            "phase01": 0,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": null,
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "black-dragon-native",
+        "scenario": {
+          "from": "stand",
+          "to": "rest",
+          "phase": 0.3,
+          "rate": 1
+        },
+        "sourceSha256": "66ef96b2407b64c8ffa749f1edf5f4731a314b39b350e128789b15476a9ac999",
+        "bones": 232,
+        "instantJointStep": 52.51403961831024,
+        "maxFrameJointStep": 0,
+        "minimumFloorM": -0.00005598178315413885,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": -0.000055889060902529486,
+          "maxJointStep": 0,
+          "finite": true,
+          "seat": [
+            4,
+            1.9326040727892733,
+            -3.3228488015687083
+          ],
+          "state": {
+            "gait": "rest",
+            "lead": "left",
+            "phase01": 0,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitioning": false,
+            "transitionDurationS": 0,
+            "restFallback": true,
+            "transitionsReviewed": false
+          },
+          "clip": null,
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "european-dragon",
+      "scenario": {
+        "from": "walk",
+        "to": "run",
+        "phase": 0.2,
+        "rate": 1
+      },
+      "before": {
+        "version": "before",
+        "breed": "european-dragon",
+        "scenario": {
+          "from": "walk",
+          "to": "run",
+          "phase": 0.2,
+          "rate": 1
+        },
+        "sourceSha256": "cd7ac607ff273ea9fef46cbb924bea7300eae2d4e625f160891c981c77c16108",
+        "bones": 169,
+        "instantJointStep": 80.16621508027055,
+        "maxFrameJointStep": 15.212645737763989,
+        "minimumFloorM": -0.056421994270512074,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.024143921843909965,
+          "maxJointStep": 3.918550346261064,
+          "finite": true,
+          "seat": [
+            4.000000050627297,
+            0.8530831086524118,
+            -2.818223388175725
+          ],
+          "state": {
+            "gait": "run",
+            "lead": "left",
+            "phase01": 0.6400000000000007,
+            "bodyLiftM": 0,
+            "speedMps": 2,
+            "grounded": true,
+            "intensity": 1,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Run",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "european-dragon",
+        "scenario": {
+          "from": "walk",
+          "to": "run",
+          "phase": 0.2,
+          "rate": 1
+        },
+        "sourceSha256": "cd7ac607ff273ea9fef46cbb924bea7300eae2d4e625f160891c981c77c16108",
+        "bones": 169,
+        "instantJointStep": 80.16621508027055,
+        "maxFrameJointStep": 15.212645737763989,
+        "minimumFloorM": -0.056421994270512074,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.024143921843909965,
+          "maxJointStep": 3.918550346261064,
+          "finite": true,
+          "seat": [
+            4.000000050627297,
+            0.8530831086524118,
+            -2.818223388175725
+          ],
+          "state": {
+            "gait": "run",
+            "lead": "left",
+            "phase01": 0.6400000000000007,
+            "bodyLiftM": 0,
+            "speedMps": 2,
+            "grounded": true,
+            "intensity": 1,
+            "turn": 0,
+            "transitioning": false,
+            "transitionDurationS": 0,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Run",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "european-dragon",
+      "scenario": {
+        "from": "run",
+        "to": "fly",
+        "phase": 0.6,
+        "rate": 0.2
+      },
+      "before": {
+        "version": "before",
+        "breed": "european-dragon",
+        "scenario": {
+          "from": "run",
+          "to": "fly",
+          "phase": 0.6,
+          "rate": 0.2
+        },
+        "sourceSha256": "cd7ac607ff273ea9fef46cbb924bea7300eae2d4e625f160891c981c77c16108",
+        "bones": 169,
+        "instantJointStep": 94.02627364176254,
+        "maxFrameJointStep": 0.27070138412065087,
+        "minimumFloorM": 0.028814941441829268,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.5611182920324813,
+          "maxJointStep": 0.27070138412065087,
+          "finite": true,
+          "seat": [
+            3.9999999885424664,
+            2.455772870342366,
+            -3.3511047890706123
+          ],
+          "state": {
+            "gait": "fly",
+            "lead": "left",
+            "phase01": 0.024303796881571953,
+            "bodyLiftM": 0,
+            "speedMps": 3,
+            "grounded": false,
+            "intensity": 1,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Fly",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "european-dragon",
+        "scenario": {
+          "from": "run",
+          "to": "fly",
+          "phase": 0.6,
+          "rate": 0.2
+        },
+        "sourceSha256": "cd7ac607ff273ea9fef46cbb924bea7300eae2d4e625f160891c981c77c16108",
+        "bones": 169,
+        "instantJointStep": 94.02627364176254,
+        "maxFrameJointStep": 0.27070138412065087,
+        "minimumFloorM": 0.028814941441829268,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": 0.5611182920324813,
+          "maxJointStep": 0.27070138412065087,
+          "finite": true,
+          "seat": [
+            3.9999999885424664,
+            2.455772870342366,
+            -3.3511047890706123
+          ],
+          "state": {
+            "gait": "fly",
+            "lead": "left",
+            "phase01": 0.024303796881571953,
+            "bodyLiftM": 0,
+            "speedMps": 3,
+            "grounded": false,
+            "intensity": 1,
+            "turn": 0,
+            "transitioning": false,
+            "transitionDurationS": 0,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Fly",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    },
+    {
+      "breed": "european-dragon",
+      "scenario": {
+        "from": "fly",
+        "to": "stand",
+        "phase": 0.3,
+        "rate": 0.2
+      },
+      "before": {
+        "version": "before",
+        "breed": "european-dragon",
+        "scenario": {
+          "from": "fly",
+          "to": "stand",
+          "phase": 0.3,
+          "rate": 0.2
+        },
+        "sourceSha256": "cd7ac607ff273ea9fef46cbb924bea7300eae2d4e625f160891c981c77c16108",
+        "bones": 169,
+        "instantJointStep": 105.19805767559134,
+        "maxFrameJointStep": 0.004777362742285072,
+        "minimumFloorM": -0.003212500648686216,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": -0.003077741058166418,
+          "maxJointStep": 0.004777362131965509,
+          "finite": true,
+          "seat": [
+            4.000166371289596,
+            0.8151350743964099,
+            -2.8072040118318196
+          ],
+          "state": {
+            "gait": "stand",
+            "lead": "left",
+            "phase01": 0.012075471698113195,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitionsReviewed": false
+          },
+          "clip": "Idle Stand",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      },
+      "after": {
+        "version": "after",
+        "breed": "european-dragon",
+        "scenario": {
+          "from": "fly",
+          "to": "stand",
+          "phase": 0.3,
+          "rate": 0.2
+        },
+        "sourceSha256": "cd7ac607ff273ea9fef46cbb924bea7300eae2d4e625f160891c981c77c16108",
+        "bones": 169,
+        "instantJointStep": 105.19805767559134,
+        "maxFrameJointStep": 0.004777362742285072,
+        "minimumFloorM": -0.003212500648686216,
+        "finite": true,
+        "actorUnchanged": true,
+        "transitionFinishS": 0.016666666666666666,
+        "final": {
+          "timeS": 0.4,
+          "floor": -0.003077741058166418,
+          "maxJointStep": 0.004777362131965509,
+          "finite": true,
+          "seat": [
+            4.000166371289596,
+            0.8151350743964099,
+            -2.8072040118318196
+          ],
+          "state": {
+            "gait": "stand",
+            "lead": "left",
+            "phase01": 0.012075471698113195,
+            "bodyLiftM": 0,
+            "speedMps": 0,
+            "grounded": true,
+            "intensity": 0,
+            "turn": 0,
+            "transitioning": false,
+            "transitionDurationS": 0,
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "clip": "Idle Stand",
+          "actorPosition": [
+            4,
+            0,
+            -3
+          ],
+          "actorQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        "resetRestFallback": true
+      }
+    }
+  ]
+}

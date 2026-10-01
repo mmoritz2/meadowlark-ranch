@@ -1,0 +1,202 @@
+{
+  "controllerSha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6",
+  "responses": [
+    {
+      "url": "http://127.0.0.1:8584/assets/native-horse-motion.js",
+      "sha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6"
+    }
+  ],
+  "errors": [],
+  "unrouted": true,
+  "actualRanchControllers": true,
+  "controlledInputOnly": true,
+  "rows": [
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "stand",
+        "to": "walk",
+        "fraction": 0.12
+      },
+      "finalClip": "Target Native Walk Rollover",
+      "actualSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+      "allFinite": true,
+      "maxActualBootResidualM": 7.635753929282147e-07,
+      "maxReinEndpointResidualM": 2.5894628196555746e-15,
+      "maxJointStep": 3.5345029418756586,
+      "minimumBodyFloorVsActorPlaneM": -0.003776869919089947,
+      "minimumBodyFloorVsPlayerGroundM": -0.003776869919089947,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "walk",
+        "to": "trot",
+        "fraction": 0.95
+      },
+      "finalClip": "Target Native Trot",
+      "actualSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+      "allFinite": true,
+      "maxActualBootResidualM": 5.657548992612072e-07,
+      "maxReinEndpointResidualM": 2.6272671962866384e-15,
+      "maxJointStep": 6.3623164012803555,
+      "minimumBodyFloorVsActorPlaneM": -0.0107241074964973,
+      "minimumBodyFloorVsPlayerGroundM": -0.0107241074964973,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "trot",
+        "to": "canterLeft",
+        "fraction": 0.95
+      },
+      "finalClip": "Target Native Canter Left",
+      "actualSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+      "allFinite": true,
+      "maxActualBootResidualM": 5.653645232367124e-07,
+      "maxReinEndpointResidualM": 2.2644195468014707e-15,
+      "maxJointStep": 7.107847165852524,
+      "minimumBodyFloorVsActorPlaneM": -0.0024003048976551228,
+      "minimumBodyFloorVsPlayerGroundM": -0.0024003048976551228,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "canterLeft",
+        "to": "canterRight",
+        "fraction": 0.95
+      },
+      "finalClip": "Target Native Canter Right",
+      "actualSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+      "allFinite": true,
+      "maxActualBootResidualM": 7.783317338473088e-07,
+      "maxReinEndpointResidualM": 2.4323767777952467e-15,
+      "maxJointStep": 7.137921057509916,
+      "minimumBodyFloorVsActorPlaneM": -0.009986778577284236,
+      "minimumBodyFloorVsPlayerGroundM": -0.02030696783844644,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "white-western",
+      "scenario": {
+        "from": "canterRight",
+        "to": "stand",
+        "fraction": 0
+      },
+      "finalClip": "Horse|Horse_Idle",
+      "actualSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+      "allFinite": true,
+      "maxActualBootResidualM": 6.692834600582021e-07,
+      "maxReinEndpointResidualM": 2.391493584112727e-15,
+      "maxJointStep": 9.535460931396782,
+      "minimumBodyFloorVsActorPlaneM": -0.002332958888925054,
+      "minimumBodyFloorVsPlayerGroundM": -0.002332958888925054,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "stand",
+        "to": "walk",
+        "fraction": 0.12
+      },
+      "finalClip": "Target Native Walk Rollover",
+      "actualSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+      "allFinite": true,
+      "maxActualBootResidualM": 3.161940295345314e-06,
+      "maxReinEndpointResidualM": 2.4017796254920325e-15,
+      "maxJointStep": 2.2562428961844265,
+      "minimumBodyFloorVsActorPlaneM": -0.0031614665915102886,
+      "minimumBodyFloorVsPlayerGroundM": -0.0031614665915102886,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "walk",
+        "to": "trot",
+        "fraction": 0.95
+      },
+      "finalClip": "Target Native Trot",
+      "actualSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+      "allFinite": true,
+      "maxActualBootResidualM": 3.362405956993826e-06,
+      "maxReinEndpointResidualM": 2.4323767777952467e-15,
+      "maxJointStep": 6.2415918128776235,
+      "minimumBodyFloorVsActorPlaneM": -0.00922593179812767,
+      "minimumBodyFloorVsPlayerGroundM": -0.00922593179812767,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "trot",
+        "to": "canterLeft",
+        "fraction": 0.95
+      },
+      "finalClip": "Target Native Canter Left",
+      "actualSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+      "allFinite": true,
+      "maxActualBootResidualM": 3.3900442783221025e-06,
+      "maxReinEndpointResidualM": 2.391493584112727e-15,
+      "maxJointStep": 7.407475209299571,
+      "minimumBodyFloorVsActorPlaneM": -0.0002967601794953423,
+      "minimumBodyFloorVsPlayerGroundM": -0.0002967601794953423,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "canterLeft",
+        "to": "canterRight",
+        "fraction": 0.95
+      },
+      "finalClip": "Target Native Canter Right",
+      "actualSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+      "allFinite": true,
+      "maxActualBootResidualM": 3.681715483860149e-06,
+      "maxReinEndpointResidualM": 2.4323767777952467e-15,
+      "maxJointStep": 7.1754379855037085,
+      "minimumBodyFloorVsActorPlaneM": -0.008536774595453794,
+      "minimumBodyFloorVsPlayerGroundM": -0.016483685408943714,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "canterRight",
+        "to": "stand",
+        "fraction": 0
+      },
+      "finalClip": null,
+      "actualSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+      "allFinite": true,
+      "maxActualBootResidualM": 3.7866698560636715e-06,
+      "maxReinEndpointResidualM": 2.360366527284141e-15,
+      "maxJointStep": 5.750230364172954,
+      "minimumBodyFloorVsActorPlaneM": -0.002014093060629746,
+      "minimumBodyFloorVsPlayerGroundM": -0.002014093060629746,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    }
+  ],
+  "allFinite": true,
+  "maxBootResidualM": 3.7866698560636715e-06,
+  "maxReinEndpointResidualM": 2.6272671962866384e-15,
+  "sourceNonReinIntact": true,
+  "attachmentPass": true,
+  "actorPlaneWithin10mm": false,
+  "verdict": "Finite mounted attachment and real-time fading pass; transient floor-contact limits remain"
+}

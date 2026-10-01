@@ -1,0 +1,69 @@
+{
+  "base": "http://127.0.0.1:8584",
+  "unrouted": true,
+  "controllerSha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6",
+  "checks": {
+    "white-westernStudio": true,
+    "bay-westernStudio": true,
+    "black-dragon-nativeStudio": true,
+    "european-dragonStudio": true,
+    "studioSwitchBack": true,
+    "freeOptIn": true,
+    "white-westernRanch": true,
+    "white-westernContacts": true,
+    "bay-westernRanch": true,
+    "bay-westernContacts": true,
+    "black-dragon-nativeRanch": true,
+    "european-dragonRanch": true,
+    "legacyBay": true,
+    "nativeWorld": true,
+    "noUnexpectedErrors": true
+  },
+  "errors": [],
+  "models": [
+    {
+      "key": "white-western",
+      "hash": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+      "bones": 677,
+      "travel": {
+        "expected": 1.9508285308323008,
+        "distance": 1.9508285308322997,
+        "localTravel": 0,
+        "max": 1.9523784043542574
+      }
+    },
+    {
+      "key": "bay-western",
+      "hash": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+      "bones": 677,
+      "travel": {
+        "expected": 1.6584034404554702,
+        "distance": 1.6584034404554706,
+        "localTravel": 0,
+        "max": 1.6592103318391431
+      }
+    },
+    {
+      "key": "black-dragon-native",
+      "hash": "66ef96b2407b64c8ffa749f1edf5f4731a314b39b350e128789b15476a9ac999",
+      "bones": 232,
+      "travel": {
+        "expected": 0,
+        "distance": 0,
+        "localTravel": 0,
+        "max": 0
+      }
+    },
+    {
+      "key": "european-dragon",
+      "hash": "cd7ac607ff273ea9fef46cbb924bea7300eae2d4e625f160891c981c77c16108",
+      "bones": 169,
+      "travel": {
+        "expected": 1.9976484155722751,
+        "distance": 1.9976484155722756,
+        "localTravel": 0,
+        "max": 1.9992354860587596
+      }
+    }
+  ]
+}
