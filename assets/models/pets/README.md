@@ -179,10 +179,10 @@ Other fields added with it:
 `assets/pet-autorig.js` hands a bird to `assets/pet-bird-rig.js`, which turns a static
 scan into a flying pet: it bakes the scan into the bird's frame (`forward` in the scene
 frame, `crop.belowY` cuts the perch away), turns the head to face forward
-(`headTwistDeg`, a twist spread down the neck from `neck.base` to `neck.head`), grafts a
-pair of feathered wings from `wing.file` (the CG Cookie wing in `owl-wing.glb`, relaid,
-recoloured and fitted at the shoulders; `wing.length` is one wing, shoulder to tip, in
-the scan's metres), builds 20 bones (`ab_root`, `ab_body`, `ab_chest`, `ab_neck1`,
+(`headTwistDeg`, a twist spread down the neck from `neck.base` to `neck.head`), draws a
+pair of feathered wings feather by feather (painted golden buff and barred above, white
+below, fitted at the shoulders; `wing.length` is one wing, shoulder to tip, in the scan's
+metres), builds 20 bones (`ab_root`, `ab_body`, `ab_chest`, `ab_neck1`,
 `ab_neck2`, `ab_head`, `ab_tail1-2`, `ab_thigh/shank/foot` L and R, `ab_wing/wing2/wing3`
 L and R) and writes the clips `bird.idle`, `bird.hop` (as `walk`: both feet together,
 planted through the stance), `bird.takeoff`, `bird.fly`, `bird.glide` and `bird.land`.
@@ -190,8 +190,7 @@ At rest the grafted wings fold away under the scan's own folded wings. `joints`,
 {T, stride, height}` and `fly: {hz, pitch}` override the defaults. The takeoff starts
 with the push itself (the game lifts the bird on the first frame), and the land clip ends
 folded and standing, the pose the idle starts from; both keep their root motion
-(`"rootMotion": "keep"` in the clip map). The owl's `"parts": {"wing": ...}` records the
-wing file's size, hash and licence (`owl-wing.provenance.json`, `owl-wing.license.txt`).
+(`"rootMotion": "keep"` in the clip map).
 
 `"game"` in an entry tunes the pet in the game for its real body
 (`assets/features/pet-models.js`): `skim` is the speed (m/s) above which a winged pet

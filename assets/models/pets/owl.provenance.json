@@ -1,0 +1,38 @@
+{
+ "schemaVersion": 1,
+ "pets": [
+  "owl"
+ ],
+ "title": "Common Barn Owl",
+ "creator": "Carnegie Museum of Natural History (CMP Innovation Studio)",
+ "creatorUrl": "https://sketchfab.com/cmp_innovation_studio",
+ "sourceUrl": "https://sketchfab.com/3d-models/common-barn-owl-19c989a6681145bc999c332699eb852e",
+ "license": "CC-BY-4.0",
+ "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+ "credit": "\"Common Barn Owl\" by Carnegie Museum of Natural History (CMP Innovation Studio), CC BY 4.0, adapted (stump removed, head turned forward, given a skeleton, clips and flight by Meadowlark Ranch's bird rig, texture to 2048, scaled) for Meadowlark Ranch.",
+ "approvedBy": "owner",
+ "downloaded": "2026-09-30",
+ "download": {
+  "file": "common_barn_owl.glb",
+  "format": "GLB (Sketchfab download)",
+  "bytes": 2568120,
+  "sha256": "75a228661de09dbd453c097982214968be198874631be17879b941d48233a30d"
+ },
+ "contents": {
+  "meshes": 1,
+  "texture": "4096x2048",
+  "skeleton": false,
+  "clips": [],
+  "pose": "perched on a stump, wings folded, head turned to one side"
+ },
+ "prepared": {
+  "file": "owl.glb",
+  "bytes": 1736584,
+  "sha256": "6056ef2c665f764c72e9394b8ed98370d6e70b0c8fe588982e1995b1ffd57f40",
+  "changes": [
+   "texture resized 4096x2048 -> 2048x1024 (2.45 MB to 1.66 MB)",
+   "nothing else in the file; at load assets/pet-bird-rig.js cuts the stump away, turns the head forward, builds the skeleton, grafts the wings and bakes the clips"
+  ]
+ },
+ "restrictions": []
+}

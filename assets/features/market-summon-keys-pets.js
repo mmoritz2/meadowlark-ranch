@@ -693,7 +693,12 @@ export function install(G){
   if(!tex){const cv=document.createElement('canvas');cv.width=cv.height=64;const c=cv.getContext('2d');const gr=c.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(0.35,'rgba(255,255,255,0.55)');gr.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=gr;c.fillRect(0,0,64,64);tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;}
   const m=new THREE.SpriteMaterial({map:tex,color:0x8fe8ff,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false});
   const s1=new THREE.Sprite(m); s1.position.y=0.34; s1.renderOrder=2; g.add(s1);
-  return {group:g,mat:m};
+  const A={group:g,mat:m,y:0.34,behind:0};
+  /* behind > 0 (a real model pet): placed that far past the pet from whichever camera draws it, so the body hides the
+     glow's middle and only a halo shows round the outline */
+  s1.onBeforeRender=(r,sc,cam)=>{s1.position.set(0,A.y,0);if(A.s)s1.scale.setScalar(A.s*(A.behind>0?1.5:1));if(!(A.behind>0)||!g.parent||!cam)return;
+   try{const c=g.localToWorld(s1.position.clone()),d=c.clone().sub(cam.getWorldPosition(new THREE.Vector3())),L=d.length();if(L>1e-3){c.addScaledVector(d,A.behind/L);s1.position.copy(g.worldToLocal(c));}s1.updateMatrixWorld();}catch(e){}};
+  return A;
  }
  const petGlow=(a,c)=>{try{if(G.petModels&&G.petModels.glow)G.petModels.glow(a,c);}catch(e){}};
  function mkRing(){
@@ -718,6 +723,10 @@ export function install(G){
   comboT+=dt;
   if(!aura)aura=mkAura();
   if(aura.group.parent!==P.parts.group){try{P.parts.group.add(aura.group);const s1=aura.group.children[0];s1.position.y=P.parts.auraY||0.34;s1.scale.setScalar(1.6*(P.parts.size||0.6));}catch(e){}}
+  /* a real model pet (its body a scan or a sculpt, not drawn) gets the light as a halo behind it: the glow sits past
+     the pet from the camera, so the body hides its middle and only its edge shows round the outline; laid over the
+     body it washed the animal in the pair's colour and made it look like a see-through ghost */
+  {const R=P.parts.real;aura.y=P.parts.auraY||0.34;aura.s=1.6*(P.parts.size||0.6);aura.behind=R&&R.state==='ready'?0.75*(P.parts.size||0.6):0;}
   const pulse=0.6+0.4*Math.sin(comboT*3.2), gc=(petCfg(P.key).glow)||'#8fe8ff';
   aura.mat.opacity=P.combo*0.35*pulse;
   aura.mat.color.set(gc);

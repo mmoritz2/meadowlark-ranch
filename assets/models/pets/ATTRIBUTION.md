@@ -17,7 +17,6 @@ and the glimmer fox. Every other pet is drawn by the game itself
 | Lamb (lamb.glb) | [Animated Sheep](https://sketchfab.com/3d-models/animated-sheep-b99698502dea4905b916fce0bcf2dfc0) | [igor-lir](https://sketchfab.com/igor-lir) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | download receipt, sha256 f7b6d31a36eb3d3e5a9dddf4069af1f470e2d11eb3cc8e66cff65717ff74d762 |
 | Snow hare, Bunny (snowhare.glb) | [Arctic Hare](https://sketchfab.com/3d-models/arctic-hare-48caf8a64509421b9d8845e8b95bdac1) | [Carnegie Museum of Natural History (CMP Innovation Studio)](https://sketchfab.com/cmp_innovation_studio) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | download receipt, sha256 359169d82963e2efa4b9ad644d4c440d26ccece657e66e09735f80c8eb82afe8 |
 | Owl (owl.glb) | [Common Barn Owl](https://sketchfab.com/3d-models/common-barn-owl-19c989a6681145bc999c332699eb852e) | [Carnegie Museum of Natural History (CMP Innovation Studio)](https://sketchfab.com/cmp_innovation_studio) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | [Record](owl.provenance.json) (download sha256 75a228661de09dbd453c097982214968be198874631be17879b941d48233a30d) |
-| Owl's wings (owl-wing.glb) | [CGC Classic: Feathery Wing](http://www.blendswap.com/blends/view/92231) (Blend Swap 92231) | CG Cookie / David Ward | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) | [Record](owl-wing.provenance.json), [bundled licence](owl-wing.license.txt) (model sha256 32dd148f6da8fabf04ff2f33ec6694299265d5338f95583408ce860fdc17b5c2) |
 | Emberling (emberling.glb) | [European Dragon](https://sketchfab.com/3d-models/european-dragon-82f393a2e6c048ad80c171ce3b3a7b87) | [Regina Cachoa (ReginaCachoa)](https://sketchfab.com/ReginaCachoa) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | [Record](emberling.provenance.json) |
 | Puppy (golden-cream) and Corgi (red-and-white, short legs, big ears), both shiba.glb | [Animated Dog Shiba Inu](https://sketchfab.com/3d-models/animated-dog-shiba-inu-9abfce885a834399b2c3ccaed51cd474) | [quander](https://sketchfab.com/quander) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | Source file sha256 ed5f9c0b... in manifest.json ("source") |
 | Kitten, grey (cat.glb) | [Bicolor Cat](https://sketchfab.com/3d-models/bicolor-cat-e623a618ca344a8393d7ba4d63ec23cf) | [kenchoo](https://sketchfab.com/kenchoo), after "Fripouille" by guillaume.bolis | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | Source file sha256 baf23535... in manifest.json ("source") |
@@ -132,27 +131,23 @@ The original download (sha256
 359169d82963e2efa4b9ad644d4c440d26ccece657e66e09735f80c8eb82afe8,
 3,566,448 bytes) is kept unchanged outside the published files.
 
-### Common Barn Owl (owl.glb) with CG Cookie's Feathery Wing (owl-wing.glb), the Owl
+### Common Barn Owl (owl.glb), the Owl
 
 Credit line: "Common Barn Owl" by Carnegie Museum of Natural History (CMP Innovation
 Studio) (https://sketchfab.com/cmp_innovation_studio), CC BY 4.0, adapted (stump
 removed, head turned forward, given a skeleton, clips and flight by Meadowlark Ranch's
-bird rig, texture to 2048, scaled) for Meadowlark Ranch; wings from "CGC Classic:
-Feathery Wing" by CG Cookie / David Ward, CC BY 3.0
-(https://creativecommons.org/licenses/by/3.0/), adapted (feathers relaid, recoloured
-barn-owl buff and white, fitted to the owl) for Meadowlark Ranch.
+bird rig, texture to 2048, scaled, open wings drawn feather by feather) for Meadowlark Ranch.
 
 - a museum scan of a real specimen perched on a stump, wings folded, head turned to
   one side: the texture resized from 4096x2048 to 2048x1024 (2.45 MB to 1.66 MB); at
   load (assets/pet-bird-rig.js) the stump is cut away and the head is turned back to
   face forward by a twist spread down the neck;
-- owl-wing.glb is an unchanged copy of the CG Cookie wing (a GLB export of the Blend
-  Swap .blend, the same bytes as the horse lane's review export); its licence text, as
-  bundled in the download, is in owl-wing.license.txt and its record in
-  owl-wing.provenance.json. At load its feathers are laid behind the arm and widened so
-  they overlap, its cartoon arm and shoulder ball are dropped, a continuous under-layer
-  is added beneath the feathers, it is coloured golden buff with grey-barred flight
-  feathers above and white below, and one wing is fitted at each shoulder of the owl;
+- the open wings are drawn at load by the bird rig, feather by feather (10 primaries in a
+  rounded tip, 14 secondaries, tertials and rows of coverts), painted golden buff with
+  grey dusting and dark bars above and white below, the covert pattern taken from the
+  scan's own texture; folded, they hide under the scan's own folded wings; the stump's
+  cut openings are closed, the back's photographic shadow lifted to plumage brightness
+  and the underside whitened for flight;
 - given a skeleton at load (20 bones) with smooth skin weights, and clips written by
   Meadowlark Ranch: idle (breathing, the head turning round to look), a two-footed
   hop, takeoff, fly, glide and land. At rest the grafted wings are folded away under
