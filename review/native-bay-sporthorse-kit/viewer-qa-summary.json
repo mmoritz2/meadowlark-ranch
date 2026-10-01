@@ -1,0 +1,105 @@
+{
+  "url": "http://127.0.0.1:8584/review/native-bay-sporthorse-kit/review.html",
+  "phasesPerGait": 64,
+  "sideAndQuarterImages": 16,
+  "combinedKitSha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+  "horseBones": 677,
+  "riderBones": 65,
+  "clips": [
+    "Target Native Walk Rollover",
+    "Target Native Trot",
+    "Target Native Canter Left",
+    "Target Native Canter Right"
+  ],
+  "triangles": {
+    "original": 17194,
+    "removed": 1640,
+    "retained": 15554
+  },
+  "hiddenComponents": [
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    72,
+    73,
+    74,
+    75,
+    103,
+    104,
+    141,
+    142,
+    143,
+    153,
+    163,
+    164,
+    244,
+    245,
+    254,
+    255,
+    278,
+    283
+  ],
+  "protectedComponents": [
+    89,
+    91,
+    205,
+    209
+  ],
+  "allOtherComponentsIntact": true,
+  "leatherWidthM": [
+    0.019,
+    0.019
+  ],
+  "maxAttachmentGapM": 1.2947314098277873e-15,
+  "minOutsideBodyM": 0.03599317171163306,
+  "insideNeckSamples": 0,
+  "minimumValidNeckSurfaceSamples": 15,
+  "maxBootTreadGapM": 0.0000028077468200823607,
+  "elbowDegrees": [
+    115.17740141602538,
+    115.17740141602901
+  ],
+  "perGait": {
+    "walk": {
+      "maxBootTreadGapM": 0.0000027550787817747193,
+      "minOutsideBodyM": 0.03644152828578845,
+      "insideNeckSamples": 0,
+      "elbowDegrees": [
+        115.17740141602538,
+        115.17740141602901
+      ]
+    },
+    "trot": {
+      "maxBootTreadGapM": 0.0000027769031724502604,
+      "minOutsideBodyM": 0.03599317171163306,
+      "insideNeckSamples": 0,
+      "elbowDegrees": [
+        115.17740141602538,
+        115.17740141602897
+      ]
+    },
+    "canterLeft": {
+      "maxBootTreadGapM": 0.0000028077468200823607,
+      "minOutsideBodyM": 0.03647439024374213,
+      "insideNeckSamples": 0,
+      "elbowDegrees": [
+        115.17740141602538,
+        115.17740141602901
+      ]
+    },
+    "canterRight": {
+      "maxBootTreadGapM": 0.0000028077468200823607,
+      "minOutsideBodyM": 0.03647439024374213,
+      "insideNeckSamples": 0,
+      "elbowDegrees": [
+        115.17740141602538,
+        115.17740141602901
+      ]
+    }
+  },
+  "errors": [],
+  "technicalPass": true
+}

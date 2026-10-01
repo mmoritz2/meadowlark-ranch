@@ -1,0 +1,248 @@
+{
+  "HL": [
+    {
+      "joint": "upperleg_l_0405",
+      "boundsDegrees": [
+        -35,
+        35
+      ],
+      "rangeDegrees": [
+        -8.700861097034352,
+        10.083694843418305
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 0.0
+    },
+    {
+      "joint": "lowerleg_l_0406",
+      "boundsDegrees": [
+        -50,
+        50
+      ],
+      "rangeDegrees": [
+        -9.631618666023167,
+        30.513196167023555
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 0.0
+    },
+    {
+      "joint": "foot_l_0407",
+      "boundsDegrees": [
+        -50,
+        20
+      ],
+      "rangeDegrees": [
+        -47.90997010401343,
+        6.836781936455358
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 0.0
+    }
+  ],
+  "FL": [
+    {
+      "joint": "clavicle_l_0203",
+      "boundsDegrees": [
+        -14,
+        14
+      ],
+      "rangeDegrees": [
+        -13.999999999999998,
+        8.90580141671426
+      ],
+      "lowerHitCount128": 34,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 191.25,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 191.25,
+      "longestUpperPlateauMs": 0.0
+    },
+    {
+      "joint": "upperarm_l_0204",
+      "boundsDegrees": [
+        -35,
+        35
+      ],
+      "rangeDegrees": [
+        -20.582120815035015,
+        17.305135362976937
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 0.0
+    },
+    {
+      "joint": "lowerarm_l_0205",
+      "boundsDegrees": [
+        -45,
+        45
+      ],
+      "rangeDegrees": [
+        -13.03086117027398,
+        3.5600532016199735
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 0.0
+    },
+    {
+      "joint": "hand_l_0206",
+      "boundsDegrees": [
+        -15,
+        70
+      ],
+      "rangeDegrees": [
+        -1.5783838984117096,
+        64.81829825029874
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 0.0
+    }
+  ],
+  "HR": [
+    {
+      "joint": "upperleg_r_0474",
+      "boundsDegrees": [
+        -35,
+        35
+      ],
+      "rangeDegrees": [
+        -6.505685069607421,
+        4.766775359673747
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 0.0
+    },
+    {
+      "joint": "lowerleg_r_0475",
+      "boundsDegrees": [
+        -50,
+        50
+      ],
+      "rangeDegrees": [
+        -31.257580891896513,
+        26.266354302284515
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 0.0
+    },
+    {
+      "joint": "foot_r_0476",
+      "boundsDegrees": [
+        -50,
+        20
+      ],
+      "rangeDegrees": [
+        -44.61715435901784,
+        19.999999999999996
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 8,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 45.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 45.0
+    }
+  ],
+  "FR": [
+    {
+      "joint": "clavicle_r_0269",
+      "boundsDegrees": [
+        -14,
+        14
+      ],
+      "rangeDegrees": [
+        -13.999999999999998,
+        11.911747881636133
+      ],
+      "lowerHitCount128": 35,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 196.875,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 196.875,
+      "longestUpperPlateauMs": 0.0
+    },
+    {
+      "joint": "upperarm_r_0270",
+      "boundsDegrees": [
+        -35,
+        35
+      ],
+      "rangeDegrees": [
+        -10.731064865980562,
+        14.379663621558235
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 0.0
+    },
+    {
+      "joint": "lowerarm_r_0271",
+      "boundsDegrees": [
+        -45,
+        45
+      ],
+      "rangeDegrees": [
+        -11.582914617492902,
+        3.4234900440673113
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 0.0
+    },
+    {
+      "joint": "hand_r_0272",
+      "boundsDegrees": [
+        -15,
+        70
+      ],
+      "rangeDegrees": [
+        -1.379680310609952,
+        65.76036852363313
+      ],
+      "lowerHitCount128": 0,
+      "upperHitCount128": 0,
+      "lowerSampledDurationMs": 0.0,
+      "upperSampledDurationMs": 0.0,
+      "longestLowerPlateauMs": 0.0,
+      "longestUpperPlateauMs": 0.0
+    }
+  ]
+}

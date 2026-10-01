@@ -1,0 +1,1503 @@
+{
+  "status": "Tangent-only private candidate; browser contact and rate tests pending",
+  "sourceRestSha256": "8f7f83e9669dc063dcb38455f8658369774ec0ce9b9eb81c2e7742e7d013d6a8",
+  "sourceCanterSha256": "dde4b71c76c7dbaf80c8d5ca9b06f7cbffaad85d500672d5ae4e5bbf73949e03",
+  "candidateSha256": "0162dd10be27992ae53c18772ad49eb29e2dffcb434b4521a7c849e3642429fe",
+  "originalBinaryPrefixIdentical": true,
+  "staticSourceArraysIdentical": true,
+  "allOriginalKeyedPoseRowsBitExact": true,
+  "loopRecurrenceWasVerifiedBeforeCubic": true,
+  "tangentsUseCenteredPeriodicDifferenceAndQuaternionTangentProjection": true,
+  "clips": {
+    "Target Native Canter Left": {
+      "tracks": [
+        {
+          "node": 8,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.5150330969956453e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.11133037507534027
+        },
+        {
+          "node": 9,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.3990581205202463e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.035606928169727325
+        },
+        {
+          "node": 10,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.0028161057079887e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.01897847279906273
+        },
+        {
+          "node": 11,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.1277190673362006e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.017250224947929382
+        },
+        {
+          "node": 12,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.1394911234852273e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.017995141446590424
+        },
+        {
+          "node": 14,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.752154587310625e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.08063508570194244
+        },
+        {
+          "node": 15,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.9743867204858463e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.05138534680008888
+        },
+        {
+          "node": 16,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.5114945949814227e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.0688166543841362
+        },
+        {
+          "node": 17,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.1166889561283786e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.04348979890346527
+        },
+        {
+          "node": 18,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 9.15367730146923e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.03450821340084076
+        },
+        {
+          "node": 19,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 8.697053389406519e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.2442319244146347
+        },
+        {
+          "node": 30,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 4.3803245394618403e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4371773898601532
+        },
+        {
+          "node": 31,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.9727531394284995e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43183350563049316
+        },
+        {
+          "node": 32,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 8.623146994282418e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4349752366542816
+        },
+        {
+          "node": 36,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.0273434171653607e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43736836314201355
+        },
+        {
+          "node": 37,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.98110509086782e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4330125153064728
+        },
+        {
+          "node": 38,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.531192633756261e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43413203954696655
+        },
+        {
+          "node": 87,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.8016042771623517e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4400702714920044
+        },
+        {
+          "node": 88,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.706086582207846e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43808361887931824
+        },
+        {
+          "node": 89,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 9.763979240119466e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43408718705177307
+        },
+        {
+          "node": 131,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 9.127088052474815e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.433855801820755
+        },
+        {
+          "node": 132,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.8831183655327154e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43810248374938965
+        },
+        {
+          "node": 133,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.19415476827173e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4398920238018036
+        },
+        {
+          "node": 145,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.901673450913668e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43717923760414124
+        },
+        {
+          "node": 146,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.9796592723513032e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43963122367858887
+        },
+        {
+          "node": 147,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.3415748068685895e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4392665922641754
+        },
+        {
+          "node": 148,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 6.614716687169065e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4358874559402466
+        },
+        {
+          "node": 156,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.433364255891122e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4313287138938904
+        },
+        {
+          "node": 157,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.5151085958704e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43557336926460266
+        },
+        {
+          "node": 158,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.1208676182184088e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.439371258020401
+        },
+        {
+          "node": 159,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 8.161804179589495e-18,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4395736753940582
+        },
+        {
+          "node": 186,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.2848386155360849e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.439159095287323
+        },
+        {
+          "node": 187,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.6519294250730834e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43504518270492554
+        },
+        {
+          "node": 188,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.7686959405024315e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4317662715911865
+        },
+        {
+          "node": 189,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.660049808740272e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43667808175086975
+        },
+        {
+          "node": 193,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.7894060185799484e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43605518341064453
+        },
+        {
+          "node": 194,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.442327751500124e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43085724115371704
+        },
+        {
+          "node": 195,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.4970530406928176e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4363158047199249
+        },
+        {
+          "node": 196,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.1107520995457487e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43936067819595337
+        },
+        {
+          "node": 251,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.3944103980395222e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 5.884317874908447
+        },
+        {
+          "node": 252,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 5.025263642360948e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 5.026847839355469
+        },
+        {
+          "node": 253,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.694729026964469e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 5.182693004608154
+        },
+        {
+          "node": 254,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.942001645013658e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 7.889016151428223
+        },
+        {
+          "node": 255,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.0150676491568823e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 3.853973388671875
+        },
+        {
+          "node": 331,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.9045521442398006e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 5.318285942077637
+        },
+        {
+          "node": 332,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.81828980751096e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 4.935423374176025
+        },
+        {
+          "node": 333,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.3860390597241824e-07,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 1.2131394147872925
+        },
+        {
+          "node": 334,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.3340200797149774e-08,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 4.534152030944824
+        },
+        {
+          "node": 335,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 4.264795241146226e-07,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 3.175135850906372
+        },
+        {
+          "node": 462,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 8.3034472049923845e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.40506166219711304
+        },
+        {
+          "node": 467,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 6.599500717614967e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6135546565055847
+        },
+        {
+          "node": 468,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.4454824512092884e-18,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6101863384246826
+        },
+        {
+          "node": 469,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 5.79366731937516e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6036118268966675
+        },
+        {
+          "node": 473,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.9638331329120364e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6136871576309204
+        },
+        {
+          "node": 474,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.3682860913825e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6111646890640259
+        },
+        {
+          "node": 475,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.366722775049661e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.604335367679596
+        },
+        {
+          "node": 476,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.0205675192336877e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6055499315261841
+        },
+        {
+          "node": 477,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.942580962096044e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6134363412857056
+        },
+        {
+          "node": 481,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.962242544929982e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6056817770004272
+        },
+        {
+          "node": 482,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 5.1081420713100355e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6040467023849487
+        },
+        {
+          "node": 483,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.938305558274177e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6110203862190247
+        },
+        {
+          "node": 484,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.267030444833726e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6137465834617615
+        },
+        {
+          "node": 485,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.2624329344131486e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6122202277183533
+        },
+        {
+          "node": 489,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.745215055171079e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6101051568984985
+        },
+        {
+          "node": 490,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.4001064278695427e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6134333610534668
+        },
+        {
+          "node": 491,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.2100517885250128e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6129793524742126
+        },
+        {
+          "node": 492,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.0795969003686329e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6075453758239746
+        },
+        {
+          "node": 493,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.8498520008132843e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6020880341529846
+        },
+        {
+          "node": 497,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.8975628288298687e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6130631566047668
+        },
+        {
+          "node": 498,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.613012994475552e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6087350845336914
+        },
+        {
+          "node": 499,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.2374013283493662e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6016651391983032
+        },
+        {
+          "node": 500,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.0554667233533396e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6112644672393799
+        },
+        {
+          "node": 501,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.704394068510024e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6130003333091736
+        },
+        {
+          "node": 505,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 5.29646480133989e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 3.2730448246002197
+        },
+        {
+          "node": 506,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.0828554795064896e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 7.455850124359131
+        },
+        {
+          "node": 507,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.009361231715134e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 3.617551803588867
+        },
+        {
+          "node": 508,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 6.089827867165781e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 5.151000022888184
+        },
+        {
+          "node": 590,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.1335419688321247e-06,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 3.2519583702087402
+        },
+        {
+          "node": 591,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.1209777631956665e-05,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 7.690426826477051
+        },
+        {
+          "node": 592,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.5278523970920391e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 6.014321804046631
+        },
+        {
+          "node": 593,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.4301075613531943e-06,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 5.342076778411865
+        },
+        {
+          "node": 8,
+          "path": "translation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 0.0,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 17.5537109375
+        }
+      ],
+      "originalKeyPoseBytesExact": true,
+      "allSamplerTangentsPeriodic": true,
+      "uncopiedClosureMaxDegrees": 1.0880016559651758e-05
+    },
+    "Target Native Canter Right": {
+      "tracks": [
+        {
+          "node": 8,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.5150330969956453e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.11133037507534027
+        },
+        {
+          "node": 9,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.3990581205202463e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.035606928169727325
+        },
+        {
+          "node": 10,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.0028161057079887e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.01897847279906273
+        },
+        {
+          "node": 11,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.1277190673362006e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.017250224947929382
+        },
+        {
+          "node": 12,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.1394911234852273e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.017995141446590424
+        },
+        {
+          "node": 14,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.752154587310625e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.08063508570194244
+        },
+        {
+          "node": 15,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.9743867204858463e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.05138534680008888
+        },
+        {
+          "node": 16,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.5114945949814227e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.0688166543841362
+        },
+        {
+          "node": 17,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.1166889561283786e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.04348979890346527
+        },
+        {
+          "node": 18,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 9.15367730146923e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.03450821340084076
+        },
+        {
+          "node": 19,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 8.697053389406519e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.2442319244146347
+        },
+        {
+          "node": 30,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 4.3803245394618403e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4371773898601532
+        },
+        {
+          "node": 31,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.9727531394284995e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43183350563049316
+        },
+        {
+          "node": 32,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 8.623146994282418e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4349752366542816
+        },
+        {
+          "node": 36,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.0273434171653607e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43736836314201355
+        },
+        {
+          "node": 37,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.98110509086782e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4330125153064728
+        },
+        {
+          "node": 38,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.531192633756261e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43413203954696655
+        },
+        {
+          "node": 87,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.8016042771623517e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4400702714920044
+        },
+        {
+          "node": 88,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.706086582207846e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43808361887931824
+        },
+        {
+          "node": 89,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 9.763979240119466e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43408718705177307
+        },
+        {
+          "node": 131,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 9.127088052474815e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.433855801820755
+        },
+        {
+          "node": 132,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.8831183655327154e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43810248374938965
+        },
+        {
+          "node": 133,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.19415476827173e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4398920238018036
+        },
+        {
+          "node": 145,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.901673450913668e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43717923760414124
+        },
+        {
+          "node": 146,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.9796592723513032e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43963122367858887
+        },
+        {
+          "node": 147,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.3415748068685895e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4392665922641754
+        },
+        {
+          "node": 148,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 6.614716687169065e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4358874559402466
+        },
+        {
+          "node": 156,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.433364255891122e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4313287138938904
+        },
+        {
+          "node": 157,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.5151085958704e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43557336926460266
+        },
+        {
+          "node": 158,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.1208676182184088e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.439371258020401
+        },
+        {
+          "node": 159,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 8.161804179589495e-18,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4395736753940582
+        },
+        {
+          "node": 186,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.2848386155360849e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.439159095287323
+        },
+        {
+          "node": 187,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.6519294250730834e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43504518270492554
+        },
+        {
+          "node": 188,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.7686959405024315e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4317662715911865
+        },
+        {
+          "node": 189,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.660049808740272e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43667808175086975
+        },
+        {
+          "node": 193,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.7894060185799484e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43605518341064453
+        },
+        {
+          "node": 194,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.442327751500124e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43085724115371704
+        },
+        {
+          "node": 195,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.4970530406928176e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.4363158047199249
+        },
+        {
+          "node": 196,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.1107520995457487e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.43936067819595337
+        },
+        {
+          "node": 251,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.3944103980395222e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 5.046442985534668
+        },
+        {
+          "node": 252,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.57056561853684e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 4.287673473358154
+        },
+        {
+          "node": 253,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.8443994527797608e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 1.3121612071990967
+        },
+        {
+          "node": 254,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.534774854052898e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 4.949135780334473
+        },
+        {
+          "node": 255,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.6680296616334977e-08,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 3.211651086807251
+        },
+        {
+          "node": 331,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.9045521442398006e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 6.1117329597473145
+        },
+        {
+          "node": 332,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.137542935609553e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 5.561398983001709
+        },
+        {
+          "node": 333,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.70193930454734e-06,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 6.420618057250977
+        },
+        {
+          "node": 334,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 8.337635774314535e-10,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 6.602593898773193
+        },
+        {
+          "node": 335,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.2615596287412065e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 3.8067455291748047
+        },
+        {
+          "node": 462,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.593817491979316e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.40506231784820557
+        },
+        {
+          "node": 467,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 6.599500717614967e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6135546565055847
+        },
+        {
+          "node": 468,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.4454824512092884e-18,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6101863384246826
+        },
+        {
+          "node": 469,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 5.79366731937516e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6036118268966675
+        },
+        {
+          "node": 473,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.9638331329120364e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6136871576309204
+        },
+        {
+          "node": 474,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.3682860913825e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6111646890640259
+        },
+        {
+          "node": 475,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.366722775049661e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.604335367679596
+        },
+        {
+          "node": 476,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.0205675192336877e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6055499315261841
+        },
+        {
+          "node": 477,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.942580962096044e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6134363412857056
+        },
+        {
+          "node": 481,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.962242544929982e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6056817770004272
+        },
+        {
+          "node": 482,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 5.1081420713100355e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6040467023849487
+        },
+        {
+          "node": 483,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.938305558274177e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6110203862190247
+        },
+        {
+          "node": 484,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.267030444833726e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6137465834617615
+        },
+        {
+          "node": 485,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.2624329344131486e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6122202277183533
+        },
+        {
+          "node": 489,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.745215055171079e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6101051568984985
+        },
+        {
+          "node": 490,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.4001064278695427e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6134333610534668
+        },
+        {
+          "node": 491,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.2100517885250128e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6129793524742126
+        },
+        {
+          "node": 492,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.0795969003686329e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6075453758239746
+        },
+        {
+          "node": 493,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.8498520008132843e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6020880341529846
+        },
+        {
+          "node": 497,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.8975628288298687e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6130631566047668
+        },
+        {
+          "node": 498,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.613012994475552e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6087350845336914
+        },
+        {
+          "node": 499,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.2374013283493662e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6016651391983032
+        },
+        {
+          "node": 500,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 1.0554667233533396e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6112644672393799
+        },
+        {
+          "node": 501,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 3.704394068510024e-17,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 0.6130003333091736
+        },
+        {
+          "node": 505,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.7698348866728054e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 3.613250970840454
+        },
+        {
+          "node": 506,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.1335365750449425e-07,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 8.224222183227539
+        },
+        {
+          "node": 507,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.1335666335468008e-07,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 4.2550554275512695
+        },
+        {
+          "node": 508,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.6680246498978183e-08,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 4.673083782196045
+        },
+        {
+          "node": 590,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.9837341020723847e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 3.021366596221924
+        },
+        {
+          "node": 591,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 8.593335401264938e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 7.028200626373291
+        },
+        {
+          "node": 592,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 2.683160969772385e-15,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 5.018195629119873
+        },
+        {
+          "node": 593,
+          "path": "rotation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 7.757420949903655e-16,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 5.672595500946045
+        },
+        {
+          "node": 8,
+          "path": "translation",
+          "sourceKeyCount": 129,
+          "keyRowsBitExact": true,
+          "endpointValueDifference": 0.0,
+          "endpointTangentDifference": 0.0,
+          "maximumTangentNormPerS": 17.5537109375
+        }
+      ],
+      "originalKeyPoseBytesExact": true,
+      "allSamplerTangentsPeriodic": true,
+      "uncopiedClosureMaxDegrees": 1.310254195715223e-06
+    }
+  }
+}

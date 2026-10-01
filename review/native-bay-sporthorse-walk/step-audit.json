@@ -1,0 +1,571 @@
+{
+  "Target Native Walk Rollover": [
+    {
+      "name": "lowerarm_r_0271",
+      "maximumStepDegrees": 4.93795497366686,
+      "maximumSpeedDegreesPerSecond": 564.3401716041092,
+      "phase": 0.48437501496768415,
+      "seamVelocityDifferenceDegreesPerSecond": 0.0074138592918914295
+    },
+    {
+      "name": "lowerarm_l_0205",
+      "maximumStepDegrees": 4.6983066713948665,
+      "maximumSpeedDegreesPerSecond": 536.9516747972255,
+      "phase": 0.9687500299353683,
+      "seamVelocityDifferenceDegreesPerSecond": 54.48797564583713
+    },
+    {
+      "name": "hand_r_0272",
+      "maximumStepDegrees": 4.519405617429959,
+      "maximumSpeedDegreesPerSecond": 516.5057509212247,
+      "phase": 0.48437501496768415,
+      "seamVelocityDifferenceDegreesPerSecond": 0.22692278328612014
+    },
+    {
+      "name": "hand_l_0206",
+      "maximumStepDegrees": 3.4891032418115224,
+      "maximumSpeedDegreesPerSecond": 398.75639464694916,
+      "phase": 0.9687500299353683,
+      "seamVelocityDifferenceDegreesPerSecond": 42.03772456670418
+    },
+    {
+      "name": "lowerleg_r_0475",
+      "maximumStepDegrees": 2.733676755703964,
+      "maximumSpeedDegreesPerSecond": 312.41943450402,
+      "phase": 0.42968748752692987,
+      "seamVelocityDifferenceDegreesPerSecond": 18.761248835150358
+    },
+    {
+      "name": "toes_01_r_0477",
+      "maximumStepDegrees": 2.380730982427097,
+      "maximumSpeedDegreesPerSecond": 272.08380032814335,
+      "phase": 0.22656249584230995,
+      "seamVelocityDifferenceDegreesPerSecond": 10.533993128213138
+    },
+    {
+      "name": "lowerleg_l_0406",
+      "maximumStepDegrees": 2.3739490544790467,
+      "maximumSpeedDegreesPerSecond": 271.3059499188753,
+      "phase": 0.9374999534338715,
+      "seamVelocityDifferenceDegreesPerSecond": 26.79423232475291
+    },
+    {
+      "name": "upperarm_l_0204",
+      "maximumStepDegrees": 2.329101579560285,
+      "maximumSpeedDegreesPerSecond": 266.182838209097,
+      "phase": 0.18749999334769593,
+      "seamVelocityDifferenceDegreesPerSecond": 26.717292937107068
+    },
+    {
+      "name": "toes_01_l_0408",
+      "maximumStepDegrees": 2.170940080060567,
+      "maximumSpeedDegreesPerSecond": 248.108519388511,
+      "phase": 0.7265625224515263,
+      "seamVelocityDifferenceDegreesPerSecond": 23.273304502519935
+    },
+    {
+      "name": "foot_r_0476",
+      "maximumStepDegrees": 2.134272826679209,
+      "maximumSpeedDegreesPerSecond": 243.9171270951233,
+      "phase": 0.4375000066523041,
+      "seamVelocityDifferenceDegreesPerSecond": 12.616778895602987
+    },
+    {
+      "name": "clavicle_r_0269",
+      "maximumStepDegrees": 2.0104409979795514,
+      "maximumSpeedDegreesPerSecond": 229.76412203158353,
+      "phase": 0.4531249916846199,
+      "seamVelocityDifferenceDegreesPerSecond": 1.886487679226592
+    },
+    {
+      "name": "upperleg_l_0405",
+      "maximumStepDegrees": 1.8371257201780635,
+      "maximumSpeedDegreesPerSecond": 209.956710285236,
+      "phase": 0.7109374842007778,
+      "seamVelocityDifferenceDegreesPerSecond": 14.012243004166818
+    },
+    {
+      "name": "clavicle_l_0203",
+      "maximumStepDegrees": 1.8024075177238823,
+      "maximumSpeedDegreesPerSecond": 205.99032864357903,
+      "phase": 0.9453125257776783,
+      "seamVelocityDifferenceDegreesPerSecond": 1.4891640758260037e-18
+    },
+    {
+      "name": "fingers_01_l_0187",
+      "maximumStepDegrees": 1.7298283013185964,
+      "maximumSpeedDegreesPerSecond": 197.69283152910162,
+      "phase": 0.9843749617492515,
+      "seamVelocityDifferenceDegreesPerSecond": 11.58594145686782
+    },
+    {
+      "name": "upperarm_r_0270",
+      "maximumStepDegrees": 1.701158182345538,
+      "maximumSpeedDegreesPerSecond": 194.41760121101677,
+      "phase": 0.6874999800430878,
+      "seamVelocityDifferenceDegreesPerSecond": 2.059500158392495
+    },
+    {
+      "name": "upperleg_r_0474",
+      "maximumStepDegrees": 1.5772218338295905,
+      "maximumSpeedDegreesPerSecond": 180.25409576994048,
+      "phase": 0.20312500498922806,
+      "seamVelocityDifferenceDegreesPerSecond": 8.974431818744558
+    },
+    {
+      "name": "fingers_01_r_0273",
+      "maximumStepDegrees": 1.4306179262557341,
+      "maximumSpeedDegreesPerSecond": 163.49879062311922,
+      "phase": 0.46874997671693575,
+      "seamVelocityDifferenceDegreesPerSecond": 0.3090638917542656
+    },
+    {
+      "name": "foot_l_0407",
+      "maximumStepDegrees": 1.0746905889320828,
+      "maximumSpeedDegreesPerSecond": 122.82148039646025,
+      "phase": 0.8359374708961697,
+      "seamVelocityDifferenceDegreesPerSecond": 8.28686181986567
+    },
+    {
+      "name": "tail_01_0367",
+      "maximumStepDegrees": 0.14908799792895217,
+      "maximumSpeedDegreesPerSecond": 17.038702617585713,
+      "phase": 0.5703125124730701,
+      "seamVelocityDifferenceDegreesPerSecond": 0.734120575035119
+    },
+    {
+      "name": "dyn_new_neck_04_03_0129",
+      "maximumStepDegrees": 0.12747624914404895,
+      "maximumSpeedDegreesPerSecond": 14.568777516238917,
+      "phase": 0.49218748087462577,
+      "seamVelocityDifferenceDegreesPerSecond": 0.08712675959458452
+    },
+    {
+      "name": "dyn_new_neck_041_01_0118",
+      "maximumStepDegrees": 0.12742980050074462,
+      "maximumSpeedDegreesPerSecond": 14.563370057682857,
+      "phase": 0.3437499900215439,
+      "seamVelocityDifferenceDegreesPerSecond": 1.3044802919804233
+    },
+    {
+      "name": "dyn_new_neck_03_04_0154",
+      "maximumStepDegrees": 0.1273956428808338,
+      "maximumSpeedDegreesPerSecond": 14.559503024792324,
+      "phase": 0.5781249783800118,
+      "seamVelocityDifferenceDegreesPerSecond": 1.206413618327381
+    },
+    {
+      "name": "dyn_new_neck_05_02_0108",
+      "maximumStepDegrees": 0.1273707704652935,
+      "maximumSpeedDegreesPerSecond": 14.55664846012539,
+      "phase": 0.7109374842007778,
+      "seamVelocityDifferenceDegreesPerSecond": 0.674248101720968
+    },
+    {
+      "name": "dyn_new_neck_02_03_0159",
+      "maximumStepDegrees": 0.12735649469176735,
+      "maximumSpeedDegreesPerSecond": 14.5550914199362,
+      "phase": 0.8984375174622982,
+      "seamVelocityDifferenceDegreesPerSecond": 1.316042070600719
+    },
+    {
+      "name": "dyn_new_neck_02_04_0160",
+      "maximumStepDegrees": 0.12733578218782302,
+      "maximumSpeedDegreesPerSecond": 14.552674485543664,
+      "phase": 0.9140624492761814,
+      "seamVelocityDifferenceDegreesPerSecond": 1.2243304741897243
+    },
+    {
+      "name": "dyn_new_neck_04_02_0128",
+      "maximumStepDegrees": 0.12729023993101046,
+      "maximumSpeedDegreesPerSecond": 14.547519063859548,
+      "phase": 0.47656249584231,
+      "seamVelocityDifferenceDegreesPerSecond": 0.3185988847960936
+    },
+    {
+      "name": "dyn_new_neck_041_02_0119",
+      "maximumStepDegrees": 0.12726665413001248,
+      "maximumSpeedDegreesPerSecond": 14.544774277506676,
+      "phase": 0.8593749750538597,
+      "seamVelocityDifferenceDegreesPerSecond": 1.3705554503306832
+    },
+    {
+      "name": "dyn_new_neck_05_03_0109",
+      "maximumStepDegrees": 0.12725166469753255,
+      "maximumSpeedDegreesPerSecond": 14.54306126334773,
+      "phase": 0.21875000332615205,
+      "seamVelocityDifferenceDegreesPerSecond": 0.46385203850928997
+    },
+    {
+      "name": "dyn_new_head_neck_01_073",
+      "maximumStepDegrees": 0.12722119375124596,
+      "maximumSpeedDegreesPerSecond": 14.539541384848814,
+      "phase": 0.9843749617492515,
+      "seamVelocityDifferenceDegreesPerSecond": 0.22450608629300875
+    },
+    {
+      "name": "dyn_head_end_left_03_035",
+      "maximumStepDegrees": 0.12711811061923053,
+      "maximumSpeedDegreesPerSecond": 14.527797925556955,
+      "phase": 0.21875000332615205,
+      "seamVelocityDifferenceDegreesPerSecond": 0.4851158760341765
+    },
+    {
+      "name": "dyn_head_end_right_03_030",
+      "maximumStepDegrees": 0.12710750912235808,
+      "maximumSpeedDegreesPerSecond": 14.526635802232779,
+      "phase": 0.9062499833692398,
+      "seamVelocityDifferenceDegreesPerSecond": 1.2856134644633377
+    },
+    {
+      "name": "dyn_new_neck_05_01_0107",
+      "maximumStepDegrees": 0.1270616199204585,
+      "maximumSpeedDegreesPerSecond": 14.521313102776874,
+      "phase": 0.6953124991684619,
+      "seamVelocityDifferenceDegreesPerSecond": 0.8676893349044241
+    },
+    {
+      "name": "dyn_new_neck_04_04_0130",
+      "maximumStepDegrees": 0.12685229542915363,
+      "maximumSpeedDegreesPerSecond": 14.497468082043973,
+      "phase": 0.0078125,
+      "seamVelocityDifferenceDegreesPerSecond": 0.16072623025136754
+    },
+    {
+      "name": "dyn_new_neck_041_03_0120",
+      "maximumStepDegrees": 0.1267261132223351,
+      "maximumSpeedDegreesPerSecond": 14.482998144892244,
+      "phase": 0.8671874941792339,
+      "seamVelocityDifferenceDegreesPerSecond": 1.3969317474098488
+    },
+    {
+      "name": "dyn_new_neck_03_03_0153",
+      "maximumStepDegrees": 0.12666737097926375,
+      "maximumSpeedDegreesPerSecond": 14.476334054951806,
+      "phase": 0.070312499168462,
+      "seamVelocityDifferenceDegreesPerSecond": 1.0754102261814384
+    },
+    {
+      "name": "dyn_new_neck_03_01_0151",
+      "maximumStepDegrees": 0.12663385551116785,
+      "maximumSpeedDegreesPerSecond": 14.472488637716452,
+      "phase": 0.2890624891900059,
+      "seamVelocityDifferenceDegreesPerSecond": 0.7297882817074633
+    },
+    {
+      "name": "dyn_new_neck_02_02_0158",
+      "maximumStepDegrees": 0.12660938063665592,
+      "maximumSpeedDegreesPerSecond": 14.46965730059226,
+      "phase": 0.8828124792115498,
+      "seamVelocityDifferenceDegreesPerSecond": 1.3708602958047458
+    },
+    {
+      "name": "dyn_new_neck_04_01_0127",
+      "maximumStepDegrees": 0.12642524304752645,
+      "maximumSpeedDegreesPerSecond": 14.448662196599793,
+      "phase": 0.9687500299353683,
+      "seamVelocityDifferenceDegreesPerSecond": 0.544750769255501
+    },
+    {
+      "name": "dyn_head_end_right_02_029",
+      "maximumStepDegrees": 0.12637952191077803,
+      "maximumSpeedDegreesPerSecond": 14.443387706948243,
+      "phase": 0.390624998336924,
+      "seamVelocityDifferenceDegreesPerSecond": 1.3547496009211044
+    },
+    {
+      "name": "dyn_new_head_neck_02_074",
+      "maximumStepDegrees": 0.12625090399824784,
+      "maximumSpeedDegreesPerSecond": 14.428737379829526,
+      "phase": 0.49218748087462577,
+      "seamVelocityDifferenceDegreesPerSecond": 0.09603464248058644
+    },
+    {
+      "name": "dyn_head_end_left_02_034",
+      "maximumStepDegrees": 0.12609742998855727,
+      "maximumSpeedDegreesPerSecond": 14.411124057355993,
+      "phase": 0.21093749750538598,
+      "seamVelocityDifferenceDegreesPerSecond": 0.6882969699750775
+    },
+    {
+      "name": "dyn_head_end_left_01_033",
+      "maximumStepDegrees": 0.12603559543272538,
+      "maximumSpeedDegreesPerSecond": 14.404071298263668,
+      "phase": 0.9374999534338715,
+      "seamVelocityDifferenceDegreesPerSecond": 0.8768049548918657
+    },
+    {
+      "name": "dyn_head_end_right_01_028",
+      "maximumStepDegrees": 0.12599255876663396,
+      "maximumSpeedDegreesPerSecond": 14.399138783831223,
+      "phase": 0.125,
+      "seamVelocityDifferenceDegreesPerSecond": 1.3860070866602139
+    },
+    {
+      "name": "dyn_new_head_neck_03_075",
+      "maximumStepDegrees": 0.1258740011875841,
+      "maximumSpeedDegreesPerSecond": 14.385662852236749,
+      "phase": 0.7656250116415322,
+      "seamVelocityDifferenceDegreesPerSecond": 0.2818387183034269
+    },
+    {
+      "name": "dyn_new_neck_03_02_0152",
+      "maximumStepDegrees": 0.12570511216718253,
+      "maximumSpeedDegreesPerSecond": 14.366300001332077,
+      "phase": 0.05468750083153801,
+      "seamVelocityDifferenceDegreesPerSecond": 0.9148107080425071
+    },
+    {
+      "name": "dyn_new_neck_02_01_0157",
+      "maximumStepDegrees": 0.12570245945520236,
+      "maximumSpeedDegreesPerSecond": 14.36605799735131,
+      "phase": 0.6171875207884502,
+      "seamVelocityDifferenceDegreesPerSecond": 1.3872282869423638
+    },
+    {
+      "name": "dyn_new_neck_041_04_0121",
+      "maximumStepDegrees": 0.12565678356460833,
+      "maximumSpeedDegreesPerSecond": 14.360788960042262,
+      "phase": 0.3828125058207661,
+      "seamVelocityDifferenceDegreesPerSecond": 1.382701796468559
+    },
+    {
+      "name": "dyn_bounce_tail_08_front_0395",
+      "maximumStepDegrees": 0.1099352193856548,
+      "maximumSpeedDegreesPerSecond": 12.564079847687452,
+      "phase": 0.6796875141361461,
+      "seamVelocityDifferenceDegreesPerSecond": 0.5640271397947906
+    },
+    {
+      "name": "dyn_bounce_tail_07_right_0387",
+      "maximumStepDegrees": 0.1098822787228382,
+      "maximumSpeedDegreesPerSecond": 12.5580294598451,
+      "phase": 0.4609375108099941,
+      "seamVelocityDifferenceDegreesPerSecond": 0.13283121319280783
+    },
+    {
+      "name": "dyn_bounce_tail_06_left_0379",
+      "maximumStepDegrees": 0.10980983159550055,
+      "maximumSpeedDegreesPerSecond": 12.549749752052707,
+      "phase": 0.7421875074838421,
+      "seamVelocityDifferenceDegreesPerSecond": 0.6161236735182299
+    },
+    {
+      "name": "dyn_bounce_tail_05_left_0378",
+      "maximumStepDegrees": 0.10953500503673808,
+      "maximumSpeedDegreesPerSecond": 12.518255591327325,
+      "phase": 0.23437498835846787,
+      "seamVelocityDifferenceDegreesPerSecond": 0.6117674008275259
+    },
+    {
+      "name": "dyn_bounce_tail_06_right_0386",
+      "maximumStepDegrees": 0.10945803206954673,
+      "maximumSpeedDegreesPerSecond": 12.509543246573541,
+      "phase": 0.445312499168462,
+      "seamVelocityDifferenceDegreesPerSecond": 0.19323741110631754
+    },
+    {
+      "name": "dyn_bounce_tail_07_front_0394",
+      "maximumStepDegrees": 0.10937038082603814,
+      "maximumSpeedDegreesPerSecond": 12.499484014841233,
+      "phase": 0.16406250249461402,
+      "seamVelocityDifferenceDegreesPerSecond": 0.536437514651685
+    },
+    {
+      "name": "dyn_bounce_tail_08_back_0402",
+      "maximumStepDegrees": 0.10926324458932697,
+      "maximumSpeedDegreesPerSecond": 12.487237803002193,
+      "phase": 0.8828124792115498,
+      "seamVelocityDifferenceDegreesPerSecond": 0.40655169839110966
+    },
+    {
+      "name": "dyn_bounce_tail_08_right_0388",
+      "maximumStepDegrees": 0.10771415869695009,
+      "maximumSpeedDegreesPerSecond": 12.3102432337671,
+      "phase": 0.9765624958423099,
+      "seamVelocityDifferenceDegreesPerSecond": 0.14168495311935264
+    },
+    {
+      "name": "dyn_bounce_tail_07_left_0380",
+      "maximumStepDegrees": 0.10750982425625673,
+      "maximumSpeedDegreesPerSecond": 12.28689062444999,
+      "phase": 0.7656250116415322,
+      "seamVelocityDifferenceDegreesPerSecond": 0.6004034339413507
+    },
+    {
+      "name": "dyn_tail_06_0372",
+      "maximumStepDegrees": 0.10733820595334052,
+      "maximumSpeedDegreesPerSecond": 12.267276156965897,
+      "phase": 0.04687499833692398,
+      "seamVelocityDifferenceDegreesPerSecond": 0.2235750484709499
+    },
+    {
+      "name": "dyn_bounce_tail_08_left_0361",
+      "maximumStepDegrees": 0.1072047628404271,
+      "maximumSpeedDegreesPerSecond": 12.25198458045183,
+      "phase": 0.281249996673848,
+      "seamVelocityDifferenceDegreesPerSecond": 0.5886908020504387
+    },
+    {
+      "name": "dyn_bounce_tail_04_left_0377",
+      "maximumStepDegrees": 0.10678542667552923,
+      "maximumSpeedDegreesPerSecond": 12.2040382104477,
+      "phase": 0.7109374842007778,
+      "seamVelocityDifferenceDegreesPerSecond": 0.5873791636952435
+    },
+    {
+      "name": "dyn_bounce_tail_05_right_0385",
+      "maximumStepDegrees": 0.10658513373842168,
+      "maximumSpeedDegreesPerSecond": 12.181211247400462,
+      "phase": 0.9296874875269299,
+      "seamVelocityDifferenceDegreesPerSecond": 0.278220743781478
+    },
+    {
+      "name": "dyn_bounce_tail_06_front_0393",
+      "maximumStepDegrees": 0.10636535101061205,
+      "maximumSpeedDegreesPerSecond": 12.156049299386423,
+      "phase": 0.6484374908530819,
+      "seamVelocityDifferenceDegreesPerSecond": 0.4938045171786287
+    },
+    {
+      "name": "neck_01_014",
+      "maximumStepDegrees": 0.10447695926121628,
+      "maximumSpeedDegreesPerSecond": 11.940235302663316,
+      "phase": 0.2968750083153801,
+      "seamVelocityDifferenceDegreesPerSecond": 0.7286609277821517
+    },
+    {
+      "name": "dyn_bounce_tail_07_back_0381",
+      "maximumStepDegrees": 0.10336685536310254,
+      "maximumSpeedDegreesPerSecond": 11.813366164744192,
+      "phase": 0.281249996673848,
+      "seamVelocityDifferenceDegreesPerSecond": 0.5653977035706902
+    },
+    {
+      "name": "dyn_tail_07_0373",
+      "maximumStepDegrees": 0.10312393810591461,
+      "maximumSpeedDegreesPerSecond": 11.7856443077218,
+      "phase": 0.5703125124730701,
+      "seamVelocityDifferenceDegreesPerSecond": 0.31857658674574624
+    },
+    {
+      "name": "dyn_bounce_tail_04_right_0384",
+      "maximumStepDegrees": 0.10220566838770907,
+      "maximumSpeedDegreesPerSecond": 11.680696925705549,
+      "phase": 0.4062500099784561,
+      "seamVelocityDifferenceDegreesPerSecond": 0.36500109258432895
+    },
+    {
+      "name": "dyn_bounce_tail_05_front_0392",
+      "maximumStepDegrees": 0.10193916605681767,
+      "maximumSpeedDegreesPerSecond": 11.650181675843603,
+      "phase": 0.6249999866953918,
+      "seamVelocityDifferenceDegreesPerSecond": 0.4369700000026797
+    },
+    {
+      "name": "dyn_bounce_tail_06_back_0400",
+      "maximumStepDegrees": 0.1017145925433069,
+      "maximumSpeedDegreesPerSecond": 11.624535948113591,
+      "phase": 0.335937497505386,
+      "seamVelocityDifferenceDegreesPerSecond": 0.4958982684340345
+    },
+    {
+      "name": "dyn_bounce_tail_04_back_0398",
+      "maximumStepDegrees": 0.09970419194152003,
+      "maximumSpeedDegreesPerSecond": 11.394771926373528,
+      "phase": 0.7499999733907837,
+      "seamVelocityDifferenceDegreesPerSecond": 0.5590928440153814
+    },
+    {
+      "name": "dyn_tail_08_0374",
+      "maximumStepDegrees": 0.09920748541280824,
+      "maximumSpeedDegreesPerSecond": 11.337999491402254,
+      "phase": 0.10156250249461403,
+      "seamVelocityDifferenceDegreesPerSecond": 0.40654383741096917
+    },
+    {
+      "name": "dyn_bounce_tail_04_front_0391",
+      "maximumStepDegrees": 0.09865496323564511,
+      "maximumSpeedDegreesPerSecond": 11.274853976852475,
+      "phase": 0.5781249783800118,
+      "seamVelocityDifferenceDegreesPerSecond": 0.36773286484486944
+    },
+    {
+      "name": "dyn_bounce_tail_05_back_0399",
+      "maximumStepDegrees": 0.0985940425917358,
+      "maximumSpeedDegreesPerSecond": 11.267901327820761,
+      "phase": 0.2968750083153801,
+      "seamVelocityDifferenceDegreesPerSecond": 0.5321648949348781
+    },
+    {
+      "name": "head_019",
+      "maximumStepDegrees": 0.04677188663851597,
+      "maximumSpeedDegreesPerSecond": 5.345381776988394,
+      "phase": 0.3515625091469181,
+      "seamVelocityDifferenceDegreesPerSecond": 0.5101574673406485
+    },
+    {
+      "name": "neck_03_016",
+      "maximumStepDegrees": 0.04566762294853174,
+      "maximumSpeedDegreesPerSecond": 5.2191796622212125,
+      "phase": 0.32812500498922803,
+      "seamVelocityDifferenceDegreesPerSecond": 0.4353485078357034
+    },
+    {
+      "name": "neck_04_017",
+      "maximumStepDegrees": 0.03503820620129021,
+      "maximumSpeedDegreesPerSecond": 4.004370241869648,
+      "phase": 0.335937497505386,
+      "seamVelocityDifferenceDegreesPerSecond": 0.36325976784845315
+    },
+    {
+      "name": "pelvis_08",
+      "maximumStepDegrees": 0.03430632708366225,
+      "maximumSpeedDegreesPerSecond": 3.9207401883464006,
+      "phase": 0.49218748087462577,
+      "seamVelocityDifferenceDegreesPerSecond": 0.0005734397005507292
+    },
+    {
+      "name": "neck_02_015",
+      "maximumStepDegrees": 0.03185782133261405,
+      "maximumSpeedDegreesPerSecond": 3.640894238608819,
+      "phase": 0.05468750083153801,
+      "seamVelocityDifferenceDegreesPerSecond": 0.24241867910433218
+    },
+    {
+      "name": "neck_05_018",
+      "maximumStepDegrees": 0.03143400486036552,
+      "maximumSpeedDegreesPerSecond": 3.5924725304585605,
+      "phase": 0.07812499833692398,
+      "seamVelocityDifferenceDegreesPerSecond": 0.302710554464395
+    },
+    {
+      "name": "spine_01_09",
+      "maximumStepDegrees": 0.021965600316357324,
+      "maximumSpeedDegreesPerSecond": 2.510356715932134,
+      "phase": 0.414062502494614,
+      "seamVelocityDifferenceDegreesPerSecond": 0.21428583030281648
+    },
+    {
+      "name": "spine_02_010",
+      "maximumStepDegrees": 0.012600904536005821,
+      "maximumSpeedDegreesPerSecond": 1.4401079262067336,
+      "phase": 0.2968750083153801,
+      "seamVelocityDifferenceDegreesPerSecond": 0.08542900654657028
+    },
+    {
+      "name": "spine_03_011",
+      "maximumStepDegrees": 0.007933010008767035,
+      "maximumSpeedDegreesPerSecond": 0.9066336678967741,
+      "phase": 0.0078125,
+      "seamVelocityDifferenceDegreesPerSecond": 0.0160902096011288
+    },
+    {
+      "name": "spine_04_012",
+      "maximumStepDegrees": 0.007833536450636164,
+      "maximumSpeedDegreesPerSecond": 0.8952644816605686,
+      "phase": 0.2968750083153801,
+      "seamVelocityDifferenceDegreesPerSecond": 0.05464584203025579
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "status": "No failed Bay model/build-report dependency; frozen Sporthorse assets plus tracked native source helpers",
+  "pythonRequirements": [
+    "numpy",
+    "scipy"
+  ],
+  "geometryReferenceFileIsProvenanceOnly": true,
+  "inputs": {
+    "tools/asset-gen/rig_hero_horse.py": "8d910ed3340bb64f691a98202a04c73516df494956892d71c3a55d2ffe85e876",
+    "review/native-rider-reins/anchors.json": "f73a196e7381c95e25f4bf9769d89bd1ce6c183f2199c48fed72c4e94e0508d7",
+    "review/native-horse-kit/model.glb": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+    "review/native-breed-targets/bay-sporthorse/input.json": "e30e344d6539f6f0f1d9c1bbf0b4050acf0a15f5ad4686228dc00dce79db41cd",
+    "review/native-breed-targets/bay-sporthorse/shape-input.npz": "d2ffccae793670f67d261a36277cf3d9e299401a9c3b3bf95e0eebd25ede10c1",
+    "review/native-breed-targets/bay-sporthorse/coat.png": "3b46a6267a559152a2af357eb6b8bd7dc7bcdc21faf7fd30d71ff5efc958819d",
+    "review/target-native-walk-rollover/native-walk-joint-reference.json": "177cf7ddbc9ec0d164039e8b64a22b374f21831119a6e2776dfe8deb7b2692e3",
+    "review/native-bay-sporthorse-walk/build-report.json": "ace6ef43f0e26185f789e77a5bb16eb142a1ca2696f47249dcf6eb367251aea9",
+    "review/native-bay-sporthorse-trot/continuity-tools.py": "e45dd7a9140c0e73c3df0a0ad63feb7a1b380f5741872c45214ca26405271475",
+    "review/native-bay-sporthorse-trot/build-report.json": "ca5f9811c31aa23362d4689512338e2322c7f6caaf0818d80c121b41d2a284b3",
+    "review/native-bay-sporthorse-canter/build-summary.json": "84d119d57a994cb39915ec93dafa626e6a1c0e827508afb191de5a69b58342b0"
+  }
+}

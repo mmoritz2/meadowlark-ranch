@@ -1,0 +1,35 @@
+{
+  "sourceSha256": "8f7f83e9669dc063dcb38455f8658369774ec0ce9b9eb81c2e7742e7d013d6a8",
+  "candidateSha256": "dde4b71c76c7dbaf80c8d5ca9b06f7cbffaad85d500672d5ae4e5bbf73949e03",
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "images": true,
+    "textures": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "accessorsSourcePrefix": true,
+    "bufferViewsSourcePrefix": true,
+    "binarySourcePrefix": true
+  },
+  "jointCount": 677,
+  "skinnedMeshVertexCounts": [
+    2028,
+    5092,
+    13895,
+    16159,
+    23514
+  ],
+  "appendedClips": [
+    "Target Native Canter Left",
+    "Target Native Canter Right"
+  ],
+  "channelsEach": [
+    82,
+    82
+  ],
+  "finite": true
+}

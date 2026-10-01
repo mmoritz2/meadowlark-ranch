@@ -1,0 +1,46 @@
+{
+  "candidateSha256": "512697ed36c8edb92cb31555e672026bb552d1f97d366d9afe9ac88b92e2dbf5",
+  "sourceSha256": "8f7f83e9669dc063dcb38455f8658369774ec0ce9b9eb81c2e7742e7d013d6a8",
+  "clip": "Target Native Walk Rollover",
+  "duration": 1.12,
+  "stanceFraction": 0.65,
+  "strideHalfM": 0.1823970526440914,
+  "bodyHeightRatio": 0.9119852632204569,
+  "swingLiftM": 0.04103933684492056,
+  "nominalSpeedMps": 0.501090803967284,
+  "uncopiedClosureMaxDegrees": 1.2202842975927288e-05,
+  "maxActualLimbStepDegrees": 4.93795497366686,
+  "maxActualLimbStepIntervalSeconds": 0.00875,
+  "maxActualLimbStepJoint": "lowerarm_r_0271",
+  "authoredGridPass": false,
+  "worstOfflineVerticalTargetErrorM": 0.005194980691773515,
+  "capHitsPer128Frames": {
+    "HL": 0,
+    "FL": 18,
+    "HR": 0,
+    "FR": 17
+  },
+  "browserQaPhases": 256,
+  "browserFinite677AndNoErrors": true,
+  "supportCounts": {
+    "one": 0,
+    "two": 100,
+    "three": 156,
+    "four": 0,
+    "suspension": 0
+  },
+  "wholeHoofStanceMinYRangeM": {
+    "min": 0.0007148005701835816,
+    "max": 0.0013630603066736814
+  },
+  "maxRegionalForeAftDriftAtNominalTravelM": 0.0001233992453106847,
+  "bodyMinYRangeM": {
+    "min": 0.0007148005701835816,
+    "max": 0.0011767347204984782,
+    "span": 0.0004619341503148966
+  },
+  "trunkMarker1998VerticalSpanM": 0.017655500406745572,
+  "headPivotVerticalSpanM": 0.03770203244255432,
+  "contactAndSupportPass": true,
+  "preservesOriginalNodesMeshesSkinBindsMaterialsMapsBinaryPrefix": true
+}

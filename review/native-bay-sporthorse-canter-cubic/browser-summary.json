@@ -1,0 +1,97 @@
+{
+  "candidateSha256": "0162dd10be27992ae53c18772ad49eb29e2dffcb434b4521a7c849e3642429fe",
+  "sourceSha256": "8f7f83e9669dc063dcb38455f8658369774ec0ce9b9eb81c2e7742e7d013d6a8",
+  "errors": [],
+  "reports": [
+    {
+      "lead": "Left",
+      "clip": "Target Native Canter Left",
+      "phases": 512,
+      "bones": 677,
+      "durationS": 0.6399999856948853,
+      "impliedSpeedMps": 1.7812212172274549,
+      "suspensionSamples": 61,
+      "finite": true,
+      "bodyMinimumAboveFloorM": 0.0008128070659845573,
+      "bodyMaximumAboveFloorM": 2.087292777384955,
+      "contact": {
+        "FL": {
+          "samples": 205,
+          "minM": 0.0009157774521070046,
+          "maxM": 0.001295030900246769,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "FR": {
+          "samples": 205,
+          "minM": 0.0008621937022696823,
+          "maxM": 0.0011450508672301786,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "HL": {
+          "samples": 205,
+          "minM": 0.0009114019165730259,
+          "maxM": 0.0010976559026874976,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "HR": {
+          "samples": 205,
+          "minM": 0.0008128070659845573,
+          "maxM": 0.004024223620067388,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        }
+      },
+      "seamPositionM": 1.1097138696213106e-7,
+      "allStanceWithin10mm": true,
+      "errors": []
+    },
+    {
+      "lead": "Right",
+      "clip": "Target Native Canter Right",
+      "phases": 512,
+      "bones": 677,
+      "durationS": 0.6399999856948853,
+      "impliedSpeedMps": 1.7812212172274549,
+      "suspensionSamples": 61,
+      "finite": true,
+      "bodyMinimumAboveFloorM": 0.000797143814119613,
+      "bodyMaximumAboveFloorM": 2.087292777384955,
+      "contact": {
+        "FL": {
+          "samples": 205,
+          "minM": 0.0008942021323676084,
+          "maxM": 0.0011087483943672855,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "FR": {
+          "samples": 205,
+          "minM": 0.0009420483972211497,
+          "maxM": 0.0014936174521360955,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "HL": {
+          "samples": 205,
+          "minM": 0.0009522500891036363,
+          "maxM": 0.0013725692324373304,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "HR": {
+          "samples": 205,
+          "minM": 0.000797143814119613,
+          "maxM": 0.0028714436041158494,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        }
+      },
+      "seamPositionM": 2.3005142664324538e-8,
+      "allStanceWithin10mm": true,
+      "errors": []
+    }
+  ]
+}

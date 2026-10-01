@@ -1,0 +1,1811 @@
+{
+  "originalSha256": "dde4b71c76c7dbaf80c8d5ca9b06f7cbffaad85d500672d5ae4e5bbf73949e03",
+  "candidateSha256": "0162dd10be27992ae53c18772ad49eb29e2dffcb434b4521a7c849e3642429fe",
+  "allAuthoredKeysExact": true,
+  "records": [
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 8,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 9,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 10,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 11,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 12,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 14,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 15,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 16,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 17,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 18,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 19,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 30,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 31,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 32,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 36,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 37,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 38,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 87,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 88,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 89,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 131,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 132,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 133,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 145,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 146,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 147,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 148,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 156,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 157,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 158,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 159,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 186,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 187,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 188,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 189,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 193,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 194,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 195,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 196,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 251,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 252,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 253,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 254,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 255,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 331,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 332,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 333,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 334,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 335,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 462,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 467,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 468,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 469,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 473,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 474,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 475,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 476,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 477,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 481,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 482,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 483,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 484,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 485,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 489,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 490,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 491,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 492,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 493,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 497,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 498,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 499,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 500,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 501,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 505,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 506,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 507,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 508,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 590,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 591,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 592,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 593,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "target": {
+        "node": 8,
+        "path": "translation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 8,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 9,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 10,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 11,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 12,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 14,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 15,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 16,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 17,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 18,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 19,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 30,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 31,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 32,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 36,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 37,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 38,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 87,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 88,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 89,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 131,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 132,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 133,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 145,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 146,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 147,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 148,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 156,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 157,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 158,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 159,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 186,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 187,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 188,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 189,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 193,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 194,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 195,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 196,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 251,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 252,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 253,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 254,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 255,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 331,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 332,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 333,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 334,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 335,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 462,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 467,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 468,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 469,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 473,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 474,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 475,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 476,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 477,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 481,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 482,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 483,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 484,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 485,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 489,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 490,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 491,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 492,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 493,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 497,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 498,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 499,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 500,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 501,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 505,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 506,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 507,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 508,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 590,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 591,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 592,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 593,
+        "path": "rotation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "target": {
+        "node": 8,
+        "path": "translation"
+      },
+      "channelsSame": true,
+      "timesSame": true,
+      "valuesSame": true,
+      "interpolation": "CUBICSPLINE"
+    }
+  ]
+}

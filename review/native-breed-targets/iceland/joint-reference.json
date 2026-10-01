@@ -1,0 +1,6837 @@
+{
+  "id": "iceland",
+  "sha256": "48e28ee87d400ddf65b944caa20fa6ee20a4e011ff737eae8c13ac1b95ed3c4d",
+  "jointCount": 677,
+  "anatomy": "Native _l positive X = FL/HL; _r negative X = FR/HR",
+  "joints": [
+    {
+      "node": 6,
+      "name": "_rootJoint",
+      "parent": 5,
+      "worldRestPosition": [
+        -0.010802215922631316,
+        0.0034702505047884686,
+        -1.4181809621497132
+      ]
+    },
+    {
+      "node": 7,
+      "name": "root_07",
+      "parent": 6,
+      "worldRestPosition": [
+        0.0036546393450274384,
+        0.0034705933292937838,
+        0.026501596858047847
+      ]
+    },
+    {
+      "node": 8,
+      "name": "pelvis_08",
+      "parent": 7,
+      "worldRestPosition": [
+        0.006739476755521454,
+        1.2256946890897031,
+        -0.3947858407963312
+      ]
+    },
+    {
+      "node": 9,
+      "name": "spine_01_09",
+      "parent": 8,
+      "worldRestPosition": [
+        0.008229337286971403,
+        1.1957608629376453,
+        -0.24349088587307396
+      ]
+    },
+    {
+      "node": 10,
+      "name": "spine_02_010",
+      "parent": 9,
+      "worldRestPosition": [
+        0.008434614344656892,
+        1.175272940209095,
+        -0.08077398928192409
+      ]
+    },
+    {
+      "node": 11,
+      "name": "spine_03_011",
+      "parent": 10,
+      "worldRestPosition": [
+        0.004342425211531873,
+        1.1604172153270742,
+        0.04833497798911887
+      ]
+    },
+    {
+      "node": 12,
+      "name": "spine_04_012",
+      "parent": 11,
+      "worldRestPosition": [
+        0.0029820090316404484,
+        1.1492853680349808,
+        0.1945464520715198
+      ]
+    },
+    {
+      "node": 13,
+      "name": "neckOff_01_013",
+      "parent": 12,
+      "worldRestPosition": [
+        0.0001144869667417947,
+        1.1412147235790844,
+        0.26940968675308774
+      ]
+    },
+    {
+      "node": 14,
+      "name": "neck_01_014",
+      "parent": 13,
+      "worldRestPosition": [
+        -0.006676227987211314,
+        1.1067321201238711,
+        0.45771028087919396
+      ]
+    },
+    {
+      "node": 15,
+      "name": "neck_02_015",
+      "parent": 14,
+      "worldRestPosition": [
+        -0.01177515966458302,
+        1.1937780727849248,
+        0.5774969431208271
+      ]
+    },
+    {
+      "node": 16,
+      "name": "neck_03_016",
+      "parent": 15,
+      "worldRestPosition": [
+        -0.016005037605302017,
+        1.3821193024658662,
+        0.640576614788675
+      ]
+    },
+    {
+      "node": 17,
+      "name": "neck_04_017",
+      "parent": 16,
+      "worldRestPosition": [
+        -0.019927182000920925,
+        1.4686194875058418,
+        0.706966842056203
+      ]
+    },
+    {
+      "node": 18,
+      "name": "neck_05_018",
+      "parent": 17,
+      "worldRestPosition": [
+        -0.021918677568702794,
+        1.5236723304645508,
+        0.758417107843802
+      ]
+    },
+    {
+      "node": 19,
+      "name": "head_019",
+      "parent": 18,
+      "worldRestPosition": [
+        -0.023888499418636334,
+        1.557027298821777,
+        0.8239040239309717
+      ]
+    },
+    {
+      "node": 20,
+      "name": "jaw_020",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.026251600807704254,
+        1.4677463170995437,
+        0.8516607580494291
+      ]
+    },
+    {
+      "node": 21,
+      "name": "jaw_end_021",
+      "parent": 20,
+      "worldRestPosition": [
+        -0.04651738008946204,
+        1.195480998209488,
+        1.0618687545477565
+      ]
+    },
+    {
+      "node": 22,
+      "name": "jaw_end_end_022",
+      "parent": 21,
+      "worldRestPosition": [
+        -0.047176289216230335,
+        1.1999960979446949,
+        1.0679440050089755
+      ]
+    },
+    {
+      "node": 23,
+      "name": "jaw_end_end_end_023",
+      "parent": 22,
+      "worldRestPosition": [
+        -0.04783521454961682,
+        1.2045109693114247,
+        1.0740195025633659
+      ]
+    },
+    {
+      "node": 24,
+      "name": "jaw_end_end_end_end_0549",
+      "parent": 23,
+      "worldRestPosition": [
+        -0.04849413433390436,
+        1.2090258327825425,
+        1.0800950496880126
+      ]
+    },
+    {
+      "node": 25,
+      "name": "bottomlip_024",
+      "parent": 20,
+      "worldRestPosition": [
+        -0.04497858998238036,
+        1.2500155936280333,
+        1.0439409770775945
+      ]
+    },
+    {
+      "node": 26,
+      "name": "bottomlip_end_025",
+      "parent": 25,
+      "worldRestPosition": [
+        -0.04563763631971761,
+        1.2545307149560057,
+        1.0500166930287391
+      ]
+    },
+    {
+      "node": 27,
+      "name": "bottomlip_end_end_026",
+      "parent": 26,
+      "worldRestPosition": [
+        -0.04629662912681829,
+        1.2590453247489424,
+        1.0560917232930769
+      ]
+    },
+    {
+      "node": 28,
+      "name": "bottomlip_end_end_end_0550",
+      "parent": 27,
+      "worldRestPosition": [
+        -0.04695563466933036,
+        1.2635599836875644,
+        1.0621670057580648
+      ]
+    },
+    {
+      "node": 29,
+      "name": "head_end_027",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.030706117319624034,
+        1.6101087416869173,
+        0.8860951061199698
+      ]
+    },
+    {
+      "node": 30,
+      "name": "dyn_head_end_right_01_028",
+      "parent": 29,
+      "worldRestPosition": [
+        -0.04017325001548354,
+        1.5847425839729046,
+        0.9620302728280864
+      ]
+    },
+    {
+      "node": 31,
+      "name": "dyn_head_end_right_02_029",
+      "parent": 30,
+      "worldRestPosition": [
+        -0.045131724442769965,
+        1.5310985981316139,
+        1.0070629894506327
+      ]
+    },
+    {
+      "node": 32,
+      "name": "dyn_head_end_right_03_030",
+      "parent": 31,
+      "worldRestPosition": [
+        -0.044093111492388225,
+        1.477728344271068,
+        1.0235676066878492
+      ]
+    },
+    {
+      "node": 33,
+      "name": "dyn_head_end_right_03_end_031",
+      "parent": 32,
+      "worldRestPosition": [
+        -0.04433957078755725,
+        1.4849200890621286,
+        1.0255250968652057
+      ]
+    },
+    {
+      "node": 34,
+      "name": "dyn_head_end_right_03_end_end_032",
+      "parent": 33,
+      "worldRestPosition": [
+        -0.04458611365817894,
+        1.492111355023664,
+        1.0274830248541476
+      ]
+    },
+    {
+      "node": 35,
+      "name": "dyn_head_end_right_03_end_end_end_0551",
+      "parent": 34,
+      "worldRestPosition": [
+        -0.04483260252372198,
+        1.499302656473352,
+        1.0294406560718004
+      ]
+    },
+    {
+      "node": 36,
+      "name": "dyn_head_end_left_01_033",
+      "parent": 29,
+      "worldRestPosition": [
+        0.0016266502260548973,
+        1.5844051458753725,
+        0.9655432396355549
+      ]
+    },
+    {
+      "node": 37,
+      "name": "dyn_head_end_left_02_034",
+      "parent": 36,
+      "worldRestPosition": [
+        0.018545933158938138,
+        1.5326503405304321,
+        0.9999218805330523
+      ]
+    },
+    {
+      "node": 38,
+      "name": "dyn_head_end_left_03_035",
+      "parent": 37,
+      "worldRestPosition": [
+        0.030267346491686834,
+        1.479973936871651,
+        1.0110517797067402
+      ]
+    },
+    {
+      "node": 39,
+      "name": "dyn_head_end_left_03_end_036",
+      "parent": 38,
+      "worldRestPosition": [
+        0.03002085217876964,
+        1.4871653218974568,
+        1.0130093095321016
+      ]
+    },
+    {
+      "node": 40,
+      "name": "dyn_head_end_left_03_end_end_037",
+      "parent": 39,
+      "worldRestPosition": [
+        0.029774345762145948,
+        1.4943567109162978,
+        1.0149668619908632
+      ]
+    },
+    {
+      "node": 41,
+      "name": "dyn_head_end_left_03_end_end_end_0552",
+      "parent": 40,
+      "worldRestPosition": [
+        0.029527850065762033,
+        1.5015480083363335,
+        1.0169244921262417
+      ]
+    },
+    {
+      "node": 42,
+      "name": "head_correctiveRoot_038",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.023888447769153304,
+        1.5570270466854261,
+        0.8239036894692392
+      ]
+    },
+    {
+      "node": 43,
+      "name": "head_middleslider_00_039",
+      "parent": 42,
+      "worldRestPosition": [
+        -0.02406877323929059,
+        1.612804289480985,
+        0.8223903469727772
+      ]
+    },
+    {
+      "node": 44,
+      "name": "head_middleslider_00_end_040",
+      "parent": 43,
+      "worldRestPosition": [
+        -0.024197101047894302,
+        1.6193770367895575,
+        0.8232009766899431
+      ]
+    },
+    {
+      "node": 45,
+      "name": "head_middleslider_00_end_end_041",
+      "parent": 44,
+      "worldRestPosition": [
+        -0.02432543199800637,
+        1.6258161604564765,
+        0.8240113134351107
+      ]
+    },
+    {
+      "node": 46,
+      "name": "head_middleslider_00_end_end_end_0553",
+      "parent": 45,
+      "worldRestPosition": [
+        -0.02445377403588564,
+        1.632252368751701,
+        0.8248216999545157
+      ]
+    },
+    {
+      "node": 47,
+      "name": "head_middleslider_01_r_042",
+      "parent": 42,
+      "worldRestPosition": [
+        -0.11074635316581381,
+        1.5523490994481237,
+        0.8078475897090643
+      ]
+    },
+    {
+      "node": 48,
+      "name": "head_middleslider_01_r_end_043",
+      "parent": 47,
+      "worldRestPosition": [
+        -0.11087407165637443,
+        1.5596933910727169,
+        0.8086582040570268
+      ]
+    },
+    {
+      "node": 49,
+      "name": "head_middleslider_01_r_end_end_044",
+      "parent": 48,
+      "worldRestPosition": [
+        -0.11100183626276537,
+        1.5670382690107723,
+        0.809468713335358
+      ]
+    },
+    {
+      "node": 50,
+      "name": "head_middleslider_01_r_end_end_end_0554",
+      "parent": 49,
+      "worldRestPosition": [
+        -0.11112968593601509,
+        1.5743839346778288,
+        0.8102790993540939
+      ]
+    },
+    {
+      "node": 51,
+      "name": "head_middleslider_02_045",
+      "parent": 42,
+      "worldRestPosition": [
+        -0.019620928964508667,
+        1.3577701291469035,
+        0.7942791340959308
+      ]
+    },
+    {
+      "node": 52,
+      "name": "head_middleslider_02_end_046",
+      "parent": 51,
+      "worldRestPosition": [
+        -0.019748941170011605,
+        1.3653690710536603,
+        0.7950895270337134
+      ]
+    },
+    {
+      "node": 53,
+      "name": "head_middleslider_02_end_end_047",
+      "parent": 52,
+      "worldRestPosition": [
+        -0.019876954207001574,
+        1.3729394945910018,
+        0.7958997705848284
+      ]
+    },
+    {
+      "node": 54,
+      "name": "head_middleslider_02_end_end_end_0555",
+      "parent": 53,
+      "worldRestPosition": [
+        -0.020004975583519314,
+        1.3804802129176756,
+        0.7967101791036626
+      ]
+    },
+    {
+      "node": 55,
+      "name": "head_middleslider_01_l_048",
+      "parent": 42,
+      "worldRestPosition": [
+        0.06382406222361349,
+        1.5522628802379708,
+        0.822744321893935
+      ]
+    },
+    {
+      "node": 56,
+      "name": "head_middleslider_01_l_end_049",
+      "parent": 55,
+      "worldRestPosition": [
+        0.06369574288108587,
+        1.5596136834471768,
+        0.8235546209438411
+      ]
+    },
+    {
+      "node": 57,
+      "name": "head_middleslider_01_l_end_end_050",
+      "parent": 56,
+      "worldRestPosition": [
+        0.06356739679017132,
+        1.566964567452203,
+        0.824365106614383
+      ]
+    },
+    {
+      "node": 58,
+      "name": "head_middleslider_01_l_end_end_end_0556",
+      "parent": 57,
+      "worldRestPosition": [
+        0.06343905437618344,
+        1.5743154398806591,
+        0.8251755049667442
+      ]
+    },
+    {
+      "node": 59,
+      "name": "ear_01_l_051",
+      "parent": 19,
+      "worldRestPosition": [
+        0.029723538148105366,
+        1.5891545335008486,
+        0.8827219846283964
+      ]
+    },
+    {
+      "node": 60,
+      "name": "ear_02_l_052",
+      "parent": 59,
+      "worldRestPosition": [
+        0.026137858681067928,
+        1.624511485430402,
+        0.9148452372932595
+      ]
+    },
+    {
+      "node": 61,
+      "name": "ear_02_l_end_053",
+      "parent": 60,
+      "worldRestPosition": [
+        0.02553390736083637,
+        1.6201623594406467,
+        0.9209117525393822
+      ]
+    },
+    {
+      "node": 62,
+      "name": "ear_02_l_end_end_054",
+      "parent": 61,
+      "worldRestPosition": [
+        0.024929981222155125,
+        1.6160142790919896,
+        0.9269777140268377
+      ]
+    },
+    {
+      "node": 63,
+      "name": "ear_02_l_end_end_end_0557",
+      "parent": 62,
+      "worldRestPosition": [
+        0.024326056795171913,
+        1.6120195318127741,
+        0.9330438543341008
+      ]
+    },
+    {
+      "node": 64,
+      "name": "ear_01_r_055",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.08910881906844331,
+        1.5892479190321172,
+        0.8725859665254233
+      ]
+    },
+    {
+      "node": 65,
+      "name": "ear_02_r_056",
+      "parent": 64,
+      "worldRestPosition": [
+        -0.09261514901396489,
+        1.62470048844623,
+        0.9046838246487243
+      ]
+    },
+    {
+      "node": 66,
+      "name": "ear_02_r_end_057",
+      "parent": 65,
+      "worldRestPosition": [
+        -0.092018567669637,
+        1.6290787368084492,
+        0.8986135854581666
+      ]
+    },
+    {
+      "node": 67,
+      "name": "ear_02_r_end_end_058",
+      "parent": 66,
+      "worldRestPosition": [
+        -0.09142193861383655,
+        1.6335399934212078,
+        0.8925431521491533
+      ]
+    },
+    {
+      "node": 68,
+      "name": "ear_02_r_end_end_end_0558",
+      "parent": 67,
+      "worldRestPosition": [
+        -0.09082535929201148,
+        1.6381007765248465,
+        0.8864727900438257
+      ]
+    },
+    {
+      "node": 69,
+      "name": "eye_l_059",
+      "parent": 19,
+      "worldRestPosition": [
+        0.048683276930431806,
+        1.4924601333770178,
+        0.955131454339238
+      ]
+    },
+    {
+      "node": 70,
+      "name": "eyeend_l_060",
+      "parent": 69,
+      "worldRestPosition": [
+        0.05823091517816231,
+        1.486789851168607,
+        0.9690322593761654
+      ]
+    },
+    {
+      "node": 71,
+      "name": "eyeend_l_end_061",
+      "parent": 70,
+      "worldRestPosition": [
+        0.057196418430068,
+        1.479799092459667,
+        0.9665766062917349
+      ]
+    },
+    {
+      "node": 72,
+      "name": "eyeend_l_end_end_062",
+      "parent": 71,
+      "worldRestPosition": [
+        0.056161631317768544,
+        1.4728079783549188,
+        0.9641204493612521
+      ]
+    },
+    {
+      "node": 73,
+      "name": "eyeend_l_end_end_end_0559",
+      "parent": 72,
+      "worldRestPosition": [
+        0.05512682512923093,
+        1.4658169392532074,
+        0.9616645897804216
+      ]
+    },
+    {
+      "node": 74,
+      "name": "eye_r_063",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.12154985496758046,
+        1.4916752889009441,
+        0.9406051169745997
+      ]
+    },
+    {
+      "node": 75,
+      "name": "eyeend_r_064",
+      "parent": 74,
+      "worldRestPosition": [
+        -0.1337285283410671,
+        1.4859046677521346,
+        0.9526518542155769
+      ]
+    },
+    {
+      "node": 76,
+      "name": "eyeend_r_end_065",
+      "parent": 75,
+      "worldRestPosition": [
+        -0.13212214649139453,
+        1.4789256551675571,
+        0.9504221423598234
+      ]
+    },
+    {
+      "node": 77,
+      "name": "eyeend_r_end_end_066",
+      "parent": 76,
+      "worldRestPosition": [
+        -0.13051594991522328,
+        1.4719468147061314,
+        0.9481915326999674
+      ]
+    },
+    {
+      "node": 78,
+      "name": "eyeend_r_end_end_end_0560",
+      "parent": 77,
+      "worldRestPosition": [
+        -0.12890999495911962,
+        1.4649680680238393,
+        0.9459610241297126
+      ]
+    },
+    {
+      "node": 79,
+      "name": "reins_04_l_067",
+      "parent": 19,
+      "worldRestPosition": [
+        0.06309393773206058,
+        1.2254469613873398,
+        0.9376500961519805
+      ]
+    },
+    {
+      "node": 80,
+      "name": "reins_04_l_end_068",
+      "parent": 79,
+      "worldRestPosition": [
+        0.06340490723605274,
+        1.2326934093278503,
+        0.9359301161751643
+      ]
+    },
+    {
+      "node": 81,
+      "name": "reins_04_l_end_end_069",
+      "parent": 80,
+      "worldRestPosition": [
+        0.06371599031308514,
+        1.239939869859619,
+        0.9342104794434007
+      ]
+    },
+    {
+      "node": 82,
+      "name": "reins_04_l_end_end_end_0540",
+      "parent": 81,
+      "worldRestPosition": [
+        0.06402695909771818,
+        1.2471861653807794,
+        0.9324907329894931
+      ]
+    },
+    {
+      "node": 83,
+      "name": "reins_04_r_070",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.12893500163124505,
+        1.2245940660025016,
+        0.9212635064010135
+      ]
+    },
+    {
+      "node": 84,
+      "name": "reins_04_r_end_071",
+      "parent": 83,
+      "worldRestPosition": [
+        -0.12889837101224436,
+        1.2173237274661852,
+        0.9230125572920082
+      ]
+    },
+    {
+      "node": 85,
+      "name": "reins_04_r_end_end_072",
+      "parent": 84,
+      "worldRestPosition": [
+        -0.12886158946051282,
+        1.2100697303207135,
+        0.9247622762883433
+      ]
+    },
+    {
+      "node": 86,
+      "name": "reins_04_r_end_end_end_0541",
+      "parent": 85,
+      "worldRestPosition": [
+        -0.12882483397111152,
+        1.2028250400243592,
+        0.9265116991333813
+      ]
+    },
+    {
+      "node": 87,
+      "name": "dyn_new_head_neck_01_073",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.03794196196680498,
+        1.6133705189060545,
+        0.8200696292730227
+      ]
+    },
+    {
+      "node": 88,
+      "name": "dyn_new_head_neck_02_074",
+      "parent": 87,
+      "worldRestPosition": [
+        -0.1210474672965649,
+        1.545431390583128,
+        0.797445304554927
+      ]
+    },
+    {
+      "node": 89,
+      "name": "dyn_new_head_neck_03_075",
+      "parent": 88,
+      "worldRestPosition": [
+        -0.13774870974050085,
+        1.4583332728846294,
+        0.7869877918530737
+      ]
+    },
+    {
+      "node": 90,
+      "name": "dyn_new_head_neck_03_end_076",
+      "parent": 89,
+      "worldRestPosition": [
+        -0.13759804612821183,
+        1.465744288047417,
+        0.7850433614666754
+      ]
+    },
+    {
+      "node": 91,
+      "name": "dyn_new_head_neck_03_end_end_077",
+      "parent": 90,
+      "worldRestPosition": [
+        -0.13744782196237176,
+        1.473170534521562,
+        0.7830987819629156
+      ]
+    },
+    {
+      "node": 92,
+      "name": "dyn_new_head_neck_03_end_end_end_0563",
+      "parent": 91,
+      "worldRestPosition": [
+        -0.13729806702640918,
+        1.4806127404506813,
+        0.7811541573876597
+      ]
+    },
+    {
+      "node": 93,
+      "name": "innernostril_l_078",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.03371434519489197,
+        1.2644472315350184,
+        1.1261374746823964
+      ]
+    },
+    {
+      "node": 94,
+      "name": "outernostril_l_079",
+      "parent": 93,
+      "worldRestPosition": [
+        -0.0052076543550021205,
+        1.2668835494800508,
+        1.1039563476705205
+      ]
+    },
+    {
+      "node": 95,
+      "name": "outernostril_l_end_080",
+      "parent": 94,
+      "worldRestPosition": [
+        -0.005328994335246772,
+        1.2742883711772244,
+        1.1046951299572454
+      ]
+    },
+    {
+      "node": 96,
+      "name": "outernostril_l_end_end_081",
+      "parent": 95,
+      "worldRestPosition": [
+        -0.005450424328596156,
+        1.2816937687458099,
+        1.1054338602874214
+      ]
+    },
+    {
+      "node": 97,
+      "name": "outernostril_l_end_end_end_0564",
+      "parent": 96,
+      "worldRestPosition": [
+        -0.005571638245231906,
+        1.2890990889640397,
+        1.1061727034012991
+      ]
+    },
+    {
+      "node": 98,
+      "name": "innernostril_r_082",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.07317720654380297,
+        1.2642642095385568,
+        1.1227714824715314
+      ]
+    },
+    {
+      "node": 99,
+      "name": "outernostril_r_083",
+      "parent": 98,
+      "worldRestPosition": [
+        -0.0966340068491602,
+        1.2664613442942516,
+        1.0961542824763715
+      ]
+    },
+    {
+      "node": 100,
+      "name": "outernostril_r_end_084",
+      "parent": 99,
+      "worldRestPosition": [
+        -0.09651286158452184,
+        1.2590558394768419,
+        1.0954154986822526
+      ]
+    },
+    {
+      "node": 101,
+      "name": "outernostril_r_end_end_085",
+      "parent": 100,
+      "worldRestPosition": [
+        -0.09639179686067657,
+        1.2516508157563258,
+        1.0946766484730208
+      ]
+    },
+    {
+      "node": 102,
+      "name": "outernostril_r_end_end_end_0565",
+      "parent": 101,
+      "worldRestPosition": [
+        -0.09627058725099717,
+        1.2442457184481615,
+        1.0939378232109975
+      ]
+    },
+    {
+      "node": 103,
+      "name": "uppereyelid_l_086",
+      "parent": 19,
+      "worldRestPosition": [
+        0.048683276930431806,
+        1.4924601333770178,
+        0.955131454339238
+      ]
+    },
+    {
+      "node": 104,
+      "name": "uppereyelid_l_end_087",
+      "parent": 103,
+      "worldRestPosition": [
+        0.04359328562747531,
+        1.4889637641780427,
+        0.9501600915464208
+      ]
+    },
+    {
+      "node": 105,
+      "name": "uppereyelid_l_end_end_088",
+      "parent": 104,
+      "worldRestPosition": [
+        0.03850344329320787,
+        1.4854673598697312,
+        0.9451885465095353
+      ]
+    },
+    {
+      "node": 106,
+      "name": "uppereyelid_l_end_end_end_0566",
+      "parent": 105,
+      "worldRestPosition": [
+        0.03341344975960269,
+        1.4819710107761748,
+        0.9402169880534054
+      ]
+    },
+    {
+      "node": 107,
+      "name": "lowereyelid_l_089",
+      "parent": 19,
+      "worldRestPosition": [
+        0.048683276930431806,
+        1.4924601333770178,
+        0.955131454339238
+      ]
+    },
+    {
+      "node": 108,
+      "name": "lowereyelid_l_end_090",
+      "parent": 107,
+      "worldRestPosition": [
+        0.0458433102747855,
+        1.4993492959767118,
+        0.9537881839334551
+      ]
+    },
+    {
+      "node": 109,
+      "name": "lowereyelid_l_end_end_091",
+      "parent": 108,
+      "worldRestPosition": [
+        0.04300316591503779,
+        1.506238268863323,
+        0.9524444781935355
+      ]
+    },
+    {
+      "node": 110,
+      "name": "lowereyelid_l_end_end_end_0567",
+      "parent": 109,
+      "worldRestPosition": [
+        0.040163164647027884,
+        1.5131270629662217,
+        0.9511010104510584
+      ]
+    },
+    {
+      "node": 111,
+      "name": "uppereyelid_r_092",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.12155307420200957,
+        1.4916786930515906,
+        0.9406033818150239
+      ]
+    },
+    {
+      "node": 112,
+      "name": "uppereyelid_r_end_093",
+      "parent": 111,
+      "worldRestPosition": [
+        -0.12762017197371583,
+        1.4951233583013008,
+        0.9446219615832089
+      ]
+    },
+    {
+      "node": 113,
+      "name": "uppereyelid_r_end_end_094",
+      "parent": 112,
+      "worldRestPosition": [
+        -0.13368715906409276,
+        1.4985684788796034,
+        0.9486413682797333
+      ]
+    },
+    {
+      "node": 114,
+      "name": "uppereyelid_r_end_end_end_0568",
+      "parent": 113,
+      "worldRestPosition": [
+        -0.13975413698533454,
+        1.502013412509354,
+        0.9526606832554936
+      ]
+    },
+    {
+      "node": 115,
+      "name": "lowereyelid_r_095",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.12155307420200957,
+        1.4916786930515906,
+        0.9406033818150239
+      ]
+    },
+    {
+      "node": 116,
+      "name": "lowereyelid_r_end_096",
+      "parent": 115,
+      "worldRestPosition": [
+        -0.12453819496662333,
+        1.4847628377108888,
+        0.9414495812481951
+      ]
+    },
+    {
+      "node": 117,
+      "name": "lowereyelid_r_end_end_097",
+      "parent": 116,
+      "worldRestPosition": [
+        -0.12752335148596244,
+        1.4778471578345291,
+        0.9422957925435671
+      ]
+    },
+    {
+      "node": 118,
+      "name": "lowereyelid_r_end_end_end_0569",
+      "parent": 117,
+      "worldRestPosition": [
+        -0.1305085505812581,
+        1.470931516583754,
+        0.943142113119066
+      ]
+    },
+    {
+      "node": 119,
+      "name": "mouthcorner_r_098",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.09791115741075591,
+        1.2697743006953193,
+        1.0314535146441735
+      ]
+    },
+    {
+      "node": 120,
+      "name": "mouthcorner_r_end_099",
+      "parent": 119,
+      "worldRestPosition": [
+        -0.09711679827769366,
+        1.2699628422178573,
+        1.0238096962191394
+      ]
+    },
+    {
+      "node": 121,
+      "name": "mouthcorner_r_end_end_0100",
+      "parent": 120,
+      "worldRestPosition": [
+        -0.09632241610553355,
+        1.2701516376961244,
+        1.016165514795243
+      ]
+    },
+    {
+      "node": 122,
+      "name": "mouthcorner_r_end_end_end_0570",
+      "parent": 121,
+      "worldRestPosition": [
+        -0.09552801847638681,
+        1.2703403337318369,
+        1.0085212442210183
+      ]
+    },
+    {
+      "node": 123,
+      "name": "mouthcorner_l_0101",
+      "parent": 19,
+      "worldRestPosition": [
+        0.009352867991181492,
+        1.2702674833955008,
+        1.0406081477989686
+      ]
+    },
+    {
+      "node": 124,
+      "name": "mouthcorner_l_end_0102",
+      "parent": 123,
+      "worldRestPosition": [
+        0.008680848735177224,
+        1.2746049529880485,
+        1.046818389428702
+      ]
+    },
+    {
+      "node": 125,
+      "name": "mouthcorner_l_end_end_0103",
+      "parent": 124,
+      "worldRestPosition": [
+        0.008008835533078863,
+        1.2789426179296541,
+        1.0530290053604952
+      ]
+    },
+    {
+      "node": 126,
+      "name": "mouthcorner_l_end_end_end_0571",
+      "parent": 125,
+      "worldRestPosition": [
+        0.007336806975430818,
+        1.2832802683719569,
+        1.059239638645851
+      ]
+    },
+    {
+      "node": 127,
+      "name": "upperlip_0104",
+      "parent": 19,
+      "worldRestPosition": [
+        -0.05210212360656922,
+        1.234095357336576,
+        1.1133370593864467
+      ]
+    },
+    {
+      "node": 128,
+      "name": "upperlip_end_0105",
+      "parent": 127,
+      "worldRestPosition": [
+        -0.05222308548807474,
+        1.2415003441111783,
+        1.1140757939088222
+      ]
+    },
+    {
+      "node": 129,
+      "name": "upperlip_end_end_0106",
+      "parent": 128,
+      "worldRestPosition": [
+        -0.05234406434452583,
+        1.2489054751614042,
+        1.1148143844106353
+      ]
+    },
+    {
+      "node": 130,
+      "name": "upperlip_end_end_end_0572",
+      "parent": 129,
+      "worldRestPosition": [
+        -0.05246506164580285,
+        1.2563105757566555,
+        1.1155531929991407
+      ]
+    },
+    {
+      "node": 131,
+      "name": "dyn_new_neck_05_01_0107",
+      "parent": 18,
+      "worldRestPosition": [
+        -0.01654808582321665,
+        1.5894999146538953,
+        0.7365536563402442
+      ]
+    },
+    {
+      "node": 132,
+      "name": "dyn_new_neck_05_02_0108",
+      "parent": 131,
+      "worldRestPosition": [
+        -0.11139893409660091,
+        1.5370189666192478,
+        0.7315262405603984
+      ]
+    },
+    {
+      "node": 133,
+      "name": "dyn_new_neck_05_03_0109",
+      "parent": 132,
+      "worldRestPosition": [
+        -0.14571597491871602,
+        1.4429088179819576,
+        0.7458590919997522
+      ]
+    },
+    {
+      "node": 134,
+      "name": "dyn_new_neck_05_03_end_0110",
+      "parent": 133,
+      "worldRestPosition": [
+        -0.1446578034421884,
+        1.4503330838173967,
+        0.7427259371386495
+      ]
+    },
+    {
+      "node": 135,
+      "name": "dyn_new_neck_05_03_end_end_0111",
+      "parent": 134,
+      "worldRestPosition": [
+        -0.14359972232743415,
+        1.4578002726084556,
+        0.7395924194800957
+      ]
+    },
+    {
+      "node": 136,
+      "name": "dyn_new_neck_05_03_end_end_end_0573",
+      "parent": 135,
+      "worldRestPosition": [
+        -0.1425417480292507,
+        1.4653099799313856,
+        0.7364590433745054
+      ]
+    },
+    {
+      "node": 137,
+      "name": "reins_03_l_0112",
+      "parent": 17,
+      "worldRestPosition": [
+        0.08818042828698218,
+        1.2097154705236706,
+        0.9040713945645417
+      ]
+    },
+    {
+      "node": 138,
+      "name": "reins_03_l_end_0113",
+      "parent": 137,
+      "worldRestPosition": [
+        0.08913697085841152,
+        1.2168619389214554,
+        0.9018892880928523
+      ]
+    },
+    {
+      "node": 139,
+      "name": "reins_03_l_end_end_0114",
+      "parent": 138,
+      "worldRestPosition": [
+        0.09009360650084405,
+        1.2240198193613843,
+        0.8997075398601818
+      ]
+    },
+    {
+      "node": 140,
+      "name": "reins_03_l_end_end_end_0574",
+      "parent": 139,
+      "worldRestPosition": [
+        0.09105019780708284,
+        1.2311895444644132,
+        0.8975257870601282
+      ]
+    },
+    {
+      "node": 141,
+      "name": "reins_03_r_0115",
+      "parent": 17,
+      "worldRestPosition": [
+        -0.1600645330544425,
+        1.2132777726426074,
+        0.8913463352444585
+      ]
+    },
+    {
+      "node": 142,
+      "name": "reins_03_r_end_0116",
+      "parent": 141,
+      "worldRestPosition": [
+        -0.1596388745218835,
+        1.206095647781968,
+        0.893599097187325
+      ]
+    },
+    {
+      "node": 143,
+      "name": "reins_03_r_end_end_0117",
+      "parent": 142,
+      "worldRestPosition": [
+        -0.1592131309855415,
+        1.1989257731535208,
+        0.8958517597744586
+      ]
+    },
+    {
+      "node": 144,
+      "name": "reins_03_r_end_end_end_0575",
+      "parent": 143,
+      "worldRestPosition": [
+        -0.15878737083435085,
+        1.191767801321974,
+        0.898104445651481
+      ]
+    },
+    {
+      "node": 145,
+      "name": "dyn_new_neck_041_01_0118",
+      "parent": 17,
+      "worldRestPosition": [
+        -0.01837874574826472,
+        1.5725324499162217,
+        0.6470180310512695
+      ]
+    },
+    {
+      "node": 146,
+      "name": "dyn_new_neck_041_02_0119",
+      "parent": 145,
+      "worldRestPosition": [
+        -0.10278683735159201,
+        1.5131221706777882,
+        0.6572950095157373
+      ]
+    },
+    {
+      "node": 147,
+      "name": "dyn_new_neck_041_03_0120",
+      "parent": 146,
+      "worldRestPosition": [
+        -0.12638950826395037,
+        1.4229919162559093,
+        0.6794803899269956
+      ]
+    },
+    {
+      "node": 148,
+      "name": "dyn_new_neck_041_04_0121",
+      "parent": 147,
+      "worldRestPosition": [
+        -0.12898082080383205,
+        1.3570696913464833,
+        0.6923988658387461
+      ]
+    },
+    {
+      "node": 149,
+      "name": "dyn_new_neck_041_04_end_0122",
+      "parent": 148,
+      "worldRestPosition": [
+        -0.1285708390266366,
+        1.3652642969525306,
+        0.6885725398105987
+      ]
+    },
+    {
+      "node": 150,
+      "name": "dyn_new_neck_041_04_end_end_0123",
+      "parent": 149,
+      "worldRestPosition": [
+        -0.12816007357657927,
+        1.3734930512820005,
+        0.6847462728272783
+      ]
+    },
+    {
+      "node": 151,
+      "name": "dyn_new_neck_041_04_end_end_end_0576",
+      "parent": 150,
+      "worldRestPosition": [
+        -0.1277484705356714,
+        1.3817422908162007,
+        0.6809199718056861
+      ]
+    },
+    {
+      "node": 152,
+      "name": "neck_04_middleslider_01_0124",
+      "parent": 16,
+      "worldRestPosition": [
+        -0.012606587229864647,
+        1.5374908594684327,
+        0.5575238608197651
+      ]
+    },
+    {
+      "node": 153,
+      "name": "neck_04_middleslider_01_end_0125",
+      "parent": 152,
+      "worldRestPosition": [
+        -0.012311000567647131,
+        1.5423947316022821,
+        0.5512258130171261
+      ]
+    },
+    {
+      "node": 154,
+      "name": "neck_04_middleslider_01_end_end_0126",
+      "parent": 153,
+      "worldRestPosition": [
+        -0.012015403092754562,
+        1.5472677692093186,
+        0.5449274080695506
+      ]
+    },
+    {
+      "node": 155,
+      "name": "neck_04_middleslider_01_end_end_end_0577",
+      "parent": 154,
+      "worldRestPosition": [
+        -0.011719804269439662,
+        1.5521105113533995,
+        0.5386293041894997
+      ]
+    },
+    {
+      "node": 156,
+      "name": "dyn_new_neck_04_01_0127",
+      "parent": 16,
+      "worldRestPosition": [
+        -0.027174937818851535,
+        1.542318718464486,
+        0.5524102954297375
+      ]
+    },
+    {
+      "node": 157,
+      "name": "dyn_new_neck_04_02_0128",
+      "parent": 156,
+      "worldRestPosition": [
+        -0.10194229129392444,
+        1.4783907557897251,
+        0.5805267970245924
+      ]
+    },
+    {
+      "node": 158,
+      "name": "dyn_new_neck_04_03_0129",
+      "parent": 157,
+      "worldRestPosition": [
+        -0.13465914412702756,
+        1.397862268516163,
+        0.6040600356656406
+      ]
+    },
+    {
+      "node": 159,
+      "name": "dyn_new_neck_04_04_0130",
+      "parent": 158,
+      "worldRestPosition": [
+        -0.15345717178361262,
+        1.2885931728539084,
+        0.6309005688092585
+      ]
+    },
+    {
+      "node": 160,
+      "name": "dyn_new_neck_04_04_end_0131",
+      "parent": 159,
+      "worldRestPosition": [
+        -0.1533315164725238,
+        1.2976855685348607,
+        0.6277523067139333
+      ]
+    },
+    {
+      "node": 161,
+      "name": "dyn_new_neck_04_04_end_end_0132",
+      "parent": 160,
+      "worldRestPosition": [
+        -0.15320427076390233,
+        1.306801269264452,
+        0.6246041952246448
+      ]
+    },
+    {
+      "node": 162,
+      "name": "dyn_new_neck_04_04_end_end_end_0578",
+      "parent": 161,
+      "worldRestPosition": [
+        -0.15307526612836486,
+        1.3159250689189665,
+        0.6214558941285669
+      ]
+    },
+    {
+      "node": 163,
+      "name": "dyn_new_rivet_neck_04_01_0133",
+      "parent": 16,
+      "worldRestPosition": [
+        -0.009818113425467291,
+        1.4907964179373934,
+        0.4924418196368882
+      ]
+    },
+    {
+      "node": 164,
+      "name": "dyn_new_rivet_neck_04_02_0134",
+      "parent": 163,
+      "worldRestPosition": [
+        -0.10151679588868939,
+        1.4443600075621572,
+        0.5046511585967706
+      ]
+    },
+    {
+      "node": 165,
+      "name": "dyn_new_rivet_neck_04_03_0135",
+      "parent": 164,
+      "worldRestPosition": [
+        -0.13952918772711106,
+        1.3606172728832808,
+        0.5282026914924188
+      ]
+    },
+    {
+      "node": 166,
+      "name": "dyn_new_rivet_neck_04_04_0136",
+      "parent": 165,
+      "worldRestPosition": [
+        -0.1552606324764024,
+        1.2465875962029156,
+        0.5626156796335521
+      ]
+    },
+    {
+      "node": 167,
+      "name": "dyn_new_rivet_neck_04_04_end_0137",
+      "parent": 166,
+      "worldRestPosition": [
+        -0.15474995217561088,
+        1.255378056985424,
+        0.5591046464605809
+      ]
+    },
+    {
+      "node": 168,
+      "name": "dyn_new_rivet_neck_04_04_end_end_0138",
+      "parent": 167,
+      "worldRestPosition": [
+        -0.15423940337539177,
+        1.264201191369651,
+        0.5555939483266783
+      ]
+    },
+    {
+      "node": 169,
+      "name": "dyn_new_rivet_neck_04_04_end_end_end_0579",
+      "parent": 168,
+      "worldRestPosition": [
+        -0.15372879131756806,
+        1.2730480629715635,
+        0.5520830523927066
+      ]
+    },
+    {
+      "node": 170,
+      "name": "neck_03_middleslider_00_0139",
+      "parent": 15,
+      "worldRestPosition": [
+        -0.014164888749972253,
+        1.1811054382042105,
+        0.6761701579526557
+      ]
+    },
+    {
+      "node": 171,
+      "name": "neck_03_middleslider_00_end_0140",
+      "parent": 170,
+      "worldRestPosition": [
+        -0.014050004618066233,
+        1.18467509551098,
+        0.669335560999112
+      ]
+    },
+    {
+      "node": 172,
+      "name": "neck_03_middleslider_00_end_end_0141",
+      "parent": 171,
+      "worldRestPosition": [
+        -0.01393469393982008,
+        1.1883940085762275,
+        0.6625013957267638
+      ]
+    },
+    {
+      "node": 173,
+      "name": "neck_03_middleslider_00_end_end_end_0580",
+      "parent": 172,
+      "worldRestPosition": [
+        -0.013818883599938183,
+        1.1922627549924876,
+        0.6556671421804154
+      ]
+    },
+    {
+      "node": 174,
+      "name": "neck_03_middleslider_01_0142",
+      "parent": 15,
+      "worldRestPosition": [
+        -0.015415177066604183,
+        1.509464163313487,
+        0.5486071934362144
+      ]
+    },
+    {
+      "node": 175,
+      "name": "neck_03_middleslider_01_end_0143",
+      "parent": 174,
+      "worldRestPosition": [
+        -0.015294372620468408,
+        1.5134262367741853,
+        0.54177267726469
+      ]
+    },
+    {
+      "node": 176,
+      "name": "neck_03_middleslider_01_end_end_0144",
+      "parent": 175,
+      "worldRestPosition": [
+        -0.015173567735354205,
+        1.5173522548832548,
+        0.5349384342940903
+      ]
+    },
+    {
+      "node": 177,
+      "name": "neck_03_middleslider_01_end_end_end_0561",
+      "parent": 176,
+      "worldRestPosition": [
+        -0.01505276994375052,
+        1.5212424156506488,
+        0.5281041351355452
+      ]
+    },
+    {
+      "node": 178,
+      "name": "reins_02_l_0145",
+      "parent": 15,
+      "worldRestPosition": [
+        0.16238432328803737,
+        1.1580184804768032,
+        0.6504952516747646
+      ]
+    },
+    {
+      "node": 179,
+      "name": "reins_02_l_end_0146",
+      "parent": 178,
+      "worldRestPosition": [
+        0.16222396254372587,
+        1.1664323417261615,
+        0.6505266192105361
+      ]
+    },
+    {
+      "node": 180,
+      "name": "reins_02_l_end_end_0147",
+      "parent": 179,
+      "worldRestPosition": [
+        0.16208372910370383,
+        1.1751143623589446,
+        0.6507612935062697
+      ]
+    },
+    {
+      "node": 181,
+      "name": "reins_02_l_end_end_end_0562",
+      "parent": 180,
+      "worldRestPosition": [
+        0.16194747244614796,
+        1.183936982101343,
+        0.6510346135101053
+      ]
+    },
+    {
+      "node": 182,
+      "name": "reins_02_r_0148",
+      "parent": 15,
+      "worldRestPosition": [
+        -0.18855819283829603,
+        1.1527957307254448,
+        0.6433350830382076
+      ]
+    },
+    {
+      "node": 183,
+      "name": "reins_02_r_end_0149",
+      "parent": 182,
+      "worldRestPosition": [
+        -0.1884808785429017,
+        1.1448074532488055,
+        0.6436160326631601
+      ]
+    },
+    {
+      "node": 184,
+      "name": "reins_02_r_end_end_0150",
+      "parent": 183,
+      "worldRestPosition": [
+        -0.18841925672870552,
+        1.1370926938935495,
+        0.6440709347391613
+      ]
+    },
+    {
+      "node": 185,
+      "name": "reins_02_r_end_end_end_0583",
+      "parent": 184,
+      "worldRestPosition": [
+        -0.18837061054231685,
+        1.1296457468255459,
+        0.6446824881898301
+      ]
+    },
+    {
+      "node": 186,
+      "name": "dyn_new_neck_03_01_0151",
+      "parent": 15,
+      "worldRestPosition": [
+        -0.03031919822325417,
+        1.4465400612463608,
+        0.42363610493755527
+      ]
+    },
+    {
+      "node": 187,
+      "name": "dyn_new_neck_03_02_0152",
+      "parent": 186,
+      "worldRestPosition": [
+        -0.1028733217305801,
+        1.4035295529890528,
+        0.4350636127180338
+      ]
+    },
+    {
+      "node": 188,
+      "name": "dyn_new_neck_03_03_0153",
+      "parent": 187,
+      "worldRestPosition": [
+        -0.13903715850527343,
+        1.3181124305867336,
+        0.45898679853747165
+      ]
+    },
+    {
+      "node": 189,
+      "name": "dyn_new_neck_03_04_0154",
+      "parent": 188,
+      "worldRestPosition": [
+        -0.14624849569263124,
+        1.2000357535244364,
+        0.505051881906143
+      ]
+    },
+    {
+      "node": 190,
+      "name": "dyn_new_neck_03_04_end_0155",
+      "parent": 189,
+      "worldRestPosition": [
+        -0.1462822988424656,
+        1.2086284987008398,
+        0.501906842003264
+      ]
+    },
+    {
+      "node": 191,
+      "name": "dyn_new_neck_03_04_end_end_0156",
+      "parent": 190,
+      "worldRestPosition": [
+        -0.14631614556158443,
+        1.2172965584744453,
+        0.49876197859510607
+      ]
+    },
+    {
+      "node": 192,
+      "name": "dyn_new_neck_03_04_end_end_end_0584",
+      "parent": 191,
+      "worldRestPosition": [
+        -0.14634999522316489,
+        1.2260300074958046,
+        0.49561703806194424
+      ]
+    },
+    {
+      "node": 193,
+      "name": "dyn_new_neck_02_01_0157",
+      "parent": 14,
+      "worldRestPosition": [
+        -0.02570627892848867,
+        1.3716762214204639,
+        0.3265244012855816
+      ]
+    },
+    {
+      "node": 194,
+      "name": "dyn_new_neck_02_02_0158",
+      "parent": 193,
+      "worldRestPosition": [
+        -0.10262869148305112,
+        1.3178125472552664,
+        0.34514620080410674
+      ]
+    },
+    {
+      "node": 195,
+      "name": "dyn_new_neck_02_03_0159",
+      "parent": 194,
+      "worldRestPosition": [
+        -0.15332478777969288,
+        1.2327519093589807,
+        0.3805824714673207
+      ]
+    },
+    {
+      "node": 196,
+      "name": "dyn_new_neck_02_04_0160",
+      "parent": 195,
+      "worldRestPosition": [
+        -0.16426280877578692,
+        1.149679267093143,
+        0.4308222817749294
+      ]
+    },
+    {
+      "node": 197,
+      "name": "dyn_new_neck_02_04_end_0161",
+      "parent": 196,
+      "worldRestPosition": [
+        -0.16424071486473207,
+        1.156411004431936,
+        0.42605982193827735
+      ]
+    },
+    {
+      "node": 198,
+      "name": "dyn_new_neck_02_04_end_end_0162",
+      "parent": 197,
+      "worldRestPosition": [
+        -0.16422514112272263,
+        1.163285911029345,
+        0.42135883540754226
+      ]
+    },
+    {
+      "node": 199,
+      "name": "dyn_new_neck_02_04_end_end_end_0585",
+      "parent": 198,
+      "worldRestPosition": [
+        -0.1642166412369818,
+        1.1702987874172082,
+        0.4167190522195488
+      ]
+    },
+    {
+      "node": 200,
+      "name": "reins_01_outer_r_0163",
+      "parent": 14,
+      "worldRestPosition": [
+        0.1039303335311241,
+        1.0898448615303096,
+        0.29098678915851905
+      ]
+    },
+    {
+      "node": 201,
+      "name": "reins_01_outer_r_end_0164",
+      "parent": 200,
+      "worldRestPosition": [
+        0.0981200954265071,
+        1.0894854461021395,
+        0.2850865967850581
+      ]
+    },
+    {
+      "node": 202,
+      "name": "reins_01_outer_r_end_end_0165",
+      "parent": 201,
+      "worldRestPosition": [
+        0.09230753991751647,
+        1.0891130156302986,
+        0.27917007082074907
+      ]
+    },
+    {
+      "node": 203,
+      "name": "reins_01_outer_r_end_end_end_0586",
+      "parent": 202,
+      "worldRestPosition": [
+        0.08649273517841882,
+        1.0887279663634546,
+        0.2732371593651331
+      ]
+    },
+    {
+      "node": 204,
+      "name": "reins_01_outer_l_0167",
+      "parent": 14,
+      "worldRestPosition": [
+        -0.11672745392551027,
+        1.1219877586325084,
+        0.6216425529471938
+      ]
+    },
+    {
+      "node": 205,
+      "name": "reins_01_outer_l_end_0168",
+      "parent": 204,
+      "worldRestPosition": [
+        -0.12252791919747925,
+        1.1217216687077085,
+        0.6160099968487213
+      ]
+    },
+    {
+      "node": 206,
+      "name": "reins_01_outer_l_end_end_0169",
+      "parent": 205,
+      "worldRestPosition": [
+        -0.12832845181220928,
+        1.1215180793334925,
+        0.6103754216215583
+      ]
+    },
+    {
+      "node": 207,
+      "name": "reins_01_outer_l_end_end_end_0587",
+      "parent": 206,
+      "worldRestPosition": [
+        -0.13412934409840524,
+        1.1213323214055793,
+        0.6047394131483151
+      ]
+    },
+    {
+      "node": 208,
+      "name": "neck_01_middleslider_00_0170",
+      "parent": 14,
+      "worldRestPosition": [
+        -0.007395719527976261,
+        1.0150982681567757,
+        0.6186418416240305
+      ]
+    },
+    {
+      "node": 209,
+      "name": "neck_01_middleslider_01_0171",
+      "parent": 208,
+      "worldRestPosition": [
+        -0.007395702012937143,
+        1.0150981900184146,
+        0.6186419269185531
+      ]
+    },
+    {
+      "node": 210,
+      "name": "neck_01_middleslider_01_end_0172",
+      "parent": 209,
+      "worldRestPosition": [
+        -0.007401882131993471,
+        1.0200870380533829,
+        0.6118548158634942
+      ]
+    },
+    {
+      "node": 211,
+      "name": "neck_01_middleslider_01_end_end_0173",
+      "parent": 210,
+      "worldRestPosition": [
+        -0.007407903942633862,
+        1.0250516382134895,
+        0.6050444037168528
+      ]
+    },
+    {
+      "node": 212,
+      "name": "neck_01_middleslider_01_end_end_end_0588",
+      "parent": 211,
+      "worldRestPosition": [
+        -0.007413812893519635,
+        1.0299960834048993,
+        0.5982174838855271
+      ]
+    },
+    {
+      "node": 213,
+      "name": "dynamic_sim_space_0174",
+      "parent": 14,
+      "worldRestPosition": [
+        -0.010289344601959195,
+        1.431360166698315,
+        0.2658077052391712
+      ]
+    },
+    {
+      "node": 214,
+      "name": "dynamic_sim_space_end_0175",
+      "parent": 213,
+      "worldRestPosition": [
+        -0.0016840519371768639,
+        1.4315748744279497,
+        0.26596664255934244
+      ]
+    },
+    {
+      "node": 215,
+      "name": "dynamic_sim_space_end_end_0176",
+      "parent": 214,
+      "worldRestPosition": [
+        0.006921108686861245,
+        1.431789809004692,
+        0.2661251651262281
+      ]
+    },
+    {
+      "node": 216,
+      "name": "dynamic_sim_space_end_end_end_0589",
+      "parent": 215,
+      "worldRestPosition": [
+        0.01552611908917148,
+        1.432004688725666,
+        0.266283891614317
+      ]
+    },
+    {
+      "node": 217,
+      "name": "neck_02_middleslider_02_0177",
+      "parent": 13,
+      "worldRestPosition": [
+        -0.02339071200623604,
+        1.3830714976726297,
+        0.3457450223426195
+      ]
+    },
+    {
+      "node": 218,
+      "name": "neck_02_middleslider_02_end_0178",
+      "parent": 217,
+      "worldRestPosition": [
+        -0.024146251604997507,
+        1.3918083837186572,
+        0.346840652039837
+      ]
+    },
+    {
+      "node": 219,
+      "name": "neck_02_middleslider_02_end_end_0179",
+      "parent": 218,
+      "worldRestPosition": [
+        -0.024901714654996153,
+        1.4004795305227615,
+        0.34793574102539554
+      ]
+    },
+    {
+      "node": 220,
+      "name": "neck_02_middleslider_02_end_end_end_0590",
+      "parent": 219,
+      "worldRestPosition": [
+        -0.025657122172064287,
+        1.4090768402129117,
+        0.3490303395046028
+      ]
+    },
+    {
+      "node": 221,
+      "name": "neck_correctiveRoot_0180",
+      "parent": 13,
+      "worldRestPosition": [
+        0.004224766501694349,
+        0.9790026140277639,
+        0.487823654977839
+      ]
+    },
+    {
+      "node": 222,
+      "name": "neckOff_middleslider_01_l_0181",
+      "parent": 221,
+      "worldRestPosition": [
+        0.12143905008163798,
+        1.0189358967638524,
+        0.5913581105227561
+      ]
+    },
+    {
+      "node": 223,
+      "name": "neckOff_middleslider_01_l_end_0182",
+      "parent": 222,
+      "worldRestPosition": [
+        0.12065039244289111,
+        1.0264367987975074,
+        0.5910981366652749
+      ]
+    },
+    {
+      "node": 224,
+      "name": "neckOff_middleslider_01_l_end_end_0183",
+      "parent": 223,
+      "worldRestPosition": [
+        0.11985798815889956,
+        1.0338536145728754,
+        0.5907471132254855
+      ]
+    },
+    {
+      "node": 225,
+      "name": "neckOff_middleslider_01_l_end_end_end_0591",
+      "parent": 224,
+      "worldRestPosition": [
+        0.11906256802956913,
+        1.0411926078750715,
+        0.5903182472725798
+      ]
+    },
+    {
+      "node": 226,
+      "name": "neckOff_middleslider_01_r_0184",
+      "parent": 221,
+      "worldRestPosition": [
+        -0.1280143046536391,
+        1.0004413323805643,
+        0.582671813781446
+      ]
+    },
+    {
+      "node": 227,
+      "name": "neckOff_middleslider_01_r_end_0185",
+      "parent": 226,
+      "worldRestPosition": [
+        -0.1287226947553469,
+        1.0081830359122752,
+        0.5827038765705697
+      ]
+    },
+    {
+      "node": 228,
+      "name": "neckOff_middleslider_01_r_end_end_0186",
+      "parent": 227,
+      "worldRestPosition": [
+        -0.1294241681255041,
+        1.0158288653943506,
+        0.5826164205344648
+      ]
+    },
+    {
+      "node": 229,
+      "name": "neckOff_middleslider_01_r_end_end_end_0592",
+      "parent": 228,
+      "worldRestPosition": [
+        -0.13011946573737898,
+        1.023383882390483,
+        0.5824222561172421
+      ]
+    },
+    {
+      "node": 230,
+      "name": "neckOff_middleslider_00_0166",
+      "parent": 13,
+      "worldRestPosition": [
+        0.010507508854531283,
+        0.8538370234277903,
+        0.5893125969632447
+      ]
+    },
+    {
+      "node": 231,
+      "name": "neckOff_middleslider_00_end_0188",
+      "parent": 230,
+      "worldRestPosition": [
+        0.009716990313722597,
+        0.861902829110824,
+        0.5905041895241879
+      ]
+    },
+    {
+      "node": 232,
+      "name": "neckOff_middleslider_00_end_end_0189",
+      "parent": 231,
+      "worldRestPosition": [
+        0.008934897412948882,
+        0.8699883500897705,
+        0.5916956836988015
+      ]
+    },
+    {
+      "node": 233,
+      "name": "neckOff_middleslider_00_end_end_end_0593",
+      "parent": 232,
+      "worldRestPosition": [
+        0.008162040244147371,
+        0.878092026356496,
+        0.5928871276382813
+      ]
+    },
+    {
+      "node": 234,
+      "name": "chest_correctiveRoot_0190",
+      "parent": 12,
+      "worldRestPosition": [
+        0.004639586611582669,
+        1.105939447033238,
+        0.2396099845620308
+      ]
+    },
+    {
+      "node": 235,
+      "name": "chestiddleslider_00_0191",
+      "parent": 234,
+      "worldRestPosition": [
+        -0.01237115795136305,
+        1.315851778265414,
+        0.21894412334292762
+      ]
+    },
+    {
+      "node": 236,
+      "name": "chestiddleslider_00_end_0192",
+      "parent": 235,
+      "worldRestPosition": [
+        -0.013091633762841134,
+        1.3243217025042713,
+        0.21908647491713273
+      ]
+    },
+    {
+      "node": 237,
+      "name": "chestiddleslider_00_end_end_0193",
+      "parent": 236,
+      "worldRestPosition": [
+        -0.01381209081756928,
+        1.3327869895308333,
+        0.21922887811899755
+      ]
+    },
+    {
+      "node": 238,
+      "name": "chestiddleslider_00_end_end_end_0594",
+      "parent": 237,
+      "worldRestPosition": [
+        -0.014532536162926813,
+        1.341246148013534,
+        0.2193712741408478
+      ]
+    },
+    {
+      "node": 239,
+      "name": "chestiddleslider_01_r_0194",
+      "parent": 234,
+      "worldRestPosition": [
+        -0.18385449270210527,
+        0.9782437275429706,
+        0.2440096959220314
+      ]
+    },
+    {
+      "node": 240,
+      "name": "chestiddleslider_01_r_end_0195",
+      "parent": 239,
+      "worldRestPosition": [
+        -0.18457092908584644,
+        0.9864588315463457,
+        0.2441562443906933
+      ]
+    },
+    {
+      "node": 241,
+      "name": "chestiddleslider_01_r_end_end_0196",
+      "parent": 240,
+      "worldRestPosition": [
+        -0.1852838092807867,
+        0.9946746627175983,
+        0.2443051520385603
+      ]
+    },
+    {
+      "node": 242,
+      "name": "chestiddleslider_01_r_end_end_end_0595",
+      "parent": 241,
+      "worldRestPosition": [
+        -0.1859935456809258,
+        1.0028902738908747,
+        0.2444568217586805
+      ]
+    },
+    {
+      "node": 243,
+      "name": "chestiddleslider_02_0197",
+      "parent": 234,
+      "worldRestPosition": [
+        0.03870230383195715,
+        0.7155534067578581,
+        0.2832026891670323
+      ]
+    },
+    {
+      "node": 244,
+      "name": "chestiddleslider_02_end_0198",
+      "parent": 243,
+      "worldRestPosition": [
+        0.037928060622602795,
+        0.722659201197376,
+        0.28334495836661217
+      ]
+    },
+    {
+      "node": 245,
+      "name": "chestiddleslider_02_end_end_0199",
+      "parent": 244,
+      "worldRestPosition": [
+        0.037151879692804736,
+        0.7297828969958926,
+        0.28348703555418003
+      ]
+    },
+    {
+      "node": 246,
+      "name": "chestiddleslider_02_end_end_end_0596",
+      "parent": 245,
+      "worldRestPosition": [
+        0.03637402418689456,
+        0.736925917943969,
+        0.2836291790988983
+      ]
+    },
+    {
+      "node": 247,
+      "name": "chestiddleslider_01_l_0200",
+      "parent": 234,
+      "worldRestPosition": [
+        0.21426233155404523,
+        1.0098110518503094,
+        0.2607794598297685
+      ]
+    },
+    {
+      "node": 248,
+      "name": "chestiddleslider_01_l_end_0201",
+      "parent": 247,
+      "worldRestPosition": [
+        0.21351576865429947,
+        1.018022632032124,
+        0.2609249653172627
+      ]
+    },
+    {
+      "node": 249,
+      "name": "chestiddleslider_01_l_end_end_0202",
+      "parent": 248,
+      "worldRestPosition": [
+        0.21276593226724844,
+        1.0262287693682879,
+        0.26107046993834077
+      ]
+    },
+    {
+      "node": 250,
+      "name": "chestiddleslider_01_l_end_end_end_0597",
+      "parent": 249,
+      "worldRestPosition": [
+        0.21201322452476795,
+        1.0344282781163014,
+        0.2612162713831679
+      ]
+    },
+    {
+      "node": 251,
+      "name": "clavicle_l_0203",
+      "parent": 12,
+      "worldRestPosition": [
+        0.046335339487768155,
+        1.2148276602179227,
+        0.3310721356476033
+      ]
+    },
+    {
+      "node": 252,
+      "name": "upperarm_l_0204",
+      "parent": 251,
+      "worldRestPosition": [
+        0.11292206451004816,
+        0.9648000023701864,
+        0.4980295035155934
+      ]
+    },
+    {
+      "node": 253,
+      "name": "lowerarm_l_0205",
+      "parent": 252,
+      "worldRestPosition": [
+        0.1192592990417315,
+        0.7345704566717147,
+        0.37356648505171
+      ]
+    },
+    {
+      "node": 254,
+      "name": "hand_l_0206",
+      "parent": 253,
+      "worldRestPosition": [
+        0.11099967896445787,
+        0.4117518457786485,
+        0.4000644345558033
+      ]
+    },
+    {
+      "node": 255,
+      "name": "fingers_01_l_0187",
+      "parent": 254,
+      "worldRestPosition": [
+        0.09737592432577849,
+        0.14523097155777692,
+        0.3703807720552149
+      ]
+    },
+    {
+      "node": 256,
+      "name": "fingers_02_l_0208",
+      "parent": 255,
+      "worldRestPosition": [
+        0.09351974021150293,
+        0.0721792314847685,
+        0.42908629761117845
+      ]
+    },
+    {
+      "node": 257,
+      "name": "fingers_end_l_0209",
+      "parent": 256,
+      "worldRestPosition": [
+        0.09078828273339849,
+        0.00507034483436912,
+        0.5343128638262663
+      ]
+    },
+    {
+      "node": 258,
+      "name": "fingers_end_l_end_0210",
+      "parent": 257,
+      "worldRestPosition": [
+        0.09106363960433972,
+        0.010494999467682384,
+        0.5402006247556906
+      ]
+    },
+    {
+      "node": 259,
+      "name": "fingers_end_l_end_end_0211",
+      "parent": 258,
+      "worldRestPosition": [
+        0.09133901697850863,
+        0.015919722151303894,
+        0.5460884476022781
+      ]
+    },
+    {
+      "node": 260,
+      "name": "fingers_end_l_end_end_end_0598",
+      "parent": 259,
+      "worldRestPosition": [
+        0.09161438013597818,
+        0.021344327092732745,
+        0.5519760800348402
+      ]
+    },
+    {
+      "node": 261,
+      "name": "fingers_02_correctiveRoot_l_0212",
+      "parent": 256,
+      "worldRestPosition": [
+        0.09351972994185112,
+        0.07217918421917979,
+        0.42908610901660654
+      ]
+    },
+    {
+      "node": 262,
+      "name": "fingers_02_middleslider_00_l_0213",
+      "parent": 261,
+      "worldRestPosition": [
+        0.09426903339484614,
+        0.08329249841005257,
+        0.4600149259688382
+      ]
+    },
+    {
+      "node": 263,
+      "name": "fingers_02_middleslider_00_out_l_0214",
+      "parent": 262,
+      "worldRestPosition": [
+        0.09426902604440715,
+        0.08329246139883532,
+        0.46001505192487074
+      ]
+    },
+    {
+      "node": 264,
+      "name": "fingers_02_middleslider_00_out_l_end_0215",
+      "parent": 263,
+      "worldRestPosition": [
+        0.09454438058028403,
+        0.08871697158833439,
+        0.46590267104122624
+      ]
+    },
+    {
+      "node": 265,
+      "name": "fingers_02_middleslider_00_out_l_end_end_0216",
+      "parent": 264,
+      "worldRestPosition": [
+        0.09481973443949125,
+        0.09414141016104545,
+        0.47179028580897847
+      ]
+    },
+    {
+      "node": 266,
+      "name": "fingers_02_middleslider_00_out_l_end_end_end_0599",
+      "parent": 265,
+      "worldRestPosition": [
+        0.09509442517049443,
+        0.09956599100129543,
+        0.477656991004187
+      ]
+    },
+    {
+      "node": 267,
+      "name": "fingers_02_middleslider_02_l_0217",
+      "parent": 261,
+      "worldRestPosition": [
+        0.09280679660756294,
+        0.06154521299098812,
+        0.4013449158085363
+      ]
+    },
+    {
+      "node": 268,
+      "name": "fingers_02_middleslider_02_out_l_0218",
+      "parent": 267,
+      "worldRestPosition": [
+        0.0928067858375684,
+        0.06154522375871383,
+        0.40134505980874047
+      ]
+    },
+    {
+      "node": 269,
+      "name": "fingers_02_middleslider_02_out_l_end_0219",
+      "parent": 268,
+      "worldRestPosition": [
+        0.09308213781044951,
+        0.06696984878427903,
+        0.4072323472963869
+      ]
+    },
+    {
+      "node": 270,
+      "name": "fingers_02_middleslider_02_out_l_end_end_0220",
+      "parent": 269,
+      "worldRestPosition": [
+        0.0933575206636763,
+        0.07239447541549136,
+        0.413119821409886
+      ]
+    },
+    {
+      "node": 271,
+      "name": "fingers_02_middleslider_02_out_l_end_end_end_0600",
+      "parent": 270,
+      "worldRestPosition": [
+        0.09363288198424378,
+        0.07781903650991379,
+        0.41900737667964727
+      ]
+    },
+    {
+      "node": 272,
+      "name": "wrist_middleslider_01_l_0221",
+      "parent": 255,
+      "worldRestPosition": [
+        0.09540235462040887,
+        0.1351005702648141,
+        0.3370529243834214
+      ]
+    },
+    {
+      "node": 273,
+      "name": "wrist_middleslider_01_out_l_0222",
+      "parent": 272,
+      "worldRestPosition": [
+        0.09540237243251448,
+        0.13510053979731873,
+        0.33705281651670166
+      ]
+    },
+    {
+      "node": 274,
+      "name": "wrist_middleslider_01_out_l_end_0223",
+      "parent": 273,
+      "worldRestPosition": [
+        0.09547258428169295,
+        0.13935862361071052,
+        0.34436117790971144
+      ]
+    },
+    {
+      "node": 275,
+      "name": "wrist_middleslider_01_out_l_end_end_0224",
+      "parent": 274,
+      "worldRestPosition": [
+        0.09554271321962086,
+        0.14361686677492908,
+        0.35157174079651476
+      ]
+    },
+    {
+      "node": 276,
+      "name": "wrist_middleslider_01_out_l_end_end_end_0581",
+      "parent": 275,
+      "worldRestPosition": [
+        0.0956131893917335,
+        0.1478749790871892,
+        0.3586801623167291
+      ]
+    },
+    {
+      "node": 277,
+      "name": "wrist_middleslider_00_l_0225",
+      "parent": 255,
+      "worldRestPosition": [
+        0.0999576035643935,
+        0.15612655935961123,
+        0.4196841624423367
+      ]
+    },
+    {
+      "node": 278,
+      "name": "wrist_middleslider_00_out_l_0226",
+      "parent": 277,
+      "worldRestPosition": [
+        0.09995758793469262,
+        0.15612638412431326,
+        0.4196840736455041
+      ]
+    },
+    {
+      "node": 279,
+      "name": "wrist_middleslider_00_out_l_end_0207",
+      "parent": 278,
+      "worldRestPosition": [
+        0.10002461120813913,
+        0.1603843910796909,
+        0.42642553407060035
+      ]
+    },
+    {
+      "node": 280,
+      "name": "wrist_middleslider_00_out_l_end_end_0228",
+      "parent": 279,
+      "worldRestPosition": [
+        0.10009926565634836,
+        0.16464251859547968,
+        0.4331481140776646
+      ]
+    },
+    {
+      "node": 281,
+      "name": "wrist_middleslider_00_out_l_end_end_end_0582",
+      "parent": 280,
+      "worldRestPosition": [
+        0.10017771293036756,
+        0.16890067345388524,
+        0.4398691126098535
+      ]
+    },
+    {
+      "node": 282,
+      "name": "elbow_middleslider_l_0229",
+      "parent": 254,
+      "worldRestPosition": [
+        0.1109996831920912,
+        0.4117519142092596,
+        0.40006474687567
+      ]
+    },
+    {
+      "node": 283,
+      "name": "elbow_middleslider_00_l_0230",
+      "parent": 282,
+      "worldRestPosition": [
+        0.111144865284464,
+        0.40878823642112566,
+        0.4340963280642483
+      ]
+    },
+    {
+      "node": 284,
+      "name": "elbow_middleslider_00_out_l_0231",
+      "parent": 283,
+      "worldRestPosition": [
+        0.11114485289136466,
+        0.40878818501232184,
+        0.43409618417131784
+      ]
+    },
+    {
+      "node": 285,
+      "name": "elbow_middleslider_00_out_l_end_0232",
+      "parent": 284,
+      "worldRestPosition": [
+        0.11104822587172256,
+        0.40807936486909535,
+        0.4422978217920242
+      ]
+    },
+    {
+      "node": 286,
+      "name": "elbow_middleslider_00_out_l_end_end_0233",
+      "parent": 285,
+      "worldRestPosition": [
+        0.11095162894307792,
+        0.4073705720266065,
+        0.4504992633558444
+      ]
+    },
+    {
+      "node": 287,
+      "name": "elbow_middleslider_00_out_l_end_end_end_0603",
+      "parent": 286,
+      "worldRestPosition": [
+        0.11085502861662991,
+        0.40666172095883196,
+        0.4587007568039741
+      ]
+    },
+    {
+      "node": 288,
+      "name": "elbow_middleslider_01_l_0234",
+      "parent": 282,
+      "worldRestPosition": [
+        0.11070036602882515,
+        0.41786353613406907,
+        0.3298894001726338
+      ]
+    },
+    {
+      "node": 289,
+      "name": "elbow_middleslider_01_out_l_0235",
+      "parent": 288,
+      "worldRestPosition": [
+        0.11070035276907997,
+        0.4178635709531158,
+        0.32988945263991687
+      ]
+    },
+    {
+      "node": 290,
+      "name": "elbow_middleslider_01_out_l_end_0236",
+      "parent": 289,
+      "worldRestPosition": [
+        0.11060374945996661,
+        0.4171547649059102,
+        0.33809110193922315
+      ]
+    },
+    {
+      "node": 291,
+      "name": "elbow_middleslider_01_out_l_end_end_0237",
+      "parent": 290,
+      "worldRestPosition": [
+        0.110507153092784,
+        0.41644587707012554,
+        0.3462928066150468
+      ]
+    },
+    {
+      "node": 292,
+      "name": "elbow_middleslider_01_out_l_end_end_end_0604",
+      "parent": 291,
+      "worldRestPosition": [
+        0.11041054491934386,
+        0.415737026661649,
+        0.35449439380543296
+      ]
+    },
+    {
+      "node": 293,
+      "name": "hand_twist_l_0238",
+      "parent": 254,
+      "worldRestPosition": [
+        0.10418996896607925,
+        0.27895118317459366,
+        0.3855970674742424
+      ]
+    },
+    {
+      "node": 294,
+      "name": "hand_twist_l_end_0239",
+      "parent": 293,
+      "worldRestPosition": [
+        0.10409337452359645,
+        0.278242191495079,
+        0.393798430281595
+      ]
+    },
+    {
+      "node": 295,
+      "name": "hand_twist_l_end_end_0240",
+      "parent": 294,
+      "worldRestPosition": [
+        0.10399675431827776,
+        0.27753326066752265,
+        0.4019999661766236
+      ]
+    },
+    {
+      "node": 296,
+      "name": "hand_twist_l_end_end_end_0605",
+      "parent": 295,
+      "worldRestPosition": [
+        0.10390015539794828,
+        0.2768244212559803,
+        0.41020152061709386
+      ]
+    },
+    {
+      "node": 297,
+      "name": "lowerarm_correctiveRoot_l_0241",
+      "parent": 253,
+      "worldRestPosition": [
+        0.11925316288610699,
+        0.73428226459936,
+        0.37347387933809806
+      ]
+    },
+    {
+      "node": 298,
+      "name": "lowerarm_middleslider_00_l_0242",
+      "parent": 297,
+      "worldRestPosition": [
+        0.1147710061916107,
+        0.7411712689348449,
+        0.48218145606404
+      ]
+    },
+    {
+      "node": 299,
+      "name": "lowerarm_middleslider_00_out_l_0243",
+      "parent": 298,
+      "worldRestPosition": [
+        0.11477103201089833,
+        0.7411713290725483,
+        0.48218145844930704
+      ]
+    },
+    {
+      "node": 300,
+      "name": "lowerarm_middleslider_00_out_l_end_0244",
+      "parent": 299,
+      "worldRestPosition": [
+        0.11443180354657298,
+        0.7416925921694976,
+        0.49039344589146916
+      ]
+    },
+    {
+      "node": 301,
+      "name": "lowerarm_middleslider_00_out_l_end_end_0245",
+      "parent": 300,
+      "worldRestPosition": [
+        0.11409247835012332,
+        0.7422138181280716,
+        0.49860565586555866
+      ]
+    },
+    {
+      "node": 302,
+      "name": "lowerarm_middleslider_00_out_l_end_end_end_0606",
+      "parent": 301,
+      "worldRestPosition": [
+        0.11375307093546087,
+        0.7427352346444961,
+        0.5068176854929262
+      ]
+    },
+    {
+      "node": 303,
+      "name": "lowerarm_middleslider_01_l_0246",
+      "parent": 297,
+      "worldRestPosition": [
+        0.12325804099050626,
+        0.7302371906444445,
+        0.2950663872090088
+      ]
+    },
+    {
+      "node": 304,
+      "name": "lowerarm_middleslider_01_out_l_0227",
+      "parent": 303,
+      "worldRestPosition": [
+        0.1232580335091721,
+        0.7302371669401004,
+        0.29506645101315976
+      ]
+    },
+    {
+      "node": 305,
+      "name": "lowerarm_middleslider_01_out_l_end_0248",
+      "parent": 304,
+      "worldRestPosition": [
+        0.12292082544392732,
+        0.7307561880847323,
+        0.3032783004478756
+      ]
+    },
+    {
+      "node": 306,
+      "name": "lowerarm_middleslider_01_out_l_end_end_0249",
+      "parent": 305,
+      "worldRestPosition": [
+        0.12258355680115493,
+        0.7312751621542394,
+        0.3114901177960846
+      ]
+    },
+    {
+      "node": 307,
+      "name": "lowerarm_middleslider_01_out_l_end_end_end_0607",
+      "parent": 306,
+      "worldRestPosition": [
+        0.1222461912647938,
+        0.7317943045688524,
+        0.31970207132658296
+      ]
+    },
+    {
+      "node": 308,
+      "name": "lowerarm_twist_01_l_0250",
+      "parent": 253,
+      "worldRestPosition": [
+        0.11289372523561401,
+        0.5008863609354518,
+        0.39288547307852517
+      ]
+    },
+    {
+      "node": 309,
+      "name": "lowerarm_twist_01_l_end_0251",
+      "parent": 308,
+      "worldRestPosition": [
+        0.11256144318377534,
+        0.5014195742986579,
+        0.40109753105880525
+      ]
+    },
+    {
+      "node": 310,
+      "name": "lowerarm_twist_01_l_end_end_0252",
+      "parent": 309,
+      "worldRestPosition": [
+        0.11222918400572265,
+        0.501953007023133,
+        0.40930936757454994
+      ]
+    },
+    {
+      "node": 311,
+      "name": "lowerarm_twist_01_l_end_end_end_0608",
+      "parent": 310,
+      "worldRestPosition": [
+        0.1118969083158423,
+        0.5024863706162949,
+        0.4175213357113366
+      ]
+    },
+    {
+      "node": 312,
+      "name": "lowerarm_twist_02_l_0253",
+      "parent": 253,
+      "worldRestPosition": [
+        0.11612733153100502,
+        0.6353660408479913,
+        0.381872568207709
+      ]
+    },
+    {
+      "node": 313,
+      "name": "lowerarm_twist_02_l_end_0255",
+      "parent": 312,
+      "worldRestPosition": [
+        0.11579580009525804,
+        0.6358769220604071,
+        0.390084357360338
+      ]
+    },
+    {
+      "node": 314,
+      "name": "lowerarm_twist_02_l_end_end_0256",
+      "parent": 313,
+      "worldRestPosition": [
+        0.11546416489338202,
+        0.6363879844150898,
+        0.39829605533656515
+      ]
+    },
+    {
+      "node": 315,
+      "name": "lowerarm_twist_02_l_end_end_end_0609",
+      "parent": 314,
+      "worldRestPosition": [
+        0.11513250531015917,
+        0.6368988931311258,
+        0.40650799071230914
+      ]
+    },
+    {
+      "node": 316,
+      "name": "upperarm_twist_01_l_0257",
+      "parent": 252,
+      "worldRestPosition": [
+        0.11648590265901473,
+        0.843663842547381,
+        0.43498391276606385
+      ]
+    },
+    {
+      "node": 317,
+      "name": "upperarm_twist_01_l_end_0258",
+      "parent": 316,
+      "worldRestPosition": [
+        0.11593168765625682,
+        0.8399057193811507,
+        0.44227548632649266
+      ]
+    },
+    {
+      "node": 318,
+      "name": "upperarm_twist_01_l_end_end_0259",
+      "parent": 317,
+      "worldRestPosition": [
+        0.11537686915149298,
+        0.8361525554926976,
+        0.4495672759228169
+      ]
+    },
+    {
+      "node": 319,
+      "name": "upperarm_twist_01_l_end_end_end_0610",
+      "parent": 318,
+      "worldRestPosition": [
+        0.11482155904739891,
+        0.8324042338361763,
+        0.45685909733269714
+      ]
+    },
+    {
+      "node": 320,
+      "name": "upperarm_correctiveRoot_l_0260",
+      "parent": 252,
+      "worldRestPosition": [
+        0.1129220426131756,
+        0.964799875622614,
+        0.4980294431386931
+      ]
+    },
+    {
+      "node": 321,
+      "name": "upperarm_middleslider_00_l_0261",
+      "parent": 320,
+      "worldRestPosition": [
+        0.10904081804192045,
+        0.8944756781352797,
+        0.5458477372235266
+      ]
+    },
+    {
+      "node": 322,
+      "name": "upperarm_middleslider_00_out_l_0262",
+      "parent": 321,
+      "worldRestPosition": [
+        0.10904086365131752,
+        0.8944755890540833,
+        0.5458478928158028
+      ]
+    },
+    {
+      "node": 323,
+      "name": "upperarm_middleslider_00_out_l_end_0263",
+      "parent": 322,
+      "worldRestPosition": [
+        0.10845654116795844,
+        0.8942477091978472,
+        0.5540663515963395
+      ]
+    },
+    {
+      "node": 324,
+      "name": "upperarm_middleslider_00_out_l_end_end_0264",
+      "parent": 323,
+      "worldRestPosition": [
+        0.10787225127602794,
+        0.8940199278387664,
+        0.5622848102897385
+      ]
+    },
+    {
+      "node": 325,
+      "name": "upperarm_middleslider_00_out_l_end_end_end_0611",
+      "parent": 324,
+      "worldRestPosition": [
+        0.10728793555945998,
+        0.8937921411048904,
+        0.5705031898443788
+      ]
+    },
+    {
+      "node": 326,
+      "name": "upperarm_middleslider_01_l_0265",
+      "parent": 320,
+      "worldRestPosition": [
+        0.17422416834415366,
+        0.9644109641859372,
+        0.5019828973552615
+      ]
+    },
+    {
+      "node": 327,
+      "name": "upperarm_middleslider_01_out_l_0266",
+      "parent": 326,
+      "worldRestPosition": [
+        0.1742242138207173,
+        0.9644110833120948,
+        0.5019828188283486
+      ]
+    },
+    {
+      "node": 328,
+      "name": "upperarm_middleslider_01_out_l_end_0267",
+      "parent": 327,
+      "worldRestPosition": [
+        0.17363991082592656,
+        0.9641835198174967,
+        0.5102012122879872
+      ]
+    },
+    {
+      "node": 329,
+      "name": "upperarm_middleslider_01_out_l_end_end_0247",
+      "parent": 328,
+      "worldRestPosition": [
+        0.17305558548343994,
+        0.9639553478770418,
+        0.5184197657166401
+      ]
+    },
+    {
+      "node": 330,
+      "name": "upperarm_middleslider_01_out_l_end_end_end_0612",
+      "parent": 329,
+      "worldRestPosition": [
+        0.17247127138172716,
+        0.9637275595323214,
+        0.5266381182445243
+      ]
+    },
+    {
+      "node": 331,
+      "name": "clavicle_r_0269",
+      "parent": 12,
+      "worldRestPosition": [
+        -0.06416117798179068,
+        1.205705539302829,
+        0.32672490139776755
+      ]
+    },
+    {
+      "node": 332,
+      "name": "upperarm_r_0270",
+      "parent": 331,
+      "worldRestPosition": [
+        -0.16522482975486713,
+        0.9544997671763442,
+        0.473920928485046
+      ]
+    },
+    {
+      "node": 333,
+      "name": "lowerarm_r_0271",
+      "parent": 332,
+      "worldRestPosition": [
+        -0.13599512697846422,
+        0.7350254424770769,
+        0.332894140542202
+      ]
+    },
+    {
+      "node": 334,
+      "name": "hand_r_0272",
+      "parent": 333,
+      "worldRestPosition": [
+        -0.13636911420423142,
+        0.41198193778733516,
+        0.30935159497469855
+      ]
+    },
+    {
+      "node": 335,
+      "name": "fingers_01_r_0273",
+      "parent": 334,
+      "worldRestPosition": [
+        -0.1306210016307906,
+        0.14956030462951325,
+        0.24805152547165765
+      ]
+    },
+    {
+      "node": 336,
+      "name": "fingers_02_r_0274",
+      "parent": 335,
+      "worldRestPosition": [
+        -0.13417668804898505,
+        0.07107401185066504,
+        0.2967699832784392
+      ]
+    },
+    {
+      "node": 337,
+      "name": "fingers_end_r_0275",
+      "parent": 336,
+      "worldRestPosition": [
+        -0.15672640496446033,
+        0.005924011752682215,
+        0.401322324177188
+      ]
+    },
+    {
+      "node": 338,
+      "name": "fingers_end_r_end_0276",
+      "parent": 337,
+      "worldRestPosition": [
+        -0.15501276839895028,
+        0.000395589606461606,
+        0.39582823677247525
+      ]
+    },
+    {
+      "node": 339,
+      "name": "fingers_end_r_end_end_0277",
+      "parent": 338,
+      "worldRestPosition": [
+        -0.15329922309077096,
+        -0.005132978783757804,
+        0.39033442295252235
+      ]
+    },
+    {
+      "node": 340,
+      "name": "fingers_end_r_end_end_end_0613",
+      "parent": 339,
+      "worldRestPosition": [
+        -0.1515855973538337,
+        -0.010661434754200068,
+        0.3848405317287518
+      ]
+    },
+    {
+      "node": 341,
+      "name": "fingers_02_correctiveRoot_r_0278",
+      "parent": 336,
+      "worldRestPosition": [
+        -0.13417657053708013,
+        0.07107395059867276,
+        0.29676973713210353
+      ]
+    },
+    {
+      "node": 342,
+      "name": "fingers_02_middleslider_00_r_0279",
+      "parent": 341,
+      "worldRestPosition": [
+        -0.14243252142586413,
+        0.08274314159978283,
+        0.32627670674340353
+      ]
+    },
+    {
+      "node": 343,
+      "name": "fingers_02_middleslider_00_out_r_0280",
+      "parent": 342,
+      "worldRestPosition": [
+        -0.14243256726288314,
+        0.08274309719567417,
+        0.326276712137853
+      ]
+    },
+    {
+      "node": 344,
+      "name": "fingers_02_middleslider_00_out_r_end_0281",
+      "parent": 343,
+      "worldRestPosition": [
+        -0.14071895345501464,
+        0.07721460598541356,
+        0.32078295274486274
+      ]
+    },
+    {
+      "node": 345,
+      "name": "fingers_02_middleslider_00_out_r_end_end_0282",
+      "parent": 344,
+      "worldRestPosition": [
+        -0.1390053321692727,
+        0.07168625110666997,
+        0.31528917308827725
+      ]
+    },
+    {
+      "node": 346,
+      "name": "fingers_02_middleslider_00_out_r_end_end_end_0614",
+      "parent": 345,
+      "worldRestPosition": [
+        -0.13729172941392556,
+        0.06615781556245046,
+        0.30979530931338106
+      ]
+    },
+    {
+      "node": 347,
+      "name": "fingers_02_middleslider_02_r_0283",
+      "parent": 341,
+      "worldRestPosition": [
+        -0.12672896328324665,
+        0.059942132886230265,
+        0.27033220153360343
+      ]
+    },
+    {
+      "node": 348,
+      "name": "fingers_02_middleslider_02_out_r_0284",
+      "parent": 347,
+      "worldRestPosition": [
+        -0.1267289616123477,
+        0.05994219966461727,
+        0.2703322133441636
+      ]
+    },
+    {
+      "node": 349,
+      "name": "fingers_02_middleslider_02_out_r_end_0285",
+      "parent": 348,
+      "worldRestPosition": [
+        -0.12501531420672016,
+        0.054413753831080214,
+        0.26483823541144
+      ]
+    },
+    {
+      "node": 350,
+      "name": "fingers_02_middleslider_02_out_r_end_end_0286",
+      "parent": 349,
+      "worldRestPosition": [
+        -0.12330168729049888,
+        0.04888537653063563,
+        0.2593444883716377
+      ]
+    },
+    {
+      "node": 351,
+      "name": "fingers_02_middleslider_02_out_r_end_end_end_0615",
+      "parent": 350,
+      "worldRestPosition": [
+        -0.12158806938274631,
+        0.04335690180778951,
+        0.2538505650717339
+      ]
+    },
+    {
+      "node": 352,
+      "name": "wrist_middleslider_01_r_0287",
+      "parent": 335,
+      "worldRestPosition": [
+        -0.12054437500417824,
+        0.14299489381942246,
+        0.21571944309334098
+      ]
+    },
+    {
+      "node": 353,
+      "name": "wrist_middleslider_01_out_r_0268",
+      "parent": 352,
+      "worldRestPosition": [
+        -0.12054464679438458,
+        0.14299511936216555,
+        0.21571942052473864
+      ]
+    },
+    {
+      "node": 354,
+      "name": "wrist_middleslider_01_out_r_end_0289",
+      "parent": 353,
+      "worldRestPosition": [
+        -0.11852534435781631,
+        0.13949147301801548,
+        0.2082939978865769
+      ]
+    },
+    {
+      "node": 355,
+      "name": "wrist_middleslider_01_out_r_end_end_0290",
+      "parent": 354,
+      "worldRestPosition": [
+        -0.11648612814804832,
+        0.1359878558286287,
+        0.2007891648200932
+      ]
+    },
+    {
+      "node": 356,
+      "name": "wrist_middleslider_01_out_r_end_end_end_0616",
+      "parent": 355,
+      "worldRestPosition": [
+        -0.11442738636445977,
+        0.13248415971259964,
+        0.19320919699918415
+      ]
+    },
+    {
+      "node": 357,
+      "name": "wrist_middleslider_00_r_0291",
+      "parent": 335,
+      "worldRestPosition": [
+        -0.14505164708449325,
+        0.15507198287552781,
+        0.29612506782811904
+      ]
+    },
+    {
+      "node": 358,
+      "name": "wrist_middleslider_00_out_r_0292",
+      "parent": 357,
+      "worldRestPosition": [
+        -0.14505146842285357,
+        0.15507178552045636,
+        0.2961250749774476
+      ]
+    },
+    {
+      "node": 359,
+      "name": "wrist_middleslider_00_out_r_end_0293",
+      "parent": 358,
+      "worldRestPosition": [
+        -0.1431363121310624,
+        0.15156805695457115,
+        0.2891035206642896
+      ]
+    },
+    {
+      "node": 360,
+      "name": "wrist_middleslider_00_out_r_end_end_0294",
+      "parent": 359,
+      "worldRestPosition": [
+        -0.14121573449032418,
+        0.1480643303615775,
+        0.28203947350259057
+      ]
+    },
+    {
+      "node": 361,
+      "name": "wrist_middleslider_00_out_r_end_end_end_0617",
+      "parent": 360,
+      "worldRestPosition": [
+        -0.1392859223351555,
+        0.14456064717032438,
+        0.27492320303917106
+      ]
+    },
+    {
+      "node": 362,
+      "name": "elbow_middleslider_r_0295",
+      "parent": 334,
+      "worldRestPosition": [
+        -0.13636909032211478,
+        0.41198199650216744,
+        0.3093515681722792
+      ]
+    },
+    {
+      "node": 363,
+      "name": "elbow_middleslider_00_r_0296",
+      "parent": 362,
+      "worldRestPosition": [
+        -0.14256876617276373,
+        0.4057772486232491,
+        0.3422470465074373
+      ]
+    },
+    {
+      "node": 364,
+      "name": "elbow_middleslider_00_out_r_0297",
+      "parent": 363,
+      "worldRestPosition": [
+        -0.14256905481324794,
+        0.40577711084615004,
+        0.34224738552616796
+      ]
+    },
+    {
+      "node": 365,
+      "name": "elbow_middleslider_00_out_r_end_0298",
+      "parent": 364,
+      "worldRestPosition": [
+        -0.14120466284809444,
+        0.4072746203344759,
+        0.3342965783657149
+      ]
+    },
+    {
+      "node": 366,
+      "name": "elbow_middleslider_00_out_r_end_end_0299",
+      "parent": 365,
+      "worldRestPosition": [
+        -0.13984019326032565,
+        0.40877198382356134,
+        0.32634566363503215
+      ]
+    },
+    {
+      "node": 367,
+      "name": "elbow_middleslider_00_out_r_end_end_end_0618",
+      "parent": 366,
+      "worldRestPosition": [
+        -0.13847578704961788,
+        0.4102694389665175,
+        0.318394851201451
+      ]
+    },
+    {
+      "node": 368,
+      "name": "elbow_middleslider_01_r_0300",
+      "parent": 362,
+      "worldRestPosition": [
+        -0.12358527710706005,
+        0.42477802979757884,
+        0.24151784049101244
+      ]
+    },
+    {
+      "node": 369,
+      "name": "elbow_middleslider_01_out_r_0301",
+      "parent": 368,
+      "worldRestPosition": [
+        -0.1235851602056635,
+        0.42477808963819774,
+        0.2415176325388397
+      ]
+    },
+    {
+      "node": 370,
+      "name": "elbow_middleslider_01_out_r_end_0302",
+      "parent": 369,
+      "worldRestPosition": [
+        -0.12222071413519865,
+        0.42627565393210926,
+        0.23356684309945897
+      ]
+    },
+    {
+      "node": 371,
+      "name": "elbow_middleslider_01_out_r_end_end_0303",
+      "parent": 370,
+      "worldRestPosition": [
+        -0.12085631602696693,
+        0.4277730510970797,
+        0.2256161189146688
+      ]
+    },
+    {
+      "node": 372,
+      "name": "elbow_middleslider_01_out_r_end_end_end_0619",
+      "parent": 371,
+      "worldRestPosition": [
+        -0.11949189972280141,
+        0.42927051369953584,
+        0.21766524330294168
+      ]
+    },
+    {
+      "node": 373,
+      "name": "hand_twist_r_0304",
+      "parent": 334,
+      "worldRestPosition": [
+        -0.13351750925629752,
+        0.2812236090057701,
+        0.27897722291899635
+      ]
+    },
+    {
+      "node": 374,
+      "name": "hand_twist_r_end_0305",
+      "parent": 373,
+      "worldRestPosition": [
+        -0.13215308198917486,
+        0.28272100582451826,
+        0.27102630669550726
+      ]
+    },
+    {
+      "node": 375,
+      "name": "hand_twist_r_end_end_0306",
+      "parent": 374,
+      "worldRestPosition": [
+        -0.13078872036897918,
+        0.28421848363726504,
+        0.263075478660345
+      ]
+    },
+    {
+      "node": 376,
+      "name": "hand_twist_r_end_end_end_0620",
+      "parent": 375,
+      "worldRestPosition": [
+        -0.1294243091424104,
+        0.285715932124411,
+        0.25512463294422283
+      ]
+    },
+    {
+      "node": 377,
+      "name": "lowerarm_correctiveRoot_r_0307",
+      "parent": 333,
+      "worldRestPosition": [
+        -0.13597157806504234,
+        0.7347453415058258,
+        0.3327589506443011
+      ]
+    },
+    {
+      "node": 378,
+      "name": "lowerarm_middleslider_00_r_0288",
+      "parent": 377,
+      "worldRestPosition": [
+        -0.1551162481016344,
+        0.7288913869340595,
+        0.4400124085928862
+      ]
+    },
+    {
+      "node": 379,
+      "name": "lowerarm_middleslider_00_out_r_0309",
+      "parent": 378,
+      "worldRestPosition": [
+        -0.15511614634351698,
+        0.7288880071425885,
+        0.44001198175342776
+      ]
+    },
+    {
+      "node": 380,
+      "name": "lowerarm_middleslider_00_out_r_end_0310",
+      "parent": 379,
+      "worldRestPosition": [
+        -0.15367189725232816,
+        0.7293301005528994,
+        0.43191014294402325
+      ]
+    },
+    {
+      "node": 381,
+      "name": "lowerarm_middleslider_00_out_r_end_end_0311",
+      "parent": 380,
+      "worldRestPosition": [
+        -0.15222718532415444,
+        0.7297723906991728,
+        0.423807949550503
+      ]
+    },
+    {
+      "node": 382,
+      "name": "lowerarm_middleslider_00_out_r_end_end_end_0601",
+      "parent": 381,
+      "worldRestPosition": [
+        -0.15078221750748144,
+        0.730214751614256,
+        0.4157058124685417
+      ]
+    },
+    {
+      "node": 383,
+      "name": "lowerarm_middleslider_01_r_0312",
+      "parent": 377,
+      "worldRestPosition": [
+        -0.12288452214906008,
+        0.7399129928954171,
+        0.25538820362239634
+      ]
+    },
+    {
+      "node": 384,
+      "name": "lowerarm_middleslider_01_out_r_0313",
+      "parent": 383,
+      "worldRestPosition": [
+        -0.12288477309601929,
+        0.7399144451322055,
+        0.25538833984062287
+      ]
+    },
+    {
+      "node": 385,
+      "name": "lowerarm_middleslider_01_out_r_end_0314",
+      "parent": 384,
+      "worldRestPosition": [
+        -0.12143317698087161,
+        0.740358594868932,
+        0.24728614466207754
+      ]
+    },
+    {
+      "node": 386,
+      "name": "lowerarm_middleslider_01_out_r_end_end_0315",
+      "parent": 385,
+      "worldRestPosition": [
+        -0.11998130291163875,
+        0.7408027717601834,
+        0.239184309761384
+      ]
+    },
+    {
+      "node": 387,
+      "name": "lowerarm_middleslider_01_out_r_end_end_end_0602",
+      "parent": 386,
+      "worldRestPosition": [
+        -0.11852907528305572,
+        0.7412470640695447,
+        0.23108218811659798
+      ]
+    },
+    {
+      "node": 388,
+      "name": "lowerarm_twist_01_r_0316",
+      "parent": 333,
+      "worldRestPosition": [
+        -0.13578124302545452,
+        0.5011797275475888,
+        0.3157292285985224
+      ]
+    },
+    {
+      "node": 389,
+      "name": "lowerarm_twist_01_r_end_0317",
+      "parent": 388,
+      "worldRestPosition": [
+        -0.13437252619691473,
+        0.5016341770898829,
+        0.3076271833165001
+      ]
+    },
+    {
+      "node": 390,
+      "name": "lowerarm_twist_01_r_end_end_0318",
+      "parent": 389,
+      "worldRestPosition": [
+        -0.1329637722548074,
+        0.5020889714783943,
+        0.299525143824144
+      ]
+    },
+    {
+      "node": 391,
+      "name": "lowerarm_twist_01_r_end_end_end_0623",
+      "parent": 390,
+      "worldRestPosition": [
+        -0.13155503797223556,
+        0.5025437003104851,
+        0.29142306729825423
+      ]
+    },
+    {
+      "node": 392,
+      "name": "lowerarm_twist_02_r_0319",
+      "parent": 333,
+      "worldRestPosition": [
+        -0.13537887986982705,
+        0.6357404019972639,
+        0.3255142500074395
+      ]
+    },
+    {
+      "node": 393,
+      "name": "lowerarm_twist_02_r_end_0320",
+      "parent": 392,
+      "worldRestPosition": [
+        -0.133962319948836,
+        0.6361759242454058,
+        0.31741238836318314
+      ]
+    },
+    {
+      "node": 394,
+      "name": "lowerarm_twist_02_r_end_end_0321",
+      "parent": 393,
+      "worldRestPosition": [
+        -0.13254546050089341,
+        0.6366114165345127,
+        0.3093104067460299
+      ]
+    },
+    {
+      "node": 395,
+      "name": "lowerarm_twist_02_r_end_end_end_0624",
+      "parent": 394,
+      "worldRestPosition": [
+        -0.13112837234457506,
+        0.6370470055600816,
+        0.3012083300732659
+      ]
+    },
+    {
+      "node": 396,
+      "name": "upperarm_twist_01_r_0322",
+      "parent": 332,
+      "worldRestPosition": [
+        -0.15085721678754285,
+        0.8389008768462795,
+        0.4024847286307229
+      ]
+    },
+    {
+      "node": 397,
+      "name": "upperarm_twist_01_r_end_0323",
+      "parent": 396,
+      "worldRestPosition": [
+        -0.1499042291872601,
+        0.8432234318287625,
+        0.39556506320980694
+      ]
+    },
+    {
+      "node": 398,
+      "name": "upperarm_twist_01_r_end_end_0324",
+      "parent": 397,
+      "worldRestPosition": [
+        -0.14894815014364648,
+        0.8475523932610287,
+        0.3886456051848252
+      ]
+    },
+    {
+      "node": 399,
+      "name": "upperarm_twist_01_r_end_end_end_0625",
+      "parent": 398,
+      "worldRestPosition": [
+        -0.14798898081699624,
+        0.8518873390731124,
+        0.3817258970547339
+      ]
+    },
+    {
+      "node": 400,
+      "name": "upperarm_correctiveRoot_r_0325",
+      "parent": 332,
+      "worldRestPosition": [
+        -0.16522518392826682,
+        0.9544965544855407,
+        0.47392060127785046
+      ]
+    },
+    {
+      "node": 401,
+      "name": "upperarm_middleslider_00_r_0326",
+      "parent": 400,
+      "worldRestPosition": [
+        -0.16996600333364253,
+        0.8805751436106424,
+        0.5158854791793204
+      ]
+    },
+    {
+      "node": 402,
+      "name": "upperarm_middleslider_00_out_r_0327",
+      "parent": 401,
+      "worldRestPosition": [
+        -0.16996556711746388,
+        0.8805744319317256,
+        0.5158831112110699
+      ]
+    },
+    {
+      "node": 403,
+      "name": "upperarm_middleslider_00_out_r_end_0308",
+      "parent": 402,
+      "worldRestPosition": [
+        -0.1687093287481796,
+        0.881461579159299,
+        0.5077790711115107
+      ]
+    },
+    {
+      "node": 404,
+      "name": "upperarm_middleslider_00_out_r_end_end_0329",
+      "parent": 403,
+      "worldRestPosition": [
+        -0.1674529053936782,
+        0.8823484881076247,
+        0.4996748427643133
+      ]
+    },
+    {
+      "node": 405,
+      "name": "upperarm_middleslider_00_out_r_end_end_end_0626",
+      "parent": 404,
+      "worldRestPosition": [
+        -0.16619635357714865,
+        0.883235592580936,
+        0.49157041901813225
+      ]
+    },
+    {
+      "node": 406,
+      "name": "upperarm_middleslider_01_r_0330",
+      "parent": 400,
+      "worldRestPosition": [
+        -0.2259676238894182,
+        0.9530898907874074,
+        0.4652006964627907
+      ]
+    },
+    {
+      "node": 407,
+      "name": "upperarm_middleslider_01_out_r_0331",
+      "parent": 406,
+      "worldRestPosition": [
+        -0.2259667919930855,
+        0.9530899489558864,
+        0.4652008560794327
+      ]
+    },
+    {
+      "node": 408,
+      "name": "upperarm_middleslider_01_out_r_end_00",
+      "parent": 407,
+      "worldRestPosition": [
+        -0.22471029650365668,
+        0.9539775847884013,
+        0.4570965352389986
+      ]
+    },
+    {
+      "node": 409,
+      "name": "upperarm_middleslider_01_out_r_end_end_0332",
+      "parent": 408,
+      "worldRestPosition": [
+        -0.2234537674705899,
+        0.9548646206999676,
+        0.448992120500502
+      ]
+    },
+    {
+      "node": 410,
+      "name": "upperarm_middleslider_01_out_r_end_end_end_0627",
+      "parent": 409,
+      "worldRestPosition": [
+        -0.22219723739701483,
+        0.9557517240324928,
+        0.44088784663110314
+      ]
+    },
+    {
+      "node": 411,
+      "name": "saddle_0333",
+      "parent": 11,
+      "worldRestPosition": [
+        0.007171521529802346,
+        1.322118584033061,
+        -4.163336342344337e-17
+      ]
+    },
+    {
+      "node": 412,
+      "name": "stirrup_01_l_0334",
+      "parent": 411,
+      "worldRestPosition": [
+        0.1614365586630659,
+        1.2386072683951355,
+        0.14529908869815455
+      ]
+    },
+    {
+      "node": 413,
+      "name": "stirrup_02_l_0335",
+      "parent": 412,
+      "worldRestPosition": [
+        0.3345513481039465,
+        0.8689628565498482,
+        0.1790151242654151
+      ]
+    },
+    {
+      "node": 414,
+      "name": "stirrup_02_l_end_0336",
+      "parent": 413,
+      "worldRestPosition": [
+        0.34237255690665236,
+        0.8690401370054609,
+        0.175515525802525
+      ]
+    },
+    {
+      "node": 415,
+      "name": "stirrup_02_l_end_end_0337",
+      "parent": 414,
+      "worldRestPosition": [
+        0.3501936160863538,
+        0.8691180071348372,
+        0.17201580023659524
+      ]
+    },
+    {
+      "node": 416,
+      "name": "stirrup_02_l_end_end_end_0628",
+      "parent": 415,
+      "worldRestPosition": [
+        0.35801481776848754,
+        0.8691957561376514,
+        0.16851625619552743
+      ]
+    },
+    {
+      "node": 417,
+      "name": "reins_01_l_0338",
+      "parent": 411,
+      "worldRestPosition": [
+        0.142796973200516,
+        1.3775323381654814,
+        0.12974378013909213
+      ]
+    },
+    {
+      "node": 418,
+      "name": "reins_01_inner_l_0339",
+      "parent": 417,
+      "worldRestPosition": [
+        0.11923524235350756,
+        1.4011734017010604,
+        0.17741506705648147
+      ]
+    },
+    {
+      "node": 419,
+      "name": "reins_01_inner_l_end_0340",
+      "parent": 418,
+      "worldRestPosition": [
+        0.11918299870107694,
+        1.4090518179977103,
+        0.17512179081710166
+      ]
+    },
+    {
+      "node": 420,
+      "name": "reins_01_inner_l_end_end_0341",
+      "parent": 419,
+      "worldRestPosition": [
+        0.11913057281725423,
+        1.4170129284205464,
+        0.17282918626248156
+      ]
+    },
+    {
+      "node": 421,
+      "name": "reins_01_inner_l_end_end_end_0629",
+      "parent": 420,
+      "worldRestPosition": [
+        0.1190777574856625,
+        1.4249721919206515,
+        0.17053730469803122
+      ]
+    },
+    {
+      "node": 422,
+      "name": "stirrup_01_r_0342",
+      "parent": 411,
+      "worldRestPosition": [
+        -0.1519024888359479,
+        1.242894253469157,
+        0.14296554414917648
+      ]
+    },
+    {
+      "node": 423,
+      "name": "stirrup_02_r_0343",
+      "parent": 422,
+      "worldRestPosition": [
+        -0.3420306666024,
+        0.8642911937800567,
+        0.18121668634827798
+      ]
+    },
+    {
+      "node": 424,
+      "name": "stirrup_02_r_end_0344",
+      "parent": 423,
+      "worldRestPosition": [
+        -0.33472895442015543,
+        0.8642162608021255,
+        0.18561906026799896
+      ]
+    },
+    {
+      "node": 425,
+      "name": "stirrup_02_r_end_end_0345",
+      "parent": 424,
+      "worldRestPosition": [
+        -0.32742740402127596,
+        0.8641412763228686,
+        0.19002159607527455
+      ]
+    },
+    {
+      "node": 426,
+      "name": "stirrup_02_r_end_end_end_0630",
+      "parent": 425,
+      "worldRestPosition": [
+        -0.3201257621719461,
+        0.8640662884386625,
+        0.19442396085609154
+      ]
+    },
+    {
+      "node": 427,
+      "name": "reins_01_r_0346",
+      "parent": 411,
+      "worldRestPosition": [
+        -0.11789175652166535,
+        1.3677058078328705,
+        0.12300133222565679
+      ]
+    },
+    {
+      "node": 428,
+      "name": "reins_01_inner_r_0328",
+      "parent": 427,
+      "worldRestPosition": [
+        -0.08886687560972875,
+        1.405131972321091,
+        0.15700908355430016
+      ]
+    },
+    {
+      "node": 429,
+      "name": "reins_01_inner_r_end_0348",
+      "parent": 428,
+      "worldRestPosition": [
+        -0.0855306921522952,
+        1.3980324702989624,
+        0.15980197788665826
+      ]
+    },
+    {
+      "node": 430,
+      "name": "reins_01_inner_r_end_end_0349",
+      "parent": 429,
+      "worldRestPosition": [
+        -0.08219424712941055,
+        1.3909285222125911,
+        0.1625977556644205
+      ]
+    },
+    {
+      "node": 431,
+      "name": "reins_01_inner_r_end_end_end_0631",
+      "parent": 430,
+      "worldRestPosition": [
+        -0.07885739955640024,
+        1.3838204495783455,
+        0.16539596354404762
+      ]
+    },
+    {
+      "node": 432,
+      "name": "reins_01_posFix_r_0350",
+      "parent": 411,
+      "worldRestPosition": [
+        -0.09598897788717699,
+        1.3195093712513022,
+        0.24437505741982318
+      ]
+    },
+    {
+      "node": 433,
+      "name": "reins_01_posFix_r_end_01",
+      "parent": 432,
+      "worldRestPosition": [
+        -0.09079638089265489,
+        1.313308060081301,
+        0.246940082399363
+      ]
+    },
+    {
+      "node": 434,
+      "name": "reins_01_posFix_r_end_end_02",
+      "parent": 433,
+      "worldRestPosition": [
+        -0.08560492860034749,
+        1.3070804761968526,
+        0.24950030145373056
+      ]
+    },
+    {
+      "node": 435,
+      "name": "reins_01_posFix_r_end_end_end_0632",
+      "parent": 434,
+      "worldRestPosition": [
+        -0.08041461333372346,
+        1.300828156919476,
+        0.25205649650068196
+      ]
+    },
+    {
+      "node": 436,
+      "name": "reins_01_posFix_l_03",
+      "parent": 411,
+      "worldRestPosition": [
+        0.10603286589453172,
+        1.3166877250579783,
+        0.24586531949107465
+      ]
+    },
+    {
+      "node": 437,
+      "name": "reins_01_posFix_l_end_04",
+      "parent": 436,
+      "worldRestPosition": [
+        0.11144802924360747,
+        1.3227289912803828,
+        0.24337676065754224
+      ]
+    },
+    {
+      "node": 438,
+      "name": "reins_01_posFix_l_end_end_05",
+      "parent": 437,
+      "worldRestPosition": [
+        0.11686443597276276,
+        1.3287439221049524,
+        0.24088434824143676
+      ]
+    },
+    {
+      "node": 439,
+      "name": "reins_01_posFix_l_end_end_end_0633",
+      "parent": 438,
+      "worldRestPosition": [
+        0.12228183013926323,
+        1.3347320933975344,
+        0.23838807651796406
+      ]
+    },
+    {
+      "node": 440,
+      "name": "mountpoint_01_06",
+      "parent": 11,
+      "worldRestPosition": [
+        -0.009756245057581686,
+        0.48361085615797117,
+        -0.005850427890461311
+      ]
+    },
+    {
+      "node": 441,
+      "name": "mountpoint_01_end_0351",
+      "parent": 440,
+      "worldRestPosition": [
+        0.0063737641675469916,
+        0.4835051010279484,
+        -0.005786059680285241
+      ]
+    },
+    {
+      "node": 442,
+      "name": "mountpoint_01_end_end_0352",
+      "parent": 441,
+      "worldRestPosition": [
+        0.014577877791402113,
+        0.4833994173722297,
+        -0.005721591202065357
+      ]
+    },
+    {
+      "node": 443,
+      "name": "mountpoint_01_end_end_end_0634",
+      "parent": 442,
+      "worldRestPosition": [
+        0.02278199357374771,
+        0.4832937366258087,
+        -0.005657268557527762
+      ]
+    },
+    {
+      "node": 444,
+      "name": "spine_01_correctiveRoot_0353",
+      "parent": 10,
+      "worldRestPosition": [
+        0.008326686880350424,
+        1.1749368272425265,
+        -0.07782602054560983
+      ]
+    },
+    {
+      "node": 445,
+      "name": "spine_01_middleslider_00_0354",
+      "parent": 444,
+      "worldRestPosition": [
+        0.02007323991238667,
+        1.2674396376299588,
+        -0.08038040707170375
+      ]
+    },
+    {
+      "node": 446,
+      "name": "spine_01_middleslider_00_end_0355",
+      "parent": 445,
+      "worldRestPosition": [
+        0.02095143243915899,
+        1.2755808831478217,
+        -0.07942258107948495
+      ]
+    },
+    {
+      "node": 447,
+      "name": "spine_01_middleslider_00_end_end_0356",
+      "parent": 446,
+      "worldRestPosition": [
+        0.021829667436928827,
+        1.2837226652585205,
+        -0.07846453862550275
+      ]
+    },
+    {
+      "node": 448,
+      "name": "spine_01_middleslider_00_end_end_end_0635",
+      "parent": 447,
+      "worldRestPosition": [
+        0.022707918702465045,
+        1.291864449556128,
+        -0.07750648184834458
+      ]
+    },
+    {
+      "node": 449,
+      "name": "spine_01_middleslider_02_0357",
+      "parent": 444,
+      "worldRestPosition": [
+        -0.0399908581966796,
+        0.7477413921721426,
+        -0.08790515024986478
+      ]
+    },
+    {
+      "node": 450,
+      "name": "spine_01_middleslider_02_end_0358",
+      "parent": 449,
+      "worldRestPosition": [
+        -0.03906431118252284,
+        0.7548772021371974,
+        -0.08694699291154682
+      ]
+    },
+    {
+      "node": 451,
+      "name": "spine_01_middleslider_02_end_end_0359",
+      "parent": 450,
+      "worldRestPosition": [
+        -0.03813668779713155,
+        0.7620347485126896,
+        -0.08598897702608278
+      ]
+    },
+    {
+      "node": 452,
+      "name": "spine_01_middleslider_02_end_end_end_0636",
+      "parent": 451,
+      "worldRestPosition": [
+        -0.03720834672286862,
+        0.7692150455748055,
+        -0.08503096224407015
+      ]
+    },
+    {
+      "node": 453,
+      "name": "spine_01_middleslider_01_l_0360",
+      "parent": 444,
+      "worldRestPosition": [
+        0.2581656525275444,
+        0.9690086972911778,
+        -0.07927099026671543
+      ]
+    },
+    {
+      "node": 454,
+      "name": "spine_01_middleslider_01_l_end_0347",
+      "parent": 453,
+      "worldRestPosition": [
+        0.25904397318130956,
+        0.977150506757863,
+        -0.0783129897774013
+      ]
+    },
+    {
+      "node": 455,
+      "name": "spine_01_middleslider_01_l_end_end_0362",
+      "parent": 454,
+      "worldRestPosition": [
+        0.259922158191362,
+        0.9852920714624501,
+        -0.07735505214807324
+      ]
+    },
+    {
+      "node": 456,
+      "name": "spine_01_middleslider_01_l_end_end_end_0637",
+      "parent": 455,
+      "worldRestPosition": [
+        0.26080037005030454,
+        0.9934334789087979,
+        -0.07639703833318864
+      ]
+    },
+    {
+      "node": 457,
+      "name": "spine_01_middleslider_01_r_0363",
+      "parent": 444,
+      "worldRestPosition": [
+        -0.2806852490863298,
+        1.0229712138355325,
+        -0.08859632826903462
+      ]
+    },
+    {
+      "node": 458,
+      "name": "spine_01_middleslider_01_r_end_0364",
+      "parent": 457,
+      "worldRestPosition": [
+        -0.27980697397052606,
+        1.0311129296044221,
+        -0.08763835538849973
+      ]
+    },
+    {
+      "node": 459,
+      "name": "spine_01_middleslider_01_r_end_end_0365",
+      "parent": 458,
+      "worldRestPosition": [
+        -0.2789287358977899,
+        1.0392546623912533,
+        -0.08668041174965588
+      ]
+    },
+    {
+      "node": 460,
+      "name": "spine_01_middleslider_01_r_end_end_end_0638",
+      "parent": 459,
+      "worldRestPosition": [
+        -0.278050495738424,
+        1.0473963186846698,
+        -0.08572236900662944
+      ]
+    },
+    {
+      "node": 461,
+      "name": "hips_0366",
+      "parent": 8,
+      "worldRestPosition": [
+        0.00673935916609418,
+        1.225694543364716,
+        -0.3947858292376177
+      ]
+    },
+    {
+      "node": 462,
+      "name": "tail_01_0367",
+      "parent": 461,
+      "worldRestPosition": [
+        -0.003942181341258929,
+        1.1755385782768362,
+        -0.7370087912421179
+      ]
+    },
+    {
+      "node": 463,
+      "name": "tail_02_0368",
+      "parent": 462,
+      "worldRestPosition": [
+        -0.007616780198081525,
+        1.1191182380054752,
+        -0.8281374073133639
+      ]
+    },
+    {
+      "node": 464,
+      "name": "tail_03_0369",
+      "parent": 463,
+      "worldRestPosition": [
+        -0.010728280074014999,
+        1.0261857344424883,
+        -0.8718819027171013
+      ]
+    },
+    {
+      "node": 465,
+      "name": "tail_04_0370",
+      "parent": 464,
+      "worldRestPosition": [
+        -0.013724994233878882,
+        0.9097729422397693,
+        -0.8940977221382765
+      ]
+    },
+    {
+      "node": 466,
+      "name": "tail_05_0371",
+      "parent": 465,
+      "worldRestPosition": [
+        -0.01663407673860589,
+        0.7924642936866205,
+        -0.8895406020084932
+      ]
+    },
+    {
+      "node": 467,
+      "name": "dyn_tail_06_0372",
+      "parent": 466,
+      "worldRestPosition": [
+        -0.014592381080671528,
+        0.6504067544762987,
+        -0.8441173990639753
+      ]
+    },
+    {
+      "node": 468,
+      "name": "dyn_tail_07_0373",
+      "parent": 467,
+      "worldRestPosition": [
+        -0.018615106067321592,
+        0.5047863422330566,
+        -0.8351435743411425
+      ]
+    },
+    {
+      "node": 469,
+      "name": "dyn_tail_08_0374",
+      "parent": 468,
+      "worldRestPosition": [
+        -0.022697973024424903,
+        0.3380224505782037,
+        -0.8452031330975919
+      ]
+    },
+    {
+      "node": 470,
+      "name": "dyn_tail_08_end_0375",
+      "parent": 469,
+      "worldRestPosition": [
+        -0.02293094315821568,
+        0.33774460239340093,
+        -0.8534342747987786
+      ]
+    },
+    {
+      "node": 471,
+      "name": "dyn_tail_08_end_end_0376",
+      "parent": 470,
+      "worldRestPosition": [
+        -0.023163923074720198,
+        0.33746670438119414,
+        -0.8616655694943147
+      ]
+    },
+    {
+      "node": 472,
+      "name": "dyn_tail_08_end_end_end_0639",
+      "parent": 471,
+      "worldRestPosition": [
+        -0.02339690084530296,
+        0.3371888032783456,
+        -0.8698968016723996
+      ]
+    },
+    {
+      "node": 473,
+      "name": "dyn_bounce_tail_04_left_0377",
+      "parent": 465,
+      "worldRestPosition": [
+        0.06545773770803848,
+        0.9035192249702598,
+        -0.8554186721256032
+      ]
+    },
+    {
+      "node": 474,
+      "name": "dyn_bounce_tail_05_left_0378",
+      "parent": 473,
+      "worldRestPosition": [
+        0.06650061498464968,
+        0.7850298566319369,
+        -0.8607316516104152
+      ]
+    },
+    {
+      "node": 475,
+      "name": "dyn_bounce_tail_06_left_0379",
+      "parent": 474,
+      "worldRestPosition": [
+        0.060691633631267936,
+        0.6510351993033462,
+        -0.8388001255071621
+      ]
+    },
+    {
+      "node": 476,
+      "name": "dyn_bounce_tail_07_left_0380",
+      "parent": 475,
+      "worldRestPosition": [
+        0.050895906327904514,
+        0.5041139259038661,
+        -0.8430747139281272
+      ]
+    },
+    {
+      "node": 477,
+      "name": "dyn_bounce_tail_08_left_0361",
+      "parent": 476,
+      "worldRestPosition": [
+        0.0565125524293149,
+        0.336713344455982,
+        -0.847182131965873
+      ]
+    },
+    {
+      "node": 478,
+      "name": "dyn_bounce_tail_08_left_end_0382",
+      "parent": 477,
+      "worldRestPosition": [
+        0.05627958392512654,
+        0.33643529750982315,
+        -0.8554133395508732
+      ]
+    },
+    {
+      "node": 479,
+      "name": "dyn_bounce_tail_08_left_end_end_0383",
+      "parent": 478,
+      "worldRestPosition": [
+        0.05604661062141797,
+        0.3361573581210095,
+        -0.8636445136889674
+      ]
+    },
+    {
+      "node": 480,
+      "name": "dyn_bounce_tail_08_left_end_end_end_0640",
+      "parent": 479,
+      "worldRestPosition": [
+        0.05581363555085693,
+        0.3358794555885988,
+        -0.8718756765517303
+      ]
+    },
+    {
+      "node": 481,
+      "name": "dyn_bounce_tail_04_right_0384",
+      "parent": 465,
+      "worldRestPosition": [
+        -0.08156967059811975,
+        0.9058304700468464,
+        -0.8513356263197813
+      ]
+    },
+    {
+      "node": 482,
+      "name": "dyn_bounce_tail_05_right_0385",
+      "parent": 481,
+      "worldRestPosition": [
+        -0.0847917584613111,
+        0.7877638287572566,
+        -0.856584019975967
+      ]
+    },
+    {
+      "node": 483,
+      "name": "dyn_bounce_tail_06_right_0386",
+      "parent": 482,
+      "worldRestPosition": [
+        -0.09299817944262476,
+        0.6477783071322782,
+        -0.8345311609715703
+      ]
+    },
+    {
+      "node": 484,
+      "name": "dyn_bounce_tail_07_right_0387",
+      "parent": 483,
+      "worldRestPosition": [
+        -0.0892922919233595,
+        0.5065428712265652,
+        -0.83940208680867
+      ]
+    },
+    {
+      "node": 485,
+      "name": "dyn_bounce_tail_08_right_0388",
+      "parent": 484,
+      "worldRestPosition": [
+        -0.0977989140897367,
+        0.33940175385840765,
+        -0.8431174947698721
+      ]
+    },
+    {
+      "node": 486,
+      "name": "dyn_bounce_tail_08_right_end_0389",
+      "parent": 485,
+      "worldRestPosition": [
+        -0.09803188113648588,
+        0.33912392936516117,
+        -0.8513485347936467
+      ]
+    },
+    {
+      "node": 487,
+      "name": "dyn_bounce_tail_08_right_end_end_0390",
+      "parent": 486,
+      "worldRestPosition": [
+        -0.09826486543008321,
+        0.3388460074994941,
+        -0.8595798086861145
+      ]
+    },
+    {
+      "node": 488,
+      "name": "dyn_bounce_tail_08_right_end_end_end_0621",
+      "parent": 487,
+      "worldRestPosition": [
+        -0.09849784396272096,
+        0.3385681005893239,
+        -0.8678110991108372
+      ]
+    },
+    {
+      "node": 489,
+      "name": "dyn_bounce_tail_04_front_0391",
+      "parent": 465,
+      "worldRestPosition": [
+        -0.008194788601032545,
+        0.9145967251878648,
+        -0.9351414006740629
+      ]
+    },
+    {
+      "node": 490,
+      "name": "dyn_bounce_tail_05_front_0392",
+      "parent": 489,
+      "worldRestPosition": [
+        -0.011245126824052746,
+        0.7982045682267804,
+        -0.9391290416005978
+      ]
+    },
+    {
+      "node": 491,
+      "name": "dyn_bounce_tail_06_front_0393",
+      "parent": 490,
+      "worldRestPosition": [
+        -0.016673947198213853,
+        0.6494287045682025,
+        -0.9182496756179938
+      ]
+    },
+    {
+      "node": 492,
+      "name": "dyn_bounce_tail_07_front_0394",
+      "parent": 491,
+      "worldRestPosition": [
+        -0.020273959570639728,
+        0.5088641099144708,
+        -0.8987820929869433
+      ]
+    },
+    {
+      "node": 493,
+      "name": "dyn_bounce_tail_08_front_0395",
+      "parent": 492,
+      "worldRestPosition": [
+        -0.024541760243241364,
+        0.3561245979880914,
+        -0.9271862509978646
+      ]
+    },
+    {
+      "node": 494,
+      "name": "dyn_bounce_tail_08_front_end_0396",
+      "parent": 493,
+      "worldRestPosition": [
+        -0.024774723750877765,
+        0.35584682269814616,
+        -0.9354172877953604
+      ]
+    },
+    {
+      "node": 495,
+      "name": "dyn_bounce_tail_08_front_end_end_0397",
+      "parent": 494,
+      "worldRestPosition": [
+        -0.025007697158113285,
+        0.35556898508826407,
+        -0.9436484013311542
+      ]
+    },
+    {
+      "node": 496,
+      "name": "dyn_bounce_tail_08_front_end_end_end_0622",
+      "parent": 495,
+      "worldRestPosition": [
+        -0.02524067074674094,
+        0.3552910836823447,
+        -0.9518795047862729
+      ]
+    },
+    {
+      "node": 497,
+      "name": "dyn_bounce_tail_04_back_0398",
+      "parent": 465,
+      "worldRestPosition": [
+        -0.004474923861596527,
+        0.9046869846820264,
+        -0.7932567862892329
+      ]
+    },
+    {
+      "node": 498,
+      "name": "dyn_bounce_tail_05_back_0399",
+      "parent": 497,
+      "worldRestPosition": [
+        -0.007367982110089073,
+        0.7879735029820794,
+        -0.7856808898845681
+      ]
+    },
+    {
+      "node": 499,
+      "name": "dyn_bounce_tail_06_back_0400",
+      "parent": 498,
+      "worldRestPosition": [
+        -0.0123458912297683,
+        0.6512573565910754,
+        -0.7638225936143621
+      ]
+    },
+    {
+      "node": 500,
+      "name": "dyn_bounce_tail_07_back_0381",
+      "parent": 499,
+      "worldRestPosition": [
+        -0.01696151064695224,
+        0.5007571102528108,
+        -0.7717370236541343
+      ]
+    },
+    {
+      "node": 501,
+      "name": "dyn_bounce_tail_08_back_0402",
+      "parent": 500,
+      "worldRestPosition": [
+        -0.020977109414157695,
+        0.32485544229484997,
+        -0.7717777287345641
+      ]
+    },
+    {
+      "node": 502,
+      "name": "dyn_bounce_tail_08_back_end_0403",
+      "parent": 501,
+      "worldRestPosition": [
+        -0.021210076294894336,
+        0.32457766985601466,
+        -0.7800087768656414
+      ]
+    },
+    {
+      "node": 503,
+      "name": "dyn_bounce_tail_08_back_end_end_0404",
+      "parent": 502,
+      "worldRestPosition": [
+        -0.021443051669774692,
+        0.32429982239051347,
+        -0.7882399292653359
+      ]
+    },
+    {
+      "node": 504,
+      "name": "dyn_bounce_tail_08_back_end_end_end_0643",
+      "parent": 503,
+      "worldRestPosition": [
+        -0.02167602790464493,
+        0.32402193327611806,
+        -0.7964710965963813
+      ]
+    },
+    {
+      "node": 505,
+      "name": "upperleg_l_0405",
+      "parent": 461,
+      "worldRestPosition": [
+        0.1536005972319203,
+        1.0299977946956644,
+        -0.6397572640736293
+      ]
+    },
+    {
+      "node": 506,
+      "name": "lowerleg_l_0406",
+      "parent": 505,
+      "worldRestPosition": [
+        0.20238576866972874,
+        0.6928862205195536,
+        -0.5697567035714869
+      ]
+    },
+    {
+      "node": 507,
+      "name": "foot_l_0407",
+      "parent": 506,
+      "worldRestPosition": [
+        0.15633173464078104,
+        0.46550828689153445,
+        -0.7462443339166542
+      ]
+    },
+    {
+      "node": 508,
+      "name": "toes_01_l_0408",
+      "parent": 507,
+      "worldRestPosition": [
+        0.18301412046306814,
+        0.1492378801119233,
+        -0.7528398229053861
+      ]
+    },
+    {
+      "node": 509,
+      "name": "toes_02_l_0409",
+      "parent": 508,
+      "worldRestPosition": [
+        0.18860882597629847,
+        0.07516152826513471,
+        -0.7217343186346665
+      ]
+    },
+    {
+      "node": 510,
+      "name": "toes_end_l_0410",
+      "parent": 509,
+      "worldRestPosition": [
+        0.20550172871826736,
+        0.0012589285606532108,
+        -0.6356921210360202
+      ]
+    },
+    {
+      "node": 511,
+      "name": "toes_end_l_end_0411",
+      "parent": 510,
+      "worldRestPosition": [
+        0.20703846514218785,
+        0.006267516285774024,
+        -0.6294912190927481
+      ]
+    },
+    {
+      "node": 512,
+      "name": "toes_end_l_end_end_0412",
+      "parent": 511,
+      "worldRestPosition": [
+        0.20857530754755496,
+        0.01127596416183103,
+        -0.6232900578848592
+      ]
+    },
+    {
+      "node": 513,
+      "name": "toes_end_l_end_end_end_0644",
+      "parent": 512,
+      "worldRestPosition": [
+        0.21011211580847183,
+        0.016284523818826654,
+        -0.6170889841794177
+      ]
+    },
+    {
+      "node": 514,
+      "name": "toes_02_correctiveRoot_l_0413",
+      "parent": 509,
+      "worldRestPosition": [
+        0.1886088034583519,
+        0.07516152847511047,
+        -0.7217343541804976
+      ]
+    },
+    {
+      "node": 515,
+      "name": "toes_02_middleslider_00_l_0414",
+      "parent": 514,
+      "worldRestPosition": [
+        0.19230868464683368,
+        0.08398106837960563,
+        -0.6962862442447847
+      ]
+    },
+    {
+      "node": 516,
+      "name": "toes_02_middleslider_00_out_l_0415",
+      "parent": 515,
+      "worldRestPosition": [
+        0.1923087660609411,
+        0.08398106027619215,
+        -0.6962863021408788
+      ]
+    },
+    {
+      "node": 517,
+      "name": "toes_02_middleslider_00_out_l_end_0416",
+      "parent": 516,
+      "worldRestPosition": [
+        0.19347099362488065,
+        0.08675166636319472,
+        -0.6882917883643601
+      ]
+    },
+    {
+      "node": 518,
+      "name": "toes_02_middleslider_00_out_l_end_end_0417",
+      "parent": 517,
+      "worldRestPosition": [
+        0.19463329474912514,
+        0.0895222746871743,
+        -0.6802975631485407
+      ]
+    },
+    {
+      "node": 519,
+      "name": "toes_02_middleslider_00_out_l_end_end_end_0645",
+      "parent": 518,
+      "worldRestPosition": [
+        0.19579559105299033,
+        0.092292871519193,
+        -0.6723031672086994
+      ]
+    },
+    {
+      "node": 520,
+      "name": "toes_02_middleslider_02_l_0418",
+      "parent": 514,
+      "worldRestPosition": [
+        0.18324523683604776,
+        0.062376265393015974,
+        -0.7586256127704284
+      ]
+    },
+    {
+      "node": 521,
+      "name": "toes_02_middleslider_02_out_l_0419",
+      "parent": 520,
+      "worldRestPosition": [
+        0.1832452849327504,
+        0.06237632452503154,
+        -0.7586256032542417
+      ]
+    },
+    {
+      "node": 522,
+      "name": "toes_02_middleslider_02_out_l_end_0420",
+      "parent": 521,
+      "worldRestPosition": [
+        0.18440761814088386,
+        0.06514697902080434,
+        -0.7506310497003629
+      ]
+    },
+    {
+      "node": 523,
+      "name": "toes_02_middleslider_02_out_l_end_end_0401",
+      "parent": 522,
+      "worldRestPosition": [
+        0.18557001082143865,
+        0.0679175415650471,
+        -0.7426367328524918
+      ]
+    },
+    {
+      "node": 524,
+      "name": "toes_02_middleslider_02_out_l_end_end_end_0646",
+      "parent": 523,
+      "worldRestPosition": [
+        0.1867322834330568,
+        0.07068809635340068,
+        -0.7346424785474747
+      ]
+    },
+    {
+      "node": 525,
+      "name": "toes_01_middleslider_00_l_0422",
+      "parent": 508,
+      "worldRestPosition": [
+        0.19378785587866854,
+        0.15550042215916868,
+        -0.7065235876642474
+      ]
+    },
+    {
+      "node": 526,
+      "name": "toes_01_middleslider_00_out_l_0423",
+      "parent": 525,
+      "worldRestPosition": [
+        0.19378786345246427,
+        0.1555004132189487,
+        -0.7065235824229895
+      ]
+    },
+    {
+      "node": 527,
+      "name": "toes_01_middleslider_00_out_l_end_0424",
+      "parent": 526,
+      "worldRestPosition": [
+        0.19560690293262686,
+        0.15740162067228608,
+        -0.6987778465114429
+      ]
+    },
+    {
+      "node": 528,
+      "name": "toes_01_middleslider_00_out_l_end_end_0425",
+      "parent": 527,
+      "worldRestPosition": [
+        0.19742425346482448,
+        0.1593029087398751,
+        -0.6910408518320899
+      ]
+    },
+    {
+      "node": 529,
+      "name": "toes_01_middleslider_00_out_l_end_end_end_0647",
+      "parent": 528,
+      "worldRestPosition": [
+        0.19924117673029088,
+        0.16120415004541114,
+        -0.6833071538318135
+      ]
+    },
+    {
+      "node": 530,
+      "name": "toes_01_middleslider_01_l_0426",
+      "parent": 508,
+      "worldRestPosition": [
+        0.1722101167683773,
+        0.13996461819410128,
+        -0.7990326102019072
+      ]
+    },
+    {
+      "node": 531,
+      "name": "toes_01_middleslider_01_out_l_0427",
+      "parent": 530,
+      "worldRestPosition": [
+        0.17221009186768652,
+        0.13996468206470453,
+        -0.7990327670624915
+      ]
+    },
+    {
+      "node": 532,
+      "name": "toes_01_middleslider_01_out_l_end_0428",
+      "parent": 531,
+      "worldRestPosition": [
+        0.17409370583518985,
+        0.1418659721453641,
+        -0.7910039107128665
+      ]
+    },
+    {
+      "node": 533,
+      "name": "toes_01_middleslider_01_out_l_end_end_0429",
+      "parent": 532,
+      "worldRestPosition": [
+        0.17596828098812922,
+        0.1437672664158739,
+        -0.7830142870601055
+      ]
+    },
+    {
+      "node": 534,
+      "name": "toes_01_middleslider_01_out_l_end_end_end_0648",
+      "parent": 533,
+      "worldRestPosition": [
+        0.17783400906937524,
+        0.1456685414009641,
+        -0.775062842369818
+      ]
+    },
+    {
+      "node": 535,
+      "name": "ankle_middleslider_l_0430",
+      "parent": 507,
+      "worldRestPosition": [
+        0.15633174642745934,
+        0.46550818572934327,
+        -0.7462442869831457
+      ]
+    },
+    {
+      "node": 536,
+      "name": "ankle_middleslider_00_l_0431",
+      "parent": 535,
+      "worldRestPosition": [
+        0.16886373048109307,
+        0.43930022142987596,
+        -0.6808778356728741
+      ]
+    },
+    {
+      "node": 537,
+      "name": "ankle_middleslider_00_out_l_0432",
+      "parent": 536,
+      "worldRestPosition": [
+        0.16886379336727367,
+        0.4393002048045076,
+        -0.6808778492769643
+      ]
+    },
+    {
+      "node": 538,
+      "name": "ankle_middleslider_00_out_l_end_0433",
+      "parent": 537,
+      "worldRestPosition": [
+        0.1702824284959019,
+        0.43642633837946115,
+        -0.6734263969957462
+      ]
+    },
+    {
+      "node": 539,
+      "name": "ankle_middleslider_00_out_l_end_end_0434",
+      "parent": 538,
+      "worldRestPosition": [
+        0.17170103833141762,
+        0.4335526832278138,
+        -0.6659751017090431
+      ]
+    },
+    {
+      "node": 540,
+      "name": "ankle_middleslider_00_out_l_end_end_end_0649",
+      "parent": 539,
+      "worldRestPosition": [
+        0.17311962183944316,
+        0.4306789089878063,
+        -0.6585238627386225
+      ]
+    },
+    {
+      "node": 541,
+      "name": "ankle_middleslider_01_l_0435",
+      "parent": 535,
+      "worldRestPosition": [
+        0.1450343193321224,
+        0.5050555998521844,
+        -0.7962584489230041
+      ]
+    },
+    {
+      "node": 542,
+      "name": "ankle_middleslider_01_out_l_0436",
+      "parent": 541,
+      "worldRestPosition": [
+        0.14503430420883284,
+        0.5050556627406704,
+        -0.7962585103643107
+      ]
+    },
+    {
+      "node": 543,
+      "name": "ankle_middleslider_01_out_l_end_0437",
+      "parent": 542,
+      "worldRestPosition": [
+        0.14639332828888332,
+        0.500035339993785,
+        -0.7903889861320101
+      ]
+    },
+    {
+      "node": 544,
+      "name": "ankle_middleslider_01_out_l_end_end_0438",
+      "parent": 543,
+      "worldRestPosition": [
+        0.14775241087881483,
+        0.4950150102113585,
+        -0.7845194789691918
+      ]
+    },
+    {
+      "node": 545,
+      "name": "ankle_middleslider_01_out_l_end_end_end_0650",
+      "parent": 544,
+      "worldRestPosition": [
+        0.1491114666865524,
+        0.4899946481053543,
+        -0.7786499360754163
+      ]
+    },
+    {
+      "node": 546,
+      "name": "foot_twist_l_0439",
+      "parent": 507,
+      "worldRestPosition": [
+        0.16960281753787168,
+        0.3084446457891752,
+        -0.7494073481647606
+      ]
+    },
+    {
+      "node": 547,
+      "name": "foot_twist_l_end_0440",
+      "parent": 546,
+      "worldRestPosition": [
+        0.17145482797104683,
+        0.30844166840592147,
+        -0.7413795909768056
+      ]
+    },
+    {
+      "node": 548,
+      "name": "foot_twist_l_end_end_0421",
+      "parent": 547,
+      "worldRestPosition": [
+        0.17330676429964192,
+        0.3084384606277063,
+        -0.7333517848940719
+      ]
+    },
+    {
+      "node": 549,
+      "name": "foot_twist_l_end_end_end_0651",
+      "parent": 548,
+      "worldRestPosition": [
+        0.1751587425083116,
+        0.3084353797146785,
+        -0.7253239189184968
+      ]
+    },
+    {
+      "node": 550,
+      "name": "lowerleg_twist_l_0442",
+      "parent": 506,
+      "worldRestPosition": [
+        0.17893172932528528,
+        0.5773093294331508,
+        -0.6610543978106342
+      ]
+    },
+    {
+      "node": 551,
+      "name": "lowerleg_twist_l_end_0443",
+      "parent": 550,
+      "worldRestPosition": [
+        0.18160378521812254,
+        0.5731823942760002,
+        -0.6548375096750126
+      ]
+    },
+    {
+      "node": 552,
+      "name": "lowerleg_twist_l_end_end_0444",
+      "parent": 551,
+      "worldRestPosition": [
+        0.18427287094643244,
+        0.5690431917685658,
+        -0.6486205584811251
+      ]
+    },
+    {
+      "node": 553,
+      "name": "lowerleg_twist_l_end_end_end_0652",
+      "parent": 552,
+      "worldRestPosition": [
+        0.18693909370221368,
+        0.5648912597503698,
+        -0.642403446050695
+      ]
+    },
+    {
+      "node": 554,
+      "name": "knee_middleslider_l_0445",
+      "parent": 506,
+      "worldRestPosition": [
+        0.20238574440311385,
+        0.692886236202613,
+        -0.5697566531859958
+      ]
+    },
+    {
+      "node": 555,
+      "name": "knee_middleslider_01_l_0446",
+      "parent": 554,
+      "worldRestPosition": [
+        0.18180378461587354,
+        0.717576055327142,
+        -0.674106494297374
+      ]
+    },
+    {
+      "node": 556,
+      "name": "knee_middleslider_01_out_l_0447",
+      "parent": 555,
+      "worldRestPosition": [
+        0.18180377069883455,
+        0.7175761336050971,
+        -0.6741064090882011
+      ]
+    },
+    {
+      "node": 557,
+      "name": "knee_middleslider_01_out_l_end_0448",
+      "parent": 556,
+      "worldRestPosition": [
+        0.1834097609715373,
+        0.7157444873569937,
+        -0.666301437491338
+      ]
+    },
+    {
+      "node": 558,
+      "name": "knee_middleslider_01_out_l_end_end_0449",
+      "parent": 557,
+      "worldRestPosition": [
+        0.18501671950860127,
+        0.7139141196478946,
+        -0.6584965435920128
+      ]
+    },
+    {
+      "node": 559,
+      "name": "knee_middleslider_01_out_l_end_end_end_0653",
+      "parent": 558,
+      "worldRestPosition": [
+        0.18663002799794098,
+        0.7120848158556004,
+        -0.6506916597998617
+      ]
+    },
+    {
+      "node": 560,
+      "name": "knee_middleslider_00_l_0450",
+      "parent": 554,
+      "worldRestPosition": [
+        0.21693284016087713,
+        0.676687382360486,
+        -0.498672259956313
+      ]
+    },
+    {
+      "node": 561,
+      "name": "knee_middleslider_00_out_l_0451",
+      "parent": 560,
+      "worldRestPosition": [
+        0.21693295419921477,
+        0.6766872792273503,
+        -0.49867215387617264
+      ]
+    },
+    {
+      "node": 562,
+      "name": "knee_middleslider_00_out_l_end_0452",
+      "parent": 561,
+      "worldRestPosition": [
+        0.21842206318377713,
+        0.6750120648741458,
+        -0.49079215808019916
+      ]
+    },
+    {
+      "node": 563,
+      "name": "knee_middleslider_00_out_l_end_end_0453",
+      "parent": 562,
+      "worldRestPosition": [
+        0.21990974877440145,
+        0.6733370403759192,
+        -0.482912018810788
+      ]
+    },
+    {
+      "node": 564,
+      "name": "knee_middleslider_00_out_l_end_end_end_0654",
+      "parent": 563,
+      "worldRestPosition": [
+        0.22139572828755733,
+        0.6716624534114125,
+        -0.47503187095972293
+      ]
+    },
+    {
+      "node": 565,
+      "name": "upperleg_twist_l_0454",
+      "parent": 505,
+      "worldRestPosition": [
+        0.17768702520002655,
+        0.8505430195722519,
+        -0.6041429774648086
+      ]
+    },
+    {
+      "node": 566,
+      "name": "upperleg_twist_01_l_0455",
+      "parent": 565,
+      "worldRestPosition": [
+        0.1384659133797375,
+        0.8475378918636657,
+        -0.7521750494327702
+      ]
+    },
+    {
+      "node": 567,
+      "name": "upperleg_twist_01_l_end_0456",
+      "parent": 566,
+      "worldRestPosition": [
+        0.14055783081060005,
+        0.8476994329926894,
+        -0.7442068416188499
+      ]
+    },
+    {
+      "node": 568,
+      "name": "upperleg_twist_01_l_end_end_0457",
+      "parent": 567,
+      "worldRestPosition": [
+        0.1426497830501094,
+        0.8478610057263944,
+        -0.7362384144951245
+      ]
+    },
+    {
+      "node": 569,
+      "name": "upperleg_twist_01_l_end_end_end_0655",
+      "parent": 568,
+      "worldRestPosition": [
+        0.14474177855581952,
+        0.8480227091890649,
+        -0.7282698755721061
+      ]
+    },
+    {
+      "node": 570,
+      "name": "upperleg_twist_00_l_0458",
+      "parent": 565,
+      "worldRestPosition": [
+        0.23690352433882833,
+        0.8546594894934847,
+        -0.40158266515353447
+      ]
+    },
+    {
+      "node": 571,
+      "name": "upperleg_twist_00_l_end_0459",
+      "parent": 570,
+      "worldRestPosition": [
+        0.23933221424906462,
+        0.8548218600631342,
+        -0.3936142574228668
+      ]
+    },
+    {
+      "node": 572,
+      "name": "upperleg_twist_00_l_end_end_0460",
+      "parent": 571,
+      "worldRestPosition": [
+        0.2417634650997452,
+        0.8549838473946285,
+        -0.38564565785405414
+      ]
+    },
+    {
+      "node": 573,
+      "name": "upperleg_twist_00_l_end_end_end_0656",
+      "parent": 572,
+      "worldRestPosition": [
+        0.2441963528836554,
+        0.8551459218933577,
+        -0.37767709045358233
+      ]
+    },
+    {
+      "node": 574,
+      "name": "hip_correctiveRoot_l_0441",
+      "parent": 505,
+      "worldRestPosition": [
+        0.15360058301755203,
+        1.0299978114527213,
+        -0.6397572719805293
+      ]
+    },
+    {
+      "node": 575,
+      "name": "hip_middleslider_00_l_0462",
+      "parent": 574,
+      "worldRestPosition": [
+        0.22404828837719934,
+        1.0450289533479138,
+        -0.39988971434759624
+      ]
+    },
+    {
+      "node": 576,
+      "name": "hip_middleslider_00_out_l_0463",
+      "parent": 575,
+      "worldRestPosition": [
+        0.22404830024965333,
+        1.04502893016275,
+        -0.3998896748870178
+      ]
+    },
+    {
+      "node": 577,
+      "name": "hip_middleslider_00_out_l_end_0464",
+      "parent": 576,
+      "worldRestPosition": [
+        0.22650403670793112,
+        1.0455266714367981,
+        -0.3919448222923651
+      ]
+    },
+    {
+      "node": 578,
+      "name": "hip_middleslider_00_out_l_end_end_0465",
+      "parent": 577,
+      "worldRestPosition": [
+        0.22896214566963438,
+        1.0460244742890954,
+        -0.38399995531894787
+      ]
+    },
+    {
+      "node": 579,
+      "name": "hip_middleslider_00_out_l_end_end_end_0657",
+      "parent": 578,
+      "worldRestPosition": [
+        0.23142194555663448,
+        1.046522315957334,
+        -0.3760550971614347
+      ]
+    },
+    {
+      "node": 580,
+      "name": "hip_middleslider_01_l_0466",
+      "parent": 574,
+      "worldRestPosition": [
+        0.11272621887440439,
+        1.0204555070293815,
+        -0.7920430715894121
+      ]
+    },
+    {
+      "node": 581,
+      "name": "hip_middleslider_01_out_l_0467",
+      "parent": 580,
+      "worldRestPosition": [
+        0.11272611458942396,
+        1.0204555594964846,
+        -0.7920432242190256
+      ]
+    },
+    {
+      "node": 582,
+      "name": "hip_middleslider_01_out_l_end_0468",
+      "parent": 581,
+      "worldRestPosition": [
+        0.1148558658552124,
+        1.020953143149554,
+        -0.7840983249138672
+      ]
+    },
+    {
+      "node": 583,
+      "name": "hip_middleslider_01_out_l_end_end_0469",
+      "parent": 582,
+      "worldRestPosition": [
+        0.11698563168272318,
+        1.0214511074153543,
+        -0.7761537091010154
+      ]
+    },
+    {
+      "node": 584,
+      "name": "hip_middleslider_01_out_l_end_end_end_0658",
+      "parent": 583,
+      "worldRestPosition": [
+        0.1191153645427867,
+        1.0219489312553887,
+        -0.7682090634246916
+      ]
+    },
+    {
+      "node": 585,
+      "name": "hip_middleslider_02_l_0470",
+      "parent": 574,
+      "worldRestPosition": [
+        0.23968745577988662,
+        1.0222159065580847,
+        -0.6307597083992346
+      ]
+    },
+    {
+      "node": 586,
+      "name": "hip_middleslider_02_out_l_0471",
+      "parent": 585,
+      "worldRestPosition": [
+        0.2396873460132373,
+        1.0222158140344104,
+        -0.630759685368463
+      ]
+    },
+    {
+      "node": 587,
+      "name": "hip_middleslider_02_out_l_end_0472",
+      "parent": 586,
+      "worldRestPosition": [
+        0.2419018524970774,
+        1.0227133638815598,
+        -0.622814769306229
+      ]
+    },
+    {
+      "node": 588,
+      "name": "hip_middleslider_02_out_l_end_end_0473",
+      "parent": 587,
+      "worldRestPosition": [
+        0.24413460477679988,
+        1.023211105505751,
+        -0.6148699443967135
+      ]
+    },
+    {
+      "node": 589,
+      "name": "hip_middleslider_02_out_l_end_end_end_0659",
+      "parent": 588,
+      "worldRestPosition": [
+        0.24638536584697499,
+        1.0237089449769936,
+        -0.60692511293321
+      ]
+    },
+    {
+      "node": 590,
+      "name": "upperleg_r_0474",
+      "parent": 461,
+      "worldRestPosition": [
+        -0.161742455606843,
+        1.0364515103980327,
+        -0.6310417711335001
+      ]
+    },
+    {
+      "node": 591,
+      "name": "lowerleg_r_0475",
+      "parent": 590,
+      "worldRestPosition": [
+        -0.20826090229005337,
+        0.7042877409571675,
+        -0.5316170614208525
+      ]
+    },
+    {
+      "node": 592,
+      "name": "foot_r_0476",
+      "parent": 591,
+      "worldRestPosition": [
+        -0.17817351063159007,
+        0.45337089968153654,
+        -0.6648322564201519
+      ]
+    },
+    {
+      "node": 593,
+      "name": "toes_01_r_0477",
+      "parent": 592,
+      "worldRestPosition": [
+        -0.20466792451367588,
+        0.14336247068260072,
+        -0.5949912913213165
+      ]
+    },
+    {
+      "node": 594,
+      "name": "toes_02_r_0478",
+      "parent": 593,
+      "worldRestPosition": [
+        -0.21558392863520565,
+        0.07590246599170007,
+        -0.5492168290591385
+      ]
+    },
+    {
+      "node": 595,
+      "name": "toes_end_r_0479",
+      "parent": 594,
+      "worldRestPosition": [
+        -0.23360359991314827,
+        0.003408459449223758,
+        -0.4617348103054278
+      ]
+    },
+    {
+      "node": 596,
+      "name": "toes_end_r_end_0480",
+      "parent": 595,
+      "worldRestPosition": [
+        -0.2319788209539431,
+        -0.0016993382371530662,
+        -0.46779817197256995
+      ]
+    },
+    {
+      "node": 597,
+      "name": "toes_end_r_end_end_0461",
+      "parent": 596,
+      "worldRestPosition": [
+        -0.23035414241107147,
+        -0.006807249370611708,
+        -0.47386134886124404
+      ]
+    },
+    {
+      "node": 598,
+      "name": "toes_end_r_end_end_end_0660",
+      "parent": 597,
+      "worldRestPosition": [
+        -0.22872945626189867,
+        -0.011915116261528007,
+        -0.4799244750907094
+      ]
+    },
+    {
+      "node": 599,
+      "name": "toes_02_correctiveRoot_r_0482",
+      "parent": 594,
+      "worldRestPosition": [
+        -0.21558396189774168,
+        0.07590242491849751,
+        -0.5492167715314115
+      ]
+    },
+    {
+      "node": 600,
+      "name": "toes_02_middleslider_00_r_0483",
+      "parent": 599,
+      "worldRestPosition": [
+        -0.21963709994917818,
+        0.08513389996360092,
+        -0.5240289534220204
+      ]
+    },
+    {
+      "node": 601,
+      "name": "toes_02_middleslider_00_out_r_0484",
+      "parent": 600,
+      "worldRestPosition": [
+        -0.2196373398201619,
+        0.08513366485273993,
+        -0.5240288873216679
+      ]
+    },
+    {
+      "node": 602,
+      "name": "toes_02_middleslider_00_out_r_end_0485",
+      "parent": 601,
+      "worldRestPosition": [
+        -0.2183641224351584,
+        0.08223368685871031,
+        -0.5319413648921912
+      ]
+    },
+    {
+      "node": 603,
+      "name": "toes_02_middleslider_00_out_r_end_end_0486",
+      "parent": 602,
+      "worldRestPosition": [
+        -0.21709086904506658,
+        0.0793338068017858,
+        -0.5398537122859077
+      ]
+    },
+    {
+      "node": 604,
+      "name": "toes_02_middleslider_00_out_r_end_end_end_0641",
+      "parent": 603,
+      "worldRestPosition": [
+        -0.2158176191144871,
+        0.07643390800300362,
+        -0.5477661118943126
+      ]
+    },
+    {
+      "node": 605,
+      "name": "toes_02_middleslider_02_r_0487",
+      "parent": 599,
+      "worldRestPosition": [
+        -0.20970889645894655,
+        0.06252027036778961,
+        -0.5857303713816132
+      ]
+    },
+    {
+      "node": 606,
+      "name": "toes_02_middleslider_02_out_r_0488",
+      "parent": 605,
+      "worldRestPosition": [
+        -0.20970853461784542,
+        0.06252028589454807,
+        -0.5857300433393482
+      ]
+    },
+    {
+      "node": 607,
+      "name": "toes_02_middleslider_02_out_r_end_0489",
+      "parent": 606,
+      "worldRestPosition": [
+        -0.20843528607427314,
+        0.059620384832195644,
+        -0.5936425674633635
+      ]
+    },
+    {
+      "node": 608,
+      "name": "toes_02_middleslider_02_out_r_end_end_0490",
+      "parent": 607,
+      "worldRestPosition": [
+        -0.2071620377684882,
+        0.05672046205370528,
+        -0.6015550162941667
+      ]
+    },
+    {
+      "node": 609,
+      "name": "toes_02_middleslider_02_out_r_end_end_end_0642",
+      "parent": 608,
+      "worldRestPosition": [
+        -0.20588878690993698,
+        0.05382056219727429,
+        -0.609467419217867
+      ]
+    },
+    {
+      "node": 610,
+      "name": "toes_01_middleslider_00_r_0491",
+      "parent": 593,
+      "worldRestPosition": [
+        -0.20766156746999026,
+        0.15719852276751736,
+        -0.5492610745892123
+      ]
+    },
+    {
+      "node": 611,
+      "name": "toes_01_middleslider_00_out_r_0492",
+      "parent": 610,
+      "worldRestPosition": [
+        -0.20766169668249376,
+        0.1571987001610302,
+        -0.5492605421357593
+      ]
+    },
+    {
+      "node": 612,
+      "name": "toes_01_middleslider_00_out_r_end_0493",
+      "parent": 611,
+      "worldRestPosition": [
+        -0.20725966736404344,
+        0.15403986520121496,
+        -0.5567201804981007
+      ]
+    },
+    {
+      "node": 613,
+      "name": "toes_01_middleslider_00_out_r_end_end_0494",
+      "parent": 612,
+      "worldRestPosition": [
+        -0.20685173691758163,
+        0.15088105841337807,
+        -0.5642144464007692
+      ]
+    },
+    {
+      "node": 614,
+      "name": "toes_01_middleslider_00_out_r_end_end_end_0661",
+      "parent": 613,
+      "worldRestPosition": [
+        -0.20643787432620786,
+        0.14772223408988971,
+        -0.5717533889492161
+      ]
+    },
+    {
+      "node": 615,
+      "name": "toes_01_middleslider_01_r_0495",
+      "parent": 593,
+      "worldRestPosition": [
+        -0.20191107009485676,
+        0.12672932864579173,
+        -0.6410129409244875
+      ]
+    },
+    {
+      "node": 616,
+      "name": "toes_01_middleslider_01_out_r_0496",
+      "parent": 615,
+      "worldRestPosition": [
+        -0.2019110938423281,
+        0.12672959182372928,
+        -0.6410126724305895
+      ]
+    },
+    {
+      "node": 617,
+      "name": "toes_01_middleslider_01_out_r_end_0497",
+      "parent": 616,
+      "worldRestPosition": [
+        -0.20145783229986275,
+        0.12357068862809273,
+        -0.6490746241573367
+      ]
+    },
+    {
+      "node": 618,
+      "name": "toes_01_middleslider_01_out_r_end_end_0498",
+      "parent": 617,
+      "worldRestPosition": [
+        -0.20100362196752083,
+        0.12041190369973388,
+        -0.6571801577098211
+      ]
+    },
+    {
+      "node": 619,
+      "name": "toes_01_middleslider_01_out_r_end_end_end_0662",
+      "parent": 618,
+      "worldRestPosition": [
+        -0.20054949681121062,
+        0.11725306765864517,
+        -0.6653184988613112
+      ]
+    },
+    {
+      "node": 620,
+      "name": "ankle_middleslider_r_0499",
+      "parent": 592,
+      "worldRestPosition": [
+        -0.17817354904054217,
+        0.45337081125526335,
+        -0.6648322140363884
+      ]
+    },
+    {
+      "node": 621,
+      "name": "ankle_middleslider_00_r_0500",
+      "parent": 620,
+      "worldRestPosition": [
+        -0.18403576113662856,
+        0.4401053437911708,
+        -0.593861308817366
+      ]
+    },
+    {
+      "node": 622,
+      "name": "ankle_middleslider_00_out_r_0481",
+      "parent": 621,
+      "worldRestPosition": [
+        -0.18403598840483668,
+        0.44010531891608345,
+        -0.5938612586924219
+      ]
+    },
+    {
+      "node": 623,
+      "name": "ankle_middleslider_00_out_r_end_0502",
+      "parent": 622,
+      "worldRestPosition": [
+        -0.18337737830296705,
+        0.4415065026108377,
+        -0.601923834539439
+      ]
+    },
+    {
+      "node": 624,
+      "name": "ankle_middleslider_00_out_r_end_end_0503",
+      "parent": 623,
+      "worldRestPosition": [
+        -0.18271878576536074,
+        0.44290753935567684,
+        -0.6099864930374603
+      ]
+    },
+    {
+      "node": 625,
+      "name": "ankle_middleslider_00_out_r_end_end_end_0663",
+      "parent": 624,
+      "worldRestPosition": [
+        -0.18206019207513435,
+        0.44430865519198026,
+        -0.6180491432489047
+      ]
+    },
+    {
+      "node": 626,
+      "name": "ankle_middleslider_01_r_0254",
+      "parent": 620,
+      "worldRestPosition": [
+        -0.1720243612801253,
+        0.48255486853655927,
+        -0.7238656071593222
+      ]
+    },
+    {
+      "node": 627,
+      "name": "ankle_middleslider_01_out_r_0504",
+      "parent": 626,
+      "worldRestPosition": [
+        -0.17202400591995143,
+        0.4825547813060283,
+        -0.7238641355275687
+      ]
+    },
+    {
+      "node": 628,
+      "name": "ankle_middleslider_01_out_r_end_0505",
+      "parent": 627,
+      "worldRestPosition": [
+        -0.17126997851061337,
+        0.48634992336242333,
+        -0.7308839501279356
+      ]
+    },
+    {
+      "node": 629,
+      "name": "ankle_middleslider_01_out_r_end_end_0506",
+      "parent": 628,
+      "worldRestPosition": [
+        -0.1705160324092152,
+        0.490145109617198,
+        -0.7379035244876404
+      ]
+    },
+    {
+      "node": 630,
+      "name": "ankle_middleslider_01_out_r_end_end_end_0664",
+      "parent": 629,
+      "worldRestPosition": [
+        -0.16976201748873962,
+        0.4939402618424299,
+        -0.7449232240010318
+      ]
+    },
+    {
+      "node": 631,
+      "name": "foot_twist_r_0507",
+      "parent": 592,
+      "worldRestPosition": [
+        -0.19140181428618527,
+        0.29941732022778306,
+        -0.6298533550472928
+      ]
+    },
+    {
+      "node": 632,
+      "name": "foot_twist_r_end_0508",
+      "parent": 631,
+      "worldRestPosition": [
+        -0.1903645705320286,
+        0.29789644718952957,
+        -0.637848319296431
+      ]
+    },
+    {
+      "node": 633,
+      "name": "foot_twist_r_end_end_0509",
+      "parent": 632,
+      "worldRestPosition": [
+        -0.18932730413450927,
+        0.29637546478644,
+        -0.6458434235904218
+      ]
+    },
+    {
+      "node": 634,
+      "name": "foot_twist_r_end_end_end_0665",
+      "parent": 633,
+      "worldRestPosition": [
+        -0.18829004420815948,
+        0.2948545093959398,
+        -0.6538384951789465
+      ]
+    },
+    {
+      "node": 635,
+      "name": "lowerleg_twist_r_0510",
+      "parent": 591,
+      "worldRestPosition": [
+        -0.19292288062316557,
+        0.5767575709313041,
+        -0.6005292944492151
+      ]
+    },
+    {
+      "node": 636,
+      "name": "lowerleg_twist_r_end_0511",
+      "parent": 635,
+      "worldRestPosition": [
+        -0.19097030849978858,
+        0.57985994203398,
+        -0.6077091755583983
+      ]
+    },
+    {
+      "node": 637,
+      "name": "lowerleg_twist_r_end_end_0512",
+      "parent": 636,
+      "worldRestPosition": [
+        -0.18901586679804114,
+        0.5829562417850415,
+        -0.614888921815825
+      ]
+    },
+    {
+      "node": 638,
+      "name": "lowerleg_twist_r_end_end_end_0666",
+      "parent": 637,
+      "worldRestPosition": [
+        -0.18705954566510063,
+        0.5860465771479867,
+        -0.6220687275621215
+      ]
+    },
+    {
+      "node": 639,
+      "name": "knee_middleslider_r_0513",
+      "parent": 591,
+      "worldRestPosition": [
+        -0.2082609701151607,
+        0.7042877161456769,
+        -0.5316170759692697
+      ]
+    },
+    {
+      "node": 640,
+      "name": "knee_middleslider_01_r_0514",
+      "parent": 639,
+      "worldRestPosition": [
+        -0.1988870096075484,
+        0.7130244000643225,
+        -0.6408441255579108
+      ]
+    },
+    {
+      "node": 641,
+      "name": "knee_middleslider_01_out_r_0515",
+      "parent": 640,
+      "worldRestPosition": [
+        -0.1988871806866126,
+        0.713024382648285,
+        -0.6408441009580154
+      ]
+    },
+    {
+      "node": 642,
+      "name": "knee_middleslider_01_out_r_end_0516",
+      "parent": 641,
+      "worldRestPosition": [
+        -0.19813537317568247,
+        0.7136568953458542,
+        -0.6490200115585288
+      ]
+    },
+    {
+      "node": 643,
+      "name": "knee_middleslider_01_out_r_end_end_0517",
+      "parent": 642,
+      "worldRestPosition": [
+        -0.19739176672130418,
+        0.7142893510489999,
+        -0.6571957135555483
+      ]
+    },
+    {
+      "node": 644,
+      "name": "knee_middleslider_01_out_r_end_end_end_0667",
+      "parent": 643,
+      "worldRestPosition": [
+        -0.19665626226819305,
+        0.7149220335288539,
+        -0.6653713154601659
+      ]
+    },
+    {
+      "node": 645,
+      "name": "knee_middleslider_00_r_0518",
+      "parent": 639,
+      "worldRestPosition": [
+        -0.21526933816773272,
+        0.6988797098289382,
+        -0.45728970475128944
+      ]
+    },
+    {
+      "node": 646,
+      "name": "knee_middleslider_00_out_r_0519",
+      "parent": 645,
+      "worldRestPosition": [
+        -0.215269080252397,
+        0.6988793599365555,
+        -0.457289509478998
+      ]
+    },
+    {
+      "node": 647,
+      "name": "knee_middleslider_00_out_r_end_0501",
+      "parent": 646,
+      "worldRestPosition": [
+        -0.21460711065399418,
+        0.6993629713325852,
+        -0.4654925302738316
+      ]
+    },
+    {
+      "node": 648,
+      "name": "knee_middleslider_00_out_r_end_end_0521",
+      "parent": 647,
+      "worldRestPosition": [
+        -0.21394581836284773,
+        0.6998466396722675,
+        -0.47369557202781604
+      ]
+    },
+    {
+      "node": 649,
+      "name": "knee_middleslider_00_out_r_end_end_end_0668",
+      "parent": 648,
+      "worldRestPosition": [
+        -0.21328555470948776,
+        0.7003303832433924,
+        -0.48189860755548075
+      ]
+    },
+    {
+      "node": 650,
+      "name": "upperleg_twist_r_0522",
+      "parent": 590,
+      "worldRestPosition": [
+        -0.1848220477834819,
+        0.8603790537044115,
+        -0.5804569872632788
+      ]
+    },
+    {
+      "node": 651,
+      "name": "upperleg_twist_01_r_0523",
+      "parent": 650,
+      "worldRestPosition": [
+        -0.1566195095585556,
+        0.8460201875288793,
+        -0.730343783788549
+      ]
+    },
+    {
+      "node": 652,
+      "name": "upperleg_twist_01_r_end_0524",
+      "parent": 651,
+      "worldRestPosition": [
+        -0.1551406019423515,
+        0.8452490161071444,
+        -0.7384123566862052
+      ]
+    },
+    {
+      "node": 653,
+      "name": "upperleg_twist_01_r_end_end_0525",
+      "parent": 652,
+      "worldRestPosition": [
+        -0.1536617509271404,
+        0.844478081840794,
+        -0.7464807422781837
+      ]
+    },
+    {
+      "node": 654,
+      "name": "upperleg_twist_01_r_end_end_end_0669",
+      "parent": 653,
+      "worldRestPosition": [
+        -0.1521830399298104,
+        0.8437072068833478,
+        -0.7545490857632526
+      ]
+    },
+    {
+      "node": 655,
+      "name": "upperleg_twist_00_r_0526",
+      "parent": 650,
+      "worldRestPosition": [
+        -0.22889447342707606,
+        0.8801350648342174,
+        -0.3753597379336055
+      ]
+    },
+    {
+      "node": 656,
+      "name": "upperleg_twist_00_r_end_0527",
+      "parent": 655,
+      "worldRestPosition": [
+        -0.22710024211812213,
+        0.8793559396641446,
+        -0.3834281761360111
+      ]
+    },
+    {
+      "node": 657,
+      "name": "upperleg_twist_00_r_end_end_0528",
+      "parent": 656,
+      "worldRestPosition": [
+        -0.22530605457973185,
+        0.8785770767466343,
+        -0.39149657659675735
+      ]
+    },
+    {
+      "node": 658,
+      "name": "upperleg_twist_00_r_end_end_end_0670",
+      "parent": 657,
+      "worldRestPosition": [
+        -0.22351266267656164,
+        0.8777983439780939,
+        -0.3995649851092652
+      ]
+    },
+    {
+      "node": 659,
+      "name": "hip_correctiveRoot_r_0529",
+      "parent": 590,
+      "worldRestPosition": [
+        -0.1617424900468391,
+        1.0364517819459476,
+        -0.6310419384371111
+      ]
+    },
+    {
+      "node": 660,
+      "name": "hip_middleslider_00_r_0530",
+      "parent": 659,
+      "worldRestPosition": [
+        -0.21374081234340234,
+        1.0700178704285406,
+        -0.38882708353155465
+      ]
+    },
+    {
+      "node": 661,
+      "name": "hip_middleslider_00_out_r_0531",
+      "parent": 660,
+      "worldRestPosition": [
+        -0.2137406742271504,
+        1.0700207350613877,
+        -0.3888272346500272
+      ]
+    },
+    {
+      "node": 662,
+      "name": "hip_middleslider_00_out_r_end_0532",
+      "parent": 661,
+      "worldRestPosition": [
+        -0.21192647377946985,
+        1.06890862514822,
+        -0.396849781476433
+      ]
+    },
+    {
+      "node": 663,
+      "name": "hip_middleslider_00_out_r_end_end_0533",
+      "parent": 662,
+      "worldRestPosition": [
+        -0.21011365801243223,
+        1.0677965946012358,
+        -0.40487237354382305
+      ]
+    },
+    {
+      "node": 664,
+      "name": "hip_middleslider_00_out_r_end_end_end_0671",
+      "parent": 663,
+      "worldRestPosition": [
+        -0.20830296707640325,
+        1.0666846762476447,
+        -0.4128950028267114
+      ]
+    },
+    {
+      "node": 665,
+      "name": "hip_middleslider_01_r_0534",
+      "parent": 659,
+      "worldRestPosition": [
+        -0.13253311327762843,
+        1.015141396388631,
+        -0.784816157545778
+      ]
+    },
+    {
+      "node": 666,
+      "name": "hip_middleslider_01_out_r_0535",
+      "parent": 665,
+      "worldRestPosition": [
+        -0.1325337212234986,
+        1.0151372372437182,
+        -0.7848174691201336
+      ]
+    },
+    {
+      "node": 667,
+      "name": "hip_middleslider_01_out_r_end_0536",
+      "parent": 666,
+      "worldRestPosition": [
+        -0.13101518528011677,
+        1.0140254720465636,
+        -0.7928399664741567
+      ]
+    },
+    {
+      "node": 668,
+      "name": "hip_middleslider_01_out_r_end_end_0537",
+      "parent": 667,
+      "worldRestPosition": [
+        -0.12949658775677914,
+        1.0129134183131552,
+        -0.8008626134776209
+      ]
+    },
+    {
+      "node": 669,
+      "name": "hip_middleslider_01_out_r_end_end_end_0672",
+      "parent": 668,
+      "worldRestPosition": [
+        -0.12797798643983496,
+        1.0118014879355839,
+        -0.8088853051120606
+      ]
+    },
+    {
+      "node": 670,
+      "name": "hip_middleslider_02_r_0538",
+      "parent": 659,
+      "worldRestPosition": [
+        -0.24710280495782028,
+        1.0305485909732324,
+        -0.61508203332754
+      ]
+    },
+    {
+      "node": 671,
+      "name": "hip_middleslider_02_out_r_0539",
+      "parent": 670,
+      "worldRestPosition": [
+        -0.24710313136794698,
+        1.0305464239097122,
+        -0.6150812957630175
+      ]
+    },
+    {
+      "node": 672,
+      "name": "hip_middleslider_02_out_r_end_0520",
+      "parent": 671,
+      "worldRestPosition": [
+        -0.24548048667709663,
+        1.0294347250997617,
+        -0.6231039186665258
+      ]
+    },
+    {
+      "node": 673,
+      "name": "hip_middleslider_02_out_r_end_end_0542",
+      "parent": 672,
+      "worldRestPosition": [
+        -0.24387620748347708,
+        1.028322723543907,
+        -0.6311266970135386
+      ]
+    },
+    {
+      "node": 674,
+      "name": "hip_middleslider_02_out_r_end_end_end_0673",
+      "parent": 673,
+      "worldRestPosition": [
+        -0.24229068973424644,
+        1.0272107913862516,
+        -0.6391493924717878
+      ]
+    },
+    {
+      "node": 675,
+      "name": "breeching_0543",
+      "parent": 461,
+      "worldRestPosition": [
+        -0.008063386946489661,
+        0.80796731288538,
+        -0.5972117736626317
+      ]
+    },
+    {
+      "node": 676,
+      "name": "breeching_end_0544",
+      "parent": 675,
+      "worldRestPosition": [
+        -0.007818254132375966,
+        0.816019900201424,
+        -0.5974262468314584
+      ]
+    },
+    {
+      "node": 677,
+      "name": "breeching_end_end_0545",
+      "parent": 676,
+      "worldRestPosition": [
+        -0.007580552225663647,
+        0.8240959605325439,
+        -0.5976407218713512
+      ]
+    },
+    {
+      "node": 678,
+      "name": "breeching_end_end_end_0674",
+      "parent": 677,
+      "worldRestPosition": [
+        -0.0073508040266083725,
+        0.8321956074820147,
+        -0.5978552509573304
+      ]
+    },
+    {
+      "node": 679,
+      "name": "rootmountpoint_01_0546",
+      "parent": 7,
+      "worldRestPosition": [
+        -0.00922879866290502,
+        0.48362828211389713,
+        -0.006210505345144005
+      ]
+    },
+    {
+      "node": 680,
+      "name": "rootmountpoint_01_end_0547",
+      "parent": 679,
+      "worldRestPosition": [
+        0.006901074672449709,
+        0.4835160340400849,
+        -0.006141995276252914
+      ]
+    },
+    {
+      "node": 681,
+      "name": "rootmountpoint_01_end_end_0548",
+      "parent": 680,
+      "worldRestPosition": [
+        0.01510504781473933,
+        0.48340377548407387,
+        -0.0060735278912052255
+      ]
+    },
+    {
+      "node": 682,
+      "name": "rootmountpoint_01_end_end_end_0675",
+      "parent": 681,
+      "worldRestPosition": [
+        0.023309020545711816,
+        0.48329154032581056,
+        -0.00600502185857726
+      ]
+    }
+  ],
+  "limbRestChains": {
+    "FL": {
+      "names": [
+        "clavicle_l_0203",
+        "upperarm_l_0204",
+        "lowerarm_l_0205",
+        "hand_l_0206",
+        "fingers_01_l_0187"
+      ],
+      "segmentLengthsM": [
+        0.30793243467264825,
+        0.26179543009604883,
+        0.32400959583115946,
+        0.268514623261679
+      ]
+    },
+    "FR": {
+      "names": [
+        "clavicle_r_0269",
+        "upperarm_r_0270",
+        "lowerarm_r_0271",
+        "hand_r_0272",
+        "fingers_01_r_0273"
+      ],
+      "segmentLengthsM": [
+        0.3081961583953504,
+        0.26251078005307166,
+        0.32390044340888796,
+        0.26954749649821097
+      ]
+    },
+    "HL": {
+      "names": [
+        "upperleg_l_0405",
+        "lowerleg_l_0406",
+        "foot_l_0407",
+        "toes_01_l_0408"
+      ],
+      "segmentLengthsM": [
+        0.3477416927351765,
+        0.2914954243485475,
+        0.3174624708413745
+      ]
+    },
+    "HR": {
+      "names": [
+        "upperleg_r_0474",
+        "lowerleg_r_0475",
+        "foot_r_0476",
+        "toes_01_r_0477"
+      ],
+      "segmentLengthsM": [
+        0.3498314001235841,
+        0.28567604126221596,
+        0.31888076207774
+      ]
+    }
+  },
+  "noMotionApproval": true
+}

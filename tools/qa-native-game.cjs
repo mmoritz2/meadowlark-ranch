@@ -4,8 +4,9 @@ if(process.env.QA_BASE_URL&&!process.env.QA_URL)process.env.QA_URL=process.env.Q
 const QA=require('./qa-platform.cjs'),fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.argv[2]||'output/native-game-qa');fs.mkdirSync(out,{recursive:true});
 const models={
- 'white-western':{bones:677,body:16159,modes:['rest','stand','walk','trot','canter']},
- 'bay-western':{bones:677,body:16159,modes:['rest','walk','trot','canter']},
+ 'white-western':{bones:677,body:16159,nativeHorse:true,modes:['rest','stand','walk','trot','canter']},
+ 'bay-western':{bones:677,body:16159,nativeHorse:true,modes:['rest','walk','trot','canter']},
+ 'bay-sporthorse-native':{bones:677,body:16159,nativeHorse:true,modes:['rest','walk','trot','canter']},
  'black-dragon-native':{bones:232,body:22292,modes:['rest','stand']},
  'european-dragon':{bones:169,body:21050,modes:['rest','stand','sit','walk','run','fly']}
 };
@@ -40,7 +41,7 @@ const models={
   const before=await ranch.evaluate(()=>{advanceTime(1);const G=__features,s=G.save.fresh();G.ui.openShop('native-models');return{count:s.horses.length,coins:s.coins,gems:s.gems,ridden:G.horse.ridden().id,rows:G.tables.BREEDS3.filter(b=>b[7].nativeModelChoice).map(b=>({key:b[0],coins:b[3],gems:b[4],random:G.horse.breedAvailable(b,'summon')}))};});
   for(const key of Object.keys(models))await ranch.locator('[data-fx="native-horses:add:'+key+'"]').click();
   const after=await ranch.evaluate(()=>{const G=__features,s=G.save.fresh();return{count:s.horses.length,coins:s.coins,gems:s.gems,ridden:G.horse.ridden().id};});
-  report.acquisition={before,after};report.checks.freeOptIn=after.count===before.count+4&&before.ridden===after.ridden&&before.coins===after.coins&&before.gems===after.gems&&before.rows.length===4&&before.rows.every(r=>r.coins===0&&r.gems===0&&!r.random);
+  report.acquisition={before,after};report.checks.freeOptIn=after.count===before.count+Object.keys(models).length&&before.ridden===after.ridden&&before.coins===after.coins&&before.gems===after.gems&&before.rows.length===Object.keys(models).length&&before.rows.every(r=>r.coins===0&&r.gems===0&&!r.random);
   await ranch.evaluate(()=>__features.hidePanels());
   for(const[key,expected]of Object.entries(models)){
    const index=await ranch.evaluate(key=>__features.horse.myHorses.findIndex(h=>h.breed===key),key);await ranch.selectOption('#horseSel',String(index),{force:true});
@@ -57,8 +58,8 @@ const models={
    await ranch.screenshot({path:path.join(out,key+'-ranch.png')});
    report.ranch.push({key,idle,moving,jump,travel});
    const cap=idle.profile.max*idle.scale[2];
-   report.checks[key+'Ranch']=[idle,moving,jump].every(s=>s.model===key&&s.finite&&s.bones===expected.bones&&s.rider.skinned&&s.rider.finite&&s.meshes.some(m=>m.vertices===expected.body))&&travel.max<=cap+1e-6&&Math.abs(travel.distance-travel.expected)<.015&&travel.localTravel<1e-7&&(key==='european-dragon'?jump.flying&&jump.clip==='Fly':jump.y===0&&jump.vy===0)&&(key.includes('western')?idle.tack&&idle.meshes.some(m=>m.vertices===13895&&m.visible):true);
-   if(key.includes('western')){const phases=[idle,moving,jump],distance=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));report.checks[key+'Contacts']=phases.every(s=>Object.values(s.skinnedBoots).every(d=>Number.isFinite(d)&&d<.01)&&s.nativeRider?.reins?.nonReinComponentsIntact&&Object.values(s.nativeRider.reins.sides).every(r=>distance(r.mainStart,r.bit)<1e-6&&distance(r.mainEnd,r.hand)<1e-6));}
+   report.checks[key+'Ranch']=[idle,moving,jump].every(s=>s.model===key&&s.finite&&s.bones===expected.bones&&s.rider.skinned&&s.rider.finite&&s.meshes.some(m=>m.vertices===expected.body))&&travel.max<=cap+1e-6&&Math.abs(travel.distance-travel.expected)<.015&&travel.localTravel<1e-7&&(key==='european-dragon'?jump.flying&&jump.clip==='Fly':jump.y===0&&jump.vy===0)&&(expected.nativeHorse?idle.tack&&idle.meshes.some(m=>m.vertices===13895&&m.visible):true);
+   if(expected.nativeHorse){const phases=[idle,moving,jump],distance=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));report.checks[key+'Contacts']=phases.every(s=>Object.values(s.skinnedBoots).every(d=>Number.isFinite(d)&&d<.01)&&s.nativeRider?.reins?.nonReinComponentsIntact&&Object.values(s.nativeRider.reins.sides).every(r=>distance(r.mainStart,r.bit)<1e-6&&distance(r.mainEnd,r.hand)<1e-6));}
    console.log(JSON.stringify({surface:'ranch',key,pass:report.checks[key+'Ranch'],travel}));
   }
   await ranch.evaluate(()=>{__features.ui.openStable();document.querySelector('#stablePanel [data-st="hero"]').click();});

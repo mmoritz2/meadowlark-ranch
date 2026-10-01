@@ -1,0 +1,2387 @@
+{
+  "sourceCanterSha256": "dde4b71c76c7dbaf80c8d5ca9b06f7cbffaad85d500672d5ae4e5bbf73949e03",
+  "cubicCandidateSha256": "0162dd10be27992ae53c18772ad49eb29e2dffcb434b4521a7c849e3642429fe",
+  "subdivisionsPer5msSegment": 64,
+  "clips": {
+    "Target Native Canter Left": {
+      "allTracksFinite": true,
+      "trackCount": 82,
+      "worstCubicAngularRateDegPerS": 995.1432602600746,
+      "worstOriginalLinearAngularRateDegPerS": 956.0584572584833,
+      "worstBetweenKeyQuaternionDeviationDegrees": 0.21710407756358346,
+      "worstRawQuaternionNormRange": [
+        0.999982798678477,
+        1.0000102271141824
+      ],
+      "topAngularRateJoints": [
+        {
+          "cubicPeakAngularRateDegPerS": 995.1432602600746,
+          "linearPeakAngularRateDegPerS": 956.0584572584833,
+          "maxBetweenKeyPoseDeviationDegrees": 0.13353175953494448,
+          "unnormalizedCubicQuatNormRange": [
+            0.999982798678477,
+            1.0000102271141824
+          ],
+          "finite": true,
+          "node": 254,
+          "nodeName": "hand_l_0206",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 903.1402242020156,
+          "linearPeakAngularRateDegPerS": 890.3595000751639,
+          "maxBetweenKeyPoseDeviationDegrees": 0.14404456203306149,
+          "unnormalizedCubicQuatNormRange": [
+            0.999991370023191,
+            1.0000038423894138
+          ],
+          "finite": true,
+          "node": 591,
+          "nodeName": "lowerleg_r_0475",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 887.391386649095,
+          "linearPeakAngularRateDegPerS": 874.9356578047433,
+          "maxBetweenKeyPoseDeviationDegrees": 0.16434603434365375,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999948468355139,
+            1.00000300430903
+          ],
+          "finite": true,
+          "node": 506,
+          "nodeName": "lowerleg_l_0406",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 753.1200906243973,
+          "linearPeakAngularRateDegPerS": 700.2592769789953,
+          "maxBetweenKeyPoseDeviationDegrees": 0.21710407756358346,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999836230534963,
+            1.000005088273995
+          ],
+          "finite": true,
+          "node": 592,
+          "nodeName": "foot_r_0476",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 690.4204364447077,
+          "linearPeakAngularRateDegPerS": 679.9378036593979,
+          "maxBetweenKeyPoseDeviationDegrees": 0.121069194997192,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999969088157316,
+            1.0000009749120828
+          ],
+          "finite": true,
+          "node": 251,
+          "nodeName": "clavicle_l_0203",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 670.1484689125587,
+          "linearPeakAngularRateDegPerS": 612.3000315922586,
+          "maxBetweenKeyPoseDeviationDegrees": 0.16633023701184455,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999864706504875,
+            1.0000036728034574
+          ],
+          "finite": true,
+          "node": 253,
+          "nodeName": "lowerarm_l_0205",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 633.190957507904,
+          "linearPeakAngularRateDegPerS": 623.0607241980146,
+          "maxBetweenKeyPoseDeviationDegrees": 0.12776229740990308,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999970783142487,
+            1.0000015536374616
+          ],
+          "finite": true,
+          "node": 331,
+          "nodeName": "clavicle_r_0269",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 614.2280082381084,
+          "linearPeakAngularRateDegPerS": 613.4424323659636,
+          "maxBetweenKeyPoseDeviationDegrees": 0.1422441325430504,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999928709282907,
+            1.0000025979661693
+          ],
+          "finite": true,
+          "node": 593,
+          "nodeName": "toes_01_r_0477",
+          "path": "rotation"
+        }
+      ],
+      "pelvisTranslation": {
+        "cubicPeakTranslationRateSourceUnitsPerS": 17.560836017565805,
+        "linearPeakTranslationRateSourceUnitsPerS": 17.55371132986007,
+        "maxBetweenKeyTranslationDeviationSourceUnits": 0.0005378723024436425,
+        "finite": true,
+        "node": 8,
+        "nodeName": "pelvis_08",
+        "path": "translation"
+      },
+      "allTracks": [
+        {
+          "cubicPeakAngularRateDegPerS": 12.76339698625356,
+          "linearPeakAngularRateDegPerS": 12.758642716966438,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0003913600052763679,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999632453027,
+            1.0000000361947394
+          ],
+          "finite": true,
+          "node": 8,
+          "nodeName": "pelvis_08",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 4.083209428573928,
+          "linearPeakAngularRateDegPerS": 4.08198080617806,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0001251761447779523,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999707140826,
+            1.000000029406154
+          ],
+          "finite": true,
+          "node": 9,
+          "nodeName": "spine_01_09",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 2.1762419489599933,
+          "linearPeakAngularRateDegPerS": 2.1756930997547848,
+          "maxBetweenKeyPoseDeviationDegrees": 6.670371275920168e-05,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703549973,
+            1.0000000294497264
+          ],
+          "finite": true,
+          "node": 10,
+          "nodeName": "spine_02_010",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 1.9777511110467152,
+          "linearPeakAngularRateDegPerS": 1.9770263503391632,
+          "maxBetweenKeyPoseDeviationDegrees": 6.063596367244672e-05,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703620891,
+            1.000000029419062
+          ],
+          "finite": true,
+          "node": 11,
+          "nodeName": "spine_03_011",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 2.0638006745636934,
+          "linearPeakAngularRateDegPerS": 2.063221914442785,
+          "maxBetweenKeyPoseDeviationDegrees": 6.324843682983222e-05,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999705797545,
+            1.000000029645551
+          ],
+          "finite": true,
+          "node": 12,
+          "nodeName": "spine_04_012",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 9.244491665241943,
+          "linearPeakAngularRateDegPerS": 9.241080470804409,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0002835865426104626,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999699909482,
+            1.000000032063028
+          ],
+          "finite": true,
+          "node": 14,
+          "nodeName": "neck_01_014",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 5.891074995544068,
+          "linearPeakAngularRateDegPerS": 5.88868233488883,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00018085497446387492,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999692469151,
+            1.0000000275799417
+          ],
+          "finite": true,
+          "node": 15,
+          "nodeName": "neck_02_015",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 7.889417310933753,
+          "linearPeakAngularRateDegPerS": 7.886419472449296,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0002418757465660206,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999700448183,
+            1.0000000296268916
+          ],
+          "finite": true,
+          "node": 16,
+          "nodeName": "neck_03_016",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 4.986133265917264,
+          "linearPeakAngularRateDegPerS": 4.984360503655556,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00015286125113209395,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706524523,
+            1.0000000289964297
+          ],
+          "finite": true,
+          "node": 17,
+          "nodeName": "neck_04_017",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 3.956951212516737,
+          "linearPeakAngularRateDegPerS": 3.9557437573567955,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00012136806047719157,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999700347114,
+            1.0000000295160019
+          ],
+          "finite": true,
+          "node": 18,
+          "nodeName": "neck_05_018",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 27.999719663409042,
+          "linearPeakAngularRateDegPerS": 27.98884951435237,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0008586008961536397,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999625287634,
+            1.0000000345045394
+          ],
+          "finite": true,
+          "node": 19,
+          "nodeName": "head_019",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.19497417524586,
+          "linearPeakAngularRateDegPerS": 50.12773832965911,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029885024213130978,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999631230588,
+            1.0000000344027473
+          ],
+          "finite": true,
+          "node": 30,
+          "nodeName": "dyn_head_end_right_01_028",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.64829406975979,
+          "linearPeakAngularRateDegPerS": 49.590707241670735,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029943559254315714,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703240576,
+            1.000000029170923
+          ],
+          "finite": true,
+          "node": 31,
+          "nodeName": "dyn_head_end_right_02_029",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.97413867956596,
+          "linearPeakAngularRateDegPerS": 49.913874801489314,
+          "maxBetweenKeyPoseDeviationDegrees": 0.002993744355596356,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706768041,
+            1.0000000282037989
+          ],
+          "finite": true,
+          "node": 32,
+          "nodeName": "dyn_head_end_right_03_030",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.281386554588046,
+          "linearPeakAngularRateDegPerS": 50.22412138693962,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00298932136317047,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999621745147,
+            1.0000000401515747
+          ],
+          "finite": true,
+          "node": 36,
+          "nodeName": "dyn_head_end_left_01_033",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.729696015693875,
+          "linearPeakAngularRateDegPerS": 49.665384444269364,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029950457392547577,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970366621,
+            1.0000000291489946
+          ],
+          "finite": true,
+          "node": 37,
+          "nodeName": "dyn_head_end_left_02_034",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.89001410376596,
+          "linearPeakAngularRateDegPerS": 49.83130219629677,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029924394828960985,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999707986752,
+            1.00000002915831
+          ],
+          "finite": true,
+          "node": 38,
+          "nodeName": "dyn_head_end_left_03_035",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.511401059587406,
+          "linearPeakAngularRateDegPerS": 50.43880045645911,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029768338536428564,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999584037818,
+            1.0000000325374385
+          ],
+          "finite": true,
+          "node": 87,
+          "nodeName": "dyn_new_head_neck_01_073",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.35931787305222,
+          "linearPeakAngularRateDegPerS": 50.30196573258507,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029877057008845334,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999704208684,
+            1.0000000289719275
+          ],
+          "finite": true,
+          "node": 88,
+          "nodeName": "dyn_new_head_neck_02_074",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.85351891078641,
+          "linearPeakAngularRateDegPerS": 49.78947761655985,
+          "maxBetweenKeyPoseDeviationDegrees": 0.002994486890310868,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999713728454,
+            1.0000000292055156
+          ],
+          "finite": true,
+          "node": 89,
+          "nodeName": "dyn_new_head_neck_03_075",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.7998147487119,
+          "linearPeakAngularRateDegPerS": 49.72695338252175,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029933644961506103,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999707208543,
+            1.000000029487834
+          ],
+          "finite": true,
+          "node": 131,
+          "nodeName": "dyn_new_neck_05_01_0107",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.33252212711363,
+          "linearPeakAngularRateDegPerS": 50.272507313484155,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029889458191199912,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970284748,
+            1.0000000290332898
+          ],
+          "finite": true,
+          "node": 132,
+          "nodeName": "dyn_new_neck_05_02_0108",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.536263418471925,
+          "linearPeakAngularRateDegPerS": 50.47616906864312,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029785596682433122,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999702512137,
+            1.0000000295303972
+          ],
+          "finite": true,
+          "node": 133,
+          "nodeName": "dyn_new_neck_05_03_0109",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.17987776457967,
+          "linearPeakAngularRateDegPerS": 50.106954122381076,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029895700741683832,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999709689554,
+            1.0000000301445278
+          ],
+          "finite": true,
+          "node": 145,
+          "nodeName": "dyn_new_neck_041_01_0118",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.51546288948838,
+          "linearPeakAngularRateDegPerS": 50.45657459044539,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029825426043858278,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970302054,
+            1.0000000297377278
+          ],
+          "finite": true,
+          "node": 146,
+          "nodeName": "dyn_new_neck_041_02_0119",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.45573195192263,
+          "linearPeakAngularRateDegPerS": 50.39403435111947,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029852087797629196,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999692909101,
+            1.0000000287311204
+          ],
+          "finite": true,
+          "node": 147,
+          "nodeName": "dyn_new_neck_041_03_0120",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.04485039797858,
+          "linearPeakAngularRateDegPerS": 49.97682951309106,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029907143658225834,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999704532351,
+            1.0000000293404316
+          ],
+          "finite": true,
+          "node": 148,
+          "nodeName": "dyn_new_neck_041_04_0121",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.54301501522185,
+          "linearPeakAngularRateDegPerS": 49.47998625431642,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029954682143599337,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999711641702,
+            1.0000000309865014
+          ],
+          "finite": true,
+          "node": 156,
+          "nodeName": "dyn_new_neck_04_01_0127",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.059205014678824,
+          "linearPeakAngularRateDegPerS": 50.00092584998836,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00299140063323833,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703414186,
+            1.0000000292599043
+          ],
+          "finite": true,
+          "node": 157,
+          "nodeName": "dyn_new_neck_04_02_0128",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.4259796852546,
+          "linearPeakAngularRateDegPerS": 50.35088880847723,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029835083115794013,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999702776466,
+            1.00000002940389
+          ],
+          "finite": true,
+          "node": 158,
+          "nodeName": "dyn_new_neck_04_03_0129",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.51875372520025,
+          "linearPeakAngularRateDegPerS": 50.46082543989442,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029818591874119504,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703234039,
+            1.0000000293426374
+          ],
+          "finite": true,
+          "node": 159,
+          "nodeName": "dyn_new_neck_04_04_0130",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.41249707254673,
+          "linearPeakAngularRateDegPerS": 50.342216356612774,
+          "maxBetweenKeyPoseDeviationDegrees": 0.002983647570478786,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999702594017,
+            1.0000000324593166
+          ],
+          "finite": true,
+          "node": 186,
+          "nodeName": "dyn_new_neck_03_01_0151",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.0124801354008,
+          "linearPeakAngularRateDegPerS": 49.95499277683809,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029923659177002807,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999707710098,
+            1.000000028224379
+          ],
+          "finite": true,
+          "node": 187,
+          "nodeName": "dyn_new_neck_03_02_0152",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.60428320875487,
+          "linearPeakAngularRateDegPerS": 49.54341999237498,
+          "maxBetweenKeyPoseDeviationDegrees": 0.002995447286696456,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999723409979,
+            1.0000000297286002
+          ],
+          "finite": true,
+          "node": 188,
+          "nodeName": "dyn_new_neck_03_03_0153",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.18584167496924,
+          "linearPeakAngularRateDegPerS": 50.12764303079094,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029900498816299893,
+          "unnormalizedCubicQuatNormRange": [
+            0.99999997036414,
+            1.000000029747857
+          ],
+          "finite": true,
+          "node": 189,
+          "nodeName": "dyn_new_neck_03_04_0154",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.08212664321556,
+          "linearPeakAngularRateDegPerS": 50.01900361681034,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029926343488468573,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999714521925,
+            1.0000000289193312
+          ],
+          "finite": true,
+          "node": 193,
+          "nodeName": "dyn_new_neck_02_01_0157",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.5113201063129,
+          "linearPeakAngularRateDegPerS": 49.452506358952384,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029936976062656063,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999721114217,
+            1.000000029394905
+          ],
+          "finite": true,
+          "node": 194,
+          "nodeName": "dyn_new_neck_02_02_0158",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.083209257731355,
+          "linearPeakAngularRateDegPerS": 50.01120017243409,
+          "maxBetweenKeyPoseDeviationDegrees": 0.002990838665987431,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970451787,
+            1.000000029785962
+          ],
+          "finite": true,
+          "node": 195,
+          "nodeName": "dyn_new_neck_02_03_0159",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.479949832680276,
+          "linearPeakAngularRateDegPerS": 50.42048001053639,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00298450692281951,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703069101,
+            1.000000028919731
+          ],
+          "finite": true,
+          "node": 196,
+          "nodeName": "dyn_new_neck_02_04_0160",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 690.4204364447077,
+          "linearPeakAngularRateDegPerS": 679.9378036593979,
+          "maxBetweenKeyPoseDeviationDegrees": 0.121069194997192,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999969088157316,
+            1.0000009749120828
+          ],
+          "finite": true,
+          "node": 251,
+          "nodeName": "clavicle_l_0203",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 597.6256814033619,
+          "linearPeakAngularRateDegPerS": 586.5213600655752,
+          "maxBetweenKeyPoseDeviationDegrees": 0.11741303657690484,
+          "unnormalizedCubicQuatNormRange": [
+            0.999996345783585,
+            1.0000008235693851
+          ],
+          "finite": true,
+          "node": 252,
+          "nodeName": "upperarm_l_0204",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 670.1484689125587,
+          "linearPeakAngularRateDegPerS": 612.3000315922586,
+          "maxBetweenKeyPoseDeviationDegrees": 0.16633023701184455,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999864706504875,
+            1.0000036728034574
+          ],
+          "finite": true,
+          "node": 253,
+          "nodeName": "lowerarm_l_0205",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 995.1432602600746,
+          "linearPeakAngularRateDegPerS": 956.0584572584833,
+          "maxBetweenKeyPoseDeviationDegrees": 0.13353175953494448,
+          "unnormalizedCubicQuatNormRange": [
+            0.999982798678477,
+            1.0000102271141824
+          ],
+          "finite": true,
+          "node": 254,
+          "nodeName": "hand_l_0206",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 456.8188195783026,
+          "linearPeakAngularRateDegPerS": 450.1137159375052,
+          "maxBetweenKeyPoseDeviationDegrees": 0.07664978389414318,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999977219871956,
+            1.0000019839468073
+          ],
+          "finite": true,
+          "node": 255,
+          "nodeName": "fingers_01_l_0187",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 633.190957507904,
+          "linearPeakAngularRateDegPerS": 623.0607241980146,
+          "maxBetweenKeyPoseDeviationDegrees": 0.12776229740990308,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999970783142487,
+            1.0000015536374616
+          ],
+          "finite": true,
+          "node": 331,
+          "nodeName": "clavicle_r_0269",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 582.4697097799475,
+          "linearPeakAngularRateDegPerS": 568.7375899871388,
+          "maxBetweenKeyPoseDeviationDegrees": 0.13389605805603388,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999970210693806,
+            1.0000008014415727
+          ],
+          "finite": true,
+          "node": 332,
+          "nodeName": "upperarm_r_0270",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 146.46075206568545,
+          "linearPeakAngularRateDegPerS": 142.6393763134279,
+          "maxBetweenKeyPoseDeviationDegrees": 0.02639952590376369,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999997370136217,
+            1.00000012358917
+          ],
+          "finite": true,
+          "node": 333,
+          "nodeName": "lowerarm_r_0271",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 533.083511286877,
+          "linearPeakAngularRateDegPerS": 526.7280251774,
+          "maxBetweenKeyPoseDeviationDegrees": 0.06537962328851843,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999971713459082,
+            1.0000016111610188
+          ],
+          "finite": true,
+          "node": 334,
+          "nodeName": "hand_r_0272",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 380.5360216586635,
+          "linearPeakAngularRateDegPerS": 374.1637782403896,
+          "maxBetweenKeyPoseDeviationDegrees": 0.08090193323562148,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999988637951513,
+            1.0000003624001956
+          ],
+          "finite": true,
+          "node": 335,
+          "nodeName": "fingers_01_r_0273",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 46.446588488824666,
+          "linearPeakAngularRateDegPerS": 46.43156970738667,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0014241087738164182,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999696464142,
+            1.0000000311756645
+          ],
+          "finite": true,
+          "node": 462,
+          "nodeName": "tail_01_0367",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.4975630927843,
+          "linearPeakAngularRateDegPerS": 70.41506104380453,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004159464286790213,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999713396398,
+            1.0000000295759073
+          ],
+          "finite": true,
+          "node": 467,
+          "nodeName": "dyn_tail_06_0372",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.09541617283317,
+          "linearPeakAngularRateDegPerS": 70.01026359375327,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004173075453713526,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703301711,
+            1.0000000297663663
+          ],
+          "finite": true,
+          "node": 468,
+          "nodeName": "dyn_tail_07_0373",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.28870167275639,
+          "linearPeakAngularRateDegPerS": 69.18816892475866,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004177428165742933,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999698289006,
+            1.000000029758597
+          ],
+          "finite": true,
+          "node": 469,
+          "nodeName": "dyn_tail_08_0374",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.51493194664091,
+          "linearPeakAngularRateDegPerS": 70.43269102283074,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041585581663218275,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999701954563,
+            1.0000000297901346
+          ],
+          "finite": true,
+          "node": 473,
+          "nodeName": "dyn_bounce_tail_04_left_0377",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.15176849406504,
+          "linearPeakAngularRateDegPerS": 70.05082746114309,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004168958443415962,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999691483764,
+            1.0000000295980214
+          ],
+          "finite": true,
+          "node": 474,
+          "nodeName": "dyn_bounce_tail_05_left_0378",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.45941302042328,
+          "linearPeakAngularRateDegPerS": 69.37812428712662,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041767158270584765,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999725484645,
+            1.0000000272576575
+          ],
+          "finite": true,
+          "node": 475,
+          "nodeName": "dyn_bounce_tail_06_left_0379",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.55220839901696,
+          "linearPeakAngularRateDegPerS": 69.46434061673763,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004178450566055525,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999694284413,
+            1.000000029756767
+          ],
+          "finite": true,
+          "node": 476,
+          "nodeName": "dyn_bounce_tail_07_left_0380",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.47083576657214,
+          "linearPeakAngularRateDegPerS": 70.38641563528577,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004162324369523809,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999704274035,
+            1.000000029539763
+          ],
+          "finite": true,
+          "node": 477,
+          "nodeName": "dyn_bounce_tail_08_left_0361",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.57815231197779,
+          "linearPeakAngularRateDegPerS": 69.49247589438714,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004178353570897675,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999717840816,
+            1.0000000296631328
+          ],
+          "finite": true,
+          "node": 481,
+          "nodeName": "dyn_bounce_tail_04_right_0384",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.43861904670553,
+          "linearPeakAngularRateDegPerS": 69.35801537012712,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004177319630064236,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706741078,
+            1.0000000297089038
+          ],
+          "finite": true,
+          "node": 482,
+          "nodeName": "dyn_bounce_tail_05_right_0385",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.1449482662425,
+          "linearPeakAngularRateDegPerS": 70.04782681938377,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004168585303443216,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999693525689,
+            1.0000000296586753
+          ],
+          "finite": true,
+          "node": 483,
+          "nodeName": "dyn_bounce_tail_06_right_0386",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.50958657612655,
+          "linearPeakAngularRateDegPerS": 70.42572842069539,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041587786679686345,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999702473452,
+            1.0000000296263991
+          ],
+          "finite": true,
+          "node": 484,
+          "nodeName": "dyn_bounce_tail_07_right_0387",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.3347647311813,
+          "linearPeakAngularRateDegPerS": 70.25079309270484,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004168018010743389,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999700165442,
+            1.0000000294018028
+          ],
+          "finite": true,
+          "node": 485,
+          "nodeName": "dyn_bounce_tail_08_right_0388",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.0748790982816,
+          "linearPeakAngularRateDegPerS": 69.98751735476084,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004173270735120403,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999704695439,
+            1.0000000287234503
+          ],
+          "finite": true,
+          "node": 489,
+          "nodeName": "dyn_bounce_tail_04_front_0391",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.49612311860244,
+          "linearPeakAngularRateDegPerS": 70.41492535928707,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004160199203550135,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999715187302,
+            1.000000029562949
+          ],
+          "finite": true,
+          "node": 490,
+          "nodeName": "dyn_bounce_tail_05_front_0392",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.35350466044068,
+          "linearPeakAngularRateDegPerS": 70.25009608074704,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004163330869624075,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999702456255,
+            1.0000000297898328
+          ],
+          "finite": true,
+          "node": 491,
+          "nodeName": "dyn_bounce_tail_06_front_0393",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.82694029769343,
+          "linearPeakAngularRateDegPerS": 69.7458470407591,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041743758766544774,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703802818,
+            1.0000000297680602
+          ],
+          "finite": true,
+          "node": 492,
+          "nodeName": "dyn_bounce_tail_07_front_0394",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.15896008444587,
+          "linearPeakAngularRateDegPerS": 69.07158797168972,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004179751409412379,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999717568627,
+            1.000000029305319
+          ],
+          "finite": true,
+          "node": 493,
+          "nodeName": "dyn_bounce_tail_08_front_0395",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.44451196527622,
+          "linearPeakAngularRateDegPerS": 70.36237883366607,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041626346804715265,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970107531,
+            1.0000000295080032
+          ],
+          "finite": true,
+          "node": 497,
+          "nodeName": "dyn_bounce_tail_04_back_0398",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.92898329269151,
+          "linearPeakAngularRateDegPerS": 69.84369619799669,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004175362013830655,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706080053,
+            1.0000000293181062
+          ],
+          "finite": true,
+          "node": 498,
+          "nodeName": "dyn_bounce_tail_05_back_0399",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.06192194020242,
+          "linearPeakAngularRateDegPerS": 68.9596592683505,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004177900664422869,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706181537,
+            1.0000000293695503
+          ],
+          "finite": true,
+          "node": 499,
+          "nodeName": "dyn_bounce_tail_06_back_0400",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.25977202839915,
+          "linearPeakAngularRateDegPerS": 70.17933207563843,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041688056244288405,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706237802,
+            1.0000000288432425
+          ],
+          "finite": true,
+          "node": 500,
+          "nodeName": "dyn_bounce_tail_07_back_0381",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.41487447752563,
+          "linearPeakAngularRateDegPerS": 70.32944302574074,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004165075383657153,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970447969,
+            1.0000000282242918
+          ],
+          "finite": true,
+          "node": 501,
+          "nodeName": "dyn_bounce_tail_08_back_0402",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 386.0351222966786,
+          "linearPeakAngularRateDegPerS": 378.87906091267405,
+          "maxBetweenKeyPoseDeviationDegrees": 0.08551793860954615,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999988983832904,
+            1.0000006379125579
+          ],
+          "finite": true,
+          "node": 505,
+          "nodeName": "upperleg_l_0405",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 887.391386649095,
+          "linearPeakAngularRateDegPerS": 874.9356578047433,
+          "maxBetweenKeyPoseDeviationDegrees": 0.16434603434365375,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999948468355139,
+            1.00000300430903
+          ],
+          "finite": true,
+          "node": 506,
+          "nodeName": "lowerleg_l_0406",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 424.76775271732004,
+          "linearPeakAngularRateDegPerS": 415.01087207238965,
+          "maxBetweenKeyPoseDeviationDegrees": 0.07743087422956926,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999980771847837,
+            1.0000016311281836
+          ],
+          "finite": true,
+          "node": 507,
+          "nodeName": "foot_l_0407",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 591.47973969709,
+          "linearPeakAngularRateDegPerS": 590.3359966904832,
+          "maxBetweenKeyPoseDeviationDegrees": 0.08806256668626618,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999989936005707,
+            1.0000011211235655
+          ],
+          "finite": true,
+          "node": 508,
+          "nodeName": "toes_01_l_0408",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 425.9351117221095,
+          "linearPeakAngularRateDegPerS": 394.35193412833337,
+          "maxBetweenKeyPoseDeviationDegrees": 0.08386525020307331,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999947977218384,
+            1.0000021529594283
+          ],
+          "finite": true,
+          "node": 590,
+          "nodeName": "upperleg_r_0474",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 903.1402242020156,
+          "linearPeakAngularRateDegPerS": 890.3595000751639,
+          "maxBetweenKeyPoseDeviationDegrees": 0.14404456203306149,
+          "unnormalizedCubicQuatNormRange": [
+            0.999991370023191,
+            1.0000038423894138
+          ],
+          "finite": true,
+          "node": 591,
+          "nodeName": "lowerleg_r_0475",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 753.1200906243973,
+          "linearPeakAngularRateDegPerS": 700.2592769789953,
+          "maxBetweenKeyPoseDeviationDegrees": 0.21710407756358346,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999836230534963,
+            1.000005088273995
+          ],
+          "finite": true,
+          "node": 592,
+          "nodeName": "foot_r_0476",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 614.2280082381084,
+          "linearPeakAngularRateDegPerS": 613.4424323659636,
+          "maxBetweenKeyPoseDeviationDegrees": 0.1422441325430504,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999928709282907,
+            1.0000025979661693
+          ],
+          "finite": true,
+          "node": 593,
+          "nodeName": "toes_01_r_0477",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakTranslationRateSourceUnitsPerS": 17.560836017565805,
+          "linearPeakTranslationRateSourceUnitsPerS": 17.55371132986007,
+          "maxBetweenKeyTranslationDeviationSourceUnits": 0.0005378723024436425,
+          "finite": true,
+          "node": 8,
+          "nodeName": "pelvis_08",
+          "path": "translation"
+        }
+      ]
+    },
+    "Target Native Canter Right": {
+      "allTracksFinite": true,
+      "trackCount": 82,
+      "worstCubicAngularRateDegPerS": 968.833881643583,
+      "worstOriginalLinearAngularRateDegPerS": 955.0014011104009,
+      "worstBetweenKeyQuaternionDeviationDegrees": 0.26114928395731335,
+      "worstRawQuaternionNormRange": [
+        0.9999804745002296,
+        1.0000067922020028
+      ],
+      "topAngularRateJoints": [
+        {
+          "cubicPeakAngularRateDegPerS": 968.833881643583,
+          "linearPeakAngularRateDegPerS": 955.0014011104009,
+          "maxBetweenKeyPoseDeviationDegrees": 0.17619813148910454,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999942076193834,
+            1.0000044817530562
+          ],
+          "finite": true,
+          "node": 506,
+          "nodeName": "lowerleg_l_0406",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 839.1077020508613,
+          "linearPeakAngularRateDegPerS": 790.8574773276214,
+          "maxBetweenKeyPoseDeviationDegrees": 0.26114928395731335,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999804745002296,
+            1.0000036724071109
+          ],
+          "finite": true,
+          "node": 333,
+          "nodeName": "lowerarm_r_0271",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 837.12366433196,
+          "linearPeakAngularRateDegPerS": 825.6115073167147,
+          "maxBetweenKeyPoseDeviationDegrees": 0.1495650367848327,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999915713348948,
+            1.0000024143497122
+          ],
+          "finite": true,
+          "node": 591,
+          "nodeName": "lowerleg_r_0475",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 819.7699393536191,
+          "linearPeakAngularRateDegPerS": 796.8609558765877,
+          "maxBetweenKeyPoseDeviationDegrees": 0.10980896835247728,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999913460055064,
+            1.0000067922020028
+          ],
+          "finite": true,
+          "node": 334,
+          "nodeName": "hand_r_0272",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 718.9476961025348,
+          "linearPeakAngularRateDegPerS": 708.0945162609094,
+          "maxBetweenKeyPoseDeviationDegrees": 0.13355603297948224,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999967425448436,
+            1.0000020820804802
+          ],
+          "finite": true,
+          "node": 331,
+          "nodeName": "clavicle_r_0269",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 697.8789162415826,
+          "linearPeakAngularRateDegPerS": 665.5907457733165,
+          "maxBetweenKeyPoseDeviationDegrees": 0.15901782359146704,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999893466997675,
+            1.000004793766416
+          ],
+          "finite": true,
+          "node": 332,
+          "nodeName": "upperarm_r_0270",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 653.3188174372998,
+          "linearPeakAngularRateDegPerS": 652.0565626410006,
+          "maxBetweenKeyPoseDeviationDegrees": 0.15482476477401397,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999955979198241,
+            1.0000020576289306
+          ],
+          "finite": true,
+          "node": 593,
+          "nodeName": "toes_01_r_0477",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 651.4161479137889,
+          "linearPeakAngularRateDegPerS": 625.1408008253992,
+          "maxBetweenKeyPoseDeviationDegrees": 0.2142867406315945,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999881263488201,
+            1.0000037495538934
+          ],
+          "finite": true,
+          "node": 592,
+          "nodeName": "foot_r_0476",
+          "path": "rotation"
+        }
+      ],
+      "pelvisTranslation": {
+        "cubicPeakTranslationRateSourceUnitsPerS": 17.560836017565805,
+        "linearPeakTranslationRateSourceUnitsPerS": 17.55371132986007,
+        "maxBetweenKeyTranslationDeviationSourceUnits": 0.0005378723024436425,
+        "finite": true,
+        "node": 8,
+        "nodeName": "pelvis_08",
+        "path": "translation"
+      },
+      "allTracks": [
+        {
+          "cubicPeakAngularRateDegPerS": 12.76339698625356,
+          "linearPeakAngularRateDegPerS": 12.758642716966438,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0003913600052763679,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999632453027,
+            1.0000000361947394
+          ],
+          "finite": true,
+          "node": 8,
+          "nodeName": "pelvis_08",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 4.083209428573928,
+          "linearPeakAngularRateDegPerS": 4.08198080617806,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0001251761447779523,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999707140826,
+            1.000000029406154
+          ],
+          "finite": true,
+          "node": 9,
+          "nodeName": "spine_01_09",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 2.1762419489599933,
+          "linearPeakAngularRateDegPerS": 2.1756930997547848,
+          "maxBetweenKeyPoseDeviationDegrees": 6.670371275920168e-05,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703549973,
+            1.0000000294497264
+          ],
+          "finite": true,
+          "node": 10,
+          "nodeName": "spine_02_010",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 1.9777511110467152,
+          "linearPeakAngularRateDegPerS": 1.9770263503391632,
+          "maxBetweenKeyPoseDeviationDegrees": 6.063596367244672e-05,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703620891,
+            1.000000029419062
+          ],
+          "finite": true,
+          "node": 11,
+          "nodeName": "spine_03_011",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 2.0638006745636934,
+          "linearPeakAngularRateDegPerS": 2.063221914442785,
+          "maxBetweenKeyPoseDeviationDegrees": 6.324843682983222e-05,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999705797545,
+            1.000000029645551
+          ],
+          "finite": true,
+          "node": 12,
+          "nodeName": "spine_04_012",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 9.244491665241943,
+          "linearPeakAngularRateDegPerS": 9.241080470804409,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0002835865426104626,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999699909482,
+            1.000000032063028
+          ],
+          "finite": true,
+          "node": 14,
+          "nodeName": "neck_01_014",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 5.891074995544068,
+          "linearPeakAngularRateDegPerS": 5.88868233488883,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00018085497446387492,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999692469151,
+            1.0000000275799417
+          ],
+          "finite": true,
+          "node": 15,
+          "nodeName": "neck_02_015",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 7.889417310933753,
+          "linearPeakAngularRateDegPerS": 7.886419472449296,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0002418757465660206,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999700448183,
+            1.0000000296268916
+          ],
+          "finite": true,
+          "node": 16,
+          "nodeName": "neck_03_016",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 4.986133265917264,
+          "linearPeakAngularRateDegPerS": 4.984360503655556,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00015286125113209395,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706524523,
+            1.0000000289964297
+          ],
+          "finite": true,
+          "node": 17,
+          "nodeName": "neck_04_017",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 3.956951212516737,
+          "linearPeakAngularRateDegPerS": 3.9557437573567955,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00012136806047719157,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999700347114,
+            1.0000000295160019
+          ],
+          "finite": true,
+          "node": 18,
+          "nodeName": "neck_05_018",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 27.999719663409042,
+          "linearPeakAngularRateDegPerS": 27.98884951435237,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0008586008961536397,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999625287634,
+            1.0000000345045394
+          ],
+          "finite": true,
+          "node": 19,
+          "nodeName": "head_019",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.19497417524586,
+          "linearPeakAngularRateDegPerS": 50.12773832965911,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029885024213130978,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999631230588,
+            1.0000000344027473
+          ],
+          "finite": true,
+          "node": 30,
+          "nodeName": "dyn_head_end_right_01_028",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.64829406975979,
+          "linearPeakAngularRateDegPerS": 49.590707241670735,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029943559254315714,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703240576,
+            1.000000029170923
+          ],
+          "finite": true,
+          "node": 31,
+          "nodeName": "dyn_head_end_right_02_029",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.97413867956596,
+          "linearPeakAngularRateDegPerS": 49.913874801489314,
+          "maxBetweenKeyPoseDeviationDegrees": 0.002993744355596356,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706768041,
+            1.0000000282037989
+          ],
+          "finite": true,
+          "node": 32,
+          "nodeName": "dyn_head_end_right_03_030",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.281386554588046,
+          "linearPeakAngularRateDegPerS": 50.22412138693962,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00298932136317047,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999621745147,
+            1.0000000401515747
+          ],
+          "finite": true,
+          "node": 36,
+          "nodeName": "dyn_head_end_left_01_033",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.729696015693875,
+          "linearPeakAngularRateDegPerS": 49.665384444269364,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029950457392547577,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970366621,
+            1.0000000291489946
+          ],
+          "finite": true,
+          "node": 37,
+          "nodeName": "dyn_head_end_left_02_034",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.89001410376596,
+          "linearPeakAngularRateDegPerS": 49.83130219629677,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029924394828960985,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999707986752,
+            1.00000002915831
+          ],
+          "finite": true,
+          "node": 38,
+          "nodeName": "dyn_head_end_left_03_035",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.511401059587406,
+          "linearPeakAngularRateDegPerS": 50.43880045645911,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029768338536428564,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999584037818,
+            1.0000000325374385
+          ],
+          "finite": true,
+          "node": 87,
+          "nodeName": "dyn_new_head_neck_01_073",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.35931787305222,
+          "linearPeakAngularRateDegPerS": 50.30196573258507,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029877057008845334,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999704208684,
+            1.0000000289719275
+          ],
+          "finite": true,
+          "node": 88,
+          "nodeName": "dyn_new_head_neck_02_074",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.85351891078641,
+          "linearPeakAngularRateDegPerS": 49.78947761655985,
+          "maxBetweenKeyPoseDeviationDegrees": 0.002994486890310868,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999713728454,
+            1.0000000292055156
+          ],
+          "finite": true,
+          "node": 89,
+          "nodeName": "dyn_new_head_neck_03_075",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.7998147487119,
+          "linearPeakAngularRateDegPerS": 49.72695338252175,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029933644961506103,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999707208543,
+            1.000000029487834
+          ],
+          "finite": true,
+          "node": 131,
+          "nodeName": "dyn_new_neck_05_01_0107",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.33252212711363,
+          "linearPeakAngularRateDegPerS": 50.272507313484155,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029889458191199912,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970284748,
+            1.0000000290332898
+          ],
+          "finite": true,
+          "node": 132,
+          "nodeName": "dyn_new_neck_05_02_0108",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.536263418471925,
+          "linearPeakAngularRateDegPerS": 50.47616906864312,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029785596682433122,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999702512137,
+            1.0000000295303972
+          ],
+          "finite": true,
+          "node": 133,
+          "nodeName": "dyn_new_neck_05_03_0109",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.17987776457967,
+          "linearPeakAngularRateDegPerS": 50.106954122381076,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029895700741683832,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999709689554,
+            1.0000000301445278
+          ],
+          "finite": true,
+          "node": 145,
+          "nodeName": "dyn_new_neck_041_01_0118",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.51546288948838,
+          "linearPeakAngularRateDegPerS": 50.45657459044539,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029825426043858278,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970302054,
+            1.0000000297377278
+          ],
+          "finite": true,
+          "node": 146,
+          "nodeName": "dyn_new_neck_041_02_0119",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.45573195192263,
+          "linearPeakAngularRateDegPerS": 50.39403435111947,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029852087797629196,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999692909101,
+            1.0000000287311204
+          ],
+          "finite": true,
+          "node": 147,
+          "nodeName": "dyn_new_neck_041_03_0120",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.04485039797858,
+          "linearPeakAngularRateDegPerS": 49.97682951309106,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029907143658225834,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999704532351,
+            1.0000000293404316
+          ],
+          "finite": true,
+          "node": 148,
+          "nodeName": "dyn_new_neck_041_04_0121",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.54301501522185,
+          "linearPeakAngularRateDegPerS": 49.47998625431642,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029954682143599337,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999711641702,
+            1.0000000309865014
+          ],
+          "finite": true,
+          "node": 156,
+          "nodeName": "dyn_new_neck_04_01_0127",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.059205014678824,
+          "linearPeakAngularRateDegPerS": 50.00092584998836,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00299140063323833,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703414186,
+            1.0000000292599043
+          ],
+          "finite": true,
+          "node": 157,
+          "nodeName": "dyn_new_neck_04_02_0128",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.4259796852546,
+          "linearPeakAngularRateDegPerS": 50.35088880847723,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029835083115794013,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999702776466,
+            1.00000002940389
+          ],
+          "finite": true,
+          "node": 158,
+          "nodeName": "dyn_new_neck_04_03_0129",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.51875372520025,
+          "linearPeakAngularRateDegPerS": 50.46082543989442,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029818591874119504,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703234039,
+            1.0000000293426374
+          ],
+          "finite": true,
+          "node": 159,
+          "nodeName": "dyn_new_neck_04_04_0130",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.41249707254673,
+          "linearPeakAngularRateDegPerS": 50.342216356612774,
+          "maxBetweenKeyPoseDeviationDegrees": 0.002983647570478786,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999702594017,
+            1.0000000324593166
+          ],
+          "finite": true,
+          "node": 186,
+          "nodeName": "dyn_new_neck_03_01_0151",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.0124801354008,
+          "linearPeakAngularRateDegPerS": 49.95499277683809,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029923659177002807,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999707710098,
+            1.000000028224379
+          ],
+          "finite": true,
+          "node": 187,
+          "nodeName": "dyn_new_neck_03_02_0152",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.60428320875487,
+          "linearPeakAngularRateDegPerS": 49.54341999237498,
+          "maxBetweenKeyPoseDeviationDegrees": 0.002995447286696456,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999723409979,
+            1.0000000297286002
+          ],
+          "finite": true,
+          "node": 188,
+          "nodeName": "dyn_new_neck_03_03_0153",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.18584167496924,
+          "linearPeakAngularRateDegPerS": 50.12764303079094,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029900498816299893,
+          "unnormalizedCubicQuatNormRange": [
+            0.99999997036414,
+            1.000000029747857
+          ],
+          "finite": true,
+          "node": 189,
+          "nodeName": "dyn_new_neck_03_04_0154",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.08212664321556,
+          "linearPeakAngularRateDegPerS": 50.01900361681034,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029926343488468573,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999714521925,
+            1.0000000289193312
+          ],
+          "finite": true,
+          "node": 193,
+          "nodeName": "dyn_new_neck_02_01_0157",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 49.5113201063129,
+          "linearPeakAngularRateDegPerS": 49.452506358952384,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0029936976062656063,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999721114217,
+            1.000000029394905
+          ],
+          "finite": true,
+          "node": 194,
+          "nodeName": "dyn_new_neck_02_02_0158",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.083209257731355,
+          "linearPeakAngularRateDegPerS": 50.01120017243409,
+          "maxBetweenKeyPoseDeviationDegrees": 0.002990838665987431,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970451787,
+            1.000000029785962
+          ],
+          "finite": true,
+          "node": 195,
+          "nodeName": "dyn_new_neck_02_03_0159",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 50.479949832680276,
+          "linearPeakAngularRateDegPerS": 50.42048001053639,
+          "maxBetweenKeyPoseDeviationDegrees": 0.00298450692281951,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703069101,
+            1.000000028919731
+          ],
+          "finite": true,
+          "node": 196,
+          "nodeName": "dyn_new_neck_02_04_0160",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 601.4586650980764,
+          "linearPeakAngularRateDegPerS": 592.2063249585166,
+          "maxBetweenKeyPoseDeviationDegrees": 0.1151015987744925,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999974185852821,
+            1.000001343299003
+          ],
+          "finite": true,
+          "node": 251,
+          "nodeName": "clavicle_l_0203",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 510.3598113084555,
+          "linearPeakAngularRateDegPerS": 498.9722056575287,
+          "maxBetweenKeyPoseDeviationDegrees": 0.11133838535313022,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999975990085906,
+            1.0000006010852451
+          ],
+          "finite": true,
+          "node": 252,
+          "nodeName": "upperarm_l_0204",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 157.07244428717968,
+          "linearPeakAngularRateDegPerS": 153.39780364831472,
+          "maxBetweenKeyPoseDeviationDegrees": 0.04314635491124433,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999994110766225,
+            1.000000161099206
+          ],
+          "finite": true,
+          "node": 253,
+          "nodeName": "lowerarm_l_0205",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 620.6163717323255,
+          "linearPeakAngularRateDegPerS": 593.6338407622525,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0708846822453351,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999929217451402,
+            1.0000022621735312
+          ],
+          "finite": true,
+          "node": 254,
+          "nodeName": "hand_l_0206",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 384.6613587518853,
+          "linearPeakAngularRateDegPerS": 378.7159690039253,
+          "maxBetweenKeyPoseDeviationDegrees": 0.08067956388907975,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999988896848774,
+            1.0000003243096462
+          ],
+          "finite": true,
+          "node": 255,
+          "nodeName": "fingers_01_l_0187",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 718.9476961025348,
+          "linearPeakAngularRateDegPerS": 708.0945162609094,
+          "maxBetweenKeyPoseDeviationDegrees": 0.13355603297948224,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999967425448436,
+            1.0000020820804802
+          ],
+          "finite": true,
+          "node": 331,
+          "nodeName": "clavicle_r_0269",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 697.8789162415826,
+          "linearPeakAngularRateDegPerS": 665.5907457733165,
+          "maxBetweenKeyPoseDeviationDegrees": 0.15901782359146704,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999893466997675,
+            1.000004793766416
+          ],
+          "finite": true,
+          "node": 332,
+          "nodeName": "upperarm_r_0270",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 839.1077020508613,
+          "linearPeakAngularRateDegPerS": 790.8574773276214,
+          "maxBetweenKeyPoseDeviationDegrees": 0.26114928395731335,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999804745002296,
+            1.0000036724071109
+          ],
+          "finite": true,
+          "node": 333,
+          "nodeName": "lowerarm_r_0271",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 819.7699393536191,
+          "linearPeakAngularRateDegPerS": 796.8609558765877,
+          "maxBetweenKeyPoseDeviationDegrees": 0.10980896835247728,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999913460055064,
+            1.0000067922020028
+          ],
+          "finite": true,
+          "node": 334,
+          "nodeName": "hand_r_0272",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 453.57462801818707,
+          "linearPeakAngularRateDegPerS": 446.53267609886166,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0785544999696199,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999977308282492,
+            1.000000871495797
+          ],
+          "finite": true,
+          "node": 335,
+          "nodeName": "fingers_01_r_0273",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 46.44668619786963,
+          "linearPeakAngularRateDegPerS": 46.43161600561491,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0014240770387905493,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999686337642,
+            1.0000000309349022
+          ],
+          "finite": true,
+          "node": 462,
+          "nodeName": "tail_01_0367",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.4975630927843,
+          "linearPeakAngularRateDegPerS": 70.41506104380453,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004159464286790213,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999713396398,
+            1.0000000295759073
+          ],
+          "finite": true,
+          "node": 467,
+          "nodeName": "dyn_tail_06_0372",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.09541617283317,
+          "linearPeakAngularRateDegPerS": 70.01026359375327,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004173075453713526,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703301711,
+            1.0000000297663663
+          ],
+          "finite": true,
+          "node": 468,
+          "nodeName": "dyn_tail_07_0373",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.28870167275639,
+          "linearPeakAngularRateDegPerS": 69.18816892475866,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004177428165742933,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999698289006,
+            1.000000029758597
+          ],
+          "finite": true,
+          "node": 469,
+          "nodeName": "dyn_tail_08_0374",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.51493194664091,
+          "linearPeakAngularRateDegPerS": 70.43269102283074,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041585581663218275,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999701954563,
+            1.0000000297901346
+          ],
+          "finite": true,
+          "node": 473,
+          "nodeName": "dyn_bounce_tail_04_left_0377",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.15176849406504,
+          "linearPeakAngularRateDegPerS": 70.05082746114309,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004168958443415962,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999691483764,
+            1.0000000295980214
+          ],
+          "finite": true,
+          "node": 474,
+          "nodeName": "dyn_bounce_tail_05_left_0378",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.45941302042328,
+          "linearPeakAngularRateDegPerS": 69.37812428712662,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041767158270584765,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999725484645,
+            1.0000000272576575
+          ],
+          "finite": true,
+          "node": 475,
+          "nodeName": "dyn_bounce_tail_06_left_0379",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.55220839901696,
+          "linearPeakAngularRateDegPerS": 69.46434061673763,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004178450566055525,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999694284413,
+            1.000000029756767
+          ],
+          "finite": true,
+          "node": 476,
+          "nodeName": "dyn_bounce_tail_07_left_0380",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.47083576657214,
+          "linearPeakAngularRateDegPerS": 70.38641563528577,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004162324369523809,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999704274035,
+            1.000000029539763
+          ],
+          "finite": true,
+          "node": 477,
+          "nodeName": "dyn_bounce_tail_08_left_0361",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.57815231197779,
+          "linearPeakAngularRateDegPerS": 69.49247589438714,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004178353570897675,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999717840816,
+            1.0000000296631328
+          ],
+          "finite": true,
+          "node": 481,
+          "nodeName": "dyn_bounce_tail_04_right_0384",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.43861904670553,
+          "linearPeakAngularRateDegPerS": 69.35801537012712,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004177319630064236,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706741078,
+            1.0000000297089038
+          ],
+          "finite": true,
+          "node": 482,
+          "nodeName": "dyn_bounce_tail_05_right_0385",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.1449482662425,
+          "linearPeakAngularRateDegPerS": 70.04782681938377,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004168585303443216,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999693525689,
+            1.0000000296586753
+          ],
+          "finite": true,
+          "node": 483,
+          "nodeName": "dyn_bounce_tail_06_right_0386",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.50958657612655,
+          "linearPeakAngularRateDegPerS": 70.42572842069539,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041587786679686345,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999702473452,
+            1.0000000296263991
+          ],
+          "finite": true,
+          "node": 484,
+          "nodeName": "dyn_bounce_tail_07_right_0387",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.3347647311813,
+          "linearPeakAngularRateDegPerS": 70.25079309270484,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004168018010743389,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999700165442,
+            1.0000000294018028
+          ],
+          "finite": true,
+          "node": 485,
+          "nodeName": "dyn_bounce_tail_08_right_0388",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.0748790982816,
+          "linearPeakAngularRateDegPerS": 69.98751735476084,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004173270735120403,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999704695439,
+            1.0000000287234503
+          ],
+          "finite": true,
+          "node": 489,
+          "nodeName": "dyn_bounce_tail_04_front_0391",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.49612311860244,
+          "linearPeakAngularRateDegPerS": 70.41492535928707,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004160199203550135,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999715187302,
+            1.000000029562949
+          ],
+          "finite": true,
+          "node": 490,
+          "nodeName": "dyn_bounce_tail_05_front_0392",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.35350466044068,
+          "linearPeakAngularRateDegPerS": 70.25009608074704,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004163330869624075,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999702456255,
+            1.0000000297898328
+          ],
+          "finite": true,
+          "node": 491,
+          "nodeName": "dyn_bounce_tail_06_front_0393",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.82694029769343,
+          "linearPeakAngularRateDegPerS": 69.7458470407591,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041743758766544774,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999703802818,
+            1.0000000297680602
+          ],
+          "finite": true,
+          "node": 492,
+          "nodeName": "dyn_bounce_tail_07_front_0394",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.15896008444587,
+          "linearPeakAngularRateDegPerS": 69.07158797168972,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004179751409412379,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999717568627,
+            1.000000029305319
+          ],
+          "finite": true,
+          "node": 493,
+          "nodeName": "dyn_bounce_tail_08_front_0395",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.44451196527622,
+          "linearPeakAngularRateDegPerS": 70.36237883366607,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041626346804715265,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970107531,
+            1.0000000295080032
+          ],
+          "finite": true,
+          "node": 497,
+          "nodeName": "dyn_bounce_tail_04_back_0398",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.92898329269151,
+          "linearPeakAngularRateDegPerS": 69.84369619799669,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004175362013830655,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706080053,
+            1.0000000293181062
+          ],
+          "finite": true,
+          "node": 498,
+          "nodeName": "dyn_bounce_tail_05_back_0399",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 69.06192194020242,
+          "linearPeakAngularRateDegPerS": 68.9596592683505,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004177900664422869,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706181537,
+            1.0000000293695503
+          ],
+          "finite": true,
+          "node": 499,
+          "nodeName": "dyn_bounce_tail_06_back_0400",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.25977202839915,
+          "linearPeakAngularRateDegPerS": 70.17933207563843,
+          "maxBetweenKeyPoseDeviationDegrees": 0.0041688056244288405,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999999706237802,
+            1.0000000288432425
+          ],
+          "finite": true,
+          "node": 500,
+          "nodeName": "dyn_bounce_tail_07_back_0381",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 70.41487447752563,
+          "linearPeakAngularRateDegPerS": 70.32944302574074,
+          "maxBetweenKeyPoseDeviationDegrees": 0.004165075383657153,
+          "unnormalizedCubicQuatNormRange": [
+            0.999999970447969,
+            1.0000000282242918
+          ],
+          "finite": true,
+          "node": 501,
+          "nodeName": "dyn_bounce_tail_08_back_0402",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 423.2438883482544,
+          "linearPeakAngularRateDegPerS": 415.76402371141995,
+          "maxBetweenKeyPoseDeviationDegrees": 0.08955840306904425,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999987944204667,
+            1.0000009956077442
+          ],
+          "finite": true,
+          "node": 505,
+          "nodeName": "upperleg_l_0405",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 968.833881643583,
+          "linearPeakAngularRateDegPerS": 955.0014011104009,
+          "maxBetweenKeyPoseDeviationDegrees": 0.17619813148910454,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999942076193834,
+            1.0000044817530562
+          ],
+          "finite": true,
+          "node": 506,
+          "nodeName": "lowerleg_l_0406",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 503.26695777501953,
+          "linearPeakAngularRateDegPerS": 497.00196458331607,
+          "maxBetweenKeyPoseDeviationDegrees": 0.08037901800740567,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999970916778606,
+            1.0000026089704628
+          ],
+          "finite": true,
+          "node": 507,
+          "nodeName": "foot_l_0407",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 537.2131998584356,
+          "linearPeakAngularRateDegPerS": 536.6157094376621,
+          "maxBetweenKeyPoseDeviationDegrees": 0.08576997575570072,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999987638693153,
+            1.0000013472369664
+          ],
+          "finite": true,
+          "node": 508,
+          "nodeName": "toes_01_l_0408",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 476.0517023542108,
+          "linearPeakAngularRateDegPerS": 432.33548093034955,
+          "maxBetweenKeyPoseDeviationDegrees": 0.09520789107527218,
+          "unnormalizedCubicQuatNormRange": [
+            0.999990983640526,
+            1.000001379762127
+          ],
+          "finite": true,
+          "node": 590,
+          "nodeName": "upperleg_r_0474",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 837.12366433196,
+          "linearPeakAngularRateDegPerS": 825.6115073167147,
+          "maxBetweenKeyPoseDeviationDegrees": 0.1495650367848327,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999915713348948,
+            1.0000024143497122
+          ],
+          "finite": true,
+          "node": 591,
+          "nodeName": "lowerleg_r_0475",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 651.4161479137889,
+          "linearPeakAngularRateDegPerS": 625.1408008253992,
+          "maxBetweenKeyPoseDeviationDegrees": 0.2142867406315945,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999881263488201,
+            1.0000037495538934
+          ],
+          "finite": true,
+          "node": 592,
+          "nodeName": "foot_r_0476",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakAngularRateDegPerS": 653.3188174372998,
+          "linearPeakAngularRateDegPerS": 652.0565626410006,
+          "maxBetweenKeyPoseDeviationDegrees": 0.15482476477401397,
+          "unnormalizedCubicQuatNormRange": [
+            0.9999955979198241,
+            1.0000020576289306
+          ],
+          "finite": true,
+          "node": 593,
+          "nodeName": "toes_01_r_0477",
+          "path": "rotation"
+        },
+        {
+          "cubicPeakTranslationRateSourceUnitsPerS": 17.560836017565805,
+          "linearPeakTranslationRateSourceUnitsPerS": 17.55371132986007,
+          "maxBetweenKeyTranslationDeviationSourceUnits": 0.0005378723024436425,
+          "finite": true,
+          "node": 8,
+          "nodeName": "pelvis_08",
+          "path": "translation"
+        }
+      ]
+    }
+  }
+}

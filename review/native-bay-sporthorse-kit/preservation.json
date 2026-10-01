@@ -1,0 +1,105 @@
+{
+  "status": "Private Bay Sporthorse mounted review kit; no production activation",
+  "inputs": {
+    "review/native-breed-targets/bay-sporthorse/rest.glb": "8f7f83e9669dc063dcb38455f8658369774ec0ce9b9eb81c2e7742e7d013d6a8",
+    "review/native-bay-sporthorse-walk/model.glb": "512697ed36c8edb92cb31555e672026bb552d1f97d366d9afe9ac88b92e2dbf5",
+    "review/native-bay-sporthorse-trot/model.glb": "6a14a61b3c99e529ddd25afba7a905d9b87fdc2b31160868ff00d1c778e6a557",
+    "review/native-bay-sporthorse-canter-cubic/model.glb": "0162dd10be27992ae53c18772ad49eb29e2dffcb434b4521a7c849e3642429fe"
+  },
+  "targetSha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+  "targetBytes": 33902428,
+  "sourceDataUnchanged": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "images": true,
+    "textures": true,
+    "samplers": true,
+    "scenes": true
+  },
+  "originalBinaryPrefixIdentical": true,
+  "originalClipsIdentical": true,
+  "curveChecks": {
+    "Target Native Walk Rollover": {
+      "channels": 82,
+      "allInputAndOutputValuesIdentical": true,
+      "interpolationIdentical": true,
+      "samplerInterpolationCounts": {
+        "CUBICSPLINE": 82
+      }
+    },
+    "Target Native Trot": {
+      "channels": 82,
+      "allInputAndOutputValuesIdentical": true,
+      "interpolationIdentical": true,
+      "samplerInterpolationCounts": {
+        "CUBICSPLINE": 82
+      }
+    },
+    "Target Native Canter Left": {
+      "channels": 82,
+      "allInputAndOutputValuesIdentical": true,
+      "interpolationIdentical": true,
+      "samplerInterpolationCounts": {
+        "CUBICSPLINE": 82
+      }
+    },
+    "Target Native Canter Right": {
+      "channels": 82,
+      "allInputAndOutputValuesIdentical": true,
+      "interpolationIdentical": true,
+      "samplerInterpolationCounts": {
+        "CUBICSPLINE": 82
+      }
+    }
+  },
+  "clipNames": [
+    "Target Native Walk Rollover",
+    "Target Native Trot",
+    "Target Native Canter Left",
+    "Target Native Canter Right"
+  ],
+  "gaits": {
+    "walk": {
+      "clip": "Target Native Walk Rollover",
+      "durationS": 1.12,
+      "stanceFraction": 0.65,
+      "strokeM": 0.3647941052881828,
+      "nominalSpeedMps": 0.501090803967284
+    },
+    "trot": {
+      "clip": "Target Native Trot",
+      "durationS": 0.72,
+      "stanceFraction": 0.44,
+      "strokeM": 0.40127351581700105,
+      "nominalSpeedMps": 1.2666461989173015
+    },
+    "canterLeft": {
+      "clip": "Target Native Canter Left",
+      "durationS": 0.64,
+      "stanceFraction": 0.4,
+      "strokeM": 0.45599263161022846,
+      "nominalSpeedMps": 1.7812212172274549,
+      "offsets": {
+        "HR": 0.0,
+        "HL": 0.24,
+        "FR": 0.24,
+        "FL": 0.48
+      }
+    },
+    "canterRight": {
+      "clip": "Target Native Canter Right",
+      "durationS": 0.64,
+      "stanceFraction": 0.4,
+      "strokeM": 0.45599263161022846,
+      "nominalSpeedMps": 1.7812212172274549,
+      "offsets": {
+        "HL": 0.0,
+        "HR": 0.24,
+        "FL": 0.24,
+        "FR": 0.48
+      }
+    }
+  }
+}

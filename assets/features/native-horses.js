@@ -1,7 +1,8 @@
-import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=native-continuity-1';
+import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=native-sporthorse-1';
 
 export const id='native-horses';
 export const NATIVE_MODEL_CHOICES=Object.freeze({
+ 'bay-sporthorse-native':{body:'#805638',mane:'#241b18',description:'Bay Sporthorse with Western tack. Standing pose, walk, trot and both canter leads. No gallop or jump yet.'},
  'white-western':{body:'#f0eee5',mane:'#e7ded1',description:'White horse with Western tack. Idle, walk, trot and both canter leads. No gallop or jump yet.'},
  'bay-western':{body:'#815638',mane:'#241b18',description:'Bay horse with Western tack. Standing pose, walk, trot and both canter leads. No gallop or jump yet.'},
  'black-dragon-native':{body:'#24242a',mane:'#24242a',description:'The original Black Dragon, with its idle animation. A stationary companion for now; walking and flight are not available.'},
@@ -33,7 +34,7 @@ export function install(G){
   if(added){H.reloadHorses();G.toast(NATIVE_BREED_PROFILES[key].name+' is in your stable.');}
   G.ui.openShop('native-models');
  });
- G.ui.stableHeader(()=>'<div class="evrow"><b>New horses and dragons</b><span>Four free choices · preview their available movements</span><button data-fx="native-horses:open">Free models</button></div>');
+ G.ui.stableHeader(()=>'<div class="evrow"><b>New horses and dragons</b><span>'+keys.length+' free choices · preview their available movements</span><button data-fx="native-horses:open">Free models</button></div>');
  G.ui.section('shopHorseRow',row=>keys.includes(row?.[0])?' · Free model choice':'');
  G.on('state',state=>{state.nativeModels=keys.map(key=>({key,name:NATIVE_BREED_PROFILES[key].name,gaits:Object.keys(NATIVE_BREED_PROFILES[key].nativeGaits),price:0}));});
 }

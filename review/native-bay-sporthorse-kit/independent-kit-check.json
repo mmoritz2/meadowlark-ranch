@@ -1,0 +1,31 @@
+{
+  "sha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+  "animations": [
+    "Target Native Walk Rollover",
+    "Target Native Trot",
+    "Target Native Canter Left",
+    "Target Native Canter Right"
+  ],
+  "curves": [
+    {
+      "clip": "Target Native Walk Rollover",
+      "exactAllCurves": true,
+      "channelCount": 82
+    },
+    {
+      "clip": "Target Native Trot",
+      "exactAllCurves": true,
+      "channelCount": 82
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "exactAllCurves": true,
+      "channelCount": 82
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "exactAllCurves": true,
+      "channelCount": 82
+    }
+  ]
+}

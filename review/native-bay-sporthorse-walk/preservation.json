@@ -1,0 +1,29 @@
+{
+  "sourceSha256": "8f7f83e9669dc063dcb38455f8658369774ec0ce9b9eb81c2e7742e7d013d6a8",
+  "candidateSha256": "512697ed36c8edb92cb31555e672026bb552d1f97d366d9afe9ac88b92e2dbf5",
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "images": true,
+    "textures": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "accessorsSourcePrefix": true,
+    "bufferViewsSourcePrefix": true,
+    "binarySourcePrefix": true
+  },
+  "jointCount": 677,
+  "skinnedMeshVertexCounts": [
+    2028,
+    5092,
+    13895,
+    16159,
+    23514
+  ],
+  "appendedClip": "Target Native Walk Rollover",
+  "channels": 82,
+  "finite": true
+}

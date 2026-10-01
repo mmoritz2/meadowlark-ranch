@@ -1,0 +1,126 @@
+{
+  "id": "iceland",
+  "sourceSha256": "fd18d9b9b22e00dc30a6fa1cfe2e135bb20f7c871df0a976706aaea2f4dff655",
+  "originalAcquiredSha256": "743fd70ec937dde1aa550afde17eeb506ca538933e291eca41d2fa8d5ffb20ea",
+  "referenceGeometrySha256": "e1c9a8a5511733ac03a510c3c4c1bc5de026cc308015fe9207a7a900d6be5798",
+  "outputSha256": "48e28ee87d400ddf65b944caa20fa6ee20a4e011ff737eae8c13ac1b95ed3c4d",
+  "jointCount": 677,
+  "clipCount": 0,
+  "noMotionApproval": true,
+  "reference40RigNotIncluded": true,
+  "jointOrderRotationScaleHierarchyPreserved": true,
+  "nativeIndicesWeightsUVsPreserved": true,
+  "originalBinaryPrefixPreserved": true,
+  "jointPivotMaxErrorM": 1.2440567926383356e-15,
+  "inverseBindsFiniteNonsingular": true,
+  "inverseBindAbsDetRange": [
+    0.9999984141820648,
+    1.0000004995490543
+  ],
+  "defaultArtistSkinOperatorMaxError": 1.3322676295501878e-15,
+  "fixedBodyFloorY": 8.27394443236873e-09,
+  "regionCageScale": 0.800040242039507,
+  "previewUniformFrameScale": 0.7722638741882183,
+  "jointPivotNonuniformDeltaRangeM": [
+    0.012810781119446009,
+    0.125503109107126
+  ],
+  "meshes": [
+    {
+      "mesh": "Horse.001_M_Body_0",
+      "vertices": 16159,
+      "maxWeightedOperatorCondition": 1.0404042478820485,
+      "restSkinnedMaxErrorM": 1.7168079324938826e-07,
+      "restSkinnedRmsErrorM": 5.673968045390083e-08,
+      "bounds": [
+        [
+          -0.2881748894472939,
+          8.27394443236873e-09,
+          -0.8709278786859204
+        ],
+        [
+          0.2748248627944505,
+          1.6657703085394968,
+          1.1354725627310693
+        ]
+      ]
+    },
+    {
+      "mesh": "Horse.001_M_Eye_0",
+      "vertices": 2028,
+      "maxWeightedOperatorCondition": 1.0000008332087462,
+      "restSkinnedMaxErrorM": 1.0625569995833023e-07,
+      "restSkinnedRmsErrorM": 5.025184265880141e-08,
+      "bounds": [
+        [
+          -0.14246131645499466,
+          1.4736400547504798,
+          0.9229699009600137
+        ],
+        [
+          0.06945754299558526,
+          1.5106395478590233,
+          0.9788454573606802
+        ]
+      ]
+    },
+    {
+      "mesh": "Horse.001_M_Hair_0",
+      "vertices": 23514,
+      "maxWeightedOperatorCondition": 1.0047460411663944,
+      "restSkinnedMaxErrorM": 1.540914046499089e-07,
+      "restSkinnedRmsErrorM": 6.149497589107407e-08,
+      "bounds": [
+        [
+          -0.23830242094349277,
+          0.14383260105273238,
+          -0.9775774991766785
+        ],
+        [
+          0.10046159966281151,
+          1.6287119314773235,
+          1.0666266523775574
+        ]
+      ]
+    },
+    {
+      "mesh": "Horse.001_M_Saddle2_0",
+      "vertices": 13895,
+      "maxWeightedOperatorCondition": 2.5189747873120982,
+      "restSkinnedMaxErrorM": 1.682669501375569e-07,
+      "restSkinnedRmsErrorM": 5.458569390723801e-08,
+      "bounds": [
+        [
+          -0.3933059570375795,
+          0.677133222462739,
+          -0.3428482414409909
+        ],
+        [
+          0.38151954970807606,
+          1.6159487768451657,
+          1.1072939335943097
+        ]
+      ]
+    },
+    {
+      "mesh": "Horse.001_M_Saddle1_0",
+      "vertices": 5092,
+      "maxWeightedOperatorCondition": 1.0031926843607866,
+      "restSkinnedMaxErrorM": 1.197368749630761e-07,
+      "restSkinnedRmsErrorM": 5.496415433444813e-08,
+      "bounds": [
+        [
+          -0.3006651594665574,
+          0.8929633579415599,
+          -0.27003507703656904
+        ],
+        [
+          0.27949168866712415,
+          1.4042842861270752,
+          0.3027087700346541
+        ]
+      ]
+    }
+  ],
+  "status": "Rest-only static target; no gait, naturalism or mounted-rider approval"
+}

@@ -1,0 +1,194 @@
+{
+  "candidateSha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+  "actualTarget": "Bay Sporthorse",
+  "profileFixtureId": "bay-western",
+  "routedPrivateCandidate": true,
+  "profileRoutes": [
+    {
+      "url": "http://127.0.0.1:8584/assets/native-breed-profiles.js?v=native-sporthorse-1",
+      "originalResponseSha256": "a8919e9477c851b7656f1c2d6695d7f48c18e906a0b18255da771e3aaa04511a",
+      "routedResponseSha256": "c33f5db38c10297653edff5da4d012c118c3766ae64cf7d9d378016a36087fd1",
+      "record": {
+        "id": "bay-western",
+        "name": "Private Bay Sporthorse",
+        "label": "Private Bay Sporthorse",
+        "nativeKind": "horse",
+        "file": "../review/native-bay-sporthorse-kit/model.glb",
+        "sha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+        "jointCount": 677,
+        "bodyVertexCount": 16159,
+        "hairVertexCount": 23514,
+        "tackVertexCount": 13895,
+        "nativeIdleClip": null,
+        "nativeHeadBone": "head_019",
+        "nativeSeatBone": "saddle_0333",
+        "nativeSourceSeat": [
+          -0.00017306463011734427,
+          1.582938121682778,
+          -4.155131004517093e-9
+        ],
+        "nativeTranslation": [
+          0.00017306463011734427,
+          -8.55023843393532e-9,
+          4.155131004517093e-9
+        ],
+        "nativeScale": 1,
+        "nativeMaxSpeedMps": 1.7812212172274549,
+        "nativeGaits": {
+          "walk": {
+            "clip": "Target Native Walk Rollover",
+            "durationS": 1.12,
+            "stanceFraction": 0.65,
+            "strokeM": 0.3647941052881828,
+            "nominalSpeedMps": 0.501090803967284
+          },
+          "trot": {
+            "clip": "Target Native Trot",
+            "durationS": 0.72,
+            "stanceFraction": 0.44,
+            "strokeM": 0.40127351581700105,
+            "nominalSpeedMps": 1.2666461989173015
+          },
+          "canterLeft": {
+            "clip": "Target Native Canter Left",
+            "durationS": 0.64,
+            "stanceFraction": 0.4,
+            "strokeM": 0.45599263161022846,
+            "nominalSpeedMps": 1.7812212172274549,
+            "offsets": {
+              "HR": 0,
+              "HL": 0.24,
+              "FR": 0.24,
+              "FL": 0.48
+            }
+          },
+          "canterRight": {
+            "clip": "Target Native Canter Right",
+            "durationS": 0.64,
+            "stanceFraction": 0.4,
+            "strokeM": 0.45599263161022846,
+            "nominalSpeedMps": 1.7812212172274549,
+            "offsets": {
+              "HL": 0,
+              "HR": 0.24,
+              "FL": 0.24,
+              "FR": 0.48
+            }
+          }
+        },
+        "nativeAnchorFile": "../review/native-bay-sporthorse-kit/anchors.json",
+        "nativeCoordinateFile": "../review/native-bay-sporthorse-kit/actual-coordinates.json"
+      }
+    }
+  ],
+  "controllerSha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6",
+  "responses": [
+    {
+      "url": "http://127.0.0.1:8584/assets/native-horse-motion.js?v=native-transitions-1",
+      "sha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6"
+    }
+  ],
+  "errors": [],
+  "unrouted": false,
+  "actualRanchControllers": true,
+  "controlledInputOnly": true,
+  "rows": [
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "stand",
+        "to": "walk",
+        "fraction": 0.12
+      },
+      "finalClip": "Target Native Walk Rollover",
+      "actualSha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+      "allFinite": true,
+      "maxActualBootResidualM": 0.00000293363316375114,
+      "maxReinEndpointResidualM": 2.5989654674417885e-15,
+      "maxJointStep": 3.6493079409397216,
+      "minimumBodyFloorVsActorPlaneM": -0.0033932612639733916,
+      "minimumBodyFloorVsPlayerGroundM": -0.0033932612639733916,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "walk",
+        "to": "trot",
+        "fraction": 0.95
+      },
+      "finalClip": "Target Native Trot",
+      "actualSha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+      "allFinite": true,
+      "maxActualBootResidualM": 0.000002763398679349849,
+      "maxReinEndpointResidualM": 2.5894628196555746e-15,
+      "maxJointStep": 6.220903952527419,
+      "minimumBodyFloorVsActorPlaneM": -0.009910405725294284,
+      "minimumBodyFloorVsPlayerGroundM": -0.009910405725294284,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "trot",
+        "to": "canterLeft",
+        "fraction": 0.95
+      },
+      "finalClip": "Target Native Canter Left",
+      "actualSha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+      "allFinite": true,
+      "maxActualBootResidualM": 0.0000027866092771219086,
+      "maxReinEndpointResidualM": 2.4924445086331347e-15,
+      "maxJointStep": 7.497836859607557,
+      "minimumBodyFloorVsActorPlaneM": -0.0003911700945468952,
+      "minimumBodyFloorVsPlayerGroundM": -0.0003911700945468952,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "canterLeft",
+        "to": "canterRight",
+        "fraction": 0.95
+      },
+      "finalClip": "Target Native Canter Right",
+      "actualSha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+      "allFinite": true,
+      "maxActualBootResidualM": 0.00000305556977965259,
+      "maxReinEndpointResidualM": 2.2752801345137463e-15,
+      "maxJointStep": 7.209087960612098,
+      "minimumBodyFloorVsActorPlaneM": -0.009014599041161517,
+      "minimumBodyFloorVsPlayerGroundM": -0.01745123266297767,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    },
+    {
+      "breed": "bay-western",
+      "scenario": {
+        "from": "canterRight",
+        "to": "stand",
+        "fraction": 0
+      },
+      "finalClip": null,
+      "actualSha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+      "allFinite": true,
+      "maxActualBootResidualM": 0.000002883818569504766,
+      "maxReinEndpointResidualM": 2.328823463338185e-15,
+      "maxJointStep": 5.80383228878747,
+      "minimumBodyFloorVsActorPlaneM": -0.0022065238311036323,
+      "minimumBodyFloorVsPlayerGroundM": -0.0022065238311036323,
+      "completedFadeByS": 0.2,
+      "sourceNonReinIntact": true
+    }
+  ],
+  "allFinite": true,
+  "maxBootResidualM": 0.00000305556977965259,
+  "maxReinEndpointResidualM": 2.5989654674417885e-15,
+  "sourceNonReinIntact": true,
+  "attachmentPass": true,
+  "actorPlaneWithin10mm": true,
+  "verdict": "Finite mounted attachment and real-time fading pass; transient floor-contact limits remain"
+}

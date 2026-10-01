@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,"><title>Bay Sporthorse cubic gait kit</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;font:14px system-ui;background:#132821;color:#e9eee5}main{height:100dvh;display:grid;grid-template-rows:auto 1fr auto}header,footer{padding:12px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}h1{font:28px Georgia,serif;margin:0 0 3px}p{margin:0;color:#bfcfc4;max-width:870px}a{color:#f0d798}#stage{position:relative;min-height:0}canvas{display:block;width:100%;height:100%}#status{position:absolute;top:12px;left:16px;background:#17372be5;padding:9px 12px;border-radius:6px;max-width:560px}button{font:inherit;color:#e9eee5;background:#294638;border:1px solid #718679;border-radius:6px;padding:7px 11px;cursor:pointer}button[aria-pressed="true"]{background:#d5c48b;color:#14241d}input{accent-color:#d5c48b}small{color:#cad5c9}label{display:flex;gap:7px;align-items:center}
+</style>
+<script type="importmap">{"imports":{"three":"../../assets/vendor/three/build/three.module.js","three/addons/":"../../assets/vendor/three/examples/jsm/"}}</script>
+</head><body><main>
+<header><div><h1>Bay Sporthorse: cubic gait kit</h1><p>Private Bay Sporthorse rider and original Western tack test across rebuilt Walk, Trot, and both Canter leads. Four preserved cubic clips use the current native motion controller. Contact and mounted transition limits are recorded in the review.</p></div><a href="../native-bay-sporthorse-walk/review.html">Sporthorse gait source</a></header>
+<div id="stage"><div id="status">Loading horse and measured tack contacts…</div></div>
+<footer><label>Gait <select id="gait"><option value="walk">Walk</option><option value="trot">Trot</option><option value="canterLeft">Canter left</option><option value="canterRight">Canter right</option></select></label><button id="start">Start</button><button id="reset">Reset</button><button id="side" aria-pressed="true">Side</button><button id="quarter" aria-pressed="false">Quarter</button><button id="follow" aria-pressed="true">Camera follows</button><button id="rider" aria-pressed="true">Rider</button><button id="markers" aria-pressed="false">Contact markers</button><label>Travel cycles <input id="cycle" type="range" min="0" max="3000" value="0" style="width:150px"></label><small id="readout">0.000 m · phase 0.000</small></footer>
+</main><script type="module" src="./review-module.mjs"></script></body></html>

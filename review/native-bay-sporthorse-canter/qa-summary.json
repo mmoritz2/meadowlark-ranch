@@ -1,0 +1,446 @@
+{
+  "candidateSha256": "dde4b71c76c7dbaf80c8d5ca9b06f7cbffaad85d500672d5ae4e5bbf73949e03",
+  "sourceSha256": "8f7f83e9669dc063dcb38455f8658369774ec0ce9b9eb81c2e7742e7d013d6a8",
+  "periodS": 0.64,
+  "stanceFraction": 0.4,
+  "bodyHeightRatio": 0.9119852632204569,
+  "halfStrokeM": 0.22799631580511423,
+  "nominalSpeedMps": 1.7812212172274549,
+  "fixedFloorY": 8.55023843393532e-09,
+  "standingProbePass": true,
+  "browserErrors": [],
+  "leads": {
+    "Left": {
+      "authoredFrames": 128,
+      "authoredGridPass": true,
+      "authoredWorstVerticalErrorM": 0.004572474319617626,
+      "authoredWorstStrideAnchorErrorM": 0.001005463409031515,
+      "authoredStanceVerticalErrorMaxM": 0.0030241686238249724,
+      "authoredStanceGridPass": true,
+      "authoredSwingHeightErrorMaxM": 0.004572474319617626,
+      "browserPhases": 128,
+      "all677BoneTransformsFinite": true,
+      "allStanceWholeHoofMinimaWithin10mm": true,
+      "stanceContact": {
+        "FL": {
+          "samples": 51,
+          "minM": 0.0009485033603277644,
+          "maxM": 0.0012635038052086563,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "FR": {
+          "samples": 51,
+          "minM": 0.0008633793282901286,
+          "maxM": 0.0011449311218943666,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "HL": {
+          "samples": 51,
+          "minM": 0.0009123566563379944,
+          "maxM": 0.0010899055810199435,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "HR": {
+          "samples": 52,
+          "minM": 0.0008139810395598264,
+          "maxM": 0.004024290182801615,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        }
+      },
+      "bodyMinAboveFloorM": 0.0008139810395598264,
+      "suspensionPhases": 15,
+      "flightBodyMinAboveFloorM": [
+        0.0010608507948361785,
+        0.035825256484953626
+      ],
+      "seamPositionM": 1.3703593714710047e-07,
+      "regionalPlantSpanXZ": {
+        "FL": {
+          "heel": {
+            "samples": 8,
+            "spanXM": 1.6773923826318704e-07,
+            "spanZM": 8.08188536094434e-06
+          },
+          "flat": {
+            "samples": 28,
+            "spanXM": 2.2280089147230786e-07,
+            "spanZM": 3.0068469454969105e-05
+          },
+          "toe": {
+            "samples": 15,
+            "spanXM": 1.5338295479561115e-07,
+            "spanZM": 2.538900123516541e-05
+          }
+        },
+        "FR": {
+          "heel": {
+            "samples": 8,
+            "spanXM": 1.6619985873655985e-07,
+            "spanZM": 3.260136378857581e-06
+          },
+          "flat": {
+            "samples": 28,
+            "spanXM": 2.272889680077217e-07,
+            "spanZM": 2.4712144261473945e-05
+          },
+          "toe": {
+            "samples": 15,
+            "spanXM": 2.0546059351089774e-07,
+            "spanZM": 3.551672964219321e-05
+          }
+        },
+        "HL": {
+          "heel": {
+            "samples": 8,
+            "spanXM": 2.2580385328208052e-07,
+            "spanZM": 2.7590500989993494e-06
+          },
+          "flat": {
+            "samples": 28,
+            "spanXM": 2.2823306927710618e-07,
+            "spanZM": 8.563449339199503e-05
+          },
+          "toe": {
+            "samples": 15,
+            "spanXM": 2.4415227509178017e-07,
+            "spanZM": 4.562367878635509e-05
+          }
+        },
+        "HR": {
+          "heel": {
+            "samples": 8,
+            "spanXM": 1.6961125856584935e-07,
+            "spanZM": 0.0005509339093094368
+          },
+          "flat": {
+            "samples": 28,
+            "spanXM": 2.1362351632081555e-07,
+            "spanZM": 3.1385253220161946e-05
+          },
+          "toe": {
+            "samples": 16,
+            "spanXM": 1.6235863684044283e-07,
+            "spanZM": 3.105888158005943e-05
+          }
+        }
+      },
+      "jointCaps": {
+        "FL": {
+          "clavicle_l_0203": {
+            "minDegrees": -17.999999999999996,
+            "maxDegrees": 12.357731168950288,
+            "capFrames": 46,
+            "capMilliseconds": 229.9999948590994
+          },
+          "upperarm_l_0204": {
+            "minDegrees": -12.898986066733379,
+            "maxDegrees": 19.197532581262337,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "lowerarm_l_0205": {
+            "minDegrees": -12.894439833832399,
+            "maxDegrees": 5.505484848641064,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "hand_l_0206": {
+            "minDegrees": -1.8498685772700616,
+            "maxDegrees": 69.99999999999999,
+            "capFrames": 6,
+            "capMilliseconds": 29.999999329447746
+          }
+        },
+        "FR": {
+          "clavicle_r_0269": {
+            "minDegrees": -17.999999999999996,
+            "maxDegrees": 8.9556911127757,
+            "capFrames": 37,
+            "capMilliseconds": 184.99999586492777
+          },
+          "upperarm_r_0270": {
+            "minDegrees": -5.363238700197779,
+            "maxDegrees": 15.315612935000653,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "lowerarm_r_0271": {
+            "minDegrees": -5.253938270974892,
+            "maxDegrees": 7.136560899105288,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "hand_r_0272": {
+            "minDegrees": -0.625296175458386,
+            "maxDegrees": 59.41455577412522,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          }
+        },
+        "HL": {
+          "upperleg_l_0405": {
+            "minDegrees": -9.120066095431005,
+            "maxDegrees": 5.2865930321279215,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "lowerleg_l_0406": {
+            "minDegrees": -9.725074353052632,
+            "maxDegrees": 39.11123617506659,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "foot_l_0407": {
+            "minDegrees": -46.93681752713749,
+            "maxDegrees": 2.4423692739439384,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          }
+        },
+        "HR": {
+          "upperleg_r_0474": {
+            "minDegrees": -10.354886634679152,
+            "maxDegrees": 4.743315766317686,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "lowerleg_r_0475": {
+            "minDegrees": -29.847712454964256,
+            "maxDegrees": 47.297432585547945,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "foot_r_0476": {
+            "minDegrees": -49.999999976602076,
+            "maxDegrees": 19.999999999999996,
+            "capFrames": 9,
+            "capMilliseconds": 44.99999899417162
+          }
+        }
+      },
+      "upperTrunkMarker1998RangeYM": 0.04955257853926698,
+      "headPivotRangeYM": 0.1132716414098689,
+      "tailBaseRangeYM": 0.03388129616086033
+    },
+    "Right": {
+      "authoredFrames": 128,
+      "authoredGridPass": false,
+      "authoredWorstVerticalErrorM": 0.006201674509908068,
+      "authoredWorstStrideAnchorErrorM": 0.0015968365343069224,
+      "authoredStanceVerticalErrorMaxM": 0.0014022901437064092,
+      "authoredStanceGridPass": true,
+      "authoredSwingHeightErrorMaxM": 0.006201674509908068,
+      "browserPhases": 128,
+      "all677BoneTransformsFinite": true,
+      "allStanceWholeHoofMinimaWithin10mm": true,
+      "stanceContact": {
+        "FL": {
+          "samples": 51,
+          "minM": 0.000900969805093983,
+          "maxM": 0.0010781598037459365,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "FR": {
+          "samples": 51,
+          "minM": 0.0009429829027354513,
+          "maxM": 0.0013370484783594757,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "HL": {
+          "samples": 52,
+          "minM": 0.0009535326696682796,
+          "maxM": 0.0012968781681162102,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        },
+        "HR": {
+          "samples": 51,
+          "minM": 0.000798254095962605,
+          "maxM": 0.0024024378360631505,
+          "above10mm": 0,
+          "belowMinus10mm": 0
+        }
+      },
+      "bodyMinAboveFloorM": 0.000798254095962605,
+      "suspensionPhases": 15,
+      "flightBodyMinAboveFloorM": [
+        0.0011540136680269287,
+        0.03542083400360794
+      ],
+      "seamPositionM": 2.6198724366203706e-08,
+      "regionalPlantSpanXZ": {
+        "FL": {
+          "heel": {
+            "samples": 8,
+            "spanXM": 2.532505011532127e-07,
+            "spanZM": 5.995469007591403e-06
+          },
+          "flat": {
+            "samples": 28,
+            "spanXM": 2.8116574136982653e-07,
+            "spanZM": 5.9699178386329876e-05
+          },
+          "toe": {
+            "samples": 15,
+            "spanXM": 2.3479244680435496e-07,
+            "spanZM": 2.1340560738325465e-05
+          }
+        },
+        "FR": {
+          "heel": {
+            "samples": 8,
+            "spanXM": 2.0836617761754717e-07,
+            "spanZM": 4.4550654587638405e-07
+          },
+          "flat": {
+            "samples": 28,
+            "spanXM": 2.2323830323189853e-07,
+            "spanZM": 2.3698862756216243e-05
+          },
+          "toe": {
+            "samples": 15,
+            "spanXM": 1.621287266662108e-07,
+            "spanZM": 5.512439044563777e-05
+          }
+        },
+        "HL": {
+          "heel": {
+            "samples": 8,
+            "spanXM": 2.058693114037613e-07,
+            "spanZM": 4.959239968793661e-06
+          },
+          "flat": {
+            "samples": 28,
+            "spanXM": 2.5042270968000935e-07,
+            "spanZM": 3.520305136928137e-05
+          },
+          "toe": {
+            "samples": 16,
+            "spanXM": 2.3212624913893087e-07,
+            "spanZM": 8.468270264772038e-05
+          }
+        },
+        "HR": {
+          "heel": {
+            "samples": 8,
+            "spanXM": 2.093512718737145e-07,
+            "spanZM": 0.0003052307393796583
+          },
+          "flat": {
+            "samples": 28,
+            "spanXM": 1.8768341070174444e-07,
+            "spanZM": 5.3033051972406486e-05
+          },
+          "toe": {
+            "samples": 15,
+            "spanXM": 2.125728434942964e-07,
+            "spanZM": 2.021746151947834e-05
+          }
+        }
+      },
+      "jointCaps": {
+        "FL": {
+          "clavicle_l_0203": {
+            "minDegrees": -17.999999999999996,
+            "maxDegrees": 5.484288652722326,
+            "capFrames": 39,
+            "capMilliseconds": 194.99999564141035
+          },
+          "upperarm_l_0204": {
+            "minDegrees": -9.582143786577344,
+            "maxDegrees": 19.378839914210026,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "lowerarm_l_0205": {
+            "minDegrees": -5.308334420406641,
+            "maxDegrees": 7.6531105633474645,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "hand_l_0206": {
+            "minDegrees": 0.07800629174930229,
+            "maxDegrees": 58.2134160253306,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          }
+        },
+        "FR": {
+          "clavicle_r_0269": {
+            "minDegrees": -17.999999999999996,
+            "maxDegrees": 14.976878585674609,
+            "capFrames": 47,
+            "capMilliseconds": 234.99999474734068
+          },
+          "upperarm_r_0270": {
+            "minDegrees": -19.694959289894165,
+            "maxDegrees": 15.512225135624249,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "lowerarm_r_0271": {
+            "minDegrees": -4.6452216230319365,
+            "maxDegrees": 11.560090594159611,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "hand_r_0272": {
+            "minDegrees": -1.9247568040192033,
+            "maxDegrees": 69.99999999999999,
+            "capFrames": 11,
+            "capMilliseconds": 54.9999987706542
+          }
+        },
+        "HL": {
+          "upperleg_l_0405": {
+            "minDegrees": -11.96999061644579,
+            "maxDegrees": 8.521082180036124,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "lowerleg_l_0406": {
+            "minDegrees": -10.944967938028547,
+            "maxDegrees": 43.24053664605727,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "foot_l_0407": {
+            "minDegrees": -48.56928146029889,
+            "maxDegrees": 8.306417578447602,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          }
+        },
+        "HR": {
+          "upperleg_r_0474": {
+            "minDegrees": -9.743023097118982,
+            "maxDegrees": 2.337939201073036,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "lowerleg_r_0475": {
+            "minDegrees": -30.61650283416872,
+            "maxDegrees": 43.682689291554674,
+            "capFrames": 0,
+            "capMilliseconds": 0.0
+          },
+          "foot_r_0476": {
+            "minDegrees": -46.69399228535346,
+            "maxDegrees": 19.999999999999993,
+            "capFrames": 7,
+            "capMilliseconds": 34.99999921768904
+          }
+        }
+      },
+      "upperTrunkMarker1998RangeYM": 0.04955257853926698,
+      "headPivotRangeYM": 0.1132716414098689,
+      "tailBaseRangeYM": 0.03388129616086033
+    }
+  }
+}
