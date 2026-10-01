@@ -1,0 +1,52 @@
+{
+  "candidate": {
+    "path": "./model.glb",
+    "sha256": "6aee1b94a4d5b1c8f7580569ba32ca6248c0a4c29b4b3e26d790fb4ac53d562e",
+    "bytes": 28535188
+  },
+  "immutableBaseline": {
+    "path": "../../native-white-head-kit/model.glb",
+    "sha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f"
+  },
+  "producer": {
+    "folder": "../../native-front-hoof-flex/",
+    "builderSha256": "d272608b86055cdd5fd431dab3674f633cdb70339e1fb888bdd6ff454b9d0be4",
+    "foldedReferenceSha256": "ab221e4a5345b5a5619b0d1139ebc2fa05cd1b275adff03ab4861fb121c55769"
+  },
+  "packageBuilder": {
+    "path": "./build.py",
+    "sha256": "c2f64acb83b60880f1dc3b93e0ea6f911cc51b303bf9f55edbb417edd2e415a9",
+    "differenceFromProducer": "Only repository-root depth and default output filename. Identical authored algorithm and output bytes.",
+    "reproductionOutput": "/private/tmp/white-foreflex-repro.glb",
+    "reproductionSha256": "6aee1b94a4d5b1c8f7580569ba32ca6248c0a4c29b4b3e26d790fb4ac53d562e"
+  },
+  "dependencies": [
+    "../../native-white-head-kit/model.glb",
+    "../../../tools/asset-gen/rig_hero_horse.py",
+    "Python",
+    "NumPy",
+    "SciPy"
+  ],
+  "author": "WildMesh 3D",
+  "appearanceSource": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+  "license": "CC BY-NC 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "gaits": [
+    "Target Native Walk Rollover",
+    "Target Native Trot",
+    "Target Native Canter Left",
+    "Target Native Canter Right"
+  ],
+  "companionsPrefix": "Native Foreleg Baseline | ",
+  "review": "Steady private correction passed. Direct folded blending rejected. Parent runtime gate/transition/mounted reports determine runtime approval.",
+  "runtimeReports": [
+    "../transition-qa.json",
+    "../rejected-fold-only-transition-qa.json"
+  ],
+  "fullSteadyEvidence": "../../native-front-hoof-flex/all-gaits-browser-qa.json",
+  "canonicalActorTranslation": [
+    -6.225790382362317e-09,
+    0.0047147771075021355,
+    -1.6744842715166992
+  ]
+}

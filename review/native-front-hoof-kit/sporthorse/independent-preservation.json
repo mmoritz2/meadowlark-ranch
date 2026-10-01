@@ -1,0 +1,218 @@
+{
+  "target": "sporthorse",
+  "source": "review/native-bay-sporthorse-packed-kit/model.glb",
+  "sourceSha256": "a7ea093b602d1b6f3ce234afaed89925974faf7a127bf07b2900ac41674b0f74",
+  "candidate": "review/native-front-hoof-kit/sporthorse/model.glb",
+  "candidateSha256": "e3e917cefff70e124b51f92ab52fff4423023665411f9d3f6a660ca02a23a1f0",
+  "candidateBytes": 17077804,
+  "checks": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "textures": true,
+    "images": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "binaryPrefixExact": true,
+    "accessorPrefixExact": true,
+    "viewPrefixExact": true,
+    "unchangedSourceOtherTracksExact": true,
+    "onlyAllowedDistalSourceTracksReplaced": true,
+    "eightSourceDefaultF02TracksPlusFourCompanionsAppended": true,
+    "allOriginalDistalCompanionCurvesExact": true,
+    "foldedMainCurvesEqualPreviousBrowserAuditedReference": true
+  },
+  "unchangedTracks": 320,
+  "gaits": [
+    {
+      "name": "Target Native Walk Rollover",
+      "baselineMaxKeyedStepDegrees": 4.93795497366686,
+      "candidateMaxKeyedStepDegrees": 4.93795497366686,
+      "baselineMaxAngularSpeedDegreesPerSecond": 584.0501409985059,
+      "candidateMaxAngularSpeedDegreesPerSecond": 584.0501409985059,
+      "candidateMaxTangentJoin": 0.0,
+      "candidateLoopTangentJoin": 0.0,
+      "changedTracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 3.1658894471679337,
+          "maxDenseAngularSpeedDegreesPerSecond": 363.56869904429294,
+          "loopPoseDegrees": 5.282475930075896e-16,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 2.487813844591807,
+          "maxDenseAngularSpeedDegreesPerSecond": 286.63388470863197,
+          "loopPoseDegrees": 4.77555792421902e-16,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 0.7340533375008083,
+          "maxDenseAngularSpeedDegreesPerSecond": 84.40737041875302,
+          "loopPoseDegrees": 1.2599470541466125e-15,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 0.7340546007420158,
+          "maxDenseAngularSpeedDegreesPerSecond": 84.40731206654671,
+          "loopPoseDegrees": 3.147225271072737e-16,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        }
+      ]
+    },
+    {
+      "name": "Target Native Trot",
+      "baselineMaxKeyedStepDegrees": 4.510106016790585,
+      "candidateMaxKeyedStepDegrees": 4.510106016790585,
+      "baselineMaxAngularSpeedDegreesPerSecond": 855.7270437416399,
+      "candidateMaxAngularSpeedDegreesPerSecond": 855.7270437416399,
+      "candidateMaxTangentJoin": 0.0,
+      "candidateLoopTangentJoin": 0.0,
+      "changedTracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 1.5409485029420393,
+          "maxDenseAngularSpeedDegreesPerSecond": 275.15154582613405,
+          "loopPoseDegrees": 2.1286021915001033e-15,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 1.5975936878609618,
+          "maxDenseAngularSpeedDegreesPerSecond": 285.18751237003596,
+          "loopPoseDegrees": 1.2538185087837753e-15,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 0.46013875596908194,
+          "maxDenseAngularSpeedDegreesPerSecond": 82.06382237489775,
+          "loopPoseDegrees": 6.457921160036559e-16,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 0.46013596627486725,
+          "maxDenseAngularSpeedDegreesPerSecond": 82.06357114253383,
+          "loopPoseDegrees": 3.147225271072737e-16,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        }
+      ]
+    },
+    {
+      "name": "Target Native Canter Left",
+      "baselineMaxKeyedStepDegrees": 4.7802921778228855,
+      "candidateMaxKeyedStepDegrees": 4.7802921778228855,
+      "baselineMaxAngularSpeedDegreesPerSecond": 995.1070161095917,
+      "candidateMaxAngularSpeedDegreesPerSecond": 995.1070161095917,
+      "candidateMaxTangentJoin": 0.0,
+      "candidateLoopTangentJoin": 1.4541508618822356e-07,
+      "changedTracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 2.2505685288662236,
+          "maxDenseAngularSpeedDegreesPerSecond": 456.8136938960523,
+          "loopPoseDegrees": 9.374304364058807e-16,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 1.870818847301718,
+          "maxDenseAngularSpeedDegreesPerSecond": 380.47193379468075,
+          "loopPoseDegrees": 4.267231599468006e-07,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 4.175715089903913e-09
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 0.42955887731701836,
+          "maxDenseAngularSpeedDegreesPerSecond": 86.1665091878055,
+          "loopPoseDegrees": 1.5422017485055354e-16,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 0.42993710825926845,
+          "maxDenseAngularSpeedDegreesPerSecond": 86.1672677665747,
+          "loopPoseDegrees": 1.8755652892670684e-15,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        }
+      ]
+    },
+    {
+      "name": "Target Native Canter Right",
+      "baselineMaxKeyedStepDegrees": 4.77500689799966,
+      "candidateMaxKeyedStepDegrees": 4.77500689799966,
+      "baselineMaxAngularSpeedDegreesPerSecond": 968.7651298353137,
+      "candidateMaxAngularSpeedDegreesPerSecond": 968.7651298353137,
+      "candidateMaxTangentJoin": 0.0,
+      "candidateLoopTangentJoin": 1.5610608899157963e-08,
+      "changedTracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 1.8935798007108606,
+          "maxDenseAngularSpeedDegreesPerSecond": 384.64726834457014,
+          "loopPoseDegrees": 2.6680424881756842e-08,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 2.3377837281722214e-10
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 2.232663329241693,
+          "maxDenseAngularSpeedDegreesPerSecond": 453.5377512213038,
+          "loopPoseDegrees": 2.8915539545963445e-15,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 0.4299366921945426,
+          "maxDenseAngularSpeedDegreesPerSecond": 86.16719171354049,
+          "loopPoseDegrees": 2.0867630582703548e-16,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "interpolation": "CUBICSPLINE",
+          "maxKeyedStepDegrees": 0.4295579827621136,
+          "maxDenseAngularSpeedDegreesPerSecond": 86.16644803859495,
+          "loopPoseDegrees": 1.1434188767547155e-15,
+          "maxNormalizedCubicTangentJoin": 0.0,
+          "loopNormalizedCubicTangentJoin": 0.0
+        }
+      ]
+    }
+  ]
+}

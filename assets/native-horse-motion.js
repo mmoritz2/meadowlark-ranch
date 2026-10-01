@@ -1,4 +1,5 @@
 import {createNativeGroomLayer} from './native-groom-layer.mjs?v=native-secondary-1';
+import {prepareNativeHoofFlex} from './native-hoof-flex.mjs?v=native-hoof-flex-1';
 // The Ranch finishes these after all actor travel and terrain transforms.
 const pendingHorseGrooms=new Set();
 export function finishNativeHorseGrooms(){for(const finish of pendingHorseGrooms)finish();}
@@ -10,6 +11,7 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
  // contact has not been approved for blended transitions.
  if(profile.nativeKind!=='horse')return createCreatorMotion({THREE,root,clips,profile});
  const rest=[];root.traverse(o=>rest.push([o,o.position.clone(),o.quaternion.clone(),o.scale.clone()]));
+ const hoofBundle=prepareNativeHoofFlex({THREE,root,clips,profile});clips=hoofBundle.clips;const hoofFlex=hoofBundle.layer;
  const mixer=new THREE.AnimationMixer(root),records=profile.nativeGaits||{},actions={},sourceClips={};
  const add=(mode,name,duration)=>{if(!name)return;const clip=THREE.AnimationClip.findByName(clips,name);if(!clip||duration&&Math.abs(clip.duration-duration)>1e-5)throw new Error('Missing or mismatched native clip '+name);sourceClips[mode]=clip;actions[mode]=mixer.clipAction(clip);};
  add('stand',profile.nativeIdleClip);add('sit',profile.nativeSitClip);
@@ -37,7 +39,7 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
  let mode='rest',key='rest',lead='left',speedMps=0,turn=0,disposed=false,transition=null;
  actions.rest.setEffectiveWeight(1).play();active.set(actions.rest,1);mixer.update(0);root.updateMatrixWorld(true);groomInertia?.beforePose();groomInertia?.afterPose(0);
  function assertLive(){if(disposed)throw new Error('Native motion disposed');}
- function restore(){pendingGroomDt=null;groomInertia?.reset();mixer.stopAllAction();active.clear();transition=null;for(const[o,p,q,s]of rest){o.position.copy(p);o.quaternion.copy(q);o.scale.copy(s);}root.updateMatrixWorld(true);}
+ function restore(){pendingGroomDt=null;hoofFlex?.reset();groomInertia?.reset();mixer.stopAllAction();active.clear();transition=null;for(const[o,p,q,s]of rest){o.position.copy(p);o.quaternion.copy(q);o.scale.copy(s);}root.updateMatrixWorld(true);}
  function phaseOf(action){const duration=action?.getClip().duration;return duration?((action.time/duration)%1+1)%1:0;}
  function alignedPhase(previous,next){
   const phase=phaseOf(actions[previous]);
@@ -77,13 +79,13 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
    for(const[action,start]of transition.start){const weight=start+(action===transition.target?1-start:-start)*s;action.setEffectiveWeight(weight);active.set(action,weight);}
   }
   // Mixer time is wall time. Each gait's own time scale controls its playback.
-  finishGroomPose();groomInertia?.beforePose();mixer.update(dt);root.updateMatrixWorld(true);
+  finishGroomPose();groomInertia?.beforePose();hoofFlex?.beforePose();mixer.update(dt);root.updateMatrixWorld(true);hoofFlex?.afterPose(active);
   if(groomInertia&&deferGroom&&dt<=.25)pendingGroomDt=dt;else groomInertia?.afterPose(dt);
   if(transition?.elapsed>=fadeSeconds){for(const action of active.keys())if(action!==target){action.stop();active.delete(action);}target.setEffectiveWeight(1);active.set(target,1);transition=null;}
  }
- function snapshot(){const clip=sourceClips[key];return {gait:mode,lead,phase01:clip?phaseOf(actions[key]):0,bodyLiftM:0,speedMps,grounded:mode!=='fly',intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:fadeSeconds,activeActions:active.size,groomInertia:groomInertia?.snapshot()||null,restFallback:!clip,transitionsReviewed:false};}
+ function snapshot(){const clip=sourceClips[key];return {gait:mode,lead,phase01:clip?phaseOf(actions[key]):0,bodyLiftM:0,speedMps,grounded:mode!=='fly',intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:fadeSeconds,activeActions:active.size,groomInertia:groomInertia?.snapshot()||null,hoofFlex:hoofFlex?.snapshot()||null,restFallback:!clip,transitionsReviewed:false};}
  function reset(){assertLive();restore();mode='rest';key='rest';speedMps=0;actions.rest.reset().setEffectiveWeight(1).play();active.set(actions.rest,1);mixer.update(0);}
- return {set,update,reset,snapshot,gaits,availableModes,supportedModes:availableModes,mixer,groomInertia,finishGroomPose,get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return sourceClips[key]?actions[key]?.time||0:0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;pendingHorseGrooms.delete(finishGroomPose);groomInertia?.dispose();restore();mixer.uncacheRoot(root);disposed=true;}};
+ return {set,update,reset,snapshot,gaits,availableModes,supportedModes:availableModes,mixer,groomInertia,hoofFlex,finishGroomPose,get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return sourceClips[key]?actions[key]?.time||0:0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;pendingHorseGrooms.delete(finishGroomPose);hoofFlex?.dispose();groomInertia?.dispose();restore();mixer.uncacheRoot(root);disposed=true;}};
 
 }
 

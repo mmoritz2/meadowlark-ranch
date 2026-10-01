@@ -1,0 +1,133 @@
+{
+  "sourceSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+  "foldedReferenceSha256": "ab221e4a5345b5a5619b0d1139ebc2fa05cd1b275adff03ab4861fb121c55769",
+  "candidateSha256": "6aee1b94a4d5b1c8f7580569ba32ca6248c0a4c29b4b3e26d790fb4ac53d562e",
+  "checks": {
+    "originalNodesMeshesSkinsMaterialsSceneExact": true,
+    "sourceBinaryPrefixExact": true,
+    "foldedReferenceBinaryPrefixExact": true,
+    "allPriorAnimationMetadataExact": true,
+    "allPriorCurveArraysExact": true,
+    "fourOriginalDistalCompanionsExact": true
+  },
+  "priorSamplerCount": 3576,
+  "companions": [
+    {
+      "name": "Native Foreleg Baseline | Target Native Walk Rollover",
+      "tracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "field": "exact-source-curve",
+          "exact": true,
+          "durationS": 1.1200000047683716
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "field": "static-source-default",
+          "exact": true,
+          "durationS": 1.1200000047683716
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "field": "exact-source-curve",
+          "exact": true,
+          "durationS": 1.1200000047683716
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "field": "static-source-default",
+          "exact": true,
+          "durationS": 1.1200000047683716
+        }
+      ]
+    },
+    {
+      "name": "Native Foreleg Baseline | Target Native Trot",
+      "tracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "field": "exact-source-curve",
+          "exact": true,
+          "durationS": 0.7200000286102295
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "field": "static-source-default",
+          "exact": true,
+          "durationS": 0.7200000286102295
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "field": "exact-source-curve",
+          "exact": true,
+          "durationS": 0.7200000286102295
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "field": "static-source-default",
+          "exact": true,
+          "durationS": 0.7200000286102295
+        }
+      ]
+    },
+    {
+      "name": "Native Foreleg Baseline | Target Native Canter Left",
+      "tracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "field": "exact-source-curve",
+          "exact": true,
+          "durationS": 0.6399999856948853
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "field": "static-source-default",
+          "exact": true,
+          "durationS": 0.6399999856948853
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "field": "exact-source-curve",
+          "exact": true,
+          "durationS": 0.6399999856948853
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "field": "static-source-default",
+          "exact": true,
+          "durationS": 0.6399999856948853
+        }
+      ]
+    },
+    {
+      "name": "Native Foreleg Baseline | Target Native Canter Right",
+      "tracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "field": "exact-source-curve",
+          "exact": true,
+          "durationS": 0.6399999856948853
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "field": "static-source-default",
+          "exact": true,
+          "durationS": 0.6399999856948853
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "field": "exact-source-curve",
+          "exact": true,
+          "durationS": 0.6399999856948853
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "field": "static-source-default",
+          "exact": true,
+          "durationS": 0.6399999856948853
+        }
+      ]
+    }
+  ],
+  "verdict": "Exact array preservation permits reusing frozen steady-gait geometry evidence. Added companion clips enable a separate unapproved runtime clearance gate; this audit does not validate its transitions."
+}

@@ -1,0 +1,951 @@
+{
+  "method": "Folded-reference curves checked directly; final companion-ready models have byte-identical main clip arrays per candidate-field-continuity.json. Runtime gating is separately checked.",
+  "phasesPerGait": 256,
+  "wholeBodyFullMeshSamplesPerGait": 16,
+  "zeroBrowserErrors": true,
+  "key": "bay-sporthorse-native",
+  "gaits": [
+    {
+      "gait": "walk",
+      "metadata": {
+        "clip": "Target Native Walk Rollover",
+        "durationS": 1.12,
+        "nominalSpeedMps": 0.501090803967284,
+        "strokeM": 0.3647941052881828,
+        "stanceFraction": 0.65
+      },
+      "all677Finite": true,
+      "skinCounts": [
+        16159,
+        2028,
+        23514,
+        13895,
+        5092
+      ],
+      "headTrunkSourceMaxDeltaM": 0,
+      "protectedStanceMaxDeltaM": 1.6792410706975733e-09,
+      "fullBodyFloorM": {
+        "min": 0.0007265855482474965,
+        "max": 0.0011767347204990047,
+        "span": 0.00045014917225150814
+      },
+      "sourceFullBodyFloorM": {
+        "min": 0.0007265853854944771,
+        "max": 0.0011767347204990047,
+        "span": 0.00045014933500452754
+      },
+      "feet": {
+        "FL": {
+          "stanceMeanPatchMaxDeltaM": 1.0235932662051217e-09,
+          "stanceWholeMinimumM": {
+            "min": 0.0007265855482474965,
+            "max": 0.0012215450476716753,
+            "span": 0.0004949594994241788
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0009231630009515477,
+            "max": 0.034733983302824095,
+            "span": 0.033810820301872546
+          },
+          "swingClearanceChangeM": {
+            "min": -0.015123950620240467,
+            "max": 2.3216178421103795e-06,
+            "span": 0.015126272238082578
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 25,
+              "worldXYZSpanM": [
+                1.9073620220744214e-07,
+                0.00010102722801905422,
+                6.409047761468667e-05
+              ]
+            },
+            "sole": {
+              "count": 92,
+              "worldXYZSpanM": [
+                1.9567509663975802e-07,
+                0.00047369162242799894,
+                2.8409497693338004e-05
+              ]
+            },
+            "toe": {
+              "count": 50,
+              "worldXYZSpanM": [
+                2.1154526363975634e-07,
+                0.0016005254122453045,
+                6.250301937860137e-05
+              ]
+            }
+          },
+          "hoofPasternAddedDegrees": {
+            "min": -5.999944777667224,
+            "max": 0.0004610111229794711,
+            "span": 6.000405788790204
+          },
+          "fetlockAddedDegrees": {
+            "min": -11.999850582713748,
+            "max": 0.0009235786508270394,
+            "span": 12.000774161364575
+          },
+          "carpusMaxDeltaDegrees": 0
+        },
+        "FR": {
+          "stanceMeanPatchMaxDeltaM": 1.6792410706975733e-09,
+          "stanceWholeMinimumM": {
+            "min": 0.0007761472485507594,
+            "max": 0.0013630599517681385,
+            "span": 0.0005869127032173791
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0010181493389454358,
+            "max": 0.03693327110447456,
+            "span": 0.03591512176552912
+          },
+          "swingClearanceChangeM": {
+            "min": -0.013191041033592258,
+            "max": 2.1060720397916496e-06,
+            "span": 0.01319314710563205
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 25,
+              "worldXYZSpanM": [
+                1.8864728745793258e-07,
+                0.0002687881801996198,
+                5.9612645162687716e-05
+              ]
+            },
+            "sole": {
+              "count": 92,
+              "worldXYZSpanM": [
+                2.1230555258267003e-07,
+                0.0005083964808608446,
+                6.614620290457118e-05
+              ]
+            },
+            "toe": {
+              "count": 50,
+              "worldXYZSpanM": [
+                2.0429697145107895e-07,
+                0.0027554844571868204,
+                0.00010405348501829614
+              ]
+            }
+          },
+          "hoofPasternAddedDegrees": {
+            "min": -5.999935739650255,
+            "max": 0.0004610331793628575,
+            "span": 6.0003967728296175
+          },
+          "fetlockAddedDegrees": {
+            "min": -11.999851522018844,
+            "max": 0.0009233458292783325,
+            "span": 12.000774867848122
+          },
+          "carpusMaxDeltaDegrees": 0
+        },
+        "HL": {
+          "stanceMeanPatchMaxDeltaM": 0,
+          "stanceWholeMinimumM": {
+            "min": 0.0008097561257667933,
+            "max": 0.0013400818780916744,
+            "span": 0.0005303257523248811
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0011330958514126342,
+            "max": 0.041777956783572295,
+            "span": 0.04064486093215966
+          },
+          "swingClearanceChangeM": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 25,
+              "worldXYZSpanM": [
+                1.633608466000691e-07,
+                0.0003405002736506695,
+                6.316498728675679e-05
+              ]
+            },
+            "sole": {
+              "count": 92,
+              "worldXYZSpanM": [
+                2.138148810226781e-07,
+                0.0004917323174871242,
+                8.481586582809175e-05
+              ]
+            },
+            "toe": {
+              "count": 50,
+              "worldXYZSpanM": [
+                1.9265775644261574e-07,
+                0.001225304927969976,
+                0.00012339924531090674
+              ]
+            }
+          },
+          "allPhaseHindMeanPatchMaxDeltaM": 0
+        },
+        "HR": {
+          "stanceMeanPatchMaxDeltaM": 0,
+          "stanceWholeMinimumM": {
+            "min": 0.0007148005701841089,
+            "max": 0.0011803242380483397,
+            "span": 0.00046552366786423074
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0009307216127149008,
+            "max": 0.041970900451760315,
+            "span": 0.04104017883904541
+          },
+          "swingClearanceChangeM": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 25,
+              "worldXYZSpanM": [
+                1.5948829140688403e-07,
+                0.00032317114219176674,
+                7.930531196304047e-05
+              ]
+            },
+            "sole": {
+              "count": 92,
+              "worldXYZSpanM": [
+                2.270284568950398e-07,
+                0.00041825818009154966,
+                3.491110356629301e-05
+              ]
+            },
+            "toe": {
+              "count": 50,
+              "worldXYZSpanM": [
+                2.2160120788372595e-07,
+                0.0022789168812070745,
+                6.377976200344637e-05
+              ]
+            }
+          },
+          "allPhaseHindMeanPatchMaxDeltaM": 0
+        }
+      }
+    },
+    {
+      "gait": "trot",
+      "metadata": {
+        "clip": "Target Native Trot",
+        "durationS": 0.72,
+        "nominalSpeedMps": 1.2666461989173015,
+        "strokeM": 0.40127351581700105,
+        "stanceFraction": 0.44
+      },
+      "all677Finite": true,
+      "skinCounts": [
+        16159,
+        2028,
+        23514,
+        13895,
+        5092
+      ],
+      "headTrunkSourceMaxDeltaM": 0,
+      "protectedStanceMaxDeltaM": 1.6792409969812095e-09,
+      "fullBodyFloorM": {
+        "min": 0.0009266398409600021,
+        "max": 0.00121559681482082,
+        "span": 0.0002889569738608179
+      },
+      "sourceFullBodyFloorM": {
+        "min": 0.0009266398409600021,
+        "max": 0.00121559681482082,
+        "span": 0.0002889569738608179
+      },
+      "feet": {
+        "FL": {
+          "stanceMeanPatchMaxDeltaM": 1.023593282738951e-09,
+          "stanceWholeMinimumM": {
+            "min": 0.0009509837251840459,
+            "max": 0.0011711749004022728,
+            "span": 0.00022019117521822687
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0010081431979940257,
+            "max": 0.10459028334351386,
+            "span": 0.10358214014551984
+          },
+          "swingClearanceChangeM": {
+            "min": -0.00760545674793546,
+            "max": 0.0034975341453862413,
+            "span": 0.011102990893321701
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 17,
+              "worldXYZSpanM": [
+                1.6971787310249287e-07,
+                0.0004734718282868363,
+                4.2673490387890034e-05
+              ]
+            },
+            "sole": {
+              "count": 62,
+              "worldXYZSpanM": [
+                1.9709042539672872e-07,
+                0.00020340978625702378,
+                1.678728251230943e-05
+              ]
+            },
+            "toe": {
+              "count": 34,
+              "worldXYZSpanM": [
+                1.3860467579229763e-07,
+                0.0031168277569595597,
+                2.559408692492937e-05
+              ]
+            }
+          },
+          "hoofPasternAddedDegrees": {
+            "min": -6.000114481584092,
+            "max": 8.184276339306962e-06,
+            "span": 6.000122665860431
+          },
+          "fetlockAddedDegrees": {
+            "min": -12.00019200972406,
+            "max": 1.7333293271803996e-05,
+            "span": 12.000209343017332
+          },
+          "carpusMaxDeltaDegrees": 0
+        },
+        "FR": {
+          "stanceMeanPatchMaxDeltaM": 1.6792409969812095e-09,
+          "stanceWholeMinimumM": {
+            "min": 0.0009014579914747565,
+            "max": 0.00123709704289794,
+            "span": 0.0003356390514231834
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0010453632902973687,
+            "max": 0.106801193456567,
+            "span": 0.10575583016626963
+          },
+          "swingClearanceChangeM": {
+            "min": -0.00652121043005055,
+            "max": 0.005725374223264745,
+            "span": 0.012246584653315296
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 17,
+              "worldXYZSpanM": [
+                1.521235387103026e-07,
+                0.00010104607441200567,
+                4.000274818927174e-05
+              ]
+            },
+            "sole": {
+              "count": 62,
+              "worldXYZSpanM": [
+                2.1231816382805135e-07,
+                0.0002944795943816787,
+                4.949940980625289e-05
+              ]
+            },
+            "toe": {
+              "count": 34,
+              "worldXYZSpanM": [
+                1.5459670732465014e-07,
+                0.0039013608743999188,
+                5.9174384244187195e-05
+              ]
+            }
+          },
+          "hoofPasternAddedDegrees": {
+            "min": -6.000105221894842,
+            "max": 7.903143227849796e-06,
+            "span": 6.0001131250380695
+          },
+          "fetlockAddedDegrees": {
+            "min": -12.000195971407493,
+            "max": 1.7274118704335706e-05,
+            "span": 12.000213245526197
+          },
+          "carpusMaxDeltaDegrees": 0
+        },
+        "HL": {
+          "stanceMeanPatchMaxDeltaM": 0,
+          "stanceWholeMinimumM": {
+            "min": 0.0009464468164328606,
+            "max": 0.0012482056197829759,
+            "span": 0.0003017588033501152
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0011071053087102199,
+            "max": 0.09200458432810686,
+            "span": 0.09089747901939664
+          },
+          "swingClearanceChangeM": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 17,
+              "worldXYZSpanM": [
+                1.749855814692225e-07,
+                0.0007749965689985549,
+                4.1409783935741906e-05
+              ]
+            },
+            "sole": {
+              "count": 62,
+              "worldXYZSpanM": [
+                1.6794949017628902e-07,
+                0.00025047817811375914,
+                5.5383507430173395e-05
+              ]
+            },
+            "toe": {
+              "count": 34,
+              "worldXYZSpanM": [
+                1.6089913335015638e-07,
+                0.002356098247722827,
+                9.579011355986822e-05
+              ]
+            }
+          },
+          "allPhaseHindMeanPatchMaxDeltaM": 0
+        },
+        "HR": {
+          "stanceMeanPatchMaxDeltaM": 0,
+          "stanceWholeMinimumM": {
+            "min": 0.0007669199699877321,
+            "max": 0.0038636929470910178,
+            "span": 0.0030967729771032857
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0010714753396682528,
+            "max": 0.09209202496097671,
+            "span": 0.09102054962130846
+          },
+          "swingClearanceChangeM": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 17,
+              "worldXYZSpanM": [
+                1.7061360493841882e-07,
+                0.0028428668073634733,
+                0.0005781264734612268
+              ]
+            },
+            "sole": {
+              "count": 62,
+              "worldXYZSpanM": [
+                1.7320589748570647e-07,
+                0.0002690003881382309,
+                3.6386566741819504e-05
+              ]
+            },
+            "toe": {
+              "count": 34,
+              "worldXYZSpanM": [
+                1.4729927849677082e-07,
+                0.0030454812064319666,
+                5.682771378828777e-05
+              ]
+            }
+          },
+          "allPhaseHindMeanPatchMaxDeltaM": 0
+        }
+      }
+    },
+    {
+      "gait": "canterLeft",
+      "metadata": {
+        "clip": "Target Native Canter Left",
+        "durationS": 0.64,
+        "nominalSpeedMps": 1.7812212172274549,
+        "strokeM": 0.45599263161022846,
+        "stanceFraction": 0.4,
+        "offsets": {
+          "HR": 0,
+          "HL": 0.24,
+          "FR": 0.24,
+          "FL": 0.48
+        }
+      },
+      "all677Finite": true,
+      "skinCounts": [
+        16159,
+        2028,
+        23514,
+        13895,
+        5092
+      ],
+      "headTrunkSourceMaxDeltaM": 0,
+      "protectedStanceMaxDeltaM": 1.6792410097341905e-09,
+      "fullBodyFloorM": {
+        "min": 0.0008281854085118428,
+        "max": 0.02785644540628929,
+        "span": 0.02702825999777745
+      },
+      "sourceFullBodyFloorM": {
+        "min": 0.0008281854085118428,
+        "max": 0.02785644540628929,
+        "span": 0.02702825999777745
+      },
+      "feet": {
+        "FL": {
+          "stanceMeanPatchMaxDeltaM": 1.0235931572702947e-09,
+          "stanceWholeMinimumM": {
+            "min": 0.000915777023475449,
+            "max": 0.0012906370532408205,
+            "span": 0.00037486002976537145
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0010608857964013165,
+            "max": 0.14774789255596535,
+            "span": 0.14668700675956403
+          },
+          "swingClearanceChangeM": {
+            "min": -0.010049369307530864,
+            "max": 0.011734961965306268,
+            "span": 0.021784331272837132
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 16,
+              "worldXYZSpanM": [
+                1.6179552227157945e-07,
+                0.00043796113163211813,
+                8.83480547431148e-06
+              ]
+            },
+            "sole": {
+              "count": 56,
+              "worldXYZSpanM": [
+                2.040766955840878e-07,
+                0.00021828691674190704,
+                3.185756372725557e-05
+              ]
+            },
+            "toe": {
+              "count": 31,
+              "worldXYZSpanM": [
+                1.368118785621819e-07,
+                0.002968686967091419,
+                4.040113838676973e-05
+              ]
+            }
+          },
+          "hoofPasternAddedDegrees": {
+            "min": -6.000012454276089,
+            "max": 2.5019665827130666e-05,
+            "span": 6.000037473941916
+          },
+          "fetlockAddedDegrees": {
+            "min": -11.999992382770643,
+            "max": 5.1556906782934675e-05,
+            "span": 12.000043939677425
+          },
+          "carpusMaxDeltaDegrees": 0
+        },
+        "FR": {
+          "stanceMeanPatchMaxDeltaM": 1.6792410097341905e-09,
+          "stanceWholeMinimumM": {
+            "min": 0.0008623782119037355,
+            "max": 0.0011450512242967429,
+            "span": 0.0002826730123930074
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0008892228888498343,
+            "max": 0.1496594090769906,
+            "span": 0.14877018618814078
+          },
+          "swingClearanceChangeM": {
+            "min": -0.008769779024510746,
+            "max": 0.013708182625591703,
+            "span": 0.02247796165010245
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 15,
+              "worldXYZSpanM": [
+                1.5444693851618396e-07,
+                4.9353932140997446e-05,
+                2.133648154889478e-05
+              ]
+            },
+            "sole": {
+              "count": 57,
+              "worldXYZSpanM": [
+                1.7642416053065268e-07,
+                0.00026165918658624127,
+                4.286623375582277e-05
+              ]
+            },
+            "toe": {
+              "count": 30,
+              "worldXYZSpanM": [
+                1.4184203894762604e-07,
+                0.0037740650944958006,
+                4.5674376440651976e-05
+              ]
+            }
+          },
+          "hoofPasternAddedDegrees": {
+            "min": -6.000048227811817,
+            "max": -7.268138233484933e-07,
+            "span": 6.000047500997994
+          },
+          "fetlockAddedDegrees": {
+            "min": -12.000086651535185,
+            "max": 0,
+            "span": 12.000086651535185
+          },
+          "carpusMaxDeltaDegrees": 0
+        },
+        "HL": {
+          "stanceMeanPatchMaxDeltaM": 0,
+          "stanceWholeMinimumM": {
+            "min": 0.0009118801911669463,
+            "max": 0.0010899233403378742,
+            "span": 0.0001780431491709279
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0010013797578122255,
+            "max": 0.1284684660994592,
+            "span": 0.12746708634164697
+          },
+          "swingClearanceChangeM": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 15,
+              "worldXYZSpanM": [
+                1.3548207131175438e-07,
+                0.0006770382864378149,
+                1.8969461637041718e-05
+              ]
+            },
+            "sole": {
+              "count": 57,
+              "worldXYZSpanM": [
+                2.0158481722765131e-07,
+                0.00014937061581907218,
+                3.301570842495494e-05
+              ]
+            },
+            "toe": {
+              "count": 30,
+              "worldXYZSpanM": [
+                1.2736880547481455e-07,
+                0.0021012987692182084,
+                5.064339866422962e-05
+              ]
+            }
+          },
+          "allPhaseHindMeanPatchMaxDeltaM": 0
+        },
+        "HR": {
+          "stanceMeanPatchMaxDeltaM": 0,
+          "stanceWholeMinimumM": {
+            "min": 0.0008134895318415974,
+            "max": 0.004024223620067712,
+            "span": 0.0032107340882261146
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0009150988371663662,
+            "max": 0.12842557131454127,
+            "span": 0.1275104724773749
+          },
+          "swingClearanceChangeM": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 16,
+              "worldXYZSpanM": [
+                7.622519984651355e-08,
+                0.0021796627136770634,
+                0.0005554803584038592
+              ]
+            },
+            "sole": {
+              "count": 56,
+              "worldXYZSpanM": [
+                2.0264230415900641e-07,
+                0.0002772696003033714,
+                7.393997964022514e-05
+              ]
+            },
+            "toe": {
+              "count": 31,
+              "worldXYZSpanM": [
+                1.3770224141507192e-07,
+                0.0027925158150023063,
+                4.897401322967454e-05
+              ]
+            }
+          },
+          "allPhaseHindMeanPatchMaxDeltaM": 0
+        }
+      }
+    },
+    {
+      "gait": "canterRight",
+      "metadata": {
+        "clip": "Target Native Canter Right",
+        "durationS": 0.64,
+        "nominalSpeedMps": 1.7812212172274549,
+        "strokeM": 0.45599263161022846,
+        "stanceFraction": 0.4,
+        "offsets": {
+          "HL": 0,
+          "HR": 0.24,
+          "FL": 0.24,
+          "FR": 0.48
+        }
+      },
+      "all677Finite": true,
+      "skinCounts": [
+        16159,
+        2028,
+        23514,
+        13895,
+        5092
+      ],
+      "headTrunkSourceMaxDeltaM": 0,
+      "protectedStanceMaxDeltaM": 1.679241001218976e-09,
+      "fullBodyFloorM": {
+        "min": 0.0008241401641287103,
+        "max": 0.02729621083547144,
+        "span": 0.026472070671342728
+      },
+      "sourceFullBodyFloorM": {
+        "min": 0.0008241401641287103,
+        "max": 0.02729621083547144,
+        "span": 0.026472070671342728
+      },
+      "feet": {
+        "FL": {
+          "stanceMeanPatchMaxDeltaM": 1.0235932270068136e-09,
+          "stanceWholeMinimumM": {
+            "min": 0.0008942022638399189,
+            "max": 0.0011087480848142512,
+            "span": 0.00021454582097433237
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0009660866518430692,
+            "max": 0.14778716872446995,
+            "span": 0.1468210820726269
+          },
+          "swingClearanceChangeM": {
+            "min": -0.010042162078421527,
+            "max": 0.011737170314877254,
+            "span": 0.02177933239329878
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 15,
+              "worldXYZSpanM": [
+                1.840703910543917e-07,
+                0.000399712208489833,
+                1.9390443576239313e-05
+              ]
+            },
+            "sole": {
+              "count": 57,
+              "worldXYZSpanM": [
+                1.9827332040089907e-07,
+                0.00016333503747871427,
+                1.38280854612427e-05
+              ]
+            },
+            "toe": {
+              "count": 30,
+              "worldXYZSpanM": [
+                1.6725640832049304e-07,
+                0.003042426786492958,
+                4.583957771797653e-05
+              ]
+            }
+          },
+          "hoofPasternAddedDegrees": {
+            "min": -6.00005729881002,
+            "max": -4.5807291826349683e-07,
+            "span": 6.000056840737102
+          },
+          "fetlockAddedDegrees": {
+            "min": -12.000082667154743,
+            "max": 0,
+            "span": 12.000082667154743
+          },
+          "carpusMaxDeltaDegrees": 0
+        },
+        "FR": {
+          "stanceMeanPatchMaxDeltaM": 1.679241001218976e-09,
+          "stanceWholeMinimumM": {
+            "min": 0.0009420486627325798,
+            "max": 0.0014844482473167588,
+            "span": 0.0005423995845841791
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0009726062058814989,
+            "max": 0.14963634195415038,
+            "span": 0.14866373574826888
+          },
+          "swingClearanceChangeM": {
+            "min": -0.008748715546433555,
+            "max": 0.013699907092447311,
+            "span": 0.022448622638880866
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 16,
+              "worldXYZSpanM": [
+                1.6954766016152867e-07,
+                9.650565139152512e-05,
+                1.1451398761908038e-05
+              ]
+            },
+            "sole": {
+              "count": 56,
+              "worldXYZSpanM": [
+                1.7492004539265693e-07,
+                0.00036397856653322055,
+                6.0479620725972794e-05
+              ]
+            },
+            "toe": {
+              "count": 31,
+              "worldXYZSpanM": [
+                1.544066895176055e-07,
+                0.003682768536509968,
+                5.852010469453717e-05
+              ]
+            }
+          },
+          "hoofPasternAddedDegrees": {
+            "min": -6.000000508516905,
+            "max": 2.4187047756640823e-05,
+            "span": 6.000024695564662
+          },
+          "fetlockAddedDegrees": {
+            "min": -11.999998537315264,
+            "max": 5.139150664490444e-05,
+            "span": 12.000049928821909
+          },
+          "carpusMaxDeltaDegrees": 0
+        },
+        "HL": {
+          "stanceMeanPatchMaxDeltaM": 0,
+          "stanceWholeMinimumM": {
+            "min": 0.0009535276406127651,
+            "max": 0.0013439062210371792,
+            "span": 0.0003903785804244141
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0010980030587193477,
+            "max": 0.12842163322722336,
+            "span": 0.127323630168504
+          },
+          "swingClearanceChangeM": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 16,
+              "worldXYZSpanM": [
+                9.306861900593155e-08,
+                0.000708749818028806,
+                3.633365960831192e-05
+              ]
+            },
+            "sole": {
+              "count": 56,
+              "worldXYZSpanM": [
+                1.9055664099432157e-07,
+                0.00020645254188498153,
+                7.816582807784744e-05
+              ]
+            },
+            "toe": {
+              "count": 31,
+              "worldXYZSpanM": [
+                1.4662493941219878e-07,
+                0.0019836360427367777,
+                8.452741021158783e-05
+              ]
+            }
+          },
+          "allPhaseHindMeanPatchMaxDeltaM": 0
+        },
+        "HR": {
+          "stanceMeanPatchMaxDeltaM": 0,
+          "stanceWholeMinimumM": {
+            "min": 0.0007973432538632961,
+            "max": 0.00240240775047333,
+            "span": 0.0016050644966100337
+          },
+          "swingWholeMinimumM": {
+            "min": 0.0008763294591433144,
+            "max": 0.1284988976453552,
+            "span": 0.12762256818621187
+          },
+          "swingClearanceChangeM": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          },
+          "regionalPlants": {
+            "heel": {
+              "count": 15,
+              "worldXYZSpanM": [
+                1.5988202836658694e-07,
+                0.0009538917697345965,
+                0.0003051684328754245
+              ]
+            },
+            "sole": {
+              "count": 57,
+              "worldXYZSpanM": [
+                1.798829956656256e-07,
+                0.00016000682478253293,
+                3.139690999820477e-05
+              ]
+            },
+            "toe": {
+              "count": 30,
+              "worldXYZSpanM": [
+                1.1669874014352821e-07,
+                0.002769211672073711,
+                5.074518821979179e-05
+              ]
+            }
+          },
+          "allPhaseHindMeanPatchMaxDeltaM": 0
+        }
+      }
+    }
+  ],
+  "foldedReferenceSha256": "5227a6d586736e171d8441b1c49b27650e6a578628ebe90e440ca5707ce0adee",
+  "companionReadySha256": "e3e917cefff70e124b51f92ab52fff4423023665411f9d3f6a660ca02a23a1f0"
+}

@@ -1,0 +1,21 @@
+{
+  "sourceSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+  "candidateSha256": "6aee1b94a4d5b1c8f7580569ba32ca6248c0a4c29b4b3e26d790fb4ac53d562e",
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "textures": true,
+    "images": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "binaryPrefix": true,
+    "accessorPrefix": true,
+    "bufferViewPrefix": true
+  },
+  "protectedCurveCount": 3560,
+  "originalDistalCompanionsExact": 4,
+  "scope": "Portable offline array audit only; paired steady and gated transition geometry are separate evidence."
+}

@@ -1,0 +1,160 @@
+{
+  "testedModelSha256": "ab221e4a5345b5a5619b0d1139ebc2fa05cd1b275adff03ab4861fb121c55769",
+  "currentModelSha256": "6aee1b94a4d5b1c8f7580569ba32ca6248c0a4c29b4b3e26d790fb4ac53d562e",
+  "currentMainCurvesExact": "companion-preservation.json",
+  "note": "Recomputed added depth from paired actual GLTF whole-hoof minima, rather than the browser runner loose -5mm threshold. Existing negative Trot stance depths remain baseline-identical. This is steady clip evidence only, not transition approval.",
+  "gaits": {
+    "Target Native Walk Rollover": {
+      "FL": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.8109673604620926,
+        "candidateMinMm": 0.8109675388411437,
+        "wholePatchMinChangeRangeMm": [
+          -16.707185860134953,
+          0.0025539231290616637
+        ]
+      },
+      "FR": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.8361670319513028,
+        "candidateMinMm": 0.836167424646826,
+        "wholePatchMinChangeRangeMm": [
+          -14.576618644220105,
+          0.0023194210218308725
+        ]
+      },
+      "HL": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.8275870841099247,
+        "candidateMinMm": 0.8275870841099247,
+        "wholePatchMinChangeRangeMm": [
+          0.0,
+          0.0
+        ]
+      },
+      "HR": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.7408630292196341,
+        "candidateMinMm": 0.7408630292196341,
+        "wholePatchMinChangeRangeMm": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "Target Native Trot": {
+      "FL": {
+        "maxAddedPenetrationMm": 7.345081062468117e-07,
+        "originalMinMm": -0.8680937691387574,
+        "candidateMinMm": -0.8680936110594611,
+        "wholePatchMinChangeRangeMm": [
+          -11.090197164586229,
+          12.678849271230641
+        ]
+      },
+      "FR": {
+        "maxAddedPenetrationMm": 1.059651408286122e-06,
+        "originalMinMm": -0.1581037096218445,
+        "candidateMinMm": -0.15810341558073013,
+        "wholePatchMinChangeRangeMm": [
+          -9.688915161328026,
+          14.85108389414702
+        ]
+      },
+      "HL": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.5783713838621507,
+        "candidateMinMm": 0.5783713838621507,
+        "wholePatchMinChangeRangeMm": [
+          0.0,
+          0.0
+        ]
+      },
+      "HR": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": -0.5090772372111718,
+        "candidateMinMm": -0.5090772372111718,
+        "wholePatchMinChangeRangeMm": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "Target Native Canter Left": {
+      "FL": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.902431382714757,
+        "candidateMinMm": 0.9024307663434978,
+        "wholePatchMinChangeRangeMm": [
+          -11.097189802369762,
+          12.692364702466929
+        ]
+      },
+      "FR": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.8503931891751986,
+        "candidateMinMm": 0.8503935013816039,
+        "wholePatchMinChangeRangeMm": [
+          -9.688587387710418,
+          14.819340964291772
+        ]
+      },
+      "HL": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.875588019884993,
+        "candidateMinMm": 0.875588019884993,
+        "wholePatchMinChangeRangeMm": [
+          0.0,
+          0.0
+        ]
+      },
+      "HR": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.7791422064217504,
+        "candidateMinMm": 0.7791422064217504,
+        "wholePatchMinChangeRangeMm": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "Target Native Canter Right": {
+      "FL": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.8831862460303426,
+        "candidateMinMm": 0.8831855820256298,
+        "wholePatchMinChangeRangeMm": [
+          -11.092186896651645,
+          12.665250829748286
+        ]
+      },
+      "FR": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.922481778192374,
+        "candidateMinMm": 0.9224820686904163,
+        "wholePatchMinChangeRangeMm": [
+          -9.669156552366012,
+          14.844377656011265
+        ]
+      },
+      "HL": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.909017224560021,
+        "candidateMinMm": 0.909017224560021,
+        "wholePatchMinChangeRangeMm": [
+          0.0,
+          0.0
+        ]
+      },
+      "HR": {
+        "maxAddedPenetrationMm": 0,
+        "originalMinMm": 0.7691350939082178,
+        "candidateMinMm": 0.7691350939082178,
+        "wholePatchMinChangeRangeMm": [
+          0.0,
+          0.0
+        ]
+      }
+    }
+  }
+}

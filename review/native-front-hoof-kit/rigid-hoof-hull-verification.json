@@ -1,0 +1,351 @@
+{
+  "method": "256 actual GLTF poses per clip; hull vs actual source-hull-corner skinned vertices and whole lower-foot mask. Near floor = actual whole-foot minimum less than20mm above fixed original source floor. Default-rest hull points transformed through current fingers02 world matrix; profile wrapper/floor adds same translation to both.",
+  "rows": [
+    {
+      "key": "white-western",
+      "variant": "baseline",
+      "clip": "Target Native Walk Rollover",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 204,
+          "maxNearFloorWholeMinErrorM": 4.51461784622964e-16,
+          "maxRigidMinimumErrorM": 4.51461784622964e-16
+        },
+        "FR": {
+          "nearFloorSamples": 206,
+          "maxNearFloorWholeMinErrorM": 4.510281037539698e-16,
+          "maxRigidMinimumErrorM": 4.510281037539698e-16
+        }
+      }
+    },
+    {
+      "key": "white-western",
+      "variant": "baseline",
+      "clip": "Target Native Trot",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 141,
+          "maxNearFloorWholeMinErrorM": 4.410534437671032e-16,
+          "maxRigidMinimumErrorM": 4.410534437671032e-16
+        },
+        "FR": {
+          "nearFloorSamples": 142,
+          "maxNearFloorWholeMinErrorM": 4.570996359198887e-16,
+          "maxRigidMinimumErrorM": 4.570996359198887e-16
+        }
+      }
+    },
+    {
+      "key": "white-western",
+      "variant": "baseline",
+      "clip": "Target Native Canter Left",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 122,
+          "maxNearFloorWholeMinErrorM": 4.371503159461554e-16,
+          "maxRigidMinimumErrorM": 4.371503159461554e-16
+        },
+        "FR": {
+          "nearFloorSamples": 122,
+          "maxNearFloorWholeMinErrorM": 4.436555289810684e-16,
+          "maxRigidMinimumErrorM": 4.510281037539698e-16
+        }
+      }
+    },
+    {
+      "key": "white-western",
+      "variant": "baseline",
+      "clip": "Target Native Canter Right",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 122,
+          "maxNearFloorWholeMinErrorM": 4.510281037539698e-16,
+          "maxRigidMinimumErrorM": 4.649058915617843e-16
+        },
+        "FR": {
+          "nearFloorSamples": 122,
+          "maxNearFloorWholeMinErrorM": 4.505944228849756e-16,
+          "maxRigidMinimumErrorM": 4.649058915617843e-16
+        }
+      }
+    },
+    {
+      "key": "bay-western",
+      "variant": "baseline",
+      "clip": "Target Native Walk Rollover",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 208,
+          "maxNearFloorWholeMinErrorM": 1.5265566588595902e-16,
+          "maxRigidMinimumErrorM": 2.2898349882893854e-16
+        },
+        "FR": {
+          "nearFloorSamples": 211,
+          "maxNearFloorWholeMinErrorM": 1.209969624493823e-16,
+          "maxRigidMinimumErrorM": 2.1510571102112408e-16
+        }
+      }
+    },
+    {
+      "key": "bay-western",
+      "variant": "baseline",
+      "clip": "Target Native Trot",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 150,
+          "maxNearFloorWholeMinErrorM": 1.3877787807814457e-16,
+          "maxRigidMinimumErrorM": 3.191891195797325e-16
+        },
+        "FR": {
+          "nearFloorSamples": 150,
+          "maxNearFloorWholeMinErrorM": 1.214306433183765e-16,
+          "maxRigidMinimumErrorM": 3.0531133177191805e-16
+        }
+      }
+    },
+    {
+      "key": "bay-western",
+      "variant": "baseline",
+      "clip": "Target Native Canter Left",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 1.0711917464156784e-16,
+          "maxRigidMinimumErrorM": 3.3306690738754696e-16
+        },
+        "FR": {
+          "nearFloorSamples": 124,
+          "maxNearFloorWholeMinErrorM": 1.1796119636642288e-16,
+          "maxRigidMinimumErrorM": 2.636779683484747e-16
+        }
+      }
+    },
+    {
+      "key": "bay-western",
+      "variant": "baseline",
+      "clip": "Target Native Canter Right",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 124,
+          "maxNearFloorWholeMinErrorM": 1.3877787807814457e-16,
+          "maxRigidMinimumErrorM": 3.0531133177191805e-16
+        },
+        "FR": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 1.3834419720915037e-16,
+          "maxRigidMinimumErrorM": 3.0531133177191805e-16
+        }
+      }
+    },
+    {
+      "key": "bay-western",
+      "variant": "candidate",
+      "clip": "Target Native Walk Rollover",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 225,
+          "maxNearFloorWholeMinErrorM": 1.942890293094024e-16,
+          "maxRigidMinimumErrorM": 3.122502256758253e-16
+        },
+        "FR": {
+          "nearFloorSamples": 221,
+          "maxNearFloorWholeMinErrorM": 1.5265566588595902e-16,
+          "maxRigidMinimumErrorM": 2.7755575615628914e-16
+        }
+      }
+    },
+    {
+      "key": "bay-western",
+      "variant": "candidate",
+      "clip": "Target Native Trot",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 150,
+          "maxNearFloorWholeMinErrorM": 1.5439038936193583e-16,
+          "maxRigidMinimumErrorM": 3.191891195797325e-16
+        },
+        "FR": {
+          "nearFloorSamples": 150,
+          "maxNearFloorWholeMinErrorM": 1.3140530330524314e-16,
+          "maxRigidMinimumErrorM": 2.7755575615628914e-16
+        }
+      }
+    },
+    {
+      "key": "bay-western",
+      "variant": "candidate",
+      "clip": "Target Native Canter Left",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 8.977193988179977e-17,
+          "maxRigidMinimumErrorM": 3.608224830031759e-16
+        },
+        "FR": {
+          "nearFloorSamples": 124,
+          "maxNearFloorWholeMinErrorM": 1.249000902703301e-16,
+          "maxRigidMinimumErrorM": 3.3306690738754696e-16
+        }
+      }
+    },
+    {
+      "key": "bay-western",
+      "variant": "candidate",
+      "clip": "Target Native Canter Right",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 124,
+          "maxNearFloorWholeMinErrorM": 1.5612511283791264e-16,
+          "maxRigidMinimumErrorM": 4.163336342344337e-16
+        },
+        "FR": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 1.3140530330524314e-16,
+          "maxRigidMinimumErrorM": 3.608224830031759e-16
+        }
+      }
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "variant": "baseline",
+      "clip": "Target Native Walk Rollover",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 206,
+          "maxNearFloorWholeMinErrorM": 3.0531133177191805e-16,
+          "maxRigidMinimumErrorM": 4.440892098500626e-16
+        },
+        "FR": {
+          "nearFloorSamples": 209,
+          "maxNearFloorWholeMinErrorM": 1.8214596497756474e-16,
+          "maxRigidMinimumErrorM": 1.942890293094024e-16
+        }
+      }
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "variant": "baseline",
+      "clip": "Target Native Trot",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 148,
+          "maxNearFloorWholeMinErrorM": 2.498001805406602e-16,
+          "maxRigidMinimumErrorM": 5.134781488891349e-16
+        },
+        "FR": {
+          "nearFloorSamples": 148,
+          "maxNearFloorWholeMinErrorM": 2.0643209364124004e-16,
+          "maxRigidMinimumErrorM": 2.0643209364124004e-16
+        }
+      }
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "variant": "baseline",
+      "clip": "Target Native Canter Left",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 1.227316859253591e-16,
+          "maxRigidMinimumErrorM": 5.551115123125783e-16
+        },
+        "FR": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 1.942890293094024e-16,
+          "maxRigidMinimumErrorM": 1.942890293094024e-16
+        }
+      }
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "variant": "baseline",
+      "clip": "Target Native Canter Right",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 1.3357370765021415e-16,
+          "maxRigidMinimumErrorM": 5.828670879282072e-16
+        },
+        "FR": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 1.929879867024198e-16,
+          "maxRigidMinimumErrorM": 1.942890293094024e-16
+        }
+      }
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "variant": "candidate",
+      "clip": "Target Native Walk Rollover",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 215,
+          "maxNearFloorWholeMinErrorM": 4.163336342344337e-16,
+          "maxRigidMinimumErrorM": 5.828670879282072e-16
+        },
+        "FR": {
+          "nearFloorSamples": 214,
+          "maxNearFloorWholeMinErrorM": 1.7867651802561113e-16,
+          "maxRigidMinimumErrorM": 1.97758476261356e-16
+        }
+      }
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "variant": "candidate",
+      "clip": "Target Native Trot",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 148,
+          "maxNearFloorWholeMinErrorM": 2.914335439641036e-16,
+          "maxRigidMinimumErrorM": 7.077671781985373e-16
+        },
+        "FR": {
+          "nearFloorSamples": 148,
+          "maxNearFloorWholeMinErrorM": 2.0816681711721685e-16,
+          "maxRigidMinimumErrorM": 2.3592239273284576e-16
+        }
+      }
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "variant": "candidate",
+      "clip": "Target Native Canter Left",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 1.227316859253591e-16,
+          "maxRigidMinimumErrorM": 7.771561172376096e-16
+        },
+        "FR": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 1.6653345369377348e-16,
+          "maxRigidMinimumErrorM": 3.0531133177191805e-16
+        }
+      }
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "variant": "candidate",
+      "clip": "Target Native Canter Right",
+      "feet": {
+        "FL": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 1.1232334506949826e-16,
+          "maxRigidMinimumErrorM": 7.216449660063518e-16
+        },
+        "FR": {
+          "nearFloorSamples": 123,
+          "maxNearFloorWholeMinErrorM": 1.8041124150158794e-16,
+          "maxRigidMinimumErrorM": 2.7755575615628914e-16
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "checks": {
+    "rigidLeafHullExactBelowNanometre": true,
+    "nearFloorWholeMinimumWithinNanometre": true,
+    "zeroErrors": true
+  }
+}

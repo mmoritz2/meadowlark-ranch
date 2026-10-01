@@ -1,0 +1,388 @@
+{
+  "base": "http://127.0.0.1:8584",
+  "models": [
+    {
+      "key": "white-western",
+      "rows": [
+        {
+          "gait": "walk",
+          "phase": 0.061,
+          "baselinePhase": 0.06099999999999994,
+          "candidatePhase": 0.06099999999999994,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.04510637073989553,
+                "finalMinimumM": 0.03770266574558416,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 12.000334833255703
+              },
+              "FR": {
+                "sourceMinimumM": 0.0010203612262670164,
+                "finalMinimumM": 0.0010203612262670164,
+                "gate": 0,
+                "maxAddedLocalAngleDeg": 0.0000024148365394514667
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0,
+            "maxCostMs": 0.19999998807907104,
+            "disposed": false
+          }
+        },
+        {
+          "gait": "trot",
+          "phase": 0.6976,
+          "baselinePhase": 0.6976,
+          "candidatePhase": 0.6976,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.13736191832866446,
+                "finalMinimumM": 0.14780759805159221,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 11.999336906847251
+              },
+              "FR": {
+                "sourceMinimumM": 0.0013401096095426168,
+                "finalMinimumM": 0.0013401096095426168,
+                "gate": 0,
+                "maxAddedLocalAngleDeg": 0.0000024148365394514667
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0,
+            "maxCostMs": 0.19999998807907104,
+            "disposed": false
+          }
+        },
+        {
+          "gait": "canterLeft",
+          "phase": 0.156,
+          "baselinePhase": 0.15599999999999992,
+          "candidatePhase": 0.15599999999999992,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.14105439183025553,
+                "finalMinimumM": 0.15151522762570657,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 11.999797782616067
+              },
+              "FR": {
+                "sourceMinimumM": 0.044299438809773606,
+                "finalMinimumM": 0.04429935712983711,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 0.02123673131463903
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0.09999999403953552,
+            "maxCostMs": 0.19999998807907104,
+            "disposed": false
+          }
+        },
+        {
+          "gait": "canterRight",
+          "phase": 0.916,
+          "baselinePhase": 0.9159999999999999,
+          "candidatePhase": 0.9159999999999999,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.1429254695890173,
+                "finalMinimumM": 0.15337498907158426,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 11.999491784698359
+              },
+              "FR": {
+                "sourceMinimumM": 0.0370966151274585,
+                "finalMinimumM": 0.037096613707106804,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 0.0000024148365394514667
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0.09999999403953552,
+            "maxCostMs": 0.19999998807907104,
+            "disposed": false
+          }
+        }
+      ]
+    },
+    {
+      "key": "bay-western",
+      "rows": [
+        {
+          "gait": "walk",
+          "phase": 0.061,
+          "baselinePhase": 0.06099999999999994,
+          "candidatePhase": 0.06099999999999994,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.03834059296599118,
+                "finalMinimumM": 0.03163927663871885,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 12.000334852042181
+              },
+              "FR": {
+                "sourceMinimumM": 0.0010365676499441284,
+                "finalMinimumM": 0.0010365676499441284,
+                "gate": 0,
+                "maxAddedLocalAngleDeg": 0.0000024148365394514667
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0,
+            "maxCostMs": 0.10000000894069672,
+            "disposed": false
+          }
+        },
+        {
+          "gait": "trot",
+          "phase": 0.6976,
+          "baselinePhase": 0.6976,
+          "candidatePhase": 0.6976,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.09304138217680097,
+                "finalMinimumM": 0.09532762055561242,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 12.000223298122997
+              },
+              "FR": {
+                "sourceMinimumM": 0.0010178676135128573,
+                "finalMinimumM": 0.0010178676135128573,
+                "gate": 0,
+                "maxAddedLocalAngleDeg": 0.0000024148365394514667
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0,
+            "maxCostMs": 0.10000000894069672,
+            "disposed": false
+          }
+        },
+        {
+          "gait": "canterLeft",
+          "phase": 0.156,
+          "baselinePhase": 0.15599999999999992,
+          "candidatePhase": 0.15599999999999992,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.12026035824124268,
+                "finalMinimumM": 0.1285982302032657,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 11.999832466008314
+              },
+              "FR": {
+                "sourceMinimumM": 0.037768833168314406,
+                "finalMinimumM": 0.03776876646710782,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 0.0000024148365394514667
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0,
+            "maxCostMs": 0.10000000894069672,
+            "disposed": false
+          }
+        },
+        {
+          "gait": "canterRight",
+          "phase": 0.916,
+          "baselinePhase": 0.9159999999999999,
+          "candidatePhase": 0.9159999999999999,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.12153557651482041,
+                "finalMinimumM": 0.12986391696999444,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 11.999519419696854
+              },
+              "FR": {
+                "sourceMinimumM": 0.031613346606028256,
+                "finalMinimumM": 0.031613346606028256,
+                "gate": 0.9747110532473008,
+                "maxAddedLocalAngleDeg": 0.0000024148365394514667
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0,
+            "maxCostMs": 0.10000000894069672,
+            "disposed": false
+          }
+        }
+      ]
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "rows": [
+        {
+          "gait": "walk",
+          "phase": 0.061,
+          "baselinePhase": 0.06099999999999994,
+          "candidatePhase": 0.06099999999999994,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.04114975182330341,
+                "finalMinimumM": 0.03455413757981332,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 12.000334922346703
+              },
+              "FR": {
+                "sourceMinimumM": 0.0010356071678647716,
+                "finalMinimumM": 0.0010356071678647716,
+                "gate": 0,
+                "maxAddedLocalAngleDeg": 0.0000024148365394514667
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0,
+            "maxCostMs": 0,
+            "disposed": false
+          }
+        },
+        {
+          "gait": "trot",
+          "phase": 0.6976,
+          "baselinePhase": 0.6976,
+          "candidatePhase": 0.6976,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.09982883703984194,
+                "finalMinimumM": 0.10297901285431052,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 12.000224528626468
+              },
+              "FR": {
+                "sourceMinimumM": 0.0010177324951271965,
+                "finalMinimumM": 0.0010177324951271965,
+                "gate": 0,
+                "maxAddedLocalAngleDeg": 0.0000024148365394514667
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0,
+            "maxCostMs": 0.09999999403953552,
+            "disposed": false
+          }
+        },
+        {
+          "gait": "canterLeft",
+          "phase": 0.156,
+          "baselinePhase": 0.15599999999999992,
+          "candidatePhase": 0.15599999999999992,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.1285972984441906,
+                "finalMinimumM": 0.13830359283365726,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 12.00000018904614
+              },
+              "FR": {
+                "sourceMinimumM": 0.04047636630451314,
+                "finalMinimumM": 0.040476365781349485,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 0.0000024148365394514667
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0,
+            "maxCostMs": 0.09999999403953552,
+            "disposed": false
+          }
+        },
+        {
+          "gait": "canterRight",
+          "phase": 0.916,
+          "baselinePhase": 0.9159999999999999,
+          "candidatePhase": 0.9159999999999999,
+          "finite": true,
+          "flex": {
+            "eligible": true,
+            "finite": true,
+            "sourceControllerUpdatesOwned": 0,
+            "feet": {
+              "FL": {
+                "sourceMinimumM": 0.13043611845761316,
+                "finalMinimumM": 0.14014278333742886,
+                "gate": 1,
+                "maxAddedLocalAngleDeg": 12.00013304465427
+              },
+              "FR": {
+                "sourceMinimumM": 0.03382051309722016,
+                "finalMinimumM": 0.03382051309722016,
+                "gate": 0.9987529739896063,
+                "maxAddedLocalAngleDeg": 0.0000024148365394514667
+              }
+            },
+            "fallbacks": 0,
+            "lastCostMs": 0,
+            "maxCostMs": 0.09999999403953552,
+            "disposed": false
+          }
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "checks": {
+    "allThreeLoaded": true,
+    "allGaitsFinite": true,
+    "matchingPhase": true,
+    "visibleFoldEveryGait": true,
+    "zeroErrors": true
+  }
+}
