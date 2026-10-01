@@ -45,7 +45,13 @@ export function install(G){
    const k=Math.min(1,u*2.2)*(flick?0.75+0.25*Math.sin(t*23+i*7.1):1);p.col.setXYZ(i,p.rgb[i*3]*k,p.rgb[i*3+1]*k,p.rgb[i*3+2]*k);}
   p.pos.needsUpdate=true;p.col.needsUpdate=true;}
  /* a world-space effect goes into the scene with the pet and leaves with it */
- function attachWorld(P,fx){P.group.addEventListener('added',()=>{if(!fx.o.parent&&G.scene)G.scene.add(fx.o);});P.group.addEventListener('removed',()=>{if(fx.o.parent)fx.o.parent.remove(fx.o);});}
+ /* ...and its GPU copy is freed then: a rebuilt pet used to leave its trail's geometry and material behind every
+    time (two per rebuild). Freeing is safe even if the pet comes back: three.js uploads them again on the next draw;
+    the shared glow texture is left alone. */
+ function attachWorld(P,fx){P.group.addEventListener('added',()=>{if(!fx.o.parent&&G.scene)G.scene.add(fx.o);});P.group.addEventListener('removed',()=>{if(fx.o.parent)fx.o.parent.remove(fx.o);try{fx.o.geometry.dispose();fx.o.material.dispose();}catch(e){}});}
+ /* effects that ride on the pet itself are its own (the pet's shapes are shared, so its clean-up leaves them):
+    freed when the pet leaves the scene, as above */
+ function own(P,o){P.group.addEventListener('removed',()=>{try{if(o.geometry&&!o.isSprite)o.geometry.dispose();if(o.material)o.material.dispose();}catch(e){}});return o;}
  function glowSprite(c,op,sx,sy){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:K.glowTex(),color:c,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,opacity:op}));s.scale.set(sx,sy||sx,1);s.name='pet-fx';return s;}
  /* where the head is now: the real body's head bone when it is showing, else the drawn head */
  function headWorld(P,out){const R=P.real;const b=R&&R.state==='ready'&&R.inst&&R.inst.bones&&R.inst.bones.head&&P.bodyPivot.visible===false?R.inst.bones.head:P.headGroup;b.getWorldPosition(out);return out;}
@@ -66,10 +72,10 @@ export function install(G){
    hz:2.2,climbHz:3,amp:.9,glide:'bursts',pitchFly:.35,omega:3.2,stagger:.1,boxX:3.4,skim:1.0},
   shadow:[.22,.42],idles:[['sit',3],['sniff',2],['look',2],['tilt',1]],
   build(P,root){
-   const glow=glowSprite('#ff7a2a',0.3,.34,.26);glow.position.set(0,.26,.1);root.add(glow);P.extra.fireGlow=glow;
-   const sp=points(24,.045,false);root.add(sp.o);P.extra.sneeze=sp;
+   const glow=glowSprite('#ff7a2a',0.3,.34,.26);glow.position.set(0,.26,.1);root.add(own(P,glow));P.extra.fireGlow=glow;
+   const sp=points(24,.045,false);root.add(own(P,sp.o));P.extra.sneeze=sp;
    const tr=points(40,.05,true);attachWorld(P,tr);P.extra.trail=tr;
-   const sm=glowSprite('#9a8f86',0,.12);sm.material.blending=THREE.NormalBlending;root.add(sm);P.extra.smoke=sm;P.extra.smokeT=0;},
+   const sm=glowSprite('#9a8f86',0,.12);sm.material.blending=THREE.NormalBlending;root.add(own(P,sm));P.extra.smoke=sm;P.extra.smokeT=0;},
   fx(P,c,st,dt,t,o){
    const E=P.extra,g=E.fireGlow;
    if(g){g.material.opacity=0.22+0.08*Math.sin(t*3.1)+0.04*Math.sin(t*7.3);g.position.y=o.flying?.26:(.24+(st.q?st.q.by:0));}
@@ -133,10 +139,10 @@ export function install(G){
   realGait:{trot:[.45,.95],run:[4.6,6.4],rateHi:7},   // it breaks into its bounding run early: its own walk covers little ground
   shadow:[.2,.36],idles:[['graze',2],['look',2],['pronk',1],['sniff',1],['lie',1]],
   build(P,root){
-   const ff=points(8,.09,false);root.add(ff.o);P.extra.flies=ff;ff.ph=Array.from({length:8},(_,i)=>({a:i/8*TAU,r:.32+Math.random()*.2,y:.35+Math.random()*.4,s:.4+Math.random()*.5,b:Math.random()*TAU}));
+   const ff=points(8,.09,false);root.add(own(P,ff.o));P.extra.flies=ff;ff.ph=Array.from({length:8},(_,i)=>({a:i/8*TAU,r:.32+Math.random()*.2,y:.35+Math.random()*.4,s:.4+Math.random()*.5,b:Math.random()*TAU}));
    const pe=points(30,.05,true);attachWorld(P,pe);P.extra.petals=pe;
    /* glowing spots: soft lights on its back, placed on the real body's spine each frame (the drawn body has painted ones) */
-   P.extra.spots=[];for(let i=0;i<6;i++){const s=glowSprite('#d8ffe2',0,.095);root.add(s);P.extra.spots.push(s);}},
+   P.extra.spots=[];for(let i=0;i<6;i++){const s=glowSprite('#d8ffe2',0,.095);root.add(own(P,s));P.extra.spots.push(s);}},
   fx(P,c,st,dt,t,o){
    const E=P.extra,ff=E.flies,col=new THREE.Color();
    for(let i=0;i<ff.n;i++){const f=ff.ph[i];f.a+=dt*f.s*.6;const x=Math.cos(f.a)*f.r,z=Math.sin(f.a)*f.r*1.2,y=f.y+Math.sin(t*1.3+f.b)*.08;ff.pos.setXYZ(i,x,y,z);const k=Math.max(0,Math.sin(t*1.7+f.b*3))**2;col.set(i%3?'#d8ff7a':'#9dffb0').multiplyScalar(.25+.75*k);ff.col.setXYZ(i,col.r,col.g,col.b);}
@@ -169,8 +175,8 @@ export function install(G){
    const tail=K.grp(P.bodyPivot,0,.27-(S.piv||.21),-.13);P.extra.plumes=tail;
    for(const [a,c,h] of [[0,'#ff5a14',.11],[-.35,'#ff9a1a',.09],[.35,'#ff9a1a',.09]]){const m=K.mesh(K.CONE,fm(c),tail,0,0,0,.02,h,.012);m.rotation.set(-2.2,0,a);}
    if(P.extra.halo)P.extra.halo.visible=false;   // the big shared halo reads as an orange haze round a small bird: a small warm glow instead
-   const glow=glowSprite('#ff7a2a',.2,.36,.32);glow.position.set(0,.22,0);root.add(glow);P.extra.fireGlow=glow;
-   const tr=points(40,.05,true);attachWorld(P,tr);P.extra.trail=tr;P.extra.burst=points(16,.05,false);root.add(P.extra.burst.o);};
+   const glow=glowSprite('#ff7a2a',.2,.36,.32);glow.position.set(0,.22,0);root.add(own(P,glow));P.extra.fireGlow=glow;
+   const tr=points(40,.05,true);attachWorld(P,tr);P.extra.trail=tr;P.extra.burst=points(16,.05,false);root.add(own(P,P.extra.burst.o));};
   S.fx=(P,c,st,dt,t,o)=>{const E=P.extra;
    if(E.crest){const k=1+.12*Math.sin(t*17)+.08*Math.sin(t*29);E.crest.scale.set(1,k,1);}
    if(E.plumes)E.plumes.rotation.x=.08*Math.sin(t*9);
