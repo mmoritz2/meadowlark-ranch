@@ -1,0 +1,182 @@
+{
+  "base": "http://127.0.0.1:8584",
+  "unrouted": true,
+  "pins": {
+    "ranch3d.html": "b68dfe59c2dd752870d68a5a83f5aa7a1596b2437f2135a4f4b521747d6ae477",
+    "assets/game-hero-horse.js": "26e489ce312e84d8fcb6473d1a51f01a17ffeda259c67b636e85a7ef4405a557",
+    "assets/native-horse-motion.js": "49ad8e0e281b1e77c6993bff2cca3549567ff7690f36ca866d38731a9ec1bb2d",
+    "assets/native-groom-layer.mjs": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240",
+    "assets/frame-inertia.mjs": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187",
+    "assets/native-groom-controls.mjs": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735",
+    "assets/native-breed-profiles.js": "721c1a3aae4c7feaaf84e173c4e609716ad239ba94402637e85b5a874cd331fd"
+  },
+  "responses": [
+    {
+      "file": "ranch3d.html",
+      "sha256": "b68dfe59c2dd752870d68a5a83f5aa7a1596b2437f2135a4f4b521747d6ae477",
+      "url": "http://127.0.0.1:8584/ranch3d.html?qa=groom-final-zero-render"
+    },
+    {
+      "file": "assets/game-hero-horse.js",
+      "sha256": "26e489ce312e84d8fcb6473d1a51f01a17ffeda259c67b636e85a7ef4405a557",
+      "url": "http://127.0.0.1:8584/assets/game-hero-horse.js?v=native-secondary-1"
+    },
+    {
+      "file": "assets/native-breed-profiles.js",
+      "sha256": "721c1a3aae4c7feaaf84e173c4e609716ad239ba94402637e85b5a874cd331fd",
+      "url": "http://127.0.0.1:8584/assets/native-breed-profiles.js?v=native-secondary-1"
+    },
+    {
+      "file": "assets/native-horse-motion.js",
+      "sha256": "49ad8e0e281b1e77c6993bff2cca3549567ff7690f36ca866d38731a9ec1bb2d",
+      "url": "http://127.0.0.1:8584/assets/native-horse-motion.js?v=native-secondary-1"
+    },
+    {
+      "file": "assets/native-groom-layer.mjs",
+      "sha256": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240",
+      "url": "http://127.0.0.1:8584/assets/native-groom-layer.mjs?v=native-secondary-1"
+    },
+    {
+      "file": "assets/frame-inertia.mjs",
+      "sha256": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187",
+      "url": "http://127.0.0.1:8584/assets/frame-inertia.mjs?v=native-secondary-1"
+    },
+    {
+      "file": "assets/native-groom-controls.mjs",
+      "sha256": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735",
+      "url": "http://127.0.0.1:8584/assets/native-groom-controls.mjs?v=native-secondary-1"
+    }
+  ],
+  "horses": [
+    {
+      "key": "bay-sporthorse-native",
+      "modelSha256": "a7ea093b602d1b6f3ce234afaed89925974faf7a127bf07b2900ac41674b0f74",
+      "before": {
+        "gait": "canter",
+        "lead": "right",
+        "phase01": 0.2108357617076193,
+        "bodyLiftM": 0,
+        "speedMps": 1.7797255405143484,
+        "grounded": true,
+        "intensity": 0.9991603082769054,
+        "turn": -1,
+        "transitioning": false,
+        "transitionElapsedS": 0,
+        "transitionDurationS": 0.2,
+        "activeActions": 1,
+        "groomInertia": {
+          "time": 3.649999999999992,
+          "remainderS": 0,
+          "frames": 220,
+          "steps": 876,
+          "capHits": 2278,
+          "held": false,
+          "disposed": false,
+          "controls": 58,
+          "maxAddedWorldAngleDeg": 4.000000000000001,
+          "finite": true,
+          "timingsMs": {
+            "restoreMs": 5.600000023841858,
+            "sampleMs": 12.100000038743019,
+            "solveMs": 3.5000000447034836,
+            "applyMs": 27.80000004172325
+          },
+          "sourceControllerUpdatesOwned": 0,
+          "adapterDisposed": false,
+          "reseededIntervals": 0,
+          "eligibleProfile": "bay-sporthorse-native"
+        },
+        "restFallback": false,
+        "transitionsReviewed": false
+      },
+      "after": {
+        "gait": "canter",
+        "lead": "left",
+        "phase01": 0.2108357617076193,
+        "bodyLiftM": 0,
+        "speedMps": 1.7797255405143484,
+        "grounded": true,
+        "intensity": 0.9991603082769054,
+        "turn": 0,
+        "transitioning": true,
+        "transitionElapsedS": 0,
+        "transitionDurationS": 0.2,
+        "activeActions": 2,
+        "groomInertia": {
+          "time": 3.649999999999992,
+          "remainderS": 0,
+          "frames": 221,
+          "steps": 876,
+          "capHits": 2278,
+          "held": false,
+          "disposed": false,
+          "controls": 58,
+          "maxAddedWorldAngleDeg": 4.000000000000001,
+          "finite": true,
+          "timingsMs": {
+            "restoreMs": 5.700000017881393,
+            "sampleMs": 12.100000038743019,
+            "solveMs": 3.5000000447034836,
+            "applyMs": 28.000000044703484
+          },
+          "sourceControllerUpdatesOwned": 0,
+          "adapterDisposed": false,
+          "reseededIntervals": 0,
+          "eligibleProfile": "bay-sporthorse-native"
+        },
+        "restFallback": false,
+        "transitionsReviewed": false
+      },
+      "calls": [
+        {
+          "target": "Nearby water reflection",
+          "groomFrames": 221,
+          "phase": 0.2108357617076193
+        },
+        {
+          "target": "EffectComposer.rt2",
+          "groomFrames": 221,
+          "phase": 0.2108357617076193
+        }
+      ],
+      "zeroPhaseDelta": 0,
+      "zeroFrameIncrement": 1,
+      "protectedDeltaM": 0,
+      "hairDeltaComponentM": 0.030441801081476427,
+      "reapplyDeltaM": 0,
+      "boot": {
+        "L": 0.0000023624205720404104,
+        "R": 0.0000029097187642714785
+      },
+      "reins": {
+        "left": {
+          "bit": 0,
+          "hand": 2.5219419200973697e-15
+        },
+        "right": {
+          "bit": 0,
+          "hand": 9.930136612989092e-16
+        }
+      },
+      "nonReinComponentsIntact": true,
+      "finite": true,
+      "reflectionState": {
+        "renders": 113,
+        "active": true
+      }
+    }
+  ],
+  "errors": [],
+  "checks": {
+    "actualSporthorse": true,
+    "allFinite": true,
+    "dt0FinishedOnce": true,
+    "everyWorldRenderAfterGroom": true,
+    "protectedExact": true,
+    "sameTimeHairReapplyExact": true,
+    "groomResponds": true,
+    "mountedContacts": true,
+    "loadedHashesExact": true,
+    "zeroErrors": true
+  }
+}

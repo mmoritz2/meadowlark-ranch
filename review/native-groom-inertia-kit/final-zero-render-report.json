@@ -1,0 +1,411 @@
+{
+  "base": "http://127.0.0.1:8584",
+  "unrouted": true,
+  "pins": {
+    "ranch3d.html": "b68dfe59c2dd752870d68a5a83f5aa7a1596b2437f2135a4f4b521747d6ae477",
+    "assets/game-hero-horse.js": "26e489ce312e84d8fcb6473d1a51f01a17ffeda259c67b636e85a7ef4405a557",
+    "assets/native-horse-motion.js": "49ad8e0e281b1e77c6993bff2cca3549567ff7690f36ca866d38731a9ec1bb2d",
+    "assets/native-groom-layer.mjs": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240",
+    "assets/frame-inertia.mjs": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187",
+    "assets/native-groom-controls.mjs": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735",
+    "assets/native-breed-profiles.js": "721c1a3aae4c7feaaf84e173c4e609716ad239ba94402637e85b5a874cd331fd"
+  },
+  "responses": [
+    {
+      "file": "ranch3d.html",
+      "sha256": "b68dfe59c2dd752870d68a5a83f5aa7a1596b2437f2135a4f4b521747d6ae477",
+      "url": "http://127.0.0.1:8584/ranch3d.html?qa=groom-final-zero-render"
+    },
+    {
+      "file": "assets/game-hero-horse.js",
+      "sha256": "26e489ce312e84d8fcb6473d1a51f01a17ffeda259c67b636e85a7ef4405a557",
+      "url": "http://127.0.0.1:8584/assets/game-hero-horse.js?v=native-secondary-1"
+    },
+    {
+      "file": "assets/native-breed-profiles.js",
+      "sha256": "721c1a3aae4c7feaaf84e173c4e609716ad239ba94402637e85b5a874cd331fd",
+      "url": "http://127.0.0.1:8584/assets/native-breed-profiles.js?v=native-secondary-1"
+    },
+    {
+      "file": "assets/native-horse-motion.js",
+      "sha256": "49ad8e0e281b1e77c6993bff2cca3549567ff7690f36ca866d38731a9ec1bb2d",
+      "url": "http://127.0.0.1:8584/assets/native-horse-motion.js?v=native-secondary-1"
+    },
+    {
+      "file": "assets/native-groom-layer.mjs",
+      "sha256": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240",
+      "url": "http://127.0.0.1:8584/assets/native-groom-layer.mjs?v=native-secondary-1"
+    },
+    {
+      "file": "assets/frame-inertia.mjs",
+      "sha256": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187",
+      "url": "http://127.0.0.1:8584/assets/frame-inertia.mjs?v=native-secondary-1"
+    },
+    {
+      "file": "assets/native-groom-controls.mjs",
+      "sha256": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735",
+      "url": "http://127.0.0.1:8584/assets/native-groom-controls.mjs?v=native-secondary-1"
+    }
+  ],
+  "horses": [
+    {
+      "key": "white-western",
+      "modelSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+      "before": {
+        "gait": "canter",
+        "lead": "right",
+        "phase01": 0.1204550466692913,
+        "bodyLiftM": 0,
+        "speedMps": 1.9492066783686288,
+        "grounded": true,
+        "intensity": 0.997993819324738,
+        "turn": -1,
+        "transitioning": false,
+        "transitionElapsedS": 0,
+        "transitionDurationS": 0.2,
+        "activeActions": 1,
+        "groomInertia": {
+          "time": 3.649999999999992,
+          "remainderS": 0,
+          "frames": 220,
+          "steps": 876,
+          "capHits": 4413,
+          "held": false,
+          "disposed": false,
+          "controls": 58,
+          "maxAddedWorldAngleDeg": 4,
+          "finite": true,
+          "timingsMs": {
+            "restoreMs": 5.999999940395355,
+            "sampleMs": 10.499999985098839,
+            "solveMs": 2.9000000804662704,
+            "applyMs": 28.099999889731407
+          },
+          "sourceControllerUpdatesOwned": 0,
+          "adapterDisposed": false,
+          "reseededIntervals": 0,
+          "eligibleProfile": "white-western"
+        },
+        "restFallback": false,
+        "transitionsReviewed": false
+      },
+      "after": {
+        "gait": "canter",
+        "lead": "left",
+        "phase01": 0.1204550466692913,
+        "bodyLiftM": 0,
+        "speedMps": 1.9492066783686288,
+        "grounded": true,
+        "intensity": 0.997993819324738,
+        "turn": 0,
+        "transitioning": true,
+        "transitionElapsedS": 0,
+        "transitionDurationS": 0.2,
+        "activeActions": 2,
+        "groomInertia": {
+          "time": 3.649999999999992,
+          "remainderS": 0,
+          "frames": 221,
+          "steps": 876,
+          "capHits": 4413,
+          "held": false,
+          "disposed": false,
+          "controls": 58,
+          "maxAddedWorldAngleDeg": 4,
+          "finite": true,
+          "timingsMs": {
+            "restoreMs": 5.999999940395355,
+            "sampleMs": 10.499999985098839,
+            "solveMs": 2.9000000804662704,
+            "applyMs": 28.29999989271164
+          },
+          "sourceControllerUpdatesOwned": 0,
+          "adapterDisposed": false,
+          "reseededIntervals": 0,
+          "eligibleProfile": "white-western"
+        },
+        "restFallback": false,
+        "transitionsReviewed": false
+      },
+      "calls": [
+        {
+          "target": "Nearby water reflection",
+          "groomFrames": 221,
+          "phase": 0.1204550466692913
+        },
+        {
+          "target": "EffectComposer.rt2",
+          "groomFrames": 221,
+          "phase": 0.1204550466692913
+        }
+      ],
+      "zeroPhaseDelta": 0,
+      "zeroFrameIncrement": 1,
+      "protectedDeltaM": 0,
+      "hairDeltaComponentM": 0.023672145529073596,
+      "reapplyDeltaM": 0,
+      "boot": {
+        "L": 1.2329377201182263e-7,
+        "R": 7.686267133677063e-7
+      },
+      "reins": {
+        "left": {
+          "bit": 0,
+          "hand": 2.5121479338940403e-15
+        },
+        "right": {
+          "bit": 0,
+          "hand": 1.9860273225978185e-15
+        }
+      },
+      "nonReinComponentsIntact": true,
+      "finite": true,
+      "reflectionState": {
+        "renders": 141,
+        "active": true
+      }
+    },
+    {
+      "key": "bay-western",
+      "modelSha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+      "before": {
+        "gait": "canter",
+        "lead": "right",
+        "phase01": 0.6294275544352357,
+        "bodyLiftM": 0,
+        "speedMps": 1.6594301567434788,
+        "grounded": true,
+        "intensity": 0.9999310696742006,
+        "turn": -1,
+        "transitioning": false,
+        "transitionElapsedS": 0,
+        "transitionDurationS": 0.2,
+        "activeActions": 1,
+        "groomInertia": {
+          "time": 3.649999999999992,
+          "remainderS": 0,
+          "frames": 220,
+          "steps": 876,
+          "capHits": 2722,
+          "held": false,
+          "disposed": false,
+          "controls": 58,
+          "maxAddedWorldAngleDeg": 4,
+          "finite": true,
+          "timingsMs": {
+            "restoreMs": 6.799999907612801,
+            "sampleMs": 8.900000005960464,
+            "solveMs": 1.7000000178813934,
+            "applyMs": 26.700000032782555
+          },
+          "sourceControllerUpdatesOwned": 0,
+          "adapterDisposed": false,
+          "reseededIntervals": 0,
+          "eligibleProfile": "bay-western"
+        },
+        "restFallback": false,
+        "transitionsReviewed": false
+      },
+      "after": {
+        "gait": "canter",
+        "lead": "left",
+        "phase01": 0.6294275544352357,
+        "bodyLiftM": 0,
+        "speedMps": 1.6594301567434788,
+        "grounded": true,
+        "intensity": 0.9999310696742006,
+        "turn": 0,
+        "transitioning": true,
+        "transitionElapsedS": 0,
+        "transitionDurationS": 0.2,
+        "activeActions": 2,
+        "groomInertia": {
+          "time": 3.649999999999992,
+          "remainderS": 0,
+          "frames": 221,
+          "steps": 876,
+          "capHits": 2722,
+          "held": false,
+          "disposed": false,
+          "controls": 58,
+          "maxAddedWorldAngleDeg": 4,
+          "finite": true,
+          "timingsMs": {
+            "restoreMs": 6.799999907612801,
+            "sampleMs": 8.900000005960464,
+            "solveMs": 1.7000000178813934,
+            "applyMs": 26.80000004172325
+          },
+          "sourceControllerUpdatesOwned": 0,
+          "adapterDisposed": false,
+          "reseededIntervals": 0,
+          "eligibleProfile": "bay-western"
+        },
+        "restFallback": false,
+        "transitionsReviewed": false
+      },
+      "calls": [
+        {
+          "target": "Nearby water reflection",
+          "groomFrames": 221,
+          "phase": 0.6294275544352357
+        },
+        {
+          "target": "EffectComposer.rt2",
+          "groomFrames": 221,
+          "phase": 0.6294275544352357
+        }
+      ],
+      "zeroPhaseDelta": 0,
+      "zeroFrameIncrement": 1,
+      "protectedDeltaM": 0,
+      "hairDeltaComponentM": 0.03462958098060254,
+      "reapplyDeltaM": 0,
+      "boot": {
+        "L": 0.000003078754057307,
+        "R": 0.0000036298467754995795
+      },
+      "reins": {
+        "left": {
+          "bit": 0,
+          "hand": 1.0175362097255202e-15
+        },
+        "right": {
+          "bit": 0,
+          "hand": 1.897149936107019e-15
+        }
+      },
+      "nonReinComponentsIntact": true,
+      "finite": true,
+      "reflectionState": {
+        "renders": 260,
+        "active": true
+      }
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "modelSha256": "a7ea093b602d1b6f3ce234afaed89925974faf7a127bf07b2900ac41674b0f74",
+      "before": {
+        "gait": "canter",
+        "lead": "right",
+        "phase01": 0.5406895887805057,
+        "bodyLiftM": 0,
+        "speedMps": 1.7809328349133093,
+        "grounded": true,
+        "intensity": 0.9998380985408458,
+        "turn": -1,
+        "transitioning": false,
+        "transitionElapsedS": 0,
+        "transitionDurationS": 0.2,
+        "activeActions": 1,
+        "groomInertia": {
+          "time": 3.649999999999992,
+          "remainderS": 0,
+          "frames": 220,
+          "steps": 876,
+          "capHits": 2944,
+          "held": false,
+          "disposed": false,
+          "controls": 58,
+          "maxAddedWorldAngleDeg": 4.000000000000001,
+          "finite": true,
+          "timingsMs": {
+            "restoreMs": 3.1999999433755875,
+            "sampleMs": 9.600000083446503,
+            "solveMs": 1.9000000208616257,
+            "applyMs": 27.00000001490116
+          },
+          "sourceControllerUpdatesOwned": 0,
+          "adapterDisposed": false,
+          "reseededIntervals": 0,
+          "eligibleProfile": "bay-sporthorse-native"
+        },
+        "restFallback": false,
+        "transitionsReviewed": false
+      },
+      "after": {
+        "gait": "canter",
+        "lead": "left",
+        "phase01": 0.5406895887805057,
+        "bodyLiftM": 0,
+        "speedMps": 1.7809328349133093,
+        "grounded": true,
+        "intensity": 0.9998380985408458,
+        "turn": 0,
+        "transitioning": true,
+        "transitionElapsedS": 0,
+        "transitionDurationS": 0.2,
+        "activeActions": 2,
+        "groomInertia": {
+          "time": 3.649999999999992,
+          "remainderS": 0,
+          "frames": 221,
+          "steps": 876,
+          "capHits": 2944,
+          "held": false,
+          "disposed": false,
+          "controls": 58,
+          "maxAddedWorldAngleDeg": 4.000000000000001,
+          "finite": true,
+          "timingsMs": {
+            "restoreMs": 3.1999999433755875,
+            "sampleMs": 9.600000083446503,
+            "solveMs": 1.9000000208616257,
+            "applyMs": 27.100000023841858
+          },
+          "sourceControllerUpdatesOwned": 0,
+          "adapterDisposed": false,
+          "reseededIntervals": 0,
+          "eligibleProfile": "bay-sporthorse-native"
+        },
+        "restFallback": false,
+        "transitionsReviewed": false
+      },
+      "calls": [
+        {
+          "target": "EffectComposer.rt2",
+          "groomFrames": 221,
+          "phase": 0.5406895887805057
+        }
+      ],
+      "zeroPhaseDelta": 0,
+      "zeroFrameIncrement": 1,
+      "protectedDeltaM": 0,
+      "hairDeltaComponentM": 0.04348202439720916,
+      "reapplyDeltaM": 0,
+      "boot": {
+        "L": 0.0000024342720521949548,
+        "R": 0.0000029835486412150117
+      },
+      "reins": {
+        "left": {
+          "bit": 0,
+          "hand": 2.2315206618374916e-15
+        },
+        "right": {
+          "bit": 0,
+          "hand": 1.3322676295501878e-15
+        }
+      },
+      "nonReinComponentsIntact": true,
+      "finite": true,
+      "reflectionState": {
+        "renders": 342,
+        "active": false
+      }
+    }
+  ],
+  "errors": [],
+  "checks": {
+    "threeActualModels": true,
+    "allFinite": true,
+    "dt0FinishedOnce": true,
+    "everyWorldRenderAfterGroom": false,
+    "protectedExact": true,
+    "sameTimeHairReapplyExact": true,
+    "groomResponds": true,
+    "mountedContacts": true,
+    "loadedHashesExact": true,
+    "zeroErrors": true
+  }
+}

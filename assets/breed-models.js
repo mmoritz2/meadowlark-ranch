@@ -1,7 +1,7 @@
 /* Approved artist-derived breed assets. Geometry/textures are cached; skeletons
  * and materials are private to each mounted horse. Native axes: +Z forward, +Y up. */
 import {fillOutTail,fillOutMane} from './horse-hair-volume.js';
-import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=native-head-batch-1';
+import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=native-secondary-1';
 export function createBreedLibrary({THREE, GLTFLoader, clone}) {
   const base=new URL('./models/artist-breeds/',import.meta.url),pending=new Map(),ready=new Map(),files=new Map();
   let manifest=null,revision='';

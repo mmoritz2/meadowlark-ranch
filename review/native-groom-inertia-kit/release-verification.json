@@ -1,0 +1,52 @@
+{
+  "status": "all local integration and final pose-order checks passed; publication pending",
+  "unrouted": true,
+  "checks": {
+    "white-westernStudio": true,
+    "bay-westernStudio": true,
+    "bay-sporthorse-nativeStudio": true,
+    "black-dragon-nativeStudio": true,
+    "european-dragonStudio": true,
+    "studioSwitchBack": true,
+    "freeOptIn": true,
+    "white-westernRanch": true,
+    "white-westernContacts": true,
+    "bay-westernRanch": true,
+    "bay-westernContacts": true,
+    "bay-sporthorse-nativeRanch": true,
+    "bay-sporthorse-nativeContacts": true,
+    "black-dragon-nativeRanch": true,
+    "european-dragonRanch": true,
+    "legacyBay": true,
+    "nativeWorld": true,
+    "noUnexpectedErrors": true
+  },
+  "errors": [],
+  "passingChecks": 18,
+  "runtimeScope": [
+    "white-western",
+    "bay-western",
+    "bay-sporthorse-native"
+  ],
+  "gaits": [
+    "Walk",
+    "Trot",
+    "Canter Left",
+    "Canter Right"
+  ],
+  "sourcePhaseAndBodyUnchanged": true,
+  "controllerCreatesNoNewGaits": true,
+  "unfinished": [
+    "All-breed replacement",
+    "Gait-transition hoof contact",
+    "Gallop and Jump",
+    "Independent hair-card appearance and collision improvements"
+  ],
+  "note": "The complete game regression sampled positive frame deltas on the first deferred controller. A separately pinned final-hash test covers zero-delta deferral and reflection ordering.",
+  "mountedGameChecks": "mounted-game-summary.json",
+  "finalPoseOrderChecks": [
+    "final-zero-render-report.json",
+    "final-sport-reflection-report.json"
+  ],
+  "finalControllerSha256": "49ad8e0e281b1e77c6993bff2cca3549567ff7690f36ca866d38731a9ec1bb2d"
+}

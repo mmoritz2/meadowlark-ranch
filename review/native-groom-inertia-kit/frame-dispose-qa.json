@@ -1,0 +1,37 @@
+{
+  "metrics": {
+    "phase": 0,
+    "finite": true,
+    "joints": 677,
+    "protectedBoneMatrixMaxDelta": 0,
+    "protectedLocalMaxDelta": 0,
+    "primaryChainRootPivotMaxDeltaM": 0,
+    "protectedWeightHairRootCount": 4017,
+    "protectedWeightHairRootMaxDeltaM": 0,
+    "nearRootCount": 10,
+    "nearRootMaxDeltaM": 0,
+    "hairMaxAddedDisplacementM": 0,
+    "bodyEyesTackMaxPointDeltaM": 0,
+    "layer": {
+      "time": 0,
+      "remainderS": 0,
+      "frames": 0,
+      "steps": 0,
+      "capHits": 0,
+      "held": false,
+      "disposed": true,
+      "controls": 58,
+      "maxAddedWorldAngleDeg": 0,
+      "finite": true,
+      "timingsMs": {
+        "restoreMs": 0,
+        "sampleMs": 0,
+        "solveMs": 0,
+        "applyMs": 0
+      },
+      "sourceControllerUpdatesOwned": 0
+    }
+  },
+  "rejectsUpdate": true,
+  "repeatDisposeSafe": true
+}

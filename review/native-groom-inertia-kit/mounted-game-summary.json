@@ -1,0 +1,84 @@
+{
+  "base": "http://127.0.0.1:8584",
+  "unrouted": true,
+  "pins": {
+    "ranch3d.html": "4c646763c159c9bc31d1cfd018aa1d09e8b9ccb1a25a6658a5094464dfb22d46",
+    "assets/game-hero-horse.js": "26e489ce312e84d8fcb6473d1a51f01a17ffeda259c67b636e85a7ef4405a557",
+    "assets/native-horse-motion.js": "c875193a133e5f7d55e02d93ff8ed1bc5423810c13c40735e0597f89b7d2970f",
+    "assets/native-groom-layer.mjs": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240",
+    "assets/frame-inertia.mjs": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187",
+    "assets/native-groom-controls.mjs": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735",
+    "assets/native-breed-profiles.js": "721c1a3aae4c7feaaf84e173c4e609716ad239ba94402637e85b5a874cd331fd"
+  },
+  "responses": [
+    {
+      "file": "ranch3d.html",
+      "url": "http://127.0.0.1:8584/ranch3d.html?qa=native-groom-game-audit",
+      "sha256": "4c646763c159c9bc31d1cfd018aa1d09e8b9ccb1a25a6658a5094464dfb22d46"
+    },
+    {
+      "file": "assets/game-hero-horse.js",
+      "url": "http://127.0.0.1:8584/assets/game-hero-horse.js?v=native-secondary-1",
+      "sha256": "26e489ce312e84d8fcb6473d1a51f01a17ffeda259c67b636e85a7ef4405a557"
+    },
+    {
+      "file": "assets/native-breed-profiles.js",
+      "url": "http://127.0.0.1:8584/assets/native-breed-profiles.js?v=native-secondary-1",
+      "sha256": "721c1a3aae4c7feaaf84e173c4e609716ad239ba94402637e85b5a874cd331fd"
+    },
+    {
+      "file": "assets/native-horse-motion.js",
+      "url": "http://127.0.0.1:8584/assets/native-horse-motion.js?v=native-secondary-1",
+      "sha256": "c875193a133e5f7d55e02d93ff8ed1bc5423810c13c40735e0597f89b7d2970f"
+    },
+    {
+      "file": "assets/native-groom-layer.mjs",
+      "url": "http://127.0.0.1:8584/assets/native-groom-layer.mjs?v=native-secondary-1",
+      "sha256": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240"
+    },
+    {
+      "file": "assets/frame-inertia.mjs",
+      "url": "http://127.0.0.1:8584/assets/frame-inertia.mjs?v=native-secondary-1",
+      "sha256": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187"
+    },
+    {
+      "file": "assets/native-groom-controls.mjs",
+      "url": "http://127.0.0.1:8584/assets/native-groom-controls.mjs?v=native-secondary-1",
+      "sha256": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735"
+    },
+    {
+      "file": "assets/native-groom-layer.mjs",
+      "url": "http://127.0.0.1:8584/assets/native-groom-layer.mjs?v=native-secondary-2",
+      "sha256": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240"
+    }
+  ],
+  "summary": {
+    "horses": 3,
+    "mountedGaitSamples": 192,
+    "geometryComparisons": 213,
+    "maxProtectedVertexDeltaM": 0,
+    "maxHairAddedComponentM": 0.040424422380705205,
+    "maxZeroDtReapplyDeltaM": 0,
+    "maxPhaseDelta": 0,
+    "maxActualSkinnedBootResidualM": 3.6667022713733415e-06,
+    "maxReinEndpointResidualM": 2.5510982866352577e-15,
+    "maxAddedWorldAngleDeg": 4.000000000000002
+  },
+  "checks": {
+    "allThreeEligible": true,
+    "all677Finite": true,
+    "actualGaitsAndFullCycles": true,
+    "protectedBodyEyesTackExact": true,
+    "onlyGroomResponds": true,
+    "restorationReapply": true,
+    "phaseAndTimeUnchangedByLayer": true,
+    "mountedContacts": true,
+    "realStartStopTurn": true,
+    "longFramesReseed": true,
+    "resetClean": true,
+    "disposeAndSwitchBack": true,
+    "loadedModulesPinned": true,
+    "zeroErrors": true
+  },
+  "errors": []
+}

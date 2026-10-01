@@ -1,0 +1,1703 @@
+{
+  "rows": [
+    {
+      "control": "source",
+      "order": "default",
+      "clip": "Rest",
+      "phase": 0,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.7775344997274471,
+            1.7775344997274471
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1047618818756255,
+            1.1047618818756255
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8467515197163785,
+            0.8467515197163785
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            8.55023875832861e-9,
+            8.55023875832861e-9
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2961775090873812,
+            0.2961775090873812
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [
+          {
+            "pixel": 258856,
+            "x": 296,
+            "y": 404,
+            "source": [
+              17,
+              6,
+              3,
+              255
+            ],
+            "packed": [
+              9,
+              3,
+              2,
+              255
+            ]
+          },
+          {
+            "pixel": 267891,
+            "x": 371,
+            "y": 418,
+            "source": [
+              6,
+              2,
+              1,
+              255
+            ],
+            "packed": [
+              7,
+              3,
+              1,
+              255
+            ]
+          },
+          {
+            "pixel": 271026,
+            "x": 306,
+            "y": 423,
+            "source": [
+              47,
+              15,
+              5,
+              255
+            ],
+            "packed": [
+              5,
+              2,
+              1,
+              255
+            ]
+          }
+        ],
+        "differingChannels": 8,
+        "maxChannelDifference": 42,
+        "meanAbsoluteChannelDifference": 0.00003960503472222222,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "source",
+      "order": "default",
+      "clip": "Rest",
+      "phase": 0,
+      "view": "quarter",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.7775344997274471,
+            1.7775344997274471
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1047618818756255,
+            1.1047618818756255
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8467515197163785,
+            0.8467515197163785
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            8.55023875832861e-9,
+            8.55023875832861e-9
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2961775090873812,
+            0.2961775090873812
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [
+          {
+            "pixel": 259519,
+            "x": 319,
+            "y": 405,
+            "source": [
+              27,
+              9,
+              3,
+              255
+            ],
+            "packed": [
+              5,
+              2,
+              1,
+              255
+            ]
+          }
+        ],
+        "differingChannels": 3,
+        "maxChannelDifference": 22,
+        "meanAbsoluteChannelDifference": 0.00001681857638888889,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "source",
+      "order": "default",
+      "clip": "Target Native Walk Rollover",
+      "phase": 0.375,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.735854782279568,
+            1.735854782279568
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1084976538918259,
+            1.1084976538918259
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8514230578486774,
+            0.8514230578486774
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0007265939357329111,
+            0.0007265939357329111
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2922829946163004,
+            0.2922829946163004
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [
+          {
+            "pixel": 267254,
+            "x": 374,
+            "y": 417,
+            "source": [
+              13,
+              4,
+              2,
+              255
+            ],
+            "packed": [
+              9,
+              4,
+              2,
+              255
+            ]
+          }
+        ],
+        "differingChannels": 1,
+        "maxChannelDifference": 4,
+        "meanAbsoluteChannelDifference": 0.000002170138888888889,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "source",
+      "order": "default",
+      "clip": "Target Native Trot",
+      "phase": 0,
+      "view": "quarter",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.8145738534025497,
+            1.8145738534025497
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1251762809963481,
+            1.1251762809963481
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8611121486573178,
+            0.8611121486573178
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0010100774298225771,
+            0.0010100774298225771
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.3197686894781638,
+            0.3197686894781638
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [
+          {
+            "pixel": 263360,
+            "x": 320,
+            "y": 411,
+            "source": [
+              26,
+              9,
+              3,
+              255
+            ],
+            "packed": [
+              6,
+              3,
+              2,
+              255
+            ]
+          },
+          {
+            "pixel": 274881,
+            "x": 321,
+            "y": 429,
+            "source": [
+              10,
+              3,
+              1,
+              255
+            ],
+            "packed": [
+              5,
+              2,
+              1,
+              255
+            ]
+          }
+        ],
+        "differingChannels": 5,
+        "maxChannelDifference": 20,
+        "meanAbsoluteChannelDifference": 0.000017903645833333333,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "source",
+      "order": "default",
+      "clip": "Target Native Canter Right",
+      "phase": 0.875,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.835398144493923,
+            1.835398144493923
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1340199656405534,
+            1.1340199656405534
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8831365663326257,
+            0.8831365663326257
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0010698381404373723,
+            0.0010698381404373723
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.30802202557872255,
+            0.30802202557872255
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [
+          {
+            "pixel": 240992,
+            "x": 352,
+            "y": 376,
+            "source": [
+              29,
+              9,
+              3,
+              255
+            ],
+            "packed": [
+              3,
+              1,
+              1,
+              255
+            ]
+          },
+          {
+            "pixel": 276185,
+            "x": 345,
+            "y": 431,
+            "source": [
+              42,
+              13,
+              5,
+              255
+            ],
+            "packed": [
+              3,
+              1,
+              1,
+              255
+            ]
+          }
+        ],
+        "differingChannels": 6,
+        "maxChannelDifference": 39,
+        "meanAbsoluteChannelDifference": 0.00004937065972222222,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "source",
+      "order": "stable",
+      "clip": "Rest",
+      "phase": 0,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.7775344997274471,
+            1.7775344997274471
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1047618818756255,
+            1.1047618818756255
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8467515197163785,
+            0.8467515197163785
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            8.55023875832861e-9,
+            8.55023875832861e-9
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2961775090873812,
+            0.2961775090873812
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "source",
+      "order": "stable",
+      "clip": "Rest",
+      "phase": 0,
+      "view": "quarter",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.7775344997274471,
+            1.7775344997274471
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1047618818756255,
+            1.1047618818756255
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8467515197163785,
+            0.8467515197163785
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            8.55023875832861e-9,
+            8.55023875832861e-9
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2961775090873812,
+            0.2961775090873812
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "source",
+      "order": "stable",
+      "clip": "Target Native Walk Rollover",
+      "phase": 0.375,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.735854782279568,
+            1.735854782279568
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1084976538918259,
+            1.1084976538918259
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8514230578486774,
+            0.8514230578486774
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0007265939357329111,
+            0.0007265939357329111
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2922829946163004,
+            0.2922829946163004
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "source",
+      "order": "stable",
+      "clip": "Target Native Trot",
+      "phase": 0,
+      "view": "quarter",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.8145738534025497,
+            1.8145738534025497
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1251762809963481,
+            1.1251762809963481
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8611121486573178,
+            0.8611121486573178
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0010100774298225771,
+            0.0010100774298225771
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.3197686894781638,
+            0.3197686894781638
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "source",
+      "order": "stable",
+      "clip": "Target Native Canter Right",
+      "phase": 0.875,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.835398144493923,
+            1.835398144493923
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1340199656405534,
+            1.1340199656405534
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8831365663326257,
+            0.8831365663326257
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0010698381404373723,
+            0.0010698381404373723
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.30802202557872255,
+            0.30802202557872255
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "packed",
+      "order": "default",
+      "clip": "Rest",
+      "phase": 0,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.7775344997274471,
+            1.7775344997274471
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1047618818756255,
+            1.1047618818756255
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8467515197163785,
+            0.8467515197163785
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            8.55023875832861e-9,
+            8.55023875832861e-9
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2961775090873812,
+            0.2961775090873812
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "packed",
+      "order": "default",
+      "clip": "Rest",
+      "phase": 0,
+      "view": "quarter",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.7775344997274471,
+            1.7775344997274471
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1047618818756255,
+            1.1047618818756255
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8467515197163785,
+            0.8467515197163785
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            8.55023875832861e-9,
+            8.55023875832861e-9
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2961775090873812,
+            0.2961775090873812
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "packed",
+      "order": "default",
+      "clip": "Target Native Walk Rollover",
+      "phase": 0.375,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.735854782279568,
+            1.735854782279568
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1084976538918259,
+            1.1084976538918259
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8514230578486774,
+            0.8514230578486774
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0007265939357329111,
+            0.0007265939357329111
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2922829946163004,
+            0.2922829946163004
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "packed",
+      "order": "default",
+      "clip": "Target Native Trot",
+      "phase": 0,
+      "view": "quarter",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.8145738534025497,
+            1.8145738534025497
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1251762809963481,
+            1.1251762809963481
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8611121486573178,
+            0.8611121486573178
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0010100774298225771,
+            0.0010100774298225771
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.3197686894781638,
+            0.3197686894781638
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "packed",
+      "order": "default",
+      "clip": "Target Native Canter Right",
+      "phase": 0.875,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.835398144493923,
+            1.835398144493923
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1340199656405534,
+            1.1340199656405534
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8831365663326257,
+            0.8831365663326257
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0010698381404373723,
+            0.0010698381404373723
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.30802202557872255,
+            0.30802202557872255
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "packed",
+      "order": "stable",
+      "clip": "Rest",
+      "phase": 0,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.7775344997274471,
+            1.7775344997274471
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1047618818756255,
+            1.1047618818756255
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8467515197163785,
+            0.8467515197163785
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            8.55023875832861e-9,
+            8.55023875832861e-9
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2961775090873812,
+            0.2961775090873812
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "packed",
+      "order": "stable",
+      "clip": "Rest",
+      "phase": 0,
+      "view": "quarter",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.7775344997274471,
+            1.7775344997274471
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1047618818756255,
+            1.1047618818756255
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8467515197163785,
+            0.8467515197163785
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            8.55023875832861e-9,
+            8.55023875832861e-9
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2961775090873812,
+            0.2961775090873812
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "packed",
+      "order": "stable",
+      "clip": "Target Native Walk Rollover",
+      "phase": 0.375,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.735854782279568,
+            1.735854782279568
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1084976538918259,
+            1.1084976538918259
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8514230578486774,
+            0.8514230578486774
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0007265939357329111,
+            0.0007265939357329111
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.2922829946163004,
+            0.2922829946163004
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "packed",
+      "order": "stable",
+      "clip": "Target Native Trot",
+      "phase": 0,
+      "view": "quarter",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.8145738534025497,
+            1.8145738534025497
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1251762809963481,
+            1.1251762809963481
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8611121486573178,
+            0.8611121486573178
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0010100774298225771,
+            0.0010100774298225771
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.3197686894781638,
+            0.3197686894781638
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    },
+    {
+      "control": "packed",
+      "order": "stable",
+      "clip": "Target Native Canter Right",
+      "phase": 0.875,
+      "view": "side",
+      "objectCount": 692,
+      "maxNodeMatrixDifference": 0,
+      "allFinite": true,
+      "meshes": [
+        {
+          "name": "Object_685",
+          "vertices": 2028,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.835398144493923,
+            1.835398144493923
+          ]
+        },
+        {
+          "name": "Object_688",
+          "vertices": 5092,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            1.1340199656405534,
+            1.1340199656405534
+          ]
+        },
+        {
+          "name": "Object_687",
+          "vertices": 13895,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.8831365663326257,
+            0.8831365663326257
+          ]
+        },
+        {
+          "name": "Object_684",
+          "vertices": 16159,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.0010698381404373723,
+            0.0010698381404373723
+          ]
+        },
+        {
+          "name": "Object_686",
+          "vertices": 23514,
+          "sourceJoints": 677,
+          "packedJoints": 677,
+          "maxSkinnedWorldPointDifferenceM": 0,
+          "minY": [
+            0.30802202557872255,
+            0.30802202557872255
+          ]
+        }
+      ],
+      "render": {
+        "width": 640,
+        "height": 720,
+        "rgbaChannels": 1843200,
+        "differingPixels": [],
+        "differingChannels": 0,
+        "maxChannelDifference": 0,
+        "meanAbsoluteChannelDifference": 0,
+        "method": "Same camera/lights/materials/floor, non-MSAA RGBA8 render target, actual GLTF GPU skinning, paired readRenderTargetPixels."
+      }
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,143 @@
+{
+  "rows": [
+    {
+      "id": "white-western",
+      "url": "http://127.0.0.1:8584/review/native-white-head-kit/model.glb",
+      "expectedProfileSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+      "actualModelSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+      "eligible": true,
+      "controls": 58,
+      "protectedDelta": 0,
+      "phaseDelta": 0,
+      "longIntervalPoseDelta": 0,
+      "finite": true,
+      "snapshot": {
+        "time": 0,
+        "remainderS": 0,
+        "frames": 0,
+        "steps": 0,
+        "capHits": 0,
+        "held": false,
+        "disposed": false,
+        "controls": 58,
+        "maxAddedWorldAngleDeg": 0,
+        "finite": true,
+        "timingsMs": {
+          "restoreMs": 0,
+          "sampleMs": 0,
+          "solveMs": 0,
+          "applyMs": 0
+        },
+        "sourceControllerUpdatesOwned": 0,
+        "adapterDisposed": false,
+        "reseededIntervals": 1,
+        "eligibleProfile": "white-western"
+      },
+      "negative": {
+        "profileRejected": true,
+        "parentRejected": true,
+        "bodyInfluenceRejected": true,
+        "extraSetRejected": true
+      },
+      "resetAngle": 0,
+      "disposedNoThrow": true
+    },
+    {
+      "id": "bay-western",
+      "url": "http://127.0.0.1:8584/review/native-bay-head-kit/model.glb",
+      "expectedProfileSha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+      "actualModelSha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+      "eligible": true,
+      "controls": 58,
+      "protectedDelta": 0,
+      "phaseDelta": 0,
+      "longIntervalPoseDelta": 0,
+      "finite": true,
+      "snapshot": {
+        "time": 0,
+        "remainderS": 0,
+        "frames": 0,
+        "steps": 0,
+        "capHits": 0,
+        "held": false,
+        "disposed": false,
+        "controls": 58,
+        "maxAddedWorldAngleDeg": 0,
+        "finite": true,
+        "timingsMs": {
+          "restoreMs": 0,
+          "sampleMs": 0,
+          "solveMs": 0,
+          "applyMs": 0
+        },
+        "sourceControllerUpdatesOwned": 0,
+        "adapterDisposed": false,
+        "reseededIntervals": 1,
+        "eligibleProfile": "bay-western"
+      },
+      "negative": {
+        "profileRejected": true,
+        "parentRejected": true,
+        "bodyInfluenceRejected": true,
+        "extraSetRejected": true
+      },
+      "resetAngle": 0,
+      "disposedNoThrow": true
+    },
+    {
+      "id": "bay-sporthorse-native",
+      "url": "http://127.0.0.1:8584/review/native-bay-sporthorse-packed-kit/model.glb",
+      "expectedProfileSha256": "a7ea093b602d1b6f3ce234afaed89925974faf7a127bf07b2900ac41674b0f74",
+      "actualModelSha256": "a7ea093b602d1b6f3ce234afaed89925974faf7a127bf07b2900ac41674b0f74",
+      "eligible": true,
+      "controls": 58,
+      "protectedDelta": 0,
+      "phaseDelta": 0,
+      "longIntervalPoseDelta": 0,
+      "finite": true,
+      "snapshot": {
+        "time": 0,
+        "remainderS": 0,
+        "frames": 0,
+        "steps": 0,
+        "capHits": 0,
+        "held": false,
+        "disposed": false,
+        "controls": 58,
+        "maxAddedWorldAngleDeg": 0,
+        "finite": true,
+        "timingsMs": {
+          "restoreMs": 0,
+          "sampleMs": 0,
+          "solveMs": 0,
+          "applyMs": 0
+        },
+        "sourceControllerUpdatesOwned": 0,
+        "adapterDisposed": false,
+        "reseededIntervals": 1,
+        "eligibleProfile": "bay-sporthorse-native"
+      },
+      "negative": {
+        "profileRejected": true,
+        "parentRejected": true,
+        "bodyInfluenceRejected": true,
+        "extraSetRejected": true
+      },
+      "resetAngle": 0,
+      "disposedNoThrow": true
+    }
+  ],
+  "sourceControllerSha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6",
+  "errors": [],
+  "checks": {
+    "zeroErrors": true,
+    "allThreeEligible": true,
+    "protectedExact": true,
+    "phaseExact": true,
+    "longIntervalRestoresCurrentSource": true,
+    "allFinite": true,
+    "failClosedNegativeCases": true,
+    "resetDispose": true,
+    "sourceUpdatesOwnedZero": true
+  }
+}

@@ -1,0 +1,401 @@
+{
+  "matchedFrames": 39,
+  "spanS": 1.3,
+  "sourceCycles": 2.03125,
+  "verticesPerFrame": 23514,
+  "rows": [
+    {
+      "timeS": 3.033333333333333,
+      "phase01": 0.7395834392712812,
+      "maxHairPointDeltaM": 0.005531445919830037,
+      "allHairRmsDeltaM": 0.0008249652669672818,
+      "sourcePhaseDelta01": 2.886579864025407e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0003849713849665079,
+      "nearRoot60M": 0.0005238323885587317
+    },
+    {
+      "timeS": 3.066666666666667,
+      "phase01": 0.7916667737687677,
+      "maxHairPointDeltaM": 0.005731467452994003,
+      "allHairRmsDeltaM": 0.0009109346463537618,
+      "sourcePhaseDelta01": 2.886579864025407e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0006478932896021397,
+      "nearRoot60M": 0.0007683364521681513
+    },
+    {
+      "timeS": 3.1,
+      "phase01": 0.8437501082662544,
+      "maxHairPointDeltaM": 0.005859081356972599,
+      "allHairRmsDeltaM": 0.001067714902356501,
+      "sourcePhaseDelta01": 2.886579864025407e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0008615640790836763,
+      "nearRoot60M": 0.0009491680574391073
+    },
+    {
+      "timeS": 3.1333333333333333,
+      "phase01": 0.8958334427637413,
+      "maxHairPointDeltaM": 0.005280616177350488,
+      "allHairRmsDeltaM": 0.0009584652958619362,
+      "sourcePhaseDelta01": 3.1086244689504383e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0009942332418150924,
+      "nearRoot60M": 0.0010391221242186945
+    },
+    {
+      "timeS": 3.1666666666666665,
+      "phase01": 0.947916777261228,
+      "maxHairPointDeltaM": 0.004907419681033401,
+      "allHairRmsDeltaM": 0.0007861865075657013,
+      "sourcePhaseDelta01": 3.3306690738754696e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0010268228935090336,
+      "nearRoot60M": 0.001022471122312203
+    },
+    {
+      "timeS": 3.2,
+      "phase01": 1.1175871472701715e-7,
+      "maxHairPointDeltaM": 0.00490051772367567,
+      "allHairRmsDeltaM": 0.0006165372891334724,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0009514270868923009,
+      "nearRoot60M": 0.0008988314528454274
+    },
+    {
+      "timeS": 3.2333333333333334,
+      "phase01": 0.052083446256201205,
+      "maxHairPointDeltaM": 0.004290291504460951,
+      "allHairRmsDeltaM": 0.0005016468681322565,
+      "sourcePhaseDelta01": 3.3306690738754696e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.000777366626113331,
+      "nearRoot60M": 0.0006823960232112626
+    },
+    {
+      "timeS": 3.2666666666666666,
+      "phase01": 0.1041667807536879,
+      "maxHairPointDeltaM": 0.003949566603912564,
+      "allHairRmsDeltaM": 0.00044073185486636913,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0005298700521677761,
+      "nearRoot60M": 0.0004081696641504812
+    },
+    {
+      "timeS": 3.3,
+      "phase01": 0.15625011525117438,
+      "maxHairPointDeltaM": 0.004272330452620972,
+      "allHairRmsDeltaM": 0.0005984265897378939,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0002605362680793863,
+      "nearRoot60M": 0.00017761095966832777
+    },
+    {
+      "timeS": 3.3333333333333335,
+      "phase01": 0.20833344974866108,
+      "maxHairPointDeltaM": 0.005123677123952017,
+      "allHairRmsDeltaM": 0.0008442041675856745,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.00020388696740457042,
+      "nearRoot60M": 0.0003182133127832577
+    },
+    {
+      "timeS": 3.3666666666666667,
+      "phase01": 0.26041678424614756,
+      "maxHairPointDeltaM": 0.005956271640985831,
+      "allHairRmsDeltaM": 0.000999015499483419,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0004416478513553351,
+      "nearRoot60M": 0.0005708899206185187
+    },
+    {
+      "timeS": 3.4,
+      "phase01": 0.31250011874363404,
+      "maxHairPointDeltaM": 0.007116647804435885,
+      "allHairRmsDeltaM": 0.0010267100301747118,
+      "sourcePhaseDelta01": 3.3306690738754696e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0006718574010353295,
+      "nearRoot60M": 0.0007752123980521658
+    },
+    {
+      "timeS": 3.4333333333333336,
+      "phase01": 0.36458345324112074,
+      "maxHairPointDeltaM": 0.007182456262396791,
+      "allHairRmsDeltaM": 0.0009609026010513713,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.000837410916084213,
+      "nearRoot60M": 0.0008992496383923597
+    },
+    {
+      "timeS": 3.466666666666667,
+      "phase01": 0.4166667877386072,
+      "maxHairPointDeltaM": 0.005877783055044366,
+      "allHairRmsDeltaM": 0.000845663258253848,
+      "sourcePhaseDelta01": 3.3306690738754696e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0009179874271388071,
+      "nearRoot60M": 0.0009287183724704149
+    },
+    {
+      "timeS": 3.5,
+      "phase01": 0.4687501222360939,
+      "maxHairPointDeltaM": 0.00527601236401129,
+      "allHairRmsDeltaM": 0.0007043261133875476,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0009023122361301822,
+      "nearRoot60M": 0.0008615311131782027
+    },
+    {
+      "timeS": 3.533333333333333,
+      "phase01": 0.5208334567335804,
+      "maxHairPointDeltaM": 0.004985128090033009,
+      "allHairRmsDeltaM": 0.0006340441693544637,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0007919104348165979,
+      "nearRoot60M": 0.0007044917995988805
+    },
+    {
+      "timeS": 3.5666666666666664,
+      "phase01": 0.5729167912310671,
+      "maxHairPointDeltaM": 0.00539584764764133,
+      "allHairRmsDeltaM": 0.0006132195140897001,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0005998520473500901,
+      "nearRoot60M": 0.0004780029268724307
+    },
+    {
+      "timeS": 3.6,
+      "phase01": 0.6250001257285536,
+      "maxHairPointDeltaM": 0.005866757111247899,
+      "allHairRmsDeltaM": 0.0006239616321719852,
+      "sourcePhaseDelta01": 3.3306690738754696e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0003540488075375335,
+      "nearRoot60M": 0.0002281224009655345
+    },
+    {
+      "timeS": 3.6333333333333333,
+      "phase01": 0.67708346022604,
+      "maxHairPointDeltaM": 0.00474641185723233,
+      "allHairRmsDeltaM": 0.0006911111185919608,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.000159778110875261,
+      "nearRoot60M": 0.00021235230922703207
+    },
+    {
+      "timeS": 3.6666666666666665,
+      "phase01": 0.7291667947235267,
+      "maxHairPointDeltaM": 0.005427890107524094,
+      "allHairRmsDeltaM": 0.000804490356628162,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.00033190800807465955,
+      "nearRoot60M": 0.0004696374136458424
+    },
+    {
+      "timeS": 3.7,
+      "phase01": 0.7812501292210134,
+      "maxHairPointDeltaM": 0.005797421755757686,
+      "allHairRmsDeltaM": 0.0009029713277823683,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0005976366511169278,
+      "nearRoot60M": 0.0007238250123021607
+    },
+    {
+      "timeS": 3.7333333333333334,
+      "phase01": 0.8333334637185001,
+      "maxHairPointDeltaM": 0.005810185866824562,
+      "allHairRmsDeltaM": 0.0010901306353307259,
+      "sourcePhaseDelta01": 3.552713678800501e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0008241039840701374,
+      "nearRoot60M": 0.000919838980442517
+    },
+    {
+      "timeS": 3.7666666666666666,
+      "phase01": 0.8854167982159868,
+      "maxHairPointDeltaM": 0.005338978421980222,
+      "allHairRmsDeltaM": 0.0009937581982754158,
+      "sourcePhaseDelta01": 3.9968028886505635e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0009757880375870514,
+      "nearRoot60M": 0.0010288749710917662
+    },
+    {
+      "timeS": 3.8,
+      "phase01": 0.9375001327134735,
+      "maxHairPointDeltaM": 0.004727871502880777,
+      "allHairRmsDeltaM": 0.0008387343593088633,
+      "sourcePhaseDelta01": 3.9968028886505635e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0010288700553537462,
+      "nearRoot60M": 0.0010347402862018048
+    },
+    {
+      "timeS": 3.8333333333333335,
+      "phase01": 0.9895834672109602,
+      "maxHairPointDeltaM": 0.004830732305982133,
+      "allHairRmsDeltaM": 0.0006555252814061402,
+      "sourcePhaseDelta01": 3.9968028886505635e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0009746521036296324,
+      "nearRoot60M": 0.0009317371366414099
+    },
+    {
+      "timeS": 3.8666666666666667,
+      "phase01": 0.04166680170844694,
+      "maxHairPointDeltaM": 0.0042992606905119584,
+      "allHairRmsDeltaM": 0.0005200306469863961,
+      "sourcePhaseDelta01": 4.218847493575595e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0008191571049600244,
+      "nearRoot60M": 0.0007318004196294771
+    },
+    {
+      "timeS": 3.9,
+      "phase01": 0.09375013620593364,
+      "maxHairPointDeltaM": 0.003941980201380811,
+      "allHairRmsDeltaM": 0.00044094647319121733,
+      "sourcePhaseDelta01": 4.440892098500626e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0005835606728672682,
+      "nearRoot60M": 0.0004649610500316072
+    },
+    {
+      "timeS": 3.9333333333333336,
+      "phase01": 0.14583347070342012,
+      "maxHairPointDeltaM": 0.004289298231215002,
+      "allHairRmsDeltaM": 0.0005543789243291826,
+      "sourcePhaseDelta01": 4.218847493575595e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0003111755515053063,
+      "nearRoot60M": 0.00020504594746971835
+    },
+    {
+      "timeS": 3.966666666666667,
+      "phase01": 0.1979168052009066,
+      "maxHairPointDeltaM": 0.005219615344038084,
+      "allHairRmsDeltaM": 0.0007981166238383739,
+      "sourcePhaseDelta01": 4.218847493575595e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.00017644669702589878,
+      "nearRoot60M": 0.0002683092235375945
+    },
+    {
+      "timeS": 4,
+      "phase01": 0.2500001396983933,
+      "maxHairPointDeltaM": 0.005957505984153827,
+      "allHairRmsDeltaM": 0.0009738008851687169,
+      "sourcePhaseDelta01": 4.218847493575595e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0003908395623455498,
+      "nearRoot60M": 0.0005229054754490825
+    },
+    {
+      "timeS": 4.033333333333333,
+      "phase01": 0.3020834741958798,
+      "maxHairPointDeltaM": 0.006980921883342113,
+      "allHairRmsDeltaM": 0.0010211339913689212,
+      "sourcePhaseDelta01": 4.218847493575595e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0006297565428540435,
+      "nearRoot60M": 0.0007403813896782634
+    },
+    {
+      "timeS": 4.066666666666666,
+      "phase01": 0.3541668086933665,
+      "maxHairPointDeltaM": 0.0072221710438817414,
+      "allHairRmsDeltaM": 0.0009590837116160111,
+      "sourcePhaseDelta01": 4.218847493575595e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0008111173254235773,
+      "nearRoot60M": 0.0008812450095494246
+    },
+    {
+      "timeS": 4.1,
+      "phase01": 0.40625014319085295,
+      "maxHairPointDeltaM": 0.0066567262244222394,
+      "allHairRmsDeltaM": 0.0008637539801321633,
+      "sourcePhaseDelta01": 4.218847493575595e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0009092649833293999,
+      "nearRoot60M": 0.0009308186461198976
+    },
+    {
+      "timeS": 4.133333333333333,
+      "phase01": 0.45833347768833965,
+      "maxHairPointDeltaM": 0.0049441420661294495,
+      "allHairRmsDeltaM": 0.0007064545670951585,
+      "sourcePhaseDelta01": 4.440892098500626e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0009129466632704806,
+      "nearRoot60M": 0.0008826460947243168
+    },
+    {
+      "timeS": 4.166666666666667,
+      "phase01": 0.5104168121858261,
+      "maxHairPointDeltaM": 0.004859900677885725,
+      "allHairRmsDeltaM": 0.0006311318134589292,
+      "sourcePhaseDelta01": 4.218847493575595e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0008212967239200042,
+      "nearRoot60M": 0.0007422334741219069
+    },
+    {
+      "timeS": 4.2,
+      "phase01": 0.5625001466833126,
+      "maxHairPointDeltaM": 0.005388762952926784,
+      "allHairRmsDeltaM": 0.0005976377188398555,
+      "sourcePhaseDelta01": 3.9968028886505635e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0006438632282656841,
+      "nearRoot60M": 0.0005273682162979946
+    },
+    {
+      "timeS": 4.233333333333333,
+      "phase01": 0.6145834811807993,
+      "maxHairPointDeltaM": 0.00593784592108161,
+      "allHairRmsDeltaM": 0.0006214101891289216,
+      "sourcePhaseDelta01": 4.440892098500626e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0004051740936784825,
+      "nearRoot60M": 0.000274555061012504
+    },
+    {
+      "timeS": 4.266666666666667,
+      "phase01": 0.6666668156782858,
+      "maxHairPointDeltaM": 0.004593890267931183,
+      "allHairRmsDeltaM": 0.0006760499152510262,
+      "sourcePhaseDelta01": 4.218847493575595e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.0001770353584257922,
+      "nearRoot60M": 0.00017648075725336626
+    },
+    {
+      "timeS": 4.3,
+      "phase01": 0.7187501501757723,
+      "maxHairPointDeltaM": 0.005328196543366854,
+      "allHairRmsDeltaM": 0.0007913497741903026,
+      "sourcePhaseDelta01": 3.9968028886505635e-15,
+      "sourceBodyTackDeltaM": 0,
+      "nearRoot30M": 0.00027989264234559746,
+      "nearRoot60M": 0.0004156892442166122
+    }
+  ],
+  "maxHairPointDeltaM": 0.0072221710438817414,
+  "maxAllHairRmsDeltaM": 0.0010901306353307259,
+  "maxPhaseDelta01": 4.440892098500626e-15
+}
