@@ -1,0 +1,81 @@
+{
+  "status": "Runtime integration prepared; root visual and subsequent unrouted game QA pending",
+  "modelSha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+  "originalKit": "review/native-bay-kit/model.glb",
+  "originalKitSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+  "runtimeProfileId": "bay-western",
+  "candidateByteIdentical": true,
+  "changedWalkRotationTracks": [
+    {
+      "node": 14,
+      "name": "neck_01_014",
+      "path": "rotation",
+      "oldOutputAccessor": 42,
+      "newOutputAccessor": 368,
+      "globalPitchFraction": 0.45
+    },
+    {
+      "node": 15,
+      "name": "neck_02_015",
+      "path": "rotation",
+      "oldOutputAccessor": 43,
+      "newOutputAccessor": 369,
+      "globalPitchFraction": 0.6
+    },
+    {
+      "node": 16,
+      "name": "neck_03_016",
+      "path": "rotation",
+      "oldOutputAccessor": 44,
+      "newOutputAccessor": 370,
+      "globalPitchFraction": 0.75
+    },
+    {
+      "node": 17,
+      "name": "neck_04_017",
+      "path": "rotation",
+      "oldOutputAccessor": 45,
+      "newOutputAccessor": 371,
+      "globalPitchFraction": 0.9
+    },
+    {
+      "node": 18,
+      "name": "neck_05_018",
+      "path": "rotation",
+      "oldOutputAccessor": 46,
+      "newOutputAccessor": 372,
+      "globalPitchFraction": 1.0
+    },
+    {
+      "node": 19,
+      "name": "head_019",
+      "path": "rotation",
+      "oldOutputAccessor": 47,
+      "newOutputAccessor": 373,
+      "globalPitchFraction": 0.85
+    }
+  ],
+  "unchangedTracksAllClips": 322,
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "textures": true,
+    "images": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "originalBinaryPrefix": true,
+    "originalAccessorPrefix": true,
+    "originalBufferViewPrefix": true
+  },
+  "candidateEvidence": {
+    "build": "../native-walk-head-batch/bay/build-summary.json",
+    "curves": "../native-walk-head-batch/bay/curve-audit.json",
+    "actualGLTF": "../native-walk-head-batch/bay/qa-summary.json",
+    "mountedPrivate": "../native-walk-head-batch/bay/mounted-summary.json"
+  },
+  "privateIcelandAssetRequired": false,
+  "noWholeGaitNaturalismClaim": true
+}

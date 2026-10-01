@@ -1,0 +1,100 @@
+{
+  "label": "Bay Sporthorse",
+  "source": "review/native-bay-sporthorse-kit/model.glb",
+  "sourceSha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+  "profileId": "bay-sporthorse-native",
+  "nominalSpeedMps": 0.501090803967284,
+  "anchors": "review/native-bay-sporthorse-kit/anchors.json",
+  "coordinates": "review/native-bay-sporthorse-kit/actual-coordinates.json",
+  "candidateSha256": "a83db5e4fda2ca1fa83478c94fda891bd385a24f7db3cecf2af2cb85e5e6b034",
+  "candidateBytes": 33940296,
+  "clip": "Target Native Walk Rollover",
+  "durationS": 1.1200000047683716,
+  "changedTracks": [
+    {
+      "node": 14,
+      "name": "neck_01_014",
+      "path": "rotation",
+      "oldOutputAccessor": 6533,
+      "newOutputAccessor": 7023,
+      "globalPitchFraction": 0.45
+    },
+    {
+      "node": 15,
+      "name": "neck_02_015",
+      "path": "rotation",
+      "oldOutputAccessor": 6534,
+      "newOutputAccessor": 7024,
+      "globalPitchFraction": 0.6
+    },
+    {
+      "node": 16,
+      "name": "neck_03_016",
+      "path": "rotation",
+      "oldOutputAccessor": 6535,
+      "newOutputAccessor": 7025,
+      "globalPitchFraction": 0.75
+    },
+    {
+      "node": 17,
+      "name": "neck_04_017",
+      "path": "rotation",
+      "oldOutputAccessor": 6536,
+      "newOutputAccessor": 7026,
+      "globalPitchFraction": 0.9
+    },
+    {
+      "node": 18,
+      "name": "neck_05_018",
+      "path": "rotation",
+      "oldOutputAccessor": 6537,
+      "newOutputAccessor": 7027,
+      "globalPitchFraction": 1.0
+    },
+    {
+      "node": 19,
+      "name": "head_019",
+      "path": "rotation",
+      "oldOutputAccessor": 6538,
+      "newOutputAccessor": 7028,
+      "globalPitchFraction": 0.85
+    }
+  ],
+  "unchangedTracksAllClips": 322,
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "textures": true,
+    "images": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "originalBinaryPrefix": true,
+    "originalAccessorPrefix": true,
+    "originalBufferViewPrefix": true
+  },
+  "originalHeadYSpanM": 0.03770203139741812,
+  "originalTrunkYSpanM": 0.017233673229524182,
+  "trunkSecondHarmonicPhaseRadians": 2.039294018845216,
+  "originalHeadMeanWorldY": 1.87558277842856,
+  "sourceBodyFloorY": 8.55023843393532e-09,
+  "standingTrunkOriginAboveFloorM": 1.3839867507673114,
+  "whiteStandingTrunkOriginAboveFloorM": 1.521258167202177,
+  "standingTrunkProxyRatio": 0.9097645492432567,
+  "whiteReferenceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+  "targetHeadSpanM": 0.06368351844702798,
+  "neckCommonPitchRangeDegrees": [
+    -6.875401226416587,
+    7.7822742922735095
+  ],
+  "method": "Own animated parents and native world-rest rotations; bounded common sagittal pitch solve; only six neck/head Walk quaternion outputs appended, periodic normalized cubic tangents.",
+  "bodyLimitation": "Unchanged source torso has dominant four-cycle vertical component; head and trunk origins are proxies, not anatomical optical markers.",
+  "noMotionOrProductionApproval": true,
+  "neckCommonPitchBoundsDegrees": [
+    -12,
+    12
+  ],
+  "runtimeFile": "review/native-bay-sporthorse-head-kit/model.glb"
+}

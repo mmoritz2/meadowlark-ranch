@@ -1,0 +1,32 @@
+{
+  "bay": {
+    "label": "Bay Western",
+    "source": "review/native-bay-kit/model.glb",
+    "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+    "profileId": "bay-western",
+    "nominalSpeedMps": 0.4668608843083865,
+    "anchors": "review/native-rider-reins/anchors.json",
+    "coordinates": "review/native-bay-rollover/rider-prerequisites/actual-coordinates.json",
+    "runtimeFile": "review/native-bay-head-kit/model.glb"
+  },
+  "sporthorse": {
+    "label": "Bay Sporthorse",
+    "source": "review/native-bay-sporthorse-kit/model.glb",
+    "sourceSha256": "d3e18fdc3926b22a9215f796f59cc6dccf044f5c2ae68a04385251e55947c272",
+    "profileId": "bay-sporthorse-native",
+    "nominalSpeedMps": 0.501090803967284,
+    "anchors": "review/native-bay-sporthorse-kit/anchors.json",
+    "coordinates": "review/native-bay-sporthorse-kit/actual-coordinates.json",
+    "runtimeFile": "review/native-bay-sporthorse-head-kit/model.glb"
+  },
+  "iceland": {
+    "label": "Icelandic private target",
+    "source": "review/native-iceland-kit/model.glb",
+    "sourceSha256": "305bcc7353381b5d677071f58b7e0e6a6bef318899c239656f4807e0f3fc10f1",
+    "profileId": "bay-western",
+    "privateProfileFixture": true,
+    "nominalSpeedMps": 0.4216924803823801,
+    "anchors": "review/native-iceland-kit/anchors.json",
+    "coordinates": "review/native-iceland-kit/actual-coordinates.json"
+  }
+}

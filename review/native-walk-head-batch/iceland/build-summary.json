@@ -1,0 +1,100 @@
+{
+  "label": "Icelandic private target",
+  "source": "review/native-iceland-kit/model.glb",
+  "sourceSha256": "305bcc7353381b5d677071f58b7e0e6a6bef318899c239656f4807e0f3fc10f1",
+  "profileId": "bay-western",
+  "privateProfileFixture": true,
+  "nominalSpeedMps": 0.4216924803823801,
+  "anchors": "review/native-iceland-kit/anchors.json",
+  "coordinates": "review/native-iceland-kit/actual-coordinates.json",
+  "candidateSha256": "aa402f2642d95f7ef9592cbb4f4cbffd2f66c6dc9e0a1ba564db272092de0f48",
+  "candidateBytes": 34320888,
+  "clip": "Target Native Walk Rollover",
+  "durationS": 1.1200000047683716,
+  "changedTracks": [
+    {
+      "node": 14,
+      "name": "neck_01_014",
+      "path": "rotation",
+      "oldOutputAccessor": 6533,
+      "newOutputAccessor": 7023,
+      "globalPitchFraction": 0.45
+    },
+    {
+      "node": 15,
+      "name": "neck_02_015",
+      "path": "rotation",
+      "oldOutputAccessor": 6534,
+      "newOutputAccessor": 7024,
+      "globalPitchFraction": 0.6
+    },
+    {
+      "node": 16,
+      "name": "neck_03_016",
+      "path": "rotation",
+      "oldOutputAccessor": 6535,
+      "newOutputAccessor": 7025,
+      "globalPitchFraction": 0.75
+    },
+    {
+      "node": 17,
+      "name": "neck_04_017",
+      "path": "rotation",
+      "oldOutputAccessor": 6536,
+      "newOutputAccessor": 7026,
+      "globalPitchFraction": 0.9
+    },
+    {
+      "node": 18,
+      "name": "neck_05_018",
+      "path": "rotation",
+      "oldOutputAccessor": 6537,
+      "newOutputAccessor": 7027,
+      "globalPitchFraction": 1.0
+    },
+    {
+      "node": 19,
+      "name": "head_019",
+      "path": "rotation",
+      "oldOutputAccessor": 6538,
+      "newOutputAccessor": 7028,
+      "globalPitchFraction": 0.85
+    }
+  ],
+  "unchangedTracksAllClips": 322,
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "textures": true,
+    "images": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "originalBinaryPrefix": true,
+    "originalAccessorPrefix": true,
+    "originalBufferViewPrefix": true
+  },
+  "originalHeadYSpanM": 0.03216423941965596,
+  "originalTrunkYSpanM": 0.014939137964133709,
+  "trunkSecondHarmonicPhaseRadians": 2.0394706779420844,
+  "originalHeadMeanWorldY": 1.5569381208359012,
+  "sourceBodyFloorY": 8.27394443236873e-09,
+  "standingTrunkOriginAboveFloorM": 1.1492853597610364,
+  "whiteStandingTrunkOriginAboveFloorM": 1.521258167202177,
+  "standingTrunkProxyRatio": 0.7554834442563719,
+  "whiteReferenceSha256": "fa797ad07137af09b1824cabe8737a530206804fcee2ab3a526ac12be1f08fc1",
+  "targetHeadSpanM": 0.05288384109794604,
+  "neckCommonPitchRangeDegrees": [
+    -6.902754417852524,
+    7.813979571058141
+  ],
+  "method": "Own animated parents and native world-rest rotations; bounded common sagittal pitch solve; only six neck/head Walk quaternion outputs appended, periodic normalized cubic tangents.",
+  "bodyLimitation": "Unchanged source torso has dominant four-cycle vertical component; head and trunk origins are proxies, not anatomical optical markers.",
+  "noMotionOrProductionApproval": true,
+  "neckCommonPitchBoundsDegrees": [
+    -12,
+    12
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "candidateSha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+  "method": "Recompute phase1 independently from original source Walk end-pose parents and desired analytic head Y, then compare with candidate phase0 float32 quaternions. Normalized cubic C1 and8 dense subintervals/key for only6 changed neck/head rotation tracks.",
+  "rows": [
+    {
+      "name": "neck_01_014",
+      "uncopiedAnalyticEndVsFirstFloat32Degrees": 1.389114655138235e-06,
+      "loopNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "internalNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "maxAuthoredKeyStepDegrees": 0.45001602959594855,
+      "maxDenseLocalDegreesPerS": 51.525645878853666
+    },
+    {
+      "name": "neck_02_015",
+      "uncopiedAnalyticEndVsFirstFloat32Degrees": 2.4446717938872306e-07,
+      "loopNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "internalNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "maxAuthoredKeyStepDegrees": 0.1396399076035806,
+      "maxDenseLocalDegreesPerS": 15.989694996832338
+    },
+    {
+      "name": "neck_03_016",
+      "uncopiedAnalyticEndVsFirstFloat32Degrees": 1.298872066318973e-07,
+      "loopNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "internalNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "maxAuthoredKeyStepDegrees": 0.1396399796926819,
+      "maxDenseLocalDegreesPerS": 15.989707038785332
+    },
+    {
+      "name": "neck_04_017",
+      "uncopiedAnalyticEndVsFirstFloat32Degrees": 5.571573814681029e-08,
+      "loopNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "internalNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "maxAuthoredKeyStepDegrees": 0.13963958732080622,
+      "maxDenseLocalDegreesPerS": 15.989641189007518
+    },
+    {
+      "name": "neck_05_018",
+      "uncopiedAnalyticEndVsFirstFloat32Degrees": 2.253231333987901e-07,
+      "loopNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "internalNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "maxAuthoredKeyStepDegrees": 0.09309095445864012,
+      "maxDenseLocalDegreesPerS": 10.659406875872824
+    },
+    {
+      "name": "head_019",
+      "uncopiedAnalyticEndVsFirstFloat32Degrees": 1.440804579428953e-06,
+      "loopNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "internalNormalizedTangentDifferenceDegreesPerS": 0.0,
+      "maxAuthoredKeyStepDegrees": 0.13964190429610504,
+      "maxDenseLocalDegreesPerS": 15.990029881688692
+    }
+  ],
+  "maxUncopiedAnalyticEndVsFirstDegrees": 1.440804579428953e-06,
+  "maxLoopNormalizedTangentDifferenceDegreesPerS": 0.0,
+  "maxInternalNormalizedTangentDifferenceDegreesPerS": 0.0,
+  "maxChangedTrackDenseDegreesPerS": 51.525645878853666,
+  "noMotionOrProductionApproval": true
+}

@@ -1,0 +1,59 @@
+{
+  "label": "Icelandic private target",
+  "privateIcelandProfileFixture": true,
+  "candidateSha256": "aa402f2642d95f7ef9592cbb4f4cbffd2f66c6dc9e0a1ba564db272092de0f48",
+  "routedPrivateCandidate": true,
+  "actualRanchControls": true,
+  "controlledPlayerSpeed": true,
+  "actualControllerResponses": [
+    {
+      "url": "http://127.0.0.1:8584/assets/native-horse-motion.js?v=native-transitions-1",
+      "sha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6"
+    }
+  ],
+  "expectedControllerSha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6",
+  "privateProfileRoutes": [
+    {
+      "url": "http://127.0.0.1:8584/assets/native-breed-profiles.js?v=native-head-walk-1",
+      "originalHash": "2a2e376da603209b925d74726ea40fd953aa85c07b47cbd64fea7e14812d086f",
+      "fixtureHash": "ec4e1d157c6c9f29d2cc529576ff3494e334155b04fcbeaeaa10d4cbbebee42c",
+      "privateTargetId": "iceland",
+      "profileId": "bay-western",
+      "coordinates": "review/native-iceland-kit/actual-coordinates.json"
+    }
+  ],
+  "phaseSamples": 64,
+  "coveredCycles": 0.9999999957424897,
+  "actualClips": [
+    "Target Native Walk Rollover"
+  ],
+  "allCandidateHashesMatch": true,
+  "headLocalYSpanM": 0.05283594416525372,
+  "bitLocalYSpanM": {
+    "left": 0.09891781092723906,
+    "right": 0.10103713536315118
+  },
+  "allFinite": true,
+  "maxActualSkinnedBootResidualM": 0.000004948766788888689,
+  "maxReinEndpointResidualM": 2.6272671962866384e-15,
+  "nonReinComponentsIntact": true,
+  "clearance": {
+    "left": {
+      "neckTriangles": 1405,
+      "phasesWithSegmentIntersection": 0,
+      "totalSegmentIntersections": 0,
+      "minimumNearestSampleGapM": 0.0705909579690943,
+      "minimumSignedNearestSampleGapM": 0.0704223429938679
+    },
+    "right": {
+      "neckTriangles": 1405,
+      "phasesWithSegmentIntersection": 0,
+      "totalSegmentIntersections": 0,
+      "minimumNearestSampleGapM": 0.07099326984876632,
+      "minimumSignedNearestSampleGapM": 0.07081787180339925
+    }
+  },
+  "clearanceMethod": "Fixed majority-neck-weight body triangles; actual rendered rein outer-edge and inspect centerline segments versus current skinned triangles. Nearest sampled gap uses vertex samples and triangle winding; not exhaustive volume, full rein triangle collision, hair collisions or contact force.",
+  "errors": [],
+  "noMotionOrProductionApproval": true
+}

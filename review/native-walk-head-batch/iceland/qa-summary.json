@@ -1,0 +1,144 @@
+{
+  "label": "Icelandic private target",
+  "targetHeadSpanM": 0.05288384109794604,
+  "candidateSha256": "aa402f2642d95f7ef9592cbb4f4cbffd2f66c6dc9e0a1ba564db272092de0f48",
+  "sourceSha256": "305bcc7353381b5d677071f58b7e0e6a6bef318899c239656f4807e0f3fc10f1",
+  "phaseCount": 256,
+  "finite": true,
+  "errors": [],
+  "landmarks": "World origins head_019/spine_04_012; proxies, not the paper optical markers",
+  "curves": {
+    "left": {
+      "head": {
+        "min": 1.5400438357408701,
+        "max": 1.572208075962784,
+        "span": 0.032164240221913776,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 6.796910344802522e-11,
+            "phaseRadians": -2.692471682863588
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.013857760628322242,
+            "phaseRadians": 1.4381507620376637
+          },
+          {
+            "n": 4,
+            "amplitudeM": 0.004682070577120505,
+            "phaseRadians": -1.5616280508448188
+          }
+        ]
+      },
+      "trunk": {
+        "min": 1.142968228876827,
+        "max": 1.157923799276431,
+        "span": 0.014955570399604046,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 1.0897441097720247e-10,
+            "phaseRadians": -2.405091708859313
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.0042037663241613465,
+            "phaseRadians": 2.0394707189225554
+          },
+          {
+            "n": 4,
+            "amplitudeM": 0.004605457721783444,
+            "phaseRadians": -1.5709284290991614
+          }
+        ]
+      },
+      "n2PhaseDifferenceDeg": -34.45309566649291,
+      "n2StrideOffset": 0.04785152175901793
+    },
+    "right": {
+      "head": {
+        "min": 1.5305028947386896,
+        "max": 1.5833736922362276,
+        "span": 0.05287079749753798,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 6.158867236877508e-10,
+            "phaseRadians": -1.9787738913147053
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.02644188819513249,
+            "phaseRadians": -1.1021220951726667
+          },
+          {
+            "n": 4,
+            "amplitudeM": 1.2155734476404598e-8,
+            "phaseRadians": 1.00263592525294
+          }
+        ]
+      },
+      "trunk": {
+        "min": 1.142968228876827,
+        "max": 1.157923799276431,
+        "span": 0.014955570399604046,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 1.0897441097720247e-10,
+            "phaseRadians": -2.405091708859313
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.0042037663241613465,
+            "phaseRadians": 2.0394707189225554
+          },
+          {
+            "n": 4,
+            "amplitudeM": 0.004605457721783444,
+            "phaseRadians": -1.5709284290991614
+          }
+        ]
+      },
+      "n2PhaseDifferenceDeg": 179.99999080371632,
+      "n2StrideOffset": 0.24999998722738376
+    }
+  },
+  "maxHoofWorldDifferenceM": 0,
+  "maxTrunkWorldDifferenceM": 0,
+  "stanceContacts": {
+    "FL": {
+      "min": 0.0007213381788731192,
+      "max": 0.0012211835046991542,
+      "span": 0.000499845325826035
+    },
+    "FR": {
+      "min": 0.0007755885028925425,
+      "max": 0.0013418243120190973,
+      "span": 0.0005662358091265548
+    },
+    "HL": {
+      "min": 0.0008056718933069883,
+      "max": 0.0013495692656172453,
+      "span": 0.0005438973723102571
+    },
+    "HR": {
+      "min": 0.0006704076585202774,
+      "max": 0.0012573589545868055,
+      "span": 0.0005869512960665281
+    }
+  },
+  "wholeBodyFloor": {
+    "min": 0.0006704076585202774,
+    "max": 0.0011736085966153956,
+    "span": 0.0005032009380951182
+  },
+  "groomVertexCount": 23514,
+  "groomSampleCount": 243,
+  "maxGroomChangeFromCurrentWalkM": 0.0754649577684482,
+  "originalManeTailChannelsPreserved": true,
+  "sourceTackPreserved": true,
+  "limitation": "Trunk n4 dominance and source high carried posture unchanged. This only tests neck/head motion and contact preservation.",
+  "noMotionOrProductionApproval": true
+}

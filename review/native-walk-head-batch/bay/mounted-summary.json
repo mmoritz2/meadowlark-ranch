@@ -1,0 +1,59 @@
+{
+  "label": "Bay Western",
+  "privateIcelandProfileFixture": false,
+  "candidateSha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+  "routedPrivateCandidate": true,
+  "actualRanchControls": true,
+  "controlledPlayerSpeed": true,
+  "actualControllerResponses": [
+    {
+      "url": "http://127.0.0.1:8584/assets/native-horse-motion.js?v=native-transitions-1",
+      "sha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6"
+    }
+  ],
+  "expectedControllerSha256": "2f44f6641225c9ab2d8b102b188da48fe9f45538211f0fb50d3a7808ad04edb6",
+  "privateProfileRoutes": [
+    {
+      "url": "http://127.0.0.1:8584/assets/native-breed-profiles.js?v=native-head-walk-1",
+      "originalHash": "2a2e376da603209b925d74726ea40fd953aa85c07b47cbd64fea7e14812d086f",
+      "fixtureHash": "fe1a4e9c364b834a9dfaa409dab0eb61f2ba62699864f657b210caaed9f2a860",
+      "privateTargetId": "bay",
+      "profileId": "bay-western",
+      "coordinates": "review/native-bay-rollover/rider-prerequisites/actual-coordinates.json"
+    }
+  ],
+  "phaseSamples": 64,
+  "coveredCycles": 0.9999999957424897,
+  "actualClips": [
+    "Target Native Walk Rollover"
+  ],
+  "allCandidateHashesMatch": true,
+  "headLocalYSpanM": 0.058974066850507434,
+  "bitLocalYSpanM": {
+    "left": 0.10652239051988532,
+    "right": 0.10875032543039986
+  },
+  "allFinite": true,
+  "maxActualSkinnedBootResidualM": 0.000003360506500819802,
+  "maxReinEndpointResidualM": 2.5989654674417885e-15,
+  "nonReinComponentsIntact": true,
+  "clearance": {
+    "left": {
+      "neckTriangles": 1405,
+      "phasesWithSegmentIntersection": 0,
+      "totalSegmentIntersections": 0,
+      "minimumNearestSampleGapM": 0.07293965640128205,
+      "minimumSignedNearestSampleGapM": 0.0727671557194757
+    },
+    "right": {
+      "neckTriangles": 1405,
+      "phasesWithSegmentIntersection": 0,
+      "totalSegmentIntersections": 0,
+      "minimumNearestSampleGapM": 0.07336568879021103,
+      "minimumSignedNearestSampleGapM": 0.07243207759004712
+    }
+  },
+  "clearanceMethod": "Fixed majority-neck-weight body triangles; actual rendered rein outer-edge and inspect centerline segments versus current skinned triangles. Nearest sampled gap uses vertex samples and triangle winding; not exhaustive volume, full rein triangle collision, hair collisions or contact force.",
+  "errors": [],
+  "noMotionOrProductionApproval": true
+}

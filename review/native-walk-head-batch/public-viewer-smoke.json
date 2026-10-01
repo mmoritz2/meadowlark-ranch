@@ -1,0 +1,31 @@
+{
+  "rows": [
+    {
+      "selected": "bay",
+      "options": [
+        "bay",
+        "sporthorse"
+      ],
+      "phase": 0.125,
+      "ready": true,
+      "clip": "Target Native Walk Rollover",
+      "bones": 677,
+      "finite": true
+    },
+    {
+      "selected": "sporthorse",
+      "options": [
+        "bay",
+        "sporthorse"
+      ],
+      "phase": 0.125,
+      "ready": true,
+      "clip": "Target Native Walk Rollover",
+      "bones": 677,
+      "finite": true
+    }
+  ],
+  "errors": [],
+  "missing": [],
+  "outputRequests": []
+}

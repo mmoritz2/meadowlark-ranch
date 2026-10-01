@@ -1,0 +1,144 @@
+{
+  "label": "Bay Western",
+  "targetHeadSpanM": 0.05902747566106753,
+  "candidateSha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+  "sourceSha256": "d7a02ea2e6cc4355a5a71b67b79af627e41ea8312157b4ff080faff42fadacef",
+  "phaseCount": 256,
+  "finite": true,
+  "errors": [],
+  "landmarks": "World origins head_019/spine_04_012; proxies, not the paper optical markers",
+  "curves": {
+    "left": {
+      "head": {
+        "min": 1.7057317933473544,
+        "max": 1.7390338392198548,
+        "span": 0.03330204587250041,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 7.429967274946391e-11,
+            "phaseRadians": -2.619250553675541
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.014060552385694433,
+            "phaseRadians": 1.4398722764482499
+          },
+          {
+            "n": 4,
+            "amplitudeM": 0.005182052457094761,
+            "phaseRadians": -1.5619778791996666
+          }
+        ]
+      },
+      "trunk": {
+        "min": 1.2760015541682,
+        "max": 1.2919811187746009,
+        "span": 0.01597956460640093,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 1.1653154093578097e-10,
+            "phaseRadians": -2.3703529740686395
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.004256957609720264,
+            "phaseRadians": 2.0394548574412505
+          },
+          {
+            "n": 4,
+            "amplitudeM": 0.005098740958882488,
+            "phaseRadians": -1.57092463666112
+          }
+        ]
+      },
+      "n2PhaseDifferenceDeg": -34.35355136045982,
+      "n2StrideOffset": 0.04771326577841641
+    },
+    "right": {
+      "head": {
+        "min": 1.69371847019572,
+        "max": 1.7527313816962498,
+        "span": 0.059012911500529786,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 8.284381601839291e-10,
+            "phaseRadians": -0.24736903803757018
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.029513701892001615,
+            "phaseRadians": -1.1021379894882937
+          },
+          {
+            "n": 4,
+            "amplitudeM": 1.9443741742874456e-8,
+            "phaseRadians": 1.0030606032889282
+          }
+        ]
+      },
+      "trunk": {
+        "min": 1.2760015541682,
+        "max": 1.2919811187746009,
+        "span": 0.01597956460640093,
+        "harmonics": [
+          {
+            "n": 1,
+            "amplitudeM": 1.1653154093578097e-10,
+            "phaseRadians": -2.3703529740686395
+          },
+          {
+            "n": 2,
+            "amplitudeM": 0.004256957609720264,
+            "phaseRadians": 2.0394548574412505
+          },
+          {
+            "n": 4,
+            "amplitudeM": 0.005098740958882488,
+            "phaseRadians": -1.57092463666112
+          }
+        ]
+      },
+      "n2PhaseDifferenceDeg": 179.99998892244824,
+      "n2StrideOffset": 0.24999998461451145
+    }
+  },
+  "maxHoofWorldDifferenceM": 0,
+  "maxTrunkWorldDifferenceM": 0,
+  "stanceContacts": {
+    "FL": {
+      "min": 0.0006996007592223966,
+      "max": 0.0012333707586359211,
+      "span": 0.0005337699994135245
+    },
+    "FR": {
+      "min": 0.000757961653293586,
+      "max": 0.0013618301917315838,
+      "span": 0.0006038685384379978
+    },
+    "HL": {
+      "min": 0.0007907314587340935,
+      "max": 0.0013640769359258968,
+      "span": 0.0005733454771918033
+    },
+    "HR": {
+      "min": 0.0006876314105551933,
+      "max": 0.0012174009960015096,
+      "span": 0.0005297695854463162
+    }
+  },
+  "wholeBodyFloor": {
+    "min": 0.0006876314105551933,
+    "max": 0.0011906281180020573,
+    "span": 0.000502996707446864
+  },
+  "groomVertexCount": 23514,
+  "groomSampleCount": 243,
+  "maxGroomChangeFromCurrentWalkM": 0.08536283885531072,
+  "originalManeTailChannelsPreserved": true,
+  "sourceTackPreserved": true,
+  "limitation": "Trunk n4 dominance and source high carried posture unchanged. This only tests neck/head motion and contact preservation.",
+  "noMotionOrProductionApproval": true
+}
