@@ -1,0 +1,91 @@
+{
+  "errors": [
+    "The AudioContext encountered an error from the audio device or the WebAudio renderer.",
+    "The AudioContext encountered an error from the audio device or the WebAudio renderer.",
+    "The AudioContext encountered an error from the audio device or the WebAudio renderer."
+  ],
+  "rows": [
+    {
+      "key": "white-western",
+      "maximumBootGapM": 5.652404137701299e-07,
+      "minimumLean": 0.040182573808069326,
+      "maximumLean": 0.1131121493171418,
+      "finite": true,
+      "reinsAttached": true,
+      "speedFractions": [
+        {
+          "fraction": 0.08,
+          "leanMean": 0.04546745797561915
+        },
+        {
+          "fraction": 0.25,
+          "leanMean": 0.06983548752811385
+        },
+        {
+          "fraction": 0.6,
+          "leanMean": 0.08784025288643364
+        },
+        {
+          "fraction": 1,
+          "leanMean": 0.09705401924249304
+        }
+      ],
+      "firstFrameBootGapM": 4.3319125350654785e-07
+    },
+    {
+      "key": "bay-western",
+      "maximumBootGapM": 0.22574177081719432,
+      "minimumLean": 0.07750342326971751,
+      "maximumLean": 0.1049881258560625,
+      "finite": true,
+      "reinsAttached": true,
+      "speedFractions": [
+        {
+          "fraction": 0.08,
+          "leanMean": 0.07904068889973684
+        },
+        {
+          "fraction": 0.25,
+          "leanMean": 0.06780448166284406
+        },
+        {
+          "fraction": 0.6,
+          "leanMean": 0.08296583880978607
+        },
+        {
+          "fraction": 1,
+          "leanMean": 0.08892999578141375
+        }
+      ],
+      "firstFrameBootGapM": 0.22574177081719432
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "maximumBootGapM": 0.2118221290882113,
+      "minimumLean": 0.06407416110311417,
+      "maximumLean": 0.10835518963941931,
+      "finite": true,
+      "reinsAttached": true,
+      "speedFractions": [
+        {
+          "fraction": 0.08,
+          "leanMean": 0.05902720121905786
+        },
+        {
+          "fraction": 0.25,
+          "leanMean": 0.06864624760868322
+        },
+        {
+          "fraction": 0.6,
+          "leanMean": 0.08498607707980016
+        },
+        {
+          "fraction": 1,
+          "leanMean": 0.09229705956477052
+        }
+      ],
+      "firstFrameBootGapM": 0.2118221290882113
+    }
+  ],
+  "nativePostureResponds": false
+}

@@ -1,0 +1,20 @@
+{
+  "unrouted": true,
+  "surface": "actual Ranch",
+  "checks": {
+    "freeOptIn": true,
+    "white-westernRanch": true,
+    "white-westernContacts": true,
+    "bay-westernRanch": true,
+    "bay-westernContacts": true,
+    "bay-sporthorse-nativeRanch": true,
+    "bay-sporthorse-nativeContacts": true,
+    "black-dragon-nativeRanch": true,
+    "european-dragonRanch": true,
+    "legacyBay": true,
+    "nativeWorld": true,
+    "noUnexpectedErrors": true
+  },
+  "errors": [],
+  "ranchHtmlSha256": "53a1c52ed45d6749a96730a101ad2b0758627d88fddf6a263074ff2707cb2516"
+}

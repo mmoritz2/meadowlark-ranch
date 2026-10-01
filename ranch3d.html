@@ -6261,8 +6261,9 @@ function riderLegs(R,F,U,Rt){
   }
  }
 }
-/* hands to the horse's mouth */
-function riderHands(R,F,U,Rt,tm,pat){
+/* Cache the hand references before leg IK: the reference pose resets every
+   role bone, including the legs, when a newly mounted horse has no hand home. */
+function cacheRiderHands(R){
  const B=R.sk.by;
  /* Her hands belong to the horse, not to her body: a low, quiet pair just ahead of the
     withers that the rest of her moves around. Where exactly is read once off the sculpt's
@@ -6276,6 +6277,11 @@ function riderHands(R,F,U,Rt,tm,pat){
   if(TACK.bitL&&TACK.bitR)R._bitRest.copy(TACK.bitL.position).add(TACK.bitR.position).multiplyScalar(0.5);
   R._rest(); R._seat(R.pose.lean,R.pose.side,R.pose.head,R.pose.rise,0); R.fitG.updateMatrixWorld(true);
  }
+}
+/* hands to the horse's mouth */
+function riderHands(R,F,U,Rt,tm,pat){
+ const B=R.sk.by;
+ cacheRiderHands(R);
  const rel=R._air*0.32;                          // crest release: hands up the neck over a fence
  _rdA.set(0,0,0);
  if(TACK.bitL&&TACK.bitR&&R._bitRest)            // and a soft following of the head, through the rein
@@ -6302,8 +6308,10 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
  const seat=riderSeat(); R.g.position.set(0,seat.y,seat.z); R.g.rotation.set(0,0,0);
  if(R.sk){
   const k=Math.min(1,(dt||0.016)*6);
-  const t=THREE.MathUtils.clamp((sp-0.3)/6,0,1);    // 0 at halt, ~1 by canter
-  const ph=RIG.phase*Math.PI*2, moving=sp>0.3;
+  const nativeHorse=RIG.profile?.nativeKind==='horse';
+  const nativeMax=nativeHorse?getNativeHorseCapabilities(RIG)?.maxSpeedMps:0;
+  const t=THREE.MathUtils.clamp(nativeHorse?(nativeMax>0?sp/nativeMax:0):(sp-0.3)/6,0,1);
+  const ph=RIG.phase*Math.PI*2, moving=sp>(nativeHorse ? .02 : .3);
   const turn=(keys.KeyA||keys.ArrowLeft||touch.left?1:0)-(keys.KeyD||keys.ArrowRight||touch.right?1:0);
   R._look=(R._look||0)+((moving?turn*0.45:Math.sin((tm||0)*0.9)*0.22+Math.sin((tm||0)*0.47+1)*0.12)-(R._look||0))*k*0.9;
   R._turn=(R._turn||0)+(turn-(R._turn||0))*k*0.7;
@@ -6343,6 +6351,7 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
   /* the horse's own axes, so "forward" means forward for the horse and not for the world */
   player.mesh.getWorldQuaternion(_rdQ);
   _rdF.set(0,0,1).applyQuaternion(_rdQ); _rdU.set(0,1,0).applyQuaternion(_rdQ); _rdR.set(1,0,0).applyQuaternion(_rdQ);
+  cacheRiderHands(R);
   riderLegs(R,_rdF,_rdU,_rdR);
   if(!G.run('riderPose',R,tm,dt))riderHands(R,_rdF,_rdU,_rdR,tm,pat);   // a rider emote (wave, guitar…) owns the arms for its duration
   if(R._sync)R._sync();   // the character's own bones take the role bones' pose (assets/rider-model.js)

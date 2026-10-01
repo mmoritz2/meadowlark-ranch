@@ -1,0 +1,88 @@
+{
+  "errors": [],
+  "audioDeviceErrors": [],
+  "rows": [
+    {
+      "key": "white-western",
+      "maximumBootGapM": 5.864717594091128e-07,
+      "minimumLean": 0.06351637741142753,
+      "maximumLean": 0.23359817362269736,
+      "finite": true,
+      "reinsAttached": true,
+      "speedFractions": [
+        {
+          "fraction": 0.08,
+          "leanMean": 0.06708212766349887
+        },
+        {
+          "fraction": 0.25,
+          "leanMean": 0.10633199360450274
+        },
+        {
+          "fraction": 0.6,
+          "leanMean": 0.163531867469767
+        },
+        {
+          "fraction": 1,
+          "leanMean": 0.21754004354804868
+        }
+      ],
+      "firstFrameBootGapM": 5.864717594091128e-07
+    },
+    {
+      "key": "bay-western",
+      "maximumBootGapM": 3.3723808677557997e-06,
+      "minimumLean": 0.06351637741142753,
+      "maximumLean": 0.23359817362269736,
+      "finite": true,
+      "reinsAttached": true,
+      "speedFractions": [
+        {
+          "fraction": 0.08,
+          "leanMean": 0.06708212766349887
+        },
+        {
+          "fraction": 0.25,
+          "leanMean": 0.10633199360450274
+        },
+        {
+          "fraction": 0.6,
+          "leanMean": 0.163531867469767
+        },
+        {
+          "fraction": 1,
+          "leanMean": 0.21754004354804868
+        }
+      ],
+      "firstFrameBootGapM": 3.3605083231295267e-06
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "maximumBootGapM": 2.7719577832852554e-06,
+      "minimumLean": 0.06351637741142753,
+      "maximumLean": 0.23359817362269736,
+      "finite": true,
+      "reinsAttached": true,
+      "speedFractions": [
+        {
+          "fraction": 0.08,
+          "leanMean": 0.06708212766349887
+        },
+        {
+          "fraction": 0.25,
+          "leanMean": 0.10633199360450274
+        },
+        {
+          "fraction": 0.6,
+          "leanMean": 0.163531867469767
+        },
+        {
+          "fraction": 1,
+          "leanMean": 0.21754004354804868
+        }
+      ],
+      "firstFrameBootGapM": 2.764227378482387e-06
+    }
+  ],
+  "nativePostureResponds": true
+}
