@@ -141,7 +141,7 @@
   },
   "fennec": {
    "base": "fox",
-   "fit": {"height": 0.42, "yawDeg": 90, "groundOffset": 0},
+   "fit": {"height": 0.5, "yawDeg": 90, "groundOffset": 0},
    "autorig": {"ears": {"scale": 1.85, "radius": 0.3, "splayDeg": 24, "sides": [{"base": [-1.55, 3.62, 0.3], "tip": [-1.52, 4.21, 0.245]}, {"base": [-1.55, 3.62, -0.3], "tip": [-1.52, 4.21, -0.245]}]}},
    "tint": {"dark": "#8a6238", "mid": "#e4c28a", "light": "#fcf4e2"},
    "materials": {"sheenColor": "#fff1d8"}
