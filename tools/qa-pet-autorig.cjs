@@ -24,8 +24,10 @@ let browser=null;
 setTimeout(async()=>{console.error('WATCHDOG: no result after 900 s');try{if(browser)await browser.close();}catch(e){}process.exit(3);},900000).unref();
 const manifest=JSON.parse(fs.readFileSync(path.join(ROOT,'assets/models/pets/manifest.json'),'utf8'));
 const entry=k=>{const P=manifest.pets;let e=P[k],out={};const chain=[];while(e){chain.unshift(e);e=e.base?P[e.base]:null;}for(const c of chain)for(const x in c)out[x]=c[x]&&typeof c[x]==='object'&&!Array.isArray(c[x])&&out[x]&&typeof out[x]==='object'?Object.assign({},out[x],c[x]):c[x];return out;};
-const ALL=Object.keys(manifest.pets).filter(k=>entry(k).autorig&&entry(k).available!==false);
-const PARKED=Object.keys(manifest.pets).filter(k=>entry(k).autorig&&entry(k).available===false);
+/* the four-legged autorigs (quadruped, hare); a bird (the owl) has its own rig and its own check, tools/qa-pet-owl.cjs */
+const isQuad=k=>{const a=entry(k).autorig;return !!a&&a.template!=='bird';};
+const ALL=Object.keys(manifest.pets).filter(k=>isQuad(k)&&entry(k).available!==false);
+const PARKED=Object.keys(manifest.pets).filter(k=>isQuad(k)&&entry(k).available===false);
 const PETS=(process.env.PETS?process.env.PETS.split(','):ALL).filter(k=>ALL.includes(k)||(process.env.QA_PARKED&&PARKED.includes(k)));
 const HEIGHT={fox:.52,fennec:.40,glimmerfox:.562,lamb:.60,snowhare:.42,bunny:.38,owl:.50};
 const errors=[];
@@ -40,6 +42,9 @@ const errors=[];
  page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));
  page.on('console',m=>{if(m.type()==='error')errors.push(m.text().slice(0,300));if(/pet models|autorig/.test(m.text())&&m.type()==='warning')errors.push('WARN '+m.text().slice(0,300));});
  page.on('dialog',d=>{d.dismiss().catch(()=>{});});
+ /* QA_PARKED=1 with PETS naming a parked pet: the page's copy of the manifest has it switched on for this run only */
+ const ON=PETS.filter(k=>PARKED.includes(k));
+ if(ON.length)await page.route(/\/assets\/models\/pets\/manifest\.json(\?.*)?$/,r=>{const m=JSON.parse(fs.readFileSync(path.join(ROOT,'assets/models/pets/manifest.json'),'utf8'));for(const k of ON){let e=m.pets[k];while(e&&e.base)e=m.pets[e.base];if(e)e.available=true;if(m.pets[k])m.pets[k].available=true;}r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(m)});});
  stage('boot');
  await page.goto(QA.BASE+'/ranch3d.html?qa=autorig&fresh='+Date.now(),{waitUntil:'load',timeout:120000});
  await page.waitForFunction(()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_game_to_text());return s.graphics&&s.graphics.horseReady&&!s.graphics.horseLoading;}catch(e){return false;}})(),null,{timeout:240000,polling:250});
@@ -83,7 +88,15 @@ const errors=[];
      let skate=0;for(const L2 in legs){const T=tr[L2],lo=Math.min(...T.map(v=>v[1])),hi=Math.max(...T.map(v=>v[1])),thr=Math.min(0.015,0.2*(hi-lo));let run=[];const runs=[];T.forEach((v,i)=>{if(v[1]<lo+thr)run.push([i,v[0]]);else if(run.length){runs.push(run);run=[];}});if(run.length)runs.push(run);
       for(const R of runs){if(R.length<2||R[0][0]===0||R[R.length-1][0]===T.length-1)continue;const zs=R.map(v=>v[1]);skate=Math.max(skate,(Math.max(...zs)-Math.min(...zs))/Math.max(1e-6,S));}}
      r.gaits[s]={stride:+S.toFixed(3),skate:+skate.toFixed(3),minY:+minY.toFixed(3),lift:+maxLiftY.toFixed(3),headLead:headLead/(2*N)};}
-    if(a.clips.run&&!a.clips.walk){const s='run',N=30;let minY=Infinity,moved=0,prev=null;for(let i=0;i<N;i++){pose(s,i/N);let lo=Infinity;for(const L2 in legs)lo=Math.min(lo,paw(L2).y);minY=Math.min(minY,lo);const hy=B('hockL').getWorldPosition(new THREE.Vector3());if(prev)moved+=prev.distanceTo(hy);prev=hy;}r.hop={minY:+minY.toFixed(3),legTravel:+moved.toFixed(3)};}
+    if(a.clips.run&&!a.clips.walk){const s='run',N=30;let minY=Infinity,moved=0,prev=null;for(let i=0;i<N;i++){pose(s,i/N);let lo=Infinity;for(const L2 in legs)lo=Math.min(lo,paw(L2).y);minY=Math.min(minY,lo);const hy=B('hockL').getWorldPosition(new THREE.Vector3());if(prev)moved+=prev.distanceTo(hy);prev=hy;}r.hop={minY:+minY.toFixed(3),legTravel:+moved.toFixed(3)};
+     /* the hare's hop and bound: the skin never under the grass, and with the paws down (phase 0.96 to 0.02: the landing done, the
+        push not yet begun) every paw's underside within 1.2 cm of it; the planted paws sweep back at the rate the clip publishes */
+     for(const s2 of ['run','bound']){if(!a.clips[s2])continue;let skinMin=Infinity,downMax=0,sweep=[];
+      for(let i=0;i<40;i++){const ph=i/40;pose(s2,ph+1e-4*(i%2));const pm=pawMesh();let lo=Infinity;I.model.traverse(o=>{if(!o.isSkinnedMesh)return;const v=new THREE.Vector3();for(let j=0;j<o.geometry.attributes.position.count;j+=5){o.getVertexPosition(j,v).applyMatrix4(o.matrixWorld);lo=Math.min(lo,v.y);}});skinMin=Math.min(skinMin,lo);
+       if(ph>=0.96||ph<=0.02)downMax=Math.max(downMax,...Object.values(pm));}
+      /* sweep: the hind paw's travel along the body between phase 0 and 0.1 (both hind feet planted), per unit of phase */
+      const zAt=ph=>{pose(s2,ph);return (paw('hL').z+paw('hR').z)/2;};const z0=zAt(0),z1=zAt(0.1);
+      r[s2==='run'?'hopClip':'boundClip']={skinMin:+skinMin.toFixed(4),downMax:+downMax.toFixed(4),sweep:+((z0-z1)/0.1).toFixed(4),published:+(((s2==='run'?ar.hopSweep:ar.boundSweep)||0)*a.scale).toFixed(4)};}}
     I.dispose();
    }catch(e){r.error=String(e&&e.message||e);}}
   return out;},[PETS,HEIGHT]);
@@ -102,6 +115,9 @@ const errors=[];
    check(k+' '+s+': paws reach the ground, never under it, and lift in the swing',g.minY>-0.015&&g.minY<0.02&&g.lift>0.01,g);
    check(k+' '+s+': faces the way it walks (head ahead of the hips all the way through)',g.headLead===1,g);}
   if(r.hop){check(k+': the hop moves the legs and stays on or above the grass',r.hop.legTravel>0.02&&r.hop.minY>-0.015,r.hop);}
+  for(const [nm,c] of [['hop',r.hopClip],['bound (its gallop)',r.boundClip]])if(c){
+   check(k+' '+nm+': no skin under the grass, all four paws down together at the landing (each within 1.2 cm)',c.skinMin>-0.004&&c.downMax<0.012,c);
+   check(k+' '+nm+': the planted hind paws sweep back at the rate the game moves it on the grass (within 25%)',c.published>0&&Math.abs(c.sweep-c.published)<0.25*c.published,c);}
  }
  /* ---- 3: in the game ---------------------------------------------------------------------------------- */
  await page.evaluate(()=>{const G=window.__features,p=G.horse.player;const c=document.getElementById('seChar');if(c&&c.classList.contains('on')&&G.wardrobe)G.wardrobe.closeChar();
@@ -120,10 +136,24 @@ const errors=[];
     if(prev){const vx=p.x-prev.x,vz=p.z-prev.z,L=Math.hypot(vx,vz);if(L>0.2)out.push(((a.x-b.x)*vx+(a.z-b.z)*vz)/(L*Math.max(1e-6,Math.hypot(a.x-b.x,a.z-b.z))));}prev=p;}
    A.key('ShiftLeft',false);A.key('KeyW',false);for(let i=0;i<30;i++)window.advanceTime(100);return out;});
   check(k+' in game: faces the way it runs (head ahead of the hips along its path)',face.length>5&&face.filter(v=>v>0.7).length>=face.length*0.9,{n:face.length,min:Math.min(...face).toFixed(2),mean:(face.reduce((x,y)=>x+y,0)/Math.max(1,face.length)).toFixed(2)});
+  /* a hare's paws on the grass: each contact tracked at 60 frames a second while it hops beside a walking, then a galloping
+     horse; how far the paw moves over the ground while it is down (its tip under 8 mm up; the landing frame just above the grass is not a touch) */
+  const hareK=lib[k]&&lib[k].autorig&&lib[k].autorig.template==='hare';
+  if(hareK){const sl=await page.evaluate(()=>{const A=window.__AR,G=A.G,T=G.THREE;A.reset(-100,400,Math.PI);window.advanceTime(1500);
+    const c0=G.pets.comp(),I=c0.parts.real&&c0.parts.real.inst;if(!I)return null;const J=I.asset.scene.userData.autorig.joints,legs={fL:['wristL','toeL'],fR:['wristR','toeR'],hL:['hockL','toeHL'],hR:['hockR','toeHR']},bone={},off={};
+    for(const L in legs){bone[L]=I.model.getObjectByName('ar_'+legs[L][0]);off[L]=new T.Vector3().fromArray(J[legs[L][1]]).sub(new T.Vector3().fromArray(J[legs[L][0]]));}
+    const tr=[];const step=n=>{for(let i=0;i<n;i++){window.advanceTime(1000/60);const c=G.pets.comp();const f={spd:c.st.spd||0,p:{}};for(const L in legs){const v=bone[L].localToWorld(off[L].clone());f.p[L]=[v.x,v.y-G.petModels.standY(v.x,v.z),v.z];}tr.push(f);}};
+    A.key('KeyW',true);step(300);A.key('ShiftLeft',true);step(300);A.key('ShiftLeft',false);A.key('KeyW',false);step(60);
+    const cont=[];for(const L in legs){let run=[];const flush=()=>{if(run.length>=2){const a=run[0].p[L];let mx=0;for(const f of run)mx=Math.max(mx,Math.hypot(f.p[L][0]-a[0],f.p[L][2]-a[2]));cont.push({L,spd:run.reduce((s,f)=>s+f.spd,0)/run.length,slide:mx});}run=[];};
+     for(const f of tr){if(f.p[L][1]<0.008&&f.spd>0.3)run.push(f);else flush();}flush();}
+    const bin=(a,b)=>{const s=cont.filter(x=>x.spd>=a&&x.spd<b).map(x=>x.slide).sort((x,y)=>x-y);return {n:s.length,median:+(s[Math.floor(s.length/2)]||0).toFixed(3),p90:+(s[Math.floor(s.length*0.9)]||0).toFixed(3),max:+(s[s.length-1]||0).toFixed(3)};};
+    return {slow:bin(0.3,2),mid:bin(2,7),fast:bin(7,20)};});
+   check(k+' in game: its paws hold the grass while it hops (at 2-7 m/s each paw slides under 3 cm per touch, 90% of touches)',sl&&sl.mid.n>=8&&sl.mid.p90<0.03,sl);}
   const flips=run.filter(o=>o.drawn||o.real!=='ready').length,clips=[...new Set(run.map(o=>o.clip))],fast=run.filter(o=>o.spd>7),last=run[run.length-1];
   check(k+' in game: stays the real body through walk, gallop and stop (never the drawn pet)',flips===0,{flips,clips});
   const hare=lib[k]&&lib[k].autorig&&lib[k].autorig.template==='hare';
-  check(k+' in game: '+(hare?'hops with its hop clip while it moves':'gallops with its run clip at speed (85% of the frames over 7 m/s; the rest blend from the trot)')+', and rests again after stopping',fast.length>0&&fast.filter(o=>o.clip==='run').length>=0.85*fast.length&&(last.clip==='idle'||last.clip==='sit'),{fastSamples:fast.length,runFrames:fast.filter(o=>o.clip==='run').length,other:[...new Set(fast.filter(o=>o.clip!=='run').map(o=>o.clip+'@'+o.spd))].slice(0,5),maxSpd:Math.max(...run.map(o=>o.spd)),last});
+  const fastOK=o=>o.clip==='run'||(hare&&o.clip==='bound');   // a hare hops with its hop (run) and, at speed, its gallop (bound)
+  check(k+' in game: '+(hare?'hops with its hop clip while it moves (its gallop, bound, over 7 m/s when it has one)':'gallops with its run clip at speed (85% of the frames over 7 m/s; the rest blend from the trot)')+', and rests again after stopping',fast.length>0&&fast.filter(fastOK).length>=0.85*fast.length&&(last.clip==='idle'||last.clip==='sit'),{fastSamples:fast.length,runFrames:fast.filter(fastOK).length,clips:[...new Set(run.map(o=>o.clip))],other:[...new Set(fast.filter(o=>!fastOK(o)).map(o=>o.clip+'@'+o.spd))].slice(0,5),maxSpd:Math.max(...run.map(o=>o.spd)),last});
  }
  check('no page errors or pet-model warnings',errors.length===0,errors.slice(0,8));
  const fails=checks.filter(c=>!c.ok);

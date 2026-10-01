@@ -46,6 +46,9 @@ const GAITS={
   run:{T:0.3,off:{hL:0,hR:0.08,fR:0.42,fL:0.52},duty:0.26,stride:3.9,lift:0.3,bob:0.05,sway:0,pitch:0.06,flex:0.16,tailSwing:0.05,neckBob:0.06,crouch:0.06}},
  hare:{walk:null,trot:null,run:null}};
 export function autorig({THREE,scene,animations,entry,key,options}){
+ /* ---- bird template (owl lane): a bird is rigged, winged and given its flight clips by assets/pet-bird-rig.js ---- */
+ if(options&&options.template==='bird')return import('./pet-bird-rig.js'+new URL(import.meta.url).search).then(M=>(M.birdRig||M.default)({THREE,scene,animations,entry,key,options}));
+ /* ---- end bird template ---- */
  const O=options||{},tpl=O.template==='hare'?'hare':'quadruped';
  const V=(x,y,z)=>new THREE.Vector3(x,y,z),arr=a=>V(+a[0]||0,+a[1]||0,+a[2]||0);
  scene.updateMatrixWorld(true);
@@ -75,7 +78,14 @@ export function autorig({THREE,scene,animations,entry,key,options}){
     const q=1e4/Math.max(1e-9,Hs0),key=new Map(),wd=new Int32Array(n);for(let i=0;i<n;i++){const k=Math.round(pos.getX(i)*q)+'_'+Math.round(pos.getY(i)*q)+'_'+Math.round(pos.getZ(i)*q);if(key.has(k)){wd[i]=key.get(k);un(i,wd[i]);}else{key.set(k,i);wd[i]=i;}}
     for(let t=0;t<keep.length;t+=3){un(keep[t],keep[t+1]);un(keep[t+1],keep[t+2]);}const cnt=new Map();for(let t=0;t<keep.length;t+=3){const r=f(keep[t]);cnt.set(r,(cnt.get(r)||0)+1);}
     let big=-1,bc=-1;for(const [r,c] of cnt)if(c>bc){bc=c;big=r;}const k2=[];for(let t=0;t<keep.length;t+=3)if(f(keep[t])===big||cnt.get(f(keep[t]))>bc*0.05)k2.push(keep[t],keep[t+1],keep[t+2]);keep.length=0;for(let i=0;i<k2.length;i++)keep.push(k2[i]);}
-   p.g.setIndex(keep);p.g.clearGroups();}}
+   p.g.setIndex(keep);p.g.clearGroups();}
+  /* the cut-away vertices are dropped from the buffers too, so nothing measures the pedestal's bounds (the
+     library fits the model to its bounding box: the pedestal's stray vertices once left the hare floating) */
+  for(const p of parts)compact(p.g);}
+ function compact(g){const ix=g.index?g.index.array:null;if(!ix)return;const n=g.attributes.position.count,map=new Int32Array(n).fill(-1);let m=0;
+  for(let i=0;i<ix.length;i++)if(map[ix[i]]<0)map[ix[i]]=m++;if(m===n)return;
+  for(const nm in g.attributes){const a=g.attributes[nm],k=a.itemSize,f=new Float32Array(m*k);for(let i=0;i<n;i++){const j=map[i];if(j<0)continue;for(let c=0;c<k;c++)f[j*k+c]=a.array[i*k+c];}g.setAttribute(nm,new THREE.BufferAttribute(f,k,a.normalized));}
+  const ni=new Uint32Array(ix.length);for(let i=0;i<ix.length;i++)ni[i]=map[ix[i]];g.setIndex(new THREE.BufferAttribute(ni,1));}
  /* the fennec: the fox's ears grown and splayed in the geometry (tapering to the tip, root kept) */
  if(O.ears&&Array.isArray(O.ears.sides)){const E=O.ears,sc=+E.scale||1.6,rad=+E.radius||0.3,spl=(+E.splayDeg||0)*Math.PI/180;
   const sides=E.sides.slice(0,2).map(s=>({b:arr(s.base),ax:arr(s.tip).sub(arr(s.base))}));const mid=sides.reduce((a,s)=>a.add(s.b),V(0,0,0)).multiplyScalar(1/sides.length);
@@ -84,6 +94,120 @@ export function autorig({THREE,scene,animations,entry,key,options}){
   for(const P of parts){const pos=P.g.attributes.position;for(let i=0;i<pos.count;i++){p.fromBufferAttribute(pos,i);for(const s of sides){d.copy(p).sub(s.b);const L2=Math.max(1e-9,s.ax.lengthSq()),u=d.dot(s.ax)/L2,rr=d.clone().addScaledVector(s.ax,-u).length(),lim=rad*(1-0.55*Math.min(1,Math.max(0,u)))+rad*0.12;
     const w=ss(0,0.42,u)*(1-ss(lim*0.8,lim*1.15,rr))*(1-ss(1.25,1.45,u));if(w<=0)continue;v.copy(d).multiplyScalar(1+(sc-1)*w);const a=spl*w,k=s.k;c.crossVectors(k,v);v.multiplyScalar(Math.cos(a)).add(c.multiplyScalar(Math.sin(a))).addScaledVector(k,k.dot(d.copy(v))*(1-Math.cos(a)));p.copy(s.b).add(v);}
    pos.setXYZ(i,p.x,p.y,p.z);}P.g.computeVertexNormals();}}
+ /* a scan that stood on a sloping rock, turned level about its hips (listed joints turn with it):
+    level:{pitchDeg (nose up), rollDeg, pivot:[x,y,z]} */
+ let LV=null;
+ if(O.level&&O.forward){const f=arr(O.forward).setY(0).normalize(),ax=V(0,0,0).crossVectors(f,V(0,1,0)).normalize(),rd=Math.PI/180;
+  const pv=O.level.pivot?arr(O.level.pivot):O.joints&&O.joints.hips?arr(O.joints.hips):V(0,0,0);
+  const q=new THREE.Quaternion().setFromAxisAngle(ax,(+O.level.pitchDeg||0)*rd).premultiply(new THREE.Quaternion().setFromAxisAngle(f,(+O.level.rollDeg||0)*rd));
+  LV=new THREE.Matrix4().makeTranslation(pv.x,pv.y,pv.z).multiply(new THREE.Matrix4().makeRotationFromQuaternion(q)).multiply(new THREE.Matrix4().makeTranslation(-pv.x,-pv.y,-pv.z));
+  for(const p of parts)p.g.applyMatrix4(LV);}
+ /* soles:{y, dome, rings} the paws cut flat where they stood on the rock: everything below the height (in the
+    levelled frame) goes, every triangle that crosses it is cut along it (new points on the line, their texture
+    and normal blended), so the rim is a clean line with no teeth, and every opening left on it is closed by a
+    sole in the paw's own fur colour (the brightest texel around the opening, its normal up so a lifted paw shows
+    fur and not a dark hole). The sole is not one flat fan: rings of points between the rim and the middle, lifted
+    a few millimetres into the paw (a shallow dome, dome in the scan's units), are added before the skin weights,
+    so it bends with the leg like skin instead of stretching into a sheet */
+ if(O.soles&&O.soles.y!=null){const yc=+O.soles.y;
+  for(const p of parts){cutAt(p.g,yc);const pos=p.g.attributes.position;
+   p.g.setIndex(dropIslands(pos,Array.from(p.g.index.array),0.02));compact(p.g);
+   capOpenings(p,yc,O.soles);}}
+ /* faceZ: the scan turned about the vertical so the animal faces +Z (listed joints turn with it), so the library measures its
+    length and width on a box that lies along the body, not one drawn round a diagonal box */
+ let TURN=null;
+ if(O.faceZ&&O.forward){const f=arr(O.forward).setY(0).normalize();TURN=new THREE.Matrix4().makeRotationFromQuaternion(new THREE.Quaternion().setFromUnitVectors(f,V(0,0,1)));for(const p of parts)p.g.applyMatrix4(TURN);}
+ function cutAt(g,yc){const pos=g.attributes.position,n0=pos.count,ix=g.index?Array.from(g.index.array):Array.from({length:n0},(_,i)=>i),names=Object.keys(g.attributes),extra={};
+  for(const nm of names)extra[nm]=[];let n=n0;const made=new Map(),up=i=>pos.getY(i)>=yc;
+  /* the crossing point, worked out from the lower end to the upper one, so both sides of a texture seam land on exactly the same point */
+  const cross=(a,b)=>{const k=a<b?a*n0+b:b*n0+a;let v=made.get(k);if(v!==undefined)return v;
+   let lo=a,hi=b;const ya=pos.getY(a),yb=pos.getY(b);if(ya>yb||(ya===yb&&(pos.getX(a)>pos.getX(b)||(pos.getX(a)===pos.getX(b)&&pos.getZ(a)>pos.getZ(b))))){lo=b;hi=a;}
+   const y0=pos.getY(lo),y1=pos.getY(hi),t=y1>y0?(yc-y0)/(y1-y0):0;
+   for(const nm of names){const at=g.attributes[nm],s=at.itemSize,E=extra[nm];for(let c=0;c<s;c++){const va=at.array[lo*s+c],vb=at.array[hi*s+c];E.push(va+(vb-va)*t);}
+    if(nm==='position')E[E.length-2]=yc;
+    if(nm==='normal'){const L=Math.hypot(E[E.length-3],E[E.length-2],E[E.length-1])||1;for(let c=1;c<=3;c++)E[E.length-c]/=L;}}
+   v=n++;made.set(k,v);return v;};
+  const out=[];
+  for(let t=0;t<ix.length;t+=3){const v=[ix[t],ix[t+1],ix[t+2]],u=v.map(up),nu=u[0]+u[1]+u[2];
+   if(nu===3){out.push(v[0],v[1],v[2]);continue;}if(nu===0)continue;
+   const r=nu===1?u.indexOf(true):u.indexOf(false),A=v[r],B=v[(r+1)%3],C=v[(r+2)%3];
+   if(nu===1)out.push(A,cross(A,B),cross(C,A));   // one corner above: the tip that is left
+   else{const pAB=cross(A,B),pCA=cross(C,A);out.push(pAB,B,C,pAB,C,pCA);}}   // two above: the quad that is left, in two
+  if(n>n0)for(const nm of names){const at=g.attributes[nm],s=at.itemSize,f=new Float32Array(n*s);f.set(at.array.subarray(0,n0*s));f.set(extra[nm],n0*s);g.setAttribute(nm,new THREE.BufferAttribute(f,s));}
+  g.setIndex(out);g.clearGroups();}
+ function dropIslands(pos,keep,frac){const n=pos.count,par=new Int32Array(n).map((_,i)=>i),f=i=>{while(par[i]!==i){par[i]=par[par[i]];i=par[i];}return i;},un=(a,b)=>{a=f(a);b=f(b);if(a!==b)par[a]=b;};
+  const q=1e4/Math.max(1e-9,Hs0),key=new Map();for(let i=0;i<n;i++){const k=Math.round(pos.getX(i)*q)+'_'+Math.round(pos.getY(i)*q)+'_'+Math.round(pos.getZ(i)*q);if(key.has(k))un(i,key.get(k));else key.set(k,i);}
+  for(let t=0;t<keep.length;t+=3){un(keep[t],keep[t+1]);un(keep[t+1],keep[t+2]);}const cnt=new Map();for(let t=0;t<keep.length;t+=3){const r=f(keep[t]);cnt.set(r,(cnt.get(r)||0)+1);}
+  let bc=0;for(const c of cnt.values())bc=Math.max(bc,c);const out=[];for(let t=0;t<keep.length;t+=3)if(cnt.get(f(keep[t]))>=bc*frac)out.push(keep[t],keep[t+1],keep[t+2]);return out;}
+ function texel(m){const img=m&&m.map&&m.map.image;if(!img||typeof document==='undefined')return null;try{const PW=256,cv=document.createElement('canvas');cv.width=cv.height=PW;const cx=cv.getContext('2d',{willReadFrequently:true});cx.drawImage(img,0,0,PW,PW);const px=cx.getImageData(0,0,PW,PW).data;
+  return (u,v)=>{const x=Math.min(PW-1,Math.max(0,Math.floor((((u%1)+1)%1)*PW))),y=Math.min(PW-1,Math.max(0,Math.floor((((v%1)+1)%1)*PW))),o=4*(y*PW+x);return [px[o]/255,px[o+1]/255,px[o+2]/255];};}catch(e){return null;}}
+ function capOpenings({m,g},yc,SO){SO=SO||{};const pos=g.attributes.position,uv=g.attributes.uv,ix=g.index.array,n=pos.count,eps=1e-6*Hs0+1e-7;
+  const q=1e5/Math.max(1e-9,Hs0),key=new Map(),wid=new Int32Array(n);let nw=0;for(let i=0;i<n;i++){const k=Math.round(pos.getX(i)*q)+'_'+Math.round(pos.getY(i)*q)+'_'+Math.round(pos.getZ(i)*q);let w=key.get(k);if(w===undefined){w=nw++;key.set(k,w);}wid[i]=w;}
+  const rep=new Int32Array(nw);for(let i=n-1;i>=0;i--)rep[wid[i]]=i;
+  const on=w=>Math.abs(pos.getY(rep[w])-yc)<=eps,cnt=new Map(),ek=(a,b)=>a<b?a*nw+b:b*nw+a;
+  for(let t=0;t<ix.length;t+=3)for(let k=0;k<3;k++){const a=wid[ix[t+k]],b=wid[ix[t+(k+1)%3]];if(a===b)continue;const e=ek(a,b);cnt.set(e,(cnt.get(e)||0)+1);}
+  /* the openings: edges on the cut used by one triangle, followed against the triangles' own winding */
+  const nxt=new Map();for(let t=0;t<ix.length;t+=3)for(let k=0;k<3;k++){const a=wid[ix[t+k]],b=wid[ix[t+(k+1)%3]];if(a===b||cnt.get(ek(a,b))!==1||!on(a)||!on(b))continue;if(!nxt.has(b))nxt.set(b,a);}
+  const tex=texel(m),loops=[],seen=new Set();
+  for(const s of nxt.keys()){if(seen.has(s))continue;const L=[];let c=s,guard=0;while(c!==undefined&&!seen.has(c)&&guard++<20000){seen.add(c);L.push(c);c=nxt.get(c);}if(c===s&&L.length>=3)loops.push(L);}
+  if(!loops.length)return;
+  /* the rim smoothed along itself on the ground plane (the cut through a scan's nearly flat underside wanders in and out;
+     once a heel lifts that shows as teeth), every copy of a rim point (texture seams) moved with it */
+  {const byW=new Map();for(let i=0;i<n;i++){const w=wid[i];let a=byW.get(w);if(!a){a=[];byW.set(w,a);}a.push(i);}
+   const it=SO.rimSmooth!=null?+SO.rimSmooth:6;
+   for(const L of loops){const m0=L.length;let xz=L.map(w=>[pos.getX(rep[w]),pos.getZ(rep[w])]);
+    for(let k=0;k<it;k++)xz=xz.map((p,i)=>{const a=xz[(i+m0-1)%m0],b=xz[(i+1)%m0];return [0.5*p[0]+0.25*(a[0]+b[0]),0.5*p[1]+0.25*(a[1]+b[1])];});
+    L.forEach((w,i)=>{for(const v of byW.get(w)){pos.setX(v,xz[i][0]);pos.setZ(v,xz[i][1]);}});}
+   pos.needsUpdate=true;}
+  const P=[],N=[],U=[],I=[],info=[];let base=n;
+  const dome=SO.dome!=null?+SO.dome:0.006,K=Math.max(0,Math.round(SO.rings!=null?+SO.rings:3)),ss0=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*(2-t);};
+  /* a triangle of the sole, turned to face down (clockwise seen from above) */
+  const tri=(a,b,c)=>{const ax=P[3*(a-n)],az=P[3*(a-n)+2],cr=(P[3*(b-n)]-ax)*(P[3*(c-n)+2]-az)-(P[3*(b-n)+2]-az)*(P[3*(c-n)]-ax);if(cr>=0)I.push(a,b,c);else I.push(a,c,b);};
+  const addP=(x,y,z,bu)=>{P.push(x,y,z);N.push(0,1,0);U.push(bu[0],bu[1]);return base++;};
+  for(const L of loops){let best=rep[L[0]];
+   /* the sole's colour: the fur just above the opening (within 3 cm of the cut, over the opening's own footprint), a light
+      texel (the 85th brightest in a hundred) rather than the rim's own, which the scan shades dark */
+   if(tex&&uv){let x0=Infinity,x1=-Infinity,z0=Infinity,z1=-Infinity;for(const w of L){const x=pos.getX(rep[w]),z=pos.getZ(rep[w]);x0=Math.min(x0,x);x1=Math.max(x1,x);z0=Math.min(z0,z);z1=Math.max(z1,z);}
+    const pad=0.01*Hs0/0.4,cand=[];for(let i=0;i<n;i+=1){const y=pos.getY(i);if(y<yc||y>yc+0.03*Hs0/0.4)continue;const x=pos.getX(i),z=pos.getZ(i);if(x<x0-pad||x>x1+pad||z<z0-pad||z>z1+pad)continue;const c=tex(uv.getX(i),uv.getY(i));cand.push([0.299*c[0]+0.587*c[1]+0.114*c[2],i]);}
+    if(cand.length){cand.sort((a,b)=>a[0]-b[0]);best=cand[Math.min(cand.length-1,Math.floor(cand.length*0.85))][1];}}
+   const bu=uv?[uv.getX(best),uv.getY(best)]:[0,0],pts=L.map(w=>[pos.getX(rep[w]),pos.getZ(rep[w])]),m0=pts.length;
+   /* the middle of the outline (its area centroid), and whether every rim point sees it (a star-shaped outline takes rings) */
+   let A2=0,cx=0,cz=0;for(let i=0;i<m0;i++){const a=pts[i],b=pts[(i+1)%m0],cr=a[0]*b[1]-b[0]*a[1];A2+=cr;cx+=(a[0]+b[0])*cr;cz+=(a[1]+b[1])*cr;}
+   if(Math.abs(A2)>1e-14){cx/=3*A2;cz/=3*A2;}else{cx=pts.reduce((s,p)=>s+p[0],0)/m0;cz=pts.reduce((s,p)=>s+p[1],0)/m0;}
+   const sg=Math.sign(A2)||1;let star=K>0;for(let i=0;i<m0&&star;i++){const a=pts[i],b=pts[(i+1)%m0];if(((a[0]-cx)*(b[1]-cz)-(a[1]-cz)*(b[0]-cx))*sg<=0)star=false;}
+   const h=Math.min(dome,0.3*Math.sqrt(Math.abs(A2)/2)),rim=pts.map(p=>addP(p[0],yc,p[1],bu));
+   if(star){let prev=rim;
+    for(let k=1;k<=K;k++){const f=k/(K+1),lift=h*(1-(1-f)*(1-f)),ring=pts.map(p=>addP(p[0]+(cx-p[0])*f,yc+lift,p[1]+(cz-p[1])*f,bu));
+     for(let i=0;i<m0;i++){const j=(i+1)%m0;tri(prev[i],prev[j],ring[j]);tri(prev[i],ring[j],ring[i]);}prev=ring;}
+    const c=addP(cx,yc+h,cz,bu);for(let i=0;i<m0;i++)tri(prev[i],prev[(i+1)%m0],c);}
+   else{/* an outline that folds back on itself (a hind paw with the haunch's underside): clipped into triangles, then every long
+       chord split at its middle until none is longer than a fifth of the opening's size, the new inner points relaxed and lifted
+       by their distance from the rim, so the sole is a mesh of small pieces that follow the leg */
+    const Vt=pts.map(p=>p.slice()),T=earcut(pts).map(t=>t.slice()),isRimE=(a,b)=>a<m0&&b<m0&&(Math.abs(a-b)===1||Math.abs(a-b)===m0-1);
+    let rimL=0;for(let i=0;i<m0;i++){const a=pts[i],b=pts[(i+1)%m0];rimL+=Math.hypot(a[0]-b[0],a[1]-b[1]);}
+    const Lt=Math.max(3*rimL/m0,Math.sqrt(Math.abs(A2)/2)/5),el=(a,b)=>Math.hypot(Vt[a][0]-Vt[b][0],Vt[a][1]-Vt[b][1]);
+    for(let guard=0;guard<6000;guard++){let bi=-1,bk=0,bL=Lt;for(let t=0;t<T.length;t++)for(let k=0;k<3;k++){const a=T[t][k],b=T[t][(k+1)%3];if(isRimE(a,b))continue;const d=el(a,b);if(d>bL){bL=d;bi=t;bk=k;}}
+     if(bi<0)break;const a=T[bi][bk],b=T[bi][(bk+1)%3],mi=Vt.length;Vt.push([(Vt[a][0]+Vt[b][0])/2,(Vt[a][1]+Vt[b][1])/2]);
+     for(let t=T.length-1;t>=0;t--){const tr=T[t],ka=tr.indexOf(a),kb=tr.indexOf(b);if(ka<0||kb<0)continue;const c=tr[3-ka-kb];
+      if((ka+1)%3===kb){T[t]=[a,mi,c];T.push([mi,b,c]);}else{T[t]=[b,mi,c];T.push([mi,a,c]);}}}
+    const nb2=Vt.map(()=>new Set());for(const [a,b,c] of T){nb2[a].add(b).add(c);nb2[b].add(a).add(c);nb2[c].add(a).add(b);}
+    for(let it=0;it<3;it++)for(let i=m0;i<Vt.length;i++){let sx=0,sz=0;for(const o of nb2[i]){sx+=Vt[o][0];sz+=Vt[o][1];}const k=nb2[i].size||1;Vt[i][0]=0.5*Vt[i][0]+0.5*sx/k;Vt[i][1]=0.5*Vt[i][1]+0.5*sz/k;}
+    const dR=p=>{let d=Infinity;for(let i=0;i<m0;i++){const a=pts[i],b=pts[(i+1)%m0],ex=b[0]-a[0],ez=b[1]-a[1],t=Math.min(1,Math.max(0,((p[0]-a[0])*ex+(p[1]-a[1])*ez)/Math.max(1e-18,ex*ex+ez*ez)));d=Math.min(d,Math.hypot(a[0]+ex*t-p[0],a[1]+ez*t-p[1]));}return d;};
+    const dI=Vt.map((p,i)=>i<m0?0:dR(p)),dMax=Math.max(1e-9,...dI),ids=Vt.map((p,i)=>i<m0?rim[i]:addP(p[0],yc+h*ss0(0,dMax,dI[i]),p[1],bu));
+    for(const [a,b,c] of T)tri(ids[a],ids[b],ids[c]);}
+   info.push({points:m0,star,area:+(Math.abs(A2)/2).toExponential(2),at:[+cx.toFixed(4),+cz.toFixed(4)]});}
+  const add=P.length/3,grow=(nm,vals,k)=>{const a=g.attributes[nm];if(!a)return;const f=new Float32Array((n+add)*a.itemSize);f.set(a.array.subarray(0,n*a.itemSize));
+   for(let i=0;i<add;i++)for(let c=0;c<a.itemSize;c++)f[(n+i)*a.itemSize+c]=vals?vals[i*k+c]:(nm==='color'?1:nm==='tangent'?(c===0||c===3?1:0):0);g.setAttribute(nm,new THREE.BufferAttribute(f,a.itemSize));};
+  grow('position',P,3);grow('normal',N,3);grow('uv',U,2);for(const nm in g.attributes)if(!['position','normal','uv'].includes(nm))grow(nm,null,0);
+  const ni=new Uint32Array(ix.length+I.length);ni.set(ix);ni.set(I,ix.length);g.setIndex(new THREE.BufferAttribute(ni,1));
+  g.userData.soles=(g.userData.soles||0)+loops.length;g.userData.soleLoops=(g.userData.soleLoops||[]).concat(info);}
+ /* ear clipping for a sole's outline (points in the ground plane) */
+ function earcut(pts){const n=pts.length;let Vx=[...Array(n).keys()],area=0;for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%n];area+=a[0]*b[1]-b[0]*a[1];}const s=area>0?1:-1,out=[];
+  const cr=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);const inT=(p,a,b,c)=>{const d1=cr(a,b,p)*s,d2=cr(b,c,p)*s,d3=cr(c,a,p)*s;return d1>=0&&d2>=0&&d3>=0;};
+  let guard=0;while(Vx.length>3&&guard++<4*n){let cut=false;for(let i=0;i<Vx.length;i++){const i0=Vx[(i+Vx.length-1)%Vx.length],i1=Vx[i],i2=Vx[(i+1)%Vx.length],a=pts[i0],b=pts[i1],c=pts[i2];
+    if(cr(a,b,c)*s<=0)continue;let bad=false;for(const j of Vx){if(j===i0||j===i1||j===i2)continue;if(inT(pts[j],a,b,c)){bad=true;break;}}if(bad)continue;out.push([i0,i1,i2]);Vx.splice(i,1);cut=true;break;}
+   if(!cut)break;}
+  for(let i=1;i+1<Vx.length;i++)out.push([Vx[0],Vx[i],Vx[i+1]]);return out;}
  /* the points to analyse and weight: the vertices still used by a triangle */
  const used=parts.map(p=>{const u=new Uint8Array(p.g.attributes.position.count);const ix=p.g.index?p.g.index.array:null;if(ix)for(let i=0;i<ix.length;i++)u[ix[i]]=1;else u.fill(1);return u;});
  const box=new THREE.Box3();parts.forEach((p,j)=>{const pos=p.g.attributes.position;for(let i=0;i<pos.count;i++)if(used[j][i])box.expandByPoint(V(pos.getX(i),pos.getY(i),pos.getZ(i)));});
@@ -91,7 +215,7 @@ export function autorig({THREE,scene,animations,entry,key,options}){
  /* ---------------------------------------------------------------- 2. the joints ---------------------- */
  const sample=[];{let tot=0;parts.forEach((p,j)=>{tot+=p.g.attributes.position.count;});const step=Math.max(1,Math.floor(tot/9000));parts.forEach((p,j)=>{const pos=p.g.attributes.position;for(let i=0;i<pos.count;i+=step)if(used[j][i])sample.push(V(pos.getX(i),pos.getY(i),pos.getZ(i)));});}
  let fwd;
- if(O.forward)fwd=arr(O.forward).setY(0).normalize();
+ if(O.forward)fwd=TURN?V(0,0,1):arr(O.forward).setY(0).normalize();
  else{/* the body axis: the long way of the points seen from above; the head is the end that stands higher */
   let mx=0,mz=0;for(const p of sample){mx+=p.x;mz+=p.z;}mx/=sample.length;mz/=sample.length;let cxx=0,czz=0,cxz=0;for(const p of sample){const a=p.x-mx,b=p.z-mz;cxx+=a*a;czz+=b*b;cxz+=a*b;}
   const ang=0.5*Math.atan2(2*cxz,cxx-czz);fwd=V(Math.cos(ang),0,Math.sin(ang));let hi=[-Infinity,-Infinity],pr=sample.map(p=>(p.x-mx)*fwd.x+(p.z-mz)*fwd.z),lo=Math.min(...pr),hiP=Math.max(...pr);
@@ -100,7 +224,7 @@ export function autorig({THREE,scene,animations,entry,key,options}){
  /* body frame helpers: x to the animal's left, y up, z forward */
  const toB=p=>V(p.dot(right),p.y,p.dot(fwd)),fromB=(x,y,z)=>right.clone().multiplyScalar(x).add(fwd.clone().multiplyScalar(z)).setY(y);
  let J={};
- if(O.joints){for(const k in O.joints)J[k]=arr(O.joints[k]);}
+ if(O.joints){for(const k in O.joints)J[k]=arr(O.joints[k]);if(LV)for(const k in J)J[k].applyMatrix4(LV);if(TURN)for(const k in J)J[k].applyMatrix4(TURN);}
  else J=analyse();
  /* mirror a left joint that has no right one (across the plane through the hips, chest and head) */
  {const c=toB(J.hips||J.chest||V(0,0,0)).x;for(const k of Object.keys(J))if(/L$/.test(k)){const r=k.replace(/L$/,'R');if(!J[r]){const b=toB(J[k]);J[r]=fromB(2*c-b.x,b.y,b.z);}}}
@@ -150,7 +274,10 @@ export function autorig({THREE,scene,animations,entry,key,options}){
  /* ---------------------------------------------------------------- 3. bones and skin weights --------- */
  const bones={},list=[];
  for(const [n,par] of BONES){const b=new THREE.Bone();b.name='ar_'+n;const p=J[n];if(par){b.position.copy(p).sub(J[par]);bones[par].add(b);}else b.position.copy(p);bones[n]=b;list.push(b);}
- const segs=BONES.filter(b=>b[2]).map(([n,par,ch])=>({n,i:list.indexOf(bones[n]),a:J[n],b:J[ch],end:!BONES.some(x=>x[0]===ch)}));
+ const segs=BONES.filter(b=>b[2]).map(([n,par,ch])=>({n,i:list.indexOf(bones[n]),pi:par?list.indexOf(bones[par]):-1,a:J[n],b:J[ch],end:!BONES.some(x=>x[0]===ch)}));
+ /* blend:{thigh:0.5,...}: near its own joint a bone of that group shares its hold with its parent (the hare's big haunch turns
+    half with the hips and half with the thigh, so a swinging leg bends the flank instead of folding it like a flap) */
+ const BL=O.blend||{},ssW=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
  const torsoL=J.hips.distanceTo(J.spine)+J.spine.distanceTo(J.chest)+J.chest.distanceTo(J.neck);
  const RD=Object.assign({},RADII[tpl],O.radii||{});for(const s of segs)s.r=Math.max(1e-6,(RD[GROUP[s.n]]||0.1)*torsoL);
  const cB=toB(J.hips).x,hipZ=toB(J.hips).z;
@@ -170,7 +297,7 @@ export function autorig({THREE,scene,animations,entry,key,options}){
     ab.copy(s.b).sub(s.a);ap.copy(tmp).sub(s.a);const tr=ap.dot(ab)/Math.max(1e-12,ab.lengthSq()),t=Math.min(1,Math.max(0,tr));const d=ap.addScaledVector(ab,-t).length()/s.r;
     /* past its far joint a bone gives way to the next one (the head beyond the neck), and before its own joint to its parent */
     const fall=(tr>1&&!s.end?Math.exp(-Math.pow((tr-1)/0.3,2)):1)*(tr<0&&s.n!=='hips'?Math.exp(-Math.pow(tr/0.3,2)):1);
-    const v=Math.max(1e-9,fall)/Math.pow(Math.max(0.25,d),5);W[w*nb+s.i]+=v;tot+=v;}
+    const v=Math.max(1e-9,fall)/Math.pow(Math.max(0.25,d),5),bk=BL[GROUP[s.n]]?+BL[GROUP[s.n]]*(1-ssW(0,0.75,t)):0;W[w*nb+s.i]+=v*(1-bk);if(bk>0&&s.pi>=0)W[w*nb+s.pi]+=v*bk;tot+=v;}
    if(tot>0)for(let k=0;k<nb;k++)W[w*nb+k]/=tot;else W[w*nb+list.indexOf(bones.hips)]=1;}
   /* smoothed over the surface: each welded vertex moves towards the mean of its neighbours */
   const idx=g.index?g.index.array:null;if(idx&&idx.length){const adj=new Map();const addE=(a,b)=>{if(a===b)return;let s=adj.get(a);if(!s){s=new Set();adj.set(a,s);}s.add(b);};
@@ -245,7 +372,8 @@ export function autorig({THREE,scene,animations,entry,key,options}){
  const home={};for(const L in LEGS){const n=LEGS[L];if(standing){home[L]=toB(rest[n[3]]).sub(toB(rest.root));}
   else{const top=toB(s0.P[n[0]]).sub(toB(rest.root));home[L]=V(top.x*0.95,0,top.z+(L[0]==='f'?0.04:0.02)*Lleg);}}
  const fdirHome={};for(const L in LEGS){const n=LEGS[L];fdirHome[L]=standing?rest[n[3]].clone().sub(rest[n[2]]).normalize():(L[0]==='f'?dirB(0.18,-1):dirB(0.42,-1));}
- const tilt=deg(+O.headTilt||0),neckDir=standing?rot(restDir('neck'),Rt,tilt*0.5):dirB(Math.cos(neckA),Math.sin(neckA)),headDir=standing?rot(restDir('head'),Rt,tilt):dirB(Math.cos(headA),Math.sin(headA));
+ /* headYawDeg: a scan whose head is turned to one side faces forward (the neck takes half of the turn); + turns it to the animal's left */
+ const tilt=deg(+O.headTilt||0),yawH=deg(+O.headYawDeg||0),neckDir=rot(standing?rot(restDir('neck'),Rt,tilt*0.5):dirB(Math.cos(neckA),Math.sin(neckA)),U,yawH*0.5),headDir=rot(standing?rot(restDir('head'),Rt,tilt):dirB(Math.cos(headA),Math.sin(headA)),U,yawH);
  const tailDir=k=>standing?restDir('tail'+k):dirB(-Math.cos(tailA-(k-1)*0.12),Math.sin(tailA-(k-1)*0.12));
  const ss=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
  /* which way each knee and elbow bends: a standing bind keeps its own bend (so the idle is the bind), a model
@@ -261,45 +389,77 @@ export function autorig({THREE,scene,animations,entry,key,options}){
   for(const L in LEGS){const u=(((ph+G.off[L])%1)+1)%1,h=home[L],front=L[0]==='f';let z,y=0,fd=fdirHome[L].clone();
    if(u<G.duty){z=h.z+S*G.duty*(0.5-u/G.duty);const k=u/G.duty;if(k>0.7)fd=rot(fd,Rt,(front?-1:-0.6)*0.6*ss(0.7,1,k));}
    else{const s=(u-G.duty)/(1-G.duty);z=h.z+S*G.duty*(-0.5+ss(0,1,s));y=G.lift*Lleg*Math.sin(Math.PI*s)*(front?1:0.85);fd=rot(fd,Rt,(front?-1.2:-0.7)*Math.sin(Math.PI*Math.min(1,s*1.3)));}
-   const toe=rest.root.clone().addScaledVector(F,travel+z).addScaledVector(Rt,h.x).add(U.clone().multiplyScalar(y));
+   const toe=rest.root.clone().addScaledVector(F,travel+z).addScaledVector(Rt,h.x).add(U.clone().multiplyScalar(y+h.y));
    legs[L]={toe,fdir:fd,pole:poleFor(L)};}
   const nb=(G.neckBob||0)*Math.sin(TAU*2*ph+0.6);
   t.dir.neck=rot(neckDir,Rt,-nb);t.dir.head=rot(headDir,Rt,nb*0.8);
   for(let k=1;k<=3;k++)t.dir['tail'+k]=rot(tailDir(k),U,(G.tailSwing||0)*Math.sin(TAU*ph-k*0.7)*k);
   return {root:t.root,dir:t.dir,legs};}
  function idlePose(ph){const TAU=Math.PI*2,br=Math.sin(TAU*ph*2);const t=torso(pitch0,0.004*Lleg*br,{flex:0.01*br});
-  const legs={};for(const L in LEGS){const h=home[L];legs[L]={toe:rest.root.clone().addScaledVector(F,h.z).addScaledVector(Rt,h.x),fdir:fdirHome[L].clone(),pole:poleFor(L)};}
+  const legs={};for(const L in LEGS){const h=home[L];legs[L]={toe:rest.root.clone().addScaledVector(F,h.z).addScaledVector(Rt,h.x).add(U.clone().multiplyScalar(h.y)),fdir:fdirHome[L].clone(),pole:poleFor(L)};}   // a standing bind's paw keeps its own height (a sole cut above the grass line)
   t.dir.neck=rot(rot(neckDir,U,0.12*Math.sin(TAU*ph)),Rt,-0.03*br);t.dir.head=rot(rot(headDir,U,0.15*Math.sin(TAU*ph-0.4)),Rt,0.05*Math.sin(TAU*ph*2+1));
   for(let k=1;k<=3;k++)t.dir['tail'+k]=rot(tailDir(k),U,0.12*Math.sin(TAU*ph-k*0.6)*k);
   return {root:t.root,dir:t.dir,legs};}
  /* the bind pose itself, breathing (a model that sits in its bind pose sits like this) */
  function bindPose(ph){const TAU=Math.PI*2,br=Math.sin(TAU*ph*2);const dir={chest:rot(restDir('chest'),Rt,-0.015*br),neck:rot(restDir('neck'),U,0.1*Math.sin(TAU*ph)),head:rot(rot(restDir('head'),U,0.14*Math.sin(TAU*ph-0.5)),Rt,0.04*br+deg(O.sitHeadTilt!=null?+O.sitHeadTilt:-18))};   // the head a little lower than the bind's, so looking up at the rider stays natural
   for(let k=1;k<=3;k++)dir['tail'+k]=rot(restDir('tail'+k),U,0.06*Math.sin(TAU*ph-k*0.6)*k);return {root:rest.root.clone(),dir};}
- /* the hare's hop, phased like the game's: 0-0.16 the push, 0.16-0.86 in the air, then the landing */
- function hopPose(ph){const TAU=Math.PI*2,u=ph,air=u>0.16&&u<0.86,a=air?(u-0.16)/0.7:0;
-  const stretch=u<0.16?u/0.16:air?Math.sin(Math.PI*Math.min(1,a*1.4)):0,gather=air?ss(0.45,1,a):u>=0.86?1-(u-0.86)/0.14:0;
-  const t=torso(pitch0+(u<0.16?0.12*stretch:air?0.18*(1-a)-0.1*a:0),-(0.02*Lleg)*(1-stretch),{flex:-0.18*stretch+0.2*gather});
-  const legs={};const S=0.55*Lleg;
-  for(const L in LEGS){const h=home[L],front=L[0]==='f';let z=h.z,y=0,fd=fdirHome[L].clone();
-   if(front){z+=air?S*(0.5*a-0.1):u<0.16?-0.1*S:0;y=air?0.25*Lleg*Math.sin(Math.PI*Math.min(1,a*1.2)):0;fd=rot(fd,Rt,air?-0.6*(1-a):0);}
-   else{const hk=O.hopHind!=null?+O.hopHind:1;z+=hk*(u<0.16?-0.45*S*stretch:air?(-0.45*S*(1-a)+0.3*S*gather):0.3*S*(1-(u-0.86)/0.14));y=air?0.12*hk*Lleg*Math.sin(Math.PI*a):0;fd=rot(fd,Rt,u<0.16||air?-0.9*hk*stretch:0);}
-   legs[L]={toe:rest.root.clone().addScaledVector(F,z).addScaledVector(Rt,h.x).add(U.clone().multiplyScalar(y)),fdir:fd,pole:poleFor(L)};}
-  t.dir.neck=neckDir.clone();t.dir.head=headDir.clone();for(let k=1;k<=3;k++)t.dir['tail'+k]=tailDir(k);
+ /* the hare's hop, phased like the game's (it adds the flight's height): 0-0.16 the push, 0.16-0.86 in the air, then
+    the landing; the game counts 0.86 to 1.16 as on the ground. Both hind feet push together from under the body while
+    the back stretches out and the heels lift a little; in the air the hind legs trail, then swing forward as the back
+    arches; the body tips forward so the front paws reach the grass first (the left a moment before the right, just after the
+    game has begun to count the hare on the ground, coming straight down so they do not skim the grass), and the
+    hind feet come down beside them, ready for the next push. Every paw on the grass sweeps back at one rate (R strides
+    per cycle), the rate the game moves the body at on the ground (userData.autorig.hopSweep), so nothing slides.
+    hopHind scales the hind legs' swing, hopStride the stride, hopFlex the back. The bound (boundStride, boundFlex) is
+    the same cycle at a gallop: longer and lower, the back working harder, nose and head down while stretched out. */
+ const HOP={S:(O.hopStride!=null?+O.hopStride:0.55)*Lleg,R:0.9,hk:O.hopHind!=null?+O.hopHind:1,FX:O.hopFlex!=null?+O.hopFlex:0.14,zH:0.085,zF:0.09,trail:0.026,airEnd:0.07,
+  p0:0.09,p1:-0.09,neck:0,bob:0,crouch:0.012,heel:0.12,fLift:0.09,reach:0.04};
+ const BOUND=Object.assign({},HOP,{S:(O.boundStride!=null?+O.boundStride:0.62)*Lleg,R:1.2,FX:O.boundFlex!=null?+O.boundFlex:0.26,zH:0.1,zF:0.17,trail:0.05,airEnd:0.08,
+  p0:-0.03,p1:-0.2,neck:-0.34,bob:0.012,heel:0.15,fLift:0.1,reach:0.07});
+ function hopPose(ph,HP){HP=HP||HOP;const u=((ph%1)+1)%1,lerp=(a,b,k)=>a+(b-a)*k,hk=HP.hk,S=HP.S,R=HP.R;
+  const push=u<0.16?u/0.16:-1,a=u>=0.16&&u<0.86?(u-0.16)/0.7:-1,land=u>=0.86?(u-0.86)/0.14:-1;
+  /* flex: + stretches the back out, - arches it; pitch: - is nose down */
+  let flex,pitch,bob;
+  if(push>=0){flex=lerp(-1,1,ss(0,1,push));pitch=HP.p0*ss(0,1,push);bob=lerp(-HP.crouch,0.02,ss(0,1,push));}
+  else if(a>=0){flex=lerp(1,-0.8,ss(0.25,0.95,a));pitch=lerp(HP.p0,HP.p1,ss(0.1,0.9,a));bob=0.02*(1-ss(0,0.6,a));}
+  else{flex=lerp(-0.8,-1,ss(0,1,land));pitch=lerp(HP.p1,0,ss(0.2,1,land));bob=-HP.crouch*ss(0,0.7,land);}
+  const t=torso(pitch0+pitch,(bob+HP.bob)*Lleg,{flex:flex*HP.FX});
+  const legs={};
+  for(const L in LEGS){const h=home[L],front=L[0]==='f';let z=0,y=0,fd=fdirHome[L].clone();
+   if(front){const uT=L==='fL'?0.89:0.915,uO=L==='fL'?0.035:0.05,Dg=1-uT+uO,g=((u-uT)%1+1)%1,zT=HP.zF-(L==='fL'?0:0.01),zO=zT-R*Dg;
+    if(g<Dg)z=(zT-R*g)*S;   // planted from the landing to the push, swept back at the ground rate: the body passes over the paw
+    else{const k=(u-uO)/(uT-uO);z=lerp(zO,zT+HP.reach,ss(0,0.6,k))*S-HP.reach*S*ss(0.6,1,k);y=HP.fLift*Lleg*Math.sqrt(Math.max(0,Math.sin(Math.PI*k)));fd=rot(fd,Rt,-0.3*Math.sin(Math.PI*k));}}   // lifts, reaches out and comes down first
+   else{const zL=HP.zH-R*0.21,yA=0.045*Lleg*hk;
+    if(u>=0.95||u<0.16){const g=((u-0.95)%1+1)%1;z=(HP.zH-R*g)*S;if(push>=0)fd=rot(fd,Rt,-HP.heel*ss(0.15,1,push));}   // planted, the body driven forward over it, the heel rising a little
+    else if(a>=0){z=(a<0.3?lerp(zL,zL-HP.trail,a/0.3):lerp(zL-HP.trail,HP.airEnd,ss(0.3,1,a)))*S;y=Lleg*hk*(a<0.3?0.045*a/0.3:lerp(0.045,0.06,ss(0.3,0.7,a))-0.015*ss(0.7,1,a));fd=rot(fd,Rt,-HP.heel*(1-ss(0.1,0.7,a)));}   // trails, then swings forward, still off the grass when the front paws land
+    else{const k=ss(0,1,(u-0.86)/0.09);z=lerp(HP.airEnd,HP.zH,k)*S;y=lerp(yA,0,k);}}   // comes down beside the front paws
+   legs[L]={toe:rest.root.clone().addScaledVector(F,h.z+z).addScaledVector(Rt,h.x).add(U.clone().multiplyScalar(h.y+y)),fdir:fd,pole:poleFor(L)};}
+  t.dir.neck=rot(neckDir,Rt,0.4*pitch+HP.neck);t.dir.head=rot(headDir,Rt,0.5*pitch+0.6*HP.neck);for(let k=1;k<=3;k++)t.dir['tail'+k]=rot(tailDir(k),Rt,0.15*flex*k/3);
   return {root:t.root,dir:t.dir,legs};}
  const names=BONES.map(b=>b[0]);
- function bake(name,T,N,poseAt,travel){const times=new Float32Array(N+1),qv={},pv=new Float32Array((N+1)*3);for(const n of names)qv[n]=new Float32Array((N+1)*4);
-  for(let i=0;i<=N;i++){const ph=i/N;times[i]=ph*T;const s=solve(poseAt(ph%1,(travel||0)*ph));
+ /* nothing sinks: a hop's crouch presses the haunch and belly (which sit on the grass in the scan) under it, so each frame of a
+    hare's clip is raised by however far its lowest skin point would go below the ground (skinned here from the solved bones,
+    on the lower part of the body), and the clip carries its own contact with the grass */
+ let lowV=null;const lifts={};
+ function lift(s){if(!lowV){lowV=[];for(const sm of meshes){const g=sm.geometry,pos=g.attributes.position,si=g.attributes.skinIndex,sw=g.attributes.skinWeight;
+    for(let i=0;i<pos.count;i++){const y=pos.getY(i);if(y>ground+0.3*Hs||(i%3&&y>ground+0.04*Hs))continue;const e=[pos.getX(i),y,pos.getZ(i)];for(let k=0;k<4;k++){const w=sw.getComponent(i,k);if(w>0.01)e.push(names[si.getComponent(i,k)],w);}lowV.push(e);}}}
+  let mn=Infinity;const v=V(0,0,0);for(const e of lowV){let y=0;for(let k=3;k<e.length;k+=2){const n=e[k];v.set(e[0],e[1],e[2]).sub(rest[n]).applyQuaternion(s.Rw[n]);y+=e[k+1]*(s.P[n].y+v.y);}if(y<mn)mn=y;}
+  return mn<ground?ground-mn:0;}
+ function bake(name,T,N,poseAt,travel,floor){const times=new Float32Array(N+1),qv={},pv=new Float32Array((N+1)*3);for(const n of names)qv[n]=new Float32Array((N+1)*4);
+  for(let i=0;i<=N;i++){const ph=i/N;times[i]=ph*T;const pz=poseAt(ph%1,(travel||0)*ph);let s=solve(pz);
+   if(floor){const l0=lift(s);if(l0>0){pz.root.addScaledVector(U,l0);s=solve(pz);}}   // the body raised over the paws, which stay where they are
    for(const n of names){const q=s.loc[n];if(i>0){const o=qv[n];const j=4*(i-1);if(o[j]*q.x+o[j+1]*q.y+o[j+2]*q.z+o[j+3]*q.w<0){q.x=-q.x;q.y=-q.y;q.z=-q.z;q.w=-q.w;}}qv[n].set([q.x,q.y,q.z,q.w],4*i);}
-   pv.set([s.P.root.x,s.P.root.y,s.P.root.z],3*i);}
+   const lf=floor?lift(s):0;if(floor)(lifts[name]=lifts[name]||[]).push(+lf.toFixed(4));pv.set([s.P.root.x,s.P.root.y+lf,s.P.root.z],3*i);}
   const tracks=[new THREE.VectorKeyframeTrack('ar_root.position',times,pv)];for(const n of names)if(n!=='root')tracks.push(new THREE.QuaternionKeyframeTrack('ar_'+n+'.quaternion',times,qv[n]));
   return new THREE.AnimationClip(name,T,tracks);}
  const clips=[];const GS=Object.assign({},GAITS.quadruped);if(O.gait)for(const g in O.gait)GS[g]=Object.assign({},GS[g]||GAITS.quadruped.walk,O.gait[g]);
- if(tpl==='hare'){clips.push(bake('autorig.idle',3.2,48,idlePose,0));clips.push(bake('autorig.hop',0.5,30,hopPose,0));if(!standing)clips.push(bake('autorig.sit',4,32,bindPose,0));}
+ if(tpl==='hare'){clips.push(bake('autorig.idle',3.2,48,idlePose,0));clips.push(bake('autorig.hop',0.5,30,ph=>hopPose(ph,HOP),0,true));clips.push(bake('autorig.bound',0.3,30,ph=>hopPose(ph,BOUND),0,true));if(!standing)clips.push(bake('autorig.sit',4,32,bindPose,0));}
  else{clips.push(bake('autorig.idle',3.2,48,idlePose,0));
   for(const g of ['walk','trot','run']){const G=GS[g];if(!G)continue;clips.push(bake('autorig.'+g,G.T,g==='walk'?32:24,(ph,tr)=>gaitPose(G,ph,tr),G.stride*Lleg));}
   if(!standing)clips.push(bake('autorig.sit',4,32,bindPose,0));}
  out.userData.autorig={template:tpl,bones:list.length,joints:Object.fromEntries(Object.entries(J).map(([k,v])=>[k,v.toArray().map(x=>+x.toFixed(4))])),standingBind:standing,
-  ground:+ground.toFixed(4),toesAboveGround:['toeL','toeR','toeHL','toeHR'].map(n=>+(J[n].y-ground).toFixed(4)),legLength:+Lleg.toFixed(4),torsoLength:+torsoL.toFixed(4),pitchDeg:+(pitch0*180/Math.PI).toFixed(1),clips:clips.map(c=>c.name),vertices:meshes.reduce((a,m)=>a+m.geometry.attributes.position.count,0)};
+  ground:+ground.toFixed(4),hopSweep:tpl==='hare'?+(HOP.R*HOP.S).toFixed(5):undefined,boundSweep:tpl==='hare'?+(BOUND.R*BOUND.S).toFixed(5):undefined,hopGround:[0.86,0.16],lifts,toesAboveGround:['toeL','toeR','toeHL','toeHR'].map(n=>+(J[n].y-ground).toFixed(4)),legLength:+Lleg.toFixed(4),torsoLength:+torsoL.toFixed(4),pitchDeg:+(pitch0*180/Math.PI).toFixed(1),clips:clips.map(c=>c.name),vertices:meshes.reduce((a,m)=>a+m.geometry.attributes.position.count,0),
+  soles:meshes.reduce((a,m)=>a.concat(m.geometry.userData.soleLoops||[]),[])};
  return {scene:out,animations:clips};
 }
 export default autorig;

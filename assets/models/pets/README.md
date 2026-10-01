@@ -143,12 +143,29 @@ Other fields added with it:
   factor}` (the lamb's bigger head, baked into the bind shape), `ears` (the fennec's,
   as the old shader ears but grown in the geometry), `crop: {belowY, box, colour:
   {belowY, maxLum, minWarm, darkLum}}` (a scan's pedestal cut by height and by its
-  texture colour), `hopHind` (the hop's hind-leg reach), `gait: {walk|trot|run:
+  texture colour; the cut vertices are dropped so the fit never measures them), `level: {pitchDeg, rollDeg,
+  pivot}` (a scan that stood on a slope turned level about its hips, listed joints with it), `faceZ` (the scan
+  turned about the vertical so it faces +Z, listed joints with it, so the library measures its real length and
+  width; use with `"fit": {"yawDeg": 0}`), `soles: {y, dome, rings, rimSmooth}` (everything below that height in the
+  levelled frame cut away, every crossing triangle cut cleanly along it, the rim smoothed along itself, and each
+  opening closed by a sole in the fur colour just above it: rings of points, or for an outline that folds back on
+  itself (a hind paw with the haunch's underside) a mesh of small pieces, lifted `dome` into the paw and weighted like
+  skin, so the sole bends with the leg: the snow hare's and bunny's feet), `headYawDeg` (a scan whose head is turned
+  to one side made to face forward, half of it in the neck; + turns it to the animal's left), `blend: {thigh,
+  upper, neck, ...}` (near its joint a bone of that group shares its hold with its parent, so the hare's haunch
+  bends instead of folding like a flap), `smooth` (weight smoothing passes), `hopHind`, `hopStride`, `hopFlex`
+  (the hop: hind feet push together, the back stretches then arches, the front paws land first; every paw on the
+  grass sweeps back at one rate), `boundStride`, `boundFlex` (the hare's gallop), `gait: {walk|trot|run:
   {T, duty, stride, lift, ...}}`. It writes the clips `autorig.idle`, `autorig.walk`,
-  `autorig.trot`, `autorig.run`, `autorig.sit` (a sitting bind) and `autorig.hop`
-  (the hare's, mapped to `run` so the game adds its own hop arc); each gait clip
-  moves its root one stride, which the library measures as `strideM`. Bones are
-  named `ar_<joint>`. `tools/qa-pet-autorig.cjs` checks them.
+  `autorig.trot`, `autorig.run`, `autorig.sit` (a sitting bind), `autorig.hop`
+  (the hare's, mapped to `run` so the game adds its own hop arc) and `autorig.bound` (the hare's gallop, mapped to
+  its own state `bound`: `assets/features/pet-models.js` blends it in over the hop from 5 to 9 m/s on the same hop
+  phase and lowers the hop's arc); a hare's clips are raised over their paws wherever the crouch would press the
+  body under the grass. `userData.autorig.hopSweep`/`boundSweep` (the planted paws' travel per hop cycle, in the
+  scan's metres) tell the game how far to move a real hare while its feet are down, so its paws do not slide. Each
+  gait clip moves its root one stride, which the library measures as `strideM`. Bones are
+  named `ar_<joint>`. `tools/qa-pet-autorig.cjs` checks them (`QA_PARKED=1 PETS=snowhare,bunny` tests parked
+  hares with the page's copy of the manifest switched on).
 - `tools/prepare-pet-glb.mjs` also takes `--keep clipA,clipB` (exactly these clips),
   `--jpeg 85` (every texture no material blends by alpha stored as a JPEG),
   `--specgloss` (a KHR_materials_pbrSpecularGlossiness material, which three.js r160
@@ -156,3 +173,37 @@ Other fields added with it:
   that never change are dropped). The Shiba went from 16.0 MB to 3.8 MB with
   `--keep "0|sitting_0,0|standing_0" --jpeg 85 --lean`, the goat from 29.9 MB to
   3.7 MB with `--jpeg 74 --lean`.
+
+## Birds (`"autorig": {"template": "bird"}`), the owl
+
+`assets/pet-autorig.js` hands a bird to `assets/pet-bird-rig.js`, which turns a static
+scan into a flying pet: it bakes the scan into the bird's frame (`forward` in the scene
+frame, `crop.belowY` cuts the perch away), turns the head to face forward
+(`headTwistDeg`, a twist spread down the neck from `neck.base` to `neck.head`), grafts a
+pair of feathered wings from `wing.file` (the CG Cookie wing in `owl-wing.glb`, relaid,
+recoloured and fitted at the shoulders; `wing.length` is one wing, shoulder to tip, in
+the scan's metres), builds 20 bones (`ab_root`, `ab_body`, `ab_chest`, `ab_neck1`,
+`ab_neck2`, `ab_head`, `ab_tail1-2`, `ab_thigh/shank/foot` L and R, `ab_wing/wing2/wing3`
+L and R) and writes the clips `bird.idle`, `bird.hop` (as `walk`: both feet together,
+planted through the stance), `bird.takeoff`, `bird.fly`, `bird.glide` and `bird.land`.
+At rest the grafted wings fold away under the scan's own folded wings. `joints`, `hop:
+{T, stride, height}` and `fly: {hz, pitch}` override the defaults. The takeoff starts
+with the push itself (the game lifts the bird on the first frame), and the land clip ends
+folded and standing, the pose the idle starts from; both keep their root motion
+(`"rootMotion": "keep"` in the clip map). The owl's `"parts": {"wing": ...}` records the
+wing file's size, hash and licence (`owl-wing.provenance.json`, `owl-wing.license.txt`).
+
+`"game"` in an entry tunes the pet in the game for its real body
+(`assets/features/pet-models.js`): `skim` is the speed (m/s) above which a winged pet
+takes to the air to keep up (the owl, 0.55: it flies low rather than hop fast),
+`realGait` its gait speeds and top cadence (`rateHi`), and `glow: [flat, rim]` how much
+of the pair glow washes the whole body and how much lights its rim (default 0.25 and
+1.6). A bird with both takeoff and land clips gets its own handling there: a takeoff
+snaps in and climbs from the grass, a skim is a short flight (takeoff, fly, land clips,
+never a standing or hopping pose in the air), the landing's flare and wing fold follow
+the height left, the hop is all or nothing, and the look at you is kept within 0.9 rad
+on top of the idle's own head turns.
+
+`tools/qa-pet-owl.cjs` checks it (it switches a parked owl on in its own copy of the
+manifest; `QA_OWL_SHIPPED=1` tests the manifest as shipped; `SHOTS=<dir>` saves
+pictures and every measured frame).

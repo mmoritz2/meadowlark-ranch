@@ -369,7 +369,12 @@ export function createPetLibrary({THREE,GLTFLoader,clone,manifest=null,manifestU
     else if(o.phased&&o.phased.includes(s)&&o.phase!=null){a.timeScale=0;a.time=(((o.phase%1)+1)%1)*dur(s);}
     else a.timeScale=(o.speed&&o.speed[s]!=null?o.speed[s]:1)*(m.speed||1);
     if(weights[s]>bw){bw=weights[s];best=s;}}
-   mixer.update(dt);if(SC)SC.apply();
+   mixer.update(dt);
+   /* (owl lane) the clips' pose of the look bones, kept to start the next frame from: three.js writes a track only
+      when its value changes, so a head the clips hold still was left at the bind pose the line above restores (the
+      owl's head snapped forward whenever its idle held a turn) */
+   for(let i=0;i<lookBones.length;i++)saved[i].copy(lookBones[i][0].quaternion);
+   if(SC)SC.apply();
    if(BG){const gw={};let tot=0,top=0,bb=null;for(const s of bs){gw[s]=weights[s];tot+=weights[s];if(weights[s]>top){top=weights[s];bb=s;}}if(tot>0.5)best=bb;BG.apply(dt,gw,o);}
    earAnchor();
    /* ground correction for the clips on the grass, weighted as they are blended */

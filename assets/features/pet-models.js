@@ -1049,7 +1049,7 @@ export function install(G){
   /* a hop over what it is stuck behind */
   if(st.hop){st.hop.t+=dt;const k=Math.min(1,st.hop.t/0.5);st.hopY=Math.sin(Math.PI*k)*0.45;c.pos.x+=st.hop.dx*2.6*dt;c.pos.z+=st.hop.dz*2.6*dt;if(k>=1){st.hop=null;st.hopY=0;}}
   /* the bunny and the hare cover their ground in the air, and barely creep while their feet are down */
-  const hk=S.kind==='bunny'&&!swim&&!st.hop&&st.hopAir>=0?(st.hopAir?1.3:0.3):1;
+  const hk=S.kind==='bunny'&&!swim&&!st.hop&&st.hopAir>=0?hopCreep(c.parts,st):1;
   c.pos.x+=st.vx*dt*hk;c.pos.z+=st.vz*dt*hk;
   pushOutPet(c,S,!!st.hop);
   /* keep out of the horse itself */
@@ -1180,7 +1180,7 @@ export function install(G){
   st.pitch=damp(st.pitch,pt,12,0.016);st.roll=damp(st.roll,rl,12,0.016);
   /* a real body does its own hops and spins in its clips: only the bunny without a hop clip keeps the drawn hop's arc */
   const real=realShown(P),hq=st.q?st.q.hopY:0;
-  const air=st.hopY+st.skim+(real?(S.kind==='bunny'&&st.hopAir>=0&&!P.real.inst.has('hop')?hq:0):hq);
+  const air=st.hopY+st.skim+(real?(S.kind==='bunny'&&st.hopAir>=0&&!P.real.inst.has('hop')?hq*(P.real.inst.has('bound')?1-0.4*sstep(5,9,st.spd||0):1):0):hq);   // a real hare with a gallop clip bounds long and low at speed
   root.position.set(x,y+air,z);
   root.rotation.set(st.pitch,c.heading+(st.q&&!real?st.q.spin:0),st.roll+st.lean);
   if(P.shadow){P.shadow.visible=true;P.shadow.position.y=0.015-air;}
@@ -1416,10 +1416,12 @@ export function install(G){
  function realWanted(k){const P=REAL.manifest&&REAL.manifest.pets||{};let e=P[k],n=0;while(e&&e.base&&n++<4){const b=P[e.base];if(!b)return false;e=Object.assign({},b,e,{base:b.base});}return !!(e&&e.available!==false&&e.file);}
  /* the pet rim and the market's pair glow on a real material too, laid over whatever it already does */
  function rimReal(m,e){if(!(m.isMeshStandardMaterial||m.isMeshPhysicalMaterial))return m;const L=(+(e&&e.lift)||0).toFixed(3),prev=m.onBeforeCompile,k0=Object.prototype.hasOwnProperty.call(m,'customProgramCacheKey')?m.customProgramCacheKey.bind(m):()=>'';
+  /* (owl lane) "game": {"glow": [flat, rim]} in a model's entry: how much of the pair glow washes the whole body and how much lights its rim (default 0.25 and 1.6; the owl's plumage keeps its colour at 0.05 and 1.2) */
+  const GW=e&&e.game&&Array.isArray(e.game.glow)?e.game.glow:null,gA=(GW?+GW[0]:0.25).toFixed(3),gB=(GW?+GW[1]:1.6).toFixed(3);
   m.onBeforeCompile=(sh,r)=>{if(prev)prev.call(m,sh,r);sh.uniforms.uPetGlow=PETGLOW;sh.fragmentShader='uniform vec3 uPetGlow;\n'+sh.fragmentShader.replace('#include <opaque_fragment>',
-   '{vec3 pV=normalize(vViewPosition);float pF=pow(1.0-clamp(dot(normal,pV),0.0,1.0),2.4);outgoingLight+=mix(diffuseColor.rgb,vec3(1.0,0.97,0.90),0.5)*pF*0.22+diffuseColor.rgb*'+L+'+uPetGlow*(0.25+pF*1.6);}\n#include <opaque_fragment>');};
-  m.customProgramCacheKey=()=>k0()+'|petRealRim'+L;m.userData.petGlow=true;return m;}
- function realLib(){if(!REAL.lib){REAL.lib=Promise.all([import('../pet-library.js?v=pl3'),import('three/addons/loaders/GLTFLoader.js'),import('three/addons/utils/SkeletonUtils.js')])
+   '{vec3 pV=normalize(vViewPosition);float pF=pow(1.0-clamp(dot(normal,pV),0.0,1.0),2.4);outgoingLight+=mix(diffuseColor.rgb,vec3(1.0,0.97,0.90),0.5)*pF*0.22+diffuseColor.rgb*'+L+'+uPetGlow*('+gA+'+pF*'+gB+');}\n#include <opaque_fragment>');};
+  m.customProgramCacheKey=()=>k0()+'|petRealRim'+L+'|'+gA+'|'+gB;m.userData.petGlow=true;return m;}
+ function realLib(){if(!REAL.lib){REAL.lib=Promise.all([import('../pet-library.js?v=pl4'),import('three/addons/loaders/GLTFLoader.js'),import('three/addons/utils/SkeletonUtils.js')])
    .then(([L,GL,SU])=>L.createPetLibrary({THREE,GLTFLoader:GL.GLTFLoader,clone:SU.clone,manifest:REAL.manifest,manifestURL:realURL(),patch:rimReal}));REAL.lib.catch(e=>console.warn('pet models: the model loader did not start ('+e.message+')'));}
   return REAL.lib;}
  function realLoad(key){const S=SPECIES[key];return realManifest().then(()=>{if(!realWanted(key))return null;if(REAL.fail===key)throw new Error('debugFail');
@@ -1439,10 +1441,23 @@ export function install(G){
  }
  /* is the real body what you see (the drawn one hidden)? always, once ready, unless it only rests */
  function realShown(P){const R=P.real;return !!(R&&R.state==='ready'&&(!R.inst.restOnly||R.hide));}
+ /* how fast a hopping bunny or hare moves while its feet are down (a share of its speed), and in the air to make up the rest.
+    A real hare's clip (assets/pet-autorig.js) sweeps its planted paws back only so far per hop (userData.autorig.hopSweep,
+    boundSweep for its gallop: metres of the scan per hop cycle): on the grass it creeps just that far, so its paws do not slide */
+ function hopCreep(P,st){let g=0.3;
+  const A=P&&realShown(P)&&P.real.inst.asset&&P.real.inst.asset.scene&&P.real.inst.asset.scene.userData.autorig;
+  if(A&&A.hopSweep){const spd=st.spd||0,Lh=clamp(0.3+spd*0.2,0.3,3.4),kb=A.boundSweep&&P.real.inst.has('bound')?sstep(5,9,spd):0,sw=(A.hopSweep*(1-kb)+(A.boundSweep||0)*kb)*(P.real.inst.asset.scale||1);g=Math.min(0.3,sw/Lh);}
+  return st.hopAir?(1-0.3*g)/0.7:g;}
  function realSwap(P,R){const inst=R.inst,S=P.spec,gw=S.grow||1,d=inst.dims;
   if(inst.restOnly){P.group.add(inst.root);inst.fade(0);R.state='ready';R.first=true;R.phase=0;R.w={};R.speed={};R.air='';R.rest=0;R.hide=false;R.lockH=null;R.calm=0;R.hPrev=null;return;}   // the drawn pet keeps moving the pet; the real one sits in when it settles
   P.group.add(inst.root);P.bodyPivot.visible=false;R.spec0=S;
   P.spec=Object.assign({},S,{len:+(d.len/gw).toFixed(3),w:+(d.w/gw).toFixed(3),real:true});   // the follow's boxes and the slope tilt use the real animal's length and width
+  /* (owl lane) "game" in a model's entry tunes the pet for its real body: "skim" is the speed (m/s) above which a
+     bird takes to the air to keep up (the real owl flies low rather than hop fast), "realGait" its gait speeds and
+     top cadence (the owl's hop never buzzes) */
+  {const g2=(inst.asset&&inst.asset.entry&&inst.asset.entry.game)||{};
+   if(g2.skim!=null&&S.wings)P.spec.wings=Object.assign({},S.wings,{skim:+g2.skim});
+   if(g2.realGait)P.spec.realGait=Object.assign({},S.realGait||{},g2.realGait);}
   R.state='ready';R.first=true;R.phase=0;R.w={};R.speed={};R.air='';}
  /* the clips, from what the drawn pet would be doing this frame */
  const IDLE_CLIP={sit:'sit',scratch:'sit',wash:'sit',groom:'sit',periscope:'sit',settle:'sit',lie:'lie',sniff:'eat',graze:'eat',peck:'eat',snuffle:'eat',pounce:'jump',pronk:'jump',boing:'jump',binky:'jump'};
@@ -1478,17 +1493,26 @@ export function install(G){
   const I=R.inst,S=P.spec,w=R.w,sp=R.speed,flying=!(st.air==='ground'||st.air==='wait');let restart=null,phase=null,phased=null,air='';
   for(const k in w)w[k]=0;
   const add=(s,v)=>{const k=I.pick(s);if(k)w[k]=(w[k]||0)+v;return k;};
+  /* (owl lane) a bird body with its own takeoff and land clips (the owl's bird rig): a takeoff snaps in, since the
+     game lifts the bird from the first frame; the landing's flare and wing fold follow the height left (and the
+     time), so the wings are folded as the feet touch; a skim is a short flight of its own (below) */
+  const birdAir=S.wings&&I.has('takeoff')&&I.has('land');
+  const firstAir=birdAir&&flying&&!/^(takeoff|fly|glide|land)$/.test(R.air||'');   // the first frame of a flight
   if(flying){const Wg=S.wings||{};
-   if(st.air==='takeoff'&&I.has('takeoff')){air='takeoff';if(R.air!=='takeoff')restart='takeoff';w.takeoff=1;sp.takeoff=clamp(I.dur('takeoff')/0.7,0.4,3);}
+   if(birdAir&&st.air==='takeoff'&&(/^(fly|glide)$/.test(R.air||'')||R.air==='skim'&&R.sk==='fly')){air='fly';add('fly',1);sp.fly=clamp((st.flapHz||Wg.hz||3)/I.hz('fly'),0.5,2.5);}   // already flying (a skim): no push off the grass
+   else if(birdAir&&st.air==='takeoff'&&R.air==='skim'&&R.sk==='up'){air='takeoff';w.takeoff=1;sp.takeoff=clamp(I.dur('takeoff')/0.7,0.4,3);}   // a skim's takeoff already under way goes on
+   else if(st.air==='takeoff'&&I.has('takeoff')){air='takeoff';if(R.air!=='takeoff')restart='takeoff';w.takeoff=1;sp.takeoff=clamp(I.dur('takeoff')/0.7,0.4,3);}
+   else if(birdAir&&st.air==='landing'&&(c.alt||0)<1.2){air='land';if(R.air!=='land'){restart='land';R.landT=0;}R.landT+=dt;w.land=1;
+    phase=Math.min(0.999,R.landT/0.75,1-clamp(((c.alt||0)-0.06)/1.14,0,1));phased=['land'];}
    else if(st.air==='landing'&&(c.alt||0)<1.2&&I.has('land')){air='land';if(R.air!=='land')restart='land';w.land=1;sp.land=clamp(I.dur('land')/0.6,0.4,3);}
    else if(st.glideNow){air='glide';add('glide',1);}
    else{air='fly';const k=add('fly',1);if(k)sp[k]=clamp((st.flapHz||Wg.hz||3)/I.hz(k),0.5,2.5);}
   }else if(st.swim){const k=add('swim',1);if(k!=='swim'&&k!=='idle'){phased=[k];R.phase+=dt*clamp(st.spd/Math.max(0.1,I.stride(k)||S.len*1.2),0.3,1.5)*0.6;phase=R.phase;}}
-  else if(S.kind==='bunny'&&st.hopAir>=0){const k=add('hop',1);phased=[k];phase=((st.ph%1)+1)%1;}   // the clip's crouch and push in step with the game's own hop
+  else if(S.kind==='bunny'&&st.hopAir>=0){const kb=I.has('bound')?sstep(5,9,st.spd||0):0,k=add('hop',1-kb);phased=[k];if(kb>0){w.bound=(w.bound||0)+kb;phased.push('bound');}phase=((st.ph%1)+1)%1;}   // the clip's crouch and push in step with the game's own hop; a real hare's gallop clip (bound) takes over from 5 to 9 m/s on the same phase
   else{
    /* turning on the spot takes steps too (a bone-walked body would otherwise pivot on planted feet) */
    const spin=R.hPrev==null?0:Math.abs(wrap(c.heading-R.hPrev))/Math.max(1e-3,dt),turnStep=I.gait?clamp((spin-0.5)/1.0,0,1):0;
-   const spd=Math.max(st.spd,turnStep*0.5),m=Math.max(sstep(0.12,0.55,spd),turnStep*0.8),trot=I.has('trot');
+   const spd=Math.max(st.spd,turnStep*0.5),m=Math.max(birdAir?sstep(0.06,0.16,spd):sstep(0.12,0.55,spd),turnStep*0.8),trot=I.has('trot');   // (owl lane) a bird's hop is all or nothing: half a hop blended with standing slid its feet
    const GT=S.realGait||{};   // a species' own gait speeds and top cadence (pet-fantasy.js: the fawn bounds early, its walk is slow)
    let wW=1,wT=0,wR=0;if(trot){const a=sstep(GT.trot?GT.trot[0]:1.3,GT.trot?GT.trot[1]:2.2,spd),b=sstep(GT.run?GT.run[0]:4.6,GT.run?GT.run[1]:6.4,spd);wW=1-a;wT=a*(1-b);wR=a*b;}else{const a=sstep(GT.run?GT.run[0]:1.8,GT.run?GT.run[1]:3.4,spd);wW=1-a;wR=a;}
    phased=[...new Set([I.pick('walk'),trot?I.pick('trot'):null,I.pick('run')].filter(Boolean))];   // every gait clip stays on the one stride phase, even while it fades out
@@ -1500,17 +1524,39 @@ export function install(G){
    const id=st.idle&&!st.idle.out?IDLE_CLIP[st.idle.name]:null;
    add(id&&I.has(id)?id:'idle',1-m);
    if(id==='jump'&&I.has('jump')&&R.idleName!==st.idle.name)restart='jump';R.idleName=st.idle?st.idle.name:null;
-   if(S.wings&&st.skim>0.08&&I.has('fly')){const k=clamp(st.skim/(S.walk==='hop'?0.45:0.18),0,1);for(const s in w)w[s]*=1-k;w.fly=(w.fly||0)+k;sp.fly=clamp((S.wings.hz||3)/I.hz('fly'),0.5,2.5);}
+   if(birdAir){
+    /* (owl lane) the skim as a short flight: up with the takeoff clip the moment the game lifts it, then the fly
+       clip, and down with the land clip (its flare and fold following the height left) as the lift runs out, so a
+       lifted bird is never shown in a standing or hopping pose, and a grounded one never in a flying one */
+    const sk=(st.skim||0)+(st.hopY||0),prev=R.skPrev==null?sk:R.skPrev,rising=sk>prev+1e-4,falling=sk<prev-1e-4;R.skPrev=sk;
+    if(R.air==='land')R.tdT=0;else if(R.tdT!=null)R.tdT+=dt;const soft=R.tdT!=null&&R.tdT<1;   // just down from a flight: still coming in at speed, a lift is the end of the same landing, not a new takeoff
+    if(R.sk==='up'||R.sk==='fly'){R.skMax=Math.max(R.skMax||0,sk);if(falling&&sk<Math.min(0.4,R.skMax*0.8)){R.sk='land';R.landT=0;restart='land';}}
+    else if(R.sk==='land'){if(rising&&sk>(soft?0.3:0.05)){if((R.lp||0)<0.8)R.sk='fly';else{R.sk='up';R.skT=0;restart='takeoff';}}else if(sk<0.012&&(R.lp||0)>=0.999)R.sk=null;}
+    else if(rising&&sk>0.015){if(soft){R.sk='land';R.landT=0.45;R.skMax=0.4;}else{R.sk='up';R.skT=0;R.skMax=sk;restart='takeoff';}}
+    if(R.sk){for(const s in w)w[s]=0;phase=null;phased=null;air='skim';
+     if(R.sk==='up'){R.skT+=dt;if(R.skT>0.7)R.sk='fly';}
+     if(R.sk==='up'){w.takeoff=1;sp.takeoff=clamp(I.dur('takeoff')/0.7,0.4,3);}
+     else if(R.sk==='fly'){add('fly',1);sp.fly=clamp((S.wings.hz||3)/I.hz('fly'),0.5,2.5);}
+     else if(R.sk==='land'){R.landT+=dt;R.lp=Math.min(0.999,R.landT/0.45,1-clamp((sk-0.01)/Math.max(0.04,Math.min(0.4,R.skMax||0.4)-0.01),0,1));w.land=1;phase=R.lp;phased=['land'];air='skim-land';}}}
+   else if(S.wings&&st.skim>0.08&&I.has('fly')){const k=clamp(st.skim/(S.walk==='hop'?0.45:0.18),0,1);for(const s in w)w[s]*=1-k;w.fly=(w.fly||0)+k;sp.fly=clamp((S.wings.hz||3)/I.hz('fly'),0.5,2.5);}
   }
-  if(phase!=null)R.phase=((phase%1)+1)%1;
+  if(flying)R.sk=null;
+  if(phased&&phased.includes('land')){/* the land clip's own phase is not the stride's */}else if(phase!=null)R.phase=((phase%1)+1)%1;
+  /* (owl lane) a restarted takeoff or landing is snapped in over about a tenth of a second (the default cross-fade
+     is a quarter: the bird rose in its standing pose); the bird's own big head turns leave the look at you less room */
+  let fade;if(birdAir){if(restart==='takeoff'||restart==='land')R.fastT=0.12;if(R.fastT>0){R.fastT-=dt;fade=0.04;}}
   const turnRate=R.hPrev==null?0:wrap(c.heading-R.hPrev)/Math.max(1e-3,dt);R.hPrev=c.heading;
   /* a bone-walked body steps at the speed the pet really covers the ground (not the speed it wants), so a
      planted foot stays put; a jump of the pet (a fast travel) is not a speed */
   let mps=st.spd||0;
   if(I.gait){const gp=P.group.position;if(R.pPrev&&dt>0){const d=Math.hypot(gp.x-R.pPrev.x,gp.z-R.pPrev.z)/dt;if(d<25)R.mv=R.mv==null?d:R.mv+(d-R.mv)*Math.min(1,dt/0.035);}R.pPrev=(R.pPrev||new THREE.Vector3()).copy(gp);
    mps=Math.max(R.mv!=null?R.mv:mps,Math.min(0.5,Math.abs(turnRate)*0.25));}
-  I.update(dt,{w,phase,phased,speed:sp,restart,snap:R.first,mps,turn:turnRate});R.first=false;R.air=air;
-  I.look(st.lookY||0,st.lookP||0);
+  I.update(dt,{w,phase,phased,speed:sp,restart,snap:R.first||(birdAir&&restart==='takeoff'&&air==='takeoff'),mps,turn:turnRate,fade});R.first=false;R.air=air;
+  /* (owl lane) the game puts a bird 0.35 m up on the first frame of a takeoff: the real body climbs to it from the
+     grass over 0.15 s instead, pushing off in its takeoff pose */
+  if(birdAir){if(firstAir){R.pop=Math.max(0,(c.alt||0)-(R.altPrev||0));R.popT=0;}
+   R.popC=0;if(R.popT!=null){R.popT+=dt;const k=1-sstep(0,0.15,R.popT);R.popC=R.pop*k;I.root.position.y-=R.popC;if(k<=0)R.popT=null;}R.altPrev=c.alt||0;}
+  I.look(birdAir?clamp(st.lookY||0,-0.9,0.9):(st.lookY||0),st.lookP||0);
   R.clip=I.state;
  }
 
