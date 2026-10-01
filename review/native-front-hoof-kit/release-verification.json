@@ -1,0 +1,98 @@
+{
+  "status": "published_and_live_verified",
+  "runtimeCommit": "34a932fbe16007bfe42921646a6d79438dad45a4",
+  "publishedTo": "origin/main",
+  "githubPages": {
+    "status": "built",
+    "commit": "34a932fbe16007bfe42921646a6d79438dad45a4",
+    "error": null,
+    "updatedAt": "2026-10-01T20:35:14Z"
+  },
+  "verifiedAt": "2026-10-01T20:43:44.339929+00:00",
+  "liveBase": "https://mmoritz2.github.io/meadowlark-ranch",
+  "liveChecks": {
+    "allThreeEligible": true,
+    "all677Finite": true,
+    "actualGaitsAndFullCycles": true,
+    "protectedBodyEyesTackExact": true,
+    "onlyGroomResponds": true,
+    "restorationReapply": true,
+    "phaseAndTimeUnchangedByLayer": true,
+    "mountedContacts": true,
+    "realStartStopTurn": true,
+    "longFramesReseed": true,
+    "resetClean": true,
+    "disposeAndSwitchBack": true,
+    "loadedModulesPinned": true,
+    "zeroErrors": true,
+    "actualFrontHoofLayer": true
+  },
+  "liveSummary": {
+    "horses": 3,
+    "mountedGaitSamples": 192,
+    "geometryComparisons": 213,
+    "maxProtectedVertexDeltaM": 0,
+    "maxHairAddedComponentM": 0.04907555591566881,
+    "maxZeroDtReapplyDeltaM": 0,
+    "maxPhaseDelta": 0,
+    "maxActualSkinnedBootResidualM": 3.6667022713733415e-06,
+    "maxReinEndpointResidualM": 2.4017796254920325e-15,
+    "maxAddedWorldAngleDeg": 4.000000000000002,
+    "maxFrontFoldLocalDeg": 11.999850484020422,
+    "hoofFallbacks": 0
+  },
+  "uniquePinnedFiles": 12,
+  "allPinnedResponsesMatch": true,
+  "models": [
+    {
+      "file": "review/native-front-hoof-kit/white/model.glb",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/review/native-front-hoof-kit/white/model.glb?build=6aee1b94a4d5b1c8f7580569ba32ca6248c0a4c29b4b3e26d790fb4ac53d562e",
+      "status": 200,
+      "bytes": 28535188,
+      "sha256": "6aee1b94a4d5b1c8f7580569ba32ca6248c0a4c29b4b3e26d790fb4ac53d562e",
+      "method": "independent full GET of the browser model URL",
+      "browserEtag": "W/\"6abec401-1b36994\"",
+      "httpEtag": "W/\"6abec401-1b36994\"",
+      "etagMatch": true
+    },
+    {
+      "file": "review/native-front-hoof-kit/bay/model.glb",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/review/native-front-hoof-kit/bay/model.glb?build=8f4bf91cee542b8535335ce1e2a62c67e778a9bc95448db8674b880645c9aefa",
+      "status": 200,
+      "bytes": 16467684,
+      "sha256": "8f4bf91cee542b8535335ce1e2a62c67e778a9bc95448db8674b880645c9aefa",
+      "method": "independent full GET of the browser model URL",
+      "browserEtag": "W/\"6abec400-fb46e4\"",
+      "httpEtag": "W/\"6abec400-fb46e4\"",
+      "etagMatch": true
+    },
+    {
+      "file": "review/native-front-hoof-kit/sporthorse/model.glb",
+      "url": "https://mmoritz2.github.io/meadowlark-ranch/review/native-front-hoof-kit/sporthorse/model.glb?build=e3e917cefff70e124b51f92ab52fff4423023665411f9d3f6a660ca02a23a1f0",
+      "status": 200,
+      "bytes": 17077804,
+      "sha256": "e3e917cefff70e124b51f92ab52fff4423023665411f9d3f6a660ca02a23a1f0",
+      "method": "independent full GET of the browser model URL",
+      "browserEtag": "W/\"6abec401-104962c\"",
+      "httpEtag": "W/\"6abec401-104962c\"",
+      "etagMatch": true
+    }
+  ],
+  "runtimePins": {
+    "ranch3d.html": "6d475f45e159777b262671f2d093b547c734954bbafa9a8edaf40d9e21f390cc",
+    "assets/game-hero-horse.js": "dc1f228ab9496120e9ef4574764dffd534c694cc6f150fcdcbd0794484731c0c",
+    "assets/native-horse-motion.js": "edd9328b38f23c85f09c1a7f52eb5a98b25ab158ef9cdbfc6a27bbad131b0a9f",
+    "assets/native-groom-layer.mjs": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240",
+    "assets/frame-inertia.mjs": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187",
+    "assets/native-groom-controls.mjs": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735",
+    "assets/native-breed-profiles.js": "d212c8d0512602a129d07f696d763abeac539cbdb4ff58bbbde38be0ffbd49a9",
+    "assets/native-hoof-flex.mjs": "60d1441156840a14020b5fd8ac73207a893ed00b54dcdf74687b84162f72d2e9",
+    "assets/native-hoof-controls.mjs": "09b93a47ed1325f1ac8c05e06ed20c5b1c7a7fc3260d484a0ba4bcdfa24f533a",
+    "review/native-front-hoof-kit/white/model.glb": "6aee1b94a4d5b1c8f7580569ba32ca6248c0a4c29b4b3e26d790fb4ac53d562e",
+    "review/native-front-hoof-kit/bay/model.glb": "8f4bf91cee542b8535335ce1e2a62c67e778a9bc95448db8674b880645c9aefa",
+    "review/native-front-hoof-kit/sporthorse/model.glb": "e3e917cefff70e124b51f92ab52fff4423023665411f9d3f6a660ca02a23a1f0"
+  },
+  "largeModelCollectionMethod": "Independent complete HTTP GET of the same model URL used by the browser, with its response ETag compared to the browser response; avoids DevTools inspector buffer eviction.",
+  "evidence": "live-mounted-qa.json",
+  "scope": "Only White Western, Bay Western and Bay Sporthorse distal foreleg articulation. Existing baseline contact dips and other breed/motion work remain."
+}

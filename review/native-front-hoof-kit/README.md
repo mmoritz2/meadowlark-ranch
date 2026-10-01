@@ -17,6 +17,6 @@ Validation:
 
 The original WildMesh model credit and CC BY-NC 4.0 terms remain in the native profiles and per-model documentation. No new source was downloaded.
 
-This is a distal motion improvement. The short stride, existing gait-transition floor dips (down to roughly 16 mm in the tested baseline), remaining breed replacements and other naturalism work remain unresolved. Publication and exact live byte checks are recorded in release-verification.json after deployment.
+This is a distal motion improvement. The short stride, existing gait-transition floor dips (down to roughly 16 mm in the tested baseline), remaining breed replacements and other naturalism work remain unresolved. Runtime commit 34a932f is deployed and live verified; [publication and exact live model checks](release-verification.json) record the three complete HTTP files and current controller/module hashes. [The live mounted check](live-mounted-qa.json) passed all 15 gates, with 192 gait samples, no hoof fallback and unchanged rider/rein contact.
 
 To repeat the checks, serve the repository and use QA_PORT or QA_URL, with the project's Playwright runtime available. The root scripts check transitions, the mounted game and the comparison preview. [Runtime hashes](runtime-hashes.json) pin the tested implementation.
