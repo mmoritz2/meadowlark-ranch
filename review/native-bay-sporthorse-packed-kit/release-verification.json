@@ -1,5 +1,5 @@
 {
-  "status": "local game integration passed; publication pending",
+  "status": "published and live-verified",
   "modelSha256": "a7ea093b602d1b6f3ce234afaed89925974faf7a127bf07b2900ac41674b0f74",
   "modelBytes": 16961188,
   "sourceMasterPreserved": true,
@@ -9,5 +9,7 @@
     "bay-sporthorse-nativeRanch": true,
     "bay-sporthorse-nativeContacts": true
   },
-  "errors": []
+  "errors": [],
+  "publishedRuntimeCommit": "86f53dacd2d7b6115cb195ce2d7c270fa9f25683",
+  "liveEvidence": "../native-groom-inertia-kit/live-verification.json"
 }

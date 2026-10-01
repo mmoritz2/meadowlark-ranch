@@ -1,0 +1,1010 @@
+{
+  "commit": "86f53dacd2d7b6115cb195ce2d7c270fa9f25683",
+  "base": "https://mmoritz2.github.io/meadowlark-ranch",
+  "unrouted": true,
+  "verifiedAtUTC": "2026-10-01T18:07:28.336062+00:00",
+  "pagesBuildEvidence": "Root confirmed exact86f53dac built/error null/updated18:00:46UTC before run. No live request was made before that confirmation.",
+  "scope": "Narrow real Ranch three-horse mounted groom/zero-time/protected geometry/boot/rein/reflection verification. Existing local all18 integration regressions and complete corrected gait cycles are separate evidence; no repeat live all-five/full-gait sweep.",
+  "checks": {
+    "threeActualModels": true,
+    "allFinite": true,
+    "dt0FinishedOnce": true,
+    "protectedExact": true,
+    "sameTimeHairReapplyExact": true,
+    "groomResponds": true,
+    "mountedContacts": true,
+    "loadedHashesExact": true,
+    "packedAssetExact": true,
+    "zeroErrors": true,
+    "allAvailableWorldRendersAfterGroom": true,
+    "threeHorseMirrorAndMainCoverage": true,
+    "separateSportReflection": true
+  },
+  "loadedRuntime": {
+    "uniqueCommittedPaths": 104,
+    "responseCount": 105,
+    "allRawHTTPBodiesMatchCommittedGitBlobs": true,
+    "files": [
+      {
+        "file": "ranch3d.html",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/ranch3d.html?qa=groom-final-zero-render",
+        "status": 200,
+        "bytes": 880220,
+        "sha256": "b68dfe59c2dd752870d68a5a83f5aa7a1596b2437f2135a4f4b521747d6ae477",
+        "expectedCommittedSha256": "b68dfe59c2dd752870d68a5a83f5aa7a1596b2437f2135a4f4b521747d6ae477"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/postprocessing/RenderPass.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/postprocessing/RenderPass.js",
+        "status": 200,
+        "bytes": 1915,
+        "sha256": "1c90c085312871c4bcdccfcf519499c6276dd503363fcf7cb7f703add45cf4a2",
+        "expectedCommittedSha256": "1c90c085312871c4bcdccfcf519499c6276dd503363fcf7cb7f703add45cf4a2"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/postprocessing/EffectComposer.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/postprocessing/EffectComposer.js",
+        "status": 200,
+        "bytes": 4651,
+        "sha256": "d234e578618fa816955ebdc059c049c577e203e650e33cf22bde3f232c29e669",
+        "expectedCommittedSha256": "d234e578618fa816955ebdc059c049c577e203e650e33cf22bde3f232c29e669"
+      },
+      {
+        "file": "assets/pastoral-sky.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/pastoral-sky.js",
+        "status": 200,
+        "bytes": 3548,
+        "sha256": "8bb2fdf2154487394ca523f4fc325811761569023cc344cfca3b43a69c20d5a9",
+        "expectedCommittedSha256": "8bb2fdf2154487394ca523f4fc325811761569023cc344cfca3b43a69c20d5a9"
+      },
+      {
+        "file": "assets/ranch-world-details.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/ranch-world-details.js",
+        "status": 200,
+        "bytes": 7033,
+        "sha256": "01c48d645978aa46f564cba859473b65152cb75e62ed33e96f9153a4652a7ce2",
+        "expectedCommittedSha256": "01c48d645978aa46f564cba859473b65152cb75e62ed33e96f9153a4652a7ce2"
+      },
+      {
+        "file": "assets/riparian.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/riparian.js",
+        "status": 200,
+        "bytes": 15576,
+        "sha256": "252a87dfe5a86ae9070032a2b25d7f6a305c372daee1481f3948d8df47d361ef",
+        "expectedCommittedSha256": "252a87dfe5a86ae9070032a2b25d7f6a305c372daee1481f3948d8df47d361ef"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/utils/SkeletonUtils.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/utils/SkeletonUtils.js",
+        "status": 200,
+        "bytes": 8007,
+        "sha256": "83748c5072a5ce96e9d68d8efda908a1f1a06c0b5fd2618edc3e54a361a8fd5b",
+        "expectedCommittedSha256": "83748c5072a5ce96e9d68d8efda908a1f1a06c0b5fd2618edc3e54a361a8fd5b"
+      },
+      {
+        "file": "assets/artist-horse-bridle.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/artist-horse-bridle.js?v=bridle-fit-1",
+        "status": 200,
+        "bytes": 11107,
+        "sha256": "f14ca8b75d4ed866261ed0b09917b780d0f025e173673db2d50e50ec7bd6be1e",
+        "expectedCommittedSha256": "f14ca8b75d4ed866261ed0b09917b780d0f025e173673db2d50e50ec7bd6be1e"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/postprocessing/OutputPass.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/postprocessing/OutputPass.js",
+        "status": 200,
+        "bytes": 2398,
+        "sha256": "13817fc7a87f662d29d2c5e00f44d3a4588c9afac4a372de0cacb0e44e368ffd",
+        "expectedCommittedSha256": "13817fc7a87f662d29d2c5e00f44d3a4588c9afac4a372de0cacb0e44e368ffd"
+      },
+      {
+        "file": "assets/equine-fantasy.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/equine-fantasy.js?v=artist-breeds-1",
+        "status": 200,
+        "bytes": 31951,
+        "sha256": "8ae188649e8fcff1c5314aa5d0fe104b60b1ed9fc28f53a9d7f5d7c12752fd30",
+        "expectedCommittedSha256": "8ae188649e8fcff1c5314aa5d0fe104b60b1ed9fc28f53a9d7f5d7c12752fd30"
+      },
+      {
+        "file": "assets/follow-camera.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/follow-camera.js",
+        "status": 200,
+        "bytes": 2794,
+        "sha256": "2a60a5f3ecaba0cc52775bfe9ba8645a4c78aeefac89d97706084c48e040fade",
+        "expectedCommittedSha256": "2a60a5f3ecaba0cc52775bfe9ba8645a4c78aeefac89d97706084c48e040fade"
+      },
+      {
+        "file": "assets/world-photoscans.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/world-photoscans.js",
+        "status": 200,
+        "bytes": 17794,
+        "sha256": "1fcf2170be475f12366e8d62206551daa9dfb87a375413513d319cfb0d3d06c3",
+        "expectedCommittedSha256": "1fcf2170be475f12366e8d62206551daa9dfb87a375413513d319cfb0d3d06c3"
+      },
+      {
+        "file": "assets/artist-horse-features.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/artist-horse-features.js?v=artist-breeds-1",
+        "status": 200,
+        "bytes": 8259,
+        "sha256": "db77354c8d43c70405cdc4025b25d1d56fd00e8661a3072cdfbd20ee7d2b2f60",
+        "expectedCommittedSha256": "db77354c8d43c70405cdc4025b25d1d56fd00e8661a3072cdfbd20ee7d2b2f60"
+      },
+      {
+        "file": "assets/vegetation.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vegetation.js",
+        "status": 200,
+        "bytes": 14958,
+        "sha256": "6e70c49dc5ddd341cb1a9ab1b88af120ed38e19bafb98e7ac8b3c9e4882811d3",
+        "expectedCommittedSha256": "6e70c49dc5ddd341cb1a9ab1b88af120ed38e19bafb98e7ac8b3c9e4882811d3"
+      },
+      {
+        "file": "assets/ranch-builder-art.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/ranch-builder-art.js",
+        "status": 200,
+        "bytes": 36156,
+        "sha256": "ccabd086de25600cdc009a33ac24f1d192688dad32f984db502a83749e3fb865",
+        "expectedCommittedSha256": "ccabd086de25600cdc009a33ac24f1d192688dad32f984db502a83749e3fb865"
+      },
+      {
+        "file": "assets/ranch-arrival-art.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/ranch-arrival-art.js",
+        "status": 200,
+        "bytes": 13874,
+        "sha256": "816eea64e23c7f2d8ca1f13321cc22d1c05af84a2fa6d1a8f86b14ca903b6d4d",
+        "expectedCommittedSha256": "816eea64e23c7f2d8ca1f13321cc22d1c05af84a2fa6d1a8f86b14ca903b6d4d"
+      },
+      {
+        "file": "assets/world-rendering.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/world-rendering.js",
+        "status": 200,
+        "bytes": 4618,
+        "sha256": "bbfdb49944b6c69d152084c4ad74c8c67b5f2209ca56e9c60ee1a60d425e9842",
+        "expectedCommittedSha256": "bbfdb49944b6c69d152084c4ad74c8c67b5f2209ca56e9c60ee1a60d425e9842"
+      },
+      {
+        "file": "assets/rider-model.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/rider-model.js?v=rider-3",
+        "status": 200,
+        "bytes": 60842,
+        "sha256": "be04b0457850a3483ac53840805f03bce1264d93ca132c1d711ac8340b4ca309",
+        "expectedCommittedSha256": "be04b0457850a3483ac53840805f03bce1264d93ca132c1d711ac8340b4ca309"
+      },
+      {
+        "file": "assets/horse-groom.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/horse-groom.js",
+        "status": 200,
+        "bytes": 26709,
+        "sha256": "600c13dabcf550636f74931f2e154f9a2577e758137944f881752e5562f8ee24",
+        "expectedCommittedSha256": "600c13dabcf550636f74931f2e154f9a2577e758137944f881752e5562f8ee24"
+      },
+      {
+        "file": "assets/world-art.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/world-art.js",
+        "status": 200,
+        "bytes": 20364,
+        "sha256": "edad6d8813a4b5bcf06e0e5067de8e32cb8e6587757ef0576351aa7f6e6a45e8",
+        "expectedCommittedSha256": "edad6d8813a4b5bcf06e0e5067de8e32cb8e6587757ef0576351aa7f6e6a45e8"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/objects/Sky.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/objects/Sky.js",
+        "status": 200,
+        "bytes": 6819,
+        "sha256": "eacd17d5debec3b909d1208304d70024a59c38c58b6533fcd4711f8a6a0b63bc",
+        "expectedCommittedSha256": "eacd17d5debec3b909d1208304d70024a59c38c58b6533fcd4711f8a6a0b63bc"
+      },
+      {
+        "file": "assets/breed-models.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/breed-models.js?v=native-secondary-1",
+        "status": 200,
+        "bytes": 9643,
+        "sha256": "798744ba48af2bbac12cdc3d1aa2f51bbe27ac610958b3348ad72605c39fea66",
+        "expectedCommittedSha256": "798744ba48af2bbac12cdc3d1aa2f51bbe27ac610958b3348ad72605c39fea66"
+      },
+      {
+        "file": "assets/ranch-architecture.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/ranch-architecture.js",
+        "status": 200,
+        "bytes": 21157,
+        "sha256": "46dc11c214769f32dee75560b58f854355977a4e35ba5ffa32d315ca9e96c88a",
+        "expectedCommittedSha256": "46dc11c214769f32dee75560b58f854355977a4e35ba5ffa32d315ca9e96c88a"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/postprocessing/Pass.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/postprocessing/Pass.js",
+        "status": 200,
+        "bytes": 1706,
+        "sha256": "b3c6128340eaa37e40a6a2f1b738e894c855239417d50959759b34a2b5e89f92",
+        "expectedCommittedSha256": "b3c6128340eaa37e40a6a2f1b738e894c855239417d50959759b34a2b5e89f92"
+      },
+      {
+        "file": "assets/features/index.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/index.js?v=feat-30",
+        "status": 200,
+        "bytes": 17295,
+        "sha256": "a17065b4a987ec25d71b1fc7db02a2150d17d2a0e1c8c9cc10a94e0035180381",
+        "expectedCommittedSha256": "a17065b4a987ec25d71b1fc7db02a2150d17d2a0e1c8c9cc10a94e0035180381"
+      },
+      {
+        "file": "assets/native-rider.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/native-rider.js?v=native-rider-1",
+        "status": 200,
+        "bytes": 12297,
+        "sha256": "dcd81fa41e59252cd51af4e41474bec0f9c050df1c3c8ae442fb0ee60823df0b",
+        "expectedCommittedSha256": "dcd81fa41e59252cd51af4e41474bec0f9c050df1c3c8ae442fb0ee60823df0b"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/postprocessing/UnrealBloomPass.js",
+        "status": 200,
+        "bytes": 12406,
+        "sha256": "8f09315c0cec117a0ca2494d3e3586035b3c4323d6dcb037537cc51b04c3cdba",
+        "expectedCommittedSha256": "8f09315c0cec117a0ca2494d3e3586035b3c4323d6dcb037537cc51b04c3cdba"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/shaders/OutputShader.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/shaders/OutputShader.js",
+        "status": 200,
+        "bytes": 1393,
+        "sha256": "53a52e430c27bc36ceaab8ae90a2b4af7b02672d7ee4b29d6ba3c28e09c92c2a",
+        "expectedCommittedSha256": "53a52e430c27bc36ceaab8ae90a2b4af7b02672d7ee4b29d6ba3c28e09c92c2a"
+      },
+      {
+        "file": "assets/geology.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/geology.js",
+        "status": 200,
+        "bytes": 19091,
+        "sha256": "cf4838e33ca6f76eb0450be731483b01ed7a0db0302a8c4dbf08c9e9e022a351",
+        "expectedCommittedSha256": "cf4838e33ca6f76eb0450be731483b01ed7a0db0302a8c4dbf08c9e9e022a351"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/shaders/CopyShader.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/shaders/CopyShader.js",
+        "status": 200,
+        "bytes": 571,
+        "sha256": "4e3346db194db56a596cd074e9bdb39fb5eb52040c333e0d29dc4eb1324d3b1d",
+        "expectedCommittedSha256": "4e3346db194db56a596cd074e9bdb39fb5eb52040c333e0d29dc4eb1324d3b1d"
+      },
+      {
+        "file": "assets/water-reflections.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/water-reflections.js",
+        "status": 200,
+        "bytes": 3596,
+        "sha256": "d0596789f429a49c67bfbd1f98851bd447136ef93b98e9fb2550eae9441fb962",
+        "expectedCommittedSha256": "d0596789f429a49c67bfbd1f98851bd447136ef93b98e9fb2550eae9441fb962"
+      },
+      {
+        "file": "assets/game-hero-horse.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/game-hero-horse.js?v=native-secondary-1",
+        "status": 200,
+        "bytes": 11660,
+        "sha256": "26e489ce312e84d8fcb6473d1a51f01a17ffeda259c67b636e85a7ef4405a557",
+        "expectedCommittedSha256": "26e489ce312e84d8fcb6473d1a51f01a17ffeda259c67b636e85a7ef4405a557"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/postprocessing/ShaderPass.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/postprocessing/ShaderPass.js",
+        "status": 200,
+        "bytes": 1576,
+        "sha256": "3b28a1ee27e0eb96c0eab137a1f442ccf127a926904eced2d51e125ec44af781",
+        "expectedCommittedSha256": "3b28a1ee27e0eb96c0eab137a1f442ccf127a926904eced2d51e125ec44af781"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/loaders/GLTFLoader.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/loaders/GLTFLoader.js",
+        "status": 200,
+        "bytes": 108522,
+        "sha256": "d073b438e6a07e1359741dd5d6c76c953420cc0d4fd84eb1bdde94315540e6a3",
+        "expectedCommittedSha256": "d073b438e6a07e1359741dd5d6c76c953420cc0d4fd84eb1bdde94315540e6a3"
+      },
+      {
+        "file": "assets/meadow-cover.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/meadow-cover.js",
+        "status": 200,
+        "bytes": 1451,
+        "sha256": "8021debac0955e6496354bdfd7a20d6cd24f261b00c1ca9a294d501e5dd45d54",
+        "expectedCommittedSha256": "8021debac0955e6496354bdfd7a20d6cd24f261b00c1ca9a294d501e5dd45d54"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/utils/BufferGeometryUtils.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/utils/BufferGeometryUtils.js",
+        "status": 200,
+        "bytes": 31906,
+        "sha256": "9be041e96308775d00e2695cc607645b9a9b64fd7c0e759dd8f7c00a8d92becb",
+        "expectedCommittedSha256": "9be041e96308775d00e2695cc607645b9a9b64fd7c0e759dd8f7c00a8d92becb"
+      },
+      {
+        "file": "assets/terrain-realism.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/terrain-realism.js",
+        "status": 200,
+        "bytes": 28201,
+        "sha256": "e79f77b013273b84f6e3c961fbf6681bd5bb9b5c848183e814c52227257c2ea6",
+        "expectedCommittedSha256": "e79f77b013273b84f6e3c961fbf6681bd5bb9b5c848183e814c52227257c2ea6"
+      },
+      {
+        "file": "assets/horse-hair-volume.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/horse-hair-volume.js",
+        "status": 200,
+        "bytes": 15416,
+        "sha256": "a2672713f4e3cc406662adcf605b45b97c276d7082e11735e4b0087dc8997e3d",
+        "expectedCommittedSha256": "a2672713f4e3cc406662adcf605b45b97c276d7082e11735e4b0087dc8997e3d"
+      },
+      {
+        "file": "assets/native-breed-profiles.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/native-breed-profiles.js?v=native-secondary-1",
+        "status": 200,
+        "bytes": 7254,
+        "sha256": "721c1a3aae4c7feaaf84e173c4e609716ad239ba94402637e85b5a874cd331fd",
+        "expectedCommittedSha256": "721c1a3aae4c7feaaf84e173c4e609716ad239ba94402637e85b5a874cd331fd"
+      },
+      {
+        "file": "assets/vendor/three/build/three.module.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/build/three.module.js",
+        "status": 200,
+        "bytes": 1272972,
+        "sha256": "76dea8151bc9352aef3528b4262e249b2604f62543828328db978d060d61a495",
+        "expectedCommittedSha256": "76dea8151bc9352aef3528b4262e249b2604f62543828328db978d060d61a495"
+      },
+      {
+        "file": "assets/features/ui2-hud.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/ui2-hud.js?v=b20260929m",
+        "status": 200,
+        "bytes": 60075,
+        "sha256": "029d658c3693c58683e2cc5ed22ca454eeaa45981109b731612f60eb6bf35362",
+        "expectedCommittedSha256": "029d658c3693c58683e2cc5ed22ca454eeaa45981109b731612f60eb6bf35362"
+      },
+      {
+        "file": "assets/features/stats-progression.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/stats-progression.js?v=b20260929m",
+        "status": 200,
+        "bytes": 44103,
+        "sha256": "a82d0dc9f4189bda640c141e566d454a65c78f2d213879c35bf298e900f32414",
+        "expectedCommittedSha256": "a82d0dc9f4189bda640c141e566d454a65c78f2d213879c35bf298e900f32414"
+      },
+      {
+        "file": "assets/features/world-atmosphere.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/world-atmosphere.js?v=b20260929m",
+        "status": 200,
+        "bytes": 39923,
+        "sha256": "8a23adda77c7acad39b5e27951959ce93051867df020979571bf48c229ff8708",
+        "expectedCommittedSha256": "8a23adda77c7acad39b5e27951959ce93051867df020979571bf48c229ff8708"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/postprocessing/MaskPass.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/postprocessing/MaskPass.js",
+        "status": 200,
+        "bytes": 2231,
+        "sha256": "328cf7db0da5d9be83ffe39d54b01d5ac1fddf108cc98182ddbb056f5c8b537f",
+        "expectedCommittedSha256": "328cf7db0da5d9be83ffe39d54b01d5ac1fddf108cc98182ddbb056f5c8b537f"
+      },
+      {
+        "file": "assets/features/story-quests.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/story-quests.js?v=b20260929m",
+        "status": 200,
+        "bytes": 77159,
+        "sha256": "49950f7d906527fe73dccb69eaae17e41fcc5e108a8e7d58f3a2682b18dbc125",
+        "expectedCommittedSha256": "49950f7d906527fe73dccb69eaae17e41fcc5e108a8e7d58f3a2682b18dbc125"
+      },
+      {
+        "file": "assets/features/mastery-style.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/mastery-style.js?v=b20260929m",
+        "status": 200,
+        "bytes": 45356,
+        "sha256": "fb5ae2b3b1c74c011ac2e19d7a199aa2bbf472f50be9a322b615348205b8c9de",
+        "expectedCommittedSha256": "fb5ae2b3b1c74c011ac2e19d7a199aa2bbf472f50be9a322b615348205b8c9de"
+      },
+      {
+        "file": "assets/features/tack-wardrobe.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/tack-wardrobe.js?v=b20260929m",
+        "status": 200,
+        "bytes": 56255,
+        "sha256": "6ef3fb8a1d70ef3b307e6466d8d795f5d4d0b629b9bfe2d85720a30fd28a4748",
+        "expectedCommittedSha256": "6ef3fb8a1d70ef3b307e6466d8d795f5d4d0b629b9bfe2d85720a30fd28a4748"
+      },
+      {
+        "file": "assets/features/account-economy.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/account-economy.js?v=b20260929m",
+        "status": 200,
+        "bytes": 56881,
+        "sha256": "3bf8291bae0e0ddb0dff824c463dc4296c1b5616979d852a890a79a3f2e2ba42",
+        "expectedCommittedSha256": "3bf8291bae0e0ddb0dff824c463dc4296c1b5616979d852a890a79a3f2e2ba42"
+      },
+      {
+        "file": "assets/features/se-frame.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/se-frame.js?v=b20260929m",
+        "status": 200,
+        "bytes": 69071,
+        "sha256": "e849a2c591458e1dcba4ca15716091582afceec01bcba9c435510fc44d66f3ff",
+        "expectedCommittedSha256": "e849a2c591458e1dcba4ca15716091582afceec01bcba9c435510fc44d66f3ff"
+      },
+      {
+        "file": "assets/features/on-foot.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/on-foot.js?v=b20260929m",
+        "status": 200,
+        "bytes": 33904,
+        "sha256": "3a82158474cc3b4000e49ff94577b3765ae72a08c94589b544ae488c2c91d115",
+        "expectedCommittedSha256": "3a82158474cc3b4000e49ff94577b3765ae72a08c94589b544ae488c2c91d115"
+      },
+      {
+        "file": "assets/features/hidden-treasures.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/hidden-treasures.js?v=b20260929m",
+        "status": 200,
+        "bytes": 12435,
+        "sha256": "6f9ac88b7c40072de410dc3dfaf90ca8fc00d11e8e1ed25e4969f9c9c44a1dcb",
+        "expectedCommittedSha256": "6f9ac88b7c40072de410dc3dfaf90ca8fc00d11e8e1ed25e4969f9c9c44a1dcb"
+      },
+      {
+        "file": "assets/features/ui2-horse.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/ui2-horse.js?v=b20260929m",
+        "status": 200,
+        "bytes": 23628,
+        "sha256": "2ac79beeae8b13c0d45867d6e54dcf873c9cc0eb446d9bac7d27bf583da327b1",
+        "expectedCommittedSha256": "2ac79beeae8b13c0d45867d6e54dcf873c9cc0eb446d9bac7d27bf583da327b1"
+      },
+      {
+        "file": "assets/features/ui2-shop.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/ui2-shop.js?v=b20260929m",
+        "status": 200,
+        "bytes": 36621,
+        "sha256": "85e9dab86f1c70f0931cb14f1fc1dc24966ab3d29748bdceab43865da5d3f4ec",
+        "expectedCommittedSha256": "85e9dab86f1c70f0931cb14f1fc1dc24966ab3d29748bdceab43865da5d3f4ec"
+      },
+      {
+        "file": "assets/features/ui2-compete.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/ui2-compete.js?v=b20260929m",
+        "status": 200,
+        "bytes": 27218,
+        "sha256": "e686dac0f56e4299b07a942020015ff79129d9aea18a7955c40dfdb39352cc74",
+        "expectedCommittedSha256": "e686dac0f56e4299b07a942020015ff79129d9aea18a7955c40dfdb39352cc74"
+      },
+      {
+        "file": "assets/features/course-engine.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/course-engine.js?v=b20260929m",
+        "status": 200,
+        "bytes": 36583,
+        "sha256": "31e1def81f55d0a572040ac613b60237bef64bf13970dab5920c597d17e4dd6b",
+        "expectedCommittedSha256": "31e1def81f55d0a572040ac613b60237bef64bf13970dab5920c597d17e4dd6b"
+      },
+      {
+        "file": "assets/features/world-flora.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/world-flora.js?v=b20260929m",
+        "status": 200,
+        "bytes": 57280,
+        "sha256": "a6b99971d2aef5acab1634980ef02f133b2e42a4414fbe054fdb502701a2238e",
+        "expectedCommittedSha256": "a6b99971d2aef5acab1634980ef02f133b2e42a4414fbe054fdb502701a2238e"
+      },
+      {
+        "file": "assets/features/season-quests.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/season-quests.js?v=b20260929m",
+        "status": 200,
+        "bytes": 39966,
+        "sha256": "263b4c1d3a5feac0e5284323d4232d696b20fd40913c7cea1fdcf65442e950ab",
+        "expectedCommittedSha256": "263b4c1d3a5feac0e5284323d4232d696b20fd40913c7cea1fdcf65442e950ab"
+      },
+      {
+        "file": "assets/features/course-guide.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/course-guide.js?v=b20260929m",
+        "status": 200,
+        "bytes": 72914,
+        "sha256": "770b57cdef005386d8a051461e8bc0b1adac2094cd71f38a672e2c66669af553",
+        "expectedCommittedSha256": "770b57cdef005386d8a051461e8bc0b1adac2094cd71f38a672e2c66669af553"
+      },
+      {
+        "file": "assets/features/world.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/world.js?v=native-companions-1",
+        "status": 200,
+        "bytes": 96324,
+        "sha256": "e50ee56493db356d43b1f3f4abb85ef2188f4311a7d02cdf609ccfbbbc161e2a",
+        "expectedCommittedSha256": "e50ee56493db356d43b1f3f4abb85ef2188f4311a7d02cdf609ccfbbbc161e2a"
+      },
+      {
+        "file": "assets/features/ui-kit.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/ui-kit.js?v=b20260929m",
+        "status": 200,
+        "bytes": 17880,
+        "sha256": "a05e0678d9e4dd8860adfa7df9935d5ddd774f848c64525b007c6bc0c2bf52c2",
+        "expectedCommittedSha256": "a05e0678d9e4dd8860adfa7df9935d5ddd774f848c64525b007c6bc0c2bf52c2"
+      },
+      {
+        "file": "assets/features/world-quarters.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/world-quarters.js?v=b20260929m",
+        "status": 200,
+        "bytes": 77859,
+        "sha256": "0674c9d0787c657b9ad14d6376f2d265037033b756128aeb48d4ed6ab0625bad",
+        "expectedCommittedSha256": "0674c9d0787c657b9ad14d6376f2d265037033b756128aeb48d4ed6ab0625bad"
+      },
+      {
+        "file": "assets/vendor/three/examples/jsm/shaders/LuminosityHighPassShader.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/vendor/three/examples/jsm/shaders/LuminosityHighPassShader.js",
+        "status": 200,
+        "bytes": 1192,
+        "sha256": "3d841cc594a0c1767d1b0185720b32761a0133c5f1b70b56658e28f2fb9b7900",
+        "expectedCommittedSha256": "3d841cc594a0c1767d1b0185720b32761a0133c5f1b70b56658e28f2fb9b7900"
+      },
+      {
+        "file": "assets/features/bond-personality-emotes.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/bond-personality-emotes.js?v=b20260929m",
+        "status": 200,
+        "bytes": 39220,
+        "sha256": "681a4978a105d93d823419a72a5ba12ea58252766d0d42d4420405379431c328",
+        "expectedCommittedSha256": "681a4978a105d93d823419a72a5ba12ea58252766d0d42d4420405379431c328"
+      },
+      {
+        "file": "assets/features/native-horses.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/native-horses.js?v=native-secondary-1",
+        "status": 200,
+        "bytes": 3435,
+        "sha256": "894da4764fd99a5bfb5a7d7e4ee7e3383cb9e13abbbb0d008a074bd11ca2b9ca",
+        "expectedCommittedSha256": "894da4764fd99a5bfb5a7d7e4ee7e3383cb9e13abbbb0d008a074bd11ca2b9ca"
+      },
+      {
+        "file": "assets/features/ui2-club.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/ui2-club.js?v=b20260929m",
+        "status": 200,
+        "bytes": 70685,
+        "sha256": "4222b6b6c38279d00d11fe8e90325da1d209bebb815b5cdedac2dc23dba64637",
+        "expectedCommittedSha256": "4222b6b6c38279d00d11fe8e90325da1d209bebb815b5cdedac2dc23dba64637"
+      },
+      {
+        "file": "assets/features/se-journey.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/se-journey.js?v=b20260929m",
+        "status": 200,
+        "bytes": 74722,
+        "sha256": "9b9c8598fc421bd85acb040dac23d4b7fa49001889b777d24169b7d391c49604",
+        "expectedCommittedSha256": "9b9c8598fc421bd85acb040dac23d4b7fa49001889b777d24169b7d391c49604"
+      },
+      {
+        "file": "assets/features/market-summon-keys-pets.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/market-summon-keys-pets.js?v=b20260929m",
+        "status": 200,
+        "bytes": 53975,
+        "sha256": "1ba2eedf3784ee6c44214379c6f3e0ef7c2aeaeebffe2c7ca0c4f12edc8bb667",
+        "expectedCommittedSha256": "1ba2eedf3784ee6c44214379c6f3e0ef7c2aeaeebffe2c7ca0c4f12edc8bb667"
+      },
+      {
+        "file": "assets/features/no-emoji.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/no-emoji.js?v=b20260929m",
+        "status": 200,
+        "bytes": 36777,
+        "sha256": "5c1a345d8ebb80920a8ce81d2389e04bc722acd4a5e23e19a16301b87f260177",
+        "expectedCommittedSha256": "5c1a345d8ebb80920a8ce81d2389e04bc722acd4a5e23e19a16301b87f260177"
+      },
+      {
+        "file": "assets/features/world-vistas.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/world-vistas.js?v=b20260929m",
+        "status": 200,
+        "bytes": 72427,
+        "sha256": "c42ca1cdbb893a9cd94aa452018817729e76ea2d78637ac8e12be192bd2c8c48",
+        "expectedCommittedSha256": "c42ca1cdbb893a9cd94aa452018817729e76ea2d78637ac8e12be192bd2c8c48"
+      },
+      {
+        "file": "assets/features/pet-fantasy.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/pet-fantasy.js?v=b20260929m",
+        "status": 200,
+        "bytes": 25343,
+        "sha256": "0e860970a7e839f8ce9c275d19d6336e6673ed47799e2dd1b7b9d2b0486aa3ef",
+        "expectedCommittedSha256": "0e860970a7e839f8ce9c275d19d6336e6673ed47799e2dd1b7b9d2b0486aa3ef"
+      },
+      {
+        "file": "assets/features/se-horses.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/se-horses.js?v=b20260929m",
+        "status": 200,
+        "bytes": 86654,
+        "sha256": "bb40039232145a8c981d9b01af57917ac4d7037dff966d644531759c7c97246e",
+        "expectedCommittedSha256": "bb40039232145a8c981d9b01af57917ac4d7037dff966d644531759c7c97246e"
+      },
+      {
+        "file": "assets/features/pet-models.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/pet-models.js?v=b20260929m",
+        "status": 200,
+        "bytes": 160130,
+        "sha256": "6ccd69122d8dd03b1218dec1a5880766255c25c48c6f21241d7aafa2424d2e2f",
+        "expectedCommittedSha256": "6ccd69122d8dd03b1218dec1a5880766255c25c48c6f21241d7aafa2424d2e2f"
+      },
+      {
+        "file": "assets/features/course-clear.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/course-clear.js?v=b20260929m",
+        "status": 200,
+        "bytes": 21125,
+        "sha256": "66a5053ee1ebd2e96197e276cfe6ea081b5591b8ad72b4038143c25f86a12941",
+        "expectedCommittedSha256": "66a5053ee1ebd2e96197e276cfe6ea081b5591b8ad72b4038143c25f86a12941"
+      },
+      {
+        "file": "assets/features/world-paths.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/world-paths.js?v=b20260929m",
+        "status": 200,
+        "bytes": 51272,
+        "sha256": "b61c1f36c55e216e745c8f44ea6c544f4fd12d7bff7b6d77d82d7ba94745d473",
+        "expectedCommittedSha256": "b61c1f36c55e216e745c8f44ea6c544f4fd12d7bff7b6d77d82d7ba94745d473"
+      },
+      {
+        "file": "assets/features/look-grade.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/look-grade.js?v=b20260929m",
+        "status": 200,
+        "bytes": 20530,
+        "sha256": "1a8f993305fe1a94043f7f6900897bf3241fcb0bb20f302e233e1ff896520628",
+        "expectedCommittedSha256": "1a8f993305fe1a94043f7f6900897bf3241fcb0bb20f302e233e1ff896520628"
+      },
+      {
+        "file": "assets/features/ui2-merge.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/ui2-merge.js?v=b20260929m",
+        "status": 200,
+        "bytes": 7629,
+        "sha256": "457aae4d46ed6032fdbfb59bf6184e5433cc798829fd4d0b61ec92ab71848a20",
+        "expectedCommittedSha256": "457aae4d46ed6032fdbfb59bf6184e5433cc798829fd4d0b61ec92ab71848a20"
+      },
+      {
+        "file": "assets/features/social-play.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/social-play.js?v=b20260929m",
+        "status": 200,
+        "bytes": 59483,
+        "sha256": "6cd25bf287c940afa9798169adfa2b8a53d825d27a7646d3a6999672169eba8d",
+        "expectedCommittedSha256": "6cd25bf287c940afa9798169adfa2b8a53d825d27a7646d3a6999672169eba8d"
+      },
+      {
+        "file": "assets/features/seasons.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/seasons.js?v=b20260929m",
+        "status": 200,
+        "bytes": 45229,
+        "sha256": "5dbc14a30fe4bac569b6deab7dbd78137b69bf78b7d8ae761ad4b5ad65c3d765",
+        "expectedCommittedSha256": "5dbc14a30fe4bac569b6deab7dbd78137b69bf78b7d8ae761ad4b5ad65c3d765"
+      },
+      {
+        "file": "assets/features/se-market.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/se-market.js?v=b20260929m",
+        "status": 200,
+        "bytes": 18756,
+        "sha256": "53179af339b30618028e7e0cbf965376caee68d6fc0f1437fc373385a6f5b6da",
+        "expectedCommittedSha256": "53179af339b30618028e7e0cbf965376caee68d6fc0f1437fc373385a6f5b6da"
+      },
+      {
+        "file": "assets/features/breeding.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/breeding.js?v=b20260929m",
+        "status": 200,
+        "bytes": 72691,
+        "sha256": "dabe770e0cfc08d115cf88b56f9414766c78b541043d38a26921de146c298d99",
+        "expectedCommittedSha256": "dabe770e0cfc08d115cf88b56f9414766c78b541043d38a26921de146c298d99"
+      },
+      {
+        "file": "assets/features/season-hunts.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/season-hunts.js?v=b20260929m",
+        "status": 200,
+        "bytes": 40463,
+        "sha256": "6e9e2140448bea73dcd610fe52e9c37f738a098f9a6a2009d0cc42b19deb3615",
+        "expectedCommittedSha256": "6e9e2140448bea73dcd610fe52e9c37f738a098f9a6a2009d0cc42b19deb3615"
+      },
+      {
+        "file": "assets/features/clubs-boards.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/clubs-boards.js?v=b20260929m",
+        "status": 200,
+        "bytes": 58696,
+        "sha256": "3012d0389fd8938c553a17ecc0926122e4dc30bfe13d57557451d06939b09b56",
+        "expectedCommittedSha256": "3012d0389fd8938c553a17ecc0926122e4dc30bfe13d57557451d06939b09b56"
+      },
+      {
+        "file": "assets/features/new-breeds.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/new-breeds.js?v=b20260929m",
+        "status": 200,
+        "bytes": 45878,
+        "sha256": "a33ddc8febff536581de87e7fd34c356b004ee7f550a3f5c577f7e0684f61106",
+        "expectedCommittedSha256": "a33ddc8febff536581de87e7fd34c356b004ee7f550a3f5c577f7e0684f61106"
+      },
+      {
+        "file": "assets/features/ranch.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/ranch.js?v=b20260929m",
+        "status": 200,
+        "bytes": 57222,
+        "sha256": "a6fb7cc869c3ef0a5a7ae29366b7a0bb5354911101b315963cc647839980a85c",
+        "expectedCommittedSha256": "a6fb7cc869c3ef0a5a7ae29366b7a0bb5354911101b315963cc647839980a85c"
+      },
+      {
+        "file": "assets/features/world-water.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/world-water.js?v=b20260929m",
+        "status": 200,
+        "bytes": 62647,
+        "sha256": "a654b83c4ce78bfbd11cb0025af7958854a68ba7f0f089893c8c8e7dd626c252",
+        "expectedCommittedSha256": "a654b83c4ce78bfbd11cb0025af7958854a68ba7f0f089893c8c8e7dd626c252"
+      },
+      {
+        "file": "assets/features/se-hud.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/se-hud.js?v=b20260929m",
+        "status": 200,
+        "bytes": 45882,
+        "sha256": "92bf150497173d08fa3d28b80129fd3e649dc943767fb61b0cb96ed062ac4511",
+        "expectedCommittedSha256": "92bf150497173d08fa3d28b80129fd3e649dc943767fb61b0cb96ed062ac4511"
+      },
+      {
+        "file": "assets/artist-horse-motion.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/artist-horse-motion.js?v=gaits-2",
+        "status": 200,
+        "bytes": 18461,
+        "sha256": "3c78367ba0bc56c2f1e8d9ef1a9d1b01f13d0075d12469dba177910bd8581f05",
+        "expectedCommittedSha256": "3c78367ba0bc56c2f1e8d9ef1a9d1b01f13d0075d12469dba177910bd8581f05"
+      },
+      {
+        "file": "assets/features/events2-ladder.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/events2-ladder.js?v=b20260929m",
+        "status": 200,
+        "bytes": 75598,
+        "sha256": "f75f2bfa5b55bcd197b18055e69263c5d1caafdae77cef5f802d5915eb16a77d",
+        "expectedCommittedSha256": "f75f2bfa5b55bcd197b18055e69263c5d1caafdae77cef5f802d5915eb16a77d"
+      },
+      {
+        "file": "assets/features/se-care.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/se-care.js?v=b20260929m",
+        "status": 200,
+        "bytes": 35942,
+        "sha256": "bc89dc901ae478fa51cef6385889c525d3cef21d67d0be749353e4ae98124198",
+        "expectedCommittedSha256": "bc89dc901ae478fa51cef6385889c525d3cef21d67d0be749353e4ae98124198"
+      },
+      {
+        "file": "assets/features/se-events.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/se-events.js?v=b20260929m",
+        "status": 200,
+        "bytes": 67615,
+        "sha256": "9c11851c55d32db45a249338b0e614d32321c5954e2e407b40c447be87b8402a",
+        "expectedCommittedSha256": "9c11851c55d32db45a249338b0e614d32321c5954e2e407b40c447be87b8402a"
+      },
+      {
+        "file": "assets/hero-horse-coat.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/hero-horse-coat.js?v=hero-ranch-1",
+        "status": 200,
+        "bytes": 2108,
+        "sha256": "c9772922c9071a1e972a18f5d52d87b590a45530d8c49c96d24f4044e19e58c0",
+        "expectedCommittedSha256": "c9772922c9071a1e972a18f5d52d87b590a45530d8c49c96d24f4044e19e58c0"
+      },
+      {
+        "file": "assets/hero-horse-motion.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/hero-horse-motion.js?v=hero-motion-20260908-4",
+        "status": 200,
+        "bytes": 15112,
+        "sha256": "2d44964a3c9705a2de94e281b56672be6c571fde3d1a614d101049df11afdc10",
+        "expectedCommittedSha256": "2d44964a3c9705a2de94e281b56672be6c571fde3d1a614d101049df11afdc10"
+      },
+      {
+        "file": "assets/horse-style.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/horse-style.js",
+        "status": 200,
+        "bytes": 23089,
+        "sha256": "f6e0fad9651b3ea96154b5efe43e1b9b185c038070fa644298046f6fdb961fc5",
+        "expectedCommittedSha256": "f6e0fad9651b3ea96154b5efe43e1b9b185c038070fa644298046f6fdb961fc5"
+      },
+      {
+        "file": "assets/features/horse-roster.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/horse-roster.js?v=b20260929m",
+        "status": 200,
+        "bytes": 86641,
+        "sha256": "468c4171d653c4e3975642675f50b8ef098ba4d154ceedb5b29d0e6b44e21cc5",
+        "expectedCommittedSha256": "468c4171d653c4e3975642675f50b8ef098ba4d154ceedb5b29d0e6b44e21cc5"
+      },
+      {
+        "file": "assets/chat-filter.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/chat-filter.js",
+        "status": 200,
+        "bytes": 6718,
+        "sha256": "511a06b4d3aa093ed05a35f8476ea9b4383f3b1d29b1cae3ee03a039cf7fcb24",
+        "expectedCommittedSha256": "511a06b4d3aa093ed05a35f8476ea9b4383f3b1d29b1cae3ee03a039cf7fcb24"
+      },
+      {
+        "file": "assets/features/world-outcrops.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/world-outcrops.js?v=b20260929m",
+        "status": 200,
+        "bytes": 14068,
+        "sha256": "9c4cec77b4255fe7db66e64b8937bfdfd266f39088223497766cd10d6453961a",
+        "expectedCommittedSha256": "9c4cec77b4255fe7db66e64b8937bfdfd266f39088223497766cd10d6453961a"
+      },
+      {
+        "file": "assets/hero-horse-groom.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/hero-horse-groom.js?v=hero-ranch-1",
+        "status": 200,
+        "bytes": 19785,
+        "sha256": "3e816db80a88255d45504a38a84a88669e83bbc0c140aac2f0767a098a1bfcf1",
+        "expectedCommittedSha256": "3e816db80a88255d45504a38a84a88669e83bbc0c140aac2f0767a098a1bfcf1"
+      },
+      {
+        "file": "assets/native-horse-motion.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/native-horse-motion.js?v=native-secondary-1",
+        "status": 200,
+        "bytes": 14186,
+        "sha256": "49ad8e0e281b1e77c6993bff2cca3549567ff7690f36ca866d38731a9ec1bb2d",
+        "expectedCommittedSha256": "49ad8e0e281b1e77c6993bff2cca3549567ff7690f36ca866d38731a9ec1bb2d"
+      },
+      {
+        "file": "assets/features/events2-disciplines.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/events2-disciplines.js?v=b20260929m",
+        "status": 200,
+        "bytes": 114074,
+        "sha256": "d1d2525776cfa829fc4a28a7f32bae9fe78b9cdc3f19ed6675a4603537f6d972",
+        "expectedCommittedSha256": "d1d2525776cfa829fc4a28a7f32bae9fe78b9cdc3f19ed6675a4603537f6d972"
+      },
+      {
+        "file": "assets/rider-hair.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/rider-hair.js",
+        "status": 200,
+        "bytes": 11521,
+        "sha256": "e0133170338ced6c283c23ba01b091eb232dfa4da9ee7434a6a8222a71fde902",
+        "expectedCommittedSha256": "e0133170338ced6c283c23ba01b091eb232dfa4da9ee7434a6a8222a71fde902"
+      },
+      {
+        "file": "assets/features/events-pvp.js",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/features/events-pvp.js?v=b20260929m",
+        "status": 200,
+        "bytes": 62589,
+        "sha256": "af499f94daddcf6622cff60af469784c61ca2ac0827fb7f292f2930666626c44",
+        "expectedCommittedSha256": "af499f94daddcf6622cff60af469784c61ca2ac0827fb7f292f2930666626c44"
+      },
+      {
+        "file": "assets/native-groom-layer.mjs",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/native-groom-layer.mjs?v=native-secondary-1",
+        "status": 200,
+        "bytes": 4372,
+        "sha256": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240",
+        "expectedCommittedSha256": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240"
+      },
+      {
+        "file": "assets/native-groom-controls.mjs",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/native-groom-controls.mjs?v=native-secondary-1",
+        "status": 200,
+        "bytes": 55223,
+        "sha256": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735",
+        "expectedCommittedSha256": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735"
+      },
+      {
+        "file": "assets/frame-inertia.mjs",
+        "url": "https://mmoritz2.github.io/meadowlark-ranch/assets/frame-inertia.mjs?v=native-secondary-1",
+        "status": 200,
+        "bytes": 5290,
+        "sha256": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187",
+        "expectedCommittedSha256": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187"
+      }
+    ]
+  },
+  "pins": {
+    "ranch3d.html": "b68dfe59c2dd752870d68a5a83f5aa7a1596b2437f2135a4f4b521747d6ae477",
+    "assets/game-hero-horse.js": "26e489ce312e84d8fcb6473d1a51f01a17ffeda259c67b636e85a7ef4405a557",
+    "assets/native-horse-motion.js": "49ad8e0e281b1e77c6993bff2cca3549567ff7690f36ca866d38731a9ec1bb2d",
+    "assets/native-groom-layer.mjs": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240",
+    "assets/frame-inertia.mjs": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187",
+    "assets/native-groom-controls.mjs": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735",
+    "assets/native-breed-profiles.js": "721c1a3aae4c7feaaf84e173c4e609716ad239ba94402637e85b5a874cd331fd"
+  },
+  "independentPackedAssetGET": {
+    "url": "https://mmoritz2.github.io/meadowlark-ranch/review/native-bay-sporthorse-packed-kit/model.glb",
+    "status": 200,
+    "bytes": 16961188,
+    "sha256": "a7ea093b602d1b6f3ce234afaed89925974faf7a127bf07b2900ac41674b0f74",
+    "expectedSha256": "a7ea093b602d1b6f3ce234afaed89925974faf7a127bf07b2900ac41674b0f74",
+    "expectedBytes": 16961188
+  },
+  "horses": [
+    {
+      "id": "white-western",
+      "profileSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+      "bones": 677,
+      "finite": true,
+      "zeroPhaseDelta": 0,
+      "groomFrameIncrement": 1,
+      "protectedVertexDeltaM": 0,
+      "sameTimeHairReapplyDeltaM": 0,
+      "addedHairComponentM": 0.01826945322805673,
+      "actualSkinnedBootResidualM": {
+        "L": 1.4793583132586557e-07,
+        "R": 7.497382134941261e-07
+      },
+      "reinEndpointResidualM": {
+        "left": {
+          "bit": 0,
+          "hand": 1.9860273225978185e-15
+        },
+        "right": {
+          "bit": 0,
+          "hand": 4.440892098500626e-16
+        }
+      },
+      "nonReinComponentsIntact": true,
+      "worldRenderCalls": [
+        {
+          "target": "Nearby water reflection",
+          "groomFrames": 221,
+          "phase": 0.21083576170761953
+        },
+        {
+          "target": "EffectComposer.rt1",
+          "groomFrames": 221,
+          "phase": 0.21083576170761953
+        }
+      ],
+      "reflectionState": {
+        "renders": 141,
+        "active": true
+      }
+    },
+    {
+      "id": "bay-western",
+      "profileSha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+      "bones": 677,
+      "finite": true,
+      "zeroPhaseDelta": 0,
+      "groomFrameIncrement": 1,
+      "protectedVertexDeltaM": 0,
+      "sameTimeHairReapplyDeltaM": 0,
+      "addedHairComponentM": 0.028281462819602865,
+      "actualSkinnedBootResidualM": {
+        "L": 3.0853974855502066e-06,
+        "R": 3.6285392694506005e-06
+      },
+      "reinEndpointResidualM": {
+        "left": {
+          "bit": 0,
+          "hand": 2.094764613337708e-15
+        },
+        "right": {
+          "bit": 0,
+          "hand": 1.4217791915866692e-15
+        }
+      },
+      "nonReinComponentsIntact": true,
+      "worldRenderCalls": [
+        {
+          "target": "Nearby water reflection",
+          "groomFrames": 221,
+          "phase": 0.6294275544352352
+        },
+        {
+          "target": "EffectComposer.rt1",
+          "groomFrames": 221,
+          "phase": 0.6294275544352352
+        }
+      ],
+      "reflectionState": {
+        "renders": 252,
+        "active": true
+      }
+    },
+    {
+      "id": "bay-sporthorse-native",
+      "profileSha256": "a7ea093b602d1b6f3ce234afaed89925974faf7a127bf07b2900ac41674b0f74",
+      "bones": 677,
+      "finite": true,
+      "zeroPhaseDelta": 0,
+      "groomFrameIncrement": 1,
+      "protectedVertexDeltaM": 0,
+      "sameTimeHairReapplyDeltaM": 0,
+      "addedHairComponentM": 0.01265390986649173,
+      "actualSkinnedBootResidualM": {
+        "L": 2.338144812955346e-06,
+        "R": 2.9360174513158215e-06
+      },
+      "reinEndpointResidualM": {
+        "left": {
+          "bit": 0,
+          "hand": 1.897149936107019e-15
+        },
+        "right": {
+          "bit": 0,
+          "hand": 1.831026719408895e-15
+        }
+      },
+      "nonReinComponentsIntact": true,
+      "worldRenderCalls": [
+        {
+          "target": "Nearby water reflection",
+          "groomFrames": 221,
+          "phase": 0.16666182155338194
+        },
+        {
+          "target": "EffectComposer.rt1",
+          "groomFrames": 221,
+          "phase": 0.16666182155338194
+        }
+      ],
+      "reflectionState": {
+        "renders": 144,
+        "active": true
+      }
+    }
+  ],
+  "reflectionCoverageNote": "The initial three-horse Sporthorse view had reflections inactive; its available main render correctly had the completed groom frame. That unmet fixture coverage remains in three-horse-report.json. A separate live High/near-water Sporthorse view produced a real mirror render with the same current groom frame and passed all11 gates under identical final runtime hashes. This is externally covered fixture coverage, not a game failure or silent change.",
+  "errors": [],
+  "limits": "Original hair cards/sheets, bounded spring response and untested hair collisions remain; no all-breed or polished-naturalism approval."
+}

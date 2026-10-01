@@ -9,3 +9,5 @@ Long frame intervals reseed from the newly authored pose. Pause, reset and dispo
 This adds movement to existing hair cards. It does not replace them with strands or certify hair/body collisions. Actual game integration and publication are recorded in release-verification.json when complete. Gait-transition hoof contact and the unfinished breed roster remain separate work.
 
 [Actual mounted game checks](mounted-game-summary.json) cover 192 gait samples, full-mesh comparisons, steering, start/stop, rider contacts and cleanup on the first deferred controller. Separately pinned final checks cover [zero-delta updates](final-zero-render-report.json) and [Sporthorse mirror rendering](final-sport-reflection-report.json); all three mounted horses give zero same-time hair reapply and protected mesh differences. Run `qa-mounted.cjs` with `QA_PORT` or `QA_URL` configured and the project Playwright runtime available to repeat the mounted check.
+
+The final three-horse reflection probe had inactive mirror coverage for Sporthorse at that camera; the separate near-water Sporthorse test closes that coverage gap. The original probe and its coverage result remain recorded.
