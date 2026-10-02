@@ -39,7 +39,9 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     normalMap: map('roof_normal.jpg'), normalScale: new THREE.Vector2(.52,.52),
     roughnessMap: map('roof_roughness.jpg'), roughness: 1, envMapIntensity: .45,
   }, 1.8);
-  const trim = material('Ranch | warm painted joinery', {color:'#dcdad0',roughness:.83});
+  const trim = material('Ranch | warm painted joinery', {color:'#dcdad0',roughness:.87,
+    normalMap:map('../builder/coated_pine_nor_gl.webp'),normalScale:new THREE.Vector2(.20,.20),
+    roughnessMap:map('../builder/coated_pine_arm.webp')});
   const wood = material('Ranch | oiled oak doors', {color:'#69513d',roughness:.8,
     map:map('siding_albedo.jpg',true)},2.4);
   const metal = material('Ranch | dark ironwork', {color:'#333a38',roughness:.66,metalness:.58});

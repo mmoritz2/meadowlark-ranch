@@ -1,0 +1,50 @@
+{
+  "asset": "Grass004",
+  "author": "ambientCG / Lennart Demes",
+  "page": "https://ambientcg.com/view?id=Grass004",
+  "download": "https://ambientcg.com/get?file=Grass004_2K-JPG.zip",
+  "license": "CC0-1.0",
+  "licenseURL": "https://docs.ambientcg.com/license/",
+  "retrieved": "2026-10-02",
+  "tileMetres": 1.4,
+  "sourceFiles": [
+    {
+      "file": "Grass004_2K-JPG_Color.jpg",
+      "bytes": 7644307,
+      "sha256": "735b141c8f1972e70a45879424f1238fea9f887324173097785f4ac36e67e9a3"
+    },
+    {
+      "file": "Grass004_2K-JPG_NormalGL.jpg",
+      "bytes": 10015079,
+      "sha256": "15ccad231764049d6581a52076d02bb6b627df77895cb0508e4017d8a4877fef"
+    },
+    {
+      "file": "Grass004_2K-JPG_AmbientOcclusion.jpg",
+      "bytes": 3659925,
+      "sha256": "0f9180993db4c7b9479ad2a4b65763d90e8668fb7e800baff68cac1883a9dff5"
+    },
+    {
+      "file": "Grass004_2K-JPG_Roughness.jpg",
+      "bytes": 3413801,
+      "sha256": "c449fdf1e779eb7be5a19c1d58ee28cc155ed0523a141b151f3cbc843c4ae2e3"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "grass_diff.webp",
+      "bytes": 1710342,
+      "sha256": "4e1835cb0773b6786a4318bf16081d6bc6f243b2da81d97e41288fa0744bfc5e"
+    },
+    {
+      "file": "grass_nor_gl.webp",
+      "bytes": 745476,
+      "sha256": "ca04f29fab1ccbeba87b8190f74fdcfbb753b4cb88255129b7a8310a345a8236"
+    },
+    {
+      "file": "grass_arm.webp",
+      "bytes": 155840,
+      "sha256": "895e68099d61d46727acf281fdf98274292934e092638b3efca42a369ef0761a"
+    }
+  ],
+  "processing": "Original albedo preserved. WebP 2048px color, 1024px OpenGL normal, 512px packed AO/roughness/zero metalness."
+}

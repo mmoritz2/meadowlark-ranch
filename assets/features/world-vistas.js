@@ -20,6 +20,7 @@
    the codebase, which makes 0 south and PI north.
 
    Owned by this package: this file only. Nothing runs at import time. */
+import {dressLandscape} from '../landscape-surface.js';
 export const id='world-vistas';
 export function install(G){
  /* ?novistas boots the world without any of this, so a before-and-after pair can be shot from
@@ -213,49 +214,14 @@ export function install(G){
  const SKY_BASE=-18;
  const rockMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,metalness:0,side:THREE.DoubleSide});
  rockMat.envMapIntensity=0.5;
- const massifTexture=new THREE.TextureLoader().load('./assets/textures/realism/rock_albedo.jpg');
- massifTexture.colorSpace=THREE.SRGBColorSpace;
- massifTexture.wrapS=massifTexture.wrapT=THREE.RepeatWrapping;
- massifTexture.anisotropy=Math.min(8,G.renderer.capabilities.getMaxAnisotropy());
- /* FogExp2 at 0.00125 leaves a peak at 900 m seventy per cent washed toward the sky colour,
-    which is not aerial perspective, it is erasure — world-art.js had to soften the same fog
-    for the rings standing behind these, for the same reason. This is that cheat with a weaker
-    hand, because these stand nearer than those do: at 800 m a ridge keeps most of its own
-    colour, by 1300 m it is two thirds sky, and the far rings stay hazier still, so the depth
-    ordering of the whole skyline comes out in the right order. */
- rockMat.onBeforeCompile=sh=>{
-  sh.uniforms.massifTexture={value:massifTexture};
-  sh.vertexShader='varying vec3 massifPosition; varying vec3 massifNormal;\n'+sh.vertexShader;
-  sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
-    massifPosition=(modelMatrix*vec4(position,1.0)).xyz;
-    massifNormal=normalize(mat3(modelMatrix)*normal);`);
-  sh.fragmentShader='uniform sampler2D massifTexture; varying vec3 massifPosition; varying vec3 massifNormal;\n'+sh.fragmentShader;
-  sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
-    vec3 mw=pow(abs(normalize(massifNormal)),vec3(4.0));mw/=max(dot(mw,vec3(1.0)),.001);
-    vec3 mp=massifPosition*.065;
-    vec3 mineral=texture2D(massifTexture,mp.yz).rgb*mw.x+texture2D(massifTexture,mp.xz).rgb*mw.y+texture2D(massifTexture,mp.xy).rgb*mw.z;
-    float grain=dot(mineral,vec3(.2126,.7152,.0722));
-    float fold=sin(massifPosition.x*.027+sin(massifPosition.z*.018)*3.0+massifPosition.y*.035);
-    float ledge=sin(massifPosition.y*.19+sin(massifPosition.x*.009)*5.0);
-    diffuseColor.rgb*=clamp(.73+grain*.78+fold*.08+ledge*.025,.60,1.18);`);
-  sh.fragmentShader=sh.fragmentShader.replace('#include <fog_fragment>',`
-#ifdef USE_FOG
- #ifdef FOG_EXP2
-  float vistaFog = 1.0 - exp(-fogDensity*fogDensity*vFogDepth*vFogDepth*0.34);
- #else
-  float vistaFog = smoothstep(fogNear,fogFar,vFogDepth)*0.6;
- #endif
- gl_FragColor.rgb = mix(gl_FragColor.rgb, fogColor, min(0.66, vistaFog));
-#endif`);
- };
- rockMat.customProgramCacheKey=()=>'vista-massif-v2-mineral';
+ dressLandscape({THREE,material:rockMat,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy())});
 
  /* A massif is a patch of heightfield laid along a bearing: u runs along the range, v across
     it, and the summits are named points on that ridgeline rather than wherever the noise
     happened to pile up. Placing the peaks by hand is the entire point — a skyline you can
     steer by needs the sharp one to be in the same place as the word "north". */
  function massif(cfg){
-  const nu=Math.max(cfg.nu||108,160),nv=Math.max(cfg.nv||14,40),b=cfg.bearing,dist=cfg.dist,span=cfg.span,depth=cfg.depth;
+  const nu=240,nv=80,b=cfg.bearing,dist=cfg.dist,span=cfg.span,depth=cfg.depth;
   const ax=Math.cos(b),az=-Math.sin(b);                   // along the range
   const ox=Math.sin(b),oz=Math.cos(b);                    // outward, away from the basin
   const rock=new THREE.Color(cfg.rock),high=new THREE.Color(cfg.high||cfg.rock);
@@ -283,7 +249,14 @@ export function install(G){
     const g2=fbm((u+sd*57)*0.042,(v-sd*33)*0.042);       // the small break-up on top of both
     const r=dist+v+(g1-0.5)*depth*0.26;                  // the range advances and retreats
     const wx=ox*r+ax*u,wz=oz*r+az*u;
-    let y=SKY_BASE+hr*Math.max(0,prof)*(0.58+g1*0.44+g3*0.20)+(g2-0.5)*hr*0.08;
+    // Branching gullies and broken shelves interrupt the former smooth,
+    // uniformly draped slopes. The named summit locations remain fixed.
+    const warp=noise2(u*.008+sd,v*.009)*11;
+    const gullies=noise2(u*.036+warp,v*.015+sd);
+    const shelves=noise2(u*.075-sd,v*.064+warp);
+    const flank=Math.sin(Math.PI*clamp(t/lc,0,1));
+    let y=SKY_BASE+hr*Math.max(0,prof)*(.69+g1*.32+g3*.10)
+      +(g2-.5)*hr*.10+(gullies-.5)*hr*.20*flank+(shelves-.5)*hr*.055*Math.max(0,prof);
     if(t<0.055)y=SKY_BASE-8;                             // the inner hem, buried under the far ground
     pos.push(wx,y,wz);
     const up=clamp((y-SKY_BASE)/tall,0,1);
@@ -291,7 +264,7 @@ export function install(G){
        blue-grey and every peak came out the colour of the sky it was standing against — a
        distant mountain is dark, and it is the fog that lifts it, not the paint. */
     c.copy(foot).lerp(rock,smooth(0.04,0.38,up));c.lerp(high,smooth(0.34,1.0,up)*0.50);
-    c.multiplyScalar(0.84+g1*0.16+g3*0.10);
+    c.multiplyScalar(.73+g1*.17+g3*.10+gullies*.15);
     col.push(c.r,c.g,c.b);
     snowAmt.push(cfg.snowAt==null?0:smooth(cfg.snowAt,cfg.snowAt+(cfg.snowBand||36),y));
    }
@@ -673,6 +646,8 @@ export function install(G){
   for(let k=0;k<16;k++){const u=A.rr(-30,30),t=A.rr(0.02,0.07);
    const p=loc(surf(u,t));A.sph(A.rr(0.5,1.4),A.rr(0.25,0.6),A.rr(0.5,1.2),CHALK,p[0],p[1]+0.2,p[2],0,0,0,0.94);}
   const me=A.mesh();me.name='vista:chalkscarp';me.castShadow=false;me.receiveShadow=true;
+  me.material=LM.clone();
+  dressLandscape({THREE,material:me.material,meadow:true,fogScale:1,fogCap:1});
   const g=new THREE.Group();g.add(me);g.position.set(SCARP.x,y0,SCARP.z);scene.add(g);
   /* Colliders over the raised part. A circle is the only shape the collision system speaks,
      so two rows of them follow the crescent and leave the grass at the toe free to ride. */

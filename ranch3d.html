@@ -2740,7 +2740,7 @@ bumpTexture.repeat.set(130,130);
 const texLoad=(path,rep)=>{const t=new THREE.TextureLoader().load(path);
  t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rep,rep);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;};
 const texData=(path,rep)=>{const t=texLoad(path,rep);t.colorSpace=THREE.NoColorSpace;return t;};
-const grassLoad=rep=>texLoad('assets/textures/scanned/leafy_grass_diff.webp',rep);
+const grassLoad=rep=>texLoad('assets/textures/pasture/grass_diff.webp',rep);
 const groundTex=grassLoad(240);
 const sandTex=texLoad('assets/textures/pastoral/arena_albedo.jpg',10);   // generated tile, same repeat and wrap as the canvas it replaces
 // Tapered blades with curved tips; silhouettes stay soft at riding distance.
@@ -3641,7 +3641,9 @@ function grainTex(base,grain,alpha){
   c.globalAlpha=1;
  },1);
 }
-const whitePaintMat=new THREE.MeshStandardMaterial({map:grainTex('#f4f0e6','#c9bfa8',0.5),roughness:0.7});
+const whitePaintMat=new THREE.MeshStandardMaterial({map:grainTex('#ece8db','#c9bfa8',0.5),roughness:0.87,
+ normalMap:texData('assets/textures/builder/coated_pine_nor_gl.webp',1),normalScale:new THREE.Vector2(.24,.24),
+ roughnessMap:texData('assets/textures/builder/coated_pine_arm.webp',1)});
 whitePaintMat.envMapIntensity=0.62;
 const paintCache={};
 function paintMat(hex){

@@ -1,5 +1,6 @@
 /* Original pastoral environment art. All geometry and foliage are authored here;
    no imagery or models from the reference game are bundled. */
+import {dressLandscape} from './landscape-surface.js';
 const TAU = Math.PI * 2;
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
@@ -44,7 +45,7 @@ export function installBackdrop({ THREE, scene }) {
       low: '#354936', high: '#64704d', snow: false },
   ];
   for (const cfg of configs) {
-    const segments = 512, rings = 32;
+    const segments = 512, rings = 48;
     const vertices = [], colors = [], indices = [];
     const low = new THREE.Color(cfg.low), high = new THREE.Color(cfg.high);
     const rock = new THREE.Color('#77796f'), snow = new THREE.Color('#c5cfd1');
@@ -65,8 +66,8 @@ export function installBackdrop({ THREE, scene }) {
         const warp = terrainNoise(x * 0.004 + cfg.phase * 10, z * 0.004) * 26;
         const erosion = 1 - Math.abs(terrainNoise(x * 0.014 + warp, z * 0.014 - warp) * 2 - 1);
         const spurs = Math.pow(Math.abs(Math.sin(a * 34 + warp * 0.12 + t * 3)), 1.4);
-        const broken = (erosion - 0.58) * cfg.height * 0.10 * Math.sin(Math.PI * t);
-        const folds = (spurs - 0.5) * cfg.height * 0.028 * profile;
+        const broken = (erosion - 0.58) * cfg.height * 0.16 * Math.sin(Math.PI * t);
+        const folds = (spurs - 0.5) * cfg.height * 0.06 * profile;
         const y = -15 + profile * cfg.height * silhouette + broken + folds;
         vertices.push(x, y, z);
         const variation = terrainNoise(x * 0.04, z * 0.04);
@@ -109,30 +110,7 @@ export function installBackdrop({ THREE, scene }) {
       fog: true,
       side: THREE.DoubleSide,
     });
-    material.onBeforeCompile = shader => {
-      shader.vertexShader = 'varying vec3 vRidgePosition;\n' + shader.vertexShader.replace(
-        '#include <begin_vertex>', '#include <begin_vertex>\nvRidgePosition = position;');
-      shader.fragmentShader = `varying vec3 vRidgePosition;
-float ridgeHash(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453);}
-float ridgeNoise(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
- return mix(mix(mix(ridgeHash(i),ridgeHash(i+vec3(1,0,0)),f.x),mix(ridgeHash(i+vec3(0,1,0)),ridgeHash(i+vec3(1,1,0)),f.x),f.y),
- mix(mix(ridgeHash(i+vec3(0,0,1)),ridgeHash(i+vec3(1,0,1)),f.x),mix(ridgeHash(i+vec3(0,1,1)),ridgeHash(i+vec3(1,1,1)),f.x),f.y),f.z);}
-` + shader.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
- float geological = ridgeNoise(vRidgePosition * 0.035);
- float fissures = ridgeNoise(vRidgePosition * vec3(0.10,0.025,0.10));
- float strata = sin((vRidgePosition.y + geological * 8.0) * 0.42);
- diffuseColor.rgb *= 0.86 + geological * 0.13 + fissures * 0.03 + strata * 0.007;`);
-      shader.fragmentShader = shader.fragmentShader.replace('#include <fog_fragment>', `
-#ifdef USE_FOG
- #ifdef FOG_EXP2
-  float ridgeFog = 1.0 - exp(-fogDensity * fogDensity * vFogDepth * vFogDepth * 0.14);
- #else
-  float ridgeFog = smoothstep(fogNear, fogFar, vFogDepth) * 0.62;
- #endif
- gl_FragColor.rgb = mix(gl_FragColor.rgb, fogColor, min(0.65, ridgeFog));
-#endif`);
-    };
-    material.customProgramCacheKey = () => 'eroded-ridge-v2';
+    dressLandscape({THREE,material,fogScale:.19,fogCap:.88});
     const ridge = new THREE.Mesh(geometry, material);
     ridge.name = cfg.snow ? 'Distant northern massif' : 'Wooded rolling ridgeline';
     ridge.castShadow = false;

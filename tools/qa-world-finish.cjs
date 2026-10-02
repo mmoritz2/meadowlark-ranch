@@ -116,7 +116,7 @@ const out=path.resolve(process.argv[2]||'output/world-finish');fs.mkdirSync(out,
    lowUsesTreeFallback:modes[0].scanTrees===0,mediumTreeBudget:modes[1].scanTrees<=6,
    highTreeBudget:modes[2].scanTrees>0&&modes[2].scanTrees<=12,
    sameModelDistantTrees:state.scans.distantTrees>100,
-   scannedGroundActive:state.groundSource.includes('scanned/leafy_grass_diff')};
+   pastureGroundActive:state.groundSource.includes('pasture/grass_diff')};
   fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({checks,errors,ao,modes,frames,state},null,2));
   for(const [k,v]of Object.entries(checks))console.log((v?'PASS ':'FAIL ')+k);
   console.log(JSON.stringify({ao,placed:state.details.placed.length,programs:state.programs}));

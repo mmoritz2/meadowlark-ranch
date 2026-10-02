@@ -61,10 +61,10 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const wetWeather={value:0};
   const uniforms = {terrainRock:{value:load('rock')}, terrainForest:{value:load('forest_floor')}, forestMask:{value:forest},
-    meadowDetail:detail('./assets/textures/scanned/leafy_grass_nor_gl.webp'),
+    meadowDetail:detail('./assets/textures/pasture/grass_nor_gl.webp'),
     stoneDetail:detail('./assets/textures/scanned/rock_boulder_cracked_nor_gl.webp'),
     litterDetail:detail('./assets/textures/scanned/forest_ground_04_nor_gl.webp'),
-    meadowARM:detail('./assets/textures/scanned/leafy_grass_arm.webp'),
+    meadowARM:detail('./assets/textures/pasture/grass_arm.webp'),
     stoneARM:detail('./assets/textures/scanned/rock_boulder_cracked_arm.webp'),
     litterARM:detail('./assets/textures/scanned/forest_ground_04_arm.webp'),wetWeather};
   for(const [key,path] of [['terrainSoil','./assets/textures/ground_sand.jpg'],['terrainSnow','./assets/textures/ground_snow.jpg']]){
@@ -72,7 +72,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v5-relief';
+  material.customProgramCacheKey = () => 'terrain-biomes-v6-pasture';
   material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
@@ -96,7 +96,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       ` + sh.fragmentShader;
     sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>',`
       vec2 p = terrainPosition.xz;
-      vec2 uv = p / 2.0;
+      vec2 uv = p / 1.4;
       vec3 turf;
       #ifdef CHEAP_GROUND
         turf = texture2D(map,uv).rgb;
@@ -147,7 +147,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
          mean and the result was a landscape that varied on paper and read as one colour from
          forty metres — this pushes the common middle out towards both ends. */
       float dryness = smoothstep(0.17,0.83, macro*0.55 + region*0.45);
-      vec3 tint = mix(vec3(.40,.60,.42), vec3(1.02,.89,.58), dryness);
+      vec3 tint = mix(vec3(.72,.83,.66), vec3(.96,.94,.75), dryness);
       /* How heavy the sward is, which the eye reads as VALUE rather than hue: thin turf over
          hard ground is paler and greyer, a deep bite of grass is darker. This is the term that
          carries the middle distance — forty to two hundred metres, where the albedo has mipped
@@ -171,7 +171,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       tint = mix(tint, tint*vec3(.67,.85,.70), damp*0.55);
       tint = mix(tint, tint*vec3(1.18,1.11,0.90), dry*0.45);
       turf *= tint;
-      turf=mix(vec3(dot(turf,vec3(.2126,.7152,.0722))),turf,.80);
+      turf=mix(vec3(dot(turf,vec3(.2126,.7152,.0722))),turf,.93);
 
       /* One fetch, two fields — see the mask canvas above. The canopy edge is pushed around by
          stand so the treeline on the ground is ragged rather than a set of soft circles. */
