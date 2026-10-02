@@ -639,7 +639,7 @@ import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=native-roster-1';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=riding-speed-1';
 import {createNativeRiderBridge} from './assets/native-rider.js?v=native-rider-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js';
@@ -13120,7 +13120,8 @@ function startHints(){
 }
 function tick(stepSeconds){
  // The animation loop supplies a timestamp; explicit test steps use a separate flag.
- let dt=manualStepping?stepSeconds:Math.min(0.05,clock.getDelta());
+ // Keep real-time travel at 10–20 fps too; long stalls remain bounded.
+ let dt=manualStepping?stepSeconds:Math.min(0.1,clock.getDelta());
  if(G.photoPause)dt=0;                    // photo mode's ⏸ freeze (clubs-boards): the camera still flies, the valley holds still
  if(manualStepping)clock.elapsedTime+=dt;
  const t=clock.elapsedTime;
@@ -13145,6 +13146,14 @@ function tick(stepSeconds){
   if(fwd)target=gallop?(abil==='swift'?15.5:12.5)*spMul:(abil==='swift'?5.6:4.8);
   if(back)target=-1.6;
  }
+ if(RIG.profile?.referenceMotion||RIG.profile?.nativeRoster)RIG.nativeCanFly=!!myHorses[rideIdx]?.wings;
+ const nativeCap=RIG.attachedTo===player.mesh?getNativeHorseCapabilities(RIG):null;
+ const requestedMode=keys.ControlLeft||keys.ControlRight?'walk':keys.AltLeft||keys.AltRight?'trot':gallop?'gallopLeft':'canterLeft';
+ RIG.nativeRequestedGait=nativeCap?.paced?requestedMode:null;
+ if(nativeCap?.paced&&target>0&&!player.flying){
+  const pace=nativeCap.gaitSpeeds[requestedMode];
+  if(pace)target=pace*Math.max(.75,spMul/.928);
+ }
  const inVR=renderer.xr.isPresenting;
  if((inVR||touch.analog)&&target>0&&touch.goA>0)target*=0.34+0.66*touch.goA;   // stick or reins: ease out of a walk
  if(touch.brake){target=0;}                       // reins drawn back into your chest = whoa
@@ -13160,19 +13169,19 @@ function tick(stepSeconds){
     a halt faster. Blown, the horse will not gallop until it has some back. Race pickups and
     a good horse's stat are the two ways to keep it. */
  if(player.stam==null)player.stam=1;
- if(gallop&&fwd&&!player.flying&&Math.abs(player.speed)>6.5)player.stam=Math.max(0,player.stam-dt*0.045*(1-0.06*((HS.stamina||3)-3))*RIDE.drain*mulOf('stamDrain',null,myHorses[rideIdx],RIDE));
+ const gallopThreshold=nativeCap?.paced?(nativeCap.gaitSpeeds.canterLeft||nativeCap.maxSpeedMps):6.5;
+ if(gallop&&fwd&&!player.flying&&Math.abs(player.speed)>gallopThreshold)player.stam=Math.max(0,player.stam-dt*0.045*(1-0.06*((HS.stamina||3)-3))*RIDE.drain*mulOf('stamDrain',null,myHorses[rideIdx],RIDE));
  else player.stam=Math.min(1,player.stam+dt*(Math.abs(player.speed)<0.5?0.12:Math.abs(player.speed)<3?0.07:0.035)*RIDE.regen*mulOf('stamRegen',null,myHorses[rideIdx],RIDE));
  if(player.stam<=0.12)player.blown=true; if(player.blown&&player.stam>0.35)player.blown=false;
- if(player.blown&&target>5.5)target=5.5;
+ const tiredCap=nativeCap?.paced?(nativeCap.gaitSpeeds.canterLeft||nativeCap.maxSpeedMps):5.5;
+ if(player.blown&&target>tiredCap)target=tiredCap;
  if(player.boostT>0){player.boostT-=dt;target*=1.22;}
- if(RIG.profile?.referenceMotion||RIG.profile?.nativeRoster)RIG.nativeCanFly=!!myHorses[rideIdx]?.wings;
- const nativeCap=RIG.attachedTo===player.mesh?getNativeHorseCapabilities(RIG):null;
  if(nativeCap?.native){
   if(player.flying&&!nativeCap.canFly){setFlying(false);player.y=0;player.vy=0;}
-  const requestedMode=keys.ControlLeft||keys.ControlRight?'walk':keys.AltLeft||keys.AltRight?'trot':gallop?'gallopLeft':'canterLeft';
-  const gaitCap=(RIG.profile.nativeGaits?.[requestedMode]?.nominalSpeedMps||nativeCap.nominalMaxSpeedMps)*nativeCap.worldScale;
+  const gaitCap=nativeCap.gaitMaxSpeeds[requestedMode]??nativeCap.maxSpeedMps;
   const max=player.flying&&nativeCap.canFly?nativeCap.flightMaxSpeedMps:gaitCap;
   target=THREE.MathUtils.clamp(target,0,max);
+  if(nativeCap.paced&&target>0&&!player.flying)RIG.nativePaceFactor=target/nativeCap.gaitSpeeds[requestedMode];
  }
  {const sw=$('stamWrap'); if(sw){const show=(course&&course.started)||player.stam<0.98||player.blown; sw.style.display=show?'block':'none'; if(show){$('stamFill').style.width=Math.round(player.stam*100)+'%'; sw.classList.toggle('blown',!!player.blown);}}}
  const accel=target>player.speed?1.7*acMul:(touch.brake?5.2:2.8);

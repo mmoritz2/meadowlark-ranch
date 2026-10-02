@@ -1,0 +1,414 @@
+{
+  "mounts": [
+    {
+      "key": "bay",
+      "gaits": [
+        {
+          "modifier": "Control",
+          "gait": "walk",
+          "speed": 0.6287384277906548,
+          "heroRate": 1.3499086198505743,
+          "nominal": 0.5494505494505494,
+          "scale": 0.8476899263786155,
+          "priorCap": 0.46576369581242605,
+          "distance": 0.7543518158152027,
+          "elapsedS": 1.2,
+          "startStamina": 1,
+          "stamina": 1,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": "Alt",
+          "gait": "trot",
+          "speed": 2.3277787751677024,
+          "heroRate": 1.4998984665006383,
+          "nominal": 1.8308080808080809,
+          "scale": 0.8476899263786155,
+          "priorCap": 1.5519575672335764,
+          "distance": 2.7928373203371546,
+          "elapsedS": 1.2,
+          "startStamina": 1,
+          "stamina": 1,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": null,
+          "gait": "canter",
+          "speed": 2.860759846447481,
+          "heroRate": 1.5998916976006814,
+          "nominal": 2.109375,
+          "scale": 0.8476899263786155,
+          "priorCap": 1.788095938454892,
+          "distance": 3.432300761959179,
+          "elapsedS": 1.2,
+          "startStamina": 1,
+          "stamina": 1,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": "Shift",
+          "gait": "gallop",
+          "speed": 5.340085046701963,
+          "heroRate": 1.7998781598007663,
+          "nominal": 3.5,
+          "scale": 0.8476899263786155,
+          "priorCap": 2.9669147423251543,
+          "distance": 6.406961422323796,
+          "elapsedS": 1.2,
+          "startStamina": 0.8672833333333241,
+          "stamina": 0.822883333333321,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        }
+      ],
+      "stop": {
+        "speed": 0,
+        "gait": "stand",
+        "finite": true
+      },
+      "jump": {
+        "started": true,
+        "peak": 0.6650129591665056,
+        "last": {
+          "gait": "stand",
+          "y": 0,
+          "finite": true
+        },
+        "finite": true
+      }
+    },
+    {
+      "key": "white-western",
+      "gaits": [
+        {
+          "modifier": "Control",
+          "gait": "walk",
+          "speed": 0.741708032884931,
+          "heroRate": 1.3499086198505745,
+          "nominal": 0.5494505494505494,
+          "scale": 1,
+          "priorCap": 0.5494505494505494,
+          "distance": 0.8898912117993918,
+          "elapsedS": 1.2,
+          "startStamina": 1,
+          "stamina": 1,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": "Alt",
+          "gait": "trot",
+          "speed": 2.746026232861017,
+          "heroRate": 1.4998984665006383,
+          "nominal": 1.8308080808080809,
+          "scale": 1,
+          "priorCap": 1.8308080808080809,
+          "distance": 3.294644932573786,
+          "elapsedS": 1.2,
+          "startStamina": 1,
+          "stamina": 1,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": null,
+          "gait": "canter",
+          "speed": 3.3747715496264354,
+          "heroRate": 1.5998916976006805,
+          "nominal": 2.109375,
+          "scale": 1,
+          "priorCap": 2.109375,
+          "distance": 4.049005013687232,
+          "elapsedS": 1.2,
+          "startStamina": 1,
+          "stamina": 1,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": "Shift",
+          "gait": "gallop",
+          "speed": 6.29957355930268,
+          "heroRate": 1.7998781598007658,
+          "nominal": 3.5,
+          "scale": 1,
+          "priorCap": 3.5,
+          "distance": 7.55814269221617,
+          "elapsedS": 1.2,
+          "startStamina": 0.8672833333333241,
+          "stamina": 0.822883333333321,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        }
+      ],
+      "stop": {
+        "speed": 0,
+        "gait": "stand",
+        "finite": true
+      },
+      "jump": {
+        "started": true,
+        "peak": 0.7845002500000001,
+        "last": {
+          "gait": "stand",
+          "y": 0,
+          "finite": true
+        },
+        "finite": true
+      }
+    },
+    {
+      "key": "welsh",
+      "gaits": [
+        {
+          "modifier": "Control",
+          "gait": "walk",
+          "speed": 0.4922128258707182,
+          "heroRate": 1.3498604188781218,
+          "nominal": 0.5494505494505494,
+          "scale": 0.6636444261616585,
+          "priorCap": 0.36463979459431783,
+          "distance": 0.5905086608717438,
+          "elapsedS": 1.2,
+          "startStamina": 1,
+          "stamina": 1,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": "Alt",
+          "gait": "trot",
+          "speed": 1.82231993192035,
+          "heroRate": 1.4998449098645799,
+          "nominal": 1.8308080808080809,
+          "scale": 0.6636444261616585,
+          "priorCap": 1.2150055782000062,
+          "distance": 2.1862406790692095,
+          "elapsedS": 1.2,
+          "startStamina": 1,
+          "stamina": 1,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": null,
+          "gait": "canter",
+          "speed": 2.2395683577117675,
+          "heroRate": 1.5998345705222181,
+          "nominal": 2.109375,
+          "scale": 0.6636444261616585,
+          "priorCap": 1.3998749614347485,
+          "distance": 2.686814406966432,
+          "elapsedS": 1.2,
+          "startStamina": 1,
+          "stamina": 1,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": "Shift",
+          "gait": "gallop",
+          "speed": 4.180527601061967,
+          "heroRate": 1.7998138918374957,
+          "nominal": 3.5,
+          "scale": 0.6636444261616585,
+          "priorCap": 2.322755491565805,
+          "distance": 5.015386893004009,
+          "elapsedS": 1.2,
+          "startStamina": 0.8812966666666703,
+          "stamina": 0.8412166666666715,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        }
+      ],
+      "stop": {
+        "speed": 0,
+        "gait": "stand",
+        "finite": true
+      },
+      "jump": {
+        "started": true,
+        "peak": 0.5206292182349277,
+        "last": {
+          "gait": "stand",
+          "y": 0,
+          "finite": true
+        },
+        "finite": true
+      }
+    }
+  ],
+  "lane": {
+    "x": -16,
+    "z": -8,
+    "heading": 0
+  },
+  "modifiers": {
+    "low": {
+      "gait": "gallop",
+      "speed": 4.925768103423361,
+      "heroRate": 1.6602324405058786,
+      "nominal": 3.5,
+      "scale": 0.8476899263786155,
+      "priorCap": 2.9669147423251543,
+      "distance": 5.909869587833155,
+      "elapsedS": 1.2,
+      "startStamina": 0.8697499999999909,
+      "stamina": 0.8253499999999878,
+      "finite": true,
+      "boneCount": 677,
+      "boostRemaining": 0,
+      "effectiveStats": {
+        "speed": 1,
+        "stamina": 3,
+        "jump": 3,
+        "accel": 3,
+        "agility": 3
+      }
+    },
+    "high": {
+      "gait": "gallop",
+      "speed": 5.933427829668848,
+      "heroRate": 1.9998646220008514,
+      "nominal": 3.5,
+      "scale": 0.8476899263786155,
+      "priorCap": 2.9669147423251543,
+      "distance": 7.118846024804216,
+      "elapsedS": 1.2,
+      "startStamina": 0.865433333333324,
+      "stamina": 0.8210333333333208,
+      "finite": true,
+      "boneCount": 677,
+      "boostRemaining": 0,
+      "effectiveStats": {
+        "speed": 10,
+        "stamina": 3,
+        "jump": 3,
+        "accel": 3,
+        "agility": 3
+      }
+    },
+    "boost": {
+      "gait": "gallop",
+      "speed": 5.933427829668848,
+      "heroRate": 1.9998646220008514,
+      "nominal": 3.5,
+      "scale": 0.8476899263786155,
+      "priorCap": 2.9669147423251543,
+      "distance": 7.118846024804216,
+      "elapsedS": 1.2,
+      "startStamina": 0.865433333333324,
+      "stamina": 0.8210333333333208,
+      "finite": true,
+      "boneCount": 677,
+      "boostRemaining": 4.779999999999914,
+      "effectiveStats": {
+        "speed": 1,
+        "stamina": 3,
+        "jump": 3,
+        "accel": 3,
+        "agility": 3
+      }
+    }
+  },
+  "errors": []
+}
