@@ -51,7 +51,7 @@ def publish(partial=False):
  old=read(ROOT/'assets/models/artist-breeds/manifest.json')
  keys=sorted({s['file'].removesuffix('.glb') for s in old['breeds'].values()})
  gallop_contract=REVIEW/'locomotion/gallop-approved/clip-contract.json'
- gallops=read(gallop_contract) if gallop_contract.exists() else None
+ gallops={k:v for k,v in read(gallop_contract).items() if k in ['gallopLeft','gallopRight']} if gallop_contract.exists() else None
  if not partial and not gallops: raise RuntimeError('Reviewed gallop contract is required')
  movements=['idle','walk','trot','canter-left','canter-right','jump']
  if gallops: movements+=['gallop-left','gallop-right']
@@ -69,7 +69,7 @@ def publish(partial=False):
    'canterRight':curve_record(CLIPS['canter-right'],.64,.54*ratio,.4,{'HL':0,'HR':.24,'FL':.24,'FR':.48})}
   if gallops:
    for mode,record in gallops.items():
-    record=copy.deepcopy(record); record['strokeM']*=ratio;record['nominalSpeedMps']*=ratio
+    record=copy.deepcopy(record);record.pop('baselineCompanion',None);record['strokeM']*=ratio;record['nominalSpeedMps']*=ratio
     gaits[mode]=record
   manifest['breeds'][key]={'motionFile':'./models/horse-motions/'+key+'.glb',
    'motionSha256':info['sha256'],'nativeKind':'horse','nativeHoofFlex':False,
@@ -98,15 +98,15 @@ def publish(partial=False):
    for r in gaits.values():r['strokeM']/=base_ratio;r['nominalSpeedMps']/=base_ratio
    gaits['walk']['authoredHoofFold']=False
    metadata=read(REVIEW/'jump/jump-metadata.json')
-  if gallops:
-   gf=REVIEW/'locomotion/gallop-approved'/(folder or 'white')
-   if folder:gaits.update(read(gf/'clip-contract.json'))
+  gf=REVIEW/'locomotion/gallop-approved'/(folder or 'white')
+  if gallops and (not partial or ((gf/'model.glb').exists() and (not folder or (gf/'clip-contract.json').exists()))):
+   if folder:gaits.update({k:v for k,v in read(gf/'clip-contract.json').items() if k in ['gallopLeft','gallopRight']})
    else:gaits.update(gallops)
-   sources.extend((gf/'model.glb',CLIPS[k]) for k in ['gallop-left','gallop-right'])
+   sources.extend((gf/'model.glb',name) for k in ['gallop-left','gallop-right'] for name in [CLIPS[k],'Native Foreleg Baseline | '+CLIPS[k]])
   info=pack.package(sources,DEST/(key+'.glb'))
   native[key]={'motionFile':'./models/horse-motions/'+key+'.glb','motionSha256':info['sha256'],
-   'nativeSupportsJump':True,'nativeSupportsGallop':bool(gallops),
-   'description':'Walk, approved Trot, both Canter leads'+(', both Gallop leads' if gallops else '')+' and Jump on the preserved native rig.',
+   'nativeSupportsJump':True,'nativeSupportsGallop':'gallopLeft' in gaits,
+   'description':'Walk, approved Trot, both Canter leads'+(', both collected Gallop leads' if 'gallopLeft' in gaits else '')+' and Jump on the preserved native rig.',
    'nativeGaits':gaits,'nativeJump':jump_record(metadata),
    'nativeMaxSpeedMps':max(r['nominalSpeedMps'] for r in gaits.values())}
  # Compact authoring reference keeps the approved Walk/Idle too.

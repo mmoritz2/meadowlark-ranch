@@ -1,6 +1,6 @@
 {
-  "sha256": "3bebf1631fa5882656830228e2a7301c160223e4f82ff1293c43db88886efd89",
-  "bytes": 564472,
+  "sha256": "196c92d233599a7aa6280566f148c92c56aff2fd3a20d0a4a0332d107d8b0348",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/appaloosa/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/appaloosa/jump-scaled.glb",
       "sourceSha256": "20698a96067ed03f7e49a53163fb5effc8a5a949282c3ec0a669f6a74b1a0615",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/appaloosa/gallop-left.glb",
+      "sourceSha256": "30b6f9a9926720d7903a7625f50dfcf87166b59f4a0819766fe84f8c8a237abd",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/appaloosa/gallop-right.glb",
+      "sourceSha256": "af461dce96409c247a9f0867548a0345e0bd9fa9a3822a33dbbf347521d8f481",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

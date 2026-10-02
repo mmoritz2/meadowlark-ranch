@@ -3,7 +3,7 @@
   "breeds": {
     "akhal": {
       "motionFile": "./models/horse-motions/akhal.glb",
-      "motionSha256": "0b07c16f1055061fcc3edfa892840e682bed03546ab25bd057aed6b36cb53a29",
+      "motionSha256": "d8c38341e15e2fd3eb268746d9b4af486c6cf3f49f9044ba3fd5ad0372748cdb",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -61,6 +61,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.97584715196249,
+          "strokeM": 0.5416041816571732,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.97584715196249,
+          "strokeM": 0.5416041816571732,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -881,12 +911,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.7934793103345363,
+      "nativeMaxSpeedMps": 2.97584715196249,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "appaloosa": {
       "motionFile": "./models/horse-motions/appaloosa.glb",
-      "motionSha256": "3bebf1631fa5882656830228e2a7301c160223e4f82ff1293c43db88886efd89",
+      "motionSha256": "196c92d233599a7aa6280566f148c92c56aff2fd3a20d0a4a0332d107d8b0348",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -944,6 +974,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.833778306499314,
+          "strokeM": 0.5157476517828752,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.833778306499314,
+          "strokeM": 0.5157476517828752,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -1764,12 +1824,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.7078574615062831,
+      "nativeMaxSpeedMps": 2.833778306499314,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "bay": {
       "motionFile": "./models/horse-motions/bay.glb",
-      "motionSha256": "356f1c77895295101df25675e4072f0c766893d7c3863f9967ef2b6a24ca6e3c",
+      "motionSha256": "1615ff5fa88408935f5eeff85bf9119b9a442a9b0c60146f455431ec3b910862",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -1827,6 +1887,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.7944314481811134,
+          "strokeM": 0.5085865235689626,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.7944314481811134,
+          "strokeM": 0.5085865235689626,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -2647,12 +2737,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.6841439531448674,
+      "nativeMaxSpeedMps": 2.7944314481811134,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "bay-sporthorse": {
       "motionFile": "./models/horse-motions/bay-sporthorse.glb",
-      "motionSha256": "d5e81b9909c10fad19bbdaccfd8bea0a71c0b25f884b7ade7a3bb3e824975268",
+      "motionSha256": "553448c0b03ab3d1dd277c6f2182fa3d3ad47f280951cc1704cba92fadaa2c78",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -2710,6 +2800,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.0458044957242754,
+          "strokeM": 0.5543364182218181,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.0458044957242754,
+          "strokeM": 0.5543364182218181,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -3530,12 +3650,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.835641102333827,
+      "nativeMaxSpeedMps": 3.0458044957242754,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "black": {
       "motionFile": "./models/horse-motions/black.glb",
-      "motionSha256": "bbab69c4583069c15974cfb08e5bd6651db70ed61092b608de73b4d4fe21ee09",
+      "motionSha256": "9dc94e8d86d251bc6d3cfec468afad0f6662c77c6e0d212b9a4a38d3c2957417",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -3593,6 +3713,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.0230484521118046,
+          "strokeM": 0.5501948182843485,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.0230484521118046,
+          "strokeM": 0.5501948182843485,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -4413,12 +4563,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.8219265224780967,
+      "nativeMaxSpeedMps": 3.0230484521118046,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "chestnut": {
       "motionFile": "./models/horse-motions/chestnut.glb",
-      "motionSha256": "7b1d1cb9529f61810232b0c42970be6dae302d3492ea3592694b7c898c7f68f3",
+      "motionSha256": "a972d4eb2408105561c715d83eb474baab5894aea22a3c47ae6b627f9bf60dfa",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -4476,6 +4626,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 1.7928853120499304,
+          "strokeM": 0.3263051267930873,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 1.7928853120499304,
+          "strokeM": 0.3263051267930873,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -5296,12 +5476,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.0805335586015206,
+      "nativeMaxSpeedMps": 1.7928853120499304,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "clyde": {
       "motionFile": "./models/horse-motions/clyde.glb",
-      "motionSha256": "810a5527128d47eebce2dc96821cf46063603fd1415ac5ae0c57adffbf9f94c7",
+      "motionSha256": "a57f99d6effd23e2365de38ebc5609f13701aab5ef574a2d16ff8596ffc4470f",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -5359,6 +5539,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.2916183411354933,
+          "strokeM": 0.5990745380866598,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.2916183411354933,
+          "strokeM": 0.5990745380866598,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -6179,12 +6389,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.9837878395236233,
+      "nativeMaxSpeedMps": 3.2916183411354933,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "fjord": {
       "motionFile": "./models/horse-motions/fjord.glb",
-      "motionSha256": "4d4901471888358dba64cf0def9dce807f31b140728ea328b0e06fec41bc04ec",
+      "motionSha256": "0e2ad59ab16c2f6848f087538d30173c43b5673bdecf04cd60cf0dd8d9c7320c",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -6242,6 +6452,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.5741974648758608,
+          "strokeM": 0.46850393860740663,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.5741974648758608,
+          "strokeM": 0.46850393860740663,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -7062,12 +7302,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.551413650706434,
+      "nativeMaxSpeedMps": 2.5741974648758608,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "grey": {
       "motionFile": "./models/horse-motions/grey.glb",
-      "motionSha256": "4e9a147790a5c61992379ae3051f2a3deaf3d65bf57b3dc59044121245bad71a",
+      "motionSha256": "b734ce79bb89a3ee054d4670efc8c5bbb916991eae9512422d59153e9e4f7e2c",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -7125,6 +7365,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.9519330594219007,
+          "strokeM": 0.537251816814786,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.9519330594219007,
+          "strokeM": 0.537251816814786,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -7945,12 +8215,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.7790667992051634,
+      "nativeMaxSpeedMps": 2.9519330594219007,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "haflinger": {
       "motionFile": "./models/horse-motions/haflinger.glb",
-      "motionSha256": "8c96a3c836ad7aa3575d4690849b5f8370436e39e0feddbd47fa64321256e99b",
+      "motionSha256": "4795e7ff9243a515f2012499560d3d78a12040bc6c51a7908320033032dc2d43",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -8008,6 +8278,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.6399570369832173,
+          "strokeM": 0.48047218073094555,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.6399570369832173,
+          "strokeM": 0.48047218073094555,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -8828,12 +9128,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.5910455356818498,
+      "nativeMaxSpeedMps": 2.6399570369832173,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "iceland": {
       "motionFile": "./models/horse-motions/iceland.glb",
-      "motionSha256": "35ae5e555b713cf51f017a0b446ecb0253fa60bc30e1fa6de029c38b994d85f4",
+      "motionSha256": "13907948876effe125feeeed99c46f5318824b9318610794d9a64198e95aafa7",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -8891,6 +9191,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.5212633574848526,
+          "strokeM": 0.45886993106224316,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.5212633574848526,
+          "strokeM": 0.45886993106224316,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -9711,12 +10041,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.5195113984841746,
+      "nativeMaxSpeedMps": 2.5212633574848526,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "knab": {
       "motionFile": "./models/horse-motions/knab.glb",
-      "motionSha256": "95ef3b40edadf937ce80db1b2fdbf6d7860e97d0ed835f46e2d6386d9615fc7d",
+      "motionSha256": "fe690998464678c73ab82b1ff6ebb9b5a52b46e5bce60b403e4569bc2cf4440f",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -9774,6 +10104,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.044903358463102,
+          "strokeM": 0.5541724112402845,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.044903358463102,
+          "strokeM": 0.5541724112402845,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -10594,12 +10954,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.8350980062166018,
+      "nativeMaxSpeedMps": 3.044903358463102,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "lipiz": {
       "motionFile": "./models/horse-motions/lipiz.glb",
-      "motionSha256": "40e8db73dcda874181fbdea2dfcaccb120161ed0c7adbea951557c2df2e088dc",
+      "motionSha256": "99e87e2e71ea2ab250fa0408b7a845191a6f1cc553172d63b0806aae64d58762",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -10657,6 +11017,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.8517185357471546,
+          "strokeM": 0.5190127735059822,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.8517185357471546,
+          "strokeM": 0.5190127735059822,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -11477,12 +11867,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.7186696532404726,
+      "nativeMaxSpeedMps": 2.8517185357471546,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "marwari": {
       "motionFile": "./models/horse-motions/marwari.glb",
-      "motionSha256": "820f97cb5fe547b4289f57fc9fca36f59e17cc454305ef130b29bdce8a192939",
+      "motionSha256": "214528329dc4309369fccd7d5e2f7536b3dabd409bd32c528b924c3d3c771f15",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -11540,6 +11930,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.9407334639041536,
+          "strokeM": 0.5352134904305559,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.9407334639041536,
+          "strokeM": 0.5352134904305559,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -12360,12 +12780,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.7723170429779498,
+      "nativeMaxSpeedMps": 2.9407334639041536,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "morgan": {
       "motionFile": "./models/horse-motions/morgan.glb",
-      "motionSha256": "c0dd92c19e1c6dff6d56226f85986d66232bc4b73e8b9ae685bca14ec36ac5a9",
+      "motionSha256": "40cf6dd1bd2e911437ed0201ef3c575a7eeffa47b15bee78e04cb3fc3419fd78",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -12423,6 +12843,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.8051926593680805,
+          "strokeM": 0.5105450640049907,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.8051926593680805,
+          "strokeM": 0.5105450640049907,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -13243,12 +13693,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.69062950452987,
+      "nativeMaxSpeedMps": 2.8051926593680805,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "palomino": {
       "motionFile": "./models/horse-motions/palomino.glb",
-      "motionSha256": "2bee98fab8a679baae25379d83dc3f8e7d5ee40061d4eee34b278cc1148f90fc",
+      "motionSha256": "e9cb66c63d403cb711a7b8cce1eca3e00bb5c3a637df7d4cb7c1d4533c948fd6",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -13306,6 +13756,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.6632412226133906,
+          "strokeM": 0.48470990251563706,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.6632412226133906,
+          "strokeM": 0.48470990251563706,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -14126,12 +14606,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.6050784154143203,
+      "nativeMaxSpeedMps": 2.6632412226133906,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "percheron": {
       "motionFile": "./models/horse-motions/percheron.glb",
-      "motionSha256": "4a5b194987d9d5465fb3b7c4123d51c8b7561aa4e4a3efb02ee5223e841472cc",
+      "motionSha256": "8563d9276e72fcec532a5a024f1aba1a65f70403f9b68829e99dbd835d85ee0f",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -14189,6 +14669,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.15312309478023,
+          "strokeM": 0.5738684032500018,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.15312309478023,
+          "strokeM": 0.5738684032500018,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -15009,12 +15519,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.900319722300585,
+      "nativeMaxSpeedMps": 3.15312309478023,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "pinto": {
       "motionFile": "./models/horse-motions/pinto.glb",
-      "motionSha256": "6f9e165c1a04ba7857148c003ef351a0d5760919d24befa41848838ea46169c4",
+      "motionSha256": "32365f037cac6e22a4043706d985de04160b665c06375358980c550820b349dc",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -15072,6 +15582,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.8671234308051607,
+          "strokeM": 0.5218164644065393,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.8671234308051607,
+          "strokeM": 0.5218164644065393,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -15892,12 +16432,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.727953853387039,
+      "nativeMaxSpeedMps": 2.8671234308051607,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "shire": {
       "motionFile": "./models/horse-motions/shire.glb",
-      "motionSha256": "3f45adb6c95eb2401be6a91a90cfbe8ff6efbdbe88e3bac09bfd98ec03237ac3",
+      "motionSha256": "aecae870b67ea7d3b4d0473f71c72a53567f974fa5b43e30fbd3acf38ad44945",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -15955,6 +16495,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.3236200288504705,
+          "strokeM": 0.6048988452507856,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.3236200288504705,
+          "strokeM": 0.6048988452507856,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -16775,12 +17345,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 2.0030745709589888,
+      "nativeMaxSpeedMps": 3.3236200288504705,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "sport": {
       "motionFile": "./models/horse-motions/sport.glb",
-      "motionSha256": "bc098dda5762bc7d6fd1edfe1a22deaefdb17a0c13de837cdb4235c0c8773c82",
+      "motionSha256": "89915093dfcdb1ccce6ebe5bfbb1e2475ddfb4f4e0b6ca6be8d0749d1eae0f33",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -16838,6 +17408,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.127903565675461,
+          "strokeM": 0.5692784489529339,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.127903565675461,
+          "strokeM": 0.5692784489529339,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -17658,12 +18258,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.8851204525276215,
+      "nativeMaxSpeedMps": 3.127903565675461,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "stock": {
       "motionFile": "./models/horse-motions/stock.glb",
-      "motionSha256": "288dce8de9f342a4c98762e203d7c9ebea153c11718c8b5b96e4e1ef2205fa6c",
+      "motionSha256": "e8cd1f28145006915554e464a38036b2844ecc6165804fd5315a6fdf41f57947",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -17721,6 +18321,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.874493300050753,
+          "strokeM": 0.523157780609237,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.874493300050753,
+          "strokeM": 0.523157780609237,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -18541,12 +19171,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.7323955156555877,
+      "nativeMaxSpeedMps": 2.874493300050753,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "sunset": {
       "motionFile": "./models/horse-motions/sunset.glb",
-      "motionSha256": "ca2443c4d16497143fd2b6c8a42e433229a57aa3e6f3746a89d023d03822e8bc",
+      "motionSha256": "f70f5f4946edf90070e34a462cdc5428e41d54b963813eeb9890cee52bb414c3",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -18604,6 +19234,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.7796041402112075,
+          "strokeM": 0.5058879535184397,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.7796041402112075,
+          "strokeM": 0.5058879535184397,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -19424,12 +20084,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.6752078523594331,
+      "nativeMaxSpeedMps": 2.7796041402112075,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "thoro": {
       "motionFile": "./models/horse-motions/thoro.glb",
-      "motionSha256": "53386f4bb756e40339f83b6782d0ee64ce7c6a90cbd674e7286e28c6ea7045f0",
+      "motionSha256": "bf39d4833d505262d31ccd1aa905660409c8d022047b4fd575dd30380369c32e",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -19487,6 +20147,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.104437243646157,
+          "strokeM": 0.5650075783436006,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 3.104437243646157,
+          "strokeM": 0.5650075783436006,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -20307,12 +20997,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.870977803090318,
+      "nativeMaxSpeedMps": 3.104437243646157,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "vanner": {
       "motionFile": "./models/horse-motions/vanner.glb",
-      "motionSha256": "7c147a88ae630f5a2c37465a267f67af1afa7b1197f32455a797f1d18f511adb",
+      "motionSha256": "0f97edced28db4c584f096371b26bda95337eee1cdb80490476a8291794ceda0",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -20370,6 +21060,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.706660797197147,
+          "strokeM": 0.4926122650898807,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.706660797197147,
+          "strokeM": 0.4926122650898807,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -21190,12 +21910,12 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.6312464625964949,
+      "nativeMaxSpeedMps": 2.706660797197147,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     },
     "welsh": {
       "motionFile": "./models/horse-motions/welsh.glb",
-      "motionSha256": "e60db2702408f3272e89fe5f439d6b5825a797f6015f44df1dd092d14b5af07f",
+      "motionSha256": "37ade9b65e5a8178542afd10720eb80347015684d641039a6b01c644a682aef5",
       "nativeKind": "horse",
       "nativeHoofFlex": false,
       "nativeIdleClip": "Horse|Horse_Idle",
@@ -21253,6 +21973,36 @@
             "HR": 0.24,
             "FL": 0.24,
             "FR": 0.48
+          },
+          "authoredHoofFold": true
+        },
+        "gallopLeft": {
+          "clip": "Target Native Gallop Left",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.165069400607557,
+          "strokeM": 0.39404263091057534,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HR": 0,
+            "HL": 0.12,
+            "FR": 0.31,
+            "FL": 0.46
+          },
+          "authoredHoofFold": true
+        },
+        "gallopRight": {
+          "clip": "Target Native Gallop Right",
+          "durationS": 0.65,
+          "nominalSpeedMps": 2.165069400607557,
+          "strokeM": 0.39404263091057534,
+          "stanceFraction": 0.28,
+          "hindStanceFraction": 0.3,
+          "footOffsets": {
+            "HL": 0,
+            "HR": 0.12,
+            "FL": 0.31,
+            "FR": 0.46
           },
           "authoredHoofFold": true
         }
@@ -22073,7 +22823,7 @@
           ]
         ]
       },
-      "nativeMaxSpeedMps": 1.3048409334018758,
+      "nativeMaxSpeedMps": 2.165069400607557,
       "motionAttribution": "Motion adapted from WildMesh 3D, CC BY-NC 4.0; original body by b2przemo, CC BY 3.0."
     }
   }

@@ -1,6 +1,6 @@
 {
-  "sha256": "820f97cb5fe547b4289f57fc9fca36f59e17cc454305ef130b29bdce8a192939",
-  "bytes": 564472,
+  "sha256": "214528329dc4309369fccd7d5e2f7536b3dabd409bd32c528b924c3d3c771f15",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/marwari/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/marwari/jump-scaled.glb",
       "sourceSha256": "84d7a6c5459d1a1c077f09fc9ceb773062f2b743b31c71abc3792650293562c8",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/marwari/gallop-left.glb",
+      "sourceSha256": "1f1a79db38a1bc8f867e2861bb2d437f6139adf96c3de9899eba1ecb7c5bf5e1",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/marwari/gallop-right.glb",
+      "sourceSha256": "18a98a460363e3861106103bb7191ec3c8870b5f609659ca846a7f976a9c4af7",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

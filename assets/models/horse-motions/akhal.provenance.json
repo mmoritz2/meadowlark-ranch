@@ -1,6 +1,6 @@
 {
-  "sha256": "0b07c16f1055061fcc3edfa892840e682bed03546ab25bd057aed6b36cb53a29",
-  "bytes": 564472,
+  "sha256": "d8c38341e15e2fd3eb268746d9b4af486c6cf3f49f9044ba3fd5ad0372748cdb",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/akhal/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/akhal/jump-scaled.glb",
       "sourceSha256": "3b1d70618870a729316fb359360762c76148af9e4d48c6b63d034d8351677117",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/akhal/gallop-left.glb",
+      "sourceSha256": "4112fcfa86b48730ec096e23c3cc88b288c3c4b862c9afcd0e2733bfa15b503f",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/akhal/gallop-right.glb",
+      "sourceSha256": "11c171d400bedb5715edae73f7b743424d8418978ebb0b3878a8218e2c6c8e74",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

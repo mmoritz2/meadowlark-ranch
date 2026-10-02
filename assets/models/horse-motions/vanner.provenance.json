@@ -1,6 +1,6 @@
 {
-  "sha256": "7c147a88ae630f5a2c37465a267f67af1afa7b1197f32455a797f1d18f511adb",
-  "bytes": 564468,
+  "sha256": "0f97edced28db4c584f096371b26bda95337eee1cdb80490476a8291794ceda0",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/vanner/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/vanner/jump-scaled.glb",
       "sourceSha256": "4ca7bcf0282b9f20e24f6030b38164c44524a0c3b100b88b9bfd43882008a6a3",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/vanner/gallop-left.glb",
+      "sourceSha256": "098fd9295dae38995028284f0e67a6bcf3748b0b998ec51d6cc6f326912d4105",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/vanner/gallop-right.glb",
+      "sourceSha256": "f4b32db42d1f2c421cebbcd3e65084d7c0e6a5c86df17cac8f78db9ccb2eac0f",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

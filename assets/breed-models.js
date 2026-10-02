@@ -5,7 +5,7 @@ import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.
 export function createBreedLibrary({THREE, GLTFLoader, clone}) {
   const base=new URL('./models/artist-breeds/',import.meta.url),pending=new Map(),ready=new Map(),files=new Map();
   let manifest=null,revision='';
-  const motionCatalog=fetch(new URL('./models/horse-motions/manifest.json',import.meta.url),{cache:'no-store'}).then(r=>r.ok?r.json():{});
+  const motionCatalog=fetch(new URL('./models/horse-motions/manifest.json',import.meta.url),{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(e=>{console.warn('Horse motion catalog unavailable; using existing body animations.',e);return {};});
   const manager=new THREE.LoadingManager();
   manager.setURLModifier(url=>{if(!revision||!url.startsWith(base.href))return url;const u=new URL(url);u.searchParams.set('build',revision);return u.href;});
   const loader=new GLTFLoader(manager);

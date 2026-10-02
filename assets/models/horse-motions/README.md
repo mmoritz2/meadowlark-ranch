@@ -4,7 +4,7 @@ These files add fitted animation to the existing horse bodies and skins. They do
 
 The reference is the user-approved White Western trot polish (`84641a03ff1adeec2c24e49b7120efdd750524c268cd1691da6f92e4bc6824b6`), including its stronger backward forehoof fold, wider stride, quieter head, and more active tail. Each of the 25 artist body models receives its own fitted 40-joint curves. The three Western horses retain their 677-joint rigs and existing Walk treatment. Fantasy aliases share their foundation body's motion. Creator dragon clips remain separate.
 
-Jump is one shot. Its clip poses the skeleton; `nativeJump.actorLiftM` moves the actor once using the same clock. Height scales with body size and time scales with its square root, retaining 9.81 m/s² flight acceleration. The controller blends back to the previous gait after landing. Ground gaits use per-body stance travel speeds and support both canter leads.
+Jump is one shot. Its clip poses the skeleton; `nativeJump.actorLiftM` moves the actor once using the same clock. Height scales with body size and time scales with its square root, retaining 9.81 m/s² flight acceleration. The controller blends back to the previous gait after landing. Ground gaits use per-body stance travel speeds and support both canter and gallop leads. Gallop is a collected four-beat cycle with a flight phase, rather than a fully extended racing stride.
 
 ## Attribution
 

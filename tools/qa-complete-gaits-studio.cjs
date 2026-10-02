@@ -11,6 +11,7 @@ const out=path.join(__dirname,'../review/native-complete-gaits');
    if(key!==keys[0])await p.locator('#list button[data-key="'+key+'"]').click();
    await p.waitForFunction(k=>window.render_game_to_text&&JSON.parse(render_game_to_text()).breed===k&&!JSON.parse(render_game_to_text()).loading,key,{timeout:90000});
    const modes=await p.locator('#motion option').evaluateAll(nodes=>nodes.map(n=>n.value));
+   if(!['european-dragon','black-dragon-native'].includes(key))for(const required of ['walk','trot','canter','gallop','jump'])assert(modes.includes(required),key+' missing '+required);
    for(const mode of modes.filter(x=>x!=='rest'&&x!=='sit')){
     await p.selectOption('#motion',mode);await p.evaluate(()=>advanceTime(650));
     const row=await p.evaluate(()=>({state:JSON.parse(render_game_to_text()),inspect:breedStudioInspect()}));
@@ -22,6 +23,6 @@ const out=path.join(__dirname,'../review/native-complete-gaits');
    console.log(key+': '+modes.join(', '));
   }
   assert.equal(errors.length,0,errors.join('\n'));
- }finally{fs.writeFileSync(path.join(out,'production-studio-report.json'),JSON.stringify({errors,rows},null,2));await b.close()}
+ }finally{fs.writeFileSync(path.join(out,process.env.QA_REPORT||'production-studio-report.json'),JSON.stringify({errors,rows},null,2));await b.close()}
  console.log('PASS '+keys.length+' models / '+rows.length+' motion checks');
 })().catch(e=>{console.error(e);process.exitCode=1});

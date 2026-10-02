@@ -1,6 +1,6 @@
 {
-  "sha256": "40e8db73dcda874181fbdea2dfcaccb120161ed0c7adbea951557c2df2e088dc",
-  "bytes": 564472,
+  "sha256": "99e87e2e71ea2ab250fa0408b7a845191a6f1cc553172d63b0806aae64d58762",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/lipiz/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/lipiz/jump-scaled.glb",
       "sourceSha256": "2a02643cd3e46a3f2e40a36e58a7d68bba5a2b38af09512ecba985032624f9fc",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/lipiz/gallop-left.glb",
+      "sourceSha256": "51e2e8e4d3d25d27d6e99bbf09de20679c50662fafb8df9dd7b0f26a6bf180ca",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/lipiz/gallop-right.glb",
+      "sourceSha256": "8dcf1072b31decf1375b511b8cfe1a6a82ed93c3178cdca0fe6e592f3f60df2c",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

@@ -1,6 +1,6 @@
 {
-  "sha256": "bc098dda5762bc7d6fd1edfe1a22deaefdb17a0c13de837cdb4235c0c8773c82",
-  "bytes": 564472,
+  "sha256": "89915093dfcdb1ccce6ebe5bfbb1e2475ddfb4f4e0b6ca6be8d0749d1eae0f33",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/sport/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/sport/jump-scaled.glb",
       "sourceSha256": "fa22c28efdfc842cbc942dc70ed8d1b9ec60905587e5f8769b9e4169b6f7e0f5",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/sport/gallop-left.glb",
+      "sourceSha256": "ed7f4a55dbbae35efbb39cf96bcd9ac7c194a11e8cc630ff31320e78134167ce",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/sport/gallop-right.glb",
+      "sourceSha256": "4d4be7fa6c1705a29db603d2826400b69fa3daff98e30731e9cabd53dbc50854",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

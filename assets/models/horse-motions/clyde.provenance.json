@@ -1,6 +1,6 @@
 {
-  "sha256": "810a5527128d47eebce2dc96821cf46063603fd1415ac5ae0c57adffbf9f94c7",
-  "bytes": 564472,
+  "sha256": "a57f99d6effd23e2365de38ebc5609f13701aab5ef574a2d16ff8596ffc4470f",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/clyde/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/clyde/jump-scaled.glb",
       "sourceSha256": "f7bab8aef3540639d6dac87ab1262242ed199d29e17ebdb3d54eaf2a0c830f4e",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/clyde/gallop-left.glb",
+      "sourceSha256": "1db8ecd4ad42f8d9e5058617b645560b275ea0cc455a2faf514bbbd85ab7e2f4",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/clyde/gallop-right.glb",
+      "sourceSha256": "38a0dea45d06731e68643ddb4ee4441f829c5cd6000338b95a09880391440395",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

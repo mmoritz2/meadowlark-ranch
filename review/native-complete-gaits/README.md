@@ -2,9 +2,9 @@
 
 The approved White Western Trot was fitted to every existing horse foundation. The 25 artist body files remain unchanged; their 45 catalog profiles and fantasy aliases receive fitted 40-joint motion. Three Western horses retain their complete 677-joint rigs. Runtime assets, source attribution, and rebuild directions are in `assets/models/horse-motions/` and `tools/native-gaits/`.
 
-Current verified motions: standing/idle, Walk, approved Trot, Canter with both leads, and one-shot Jump. Gallop remains private authoring work until the visible stride and limb continuity pass.
+Current verified motions: standing/idle, Walk, approved Trot, Canter and collected four-beat Gallop with both leads, and one-shot Jump. The earlier rejected gallop trials remain private diagnostics.
 
-Validation includes actual GLTF-loader skinning of all 25 Trot curves and 100 Walk/Canter/Jump cases; all were finite and retained their original body hashes. Runtime Jump clips use body-scaled height and sqrt-scaled duration. Mounted native three, Quarter Horse, Welsh and Shire passed gait input and jump/landing recovery; Pegasus retained flight. The creature dragons retain their original clips.
+Validation includes actual GLTF-loader skinning of all 25 Trot curves and 100 Walk/Canter/Jump cases; all were finite and retained their original body hashes. Both Gallop leads on all 25 bodies also passed actual skinning, fore-elbow bend direction and normal-playback checks. Runtime Jump clips use body-scaled height and sqrt-scaled duration. Mounted native three, Quarter Horse, Welsh and Shire passed gait input and jump/landing recovery; Pegasus retained flight. The creature dragons retain their original clips.
 
 The authoring curve/contact reports live in `roster/`; `production-ranch-report.json` and `release-verification.json` record the game checks. Motion-only bundles retain input clip hashes. Rejected solver variants, duplicate full GLBs and temporary screenshots are excluded from the commit.
 

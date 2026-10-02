@@ -7,7 +7,7 @@ const QA=require('./qa-platform.cjs'),fs=require('fs'),path=require('path'),asse
   await p.goto(QA.BASE+'/ranch3d.html?qa=native-game',{timeout:120000});
   await p.waitForFunction(()=>window.__features?.installed?.includes('native-horses'),null,{timeout:90000});
   console.log('Game initialized');
-  for(const key of ['white-western','bay-western','bay-sporthorse-native','bay','welsh','shire','pegasus']){
+  for(const key of (process.env.QA_HORSES?.split(',')||['white-western','bay-western','bay-sporthorse-native','bay','welsh','shire','pegasus'])){
    // This Playwright context has a temporary save, separate from the user's game.
    const index=await p.evaluate(key=>{const G=__features;G.save.sync(s=>G.horse.grantHorse(s,key,{name:'Motion QA'}));G.horse.reloadHorses();G.horse.rebuildAll();G.hidePanels();return G.horse.myHorses.findIndex(h=>h.breed===key)},key);
    console.log('Select',key,index);await p.selectOption('#horseSel',String(index),{force:true});
@@ -17,7 +17,7 @@ const QA=require('./qa-platform.cjs'),fs=require('fs'),path=require('path'),asse
    for(const [modifier,expected]of [['Control','walk'],['Alt','trot'],[null,'canter'],['Shift','gallop']]){
     if(modifier)await p.keyboard.down(modifier);await p.evaluate(()=>advanceTime(4500));
     const state=await p.evaluate(()=>{const r=__features.horse.RIG();return{mode:r.heroMotion.mode,state:r.heroMotion.state,profile:r.profile.nativeGaits,finite:r.bones.every(b=>b.matrixWorld.elements.every(Number.isFinite))}});
-    const wanted=expected==='gallop'&&!state.profile.gallopLeft?'canter':expected;
+    const wanted=expected;
     assert.equal(state.mode,wanted,key+' '+modifier);assert(state.finite);modes.push({modifier,state});if(modifier)await p.keyboard.up(modifier);
    }
    await p.keyboard.up('ArrowUp');
@@ -33,5 +33,5 @@ const QA=require('./qa-platform.cjs'),fs=require('fs'),path=require('path'),asse
    console.log(key+' mounted gaits and '+(key==='pegasus'?'flight':'jump')+' passed');
   }
   assert.equal(errors.length,0,errors.join('\n'));
- }finally{fs.writeFileSync(path.join(out,'production-ranch-report.json'),JSON.stringify({errors,rows},null,2));await b.close()}
+ }finally{fs.writeFileSync(path.join(out,process.env.QA_REPORT||'production-ranch-report.json'),JSON.stringify({errors,rows},null,2));await b.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

@@ -1,6 +1,6 @@
 {
-  "sha256": "4d4901471888358dba64cf0def9dce807f31b140728ea328b0e06fec41bc04ec",
-  "bytes": 564472,
+  "sha256": "0e2ad59ab16c2f6848f087538d30173c43b5673bdecf04cd60cf0dd8d9c7320c",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/fjord/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/fjord/jump-scaled.glb",
       "sourceSha256": "aa1a613c2e159872e39c9806de1a7c372cf09de7e2a0cb74e8059183856412f9",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/fjord/gallop-left.glb",
+      "sourceSha256": "eed77f37e5eeab8dcd90c189f78579957f51d5f3dc90d23f731d21a86161d3f3",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/fjord/gallop-right.glb",
+      "sourceSha256": "0e148a848280097ed9380f909feff6e211efb49a863339499e2eea9355d3d092",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

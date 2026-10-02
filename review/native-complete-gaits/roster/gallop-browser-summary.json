@@ -1,0 +1,14 @@
+{
+  "bodyCount": 25,
+  "clipCases": 50,
+  "samplesPerClip": 129,
+  "allFinite": true,
+  "zeroPageErrors": true,
+  "allBodyAndMotionPins": true,
+  "allSourcePins": true,
+  "sourceSha256": "e4b79a8449ac2dc9b4e2673ba40f066ed35640bcd14f4de88c674fb17d5f00a9",
+  "minimumHoofMm": 0.9938385325771006,
+  "minimumBodyMm": 0.9945346616878589,
+  "allNormalPlaybackAtLeastTwoWraps": true,
+  "readOnly": true
+}

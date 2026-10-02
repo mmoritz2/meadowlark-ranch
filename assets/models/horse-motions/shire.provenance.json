@@ -1,6 +1,6 @@
 {
-  "sha256": "3f45adb6c95eb2401be6a91a90cfbe8ff6efbdbe88e3bac09bfd98ec03237ac3",
-  "bytes": 564472,
+  "sha256": "aecae870b67ea7d3b4d0473f71c72a53567f974fa5b43e30fbd3acf38ad44945",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/shire/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/shire/jump-scaled.glb",
       "sourceSha256": "e23427af047402c1dea883dbb953157b5b98a6bc87802298dbf69d2ed283096b",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/shire/gallop-left.glb",
+      "sourceSha256": "8a147d97f70e77b47efe5ec2856a740e4ad82ade9c596db9b9f63073a923429a",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/shire/gallop-right.glb",
+      "sourceSha256": "2bc9742cb68a1e21c87d91dcd7a8b693a22de40a156639d9d12e5a78ef475cfc",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

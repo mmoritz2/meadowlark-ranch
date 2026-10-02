@@ -1,6 +1,6 @@
 {
-  "sha256": "ca2443c4d16497143fd2b6c8a42e433229a57aa3e6f3746a89d023d03822e8bc",
-  "bytes": 564468,
+  "sha256": "f70f5f4946edf90070e34a462cdc5428e41d54b963813eeb9890cee52bb414c3",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/sunset/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/sunset/jump-scaled.glb",
       "sourceSha256": "78a07579d9c1a2006694aa5815667427213d631fbaef1560bb569d8c33f2252c",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/sunset/gallop-left.glb",
+      "sourceSha256": "2188ebff96fc539da9910abd39e3541efab4bcc58db6c17c933d2ee91986bcdb",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/sunset/gallop-right.glb",
+      "sourceSha256": "e978f0ec62fcf8850593eb650a0c94361ee03963f7757c7ef33947492e2ad233",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

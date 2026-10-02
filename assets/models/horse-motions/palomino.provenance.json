@@ -1,6 +1,6 @@
 {
-  "sha256": "2bee98fab8a679baae25379d83dc3f8e7d5ee40061d4eee34b278cc1148f90fc",
-  "bytes": 564472,
+  "sha256": "e9cb66c63d403cb711a7b8cce1eca3e00bb5c3a637df7d4cb7c1d4533c948fd6",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/palomino/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/palomino/jump-scaled.glb",
       "sourceSha256": "9589bd5343276b5c6b998cf43afdb1dfd57db3d7a29caef0d3d8d46cb4251def",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/palomino/gallop-left.glb",
+      "sourceSha256": "20b8fa46f1e65381a135dad99fdc0e275fc0e083dea1932685a9fd9ffcf0bcbe",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/palomino/gallop-right.glb",
+      "sourceSha256": "c2df7bc28a259b6ba7338cc6d351d0763d18f43d5a741b44ae6669d4357ae0b6",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

@@ -1,6 +1,6 @@
 {
-  "sha256": "7b1d1cb9529f61810232b0c42970be6dae302d3492ea3592694b7c898c7f68f3",
-  "bytes": 564472,
+  "sha256": "a972d4eb2408105561c715d83eb474baab5894aea22a3c47ae6b627f9bf60dfa",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/chestnut/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/chestnut/jump-scaled.glb",
       "sourceSha256": "f06bd10a81a43fbb5392bee72dff54162e138c7738ec848bf669409f8fa972be",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/chestnut/gallop-left.glb",
+      "sourceSha256": "2a6565c417fdef081c23e4186ee4c07009d7ea3f6cbaeda0411ebf9763c7dc04",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/chestnut/gallop-right.glb",
+      "sourceSha256": "193a96c550b9ac4ee4461aa7722752004d2d14e95250da5a8d616517779c5933",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

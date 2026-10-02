@@ -1,6 +1,6 @@
 {
-  "sha256": "6f9e165c1a04ba7857148c003ef351a0d5760919d24befa41848838ea46169c4",
-  "bytes": 564468,
+  "sha256": "32365f037cac6e22a4043706d985de04160b665c06375358980c550820b349dc",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/pinto/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/pinto/jump-scaled.glb",
       "sourceSha256": "1f3b9999f60b64bb3d2014e57db91cc820e21168f5d194449575166c8b47455f",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/pinto/gallop-left.glb",
+      "sourceSha256": "1129bb6f6d73e170958c2313492d705c656ea3ed7d861ce06beaca5d4054ebe1",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/pinto/gallop-right.glb",
+      "sourceSha256": "2559d75421de2981d14eb1adb09afc288ee34ffa59ac232ad437cd66ff63c308",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

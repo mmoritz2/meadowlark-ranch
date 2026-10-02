@@ -1,6 +1,6 @@
 {
-  "sha256": "95ef3b40edadf937ce80db1b2fdbf6d7860e97d0ed835f46e2d6386d9615fc7d",
-  "bytes": 564472,
+  "sha256": "fe690998464678c73ab82b1ff6ebb9b5a52b46e5bce60b403e4569bc2cf4440f",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/knab/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/knab/jump-scaled.glb",
       "sourceSha256": "14a65002d032a5100e05147a91b48a8c7a7f66c397936a933f79398491cb0882",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/knab/gallop-left.glb",
+      "sourceSha256": "ba265152461b1e01ccd1523a523113008bcb5bf382b44de8f7e3b4bcbdc04fca",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/knab/gallop-right.glb",
+      "sourceSha256": "92170578545bf2fc943be3b904f2623671e21ff697a5a44ef82647fffd40475d",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

@@ -1,6 +1,6 @@
 {
-  "sha256": "5786cf606b72d1494e195e193b2e3bc421e510aa44310b34a5aadd9c06e9d874",
-  "bytes": 897612,
+  "sha256": "87da96bce7e484d5298b83734ec44560b15ecb38e1fcc4171a907393e5fcd157",
+  "bytes": 2027540,
   "clips": [
     {
       "source": "review/native-trot-polish-pilot/model.glb",
@@ -25,6 +25,30 @@
       "sourceSha256": "d7e14d14bf23cc4f12086714dca4fdea4cd4cb433b231abb3a085c7b647ab016",
       "clip": "Target Native Jump",
       "channels": 86
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/gallop-approved/white/model.glb",
+      "sourceSha256": "e4b79a8449ac2dc9b4e2673ba40f066ed35640bcd14f4de88c674fb17d5f00a9",
+      "clip": "Target Native Gallop Left",
+      "channels": 84
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/gallop-approved/white/model.glb",
+      "sourceSha256": "e4b79a8449ac2dc9b4e2673ba40f066ed35640bcd14f4de88c674fb17d5f00a9",
+      "clip": "Native Foreleg Baseline | Target Native Gallop Left",
+      "channels": 4
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/gallop-approved/white/model.glb",
+      "sourceSha256": "e4b79a8449ac2dc9b4e2673ba40f066ed35640bcd14f4de88c674fb17d5f00a9",
+      "clip": "Target Native Gallop Right",
+      "channels": 84
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/gallop-approved/white/model.glb",
+      "sourceSha256": "e4b79a8449ac2dc9b4e2673ba40f066ed35640bcd14f4de88c674fb17d5f00a9",
+      "clip": "Native Foreleg Baseline | Target Native Gallop Right",
+      "channels": 4
     }
   ]
 }

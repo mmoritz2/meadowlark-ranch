@@ -1,6 +1,6 @@
 {
-  "sha256": "16b1802dd7445b9b841012b48d03bd6f575147bd8702c73b239db1907af532bf",
-  "bytes": 952124,
+  "sha256": "14736968ae54f351df9acc916520080ee57153a6fc3e70d184c5f79497718118",
+  "bytes": 2082060,
   "clips": [
     {
       "source": "review/native-complete-gaits/locomotion/sport/motion-override.glb",
@@ -43,6 +43,30 @@
       "sourceSha256": "16b1802dd7445b9b841012b48d03bd6f575147bd8702c73b239db1907af532bf",
       "clip": "Target Native Jump",
       "channels": 86
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/gallop-approved/sport/model.glb",
+      "sourceSha256": "7cd9979d442555fd2baa46c4aa787786ab90718f4f3ccbe87d5c740d0317435e",
+      "clip": "Target Native Gallop Left",
+      "channels": 84
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/gallop-approved/sport/model.glb",
+      "sourceSha256": "7cd9979d442555fd2baa46c4aa787786ab90718f4f3ccbe87d5c740d0317435e",
+      "clip": "Native Foreleg Baseline | Target Native Gallop Left",
+      "channels": 4
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/gallop-approved/sport/model.glb",
+      "sourceSha256": "7cd9979d442555fd2baa46c4aa787786ab90718f4f3ccbe87d5c740d0317435e",
+      "clip": "Target Native Gallop Right",
+      "channels": 84
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/gallop-approved/sport/model.glb",
+      "sourceSha256": "7cd9979d442555fd2baa46c4aa787786ab90718f4f3ccbe87d5c740d0317435e",
+      "clip": "Native Foreleg Baseline | Target Native Gallop Right",
+      "channels": 4
     }
   ]
 }

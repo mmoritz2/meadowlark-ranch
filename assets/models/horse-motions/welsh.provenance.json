@@ -1,6 +1,6 @@
 {
-  "sha256": "e60db2702408f3272e89fe5f439d6b5825a797f6015f44df1dd092d14b5af07f",
-  "bytes": 564472,
+  "sha256": "37ade9b65e5a8178542afd10720eb80347015684d641039a6b01c644a682aef5",
+  "bytes": 752408,
   "clips": [
     {
       "source": "review/native-complete-gaits/roster/welsh/idle.glb",
@@ -36,6 +36,18 @@
       "source": "review/native-complete-gaits/roster/welsh/jump-scaled.glb",
       "sourceSha256": "95d260ab327569f03550144a19968b464fcaa630cb0602f310e421ef5a2eb4ed",
       "clip": "Target Native Jump",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/welsh/gallop-left.glb",
+      "sourceSha256": "56b9da4ae886e29c590f591c1144efc2b016107abe5f98fd969aeb9e1acc1936",
+      "clip": "Target Native Gallop Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/welsh/gallop-right.glb",
+      "sourceSha256": "dcef758a43f038fac0c38dac453cf7e27de73b9d91bf51badd93c73b503f12f1",
+      "clip": "Target Native Gallop Right",
       "channels": 41
     }
   ]

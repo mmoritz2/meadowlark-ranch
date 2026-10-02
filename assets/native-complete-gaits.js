@@ -2,10 +2,10 @@
 export const NATIVE_COMPLETE_GAITS={
   "white-western": {
     "motionFile": "./models/horse-motions/white-western.glb",
-    "motionSha256": "5786cf606b72d1494e195e193b2e3bc421e510aa44310b34a5aadd9c06e9d874",
+    "motionSha256": "87da96bce7e484d5298b83734ec44560b15ecb38e1fcc4171a907393e5fcd157",
     "nativeSupportsJump": true,
-    "nativeSupportsGallop": false,
-    "description": "Walk, approved Trot, both Canter leads and Jump on the preserved native rig.",
+    "nativeSupportsGallop": true,
+    "description": "Walk, approved Trot, both Canter leads, both collected Gallop leads and Jump on the preserved native rig.",
     "nativeGaits": {
       "walk": {
         "clip": "Target Native Walk Rollover",
@@ -60,6 +60,38 @@ export const NATIVE_COMPLETE_GAITS={
           "HR": 0.24,
           "FL": 0.24,
           "FR": 0.48
+        },
+        "authoredHoofFold": true
+      },
+      "gallopLeft": {
+        "clip": "Target Native Gallop Left",
+        "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+        "durationS": 0.65,
+        "nominalSpeedMps": 3.5,
+        "strokeM": 0.637,
+        "stanceFraction": 0.28,
+        "hindStanceFraction": 0.3,
+        "footOffsets": {
+          "HR": 0,
+          "HL": 0.12,
+          "FR": 0.31,
+          "FL": 0.46
+        },
+        "authoredHoofFold": true
+      },
+      "gallopRight": {
+        "clip": "Target Native Gallop Right",
+        "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+        "durationS": 0.65,
+        "nominalSpeedMps": 3.5,
+        "strokeM": 0.637,
+        "stanceFraction": 0.28,
+        "hindStanceFraction": 0.3,
+        "footOffsets": {
+          "HL": 0,
+          "HR": 0.12,
+          "FL": 0.31,
+          "FR": 0.46
         },
         "authoredHoofFold": true
       }
@@ -880,14 +912,14 @@ export const NATIVE_COMPLETE_GAITS={
         ]
       ]
     },
-    "nativeMaxSpeedMps": 2.109375
+    "nativeMaxSpeedMps": 3.5
   },
   "bay-western": {
     "motionFile": "./models/horse-motions/bay-western.glb",
-    "motionSha256": "0a16a6150b321db1bf4e6a3bbf13a4170ea87fa1df130b080b5044673e66833f",
+    "motionSha256": "ae97ce6203633c0c7435ad51a880d8b601918c924beb1490274d657f88f6c824",
     "nativeSupportsJump": true,
-    "nativeSupportsGallop": false,
-    "description": "Walk, approved Trot, both Canter leads and Jump on the preserved native rig.",
+    "nativeSupportsGallop": true,
+    "description": "Walk, approved Trot, both Canter leads, both collected Gallop leads and Jump on the preserved native rig.",
     "nativeGaits": {
       "walk": {
         "clip": "Target Native Walk Rollover",
@@ -935,6 +967,38 @@ export const NATIVE_COMPLETE_GAITS={
           "HR": 0.24,
           "FL": 0.24,
           "FR": 0.48
+        },
+        "authoredHoofFold": true
+      },
+      "gallopLeft": {
+        "clip": "Target Native Gallop Left",
+        "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+        "durationS": 0.65,
+        "nominalSpeedMps": 2.973903833044422,
+        "strokeM": 0.5412504976140848,
+        "stanceFraction": 0.28,
+        "hindStanceFraction": 0.3,
+        "footOffsets": {
+          "HR": 0.0,
+          "HL": 0.12,
+          "FR": 0.31,
+          "FL": 0.46
+        },
+        "authoredHoofFold": true
+      },
+      "gallopRight": {
+        "clip": "Target Native Gallop Right",
+        "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+        "durationS": 0.65,
+        "nominalSpeedMps": 2.973903833044422,
+        "strokeM": 0.5412504976140848,
+        "stanceFraction": 0.28,
+        "hindStanceFraction": 0.3,
+        "footOffsets": {
+          "HL": 0.0,
+          "HR": 0.12,
+          "FL": 0.31,
+          "FR": 0.46
         },
         "authoredHoofFold": true
       }
@@ -1755,14 +1819,14 @@ export const NATIVE_COMPLETE_GAITS={
         ]
       ]
     },
-    "nativeMaxSpeedMps": 1.792308113665165
+    "nativeMaxSpeedMps": 2.973903833044422
   },
   "bay-sporthorse-native": {
     "motionFile": "./models/horse-motions/bay-sporthorse-native.glb",
-    "motionSha256": "16b1802dd7445b9b841012b48d03bd6f575147bd8702c73b239db1907af532bf",
+    "motionSha256": "14736968ae54f351df9acc916520080ee57153a6fc3e70d184c5f79497718118",
     "nativeSupportsJump": true,
-    "nativeSupportsGallop": false,
-    "description": "Walk, approved Trot, both Canter leads and Jump on the preserved native rig.",
+    "nativeSupportsGallop": true,
+    "description": "Walk, approved Trot, both Canter leads, both collected Gallop leads and Jump on the preserved native rig.",
     "nativeGaits": {
       "walk": {
         "clip": "Target Native Walk Rollover",
@@ -1810,6 +1874,38 @@ export const NATIVE_COMPLETE_GAITS={
           "HR": 0.24,
           "FL": 0.24,
           "FR": 0.48
+        },
+        "authoredHoofFold": true
+      },
+      "gallopLeft": {
+        "clip": "Target Native Gallop Left",
+        "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+        "durationS": 0.65,
+        "nominalSpeedMps": 3.1919484212715994,
+        "strokeM": 0.5809346126714312,
+        "stanceFraction": 0.28,
+        "hindStanceFraction": 0.3,
+        "footOffsets": {
+          "HR": 0.0,
+          "HL": 0.12,
+          "FR": 0.31,
+          "FL": 0.46
+        },
+        "authoredHoofFold": true
+      },
+      "gallopRight": {
+        "clip": "Target Native Gallop Right",
+        "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+        "durationS": 0.65,
+        "nominalSpeedMps": 3.1919484212715994,
+        "strokeM": 0.5809346126714312,
+        "stanceFraction": 0.28,
+        "hindStanceFraction": 0.3,
+        "footOffsets": {
+          "HL": 0.0,
+          "HR": 0.12,
+          "FL": 0.31,
+          "FR": 0.46
         },
         "authoredHoofFold": true
       }
@@ -2630,6 +2726,6 @@ export const NATIVE_COMPLETE_GAITS={
         ]
       ]
     },
-    "nativeMaxSpeedMps": 1.9237189146056515
+    "nativeMaxSpeedMps": 3.1919484212715994
   }
 };

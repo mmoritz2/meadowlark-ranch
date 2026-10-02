@@ -1,6 +1,6 @@
 {
-  "sha256": "d926850cc6fff480e05d969c0a41666a824b67ae5e0f3b0115f816fc75b97edd",
-  "bytes": 10645864,
+  "sha256": "eac6738d45d7a4a292079aec13dddaac3bc5c0fd48b0135a4928f01530c4cde1",
+  "bytes": 11723720,
   "clips": [
     {
       "source": "review/native-trot-polish-pilot/model.glb",
@@ -37,6 +37,18 @@
       "sourceSha256": "d7e14d14bf23cc4f12086714dca4fdea4cd4cb433b231abb3a085c7b647ab016",
       "clip": "Target Native Jump",
       "channels": 86
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/gallop-approved/white/model.glb",
+      "sourceSha256": "e4b79a8449ac2dc9b4e2673ba40f066ed35640bcd14f4de88c674fb17d5f00a9",
+      "clip": "Target Native Gallop Left",
+      "channels": 84
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/gallop-approved/white/model.glb",
+      "sourceSha256": "e4b79a8449ac2dc9b4e2673ba40f066ed35640bcd14f4de88c674fb17d5f00a9",
+      "clip": "Target Native Gallop Right",
+      "channels": 84
     }
   ]
 }
