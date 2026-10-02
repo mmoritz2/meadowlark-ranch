@@ -251,8 +251,10 @@ with these extra options: `meshName` (its meshes are `duck-body`, `duck-wings`,
 lifted onto drawn legs); `legs: {drawn, r, toes, spread, colors}` (legs and three-toed
 webbed feet drawn and skinned by the rig); `tint` (the scan repainted by place on the bird,
 the texture's detail kept: yellow, olive crown, `nape`, eye stripe, back, spots, bill);
-`eyes: {at, r, sink}` (glossy eyes set on the scan's surface); `headRound: {c, ext, k, front}`
-(a boxy head rounded off behind); `neckFill: {y, w, z}` (a neck pinched thinner than the
+`eyes: {at, r, sink}` (glossy eyes set on the scan's surface); `headRound: {c, ext, k, front,
+smooth, crown, nape}` (a boxy head rounded off behind; `smooth` passes of smoothing over the
+back and top of the head, `crown` and `nape` a dome from behind and a softer ledge over the
+neck, the face, eyes and bill not moved); `neckFill: {y, w, z}` (a neck pinched thinner than the
 head widened between two heights, so the head sits on a short thick neck);
 `wing.style: "stub"` (a short downy paddle painted olive with a pale patch, instead of
 flight feathers; `wing.chord` its width, `wing.flyScale` how much larger it opens in the
@@ -289,12 +291,22 @@ skin: `n` copies of the skin pushed out along the normal, cut to strands by a ce
 pattern fixed to the bind pose, none on the legs, beak or eyes, and dropped beyond `far`
 metres from the camera (the outer layers first).
 
-`"game"` for both: `skim` 4.0 (they walk, then run, beside a walking horse, Ctrl+W at
-2.2 m/s, and take to the air only above 4 m/s: a trot, or a quick dash back to their spot)
-and `realGait` (the duckling's run from 1.0 to 1.8 m/s with `rateHi` 3.5, the chick's from
-0.7 to 1.3 m/s with 3.0). The walk clips are long (`T` 0.5 and 0.4) so the game's slowest
-cadence, half the clip's own, still matches a slow walk of about 0.2 m/s without the feet
-sliding; the clips are driven by the stride, so `T` does not change how fast they step.
+`"game"` for both: `skim` 3.6 with `skimHold` 0.4 (they walk, then run, beside a walking
+horse and never run faster than 3.6 m/s, which their legs can step; they take to the air only
+after running 0.4 m further than their legs can cover at 3.6 m/s, and only beside a horse
+faster than 2.9 m/s or when more than 6 m behind, so a galloping horse has them flying beside
+it; once up they fly at least 1.2 s), `turn` 16 (how fast, in rad/s, the pet swings round, so
+it does not crab sideways on planted feet; a pet with `turn` faces the way it moves down to
+0.12 m/s, steps a short slow shuffle backwards with its clips reversed, and stays at its spot
+until the spot is 0.32 m away) and `realGait` (the duckling's run from 1.0 to 1.8 m/s, the
+chick's from 0.7 to 1.3 m/s, both with `rateHi` 3.5 and `hzHi` 12, a cap of 12 strides a
+second so the legs never strobe). A pet walked by its own clips steps by the ground it
+actually covers in the direction it faces, with the stride its legs show this frame
+(including a clip still fading out); teleports and nudges are not walked. `"skim": false`
+would keep a pet on the ground except when the horse flies. The walk clips are long (`T` 0.5
+and 0.4) so the game's slowest cadence, half the clip's own, still matches a slow walk of
+about 0.2 m/s without the feet sliding; the clips are driven by the stride, so `T` does not
+change how fast they step.
 
 `tools/qa-pet-birds.cjs` checks both (`PETS=duck` or `PETS=chick` for one; a parked bird is
 switched on in the page's copy of the manifest, `QA_BIRDS_SHIPPED=1` tests it as shipped;

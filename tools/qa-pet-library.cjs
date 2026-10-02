@@ -176,7 +176,7 @@ const HOME={x:-100,z:400,h:Math.PI};
  check('the drawn portraits still draw for every pet',Pt);
  const before=requests.length;
  const Sh=await page.evaluate(async()=>{const G=window.__features,keys=await G.petModels.useManifest(null),list=await G.petModels.realList();return {keys,list};});
- const unlisted=['duck','chick','raccoon','bunny','owl','lamb','snowhare'].find(k=>!Sh.list.includes(k))||'duck';
+ const unlisted=['duck','chick','raccoon','bunny','owl','lamb','snowhare','gryphling','cinderchick'].find(k=>!Sh.list.includes(k))||'duck';
  const dS0=await activate(unlisted);await page.evaluate(()=>{for(let i=0;i<20;i++)window.advanceTime(100);});const dDog=await drawn();
  check('the shipped manifest lists the fox family and the bone-walked dog, corgi, cat, piglet and goat, and a pet it does not list ('+unlisted+') stays drawn with no model fetched',
   ['fennec','fox','glimmerfox','dog','corgi','cat','piglet','goat'].every(k=>Sh.list.includes(k))&&dS0.state==='none'&&dDog.bodyVisible&&!requests.slice(before).some(u=>/\.glb/.test(u))&&requests.slice(before).some(u=>/assets\/models\/pets\/manifest\.json/.test(u)),{Sh,dS0,after:requests.slice(before)});

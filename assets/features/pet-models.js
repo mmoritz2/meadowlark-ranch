@@ -1032,7 +1032,9 @@ export function install(G){
   const turning=Math.abs(R.yawRate)>0.6&&R.spd>2;
   const gain=d>0.05?clamp((turning?3.4:2.2)*d,0,turning?12:8)+(d>10?(d-10)*0.9:0):0;
   if(d>0.05){vx+=ex/d*gain;vz+=ez/d*gain;}
-  if(R.spd<0.25&&d<0.18){vx=0;vz=0;}
+  /* (bird lane) a pet with a "turn" stays put at its spot until the spot is a good step away, rather than inching after a
+     creeping horse a few millimetres at a time (each nudge was a flick of its head round and a twitch of its legs) */
+  {const park=R.spd<0.25&&d<(S.turn&&st.park?0.32:0.18);if(park){vx=0;vz=0;}st.park=park;}
   const onDeck=deckAt(c.pos.x,c.pos.z,0)!=null,wa=onDeck?null:waterAt(c.pos.x,c.pos.z),swim=wa&&wa.depth>(S.wade||0.3);
   if(swim&&!S.swim){const k=R.flying?0.5:0.75;vx*=k;vz*=k;}
   let spd=Math.hypot(vx,vz);
@@ -1046,6 +1048,16 @@ export function install(G){
      the spot means turning its own speed as fast as the horse turns */
   const acc=(S.accel||32)*(d>6?1.6:1)+Math.abs(R.yawRate)*Math.hypot(vx,vz)*1.3,dvx=vx-st.vx,dvz=vz-st.vz,dv=Math.hypot(dvx,dvz),mx=acc*dt;
   if(dv>mx){st.vx+=dvx/dv*mx;st.vz+=dvz/dv*mx;}else{st.vx=vx;st.vz=vz;}
+  /* (bird lane) a pet with a "turn" (the real chick and duckling) turns first and then runs: on its feet it never goes
+     faster than a shuffle in a direction well off the way it faces (it reversed at 3 m/s in two frames and skated
+     sideways while its head came round); it swings round at its "turn" rate in a tenth of a second or so */
+  if(S.turn&&!st.hop&&!(st.skim>0.05)){const sp=Math.hypot(st.vx,st.vz);if(sp>0.6){const off=Math.abs(wrap(Math.atan2(st.vx,st.vz)-c.heading)),k=clamp((1.6-off)/0.6,0,1),cap=0.6+(sp-0.6)*k;if(cap<sp){st.vx*=cap/sp;st.vz*=cap/sp;}}}
+  /* (bird lane) and beside a horse at a walk (slower than four-fifths of its "skim" speed, and not left far behind) a
+     flap-running bird (skimHold) hurries on its feet no faster than that skim speed, which its legs can step (crossing to
+     the other side it ran at 6 m/s and skated); with a faster horse, or far behind, it may go faster and take to the air */
+  const flapOK=!!(S.wings&&S.wings.skimHold)&&(R.spd>0.8*S.wings.skim||d>6);
+  if(S.turn&&S.wings&&S.wings.skimHold&&!flapOK&&!st.hop&&!(st.skim>0.05)){const sp=Math.hypot(st.vx,st.vz),cap=S.wings.skim;if(sp>cap){st.vx*=cap/sp;st.vz*=cap/sp;}}
+  const x0=c.pos.x,z0=c.pos.z;
   /* a hop over what it is stuck behind */
   if(st.hop){st.hop.t+=dt;const k=Math.min(1,st.hop.t/0.5);st.hopY=Math.sin(Math.PI*k)*0.45;c.pos.x+=st.hop.dx*2.6*dt;c.pos.z+=st.hop.dz*2.6*dt;if(k>=1){st.hop=null;st.hopY=0;}}
   /* the bunny and the hare cover their ground in the air, and barely creep while their feet are down */
@@ -1064,17 +1076,39 @@ export function install(G){
   if(d>0.35&&d<4&&R.spd<1.5&&!st.hop&&st.slotI>=0){if(st.progS!==st.slotI||d<(st.progD||1e9)-0.3){st.progS=st.slotI;st.progD=d;st.blockT=0;}else{st.blockT=(st.blockT||0)+dt;if(st.blockT>1.6){st.bad=st.bad||{};st.bad[st.slotI]=t+8;st.badAt=[R.x,R.z];st.frameT=0;st.blockT=0;st.progD=1e9;}}}else{st.blockT=0;st.progD=1e9;}
   st.spd=Math.hypot(st.vx,st.vz);
   const spinning=st.idle&&st.idle.name==='spin';
-  if(st.spd>0.35){const want=Math.atan2(st.vx,st.vz),dh=wrap(want-c.heading),turn=cl1(dh,(st.spd>3?7:9)*dt);c.heading+=turn;st.yawRate=damp(st.yawRate,turn/dt,8,dt);}
+  /* (bird lane) a pet with a "turn" of its own (the real chick and duckling, walked by clips that step straight ahead)
+     faces the way it goes down to a creep, so a slow shuffle to a new spot is stepped, not glided sideways; a short slow
+     shuffle straight back (an overshoot as the horse halts) it steps backwards, facing on, for up to a second */
+  st.fs=damp(st.fs||0,st.spd,12,dt);   // (its speed over the last tenth of a second or so: a one-frame nudge is not a walk)
+  let face=S.turn?st.fs>0.12&&st.spd>0.05:st.spd>0.35,back=false;
+  if(S.turn){const off=face?Math.abs(wrap(Math.atan2(st.vx,st.vz)-c.heading)):0;
+   if(face&&off>2.3&&st.spd<0.5&&(st.backT||0)<1){back=true;face=false;st.backT=(st.backT||0)+dt;}else if(!(face&&off>2.3))st.backT=0;}
+  st.back=back;
+  const h0=c.heading;
+  if(face){const want=Math.atan2(st.vx,st.vz),dh=wrap(want-c.heading),turn=cl1(dh,(S.turn||(st.spd>3?7:9))*dt);c.heading+=turn;st.yawRate=damp(st.yawRate,turn/dt,8,dt);}
+  else if(back)st.yawRate=damp(st.yawRate,0,6,dt);
   else{
    /* standing still: after a moment it turns three-quarters towards the camera, angled towards the rider,
       so from the saddle you see its face and not its back */
    if(!spinning){let want=R.h;if((st.still||0)>1.0){const cp=G.camera.position,sd=((c.pos.x-R.x)*R.rx+(c.pos.z-R.z)*R.rz)>=0?1:-1;want=Math.atan2(cp.x-c.pos.x,cp.z-c.pos.z)-sd*0.85;}
     c.heading+=cl1(wrap(want-c.heading),1.6*dt);}
    st.yawRate=damp(st.yawRate,0,6,dt);}
+  /* (bird lane) it turns on its feet, not round the middle of its body: a real chick or duckling's feet are not under
+     the middle of its body (footZ, how far forward of it they are as it stands, measured on the real body), and a pivot
+     round the middle swung its planted feet sideways a couple of centimetres a frame. (Round the one foot that is down
+     was tried too, standing and walking: that foot is often far back in its stride, and the body swung wide round it,
+     4 to 5 cm a frame in a quick turn.) */
+  if(S.footZ!=null&&c.heading!==h0&&!(st.skim>0.05)){const z=S.footZ;c.pos.x+=z*(Math.sin(h0)-Math.sin(c.heading));c.pos.z+=z*(Math.cos(h0)-Math.cos(c.heading));}
   st.swim=!!swim;
   /* the birds skim-fly to keep up: the owl glides a hand's breadth over the grass above a trot; the duckling
      and the chick waddle and scurry up to a canter and only then flap along in short bursts */
-  const skimOn=S.wings&&!swim&&st.spd>(S.wings.skim||4.2);
+  let skimOn=S.wings&&!swim&&st.spd>(S.wings.skim||4.2);
+  /* (bird lane) "skimHold": it takes to the air only once it has run that many metres beyond what its legs cover at the
+     "skim" speed (a canter in a third of a second, a sprint at twice the skim speed in a tenth), so a short catch-up dash stays
+     on its feet; beside a horse at a walk (not flapOK, above) it never takes off to keep up: it waddles and runs, crossing
+     over to the other side too; once up it flap-runs on until it slows to three-quarters of the skim speed */
+  if(S.wings&&S.wings.skimHold){const k=S.wings.skim,mv=Math.hypot(c.pos.x-x0,c.pos.z-z0)/Math.max(1e-3,dt);st.mvG=damp(st.mvG||0,Math.min(mv,st.spd+1),10,dt);
+   const sv=Math.min(st.spd,st.mvG);st.skT=sv>k?(st.skT||0)+(sv-k)*dt:sv<0.75*k?0:(st.skT||0);const was=!!st.skOn;skimOn=!swim&&(flapOK&&st.skT>S.wings.skimHold||was&&(st.skOnT||0)<1.2);st.skOnT=skimOn&&was?(st.skOnT||0)+dt:0;st.skOn=skimOn;}   // (the ground it really covers counts: pressed against the horse or a trunk it does not fly up on the spot; once up, a flap-run lasts at least 1.2 s, a flight of its own, never a blip)
   st.skim=damp(st.skim,skimOn?(S.wings.skimH||(S.walk==='hop'?0.55:0.22)):0,skimOn?4:6,dt);   // skimH: a flyer whose legs hang low in flight skims higher (the wyvern)
  }
  /* on a phone held upright the flying birds keep above and behind the rider, and the exact spot is
@@ -1456,8 +1490,10 @@ export function install(G){
      bird takes to the air to keep up (the real owl flies low rather than hop fast), "realGait" its gait speeds and
      top cadence (the owl's hop never buzzes) */
   {const g2=(inst.asset&&inst.asset.entry&&inst.asset.entry.game)||{};
-   if(g2.skim!=null&&S.wings)P.spec.wings=Object.assign({},S.wings,{skim:+g2.skim});
-   if(g2.realGait)P.spec.realGait=Object.assign({},S.realGait||{},g2.realGait);}
+   if(g2.skim!=null&&S.wings)P.spec.wings=Object.assign({},S.wings,{skim:g2.skim===false?Infinity:+g2.skim});   // "skim": false: never lifts off the grass to keep up (they fly only with a flying horse)
+   if(g2.skimHold&&P.spec.wings)P.spec.wings=Object.assign({},P.spec.wings,{skimHold:+g2.skimHold});   // "skimHold": metres run beyond the "skim" speed before it flap-runs (the chick and the duckling: a canter, a gallop or a sprint, not a short dash)
+   if(g2.realGait)P.spec.realGait=Object.assign({},S.realGait||{},g2.realGait);
+   if(g2.turn)P.spec.turn=+g2.turn;}   // "turn": how fast (rad/s) it swings round to the way it is going: a real chick or duckling darts round at once rather than crabbing sideways on planted feet
   R.state='ready';R.first=true;R.phase=0;R.w={};R.speed={};R.air='';}
  /* the clips, from what the drawn pet would be doing this frame */
  const IDLE_CLIP={sit:'sit',scratch:'sit',wash:'sit',groom:'sit',periscope:'sit',settle:'sit',lie:'lie',sniff:'eat',graze:'eat',peck:'eat',snuffle:'eat',pounce:'jump',pronk:'jump',boing:'jump',binky:'jump'};
@@ -1468,6 +1504,15 @@ export function install(G){
     While it sits it keeps its own heading: if the camera swings far round, it gets up and the drawn pet
     turns, then it sits again. */
  const _seat=new THREE.Vector3();
+ /* (bird lane) where a real bird's feet are as it stands, in its own frame: the middle of its lowest vertices, how far
+    forward of the pet's origin (footZ: it turns on its feet round that spot), and half the distance between its two
+    feet (footX: how far a foot travels as it turns); measured once on the real body */
+ const _sv=new THREE.Vector3(),_sm=new THREE.Matrix4();
+ function soleSpot(I,P){P.group.updateMatrixWorld(true);_sm.copy(P.group.matrixWorld).invert();const pts=[];let lo=1e9;
+  I.model.traverse(o=>{if(!o.isSkinnedMesh||!o.visible)return;const n=o.geometry.attributes.position.count;
+   for(let i=0;i<n;i++){o.getVertexPosition(i,_sv).applyMatrix4(o.matrixWorld).applyMatrix4(_sm);if(_sv.y<lo+0.008){if(_sv.y<lo)lo=_sv.y;pts.push(_sv.x,_sv.y,_sv.z);}}});
+  let z=0,n=0,xl=0,nl=0,xr=0,nr=0;for(let i=0;i<pts.length;i+=3){if(pts[i+1]>lo+0.006)continue;z+=pts[i+2];n++;if(pts[i]>0){xl+=pts[i];nl++;}else{xr+=pts[i];nr++;}}
+  return n>3?{z:z/n,x:nl&&nr?(xl/nl-xr/nr)/2:0}:null;}
  function driveRest(c,st,P,R,dt){
   const I=R.inst,flying=!(st.air==='ground'||st.air==='wait');
   const turn=R.hPrev==null?0:Math.abs(wrap(c.heading-R.hPrev))/Math.max(1e-3,dt);R.hPrev=c.heading;
@@ -1490,7 +1535,7 @@ export function install(G){
  }
  function driveReal(c,st,P,R,dt){
   if(R.inst.restOnly){driveRest(c,st,P,R,dt);return;}
-  const I=R.inst,S=P.spec,w=R.w,sp=R.speed,flying=!(st.air==='ground'||st.air==='wait');let restart=null,phase=null,phased=null,air='';
+  const I=R.inst,S=P.spec,w=R.w,sp=R.speed,flying=!(st.air==='ground'||st.air==='wait');let restart=null,phase=null,phased=null,air='',onFeet=false;
   for(const k in w)w[k]=0;
   const add=(s,v)=>{const k=I.pick(s);if(k)w[k]=(w[k]||0)+v;return k;};
   /* (owl lane) a bird body with its own takeoff and land clips (the owl's bird rig): a takeoff snaps in, since the
@@ -1511,15 +1556,34 @@ export function install(G){
   else if(S.kind==='bunny'&&st.hopAir>=0){const kb=I.has('bound')?sstep(5,9,st.spd||0):0,k=add('hop',1-kb);phased=[k];if(kb>0){w.bound=(w.bound||0)+kb;phased.push('bound');}phase=((st.ph%1)+1)%1;}   // the clip's crouch and push in step with the game's own hop; a real hare's gallop clip (bound) takes over from 5 to 9 m/s on the same phase
   else{
    /* turning on the spot takes steps too (a bone-walked body would otherwise pivot on planted feet) */
-   const spin=R.hPrev==null?0:Math.abs(wrap(c.heading-R.hPrev))/Math.max(1e-3,dt),turnStep=I.gait?clamp((spin-0.5)/1.0,0,1):0;
-   const spd=Math.max(st.spd,turnStep*0.5),m=Math.max(birdAir?sstep(0.06,0.16,spd):sstep(0.12,0.55,spd),turnStep*0.8),trot=I.has('trot');   // (owl lane) a bird's hop is all or nothing: half a hop blended with standing slid its feet
+   const spin=R.hPrev==null?0:Math.abs(wrap(c.heading-R.hPrev))/Math.max(1e-3,dt),turnStep=(I.gait||S.turn)?clamp((spin-0.5)/1.0,0,1):0;   // (bird lane: a clip-walked bird with a "turn" steps round a pivot too)
+   /* a body walked by its own clips steps by the ground it really covers this frame (where its group went), as a
+      bone-walked one does, not by the speed the follow asked for: pushed round the horse, out of a tree or along a
+      turning spot it covers more or less than that, and its planted feet slid. A jump (a fast travel, a nudge) is
+      not walked. Its gait (the walk, trot and run blend) follows that speed too */
+   let cov=(st.spd||0)*dt;
+   if(!I.gait){const gp=P.group.position;if(R.gPrev&&dt>0){const ex=gp.x-R.gPrev.x,ez=gp.z-R.gPrev.z,d=Math.hypot(ex,ez);if(d/dt<Math.min(25,2*(st.spd||0)+3)){const fw=ex*Math.sin(c.heading)+ez*Math.cos(c.heading);cov=S.turn&&st.back?fw:Math.max(0,fw);}}   // (the clips step straight ahead: only the ground covered the way it faces is walked; a bird stepping back runs its clips backwards)
+    /* (bird lane) a pivot is stepped round as well: each foot, footX out to the side of the spot it turns on, covers spin x
+       footX; a slow walk round a bend takes whichever is more, never both */
+    const v=dt>0?Math.abs(cov)/dt:0;R.mvC=R.mvC==null?v:R.mvC+(v-R.mvC)*Math.min(1,dt/0.05);onFeet=true;
+    if(S.turn&&turnStep>0){const pv=turnStep*spin*dt*(S.footX||S.w*0.25);if(pv>Math.abs(cov))cov=cov<0?-pv:pv;}}   // (the pivot's steps are small ones: the gait comes in only part way for them, below)
+   const spd=Math.max(I.gait?st.spd:R.mvC,I.gait?turnStep*0.5:0),m=Math.max(birdAir?sstep(0.06,0.16,spd):sstep(0.12,0.55,spd),turnStep*(I.gait?0.8:0.5)),trot=I.has('trot');   // (owl lane) a bird's hop is all or nothing: half a hop blended with standing slid its feet
    const GT=S.realGait||{};   // a species' own gait speeds and top cadence (pet-fantasy.js: the fawn bounds early, its walk is slow)
    let wW=1,wT=0,wR=0;if(trot){const a=sstep(GT.trot?GT.trot[0]:1.3,GT.trot?GT.trot[1]:2.2,spd),b=sstep(GT.run?GT.run[0]:4.6,GT.run?GT.run[1]:6.4,spd);wW=1-a;wT=a*(1-b);wR=a*b;}else{const a=sstep(GT.run?GT.run[0]:1.8,GT.run?GT.run[1]:3.4,spd);wW=1-a;wR=a;}
    phased=[...new Set([I.pick('walk'),trot?I.pick('trot'):null,I.pick('run')].filter(Boolean))];   // every gait clip stays on the one stride phase, even while it fades out
    if(m>0){const kW=add('walk',m*wW),kT=wT?add('trot',m*wT):null,kR=wR?add('run',m*wR):null;
     /* one stride phase for every gait clip, advanced at the pet's speed over the blended stride */
     const sW=I.stride(kW)||S.len*1.3,sT=kT?(I.stride(kT)||S.len*1.9):0,sR=kR?(I.stride(kR)||S.len*2.8):0,str=(sW*wW+sT*wT+sR*wR)/Math.max(1e-3,wW+wT+wR);
-    const dom=wR>0.5?kR:wT>0.5?kT:kW,nat=1/Math.max(0.1,I.dur(dom));R.phase+=dt*clamp(spd/Math.max(0.05,str),nat*0.5,nat*(GT.rateHi||2.6));}
+    const dom=wR>0.5?kR:wT>0.5?kT:kW,nat=1/Math.max(0.1,I.dur(dom));
+    if(I.gait)R.phase+=dt*clamp(spd/Math.max(0.05,str),nat*0.5,nat*(GT.rateHi||2.6));   // (a bone-walked body plants its own feet at the speed it is given)
+    else{
+     /* the stride its legs really show this frame: each gait clip at the weight the instance eases it to now (a walk
+        still fading into the run sweeps a planted foot back by the walk's short stride, so the clips must turn over
+        faster until the run is in), a standing pose under them sweeping nothing; then one stride of phase for each
+        stride of ground covered, up to the gait's top cadence */
+     const kf=1-Math.exp(-dt/(birdAir&&R.fastT>0?0.04:S.turn?0.1:0.25)),seen={};let sweep=0;
+     for(const k2 of phased){if(seen[k2])continue;seen[k2]=1;const cur=I.weights[k2]||0,e2=cur+((w[k2]||0)-cur)*kf;if(e2>1e-3)sweep+=e2*(I.stride(k2)||S.len*(k2===I.pick('run')&&k2!==I.pick('walk')?2.8:k2===I.pick('trot')&&k2!==I.pick('walk')?1.9:1.3));}   // (every gait clip still showing, the one fading out too)
+     const dP=Math.min(Math.abs(cov)/Math.max(sweep,0.35*m*str,1e-3),dt*Math.min(nat*(GT.rateHi||2.6),GT.hzHi||1e9));R.phase+=cov<0?-dP:dP;}}   // ("hzHi": a top cadence in strides a second whatever the clip, so a small bird's legs never turn over faster than a screen can show)
    phase=R.phase;   // held while it stands, so a gait clip fading out keeps its step
    const id=st.idle&&!st.idle.out?IDLE_CLIP[st.idle.name]:null;
    add(id&&I.has(id)?id:'idle',1-m);
@@ -1545,6 +1609,7 @@ export function install(G){
   /* (owl lane) a restarted takeoff or landing is snapped in over about a tenth of a second (the default cross-fade
      is a quarter: the bird rose in its standing pose); the bird's own big head turns leave the look at you less room */
   let fade;if(birdAir){if(restart==='takeoff'||restart==='land')R.fastT=0.12;if(R.fastT>0){R.fastT-=dt;fade=0.04;}}
+  if(fade==null&&S.turn&&!flying)fade=0.1;   // (bird lane) a chick or a duckling starts and stops at once: its gait cross-fades in a tenth of a second, so its legs show their full stride sooner and skid less as it sets off
   const turnRate=R.hPrev==null?0:wrap(c.heading-R.hPrev)/Math.max(1e-3,dt);R.hPrev=c.heading;
   /* a bone-walked body steps at the speed the pet really covers the ground (not the speed it wants), so a
      planted foot stays put; a jump of the pet (a fast travel) is not a speed */
@@ -1558,6 +1623,8 @@ export function install(G){
    R.popC=0;if(R.popT!=null){R.popT+=dt;const k=1-sstep(0,0.15,R.popT);R.popC=R.pop*k;I.root.position.y-=R.popC;if(k<=0)R.popT=null;}R.altPrev=c.alt||0;}
   I.look(birdAir?clamp(st.lookY||0,-0.9,0.9):(st.lookY||0),st.lookP||0);
   R.clip=I.state;
+  R.gPrev=(R.gPrev||new THREE.Vector3()).copy(P.group.position);if(!onFeet)R.mvC=null;   // where it stood, for the next frame's ground covered
+  if(S.turn&&R.foot==null&&onFeet&&!R.sk&&(st.spd||0)<0.05&&(I.weights.idle||0)>0.97){P.group.updateMatrixWorld(true);const f=soleSpot(I,P);R.foot=f||false;if(f&&Math.abs(f.z)<S.len*0.5){P.spec.footZ=+f.z.toFixed(4);P.spec.footX=+Math.max(0.01,f.x).toFixed(4);}}   // (bird lane) its feet, once, standing in its idle
  }
 
  /* ================================================================ the handles ================ */
