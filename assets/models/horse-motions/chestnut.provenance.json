@@ -1,0 +1,42 @@
+{
+  "sha256": "7b1d1cb9529f61810232b0c42970be6dae302d3492ea3592694b7c898c7f68f3",
+  "bytes": 564472,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/roster/chestnut/idle.glb",
+      "sourceSha256": "f1aa9c12c975766990b9646d2cc0365ca5a00e3bd8a5d2a2405c45d3fe2e364b",
+      "clip": "Horse|Horse_Idle",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/chestnut/walk.glb",
+      "sourceSha256": "a35326ab206428ce89403df2356f9261ca4b1226e4cbd6e07db8a79a6c940651",
+      "clip": "Target Native Walk Rollover",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/chestnut/trot.glb",
+      "sourceSha256": "7a8971c0cb29e7a69a2d162b59e9479aedaa913390c7dde2adebf134d74ccd08",
+      "clip": "Target Native Trot",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/chestnut/canter-left.glb",
+      "sourceSha256": "4b0a58fe9720d56232c2412adeb4fb43c14f5100a455883844b3af7bd7a0f760",
+      "clip": "Target Native Canter Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/chestnut/canter-right.glb",
+      "sourceSha256": "436758be9a12bd623e3df0971794983c12bb21be8095e23b5fa4e5c344df7a67",
+      "clip": "Target Native Canter Right",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/chestnut/jump-scaled.glb",
+      "sourceSha256": "f06bd10a81a43fbb5392bee72dff54162e138c7738ec848bf669409f8fa972be",
+      "clip": "Target Native Jump",
+      "channels": 41
+    }
+  ]
+}

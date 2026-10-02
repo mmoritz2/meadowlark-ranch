@@ -1,0 +1,42 @@
+{
+  "sha256": "35ae5e555b713cf51f017a0b446ecb0253fa60bc30e1fa6de029c38b994d85f4",
+  "bytes": 564472,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/roster/iceland/idle.glb",
+      "sourceSha256": "4595cd551e2726d012ef361e936440e6cfe1d6ef6d7b6ed75c479e0c109b9a8c",
+      "clip": "Horse|Horse_Idle",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/iceland/walk.glb",
+      "sourceSha256": "80aec6cc61158b2a0a4250cbfc4b50a1a02c4b1b35ce1b94a3e3651b599c662c",
+      "clip": "Target Native Walk Rollover",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/iceland/trot.glb",
+      "sourceSha256": "2d0ab2305c27ede1e13d79f94fcbbb57d4328695f36d5e1f2a27f0c050251513",
+      "clip": "Target Native Trot",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/iceland/canter-left.glb",
+      "sourceSha256": "1733f640b0267438abc7cc757c051cda2f4de1b13b180986b8992b4601610a4a",
+      "clip": "Target Native Canter Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/iceland/canter-right.glb",
+      "sourceSha256": "3cb987fb5f83695a3b139378e4a6b4b9ed4012f0b22110dd9e0163f65bcc2168",
+      "clip": "Target Native Canter Right",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/iceland/jump-scaled.glb",
+      "sourceSha256": "40fcd5c87eaa546767b347cb7ea2ccbcef04c032aa31ef22be43f06cfa5b444f",
+      "clip": "Target Native Jump",
+      "channels": 41
+    }
+  ]
+}

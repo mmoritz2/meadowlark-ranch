@@ -2,13 +2,14 @@ import {createArtistMotion,ARTIST_GAITS} from './artist-horse-motion.js?v=gaits-
 import {finishHeroCoat} from './hero-horse-coat.js?v=hero-ranch-1';
 import {createHeroHorseGroom} from './hero-horse-groom.js?v=hero-ranch-1';
 import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-20260908-4';
-import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities} from './native-horse-motion.js?v=native-hoof-flex-2';
-export {getNativeHorseCapabilities,finishNativeHorseGrooms} from './native-horse-motion.js?v=native-hoof-flex-2';
+import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=complete-gaits-2';
+export {getNativeHorseCapabilities,finishNativeHorseGrooms} from './native-horse-motion.js?v=complete-gaits-2';
 
 // Adapts the approved raw-space hero to the ranch's +Z-forward mount space.
 // Existing horse models continue using their own renderer and animation path.
 export function initGameHero(THREE,rig){
   if(rig.profile?.nativeBreed){rig.heroMotion=createNativeHorseMotion({THREE,root:rig.nativeRoot,clips:rig.animations,profile:rig.profile,deferGroom:true});rig.nativeMotion=rig.heroMotion;rig.heroMotion.set('stand');rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroSeat=new THREE.Vector3();return;}
+  if(rig.profile?.referenceMotion){rig.heroMotion=createNativeHorseMotion({THREE,root:rig.scene,clips:rig.animations,profile:{...rig.profile,nativeBreed:true,nativeKind:'horse',nativeHoofFlex:false}});rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroSeat=new THREE.Vector3();rig.artistClock=0;return;}
   if(rig.profile?.artistBreed){rig.heroMotion=createArtistMotion({THREE,root:rig.scene,skin:rig.skin,heightM:rig.profile.heightM});rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroSeat=new THREE.Vector3();rig.artistClock=0;rig.artistWorldScale=new THREE.Vector3();return;}
   if(!rig.profile?.hero)return;
   rig.heroMaterial=finishHeroCoat({THREE,scene:rig.scene});
@@ -17,6 +18,7 @@ export function initGameHero(THREE,rig){
   rig.heroSeat=new THREE.Vector3();
 }
 export function disposeMountedRig(rig){
+  if(rig.profile?.referenceMotion)rig.heroMotion?.dispose?.();
   if(rig.profile?.nativeBreed){rig.nativeRider?.dispose?.();rig.nativeMotion?.dispose?.();}
   (rig.groom||rig.hair)?.dispose?.();
   const skeletons=new Set();rig.scene?.traverse(o=>{if(o.isSkinnedMesh&&o.skeleton)skeletons.add(o.skeleton);});
@@ -39,7 +41,7 @@ export function heroGroomFacade({THREE,skin,bones,mount,profile}){
   return facade;
 }
 export function startGameHeroJump(rig){
-  if(rig.profile?.nativeBreed)return false;
+  if(rig.profile?.nativeBreed||rig.profile?.referenceMotion)return startNativeHorseJump(rig);
   if(!rig.heroMotion||rig.heroJumpAge!==null)return false;
   rig.heroJumpAge=0;rig.heroMotion.set('jump');return true;
 }
@@ -54,7 +56,7 @@ export function startGameHeroJump(rig){
 const JUMP_GATHER_RATE=2.4,JUMP_LAND_RATE=1.6,JUMP_RELEASE=1.18,JUMP_GRACE=0.35;
 function jumpClockRate(age){return age<.38?JUMP_GATHER_RATE:age<1.16?1:JUMP_LAND_RATE;}
 export function tickGameHero(rig,speed,dt,turn=0){
-  if(rig.profile?.nativeBreed)return tickNativeHorse(rig,speed,dt,turn);
+  if(rig.profile?.nativeBreed||rig.profile?.referenceMotion){if(rig.profile.referenceMotion){rig.artistClock=(rig.artistClock||0)+dt;rig.skin.material.userData.update?.(rig.artistClock);}const state=tickNativeHorse(rig,speed,dt,turn);if(rig.profile.referenceMotion)(rig.groom||rig.hair)?.update?.(dt,{...state,speedMps:speed});return state;}
   const motion=rig.heroMotion;if(!motion)return null;
   rig.artistClock=(rig.artistClock||0)+dt;rig.skin.material.userData.update?.(rig.artistClock);
   let rate=1;

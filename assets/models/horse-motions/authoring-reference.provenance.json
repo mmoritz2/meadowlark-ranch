@@ -1,0 +1,42 @@
+{
+  "sha256": "d926850cc6fff480e05d969c0a41666a824b67ae5e0f3b0115f816fc75b97edd",
+  "bytes": 10645864,
+  "clips": [
+    {
+      "source": "review/native-trot-polish-pilot/model.glb",
+      "sourceSha256": "84641a03ff1adeec2c24e49b7120efdd750524c268cd1691da6f92e4bc6824b6",
+      "clip": "Horse|Horse_Idle",
+      "channels": 1622
+    },
+    {
+      "source": "review/native-trot-polish-pilot/model.glb",
+      "sourceSha256": "84641a03ff1adeec2c24e49b7120efdd750524c268cd1691da6f92e4bc6824b6",
+      "clip": "Target Native Walk Rollover",
+      "channels": 82
+    },
+    {
+      "source": "review/native-trot-polish-pilot/model.glb",
+      "sourceSha256": "84641a03ff1adeec2c24e49b7120efdd750524c268cd1691da6f92e4bc6824b6",
+      "clip": "Target Native Trot",
+      "channels": 84
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/canter/model.glb",
+      "sourceSha256": "32fb7bd23703233757d18ac14d04bae2e4b6b25f488211e6b339d1871ca7f9cc",
+      "clip": "Target Native Canter Left",
+      "channels": 84
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/canter/model.glb",
+      "sourceSha256": "32fb7bd23703233757d18ac14d04bae2e4b6b25f488211e6b339d1871ca7f9cc",
+      "clip": "Target Native Canter Right",
+      "channels": 84
+    },
+    {
+      "source": "review/native-complete-gaits/jump/model.glb",
+      "sourceSha256": "d7e14d14bf23cc4f12086714dca4fdea4cd4cb433b231abb3a085c7b647ab016",
+      "clip": "Target Native Jump",
+      "channels": 86
+    }
+  ]
+}

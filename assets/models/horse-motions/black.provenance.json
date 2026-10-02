@@ -1,0 +1,42 @@
+{
+  "sha256": "bbab69c4583069c15974cfb08e5bd6651db70ed61092b608de73b4d4fe21ee09",
+  "bytes": 564468,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/roster/black/idle.glb",
+      "sourceSha256": "478e3497c5d7c9cf17568251da0c1630e02146893ecc0c62fa6fcfb0d7394977",
+      "clip": "Horse|Horse_Idle",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/black/walk.glb",
+      "sourceSha256": "66f04c84f687cf72905b2480b07f0ac937e606b97901eb5fb0df894621bc7a04",
+      "clip": "Target Native Walk Rollover",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/black/trot.glb",
+      "sourceSha256": "bd27469cfac3053d0504e1b5f5a741488bc373ccdbd3ee3f76bb6b10924f1d57",
+      "clip": "Target Native Trot",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/black/canter-left.glb",
+      "sourceSha256": "479d2bdef8eafd68a62546683a8c889759b321801229fc1afcca0496575af9fa",
+      "clip": "Target Native Canter Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/black/canter-right.glb",
+      "sourceSha256": "9042a040b0f62bbab418426f01aece3761a097d8db70283d7659054284322995",
+      "clip": "Target Native Canter Right",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/black/jump-scaled.glb",
+      "sourceSha256": "dbd819e948fe2c24bc4d4413ad2cf317bbd1bf41e2173d58526292908b86831b",
+      "clip": "Target Native Jump",
+      "channels": 41
+    }
+  ]
+}

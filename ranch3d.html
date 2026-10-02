@@ -538,7 +538,7 @@ body.touch #stickZone{display:block}
  <button id="flyBtn" style="display:none">🪽 Fly</button>
  <button id="breathBtn" style="display:none" title="Breathe (B)">🔥 Breathe</button>
 </nav>
-<div id="hint">W/↑ ride · A/D steer · Shift gallop · Space jump · drag to look around</div>
+<div id="hint">W/↑ ride · Ctrl walk · Alt trot · Shift gallop · Space jump · A/D steer</div>
 <div id="toasts" role="status" aria-live="polite" aria-atomic="true"></div>
 <canvas id="mini" width="140" height="140" title="Open the world map (M)"></canvas>
 <div id="bigmapWrap"><div style="display:flex;flex-direction:column;align-items:center"><canvas id="bigmap" width="560" height="560"></canvas><div id="ftBar"></div></div></div>
@@ -632,12 +632,12 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from './assets/breed-models.js?v=native-hoof-flex-2';
+import {createBreedLibrary} from './assets/breed-models.js?v=complete-gaits-2';
 import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=native-hoof-flex-2';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=complete-gaits-2';
 import {createNativeRiderBridge} from './assets/native-rider.js?v=native-rider-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js';
@@ -5437,9 +5437,9 @@ function rigPhaseStep(sp,grounded,dt,scale=1){
 function driveRig(sp,grounded,t,dt){
  if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
  if(RIG.heroMotion){
-  if(RIG.profile?.nativeBreed)RIG.nativeFlying=!!player.flying;
+  if(RIG.profile?.nativeBreed||RIG.profile?.referenceMotion)RIG.nativeFlying=!!player.flying;
   const state=tickGameHero(RIG,sp,dt,player.turnSm||0);
-  if(!player.flying){if(RIG.heroJumpAge!==null){player.y=Math.max(0,state.bodyLiftM+RIG.heroJumpExtra);player.vy=0;}else{player.y=0;player.vy=0;}}
+  if(!player.flying){if(RIG.heroJumpAge!==null){player.y=Math.max(0,(RIG.profile?.nativeBreed||RIG.profile?.referenceMotion)?RIG.heroJumpExtra:state.bodyLiftM+RIG.heroJumpExtra);player.vy=0;}else{player.y=0;player.vy=0;}}
   if(RIG._hideFor!==player.mesh){hideProceduralBody();RIG._hideFor=player.mesh;}
   if(RIG.emote&&!RIG.profile?.nativeBreed){RIG.emote.t+=dt;if(RIG.emote.t>=RIG.emote.dur)RIG.emote=null;else G.run('rigEmote',RIG,RIG.emote,dt,t);}   // bond-personality-emotes poses the artist bones additively
   if(TACK.saddle&&!RIG.profile?.nativeBreed)TACK.saddle.position.copy(breedSeat());
@@ -13059,6 +13059,7 @@ function animateHorse(parts,phase,amp,gait,grounded,t,grazing,dt){
 const clock=new THREE.Clock();
 function setFlying(on){
  const winged=myHorses[rideIdx]&&myHorses[rideIdx].wings;
+ if(RIG.profile?.referenceMotion)RIG.nativeCanFly=!!myHorses[rideIdx]?.wings;
  const nativeCap=RIG.attachedTo===player.mesh?getNativeHorseCapabilities(RIG):null;
  if(on&&nativeCap?.native&&!nativeCap.canFly){toast('This native mount has no flight animation.');return;}
  if(on&&!winged&&!nativeCap?.canFly){toast('🪽 Only a Pegasus can fly! Get one in the 🛍️ Shop.');return;}
@@ -13092,7 +13093,7 @@ let hintT=0,loadWaitT=0;
    of a 1000-unit world, or that VR and multiplayer exist. Returning players get the
    single control line and it fades as before. */
 const HINTS_KEYS=[
- 'W/↑ ride · A/D steer · Shift gallop · Space jump · drag to look around',
+ 'W/↑ ride · Ctrl walk · Alt trot · Shift gallop · Space jump · A/D steer',
  'This arena is one corner of a big world — ride out through the gate and explore · M for the map',
  'The fences in here are a show-jumping course · 🏅 tracks your progress',
  '🌐 Club lets friends ride in your world · 🥽 Ride in VR on a headset'];
@@ -13157,10 +13158,13 @@ function tick(stepSeconds){
  if(player.stam<=0.12)player.blown=true; if(player.blown&&player.stam>0.35)player.blown=false;
  if(player.blown&&target>5.5)target=5.5;
  if(player.boostT>0){player.boostT-=dt;target*=1.22;}
+ if(RIG.profile?.referenceMotion)RIG.nativeCanFly=!!myHorses[rideIdx]?.wings;
  const nativeCap=RIG.attachedTo===player.mesh?getNativeHorseCapabilities(RIG):null;
  if(nativeCap?.native){
   if(player.flying&&!nativeCap.canFly){setFlying(false);player.y=0;player.vy=0;}
-  const max=player.flying&&nativeCap.canFly?nativeCap.flightMaxSpeedMps:nativeCap.maxSpeedMps;
+  const requestedMode=keys.ControlLeft||keys.ControlRight?'walk':keys.AltLeft||keys.AltRight?'trot':gallop?'gallopLeft':'canterLeft';
+  const gaitCap=(RIG.profile.nativeGaits?.[requestedMode]?.nominalSpeedMps||nativeCap.nominalMaxSpeedMps)*nativeCap.worldScale;
+  const max=player.flying&&nativeCap.canFly?nativeCap.flightMaxSpeedMps:gaitCap;
   target=THREE.MathUtils.clamp(target,0,max);
  }
  {const sw=$('stamWrap'); if(sw){const show=(course&&course.started)||player.stam<0.98||player.blown; sw.style.display=show?'block':'none'; if(show){$('stamFill').style.width=Math.round(player.stam*100)+'%'; sw.classList.toggle('blown',!!player.blown);}}}
@@ -13267,7 +13271,8 @@ function tick(stepSeconds){
    const pressed=!!(keys.Space||touch.jump)&&!RIDE.noJump;
    if(pressed&&!RIG.heroJumpHeld){
     if(nativeCap.canFly)setFlying(true);
-    else toast('This native mount has no jump animation yet.');
+    else if(nativeCap.canJump){if(startGameHeroJump(RIG))sJump();}
+    else toast('This mount has no jump animation yet.');
    }
    RIG.heroJumpHeld=pressed;RIG.heroJumpWant=0;
   }else if(RIG.heroMotion){

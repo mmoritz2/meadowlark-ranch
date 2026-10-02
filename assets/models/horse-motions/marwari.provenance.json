@@ -1,0 +1,42 @@
+{
+  "sha256": "820f97cb5fe547b4289f57fc9fca36f59e17cc454305ef130b29bdce8a192939",
+  "bytes": 564472,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/roster/marwari/idle.glb",
+      "sourceSha256": "fc6367cc9206323b235f53a8d4ff6dc8748342464bd9172b52c85e3da2e0e40d",
+      "clip": "Horse|Horse_Idle",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/marwari/walk.glb",
+      "sourceSha256": "dd6c0532edcae14016b54e0e64fccc152b1a3f010e59721a34defcb114611c13",
+      "clip": "Target Native Walk Rollover",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/marwari/trot.glb",
+      "sourceSha256": "8b8124e987406741362995df91f5b582b13a8aa3ea2c220846546790cc39eddd",
+      "clip": "Target Native Trot",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/marwari/canter-left.glb",
+      "sourceSha256": "06a9355d9af5947d9c9127c8088d1664c9fb092c8864abdf1bdccc671044c1d0",
+      "clip": "Target Native Canter Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/marwari/canter-right.glb",
+      "sourceSha256": "742666f56d5d54c730d75c9e202b78bd9a94aab6404a356aa11757d2c9c448ae",
+      "clip": "Target Native Canter Right",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/marwari/jump-scaled.glb",
+      "sourceSha256": "84d7a6c5459d1a1c077f09fc9ceb773062f2b743b31c71abc3792650293562c8",
+      "clip": "Target Native Jump",
+      "channels": 41
+    }
+  ]
+}

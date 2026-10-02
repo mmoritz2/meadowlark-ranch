@@ -1,0 +1,42 @@
+{
+  "sha256": "4d4901471888358dba64cf0def9dce807f31b140728ea328b0e06fec41bc04ec",
+  "bytes": 564472,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/roster/fjord/idle.glb",
+      "sourceSha256": "fec0133d439eefadf5b6a7279e1dc08cc0998926be94bcfa816e46ce160a2170",
+      "clip": "Horse|Horse_Idle",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/fjord/walk.glb",
+      "sourceSha256": "89d1d743f24a0b7f6fdd57e9291674eecc703fc97a7c3d1430064f780daf584a",
+      "clip": "Target Native Walk Rollover",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/fjord/trot.glb",
+      "sourceSha256": "4047f5af2790bce6b305e495c373abcbd69ad85ba1b63d83343036900ab6e144",
+      "clip": "Target Native Trot",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/fjord/canter-left.glb",
+      "sourceSha256": "ca581d69ba34aa3a3a39d228d0b2c6ed63e38bbc8e9926f438ab92749a97ac1b",
+      "clip": "Target Native Canter Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/fjord/canter-right.glb",
+      "sourceSha256": "a0a6455f9cf512fd1afdb1d6e1c4d312848f396471ca3b0f04d7ebb2a6e03b36",
+      "clip": "Target Native Canter Right",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/fjord/jump-scaled.glb",
+      "sourceSha256": "aa1a613c2e159872e39c9806de1a7c372cf09de7e2a0cb74e8059183856412f9",
+      "clip": "Target Native Jump",
+      "channels": 41
+    }
+  ]
+}

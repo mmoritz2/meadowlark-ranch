@@ -1,14 +1,15 @@
 /* Approved artist-derived breed assets. Geometry/textures are cached; skeletons
  * and materials are private to each mounted horse. Native axes: +Z forward, +Y up. */
 import {fillOutTail,fillOutMane} from './horse-hair-volume.js';
-import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=native-hoof-flex-2';
+import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=complete-gaits-2';
 export function createBreedLibrary({THREE, GLTFLoader, clone}) {
   const base=new URL('./models/artist-breeds/',import.meta.url),pending=new Map(),ready=new Map(),files=new Map();
   let manifest=null,revision='';
+  const motionCatalog=fetch(new URL('./models/horse-motions/manifest.json',import.meta.url),{cache:'no-store'}).then(r=>r.ok?r.json():{});
   const manager=new THREE.LoadingManager();
   manager.setURLModifier(url=>{if(!revision||!url.startsWith(base.href))return url;const u=new URL(url);u.searchParams.set('build',revision);return u.href;});
   const loader=new GLTFLoader(manager);
-  const manifestReady=fetch(new URL('manifest.json',base),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`Artist breed catalog HTTP ${r.status}`);return r.json();}).then(m=>{m={...m,breeds:{...m.breeds,...NATIVE_BREED_PROFILES}};let hash=2166136261;for(const c of JSON.stringify(m))hash=Math.imul(hash^c.charCodeAt(0),16777619);revision=(hash>>>0).toString(16);manifest=m;return m;});
+  const manifestReady=fetch(new URL('manifest.json',base),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`Artist breed catalog HTTP ${r.status}`);return r.json();}).then(async m=>{const motions=await motionCatalog;const breeds=Object.fromEntries(Object.entries(m.breeds).map(([key,spec])=>{const motion=motions.breeds?.[spec.file.replace('.glb','')];return[key,motion?{...spec,...motion,referenceMotion:true}:spec]}));m={...m,breeds:{...breeds,...NATIVE_BREED_PROFILES}};let hash=2166136261;for(const c of JSON.stringify(m))hash=Math.imul(hash^c.charCodeAt(0),16777619);revision=(hash>>>0).toString(16);manifest=m;return m;});
   manifestReady.catch(()=>{});
   /* Feature packages add breed rows without touching the model manifest: alias(key, foundation) maps a new
    * roster key onto an authored body, consulted after the manifest's own aliases. */
@@ -49,7 +50,7 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
   }
   async function load(requested='bay'){
     await manifestReady;const key=resolve(requested);if(ready.has(key))return ready.get(key);
-    if(!pending.has(key)){const spec=manifest.breeds[key];if(!spec)throw new Error(`Missing authored breed: ${requested}`);const url=new URL(spec.file,spec.nativeBreed?import.meta.url:base);url.searchParams.set('build',spec.sha256||revision);if(!files.has(url.href))files.set(url.href,loader.loadAsync(url.href).catch(e=>{files.delete(url.href);throw e;}));pending.set(key,files.get(url.href).then(g=>spec.nativeBreed?prepareNative(g,key,spec):prepare(g,key,spec)).catch(e=>{pending.delete(key);throw e;}));}
+    if(!pending.has(key)){const spec=manifest.breeds[key];if(!spec)throw new Error(`Missing authored breed: ${requested}`);const url=new URL(spec.file,spec.nativeBreed?import.meta.url:base);url.searchParams.set('build',spec.sha256||revision);if(!files.has(url.href))files.set(url.href,loader.loadAsync(url.href).catch(e=>{files.delete(url.href);throw e;}));pending.set(key,files.get(url.href).then(async g=>{if(spec.motionFile){const mu=new URL(spec.motionFile,import.meta.url);mu.searchParams.set('build',spec.motionSha256);if(!files.has(mu.href))files.set(mu.href,loader.loadAsync(mu.href).catch(e=>{files.delete(mu.href);throw e;}));const extra=await files.get(mu.href),replaced=new Set(extra.animations.map(c=>c.name));g={...g,animations:[...g.animations.filter(c=>!replaced.has(c.name)),...extra.animations]};}return spec.nativeBreed?prepareNative(g,key,spec):prepare(g,key,spec)}).catch(e=>{pending.delete(key);throw e;}));}
     return pending.get(key);
   }
   function instantiate(asset){

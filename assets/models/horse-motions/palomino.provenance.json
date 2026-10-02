@@ -1,0 +1,42 @@
+{
+  "sha256": "2bee98fab8a679baae25379d83dc3f8e7d5ee40061d4eee34b278cc1148f90fc",
+  "bytes": 564472,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/roster/palomino/idle.glb",
+      "sourceSha256": "cf2750a3cf673e3ef523aa0edfef5fa9788a1e671a62b18225d5c120d2dbff48",
+      "clip": "Horse|Horse_Idle",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/palomino/walk.glb",
+      "sourceSha256": "c77c1d50c2469894ab73b0c15492c169251b1b1e8215b78b4ea832a11d75ef08",
+      "clip": "Target Native Walk Rollover",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/palomino/trot.glb",
+      "sourceSha256": "032ea009067b23722088b06759c327858d5c9fc79eb6abebc89e14be8a5ff729",
+      "clip": "Target Native Trot",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/palomino/canter-left.glb",
+      "sourceSha256": "8fe56e5eae6c8c50267c3ffee616d3a4b87f3957802f9a2f5779f2ac5103be90",
+      "clip": "Target Native Canter Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/palomino/canter-right.glb",
+      "sourceSha256": "b7b571a8182cc45cc89bcc3eb3f9f3c62516554b43fcb7e80cfd3fbe59c80ffd",
+      "clip": "Target Native Canter Right",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/palomino/jump-scaled.glb",
+      "sourceSha256": "9589bd5343276b5c6b998cf43afdb1dfd57db3d7a29caef0d3d8d46cb4251def",
+      "clip": "Target Native Jump",
+      "channels": 41
+    }
+  ]
+}

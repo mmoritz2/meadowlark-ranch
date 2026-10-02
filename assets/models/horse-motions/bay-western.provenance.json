@@ -1,0 +1,48 @@
+{
+  "sha256": "0a16a6150b321db1bf4e6a3bbf13a4170ea87fa1df130b080b5044673e66833f",
+  "bytes": 952124,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/locomotion/bay/motion-override.glb",
+      "sourceSha256": "0a16a6150b321db1bf4e6a3bbf13a4170ea87fa1df130b080b5044673e66833f",
+      "clip": "Target Native Trot",
+      "channels": 84
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/bay/motion-override.glb",
+      "sourceSha256": "0a16a6150b321db1bf4e6a3bbf13a4170ea87fa1df130b080b5044673e66833f",
+      "clip": "Target Native Canter Left",
+      "channels": 84
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/bay/motion-override.glb",
+      "sourceSha256": "0a16a6150b321db1bf4e6a3bbf13a4170ea87fa1df130b080b5044673e66833f",
+      "clip": "Target Native Canter Right",
+      "channels": 84
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/bay/motion-override.glb",
+      "sourceSha256": "0a16a6150b321db1bf4e6a3bbf13a4170ea87fa1df130b080b5044673e66833f",
+      "clip": "Native Foreleg Baseline | Target Native Trot",
+      "channels": 4
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/bay/motion-override.glb",
+      "sourceSha256": "0a16a6150b321db1bf4e6a3bbf13a4170ea87fa1df130b080b5044673e66833f",
+      "clip": "Native Foreleg Baseline | Target Native Canter Left",
+      "channels": 4
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/bay/motion-override.glb",
+      "sourceSha256": "0a16a6150b321db1bf4e6a3bbf13a4170ea87fa1df130b080b5044673e66833f",
+      "clip": "Native Foreleg Baseline | Target Native Canter Right",
+      "channels": 4
+    },
+    {
+      "source": "review/native-complete-gaits/locomotion/bay/motion-override.glb",
+      "sourceSha256": "0a16a6150b321db1bf4e6a3bbf13a4170ea87fa1df130b080b5044673e66833f",
+      "clip": "Target Native Jump",
+      "channels": 86
+    }
+  ]
+}

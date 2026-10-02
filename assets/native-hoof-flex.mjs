@@ -12,6 +12,7 @@ export function prepareNativeHoofFlex({THREE,root,clips,profile}){
  for(const c of Object.values(controls))if(c.bones.length!==2||bones.get(c.bones[1]).parent!==bones.get(c.bones[0])||!c.hull?.length||c.hull.some(p=>p.length!==3||p.some(x=>!Number.isFinite(x))))throw new Error('Native hoof controls mismatch');
  const names=new Set(boneNames.map(n=>n+'.quaternion')),defaults=new Map(boneNames.map(n=>[n,bones.get(n).quaternion.clone()])),samplers=new Map(),replacement=new Map();
  for(const record of Object.values(profile.nativeGaits||{})){
+  if(record.authoredHoofFold)continue;
   const folded=THREE.AnimationClip.findByName(clips,record.clip),original=THREE.AnimationClip.findByName(clips,'Native Foreleg Baseline | '+record.clip);
   if(!folded||!original||Math.abs(folded.duration-original.duration)>1e-5)throw new Error('Missing original native foreleg tracks');
   const originalTracks=new Map(original.tracks.map(t=>[t.name,t]));

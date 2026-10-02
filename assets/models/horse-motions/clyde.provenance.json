@@ -1,0 +1,42 @@
+{
+  "sha256": "810a5527128d47eebce2dc96821cf46063603fd1415ac5ae0c57adffbf9f94c7",
+  "bytes": 564472,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/roster/clyde/idle.glb",
+      "sourceSha256": "137d670228d4f8535e8535278f6612a62401ce1e7293e0c43f5b528b31c46fba",
+      "clip": "Horse|Horse_Idle",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/clyde/walk.glb",
+      "sourceSha256": "b28424afc525e759ae2003e2547648ca77eca9d885a59a7c6a6dd5a0e00a1b69",
+      "clip": "Target Native Walk Rollover",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/clyde/trot.glb",
+      "sourceSha256": "0ac783ae5996f8ce2ce36c345183343aeb037faf442e9ca757bfae42b8613ea0",
+      "clip": "Target Native Trot",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/clyde/canter-left.glb",
+      "sourceSha256": "b192bc79df1b8d6ab2eefa8afd709100e604cabb513b7f89f9e9d9e7a6c72a13",
+      "clip": "Target Native Canter Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/clyde/canter-right.glb",
+      "sourceSha256": "72dd23de09336fb78308cd22ce81c491aa420676a65dc4391e29500bf4f36e19",
+      "clip": "Target Native Canter Right",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/clyde/jump-scaled.glb",
+      "sourceSha256": "f7bab8aef3540639d6dac87ab1262242ed199d29e17ebdb3d54eaf2a0c830f4e",
+      "clip": "Target Native Jump",
+      "channels": 41
+    }
+  ]
+}

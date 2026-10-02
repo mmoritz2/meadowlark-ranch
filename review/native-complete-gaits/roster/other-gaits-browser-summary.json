@@ -1,0 +1,42 @@
+{
+  "targetCount": 25,
+  "rows": 100,
+  "gaits": [
+    "walk",
+    "canter-left",
+    "canter-right",
+    "jump"
+  ],
+  "failures": [],
+  "allFinite": true,
+  "allResponsePins": true,
+  "minimumHoofMm": 0.9915136161171669,
+  "minimumBodyMm": 0.99182230599373,
+  "jumpTimingPendingNormalization": [
+    "akhal",
+    "appaloosa",
+    "bay",
+    "bay-sporthorse",
+    "black",
+    "chestnut",
+    "clyde",
+    "fjord",
+    "grey",
+    "haflinger",
+    "iceland",
+    "knab",
+    "lipiz",
+    "marwari",
+    "morgan",
+    "palomino",
+    "percheron",
+    "pinto",
+    "shire",
+    "sport",
+    "stock",
+    "sunset",
+    "thoro",
+    "vanner",
+    "welsh"
+  ]
+}

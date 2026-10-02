@@ -1,0 +1,42 @@
+{
+  "sha256": "c0dd92c19e1c6dff6d56226f85986d66232bc4b73e8b9ae685bca14ec36ac5a9",
+  "bytes": 564468,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/roster/morgan/idle.glb",
+      "sourceSha256": "b5dec9aada83c8f72d6393a265af829245596a5abba22dee643d6e8d598785f5",
+      "clip": "Horse|Horse_Idle",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/morgan/walk.glb",
+      "sourceSha256": "df97f70becdfbbb863191f3f911e4bb8df7475c83bec9fe57491fe6ffe34d9d8",
+      "clip": "Target Native Walk Rollover",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/morgan/trot.glb",
+      "sourceSha256": "e0abfd14f7f8ea99935d50e702a9444215d2315b10c6a8a0fcca5dfb5bd6052f",
+      "clip": "Target Native Trot",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/morgan/canter-left.glb",
+      "sourceSha256": "93cf04e19194a300be4dd72ca3038a8e95ee5cb8d390d5cd83a010adf3ff7d0e",
+      "clip": "Target Native Canter Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/morgan/canter-right.glb",
+      "sourceSha256": "120ca5e928df4e8a2d758e3f2ad86491168b69c5694e275bd88dd55412312fb9",
+      "clip": "Target Native Canter Right",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/morgan/jump-scaled.glb",
+      "sourceSha256": "9e31fca5394b1515824560d0bf3df6e6431530c113d2e21e3bd1008f2ecdd444",
+      "clip": "Target Native Jump",
+      "channels": 41
+    }
+  ]
+}

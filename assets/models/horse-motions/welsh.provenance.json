@@ -1,0 +1,42 @@
+{
+  "sha256": "e60db2702408f3272e89fe5f439d6b5825a797f6015f44df1dd092d14b5af07f",
+  "bytes": 564472,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/roster/welsh/idle.glb",
+      "sourceSha256": "937a6a854424de2305a37f38657cdc220b9897960a36aba0e30a7ed1ec614ea5",
+      "clip": "Horse|Horse_Idle",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/welsh/walk.glb",
+      "sourceSha256": "4c0fda0566f590e5ac2ddaf3219ccf52c7b37dbe51baae207aedca597f61a483",
+      "clip": "Target Native Walk Rollover",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/welsh/trot.glb",
+      "sourceSha256": "2c125c4f33c49dadfbaa9d9ad7348de14ae24432bcb95cb4b376503d7b91a56c",
+      "clip": "Target Native Trot",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/welsh/canter-left.glb",
+      "sourceSha256": "b6f502b163cc594416dcf032380b64e8ebf6096ed94ee76a0d0d58e987a06749",
+      "clip": "Target Native Canter Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/welsh/canter-right.glb",
+      "sourceSha256": "08421e7eaa35ca25f16669e624e5c679b218b1254c091d10751f644c67f7b236",
+      "clip": "Target Native Canter Right",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/welsh/jump-scaled.glb",
+      "sourceSha256": "95d260ab327569f03550144a19968b464fcaa630cb0602f310e421ef5a2eb4ed",
+      "clip": "Target Native Jump",
+      "channels": 41
+    }
+  ]
+}

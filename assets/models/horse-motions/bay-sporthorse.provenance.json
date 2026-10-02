@@ -1,0 +1,42 @@
+{
+  "sha256": "d5e81b9909c10fad19bbdaccfd8bea0a71c0b25f884b7ade7a3bb3e824975268",
+  "bytes": 564472,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/roster/bay-sporthorse/idle.glb",
+      "sourceSha256": "de29d548a2c1f229a43b4c5f49820c95f810217790a644255c673b6e6e75101d",
+      "clip": "Horse|Horse_Idle",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/bay-sporthorse/walk.glb",
+      "sourceSha256": "15c6580a964e4bfbb7d3c9d25386aa9c522cc89a1cb947ff4a93b6f88432cec9",
+      "clip": "Target Native Walk Rollover",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/bay-sporthorse/trot.glb",
+      "sourceSha256": "41d1ed98f84769efe3d23a460bc20818b1388def0c3538c12cf95ee7021b6bae",
+      "clip": "Target Native Trot",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/bay-sporthorse/canter-left.glb",
+      "sourceSha256": "7f4cdb9da1dcd9e3598035725aef971ca966e5ce304918499af3c813bdb263be",
+      "clip": "Target Native Canter Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/bay-sporthorse/canter-right.glb",
+      "sourceSha256": "5e36f6dd02004b7d089d210f89462b6549323ae487461923f5c005da50045f75",
+      "clip": "Target Native Canter Right",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/bay-sporthorse/jump-scaled.glb",
+      "sourceSha256": "4cea6cbae1e269fd658a0eac4cbbf80911b6cd93314e0400b6f308fd69fee3ea",
+      "clip": "Target Native Jump",
+      "channels": 41
+    }
+  ]
+}

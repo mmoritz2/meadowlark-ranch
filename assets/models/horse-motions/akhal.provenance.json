@@ -1,0 +1,42 @@
+{
+  "sha256": "0b07c16f1055061fcc3edfa892840e682bed03546ab25bd057aed6b36cb53a29",
+  "bytes": 564472,
+  "clips": [
+    {
+      "source": "review/native-complete-gaits/roster/akhal/idle.glb",
+      "sourceSha256": "6468190fb2eeed9277c52c49c068d8b443561f9e8ce05b256ad1cc509ff52b79",
+      "clip": "Horse|Horse_Idle",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/akhal/walk.glb",
+      "sourceSha256": "09c6ebd1d4683d7a0b91cb74c4a0067a4112d074b31c758f257d17319334854e",
+      "clip": "Target Native Walk Rollover",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/akhal/trot.glb",
+      "sourceSha256": "e6050d613b67b9b77107699b2d910b1eda0c36c4f5cc25643006d13977184bf5",
+      "clip": "Target Native Trot",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/akhal/canter-left.glb",
+      "sourceSha256": "6852c0f9d2ae29286535cd3c4d0134bdd6ed1c77277420faae88120abb05e79f",
+      "clip": "Target Native Canter Left",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/akhal/canter-right.glb",
+      "sourceSha256": "8e8cf9566cba1090991e6b741d0c97c9d1101d188a0442d3c0e7e64a6c747477",
+      "clip": "Target Native Canter Right",
+      "channels": 41
+    },
+    {
+      "source": "review/native-complete-gaits/roster/akhal/jump-scaled.glb",
+      "sourceSha256": "3b1d70618870a729316fb359360762c76148af9e4d48c6b63d034d8351677117",
+      "clip": "Target Native Jump",
+      "channels": 41
+    }
+  ]
+}
