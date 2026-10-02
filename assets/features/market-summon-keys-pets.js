@@ -164,7 +164,7 @@ export function install(G){
  /* ---- 2. the roster rows this package brings ------------------------------------------ */
  if(!byKey('lumen')){
   BREEDS3.push(LUMEN);
-  try{if(G.horse.breedModels&&G.horse.breedModels.alias)G.horse.breedModels.alias('lumen','lipiz');}catch(e){}
+  try{if(G.horse.breedModels&&G.horse.breedModels.alias)G.horse.breedModels.alias('lumen','lipiz',LUMEN);}catch(e){}
  }
  /* the pet half of every pair, and the rest of the menagerie */
  for(const p of NEW_PETS) if(!PETS3.some(x=>x.key===p.key))PETS3.push(p);

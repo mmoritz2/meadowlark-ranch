@@ -1,4 +1,4 @@
-import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=complete-gaits-2';
+import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=native-roster-1';
 
 export const id='native-horses';
 export const NATIVE_MODEL_CHOICES=Object.freeze({

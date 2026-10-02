@@ -1,0 +1,5202 @@
+{
+  "errors": [],
+  "rows": [
+    {
+      "key": "bay",
+      "modes": [
+        {
+          "modifier": "Control",
+          "state": {
+            "mode": "walk",
+            "state": {
+              "gait": "walk",
+              "lead": "left",
+              "phase01": 0.5413245046413486,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 0.4656488909877097,
+              "grounded": true,
+              "intensity": 0.13304254028220278,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 4.799999999999988,
+                "remainderS": 0,
+                "frames": 285,
+                "steps": 1152,
+                "capHits": 1062,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 2.2784689110672582,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 9.300000041723251,
+                  "sampleMs": 11.799999982118607,
+                  "solveMs": 4.900000065565109,
+                  "applyMs": 36.900000125169754
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "bay"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.0010224963667246761,
+                    "finalMinimumM": 0.0010224963667246761,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010224963667246761,
+                    "maxAddedLocalAngleDeg": 0
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.04213874743822173,
+                    "finalMinimumM": 0.06601630103853658,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.06601630103853658,
+                    "maxAddedLocalAngleDeg": 28.957821452636068
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": "Alt",
+          "state": {
+            "mode": "trot",
+            "state": {
+              "gait": "trot",
+              "lead": "left",
+              "phase01": 0.02295361564525611,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 1.5516898059668967,
+              "grounded": true,
+              "intensity": 0.44333994456197046,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 9.300000000000042,
+                "remainderS": 0,
+                "frames": 555,
+                "steps": 2232,
+                "capHits": 4896,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 4,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 16.70000010728836,
+                  "sampleMs": 23.69999998807907,
+                  "solveMs": 7.000000089406967,
+                  "applyMs": 74.60000032186508
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "bay"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": -0.001692516747806877,
+                    "finalMinimumM": -0.001692516747806877,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": -0.001692516747806877,
+                    "maxAddedLocalAngleDeg": 0
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0345520368211283,
+                    "finalMinimumM": 0.03455203765928881,
+                    "gate": 0.8983053260662066,
+                    "requestedGate": 0.8983053260662066,
+                    "requestedMinimumM": 0.03455203765928881,
+                    "maxAddedLocalAngleDeg": 0.022795181574953034
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": null,
+          "state": {
+            "mode": "canter",
+            "state": {
+              "gait": "canter",
+              "lead": "left",
+              "phase01": 0.4240530220365699,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 1.788037667351227,
+              "grounded": true,
+              "intensity": 0.5108679049574935,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 13.800000000000265,
+                "remainderS": 0,
+                "frames": 825,
+                "steps": 3312,
+                "capHits": 6798,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 4,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 26.300000101327896,
+                  "sampleMs": 36.40000003576279,
+                  "solveMs": 11.50000011920929,
+                  "applyMs": 112.30000013113022
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "bay"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.026263334660775836,
+                    "finalMinimumM": 0.026263334637566804,
+                    "gate": 0.45403239429987663,
+                    "requestedGate": 0.45403239429987663,
+                    "requestedMinimumM": 0.026263334637566804,
+                    "maxAddedLocalAngleDeg": 0
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0009728668846646082,
+                    "finalMinimumM": 0.0009728668846646082,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0009728668846646082,
+                    "maxAddedLocalAngleDeg": 0
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": "Shift",
+          "state": {
+            "mode": "gallop",
+            "state": {
+              "gait": "gallop",
+              "lead": "left",
+              "phase01": 0.0011812242402093887,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 2.9666241641260127,
+              "grounded": true,
+              "intensity": 0.8476069040360036,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 18.300000000000242,
+                "remainderS": 0,
+                "frames": 1095,
+                "steps": 4392,
+                "capHits": 9764,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 4,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 35.60000020265579,
+                  "sampleMs": 48.699999928474426,
+                  "solveMs": 13.700000166893005,
+                  "applyMs": 150.19999986886978
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "bay"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.35198072362745836,
+                    "finalMinimumM": 0.35198072286948523,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.35198072286948523,
+                    "maxAddedLocalAngleDeg": 0
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.3691070947766468,
+                    "finalMinimumM": 0.36910709426611377,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.36910709426611377,
+                    "maxAddedLocalAngleDeg": 0
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        }
+      ],
+      "peak": 0.6651977555704561,
+      "last": {
+        "mode": "stand",
+        "y": 0,
+        "finite": true,
+        "rider": {
+          "kind": "nativeWesternHorse",
+          "enabled": true,
+          "contact": {
+            "seat": [
+              0.00020209404400306497,
+              1.4826649528008793,
+              0.000391172241410942
+            ],
+            "leftTread": [
+              -0.36254847694937986,
+              0.894482239074212,
+              0.18279628317367624
+            ],
+            "rightTread": [
+              0.3529337941384254,
+              0.8991233983800349,
+              0.17050321611515074
+            ],
+            "leftBit": [
+              -0.09709910322642568,
+              1.4316265895491693,
+              1.111601843132732
+            ],
+            "rightBit": [
+              0.0246400057481706,
+              1.4326854245827967,
+              1.1164675677702363
+            ]
+          },
+          "reins": {
+            "triangles": {
+              "original": 17194,
+              "removed": 1640,
+              "retained": 15554
+            },
+            "hiddenComponents": [
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              72,
+              73,
+              74,
+              75,
+              103,
+              104,
+              141,
+              142,
+              143,
+              153,
+              163,
+              164,
+              244,
+              245,
+              254,
+              255,
+              278,
+              283
+            ],
+            "protectedComponents": [
+              89,
+              91,
+              205,
+              209
+            ],
+            "nonReinComponentsIntact": true,
+            "sides": {
+              "left": {
+                "bit": [
+                  -3.0970991032264257,
+                  1.4316265895491693,
+                  20.24160184313273
+                ],
+                "hand": [
+                  -3.074477352617245,
+                  1.7577383269457192,
+                  19.438428735716908
+                ],
+                "mainStart": [
+                  -3.0970991032264257,
+                  1.4316265895491693,
+                  20.24160184313273
+                ],
+                "mainEnd": [
+                  -3.074477352617245,
+                  1.757738326945719,
+                  19.4384287357169
+                ],
+                "looseStart": [
+                  -3.074477352617245,
+                  1.7577383269457192,
+                  19.438428735716908
+                ],
+                "looseEnd": [
+                  -3.319797905955996,
+                  1.0026649528008789,
+                  19.250391172241418
+                ],
+                "mainWidthM": 0.019,
+                "looseWidthM": 0.019,
+                "mainCenterline": [
+                  [
+                    -3.0970991032264257,
+                    1.4316265895491693,
+                    20.24160184313273
+                  ],
+                  [
+                    -3.100664850314023,
+                    1.4259851669768293,
+                    20.228414441673486
+                  ],
+                  [
+                    -3.1040738128443257,
+                    1.4203945620481313,
+                    20.215571073326956
+                  ],
+                  [
+                    -3.107482775374629,
+                    1.414803957119434,
+                    20.202727704980425
+                  ],
+                  [
+                    -3.111048522462226,
+                    1.4091625345470937,
+                    20.189540303521184
+                  ],
+                  [
+                    -3.1149278386644124,
+                    1.4034194766874688,
+                    20.175664835836514
+                  ],
+                  [
+                    -3.1192775085384783,
+                    1.3975239658969172,
+                    20.160757268813697
+                  ],
+                  [
+                    -3.126313659118456,
+                    1.38910355125499,
+                    20.138851766446937
+                  ],
+                  [
+                    -3.134539619131478,
+                    1.3801656471409012,
+                    20.115227492545376
+                  ],
+                  [
+                    -3.1433322173105234,
+                    1.3710440819769483,
+                    20.09035984177427
+                  ],
+                  [
+                    -3.15206828238857,
+                    1.3620726841854287,
+                    20.064724208798904
+                  ],
+                  [
+                    -3.160124643098597,
+                    1.3535852821886405,
+                    20.038795988284548
+                  ],
+                  [
+                    -3.1668781281735825,
+                    1.3459157044088812,
+                    20.013050574896475
+                  ],
+                  [
+                    -3.1722581681272226,
+                    1.3387030081202902,
+                    19.986938325084736
+                  ],
+                  [
+                    -3.1767496203589207,
+                    1.3316074308135002,
+                    19.959967263384385
+                  ],
+                  [
+                    -3.1805614457276907,
+                    1.3249957941125383,
+                    19.932703647508106
+                  ],
+                  [
+                    -3.1839026050925443,
+                    1.3192349196414326,
+                    19.905713735168607
+                  ],
+                  [
+                    -3.186982059312496,
+                    1.3146916290242114,
+                    19.879563784078567
+                  ],
+                  [
+                    -3.190008769246557,
+                    1.3117327438849018,
+                    19.854820051950682
+                  ],
+                  [
+                    -3.1923336661551787,
+                    1.3096131685684627,
+                    19.836032943180523
+                  ],
+                  [
+                    -3.194410086685573,
+                    1.3072447333839885,
+                    19.817997061534182
+                  ],
+                  [
+                    -3.196316378949629,
+                    1.3056678203923966,
+                    19.80050721864155
+                  ],
+                  [
+                    -3.198130891059238,
+                    1.3059228116546053,
+                    19.78335822613252
+                  ],
+                  [
+                    -3.199931971126288,
+                    1.3090500892315324,
+                    19.76634489563698
+                  ],
+                  [
+                    -3.2017979672626704,
+                    1.316090035184096,
+                    19.74926203878481
+                  ],
+                  [
+                    -3.206251251567508,
+                    1.338506409163567,
+                    19.720112941536616
+                  ],
+                  [
+                    -3.212308639539184,
+                    1.3727250571391743,
+                    19.689397269502773
+                  ],
+                  [
+                    -3.2183310681361186,
+                    1.4144193614199743,
+                    19.659034682946977
+                  ],
+                  [
+                    -3.2226794743167315,
+                    1.4592627043150235,
+                    19.63094484213292
+                  ],
+                  [
+                    -3.2237147950394425,
+                    1.5029284681333785,
+                    19.607047407324295
+                  ],
+                  [
+                    -3.21979796726267,
+                    1.5410900351840962,
+                    19.58926203878481
+                  ],
+                  [
+                    -3.2129691492797052,
+                    1.5668823150957925,
+                    19.582004738991053
+                  ],
+                  [
+                    -3.203472110072938,
+                    1.5926165048657128,
+                    19.579743687765216
+                  ],
+                  [
+                    -3.1920906302228382,
+                    1.6176809027147614,
+                    19.579867223466103
+                  ],
+                  [
+                    -3.1796084903098762,
+                    1.641463806863843,
+                    19.579763684452484
+                  ],
+                  [
+                    -3.166809470914522,
+                    1.6633535155338608,
+                    19.576821409083152
+                  ],
+                  [
+                    -3.154477352617245,
+                    1.6827383269457192,
+                    19.568428735716907
+                  ],
+                  [
+                    -3.141857479861995,
+                    1.6995008949438681,
+                    19.55315354149925
+                  ],
+                  [
+                    -3.1287239154905246,
+                    1.71319441398335,
+                    19.533276487118307
+                  ],
+                  [
+                    -3.1152478900415748,
+                    1.72484190038372,
+                    19.51033152596184
+                  ],
+                  [
+                    -3.101600634053885,
+                    1.7354663704645343,
+                    19.485852611417606
+                  ],
+                  [
+                    -3.087953378066195,
+                    1.7460908405453488,
+                    19.461373696873377
+                  ],
+                  [
+                    -3.074477352617245,
+                    1.757738326945719,
+                    19.4384287357169
+                  ]
+                ],
+                "looseCenterline": [
+                  [
+                    -3.074477352617245,
+                    1.7577383269457192,
+                    19.438428735716908
+                  ],
+                  [
+                    -3.0772667155157163,
+                    1.7538784243021361,
+                    19.434466093495423
+                  ],
+                  [
+                    -3.0799152703911905,
+                    1.750282478285764,
+                    19.430615532003387
+                  ],
+                  [
+                    -3.0824975626676077,
+                    1.7468107471527858,
+                    19.426817714384033
+                  ],
+                  [
+                    -3.0850881377689077,
+                    1.7433234891593836,
+                    19.423013303780593
+                  ],
+                  [
+                    -3.0877615411190287,
+                    1.739680962561739,
+                    19.4191429633363
+                  ],
+                  [
+                    -3.09059231814191,
+                    1.735743425616035,
+                    19.415147356194392
+                  ],
+                  [
+                    -3.0936550142614907,
+                    1.731371136578453,
+                    19.410967145498102
+                  ],
+                  [
+                    -3.0970241749017116,
+                    1.726424353705176,
+                    19.406542994390666
+                  ],
+                  [
+                    -3.102052866816127,
+                    1.7189165544404514,
+                    19.40021630961072
+                  ],
+                  [
+                    -3.1108677765139205,
+                    1.7066038764014912,
+                    19.38938714634235
+                  ],
+                  [
+                    -3.121042824976661,
+                    1.6929343787175026,
+                    19.37714977262174
+                  ],
+                  [
+                    -3.1322277683499253,
+                    1.677797774282393,
+                    19.36399226741349
+                  ],
+                  [
+                    -3.1440723627792893,
+                    1.6610837759900718,
+                    19.3504027096822
+                  ],
+                  [
+                    -3.1562263644103288,
+                    1.6426820967344464,
+                    19.336869178392476
+                  ],
+                  [
+                    -3.168339529388621,
+                    1.622482449409426,
+                    19.323879752508926
+                  ],
+                  [
+                    -3.1800616138597406,
+                    1.600374546908918,
+                    19.311922510996148
+                  ],
+                  [
+                    -3.191042373969265,
+                    1.5762481021268313,
+                    19.30148553281874
+                  ],
+                  [
+                    -3.2054555176388826,
+                    1.5368486716618375,
+                    19.2895511086519
+                  ],
+                  [
+                    -3.221138709044121,
+                    1.483144543808684,
+                    19.27927124805903
+                  ],
+                  [
+                    -3.2360482984038375,
+                    1.4221690329605643,
+                    19.271987479737405
+                  ],
+                  [
+                    -3.250372459188566,
+                    1.3556908539000376,
+                    19.266971024485905
+                  ],
+                  [
+                    -3.2642993648688368,
+                    1.285478721409664,
+                    19.263493103103425
+                  ],
+                  [
+                    -3.2780171889151832,
+                    1.2133013502720016,
+                    19.26082493638885
+                  ],
+                  [
+                    -3.2917141047981366,
+                    1.14092745526961,
+                    19.258237745141066
+                  ],
+                  [
+                    -3.30557828598823,
+                    1.0701257511850497,
+                    19.255002750158962
+                  ],
+                  [
+                    -3.319797905955996,
+                    1.0026649528008789,
+                    19.250391172241418
+                  ]
+                ]
+              },
+              "right": {
+                "bit": [
+                  -2.9753599942518294,
+                  1.4326854245827967,
+                  20.246467567770235
+                ],
+                "hand": [
+                  -2.9215957098697785,
+                  1.7604811352391814,
+                  19.438898476863315
+                ],
+                "mainStart": [
+                  -2.9753599942518294,
+                  1.4326854245827967,
+                  20.246467567770235
+                ],
+                "mainEnd": [
+                  -2.9215957098697785,
+                  1.7604811352391814,
+                  19.438898476863315
+                ],
+                "looseStart": [
+                  -2.9215957098697785,
+                  1.7604811352391814,
+                  19.438898476863315
+                ],
+                "looseEnd": [
+                  -2.6797979059559967,
+                  1.0026649528008797,
+                  19.25039117224141
+                ],
+                "mainWidthM": 0.019,
+                "looseWidthM": 0.019,
+                "mainCenterline": [
+                  [
+                    -2.9753599942518294,
+                    1.4326854245827967,
+                    20.246467567770235
+                  ],
+                  [
+                    -2.9698464462098433,
+                    1.4271370782752,
+                    20.23360681277252
+                  ],
+                  [
+                    -2.964532782380646,
+                    1.421627072182959,
+                    20.22108884153633
+                  ],
+                  [
+                    -2.9592191185514487,
+                    1.4161170660907183,
+                    20.208570870300136
+                  ],
+                  [
+                    -2.953705570509463,
+                    1.4105687197831216,
+                    20.195710115302425
+                  ],
+                  [
+                    -2.9477922540419006,
+                    1.4049436930448127,
+                    20.18216379278166
+                  ],
+                  [
+                    -2.9412792849359737,
+                    1.399203645660436,
+                    20.167589118976316
+                  ],
+                  [
+                    -2.9308887225193865,
+                    1.3910000637890771,
+                    20.14601561494983
+                  ],
+                  [
+                    -2.918917752283859,
+                    1.3823398831432616,
+                    20.122761544454452
+                  ],
+                  [
+                    -2.9062133624268927,
+                    1.3735390237222689,
+                    20.098249724119274
+                  ],
+                  [
+                    -2.893622541145989,
+                    1.3649134055253793,
+                    20.072902970573395
+                  ],
+                  [
+                    -2.8819922766386497,
+                    1.3567789485518718,
+                    20.047144100445912
+                  ],
+                  [
+                    -2.8721695571023775,
+                    1.3494515728010257,
+                    20.021395930365934
+                  ],
+                  [
+                    -2.86428661040566,
+                    1.3426414135121105,
+                    19.995292106051156
+                  ],
+                  [
+                    -2.8575990066727472,
+                    1.3359658983484817,
+                    19.968166340681808
+                  ],
+                  [
+                    -2.8518559243884196,
+                    1.329773345070048,
+                    19.940635338515065
+                  ],
+                  [
+                    -2.8468065420374584,
+                    1.3244120714367202,
+                    19.913315803808093
+                  ],
+                  [
+                    -2.842200038104646,
+                    1.3202303952084078,
+                    19.88682444081806
+                  ],
+                  [
+                    -2.8377855910747627,
+                    1.3175766341450208,
+                    19.861777953802136
+                  ],
+                  [
+                    -2.8344525875184403,
+                    1.3156406305619919,
+                    19.842736722057367
+                  ],
+                  [
+                    -2.8315007242938304,
+                    1.3134076293446602,
+                    19.824431073863543
+                  ],
+                  [
+                    -2.828837600194894,
+                    1.3119436787502856,
+                    19.80666536071206
+                  ],
+                  [
+                    -2.8263708140155925,
+                    1.3123148270361276,
+                    19.78924393409433
+                  ],
+                  [
+                    -2.824007964549887,
+                    1.315587122459446,
+                    19.771971145501762
+                  ],
+                  [
+                    -2.8216566505917386,
+                    1.3228266132775008,
+                    19.754651346425756
+                  ],
+                  [
+                    -2.817159245830623,
+                    1.3453774658614537,
+                    19.72552408920926
+                  ],
+                  [
+                    -2.8119254894618804,
+                    1.3795916387376286,
+                    19.694960774087356
+                  ],
+                  [
+                    -2.806956866619565,
+                    1.4212063859116724,
+                    19.664776621654052
+                  ],
+                  [
+                    -2.803254862437733,
+                    1.4659589613892337,
+                    19.636786852503352
+                  ],
+                  [
+                    -2.8018209620504386,
+                    1.5095866191759608,
+                    19.612806687229252
+                  ],
+                  [
+                    -2.803656650591739,
+                    1.547826613277501,
+                    19.594651346425756
+                  ],
+                  [
+                    -2.807102288442315,
+                    1.572758064057073,
+                    19.587026964595314
+                  ],
+                  [
+                    -2.811852536881836,
+                    1.597716683111547,
+                    19.583814589425547
+                  ],
+                  [
+                    -2.8177921995773207,
+                    1.6220853850989594,
+                    19.582704886991966
+                  ],
+                  [
+                    -2.8248060801957924,
+                    1.6452470846773453,
+                    19.581388523370066
+                  ],
+                  [
+                    -2.8327789824042715,
+                    1.666584696504741,
+                    19.57755616463535
+                  ],
+                  [
+                    -2.8415957098697784,
+                    1.6854811352391814,
+                    19.568898476863314
+                  ],
+                  [
+                    -2.8525870595704843,
+                    1.7024356581631799,
+                    19.553376009071194
+                  ],
+                  [
+                    -2.8652646374866824,
+                    1.7161829245818996,
+                    19.5334297180894
+                  ],
+                  [
+                    -2.879066367546541,
+                    1.7277920199970997,
+                    19.510534211647823
+                  ],
+                  [
+                    -2.89343017367823,
+                    1.7383320299105403,
+                    19.486164097476358
+                  ],
+                  [
+                    -2.9077939798099197,
+                    1.748872039823981,
+                    19.461793983304887
+                  ],
+                  [
+                    -2.9215957098697785,
+                    1.7604811352391814,
+                    19.438898476863315
+                  ]
+                ],
+                "looseCenterline": [
+                  [
+                    -2.9215957098697785,
+                    1.7604811352391814,
+                    19.438898476863315
+                  ],
+                  [
+                    -2.9188063469713073,
+                    1.7566212325955983,
+                    19.43493583464183
+                  ],
+                  [
+                    -2.916157792095833,
+                    1.7530252865792262,
+                    19.431085273149794
+                  ],
+                  [
+                    -2.913575499819416,
+                    1.749553555446248,
+                    19.42728745553044
+                  ],
+                  [
+                    -2.910984924718116,
+                    1.7460662974528456,
+                    19.423483044926996
+                  ],
+                  [
+                    -2.908311521367995,
+                    1.742423770855201,
+                    19.419612704482702
+                  ],
+                  [
+                    -2.9054807443451134,
+                    1.7384862339094966,
+                    19.415617097340796
+                  ],
+                  [
+                    -2.902418048225533,
+                    1.7341139448719147,
+                    19.411436886644506
+                  ],
+                  [
+                    -2.899048887585312,
+                    1.7291671619986375,
+                    19.407012735537066
+                  ],
+                  [
+                    -2.8940190109496373,
+                    1.7216598319240302,
+                    19.400686218015135
+                  ],
+                  [
+                    -2.8851886050977744,
+                    1.7093532908917926,
+                    19.389859242481503
+                  ],
+                  [
+                    -2.874986118490672,
+                    1.6956946596508997,
+                    19.37762574245635
+                  ],
+                  [
+                    -2.8637694719765125,
+                    1.6805706107433054,
+                    19.364472713072374
+                  ],
+                  [
+                    -2.8518965864034804,
+                    1.6638678167109637,
+                    19.350887149462302
+                  ],
+                  [
+                    -2.8397253826197586,
+                    1.645472950095829,
+                    19.337356046758853
+                  ],
+                  [
+                    -2.8276137814735285,
+                    1.6252726834398545,
+                    19.324366400094732
+                  ],
+                  [
+                    -2.8159197038129755,
+                    1.6031536892849947,
+                    19.312405204602655
+                  ],
+                  [
+                    -2.8050010704862816,
+                    1.5790026401732036,
+                    19.30195945541534
+                  ],
+                  [
+                    -2.790732469906689,
+                    1.53948298282173,
+                    19.28998860862658
+                  ],
+                  [
+                    -2.775313104956333,
+                    1.485556057635542,
+                    19.279658105360525
+                  ],
+                  [
+                    -2.7607575617336644,
+                    1.424298498510144,
+                    19.272321443862328
+                  ],
+                  [
+                    -2.746855721440057,
+                    1.357493432619938,
+                    19.267250392350622
+                  ],
+                  [
+                    -2.7333974652768833,
+                    1.2869239871393268,
+                    19.263716719044034
+                  ],
+                  [
+                    -2.720172674445517,
+                    1.214373289242713,
+                    19.260992192161186
+                  ],
+                  [
+                    -2.706971230147332,
+                    1.1416244661044987,
+                    19.258348579920714
+                  ],
+                  [
+                    -2.6935830135837007,
+                    1.0704606448990868,
+                    19.255057650541247
+                  ],
+                  [
+                    -2.6797979059559967,
+                    1.0026649528008797,
+                    19.25039117224141
+                  ]
+                ]
+              }
+            }
+          },
+          "seatFollower": "Native seat contact"
+        }
+      }
+    },
+    {
+      "key": "chestnut",
+      "modes": [
+        {
+          "modifier": "Control",
+          "state": {
+            "mode": "walk",
+            "state": {
+              "gait": "walk",
+              "lead": "left",
+              "phase01": 0.5234485740776231,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 0.3088682650743361,
+              "grounded": true,
+              "intensity": 0.08824807573552461,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 4.699999999999989,
+                "remainderS": 0,
+                "frames": 283,
+                "steps": 1128,
+                "capHits": 262,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 4.000000000000001,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 8.500000059604645,
+                  "sampleMs": 9.700000137090683,
+                  "solveMs": 3.599999964237213,
+                  "applyMs": 33.799999594688416
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "chestnut"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.0010483541338748986,
+                    "finalMinimumM": 0.0010483541338748986,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010483541338748986,
+                    "maxAddedLocalAngleDeg": 0
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.03782325569154392,
+                    "finalMinimumM": 0.04992947175188593,
+                    "gate": 0.9783352623483207,
+                    "requestedGate": 0.9783352623483207,
+                    "requestedMinimumM": 0.04992947175188593,
+                    "maxAddedLocalAngleDeg": 23.941916506032456
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.19999998807907104,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": "Alt",
+          "state": {
+            "mode": "trot",
+            "state": {
+              "gait": "trot",
+              "lead": "left",
+              "phase01": 0.9865138747078834,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 1.0292719725006525,
+              "grounded": true,
+              "intensity": 0.29407770642875786,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 9.200000000000037,
+                "remainderS": 0,
+                "frames": 553,
+                "steps": 2208,
+                "capHits": 3331,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 4.000000000000001,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 16.30000001192093,
+                  "sampleMs": 19.300000071525574,
+                  "solveMs": 6.799999892711639,
+                  "applyMs": 64.39999949932098
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "chestnut"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.0025121429756843616,
+                    "finalMinimumM": 0.0025121429756843616,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0025121429756843616,
+                    "maxAddedLocalAngleDeg": 0
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.012880717055417892,
+                    "finalMinimumM": 0.012880717055496801,
+                    "gate": 0.0002420036517645314,
+                    "requestedGate": 0.0002420036517645314,
+                    "requestedMinimumM": 0.012880717055496801,
+                    "maxAddedLocalAngleDeg": 0.023365267265060177
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.19999998807907104,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": null,
+          "state": {
+            "mode": "canter",
+            "state": {
+              "gait": "canter",
+              "lead": "left",
+              "phase01": 0.3836301878876729,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 1.186101393019322,
+              "grounded": true,
+              "intensity": 0.3388861122912349,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 13.70000000000026,
+                "remainderS": 0,
+                "frames": 823,
+                "steps": 3288,
+                "capHits": 4628,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 4,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 21.90000009536743,
+                  "sampleMs": 32.60000026226044,
+                  "solveMs": 9.499999910593033,
+                  "applyMs": 95.59999960660934
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "chestnut"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.04881444562366856,
+                    "finalMinimumM": 0.048814441382295404,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.048814441382295404,
+                    "maxAddedLocalAngleDeg": 0.018470543108374246
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0009390368502596169,
+                    "finalMinimumM": 0.0009390368502596169,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0009390368502596169,
+                    "maxAddedLocalAngleDeg": 0
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.10000002384185791,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": "Shift",
+          "state": {
+            "mode": "gallop",
+            "state": {
+              "gait": "gallop",
+              "lead": "left",
+              "phase01": 0.9490917689094958,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 1.967878988541692,
+              "grounded": true,
+              "intensity": 0.5622511395833406,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 18.200000000000248,
+                "remainderS": 0,
+                "frames": 1093,
+                "steps": 4368,
+                "capHits": 5679,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 3.127441977143916,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 28.200000017881393,
+                  "sampleMs": 43.400000154972076,
+                  "solveMs": 10.499999910593033,
+                  "applyMs": 125.3999995291233
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "chestnut"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.2247250414821222,
+                    "finalMinimumM": 0.22472504233540402,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.22472504233540402,
+                    "maxAddedLocalAngleDeg": 0
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.4359341745348808,
+                    "finalMinimumM": 0.4359341721922123,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.4359341721922123,
+                    "maxAddedLocalAngleDeg": 0
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.09999999403953552,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        }
+      ],
+      "peak": 0.4412661072931295,
+      "last": {
+        "mode": "stand",
+        "y": 0,
+        "finite": true,
+        "rider": {
+          "kind": "nativeWesternHorse",
+          "enabled": true,
+          "contact": {
+            "seat": [
+              0.0001399341103542895,
+              0.9939680921026154,
+              0.0002632730532567962
+            ],
+            "leftTread": [
+              -0.2587503016567503,
+              0.5705432131492725,
+              0.12194537864538191
+            ],
+            "rightTread": [
+              0.25236770602577074,
+              0.5740790793754345,
+              0.11380635788080085
+            ],
+            "leftBit": [
+              -0.06984248506486956,
+              0.9564613733748558,
+              0.7232737708290387
+            ],
+            "rightBit": [
+              0.016212266288267774,
+              0.9571768862045547,
+              0.7258256037261397
+            ]
+          },
+          "reins": {
+            "triangles": {
+              "original": 17194,
+              "removed": 1640,
+              "retained": 15554
+            },
+            "hiddenComponents": [
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              72,
+              73,
+              74,
+              75,
+              103,
+              104,
+              141,
+              142,
+              143,
+              153,
+              163,
+              164,
+              244,
+              245,
+              254,
+              255,
+              278,
+              283
+            ],
+            "protectedComponents": [
+              89,
+              91,
+              205,
+              209
+            ],
+            "nonReinComponentsIntact": true,
+            "sides": {
+              "left": {
+                "bit": [
+                  -3.0698424850648696,
+                  0.9564613733748558,
+                  17.50667483594528
+                ],
+                "hand": [
+                  -3.074697318295695,
+                  1.280693646997149,
+                  17.091054720516542
+                ],
+                "mainStart": [
+                  -3.0698424850648696,
+                  0.9564613733748558,
+                  17.50667483594528
+                ],
+                "mainEnd": [
+                  -3.074697318295697,
+                  1.2806936469971493,
+                  17.091054720516546
+                ],
+                "looseStart": [
+                  -3.074697318295695,
+                  1.280693646997149,
+                  17.091054720516542
+                ],
+                "looseEnd": [
+                  -3.3198600658896447,
+                  0.5139680921026153,
+                  16.903664338169495
+                ],
+                "mainWidthM": 0.019,
+                "looseWidthM": 0.019,
+                "mainCenterline": [
+                  [
+                    -3.0698424850648696,
+                    0.9564613733748558,
+                    17.50667483594528
+                  ],
+                  [
+                    -3.0723153176574716,
+                    0.9527604760925747,
+                    17.49843375271075
+                  ],
+                  [
+                    -3.074680146019867,
+                    0.9491195899504389,
+                    17.490405408328204
+                  ],
+                  [
+                    -3.077044974382263,
+                    0.945478703808303,
+                    17.482377063945655
+                  ],
+                  [
+                    -3.0795178069748643,
+                    0.9417778065260219,
+                    17.47413598071112
+                  ],
+                  [
+                    -3.0822066480278782,
+                    0.9379568869634506,
+                    17.465469419772617
+                  ],
+                  [
+                    -3.08521950177151,
+                    0.9339559339804436,
+                    17.45616464227814
+                  ],
+                  [
+                    -3.090128625227801,
+                    0.92813674028908,
+                    17.442376677084514
+                  ],
+                  [
+                    -3.095859986105412,
+                    0.9219394235377524,
+                    17.427514454129728
+                  ],
+                  [
+                    -3.1019889942555543,
+                    0.9155211592721035,
+                    17.411868974592377
+                  ],
+                  [
+                    -3.1080910595294378,
+                    0.909039123037776,
+                    17.395731239651028
+                  ],
+                  [
+                    -3.113741591778273,
+                    0.9026504903804125,
+                    17.379392250484266
+                  ],
+                  [
+                    -3.1185160008532713,
+                    0.8965124368456555,
+                    17.36314300827068
+                  ],
+                  [
+                    -3.122431700005298,
+                    0.890045163890017,
+                    17.34639392162967
+                  ],
+                  [
+                    -3.1257486365954428,
+                    0.8831183876678569,
+                    17.32908972605041
+                  ],
+                  [
+                    -3.1286000120263204,
+                    0.8762879168655857,
+                    17.311578023721264
+                  ],
+                  [
+                    -3.131119027700548,
+                    0.8701095601696144,
+                    17.294206416830626
+                  ],
+                  [
+                    -3.1334388850207398,
+                    0.8651391262663528,
+                    17.277322507566865
+                  ],
+                  [
+                    -3.1356927853895122,
+                    0.8619324238422121,
+                    17.26127389811836
+                  ],
+                  [
+                    -3.137379684363678,
+                    0.8600889012848245,
+                    17.249273987508737
+                  ],
+                  [
+                    -3.1388724657778226,
+                    0.8583878006394364,
+                    17.237844977762336
+                  ],
+                  [
+                    -3.1402386017246067,
+                    0.8574548221617473,
+                    17.22672609657763
+                  ],
+                  [
+                    -3.1415455642966945,
+                    0.8579156661074562,
+                    17.215656571653085
+                  ],
+                  [
+                    -3.1428608255867467,
+                    0.8603960327322628,
+                    17.204375630687174
+                  ],
+                  [
+                    -3.1442518576874265,
+                    0.865521622291866,
+                    17.192622501378366
+                  ],
+                  [
+                    -3.1475061703759177,
+                    0.8873933481503108,
+                    17.16318169184886
+                  ],
+                  [
+                    -3.1511982323024967,
+                    0.9227735046962475,
+                    17.1270344888651
+                  ],
+                  [
+                    -3.154923437732049,
+                    0.966219251156524,
+                    17.090042930376626
+                  ],
+                  [
+                    -3.1582771809294634,
+                    1.0122877467579876,
+                    17.058069054332982
+                  ],
+                  [
+                    -3.1608548561596264,
+                    1.055536150727486,
+                    17.036974898683713
+                  ],
+                  [
+                    -3.1622518576874263,
+                    1.090521622291866,
+                    17.032622501378366
+                  ],
+                  [
+                    -3.1633153106415945,
+                    1.1147752928194166,
+                    17.05007581267097
+                  ],
+                  [
+                    -3.16468653208493,
+                    1.136089694068983,
+                    17.08554379641254
+                  ],
+                  [
+                    -3.16543793279472,
+                    1.1551517780760534,
+                    17.12970106583549
+                  ],
+                  [
+                    -3.1646419235482526,
+                    1.1726484968761135,
+                    17.173222234172208
+                  ],
+                  [
+                    -3.161370915122814,
+                    1.1892668025046496,
+                    17.206781914655092
+                  ],
+                  [
+                    -3.154697318295695,
+                    1.205693646997149,
+                    17.22105472051654
+                  ],
+                  [
+                    -3.1453325582344727,
+                    1.2196021513166655,
+                    17.215360945793872
+                  ],
+                  [
+                    -3.1331104254173305,
+                    1.23249653252613,
+                    17.198166688871524
+                  ],
+                  [
+                    -3.118983377429575,
+                    1.2447148316622267,
+                    17.17330544381606
+                  ],
+                  [
+                    -3.1039038718565135,
+                    1.2565950897616396,
+                    17.14461070469404
+                  ],
+                  [
+                    -3.088824366283452,
+                    1.2684753478610524,
+                    17.11591596557201
+                  ],
+                  [
+                    -3.074697318295697,
+                    1.2806936469971493,
+                    17.091054720516546
+                  ]
+                ],
+                "looseCenterline": [
+                  [
+                    -3.074697318295695,
+                    1.280693646997149,
+                    17.091054720516542
+                  ],
+                  [
+                    -3.077486681194166,
+                    1.276833744353566,
+                    17.087092078295058
+                  ],
+                  [
+                    -3.0801352360696406,
+                    1.2732377983371939,
+                    17.08324151680302
+                  ],
+                  [
+                    -3.082717528346058,
+                    1.2697660672042157,
+                    17.079443699183667
+                  ],
+                  [
+                    -3.0853081034473577,
+                    1.2662788092108133,
+                    17.075639288580224
+                  ],
+                  [
+                    -3.0879815067974787,
+                    1.2626362826131687,
+                    17.07176894813593
+                  ],
+                  [
+                    -3.09081228382036,
+                    1.2586987456674645,
+                    17.067773340994023
+                  ],
+                  [
+                    -3.093874979939941,
+                    1.2543264566298826,
+                    17.063593130297733
+                  ],
+                  [
+                    -3.0972441405801616,
+                    1.2493796737566056,
+                    17.059168979190293
+                  ],
+                  [
+                    -3.1022732016398527,
+                    1.2418732444287528,
+                    17.052842186755328
+                  ],
+                  [
+                    -3.1110929397578495,
+                    1.22957848516407,
+                    17.042011615359197
+                  ],
+                  [
+                    -3.121276537625171,
+                    1.2159407152180224,
+                    17.029771748348146
+                  ],
+                  [
+                    -3.132471359326008,
+                    1.200840770293591,
+                    17.016611362291357
+                  ],
+                  [
+                    -3.1443247689445504,
+                    1.184159486093758,
+                    17.003019233758007
+                  ],
+                  [
+                    -3.15648413056499,
+                    1.1657776983215051,
+                    16.989484139317284
+                  ],
+                  [
+                    -3.1685968082715186,
+                    1.1455762426798144,
+                    16.97649485553837
+                  ],
+                  [
+                    -3.1803101661483253,
+                    1.123435954871667,
+                    16.964540158990445
+                  ],
+                  [
+                    -3.191271568279601,
+                    1.0992376706000455,
+                    16.954108826242692
+                  ],
+                  [
+                    -3.20573725125648,
+                    1.0593294804548732,
+                    16.94211243695707
+                  ],
+                  [
+                    -3.2214697897798583,
+                    1.0046664312193616,
+                    16.93180264610972
+                  ],
+                  [
+                    -3.2363859988643404,
+                    0.9424881398873796,
+                    16.92455510796101
+                  ],
+                  [
+                    -3.250684445130198,
+                    0.8746226383202313,
+                    16.91962495023289
+                  ],
+                  [
+                    -3.2645636951977033,
+                    0.8028979583792201,
+                    16.91626730064731
+                  ],
+                  [
+                    -3.278222315687129,
+                    0.7291421319256494,
+                    16.913737286926228
+                  ],
+                  [
+                    -3.291858873218746,
+                    0.6551831908208227,
+                    16.9112900367916
+                  ],
+                  [
+                    -3.305671934412828,
+                    0.5828491669260434,
+                    16.90818067796537
+                  ],
+                  [
+                    -3.3198600658896447,
+                    0.5139680921026153,
+                    16.903664338169495
+                  ]
+                ]
+              },
+              "right": {
+                "bit": [
+                  -2.9837877337117322,
+                  0.9571768862045547,
+                  17.50922666884238
+                ],
+                "hand": [
+                  -2.922579287500214,
+                  1.2774487528343426,
+                  17.09145866413678
+                ],
+                "mainStart": [
+                  -2.9837877337117322,
+                  0.9571768862045547,
+                  17.50922666884238
+                ],
+                "mainEnd": [
+                  -2.922579287500214,
+                  1.277448752834343,
+                  17.091458664136777
+                ],
+                "looseStart": [
+                  -2.922579287500214,
+                  1.2774487528343426,
+                  17.09145866413678
+                ],
+                "looseEnd": [
+                  -2.6798600658896463,
+                  0.5139680921026153,
+                  16.903664338169495
+                ],
+                "mainWidthM": 0.019,
+                "looseWidthM": 0.019,
+                "mainCenterline": [
+                  [
+                    -2.9837877337117322,
+                    0.9571768862045547,
+                    17.50922666884238
+                  ],
+                  [
+                    -2.9798291474045393,
+                    0.953545186165711,
+                    17.50117037204665
+                  ],
+                  [
+                    -2.9760115224173513,
+                    0.9499649382220481,
+                    17.49332484061926
+                  ],
+                  [
+                    -2.972193897430164,
+                    0.946384690278385,
+                    17.48547930919186
+                  ],
+                  [
+                    -2.968235311122971,
+                    0.9427529902395415,
+                    17.477423012396134
+                  ],
+                  [
+                    -2.9639948021757676,
+                    0.939018386010337,
+                    17.468945184863756
+                  ],
+                  [
+                    -2.959331409268548,
+                    0.9351294254955911,
+                    17.459835061226393
+                  ],
+                  [
+                    -2.95185199498514,
+                    0.9294782485390445,
+                    17.446279263010226
+                  ],
+                  [
+                    -2.943246541576813,
+                    0.9234914491163198,
+                    17.431692630632945
+                  ],
+                  [
+                    -2.93411615642849,
+                    0.9173130450899458,
+                    17.41632112030813
+                  ],
+                  [
+                    -2.9250619469250956,
+                    0.9110870543224507,
+                    17.40041068824938
+                  ],
+                  [
+                    -2.9166850204515535,
+                    0.9049574946763637,
+                    17.38420729067028
+                  ],
+                  [
+                    -2.909586484392788,
+                    0.899068384014213,
+                    17.367956883784416
+                  ],
+                  [
+                    -2.9038156093137344,
+                    0.8929678294826497,
+                    17.35131433071616
+                  ],
+                  [
+                    -2.8988945590948902,
+                    0.8864443720218724,
+                    17.33399761828306
+                  ],
+                  [
+                    -2.8946496477681767,
+                    0.8800171827809113,
+                    17.31638843523778
+                  ],
+                  [
+                    -2.890907189365515,
+                    0.8742054329087964,
+                    17.298868470332973
+                  ],
+                  [
+                    -2.8874934979188254,
+                    0.869528293554558,
+                    17.28181941232131
+                  ],
+                  [
+                    -2.88423488746003,
+                    0.8665049358672259,
+                    17.26562294995543
+                  ],
+                  [
+                    -2.881812741810249,
+                    0.8646924668968657,
+                    17.253454956913906
+                  ],
+                  [
+                    -2.879682246618903,
+                    0.8629415524157918,
+                    17.241844807459962
+                  ],
+                  [
+                    -2.877762760227724,
+                    0.8619188522509185,
+                    17.23053689488447
+                  ],
+                  [
+                    -2.8759736409784407,
+                    0.8622910262291599,
+                    17.219275612478288
+                  ],
+                  [
+                    -2.8742342472127853,
+                    0.8647247341774305,
+                    17.2078053535323
+                  ],
+                  [
+                    -2.8724639372724865,
+                    0.8698866359226451,
+                    17.195870511337365
+                  ],
+                  [
+                    -2.8690036856072068,
+                    0.8918742399553928,
+                    17.166344309594088
+                  ],
+                  [
+                    -2.865768194971546,
+                    0.9274626802120508,
+                    17.130120977203337
+                  ],
+                  [
+                    -2.8627269700928735,
+                    0.971105048314862,
+                    17.093081222673707
+                  ],
+                  [
+                    -2.8598495156985595,
+                    1.0172544358860693,
+                    17.06110575451378
+                  ],
+                  [
+                    -2.857105336515974,
+                    1.0603639345479166,
+                    17.040075281232138
+                  ],
+                  [
+                    -2.8544639372724867,
+                    1.0948866359226452,
+                    17.035870511337365
+                  ],
+                  [
+                    -2.8510206090161314,
+                    1.118016248506553,
+                    17.053159433351375
+                  ],
+                  [
+                    -2.846236162549408,
+                    1.1379472389987348,
+                    17.088072005127696
+                  ],
+                  [
+                    -2.8415552025183852,
+                    1.1555177960383975,
+                    17.131483220380364
+                  ],
+                  [
+                    -2.8384223335691314,
+                    1.1715661082647484,
+                    17.17426807282341
+                  ],
+                  [
+                    -2.838282160347718,
+                    1.1869303643169942,
+                    17.207301556170872
+                  ],
+                  [
+                    -2.842579287500214,
+                    1.2024487528343426,
+                    17.22145866413678
+                  ],
+                  [
+                    -2.8509768589334916,
+                    1.2160769458444893,
+                    17.215874633472044
+                  ],
+                  [
+                    -2.8629281789348098,
+                    1.2288928398873304,
+                    17.198711104885913
+                  ],
+                  [
+                    -2.877248664648154,
+                    1.2411672012853012,
+                    17.173827911018865
+                  ],
+                  [
+                    -2.892753733217512,
+                    1.2531707963608365,
+                    17.14508488451134
+                  ],
+                  [
+                    -2.90825880178687,
+                    1.2651743914363722,
+                    17.11634185800383
+                  ],
+                  [
+                    -2.922579287500214,
+                    1.277448752834343,
+                    17.091458664136777
+                  ]
+                ],
+                "looseCenterline": [
+                  [
+                    -2.922579287500214,
+                    1.2774487528343426,
+                    17.09145866413678
+                  ],
+                  [
+                    -2.919789924601743,
+                    1.2735888501907595,
+                    17.087496021915296
+                  ],
+                  [
+                    -2.9171413697262687,
+                    1.2699929041743874,
+                    17.08364546042326
+                  ],
+                  [
+                    -2.9145590774498515,
+                    1.2665211730414092,
+                    17.079847642803905
+                  ],
+                  [
+                    -2.9119685023485515,
+                    1.2630339150480068,
+                    17.076043232200462
+                  ],
+                  [
+                    -2.9092950989984305,
+                    1.2593913884503622,
+                    17.072172891756168
+                  ],
+                  [
+                    -2.906464321975549,
+                    1.255453851504658,
+                    17.06817728461426
+                  ],
+                  [
+                    -2.9034016258559685,
+                    1.2510815624670761,
+                    17.06399707391797
+                  ],
+                  [
+                    -2.9000324652157476,
+                    1.2461347795937991,
+                    17.05957292281053
+                  ],
+                  [
+                    -2.8950027292872496,
+                    1.2386280773311482,
+                    17.053246226244905
+                  ],
+                  [
+                    -2.8861741638852556,
+                    1.2263297480793054,
+                    17.04241690881974
+                  ],
+                  [
+                    -2.8759749360563616,
+                    1.2126856569633322,
+                    17.0301792621426
+                  ],
+                  [
+                    -2.864762054866247,
+                    1.197578408303702,
+                    17.01702144154934
+                  ],
+                  [
+                    -2.8528925293805907,
+                    1.180890606420889,
+                    17.003431602375823
+                  ],
+                  [
+                    -2.8407233686650715,
+                    1.162504855635367,
+                    16.989897899957914
+                  ],
+                  [
+                    -2.8286115817853688,
+                    1.1423037602676096,
+                    16.976908489631473
+                  ],
+                  [
+                    -2.8169141778071625,
+                    1.1201699246380907,
+                    16.964951526732357
+                  ],
+                  [
+                    -2.8059881657961303,
+                    1.0959859530672849,
+                    16.954515166596426
+                  ],
+                  [
+                    -2.7916488453778388,
+                    1.0562189725052347,
+                    16.9425302756815
+                  ],
+                  [
+                    -2.776126523209013,
+                    1.0018250149118135,
+                    16.932214979234363
+                  ],
+                  [
+                    -2.7614658975080624,
+                    0.9399824273799631,
+                    16.92493593853988
+                  ],
+                  [
+                    -2.7474573664314486,
+                    0.872503038813626,
+                    16.91995460490145
+                  ],
+                  [
+                    -2.7338913281356354,
+                    0.8011986781167446,
+                    16.91653242962248
+                  ],
+                  [
+                    -2.7205581807770853,
+                    0.7278811741932605,
+                    16.913930864006392
+                  ],
+                  [
+                    -2.7072483225122617,
+                    0.6543623559471159,
+                    16.911411359356592
+                  ],
+                  [
+                    -2.6937521514976277,
+                    0.5824540522822537,
+                    16.90823536697649
+                  ],
+                  [
+                    -2.6798600658896463,
+                    0.5139680921026153,
+                    16.903664338169495
+                  ]
+                ]
+              }
+            }
+          },
+          "seatFollower": "Native seat contact"
+        }
+      }
+    },
+    {
+      "key": "shire",
+      "modes": [
+        {
+          "modifier": "Control",
+          "state": {
+            "mode": "walk",
+            "state": {
+              "gait": "walk",
+              "lead": "left",
+              "phase01": 0.46801041049503533,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 0.5441849093837287,
+              "grounded": true,
+              "intensity": 0.15548140268106533,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 4.699999999999989,
+                "remainderS": 0,
+                "frames": 283,
+                "steps": 1128,
+                "capHits": 1066,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 3.3949610984966467,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 4.999999970197678,
+                  "sampleMs": 9.399999797344208,
+                  "solveMs": 1.899999886751175,
+                  "applyMs": 34.699999898672104
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "shire"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.0010141785139015508,
+                    "finalMinimumM": 0.0010141785139015508,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010141785139015508,
+                    "maxAddedLocalAngleDeg": 0.0000017075472925031877
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.018423320065791546,
+                    "finalMinimumM": 0.018128371881573693,
+                    "gate": 0.0693312036797012,
+                    "requestedGate": 0.0693312036797012,
+                    "requestedMinimumM": 0.018128371881573693,
+                    "maxAddedLocalAngleDeg": 0.1522137942441463
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": "Alt",
+          "state": {
+            "mode": "trot",
+            "state": {
+              "gait": "trot",
+              "lead": "left",
+              "phase01": 0.8696227176274665,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 1.8136648688063957,
+              "grounded": true,
+              "intensity": 0.518189962516113,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 9.200000000000037,
+                "remainderS": 0,
+                "frames": 553,
+                "steps": 2208,
+                "capHits": 4945,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 4,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 10.599999904632568,
+                  "sampleMs": 18.899999737739563,
+                  "solveMs": 4.299999952316284,
+                  "applyMs": 67.10000002384186
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "shire"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.05623061440672271,
+                    "finalMinimumM": 0.056230614834971646,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.056230614834971646,
+                    "maxAddedLocalAngleDeg": 0.025835610758625248
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0002828766032518665,
+                    "finalMinimumM": 0.0002828766032518665,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0002828766032518665,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": null,
+          "state": {
+            "mode": "canter",
+            "state": {
+              "gait": "canter",
+              "lead": "left",
+              "phase01": 0.25345794820049816,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 2.0905005781923904,
+              "grounded": true,
+              "intensity": 0.5972858794835402,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 13.70000000000026,
+                "remainderS": 0,
+                "frames": 823,
+                "steps": 3288,
+                "capHits": 7215,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 3.9936560900875313,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 17.30000001192093,
+                  "sampleMs": 27.099999606609344,
+                  "solveMs": 6.799999952316284,
+                  "applyMs": 98.69999983906746
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "shire"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.12424808728754798,
+                    "finalMinimumM": 0.12424808769249963,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.12424808769249963,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0008630266960568123,
+                    "finalMinimumM": 0.0008630266960568123,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0008630266960568123,
+                    "maxAddedLocalAngleDeg": 0.013588926567515501
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": "Shift",
+          "state": {
+            "mode": "gallop",
+            "state": {
+              "gait": "gallop",
+              "lead": "left",
+              "phase01": 0.7803141443561499,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 3.4680032151096465,
+              "grounded": true,
+              "intensity": 0.990858061459899,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 18.200000000000248,
+                "remainderS": 0,
+                "frames": 1093,
+                "steps": 4368,
+                "capHits": 10158,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 4.000000000000001,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 23.000000059604645,
+                  "sampleMs": 37.49999961256981,
+                  "solveMs": 8.499999970197678,
+                  "applyMs": 131.19999977946281
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "shire"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.01409289906269827,
+                    "finalMinimumM": 0.01409289906269827,
+                    "gate": 0.003049934375833732,
+                    "requestedGate": 0.003049934375833732,
+                    "requestedMinimumM": 0.01409289906269827,
+                    "maxAddedLocalAngleDeg": 0
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.19077367132610573,
+                    "finalMinimumM": 0.19077367232742481,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.19077367232742481,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        }
+      ],
+      "peak": 0.7777728763727877,
+      "last": {
+        "mode": "stand",
+        "y": 0,
+        "finite": true,
+        "rider": {
+          "kind": "nativeWesternHorse",
+          "enabled": true,
+          "contact": {
+            "seat": [
+              0.0002512476270419839,
+              1.7601296356113418,
+              0.000467008294833704
+            ],
+            "leftTread": [
+              -0.473997090052253,
+              0.9877199687686979,
+              0.2214074172669065
+            ],
+            "rightTread": [
+              0.4626204557897893,
+              0.9943871541503366,
+              0.20670415972803013
+            ],
+            "leftBit": [
+              -0.11331795321166238,
+              1.6455311383382822,
+              1.356797767365233
+            ],
+            "rightBit": [
+              0.03184644486066723,
+              1.6468592052568358,
+              1.363590012327986
+            ]
+          },
+          "reins": {
+            "triangles": {
+              "original": 17194,
+              "removed": 1640,
+              "retained": 15554
+            },
+            "hiddenComponents": [
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              72,
+              73,
+              74,
+              75,
+              103,
+              104,
+              141,
+              142,
+              143,
+              153,
+              163,
+              164,
+              244,
+              245,
+              254,
+              255,
+              278,
+              283
+            ],
+            "protectedComponents": [
+              89,
+              91,
+              205,
+              209
+            ],
+            "nonReinComponentsIntact": true,
+            "sides": {
+              "left": {
+                "bit": [
+                  -3.1133179532116624,
+                  1.6455311383382822,
+                  20.486797767365232
+                ],
+                "hand": [
+                  -3.0734140060339326,
+                  2.0370249884428313,
+                  19.437966502942995
+                ],
+                "mainStart": [
+                  -3.1133179532116624,
+                  1.6455311383382822,
+                  20.486797767365232
+                ],
+                "mainEnd": [
+                  -3.073414006033932,
+                  2.037024988442831,
+                  19.43796650294299
+                ],
+                "looseStart": [
+                  -3.0734140060339326,
+                  2.0370249884428313,
+                  19.437966502942995
+                ],
+                "looseEnd": [
+                  -3.319748752372959,
+                  1.2801296356113414,
+                  19.250467008294834
+                ],
+                "mainWidthM": 0.019,
+                "looseWidthM": 0.019,
+                "mainCenterline": [
+                  [
+                    -3.1133179532116624,
+                    1.6455311383382822,
+                    20.486797767365232
+                  ],
+                  [
+                    -3.117777168755218,
+                    1.6380349319039806,
+                    20.46884697377986
+                  ],
+                  [
+                    -3.1220165721272397,
+                    1.6306429283969484,
+                    20.45135279328116
+                  ],
+                  [
+                    -3.1262559754992605,
+                    1.6232509248899158,
+                    20.433858612782455
+                  ],
+                  [
+                    -3.130715191042817,
+                    1.6157547184556145,
+                    20.41590781919709
+                  ],
+                  [
+                    -3.1356140309294434,
+                    1.6080501061667754,
+                    20.397043799438396
+                  ],
+                  [
+                    -3.1411723073306757,
+                    1.600032885096129,
+                    20.37680994041971
+                  ],
+                  [
+                    -3.1501181554486393,
+                    1.5883916002933198,
+                    20.34686273920455
+                  ],
+                  [
+                    -3.160469926797163,
+                    1.5759151745954623,
+                    20.314420244765472
+                  ],
+                  [
+                    -3.171621551101273,
+                    1.5630595750840044,
+                    20.280316225742133
+                  ],
+                  [
+                    -3.182966958085994,
+                    1.5502807688403948,
+                    20.24538445077416
+                  ],
+                  [
+                    -3.193900077476353,
+                    1.5380347229460813,
+                    20.210458688501223
+                  ],
+                  [
+                    -3.203814838997375,
+                    1.5267774044825118,
+                    20.176372707562948
+                  ],
+                  [
+                    -3.2125511762687093,
+                    1.5161407673908551,
+                    20.143969236268507
+                  ],
+                  [
+                    -3.2210422722414074,
+                    1.5051307349887493,
+                    20.11105654902897
+                  ],
+                  [
+                    -3.2291551884278786,
+                    1.4946093886343488,
+                    20.078149377065056
+                  ],
+                  [
+                    -3.2367569863405303,
+                    1.48543880968581,
+                    20.045762451597486
+                  ],
+                  [
+                    -3.24371472749177,
+                    1.4784810795012886,
+                    20.014410503846964
+                  ],
+                  [
+                    -3.249895473394008,
+                    1.4745982794389412,
+                    19.984608265034222
+                  ],
+                  [
+                    -3.254149692663556,
+                    1.4729495984214644,
+                    19.96219896189438
+                  ],
+                  [
+                    -3.2578859075001536,
+                    1.471832890526646,
+                    19.940576130316625
+                  ],
+                  [
+                    -3.261218319692604,
+                    1.4721035668431985,
+                    19.919602196109143
+                  ],
+                  [
+                    -3.264261131029708,
+                    1.4746170384598356,
+                    19.899139585080093
+                  ],
+                  [
+                    -3.26712854330027,
+                    1.4802287164652692,
+                    19.879050723037665
+                  ],
+                  [
+                    -3.269934758293091,
+                    1.4897940119482114,
+                    19.85919803579003
+                  ],
+                  [
+                    -3.2753546691026596,
+                    1.5132381708567608,
+                    19.830440963548018
+                  ],
+                  [
+                    -3.2821608543959635,
+                    1.5466221637710607,
+                    19.802409220981033
+                  ],
+                  [
+                    -3.28858763506733,
+                    1.5867078675142325,
+                    19.77518593250541
+                  ],
+                  [
+                    -3.2928693320110876,
+                    1.6302571589093997,
+                    19.748854222537474
+                  ],
+                  [
+                    -3.2932402661215656,
+                    1.674031914779685,
+                    19.72349721549357
+                  ],
+                  [
+                    -3.287934758293091,
+                    1.7147940119482115,
+                    19.69919803579003
+                  ],
+                  [
+                    -3.274308123449686,
+                    1.7574126884918468,
+                    19.675638002132125
+                  ],
+                  [
+                    -3.2536754002924972,
+                    1.8027398566529087,
+                    19.654428389541845
+                  ],
+                  [
+                    -3.2286531078969256,
+                    1.848320093579968,
+                    19.634312815673486
+                  ],
+                  [
+                    -3.2018577653383735,
+                    1.8916979764215949,
+                    19.614034898181355
+                  ],
+                  [
+                    -3.175905891692242,
+                    1.9304180823263595,
+                    19.592338254719756
+                  ],
+                  [
+                    -3.1534140060339326,
+                    1.9620249884428314,
+                    19.567966502942994
+                  ],
+                  [
+                    -3.139118319840132,
+                    1.9798392624991739,
+                    19.547918526633293
+                  ],
+                  [
+                    -3.1255155277058675,
+                    1.9938272592349493,
+                    19.526705093266578
+                  ],
+                  [
+                    -3.1123746649446278,
+                    2.0052644044236807,
+                    19.504714688528516
+                  ],
+                  [
+                    -3.0994647668699002,
+                    2.0154261238388904,
+                    19.48233579810478
+                  ],
+                  [
+                    -3.0865548687951723,
+                    2.0255878432540997,
+                    19.459956907681054
+                  ],
+                  [
+                    -3.073414006033932,
+                    2.037024988442831,
+                    19.43796650294299
+                  ]
+                ],
+                "looseCenterline": [
+                  [
+                    -3.0734140060339326,
+                    2.0370249884428313,
+                    19.437966502942995
+                  ],
+                  [
+                    -3.0762033689324038,
+                    2.033165085799248,
+                    19.43400386072151
+                  ],
+                  [
+                    -3.078851923807878,
+                    2.029569139782876,
+                    19.430153299229474
+                  ],
+                  [
+                    -3.081434216084295,
+                    2.0260974086498984,
+                    19.42635548161012
+                  ],
+                  [
+                    -3.084024791185595,
+                    2.0226101506564955,
+                    19.42255107100668
+                  ],
+                  [
+                    -3.086698194535716,
+                    2.0189676240588508,
+                    19.418680730562386
+                  ],
+                  [
+                    -3.0895289715585976,
+                    2.0150300871131464,
+                    19.41468512342048
+                  ],
+                  [
+                    -3.092591667678178,
+                    2.010657798075565,
+                    19.41050491272419
+                  ],
+                  [
+                    -3.0959608283183986,
+                    2.0057110152022877,
+                    19.406080761616753
+                  ],
+                  [
+                    -3.1009892517221824,
+                    1.9982033930991383,
+                    19.39975392125051
+                  ],
+                  [
+                    -3.109800649300909,
+                    1.9858930323335775,
+                    19.388922722913392
+                  ],
+                  [
+                    -3.1199694790574113,
+                    1.9722276377116623,
+                    19.376681745814178
+                  ],
+                  [
+                    -3.131147237086162,
+                    1.9570957741202966,
+                    19.36352007711665
+                  ],
+                  [
+                    -3.1429854194816333,
+                    1.9403860064463831,
+                    19.34992680398462
+                  ],
+                  [
+                    -3.1551355223382953,
+                    1.9219868995768252,
+                    19.336391013581885
+                  ],
+                  [
+                    -3.167249041750621,
+                    1.9017870183985257,
+                    19.323401793072243
+                  ],
+                  [
+                    -3.178977473813082,
+                    1.8796749277983882,
+                    19.311448229619494
+                  ],
+                  [
+                    -3.1899723146201504,
+                    1.8555391926633151,
+                    19.301019410387436
+                  ],
+                  [
+                    -3.2044403291812875,
+                    1.8160600205204114,
+                    19.289092985735525
+                  ],
+                  [
+                    -3.2202132519472455,
+                    1.7622049317750008,
+                    19.27884113370958
+                  ],
+                  [
+                    -3.235229833584196,
+                    1.7010409746593005,
+                    19.27160692648509
+                  ],
+                  [
+                    -3.249674048961358,
+                    1.634345982020138,
+                    19.266656342353595
+                  ],
+                  [
+                    -3.2637298729479483,
+                    1.5638977867043404,
+                    19.26325535960663
+                  ],
+                  [
+                    -3.277581280413186,
+                    1.4914742215587349,
+                    19.260669956535732
+                  ],
+                  [
+                    -3.291412246226289,
+                    1.4188531194301481,
+                    19.258166111432445
+                  ],
+                  [
+                    -3.305406745256473,
+                    1.347812313165408,
+                    19.2550098025883
+                  ],
+                  [
+                    -3.319748752372959,
+                    1.2801296356113414,
+                    19.250467008294834
+                  ]
+                ]
+              },
+              "right": {
+                "bit": [
+                  -2.9681535551393328,
+                  1.6468592052568358,
+                  20.493590012327985
+                ],
+                "hand": [
+                  -2.9208528222925634,
+                  2.039507604050953,
+                  19.438031423241856
+                ],
+                "mainStart": [
+                  -2.9681535551393328,
+                  1.6468592052568358,
+                  20.493590012327985
+                ],
+                "mainEnd": [
+                  -2.920852822292563,
+                  2.039507604050953,
+                  19.438031423241863
+                ],
+                "looseStart": [
+                  -2.9208528222925634,
+                  2.039507604050953,
+                  19.438031423241856
+                ],
+                "looseEnd": [
+                  -2.6797487523729586,
+                  1.2801296356113419,
+                  19.25046700829483
+                ],
+                "mainWidthM": 0.019,
+                "looseWidthM": 0.019,
+                "mainCenterline": [
+                  [
+                    -2.9681535551393328,
+                    1.6468592052568358,
+                    20.493590012327985
+                  ],
+                  [
+                    -2.961659338524842,
+                    1.6394900797455723,
+                    20.476236049530865
+                  ],
+                  [
+                    -2.955419119764215,
+                    1.6322062977785667,
+                    20.45934686569373
+                  ],
+                  [
+                    -2.949178901003589,
+                    1.624922515811561,
+                    20.442457681856588
+                  ],
+                  [
+                    -2.9426846843890977,
+                    1.6175533903002979,
+                    20.42510371905947
+                  ],
+                  [
+                    -2.9356824720668784,
+                    1.610013577700519,
+                    20.406820198342388
+                  ],
+                  [
+                    -2.927918266183064,
+                    1.6022177344679671,
+                    20.387142340745363
+                  ],
+                  [
+                    -2.9155113616596573,
+                    1.5908424083982902,
+                    20.357588055786863
+                  ],
+                  [
+                    -2.901318306866615,
+                    1.5787155728413318,
+                    20.32550444415285
+                  ],
+                  [
+                    -2.886178709858666,
+                    1.5662706981112835,
+                    20.291688798568437
+                  ],
+                  [
+                    -2.87093217869054,
+                    1.553941254522337,
+                    20.256938411758725
+                  ],
+                  [
+                    -2.856418321416965,
+                    1.542160712388683,
+                    20.222050576448822
+                  ],
+                  [
+                    -2.843476746092671,
+                    1.531362542024513,
+                    20.187822585363833
+                  ],
+                  [
+                    -2.8324037999715586,
+                    1.5211753058841606,
+                    20.15497785554016
+                  ],
+                  [
+                    -2.8219878258436513,
+                    1.5106676153426328,
+                    20.1213962491737
+                  ],
+                  [
+                    -2.81224649186557,
+                    1.5006653487868544,
+                    20.08768808134865
+                  ],
+                  [
+                    -2.8031974661939376,
+                    1.4919943846037504,
+                    20.05446366714922
+                  ],
+                  [
+                    -2.7948584169853765,
+                    1.4854806011802455,
+                    20.0223333216596
+                  ],
+                  [
+                    -2.7872470123965085,
+                    1.4819498769032633,
+                    19.991907359964003
+                  ],
+                  [
+                    -2.781810897694136,
+                    1.4804819741946147,
+                    19.96921718514121
+                  ],
+                  [
+                    -2.7768788859867026,
+                    1.4794576052958135,
+                    19.947356316168516
+                  ],
+                  [
+                    -2.7723881406506212,
+                    1.4797739728518813,
+                    19.926175435554168
+                  ],
+                  [
+                    -2.7682758250623043,
+                    1.4823282795078394,
+                    19.90552522580642
+                  ],
+                  [
+                    -2.7644791025981648,
+                    1.488017727908709,
+                    19.88525636943354
+                  ],
+                  [
+                    -2.7609351366346147,
+                    1.4977395206995125,
+                    19.86521954894378
+                  ],
+                  [
+                    -2.755253839146321,
+                    1.5212707260757934,
+                    19.836558102502654
+                  ],
+                  [
+                    -2.7490344141486474,
+                    1.5546571669522509,
+                    19.808740663474588
+                  ],
+                  [
+                    -2.743484846520119,
+                    1.5946980550908683,
+                    19.781732660232116
+                  ],
+                  [
+                    -2.739813121139256,
+                    1.6381926022536286,
+                    19.755499521147794
+                  ],
+                  [
+                    -2.73922722288458,
+                    1.681940020202516,
+                    19.73000667459417
+                  ],
+                  [
+                    -2.742935136634615,
+                    1.7227395206995126,
+                    19.70521954894378
+                  ],
+                  [
+                    -2.7523093650259276,
+                    1.764354692183779,
+                    19.68115851845425
+                  ],
+                  [
+                    -2.7664975146284663,
+                    1.8086319085570202,
+                    19.65881618499645
+                  ],
+                  [
+                    -2.7839727602993145,
+                    1.8531784888747984,
+                    19.63726242865835
+                  ],
+                  [
+                    -2.8032082768955573,
+                    1.895601752192673,
+                    19.615567129527907
+                  ],
+                  [
+                    -2.822677239274279,
+                    1.9335090175662042,
+                    19.592800167693085
+                  ],
+                  [
+                    -2.8408528222925633,
+                    1.9645076040509533,
+                    19.568031423241855
+                  ],
+                  [
+                    -2.853905501834645,
+                    1.9824368387576567,
+                    19.547653133678143
+                  ],
+                  [
+                    -2.8671602521064274,
+                    1.9964570244755337,
+                    19.526347212600307
+                  ],
+                  [
+                    -2.8805497161980114,
+                    2.007871177534193,
+                    19.504422870513043
+                  ],
+                  [
+                    -2.8940065371994956,
+                    2.017982314263243,
+                    19.48218931792108
+                  ],
+                  [
+                    -2.9074633582009795,
+                    2.028093450992294,
+                    19.459955765329116
+                  ],
+                  [
+                    -2.920852822292563,
+                    2.039507604050953,
+                    19.438031423241863
+                  ]
+                ],
+                "looseCenterline": [
+                  [
+                    -2.9208528222925634,
+                    2.039507604050953,
+                    19.438031423241856
+                  ],
+                  [
+                    -2.918063459394092,
+                    2.03564770140737,
+                    19.434068781020372
+                  ],
+                  [
+                    -2.9154149045186175,
+                    2.032051755390998,
+                    19.430218219528335
+                  ],
+                  [
+                    -2.912832612242201,
+                    2.0285800242580203,
+                    19.42642040190898
+                  ],
+                  [
+                    -2.910242037140901,
+                    2.0250927662646174,
+                    19.422615991305538
+                  ],
+                  [
+                    -2.9075686337907793,
+                    2.0214502396669727,
+                    19.418745650861243
+                  ],
+                  [
+                    -2.9047378567678974,
+                    2.0175127027212683,
+                    19.414750043719337
+                  ],
+                  [
+                    -2.9016751606483164,
+                    2.013140413683687,
+                    19.410569833023047
+                  ],
+                  [
+                    -2.8983060000080956,
+                    2.0081936308104096,
+                    19.406145681915607
+                  ],
+                  [
+                    -2.893275866354108,
+                    2.0006865285902897,
+                    19.39981887390549
+                  ],
+                  [
+                    -2.88444209870269,
+                    1.9883829678947547,
+                    19.388988098786434
+                  ],
+                  [
+                    -2.874233659551422,
+                    1.9747296137638035,
+                    19.37674787105497
+                  ],
+                  [
+                    -2.863010135227166,
+                    1.9596116622423079,
+                    19.363587068207238
+                  ],
+                  [
+                    -2.851131112056782,
+                    1.942914309375139,
+                    19.34999456773937
+                  ],
+                  [
+                    -2.8389561763671325,
+                    1.9245227512071699,
+                    19.33645924714751
+                  ],
+                  [
+                    -2.826844914485078,
+                    1.9043221837832713,
+                    19.32346998392779
+                  ],
+                  [
+                    -2.815156912737481,
+                    1.882197803148316,
+                    19.311515655576347
+                  ],
+                  [
+                    -2.8042517574512025,
+                    1.858034805347175,
+                    19.301085139589322
+                  ],
+                  [
+                    -2.7900066646914308,
+                    1.8184468123601896,
+                    19.289145292936734
+                  ],
+                  [
+                    -2.774634182146183,
+                    1.7643922379643828,
+                    19.278878985656018
+                  ],
+                  [
+                    -2.760146496739299,
+                    1.70297378853371,
+                    19.27163472804323
+                  ],
+                  [
+                    -2.7463283875452316,
+                    1.6359826769144905,
+                    19.266677426935914
+                  ],
+                  [
+                    -2.732964633638433,
+                    1.565210115953043,
+                    19.263271989171592
+                  ],
+                  [
+                    -2.719840014093354,
+                    1.4924473184956855,
+                    19.260683321587795
+                  ],
+                  [
+                    -2.7067393079844475,
+                    1.419485497388737,
+                    19.25817633102205
+                  ],
+                  [
+                    -2.6934472943861656,
+                    1.3481158654785161,
+                    19.255015924311884
+                  ],
+                  [
+                    -2.6797487523729586,
+                    1.2801296356113419,
+                    19.25046700829483
+                  ]
+                ]
+              }
+            }
+          },
+          "seatFollower": "Native seat contact"
+        }
+      }
+    },
+    {
+      "key": "pegasus",
+      "modes": [
+        {
+          "modifier": "Control",
+          "state": {
+            "mode": "walk",
+            "state": {
+              "gait": "walk",
+              "lead": "left",
+              "phase01": 0.5833956261757951,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 0.5113517850797791,
+              "grounded": true,
+              "intensity": 0.14610051002279403,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 4.699999999999989,
+                "remainderS": 0,
+                "frames": 283,
+                "steps": 1128,
+                "capHits": 996,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 3.3291147515443305,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 6.499999910593033,
+                  "sampleMs": 11.100000083446503,
+                  "solveMs": 1.5,
+                  "applyMs": 34.79999974370003
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "pegasus"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.000944654996750352,
+                    "finalMinimumM": 0.000944654996750352,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.000944654996750352,
+                    "maxAddedLocalAngleDeg": 0
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.04546032823404812,
+                    "finalMinimumM": 0.05462393032821618,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.05462393032821618,
+                    "maxAddedLocalAngleDeg": 29.047597260885972
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": "Alt",
+          "state": {
+            "mode": "trot",
+            "state": {
+              "gait": "trot",
+              "lead": "left",
+              "phase01": 0.11090641557971082,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 1.7039172781366092,
+              "grounded": true,
+              "intensity": 0.4868335080390312,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 9.200000000000037,
+                "remainderS": 0,
+                "frames": 553,
+                "steps": 2208,
+                "capHits": 5283,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 4,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 12.699999809265137,
+                  "sampleMs": 22.000000059604645,
+                  "solveMs": 3.700000047683716,
+                  "applyMs": 70.19999977946281
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "pegasus"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.0004449453616985899,
+                    "finalMinimumM": 0.0004449453616985899,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0004449453616985899,
+                    "maxAddedLocalAngleDeg": 0.02987603613186656
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.14953450096130871,
+                    "finalMinimumM": 0.14953450050881367,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.14953450050881367,
+                    "maxAddedLocalAngleDeg": 0
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": null,
+          "state": {
+            "mode": "canter",
+            "state": {
+              "gait": "canter",
+              "lead": "left",
+              "phase01": 0.5218119183703811,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 1.9633013103653933,
+              "grounded": true,
+              "intensity": 0.5609432315329695,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 13.70000000000026,
+                "remainderS": 0,
+                "frames": 823,
+                "steps": 3288,
+                "capHits": 7500,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 4.000000000000001,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 18.999999701976776,
+                  "sampleMs": 31.599999994039536,
+                  "solveMs": 6.100000083446503,
+                  "applyMs": 104.19999957084656
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "pegasus"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.001033580234423237,
+                    "finalMinimumM": 0.001033580234423237,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.001033580234423237,
+                    "maxAddedLocalAngleDeg": 0
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.001127004260447817,
+                    "finalMinimumM": 0.001127004260447817,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.001127004260447817,
+                    "maxAddedLocalAngleDeg": 0.016346238495066816
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        },
+        {
+          "modifier": "Shift",
+          "state": {
+            "mode": "gallop",
+            "state": {
+              "gait": "gallop",
+              "lead": "left",
+              "phase01": 0.1277811453657567,
+              "bodyLiftM": 0,
+              "jumpTimeS": 0,
+              "speedMps": 3.257529619103199,
+              "grounded": true,
+              "intensity": 0.9307227483151996,
+              "turn": 0,
+              "transitioning": false,
+              "transitionElapsedS": 0,
+              "transitionDurationS": 0.2,
+              "activeActions": 1,
+              "groomInertia": {
+                "time": 18.200000000000248,
+                "remainderS": 0,
+                "frames": 1093,
+                "steps": 4368,
+                "capHits": 9024,
+                "held": false,
+                "disposed": false,
+                "controls": 58,
+                "maxAddedWorldAngleDeg": 3.951855258548793,
+                "finite": true,
+                "timingsMs": {
+                  "restoreMs": 26.699999541044235,
+                  "sampleMs": 42.500000059604645,
+                  "solveMs": 8.100000023841858,
+                  "applyMs": 139.49999970197678
+                },
+                "sourceControllerUpdatesOwned": 0,
+                "adapterDisposed": false,
+                "reseededIntervals": 0,
+                "eligibleProfile": "pegasus"
+              },
+              "hoofFlex": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.39773478833577725,
+                    "finalMinimumM": 0.3977347896597875,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.3977347896597875,
+                    "maxAddedLocalAngleDeg": 0.0000017075472925031877
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.14247982234259587,
+                    "finalMinimumM": 0.1424798213348607,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.1424798213348607,
+                    "maxAddedLocalAngleDeg": 0
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "restFallback": false,
+              "transitionsReviewed": false
+            },
+            "profile": {
+              "walk": {
+                "clip": "Target Native Walk Rollover",
+                "durationS": 1.12,
+                "strokeM": 0.4,
+                "stanceFraction": 0.65,
+                "nominalSpeedMps": 0.5494505494505494,
+                "footOffsets": {
+                  "HL": 0,
+                  "FL": 0.25,
+                  "HR": 0.5,
+                  "FR": 0.75
+                },
+                "authoredHoofFold": false
+              },
+              "trot": {
+                "clip": "Target Native Trot",
+                "durationS": 0.72,
+                "strokeM": 0.58,
+                "stanceFraction": 0.44,
+                "nominalSpeedMps": 1.8308080808080809,
+                "footOffsets": {
+                  "FL": 0,
+                  "HR": 0,
+                  "FR": 0.5,
+                  "HL": 0.5
+                },
+                "authoredHoofFold": true
+              },
+              "canterLeft": {
+                "clip": "Target Native Canter Left",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.24,
+                  "FR": 0.24,
+                  "FL": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "canterRight": {
+                "clip": "Target Native Canter Right",
+                "durationS": 0.64,
+                "strokeM": 0.54,
+                "stanceFraction": 0.4,
+                "nominalSpeedMps": 2.109375,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.24,
+                  "FL": 0.24,
+                  "FR": 0.48
+                },
+                "authoredHoofFold": true
+              },
+              "gallopLeft": {
+                "clip": "Target Native Gallop Left",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Left",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HR": 0,
+                  "HL": 0.12,
+                  "FR": 0.31,
+                  "FL": 0.46
+                },
+                "authoredHoofFold": true
+              },
+              "gallopRight": {
+                "clip": "Target Native Gallop Right",
+                "baselineCompanion": "Native Foreleg Baseline | Target Native Gallop Right",
+                "durationS": 0.65,
+                "nominalSpeedMps": 3.5,
+                "strokeM": 0.637,
+                "stanceFraction": 0.28,
+                "hindStanceFraction": 0.3,
+                "footOffsets": {
+                  "HL": 0,
+                  "HR": 0.12,
+                  "FL": 0.31,
+                  "FR": 0.46
+                },
+                "authoredHoofFold": true
+              }
+            },
+            "finite": true
+          }
+        }
+      ],
+      "flying": true
+    }
+  ]
+}

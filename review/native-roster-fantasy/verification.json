@@ -1,0 +1,973 @@
+{
+  "errors": [],
+  "rows": [
+    {
+      "surface": "studio",
+      "key": "unicorn",
+      "result": {
+        "state": {
+          "mode": "breed studio",
+          "coordinates": "+Y up, +Z forward; metres",
+          "breed": "unicorn",
+          "name": "Unicorn",
+          "loading": false,
+          "modelReady": true,
+          "count": 51,
+          "asset": {
+            "file": "../review/native-trot-reference-kit/white/model.glb",
+            "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+            "artist": "WildMesh 3D",
+            "license": "CC BY-NC 4.0",
+            "current": true,
+            "artistBreed": false,
+            "nativeBreed": true,
+            "referenceMotion": false,
+            "geometryHash": "3a0c0c33",
+            "conformation": "Baroque riding horse, rounded muscular quarters",
+            "coat": "Fantasy coat applied by the ranch renderer",
+            "bones": 677,
+            "bodyMesh": "Object_684",
+            "availableClips": [
+              "Target Native Walk Rollover",
+              "Target Native Trot",
+              "Target Native Canter Left",
+              "Target Native Canter Right",
+              "Target Native Gallop Left",
+              "Target Native Gallop Right",
+              "Horse|Horse_Idle",
+              "Target Native Jump"
+            ],
+            "supportedModes": [
+              "rest",
+              "stand",
+              "walk",
+              "trot",
+              "canter",
+              "gallop",
+              "jump"
+            ]
+          },
+          "surface": "coat",
+          "view": "body",
+          "hair": true,
+          "wings": null,
+          "motion": "canter",
+          "clip": "Target Native Canter Left",
+          "clipTime": 0.11660000000000004,
+          "lead": "left",
+          "paused": false,
+          "playback": 1,
+          "turntable": false,
+          "camera": [
+            -4.091974266746246,
+            1.751060270821787,
+            3.921475338965152
+          ],
+          "target": [
+            0,
+            1.0122315837703808,
+            0
+          ],
+          "groom": {
+            "native": true,
+            "meshes": 1
+          },
+          "memory": {
+            "geometries": 9,
+            "textures": 12
+          },
+          "status": ""
+        },
+        "inspect": {
+          "finite": true,
+          "vertices": 61690,
+          "bones": 677,
+          "meshes": [
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 99
+            },
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 903
+            },
+            {
+              "name": "Object_684",
+              "skinned": true,
+              "vertices": 16159
+            },
+            {
+              "name": "Object_685",
+              "skinned": true,
+              "vertices": 2028
+            },
+            {
+              "name": "Object_686",
+              "skinned": true,
+              "vertices": 23514
+            },
+            {
+              "name": "Object_687",
+              "skinned": true,
+              "vertices": 13895
+            },
+            {
+              "name": "Object_688",
+              "skinned": true,
+              "vertices": 5092
+            }
+          ],
+          "bounds": {
+            "min": [
+              -0.42632710671944496,
+              0.00035274789591668203,
+              -1.0714240525805063
+            ],
+            "max": [
+              0.4135044816770532,
+              1.983963597697385,
+              1.3368515748780991
+            ],
+            "size": [
+              0.8398315883964982,
+              1.9836108498014684,
+              2.4082756274586057
+            ]
+          },
+          "projected": {
+            "left": -0.32627793355865986,
+            "top": 0.5727088517739016,
+            "right": 0.5462993896517424,
+            "bottom": -0.6315376584838011
+          },
+          "animation": {
+            "gait": "canter",
+            "lead": "left",
+            "phase01": 0.18218750407220807,
+            "bodyLiftM": 0,
+            "jumpTimeS": 0,
+            "speedMps": 2.109375,
+            "grounded": true,
+            "intensity": 0.6026785714285714,
+            "turn": 0,
+            "transitioning": true,
+            "transitionElapsedS": 0.11660000000000004,
+            "transitionDurationS": 0.2,
+            "activeActions": 2,
+            "groomInertia": {
+              "time": 0.11660000000000004,
+              "remainderS": 0.00410000000000002,
+              "frames": 3,
+              "steps": 27,
+              "capHits": 0,
+              "held": false,
+              "disposed": false,
+              "controls": 58,
+              "maxAddedWorldAngleDeg": 0.7468533023295693,
+              "finite": true,
+              "timingsMs": {
+                "restoreMs": 0.09999999403953552,
+                "sampleMs": 0.7000000178813934,
+                "solveMs": 0.5999999940395355,
+                "applyMs": 0.5999999642372131
+              },
+              "sourceControllerUpdatesOwned": 0,
+              "adapterDisposed": false,
+              "reseededIntervals": 0,
+              "eligibleProfile": "unicorn"
+            },
+            "hoofFlex": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.038879772528923925,
+                  "finalMinimumM": 0.038879772528923925,
+                  "gate": 0.9904311733485552,
+                  "requestedGate": 0.9904311733485552,
+                  "requestedMinimumM": 0.038879772528923925,
+                  "maxAddedLocalAngleDeg": 0
+                },
+                "FR": {
+                  "sourceMinimumM": 0.008556395258602897,
+                  "finalMinimumM": 0.008556395258602897,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.008556395258602897,
+                  "maxAddedLocalAngleDeg": 0.014212131848792964
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0.20000001788139343,
+              "maxCostMs": 0.20000001788139343,
+              "disposed": false
+            },
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "asset": {
+            "file": "../review/native-trot-reference-kit/white/model.glb",
+            "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+            "artist": "WildMesh 3D",
+            "license": "CC BY-NC 4.0",
+            "current": true,
+            "artistBreed": false,
+            "nativeBreed": true,
+            "referenceMotion": false,
+            "geometryHash": "3a0c0c33",
+            "conformation": "Baroque riding horse, rounded muscular quarters",
+            "coat": "Fantasy coat applied by the ranch renderer",
+            "bones": 677,
+            "bodyMesh": "Object_684",
+            "availableClips": [
+              "Target Native Walk Rollover",
+              "Target Native Trot",
+              "Target Native Canter Left",
+              "Target Native Canter Right",
+              "Target Native Gallop Left",
+              "Target Native Gallop Right",
+              "Horse|Horse_Idle",
+              "Target Native Jump"
+            ],
+            "supportedModes": [
+              "rest",
+              "stand",
+              "walk",
+              "trot",
+              "canter",
+              "gallop",
+              "jump"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "surface": "studio",
+      "key": "pegasus",
+      "result": {
+        "state": {
+          "mode": "breed studio",
+          "coordinates": "+Y up, +Z forward; metres",
+          "breed": "pegasus",
+          "name": "Pegasus",
+          "loading": false,
+          "modelReady": true,
+          "count": 51,
+          "asset": {
+            "file": "../review/native-trot-reference-kit/white/model.glb",
+            "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+            "artist": "WildMesh 3D",
+            "license": "CC BY-NC 4.0",
+            "current": true,
+            "artistBreed": false,
+            "nativeBreed": true,
+            "referenceMotion": false,
+            "geometryHash": "91e8f89a",
+            "conformation": "Chosen taller athletic cross with less bulk",
+            "coat": "Fantasy coat applied by the ranch renderer",
+            "bones": 677,
+            "bodyMesh": "Object_684",
+            "availableClips": [
+              "Target Native Walk Rollover",
+              "Target Native Trot",
+              "Target Native Canter Left",
+              "Target Native Canter Right",
+              "Target Native Gallop Left",
+              "Target Native Gallop Right",
+              "Horse|Horse_Idle",
+              "Target Native Jump"
+            ],
+            "supportedModes": [
+              "rest",
+              "stand",
+              "walk",
+              "trot",
+              "canter",
+              "gallop",
+              "jump"
+            ]
+          },
+          "surface": "coat",
+          "view": "body",
+          "hair": true,
+          "wings": {
+            "open": false,
+            "kind": "feathered"
+          },
+          "motion": "canter",
+          "clip": "Target Native Canter Left",
+          "clipTime": 0.1166,
+          "lead": "left",
+          "paused": false,
+          "playback": 1,
+          "turntable": false,
+          "camera": [
+            -4.250723017127081,
+            1.8059260129949006,
+            4.073609558080118
+          ],
+          "target": [
+            0,
+            1.038434357124733,
+            0
+          ],
+          "groom": {
+            "native": true,
+            "meshes": 1
+          },
+          "memory": {
+            "geometries": 8,
+            "textures": 13
+          },
+          "status": ""
+        },
+        "inspect": {
+          "finite": true,
+          "vertices": 60760,
+          "bones": 677,
+          "meshes": [
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 18
+            },
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 18
+            },
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 18
+            },
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 18
+            },
+            {
+              "name": "Object_684",
+              "skinned": true,
+              "vertices": 16159
+            },
+            {
+              "name": "Object_685",
+              "skinned": true,
+              "vertices": 2028
+            },
+            {
+              "name": "Object_686",
+              "skinned": true,
+              "vertices": 23514
+            },
+            {
+              "name": "Object_687",
+              "skinned": true,
+              "vertices": 13895
+            },
+            {
+              "name": "Object_688",
+              "skinned": true,
+              "vertices": 5092
+            }
+          ],
+          "bounds": {
+            "min": [
+              -1.0899740013630523,
+              0.00037365512706122317,
+              -1.317047032533675
+            ],
+            "max": [
+              1.089974013703888,
+              2.0570221262795045,
+              1.3810331274517849
+            ],
+            "size": [
+              2.17994801506694,
+              2.0566484711524433,
+              2.6980801599854596
+            ]
+          },
+          "projected": {
+            "left": -0.7496800769233635,
+            "top": 0.5751819814531961,
+            "right": 0.5264788826639253,
+            "bottom": -0.6261646372326357
+          },
+          "animation": {
+            "gait": "canter",
+            "lead": "left",
+            "phase01": 0.18218750407220807,
+            "bodyLiftM": 0,
+            "jumpTimeS": 0,
+            "speedMps": 2.109375,
+            "grounded": true,
+            "intensity": 0.6026785714285714,
+            "turn": 0,
+            "transitioning": true,
+            "transitionElapsedS": 0.1166,
+            "transitionDurationS": 0.2,
+            "activeActions": 2,
+            "groomInertia": {
+              "time": 0.1166,
+              "remainderS": 0.0040999999999999925,
+              "frames": 3,
+              "steps": 27,
+              "capHits": 0,
+              "held": false,
+              "disposed": false,
+              "controls": 58,
+              "maxAddedWorldAngleDeg": 0.7579616563469336,
+              "finite": true,
+              "timingsMs": {
+                "restoreMs": 0.19999998807907104,
+                "sampleMs": 0.3999999761581421,
+                "solveMs": 0.10000002384185791,
+                "applyMs": 0.6999999582767487
+              },
+              "sourceControllerUpdatesOwned": 0,
+              "adapterDisposed": false,
+              "reseededIntervals": 0,
+              "eligibleProfile": "pegasus"
+            },
+            "hoofFlex": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.03887977252892451,
+                  "finalMinimumM": 0.03887977252892451,
+                  "gate": 0.9904311733485597,
+                  "requestedGate": 0.9904311733485597,
+                  "requestedMinimumM": 0.03887977252892451,
+                  "maxAddedLocalAngleDeg": 0
+                },
+                "FR": {
+                  "sourceMinimumM": 0.008556395258602939,
+                  "finalMinimumM": 0.008556395258602939,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.008556395258602939,
+                  "maxAddedLocalAngleDeg": 0.014212131848792964
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0.09999999403953552,
+              "maxCostMs": 0.20000001788139343,
+              "disposed": false
+            },
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "asset": {
+            "file": "../review/native-trot-reference-kit/white/model.glb",
+            "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+            "artist": "WildMesh 3D",
+            "license": "CC BY-NC 4.0",
+            "current": true,
+            "artistBreed": false,
+            "nativeBreed": true,
+            "referenceMotion": false,
+            "geometryHash": "91e8f89a",
+            "conformation": "Chosen taller athletic cross with less bulk",
+            "coat": "Fantasy coat applied by the ranch renderer",
+            "bones": 677,
+            "bodyMesh": "Object_684",
+            "availableClips": [
+              "Target Native Walk Rollover",
+              "Target Native Trot",
+              "Target Native Canter Left",
+              "Target Native Canter Right",
+              "Target Native Gallop Left",
+              "Target Native Gallop Right",
+              "Horse|Horse_Idle",
+              "Target Native Jump"
+            ],
+            "supportedModes": [
+              "rest",
+              "stand",
+              "walk",
+              "trot",
+              "canter",
+              "gallop",
+              "jump"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "surface": "studio",
+      "key": "emberdrake",
+      "result": {
+        "state": {
+          "mode": "breed studio",
+          "coordinates": "+Y up, +Z forward; metres",
+          "breed": "emberdrake",
+          "name": "Emberflight Dragon",
+          "loading": false,
+          "modelReady": true,
+          "count": 51,
+          "asset": {
+            "file": "../review/native-trot-reference-kit/white/model.glb",
+            "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+            "artist": "WildMesh 3D",
+            "license": "CC BY-NC 4.0",
+            "current": true,
+            "artistBreed": false,
+            "nativeBreed": true,
+            "referenceMotion": false,
+            "geometryHash": "5699d1f7",
+            "conformation": "Tall lean speed athlete, prominent withers, sloping shoulder",
+            "coat": "Fantasy coat applied by the ranch renderer",
+            "bones": 677,
+            "bodyMesh": "Object_684",
+            "availableClips": [
+              "Target Native Walk Rollover",
+              "Target Native Trot",
+              "Target Native Canter Left",
+              "Target Native Canter Right",
+              "Target Native Gallop Left",
+              "Target Native Gallop Right",
+              "Horse|Horse_Idle",
+              "Target Native Jump"
+            ],
+            "supportedModes": [
+              "rest",
+              "stand",
+              "walk",
+              "trot",
+              "canter",
+              "gallop",
+              "jump"
+            ]
+          },
+          "surface": "coat",
+          "view": "body",
+          "hair": true,
+          "wings": {
+            "open": false,
+            "kind": "dragon"
+          },
+          "motion": "canter",
+          "clip": "Target Native Canter Left",
+          "clipTime": 0.016700000000000017,
+          "lead": "left",
+          "paused": false,
+          "playback": 1,
+          "turntable": false,
+          "camera": [
+            -4.453151272423043,
+            1.9145513483856693,
+            4.267603302738749
+          ],
+          "target": [
+            0,
+            1.110510146420397,
+            0
+          ],
+          "groom": {
+            "native": true,
+            "meshes": 1
+          },
+          "memory": {
+            "geometries": 15,
+            "textures": 13
+          },
+          "status": ""
+        },
+        "inspect": {
+          "finite": true,
+          "vertices": 62028,
+          "bones": 677,
+          "meshes": [
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 142
+            },
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 142
+            },
+            {
+              "name": "NativeDragonCrest",
+              "skinned": false,
+              "vertices": 142
+            },
+            {
+              "name": "NativeDragonCrest",
+              "skinned": false,
+              "vertices": 142
+            },
+            {
+              "name": "NativeDragonCrest",
+              "skinned": false,
+              "vertices": 142
+            },
+            {
+              "name": "NativeDragonCrest",
+              "skinned": false,
+              "vertices": 142
+            },
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 160
+            },
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 84
+            },
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 160
+            },
+            {
+              "name": "",
+              "skinned": false,
+              "vertices": 84
+            },
+            {
+              "name": "Object_684",
+              "skinned": true,
+              "vertices": 16159
+            },
+            {
+              "name": "Object_685",
+              "skinned": true,
+              "vertices": 2028
+            },
+            {
+              "name": "Object_686",
+              "skinned": true,
+              "vertices": 23514
+            },
+            {
+              "name": "Object_687",
+              "skinned": true,
+              "vertices": 13895
+            },
+            {
+              "name": "Object_688",
+              "skinned": true,
+              "vertices": 5092
+            }
+          ],
+          "bounds": {
+            "min": [
+              -0.8401489535428708,
+              0.00007164038921397137,
+              -1.5327666396902697
+            ],
+            "max": [
+              0.8401489637680967,
+              2.2133429868005265,
+              1.3952840706358738
+            ],
+            "size": [
+              1.6802979173109676,
+              2.2132713464113127,
+              2.9280507103261435
+            ]
+          },
+          "projected": {
+            "left": -0.647195298704672,
+            "top": 0.588592133018735,
+            "right": 0.5034406898762088,
+            "bottom": -0.6184394151999046
+          },
+          "animation": {
+            "gait": "canter",
+            "lead": "left",
+            "phase01": 0.026093750583240816,
+            "bodyLiftM": 0,
+            "jumpTimeS": 0,
+            "speedMps": 2.109375,
+            "grounded": true,
+            "intensity": 0.6026785714285714,
+            "turn": 0,
+            "transitioning": true,
+            "transitionElapsedS": 0.016700000000000017,
+            "transitionDurationS": 0.2,
+            "activeActions": 2,
+            "groomInertia": {
+              "time": 0.016700000000000017,
+              "remainderS": 0.00003333333333335048,
+              "frames": 2,
+              "steps": 4,
+              "capHits": 0,
+              "held": false,
+              "disposed": false,
+              "controls": 58,
+              "maxAddedWorldAngleDeg": 0,
+              "finite": true,
+              "timingsMs": {
+                "restoreMs": 0.09999999403953552,
+                "sampleMs": 0.4000000059604645,
+                "solveMs": 0,
+                "applyMs": 0.4000000059604645
+              },
+              "sourceControllerUpdatesOwned": 0,
+              "adapterDisposed": false,
+              "reseededIntervals": 0,
+              "eligibleProfile": "emberdrake"
+            },
+            "hoofFlex": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.003603054555845406,
+                  "finalMinimumM": 0.003603054555845406,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.003603054555845406,
+                  "maxAddedLocalAngleDeg": 0.0000017075472925031877
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0019891771429593336,
+                  "finalMinimumM": 0.0019891771429593336,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0019891771429593336,
+                  "maxAddedLocalAngleDeg": 0
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0.09999999403953552,
+              "maxCostMs": 0.09999999403953552,
+              "disposed": false
+            },
+            "restFallback": false,
+            "transitionsReviewed": false
+          },
+          "asset": {
+            "file": "../review/native-trot-reference-kit/white/model.glb",
+            "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+            "artist": "WildMesh 3D",
+            "license": "CC BY-NC 4.0",
+            "current": true,
+            "artistBreed": false,
+            "nativeBreed": true,
+            "referenceMotion": false,
+            "geometryHash": "5699d1f7",
+            "conformation": "Tall lean speed athlete, prominent withers, sloping shoulder",
+            "coat": "Fantasy coat applied by the ranch renderer",
+            "bones": 677,
+            "bodyMesh": "Object_684",
+            "availableClips": [
+              "Target Native Walk Rollover",
+              "Target Native Trot",
+              "Target Native Canter Left",
+              "Target Native Canter Right",
+              "Target Native Gallop Left",
+              "Target Native Gallop Right",
+              "Horse|Horse_Idle",
+              "Target Native Jump"
+            ],
+            "supportedModes": [
+              "rest",
+              "stand",
+              "walk",
+              "trot",
+              "canter",
+              "gallop",
+              "jump"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "surface": "ranch",
+      "key": "unicorn",
+      "before": {
+        "nativeRoster": true,
+        "bones": 677,
+        "key": "unicorn",
+        "horn": true,
+        "wings": false,
+        "hornParent": "head_019",
+        "coat": "M_Body",
+        "localHorn": [
+          15.100415887531,
+          19.75023000932768,
+          -4.9812149261741165
+        ]
+      },
+      "after": {
+        "mode": "gallop",
+        "finite": true,
+        "localHorn": [
+          15.100415887531,
+          19.75023000932768,
+          -4.9812149261741165
+        ],
+        "openness": 0.04
+      },
+      "flight": null
+    },
+    {
+      "surface": "ranch",
+      "key": "pegasus",
+      "before": {
+        "nativeRoster": true,
+        "bones": 677,
+        "key": "pegasus",
+        "horn": false,
+        "wings": true,
+        "wingParent": "spine_04_012",
+        "coat": "M_Body",
+        "localWings": [
+          5.444439942542672,
+          9.562886080819794,
+          -0.6735206586868543
+        ]
+      },
+      "after": {
+        "mode": "gallop",
+        "finite": true,
+        "localWings": [
+          5.444439942542672,
+          9.562886080819794,
+          -0.6735206586868543
+        ],
+        "wingVisible": true,
+        "openness": 0.24429546434723018
+      },
+      "flight": {
+        "flying": true,
+        "openness": 0.9991583150690763,
+        "beat": 0.11424999999999952,
+        "visible": true,
+        "finite": true
+      }
+    },
+    {
+      "surface": "ranch",
+      "key": "emberdrake",
+      "before": {
+        "nativeRoster": true,
+        "bones": 677,
+        "key": "emberdrake",
+        "horn": false,
+        "wings": true,
+        "dragon": true,
+        "wingParent": "spine_04_012",
+        "appearance": "fire",
+        "coat": "EquineFantasy_fire_scales",
+        "localWings": [
+          5.3132972796655356,
+          9.614452381812413,
+          -0.6731951337878197
+        ]
+      },
+      "after": {
+        "mode": "gallop",
+        "finite": true,
+        "localWings": [
+          5.3132972796655356,
+          9.614452381812413,
+          -0.6731951337878197
+        ],
+        "wingVisible": true,
+        "openness": 0.0949114452852638
+      },
+      "flight": {
+        "flying": true,
+        "openness": 0.99899193486116,
+        "beat": 0.11424999999999952,
+        "visible": true,
+        "finite": true
+      }
+    },
+    {
+      "surface": "ranch",
+      "key": "alicorn",
+      "before": {
+        "nativeRoster": true,
+        "bones": 677,
+        "key": "alicorn",
+        "horn": true,
+        "wings": true,
+        "hornParent": "head_019",
+        "wingParent": "spine_04_012",
+        "coat": "M_Body",
+        "localHorn": [
+          15.100415887531,
+          19.75023000932768,
+          -4.9812149261741165
+        ],
+        "localWings": [
+          5.4917518688118,
+          9.653794709000692,
+          -0.6830592313802324
+        ]
+      },
+      "after": {
+        "mode": "gallop",
+        "finite": true,
+        "localHorn": [
+          15.100415887531,
+          19.75023000932768,
+          -4.9812149261741165
+        ],
+        "localWings": [
+          5.4917518688118,
+          9.653794709000692,
+          -0.6830592313802324
+        ],
+        "wingVisible": true,
+        "openness": 0.23313607643592854
+      },
+      "flight": {
+        "flying": true,
+        "openness": 0.9991458860201555,
+        "beat": 0.11424999999999952,
+        "visible": true,
+        "finite": true
+      }
+    },
+    {
+      "surface": "ranch",
+      "key": "opaline",
+      "before": {
+        "nativeRoster": true,
+        "bones": 677,
+        "key": "opaline",
+        "horn": true,
+        "wings": false,
+        "hornParent": "head_019",
+        "appearance": "opal",
+        "coat": "EquineFantasy_opal",
+        "localHorn": [
+          14.980382059219266,
+          19.22475468860989,
+          -4.9303628955355805
+        ]
+      },
+      "after": {
+        "mode": "gallop",
+        "finite": true,
+        "localHorn": [
+          14.980382059219266,
+          19.22475468860989,
+          -4.9303628955355805
+        ],
+        "openness": 0.04
+      },
+      "flight": null
+    }
+  ]
+}

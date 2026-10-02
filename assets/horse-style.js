@@ -20,7 +20,8 @@
 export function createHorseStyle({THREE}){
  const _v=new THREE.Vector3(),_w=new THREE.Vector3(),_m=new THREE.Matrix4(),_m2=new THREE.Matrix4();
  const clean=n=>String(n||'').replace(/[.\s_]/g,'').toLowerCase();
- const PART_OF=n=>{n=clean(n);if(/^tail|dock/.test(n))return 2;if(/^neck|^head|^jaw|^ear|poll|crest|skull|forelock/.test(n))return 1;return 0;};
+ const PART_OF=n=>{n=clean(n);if(/tail|dock/.test(n))return 2;if(/neck|head|jaw|ear|poll|crest|skull|forelock/.test(n))return 1;return 0;};
+ function bonePart(bone){for(let b=bone;b?.isBone;b=b.parent){const part=PART_OF(b.name);if(part)return part;}return 0;}
  const FX={
   ice:    {a:'#9fe0ff',b:'#f6ffff',glow:.75,mode:1},
   fire:   {a:'#ff3c0a',b:'#ffd257',glow:1.0,mode:2},
@@ -38,11 +39,15 @@ export function createHorseStyle({THREE}){
  function bindPos(skel,i,bindInv,out){ _m.copy(skel.boneInverses[i]).invert(); out.set(0,0,0).applyMatrix4(_m).applyMatrix4(bindInv); return out; }
  function childOf(skel,i){const b=skel.bones[i];for(const c of b.children){if(c.isBone){const j=skel.bones.indexOf(c);if(j>=0)return j;}}return -1;}
  function prepareGeometry(mesh,role){
-  const g=mesh.geometry; if(!g||!g.attributes.skinIndex||g.userData.hairStyled)return !!g?.userData.hairStyled;
+  const g=mesh.geometry;if(!g||!g.attributes.skinIndex)return false;
+  if(g.userData.hairStyled&&['hairRoot','hairRootR','hairSpan','hairPart'].every(k=>g.attributes[k]?.count===g.attributes.position.count))return true;
+  // This Three version shares userData during BufferGeometry.clone(). A flag
+  // from another breed is not evidence that this geometry owns the attributes.
+  g.userData={...g.userData};
   const skel=mesh.skeleton, si=g.attributes.skinIndex, sw=g.attributes.skinWeight, pos=g.attributes.position, n=pos.count;
   const bindInv=new THREE.Matrix4().copy(mesh.bindMatrix).invert();
   const nb=skel.bones.length, P=[],D=[],L=[],PART=[];
-  for(let i=0;i<nb;i++){ const p=bindPos(skel,i,bindInv,new THREE.Vector3()); P.push(p); PART.push(PART_OF(skel.bones[i].name)); }
+  for(let i=0;i<nb;i++){ const p=bindPos(skel,i,bindInv,new THREE.Vector3()); P.push(p); PART.push(bonePart(skel.bones[i])); }
   for(let i=0;i<nb;i++){ const c=childOf(skel,i); let d;
    if(c>=0)d=P[c].clone().sub(P[i]); else { const par=skel.bones[i].parent, j=par&&par.isBone?skel.bones.indexOf(par):-1; d=j>=0?P[i].clone().sub(P[j]):new THREE.Vector3(0,1,0); }
    const len=d.length(); L.push(c>=0?len:0); D.push(len>1e-6?d.multiplyScalar(1/len):new THREE.Vector3(0,1,0)); }
@@ -132,12 +137,13 @@ export function createHorseStyle({THREE}){
   const groom=rig.groom||rig.hair;
   if(groom){ for(const [k,role] of [['mane','mane'],['tail','tail']]){ const o=groom[k]; if(!o)continue; if(o.isSkinnedMesh)add(o,role); else if(o.traverse)o.traverse(c=>add(c,role)); } if(groom.feathers)groom.feathers.forEach?.(f=>add(f,'feather')); }
   let root=rig.scene||rig.skin; if(!rig.scene&&rig.skin){root=rig.skin;while(root.parent&&root.parent!==mount)root=root.parent;}
-  if(root&&root.traverse)root.traverse(o=>{ if(o.isSkinnedMesh&&o!==rig.skin&&(/groom|mane|tail|forelock|strand|feather/i.test(o.name)||/groom/i.test(o.parent?.name||'')))add(o,null); });
+  if(root&&root.traverse)root.traverse(o=>{ if(o.isSkinnedMesh&&o!==rig.skin&&(rig.profile?.nativeRoster&&o.geometry?.attributes.position.count===rig.profile.hairVertexCount||/groom|mane|tail|forelock|strand|feather/i.test(o.name)||/groom/i.test(o.parent?.name||'')))add(o,null); });
   return out;
  }
  /* look = {maneLen, tailLen, fx:'ice'|null, fxMask:1|2|3} */
  function hair(rig,mount,look){
   const list=hairMeshes(rig,mount); if(!list.length)return null;
+  if(rig.profile?.nativeRoster&&(look.maneLen??1)===1&&(look.tailLen??1)===1&&!look.fx&&list.every(({mesh})=>(Array.isArray(mesh.material)?mesh.material:[mesh.material]).every(m=>!m.userData.hairStyle)))return{meshes:list.map(x=>x.mesh),materials:[]};
   const mats=new Set();
   for(const {mesh,role} of list){ try{ if(!prepareGeometry(mesh,role))continue; }catch(e){continue;} for(const m of Array.isArray(mesh.material)?mesh.material:[mesh.material])mats.add(m); }
   for(const m of mats){ const st=install(m); st.maneLen=look.maneLen??1; st.tailLen=look.tailLen??1; st.fx=look.fx||null; st.fxMask=look.fxMask??3; m.userData.fx=st.fx; push(st); }
@@ -166,10 +172,113 @@ export function createHorseStyle({THREE}){
  function group(name){ const g=new THREE.Group(); g.name=name; g.userData.style=true; return g; }
  function scaleOf(rig){ return rig.fitScale&&rig.profile?.artistBreed?1:1; }
 
+ /* Native bones use centimetres inside their source hierarchy. Build every
+    cosmetic in the outer horse's metre frame, then attach while preserving its
+    world transform. Surface samples use the actual deformed breed body. */
+ function nativeStyleFrame(rig){
+  const scene=rig.scene,bones=rig.bones||rig.skin.skeleton.bones;
+  scene.updateWorldMatrix(true,true);rig.skin.skeleton.update();
+  const inverse=scene.matrixWorld.clone().invert(),body=[],p=new THREE.Vector3();
+  for(let i=0;i<rig.skin.geometry.attributes.position.count;i++){
+   rig.skin.getVertexPosition(i,p);body.push(p.clone().applyMatrix4(rig.skin.matrixWorld).applyMatrix4(inverse));
+  }
+  const bone=name=>bones.find(b=>b.name===name);
+  const point=b=>b.getWorldPosition(new THREE.Vector3()).applyMatrix4(inverse);
+  const put=(b,p,q,mesh)=>{mesh.position.copy(p);if(q)mesh.quaternion.copy(q);scene.add(mesh);scene.updateWorldMatrix(true,true);b.attach(mesh);mesh.castShadow=true;mesh.userData.style=true;return mesh;};
+  const radius=(a,b,t,width=.13)=>{
+   const axis=b.clone().sub(a),length=axis.length(),dir=axis.normalize(),values=[];
+   for(const p of body){const d=p.clone().sub(a),u=d.dot(dir)/length;if(Math.abs(u-t)>width)continue;
+    const r=d.addScaledVector(dir,-u*length).length();if(r<.42)values.push(r);}
+   values.sort((a,b)=>a-b);return values.length?values[Math.floor(values.length*.94)]:.07;
+  };
+  return{scene,body,bone,point,put,radius};
+ }
+ function nativeDecor(rig,part,kind,col){
+  const F=nativeStyleFrame(rig),handles=[],materials=[mat(col||'#e8b4c8')],M=materials[0],g=group('decor:'+part+':'+kind);
+  const put=(bone,pos,mesh)=>{F.put(bone,pos,null,mesh);handles.push(mesh);};
+  const bead=(r)=>new THREE.Mesh(new THREE.SphereGeometry(r,10,8),M);
+  if(part==='mane'){
+   const names=['neck_01_014','neck_02_015','neck_03_016','neck_04_017','neck_05_018','head_019'];
+   for(let k=0;k<names.length-1;k++){
+    const b=F.bone(names[k]),next=F.bone(names[k+1]);if(!b||!next)continue;
+    const a=F.point(b),z=F.point(next),n=kind==='ribbons'?3:kind==='bands'?2:4;
+    for(let i=0;i<n;i++){
+     const p=a.clone().lerp(z,(i+.5)/n);let crest=-Infinity;
+     for(const v of F.body)if(Math.abs(v.z-p.z)<.035&&Math.abs(v.x)<.14)crest=Math.max(crest,v.y);
+     if(Number.isFinite(crest))p.y=crest+.013;p.x=.015;
+     const mesh=kind==='bands'?new THREE.Mesh(new THREE.TorusGeometry(.027,.007,6,14),M):bead(.026);
+     mesh.scale.set(1,1,1.2);put(b,p,mesh);
+     if(kind==='ribbons'){const ribbon=new THREE.Mesh(new THREE.BoxGeometry(.055,.013,.029),M);ribbon.rotation.z=i%2?.45:-.45;put(b,p.clone().add(new THREE.Vector3(0,.02,0)),ribbon);}
+    }
+   }
+  }else{
+   const names=['tail_02_0368','tail_03_0369','tail_04_0370','tail_05_0371'];
+   const b=F.bone(names[0]);if(!b)return null;const p=F.point(b).add(new THREE.Vector3(0,0,-.045));
+   if(kind==='bow'){
+    for(const s of [-1,1]){const m=bead(.048);m.scale.set(1.4,.55,.9);put(b,p.clone().add(new THREE.Vector3(s*.05,0,0)),m);}put(b,p,bead(.028));
+   }else if(kind==='knot'){
+    const b2=F.bone(names[2])||b,m=bead(.065);m.scale.set(1,1.25,1);put(b2,F.point(b2).add(new THREE.Vector3(0,0,-.035)),m);
+   }else for(let i=0;i<names.length-1;i++){
+    const b=F.bone(names[i]),end=F.bone(names[i+1]);if(!b||!end)continue;
+    const a=F.point(b),z=F.point(end),dir=z.clone().sub(a).normalize();
+    for(let k=0;k<3;k++){const m=kind==='bands'?new THREE.Mesh(new THREE.TorusGeometry(.042,.008,6,14),M):bead(.035);
+     if(kind==='bands')m.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),dir);else m.scale.set(1,1.25,1);
+     put(b,a.clone().lerp(z,(k+.5)/3).add(new THREE.Vector3(0,0,-.025)),m);}
+   }
+  }
+  if(!handles.length){materials.forEach(m=>m.dispose());return null;}
+  g.userData.handles=handles;return{group:g,handles,dispose(){for(const m of handles){m.removeFromParent();m.geometry.dispose();}materials.forEach(m=>m.dispose());}};
+ }
+ function nativeAccessory(def,rig){
+  if(def.slot==='tail')return nativeDecor(rig,'tail','bow',def.col);
+  const F=nativeStyleFrame(rig),handles=[],materials=[];
+  const M=(c,extra={})=>{const m=mat(c||'#f4efe4',{...extra,...(def.glow?{emissive:new THREE.Color(def.glow),emissiveIntensity:.7}:{})});materials.push(m);return m;};
+  const put=(b,p,q,m)=>{m.name='acc:'+def.slot;F.put(b,p,q,m);handles.push(m);return m;};
+  if(def.slot==='mask'||def.slot==='brow'){
+   const head=F.bone('head_019'),left=F.bone('eye_l_059'),right=F.bone('eye_r_063');if(!head||!left||!right)return null;
+   const l=F.point(left),r=F.point(right),mid=l.clone().add(r).multiplyScalar(.5),side=l.clone().sub(r).normalize();
+   const forward=mid.clone().sub(F.point(head)).normalize(),up=new THREE.Vector3().crossVectors(forward,side).normalize();
+   const q=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(side,up,forward)),width=l.distanceTo(r);
+   if(def.slot==='mask'){
+    const shape=new THREE.Mesh(new THREE.SphereGeometry(1,18,12,0,Math.PI*2,0,Math.PI*.55),M(def.col,{side:THREE.DoubleSide,transparent:true,opacity:.86}));
+    shape.scale.set(width*.66,width*.63,width*.65);
+    const facing=q.clone().multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),Math.PI/2));
+    put(head,mid.clone().addScaledVector(forward,.025),facing,shape);
+    const trim=new THREE.Mesh(new THREE.TorusGeometry(1,.04,6,24),M(def.col2));trim.scale.set(width*.66,width*.64,1);
+    put(head,mid.clone().addScaledVector(forward,.025),q,trim);
+   }else{
+    const charm=new THREE.Mesh(new THREE.TorusGeometry(width*.53,.009,8,26),M(def.col,{metalness:.5,roughness:.3}));
+    put(head,mid.clone().addScaledVector(up,width*.42).addScaledVector(forward,.03),q,charm);
+   }
+  }else if(def.slot==='legs'){
+   for(const [start,end] of [['hand_l_0206','fingers_01_l_0187'],['hand_r_0272','fingers_01_r_0273'],['foot_l_0407','toes_01_l_0408'],['foot_r_0476','toes_01_r_0477']]){
+    const b=F.bone(start),e=F.bone(end);if(!b||!e)continue;const a=F.point(b),z=F.point(e),dir=z.clone().sub(a).normalize(),length=a.distanceTo(z);
+    const radius=Math.min(.095,Math.max(.036,F.radius(a,z,.48,.12)+.006));
+    const wrap=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius*1.07,length*.62,16,1,true),M(def.col,{side:THREE.DoubleSide,roughness:.8}));
+    put(b,a.clone().lerp(z,.49),new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),dir),wrap);
+    if(def.col2){const band=new THREE.Mesh(new THREE.TorusGeometry(radius*1.045,.006,6,18),M(def.col2));put(b,a.clone().lerp(z,.72),new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,0,1),dir),band);}
+   }
+  }else if(def.slot==='neck'){
+   const b=F.bone('neck_01_014'),e=F.bone('neck_03_016');if(!b||!e)return null;
+   const a=F.point(b),z=F.point(e),dir=z.clone().sub(a).normalize(),center=a.clone().lerp(z,.22),radius=Math.min(.235,Math.max(.16,F.radius(a,z,.22,.15)*.82+.006));
+   const ring=new THREE.Mesh(new THREE.TorusGeometry(radius,.018,8,32),M(def.col));ring.scale.x=.70;put(b,center,new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,0,1),dir),ring);
+   if(def.col2){const bell=new THREE.Mesh(new THREE.SphereGeometry(.034,10,8),M(def.col2,{metalness:.65}));put(b,center.clone().add(new THREE.Vector3(0,-radius*.65,radius*.65)),null,bell);}
+  }else if(def.slot==='blanket'){
+   const b=F.bone('pelvis_08');if(!b)return null;const back=F.body.filter(p=>p.z<-.36&&p.z>-.87&&p.y>1.15);
+   if(!back.length)return null;const box=new THREE.Box3().setFromPoints(back),c=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
+   c.y=box.max.y-.175;c.z=-.50;const sheet=new THREE.Mesh(new THREE.SphereGeometry(1,24,14,0,Math.PI*2,0,Math.PI*.58),M(def.col,{side:THREE.DoubleSide,roughness:.85}));
+   sheet.scale.set(size.x*.52+.025,.18,.39);put(b,c,null,sheet);
+   if(def.col2){const trim=new THREE.Mesh(new THREE.TorusGeometry(1,.016,6,32),M(def.col2));trim.scale.set(size.x*.52+.025,.39,.15);put(b,c.clone().add(new THREE.Vector3(0,-.033,0)),new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),Math.PI/2),trim);}
+  }
+  if(!handles.length){materials.forEach(m=>m.dispose());return null;}
+  return{handles,dispose(){for(const m of handles){m.removeFromParent();m.geometry.dispose();}materials.forEach(m=>m.dispose());}};
+ }
+
  /* ---- decorations: braids, bands, ribbons --------------------------------------------- */
  /* kind: 'braid' | 'bands' | 'ribbons' | 'knot' | 'bow'; part: 'mane' | 'tail'; col: hex */
  function decor(rig,mount,part,kind,col){
   if(!rig||!rig.skin)return null;
+  if(rig.profile?.nativeRoster)return nativeDecor(rig,part,kind,col);
   const g=group('decor:'+part+':'+kind); const handles=[];
   const beadM=mat(col||'#f2ece0',{roughness:.6}), ribM=mat(col||'#e8b4c8',{roughness:.5});
   const s=1;
@@ -202,6 +311,7 @@ export function createHorseStyle({THREE}){
  /* def: {slot:'mask'|'legs'|'tail'|'blanket'|'neck'|'brow', col, col2?, glow?} */
  function accessory(def,rig,mount){
   if(!rig||!rig.skin)return null;
+  if(rig.profile?.nativeRoster)return nativeAccessory(def,rig);
   const A=rig.profile?.anchors||{}; const handles=[]; const mats=[];
   const M=(c,o)=>{const m=mat(c,o);mats.push(m);return m;};
   const glow=def.glow?{emissive:new THREE.Color(def.glow),emissiveIntensity:.9}:{};
@@ -257,12 +367,13 @@ export function createHorseStyle({THREE}){
  /* ---- the rainbow horn ---------------------------------------------------------------- */
  function horn(mesh,on){
   if(!mesh)return;
+  if(!mesh.isMesh){mesh.traverse?.(child=>{if(child.isMesh)horn(child,on);});return;}
   if(on){
    if(mesh.userData.rainbowMat){mesh.material=mesh.userData.rainbowMat;return;}
    mesh.userData.baseMat=mesh.userData.baseMat||mesh.material;
    const m=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.35,metalness:.2,emissive:0x222222});
-   const u={uTime:{value:0}}; uniformSets.add(u);
-   m.onBeforeCompile=sh=>{ sh.uniforms.uFxTime=u.uTime; sh.vertexShader='varying float vHornY;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvHornY=position.y;');
+   const u={uFxTime:{value:0}}; uniformSets.add(u);
+   m.onBeforeCompile=sh=>{ sh.uniforms.uFxTime=u.uFxTime; sh.vertexShader='varying float vHornY;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvHornY=position.y;');
     sh.fragmentShader='uniform float uFxTime;varying float vHornY;\nvec3 hsHue2(float h){vec3 p=abs(fract(vec3(h)+vec3(0.0,2.0/3.0,1.0/3.0))*6.0-3.0);return clamp(p-1.0,0.0,1.0);}\n'+sh.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n{ vec3 c=hsHue2(fract(vHornY*2.2+uFxTime*0.12)); diffuseColor.rgb=mix(diffuseColor.rgb,c,0.85); totalEmissiveRadiance+=c*0.45; }'); };
    m.customProgramCacheKey=()=>'rainbow-horn-v1'; m.userData.fx='rainbow';
    mesh.userData.rainbowMat=m; mesh.material=m;

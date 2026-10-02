@@ -5,7 +5,7 @@ import {NATIVE_HOOF_CONTROLS} from './native-hoof-controls.mjs?v=native-hoof-fle
 // owned by the existing controller.
 export function prepareNativeHoofFlex({THREE,root,clips,profile}){
  if(!profile.nativeHoofFlex)return{clips,layer:null};
- const controls=NATIVE_HOOF_CONTROLS[profile.id];
+ const controls=NATIVE_HOOF_CONTROLS[profile.nativeRoster?'white-western':profile.id];
  if(profile.nativeKind!=='horse'||!controls)throw new Error('Unverified native hoof profile');
  const boneNames=Object.values(controls).flatMap(c=>c.bones),bones=new Map();root.traverse(o=>{if(o.isBone)bones.set(o.name,o);});
  if(bones.size!==677||boneNames.some(n=>!bones.has(n)))throw new Error('Native hoof rig mismatch');

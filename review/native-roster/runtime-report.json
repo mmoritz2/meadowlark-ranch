@@ -1,0 +1,3315 @@
+{
+  "roster": [
+    {
+      "key": "bay-sporthorse",
+      "resolved": "bay-sporthorse",
+      "id": "bay-sporthorse",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "bay",
+      "resolved": "bay",
+      "id": "bay",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "chestnut",
+      "resolved": "chestnut",
+      "id": "chestnut",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "palomino",
+      "resolved": "palomino",
+      "id": "palomino",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "haflinger",
+      "resolved": "haflinger",
+      "id": "haflinger",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "grey",
+      "resolved": "grey",
+      "id": "grey",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "black",
+      "resolved": "black",
+      "id": "black",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "pinto",
+      "resolved": "pinto",
+      "id": "pinto",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "appaloosa",
+      "resolved": "appaloosa",
+      "id": "appaloosa",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "sunset",
+      "resolved": "sunset",
+      "id": "sunset",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "iceland",
+      "resolved": "iceland",
+      "id": "iceland",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "welsh",
+      "resolved": "welsh",
+      "id": "welsh",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "stock",
+      "resolved": "stock",
+      "id": "stock",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "fjord",
+      "resolved": "fjord",
+      "id": "fjord",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "morgan",
+      "resolved": "morgan",
+      "id": "morgan",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "thoro",
+      "resolved": "thoro",
+      "id": "thoro",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "knab",
+      "resolved": "knab",
+      "id": "knab",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "vanner",
+      "resolved": "vanner",
+      "id": "vanner",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "marwari",
+      "resolved": "marwari",
+      "id": "marwari",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "lipiz",
+      "resolved": "lipiz",
+      "id": "lipiz",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "sport",
+      "resolved": "sport",
+      "id": "sport",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "akhal",
+      "resolved": "akhal",
+      "id": "akhal",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "percheron",
+      "resolved": "percheron",
+      "id": "percheron",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "aether",
+      "resolved": "aether",
+      "id": "aether",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "sunspear",
+      "resolved": "sunspear",
+      "id": "sunspear",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "meadowlight",
+      "resolved": "meadowlight",
+      "id": "meadowlight",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "tempest",
+      "resolved": "tempest",
+      "id": "tempest",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "eclipse",
+      "resolved": "eclipse",
+      "id": "eclipse",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "glacier",
+      "resolved": "glacier",
+      "id": "glacier",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "unicorn",
+      "resolved": "unicorn",
+      "id": "unicorn",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "pegasus",
+      "resolved": "pegasus",
+      "id": "pegasus",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "celestial",
+      "resolved": "celestial",
+      "id": "celestial",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "ember",
+      "resolved": "ember",
+      "id": "ember",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "frost",
+      "resolved": "frost",
+      "id": "frost",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "aurora",
+      "resolved": "aurora",
+      "id": "aurora",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "phoenix",
+      "resolved": "phoenix",
+      "id": "phoenix",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "frostdrake",
+      "resolved": "frostdrake",
+      "id": "frostdrake",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "emberdrake",
+      "resolved": "emberdrake",
+      "id": "emberdrake",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "amethyst",
+      "resolved": "amethyst",
+      "id": "amethyst",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "stormdrake",
+      "resolved": "stormdrake",
+      "id": "stormdrake",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "verdant",
+      "resolved": "verdant",
+      "id": "verdant",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "shadowmare",
+      "resolved": "shadowmare",
+      "id": "shadowmare",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "kestrel",
+      "resolved": "kestrel",
+      "id": "kestrel",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "shire",
+      "resolved": "shire",
+      "id": "shire",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "clyde",
+      "resolved": "clyde",
+      "id": "clyde",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "tidewalker",
+      "resolved": "tidewalker",
+      "id": "tidewalker",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "glimmerdrake",
+      "resolved": "glimmerdrake",
+      "id": "glimmerdrake",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "thorndrake",
+      "resolved": "thorndrake",
+      "id": "thorndrake",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "tidedrake",
+      "resolved": "tidedrake",
+      "id": "tidedrake",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "gloomdrake",
+      "resolved": "gloomdrake",
+      "id": "gloomdrake",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "alicorn",
+      "resolved": "alicorn",
+      "id": "alicorn",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "ancientdrake",
+      "resolved": "ancientdrake",
+      "id": "ancientdrake",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "duskmustang",
+      "resolved": "duskmustang",
+      "id": "duskmustang",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "kilnfriesian",
+      "resolved": "kilnfriesian",
+      "id": "kilnfriesian",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "larkunicorn",
+      "resolved": "larkunicorn",
+      "id": "larkunicorn",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "petalmane",
+      "resolved": "petalmane",
+      "id": "petalmane",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "dryadwalker",
+      "resolved": "dryadwalker",
+      "id": "dryadwalker",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "blossomdrake",
+      "resolved": "blossomdrake",
+      "id": "blossomdrake",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "sunflare",
+      "resolved": "sunflare",
+      "id": "sunflare",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "noonshade",
+      "resolved": "noonshade",
+      "id": "noonshade",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "heliosdrake",
+      "resolved": "heliosdrake",
+      "id": "heliosdrake",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "harvestmoon",
+      "resolved": "harvestmoon",
+      "id": "harvestmoon",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "cinderlark",
+      "resolved": "cinderlark",
+      "id": "cinderlark",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "ashwing",
+      "resolved": "ashwing",
+      "id": "ashwing",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "snowlark",
+      "resolved": "snowlark",
+      "id": "snowlark",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "rimewalker",
+      "resolved": "rimewalker",
+      "id": "rimewalker",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "polarisdrake",
+      "resolved": "polarisdrake",
+      "id": "polarisdrake",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "chameleon",
+      "resolved": "chameleon",
+      "id": "chameleon",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "connemara",
+      "resolved": "connemara",
+      "id": "connemara",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "suffolk",
+      "resolved": "suffolk",
+      "id": "suffolk",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "rockymtn",
+      "resolved": "rockymtn",
+      "id": "rockymtn",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "hanover",
+      "resolved": "hanover",
+      "id": "hanover",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "camargue",
+      "resolved": "camargue",
+      "id": "camargue",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "lusitano",
+      "resolved": "lusitano",
+      "id": "lusitano",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "firefly",
+      "resolved": "firefly",
+      "id": "firefly",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "opaline",
+      "resolved": "opaline",
+      "id": "opaline",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "daybreak",
+      "resolved": "daybreak",
+      "id": "daybreak",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "bay-sporthorse-native",
+      "resolved": "bay-sporthorse-native",
+      "id": "bay-sporthorse-native",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": false,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "white-western",
+      "resolved": "white-western",
+      "id": "white-western",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": false,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "bay-western",
+      "resolved": "bay-western",
+      "id": "bay-western",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": false,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "black-dragon-native",
+      "resolved": "black-dragon-native",
+      "id": "black-dragon-native",
+      "native": true,
+      "kind": "black-dragon",
+      "joints": 232,
+      "roster": false,
+      "gaits": [],
+      "jump": false
+    },
+    {
+      "key": "european-dragon",
+      "resolved": "european-dragon",
+      "id": "european-dragon",
+      "native": true,
+      "kind": "european-dragon",
+      "joints": 169,
+      "roster": false,
+      "gaits": [
+        "walk",
+        "run",
+        "fly"
+      ],
+      "jump": false
+    },
+    {
+      "key": "lumen",
+      "resolved": "lumen",
+      "id": "lumen",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "emberfriesian",
+      "resolved": "emberfriesian",
+      "id": "emberfriesian",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    },
+    {
+      "key": "larksong",
+      "resolved": "larksong",
+      "id": "larksong",
+      "native": true,
+      "kind": "horse",
+      "joints": 677,
+      "roster": true,
+      "gaits": [
+        "walk",
+        "trot",
+        "canterLeft",
+        "canterRight",
+        "gallopLeft",
+        "gallopRight"
+      ],
+      "jump": true
+    }
+  ],
+  "mounts": [
+    {
+      "key": "suffolk",
+      "model": "suffolk",
+      "native": true,
+      "bones": 677,
+      "finite": true,
+      "seat": {
+        "kind": "nativeWesternHorse",
+        "enabled": true,
+        "contact": {
+          "seat": [
+            0.00013964214430295385,
+            1.6777895097583304,
+            0.00005038419351777179
+          ],
+          "leftTread": [
+            -0.44676486657061787,
+            0.9526826187687089,
+            0.20939381583275107
+          ],
+          "rightTread": [
+            0.4347247968436676,
+            0.9576719558568023,
+            0.1945894730326625
+          ],
+          "leftBit": [
+            -0.11529581668727396,
+            1.5900946840445267,
+            1.2598302391833514
+          ],
+          "rightBit": [
+            0.02453603385445291,
+            1.59116146081209,
+            1.2674362498368232
+          ]
+        },
+        "reins": {
+          "triangles": {
+            "original": 17194,
+            "removed": 1640,
+            "retained": 15554
+          },
+          "hiddenComponents": [
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            72,
+            73,
+            74,
+            75,
+            103,
+            104,
+            141,
+            142,
+            143,
+            153,
+            163,
+            164,
+            244,
+            245,
+            254,
+            255,
+            278,
+            283
+          ],
+          "protectedComponents": [
+            89,
+            91,
+            205,
+            209
+          ],
+          "nonReinComponentsIntact": true,
+          "sides": {
+            "left": {
+              "bit": [
+                -6.884704183312726,
+                1.5900946840445267,
+                8.740169760816649
+              ],
+              "hand": [
+                -6.925243943832999,
+                1.9718766913776171,
+                9.706364315370807
+              ],
+              "mainStart": [
+                -6.884704183312726,
+                1.5900946840445267,
+                8.740169760816649
+              ],
+              "mainEnd": [
+                -6.925243943833,
+                1.9718766913776167,
+                9.70636431537081
+              ],
+              "looseStart": [
+                -6.925243943832999,
+                1.9718766913776171,
+                9.706364315370807
+              ],
+              "looseEnd": [
+                -7.3201396421443015,
+                1.1977895097583304,
+                10.119949615806478
+              ],
+              "mainWidthM": 0.019,
+              "looseWidthM": 0.019,
+              "mainCenterline": [
+                [
+                  -6.884704183312726,
+                  1.5900946840445267,
+                  8.740169760816649
+                ],
+                [
+                  -6.880760339212548,
+                  1.5832838867656958,
+                  8.755755742805134
+                ],
+                [
+                  -6.877015427969934,
+                  1.576581030871334,
+                  8.770946495679466
+                ],
+                [
+                  -6.87327051672732,
+                  1.569878174976972,
+                  8.786137248553796
+                ],
+                [
+                  -6.869326672627143,
+                  1.563067377698141,
+                  8.801723230542281
+                ],
+                [
+                  -6.864984962811839,
+                  1.5560406976503718,
+                  8.818099670759079
+                ],
+                [
+                  -6.86004645442384,
+                  1.5486901934491957,
+                  8.835661798318345
+                ],
+                [
+                  -6.852025693221068,
+                  1.5379963149737095,
+                  8.861635580219254
+                ],
+                [
+                  -6.842691658986459,
+                  1.5265563778132862,
+                  8.889692454376858
+                ],
+                [
+                  -6.8326306177554414,
+                  1.5147219651364914,
+                  8.919193706977987
+                ],
+                [
+                  -6.822428835563449,
+                  1.5028446601118897,
+                  8.949500624209488
+                ],
+                [
+                  -6.812672578445914,
+                  1.4912760459080463,
+                  8.979974492258188
+                ],
+                [
+                  -6.803948112438267,
+                  1.4803677056935258,
+                  9.009976597310931
+                ],
+                [
+                  -6.796196618929449,
+                  1.4693836015692963,
+                  9.039740154186601
+                ],
+                [
+                  -6.788831874675708,
+                  1.4577598978600976,
+                  9.070196441246127
+                ],
+                [
+                  -6.781903281524599,
+                  1.4464383900306952,
+                  9.100816166431098
+                ],
+                [
+                  -6.775460241323686,
+                  1.436360873545855,
+                  9.131070037683113
+                ],
+                [
+                  -6.769552155920524,
+                  1.4284691438703427,
+                  9.16042876294376
+                ],
+                [
+                  -6.764228427162676,
+                  1.4237049964689235,
+                  9.188363050154635
+                ],
+                [
+                  -6.760285030161639,
+                  1.4214116250868425,
+                  9.21136684249343
+                ],
+                [
+                  -6.756518915513013,
+                  1.41966460568963,
+                  9.236000701152001
+                ],
+                [
+                  -6.753089532801259,
+                  1.4192934487559052,
+                  9.260071102403103
+                ],
+                [
+                  -6.7501563316108335,
+                  1.4211276647642874,
+                  9.281384522519494
+                ],
+                [
+                  -6.747878761526197,
+                  1.425996764193396,
+                  9.297747437773921
+                ],
+                [
+                  -6.7464162721318095,
+                  1.4347302575218501,
+                  9.306966324439138
+                ],
+                [
+                  -6.74517949827056,
+                  1.4584232942936244,
+                  9.29900937628053
+                ],
+                [
+                  -6.744883109023652,
+                  1.4934351440771447,
+                  9.268014512639152
+                ],
+                [
+                  -6.746092848088704,
+                  1.5354187860820692,
+                  9.225647254574667
+                ],
+                [
+                  -6.749374459163336,
+                  1.5800271995180561,
+                  9.183573123146731
+                ],
+                [
+                  -6.755293685945164,
+                  1.622913363594764,
+                  9.153457639415002
+                ],
+                [
+                  -6.764416272131809,
+                  1.6597302575218502,
+                  9.146966324439138
+                ],
+                [
+                  -6.795771231186939,
+                  1.7104361268861872,
+                  9.207927092146154
+                ],
+                [
+                  -6.845864907107085,
+                  1.7554422846706386,
+                  9.33690564525054
+                ],
+                [
+                  -6.903278158112006,
+                  1.7956690754436055,
+                  9.499070313938748
+                ],
+                [
+                  -6.956591842421461,
+                  1.8320368437734902,
+                  9.65958942839723
+                ],
+                [
+                  -6.994386818255205,
+                  1.8654659342286937,
+                  9.783631318812432
+                ],
+                [
+                  -7.005243943832999,
+                  1.8968766913776172,
+                  9.836364315370808
+                ],
+                [
+                  -6.999072158558361,
+                  1.910732827609024,
+                  9.83153109804966
+                ],
+                [
+                  -6.987744058681463,
+                  1.923612545753818,
+                  9.81457779719974
+                ],
+                [
+                  -6.9729784157363905,
+                  1.9358413185075367,
+                  9.789544440663969
+                ],
+                [
+                  -6.956494001257232,
+                  1.9477446185657177,
+                  9.760471056285274
+                ],
+                [
+                  -6.940009586778073,
+                  1.9596479186238984,
+                  9.73139767190658
+                ],
+                [
+                  -6.925243943833,
+                  1.9718766913776167,
+                  9.70636431537081
+                ]
+              ],
+              "looseCenterline": [
+                [
+                  -6.925243943832999,
+                  1.9718766913776171,
+                  9.706364315370807
+                ],
+                [
+                  -6.9280333067314706,
+                  1.968016788734034,
+                  9.702401673149325
+                ],
+                [
+                  -6.930681861606945,
+                  1.964420842717662,
+                  9.698551111657288
+                ],
+                [
+                  -6.933264153883362,
+                  1.9609491115846838,
+                  9.69475329403793
+                ],
+                [
+                  -6.935854728984662,
+                  1.9574618535912816,
+                  9.690948883434489
+                ],
+                [
+                  -6.938528132334783,
+                  1.953819326993637,
+                  9.687078542990196
+                ],
+                [
+                  -6.941358909357664,
+                  1.9498817900479328,
+                  9.683082935848288
+                ],
+                [
+                  -6.9444216054772445,
+                  1.9455095010103511,
+                  9.678902725151996
+                ],
+                [
+                  -6.947790766117464,
+                  1.9405627181370741,
+                  9.674478574044556
+                ],
+                [
+                  -6.952789326946458,
+                  1.933020094180887,
+                  9.668013101609999
+                ],
+                [
+                  -6.9612101220469045,
+                  1.9202519091775994,
+                  9.65536859581916
+                ],
+                [
+                  -6.970687334571227,
+                  1.9057758716393425,
+                  9.639916900017482
+                ],
+                [
+                  -6.981065970098545,
+                  1.8897073584607005,
+                  9.623045437171523
+                ],
+                [
+                  -6.992191034207984,
+                  1.8721617465362586,
+                  9.606141630247842
+                ],
+                [
+                  -7.003907532478668,
+                  1.8532544127605997,
+                  9.590592902212997
+                ],
+                [
+                  -7.016060470489718,
+                  1.8331007340283096,
+                  9.577786676033547
+                ],
+                [
+                  -7.028494853820261,
+                  1.8118160872339717,
+                  9.569110374676054
+                ],
+                [
+                  -7.041055688049419,
+                  1.7895158492721703,
+                  9.565951421107073
+                ],
+                [
+                  -7.0627249296205745,
+                  1.7488627939774912,
+                  9.575454211171875
+                ],
+                [
+                  -7.091093773825052,
+                  1.6923599835405694,
+                  9.608714204589003
+                ],
+                [
+                  -7.121581352012336,
+                  1.628968301624737,
+                  9.66133767905878
+                ],
+                [
+                  -7.153672296456877,
+                  1.5603634196708114,
+                  9.728614598649486
+                ],
+                [
+                  -7.186851239433129,
+                  1.4882210091196078,
+                  9.805834927429387
+                ],
+                [
+                  -7.220602813215545,
+                  1.4142167414119418,
+                  9.888288629466768
+                ],
+                [
+                  -7.254411650078578,
+                  1.3400262879886298,
+                  9.971265668829892
+                ],
+                [
+                  -7.2877623822966795,
+                  1.267325320290487,
+                  10.050056009587037
+                ],
+                [
+                  -7.3201396421443015,
+                  1.1977895097583304,
+                  10.119949615806478
+                ]
+              ]
+            },
+            "right": {
+              "bit": [
+                -7.024536033854453,
+                1.59116146081209,
+                8.732563750163177
+              ],
+              "hand": [
+                -7.076974881035266,
+                1.9707272056697709,
+                9.70656574513464
+              ],
+              "mainStart": [
+                -7.024536033854453,
+                1.59116146081209,
+                8.732563750163177
+              ],
+              "mainEnd": [
+                -7.076974881035263,
+                1.9707272056697707,
+                9.706565745134641
+              ],
+              "looseStart": [
+                -7.076974881035266,
+                1.9707272056697709,
+                9.70656574513464
+              ],
+              "looseEnd": [
+                -6.6801396421443,
+                1.1977895097583302,
+                10.119949615806481
+              ],
+              "mainWidthM": 0.019,
+              "looseWidthM": 0.019,
+              "mainCenterline": [
+                [
+                  -7.024536033854453,
+                  1.59116146081209,
+                  8.732563750163177
+                ],
+                [
+                  -7.031120201289904,
+                  1.5844576143387095,
+                  8.747595885696837
+                ],
+                [
+                  -7.037462895919894,
+                  1.5778425950403259,
+                  8.762222455261915
+                ],
+                [
+                  -7.0438055905498835,
+                  1.5712275757419425,
+                  8.77684902482699
+                ],
+                [
+                  -7.050389757985336,
+                  1.564523729268562,
+                  8.791881160360651
+                ],
+                [
+                  -7.057456871031711,
+                  1.5576422284451876,
+                  8.807724427831479
+                ],
+                [
+                  -7.065248402494472,
+                  1.5504942460968225,
+                  8.824784393208061
+                ],
+                [
+                  -7.077728422822862,
+                  1.5400389666962129,
+                  8.850431444262348
+                ],
+                [
+                  -7.092012022468086,
+                  1.5289210988940944,
+                  8.878199463350542
+                ],
+                [
+                  -7.10720177191183,
+                  1.5174698986217934,
+                  8.907489407526805
+                ],
+                [
+                  -7.122400241635779,
+                  1.5060146218106356,
+                  8.9377022338453
+                ],
+                [
+                  -7.136710002121619,
+                  1.4948845243919473,
+                  8.968238899360191
+                ],
+                [
+                  -7.1492336238510354,
+                  1.4844088622970544,
+                  8.99850036112564
+                ],
+                [
+                  -7.159836704952413,
+                  1.4739792077028078,
+                  9.028525587371556
+                ],
+                [
+                  -7.169483055361803,
+                  1.4629758227447556,
+                  9.059481522212618
+                ],
+                [
+                  -7.1782742699132775,
+                  1.4522853326535854,
+                  9.090749062354002
+                ],
+                [
+                  -7.186311943440912,
+                  1.4427943626599862,
+                  9.121709104500871
+                ],
+                [
+                  -7.193697670778778,
+                  1.4353895379946453,
+                  9.151742545358399
+                ],
+                [
+                  -7.200533046760951,
+                  1.4309574838882513,
+                  9.18023028163175
+                ],
+                [
+                  -7.205714412328494,
+                  1.4287693714580234,
+                  9.20358889375976
+                ],
+                [
+                  -7.210682216704626,
+                  1.4269979674712698,
+                  9.228598741968115
+                ],
+                [
+                  -7.215241001392257,
+                  1.42653537474183,
+                  9.253027256660484
+                ],
+                [
+                  -7.2191953078942985,
+                  1.428273696083544,
+                  9.274641868240533
+                ],
+                [
+                  -7.222349677713662,
+                  1.433105034310252,
+                  9.291210007111928
+                ],
+                [
+                  -7.224508652353258,
+                  1.4419214922357932,
+                  9.300499103678332
+                ],
+                [
+                  -7.22619571865191,
+                  1.4656999436613205,
+                  9.292414604642218
+                ],
+                [
+                  -7.226317062655955,
+                  1.500814006863038,
+                  9.26126866989164
+                ],
+                [
+                  -7.224640856196751,
+                  1.5428784375811446,
+                  9.21878272592328
+                ],
+                [
+                  -7.220935271105661,
+                  1.58750799155584,
+                  9.17667819923382
+                ],
+                [
+                  -7.2149684792140425,
+                  1.630317424527323,
+                  9.146676516319944
+                ],
+                [
+                  -7.206508652353258,
+                  1.6669214922357933,
+                  9.140499103678332
+                ],
+                [
+                  -7.17860556699252,
+                  1.7166015203334877,
+                  9.202328812734125
+                ],
+                [
+                  -7.134212258836093,
+                  1.7600829112324679,
+                  9.332486220238046
+                ],
+                [
+                  -7.083590632023063,
+                  1.79855092007416,
+                  9.495979971710078
+                ],
+                [
+                  -7.037002590692523,
+                  1.8331908019999907,
+                  9.657818712670203
+                ],
+                [
+                  -7.004710038983561,
+                  1.8651878121513858,
+                  9.783011088638395
+                ],
+                [
+                  -6.996974881035266,
+                  1.895727205669771,
+                  9.83656574513464
+                ],
+                [
+                  -7.00366169646371,
+                  1.909455977473613,
+                  9.831937370091111
+                ],
+                [
+                  -7.015134004783673,
+                  1.9223000335786888,
+                  9.815041425078924
+                ],
+                [
+                  -7.029796641697985,
+                  1.9345542792179204,
+                  9.78996710008763
+                ],
+                [
+                  -7.046054442909469,
+                  1.9465136196242296,
+                  9.760803585106782
+                ],
+                [
+                  -7.062312244120954,
+                  1.9584729600305393,
+                  9.731640070125936
+                ],
+                [
+                  -7.076974881035263,
+                  1.9707272056697707,
+                  9.706565745134641
+                ]
+              ],
+              "looseCenterline": [
+                [
+                  -7.076974881035266,
+                  1.9707272056697709,
+                  9.70656574513464
+                ],
+                [
+                  -7.074185518136795,
+                  1.9668673030261878,
+                  9.702603102913157
+                ],
+                [
+                  -7.0715369632613205,
+                  1.9632713570098157,
+                  9.69875254142112
+                ],
+                [
+                  -7.068954670984903,
+                  1.9597996258768375,
+                  9.694954723801764
+                ],
+                [
+                  -7.066364095883603,
+                  1.9563123678834353,
+                  9.691150313198321
+                ],
+                [
+                  -7.063690692533482,
+                  1.9526698412857908,
+                  9.68727997275403
+                ],
+                [
+                  -7.060859915510601,
+                  1.9487323043400866,
+                  9.683284365612122
+                ],
+                [
+                  -7.057797219391021,
+                  1.944360015302505,
+                  9.67910415491583
+                ],
+                [
+                  -7.054428058750801,
+                  1.939413232429228,
+                  9.674680003808392
+                ],
+                [
+                  -7.049429966318345,
+                  1.9318703694576425,
+                  9.668214535941427
+                ],
+                [
+                  -7.041015297844622,
+                  1.9190990581329441,
+                  9.655570089894745
+                ],
+                [
+                  -7.031548933384131,
+                  1.9046174849980608,
+                  9.640118499878595
+                ],
+                [
+                  -7.021182832148181,
+                  1.8885425757673584,
+                  9.623247159261506
+                ],
+                [
+                  -7.01006895334808,
+                  1.8709912561552033,
+                  9.606343461412019
+                ],
+                [
+                  -6.998359256195135,
+                  1.8520804518759602,
+                  9.590794799698669
+                ],
+                [
+                  -6.986205699900653,
+                  1.8319270886439958,
+                  9.577988567489992
+                ],
+                [
+                  -6.973760243675942,
+                  1.8106480921736756,
+                  9.569312158154526
+                ],
+                [
+                  -6.961174846732307,
+                  1.7883603881793648,
+                  9.566152965060805
+                ],
+                [
+                  -6.939430845782372,
+                  1.7477530586172765,
+                  9.575652448286752
+                ],
+                [
+                  -6.9109169512292015,
+                  1.6913383922349434,
+                  9.608900444557635
+                ],
+                [
+                  -6.880234519557854,
+                  1.6280629926597334,
+                  9.661504809817334
+                ],
+                [
+                  -6.847911032770049,
+                  1.559595686884509,
+                  9.72875723809559
+                ],
+                [
+                  -6.8144739728675034,
+                  1.4876053019021314,
+                  9.805949423422156
+                ],
+                [
+                  -6.780450821851938,
+                  1.413760664705463,
+                  9.88837305982678
+                ],
+                [
+                  -6.746369061725069,
+                  1.3397306022873652,
+                  9.97131984133921
+                ],
+                [
+                  -6.712756174488617,
+                  1.2671839416407003,
+                  10.050081461989194
+                ],
+                [
+                  -6.6801396421443,
+                  1.1977895097583302,
+                  10.119949615806481
+                ]
+              ]
+            }
+          }
+        },
+        "seatFollower": "Native seat contact"
+      },
+      "material": "M_Body",
+      "appearance": {
+        "body": true,
+        "mark": "none",
+        "mark2": null,
+        "mane": true,
+        "tail": true
+      }
+    },
+    {
+      "key": "suffolk",
+      "model": "suffolk",
+      "native": true,
+      "bones": 677,
+      "finite": true,
+      "seat": {
+        "kind": "nativeWesternHorse",
+        "enabled": true,
+        "contact": {
+          "seat": [
+            0.00013964214430295385,
+            1.6777895097583304,
+            0.00005038419351777179
+          ],
+          "leftTread": [
+            -0.44676486657061787,
+            0.9526826187687089,
+            0.20939381583275107
+          ],
+          "rightTread": [
+            0.4347247968436676,
+            0.9576719558568023,
+            0.1945894730326625
+          ],
+          "leftBit": [
+            -0.11529581668727396,
+            1.5900946840445267,
+            1.2598302391833514
+          ],
+          "rightBit": [
+            0.02453603385445291,
+            1.59116146081209,
+            1.2674362498368232
+          ]
+        },
+        "reins": {
+          "triangles": {
+            "original": 17194,
+            "removed": 1640,
+            "retained": 15554
+          },
+          "hiddenComponents": [
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            72,
+            73,
+            74,
+            75,
+            103,
+            104,
+            141,
+            142,
+            143,
+            153,
+            163,
+            164,
+            244,
+            245,
+            254,
+            255,
+            278,
+            283
+          ],
+          "protectedComponents": [
+            89,
+            91,
+            205,
+            209
+          ],
+          "nonReinComponentsIntact": true,
+          "sides": {
+            "left": {
+              "bit": [
+                -6.884704183312726,
+                1.5900946840445267,
+                8.740169760816649
+              ],
+              "hand": [
+                -6.925243943832999,
+                1.9718766913776171,
+                9.706364315370807
+              ],
+              "mainStart": [
+                -6.884704183312726,
+                1.5900946840445267,
+                8.740169760816649
+              ],
+              "mainEnd": [
+                -6.925243943833,
+                1.9718766913776167,
+                9.70636431537081
+              ],
+              "looseStart": [
+                -6.925243943832999,
+                1.9718766913776171,
+                9.706364315370807
+              ],
+              "looseEnd": [
+                -7.3201396421443015,
+                1.1977895097583304,
+                10.119949615806478
+              ],
+              "mainWidthM": 0.019,
+              "looseWidthM": 0.019,
+              "mainCenterline": [
+                [
+                  -6.884704183312726,
+                  1.5900946840445267,
+                  8.740169760816649
+                ],
+                [
+                  -6.880760339212548,
+                  1.5832838867656958,
+                  8.755755742805134
+                ],
+                [
+                  -6.877015427969934,
+                  1.576581030871334,
+                  8.770946495679466
+                ],
+                [
+                  -6.87327051672732,
+                  1.569878174976972,
+                  8.786137248553796
+                ],
+                [
+                  -6.869326672627143,
+                  1.563067377698141,
+                  8.801723230542281
+                ],
+                [
+                  -6.864984962811839,
+                  1.5560406976503718,
+                  8.818099670759079
+                ],
+                [
+                  -6.86004645442384,
+                  1.5486901934491957,
+                  8.835661798318345
+                ],
+                [
+                  -6.852025693221068,
+                  1.5379963149737095,
+                  8.861635580219254
+                ],
+                [
+                  -6.842691658986459,
+                  1.5265563778132862,
+                  8.889692454376858
+                ],
+                [
+                  -6.8326306177554414,
+                  1.5147219651364914,
+                  8.919193706977987
+                ],
+                [
+                  -6.822428835563449,
+                  1.5028446601118897,
+                  8.949500624209488
+                ],
+                [
+                  -6.812672578445914,
+                  1.4912760459080463,
+                  8.979974492258188
+                ],
+                [
+                  -6.803948112438267,
+                  1.4803677056935258,
+                  9.009976597310931
+                ],
+                [
+                  -6.796196618929449,
+                  1.4693836015692963,
+                  9.039740154186601
+                ],
+                [
+                  -6.788831874675708,
+                  1.4577598978600976,
+                  9.070196441246127
+                ],
+                [
+                  -6.781903281524599,
+                  1.4464383900306952,
+                  9.100816166431098
+                ],
+                [
+                  -6.775460241323686,
+                  1.436360873545855,
+                  9.131070037683113
+                ],
+                [
+                  -6.769552155920524,
+                  1.4284691438703427,
+                  9.16042876294376
+                ],
+                [
+                  -6.764228427162676,
+                  1.4237049964689235,
+                  9.188363050154635
+                ],
+                [
+                  -6.760285030161639,
+                  1.4214116250868425,
+                  9.21136684249343
+                ],
+                [
+                  -6.756518915513013,
+                  1.41966460568963,
+                  9.236000701152001
+                ],
+                [
+                  -6.753089532801259,
+                  1.4192934487559052,
+                  9.260071102403103
+                ],
+                [
+                  -6.7501563316108335,
+                  1.4211276647642874,
+                  9.281384522519494
+                ],
+                [
+                  -6.747878761526197,
+                  1.425996764193396,
+                  9.297747437773921
+                ],
+                [
+                  -6.7464162721318095,
+                  1.4347302575218501,
+                  9.306966324439138
+                ],
+                [
+                  -6.74517949827056,
+                  1.4584232942936244,
+                  9.29900937628053
+                ],
+                [
+                  -6.744883109023652,
+                  1.4934351440771447,
+                  9.268014512639152
+                ],
+                [
+                  -6.746092848088704,
+                  1.5354187860820692,
+                  9.225647254574667
+                ],
+                [
+                  -6.749374459163336,
+                  1.5800271995180561,
+                  9.183573123146731
+                ],
+                [
+                  -6.755293685945164,
+                  1.622913363594764,
+                  9.153457639415002
+                ],
+                [
+                  -6.764416272131809,
+                  1.6597302575218502,
+                  9.146966324439138
+                ],
+                [
+                  -6.795771231186939,
+                  1.7104361268861872,
+                  9.207927092146154
+                ],
+                [
+                  -6.845864907107085,
+                  1.7554422846706386,
+                  9.33690564525054
+                ],
+                [
+                  -6.903278158112006,
+                  1.7956690754436055,
+                  9.499070313938748
+                ],
+                [
+                  -6.956591842421461,
+                  1.8320368437734902,
+                  9.65958942839723
+                ],
+                [
+                  -6.994386818255205,
+                  1.8654659342286937,
+                  9.783631318812432
+                ],
+                [
+                  -7.005243943832999,
+                  1.8968766913776172,
+                  9.836364315370808
+                ],
+                [
+                  -6.999072158558361,
+                  1.910732827609024,
+                  9.83153109804966
+                ],
+                [
+                  -6.987744058681463,
+                  1.923612545753818,
+                  9.81457779719974
+                ],
+                [
+                  -6.9729784157363905,
+                  1.9358413185075367,
+                  9.789544440663969
+                ],
+                [
+                  -6.956494001257232,
+                  1.9477446185657177,
+                  9.760471056285274
+                ],
+                [
+                  -6.940009586778073,
+                  1.9596479186238984,
+                  9.73139767190658
+                ],
+                [
+                  -6.925243943833,
+                  1.9718766913776167,
+                  9.70636431537081
+                ]
+              ],
+              "looseCenterline": [
+                [
+                  -6.925243943832999,
+                  1.9718766913776171,
+                  9.706364315370807
+                ],
+                [
+                  -6.9280333067314706,
+                  1.968016788734034,
+                  9.702401673149325
+                ],
+                [
+                  -6.930681861606945,
+                  1.964420842717662,
+                  9.698551111657288
+                ],
+                [
+                  -6.933264153883362,
+                  1.9609491115846838,
+                  9.69475329403793
+                ],
+                [
+                  -6.935854728984662,
+                  1.9574618535912816,
+                  9.690948883434489
+                ],
+                [
+                  -6.938528132334783,
+                  1.953819326993637,
+                  9.687078542990196
+                ],
+                [
+                  -6.941358909357664,
+                  1.9498817900479328,
+                  9.683082935848288
+                ],
+                [
+                  -6.9444216054772445,
+                  1.9455095010103511,
+                  9.678902725151996
+                ],
+                [
+                  -6.947790766117464,
+                  1.9405627181370741,
+                  9.674478574044556
+                ],
+                [
+                  -6.952789326946458,
+                  1.933020094180887,
+                  9.668013101609999
+                ],
+                [
+                  -6.9612101220469045,
+                  1.9202519091775994,
+                  9.65536859581916
+                ],
+                [
+                  -6.970687334571227,
+                  1.9057758716393425,
+                  9.639916900017482
+                ],
+                [
+                  -6.981065970098545,
+                  1.8897073584607005,
+                  9.623045437171523
+                ],
+                [
+                  -6.992191034207984,
+                  1.8721617465362586,
+                  9.606141630247842
+                ],
+                [
+                  -7.003907532478668,
+                  1.8532544127605997,
+                  9.590592902212997
+                ],
+                [
+                  -7.016060470489718,
+                  1.8331007340283096,
+                  9.577786676033547
+                ],
+                [
+                  -7.028494853820261,
+                  1.8118160872339717,
+                  9.569110374676054
+                ],
+                [
+                  -7.041055688049419,
+                  1.7895158492721703,
+                  9.565951421107073
+                ],
+                [
+                  -7.0627249296205745,
+                  1.7488627939774912,
+                  9.575454211171875
+                ],
+                [
+                  -7.091093773825052,
+                  1.6923599835405694,
+                  9.608714204589003
+                ],
+                [
+                  -7.121581352012336,
+                  1.628968301624737,
+                  9.66133767905878
+                ],
+                [
+                  -7.153672296456877,
+                  1.5603634196708114,
+                  9.728614598649486
+                ],
+                [
+                  -7.186851239433129,
+                  1.4882210091196078,
+                  9.805834927429387
+                ],
+                [
+                  -7.220602813215545,
+                  1.4142167414119418,
+                  9.888288629466768
+                ],
+                [
+                  -7.254411650078578,
+                  1.3400262879886298,
+                  9.971265668829892
+                ],
+                [
+                  -7.2877623822966795,
+                  1.267325320290487,
+                  10.050056009587037
+                ],
+                [
+                  -7.3201396421443015,
+                  1.1977895097583304,
+                  10.119949615806478
+                ]
+              ]
+            },
+            "right": {
+              "bit": [
+                -7.024536033854453,
+                1.59116146081209,
+                8.732563750163177
+              ],
+              "hand": [
+                -7.076974881035266,
+                1.9707272056697709,
+                9.70656574513464
+              ],
+              "mainStart": [
+                -7.024536033854453,
+                1.59116146081209,
+                8.732563750163177
+              ],
+              "mainEnd": [
+                -7.076974881035263,
+                1.9707272056697707,
+                9.706565745134641
+              ],
+              "looseStart": [
+                -7.076974881035266,
+                1.9707272056697709,
+                9.70656574513464
+              ],
+              "looseEnd": [
+                -6.6801396421443,
+                1.1977895097583302,
+                10.119949615806481
+              ],
+              "mainWidthM": 0.019,
+              "looseWidthM": 0.019,
+              "mainCenterline": [
+                [
+                  -7.024536033854453,
+                  1.59116146081209,
+                  8.732563750163177
+                ],
+                [
+                  -7.031120201289904,
+                  1.5844576143387095,
+                  8.747595885696837
+                ],
+                [
+                  -7.037462895919894,
+                  1.5778425950403259,
+                  8.762222455261915
+                ],
+                [
+                  -7.0438055905498835,
+                  1.5712275757419425,
+                  8.77684902482699
+                ],
+                [
+                  -7.050389757985336,
+                  1.564523729268562,
+                  8.791881160360651
+                ],
+                [
+                  -7.057456871031711,
+                  1.5576422284451876,
+                  8.807724427831479
+                ],
+                [
+                  -7.065248402494472,
+                  1.5504942460968225,
+                  8.824784393208061
+                ],
+                [
+                  -7.077728422822862,
+                  1.5400389666962129,
+                  8.850431444262348
+                ],
+                [
+                  -7.092012022468086,
+                  1.5289210988940944,
+                  8.878199463350542
+                ],
+                [
+                  -7.10720177191183,
+                  1.5174698986217934,
+                  8.907489407526805
+                ],
+                [
+                  -7.122400241635779,
+                  1.5060146218106356,
+                  8.9377022338453
+                ],
+                [
+                  -7.136710002121619,
+                  1.4948845243919473,
+                  8.968238899360191
+                ],
+                [
+                  -7.1492336238510354,
+                  1.4844088622970544,
+                  8.99850036112564
+                ],
+                [
+                  -7.159836704952413,
+                  1.4739792077028078,
+                  9.028525587371556
+                ],
+                [
+                  -7.169483055361803,
+                  1.4629758227447556,
+                  9.059481522212618
+                ],
+                [
+                  -7.1782742699132775,
+                  1.4522853326535854,
+                  9.090749062354002
+                ],
+                [
+                  -7.186311943440912,
+                  1.4427943626599862,
+                  9.121709104500871
+                ],
+                [
+                  -7.193697670778778,
+                  1.4353895379946453,
+                  9.151742545358399
+                ],
+                [
+                  -7.200533046760951,
+                  1.4309574838882513,
+                  9.18023028163175
+                ],
+                [
+                  -7.205714412328494,
+                  1.4287693714580234,
+                  9.20358889375976
+                ],
+                [
+                  -7.210682216704626,
+                  1.4269979674712698,
+                  9.228598741968115
+                ],
+                [
+                  -7.215241001392257,
+                  1.42653537474183,
+                  9.253027256660484
+                ],
+                [
+                  -7.2191953078942985,
+                  1.428273696083544,
+                  9.274641868240533
+                ],
+                [
+                  -7.222349677713662,
+                  1.433105034310252,
+                  9.291210007111928
+                ],
+                [
+                  -7.224508652353258,
+                  1.4419214922357932,
+                  9.300499103678332
+                ],
+                [
+                  -7.22619571865191,
+                  1.4656999436613205,
+                  9.292414604642218
+                ],
+                [
+                  -7.226317062655955,
+                  1.500814006863038,
+                  9.26126866989164
+                ],
+                [
+                  -7.224640856196751,
+                  1.5428784375811446,
+                  9.21878272592328
+                ],
+                [
+                  -7.220935271105661,
+                  1.58750799155584,
+                  9.17667819923382
+                ],
+                [
+                  -7.2149684792140425,
+                  1.630317424527323,
+                  9.146676516319944
+                ],
+                [
+                  -7.206508652353258,
+                  1.6669214922357933,
+                  9.140499103678332
+                ],
+                [
+                  -7.17860556699252,
+                  1.7166015203334877,
+                  9.202328812734125
+                ],
+                [
+                  -7.134212258836093,
+                  1.7600829112324679,
+                  9.332486220238046
+                ],
+                [
+                  -7.083590632023063,
+                  1.79855092007416,
+                  9.495979971710078
+                ],
+                [
+                  -7.037002590692523,
+                  1.8331908019999907,
+                  9.657818712670203
+                ],
+                [
+                  -7.004710038983561,
+                  1.8651878121513858,
+                  9.783011088638395
+                ],
+                [
+                  -6.996974881035266,
+                  1.895727205669771,
+                  9.83656574513464
+                ],
+                [
+                  -7.00366169646371,
+                  1.909455977473613,
+                  9.831937370091111
+                ],
+                [
+                  -7.015134004783673,
+                  1.9223000335786888,
+                  9.815041425078924
+                ],
+                [
+                  -7.029796641697985,
+                  1.9345542792179204,
+                  9.78996710008763
+                ],
+                [
+                  -7.046054442909469,
+                  1.9465136196242296,
+                  9.760803585106782
+                ],
+                [
+                  -7.062312244120954,
+                  1.9584729600305393,
+                  9.731640070125936
+                ],
+                [
+                  -7.076974881035263,
+                  1.9707272056697707,
+                  9.706565745134641
+                ]
+              ],
+              "looseCenterline": [
+                [
+                  -7.076974881035266,
+                  1.9707272056697709,
+                  9.70656574513464
+                ],
+                [
+                  -7.074185518136795,
+                  1.9668673030261878,
+                  9.702603102913157
+                ],
+                [
+                  -7.0715369632613205,
+                  1.9632713570098157,
+                  9.69875254142112
+                ],
+                [
+                  -7.068954670984903,
+                  1.9597996258768375,
+                  9.694954723801764
+                ],
+                [
+                  -7.066364095883603,
+                  1.9563123678834353,
+                  9.691150313198321
+                ],
+                [
+                  -7.063690692533482,
+                  1.9526698412857908,
+                  9.68727997275403
+                ],
+                [
+                  -7.060859915510601,
+                  1.9487323043400866,
+                  9.683284365612122
+                ],
+                [
+                  -7.057797219391021,
+                  1.944360015302505,
+                  9.67910415491583
+                ],
+                [
+                  -7.054428058750801,
+                  1.939413232429228,
+                  9.674680003808392
+                ],
+                [
+                  -7.049429966318345,
+                  1.9318703694576425,
+                  9.668214535941427
+                ],
+                [
+                  -7.041015297844622,
+                  1.9190990581329441,
+                  9.655570089894745
+                ],
+                [
+                  -7.031548933384131,
+                  1.9046174849980608,
+                  9.640118499878595
+                ],
+                [
+                  -7.021182832148181,
+                  1.8885425757673584,
+                  9.623247159261506
+                ],
+                [
+                  -7.01006895334808,
+                  1.8709912561552033,
+                  9.606343461412019
+                ],
+                [
+                  -6.998359256195135,
+                  1.8520804518759602,
+                  9.590794799698669
+                ],
+                [
+                  -6.986205699900653,
+                  1.8319270886439958,
+                  9.577988567489992
+                ],
+                [
+                  -6.973760243675942,
+                  1.8106480921736756,
+                  9.569312158154526
+                ],
+                [
+                  -6.961174846732307,
+                  1.7883603881793648,
+                  9.566152965060805
+                ],
+                [
+                  -6.939430845782372,
+                  1.7477530586172765,
+                  9.575652448286752
+                ],
+                [
+                  -6.9109169512292015,
+                  1.6913383922349434,
+                  9.608900444557635
+                ],
+                [
+                  -6.880234519557854,
+                  1.6280629926597334,
+                  9.661504809817334
+                ],
+                [
+                  -6.847911032770049,
+                  1.559595686884509,
+                  9.72875723809559
+                ],
+                [
+                  -6.8144739728675034,
+                  1.4876053019021314,
+                  9.805949423422156
+                ],
+                [
+                  -6.780450821851938,
+                  1.413760664705463,
+                  9.88837305982678
+                ],
+                [
+                  -6.746369061725069,
+                  1.3397306022873652,
+                  9.97131984133921
+                ],
+                [
+                  -6.712756174488617,
+                  1.2671839416407003,
+                  10.050081461989194
+                ],
+                [
+                  -6.6801396421443,
+                  1.1977895097583302,
+                  10.119949615806481
+                ]
+              ]
+            }
+          }
+        },
+        "seatFollower": "Native seat contact"
+      },
+      "material": "M_Body",
+      "appearance": {
+        "body": true,
+        "mark": "none",
+        "mark2": null,
+        "mane": true,
+        "tail": true
+      }
+    }
+  ],
+  "customization": {
+    "unchanged": true,
+    "matrixUntouched": true,
+    "positionsUntouched": true,
+    "isolated": true,
+    "hair": [
+      {
+        "tailMaskRange": [
+          0,
+          1.0000001192092896
+        ],
+        "uniforms": [
+          {
+            "mane": "e0ba72",
+            "tail": "322318",
+            "maneOn": 1,
+            "tailOn": 1
+          }
+        ]
+      }
+    ],
+    "applied": {
+      "body": true,
+      "mark": "pinto",
+      "mark2": "stockings",
+      "mane": true,
+      "tail": true
+    }
+  },
+  "errors": [],
+  "naturalAliasCustomization": {
+    "unchanged": true,
+    "matrixUntouched": true,
+    "positionsUntouched": true,
+    "isolated": true,
+    "hair": [
+      {
+        "tailMaskRange": [
+          0,
+          1.0000001192092896
+        ],
+        "uniforms": [
+          {
+            "mane": "e0ba72",
+            "tail": "322318",
+            "maneOn": 1,
+            "tailOn": 1
+          }
+        ]
+      }
+    ],
+    "applied": {
+      "body": true,
+      "mark": "pinto",
+      "mark2": "stockings",
+      "mane": true,
+      "tail": true
+    }
+  }
+}

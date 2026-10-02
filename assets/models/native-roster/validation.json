@@ -1,0 +1,434 @@
+{
+  "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+  "all25NativeFoundations": true,
+  "distinctBodyGeometryCount": 25,
+  "sharedOriginalNativeSkeletonSize": 677,
+  "unchangedSkinWeightsBindsAndAnimations": true,
+  "rows": [
+    {
+      "id": "bay",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "4b86ffb66e049ccf68ea0218dfee32386675e3d2b236d038704f397486ad0e25",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 3.874301910400391e-06,
+      "actorScale": 0.8476899263786155,
+      "withersM": 1.52,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "chestnut",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "da55ba3ba616baf887854b171e90b0636beb49dd0ee554a9faad16cef83d6bc3",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 6.496906280517578e-06,
+      "actorScale": 0.5623242575193446,
+      "withersM": 1.02,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "palomino",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "569e116a13a083ca18c40061d03d6641b840fcea18b5ea1f01ba96e92d145824",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 1.1920928955078125e-06,
+      "actorScale": 0.810625425757807,
+      "withersM": 1.45,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "haflinger",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "286a6ea2d0d6a227be35f4666c39b3b169a162d0986e5f2b3261771de2a84b4f",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 3.874301910400391e-06,
+      "actorScale": 0.8035055378476845,
+      "withersM": 1.45,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "grey",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "366ab4b2bc38d6661f49a6384c634702539fb4ae07e08004c4dafefe6641381d",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 7.3909759521484375e-06,
+      "actorScale": 0.8786846541304494,
+      "withersM": 1.6,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "black",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "26c77c420e61eb634ab8f6776f603597bf746578f8f7f5234e58b3f0be316b5c",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 1.0132789611816406e-05,
+      "actorScale": 0.8942272156187178,
+      "withersM": 1.64,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "pinto",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "850bf965aa4d9096a80802f5cad5b4fba6c77ba579ef3a7fecc773e3b867f398",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 2.5033950805664062e-06,
+      "actorScale": 0.863321190470604,
+      "withersM": 1.55,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "appaloosa",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "d4d8a31f04de54863cb89ee3d9e931ba4818f9cadf5cc001e47d896d38135588",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 2.086162567138672e-06,
+      "actorScale": 0.8598054213101979,
+      "withersM": 1.54,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "sunset",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "f6cdcccc4d6e516650e40840ce55b76041102cfd3e305c26524c85a05c24ef24",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 5.7220458984375e-06,
+      "actorScale": 0.838013152601677,
+      "withersM": 1.5,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "iceland",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "8c4f14e26baba35799af43c422a231ca899a0494a0467c214fbd7968b7005147",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 2.9802322387695312e-06,
+      "actorScale": 0.7651438734840629,
+      "withersM": 1.38,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "welsh",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "243faf498c60f71fd8288b93602c250b06d83547a475f2e219e0cf777e3bf7c1",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 5.602836608886719e-06,
+      "actorScale": 0.6636444261616585,
+      "withersM": 1.19,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "stock",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "2c5d70092acc91a69b38c4629273e94bd255480843de8e3878b36f4d6f090cfb",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 1.1324882507324219e-06,
+      "actorScale": 0.8686588546961173,
+      "withersM": 1.55,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "fjord",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "b912fdc366c44ea676dfebd9dbe5b850e68c71157332eb9793bb0f21dd4381d8",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 8.225440979003906e-06,
+      "actorScale": 0.7761249771443578,
+      "withersM": 1.42,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "morgan",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "b35a4fa2762716546d35798a5a784147de173e8579066038f458714ff35ca78c",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 6.020069122314453e-06,
+      "actorScale": 0.8393637978536996,
+      "withersM": 1.52,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "thoro",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "a4349ddd1aa24223a199bc0d83b737a232aded0304c918d650777c6f87806d98",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 4.649162292480469e-06,
+      "actorScale": 0.9383673208259842,
+      "withersM": 1.66,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "knab",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "623fa58167bc570d9026ca187d5d998c04c4155658125e4b63368979ac9b8cc4",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 2.384185791015625e-06,
+      "actorScale": 0.9136904692877638,
+      "withersM": 1.64,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "vanner",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "0de104b0dea1b9bd59a83d7090dc2535bef0a96da19f1c2659d68d1a4a48b41e",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 7.033348083496094e-06,
+      "actorScale": 0.8207562795929052,
+      "withersM": 1.5,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "marwari",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "65551850ac12b5e0e78904505b4893ad534945d77d17b5aeab7331ee0d2ed14b",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 7.510185241699219e-06,
+      "actorScale": 0.8814883670031307,
+      "withersM": 1.58,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "lipiz",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "0d425505465a1a48b46154c30ba8a0982f4579b88a42de4fd4c6980f9a247d46",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 8.702278137207031e-06,
+      "actorScale": 0.8519734001869655,
+      "withersM": 1.56,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "sport",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "bf982284497d40a049e9a96dfb7f18b44ea3b600c32dcfa49d353c6941d49e4b",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 4.410743713378906e-06,
+      "actorScale": 0.9307639531961933,
+      "withersM": 1.68,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "akhal",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "8991e7edd41ba7653c2fc4d1d9f986c93bea5ed3b33ca7700f6968fdcaf6270c",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 7.152557373046875e-06,
+      "actorScale": 0.9022540456679599,
+      "withersM": 1.59,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "percheron",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "4c2fd014cfae3df170c9bb98cffa0d9c9273120333def4b8d5b7c4f21641c2f3",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 6.9141387939453125e-06,
+      "actorScale": 0.9470224159338522,
+      "withersM": 1.73,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "shire",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "f18d5e8c9b96d4f07e08d5fdafad1e3981807eb81a1df735bbd1a0f8ab7d7702",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 8.344650268554688e-06,
+      "actorScale": 0.9911492135843502,
+      "withersM": 1.82,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "clyde",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "18120ec25a18225986412bcb9b5ce95b132c591140edbb3f2c4c47dffc8423bb",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 6.794929504394531e-06,
+      "actorScale": 0.9759128233976231,
+      "withersM": 1.78,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "bay-sporthorse",
+      "jointCount": 677,
+      "meshes": 5,
+      "bodyVertices": 16159,
+      "bodyGeometrySha256": "96e64de714e532e815f5d3a5bd23211da9ff6aab8bb4dda04c3d46bb5b6249bb",
+      "protectedLowerBodyVertices": 3054,
+      "protectedBodyPositionsAndNormalsBitExact": true,
+      "standingBodyFloorM": 0.0,
+      "maxNormalLengthError": 5.960464477539062e-07,
+      "actorScale": 0.9177628649773031,
+      "withersM": 1.64,
+      "textureSize": [
+        1024,
+        1024
+      ]
+    }
+  ]
+}

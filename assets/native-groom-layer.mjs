@@ -5,7 +5,7 @@ import {NATIVE_GROOM_PROFILE_IDS,NATIVE_GROOM_HIERARCHY,NATIVE_GROOM_AUDIT} from
 /** One-time, fail-closed verification of the original five-mesh WildMesh skin. */
 export function validateNativeGroomRig(rig){
  try{
-  if(!rig?.profile?.nativeBreed||rig.profile.nativeKind!=='horse'||!NATIVE_GROOM_PROFILE_IDS.includes(rig.profile.id||rig.key))return {eligible:false,reason:'Unverified native profile'};
+  if(!rig?.profile?.nativeBreed||rig.profile.nativeKind!=='horse'||!(rig.profile.nativeRoster||NATIVE_GROOM_PROFILE_IDS.includes(rig.profile.id||rig.key)))return {eligible:false,reason:'Unverified native profile'};
   const root=rig.nativeRoot;if(!root)return {eligible:false,reason:'Missing original native root'};
   const meshes=[];root.traverse(o=>{if(o.isSkinnedMesh)meshes.push(o);});
   const expectedCounts=[2028,5092,13895,16159,23514],counts=meshes.map(m=>m.geometry?.attributes?.position?.count).sort((a,b)=>a-b);

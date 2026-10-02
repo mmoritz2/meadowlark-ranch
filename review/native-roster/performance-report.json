@@ -1,0 +1,333 @@
+{
+  "scope": "Actual full ranch, cold temporary save, default position and nearby horses; real requestAnimationFrame intervals after 90 warmup frames. No advanceTime. Desktop headless ANGLE Metal; no mobile performance claim.",
+  "timing": {
+    "frames": 120,
+    "warmupFrames": 90,
+    "medianMs": 49.900000000001455,
+    "p95Ms": 50.100000000000364,
+    "maxMs": 83.39999999999964,
+    "meanMs": 43.88666666666666
+  },
+  "defaultScene": {
+    "graphics": {
+      "quality": "high",
+      "bridleFitted": false,
+      "horseModel": "bay-sporthorse",
+      "artistRig": false,
+      "joints": 677,
+      "motion": "stand",
+      "horseBreed": "bay-sporthorse",
+      "horseLoading": false,
+      "horseReady": true,
+      "horseAttached": true,
+      "day": 0.361,
+      "triangles": 21564568,
+      "drawCalls": 2160
+    },
+    "renderer": {
+      "calls": 2160,
+      "triangles": 21564568,
+      "memory": {
+        "geometries": 1444,
+        "textures": 293
+      },
+      "pixelRatio": 1,
+      "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Max, Unspecified Version)"
+    },
+    "actors": [
+      {
+        "name": "Native actor bay-sporthorse",
+        "position": [
+          -7,
+          0,
+          10
+        ],
+        "joints": 677,
+        "visible": true,
+        "skins": 5
+      },
+      {
+        "name": "Native actor bay",
+        "position": [
+          50.282143664565034,
+          -1.325141448672363,
+          165.896488648172
+        ],
+        "joints": 677,
+        "visible": true,
+        "skins": 5
+      },
+      {
+        "name": "Native actor bay",
+        "position": [
+          39.60335582586911,
+          -2.471035135200892,
+          -129.8958114370067
+        ],
+        "joints": 677,
+        "visible": true,
+        "skins": 5
+      },
+      {
+        "name": "Native actor bay",
+        "position": [
+          -3.040853511944798,
+          0.3390724181650924,
+          33.083575920158
+        ],
+        "joints": 677,
+        "visible": true,
+        "skins": 5
+      },
+      {
+        "name": "Native actor bay",
+        "position": [
+          2.994542938282053,
+          0.6177472225502253,
+          -35.9141934486142
+        ],
+        "joints": 677,
+        "visible": true,
+        "skins": 5
+      },
+      {
+        "name": "Native actor grey",
+        "position": [
+          -9.682009810361679,
+          0,
+          8.429302292564737
+        ],
+        "joints": 677,
+        "visible": true,
+        "skins": 5
+      }
+    ]
+  },
+  "world": [
+    {
+      "kind": "wild",
+      "key": "black",
+      "model": "black",
+      "native": true,
+      "joints": 677,
+      "finite": true,
+      "localScale": [
+        0.8942272156187178,
+        0.8942272156187178,
+        0.8942272156187178
+      ],
+      "worldScale": [
+        0.8942272156187179,
+        0.8942272156187178,
+        0.8942272156187179
+      ],
+      "parentScale": [
+        1,
+        1,
+        1
+      ],
+      "expectedActorScale": 0.8942272156187178,
+      "foal": false,
+      "bodyHeightM": 1.9791489708000667,
+      "tack": [
+        {
+          "vertices": 13895,
+          "visible": false
+        },
+        {
+          "vertices": 5092,
+          "visible": false
+        }
+      ]
+    },
+    {
+      "kind": "wild",
+      "key": "bay",
+      "model": "bay",
+      "native": true,
+      "joints": 677,
+      "finite": true,
+      "localScale": [
+        0.8476899263786155,
+        0.8476899263786155,
+        0.8476899263786155
+      ],
+      "worldScale": [
+        0.8476899263786155,
+        0.8476899263786155,
+        0.8476899263786155
+      ],
+      "parentScale": [
+        1,
+        1,
+        1
+      ],
+      "expectedActorScale": 0.8476899263786155,
+      "foal": false,
+      "bodyHeightM": 1.8459454624780338,
+      "tack": [
+        {
+          "vertices": 13895,
+          "visible": false
+        },
+        {
+          "vertices": 5092,
+          "visible": false
+        }
+      ]
+    },
+    {
+      "kind": "wild",
+      "key": "haflinger",
+      "model": "haflinger",
+      "native": true,
+      "joints": 677,
+      "finite": true,
+      "localScale": [
+        0.8035055378476845,
+        0.8035055378476845,
+        0.8035055378476845
+      ],
+      "worldScale": [
+        0.8035055378476844,
+        0.8035055378476845,
+        0.8035055378476844
+      ],
+      "parentScale": [
+        0.9999999999999999,
+        1,
+        0.9999999999999999
+      ],
+      "expectedActorScale": 0.8035055378476845,
+      "foal": false,
+      "bodyHeightM": 1.7700987129835746,
+      "tack": [
+        {
+          "vertices": 13895,
+          "visible": false
+        },
+        {
+          "vertices": 5092,
+          "visible": false
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "measurementConditions": {
+    "concurrentAutomatedBrowserWork": true,
+    "comparableFullRanchBaselineAvailable": false,
+    "priorEvidence": "review/native-gait-controller/performance-summary.json measures an isolated 1/4-horse scene, not the full Ranch, so no regression comparison is valid."
+  },
+  "ownedPasture": {
+    "rows": [
+      {
+        "name": "Pasture pony",
+        "breed": "chestnut",
+        "foal": false,
+        "bareback": false,
+        "native": true,
+        "joints": 677,
+        "finite": true,
+        "localScale": [
+          0.5623242575193446,
+          0.5623242575193446,
+          0.5623242575193446
+        ],
+        "parentScale": [
+          0.9999999999999999,
+          1,
+          0.9999999999999999
+        ],
+        "worldScale": [
+          0.5623242575193446,
+          0.5623242575193446,
+          0.5623242575193446
+        ],
+        "expectedActorScale": 0.5623242575193446,
+        "tack": [
+          {
+            "vertices": 13895,
+            "visible": true
+          },
+          {
+            "vertices": 5092,
+            "visible": true
+          }
+        ]
+      },
+      {
+        "name": "Bareback draft",
+        "breed": "shire",
+        "foal": false,
+        "bareback": true,
+        "native": true,
+        "joints": 677,
+        "finite": true,
+        "localScale": [
+          0.9911492135843502,
+          0.9911492135843502,
+          0.9911492135843502
+        ],
+        "parentScale": [
+          1,
+          1,
+          1
+        ],
+        "worldScale": [
+          0.9911492135843503,
+          0.9911492135843502,
+          0.9911492135843503
+        ],
+        "expectedActorScale": 0.9911492135843502,
+        "tack": [
+          {
+            "vertices": 13895,
+            "visible": false
+          },
+          {
+            "vertices": 5092,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "name": "Pasture foal",
+        "breed": "chestnut",
+        "foal": true,
+        "bareback": false,
+        "native": true,
+        "joints": 677,
+        "finite": true,
+        "localScale": [
+          0.5623242575193446,
+          0.5623242575193446,
+          0.5623242575193446
+        ],
+        "parentScale": [
+          0.65,
+          0.65,
+          0.65
+        ],
+        "worldScale": [
+          0.36551076738757404,
+          0.365510767387574,
+          0.36551076738757404
+        ],
+        "expectedActorScale": 0.5623242575193446,
+        "tack": [
+          {
+            "vertices": 13895,
+            "visible": true
+          },
+          {
+            "vertices": 5092,
+            "visible": true
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "scope": "Separate temporary save after default-scene timing. Three owned pasture horses; normal runtime ticks, no advanceTime."
+  }
+}

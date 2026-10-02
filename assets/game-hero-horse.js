@@ -2,8 +2,8 @@ import {createArtistMotion,ARTIST_GAITS} from './artist-horse-motion.js?v=gaits-
 import {finishHeroCoat} from './hero-horse-coat.js?v=hero-ranch-1';
 import {createHeroHorseGroom} from './hero-horse-groom.js?v=hero-ranch-1';
 import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-20260908-4';
-import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=complete-gaits-2';
-export {getNativeHorseCapabilities,finishNativeHorseGrooms} from './native-horse-motion.js?v=complete-gaits-2';
+import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=native-roster-1';
+export {getNativeHorseCapabilities,finishNativeHorseGrooms} from './native-horse-motion.js?v=native-roster-1';
 
 // Adapts the approved raw-space hero to the ranch's +Z-forward mount space.
 // Existing horse models continue using their own renderer and animation path.
@@ -25,6 +25,8 @@ export function disposeMountedRig(rig){
   for(const skeleton of skeletons)skeleton.dispose();
   rig.heroMaterial?.dispose();
   for(const material of rig.materials||[])material.dispose();
+  rig.nativeCustomization?.dispose?.();
+  rig.nativeFantasy?.dispose?.();
   rig.fantasyMaterial?.dispose();
   rig.scene?.traverse(o=>{if(o.name==='ArtistDragonCrest'){o.geometry.dispose();o.material.dispose();}});
 }
@@ -56,7 +58,7 @@ export function startGameHeroJump(rig){
 const JUMP_GATHER_RATE=2.4,JUMP_LAND_RATE=1.6,JUMP_RELEASE=1.18,JUMP_GRACE=0.35;
 function jumpClockRate(age){return age<.38?JUMP_GATHER_RATE:age<1.16?1:JUMP_LAND_RATE;}
 export function tickGameHero(rig,speed,dt,turn=0){
-  if(rig.profile?.nativeBreed||rig.profile?.referenceMotion){if(rig.profile.referenceMotion){rig.artistClock=(rig.artistClock||0)+dt;rig.skin.material.userData.update?.(rig.artistClock);}const state=tickNativeHorse(rig,speed,dt,turn);if(rig.profile.referenceMotion)(rig.groom||rig.hair)?.update?.(dt,{...state,speedMps:speed});return state;}
+  if(rig.profile?.nativeBreed||rig.profile?.referenceMotion){if(rig.profile.referenceMotion){rig.artistClock=(rig.artistClock||0)+dt;rig.skin.material.userData.update?.(rig.artistClock);}const state=tickNativeHorse(rig,speed,dt,turn);rig.nativeFantasy?.update(dt,{...state,flying:!!rig.nativeFlying});if(rig.profile.referenceMotion)(rig.groom||rig.hair)?.update?.(dt,{...state,speedMps:speed});return state;}
   const motion=rig.heroMotion;if(!motion)return null;
   rig.artistClock=(rig.artistClock||0)+dt;rig.skin.material.userData.update?.(rig.artistClock);
   let rate=1;

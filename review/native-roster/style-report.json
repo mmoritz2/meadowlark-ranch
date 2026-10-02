@@ -1,0 +1,113 @@
+{
+  "rows": [
+    {
+      "key": "bay",
+      "slots": [
+        {
+          "slot": "mask",
+          "count": 2
+        },
+        {
+          "slot": "brow",
+          "count": 1
+        },
+        {
+          "slot": "legs",
+          "count": 8
+        },
+        {
+          "slot": "tail",
+          "count": 3
+        },
+        {
+          "slot": "neck",
+          "count": 2
+        },
+        {
+          "slot": "blanket",
+          "count": 2
+        }
+      ],
+      "hair": {
+        "mane": 11984,
+        "tail": 11530,
+        "other": 0
+      },
+      "bones": 677,
+      "finite": true
+    },
+    {
+      "key": "chestnut",
+      "slots": [
+        {
+          "slot": "mask",
+          "count": 2
+        },
+        {
+          "slot": "brow",
+          "count": 1
+        },
+        {
+          "slot": "legs",
+          "count": 8
+        },
+        {
+          "slot": "tail",
+          "count": 3
+        },
+        {
+          "slot": "neck",
+          "count": 2
+        },
+        {
+          "slot": "blanket",
+          "count": 2
+        }
+      ],
+      "hair": {
+        "mane": 11984,
+        "tail": 11530,
+        "other": 0
+      },
+      "bones": 677,
+      "finite": true
+    },
+    {
+      "key": "unicorn",
+      "slots": [
+        {
+          "slot": "mask",
+          "count": 2
+        },
+        {
+          "slot": "brow",
+          "count": 1
+        },
+        {
+          "slot": "legs",
+          "count": 8
+        },
+        {
+          "slot": "tail",
+          "count": 3
+        },
+        {
+          "slot": "neck",
+          "count": 2
+        },
+        {
+          "slot": "blanket",
+          "count": 2
+        }
+      ],
+      "hair": {
+        "mane": 11984,
+        "tail": 11530,
+        "other": 0
+      },
+      "bones": 677,
+      "finite": true
+    }
+  ],
+  "errors": []
+}

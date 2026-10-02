@@ -129,7 +129,7 @@ export function install(G){
  /* =============================== 3. Breeds =============================== */
  (function(){
   for(const row of NEW_BREEDS)if(!T.BREEDS3.some(b=>b[0]===row[0]))T.BREEDS3.push(row);
-  try{for(const row of NEW_BREEDS){const o=row[7]||{};if(o.body&&G.horse.breedModels&&G.horse.breedModels.alias)G.horse.breedModels.alias(row[0],o.body);}}catch(e){}
+  try{for(const row of NEW_BREEDS){const o=row[7]||{};if(o.body&&G.horse.breedModels&&G.horse.breedModels.alias)G.horse.breedModels.alias(row[0],o.body,row);}}catch(e){}
  })();
  /* Belt and braces on top of breedSrc: never offer these two from any source. */
  G.horse.sourceRule((ctx,b)=>{if(b&&b[0]&&(b[0]===CLUB_HORSE||b[0]===PHOTO_HORSE))return false;});

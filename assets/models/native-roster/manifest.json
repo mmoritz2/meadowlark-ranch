@@ -1,0 +1,3553 @@
+{
+  "schemaVersion": 1,
+  "sourceFile": "../review/native-trot-reference-kit/white/model.glb",
+  "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+  "sourceWithersM": 1.7869539753502213,
+  "sourceTranslation": [
+    -6.225790382362317e-09,
+    0.0047147771075021355,
+    -1.6744842715166992
+  ],
+  "sourceSeat": [
+    6.225790382362317e-09,
+    1.7380817122270678,
+    1.6744842715166992
+  ],
+  "jointCount": 677,
+  "bodyVertexCount": 16159,
+  "hairVertexCount": 23514,
+  "tackVertexCount": 13895,
+  "neutralCoatFile": "./models/native-roster/neutralcoat.png",
+  "neutralCoatSha256": "0e43d3fa2c5a54976e287ad9b7bce924a780c575dd8afb1a5e2bde6447f0562a",
+  "license": "CC BY-NC 4.0",
+  "artist": "WildMesh 3D",
+  "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
+  "method": "Original native677 skeleton and all approved clips unchanged; upper body/groom geometry, original-UV coat and uniform actor height derivatives.",
+  "breeds": {
+    "bay": {
+      "id": "bay",
+      "label": "Quarter Horse",
+      "file": "./models/native-roster/bay.bin",
+      "sha256": "ca1dcf544abb19e478ac0813f5ae59290beccc09cccda9680343089dcdb600e7",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.0001449069592328885
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 4.8771585530361755e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 4.999397988317649e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1.3605781158807767e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 6.615676039140084e-05
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 4.126865135369759e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.00019995747632417532
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 3.109469874218858e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 9.340868524483063e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 1.6301597239305688e-06
+          }
+        }
+      ],
+      "withersM": 1.52,
+      "sourceWithersM": 1.7931084854264285,
+      "actorScale": 0.8476899263786155,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7442621943430692,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 0.97,
+        "barrel_width": 1.09,
+        "body_depth": 1.03,
+        "neck_length": 0.94,
+        "neck_thickness": 1.03,
+        "head_length": 0.95,
+        "head_width": 1.06,
+        "ear_length": 0.87,
+        "limb_length": 0.97,
+        "hoof_width": 1.02,
+        "hindquarter_width": 1.16,
+        "face_profile_depth_per_withers": -0.002,
+        "neck_arch_rise_per_withers": 0.02
+      },
+      "conformation": "Compact athletic stock build; broad rounded haunches",
+      "groom": {
+        "maneLengthFactor": 1.0,
+        "tailLengthFactor": 1.0,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/bay-coat.webp",
+        "sha256": "e8eefc19ee4a408f64c02c9cbbdb14ae660d784f9d86dcdd495ebcd884e5b326",
+        "description": "Rich bay with black points",
+        "colorSrgb": [
+          0.6180314235705168,
+          0.43662706741680085,
+          0.2933720544040729
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "chestnut": {
+      "id": "chestnut",
+      "label": "Shetland Pony",
+      "file": "./models/native-roster/chestnut.bin",
+      "sha256": "01d8f25146d2be5b4fae8d5e53fc1db3651a7d37f306ef824c8358c53ebc2962",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.00018300218346593207
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 8.209397059283116e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 0.00011581539940960676
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 2.875050631683909e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.0003785931087885476
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 8.26166770735815e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.0003959891241044826
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 6.364120406388907e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 0.00018465501690265586
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 2.7049767768338145e-06
+          }
+        }
+      ],
+      "withersM": 1.02,
+      "sourceWithersM": 1.8139000520796686,
+      "actorScale": 0.5623242575193446,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7628036406910732,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 0.98,
+        "barrel_width": 1.18,
+        "body_depth": 1.12,
+        "neck_length": 0.84,
+        "neck_thickness": 1.11,
+        "head_length": 0.9,
+        "head_width": 1.13,
+        "ear_length": 0.78,
+        "limb_length": 0.76,
+        "hoof_width": 1.12,
+        "hindquarter_width": 1.07,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.025
+      },
+      "conformation": "Deep compact pony, rounded ribs",
+      "groom": {
+        "maneLengthFactor": 1.18,
+        "tailLengthFactor": 1.1,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/chestnut-coat.webp",
+        "sha256": "a01783419b3e5bbc6c35c1761ba614f52ca81a3ec37480f37758851514a12b71",
+        "description": "Chestnut with flaxen mane",
+        "colorSrgb": [
+          0.7220273554858574,
+          0.4731206227190587,
+          0.30353205142878276
+        ],
+        "hairColorSrgb": [
+          0.7977377330312598,
+          0.6872171460034034,
+          0.5063864292846207
+        ],
+        "hairColorLinear": [
+          0.6,
+          0.43,
+          0.22
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "palomino": {
+      "id": "palomino",
+      "label": "Mustang",
+      "file": "./models/native-roster/palomino.bin",
+      "sha256": "f6ee5303eb51f6b62100f1601fd86bd16ee85f584b5540f00d2d99227f9117b6",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 3.584662715622865e-05
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 1.2255113944611347e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 2.7925494827569976e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 7.932435836425261e-07
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.00015113397601699877
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 1.4949239643754213e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 2.9008509297309188e-05
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 9.76725023699379e-07
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 1.917858963422563e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 5.565491244897461e-07
+          }
+        }
+      ],
+      "withersM": 1.45,
+      "sourceWithersM": 1.7887423141760923,
+      "actorScale": 0.810625425757807,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7422020336377355,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1,
+        "barrel_width": 1.01,
+        "body_depth": 1.02,
+        "neck_length": 0.94,
+        "neck_thickness": 1.01,
+        "head_length": 1.01,
+        "head_width": 1.05,
+        "ear_length": 0.98,
+        "limb_length": 0.95,
+        "hoof_width": 1.02,
+        "hindquarter_width": 1.02,
+        "face_profile_depth_per_withers": 0.004,
+        "neck_arch_rise_per_withers": 0.018
+      },
+      "conformation": "Selected hardy ranch individual, moderate substance",
+      "groom": {
+        "maneLengthFactor": 1.08,
+        "tailLengthFactor": 1.04,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/palomino-coat.webp",
+        "sha256": "747a77b4a268fa04d32e6060a7915b214d6a0a0ba369881a03e4946cd7573303",
+        "description": "Golden palomino with ivory mane",
+        "colorSrgb": [
+          0.8488705729837295,
+          0.7014107175340978,
+          0.43662706741680085
+        ],
+        "hairColorSrgb": [
+          0.8911433221007495,
+          0.8433891672907193,
+          0.7152408841330303
+        ],
+        "hairColorLinear": [
+          0.77,
+          0.68,
+          0.47
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "haflinger": {
+      "id": "haflinger",
+      "label": "Haflinger",
+      "file": "./models/native-roster/haflinger.bin",
+      "sha256": "d9daaf78d28991d7be44ba9e45e98ea9a015887f611009074b966f2ff1de071b",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.00010818070551878993
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 3.902166938684633e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 4.004977358496078e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 9.587877435453545e-07
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.0004943160774074165
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 4.618890056309999e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.00024425274756919793
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 4.069335906105718e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 0.00011260660188037236
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 1.6265960079177715e-06
+          }
+        }
+      ],
+      "withersM": 1.45,
+      "sourceWithersM": 1.8045924162315696,
+      "actorScale": 0.8035055378476845,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7525028371644045,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1,
+        "barrel_width": 1.11,
+        "body_depth": 1.07,
+        "neck_length": 0.96,
+        "neck_thickness": 1.08,
+        "head_length": 0.95,
+        "head_width": 1.03,
+        "ear_length": 0.87,
+        "limb_length": 0.94,
+        "hoof_width": 1.05,
+        "hindquarter_width": 1.08,
+        "face_profile_depth_per_withers": -0.003,
+        "neck_arch_rise_per_withers": 0.025
+      },
+      "conformation": "Small athletic muscular horse, harmonious rounded barrel",
+      "groom": {
+        "maneLengthFactor": 1.28,
+        "tailLengthFactor": 1.1,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/haflinger-coat.webp",
+        "sha256": "0d977e0b16a2ec3c5f4ea84f9148d85e4aa46c540ba4e5841691823a9b1ef5fb",
+        "description": "Copper chestnut with flaxen mane and blaze",
+        "colorSrgb": [
+          0.8152506478027833,
+          0.5657284334090101,
+          0.32272611513876776
+        ],
+        "hairColorSrgb": [
+          0.8911433221007495,
+          0.8433891672907193,
+          0.7152408841330303
+        ],
+        "hairColorLinear": [
+          0.77,
+          0.68,
+          0.47
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "grey": {
+      "id": "grey",
+      "label": "Andalusian / PRE",
+      "file": "./models/native-roster/grey.bin",
+      "sha256": "e65c13551cddb5304974ae4846816a1d838b3bf56465858a20fd8cd85432b066",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.00016486821782957735
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 7.0630613538984945e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 3.097288053894687e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1.492083008983721e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.00043158901087687093
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 9.260168307517516e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.0001336491768159763
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 7.695630922108669e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 7.292494215470761e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 3.809108986091044e-06
+          }
+        }
+      ],
+      "withersM": 1.6,
+      "sourceWithersM": 1.8209035431298932,
+      "actorScale": 0.8786846541304494,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7442621943430692,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 0.99,
+        "barrel_width": 1.06,
+        "body_depth": 1.03,
+        "neck_length": 1.01,
+        "neck_thickness": 1.12,
+        "head_length": 1.02,
+        "head_width": 1,
+        "ear_length": 1,
+        "limb_length": 1,
+        "hoof_width": 1.03,
+        "hindquarter_width": 1.06,
+        "face_profile_depth_per_withers": 0.012,
+        "neck_arch_rise_per_withers": 0.055
+      },
+      "conformation": "Baroque riding horse, rounded muscular quarters",
+      "groom": {
+        "maneLengthFactor": 1.2,
+        "tailLengthFactor": 1.07,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/grey-coat.webp",
+        "sha256": "6b6401f8e116113c4854b23475f5e4366d07676259a2c059d0aa97fced8fca04",
+        "description": "Dapple grey with charcoal points",
+        "colorSrgb": [
+          0.8152506478027833,
+          0.8322835558967641,
+          0.8488705729837295
+        ],
+        "hairColorSrgb": [
+          0.6342527406021728,
+          0.649956455014496,
+          0.6651850846308363
+        ],
+        "hairColorLinear": [
+          0.36,
+          0.38,
+          0.4
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "black": {
+      "id": "black",
+      "label": "Friesian",
+      "file": "./models/native-roster/black.bin",
+      "sha256": "b0cb1d641edb47cb5339485642969671bee287168c663f62a0d61b31575b2dad",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.00023684818183529038
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 1.0548296844729994e-05
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 3.910007785127219e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 3.7524263856801755e-07
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.001027197792192768
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 1.2643780104044106e-05
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.00022723291438973232
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 9.544034208883592e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 0.00010489909546996261
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 4.605981954423552e-06
+          }
+        }
+      ],
+      "withersM": 1.64,
+      "sourceWithersM": 1.8339857827579988,
+      "actorScale": 0.8942272156187178,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7504426764590706,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.03,
+        "barrel_width": 1.1,
+        "body_depth": 1.06,
+        "neck_length": 1.09,
+        "neck_thickness": 1.16,
+        "head_length": 0.97,
+        "head_width": 1,
+        "ear_length": 0.88,
+        "limb_length": 1.03,
+        "hoof_width": 1.09,
+        "hindquarter_width": 1.1,
+        "face_profile_depth_per_withers": -0.003,
+        "neck_arch_rise_per_withers": 0.07
+      },
+      "conformation": "Substantial elegant rectangular riding/driving build",
+      "groom": {
+        "maneLengthFactor": 1.48,
+        "tailLengthFactor": 1.13,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/black-coat.webp",
+        "sha256": "fb8cc14c1b274dc24d14d51c038cb49768e90088cb0e920eefc3114cc012af97",
+        "description": "Soft black with warm highlights",
+        "colorSrgb": [
+          0.26006748065395024,
+          0.23479507938808275,
+          0.2237698062683856
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "pinto": {
+      "id": "pinto",
+      "label": "American Paint Horse",
+      "file": "./models/native-roster/pinto.bin",
+      "sha256": "0cb283c8e25784e34cfa704df736e5ad200a3c3e1d628711112ae1b1dea4fe44",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 9.105219113020211e-05
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 3.137559490880818e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 2.10674249947084e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 5.966393810283533e-07
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.0001511345610948568
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 2.097337162344222e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.00013756365954953375
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 1.7421159378632626e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 6.227729959986185e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 9.74444800156888e-07
+          }
+        }
+      ],
+      "withersM": 1.55,
+      "sourceWithersM": 1.795392047721059,
+      "actorScale": 0.863321190470604,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7422020336377355,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.01,
+        "barrel_width": 1.06,
+        "body_depth": 1.02,
+        "neck_length": 0.99,
+        "neck_thickness": 1.04,
+        "head_length": 0.99,
+        "head_width": 1.04,
+        "ear_length": 0.94,
+        "limb_length": 1.01,
+        "hoof_width": 1.04,
+        "hindquarter_width": 1.1,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.025
+      },
+      "conformation": "Chosen slightly taller stock individual, broad athletic quarters",
+      "groom": {
+        "maneLengthFactor": 1.05,
+        "tailLengthFactor": 1.04,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/pinto-coat.webp",
+        "sha256": "f8ead1968b3fa67849e7bde7faefb0174236e8e5f98460e4f8d1c0a6f89b4d90",
+        "description": "Bay tobiano with broad white patches",
+        "colorSrgb": [
+          0.6342527406021728,
+          0.36556462992983896,
+          0.23209419298460426
+        ],
+        "hairColorSrgb": [
+          0.17558162099195662,
+          0.16007763053951615,
+          0.1428256813030392
+        ],
+        "hairColorLinear": [
+          0.026,
+          0.022,
+          0.018
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "appaloosa": {
+      "id": "appaloosa",
+      "label": "Appaloosa",
+      "file": "./models/native-roster/appaloosa.bin",
+      "sha256": "1f0e7c0b0bacae87ad5d3d5dc8574865e626e582a3612e4a0fe449812ae1a0d5",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 6.928919402453219e-05
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 2.7004262046800846e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 7.488314734240639e-06
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 6.23015481452129e-08
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 9.642652106727803e-05
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 1.2955188582842305e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 8.624628271414944e-05
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 1.3644008283515064e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 4.197617223110221e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 1.0930258733458712e-06
+          }
+        }
+      ],
+      "withersM": 1.54,
+      "sourceWithersM": 1.7911029191387289,
+      "actorScale": 0.8598054213101979,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7463223550484028,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1,
+        "barrel_width": 1.04,
+        "body_depth": 1.04,
+        "neck_length": 0.98,
+        "neck_thickness": 1,
+        "head_length": 1.02,
+        "head_width": 1,
+        "ear_length": 1,
+        "limb_length": 0.99,
+        "hoof_width": 1.03,
+        "hindquarter_width": 1.08,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.025
+      },
+      "conformation": "Smooth athletic stock build, deep chest, strong loin",
+      "groom": {
+        "maneLengthFactor": 0.94,
+        "tailLengthFactor": 1.02,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/appaloosa-coat.webp",
+        "sha256": "973d7854c30f5ef429e33c7ba9a25e09d5346cbd3731994d9b372ea2fb188194",
+        "description": "Bay blanket with dark leopard spots",
+        "colorSrgb": [
+          0.6421665015330558,
+          0.43662706741680085,
+          0.28277929498666315
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "sunset": {
+      "id": "sunset",
+      "label": "Arabian",
+      "file": "./models/native-roster/sunset.bin",
+      "sha256": "ed74a03ac807c43b56849994eb8b5421040d87fee1ed2d36cd12d7953fe86c08",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.00011082412115044449
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 6.281951381615003e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 1.9973962146891605e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 2.328050953125682e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.0003021397120381051
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 7.424452543807294e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.00010193140959728478
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 5.734202070632291e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 5.92809845520606e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 2.2712847611495494e-06
+          }
+        }
+      ],
+      "withersM": 1.5,
+      "sourceWithersM": 1.789948040007646,
+      "actorScale": 0.838013152601677,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7380817122270678,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 0.94,
+        "barrel_width": 0.96,
+        "body_depth": 1,
+        "neck_length": 1.08,
+        "neck_thickness": 0.89,
+        "head_length": 0.91,
+        "head_width": 1.04,
+        "ear_length": 0.78,
+        "limb_length": 1,
+        "hoof_width": 0.94,
+        "hindquarter_width": 0.99,
+        "face_profile_depth_per_withers": -0.018,
+        "neck_arch_rise_per_withers": 0.065
+      },
+      "conformation": "Refined compact athlete, short back, near-level croup",
+      "groom": {
+        "maneLengthFactor": 0.94,
+        "tailLengthFactor": 1.08,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/sunset-coat.webp",
+        "sha256": "3982a97e30c0e16ca003eb9bc7b483e6ea8b0557ba1be543c20757b0379c106f",
+        "description": "Copper chestnut with fine dark red mane",
+        "colorSrgb": [
+          0.7797062195032237,
+          0.4731206227190587,
+          0.28277929498666315
+        ],
+        "hairColorSrgb": [
+          0.43662706741680085,
+          0.23479507938808275,
+          0.12835404027352187
+        ],
+        "hairColorLinear": [
+          0.16,
+          0.045,
+          0.015
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "iceland": {
+      "id": "iceland",
+      "label": "Icelandic Horse",
+      "file": "./models/native-roster/iceland.bin",
+      "sha256": "8fe26cbbbfe235fd81831deae40ee9127a6d9c83e05d94e8db3cf857d93ed8bd",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 7.906566397568286e-05
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 2.551679749945919e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 4.009423803862669e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 9.92629204151612e-07
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.0005426284880779516
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 3.907340422427188e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.00018535920555199707
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 2.8720584403813317e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 8.284622934144464e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 1.6019116659730885e-06
+          }
+        }
+      ],
+      "withersM": 1.38,
+      "sourceWithersM": 1.8035823690467592,
+      "actorScale": 0.7651438734840629,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7442621943430692,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.03,
+        "barrel_width": 1.08,
+        "body_depth": 1.03,
+        "neck_length": 0.93,
+        "neck_thickness": 1.07,
+        "head_length": 1,
+        "head_width": 1.06,
+        "ear_length": 0.93,
+        "limb_length": 0.92,
+        "hoof_width": 1.06,
+        "hindquarter_width": 1.03,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.03
+      },
+      "conformation": "Robust small riding horse, strong broad back and loin",
+      "groom": {
+        "maneLengthFactor": 1.32,
+        "tailLengthFactor": 1.12,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/iceland-coat.webp",
+        "sha256": "68b862d2c9b8ab6fc6342d5b973472d0be138b760cabc543a4bedb8be3172bea",
+        "description": "Mouse dun with dark dorsal stripe",
+        "colorSrgb": [
+          0.601243402976684,
+          0.46135612950044164,
+          0.3189971833548939
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "welsh": {
+      "id": "welsh",
+      "label": "Welsh Mountain Pony / Section A",
+      "file": "./models/native-roster/welsh.bin",
+      "sha256": "0af77ee90e0d8190acc35e050443333ae10665f9039b6029254b3bb1ca44b2e1",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.00012107108286037138
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 6.5860250961761e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 2.777099049481644e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1.2809662303860789e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.00022678902047656651
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 7.105829152245739e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 6.132657308768088e-05
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 5.8131121879579245e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 3.75772758393517e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 1.471936821380662e-06
+          }
+        }
+      ],
+      "withersM": 1.19,
+      "sourceWithersM": 1.793128900189279,
+      "actorScale": 0.6636444261616585,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7463223550484028,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 0.96,
+        "barrel_width": 1.03,
+        "body_depth": 1.04,
+        "neck_length": 1.02,
+        "neck_thickness": 0.97,
+        "head_length": 0.89,
+        "head_width": 1.03,
+        "ear_length": 0.78,
+        "limb_length": 0.9,
+        "hoof_width": 0.98,
+        "hindquarter_width": 1.02,
+        "face_profile_depth_per_withers": -0.007,
+        "neck_arch_rise_per_withers": 0.04
+      },
+      "conformation": "Refined compact pony, deep ribs, strong coupling",
+      "groom": {
+        "maneLengthFactor": 1.1,
+        "tailLengthFactor": 1.06,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/welsh-coat.webp",
+        "sha256": "248a7c17b1997d14af43c4490428a6a2738ddf5d75e7269abb4455445bf66b21",
+        "description": "Warm grey with dapples",
+        "colorSrgb": [
+          0.7917869007673474,
+          0.7797062195032237,
+          0.7547806693306308
+        ],
+        "hairColorSrgb": [
+          0.6342527406021728,
+          0.649956455014496,
+          0.6651850846308363
+        ],
+        "hairColorLinear": [
+          0.36,
+          0.38,
+          0.4
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "stock": {
+      "id": "stock",
+      "label": "Australian Stock Horse",
+      "file": "./models/native-roster/stock.bin",
+      "sha256": "9d906ff04732bcd11592bce1437cb1f8dade3e062afb0245e770be9429403c64",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 2.5807259072763532e-05
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 9.739912788937496e-07
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 1.1357205638843869e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 2.0022958638869428e-07
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.00016519873746975125
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 9.47867385152554e-07
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 2.4109820362063355e-05
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 1.4627685295807633e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 1.1996981604253521e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 9.514057627307515e-07
+          }
+        }
+      ],
+      "withersM": 1.55,
+      "sourceWithersM": 1.7843598688028526,
+      "actorScale": 0.8686588546961173,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7401418729324014,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.01,
+        "barrel_width": 1,
+        "body_depth": 1.01,
+        "neck_length": 1.02,
+        "neck_thickness": 0.97,
+        "head_length": 1,
+        "head_width": 0.99,
+        "ear_length": 0.97,
+        "limb_length": 1.02,
+        "hoof_width": 1,
+        "hindquarter_width": 1.03,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.025
+      },
+      "conformation": "Balanced all-purpose athletic working build",
+      "groom": {
+        "maneLengthFactor": 0.9,
+        "tailLengthFactor": 0.98,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/stock-coat.webp",
+        "sha256": "bb4927615f725c1bc30aac08024f37915ef7af4a862b72d0f25cdf8b521573bb",
+        "description": "Deep mahogany bay",
+        "colorSrgb": [
+          0.6180314235705168,
+          0.3353888342898874,
+          0.20598415724984537
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "fjord": {
+      "id": "fjord",
+      "label": "Norwegian Fjord",
+      "file": "./models/native-roster/fjord.bin",
+      "sha256": "259adf614e29cb9cbd9b5bb38b172af6d3cbb8d6ddfae1258f813d3920a03f3a",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.0001665876239699143
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 7.941773968811898e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 6.649456479989105e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 2.110486578885112e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.001009601620690649
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 1.0241606865776633e-05
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.00037802940493032993
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 7.263393707399364e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 0.00017451594109774417
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 3.3855225166889838e-06
+          }
+        }
+      ],
+      "withersM": 1.42,
+      "sourceWithersM": 1.8296022442476845,
+      "actorScale": 0.7761249771443578,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.756623158575072,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 0.98,
+        "barrel_width": 1.17,
+        "body_depth": 1.09,
+        "neck_length": 0.91,
+        "neck_thickness": 1.17,
+        "head_length": 0.95,
+        "head_width": 1.12,
+        "ear_length": 0.94,
+        "limb_length": 0.93,
+        "hoof_width": 1.11,
+        "hindquarter_width": 1.1,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.047
+      },
+      "conformation": "Broad powerful compact small horse",
+      "groom": {
+        "maneLengthFactor": 0.38,
+        "tailLengthFactor": 1.06,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/fjord-coat.webp",
+        "sha256": "83be8e7a8118c39ba0f04ff8f698d828b96a13737a5a97d1cb243ef69fdc78aa",
+        "description": "Brown dun with a shortened dark mane",
+        "colorSrgb": [
+          0.820979848329444,
+          0.7287318438688483,
+          0.5657284334090101
+        ],
+        "hairColorSrgb": [
+          0.2716997588910656,
+          0.21508198999620604,
+          0.13816992456188154
+        ],
+        "hairColorLinear": [
+          0.06,
+          0.038,
+          0.017
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "morgan": {
+      "id": "morgan",
+      "label": "Morgan",
+      "file": "./models/native-roster/morgan.bin",
+      "sha256": "176dd003fe6029ef4dae2eb3f754f17fb617247c6defd1419a34eedea824262b",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.0001226967667197326
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 5.889430422123136e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 3.183789777018037e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1.3548044633566306e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.00028404870607568643
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 7.543730831781807e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 8.719232427768257e-05
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 5.722364469379152e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 5.055500067447009e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 2.6066555481409417e-06
+          }
+        }
+      ],
+      "withersM": 1.52,
+      "sourceWithersM": 1.8108953517970698,
+      "actorScale": 0.8393637978536996,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7422020336377355,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 0.94,
+        "barrel_width": 1.04,
+        "body_depth": 1.02,
+        "neck_length": 1.01,
+        "neck_thickness": 1.07,
+        "head_length": 0.93,
+        "head_width": 1.06,
+        "ear_length": 0.87,
+        "limb_length": 0.99,
+        "hoof_width": 1.02,
+        "hindquarter_width": 1.07,
+        "face_profile_depth_per_withers": -0.006,
+        "neck_arch_rise_per_withers": 0.05
+      },
+      "conformation": "Compact strong short-backed horse",
+      "groom": {
+        "maneLengthFactor": 1.14,
+        "tailLengthFactor": 1.06,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/morgan-coat.webp",
+        "sha256": "22a14fc06cab6862548433299ff844fec25e856b5498256ddd2a6fc601aa14e5",
+        "description": "Seal bay with black points",
+        "colorSrgb": [
+          0.6180314235705168,
+          0.32272611513876776,
+          0.17923620762180825
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "thoro": {
+      "id": "thoro",
+      "label": "Thoroughbred",
+      "file": "./models/native-roster/thoro.bin",
+      "sha256": "d6261a3164afa6fca69e8d79fbe3b856d75dbcb471a4387c4509d5b699cecc3f",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 9.922443186272504e-05
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 3.94255074664486e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 6.344869520315651e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1.4343657663284022e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.0003672100909480519
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 4.850969999002835e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.00018292138137295883
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 6.3123664309394115e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 8.517066030838828e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 3.677050082165478e-06
+          }
+        }
+      ],
+      "withersM": 1.66,
+      "sourceWithersM": 1.7690300622775408,
+      "actorScale": 0.9383673208259842,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7401418729324014,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.04,
+        "barrel_width": 0.92,
+        "body_depth": 1.01,
+        "neck_length": 1.09,
+        "neck_thickness": 0.88,
+        "head_length": 1.05,
+        "head_width": 0.94,
+        "ear_length": 1.02,
+        "limb_length": 1.1,
+        "hoof_width": 0.97,
+        "hindquarter_width": 1,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.022
+      },
+      "conformation": "Tall lean speed athlete, prominent withers, sloping shoulder",
+      "groom": {
+        "maneLengthFactor": 0.78,
+        "tailLengthFactor": 0.98,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/thoro-coat.webp",
+        "sha256": "c0169fb7c1baafe937fdd61eb18dba17d3fa10c94fa6073c11f5a7cc6dd5aac0",
+        "description": "Dark bay with a small star",
+        "colorSrgb": [
+          0.5838314900602575,
+          0.28277929498666315,
+          0.16801828768325677
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "knab": {
+      "id": "knab",
+      "label": "Knabstrupper",
+      "file": "./models/native-roster/knab.bin",
+      "sha256": "815ae0c534b24b88e27cb6408cd4308fedc83185b7562f6cd2def363b609a20e",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 7.309510636632574e-05
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 2.579515894463732e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 3.1342551315188664e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 3.762420978088454e-07
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.00014438349795207613
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 3.0298064529883586e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 6.999319659072264e-05
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 1.7535848428430636e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 3.775694497525765e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 1.0547634682875915e-06
+          }
+        }
+      ],
+      "withersM": 1.64,
+      "sourceWithersM": 1.7949185803354235,
+      "actorScale": 0.9136904692877638,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7463223550484028,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.05,
+        "barrel_width": 1.03,
+        "body_depth": 1.04,
+        "neck_length": 1.03,
+        "neck_thickness": 1.01,
+        "head_length": 1.04,
+        "head_width": 1.02,
+        "ear_length": 1,
+        "limb_length": 1.07,
+        "hoof_width": 1.04,
+        "hindquarter_width": 1.06,
+        "face_profile_depth_per_withers": 0.003,
+        "neck_arch_rise_per_withers": 0.032
+      },
+      "conformation": "Chosen large-framed leggy riding type with depth",
+      "groom": {
+        "maneLengthFactor": 0.9,
+        "tailLengthFactor": 1.02,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/knab-coat.webp",
+        "sha256": "cc2a734a57c8047d1e40b2dc07549c464887a3ee1e70a19438897791fbe1bfb6",
+        "description": "Ivory leopard with irregular dark spots",
+        "colorSrgb": [
+          0.8860039716077742,
+          0.8808250210902997,
+          0.85430583154494
+        ],
+        "hairColorSrgb": [
+          0.17558162099195662,
+          0.16007763053951615,
+          0.1428256813030392
+        ],
+        "hairColorLinear": [
+          0.026,
+          0.022,
+          0.018
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "vanner": {
+      "id": "vanner",
+      "label": "Gypsy Vanner",
+      "file": "./models/native-roster/vanner.bin",
+      "sha256": "ffd006da8a808c287410fb147688bde72e3b9c20e05c8a9bf8496d6a858250ac",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.00019680935825028886
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 7.888065956040005e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 6.862956027241879e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1.947615700053185e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.00085474123333763
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 9.057717968038624e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.0004394890264551817
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 6.108364215494249e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 0.00020493815982713424
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 2.847789210149047e-06
+          }
+        }
+      ],
+      "withersM": 1.5,
+      "sourceWithersM": 1.8275827274133065,
+      "actorScale": 0.8207562795929052,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.764863801396407,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 0.97,
+        "barrel_width": 1.2,
+        "body_depth": 1.13,
+        "neck_length": 0.95,
+        "neck_thickness": 1.15,
+        "head_length": 0.97,
+        "head_width": 1.13,
+        "ear_length": 0.93,
+        "limb_length": 0.94,
+        "hoof_width": 1.15,
+        "hindquarter_width": 1.18,
+        "face_profile_depth_per_withers": 0.006,
+        "neck_arch_rise_per_withers": 0.045
+      },
+      "conformation": "Small draft body, wide deep ribs and powerful rounded quarters",
+      "groom": {
+        "maneLengthFactor": 1.44,
+        "tailLengthFactor": 1.14,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/vanner-coat.webp",
+        "sha256": "8ad752c5337894bb1e238175dab05a3efdf2a7b88826240d5b33d2d0f7b1134c",
+        "description": "Piebald with white stockings",
+        "colorSrgb": [
+          0.20598415724984537,
+          0.19311508266551217,
+          0.1828126611222896
+        ],
+        "hairColorSrgb": [
+          0.17558162099195662,
+          0.16007763053951615,
+          0.1428256813030392
+        ],
+        "hairColorLinear": [
+          0.026,
+          0.022,
+          0.018
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "marwari": {
+      "id": "marwari",
+      "label": "Marwari",
+      "file": "./models/native-roster/marwari.bin",
+      "sha256": "0391e61b8ad20098673c8931fe152a902e77d1fec09323b9891b0f8693e78d91",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.00010886171416969025
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 9.842312858759451e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 7.545091722596035e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1.4556596738547283e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.0001013432517800439
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 3.97166151497014e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.0001088426723057996
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 2.995570926088448e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 3.171319581669002e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 1.4606760455060049e-06
+          }
+        }
+      ],
+      "withersM": 1.58,
+      "sourceWithersM": 1.7924229736254573,
+      "actorScale": 0.8814883670031307,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7380817122270678,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.02,
+        "barrel_width": 0.97,
+        "body_depth": 1,
+        "neck_length": 1.08,
+        "neck_thickness": 0.95,
+        "head_length": 1.04,
+        "head_width": 0.97,
+        "ear_length": 1.16,
+        "limb_length": 1.04,
+        "hoof_width": 0.99,
+        "hindquarter_width": 1.01,
+        "face_profile_depth_per_withers": 0.012,
+        "neck_arch_rise_per_withers": 0.052
+      },
+      "conformation": "Elegant dry riding horse",
+      "groom": {
+        "maneLengthFactor": 1.02,
+        "tailLengthFactor": 1.02,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/marwari-coat.webp",
+        "sha256": "863828ab015db0e3acd037223b50d7bcf19ad50be52e183bc95194b7f6e7f542",
+        "description": "Dun bay with dark points and narrow blaze",
+        "colorSrgb": [
+          0.7220273554858574,
+          0.5168810746919994,
+          0.3491902126282938
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "lipiz": {
+      "id": "lipiz",
+      "label": "Lipizzaner",
+      "file": "./models/native-roster/lipiz.bin",
+      "sha256": "97997fc863a5b0d28853ba19451ca6f75dca80efe75d56dbcc34edbb02419c39",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.00020077630646132138
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 8.99367891394458e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 2.4636819014235547e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1.3813172370546264e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.00046294822339890113
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 1.1415289745399587e-05
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.00019582766665687595
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 8.508564488058226e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 0.00010085029844182309
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 4.304201658489312e-06
+          }
+        }
+      ],
+      "withersM": 1.56,
+      "sourceWithersM": 1.8310430814596537,
+      "actorScale": 0.8519734001869655,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7504426764590706,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 0.97,
+        "barrel_width": 1.09,
+        "body_depth": 1.06,
+        "neck_length": 0.99,
+        "neck_thickness": 1.16,
+        "head_length": 1.01,
+        "head_width": 1.05,
+        "ear_length": 0.91,
+        "limb_length": 0.96,
+        "hoof_width": 1.05,
+        "hindquarter_width": 1.08,
+        "face_profile_depth_per_withers": 0.011,
+        "neck_arch_rise_per_withers": 0.06
+      },
+      "conformation": "Compact baroque muscular riding build",
+      "groom": {
+        "maneLengthFactor": 1.2,
+        "tailLengthFactor": 1.09,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/lipiz-coat.webp",
+        "sha256": "ba5855790c9df38958517ef476a456f56f8562e23b0a625ce40d1714532bb7d7",
+        "description": "Mature pale grey with darker muzzle",
+        "colorSrgb": [
+          0.8911433221007495,
+          0.8962438838245138,
+          0.8860039716077742
+        ],
+        "hairColorSrgb": [
+          0.6342527406021728,
+          0.649956455014496,
+          0.6651850846308363
+        ],
+        "hairColorLinear": [
+          0.36,
+          0.38,
+          0.4
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "sport": {
+      "id": "sport",
+      "label": "Friesian Sporthorse",
+      "file": "./models/native-roster/sport.bin",
+      "sha256": "df35826e54a9297ca4fe077b07229f283b7618dc3d0ba225674b12a8cb8bb246",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.000111808557337227
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 4.329575695014351e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 4.986994413087044e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 5.547565969765892e-07
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.00029018255318079766
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 5.472984610237311e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 7.334976640396997e-05
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 4.4205339081317e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 3.726006152913812e-05
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 2.1538369333565683e-06
+          }
+        }
+      ],
+      "withersM": 1.68,
+      "sourceWithersM": 1.8049689120759032,
+      "actorScale": 0.9307639531961933,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7422020336377355,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.05,
+        "barrel_width": 1.03,
+        "body_depth": 1.02,
+        "neck_length": 1.08,
+        "neck_thickness": 1.03,
+        "head_length": 1.02,
+        "head_width": 0.99,
+        "ear_length": 0.96,
+        "limb_length": 1.07,
+        "hoof_width": 1.04,
+        "hindquarter_width": 1.04,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.052
+      },
+      "conformation": "Chosen taller athletic cross with less bulk",
+      "groom": {
+        "maneLengthFactor": 1.15,
+        "tailLengthFactor": 1.05,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/sport-coat.webp",
+        "sha256": "5f36ff24c69cb432eb644116900fda53382bd5fc191d0e989b619b5ba02983e6",
+        "description": "Black-brown athletic coat",
+        "colorSrgb": [
+          0.3015324056525349,
+          0.2716997588910656,
+          0.24526231338096166
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "akhal": {
+      "id": "akhal",
+      "label": "Akhal-Teke",
+      "file": "./models/native-roster/akhal.bin",
+      "sha256": "0c536c220d31fba3ba80d96471a7940dbf68f0051f4efc7f9ba1f4ddb11addc4",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.00017085965293454667
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 6.875219682687027e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 0.00011068624122876669
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 2.5499350241836875e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.0006057287210573119
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 5.859949831020331e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.00029286959642188575
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 9.147591994058183e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 0.00013684311453837395
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 4.843868549246315e-06
+          }
+        }
+      ],
+      "withersM": 1.59,
+      "sourceWithersM": 1.7622531122294782,
+      "actorScale": 0.9022540456679599,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.736021551521734,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.1,
+        "barrel_width": 0.87,
+        "body_depth": 0.99,
+        "neck_length": 1.16,
+        "neck_thickness": 0.8,
+        "head_length": 1.08,
+        "head_width": 0.89,
+        "ear_length": 1.13,
+        "limb_length": 1.08,
+        "hoof_width": 0.93,
+        "hindquarter_width": 0.97,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.037
+      },
+      "conformation": "Lithe long-lined body, narrow chest with deep girth",
+      "groom": {
+        "maneLengthFactor": 0.63,
+        "tailLengthFactor": 0.88,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/akhal-coat.webp",
+        "sha256": "5d57b86d1b8957deae81eb96eaa28685fa5cfc17add76833d1498277e967f098",
+        "description": "Golden buckskin",
+        "colorSrgb": [
+          0.8152506478027833,
+          0.6799757283637317,
+          0.43662706741680085
+        ],
+        "hairColorSrgb": [
+          0.5838314900602575,
+          0.4731206227190587,
+          0.2849349091180111
+        ],
+        "hairColorLinear": [
+          0.3,
+          0.19,
+          0.066
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "percheron": {
+      "id": "percheron",
+      "label": "Percheron",
+      "file": "./models/native-roster/percheron.bin",
+      "sha256": "eba2c995e5ccd6bfba6118c696f0f449e067d3925bd933ab92fa2a45714236c5",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.0002069909795630833
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 8.445089059950828e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 4.6607294653221896e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1.1650339456793402e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.0003870011154163039
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 8.494840808353985e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.00046940008074050247
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 5.834599165412487e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 0.00021542005439860744
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 3.422030964087214e-06
+          }
+        }
+      ],
+      "withersM": 1.73,
+      "sourceWithersM": 1.8267783010120824,
+      "actorScale": 0.9470224159338522,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.766923962101741,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.03,
+        "barrel_width": 1.21,
+        "body_depth": 1.14,
+        "neck_length": 0.98,
+        "neck_thickness": 1.16,
+        "head_length": 1,
+        "head_width": 1.09,
+        "ear_length": 0.98,
+        "limb_length": 1.03,
+        "hoof_width": 1.2,
+        "hindquarter_width": 1.2,
+        "face_profile_depth_per_withers": 0.003,
+        "neck_arch_rise_per_withers": 0.04
+      },
+      "conformation": "Deep powerful draft frame and broad muscular quarters",
+      "groom": {
+        "maneLengthFactor": 1.15,
+        "tailLengthFactor": 1.1,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/percheron-coat.webp",
+        "sha256": "883aed999954f0b94df0507c55a236b388d9639a04ce91f2b1f53a3ab65ced89",
+        "description": "Steel dapple grey",
+        "colorSrgb": [
+          0.6651850846308363,
+          0.6872171460034034,
+          0.708369650344471
+        ],
+        "hairColorSrgb": [
+          0.6342527406021728,
+          0.649956455014496,
+          0.6651850846308363
+        ],
+        "hairColorLinear": [
+          0.36,
+          0.38,
+          0.4
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "shire": {
+      "id": "shire",
+      "label": "Shire",
+      "file": "./models/native-roster/shire.bin",
+      "sha256": "3552dd40a09b6fa973e4971993ed393db09a775d3063d26b45fef83049e0161f",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.00023255602429573667
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 9.774750305039148e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 8.284300658583297e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1.4257033494949016e-06
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.0008373814481532952
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 1.0812760661974298e-05
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.0005153125064579436
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 5.586235554821398e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 0.0002364040910187245
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 4.2900579667118e-06
+          }
+        }
+      ],
+      "withersM": 1.82,
+      "sourceWithersM": 1.836252276706379,
+      "actorScale": 0.9911492135843502,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7710442835124085,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.05,
+        "barrel_width": 1.23,
+        "body_depth": 1.16,
+        "neck_length": 1.07,
+        "neck_thickness": 1.18,
+        "head_length": 1.1,
+        "head_width": 1.08,
+        "ear_length": 1.15,
+        "limb_length": 1.07,
+        "hoof_width": 1.25,
+        "hindquarter_width": 1.23,
+        "face_profile_depth_per_withers": 0.012,
+        "neck_arch_rise_per_withers": 0.055
+      },
+      "conformation": "Largest substantial draft exemplar, deep ribs and long quarters",
+      "groom": {
+        "maneLengthFactor": 1.38,
+        "tailLengthFactor": 1.14,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/shire-coat.webp",
+        "sha256": "cf1d1ceb8b8a2810f5731c09738e7368e29897b9f52e928eb74f018ccf22b381",
+        "description": "Black with white stockings and blaze",
+        "colorSrgb": [
+          0.22658293452509176,
+          0.19966344000447378,
+          0.1828126611222896
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "clyde": {
+      "id": "clyde",
+      "label": "Clydesdale",
+      "file": "./models/native-roster/clyde.bin",
+      "sha256": "d59e832c89e6b6b76f80abf644e6d9470e75c0ae2e706d2faa40ac2bb0a0f1ac",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 0.0001708548300379278
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 6.253467022799299e-06
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 8.244967810336756e-05
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1.6841588523648183e-07
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 0.0006153227704722901
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 8.866266434734704e-06
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 0.000339207717565606
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 5.559078733868514e-06
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 0.00015386568243409937
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 3.3361627471232547e-06
+          }
+        }
+      ],
+      "withersM": 1.78,
+      "sourceWithersM": 1.8239334060628098,
+      "actorScale": 0.9759128233976231,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7586833192804059,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.05,
+        "barrel_width": 1.15,
+        "body_depth": 1.1,
+        "neck_length": 1.11,
+        "neck_thickness": 1.13,
+        "head_length": 1.09,
+        "head_width": 1.08,
+        "ear_length": 1.16,
+        "limb_length": 1.11,
+        "hoof_width": 1.23,
+        "hindquarter_width": 1.15,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.053
+      },
+      "conformation": "Tall energetic draft with less squat silhouette",
+      "groom": {
+        "maneLengthFactor": 1.28,
+        "tailLengthFactor": 1.12,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/clyde-coat.webp",
+        "sha256": "b7828f7c186ec9626ad02ed7637736f9cd4182ad7f3bd9ef625c0432687203df",
+        "description": "Bright bay with wide blaze and stockings",
+        "colorSrgb": [
+          0.6872171460034034,
+          0.42358287124447963,
+          0.2527895373391935
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    },
+    "bay-sporthorse": {
+      "id": "bay-sporthorse",
+      "label": "Bay Sporthorse",
+      "file": "./models/native-roster/bay-sporthorse.bin",
+      "sha256": "1ba3bdabbb7dd6641cfd71fc01409b38883e7aa8c3ac68d0925709b1d8b67b12",
+      "byteLength": 728256,
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "name": "Horse.001_M_Body_0",
+          "vertexCount": 16159,
+          "positionDelta": {
+            "byteOffset": 0,
+            "count": 48477,
+            "scale": 2.1760858843060287e-05
+          },
+          "normalDelta": {
+            "byteOffset": 96954,
+            "count": 48477,
+            "scale": 6.396266083209388e-07
+          }
+        },
+        {
+          "meshIndex": 1,
+          "name": "Horse.001_M_Eye_0",
+          "vertexCount": 2028,
+          "positionDelta": {
+            "byteOffset": 193908,
+            "count": 6084,
+            "scale": 1e-10
+          },
+          "normalDelta": {
+            "byteOffset": 206076,
+            "count": 6084,
+            "scale": 1e-10
+          }
+        },
+        {
+          "meshIndex": 2,
+          "name": "Horse.001_M_Hair_0",
+          "vertexCount": 23514,
+          "positionDelta": {
+            "byteOffset": 218244,
+            "count": 70542,
+            "scale": 2.371622880271423e-05
+          },
+          "normalDelta": {
+            "byteOffset": 359328,
+            "count": 70542,
+            "scale": 7.892306564139259e-07
+          }
+        },
+        {
+          "meshIndex": 3,
+          "name": "Horse.001_M_Saddle2_0",
+          "vertexCount": 13895,
+          "positionDelta": {
+            "byteOffset": 500412,
+            "count": 41685,
+            "scale": 1.5602337839720694e-05
+          },
+          "normalDelta": {
+            "byteOffset": 583782,
+            "count": 41685,
+            "scale": 4.96933011525013e-07
+          }
+        },
+        {
+          "meshIndex": 4,
+          "name": "Horse.001_M_Saddle1_0",
+          "vertexCount": 5092,
+          "positionDelta": {
+            "byteOffset": 667152,
+            "count": 15276,
+            "scale": 6.748124315373141e-06
+          },
+          "normalDelta": {
+            "byteOffset": 697704,
+            "count": 15276,
+            "scale": 1.5406873302977259e-07
+          }
+        }
+      ],
+      "withersM": 1.64,
+      "sourceWithersM": 1.786953975350221,
+      "actorScale": 0.9177628649773031,
+      "sourceSeat": [
+        6.225790382362317e-09,
+        1.7380817122270678,
+        1.6744842715166992
+      ],
+      "sourceTranslation": [
+        -6.225790382362317e-09,
+        0.0047147771075021355,
+        -1.6744842715166992
+      ],
+      "sculptTargets": {
+        "body_length": 1.015,
+        "barrel_width": 1,
+        "body_depth": 1,
+        "neck_length": 1,
+        "neck_thickness": 1,
+        "head_length": 1,
+        "head_width": 1,
+        "ear_length": 1,
+        "limb_length": 1.02,
+        "hoof_width": 1,
+        "hindquarter_width": 1,
+        "face_profile_depth_per_withers": 0,
+        "neck_arch_rise_per_withers": 0.022
+      },
+      "conformation": "Chosen taller athletic cross with less bulk",
+      "groom": {
+        "maneLengthFactor": 1.0,
+        "tailLengthFactor": 1.0,
+        "preservedSourceCardTopology": true
+      },
+      "coat": {
+        "file": "./models/native-roster/bay-sporthorse-coat.webp",
+        "sha256": "138928e248f4dcb5ce6d753d9cd028860b0782360a363c2aba878786bce47633",
+        "description": "Warm bay with black points",
+        "colorSrgb": [
+          0.6576277214849644,
+          0.48452920448170694,
+          0.32272611513876776
+        ],
+        "hairColorSrgb": [
+          0.11207493935437163,
+          0.08610420435002503,
+          0.06100854008843736
+        ],
+        "hairColorLinear": [
+          0.012,
+          0.008,
+          0.005
+        ],
+        "neutralFile": "./models/native-roster/neutralcoat.png",
+        "originalUVsPreserved": true
+      },
+      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+    }
+  }
+}

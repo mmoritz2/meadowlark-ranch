@@ -1,0 +1,46 @@
+{
+  "errors": [],
+  "rows": [
+    {
+      "key": "bay",
+      "bones": 677,
+      "horn": false,
+      "wings": true,
+      "oldRemoved": true,
+      "sameController": true,
+      "sameMaterial": true,
+      "materialCount": 5,
+      "afterCount": 5,
+      "bodyMaterial": "M_Body",
+      "flight": {
+        "flying": true,
+        "open": 0.9986940466839541,
+        "visible": true
+      }
+    },
+    {
+      "key": "unicorn",
+      "bones": 677,
+      "horn": false,
+      "wings": false,
+      "oldRemoved": true,
+      "sameController": true,
+      "sameMaterial": true,
+      "materialCount": 6,
+      "afterCount": 6,
+      "bodyMaterial": "M_Body"
+    },
+    {
+      "key": "pegasus",
+      "bones": 677,
+      "horn": true,
+      "wings": true,
+      "oldRemoved": true,
+      "sameController": true,
+      "sameMaterial": true,
+      "materialCount": 6,
+      "afterCount": 6,
+      "bodyMaterial": "M_Body"
+    }
+  ]
+}

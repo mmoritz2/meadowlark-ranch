@@ -1,0 +1,476 @@
+{
+  "render": "Actual production Breed Studio, native677 rig, source Western tack, rest pose",
+  "errors": [],
+  "records": [
+    {
+      "key": "chameleon",
+      "sha256": "560ca4d57e922e2cb41d138ce34b67b91f63a2ac7acfdd35c95e2bde6512ceea",
+      "bytes": 26244,
+      "bones": 677,
+      "vertices": 60688,
+      "projectedBounds": {
+        "left": -0.4948760647407826,
+        "top": 0.8347568608093907,
+        "right": 0.665076979645789,
+        "bottom": -0.8117774680193891
+      },
+      "asset": {
+        "file": "../review/native-trot-reference-kit/white/model.glb",
+        "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "artist": "WildMesh 3D",
+        "license": "CC BY-NC 4.0",
+        "current": true,
+        "artistBreed": false,
+        "nativeBreed": true,
+        "referenceMotion": false,
+        "geometryHash": "bb55a522",
+        "conformation": "Selected hardy ranch individual, moderate substance",
+        "coat": "Golden palomino with ivory mane",
+        "bones": 677,
+        "bodyMesh": "Object_684",
+        "availableClips": [
+          "Target Native Walk Rollover",
+          "Target Native Trot",
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Gallop Left",
+          "Target Native Gallop Right",
+          "Horse|Horse_Idle",
+          "Target Native Jump"
+        ],
+        "supportedModes": [
+          "rest",
+          "stand",
+          "walk",
+          "trot",
+          "canter",
+          "gallop",
+          "jump"
+        ]
+      }
+    },
+    {
+      "key": "connemara",
+      "sha256": "2eea525028b5af247ae9fe0800bda41662ec3705db52ecb5930cf12c335e261a",
+      "bytes": 30862,
+      "bones": 677,
+      "vertices": 60688,
+      "projectedBounds": {
+        "left": -0.5003040992498725,
+        "top": 0.8347339183910486,
+        "right": 0.6663239957989615,
+        "bottom": -0.8121526645177221
+      },
+      "asset": {
+        "file": "../review/native-trot-reference-kit/white/model.glb",
+        "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "artist": "WildMesh 3D",
+        "license": "CC BY-NC 4.0",
+        "current": true,
+        "artistBreed": false,
+        "nativeBreed": true,
+        "referenceMotion": false,
+        "geometryHash": "89f66905",
+        "conformation": "Robust small riding horse, strong broad back and loin",
+        "coat": "Mouse dun with dark dorsal stripe",
+        "bones": 677,
+        "bodyMesh": "Object_684",
+        "availableClips": [
+          "Target Native Walk Rollover",
+          "Target Native Trot",
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Gallop Left",
+          "Target Native Gallop Right",
+          "Horse|Horse_Idle",
+          "Target Native Jump"
+        ],
+        "supportedModes": [
+          "rest",
+          "stand",
+          "walk",
+          "trot",
+          "canter",
+          "gallop",
+          "jump"
+        ]
+      }
+    },
+    {
+      "key": "suffolk",
+      "sha256": "950969136b206bee49dec313409af6d0775f02b6a618a43f29e65138c2fe7858",
+      "bytes": 24424,
+      "bones": 677,
+      "vertices": 60688,
+      "projectedBounds": {
+        "left": -0.5059932425045923,
+        "top": 0.8347370197663557,
+        "right": 0.6662430961119175,
+        "bottom": -0.8105773207035826
+      },
+      "asset": {
+        "file": "../review/native-trot-reference-kit/white/model.glb",
+        "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "artist": "WildMesh 3D",
+        "license": "CC BY-NC 4.0",
+        "current": true,
+        "artistBreed": false,
+        "nativeBreed": true,
+        "referenceMotion": false,
+        "geometryHash": "298a4234",
+        "conformation": "Deep powerful draft frame and broad muscular quarters",
+        "coat": "Steel dapple grey",
+        "bones": 677,
+        "bodyMesh": "Object_684",
+        "availableClips": [
+          "Target Native Walk Rollover",
+          "Target Native Trot",
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Gallop Left",
+          "Target Native Gallop Right",
+          "Horse|Horse_Idle",
+          "Target Native Jump"
+        ],
+        "supportedModes": [
+          "rest",
+          "stand",
+          "walk",
+          "trot",
+          "canter",
+          "gallop",
+          "jump"
+        ]
+      }
+    },
+    {
+      "key": "rockymtn",
+      "sha256": "6df7650a455dd911a3a5a1ae3797e3191e1e52d473599c0235114f1b3a8af7ac",
+      "bytes": 22164,
+      "bones": 677,
+      "vertices": 60688,
+      "projectedBounds": {
+        "left": -0.49398487945272956,
+        "top": 0.8346921474236941,
+        "right": 0.6697266999133517,
+        "bottom": -0.8114648883600777
+      },
+      "asset": {
+        "file": "../review/native-trot-reference-kit/white/model.glb",
+        "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "artist": "WildMesh 3D",
+        "license": "CC BY-NC 4.0",
+        "current": true,
+        "artistBreed": false,
+        "nativeBreed": true,
+        "referenceMotion": false,
+        "geometryHash": "277b7c01",
+        "conformation": "Compact strong short-backed horse",
+        "coat": "Seal bay with black points",
+        "bones": 677,
+        "bodyMesh": "Object_684",
+        "availableClips": [
+          "Target Native Walk Rollover",
+          "Target Native Trot",
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Gallop Left",
+          "Target Native Gallop Right",
+          "Horse|Horse_Idle",
+          "Target Native Jump"
+        ],
+        "supportedModes": [
+          "rest",
+          "stand",
+          "walk",
+          "trot",
+          "canter",
+          "gallop",
+          "jump"
+        ]
+      }
+    },
+    {
+      "key": "hanover",
+      "sha256": "bc7fdff025b0ff37754a2b9db9aba5802ebdae2cdb464895a5a3e1311bf7ec2e",
+      "bytes": 21460,
+      "bones": 677,
+      "vertices": 60688,
+      "projectedBounds": {
+        "left": -0.5039078258772582,
+        "top": 0.8348314689137044,
+        "right": 0.6710586243392888,
+        "bottom": -0.8091816142323833
+      },
+      "asset": {
+        "file": "../review/native-trot-reference-kit/white/model.glb",
+        "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "artist": "WildMesh 3D",
+        "license": "CC BY-NC 4.0",
+        "current": true,
+        "artistBreed": false,
+        "nativeBreed": true,
+        "referenceMotion": false,
+        "geometryHash": "5699d1f7",
+        "conformation": "Tall lean speed athlete, prominent withers, sloping shoulder",
+        "coat": "Dark bay with a small star",
+        "bones": 677,
+        "bodyMesh": "Object_684",
+        "availableClips": [
+          "Target Native Walk Rollover",
+          "Target Native Trot",
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Gallop Left",
+          "Target Native Gallop Right",
+          "Horse|Horse_Idle",
+          "Target Native Jump"
+        ],
+        "supportedModes": [
+          "rest",
+          "stand",
+          "walk",
+          "trot",
+          "canter",
+          "gallop",
+          "jump"
+        ]
+      }
+    },
+    {
+      "key": "camargue",
+      "sha256": "6f9e2752faef914dc02f23a4957419ebec90091d68ae2bf73ff715493c2ddee2",
+      "bytes": 22418,
+      "bones": 677,
+      "vertices": 60688,
+      "projectedBounds": {
+        "left": -0.4954067393888679,
+        "top": 0.8347466974687943,
+        "right": 0.6718984190921031,
+        "bottom": -0.8105865848104963
+      },
+      "asset": {
+        "file": "../review/native-trot-reference-kit/white/model.glb",
+        "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "artist": "WildMesh 3D",
+        "license": "CC BY-NC 4.0",
+        "current": true,
+        "artistBreed": false,
+        "nativeBreed": true,
+        "referenceMotion": false,
+        "geometryHash": "bae26a5c",
+        "conformation": "Compact baroque muscular riding build",
+        "coat": "Mature pale grey with darker muzzle",
+        "bones": 677,
+        "bodyMesh": "Object_684",
+        "availableClips": [
+          "Target Native Walk Rollover",
+          "Target Native Trot",
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Gallop Left",
+          "Target Native Gallop Right",
+          "Horse|Horse_Idle",
+          "Target Native Jump"
+        ],
+        "supportedModes": [
+          "rest",
+          "stand",
+          "walk",
+          "trot",
+          "canter",
+          "gallop",
+          "jump"
+        ]
+      }
+    },
+    {
+      "key": "lusitano",
+      "sha256": "9d0d66c0d019ed26cf6b43015b59da8538a795c45e976a5678fdd71fb5253565",
+      "bytes": 22074,
+      "bones": 677,
+      "vertices": 60688,
+      "projectedBounds": {
+        "left": -0.4967331469796708,
+        "top": 0.8347971103586417,
+        "right": 0.669538670157478,
+        "bottom": -0.8103945993165763
+      },
+      "asset": {
+        "file": "../review/native-trot-reference-kit/white/model.glb",
+        "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "artist": "WildMesh 3D",
+        "license": "CC BY-NC 4.0",
+        "current": true,
+        "artistBreed": false,
+        "nativeBreed": true,
+        "referenceMotion": false,
+        "geometryHash": "3a0c0c33",
+        "conformation": "Baroque riding horse, rounded muscular quarters",
+        "coat": "Dapple grey with charcoal points",
+        "bones": 677,
+        "bodyMesh": "Object_684",
+        "availableClips": [
+          "Target Native Walk Rollover",
+          "Target Native Trot",
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Gallop Left",
+          "Target Native Gallop Right",
+          "Horse|Horse_Idle",
+          "Target Native Jump"
+        ],
+        "supportedModes": [
+          "rest",
+          "stand",
+          "walk",
+          "trot",
+          "canter",
+          "gallop",
+          "jump"
+        ]
+      }
+    },
+    {
+      "key": "firefly",
+      "sha256": "1ce0460a3990b3d204d8659c3f2607145ad103e9661e473a956d0172188c29f7",
+      "bytes": 23286,
+      "bones": 677,
+      "vertices": 60688,
+      "projectedBounds": {
+        "left": -0.49657381694102415,
+        "top": 0.8346629098449252,
+        "right": 0.6748011809593691,
+        "bottom": -0.8108012039968474
+      },
+      "asset": {
+        "file": "../review/native-trot-reference-kit/white/model.glb",
+        "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "artist": "WildMesh 3D",
+        "license": "CC BY-NC 4.0",
+        "current": true,
+        "artistBreed": false,
+        "nativeBreed": true,
+        "referenceMotion": false,
+        "geometryHash": "ce48e39e",
+        "conformation": "Refined compact athlete, short back, near-level croup",
+        "coat": "Copper chestnut with fine dark red mane",
+        "bones": 677,
+        "bodyMesh": "Object_684",
+        "availableClips": [
+          "Target Native Walk Rollover",
+          "Target Native Trot",
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Gallop Left",
+          "Target Native Gallop Right",
+          "Horse|Horse_Idle",
+          "Target Native Jump"
+        ],
+        "supportedModes": [
+          "rest",
+          "stand",
+          "walk",
+          "trot",
+          "canter",
+          "gallop",
+          "jump"
+        ]
+      }
+    },
+    {
+      "key": "opaline",
+      "sha256": "5d5e24b72409f8af3ca4b22b8efbb8926d5d57dca465f0e4fda9206c7ebe209b",
+      "bytes": 20076,
+      "bones": 677,
+      "vertices": 61690,
+      "projectedBounds": {
+        "left": -0.4867315108378536,
+        "top": 0.8345097940097949,
+        "right": 0.6755257813028358,
+        "bottom": -0.800190552552741
+      },
+      "asset": {
+        "file": "../review/native-trot-reference-kit/white/model.glb",
+        "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "artist": "WildMesh 3D",
+        "license": "CC BY-NC 4.0",
+        "current": true,
+        "artistBreed": false,
+        "nativeBreed": true,
+        "referenceMotion": false,
+        "geometryHash": "bae26a5c",
+        "conformation": "Compact baroque muscular riding build",
+        "coat": "Mature pale grey with darker muzzle",
+        "bones": 677,
+        "bodyMesh": "Object_684",
+        "availableClips": [
+          "Target Native Walk Rollover",
+          "Target Native Trot",
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Gallop Left",
+          "Target Native Gallop Right",
+          "Horse|Horse_Idle",
+          "Target Native Jump"
+        ],
+        "supportedModes": [
+          "rest",
+          "stand",
+          "walk",
+          "trot",
+          "canter",
+          "gallop",
+          "jump"
+        ]
+      }
+    },
+    {
+      "key": "daybreak",
+      "sha256": "6f4a25c5f9f1505cee387c7f87ec37b6310d103ac5cc9f4def15348012b9c140",
+      "bytes": 23708,
+      "bones": 677,
+      "vertices": 60688,
+      "projectedBounds": {
+        "left": -0.49858475103069466,
+        "top": 0.83471729984206,
+        "right": 0.6692571503971597,
+        "bottom": -0.8124830283138139
+      },
+      "asset": {
+        "file": "../review/native-trot-reference-kit/white/model.glb",
+        "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+        "artist": "WildMesh 3D",
+        "license": "CC BY-NC 4.0",
+        "current": true,
+        "artistBreed": false,
+        "nativeBreed": true,
+        "referenceMotion": false,
+        "geometryHash": "f84bfc99",
+        "conformation": "Small athletic muscular horse, harmonious rounded barrel",
+        "coat": "Copper chestnut with flaxen mane and blaze",
+        "bones": 677,
+        "bodyMesh": "Object_684",
+        "availableClips": [
+          "Target Native Walk Rollover",
+          "Target Native Trot",
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Gallop Left",
+          "Target Native Gallop Right",
+          "Horse|Horse_Idle",
+          "Target Native Jump"
+        ],
+        "supportedModes": [
+          "rest",
+          "stand",
+          "walk",
+          "trot",
+          "canter",
+          "gallop",
+          "jump"
+        ]
+      }
+    }
+  ]
+}

@@ -276,7 +276,7 @@ export function install(G){
  const TRAITS=T.TRAITS;
  G.horse.sourceRule((ctx,b)=>{const src=G.horse.breedSrc(b); if(ctx==='summon'&&src==='summon')return true; if(ctx==='shop'&&src!=='shop')return false; return undefined;});
  /* body models for the new keys, without touching the model manifest */
- try{for(const row of NEW_BREEDS){const o=row[7]||{};if(o.body&&G.horse.breedModels&&G.horse.breedModels.alias)G.horse.breedModels.alias(row[0],o.body);}}catch(e){}
+ try{for(const row of NEW_BREEDS){const o=row[7]||{};if(o.body&&G.horse.breedModels&&G.horse.breedModels.alias)G.horse.breedModels.alias(row[0],o.body,row);}}catch(e){}
 
  /* ---- 2. fantasy themes: shared shader module + the inline mirrors --------------------- */
  for(const k in NEW_THEMES){const th=NEW_THEMES[k];

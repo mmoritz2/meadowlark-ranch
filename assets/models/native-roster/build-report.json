@@ -1,0 +1,1307 @@
+{
+  "sourceSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+  "rows": [
+    {
+      "id": "bay",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.7513966989023315,
+          "maxPositionQuantizationErrorM": 1.230223295316835e-06,
+          "maxAppearanceDeltaM": 0.050984216438517645,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 0.9694097230900931,
+          "maxPositionQuantizationErrorM": 4.108334144814645e-07,
+          "maxAppearanceDeltaM": 0.017650087207249962,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.7514005026443477,
+          "maxPositionQuantizationErrorM": 5.584168091212516e-07,
+          "maxAppearanceDeltaM": 0.028926784824552347,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.7514649648885765,
+          "maxPositionQuantizationErrorM": 1.7047750285651408e-06,
+          "maxAppearanceDeltaM": 0.041902220686776806,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.096954786067097,
+          "maxPositionQuantizationErrorM": 7.826097158855705e-07,
+          "maxAppearanceDeltaM": 0.03195577988904028,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "ca1dcf544abb19e478ac0813f5ae59290beccc09cccda9680343089dcdb600e7",
+      "byteLength": 728256,
+      "actorScale": 0.8476899263786155,
+      "withersM": 1.52,
+      "sourceWithersM": 1.7931084854264285,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "chestnut",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.5511505317232809,
+          "maxPositionQuantizationErrorM": 1.564394449947815e-06,
+          "maxAppearanceDeltaM": 0.07123923691054569,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 0.9274531499652509,
+          "maxPositionQuantizationErrorM": 9.808788223229735e-07,
+          "maxAppearanceDeltaM": 0.04078088660038598,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.5511508352795956,
+          "maxPositionQuantizationErrorM": 3.190615268756267e-06,
+          "maxAppearanceDeltaM": 0.12409718739845367,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.5511504596864005,
+          "maxPositionQuantizationErrorM": 3.3331939934476754e-06,
+          "maxAppearanceDeltaM": 0.09502779967743827,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.281142608891843,
+          "maxPositionQuantizationErrorM": 1.5529143025998497e-06,
+          "maxAppearanceDeltaM": 0.06809244302115187,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "01d8f25146d2be5b4fae8d5e53fc1db3651a7d37f306ef824c8358c53ebc2962",
+      "byteLength": 728256,
+      "actorScale": 0.5623242575193446,
+      "withersM": 1.02,
+      "sourceWithersM": 1.8139000520796686,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "palomino",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.9643443564493522,
+          "maxPositionQuantizationErrorM": 3.0394512741814583e-07,
+          "maxAppearanceDeltaM": 0.013145859813752186,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0296471035595094,
+          "maxPositionQuantizationErrorM": 2.344071993208394e-07,
+          "maxAppearanceDeltaM": 0.011936511589402638,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.9666661889833136,
+          "maxPositionQuantizationErrorM": 1.2851663851317874e-06,
+          "maxAppearanceDeltaM": 0.04953909630931033,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.973748540563519,
+          "maxPositionQuantizationErrorM": 2.4850216072604354e-07,
+          "maxAppearanceDeltaM": 0.011836606984563286,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.0184473620440078,
+          "maxPositionQuantizationErrorM": 1.6197007681930215e-07,
+          "maxAppearanceDeltaM": 0.0070677966974864006,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "f6ee5303eb51f6b62100f1601fd86bd16ee85f584b5540f00d2d99227f9117b6",
+      "byteLength": 728256,
+      "actorScale": 0.810625425757807,
+      "withersM": 1.45,
+      "sourceWithersM": 1.7887423141760923,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "haflinger",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.7394343419635029,
+          "maxPositionQuantizationErrorM": 9.03192773805522e-07,
+          "maxAppearanceDeltaM": 0.042653303803850164,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 0.9506880460248612,
+          "maxPositionQuantizationErrorM": 3.276931099810796e-07,
+          "maxAppearanceDeltaM": 0.01319722931190502,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.7394394324965986,
+          "maxPositionQuantizationErrorM": 4.179835629285537e-06,
+          "maxAppearanceDeltaM": 0.1636591407931177,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.7395346278077486,
+          "maxPositionQuantizationErrorM": 2.04430451015029e-06,
+          "maxAppearanceDeltaM": 0.05728588499750678,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.175964819847951,
+          "maxPositionQuantizationErrorM": 9.636153168244246e-07,
+          "maxAppearanceDeltaM": 0.04128940353726074,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "d9daaf78d28991d7be44ba9e45e98ea9a015887f611009074b966f2ff1de071b",
+      "byteLength": 728256,
+      "actorScale": 0.8035055378476845,
+      "withersM": 1.45,
+      "sourceWithersM": 1.8045924162315696,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "grey",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.9012620920533556,
+          "maxPositionQuantizationErrorM": 1.3888508908051308e-06,
+          "maxAppearanceDeltaM": 0.054019282854774114,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0363485706181736,
+          "maxPositionQuantizationErrorM": 2.5560652793167467e-07,
+          "maxAppearanceDeltaM": 0.010229587997277948,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.9548546934580467,
+          "maxPositionQuantizationErrorM": 3.6237795494041895e-06,
+          "maxAppearanceDeltaM": 0.1441966539368966,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.9279240794266529,
+          "maxPositionQuantizationErrorM": 1.1306118180635064e-06,
+          "maxAppearanceDeltaM": 0.045923716491113466,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.0788991852598855,
+          "maxPositionQuantizationErrorM": 5.992672815934111e-07,
+          "maxAppearanceDeltaM": 0.023995964231177794,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "e65c13551cddb5304974ae4846816a1d838b3bf56465858a20fd8cd85432b066",
+      "byteLength": 728256,
+      "actorScale": 0.8786846541304494,
+      "withersM": 1.6,
+      "sourceWithersM": 1.8209035431298932,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "black",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.8142387842530571,
+          "maxPositionQuantizationErrorM": 1.995573996015984e-06,
+          "maxAppearanceDeltaM": 0.07759433960662016,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0130392360564155,
+          "maxPositionQuantizationErrorM": 3.2833393207177556e-07,
+          "maxAppearanceDeltaM": 0.013508800329254845,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.8142440105375635,
+          "maxPositionQuantizationErrorM": 8.718580850153407e-06,
+          "maxAppearanceDeltaM": 0.3392748978470836,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.8143437702802332,
+          "maxPositionQuantizationErrorM": 1.9051453088738066e-06,
+          "maxAppearanceDeltaM": 0.06638377407756821,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.1563174799641753,
+          "maxPositionQuantizationErrorM": 8.858466850098475e-07,
+          "maxAppearanceDeltaM": 0.037199563391819145,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "b0cb1d641edb47cb5339485642969671bee287168c663f62a0d61b31575b2dad",
+      "byteLength": 728256,
+      "actorScale": 0.8942272156187178,
+      "withersM": 1.64,
+      "sourceWithersM": 1.8339857827579988,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "pinto",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.9195369561253974,
+          "maxPositionQuantizationErrorM": 7.554781636602253e-07,
+          "maxAppearanceDeltaM": 0.03173386929432781,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0239418799712734,
+          "maxPositionQuantizationErrorM": 1.740460198674235e-07,
+          "maxAppearanceDeltaM": 0.007088760999387549,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.9195370403732145,
+          "maxPositionQuantizationErrorM": 1.2766831613165828e-06,
+          "maxAppearanceDeltaM": 0.049539084810002645,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.9195369361141398,
+          "maxPositionQuantizationErrorM": 1.16953710427536e-06,
+          "maxAppearanceDeltaM": 0.027898683748247253,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.0757017250756693,
+          "maxPositionQuantizationErrorM": 5.296498040907561e-07,
+          "maxAppearanceDeltaM": 0.02130380030065945,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "0cb283c8e25784e34cfa704df736e5ad200a3c3e1d628711112ae1b1dea4fe44",
+      "byteLength": 728256,
+      "actorScale": 0.863321190470604,
+      "withersM": 1.55,
+      "sourceWithersM": 1.795392047721059,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "appaloosa",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.9329882024557112,
+          "maxPositionQuantizationErrorM": 5.839659587965316e-07,
+          "maxAppearanceDeltaM": 0.029287935224975196,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0090199999787337,
+          "maxPositionQuantizationErrorM": 6.175977147396346e-08,
+          "maxAppearanceDeltaM": 0.0026388916079988626,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.9406015749246401,
+          "maxPositionQuantizationErrorM": 8.158482840467649e-07,
+          "maxAppearanceDeltaM": 0.031589304868102255,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.9574488534376461,
+          "maxPositionQuantizationErrorM": 7.416840453934096e-07,
+          "maxAppearanceDeltaM": 0.024925682594986096,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.0343474936890242,
+          "maxPositionQuantizationErrorM": 3.522086695797536e-07,
+          "maxAppearanceDeltaM": 0.017261867836653906,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "1f0e7c0b0bacae87ad5d3d5dc8574865e626e582a3612e4a0fe449812ae1a0d5",
+      "byteLength": 728256,
+      "actorScale": 0.8598054213101979,
+      "withersM": 1.54,
+      "sourceWithersM": 1.7911029191387289,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "sunset",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.6130156025386179,
+          "maxPositionQuantizationErrorM": 9.260950209245125e-07,
+          "maxAppearanceDeltaM": 0.03903847941910584,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 0.9529947424196016,
+          "maxPositionQuantizationErrorM": 1.6934474813637847e-07,
+          "maxAppearanceDeltaM": 0.0075848333402573995,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.6106248166202997,
+          "maxPositionQuantizationErrorM": 2.5456945813946405e-06,
+          "maxAppearanceDeltaM": 0.09903848813392845,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.6135103035382203,
+          "maxPositionQuantizationErrorM": 8.550607526916511e-07,
+          "maxAppearanceDeltaM": 0.036768165755595945,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 0.8854183640766379,
+          "maxPositionQuantizationErrorM": 5.044145911532436e-07,
+          "maxAppearanceDeltaM": 0.020697790553805488,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "ed74a03ac807c43b56849994eb8b5421040d87fee1ed2d36cd12d7953fe86c08",
+      "byteLength": 728256,
+      "actorScale": 0.838013152601677,
+      "withersM": 1.5,
+      "sourceWithersM": 1.789948040007646,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "iceland",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.8969965432017714,
+          "maxPositionQuantizationErrorM": 6.653987102159286e-07,
+          "maxAppearanceDeltaM": 0.02792294309848562,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0195795499689606,
+          "maxPositionQuantizationErrorM": 3.262839224985797e-07,
+          "maxAppearanceDeltaM": 0.015968981149285473,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.8969966421121323,
+          "maxPositionQuantizationErrorM": 4.678871684359181e-06,
+          "maxAppearanceDeltaM": 0.17908585973352886,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.896996519711262,
+          "maxPositionQuantizationErrorM": 1.5743614489174722e-06,
+          "maxAppearanceDeltaM": 0.037736530313253504,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.12156751718142,
+          "maxPositionQuantizationErrorM": 6.686741674267074e-07,
+          "maxAppearanceDeltaM": 0.0285589078393347,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "8fe26cbbbfe235fd81831deae40ee9127a6d9c83e05d94e8db3cf857d93ed8bd",
+      "byteLength": 728256,
+      "actorScale": 0.7651438734840629,
+      "withersM": 1.38,
+      "sourceWithersM": 1.8035823690467592,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "welsh",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.5677106036966161,
+          "maxPositionQuantizationErrorM": 1.0113718801069845e-06,
+          "maxAppearanceDeltaM": 0.03968149076037231,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 0.9156088698529408,
+          "maxPositionQuantizationErrorM": 2.266411393687872e-07,
+          "maxAppearanceDeltaM": 0.009221945022502447,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.5677197246127281,
+          "maxPositionQuantizationErrorM": 1.9166519039348846e-06,
+          "maxAppearanceDeltaM": 0.07433866163451268,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.5678933834054452,
+          "maxPositionQuantizationErrorM": 5.142886204842349e-07,
+          "maxAppearanceDeltaM": 0.02260418631059142,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.013740349892629,
+          "maxPositionQuantizationErrorM": 3.100519949302748e-07,
+          "maxAppearanceDeltaM": 0.015552618459217146,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "0af77ee90e0d8190acc35e050443333ae10665f9039b6029254b3bb1ca44b2e1",
+      "byteLength": 728256,
+      "actorScale": 0.6636444261616585,
+      "withersM": 1.19,
+      "sourceWithersM": 1.793128900189279,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "stock",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.9400133178694247,
+          "maxPositionQuantizationErrorM": 2.180925314300816e-07,
+          "maxAppearanceDeltaM": 0.010118478585078625,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0009196999686092,
+          "maxPositionQuantizationErrorM": 9.311823772968152e-08,
+          "maxAppearanceDeltaM": 0.003958269917584028,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.940677785582253,
+          "maxPositionQuantizationErrorM": 1.41538509548679e-06,
+          "maxAppearanceDeltaM": 0.054624726182496204,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.9347447131023675,
+          "maxPositionQuantizationErrorM": 2.0340830802261668e-07,
+          "maxAppearanceDeltaM": 0.010035623928063984,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 0.966049307089363,
+          "maxPositionQuantizationErrorM": 9.945515213071432e-08,
+          "maxAppearanceDeltaM": 0.003931614042595409,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "9d906ff04732bcd11592bce1437cb1f8dade3e062afb0245e770be9429403c64",
+      "byteLength": 728256,
+      "actorScale": 0.8686588546961173,
+      "withersM": 1.55,
+      "sourceWithersM": 1.7843598688028526,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "fjord",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.8474878259533678,
+          "maxPositionQuantizationErrorM": 1.3929413793535087e-06,
+          "maxAppearanceDeltaM": 0.06240811036113941,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0113067999711616,
+          "maxPositionQuantizationErrorM": 5.698383456755411e-07,
+          "maxAppearanceDeltaM": 0.027435860518865023,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.8473998478559758,
+          "maxPositionQuantizationErrorM": 8.544206546755637e-06,
+          "maxAppearanceDeltaM": 0.3315686533062765,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.9040871063137339,
+          "maxPositionQuantizationErrorM": 3.2465822746054852e-06,
+          "maxAppearanceDeltaM": 0.08463987236047661,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.257281307503022,
+          "maxPositionQuantizationErrorM": 1.463572864651152e-06,
+          "maxAppearanceDeltaM": 0.0622106240699791,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "259adf614e29cb9cbd9b5bb38b172af6d3cbb8d6ddfae1258f813d3920a03f3a",
+      "byteLength": 728256,
+      "actorScale": 0.7761249771443578,
+      "withersM": 1.42,
+      "sourceWithersM": 1.8296022442476845,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "morgan",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.766997405004785,
+          "maxPositionQuantizationErrorM": 1.039350494819113e-06,
+          "maxAppearanceDeltaM": 0.04019602538434323,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 0.979347492037144,
+          "maxPositionQuantizationErrorM": 2.6174262378547414e-07,
+          "maxAppearanceDeltaM": 0.011192648174106902,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.7670023766315684,
+          "maxPositionQuantizationErrorM": 2.4135108313478297e-06,
+          "maxAppearanceDeltaM": 0.09461851626715616,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.7672050228984606,
+          "maxPositionQuantizationErrorM": 7.471636159702403e-07,
+          "maxAppearanceDeltaM": 0.02699724650127183,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.0292891756374176,
+          "maxPositionQuantizationErrorM": 4.220263247554638e-07,
+          "maxAppearanceDeltaM": 0.017356490182403365,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "176dd003fe6029ef4dae2eb3f754f17fb617247c6defd1419a34eedea824262b",
+      "byteLength": 728256,
+      "actorScale": 0.8393637978536996,
+      "withersM": 1.52,
+      "sourceWithersM": 1.8108953517970698,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "thoro",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.757489030455323,
+          "maxPositionQuantizationErrorM": 8.380804817658269e-07,
+          "maxAppearanceDeltaM": 0.03409554039246502,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0358353499740554,
+          "maxPositionQuantizationErrorM": 5.195856099484945e-07,
+          "maxAppearanceDeltaM": 0.02164111601371993,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.8034890379572551,
+          "maxPositionQuantizationErrorM": 3.1420463485151313e-06,
+          "maxAppearanceDeltaM": 0.12359683478378523,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.7273593342334642,
+          "maxPositionQuantizationErrorM": 1.5557831498446271e-06,
+          "maxAppearanceDeltaM": 0.0400852514511282,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 0.8215176129435628,
+          "maxPositionQuantizationErrorM": 7.08509533933042e-07,
+          "maxAppearanceDeltaM": 0.027906020335752763,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "d6261a3164afa6fca69e8d79fbe3b856d75dbcb471a4387c4509d5b699cecc3f",
+      "byteLength": 728256,
+      "actorScale": 0.9383673208259842,
+      "withersM": 1.66,
+      "sourceWithersM": 1.7690300622775408,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "knab",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.9355777118270405,
+          "maxPositionQuantizationErrorM": 6.197921323440895e-07,
+          "maxAppearanceDeltaM": 0.029673799803269996,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.08119936133583,
+          "maxPositionQuantizationErrorM": 2.604657044323232e-07,
+          "maxAppearanceDeltaM": 0.010497630395999696,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.9410666008682087,
+          "maxPositionQuantizationErrorM": 1.2255000860258744e-06,
+          "maxAppearanceDeltaM": 0.04734286410336372,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.9640767011767055,
+          "maxPositionQuantizationErrorM": 5.963552264357563e-07,
+          "maxAppearanceDeltaM": 0.023897888071959444,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.0200220770002364,
+          "maxPositionQuantizationErrorM": 3.170621364035384e-07,
+          "maxAppearanceDeltaM": 0.015612595571932708,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "815ae0c534b24b88e27cb6408cd4308fedc83185b7562f6cd2def363b609a20e",
+      "byteLength": 728256,
+      "actorScale": 0.9136904692877638,
+      "withersM": 1.64,
+      "sourceWithersM": 1.7949185803354235,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "vanner",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.7834142608262489,
+          "maxPositionQuantizationErrorM": 1.6613972005789448e-06,
+          "maxAppearanceDeltaM": 0.08258218262029804,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.071765079015184,
+          "maxPositionQuantizationErrorM": 5.763582279590694e-07,
+          "maxAppearanceDeltaM": 0.02323552899197349,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.7833671165251805,
+          "maxPositionQuantizationErrorM": 7.244234917495929e-06,
+          "maxAppearanceDeltaM": 0.28331631608045976,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.8755895891396059,
+          "maxPositionQuantizationErrorM": 3.7196737330502825e-06,
+          "maxAppearanceDeltaM": 0.10481579632264836,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.335765360812293,
+          "maxPositionQuantizationErrorM": 1.6872660050410175e-06,
+          "maxAppearanceDeltaM": 0.07533298232932627,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "ffd006da8a808c287410fb147688bde72e3b9c20e05c8a9bf8496d6a858250ac",
+      "byteLength": 728256,
+      "actorScale": 0.8207562795929052,
+      "withersM": 1.5,
+      "sourceWithersM": 1.8275827274133065,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "marwari",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.8525466065237719,
+          "maxPositionQuantizationErrorM": 9.235357857412073e-07,
+          "maxAppearanceDeltaM": 0.04183144998350682,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0638141041294076,
+          "maxPositionQuantizationErrorM": 6.196234808544061e-07,
+          "maxAppearanceDeltaM": 0.024984026458880544,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.9330215181406422,
+          "maxPositionQuantizationErrorM": 8.673667478192815e-07,
+          "maxAppearanceDeltaM": 0.03358221797096355,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.9060126717386214,
+          "maxPositionQuantizationErrorM": 9.14724032595766e-07,
+          "maxAppearanceDeltaM": 0.03609473646853273,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 0.9219023053242991,
+          "maxPositionQuantizationErrorM": 2.6513780359605584e-07,
+          "maxAppearanceDeltaM": 0.010530700639517845,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "0391e61b8ad20098673c8931fe152a902e77d1fec09323b9891b0f8693e78d91",
+      "byteLength": 728256,
+      "actorScale": 0.8814883670031307,
+      "withersM": 1.58,
+      "sourceWithersM": 1.7924229736254573,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "lipiz",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.8974990773056486,
+          "maxPositionQuantizationErrorM": 1.681551910292227e-06,
+          "maxAppearanceDeltaM": 0.06577033945167811,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0649204233381016,
+          "maxPositionQuantizationErrorM": 1.9717554499511358e-07,
+          "maxAppearanceDeltaM": 0.009172412316927272,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.8970647594699571,
+          "maxPositionQuantizationErrorM": 3.872646988157048e-06,
+          "maxAppearanceDeltaM": 0.15606277227384688,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.8972943599599619,
+          "maxPositionQuantizationErrorM": 1.6406889501780704e-06,
+          "maxAppearanceDeltaM": 0.059903130668986115,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.1338417975848931,
+          "maxPositionQuantizationErrorM": 8.462467069413641e-07,
+          "maxAppearanceDeltaM": 0.03404666332152936,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "97997fc863a5b0d28853ba19451ca6f75dca80efe75d56dbcc34edbb02419c39",
+      "byteLength": 728256,
+      "actorScale": 0.8519734001869655,
+      "withersM": 1.56,
+      "sourceWithersM": 1.8310430814596537,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "sport",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.9726164621609843,
+          "maxPositionQuantizationErrorM": 9.405070185428312e-07,
+          "maxAppearanceDeltaM": 0.036649305604707125,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0543648499669165,
+          "maxPositionQuantizationErrorM": 3.989925443461121e-07,
+          "maxAppearanceDeltaM": 0.01666291566259442,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.974064310677711,
+          "maxPositionQuantizationErrorM": 2.433542747822054e-06,
+          "maxAppearanceDeltaM": 0.09554926558889106,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.9852009790732495,
+          "maxPositionQuantizationErrorM": 6.25176087392207e-07,
+          "maxAppearanceDeltaM": 0.022755520046574905,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.02318560299404,
+          "maxPositionQuantizationErrorM": 3.025938567514044e-07,
+          "maxAppearanceDeltaM": 0.012301696994110038,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "df35826e54a9297ca4fe077b07229f283b7618dc3d0ba225674b12a8cb8bb246",
+      "byteLength": 728256,
+      "actorScale": 0.9307639531961933,
+      "withersM": 1.68,
+      "sourceWithersM": 1.8049689120759032,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "akhal",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.5984910522449414,
+          "maxPositionQuantizationErrorM": 1.4658992228118512e-06,
+          "maxAppearanceDeltaM": 0.0586774320403665,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.045742879958374,
+          "maxPositionQuantizationErrorM": 9.194205612719512e-07,
+          "maxAppearanceDeltaM": 0.03819338847695471,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.6890310845200416,
+          "maxPositionQuantizationErrorM": 5.1343351900650285e-06,
+          "maxAppearanceDeltaM": 0.20389390236621732,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.5526168154093586,
+          "maxPositionQuantizationErrorM": 2.470316586060685e-06,
+          "maxAppearanceDeltaM": 0.06635927392063654,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 0.7028468416222697,
+          "maxPositionQuantizationErrorM": 1.1387640736793698e-06,
+          "maxAppearanceDeltaM": 0.04528648570589541,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "0c536c220d31fba3ba80d96471a7940dbf68f0051f4efc7f9ba1f4ddb11addc4",
+      "byteLength": 728256,
+      "actorScale": 0.9022540456679599,
+      "withersM": 1.59,
+      "sourceWithersM": 1.7622531122294782,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "percheron",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.7717992102936955,
+          "maxPositionQuantizationErrorM": 1.753511027741246e-06,
+          "maxAppearanceDeltaM": 0.08954818272039074,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.080907555344243,
+          "maxPositionQuantizationErrorM": 3.9242516275867254e-07,
+          "maxAppearanceDeltaM": 0.015300037293847745,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.7717990010144613,
+          "maxPositionQuantizationErrorM": 3.2856243045682583e-06,
+          "maxAppearanceDeltaM": 0.12887352270147895,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.8753417584035484,
+          "maxPositionQuantizationErrorM": 4.0160614136704385e-06,
+          "maxAppearanceDeltaM": 0.11087654833060683,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.3376080456603763,
+          "maxPositionQuantizationErrorM": 1.809850979464709e-06,
+          "maxAppearanceDeltaM": 0.07944126767964603,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "eba2c995e5ccd6bfba6118c696f0f449e067d3925bd933ab92fa2a45714236c5",
+      "byteLength": 728256,
+      "actorScale": 0.9470224159338522,
+      "withersM": 1.73,
+      "sourceWithersM": 1.8267783010120824,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "shire",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.7385519050249655,
+          "maxPositionQuantizationErrorM": 1.9573199430736956e-06,
+          "maxAppearanceDeltaM": 0.10249049664387615,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.2468345549174737,
+          "maxPositionQuantizationErrorM": 6.839777118736359e-07,
+          "maxAppearanceDeltaM": 0.028480724737560165,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.7385521688560891,
+          "maxPositionQuantizationErrorM": 7.108516944287171e-06,
+          "maxAppearanceDeltaM": 0.27862193647358746,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.8523034019741755,
+          "maxPositionQuantizationErrorM": 4.282681874663061e-06,
+          "maxAppearanceDeltaM": 0.12308887069713466,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.3554590692105464,
+          "maxPositionQuantizationErrorM": 1.9459734275713326e-06,
+          "maxAppearanceDeltaM": 0.08767672649083383,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "3552dd40a09b6fa973e4971993ed393db09a775d3063d26b45fef83049e0161f",
+      "byteLength": 728256,
+      "actorScale": 0.9911492135843502,
+      "withersM": 1.82,
+      "sourceWithersM": 1.836252276706379,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "clyde",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.8429430346706506,
+          "maxPositionQuantizationErrorM": 1.4544608504856735e-06,
+          "maxAppearanceDeltaM": 0.06659073046388564,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.2485987999575017,
+          "maxPositionQuantizationErrorM": 6.986359997354788e-07,
+          "maxAppearanceDeltaM": 0.02857450254767902,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.842943032420909,
+          "maxPositionQuantizationErrorM": 5.1407262608383675e-06,
+          "maxAppearanceDeltaM": 0.20453816537289932,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.9228330064533309,
+          "maxPositionQuantizationErrorM": 2.8324391834165472e-06,
+          "maxAppearanceDeltaM": 0.07928412436808466,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 1.215976579447657,
+          "maxPositionQuantizationErrorM": 1.2775642712919171e-06,
+          "maxAppearanceDeltaM": 0.056744438869215603,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "d59e832c89e6b6b76f80abf644e6d9470e75c0ae2e706d2faa40ac2bb0a0f1ac",
+      "byteLength": 728256,
+      "actorScale": 0.9759128233976231,
+      "withersM": 1.78,
+      "sourceWithersM": 1.8239334060628098,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    },
+    {
+      "id": "bay-sporthorse",
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "vertices": 16159,
+          "minCageJacobianDeterminant": 0.9924118254225899,
+          "maxPositionQuantizationErrorM": 1.8314574823936884e-07,
+          "maxAppearanceDeltaM": 0.007134062350808046,
+          "fixedLowerVertices": 3054
+        },
+        {
+          "meshIndex": 1,
+          "vertices": 2028,
+          "minCageJacobianDeterminant": 1.0000000000002245,
+          "maxPositionQuantizationErrorM": 2.2247786310271853e-16,
+          "maxAppearanceDeltaM": 2.2247786310271853e-16,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 2,
+          "vertices": 23514,
+          "minCageJacobianDeterminant": 0.9924115914430874,
+          "maxPositionQuantizationErrorM": 2.0187159655620973e-07,
+          "maxAppearanceDeltaM": 0.00777511253384211,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 3,
+          "vertices": 13895,
+          "minCageJacobianDeterminant": 0.9924116326157083,
+          "maxPositionQuantizationErrorM": 1.2874825887575704e-07,
+          "maxAppearanceDeltaM": 0.00511817229616196,
+          "fixedLowerVertices": 0
+        },
+        {
+          "meshIndex": 4,
+          "vertices": 5092,
+          "minCageJacobianDeterminant": 0.9935785212930679,
+          "maxPositionQuantizationErrorM": 5.477678925587491e-08,
+          "maxAppearanceDeltaM": 0.002211947268003611,
+          "fixedLowerVertices": 0
+        }
+      ],
+      "sha256": "1ba3bdabbb7dd6641cfd71fc01409b38883e7aa8c3ac68d0925709b1d8b67b12",
+      "byteLength": 728256,
+      "actorScale": 0.9177628649773031,
+      "withersM": 1.64,
+      "sourceWithersM": 1.786953975350221,
+      "unchangedRigJoints": 677,
+      "bodyBelow065mExactlyPreserved": true
+    }
+  ],
+  "distinctBodyDeltaHashes": 25,
+  "allApprovedMotionAndRigDataUnchanged": true
+}

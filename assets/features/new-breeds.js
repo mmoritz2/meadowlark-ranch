@@ -234,7 +234,7 @@ export function install(G){
 
  /* ---- 1. rows, bodies, coats, ceilings, perks, sources ------------------------------------ */
  for(const r of ROWS){ if(!byKey(r[0]))BREEDS3.push(r); }
- try{for(const r of ROWS){if(r[7].body&&H.breedModels&&H.breedModels.alias)H.breedModels.alias(r[0],r[7].body);}}catch(e){}
+ try{for(const r of ROWS){if(r[7].body&&H.breedModels&&H.breedModels.alias)H.breedModels.alias(r[0],r[7].body,r);}}catch(e){}
  for(const k in CEIL){const c=CEIL[k];T.BREED_CEIL[k]={speed:c[0],stamina:c[1],jump:c[2],accel:c[3],agility:c[4]};}
  if(R){
   for(const k in COATS)if(!R.COATS3[k])R.COATS3[k]=COATS[k].map(v=>{const o=v.slice();if(R.tameHex)o[2]=R.tameHex(o[2]);return o;});   // the roster's soft knee on pale coats, as its own table gets

@@ -1,5 +1,5 @@
-import {createNativeGroomLayer} from './native-groom-layer.mjs?v=native-secondary-1';
-import {prepareNativeHoofFlex} from './native-hoof-flex.mjs?v=complete-gaits-2';
+import {createNativeGroomLayer} from './native-groom-layer.mjs?v=native-roster-1';
+import {prepareNativeHoofFlex} from './native-hoof-flex.mjs?v=native-roster-1';
 // The Ranch finishes these after all actor travel and terrain transforms.
 const pendingHorseGrooms=new Set();
 export function finishNativeHorseGrooms(){for(const finish of pendingHorseGrooms)finish();}
@@ -124,7 +124,7 @@ function createCreatorMotion({THREE,root,clips,profile}={}){
 
 export function getNativeHorseCapabilities(rig){
  if(!rig?.profile?.nativeBreed&&!rig?.profile?.referenceMotion)return null;
- const profile=rig.profile,scale=rig.scene?.getWorldScale(rig.scene.position.clone().set(1,1,1)).z||1,referenceFlight=!!(profile.referenceMotion&&(rig.nativeCanFly||rig.fantasyAppearance?.wings));
+ const profile=rig.profile,scale=rig.scene?.getWorldScale(rig.scene.position.clone().set(1,1,1)).z||1,referenceFlight=!!((profile.referenceMotion||profile.nativeRoster)&&(rig.nativeCanFly||rig.nativeFantasy?.pair||rig.fantasyAppearance?.wings));
  return {native:true,nativeKind:profile.nativeKind,maxSpeedMps:profile.nativeMaxSpeedMps*Math.abs(scale),flightMaxSpeedMps:referenceFlight?13:(profile.nativeGaits?.fly?.nominalSpeedMps||0)*Math.abs(scale),nominalMaxSpeedMps:profile.nativeMaxSpeedMps,worldScale:Math.abs(scale),supportedModes:rig.heroMotion?.availableModes||['rest','stand',...Object.keys(profile.nativeGaits||{})],canJump:!!profile.nativeJump,canGallop:!!profile.nativeGaits?.gallopLeft,canFly:!!profile.nativeCanFly||referenceFlight,speedBasis:profile.nativeSpeedBasis||'Measured stance backflow of checked native horse clips'};
 }
 

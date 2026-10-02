@@ -15,7 +15,7 @@
    Owned by that package: edit only this file and the inline hot spots assigned to it
    (masteryOf, the mastery block of renderCare, riderSeat's bareback line, riderLegs' saddle
    test, grantStatXp's 'sxp' factor). See index.js for the contract. Nothing runs at import. */
-import {createHorseStyle} from '../horse-style.js';
+import {createHorseStyle} from '../horse-style.js?v=native-roster-1';
 export const id='mastery-style';
 export function install(G){
  const {THREE,$}=G, T=G.tables, player=G.horse.player;
@@ -262,7 +262,7 @@ export function install(G){
   return L;
  }
  function applyPlayerLook(force){ const rig=RIG(), h=ridden(); if(!rig||!rig.ready||!rig.skin||!player.mesh||!h)return null; const L=applyLook(rig,player.mesh,h,force);
-  try{ const horn=player.parts&&player.parts.horn; if(horn)HS.horn(horn,!!(h.fx&&h.fx.horn)); }catch(e){} return L; }
+  try{ const horn=rig.nativeFantasy?.horn||(player.parts&&player.parts.horn); if(horn)HS.horn(horn,!!(h.fx&&h.fx.horn)); }catch(e){} return L; }
  G.on('attachTack',()=>{applyPlayerLook();applyWild();});
  G.on('coat',()=>{applyPlayerLook();});
  G.on('rebuild',()=>{applyPlayerLook();});
