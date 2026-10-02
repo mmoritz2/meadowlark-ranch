@@ -1,0 +1,2016 @@
+{
+  "base": "http://127.0.0.1:8584",
+  "unrouted": true,
+  "pins": {
+    "review/native-front-hoof-kit/review.html": "20bf01ef171665fa330ddeaf9732b8fe67d4aa885051b201fbc74c227426baaa",
+    "review/native-front-hoof-kit/viewer.mjs": "264f5adb19f00d0e87803a2123f0e27b1f48962f7e9095d9c284230958e3f639",
+    "review/native-front-hoof-kit/config.json": "18e6e550f868891d4815ac875bc26280da07e90db5b661fb1b9adfd4582259ec",
+    "assets/native-horse-motion.js": "e1855f0d5de2430d7c5def5441679ff42e0bb6c89d21137aec35a9c73ee8d049",
+    "assets/native-hoof-flex.mjs": "c96101951681c195e31cc07cdfc3bf525800e238f5760ef4499131caf7dcd8fa",
+    "assets/native-hoof-controls.mjs": "09b93a47ed1325f1ac8c05e06ed20c5b1c7a7fc3260d484a0ba4bcdfa24f533a",
+    "assets/native-breed-profiles.js": "dc1bdea100fb7490cc9c4673a94050065d781ffb70fa1b37be5b62b89c3afffe",
+    "review/native-front-hoof-kit/white/model.glb": "6aee1b94a4d5b1c8f7580569ba32ca6248c0a4c29b4b3e26d790fb4ac53d562e",
+    "review/native-trot-reference-kit/white/model.glb": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+    "review/native-front-hoof-kit/bay/model.glb": "8f4bf91cee542b8535335ce1e2a62c67e778a9bc95448db8674b880645c9aefa",
+    "review/native-trot-reference-kit/bay/model.glb": "611b009fcdd348f8e5ccd58be7d9e3bc6829a54180bf94ef59abeba281272979",
+    "review/native-front-hoof-kit/sporthorse/model.glb": "e3e917cefff70e124b51f92ab52fff4423023665411f9d3f6a660ca02a23a1f0",
+    "review/native-trot-reference-kit/sporthorse/model.glb": "feb8e040cfb385eafade0bcfa03e6dcde5b5a5b48589074960a8cba9329d707f"
+  },
+  "responses": [
+    {
+      "file": "review/native-front-hoof-kit/review.html",
+      "url": "http://127.0.0.1:8584/review/native-front-hoof-kit/review.html?horse=white-western&gait=trot",
+      "status": 200,
+      "bytes": 2511,
+      "sha256": "20bf01ef171665fa330ddeaf9732b8fe67d4aa885051b201fbc74c227426baaa",
+      "method": "browser response body",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Fri, 02 Oct 2026 12:00:00 GMT",
+      "httpLastModified": null,
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "review/native-front-hoof-kit/viewer.mjs",
+      "url": "http://127.0.0.1:8584/review/native-front-hoof-kit/viewer.mjs?v=native-hoof-view-2",
+      "status": 200,
+      "bytes": 6843,
+      "sha256": "264f5adb19f00d0e87803a2123f0e27b1f48962f7e9095d9c284230958e3f639",
+      "method": "browser response body",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Fri, 02 Oct 2026 12:12:53 GMT",
+      "httpLastModified": null,
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "assets/native-horse-motion.js",
+      "url": "http://127.0.0.1:8584/assets/native-horse-motion.js?v=native-hoof-flex-2",
+      "status": 200,
+      "bytes": 14527,
+      "sha256": "e1855f0d5de2430d7c5def5441679ff42e0bb6c89d21137aec35a9c73ee8d049",
+      "method": "browser response body",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Fri, 02 Oct 2026 12:12:53 GMT",
+      "httpLastModified": null,
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "assets/native-breed-profiles.js",
+      "url": "http://127.0.0.1:8584/assets/native-breed-profiles.js?v=native-hoof-flex-2",
+      "status": 200,
+      "bytes": 7338,
+      "sha256": "dc1bdea100fb7490cc9c4673a94050065d781ffb70fa1b37be5b62b89c3afffe",
+      "method": "browser response body",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Fri, 02 Oct 2026 12:31:26 GMT",
+      "httpLastModified": null,
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "assets/native-hoof-flex.mjs",
+      "url": "http://127.0.0.1:8584/assets/native-hoof-flex.mjs?v=native-hoof-flex-2",
+      "status": 200,
+      "bytes": 5429,
+      "sha256": "c96101951681c195e31cc07cdfc3bf525800e238f5760ef4499131caf7dcd8fa",
+      "method": "browser response body",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Fri, 02 Oct 2026 12:16:56 GMT",
+      "httpLastModified": null,
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "assets/native-hoof-controls.mjs",
+      "url": "http://127.0.0.1:8584/assets/native-hoof-controls.mjs?v=native-hoof-flex-2",
+      "status": 200,
+      "bytes": 37716,
+      "sha256": "09b93a47ed1325f1ac8c05e06ed20c5b1c7a7fc3260d484a0ba4bcdfa24f533a",
+      "method": "browser response body",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Thu, 01 Oct 2026 20:17:39 GMT",
+      "httpLastModified": null,
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "review/native-front-hoof-kit/config.json",
+      "url": "http://127.0.0.1:8584/review/native-front-hoof-kit/config.json?v=native-hoof-view-2",
+      "status": 200,
+      "bytes": 109896,
+      "sha256": "18e6e550f868891d4815ac875bc26280da07e90db5b661fb1b9adfd4582259ec",
+      "method": "browser response body",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Fri, 02 Oct 2026 12:31:26 GMT",
+      "httpLastModified": null,
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "review/native-front-hoof-kit/white/model.glb",
+      "url": "http://127.0.0.1:8584/review/native-front-hoof-kit/white/model.glb",
+      "status": 200,
+      "bytes": 28535188,
+      "sha256": "6aee1b94a4d5b1c8f7580569ba32ca6248c0a4c29b4b3e26d790fb4ac53d562e",
+      "method": "independent full GET of the browser model URL",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Thu, 01 Oct 2026 20:23:21 GMT",
+      "httpLastModified": "Thu, 01 Oct 2026 20:23:21 GMT",
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "review/native-trot-reference-kit/white/model.glb",
+      "url": "http://127.0.0.1:8584/review/native-trot-reference-kit/white/model.glb",
+      "status": 200,
+      "bytes": 28557020,
+      "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+      "method": "independent full GET of the browser model URL",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Fri, 02 Oct 2026 12:31:26 GMT",
+      "httpLastModified": "Fri, 02 Oct 2026 12:31:26 GMT",
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "review/native-front-hoof-kit/bay/model.glb",
+      "url": "http://127.0.0.1:8584/review/native-front-hoof-kit/bay/model.glb",
+      "status": 200,
+      "bytes": 16467684,
+      "sha256": "8f4bf91cee542b8535335ce1e2a62c67e778a9bc95448db8674b880645c9aefa",
+      "method": "independent full GET of the browser model URL",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Thu, 01 Oct 2026 20:19:23 GMT",
+      "httpLastModified": "Thu, 01 Oct 2026 20:19:23 GMT",
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "review/native-trot-reference-kit/bay/model.glb",
+      "url": "http://127.0.0.1:8584/review/native-trot-reference-kit/bay/model.glb",
+      "status": 200,
+      "bytes": 16530792,
+      "sha256": "611b009fcdd348f8e5ccd58be7d9e3bc6829a54180bf94ef59abeba281272979",
+      "method": "independent full GET of the browser model URL",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Fri, 02 Oct 2026 12:30:08 GMT",
+      "httpLastModified": "Fri, 02 Oct 2026 12:30:08 GMT",
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "review/native-front-hoof-kit/sporthorse/model.glb",
+      "url": "http://127.0.0.1:8584/review/native-front-hoof-kit/sporthorse/model.glb",
+      "status": 200,
+      "bytes": 17077804,
+      "sha256": "e3e917cefff70e124b51f92ab52fff4423023665411f9d3f6a660ca02a23a1f0",
+      "method": "independent full GET of the browser model URL",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Thu, 01 Oct 2026 20:19:24 GMT",
+      "httpLastModified": "Thu, 01 Oct 2026 20:19:24 GMT",
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    },
+    {
+      "file": "review/native-trot-reference-kit/sporthorse/model.glb",
+      "url": "http://127.0.0.1:8584/review/native-trot-reference-kit/sporthorse/model.glb",
+      "status": 200,
+      "bytes": 17140912,
+      "sha256": "feb8e040cfb385eafade0bcfa03e6dcde5b5a5b48589074960a8cba9329d707f",
+      "method": "independent full GET of the browser model URL",
+      "browserEtag": null,
+      "httpEtag": null,
+      "browserLastModified": "Fri, 02 Oct 2026 12:30:17 GMT",
+      "httpLastModified": "Fri, 02 Oct 2026 12:30:17 GMT",
+      "etagMatch": true,
+      "lastModifiedMatch": true
+    }
+  ],
+  "bodyReadErrors": [],
+  "errors": [],
+  "horses": [
+    {
+      "horse": "white-western",
+      "peak": {
+        "horse": "white-western",
+        "comparing": true,
+        "labelsHidden": false,
+        "labels": [
+          "Before",
+          "Updated · same stride phase"
+        ],
+        "play": "Play",
+        "speed": "1",
+        "slider": 0.698,
+        "studio": "http://127.0.0.1:8584/breeds.html?horse=white-western&v=native-hoof-flex-2",
+        "rigs": {
+          "baseline": {
+            "clip": "Target Native Trot",
+            "phase": 0.6976,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.13736191832866446,
+                  "finalMinimumM": 0.14780759805159221,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.14780759805159221,
+                  "maxAddedLocalAngleDeg": 11.999336906847251
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0013401096095426168,
+                  "finalMinimumM": 0.0013401096095426168,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0013401096095426168,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.19999998807907104,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          },
+          "candidate": {
+            "clip": "Target Native Trot",
+            "phase": 0.6976,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.13736191832866446,
+                  "finalMinimumM": 0.19434425563719127,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.19434425563719127,
+                  "maxAddedLocalAngleDeg": 29.99836497475944
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0013401096095426168,
+                  "finalMinimumM": 0.0013401096095426168,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0013401096095426168,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.10000002384185791,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          }
+        }
+      },
+      "controls": {
+        "before": true,
+        "after": true,
+        "compare": true,
+        "halfSpeed": true,
+        "normalSpeed": true,
+        "whole": true,
+        "close": true
+      },
+      "halfSpeed": {
+        "horse": "white-western",
+        "comparing": true,
+        "labelsHidden": false,
+        "labels": [
+          "Before",
+          "Updated · same stride phase"
+        ],
+        "play": "Pause",
+        "speed": ".5",
+        "slider": 0.779,
+        "studio": "http://127.0.0.1:8584/breeds.html?horse=white-western&v=native-hoof-flex-2",
+        "rigs": {
+          "baseline": {
+            "clip": "Target Native Trot",
+            "phase": 0.77864166344636,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.129309031009342,
+                  "finalMinimumM": 0.12140510049905208,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.12140510049905208,
+                  "maxAddedLocalAngleDeg": 8.948541070526852
+                },
+                "FR": {
+                  "sourceMinimumM": 0.001958956648017457,
+                  "finalMinimumM": 0.001958956648017457,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.001958956648017457,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.19999998807907104,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 0.5,
+            "nativeHoofFlex": true
+          },
+          "candidate": {
+            "clip": "Target Native Trot",
+            "phase": 0.77864166344636,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.12462009936772252,
+                  "finalMinimumM": 0.12112763505569725,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.12112763505569725,
+                  "maxAddedLocalAngleDeg": 22.371346006393008
+                },
+                "FR": {
+                  "sourceMinimumM": 0.001958956648017457,
+                  "finalMinimumM": 0.001958956648017457,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.001958956648017457,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.10000002384185791,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 0.5,
+            "nativeHoofFlex": true
+          }
+        }
+      },
+      "normalSpeed": {
+        "horse": "white-western",
+        "comparing": true,
+        "labelsHidden": false,
+        "labels": [
+          "Before",
+          "Updated · same stride phase"
+        ],
+        "play": "Pause",
+        "speed": "1",
+        "slider": 0.895,
+        "studio": "http://127.0.0.1:8584/breeds.html?horse=white-western&v=native-hoof-flex-2",
+        "rigs": {
+          "baseline": {
+            "clip": "Target Native Trot",
+            "phase": 0.8945444366185753,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.05569613455807618,
+                  "finalMinimumM": 0.054987656559977074,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.054987656559977074,
+                  "maxAddedLocalAngleDeg": 0.18370918394305477
+                },
+                "FR": {
+                  "sourceMinimumM": 0.00013361586937825354,
+                  "finalMinimumM": 0.00013361586937825354,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.00013361586937825354,
+                  "maxAddedLocalAngleDeg": 0.016461137184940314
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.19999998807907104,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          },
+          "candidate": {
+            "clip": "Target Native Trot",
+            "phase": 0.8945444366185753,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.030152268030095686,
+                  "finalMinimumM": 0.02979870174057138,
+                  "gate": 0.6912929683324835,
+                  "requestedGate": 0.6912929683324835,
+                  "requestedMinimumM": 0.02979870174057138,
+                  "maxAddedLocalAngleDeg": 0.3177469637068074
+                },
+                "FR": {
+                  "sourceMinimumM": 0.00013361586937825354,
+                  "finalMinimumM": 0.00013361586937825354,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.00013361586937825354,
+                  "maxAddedLocalAngleDeg": 0.016461137184940314
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.10000002384185791,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          }
+        }
+      },
+      "gaits": [
+        {
+          "gait": "walk",
+          "horse": "white-western",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.061,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=white-western&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Walk Rollover",
+              "phase": 0.06099999999999994,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.04510637073989553,
+                    "finalMinimumM": 0.03770266574558416,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.03770266574558416,
+                    "maxAddedLocalAngleDeg": 12.000334833255703
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0010203612262670164,
+                    "finalMinimumM": 0.0010203612262670164,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010203612262670164,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.09999999403953552,
+                "maxCostMs": 0.19999998807907104,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Walk Rollover",
+              "phase": 0.06099999999999994,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.04510637073989553,
+                    "finalMinimumM": 0.06090916481925786,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.06090916481925786,
+                    "maxAddedLocalAngleDeg": 30.000838173867564
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0010203612262670164,
+                    "finalMinimumM": 0.0010203612262670164,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010203612262670164,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.10000002384185791,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        },
+        {
+          "gait": "trot",
+          "horse": "white-western",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.698,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=white-western&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Trot",
+              "phase": 0.6976,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.13736191832866446,
+                    "finalMinimumM": 0.14780759805159221,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.14780759805159221,
+                    "maxAddedLocalAngleDeg": 11.999336906847251
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0013401096095426168,
+                    "finalMinimumM": 0.0013401096095426168,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0013401096095426168,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.19999998807907104,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Trot",
+              "phase": 0.6976,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.13736191832866446,
+                    "finalMinimumM": 0.19434425563719127,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.19434425563719127,
+                    "maxAddedLocalAngleDeg": 29.99836497475944
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0013401096095426168,
+                    "finalMinimumM": 0.0013401096095426168,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0013401096095426168,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.09999999403953552,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        },
+        {
+          "gait": "canterLeft",
+          "horse": "white-western",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.156,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=white-western&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Canter Left",
+              "phase": 0.15599999999999992,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.14105439183025553,
+                    "finalMinimumM": 0.15151522762570657,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.15151522762570657,
+                    "maxAddedLocalAngleDeg": 11.999797782616067
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.044299438809773606,
+                    "finalMinimumM": 0.04429935712983711,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.04429935712983711,
+                    "maxAddedLocalAngleDeg": 0.02123673131463903
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.19999998807907104,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Canter Left",
+              "phase": 0.15599999999999992,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.14105439183025553,
+                    "finalMinimumM": 0.1980726179767306,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.1980726179767306,
+                    "maxAddedLocalAngleDeg": 29.999530945561034
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.044299438809773606,
+                    "finalMinimumM": 0.04429923411701957,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.04429923411701957,
+                    "maxAddedLocalAngleDeg": 0.02123838168545015
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        },
+        {
+          "gait": "canterRight",
+          "horse": "white-western",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.916,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=white-western&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Canter Right",
+              "phase": 0.9159999999999999,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.1429254695890173,
+                    "finalMinimumM": 0.15337498907158426,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.15337498907158426,
+                    "maxAddedLocalAngleDeg": 11.999491784698359
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0370966151274585,
+                    "finalMinimumM": 0.03709661512745853,
+                    "gate": 0.9663411371913914,
+                    "requestedGate": 0.9663411371913914,
+                    "requestedMinimumM": 0.03709661512745853,
+                    "maxAddedLocalAngleDeg": 0.0000017075472925031877
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.09999999403953552,
+                "maxCostMs": 0.19999998807907104,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Canter Right",
+              "phase": 0.9159999999999999,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.1429254695890173,
+                    "finalMinimumM": 0.19991702423246832,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.19991702423246832,
+                    "maxAddedLocalAngleDeg": 29.998753256227552
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0370966151274585,
+                    "finalMinimumM": 0.03709661512745853,
+                    "gate": 0.9663411371913914,
+                    "requestedGate": 0.9663411371913914,
+                    "requestedMinimumM": 0.03709661512745853,
+                    "maxAddedLocalAngleDeg": 0.0000017075472925031877
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "horse": "bay-western",
+      "peak": {
+        "horse": "bay-western",
+        "comparing": true,
+        "labelsHidden": false,
+        "labels": [
+          "Before",
+          "Updated · same stride phase"
+        ],
+        "play": "Play",
+        "speed": "1",
+        "slider": 0.698,
+        "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-western&v=native-hoof-flex-2",
+        "rigs": {
+          "baseline": {
+            "clip": "Target Native Trot",
+            "phase": 0.6976,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.09304138217680097,
+                  "finalMinimumM": 0.09532762055561242,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.09532762055561242,
+                  "maxAddedLocalAngleDeg": 12.000223298122997
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0010178676135128573,
+                  "finalMinimumM": 0.0010178676135128573,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0010178676135128573,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0.09999999403953552,
+              "maxCostMs": 0.10000002384185791,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          },
+          "candidate": {
+            "clip": "Target Native Trot",
+            "phase": 0.6976,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.09304138217680097,
+                  "finalMinimumM": 0.12624001002753393,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.12624001002753393,
+                  "maxAddedLocalAngleDeg": 30.000560303212705
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0010178676135128573,
+                  "finalMinimumM": 0.0010178676135128573,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0010178676135128573,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.09999999403953552,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          }
+        }
+      },
+      "controls": {
+        "before": true,
+        "after": true,
+        "compare": true,
+        "halfSpeed": true,
+        "normalSpeed": true,
+        "whole": true,
+        "close": true
+      },
+      "halfSpeed": {
+        "horse": "bay-western",
+        "comparing": true,
+        "labelsHidden": false,
+        "labels": [
+          "Before",
+          "Updated · same stride phase"
+        ],
+        "play": "Pause",
+        "speed": ".5",
+        "slider": 0.779,
+        "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-western&v=native-hoof-flex-2",
+        "rigs": {
+          "baseline": {
+            "clip": "Target Native Trot",
+            "phase": 0.7785722190046751,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.08630286617036438,
+                  "finalMinimumM": 0.08220935835268126,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.08220935835268126,
+                  "maxAddedLocalAngleDeg": 8.960837373025653
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0011703925305665136,
+                  "finalMinimumM": 0.0011703925305665136,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0011703925305665136,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0.09999999403953552,
+              "maxCostMs": 0.10000002384185791,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 0.5,
+            "nativeHoofFlex": true
+          },
+          "candidate": {
+            "clip": "Target Native Trot",
+            "phase": 0.7785722190046751,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.08301724829662206,
+                  "finalMinimumM": 0.08696785941938909,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.08696785941938909,
+                  "maxAddedLocalAngleDeg": 22.402091227955594
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0011703925305665136,
+                  "finalMinimumM": 0.0011703925305665136,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0011703925305665136,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.09999999403953552,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 0.5,
+            "nativeHoofFlex": true
+          }
+        }
+      },
+      "normalSpeed": {
+        "horse": "bay-western",
+        "comparing": true,
+        "labelsHidden": false,
+        "labels": [
+          "Before",
+          "Updated · same stride phase"
+        ],
+        "play": "Pause",
+        "speed": "1",
+        "slider": 0.894,
+        "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-western&v=native-hoof-flex-2",
+        "rigs": {
+          "baseline": {
+            "clip": "Target Native Trot",
+            "phase": 0.8942666588518362,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.03630790097266558,
+                  "finalMinimumM": 0.03577858028390428,
+                  "gate": 0.9496594282606969,
+                  "requestedGate": 0.9496594282606969,
+                  "requestedMinimumM": 0.03577858028390428,
+                  "maxAddedLocalAngleDeg": 0.171017181145312
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0010248152587084836,
+                  "finalMinimumM": 0.0010248152587084836,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0010248152587084836,
+                  "maxAddedLocalAngleDeg": 0.0000029575586669421963
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0.09999999403953552,
+              "maxCostMs": 0.10000002384185791,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          },
+          "candidate": {
+            "clip": "Target Native Trot",
+            "phase": 0.8942666588518362,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.019771696036094258,
+                  "finalMinimumM": 0.01972524511062057,
+                  "gate": 0.11329714369852213,
+                  "requestedGate": 0.11329714369852213,
+                  "requestedMinimumM": 0.01972524511062057,
+                  "maxAddedLocalAngleDeg": 0.05100690964439805
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0010248152587084836,
+                  "finalMinimumM": 0.0010248152587084836,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0010248152587084836,
+                  "maxAddedLocalAngleDeg": 0.0000029575586669421963
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0.09999999403953552,
+              "maxCostMs": 0.09999999403953552,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          }
+        }
+      },
+      "gaits": [
+        {
+          "gait": "walk",
+          "horse": "bay-western",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.061,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-western&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Walk Rollover",
+              "phase": 0.06099999999999994,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.03834059296599118,
+                    "finalMinimumM": 0.03161474195207978,
+                    "gate": 0.9850091619965293,
+                    "requestedGate": 0.9850091619965293,
+                    "requestedMinimumM": 0.03161474195207978,
+                    "maxAddedLocalAngleDeg": 11.820439776287802
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0010365676499441284,
+                    "finalMinimumM": 0.0010365676499441284,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010365676499441284,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Walk Rollover",
+              "phase": 0.06099999999999994,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.03834059296599118,
+                    "finalMinimumM": 0.0496938535305492,
+                    "gate": 0.9850091619965293,
+                    "requestedGate": 0.9850091619965293,
+                    "requestedMinimumM": 0.0496938535305492,
+                    "maxAddedLocalAngleDeg": 29.551100942681284
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0010365676499441284,
+                    "finalMinimumM": 0.0010365676499441284,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010365676499441284,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.09999999403953552,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        },
+        {
+          "gait": "trot",
+          "horse": "bay-western",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.698,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-western&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Trot",
+              "phase": 0.6976,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.09304138217680097,
+                    "finalMinimumM": 0.09532762055561242,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.09532762055561242,
+                    "maxAddedLocalAngleDeg": 12.000223298122997
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0010178676135128573,
+                    "finalMinimumM": 0.0010178676135128573,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010178676135128573,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Trot",
+              "phase": 0.6976,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.09304138217680097,
+                    "finalMinimumM": 0.12624001002753393,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.12624001002753393,
+                    "maxAddedLocalAngleDeg": 30.000560303212705
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0010178676135128573,
+                    "finalMinimumM": 0.0010178676135128573,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010178676135128573,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.09999999403953552,
+                "maxCostMs": 0.09999999403953552,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        },
+        {
+          "gait": "canterLeft",
+          "horse": "bay-western",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.156,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-western&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Canter Left",
+              "phase": 0.15599999999999992,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.12026035824124268,
+                    "finalMinimumM": 0.1285982302032657,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.1285982302032657,
+                    "maxAddedLocalAngleDeg": 11.999832466008314
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.037768833168314406,
+                    "finalMinimumM": 0.037768833168314406,
+                    "gate": 0.977545096246302,
+                    "requestedGate": 0.977545096246302,
+                    "requestedMinimumM": 0.037768833168314406,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Canter Left",
+              "phase": 0.15599999999999992,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.12026035824124268,
+                    "finalMinimumM": 0.16723330694017513,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.16723330694017513,
+                    "maxAddedLocalAngleDeg": 29.999543969058667
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.037768833168314406,
+                    "finalMinimumM": 0.037768833168314406,
+                    "gate": 0.977545096246302,
+                    "requestedGate": 0.977545096246302,
+                    "requestedMinimumM": 0.037768833168314406,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.09999999403953552,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        },
+        {
+          "gait": "canterRight",
+          "horse": "bay-western",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.916,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-western&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Canter Right",
+              "phase": 0.9159999999999999,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.12153557651482041,
+                    "finalMinimumM": 0.12986391696999444,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.12986391696999444,
+                    "maxAddedLocalAngleDeg": 11.999519419696854
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.031613346606028256,
+                    "finalMinimumM": 0.031613346606028256,
+                    "gate": 0.7706675963853326,
+                    "requestedGate": 0.7706675963853326,
+                    "requestedMinimumM": 0.031613346606028256,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.09999999403953552,
+                "maxCostMs": 0.20000001788139343,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Canter Right",
+              "phase": 0.9159999999999999,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.12153557651482041,
+                    "finalMinimumM": 0.16848603608181023,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.16848603608181023,
+                    "maxAddedLocalAngleDeg": 29.998763977816886
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.031613346606028256,
+                    "finalMinimumM": 0.031613346606028256,
+                    "gate": 0.7706675963853326,
+                    "requestedGate": 0.7706675963853326,
+                    "requestedMinimumM": 0.031613346606028256,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.09999999403953552,
+                "maxCostMs": 0.09999999403953552,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "horse": "bay-sporthorse-native",
+      "peak": {
+        "horse": "bay-sporthorse-native",
+        "comparing": true,
+        "labelsHidden": false,
+        "labels": [
+          "Before",
+          "Updated · same stride phase"
+        ],
+        "play": "Play",
+        "speed": "1",
+        "slider": 0.698,
+        "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-sporthorse-native&v=native-hoof-flex-2",
+        "rigs": {
+          "baseline": {
+            "clip": "Target Native Trot",
+            "phase": 0.6976,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.09982883703984194,
+                  "finalMinimumM": 0.10297901285431052,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.10297901285431052,
+                  "maxAddedLocalAngleDeg": 12.000224528626468
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0010177324951271965,
+                  "finalMinimumM": 0.0010177324951271965,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0010177324951271965,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.10000002384185791,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          },
+          "candidate": {
+            "clip": "Target Native Trot",
+            "phase": 0.6976,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.09982883703984194,
+                  "finalMinimumM": 0.1373215423505698,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.1373215423505698,
+                  "maxAddedLocalAngleDeg": 30.000560174997446
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0010177324951271965,
+                  "finalMinimumM": 0.0010177324951271965,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0010177324951271965,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.09999999403953552,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          }
+        }
+      },
+      "controls": {
+        "before": true,
+        "after": true,
+        "compare": true,
+        "halfSpeed": true,
+        "normalSpeed": true,
+        "whole": true,
+        "close": true
+      },
+      "halfSpeed": {
+        "horse": "bay-sporthorse-native",
+        "comparing": true,
+        "labelsHidden": false,
+        "labels": [
+          "Before",
+          "Updated · same stride phase"
+        ],
+        "play": "Pause",
+        "speed": ".5",
+        "slider": 0.779,
+        "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-sporthorse-native&v=native-hoof-flex-2",
+        "rigs": {
+          "baseline": {
+            "clip": "Target Native Trot",
+            "phase": 0.7786416634463602,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.09256593735857496,
+                  "finalMinimumM": 0.08861989551742303,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.08861989551742303,
+                  "maxAddedLocalAngleDeg": 8.954888433504479
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0011627380141584626,
+                  "finalMinimumM": 0.0011627380141584626,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0011627380141584626,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.10000002384185791,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 0.5,
+            "nativeHoofFlex": true
+          },
+          "candidate": {
+            "clip": "Target Native Trot",
+            "phase": 0.7786416634463602,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.08900539390432771,
+                  "finalMinimumM": 0.0943940863731765,
+                  "gate": 1,
+                  "requestedGate": 1,
+                  "requestedMinimumM": 0.0943940863731765,
+                  "maxAddedLocalAngleDeg": 22.3872210154718
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0011627380141584626,
+                  "finalMinimumM": 0.0011627380141584626,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0011627380141584626,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.09999999403953552,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 0.5,
+            "nativeHoofFlex": true
+          }
+        }
+      },
+      "normalSpeed": {
+        "horse": "bay-sporthorse-native",
+        "comparing": true,
+        "labelsHidden": false,
+        "labels": [
+          "Before",
+          "Updated · same stride phase"
+        ],
+        "play": "Pause",
+        "speed": "1",
+        "slider": 0.894,
+        "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-sporthorse-native&v=native-hoof-flex-2",
+        "rigs": {
+          "baseline": {
+            "clip": "Target Native Trot",
+            "phase": 0.8942666588518366,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.03886017811021995,
+                  "finalMinimumM": 0.03826945634587248,
+                  "gate": 0.9902600622415739,
+                  "requestedGate": 0.9902600622415739,
+                  "requestedMinimumM": 0.03826945634587248,
+                  "maxAddedLocalAngleDeg": 0.17832986025701353
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0010241904163217908,
+                  "finalMinimumM": 0.0010241904163217908,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0010241904163217908,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.10000002384185791,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          },
+          "candidate": {
+            "clip": "Target Native Trot",
+            "phase": 0.8942666588518366,
+            "hoof": {
+              "eligible": true,
+              "finite": true,
+              "sourceControllerUpdatesOwned": 0,
+              "feet": {
+                "FL": {
+                  "sourceMinimumM": 0.021248603561579663,
+                  "finalMinimumM": 0.021170614790380918,
+                  "gate": 0.17421495989563962,
+                  "requestedGate": 0.17421495989563962,
+                  "requestedMinimumM": 0.021170614790380918,
+                  "maxAddedLocalAngleDeg": 0.07843260265556976
+                },
+                "FR": {
+                  "sourceMinimumM": 0.0010241904163217908,
+                  "finalMinimumM": 0.0010241904163217908,
+                  "gate": 0,
+                  "requestedGate": 0,
+                  "requestedMinimumM": 0.0010241904163217908,
+                  "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                }
+              },
+              "fallbacks": 0,
+              "lastCostMs": 0,
+              "maxCostMs": 0.09999999403953552,
+              "disposed": false
+            },
+            "finite": true,
+            "rate": 1,
+            "nativeHoofFlex": true
+          }
+        }
+      },
+      "gaits": [
+        {
+          "gait": "walk",
+          "horse": "bay-sporthorse-native",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.061,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-sporthorse-native&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Walk Rollover",
+              "phase": 0.06099999999999994,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.04114975182330341,
+                    "finalMinimumM": 0.034553575815004844,
+                    "gate": 0.9997819153675804,
+                    "requestedGate": 0.9997819153675804,
+                    "requestedMinimumM": 0.034553575815004844,
+                    "maxAddedLocalAngleDeg": 11.997717833716186
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0010356071678647716,
+                    "finalMinimumM": 0.0010356071678647716,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010356071678647716,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.09999999403953552,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Walk Rollover",
+              "phase": 0.06099999999999994,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.04114975182330341,
+                    "finalMinimumM": 0.05593050522897544,
+                    "gate": 0.9997819153675804,
+                    "requestedGate": 0.9997819153675804,
+                    "requestedMinimumM": 0.05593050522897544,
+                    "maxAddedLocalAngleDeg": 29.994296028373935
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0010356071678647716,
+                    "finalMinimumM": 0.0010356071678647716,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010356071678647716,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        },
+        {
+          "gait": "trot",
+          "horse": "bay-sporthorse-native",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.698,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-sporthorse-native&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Trot",
+              "phase": 0.6976,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.09982883703984194,
+                    "finalMinimumM": 0.10297901285431052,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.10297901285431052,
+                    "maxAddedLocalAngleDeg": 12.000224528626468
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0010177324951271965,
+                    "finalMinimumM": 0.0010177324951271965,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010177324951271965,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.09999999403953552,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Trot",
+              "phase": 0.6976,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.09982883703984194,
+                    "finalMinimumM": 0.1373215423505698,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.1373215423505698,
+                    "maxAddedLocalAngleDeg": 30.000560174997446
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.0010177324951271965,
+                    "finalMinimumM": 0.0010177324951271965,
+                    "gate": 0,
+                    "requestedGate": 0,
+                    "requestedMinimumM": 0.0010177324951271965,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        },
+        {
+          "gait": "canterLeft",
+          "horse": "bay-sporthorse-native",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.156,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-sporthorse-native&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Canter Left",
+              "phase": 0.15599999999999992,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.1285972984441906,
+                    "finalMinimumM": 0.13830359283365726,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.13830359283365726,
+                    "maxAddedLocalAngleDeg": 12.00000018904614
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.04047636630451314,
+                    "finalMinimumM": 0.0404763657819837,
+                    "gate": 0.9987877520480549,
+                    "requestedGate": 0.9987877520480549,
+                    "requestedMinimumM": 0.0404763657819837,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Canter Left",
+              "phase": 0.15599999999999992,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.1285972984441906,
+                    "finalMinimumM": 0.1809862266288765,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.1809862266288765,
+                    "maxAddedLocalAngleDeg": 30.000000831624092
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.04047636630451314,
+                    "finalMinimumM": 0.0404763657819837,
+                    "gate": 0.9987877520480549,
+                    "requestedGate": 0.9987877520480549,
+                    "requestedMinimumM": 0.0404763657819837,
+                    "maxAddedLocalAngleDeg": 0.0000024148365394514667
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        },
+        {
+          "gait": "canterRight",
+          "horse": "bay-sporthorse-native",
+          "comparing": true,
+          "labelsHidden": false,
+          "labels": [
+            "Before",
+            "Updated · same stride phase"
+          ],
+          "play": "Play",
+          "speed": "1",
+          "slider": 0.916,
+          "studio": "http://127.0.0.1:8584/breeds.html?horse=bay-sporthorse-native&v=native-hoof-flex-2",
+          "rigs": {
+            "baseline": {
+              "clip": "Target Native Canter Right",
+              "phase": 0.9159999999999999,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.13043611845761316,
+                    "finalMinimumM": 0.14014278333742886,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.14014278333742886,
+                    "maxAddedLocalAngleDeg": 12.00013304465427
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.03382051309722016,
+                    "finalMinimumM": 0.03382051309722016,
+                    "gate": 0.8711698055483676,
+                    "requestedGate": 0.8711698055483676,
+                    "requestedMinimumM": 0.03382051309722016,
+                    "maxAddedLocalAngleDeg": 0.0000029575586669421963
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0.10000002384185791,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            },
+            "candidate": {
+              "clip": "Target Native Canter Right",
+              "phase": 0.9159999999999999,
+              "hoof": {
+                "eligible": true,
+                "finite": true,
+                "sourceControllerUpdatesOwned": 0,
+                "feet": {
+                  "FL": {
+                    "sourceMinimumM": 0.13043611845761316,
+                    "finalMinimumM": 0.18282650975504788,
+                    "gate": 1,
+                    "requestedGate": 1,
+                    "requestedMinimumM": 0.18282650975504788,
+                    "maxAddedLocalAngleDeg": 30.000333069645414
+                  },
+                  "FR": {
+                    "sourceMinimumM": 0.03382051309722016,
+                    "finalMinimumM": 0.03382051309722016,
+                    "gate": 0.8711698055483676,
+                    "requestedGate": 0.8711698055483676,
+                    "requestedMinimumM": 0.03382051309722016,
+                    "maxAddedLocalAngleDeg": 0.0000029575586669421963
+                  }
+                },
+                "fallbacks": 0,
+                "lastCostMs": 0,
+                "maxCostMs": 0.10000002384185791,
+                "disposed": false
+              },
+              "finite": true,
+              "rate": 1,
+              "nativeHoofFlex": true
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "allThree": true,
+    "controls": true,
+    "defaultSideBySide": true,
+    "samePhase": true,
+    "bothUseActualGate": true,
+    "all677Finite": true,
+    "actualStrongFold": true,
+    "fourGaits": true,
+    "zeroErrors": true,
+    "responsePins": true
+  }
+}

@@ -1,7 +1,7 @@
 {
   "white-western": {
-    "baseline": "../native-white-head-kit/model.glb",
-    "candidate": "./white/model.glb",
+    "baseline": "./white/model.glb",
+    "candidate": "../native-trot-reference-kit/white/model.glb",
     "footMasks": {
       "HL": {
         "vertices": [
@@ -2200,11 +2200,12 @@
         ],
         "terminal": "fingers_01_r_0273"
       }
-    }
+    },
+    "baselineHoofFlex": true
   },
   "bay-western": {
-    "baseline": "../../review/native-bay-head-kit/model.glb",
-    "candidate": "./bay/model.glb",
+    "baseline": "./bay/model.glb",
+    "candidate": "../native-trot-reference-kit/bay/model.glb",
     "footMasks": {
       "HL": {
         "vertices": [
@@ -4478,11 +4479,12 @@
         ],
         "terminal": "fingers_01_r_0273"
       }
-    }
+    },
+    "baselineHoofFlex": true
   },
   "bay-sporthorse-native": {
-    "baseline": "../../review/native-bay-sporthorse-packed-kit/model.glb",
-    "candidate": "./sporthorse/model.glb",
+    "baseline": "./sporthorse/model.glb",
+    "candidate": "../native-trot-reference-kit/sporthorse/model.glb",
     "footMasks": {
       "HL": {
         "vertices": [
@@ -6711,6 +6713,7 @@
         ],
         "terminal": "fingers_01_r_0273"
       }
-    }
+    },
+    "baselineHoofFlex": true
   }
 }

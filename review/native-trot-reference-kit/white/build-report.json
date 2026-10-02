@@ -1,0 +1,561 @@
+{
+  "sourceFile": "build-phase.py generated intermediate, exact frozen f8d688",
+  "sourceSha256": "f8d688b660fbb841bfc168e86a9fa1d7bb3a92de2ad8ea87f79062a2fe0fa81d",
+  "candidateFile": "model.glb",
+  "candidateSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+  "candidateBytes": 28557020,
+  "changedTracks": [
+    {
+      "clip": "Target Native Walk Rollover",
+      "foot": "FL",
+      "name": "fingers_01_l_0187",
+      "node": 255,
+      "kind": "replace",
+      "interpolation": "CUBICSPLINE",
+      "amplitudeDegrees": 30.0,
+      "localParentAxis": [
+        -0.04573148214057032,
+        -0.011773097418909861,
+        -0.9988843905669924
+      ],
+      "durationS": 1.1200000047683716,
+      "stanceFraction": 0.65,
+      "footOffset": 0.25,
+      "oldOutputAccessor": 6560,
+      "newOutputAccessor": 6864,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 34
+    },
+    {
+      "clip": "Target Native Walk Rollover",
+      "foot": "FL",
+      "name": "fingers_02_l_0208",
+      "node": 256,
+      "kind": "new-default-binding",
+      "interpolation": "CUBICSPLINE",
+      "amplitudeDegrees": 12.0,
+      "localParentAxis": [
+        -0.03815581036423594,
+        0.009560815355370846,
+        -0.9992260629833416
+      ],
+      "durationS": 1.1200000047683716,
+      "stanceFraction": 0.65,
+      "footOffset": 0.25,
+      "oldOutputAccessor": null,
+      "newOutputAccessor": 6865,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 34
+    },
+    {
+      "clip": "Target Native Walk Rollover",
+      "foot": "FR",
+      "name": "fingers_01_r_0273",
+      "node": 335,
+      "kind": "replace",
+      "interpolation": "CUBICSPLINE",
+      "amplitudeDegrees": 30.0,
+      "localParentAxis": [
+        -0.01915394563138384,
+        0.1662860176555942,
+        -0.9858915187275898
+      ],
+      "durationS": 1.1200000047683716,
+      "stanceFraction": 0.65,
+      "footOffset": 0.75,
+      "oldOutputAccessor": 6565,
+      "newOutputAccessor": 6866,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 33
+    },
+    {
+      "clip": "Target Native Walk Rollover",
+      "foot": "FR",
+      "name": "fingers_02_r_0274",
+      "node": 336,
+      "kind": "new-default-binding",
+      "interpolation": "CUBICSPLINE",
+      "amplitudeDegrees": 12.0,
+      "localParentAxis": [
+        0.03533095279186794,
+        0.23536217737384002,
+        -0.9712653444021689
+      ],
+      "durationS": 1.1200000047683716,
+      "stanceFraction": 0.65,
+      "footOffset": 0.75,
+      "oldOutputAccessor": null,
+      "newOutputAccessor": 6867,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 33
+    },
+    {
+      "clip": "Target Native Trot",
+      "foot": "FL",
+      "name": "fingers_01_l_0187",
+      "node": 255,
+      "kind": "replace",
+      "interpolation": "LINEAR",
+      "amplitudeDegrees": 30.0,
+      "localParentAxis": [
+        -0.04573148214057032,
+        -0.011773097418909861,
+        -0.9988843905669924
+      ],
+      "durationS": 0.7200000286102295,
+      "stanceFraction": 0.44,
+      "footOffset": 0.0,
+      "oldOutputAccessor": 6858,
+      "newOutputAccessor": 6868,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 53
+    },
+    {
+      "clip": "Target Native Trot",
+      "foot": "FL",
+      "name": "fingers_02_l_0208",
+      "node": 256,
+      "kind": "new-default-binding",
+      "interpolation": "CUBICSPLINE",
+      "amplitudeDegrees": 12.0,
+      "localParentAxis": [
+        -0.03815581036423594,
+        0.009560815355370846,
+        -0.9992260629833416
+      ],
+      "durationS": 0.7200000286102295,
+      "stanceFraction": 0.44,
+      "footOffset": 0.0,
+      "oldOutputAccessor": null,
+      "newOutputAccessor": 6869,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 53
+    },
+    {
+      "clip": "Target Native Trot",
+      "foot": "FR",
+      "name": "fingers_01_r_0273",
+      "node": 335,
+      "kind": "replace",
+      "interpolation": "LINEAR",
+      "amplitudeDegrees": 30.0,
+      "localParentAxis": [
+        -0.01915394563138384,
+        0.1662860176555942,
+        -0.9858915187275898
+      ],
+      "durationS": 0.7200000286102295,
+      "stanceFraction": 0.44,
+      "footOffset": 0.5,
+      "oldOutputAccessor": 6863,
+      "newOutputAccessor": 6870,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 53
+    },
+    {
+      "clip": "Target Native Trot",
+      "foot": "FR",
+      "name": "fingers_02_r_0274",
+      "node": 336,
+      "kind": "new-default-binding",
+      "interpolation": "CUBICSPLINE",
+      "amplitudeDegrees": 12.0,
+      "localParentAxis": [
+        0.03533095279186794,
+        0.23536217737384002,
+        -0.9712653444021689
+      ],
+      "durationS": 0.7200000286102295,
+      "stanceFraction": 0.44,
+      "footOffset": 0.5,
+      "oldOutputAccessor": null,
+      "newOutputAccessor": 6871,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 53
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "foot": "FL",
+      "name": "fingers_01_l_0187",
+      "node": 255,
+      "kind": "replace",
+      "interpolation": "LINEAR",
+      "amplitudeDegrees": 30.0,
+      "localParentAxis": [
+        -0.04573148214057032,
+        -0.011773097418909861,
+        -0.9988843905669924
+      ],
+      "durationS": 0.6399999856948853,
+      "stanceFraction": 0.4,
+      "footOffset": 0.48,
+      "oldOutputAccessor": 6726,
+      "newOutputAccessor": 6872,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 58
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "foot": "FL",
+      "name": "fingers_02_l_0208",
+      "node": 256,
+      "kind": "new-default-binding",
+      "interpolation": "CUBICSPLINE",
+      "amplitudeDegrees": 12.0,
+      "localParentAxis": [
+        -0.03815581036423594,
+        0.009560815355370846,
+        -0.9992260629833416
+      ],
+      "durationS": 0.6399999856948853,
+      "stanceFraction": 0.4,
+      "footOffset": 0.48,
+      "oldOutputAccessor": null,
+      "newOutputAccessor": 6873,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 58
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "foot": "FR",
+      "name": "fingers_01_r_0273",
+      "node": 335,
+      "kind": "replace",
+      "interpolation": "LINEAR",
+      "amplitudeDegrees": 30.0,
+      "localParentAxis": [
+        -0.01915394563138384,
+        0.1662860176555942,
+        -0.9858915187275898
+      ],
+      "durationS": 0.6399999856948853,
+      "stanceFraction": 0.4,
+      "footOffset": 0.24,
+      "oldOutputAccessor": 6731,
+      "newOutputAccessor": 6874,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 57
+    },
+    {
+      "clip": "Target Native Canter Left",
+      "foot": "FR",
+      "name": "fingers_02_r_0274",
+      "node": 336,
+      "kind": "new-default-binding",
+      "interpolation": "CUBICSPLINE",
+      "amplitudeDegrees": 12.0,
+      "localParentAxis": [
+        0.03533095279186794,
+        0.23536217737384002,
+        -0.9712653444021689
+      ],
+      "durationS": 0.6399999856948853,
+      "stanceFraction": 0.4,
+      "footOffset": 0.24,
+      "oldOutputAccessor": null,
+      "newOutputAccessor": 6875,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 57
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "foot": "FL",
+      "name": "fingers_01_l_0187",
+      "node": 255,
+      "kind": "replace",
+      "interpolation": "LINEAR",
+      "amplitudeDegrees": 30.0,
+      "localParentAxis": [
+        -0.04573148214057032,
+        -0.011773097418909861,
+        -0.9988843905669924
+      ],
+      "durationS": 0.6399999856948853,
+      "stanceFraction": 0.4,
+      "footOffset": 0.24,
+      "oldOutputAccessor": 6809,
+      "newOutputAccessor": 6876,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 57
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "foot": "FL",
+      "name": "fingers_02_l_0208",
+      "node": 256,
+      "kind": "new-default-binding",
+      "interpolation": "CUBICSPLINE",
+      "amplitudeDegrees": 12.0,
+      "localParentAxis": [
+        -0.03815581036423594,
+        0.009560815355370846,
+        -0.9992260629833416
+      ],
+      "durationS": 0.6399999856948853,
+      "stanceFraction": 0.4,
+      "footOffset": 0.24,
+      "oldOutputAccessor": null,
+      "newOutputAccessor": 6877,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 57
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "foot": "FR",
+      "name": "fingers_01_r_0273",
+      "node": 335,
+      "kind": "replace",
+      "interpolation": "LINEAR",
+      "amplitudeDegrees": 30.0,
+      "localParentAxis": [
+        -0.01915394563138384,
+        0.1662860176555942,
+        -0.9858915187275898
+      ],
+      "durationS": 0.6399999856948853,
+      "stanceFraction": 0.4,
+      "footOffset": 0.48,
+      "oldOutputAccessor": 6814,
+      "newOutputAccessor": 6878,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 58
+    },
+    {
+      "clip": "Target Native Canter Right",
+      "foot": "FR",
+      "name": "fingers_02_r_0274",
+      "node": 336,
+      "kind": "new-default-binding",
+      "interpolation": "CUBICSPLINE",
+      "amplitudeDegrees": 12.0,
+      "localParentAxis": [
+        0.03533095279186794,
+        0.23536217737384002,
+        -0.9712653444021689
+      ],
+      "durationS": 0.6399999856948853,
+      "stanceFraction": 0.4,
+      "footOffset": 0.48,
+      "oldOutputAccessor": null,
+      "newOutputAccessor": 6879,
+      "stanceKeyRowsExactBeforeFloat32": true,
+      "changedKeyCount": 58
+    }
+  ],
+  "unchangedTracksAllClips": 3560,
+  "originalDistalCompanions": [
+    {
+      "clip": "Native Foreleg Baseline | Target Native Walk Rollover",
+      "sourceGait": "Target Native Walk Rollover",
+      "tracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "node": 255,
+          "field": "exact-source-curve",
+          "input": 6516,
+          "output": 6560,
+          "interpolation": "CUBICSPLINE"
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "node": 256,
+          "field": "static-source-default",
+          "input": 6516,
+          "output": 6880,
+          "interpolation": "CUBICSPLINE"
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "node": 335,
+          "field": "exact-source-curve",
+          "input": 6516,
+          "output": 6565,
+          "interpolation": "CUBICSPLINE"
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "node": 336,
+          "field": "static-source-default",
+          "input": 6516,
+          "output": 6881,
+          "interpolation": "CUBICSPLINE"
+        }
+      ]
+    },
+    {
+      "clip": "Native Foreleg Baseline | Target Native Trot",
+      "sourceGait": "Target Native Trot",
+      "tracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "node": 255,
+          "field": "exact-source-curve",
+          "input": 6599,
+          "output": 6858,
+          "interpolation": "LINEAR"
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "node": 256,
+          "field": "static-source-default",
+          "input": 6599,
+          "output": 6880,
+          "interpolation": "CUBICSPLINE"
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "node": 335,
+          "field": "exact-source-curve",
+          "input": 6599,
+          "output": 6863,
+          "interpolation": "LINEAR"
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "node": 336,
+          "field": "static-source-default",
+          "input": 6599,
+          "output": 6881,
+          "interpolation": "CUBICSPLINE"
+        }
+      ]
+    },
+    {
+      "clip": "Native Foreleg Baseline | Target Native Canter Left",
+      "sourceGait": "Target Native Canter Left",
+      "tracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "node": 255,
+          "field": "exact-source-curve",
+          "input": 6682,
+          "output": 6726,
+          "interpolation": "LINEAR"
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "node": 256,
+          "field": "static-source-default",
+          "input": 6682,
+          "output": 6880,
+          "interpolation": "CUBICSPLINE"
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "node": 335,
+          "field": "exact-source-curve",
+          "input": 6682,
+          "output": 6731,
+          "interpolation": "LINEAR"
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "node": 336,
+          "field": "static-source-default",
+          "input": 6682,
+          "output": 6881,
+          "interpolation": "CUBICSPLINE"
+        }
+      ]
+    },
+    {
+      "clip": "Native Foreleg Baseline | Target Native Canter Right",
+      "sourceGait": "Target Native Canter Right",
+      "tracks": [
+        {
+          "name": "fingers_01_l_0187",
+          "node": 255,
+          "field": "exact-source-curve",
+          "input": 6765,
+          "output": 6809,
+          "interpolation": "LINEAR"
+        },
+        {
+          "name": "fingers_02_l_0208",
+          "node": 256,
+          "field": "static-source-default",
+          "input": 6765,
+          "output": 6880,
+          "interpolation": "CUBICSPLINE"
+        },
+        {
+          "name": "fingers_01_r_0273",
+          "node": 335,
+          "field": "exact-source-curve",
+          "input": 6765,
+          "output": 6814,
+          "interpolation": "LINEAR"
+        },
+        {
+          "name": "fingers_02_r_0274",
+          "node": 336,
+          "field": "static-source-default",
+          "input": 6765,
+          "output": 6881,
+          "interpolation": "CUBICSPLINE"
+        }
+      ]
+    }
+  ],
+  "gaits": {
+    "Target Native Walk Rollover": {
+      "stanceFraction": 0.65,
+      "foreOffsets": {
+        "FL": 0.25,
+        "FR": 0.75
+      }
+    },
+    "Target Native Trot": {
+      "stanceFraction": 0.44,
+      "foreOffsets": {
+        "FL": 0.0,
+        "FR": 0.5
+      }
+    },
+    "Target Native Canter Left": {
+      "stanceFraction": 0.4,
+      "foreOffsets": {
+        "FL": 0.48,
+        "FR": 0.24
+      }
+    },
+    "Target Native Canter Right": {
+      "stanceFraction": 0.4,
+      "foreOffsets": {
+        "FL": 0.24,
+        "FR": 0.48
+      }
+    }
+  },
+  "swingWindowU": [
+    0.12,
+    0.46,
+    0.86
+  ],
+  "addedFetlockDegrees": 30.0,
+  "addedCoffinDegrees": 12.0,
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "textures": true,
+    "images": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "originalBinaryPrefix": true,
+    "originalAccessorsPrefix": true,
+    "originalBufferViewsPrefix": true
+  },
+  "method": "Only four distal fore quaternion channels per checked gait. Parent-rest inverse+worldX hinge;30degree fetlock+12degree coffin, quintic delayed swing lobe, exact product-rule derivatives for cubic inputs; existing LINEAR interpolation remains LINEAR. Existing stance rows untouched; new coffin channels use source default values outside the swing lobe. No gait/global solve, body/root/translation/head/neck/groom/tack edits. Four Native Foreleg Baseline companion clips reuse exact original f01 curves and static source-default f02 values.",
+  "defaultBindingNote": "New f02 sampler values cast original JSON default quaternion to GLTF float32; actual stance geometry delta must be measured, not assumed byte-zero.",
+  "remainingLimits": [
+    "Preserved source LINEAR fetlock tracks are not total C1; new f02 and cubic source paths have analytic cubic tangents",
+    "Single stronger source-informed visual-authoring choice; not a physiological amplitude claim",
+    "Existing short stride/body timing/caps remain unchanged",
+    "Authored fold is reviewed through the current clearance gate; unrestricted direct blending is unapproved",
+    "Companion clips enable a separate root-owned runtime gate; their presence alone does not approve that gate"
+  ],
+  "browserVerdict": "Actual current clearance-gated steady4gait and130 current-live transition checks passed; broader naturalism remains limited."
+}

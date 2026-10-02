@@ -1,0 +1,25 @@
+{
+  "sourceSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+  "phaseSha256": "f8d688b660fbb841bfc168e86a9fa1d7bb3a92de2ad8ea87f79062a2fe0fa81d",
+  "candidateSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "images": true,
+    "textures": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "originalBinaryPrefix": true,
+    "phaseBinaryPrefix": true,
+    "originalAccessorPrefix": true,
+    "phaseAccessorPrefix": true,
+    "originalBufferViewPrefix": true,
+    "phaseBufferViewPrefix": true
+  },
+  "protectedOriginalCurveCount": 3552,
+  "exactPhaseDistalCompanions": 4,
+  "scope": "Layered offline preservation; actual clearance gate/contact/transition evidence is separate."
+}

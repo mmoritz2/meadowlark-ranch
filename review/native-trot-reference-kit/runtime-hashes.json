@@ -1,0 +1,11 @@
+{
+  "assets/native-horse-motion.js": "e1855f0d5de2430d7c5def5441679ff42e0bb6c89d21137aec35a9c73ee8d049",
+  "assets/native-hoof-flex.mjs": "c96101951681c195e31cc07cdfc3bf525800e238f5760ef4499131caf7dcd8fa",
+  "assets/native-hoof-controls.mjs": "09b93a47ed1325f1ac8c05e06ed20c5b1c7a7fc3260d484a0ba4bcdfa24f533a",
+  "assets/native-groom-layer.mjs": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240",
+  "assets/frame-inertia.mjs": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187",
+  "assets/native-groom-controls.mjs": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735",
+  "assets/native-breed-profiles.js": "dc1bdea100fb7490cc9c4673a94050065d781ffb70fa1b37be5b62b89c3afffe",
+  "assets/game-hero-horse.js": "03d3148cdf30749bbfaa5cdf6bf32f9d4b291186a12290211269b2651e96f2ed",
+  "assets/features/native-horses.js": "85e14cfedad964a61e80700227b3f4b5a5f8b370a93402439607b5040a74b122"
+}

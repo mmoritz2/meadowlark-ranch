@@ -1,5 +1,5 @@
 import {createNativeGroomLayer} from './native-groom-layer.mjs?v=native-secondary-1';
-import {prepareNativeHoofFlex} from './native-hoof-flex.mjs?v=native-hoof-flex-1';
+import {prepareNativeHoofFlex} from './native-hoof-flex.mjs?v=native-hoof-flex-2';
 // The Ranch finishes these after all actor travel and terrain transforms.
 const pendingHorseGrooms=new Set();
 export function finishNativeHorseGrooms(){for(const finish of pendingHorseGrooms)finish();}

@@ -1,0 +1,159 @@
+{
+  "source": "review/native-white-head-kit/model.glb",
+  "sourceSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+  "output": "build-phase.py generated intermediate",
+  "outputSha256": "f8d688b660fbb841bfc168e86a9fa1d7bb3a92de2ad8ea87f79062a2fe0fa81d",
+  "clip": "Target Native Trot",
+  "durationS": 0.7200000286102295,
+  "stanceFraction": 0.44,
+  "offsets": {
+    "FL": 0.0,
+    "FR": 0.5
+  },
+  "advanceFraction": 0.05,
+  "swingWindowU": [
+    0.55,
+    0.75,
+    0.98
+  ],
+  "globalMinMapDerivative": 0.27212732919254656,
+  "changedTracks": [
+    {
+      "foot": "FL",
+      "name": "clavicle_l_0203",
+      "node": 251,
+      "oldAccessor": 6639,
+      "newAccessor": 6854,
+      "changedKeys": 31,
+      "minMapDerivative": 0.27436356966023145,
+      "maxMapDerivative": 1.836801264210369,
+      "sourceInterpolation": "LINEAR",
+      "durationS": 0.7200000286102295
+    },
+    {
+      "foot": "FL",
+      "name": "upperarm_l_0204",
+      "node": 252,
+      "oldAccessor": 6640,
+      "newAccessor": 6855,
+      "changedKeys": 31,
+      "minMapDerivative": 0.27436356966023145,
+      "maxMapDerivative": 1.836801264210369,
+      "sourceInterpolation": "LINEAR",
+      "durationS": 0.7200000286102295
+    },
+    {
+      "foot": "FL",
+      "name": "lowerarm_l_0205",
+      "node": 253,
+      "oldAccessor": 6641,
+      "newAccessor": 6856,
+      "changedKeys": 31,
+      "minMapDerivative": 0.27436356966023145,
+      "maxMapDerivative": 1.836801264210369,
+      "sourceInterpolation": "LINEAR",
+      "durationS": 0.7200000286102295
+    },
+    {
+      "foot": "FL",
+      "name": "hand_l_0206",
+      "node": 254,
+      "oldAccessor": 6642,
+      "newAccessor": 6857,
+      "changedKeys": 31,
+      "minMapDerivative": 0.27436356966023145,
+      "maxMapDerivative": 1.836801264210369,
+      "sourceInterpolation": "LINEAR",
+      "durationS": 0.7200000286102295
+    },
+    {
+      "foot": "FL",
+      "name": "fingers_01_l_0187",
+      "node": 255,
+      "oldAccessor": 6643,
+      "newAccessor": 6858,
+      "changedKeys": 31,
+      "minMapDerivative": 0.27436356966023145,
+      "maxMapDerivative": 1.836801264210369,
+      "sourceInterpolation": "LINEAR",
+      "durationS": 0.7200000286102295
+    },
+    {
+      "foot": "FR",
+      "name": "clavicle_r_0269",
+      "node": 331,
+      "oldAccessor": 6644,
+      "newAccessor": 6859,
+      "changedKeys": 31,
+      "minMapDerivative": 0.27436349640157676,
+      "maxMapDerivative": 1.8368012793994115,
+      "sourceInterpolation": "LINEAR",
+      "durationS": 0.7200000286102295
+    },
+    {
+      "foot": "FR",
+      "name": "upperarm_r_0270",
+      "node": 332,
+      "oldAccessor": 6645,
+      "newAccessor": 6860,
+      "changedKeys": 31,
+      "minMapDerivative": 0.27436349640157676,
+      "maxMapDerivative": 1.8368012793994115,
+      "sourceInterpolation": "LINEAR",
+      "durationS": 0.7200000286102295
+    },
+    {
+      "foot": "FR",
+      "name": "lowerarm_r_0271",
+      "node": 333,
+      "oldAccessor": 6646,
+      "newAccessor": 6861,
+      "changedKeys": 31,
+      "minMapDerivative": 0.27436349640157676,
+      "maxMapDerivative": 1.8368012793994115,
+      "sourceInterpolation": "LINEAR",
+      "durationS": 0.7200000286102295
+    },
+    {
+      "foot": "FR",
+      "name": "hand_r_0272",
+      "node": 334,
+      "oldAccessor": 6647,
+      "newAccessor": 6862,
+      "changedKeys": 31,
+      "minMapDerivative": 0.27436349640157676,
+      "maxMapDerivative": 1.8368012793994115,
+      "sourceInterpolation": "LINEAR",
+      "durationS": 0.7200000286102295
+    },
+    {
+      "foot": "FR",
+      "name": "fingers_01_r_0273",
+      "node": 335,
+      "oldAccessor": 6648,
+      "newAccessor": 6863,
+      "changedKeys": 31,
+      "minMapDerivative": 0.27436349640157676,
+      "maxMapDerivative": 1.8368012793994115,
+      "sourceInterpolation": "LINEAR",
+      "durationS": 0.7200000286102295
+    }
+  ],
+  "unchangedTracks": 3558,
+  "preservation": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "textures": true,
+    "images": true,
+    "samplers": true,
+    "scenes": true,
+    "scene": true,
+    "binaryPrefixExact": true,
+    "oldAccessorsPrefixExact": true,
+    "oldBufferViewsPrefixExact": true
+  },
+  "method": "Each of ten fore rotation tracks is re-sampled from its own original target Trot clip at a monotone late-swing quintic phase map. Source LINEAR interpolation and 129 key times remain; original quaternion at every unchanged key is exact. No body, hind, floor, stance, clip rate or node bind edits.",
+  "status": "Frozen phase stage; compound gated QA is separate."
+}

@@ -1,0 +1,52 @@
+<!doctype html><meta charset="utf-8"><title>Front hoof transition verification</title>
+<script type="importmap">{"imports":{"three":"../../assets/vendor/three/build/three.module.js","three/addons/":"../../assets/vendor/three/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {createNativeHorseMotion} from '../../assets/native-horse-motion.js';
+import {NATIVE_BREED_PROFILES} from '../../assets/native-breed-profiles.js';
+const config=await(await fetch('./config.json')).json();
+const v=new THREE.Vector3();
+async function load(key,url,enabled){
+ const profile={...NATIVE_BREED_PROFILES[key],nativeHoofFlex:enabled},asset=await new GLTFLoader().loadAsync(url),actor=new THREE.Group(),root=asset.scene;
+ actor.position.fromArray(profile.nativeTranslation);actor.add(root);actor.updateMatrixWorld(true);
+ let body;root.traverse(o=>{if(o.isSkinnedMesh&&o.geometry.attributes.position.count===16159)body=o;});
+ const motion=createNativeHorseMotion({THREE,root,clips:asset.animations,profile});
+ return{profile,actor,root,body,motion,bones:body.skeleton.bones,masks:config[key].footMasks};
+}
+function sample(r){
+ r.actor.updateMatrixWorld(true);r.body.skeleton.update();const feet={};
+ for(const[k,mask]of Object.entries(r.masks)){let min=Infinity;const center=new THREE.Vector3();for(const i of mask.wholeVertices){r.body.getVertexPosition(i,v);v.applyMatrix4(r.body.matrixWorld);min=Math.min(min,v.y);center.add(v);}feet[k]={minY:min,center:center.divideScalar(mask.wholeVertices.length).toArray()};}
+ const protectedBones=Object.fromEntries(['spine_04_012','head_019','saddle_0333','upperleg_l_0405','lowerleg_l_0406','foot_l_0407','toes_01_l_0408','upperleg_r_0474','lowerleg_r_0475','foot_r_0476','toes_01_r_0477'].map(n=>[n,r.root.getObjectByName(n).matrixWorld.elements.slice()]));
+ return{feet,protectedBones,finite:r.bones.length===677&&r.bones.every(b=>b.matrixWorld.elements.every(Number.isFinite)),state:r.motion.snapshot()};
+}
+function set(r,gait,phase){
+ const m=r.motion;m.reset();if(gait==='rest')return;
+ const canter=gait.startsWith('canter'),mode=canter?'canter':gait,lead=gait==='canterRight'?'right':'left';
+ m.set(mode,{lead});m.update(.2);const clip=r.profile.nativeGaits[gait].clip,a=m.mixer._actions.find(x=>x.getClip().name===clip);a.time=phase*a.getClip().duration;m.update(0);
+}
+function runCase(r,from,to,phase,fps){
+ set(r,from,phase);const m=r.motion,rows=[sample(r)],canter=to.startsWith('canter');
+ m.set(canter?'canter':to,{lead:to==='canterRight'?'right':'left'});
+ for(let i=0;i<Math.round(.4*fps);i++){m.update(1/fps);rows.push(sample(r));}
+ return rows;
+}
+window.hoofTransition={ready:true,async run(key){
+ const rigs={baseline:await load(key,config[key].baseline,false),candidate:await load(key,config[key].candidate,true)},rows=[];
+ const pairs=[['rest','walk'],['walk','rest'],['walk','trot'],['trot','walk'],['trot','canterLeft'],['canterLeft','trot'],['canterLeft','canterRight'],['canterRight','canterLeft'],['canterRight','rest']];
+ for(const fps of [30,60])for(const[from,to]of pairs)for(const phase of from==='rest'?[0]:Array.from({length:8},(_,i)=>i/8)){
+  const a=runCase(rigs.baseline,from,to,phase,fps),b=runCase(rigs.candidate,from,to,phase,fps);
+  let protectedDelta=0,phaseDelta=0,minBaseline=Infinity,minCandidate=Infinity,maxAddedPenetration=0,maxNearestDelta=0;
+  for(let i=0;i<a.length;i++){
+   for(const[n,matrix]of Object.entries(a[i].protectedBones))for(let j=0;j<16;j++)protectedDelta=Math.max(protectedDelta,Math.abs(matrix[j]-b[i].protectedBones[n][j]));
+   phaseDelta=Math.max(phaseDelta,Math.abs(a[i].state.phase01-b[i].state.phase01));
+   for(const foot of Object.keys(rigs.baseline.masks)){const y=a[i].feet[foot].minY,z=b[i].feet[foot].minY;minBaseline=Math.min(minBaseline,y);minCandidate=Math.min(minCandidate,z);maxAddedPenetration=Math.max(maxAddedPenetration,Math.max(0,-z)-Math.max(0,-y));}
+   maxNearestDelta=Math.max(maxNearestDelta,Math.abs(Math.min(...Object.values(a[i].feet).map(f=>f.minY))-Math.min(...Object.values(b[i].feet).map(f=>f.minY))));
+  }
+  const flex=b.map(x=>x.state.hoofFlex),foldFeet=flex.flatMap(x=>Object.values(x?.feet||{}));
+  rows.push({fps,from,to,phase,frames:a.length,allFinite:a.every(x=>x.finite)&&b.every(x=>x.finite),protectedDelta,phaseDelta,minBaseline,minCandidate,maxAddedPenetration,maxNearestDelta,maxFoldGate:Math.max(0,...foldFeet.map(f=>f.gate)),maxFoldDegrees:Math.max(0,...foldFeet.map(f=>f.maxAddedLocalAngleDeg)),fallbacks:Math.max(0,...flex.map(f=>f?.fallbacks||0)),costMs:flex.map(f=>f?.lastCostMs||0)});
+ }
+ for(const r of Object.values(rigs)){r.motion.dispose();r.root.traverse(o=>{if(o.isMesh)o.geometry.dispose();});}
+ return{key,rows};
+}};
+</script>

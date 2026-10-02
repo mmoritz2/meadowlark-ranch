@@ -1,0 +1,22 @@
+{
+  "README.md": "8d949d10f36ac2ad85dee59cda4be90bff6ebe1ac2fa46983f1442b99cab56a4",
+  "audit.py": "78ed6a577bc28a057ba7f3618abf81fe7096d79dfb743a2756414c9296690fcc",
+  "build-fold.py": "f796186671ffc33d47b4934d3011ed5053a68cfc37f2398956b762348ee3b340",
+  "build-phase.py": "7436a45e2a749de82ebbc04d8682aa8e18cda565eceb02186f02cad788342e2e",
+  "build-report.json": "fa8076157d14bae87e30eef1734d4f1bb04c7326edc366a2ca381f0c3f951829",
+  "build.py": "3c15ea5a006efcbf9f174fc782be02314c042c631dae207cded86a2871adad2d",
+  "current-live-transition-qa.json": "9caa45d12eb464d06b27450bc0b3f7f846f0afbd64b6b590054cbd5385456c29",
+  "curve-audit.json": "7e867eb1c965bd4ef61353873ad1dc1c8827362239312058fceee241cdfc3c6e",
+  "foot-masks.json": "ff50b1120303044cca2b7751936b9518d166789ca6be3aab6a0d1dea663429d0",
+  "gate-contact-delta.json": "16c9f0d06006413bc84aeeff9b1345ebdc2654c99b2d66a67d6dfd14ef2120d1",
+  "manifest.json": "6df34becfcf66e07405b43cb25cc10989bc879e1cc34b947e7a09b6c4e1fe04b",
+  "model.glb": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+  "normal-rate-qa.json": "6ca911173beec7665c9997f6bbeaa79c4b0323edc79dd9028004e2e6004a23e4",
+  "package-preservation.json": "0948d5e9a3b1a7ee2b0de836570abd68bd25967ecd70822e8c168d0194d00ff0",
+  "peak-comparison.json": "e557fdae88adf78f322b9de097746dcc7dcb544354985bac446a319cf0300b32",
+  "phase-build-report.json": "e749c3e7329815e6af75acddfe22b7da95802765292b03de0b2e3417c29f057e",
+  "trot-pilot-hoof.png": "adeb8bce6dbc38c6a7269dbb36d59943cb7b23abf9244d8811ead31b0265076a",
+  "trot-pilot-side.png": "699f6999b7067716c33a735bb71cee23bb97b18969765dcc2c55182355900886",
+  "trot-shipped-hoof.png": "80d11a331f4139d9f525c15c5a9be2a8fe89b3cdbef4d847646ad82317f657a3",
+  "trot-shipped-side.png": "eabcdd76a331d9933370ff37324529fb1c39790d100e7e7e553addd062f22c8d"
+}

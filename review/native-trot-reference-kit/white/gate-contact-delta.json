@@ -1,0 +1,28 @@
+{
+  "sourceSha256": "f8d688b660fbb841bfc168e86a9fa1d7bb3a92de2ad8ea87f79062a2fe0fa81d",
+  "candidateSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+  "helperSha256": "c96101951681c195e31cc07cdfc3bf525800e238f5760ef4499131caf7dcd8fa",
+  "sampling": "normal-rate60fps1x aftertwo warm-up cycles, actual current production factory+gate; independent256phase evidence separatelyowned",
+  "gaits": {
+    "walk": {
+      "samples": 69,
+      "maxAddedNegativeDepthM": 0,
+      "fallbackDelta": 0
+    },
+    "trot": {
+      "samples": 45,
+      "maxAddedNegativeDepthM": 1.0014346019104892e-09,
+      "fallbackDelta": 0
+    },
+    "canterLeft": {
+      "samples": 40,
+      "maxAddedNegativeDepthM": 0,
+      "fallbackDelta": 0
+    },
+    "canterRight": {
+      "samples": 40,
+      "maxAddedNegativeDepthM": 0,
+      "fallbackDelta": 0
+    }
+  }
+}

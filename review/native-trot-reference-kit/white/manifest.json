@@ -1,0 +1,18 @@
+{
+  "source": "review/native-white-head-kit/model.glb",
+  "sourceSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+  "temporaryPhaseSha256": "f8d688b660fbb841bfc168e86a9fa1d7bb3a92de2ad8ea87f79062a2fe0fa81d",
+  "candidate": "model.glb",
+  "candidateSha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+  "reproduction": "python3 review/native-trot-reference-kit/white/build.py /private/tmp/white-reference-fold-repro.glb",
+  "reproductionDependencies": [
+    "review/native-white-head-kit/model.glb",
+    "tools/asset-gen/rig_hero_horse.py",
+    "build-phase.py",
+    "build-fold.py",
+    "Python NumPy SciPy"
+  ],
+  "privatePilotModelDependency": false,
+  "checkedRuntimeHelperSha256": "c96101951681c195e31cc07cdfc3bf525800e238f5760ef4499131caf7dcd8fa",
+  "scope": "White late-recovery phase +30deg/12deg distal fold with original-distal companion clips; actual gate required."
+}

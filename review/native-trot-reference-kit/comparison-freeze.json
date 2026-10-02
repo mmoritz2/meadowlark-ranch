@@ -1,0 +1,34 @@
+{
+  "candidateHashes": {
+    "review/native-front-hoof-kit/white/model.glb": "6aee1b94a4d5b1c8f7580569ba32ca6248c0a4c29b4b3e26d790fb4ac53d562e",
+    "review/native-trot-reference-kit/white/model.glb": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+    "review/native-front-hoof-kit/bay/model.glb": "8f4bf91cee542b8535335ce1e2a62c67e778a9bc95448db8674b880645c9aefa",
+    "review/native-trot-reference-kit/bay/model.glb": "611b009fcdd348f8e5ccd58be7d9e3bc6829a54180bf94ef59abeba281272979",
+    "review/native-front-hoof-kit/sporthorse/model.glb": "e3e917cefff70e124b51f92ab52fff4423023665411f9d3f6a660ca02a23a1f0",
+    "review/native-trot-reference-kit/sporthorse/model.glb": "feb8e040cfb385eafade0bcfa03e6dcde5b5a5b48589074960a8cba9329d707f"
+  },
+  "helperSha256": "c96101951681c195e31cc07cdfc3bf525800e238f5760ef4499131caf7dcd8fa",
+  "checks": {
+    "allThree": true,
+    "controls": true,
+    "defaultSideBySide": true,
+    "samePhase": true,
+    "bothUseActualGate": true,
+    "all677Finite": true,
+    "actualStrongFold": true,
+    "fourGaits": true,
+    "zeroErrors": true,
+    "responsePins": true
+  },
+  "evidenceHashes": {
+    "bay-sporthorse-native-normal-comparison.png": "7ade6aad1b702974e37cdfce4b1af4c6536d129ca26262872b3409d32fa447f3",
+    "bay-sporthorse-native-peak-comparison.png": "2d4ae3c953c31f03dafb1c0accc3a56b86e2b671610e39d57c6cb06208d930aa",
+    "bay-western-normal-comparison.png": "5e118e2b554773a0351eb9b38580ec903e67e6db97494e315fe75f2a1d933fa1",
+    "bay-western-peak-comparison.png": "a96f4253a574b4636156f401ad089e8c596811651c94eb14fafbe9e66444e10b",
+    "comparison-REVIEW.md": "6834e17c12b07650489bcf7c5005985bf6340f0ae182d553bff30366f72b1426",
+    "comparison-qa.json": "afb68e1ac9f226e38992d241e2c2f3fbeb47a3e8d4ea6e842a7dad0e5187b930",
+    "qa-comparison.cjs": "a29f98490c5389f88d688ce7fe4140c968de7b11c1005bd2e763d4343ca15f98",
+    "white-western-normal-comparison.png": "c1edf2868dd8bb3afdf84774f059837abb09b9f041e56ff1f5d7ae28a7661bd5",
+    "white-western-peak-comparison.png": "4a0e5eeba6962f31c66d46720ee79969cf1e7f47f0ee6128838d15cf5f87a353"
+  }
+}

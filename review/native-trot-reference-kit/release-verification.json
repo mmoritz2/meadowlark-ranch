@@ -1,0 +1,83 @@
+{
+  "status": "Local final validation passed; public deployment pending",
+  "models": [
+    {
+      "folder": "white",
+      "originalFile": "review/native-white-head-kit/model.glb",
+      "originalSha256": "488a3382f9c2f44dc69ccdfe935a032a03dae768e794088aaf9fa04ad045f81f",
+      "file": "review/native-trot-reference-kit/white/model.glb",
+      "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+      "bytes": 28557020
+    },
+    {
+      "folder": "bay",
+      "originalFile": "review/native-bay-head-kit/model.glb",
+      "originalSha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+      "file": "review/native-trot-reference-kit/bay/model.glb",
+      "sha256": "611b009fcdd348f8e5ccd58be7d9e3bc6829a54180bf94ef59abeba281272979",
+      "bytes": 16530792
+    },
+    {
+      "folder": "sporthorse",
+      "originalFile": "review/native-bay-sporthorse-packed-kit/model.glb",
+      "originalSha256": "a7ea093b602d1b6f3ce234afaed89925974faf7a127bf07b2900ac41674b0f74",
+      "file": "review/native-trot-reference-kit/sporthorse/model.glb",
+      "sha256": "feb8e040cfb385eafade0bcfa03e6dcde5b5a5b48589074960a8cba9329d707f",
+      "bytes": 17140912
+    }
+  ],
+  "runtimePins": {
+    "assets/native-horse-motion.js": "e1855f0d5de2430d7c5def5441679ff42e0bb6c89d21137aec35a9c73ee8d049",
+    "assets/native-hoof-flex.mjs": "c96101951681c195e31cc07cdfc3bf525800e238f5760ef4499131caf7dcd8fa",
+    "assets/native-hoof-controls.mjs": "09b93a47ed1325f1ac8c05e06ed20c5b1c7a7fc3260d484a0ba4bcdfa24f533a",
+    "assets/native-groom-layer.mjs": "1d07b8fb578428ca4e795b09d042687cbec2b1edc3e3e1a311af3896b9683240",
+    "assets/frame-inertia.mjs": "e38483e86f36c0a4a733becd7af8e780f9ba8d910ef4242e52573771f71ba187",
+    "assets/native-groom-controls.mjs": "31094b41aec830eebf1189272ded37b77be7b15dac43337ee3751cc116b7a735",
+    "assets/native-breed-profiles.js": "dc1bdea100fb7490cc9c4673a94050065d781ffb70fa1b37be5b62b89c3afffe",
+    "assets/game-hero-horse.js": "03d3148cdf30749bbfaa5cdf6bf32f9d4b291186a12290211269b2651e96f2ed",
+    "assets/features/native-horses.js": "85e14cfedad964a61e80700227b3f4b5a5f8b370a93402439607b5040a74b122"
+  },
+  "scope": "Three native horse forelegs only; stronger lifted hoof tuck plus late Trot recovery timing. No hind/body/head/groom/tack source curves changed; legacy80 and both dragons unchanged.",
+  "reference": "User supplied Arabian photo Adobe Stock25513529 via Bing; visual phase reference only; image not bundled.",
+  "localVerifiedAtUtc": "2026-10-02T12:38:47.304204+00:00",
+  "checks": {
+    "transition-qa.json": {
+      "allFinite": true,
+      "protectedBodyHeadSaddleHindExact": true,
+      "controllerPhaseExact": true,
+      "noMaterialAddedPenetration": true,
+      "authoredFoldApplies": true,
+      "noFallbackDiscontinuities": true,
+      "zeroErrors": true
+    },
+    "mounted-qa.json": {
+      "allThreeEligible": true,
+      "all677Finite": true,
+      "actualGaitsAndFullCycles": true,
+      "protectedBodyEyesTackExact": true,
+      "onlyGroomResponds": true,
+      "restorationReapply": true,
+      "phaseAndTimeUnchangedByLayer": true,
+      "mountedContacts": true,
+      "realStartStopTurn": true,
+      "longFramesReseed": true,
+      "resetClean": true,
+      "disposeAndSwitchBack": true,
+      "loadedModulesPinned": true,
+      "zeroErrors": true,
+      "actualFrontHoofLayer": true
+    },
+    "comparison-qa.json": {
+      "allThree": true,
+      "controls": true,
+      "defaultSideBySide": true,
+      "samePhase": true,
+      "bothUseActualGate": true,
+      "all677Finite": true,
+      "actualStrongFold": true,
+      "fourGaits": true,
+      "zeroErrors": true,
+      "responsePins": true
+    }
+  }
+}

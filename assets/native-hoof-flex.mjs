@@ -1,4 +1,4 @@
-import {NATIVE_HOOF_CONTROLS} from './native-hoof-controls.mjs?v=native-hoof-flex-1';
+import {NATIVE_HOOF_CONTROLS} from './native-hoof-controls.mjs?v=native-hoof-flex-2';
 
 // The main mixer keeps the original distal pose. Authored hoof articulation is
 // added only where that pose has clearance; gait clocks and actor travel stay
@@ -34,13 +34,14 @@ export function prepareNativeHoofFlex({THREE,root,clips,profile}){
   }
   const feet={};
   for(const[foot,c]of Object.entries(controls)){
-   const sourceMinimum=minimum(c),gate=smooth((sourceMinimum-.012)/.023),first=bones.get(c.bones[0]);
+   // Fade the stronger fold through a wider clearance band before contact.
+   const sourceMinimum=minimum(c),gate=smooth((sourceMinimum-.012)/.030),first=bones.get(c.bones[0]);
    for(const n of c.bones)bones.get(n).quaternion.copy(source.get(n)).slerp(desired.get(n),gate);
-   first.updateWorldMatrix(false,true);let finalMinimum=minimum(c),appliedGate=gate;
+   first.updateWorldMatrix(false,true);let finalMinimum=minimum(c),appliedGate=gate;const requestedMinimum=finalMinimum;
    // A rare pose outside the audited envelope falls back to its source pose.
    // This does not lift the root, move joints, or correct source contact faults.
    if(finalMinimum<Math.min(.0005,sourceMinimum)-1e-7){for(const n of c.bones)bones.get(n).quaternion.copy(source.get(n));first.updateWorldMatrix(false,true);finalMinimum=minimum(c);appliedGate=0;fallbacks++;}
-   feet[foot]={sourceMinimumM:sourceMinimum,finalMinimumM:finalMinimum,gate:appliedGate,maxAddedLocalAngleDeg:Math.max(...c.bones.map(n=>source.get(n).angleTo(bones.get(n).quaternion)*180/Math.PI))};
+   feet[foot]={sourceMinimumM:sourceMinimum,finalMinimumM:finalMinimum,gate:appliedGate,requestedGate:gate,requestedMinimumM:requestedMinimum,maxAddedLocalAngleDeg:Math.max(...c.bones.map(n=>source.get(n).angleTo(bones.get(n).quaternion)*180/Math.PI))};
   }
   sampled=true;const cost=performance.now()-started;maxCost=Math.max(maxCost,cost);state={eligible:true,finite:boneNames.every(n=>bones.get(n).quaternion.toArray().every(Number.isFinite)),sourceControllerUpdatesOwned:0,feet,fallbacks,lastCostMs:cost,maxCostMs:maxCost};
  }

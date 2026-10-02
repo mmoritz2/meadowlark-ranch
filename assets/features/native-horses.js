@@ -1,4 +1,4 @@
-import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=native-hoof-flex-1';
+import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=native-hoof-flex-2';
 
 export const id='native-horses';
 export const NATIVE_MODEL_CHOICES=Object.freeze({
