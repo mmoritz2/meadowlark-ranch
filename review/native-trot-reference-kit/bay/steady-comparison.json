@@ -1,0 +1,1047 @@
+{
+  "pilotSha256": "611b009fcdd348f8e5ccd58be7d9e3bc6829a54180bf94ef59abeba281272979",
+  "sourceSha256": "8f7e7c94395595693e480a9b16a7112b0b70231f54ce6d34efa376a2ec2bec2d",
+  "controllerSha256": "e1855f0d5de2430d7c5def5441679ff42e0bb6c89d21137aec35a9c73ee8d049",
+  "helperSha256": "c96101951681c195e31cc07cdfc3bf525800e238f5760ef4499131caf7dcd8fa",
+  "phaseSamples": 256,
+  "gaits": [
+    {
+      "gait": "walk",
+      "all677Finite": true,
+      "fallbackIncrements": 0,
+      "maximumProtectedMatrixDelta": 0,
+      "maximumProtectedSkinnedDelta": 0,
+      "bodyMinY": {
+        "min": 0.0006995992086044687,
+        "max": 0.001190626416850173,
+        "span": 0.0004910272082457043
+      },
+      "feet": {
+        "FL": {
+          "stanceWholeMinM": {
+            "min": 0.0006995992086044687,
+            "max": 0.0012333687634821615,
+            "span": 0.0005337695548776927
+          },
+          "allWholeMinM": {
+            "min": 0.0006995992086044687,
+            "max": 0.05030282524885643,
+            "span": 0.04960322604025196
+          },
+          "stanceMeanDeltaM": 6.624500846714322e-10,
+          "maximumAddedPenetrationM": 0,
+          "fallbackStart": 0,
+          "fallbackEnd": 0,
+          "maxAdditionalLocalDegrees": 29.646712058192783,
+          "gate": {
+            "min": 0,
+            "max": 0.991326558382256,
+            "span": 0.991326558382256
+          },
+          "actualAddedHoofPasternDegrees": {
+            "min": -11.858722778699644,
+            "max": -4.5807087190041784e-07,
+            "span": 11.858722320628772
+          },
+          "relativeToShippedHoofPasternDegrees": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          }
+        },
+        "FR": {
+          "stanceWholeMinM": {
+            "min": 0.0007579602792696758,
+            "max": 0.001361828826880513,
+            "span": 0.0006038685476108373
+          },
+          "allWholeMinM": {
+            "min": 0.0007579602792696758,
+            "max": 0.0547157272949042,
+            "span": 0.05395776701563452
+          },
+          "stanceMeanDeltaM": 1.0866893768660464e-09,
+          "maximumAddedPenetrationM": 0,
+          "fallbackStart": 0,
+          "fallbackEnd": 0,
+          "maxAdditionalLocalDegrees": 29.567275946525527,
+          "gate": {
+            "min": 0,
+            "max": 0.9890319033747248,
+            "span": 0.9890319033747248
+          },
+          "actualAddedHoofPasternDegrees": {
+            "min": -11.826925352651415,
+            "max": -7.289321501957602e-07,
+            "span": 11.826924623719265
+          },
+          "relativeToShippedHoofPasternDegrees": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          }
+        },
+        "HL": {
+          "stanceWholeMinM": {
+            "min": 0.0007907297575822092,
+            "max": 0.0013640752347740125,
+            "span": 0.0005733454771918033
+          },
+          "allWholeMinM": {
+            "min": 0.0007907297575822092,
+            "max": 0.03895773354069304,
+            "span": 0.03816700378311083
+          },
+          "stanceMeanDeltaM": 0,
+          "maximumAddedPenetrationM": 0
+        },
+        "HR": {
+          "stanceWholeMinM": {
+            "min": 0.0006876297094033086,
+            "max": 0.0012173992948496248,
+            "span": 0.0005297695854463162
+          },
+          "allWholeMinM": {
+            "min": 0.0006876297094033086,
+            "max": 0.03915110957442076,
+            "span": 0.03846347986501745
+          },
+          "stanceMeanDeltaM": 0,
+          "maximumAddedPenetrationM": 0
+        }
+      },
+      "localStep": {
+        "fingers_01_l_0187": {
+          "sourceMaxDegrees": 0.857599825169359,
+          "shippedMaxDegrees": 3.1080961630844874,
+          "pilotMaxDegrees": 3.1080961630844874
+        },
+        "fingers_02_l_0208": {
+          "sourceMaxDegrees": 0,
+          "shippedMaxDegrees": 0.9681397034673277,
+          "pilotMaxDegrees": 0.9681397034673277
+        },
+        "fingers_01_r_0273": {
+          "sourceMaxDegrees": 0.7093570548329865,
+          "shippedMaxDegrees": 3.1271694699465193,
+          "pilotMaxDegrees": 3.1271694699465193
+        },
+        "fingers_02_r_0274": {
+          "sourceMaxDegrees": 0,
+          "shippedMaxDegrees": 1.0832105230692823,
+          "pilotMaxDegrees": 1.0832105230692823
+        }
+      }
+    },
+    {
+      "gait": "trot",
+      "all677Finite": true,
+      "fallbackIncrements": 0,
+      "maximumProtectedMatrixDelta": 0,
+      "maximumProtectedSkinnedDelta": 0.017179531404779725,
+      "bodyMinY": {
+        "min": 0.0009196876225952282,
+        "max": 0.0010513984138509837,
+        "span": 0.00013171079125575552
+      },
+      "feet": {
+        "FL": {
+          "stanceWholeMinM": {
+            "min": 0.0009480254332370282,
+            "max": 0.0011810796669965086,
+            "span": 0.00023305423375948042
+          },
+          "allWholeMinM": {
+            "min": 0.0009480254332370282,
+            "max": 0.12790333661207454,
+            "span": 0.12695531117883752
+          },
+          "stanceMeanDeltaM": 6.624499120695709e-10,
+          "maximumAddedPenetrationM": 0,
+          "fallbackStart": 0,
+          "fallbackEnd": 0,
+          "maxAdditionalLocalDegrees": 30.000497411623456,
+          "gate": {
+            "min": 0,
+            "max": 1,
+            "span": 1
+          },
+          "actualAddedHoofPasternDegrees": {
+            "min": -12.00022590263211,
+            "max": -7.379924227279844e-08,
+            "span": 12.000225828832868
+          },
+          "relativeToShippedHoofPasternDegrees": {
+            "min": -3.2057187127065845e-08,
+            "max": 0.5263376514814126,
+            "span": 0.5263376835385998
+          }
+        },
+        "FR": {
+          "stanceWholeMinM": {
+            "min": 0.0008967862647461596,
+            "max": 0.001251085885830006,
+            "span": 0.00035429962108384644
+          },
+          "allWholeMinM": {
+            "min": 0.0008967862647461596,
+            "max": 0.13237287447683366,
+            "span": 0.1314760882120875
+          },
+          "stanceMeanDeltaM": 1.0866894514574578e-09,
+          "maximumAddedPenetrationM": 0,
+          "fallbackStart": 0,
+          "fallbackEnd": 0,
+          "maxAdditionalLocalDegrees": 30.0004975871895,
+          "gate": {
+            "min": 0,
+            "max": 1,
+            "span": 1
+          },
+          "actualAddedHoofPasternDegrees": {
+            "min": -12.000205090712711,
+            "max": 3.348348172949045e-06,
+            "span": 12.000208439060884
+          },
+          "relativeToShippedHoofPasternDegrees": {
+            "min": -6.796260549890576e-07,
+            "max": 0.6801307053846131,
+            "span": 0.680131385010668
+          }
+        },
+        "HL": {
+          "stanceWholeMinM": {
+            "min": 0.0009410067019711148,
+            "max": 0.0012674308968579355,
+            "span": 0.00032642419488682073
+          },
+          "allWholeMinM": {
+            "min": 0.0009410067019711148,
+            "max": 0.08574551817633819,
+            "span": 0.08480451147436707
+          },
+          "stanceMeanDeltaM": 0,
+          "maximumAddedPenetrationM": 0
+        },
+        "HR": {
+          "stanceWholeMinM": {
+            "min": 0.0007540927687700386,
+            "max": 0.004594487846953682,
+            "span": 0.0038403950781836435
+          },
+          "allWholeMinM": {
+            "min": 0.0007540927687700386,
+            "max": 0.085846513115929,
+            "span": 0.08509242034715897
+          },
+          "stanceMeanDeltaM": 0,
+          "maximumAddedPenetrationM": 0
+        }
+      },
+      "localStep": {
+        "fingers_01_l_0187": {
+          "sourceMaxDegrees": 0.7594070602137611,
+          "shippedMaxDegrees": 0.9820023620366887,
+          "pilotMaxDegrees": 0.9490512563283647
+        },
+        "fingers_02_l_0208": {
+          "sourceMaxDegrees": 0,
+          "shippedMaxDegrees": 0.46135555259124184,
+          "pilotMaxDegrees": 0.46135555259124184
+        },
+        "fingers_01_r_0273": {
+          "sourceMaxDegrees": 0.7862962630525121,
+          "shippedMaxDegrees": 1.0863218688868685,
+          "pilotMaxDegrees": 1.1272711675496871
+        },
+        "fingers_02_r_0274": {
+          "sourceMaxDegrees": 0,
+          "shippedMaxDegrees": 0.46135253608827254,
+          "pilotMaxDegrees": 0.4685159746309392
+        }
+      }
+    },
+    {
+      "gait": "canterLeft",
+      "all677Finite": true,
+      "fallbackIncrements": 0,
+      "maximumProtectedMatrixDelta": 0,
+      "maximumProtectedSkinnedDelta": 0,
+      "bodyMinY": {
+        "min": 0.0008112580236878659,
+        "max": 0.004707734318024043,
+        "span": 0.003896476294336177
+      },
+      "feet": {
+        "FL": {
+          "stanceWholeMinM": {
+            "min": 0.000901318626027936,
+            "max": 0.0012942029024718624,
+            "span": 0.00039288427644392637
+          },
+          "allWholeMinM": {
+            "min": 0.000901318626027936,
+            "max": 0.17587131739588285,
+            "span": 0.17496999876985492
+          },
+          "stanceMeanDeltaM": 6.624498284159385e-10,
+          "maximumAddedPenetrationM": 0,
+          "fallbackStart": 0,
+          "fallbackEnd": 0,
+          "maxAdditionalLocalDegrees": 30.00000695505829,
+          "gate": {
+            "min": 0,
+            "max": 1,
+            "span": 1
+          },
+          "actualAddedHoofPasternDegrees": {
+            "min": -12.000010723480614,
+            "max": 4.983061239727249e-05,
+            "span": 12.000060554093011
+          },
+          "relativeToShippedHoofPasternDegrees": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          }
+        },
+        "FR": {
+          "stanceWholeMinM": {
+            "min": 0.0008361215995551807,
+            "max": 0.0012088604042134817,
+            "span": 0.000372738804658301
+          },
+          "allWholeMinM": {
+            "min": 0.0008361215995551807,
+            "max": 0.17961384043898349,
+            "span": 0.1787777188394283
+          },
+          "stanceMeanDeltaM": 1.0866894280351202e-09,
+          "maximumAddedPenetrationM": 0,
+          "fallbackStart": 0,
+          "fallbackEnd": 0,
+          "maxAdditionalLocalDegrees": 29.999748534288788,
+          "gate": {
+            "min": 0,
+            "max": 1,
+            "span": 1
+          },
+          "actualAddedHoofPasternDegrees": {
+            "min": -12.00009146637467,
+            "max": -7.034113878034987e-07,
+            "span": 12.000090762963282
+          },
+          "relativeToShippedHoofPasternDegrees": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          }
+        },
+        "HL": {
+          "stanceWholeMinM": {
+            "min": 0.0008697002431364014,
+            "max": 0.0010967369347291288,
+            "span": 0.00022703669159272744
+          },
+          "allWholeMinM": {
+            "min": 0.0008697002431364014,
+            "max": 0.11970638519651489,
+            "span": 0.11883668495337849
+          },
+          "stanceMeanDeltaM": 0,
+          "maximumAddedPenetrationM": 0
+        },
+        "HR": {
+          "stanceWholeMinM": {
+            "min": 0.0007521834353577117,
+            "max": 0.004707734318024043,
+            "span": 0.003955550882666331
+          },
+          "allWholeMinM": {
+            "min": 0.0007521834353577117,
+            "max": 0.11965528162648442,
+            "span": 0.11890309819112671
+          },
+          "stanceMeanDeltaM": 0,
+          "maximumAddedPenetrationM": 0
+        }
+      },
+      "localStep": {
+        "fingers_01_l_0187": {
+          "sourceMaxDegrees": 1.144035336094572,
+          "shippedMaxDegrees": 1.449484151821006,
+          "pilotMaxDegrees": 1.449484151821006
+        },
+        "fingers_02_l_0208": {
+          "sourceMaxDegrees": 0,
+          "shippedMaxDegrees": 0.4305975615511724,
+          "pilotMaxDegrees": 0.4305975615511724
+        },
+        "fingers_01_r_0273": {
+          "sourceMaxDegrees": 0.959356708782457,
+          "shippedMaxDegrees": 1.4684280518876587,
+          "pilotMaxDegrees": 1.4684280518876587
+        },
+        "fingers_02_r_0274": {
+          "sourceMaxDegrees": 0,
+          "shippedMaxDegrees": 0.43071377274831024,
+          "pilotMaxDegrees": 0.43071377274831024
+        }
+      }
+    },
+    {
+      "gait": "canterRight",
+      "all677Finite": true,
+      "fallbackIncrements": 0,
+      "maximumProtectedMatrixDelta": 0,
+      "maximumProtectedSkinnedDelta": 0,
+      "bodyMinY": {
+        "min": 0.0008208388179004045,
+        "max": 0.0013229988562132831,
+        "span": 0.0005021600383128787
+      },
+      "feet": {
+        "FL": {
+          "stanceWholeMinM": {
+            "min": 0.0008765083673254108,
+            "max": 0.0011373908371719657,
+            "span": 0.00026088246984655493
+          },
+          "allWholeMinM": {
+            "min": 0.0008765083673254108,
+            "max": 0.17579695634857648,
+            "span": 0.17492044798125106
+          },
+          "stanceMeanDeltaM": 6.624498369893843e-10,
+          "maximumAddedPenetrationM": 0,
+          "fallbackStart": 0,
+          "fallbackEnd": 0,
+          "maxAdditionalLocalDegrees": 29.999758146091683,
+          "gate": {
+            "min": 0,
+            "max": 1,
+            "span": 1
+          },
+          "actualAddedHoofPasternDegrees": {
+            "min": -12.000108726361987,
+            "max": -4.554541419565794e-07,
+            "span": 12.000108270907845
+          },
+          "relativeToShippedHoofPasternDegrees": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          }
+        },
+        "FR": {
+          "stanceWholeMinM": {
+            "min": 0.0009186023506228655,
+            "max": 0.0016461444764859158,
+            "span": 0.0007275421258630503
+          },
+          "allWholeMinM": {
+            "min": 0.0009186023506228655,
+            "max": 0.17970483096157455,
+            "span": 0.1787862286109517
+          },
+          "stanceMeanDeltaM": 1.0866896736200717e-09,
+          "maximumAddedPenetrationM": 0,
+          "fallbackStart": 0,
+          "fallbackEnd": 0,
+          "maxAdditionalLocalDegrees": 29.99999591567977,
+          "gate": {
+            "min": 0,
+            "max": 1,
+            "span": 1
+          },
+          "actualAddedHoofPasternDegrees": {
+            "min": -11.99999645256105,
+            "max": 4.95078825224482e-05,
+            "span": 12.000045960443572
+          },
+          "relativeToShippedHoofPasternDegrees": {
+            "min": 0,
+            "max": 0,
+            "span": 0
+          }
+        },
+        "HL": {
+          "stanceWholeMinM": {
+            "min": 0.0009100941955046409,
+            "max": 0.0013441957886278638,
+            "span": 0.00043410159312322295
+          },
+          "allWholeMinM": {
+            "min": 0.0009100941955046409,
+            "max": 0.11966472979357068,
+            "span": 0.11875463559806604
+          },
+          "stanceMeanDeltaM": 0,
+          "maximumAddedPenetrationM": 0
+        },
+        "HR": {
+          "stanceWholeMinM": {
+            "min": 0.0007391734010479267,
+            "max": 0.0031155037650918704,
+            "span": 0.0023763303640439437
+          },
+          "allWholeMinM": {
+            "min": 0.0007391734010479267,
+            "max": 0.119724364370575,
+            "span": 0.11898519096952707
+          },
+          "stanceMeanDeltaM": 0,
+          "maximumAddedPenetrationM": 0
+        }
+      },
+      "localStep": {
+        "fingers_01_l_0187": {
+          "sourceMaxDegrees": 0.9664504963792261,
+          "shippedMaxDegrees": 1.4615947543524155,
+          "pilotMaxDegrees": 1.4615947543524155
+        },
+        "fingers_02_l_0208": {
+          "sourceMaxDegrees": 0,
+          "shippedMaxDegrees": 0.4307140338045371,
+          "pilotMaxDegrees": 0.4307140338045371
+        },
+        "fingers_01_r_0273": {
+          "sourceMaxDegrees": 1.137715591038301,
+          "shippedMaxDegrees": 1.2619018368651762,
+          "pilotMaxDegrees": 1.2619018368651762
+        },
+        "fingers_02_r_0274": {
+          "sourceMaxDegrees": 0,
+          "shippedMaxDegrees": 0.43059780122624536,
+          "pilotMaxDegrees": 0.43059780122624536
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "checks": {
+    "finite677": true,
+    "stanceMeanBelowOneMicrometre": true,
+    "noAddedWholeHoofGroundPenetration": true,
+    "noFallbackResets": true,
+    "zeroErrors": true,
+    "protectedWorldBones256Exactly": true,
+    "protectedFixedSkinFull16PerGaitExactly": true,
+    "targetedTransitionsZeroFallback": true,
+    "targetedTransitionsNoAddedDepth": true,
+    "targetedTransitionsProtected": true,
+    "normalRateZeroFallback": true
+  },
+  "method": "256 actual GLTF phases per gait, fixed source all-four whole/strict-sole/toe/heel masks. All256 unaffected world bones exact; 16 full protected-vertex cases per gait then actual rate1 Trot and30/60fps Trot\u2192Walk .75. Original first skin mask included permitted fore-weighted leg groom; corrected fixed per-mesh mask removes only vertices with a positive original influence on changed fore nodes/descendants.",
+  "correctedProtectedVertexCheck": {
+    "target": "bay",
+    "helperSha256": "c96101951681c195e31cc07cdfc3bf525800e238f5760ef4499131caf7dcd8fa",
+    "controllerSha256": "e1855f0d5de2430d7c5def5441679ff42e0bb6c89d21137aec35a9c73ee8d049",
+    "protectedMaskMethod": "Per original mesh, fixed vertices having no positive weight on any descendant of the ten changed fore rotation nodes or the two distal leaves. Fore-weighted leg groom follows the changed limb and is separately allowed. Trunk/head/hind/seat/tack world bones retained exactly.",
+    "cases": [
+      {
+        "gait": "walk",
+        "frames": 16,
+        "maxProtectedMatrix": 0,
+        "maxProtectedSkin": 0,
+        "finite": true
+      },
+      {
+        "gait": "trot",
+        "frames": 16,
+        "maxProtectedMatrix": 0,
+        "maxProtectedSkin": 0,
+        "finite": true
+      },
+      {
+        "gait": "canterLeft",
+        "frames": 16,
+        "maxProtectedMatrix": 0,
+        "maxProtectedSkin": 0,
+        "finite": true
+      },
+      {
+        "gait": "canterRight",
+        "frames": 16,
+        "maxProtectedMatrix": 0,
+        "maxProtectedSkin": 0,
+        "finite": true
+      }
+    ],
+    "errors": [],
+    "transitions": [
+      {
+        "fps": 30,
+        "frames": 13,
+        "fallbackDelta": 0,
+        "addedNegativeDepthM": 0,
+        "maxProtectedMatrix": 0,
+        "maxProtectedSkin": 0
+      },
+      {
+        "fps": 60,
+        "frames": 25,
+        "fallbackDelta": 0,
+        "addedNegativeDepthM": 9.950348470524895e-10,
+        "maxProtectedMatrix": 0,
+        "maxProtectedSkin": 0
+      }
+    ],
+    "normalRate": {
+      "frames": 44,
+      "dt": 0.016666666666666666,
+      "fallbackDelta": 0
+    },
+    "checks": {
+      "protectedFixedVerticesExact": true,
+      "finite677": true,
+      "targetedTransitionsZeroFallback": true,
+      "targetedTransitionsNoAddedDepth": true,
+      "targetedTransitionsProtected": true,
+      "normalRateZeroFallback": true,
+      "zeroErrors": true
+    }
+  },
+  "regionalContacts": {
+    "walk": {
+      "speedMps": 0.4668608843083865,
+      "durationS": 1.12,
+      "regions": {
+        "FL": {
+          "heel": {
+            "samples": 25,
+            "worldXYZSpanM": [
+              1.6754428493193085e-07,
+              0.00012280333937496422,
+              6.840208163316763e-05
+            ]
+          },
+          "sole": {
+            "samples": 92,
+            "worldXYZSpanM": [
+              1.7736919005750806e-07,
+              0.0005104485256458794,
+              3.2167097799962185e-05
+            ]
+          },
+          "toe": {
+            "samples": 50,
+            "worldXYZSpanM": [
+              1.5701136817092287e-07,
+              0.0014863894998864268,
+              6.215081665050803e-05
+            ]
+          }
+        },
+        "FR": {
+          "heel": {
+            "samples": 25,
+            "worldXYZSpanM": [
+              1.9510018414714558e-07,
+              0.00029625827239911345,
+              5.684025370089607e-05
+            ]
+          },
+          "sole": {
+            "samples": 92,
+            "worldXYZSpanM": [
+              2.2787019365866357e-07,
+              0.0005396304384927145,
+              6.845559822243885e-05
+            ]
+          },
+          "toe": {
+            "samples": 50,
+            "worldXYZSpanM": [
+              1.9182427971053961e-07,
+              0.0024884278857146887,
+              0.00010811855882852939
+            ]
+          }
+        },
+        "HL": {
+          "heel": {
+            "samples": 25,
+            "worldXYZSpanM": [
+              1.6911527919716285e-07,
+              0.00026271197836857593,
+              6.0619331009648114e-05
+            ]
+          },
+          "sole": {
+            "samples": 92,
+            "worldXYZSpanM": [
+              2.108457350380455e-07,
+              0.0005326127896110918,
+              9.064182011120359e-05
+            ]
+          },
+          "toe": {
+            "samples": 50,
+            "worldXYZSpanM": [
+              1.838418096644645e-07,
+              0.0011250493475473754,
+              0.0001316714236244687
+            ]
+          }
+        },
+        "HR": {
+          "heel": {
+            "samples": 25,
+            "worldXYZSpanM": [
+              1.559436473008713e-07,
+              0.00029077391034585103,
+              8.706280045278625e-05
+            ]
+          },
+          "sole": {
+            "samples": 92,
+            "worldXYZSpanM": [
+              1.9387077235255568e-07,
+              0.00046610169839068905,
+              3.95717437334242e-05
+            ]
+          },
+          "toe": {
+            "samples": 50,
+            "worldXYZSpanM": [
+              1.8641870086488765e-07,
+              0.0021030925933915754,
+              6.947361808851138e-05
+            ]
+          }
+        }
+      }
+    },
+    "trot": {
+      "speedMps": 1.1801205686684215,
+      "durationS": 0.72,
+      "regions": {
+        "FL": {
+          "heel": {
+            "samples": 17,
+            "worldXYZSpanM": [
+              1.4387027147400033e-07,
+              0.0004370947416723241,
+              4.1984076583734264e-05
+            ]
+          },
+          "sole": {
+            "samples": 62,
+            "worldXYZSpanM": [
+              1.6946941237827584e-07,
+              0.00021538582854030474,
+              1.762413568295873e-05
+            ]
+          },
+          "toe": {
+            "samples": 34,
+            "worldXYZSpanM": [
+              1.277168846652854e-07,
+              0.002925498821678897,
+              2.6729002767900134e-05
+            ]
+          }
+        },
+        "FR": {
+          "heel": {
+            "samples": 17,
+            "worldXYZSpanM": [
+              1.6520808998610192e-07,
+              9.692508234342319e-05,
+              3.874574901430172e-05
+            ]
+          },
+          "sole": {
+            "samples": 62,
+            "worldXYZSpanM": [
+              1.7046247782759316e-07,
+              0.0003104037439604279,
+              5.193261942793015e-05
+            ]
+          },
+          "toe": {
+            "samples": 34,
+            "worldXYZSpanM": [
+              1.5297888678045268e-07,
+              0.004015801318557803,
+              6.167950162494495e-05
+            ]
+          }
+        },
+        "HL": {
+          "heel": {
+            "samples": 17,
+            "worldXYZSpanM": [
+              1.4813184154305326e-07,
+              0.000678113846957068,
+              4.0015304981488864e-05
+            ]
+          },
+          "sole": {
+            "samples": 62,
+            "worldXYZSpanM": [
+              1.6663547100503884e-07,
+              0.0002716506015915301,
+              6.007243504202453e-05
+            ]
+          },
+          "toe": {
+            "samples": 34,
+            "worldXYZSpanM": [
+              1.5764313635036054e-07,
+              0.0022267111090640257,
+              0.00010316686252975771
+            ]
+          }
+        },
+        "HR": {
+          "heel": {
+            "samples": 17,
+            "worldXYZSpanM": [
+              1.650095366179105e-07,
+              0.0035374253087531596,
+              0.0007232062416343554
+            ]
+          },
+          "sole": {
+            "samples": 62,
+            "worldXYZSpanM": [
+              1.6013742837328593e-07,
+              0.00031990835425069284,
+              4.4177106786114084e-05
+            ]
+          },
+          "toe": {
+            "samples": 34,
+            "worldXYZSpanM": [
+              1.3338864041090304e-07,
+              0.002844396259603255,
+              6.090237967676382e-05
+            ]
+          }
+        }
+      }
+    },
+    "canterLeft": {
+      "speedMps": 1.6595445496899675,
+      "durationS": 0.64,
+      "regions": {
+        "FL": {
+          "heel": {
+            "samples": 16,
+            "worldXYZSpanM": [
+              1.662170160121601e-07,
+              0.00040373464017549963,
+              6.585865510633226e-05
+            ]
+          },
+          "sole": {
+            "samples": 56,
+            "worldXYZSpanM": [
+              2.114933155550336e-07,
+              0.00021517471558641374,
+              3.3628416119979576e-05
+            ]
+          },
+          "toe": {
+            "samples": 31,
+            "worldXYZSpanM": [
+              1.5861979514586455e-07,
+              0.0028046431776078346,
+              3.901418451901506e-05
+            ]
+          }
+        },
+        "FR": {
+          "heel": {
+            "samples": 15,
+            "worldXYZSpanM": [
+              1.594216667843984e-07,
+              6.416177658420327e-05,
+              5.675925572212748e-06
+            ]
+          },
+          "sole": {
+            "samples": 57,
+            "worldXYZSpanM": [
+              1.776728014990514e-07,
+              0.00025461273439089573,
+              4.7986023238744124e-05
+            ]
+          },
+          "toe": {
+            "samples": 30,
+            "worldXYZSpanM": [
+              1.9067177434162197e-07,
+              0.003856532209150386,
+              4.20311622850722e-05
+            ]
+          }
+        },
+        "HL": {
+          "heel": {
+            "samples": 15,
+            "worldXYZSpanM": [
+              2.722074050887091e-07,
+              0.0005775778323453967,
+              4.306145806376449e-06
+            ]
+          },
+          "sole": {
+            "samples": 57,
+            "worldXYZSpanM": [
+              2.581769518172905e-07,
+              0.00017088724987156592,
+              3.6733606577354916e-05
+            ]
+          },
+          "toe": {
+            "samples": 30,
+            "worldXYZSpanM": [
+              2.499809166334188e-07,
+              0.0019795473578051405,
+              4.865847467216966e-05
+            ]
+          }
+        },
+        "HR": {
+          "heel": {
+            "samples": 16,
+            "worldXYZSpanM": [
+              1.26533130806461e-07,
+              0.002774755241379521,
+              0.0006932919715278429
+            ]
+          },
+          "sole": {
+            "samples": 56,
+            "worldXYZSpanM": [
+              2.008841137879358e-07,
+              0.00032308791835292117,
+              8.278708172515525e-05
+            ]
+          },
+          "toe": {
+            "samples": 31,
+            "worldXYZSpanM": [
+              1.5160403388225774e-07,
+              0.0024924797898163427,
+              3.5547638184085795e-05
+            ]
+          }
+        }
+      }
+    },
+    "canterRight": {
+      "speedMps": 1.6595445496899675,
+      "durationS": 0.64,
+      "regions": {
+        "FL": {
+          "heel": {
+            "samples": 15,
+            "worldXYZSpanM": [
+              2.1325219747014845e-07,
+              0.00037971041580705384,
+              1.237605445869594e-05
+            ]
+          },
+          "sole": {
+            "samples": 57,
+            "worldXYZSpanM": [
+              2.1205082081920956e-07,
+              0.0001691671104524263,
+              1.6565995819117774e-05
+            ]
+          },
+          "toe": {
+            "samples": 30,
+            "worldXYZSpanM": [
+              2.327097115006893e-07,
+              0.002864238917472431,
+              2.6821084670780593e-05
+            ]
+          }
+        },
+        "FR": {
+          "heel": {
+            "samples": 16,
+            "worldXYZSpanM": [
+              1.1723473061775458e-07,
+              9.709588260554611e-05,
+              5.5350436580337004e-05
+            ]
+          },
+          "sole": {
+            "samples": 56,
+            "worldXYZSpanM": [
+              1.7865334350775086e-07,
+              0.0003693082370478133,
+              6.345787736550257e-05
+            ]
+          },
+          "toe": {
+            "samples": 31,
+            "worldXYZSpanM": [
+              1.6927169055325209e-07,
+              0.0037830873460366395,
+              6.057715663776442e-05
+            ]
+          }
+        },
+        "HL": {
+          "heel": {
+            "samples": 16,
+            "worldXYZSpanM": [
+              1.8715931779378359e-07,
+              0.0005957006381561714,
+              6.363789640917439e-06
+            ]
+          },
+          "sole": {
+            "samples": 56,
+            "worldXYZSpanM": [
+              2.4844526258505084e-07,
+              0.00021712030208896876,
+              8.330288537705677e-05
+            ]
+          },
+          "toe": {
+            "samples": 31,
+            "worldXYZSpanM": [
+              2.3750759536866894e-07,
+              0.0018386017043905442,
+              9.030977766011361e-05
+            ]
+          }
+        },
+        "HR": {
+          "heel": {
+            "samples": 15,
+            "worldXYZSpanM": [
+              2.1350900078487278e-07,
+              0.0016300668517312909,
+              0.0004733472371585834
+            ]
+          },
+          "sole": {
+            "samples": 57,
+            "worldXYZSpanM": [
+              1.8382768218749845e-07,
+              0.00019886530272116877,
+              3.848051879146164e-05
+            ]
+          },
+          "toe": {
+            "samples": 30,
+            "worldXYZSpanM": [
+              1.7602135604644076e-07,
+              0.0025530840510762883,
+              2.3674004780205316e-05
+            ]
+          }
+        }
+      }
+    }
+  }
+}

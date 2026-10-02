@@ -1,0 +1,69 @@
+{
+  "target": "bay",
+  "helperSha256": "c96101951681c195e31cc07cdfc3bf525800e238f5760ef4499131caf7dcd8fa",
+  "controllerSha256": "e1855f0d5de2430d7c5def5441679ff42e0bb6c89d21137aec35a9c73ee8d049",
+  "protectedMaskMethod": "Per original mesh, fixed vertices having no positive weight on any descendant of the ten changed fore rotation nodes or the two distal leaves. Fore-weighted leg groom follows the changed limb and is separately allowed. Trunk/head/hind/seat/tack world bones retained exactly.",
+  "cases": [
+    {
+      "gait": "walk",
+      "frames": 16,
+      "maxProtectedMatrix": 0,
+      "maxProtectedSkin": 0,
+      "finite": true
+    },
+    {
+      "gait": "trot",
+      "frames": 16,
+      "maxProtectedMatrix": 0,
+      "maxProtectedSkin": 0,
+      "finite": true
+    },
+    {
+      "gait": "canterLeft",
+      "frames": 16,
+      "maxProtectedMatrix": 0,
+      "maxProtectedSkin": 0,
+      "finite": true
+    },
+    {
+      "gait": "canterRight",
+      "frames": 16,
+      "maxProtectedMatrix": 0,
+      "maxProtectedSkin": 0,
+      "finite": true
+    }
+  ],
+  "errors": [],
+  "transitions": [
+    {
+      "fps": 30,
+      "frames": 13,
+      "fallbackDelta": 0,
+      "addedNegativeDepthM": 0,
+      "maxProtectedMatrix": 0,
+      "maxProtectedSkin": 0
+    },
+    {
+      "fps": 60,
+      "frames": 25,
+      "fallbackDelta": 0,
+      "addedNegativeDepthM": 9.950348470524895e-10,
+      "maxProtectedMatrix": 0,
+      "maxProtectedSkin": 0
+    }
+  ],
+  "normalRate": {
+    "frames": 44,
+    "dt": 0.016666666666666666,
+    "fallbackDelta": 0
+  },
+  "checks": {
+    "protectedFixedVerticesExact": true,
+    "finite677": true,
+    "targetedTransitionsZeroFallback": true,
+    "targetedTransitionsNoAddedDepth": true,
+    "targetedTransitionsProtected": true,
+    "normalRateZeroFallback": true,
+    "zeroErrors": true
+  }
+}
