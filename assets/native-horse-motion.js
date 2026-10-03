@@ -155,7 +155,7 @@ function createCreatorMotion({THREE,root,clips,profile}={}){
    target.setEffectiveWeight(0).play();active.set(target,0);
   }
   mode=value;key=nextKey;lead=nextLead;
-  transition={elapsed:0,duration:previous==='fly'||nextKey==='fly'?.65:.28,start:new Map(active),target};
+  transition={elapsed:0,duration:previous==='fly'?(profile.nativeLandingBlendS||.65):nextKey==='fly'?.65:.28,start:new Map(active),target};
  }
  function update(dt,{rate=1}={}){
   assertLive();if(!Number.isFinite(rate)||rate<0)throw new Error('Invalid native playback rate');if(!Number.isFinite(dt)||dt<0)throw new Error('Invalid native motion delta');
@@ -168,7 +168,7 @@ function createCreatorMotion({THREE,root,clips,profile}={}){
   mixer.update(dt);root.updateMatrixWorld(true);
   if(transition&&transition.elapsed>=transition.duration){for(const action of active.keys())if(action!==target){action.stop();active.delete(action);}target.setEffectiveWeight(1);active.set(target,1);transition=null;}
  }
- function snapshot(){const clip=sourceClips[key];return {gait:mode,lead,phase01:clip?actions[key].time/clip.duration:0,bodyLiftM:0,speedMps,grounded:mode!=='fly',intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:transition?.duration||.28,activeActions:active.size,restFallback:!clip,transitionsReviewed:false};}
+ function snapshot(){const clip=sourceClips[key];return {gait:mode,lead,phase01:clip?actions[key].time/clip.duration:0,bodyLiftM:0,flightWeight:active.get(actions.fly)||0,speedMps,grounded:mode!=='fly',intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:transition?.duration||.28,activeActions:active.size,restFallback:!clip,transitionsReviewed:false};}
  function reset(){assertLive();restore();mode='rest';key='rest';speedMps=0;actions.rest.reset().setEffectiveWeight(1).play();active.set(actions.rest,1);mixer.update(0);}
  return {set,update,reset,snapshot,gaits,availableModes,supportedModes:availableModes,mixer,get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return actions[key]?.time||0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;restore();mixer.uncacheRoot(root);disposed=true;}};
 }
@@ -186,7 +186,11 @@ export function tickNativeHorse(rig,speed,dt,turn=0){
  if(rig.heroJumpGrace>0)rig.heroJumpGrace=Math.max(0,rig.heroJumpGrace-dt);
  if(motion.mode==='jump'){motion.set('jump',{speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate:1});const state=motion.state;rig.phase=state.phase01;rig.heroJumpAge=state.gait==='jump'?state.jumpTimeS:null;rig.heroJumpExtra=state.bodyLiftM*cap.worldScale;rig.heroRate=1;if(state.gait!=='jump')rig.heroJumpGrace=.20;return state;}
  let gait='stand',rate=1,record=null;
- if(rig.nativeFlying&&gaits.fly){gait='fly';record=gaits.fly;}
+ // Gather the Black Dragon's wings during the last part of a requested
+ // landing. Physics stays airborne until contact; a low hover keeps flapping.
+ const landingApproach=!!(rig.nativeFlying&&gaits.fly&&rig.profile.nativeLandingBlendHeightM&&rig.nativeLanding&&Number.isFinite(rig.nativeAltitude)&&rig.nativeAltitude<=rig.profile.nativeLandingBlendHeightM);
+ rig.nativeLandingPose=landingApproach;
+ if(rig.nativeFlying&&gaits.fly&&!landingApproach){gait='fly';record=gaits.fly;}
  else if(actual>.02){
   const ground=Object.entries(gaits).filter(([key])=>key!=='fly'&&!key.endsWith('Right')).sort((a,b)=>a[1].nominalSpeedMps-b[1].nominalSpeedMps);
   const paceFactor=cap.paced?(rig.nativePaceFactor||1):1;
@@ -200,7 +204,17 @@ export function tickNativeHorse(rig,speed,dt,turn=0){
  const lead=turn<-.32?'right':turn>-.08?'left':rig.heroLead||'left';rig.heroLead=lead;if(gait.endsWith('Left'))gait=gait.slice(0,-4);
  if(record){const key=gait==='canter'||gait==='gallop'?gait+'Left':gait;rate=(cap.paced||cap.dragonTravel)&&gait!=='fly'?actual/cap.gaitSpeeds[key]*cap.gaitRates[key]:actual/(record.nominalSpeedMps*cap.worldScale);}
  if(gait==='fly')rate=cap.dragonTravel?(rig.profile.nativeFlightRate||1)*(1+.12*actual/Math.max(1,cap.flightMaxSpeedMps)):Math.max(.1,Math.min(1,rate||1));else rate=Math.min(cap.cadenceLimit,Math.max(0,rate));
- motion.set(gait,{lead,speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate});rig.phase=motion.state.phase01;rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroRate=rate;return motion.state;
+ motion.set(gait,{lead,speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate});
+ // The original long wing fingers sweep below the feet during some blends.
+ // Keep the measured clearance envelope above the actor's ground plane. This
+ // normalization offset also carries the saddle and follows interrupted fades.
+ if(rig.profile.nativeFlightBlendClearanceM&&rig.nativeRoot?.parent){
+  const w=motion.state.flightWeight||0,altitude=Math.max(0,rig.nativeAltitude||0)/cap.worldScale;
+  const lift=Math.max(0,rig.profile.nativeFlightBlendClearanceM*4*w*(1-w)-altitude);
+  rig.nativeRoot.parent.position.y=(rig.profile.nativeTranslation?.[1]||0)+lift;
+  rig.nativePoseLiftM=lift*cap.worldScale;
+ }
+ rig.phase=motion.state.phase01;rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroRate=rate;return motion.state;
 }
 
 // Actor lift is separate from the skinned jump pose and follows the same clock.

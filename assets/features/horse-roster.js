@@ -658,7 +658,8 @@ export function install(G){
     frame the solver has already wiped it and the swing applies whole. */
  const SWISH=new WeakMap(), _si=new THREE.Quaternion(), _sax=new THREE.Vector3(1,0,0);
  function swish(rig,t,sp){
-  if(!rig||!rig.bones)return;
+  // Black Dragon clips already animate the weighted tail; a horse swish bends it twice.
+  if(!rig||!rig.bones||rig.profile?.nativeKind==='black-dragon')return;
   for(const b of rig.bones){
    const n=b.name.replace(/[.\s]/g,''); if(n.slice(0,4)!=='tail')continue;
    const seg=+n.slice(4)||1, lag=(seg-1)*0.5, amp=(0.022+0.020*seg)*(1+Math.min(1.4,sp*0.2));

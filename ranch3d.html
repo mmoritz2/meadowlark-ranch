@@ -632,14 +632,14 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from './assets/breed-models.js?v=dragon-rigging-1';
+import {createBreedLibrary} from './assets/breed-models.js?v=dragon-wing-tail-1';
 import {configureNativeCustomization} from './assets/native-horse-customization.js?v=native-roster-1';
 import {syncNativeHorseFantasy} from './assets/native-horse-fantasy.js?v=native-roster-1';
 import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=dragon-rigging-1';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=dragon-wing-tail-1';
 import {createNativeRiderBridge} from './assets/native-rider.js?v=native-rider-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js';
@@ -658,7 +658,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js';
 import {installWorldPhotoscans} from './assets/world-photoscans.js';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=native-rider-1';
-import {FEATURES} from './assets/features/index.js?v=dragon-rigging-1';
+import {FEATURES} from './assets/features/index.js?v=dragon-wing-tail-1';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -5426,7 +5426,7 @@ function rigPhaseStep(sp,grounded,dt,scale=1){
 function driveRig(sp,grounded,t,dt){
  if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
  if(RIG.heroMotion){
-  if(RIG.profile?.nativeBreed||RIG.profile?.referenceMotion)RIG.nativeFlying=!!player.flying;
+  if(RIG.profile?.nativeBreed||RIG.profile?.referenceMotion){RIG.nativeFlying=!!player.flying;RIG.nativeLanding=!!player.flying&&(!!player.landing||player.flyAlt<=.001);RIG.nativeAltitude=player.y||0;}
   const state=tickGameHero(RIG,sp,dt,player.turnSm||0);
   if(!player.flying){if(RIG.heroJumpAge!==null){player.y=Math.max(0,(RIG.profile?.nativeBreed||RIG.profile?.referenceMotion)?RIG.heroJumpExtra:state.bodyLiftM+RIG.heroJumpExtra);player.vy=0;}else{player.y=0;player.vy=0;}}
   if(RIG._hideFor!==player.mesh){hideProceduralBody();RIG._hideFor=player.mesh;}
@@ -10878,7 +10878,7 @@ function remoteUpdate(m){
  if(m.c&&m.c.body)r.colors=m.c;
  if(m.hn)r.horseName=m.hn;
  if(m.b)r.breed=m.b;
- r.wings=!!m.wg;
+ r.wings=!!m.wg;r.landRequested=m.ld===1;
  if(m.ct)r.coat=m.ct;
  if(m.hl)r.horseLv=m.hl;
  if(r.rig?.profile.artistBreed||r.rig?.profile.nativeRoster){const look=JSON.stringify([m.c,m.tailCol,m.mark,m.markCol,m.ct,m.wg,m.hrn,m.dg]);if(look!==r.artistLook){r.artistLook=look;configureArtistCustomization(r.rig,{breed,colors:m.c,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,coat:m.ct,wings:m.wg,horn:m.hrn,dragon:m.dg,id:m.id});}}
@@ -10893,7 +10893,7 @@ function netTick(dt,t){
   try{
    const payload={
     id:net.id,n:myName(),x:+player.pos.x.toFixed(1),z:+player.pos.z.toFixed(1),
-    h:+player.heading.toFixed(2),sp:+Math.abs(player.speed).toFixed(1),
+    h:+player.heading.toFixed(2),sp:+Math.abs(player.speed).toFixed(1),ld:player.flying&&(player.landing||player.flyAlt<=.001)?1:0,
     c:h?h.colors:null,k:h?(h.tack||'#7a583a'):null,tailCol:h?.tailCol||null,mark:h?.mark??null,markCol:h?.markCol??null,
     s:(s.rider&&s.rider.shirt)||RIDER_DEF_SHIRT,p:(s.rider&&s.rider.pants)||RIDER_DEF_PANTS,hr:(s.rider&&s.rider.hair)||null,sk:(s.rider&&s.rider.skin)||null,hm:(s.rider&&s.rider.helmet)||null,
     hn:h?String(h.name).slice(0,14):null,b:h?(h.breed||null):null,hl:h?(h.level||1):1,wg:!!(h&&h.wings),hrn:h?.horn,dg:h?.dragon,ct:h?(h.coat||null):null,
@@ -10921,7 +10921,7 @@ function netTick(dt,t){
   }
   if(r.rig){
    // the good horse: same gait code the player's mount runs
-   if(r.rig.heroMotion){r.rig.nativeFlying=!!r.fly;tickGameHero(r.rig,r.sp,dt);if(r.rig.profile?.nativeBreed){const seat=gameHeroSeat(r.rig,r.parts.group);r.rider.g.position.set(seat.x,seat.y+.11,seat.z-.02);}else{if(r.rig.saddle)r.rig.saddle.position.copy(breedSeat(r.rig));fitArtistFeatures(r.rig,r.parts,true);}}
+   if(r.rig.heroMotion){r.rig.nativeFlying=!!r.fly;r.rig.nativeLanding=!!r.landRequested;r.rig.nativeAltitude=r.y||0;tickGameHero(r.rig,r.sp,dt);if(r.rig.profile?.nativeBreed){const seat=gameHeroSeat(r.rig,r.parts.group);r.rider.g.position.set(seat.x,seat.y+.11,seat.z-.02);}else{if(r.rig.saddle)r.rig.saddle.position.copy(breedSeat(r.rig));fitArtistFeatures(r.rig,r.parts,true);}}
    else{r.rig.phase+=rigPhaseStep(r.sp,true,dt,r.parts.group.scale.x);poseRigBones(r.rig.bones,r.rig.phase,r.sp,true,0,t,dt,0,r.rig);r.rig.hair?.update?.(t,r.sp);}
    if(r.bridle)r.bridle.userData.follow(r.rig.headBone||r.rig.bones[6],r.rig.bones,r.rig.restQ,r.rig.scene,r.parts.group);
   }
@@ -13199,7 +13199,9 @@ function tick(stepSeconds){
   const faPrev=(typeof player.flyAlt==='number')?player.flyAlt:6;
   player.flyAlt=player.landing?0:THREE.MathUtils.clamp(faPrev+climb*16*dt,0,42);
   const oldAltitude=player.y;
-  const altitudeStep=(player.flyAlt-player.y)*(nativeCap?.dragonTravel?1-Math.exp(-dt*2.4):Math.min(1,dt*2.4));
+  // Ease the last Black Dragon descent while the wings gather for contact.
+  const altitudeFollow=RIG.nativeLandingPose&&player.flyAlt<=.001?1.2:2.4;
+  const altitudeStep=(player.flyAlt-player.y)*(nativeCap?.dragonTravel?1-Math.exp(-dt*altitudeFollow):Math.min(1,dt*2.4));
   player.y+=nativeCap?.dragonTravel?THREE.MathUtils.clamp(altitudeStep,-5*dt,7*dt):altitudeStep;
   player.vy=nativeCap?.dragonTravel?(dt>0?(player.y-oldAltitude)/dt:0):climb*4;
   player.flyT=(player.flyT||0)+dt;
@@ -13285,14 +13287,14 @@ function tick(stepSeconds){
  const behind=groundH(player.pos.x-dx*1.4,player.pos.z-dz*1.4);
  const slope=-Math.atan2(ahead-behind,2.8);
  const rock=!RIG.heroMotion&&sp>7&&grounded?Math.sin(player.phase)*0.045:0;
- const jumpPitch=player.flying?(player.climbInput||0)*-0.2:(player.y>0?THREE.MathUtils.clamp(-player.vy*0.026,-0.24,0.26):0);
+ const jumpPitch=player.flying?(RIG.nativeLandingPose?0:(player.climbInput||0)*-0.2):(player.y>0?THREE.MathUtils.clamp(-player.vy*0.026,-0.24,0.26):0);
  const pPrev=Number.isFinite(player.pitchSm)?player.pitchSm:0;
- const pitchTgt=player.flying?jumpPitch:(slope*0.7+jumpPitch);
+ const pitchTgt=player.flying&&!RIG.nativeLandingPose?jumpPitch:(slope*0.7+jumpPitch);
  player.pitchSm=pPrev+(pitchTgt-pPrev)*Math.min(1,dt*6);
  player.mesh.rotation.x=player.pitchSm+rock+(RIG.emote?EMOTES[RIG.emote.type].pitch*emEnv(RIG.emote):0);
  const tPrev=Number.isFinite(player.turnSm)?player.turnSm:0;
  player.turnSm=tPrev+(turn-tPrev)*Math.min(1,dt*5);
- player.mesh.rotation.z=-player.turnSm*(player.flying?0.4:Math.min(1,sp/8)*0.16);
+ player.mesh.rotation.z=-player.turnSm*(player.flying&&!RIG.nativeLandingPose?0.4:Math.min(1,sp/8)*0.16);
  if(player.trick){const tr=player.trick;tr.t+=dt;const pr=Math.min(1,tr.t/tr.dur);
   const ez=pr<0.5?2*pr*pr:1-Math.pow(-2*pr+2,2)/2, ang=ez*Math.PI*2*tr.dir;
   if(tr.type==='roll')player.mesh.rotation.z+=ang; else if(tr.type==='spin')player.mesh.rotation.y+=ang; else player.mesh.rotation.x+=ang;
