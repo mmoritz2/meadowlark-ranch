@@ -1,0 +1,93 @@
+{
+  "processing": "Eight orthographic albedo and object-space normal views of the existing CC0 scans. Live lighting is applied by the game.",
+  "trees": [
+    {
+      "id": "tree_small_02",
+      "variant": -1,
+      "width": 4.654437732696533,
+      "height": 4.823275546617806,
+      "bottom": -0.16053979707881808,
+      "sourceHeight": 4.55025994963944,
+      "viewCount": 8,
+      "views": {
+        "file": "tree_small_02_views.webp",
+        "bytes": 1859186,
+        "sha256": "41a45c303572333452998ff56a5f5c19fa3c2386827e52239d2c6afb8522d338"
+      },
+      "normals": {
+        "file": "tree_small_02_normals.webp",
+        "bytes": 1192582,
+        "sha256": "aaee6aaef5d93b44a9952da6beec9f8ebc10a5b23960f2df25e91cd1cdfbe9ad"
+      },
+      "source": "tree_small_02.glb",
+      "sourcePage": "https://polyhaven.com/a/tree_small_02",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "fir_sapling_medium",
+      "variant": 0,
+      "width": 5.803425359725953,
+      "height": 9.356490723490715,
+      "bottom": -0.353054087460041,
+      "sourceHeight": 8.826878041028976,
+      "viewCount": 8,
+      "views": {
+        "file": "fir_sapling_medium_0_views.webp",
+        "bytes": 659334,
+        "sha256": "6061c78ed30b09814676180961d22cd5cf3099e66a21bf4aba876f737291f6b7"
+      },
+      "normals": {
+        "file": "fir_sapling_medium_0_normals.webp",
+        "bytes": 1090988,
+        "sha256": "6344f5abf5cf4ee37a13708b3a92a41d8cfdb9cb066e95e2dd96f8416349d251"
+      },
+      "source": "fir_sapling_medium.glb",
+      "sourcePage": "https://polyhaven.com/a/fir_sapling_medium",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "fir_sapling_medium",
+      "variant": 1,
+      "width": 4.697557806968689,
+      "height": 8.263886294811964,
+      "bottom": -0.35185921914875506,
+      "sourceHeight": 7.796119146049023,
+      "viewCount": 8,
+      "views": {
+        "file": "fir_sapling_medium_1_views.webp",
+        "bytes": 616624,
+        "sha256": "8f672923ca7dde4eee087da795c07629e61124059a76179ae46d7119ea3dd0a6"
+      },
+      "normals": {
+        "file": "fir_sapling_medium_1_normals.webp",
+        "bytes": 1010742,
+        "sha256": "b1554bafa8ce5ab431bf77e3fdbb57dfedbf1b948934e75c0b8ffe8fc93988b7"
+      },
+      "source": "fir_sapling_medium.glb",
+      "sourcePage": "https://polyhaven.com/a/fir_sapling_medium",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "fir_sapling_medium",
+      "variant": 2,
+      "width": 4.739362382888794,
+      "height": 6.2625560301542285,
+      "bottom": -0.32951649218797685,
+      "sourceHeight": 5.908071726560593,
+      "viewCount": 8,
+      "views": {
+        "file": "fir_sapling_medium_2_views.webp",
+        "bytes": 806972,
+        "sha256": "d0eaa210661566e84224bbc0cd85456c03434c903ca977d607cce389bb53e76f"
+      },
+      "normals": {
+        "file": "fir_sapling_medium_2_normals.webp",
+        "bytes": 1257786,
+        "sha256": "47859b54702fe3d174522308032a577d45a8b4359f1afbc41e6688f0c9087f3a"
+      },
+      "source": "fir_sapling_medium.glb",
+      "sourcePage": "https://polyhaven.com/a/fir_sapling_medium",
+      "license": "CC0-1.0"
+    }
+  ]
+}

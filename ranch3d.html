@@ -644,25 +644,25 @@ import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1
 import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=tack-stats-1';
 import {createNativeRiderBridge} from './assets/native-rider.js?v=native-rider-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createPastoralSky} from './assets/pastoral-sky.js';
-import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js';
-import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs,createForestImpostor} from './assets/vegetation.js';
-import {createGrassTuftGeometry} from './assets/meadow-cover.js';
-import {createGeology} from './assets/geology.js';
+import {createPastoralSky} from './assets/pastoral-sky.js?v=world-cinematic-1';
+import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=world-cinematic-1';
+import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs,createForestImpostor} from './assets/vegetation.js?v=world-cinematic-1';
+import {createGrassTuftGeometry} from './assets/meadow-cover.js?v=world-cinematic-1';
+import {createGeology} from './assets/geology.js?v=world-cinematic-1';
 import {createSceneryArt} from './assets/scenery-art.js';
 import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=world-cinematic-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRanchBuilderArt} from './assets/ranch-builder-art.js';
 import {createWorldFinish} from './assets/world-rendering.js';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js';
-import {installWorldPhotoscans} from './assets/world-photoscans.js';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=world-cinematic-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=native-rider-1';
-import {FEATURES} from './assets/features/index.js?v=clubhouse-1';
+import {FEATURES} from './assets/features/index.js?v=world-cinematic-1';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -2647,6 +2647,7 @@ let quality=(save&&save.quality)||'high';
 const QUAL_LABEL={low:'🎚️ Graphics: Low — smoothest',medium:'🎚️ Graphics: Medium',high:'🎚️ Graphics: High — prettiest'};
 function applyQuality(q){
  quality=q;
+ sky.material.uniforms.cloudSteps.value=q==='high'?12:q==='medium'?8:5;
  worldFinish.setQuality(q);
  const samples=q==='high'?Math.min(4,renderer.capabilities.maxSamples):q==='medium'?Math.min(2,renderer.capabilities.maxSamples):0;
  for(const rt of [composer.renderTarget1,composer.renderTarget2])if(rt.samples!==samples){rt.samples=samples;rt.dispose();}
@@ -2984,11 +2985,15 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
 `#include <begin_vertex>
 #ifdef USE_INSTANCING
  vec3 ip=vec3(instanceMatrix[3][0],instanceMatrix[3][1],instanceMatrix[3][2]);
- float wph=ip.x*0.8+ip.z*0.6;
+ float wph=ip.x*.19+ip.z*.13;
  float fade=1.0-smoothstep(${(NG_R*0.60).toFixed(1)},${(NG_R*0.94).toFixed(1)},distance(ip.xz,uPlayer.xz));
  transformed.y*=fade;
  transformed.x+=(sin(uTime*1.7+wph)*${sway}+sin(uTime*3.1+wph*2.3)*0.07)*transformed.y;
  transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.16;
+ vec2 away=ip.xz-uPlayer.xz;
+ float parting=1.0-smoothstep(.35,1.35,length(away));
+ transformed.xz+=normalize(away+vec2(.001))*parting*transformed.y*.70;
+ transformed.y*=1.0-parting*.30;
 #endif`);};};
  /* ===== ground cover =====
     Grass alone is a lawn. What makes ground read as country is the litter on it: ferns and
@@ -3115,9 +3120,10 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const id=slot*NG_K+k, h1=gh(ci*73+k*7,cj*131+k*3), h2=gh(ci*17+k*11,cj*59+k*5), h3=gh(k*13+ci,cj*7+k), h4=gh(k*29+cj,ci*3+k*17);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    if(!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);near.setMatrixAt(id,m4);continue;}
-   const sz=0.82+h3*0.36; e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz,sz*(0.9+h1*0.22),sz);   // was 0.7-1.45 and up to 1.3 tall: a few tufts reached 86 cm
+   const swath=.5+.5*Math.sin(x*.21+Math.sin(z*.12)*2.0);
+   const sz=.75+h3*.32+swath*.26; e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz,sz*(0.9+h1*0.22),sz);
    v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc); near.setMatrixAt(id,m4);
-   bcol.setHSL(0.250+h2*0.03,0.47+h3*0.10,0.128+h4*0.06); near.setColorAt(id,bcol);   // hue 90-101°, sat .47-.57: matched by measurement to the reference's grass (lum .40, sat .58)
+   bcol.setHSL(.238+h2*.035,.43+h3*.12,.145+h4*.055+swath*.018); near.setColorAt(id,bcol);
   }
   for(let k=0;k<NG_F;k++){
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
@@ -14268,7 +14274,7 @@ function installFeatures(){
 }
 installFeatures();
 installRanchWorldDetails(G,{shrubs:FOLIAGE.bush});
-installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
+installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,farTrees:farForest,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
 const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,
  levelAt(x,z){
   const planes=[{distance:Math.abs(z-riverZ(x)),level:riverLevel(x)},

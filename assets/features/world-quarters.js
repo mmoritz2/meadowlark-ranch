@@ -23,7 +23,7 @@
    windmill fan and a bell — and not one of them allocates so much as a vector during a frame.
    The four sites sit six hundred metres apart, so the frustum only ever holds one of them. */
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {plantNaturalPines,plantScannedSaplings} from '../vegetation.js';
+import {plantNaturalPines,plantScannedSaplings} from '../vegetation.js?v=world-cinematic-1';
 export const id='world-quarters';
 export function install(G){
  const {THREE,scene,toast}=G;

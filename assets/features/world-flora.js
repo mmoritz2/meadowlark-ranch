@@ -31,7 +31,7 @@
    includes every town building world.js placed — and it leaves a clear circle at each town centre
    and at the exact centre of each of the four quarters, because six other packages are building
    there and a barn dropped into a thicket helps nobody. */
-import {getFoliageTexture} from '../world-art.js';
+import {getFoliageTexture} from '../world-art.js?v=world-cinematic-1';
 export const id='world-flora';
 export function install(G){
  const {THREE,scene}=G, W=G.world, T=G.tables;

@@ -1,9 +1,10 @@
+import {treeImpostor} from './tree-impostors.js?v=world-cinematic-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
 
 // Real, CC0 Poly Haven assets. The generated world stays available until each
 // replacement has loaded; detailed crowns are budgeted around the rider.
-export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={}) {
+export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],farTrees=null}={}) {
   const {THREE,scene,world:W,horse:H,renderer}=G;
   const state=G.photoscans={ready:null,errors:[],assets:[],trees:0,activeTrees:0,rocks:0,outcrops:0,saplings:0,logs:0,cliffs:0};
   const loader=new GLTFLoader(),wind={value:0},group=new THREE.Group();
@@ -92,95 +93,84 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const root=await load('tree_small_02'),parts=pieces(root),bounds=new THREE.Box3().setFromObject(root);
-    const sourceHeight=bounds.max.y-bounds.min.y;
-    // Pair the original instanced trunk/crown before replacing both together.
-    for(const stem of seedTrees.filter(o=>o.userData.treeLayer==='wood'&&['oak','birch'].includes(o.userData.treeSpecies))){
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=world-cinematic-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium');
+    const sources=[broad,...pine.children],species=['broadleaf','pine-0','pine-1','pine-2'];
+    const variants=sources.map((root,i)=>{
+      const parts=pieces(root,i>0),bounds=new THREE.Box3();parts.forEach(p=>bounds.union(p.bounds));
+      return {parts,bounds,key:species[i],meta:catalog.trees[i]};
+    });
+    const sourceFor=(kind,x,z)=>kind==='pine'||kind==='snowpine'||kind==='cold'?variants[1+Math.floor(rnd(x,z,17)*3)]:variants[0];
+    const add=t=>{t.source=sourceFor(t.kind,t.x,t.z);trees.push(t);};
+    // Keep every placement, size and collider; replace paired trunks and crowns.
+    for(const stem of seedTrees.filter(o=>o.userData.treeLayer==='wood'&&['oak','birch','pine','snowpine'].includes(o.userData.treeSpecies))){
       const leaves=seedTrees.find(o=>o.userData.treeLayer==='leaves'&&o.userData.treePoints===stem.userData.treePoints);
       if(!leaves)continue;
-      stem.userData.treePoints.forEach((p,i)=>{
-        trees.push({x:p.x,z:p.z,height:6.2*p.s,yaw:p.r,stem,leaves,index:i});
-      });
+      const kind=stem.userData.treeSpecies,height=kind==='pine'?7.4:kind==='snowpine'?7.2:6.2;
+      stem.userData.treePoints.forEach((p,i)=>add({x:p.x,z:p.z,height:height*p.s,yaw:p.r,stem,leaves,index:i,kind}));
     }
-    // The biome package also plants broadleaf copses. Replace their simple
-    // forked trunks as well, matching trunk/crown instances by world position.
     const banks=G.floraPkg?.bank,stems=new Map(),floraCanopies=[];
     if(banks?.trunk){
-      const matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),rot=new THREE.Quaternion(),scale=new THREE.Vector3();
-      const key=p=>p.x.toFixed(3)+','+p.z.toFixed(3);
+      const matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),rot=new THREE.Quaternion(),scale=new THREE.Vector3(),key=p=>p.x.toFixed(3)+','+p.z.toFixed(3);
       for(let i=0;i<banks.trunk.n;i++){banks.trunk.im.getMatrixAt(i,matrix);pos.setFromMatrixPosition(matrix);stems.set(key(pos),i);}
-      for(const kind of ['oak','birch']){
+      for(const kind of ['oak','birch','pine','cold']){
         const bank=banks[kind];if(!bank)continue;floraCanopies.push(bank.im);
         for(let i=0;i<bank.n;i++){
           bank.im.getMatrixAt(i,matrix);matrix.decompose(pos,rot,scale);
           const stemIndex=stems.get(key(pos));if(stemIndex===undefined)continue;
-          const amber=Math.hypot(pos.x-300,pos.z+300)<145;
-          trees.push({x:pos.x,z:pos.z,height:scale.y,yaw:new THREE.Euler().setFromQuaternion(rot).y,
-            stem:banks.trunk.im,stemIndex,leaves:bank.im,index:i,
-            tint:amber?new THREE.Color('#d9a568'):new THREE.Color(0xffffff)});
+          const amber=Math.hypot(pos.x-300,pos.z+300)<145&&kind!=='pine'&&kind!=='cold';
+          add({x:pos.x,z:pos.z,height:scale.y,yaw:new THREE.Euler().setFromQuaternion(rot).y,kind,
+            stem:banks.trunk.im,stemIndex,leaves:bank.im,index:i,tint:amber?new THREE.Color('#d9a568'):WHITE});
         }
       }
     }
-    // Close, individually authored broadleaf trees also gain the new crown.
-    const natural=[];scene.traverse(o=>{if(['Natural oak tree','Natural birch tree'].includes(o.name)&&o.parent===scene)natural.push(o);});
-    for(const original of natural){
-      const b=new THREE.Box3().setFromObject(original);if(b.isEmpty())continue;
-      trees.push({x:original.position.x,z:original.position.z,height:b.max.y-b.min.y,yaw:original.rotation.y,root:original});
+    const natural=[];scene.traverse(o=>{if(['Natural oak tree','Natural birch tree','Natural pine pine','Natural snowpine pine'].includes(o.name)&&o.parent===scene)natural.push(o);});
+    for(const original of natural){const b=new THREE.Box3().setFromObject(original);if(b.isEmpty())continue;
+      add({x:original.position.x,z:original.position.z,height:b.max.y-b.min.y,yaw:original.rotation.y,root:original,kind:original.name.includes('pine')?'pine':'oak'});
+    }
+    const textureLoader=new THREE.TextureLoader();
+    // Load all views before hiding any original tree. Missing data leaves the
+    // existing forest intact, instead of empty silhouettes during a slow load.
+    for(const source of variants){
+      const m=source.meta;
+      const [atlas,normals]=await Promise.all([textureLoader.loadAsync('./assets/models/world/realism/'+m.views.file+'?v=world-cinematic-1'),textureLoader.loadAsync('./assets/models/world/realism/'+m.normals.file)]);
+      atlas.colorSpace=THREE.SRGBColorSpace;atlas.anisotropy=8;normals.colorSpace=THREE.NoColorSpace;normals.anisotropy=4;
+      source.impostor={THREE,albedo:atlas,normals,width:m.width,height:m.height,bottom:m.bottom};
+      source.card=treeImpostor(source.impostor);
+    }
+    if(farTrees){
+      const oldGeometry=new Set();
+      for(const [mesh,source]of [[farTrees.leafy,variants[0]],[farTrees.pines,variants[1]]]){
+        const card=treeImpostor({...source.impostor,nearFade:H.player.pos}),scale=1/source.meta.sourceHeight;
+        card.geo.scale(scale,scale,scale);oldGeometry.add(mesh.geometry);mesh.material.dispose();
+        mesh.geometry=card.geo;mesh.material=card.mat;mesh.customDepthMaterial=card.mat.userData.scanDepth;
+        mesh.name='Scanned far forest | '+source.key;
+      }
+      oldGeometry.forEach(g=>g.dispose());state.farForestViews=farTrees.leafy.count+farTrees.pines.count;
     }
     for(const t of trees){
-      const scale=t.height/sourceHeight;
+      const scale=t.height/t.source.meta.sourceHeight;
       q.setFromAxisAngle(UP,t.yaw);s.setScalar(scale);
-      v.set(t.x,W.groundH(t.x,t.z)-bounds.min.y*scale-.07,t.z);
+      v.set(t.x,W.groundH(t.x,t.z)-t.source.bounds.min.y*scale-.07,t.z);
       t.matrix=new THREE.Matrix4().compose(v,q,s);
     }
-    const cells=new Map();
-    for(const t of trees){const key=Math.floor(t.x/55)+','+Math.floor(t.z/55);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(t);}
-    const atlas=await new THREE.TextureLoader().loadAsync('./assets/models/world/realism/tree_small_02_views.webp');
-    atlas.colorSpace=THREE.SRGBColorSpace;atlas.anisotropy=4;
-    const cardGeo=new THREE.PlaneGeometry(6,5);cardGeo.translate(0,2.3,0);
-    // Predominantly upward botanical normals keep distant crowns from changing
-    // brightness just because the camera turns. The game still lights them.
-    const normals=cardGeo.getAttribute('normal');for(let i=0;i<normals.count;i++)normals.setXYZ(i,0,.94,.34);
-    const cardMat=new THREE.MeshStandardMaterial({map:atlas,alphaTest:.28,side:THREE.DoubleSide,roughness:1,envMapIntensity:.48});
-    cardMat.alphaToCoverage=true;
-    cardMat.onBeforeCompile=sh=>{
-      sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
-        #ifdef USE_INSTANCING
-          vec3 toEye=cameraPosition-instanceMatrix[3].xyz;
-          float eyeAngle=atan(toEye.x,toEye.z);
-          float treeAngle=atan(instanceMatrix[2].x,instanceMatrix[2].z);
-          float localAngle=eyeAngle-treeAngle;
-          float frame=mod(floor((localAngle+6.2831853+.3926991)/.7853982),8.0);
-          transformed.x=position.x*cos(localAngle);
-          transformed.z=-position.x*sin(localAngle);
-          vMapUv=(uv+vec2(mod(frame,4.0),1.0-floor(frame/4.0)))/vec2(4.0,2.0);
-        #endif`);
-    };
-    cardMat.customProgramCacheKey=()=> 'scanned-tree-eight-views-v1';
+    const cells=new Map();for(const t of trees){const key=t.source.key+':'+Math.floor(t.x/65)+','+Math.floor(t.z/65);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(t);}
     for(const records of cells.values()){
-      const mesh=instances({geo:cardGeo,mat:cardMat},records.map(t=>t.matrix),'Scanned distant tree views');
-      records.forEach((t,i)=>mesh.setColorAt(i,t.tint||new THREE.Color(0xffffff)));
-      mesh.castShadow=false;treeCards.push({mesh,records});
-    }
-    // The distant views use this same tree, so both LODs share their silhouette.
-    // Original procedural meshes remain available until the atlas has loaded.
-    for(const t of trees){
-      if(t.root)t.root.visible=false;
-      else{
-        t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);
-        t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;
+      const source=records[0].source;
+      const card=instances(source.card,records.map(t=>t.matrix),'Scanned distant tree views | '+source.key);
+      records.forEach((t,i)=>card.setColorAt(i,t.tint||WHITE));treeCards.push({mesh:card,records});
+      for(const p of source.parts){
+        const mesh=instances(p,records.map(()=>zero),'Photoscan '+source.key+' | '+p.name);
+        records.forEach((t,i)=>mesh.setColorAt(i,/leaves|twig/.test(p.mat.name)&&t.tint?t.tint:WHITE));
+        mesh.count=0;treeMeshes.push({mesh,records});
       }
     }
+    for(const t of trees){if(t.root)t.root.visible=false;else{
+      t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;
+    }}
     floraCanopies.forEach(m=>{m.visible=false;});
-    // Separate spatial batches allow Three to reject crowns behind the camera
-    // and outside the shadow frustum instead of drawing every nearby tree.
-    for(const records of cells.values())for(const p of parts){
-      const mesh=instances(p,records.map(()=>zero),'Photoscan broadleaf | '+p.name);
-      records.forEach((t,i)=>mesh.setColorAt(i,/leaves/.test(p.mat.name)&&t.tint?t.tint:new THREE.Color(0xffffff)));
-      mesh.count=0;treeMeshes.push({mesh,records});
-    }
-    state.trees=trees.length;
-    state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height}));
+    state.trees=trees.length;state.conifers=trees.filter(t=>t.source!==variants[0]).length;state.normalMappedViews=variants.length;
+    state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind}));
   }
   async function installRocks(){
     const parts=pieces(await load('rock_moss_set_01'),true);
@@ -275,7 +265,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     }
     for(const {mesh,records} of treeCards){
       let count=0;for(const t of records)if(!set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,t.tint||WHITE);count++;}
-      mesh.count=count;mesh.visible=count>0;mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;
+      mesh.count=count;mesh.visible=count>0;mesh.castShadow=tier==='high'&&!renderer.xr.isPresenting;mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;
       if(count)mesh.computeBoundingSphere();
     }
     state.activeTrees=selected.length;

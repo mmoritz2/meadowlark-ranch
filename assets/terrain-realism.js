@@ -368,8 +368,8 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
 export function createRiverMaterial({THREE, map}) {
   const time={value:0};
   const reflection={map:{value:null},matrix:{value:new THREE.Matrix4()},amount:{value:0},level:{value:0}};
-  const material=new THREE.MeshPhysicalMaterial({map,color:0x45675e,roughness:.14,metalness:0,
-    ior:1.333,clearcoat:.55,clearcoatRoughness:.18,side:THREE.DoubleSide,transparent:true,opacity:.94,depthWrite:false});
+  const material=new THREE.MeshPhysicalMaterial({map,color:0x285b52,roughness:.095,metalness:0,
+    ior:1.333,clearcoat:.72,clearcoatRoughness:.13,side:THREE.DoubleSide,transparent:true,opacity:.94,depthWrite:false});
   material.envMapIntensity=1.15;
   const shader=fade=>sh=>{
     sh.uniforms.waterTime=time;
@@ -411,7 +411,7 @@ export function createRiverMaterial({THREE, map}) {
         vec3 reflected=texture2D(waterReflection,clamp(reflectionUV,0.0,1.0)).rgb;
         float localReflection=(1.0-smoothstep(.12,.65,abs(waterWorld.y-waterReflectionLevel)))
           *(1.0-smoothstep(55.0,110.0,length(cameraPosition-waterWorld)));
-        outgoingLight=mix(outgoingLight,reflected,edge*(.20+.56*fresnel)*localReflection);
+        outgoingLight=mix(outgoingLight,reflected,edge*(.28+.58*fresnel)*localReflection);
       }
       #include <opaque_fragment>`);
     if(fade) sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>',`#include <alphatest_fragment>
@@ -423,6 +423,6 @@ export function createRiverMaterial({THREE, map}) {
   // Uniform objects cannot go in userData: Material.clone JSON-serializes it.
   // Share the live reflection through the shader closure and a non-enumerable key.
   Object.defineProperty(material.userData,'reflection',{value:reflection});
-  material.customProgramCacheKey=()=> 'ripple-water-v3-fresnel';
+  material.customProgramCacheKey=()=> 'ripple-water-v4-clear-reflection';
   return material;
 }

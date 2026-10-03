@@ -1,4 +1,4 @@
-import {dressLandscape} from './landscape-surface.js';
+import {dressLandscape} from './landscape-surface.js?v=world-cinematic-1';
 /* Deterministic original sedimentary geology. Shapes are local to a ground-level
    origin; callers retain their existing world placement and collision policy. */
 export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,

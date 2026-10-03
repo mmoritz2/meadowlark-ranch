@@ -152,7 +152,7 @@
    ============================================================================================ */
 /* BUILD STAMP: every import below carries the same ?v= build id, so a normal reload after an update fetches every changed
    module instead of running a cached mix of old and new ones. Bump it (all of them at once) whenever a feature file changes. */
-import * as stats from './stats-progression.js?v=b20261001b';
+import * as stats from './stats-progression.js?v=world-cinematic-1';
 import * as roster from './horse-roster.js?v=dragon-flight-legs-1';
 import * as bond from './bond-personality-emotes.js?v=b20261001b';   // versioned: rider emotes reach the character's own bones
 import * as mastery from './mastery-style.js?v=dragon-rigging-1';
@@ -175,11 +175,11 @@ import * as seasonQuests from './season-quests.js?v=b20261001b';
 import * as ev2disc from './events2-disciplines.js?v=tack-stats-1';
 import * as ev2ladder from './events2-ladder.js?v=b20261001b';
 import * as courseGuide from './course-guide.js?v=b20261001b';
-import * as wVistas from './world-vistas.js?v=b20261001b';
-import * as wFlora from './world-flora.js?v=b20261001b';
+import * as wVistas from './world-vistas.js?v=world-cinematic-1';
+import * as wFlora from './world-flora.js?v=world-cinematic-1';
 import * as wWater from './world-water.js?v=b20261001b';
-import * as wAtmos from './world-atmosphere.js?v=b20261001b';
-import * as wQuarters from './world-quarters.js?v=b20261001b';
+import * as wAtmos from './world-atmosphere.js?v=world-cinematic-1';
+import * as wQuarters from './world-quarters.js?v=world-cinematic-1';
 import * as wPaths from './world-paths.js?v=b20261001b';
 import * as wOutcrops from './world-outcrops.js?v=b20261001b';
 import * as uikit from './ui-kit.js?v=native-roster-1';

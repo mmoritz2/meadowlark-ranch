@@ -1,7 +1,7 @@
 // World-space mineral detail for distant relief and the chalk down. Textures
 // are shared with the terrain; no extra geometry passes or per-frame updates.
 const textures=new Map();
-export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=.82,meadow=false,mineralScale=18,bumpStrength=1}) {
+export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=.82,meadow=false,wooded=false,mineralScale=18,bumpStrength=1}) {
   const loader=new THREE.TextureLoader();
   const load=path=>{
     if(textures.has(path)){const t=textures.get(path);t.anisotropy=Math.max(t.anisotropy,anisotropy);return t;}
@@ -9,7 +9,7 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
     t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=anisotropy;textures.set(path,t);return t;
   };
   const stone=load('./assets/textures/scanned/rock_boulder_cracked_diff.webp');
-  const turf=meadow?load('./assets/textures/pasture/grass_diff.webp'):null;
+  const turf=meadow||wooded?load('./assets/textures/pasture/grass_diff.webp'):null;
   material.onBeforeCompile=sh=>{
     sh.uniforms.landStone={value:stone};if(turf)sh.uniforms.landTurf={value:turf};
     sh.vertexShader='varying vec3 landPosition, landNormal;\n'+sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
@@ -22,7 +22,7 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
       landNormal=normalize(mat3(modelMatrix)*landLocalNormal);`);
     sh.fragmentShader=`varying vec3 landPosition,landNormal;
       uniform sampler2D landStone;
-      ${meadow?'uniform sampler2D landTurf;':''}
+      ${meadow||wooded?'uniform sampler2D landTurf;':''}
       float landHash(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
       float landNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
         return mix(mix(landHash(i),landHash(i+vec2(1,0)),f.x),mix(landHash(i+vec2(0,1)),landHash(i+vec2(1,1)),f.x),f.y);}
@@ -36,8 +36,8 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
       float weathering=smoothstep(.23,.77,large*.6+fracture*.4);
       float rockGrain=dot(mineral,vec3(.2126,.7152,.0722));
       // Light and dark mineral seams remain legible after mip filtering.
-      float relief=mix(.61,1.18,weathering)*clamp(.40+rockGrain*2.8,.48,1.42);
-      float landHeight=(rockGrain*.28+fracture*2.4)*${bumpStrength.toFixed(3)};
+      float relief=mix(.78,1.12,weathering)*clamp(.74+rockGrain*1.10,.74,1.25);
+      float landHeight=(rockGrain*.10+fracture*.24)*${bumpStrength.toFixed(3)};
       ${meadow?`
         // Vertex colours separate the green down from its white chalk figure.
         float living=smoothstep(.008,.06,vColor.g-vColor.b)*
@@ -47,6 +47,16 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
         float turfRelief=(.61+large*.43+fracture*.26)*clamp(.64+turfGrain*1.3,.64,1.20);
         relief=mix(1.0,turfRelief,living);
         landHeight=living*(turfGrain*.07+fracture*.3);
+      `:''}
+      ${wooded?`
+        float green=smoothstep(.005,.035,vColor.g-vColor.b);
+        float groves=smoothstep(.36,.65,landNoise(landPosition.xz*.025)+fracture*.18);
+        float exposure=smoothstep(.65,.96,abs(landNormal.y));
+        vec3 grass=texture2D(landTurf,landPosition.xz/3.6).rgb;
+        float grassLuma=dot(grass,vec3(.2126,.7152,.0722));
+        relief=mix(relief,(.70+grassLuma*.85)*mix(1.10,.56,groves),green);
+        diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(.82,.97,.79),green*groves);
+        landHeight*=mix(1.0,.32,green*exposure);
       `:''}
       diffuseColor.rgb*=relief;`);
     // Screen derivatives supply a stable bump gradient on all three projection
@@ -69,6 +79,6 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
         gl_FragColor.rgb=mix(gl_FragColor.rgb,fogColor,min(${fogCap.toFixed(3)},landFog));
       #endif`);
   };
-  material.customProgramCacheKey=()=>`landscape-surface-v2-${meadow}-${fogScale}-${fogCap}-${mineralScale}-${bumpStrength}`;
+  material.customProgramCacheKey=()=>`landscape-surface-v3-${wooded}-${meadow}-${fogScale}-${fogCap}-${mineralScale}-${bumpStrength}`;
   material.needsUpdate=true;
 }

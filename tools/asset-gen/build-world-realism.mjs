@@ -6,6 +6,7 @@ import {pathToFileURL} from 'node:url';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {simplifyNeedleRibbons} from './simplify-needle-ribbons.mjs';
 const req=createRequire(process.env.GLTF_PIPELINE_MODULES ? path.join(process.env.GLTF_PIPELINE_MODULES,'../package.json') : import.meta.url);
 const imp=async name=>import(pathToFileURL(req.resolve(name)));
 const {NodeIO}=await imp('@gltf-transform/core');
@@ -23,6 +24,10 @@ for(const id of process.argv.slice(2)){
   const source=JSON.parse(await fs.readFile(path.join(base,'source.json'),'utf8'));
   const doc=await io.read(path.join(base,id+'.gltf')),root=doc.getRoot();
   const before=root.listMeshes().flatMap(m=>m.listPrimitives()).reduce((n,p)=>n+tris(p),0);
+  const needles=[];
+  if(id==='fir_sapling_medium')for(const mesh of root.listMeshes())for(const primitive of mesh.listPrimitives())
+    if(/twig/.test(primitive.getMaterial()?.getName()||''))needles.push(simplifyNeedleRibbons(doc,primitive));
+  console.log(id,'needle conversion',JSON.stringify(needles));
   // Normalize collection layouts at runtime; keep individual rocks and saplings.
   await doc.transform(weld(),dedup());
   for(const m of root.listMaterials()){
@@ -46,8 +51,9 @@ for(const id of process.argv.slice(2)){
     // decimation deletes the crown of an archviz tree instead of simplifying it.
     const target=id==='tree_small_02'?(/leaves/.test(name)?110000:7000):
       id==='pine_sapling_small'?(/twig/.test(name)?16000:1000):
+      id==='fir_sapling_medium'?(/twig/.test(name)?120000:3500):
       id==='namaqualand_cliff_02'?24000:id==='rock_moss_set_01'?4500:8500;
-    simplifyPrimitive(p,{simplifier:MeshoptSimplifier,ratio:Math.min(1,target/n),error:.012,lockBorder:false});
+    simplifyPrimitive(p,{simplifier:MeshoptSimplifier,ratio:Math.min(1,target/n),error:.012,lockBorder:id==='fir_sapling_medium'&&/twig/.test(name)});
     metrics.push({material:name,before:n,after:tris(p)});
   }
   await doc.transform(prune(),dedup(),
@@ -64,9 +70,11 @@ for(const id of process.argv.slice(2)){
   const file=path.join(out,id+'.glb');await io.write(file,doc);
   const data=await fs.readFile(file);
   const record={...source,output:{file:id+'.glb',bytes:data.length,sha256:createHash('sha256').update(data).digest('hex'),
-    trianglesBefore:before,triangles:metrics.reduce((n,p)=>n+p.after,0),primitives:metrics,
+    trianglesBefore:before,...(needles.length?{needles}:{}),triangles:metrics.reduce((n,p)=>n+p.after,0),primitives:metrics,
     materials:root.listMaterials().length,textures:root.listTextures().length},
-    processing:'Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading.'};
+    processing:(needles.length?'Preserve all needle ribbons as fitted textured quads; ':'')+'Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading.'};
   records.push(record);console.log(id,JSON.stringify(record.output));
 }
-await fs.writeFile(path.join(out,'manifest.json'),JSON.stringify(records,null,2)+'\n');
+const manifest=path.join(out,'manifest.json');
+const prior=JSON.parse(await fs.readFile(manifest,'utf8').catch(()=> '[]'));
+await fs.writeFile(manifest,JSON.stringify([...prior.filter(r=>!records.some(n=>n.id===r.id)),...records],null,2)+'\n');

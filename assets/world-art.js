@@ -1,6 +1,6 @@
 /* Original pastoral environment art. All geometry and foliage are authored here;
    no imagery or models from the reference game are bundled. */
-import {dressLandscape} from './landscape-surface.js';
+import {dressLandscape} from './landscape-surface.js?v=world-cinematic-1';
 const TAU = Math.PI * 2;
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
@@ -110,7 +110,7 @@ export function installBackdrop({ THREE, scene }) {
       fog: true,
       side: THREE.DoubleSide,
     });
-    dressLandscape({THREE,material,fogScale:.19,fogCap:.88});
+    dressLandscape({THREE,material,wooded:!cfg.snow,fogScale:.27,fogCap:.90,mineralScale:24,bumpStrength:.7});
     const ridge = new THREE.Mesh(geometry, material);
     ridge.name = cfg.snow ? 'Distant northern massif' : 'Wooded rolling ridgeline';
     ridge.castShadow = false;

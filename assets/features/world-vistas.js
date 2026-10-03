@@ -20,7 +20,7 @@
    the codebase, which makes 0 south and PI north.
 
    Owned by this package: this file only. Nothing runs at import time. */
-import {dressLandscape} from '../landscape-surface.js';
+import {dressLandscape} from '../landscape-surface.js?v=world-cinematic-1';
 export const id='world-vistas';
 export function install(G){
  /* ?novistas boots the world without any of this, so a before-and-after pair can be shot from
@@ -214,7 +214,7 @@ export function install(G){
  const SKY_BASE=-18;
  const rockMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,metalness:0,side:THREE.DoubleSide});
  rockMat.envMapIntensity=0.5;
- dressLandscape({THREE,material:rockMat,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy())});
+ dressLandscape({THREE,material:rockMat,wooded:true,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy())});
 
  /* A massif is a patch of heightfield laid along a bearing: u runs along the range, v across
     it, and the summits are named points on that ridgeline rather than wherever the noise

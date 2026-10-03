@@ -3,6 +3,7 @@
 Only glTF geometry and its images/buffers are downloaded; no executable assets.
 Sources are cached outside the repository. Run with model IDs as arguments.
 """
+from datetime import date
 import hashlib
 import json
 from pathlib import Path
@@ -47,7 +48,7 @@ for asset in sys.argv[1:]:
                         'sha256': hashlib.sha256(data).hexdigest()})
     provenance = {'id': asset, 'page': 'https://polyhaven.com/a/' + asset,
                   'license': 'CC0-1.0', 'licenseURL': 'https://polyhaven.com/license',
-                  'retrieved': '2026-09-30', 'authors': info.get('authors', {}),
+                  'retrieved': date.today().isoformat(), 'authors': info.get('authors', {}),
                   'sourceFiles': records}
     (folder / 'source.json').write_text(json.dumps(provenance, indent=2) + '\n')
     print(asset, round(sum(r['bytes'] for r in records) / 1048576, 2), 'MB verified', flush=True)
