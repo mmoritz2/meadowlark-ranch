@@ -1,12 +1,12 @@
-import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=dragon-flight-legs-1';
+import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=dragon-roster-1';
 
 export const id='native-horses';
 export const NATIVE_MODEL_CHOICES=Object.freeze({
  'bay-sporthorse-native':{body:'#805638',mane:'#241b18',description:'Bay Sporthorse with Western tack. Standing pose, walk, trot, both canter leads, collected gallop and jump.'},
  'white-western':{body:'#f0eee5',mane:'#e7ded1',description:'White horse with Western tack. Idle, walk, trot, both canter leads, collected gallop and jump.'},
  'bay-western':{body:'#815638',mane:'#241b18',description:'Bay horse with Western tack. Standing pose, walk, trot, both canter leads, collected gallop and jump.'},
- 'black-dragon-native':{body:'#24242a',mane:'#24242a',description:'The original Black Dragon with animated legs, wings and tail. Stand, walk, run, take off, hover, fly and land.'},
- 'european-dragon':{body:'#665f52',mane:'#665f52',description:'European Dragon with standing and sitting idles, walk, run, takeoff, hovering flight and smooth landing.'}
+ 'black-dragon-native':{body:'#24242a',mane:'#24242a',description:'The original Black Dragon with animated legs, wings and tail. Stand, walk, run, take off, hover, fly, land and breathe fire.'},
+ 'european-dragon':{body:'#665f52',mane:'#665f52',description:'European Dragon with standing and sitting idles, walk, run, takeoff, hovering flight, smooth landing and fire breath.'}
 });
 
 export function install(G){

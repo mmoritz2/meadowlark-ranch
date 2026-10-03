@@ -133,3 +133,16 @@ recorded separately. Ordinary
 numerical mesh, paint, skinning, baking and rendering tools are used for these
 sources; no generative AI asset or image tools are used. Actual adaptation and
 publication status remain in [catalog.json](catalog.json).
+
+
+### Dragon roster replacements
+
+The 13 elemental, breeding and seasonal dragons now use the existing European
+Dragon (CC BY 4.0) and Black Dragon (3DHaupt, CC BY-NC 4.0) rigs above. The original
+model files and textures are unchanged. `assets/dragon-roster.js` assigns each
+breed its source rig and applies a runtime color palette while retaining source
+texture detail. Breed Studio displays the source creator and license for every
+variant. The Black Dragon derivatives retain the source noncommercial restriction.
+Existing custom Black Dragon movement clips and European Dragon movement clips
+are reused without modifying the skeleton or skin weights. Breath emitters follow
+the animated head in each original rig.

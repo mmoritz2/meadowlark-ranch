@@ -2,9 +2,10 @@
  * Prepared geometry/textures are cached; each actor owns its skeleton and
  * materials. Actor axes: +Z forward, +Y up. */
 import {fillOutTail,fillOutMane} from './horse-hair-volume.js';
-import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=dragon-flight-legs-1';
+import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=dragon-roster-1';
 import {nativeRosterProfiles,applyNativeRosterShape} from './native-roster.js?v=native-roster-1';
 import {createNativeHorseFantasy} from './native-horse-fantasy.js?v=native-roster-1';
+import {dragonProfiles,dragonProfile,configureDragonAppearance,attachDragonBreath} from './dragon-roster.js?v=dragon-roster-1';
 export function createBreedLibrary({THREE, GLTFLoader, clone}) {
   const base=new URL('./models/artist-breeds/',import.meta.url),pending=new Map(),ready=new Map(),files=new Map();
   let manifest=null,revision='';
@@ -13,13 +14,14 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
   const manager=new THREE.LoadingManager();
   manager.setURLModifier(url=>{if(!revision||!url.startsWith(base.href))return url;const u=new URL(url);u.searchParams.set('build',revision);return u.href;});
   const loader=new GLTFLoader(manager);
-  const manifestReady=fetch(new URL('manifest.json',base),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`Artist breed catalog HTTP ${r.status}`);return r.json();}).then(async m=>{const variants=await rosterCatalog;const breeds=nativeRosterProfiles(m,variants,NATIVE_BREED_PROFILES['white-western']);m={...m,breeds:{...breeds,...NATIVE_BREED_PROFILES}};let hash=2166136261;for(const c of JSON.stringify(m))hash=Math.imul(hash^c.charCodeAt(0),16777619);revision=(hash>>>0).toString(16);manifest=m;for(const key of extraRows.keys())registerProfile(key);return m;});
+  const manifestReady=fetch(new URL('manifest.json',base),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`Artist breed catalog HTTP ${r.status}`);return r.json();}).then(async m=>{const variants=await rosterCatalog;const breeds=nativeRosterProfiles(m,variants,NATIVE_BREED_PROFILES['white-western']);m={...m,breeds:{...breeds,...NATIVE_BREED_PROFILES,...dragonProfiles(NATIVE_BREED_PROFILES)}};let hash=2166136261;for(const c of JSON.stringify(m))hash=Math.imul(hash^c.charCodeAt(0),16777619);revision=(hash>>>0).toString(16);manifest=m;for(const key of extraRows.keys())registerProfile(key);return m;});
   manifestReady.catch(()=>{});
   /* Feature aliases borrow a body shape while retaining their own ID, coat,
    * fantasy traits and source attribution. */
   const extraAliases={};
   function registerProfile(key){
     if(!manifest)return;const row=extraRows.get(key),to=extraAliases[key]||row?.[7]?.body;
+    const dragon=dragonProfile(NATIVE_BREED_PROFILES,key,row);if(dragon){manifest.breeds[key]=dragon;return;}
     const existed=!!manifest.breeds[key],original=manifest.breeds[key]||manifest.breeds[to];if(!original?.nativeRoster)return;
     const flags=row?.[7]||{};manifest.breeds[key]={...original,id:key,name:row?.[1]||original.name,label:row?.[1]||original.label,
       nativeRosterAlias:original.nativeRosterAlias||!existed,nativeRosterAppearance:{...original.nativeRosterAppearance,...flags,body:row?.[5],mane:row?.[6]},
@@ -90,6 +92,8 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
       let tack=null;scene.traverse(o=>{if(o.isSkinnedMesh&&o.geometry.attributes.position.count===asset.profile.tackVertexCount)tack=o;});
       inst.nativeContacts={tack,seatFollower:inst.nativeSeatFollower,sourceSeat:[...asset.profile.nativeSourceSeat],sourceToGameTranslation:[...asset.profile.nativeTranslation],nativeScale:asset.profile.nativeScale,tackVertexCount:asset.profile.tackVertexCount||0,treadRanges:{left:[2792,2845],right:[2716,2769]},bitRanges:{left:[7894,8124],right:[6954,7184]}};
     }
+    inst.nativeBreath=attachDragonBreath(THREE,inst);
+    configureDragonAppearance(THREE,inst);
     if(asset.profile.nativeRoster){inst.nativeFantasy=createNativeHorseFantasy({THREE,inst,key:inst.key});inst.fantasyAppearance=inst.nativeFantasy?.appearance;}
     return inst;
   }

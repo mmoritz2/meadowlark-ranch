@@ -632,7 +632,8 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from './assets/breed-models.js?v=dragon-flight-legs-1';
+import {configureDragonAppearance,dragonBreathElement,dragonBreathPose,DRAGON_ELEMENTS as ELEM_OF} from './assets/dragon-roster.js?v=dragon-roster-1';
+import {createBreedLibrary} from './assets/breed-models.js?v=dragon-roster-1';
 import {configureNativeCustomization} from './assets/native-horse-customization.js?v=native-roster-1';
 import {syncNativeHorseFantasy} from './assets/native-horse-fantasy.js?v=native-roster-1';
 import {createBreedGroom} from './assets/horse-groom.js';
@@ -660,7 +661,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js';
 import {installWorldPhotoscans} from './assets/world-photoscans.js';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=native-rider-1';
-import {FEATURES} from './assets/features/index.js?v=dragon-flight-legs-1';
+import {FEATURES} from './assets/features/index.js?v=dragon-roster-1';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -5126,7 +5127,7 @@ function hairColourFor(colors,coat,tailCol){
 function hairColour(){hairColourInner();G.run('coat',myHorses[rideIdx]);}   // the 'coat' hook fires after every recolour
 function hairColourInner(){
  const h=myHorses[rideIdx]; if(!h)return;
- if(RIG.profile?.artistBreed||RIG.profile?.nativeRoster){configureArtistCustomization(RIG,h);return;}
+ if(RIG.profile?.artistBreed||RIG.profile?.nativeRoster||RIG.profile?.nativeDragon){configureArtistCustomization(RIG,h);return;}
  const hc=hairColourFor(h.colors,h.coat,h.tailCol);
  if(RIG.groom?.setColors){RIG.groom.setColors({maneColor:hc.mane,tailColor:hc.tail});return;}
  if(RIG.hairMane)RIG.hairMane.material.color.copy(hc.mane);
@@ -5423,6 +5424,7 @@ function driveRig(sp,grounded,t,dt){
    variants this used to download were 8.9 MB of dead weight on every single load. */
 let artistNeutralMap=null;
 function configureArtistCustomization(rig,h){
+ if(rig.profile?.nativeDragon){configureDragonAppearance(THREE,rig,h,BREEDS3.find(b=>b[0]===h?.breed));return;}
  if(rig.profile?.nativeRoster){syncNativeHorseFantasy({THREE,rig,horse:h});configureNativeCustomization({THREE,rig,horse:h,defaults:BREEDS3.find(b=>b[0]===h?.breed)});return;}
  if(rig.profile?.nativeBreed)return;
  if(!rig.profile?.artistBreed||!h)return;
@@ -5776,7 +5778,7 @@ function applyCoat(){applyCoatInner();G.run('coat',myHorses[rideIdx]);}
 function applyCoatInner(){
  const selected=myHorses[rideIdx]?.breed||'bay';if(RIG.requestedBreed!==selected)requestPlayerBreed(selected);
  if(!RIG.ready||!RIG.skin||!RIG.baseMat) return;
- if(RIG.profile?.nativeRoster){configureArtistCustomization(RIG,myHorses[rideIdx]);return;}
+ if(RIG.profile?.nativeRoster||RIG.profile?.nativeDragon){configureArtistCustomization(RIG,myHorses[rideIdx]);return;}
  if(RIG.profile?.nativeBreed)return; // Preserve the source material, texture, and authored hair.
  const h=myHorses[rideIdx];
  if(RIG.profile?.hero){hairColourInner();return;}
@@ -7516,8 +7518,7 @@ const BREATH_EL={
  arcane:{a:'#eddcff',b:'#9a5cff',c:'#2e1470',sp:9.5,spread:0.21,life:0.90,size:0.24,grow:1.9,rise: 1.0,rate:115,snd:[760,250]},
  shadow:{a:'#b79bff',b:'#5726c0',c:'#0b0518',sp:8.5,spread:0.24,life:0.98,size:0.29,grow:2.3,rise: 0.7,rate:110,snd:[170, 55]},
 };
-const ELEM_OF={fire:'fire',ice:'ice',aurora:'water',galaxy:'arcane',shadow:'shadow'};
-function dragonElement(h){ return (h&&h.dragon)?(ELEM_OF[h.coat]||'fire'):null; }
+function dragonElement(h){return dragonBreathElement(h,BREED_MODELS.profile(h?.breed));}
 const BREATH_N=300;
 const breathTex=(()=>{
  const cv=document.createElement('canvas'); cv.width=cv.height=64; const c=cv.getContext('2d');
@@ -7691,10 +7692,14 @@ function tickBreath(dt){
 }
 const _bo=new THREE.Vector3(),_bf=new THREE.Vector3();
 /* The muzzle, and where it points, for any horse wearing the rigged body. */
-function breathFrom(group,elem,dt){
+function breathFrom(group,elem,dt,rig){
  if(!group)return;
- _bo.set(0,1.60,1.06).applyMatrix4(group.matrixWorld);
- _bf.set(0,-0.06,1).transformDirection(group.matrixWorld);
+ // Never emit from a horse-shaped placeholder while a dragon downloads.
+ if(!dragonBreathPose(rig,_bo,_bf)){
+  if(BREED_MODELS.profile(group.userData.breed)?.nativeDragon)return;
+  _bo.set(0,1.60,1.06).applyMatrix4(group.matrixWorld);
+  _bf.set(0,-0.06,1).transformDirection(group.matrixWorld);
+ }
  breathe(_bo,_bf,elem,dt);
 }
 let breathSndT=0;
@@ -7702,11 +7707,11 @@ function playerBreath(dt,t){
  const h=myHorses[rideIdx], el=dragonElement(h);
  const btn=$('breathBtn');
  if(btn){ const want=el?'inline-block':'none'; if(btn.style.display!==want)btn.style.display=want; }
- if(!el){ player.breathing=false; return; }
+ if(!el||player.onFoot||!RIG.ready||RIG.loadingBreed||RIG.attachedTo!==player.mesh){player.breathing=false;return;}
  const on=!!(keys.KeyB||player.breathHold);
  player.breathing=on;
  if(!on)return;
- breathFrom(player.mesh,el,dt);
+ breathFrom(player.mesh,el,dt,RIG);
  if(t>breathSndT){ breathSndT=t+0.34; const E=BREATH_EL[el];
   try{ beep(E.snd[0],E.snd[1],0.42,el==='ice'||el==='water'?'triangle':'sawtooth',0.05); }catch(e){} }
 }
@@ -7817,7 +7822,7 @@ function makeHorse(cfg){
     the spine. Built in the rigged horse's own coordinates, because that is the body every
     horse in the world now wears. */
  let crest=null;
- if(cfg.dragon){
+ if(cfg.dragon&&!BREED_MODELS.profile(cfg.breed)?.nativeDragon){
   crest=new THREE.Group();
   const th=DRAGON_TINT[cfg.coat]||DRAGON_TINT._;
   const hm=new THREE.MeshStandardMaterial({color:th.bone,roughness:0.42,metalness:0.28,
@@ -7840,7 +7845,7 @@ function makeHorse(cfg){
   g.add(crest);
  }
  let wings=null;
- if(cfg.wings){ wings=cfg.dragon?buildDragonWings():buildPegasusWings(); wings.forEach(w=>{g.add(w); w.position.set(w.userData.sgn*0.19,1.46,0.24); if(cfg.dragon)tintDragonWing(w,cfg.coat); else if(cfg.coat)tintWingMats(w,cfg.coat);}); }
+ if(cfg.wings&&!BREED_MODELS.profile(cfg.breed)?.nativeDragon){ wings=cfg.dragon?buildDragonWings():buildPegasusWings(); wings.forEach(w=>{g.add(w); w.position.set(w.userData.sgn*0.19,1.46,0.24); if(cfg.dragon)tintDragonWing(w,cfg.coat); else if(cfg.coat)tintWingMats(w,cfg.coat);}); }
  const feathered=cfg.breed==='clyde'||cfg.breed==='shire';
  const sox=n=>!cfg.coat&&(feathered||(seed+n)%5<2);   // mythic coats: no white socks (they broke the themed legs)
  const legs=[
@@ -8402,6 +8407,7 @@ function tickBarn(dt,t){
  }
 }
 function rebuildAll(){
+ player.breathHold=false;player.breathing=false;
  if(myHorses[rideIdx])syncSave(s=>{s.ridingHorseId=myHorses[rideIdx].id;});
  if(player.mesh)scene.remove(player.mesh);
  for(const a of herd){scene.remove(a.parts.group);if(a.rig){disposeMountedRig(a.rig);a.rig.skin?.material?.dispose();worldRigCount=Math.max(0,worldRigCount-1);}}
@@ -8587,6 +8593,8 @@ addEventListener('keydown',e=>{
  if(build.type||build.remove||build.move){ const rs=e.shiftKey?Math.PI/16:Math.PI/4; if(e.code==='Escape'){endBuild();return;} if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;} if(e.code==='KeyQ'){build.rot-=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;} }
  if(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='SELECT'))return;
  if(G.run('key',e))return;                                  // a package swallowed the key
+ // Mounted dragons own B; otherwise it remains the ranch builder shortcut.
+ if(e.code==='KeyB'&&!player.onFoot&&!freeCam&&!build.type&&!build.remove&&!build.move&&dragonElement(myHorses[rideIdx])){keys.KeyB=true;e.preventDefault();return;}
  if(!e.repeat&&!freeCam&&PANEL_HOTKEYS[e.code]){PANEL_HOTKEYS[e.code](e);e.preventDefault();return;}
  keys[e.code]=true;
  if(['Space','ArrowUp','ArrowDown'].includes(e.code))e.preventDefault();
@@ -10832,7 +10840,7 @@ function remoteUpdate(m){
  r.wings=!!m.wg;r.landRequested=m.ld===1;
  if(m.ct)r.coat=m.ct;
  if(m.hl)r.horseLv=m.hl;
- if(r.rig?.profile.artistBreed||r.rig?.profile.nativeRoster){const look=JSON.stringify([m.c,m.tailCol,m.mark,m.markCol,m.ct,m.wg,m.hrn,m.dg]);if(look!==r.artistLook){r.artistLook=look;configureArtistCustomization(r.rig,{breed,colors:m.c,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,coat:m.ct,wings:m.wg,horn:m.hrn,dragon:m.dg,id:m.id});}}
+ if(r.rig?.profile.artistBreed||r.rig?.profile.nativeRoster||r.rig?.profile.nativeDragon){const look=JSON.stringify([m.c,m.tailCol,m.mark,m.markCol,m.ct,m.wg,m.hrn,m.dg]);if(look!==r.artistLook){r.artistLook=look;configureArtistCustomization(r.rig,{breed,colors:m.c,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,coat:m.ct,wings:m.wg,horn:m.hrn,dragon:m.dg,id:m.id});}}
  G.run('remote',m,r);
 }
 function netTick(dt,t){
@@ -12953,7 +12961,8 @@ $('flyBtn').onclick=()=>setFlying(player.landing||!player.flying);
 {const bb=$('breathBtn');                                   // hold the button, or hold B
  const on=e=>{player.breathHold=true; e.preventDefault();}, off=()=>{player.breathHold=false;};
  bb.addEventListener('pointerdown',on); addEventListener('pointerup',off); addEventListener('pointercancel',off);
- bb.addEventListener('touchstart',on,{passive:false}); addEventListener('touchend',off);}
+ bb.addEventListener('touchstart',on,{passive:false}); addEventListener('touchend',off);
+ addEventListener('blur',()=>{off();keys.KeyB=false;});}
 // aerial tricks (barrel roll / spin / flip) — only while flying or airborne
 function startTrick(type){
  if(player.trick) return;
@@ -13382,7 +13391,7 @@ function tick(stepSeconds){
    const el=dragonElement(hh);                       // a dragon in the pasture breathes now and then
    if(el){ a.brT=(a.brT==null?3+Math.random()*9:a.brT)-dt;
     if(a.brT<0){ a.brOn=0.85; a.brT=7+Math.random()*11; }
-    if(a.brOn>0){ a.brOn-=dt; breathFrom(a.parts.group,el,dt); } }}
+    if(a.brOn>0){ a.brOn-=dt; breathFrom(a.parts.group,el,dt,a.rig); } }}
   if(a.graze<=0){
    const nt=-0.58+Math.sin(a.phase)*0.04;
    a.parts.neck.rotation.x+=(nt-a.parts.neck.rotation.x)*0.08;
@@ -14199,6 +14208,7 @@ function installFeatures(){
   horse:{myHorses,rideIdx:()=>rideIdx,ridden:()=>myHorses[rideIdx],RIG:()=>RIG,TACK:()=>TACK,player,herd:()=>herd,remotes,
    registerBreed(row){if(!Array.isArray(row)||typeof row[0]!=='string'||row.length<8)throw Error('Invalid breed row');const found=BREEDS3.find(b=>b[0]===row[0]);if(found)return found;BREEDS3.push(row);BREED_MODELS.register(row);return row;},
    nativeRiderInspect(){return nativeRiderBridge?.inspect()||null;},
+   breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
   world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,geology,box,tube,blob,
