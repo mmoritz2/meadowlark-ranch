@@ -270,7 +270,7 @@ export function install(G){
 
  /* the grandstand seat ------------------------------------------------------------------- */
  let spectate=false;
- const SEAT={x:-28.5,z:0};
+ const SEAT={x:-28.5,z:7.5};
  function setSpectate(on){
   spectate=!!on;
   if(spectate){toast('👀 In the grandstand — any movement key gets you back on.');player.speed=0;}
@@ -281,7 +281,7 @@ export function install(G){
  G.on('camera',({dt})=>{
   if(!spectate)return false;
   const cam=G.camera;
-  cam.position.lerp(new THREE.Vector3(SEAT.x-2.6,W.groundH(SEAT.x-2.6,SEAT.z)+3.4,SEAT.z),1-Math.exp(-6*dt));
+  cam.position.lerp(new THREE.Vector3(SEAT.x-2.6,W.groundH(SEAT.x-2.6,SEAT.z)+3.0,SEAT.z),1-Math.exp(-6*dt));
   cam.lookAt(2,1.2,1);
   return true;
  });

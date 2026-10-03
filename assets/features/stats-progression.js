@@ -16,6 +16,8 @@
      9. Region-specific wildlife (coyotes, mountain goats) that can spook a galloping horse.
     10. Golden horseshoes pay XP (inline).
     11. Fishing at four waters with species by spot, a rod and bobber, fish to sell or barter. */
+import {makeNaturalTree} from '../vegetation.js';
+
 export const id='stats-progression';
 
 /* ---------------------------------------------------------------- data ---------------------------------------------------------------- */
@@ -318,11 +320,18 @@ export function install(G){
  const cornRows=[[198,-92],[201,-92],[204,-92],[207,-92],[198,-88],[201,-88],[204,-88],[207,-88]];
  const smat=c=>new THREE.MeshStandardMaterial({color:c,roughness:0.85});
  const decor=new THREE.Group(); decor.name='Forage decor';
- for(const p of orchardTrees){const t=new THREE.Group();const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.2,1.6,7),smat('#5a3d22'));trunk.position.y=0.8;trunk.castShadow=true;t.add(trunk);
-  const crown=new THREE.Mesh(new THREE.SphereGeometry(1.35,9,7),smat('#4f8a3f'));crown.position.y=2.2;crown.scale.set(1,0.85,1);crown.castShadow=true;t.add(crown);
-  for(let i=0;i<3;i++){const a=new THREE.Mesh(new THREE.SphereGeometry(0.09,6,5),smat('#d6403a'));a.position.set(Math.cos(i*2.1)*1.0,1.9+i*0.25,Math.sin(i*2.1)*1.0);t.add(a);}
-  t.position.set(p[0],W.groundH(p[0],p[1]),p[1]);decor.add(t);W.colliders.push({x:p[0],z:p[1],r:0.5});}
- for(const p of hives){const b=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.6,0.5),smat('#e8dcc0'));b.position.set(p[0],W.groundH(p[0],p[1])+0.5,p[1]);b.castShadow=true;decor.add(b);const lid=new THREE.Mesh(new THREE.BoxGeometry(0.6,0.08,0.6),smat('#8a5a2a'));lid.position.set(p[0],W.groundH(p[0],p[1])+0.84,p[1]);decor.add(lid);}
+ const fruitMat=smat('#a64932'),fruitGeo=new THREE.SphereGeometry(.075,12,8);
+ for(const [i,p]of orchardTrees.entries()){
+  const t=new THREE.Group();t.name='Orchard | apple tree';
+  const tree=makeNaturalTree({THREE,scale:.72+(i%3)*.035,seed:i+713});tree.rotation.y=i*2.39996;t.add(tree);
+  for(let j=0;j<7;j++){
+   const a=j*2.39996,r=.65+(j%3)*.12,apple=new THREE.Mesh(fruitGeo,fruitMat);
+   apple.position.set(Math.cos(a)*r,2.05+(j%3)*.23,Math.sin(a)*r);apple.scale.y=.92;apple.castShadow=true;t.add(apple);
+   tube(.009,.008,.065,'#62513b',apple.position.x,apple.position.y+.092,apple.position.z,t);
+  }
+  t.position.set(p[0],W.groundH(p[0],p[1]),p[1]);decor.add(t);W.colliders.push({x:p[0],z:p[1],r:.5});
+ }
+ for(const p of hives){const hive=W.ranchBuilderArt.create('beehive');hive.name='Orchard | beehive';hive.position.set(p[0],W.groundH(p[0],p[1]),p[1]);decor.add(hive);}
  G.scene.add(decor);
  const spots={
   sweetpea:[0,5,26,48,6], berries:[-30,-58,6,30,8], cress:[8,118,6,30,7], watermelon:[232,-122,8,40,6], strawberry:[54,-38,6,26,7],

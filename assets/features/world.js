@@ -314,8 +314,17 @@ export function install(G){
      the ring, an invisible wall at the C end that a horse cantering round the rail ran into; it sits at
      B+6 now and its three smaller circles follow the 13 by 4.6 m stand, all of it five metres off the rail. */
   const SZ=B+6,SC=SZ+1.4;
-  const stand=new THREE.Group();for(let r=0;r<3;r++){const b=box(12,0.5,1.2,r%2?'#c9a86a':'#b8935a',0,0.25+r*0.55,-r*1.25,stand);b.castShadow=true;}box(12.4,0.2,4,'#6b4a2a',0,0.05,-1.25,stand);post(-6,-3.6,stand,3.2,'#6b4a2a');post(6,-3.6,stand,3.2,'#6b4a2a');const roof=box(13,0.16,4.6,'#a33a3a',0,3.3,-1.4,stand);roof.rotation.x=0.12;
-  stand.position.set(0,dy(0,SC),SZ);stand.rotation.y=Math.PI;g.add(stand);
+  const stand=W.ranchBuilderArt.create('grandstand');stand.name='Arena | grandstand | '+rg.id;
+  // Keep the deck level while footing extensions meet the sloped town ground.
+  const supportPoints=[-5.85,-1.8,1.8,5.85].flatMap(x=>[.35,-3.15].map(z=>[x,z]));
+  const standY=Math.max(...supportPoints.map(([x,z])=>dy(-x,SZ-z)));
+  stand.position.set(0,standY,SZ);stand.rotation.y=Math.PI;g.add(stand);
+  for(const [x,z]of supportPoints){
+   const wx=-x,wz=SZ-z,base=dy(wx,wz),h=standY-base;
+   if(h>.015)box(.39,h+.08,.39,W.ranchBuilderArt.materials.stone,wx,base+h/2,wz,g);
+  }
+  const entryZ=SZ-.45,entryBase=dy(0,entryZ),entryRise=standY-entryBase;
+  if(entryRise>.015)box(1.16,entryRise+.05,.60,W.ranchBuilderArt.materials.stone,0,entryBase+entryRise/2,entryZ,g);
   g.position.set(v.x,gy,v.z);
   for(const c of g.children){if(c.isMesh){c.castShadow=true;}}
   scene.add(g);W.followCamera.register(g);

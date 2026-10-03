@@ -41,7 +41,7 @@ export function install(G){
  const REPORT_WINDOW=10*60e3, REPORT_VOTES=2; // two different riders inside ten minutes
  const GIFT_CAP=3;                            // forage gifts you can RECEIVE in a day
  const TOUR=[128,64];                         // the showcase paddock: a friend's ranch is rebuilt here
- const SEAT={x:-31.5,y:3.4,z:0,lx:0,lz:0};    // the grandstand seat above the arena
+ const SEAT={x:-31.5,y:3.0,z:7.5,lx:0,lz:0};    // the grandstand seat above the arena
 
  /* The four chat rooms. 'club' is the existing topic so nothing about the old chat changes. */
  const CHAT_ROOMS={
@@ -650,10 +650,10 @@ export function install(G){
     was unreachable from inside the world. There is one stand now: the earlier thing comes
     out, and events-pvp keeps its setSpectate API for the arena's own tests. */
  for(let i=W.things.length-1;i>=0;i--){const t=W.things[i];if(t&&t.id==='grandstand'&&t.kind==='stand')W.things.splice(i,1);}
- W.addThing({kind:'grandstand',id:'arena-stand',x:-28.5,z:0,reach:4.5,
+ W.addThing({kind:'grandstand',id:'arena-stand',x:-28.5,z:7.5,reach:4.5,
   label:()=>spec?'👁️ Watching from the grandstand (Esc to leave)':'👁️ Sit in the grandstand and watch (E)',
   use:()=>{ if(spec)stopSpectate(); else startSpectate(null,true); }});
- W.mapMarkers.push({x:-28.5,z:0,glyph:'👁️',label:'Grandstand'});
+ W.mapMarkers.push({x:-28.5,z:7.5,glyph:'👁️',label:'Grandstand'});
 
  /* ======================= 12. Co-operative foraging ======================= */
  const coopData={};                                     // week -> {name:count}

@@ -29,6 +29,8 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  const red=cloth.clone();red.name='Builder | oxblood woven cloth';red.color.set('#884b40');
  const blue=cloth.clone();blue.name='Builder | washed indigo cloth';blue.color.set('#566e7e');
  const leaf=material('living foliage','#47633d',.92),petal=material('rose petals','#ac737b',.86),yellow=material('warm ochre','#bf9855',.92),straw=material('dry hay','#eee1ba',1,0,'riet_01',1.15),snow=material('granular snow','#eef0e8',1);
+ // The reed photograph supplies fine fibres; warm dry-hay albedo and softer normals keep bales from reading as stone.
+ straw.color.setRGB(1.8,1.4,.72);straw.userData.metres=.45;straw.normalScale.set(.30,.30);
  snow.normalMap=cloth.normalMap;snow.normalScale=new T.Vector2(.12,.12);snow.userData.metres=.45;
  const bronze=material('patinated bronze','#54675b',.53,.73),rubber=material('rubber','#303734',.96);
  const water=new T.MeshPhysicalMaterial({name:'Builder | water',color:'#527c79',roughness:.13,metalness:.18,clearcoat:1,transparent:true,opacity:.78,depthWrite:false});
@@ -77,7 +79,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  }
  function boards(b,w,h,d,m,x,y,z,vertical=false){const n=Math.max(2,Math.ceil((vertical?w:d)/.16));for(let i=0;i<n;i++){if(vertical)b.box(w/n-.006,h,d,m,x-w/2+(i+.5)*w/n,y,z);else b.box(w,h,d/n-.006,m,x,y,z-d/2+(i+.5)*d/n);}}
  function fence(b,length=3,x=0,z=0,ry=0){const f=new Model('Mortised three-rail fence');for(const s of[-1,1]){f.box(.16,1.25,.16,aged,s*length/2,.595,0);f.box(.19,.045,.19,endgrain,s*length/2,1.235,0);for(const y of[.4,.78,1.1])for(const dx of[-.035,.035])f.bolt(s*length/2+dx,y,.088,.009);}for(const y of[.4,.78,1.1])f.box(length+.07,.11,.058,paint,0,y,.015);b.add(f.finish(),x,0,z,ry);}
- function hay(b,x=0,y=0,z=0,s=1){b.box(1.1*s,.55*s,.64*s,straw,x,y+.275*s,z,null,.06);for(const a of[-.30,.30]){b.box(.012*s,.565*s,.657*s,aged,x+a*s,y+.275*s,z);}
+ function hay(b,x=0,y=0,z=0,s=1){b.box(1.1*s,.55*s,.64*s,straw,x,y+.275*s,z,null,.06);for(const a of[-.30,.30]){b.box(.012*s,.565*s,.657*s,cloth,x+a*s,y+.275*s,z);}
   for(let i=0;i<85;i++){const a=i*2.3999,xx=x+Math.sin(a)*.51*s,zz=z+Math.cos(a*1.47)*.30*s;const yy=y+.55*s+Math.sin(a*3)*.008;b.beam([xx-.045*s,yy,zz],[xx+.07*s,yy+.013*s,zz+.015*s],.004*s,.004*s,i%3?straw:yellow);}}
  function flowers(b,x=0,z=0,n=9,y=.4){
   if(scans.has('flower_gazania')){const count=Math.max(1,Math.ceil(n/4));for(let i=0;i<count;i++){const a=i*2.39996,r=count===1?0:.19;scan(b,'flower_gazania',{height:.37+.035*(i%3),x:x+Math.sin(a)*r,y,z:z+Math.cos(a)*r,ry:a});}return;}
@@ -123,8 +125,195 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
   b.cylinder(.045,.095,1.6,aged,0,.8,0);const branchMap=tex('assets/textures/realism/foliage_branch_rgba.png',true);const lm=new T.MeshStandardMaterial({name:'Builder | leaf sprays',map:branchMap,alphaTest:.38,side:T.DoubleSide,roughness:.94,color:blossom?'#b4a792':'#c7cfb6'});
   for(let i=0;i<30;i++){const a=i*2.399,r=.2+.4*Math.sin(i*1.13)**2,y=1.4+.8*(i%7)/7;const x=Math.sin(a)*r,z=Math.cos(a)*r;b.beam([0,y-.35,0],[x,y,z],.015,.015,aged);b.mesh(new T.PlaneGeometry(.58,.58),lm,x,y,z,[.1,a,.25]);}
  }
+ const arenaPaint=paint.clone();arenaPaint.name='Arena | painted timber';arenaPaint.map=null;arenaPaint.color.set('#d9d7c9');
+ const arenaRed=arenaPaint.clone();arenaRed.name='Arena | painted red rails';arenaRed.color.set('#984d40');
+ const arenaBlue=arenaPaint.clone();arenaBlue.name='Arena | painted blue rails';arenaBlue.color.set('#4d7285');
+ // Arena structures use the same measured joinery and photographed surfaces as placed furniture.
+ // Local +Z faces the arena; the centre aisle stays clear from the stairs to the rear row.
+ function grandstand(b){
+  const front=.35,back=-3.15;
+  b.root.userData.arenaArt={kind:'grandstand',version:1,seatRows:3};
+  for(const x of[-5.85,-1.8,1.8,5.85])for(const z of[front,back]){
+   b.box(.42,.24,.42,stone,x,.06,z);b.box(.25,.07,.25,iron,x,.20,z);
+   b.box(.18,3.73,.18,arenaPaint,x,2.07,z);
+   for(const dz of[-.07,.07])b.bolt(x,3.61,z+dz,.018);
+   for(const s of[-1,1])if(Math.abs(x+s*.65)<6.1)b.beam([x,3.15,z],[x+s*.65,3.83,z],.085,.13,aged);
+  }
+  for(const z of[front,back])b.box(12.15,.23,.18,aged,0,3.86,z);
+  for(let row=0;row<3;row++){
+   const level=.18+row*.44,z=-.10-row*1.1;
+   for(const side of[-1,1]){
+    const x=side*3.34;
+    boards(b,5.46,.065,1.09,aged,x,level-.032,z);
+    b.box(5.46,.15,.06,arenaPaint,x,level-.075,z+.535);
+    for(const lx of[side*.72,side*3.05,side*5.92]){
+     b.box(.11,level,.11,aged,lx,level/2,z);
+     b.box(.095,.43,.095,arenaPaint,lx,level+.19,z-.19);
+     b.box(.10,.07,.48,aged,lx,level+.41,z-.19);
+     b.box(.065,.84,.065,arenaPaint,lx,level+.42,z-.42);
+    }
+    for(const dz of[-.06,-.20,-.34])b.box(5.36,.047,.13,oak,x,level+.46,z+dz);
+    for(const dy of[.70,.84]){b.box(5.36,.115,.047,oak,x,level+dy,z-.44,[.10,0,0]);for(const lx of[side*.72,side*3.05,side*5.92])b.bolt(lx,level+dy,z-.411,.01);}
+   }
+  }
+  // Five shallow, closed risers; a level landing continues between the back benches.
+  for(let i=0;i<5;i++){
+   const h=.18+i*.22,z=.45-i*.55;
+   b.box(1.10,h,.55,aged,0,h/2,z);
+   b.box(1.14,.055,.55,oak,0,h+.015,z);
+   b.box(1.08,.012,.055,rubber,0,h+.048,z+.225);
+  }
+  boards(b,1.1,.065,1.2,aged,0,1.04,-2.48);
+  for(const x of[-6.04,6.04]){
+   b.beam([x,.23,.35],[x,1.08,-3.15],.13,.13,aged);
+   b.beam([x,.04,-3.15],[x,1.04,-.65],.10,.10,aged);
+   for(let i=0;i<4;i++){const z=.30-i*1.1,y=.2+i*.29;b.box(.095,1.02,.095,arenaPaint,x,y+.5,z);}
+   for(const offset of[.62,1.08])b.beam([x,.18+offset,.35],[x,1.06+offset,-3.15],.065,.075,paint);
+  }
+  for(const x of[-5.9,-4,-2,0,2,4,5.9])b.box(.095,1.12,.095,arenaPaint,x,1.57,-3.15);
+  for(const y of[1.48,2.12])b.box(12.15,.065,.075,arenaPaint,0,y,-3.15);
+  for(let i=0;i<43;i++)b.box(.028,.59,.028,iron,-5.88+i*.28,1.80,-3.15);
+  // Real rafters carry two shingled roof slopes, with fascia, ridge cap and guttering.
+  const cz=-1.4,half=2.35,rise=.78,angle=Math.atan2(rise,half),slope=Math.hypot(half,rise);
+  for(const s of[-1,1]){
+   b.box(13,.09,slope,roof,0,4.06+rise/2,cz+s*half/2,[s*angle,0,0]);
+   b.box(13.08,.17,.08,arenaPaint,0,4.02,cz+s*half);
+   b.box(13.08,.05,.10,iron,0,3.97,cz+s*(half+.065));
+  }
+  b.box(13.12,.065,.17,iron,0,4.85,cz);
+  for(const x of[-6.3,-5.85,-3.9,-1.8,1.8,3.9,5.85,6.3]){
+   b.box(.10,.14,4.75,aged,x,3.93,cz);
+   for(const s of[-1,1])b.beam([x,4.0,cz+s*half],[x,4.78,cz],.10,.14,aged);
+   b.box(.085,.70,.085,arenaPaint,x,4.35,cz);
+  }
+  for(const x of[-6.1,6.1])b.tube([[x,3.97,cz-half],[x,3.75,back-.22],[x,.20,back-.22],[x,.12,back-.45]],.036,iron);
+  b.box(3.5,.33,.055,aged,0,3.68,.48);
+  const cv=document.createElement('canvas');cv.width=1024;cv.height=128;const cx=cv.getContext('2d');cx.fillStyle='#e9e5d8';cx.font='500 48px Georgia';cx.textAlign='center';cx.textBaseline='middle';cx.fillText('SPECTATOR PAVILION',512,64,950);
+  const tx=new T.CanvasTexture(cv);tx.colorSpace=T.SRGBColorSpace;
+  const lettering=new T.MeshStandardMaterial({name:'Arena | pavilion lettering',map:tx,transparent:true,roughness:.9,depthWrite:false});
+  b.mesh(new T.PlaneGeometry(3.3,.29),lettering,0,3.68,.511,null,null,false);
+ }
+ function judgesPavilion(b){
+  b.root.userData.arenaArt={kind:'judges_pavilion',version:1};
+  for(const x of[-.98,.98])for(const z of[-.98,.98]){
+   b.box(.36,.20,.36,stone,x,.05,z);b.box(.17,3.19,.17,arenaPaint,x,1.715,z);
+   b.box(.22,.06,.22,iron,x,.16,z);
+  }
+  for(const x of[-.97,.97]){b.beam([x,.22,-.98],[x,1.01,.98],.075,.075,aged);b.beam([x,.22,.98],[x,1.01,-.98],.075,.075,aged);}
+  for(const z of[-.99,.99])b.box(2.2,.20,.14,aged,0,.94,z);
+  boards(b,2.22,.08,2.22,oak,0,1.08,0);
+  for(const x of[-1.02,1.02]){
+   for(const y of[1.31,2.12])b.box(.07,.07,2.1,arenaPaint,x,y,0);
+   for(let i=0;i<8;i++)b.box(.038,.75,.038,arenaPaint,x,1.72,-.87+i*.25);
+   b.box(.16,.17,2.3,aged,x,3.29,0);
+   for(const z of[-.98,.98])b.beam([x,2.78,z],[x,3.21,z-Math.sign(z)*.48],.08,.08,aged);
+  }
+  for(const y of[1.31,2.12])b.box(2.1,.07,.07,arenaPaint,0,y,1.02);
+  for(let i=0;i<9;i++)b.box(.038,.75,.038,arenaPaint,-1+i*.25,1.72,1.02);
+  for(const side of[-1,1]){b.box(.56,.07,.07,arenaPaint,side*.77,2.12,-1.02);b.box(.065,1.05,.065,arenaPaint,side*.5,1.63,-1.02);}
+  for(let i=0;i<6;i++){
+   const h=(i+1)*.18,z=-2.56+i*.27;b.box(.92,h,.275,aged,0,h/2,z);b.box(.97,.045,.29,oak,0,h+.018,z);
+   b.box(.89,.012,.045,rubber,0,h+.046,z-.10);
+  }
+  for(const x of[-.54,.54]){b.box(.065,.95,.065,arenaPaint,x,.48,-2.62);b.beam([x,.95,-2.62],[x,2.10,-1.0],.055,.065,paint);}
+  for(const z of[-1.11,1.11])b.box(2.27,.16,.16,aged,0,3.29,z);
+  const a=Math.atan2(.58,1.43),len=Math.hypot(.58,1.43);
+  for(const s of[-1,1]){b.box(2.91,.085,len,roof,0,3.68,s*.715,[s*a,0,0]);b.box(2.97,.13,.07,arenaPaint,0,3.35,s*1.43);}
+  for(const x of[-1.4,1.4])for(const s of[-1,1])b.beam([x,3.35,s*1.44],[x,3.95,0],.085,.12,paint);
+  b.box(2.98,.06,.15,iron,0,4.0,0);
+  boards(b,1.66,.055,.5,oak,0,1.84,.58);
+  for(const x of[-.65,.65])b.box(.055,.70,.055,iron,x,1.46,.6);
+  b.add(createTemplate('chair'),0,1.12,-.12);
+  b.box(.23,.01,.31,cloth,.34,1.88,.6,[0,.17,0]);b.cylinder(.045,.042,.10,steel,-.45,1.92,.67);
+ }
+ function mountingBlock(b){
+  for(let i=0;i<3;i++){const h=.18*(i+1),z=.34-i*.32;boards(b,.82,.055,.32,oak,0,h,z);for(const x of[-.35,.35]){b.box(.10,h,.30,aged,x,h/2,z);b.bolt(x,h-.07,z+.155,.012);}b.box(.78,.13,.045,arenaPaint,0,h-.08,z+.14);for(const dz of[-.075,.075])b.box(.76,.01,.035,rubber,0,h+.033,z+dz);}
+  for(const x of[-.35,.35])b.box(.10,.07,.96,aged,x,.06,.02);
+ }
+ function poleRack(b){
+  for(const x of[-1.1,1.1]){
+   b.box(.16,.10,.94,aged,x,.05,0);b.box(.105,1.18,.105,arenaPaint,x,.62,-.23);
+   b.beam([x,.10,-.40],[x,.68,-.23],.065,.065,aged);
+   for(const y of[.32,.65,.98]){b.box(.07,.055,.58,iron,x,y,.02);b.box(.075,.09,.045,iron,x,y+.025,.30);b.bolt(x,y,-.17,.015);}
+  }
+  b.box(2.35,.11,.09,aged,0,.24,-.23);
+  for(let row=0;row<3;row++)for(let band=0;band<9;band++)b.cylinder(.052,.052,1/3,band%3===1?arenaPaint:row===1?arenaRed:arenaBlue,-4/3+band/3,.405+row*.33,.12,[0,0,Math.PI/2],16);
+ }
+ function floodlight(b){
+  b.box(.36,.13,.36,stone,0,.025,0);b.box(.28,.035,.28,steel,0,.11,0);
+  for(const x of[-.10,.10])for(const z of[-.10,.10])b.cylinder(.02,.02,.035,iron,x,.145,z,null,6);
+  b.cylinder(.065,.095,6.5,steel,0,3.37,0);
+  b.box(.18,.32,.13,iron,0,.62,-.10);b.box(.025,.09,.02,steel,.055,.62,-.175);
+  b.box(.58,.045,.075,iron,0,6.53,0);
+  for(const x of[-.29,.29]){b.box(.045,.29,.075,iron,x,6.65,0);b.bolt(x,6.72,.045,.025);}
+  b.box(.76,.45,.22,iron,0,6.7,0,[-.25,0,0]);
+  for(let i=0;i<8;i++)b.box(.018,.35,.08,steel,-.31+i*.089,6.69,-.16,[-.25,0,0]);
+  b.tube([[0,6.45,-.075],[.11,6.5,-.16],[.12,6.65,-.19]],.012,rubber);
+ }
+ function windmillTower(b){
+  b.root.userData.arenaArt={kind:'windmill_tower',version:1};
+  // A stone plinth carries a tapered, boarded octagonal mill, with framed openings.
+  stoneCourses(b,1.61,.43);
+  b.cylinder(1.07,1.68,6.64,aged,0,3.73,0,null,8);
+  for(let i=0;i<8;i++){
+   const a=i*Math.PI/4,x=Math.sin(a),z=Math.cos(a);
+   b.beam([x*1.69,.39,z*1.69],[x*1.08,7.03,z*1.08],.12,.12,arenaPaint);
+   for(const y of[.48,3.58,6.94]){const r=1.73-(y-.39)*.092,next=a+Math.PI/4;b.beam([x*r,y,z*r],[Math.sin(next)*r,y,Math.cos(next)*r],.08,.095,arenaPaint);}
+  }
+  for(const y of[1.0,1.65,2.30,2.95,4.12,4.77,5.42,6.07,6.72]){
+   const r=1.69-(y-.39)*.092;b.cylinder(r+.018,r+.03,.038,oak,0,y,0,null,8);
+  }
+  boards(b,.80,1.66,.06,oak,0,1.15,1.64,true);
+  for(const x of[-.45,.45])b.box(.085,1.79,.11,arenaPaint,x,1.16,1.66);
+  b.box(.98,.095,.11,arenaPaint,0,2.02,1.66);
+  b.beam([-.34,.41,1.69],[.34,1.83,1.69],.07,.04,aged);
+  for(const y of[.65,1.65])b.box(.27,.04,.025,iron,-.2,y,1.71);
+  b.torus(.04,.009,iron,.26,1.13,1.72);
+  for(const a of[0,Math.PI/2,Math.PI,Math.PI*1.5]){
+   const w=new Model('Mill window');w.box(.50,.72,.055,iron,0,4.83,0);
+   for(const x of[-.28,0,.28])w.box(.045,.83,.06,arenaPaint,x,4.83,.035);
+   for(const y of[4.42,4.83,5.24])w.box(.60,.045,.06,arenaPaint,0,y,.035);
+   w.box(.64,.045,.19,oak,0,4.4,.055);b.add(w.finish(),Math.sin(a)*1.23,0,Math.cos(a)*1.23,a);
+  }
+  b.cylinder(0,1.47,1.46,roof,0,7.76,0,null,32);
+  b.torus(1.45,.065,arenaPaint,0,7.02,0,[Math.PI/2,0,0]);
+  for(let i=0;i<8;i++){const a=i*Math.PI/4;b.beam([Math.sin(a)*1.46,7.04,Math.cos(a)*1.46],[0,8.50,0],.055,.055,iron);}
+  b.cylinder(.055,.065,.23,iron,0,8.60,0);
+  b.cylinder(.14,.14,.86,iron,0,6.8,1.35,[Math.PI/2,0,0]);
+ }
+ function windmillRotor(b){
+  b.cylinder(.23,.23,.28,iron,0,0,0,[Math.PI/2,0,0]);
+  b.cylinder(.13,.13,.06,brass,0,0,.17,[Math.PI/2,0,0]);
+  for(let i=0;i<4;i++){
+   const sail=new Model('Mill | lattice sail');sail.box(.095,3.62,.075,aged,0,1.66,0);
+   sail.box(.70,2.55,.015,cloth,.35,2.14,.015);
+   for(const x of[0,.70])sail.box(.048,2.64,.055,arenaPaint,x,2.14,.035);
+   for(let k=0;k<10;k++)sail.box(.75,.04,.07,oak,.35,.84+k*.29,.042);
+   sail.beam([0,.88,.055],[.7,3.43,.055],.032,.03,aged);
+   const g=sail.finish();g.rotation.z=i*Math.PI/2;b.root.add(g);
+  }
+ }
  function createTemplate(type){const b=new Model('Ranch builder | '+type);
   switch(type){
+   case 'windmill_tower':windmillTower(b);break;
+   case 'windmill_rotor':windmillRotor(b);break;
+   case 'beehive':
+    for(const x of[-.19,.19]){b.box(.10,.20,.55,aged,x,.09,0);b.box(.17,.10,.20,stone,x,.015,0);}
+    b.box(.57,.055,.61,oak,0,.205,.025);
+    for(let row=0;row<3;row++){
+     const y=.33+row*.21;b.box(.51,.20,.52,arenaPaint,0,y,0);
+     for(const x of[-.22,.22])b.box(.055,.19,.032,oak,x,y,.27);
+     b.box(.19,.025,.055,aged,0,y+.045,.28);
+     for(const x of[-.25,.25])b.box(.035,.025,.17,oak,x,y+.045,0);
+    }
+    b.box(.25,.025,.012,iron,0,.25,.268);b.box(.34,.02,.15,oak,0,.237,.32);
+    b.box(.62,.055,.65,steel,0,.895,0,[.055,0,0]);
+    break;
+   case 'grandstand':grandstand(b);break;
+   case 'judges_pavilion':judgesPavilion(b);break;
+   case 'mounting_block':mountingBlock(b);break;
+   case 'pole_rack':poleRack(b);break;
+   case 'floodlight':floodlight(b);break;
    case 'fence':fence(b);break;
    case 'post':b.box(.19,1.4,.19,aged,0,.66,0);b.box(1.03,.13,.16,oak,0,1.24,0);b.box(.24,.045,.24,oak,0,1.38,0);for(const x of[-.32,.32]){b.torus(.058,.012,iron,x,1.12,.10);b.bolt(x,1.23,.09,.02);}break;
    case 'haybale':hay(b);break;
@@ -156,7 +345,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
    case 'tulip_bed':b.box(1.8,.10,1.0,soil,0,.035,0);for(const z of[-.5,.5])b.box(1.85,.14,.065,aged,0,.06,z);flowers(b,-.45,0,12,.1);flowers(b,.4,0,12,.1);break;
    case 'butterfly_house':b.box(.10,1.6,.10,aged,0,.76,0);boards(b,.42,.65,.10,paint,0,1.63,0,true);for(const x of[-.22,.22])b.box(.055,.66,.32,oak,x,1.63,0);for(const x of[-.12,0,.12])b.box(.018,.34,.012,iron,x,1.66,.059);b.box(.56,.065,.4,roof,0,2,0,[0,0,.09]);break;
    case 'blossom_tree':tree(b,false,true);break;
-   case 'trough':for(const x of[-.57,.57])b.box(.18,.12,.57,stone,x,.04,0);b.box(1.55,.06,.65,steel,0,.19,0,null,.03);for(const z of[-.32,.32]){b.box(1.55,.45,.045,steel,0,.4,z,null,.02);b.box(1.61,.035,.062,steel,0,.64,z);}for(const x of[-.76,.76])b.box(.045,.45,.64,steel,x,.4,0);b.box(1.44,.01,.56,water,0,.52,0);b.tube([[.79,.24,0],[.82,.7,0],[.62,.74,0],[.60,.66,0]],.02,brass);for(const x of[-.68,.68])for(const z of[-.345,.345])for(const y of[.26,.56])b.bolt(x,y,z,.009);break;
+   case 'trough':for(const x of[-.57,.57])b.box(.18,.22,.57,stone,x,.08,0);b.box(1.55,.06,.65,steel,0,.19,0,null,.03);for(const z of[-.32,.32]){b.box(1.55,.45,.045,steel,0,.4,z,null,.02);b.box(1.61,.035,.062,steel,0,.64,z);}for(const x of[-.76,.76])b.box(.045,.45,.64,steel,x,.4,0);b.box(1.44,.01,.56,water,0,.52,0);b.tube([[.79,.24,0],[.82,.7,0],[.62,.74,0],[.60,.66,0]],.02,brass);for(const x of[-.68,.68])for(const z of[-.345,.345])for(const y of[.26,.56])b.bolt(x,y,z,.009);break;
    case 'wash_rack':b.box(2.4,.09,2.4,stone,0,.018,0);for(const x of[-1.05,1.05])b.tube([[x,.03,.9],[x,1.25,.9],[x,1.4,.4],[x,1.4,-.9],[x,2.2,-1.0]],.032,steel);b.tube([[-1.05,2.2,-1.0],[0,2.2,-1.0],[1.05,2.2,-1]],.032,steel);b.tube([[.8,1.9,-.95],[.55,1.55,-.86],[.7,.42,-.64],[.86,.37,-.66],[.97,1.13,-.62]],.012,rubber);for(let i=0;i<15;i++)b.box(.045,.018,.30,iron,-.36+i*.05,.073,.2);break;
    case 'muck_cart':case 'harvest_wagon':{
     const big=type==='harvest_wagon',w=big?2.1:1.1,d=big?1.2:.7,h=big?.55:.42;

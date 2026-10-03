@@ -264,7 +264,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   document.activeElement&&document.activeElement.blur();
   document.getElementById('chatBar').style.display='none';
   const spec0=(G.save.fresh().stats||{}).spectated||0;
-  G.horse.player.pos.set(-27,0,0); G.horse.player.speed=0;
+  G.horse.player.pos.set(-26.5,0,7.5); G.horse.player.speed=0;
   await window.advanceTime(400);
   const ctx=(document.getElementById('ctx')||{}).textContent||'';
   window.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyE'}));
