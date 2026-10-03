@@ -16,6 +16,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   const routes=Object.values(G.tables.RACE_ROUTES).filter(Array.isArray);
   function segmentDistance(x,z,a,b){const dx=b[0]-a[0],dz=b[1]-a[1],t=THREE.MathUtils.clamp(((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz||1),0,1);return Math.hypot(x-a[0]-t*dx,z-a[1]-t*dz);}
   function clear(x,z,r=1){
+    if(W.sceneryArt.containsWaterfall(x,z,r))return false;
     if(Math.hypot(x,z)<33||W.pathDist(x,z)<r+3)return false;
     if(Math.abs(z-W.riverZ(x))<r+10||z<163&&Math.abs(x-W.streamX(z))<r+8)return false;
     if(Math.hypot(x-20,z-16)<r+19)return false;

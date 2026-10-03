@@ -647,6 +647,8 @@ import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.j
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs,createForestImpostor} from './assets/vegetation.js';
 import {createGrassTuftGeometry} from './assets/meadow-cover.js';
 import {createGeology} from './assets/geology.js';
+import {createSceneryArt} from './assets/scenery-art.js';
+import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
 import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js';
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
@@ -2638,6 +2640,8 @@ const glowPanes=[];
 const ranchArchitecture=createRanchArchitecture({THREE,glowPanes});
 const ranchBuilderArt=createRanchBuilderArt({THREE,GLTFLoader,architecture:ranchArchitecture,
  anisotropy:renderer.capabilities.getMaxAnisotropy(),getRanchName:()=>freshSave()?.ranchName||'Meadowlark Ranch'});
+const waterfallArt=createWaterfallArt({THREE});
+const sceneryArt=createSceneryArt({THREE,materials:ranchBuilderArt.materials,groundH});
 const arrivalArt=createArrivalArt({THREE,anisotropy:renderer.capabilities.getMaxAnisotropy()});
 const geology=createGeology({THREE,scene,groundH:terrainH});
 /* fireflies: drifting HDR embers over the meadows, only alive at night */
@@ -4212,7 +4216,7 @@ for(let i=0;i<560;i++){                                      // dense forest sca
  do{
   const a=Math.random()*Math.PI*2,rr=33+Math.random()*415;
   x=Math.cos(a)*rr;z=Math.sin(a)*rr;
- }while((Math.abs(x)<30&&Math.abs(z)<26)||(x>-34&&x<-26&&z>0&&z<16)||Math.abs(z-riverZ(x))<8||inCoyote(x,z));
+ }while((Math.abs(x)<30&&Math.abs(z)<26)||(x>-34&&x<-26&&z>0&&z<16)||Math.abs(z-riverZ(x))<8||inCoyote(x,z)||sceneryArt.containsWaterfall(x,z,3.5));
  colliders.push({x,z,r:0.8});
  const sp=inSnow(x,z)?'snowpine':TREE_MIX[(Math.random()*TREE_MIX.length)|0];
  (FOLIAGE[sp]||(FOLIAGE[sp]=[])).push({x,z,s:1.0+Math.random()*1.0,r:Math.random()*Math.PI*2});   // bigger + more size variety
@@ -4222,7 +4226,7 @@ for(let i=0;i<280;i++){                                      // lots of bushes (
  do{
   const a=Math.random()*Math.PI*2,rr=30+Math.random()*420;
   x=Math.cos(a)*rr;z=Math.sin(a)*rr;
- }while((Math.abs(x)<29&&Math.abs(z)<25)||(x>-34&&x<-26&&z>0&&z<16)||Math.abs(z-riverZ(x))<7||inCoyote(x,z)||inSnow(x,z));
+ }while((Math.abs(x)<29&&Math.abs(z)<25)||(x>-34&&x<-26&&z>0&&z<16)||Math.abs(z-riverZ(x))<7||inCoyote(x,z)||inSnow(x,z)||sceneryArt.containsWaterfall(x,z,1));
  (Math.random()<0.7?FOLIAGE.bush:FOLIAGE.flowerbush).push({x,z,s:0.9+Math.random()*0.9,r:Math.random()*Math.PI*2});
 }
 for(let i=0;i<90;i++){                                       // cacti across Coyote Canyon desert
@@ -4245,7 +4249,7 @@ FOLIAGE.trough.push({x:-46,z:-6,s:1,r:0.35},{x:-36,z:-1,s:1,r:1.6});
 for(let i=0;i<74;i++){                                       // boulders: meadow and hills, not sand or snow
  let x,z;
  do{ const a=Math.random()*Math.PI*2,rr=40+Math.random()*410; x=Math.cos(a)*rr;z=Math.sin(a)*rr; }
- while((Math.abs(x)<32&&Math.abs(z)<28)||Math.abs(z-riverZ(x))<9||inCoyote(x,z)||inSnow(x,z));
+ while((Math.abs(x)<32&&Math.abs(z)<28)||Math.abs(z-riverZ(x))<9||inCoyote(x,z)||inSnow(x,z)||sceneryArt.containsWaterfall(x,z,1));
  const s=0.8+Math.random()*1.4;
  FOLIAGE.boulder.push({x,z,s,r:Math.random()*Math.PI*2});
  colliders.push({x,z,r:0.9*s});
@@ -4253,7 +4257,7 @@ for(let i=0;i<74;i++){                                       // boulders: meadow
 for(let i=0;i<44;i++){                                       // stumps: where trees would have stood
  let x,z;
  do{ const a=Math.random()*Math.PI*2,rr=45+Math.random()*400; x=Math.cos(a)*rr;z=Math.sin(a)*rr; }
- while((Math.abs(x)<32&&Math.abs(z)<28)||Math.abs(z-riverZ(x))<8||inCoyote(x,z)||inSnow(x,z));
+ while((Math.abs(x)<32&&Math.abs(z)<28)||Math.abs(z-riverZ(x))<8||inCoyote(x,z)||inSnow(x,z)||sceneryArt.containsWaterfall(x,z,1));
  FOLIAGE.stump.push({x,z,s:0.8+Math.random()*0.6,r:Math.random()*Math.PI*2});
 }
 const PROP_SRC={};
@@ -4461,49 +4465,8 @@ let waterMat=null;   // hoisted: the pond reuses it
   cliff.position.set(FX,foot,FZ);scene.add(cliff);
   for(let j=0;j<=SEG;j+=2){ const u=j/SEG*2-1;                    // solid to ride into; landform, so course-clear never takes the rock face for a clearable post
    colliders.push({x:FX+u*WID,z:FZ+Math.pow(Math.abs(u),2.1)*6.4,r:1.6,landform:true}); }
-  /* the falling water: a sheet through the notch, its texture scrolling down */
-  const fallTex=waterShimTex.clone(); fallTex.needsUpdate=true;
-  fallTex.wrapS=fallTex.wrapT=THREE.RepeatWrapping; fallTex.repeat.set(1.1,2.6);
-  const fallMat=new THREE.MeshStandardMaterial({map:fallTex,color:0xdff2ff,roughness:0.16,metalness:0.05,
-   transparent:true,opacity:0.9,side:THREE.DoubleSide,emissive:0x8fc4e8,emissiveIntensity:0.22});
-  waterAnims.push({tex:fallTex,sx:0.0,sy:-1.35});
-  /* The water was one flat sheet five vertices wide — a pane of glass leaning on the cliff,
-     which from any angle but dead ahead is exactly what it looked like. Falling water has
-     a front and a back: it leaves the lip as a rounded tongue, thins and widens as it
-     drops, and breaks up before it lands. This is a closed volume with a real cross
-     section, so it has an edge you can see from the side. */
-  {const FS=16, FJ=9, FW=2.9;
-   const fp=[],fi=[],fu=[];
-   /* half a rounded cross-section at each height: how far the water stands off the rock */
-   const ring=(v)=>{
-    const spread=1+v*0.52;                       // widens as it falls
-    const thick=(0.62-0.34*v)*(1+0.5*Math.sin(v*7.0));   // and thins, unevenly
-    return {w:FW*spread, t:Math.max(0.10,thick)};
-   };
-   for(let r=0;r<=FS;r++){ const v=r/FS, R=ring(v);
-    const y=lip-0.55-(lip-foot-0.35)*Math.pow(v,1.06);
-    const z0=FZ+0.40+v*v*2.6;                    // the arc away from the cliff face
-    for(let j=0;j<=FJ;j++){
-     /* all the way round: the front face bulges out, the back hugs the rock */
-     const a=j/FJ*Math.PI*2, cu=Math.cos(a), su=Math.sin(a);
-     const wob=1+0.10*Math.sin(a*3+v*9.0);
-     fp.push(FX+cu*R.w*wob, y+su*R.t*0.30, z0+su*R.t);
-     fu.push(j/FJ*1.6, v*2.4);
-    }}
-   for(let r=0;r<FS;r++)for(let j=0;j<FJ;j++){
-    const a=r*(FJ+1)+j, b=a+FJ+1;
-    fi.push(a,b,a+1, a+1,b,b+1);
-   }
-   const fg=new THREE.BufferGeometry();
-   fg.setAttribute('position',new THREE.Float32BufferAttribute(fp,3));
-   fg.setAttribute('uv',new THREE.Float32BufferAttribute(fu,2));
-   fg.setIndex(fi); fg.computeVertexNormals();
-   const fall=new THREE.Mesh(fg,fallMat); fall.renderOrder=2; fall.frustumCulled=false; scene.add(fall);
-   /* the tongue over the lip: a rounded roll of water, not a cylinder stuck on the edge */
-   const lipMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.3,transparent:true,opacity:0.85,
-    emissive:0xcfe8ff,emissiveIntensity:0.3,side:THREE.DoubleSide});
-   const crest=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.46,FW*2.05,14,1,true),lipMat);
-   crest.rotation.set(0,0,Math.PI/2); crest.position.set(FX,lip-0.42,FZ+0.50); scene.add(crest);
+  {const FW=2.9;
+   const fall=waterfallArt.fall({x:FX,z:FZ+.40,top:lip-.55,bottom:foot+.08,width:FW,run:2.6,name:'Hollowpeak Falls'});scene.add(fall);FALLS.surface=fall;
    /* Falling water throws water. These are the strands that break off the sheet: thin
       cards that fall, fade and start again, so the drop reads as moving volume rather
       than a scrolling texture on a plane. */
@@ -4523,20 +4486,8 @@ let waterMat=null;   // hoisted: the pond reuses it
    FALLS.fw=FW;
   }
   /* the plunge pool, and a ring of foam where the water lands */
-  {const poolTex=waterShimTex.clone(); poolTex.needsUpdate=true;
-   poolTex.wrapS=poolTex.wrapT=THREE.RepeatWrapping; poolTex.repeat.set(3,3);
-   waterAnims.push({tex:poolTex,sx:0.012,sy:0.009});
-   const pool=new THREE.Mesh(new THREE.CircleGeometry(7.4,28),
-    new THREE.MeshStandardMaterial({map:poolTex,color:0x2f7ea8,roughness:0.12,metalness:0.12,
-     transparent:true,opacity:0.93,envMapIntensity:1.6}));
-   pool.rotation.x=-Math.PI/2; pool.position.set(FX,foot+0.16,FZ+7.6); pool.receiveShadow=true; scene.add(pool);
-   const foamTex=canvasTex(128,128,(c,w,h)=>{ c.clearRect(0,0,w,h);
-    for(let i=0;i<160;i++){ c.fillStyle='rgba(255,255,255,'+(0.25+Math.random()*0.5)+')';
-     c.beginPath(); c.arc(Math.random()*w,Math.random()*h,3+Math.random()*11,0,7); c.fill(); }});
-   const foam=new THREE.Mesh(new THREE.RingGeometry(1.5,4.4,26),
-    new THREE.MeshBasicMaterial({map:foamTex,transparent:true,opacity:0.55,depthWrite:false,
-     blending:THREE.AdditiveBlending,side:THREE.DoubleSide}));
-   foam.rotation.x=-Math.PI/2; foam.position.set(FX,foot+0.2,FZ+3.4); foam.renderOrder=3; scene.add(foam);
+  {const pool=waterfallArt.pool({x:FX,z:FZ+7.6,y:foot+.16,radius:7.4});scene.add(pool);FALLS.pool=pool;
+   const foam=waterfallArt.impact({x:FX,y:foot+.2,z:FZ+3.4,radius:4.4});scene.add(foam);
    FALLS.foam=foam;
    for(let i=0;i<16;i++){                                          // boulders round the pool
     const a=Math.random()*Math.PI*2, rr=6.4+Math.random()*3.2;
@@ -13697,6 +13648,7 @@ function tick(stepSeconds){
  for(const r of ripples)r.m.rotation.z+=dt*0.13*r.dir;
  if(waterMat?.userData.waterTime)waterMat.userData.waterTime.value=t;
  if(groundMat?.userData.wetWeather){const w=groundMat.userData.wetWeather;w.value+=((weather.mode==='rain'?1:0)-w.value)*Math.min(1,dt*.18);}
+ waterfallArt.update(t);
  for(const wa of waterAnims){wa.tex.offset.x+=dt*wa.sx;wa.tex.offset.y+=dt*(wa.sy<-0.5?wa.sy:wa.sy*Math.sin(t*0.5));}
  tickFalls(dt,t);
  tickSummon(dt);
@@ -14249,7 +14201,7 @@ function installFeatures(){
    nativeRiderInspect(){return nativeRiderBridge?.inspect()||null;},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,geology,box,tube,blob,
+  world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},

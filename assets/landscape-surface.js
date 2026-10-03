@@ -1,7 +1,7 @@
 // World-space mineral detail for distant relief and the chalk down. Textures
 // are shared with the terrain; no extra geometry passes or per-frame updates.
 const textures=new Map();
-export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=.82,meadow=false}) {
+export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=.82,meadow=false,mineralScale=18,bumpStrength=1}) {
   const loader=new THREE.TextureLoader();
   const load=path=>{
     if(textures.has(path)){const t=textures.get(path);t.anisotropy=Math.max(t.anisotropy,anisotropy);return t;}
@@ -13,8 +13,13 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
   material.onBeforeCompile=sh=>{
     sh.uniforms.landStone={value:stone};if(turf)sh.uniforms.landTurf={value:turf};
     sh.vertexShader='varying vec3 landPosition, landNormal;\n'+sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
-      landPosition=(modelMatrix*vec4(position,1.0)).xyz;
-      landNormal=normalize(mat3(modelMatrix)*normal);`);
+      vec4 landVertex=vec4(position,1.0);vec3 landLocalNormal=normal;
+      #ifdef USE_INSTANCING
+        landVertex=instanceMatrix*landVertex;
+        landLocalNormal=mat3(instanceMatrix)*landLocalNormal;
+      #endif
+      landPosition=(modelMatrix*landVertex).xyz;
+      landNormal=normalize(mat3(modelMatrix)*landLocalNormal);`);
     sh.fragmentShader=`varying vec3 landPosition,landNormal;
       uniform sampler2D landStone;
       ${meadow?'uniform sampler2D landTurf;':''}
@@ -24,7 +29,7 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
       `+sh.fragmentShader;
     sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
       vec3 lw=pow(abs(landNormal),vec3(4.0));lw/=max(dot(lw,vec3(1.0)),.001);
-      vec3 lp=landPosition/18.0;
+      vec3 lp=landPosition/${mineralScale.toFixed(3)};
       vec3 mineral=texture2D(landStone,lp.yz).rgb*lw.x+texture2D(landStone,lp.xz).rgb*lw.y+texture2D(landStone,lp.xy).rgb*lw.z;
       float large=landNoise(landPosition.xz*.013+landPosition.y*.004);
       float fracture=landNoise(vec2(landPosition.x+landPosition.z*.63,landPosition.y*1.8)*.063);
@@ -32,7 +37,7 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
       float rockGrain=dot(mineral,vec3(.2126,.7152,.0722));
       // Light and dark mineral seams remain legible after mip filtering.
       float relief=mix(.61,1.18,weathering)*clamp(.40+rockGrain*2.8,.48,1.42);
-      float landHeight=rockGrain*.28+fracture*2.4;
+      float landHeight=(rockGrain*.28+fracture*2.4)*${bumpStrength.toFixed(3)};
       ${meadow?`
         // Vertex colours separate the green down from its white chalk figure.
         float living=smoothstep(.008,.06,vColor.g-vColor.b)*
@@ -64,6 +69,6 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
         gl_FragColor.rgb=mix(gl_FragColor.rgb,fogColor,min(${fogCap.toFixed(3)},landFog));
       #endif`);
   };
-  material.customProgramCacheKey=()=>`landscape-surface-v1-${meadow}-${fogScale}-${fogCap}`;
+  material.customProgramCacheKey=()=>`landscape-surface-v2-${meadow}-${fogScale}-${fogCap}-${mineralScale}-${bumpStrength}`;
   material.needsUpdate=true;
 }

@@ -444,6 +444,7 @@ export function install(G){
     const n=2+Math.round(rnd()*3);
     for(let i=0;i<n;i++){
      const off=rr(3.4,5.2), px=x+rr(-1.3,1.3), pz=zc+sgn*off;
+     if(W.sceneryArt.containsWaterfall(px,pz,.5))continue;
      const gy=groundH(px,pz), h=rr(0.75,1.5);
      reeds.push({x:px,y:Math.min(gy,riverLevel(px))-0.1,z:pz,sx:rr(0.5,0.85),sy:h,sz:rr(0.5,0.85),
       ry:rnd()*6.28,c:0xffffff,cm:rr(0.72,1.15)});
@@ -711,59 +712,12 @@ export function install(G){
   const shelfY=groundH(FALL_X,SHELF_Z)+0.35;
   P.falls={x:FALL_X,z:zc,lipY:+lipY.toFixed(2),shelfY:+shelfY.toFixed(2),toeY:+lvl.toFixed(2),
            free:+(lipY-shelfY).toFixed(2),total:+(lipY-lvl).toFixed(2)};
-  /* the buttress: two courses of stacked rock with a notch cut through it, plus returns running
-     downstream on each side so the fall is standing in something rather than on it */
+  /* A continuous eroded buttress carries the source and the waterfall notch. */
   {
-   const NOTCH=1.75;
-   for(let i=0;i<11;i++){
-    const bx=FALL_X+(i/10-0.5)*17.5;
-    if(Math.abs(bx-FALL_X)<NOTCH+0.9)continue;
-    const bz=LIP_Z+rr(-0.7,0.7), g0=groundH(bx,bz);
-    boulder(bx,g0-0.15,bz,rr(1.5,1.9),1.0);
-    if(rnd()<0.75)boulder(bx+rr(-0.8,0.8),g0+1.55,bz+rr(-0.5,0.5),rr(1.05,1.35),1.0);
-    if(claim(bx,bz,1.4,'falls-rock'))W.colliders.push({x:bx,z:bz,r:1.4});
-   }
-   for(const s of[-1,1])for(let i=0;i<4;i++){        // the returns, stepping down beside the chute
-    const bz=LIP_Z+1.6+i*1.9, bx=FALL_X+s*(2.6+i*0.55);
-    boulder(bx,groundH(bx,bz)-0.1,bz,rr(0.9,1.5),rr(0.75,1.1));
-   }
-  }
-  /* the free fall: a tongue that leaves the notch, widens, thins and breaks up before the shelf */
-  {
-   const FS=15,FJ=8,FW=1.35;
-   const pos=[],uv=[],idx=[];
-   for(let r=0;r<=FS;r++){
-    const v=r/FS;
-    const w=FW*(1+v*0.45), th=Math.max(0.10,(0.48-0.25*v)*(1+0.42*Math.sin(v*6.4)));
-    const y=lipY-0.30-(lipY-shelfY-0.15)*Math.pow(v,1.04);
-    const z0=LIP_Z+0.55+v*v*(SHELF_Z-LIP_Z-0.7);
-    for(let j=0;j<=FJ;j++){
-     const a=j/FJ*Math.PI*2, cu=Math.cos(a), su=Math.sin(a);
-     const wob=1+0.11*Math.sin(a*3+v*8.4);
-     pos.push(FALL_X+cu*w*wob,y+su*th*0.28,z0+su*th);
-     uv.push(j/FJ*1.5,v*2.4);
-    }
-   }
-   for(let r=0;r<FS;r++)for(let j=0;j<FJ;j++){
-    const a=r*(FJ+1)+j,b=a+FJ+1;idx.push(a,b,a+1,a+1,b,b+1);
-   }
-   const geo=new THREE.BufferGeometry();
-   geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-   geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
-   geo.setIndex(idx);geo.computeVertexNormals();
-   const t=scroll(whiteTex.clone(),0,-1.35);t.repeat.set(1.3,2.6);
-   const fall=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:t,color:0xe4f4ff,roughness:0.15,
-    metalness:0.05,transparent:true,opacity:0.95,side:THREE.DoubleSide,emissive:0x9fd0ee,
-    emissiveIntensity:0.3,depthWrite:false}));
-   fall.renderOrder=2;fall.frustumCulled=false;scene.add(fall);P.fallSheet=fall;
-   /* The roll of water going over the lip, so the top of the fall is a crest and not a cut edge.
-      It was twice this fat and sat proud of the rock, where from the river it read as a white bar
-      hanging in the air above the notch; it is now tucked down into the gap with the sheet's own
-      top overlapping it, and only the front of the roll shows. */
-   const crest=new THREE.Mesh(new THREE.CylinderGeometry(0.20,0.17,FW*1.75,10,1,true),
-    new THREE.MeshStandardMaterial({color:0xf2fbff,roughness:0.28,transparent:true,opacity:0.85,
-     emissive:0xcfe8ff,emissiveIntensity:0.28,side:THREE.DoubleSide,depthWrite:false}));
-   crest.rotation.z=Math.PI/2;crest.position.set(FALL_X,lipY-0.46,LIP_Z+0.46);scene.add(crest);
+   const cliff=W.geology.makeWaterfallCliff({width:17.5,lip:lipY,foot:shelfY-1.1,seed:8723,notchWidth:3.5});
+   cliff.position.set(FALL_X,shelfY-1.1,LIP_Z);cliff.name='Geology | Ribbon Falls buttress';scene.add(cliff);P.cliff=cliff;
+   for(const side of[-1,1])for(let i=0;i<4;i++){const bx=FALL_X+side*(2.8+i*1.5),bz=LIP_Z+i*.24;if(claim(bx,bz,1.4,'falls-rock'))W.colliders.push({x:bx,z:bz,r:1.4});}
+   const fall=W.waterfallArt.fall({x:FALL_X,z:LIP_Z+.55,top:lipY-.30,bottom:groundH(FALL_X,SHELF_Z)+.075,width:1.35,run:SHELF_Z-LIP_Z-.55,name:'Ribbon Falls'});scene.add(fall);P.fallSheet=fall;
   }
   /* below the shelf the water stops falling and starts running: a cascade down the rest of the
      natural face into the river. Tinted toward water rather than left pure white — the first
@@ -776,14 +730,13 @@ export function install(G){
     const w=1.35+t*2.5;
     const a=0.55+0.34*Math.sin(t*13);                 // steps: white where it breaks, glassy between
     const e=[a*0.5,a*0.56,a*0.6];
-    rows.push({u:i*0.4,p:[[FALL_X-w,gy+0.16,z],[FALL_X,gy,z],[FALL_X+w,gy+0.16,z]],c:[e,[a,a,a],e]});
+    const points=[];for(let j=0;j<9;j++){const xx=FALL_X+(j/8*2-1)*w;points.push([xx,groundH(xx,z)+.075,z]);}
+    rows.push({u:t,p:points,c:points.map(()=>[1,1,1])});
    }
-   const cm=new THREE.MeshStandardMaterial({map:scroll(whiteTex.clone(),0,0.8),color:0xc9e6f4,
-    vertexColors:true,roughness:0.16,metalness:0.05,transparent:true,opacity:0.95,
-    side:THREE.DoubleSide,emissive:0x77b0d4,emissiveIntensity:0.20,depthWrite:false});
-   cm.map.repeat.set(1.5,6);
-   P.chute=band(rows,3,cm,'Water | falls chute');
-   P.chute.renderOrder=2;
+   P.chute=band(rows,9,W.waterfallArt.material,'Water | falls chute');
+   const uv=P.chute.geometry.attributes.uv;
+   for(let i=0;i<uv.count;i++)uv.setXY(i,(i%9)/8,Math.floor(i/9)/24);
+   uv.needsUpdate=true;P.chute.renderOrder=2;
    for(let i=0;i<20;i++){                             // rock either side of the chute
     const t=rnd(), z=SHELF_Z+1+(TOE_Z-SHELF_Z-1)*t;
     const side=rnd()<0.5?-1:1, bx=FALL_X+side*rr(2.2,5.2)*(1+t*0.5);
@@ -808,11 +761,7 @@ export function install(G){
    pm.map.repeat.set(4,2);
    P.plunge=band(rows,3,pm,'Water | falls plunge');
    P.plunge.renderOrder=3;
-   const foam=new THREE.Mesh(new THREE.RingGeometry(0.7,2.4,20),
-    new THREE.MeshBasicMaterial({map:scroll(foamTex.clone(),0.04,0),transparent:true,opacity:0.5,
-     depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide}));
-   foam.material.map.repeat.set(5,1);
-   foam.rotation.x=-Math.PI/2;foam.position.set(FALL_X,lvl+0.09,TOE_Z-0.6);foam.renderOrder=3;scene.add(foam);
+   const foam=W.waterfallArt.impact({x:FALL_X,y:lvl+.09,z:TOE_Z-.6,radius:2.4});scene.add(foam);
   }
   /* falling strands that break off the sheet, and mist where it lands. The mist was three times
      this strong to begin with and whited out half the frame — spray you cannot see the rock
@@ -956,35 +905,22 @@ export function install(G){
    /* Four planks butted into a slab read as a garden table from the shore, which is what the first
       one looked like. A stage is two stringers, boards laid across with daylight between them, and
       posts that stand above the deck — the gaps and the post tops are the whole silhouette. */
-   const bg=new THREE.BoxGeometry(1,1,1), cg=new THREE.CylinderGeometry(1,1,1,6);
-   const yaw=Math.atan2(dirX,dirZ), LEN=5.0, parts=[];
-   for(const s of[-1,1])
-    parts.push(part(bg,jx+dirX*LEN/2+dirZ*s*0.5,deckY-0.085,jz+dirZ*LEN/2-dirX*s*0.5,0.11,0.09,LEN,yaw));
-   for(let i=0;i<13;i++){
-    const t=0.04+i*0.0775, px=jx+dirX*t*LEN, pz=jz+dirZ*t*LEN;
-    parts.push(part(bg,px,deckY,pz,1.26,0.05,0.26,yaw));
-   }
-   for(let i=0;i<4;i++){
-    const t=i/3, px=jx+dirX*t*LEN, pz=jz+dirZ*t*LEN;
-    for(const s of[-1,1]){
-     const lx=px+dirZ*s*0.58, lz=pz-dirX*s*0.58, lg=groundH(lx,lz)-0.25;
-     const top=deckY+(i===0||i===3?0.42:0.06);
-     parts.push(part(cg,lx,(top+lg)/2,lz,0.072,top-lg,0.072,0));
-    }
-   }
-   parts.push(part(cg,jx+dirZ*0.95,deckY+0.5,jz-dirX*0.95,0.105,1.2,0.105,0));
-   merge(parts,timberMat,'Water | Loon Lake jetty',true);
+   const yaw=Math.atan2(dirX,dirZ),LEN=5.0;
+   const jetty=W.sceneryArt.dock({x:jx+dirX*LEN/2,z:jz+dirZ*LEN/2,y:deckY,yaw,width:1.6,length:LEN,rail:false,name:'Loon Lake jetty'});
+   scene.add(jetty);P.jetty=jetty;
+   // Existing instanced reeds must not grow through the deck planks.
+   const inverse=new THREE.Matrix4().copy(jetty.matrixWorld);jetty.updateMatrixWorld(true);inverse.copy(jetty.matrixWorld).invert();
+   const point=new THREE.Vector3(),matrix=new THREE.Matrix4(),zero=new THREE.Matrix4().makeScale(0,0,0);
+   for(const kind of ['reed','tuft','petal']){const bank=G.floraPkg?.bank?.[kind];if(!bank)continue;
+    for(let i=0;i<bank.n;i++){bank.im.getMatrixAt(i,matrix);point.setFromMatrixPosition(matrix).applyMatrix4(inverse);if(Math.abs(point.x)<.98&&Math.abs(point.z)<LEN/2+.16)bank.im.setMatrixAt(i,zero);}
+    bank.im.instanceMatrix.needsUpdate=true;}
+
    W.colliders.push({x:jx,z:jz,r:0.5});
    W.mapMarkers.push({x:jx,z:jz,glyph:'🎣',label:'Loon Lake jetty',kind:'water'});
    /* and a flat-bottomed punt moored to it — the only thing at this lake that moves by hand */
-   const pp=[part(bg,0,0.12,0,0.95,0.3,2.5,0),
-             part(bg,0,0.3,0.2,0.88,0.06,0.3,0),
-             part(bg,0.2,0.32,-0.2,0.06,0.04,1.8,0.18)];
-   for(const s of[-1,1])pp.push(part(bg,s*0.46,0.24,0,0.08,0.24,2.5,0));
-   for(const e of[-1,1])pp.push(part(bg,0,0.24,e*1.22,0.95,0.28,0.09,0,e*0.3));
-   const punt=merge(pp,timberMat,'Water | punt',true);
-   punt.position.set(jx+dirX*3.4+dirZ*1.25,surf-0.03,jz+dirZ*3.4-dirX*1.25);
-   punt.rotation.y=Math.atan2(dirX,dirZ)+0.25;
+   const punt=W.sceneryArt.boat();scene.add(punt);
+   punt.position.set(jx+dirX*3.3+dirZ*1.65,surf,jz+dirZ*3.3-dirX*1.65);
+   punt.rotation.y=yaw+.15;
    P.punt=punt;P.puntY=punt.position.y;
   }
   /* a few more lilies out where the existing scatter left a gap, sitting on the water this time */
@@ -1119,6 +1055,8 @@ export function install(G){
 
  /* Everything scattered above goes in now, one mesh per kind and three for all the rock. */
  P.pebbleMesh=instance(pebbleGeo,pebbleMat,pebbles,'Water | bank shingle',false);
+ if(P.jetty){const inv=P.jetty.matrixWorld.clone().invert(),p=new THREE.Vector3();
+  for(let i=reeds.length-1;i>=0;i--){p.set(reeds[i].x,reeds[i].y,reeds[i].z).applyMatrix4(inv);if(Math.abs(p.x)<1.05&&Math.abs(p.z)<2.75)reeds.splice(i,1);}}
  P.reedMesh=instance(reedGeo,reedMat,reeds,'Water | bank reeds',false);
  P.rootMesh=instance(rootGeo,rootMat,roots,'Water | undercut roots',false);
  P.boulderMeshes=boulderProtos.map((p,i)=>instance(p.g,p.mat,boulderRows[i],'Water | boulders '+i,true)).filter(Boolean).length;

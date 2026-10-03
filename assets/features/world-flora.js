@@ -472,6 +472,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
     is pushed under the analytic ground — a stem that hovers a centimetre on a crest is the first
     thing the eye finds. */
  function put(name,x,z,h,wid,col,lean,sink){
+  if(W.sceneryArt.containsWaterfall(x,z,.6))return false;
   const b=BANK[name]; if(!b||b.n>=b.cap)return false;
   _e.set((rnd()-0.5)*(lean||0),rnd()*Math.PI*2,(rnd()-0.5)*(lean||0));
   _q.setFromEuler(_e); _sc.set(h*wid,h,h*wid);
@@ -486,6 +487,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
  const TREE={oak:'#dff0c8',blossom:'#ffe8ee',birch:'#e6f2d0',pine:'#dfeccd',cold:'#eef7fb',willow:'#f2f7d8'};
  const BARK={oak:'#e4dac6',blossom:'#e2d6c4',birch:'#fbf8f0',pine:'#cdc2ad',cold:'#d2d6d4',willow:'#ddd2bd'};
  function tree(kind,x,z,h,wid,leafCol,barkCol,noColl){
+  if(W.sceneryArt.containsWaterfall(x,z,h*wid*.6+1))return false;
   const b=BANK[kind]; if(!b||b.n>=b.cap)return false;
   const y=groundH(x,z)-0.05*h;
   _e.set((rnd()-0.5)*0.06,rnd()*Math.PI*2,(rnd()-0.5)*0.06);_q.setFromEuler(_e);

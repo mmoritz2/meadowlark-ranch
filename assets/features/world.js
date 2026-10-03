@@ -507,14 +507,10 @@ export function install(G){
   {id:'hollowpeak',region:'hollowpeak',x:-116,z:-196,label:'🎈 Hollowpeak balloon field',stripe:['#7fb2e0','#f4f4f4']},
  ];
  P.BALLOON_STATIONS=BALLOON_STATIONS;
- function stripeTex(a,b){const c=document.createElement('canvas');c.width=64;c.height=8;const x=c.getContext('2d');for(let i=0;i<8;i++){x.fillStyle=i%2?a:b;x.fillRect(i*8,0,8,8);}const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,1);return t;}
  function mkBalloon(st){
-  const g=new THREE.Group();
-  const env=new THREE.Mesh(new THREE.SphereGeometry(2.8,18,14),new THREE.MeshStandardMaterial({map:stripeTex(st.stripe[0],st.stripe[1]),roughness:0.6}));env.scale.set(1,1.18,1);env.position.y=7.2;env.castShadow=true;g.add(env);
-  const cone=new THREE.Mesh(new THREE.ConeGeometry(2.0,2.2,16,1,true),new THREE.MeshStandardMaterial({color:st.stripe[0],roughness:0.7,side:THREE.DoubleSide}));cone.rotation.x=Math.PI;cone.position.y=3.6;g.add(cone);
-  const basket=box(3.2,1.3,3.2,'#a8804a',0,0.65,0,g);basket.castShadow=true;box(3.3,0.12,3.3,'#7a5a30',0,1.3,0,g);
-  for(const [x,z] of [[-1.4,-1.4],[1.4,-1.4],[-1.4,1.4],[1.4,1.4]]){const rp=tube(0.03,0.03,2.6,'#5a4630',x*0.9,2.4,z*0.9,g);rp.rotation.z=-x*0.22;rp.rotation.x=z*0.22;}
-  const burner=new THREE.Mesh(new THREE.SphereGeometry(0.28,8,6),new THREE.MeshStandardMaterial({color:0xffb040,emissive:0xff7a10,emissiveIntensity:1.2}));burner.position.y=2.5;g.add(burner);
+  const g=W.sceneryArt.balloon(st.stripe);
+  const burner=new THREE.Mesh(new THREE.SphereGeometry(.16,12,8),new THREE.MeshStandardMaterial({color:0xffc779,emissive:0xff891d,emissiveIntensity:1.2,transparent:true,opacity:.8}));
+  burner.scale.y=2.7;burner.position.set(0,4.30,0);g.add(burner);
   /* Off every doorstep already standing, not just off the colliders. The auction house and the
      Cottonwood field are both found room for round the same corner of town, and in an unlucky
      boot the field came down on the auction-house doorstep; the prompt is whichever thing in
@@ -525,7 +521,7 @@ export function install(G){
   if(!offSteps(at[0],at[1])||!clear(at[0],at[1],4.5))at=findClear(st.x,st.z,4.5,50,(x,z)=>offCourse(x,z,9));
   st.x=at[0];st.z=at[1];PLACED.push({id:'balloon:'+st.id,x:st.x,z:st.z,need:9});
   g.position.set(st.x,groundH(st.x,st.z),st.z);scene.add(g);W.followCamera.register(g);
-  labelAt(g,st.label,11.5);
+  labelAt(g,st.label,14.0);
   return {g,burner};
  }
  for(const st of BALLOON_STATIONS){
@@ -556,24 +552,23 @@ export function install(G){
  }
  /* The ferry: Otter Ford, downstream to the far bank and back. */
  const FERRY={docks:[{id:'ford',x:16,label:'⛵ Otter Ford ferry'},{id:'farbank',x:134,label:'⛵ Far bank ferry'}],speed:4.2,pts:[]};
- for(let x=16;x<=134;x+=6)FERRY.pts.push([x,riverZ(x)]);
+ for(let x=16;x<134;x+=6)FERRY.pts.push([x,riverZ(x)]);
+ FERRY.pts.push([134,riverZ(134)]);
  for(const d of FERRY.docks){d.z=riverZ(d.x);const side=groundH(d.x,d.z+9)>groundH(d.x,d.z-9)?1:-1;d.bz=d.z+side*8;d.side=side;}
  P.FERRY=FERRY;
  {
-  const g=new THREE.Group();
-  const hull=box(4.8,0.55,2.1,'#6b4a2a',0,0.28,0,g);hull.castShadow=true;box(5.0,0.14,2.3,'#8a6a45',0,0.6,0,g);
-  box(4.6,0.5,0.14,'#5a3a1a',0,0.85,1.0,g);box(4.6,0.5,0.14,'#5a3a1a',0,0.85,-1.0,g);box(0.14,0.5,2.1,'#5a3a1a',2.35,0.85,0,g);box(0.14,0.5,2.1,'#5a3a1a',-2.35,0.85,0,g);
-  box(0.8,0.1,1.6,'#a8804a',-1.7,0.95,0,g);tube(0.04,0.04,3.2,'#3a2a1a',2.0,1.9,0.8,g);
-  const lamp=new THREE.Mesh(new THREE.SphereGeometry(0.14,8,6),new THREE.MeshStandardMaterial({color:0xffd080,emissive:0xffb040,emissiveIntensity:1.0}));lamp.position.set(2.0,3.4,0.8);g.add(lamp);
-  const d0=FERRY.docks[0];g.position.set(d0.x,riverLevel(d0.x)+0.3,d0.z);scene.add(g);FERRY.g=g;FERRY.at=0;
-  for(const d of FERRY.docks){const dg=new THREE.Group();for(let k=0;k<3;k++){post(-1.2,k*2.6-2.6,dg,1.4,'#5a3a1a');post(1.2,k*2.6-2.6,dg,1.4,'#5a3a1a');}box(2.8,0.12,8.4,'#8a6a45',0,1.35,0,dg);
-   const bx=d.x,bz=d.z+d.side*4.6;dg.position.set(bx,riverLevel(bx)+0.05,bz);scene.add(dg);labelAt(dg,d.label,3.4);
+  const g=W.sceneryArt.boat(true);
+  const d0=FERRY.docks[0];g.position.set(d0.x,riverLevel(d0.x),d0.z);g.rotation.y=Math.atan2(1,(riverZ(17)-riverZ(15))/2);scene.add(g);FERRY.g=g;FERRY.at=0;
+  for(const d of FERRY.docks){
+   const bx=d.x,bz=d.z+d.side*5.5,deckY=Math.max(riverLevel(bx)+.70,groundH(bx,d.bz)+.12);
+   const dg=W.sceneryArt.dock({x:bx,z:bz,y:deckY,yaw:d.side<0?Math.PI:0,width:2.6,length:7.8,name:d.id+' ferry landing'});
+   scene.add(dg);d.g=dg;labelAt(dg,d.label,2.5);
    W.addThing({kind:'ferry',id:d.id,x:d.x,z:d.bz,g:null,reach:9,label:()=>P.veh?'⛵ …':(FERRY.at===FERRY.docks.indexOf(d)?'⛵ Take the ferry (E) — across the river':'⛵ The ferry is at the other dock — wait for it (E)'),use:()=>boardFerry(d)});}
  }
  function boardFerry(d){
   if(P.veh)return;if(G.course.get()){toast('🏁 Finish the course first!');return;}
   const i=FERRY.docks.indexOf(d);
-  if(FERRY.at!==i){FERRY.at=i;toast('⛵ The ferryman poles back over for you…');const dk=FERRY.docks[i];FERRY.g.position.set(dk.x,riverLevel(dk.x)+0.3,dk.z);return;}
+  if(FERRY.at!==i){FERRY.at=i;toast('⛵ The ferryman poles back over for you…');const dk=FERRY.docks[i];FERRY.g.position.set(dk.x,riverLevel(dk.x),dk.z);return;}
   const pts=i===0?FERRY.pts.slice():FERRY.pts.slice().reverse();let len=0;for(let k=1;k<pts.length;k++)len+=Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]);
   P.veh={kind:'boat',pts,len,t:0,dur:len/FERRY.speed,g:FERRY.g,to:1-i,heading:player.heading};
   player.speed=0;player.y=0;player.vy=0;
@@ -588,9 +583,9 @@ export function install(G){
   let x,z,y,heading;
   if(v.kind==='balloon'){const p=balloonPos(v,u);x=p.x;z=p.z;const gy=groundH(x,z);y=gy+p.alt;v.alt=p.alt;heading=v.heading;
    v.g.position.set(x,y,z);v.g.rotation.y+=dt*0.05;v.burner.material.emissiveIntensity=0.6+Math.random()*0.9;
-   player.pos.set(x,0,z);player.mesh.position.set(x,y+1.3,z);player.mesh.rotation.y=heading;player.mesh.rotation.x=0;}
-  else{const p=boatPos(v.pts,v.len,u);x=p.x;z=p.z;y=riverLevel(x)+0.3+Math.sin(v.t*1.7)*0.04;heading=p.heading;v.g.position.set(x,y,z);v.g.rotation.y=heading;v.g.rotation.z=Math.sin(v.t*1.3)*0.02;
-   player.pos.set(x,0,z);player.mesh.position.set(x,y+0.6,z);player.mesh.rotation.y=heading+Math.PI/2;player.mesh.rotation.x=0;}
+   player.pos.set(x,0,z);player.mesh.position.set(x,y+0.20,z);player.mesh.rotation.y=heading;player.mesh.rotation.x=0;}
+  else{const p=boatPos(v.pts,v.len,u);x=p.x;z=p.z;y=riverLevel(x)+Math.sin(v.t*1.7)*0.04;heading=p.heading;v.g.position.set(x,y,z);v.g.rotation.y=heading;v.g.rotation.z=Math.sin(v.t*1.3)*0.02;
+   player.pos.set(x,0,z);player.mesh.position.set(x,y+0.6,z);player.mesh.rotation.y=heading;player.mesh.rotation.x=0;}
   v.x=x;v.z=z;v.y=y;v.h=heading;
   if(u>=1)landVehicle(v);
  }
@@ -615,7 +610,7 @@ export function install(G){
  /* Aboard, the camera hangs back and a little above whatever we are riding. */
  G.on('camera',c=>{
   const v=P.veh;if(!v||v.x==null)return false;
-  const back=v.kind==='balloon'?14:9,up=v.kind==='balloon'?5:3.2;
+  const back=v.kind==='balloon'?19:10,up=v.kind==='balloon'?7:3.8;
   const dx=Math.sin(v.h),dz=Math.cos(v.h);
   const dx2=v.kind==='boat'?-dz:dx,dz2=v.kind==='boat'?dx:dz;   // beside the boat, behind the basket
   const px=v.x-dx2*back,pz=v.z-dz2*back;

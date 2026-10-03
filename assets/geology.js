@@ -1,7 +1,8 @@
+import {dressLandscape} from './landscape-surface.js';
 /* Deterministic original sedimentary geology. Shapes are local to a ground-level
    origin; callers retain their existing world placement and collision policy. */
 export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
-  textureRoot='assets/textures/realism/',anisotropy=8}={}) {
+  textureRoot='assets/textures/scanned/',anisotropy=8}={}) {
   if(!THREE)throw new TypeError('createGeology requires THREE');
   const loader=loadTextures?new THREE.TextureLoader():null;
   const tex=(name,color=false)=>{
@@ -10,9 +11,8 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
     if(color)t.colorSpace=THREE.SRGBColorSpace;return t;
   };
   const material=new THREE.MeshStandardMaterial({name:'Weathered sedimentary limestone',
-    map:tex('rock_albedo.jpg',true),normalMap:tex('rock_normal.jpg'),
-    roughnessMap:tex('rock_roughness.jpg'),normalScale:new THREE.Vector2(.55,.55),
-    color:'#ffffff',roughness:1,metalness:0,vertexColors:true,envMapIntensity:.50});
+    map:tex('rock_boulder_cracked_diff.webp',true),normalMap:tex('rock_boulder_cracked_nor_gl.webp'),roughnessMap:tex('rock_boulder_cracked_arm.webp'),normalScale:new THREE.Vector2(.65,.65),roughness:1,metalness:0,vertexColors:true,color:'#d4cec0',envMapIntensity:.50});
+  if(loadTextures)dressLandscape({THREE,material,anisotropy,fogScale:1,fogCap:1,mineralScale:8.0,bumpStrength:.04});
   const TAU=Math.PI*2,PATCH=3.2;
   const rng=seed=>{let s=seed|0;return()=>{s+=0x6D2B79F5;let t=s;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};};
   const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};
@@ -301,6 +301,26 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
     group.userData.geology={...mesh.userData.geology,width,height,lip,foot,notchWidth,origin:'place at (FX, foot, FZ)'};
     return group;
   }
+  function makeArch(seed=413){
+    const p=[],u=[],c=[],idx=[],N=80,R=24;
+    for(let i=0;i<=N;i++)for(let j=0;j<=R;j++){
+      const a=i/N*Math.PI,b=j/R*TAU,cb=Math.cos(b),sb=Math.sin(b);
+      const radial=Math.sign(cb)*Math.pow(Math.abs(cb),.58)*(2.0+.35*Math.sin(a*7+.8));
+      const z=Math.sign(sb)*Math.pow(Math.abs(sb),.6)*(2.7+.37*Math.sin(a*9));
+      const rough=.15*Math.sin(a*31+z*2.4)+.095*Math.cos(a*51-z*4);
+      const x=Math.cos(a)*(8+radial+rough),y=Math.sin(a)*(8+radial+rough)*1.23-.25;
+      p.push(x,y,z+.12*Math.sin(y*3.1+x*.7));u.push(x/PATCH,y/PATCH);
+      const v=.88+.065*Math.sin(y*3.2+x*.22)+.04*Math.cos(x*2+z);c.push(v*1.12,v*.70,v*.46);
+    }
+    for(let i=0;i<N;i++)for(let j=0;j<R;j++){const a=i*(R+1)+j,b=a+R+1;idx.push(a,a+1,b,a+1,b+1,b);}
+    const mesh=finish(geometry(p,u,c,idx),'eroded sandstone arch',seed),g=new THREE.Group();g.add(mesh);
+    for(const side of[-1,1])for(let i=0;i<7;i++){
+      const a=i*2.399+seed,rock=makeBoulder(i<2?2.5:1.1+(i%3)*.35,seed+i+side*71);
+      rock.position.set(side*8.6+Math.cos(a)*(i<2?.8:3.4),-.4,Math.sin(a)*(i<2?.7:2.8));
+      const col=rock.geometry.attributes.color;for(let k=0;k<col.count;k++)col.setXYZ(k,col.getX(k)*1.12,col.getY(k)*.70,col.getZ(k)*.46);g.add(rock);
+    }
+    g.name='Geology | Ochre sandstone arch';g.userData.geology={kind:'eroded sandstone arch',height:13,seed};return g;
+  }
   function groundAt(group,x,z){
     const base=groundH(x,z),height=group.userData.geology?.height||1;
     group.traverse(mesh=>{
@@ -333,5 +353,5 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
   const placeHoodoo=(x,z,radius,height,seed=1)=>{
     const g=groundAt(makeHoodoo(radius,height,seed),x,z);if(scene)scene.add(g);return g;
   };
-  return {makeMesa,makeHoodoo,makeBoulder,makeWaterfallCliff,groundAt,placeMesa,placeHoodoo,material};
+  return {makeMesa,makeHoodoo,makeArch,makeBoulder,makeWaterfallCliff,groundAt,placeMesa,placeHoodoo,material};
 }

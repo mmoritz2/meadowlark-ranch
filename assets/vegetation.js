@@ -13,6 +13,10 @@ const random = seed => {
 function barkMaterial(THREE, birch) {
   const key = birch ? 'birch-bark' : 'bark';
   if (materials.has(key)) return materials.get(key);
+  if(!birch){
+    const loader=new THREE.TextureLoader(),load=(kind,color=false)=>{const t=loader.load('assets/textures/scanned/pine_sapling_small_bark_'+kind+'.webp');t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;if(color)t.colorSpace=THREE.SRGBColorSpace;return t;};
+    const m=new THREE.MeshStandardMaterial({name:key,map:load('diff',true),normalMap:load('nor_gl'),roughnessMap:load('rough'),normalScale:new THREE.Vector2(.65,.65),roughness:1,vertexColors:true,color:'#d8d1bf'});materials.set(key,m);return m;
+  }
   const canvas = document.createElement('canvas'); canvas.width=256;canvas.height=512;
   const c=canvas.getContext('2d'), r=random(birch?1463:824);
   c.fillStyle=birch?'#9e9c8f':'#655c4e';c.fillRect(0,0,256,512);
@@ -93,38 +97,31 @@ function buildPrototype(THREE,type,species,variant) {
   const wood=geometryWriter(THREE),leaves=geometryWriter(THREE);
   const V=(x,y,z)=>new THREE.Vector3(x,y,z);
   if(type==='pine'){
-    const height=5.0+rng()*1.4,leanX=(rng()-.5)*.32,leanZ=(rng()-.5)*.28;
+    const height=5.2+rng()*1.2,leanX=(rng()-.5)*.40,leanZ=(rng()-.5)*.35;
     let last=V(0,0,0);
-    for(let i=1;i<=9;i++){
-      const t=i/9,p=V(leanX*t*t,height*t,leanZ*t*t);
-      wood.cylinder(last,p,.13*(1-(i-1)/10),.13*(1-i/10),.94,8);last=p;
-    }
-    for(let tier=0;tier<10;tier++){
-      const t=tier/10,y=.9+t*(height-.95),radius=(1-t)**.86*(1.48+rng()*.44);
-      const count=4+(tier%3===0?1:0);
+    for(let i=1;i<=11;i++){const t=i/11,p=V(leanX*t*t,height*t,leanZ*t*t);
+      wood.cylinder(last,p,(i===1?.21:.145)*(1-(i-1)/12),.145*(1-i/12),.94,9);last=p;}
+    for(let i=0;i<5;i++){const a=i*2.399;wood.cylinder(V(Math.cos(a)*.37,-.04,Math.sin(a)*.37),V(0,.36,0),.08,.055,.83);}
+    for(let tier=0;tier<12;tier++){
+      const t=tier/12,y=.68+t*(height-.78),radius=(1-t)**.83*(1.65+rng()*.48);
+      const count=3+tier%3;
       for(let j=0;j<count;j++){
-        const a=j/count*TAU+tier*2.399+variant*.8+(rng()-.5)*.35;
-        const r=radius*(.78+rng()*.35),start=V(leanX*t,y,leanZ*t);
-        const tip=V(Math.cos(a)*r+leanX*t,y-.22+rng()*.19,Math.sin(a)*r+leanZ*t);
-        wood.cylinder(start,tip,.037*(1-t)+.008,.006,.78+rng()*.14);
-        for(let k=1;k<=4;k++){
-          const f=k/4,p=start.clone().lerp(tip,f);p.y+=(rng()-.5)*.26;
-          const n=V(Math.cos(a)*.7,.32+rng()*.5,Math.sin(a)*.7).normalize();
-          const size=(.45+rng()*.15)*(1-t*.65);
-          leaves.card(p,n,size*1.4,size,a+(rng()-.5)*.5,.64+.26*f+.1*t);
-          if(k>1){const side=V(-Math.sin(a),.2,Math.cos(a));
-            const twig=p.clone().addScaledVector(side,(k%2?-1:1)*size*.3);
-            wood.cylinder(p,twig,.01,.004,.85);
-            leaves.card(twig,n,size,size*.9,a+(k%2?1:-1)*.5,.72+.2*f);
+        const a=j/count*TAU+tier*2.399+variant*.8+(rng()-.5)*.8,r=radius*(.65+rng()*.44);
+        const start=V(leanX*t,y+(rng()-.5)*.25,leanZ*t),mid=V(Math.cos(a)*r*.50+leanX*t,y-.23,Math.sin(a)*r*.50+leanZ*t);
+        const tip=V(Math.cos(a)*r+leanX*t,y-.13+rng()*.27,Math.sin(a)*r+leanZ*t);
+        wood.cylinder(start,mid,.043*(1-t)+.007,.020*(1-t)+.004,.76);wood.cylinder(mid,tip,.02*(1-t)+.004,.003,.89);
+        for(let k=1;k<=6;k++){
+          const f=k/6,p=k<3?start.clone().lerp(mid,f*2):mid.clone().lerp(tip,(f-.33)/.67);
+          for(const side of[-1,1]){
+            const size=(.28+rng()*.13)*(1-t*.52),twig=p.clone().add(V(-Math.sin(a)*side*size*.7,.07+rng()*.10,Math.cos(a)*side*size*.7));
+            wood.cylinder(p,twig,.009*(1-t)+.002,.002,.84);
+            const n=V(Math.cos(a)*.35,.7+rng()*.3,Math.sin(a)*.35).normalize();
+            leaves.card(twig,n,size*1.5,size*1.55,a+side*.63+(rng()-.5)*.35,.63+.24*f+.08*t);
           }
         }
       }
     }
-    for(let k=0;k<7;k++){
-      const a=k/7*TAU,p=V(leanX,height-.25+rng()*.16,leanZ);
-      const n=V(Math.cos(a)*.65,.6,Math.sin(a)*.65).normalize();
-      leaves.card(p,n,.26,.39,a,.88+rng()*.1);
-    }
+    for(let k=0;k<6;k++){const a=k/6*TAU,p=V(leanX,height-.14+rng()*.10,leanZ);leaves.card(p,V(Math.cos(a)*.55,.7,Math.sin(a)*.55).normalize(),.21,.36,a,.93);}
   }else if(type==='shrub'){
     const count=7+variant;
     for(let b=0;b<count;b++){
@@ -203,6 +200,33 @@ export function plantNaturalShrubs({THREE,scene,placements,groundH,flowering=fal
     for(const mesh of [wood,leaf]){mesh.castShadow=true;mesh.receiveShadow=true;mesh.instanceMatrix.needsUpdate=true;scene.add(mesh);made.push(mesh);}
   }
   return made;
+}
+
+export function plantNaturalPines({THREE,scene,placements,groundH,species='pine'}){
+  const made=[],m=new THREE.Matrix4(),p=new THREE.Vector3(),q=new THREE.Quaternion(),scale=new THREE.Vector3();
+  for(let v=0;v<4;v++){
+    const rows=placements.filter((_,i)=>i%4===v);if(!rows.length)continue;
+    const source=makeNaturalPine({THREE,species,seed:v});
+    for(const part of source.children){const mesh=new THREE.InstancedMesh(part.geometry,part.material,rows.length);mesh.name='Natural '+species+' saplings';mesh.customDepthMaterial=part.customDepthMaterial;
+      rows.forEach((pt,i)=>{p.set(pt.x,groundH(pt.x,pt.z)-.03,pt.z);q.setFromAxisAngle(new THREE.Vector3(0,1,0),pt.r);scale.setScalar(pt.s);m.compose(p,q,scale);mesh.setMatrixAt(i,m);});
+      mesh.castShadow=true;mesh.receiveShadow=true;mesh.computeBoundingSphere();mesh.instanceMatrix.needsUpdate=true;scene.add(mesh);made.push(mesh);}
+  }return made;
+}
+
+// Four bounded clusters retain culling while sharing the scanned bark/needle
+// geometry. This is used for close saplings, never full-sized distant forests.
+export function plantScannedSaplings({THREE,scene,template,placements,groundH}){
+  const made=[],center=placements.reduce((a,p)=>({x:a.x+p.x/placements.length,z:a.z+p.z/placements.length}),{x:0,z:0});
+  template.updateMatrixWorld(true);
+  template.traverse(part=>{if(!part.isMesh)return;
+    const geo=part.geometry.clone().applyMatrix4(part.matrixWorld);
+    for(let c=0;c<4;c++){
+      const rows=placements.filter(p=>(p.x>center.x?1:0)+(p.z>center.z?2:0)===c);if(!rows.length)continue;
+      const mesh=new THREE.InstancedMesh(geo,part.material,rows.length),m=new THREE.Matrix4(),v=new THREE.Vector3(),q=new THREE.Quaternion(),scale=new THREE.Vector3();
+      rows.forEach((p,i)=>{v.set(p.x,groundH(p.x,p.z)-.025,p.z);q.setFromAxisAngle(new THREE.Vector3(0,1,0),p.r);scale.setScalar(p.s*2);m.compose(v,q,scale);mesh.setMatrixAt(i,m);});
+      mesh.name='Frostpine | scanned saplings';mesh.castShadow=true;mesh.receiveShadow=true;mesh.computeBoundingSphere();mesh.instanceMatrix.needsUpdate=true;scene.add(mesh);made.push(mesh);
+    }
+  });return made;
 }
 
 const impostors = new WeakMap();

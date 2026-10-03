@@ -26,3 +26,8 @@ node tools/asset-gen/compress-ground-scans.mjs
 
 The converter uses the dependencies in `tools/asset-gen/package.json`, or an
 existing dependency directory supplied through `GLTF_PIPELINE_MODULES`.
+
+Pine bark diffuse, OpenGL normal and roughness maps are also extracted unchanged
+from the locally hosted `pine_sapling_small.glb` (Poly Haven, Rob Tuytel and Rico
+Cilliers, CC0). They are shared by the botanical pine trunks and branches. See
+`assets/models/world/realism/manifest.json` for the original download provenance.

@@ -23,6 +23,7 @@
    windmill fan and a bell — and not one of them allocates so much as a vector during a frame.
    The four sites sit six hundred metres apart, so the frustum only ever holds one of them. */
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {plantNaturalPines,plantScannedSaplings} from '../vegetation.js';
 export const id='world-quarters';
 export function install(G){
  const {THREE,scene,toast}=G;
@@ -659,12 +660,8 @@ export function install(G){
   /* Punts tied up, nets drying on a frame, and four herons that have no opinion about any of it. */
   const bg=new THREE.Group();
   for(let i=0;i<3;i++){
-   const p=POOLS[i*2%POOLS.length],a=rr(0,6.28),px=p.x+Math.cos(a)*p.r*0.55,pz=p.z+Math.sin(a)*p.r*0.55,pg=new THREE.Group();
-   bx(pg,'#7a6242',0,0.12,0,1.0,0.22,4.2);bx(pg,'#8e7550',0,0.3,0,0.9,0.12,4.0);
-   for(const s of [-1,1])bx(pg,'#7a6242',s*0.48,0.3,0,0.08,0.34,4.0);
-   bx(pg,'#6b5336',0,0.34,-1.2,0.8,0.08,0.5);
-   cy(pg,'#8e7550',0.3,0.5,0.6,0.045,3.2).rotation.set(0.1,0,1.35);
-   pg.position.set(px,p.y-0.06,pz);pg.rotation.y=rr(0,6.28);bg.add(pg);}
+   const p=POOLS[i*2%POOLS.length],a=rr(0,6.28),px=p.x+Math.cos(a)*p.r*.55,pz=p.z+Math.sin(a)*p.r*.55,pg=W.sceneryArt.boat();
+   pg.position.set(px,p.y,pz);pg.rotation.y=rr(0,6.28);scene.add(own(pg));}
   for(let i=0;i<4;i++){
    const p=POOLS[(i*2+1)%POOLS.length],a=rr(0,6.28),hx=p.x+Math.cos(a)*p.r*0.78,hz=p.z+Math.sin(a)*p.r*0.78,hg=new THREE.Group();
    for(const s of [-1,1])cy(hg,'#c6ba9a',s*0.06,0.34,0,0.028,0.72);
@@ -889,19 +886,18 @@ export function install(G){
   W.addThing({kind:'qbell',id:'q:frost:bell',x:twr[0],z:twr[1],g:null,reach:5.4,label:()=>'🔔 Ring the Frostpine bell (E)',
    use:()=>{swing=0.6;G.sChime();toast('🔔 The bell carries a long way over snow. Somewhere out in the pines, somebody turns for home.');}});
 
-  /* Snow-laden saplings, drifts and marker cairns: the ground work that turns bare white terrain
-     into somewhere with a path through it. Three cones a tree, one draw call for the lot. */
-  /* Saplings: five narrow tiers each, a metre and a half to three and a half tall, snow only on
-     the top two. The first pass built them at three cones and nearly six metres and the
-     snowfield filled up with Christmas-tree emoji. */
+  /* Needle sprays and branching saplings share four instanced prototypes. */
   const sap=[];
   for(let i=0;i<96;i++){
    const a=rr(0,6.28),d=rr(14,70),x=F.cx+Math.cos(a)*d,z=F.cz+Math.sin(a)*d;
-   if(Math.hypot(x,z)>450||hyp(x,z,tat[0],tat[1])<11)continue;
-   const s=rr(0.45,0.95),y=groundH(x,z),ry=rr(0,6.28),lean=rr(-0.04,0.04);
-   cy(solid,'#4a3a2a',x,y+0.35*s,z,0.09*s,0.7*s);
-   for(let k=0;k<5;k++)sap.push({x,y:y+0.62*s+k*0.58*s,z,sx:(1.15-k*0.19)*s,sy:1.0*s,sz:(1.15-k*0.19)*s,ry,rz:lean,c:k>=3?'#dbe8f0':(k===2?'#3a5a44':PINE)});}
-  scatter(G_CONE,WHITE,sap,true);
+   if(Math.hypot(x,z)>450||hyp(x,z,tat[0],tat[1])<11||W.colliders.some(c=>hyp(x,z,c.x,c.z)<(c.r||0)+1.25))continue;
+   const s=rr(.27,.57),ry=rr(0,6.28);sap.push({x,z,s,r:ry});}
+  P.saplings=plantNaturalPines({THREE,scene,placements:sap,groundH,species:'snowpine'});
+  P.saplingsReady=W.ranchBuilderArt.ready.then(()=>{
+   if(!W.ranchBuilderArt.models.includes('pine_sapling_small'))return;
+   const scanned=plantScannedSaplings({THREE,scene,template:W.ranchBuilderArt.create('frost_tree'),placements:sap,groundH});
+   for(const m of P.saplings){scene.remove(m);m.dispose();}P.saplings=scanned;
+  });
   /* Drifts: long, shallow and barely brighter than the ground. At the first pass they were
      round and bright and the snowfield looked like it had been rained on. */
   const drifts=[];
@@ -942,44 +938,26 @@ export function install(G){
   const ROCK='#8a5238',ROCK2='#6e3c28',ROCK3='#a87552',BONE='#c9bda0',T_DARK='#5a4634',T_MID='#7d6245',IRON='#454a4c',TIN='#8e9296';
   const STRATA=['#8a5238','#6e3c28','#9c6544','#5e3324','#7d4a30','#a87552','#79432c'];
 
-  /* The mesas. Fourteen shallow strata under a harder cap, seven buttresses running the full
-     height of the face, and a talus of the mesa's own spoil heaped round the foot. Two earlier
-     passes got this wrong in two different ways worth recording: seven clean drums stepping
-     evenly inward came out as stacked cake tins, and then a rib per drum came out as a wall of
-     barnacles. A buttress has to run top to bottom or it is not a buttress. */
+  /* Eroded rock masses use the same grounded geology as the canyon. Keep
+     them out of the settlement bake, which intentionally drops vertex colours. */
   function mesa(x,z,r,h,seed){
-   const mg=new THREE.Group(),n=14;
-   for(let k=0;k<n;k++){
-    const f=1-k/n*0.19+Math.sin(k*2.7+seed*1.7)*0.022,y=h*k/n,hh=h/n*1.07;
-    cy(mg,STRATA[(k+seed)%STRATA.length],Math.sin(k*2.1+seed)*r*0.025,y+hh/2,Math.cos(k*1.7+seed)*r*0.025,r*f,hh).rotation.y=k*0.19+seed;}
-   for(let j=0;j<7;j++){const a=j/7*Math.PI*2+seed,rb=r*rr(0.86,0.93);
-    tp(mg,STRATA[(j+seed+3)%STRATA.length],Math.cos(a)*rb,h*0.44,Math.sin(a)*rb,r*rr(0.11,0.17),h*rr(0.8,0.92));}
-   cy(mg,'#4f2a1b',0,h*1.01,0,r*0.78,h*0.05);
-   put(G_FLARE,'#7d4a30',r*1.32,h*0.3,r*1.32,0,h*0.15,0,mg).receiveShadow=true;
-   for(let k=0;k<18;k++){const a=rr(0,6.28),d=r*rr(1.2,1.6);   // and the blocks that have come off the front of it
-    lp(mg,k%2?ROCK2:ROCK,Math.cos(a)*d,rr(0.1,1.1),Math.sin(a)*d,rr(0.9,2.8),rr(0.6,1.6),rr(0.9,2.8));}
-   place(solid,mg,x,z,0);
-   collide(x,z,r*0.95);
+   const mg=W.geology.groundAt(W.geology.makeMesa(r,h,seed+6401),x,z);
+   mg.traverse(o=>{if(!o.isMesh)return;const c=o.geometry.attributes.color;
+    for(let i=0;i<c.count;i++)c.setXYZ(i,c.getX(i)*1.12,c.getY(i)*.70,c.getZ(i)*.46);});
+   scene.add(own(mg));collide(x,z,r*.95);
   }
   const M1=F.at(-24,-18),M2=F.at(-10,34),M3=F.at(40,-46);
   mesa(M1[0],M1[1],22,30,0);
   mesa(M2[0],M2[1],15,20,3);
   mesa(M3[0],M3[1],11,14,1);
 
-  /* The arch: a half torus flattened into a span with two eroded legs under it, wide enough and
-     high enough that riding through is the point of it. */
-  const arc=F.at(18,-27),ARCYAW=F.yaw+0.5,ag=new THREE.Group();
-  {const t=new THREE.Mesh(new THREE.TorusGeometry(8,2.1,7,16,Math.PI),mt(ROCK));
-   t.scale.set(1,1.3,1.5);t.position.y=0.2;t.castShadow=true;t.receiveShadow=true;ag.add(t);}
-  /* A bare torus reads as rubber. Lumps along the span and down the haunches give it the weather
-     that put a hole through it in the first place. */
-  for(let k=0;k<11;k++){const th=k/10*Math.PI,cx2=Math.cos(th)*8,cy2=Math.sin(th)*10.4+0.2;
-   lp(ag,STRATA[k%STRATA.length],cx2,cy2,rr(-1.1,1.1),rr(1.6,2.9),rr(1.5,2.4),rr(1.9,3.4));}
-  for(const s of [-1,1]){
-   lp(ag,ROCK2,s*8.4,2.4,0,3.2,3.2,3.5);lp(ag,ROCK,s*8.9,0.9,0,3.8,1.7,4.1);
-   for(let k=0;k<6;k++){const a=rr(0,6.28),d=rr(3.4,6.4);
-    lp(ag,k%2?ROCK3:ROCK2,s*8.4+Math.cos(a)*d,rr(0.2,0.9),Math.sin(a)*d,rr(0.7,1.9),rr(0.4,1.1),rr(0.7,1.9));}}
-  place(solid,ag,arc[0],arc[1],ARCYAW);
+  const arc=F.at(18,-27),ARCYAW=F.yaw+.5,ag=W.geology.makeArch(6413);
+  // Ground each arch foot after its yaw so its buried contact follows the actual terrain.
+  ag.traverse(o=>{if(!o.isMesh)return;const p=o.geometry.attributes.position;
+   for(let i=0;i<p.count;i++){const x=p.getX(i)+o.position.x,y=p.getY(i)+o.position.y,z=p.getZ(i)+o.position.z,wp=world(arc[0],arc[1],ARCYAW,x,z);
+    const blend=1-Math.min(1,Math.max(0,y)/4);p.setY(i,p.getY(i)+(groundH(...wp)-groundH(...arc))*blend);}
+   o.geometry.computeVertexNormals();o.geometry.computeBoundingSphere();});
+  ag.position.set(arc[0],groundH(...arc),arc[1]);ag.rotation.y=ARCYAW;scene.add(own(ag));
   for(const s of [-1,1]){const lg=world(arc[0],arc[1],ARCYAW,s*8.7,0);collide(lg[0],lg[1],3.4);}
 
   /* The dry wash: a pale ribbon of scoured sand with the cobbles the last flood left in it. The
