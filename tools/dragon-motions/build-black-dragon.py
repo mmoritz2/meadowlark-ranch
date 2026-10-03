@@ -9,6 +9,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 from black_dragon_tail import apply_flight_tail
 from black_dragon_flight_legs import flight_leg_offsets
+from black_dragon_idle import IDLE_DURATION, idle_curves, apply_idle_neck
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'tools/asset-gen'));import rig_hero_horse as g
 SRC=ROOT/'assets/models/horse-imports/black-dragon/game/black-dragon-native-2k-candidate.glb'
 OUT=ROOT/'assets/models/dragon-motions/black-dragon-motion.glb'
@@ -85,12 +86,16 @@ GROUND_WING_FOLD=(
 def pose(kind,p):
  doc=copy.deepcopy(base);flight=kind=='DragonFly';run=kind=='DragonRun';stand=kind=='DragonStand';errors=[]
  tail_phase=p
+ idle_phase=p
+ if stand:p=(p*5)%1  # Five breathing cycles in the long, varied standing idle.
  if flight:p=(p*2)%1  # Two original wingbeats per slower, flowing tail cycle.
  bob=(.10*np.cos(2*np.pi*p) if flight else (.08*np.cos(4*np.pi*p)-.045 if run else .024*np.cos(4*np.pi*p)))
+ if stand:bob=.022*np.cos(2*np.pi*p)-.05*idle_curves(idle_phase)[2]
  w=world(doc);pelvis=w[13][:3,3].copy();pelvis[1]+=bob;set_world_pos(doc,w,13,pelvis)
  turn(doc,31,[1,0,0],(.025 if run else .009)*np.sin(2*np.pi*p))
  turn(doc,36,[1,0,0],(.045 if flight else .018)*np.sin(2*np.pi*p+.5))
  turn(doc,40,[1,0,0],-.015*np.sin(2*np.pi*p+.5))
+ if stand:apply_idle_neck(doc,idle_phase,turn)
  if flight:apply_flight_tail(doc,tail_phase,turn)
  else:
   for k,i in enumerate([14,15,16,17]):turn(doc,i,[0,1,0],.026*np.sin(2*np.pi*p-k*.5))
@@ -122,8 +127,8 @@ for leg in LEGS:
   fi=stack.pop();footnodes.add(fi);stack.extend(d['nodes'][fi].get('children',[]))
 footids=[k for k,n in enumerate(J) if n in footnodes];footmask=np.sum(vw*np.isin(vj,footids),axis=1)>.7
 reports=[]
-for kind,duration,speed in [('DragonStand',3.,0),('DragonWalk',1.35,1.35/(1.35*.73)),('DragonRun',.78,1.55/(.78*.52)),('DragonFly',3.30,12.)]:
- N=161 if kind=='DragonFly' else 81;poses=[];errs=[]
+for kind,duration,speed in [('DragonStand',IDLE_DURATION,0),('DragonWalk',1.35,1.35/(1.35*.73)),('DragonRun',.78,1.55/(.78*.52)),('DragonFly',3.30,12.)]:
+ N=481 if kind=='DragonStand' else 161 if kind=='DragonFly' else 81;poses=[];errs=[]
  for p in np.linspace(0,1,N):
   doc,err=pose(kind,p if p<1 else 0);poses.append(doc);errs+=err
  floor=[];wing=[]

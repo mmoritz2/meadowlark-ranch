@@ -8,12 +8,12 @@ hip/shoulder and knee/elbow joints. No mesh, weighting or ground clip changes.
 """
 from math import pi, sin
 
-# Front left/right then hind left/right. Small left/right timing differences
+# Front left/right then hind left/right. Left/right timing differences
 # preserve a relaxed airborne pose without reproducing a walking footfall.
 _PHASE_LAG = (0., .72, 1.45, 2.17)
-_HEIGHT_AMPLITUDE = (.21, .21, .17, .17)
-_REACH_AMPLITUDE = (.18, .18, .16, .16)
-_ANKLE_AMPLITUDE = (.13, .13, .105, .105)
+_HEIGHT_AMPLITUDE = (.49, .49, .39, .39)
+_REACH_AMPLITUDE = (.44, .44, .36, .36)
+_ANKLE_AMPLITUDE = (.27, .27, .23, .23)
 
 
 def flight_leg_offsets(leg_index, phase):
@@ -21,7 +21,7 @@ def flight_leg_offsets(leg_index, phase):
     i = int(leg_index)
     theta = 2*pi*(float(phase) % 1.) - _PHASE_LAG[i]
     side = 1. if i in (0, 2) else -1.
-    offset = (side*.025*sin(theta-.35),
+    offset = (side*.05*sin(theta-.35),
               _HEIGHT_AMPLITUDE[i]*sin(theta),
               _REACH_AMPLITUDE[i]*sin(theta+.85))
     ankle = _ANKLE_AMPLITUDE[i]*sin(theta-.50)

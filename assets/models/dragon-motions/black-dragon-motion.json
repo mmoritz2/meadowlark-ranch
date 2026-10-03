@@ -2,14 +2,14 @@
   "source": "assets/models/horse-imports/black-dragon/game/black-dragon-native-2k-candidate.glb",
   "sourceSha256": "66ef96b2407b64c8ffa749f1edf5f4731a314b39b350e128789b15476a9ac999",
   "motion": "assets/models/dragon-motions/black-dragon-motion.glb",
-  "motionSha256": "6f247de93db7b2844742d801d0d0b9b6530dd9664b1c75579cfa3ab4beddecc0",
+  "motionSha256": "4c78fa72f47ea87ee7de64bc47219f527cd5423e3f3b6ba0a74ca41469fae7d9",
   "sourceUnchanged": true,
   "clips": [
     {
       "clip": "DragonStand",
-      "duration": 3.0,
+      "duration": 20.0,
       "sourceSpeedMps": 0,
-      "samples": 81,
+      "samples": 481,
       "joints": 232,
       "changedTracks": [
         "pelvic_2_03.translation",
@@ -23,6 +23,9 @@
         "lowerleg_R_013.rotation",
         "pelvic_1_016.rotation",
         "ACT_neck_4_01.rotation",
+        "ACT_neck_3_019.rotation",
+        "ACT_neck_2_020.rotation",
+        "ACT_neck_1_021.rotation",
         "head_022.rotation",
         "upper_arm_L_052.rotation",
         "ik_underarm_L_053.rotation",
@@ -229,12 +232,12 @@
       ],
       "maximumIkReachErrorSourceM": 2.220446049250313e-16,
       "loopEndpointError": 0,
-      "feetMinimumYSourceM": 0.33442279632594485,
-      "bodyMinimumYSourceM": 0.33442279632594485,
+      "feetMinimumYSourceM": 0.22156438765542597,
+      "bodyMinimumYSourceM": 0.22156438765542597,
       "sourceGroundY": -0.01812823,
       "ikErrorByLeg": [
-        0.0,
-        0.0,
+        1.1102230246251565e-16,
+        1.1102230246251565e-16,
         2.220446049250313e-16,
         2.220446049250313e-16
       ]

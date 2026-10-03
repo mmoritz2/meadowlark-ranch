@@ -1,7 +1,7 @@
 /* Black Dragon mounted flight legs, wing separation, tail motion and landing.
  * Uses a disposable browser save and actual skinned geometry. */
 const QA=require('./qa-platform.cjs'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const output=path.join(__dirname,'../review/dragon-flight-legs/mounted');
+const output=path.resolve(process.env.QA_OUT||path.join(__dirname,'../review/dragon-flight-legs/mounted'));
 (async()=>{
  const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()}),page=await browser.newPage({viewport:{width:1440,height:960}}),errors=[],report={};
  page.on('pageerror',e=>errors.push(e.message));
@@ -29,7 +29,7 @@ const output=path.join(__dirname,'../review/dragon-flight-legs/mounted');
     const seat=r.nativeSeatFollower.getWorldPosition(new T.Vector3()).applyMatrix4(inverse),expected=seat.clone().add(new T.Vector3(0,.11,-.02));
     const tail=r.nativeRoot.getObjectByName('ik_ACT_tail_5_end_0189').getWorldPosition(new T.Vector3()).applyMatrix4(inverse);
     return {y:p.y,flying:p.flying,landing:p.landing,flyAlt:p.flyAlt,nativeLanding:r.nativeLanding,nativeLandingPose:r.nativeLandingPose,nativeAltitude:r.nativeAltitude,nativePoseLiftM:r.nativePoseLiftM||0,gait:r.heroMotion.mode,motion:r.heroMotion.state,minimumY:skin?minimumY:null,lowest,actor:{position:p.pos.toArray(),meshPosition:p.mesh.position.toArray(),rotation:p.mesh.rotation.toArray(),floor},wingSides:sides,wingP05Gap:skin?sides.left.p05+sides.right.p05:null,
-     wingPose:['w_C_L_057','w_C_R_069','w2_L_059','w2_R_071'].map(name=>({name,q:r.nativeRoot.getObjectByName(name).quaternion.toArray()})),tail:tail.toArray(),feetRelativeTorso:['Hand_L_0133','Hand_R_099','back_food_L_082','back_food_R_0116'].map(n=>r.nativeRoot.getObjectByName(n).getWorldPosition(new T.Vector3()).applyMatrix4(inverse).sub(r.nativeRoot.getObjectByName('paunch_017').getWorldPosition(new T.Vector3()).applyMatrix4(inverse)).toArray()),seat:seat.toArray(),riderDelta:p.rider.g.position.clone().sub(expected).toArray(),riderAnchorError:p.rider.g.position.distanceTo(expected),finite:r.bones.every(b=>b.matrixWorld.elements.every(Number.isFinite))&&Object.values(p.rider.sk?.by||{}).every(b=>b.matrixWorld.elements.every(Number.isFinite)),bones:r.bones.length};
+     wingPose:['w_C_L_057','w_C_R_069','w2_L_059','w2_R_071'].map(name=>({name,q:r.nativeRoot.getObjectByName(name).quaternion.toArray()})),tail:tail.toArray(),feetRelativeTorso:['Hand_L_0133','Hand_R_099','back_food_L_082','back_food_R_0116'].map(n=>r.nativeRoot.getObjectByName(n).getWorldPosition(new T.Vector3()).applyMatrix4(inverse).sub(r.nativeRoot.getObjectByName('paunch_017').getWorldPosition(new T.Vector3()).applyMatrix4(inverse)).toArray()),head:r.nativeRoot.getObjectByName('head_022').getWorldPosition(new T.Vector3()).applyMatrix4(inverse).toArray(),headQuaternion:r.nativeRoot.getObjectByName('head_022').getWorldQuaternion(new T.Quaternion()).toArray(),feetActor:['Hand_L_0133','Hand_R_099','back_food_L_082','back_food_R_0116'].map(n=>r.nativeRoot.getObjectByName(n).getWorldPosition(new T.Vector3()).applyMatrix4(inverse).toArray()),seat:seat.toArray(),riderDelta:p.rider.g.position.clone().sub(expected).toArray(),riderAnchorError:p.rider.g.position.distanceTo(expected),finite:r.bones.every(b=>b.matrixWorld.elements.every(Number.isFinite))&&Object.values(p.rider.sk?.by||{}).every(b=>b.matrixWorld.elements.every(Number.isFinite)),bones:r.bones.length};
    };
    return {reviewPosition:spot,groundClearanceBasis:'Pointwise groundH at every actual skinned vertex',motionFile:r.profile.motionFile,motionSha256:r.profile.motionSha256,sourceSha256:r.profile.sha256,landingHeight:r.profile.nativeLandingBlendHeightM,landingBlend:r.profile.nativeLandingBlendS,wingMasks:meshes.map(x=>({vertices:x.mesh.geometry.attributes.position.count,left:x.indices.left.length,right:x.indices.right.length}))};
   });
@@ -59,9 +59,26 @@ const output=path.join(__dirname,'../review/dragon-flight-legs/mounted');
   report.landing=await page.evaluate(()=>{const rows=[];for(let i=0;i<60;i++){advanceTime(50);rows.push(__wingTailSample());if(!rows.at(-1).flying){advanceTime(900);rows.push(__wingTailSample());break;}}return rows;});
   report.landed=report.landing.at(-1);
   assert(!report.landed.flying&&report.landed.y===0&&report.landed.gait==='stand','Landing completes in the folded idle');
-  const all=[report.ground,...report.air,...report.approach,report.cancel,report.lowHover,...report.landing];assert(all.every(s=>s.finite&&s.bones===232),'Native dragon and rider transforms stay finite');assert(all.every(s=>s.riderAnchorError<.025),'Rider remains on the animated seat');
+  report.resting=await page.evaluate(()=>{const rows=[];for(let i=0;i<200;i++){advanceTime(100);rows.push(__wingTailSample(i%10===0));}return rows;});
+  const span=(rows,pick)=>{const values=rows.map(pick);return Math.max(...values)-Math.min(...values);};
+  report.idleHeadRange=[0,1,2].map(k=>span(report.resting,s=>s.head[k]));
+  report.idleFootDrift=[0,1,2,3].map(i=>Math.max(...[0,1,2].map(k=>span(report.resting,s=>s.feetActor[i][k]))));
+  assert(report.resting.every(s=>s.gait==='stand'&&!s.flying),'Standing acting plays automatically');
+  assert(report.idleHeadRange[0]>.25&&report.idleHeadRange[1]>.25,'Gameplay plays the neck shake and bow');
+  assert(report.idleFootDrift.every(d=>d<.015),'Feet remain planted through the complete idle');
+  await page.evaluate(()=>{const r=__features.horse.RIG();for(let i=0;i<210&&Math.abs(r.heroMotion.time-13)>.11;i++)advanceTime(100);document.activeElement?.blur();});
+  report.images.push(await capture('mounted-bow','quarter'));
+  await page.keyboard.down('b');await page.evaluate(()=>advanceTime(100));
+  report.bowBreath=await page.evaluate(()=>{const G=__features,T=G.THREE,r=G.horse.RIG(),b=G.horse.breathInspect(),a=r.nativeBreath;return {inspect:b,anchorError:new T.Vector3(...b.origin).distanceTo(a.bone.localToWorld(a.origin.clone()))};});
+  await page.keyboard.up('b');assert(report.bowBreath.inspect.active&&report.bowBreath.inspect.anchored&&report.bowBreath.anchorError<.015,'Fire stays attached to the mouth during a bow');
+  await page.locator('#flyBtn').click({force:true});
+  report.bowTakeoff=await page.evaluate(()=>{const rows=[__wingTailSample(false)];for(let i=0;i<20;i++){advanceTime(50);rows.push(__wingTailSample(i%5===0));}return rows;});
+  const angle=(a,b)=>2*Math.acos(Math.min(1,Math.abs(a.reduce((sum,v,i)=>sum+v*b[i],0))))*180/Math.PI;
+  report.bowTakeoffHeadStep=Math.max(...report.bowTakeoff.slice(1).map((s,i)=>angle(s.headQuaternion,report.bowTakeoff[i].headQuaternion)));
+  assert(report.bowTakeoff.at(-1).gait==='fly'&&report.bowTakeoffHeadStep<15,'Takeoff interrupts the bow smoothly');
+  const all=[report.ground,...report.air,...report.approach,report.cancel,report.lowHover,...report.landing,...report.resting,...report.bowTakeoff];assert(all.every(s=>s.finite&&s.bones===232),'Native dragon and rider transforms stay finite');assert(all.every(s=>s.riderAnchorError<.025),'Rider remains on the animated seat');
   assert(report.ground.wingP05Gap>.02&&report.landed.wingP05Gap>.02,'Folded left and right wing skins stay separated on their own sides');
   report.minimumSkinY=Math.min(...all.filter(s=>s.minimumY!==null).map(s=>s.minimumY));assert(report.minimumSkinY>-.04,'Actual skin should not penetrate the landing floor');
-  assert.equal(errors.length,0,errors.join('\n'));console.log(JSON.stringify({footRanges:report.footRanges,wingGap:report.ground.wingP05Gap,landedGap:report.landed.wingP05Gap,tailRange,minimumSkinY:report.minimumSkinY,preContactFoldSamples:folding.length,images:report.images}));
+  assert.equal(errors.length,0,errors.join('\n'));console.log(JSON.stringify({footRanges:report.footRanges,wingGap:report.ground.wingP05Gap,landedGap:report.landed.wingP05Gap,tailRange,minimumSkinY:report.minimumSkinY,preContactFoldSamples:folding.length,idleHeadRange:report.idleHeadRange,idleFootDrift:report.idleFootDrift,bowTakeoffHeadStep:report.bowTakeoffHeadStep,images:report.images}));
  }finally{fs.mkdirSync(output,{recursive:true});fs.writeFileSync(path.join(output,process.env.QA_REPORT||'mounted-report.json'),JSON.stringify({...report,errors},null,2));await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
