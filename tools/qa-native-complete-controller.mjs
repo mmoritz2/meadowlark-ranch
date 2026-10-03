@@ -13,21 +13,22 @@ tickNativeHorse(rig,3,.68);assert(Math.abs(rig.heroJumpExtra-.7848)<1e-6);assert
 tickNativeHorse(rig,3,1);assert.equal(m.mode,'gallop');assert.equal(m.state.lead,'right');assert.equal(rig.heroJumpAge,null);assert.equal(rig.heroJumpExtra,0);
 // A new press while the previous jump action is fading must restart its clock.
 assert.equal(startNativeHorseJump(rig),true);assert.equal(m.time,0);tickNativeHorse(rig,2,.05);assert(m.time<.051);
-m.set('stand');m.update(.3);tickNativeHorse(rig,4.5,.3,-.5);assert.equal(m.clip,'GallopR');assert(m.state.activeActions<=2);
+m.set('stand');m.update(.3);tickNativeHorse(rig,15,.3,-.5);assert.equal(m.clip,'GallopR');assert(m.state.activeActions<=2);
 const cap=getNativeHorseCapabilities(rig);assert.equal(cap.canGallop,true);assert.equal(cap.canJump,true);
-assert.equal(cap.maxSpeedMps,6);assert.equal(rig.heroRate,1.5);assert.equal(m.state.speedMps,4.5);
-// Faster travel advances the same stride clock, including actor scale. Source
-// measurements stay unchanged instead of being rewritten as gameplay speeds.
-const previousTime=m.time;tickNativeHorse(rig,4.5,.1,-.5);
-assert(Math.abs((m.time-previousTime+.62)%.62-.15)<1e-7);
+assert.equal(cap.maxSpeedMps,20.25);assert.equal(rig.heroRate,1.8);assert.equal(m.state.speedMps,15);
+// Faster gameplay travel deliberately keeps a bounded visual cadence. Preserve
+// measured source metadata and report the absence of exact contact matching.
+assert.equal(cap.contactSpeedMatched,false);
+const previousTime=m.time;tickNativeHorse(rig,15,.1,-.5);
+assert(Math.abs((m.time-previousTime+.62)%.62-.18)<1e-7);
 assert.equal(profile.nativeGaits.gallopLeft.nominalSpeedMps,3);
-root.scale.setScalar(.5);root.updateMatrixWorld(true);tickNativeHorse(rig,2.25,.1);
-assert.equal(getNativeHorseCapabilities(rig).maxSpeedMps,3);assert.equal(rig.heroRate,1.5);
+root.scale.setScalar(.5);root.updateMatrixWorld(true);tickNativeHorse(rig,13.5,.1);
+assert(Math.abs(getNativeHorseCapabilities(rig).maxSpeedMps-18.225)<1e-9);assert.equal(rig.heroRate,1.8);
 root.scale.setScalar(1);root.updateMatrixWorld(true);
-rig.nativeRequestedGait='trot';tickNativeHorse(rig,3,.3);assert.equal(m.mode,'trot');assert.equal(rig.heroRate,3/1.8);
-rig.nativeRequestedGait='canterLeft';tickNativeHorse(rig,5,.3);assert.equal(m.mode,'gallop'); // Still too fast to drop to canter.
-tickNativeHorse(rig,3.8,.3);assert.equal(m.mode,'canter');assert.equal(rig.heroRate,3.8/2.1);
-tickNativeHorse(rig,100,.3);assert.equal(m.mode,'gallop');assert.equal(rig.heroRate,2);assert.equal(m.state.speedMps,6);
+rig.nativeRequestedGait='trot';tickNativeHorse(rig,5,.3);assert.equal(m.mode,'trot');assert.equal(rig.heroRate,5/4.2*1.5);
+rig.nativeRequestedGait='canterLeft';tickNativeHorse(rig,15,.3);assert.equal(m.mode,'gallop');
+tickNativeHorse(rig,9,.3);assert.equal(m.mode,'canter');assert.equal(rig.heroRate,9/7.5*1.6);
+tickNativeHorse(rig,100,.3);assert.equal(m.mode,'gallop');assert.equal(rig.heroRate,2);assert.equal(m.state.speedMps,20.25);
 const dragonCap=getNativeHorseCapabilities({profile:{nativeBreed:true,nativeKind:'european-dragon',nativeMaxSpeedMps:2,nativeGaits:{run:{nominalSpeedMps:2}}},scene:root});
 assert.equal(dragonCap.maxSpeedMps,2);assert.equal(dragonCap.cadenceLimit,1);
 assert.equal(sampleNativeJumpLift(profile.nativeJump,2),0);assert.equal(sampleNativeJumpLift(profile.nativeJump,-1),0);assert(Math.abs(sampleNativeJumpLift(profile.nativeJump,.48)-.3924)<1e-8);

@@ -1,0 +1,35 @@
+{
+  "movementPolicy": "Faster game travel with bounded visual cadence; hoof contact is not claimed to match translation.",
+  "mounts": [],
+  "lane": {
+    "x": -16,
+    "z": -8,
+    "heading": 0
+  },
+  "exhaustion": {
+    "gait": "canter",
+    "speed": 7.208918198940945,
+    "heroRate": 1.5550523179868891,
+    "nominal": 2.109375,
+    "scale": 0.8476899263786155,
+    "sourceSpeed": 1.788095938454892,
+    "previousSpeed": 2.8609535015278276,
+    "distance": 3.541356630645671,
+    "elapsedS": 0.5,
+    "startStamina": 0.21740000000000095,
+    "stamina": 0.23890000000000108,
+    "blown": true,
+    "finite": true,
+    "boneCount": 677,
+    "boostRemaining": 0,
+    "effectiveStats": {
+      "speed": 3,
+      "stamina": 3,
+      "jump": 3,
+      "accel": 3,
+      "agility": 3
+    },
+    "canterLimit": 7.417286855812886
+  },
+  "errors": []
+}

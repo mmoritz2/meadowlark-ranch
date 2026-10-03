@@ -4,18 +4,24 @@ import {prepareNativeHoofFlex} from './native-hoof-flex.mjs?v=native-roster-1';
 const pendingHorseGrooms=new Set();
 export function finishNativeHorseGrooms(){for(const finish of pendingHorseGrooms)finish();}
 
-// Riding pace is separate from the measured clip metadata. Travel and playback
-// use the same multiplier, preserving the approved stride and hoof contacts.
+// Gameplay travel is independent of the short collected source strides. Keep
+// their poses and bounded cadence; these faster speeds are not contact-matched.
 const ridingRates={walk:1.35,trot:1.5,canterLeft:1.6,canterRight:1.6,gallopLeft:1.8,gallopRight:1.8};
+const ridingSpeeds={walk:2,trot:4.2,canterLeft:7.5,canterRight:7.5,gallopLeft:15,gallopRight:15};
 export function nativeHorseSpeedLimits(profile,worldScale=1){
  const paced=profile?.nativeKind==='horse',cadenceLimit=paced?2:1,scale=Math.abs(worldScale);
- const gaitSpeeds={},gaitMaxSpeeds={};
+ // Pony stature remains visible without making travel across the map unusably
+ // slow. Stats and temporary boosts still vary speed within each gait.
+ const sizeFactor=paced?Math.max(.9,Math.min(1.08,(profile.nativeMaxSpeedMps||3)*scale/3)):1;
+ const gaitSpeeds={},gaitMaxSpeeds={},gaitRates={};
  for(const [key,r]of Object.entries(profile?.nativeGaits||{})){
   const speed=r.nominalSpeedMps*scale;
-  gaitSpeeds[key]=speed*(paced?(ridingRates[key]||1):1);
-  gaitMaxSpeeds[key]=speed*(paced&&key!=='fly'?cadenceLimit:1);
+  gaitSpeeds[key]=paced&&ridingSpeeds[key]?ridingSpeeds[key]*sizeFactor:speed;
+  gaitMaxSpeeds[key]=gaitSpeeds[key]*(paced&&ridingSpeeds[key]?1.35:1);
+  gaitRates[key]=paced?(ridingRates[key]||1):1;
  }
- return {paced,cadenceLimit,gaitSpeeds,gaitMaxSpeeds,maxSpeedMps:(profile?.nativeMaxSpeedMps||0)*scale*cadenceLimit};
+ const maxSpeedMps=paced?Math.max(0,...Object.entries(gaitMaxSpeeds).filter(([k])=>k!=='fly').map(([,v])=>v)):(profile?.nativeMaxSpeedMps||0)*scale;
+ return {paced,cadenceLimit,gaitSpeeds,gaitMaxSpeeds,gaitRates,maxSpeedMps,sizeFactor,contactSpeedMatched:paced?false:null};
 }
 
 // Pose-only playback of the preserved native clips. The Ranch owns actor travel.
@@ -139,7 +145,7 @@ function createCreatorMotion({THREE,root,clips,profile}={}){
 export function getNativeHorseCapabilities(rig){
  if(!rig?.profile?.nativeBreed&&!rig?.profile?.referenceMotion)return null;
  const profile=rig.profile,scale=rig.scene?.getWorldScale(rig.scene.position.clone().set(1,1,1)).z||1,referenceFlight=!!((profile.referenceMotion||profile.nativeRoster)&&(rig.nativeCanFly||rig.nativeFantasy?.pair||rig.fantasyAppearance?.wings));
- return {native:true,nativeKind:profile.nativeKind,...nativeHorseSpeedLimits(profile,scale),flightMaxSpeedMps:referenceFlight?13:(profile.nativeGaits?.fly?.nominalSpeedMps||0)*Math.abs(scale),nominalMaxSpeedMps:profile.nativeMaxSpeedMps,worldScale:Math.abs(scale),supportedModes:rig.heroMotion?.availableModes||['rest','stand',...Object.keys(profile.nativeGaits||{})],canJump:!!profile.nativeJump,canGallop:!!profile.nativeGaits?.gallopLeft,canFly:!!profile.nativeCanFly||referenceFlight,speedBasis:profile.nativeSpeedBasis||'Measured stance backflow of checked native horse clips'};
+ return {native:true,nativeKind:profile.nativeKind,...nativeHorseSpeedLimits(profile,scale),flightMaxSpeedMps:referenceFlight?13:(profile.nativeGaits?.fly?.nominalSpeedMps||0)*Math.abs(scale),nominalMaxSpeedMps:profile.nativeMaxSpeedMps,worldScale:Math.abs(scale),supportedModes:rig.heroMotion?.availableModes||['rest','stand',...Object.keys(profile.nativeGaits||{})],canJump:!!profile.nativeJump,canGallop:!!profile.nativeGaits?.gallopLeft,canFly:!!profile.nativeCanFly||referenceFlight,speedBasis:profile.nativeKind==='horse'?'Gameplay travel with bounded collected animation cadence; not contact-matched':profile.nativeSpeedBasis||'Configured source animation travel reference'};
 }
 
 export function tickNativeHorse(rig,speed,dt,turn=0){
@@ -155,13 +161,14 @@ export function tickNativeHorse(rig,speed,dt,turn=0){
   const paceFactor=cap.paced?(rig.nativePaceFactor||1):1;
   let chosen=ground.find(([key])=>actual<=cap.gaitSpeeds[key]*paceFactor+1e-7)||ground.at(-1);
   // A faster trot remains a trot. On slowing down, keep a faster gait until
-  // the requested gait can carry the actual speed without exceeding its rate.
+  // actual travel enters the requested gait's gameplay speed range.
   const requested=ground.find(([key])=>key===rig.nativeRequestedGait);
   if(cap.paced&&requested&&chosen&&ground.indexOf(chosen)>ground.indexOf(requested)&&actual<=cap.gaitMaxSpeeds[requested[0]]+1e-7)chosen=requested;
   if(chosen){gait=chosen[0];record=chosen[1];}
  }
  const lead=turn<-.32?'right':turn>-.08?'left':rig.heroLead||'left';rig.heroLead=lead;if(gait.endsWith('Left'))gait=gait.slice(0,-4);
- if(record)rate=actual/(record.nominalSpeedMps*cap.worldScale);if(gait==='fly')rate=Math.max(.1,Math.min(1,rate||1));else rate=Math.min(cap.cadenceLimit,Math.max(0,rate));
+ if(record){const key=gait==='canter'||gait==='gallop'?gait+'Left':gait;rate=cap.paced&&gait!=='fly'?actual/cap.gaitSpeeds[key]*cap.gaitRates[key]:actual/(record.nominalSpeedMps*cap.worldScale);}
+ if(gait==='fly')rate=Math.max(.1,Math.min(1,rate||1));else rate=Math.min(cap.cadenceLimit,Math.max(0,rate));
  motion.set(gait,{lead,speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate});rig.phase=motion.state.phase01;rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroRate=rate;return motion.state;
 }
 
