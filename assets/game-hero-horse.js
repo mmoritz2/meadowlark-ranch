@@ -2,8 +2,8 @@ import {createArtistMotion,ARTIST_GAITS} from './artist-horse-motion.js?v=gaits-
 import {finishHeroCoat} from './hero-horse-coat.js?v=hero-ranch-1';
 import {createHeroHorseGroom} from './hero-horse-groom.js?v=hero-ranch-1';
 import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-20260908-4';
-import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=dragon-flight-legs-1';
-export {getNativeHorseCapabilities,finishNativeHorseGrooms} from './native-horse-motion.js?v=dragon-flight-legs-1';
+import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=tack-stats-1';
+export {getNativeHorseCapabilities,finishNativeHorseGrooms} from './native-horse-motion.js?v=tack-stats-1';
 
 // Adapts the approved raw-space hero to the ranch's +Z-forward mount space.
 // Existing horse models continue using their own renderer and animation path.
@@ -42,8 +42,8 @@ export function heroGroomFacade({THREE,skin,bones,mount,profile}){
     }).catch(e=>console.warn('Bay sporthorse groom unavailable',e));
   return facade;
 }
-export function startGameHeroJump(rig){
-  if(rig.profile?.nativeBreed||rig.profile?.referenceMotion)return startNativeHorseJump(rig);
+export function startGameHeroJump(rig,options){
+  if(rig.profile?.nativeBreed||rig.profile?.referenceMotion)return startNativeHorseJump(rig,options);
   if(!rig.heroMotion||rig.heroJumpAge!==null)return false;
   rig.heroJumpAge=0;rig.heroMotion.set('jump');return true;
 }

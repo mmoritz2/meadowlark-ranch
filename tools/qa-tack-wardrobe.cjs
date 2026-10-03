@@ -197,7 +197,7 @@ const READY=()=>window.render_game_to_text&&(()=>{try{const s=JSON.parse(render_
  check('D upgrade spends coins + Toolkit I, pays 1 SP per rarity star',r.up1&&r.up1.lvl===2&&r.up1.kit1===0&&r.up1.sp===1&&r.up1.coins<5000,r.up1);
  check('D upgrade refused without a toolkit (level and coins unchanged)',r.up2&&r.up2.lvl===2&&r.up2.coinsSame&&r.up2.kit1===0,r.up2);
  check('D levels stop at 8, kits I/II/III consumed by tier, no upgrade button at max',r.up8&&r.up8.lvl===8&&r.up8.max===8&&r.up8.kits[0]===3&&r.up8.kits[1]===2&&r.up8.kits[2]===4&&!r.up8.btn,r.up8);
- check('D Legendary Lv8 bonus is +8/+6/+2 and upgrade cost carries the kit tier',r.legend8&&Object.values(r.legend8).sort((a,b)=>b-a).join()==='8,6,2'&&r.costs.l1.kit==='kit1'&&r.costs.l4.kit==='kit2'&&r.costs.l7.kit==='kit3'&&r.costs.l4.c>r.costs.l1.c,{legend8:r.legend8,costs:r.costs});
+ check('D Legendary Lv8 bonus is +8.5/+6.75/+2 and upgrade cost carries the kit tier',r.legend8&&Object.values(r.legend8).sort((a,b)=>b-a).join()==='8.5,6.75,2'&&r.costs.l1.kit==='kit1'&&r.costs.l4.kit==='kit2'&&r.costs.l7.kit==='kit3'&&r.costs.l4.c>r.costs.l1.c,{legend8:r.legend8,costs:r.costs});
  check('E strip removes the spare and pays parts',r.strip&&r.strip.removed===1&&r.strip.parts===r.strip.want,r.strip);
  check('E merge costs coins + parts and raises the primary bonus',r.merge&&r.merge.coinsDown===r.merge.cost&&r.merge.partsDown===3&&r.merge.bonusUp===1&&r.merge.merged===1,r.merge);
  check('E merge refused with no coins',r.mergePoor&&r.mergePoor.merged===1&&r.mergePoor.coins===0,r.mergePoor);

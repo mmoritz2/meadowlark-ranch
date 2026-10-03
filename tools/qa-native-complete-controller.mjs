@@ -32,4 +32,14 @@ tickNativeHorse(rig,100,.3);assert.equal(m.mode,'gallop');assert.equal(rig.heroR
 const dragonCap=getNativeHorseCapabilities({profile:{nativeBreed:true,nativeKind:'european-dragon',nativeMaxSpeedMps:2,nativeGaits:{run:{nominalSpeedMps:2}}},scene:root});
 assert.equal(dragonCap.maxSpeedMps,2);assert.equal(dragonCap.cadenceLimit,1);
 assert.equal(sampleNativeJumpLift(profile.nativeJump,2),0);assert.equal(sampleNativeJumpLift(profile.nativeJump,-1),0);assert(Math.abs(sampleNativeJumpLift(profile.nativeJump,.48)-.3924)<1e-8);
+// Equipped stats raise travel limits without speeding animation past its cap.
+rig.nativeTravelStatFactor=1.4;rig.nativeRequestedGait='gallopLeft';tickNativeHorse(rig,100,.3);
+assert(Math.abs(getNativeHorseCapabilities(rig).maxSpeedMps-28.35)<1e-8);assert.equal(rig.heroRate,2);
+// Jump gear lifts the actor while preserving the authored pose and landing.
+const sourceLift=JSON.stringify(profile.nativeJump.actorLiftM);
+assert(startNativeHorseJump(rig,{heightScale:1.25}));tickNativeHorse(rig,3,.68);
+assert(Math.abs(rig.heroJumpExtra-.7848*1.25)<1e-6);assert(Math.abs(m.state.bodyLiftM-.7848)<1e-6);
+assert.equal(startNativeHorseJump(rig,{heightScale:1.5}),false);assert.equal(rig.nativeJumpHeightScale,1.25,'A held press cannot change height mid-jump');
+tickNativeHorse(rig,3,1);assert.equal(rig.heroJumpExtra,0);assert.equal(rig.heroJumpAge,null);
+assert.equal(JSON.stringify(profile.nativeJump.actorLiftM),sourceLift);
 m.reset();assert.equal(m.mode,'rest');assert.equal(m.state.bodyLiftM,0);assert(root.matrixWorld.elements.every(Number.isFinite));m.dispose();console.log('Native canter/gallop leads, one-shot jump, repeated press, lift clock, recovery and capabilities passed.');

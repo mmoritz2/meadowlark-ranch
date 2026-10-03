@@ -564,7 +564,8 @@ export function install(G){
    main+='<div class="sev-ribs">'+[0,1,2,3].map(k=>'<span class="rs'+(k<rb.per[di]?'':' off')+'" title="'+(k<3?['Finish','Two stars','Three stars'][k]:'Gold: 95% accuracy, nothing down')+'">'+(k<3?K.RIBBON('#3fae5a','#2a7d40'):K.RIBBON('#e6b53a','#b8831d'))+'</span>').join('')+'</div>';
    let tA=0; try{tA=G.course.eventTimeAllowed?G.course.eventTimeAllowed(ev,di):0;}catch(e){}
    const best=(s.bestTimes||{})[ev.id], bestS=ev.dressage?((s.bestScore||{})[ev.id]||(s.showBest||{})[ev.id]):null;
-   const req=[['level',ev.lvl]].concat(Object.entries(ev.req||{})).map(([k,need])=>{const have=k==='level'?lvl:((h.stats&&h.stats[k])||0);return '<span class="'+(have>=need?'ok':'bad')+'">'+(k==='level'?'Lv':esc(statLbl(k).replace(/^\S+\s/,'')))+' '+need+'</span>';}).join('');
+   const equipped=G.xp.effStats(h);
+   const req=[['level',ev.lvl]].concat(Object.entries(ev.req||{})).map(([k,need])=>{const have=k==='level'?lvl:(equipped[k]||0);return '<span class="'+(have>=need?'ok':'bad')+'" title="You have '+have+(k==='level'?'':' including equipped tack')+'">'+(k==='level'?'Lv':esc(statLbl(k).replace(/^\S+\s/,'')))+' '+need+'</span>';}).join('');
    const why=lk?lk:!g.ok?('Needs '+needText(g.missing)):dLock?(d.label+' opens at Lv '+(ev.lvl+d.lvlAdd)):'';
    main+='<div class="sev-pbar"><span><span class="pb-k">Time allowed</span><span class="pb-v">'+(tA?tSec(tA):'—')+(ev.laps>1?' ('+ev.laps+' laps)':'')+'</span></span>'
     +'<span><span class="pb-k">Personal best</span><span class="pb-v">'+(best?tBest(best):bestS?Math.round((bestS>1?bestS:bestS*100))+'%':'--:--')+'</span></span>'

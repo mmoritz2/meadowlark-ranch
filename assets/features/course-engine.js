@@ -95,7 +95,7 @@ export function install(G){
   h=h||ridden(); if(!h)return {ok:false,missing:[]};
   const lvl=h.level||1, missing=[];
   if(lvl<ev.lvl)missing.push(['level',ev.lvl,lvl]);
-  if(ev.req){ G.xp.ensureStats(h); for(const k in ev.req){const have=(h.stats&&h.stats[k])||0; if(have<ev.req[k])missing.push([k,ev.req[k],have]);} }
+  if(ev.req){ const stats=G.xp.effStats(h); for(const k in ev.req){const have=stats[k]||0; if(have<ev.req[k])missing.push([k,ev.req[k],have]);} }
   return {ok:!missing.length,missing};
  }
  const missingText=m=>m.map(([k,need,have])=>(k==='level'?'Lv '+need:T.STAT_LBL[k]+' '+need)+' (have '+have+')').join(' · ');
@@ -228,7 +228,7 @@ export function install(G){
  let pendingDi=null;
  G.on('courseGate',(ev,di)=>{
   const h=ridden(); const ok=eventOk(ev,h);
-  if(!ok.ok){toast('🔒 '+ev.name+' needs '+missingText(ok.missing)+' — train in the drills');return true;}
+  if(!ok.ok){toast('🔒 '+ev.name+' needs '+missingText(ok.missing)+(ok.missing.some(m=>m[0]!=='level')?' — train or equip tack for the missing stats':''));return true;}
   let use=di; if(use==null){try{use=G.save.fresh().evDiff;}catch(e){} if(use==null)use=1;}
   use=clamp(Math.round(use),0,DIFFS.length-1);
   if(DIFFS[use].lvlAdd&&(h.level||1)<ev.lvl+DIFFS[use].lvlAdd){toast('🔥 Elite '+ev.name+' opens at Lv '+(ev.lvl+DIFFS[use].lvlAdd));return true;}
@@ -438,7 +438,7 @@ export function install(G){
   /* jumping costs stamina */
   const age=Rg.heroMotion?Rg.heroJumpAge:null;
   const jumpStart=Rg.heroMotion?(age!==null&&R.lastJumpAge===null):(player.vy>0&&!R.wasAir&&!player.flying);
-  if(jumpStart&&!player.flying){player.stam=Math.max(0,player.stam-(((h&&h.stats&&h.stats.stamina)||3)>=7?0.05:0.08));}
+  if(jumpStart&&!player.flying){const stamina=G.xp.effStats(h).stamina||3;player.stam=Math.max(0,player.stam-(stamina>=7?0.05:0.08));}
   R.lastJumpAge=age; R.wasAir=player.y>0.05||player.vy>0;
   /* sliding stop pose */
   if(R.slide&&player.mesh){const p=Math.min(1,R.slide.t/R.slide.dur),env=Math.sin(p*Math.PI); player.mesh.rotation.x+=-0.22*env; player.mesh.position.y-=0.12*env;

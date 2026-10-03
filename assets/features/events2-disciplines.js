@@ -1204,12 +1204,24 @@ export function install(G){
   return fmtT((ev.time||G.course.eventPar(ev)*1.4)*diffAt(di).parMul)+' allowed';
  }
  const SCORE_BANDS='60% finishes · 75% ⭐⭐ · 90% ⭐⭐⭐ · 95% 🥇';
+ function entryStats(h){
+  if(G.xp.statBreakdown)return G.xp.statBreakdown(h);
+  const total=G.xp.effStats(h),base=(h&&h.stats)||{},tack={};
+  for(const k in total)tack[k]=Math.max(0,total[k]-(base[k]||0));
+  return {base,total,tack};
+ }
  function reqLine(ev,h){
-  const bits=[]; const lvl=(h&&h.level)||1;
+  const bits=[]; const lvl=(h&&h.level)||1, stats=entryStats(h);
   bits.push((lvl>=ev.lvl?'✅':'🔒')+' Level '+ev.lvl+' (you are '+lvl+')');
-  if(ev.req)for(const k in ev.req){ let have=0; try{have=(h&&h.stats&&h.stats[k])||0;}catch(e){}
-   bits.push((have>=ev.req[k]?'✅':'🔒')+' '+(T.STAT_LBL[k]||k)+' '+ev.req[k]+' (you have '+have+')'); }
+  if(ev.req)for(const k in ev.req){ const have=stats.total[k]||0,bonus=stats.tack[k]||0;
+   bits.push((have>=ev.req[k]?'✅':'🔒')+' '+(T.STAT_LBL[k]||k)+' '+ev.req[k]+' (you have '+have+(bonus>0?' = '+(stats.base[k]||0)+' trained + '+bonus+' tack':'')+')'); }
   return bits.join('<br>');
+ }
+ const TACK_BENEFITS={speed:'pace around the course',stamina:'sustaining gallops and repeated jumps',jump:'fence clearance',agility:'turns and figures',accel:'reaching the requested pace'};
+ function tackLine(ev,h){
+  const stats=entryStats(h),keys=discOf(ev).stats;
+  return keys.map(k=>{const bonus=stats.tack[k]||0;return '<b>'+(T.STAT_LBL[k]||k)+' '+(stats.total[k]||0)+'</b> · '+(stats.base[k]||0)+' trained'+(bonus>0?' + '+bonus+' equipped tack':'')+' · '+TACK_BENEFITS[k];}).join('<br>')
+   +'<br>Equipped tack counts toward stat entry requirements. Ride the round to earn its ribbons.';
  }
  function cardHtml(){
   const ev=cardFor; let s={},h=null;
@@ -1230,6 +1242,7 @@ export function install(G){
             +(s.bestTimes&&s.bestTimes[ev.id]?'<br>Your best here: <b>'+s.bestTimes[ev.id]+'s</b>':''))
    +'</span></div>';
   html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🚪 To get in</b><span class="ev2card">'+reqLine(ev,h)+'</span></div>';
+  html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🐴 Your horse + equipped tack</b><span class="ev2card">'+tackLine(ev,h)+'</span></div>';
   html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🎁 What it pays · '+diffAt(di).label+'</b><span class="ev2card">'+rewardLine(ev,di)+'</span></div>';
   html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🎚️ The three levels</b>';
   for(let i=0;i<DIFFS.length;i++){
@@ -1333,6 +1346,7 @@ export function install(G){
   if(!h){toast('🧼 Pick a horse to show first.');return;}
   if(baseShow)baseShow(ev); else G.course.startDressage(ev);
  };
+ const GAIT_ORDER={halt:0,walk:1,trot:2,canter:3,gallop:3};
  function showFrame(c,dt){
   const f=c.figs&&c.figs[c.fi]; if(!f||c.done)return 1;
   const SH=CUR.show; if(!SH)return 1;
@@ -1349,7 +1363,9 @@ export function install(G){
    }
   }else{
    const want=f.gait==='walk'?2.8:f.gait==='trot'?7:99;
-   if(sp>want+1.6){SH.rush+=dt;q=0.3;}else{SH.quiet+=dt;}
+   const rig=G.horse.RIG(),nativeHorse=rig?.attachedTo===player.mesh&&rig?.profile?.nativeKind==='horse'&&rig.heroMotion;
+   const rushing=nativeHorse&&G.course.riddenGait?GAIT_ORDER[G.course.riddenGait()]>GAIT_ORDER[f.gait]:sp>want+1.6;
+   if(rushing){SH.rush+=dt;q=0.3;}else{SH.quiet+=dt;}
   }
   const good=SH.still+SH.square+SH.quiet, bad=SH.fidget+SH.crooked+SH.rush;
   CUR.handling=clamp(good/Math.max(0.6,good+bad*1.6),0,1);
@@ -1424,7 +1440,7 @@ export function install(G){
     /* a kind judge and a strict one: the same wrong gait costs half again at Elite and is
        half forgiven at Novice, in the engine's own good/total currency */
     if(d.k!=='open'&&f.gait!=='halt'){
-     const sp=Math.abs(player.speed), g=sp<0.3?'halt':sp<2.8?'walk':sp<7?'trot':'canter';
+     const sp=Math.abs(player.speed), g=G.course.riddenGait?G.course.riddenGait():sp<0.3?'halt':sp<2.8?'walk':sp<7?'trot':'canter';
      if(g!==f.gait){ if(d.k==='elite')f.total+=dt*0.5; else f.good+=dt*0.5; }
     }
    }

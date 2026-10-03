@@ -78,11 +78,17 @@ export function install(G){
 #seOv .sv-stat .ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:clamp(22px,3.8vh,34px);opacity:.55;filter:grayscale(.3)}
 #seOv .sv-stat .nm{font-size:clamp(14px,2.3vh,19px);font-weight:900;text-transform:uppercase;letter-spacing:.4px;color:#fff5e2}
 #seOv .sv-stat .mx{font-size:clamp(11px,1.7vh,14px);font-weight:900;color:#78bbff;margin-top:4px}
+#seOv .sv-stat .eq{font-size:12px;font-weight:800;color:#eee0c7;margin-top:4px;line-height:1.4}
 #seOv .sv-stat .v{font-size:clamp(20px,3.6vh,30px);font-weight:900;text-align:right;line-height:1}
 #seOv .sv-stat .v.up{color:#a6e86a}
 #seOv .sv-stat .bn{font-size:14px;font-weight:900;color:#a6e86a;text-align:right;margin-top:6px}
 #seOv .sv-stat .tr{position:absolute;left:12px;right:12px;bottom:6px;height:4px;border-radius:2px;background:rgba(0,0,0,.35);overflow:hidden}
 #seOv .sv-stat .tr i{display:block;height:100%;background:#78bbff}
+#seOv .sv-stat-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+#seOv .sv-stat-table th,#seOv .sv-stat-table td{padding:9px 4px;text-align:right;border-bottom:1px solid rgba(255,236,200,.16)}
+#seOv .sv-stat-table th:first-child,#seOv .sv-stat-table td:first-child{text-align:left}
+#seOv .sv-stat-table th{font-size:11px;color:#e8d8b8}
+#seOv .sv-stat-table td:last-child{font-weight:900;color:#a6e86a}
 #seOv .sv-btns{display:flex;gap:10px;padding:10px 12px 12px}
 #seOv .sv-b{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:clamp(40px,6.4vh,52px);border-radius:10px;font-size:clamp(13px,2.1vh,17px);font-weight:900;color:#fff;
  background:linear-gradient(180deg,#7a6446,#5e4a32);text-transform:uppercase;letter-spacing:.3px;box-shadow:inset 0 0 0 2px rgba(255,236,200,.18)!important}
@@ -172,24 +178,31 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
  const breedLabel=k=>{try{return G.horse.breedLabel(k);}catch(e){return k;}};
  const starsOf=h=>{let n=h.stars;if(!n){const b=(T.BREEDS3||[]).find(r=>r[0]===h.breed);n=b?((T.TIER_STARS||{})[b[2]]||2):2;}return clamp(n|0,1,6);};
  function effective(h){try{return G.xp.effStats(h)||{};}catch(e){return h.stats||{};}}
+ const statNumber=v=>Number.isFinite(Number(v))?Number(Number(v).toFixed(2)):0;
+ function statBreakdown(s,h){
+  try{if(G.xp.statBreakdown)return G.xp.statBreakdown(h,s.tack||[]);}catch(e){}
+  const base=h.stats||{},total=effective(h),tack={},gear={},sets={};
+  for(const [k] of STATS){tack[k]=statNumber(total[k])-statNumber(base[k]);gear[k]=tack[k];sets[k]=0;}
+  return {base,total,tack,gear,sets};
+ }
 
  function horseTab(s,h){
   try{G.xp.ensureStats(h);}catch(e){}
   const lvl=h.level||1, cap=50+lvl*50, xp=Math.round(h.xp||0), bond=clamp(Math.round(h.bond||0),0,100);
   let bl=null;try{bl=G.horse.bondLevel?G.horse.bondLevel(h):null;}catch(e){}
-  const eff=effective(h);
+  const stats=statBreakdown(s,h);
   let x='<div class="sv-lvl"><div class="sv-shield">'+lvl+'</div>'
    +'<div class="sv-meter"><div class="lb"><span>Horse level</span><small>'+xp+'/'+cap+'</small></div><div class="sv-bar"><i style="width:'+clamp(100*xp/cap,0,100).toFixed(1)+'%"></i></div></div>'
    +'<div class="sv-meter sv-bond"><div class="lb"><span>💗 Bond'+(bl!=null?' · Lv '+esc(bl):'')+'</span><small>'+bond+'/100</small></div><div class="sv-bar"><i style="width:'+bond+'%"></i></div></div></div>';
-  x+='<div class="sv-head">Horse stats</div>';
+  x+='<div class="sv-head">Horse stats</div><p class="sv-p">Base + tack = effective stats. Equipped bonuses help event entry and riding performance.</p>';
   for(const [k,label,ic] of STATS){
-   const v=(h.stats&&h.stats[k])|0, e=eff[k]!=null?eff[k]|0:v, bonus=e-v;
+   const v=statNumber(stats.base[k]),e=statNumber(stats.total[k]),bonus=statNumber(stats.tack[k]);
    let ceil=10,need=1;try{ceil=G.xp.statCeil(h,k);need=G.xp.statNeed(v)||1;}catch(err){}
    let capN=ceil;try{capN=Math.min(G.xp.statCap(h),ceil);}catch(err){}
    const prog=v>=capN?100:clamp(100*((h.sxp&&h.sxp[k])||0)/need,0,100);
-   x+='<div class="sv-stat" title="'+esc(v>=capN?'At its cap for now':((h.sxp&&h.sxp[k])||0)+' / '+need+' XP to '+(v+1))+'">'
-    +'<span class="ic">'+ic+'</span><div><div class="nm">'+label+'</div><div class="mx">MAX '+ceil+'</div></div>'
-    +'<div><div class="v'+(bonus>0?' up':'')+'">'+e+'</div>'+(bonus>0?'<div class="bn">🐎 +'+bonus+'</div>':'')+'</div>'
+   x+='<div class="sv-stat" data-stat="'+k+'" aria-label="'+esc(label+': '+v+' base + '+bonus+' tack = '+e+' effective')+'" title="'+esc((v>=capN?'Base stat is at its training cap for now':((h.sxp&&h.sxp[k])||0)+' / '+need+' XP to base '+(v+1))+'. Breed ceiling: '+ceil+'. Tack includes matching-set bonuses and can exceed training caps.')+'">'
+    +'<span class="ic">'+ic+'</span><div><div class="nm">'+label+'</div><div class="eq">Base '+v+' + '+bonus+' tack</div><div class="mx">Training cap '+capN+'</div></div>'
+    +'<div><div class="v'+(bonus>0?' up':'')+'">'+e+'</div><div class="bn">effective</div></div>'
     +'<div class="tr"><i style="width:'+prog.toFixed(1)+'%"></i></div></div>';
   }
   return {body:x,btns:'<button class="sv-b" data-se="open:stable">🏠 Stable</button><button class="sv-b" data-se="open:tack">🐎 Tack</button>'};
@@ -233,11 +246,13 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   return {body:x,btns:'<button class="sv-b" data-se="open:care">📋 Tricks &amp; perks</button>'};
  }
  function equipmentTab(s,h){
-  const eff=effective(h);
-  let x='<div class="sv-head">Tack bonuses</div>';
-  x+=STATS.map(([k,label,ic])=>{const b=((eff[k]|0)-((h.stats&&h.stats[k])|0));
-   return '<div class="sv-row"><span>'+ic+' '+label+'</span><span style="color:'+(b>0?'#a6e86a':'#e8d8b8')+'">'+(b>0?'+'+b:'—')+'</span></div>';}).join('');
-  x+='<p class="sv-p" style="margin-top:10px">Saddles, bridles and boots each add to a stat. Change what '+esc(h.name)+' wears in the tack room.</p>';
+  const stats=statBreakdown(s,h);
+  let x='<div class="sv-head">Tack bonuses</div><table class="sv-stat-table"><thead><tr><th scope="col">Stat</th><th scope="col">Base</th><th scope="col">+ Tack</th><th scope="col">Effective</th></tr></thead><tbody>';
+  x+=STATS.map(([k,label,ic])=>'<tr data-stat="'+k+'"><th scope="row">'+ic+' '+label+'</th><td>'+statNumber(stats.base[k])+'</td><td>+'+statNumber(stats.tack[k])+'</td><td>'+statNumber(stats.total[k])+'</td></tr>').join('');
+  x+='</tbody></table>';
+  const sets=STATS.filter(([k])=>stats.sets[k]>0).map(([k,label])=>'+'+statNumber(stats.sets[k])+' '+label).join(', ');
+  x+='<p class="sv-p" style="margin-top:10px">Tack includes equipped pieces'+(sets?' and matching-set bonuses: '+sets:'. Wear matching pieces to unlock set bonuses')+'. These effective stats help event entry and riding performance.</p>';
+  x+='<p class="sv-p">Saddles, pads, bridles and horseshoes add stats beyond training caps. Change what '+esc(h.name)+' wears in the tack room; preview each upgrade or swap there.</p>';
   return {body:x,btns:'<button class="sv-b go" data-se="open:tack">🐎 Tack room</button><button class="sv-b" data-se="open:wardrobe">🧑 Rider</button>'};
  }
  function styleTab(s,h){

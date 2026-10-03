@@ -183,6 +183,7 @@ export function install(G){
  /* What the discipline is, and what it asks of a horse. Two stats, not five: a spec panel
     that lists everything tells you nothing. */
  function disc(ev){
+  if(G.events2?.discOf&&G.events2?.discDetail)return {...G.events2.discOf(ev),detail:G.events2.discDetail(ev)};
   if(ev.dressage)return {icon:'🎽',label:'Dressage',stats:['agility','stamina'],
    detail:((T.DRESSAGE_TESTS||G.course&&G.course.DRESSAGE_TESTS||{})[ev.id]||[]).length+' figures'};
   if(ev.xc)return {icon:'🌲',label:'Cross country',stats:['stamina','jump'],
@@ -204,11 +205,12 @@ export function install(G){
   const v=s&&s.bestTimes&&s.bestTimes[ev.id];return v?v+'s':null;
  }
  function statOf(h,k){
-  let at=0,cap=10;
-  try{at=(h&&h.stats&&h.stats[k])||0;}catch(e){}
+  let at=0,base=0,tack=0,cap=10;
+  try{const b=G.xp.statBreakdown?.(h);base=b?.base[k]??h?.stats?.[k]??0;at=b?.total[k]??G.xp.effStats(h)[k]??base;tack=b?.tack[k]??Math.max(0,at-base);}catch(e){}
   try{if(G.xp&&G.xp.statCap)cap=Math.min(G.xp.statCap(h),G.xp.statCeil?G.xp.statCeil(h,k):10);}catch(e){}
   if(!(cap>0))cap=10;
-  return {at:Math.round(at*10)/10,cap};
+  const rounded=v=>Math.round(v*100)/100;
+  return {at:rounded(at),base:rounded(base),tack:rounded(tack),cap};
  }
  /* Four ribbons: three green, then the gold for a clean 95% round. */
  function pips(r,gold){
@@ -269,9 +271,11 @@ export function install(G){
     let sp=spec('Level','Lv '+ev.lvl,lvl>=ev.lvl?'good':'bad',
         '<span class="c2-k" style="letter-spacing:.02em;text-transform:none">you Lv '+lvl+'</span>');
     d.stats.forEach(k=>{
-     const st=statOf(h,k), lbl=(STAT_LBL[k]||k);
-     sp+=spec(lbl.replace(/^\S+\s/,''),st.at+' / '+st.cap,st.at>=st.cap?'good':'',
-      '<span class="c2-reqBar"><i style="width:'+Math.max(4,Math.round(100*st.at/st.cap))+'%"></i></span>');
+     const st=statOf(h,k), lbl=(STAT_LBL[k]||k),need=ev.req&&ev.req[k];
+     sp+=spec(lbl.replace(/^\S+\s/,''),st.at+' total',need?(st.at>=need?'good':'bad'):'',
+      '<span class="c2-k" style="letter-spacing:0;text-transform:none">'+st.base+' trained + '+st.tack+' tack</span>'
+      +'<span class="c2-k" style="letter-spacing:0;text-transform:none">Training cap '+st.cap+'</span>'
+      +'<span class="c2-reqBar" title="Trained '+st.base+' of '+st.cap+'"><i style="width:'+Math.max(0,Math.min(100,Math.round(100*st.base/st.cap)))+'%"></i></span>');
     });
     sp+=spec(ev.dressage?'Score to beat':'Time allowed',allowed(ev))
       +spec('Your best',pb||'—',pb?'':'dim');

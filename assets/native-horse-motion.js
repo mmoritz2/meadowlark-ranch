@@ -176,7 +176,12 @@ function createCreatorMotion({THREE,root,clips,profile}={}){
 export function getNativeHorseCapabilities(rig){
  if(!rig?.profile?.nativeBreed&&!rig?.profile?.referenceMotion)return null;
  const profile=rig.profile,scale=rig.scene?.getWorldScale(rig.scene.position.clone().set(1,1,1)).z||1,referenceFlight=!!((profile.referenceMotion||profile.nativeRoster)&&(rig.nativeCanFly||rig.nativeFantasy?.pair||rig.fantasyAppearance?.wings));
- return {native:true,nativeKind:profile.nativeKind,...nativeHorseSpeedLimits(profile,scale),flightMaxSpeedMps:referenceFlight?13:profile.nativeTravelSpeeds?.fly??(profile.nativeGaits?.fly?.nominalSpeedMps||0)*Math.abs(scale),nominalMaxSpeedMps:profile.nativeMaxSpeedMps,worldScale:Math.abs(scale),supportedModes:rig.heroMotion?.availableModes||['rest','stand',...Object.keys(profile.nativeGaits||{})],canJump:!!profile.nativeJump,canGallop:!!profile.nativeGaits?.gallopLeft,canFly:!!profile.nativeCanFly||referenceFlight,speedBasis:profile.nativeKind==='horse'?'Gameplay travel with bounded collected animation cadence; not contact-matched':profile.nativeSpeedBasis||'Configured source animation travel reference'};
+ const limits=nativeHorseSpeedLimits(profile,scale),statFactor=Number.isFinite(rig.nativeTravelStatFactor)?Math.max(1,Math.min(2,rig.nativeTravelStatFactor)):1;
+ // Keep the selected gait and bounded cadence, but let equipped stats raise
+ // its travel ceiling instead of silently flattening every strong tack set.
+ limits.maxSpeedMps*=statFactor;
+ limits.gaitMaxSpeeds=Object.fromEntries(Object.entries(limits.gaitMaxSpeeds).map(([k,v])=>[k,v*statFactor]));
+ return {native:true,nativeKind:profile.nativeKind,...limits,flightMaxSpeedMps:(referenceFlight?13:profile.nativeTravelSpeeds?.fly??(profile.nativeGaits?.fly?.nominalSpeedMps||0)*Math.abs(scale))*statFactor,nominalMaxSpeedMps:profile.nativeMaxSpeedMps,worldScale:Math.abs(scale),supportedModes:rig.heroMotion?.availableModes||['rest','stand',...Object.keys(profile.nativeGaits||{})],canJump:!!profile.nativeJump,canGallop:!!profile.nativeGaits?.gallopLeft,canFly:!!profile.nativeCanFly||referenceFlight,speedBasis:profile.nativeKind==='horse'?'Gameplay travel with bounded collected animation cadence; not contact-matched':profile.nativeSpeedBasis||'Configured source animation travel reference'};
 }
 
 export function tickNativeHorse(rig,speed,dt,turn=0){
@@ -184,7 +189,7 @@ export function tickNativeHorse(rig,speed,dt,turn=0){
  if(!Number.isFinite(dt)||dt<0)throw new Error('Invalid native update delta');
  const actual=Math.max(0,Math.min(rig.nativeFlying&&cap.canFly?cap.flightMaxSpeedMps:cap.maxSpeedMps,Math.abs(Number(speed)||0))),gaits=rig.profile.nativeGaits||{};
  if(rig.heroJumpGrace>0)rig.heroJumpGrace=Math.max(0,rig.heroJumpGrace-dt);
- if(motion.mode==='jump'){motion.set('jump',{speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate:1});const state=motion.state;rig.phase=state.phase01;rig.heroJumpAge=state.gait==='jump'?state.jumpTimeS:null;rig.heroJumpExtra=state.bodyLiftM*cap.worldScale;rig.heroRate=1;if(state.gait!=='jump')rig.heroJumpGrace=.20;return state;}
+ if(motion.mode==='jump'){motion.set('jump',{speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate:1});const state=motion.state;rig.phase=state.phase01;rig.heroJumpAge=state.gait==='jump'?state.jumpTimeS:null;rig.heroJumpExtra=state.bodyLiftM*cap.worldScale*(rig.nativeJumpHeightScale||1);rig.heroRate=1;if(state.gait!=='jump')rig.heroJumpGrace=.20;return state;}
  let gait='stand',rate=1,record=null;
  // Gather the Black Dragon's wings during the last part of a requested
  // landing. Physics stays airborne until contact; a low hover keeps flapping.
@@ -224,7 +229,8 @@ export function sampleNativeJumpLift(record,time){
  for(let i=1;i<keys.length;i++){if(time<=keys[i][0]){const a=keys[i-1],b=keys[i],t=(time-a[0])/(b[0]-a[0]);return a[1]+(b[1]-a[1])*t;}}
  return keys.at(-1)[1];
 }
-export function startNativeHorseJump(rig){
+export function startNativeHorseJump(rig,{heightScale=1}={}){
  const motion=rig?.heroMotion;if(!rig?.profile?.nativeJump||!motion||motion.mode==='jump')return false;
+ rig.nativeJumpHeightScale=Number.isFinite(heightScale)?Math.max(.8,Math.min(1.5,heightScale)):1;
  rig.heroJumpAge=0;rig.heroJumpExtra=0;motion.set('jump');return true;
 }
