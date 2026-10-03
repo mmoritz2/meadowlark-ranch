@@ -115,6 +115,10 @@ export function install(G){
   s.reports=s.reports||[];
   s.chatRoom=s.chatRoom||'club';
   s.coopClaims=s.coopClaims||{};
+  s.coopByClub=s.coopByClub||{};
+  s.coopClubClaims=s.coopClubClaims||{};
+  const scope=coopScope(s);
+  if(scope&&!s.coopClaimsScoped){for(const [key,value]of Object.entries(s.coopClaims))if(value)s.coopClubClaims[scope+'|'+key]=true;s.coopClaimsScoped=true;}
   s.giftDay=s.giftDay||''; s.giftN=s.giftN||0;
   s.likesGiven=s.likesGiven||{};
   s.ranchLikes=s.ranchLikes||0;
@@ -309,11 +313,11 @@ export function install(G){
  }
  /* The club owner (whoever's code the room is) may publish a ban; everyone honours it locally.
     It is the honour system — the broker cannot enforce anything — and the panel says so. */
- /* "Owner" is simply: this is your own private room, not the Commons. The broker cannot
-    verify that, so a ban is a request every honest client honours — the panel says so. */
- function amOwner(){const s=S.fresh()||{};return !!(N.net.club&&!s.pubWorld&&N.net.club!==COMMONS);}
+ /* Only the recorded founder can request moderation in that club's own room.
+    The broker cannot enforce it; visiting a private room never grants ownership. */
+ function amOwner(){const s=S.fresh()||{};return !!(N.net.club&&N.net.club!==COMMONS&&G.clubs?.identity(s)?.code===N.net.club&&G.clubs?.isLeader(s));}
  function banRider(name){
-  if(!name)return;
+  if(!name||!amOwner())return;
   ping({ban:name});
   setBlocked(name,true);
   toast('⛔ '+name+' banned from club "'+(N.net.club||'')+'" — every rider here who honours the ban drops them.');
@@ -484,6 +488,7 @@ export function install(G){
   return undefined;                                     // a clean club line: the built-in prints it
  });
  function onBan(m,from){
+  const club=G.clubs?.identity();if(!club?.code||club.code!==N.net.club||!(club.founderId?m.id===club.founderId:!!club.founder&&from===club.founder))return;
   const who=nm14(m.ban);
   if(who!==me()){ if(remoteByName(who))toast('⛔ '+from+' banned '+who+' from this club.'); return; }
   toast('⛔ '+from+' banned you from club "'+(N.net.club||'')+'".');
@@ -656,25 +661,32 @@ export function install(G){
  W.mapMarkers.push({x:-28.5,z:7.5,glyph:'👁️',label:'Grandstand'});
 
  /* ======================= 12. Co-operative foraging ======================= */
- const coopData={};                                     // week -> {name:count}
- function coopWeek(){return coopData[week()]=coopData[week()]||{};}
+ const coopData={};                                     // current scope -> week -> {name:count}
+ function coopScope(s=S.fresh()||{}){const c=G.clubs?.identity(s)?.code||N.net.club||s.club||'';return /^[A-Za-z0-9_-]{1,64}$/.test(c)&&c!=='prototype'&&!Object.prototype.hasOwnProperty.call(Object.prototype,c)?c:'';}
+ function coopWeek(){const s=S.fresh()||{},c=coopScope(s),w=s.coopByClub?.[c]?.[week()]||{};for(const k of Object.keys(coopData))delete coopData[k];if(c)coopData[c]={[week()]:{...w}};return {...w};}
  function coopTotal(){const w=coopWeek();return Object.keys(w).reduce((n,k)=>n+(w[k]||0),0);}
- function coopMine(){const s=S.fresh()||{};return (s.life&&s.life.forage)||0;}
+ function coopMine(){return coopWeek()[me()]||0;}
+ function coopClaimed(s,id){return !!s.coopClubClaims?.[coopScope(s)+'|'+week()+':'+id];}
+ function saveCoop(name,value){
+  if(!name||name==='prototype'||Object.prototype.hasOwnProperty.call(Object.prototype,name))return;
+  S.sync(s=>{const c=coopScope(s);if(!c)return;s.coopByClub=s.coopByClub||{};const club=s.coopByClub[c]||(s.coopByClub[c]={}),w=club[week()]||(club[week()]={});if(!(name in w)&&Object.keys(w).length>=128)return;w[name]=Math.max(w[name]||0,Math.min(9999,value));for(const old of Object.keys(club).sort().reverse().slice(8))delete club[old];});
+ }
+ function subscribeCoop(){const c=coopScope();if(c)N.subscribe('srf1/'+c+'/coop/#');}
  function publishCoop(){
-  const w=week();
-  N.publish('srf1/{club}/coop/'+w+'/'+topicName(),{n:me(),v:coopWeek()[me()]||0},{retain:true});
+  const c=coopScope();if(!c)return;
+  N.publish('srf1/'+c+'/coop/'+week()+'/'+topicName(),{n:me(),v:coopMine()},{retain:true});
  }
  function onCoop(topic,m){
   const tp=topic.split('/');                            // srf1/<club>/coop/<week>/<name>
-  const wk=tp[3]||week(), name=nm14(m.n||tp[4]||'Rider');
-  if(typeof m.v!=='number')return;
+  const wk=tp[3], name=nm14(m.n||tp[4]||'Rider');
+  if(tp.length!==5||tp[0]!=='srf1'||tp[1]!==coopScope()||wk!==week()||name===me()||!Number.isFinite(m.v)||m.v<0)return;
   const s=S.fresh()||{}; if(isBlocked(s,name))return;
-  (coopData[wk]=coopData[wk]||{})[name]=Math.max(0,Math.min(9999,Math.round(m.v)));
+  saveCoop(name,Math.round(m.v));
   refreshQuests();
  }
  /* Picking forage: tell the club so their copy of the same bush empties too. */
  G.on('forage',(item,f)=>{
-  const w=coopWeek(); w[me()]=(w[me()]||0)+1;
+  saveCoop(me(),coopMine()+1);
   if(f&&f.g)ping({fg:[String(item).slice(0,12),+f.g.position.x.toFixed(0),+f.g.position.z.toFixed(0)]});
   publishCoop();
  });
@@ -689,9 +701,10 @@ export function install(G){
  function claimCoop(goalId){
   const g=COOP_GOALS.find(g=>g.id===goalId); if(!g)return;
   const wk=week();
+  if(!coopScope()||!coopMine()){toast('🧺 Pick something for this club before claiming.');return;}
   if(coopTotal()<g.goal){toast('🧺 Not there yet — '+coopTotal()+'/'+g.goal+'.');return;}
   let ok=false;
-  S.sync(s=>{ s.coopClaims=s.coopClaims||{}; const k=wk+':'+g.id; if(s.coopClaims[k])return; s.coopClaims[k]=true; M.payReward(s,g.r); ok=true; });
+  S.sync(s=>{s.coopClubClaims=s.coopClubClaims||{};const k=coopScope(s)+'|'+wk+':'+g.id;if(s.coopClubClaims[k])return;s.coopClubClaims[k]=true;M.payReward(s,g.r);ok=true;});
   if(!ok){toast('Already claimed this week.');return;}
   M.refreshWallet(); G.sGem(); toast(g.icon+' '+g.label+' claimed — '+M.rewardLabel(g.r));
   refreshQuests();
@@ -938,13 +951,13 @@ export function install(G){
   let h='<span style="font-size:12px;color:#8c7a63">Everything the club forages this week counts once, for everybody. '
    +'Pick berries beside a club mate and you both see the bush empty.</span>';
   h+=COOP_GOALS.map(g=>{
-   const claimed=(s.coopClaims||{})[week()+':'+g.id];
+   const claimed=coopClaimed(s,g.id);
    const pct=Math.min(100,Math.round(100*total/g.goal));
    return '<div class="qrow'+(claimed?' claimed':'')+'"><span class="qico">'+g.icon+'</span><span class="qmain"><b>'+g.label+'</b>'
     +'<span style="font-size:11px;color:#8c7a63;font-weight:600">'+g.desc+'</span>'
     +'<span class="qbar"><span class="qfill" style="width:'+pct+'%"></span></span></span>'
     +'<span style="font-size:11px;color:#8c7a63">'+total+'/'+g.goal+'</span>'
-    +(claimed?'<span style="font-size:11px">✅</span>':'<button class="claimBtn" data-fx="sp:coop:'+g.id+'" '+(total>=g.goal?'':'disabled')+'>Claim</button>')
+    +(claimed?'<span style="font-size:11px">✅</span>':'<button class="claimBtn" data-fx="sp:coop:'+g.id+'" '+(total>=g.goal&&coopMine()>0?'':'disabled')+'>Claim</button>')
     +'</div>';
   }).join('');
   h+='<b style="font-size:13px;margin-top:6px">🧺 Contributors this week</b>';
@@ -1003,13 +1016,15 @@ export function install(G){
  G.on('connect',()=>{
   N.subscribe('loc/'+regionIdx());
   N.subscribe('party');
-  N.subscribe('srf1/{club}/coop/#');
+  subscribeCoop();
   N.subscribe('srf1/{club}/ranch/#');
   const s=S.fresh()||{};
   if(s.pubChat||s.pubWorld)N.subscribe('srf1/'+COMMONS+'/chat');
   setTimeout(()=>{publishCoop();publishRanch(true);},2000);
  });
  G.on('interval30',()=>{publishRanch();publishCoop();});
+ G.on('clubChanged',()=>{subscribeCoop();publishCoop();refreshQuests();});
+ G.on('clubRoom',()=>{subscribeCoop();});
 
  /* Boot: the module installs after the save has been read, so anything that had to look at
     the save (rooms, the remote cap, the Commons club swap) re-runs here. */
@@ -1030,5 +1045,5 @@ export function install(G){
   startRide,startSync,scheduleEmote,tickSync,get pending(){return pending;},
   startSpectate,stopSpectate,get spectate(){return spec;},
   startTour,endTour,likeRanch,publishRanch,get tour(){return tour;},
-  claimCoop,coopTotal,sendGift,setCommons,regionIdx,ranchPts,FRIEND_MAX,GIFT_CAP,TOUR,SEAT};
+  claimCoop,coopTotal,coopMine,coopScope,coopClaimed,sendGift,setCommons,regionIdx,ranchPts,FRIEND_MAX,GIFT_CAP,TOUR,SEAT};
 }

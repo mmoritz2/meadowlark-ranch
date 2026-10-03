@@ -75,6 +75,8 @@
      'chat'        (m,nm2)                a /chat message (return true to swallow it)
      'message'     (topic,m)              every MQTT message before the built-in dispatch
      'connect'     (club)                 after the built-in subscribes
+     'clubRoom'    (club,previousClub)    before the network room changes; clear room-scoped state
+     'starPoints'  (s,n,why)              inside addSP's save transaction; mutate s without another sync
      'wallet'      (s)                    end of refreshWallet — paint #dustEl/#btokEl/#tokEl, pips
      'courseFinish'({c,ev,stars,RB,pay,dressage,pct?})   after pay is computed
      'courseStart' (course)               end of startCourse / startDressage
@@ -164,8 +166,9 @@ import * as market from './market-summon-keys-pets.js?v=native-roster-1';
 import * as breeding from './breeding.js?v=b20261001b';
 import * as ranch from './ranch.js?v=b20261001b';
 import * as world from './world.js?v=native-roster-1';
-import * as clubs from './clubs-boards.js?v=native-roster-1';
-import * as social from './social-play.js?v=b20261001b';
+import * as clubs from './clubs-boards.js?v=clubhouse-1';
+import * as social from './social-play.js?v=clubhouse-1';
+import * as clubActivities from './club-activities.js?v=clubhouse-1';
 import * as seasons from './seasons.js?v=b20261001b';
 import * as seasonHunts from './season-hunts.js?v=b20261001b';
 import * as seasonQuests from './season-quests.js?v=b20261001b';
@@ -195,10 +198,11 @@ import * as treasures from './hidden-treasures.js?v=b20261001b';   // golden hor
 import * as courseClear from './course-clear.js?v=b20261001b';   // a mown, cleared track on every event course; routes bent round what cannot be cleared
 import * as seFrame from './se-frame.js?v=b20261001b';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use
 import * as seEvents from './se-events.js?v=tack-stats-1';   // Riding Events as towns and a carousel of entry tickets, each event's page with its course map
-import * as seJourney from './se-journey.js?v=b20261001b';   // My Journey as a hub of story and discipline cards, each with its picture and how far along you are
+import * as seJourney from './se-journey.js?v=clubhouse-1';   // My Journey as a hub of story and discipline cards, each with its picture and how far along you are
 import * as seHorses from './se-horses.js?v=b20261001b';   // My Horses as portrait cards: favourites, then each breed with its mastery track
+import * as clubhouseUI from './clubhouse-ui.js?v=clubhouse-1';
 import * as newBreeds from './new-breeds.js?v=native-roster-1';   // more horses: the very rare camouflage horse whose coat takes on the ground it stands on, and a new batch across every rarity
 import * as nativeHorses from './native-horses.js?v=dragon-acting-1';
 import * as petFantasy from './pet-fantasy.js?v=b20261001b';   // fantasy pets: the Emberling dragon, the Mossglow fawn, the wyvern, the griffin cub and friends
 import * as noEmoji from './no-emoji.js?v=b20261001b';   // nothing on the page is an emoji: meaningful ones become drawn icons, the rest go (installed last, so it sees everything)
-export const FEATURES=[stats,roster,newBreeds,nativeHorses,bond,mastery,tack,course,events,story,account,petModels,petFantasy,market,breeding,ranch,world,clubs,social,seasons,seasonHunts,seasonQuests,ev2disc,ev2ladder,courseGuide,wVistas,wFlora,wWater,wAtmos,wQuarters,wPaths,wOutcrops,uikit,ui2horse,ui2shop,ui2compete,ui2hud,ui2club,ui2merge,lookGrade,seHud,seCare,onFoot,seMarket,treasures,courseClear,seFrame,seEvents,seJourney,seHorses,noEmoji];
+export const FEATURES=[stats,roster,newBreeds,nativeHorses,bond,mastery,tack,course,events,story,account,petModels,petFantasy,market,breeding,ranch,world,clubs,social,clubActivities,seasons,seasonHunts,seasonQuests,ev2disc,ev2ladder,courseGuide,wVistas,wFlora,wWater,wAtmos,wQuarters,wPaths,wOutcrops,uikit,ui2horse,ui2shop,ui2compete,ui2hud,ui2club,ui2merge,lookGrade,seHud,seCare,onFoot,seMarket,treasures,courseClear,seFrame,seEvents,seJourney,seHorses,clubhouseUI,noEmoji];

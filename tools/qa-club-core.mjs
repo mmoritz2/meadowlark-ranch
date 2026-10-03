@@ -1,0 +1,46 @@
+/* Two disposable clients and a retained in-memory broker. No browser or real network. */
+import assert from 'node:assert/strict';
+import {install} from '../assets/features/clubs-boards.js';
+import {cleanClubMeta,acceptClubMeta} from '../assets/club-state.js';
+const clone=v=>JSON.parse(JSON.stringify(v));
+globalThis.document={createElement:()=>({}),head:{appendChild(){}},body:{classList:{contains:()=>false}}};
+let week='2026-09-28';const clients=[],retained=new Map(),pending=[];
+const matches=(pattern,topic)=>pattern.endsWith('/#')?topic.startsWith(pattern.slice(0,-1)):pattern===topic;
+function flush(){for(let count=0;pending.length;count++){assert(count<1000,'No publication loop');const [to,topic,m]=pending.shift();if(m.id!==to.net.net.id)to.run('message',topic,clone(m));}}
+function client(id,name,code='lake',seed){
+ let saved=clone(seed||{playerName:name,club:code,horses:[],sp:{week:'personal-week',pts:0},coins:0}),writing=false;const ensures=[],events=new Map(),subs=new Set(),sent=[];
+ const G={$:()=>null,toast(){},tables:{BREEDS3:[],NEIGHBOURS:[],EVENTS3:[]},horse:{sourceRule(){},grantHorse(s,key){const h={breed:key,name:key};s.horses.push(h);return h;},refreshTack(){},reloadHorses(){}},course:{weeklyFeatured:()=>[]},quest:{addAch(){}},sGem(){},sNeigh(){},time:{isoWeekKey:()=>week,weekKey:()=> 'personal-week'},ui:{rerender(){},onlineSection(){},lbTab(){},action(){},openOnline(){},renderLB(){}},money:{payReward(s,r){s.payments=(s.payments||0)+1;s.coins+=(r.c||0);},rewardLabel:()=>'',refreshWallet(){}}};
+ G.on=(key,fn)=>{const a=events.get(key)||[];a.push(fn);events.set(key,a);};G.run=(key,...args)=>{for(const f of events.get(key)||[])if(f(...args)===true)return true;};
+ G.save={ensure(fn){ensures.push(fn);fn(saved);},fresh(){const s=clone(saved);for(const f of ensures)f(s);return s;},sync(fn){assert(!writing,'No nested save transaction');writing=true;try{const s=G.save.fresh();fn(s);saved=clone(s);}finally{writing=false;}},flag(s,k){s.flags=s.flags||{};if(s.flags[k])return false;s.flags[k]=true;return true;}};
+ G.net={net:{id,club:code,client:{connected:true,end(){this.connected=false;}}},lbData:{},myName:()=>G.save.fresh().playerName,subscribe(topic){subs.add(topic);for(const [t,m]of retained)if(matches(topic,t))pending.push([G,t,m]);},publish(topic,obj,opts){if(!G.net.net.client?.connected)return false;const m={id,n:G.net.myName(),...obj};sent.push([topic,clone(m)]);if(opts?.retain)retained.set(topic,m);for(const peer of clients)if([...peer.subs].some(p=>matches(p,topic)))pending.push([peer.G,topic,m]);return true;},netConnect(){G.run('clubRoom',saved.club,G.net.net.club);G.net.net.club=saved.club;}};
+ const wrapper={G,subs,sent,raw:()=>clone(saved),rename(n){G.save.sync(s=>{s.playerName=n;});},credit(n){G.save.sync(s=>G.run('starPoints',s,n,'qa'));}};clients.push(wrapper);install(G);return wrapper;
+}
+const A=client('pa','Ada','lake',{playerName:'Ada',club:'lake',clubMeta:{name:'Lake Riders',founder:'Ada'},horses:[],coins:0}),B=client('pb','Bea');
+assert(B.G.clubs.identity().pendingJoin);assert(!B.G.clubs.updateIdentity({name:'Accidental takeover'}),'Unknown joined club cannot be claimed');
+assert(A.G.clubs.updateIdentity({name:'Lake Riders',motto:'Ride together',crest:'star',color:'#436b99',pub:true}));flush();
+assert.equal(B.G.clubs.identity().name,'Lake Riders');assert(A.G.clubs.isLeader());assert(!B.G.clubs.isLeader());
+A.credit(10);B.credit(7);A.G.clubs.publishClubCard();B.G.clubs.publishClubCard();flush();assert.equal(A.G.clubs.clubTotal(),17);assert.equal(B.G.clubs.clubTotal(),17);
+A.G.run('message','srf1/lake/members/pb',{id:'pb',n:'Bea',sp:999999,wk:'2026-09-21',last:Date.now()+1});assert.equal(A.G.clubs.clubTotal(),17,'Late prior-week card cannot erase current contribution');
+assert(!B.G.clubs.updateIdentity({name:'Wrong'}));assert(!B.G.clubs.saveNotice('Wrong'));
+assert(A.G.clubs.setRole('Bea','officer'));flush();assert(B.G.clubs.canManage());assert(!A.G.clubs.canManageName('Bea','different-id'),'Another rider with the same officer name gets no role');assert(!A.G.clubs.canManageName('Bea'),'Name-only message cannot impersonate an ID-backed officer');assert(B.G.clubs.saveNotice('Saturday ride'));flush();assert.equal(A.G.save.fresh().clubNotice.t,'Saturday ride');A.G.run('message','srf1/lake/notice',{id:'different-id',n:'Bea',t:'False officer notice',at:Date.now()+1000});assert.equal(A.G.save.fresh().clubNotice.t,'Saturday ride');
+B.rename('Bee');assert(B.G.clubs.canManage(),'Officer permission follows stable ID after name change');assert(B.G.clubs.saveNotice('Sunday ride'));flush();
+A.rename('Adaline');assert(A.G.clubs.isLeader(),'Founder permission follows stable ID after name change');A.G.clubs.publishClubCard();flush();const C=client('pc','Cora');flush();assert.equal(C.G.clubs.identity().founderId,'pa','New joiner accepts stable founder ID after founder rename');
+A.G.run('message','srf1/lake/meta',{id:'pretender',n:'Ada',f:'Ada',fid:'pa',nm:'Hijack',rev:100});assert.equal(A.G.clubs.identity().name,'Lake Riders');
+A.G.run('message','srf1/lake/members/ancient',{id:'ancient',n:'Old',sp:999999,last:Date.now()});assert.equal(A.G.clubs.clubTotal(),17,'Untagged old points never count');
+const reloaded=client('pb','Bee','lake',B.raw());flush();assert.equal(reloaded.G.clubs.spOf(),7,'Local contributions survive reload');
+A.G.clubs.updateIdentity({pub:false});flush();assert(!B.G.clubs.clubDir.lake,'Unlisting removes retained public directory card');
+B.G.run('message','srf1/dir/lake',{id:'pa',fid:'pa',nm:'Old listed club',wk:week,pub:true,rev:1});assert(!B.G.clubs.clubDir.lake,'Old listing cannot undo a newer unlist');
+B.G.run('message','srf1/dir/legacy',{id:'old',nm:'Untagged stale points',sp:999999});assert(!B.G.clubs.clubDir.legacy,'Untagged directory cards are excluded');
+A.G.run('clubRoom','meadowlark-commons','lake');A.G.net.net.club='meadowlark-commons';A.G.clubs.publishClubCard();flush();assert.equal(A.G.clubs.identity().code,'lake');assert(!A.sent.some(([t])=>t==='srf1/meadowlark-commons/meta'),'Commons never receives private identity');
+A.G.run('message','srf1/clubs/forest',{id:'host',nm:'Forest advertised',wk:week,sp:40,mem:2});assert(A.G.clubs.joinClub('forest'));assert.equal(A.G.clubs.clubRows().filter(r=>r.n==='Forest advertised').length,0,'Joined club has only its own row, not a duplicate cached advertised row');assert.equal(A.G.clubs.spOf(),0);A.credit(4);assert.equal(A.G.clubs.spOf(),4);A.G.run('message','srf1/lake/meta',{id:'pa',n:'Ada',f:'Ada',fid:'pa',nm:'Old room',rev:200});assert.equal(A.G.clubs.identity().code,'forest');assert.notEqual(A.G.clubs.identity().name,'Old room');
+assert(A.G.clubs.joinClub('lake'));assert.equal(A.G.clubs.spOf(),10,'Rejoin restores only this club’s existing contribution');assert.equal(A.G.clubs.clubTotal(),17);
+week='2026-10-05';A.G.clubs.clubWeekRoll();assert.equal(A.G.clubs.clubTotal(),0,'Monday excludes all old contribution cards');A.credit(3);assert.equal(A.G.clubs.clubTotal(),3);A.G.clubs.publishClubCard();flush();assert.equal(B.G.clubs.clubTotal(),3);
+A.G.save.sync(s=>{s.clubRecords.lake.last={week:'2026-09-28',total:320,rank:5,claimed:false};s.clubWeekLast={...s.clubRecords.lake.last};});assert(A.G.clubs.claimClubChest());const payments=A.raw().payments;assert(!A.G.clubs.claimClubChest());A.G.clubs.joinClub('forest');A.G.clubs.joinClub('lake');assert(!A.G.clubs.claimClubChest());assert.equal(A.raw().payments,payments,'Chest cannot be re-claimed by leaving/rejoining');
+const archiveReload=client('pa','Adaline','lake',A.raw());assert(!archiveReload.G.clubs.claimClubChest(),'Chest archive survives reload');
+A.G.save.sync(s=>A.G.run('interval30',s,Date.now()));assert.equal(A.G.clubs.spOf(),3,'Periodic upkeep preserves current transaction');
+assert(A.G.clubs.leaveClub());assert.equal(A.G.clubs.identity().code,'');assert.equal(A.G.clubs.memberRows().length,0);assert(A.G.clubs.identity().canCreate);assert(A.G.clubs.createClub({name:'Fresh Club'}));assert(A.G.clubs.isLeader());
+assert(!A.G.clubs.joinClub('constructor'));assert.equal({}.polluted,undefined);
+const pendingClient=client('pending','Newcomer','new-room');pendingClient.G.run('message','srf1/new-room/notice',{id:'newfounder',n:'Founder',t:'Retained notice first',at:Date.now()});pendingClient.G.run('message','srf1/new-room/meta',{id:'newfounder',n:'Founder',f:'Founder',fid:'newfounder',nm:'New Room',rev:1});assert.equal(pendingClient.G.save.fresh().clubNotice.t,'Retained notice first','One pending notice replays only after founder authorization');
+const legacyPersonal=client('personal','Solo','mr-abcdef');assert(legacyPersonal.G.clubs.identity().canCreate);assert(legacyPersonal.G.clubs.updateIdentity({name:'Solo Club'}),'Legacy unnamed personal room remains creatable');const safe=cleanClubMeta({roles:JSON.parse('{"__proto__":"officer","constructor":"officer"}')});assert(!Object.hasOwn(safe.roles,'__proto__'));assert(!Object.hasOwn(safe.roles,'constructor'));
+assert(acceptClubMeta(cleanClubMeta(),{founder:'Old Name',founderId:'pa',senderId:'pa',senderName:'New Name',revision:1}));
+console.log('PASS club core: two-client identity/roles, stable IDs, current-week contributions, reload, Commons isolation, join/leave, directory tombstone, chest idempotence, transaction safety');

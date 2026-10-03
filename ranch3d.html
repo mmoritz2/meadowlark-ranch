@@ -662,7 +662,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js';
 import {installWorldPhotoscans} from './assets/world-photoscans.js';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=native-rider-1';
-import {FEATURES} from './assets/features/index.js?v=tack-stats-1';
+import {FEATURES} from './assets/features/index.js?v=clubhouse-1';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -8932,6 +8932,7 @@ function addSP(s,n,why){ensureWeek(s);
  s.wk.sp=(s.wk.sp||0)+n;
  const ds=new Date().toDateString();
  if(s.wk.lastDay!==ds){s.wk.lastDay=ds;s.wk.days=(s.wk.days||0)+1;}
+ G.run('starPoints',s,n,why);                          // club contributions use their own Monday UTC ledger
 }
 function weeklyFeatured(){
  const wk=weekKey(); let h=0; for(const ch of wk)h=(h*31+ch.charCodeAt(0))>>>0;
@@ -10690,6 +10691,13 @@ async function netConnect(){
  }
  if(net.client){try{net.client.end(true);}catch(e){}net.client=null;}
  const club=myClub().toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,24)||myClub();
+ const previousClub=net.club;
+ G.run('clubRoom',club,previousClub);
+ if(previousClub!==club){
+  for(const id of Object.keys(remotes)){scene.remove(remotes[id].parts.group);delete remotes[id];}
+  for(const key of Object.keys(lbData))delete lbData[key];
+  trailOffer=null;
+ }
  net.club=club;
  try{
   net.client=mqtt.connect('wss://broker.emqx.io:8084/mqtt',{clientId:'srf_'+net.id+'_'+Math.random().toString(36).slice(2,6),clean:true,connectTimeout:9000,reconnectPeriod:5000});
@@ -10713,8 +10721,9 @@ async function netConnect(){
 function netOnMessage(topic,payload){
   let m;
   try{m=JSON.parse(typeof payload==='string'?payload:payload.toString());}catch(e){return;}
-  if(!m||m.id===net.id)return;
-  if(G.run('message',topic,m)===true)return;            // a package handled its own topic
+ if(!m||m.id===net.id)return;
+ if(G.run('message',topic,m)===true)return;            // a package handled its own topic
+ if(topic.startsWith('srf1/')&&topic.split('/')[1]!==net.club)return; // delayed packets from a former room cannot enter this one
   if(topic.endsWith('/pos'))remoteUpdate(m);
   else if(topic.endsWith('/chat')&&typeof m.t==='string'){
    const nm2=String(m.n||'Rider').slice(0,14);

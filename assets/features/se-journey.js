@@ -121,8 +121,8 @@ export function install(G){
    isNew:q.idx===0&&!(q.prog>0),sig:'f:'+(q.active||'')};
  };
  F.coop=s=>{
-  const SP=G.social, total=SP.coopTotal(), cl=s.coopClaims||{};
-  const goals=SP.COOP_GOALS.map(g=>({g,claimed:!!cl[wk()+':'+g.id],ready:total>=g.goal&&!cl[wk()+':'+g.id]}));
+  const SP=G.social, total=SP.coopTotal(), mine=SP.coopMine();
+  const goals=SP.COOP_GOALS.map(g=>{const claimed=SP.coopClaimed(s,g.id);return {g,claimed,ready:mine>0&&total>=g.goal&&!claimed};});
   const top=SP.COOP_GOALS[SP.COOP_GOALS.length-1].goal, nxg=goals.find(o=>!o.claimed), readyN=goals.filter(o=>o.ready).length;
   return {pct:clampPct(100*total/top),x:total,y:top,sub:nxg?total+'/'+nxg.g.goal+' foraged this week':'Both baskets claimed',status:'The club has foraged '+total+' this week',ready:readyN>0,readyN};
  };

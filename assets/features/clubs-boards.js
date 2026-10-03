@@ -13,6 +13,7 @@
    The broker is public and unauthenticated: club names, notices, presence and chat are all
    honour-system. Every remote string is truncated here, the own-echo guard upstream is left
    alone, and nothing about a save is ever published. */
+import {CLUB_COMMONS,CLUB_CRESTS,CLUB_COLORS,clubCode,cleanClubMeta,ensureClubState,activateClub,loadClub,stashClub,creditClubPoints,ownClubPoints,acceptClubMeta} from '../club-state.js?v=clubhouse-1';
 export const id='clubs-boards';
 export function install(G){
  const {$,toast}=G, S=G.save, M=G.money, T=G.tables, U=G.ui, N=G.net;
@@ -27,6 +28,7 @@ export function install(G){
     closes its books at the same instant wherever the riders are. The personal week
     (weekKey) is a local Jan-1 bucket and is deliberately left alone. */
  const CW=()=>G.time.isoWeekKey();
+ function syncClub(fn){return S.sync(s=>{fn(s);stashClub(s);});}
 
  /* Star Point thresholds for the club chest. Star Equestrian puts tier 3 at 20,000, tier 4
     at 50,000 and tier 5 at 100,000 — numbers from an economy roughly sixty times this one,
@@ -124,6 +126,9 @@ export function install(G){
   s.photoClaims=s.photoClaims||{};
   s.photoFrame=!!s.photoFrame;
   s.stats=s.stats||{};
+  const first=s.ridingClub===undefined;const record=ensureClubState(s,CW(),G.time.weekKey());
+  if(first&&record&&!record.meta.founder&&typeof location!=='undefined'&&new URLSearchParams(location.search).has('club'))record.pendingJoin=true;
+  loadClub(s,record,CW());
  });
 
  /* =============================== 3. Breeds =============================== */
@@ -139,95 +144,171 @@ export function install(G){
  }
 
  /* =============================== 4. Club identity & the net =============================== */
- const clubMeta={}, clubMembers={}, clubBoard={}, clubDir={}, photoData={};
+ const clubMeta={}, clubMembers={}, clubBoard={}, clubDir={}, dirVersions={}, photoData={};
  const clubLog=[];                                           // the chat log, newest last
+ let pendingNotice=null;
  let clubDirOpen=false;                                      // the 'Find a club' drawer in 🌐 Club
- function meta(s){return (s&&s.clubMeta)||{name:'',founder:'',motto:'',created:0,pub:false};}
- function clubName(s){const m=meta(s);return m.name||clubMeta.name||'';}
- function isFounder(s){const m=meta(s);return !m.founder||m.founder===N.myName();}
+ function record(s){s=s||S.fresh()||{};return s.clubRecords?.[s.ridingClub]||null;}
+ function identity(s){s=s||S.fresh()||{};const r=record(s),m=cleanClubMeta(r?.meta||s.clubMeta);return {code:s.ridingClub||'',...m,pendingJoin:!!r?.pendingJoin&&!m.founder,canCreate:!m.founder&&!r?.pendingJoin};}
+ function meta(s){return identity(s);}
+ function clubName(s){return identity(s).name;}
+ function isLeader(s){const m=identity(s);return !!m.founder&&(m.founderId?m.founderId===N.net.id:m.founder===N.myName());}
+ function canManage(s){return isLeader(s)||roleOf(N.myName(),s,N.net.id)==='officer';}
+ function canManageName(name,id,s){return ['founder','officer'].includes(roleOf(name,s,id));}
+ const isFounder=isLeader;
  function online(){return !!(N.net.client&&N.net.client.connected);}
-
- N.subscribe('meta');
- N.subscribe('notice');
- N.subscribe('srf1/{club}/members/#');
- N.subscribe('srf1/{club}/photo/#');
- N.subscribe('srf1/clubs/#');
- N.subscribe('srf1/dir/#');
-
+ function roleOf(name,s,id){
+  const m=identity(s);if(m.founderId?id===m.founderId:name===m.founder)return 'founder';
+  if(id&&Object.hasOwn(m.roleIds,id))return m.roleIds[id];
+  // A name attached to an ID-backed appointment never grants a different ID that role.
+  if(Object.hasOwn(m.roleOwners,name))return 'member';
+  if(Object.entries(record(s)?.members||{}).some(([key,r])=>r.n===name&&Object.hasOwn(m.roleIds,key)))return 'member';
+  return Object.hasOwn(m.roles,name)?m.roles[name]:'member';
+ }
+ function memberRows(s){
+  s=s||S.fresh()||{};if(!identity(s).code)return [];
+  const rows=new Map(),now=Date.now();
+  for(const [id,r] of Object.entries(record(s)?.members||{})){
+   if(r.left||id===N.net.id||r.n===N.myName())continue;
+   const row={name:r.n,sp:r.wk===CW()?Math.max(0,+r.sp||0):0,role:roleOf(r.n,s,id),id,online:now-r.last<150000,last:r.last||0,me:false};
+   if(!rows.has(row.name)||rows.get(row.name).last<row.last)rows.set(row.name,row);
+  }
+  rows.set(N.myName(),{name:N.myName(),sp:spOf(s),role:roleOf(N.myName(),s,N.net.id),id:N.net.id,online:online(),last:now,me:true});
+  return [...rows.values()].sort((a,b)=>b.sp-a.sp||a.name.localeCompare(b.name));
+ }
+ function hydrateClub(){
+  const s=S.fresh()||{};
+  for(const code of Object.keys(clubDir))if(clubDir[code].wk!==CW())delete clubDir[code];
+  for(const k of Object.keys(clubMeta))delete clubMeta[k];Object.assign(clubMeta,identity(s));
+  for(const k of Object.keys(clubMembers))delete clubMembers[k];
+  for(const r of memberRows(s))if(!r.me)clubMembers[r.name]={n:r.name,sp:r.sp,last:r.last};
+  clubLog.length=0;for(const r of (s.chatLog||[]))clubLog.push({n:r.n,t:r.t,at:r.at,mine:!!r.m});
+ }
+ function subscribeClub(code){if(!code)return;for(const topic of ['meta','notice','members/#','photo/#'])N.subscribe('srf1/'+code+'/'+topic);}
+ function publishToClub(topic,data,opts={retain:true}){const code=identity().code;return code?N.publish('srf1/'+code+'/'+topic,data,opts):false;}
+ function changeClub(code){
+  code=clubCode(code);if(code===CLUB_COMMONS)return false;
+  const previous=identity().code;if(code===previous)return true;
+  if(previous&&online())N.publish('srf1/'+previous+'/members/'+encodeURIComponent(N.net.id),{n:N.myName(),left:true,last:Date.now(),wk:CW(),sp:spOf()},{retain:true});
+  syncClub(s=>{activateClub(s,code,CW(),G.time.weekKey());});
+  // The inline boards are room-scoped and must not leak between memberships.
+  for(const k of Object.keys(N.lbData||{}))delete N.lbData[k];
+  for(const k of Object.keys(photoData))delete photoData[k];pendingNotice=null;hydrateClub();subscribeClub(code);
+  G.run('clubChanged',code,previous);return true;
+ }
+ function joinClub(code){
+  code=clubCode(code);if(!code||code===CLUB_COMMONS)return false;
+  changeClub(code);syncClub(s=>{s.club=code;s.pubWorld=false;s.clubPriv=code;});
+  if(online())N.netConnect();else toast('Club joined. Connect to ride with its members.');
+  U.rerender('onlinePanel');return true;
+ }
+ function leaveClub(){
+  const old=identity().code;if(!old)return false;changeClub('');
+  syncClub(s=>{s.club='';s.clubPriv='';s.pubWorld=false;});
+  if(N.net.client){try{N.net.client.end(true);}catch(e){}N.net.client=null;}
+  U.rerender('onlinePanel');toast('You left the club. Your horses and rewards stay with you.');return true;
+ }
+ function createClub(patch={}){
+  if(!String(patch.name||'').trim()){toast('Give your club a name first.');return false;}
+  const code='mr-'+String(N.net.id||'rider').replace(/[^a-z0-9]/gi,'').slice(-10).toLowerCase()+'-'+Math.random().toString(36).slice(2,7);
+  changeClub(code);syncClub(s=>{record(s).pendingJoin=false;s.club=code;s.pubWorld=false;s.clubPriv=code;});
+  const ok=updateIdentity(patch);if(online())N.netConnect();return ok;
+ }
+ function updateIdentity(patch={}){
+  let m=identity();if(m.founder&&!isLeader()){toast('Only the founder can edit club identity.');return false;}
+  if(!m.code)return createClub(patch);
+  if(m.pendingJoin){toast('Waiting for this club’s founder details. Connect to load them.');return false;}
+  const next=cleanClubMeta({...m,...patch,founder:N.myName(),founderId:m.founderId||N.net.id,created:m.created||Date.now(),revision:m.revision+1,roles:m.roles,roleIds:m.roleIds,roleOwners:m.roleOwners});
+  syncClub(s=>{s.clubMeta=next;record(s).pendingJoin=false;});hydrateClub();publishClubCard();U.rerender('onlinePanel');return true;
+ }
+ function setRole(name,role){
+  name=String(name||'').slice(0,14);if(!isLeader()||!name||name===identity().founder||!['officer','member'].includes(role)||!memberRows().some(r=>r.name===name))return false;
+  const id=memberRows().find(r=>r.name===name)?.id;
+  if(['__proto__','prototype','constructor'].includes(name)||['__proto__','prototype','constructor'].includes(id))return false;
+  syncClub(s=>{
+   const m=s.clubMeta;m.roles=m.roles||{};m.roleIds=m.roleIds||{};m.roleOwners=m.roleOwners||{};
+   // Clear old display-name aliases for this same rider before replacing the appointment.
+   if(id)for(const [oldName,owner] of Object.entries(m.roleOwners))if(owner===id){delete m.roles[oldName];delete m.roleOwners[oldName];}
+   if(role==='officer'){m.roles[name]='officer';if(id){m.roleIds[id]='officer';m.roleOwners[name]=id;}}
+   else{delete m.roles[name];delete m.roleOwners[name];if(id)delete m.roleIds[id];}m.revision++;
+  });
+  hydrateClub();publishClubCard();U.rerender('onlinePanel');return true;
+ }
+ N.subscribe('srf1/clubs/#');N.subscribe('srf1/dir/#');
  function publishClubCard(){
-  const s=S.fresh(); if(!s||!online())return false;
-  const m=meta(s);
-  N.publish('meta',{nm:String(m.name||'').slice(0,NAME_MAX),f:String(m.founder||'').slice(0,14),mo:String(m.motto||'').slice(0,90),at:m.created||Date.now()},{retain:true});
-  N.publish('srf1/{club}/members/'+N.myName(),{sp:spOf(s),last:Date.now(),h:(s.horses||[]).length},{retain:true});
-  const tot=clubTotal(s), n=memberCount();
-  N.publish('srf1/clubs/'+(N.net.club||''),{nm:String(m.name||N.net.club||'').slice(0,NAME_MAX),sp:tot,mem:n,wk:CW()},{retain:true});
-  if(m.pub)N.publish('srf1/dir/'+(N.net.club||''),{nm:String(m.name||'').slice(0,NAME_MAX),mem:n,sp:tot,wk:CW()},{retain:true});
+  const s=S.fresh();if(!s||!online())return false;const m=identity(s);if(!m.code)return false;
+  if(isLeader(s))publishToClub('meta',{nm:m.name,f:m.founder,fid:m.founderId,mo:m.motto,at:m.created,pub:m.pub,crest:m.crest,color:m.color,rev:m.revision,roles:m.roles,roleIds:m.roleIds,roleOwners:m.roleOwners});
+  publishToClub('members/'+encodeURIComponent(N.net.id),{sp:spOf(s),wk:CW(),last:Date.now(),h:(s.horses||[]).length});
+  const card={nm:m.name||m.code,sp:clubTotal(s),mem:memberCount(),wk:CW(),crest:m.crest,color:m.color};
+  N.publish('srf1/clubs/'+m.code,card,{retain:true});
+  if(isLeader(s))N.publish('srf1/dir/'+m.code,{...card,pub:m.pub,rev:m.revision,f:m.founder,fid:m.founderId},{retain:true});
   return true;
  }
- function pinNotice(text){
-  const t=String(text||'').slice(0,NOTICE_MAX), at=Date.now(), by=N.myName();
-  S.sync(sv=>{sv.clubNotice={t,by,at};sv.clubSeen=at;});
-  N.publish('notice',{t,at},{retain:true});
-  return t;
+ function saveNotice(text){
+  if(!canManage()){toast('Only the founder or an officer can pin a notice.');return false;}
+  const t=String(text||'').slice(0,NOTICE_MAX),at=Date.now(),by=N.myName();
+  syncClub(s=>{s.clubNotice={t,by,at};s.clubSeen=at;});publishToClub('notice',{t,at});U.rerender('onlinePanel');return true;
  }
+ function pinNotice(text){return saveNotice(text)?String(text||'').slice(0,NOTICE_MAX):false;}
+ function receiveNotice(m,queue=true){
+  const by=String(m.n||'Rider').slice(0,14),at=clamp(+m.at||0,0,Date.now()+30000);
+  if(!canManageName(by,m.id)){
+   if(queue&&(!pendingNotice||pendingNotice.at<=at))pendingNotice={id:String(m.id||'').slice(0,64),n:by,t:String(m.t||'').slice(0,NOTICE_MAX),at};
+   return;
+  }
+  if(at<(S.fresh()?.clubNotice?.at||0))return;
+  syncClub(s=>{s.clubNotice={t:String(m.t).slice(0,NOTICE_MAX),by,at};});U.rerender('onlinePanel');
+ }
+
+ G.on('starPoints',(s,n)=>{
+  creditClubPoints(s,n,CW(),G.time.weekKey());
+  if(identity(s).code&&s.clubWeek?.week===CW()){const rank=myClubRank(s);s.clubWeek.total=clubTotal(s);s.clubWeek.rank=rank.rank;s.clubWeek.n=memberRows(s).length;stashClub(s);}
+ });
+ G.on('clubRoom',(room,previous)=>{
+  // Commons is a world room; visiting it never changes club membership.
+  if(room!==CLUB_COMMONS&&clubCode(room)!==identity().code)changeClub(room);
+  subscribeClub(identity().code);
+ });
  G.on('message',(topic,m)=>{
-  const club=N.net.club||'';
-  if(topic.endsWith('/meta')&&topic.indexOf('/'+club+'/')>=0){
-   clubMeta.name=String(m.nm||'').slice(0,NAME_MAX); clubMeta.founder=String(m.f||'').slice(0,14);
-   clubMeta.motto=String(m.mo||'').slice(0,90); clubMeta.created=+m.at||Date.now();
-   S.sync(sv=>{sv.clubMeta=sv.clubMeta||{};
-    if(clubMeta.name&&!sv.clubMeta.name)sv.clubMeta.name=clubMeta.name;
-    if(clubMeta.founder&&!sv.clubMeta.founder)sv.clubMeta.founder=clubMeta.founder;
-    if(clubMeta.motto&&!sv.clubMeta.motto)sv.clubMeta.motto=clubMeta.motto;});
-   return true;
+  const parts=topic.split('/'),club=identity().code,scope=parts[1],kind=parts[2];
+  if(scope==='clubs'){
+   const code=clubCode(kind);if(m.wk!==CW())return true;if(code&&code!==club)clubBoard[code]={code,n:String(m.nm||code).slice(0,NAME_MAX),v:clamp(+m.sp||0,0,999999),mem:clamp(+m.mem||1,1,99),wk:String(m.wk||'')};return true;
   }
-  if(topic.indexOf('/members/')>=0){
-   const nm=String(m.n||topic.split('/').pop()||'Rider').slice(0,14);
-   clubMembers[nm]={n:nm,sp:clamp(+m.sp||0,0,999999),last:+m.last||Date.now(),h:clamp(+m.h||0,0,999)};
-   return true;
+  if(scope==='dir'){
+   const code=clubCode(kind);if(!code)return true;
+   const version=dirVersions[code],rev=Math.max(0,+m.rev||0);
+   if((version&&rev<version.rev)||(version?.fid&&version.fid!==m.id)||(m.fid&&m.fid!==m.id))return true;
+   if(m.pub===false){dirVersions[code]={rev,fid:m.fid||version?.fid||''};delete clubDir[code];return true;}
+   if(m.wk!==CW())return true;dirVersions[code]={rev,fid:m.fid||version?.fid||''};
+   if(code)clubDir[code]={code,n:String(m.nm||'').slice(0,NAME_MAX),mem:clamp(+m.mem||1,1,99),v:clamp(+m.sp||0,0,999999),wk:String(m.wk||'')};return true;
   }
-  if(topic.endsWith('/notice')&&typeof m.t==='string'){
-   const t=String(m.t).slice(0,NOTICE_MAX), by=String(m.n||'Rider').slice(0,14), at=+m.at||Date.now();
-   S.sync(sv=>{sv.clubNotice={t,by,at};});
-   if(t)toast('📌 Club notice from '+by+': '+t.slice(0,60));
-   try{U.rerender('onlinePanel');}catch(e){}
-   return true;
+  if(['meta','notice','members','photo'].includes(kind)&&(!club||scope!==club))return true;
+  if(scope!==club||!club)return false;
+  if(kind==='meta'){
+   const current=identity(),incoming=acceptClubMeta(current,{name:m.nm,founder:m.f,founderId:m.fid,motto:m.mo,created:m.at,pub:m.pub,crest:m.crest,color:m.color,revision:m.rev,roles:m.roles,roleIds:m.roleIds,roleOwners:m.roleOwners,senderId:m.id,senderName:m.n});
+   if(incoming){syncClub(s=>{s.clubMeta=incoming;record(s).pendingJoin=false;});hydrateClub();if(pendingNotice){const notice=pendingNotice;pendingNotice=null;receiveNotice(notice,false);}U.rerender('onlinePanel');}return true;
   }
-  if(topic.startsWith('srf1/clubs/')){
-   const code=topic.split('/')[2]||'';
-   if(code&&code!==club)clubBoard[code]={code,n:String(m.nm||code).slice(0,NAME_MAX),v:clamp(+m.sp||0,0,999999),mem:clamp(+m.mem||1,1,99),wk:String(m.wk||'').slice(0,10)};
-   return true;
+  if(kind==='members'){
+   const nm=String(m.n||'Rider').slice(0,14),id=String(m.id||parts[3]||nm).slice(0,64),last=clamp(+m.last||0,0,Date.now()+30000);
+   if(['__proto__','prototype','constructor'].includes(id))return true;
+   // Untagged legacy packets cannot contribute to a Monday-aligned week.
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(String(m.wk||''))||m.wk>CW())return true;
+   syncClub(s=>{const r=record(s),prior=r.members[id];if(prior&&((prior.last||0)>last||(prior.wk===CW()&&m.wk!==CW())))return;r.members[id]={n:nm,sp:clamp(+m.sp||0,0,999999),wk:m.wk,last,h:clamp(+m.h||0,0,999),left:!!m.left};if(s.clubWeek?.week===CW()){const rank=myClubRank(s);s.clubWeek.total=clubTotal(s);s.clubWeek.rank=rank.rank;s.clubWeek.n=memberRows(s).length;}});hydrateClub();return true;
   }
-  if(topic.startsWith('srf1/dir/')){
-   const code=topic.split('/')[2]||'';
-   if(code)clubDir[code]={code,n:String(m.nm||'').slice(0,NAME_MAX),mem:clamp(+m.mem||1,1,99),v:clamp(+m.sp||0,0,999999),wk:String(m.wk||'').slice(0,10)};
-   return true;
-  }
-  if(topic.indexOf('/photo/')>=0){
-   const tp=topic.split('/'), wk=tp[3]||'', nm=String(m.n||tp[4]||'Rider').slice(0,14);
-   if(!wk)return true;
-   photoData[wk]=photoData[wk]||{};
-   photoData[wk][nm]={n:nm,v:clamp(+m.v||0,0,200),th:(typeof m.th==='string'&&m.th.slice(0,12)==='data:image/')?m.th.slice(0,24000):null};
-   return true;
+  if(kind==='notice'&&typeof m.t==='string'){receiveNotice(m);return true;}
+  if(kind==='photo'){
+   const wk=parts[3]||'',nm=String(m.n||parts[4]||'Rider').slice(0,14);if(!wk)return true;
+   photoData[wk]=photoData[wk]||{};photoData[wk][nm]={n:nm,v:clamp(+m.v||0,0,200),th:(typeof m.th==='string'&&m.th.slice(0,12)==='data:image/')?m.th.slice(0,24000):null};return true;
   }
   return false;
  });
- G.on('connect',()=>{setTimeout(()=>{publishClubCard();publishMyPhoto();},1800);});
+ G.on('connect',()=>{subscribeClub(identity().code);setTimeout(()=>{publishClubCard();publishMyPhoto();},1800);});
+ hydrateClub();subscribeClub(identity().code);
 
  /* =============================== 5. The weekly club ladder =============================== */
- function spOf(s){return (s&&s.sp&&s.sp.week===G.time.weekKey())?(s.sp.pts||0):0;}
- function memberCount(){return 1+Object.keys(clubMembers).filter(n=>n!==N.myName()).length;}
- /* The club's week: your Star Points plus every club mate's, read off the retained sp board
-    the game already publishes (and the presence cards, whichever is fresher). */
- function clubTotal(s){
-  s=s||S.fresh()||{};
-  let tot=spOf(s);
-  const me=N.myName(), board=(N.lbData&&N.lbData.sp)||{}, seen={};
-  for(const nm of Object.keys(board)){if(nm===me)continue;seen[nm]=Math.max(seen[nm]||0,+board[nm]||0);}
-  for(const nm of Object.keys(clubMembers)){if(nm===me)continue;seen[nm]=Math.max(seen[nm]||0,clubMembers[nm].sp||0);}
-  for(const nm of Object.keys(seen))tot+=seen[nm];
-  return Math.round(tot);
- }
+ function spOf(s){return ownClubPoints(s||S.fresh()||{},CW());}
+ function memberCount(){return memberRows().length;}
+ function clubTotal(s){s=s||S.fresh()||{};let total=spOf(s);for(const [id,r] of Object.entries(record(s)?.members||{}))if(id!==N.net.id&&r.n!==N.myName()&&r.wk===CW())total+=Math.max(0,+r.sp||0);return Math.round(total);}
  function rivalRows(){
   const wk=CW();
   return RIVAL_CLUBS.map(([nm,str])=>({n:nm,v:Math.round(RIVAL_BASE*str*(0.6+0.8*hsh('club'+wk+nm))),mem:2+Math.round(4*hsh('mem'+wk+nm)),rival:true}));
@@ -235,8 +316,8 @@ export function install(G){
  function clubRows(s){
   s=s||S.fresh()||{};
   const wk=CW(), rows=rivalRows();
-  for(const code of Object.keys(clubBoard)){const c=clubBoard[code];if(c.wk&&c.wk!==wk)continue;rows.push({n:c.n||code,v:c.v,mem:c.mem,club:true});}
-  rows.push({n:clubName(s)||('Your club'),v:clubTotal(s),mem:memberCount(),me:true});
+  for(const code of Object.keys(clubBoard)){if(code===identity(s).code)continue;const c=clubBoard[code];if(c.wk!==wk)continue;rows.push({n:c.n||code,v:c.v,mem:c.mem,club:true});}
+  if(identity(s).code)rows.push({n:clubName(s)||('Your club'),v:clubTotal(s),mem:memberCount(),me:true});
   rows.sort((a,b)=>b.v-a.v);
   return rows;
  }
@@ -256,7 +337,7 @@ export function install(G){
   const s=S.fresh(); if(!s)return;
   const wk=CW(), tot=clubTotal(s), r=myClubRank(s);
   const ranks=weeklyRanks(s);
-  S.sync(sv=>{
+  syncClub(sv=>{
    sv.clubWeek=sv.clubWeek||{week:wk,total:0,rank:0,n:1};
    sv.wkRanks={week:G.time.weekKey(),ranks};                       // live placings, banked when the week turns
    if(sv.clubWeek.week!==wk)return;                                // the roll below owns that
@@ -265,8 +346,8 @@ export function install(G){
  }
  /* Monday 00:00 UTC: the books close, last week is put aside to be claimed, a fresh one starts. */
  function clubWeekRoll(){
-  const wk=CW(); let closed=null;
-  S.sync(sv=>{
+  const wk=CW(); let closed=null;if(!identity().code)return null;
+  syncClub(sv=>{
    sv.clubWeek=sv.clubWeek||{week:wk,total:0,rank:0,n:1};
    if(sv.clubWeek.week===wk)return;
    closed=Object.assign({},sv.clubWeek);
@@ -292,12 +373,12 @@ export function install(G){
    +rows.map(x=>'<span class="bE">'+x.p+'% '+esc(M.rewardLabel(x.r)||'—')+'</span>').join('')+'</div>';
  }
  function claimClubChest(){
-  const s=S.fresh(); if(!s||!s.clubWeekLast||s.clubWeekLast.claimed){toast('Nothing to collect yet.');return false;}
+  const s=S.fresh(); if(!s||!identity(s).code||!s.clubWeekLast||s.clubWeekLast.claimed||record(s)?.claims?.[s.clubWeekLast.week]){toast('Nothing to collect yet.');return false;}
   const L=s.clubWeekLast, tier=chestTier(L.total||0), lines=[];
   const won=rollClubChest(tier);
   let horses=0;
-  S.sync(sv=>{
-   if(!sv.clubWeekLast||sv.clubWeekLast.claimed)return;
+  syncClub(sv=>{
+   if(!sv.clubWeekLast||sv.clubWeekLast.claimed||record(sv)?.claims?.[sv.clubWeekLast.week])return;
    M.payReward(sv,won.r); lines.push('📦 Tier '+tier+': '+(M.rewardLabel(won.r)||'—'));
    const champs=championCount(L.rank||0);
    for(let i=0;i<champs;i++){
@@ -308,7 +389,7 @@ export function install(G){
    sv.stats=sv.stats||{};
    sv.stats.clubChests=(sv.stats.clubChests||0)+1;
    if(champs)sv.stats.clubChamp=(sv.stats.clubChamp||0)+1;
-   sv.clubWeekLast.claimed=true; sv.clubWeekLast.champClaimed=true; sv.clubWeekLast.tier=tier;
+   sv.clubWeekLast.claimed=true; sv.clubWeekLast.champClaimed=true; sv.clubWeekLast.tier=tier;record(sv).claims[sv.clubWeekLast.week]=true;
   });
   M.refreshWallet(); try{G.horse.refreshTack();}catch(e){}
   try{G.sGem();}catch(e){}
@@ -320,7 +401,7 @@ export function install(G){
  function claimClubHorse(){
   const s=S.fresh(); if(!s||(s.clubHorseVoucher||0)<1){toast('You need a club horse token — finish in the top three.');return false;}
   let name='';
-  S.sync(sv=>{
+  syncClub(sv=>{
    if((sv.clubHorseVoucher||0)<1)return;
    sv.clubHorseVoucher--;
    const h=grantExclusive(sv,CLUB_HORSE,'club'); name=h.name;
@@ -335,9 +416,10 @@ export function install(G){
 
  /* =============================== 7. Chat log & mute =============================== */
  function logPush(n,t,mine){
+  if(!identity().code||(N.net.club&&N.net.club!==identity().code))return;
   clubLog.push({n:String(n||'Rider').slice(0,14),t:String(t||'').slice(0,CHAT_MAX),at:Date.now(),mine:!!mine});
   while(clubLog.length>LOG_MAX)clubLog.shift();
-  S.sync(sv=>{sv.chatLog=clubLog.slice(-LOG_SAVE).map(x=>({n:x.n,t:x.t,at:x.at,m:x.mine?1:0}));});
+  syncClub(sv=>{sv.chatLog=clubLog.slice(-LOG_SAVE).map(x=>({n:x.n,t:x.t,at:x.at,m:x.mine?1:0}));});
  }
  /* Every line that reaches the HUD ticker, whoever sent it, arrives as one child of
     #chatFeed — watching that catches your own lines and remote ones alike, exactly once,
@@ -358,7 +440,7 @@ export function install(G){
  function isMuted(nm){const s=S.fresh();return !!(s&&s.muteList&&s.muteList[nm]);}
  G.on('chat',(m,nm2)=>{ if(isMuted(nm2))return true; });   // muted: no ticker line, no bubble, no trail or party invite
  function toggleMute(nm){
-  S.sync(sv=>{sv.muteList=sv.muteList||{};if(sv.muteList[nm])delete sv.muteList[nm];else sv.muteList[nm]=1;});
+  syncClub(sv=>{sv.muteList=sv.muteList||{};if(sv.muteList[nm])delete sv.muteList[nm];else sv.muteList[nm]=1;});
   toast(isMuted(nm)?'🔇 '+nm+' muted in club chat.':'🔊 '+nm+' unmuted.');
   U.rerender('onlinePanel');
  }
@@ -417,13 +499,13 @@ export function install(G){
   if(!online())return false;
   const ph=loadPhotos(), mine=ph.shots.find(x=>x.id===ph.entry);
   if(!mine)return false;
-  return N.publish('srf1/{club}/photo/'+G.time.weekKey()+'/'+N.myName(),{v:scoreShot(mine.m).total,th:String(mine.thumb||'').slice(0,24000)},{retain:true});
+  return publishToClub('photo/'+G.time.weekKey()+'/'+encodeURIComponent(N.net.id),{v:scoreShot(mine.m).total,th:String(mine.thumb||'').slice(0,24000)},{retain:true});
  }
  function enterPhoto(pid){
   const ph=loadPhotos(); if(!ph.shots.some(x=>x.id===pid))return false;
   ph.entry=pid; savePhotos(ph);
   const st=standings(), mi=st.findIndex(r=>r.me);
-  S.sync(sv=>{sv.wk=sv.wk||{week:G.time.weekKey()};sv.wk.place=(mi>=0&&mi<3)?mi+1:0;});
+  syncClub(sv=>{sv.wk=sv.wk||{week:G.time.weekKey()};sv.wk.place=(mi>=0&&mi<3)?mi+1:0;});
   publishMyPhoto();
   try{G.sChime();}catch(e){}
   try{G.ui.renderLB();}catch(e){}
@@ -443,7 +525,7 @@ export function install(G){
   if(!s||!p)return false;
   if((s.photoWins||0)<p.n||(s.photoClaims||{})[p.id]){toast('Not yet — win '+p.n+' contest'+(p.n>1?'s':'')+' first.');return false;}
   let horse='';
-  S.sync(sv=>{
+  syncClub(sv=>{
    sv.photoClaims=sv.photoClaims||{};
    if(sv.photoClaims[p.id])return;
    sv.photoClaims[p.id]=Date.now();
@@ -464,7 +546,7 @@ export function install(G){
  function closeWeek(closed){
   if(!closed)return false;
   let did=false;
-  S.sync(sv=>{
+  syncClub(sv=>{
    if(!S.flag(sv,'clubpw-'+(closed.week||'?')))return;
    did=true;
    const c=PHOTO_CONTESTS.find(x=>x.m===new Date().getUTCMonth());
@@ -506,7 +588,7 @@ export function install(G){
   const snap=s.wkRanksLast||{ranks:{}}, rank=(snap.ranks||{})[evId]||0, key='wr_'+(snap.week||'')+'_'+evId;
   const band=bandFor(rank);
   if(!band||(s.lbClaims||{})[key]){toast('Nothing to claim on that board.');return false;}
-  S.sync(sv=>{sv.lbClaims=sv.lbClaims||{};if(sv.lbClaims[key])return;sv.lbClaims[key]=Date.now();M.payReward(sv,band.r);});
+  syncClub(sv=>{sv.lbClaims=sv.lbClaims||{};if(sv.lbClaims[key])return;sv.lbClaims[key]=Date.now();M.payReward(sv,band.r);});
   M.refreshWallet(); try{G.sGem();}catch(e){}
   toast('🏅 '+band.label+' — '+(M.rewardLabel(band.r)||''));
   try{G.ui.renderLB();}catch(e){}
@@ -631,7 +713,7 @@ export function install(G){
   h+='<div class="crow"><span class="lbl">Club name</span><input id="clubNameIn" maxlength="'+NAME_MAX+'" value="'+esc(m.name||'')+'" placeholder="Name your club"><button data-fx="clubs:name">'+(m.name?'Rename':'Create')+'</button></div>';
   h+='<div class="crow"><span class="lbl">Motto</span><input id="clubMottoIn" maxlength="90" value="'+esc(m.motto||'')+'" placeholder="A line for the gate sign"><button data-fx="clubs:motto">Save</button></div>';
   h+='<span style="font-size:11px;color:#8c7a63">'+(m.founder?'Founded by '+esc(m.founder)+(m.created?' · '+new Date(m.created).toLocaleDateString():''):'Creating a club is free here, for everyone — no membership required.')
-   +' Your club code above is still the password: anyone who has it can ride in, read the chat and pin a notice.</span>';
+   +' Share the code to invite riders. The founder manages the club; officers can pin notices.</span>';
   h+='<div class="crow" style="gap:6px"><button data-fx="clubs:pub">'+(m.pub?'🌍 Listed in the club directory':'🔒 Private — not listed')+'</button><button data-fx="clubs:find">🔍 Find a club</button></div>';
   if(clubDirOpen){
    const list=Object.values(clubDir).filter(c=>c.wk===CW()&&c.code!==(N.net.club||'')).sort((a,b)=>b.v-a.v).slice(0,12);
@@ -644,9 +726,9 @@ export function install(G){
   h+='<b style="font-size:13px;margin-top:8px">📌 Notice board</b>';
   h+=nt.t?'<div class="noticeCard"><div class="nt">'+esc(nt.t)+'</div><div class="nb">pinned by '+esc(nt.by||'a rider')+(nt.at?' · '+new Date(nt.at).toLocaleString():'')+'</div></div>'
         :'<span style="font-size:11.5px;color:#8c7a63">The board is empty. Pin the week\'s ride time, a rule, a welcome — it stays up for everyone who joins, long after the chat has scrolled away.</span>';
-  if(isFounder(s))h+='<textarea id="noticeIn" maxlength="'+NOTICE_MAX+'" placeholder="Pin a notice (up to '+NOTICE_MAX+' characters)"></textarea>'
+  if(canManage(s))h+='<textarea id="noticeIn" maxlength="'+NOTICE_MAX+'" placeholder="Pin a notice (up to '+NOTICE_MAX+' characters)"></textarea>'
    +'<div class="crow" style="gap:6px"><button data-fx="clubs:pin" class="claimBtn">📌 Pin it</button><button data-fx="clubs:unpin">Clear</button></div>';
-  else h+='<span style="font-size:11px;color:#8c7a63">Only '+esc(m.founder)+' can pin here.</span>';
+  else h+='<span style="font-size:11px;color:#8c7a63">The founder and officers can pin here.</span>';
   /* -- roster ---------------------------------------------------------------------- */
   h+='<b style="font-size:13px;margin-top:8px">👥 Roster ('+memberCount()+')</b>';
   h+='<div class="clubRow me">🐴 <b>'+esc(N.myName())+'</b><span style="font-size:11px;color:#8c7a63">you'+(m.founder===N.myName()?' · founder':'')+'</span><span class="cv">'+spOf(s)+'⭐</span></div>';
@@ -670,36 +752,33 @@ export function install(G){
   if(a[0]==='name'){
    const v=String(($('clubNameIn')||{}).value||'').trim().slice(0,NAME_MAX);
    if(!v){toast('Type a club name first.');return;}
-   if(!isFounder(s)){toast('Only '+meta(s).founder+' can rename this club.');return;}
-   S.sync(sv=>{sv.clubMeta=sv.clubMeta||{};sv.clubMeta.name=v;if(!sv.clubMeta.founder)sv.clubMeta.founder=N.myName();if(!sv.clubMeta.created)sv.clubMeta.created=Date.now();});
+   if(!updateIdentity({name:v}))return;
    publishClubCard(); toast('🏛️ Your club is "'+v+'".'); U.rerender('onlinePanel'); try{G.ui.openOnline();G.ui.openOnline();}catch(e){}
    return;
   }
   if(a[0]==='motto'){
    const v=String(($('clubMottoIn')||{}).value||'').trim().slice(0,90);
-   S.sync(sv=>{sv.clubMeta=sv.clubMeta||{};sv.clubMeta.motto=v;});
+   if(!updateIdentity({motto:v}))return;
    publishClubCard(); toast('🪧 Motto saved.'); U.rerender('onlinePanel');
    return;
   }
-  if(a[0]==='pub'){S.sync(sv=>{sv.clubMeta=sv.clubMeta||{};sv.clubMeta.pub=!sv.clubMeta.pub;});publishClubCard();U.rerender('onlinePanel');
+  if(a[0]==='pub'){if(!updateIdentity({pub:!meta(s).pub}))return;publishClubCard();U.rerender('onlinePanel');
    toast((S.fresh().clubMeta.pub)?'🌍 Listed — riders browsing the directory can find you.':'🔒 Unlisted.');return;}
   if(a[0]==='find'){clubDirOpen=!clubDirOpen;U.rerender('onlinePanel');if(clubDirOpen&&!online())toast('🌐 Connect first — the directory is read from the broker.');return;}
   if(a[0]==='join'){
    const code=String(a[1]||'').toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,24);
    if(!code)return;
    U.confirm({title:'Join club "'+code+'"?',body:'You leave your own room and ride with them. Your ranch, horses and money all stay yours.',
-    onYes(){S.sync(sv=>{sv.club=code;sv.clubMeta={name:'',founder:'',motto:'',created:0,pub:false};});
-     for(const k of Object.keys(clubMembers))delete clubMembers[k];
-     toast('🎟️ Joining "'+code+'" — press 🟢 Connect.'); U.rerender('onlinePanel');}});
+    onYes(){joinClub(code);}});
    return;
   }
   if(a[0]==='pin'){
    const v=String(($('noticeIn')||{}).value||'').trim();
    if(!v){toast('Write the notice first.');return;}
-   pinNotice(v); toast('📌 Pinned for the club.'); U.rerender('onlinePanel'); try{G.ui.openOnline();G.ui.openOnline();}catch(e){}
+   if(!saveNotice(v))return; toast('📌 Pinned for the club.'); U.rerender('onlinePanel'); try{G.ui.openOnline();G.ui.openOnline();}catch(e){}
    return;
   }
-  if(a[0]==='unpin'){pinNotice('');toast('📌 Board cleared.');U.rerender('onlinePanel');try{G.ui.openOnline();G.ui.openOnline();}catch(e){}return;}
+  if(a[0]==='unpin'){if(!saveNotice(''))return;toast('📌 Board cleared.');U.rerender('onlinePanel');try{G.ui.openOnline();G.ui.openOnline();}catch(e){}return;}
   if(a[0]==='mute'){toggleMute(a[1]);try{G.ui.openOnline();G.ui.openOnline();}catch(e){}return;}
   if(a[0]==='prof'){try{N.openProfile(a[1]);}catch(e){}return;}
   if(a[0]==='claim'){claimClubChest();return;}
@@ -845,19 +924,22 @@ export function install(G){
   const nt=s.clubNotice||{};
   if(nt.t&&nt.at&&nt.at>(s.clubSeen||0)){
    setTimeout(()=>{try{toast('📌 '+(clubName(s)||'Club')+' notice from '+(nt.by||'a rider')+': '+String(nt.t).slice(0,60));}catch(e){}},4200);
-   S.sync(sv=>{sv.clubSeen=nt.at;});
+   syncClub(sv=>{sv.clubSeen=nt.at;});
   }
   if(s.clubWeekLast&&!s.clubWeekLast.claimed)setTimeout(()=>{try{toast('📦 A club chest is waiting in 🏅 → 🏇 Club.');}catch(e){}},6200);
  });
  let pubT=0;
  G.on('interval30',(s,now)=>{
-  clubWeekRoll();
-  touchClubWeek();
+  if(identity(s).code){
+   if(s.clubWeek.week!==CW()){s.clubWeekLast={...s.clubWeek,claimed:!!record(s).claims[s.clubWeek.week],champClaimed:!!record(s).claims[s.clubWeek.week]};s.clubWeek={week:CW(),total:0,rank:0,n:1};}
+   const rank=myClubRank(s);s.clubWeek.total=clubTotal(s);s.clubWeek.rank=rank.rank;s.clubWeek.n=memberRows(s).length;stashClub(s);
+  }
+  hydrateClub();
   if(online()&&now-pubT>120000){pubT=now;publishClubCard();}
  });
 
  /* =============================== 18. QA surface =============================== */
- G.clubs={CW,clubTotal,clubRows,myClubRank,chestTier,nextTier,championCount,rollClubChest,rollChampion,
+ G.clubs={identity,createClub,memberRows,isLeader,canManage,canManageName,updateIdentity,setRole,joinClub,leaveClub,spOf,saveNotice,CLUB_CRESTS,CLUB_COLORS,CW,clubTotal,clubRows,myClubRank,chestTier,nextTier,championCount,rollClubChest,rollChampion,
   claimClubChest,claimClubHorse,clubWeekRoll,touchClubWeek,pinNotice,publishClubCard,publishMyPhoto,
   clubMeta,clubMembers,clubBoard,clubDir,photoData,clubLog,isMuted,toggleMute,memberCount,msToMonday,
   scoreShot,standings,enterPhoto,contestNow,claimPhotoPrize,loadPhotos,savePhotos,evRows,weeklyRanks,bandFor,claimWeekRank,
