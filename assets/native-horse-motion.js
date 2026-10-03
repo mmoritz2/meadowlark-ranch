@@ -9,26 +9,25 @@ export function finishNativeHorseGrooms(){for(const finish of pendingHorseGrooms
 const ridingRates={walk:1.35,trot:1.5,canterLeft:1.6,canterRight:1.6,gallopLeft:1.8,gallopRight:1.8};
 const ridingSpeeds={walk:2,trot:4.2,canterLeft:7.5,canterRight:7.5,gallopLeft:15,gallopRight:15};
 export function nativeHorseSpeedLimits(profile,worldScale=1){
- const paced=profile?.nativeKind==='horse',cadenceLimit=paced?2:1,scale=Math.abs(worldScale);
+ const paced=profile?.nativeKind==='horse',dragonTravel=!!profile?.nativeTravelSpeeds,cadenceLimit=paced?2:dragonTravel?1.6:1,scale=Math.abs(worldScale);
  // Pony stature remains visible without making travel across the map unusably
  // slow. Stats and temporary boosts still vary speed within each gait.
  const sizeFactor=paced?Math.max(.9,Math.min(1.08,(profile.nativeMaxSpeedMps||3)*scale/3)):1;
  const gaitSpeeds={},gaitMaxSpeeds={},gaitRates={};
  for(const [key,r]of Object.entries(profile?.nativeGaits||{})){
   const speed=r.nominalSpeedMps*scale;
-  gaitSpeeds[key]=paced&&ridingSpeeds[key]?ridingSpeeds[key]*sizeFactor:speed;
+  gaitSpeeds[key]=paced&&ridingSpeeds[key]?ridingSpeeds[key]*sizeFactor:profile.nativeTravelSpeeds?.[key]??speed;
   gaitMaxSpeeds[key]=gaitSpeeds[key]*(paced&&ridingSpeeds[key]?1.35:1);
-  gaitRates[key]=paced?(ridingRates[key]||1):1;
+  gaitRates[key]=paced?(ridingRates[key]||1):(profile.nativePlaybackRates?.[key]||1);
  }
- const maxSpeedMps=paced?Math.max(0,...Object.entries(gaitMaxSpeeds).filter(([k])=>k!=='fly').map(([,v])=>v)):(profile?.nativeMaxSpeedMps||0)*scale;
- return {paced,cadenceLimit,gaitSpeeds,gaitMaxSpeeds,gaitRates,maxSpeedMps,sizeFactor,contactSpeedMatched:paced?false:null};
+ const maxSpeedMps=paced||dragonTravel?Math.max(0,...Object.entries(gaitMaxSpeeds).filter(([k])=>k!=='fly').map(([,v])=>v)):(profile?.nativeMaxSpeedMps||0)*scale;
+ return {paced,dragonTravel,cadenceLimit,gaitSpeeds,gaitMaxSpeeds,gaitRates,maxSpeedMps,sizeFactor,contactSpeedMatched:paced||dragonTravel?false:null};
 }
 
 // Pose-only playback of the preserved native clips. The Ranch owns actor travel.
 export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=false}={}){
  if(!THREE||!root||!profile?.nativeBreed)throw new Error('Native motion requires its original root and profile');
- // Creator dragon clips retain their source playback behavior; their ground
- // contact has not been approved for blended transitions.
+ // Dragon actions blend on their original skeleton and preserve their skin weights.
  if(profile.nativeKind!=='horse')return createCreatorMotion({THREE,root,clips,profile});
  const rest=[];root.traverse(o=>rest.push([o,o.position.clone(),o.quaternion.clone(),o.scale.clone()]));
  const hoofBundle=prepareNativeHoofFlex({THREE,root,clips,profile});clips=hoofBundle.clips;const hoofFlex=hoofBundle.layer;
@@ -123,29 +122,61 @@ function createCreatorMotion({THREE,root,clips,profile}={}){
  for(const [key,record]of Object.entries(records)){if(!(record.nominalSpeedMps>0))throw new Error('Invalid native gait reference '+key);if(record.strokeM&&Math.abs(record.nominalSpeedMps-record.strokeM/(record.stanceFraction*record.durationS))>1e-7)throw new Error('Native gait speed/timing mismatch '+key);add(key,record.clip,record.durationS);}
  const gaits={stand:{speed:0},rest:{speed:0}};for(const [key,r]of Object.entries(records))gaits[key]={speed:r.nominalSpeedMps,clip:r.clip,duration:r.durationS};if(records.canterLeft)gaits.canter={speed:records.canterLeft.nominalSpeedMps};
  const availableModes=['rest','stand',...(profile.nativeSitClip?['sit']:[]),...Object.keys(records).filter(k=>!/^canter/.test(k)),...(records.canterLeft?['canter']:[])];
- let mode='rest',key='rest',lead='left',speedMps=0,turn=0,disposed=false;
+ // Blend through the source bindings, including a proper rest target. Stopping
+ // every action at a gait switch used to snap the dragon and its rider.
+ const restTracks=[],bindings=new Set();
+ for(const clip of Object.values(sourceClips))for(const track of clip.tracks){
+  if(bindings.has(track.name))continue;bindings.add(track.name);
+  const cubic=!!track.createInterpolant.isInterpolantFactoryMethodGLTFCubicSpline;
+  const value=new Float32Array(track.getValueSize()/(cubic?3:1));
+  const binding=THREE.PropertyBinding.create(root,track.name);binding.bind();binding.getValue(value,0);binding.unbind();
+  if(!value.every(Number.isFinite))throw new Error('Invalid dragon rest binding '+track.name);
+  restTracks.push(new track.constructor(track.name,[0,1],[...value,...value],THREE.InterpolateLinear));
+ }
+ actions.rest=mixer.clipAction(new THREE.AnimationClip('Dragon rest pose',1,restTracks));
+ if(!actions.stand)actions.stand=actions.rest;
+ const active=new Map();
+ let mode='rest',key='rest',lead='left',speedMps=0,turn=0,disposed=false,transition=null;
+ actions.rest.setEffectiveWeight(1).play();active.set(actions.rest,1);mixer.update(0);
  function assertLive(){if(disposed)throw new Error('Native motion disposed');}
- function restore(){mixer.stopAllAction();for(const[o,p,q,s]of rest){o.position.copy(p);o.quaternion.copy(q);o.scale.copy(s);}root.updateMatrixWorld(true);}
+ function restore(){mixer.stopAllAction();active.clear();transition=null;for(const[o,p,q,s]of rest){o.position.copy(p);o.quaternion.copy(q);o.scale.copy(s);}root.updateMatrixWorld(true);}
  function set(value,{lead:nextLead=lead,speedMps:nextSpeed}={}){
   assertLive();const byClip=Object.keys(sourceClips).find(k=>sourceClips[k].name===value);if(byClip)value=byClip;
   nextLead=nextLead==='right'?'right':'left';let nextKey=value;
-  if(value==='canter'){nextKey=nextLead==='right'?'canterRight':'canterLeft';}
+  if(value==='canter')nextKey=nextLead==='right'?'canterRight':'canterLeft';
   if(value==='canterLeft'||value==='canterRight'){nextLead=value==='canterRight'?'right':'left';value='canter';}
-  if(value!=='rest'&&value!=='stand'&&!actions[nextKey])throw new Error('Native '+profile.id+' has no '+value+' animation');
+  if(!actions[nextKey])throw new Error('Native '+profile.id+' has no '+value+' animation');
   if(nextSpeed!==undefined){if(!Number.isFinite(nextSpeed)||nextSpeed<0)throw new Error('Invalid native speed');speedMps=nextSpeed;}else speedMps=records[nextKey]?.nominalSpeedMps||0;
   if(nextKey===key){lead=nextLead;return;}
-  restore();mode=value;key=nextKey;lead=nextLead;if(actions[key]){actions[key].reset().play();mixer.update(0);}root.updateMatrixWorld(true);
+  const target=actions[nextKey],previous=key,phase=actions[key].time/actions[key].getClip().duration;
+  if(!active.has(target)){
+   target.reset();
+   if(records[key]&&records[nextKey]&&key!=='fly'&&nextKey!=='fly')target.time=(phase%1)*target.getClip().duration;
+   target.setEffectiveWeight(0).play();active.set(target,0);
+  }
+  mode=value;key=nextKey;lead=nextLead;
+  transition={elapsed:0,duration:previous==='fly'||nextKey==='fly'?.65:.28,start:new Map(active),target};
  }
- function update(dt,{rate=1}={}){assertLive();if(!Number.isFinite(rate)||rate<0)throw new Error('Invalid native playback rate');if(!Number.isFinite(dt)||dt<0)throw new Error('Invalid native motion delta');if(actions[key])mixer.update(dt*rate);root.updateMatrixWorld(true);}
- function snapshot(){const clip=sourceClips[key];return {gait:mode,lead,phase01:clip?actions[key].time/clip.duration:0,bodyLiftM:0,speedMps,grounded:mode!=='fly',intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:false,transitionDurationS:0,restFallback:!clip,transitionsReviewed:false};}
- function reset(){assertLive();restore();mode='rest';key='rest';speedMps=0;}
+ function update(dt,{rate=1}={}){
+  assertLive();if(!Number.isFinite(rate)||rate<0)throw new Error('Invalid native playback rate');if(!Number.isFinite(dt)||dt<0)throw new Error('Invalid native motion delta');
+  const target=actions[key];target.setEffectiveTimeScale(records[key]?rate:1);
+  if(transition){
+   transition.elapsed=Math.min(transition.duration,transition.elapsed+dt);
+   const t=transition.elapsed/transition.duration,s=t*t*t*(t*(t*6-15)+10);
+   for(const[action,start]of transition.start){const weight=start+(action===target?1-start:-start)*s;action.setEffectiveWeight(weight);active.set(action,weight);}
+  }
+  mixer.update(dt);root.updateMatrixWorld(true);
+  if(transition&&transition.elapsed>=transition.duration){for(const action of active.keys())if(action!==target){action.stop();active.delete(action);}target.setEffectiveWeight(1);active.set(target,1);transition=null;}
+ }
+ function snapshot(){const clip=sourceClips[key];return {gait:mode,lead,phase01:clip?actions[key].time/clip.duration:0,bodyLiftM:0,speedMps,grounded:mode!=='fly',intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:transition?.duration||.28,activeActions:active.size,restFallback:!clip,transitionsReviewed:false};}
+ function reset(){assertLive();restore();mode='rest';key='rest';speedMps=0;actions.rest.reset().setEffectiveWeight(1).play();active.set(actions.rest,1);mixer.update(0);}
  return {set,update,reset,snapshot,gaits,availableModes,supportedModes:availableModes,mixer,get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return actions[key]?.time||0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;restore();mixer.uncacheRoot(root);disposed=true;}};
 }
 
 export function getNativeHorseCapabilities(rig){
  if(!rig?.profile?.nativeBreed&&!rig?.profile?.referenceMotion)return null;
  const profile=rig.profile,scale=rig.scene?.getWorldScale(rig.scene.position.clone().set(1,1,1)).z||1,referenceFlight=!!((profile.referenceMotion||profile.nativeRoster)&&(rig.nativeCanFly||rig.nativeFantasy?.pair||rig.fantasyAppearance?.wings));
- return {native:true,nativeKind:profile.nativeKind,...nativeHorseSpeedLimits(profile,scale),flightMaxSpeedMps:referenceFlight?13:(profile.nativeGaits?.fly?.nominalSpeedMps||0)*Math.abs(scale),nominalMaxSpeedMps:profile.nativeMaxSpeedMps,worldScale:Math.abs(scale),supportedModes:rig.heroMotion?.availableModes||['rest','stand',...Object.keys(profile.nativeGaits||{})],canJump:!!profile.nativeJump,canGallop:!!profile.nativeGaits?.gallopLeft,canFly:!!profile.nativeCanFly||referenceFlight,speedBasis:profile.nativeKind==='horse'?'Gameplay travel with bounded collected animation cadence; not contact-matched':profile.nativeSpeedBasis||'Configured source animation travel reference'};
+ return {native:true,nativeKind:profile.nativeKind,...nativeHorseSpeedLimits(profile,scale),flightMaxSpeedMps:referenceFlight?13:profile.nativeTravelSpeeds?.fly??(profile.nativeGaits?.fly?.nominalSpeedMps||0)*Math.abs(scale),nominalMaxSpeedMps:profile.nativeMaxSpeedMps,worldScale:Math.abs(scale),supportedModes:rig.heroMotion?.availableModes||['rest','stand',...Object.keys(profile.nativeGaits||{})],canJump:!!profile.nativeJump,canGallop:!!profile.nativeGaits?.gallopLeft,canFly:!!profile.nativeCanFly||referenceFlight,speedBasis:profile.nativeKind==='horse'?'Gameplay travel with bounded collected animation cadence; not contact-matched':profile.nativeSpeedBasis||'Configured source animation travel reference'};
 }
 
 export function tickNativeHorse(rig,speed,dt,turn=0){
@@ -163,12 +194,12 @@ export function tickNativeHorse(rig,speed,dt,turn=0){
   // A faster trot remains a trot. On slowing down, keep a faster gait until
   // actual travel enters the requested gait's gameplay speed range.
   const requested=ground.find(([key])=>key===rig.nativeRequestedGait);
-  if(cap.paced&&requested&&chosen&&ground.indexOf(chosen)>ground.indexOf(requested)&&actual<=cap.gaitMaxSpeeds[requested[0]]+1e-7)chosen=requested;
+  if((cap.paced||cap.dragonTravel)&&requested&&chosen&&ground.indexOf(chosen)>ground.indexOf(requested)&&actual<=cap.gaitMaxSpeeds[requested[0]]+1e-7)chosen=requested;
   if(chosen){gait=chosen[0];record=chosen[1];}
  }
  const lead=turn<-.32?'right':turn>-.08?'left':rig.heroLead||'left';rig.heroLead=lead;if(gait.endsWith('Left'))gait=gait.slice(0,-4);
- if(record){const key=gait==='canter'||gait==='gallop'?gait+'Left':gait;rate=cap.paced&&gait!=='fly'?actual/cap.gaitSpeeds[key]*cap.gaitRates[key]:actual/(record.nominalSpeedMps*cap.worldScale);}
- if(gait==='fly')rate=Math.max(.1,Math.min(1,rate||1));else rate=Math.min(cap.cadenceLimit,Math.max(0,rate));
+ if(record){const key=gait==='canter'||gait==='gallop'?gait+'Left':gait;rate=(cap.paced||cap.dragonTravel)&&gait!=='fly'?actual/cap.gaitSpeeds[key]*cap.gaitRates[key]:actual/(record.nominalSpeedMps*cap.worldScale);}
+ if(gait==='fly')rate=cap.dragonTravel?(rig.profile.nativeFlightRate||1)*(1+.12*actual/Math.max(1,cap.flightMaxSpeedMps)):Math.max(.1,Math.min(1,rate||1));else rate=Math.min(cap.cadenceLimit,Math.max(0,rate));
  motion.set(gait,{lead,speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate});rig.phase=motion.state.phase01;rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroRate=rate;return motion.state;
 }
 

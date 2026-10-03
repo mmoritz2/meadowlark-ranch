@@ -1,6 +1,6 @@
 # Imported horse asset attribution
 
-These credits cover the nine acquired source assets and their Meadowlark Ranch
+These credits cover the ten acquired source assets and their Meadowlark Ranch
 adaptations. Current acquisition and publication status is recorded in
 [README.md](README.md) and [the prepared catalog](prepared-manifest.json).
 Original creators are credited for their source art; Meadowlark Ranch authored
@@ -17,8 +17,9 @@ the changes described below. The preserved originals remain unchanged.
 | [Arabian Horse](https://pinshape.com/items/114373-3d-printed-arabian-horse) | [jesusrhino](https://pinshape.com/users/2550443-jesusrhino) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | [Record](arabian-sculpt/provenance.json) |
 | [Fjord Pony Horse](https://www.cgtrader.com/free-3d-print-models/art/sculpture/fjord-pony-horse) | [TheBigWolfy](https://www.cgtrader.com/designers/thebigwolfy) | [CGTrader Royalty Free License, NoAI](https://www.cgtrader.com/pages/terms-and-conditions) | [Record](fjord-sculpt/provenance.json) |
 | [unicorn](https://www.cgtrader.com/free-3d-models/animal/mammal/unicorn-3f699121-8562-436d-a0a3-9c130380790c) | [maryna287887](https://www.cgtrader.com/designers/maryna287887) | [CGTrader Royalty Free License, NoAI](https://www.cgtrader.com/pages/terms-and-conditions) | [Record](pastel-unicorn/provenance.json) |
+| [European Dragon](https://sketchfab.com/3d-models/european-dragon-82f393a2e6c048ad80c171ce3b3a7b87) | Regina Cachoa listing; embedded author Nonexistent 101 | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | Original metadata embedded in `european-dragon/game/european-dragon-2k-candidate.glb` |
 
-The four Sketchfab originals embed their creator, source and Creative Commons
+The five Sketchfab originals embed their creator, source and Creative Commons
 license metadata. The ikkiz and CG Cookie/David Ward archives include bundled
 license documents establishing CC BY 3.0. The public records identify the
 verified original filenames, sizes and SHA-256 hashes without local download paths.
@@ -59,15 +60,22 @@ verified original filenames, sizes and SHA-256 hashes without local download pat
   rib, fetlock and hock attachment ownership. Authored locomotion, jump and
   spectral material/effect adaptations. The original source is a static,
   unskinned anatomy model with no animation clips.
-- **3DHaupt:** normalized the genuine dragon to physical metres and omitted its
-  decorative showcase floor. Preserved source body/wing topology, UVs, material
-  definitions and texture content, with conventional resizing of large textures.
-  Rebound the body to forty anatomical joints while retaining twenty-eight source
-  wing joints. Adapted low claw weights for floor contact and authored ground,
-  jump, wing fold, takeoff, flight and landing motions. The original Scene clip
-  remains in the preserved acquisition. Conversion, image resizing, skin
-  evaluation, animation baking and rendering used ordinary numerical tools;
-  no generative AI asset or image tools were used for this NoAI source.
+- **3DHaupt:** the current Black Dragon keeps the original 232-joint skin,
+  body/wing topology, UVs and texture content, with ordinary resizing of large
+  textures and removal of the decorative floor. Meadowlark Ranch authored
+  standing, walking, running and flying motion on those original joints; ground
+  poses gather the wings, and flight moves the actual wing fingers. The creator's
+  Scene idle and original model remain preserved. Earlier forty-joint conversion
+  experiments are superseded by this native rig. Runtime transitions blend
+  ground/flight poses during takeoff and landing. Conversion, skin evaluation,
+  animation baking and rendering use ordinary numerical tools; no generative AI
+  asset or image tools were used for this NoAI source.
+- **Regina Cachoa listing / embedded author Nonexistent 101:** the European
+  Dragon keeps its original 169-joint skin and five creator animation clips.
+  Replacement Walk and Run clips preserve every original joint track and add
+  measured vertical scene correction for foot clearance. The game adds smooth
+  clip transitions, an animated rider seat and continuous hovering wing playback.
+  See [native dragon motion documentation](../dragon-motions/README.md).
 - **jesusrhino:** adapted the prancing Arabian sculpture to a standing game bind
   using mirrored planted-side forequarter and hind-limb surfaces from the same
   source. Ordinary voxel joining, local fairing and topology reduction repaired
@@ -102,7 +110,7 @@ WildMesh 3D and 3DHaupt assets retain **noncommercial** use restrictions.
 The dragon also retains the creator listing's separate **NoAI** restriction.
 These restrictions continue to apply to the source art within adapted models,
 including recolours, fantasy effects and combined winged horses. The remaining
-five Creative Commons sources use the attribution licenses linked above; credit and adaptation
+six Creative Commons sources use the attribution licenses linked above; credit and adaptation
 statements remain attached to their copies and derivatives.
 
 A Pegasus or alicorn using CG Cookie/David Ward wings requires credit for both
@@ -111,7 +119,7 @@ WildMesh-based winged horse retains CC BY-NC 4.0 even though the wing component
 uses CC BY 3.0. Body and component sources are recorded separately in the
 prepared catalog.
 
-All nine approved originals are acquired and preserved. Candidate conversion,
+All ten approved originals are acquired and preserved. Candidate conversion,
 mounted integration and publication are separate checks; their current status
 is recorded in the import README and prepared catalog.
 

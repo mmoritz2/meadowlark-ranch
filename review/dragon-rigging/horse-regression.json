@@ -1,0 +1,230 @@
+{
+  "movementPolicy": "Faster game travel with bounded visual cadence; hoof contact is not claimed to match translation.",
+  "mounts": [
+    {
+      "key": "bay",
+      "gaits": [
+        {
+          "modifier": "Control",
+          "gait": "walk",
+          "speed": 1.9773898655861155,
+          "heroRate": 1.3496223604571138,
+          "nominal": 0.5494505494505494,
+          "scale": 0.8476899263786155,
+          "sourceSpeed": 0.46576369581242605,
+          "previousSpeed": 0.6287809893467752,
+          "distance": 0.9885273723651,
+          "elapsedS": 0.5,
+          "startStamina": 1,
+          "stamina": 1,
+          "blown": false,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": "Alt",
+          "gait": "trot",
+          "speed": 4.1525187177308425,
+          "heroRate": 1.4995804005079039,
+          "nominal": 1.8308080808080809,
+          "scale": 0.8476899263786155,
+          "sourceSpeed": 1.5519575672335764,
+          "previousSpeed": 2.3279363508503645,
+          "distance": 2.075907481966709,
+          "elapsedS": 0.5,
+          "startStamina": 1,
+          "stamina": 1,
+          "blown": false,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": null,
+          "gait": "canter",
+          "speed": 7.415211995947933,
+          "heroRate": 1.5995524272084312,
+          "nominal": 2.109375,
+          "scale": 0.8476899263786155,
+          "sourceSpeed": 1.788095938454892,
+          "previousSpeed": 2.8609535015278276,
+          "distance": 3.7069776463691273,
+          "elapsedS": 0.5,
+          "startStamina": 1,
+          "stamina": 1,
+          "blown": false,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        },
+        {
+          "modifier": "Shift",
+          "gait": "gallop",
+          "speed": 14.830423991895866,
+          "heroRate": 1.7994964806094849,
+          "nominal": 3.5,
+          "scale": 0.8476899263786155,
+          "sourceSpeed": 2.9669147423251543,
+          "previousSpeed": 5.3404465361852775,
+          "distance": 7.41395529273825,
+          "elapsedS": 0.5,
+          "startStamina": 0.8660499999999907,
+          "stamina": 0.8475499999999894,
+          "blown": false,
+          "finite": true,
+          "boneCount": 677,
+          "boostRemaining": 0,
+          "effectiveStats": {
+            "speed": 3,
+            "stamina": 3,
+            "jump": 3,
+            "accel": 3,
+            "agility": 3
+          }
+        }
+      ],
+      "stop": {
+        "speed": 0,
+        "gait": "stand",
+        "finite": true
+      },
+      "jump": {
+        "started": true,
+        "peak": 0.6650129591665056,
+        "last": {
+          "gait": "stand",
+          "y": 0,
+          "finite": true
+        },
+        "finite": true
+      }
+    }
+  ],
+  "lane": {
+    "x": -16,
+    "z": -8,
+    "heading": 0
+  },
+  "modifiers": {
+    "low": {
+      "gait": "gallop",
+      "speed": 13.67978764769705,
+      "heroRate": 1.659880374355301,
+      "nominal": 3.5,
+      "scale": 0.8476899263786155,
+      "sourceSpeed": 2.9669147423251543,
+      "previousSpeed": 5.3404465361852775,
+      "distance": 6.8387346234740765,
+      "elapsedS": 0.5,
+      "startStamina": 0.8678999999999908,
+      "stamina": 0.8493999999999895,
+      "blown": false,
+      "finite": true,
+      "boneCount": 677,
+      "boostRemaining": 0,
+      "effectiveStats": {
+        "speed": 1,
+        "stamina": 3,
+        "jump": 3,
+        "accel": 3,
+        "agility": 3
+      }
+    },
+    "high": {
+      "gait": "gallop",
+      "speed": 18.85765119659172,
+      "heroRate": 2,
+      "nominal": 3.5,
+      "scale": 0.8476899263786155,
+      "sourceSpeed": 2.9669147423251543,
+      "previousSpeed": 5.3404465361852775,
+      "distance": 9.427227635162863,
+      "elapsedS": 0.5,
+      "startStamina": 0.8623499999999904,
+      "stamina": 0.8438499999999891,
+      "blown": false,
+      "finite": true,
+      "boneCount": 677,
+      "boostRemaining": 0,
+      "effectiveStats": {
+        "speed": 10,
+        "stamina": 3,
+        "jump": 3,
+        "accel": 3,
+        "agility": 3
+      }
+    },
+    "boost": {
+      "gait": "gallop",
+      "speed": 16.6893409301904,
+      "heroRate": 2,
+      "nominal": 3.5,
+      "scale": 0.8476899263786155,
+      "sourceSpeed": 2.9669147423251543,
+      "previousSpeed": 5.3404465361852775,
+      "distance": 8.343256240638373,
+      "elapsedS": 0.5,
+      "startStamina": 0.8641999999999905,
+      "stamina": 0.8456999999999892,
+      "blown": false,
+      "finite": true,
+      "boneCount": 677,
+      "boostRemaining": 5.479999999999912,
+      "effectiveStats": {
+        "speed": 1,
+        "stamina": 3,
+        "jump": 3,
+        "accel": 3,
+        "agility": 3
+      }
+    }
+  },
+  "exhaustion": {
+    "gait": "canter",
+    "speed": 7.208918198940945,
+    "heroRate": 1.5550523179868891,
+    "nominal": 2.109375,
+    "scale": 0.8476899263786155,
+    "sourceSpeed": 1.788095938454892,
+    "previousSpeed": 2.8609535015278276,
+    "distance": 3.541356630645671,
+    "elapsedS": 0.5,
+    "startStamina": 0.03,
+    "stamina": 0.05149999999999993,
+    "blown": true,
+    "finite": true,
+    "boneCount": 677,
+    "boostRemaining": 0,
+    "effectiveStats": {
+      "speed": 3,
+      "stamina": 3,
+      "jump": 3,
+      "accel": 3,
+      "agility": 3
+    },
+    "canterLimit": 7.417286855812886
+  },
+  "errors": []
+}

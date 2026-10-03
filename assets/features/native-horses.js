@@ -1,12 +1,12 @@
-import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=native-roster-1';
+import {NATIVE_BREED_PROFILES} from '../native-breed-profiles.js?v=dragon-rigging-1';
 
 export const id='native-horses';
 export const NATIVE_MODEL_CHOICES=Object.freeze({
  'bay-sporthorse-native':{body:'#805638',mane:'#241b18',description:'Bay Sporthorse with Western tack. Standing pose, walk, trot, both canter leads, collected gallop and jump.'},
  'white-western':{body:'#f0eee5',mane:'#e7ded1',description:'White horse with Western tack. Idle, walk, trot, both canter leads, collected gallop and jump.'},
  'bay-western':{body:'#815638',mane:'#241b18',description:'Bay horse with Western tack. Standing pose, walk, trot, both canter leads, collected gallop and jump.'},
- 'black-dragon-native':{body:'#24242a',mane:'#24242a',description:'The original Black Dragon, with its idle animation. A stationary companion for now; walking and flight are not available.'},
- 'european-dragon':{body:'#665f52',mane:'#665f52',description:'European Dragon with standing and sitting idles, walk, run and flight. No jumping animation.'}
+ 'black-dragon-native':{body:'#24242a',mane:'#24242a',description:'The original Black Dragon with animated legs, wings and tail. Stand, walk, run, take off, hover, fly and land.'},
+ 'european-dragon':{body:'#665f52',mane:'#665f52',description:'European Dragon with standing and sitting idles, walk, run, takeoff, hovering flight and smooth landing.'}
 });
 
 export function install(G){
@@ -23,7 +23,7 @@ export function install(G){
  G.ui.shopTab({id:'native-models',label:'Free models',pos:1,render(save){
   return '<p>Choose a horse or dragon to add to your stable for free. Each has the movements listed below.</p>'+keys.map(key=>{
    const profile=NATIVE_BREED_PROFILES[key],choice=NATIVE_MODEL_CHOICES[key];
-   return '<div class="evrow" data-native-choice="'+key+'"><b>'+esc(profile.name)+'</b><span>'+esc(choice.description)+' <a href="breeds.html?horse='+key+'&amp;v=native-gaits-1" target="_blank" rel="noopener">Preview in Breed Studio</a></span><button data-fx="native-horses:add:'+key+'"'+(owned(save,key)?' disabled':'')+'>'+(owned(save,key)?'In your stable':'Add to stable · Free')+'</button></div>';
+   return '<div class="evrow" data-native-choice="'+key+'"><b>'+esc(profile.name)+'</b><span>'+esc(choice.description)+' <a href="breeds.html?horse='+key+'&amp;v=dragon-rigging-1" target="_blank" rel="noopener">Preview in Breed Studio</a></span><button data-fx="native-horses:add:'+key+'"'+(owned(save,key)?' disabled':'')+'>'+(owned(save,key)?'In your stable':'Add to stable · Free')+'</button></div>';
   }).join('')+'<p>After adding a model, open My Horses and choose Ride when you are ready.</p>';
  }});
  G.ui.action('native-horses',args=>{

@@ -632,14 +632,14 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from './assets/breed-models.js?v=native-roster-1';
+import {createBreedLibrary} from './assets/breed-models.js?v=dragon-rigging-1';
 import {configureNativeCustomization} from './assets/native-horse-customization.js?v=native-roster-1';
 import {syncNativeHorseFantasy} from './assets/native-horse-fantasy.js?v=native-roster-1';
 import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=fast-travel-1';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=dragon-rigging-1';
 import {createNativeRiderBridge} from './assets/native-rider.js?v=native-rider-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js';
@@ -658,7 +658,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js';
 import {installWorldPhotoscans} from './assets/world-photoscans.js';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=native-rider-1';
-import {FEATURES} from './assets/features/index.js?v=native-roster-1';
+import {FEATURES} from './assets/features/index.js?v=dragon-rigging-1';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -5875,7 +5875,7 @@ function breedSeat(rig=RIG){
  return BREED_MODELS.mountPoint(rig,rig.profile?.anchors?.saddle)||new THREE.Vector3(0,1.39,-.30);
 }
 function riderSeat(){const seat=RIG.profile?.nativeBreed?(nativeRiderBridge?.seatLocal()||breedSeat()):breedSeat(),scale=player.mesh?.scale.x||1;
- if(RIG.profile?.nativeBreed)return {y:seat.y+(.11-(myHorses[rideIdx]?.bareback ? .09 : 0))/scale,z:seat.z-.02/scale};
+ if(RIG.profile?.nativeBreed)return {x:seat.x,y:seat.y+(.11-(RIG.profile.nativeKind==='horse'&&myHorses[rideIdx]?.bareback ? .09 : 0))/scale,z:seat.z-.02/scale};
  const o={y:seat.y+((RIG.profile?.hero||RIG.profile?.artistBreed)?.14:.18)/scale,z:seat.z+.02/scale};
  if(myHorses[rideIdx]&&myHorses[rideIdx].bareback){o.y-=.10/scale;o.z+=.03/scale;}   // mastery-style: bareback, she sits on the back, not on a saddle that is not there
  if(TACK.saddle&&TACK.saddle.userData.style==='western'){o.y-=WESTERN_SEAT.dy/scale;o.z+=WESTERN_SEAT.dz/scale;}   // tack-wardrobe: a Western seat sits deeper and a touch further back
@@ -6170,7 +6170,7 @@ function attachNativeTack(){
  }
  const rider=player.rider;
  if(rider?.g){rider._setHero?.(true);rider.g.visible=true;rider.g.traverse(o=>{if(o.isMesh)o.visible=true;});
-  const seat=riderSeat();rider.g.position.set(0,seat.y,seat.z);rider.g.scale.setScalar(1/(player.mesh.scale.x||1));rider._handHome=null;}
+  const seat=riderSeat();rider.g.position.set(seat.x||0,seat.y,seat.z);rider.g.scale.setScalar(1/(player.mesh.scale.x||1));rider._handHome=null;}
  G.run('attachTack',h);
 }
 function attachTack(){   // idempotent: places whatever has loaded so far onto the current mount
@@ -6196,7 +6196,7 @@ function attachTack(){   // idempotent: places whatever has loaded so far onto t
   player.rider._setHero?.(!!(RIG.profile?.hero||RIG.profile?.artistBreed));
   player.rider.g.visible=true;
   player.rider.g.traverse(o=>{if(o.isMesh)o.visible=true;});
-  const seat=riderSeat();player.rider.g.position.set(0,seat.y,seat.z);player.rider.g.scale.setScalar(1/player.mesh.scale.x);
+  const seat=riderSeat();player.rider.g.position.set(seat.x||0,seat.y,seat.z);player.rider.g.scale.setScalar(1/player.mesh.scale.x);
   player.rider._handHome=null;   // a different horse means a different place to hold the reins
  }
  if(!TACK.bitL){TACK.bitL=new THREE.Object3D();TACK.bitL.position.set(0.13,1.34,1.0);
@@ -6271,6 +6271,8 @@ function cacheRiderHands(R){
 }
 /* hands to the horse's mouth */
 function riderHands(R,F,U,Rt,tm,pat){
+ // Dragons have no horse bit: keep the seated arms with the animated torso.
+ if(RIG.profile?.nativeBreed&&RIG.profile.nativeKind!=='horse')return;
  const B=R.sk.by;
  cacheRiderHands(R);
  const rel=R._air*0.32;                          // crest release: hands up the neck over a fence
@@ -6296,13 +6298,13 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
  const R=player.rider;
  if(!R||!R.g)return;
  if(player.onFoot){reinL.visible=false;reinR.visible=false;return;}   // on foot (on-foot package): she is walking, not seated, and the reins stay on the horse
- const seat=riderSeat(); R.g.position.set(0,seat.y,seat.z); R.g.rotation.set(0,0,0);
+ const seat=riderSeat(); R.g.position.set(seat.x||0,seat.y,seat.z); R.g.rotation.set(0,0,0);
  if(R.sk){
   const k=Math.min(1,(dt||0.016)*6);
-  const nativeHorse=RIG.profile?.nativeKind==='horse';
-  const nativeMax=nativeHorse?getNativeHorseCapabilities(RIG)?.maxSpeedMps:0;
-  const t=THREE.MathUtils.clamp(nativeHorse?(nativeMax>0?sp/nativeMax:0):(sp-0.3)/6,0,1);
-  const ph=RIG.phase*Math.PI*2, moving=sp>(nativeHorse ? .02 : .3);
+  const nativeMount=!!RIG.profile?.nativeBreed;
+  const nativeMax=nativeMount?getNativeHorseCapabilities(RIG)?.maxSpeedMps:0;
+  const t=THREE.MathUtils.clamp(nativeMount?(nativeMax>0?sp/nativeMax:0):(sp-0.3)/6,0,1);
+  const ph=RIG.phase*Math.PI*2, moving=sp>(nativeMount ? .02 : .3);
   const turn=(keys.KeyA||keys.ArrowLeft||touch.left?1:0)-(keys.KeyD||keys.ArrowRight||touch.right?1:0);
   R._look=(R._look||0)+((moving?turn*0.45:Math.sin((tm||0)*0.9)*0.22+Math.sin((tm||0)*0.47+1)*0.12)-(R._look||0))*k*0.9;
   R._turn=(R._turn||0)+(turn-(R._turn||0))*k*0.7;
@@ -8466,15 +8468,16 @@ function rebuildAll(){
  scene.add(player.mesh);
  RIG.attachedTo=null; attachRig(); applyCoat();   // swap in the textured rigged mount, coat to this horse
  attachTack();                       // (re)attach saddle + rider
- $('nameEl').textContent=h.name+(h.horn?' 🦄':h.wings?' 🪽':'');
+ const canFly=!!h.wings||!!BREED_MODELS.profile(h.breed)?.nativeCanFly;
+ $('nameEl').textContent=h.name+(h.horn?' 🦄':canFly?' 🪽':'');
  const fb=$('flyBtn');
- if(fb){fb.style.display=h.wings?'inline-block':'none';if(!player.flying)fb.textContent='🪽 Fly';}
+ if(fb){fb.style.display=canFly?'inline-block':'none';if(!player.flying)fb.textContent='🪽 Fly';}
  {const bb=$('breathBtn'), el=dragonElement(h);
   if(bb){ bb.style.display=el?'inline-block':'none';
    bb.textContent=({fire:'🔥',ice:'❄️',water:'💧',arcane:'🔮',shadow:'🌑'}[el]||'🔥')+' Breathe'; }
   if(el&&!window._breathHint){window._breathHint=1;setTimeout(()=>{try{toast('🔥 Hold B (or the Breathe button) to breathe '+el+'!');}catch(e){}},1400);}}
- if(!h.wings&&player.flying)player.flying=false;
- if(h.wings&&!window._flyHint){window._flyHint=1;setTimeout(()=>{try{toast('🪽 Tap 🪽 Fly (or Space) to take off!');}catch(e){}},800);}
+ if(!canFly){player.flying=false;player.landing=false;}
+ if(canFly&&!window._flyHint){window._flyHint=1;setTimeout(()=>{try{toast('🪽 Tap 🪽 Fly (or Space) to take off!');}catch(e){}},800);}
  let n=0;
  try{refreshBarn();}catch(e){}                 // whoever is not out to grass is in a stall
  const _sv=freshSave(); const _pm=_sv?pastureMax(_sv):PASTURE_BASE;
@@ -8654,7 +8657,7 @@ addEventListener('keydown',e=>{
   }
   if(best)openProfile(best.name);else takePhoto();
  }
- if(e.code==='KeyF')setFlying(!player.flying);
+ if(e.code==='KeyF')setFlying(player.landing||!player.flying);
  if(e.code==='KeyB'&&!e.repeat)keys.KeyB=true;
  if(e.code==='KeyQ')startTrick('roll');
  if(e.code==='KeyR')startTrick('spin');
@@ -10841,7 +10844,7 @@ function remoteUpdate(m){
     if(parts.wings)for(const wing of parts.wings)wing.visible=false;
     if(parts.horn)parts.horn.visible=false;
     if(parts.crest)parts.crest.visible=false;
-    const seat=gameHeroSeat(rrig,parts.group);rider.g.position.set(0,seat.y+.11,seat.z-.02);
+    const seat=gameHeroSeat(rrig,parts.group);rider.g.position.set(seat.x,seat.y+.11,seat.z-.02);
     parts.group.scale.setScalar(1);
     configureArtistCustomization(rrig,{breed,colors:m.c,tailCol:m.tailCol,mark:m.mark,markCol:m.markCol,coat:m.ct,wings:m.wg,horn:m.hrn,dragon:m.dg,id:m.id});
    }else{
@@ -10918,7 +10921,7 @@ function netTick(dt,t){
   }
   if(r.rig){
    // the good horse: same gait code the player's mount runs
-   if(r.rig.heroMotion){tickGameHero(r.rig,r.sp,dt);if(r.rig.profile?.nativeBreed){const seat=gameHeroSeat(r.rig,r.parts.group);r.rider.g.position.set(0,seat.y+.11,seat.z-.02);}else{if(r.rig.saddle)r.rig.saddle.position.copy(breedSeat(r.rig));fitArtistFeatures(r.rig,r.parts,true);}}
+   if(r.rig.heroMotion){r.rig.nativeFlying=!!r.fly;tickGameHero(r.rig,r.sp,dt);if(r.rig.profile?.nativeBreed){const seat=gameHeroSeat(r.rig,r.parts.group);r.rider.g.position.set(seat.x,seat.y+.11,seat.z-.02);}else{if(r.rig.saddle)r.rig.saddle.position.copy(breedSeat(r.rig));fitArtistFeatures(r.rig,r.parts,true);}}
    else{r.rig.phase+=rigPhaseStep(r.sp,true,dt,r.parts.group.scale.x);poseRigBones(r.rig.bones,r.rig.phase,r.sp,true,0,t,dt,0,r.rig);r.rig.hair?.update?.(t,r.sp);}
    if(r.bridle)r.bridle.userData.follow(r.rig.headBone||r.rig.bones[6],r.rig.bones,r.rig.restQ,r.rig.scene,r.parts.group);
   }
@@ -12981,16 +12984,21 @@ function setFlying(on){
  const nativeCap=RIG.attachedTo===player.mesh?getNativeHorseCapabilities(RIG):null;
  if(on&&nativeCap?.native&&!nativeCap.canFly){toast('This native mount has no flight animation.');return;}
  if(on&&!winged&&!nativeCap?.canFly){toast('🪽 Only a Pegasus can fly! Get one in the 🛍️ Shop.');return;}
- player.flying=!!on;
+ if(!on&&player.flying&&nativeCap?.dragonTravel&&(player.y||0)>.08){
+  player.landing=true;player.flyAlt=0;
+  const fb=$('flyBtn');if(fb)fb.textContent='🪽 Cancel landing';
+  return;
+ }
+ const wasFlying=player.flying;player.flying=!!on;player.landing=false;
  if(on){
   player.flyT=0;                                   // the push-off is timed from here
-  player.flyAlt=Math.max(player.y||0,6);
+  player.flyAlt=wasFlying?Math.max(player.y||0,.5):Math.max(player.y||0,6);
   try{sJump();}catch(e){}
   if(!window._flyTut){window._flyTut=1;toast('🪽 Flying! Space climb · Shift dive · W cruise · Q roll · R spin · 🛬 land');}
  }
  const fb=$('flyBtn');if(fb)fb.textContent=player.flying?'🛬 Land':'🪽 Fly';
 }
-$('flyBtn').onclick=()=>setFlying(!player.flying);
+$('flyBtn').onclick=()=>setFlying(player.landing||!player.flying);
 {const bb=$('breathBtn');                                   // hold the button, or hold B
  const on=e=>{player.breathHold=true; e.preventDefault();}, off=()=>{player.breathHold=false;};
  bb.addEventListener('pointerdown',on); addEventListener('pointerup',off); addEventListener('pointercancel',off);
@@ -13060,8 +13068,12 @@ function tick(stepSeconds){
  }
  if(RIG.profile?.referenceMotion||RIG.profile?.nativeRoster)RIG.nativeCanFly=!!myHorses[rideIdx]?.wings;
  const nativeCap=RIG.attachedTo===player.mesh?getNativeHorseCapabilities(RIG):null;
- const requestedMode=keys.ControlLeft||keys.ControlRight?'walk':keys.AltLeft||keys.AltRight?'trot':gallop?'gallopLeft':'canterLeft';
- RIG.nativeRequestedGait=nativeCap?.paced?requestedMode:null;
+ const walking=keys.ControlLeft||keys.ControlRight;
+ const requestedMode=nativeCap?.dragonTravel?(walking?'walk':'run'):walking?'walk':keys.AltLeft||keys.AltRight?'trot':gallop?'gallopLeft':'canterLeft';
+ RIG.nativeRequestedGait=nativeCap?.paced||nativeCap?.dragonTravel?requestedMode:null;
+ if(nativeCap?.dragonTravel&&target>0){
+  target=player.flying?nativeCap.flightMaxSpeedMps*(gallop?1:.75):nativeCap.gaitSpeeds[requestedMode]*(requestedMode==='run'&&!gallop ? .68 : 1)*Math.max(.75,spMul/.928);
+ }
  if(nativeCap?.paced&&target>0&&!player.flying){
   const pace=nativeCap.gaitSpeeds[requestedMode];
   if(pace)target=pace*Math.max(.75,spMul/.928);
@@ -13181,18 +13193,20 @@ function tick(stepSeconds){
  const winged=!!(myHorses[rideIdx]&&myHorses[rideIdx].wings)||!!nativeCap?.canFly;
  if(!winged&&player.flying)player.flying=false;
  if(player.flying){
-  /* ===== Pegasus flight — sustained, altitude-holding ===== */
-  const climb=((keys.Space||touch.jump)?1:0)-((keys.ShiftLeft||keys.ShiftRight||touch.gal)?1:0);
+  /* Sustained flight with altitude hold and a bounded dragon descent. */
+  const climb=player.landing?-1:((keys.Space||touch.jump)?1:0)-((keys.ShiftLeft||keys.ShiftRight||touch.gal)?1:0);
   player.climbInput=climb;
   const faPrev=(typeof player.flyAlt==='number')?player.flyAlt:6;
-  player.flyAlt=THREE.MathUtils.clamp(faPrev+climb*16*dt,0,42);
-  player.y+=(player.flyAlt-player.y)*Math.min(1,dt*2.4);
-  player.vy=climb*4;
+  player.flyAlt=player.landing?0:THREE.MathUtils.clamp(faPrev+climb*16*dt,0,42);
+  const oldAltitude=player.y;
+  const altitudeStep=(player.flyAlt-player.y)*(nativeCap?.dragonTravel?1-Math.exp(-dt*2.4):Math.min(1,dt*2.4));
+  player.y+=nativeCap?.dragonTravel?THREE.MathUtils.clamp(altitudeStep,-5*dt,7*dt):altitudeStep;
+  player.vy=nativeCap?.dragonTravel?(dt>0?(player.y-oldAltitude)/dt:0):climb*4;
   player.flyT=(player.flyT||0)+dt;
   if(player.parts){player.parts.wingPow=THREE.MathUtils.clamp((player.parts.wingPow||0.4)+(climb>0?dt*3:(climb<0?-dt*2:dt*0.5)),0.32,1); player.parts.wingFly=true;}
   if(player.y>20&&!player.skyHi){player.skyHi=true;statBump('skyHigh',1);toast('☁️ Soaring above Kestrel Basin!');}
-  if(player.flyAlt<0.35&&player.y<0.5){
-   player.flying=false;player.y=0;player.vy=0;player.skyHi=false;
+  if(player.flyAlt<0.35&&player.y<(nativeCap?.dragonTravel ? .08 : .5)){
+   player.flying=false;player.landing=false;player.y=0;player.vy=0;player.skyHi=false;
    const fb2=$('flyBtn');if(fb2)fb2.textContent='🪽 Fly';
    player.landT=0.18;beep(120,60,0.12,'sine',0.08);
    const gyl=groundH(player.pos.x,player.pos.z);

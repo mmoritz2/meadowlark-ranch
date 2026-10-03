@@ -1,0 +1,31 @@
+{
+  "clips": [
+    {
+      "clip": "Run",
+      "duration": 0.625,
+      "loopLiftGap": 0,
+      "sourceTracksUnchanged": true,
+      "sourceTrackCount": 503,
+      "newTrackCount": 504,
+      "minimumFootY": 0.0011934950038589992,
+      "maxLift": 0.059421993581329775,
+      "finite": true,
+      "samples": 301
+    },
+    {
+      "clip": "Walk",
+      "duration": 0.625,
+      "loopLiftGap": 0,
+      "sourceTracksUnchanged": true,
+      "sourceTrackCount": 501,
+      "newTrackCount": 502,
+      "minimumFootY": 0.002865294209006254,
+      "maxLift": 0.01747631347234811,
+      "finite": true,
+      "samples": 301
+    }
+  ],
+  "bones": 169,
+  "footVertices": 1782,
+  "errors": []
+}

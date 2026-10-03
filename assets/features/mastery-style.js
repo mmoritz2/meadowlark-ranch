@@ -282,7 +282,7 @@ export function install(G){
  let wild=false, reins=null;
  function findReins(){ if(reins)return reins; reins=[]; for(const o of G.scene.children){ if(o.isMesh&&o.geometry&&o.geometry.boundingSphere&&o.geometry.boundingSphere.radius===1e4)reins.push(o); } return reins; }
  function applyWild(){ const R=player.rider; if(R&&R.g)R.g.visible=!wild; const TK=TACK(); const h=ridden()||{};
-  if(TK.saddle)TK.saddle.visible=!wild&&!h.bareback; if(TK.bridle)TK.bridle.visible=!wild; for(const r of findReins())if(wild)r.visible=false;
+  if(TK.saddle)TK.saddle.visible=!wild&&!h.bareback&&(!TK.saddle.userData.nativeAnchorCarrier||RIG()?.profile?.nativeKind==='horse'); if(TK.bridle)TK.bridle.visible=!wild; for(const r of findReins())if(wild)r.visible=false;
   try{document.body.classList.toggle('wildmode',wild);}catch(e){} }
  function enforceWild(){ const R=player.rider; if(R&&R.g&&R.g.visible)R.g.visible=false; const TK=TACK(); if(TK.saddle&&TK.saddle.visible)TK.saddle.visible=false; if(TK.bridle&&TK.bridle.visible)TK.bridle.visible=false; for(const r of findReins())if(r.visible)r.visible=false; }
  function toggleWild(){

@@ -2,7 +2,7 @@
  * Prepared geometry/textures are cached; each actor owns its skeleton and
  * materials. Actor axes: +Z forward, +Y up. */
 import {fillOutTail,fillOutMane} from './horse-hair-volume.js';
-import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=native-roster-1';
+import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=dragon-rigging-1';
 import {nativeRosterProfiles,applyNativeRosterShape} from './native-roster.js?v=native-roster-1';
 import {createNativeHorseFantasy} from './native-horse-fantasy.js?v=native-roster-1';
 export function createBreedLibrary({THREE, GLTFLoader, clone}) {
