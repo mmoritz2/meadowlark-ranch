@@ -8,6 +8,7 @@ import copy, hashlib, json, sys
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 from black_dragon_tail import apply_flight_tail
+from black_dragon_flight_legs import flight_leg_offsets
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'tools/asset-gen'));import rig_hero_horse as g
 SRC=ROOT/'assets/models/horse-imports/black-dragon/game/black-dragon-native-2k-candidate.glb'
 OUT=ROOT/'assets/models/dragon-motions/black-dragon-motion.glb'
@@ -97,6 +98,8 @@ def pose(kind,p):
   target=bw[leg['foot']][:3,3].copy();pitch=0
   if flight:
    target[1]+=1.08 if li<2 else .64;target[2]-=.50 if li<2 else .18;pitch=-.28 if li<2 else .18
+   offset,ankle=flight_leg_offsets(li,tail_phase)
+   target+=np.array(offset);pitch+=ankle
   elif not stand:
    phase=(p+([0,.5,.5,0][li] if run else leg['phase']))%1
    stride=1.55 if run else 1.35;dx,dy,pitch=footcurve(phase,.52 if run else .73,stride,.62 if run else .32)

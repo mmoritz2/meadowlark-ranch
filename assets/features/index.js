@@ -151,7 +151,7 @@
 /* BUILD STAMP: every import below carries the same ?v= build id, so a normal reload after an update fetches every changed
    module instead of running a cached mix of old and new ones. Bump it (all of them at once) whenever a feature file changes. */
 import * as stats from './stats-progression.js?v=b20261001b';
-import * as roster from './horse-roster.js?v=dragon-wing-tail-1';
+import * as roster from './horse-roster.js?v=dragon-flight-legs-1';
 import * as bond from './bond-personality-emotes.js?v=b20261001b';   // versioned: rider emotes reach the character's own bones
 import * as mastery from './mastery-style.js?v=dragon-rigging-1';
 import * as tack from './tack-wardrobe.js?v=b20261001b';   // versioned: the Character screen, then the character herself (outfits, eyes)
@@ -198,7 +198,7 @@ import * as seEvents from './se-events.js?v=b20261001b';   // Riding Events as t
 import * as seJourney from './se-journey.js?v=b20261001b';   // My Journey as a hub of story and discipline cards, each with its picture and how far along you are
 import * as seHorses from './se-horses.js?v=b20261001b';   // My Horses as portrait cards: favourites, then each breed with its mastery track
 import * as newBreeds from './new-breeds.js?v=native-roster-1';   // more horses: the very rare camouflage horse whose coat takes on the ground it stands on, and a new batch across every rarity
-import * as nativeHorses from './native-horses.js?v=dragon-wing-tail-1';
+import * as nativeHorses from './native-horses.js?v=dragon-flight-legs-1';
 import * as petFantasy from './pet-fantasy.js?v=b20261001b';   // fantasy pets: the Emberling dragon, the Mossglow fawn, the wyvern, the griffin cub and friends
 import * as noEmoji from './no-emoji.js?v=b20261001b';   // nothing on the page is an emoji: meaningful ones become drawn icons, the rest go (installed last, so it sees everything)
 export const FEATURES=[stats,roster,newBreeds,nativeHorses,bond,mastery,tack,course,events,story,account,petModels,petFantasy,market,breeding,ranch,world,clubs,social,seasons,seasonHunts,seasonQuests,ev2disc,ev2ladder,courseGuide,wVistas,wFlora,wWater,wAtmos,wQuarters,wPaths,wOutcrops,uikit,ui2horse,ui2shop,ui2compete,ui2hud,ui2club,ui2merge,lookGrade,seHud,seCare,onFoot,seMarket,treasures,courseClear,seFrame,seEvents,seJourney,seHorses,noEmoji];

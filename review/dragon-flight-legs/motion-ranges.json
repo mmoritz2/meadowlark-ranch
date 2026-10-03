@@ -1,0 +1,62 @@
+{
+  "duration": 3.3,
+  "sourceScale": 0.5624543581336393,
+  "legs": [
+    {
+      "leg": "front-left",
+      "footTargetRangeM": [
+        0.028122552556074615,
+        0.2362308304161285,
+        0.20246390128050704
+      ],
+      "footTargetMaximumSeparationM": 0.2850938287120339,
+      "jointAngularRangeDegrees": {
+        "upper": 15.944171946979761,
+        "lower": 24.98925107816013,
+        "foot": 14.89607976700553
+      }
+    },
+    {
+      "leg": "front-right",
+      "footTargetRangeM": [
+        0.028121391477391598,
+        0.2362104318181859,
+        0.20246852430009568
+      ],
+      "footTargetMaximumSeparationM": 0.28513012398718884,
+      "jointAngularRangeDegrees": {
+        "upper": 18.32193968053858,
+        "lower": 27.380386983313482,
+        "foot": 14.896850613879767
+      }
+    },
+    {
+      "leg": "hind-left",
+      "footTargetRangeM": [
+        0.028122139112488943,
+        0.19123362888005532,
+        0.17997460164633786
+      ],
+      "footTargetMaximumSeparationM": 0.24026269332141137,
+      "jointAngularRangeDegrees": {
+        "upper": 14.550270757034156,
+        "lower": 15.961843944774033,
+        "foot": 12.03101766383988
+      }
+    },
+    {
+      "leg": "hind-right",
+      "footTargetRangeM": [
+        0.02812208180943498,
+        0.19122462131706142,
+        0.17996466629701954
+      ],
+      "footTargetMaximumSeparationM": 0.24023623350318185,
+      "jointAngularRangeDegrees": {
+        "upper": 14.422156870856734,
+        "lower": 15.20051904745039,
+        "foot": 12.032112690715632
+      }
+    }
+  ]
+}

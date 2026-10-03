@@ -1,0 +1,43 @@
+{
+  "baselineSha256": "d779f9ddf4419260a4b2b2771440de5d370d83aa430de51b7a38f12203a99d06",
+  "motionSha256": "6f247de93db7b2844742d801d0d0b9b6530dd9664b1c75579cfa3ab4beddecc0",
+  "clips": [
+    {
+      "clip": "DragonStand",
+      "changedTracks": [],
+      "loopEndpointError": 0
+    },
+    {
+      "clip": "DragonWalk",
+      "changedTracks": [],
+      "loopEndpointError": 0
+    },
+    {
+      "clip": "DragonRun",
+      "changedTracks": [],
+      "loopEndpointError": 0
+    },
+    {
+      "clip": "DragonFly",
+      "changedTracks": [
+        "Oberschenkel_L_08.rotation",
+        "lowerleg_L_09.rotation",
+        "Oberschenkel_R_012.rotation",
+        "lowerleg_R_013.rotation",
+        "upper_arm_L_052.rotation",
+        "ik_underarm_L_053.rotation",
+        "upper_arm_R_054.rotation",
+        "ik_underarm_R_055.rotation",
+        "back_food_L_082.translation",
+        "back_food_L_082.rotation",
+        "Hand_R_099.translation",
+        "Hand_R_099.rotation",
+        "back_food_R_0116.translation",
+        "back_food_R_0116.rotation",
+        "Hand_L_0133.translation",
+        "Hand_L_0133.rotation"
+      ],
+      "loopEndpointError": 0
+    }
+  ]
+}
