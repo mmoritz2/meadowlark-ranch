@@ -45,17 +45,20 @@ const output=path.join(__dirname,'../review/native-fast-travel');
     G.hidePanels();advanceTime(20);
    },{stat,boost,stamina,blown});
    await page.keyboard.down('ArrowUp');if(modifier)await page.keyboard.down(modifier);
-   const row=await page.evaluate(sampleMs=>{
+   const row=await page.evaluate(({sampleMs,keepExhausted})=>{
     const G=__features,p=G.horse.player,r=G.horse.RIG(),lane=window.__speedQaLane;
     // Reset position between warm-up pieces; the measured interval below is
     // continuous and stays wholly inside the clear line even at maximum pace.
-    for(let i=0;i<8;i++){advanceTime(500);p.pos.set(lane.x,0,lane.z);p.heading=lane.heading;}
+    // Keep an exhaustion fixture below recovery-perk thresholds during warmup.
+    // Long speed suites can earn Second Wind before reaching this final case.
+    for(let i=0;i<8;i++){if(keepExhausted){p.stam=.03;p.blown=true;}advanceTime(500);p.pos.set(lane.x,0,lane.z);p.heading=lane.heading;}
+    if(keepExhausted){p.stam=.03;p.blown=true;}
     const start=p.pos.clone(),startStamina=p.stam;advanceTime(sampleMs);
     const gait=r.heroMotion.mode,key=['canter','gallop'].includes(gait)?gait+'Left':gait;
     const nominal=r.profile.nativeGaits[key]?.nominalSpeedMps,scale=r.scene.getWorldScale(new G.THREE.Vector3()).z;
     return{gait,speed:p.speed,heroRate:r.heroRate,nominal,scale,sourceSpeed:nominal*scale,previousSpeed:nominal*scale*({walk:1.35,trot:1.5,canterLeft:1.6,gallopLeft:1.8}[key]||1),distance:p.pos.distanceTo(start),elapsedS:sampleMs/1000,startStamina,stamina:p.stam,blown:p.blown,
      finite:r.bones.every(b=>b.matrixWorld.elements.every(Number.isFinite)),boneCount:r.bones.length,boostRemaining:p.boostT,effectiveStats:G.xp.effStats(G.horse.ridden())};
-   },sampleMs);
+   },{sampleMs,keepExhausted:blown});
    await release();return row;
   }
   if(process.env.QA_CASE!=='exhaustion'){
