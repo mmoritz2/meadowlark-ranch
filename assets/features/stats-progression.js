@@ -16,7 +16,7 @@
      9. Region-specific wildlife (coyotes, mountain goats) that can spook a galloping horse.
     10. Golden horseshoes pay XP (inline).
     11. Fishing at four waters with species by spot, a rod and bobber, fish to sell or barter. */
-import {makeNaturalTree} from '../vegetation.js';
+import {makeNaturalTree} from '../vegetation.js?v=world-cinematic-1';
 
 export const id='stats-progression';
 

@@ -1,0 +1,44 @@
+// Matching albedo/normal views of each source scan. The normal is rotated with
+// the tree, so a distant crown keeps its volume as the sun and camera move.
+export function treeImpostor({THREE,albedo,normals,width,height,bottom,nearFade=null}) {
+  const geo=new THREE.PlaneGeometry(width,height);geo.translate(0,bottom+height*.5,0);
+  const mat=new THREE.MeshStandardMaterial({map:albedo,alphaTest:.22,side:THREE.DoubleSide,roughness:1,envMapIntensity:.48});
+  mat.alphaToCoverage=true;
+  const vertex=sh=>{
+    if(nearFade)sh.uniforms.treeViewer={value:nearFade};
+    sh.vertexShader='varying vec2 treeHeading;'+(nearFade?'uniform vec3 treeViewer;':'')+'\n'+sh.vertexShader;
+    sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+      #ifdef USE_INSTANCING
+        vec3 toEye=cameraPosition-instanceMatrix[3].xyz;
+        float eyeAngle=atan(toEye.x,toEye.z);
+        float treeAngle=atan(instanceMatrix[2].x,instanceMatrix[2].z);
+        float localAngle=eyeAngle-treeAngle;
+        float frame=mod(floor((localAngle+6.2831853+.3926991)/.7853982),8.0);
+        transformed.x=position.x*cos(localAngle);
+        transformed.z=-position.x*sin(localAngle);
+        vMapUv=(uv+vec2(mod(frame,4.0),1.0-floor(frame/4.0)))/vec2(4.0,2.0);
+        treeHeading=vec2(sin(treeAngle),cos(treeAngle));
+        ${nearFade?'transformed*=smoothstep(95.,150.,distance(instanceMatrix[3].xz,treeViewer.xz));':''}
+      #endif`);
+  };
+  mat.onBeforeCompile=sh=>{
+    vertex(sh);sh.uniforms.treeNormals={value:normals};
+    sh.fragmentShader='uniform sampler2D treeNormals;varying vec2 treeHeading;\n'+sh.fragmentShader;
+    sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+      vec3 treeN=normalize(texture2D(treeNormals,vMapUv).xyz*2.0-1.0);
+      // A little canopy averaging softens the lighting of individual leaf cards.
+      treeN=normalize(mix(treeN,vec3(treeN.x,.8,treeN.z),.30));
+      treeN=vec3(treeN.x*treeHeading.y+treeN.z*treeHeading.x,treeN.y,-treeN.x*treeHeading.x+treeN.z*treeHeading.y);
+      normal=normalize(mat3(viewMatrix)*treeN);`);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <opaque_fragment>',`
+      #if NUM_DIR_LIGHTS > 0
+        float backlit=pow(max(dot(normalize(vViewPosition),-directionalLights[0].direction),0.0),4.0);
+        outgoingLight+=diffuseColor.rgb*directionalLights[0].color*backlit*.04;
+      #endif
+      #include <opaque_fragment>`);
+  };
+  mat.customProgramCacheKey=()=> 'scan-tree-normal-views-v1-'+!!nearFade;
+  const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:albedo,alphaTest:.22,side:THREE.DoubleSide});
+  depth.onBeforeCompile=vertex;depth.customProgramCacheKey=()=> 'scan-tree-normal-depth-v1-'+!!nearFade;mat.userData.scanDepth=depth;
+  return {geo,mat};
+}

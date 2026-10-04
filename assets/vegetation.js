@@ -1,7 +1,7 @@
 /* Botanical replacement meshes for the old sphere shrubs and solid cone pines.
    Shared prototypes keep repeated plants inexpensive. Each plant is two meshes:
    bark and alpha-tested leaves. Shapes and texture artwork are original. */
-import { getFoliageTexture, tuneFoliage, onFoliageAtlasReady } from './world-art.js';
+import { getFoliageTexture, tuneFoliage, onFoliageAtlasReady } from './world-art.js?v=world-cinematic-1';
 
 const TAU = Math.PI * 2;
 const prototypes = new Map(), materials = new Map();

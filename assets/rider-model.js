@@ -13,7 +13,7 @@
                   with a white stock collar, breeches with suede knee patches and a belt, tall boots with
                   a sole and a shine. Every colour is the wardrobe's (shirt, pants, boots), so every piece
                   the game already sells still means something.
-     outfits      the pack's Peasant ("Stable hand") and Ranger ("Trail rider"), loaded when first worn;
+     outfits      48 clothing recipes: fitted riding kit and tailored Peasant/Ranger garments, loaded when first worn;
                   the body under them is cut back to the head and neck, as the pack intends.
      helmet       a riding helmet built to her head — shell, peak and harness — in the wardrobe's colour.
      hair         the pack's styles (long, space buns; short, crop and a beard for the other body), and
@@ -36,23 +36,29 @@
 
    Pure module: THREE and friends are injected, nothing runs at import time. */
 
+import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailorGarment,tailoredTop,sewnDetails} from './rider-clothes.js?v=appearance-3';
+export {RIDER_OUTFITS};
+import {EXTRA_HAIR,shapeHair,hairDetails} from './rider-hairstyles.js?v=appearance-3';
+import {accessoryFit,buildAccessories} from './rider-accessories.js?v=appearance-1';
+
 /* ---- tables ------------------------------------------------------------------------------------ */
 /* mesh: the pack's own hairstyle. scalp: hair drawn back over her own scalp (buildScalp) with what is tied
    from it (tails: ponytail, bun, braid, pigtails). curls: ringlets over the long style's shape. */
 export const RIDER_HAIR=[
- {id:'long',label:'Long',body:['f','m'],mesh:'Hair_Long'},
+ {id:'long',label:'Long',body:['f','m'],mesh:'Hair_Long',shape:'long'},
  {id:'ponytail',label:'Ponytail',body:['f','m'],scalp:true,tail:'ponytail'},
  {id:'braid',label:'Braid',body:['f'],scalp:true,tail:'braid'},
  {id:'bun',label:'Bun',body:['f','m'],scalp:true,tail:'bun'},
  {id:'buns',label:'Space buns',body:['f'],mesh:'Hair_Buns'},
  {id:'pigtails',label:'Pigtails',body:['f'],scalp:true,tail:'pigtails'},
  {id:'curly',label:'Curls',body:['f','m'],mesh:'Hair_Long',curls:true},
+ ...EXTRA_HAIR,
  {id:'short',label:'Short',body:['m'],mesh:'Hair_SimpleParted'},
  {id:'crop',label:'Crop',body:['m'],mesh:'Hair_Buzzed'},
  {id:'beard',label:'Short + beard',body:['m'],mesh:'Hair_SimpleParted',extra:'Hair_Beard'},
 ];
 /* styles the old creator saved, and what each becomes (the pack's men's cuts leave a woman's scalp bare) */
-const LEGACY_HAIR={loose:'long',bob:'long',quiff:'short'};
+const LEGACY_HAIR={loose:'long',quiff:'short'};
 export function riderHairId(id,body){
  id=LEGACY_HAIR[id]||id||'long';
  const h=RIDER_HAIR.find(x=>x.id===id);
@@ -60,14 +66,11 @@ export function riderHairId(id,body){
  if(body!=='m'&&(id==='short'||id==='crop'||id==='beard'))return 'ponytail';
  return (body==='m')?'short':'long';
 }
-export const RIDER_OUTFITS=[
- {id:'riding',label:'Riding kit',icon:'🏇'},
- {id:'peasant',label:'Stable hand',icon:'🧺'},
- {id:'ranger',label:'Trail rider',icon:'🏹'},
-];
 export const RIDER_EYES=[
  {id:'brown',label:'Brown',col:'#6b3f1f'},{id:'hazel',label:'Hazel',col:'#8a6a2c'},{id:'green',label:'Green',col:'#4f8a4a'},
  {id:'blue',label:'Blue',col:'#4a7ec0'},{id:'grey',label:'Grey',col:'#8d98a4'},{id:'amber',label:'Amber',col:'#b87d24'},
+ {id:'darkbrown',label:'Espresso',col:'#3a231b'},{id:'olive',label:'Olive',col:'#727341'},
+ {id:'steel',label:'Blue-grey',col:'#779399'},{id:'honey',label:'Honey',col:'#a47739'},
 ];
 /* role bone -> her bone. The role 'R' side is the +x side, which is her _l. */
 const ROLE_BONE={hips:'pelvis',spine:'spine_01',chest:'spine_03',neck:'neck_01',head:'Head',
@@ -411,7 +414,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const z=kit.zones,ref=SKIN_REF[kit.body];
   return {uSkin:{value:new THREE.Color(DEF_SKIN)},uSkinW:{value:1},uBootMesh:{value:0},uBootRef:{value:0.1},uSkinRef:{value:new THREE.Vector3(...ref)},
    uShirt:{value:new THREE.Color('#3d4a6e')},uPants:{value:new THREE.Color('#cfc6ae')},uBoot:{value:new THREE.Color('#3b2a14')},
-   uHair:{value:new THREE.Color('#4a2e1c')},uEye:{value:new THREE.Color('#6b3f1f')},uEyeW:{value:0},uOutfit:{value:0},
+   uClothes:{value:new THREE.Vector4(0,0,0,0)},uHair:{value:new THREE.Color('#4a2e1c')},uEye:{value:new THREE.Color('#6b3f1f')},uEyeW:{value:0},uOutfit:{value:0},
    uZ1:{value:new THREE.Vector4(z.neckY,z.neckZ,z.waistY,z.bootY)},uZ2:{value:new THREE.Vector4(z.cuffX,z.armY,z.armZ,z.headY)},
    uHelmet:{value:0},uHelm:{value:new THREE.Vector4(0,0,0,0)},uHelmR:{value:new THREE.Vector4(0,0,0,0)}};
  }
@@ -439,7 +442,7 @@ vec3 riderSkin(vec3 t){ if(uSkinW<0.5)return t;
    float cloth=(1.0-step(uZ1.x,position.y))*(1.0-arm*smoothstep(uZ2.x-0.01,uZ2.x,ax));
    transformed+=normal*(boot*(0.0055+rim*0.0022)+(1.0-boot)*cloth*0.0016)*(1.0-uOutfit); }`);
    sh.fragmentShader=sh.fragmentShader
-    .replace('#include <common>','#include <common>\n'+HEAD_GLSL+'\nvarying vec3 vBind; varying vec3 vBindN;\n'+SKIN_GLSL+`
+    .replace('#include <common>','#include <common>\n'+HEAD_GLSL+'\nvarying vec3 vBind; varying vec3 vBindN;\n'+SKIN_GLSL+CLOTH_GLSL+`
 float rBand(float x,float a,float b){return step(a,x)*step(x,b);}
 float rHash(vec3 p){p=fract(p*0.3183099+vec3(0.1,0.2,0.3));p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
 float rNoise(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
@@ -463,7 +466,8 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    float arm=smoothstep(uZ2.y-0.20,uZ2.y-0.14,y)*smoothstep(0.17,0.20,ax);
    float headZ=max(step(uZ2.w,y)*(1.0-arm),step(neckY,y)*(1.0-smoothstep(0.070,0.080,rN))*(1.0-arm));
    float hand=arm*step(uZ2.x,ax);
-   float skinZ=max(headZ,hand);
+   float shortSleeve=arm*step(uZ2.x-0.31,ax)*uClothes.y;
+   float skinZ=max(max(headZ,hand),shortSleeve);
    float collar=(1.0-arm)*rBand(y,neckY,neckY+0.030)*(1.0-smoothstep(0.070,0.084,rN))*(1.0-step(uZ2.w,y));
    float bootY=uZ1.w-0.075*uBootMesh;
    float boot=(1.0-step(bootY,y))*(1.0-arm);
@@ -474,7 +478,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    float pants=(1.0-arm)*(1.0-boot)*(1.0-step(uZ1.z-0.016,y));
    float kneeP=pants*rBand(y,uZ1.w+0.02,uZ1.w+0.20)*step(0.25,-sign(vBind.x)*vBindN.x)*step(ax,0.15);
    float grain=rNoise(vBind*vec3(380.0,150.0,380.0));
-   vec3 cloth=uShirt;
+   vec3 cloth=riderFabric(uShirt,vBind);
    cloth=mix(cloth,uPants*(1.0-0.16*kneeP),pants);
    cloth=mix(cloth,uBoot,boot);
    cloth=mix(cloth,uBoot*1.18+0.02,bootTop);
@@ -485,25 +489,39 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    cloth*=0.95+0.06*grain*(1.0-boot);
    diffuseColor.rgb=mix(cloth,riderSkin(diffuseColor.rgb),skinZ);
    rwSkinZ=skinZ; rwBoot=boot; rwSole=sole; rwMetal=buckle;
-   rwRough=mix(mix(mix(0.80,0.34,boot),0.5,belt),0.85,sole);
+   rwRough=mix(mix(mix(riderFabricRoughness(),0.34,boot),0.5,belt),0.85,sole);
  }`)
     .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\n roughnessFactor=mix(rwRough,roughnessFactor,rwSkinZ);')
     .replace('#include <metalnessmap_fragment>','#include <metalnessmap_fragment>\n metalnessFactor=max(metalnessFactor,rwMetal*0.85);')
-    .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\n normal=normalize(mix(nonPerturbedNormal,normal,rwSkinZ));');
+    .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\n normal=normalize(mix(riderFabricNormal(nonPerturbedNormal,vBind,0.0),normal,max(rwSkinZ,rwBoot)));');
   };
-  mat.customProgramCacheKey=()=>'rider-body-v1';
+  mat.customProgramCacheKey=()=>'rider-body-appearance-1';
  }
  /* skin parts of an outfit (the Ranger's bare forearms), and an outfit's hands */
- function patchOutfit(mat,u,allSkin){
+ function patchOutfit(mat,u,allSkin,part,reference=0.2,cut='shirt'){
+  const tailored=part==='tailored'||part==='collar';
+  if(tailored){mat.normalMap=null;mat.roughness=0.82;}
   mat.onBeforeCompile=sh=>{
-   Object.assign(sh.uniforms,u);
+   Object.assign(sh.uniforms,u,{uClothRef:{value:reference}});
    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vBind;').replace('#include <begin_vertex>','#include <begin_vertex>\n vBind=position;');
-   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\n'+HEAD_GLSL+'\nvarying vec3 vBind;\n'+SKIN_GLSL)
+   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\n'+HEAD_GLSL+'\nuniform float uClothRef; varying vec3 vBind; float rwClothSkin;\n'+SKIN_GLSL+CLOTH_GLSL)
+    .replace('#include <clipping_planes_fragment>',`#include <clipping_planes_fragment>
+ ${tailored?`{float ax=abs(vBind.x),y=vBind.y;float arm=smoothstep(uZ2.y-0.20,uZ2.y-0.14,y)*smoothstep(0.17,0.20,ax);
+ float rN=length(vec2(vBind.x,vBind.z-uZ1.y)),neckY=uZ1.x+0.042*smoothstep(0.0,-0.09,vBind.z-uZ1.y);
+ float headZ=max(step(uZ2.w,y)*(1.0-arm),step(neckY,y)*(1.0-smoothstep(0.070,0.080,rN))*(1.0-arm));
+ if(headZ>0.5||y<uZ1.z-${cut==='coat'?'0.13':'0.04'})discard;}`:''}`)
     .replace('#include <map_fragment>',`#include <map_fragment>
  { float sk=${allSkin?'1.0':'step(uZ2.x+0.004,abs(vBind.x))*step(uZ2.y-0.14,vBind.y)'};
-   diffuseColor.rgb=mix(diffuseColor.rgb,riderSkin(diffuseColor.rgb),sk); }`);
+   float shade=clamp(pow(dot(diffuseColor.rgb,vec3(0.2126,0.7152,0.0722))/uClothRef,0.60),0.40,1.6);
+   vec3 cloth=${part==='collar'?'riderFabric(uShirt*0.94+vec3(0.002),vBind)':part==='legs'?'uPants':part==='trim'?'uBoot':part==='arms'?'mix(riderFabric(uShirt,vBind),vec3(0.82,0.77,0.65),uClothes.w)':'riderFabric(uShirt,vBind)'};
+   ${part==='legs'?'cloth*=0.95+0.04*sin((vBind.x+vBind.y)*650.0);':''}
+   rwClothSkin=sk;
+   diffuseColor.rgb=mix(cloth*${tailored?'1.0':'shade'},riderSkin(diffuseColor.rgb),sk); }`)
+    .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\n roughnessFactor=mix(riderFabricRoughness(),roughnessFactor,rwClothSkin);')
+    .replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+ normal=normalize(mix(riderFabricNormal(normal,vBind,${part==='legs'?'1.0':'0.0'}),normal,rwClothSkin));`);
   };
-  mat.customProgramCacheKey=()=>'rider-outfit-'+(allSkin?1:0);
+  mat.customProgramCacheKey=()=>'rider-outfit-appearance-1-'+part+'-'+(allSkin?1:0)+'-'+cut;
  }
  /* hair: the grey strand texture takes the chosen colour. Under a helmet everything above the brim is
     pressed in under the shell, so long hair still falls out below it and nothing pokes through. */
@@ -533,15 +551,17 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
  /* the cap of drawn-back hair: tinted like the rest, its edge carved into a hairline of loose strands, the
     roots there a shade darker where the scalp shows through */
  function patchScalp(mat,u){
-  mat.alphaTest=0.5; mat.side=THREE.FrontSide;
+  mat.alphaTest=0.5; mat.side=THREE.FrontSide;mat.normalMap=null;mat.roughness=0.65;
   mat.onBeforeCompile=sh=>{
    Object.assign(sh.uniforms,u);
    squashVerts(sh);
-   sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float hairFade; varying float vFade; varying vec3 vHP;')
-    .replace('#include <begin_vertex>','#include <begin_vertex>\n vFade=hairFade; vHP=position;');
-   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uHair; varying float vFade; varying vec3 vHP;\nfloat sHash(vec3 p){p=fract(p*0.3183099+0.1);p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}')
+   sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float hairFade; varying float vFade; varying vec3 vHP; varying vec2 vCombUV;')
+    .replace('#include <begin_vertex>','#include <begin_vertex>\n vFade=hairFade; vHP=position;vCombUV=uv;');
+   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uHair; varying float vFade; varying vec3 vHP; varying vec2 vCombUV;\nfloat sHash(vec3 p){p=fract(p*0.3183099+0.1);p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}')
     .replace('#include <map_fragment>',`#include <map_fragment>
- diffuseColor.rgb=uHair*(dot(diffuseColor.rgb,vec3(0.2126,0.7152,0.0722))/${HAIR_TEX_LUM.toFixed(3)});
+ float strands=sin(vCombUV.x*100.0+sin(vCombUV.y*15.0)*1.2);
+ float resolved=1.0-smoothstep(.7,2.5,fwidth(vCombUV.x*100.0));
+ diffuseColor.rgb=uHair*(.76+.13*strands*resolved);
  { float nz=sHash(floor(vHP*vec3(1100.0,420.0,1100.0)))*0.7+sHash(floor(vHP*300.0))*0.5;
    diffuseColor.a=clamp(vFade*0.85+0.5+(nz-0.6)*0.42,0.0,1.0);
    diffuseColor.rgb*=mix(0.80,1.0,smoothstep(-0.5,2.5,vFade)); }`);
@@ -610,13 +630,26 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    const base=(kit.hair.Hair_Long||kit.hair[Object.keys(kit.hair)[0]]).material;   // the pack's strand texture
    const put=(geo,mat,o)=>{const m=o&&o.inst?geo:new THREE.Mesh(geo,mat);m.userData.ownMat=true;m.userData.ownGeo=!!(o&&o.ownGeo);
     if(!(o&&o.noDepth))m.customDepthMaterial=depthMat;m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;g.add(m);return m;};
-   const addMesh=(name,dim)=>{const src=kit.hair[name];if(!src)return;const mat=src.material.clone();if(dim)mat.color.setScalar(dim);patchHair(mat,u,false);put(src.geometry,mat);};
+   const addMesh=(name,dim)=>{const src=kit.hair[name];if(!src)return;const mat=src.material.clone();if(dim)mat.color.setScalar(dim);patchHair(mat,u,false);const geo=h.shape&&name===h.mesh?shapeHair(src.geometry,h.shape,kit.head):src.geometry;put(geo,mat,{ownGeo:geo!==src.geometry});};
    if(h.mesh)addMesh(h.mesh,h.curls?0.72:0); if(h.extra)addMesh(h.extra);
    if(h.scalp){
-    const cap=base.clone();patchScalp(cap,u);put(scalpGeometry(kit,'back'),cap);
+    const cap=base.clone();patchScalp(cap,u);
+    let scalp=scalpGeometry(kit,'back');
+    if(h.detail==='coils'){
+     scalp=scalp.clone();const p=scalp.attributes.position,H=kit.head;
+     for(let i=0;i<p.count;i++)p.setXYZ(i,H.cx+(p.getX(i)-H.cx)*1.18,H.cy+(p.getY(i)-H.cy)*1.17,H.cz+(p.getZ(i)-H.cz)*1.15);
+     scalp.computeVertexNormals();scalp.computeBoundingSphere();
+    }
+    put(scalp,cap,{ownGeo:h.detail==='coils'});
     const pc=tailPieces(kit,h.tail,helmetOn);
     for(const geo of pc.hair){const mat=base.clone();patchHair(mat,u,false);put(geo,mat,{ownGeo:true});}
     if(pc.ties.length)put(mergeGeos(pc.ties),new THREE.MeshStandardMaterial({color:0x1d1916,roughness:0.55,metalness:0}),{ownGeo:true,noDepth:true});
+   }
+   if(h.detail){
+    const pieces=hairDetails({THREE,kit,style:h.detail,helmet:helmetOn,tube:tubeGeo,merge:mergeGeos,tiePoint});
+    for(const geo of pieces.hair){const mat=base.clone();patchHair(mat,u,false);put(geo,mat,{ownGeo:true});}
+    if(pieces.ties.length)put(mergeGeos(pieces.ties),new THREE.MeshStandardMaterial({color:0x30251d,roughness:0.85}),{ownGeo:true,noDepth:true});
+    if(pieces.ribbon.length)put(mergeGeos(pieces.ribbon),new THREE.MeshStandardMaterial({color:0x7b3548,roughness:0.8,side:THREE.DoubleSide}),{ownGeo:true,noDepth:true});
    }
    if(h.curls){
     const M=curlMatrices(kit,helmetOn),ico=new THREE.IcosahedronGeometry(1,1),mat=base.clone();patchHair(mat,u,false,true);
@@ -628,7 +661,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    }
    hb.add(g);rig.hair=g;
   };
-  const dropMeshes=list=>{for(const m of list){m.parent&&m.parent.remove(m);const k=mats.indexOf(m.material);if(k>=0)mats.splice(k,1);m.material.dispose();}};
+  const dropMeshes=list=>{for(const m of list){m.parent&&m.parent.remove(m);const k=mats.indexOf(m.material);if(k>=0)mats.splice(k,1);m.material.dispose();if(m.skeleton)m.skeleton.dispose();}};
   const skinned=(s,mat)=>{const m=new THREE.SkinnedMesh(s.geometry,mat);m.name=s.name;
    m.bind(new THREE.Skeleton(s.skeleton.bones.map(b=>bones[b.name]),s.skeleton.boneInverses),s.bindMatrix);
    m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;body.parent.add(m);return m;};
@@ -638,24 +671,31 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    if(!on){if(rig.boots){dropMeshes(rig.boots);rig.boots=null;}u.uBootMesh.value=0;return;}
    if(rig.boots){u.uBootMesh.value=1;return;}
    outfitFor(kit,'peasant').then(src=>{
-    if(rig.disposed||rig.boots||rig.outfitId!=='riding')return;
+    if(rig.disposed||rig.boots||riderOutfit(rig.outfitId).source!=='riding')return;
     const feet=src.meshes.filter(m=>/Feet/.test(m.name)); if(!feet.length)return;
     rig.boots=feet.map(sm=>{const mat=sm.material.clone();patchBoot(mat,u);mats.push(mat);return skinned(sm,mat);});
     u.uBootRef.value=src.bootRef||0.1; u.uBootMesh.value=1;
    }).catch(e=>console.warn('rider boots failed to load',e));
   };
   rig.setOutfit=(id,cb)=>{
-   id=RIDER_OUTFITS.some(o=>o.id===id)?id:'riding';
+   const outfit=riderOutfit(id);id=outfit.id;
    rig.outfitId=id;
-   const done=()=>{u.uOutfit.value=rig.outfit?1:0;rig.setBoots(id==='riding');if(cb)cb();};
+   u.uClothes.value.set(outfit.design,outfit.cut==='short'?1:0,outfit.cut==='sweater'?1:0,outfit.cut==='gilet'?1:0);
+   const done=()=>{u.uOutfit.value=rig.outfit?1:0;rig.setBoots(outfit.source==='riding');if(cb)cb();};
    if(rig.outfit&&rig.outfit.id===id)return done();
    if(rig.outfit){dropMeshes(rig.outfit.meshes);rig.outfit=null;}
-   if(id==='riding')return done();
+   u.uOutfit.value=0;
+   if(outfit.source==='riding')return done();
    outfitFor(kit,id).then(src=>{
     if(rig.disposed||rig.outfitId!==id||rig.outfit)return;
-    const meshes=src.meshes.map(sm=>{const mat=sm.material.clone();patchOutfit(mat,u,/Regular/.test(sm.material.name));mats.push(mat);return skinned(sm,mat);});
+    const meshes=src.meshes.map(sm=>{
+     const mat=sm.material.clone(),feet=/Feet/.test(sm.name),part=sm.name==='Tailored_Collars'?'collar':/^Tailored/.test(sm.name)?'tailored':/Legs/.test(sm.name)?'legs':/Belt|Bracer/.test(sm.name)?'trim':/Arms/.test(sm.name)?'arms':'body';
+     if(feet)patchBoot(mat,u);else if(sm.name!=='Sewn_Buttons')patchOutfit(mat,u,/Regular/.test(sm.material.name),part,src.refs.get(sm)||0.2,outfit.cut);
+     mats.push(mat);return skinned(sm,mat);
+    });
+    u.uBootRef.value=src.bootRef||0.1;
     rig.outfit={id,meshes};done();
-   }).catch(e=>{console.warn('rider outfit failed to load',id,e);rig.outfitId='riding';done();});
+   }).catch(e=>{if(rig.disposed||rig.outfitId!==id)return;console.warn('rider outfit failed to load',id,e);rig.setOutfit('riding',cb);});
   };
   /* the whole look; a helmet or a new style rebuilds the hair, colours only move uniforms */
   rig.setLook=f=>{
@@ -669,33 +709,57 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    if(helm){helmMat.color.set(helm);if(helmet.parent!==hb)hb.add(helmet);}else if(helmet.parent)helmet.parent.remove(helmet);
    const key=style+'|'+(helm?1:0);   // the colour is a uniform: only the style and the helmet rebuild her hair
    if(rig.look!==key){rig.setHair(style,f.hair||'#4a2e1c',!!helm);rig.look=key;}
+   const accessories=accessoryFit(f),accessoryKey=Object.values(accessories).join('|')+(accessories.neckwear!=='none'?'|'+(f.outfit||'riding'):'');
+   if(rig.accessoryKey!==accessoryKey){
+    if(rig.accessories)rig.accessories.dispose();
+    rig.accessories=buildAccessories(THREE,kit,bones,{...accessories,outfit:f.outfit||'riding'});rig.accessoryKey=accessoryKey;
+   }
    rig.setOutfit(f.outfit||'riding');
   };
   rig.dispose=()=>{
    rig.disposed=true;
    try{mixer.stopAllAction();mixer.uncacheRoot(root);}catch(e){}
    if(rig.hair)dropHair(rig.hair);
+   if(rig.accessories)rig.accessories.dispose();
+   if(rig.outfit)dropMeshes(rig.outfit.meshes);
+   if(rig.boots)dropMeshes(rig.boots);
    for(const m of mats){try{m.dispose();}catch(e){}}
   };
   rig.setLook(fit);
   return rig;
  }
+ /* Read the texture through each garment's UVs, once: shirt, leather and trousers
+    share atlases but need their own brightness reference when the player dyes them. */
+ function clothReference(mesh){
+  try{
+   const img=mesh.material.map&&mesh.material.map.image;if(!img)return 0.2;
+   const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');x.drawImage(img,0,0,128,128);
+   const d=x.getImageData(0,0,128,128).data,uv=mesh.geometry.attributes.uv;
+   const lin=v=>{v/=255;return v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4);};
+   let sum=0,n=0;
+   for(let i=0;i<uv.count;i+=3){const px=Math.min(127,Math.max(0,Math.floor(uv.getX(i)*128))),py=Math.min(127,Math.max(0,Math.floor(uv.getY(i)*128))),o=(py*128+px)*4;
+    sum+=0.2126*lin(d[o])+0.7152*lin(d[o+1])+0.0722*lin(d[o+2]);n++;}
+   return Math.max(0.02,sum/Math.max(1,n));
+  }catch(e){return 0.2;}
+ }
  function outfitFor(kit,id){
-  if(!kit.outfits[id])kit.outfits[id]=file('outfit-'+id+'-'+kit.body+'.glb').then(g=>{
-   /* no hood (she has hair, or a helmet) and no pauldron (a ranch, not a war) */
-   const meshes=[];
-   g.scene.traverse(o=>{if(o.isSkinnedMesh&&!/Hood|Pauldron/i.test(o.name))meshes.push(o);});
+  const outfit=riderOutfit(id),source=outfit.source;
+  if(source==='riding')return Promise.resolve({meshes:[],refs:new Map()});
+  if(!kit.outfits[id])kit.outfits[id]=file('outfit-'+source+'-'+kit.body+'.glb').then(g=>{
+   const meshes=[],refs=new Map();
    g.scene.updateMatrixWorld(true);
-   /* how bright the boots are in the texture, so a boot colour can replace theirs and keep the stitching */
-   let bootRef=0.1;
-   try{const f=meshes.find(m=>/Feet/.test(m.name)),img=f&&f.material.map&&f.material.map.image;
-    if(img){const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');x.drawImage(img,0,0,256,256);
-     const d=x.getImageData(0,0,256,256).data,uv=f.geometry.attributes.uv,lin=v=>{v/=255;return v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4);};
-     let t=0,n=0;for(let i=0;i<uv.count;i+=3){const px=Math.min(255,Math.max(0,Math.floor(uv.getX(i)*256))),py=Math.min(255,Math.max(0,Math.floor(uv.getY(i)*256))),o=(py*256+px)*4;
-      t+=0.2126*lin(d[o])+0.7152*lin(d[o+1])+0.0722*lin(d[o+2]);n++;}
-     if(n)bootRef=Math.max(0.02,t/n);}}catch(e){}
-   return {meshes,bootRef};
-  });
+   g.scene.traverse(o=>{
+    if(!o.isSkinnedMesh||/Hood|Pauldron/i.test(o.name))return;
+    if(outfit.cut==='gilet'&&/Belt|Bracer/.test(o.name))return;
+    if(outfit.source==='peasant'&&outfit.design>0&&/Body|Arms/.test(o.name))return;
+    const geometry=tailorGarment(THREE,o,outfit,kit.zones);
+    const mesh=geometry===o.geometry?o:{geometry,material:o.material,name:o.name,skeleton:o.skeleton,bindMatrix:o.bindMatrix};
+    meshes.push(mesh);refs.set(mesh,clothReference(o));
+   });
+   if(outfit.source==='peasant'&&outfit.design>0){const top=tailoredTop(kit,outfit);meshes.push(top,...sewnDetails(THREE,top,outfit,kit));}
+   const feet=meshes.find(m=>/Feet/.test(m.name));
+   return {meshes,refs,bootRef:feet?refs.get(feet):0.1};
+  }).catch(e=>{delete kit.outfits[id];throw e;});
   return kit.outfits[id];
  }
 

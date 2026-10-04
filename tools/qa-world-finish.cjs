@@ -10,7 +10,7 @@ const out=path.resolve(process.argv[2]||'output/world-finish');fs.mkdirSync(out,
   page.on('console',m=>{if(m.type()==='error'){errors.push(m.text());console.error(m.text().slice(0,1600));}});
   await page.route('**/ranch3d.html*',async route=>{
    const response=await route.fetch(),html=await response.text();
-   await route.fulfill({response,body:html.replace('const MERGE_STATS=mergeStatics();',`window.__finishQA={THREE,scene,camera,renderer,composer,worldFinish,RIG,player,G,groundH,
+   await route.fulfill({response,body:html.replace('const MERGE_STATS=mergeStatics();',`window.__finishQA={THREE,scene,camera,renderer,composer,worldFinish,RIG,player,G,groundH,sky,
      day(v,rain=false){dayT=v;weather.mode=rain?'rain':'clear';weather.timer=99999;},
      place(x,z,h=0){player.pos.set(x,0,z);player.heading=h;player.speed=0;player.y=0;camYaw=.24;camPitch=.27;camDist=camDistSm=6.2;},
      shot(p,t){camera.position.set(...p);camera.lookAt(...t);renderer.info.reset();G.waterReflections.update(performance.now()+100);composer.render();},quality:applyQuality};
@@ -48,8 +48,10 @@ const out=path.resolve(process.argv[2]||'output/world-finish');fs.mkdirSync(out,
   const scanViews=await page.evaluate(()=>{
     const q=__finishQA,tree=q.G.photoscans.treePositions.slice().sort((a,b)=>Math.hypot(a.x+50,a.z-30)-Math.hypot(b.x+50,b.z-30))[0];
     const rock=q.G.worldOutcrops.placed[0];
+    const fir=q.G.photoscans.treePositions.filter(t=>t.kind==='pine').sort((a,b)=>Math.hypot(a.x+50,a.z-30)-Math.hypot(b.x+50,b.z-30))[0];
     return [
       ['scanned-woodland',[tree.x+10,tree.z+10,0],[tree.x+12,q.groundH(tree.x+12,tree.z+16)+3.2,tree.z+16],[tree.x,q.groundH(tree.x,tree.z)+tree.height*.48,tree.z]],
+      ['scanned-fir',[fir.x+5,fir.z+6,0],[fir.x+8,q.groundH(fir.x+8,fir.z+12)+2.8,fir.z+12],[fir.x,q.groundH(fir.x,fir.z)+fir.height*.47,fir.z]],
       ['scanned-outcrop',[rock.x+10,rock.z+10,0],[rock.x+10,q.groundH(rock.x+10,rock.z+14)+2.2,rock.z+14],[rock.x,q.groundH(rock.x,rock.z)+1.8,rock.z]],
     ];
   });
@@ -81,7 +83,7 @@ const out=path.resolve(process.argv[2]||'output/world-finish');fs.mkdirSync(out,
   for(const tier of ['low','medium','high']){
    modes.push(await page.evaluate(tier=>{
     const q=__finishQA;q.quality(tier);q.day(.34);advanceTime(450);q.G.photoscans.update();
-    return {tier,ao:q.worldFinish.pass.enabled,samples:q.worldFinish.pass.uniforms.sampleCount.value,depth:!!q.composer.readBuffer.depthTexture,reflection:q.G.waterReflections.state.active,scanTrees:q.G.photoscans.activeTrees};
+    return {tier,ao:q.worldFinish.pass.enabled,samples:q.worldFinish.pass.uniforms.sampleCount.value,depth:!!q.composer.readBuffer.depthTexture,reflection:q.G.waterReflections.state.active,scanTrees:q.G.photoscans.activeTrees,cloudSteps:q.sky.material.uniforms.cloudSteps.value};
    },tier));await save(tier);
   }
   await page.setViewportSize({width:900,height:650});await page.evaluate(()=>advanceTime(100));
@@ -110,12 +112,14 @@ const out=path.resolve(process.argv[2]||'output/world-finish');fs.mkdirSync(out,
    noAssetFailures:!state.details.errors.length,photoscansPlaced:state.details.placed.length>0,
    scannedUnderstory:state.details.understory>100,highReflectsWater:state.reflections.renders>0,
    lowDisablesReflections:!modes[0].reflection,mediumDisablesReflections:!modes[1].reflection,webGLValid:state.glError===0,
-   sixNewAssetsLoaded:state.scans.assets.length===6&&!state.scans.errors.length,
+   sevenAssetsLoaded:state.scans.assets.length===7&&!state.scans.errors.length,
    bouldersReplaced:state.scans.rocks===74,scannedOutcrops:state.scans.outcrops>0,
    forestDetailsPlaced:state.scans.saplings>10&&state.scans.logs>0&&state.scans.cliffs>0,
    lowUsesTreeFallback:modes[0].scanTrees===0,mediumTreeBudget:modes[1].scanTrees<=6,
    highTreeBudget:modes[2].scanTrees>0&&modes[2].scanTrees<=12,
    sameModelDistantTrees:state.scans.distantTrees>100,
+   scannedConifers:state.scans.conifers>100,normalMappedTrees:state.scans.normalMappedViews===4,
+   distantForestLit:state.scans.farForestViews>3000,cloudQualityBudget:modes.map(m=>m.cloudSteps).join()==='5,8,12',
    pastureGroundActive:state.groundSource.includes('pasture/grass_diff')};
   fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({checks,errors,ao,modes,frames,state},null,2));
   for(const [k,v]of Object.entries(checks))console.log((v?'PASS ':'FAIL ')+k);

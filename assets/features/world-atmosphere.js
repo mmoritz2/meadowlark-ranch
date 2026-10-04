@@ -71,8 +71,8 @@ export function install(G){
     deep orange, six degrees up is the golden hour proper, and by thirty degrees the light is
     white with only a trace of warmth left in it. Two ramps because the morning is cooler. */
  const C=h=>new THREE.Color(h);
- const SUN_DAWN=[[-6,'#7d90bd'],[-1,'#e8794f'],[3,'#ffa477'],[8,'#ffc99b'],[16,'#ffe8cf'],[34,'#fff8ef']];
- const SUN_DUSK=[[-6,'#7d90bd'],[-1,'#ff6a2e'],[3,'#ff8c3e'],[8,'#ffb060'],[16,'#ffdcaf'],[34,'#fff7ec']];
+ const SUN_DAWN=[[-6,'#7d90bd'],[-1,'#e8794f'],[3,'#ffa477'],[8,'#ffc99b'],[16,'#ffe8cf'],[34,'#fff4e3']];
+ const SUN_DUSK=[[-6,'#7d90bd'],[-1,'#ff6a2e'],[3,'#ff8c3e'],[8,'#ffb060'],[16,'#ffdcaf'],[34,'#fff1df']];
  /* Two horizons, because the two ends of the day are not the same colour. Dawn is rose over
     cold ground and its band is narrow; dusk is amber over ground that has had the sun on it
     all day and runs much further up the sky. Sharing one ramp was why the after-shots of dawn
@@ -85,10 +85,10 @@ export function install(G){
     about (129,181,209). Everything from twelve degrees down, the golden hour and the night, is
     untouched. The fog is mixed from these two below, so the far hills haze to the lighter blue
     as well. */
- const HOR_DAWN=[[-8,'#1c2740'],[-1,'#cf90a0'],[4,'#e7b3ae'],[12,'#cdd6de'],[26,'#c4e2f7'],[50,'#bcdff7']];
- const HOR_DUSK=[[-8,'#1c2740'],[-1,'#e09071'],[4,'#eebd93'],[12,'#d2d7cf'],[26,'#c4e2f7'],[50,'#bcdff7']];
- const ZEN_DAWN=[[-8,'#0a1024'],[-1,'#334478'],[4,'#42639e'],[14,'#4c9ad6'],[34,'#68b3ec'],[54,'#70bcf2']];
- const ZEN_DUSK=[[-8,'#0a1024'],[-1,'#2a4d7e'],[4,'#31659c'],[14,'#4c9ad6'],[34,'#68b3ec'],[54,'#70bcf2']];
+ const HOR_DAWN=[[-8,'#1c2740'],[-1,'#cf90a0'],[4,'#e7b3ae'],[12,'#cdd6de'],[26,'#bfd9e5'],[50,'#b7d4e5']];
+ const HOR_DUSK=[[-8,'#1c2740'],[-1,'#e09071'],[4,'#eebd93'],[12,'#d2d7cf'],[26,'#bfd9e5'],[50,'#b7d4e5']];
+ const ZEN_DAWN=[[-8,'#0a1024'],[-1,'#334478'],[4,'#42639e'],[14,'#4c9ad6'],[34,'#5595c1'],[54,'#579cc8']];
+ const ZEN_DUSK=[[-8,'#0a1024'],[-1,'#2a4d7e'],[4,'#31659c'],[14,'#4c9ad6'],[34,'#5595c1'],[54,'#579cc8']];
  const GLOW_DAWN=[[-4,'#5b4a68'],[0,'#ffa295'],[6,'#ffbda8'],[16,'#e8cdb4']];
  const GLOW_DUSK=[[-4,'#5f3c52'],[0,'#ff7a35'],[6,'#ff9c4e'],[16,'#f0c898']];
  /* Built once. A ramp is walked with two comparisons and one lerp per frame, which is the
@@ -588,7 +588,7 @@ export function install(G){
      why a seven-degree sun produced a picture with no shadows in it. The ratio is the whole
      effect: push the key at the horizon hours and pull the fill down to meet it. -- */
   if(sun){
-   const keyDay=lerp(2.55,3.00,sstep(e,10,40));
+   const keyDay=lerp(2.90,3.35,sstep(e,10,40));
    const key=(rain?1.25:lerp(keyDay,3.85,K.horizon))*(1-K.night*0.72)+0.80*K.night;
    SM.key+=(key-SM.key)*Math.min(1,dt*3.5);
    sun.intensity=SM.key*(0.74+0.26*(A.cloud||1));   // a cloud passing over dims the world, not only the turf
@@ -614,7 +614,7 @@ export function install(G){
    hemi.groundColor.copy(C_GRND_NIGHT).lerp(_tmp,K.day);
    /* The floor matters more than it looks: below about 0.7 the near grass at dawn goes to a
       murky olive and the whole quarter reads as underexposed rather than as early. */
-   const fill=rain?1.05:lerp(1.22,0.66,K.horizon)*K.day+0.78*(1-K.day);
+   const fill=rain?1.05:lerp(.94,0.66,K.horizon)*K.day+0.78*(1-K.day);
    SM.fill+=(fill-SM.fill)*Math.min(1,dt*3.5);
    hemi.intensity=SM.fill;
   }
