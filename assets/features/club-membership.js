@@ -87,7 +87,9 @@ export function install(G){
  }
  function readMeta(c,m){
   const s=state(),out=s.outgoing[c];if(!active(out))return;
-  const current=s.contacts[c]?.meta||cleanClubMeta({founderId:s.contacts[c]?.founderId||'',founder:s.contacts[c]?.founder||''});
+  // A directory anchor has no accepted metadata revision yet. The temporary
+  // -1 sentinel admits legacy revision 0 once while preserving founder checks.
+  const current=s.contacts[c]?.meta||{...cleanClubMeta({founderId:s.contacts[c]?.founderId||'',founder:s.contacts[c]?.founder||''}),revision:-1};
   const meta=acceptClubMeta(current,{name:m.nm,founder:m.f,founderId:m.fid,motto:m.mo,created:m.at,pub:m.pub,crest:m.crest,color:m.color,revision:m.rev,roles:m.roles,roleIds:m.roleIds,roleOwners:m.roleOwners,senderId:m.id,senderName:m.n});
   if(!meta)return;S.sync(v=>{v.clubMembership.contacts[c]={...(v.clubMembership.contacts[c]||{}),meta};});
   const pending=state().outgoing[c]?.pendingDecision;if(pending)receiveDecision(c,pending);changed();
