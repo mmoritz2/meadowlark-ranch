@@ -73,14 +73,14 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   s=S.fresh(); out.pinned={t:s.clubNotice.t,by:s.clubNotice.by,at:s.clubNotice.at>0};
   out.ach_notice=(G.quest.ACHS.find(x=>x.id==='clubnotice')||{v:()=>0}).v(s);
   /* a remote notice, over-length, from another rider */
-  N.onMessage('srf1/'+CLUB+'/notice',JSON.stringify({id:'zz',n:'Ann Kestrel and a very long name',t:'x'.repeat(500),at:Date.now()}));
+  N.onMessage('srf1/'+CLUB+'/notice',JSON.stringify({id:'zz',n:'Ann Kestrel and a very long name',t:'x'.repeat(1500),at:Date.now()}));
   s=S.fresh(); out.remoteNotice={len:s.clubNotice.t.length,by:s.clubNotice.by,byLen:s.clubNotice.by.length};
   document.getElementById('netBtn').click(); document.getElementById('netBtn').click();
   out.noticeShown=/xxxx/.test(document.getElementById('onlinePanel').textContent);
 
   /* -- roster from presence cards ------------------------------------------------- */
-  N.onMessage('srf1/'+CLUB+'/members/Ann',JSON.stringify({id:'zz',n:'Ann',sp:180,last:Date.now(),h:4}));
-  N.onMessage('srf1/'+CLUB+'/members/Bo',JSON.stringify({id:'yy',n:'Bo',sp:60,last:Date.now(),h:2}));
+  N.onMessage('srf1/'+CLUB+'/members/Ann',JSON.stringify({id:'zz',n:'Ann',sp:180,wk:C.CW(),last:Date.now(),h:4}));
+  N.onMessage('srf1/'+CLUB+'/members/Bo',JSON.stringify({id:'yy',n:'Bo',sp:60,wk:C.CW(),last:Date.now(),h:2}));
   out.memberCount=C.memberCount();
   document.getElementById('netBtn').click(); document.getElementById('netBtn').click();
   out.rosterText=/Ann/.test(document.getElementById('onlinePanel').textContent)&&/Bo/.test(document.getElementById('onlinePanel').textContent);
@@ -117,7 +117,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
  check('clubs-create-join: motto and directory opt-in persist',a.motto==='Ride kind, ride far'&&a.pub===true,{motto:a.motto,pub:a.pub});
  check('clubs-create-join: the founding-member achievement reads 1',a.ach_club1===1,a.ach_club1);
  check('club-notice-board: pinning writes text, author and time',a.pinned.t.indexOf('Sunday at six')>0&&a.pinned.by==='QA'&&a.pinned.at,a.pinned);
- check('club-notice-board: a remote notice is truncated to 200 chars and the name to 14',a.remoteNotice.len===200&&a.remoteNotice.byLen===14,a.remoteNotice);
+ check('club-notice-board: a remote notice is truncated to 1000 chars and the name to 14',a.remoteNotice.len===1000&&a.remoteNotice.byLen===14,a.remoteNotice);
  check('club-notice-board: the pinned notice renders in the panel',a.noticeShown,a.noticeShown);
  check('club-notice-board: the notice achievement reads 1',a.ach_notice===1,a.ach_notice);
  check('clubs-create-join: presence cards build a 3-rider roster',a.memberCount===3&&a.rosterText,{memberCount:a.memberCount,rosterText:a.rosterText});
@@ -134,18 +134,18 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   const st=()=>JSON.parse(render_game_to_text());
   const CLUB=N.net.club, wk=G.time.weekKey();
   /* -- the club total: mine plus every club mate's retained sp board -------------- */
-  S.sync(sv=>{sv.sp={week:wk,pts:120};});
+  S.sync(sv=>{sv.clubRecords[sv.ridingClub].points={week:C.CW(),pts:0};G.run('starPoints',sv,120,'qa');});
   N.lbData.sp={QA:120,Ann:80,Bo:40};
-  out.total=C.clubTotal();                       // presence cards say Ann 180 / Bo 60, the retained board 80 / 40 — the higher wins
+  out.total=C.clubTotal();                       // persisted current-week member contributions: 120 + 180 + 60
   const keep={}; for(const k of Object.keys(C.clubMembers)){keep[k]=C.clubMembers[k];delete C.clubMembers[k];}
-  out.totalBoardOnly=C.clubTotal();              // board alone: 120 + 80 + 40
+  out.totalBoardOnly=C.clubTotal();              // presentation caches and personal leaderboard do not change club contributions
   for(const k of Object.keys(keep))C.clubMembers[k]=keep[k];
   out.isoWeek=C.CW();
   out.msToMonday=C.msToMonday();
-  /* -- rival clubs and a real one over the global topic --------------------------- */
+  /* -- real club leaderboard over the global topic --------------------------- */
   N.onMessage('srf1/clubs/other-club',JSON.stringify({id:'zz',n:'Ann',nm:'Willow Bend Riders',sp:9999,mem:6,wk:C.CW()}));
   const rows=C.clubRows();
-  out.rowCount=rows.length;
+  out.rowCount=rows.length;out.noNpc=rows.every(r=>!r.rival);out.npcSeparate=C.npcClubRows().every(r=>r.rival);
   out.topIsReal=rows[0].n==='Willow Bend Riders'&&rows[0].club===true;
   out.sortedDesc=rows.every((r,i)=>i===0||rows[i-1].v>=r.v);
   out.rankWithReal=C.myClubRank().rank;
@@ -166,22 +166,22 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   for(let i=0;i<M;i++){const r=C.rollChampion();if(r.clubHorse)horse++;if(r.r&&r.r.btok)tok++;}
   out.champHorseFreq=+(horse/M*100).toFixed(1);
   out.champTokFreq=+(tok/M*100).toFixed(1);
-  out.champCounts=[C.championCount(1),C.championCount(2),C.championCount(3),C.championCount(4),C.championCount(0)];
+  out.champCounts=[C.championCount(1,100),C.championCount(50,100),C.championCount(51,100),C.championCount(1,99),C.championCount(0,100)];
   /* -- a settled week, claimed from the Club tab ---------------------------------- */
-  S.sync(sv=>{sv.clubWeekLast={week:'2026-W00',total:1500,rank:1,n:3,claimed:false,champClaimed:false};
+  S.sync(sv=>{sv.clubWeekLast={week:'2026-01-05',total:1500,ownSP:120,rewardPolicy:2,rank:1,n:3,claimed:false,champClaimed:false};sv.clubRecords[sv.ridingClub].last={...sv.clubWeekLast};
    sv.stats=sv.stats||{}; sv.stats.clubChests=0; sv.stats.clubChamp=0; sv.clubHorseVoucher=0;});
   G.ui.openLB();
   const lp=document.getElementById('lbPanel');
   out.clubTabExists=!!lp.querySelector('[data-lbtab="club"]');
   lp.querySelector('[data-lbtab="club"]').click();
   out.clubTab={odds:/%/.test(lp.textContent),claimBtn:!!lp.querySelector('[data-fx="clubs:claim"]'),
-   champRow:/Champions chest ×2/.test(lp.textContent),ladder:/Basin club ladder/.test(lp.textContent),
+   champRow:/Champions chest ×1/.test(lp.textContent),ladder:/Basin club ladder/.test(lp.textContent),
    ember:/Ember Friesian/.test(lp.textContent),monday:/Monday 00:00 UTC/.test(lp.textContent),
    tierLine:/120⭐→T2/.test(lp.textContent)};
   const w0=st().wallet, tack0=(S.fresh().tack||[]).length;
   lp.querySelector('[data-fx="clubs:claim"]').click();
   const s2=S.fresh(), w1=st().wallet;
-  out.claim={claimed:s2.clubWeekLast.claimed,tier:s2.clubWeekLast.tier,chests:s2.stats.clubChests,champ:s2.stats.clubChamp,
+  out.claim={rolls:s2.clubWeekLast.rewards?.length,claimed:s2.clubWeekLast.claimed,tier:s2.clubWeekLast.tier,chests:s2.stats.clubChests,champ:s2.stats.clubChamp,
    gained:(w1.coins-w0.coins)+(w1.gems-w0.gems)+(w1.keys-w0.keys)+(w1.dust-w0.dust)+(w1.btok-w0.btok)+((S.fresh().tack||[]).length-tack0)+(s2.clubHorseVoucher||0)};
   /* claiming twice must be a no-op */
   const w2=st().wallet;
@@ -209,20 +209,20 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 600 s');try{if(bro
   return out;
  });
  stage('ladder + chests');
- check('club-weekly-leaderboard: the club total sums every member’s Star Points',b.total===360&&b.totalBoardOnly===240,{merged:b.total,boardOnly:b.totalBoardOnly});
+ check('club-weekly-leaderboard: the club total sums every member’s Star Points',b.total===360&&b.totalBoardOnly===360,{merged:b.total,boardOnly:b.totalBoardOnly});
  check('club-weekly-leaderboard: the club week is the ISO Monday-00:00-UTC week',/^\d{4}-\d{2}-\d{2}$/.test(b.isoWeek)&&b.msToMonday>0&&b.msToMonday<=7*864e5,{isoWeek:b.isoWeek,ms:b.msToMonday});
- check('club-weekly-leaderboard: rivals plus a real club rank together, highest first',b.rowCount===10&&b.topIsReal&&b.sortedDesc&&b.rankWithReal>1,b);
+ check('club-weekly-leaderboard: real clubs rank highest first with NPC rivals kept separate',b.rowCount===2&&b.noNpc&&b.npcSeparate&&b.topIsReal&&b.sortedDesc&&b.rankWithReal===2,b);
  check('club-weekly-leaderboard: a card from another club week is ignored',b.staleIgnored,b.staleIgnored);
  check('clubs-create-join: the public directory records other clubs',b.dir,b.dir);
  check('club-chest-tiers: thresholds map 0/120/300/700/1500 onto tiers 1-5',JSON.stringify(b.tiers)==='[1,1,2,3,4,5,5]',b.tiers);
  check('club-chest-tiers: every tier’s published odds sum to 100%',Object.values(b.oddsSum).every(v=>v===100),b.oddsSum);
  check('club-chest-tiers: tier 5 rolls 5 keys at the published 40%',near(b.tier5KeyFreq,40,4),b.tier5KeyFreq);
  check('club-chest-tiers: the Club tab publishes the odds and the tier ladder',b.clubTab.odds&&b.clubTab.tierLine&&b.clubTab.ladder&&b.clubTab.monday,b.clubTab);
- check('champions-chests: rank 1 takes two, the rest of the top three take one, nobody else',JSON.stringify(b.champCounts)==='[2,1,1,0,0]',b.champCounts);
+ check('champions-chests: top-50 clubs qualify for one chest when personal SP is at least100',JSON.stringify(b.champCounts)==='[1,1,0,0,0]',b.champCounts);
  check('champions-chests: the club horse rolls at the published 5% and a token at 35%',near(b.champHorseFreq,5,2)&&near(b.champTokFreq,35,4),{horse:b.champHorseFreq,tok:b.champTokFreq});
- check('champions-chests: a rank-1 week shows the ×2 Champions row',b.clubTab.champRow,b.clubTab);
- check('club-chest-tiers: collecting pays out, stamps the week and cannot be repeated',b.claim.claimed&&b.claim.chests===1&&b.claim.gained>0&&!b.claim.secondBtn,b.claim);
- check('champions-chests: the champion counter moves on a top-three week',b.claim.champ===1,b.claim.champ);
+ check('champions-chests: an eligible rank-1 week shows one Champions chest',b.clubTab.champRow,b.clubTab);
+ check('club-chest-tiers: collecting pays out, stamps the week and cannot be repeated',b.claim.claimed&&b.claim.chests===1&&b.claim.rolls===4&&b.claim.gained>0&&!b.claim.secondBtn,b.claim);
+ check('champions-chests: the champion counter moves on an eligible top-50 week',b.claim.champ===1,b.claim.champ);
  check('club-exclusive-horse: the Ember Friesian is granted with its fixed 9/8/6/9/5 profile',b.clubHorse.added===1&&b.clubHorse.voucher===0&&JSON.stringify(b.clubHorse.stats)==='{"speed":9,"stamina":8,"jump":6,"accel":9,"agility":5}'&&b.clubHorse.ach===1,b.clubHorse);
  check('club-exclusive-horse: a second claim without a token is refused',b.clubHorseAgain,b.clubHorseAgain);
  check('club-exclusive-horse: neither exclusive is on sale anywhere',b.exclusive.inTable&&!b.exclusive.shop&&!b.exclusive.market&&!b.exclusive.summon&&!b.exclusive.pshop&&b.exclusive.shopHtml,b.exclusive);

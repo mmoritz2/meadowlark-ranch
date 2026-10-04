@@ -2,7 +2,7 @@
    Named clubs you create and join by code, a club roster built from retained presence cards, a
    pinned notice board, a scrollable chat log with a mute list, the weekly club ladder on Star
    Points (Monday 00:00 UTC), club chests with published odds, Champions chests for the top
-   three, the club-only Ember Friesian, the weekly event leaderboard with rank-band rewards, the
+   50 clubs with a 100-SP personal minimum, the club-only Ember Friesian, the weekly event leaderboard with rank-band rewards, the
    monthly photo contest series with real club entries and a past-winners archive, and photo mode
    proper: six film looks, a world freeze and the free camera.
 
@@ -13,7 +13,7 @@
    The broker is public and unauthenticated: club names, notices, presence and chat are all
    honour-system. Every remote string is truncated here, the own-echo guard upstream is left
    alone, and nothing about a save is ever published. */
-import {CLUB_COMMONS,CLUB_CRESTS,CLUB_COLORS,clubCode,cleanClubMeta,ensureClubState,activateClub,loadClub,stashClub,creditClubPoints,ownClubPoints,acceptClubMeta} from '../club-state.js?v=clubhouse-1';
+import {CLUB_COMMONS,CLUB_CRESTS,CLUB_COLORS,clubCode,cleanClubMeta,ensureClubState,activateClub,loadClub,stashClub,creditClubPoints,ownClubPoints,acceptClubMeta,clearCurrentClubContribution} from '../club-state.js?v=clubhouse-2';
 export const id='clubs-boards';
 export function install(G){
  const {$,toast}=G, S=G.save, M=G.money, T=G.tables, U=G.ui, N=G.net;
@@ -21,19 +21,21 @@ export function install(G){
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
  /* fnv-1a, imul so it stays a 32-bit int — the same trap the boards' bhash documents. */
  function hsh(str){let h=0x811c9dc5|0;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,0x01000193);}return ((h>>>8)&0xffff)/0xffff;}
- const CHAT_MAX=120, LOG_MAX=80, LOG_SAVE=30, NOTICE_MAX=200, NAME_MAX=24;
+ const CHAT_MAX=120, LOG_MAX=80, LOG_SAVE=30, NOTICE_MAX=1000, NAME_MAX=24;
 
  /* =============================== 1. Tables =============================== */
  /* The club week is the ISO week that starts Monday 00:00 UTC, so every club in the Basin
     closes its books at the same instant wherever the riders are. The personal week
     (weekKey) is a local Jan-1 bucket and is deliberately left alone. */
  const CW=()=>G.time.isoWeekKey();
+ const previousWeek=()=>new Date(Date.parse(CW()+'T00:00:00Z')-7*864e5).toISOString().slice(0,10);
+ const points=v=>Number.isFinite(+v)?clamp(+v,0,1e12):0;
+ function lastMemberSP(s,id,row){const last=record(s)?.last;if(last?.week===previousWeek()){if(id===N.net.id&&Number.isFinite(last.ownSP))return last.ownSP;const v=last.members?.[id];if(Number.isFinite(v))return v;}if(row?.lastWeek?.week===previousWeek())return row.lastWeek.sp;if(row?.wk===previousWeek())return points(row.sp);return null;}
+ function snapshotMembers(s){return Object.fromEntries(memberRows(s).map(r=>[r.id,r.sp]));}
  function syncClub(fn){return S.sync(s=>{fn(s);stashClub(s);});}
 
- /* Star Point thresholds for the club chest. Star Equestrian puts tier 3 at 20,000, tier 4
-    at 50,000 and tier 5 at 100,000 — numbers from an economy roughly sixty times this one,
-    where a solo champion week here is 550 SP (WAGE_TIERS). Divided through by ~66 so the
-    ladder means the same thing: a hard solo week reaches tier 3, a real club reaches 5. */
+ /* Meadowlark's existing chest thresholds are retained; the reference's full economy
+    is not verified. A hard solo week reaches tier 3 and a real club can reach tier 5. */
  const CLUB_CHEST_TIERS=[{sp:0,t:1},{sp:120,t:2},{sp:300,t:3},{sp:700,t:4},{sp:1500,t:5}];
  /* Published odds, in the panel as well as here. Percentages per tier sum to 100. */
  const CLUB_CHEST_LOOT={
@@ -43,8 +45,8 @@ export function install(G){
   4:[{p:36,r:{k:4}},{p:25,r:{gear:'Epic'}},{p:19,r:{g:6}},{p:11,r:{c:1000}},{p:6,r:{btok:1}},{p:3,r:{gear:'Legendary'}}],
   5:[{p:40,r:{k:5}},{p:25,r:{gear:'Epic'}},{p:20,r:{g:8}},{p:10,r:{c:1500}},{p:5,r:{gear:'Legendary'}}],
  };
- /* The top club takes two Champions chests, the rest of the top three take one. */
- const CHAMPION_CHESTS=[{rank:1,n:2},{rank:3,n:1}];
+ /* Verified club-reward screen: top 50 clubs; each recipient contributes 100 SP. */
+ const CHAMPION_CHESTS=[{rank:50,n:1}], CHAMPION_MIN_SP=100, CLUB_CHEST_ROLLS=4;
  const CHAMPION_LOOT=[{p:35,r:{btok:1}},{p:25,r:{gear:'Legendary'}},{p:20,r:{g:15}},{p:15,r:{k:5}},{p:5,r:{},clubHorse:1}];
  /* The other clubs in the Basin. Their weeks are worked out from the club week and their own
     name, so they hold still for seven days instead of shuffling every time the panel opens,
@@ -144,7 +146,10 @@ export function install(G){
  }
 
  /* =============================== 4. Club identity & the net =============================== */
- const clubMeta={}, clubMembers={}, clubBoard={}, clubDir={}, dirVersions={}, photoData={};
+ const clubMeta={}, clubMembers={}, clubBoard={}, clubDir={}, dirVersions={}, clubDepartures={}, photoData={};
+ let clubCardClock=0;
+ function cardTime(){clubCardClock=Math.max(Date.now(),clubCardClock+1);return clubCardClock;}
+ function invalidateDeparture(code,at){clubDepartures[code]=Math.max(clubDepartures[code]||0,at);if(clubDir[code]&&(clubDir[code].at||0)<=clubDepartures[code])delete clubDir[code];}
  const clubLog=[];                                           // the chat log, newest last
  let pendingNotice=null;
  let clubDirOpen=false;                                      // the 'Find a club' drawer in 🌐 Club
@@ -170,10 +175,10 @@ export function install(G){
   const rows=new Map(),now=Date.now();
   for(const [id,r] of Object.entries(record(s)?.members||{})){
    if(r.left||id===N.net.id||r.n===N.myName())continue;
-   const row={name:r.n,sp:r.wk===CW()?Math.max(0,+r.sp||0):0,role:roleOf(r.n,s,id),id,online:now-r.last<150000,last:r.last||0,me:false};
+   const row={name:r.n,sp:r.wk===CW()?Math.max(0,+r.sp||0):0,lastSP:lastMemberSP(s,id,r),role:roleOf(r.n,s,id),id,online:now-r.last<150000,last:r.last||0,me:false};
    if(!rows.has(row.name)||rows.get(row.name).last<row.last)rows.set(row.name,row);
   }
-  rows.set(N.myName(),{name:N.myName(),sp:spOf(s),role:roleOf(N.myName(),s,N.net.id),id:N.net.id,online:online(),last:now,me:true});
+  rows.set(N.myName(),{name:N.myName(),sp:spOf(s),lastSP:lastMemberSP(s,N.net.id),role:roleOf(N.myName(),s,N.net.id),id:N.net.id,online:online(),last:now,me:true});
   return [...rows.values()].sort((a,b)=>b.sp-a.sp||a.name.localeCompare(b.name));
  }
  function hydrateClub(){
@@ -189,8 +194,14 @@ export function install(G){
  function changeClub(code){
   code=clubCode(code);if(code===CLUB_COMMONS)return false;
   const previous=identity().code;if(code===previous)return true;
-  if(previous&&online())N.publish('srf1/'+previous+'/members/'+encodeURIComponent(N.net.id),{n:N.myName(),left:true,last:Date.now(),wk:CW(),sp:spOf()},{retain:true});
-  syncClub(s=>{activateClub(s,code,CW(),G.time.weekKey());});
+  if(previous&&online()){
+   const at=cardTime();invalidateDeparture(previous,at);
+   // A departing client cannot safely rewrite an aggregate from its stale view of peers.
+   // Invalidate the old score separately; a remaining member publishes the fresh total.
+   N.publish('srf1/clubs/'+previous+'/departures/'+encodeURIComponent(N.net.id),{wk:CW(),at},{retain:true});
+   N.publish('srf1/'+previous+'/members/'+encodeURIComponent(N.net.id),{n:N.myName(),left:true,last:at,wk:CW(),sp:0,allTime:record()?.allTime||0},{retain:true});
+  }
+  syncClub(s=>{clearCurrentClubContribution(s,CW());activateClub(s,code,CW(),G.time.weekKey());});
   // The inline boards are room-scoped and must not leak between memberships.
   for(const k of Object.keys(N.lbData||{}))delete N.lbData[k];
   for(const k of Object.keys(photoData))delete photoData[k];pendingNotice=null;hydrateClub();subscribeClub(code);
@@ -238,8 +249,10 @@ export function install(G){
  function publishClubCard(){
   const s=S.fresh();if(!s||!online())return false;const m=identity(s);if(!m.code)return false;
   if(isLeader(s))publishToClub('meta',{nm:m.name,f:m.founder,fid:m.founderId,mo:m.motto,at:m.created,pub:m.pub,crest:m.crest,color:m.color,rev:m.revision,roles:m.roles,roleIds:m.roleIds,roleOwners:m.roleOwners});
-  publishToClub('members/'+encodeURIComponent(N.net.id),{sp:spOf(s),wk:CW(),last:Date.now(),h:(s.horses||[]).length});
-  const card={nm:m.name||m.code,sp:clubTotal(s),mem:memberCount(),wk:CW(),crest:m.crest,color:m.color};
+  const settled=s.clubWeekLast;
+  publishToClub('members/'+encodeURIComponent(N.net.id),{sp:spOf(s),wk:CW(),last:Date.now(),allTime:record(s)?.allTime||0,lastWeek:settled&&Number.isFinite(settled.ownSP)?{week:settled.week,sp:settled.ownSP}:null,h:(s.horses||[]).length});
+  const level=clamp(Math.floor(G.clubActivities?.snapshot?.().level||1),1,50);
+  const card={at:cardTime(),nm:m.name||m.code,sp:clubTotal(s),allTime:clubAllTime(s),lastWeek:settled?{week:settled.week,total:settled.total}:null,level,mem:memberCount(),wk:CW(),crest:m.crest,color:m.color};
   N.publish('srf1/clubs/'+m.code,card,{retain:true});
   if(isLeader(s))N.publish('srf1/dir/'+m.code,{...card,pub:m.pub,rev:m.revision,f:m.founder,fid:m.founderId},{retain:true});
   return true;
@@ -262,7 +275,7 @@ export function install(G){
 
  G.on('starPoints',(s,n)=>{
   creditClubPoints(s,n,CW(),G.time.weekKey());
-  if(identity(s).code&&s.clubWeek?.week===CW()){const rank=myClubRank(s);s.clubWeek.total=clubTotal(s);s.clubWeek.rank=rank.rank;s.clubWeek.n=memberRows(s).length;stashClub(s);}
+  if(identity(s).code&&s.clubWeek?.week===CW()){const rank=myClubRank(s);s.clubWeek.total=clubTotal(s);s.clubWeek.ownSP=spOf(s);s.clubWeek.rewardPolicy=2;s.clubWeek.rank=rank.rank;s.clubWeek.n=memberRows(s).length;s.clubWeek.members=snapshotMembers(s);stashClub(s);}
  });
  G.on('clubRoom',(room,previous)=>{
   // Commons is a world room; visiting it never changes club membership.
@@ -272,15 +285,28 @@ export function install(G){
  G.on('message',(topic,m)=>{
   const parts=topic.split('/'),club=identity().code,scope=parts[1],kind=parts[2];
   if(scope==='clubs'){
-   const code=clubCode(kind);if(m.wk!==CW())return true;if(code&&code!==club)clubBoard[code]={code,n:String(m.nm||code).slice(0,NAME_MAX),v:clamp(+m.sp||0,0,999999),mem:clamp(+m.mem||1,1,99),wk:String(m.wk||'')};return true;
+   const code=clubCode(kind);
+   if(parts[3]==='departures'){
+    if(!code||m.wk!==CW()||parts[4]!==encodeURIComponent(String(m.id||'')))return true;
+    const at=clamp(+m.at||0,0,Date.now()+30000);if(!at)return true;
+    invalidateDeparture(code,at);clubCardClock=Math.max(clubCardClock,at);return true;
+   }
+   if(!code||code===club||!/^\d{4}-\d{2}-\d{2}$/.test(String(m.wk||''))||m.wk>CW())return true;
+   const prior=clubBoard[code],card={code,at:clamp(+m.at||0,0,Date.now()+30000),n:String(m.nm||code).slice(0,NAME_MAX),v:clamp(+m.sp||0,0,999999),mem:clamp(+m.mem||1,1,99),wk:String(m.wk),level:clamp(Math.floor(+m.level||1),1,50),crest:CLUB_CRESTS.includes(m.crest)?m.crest:'horse',color:CLUB_COLORS.includes(m.color)?m.color:CLUB_COLORS[0]};
+   clubCardClock=Math.max(clubCardClock,card.at);
+   card.allTime=Number.isFinite(m.allTime)?Math.max(points(m.allTime),prior?.allTime||0):prior?.allTime;
+   card.lastWeek=m.lastWeek?.week===previousWeek()&&Number.isFinite(m.lastWeek.total)?{week:m.lastWeek.week,total:points(m.lastWeek.total)}:prior?.lastWeek?.week===previousWeek()?prior.lastWeek:undefined;
+   if(prior?.wk===previousWeek()&&!card.lastWeek)card.lastWeek={week:prior.wk,total:prior.v};
+   if(prior&&(prior.wk>card.wk||(prior.wk===card.wk&&(prior.at||0)>card.at))){if(card.wk===previousWeek()&&prior.lastWeek?.week!==previousWeek())prior.lastWeek={week:card.wk,total:card.v};if(card.allTime!==undefined)prior.allTime=card.allTime;return true;}
+   clubBoard[code]=card;return true;
   }
   if(scope==='dir'){
    const code=clubCode(kind);if(!code)return true;
    const version=dirVersions[code],rev=Math.max(0,+m.rev||0);
    if((version&&rev<version.rev)||(version?.fid&&version.fid!==m.id)||(m.fid&&m.fid!==m.id))return true;
    if(m.pub===false){dirVersions[code]={rev,fid:m.fid||version?.fid||''};delete clubDir[code];return true;}
-   if(m.wk!==CW())return true;dirVersions[code]={rev,fid:m.fid||version?.fid||''};
-   if(code)clubDir[code]={code,n:String(m.nm||'').slice(0,NAME_MAX),mem:clamp(+m.mem||1,1,99),v:clamp(+m.sp||0,0,999999),wk:String(m.wk||'')};return true;
+   if(m.wk!==CW()||(clubDepartures[code]&&(+m.at||0)<=clubDepartures[code]))return true;dirVersions[code]={rev,fid:m.fid||version?.fid||''};
+   if(code)clubDir[code]={code,at:clamp(+m.at||0,0,Date.now()+30000),n:String(m.nm||'').slice(0,NAME_MAX),mem:clamp(+m.mem||1,1,99),v:clamp(+m.sp||0,0,999999),wk:String(m.wk||''),level:clamp(Math.floor(+m.level||1),1,50),allTime:Number.isFinite(m.allTime)?points(m.allTime):undefined};return true;
   }
   if(['meta','notice','members','photo'].includes(kind)&&(!club||scope!==club))return true;
   if(scope!==club||!club)return false;
@@ -293,7 +319,10 @@ export function install(G){
    if(['__proto__','prototype','constructor'].includes(id))return true;
    // Untagged legacy packets cannot contribute to a Monday-aligned week.
    if(!/^\d{4}-\d{2}-\d{2}$/.test(String(m.wk||''))||m.wk>CW())return true;
-   syncClub(s=>{const r=record(s),prior=r.members[id];if(prior&&((prior.last||0)>last||(prior.wk===CW()&&m.wk!==CW())))return;r.members[id]={n:nm,sp:clamp(+m.sp||0,0,999999),wk:m.wk,last,h:clamp(+m.h||0,0,999),left:!!m.left};if(s.clubWeek?.week===CW()){const rank=myClubRank(s);s.clubWeek.total=clubTotal(s);s.clubWeek.rank=rank.rank;s.clubWeek.n=memberRows(s).length;}});hydrateClub();return true;
+   syncClub(s=>{const r=record(s),prior=r.members[id];if(prior&&((prior.last||0)>last||(prior.wk===CW()&&m.wk!==CW())))return;const lastWeek=m.lastWeek?.week===previousWeek()&&Number.isFinite(m.lastWeek.sp)?{week:m.lastWeek.week,sp:points(m.lastWeek.sp)}:prior?.wk===previousWeek()?{week:prior.wk,sp:points(prior.sp)}:prior?.lastWeek;
+    const knownAllTime=points(prior?.allTime??prior?.sp),delta=prior?(m.wk===prior.wk?Math.max(0,points(m.sp)-points(prior.sp)):m.wk>prior.wk?points(m.sp):0):points(m.sp);
+    const allTime=Number.isFinite(m.allTime)?Math.max(points(m.allTime),knownAllTime):Math.min(1e12,knownAllTime+delta);clubCardClock=Math.max(clubCardClock,last);
+    r.members[id]={n:nm,sp:clamp(+m.sp||0,0,999999),wk:m.wk,last,allTime,lastWeek,h:clamp(+m.h||0,0,999),left:!!m.left};if(s.clubWeek?.week===CW()){const rank=myClubRank(s);s.clubWeek.total=clubTotal(s);s.clubWeek.ownSP=spOf(s);s.clubWeek.rewardPolicy=2;s.clubWeek.rank=rank.rank;s.clubWeek.n=memberRows(s).length;s.clubWeek.members=snapshotMembers(s);}});hydrateClub();if(m.left&&m.wk===CW())publishClubCard();return true;
   }
   if(kind==='notice'&&typeof m.t==='string'){receiveNotice(m);return true;}
   if(kind==='photo'){
@@ -308,23 +337,35 @@ export function install(G){
  /* =============================== 5. The weekly club ladder =============================== */
  function spOf(s){return ownClubPoints(s||S.fresh()||{},CW());}
  function memberCount(){return memberRows().length;}
- function clubTotal(s){s=s||S.fresh()||{};let total=spOf(s);for(const [id,r] of Object.entries(record(s)?.members||{}))if(id!==N.net.id&&r.n!==N.myName()&&r.wk===CW())total+=Math.max(0,+r.sp||0);return Math.round(total);}
+ function clubTotal(s){s=s||S.fresh()||{};let total=spOf(s);for(const [id,r] of Object.entries(record(s)?.members||{}))if(id!==N.net.id&&r.n!==N.myName()&&!r.left&&r.wk===CW())total+=Math.max(0,+r.sp||0);return Math.round(total);}
+ function clubAllTime(s){s=s||S.fresh()||{};let total=points(record(s)?.allTime);for(const [id,r] of Object.entries(record(s)?.members||{}))if(id!==N.net.id)total+=points(r.allTime??r.sp);return Math.round(total);}
  function rivalRows(){
   const wk=CW();
   return RIVAL_CLUBS.map(([nm,str])=>({n:nm,v:Math.round(RIVAL_BASE*str*(0.6+0.8*hsh('club'+wk+nm))),mem:2+Math.round(4*hsh('mem'+wk+nm)),rival:true}));
  }
- function clubRows(s){
-  s=s||S.fresh()||{};
-  const wk=CW(), rows=rivalRows();
-  for(const code of Object.keys(clubBoard)){if(code===identity(s).code)continue;const c=clubBoard[code];if(c.wk!==wk)continue;rows.push({n:c.n||code,v:c.v,mem:c.mem,club:true});}
-  if(identity(s).code)rows.push({n:clubName(s)||('Your club'),v:clubTotal(s),mem:memberCount(),me:true});
-  rows.sort((a,b)=>b.v-a.v);
-  return rows;
+ function clubRows(s,period='week'){
+  s=s||S.fresh()||{};period=period==='all'?'all':period==='last'?'last':'week';
+  const wk=CW(),prev=previousWeek(),rows=[],own=identity(s);
+  for(const [code,c] of Object.entries(clubBoard)){
+   if(code===own.code)continue;
+   const v=period==='all'?c.allTime:period==='last'?(c.lastWeek?.week===prev?c.lastWeek.total:c.wk===prev?c.v:null):c.wk===wk&&(!clubDepartures[code]||(c.at||0)>clubDepartures[code])?c.v:null;
+   if(!Number.isFinite(v))continue;rows.push({code,n:c.n||code,v,mem:c.mem,level:c.level||1,crest:c.crest,color:c.color,club:true});
+  }
+  if(own.code){const last=s.clubWeekLast,v=period==='all'?clubAllTime(s):period==='last'?(last?.week===prev?last.total:null):clubTotal(s);
+   if(Number.isFinite(v))rows.push({code:own.code,n:clubName(s)||'Your club',v,mem:memberRows(s).length,level:clamp(Math.floor(G.clubActivities?.snapshot?.().level||1),1,50),crest:own.crest,color:own.color,me:true});}
+  rows.sort((a,b)=>b.v-a.v||a.code.localeCompare(b.code));return rows;
  }
- function myClubRank(s){const rows=clubRows(s);const i=rows.findIndex(r=>r.me);return {rank:i+1,of:rows.length,rows};}
+ function myClubRank(s,period='week'){const rows=clubRows(s,period);const i=rows.findIndex(r=>r.me);return {rank:i+1,of:rows.length,rows};}
  function chestTier(total){let t=1;for(const x of CLUB_CHEST_TIERS)if((total||0)>=x.sp)t=x.t;return t;}
  function nextTier(total){for(const x of CLUB_CHEST_TIERS)if((total||0)<x.sp)return x;return null;}
- function championCount(rank){let n=0;for(const c of CHAMPION_CHESTS)if(rank&&rank<=c.rank)n=Math.max(n,c.n);return n;}
+ function championCount(rank,ownSP=0){return Number.isInteger(rank)&&rank>=1&&rank<=50&&Number.isFinite(ownSP)&&ownSP>=CHAMPION_MIN_SP?1:0;}
+ function championsForWeek(last){
+  if(!last)return 0;
+  // Existing unclaimed awards retain the rules under which they were earned.
+  if(last.rewardPolicy!==2&&last.ownSP===undefined)return last.rank===1?2:last.rank>=2&&last.rank<=3?1:0;
+  return championCount(last.rank||0,last.ownSP||0);
+ }
+
  function msToMonday(){
   const now=new Date(), day=(now.getUTCDay()+6)%7;
   const mon=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()-day)+7*864e5;
@@ -341,7 +382,7 @@ export function install(G){
    sv.clubWeek=sv.clubWeek||{week:wk,total:0,rank:0,n:1};
    sv.wkRanks={week:G.time.weekKey(),ranks};                       // live placings, banked when the week turns
    if(sv.clubWeek.week!==wk)return;                                // the roll below owns that
-   sv.clubWeek.total=tot; sv.clubWeek.rank=r.rank; sv.clubWeek.n=memberCount();
+   sv.clubWeek.total=tot; sv.clubWeek.ownSP=spOf(sv);sv.clubWeek.rewardPolicy=2;sv.clubWeek.rank=r.rank; sv.clubWeek.n=memberCount();sv.clubWeek.members=snapshotMembers(sv);
   });
  }
  /* Monday 00:00 UTC: the books close, last week is put aside to be claimed, a fresh one starts. */
@@ -351,8 +392,8 @@ export function install(G){
    sv.clubWeek=sv.clubWeek||{week:wk,total:0,rank:0,n:1};
    if(sv.clubWeek.week===wk)return;
    closed=Object.assign({},sv.clubWeek);
-   sv.clubWeekLast=Object.assign({},closed,{claimed:false,champClaimed:false});
-   sv.clubWeek={week:wk,total:0,rank:0,n:1};
+   sv.clubWeekLast=Object.assign({},closed,{claimed:!!record(sv).claims[closed.week],champClaimed:!!record(sv).claims[closed.week]});
+   sv.clubWeek={week:wk,total:0,ownSP:0,rewardPolicy:2,rank:0,n:1};
   });
   if(closed)try{toast('🏇 The club week is settled — '+(closed.total||0)+'⭐, rank #'+(closed.rank||'—')+'. Collect the chest in 🏅 → Club.');}catch(e){}
   return closed;
@@ -375,12 +416,12 @@ export function install(G){
  function claimClubChest(){
   const s=S.fresh(); if(!s||!identity(s).code||!s.clubWeekLast||s.clubWeekLast.claimed||record(s)?.claims?.[s.clubWeekLast.week]){toast('Nothing to collect yet.');return false;}
   const L=s.clubWeekLast, tier=chestTier(L.total||0), lines=[];
-  const won=rollClubChest(tier);
+  const won=Array.from({length:CLUB_CHEST_ROLLS},()=>rollClubChest(tier));
   let horses=0;
   syncClub(sv=>{
    if(!sv.clubWeekLast||sv.clubWeekLast.claimed||record(sv)?.claims?.[sv.clubWeekLast.week])return;
-   M.payReward(sv,won.r); lines.push('📦 Tier '+tier+': '+(M.rewardLabel(won.r)||'—'));
-   const champs=championCount(L.rank||0);
+   for(const item of won){M.payReward(sv,item.r);lines.push('📦 Tier '+tier+': '+(M.rewardLabel(item.r)||'—'));}
+   const champs=championsForWeek(L);
    for(let i=0;i<champs;i++){
     const c=rollChampion();
     if(c.clubHorse){sv.clubHorseVoucher=(sv.clubHorseVoucher||0)+1;horses++;lines.push('🏆 Champions chest: a CLUB HORSE token!');}
@@ -389,7 +430,7 @@ export function install(G){
    sv.stats=sv.stats||{};
    sv.stats.clubChests=(sv.stats.clubChests||0)+1;
    if(champs)sv.stats.clubChamp=(sv.stats.clubChamp||0)+1;
-   sv.clubWeekLast.claimed=true; sv.clubWeekLast.champClaimed=true; sv.clubWeekLast.tier=tier;record(sv).claims[sv.clubWeekLast.week]=true;
+   sv.clubWeekLast.claimed=true; sv.clubWeekLast.champClaimed=true; sv.clubWeekLast.tier=tier;sv.clubWeekLast.rewards=won.map(x=>x.r);record(sv).claims[sv.clubWeekLast.week]=true;
   });
   M.refreshWallet(); try{G.horse.refreshTack();}catch(e){}
   try{G.sGem();}catch(e){}
@@ -399,7 +440,7 @@ export function install(G){
   return true;
  }
  function claimClubHorse(){
-  const s=S.fresh(); if(!s||(s.clubHorseVoucher||0)<1){toast('You need a club horse token — finish in the top three.');return false;}
+  const s=S.fresh(); if(!s||(s.clubHorseVoucher||0)<1){toast('You need a club horse token — earn a Champions chest with at least 100 personal SP in a top-50 club.');return false;}
   let name='';
   syncClub(sv=>{
    if((sv.clubHorseVoucher||0)<1)return;
@@ -802,20 +843,19 @@ export function install(G){
    +'<div class="sub" style="margin-top:4px">Every member\'s Star Points add up here. Rankings finalise Monday 00:00 UTC, the same instant for every club in the Basin, and the chest lands in this tab.</div></div>';
   /* the collect card */
   if(L&&!L.claimed){
-   const lt=chestTier(L.total||0), champs=championCount(L.rank||0);
+   const lt=chestTier(L.total||0), champs=championsForWeek(L);
    h+='<div class="passCard" style="margin-top:6px;background:linear-gradient(180deg,#fff6e2,#ffe9c4)"><div class="ph"><b>📦 Last club week is settled</b><span style="font-size:11px;color:#4a3526">'+(L.total||0)+'⭐ · rank #'+(L.rank||'—')+'</span></div>'
     +'<div class="sub">Tier '+lt+' club chest'+(champs?' + '+champs+' Champions chest'+(champs>1?'s':''):'')+'. The odds, in full:</div>'
     +oddsHtml(lt)
-    +(champs?'<div class="sub" style="margin-top:5px"><b>🏆 Champions chest ×'+champs+'</b> — top three only:</div><div class="crow" style="gap:4px;flex-wrap:wrap;margin-top:3px">'
+    +(champs?'<div class="sub" style="margin-top:5px"><b>🏆 Champions chest ×'+champs+'</b> — eligible club members:</div><div class="crow" style="gap:4px;flex-wrap:wrap;margin-top:3px">'
       +CHAMPION_LOOT.map(x=>'<span class="bE">'+x.p+'% '+esc(x.clubHorse?'🔥 a club horse token':(M.rewardLabel(x.r)||'—'))+'</span>').join('')+'</div>':'')
     +'<button data-fx="clubs:claim" class="claimBtn" style="margin-top:6px">Collect the chest'+(champs?'s':'')+'</button></div>';
   }else if(L&&L.claimed){
    h+='<div class="evrow">✅ <b>Last week collected</b><span>tier '+(L.tier||chestTier(L.total||0))+' · rank #'+(L.rank||'—')+' · '+(L.total||0)+'⭐</span></div>';
   }
-  /* the ladder. (Design note, not for the player: the reference game pays chests to its top hundred clubs; the Basin has
-     only a valley's worth, so every club on this board gets a chest.) */
+  /* Real club standings; synthetic valley rivals stay on their separate board. */
   h+='<div class="bGroup">The Basin club ladder</div>'
-   +'<div style="font-size:11px;color:#8c7a63;margin-bottom:3px">Every club on this board is in the running for a chest. The other clubs are the valley\'s own — their weeks are fixed on Monday and do not move again until the next one, so a club of two really can finish first.</div>';
+   +'<div style="font-size:11px;color:#8c7a63;margin-bottom:3px">This board contains real clubs whose current weekly score cards have been received. NPC neighbours do not affect club ranks or Champions rewards.</div>';
   h+=r.rows.slice(0,12).map((row,i)=>'<div class="clubRow'+(row.me?' me':'')+'">'+(i===0?'👑':i===1?'🥈':i===2?'🥉':'#'+(i+1))+' <b>'+esc(row.n)+'</b>'
    +'<span style="font-size:11px;color:#8c7a63">'+(row.mem||1)+' rider'+((row.mem||1)===1?'':'s')+(row.club?' · club':'')+'</span><span class="cv">'+row.v+'⭐</span></div>').join('');
   if(r.rank>12)h+='<div class="clubRow me">#'+r.rank+' <b>'+esc(nm)+'</b><span class="cv">'+tot+'⭐</span></div>';
@@ -834,7 +874,7 @@ export function install(G){
   h+='<div class="bGroup">🔥 The Ember Friesian</div>'
    +'<div class="passCard" style="background:linear-gradient(180deg,#2a1c18,#4a2a14);color:#ffd9a8">'
    +'<div class="ph"><b style="color:#ffb45a">'+(owns?'🔥 Ember Friesian — in your barn':vouchers?'🔥 Ember Friesian — a token is waiting':'🔒 Ember Friesian')+'</b><span style="font-size:11px;color:#e0a96a">Legendary · 9 speed / 8 stamina / 6 jump / 9 accel / 5 agility</span></div>'
-   +'<div class="sub" style="color:#e8c79a">A black Friesian with fire in its coat. It is not in the shop, not in the market, not in the summoning stall and it never will be — the only way to one is a Champions chest, and those go to the top three clubs of the week.</div>'
+   +'<div class="sub" style="color:#e8c79a">A black Friesian with fire in its coat. It is not in the shop, not in the market, not in the summoning stall and it never will be — the only way to one is a Champions chest, awarded to members with at least 100 personal SP in a top-50 club.</div>'
    +(vouchers?'<button data-fx="clubs:horse" class="claimBtn" style="margin-top:6px">Claim your Ember Friesian ('+vouchers+' token'+(vouchers>1?'s':'')+')</button>':'')
    +'</div>';
   return h;
@@ -911,7 +951,7 @@ export function install(G){
  G.quest.addAch({id:'club1',icon:'🏛️',label:'Founding member',desc:'Name your club',social:true,v:s=>(s.clubMeta&&s.clubMeta.name)?1:0,goal:1,r:{c:150,sp:5}});
  G.quest.addAch({id:'clubnotice',icon:'📌',label:'Notice given',desc:'Pin a club notice',social:true,v:s=>(s.clubNotice&&s.clubNotice.t)?1:0,goal:1,r:{c:120}});
  G.quest.addAch({id:'clubchest5',icon:'📦',label:'Club treasurer',desc:'Collect five club chests',social:true,v:s=>(s.stats&&s.stats.clubChests)||0,goal:5,r:{g:5,k:1}});
- G.quest.addAch({id:'clubchamp',icon:'🏆',label:'Champions',desc:'Finish a club week in the top three',social:true,v:s=>(s.stats&&s.stats.clubChamp)||0,goal:1,r:{g:10,k:2}});
+ G.quest.addAch({id:'clubchamp',icon:'🏆',label:'Champions',desc:'Earn a Champions chest for a top-50 club week',social:true,v:s=>(s.stats&&s.stats.clubChamp)||0,goal:1,r:{g:10,k:2}});
  G.quest.addAch({id:'clubhorse',icon:'🔥',label:'Ember rider',desc:'Ride the club-exclusive Ember Friesian',social:true,v:s=>(s.horses||[]).some(h=>h.breed===CLUB_HORSE)?1:0,goal:1,r:{g:5}});
  G.quest.addAch({id:'photo1st',icon:'🖼️',label:'Shutterbug champion',desc:'Win the weekly photo competition',v:s=>s.photoWins||0,goal:1,r:{g:3}});
 
@@ -931,15 +971,15 @@ export function install(G){
  let pubT=0;
  G.on('interval30',(s,now)=>{
   if(identity(s).code){
-   if(s.clubWeek.week!==CW()){s.clubWeekLast={...s.clubWeek,claimed:!!record(s).claims[s.clubWeek.week],champClaimed:!!record(s).claims[s.clubWeek.week]};s.clubWeek={week:CW(),total:0,rank:0,n:1};}
-   const rank=myClubRank(s);s.clubWeek.total=clubTotal(s);s.clubWeek.rank=rank.rank;s.clubWeek.n=memberRows(s).length;stashClub(s);
+   if(s.clubWeek.week!==CW()){s.clubWeekLast={...s.clubWeek,claimed:!!record(s).claims[s.clubWeek.week],champClaimed:!!record(s).claims[s.clubWeek.week]};s.clubWeek={week:CW(),total:0,ownSP:0,rewardPolicy:2,rank:0,n:1};}
+   const rank=myClubRank(s);s.clubWeek.total=clubTotal(s);s.clubWeek.ownSP=spOf(s);s.clubWeek.rewardPolicy=2;s.clubWeek.rank=rank.rank;s.clubWeek.n=memberRows(s).length;s.clubWeek.members=snapshotMembers(s);stashClub(s);
   }
   hydrateClub();
   if(online()&&now-pubT>120000){pubT=now;publishClubCard();}
  });
 
  /* =============================== 18. QA surface =============================== */
- G.clubs={identity,createClub,memberRows,isLeader,canManage,canManageName,updateIdentity,setRole,joinClub,leaveClub,spOf,saveNotice,CLUB_CRESTS,CLUB_COLORS,CW,clubTotal,clubRows,myClubRank,chestTier,nextTier,championCount,rollClubChest,rollChampion,
+ G.clubs={npcClubRows:rivalRows,championsForWeek,CLUB_CHEST_ROLLS,CHAMPION_MIN_SP,identity,createClub,memberRows,isLeader,canManage,canManageName,updateIdentity,setRole,joinClub,leaveClub,spOf,saveNotice,CLUB_CRESTS,CLUB_COLORS,CW,clubTotal,clubAllTime,clubRows,myClubRank,chestTier,nextTier,championCount,rollClubChest,rollChampion,
   claimClubChest,claimClubHorse,clubWeekRoll,touchClubWeek,pinNotice,publishClubCard,publishMyPhoto,
   clubMeta,clubMembers,clubBoard,clubDir,photoData,clubLog,isMuted,toggleMute,memberCount,msToMonday,
   scoreShot,standings,enterPhoto,contestNow,claimPhotoPrize,loadPhotos,savePhotos,evRows,weeklyRanks,bandFor,claimWeekRank,
