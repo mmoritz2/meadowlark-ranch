@@ -277,6 +277,29 @@ day/night and graphics settings. Results and screenshots go in
 `output/world-validation/`. This remains an evolving game world; its characters,
 some props, and procedural water still have a stylized appearance.
 
+## Riding stability checks
+
+Retina and large windows use a scene pixel budget (1.65 million on High,
+1.1 million on Medium, 850,000 on Low), reapplied on resize and VR exit.
+High retains its detailed models, clouds, contact shading and reflections,
+with 2× postprocess MSAA and a 2048px shadow map. Replaced tree batches are
+hidden completely, and tree detail selection uses hysteresis; unchanged
+instance buffers are no longer uploaded every scenery tick.
+
+The follow camera keeps a consistent avoidance side and anticipates travel
+around corners. Rider pose blends remain bounded during slow frames, and
+jumping rise is limited by actual leg reach so boots stay in the stirrups.
+CPU contact sampling reads current bone transforms without repeatedly
+rebuilding the horse's GPU skeleton matrices.
+
+Run `node tools/test-follow-camera.mjs` and `node tools/test-render-budget.mjs`
+for moving-wall/corner sightlines and viewport budgets. With the local server
+running, `node tools/qa-riding-stability.cjs` checks actual skinned boot and rein
+contacts on Bay and White Western horses, slow-frame jumps and landing,
+paused poses, retired tree batches, stationary buffers and Retina resizing.
+It uses a disposable save and writes its report and captures to
+`output/riding-stability/`. Set `QA_PORT` for a different preview port.
+
 ## Honest limitations
 
 - The rider is a generated mesh without a skeleton. Her lean, breathing, posting and head turn use a

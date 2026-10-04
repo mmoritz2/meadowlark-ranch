@@ -73,7 +73,7 @@ export function createNativeRiderReins({THREE,scene,tack,anchors,rider,contactPo
   };
   const pointPair=(id,k)=>{const ids=vertices[id],p=new THREE.Vector3(),q=new THREE.Vector3();if(ids.length!==56)throw Error('Source main-rein guide width/count changed');tack.getVertexPosition(ids[2*k],p);tack.getVertexPosition(ids[2*k+1],q);return p.applyMatrix4(tack.matrixWorld).add(q.applyMatrix4(tack.matrixWorld)).multiplyScalar(.5);};
   function update(){
-    tack.skeleton.update();tack.updateWorldMatrix(true,false);rider.R.fitG.updateMatrixWorld(true);
+    tack.updateWorldMatrix(true,false);rider.R.fitG.updateMatrixWorld(true);
     const seat=seatFollower.getWorldPosition(new THREE.Vector3());
     for(const side of ['left','right']){
       const sign=side==='left'?-1:1,r=reins[side];
@@ -132,7 +132,9 @@ export function createNativeRiderBridge({THREE,scene,mount,rig,rider,saddleProxy
   let reins=null,enabled=true,reinsWanted=true,disposed=false,lastContact=null;
   function assertLive(){if(disposed)throw Error('Native rider bridge disposed');}
   function point(ids,mesh,top=false){
-    mesh.skeleton.update();mesh.updateWorldMatrix(true,false);
+    // CPU skinning reads bone world matrices directly. The renderer uploads
+    // the shared skeleton once; rebuilding its 677 GPU matrices per contact
+    // repeated that work six times every riding frame. Callers update matrices.
     min.set(Infinity,Infinity,Infinity);max.set(-Infinity,-Infinity,-Infinity);mean.set(0,0,0);
     for(const i of ids){mesh.getVertexPosition(i,v);v.applyMatrix4(mesh.matrixWorld);min.min(v);max.max(v);mean.add(v);}
     mean.multiplyScalar(1/ids.length);

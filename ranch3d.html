@@ -642,7 +642,8 @@ import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equ
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
 import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=tack-stats-1';
-import {createNativeRiderBridge} from './assets/native-rider.js?v=native-rider-1';
+import {createNativeRiderBridge} from './assets/native-rider.js?v=riding-stability-1';
+import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js?v=world-cinematic-1';
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=world-cinematic-1';
@@ -654,12 +655,12 @@ import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
 import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=world-cinematic-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
-import {createFollowCamera} from './assets/follow-camera.js';
+import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRanchBuilderArt} from './assets/ranch-builder-art.js';
 import {createWorldFinish} from './assets/world-rendering.js';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=world-cinematic-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=riding-stability-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-appearance-3';
 import {FEATURES} from './assets/features/index.js?v=clubhouse-2';
@@ -1498,7 +1499,7 @@ const followCamera=createFollowCamera({THREE,groundHeight:groundH});
 /* ================= renderer / scene / sky / light ================= */
 const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
 renderer.setSize(innerWidth,innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
+renderer.setPixelRatio(renderPixelRatio(innerWidth,innerHeight,devicePixelRatio));
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -2427,7 +2428,7 @@ renderer.xr.addEventListener('sessionend',()=>{
  if(groundMat&&groundMat.defines){delete groundMat.defines.CHEAP_GROUND;groundMat.needsUpdate=true;}
  if(seedTreeInsts)seedTreeInsts.forEach(m=>{if(m.userData.vrWas)m.count=m.userData.vrWas;});
  if(typeof fireflies!=='undefined'&&fireflies&&vrFireWas)fireflies.count=vrFireWas;
- renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
+ applyQuality(quality);
  camera.aspect=innerWidth/innerHeight;
  camera.updateProjectionMatrix();
  renderer.setSize(innerWidth,innerHeight);
@@ -2543,8 +2544,8 @@ scene.add(sun);scene.add(sun.target);
 
 const composer=new EffectComposer(renderer);
 // The postprocess targets need their own MSAA; canvas antialiasing cannot cover them.
-for(const rt of [composer.renderTarget1,composer.renderTarget2])rt.samples=Math.min(4,renderer.capabilities.maxSamples);
-composer.setPixelRatio(Math.min(devicePixelRatio,1.75));
+for(const rt of [composer.renderTarget1,composer.renderTarget2])rt.samples=Math.min(2,renderer.capabilities.maxSamples);
+composer.setPixelRatio(renderer.getPixelRatio());
 composer.addPass(new RenderPass(scene,camera));
 const worldFinish=createWorldFinish({composer,camera});
 const bloomPass=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.045,0.85,0.72);
@@ -2649,14 +2650,14 @@ function applyQuality(q){
  quality=q;
  sky.material.uniforms.cloudSteps.value=q==='high'?12:q==='medium'?8:5;
  worldFinish.setQuality(q);
- const samples=q==='high'?Math.min(4,renderer.capabilities.maxSamples):q==='medium'?Math.min(2,renderer.capabilities.maxSamples):0;
+ const samples=q==='low'?0:Math.min(2,renderer.capabilities.maxSamples);
  for(const rt of [composer.renderTarget1,composer.renderTarget2])if(rt.samples!==samples){rt.samples=samples;rt.dispose();}
- const pr=q==='high'?Math.min(devicePixelRatio,1.75):q==='medium'?Math.min(devicePixelRatio,1.25):1;
+ const pr=renderPixelRatio(innerWidth,innerHeight,devicePixelRatio,q);
  renderer.setPixelRatio(pr);
  composer.setPixelRatio(pr);
  renderer.setSize(innerWidth,innerHeight);
  composer.setSize(innerWidth,innerHeight);
- const sh=q==='high'?4096:q==='medium'?2048:1024;
+ const sh=q==='low'?1024:2048;
  if(sun.shadow.mapSize.x!==sh){
   sun.shadow.mapSize.set(sh,sh);
   if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null;}
@@ -6157,7 +6158,7 @@ const _rdA=new THREE.Vector3(),_rdB=new THREE.Vector3(),_rdC=new THREE.Vector3()
       _rdE=new THREE.Vector3(),_rdF=new THREE.Vector3(),_rdU=new THREE.Vector3(),_rdR=new THREE.Vector3(),
       _rdT=new THREE.Vector3(),_rdQ=new THREE.Quaternion();
 /* feet into the irons, heels down */
-function riderLegs(R,F,U,Rt){
+function riderLegs(R,F,U,Rt,reachPass=0){
  const st=TACK.saddle&&TACK.saddle.visible&&TACK.saddle.userData&&TACK.saddle.userData.stir, B=R.sk.by;   // no saddle (bareback, Wild Mode): the legs hang, no irons to find
  if(!st){ R._seat(R.pose.lean,R.pose.side,R.pose.head,R.pose.rise,R.pose.spread); R.fitG.updateMatrixWorld(true); return; }
  for(const s of [1,-1]){ const S=s>0?'R':'L', anc=s>0?st.R:st.L;
@@ -6189,6 +6190,28 @@ function riderLegs(R,F,U,Rt){
      boneAim(foot,_rdE.copy(sole.forward).transformDirection(foot.matrixWorld),_rdT);
     }
    }
+  }
+ }
+ // A high two-point pose can put the tread beyond the rider's leg length.
+ // Lower the pelvis only as far as needed to make both sole targets reachable;
+ // stretching the IK chain or solving it again at the same height cannot fix it.
+ if(RIG.profile?.nativeKind==='horse'&&R.pose.rise>0&&reachPass<2){
+  let lower=0;
+  for(const S of ['L','R']){
+   const thigh=B['thigh'+S],shin=B['shin'+S],foot=B['foot'+S],sole=foot.userData.soleContact;
+   if(!sole||!st[S])continue;
+   thigh.getWorldPosition(_rdC);shin.getWorldPosition(_rdD);foot.getWorldPosition(_rdB);
+   const length=(_rdC.distanceTo(_rdD)+_rdD.distanceTo(_rdB))*.997;
+   st[S].getWorldPosition(_rdA);_rdE.copy(sole.point).applyMatrix4(foot.matrixWorld);
+   _rdB.add(_rdA).sub(_rdE);_rdE.copy(_rdC).sub(_rdB);
+   const vertical=_rdE.dot(U),horizontalSq=Math.max(0,_rdE.lengthSq()-vertical*vertical);
+   if(horizontalSq<length*length)lower=Math.max(lower,vertical-Math.sqrt(length*length-horizontalSq));
+  }
+  if(lower>.0005){
+   const hips=B.hips,scale=hips.parent.getWorldScale(_rdC).y;
+   lower=Math.min(lower,R.pose.rise*scale);R.pose.rise-=lower/scale;
+   hips.getWorldPosition(_rdA).addScaledVector(U,-lower);hips.position.copy(hips.parent.worldToLocal(_rdA));
+   hips.updateMatrixWorld(true);riderLegs(R,F,U,Rt,reachPass+1);
   }
  }
 }
@@ -6240,31 +6263,32 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
  if(player.onFoot){reinL.visible=false;reinR.visible=false;return;}   // on foot (on-foot package): she is walking, not seated, and the reins stay on the horse
  const seat=riderSeat(); R.g.position.set(seat.x||0,seat.y,seat.z); R.g.rotation.set(0,0,0);
  if(R.sk){
-  const k=Math.min(1,(dt||0.016)*6);
+  const poseDt=Math.max(0,dt??1/60);
+  const smooth=rate=>1-Math.exp(-rate*poseDt);
   const nativeMount=!!RIG.profile?.nativeBreed;
   const nativeMax=nativeMount?getNativeHorseCapabilities(RIG)?.maxSpeedMps:0;
   const t=THREE.MathUtils.clamp(nativeMount?(nativeMax>0?sp/nativeMax:0):(sp-0.3)/6,0,1);
   const ph=RIG.phase*Math.PI*2, moving=sp>(nativeMount ? .02 : .3);
   const turn=(keys.KeyA||keys.ArrowLeft||touch.left?1:0)-(keys.KeyD||keys.ArrowRight||touch.right?1:0);
-  R._look=(R._look||0)+((moving?turn*0.45:Math.sin((tm||0)*0.9)*0.22+Math.sin((tm||0)*0.47+1)*0.12)-(R._look||0))*k*0.9;
-  R._turn=(R._turn||0)+(turn-(R._turn||0))*k*0.7;
+  R._look=(R._look||0)+((moving?turn*0.45:Math.sin((tm||0)*0.9)*0.22+Math.sin((tm||0)*0.47+1)*0.12)-(R._look||0))*smooth(5.4);
+  R._turn=(R._turn||0)+(turn-(R._turn||0))*smooth(4.2);
   /* The baked hero gait carries its own lift and leaves player.y alone, so a jump on that
      mount never crossed a height test. Ask whether the jump is running instead. */
   const airborne=((RIG.heroJumpAge!==null&&RIG.heroJumpAge!==undefined)||(player.y>0.25))&&!player.flying;
-  R._air =(R._air ||0)+((airborne?1:0)-(R._air||0))*k*1.7;
+  R._air =(R._air ||0)+((airborne?1:0)-(R._air||0))*smooth(10.2);
   /* posting is a trot thing — she sits the walk, and sits deep at the canter */
   /* Posting is for the TROT. On the artist mounts ask the motion which gait it is in — the
      speed band guessed here put her out of the saddle through every stride of the canter,
      which is the gait a plain W settles into. A Western rider sits the jog either way. */
   const trotting=(RIG.heroMotion?RIG.heroMotion.mode==='trot':(moving&&sp>2.1&&sp<6.6))&&TACK.saddle?.userData?.style!=='western';
-  R._post=(R._post||0)+((trotting?1:0)-(R._post||0))*k*0.6;
+  R._post=(R._post||0)+((trotting?1:0)-(R._post||0))*smooth(3.6);
   const beat=Math.max(0,Math.sin(ph));
   const breath=moving?Math.sin(ph)*0.018:Math.sin((tm||0)*1.4)*0.030;
   const em=RIG.emote?EMOTES[RIG.emote.type].lean*emEnv(RIG.emote):0;
   /* Standing about, she reaches down and pats him — every twenty seconds or so, three
      quick pats on the crest. It costs nothing and it is the difference between a rider
      and a mannequin strapped to a horse. */
-  const dtq=dt||0.016;
+  const dtq=poseDt;
   if(R._patT===undefined)R._patT=6+Math.random()*8;
   if(!moving&&!RIG.emote&&player.y<=0){ R._patT-=dtq; if(R._patT<=0){R._patT=17+Math.random()*16;R._patRun=1.9;} }
   else R._patT=Math.max(R._patT,4);
@@ -14289,6 +14313,8 @@ addEventListener('resize',()=>{
  if(renderer.xr.isPresenting)return;   // the headset owns the framebuffer while presenting
  camera.aspect=innerWidth/innerHeight;
  camera.updateProjectionMatrix();
+ const pr=renderPixelRatio(innerWidth,innerHeight,devicePixelRatio,quality);
+ renderer.setPixelRatio(pr);composer.setPixelRatio(pr);
  renderer.setSize(innerWidth,innerHeight);
  composer.setSize(innerWidth,innerHeight);
 });

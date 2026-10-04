@@ -168,6 +168,12 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
     for(const t of trees){if(t.root)t.root.visible=false;else{
       t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;
     }}
+    // A zero-scale instance still runs every vertex and shadow vertex shader.
+    // These seed batches are wholly replaced; stop submitting their old meshes.
+    const retired=new Set();
+    for(const t of trees)if(t.stem?.userData.treePoints){retired.add(t.stem);retired.add(t.leaves);}
+    for(const mesh of retired){mesh.visible=false;mesh.userData.photoscanReplaced=true;}
+    state.retiredBatches=retired.size;
     floraCanopies.forEach(m=>{m.visible=false;});
     state.trees=trees.length;state.conifers=trees.filter(t=>t.source!==variants[0]).length;state.normalMappedViews=variants.length;
     state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind}));
@@ -249,25 +255,37 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
       }
     }
   }
+  let previousSelection=new Set(),previousMode=null;
   function updateTrees(){
     if(!treeMeshes.length)return;
     const p=H.player.pos,tier=G.gfx.get(),enabled=tier!=='low'&&!renderer.xr.isPresenting;
     const range=tier==='high'?58:40,budget=tier==='high'?12:6;
-    const selected=enabled?trees.filter(t=>Math.hypot(t.x-p.x,t.z-p.z)<range).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z)).slice(0,budget):[];
+    // Keep an incumbent until a new tree is appreciably closer. Nearest-N
+    // alone alternates equally distant trees at every scenery tick while riding.
+    const distance=t=>(t.x-p.x)**2+(t.z-p.z)**2;
+    const selected=enabled?trees.filter(t=>distance(t)<(range+(previousSelection.has(t)?5:0))**2)
+      .sort((a,b)=>distance(a)*(previousSelection.has(a)?.72:1)-distance(b)*(previousSelection.has(b)?.72:1)).slice(0,budget):[];
     const set=new Set(selected);
+    const mode=tier+':'+renderer.xr.isPresenting,tierChanged=previousMode!==mode;
+    if(!tierChanged&&set.size===previousSelection.size&&selected.every(t=>previousSelection.has(t)))return;
+    const changed=records=>tierChanged||records.some(t=>set.has(t)!==previousSelection.has(t));
     for(const {mesh,records} of treeMeshes){
+      if(!changed(records))continue;
       let count=0;for(const t of records)if(set.has(t)){
-        mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,/leaves/.test(mesh.material.name)&&t.tint?t.tint:WHITE);count++;
+        mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,/leaves|twig/.test(mesh.material.name)&&t.tint?t.tint:WHITE);count++;
       }
       mesh.count=count;mesh.visible=count>0;
       mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;mesh.castShadow=tier==='high';
       if(count)mesh.computeBoundingSphere();
     }
     for(const {mesh,records} of treeCards){
+      if(!changed(records))continue;
       let count=0;for(const t of records)if(!set.has(t)){mesh.setMatrixAt(count,t.matrix);mesh.setColorAt(count,t.tint||WHITE);count++;}
       mesh.count=count;mesh.visible=count>0;mesh.castShadow=tier==='high'&&!renderer.xr.isPresenting;mesh.instanceMatrix.needsUpdate=mesh.instanceColor.needsUpdate=true;
       if(count)mesh.computeBoundingSphere();
     }
+    previousSelection=set;previousMode=mode;
+    state.detailRebuilds=(state.detailRebuilds||0)+1;
     state.activeTrees=selected.length;
     state.distantTrees=trees.length-selected.length;
   }
