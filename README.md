@@ -35,6 +35,27 @@ For VR, serve over HTTPS (WebXR requires a secure origin) and press **Ride in VR
 python serve-vr.py
 ```
 
+## Rider wardrobe
+
+Open **Rider → Outfit** for 48 free looks across Riding, Ranch, Everyday and
+Adventure. Flannel, denim, overalls, knits, show jackets and trail layers have
+rendered previews, alongside gingham, argyle, herringbone, Fair Isle, botanical
+prints and colour-blocked tops. Top, trouser and boot colours change separately.
+Changes stay in the preview until **Save**. **Undo** restores your saved look.
+
+Clothing has fabric relief, softer folds, sewn collars and pockets, and raised
+buttons. The character editor offers 30 hairstyles per body, 20 hair colours,
+10 skin tones and 10 eye colours. New styles include bobs, loose waves, a half-up
+twist, side and twin braids, a braided crown, natural coils and a swept pixie;
+helmet fitting also applies to these styles. The newest choices include high
+and bubble ponytails, a braided ponytail, long waves, half-up buns, cropped
+coils and shoulder twists.
+
+Mix in 18 free accessories across **Glasses**, **Earrings**, and **Necklaces &
+scarves**. Each category has real close-up previews and a remove option. These
+choices are independent of clothing and hair, are included in Save and Undo,
+and appear on other riders in multiplayer.
+
 ## Controls
 
 **On a screen**
