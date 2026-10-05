@@ -1,3 +1,5 @@
+import {recordSolidPart} from '../solid-collisions.js?v=solid-world-1';
+import {createChalkDown} from '../chalk-down.js?v=chalk-down-1';
 /* Feature package 'world-vistas' — distance, and the things that draw the eye.
 
    Kestrel Basin's horizon was trees and haze. assets/world-art.js already lays three soft
@@ -71,7 +73,7 @@ export function install(G){
  LM.envMapIntensity=0.58;
 
  function Acc(seed,ox,oy,oz){
-  const pos=[],nor=[],col=[];
+  const pos=[],nor=[],col=[],solidOwner={userData:{}};
   const c=new THREE.Color(),v=new THREE.Vector3();
   const m=new THREE.Matrix4(),nm=new THREE.Matrix3(),q=new THREE.Quaternion(),e=new THREE.Euler();
   const tr=new THREE.Vector3(),sc=new THREE.Vector3(),UP=new THREE.Vector3(0,1,0),dir=new THREE.Vector3();
@@ -80,6 +82,7 @@ export function install(G){
   const rr=(a,b)=>a+rnd()*(b-a);
   function putQ(geo,hex,px,py,pz,sx,sy,sz,quat,shade,keep){
    tr.set(px,py,pz);sc.set(sx,sy,sz);m.compose(tr,quat,sc);nm.getNormalMatrix(m);
+   recordSolidPart(THREE,solidOwner,geo,LM,m);
    const g=keep?nonIdx(geo):(geo.index?geo.toNonIndexed():geo);
    const p=g.attributes.position,gn=g.attributes.normal;
    c.set(hex);const s=(shade==null?1:shade)*(0.95+rnd()*0.10);   // every piece a shade apart, or it reads as plastic
@@ -159,7 +162,7 @@ export function install(G){
     g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));
     g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
     g.computeBoundingSphere();
-    const me=new THREE.Mesh(g,LM);me.castShadow=true;me.receiveShadow=true;return me;
+    const me=new THREE.Mesh(g,LM);me.userData.solidParts=solidOwner.userData.solidParts||[];me.castShadow=true;me.receiveShadow=true;return me;
    },
   };
   return A;
@@ -339,7 +342,7 @@ export function install(G){
   const me=A.mesh();me.name='vista:'+def.id;
   const g=new THREE.Group();g.add(me);g.position.set(x,y,z);scene.add(g);
   if(def.label){const sp=G.nameSprite(def.label);sp.position.set(0,def.labelY||7,0);sp.scale.set(def.labelW||5.0,(def.labelW||5.0)/4.2,1);g.add(sp);}
-  for(const c of def.colliders||[])W.colliders.push({x:x+c[0],z:z+c[1],r:c[2]});
+  for(const c of def.colliders||[])W.colliders.push({x:x+c[0],z:z+c[1],r:c[2],precise:!!me.userData.solidParts?.length});
   const L={id:def.id,name:def.name,glyph:def.glyph,x,y,z,g,mesh:me,reach:def.reach||14,
    blurb:def.blurb,arrive:def.arrive,tall:def.tall||0,verts:A.verts()};
   LAND.push(L);
@@ -455,23 +458,10 @@ export function install(G){
   }});
 
  /* ---- 2b. the Chalk Mare, on a bluff that had to be built to hold her ---- */
- /* There is no slope in this basin steep enough for a hill figure. Every face the sweep turned
-    up belonged to Sparrow Creek, whose bed runs perched above the meadow in the north, and a
-    chalk horse in a streambed is not a landmark, it is a mistake. So the bluff is built: a
-    crescent of raised ground ninety-six metres along with a thirty-six degree scarp on the
-    side that faces the middle of the valley, the mare laid on that scarp as flat triangles a
-    hand's breadth off it. A horse cannot climb it, which is right — you ride to the foot, and
-    then you ride back out to the stone, because up close she is only a white smear. */
- const SCARP={x:-76,z:172,len:112,depth:76,h:26,crest:0.40};
- /* Sited on fixed ground only. clearAt measures room against the trees, which are sown afresh every boot, so the scarp (a
-    hundred and twelve metres of r10 colliders) and its viewing stone slid up to forty-five metres from one load to the
-    next, and nothing stopped either landing across a race route, a town arena or a road. fixedSite asks only what is the
-    same on every load: the roads, the river, the creek and Loon Lake, every race route and start box (the season's
-    gauntlet loops too, from events2, which installs before this file), every arena, every ranch plot, pasture and barn
-    row (the stone once stood on plots l5 and l6), and the seeded landforms. Every point
-    of the mound's footprint and of the stone's patch has to pass, the sweep runs outwards from the nominal site, and the
-    first site that passes is taken, so it is the same site every time. The random trees are then cleared off the mound
-    instead of the mound being moved off them: course-clear hides whatever grows inside P.clearZones. */
+ const SCARP={x:-76,z:172,len:112,depth:76,h:18,crest:0.40};
+ /* Keep the down and viewing stone on deterministic ground clear of roads, race routes,
+    arenas and build plots. The hill's heightfield becomes ridable ground. Planting and
+    streamed replacements respect its clearance zones instead of moving the landmark. */
  function routeSegs(){
   const out=[],R=T.RACE_ROUTES||{};
   const add=pl=>{for(let i=0;i<pl.length;i++){const a=pl[i],b=pl[(i+1)%pl.length];if(a&&b)out.push([a[0],a[1],b[0],b[1]]);}
@@ -513,147 +503,8 @@ export function install(G){
   const face=Math.atan2(SCARP.x,SCARP.z);                 // outward: away from the middle of the basin
   const ax=Math.cos(face),az=-Math.sin(face),ox=Math.sin(face),oz=Math.cos(face);
   const y0=groundH(SCARP.x,SCARP.z);
-  /* The mound in its own frame: u along the crest, t across it, 0 at the toe of the scarp and
-     1 at the back. Twenty-one metres of rise over twenty-four of run is a thirty-eight degree
-     face, which is about what a chalk down does; behind the crest it lets itself down slowly
-     so the thing reads as a landform rather than as a wall dropped on the grass. */
-  const prof=t=>t<=SCARP.crest?Math.pow(t/SCARP.crest,0.80):1-0.90*Math.pow((t-SCARP.crest)/(1-SCARP.crest),1.6);
-  /* Flat-topped over the middle forty metres rather than lens-shaped end to end: the figure
-     needs level ground under it, and the first pass curved the crest away under her so she
-     came out bent round a pudding. */
-  const along=u=>{const q=Math.max(0,Math.abs(u)-30)/(SCARP.len/2-30);
-   return Math.max(0,1-q*q*0.94)*(0.90+ridged(u*0.023+9,4.4)*0.20);};
-  const surf=(u,t)=>{
-   const v=(t-0.5)*SCARP.depth;
-   const wx=SCARP.x+ox*v+ax*u,wz=SCARP.z+oz*v+az*u;
-   /* Gullies down the face and a rumpled crown. The first mound had none of this and read as
-      a blancmange; relief is most of what tells a landform from a lump. */
-   const relief=(ridged(u*0.052+3,t*7.5+1)-0.5)*SCARP.h*0.30*prof(t)
-    +(fbm(u*0.10+13,v*0.10-7)-0.5)*SCARP.h*0.11*prof(t);
-   const lift=SCARP.h*prof(t)*along(u)+relief;
-   return [wx,groundH(wx,wz)+Math.max(0,lift),wz];
-  };
-  const A=Acc(5501,SCARP.x,y0,SCARP.z);
-  const NU=96,NV=40,turf=new THREE.Color('#6a7a4a'),bareC=new THREE.Color('#d8d2bd'),cc=new THREE.Color();
-  const loc=p=>[p[0]-SCARP.x,p[1]-y0,p[2]-SCARP.z];
-  /* Shaded smooth, from a normal at every corner of the grid. Flat-shaded, every one of the four
-     thousand facets caught the sun at its own angle and the down came out as a low-poly model of
-     a hill — a mosaic of pale and dark triangles that no grass slope in the valley around it
-     looked anything like. The grid is finer than the first one for the same reason: the gullies
-     down the face run seven to a band, and twenty-two rows could not draw them, only alias them. */
-  const GP=[],GN=[],GC=[],gp=(i,j)=>GP[j*(NU+1)+i];
-  for(let j=0;j<=NV;j++)for(let i=0;i<=NU;i++){
-   const u=(i/NU-0.5)*SCARP.len*1.02,t=j/NV,v=(t-0.5)*SCARP.depth;
-   GP.push(loc(surf(u,t)));
-   /* Turf, the whole way up, and nothing else. Two goes at scattering chalk scars over the
-      face ended as horizontal stripes and then as a white hill with green patches, and both
-      of them buried the only white thing here that is supposed to mean anything. Uffington
-      works because the down is green: the figure is the only chalk showing. The variation is
-      just sun-bleached grass on the steep ground, in metres both ways so that it drifts in
-      patches rather than running along the rows of the grid. */
-   const bleach=smooth(0.06,0.34,t)*smooth(SCARP.crest+0.16,SCARP.crest*0.7,t);
-   const drift=fbm(u*0.045+21,v*0.045-4),fine=fbm(u*0.17+5,v*0.17+9);
-   cc.copy(turf).lerp(bareC,clamp(bleach*0.18+(drift-0.5)*0.12,0,1))
-    .multiplyScalar(0.92+(fine-0.5)*0.18+(drift-0.5)*0.10);
-   GC.push([cc.r,cc.g,cc.b]);
-  }
-  for(let j=0;j<=NV;j++)for(let i=0;i<=NU;i++){
-   const a=gp(Math.max(0,i-1),j),b=gp(Math.min(NU,i+1),j),c=gp(i,Math.max(0,j-1)),d=gp(i,Math.min(NV,j+1));
-   const ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2],vx=d[0]-c[0],vy=d[1]-c[1],vz=d[2]-c[2];
-   let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;
-   const l=Math.hypot(nx,ny,nz)||1,sg=ny<0?-1:1;             // a heightfield: up is always out
-   GN.push([nx/l*sg,ny/l*sg,nz/l*sg]);
-  }
-  /* (u,v) is orientation-preserving whatever the bearing, so clockwise in parameter space is
-     the face you see. Get this the wrong way round and the whole bluff is invisible. */
-  const corner=(q,i,j)=>{const k=j*(NU+1)+i;q[0].push(...GP[k]);q[1].push(...GN[k]);q[2].push(...GC[k]);};
-  for(let j=0;j<NV;j++)for(let i=0;i<NU;i++){
-   const q=[[],[],[]];
-   corner(q,i,j);corner(q,i+1,j+1);corner(q,i+1,j);
-   corner(q,i,j);corner(q,i,j+1);corner(q,i+1,j+1);
-   A.trisV(q[0],q[1],q[2]);
-  }
-  /* The mare, in convex pieces fanned from their first point. An outline would want a
-     triangulator, and a triangulator that gives up leaves a blank hillside; a fan cannot fail.
-     The lists run clockwise, which is the winding the mound established above. */
-  const FIG=[
-   [[-8.5,4.2],[-3,5.2],[3,5.2],[6.6,4.4],[7.8,2.9],[6.4,1.9],[0,1.4],[-6.6,1.7],[-8.5,2.8]],   // barrel
-   [[5.6,4.6],[8.2,7.0],[10.4,8.4],[11.9,7.2],[9.6,5.6],[7.6,3.6]],                      // neck, thrown out level
-   [[10.8,8.4],[14.6,9.2],[15.6,8.0],[14.2,6.9],[11.4,7.0]],                             // head, muzzle forward
-   [[13.4,9.1],[13.9,10.6],[14.7,9.1]],                                                  // ear
-   /* Every limb is rooted a good way inside the barrel rather than butted against it: the
-      pieces sit on a curved surface, and two edges that only just meet in figure coordinates
-      open into a green seam once they are laid on the hill. */
-   [[-6.5,3.6],[-12.4,7.4],[-14.6,7.0],[-13.0,5.2],[-7.4,1.9]],                          // tail, streaming up
-   [[5.2,2.6],[9.8,-1.6],[11.0,-0.4],[7.0,2.8]],                                         // off fore, reaching
-   [[2.2,2.6],[3.4,-3.0],[4.8,-2.8],[4.0,2.7]],                                          // near fore, gathered
-   [[-6.4,2.6],[-11.4,-1.2],[-10.6,-2.5],[-5.2,2.3]],                                    // off hind, trailing
-   [[-3.2,2.6],[-5.2,-2.8],[-3.8,-3.3],[-1.9,2.4]],                                      // near hind
-  ];
-  /* Drawn tall and narrow on purpose. Seen from the valley floor the face is heavily
-     foreshortened — sixty metres out and twenty below the lip, a metre of height on that slope
-     covers about two thirds of a metre on screen — so a mare laid out in true proportion comes
-     out a slug. Every hill figure ever cut is distorted for the same reason. */
-  const U0=-1,H0=8.5,SCALE=0.86,VS=1.24;
-  /* Laying her out in (along-crest, across-band) squashed the legs and stretched the head,
-     because how far up the face a given t reaches is a power curve, not a ruler. So the figure
-     is laid out in metres of actual height and the band coordinate is solved for: a dozen
-     bisections a point, once, at install. This is how a hill figure is really set out — you
-     peg the outline at heights up the slope, not at fractions of the hill. */
-  const tAtHeight=(u,want)=>{
-   let lo=0.012,hi=SCARP.crest;
-   const at=t=>surf(u,t)[1]-groundH(surf(u,t)[0],surf(u,t)[2]);
-   if(at(hi)<want)return hi;
-   for(let k=0;k<14;k++){const mid=(lo+hi)/2;if(at(mid)<want)lo=mid;else hi=mid;}
-   return (lo+hi)/2;
-  };
-  const nrm=(u,t)=>{                                      // the surface normal, so she lies on the slope
-   const a=surf(u-0.6,t),b=surf(u+0.6,t),c=surf(u,t-0.006),d=surf(u,t+0.006);
-   const ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2],vx=d[0]-c[0],vy=d[1]-c[1],vz=d[2]-c[2];
-   let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;
-   const l=Math.hypot(nx,ny,nz)||1;nx/=l;ny/=l;nz/=l;
-   return ny<0?[-nx,-ny,-nz]:[nx,ny,nz];
-  };
-  /* Normalise the winding instead of trusting nine hand-typed outlines to agree about it. The
-     first version of this list had the barrel, neck, head and ear clockwise and all four legs
-     and the tail anticlockwise, so five of the nine pieces came out back-facing and were
-     culled — which left a white shape on the hillside that was, unmistakably, a swan. */
-  const area=p=>{let a=0;for(let i=0;i<p.length;i++){const q=p[(i+1)%p.length];a+=p[i][0]*q[1]-q[0]*p[i][1];}return a;};
-  /* Each fan triangle is cut into sixteen and every corner is pegged to the hill, so the chalk
-     drapes over the relief instead of spanning it. A flat triangle two metres across sat on the
-     crowns of the bumps and let the hollows show through as green holes in her barrel as soon
-     as the down was drawn fine enough to have hollows; laid through the same points it follows
-     the ground at a hand's depth everywhere. */
-  const chalk=new THREE.Color(CHALK),SUB=4,pegs=new Map();
-  const peg=(fx,fy)=>{const key=fx.toFixed(3)+','+fy.toFixed(3);let q=pegs.get(key);
-   if(!q){const u=U0+fx*SCALE,t=tAtHeight(u,H0+fy*VS),p=loc(surf(u,t)),n=nrm(u,t);
-    q=[p[0]+n[0]*0.36,p[1]+n[1]*0.36,p[2]+n[2]*0.36,n[0],n[1],n[2]];pegs.set(key,q);}
-   return q;};
-  for(const raw of FIG){
-   const poly=area(raw)>0?raw.slice().reverse():raw;
-   for(let i=1;i<poly.length-1;i++){
-    const [a0,a1]=poly[0],[b0,b1]=poly[i],[c0,c1]=poly[i+1],ps=[],ns=[],cs=[];
-    const V=(a,b)=>peg(a0+(b0-a0)*a/SUB+(c0-a0)*b/SUB,a1+(b1-a1)*a/SUB+(c1-a1)*b/SUB);
-    const tri=(p,q,r)=>{for(const v of [p,q,r]){ps.push(v[0],v[1],v[2]);ns.push(v[3],v[4],v[5]);cs.push(chalk.r,chalk.g,chalk.b);}};
-    for(let a=0;a<SUB;a++)for(let b=0;a+b<SUB;b++){
-     tri(V(a,b),V(a+1,b),V(a,b+1));
-     if(a+b<SUB-1)tri(V(a+1,b),V(a+1,b+1),V(a,b+1));
-    }
-    A.trisV(ps,ns,cs);
-   }
-  }
-  /* Chalk spoil where the cutting goes over the lip, and a scatter of it fallen to the toe. */
-  for(let k=0;k<16;k++){const u=A.rr(-30,30),t=A.rr(0.02,0.07);
-   const p=loc(surf(u,t));A.sph(A.rr(0.5,1.4),A.rr(0.25,0.6),A.rr(0.5,1.2),CHALK,p[0],p[1]+0.2,p[2],0,0,0,0.94);}
-  const me=A.mesh();me.name='vista:chalkscarp';me.castShadow=false;me.receiveShadow=true;
-  me.material=LM.clone();
-  dressLandscape({THREE,material:me.material,meadow:true,fogScale:1,fogCap:1});
-  const g=new THREE.Group();g.add(me);g.position.set(SCARP.x,y0,SCARP.z);scene.add(g);
-  /* Colliders over the raised part. A circle is the only shape the collision system speaks,
-     so two rows of them follow the crescent and leave the grass at the toe free to ride. */
-  for(let k=0;k<9;k++){const u=(k/8-0.5)*SCARP.len*0.90;
-   for(const t of [0.17,0.50]){const v=(t-0.5)*SCARP.depth;
-    W.colliders.push({x:SCARP.x+ax*u+ox*v,z:SCARP.z+az*u+oz*v,r:10});}}
+  const down=createChalkDown({THREE,site:SCARP,baseHeight:W.terrainH});
+  scene.add(down.root);W.groundSurfaces.push(down.heightAt);P.chalkDown=down;window.__chalkCut=down.isChalk;
   P.SCARP=SCARP;
   /* The viewing stone, sixty metres off the toe of the scarp. That distance is the whole point
      of it: from the foot she is a white smear, and from here she is a horse. Its patch was checked with the mound's
@@ -661,14 +512,16 @@ export function install(G){
   const vx=+(SCARP.x-ox*95).toFixed(2),vz=+(SCARP.z-oz*95).toFixed(2);
   /* What course-clear takes off the mound and the stone's patch: a tree whose foot is buried under a metre of chalk down
      otherwise pokes its crown out of the slope. Raised ground only, from the same profile the mesh is built from. */
-  P.clearZones.push((x,z)=>{const dx=x-SCARP.x,dz=z-SCARP.z,u=dx*ax+dz*az,v=dx*ox+dz*oz;if(Math.abs(u)>SCARP.len/2+2||Math.abs(v)>SCARP.depth/2+2)return false;const t=v/SCARP.depth+0.5;return SCARP.h*prof(Math.max(0,Math.min(1,t)))*along(u)>0.6;});
+  P.clearZones.push(down.contains);
+  // Keep a widening sightline from the viewing stone to the figure clear of trees.
+  P.clearZones.push((x,z)=>{const dx=x-SCARP.x,dz=z-SCARP.z,u=dx*ax+dz*az,v=dx*ox+dz*oz;return v>-100&&v<-12&&Math.abs(u)<9+(v+100)*.20;});
   P.clearZones.push((x,z)=>hyp(x,z,vx,vz)<7.5);
   landmark({
    id:'chalkmare',name:'The Chalk Mare',glyph:'🐎',mapLabel:'🐎 The Chalk Mare',labelDz:16,
    x:vx,z:vz,fixed:!!SCARP.sited,clear:5,maxR:18,seed:812,label:'🐎 The Chalk Mare',labelY:3.6,labelW:4.4,tall:19,reach:17,mini:'#f4f0e0',
    colliders:[[0,0,1.2]],
-   blurb:'Forty-odd metres of galloping mare scoured into the chalk of Whitehorse Scarp, and nobody at the ranch will tell you who cut her. Grandpa Wren says the grass has to be pared back every spring or she closes over in a season; that somebody always does it; and that in seventy years he has never once seen who.',
-   arrive:'Stand at the stone to look. Any nearer and she is a white smear on a hillside.',
+   blurb:'Thirty-five metres of galloping mare scoured into the chalk of Whitehorse Scarp, and nobody at the ranch will tell you who cut her. Grandpa Wren says the grass has to be pared back every spring or she closes over in a season; that somebody always does it; and that in seventy years he has never once seen who.',
+   arrive:'Follow the down to see the chalk cutting up close, or look back from the viewing stone.',
    build(A,a2){
     A.patch(0,0,7,DIRT,DIRT_RIM,0.07,16,2);
     rock(A,0,0.85,0,1.5,1.7,0.9,STONE,face+Math.PI/2);

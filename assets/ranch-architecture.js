@@ -1,5 +1,7 @@
+import {recordSolidPart} from './solid-collisions.js?v=solid-world-1';
 /* Original ranch architecture. Metre-scaled materials, real wall openings and
-   batched static details. No scene placement, navigation or collisions here. */
+   batched static details. Collision part bounds are retained before batching;
+   placement and collision resolution belong to the world. */
 export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = true,
   textureRoot = 'assets/textures/realism/', anisotropy = 8} = {}) {
   if (!THREE) throw new TypeError('createRanchArchitecture requires THREE');
@@ -66,6 +68,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
   class Builder {
     constructor(name) { this.group=new THREE.Group(); this.group.name=name; this.batches=new Map(); this.parts=0; }
     geometry(g,m,matrix = new THREE.Matrix4()) {
+      recordSolidPart(THREE,this.group,g,m,matrix);
       g.applyMatrix4(matrix);
       let b=this.batches.get(m); if(!b){b={p:[],n:[],u:[],i:[]};this.batches.set(m,b);}
       const offset=b.p.length/3;

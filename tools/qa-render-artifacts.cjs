@@ -7,6 +7,8 @@ const out=path.resolve(process.argv[2]||'output/render-artifacts');fs.mkdirSync(
  const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});
  try{
   const page=await browser.newPage({viewport:{width:988,height:859},deviceScaleFactor:2}),errors=[];
+  // Match signed-out Pages behavior when this runs on a local static server.
+  await page.route('**/api/me',route=>route.fulfill({contentType:'application/json',body:'null'}));
   page.on('pageerror',e=>errors.push(e.message));
   page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   await page.route('**/ranch3d.html*',async route=>{

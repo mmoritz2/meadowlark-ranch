@@ -53,7 +53,7 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
           root.name='Yard scan | '+name;
           root.rotation.y=yaw;root.position.set(x,W.groundH(x,z)-bounds.min.y,z);
           group.add(root);objects.push(root);
-          if(radius>0)W.colliders.push({x,z,r:radius});
+          if(radius>0)W.colliders.push({x,z,r:radius,height:bounds.max.y-bounds.min.y});
           W.followCamera.register(root);
           state.placed.push({asset:name,x,z,r:radius});
         }
@@ -62,7 +62,7 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
     for(const [name,parity,height] of [['shrub_03',0,.8],['shrub_04',1,.65],['fern_02',2,.48]]){
       const points=shrubs.filter((p,i)=>parity===2?i%4===0:i%2===parity)
         .map(p=>({...p,x:p.x+(parity===2?1.05:0),z:p.z+(parity===2?.85:0)}))
-        .filter(p=>W.pathDist(p.x,p.z)>2.5&&!(window.__onCourse&&window.__onCourse(p.x,p.z,3.4)));
+        .filter(p=>!window.__chalkCut?.(p.x,p.z)&&W.pathDist(p.x,p.z)>2.5&&!(window.__onCourse&&window.__onCourse(p.x,p.z,3.4)));
       try{
         const asset=await loader.loadAsync('./assets/models/world/'+name+'.glb');
         asset.scene.updateMatrixWorld(true);

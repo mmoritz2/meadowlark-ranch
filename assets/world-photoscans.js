@@ -17,6 +17,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   const routes=Object.values(G.tables.RACE_ROUTES).filter(Array.isArray);
   function segmentDistance(x,z,a,b){const dx=b[0]-a[0],dz=b[1]-a[1],t=THREE.MathUtils.clamp(((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz||1),0,1);return Math.hypot(x-a[0]-t*dx,z-a[1]-t*dz);}
   function clear(x,z,r=1){
+    if(G.vistas?.clearZones?.some(test=>test(x,z)))return false;
     if(W.sceneryArt.containsWaterfall(x,z,r))return false;
     if(Math.hypot(x,z)<33||W.pathDist(x,z)<r+3)return false;
     if(Math.abs(z-W.riverZ(x))<r+10||z<163&&Math.abs(x-W.streamX(z))<r+8)return false;
@@ -119,9 +120,18 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       if(!['pine','snowpine','cold'].includes(t.kind))return variants[0];
       return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
     };
-    const add=t=>{t.source=sourceFor(t);trees.push(t);};
-    // Keep surviving placements, sizes and colliders. Course clearing can zero
-    // an instance while retaining its original placement in treePoints.
+    const add=t=>{
+      const cleared=G.vistas?.clearZones?.some(test=>test(t.x,t.z));
+      if(cleared){
+        if(t.root)t.root.visible=false;else{t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;}
+        for(let i=W.colliders.length-1;i>=0;i--){const c=W.colliders[i];if((c.r<=1.1||c.height>3)&&Math.hypot(c.x-t.x,c.z-t.z)<.15)W.colliders.splice(i,1);}
+        return;
+      }
+      if(t.root&&!t.root.visible)return;
+      if(t.stem){const matrix=new THREE.Matrix4();t.stem.getMatrixAt(t.stemIndex??t.index,matrix);const a=matrix.elements;if(Math.hypot(a[0],a[1],a[2])<.01)return;}
+      t.source=sourceFor(t);trees.push(t);
+    };
+    // Respect cleared placements in both the original seed batches and new landmark zones.
     const seedMatrix=new THREE.Matrix4();
     for(const stem of seedTrees.filter(o=>o.userData.treeLayer==='wood'&&['oak','birch','pine','snowpine'].includes(o.userData.treeSpecies))){
       const leaves=seedTrees.find(o=>o.userData.treeLayer==='leaves'&&o.userData.treePoints===stem.userData.treePoints);

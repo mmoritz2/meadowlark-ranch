@@ -1,3 +1,4 @@
+import {recordSolidPart} from './solid-collisions.js?v=solid-world-1';
 /* Placed ranch catalogue: measured joinery, PBR surfaces and CC0 scanned props.
  * Templates share geometry/textures. Preview clones share the exact silhouette,
  * with separate cached translucent materials; loading upgrades both in place.
@@ -59,7 +60,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
      if(m.userData.grain){const along=long==='x'?p.getX(i):long==='y'?p.getY(i):p.getZ(i);const across=long==='x'?(ny>nz?p.getZ(i):p.getY(i)):long==='y'?(nx>nz?p.getZ(i):p.getX(i)):(ny>nx?p.getX(i):p.getY(i));u.setXY(i,along/k+.15,across/k+.43);}
      else if(ny>nx&&ny>nz)u.setXY(i,p.getX(i)/k,p.getZ(i)/k);else if(nx>nz)u.setXY(i,p.getZ(i)/k,p.getY(i)/k);else u.setXY(i,p.getX(i)/k,p.getY(i)/k);
     }}
-   const q=new T.Quaternion();if(rot)q.setFromEuler(new T.Euler(...rot));g.applyMatrix4(new T.Matrix4().compose(new T.Vector3(x,y,z),q,scale?new T.Vector3(...scale):new T.Vector3(1,1,1)));
+   const q=new T.Quaternion();if(rot)q.setFromEuler(new T.Euler(...rot));const transform=new T.Matrix4().compose(new T.Vector3(x,y,z),q,scale?new T.Vector3(...scale):new T.Vector3(1,1,1));recordSolidPart(T,this.root,g,m,transform);g.applyMatrix4(transform);
    if(!this.parts.has(m))this.parts.set(m,[]);this.parts.get(m).push(g);this.count++;return this;
   }
   box(w,h,d,m,x=0,y=0,z=0,rot=null,r=.012){return this.mesh(rounded(w,h,d,r),m,x,y,z,rot);}
@@ -76,7 +77,10 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  function scan(b,id,{height=null,width=null,depth=null,x=0,y=0,z=0,ry=0}={}){
   const src=scans.get(id);if(!src)return false;const group=src.clone(true);const bounds=new T.Box3().setFromObject(group),size=bounds.getSize(new T.Vector3()),c=bounds.getCenter(new T.Vector3());
   const s=height?height/size.y:width?width/size.x:depth?depth/size.z:1;
-  const wrap=new T.Group();group.position.set(-c.x*s,-bounds.min.y*s,-c.z*s);group.scale.setScalar(s);wrap.add(group);b.add(wrap,x,y,z,ry);b.root.userData.scanned=true;return true;
+  const wrap=new T.Group();group.position.set(-c.x*s,-bounds.min.y*s,-c.z*s);group.scale.setScalar(s);wrap.add(group);b.add(wrap,x,y,z,ry);b.root.userData.scanned=true;
+  if(!/flower|sapling|tree_small/.test(id)){const proxy=new T.BoxGeometry(size.x*s,size.y*s,size.z*s);recordSolidPart(T,wrap,proxy,aged,new T.Matrix4().makeTranslation(0,size.y*s/2,0));proxy.dispose();}
+  else if(/sapling|tree_small/.test(id)){const proxy=new T.CylinderGeometry(.06,.12,size.y*s*.65,8);recordSolidPart(T,wrap,proxy,aged,new T.Matrix4().makeTranslation(0,size.y*s*.325,0));proxy.dispose();}
+  return true;
  }
  function boards(b,w,h,d,m,x,y,z,vertical=false){const n=Math.max(2,Math.ceil((vertical?w:d)/.16));for(let i=0;i<n;i++){if(vertical)b.box(w/n-.006,h,d,m,x-w/2+(i+.5)*w/n,y,z);else b.box(w,h,d/n-.006,m,x,y,z-d/2+(i+.5)*d/n);}}
  function fence(b,length=3,x=0,z=0,ry=0){const f=new Model('Mortised three-rail fence');for(const s of[-1,1]){f.box(.16,1.25,.16,aged,s*length/2,.595,0);f.box(.19,.045,.19,endgrain,s*length/2,1.235,0);for(const y of[.4,.78,1.1])for(const dx of[-.035,.035])f.bolt(s*length/2+dx,y,.088,.009);}for(const y of[.4,.78,1.1])f.box(length+.07,.11,.058,paint,0,y,.015);b.add(f.finish(),x,0,z,ry);}
@@ -92,9 +96,9 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  function wheel(b,x,y,z,r=.3){b.torus(r,.025,iron,x,y,z);b.torus(r-.04,.032,aged,x,y,z);for(let i=0;i<10;i++){const a=i*Math.PI/5;b.beam([x,y,z],[x+Math.sin(a)*(r-.05),y+Math.cos(a)*(r-.05),z],.026,.027,oak);}b.cylinder(.06,.06,.16,iron,x,y,z,[Math.PI/2,0,0]);}
  function pumpkin(b,x,y,z,r){const geo=new T.SphereGeometry(1,40,20),p=geo.attributes.position;for(let i=0;i<p.count;i++){const a=Math.atan2(p.getZ(i),p.getX(i)),rr=1+.065*Math.cos(a*10);p.setXYZ(i,p.getX(i)*rr,p.getY(i),p.getZ(i)*rr);}geo.computeVertexNormals();b.mesh(geo,yellow,x,y,z,null,[r,r*.8,r],false);b.tube([[x,y+r*.73,z],[x+.015,y+r*1.02,z],[x+.055,y+r*1.06,z+.014]],r*.10,aged);}
  function fabric(b,w,h,x,y,z,m=red){const geo=new T.PlaneGeometry(w,h,16,14),p=geo.attributes.position;for(let i=0;i<p.count;i++)p.setZ(i,.025*Math.sin(p.getX(i)*23)+.012*Math.sin(p.getY(i)*11));geo.computeVertexNormals();const mat=m.clone();mat.side=T.DoubleSide;b.mesh(geo,mat,x,y,z);}
- function shelter(b,stall=false){const w=4,d=3.25,h=2.5;
+ function shelter(b,stall=false){const w=4,d=3.25,h=3.25;
   b.box(w,.10,d,stone,0,.015,0);
-  boards(b,w,2.15,.085,aged,0,1.18,-d/2,true);
+  boards(b,w,2.8,.085,aged,0,1.505,-d/2,true);
   for(const x of[-w/2,w/2]){const side=new Model('Boarded divider');boards(side,d,1.5,.085,aged,0,.82,0,true);for(let i=0;i<13;i++)side.cylinder(.012,.012,.62,iron,-d/2+.13+i*.25,1.89,0);b.add(side.finish(),x,0,0,Math.PI/2);for(const z of[-d/2,d/2]){b.box(.17,h,.17,oak,x,h/2,z);b.box(.22,.18,.22,stone,x,.045,z);b.beam([x,h-.55,z],[x-Math.sign(x)*.43,h-.13,z],.09,.1,oak);}}
   b.box(w+.18,.19,.16,oak,0,h-.1,d/2);b.box(w+.5,.12,d+.5,roof,0,h+.06,0,[-.07,0,0]);
   for(const z of[-d/2-.24,d/2+.24])b.box(w+.55,.16,.09,aged,0,h+.035+z*.07,z);
@@ -425,7 +429,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
   return b.finish();
  }
  function key(type){return type==='sign'?type+':'+getRanchName():type;}
- function copy(type,ghost){const k=key(type);let src=templates.get(k);if(!src){src=createTemplate(type);if(!src)return null;templates.set(k,src);}const out=src.clone(true);out.traverse(o=>{if(!o.isMesh)return;if(o.userData.builderBillboard)o.onBeforeRender=function(renderer,scene,camera){const here=this.getWorldPosition(new T.Vector3()),cam=camera.getWorldPosition(new T.Vector3());this.lookAt(cam.x,here.y,cam.z);this.updateWorldMatrix(false,false);};o.castShadow=!ghost&&!o.material.transparent&&!o.userData.builderBillboard;o.receiveShadow=true;if(ghost){const convert=m=>{if(!ghosts.has(m)){const c=m.clone();c.transparent=true;c.opacity=Math.min(m.opacity,.48);c.depthWrite=false;c.onBeforeCompile=m.onBeforeCompile;c.customProgramCacheKey=m.customProgramCacheKey;ghosts.set(m,c);}return ghosts.get(m);};o.material=Array.isArray(o.material)?o.material.map(convert):convert(o.material);}});return out;}
+ function copy(type,ghost){const k=key(type);let src=templates.get(k);if(!src){src=createTemplate(type);if(!src)return null;templates.set(k,src);}const out=src.clone(true);if(ghost)out.userData.collisionIgnore=true;out.traverse(o=>{if(!o.isMesh)return;if(o.userData.builderBillboard)o.onBeforeRender=function(renderer,scene,camera){const here=this.getWorldPosition(new T.Vector3()),cam=camera.getWorldPosition(new T.Vector3());this.lookAt(cam.x,here.y,cam.z);this.updateWorldMatrix(false,false);};o.castShadow=!ghost&&!o.material.transparent&&!o.userData.builderBillboard;o.receiveShadow=true;if(ghost){const convert=m=>{if(!ghosts.has(m)){const c=m.clone();c.transparent=true;c.opacity=Math.min(m.opacity,.48);c.depthWrite=false;c.onBeforeCompile=m.onBeforeCompile;c.customProgramCacheKey=m.customProgramCacheKey;ghosts.set(m,c);}return ghosts.get(m);};o.material=Array.isArray(o.material)?o.material.map(convert):convert(o.material);}});return out;}
  function create(type,ghost=false){const out=copy(type,ghost);if(!out)return null;if(!state.loaded)state.ready.then(()=>{const replacement=copy(type,ghost);out.clear();for(const child of [...replacement.children])out.add(child);out.userData={...replacement.userData};});return out;}
  const sources={
   wine_barrel_01:'builder/wine_barrel_01',wooden_picnic_table:'builder/wooden_picnic_table',planter_box_01:'builder/planter_box_01',wooden_lantern_01:'builder/wooden_lantern_01',tree_stump_01:'builder/tree_stump_01',flower_gazania:'builder/flower_gazania',wild_rooibos_bush:'builder/wild_rooibos_bush',

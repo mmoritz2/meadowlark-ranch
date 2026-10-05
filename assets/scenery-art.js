@@ -1,8 +1,9 @@
+import {recordSolidPart} from './solid-collisions.js?v=solid-world-1';
 /* Shared scenery with metre-scaled timber, built hulls and sewn balloon gores.
  * Materials reuse the ranch's locally hosted CC0 PBR photographs. Each object
  * batches its static joinery by material; moving vehicles keep their own root. */
 import {mergeGeometries} from './vendor/three/examples/jsm/utils/BufferGeometryUtils.js';
-export function createSceneryArt({THREE:T,materials,groundH}){
+export function createSceneryArt({THREE:T,materials,groundH,groundSurfaces=[]}){
  const containsWaterfall=(x,z,pad=0)=>(Math.abs(x-342)<5.5+pad&&z>63-pad&&z<79+pad)||(Math.abs(x+150)<8+pad&&z>-244-pad&&z<-223+pad);
  const {aged,oak,iron,steel,cloth,leather}=materials,UP=new T.Vector3(0,1,0);
  const rope=cloth.clone();rope.name='Scenery | braided hemp';rope.color.set('#ad9570');
@@ -13,7 +14,7 @@ export function createSceneryArt({THREE:T,materials,groundH}){
   mesh(geo,m,x=0,y=0,z=0,rot=null,metric=true){let g=geo.index?geo.toNonIndexed():geo;if(g!==geo)geo.dispose();
    if(metric&&g.attributes.uv){const p=g.attributes.position,n=g.attributes.normal,u=g.attributes.uv,k=m.userData.metres||.7;g.computeBoundingBox();const sz=g.boundingBox.getSize(new T.Vector3()),long=sz.y>sz.z&&sz.y>sz.x?'y':sz.z>sz.x?'z':'x';
     for(let i=0;i<p.count;i++){const nx=Math.abs(n.getX(i)),ny=Math.abs(n.getY(i)),nz=Math.abs(n.getZ(i));const a=long==='y'?p.getY(i):long==='z'?p.getZ(i):p.getX(i),b=long==='y'?(nx>nz?p.getZ(i):p.getX(i)):long==='z'?(ny>nx?p.getX(i):p.getY(i)):(ny>nz?p.getZ(i):p.getY(i));u.setXY(i,a/k,b/k);}}
-   const q=new T.Quaternion();if(rot)q.setFromEuler(new T.Euler(...rot));g.applyMatrix4(new T.Matrix4().compose(new T.Vector3(x,y,z),q,new T.Vector3(1,1,1)));
+   const q=new T.Quaternion();if(rot)q.setFromEuler(new T.Euler(...rot));const transform=new T.Matrix4().compose(new T.Vector3(x,y,z),q,new T.Vector3(1,1,1));recordSolidPart(T,this.g,g,m,transform);g.applyMatrix4(transform);
    if(!this.parts.has(m))this.parts.set(m,[]);this.parts.get(m).push(g);this.count++;}
   box(w,h,d,m,x=0,y=0,z=0,rot=null){this.mesh(new T.BoxGeometry(w,h,d),m,x,y,z,rot);}
   cy(r,h,m,x,y,z,rot=null){this.mesh(new T.CylinderGeometry(r,r*1.025,h,12),m,x,y,z,rot);}
@@ -40,7 +41,9 @@ export function createSceneryArt({THREE:T,materials,groundH}){
    if(i<n){const next=-length/2+.17+(length-.34)*(i+1)/n;for(const side of[-1,1]){const px=side*(width/2-.12),[wx,wz]=world(px,(pz+next)/2),low=Math.max(groundH(wx,wz)-y+.1,-1.8);b.beam([px,low,pz],[px,-.28,next],.095,.095,aged);}}
   }
   for(const side of[-1,1])cleat(b,side*(width/2-.2),.02,-length/2+.58);coil(b,width/2-.45,.025,-length/2+.95);
-  const out=b.finish({kind:'dock',deckY:y,width,length,supports});out.position.set(x,y,z);out.rotation.y=yaw;return out;
+  const out=b.finish({kind:'dock',deckY:y,width,length,supports});out.position.set(x,y,z);out.rotation.y=yaw;
+  groundSurfaces.push((wx,wz)=>{const dx=wx-x,dz=wz-z,u=dx*c-dz*s,v=dx*s+dz*c;return Math.abs(u)<width/2&&Math.abs(v)<length/2?y:-Infinity;});
+  return out;
  }
  function boat(ferry=false){const key=ferry?'ferry':'rowboat';if(templates.has(key))return templates.get(key).clone(true);
   const b=new Build('Scenery | '+(ferry?'clinker-built passenger ferry':'clinker-built rowing skiff'));

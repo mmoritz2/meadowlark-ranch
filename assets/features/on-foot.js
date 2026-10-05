@@ -137,7 +137,10 @@ export function install(G){
     the near side is the far side of the fence, and she used to land outside the arena, the rail between her and her horse. */
  function stepDownSpot(x,z,hd){
   const lx=Math.cos(hd),lz=-Math.sin(hd), fx=Math.sin(hd),fz=Math.cos(hd);
-  const solid=(px,pz)=>Wd.colliders.some(c=>!c.onFoot&&!c.climb&&Math.hypot(px-c.x,pz-c.z)<c.r+0.45);
+  const solid=(px,pz)=>{
+   if(Wd.colliders.some(c=>!c.onFoot&&!c.climb&&!c.precise&&Math.hypot(px-c.x,pz-c.z)<c.r+0.45))return true;
+   const foot=Wd.groundH(px,pz);return Wd.solidWorld?.resolve({x:px,z:pz},{bottom:foot+.22,top:foot+1.75,radius:.34})>0;
+  };
   for(const [a,b] of [[1.05,0],[-1.05,0],[0.75,0],[-0.75,0],[0,-1.5],[0,1.7]]){
    const px=x+lx*a+fx*b, pz=z+lz*a+fz*b;
    if(!crossWall(x,z,px,pz)&&!solid(px,pz))return [px,pz];
@@ -411,7 +414,7 @@ export function install(G){
    }
   }
   /* keep off the buildings and the trees on the way over */
-  if(sp>0)for(const c of Wd.colliders){if(c.onFoot)continue;const ox=e.x-c.x,oz=e.z-c.z,r=c.r+0.9,d2=ox*ox+oz*oz;if(d2<r*r&&d2>1e-6){const d=Math.sqrt(d2);e.x=c.x+ox/d*r;e.z=c.z+oz/d*r;}}
+  if(sp>0)for(const c of Wd.colliders){if(c.onFoot||c.precise)continue;const ox=e.x-c.x,oz=e.z-c.z,r=c.r+0.9,d2=ox*ox+oz*oz;if(d2<r*r&&d2>1e-6){const d=Math.sqrt(d2);e.x=c.x+ox/d*r;e.z=c.z+oz/d*r;}}
   /* and out of the rails, the way the game keeps the ridden horse out of them, except in the air over one */
   let hopY=0;
   if(e.hop){e.hop.t+=dt;const k=e.hop.t/e.hop.dur;if(k>=1)e.hop=null;else hopY=Math.sin(k*Math.PI)*1.15*(e.sc||1);}
@@ -420,6 +423,7 @@ export function install(G){
    const cx=w.x1+ex*tt,cz=w.z1+ez*tt,ox=e.x-cx,oz=e.z-cz,d2=ox*ox+oz*oz,r=0.7;
    if(d2<r*r&&d2>1e-6){const d=Math.sqrt(d2);e.x=cx+ox/d*r;e.z=cz+oz/d*r;}
   }
+  if(sp>0){const pos={x:e.x,z:e.z},foot=Wd.groundH(e.x,e.z)+hopY;Wd.solidWorld?.resolve(pos,{bottom:foot+(e.hop?1.45:.38),top:foot+2.65,radius:.55});e.x=pos.x;e.z=pos.z;}
   e.speed+=(sp-e.speed)*Math.min(1,dt*4);
   /* standing about it grazes now and then */
   if(e.speed<0.3){e.grazeT-=dt;if(e.grazeT<=0){e.graze=e.graze?0:1;e.grazeT=e.graze?5+Math.random()*7:3+Math.random()*6;}}else e.graze=0;
@@ -523,7 +527,7 @@ export function install(G){
   if(t.closest('#seWhistle')||t.closest('#whistleBtn')){e.stopPropagation();e.preventDefault();callHorse(false);}
  },true);
 
- G.onFoot={get on(){return ST.on;},dismount,mount,toggle,callHorse,pose:(R,ph,amp,run,t,look)=>R&&R.locomote?R.locomote(0.016,{speed:0,look}):pose(R,ph,amp,run,t,look),
+ G.onFoot={get height(){return ST.fy;},get on(){return ST.on;},dismount,mount,toggle,callHorse,pose:(R,ph,amp,run,t,look)=>R&&R.locomote?R.locomote(0.016,{speed:0,look}):pose(R,ph,amp,run,t,look),
   horse:()=>ST.horse?{x:ST.horse.x,z:ST.horse.z,heading:ST.horse.heading,sc:ST.horse.sc,group:ST.horse.parts.group}:null,
   walker:()=>ST.W,footing:(x,z)=>footing(x,z),waterAt:(x,z)=>waterAt(x,z),standingOn:()=>ST.on&&ST.mode==='rock'?ST.rockOn:null,
   state:()=>({on:ST.on,horse:ST.horse?{x:+ST.horse.x.toFixed(2),z:+ST.horse.z.toFixed(2),hop:!!ST.horse.hop}:null,calling:!!ST.call,

@@ -472,6 +472,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
     is pushed under the analytic ground — a stem that hovers a centimetre on a crest is the first
     thing the eye finds. */
  function put(name,x,z,h,wid,col,lean,sink){
+  if(G.vistas?.chalkDown?.isChalk(x,z))return false;
   if(W.sceneryArt.containsWaterfall(x,z,.6))return false;
   const b=BANK[name]; if(!b||b.n>=b.cap)return false;
   _e.set((rnd()-0.5)*(lean||0),rnd()*Math.PI*2,(rnd()-0.5)*(lean||0));
@@ -487,6 +488,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
  const TREE={oak:'#dff0c8',blossom:'#ffe8ee',birch:'#e6f2d0',pine:'#dfeccd',cold:'#eef7fb',willow:'#f2f7d8'};
  const BARK={oak:'#e4dac6',blossom:'#e2d6c4',birch:'#fbf8f0',pine:'#cdc2ad',cold:'#d2d6d4',willow:'#ddd2bd'};
  function tree(kind,x,z,h,wid,leafCol,barkCol,noColl){
+  if(G.vistas?.clearZones?.some(test=>test(x,z)))return false;
   if(W.sceneryArt.containsWaterfall(x,z,h*wid*.6+1))return false;
   const b=BANK[kind]; if(!b||b.n>=b.cap)return false;
   const y=groundH(x,z)-0.05*h;
@@ -496,7 +498,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   b.im.setColorAt(b.n,_col);b.n++;
   const tb=BANK.trunk;
   if(tb.n<tb.cap){tb.im.setMatrixAt(tb.n,_m);_col.set(barkCol||BARK[kind]||'#ddd2ba').offsetHSL(0,(rnd()-0.5)*0.10,(rnd()-0.5)*0.22);tb.im.setColorAt(tb.n,_col);tb.n++;}
-  if(!noColl){const r=Math.max(0.55,h*0.055);W.colliders.push({x,z,r});addOcc(x,z,r);}
+  if(!noColl){const r=Math.max(0.55,h*0.055);W.colliders.push({x,z,r,height:h});addOcc(x,z,r);}
   /* And onto forestPoints, the list the follow camera reads to keep its eye and its sight line out
      of the trees. Every copse this package planted had a collider for the horse and was invisible
      to the camera, which only knew the valley's first trees; that stayed hidden while the eye rode
@@ -506,11 +508,12 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   return true;
  }
  function snag(x,z,h,col){
+  if(G.vistas?.clearZones?.some(test=>test(x,z)))return false;
   const b=BANK.snag; if(b.n>=b.cap)return false;
   _e.set((rnd()-0.5)*0.12,rnd()*Math.PI*2,(rnd()-0.5)*0.12);_q.setFromEuler(_e);
   _sc.set(h*0.9,h,h*0.9);_v.set(x,groundH(x,z)-0.06*h,z);_m.compose(_v,_q,_sc);
   b.im.setMatrixAt(b.n,_m);_col.set(col||'#efe9db').offsetHSL(0,(rnd()-0.5)*0.08,(rnd()-0.5)*0.12);b.im.setColorAt(b.n,_col);b.n++;
-  W.colliders.push({x,z,r:0.5});addOcc(x,z,0.5);return true;
+  W.colliders.push({x,z,r:0.5,height:h});addOcc(x,z,0.5);return true;
  }
 
  /* ================= 6. the planting ================= */
