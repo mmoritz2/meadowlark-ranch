@@ -494,11 +494,8 @@ export function install(G){
  for(const b of BOTTLES)MK.push({x:b.x,z:b.z,glyph:'🍾',kind:'bottle',hidden:s=>(s.bottles||[]).includes(b.id)});
  for(const l of P.LANDMARKS)if(l.glyph)MK.push({x:l.x,z:l.z,glyph:l.glyph,kind:'landmark',id:l.id});
  P.markerKinds=()=>MK.reduce((a,m)=>{a[m.kind||'other']=(a[m.kind||'other']||0)+1;return a;},{});
- /* Clicking a fast-travel pin on the map travels there (locks honoured); the click is stopped
-    before the wrapper's own toggle sees it. */
- {const cv=$('bigmap');if(cv)cv.addEventListener('click',e=>{const r=cv.getBoundingClientRect(),sx=560/r.width,S2=560/700;const mx=(e.clientX-r.left)*sx,my=(e.clientY-r.top)*sx;let best=null,bd=13;
-  T.FT.forEach((f,i)=>{const px=280+f[1]*S2,pz=280+(f[2]-7)*S2;const d=Math.hypot(px-mx,pz-my);if(d<bd){bd=d;best=i;}});
-  if(best==null)return;e.stopImmediatePropagation();e.preventDefault();const btn=document.querySelector('#ftBar [data-ft="'+best+'"]');if(btn)btn.click();},true);}
+ // The travel-map controller owns projected pins and selection. Travel itself
+ // uses the shared guarded fastTravelTo handler in ranch3d.html.
 
  /* ================= 5. balloons and the ferry: one vehicle, one freeze guard ================= */
  const BALLOON_STATIONS=[
