@@ -6,8 +6,8 @@ const game=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8'),rj=
  const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});
  try{
   const page=await browser.newPage({viewport:{width:1200,height:920}}),errors=[];
-  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
-  await page.route('**/__hair_qa.html',r=>r.fulfill({contentType:'text/html',body:`<!doctype html><meta charset="utf-8"><script type="importmap">{"imports":{"three":"/assets/vendor/three/build/three.module.js","three/addons/":"/assets/vendor/three/examples/jsm/"}}</script><style>body{margin:0;padding:24px;background:#ece7dd;font:14px system-ui;color:#292c28}h1{font:600 26px Georgia;margin:0 0 6px}p{margin:0 0 20px;color:#636859}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.card{background:#dad5c7;border-radius:10px;overflow:hidden;text-align:center}.card img{width:100%;display:block}.label{padding:8px;font-weight:600}#helmet{display:none}</style><h1>Meadowlark · More ways to wear your hair</h1><p>30 hairstyles · natural colours · helmet-compatible</p><div class="grid" id="bare"></div><div class="grid" id="helmet"></div><script>window.RJ=${rj};</script>`}));
+  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.text().startsWith('HAIR '))console.log(m.text());});page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+  await page.route('**/__hair_qa.html',r=>r.fulfill({contentType:'text/html',body:`<!doctype html><meta charset="utf-8"><script type="importmap">{"imports":{"three":"/assets/vendor/three/build/three.module.js","three/addons/":"/assets/vendor/three/examples/jsm/"}}</script><style>body{margin:0;padding:24px;background:#ece7dd;font:14px system-ui;color:#292c28}h1{font:600 26px Georgia;margin:0 0 6px}p{margin:0 0 20px;color:#636859}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.card{background:#dad5c7;border-radius:10px;overflow:hidden;text-align:center}.card img{width:100%;display:block}.label{padding:8px;font-weight:600}#helmet,#details{display:none}#details{grid-template-columns:repeat(3,1fr)}</style><h1>Meadowlark · More ways to wear your hair</h1><p>30 hairstyles · natural colours · helmet-compatible</p><div class="grid" id="bare"></div><div class="grid" id="helmet"></div><div class="grid" id="details"></div><script>window.RJ=${rj};</script>`}));
   await page.goto(QA.BASE+'/__hair_qa.html');
   const result=await page.evaluate(async()=>{
    const THREE=await import('three'),{GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js'),{clone}=await import('three/addons/utils/SkeletonUtils.js');
@@ -25,6 +25,7 @@ const game=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8'),rj=
     const rig=lib.build(kit,fit);await Promise.resolve();await Promise.resolve();scene.add(rig.root);rig.root.rotation.y=.55;
     rig.action('idle').setEffectiveWeight(1);rig.mixer.update(.05);
     for(const h of RIDER_HAIR.filter(h=>h.body.includes(body))){
+     console.log('HAIR '+body+' '+h.id);
      for(const helmet of [false,true]){
       rig.setLook({...fit,hairStyle:h.id,helmet:helmet?'#2e2e38':'none'});renderer.render(scene,cam);
       let finite=true,vertices=0;rig.hair.traverse(m=>{if(m.isMesh){vertices+=m.geometry.attributes.position.count;finite=finite&&Array.from(m.geometry.attributes.position.array).every(Number.isFinite);}});
@@ -34,6 +35,15 @@ const game=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8'),rj=
        const img=renderer.domElement.toDataURL('image/png');images.push({id:h.id+(helmet?'-helmet':''),img});
        const card=document.createElement('div');card.className='card';const image=new Image();image.src=img;card.append(image);
        const label=document.createElement('div');label.className='label';label.textContent=h.label;card.append(label);document.getElementById(helmet?'helmet':'bare').append(card);
+       if(!helmet&&['ponytail','braid','bun','lowpony','sidebraid','twintails','curly','coils','croppedcoils','twists'].includes(h.id)){
+        for(const [angle,name]of [[0,'front'],[1.57,'side'],[Math.PI,'back']]){
+         rig.root.rotation.y=angle;cam.position.set(0,1.64,.98);cam.lookAt(0,1.56,0);renderer.render(scene,cam);
+         const close=renderer.domElement.toDataURL('image/png');images.push({id:h.id+'-'+name,img:close});
+         const detail=document.createElement('div');detail.className='card';detail.innerHTML='<img src="'+close+'"><div class="label">'+h.label+' · '+name+'</div>';document.getElementById('details').append(detail);
+        }
+        rig.root.rotation.y=.55;cam.position.set(0,1.64,1.58);cam.lookAt(0,1.53,0);
+       }
+
       }
      }
     }
@@ -44,6 +54,8 @@ const game=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8'),rj=
   await page.screenshot({path:path.join(out,'hairstyles.png'),fullPage:true});
   await page.evaluate(()=>{document.getElementById('bare').style.display='none';document.getElementById('helmet').style.display='grid';});
   await page.screenshot({path:path.join(out,'hairstyles-helmets.png'),fullPage:true});
+  await page.evaluate(()=>{document.getElementById('helmet').style.display='none';document.getElementById('details').style.display='grid';});
+  await page.screenshot({path:path.join(out,'hairstyles-detail.png'),fullPage:true});
   for(const {id,img} of result.images)fs.writeFileSync(path.join(out,id+'.png'),Buffer.from(img.split(',')[1],'base64'));
   delete result.images;result.errors=errors;fs.writeFileSync(path.join(out,'hair-report.json'),JSON.stringify(result,null,2));
   assert.deepEqual(errors,[]);assert.equal(result.checks.filter(c=>c.body==='f'&&!c.helmet).length,30);

@@ -48,7 +48,7 @@ export function shapeHair(source,style,head){
   }
   p.setXYZ(i,x,y,z);
  }
- geo.computeVertexNormals();geo.computeBoundingSphere();return geo;
+ smoothHairNormals(geo);geo.computeBoundingSphere();return geo;
 }
 
 /* The measured skull narrows sharply at the nape. A bounding-box radius leaves
@@ -102,7 +102,8 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
  const bun=(messy=false,anchor=null)=>{
   const root=anchor||tiePoint(kit,helmet||!messy?'nape':'crown'),at=root.clone();at.z-=0.014;
   gather(root,at,.019);
-  const pieces=[];
+  const core=new THREE.SphereGeometry(.027,24,16);core.scale(1.08,.76,.68);core.translate(at.x,at.y,at.z-.008);
+  const pieces=[core];
   for(let j=0;j<7;j++){
    const pts=[],a0=j*0.9;
    for(let k=0;k<=24;k++){
@@ -123,6 +124,20 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
     const tail=new THREE.PlaneGeometry(.019,.061,1,4);tail.rotateZ(sd*.20);tail.translate(at.x+sd*.013,at.y-.036,at.z-.020);ribbon.push(tail);
    }
   }
+ }else if(style==='ringlets'){
+  const locks=[];
+  for(let j=0;j<38;j++){
+   const angle=1.05+j/37*(Math.PI*2-2.10),front=Math.cos(angle),side=Math.sin(angle);
+   const start=scalpPoint(THREE,kit,V(side*H.rx,H.cy+.068,H.cz+front*H.rz),.018),fall=scalpPoint(THREE,kit,V(side*H.rx,H.cy+.006,H.cz+front*H.rz),.018);
+   const length=.26+.025*Math.sin(j*2.3),pts=[];
+   for(let k=0;k<=40;k++){
+    const t=k/40,turn=t*Math.PI*(7.5+.6*Math.sin(j))+j*2.399963,hang=Math.max(0,(t-.26)/.74),wave=.013*Math.min(1,t*5)+.003*hang;
+    const center=t<.26?scalpPoint(THREE,kit,start.clone().lerp(fall,t/.26),.018):V(fall.x+side*.012*hang,fall.y-length*hang,fall.z-.025*hang);
+    pts.push(center.add(V(Math.cos(turn)*wave,0,Math.sin(turn)*wave)));
+   }
+   locks.push(curve(pts,[.006,.010,.010,.008,.006,.0007],44,8));
+  }
+  hair.push(merge(locks));
  }else if(style==='highpony'){
   pony(tiePoint(kit,helmet?'nape':'crown'),.37);
  }else if(style==='bubblepony'){
@@ -139,8 +154,8 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
   hair.push(merge(pieces));ring(at);
  }else if(style==='braidedpony'){
   const at=tiePoint(kit,helmet?'nape':'back');braid([at,V(at.x,at.y-.10,at.z-.055),V(at.x+.025,at.y-.24,at.z-.06),V(at.x+.04,at.y-.38,at.z-.04)],.021,11);
- }else if(style==='twintails'){
-  for(const sd of [-1,1])pony(V(sd*H.rx*.86,H.cy-.055,H.cz-.072),.24);
+ }else if(style==='twintails'||style==='pigtails'){
+  for(const sd of [-1,1])pony(V(sd*H.rx*(style==='pigtails'?.98:.86),H.cy-(style==='pigtails'?.004:.055),H.cz-.072),style==='pigtails'?.27:.24);
  }else if(style==='halfupbun'){
   bun(false,tiePoint(kit,helmet?'nape':'back'));
  }else if(style==='braidedbun'){
@@ -151,10 +166,15 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
  }else if(style==='twists'){
   const pieces=[];
   for(let j=0;j<17;j++){
-   const a=1.20+j/16*(Math.PI*2-2.4),start=anchor(V(Math.sin(a)*H.rx,H.cy+.022,H.cz+Math.cos(a)*H.rz));
+   const a=1.20+j/16*(Math.PI*2-2.4),start=scalpPoint(THREE,kit,V(Math.sin(a)*H.rx,H.cy+.022,H.cz+Math.cos(a)*H.rz),.012);
    for(let strand=0;strand<2;strand++){
-    const pts=[];for(let k=0;k<=40;k++){const t=k/40,turn=t*Math.PI*17+strand*Math.PI,root=Math.min(1,t*16);pts.push(V(start.x+Math.sin(a)*t*.016+Math.cos(turn)*.005*root,start.y-t*(.30+.018*Math.cos(j*3)),start.z-.020*t+Math.sin(turn)*.005*root));}
-    pieces.push(curve(pts,[.0055,.006,.005,.004,.001],44,6));
+    const pts=[],crown=V(Math.sin(a)*.028,H.top-.008,H.cz+Math.cos(a)*.030);
+    for(let k=0;k<=52;k++){
+     const t=k/52,turn=t*Math.PI*23+strand*Math.PI,root=Math.min(1,t*20),hang=Math.max(0,(t-.28)/.72);
+     const center=t<.28?scalpPoint(THREE,kit,crown.clone().lerp(start,t/.28),.008):V(start.x+Math.sin(a)*hang*.016,start.y-hang*(.30+.018*Math.cos(j*3)),start.z-.020*hang);
+     pts.push(center.add(V(Math.cos(turn)*.005*root,0,Math.sin(turn)*.005*root)));
+    }
+    pieces.push(curve(pts,[.0045,.006,.006,.004,.001],58,6));
    }
   }
   hair.push(merge(pieces));
@@ -177,19 +197,49 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
    const target=V(Math.sin(th)*Math.sin(phi)*H.rx,H.cy+Math.cos(phi)*H.ry,H.cz+Math.cos(th)*Math.sin(phi)*H.rz);
    if(Math.cos(th)>.35&&target.y<H.browTop+.026)continue;
    const size=(cropped?.0085:.017)*(1+.18*Math.sin(j*7.3+Math.cos(j*2.8)));
-   const root=scalpPoint(THREE,kit,target,.001),normal=root.clone().sub(V(H.cx,H.cy,H.cz)).normalize(),center=root.clone().addScaledVector(normal,size*.42);
-   const tuft=new THREE.SphereGeometry(size,9,7);tuft.scale(1,1.12,.91);tuft.rotateY(j*1.7);tuft.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(V(0,1,0),normal));tuft.translate(center.x,center.y,center.z);pieces.push(tuft);
+   const root=scalpPoint(THREE,kit,target,.001),normal=root.clone().sub(V(H.cx,H.cy,H.cz)).normalize();
+   const tangent=V(Math.cos(th),0,-Math.sin(th)).normalize(),cross=normal.clone().cross(tangent).normalize(),pts=[];
+   for(let k=0;k<=20;k++){const t=k/20,a=t*Math.PI*2.7+j*.83,r=size*(.36+.35*Math.sin(Math.PI*t));pts.push(root.clone().addScaledVector(normal,size*(.16+.50*Math.sin(Math.PI*t))).addScaledVector(tangent,Math.cos(a)*r).addScaledVector(cross,Math.sin(a)*r));}
+   pieces.push(curve(pts,[size*.28,size*.32,size*.29,size*.13],22,6));
   }
   hair.push(merge(pieces));
  }
- if(!helmet&&!['coils','croppedcoils','twists','halfup','halfupbun'].includes(style)){
-  const wisps=[];
-  for(const side of [-1,1])for(let j=0;j<3;j++){
-   const points=[];
-   for(let k=0;k<5;k++){const t=k/4,at=V(side*(H.rx*.84+.008*t+j*.0015),H.browTop+.023-t*(.052+j*.012),H.cz+.053+.012*Math.sin(t*Math.PI)+j*.002);points.push(scalpPoint(THREE,kit,at,.003+t*.001));}
-   wisps.push(curve(points,[.0014,.0022,.0015,.0002],16,6));
-  }
-  hair.push(merge(wisps));
- }
  return {hair,ties,ribbon};
+}
+
+/* Keep the sculpted part and face-framing locks of the loose style, drawing the
+   lengths back around the ears into a compact crown for tied styles. */
+export function gatheredCrown(THREE,source,kit){
+ const geo=source.clone(),p=geo.attributes.position,index=geo.index;
+ // The source has individual sculpted locks. Keep its five front locks; its
+ // loose back curtain would turn into a blunt bob when gathered up.
+ const parent=Array.from({length:p.count},(_,i)=>i),weld=new Map();
+ const root=i=>{while(parent[i]!==i){parent[i]=parent[parent[i]];i=parent[i];}return i;};
+ const join=(a,b)=>{parent[root(a)]=root(b);};
+ for(let i=0;i<p.count;i++){const key=[p.getX(i),p.getY(i),p.getZ(i)].map(v=>Math.round(v*100000)).join(',');if(weld.has(key))join(i,weld.get(key));else weld.set(key,i);}
+ for(let i=0;i<index.count;i+=3){join(index.getX(i),index.getX(i+1));join(index.getX(i),index.getX(i+2));}
+ const bounds=new Map();for(let i=0;i<p.count;i++){const id=root(i),b=bounds.get(id)||{z:Infinity,y:-Infinity};b.z=Math.min(b.z,p.getZ(i));b.y=Math.max(b.y,p.getY(i));bounds.set(id,b);}
+ const kept=[];for(let i=0;i<index.count;i+=3){const b=bounds.get(root(index.getX(i)));if(b.z>.019&&b.y>.18)kept.push(index.getX(i),index.getX(i+1),index.getX(i+2));}
+ geo.setIndex(kept);
+ const smooth=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
+ for(let i=0;i<p.count;i++){
+  let x=p.getX(i),y=p.getY(i),z=p.getZ(i);
+  const originalY=y;
+  if(y<.145){
+   const t=smooth((.145-y)/.18);
+   y=.145+(y-.145)*.78;
+   z-=.012*t;
+   const point=new THREE.Vector3(x,y,z),fitted=scalpPoint(THREE,kit,point,.006);
+   point.lerp(fitted,smooth((.15-originalY)/.20));
+   x=point.x;y=point.y;z=point.z;
+  }
+  p.setXYZ(i,x,y,z);
+ }
+ smoothHairNormals(geo);geo.computeBoundingSphere();return geo;
+}
+
+function smoothHairNormals(geo){
+ geo.computeVertexNormals();const p=geo.attributes.position,n=geo.attributes.normal,groups=new Map();
+ for(let i=0;i<p.count;i++){const key=[p.getX(i),p.getY(i),p.getZ(i)].map(v=>Math.round(v*100000)).join(',');if(!groups.has(key))groups.set(key,[]);groups.get(key).push(i);}
+ for(const ids of groups.values()){let x=0,y=0,z=0;for(const i of ids){x+=n.getX(i);y+=n.getY(i);z+=n.getZ(i);}const length=Math.hypot(x,y,z)||1;for(const i of ids)n.setXYZ(i,x/length,y/length,z/length);}
 }

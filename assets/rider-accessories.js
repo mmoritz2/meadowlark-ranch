@@ -1,6 +1,6 @@
 /* Small, independently selectable pieces, fitted to the shared rider skeleton.
    Every mesh belongs to one rider; switching or removing a piece frees its resources. */
-import {scalpPoint} from './rider-hairstyles.js?v=art-20261005';
+import {scalpPoint} from './rider-hairstyles.js?v=hair-20261005b';
 import {surfaceSampler} from './rider-fit.js?v=art-20261005';
 const item=(id,label,col)=>({id,label,col});
 export const RIDER_ACCESSORIES={

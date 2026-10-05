@@ -18,7 +18,7 @@
      helmet       a riding helmet built to her head — shell, peak and harness — in the wardrobe's colour.
      hair         the pack's styles (long, space buns; short, crop and a beard for the other body), and
                   ponytail, braid, bun, pigtails and curls built here for this head: hair drawn back over
-                  her own scalp with what is tied from it, and ringlets over the long style's shape. Under a
+                  her own scalp with sculpted front locks, gathered lengths and continuous ringlets. Under a
                   helmet the hair above the brim is pressed in under the shell, what is tied sits low below
                   it, and whatever falls below the brim shows.
      face         skin tone, hair colour on the brows, and eye colour.
@@ -38,21 +38,21 @@
 
 import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailorGarment,tailoredTop,sewnDetails} from './rider-clothes.js?v=art-20261005';
 export {RIDER_OUTFITS};
-import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint} from './rider-hairstyles.js?v=art-20261005';
+import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown} from './rider-hairstyles.js?v=hair-20261005b';
 import {refineRiderFace} from './rider-face.js?v=art-20261005';
-import {accessoryFit,buildAccessories} from './rider-accessories.js?v=art-20261005';
+import {accessoryFit,buildAccessories} from './rider-accessories.js?v=hair-20261005b';
 
 /* ---- tables ------------------------------------------------------------------------------------ */
-/* mesh: the pack's own hairstyle. scalp: hair drawn back over her own scalp (buildScalp) with what is tied
-   from it (tails: ponytail, bun, braid, pigtails). curls: ringlets over the long style's shape. */
+/* mesh: a source hairstyle. scalp: a fitted crown and optional sculpted front locks.
+   detail: gathered lengths, buns, braids, twists or continuous curls. */
 export const RIDER_HAIR=[
  {id:'long',label:'Long',body:['f','m'],mesh:'Hair_Long',shape:'long'},
  {id:'ponytail',label:'Ponytail',body:['f','m'],scalp:true,detail:'ponytail'},
  {id:'braid',label:'Braid',body:['f'],scalp:true,detail:'braidedpony'},
  {id:'bun',label:'Bun',body:['f','m'],scalp:true,detail:'classicbun'},
  {id:'buns',label:'Space buns',body:['f'],mesh:'Hair_Buns'},
- {id:'pigtails',label:'Pigtails',body:['f'],scalp:true,tail:'pigtails'},
- {id:'curly',label:'Curls',body:['f','m'],mesh:'Hair_Long',curls:true},
+ {id:'pigtails',label:'Pigtails',body:['f'],scalp:true,detail:'pigtails'},
+ {id:'curly',label:'Curls',body:['f','m'],scalp:true,detail:'ringlets'},
  ...EXTRA_HAIR,
  {id:'short',label:'Short',body:['m'],mesh:'Hair_SimpleParted'},
  {id:'crop',label:'Crop',body:['m'],mesh:'Hair_Buzzed'},
@@ -277,9 +277,9 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
     millimetres, with the edge carved irregular in the shader and the strands of the pack's hair texture
     running from the tie), and what is tied from it — a ponytail, a bun, a plaited braid, pigtails. Under a
     helmet they sit low, below the brim, as riders wear them. */
- function hairline(kit){
+ function hairline(kit,gathered=false){
   const bt=kit.head.browTop;
-  const K=[[0,bt+0.043],[0.35,bt+0.041],[0.80,bt+0.029],[1.30,bt+0.004],[1.62,bt-0.010],[2.05,bt-0.058],[2.60,bt-0.090],[Math.PI,bt-0.102]];
+  const K=gathered?[[0,bt+.052],[.35,bt+.046],[.80,bt+.016],[1.30,bt-.012],[1.62,bt-.022],[2.05,bt-.058],[2.60,bt-.090],[Math.PI,bt-.102]]:[[0,bt+0.043],[0.35,bt+0.041],[0.80,bt+0.029],[1.30,bt+0.004],[1.62,bt-0.010],[2.05,bt-0.058],[2.60,bt-0.090],[Math.PI,bt-0.102]];
   return th=>{const a=Math.abs(th);for(let i=1;i<K.length;i++)if(a<=K[i][0]){const t=(a-K[i-1][0])/(K[i][0]-K[i-1][0]),e=t*t*(3-2*t);return K[i-1][1]+(K[i][1]-K[i-1][1])*e;}return K[K.length-1][1];};
  }
  function tiePoint(kit,tie){const H=kit.head;
@@ -290,7 +290,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   kit.scalps=kit.scalps||{}; if(kit.scalps[tie])return kit.scalps[tie];
   const skin=kit.skin,g=skin.geometry,pos=g.attributes.position,nor=g.attributes.normal,si=g.attributes.skinIndex,sw=g.attributes.skinWeight,idx=g.index;
   const hi=skin.skeleton.bones.indexOf(kit.bones.Head),inv=skin.skeleton.boneInverses[hi],nm=new THREE.Matrix3().getNormalMatrix(inv);
-  const H=kit.head,hl=hairline(kit),C=V(H.cx,H.cy,H.cz),td=tiePoint(kit,tie).sub(C).normalize();
+  const H=kit.head,hl=hairline(kit,tie==='gathered'),C=V(H.cx,H.cy,H.cz),td=tiePoint(kit,tie).sub(C).normalize();
   const up=Math.abs(td.y)<0.9?V(0,1,0):V(0,0,-1),ax=up.clone().sub(td.clone().multiplyScalar(up.dot(td))).normalize(),bx=td.clone().cross(ax);
   const cmp=(a,i,k)=>k===0?a.getX(i):k===1?a.getY(i):k===2?a.getZ(i):a.getW(i);
   const n=pos.count,w=new Float32Array(n),loc=new Float32Array(n*3),fade=new Float32Array(n);
@@ -298,9 +298,16 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
    _v.fromBufferAttribute(pos,i).applyMatrix4(inv);loc.set([_v.x,_v.y,_v.z],i*3);fade[i]=(_v.y-hl(Math.atan2(_v.x-H.cx,_v.z-H.cz)))/0.010;}
   const map=new Int32Array(n).fill(-1),P=[],N=[],UV=[],F=[],I=[];
   const vtx=i=>{if(map[i]>=0)return map[i];
-   const x=loc[i*3],y=loc[i*3+1],z=loc[i*3+2]; _v2.fromBufferAttribute(nor,i).applyMatrix3(nm).normalize();
-   const off=0.0034+0.003*Math.max(0,Math.min(1,fade[i]/5));P.push(x+_v2.x*off,y+_v2.y*off,z+_v2.z*off);N.push(_v2.x,_v2.y,_v2.z);
+   let x=loc[i*3];const y=loc[i*3+1],z=loc[i*3+2]; _v2.fromBufferAttribute(nor,i).applyMatrix3(nm).normalize();
+   // The hair follows the skull behind the ears, never the ear's folded surface.
+   if(tie==='gathered'&&y<H.browTop+.035&&z>H.cz-.065&&z<H.cz+.065){
+    const side=H.rx*.85*Math.sqrt(Math.max(.2,1-((y-H.cy)/.13)**2-((z-H.cz)/.16)**2));
+    if(Math.abs(x)>side){x=Math.sign(x)*side;_v2.set(x-H.cx,y-H.cy,z-H.cz).normalize();}
+   }
    const d=V(x-C.x,y-C.y,z-C.z).normalize(),pol=Math.acos(Math.max(-1,Math.min(1,d.dot(td)))),az=Math.atan2(d.dot(bx),d.dot(ax));
+   const volume=Math.max(0,Math.min(1,fade[i]/5));
+   const off=tie==='gathered'?.004+volume*(.010+.0015*Math.sin(az*10+pol*3)*Math.sin(pol)):.0034+.003*volume;
+   P.push(x+_v2.x*off,y+_v2.y*off,z+_v2.z*off);N.push(_v2.x,_v2.y,_v2.z);
    UV.push(az/(Math.PI*2)*4,pol/Math.PI*1.7);F.push(fade[i]);map[i]=P.length/3-1;return map[i];};
   for(let t=0;t<idx.count;t+=3){const a=idx.getX(t),b=idx.getX(t+1),c=idx.getX(t+2);
    if(w[a]<0.5||w[b]<0.5||w[c]<0.5)continue; if(Math.max(fade[a],fade[b],fade[c])<-1.3)continue;
@@ -331,33 +338,6 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(P,3));geo.setAttribute('normal',new THREE.BufferAttribute(N,3));
   geo.setAttribute('uv',new THREE.BufferAttribute(U,2));geo.setIndex(I);geo.computeBoundingSphere();return geo;
  }
- const tieRing=(at,dir,r)=>{const g=new THREE.TorusGeometry(r,0.0052,8,22);_q.setFromUnitVectors(V(0,0,1),dir.clone().normalize());g.applyQuaternion(_q);g.translate(at.x,at.y,at.z);return g;};
- /* what is tied from the cap: [hair geometries], [tie geometries] */
- function tailPieces(kit,tail,helm){
-  const H=kit.head,hair=[],ties=[];
-  if(tail==='pigtails'){
-   for(const sd of [1,-1]){const T=scalpPoint(THREE,kit,V(sd*(H.rx+0.001),H.cy-0.040,H.cz-0.036),.001);
-    const pts=[[0,0,0],[sd*0.020,-0.030,-0.018],[sd*0.030,-0.100,-0.028],[sd*0.026,-0.178,-0.026],[sd*0.018,-0.232,-0.020]].map(o=>V(T.x+o[0],T.y+o[1],T.z+o[2]));
-    hair.push(tubeGeo(pts,[0.015,0.022,0.022,0.016,0.004]));ties.push(tieRing(pts[0].clone().lerp(pts[1],0.35),pts[1].clone().sub(pts[0]),0.0155));}
-  }
-  return {hair,ties};
- }
- /* curls: ringlets over the long style's own shape (so none of them fall over her face), a few hundred in
-    one instanced draw; under a helmet only those below the brim */
- function curlMatrices(kit,helm){
-  const src=kit.hair.Hair_Long&&kit.hair.Hair_Long.geometry; if(!src)return [];
-  const pos=src.attributes.position,nor=src.attributes.normal,H=kit.head,C=V(H.cx,H.cy,H.cz),hg=kit.helmetGeo,out=[];
-  let seed=11;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
-  const m=new THREE.Matrix4(),q=new THREE.Quaternion(),sc=V(0,0,0),p=V(0,0,0),n=V(0,0,0);
-  for(let i=0;i<pos.count;i++){if(rnd()>0.52)continue;
-   p.fromBufferAttribute(pos,i);n.fromBufferAttribute(nor,i);if(n.dot(p.clone().sub(C))<0)continue;
-   if(helm){const th=Math.atan2(p.x-hg.cx,p.z-hg.cz);if(p.y>hg.rimY(th)-0.012)continue;}
-   const r=0.0082+rnd()*0.0046;p.addScaledVector(n,0.004+rnd()*0.0035);
-   q.setFromAxisAngle(V(rnd()-0.5,rnd()-0.5,rnd()-0.5).normalize(),rnd()*6.28);sc.set(r,r*(0.8+0.35*rnd()),r);
-   out.push(new THREE.Matrix4().compose(p.clone(),q.clone(),sc.clone()));}
-  return out;
- }
-
  /* ---- the helmet: a shell to her skull, a peak, a harness to the chin --------------------------- */
  function buildHelmetGeometry(h){
   const cx=h.cx,cy=h.cy+0.006,cz=h.cz-0.004, rx=h.rx+0.021, ry=h.ry+0.024, rz=h.rz+0.020;
@@ -529,8 +509,9 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
     diffuseColor.a*=smoothstep(0.0,.13,vBrowUV.y)*(1.0-smoothstep(.87,1.0,vBrowUV.y))*smoothstep(0.0,.06,vBrowUV.x);`);
   };mat.customProgramCacheKey=()=>'rider-brows-natural-1';
  }
- function patchHair(mat,u,brows,noSquash){
-  mat.normalScale.set(brows?.22:.38,brows?.22:.38);mat.roughness=brows?.85:.52;
+ function patchHair(mat,u,brows,noSquash,strands=false){
+  if(strands){mat.map=null;mat.normalMap=null;}
+  mat.normalScale.set(brows?.22:.38,brows?.22:.38);mat.roughness=brows?.85:.64;
   mat.onBeforeCompile=sh=>{
    Object.assign(sh.uniforms,u);
    if(!noSquash)squashVerts(sh);
@@ -539,12 +520,22 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
  float sourceShade=clamp(dot(diffuseColor.rgb,vec3(0.2126,0.7152,0.0722))/${HAIR_TEX_LUM.toFixed(3)},.48,1.45);
  diffuseColor.rgb=${brows?'(uHair*.72+vec3(.012))':'uHair'}*mix(1.0,sourceShade,${brows?'.40':'.62'});`);
   };
-  mat.customProgramCacheKey=()=>'rider-hair-'+(brows?1:0)+(noSquash?'n':'');
+  if(strands){
+   const original=mat.onBeforeCompile;
+   mat.onBeforeCompile=sh=>{original(sh);
+    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec2 vStrandUV;').replace('#include <begin_vertex>','#include <begin_vertex>\nvStrandUV=uv;');
+    sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec2 vStrandUV;').replace('#include <color_fragment>',`#include <color_fragment>
+     float fine=vStrandUV.x*105.0+sin(vStrandUV.y*4.0)*1.2;
+     float detail=(1.0-smoothstep(.5,2.0,fwidth(fine)))*sin(fine)*.035;
+     diffuseColor.rgb=uHair*(.94+.075*sin(vStrandUV.x*25.1327)+detail);`);
+   };
+  }
+  mat.customProgramCacheKey=()=>'rider-hair-'+(brows?1:0)+(noSquash?'n':'')+(strands?'strands':'');
  }
  /* the cap of drawn-back hair: tinted like the rest, its edge carved into a hairline of loose strands, the
     roots there a shade darker where the scalp shows through */
  function patchScalp(mat,u){
-  mat.alphaTest=0.5; mat.side=THREE.FrontSide;mat.normalMap=null;mat.roughness=0.57;
+  mat.alphaTest=0.5;mat.alphaToCoverage=true; mat.side=THREE.FrontSide;mat.normalMap=null;mat.roughness=.64;
   mat.onBeforeCompile=sh=>{
    Object.assign(sh.uniforms,u);
    squashVerts(sh);
@@ -556,9 +547,9 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
  float strands=sin(comb)*.045+sin(comb*2.71+1.8)*.025;
  float resolved=1.0-smoothstep(.7,2.5,fwidth(comb));
  float clumps=sin(vCombUV.x*47.0+sin(vCombUV.y*6.0)*1.4)*.045;
- diffuseColor.rgb=uHair*(.88+clumps+strands*resolved);
+ diffuseColor.rgb=uHair*(.94+clumps+strands*resolved);
  { float nz=sHash(floor(vHP*vec3(1100.0,420.0,1100.0)))*0.7+sHash(floor(vHP*300.0))*0.5;
-   diffuseColor.a=clamp(vFade*0.85+0.5+(nz-0.6)*0.42,0.0,1.0);
+   diffuseColor.a=clamp(vFade*0.85+0.5+(nz-0.6)*0.12,0.0,1.0);
    diffuseColor.rgb*=mix(0.88,1.0,smoothstep(-0.5,2.5,vFade)); }`);
   };
   mat.customProgramCacheKey=()=>'rider-scalp';
@@ -626,33 +617,24 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    const put=(geo,mat,o)=>{const m=o&&o.inst?geo:new THREE.Mesh(geo,mat);m.userData.ownMat=true;m.userData.ownGeo=!!(o&&o.ownGeo);
     if(!(o&&o.noDepth))m.customDepthMaterial=depthMat;m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;g.add(m);return m;};
    const addMesh=(name,dim)=>{const src=kit.hair[name];if(!src)return;const mat=src.material.clone();if(dim)mat.color.setScalar(dim);patchHair(mat,u,false);const geo=h.shape&&name===h.mesh?shapeHair(src.geometry,h.shape,kit.head):src.geometry;put(geo,mat,{ownGeo:geo!==src.geometry});};
-   if(h.mesh)addMesh(h.mesh,h.curls?0.72:0); if(h.extra)addMesh(h.extra);
+   if(h.mesh)addMesh(h.mesh); if(h.extra)addMesh(h.extra);
    if(h.scalp){
+    if(!h.mesh&&!['coils','croppedcoils','twists'].includes(h.detail)){const crownMat=base.clone();patchHair(crownMat,u,false);put(kit.gatheredCrown||(kit.gatheredCrown=gatheredCrown(THREE,kit.hair.Hair_Long.geometry,kit)),crownMat);}
     const cap=base.clone();patchScalp(cap,u);
-    let scalp=scalpGeometry(kit,'back');
+    let scalp=scalpGeometry(kit,!h.mesh&&!['coils','croppedcoils','twists'].includes(h.detail)?'gathered':'back');
     if(h.detail==='coils'){
      scalp=scalp.clone();const p=scalp.attributes.position,H=kit.head;
      for(let i=0;i<p.count;i++)p.setXYZ(i,H.cx+(p.getX(i)-H.cx)*1.10,H.cy+(p.getY(i)-H.cy)*1.10,H.cz+(p.getZ(i)-H.cz)*1.10);
      scalp.computeVertexNormals();scalp.computeBoundingSphere();
     }
-    put(scalp,cap,{ownGeo:h.detail==='coils'});
-    const pc=tailPieces(kit,h.tail,helmetOn);
-    for(const geo of pc.hair){const mat=base.clone();patchHair(mat,u,false);put(geo,mat,{ownGeo:true});}
-    if(pc.ties.length)put(mergeGeos(pc.ties),new THREE.MeshStandardMaterial({color:0x1d1916,roughness:0.55,metalness:0}),{ownGeo:true,noDepth:true});
+    put(scalp,cap,{ownGeo:h.detail==='coils'}).castShadow=false;
+
    }
    if(h.detail){
     const pieces=hairDetails({THREE,kit,style:h.detail,helmet:helmetOn,tube:tubeGeo,merge:mergeGeos,tiePoint});
-    for(const geo of pieces.hair){const mat=base.clone();patchHair(mat,u,false);put(geo,mat,{ownGeo:true});}
+    for(const geo of pieces.hair){const mat=base.clone();patchHair(mat,u,false,false,true);put(geo,mat,{ownGeo:true});}
     if(pieces.ties.length)put(mergeGeos(pieces.ties),new THREE.MeshStandardMaterial({color:0x30251d,roughness:0.85}),{ownGeo:true,noDepth:true});
     if(pieces.ribbon.length)put(mergeGeos(pieces.ribbon),new THREE.MeshStandardMaterial({color:0x7b3548,roughness:0.8,side:THREE.DoubleSide}),{ownGeo:true,noDepth:true});
-   }
-   if(h.curls){
-    const M=curlMatrices(kit,helmetOn),ico=new THREE.IcosahedronGeometry(1,1),mat=base.clone();patchHair(mat,u,false,true);
-    const im=new THREE.InstancedMesh(ico,mat,Math.max(1,M.length)),cl=new THREE.Color();let seed=5;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
-    M.forEach((m,i)=>{im.setMatrixAt(i,m);im.setColorAt(i,cl.setScalar(0.84+0.24*rnd()));});
-    if(!M.length)im.setMatrixAt(0,new THREE.Matrix4().makeScale(0,0,0));
-    im.instanceMatrix.needsUpdate=true;if(im.instanceColor)im.instanceColor.needsUpdate=true;
-    put(im,null,{inst:true,ownGeo:true,noDepth:true});
    }
    hb.add(g);rig.hair=g;
   };
