@@ -72,7 +72,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v7-thaw';
+  material.customProgramCacheKey = () => 'terrain-biomes-v8-clean-thaw';
   material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
@@ -147,21 +147,23 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
          mean and the result was a landscape that varied on paper and read as one colour from
          forty metres — this pushes the common middle out towards both ends. */
       float dryness = smoothstep(0.17,0.83, macro*0.55 + region*0.45);
-      vec3 tint = mix(vec3(.72,.83,.66), vec3(.96,.94,.75), dryness);
+      vec3 tint = mix(vec3(.74,.84,.69), vec3(.92,.92,.77), dryness);
       /* How heavy the sward is, which the eye reads as VALUE rather than hue: thin turf over
          hard ground is paler and greyer, a deep bite of grass is darker. This is the term that
          carries the middle distance — forty to two hundred metres, where the albedo has mipped
          to a flat colour and the near-field tufts have already stopped — and without it that
          whole band goes back to being one painted green however much the hue drifts. */
       float vigour = smoothstep(0.34,0.70, stand*0.66+macro*0.34);
-      tint *= mix(1.13,0.86,vigour);
-      tint = mix(tint, tint*vec3(.90,1.04,.93), vigour*0.55);
+      // Broad field variation carries the distance; several strong, independent
+      // five-metre patterns made the pasture look pieced together underfoot.
+      tint *= mix(1.07,0.92,vigour);
+      tint = mix(tint, tint*vec3(.94,1.02,.96), vigour*0.40);
       /* A distinct clump of something coarser, off edgeHi rather than stand so it does not
          simply repeat the vigour pattern — and it is free, because edgeHi is already fetched
          for the region boundaries below. */
       float clump = smoothstep(0.54,0.66,edgeHi)*(1.0-dryness*0.45);
-      tint = mix(tint, tint*vec3(.74,.95,.82)*1.10, clump*0.70);
-      tint *= 1.0+(grain-0.5)*0.30*upClose;
+      tint = mix(tint, tint*vec3(.84,.97,.88)*1.04, clump*0.35);
+      tint *= 1.0+(grain-0.5)*0.14*upClose;
       /* Water runs downhill and stands in the flats. The low ground of this basin is within a
          couple of metres of the river's own level and should read damp: darker, greener, not
          bleached. The ridges go the other way and burn off first, and burn off faster where

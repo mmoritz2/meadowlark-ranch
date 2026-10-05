@@ -178,10 +178,10 @@ export function install(G){
     below a pixel and a metre-high tussock is not. */
  const tuftTex=cvt(160,160,(c,w,h)=>{c.clearRect(0,0,w,h);
   for(let i=0;i<26;i++){const x=16+Math.random()*128,tall=h*(0.42+Math.random()*0.56),lean=(Math.random()-0.5)*70;
-   const g=c.createLinearGradient(0,h,0,h-tall);g.addColorStop(0,'#587a3c');g.addColorStop(0.55,'#7d9c50');g.addColorStop(1,i%5?'#a9c070':'#cdd28e');
+   const g=c.createLinearGradient(0,h,0,h-tall);g.addColorStop(0,'#626f49');g.addColorStop(0.55,'#859260');g.addColorStop(1,i%5?'#a7af81':'#bcc09a');
    c.fillStyle=g;c.beginPath();c.moveTo(x-3.4,h);c.quadraticCurveTo(x+lean*0.4,h-tall*0.55,x+lean,h-tall);
    c.quadraticCurveTo(x+lean*0.4+3,h-tall*0.5,x+3.4,h);c.closePath();c.fill();}
- },'#74924a');
+ },'#81905f');
  /* Meadow flowers, drawn as a little spray of five heads rather than one bloom, so a drift of them
     reads as colour at distance instead of confetti. White here; the drift colour is per instance. */
  const petalTex=cvt(128,128,(c,w,h)=>{c.clearRect(0,0,w,h);
@@ -823,7 +823,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
  /* ---- 6h. wildflower meadows ----------------------------------------------------------------
     Drifts, each mostly one colour, because a real meadow is one species winning a patch rather than
     a spilt paintbox. Seen from the ridge they are what turns a flat green plain into a field. */
- const DRIFT=['#ffffff','#ffe9a3','#f6b9d3','#cbb4f2','#ffd08a','#e8f0b0','#f7a9a0'];
+ const DRIFT=['#ecebdd','#ddd5b5','#d6c8c4','#bdb8cc','#d6c5a2','#dce1c5','#cfc2b6'];
  for(let d=0,made=0;d<600&&made<13;d++){
   const a=rnd()*Math.PI*2, r=48+rnd()*340, cx=Math.cos(a)*r, cz=Math.sin(a)*r;
   const B=biomeAt(cx,cz);
@@ -858,6 +858,46 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   const col=B==='amber'?'#e2c48a':B==='marsh'?'#cfe3a6':B==='tundra'?'#c3cfb2':'#dcecbe';
   put('tuft',x,z,rr(0.6,1.35)*(0.75+lush*0.6),rr(0.9,1.35),col,0.16);
  }
+
+ /* ---- 6j. keep working land open -----------------------------------------------------------
+    The planting above also feeds the tree/collider layout through its seeded random stream.
+    Thin decorative cover only after that layout is finished: fewer shrubs must not move trees,
+    race obstacles, or the camera's forest points. No gameplay pickups live in these banks. */
+ const coverKinds={scrub:[0.66,0.84],juni:[0.82,0.90],sage:[0.86,0.95],
+  brack:[0.56,0.72],reed:[0.78,0.90],tuft:[0.48,0.62],petal:[0.36,0.76]};
+ const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t);};
+ const managedAt=(x,z)=>{
+  // Grazed paddock, yard approaches and occupied town clearings blend into longer field margins.
+  let m=1-smooth(0.82,1.18,Math.hypot((x+5)/61,z/48));
+  for(const [cx,cz,r] of KEEP)m=Math.max(m,1-smooth(r*0.80,r+9,Math.hypot(x-cx,z-cz)));
+  if(inFarm(x,z))m=1;
+  m=Math.max(m,1-smooth(3.4,7.5,pathDist(x,z)));
+  if(onRace(x,z))m=1;
+  return m;
+ };
+ const coverBefore={},coverAfter={};
+ let coverKind=0;
+ for(const [name,[density,size]] of Object.entries(coverKinds)){
+  const b=BANK[name],n=b.n;let kept=0;coverBefore[name]=n;coverKind++;
+  for(let i=0;i<n;i++){
+   b.im.getMatrixAt(i,_m);_m.decompose(_v,_q,_sc);
+   const x=_v.x,z=_v.z,managed=managedAt(x,z);
+   const patch=0.74+0.32*vn(x*0.06+13,z*0.06+7);
+   const keep=density*patch*(1-managed*0.87);
+   if(hsh(Math.floor(x*23)+coverKind*971,Math.floor(z*29))>keep)continue;
+   let scale=size*(1-managed*0.48);
+   // Short pasture grass, rather than waist-high cards beside the horse and stable doors.
+   const maxH=name==='petal'?0.28:name==='tuft'?0.34:name==='reed'?0.72:0.52;
+   if(managed>0.9)scale=Math.min(scale,maxH/_sc.y);
+   _v.y=groundH(x,z)+(_v.y-groundH(x,z))*scale;
+   _sc.multiplyScalar(scale);_m.compose(_v,_q,_sc);
+   b.im.setMatrixAt(kept,_m);
+   b.im.getColorAt(i,_col);_col.offsetHSL(0,-0.04,0);
+   b.im.setColorAt(kept,_col);kept++;
+  }
+  b.n=kept;coverAfter[name]=kept;
+ }
+ F.coverCleanup={before:coverBefore,after:coverAfter};
 
  /* ================= 7. hand the banks to the renderer ================= */
  let total=0;

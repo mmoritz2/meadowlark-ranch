@@ -662,7 +662,7 @@ import {createGeology} from './assets/geology.js?v=world-cinematic-1';
 import {createSceneryArt} from './assets/scenery-art.js';
 import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=thaw-margin-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=clean-pastures-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
@@ -671,10 +671,10 @@ import {createWorldFinish} from './assets/world-rendering.js';
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=botanical-trails-3';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=grounded-woodland-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=clean-foliage-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=fit-20261005';
-import {FEATURES} from './assets/features/index.js?v=commerce-preview-20261005';
+import {FEATURES} from './assets/features/index.js?v=clean-map-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -1466,6 +1466,11 @@ const PATHS=[
  [[-30,-20],[-33,-38],[-31,-52],[-30,-58]],                          // pasture road -> Hollowpeak Pines
 ];
 const PATH_W=2.9;
+// A maintained yard and clipped trail shoulders give way gradually to meadow.
+function managedGrass(x,z){
+ return Math.max(1-THREE.MathUtils.smoothstep(Math.hypot(x*.94,z*1.12),38,82),
+  1-THREE.MathUtils.smoothstep(pathDist(x,z),2.6,5.8));
+}
 const _PSEG=(()=>{                                                   // flattened into segments once
  const out=[];
  for(const pl of PATHS)for(let i=0;i<pl.length-1;i++){
@@ -2957,7 +2962,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   e.set(0,Math.random()*Math.PI,(Math.random()-0.5)*0.15);
   q.setFromEuler(e);
   const s=0.7+Math.random()*0.8;
-  sc.set(s,s,s);
+  sc.set(s,s*(.78-.40*managedGrass(x,z)),s);
   v.set(x,groundH(x,z),z);
   m4.compose(v,q,sc);
   blades.setMatrixAt(placed,m4);
@@ -3063,7 +3068,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const f=0.80+hh(q(x),q(y),q(z))*0.34+0.10*Math.sin(x*6.1+z*4.3);
    pa.setXYZ(i,x*f*1.06,Math.max(-0.16,y*f*0.66),z*f*0.94);   // squat, with a flattened underside that sits into the ground
   }
-  g.computeVertexNormals(); return g;
+  g.computeVertexNormals();g.computeBoundingBox(); return g;
  })();
  const nearMat=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:1});
  nearMat.envMapIntensity=0.7;nearMat.alphaToCoverage=true; windy(nearMat,0.32);
@@ -3082,7 +3087,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const rock=new THREE.InstancedMesh(rockGeo,rockMat,NG_W*NG_W*NG_RK);
  const luMat=new THREE.MeshStandardMaterial({map:lupinTex,alphaTest:0.45,side:THREE.DoubleSide,roughness:0.95});
  luMat.envMapIntensity=0.6; windy(luMat,0.14);
- const lupin=new THREE.InstancedMesh(crossGeo(0.34,1.0),luMat,NG_W*NG_W*NG_LU);
+ const lupin=new THREE.InstancedMesh(crossGeo(0.24,0.72),luMat,NG_W*NG_W*NG_LU);
  for(const im of[near,flow,fern,reed,rock,lupin]){im.frustumCulled=false;im.receiveShadow=true;im.castShadow=false;scene.add(im);}
  rock.castShadow=quality==='high';
  const okGrass=(x,z)=>{
@@ -3092,7 +3097,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
   if(!hasMeadowCover(x,z))return false;                  // match the terrain's transition zones
   if(Math.hypot(x-20,z-16)<5.4)return false;               // Loon Lake
-  if(pathDist(x,z)<PATH_W*0.62)return false;               // the road is worn bare
+  if(pathDist(x,z)<PATH_W*.92)return false;               // clear ground through the feathered shoulder
   if(window.__onCourse&&window.__onCourse(x,z,3.4))return false;   // nor the event courses (course-clear.js): a mown track to ride and to see down
   return true;};
  /* Which country you are standing in, and therefore what grows here. */
@@ -3113,11 +3118,12 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.abs(z-riverZ(x))<5.2)return false;               // not standing in the river
   if(Math.hypot(x-20,z-16)<5.6)return false;               // not in the lake
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
-  if(pathDist(x,z)<PATH_W*0.55)return false;               // nor on the road
+  if(pathDist(x,z)<PATH_W*1.16)return false;               // leave room around the trail
+  if(managedGrass(x,z)>.58)return false;                  // maintained yard, not woodland undergrowth
   if(window.__onCourse&&window.__onCourse(x,z,3.8))return false;   // nor on a course
   return true;};
  const CLUT={
-  meadow:{fern:'#7aa84f',rock:'#a39784',p:0.85,sz:0.95},   // was '#b0bca0'/'#8c8a82': a pale sage that made every bush look dead, and a cold grey stone
+  meadow:{fern:'#8a9d71',rock:'#a39784',p:0.38,sz:0.70},
   desert:{fern:'#d8bb72',rock:'#a8794a',p:0.80,sz:1.35},   // dry scrub, and plenty of it
   snow  :{fern:'#a4b0a2',rock:'#8e969d',p:0.62,sz:1.05},   // dead tufts showing through the crust
   water :{fern:'#86a862',rock:'#8f8a80',p:0.90,sz:1.0},
@@ -3135,14 +3141,15 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    if(!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);near.setMatrixAt(id,m4);continue;}
    const swath=.5+.5*Math.sin(x*.21+Math.sin(z*.12)*2.0);
-   const sz=.75+h3*.32+swath*.26; e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz,sz*(0.9+h1*0.22),sz);
+   const sz=.75+h3*.32+swath*.26,trim=.78-.44*managedGrass(x,z);
+   e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz,sz*(.9+h1*.22)*trim,sz);
    v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc); near.setMatrixAt(id,m4);
    bcol.setHSL(.238+h2*.035,.43+h3*.12,.145+h4*.055+swath*.018); near.setColorAt(id,bcol);
   }
   for(let k=0;k<NG_F;k++){
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
-   const meadow=gh(ci*3,cj*5)>0.45;                      // flowers come in patches, not evenly
+   const meadow=gh(ci*3,cj*5)>.62&&managedGrass(x,z)<.58;
    if(!meadow||h3>0.6||!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);flow.setMatrixAt(id,m4);continue;}
    const sz=0.8+h3*0.6; e.set(0,h2*Math.PI,0); q.setFromEuler(e); sc.set(sz,sz,sz);
    v.set(x,groundH(x,z)-0.01,z); m4.compose(v,q,sc); flow.setMatrixAt(id,m4);
@@ -3155,10 +3162,10 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    for(let k=0;k<NG_LU;k++){
     const id=slot*NG_LU+k, h1=gh(ci*67+k*29,cj*43+k*13), h2=gh(ci*31+k*17,cj*83+k*41), h3=gh(k*59+ci*7,cj*19+k*23);
     const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
-    if(drift<0.62||h3>(drift-0.62)*3.2||biomeAt(x,z)!=='meadow'||!okClutter(x,z)){hide(lupin,id);continue;}
+    if(drift<.68||h3>(drift-.68)*2.2||biomeAt(x,z)!=='meadow'||!okClutter(x,z)){hide(lupin,id);continue;}
     const sz=0.75+h3*0.55; e.set(0,h2*Math.PI,(h1-0.5)*0.08); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.35),sz);
     v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc); lupin.setMatrixAt(id,m4);
-    bcol.setHSL(0.72+h1*0.08,0.52+h2*0.22,0.55+h3*0.12); lupin.setColorAt(id,bcol);   // violet through blue-violet, a few paler
+    bcol.setHSL(.71+h1*.055,.28+h2*.12,.43+h3*.10); lupin.setColorAt(id,bcol);
    }
   }
   for(let k=0;k<NG_FR;k++){                                  // ferns, scrub, dry brush, snow tufts
@@ -3186,8 +3193,8 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const B=biomeAt(x,z);
    if(!okClutter(x,z)||h3>(B==='desert'?0.78:B==='snow'?0.5:0.34)){hide(rock,id);continue;}
    const sz=(0.18+h3*0.46)*(B==='desert'?2.1:B==='snow'?1.4:1);
-   e.set(h1*0.6,h2*Math.PI*2,h3*0.5); q.setFromEuler(e); sc.set(sz,sz*(0.6+h1*0.5),sz*(0.8+h2*0.4));
-   v.set(x,groundH(x,z)+sz*0.16,z); m4.compose(v,q,sc); rock.setMatrixAt(id,m4);
+   e.set(0,h2*Math.PI*2,0); q.setFromEuler(e); sc.set(sz,sz*(0.6+h1*0.5),sz*(0.8+h2*0.4));
+   v.set(x,groundH(x,z)-(rock.geometry.boundingBox?.min.y??-.16)*sc.y-.025,z); m4.compose(v,q,sc); rock.setMatrixAt(id,m4);
    bcol.set(CLUT[B].rock).offsetHSL(0,(h2-0.5)*0.05,(h1-0.5)*0.16); rock.setColorAt(id,bcol);
   }
  };
@@ -3205,10 +3212,10 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  nearGrass={near,flow,fern,reed,rock,tick:(t,px,pz)=>{nearU.uTime.value=t;nearU.uPlayer.value.set(px,0,pz);update(px,pz);},
   setVR:on=>{near.count=on?Math.floor(NG_W*NG_W*NG_K*0.5):NG_W*NG_W*NG_K;}};
  update(0,0);
- const flowerGeo=new THREE.IcosahedronGeometry(0.07,0);
+ const flowerGeo=new THREE.IcosahedronGeometry(0.025,1);
  const flowerMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1});
  const flowers=new THREE.InstancedMesh(flowerGeo,flowerMat,220);
- const palette=['#ff8fab','#ffd166','#b197fc','#74c0fc','#fff3bf'];
+ const palette=['#e2dcc6','#d7c883','#aaa0b0','#c9c3b5','#e2dcc6'];
  const fc=new THREE.Color();
  for(let i=0;i<12;i++){
   const a=Math.random()*Math.PI*2,rr=40+Math.random()*240;
@@ -3219,7 +3226,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   const x=cc[0]+(Math.random()+Math.random()-1)*5;
   const z=cc[1]+(Math.random()+Math.random()-1)*5;
   m4.makeRotationY(0);
-  m4.setPosition(x,groundH(x,z)+0.12,z);
+  m4.setPosition(x,groundH(x,z)+0.06,z);
   flowers.setMatrixAt(i,m4);
   flowers.setColorAt(i,fc.set(palette[i%palette.length]));
  }
@@ -4580,13 +4587,14 @@ let waterMat=null;   // hoisted: the pond reuses it
  /* the roads, laid over the ground as ribbons that follow it */
  {
   const roadTex=texLoad('assets/textures/pastoral/bridleway_albedo.jpg',1);
-  const roadMat=new THREE.MeshStandardMaterial({map:roadTex,transparent:true,roughness:1,metalness:0,
+  const roadMat=new THREE.MeshStandardMaterial({map:roadTex,color:0xc0b3a0,vertexColors:true,transparent:true,roughness:1,metalness:0,
    normalMap:texData('assets/textures/pastoral/bridleway_normal.jpg',1),normalScale:new THREE.Vector2(0.28,0.28),
    roughnessMap:texData('assets/textures/pastoral/bridleway_roughness.jpg',1),
    depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3});
   roadMat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',
-   '#include <map_fragment>\n diffuseColor.a *= smoothstep(0.0,0.14,vMapUv.y)*(1.0-smoothstep(0.86,1.0,vMapUv.y));');};
-  const rp=[],ru=[],ri=[];
+   '#include <map_fragment>\n diffuseColor.a *= smoothstep(0.0,0.26,vMapUv.y)*(1.0-smoothstep(0.74,1.0,vMapUv.y));');};
+  roadMat.customProgramCacheKey=()=> 'soft-grounded-bridleway-1';
+  const rp=[],ru=[],rc=[],ri=[];
   const cr=(p0,p1,p2,p3,t)=>{                              // catmull-rom, so corners round off
    const t2=t*t,t3=t2*t;
    return 0.5*((2*p1)+(-p0+p2)*t+(2*p0-5*p1+4*p2-p3)*t2+(-p0+3*p1-3*p2+p3)*t3);
@@ -4606,20 +4614,28 @@ let waterMat=null;   // hoisted: the pond reuses it
     const a=pts[Math.max(0,i-1)], b=pts[Math.min(pts.length-1,i+1)];
     let dx=b[0]-a[0], dz=b[1]-a[1]; const L=Math.hypot(dx,dz)||1; dx/=L; dz/=L;
     if(i>0)run+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);
-    const wob=PATH_W*(0.86+0.22*Math.sin(i*0.7)+0.10*Math.sin(i*1.9));   // never a ruled line
-    for(const sg of[-1,1]){
+    const wob=PATH_W*(.94+.05*Math.sin(run*.12)+.035*Math.sin(run*.047));
+    // Sample across the full track: two edge vertices made a suspended flat
+    // ribbon wherever the middle of a trail crossed a hollow.
+    for(let lane=0;lane<=8;lane++){
+     const sg=lane/4-1;
      const x=pts[i][0]-dz*sg*wob, z=pts[i][1]+dx*sg*wob;
-     rp.push(x,groundH(x,z)+0.055,z);
-     ru.push(run/3,sg<0?0:1);
+     rp.push(x,groundH(x,z)+.025,z);
+     ru.push(run/3,lane/8);
+     // Keep the maintained sand footing continuous where approach paths meet it.
+     rc.push(1,1,1,THREE.MathUtils.smoothstep((x/24.8)**2+(z/19.8)**2,.99,1.04));
     }
    }
-   for(let i=0;i<pts.length-1;i++){const a=base+i*2; ri.push(a,a+1,a+2, a+1,a+3,a+2);}
+   for(let i=0;i<pts.length-1;i++)for(let lane=0;lane<8;lane++){
+    const a=base+i*9+lane;ri.push(a,a+1,a+9,a+1,a+10,a+9);
+   }
   }
   const rg=new THREE.BufferGeometry();
   rg.setAttribute('position',new THREE.Float32BufferAttribute(rp,3));
   rg.setAttribute('uv',new THREE.Float32BufferAttribute(ru,2));
+  rg.setAttribute('color',new THREE.Float32BufferAttribute(rc,4));
   rg.setIndex(ri); rg.computeVertexNormals();
-  const road=new THREE.Mesh(rg,roadMat); road.receiveShadow=true; road.renderOrder=1; scene.add(road);
+  const road=new THREE.Mesh(rg,roadMat);road.name='Grounded ranch bridleways'; road.receiveShadow=true; road.renderOrder=1; scene.add(road);
  }
  // golden wheat field by Cottonwood Village
  const wheat=new THREE.InstancedMesh(new THREE.ConeGeometry(0.05,0.9,5),new THREE.MeshStandardMaterial({color:0xd9b85c,roughness:1}),520);

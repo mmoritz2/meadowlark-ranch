@@ -181,16 +181,16 @@ export function install(G){
  const onAnyRoad=(x,z,m)=>trackDist(x,z)<m||W.pathDist(x,z)<m;
 
  /* ================= 2. the road surface =================
-    One texture, drawn once: dry earth with two darker wheel ruts, a strip of grass surviving down
-    the middle where no hoof falls, a wandering edge and an alpha that fades to nothing at the
-    verge so the track dissolves into the meadow instead of ending at a ruled line. */
+    The same mineral albedo and relief as the ranch bridleways keep junctions coherent.
+    A small generated mask adds quiet wheel wear and feathered verges; it does not
+    replace photographed soil with a second, brighter painted road material. */
  const TW=256,TH=128;
  function lattice(L){                                          // wraps in u so the road has no seam
   const rows=Math.ceil(TH/(TW/L))+2, a=new Float32Array(L*rows);
   for(let j=0;j<rows;j++)for(let i=0;i<L;i++)a[j*L+i]=hash01(i*3.1+L*7.7,j*5.3+L*2.9);
   return {a,L,rows,cs:TW/L};
  }
- const LAT=[lattice(6),lattice(20),lattice(64)];
+ const LAT=lattice(6);
  function vn(n,i,j){
   const x=i/n.cs,y=j/n.cs,ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
   const sx=fx*fx*(3-2*fx),sy=fy*fy*(3-2*fy),L=n.L;
@@ -198,35 +198,36 @@ export function install(G){
   const p=g(ix,iy),q=g(ix+1,iy),r=g(ix,iy+1),s=g(ix+1,iy+1);
   return p+(q-p)*sx+(r-p)*sy+(p-q-r+s)*sx*sy;
  }
- const roadTex=(()=>{
+ const roadWear=(()=>{
   const c=document.createElement('canvas');c.width=TW;c.height=TH;
   const ctx=c.getContext('2d'),img=ctx.createImageData(TW,TH),d=img.data;
   for(let j=0;j<TH;j++){
    const fy=j/(TH-1), across=Math.abs(fy*2-1);
    for(let i=0;i<TW;i++){
-    const blot=vn(LAT[0],i,j), grain=vn(LAT[1],i,j), fine=vn(LAT[2],i,j);
-    const edge=0.74+0.20*vn(LAT[0],i,4);                       // the verge wanders down the road
-    let a=1-sstep(across,edge-0.34,edge+0.05);
-    a*=0.66+0.40*blot;
+    const edge=0.88+0.055*(vn(LAT,i,4)-0.5);
+    const a=1-sstep(across,edge-0.32,0.99);
     const rut=Math.max(Math.exp(-Math.pow((fy-0.325)/0.085,2)),Math.exp(-Math.pow((fy-0.675)/0.085,2)))
-             *(0.5+0.55*vn(LAT[1],i,2));
-    const med=Math.exp(-Math.pow((fy-0.5)/0.070,2))*sstep(vn(LAT[0],i,9),0.42,0.78);
-    let L=0.58+0.26*grain+0.20*blot+0.10*fine;
-    L*=1-rut*0.34;                                             // the ruts hold the damp and stay dark
-    let r=L*1.00,g=L*0.895,b=L*0.735;
-    r+=(L*0.50-r)*med*0.85; g+=(L*0.66-g)*med*0.85; b+=(L*0.34-b)*med*0.85;
-    if(fine>0.93&&a>0.4){const s=0.72+fine*0.3;r=s;g=s*0.97;b=s*0.92;}   // pebbles brought up by wheels
+             *(0.72+0.28*vn(LAT,i,2));
+    const med=Math.exp(-Math.pow((fy-0.5)/0.070,2))*sstep(vn(LAT,i,9),0.42,0.78);
     const o=(j*TW+i)*4;
-    d[o]=Math.min(255,r*255);d[o+1]=Math.min(255,g*255);d[o+2]=Math.min(255,b*255);
+    d[o]=rut*255;d[o+1]=med*255;d[o+2]=0;
     d[o+3]=Math.max(0,Math.min(1,a))*255;
    }
   }
   ctx.putImageData(img,0,0);
   const t=new THREE.CanvasTexture(c);
-  t.colorSpace=THREE.SRGBColorSpace; t.wrapS=THREE.RepeatWrapping; t.wrapT=THREE.ClampToEdgeWrapping;
+  t.colorSpace=THREE.NoColorSpace; t.wrapS=THREE.RepeatWrapping; t.wrapT=THREE.ClampToEdgeWrapping;
   try{t.anisotropy=Math.min(8,G.renderer.capabilities.getMaxAnisotropy());}catch(e){}
   return t;
  })();
+ const roadLoader=new THREE.TextureLoader();
+ function roadTexture(kind,color=false){
+  const t=roadLoader.load('./assets/textures/pastoral/bridleway_'+kind+'.jpg');
+  t.colorSpace=color?THREE.SRGBColorSpace:THREE.NoColorSpace;
+  t.wrapS=THREE.RepeatWrapping;t.wrapT=THREE.ClampToEdgeWrapping;
+  t.anisotropy=Math.min(8,G.renderer.capabilities.getMaxAnisotropy());
+  return t;
+ }
  /* Which country the road is passing through, mirrored off the smoothsteps in terrain-realism.js
     so a track through Ochre Reach is red dust and a track over Frostpine is grey grit.
 
@@ -235,7 +236,7 @@ export function install(G){
     all but vanished into it — a worn road is compacted and damper than the loose stuff either side
     of it, and it is that difference in value, not in colour, that makes it read at a distance. */
  function tintAt(x,z){
-  let r=1,g=0.97,b=0.90;
+  let r=1,g=1,b=1;
   const mix=(tr,tg,tb,k)=>{if(k<=0.002)return;r+=(tr-r)*k;g+=(tg-g)*k;b+=(tb-b)*k;};
   mix(0.90,0.67,0.49,(1-sstep(hyp(x,z,-220,130),96,176))*0.90);   // Coyote: sand beaten flat
   mix(0.86,0.60,0.44,(1-sstep(hyp(x,z,-330,300),70,134))*0.95);   // Ochre Reach: red dust, darker
@@ -255,7 +256,7 @@ export function install(G){
     over it — sample the ground at every vertex and the track lies on the hillside instead of
     hovering off one edge of it. */
  {
-  const COLS=9, REPEAT=9.0, pos=[],uv=[],col=[],idx=[];
+  const COLS=9, REPEAT=3.0, pos=[],uv=[],col=[],idx=[];
   let base=0;
   for(const tr of TRACKS){
    const N=tr.pts.length;
@@ -263,7 +264,8 @@ export function install(G){
     const p=tr.pts[i], a=tr.pts[Math.max(0,i-1)], b=tr.pts[Math.min(N-1,i+1)];
     let tx=b[0]-a[0],tz=b[1]-a[1];const tl=Math.hypot(tx,tz)||1;tx/=tl;tz/=tl;
     const nx=-tz,nz=tx;
-    const w=tr.w*(0.86+0.26*hash01(p[0]*0.31,p[1]*0.29));      // the width breathes; roads are not extrusions
+    // Slow width variation avoids a fresh angular notch at every 2.6 m sample.
+    const w=tr.w*(1+0.04*Math.sin(tr.run[i]*0.12)+0.02*Math.sin(tr.run[i]*0.047));
     const c=tintAt(p[0],p[1]);
     const ends=Math.min(sstep(tr.run[i],0,2.2),1-sstep(tr.run[i],tr.len-3.5,tr.len));
     for(let j=0;j<COLS;j++){
@@ -283,8 +285,20 @@ export function install(G){
   geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
   geo.setAttribute('color',new THREE.Float32BufferAttribute(col,4));
   geo.setIndex(idx); geo.computeVertexNormals(); geo.computeBoundingSphere();
-  const mat=new THREE.MeshStandardMaterial({map:roadTex,vertexColors:true,transparent:true,roughness:1,
+  const mat=new THREE.MeshStandardMaterial({map:roadTexture('albedo',true),color:0xc0b3a0,
+   normalMap:roadTexture('normal'),normalScale:new THREE.Vector2(.28,.28),roughnessMap:roadTexture('roughness'),
+   vertexColors:true,transparent:true,roughness:1,
    metalness:0,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-6});
+  mat.onBeforeCompile=sh=>{
+   sh.uniforms.roadWear={value:roadWear};
+   sh.fragmentShader='uniform sampler2D roadWear;\n'+sh.fragmentShader;
+   sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+    vec4 trackWear=texture2D(roadWear,vec2(vMapUv.x/3.0,vMapUv.y));
+    diffuseColor.rgb*=1.0-trackWear.r*.14;
+    diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(.82,.96,.76),trackWear.g*.22);
+    diffuseColor.a*=trackWear.a;`);
+  };
+  mat.customProgramCacheKey=()=> 'world-paths-mineral-v1';
   const mesh=new THREE.Mesh(geo,mat);
   /* Ahead of the river and the creek in the transparent pass: both of those also draw with
      depthWrite off, and whichever goes last wins. The road goes first and the water covers it. */

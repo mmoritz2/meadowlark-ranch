@@ -1,4 +1,4 @@
-import {treeImpostor} from './tree-impostors.js?v=grounded-woodland-1';
+import {treeImpostor,patchFoliageCoverage} from './tree-impostors.js?v=foliage-coverage-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -44,7 +44,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
           transformed.z+=sin(scanWind*1.1+scanPhase)*scanTip*.004;
         #endif`);
     };
-    mat.onBeforeCompile=sh=>{
+    mat.onBeforeCompile=(sh,activeRenderer)=>{
       deform(sh);
       sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
         vec3 canopyUp=normalize(mat3(viewMatrix)*vec3(0.0,1.0,0.0));
@@ -55,8 +55,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
           outgoingLight+=diffuseColor.rgb*directionalLights[0].color*scanBack*.055;
         #endif
         #include <opaque_fragment>`);
+      patchFoliageCoverage(sh,activeRenderer);
     };
-    mat.customProgramCacheKey=()=> 'photoscan-foliage-v2';
+    mat.customProgramCacheKey=()=> 'photoscan-foliage-v3';
     const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:mat.map,alphaTest:mat.alphaTest,side:THREE.DoubleSide});
     depth.onBeforeCompile=deform;depth.customProgramCacheKey=()=> 'photoscan-foliage-depth-v1';
     mat.userData.scanDepth=depth;
@@ -119,12 +120,18 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
     };
     const add=t=>{t.source=sourceFor(t);trees.push(t);};
-    // Keep every placement, size and collider; replace paired trunks and crowns.
+    // Keep surviving placements, sizes and colliders. Course clearing can zero
+    // an instance while retaining its original placement in treePoints.
+    const seedMatrix=new THREE.Matrix4();
     for(const stem of seedTrees.filter(o=>o.userData.treeLayer==='wood'&&['oak','birch','pine','snowpine'].includes(o.userData.treeSpecies))){
       const leaves=seedTrees.find(o=>o.userData.treeLayer==='leaves'&&o.userData.treePoints===stem.userData.treePoints);
       if(!leaves)continue;
       const kind=stem.userData.treeSpecies,height=kind==='pine'?7.4:kind==='snowpine'?7.2:6.2;
-      stem.userData.treePoints.forEach((p,i)=>add({x:p.x,z:p.z,height:height*p.s,yaw:p.r,stem,leaves,index:i,kind}));
+      stem.userData.treePoints.forEach((p,i)=>{
+        stem.getMatrixAt(i,seedMatrix);if(seedMatrix.determinant()===0)return;
+        leaves.getMatrixAt(i,seedMatrix);if(seedMatrix.determinant()===0)return;
+        add({x:p.x,z:p.z,height:height*p.s,yaw:p.r,stem,leaves,index:i,kind});
+      });
     }
     const banks=G.floraPkg?.bank,stems=new Map(),floraCanopies=[];
     if(banks?.trunk){
@@ -142,7 +149,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       }
     }
     const natural=[];scene.traverse(o=>{if(['Natural oak tree','Natural birch tree','Natural pine pine','Natural snowpine pine'].includes(o.name)&&o.parent===scene)natural.push(o);});
-    for(const original of natural){const b=new THREE.Box3().setFromObject(original);if(b.isEmpty())continue;
+    for(const original of natural){if(!original.visible)continue;const b=new THREE.Box3().setFromObject(original);if(b.isEmpty())continue;
       add({x:original.position.x,z:original.position.z,height:b.max.y-b.min.y,yaw:original.rotation.y,root:original,kind:original.name.includes('pine')?'pine':'oak'});
     }
     const textureLoader=new THREE.TextureLoader();
