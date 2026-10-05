@@ -3,8 +3,9 @@
  * with separate cached translucent materials; loading upgrades both in place.
  */
 import {mergeGeometries} from './vendor/three/examples/jsm/utils/BufferGeometryUtils.js';
+import {createDeferredLoad} from './deferred-load.js';
 
-export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=8,getRanchName=()=> 'Meadowlark Ranch'}) {
+export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=8,getRanchName=()=> 'Meadowlark Ranch',deferModels=false}) {
  const T=THREE,loader=new T.TextureLoader(),textures=new Map(),templates=new Map(),scans=new Map(),ghosts=new Map();
  const state={version:1,loaded:false,errors:[],models:[],materialNames:[],ready:null};
  function tex(path,color=false){if(textures.has(path))return textures.get(path);const t=loader.load(path,undefined,undefined,()=>state.errors.push(path));t.colorSpace=color?T.SRGBColorSpace:T.NoColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=Math.min(8,anisotropy);textures.set(path,t);return t;}
@@ -402,7 +403,10 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
   tree_small_02:'realism/tree_small_02',pine_sapling_small:'realism/pine_sapling_small',rock_moss_set_01:'realism/rock_moss_set_01',
  };
  const gltf=new GLTFLoader();
- state.ready=Promise.all(Object.entries(sources).map(async([id,path])=>{
+ // The game starts this batch after the mounted horse is ready (with a bounded
+ // fallback). Existing procedural props stay visible until the same scans arrive.
+ // Art tools retain eager loading unless they explicitly opt into the gate.
+ const modelLoad=createDeferredLoad(()=>Promise.all(Object.entries(sources).map(async([id,path])=>{
   try{const data=await gltf.loadAsync('assets/models/world/'+path+'.glb');let root=data.scene;
    if(['pine_sapling_small','rock_moss_set_01','flower_gazania','wild_rooibos_bush'].includes(id)){
     // A glTF node can contain several primitives (pine bark + needles). Keep
@@ -415,6 +419,9 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
   // The existing instances swap children in the following promise callbacks.
   // Retire only procedural fallback geometry, never shared scan resources.
   setTimeout(()=>{for(const root of old)root.traverse(o=>{if(o.isMesh&&!o.geometry.userData.builderScan)o.geometry.dispose();});},0);
-  return state;});
+  return state;}));
+ state.ready=modelLoad.ready;
+ state.startLoading=()=>modelLoad.start();
+ if(!deferModels)state.startLoading();
  return Object.assign(state,{create,materials:{oak,aged,iron,steel,stone,cloth,leather,water},templates});
 }

@@ -360,7 +360,7 @@ export function install(G){
    if(across<0&&across>-1.4&&Math.abs(along)<1.8&&Math.abs(player.speed)>2.5&&!jumpingNow()&&j.refuseCd<=0&&!player.flying){
     j.refuseCd=2.0; S.refusals++; S.lastGrade='refusal'; S.grades.push('refusal');
     player.speed=0; player.pos.x=j.x+Math.sin(j.rotY)*-1.7; player.pos.z=j.z+Math.cos(j.rotY)*-1.7;
-    G.beep(90,120,0.18,'square',0.09); flash('🛑 Refusal'); toast('🛑 Refusal — ask for the jump with Space as you meet the fence');
+    G.beep(90,120,0.18,'square',0.09); flash('🛑 Refusal'); toast('🛑 Refusal — '+(document.body.classList.contains('touch')?'Tap Jump':'Press Space')+' as you approach the fence');
    }
    else if(j.prevSide!==0&&side!==j.prevSide&&Math.abs(along)<1.8&&Math.abs(across)<1.3){
     if(side>0){

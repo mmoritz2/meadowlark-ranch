@@ -29,10 +29,21 @@ export function nearestPickup(rows,item,position){
  return best;
 }
 
+// The opening gallop starts inside a fenced yard. Lead through its real south opening
+// before dropping the marker for the free ride; a diagonal line straight outside cuts a rail.
+export function firstGallopExit(m,position){
+ if(m?.type!=='gallop'||m.book!=='Prologue'||!position)return null;
+ const {x,z}=position;
+ if(!(x>-25&&x<25&&z>-20&&z<24))return null;
+ return Math.abs(x)>2||z<14?{x:0,z:16}:{x:0,z:26};
+}
+
 // undefined lets the established door/visit/person resolver handle the mission.
 // null deliberately removes a misleading arrow to the giver before an action is done.
 export function resolveTarget(m,done,world,position){
  if(!m||done)return undefined;
+ const exit=firstGallopExit(m,position);
+ if(exit)return {id:'prologue:south-gate',position:{...exit,y:world.groundH?.(exit.x,exit.z)||0},arrivalDistance:1};
  if(m.type==='carrots'||m.type==='forage'){
   const group=nearestPickup(m.type==='carrots'?world.carrots:world.forage,m.type==='forage'?m.item:null,position);
   return group?{id:'gather:'+m.type+':'+(m.item||'carrot'),position:group.position,arrivalDistance:1}:null;
@@ -41,8 +52,9 @@ export function resolveTarget(m,done,world,position){
  return undefined;
 }
 
-export function nextAction(m,done){
+export function nextAction(m,done,position){
  if(!m||done)return null;
+ if(firstGallopExit(m,position))return {hint:'Follow the south gate marker. Tap for Gallop.',action:'gallop'};
  if(m.type==='name'&&m.npc==='wren')return {hint:'Follow the marker and talk to Wren by the barn.',action:''};
  if(m.type==='carrots'||m.type==='forage')return {hint:'Follow the marker and ride over the food.',action:''};
  const row=ACTIONS[m.type];
@@ -63,14 +75,14 @@ export function install(G){
   return cachedTarget;
  };
  function pill(m,s,progress){
-  const action=nextAction(m,progress>=(m?.goal||1));
+  const action=nextAction(m,progress>=(m?.goal||1),H.player.pos);
   if(!action)return '';
   const label=String(m.label||'Current task').replace(/\{name\}/g,s?.story?.name||'the grey mare');
   const count=m.goal>1?' ('+Math.floor(Math.max(0,Math.min(progress,m.goal)))+'/'+m.goal+')':'';
   return label+count+'\n'+action.hint;
  }
  function activate(){
-  const m=current(), step=nextAction(m,done(m));
+  const m=current(), step=nextAction(m,done(m),H.player.pos);
   if(!step)return;
   if(step.action==='gallop'){G.riding?.selectGait('gallop');G.toast('Gallop selected — ride forward to cover the distance.');}
   else if(step.action==='event'&&m.ev&&G.seEvents?.openPage){G.ui.openEvents();G.seEvents.openPage(m.ev);}
@@ -80,7 +92,7 @@ export function install(G){
   else if(step.action==='stable')G.ui.openStable();
   else if(step.action==='photo')G.$('photoBtn')?.click();
  }
- G.storyGuidance={target,pill,activate,next:()=>nextAction(current(),done(current()))};
+ G.storyGuidance={target,pill,activate,next:()=>nextAction(current(),done(current()),H.player.pos)};
  const track=G.$('questTrack');
  if(track){
   const style=document.createElement('style');
@@ -91,11 +103,11 @@ export function install(G){
   let elapsed=1;
   G.on('tick',dt=>{
    elapsed+=dt;if(elapsed<0.25)return;elapsed=0;
-   const step=nextAction(current(),done(current()));
+   const step=nextAction(current(),done(current()),H.player.pos);
    track.dataset.guided=step?'true':'false';
    if(step?.action){track.setAttribute('role','button');track.tabIndex=0;track.setAttribute('aria-label',step.hint+' Activate to open this action.');}
    else {track.removeAttribute('role');track.removeAttribute('tabindex');track.removeAttribute('aria-label');}
   });
  }
- G.on('state',o=>{const m=current(), step=nextAction(m,done(m));o.guidance=step?{type:m.type,...step}:null;});
+ G.on('state',o=>{const m=current(), step=nextAction(m,done(m),H.player.pos);o.guidance=step?{type:m.type,...step}:null;});
 }

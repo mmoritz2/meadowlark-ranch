@@ -1164,7 +1164,7 @@ export function install(G){
    rows.push(['🎯 Score',Math.round((CUR.raceAcc==null?0:CUR.raceAcc)*100)+'%'+(CUR.demoted?' — short of the gold':'')]);
   }else{
    rows.push(['⏱ Time',(c.t||0).toFixed(1)+'s of '+Math.round(S.timeAllowed||0)+'s allowed']);
-   rows.push(['Faults',String(CUR.fenceFaults)+(CUR.fenceFaults?'':' — clear round')]);
+   rows.push(['Fence faults',String(CUR.fenceFaults)+(CUR.fenceFaults?'':' — clear round')]);
    if(S.refusals)rows.push(['Refusals',String(S.refusals)]);
    if(S.grades&&S.grades.length){const cnt={};for(const g of S.grades)cnt[g]=(cnt[g]||0)+1;
     rows.push(['Fences',Object.keys(cnt).map(k=>((GRADE[k]||{}).icon||k)+'×'+cnt[k]).join(' ')]);}
@@ -1510,6 +1510,9 @@ export function install(G){
  G.on('ribbons',RB=>{
   const c=G.course.get(), S=c&&c.ce, ev=RB&&RB.ev;
   if(!ev||!S||S.dressage)return;
+  // The final crossing finishes inside course-engine's tick, before our tick
+  // consumes its grade. Flush it before any ribbon or clean-round reward reads it.
+  priceGrades(c);
   if(S.kind==='race'&&c.started){
    /* a race's accuracy used to be its time restated, so the gold ribbon — the price of a place
       on the weekly board — was the stopwatch read twice. Gate discipline counts now. */
@@ -1554,6 +1557,7 @@ export function install(G){
    return;
   }
   if(!S)return;
+  priceGrades(c); // also covers finishes replayed without the ribbons hook
   if(S.xcModel){
    const total=+(CUR.xcTime+CUR.xcJump).toFixed(1);
    G.save.sync(s=>{s.ev2=s.ev2||{};s.ev2.xcBest=s.ev2.xcBest||{};
@@ -1562,7 +1566,7 @@ export function install(G){
    if(total===0)G.quest.dailyEvt('ev2clear',1);
   }else if(S.kind==='jump'){
    if(!CUR.fenceFaults&&!(S.refusals||0)){G.save.sync(s=>{s.ev2=s.ev2||{};s.ev2.clean=(s.ev2.clean||0)+1;});G.quest.dailyEvt('ev2clear',1);}
-   else toast('⤴️ '+ev.name+' — '+CUR.fenceFaults+' faults'+(S.refusals?' · '+S.refusals+' refusal'+(S.refusals>1?'s':''):''));
+   else toast('⤴️ '+ev.name+' — '+CUR.fenceFaults+' fence faults'+(S.refusals?' · '+S.refusals+' refusal'+(S.refusals>1?'s':''):''));
   }else if(S.kind==='race'&&CUR.raceAcc!=null){
    const home=GH.on?(' · P'+(GH.list.filter(g=>g.done).length+1)+'/'+(GH.list.length+1)+' of the field'):'';
    toast('🏁 Gates '+Math.round((S.gateClean||1)*100)+'%'+home+' · '+((S.lineOff||0)<1?'line clean':'line +'+Math.floor((S.lineOff||0)/2)+'s')

@@ -684,7 +684,7 @@ export function install(G){
   if(!L.grades||!L.grades.length)return '';
   const cnt={}; for(const g of L.grades)cnt[g]=(cnt[g]||0)+1;
   const GRD=GR();
-  return Object.keys(cnt).map(k=>'<span class="ladChip'+(k==='perfect'?' on':(k==='fault'||k==='refusal')?' bad':'')+'">'
+  return Object.keys(cnt).filter(k=>k!=='refusal').map(k=>'<span class="ladChip'+(k==='perfect'?' on':(k==='fault'||k==='refusal')?' bad':'')+'">'
    +((GRD[k]&&GRD[k].icon)||'•')+' '+((GRD[k]&&GRD[k].text)||k)+' ×'+cnt[k]+'</span>').join('');
  }
  const figLines=L=>L.figs.map(f=>'<div><span>'+esc(f.at||'')+' · '+esc(f.text||'')+'</span><span>'+(f.score==null?'—':f.score+'/10')+'</span></div>').join('');
@@ -717,7 +717,7 @@ export function install(G){
   }
   let h=discSheet(L)+'<div class="ladGrid"><span class="ladChip">🎯 Accuracy '+pc(L.acc)+'%</span>'+gradeLine(L);
   if(L.refusals)h+='<span class="ladChip bad">🛑 Refusals ×'+L.refusals+'</span>';
-  if(L.timeFaults)h+='<span class="ladChip bad">⏱ Over time +'+L.timeFaults+' faults</span>';
+  if(L.timeFaults)h+='<span class="ladChip bad">⏱ Time faults '+L.timeFaults+'</span>';
   if(L.lineOff>=1)h+='<span class="ladChip bad">📏 Off the line '+L.lineOff+'s</span>';
   if(L.insp)h+='<span class="ladChip on">✨ Inspiring ×'+L.insp+'</span>';
   if(L.off)h+='<span class="ladChip">↪️ Off the approach ×'+L.off+'</span>';
@@ -849,14 +849,15 @@ export function install(G){
   }
   if(L.notes.length)h+='<div class="ph"><b>📝 Also this round</b></div><div class="sub">'+L.notes.map(n=>esc(n)).join('<br>')+'</div>';
   /* what to ride next: a round that ends with nothing to do next is where a ladder stops being one */
-  {const feat=featuredNow().filter(e=>e.id!==L.ev.id&&(()=>{try{return G.course.eventOk(e,ridden()).ok;}catch(err){return true;}})());
+  {const feat=featuredNow().filter(e=>e.id!==L.ev.id&&!entryLock(e,s,ridden()));
    const gold=(s.weekly&&s.weekly.gold)||{}, want=feat.find(e=>!gold[e.id])||feat[0];
    h+='<div class="ph"><b>➡️ Next on the ladder</b></div><div class="sub">'
     +(want?('<b>'+esc(want.name)+'</b> is featured this week'+(gold[want.id]?' and you are already on its board':' and still wants a gold ribbon from you')+' — '+weekLeft()+' left. ')
-      :'Nothing featured is inside this horse\'s reach today. ')
+      :'No other featured event is ready at this difficulty. Choose an event to check its requirements. ')
     +esc(nextVenueHint(s))+'</div>';
    if(want)h+='<div class="ladGrid"><button data-fx="lad:again:'+esc(want.id)+'">Ride '+esc(want.name)+'</button>'
-    +'<button data-fx="lad:why:'+esc(want.id)+'">What it pays</button></div>';}
+    +'<button data-fx="lad:why:'+esc(want.id)+'">What it pays</button></div>';
+   else h+='<button data-fx="lad:events">Choose an event</button>';}
   h+='<div class="ladGrid" style="margin-top:6px">'
    +'<button class="claimBtn" data-fx="lad:again:'+esc(L.ev.id)+'">Ride it again</button>';
   if(L.ev.race&&!L.ev.gauntlet&&!L.ev.friendly&&(E().tix?E().tix(s):0)>0)
@@ -979,6 +980,7 @@ export function install(G){
   else if(k==='card'){ CARD={mode:'result'}; G.ui.open('resultPanel'); }
   else if(k==='resume')resumeRun();
   else if(k==='drop')dropRun(true);
+  else if(k==='events')G.ui.openEvents();
   else if(k==='boards'){ try{G.ui.renderLB();}catch(e){} G.ui.open('lbPanel'); const b=$('lbPanel')&&$('lbPanel').querySelector('[data-lbtab="ladder"]'); if(b)b.click(); }
  });
 

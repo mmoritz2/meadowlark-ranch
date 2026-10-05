@@ -35,3 +35,17 @@ test('action tasks suppress premature giver markers and expose the real action',
  assert.equal(nextAction({type:'train'},false).action,'care');
  assert.equal(nextAction({type:'carrots'},false).action,'');
 });
+
+
+test('opening gallop routes inside riders through the actual south gate only',()=>{
+ const m={type:'gallop',book:'Prologue'},world={groundH:()=>2};
+ const a=resolveTarget(m,false,world,{x:19,z:16});
+ assert.deepEqual(a.position,{x:0,z:16,y:2});
+ assert.equal(a.arrivalDistance,1);
+ assert.deepEqual(resolveTarget(m,false,world,{x:0,z:15}).position,{x:0,z:26,y:2});
+ assert.equal(resolveTarget(m,false,world,{x:0,z:27}),null);
+ assert.equal(resolveTarget(m,true,world,{x:0,z:15}),undefined);
+ assert.match(nextAction(m,false,{x:-9,z:-14}).hint,/south gate/);
+ assert.equal(nextAction(m,false,{x:0,z:27}).hint,'Tap here for Gallop, then ride forward.');
+ assert.equal(resolveTarget({type:'gallop'},false,world,{x:0,z:15}),null);
+});

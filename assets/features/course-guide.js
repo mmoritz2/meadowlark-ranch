@@ -39,6 +39,25 @@
    opacity writes. ranch3d.html:8066 records what the last piece of per-frame geometry in this
    game cost; this one is answered before it is asked. */
 export const id='course-guide';
+const TO_PERFECT=[0.58,0.96], TO_GOOD=[0.42,1.12], TO_SHOW=2.2;
+const JUMP_CUES={early:'Wait',good:'Jump',perfect:'Jump now',late:'Too close',lineup:'Line up'};
+// Predict the same forward fence crossing that course-engine scores. A nearby
+// checkpoint, a reverse approach or a path beside the rails is not a jump window.
+export function jumpCue(j,player){
+ if(!j||j.kind!=='fence'||player.flying||player.y>=0.05||!(player.speed>0.8))return '';
+ const dx=player.pos.x-j.x,dz=player.pos.z-j.z,speed=player.speed;
+ if(Math.hypot(dx,dz)/speed>TO_SHOW)return '';
+ const rot=j.rotY||0,sn=Math.sin(rot),cs=Math.cos(rot);
+ const across=dx*sn+dz*cs,along=dx*cs-dz*sn,angle=(player.heading||0)-rot;
+ const forward=speed*Math.cos(angle);
+ if(across>=0||forward<=0.8)return 'lineup';
+ const time=-across/forward,crossing=along+speed*Math.sin(angle)*time;
+ if(Math.abs(crossing)>=1.8)return 'lineup';
+ if(time>TO_SHOW)return '';
+ if(time>=TO_PERFECT[0]&&time<=TO_PERFECT[1])return 'perfect';
+ if(time>=TO_GOOD[0]&&time<=TO_GOOD[1])return 'good';
+ return time<TO_GOOD[0]?'late':'early';
+}
 export function install(G){
  const THREE=G.THREE, $=G.$, W=G.world, player=G.horse&&G.horse.player;
  if(!THREE||!G.scene||!W||!player)return;                 // nothing to draw on or nobody to draw for
@@ -137,14 +156,11 @@ export function install(G){
     to it. A rider could ride a hundred rounds and never learn what she was doing differently on
     the clears, because the feedback arrived after the decision and never named the cause.
 
-    So: a ring over the fence that says press NOW. Take-off is the press, and the crossing comes
-    one flight-time later, so pressing at range d and speed v lands the crossing at age d/v —
-    which is exactly the number course-engine is about to grade. The bands below are ITS bands,
-    read straight off gradeCrossing rather than retuned here; if that function is ever
-    rebalanced this ring must be corrected with it or it will start lying. Green is the perfect
-    window, amber the wider clear, and red is everything that ends in rails on the floor. */
- const TO_PERFECT=[0.58,0.96], TO_GOOD=[0.42,1.12];   // seconds of flight — course-engine's gradeCrossing
- const TO_SHOW=2.2;                                   // start showing it about two strides out
+    The ring predicts time to the fence plane along the horse's current heading, using the
+    same forward crossing and 1.8 m lateral limit as course-engine. Green and amber retain its
+    existing timing bands. The HUD names the action so color is not the only cue; an approach
+    that would miss the rails asks the rider to line up instead of advertising a perfect jump.
+    If gradeCrossing changes, the timing bands above must change with it. */
  const C_PERFECT=0x4ade5e, C_GOOD=0xf0b429, C_MISS=0xe4574c;
  const reticleTex=(()=>{
   const cv=document.createElement('canvas'); cv.width=cv.height=128;
@@ -159,22 +175,17 @@ export function install(G){
  const reticle=new THREE.Sprite(reticleMat);
  reticle.renderOrder=6; reticle.visible=false; reticle.frustumCulled=false; reticle.scale.set(1.5,1.5,1);
  G.scene.add(reticle);
- let toGrade='';                                      // what the ring is saying this frame, for QA
- /* Where the ring sits and what colour it is. Returns '' when there is nothing to time. */
+ let toGrade='',toCue='';
  function tickReticle(dt,t){
-  let show='';
+  let show='',cue='';
   try{
    const c=G.course.get();
    const j=c&&!c.dressage&&c.jumps?c.jumps[c.idx]:null;
-   /* nothing to time while she is already in the air — the decision has been made */
-   if(j&&enabled&&player.y<0.05){
-    const d=Math.hypot(player.pos.x-j.x,player.pos.z-j.z);
-    const v=Math.abs(player.speed||0);
-    const tc=v>0.8?d/v:99;                            // at a standstill there is no window to show
-    if(tc<=TO_SHOW){
-     show=(tc>=TO_PERFECT[0]&&tc<=TO_PERFECT[1])?'perfect':(tc>=TO_GOOD[0]&&tc<=TO_GOOD[1])?'good':'miss';
+   if(j&&enabled&&c.started&&!closing){
+    cue=jumpCue(j,player);
+    if(cue&&cue!=='lineup'){
+     show=cue==='perfect'||cue==='good'?cue:'miss';
      reticleMat.color.setHex(show==='perfect'?C_PERFECT:show==='good'?C_GOOD:C_MISS);
-     /* it tightens as the window closes, so the eye is drawn to the moment and not the ring */
      const k=show==='perfect'?1.25+0.1*Math.sin(t*9):show==='good'?1.45:1.7;
      reticle.scale.set(k,k,1);
      reticleMat.opacity=show==='miss'?0.55:0.95;
@@ -182,7 +193,7 @@ export function install(G){
     }
    }
   }catch(e){}
-  reticle.visible=!!show; toGrade=show;
+  reticle.visible=!!show; toGrade=show; toCue=cue;
  }
 
 
@@ -359,7 +370,7 @@ export function install(G){
  G.on('courseFinish',o=>{const c=o&&o.c;if(!c||c===G.course.get())closing=true;});
  function hide(){
   core.count=rim.count=0; core.visible=rim.visible=ring.visible=bigRing.visible=false; tx=tz=null; circ=null;
-  reticle.visible=false; toGrade='';
+  reticle.visible=false; toGrade=''; toCue='';
   if(distEl&&distEl.style.display!=='none')distEl.style.display='none';
  }
  G.on('tick',(dt,t)=>{
@@ -410,7 +421,7 @@ export function install(G){
         as nothing — and only its size. The line beside this already says 'Canter a circle at B',
         and on a phone every word here is squeezed out of that line: the long version squeezed it to
         130 px and three or four lines, the last of them under the green stamina bar. */
-     distEl.textContent=circ?'· big circle':'· 📍 '+(d<10?d.toFixed(1):String(Math.round(d)))+' m';
+     distEl.textContent=circ?'· big circle':toCue?'· '+JUMP_CUES[toCue]:'· 📍 '+(d<10?d.toFixed(1):String(Math.round(d)))+' m';
      if(distEl.style.display!=='')distEl.style.display='';}
     else if(distEl.style.display!=='none')distEl.style.display='none';
    }
@@ -420,7 +431,7 @@ export function install(G){
  /* ---------------------------------------------------------------- state + handles ------ */
  G.on('state',o=>{
   o.guide={on:fade>0.01,fade:+fade.toFixed(2),chevrons:core.count,built:SP.built,
-   takeoff:toGrade||null,takeoffShown:reticle.visible,
+   takeoff:toGrade||null,takeoffShown:reticle.visible,jumpCue:toCue||null,
    spacing:+SP.spacing.toFixed(2),legLen:+SP.len.toFixed(1),onScoredLine:!SP.free&&SP.n>0,
    lays:STATS.lays,target:tx===null?null:[+tx.toFixed(1),+tz.toFixed(1)],
    dist:tx===null?null:+Math.hypot(player.pos.x-tx,player.pos.z-tz).toFixed(1),
@@ -431,7 +442,7 @@ export function install(G){
     setEnabled is the honest way to measure what the ribbon costs: the same page, the same
     course, the feature on and off. */
  G.courseGuide={core,rim,ring,bigRing,CIRC,reticle,SP,STATS,plan,
-  takeoff:()=>toGrade||null,TO_PERFECT,TO_GOOD,TO_SHOW,
+  takeoff:()=>toGrade||null,jumpCue:()=>toCue||null,TO_PERFECT,TO_GOOD,TO_SHOW,
   mats:{core:coreMat,rim:rimMat,ringLit:ringLitMat,ringDark:ringDarkMat},
   setEnabled(b){enabled=!!b;if(!enabled){fade=0;hide();}},
   isEnabled:()=>enabled,isOn:()=>fade>0.01,fadeNow:()=>fade,

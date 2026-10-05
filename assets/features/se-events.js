@@ -361,8 +361,12 @@ export function install(G){
 #seEv .sev-pbar .pb-req>span.bad{background:rgba(228,80,70,.3);color:#ffd6d2}
 #seEv .sev-pbar .pb-req>span.ok{background:rgba(90,190,110,.28);color:#d9ffe0}
 #seEv .sev-pbar .pb-req small{display:block;margin-top:3px;font-size:10.5px;font-weight:700}
-#seEv .sev-horse{width:min(960px,100%);margin:10px 0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;font:700 12px/1.4 Nunito,system-ui,sans-serif;color:#e8e2f6}
-#seEv .sev-horse b{font-size:14px;color:#fff}
+#seEv .sev-pbar.sev-preflight{flex:none;flex-direction:column;align-items:stretch;gap:6px}
+#seEv .pb-context{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 12px;font:700 11.5px/1.35 Nunito,system-ui,sans-serif;color:#e8e2f6}
+#seEv .pb-context b{color:#fff}
+#seEv .pb-context .pb-guide{margin-left:auto}
+#seEv .pb-context .pb-lock{flex-basis:100%;color:#ffdfb4}
+#seEv .pb-controls{display:flex;align-items:center;gap:18px}
 #seEv .sev-pbar .se-gold{min-width:clamp(140px,15vw,200px);padding:12px 22px!important}
 #seEv .sev-blurb{width:min(960px,100%);margin-top:10px;font:700 clamp(11.5px,1.9vh,14px)/1.45 Nunito,system-ui,sans-serif;color:#ece7fa;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 #seEv .sev-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;width:min(960px,100%);margin-top:14px}
@@ -417,7 +421,8 @@ export function install(G){
  #seEv .sev-diffs{max-width:none}
  #seEv .sev-fe{grid-template-columns:repeat(2,1fr)}
  #seEv .sev-tiers{flex-wrap:wrap}
- #seEv .sev-pbar{flex-wrap:wrap}}`;
+ #seEv .sev-pbar,#seEv .pb-controls{flex-wrap:wrap}
+ #seEv .pb-context .pb-guide{margin-left:0}}`;
   document.head.appendChild(st);
  }
 
@@ -574,11 +579,13 @@ export function install(G){
     return '<span class="'+(have>=need?'ok':'bad')+'">'+esc(label)+' <b>'+esc(have)+' / '+esc(need)+'</b>'+detail+'</span>';
    }).join('');
    const why=lk?lk:!g.ok?('Needs '+needText(g.missing)):dLock?(d.label+' opens at Lv '+(ev.lvl+d.lvlAdd)):'';
-   main+='<div class="sev-horse"><b>'+esc(h.name||'Your horse')+'</b><span>Entry checks: current / required. Stats include equipped tack.</span></div>';
-   main+='<div class="sev-pbar"><span><span class="pb-k">Time allowed</span><span class="pb-v">'+(tA?tSec(tA):'—')+(ev.laps>1?' ('+ev.laps+' laps)':'')+'</span></span>'
+   main+='<div class="sev-pbar sev-preflight"><div class="pb-context"><span><b>'+esc(h.name||'Your horse')+'</b> · Current / required, includes tack.</span>';
+   if(disc==='jump'||disc==='xc')main+='<span class="pb-guide">Follow the trail '+(disc==='xc'?'through gates and over fences':'to each fence')+'. Tap Jump when the ring turns green.</span>';
+   if(why)main+='<span class="pb-lock" role="status"><b>Before you ride:</b> '+esc(why)+'</span>';
+   main+='</div><div class="pb-controls"><span><span class="pb-k">Time allowed</span><span class="pb-v">'+(tA?tSec(tA):'—')+(ev.laps>1?' ('+ev.laps+' laps)':'')+'</span></span>'
     +'<span><span class="pb-k">Personal best</span><span class="pb-v">'+(best?tBest(best):bestS?Math.round((bestS>1?bestS:bestS*100))+'%':'--:--')+'</span></span>'
     +'<span class="pb-req">'+req+'</span>'
-    +'<button class="se-gold" data-sev="ride"'+(why?' disabled title="'+esc(why)+'"':'')+'>'+(why?'Locked':'Ride')+'</button></div></div>';
+    +'<button class="se-gold" data-sev="ride"'+(why?' disabled title="'+esc(why)+'"':'')+'>'+(why?'Locked':'Ride')+'</button></div></div></div>';
    me.fns.push(()=>drawCourse(ev,mv));
    setTimeout(()=>drawCourse(ev,mv),0);
   }

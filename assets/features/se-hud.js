@@ -269,6 +269,7 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
 #seRidePace #seStop{font-size:12px;margin-left:4px}
 #seGaitChoices{position:absolute;bottom:calc(100% + 8px);left:0;right:0;display:none;grid-template-columns:1fr 1fr;gap:4px;padding:5px;border-radius:12px;background:rgba(18,22,36,.94)}
 #seGaitChoices.on{display:grid}#seGaitChoices button{font-size:14px}
+#seHudRoot:has(#seGaitChoices.on){z-index:9}
 body.se-hud #tGal{display:none!important}
 body.se-riding-flight #tGal,body.se-riding-foot #tGal{display:block!important}
 body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}

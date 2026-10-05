@@ -117,11 +117,69 @@ Baseline high-quality browser profiling on a desktop Metal GPU measured a
 33.4 ms median frame interval over ten seconds. These identify optimization
 work; they are not physical-phone benchmarks or evidence of performance parity.
 
+## Second playability pass
+
+A fresh, isolated touch session completed the prologue, entered the available
+Novice Welcome Jump through the Events screen, rode all five fences, received
+one finish ribbon plus 158 coins and 4 gems, and closed the result to resume
+riding. Naming, claiming and riding used the real UI. No teleport, edited
+progress or debug completion was used. Reload preserved the earned save.
+This branches to an available event after the prologue; the intervening
+builder and food chapters have not had the same complete acceptance run.
+The round was not a clean win, and its time includes long inspection pauses.
+
+The playthrough produced these implemented corrections:
+
+- The Gallop selector remains tappable beside Wren's Talk prompt. The first
+  gallop objective guides a new rider through the actual south gate.
+- Hay and its collision boundary were moved away from Wren's direct exit.
+  A matching opening in the north rails, posts, kickboards and collision wall
+  permits walking to the old stall. Both routes passed actual touch riding.
+- Conversations use a readable bottom panel, hide riding controls, stop held
+  input and keep keyboard focus inside. Name entry and quest callbacks are
+  preserved. A key held through closing must be released before riding resumes.
+  Actual attempts to use the former joystick area caused zero travel while
+  talking. Browser checks cover Tab, Enter, Space, Escape, focus restoration,
+  held-key repeat and both phone orientations.
+- Event instructions, the horse's current/required stats and entry-lock reason
+  sit with the Ride control. Jump cues now use the actual forward crossing
+  and fence width; race gates, reversing and missed approaches cannot display
+  a false green jump cue. Result suggestions use the same entry locks as Ride.
+- The final fence grade is priced before rewards and the score snapshot,
+  fixing omitted last-fence points and false clean-round credit. Fence and
+  time faults have separate labels; refusal chips are no longer duplicated.
+  Refusal instructions name the touch or keyboard control in use.
+- Loading no longer declares failure at nine seconds or reveals a placeholder
+  horse at twelve seconds. A slow connection retains its loading stage and
+  offers Retry; a real failed module or horse request reports a failure.
+  An actual held/aborted module request verified the slow, failed and retry
+  paths. Optional scenery model requests are deferred behind the player horse,
+  with a twenty-second fallback. The previous seven-second fallback started
+  scenery just before the horse was ready in the controlled loading fixture;
+  the longer fallback lets the normal horse-ready trigger take precedence.
+
+The functional run used desktop Chromium/Metal at 844 × 390, DPR 2, with touch
+input and isolated storage; it is not a physical iPhone performance result.
+No page errors occurred. Focused regression tests cover cue geometry, entry
+locks, final-fence rewards, first-gallop guidance, deferred loading and loading
+recovery. Approved horse bodies and gait files were not changed.
+
+The final controlled Medium-quality loading run confirmed zero catalogue
+requests before the horse attached, followed by all ten original scenery
+models loading without request, model, feature or page errors. This proves
+request priority, not an FPS gain or a general loading-time improvement.
+Integrated dialogue and event preparation fit both 844 × 390 and 390 × 844
+viewports. After incorporating main's latest rendering fixes, the combined
+game passed the same phone layout smoke test. Its iOS development bundle was
+resynced and all 660 file hashes,
+relative imports and save/lifecycle seams verified; the approved horse hashes
+remain intact. Native device execution is still unverified.
+
 ## Next quality milestones
 
-1. Complete the opening story and first competition using touch alone. Verify
-   every prompt, destination, jump, fault, reward, retry and return to exploration.
-   No debug progress or teleporting should stand in for that acceptance run.
+1. Extend the touch acceptance run through the builder and food story chapters,
+   then complete a clean competition win and repeat across disciplines. Verify
+   prompts, navigation, rewards and return paths with normal play.
 2. Profile low, medium and high quality on actual supported iPhones/iPads.
    Measure cold start, frame time, memory, sustained heat and battery behavior;
    establish the supported-device floor before choosing a performance target.
