@@ -321,16 +321,26 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
  }
  const later=()=>{render();setTimeout(render,350);setTimeout(render,1200);};
  function openOther(what){
-  const i=G.horse.rideIdx(); close();
+  const i=G.horse.rideIdx(), h=(fresh()?.horses||[])[i], horseId=h&&h.id, tab=ST.tab, scroll=$('seOvBody').scrollTop;
+  const returnOverview=()=>{
+   // Find the same horse by identity: breeding or stable actions can reorder the herd.
+   const horses=fresh()?.horses||[], index=horses.findIndex(h=>h.id===horseId);
+   if(index>=0&&index!==G.horse.rideIdx()&&!horses[index].foal){const sel=$('horseSel');if(sel&&sel.onchange){sel.value=String(index);sel.onchange();}}
+   open(tab); $('seOvBody').scrollTop=scroll;
+  };
+  close();
+  const panel={care:'carePanel',stable:'stablePanel',style:'stylePanel',breed:'breedPanel'}[what];
+  if(panel&&G.seFrame)G.seFrame.setBack(panel,returnOverview);
+  if((what==='tack'||what==='shop')&&G.seMarket?.setBack)G.seMarket.setBack(returnOverview,'horse overview');
   try{
    if(what==='care')G.ui.openCare();
    else if(what==='stable')G.ui.openStable();
    else if(what==='style')G.ui.dispatch('style:open');
    else if(what==='breed')G.ui.dispatch('breed:open');
    else if(what==='tack')G.ui.dispatch('ranch:tack:'+i);
-   else if(what==='wardrobe')G.ui.dispatch('wd:creator');
+   else if(what==='wardrobe'){if(G.wardrobe?.openChar)G.wardrobe.openChar(undefined,{onBack:returnOverview});else G.ui.dispatch('wd:creator');}
    else if(what==='shop')G.ui.openShop();
-  }catch(e){console.error('se-care open '+what,e);}
+  }catch(e){if(panel&&G.seFrame)G.seFrame.setBack(panel,null);if(what==='tack'||what==='shop')G.seMarket?.setBack?.(null);console.error('se-care open '+what,e);}
  }
  function rideHorse(i){
   const sel=$('horseSel'); if(!sel||!sel.onchange)return;

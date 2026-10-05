@@ -488,9 +488,9 @@ export function install(G){
     The whistle calls the horse she left standing rather than one from the pasture. */
  window.addEventListener('keydown',e=>{
   if(!ST.on)return;
-  if(G.screenInput?.active||G.dialogue?.active)return;
+  if(G.screenInput?.active||G.dialogue?.active||G.input?.blocked())return;
   const tag=document.activeElement&&document.activeElement.tagName;
-  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||document.activeElement?.isContentEditable)return;
   const wh=(G.key&&G.key('whistle'))||'KeyH';
   if(e.code===wh){e.stopImmediatePropagation();e.preventDefault();if(!e.repeat)callHorse(false);return;}
   if(/^Digit[1-8]$/.test(e.code)||['KeyQ','KeyR','KeyV','KeyB','KeyX'].includes(e.code)){e.stopImmediatePropagation();}

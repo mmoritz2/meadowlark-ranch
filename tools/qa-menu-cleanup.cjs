@@ -1,0 +1,112 @@
+// Isolated accounts and save; regression checks for menu routing, focus, input, and phone layouts.
+const {chromium,ANGLE}=require('./qa-platform.cjs');
+const assert=require('node:assert/strict'),fs=require('node:fs');
+(async()=>{
+ const {Commerce,createCommerceServer}=await import('../server/commerce.mjs');
+ const service=new Commerce({dbPath:':memory:'}),server=createCommerceServer(service);
+ await new Promise((r,j)=>{server.once('error',j);server.listen(0,'127.0.0.1',r)});service.origin='http://127.0.0.1:'+server.address().port;
+ let b;try{
+  b=await chromium.launch({headless:true,args:[ANGLE,'--ignore-gpu-blocklist']});const p=await b.newPage({viewport:{width:1280,height:800}}),errors=[];
+  p.on('pageerror',e=>errors.push(e.message));
+  await p.goto(service.origin+'/ranch3d.html?qa=menu-cleanup',{waitUntil:'domcontentloaded',timeout:120000});
+  await p.waitForFunction(()=>window.__features?.seFrame&&window.__features?.seHud,null,{timeout:150000});
+  await p.locator('#load').waitFor({state:'hidden',timeout:150000});
+  fs.mkdirSync('output/menu-cleanup',{recursive:true});
+  const shot=name=>p.screenshot({path:'output/menu-cleanup/'+name+'.png'});
+  const evaluate=fn=>p.evaluate(fn),openMenu=async()=>{await evaluate(()=>window.__features.seHud.open());await p.locator('#seMenu.on').waitFor();};
+  assert.equal(await p.locator('#stickZone').isVisible(),false,'desktop has no touch joystick');
+  assert.equal(await p.locator('#seQuickPanel').isVisible(),false);
+  assert.equal(await p.locator('#questTrack').isVisible(),false);
+  await p.locator('#seQuickToggle').click();assert.equal(await p.locator('#seQuickPanel #stableBtn').isVisible(),true);
+  await p.evaluate(()=>window.__features.seHud.sync());assert.equal(await p.locator('#seQuickPanel #stableBtn').isVisible(),true);
+  await p.locator('#seQuickToggle').click();await p.locator('#seGoalToggle').click();assert.equal(await p.locator('#questTrack').isVisible(),true);
+  assert.equal(await p.evaluate(()=>localStorage.getItem('mlrHudGoalExpanded')),'1');await p.locator('#seGoalToggle').click();
+  // Disclosure must leave the live gait controls and held STOP action reachable.
+  await p.locator('#seGaitLabel').click();await p.locator('#seGaitChoices [data-gait="walk"]').click();
+  assert.equal(await evaluate(()=>window.__features.riding.state().selected),'walk');
+  await p.locator('#seStop').focus();await p.keyboard.down('Space');
+  await p.waitForFunction(()=>window.__features.riding.state().braking);
+  await p.keyboard.up('Space');await p.waitForFunction(()=>!window.__features.riding.state().braking);
+  await p.locator('#seGaitUp').click();assert.equal(await evaluate(()=>window.__features.riding.state().selected),'trot');
+  await p.locator('#seMenuBtn').focus();
+  await shot('after-hud');
+  await p.keyboard.down('w');assert.equal(await evaluate(()=>window._k.KeyW),true);
+  await openMenu();assert.equal(await evaluate(()=>!!window._k.KeyW),false,'opening menu releases movement');assert.equal(await evaluate(()=>window.__features.riding.state().selected),'trot','menu preserves selected gait');await p.keyboard.up('w');
+  assert.equal(await p.locator('#seTiles>[data-sem-main]:visible').count(),6,'six primary destinations');
+  assert.equal(await evaluate(()=>document.querySelector('#seHudRoot').inert),true);
+  await p.keyboard.press('Tab');assert.equal(await p.locator(':focus').getAttribute('aria-label'),'Back to ranch');
+  await p.keyboard.press('Shift+Tab');assert.equal(await p.locator(':focus').textContent(),'Settings');
+  await p.keyboard.press('Tab');assert.equal(await p.locator(':focus').getAttribute('aria-label'),'Back to ranch');
+  await p.keyboard.press('w');await p.keyboard.press('c');await p.keyboard.press('f');
+  assert.equal(await evaluate(()=>!!window._k.KeyW||document.body.classList.contains('freecam')||document.body.classList.contains('on-foot')),false,'menu owns keyboard');
+  assert.equal(await p.locator('.sem-hero').isVisible(),true,'home leads with current adventure');
+  const missionLabel=await evaluate(()=>{const Q=window.__features.quest;return Q.STORY[Q.storyIdx()]?.label;});
+  assert.ok(missionLabel,'fresh ranch has a current story mission');
+  assert.equal(await p.locator('#semGoal').textContent(),missionLabel,'menu hero shows the actual current mission');
+  assert.equal(await evaluate(()=>{const frame=document.querySelector('.sem-body').getBoundingClientRect();return [...document.querySelectorAll('#seTiles>[data-sem-main]')].filter(e=>!e.hidden).every(e=>e.getBoundingClientRect().bottom<=frame.bottom+1);}),true,'all six home destinations fit on desktop');
+  await shot('after-menu');
+  await p.getByLabel('Find a menu',{exact:true}).fill('breeding');
+  assert.equal(await p.locator('.sem-hero').isVisible(),false,'search prioritizes matching destinations');
+  assert.equal(await p.locator('#seTiles>[data-sem-main]:visible').count(),1);assert.equal(await p.locator('#seTiles>[data-sem-main]:visible').getAttribute('aria-label'),'Breeding');
+  await p.getByLabel('Find a menu',{exact:true}).fill('no matching menu');assert.equal(await p.locator('.sem-empty').isVisible(),true);
+  await p.keyboard.press('Escape');assert.equal(await p.locator('#seMenu.on').count(),0);assert.equal(await evaluate(()=>document.querySelector('#seHudRoot').inert),false);
+  await p.locator('#seMenuBtn').click();await p.keyboard.press('Escape');assert.equal(await p.locator(':focus').getAttribute('id'),'seMenuBtn');
+  await openMenu();await p.getByRole('button',{name:'Continue riding',exact:false}).click();assert.equal(await p.locator('#seMenu.on').count(),0);
+  console.log('PASS default menu, search, focus trap, Escape and background input');
+  await evaluate(()=>{window._k.KeyW=true;window._touch.go=true;window._touch.goA=1;window.dispatchEvent(new Event('blur'));});
+  assert.equal(await evaluate(()=>!!window._k.KeyW||window._touch.go||!!window._touch.goA),false,'blur releases controls');
+  await evaluate(()=>{const e=document.createElement('textarea');e.id='qaEdit';document.body.appendChild(e);e.focus();});
+  await p.keyboard.press('c');await p.keyboard.press('1');await p.keyboard.press('m');
+  assert.equal(await evaluate(()=>document.body.classList.contains('freecam')||document.querySelector('#bigmapWrap').style.display==='flex'),false);
+  await evaluate(()=>document.querySelector('#qaEdit').remove());
+  await openMenu();await p.getByLabel('Find a menu',{exact:true}).fill('Season pass');await p.getByRole('button',{name:'Season pass',exact:true}).click();
+  await p.locator('#lbPanel').waitFor({state:'visible'});
+  assert.equal(await p.locator('#lbPanel [data-lbtab="pass"]').evaluate(b=>b.classList.contains('claimBtn')),true,'Season pass destination');
+  await evaluate(()=>window.__features.ui.openEvents());await p.locator('#seEv.on').waitFor();
+  assert.equal(await evaluate(()=>document.querySelector('#lbPanel').style.display),'none','Events closes prior screens');
+  assert.equal(await evaluate(()=>document.querySelector('#eventsPanel').inert),true,'covered source panel inert');
+  await p.keyboard.press('f');await p.keyboard.press('c');assert.equal(await evaluate(()=>document.body.classList.contains('on-foot')||document.body.classList.contains('freecam')),false,'riding hooks blocked under Events');
+  await evaluate(()=>window.__features.hidePanels());await p.waitForFunction(()=>!document.querySelector('#eventsPanel').inert);
+  await evaluate(()=>window.__features.ranchSys.startMoveMode());assert.equal(await evaluate(()=>window.__features.ranchSys.build.move),true);
+  await p.keyboard.press('Escape');assert.equal(await evaluate(()=>window.__features.ranchSys.build.move),false);
+  await evaluate(()=>{const G=window.__features;G.ui.open('settingsPanel');G.ui.dispatch('acct:stab:controls');G.ui.dispatch('acct:remap:shop');});
+  await p.keyboard.press(',');assert.equal(await evaluate(()=>window.__features.save.fresh().keymap.shop),'Comma','settings remapping still receives keys');
+  await evaluate(()=>window.__features.ui.dispatch('acct:remap:shop'));await p.keyboard.press('Escape');
+  assert.equal(await p.locator('#settingsPanel').isVisible(),true,'Escape cancels remap before closing settings');
+  await evaluate(()=>{window.__features.ui.dispatch('acct:unmap:shop');window.__features.hidePanels();});
+  console.log('PASS text input guard, blur reset, Season Pass, exclusive Events, hidden panel focus and Escape move mode');
+  await evaluate(()=>window.__features.seCare.open('equipment'));await p.locator('#seOv [data-se="open:wardrobe"]').click();
+  await p.locator('#seChar.on').waitFor();await p.locator('#chGroups [data-ch="group:accessories"]').click();
+  assert.equal(await p.locator('#chStrip .ch-cat:visible').count(),3);await p.locator('#seChar [data-ch="back"]').click();
+  await p.locator('#seOv.on').waitFor();assert.equal(await evaluate(()=>window.__features.seCare.state().tab),'equipment');
+  await evaluate(()=>window.__features.seCare.close());
+  console.log('PASS HUD disclosures, saved goal preference, grouped Character and return to Horse Overview');
+  await evaluate(()=>window.__features.ui.openShop());await p.locator('#seMkTop').waitFor({state:'visible'});await shot('after-market');
+  await evaluate(()=>window.__features.hidePanels());
+  for(const size of [{width:390,height:844},{width:320,height:640},{width:844,height:390}]){
+   await p.setViewportSize(size);await openMenu();
+   const geometry=await evaluate(()=>{const sheet=document.querySelector('#seMenu .se-sheet'),tiles=document.querySelector('#seTiles'),r=sheet.getBoundingClientRect();return {x:r.left,y:r.top,right:r.right,bottom:r.bottom,overflow:tiles.scrollWidth>tiles.clientWidth+1};});
+   assert.ok(geometry.x>=0&&geometry.y>=0&&geometry.right<=size.width+1&&geometry.bottom<=size.height+1,JSON.stringify(geometry));assert.equal(geometry.overflow,false);
+   if(size.width===390){assert.equal(await evaluate(()=>{const frame=document.querySelector('.sem-body').getBoundingClientRect();return [...document.querySelectorAll('#seTiles>[data-sem-main]')].filter(e=>!e.hidden).every(e=>e.getBoundingClientRect().bottom<=frame.bottom+1);}),true,'all six home destinations fit on phone');await shot('after-menu-mobile');}
+   await p.keyboard.press('Escape');
+  }
+  await p.setViewportSize({width:390,height:844});await evaluate(()=>document.body.classList.add('touch'));await shot('after-hud-mobile');
+  assert.equal(await p.locator('#stickZone').isVisible(),true,'touch controls remain available');
+  for(const id of ['seGaitDown','seGaitLabel','seGaitUp','seStop']){
+   const r=await p.locator('#'+id).boundingBox();assert.ok(r&&r.width>=44&&r.height>=44&&r.x>=0&&r.x+r.width<=390&&r.y+r.height<=844,id+' remains reachable on phone');
+  }
+  assert.equal(await evaluate(()=>{const a=document.getElementById('seRidePace').getBoundingClientRect();return ['stickZone','seJump'].every(id=>{const b=document.getElementById(id).getBoundingClientRect();return a.right<=b.left||a.left>=b.right||a.bottom<=b.top||a.top>=b.bottom;});}),true,'pace and STOP clear joystick and jump');
+  await p.locator('#seGaitDown').click();assert.equal(await evaluate(()=>window.__features.riding.state().selected),'walk');
+  await p.locator('#seStop').focus();await p.keyboard.down('Enter');await p.waitForFunction(()=>window.__features.riding.state().braking);await p.keyboard.up('Enter');
+  await p.waitForFunction(()=>!window.__features.riding.state().braking);
+  assert.equal(await evaluate(()=>{const a=document.querySelector('#seWay').getBoundingClientRect(),b=document.querySelector('#questTrack').getBoundingClientRect();return a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;}),false,'direction marker clears quest text');
+  await evaluate(()=>window.__features.ui.openShop());await p.locator('#seMkBrowse').waitFor({state:'visible'});
+  await evaluate(()=>window.__features.toast('Menu layout check'));
+  assert.ok(await evaluate(()=>document.querySelector('#toasts').getBoundingClientRect().top>document.querySelector('#seMkBrowse').getBoundingClientRect().bottom),'notifications clear market navigation');
+  await shot('after-market-mobile');
+  assert.equal(await evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  assert.deepEqual(errors,[]);assert.deepEqual(await evaluate(()=>window.__features.errors),[]);
+  console.log('PASS responsive menu and live market, touch controls, no browser or feature errors');
+  console.log('Screenshots: output/menu-cleanup/after-*.png');
+ }finally{if(b)await b.close();await new Promise(r=>{server.close(r);server.closeAllConnections()});service.close();}
+})().catch(e=>{console.error(e);process.exitCode=1});

@@ -12,9 +12,8 @@
      - the panel goes full screen over the dimmed world, with the shared strip across the top;
      - its row of tabs becomes the left column (the same buttons, so a click is still the menu's);
      - its rows become cream cards, its main buttons gold, its section heads serif capitals.
-   The ☰ menu becomes the reference's main menu: a full screen of big parchment tiles, each a brown
-   drawing with its name and what it is for, the player's badge across the top and the small
-   settings beside it.
+   The main menu is a ranch journal: persistent categories and search, the current adventure
+   over an illustrated valley, and compact destinations with clear labels.
 
    It is also the kit the rebuilt screens use (se-events and the rest): the drawings, the coin and
    gem, the top strip, and cover(), which lets a screen stand in for a panel whenever that panel
@@ -267,64 +266,82 @@ body.se-screen-open #dlg{z-index:15!important}
 [style*="color:#8c7a63"],[style*="color: #8c7a63"],[style*="color:#9a8770"]{color:#5e4e3c!important}
 #seFrameTop{display:none}
 body.se-frame-open #seFrameTop{display:flex}
-/* ---------------- the main menu (☰): a full screen of parchment tiles ---------------- */
-#seMenu.se-main{z-index:60;background:#33286a!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;align-items:stretch!important;justify-content:stretch!important}
-#seMenu.se-main::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.07;
- background-image:linear-gradient(45deg,#fff 1.5px,transparent 1.5px),linear-gradient(-45deg,#fff 1.5px,transparent 1.5px);background-size:34px 34px}
-#seMenu.se-main .se-sheet{position:relative;width:100%!important;max-width:none!important;max-height:none!important;height:100%!important;border-radius:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
-#seMenu.se-main .se-bar{position:relative;z-index:1;flex:none;height:${TOP};padding:0 14px 0 12px!important;gap:12px!important;background:linear-gradient(180deg,#6247b3,#4b3294)!important;border-bottom:0!important;
- box-shadow:0 2px 0 #c6a14e,0 3px 0 #6b4f16,0 6px 10px rgba(0,0,0,.35)}
-#seMenu.se-main .se-bar::before,#seMenu.se-main .se-bar::after{content:'';position:absolute;bottom:-8px;width:18px;height:8px;background:#c6a14e;clip-path:polygon(0 0,100% 0,50% 100%)}
-#seMenu.se-main .se-bar::before{left:4px}#seMenu.se-main .se-bar::after{right:4px}
-#seMenu.se-main .sem-badge{position:relative;display:flex;align-items:center;gap:10px;padding-left:30px;min-width:0}
-#seMenu.se-main .sem-badge>svg{position:absolute;left:-8px;top:50%;width:58px;height:58px;transform:translateY(-50%);opacity:.3}
-#seMenu.se-main .sem-lv{position:relative;flex:none;width:34px;height:34px;border-radius:6px;background:linear-gradient(180deg,#2d2a55,#1a1838);border:2px solid #efe6c8;color:#fff;font:900 16px/30px Nunito,system-ui,sans-serif;text-align:center}
-#seMenu.se-main #seMenuName{display:block;font:900 clamp(16px,2.8vh,21px)/1.05 Nunito,system-ui,sans-serif;color:#fff;white-space:nowrap}
-#seMenu.se-main #seMenuSub{display:block;font:800 clamp(11px,1.8vh,13px)/1.3 Nunito,system-ui,sans-serif;color:#f5d77f;white-space:nowrap}
+/* A ranch journal: navigation stays put, the current adventure leads the home screen. */
+#seMenu.se-main{z-index:60;background:rgba(13,30,25,.6)!important;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);padding:28px;align-items:center!important;justify-content:center!important}
+#seMenu.se-main .se-sheet{display:grid!important;grid-template-columns:184px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;width:min(1100px,100%)!important;height:690px!important;max-height:calc(100dvh - 56px)!important;min-height:0;border:1px solid #f2ecdc66!important;border-radius:20px!important;background:#f8f5ec!important;box-shadow:0 28px 100px #061c1aaa!important;overflow:hidden}
+#seMenu.se-main .se-bar{grid-column:2;grid-row:1;background:transparent!important;border:0!important;padding:24px 30px 16px!important;gap:18px;align-items:center;box-shadow:none}
+#seMenu.se-main .se-bar>span:first-child{min-width:0;flex:1}
+#seMenu.se-main .se-bar b{font:400 29px/1.2 Georgia,serif;color:#203f35;letter-spacing:-.7px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#seMenu.se-main .se-bar small{display:block;font:12px/1.5 system-ui,sans-serif;color:#768174;margin-top:5px}
 #seMenu.se-main .se-bar br{display:none}
-#seMenu.se-main .sem-promo{margin-left:auto;display:flex;align-items:center;gap:10px;height:calc(${TOP} - 14px);padding:0 14px 0 8px;border-radius:8px;cursor:pointer;border:0;min-height:0;
- background:linear-gradient(90deg,#8a39c9,#b04fd6);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35);color:#fff;font-family:Nunito,system-ui,sans-serif;min-width:0;max-width:40vw;text-align:left}
-#seMenu.se-main .sem-promo b{display:block;font:900 clamp(13px,2.2vh,17px)/1.05 var(--sef-serif);text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
-#seMenu.se-main .sem-promo small{display:block;font:700 clamp(10px,1.6vh,12px)/1.2 Nunito,system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;opacity:.95}
-#seMenu.se-main .sem-promo i{flex:none;font-style:normal;background:#6fdc70;color:#15461b;border-radius:10px;padding:3px 8px;font:900 12px/1 Nunito,system-ui,sans-serif}
-#seMenu.se-main .sem-util{display:flex;gap:8px}
-#seMenu.se-main .se-x{margin-left:0!important;width:clamp(36px,5.8vh,44px)!important;height:clamp(36px,5.8vh,44px)!important;padding:9px!important;font-size:0!important;border:2.5px solid #fff!important;
- background:radial-gradient(circle at 38% 30%,#5d5d6e,#2f2f3c)!important}
-#seMenu.se-main .se-x::before{content:'';display:block;width:100%;height:100%;background:#fff;
- -webkit-mask:url("data:image/svg+xml;charset=utf-8,${xMask}") center/contain no-repeat;mask:url("data:image/svg+xml;charset=utf-8,${xMask}") center/contain no-repeat}
-#seMenu.se-main{--semH:clamp(136px,calc((100vh - ${TOP} - 118px) / 2),262px)}
-#seMenu.se-main .se-tiles{flex:1;display:grid!important;grid-auto-flow:column!important;grid-template-rows:repeat(2,var(--semH))!important;grid-template-columns:none!important;
- grid-auto-columns:calc(var(--semH) * .8)!important;gap:clamp(10px,1.8vh,16px)!important;padding:10px 18px!important;
- overflow-x:auto!important;overflow-y:hidden!important;background:transparent!important;scrollbar-width:none;align-content:center}
-#seMenu.se-main .se-tiles::-webkit-scrollbar{display:none}
-#seMenu.se-main .se-tiles>button{position:relative;display:block!important;width:auto!important;height:var(--semH)!important;min-height:0!important;max-height:none;align-self:center;
- padding:0!important;border-radius:4px!important;cursor:pointer;overflow:hidden;font-size:0!important;color:transparent!important;text-shadow:none!important;
- border:1.5px solid #b89a60!important;box-shadow:inset 0 0 0 3px #efe2bd,inset 0 0 0 4px rgba(150,115,60,.55),0 4px 10px rgba(0,0,0,.4)!important;
- background:var(--sem-ic,none) center 34%/clamp(52px,10.5vh,86px) no-repeat,radial-gradient(120% 80% at 50% 35%,#efe3c2,#dfcb9d)!important}
-#seMenu.se-main .se-tiles>button:hover{filter:brightness(1.05)}
-#seMenu.se-main .se-tiles>button:active{transform:translateY(1px)}
-#seMenu.se-main .se-tiles>button>*:not(.pip):not(.badge):not(.sem-keep){display:none!important}
-#seMenu.se-main .se-tiles>button::before{content:attr(data-sem-t)!important;position:absolute!important;left:6px;right:6px;bottom:clamp(22px,4vh,32px);display:block!important;z-index:1;
- font:800 clamp(13px,2.3vh,18px)/1.05 var(--sef-serif)!important;color:#5a3b1a!important;text-transform:uppercase;letter-spacing:.3px;text-align:center;white-space:normal}
-#seMenu.se-main .se-tiles>button::after{content:attr(data-sem-s)!important;position:absolute!important;left:6px;right:6px;bottom:clamp(8px,1.6vh,14px);display:block!important;z-index:1;
- font:700 clamp(10.5px,1.65vh,13px)/1.1 Nunito,system-ui,sans-serif!important;color:#583a19!important;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:none!important;letter-spacing:0}
-#seMenu.se-main .se-tiles>button.sem-feat{background:var(--sem-ic,none) center 42%/clamp(56px,11vh,90px) no-repeat,radial-gradient(120% 80% at 50% 35%,#8d5a2c,#6a421f)!important;
- border-color:#e7c569!important;box-shadow:inset 0 0 0 3px #7b4d24,inset 0 0 0 4px #d9b454,0 4px 12px rgba(0,0,0,.45)!important}
-#seMenu.se-main .se-tiles>button.sem-feat::before{bottom:clamp(24px,4.4vh,34px);color:#3a260c!important}
-#seMenu.se-main .se-tiles>button.sem-feat::after{color:#6b4410!important}
-#seMenu.se-main .se-tiles>button.sem-feat .sem-plate{position:absolute;left:-2px;right:-2px;bottom:4px;height:clamp(42px,7.6vh,58px);background:linear-gradient(180deg,#f7dc7c,#dcb244);box-shadow:0 1px 3px rgba(0,0,0,.4)}
-#seMenu.se-main .se-tiles>button.sem-feat .sem-ribbon{position:absolute;left:-2px;right:-2px;top:8px;padding:5px 2px 6px;text-align:center;background:linear-gradient(180deg,#be3a30,#8f2019);
- font:800 clamp(11px,1.9vh,15px)/1 var(--sef-serif);color:#fff;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 3px rgba(0,0,0,.4);text-shadow:0 1px 0 rgba(0,0,0,.35)}
-#seMenu.se-main .se-tiles>button .sem-tag{position:absolute;left:7px;top:7px;display:flex;align-items:center;gap:4px;padding:2px 7px;border-radius:4px;background:rgba(80,56,28,.16);
- font:900 clamp(10px,1.7vh,13px)/1.2 Nunito,system-ui,sans-serif;color:#4a3318}
-#seMenu.se-main .se-tiles>button .sem-tag svg{width:15px;height:15px}
-#seMenu.se-main .se-tiles>button .pip,#seMenu.se-main .se-tiles>button .badge{position:absolute!important;top:7px!important;right:7px!important;left:auto!important;min-width:20px;height:20px;padding:0 6px;border-radius:10px;
- background:#d93a33!important;color:#fff!important;border:1.5px solid #fff!important;font:900 11px/17px Nunito,system-ui,sans-serif!important;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.35)}
-#seMenu.se-main .se-tiles>button.sem-util-tile{display:none!important}
-#seMenu.se-main .sem-foot{flex:none;display:flex;align-items:center;gap:12px;padding:0 18px clamp(8px,1.6vh,14px);font:700 11px/1 Nunito,system-ui,sans-serif;color:rgba(235,228,255,.7)}
-#seMenu.se-main .sem-track{flex:none;height:5px;margin:0 18px 8px;border-radius:3px;background:rgba(0,0,0,.35);overflow:hidden}
-#seMenu.se-main .sem-track i{display:block;height:100%;width:30%;border-radius:3px;background:linear-gradient(90deg,#e9cf8a,#d2ad5a)}
-#seMenu.se-main .sem-foot .sem-sp{flex:1}
+#seMenu.se-main .se-x{width:auto;min-width:112px;height:42px;min-height:42px;padding:0 14px;border:1px solid #d4dacc;border-radius:8px;background:transparent;color:#355646;font:600 12px/1 system-ui;white-space:nowrap;flex:none;box-shadow:none!important}
+.sem-controls{grid-column:1;grid-row:1 / 4;padding:30px 16px 20px;display:flex;flex-direction:column;gap:24px;min-width:0;background:#1e4135;color:#f3eedc;border-right:1px solid #173b2e}
+.sem-brand{text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px;padding:0 0 22px;border-bottom:1px solid #c7d5be24}
+.sem-brand>svg{width:49px;height:49px;opacity:.95}
+.sem-brand strong{font:600 11px/1.2 system-ui;letter-spacing:2px}.sem-brand small{font:10px/1.4 system-ui;letter-spacing:4px;color:#d2d3b5}
+.sem-categories{display:flex;gap:7px;flex-direction:column}
+.sem-categories button{display:flex;align-items:center;gap:11px;background:transparent!important;color:#d6dfca!important;border:1px solid transparent!important;box-shadow:none!important;border-radius:8px!important;min-height:46px;padding:10px 12px;font:500 13px/1.2 system-ui;text-align:left;white-space:nowrap}
+.sem-categories button svg{width:19px;height:19px;opacity:.75;flex:none}
+.sem-categories button:hover{background:#ffffff0b!important;color:#fff!important}
+.sem-categories button[aria-pressed="true"]{background:#e9dfb6!important;color:#234838!important;border-color:#e9dfb6!important;font-weight:650}
+.sem-search-label{margin-top:auto;display:block;position:relative;width:100%}
+.sem-search-label>span{font:10px/1.4 system-ui;letter-spacing:1px;text-transform:uppercase;color:#bcccb4;display:block;margin:0 0 8px 3px}
+.sem-search{width:100%;min-width:0;border:1px solid #d0dac64a!important;border-radius:8px!important;background:#17392e!important;color:#fcf9ee!important;font:12px/1.3 system-ui!important;padding:12px 10px!important;height:42px;box-shadow:none!important}
+.sem-search::placeholder{color:#b9c8b2}.sem-search::-webkit-search-cancel-button{filter:grayscale(1) brightness(2)}
+.sem-side-note{font:11px/1.6 system-ui;color:#b9c8b2;text-align:center}
+.sem-body{grid-column:2;grid-row:2;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 30px 22px;scrollbar-width:thin;scrollbar-color:#bdcab6 transparent}
+.sem-hero{position:relative;isolation:isolate;min-height:190px;overflow:hidden;border:1px solid #dbdec7;border-radius:12px;background:#e6e5ce;padding:23px;display:flex;align-items:center}
+.sem-hero[hidden]{display:none!important}
+.sem-hero-art{position:absolute;inset:0 0 0 auto;width:67%;z-index:-1;pointer-events:none}
+.sem-hero-art>svg{display:block;width:100%;height:100%;object-fit:cover}
+.sem-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#e6e5ce 25%,#e6e5cee0 39%,#e6e5ce00 66%);z-index:-1;pointer-events:none}
+.sem-hero-copy{max-width:55%}.sem-eyebrow{display:block;font:700 9px/1.4 system-ui;letter-spacing:1.4px;text-transform:uppercase;color:#5a7056}
+.sem-hero h2{font:400 clamp(24px,2.6vw,32px)/1.1 Georgia,serif;letter-spacing:-.65px;color:#243f30;margin:9px 0 10px;text-wrap:balance}
+.sem-hero p{font:12px/1.5 system-ui;color:#5e7057;margin:0 0 17px;text-wrap:pretty}
+.sem-ride{display:inline-flex;align-items:center;gap:24px;min-height:42px;padding:11px 16px!important;background:#214e3b!important;border:1px solid #214e3b!important;border-radius:7px!important;box-shadow:0 3px 0 #163a2e20!important;color:#fffbee!important;font:600 12px/1 system-ui!important}
+.sem-ride:hover{background:#306047!important;transform:translateY(-1px)}
+.sem-ridden{position:absolute;right:16px;bottom:14px;border:1px solid #eceddb66;border-radius:6px;padding:7px 10px;background:#163d2cbd;color:#fffbee;font:11px/1.3 system-ui;backdrop-filter:blur(5px)}
+.sem-section{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:23px 0 13px}
+.sem-section h2{font:400 20px/1.2 Georgia,serif;color:#294b3d;margin:0}.sem-section span{font:11px/1.4 system-ui;color:#7c8677;text-align:right}
+#seMenu.se-main .se-tiles{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:none!important;grid-auto-flow:row!important;grid-auto-columns:auto!important;gap:10px!important;padding:0!important;overflow:visible!important;min-height:0;align-content:start;background:transparent!important}
+#seMenu.se-main .se-tiles>button{position:relative;display:grid!important;grid-template-columns:40px minmax(0,1fr) 14px!important;grid-template-rows:auto auto!important;align-items:center!important;align-content:center!important;justify-content:normal!important;column-gap:13px!important;row-gap:4px!important;min-height:78px!important;height:auto!important;width:auto!important;padding:13px!important;background:#fffdf7!important;color:#244c40!important;border:1px solid #dee1d2!important;border-radius:10px!important;box-shadow:0 2px 2px #25422a03!important;text-align:left;overflow:hidden;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+#seMenu.se-main .se-tiles>button:hover{background:#f2f5e8!important;border-color:#a8b99a!important;transform:translateY(-2px);box-shadow:0 5px 12px #3045290a!important}
+#seMenu.se-main .se-tiles>button::before,#seMenu.se-main .se-tiles>button::after{display:none!important;content:none!important}
+#seMenu.se-main .sem-icon{display:flex!important;align-items:center;justify-content:center;grid-column:1;grid-row:1 / 3;width:40px;height:44px;padding:8px;border-radius:10px;background:#eaf0df;color:#5c7750}
+#seMenu.se-main .sem-icon svg{width:100%;height:100%}
+#seMenu.se-main [data-sem-main="journey"] .sem-icon{background:#f4e8c9}#seMenu.se-main [data-sem-main="events"] .sem-icon{background:#e5ecf2}#seMenu.se-main [data-sem-main="market"] .sem-icon{background:#f2e3d9}#seMenu.se-main [data-sem-main="character"] .sem-icon{background:#eee4ee}
+#seMenu.se-main .sem-title{grid-column:2;grid-row:1;display:block!important;font:650 14px/1.25 system-ui,sans-serif!important;color:#2a4939!important;letter-spacing:0!important;text-transform:none!important}
+#seMenu.se-main .sem-description{grid-column:2;grid-row:2;display:block!important;font:12px/1.4 system-ui,sans-serif!important;color:#7b8475!important;letter-spacing:0!important;text-transform:none!important}
+#seMenu.se-main .sem-arrow{grid-column:3;grid-row:1 / 3;color:#9ba78f;font:17px/1 system-ui}
+#seMenu.se-main .se-tiles>button.sem-util-tile,#seMenu.se-main .se-tiles>button[hidden]{display:none!important}
+#seMenu.se-main .se-tiles .pip{position:absolute!important;top:4px!important;right:4px!important;left:auto!important;background:#be8848!important;border:2px solid #fffdf7!important;box-shadow:none!important;font:600 9px/14px system-ui!important;min-width:18px;height:18px;padding:0 3px;color:#fff}
+.sem-empty{grid-column:1/-1;padding:32px 15px;font:13px/1.6 system-ui;color:#6e7c64;text-align:center;border:1px dashed #b9c7ac;border-radius:10px;margin:0}.sem-empty[hidden]{display:none}
+.sem-foot{grid-column:2;grid-row:3;display:flex;align-items:center;gap:16px;padding:10px 30px;border-top:1px solid #e0e3d4;font:11px/1.5 system-ui;color:#7a8570;background:#f8f5ec}
+.sem-foot .sem-sp{flex:1}.sem-foot button{border:0!important;box-shadow:none!important;background:none!important;color:#456545!important;padding:7px 0!important;min-height:36px!important;font:600 12px/1.3 system-ui!important}
+#seMenu button:focus-visible,#seMenu input:focus-visible{outline:3px solid #c39342!important;outline-offset:3px!important}
+@media(prefers-reduced-motion:reduce){#seMenu.se-main .se-tiles>button,.sem-ride{transition:none!important;transform:none!important}}
+@media(max-width:760px){
+ #seMenu.se-main{padding:12px}#seMenu.se-main .se-sheet{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;max-height:calc(100dvh - 24px)!important;height:800px!important;border-radius:15px!important}
+ #seMenu.se-main .se-bar{grid-column:1;grid-row:1;padding:20px 20px 15px!important;gap:12px!important}
+ #seMenu.se-main .se-bar b{font-size:23px}#seMenu.se-main .se-bar small{font-size:11px}
+ #seMenu.se-main .se-x{min-width:0;width:38px;height:38px;min-height:38px;font-size:0;padding:0}.se-x::after{content:'×';font:25px/1 system-ui}
+ .sem-controls{grid-column:1;grid-row:2;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:0 20px 14px;background:transparent;border:0;border-bottom:1px solid #e0e3d4}
+ .sem-brand,.sem-side-note,.sem-search-label>span{display:none}.sem-search-label{grid-row:1;margin:0}
+ .sem-search{height:38px;background:#efeee2!important;color:#365642!important;border-color:#d9ddcc!important;font-size:12px!important;padding:10px 12px!important}.sem-search::placeholder{color:#839078}
+ .sem-categories{flex-direction:row;gap:5px;justify-content:space-between}.sem-categories button{justify-content:center;gap:0;flex:1;padding:9px 5px;min-height:40px;color:#5e745d!important;font-size:11px;font-weight:600}.sem-categories button svg{display:none}.sem-categories button[aria-pressed="true"]{background:#284e3a!important;color:#fffbed!important;border-color:#284e3a!important}
+ .sem-body{grid-column:1;grid-row:3;padding:16px 20px 20px}.sem-hero{min-height:177px;padding:20px}.sem-hero-copy{max-width:65%}.sem-hero h2{font-size:24px}.sem-hero p{font-size:10px;margin-bottom:13px}.sem-hero-art{width:85%;right:-35px}.sem-hero::after{background:linear-gradient(90deg,#e6e5ce 12%,#e6e5cee8 28%,#e6e5ce00 72%)}.sem-ridden{display:none}.sem-ride{font-size:11px!important;padding:10px 12px!important;min-height:38px;gap:14px}.sem-eyebrow{font-size:8px}
+ .sem-section{margin-top:19px}.sem-section h2{font-size:19px}.sem-section span{display:none}
+ #seMenu.se-main .se-tiles{grid-template-columns:minmax(0,1fr)!important;gap:8px!important}
+ #seMenu.se-main .se-tiles>button{min-height:72px!important;padding:13px!important;grid-template-columns:36px minmax(0,1fr) 14px!important;column-gap:12px!important}
+ #seMenu.se-main .sem-icon{width:36px;height:38px;padding:7px}#seMenu.se-main .sem-description{font-size:10px!important}
+ #seMenu[data-menu-view="home"] #seTiles{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #seMenu[data-menu-view="home"] #seTiles>button{grid-template-columns:28px minmax(0,1fr)!important;grid-template-rows:1fr!important;gap:8px!important;min-height:76px!important;padding:12px 10px!important}
+ #seMenu[data-menu-view="home"] #seTiles .sem-icon{grid-row:1;width:28px;height:34px;padding:4px;background:transparent}
+ #seMenu[data-menu-view="home"] #seTiles .sem-title{font-size:12px!important;grid-row:1}
+ #seMenu[data-menu-view="home"] #seTiles :is(.sem-description,.sem-arrow){display:none!important}
+ .sem-foot{grid-column:1;grid-row:4;padding:9px 20px;gap:12px;font-size:10px}.sem-foot button{font-size:11px!important}
+}
+@media(max-height:540px) and (min-width:761px){#seMenu.se-main{padding:10px}#seMenu.se-main .se-sheet{max-height:calc(100dvh - 20px)!important;grid-template-columns:164px minmax(0,1fr)}.sem-controls{padding:18px 12px;gap:14px}.sem-brand{display:none}.sem-side-note{display:none}.sem-categories{gap:3px}.sem-categories button{min-height:40px}#seMenu.se-main .se-bar{padding:18px 24px 14px!important}.sem-body{padding:0 24px 18px}.sem-hero{min-height:170px;padding:20px}.sem-hero h2{font-size:26px}.sem-foot{padding:8px 24px}}
 @media (max-width:760px){
  .se-fr.se-fr-tabs{padding-left:0!important;padding-top:calc(${TOP} + 70px)!important}
  .se-fr .mk-panel-body>.crow.se-tabcol{top:${TOP};bottom:auto;right:0;width:auto!important;height:62px;flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important}
@@ -334,17 +351,6 @@ body.se-frame-open #seFrameTop{display:flex}
  .se-strip .se-ttl{gap:6px}
  .se-strip .se-ttl small{display:none!important}
  .se-pill{min-width:0;height:26px;padding:0 8px 0 23px;margin-left:8px;font-size:13px}.se-pill>svg{width:26px;height:26px;left:-9px}
- /* the promo goes (the Treasures tile does the same job), but Photo, Graphics, Sound and Settings stay, a size down beside
-    the close: hiding them left a phone with no way to mute the game or lower the graphics */
- #seMenu.se-main .sem-promo{display:none}
- #seMenu.se-main .se-bar{gap:8px!important;padding:0 10px!important}
- #seMenu.se-main .sem-util{gap:5px}
- #seMenu.se-main .sem-util .se-circ{width:32px!important;height:32px!important;padding:6px!important;border-width:2px!important}
- #seMenu.se-main .sem-badge{flex:1 1 auto;padding-left:22px}
- #seMenu.se-main .sem-badge>span:last-child{min-width:0;overflow:hidden}
- #seMenu.se-main #seMenuName,#seMenu.se-main #seMenuSub{overflow:hidden;text-overflow:ellipsis}
- #seMenu.se-main .sem-lv{width:28px;height:28px;font-size:14px;line-height:24px}
- #seMenu.se-main .se-tiles{grid-auto-columns:128px!important}
  /* The frame is a little narrower than the old sheet, and at 390px the Build catalogue fell from two columns of pieces to
     one: a third longer to scroll. A tighter gutter and a narrower column keep it at two. */
  .se-fr>*{width:calc(100% - 16px)!important}
@@ -434,14 +440,19 @@ body.se-frame-open #seFrameTop{display:flex}
  function anyScreen(){return !!document.querySelector('.se-fr')||Object.keys(COVERS).some(k=>COVERS[k].on)||[...screens].some(f=>f());}
  const screens=new Set();   // other full screens (se-events' own sub-views) that keep the HUD down
  function settle(){if(anyScreen())document.body.classList.add('se-screen-open');else document.body.classList.remove('se-screen-open');}
+ const coveredState=new WeakMap();
+ function setCovered(P,covered){
+  if(covered&&!coveredState.has(P)){coveredState.set(P,{inert:P.inert,aria:P.getAttribute('aria-hidden')});P.inert=true;P.setAttribute('aria-hidden','true');}
+  else if(!covered&&coveredState.has(P)){const previous=coveredState.get(P);P.inert=previous.inert;if(previous.aria===null)P.removeAttribute('aria-hidden');else P.setAttribute('aria-hidden',previous.aria);coveredState.delete(P);}
+ }
  function sync(P){
   const C=COVERS[P.id];
   if(isOpen(P)){
-   if(C&&!C.classic){ unframe(P); P.classList.add('se-covered');
+   if(C&&!C.classic){ unframe(P); P.classList.add('se-covered'); setCovered(P,true);
     if(!C.on){C.on=true;try{C.show(P);}catch(e){console.error('se cover '+P.id,e);}} }
-   else { P.classList.remove('se-covered'); if(C&&C.on){C.on=false;try{C.hide();}catch(e){}} frame(P); }
+   else { P.classList.remove('se-covered'); setCovered(P,false); if(C&&C.on){C.on=false;try{C.hide();}catch(e){}} frame(P); }
   }else{
-   P.classList.remove('se-covered'); unframe(P);
+   P.classList.remove('se-covered'); setCovered(P,false); unframe(P);
    if(C){ C.classic=false; if(C.on){C.on=false;try{C.hide();}catch(e){}} }
    if(backTo[P.id]&&!P._seGoingBack)setTimeout(()=>{if(!isOpen(P))delete backTo[P.id];},0);
   }
@@ -471,106 +482,128 @@ body.se-frame-open #seFrameTop{display:flex}
  const menu=$('seMenu'), tiles=$('seTiles');
  if(menu&&tiles){
   menu.classList.add('se-main');
-  const bar0=menu.querySelector('.se-bar'), sheet=menu.querySelector('.se-sheet');
-  if(bar0&&!bar0.querySelector('.sem-badge')){
-   const nameWrap=$('seMenuName')&&$('seMenuName').parentElement;
-   const badge=document.createElement('span'); badge.className='sem-badge';
-   badge.innerHTML=art('head',{b:'#fff',l:'#5a3fa6'})+'<span class="sem-lv" id="semLv" title="Ranch level">1</span>';
-   if(nameWrap){bar0.insertBefore(badge,nameWrap);badge.appendChild(nameWrap);}
-   const promo=document.createElement('button'); promo.className='sem-promo'; promo.type='button'; promo.id='semPromo';
-   promo.innerHTML='<i id="semPromoTag">NEW</i><span><b id="semPromoT">Golden horseshoes</b><small id="semPromoS">Hidden on rocks and in the water</small></span>';
-   const util=document.createElement('span'); util.className='sem-util';
-   util.innerHTML=[['photo','poseBtn','Photo mode'],['graphics','qualBtn','Graphics'],['sound','muteBtn','Sound'],['gear','settingsBtn','Settings']]
-    .map(u=>'<button class="se-circ" data-sem-util="'+u[1]+'" title="'+u[2]+'" aria-label="'+u[2]+'">'+line(u[0],'#fff',2)+'</button>').join('');
-   const x=bar0.querySelector('.se-x'); bar0.insertBefore(promo,x); bar0.insertBefore(util,x);
-   util.addEventListener('click',e=>{const b=e.target.closest('[data-sem-util]');if(!b)return;e.stopPropagation();const t=$(b.dataset.semUtil);if(t){menu.classList.remove('on');setTimeout(()=>t.click(),0);}});
-   promo.addEventListener('click',e=>{e.stopPropagation();menu.classList.remove('on');try{G.run('sePromo');}catch(err){}});
+  const sheet=menu.querySelector('.se-sheet'), bar0=menu.querySelector('.se-bar');
+  const x=bar0.querySelector('.se-x'); x.textContent='Back to ranch'; x.setAttribute('aria-label','Back to ranch');
+  let category='home', search='';
+  const controls=document.createElement('div');controls.className='sem-controls';
+  const categories=document.createElement('nav');categories.className='sem-categories';categories.setAttribute('aria-label','Menu categories');
+  for(const [id,label,icon] of [['home','Home','build'],['horses','Horses','horses'],['explore','Explore','compass'],['more','More','list']]){
+   const b=document.createElement('button');b.type='button';b.dataset.menuCategory=id;b.innerHTML=line(icon,'currentColor',1.8)+'<span>'+label+'</span>';b.setAttribute('aria-pressed',String(id===category));
+   b.onclick=()=>{category=id;search='';input.value='';dressTiles();body.scrollTop=0;};categories.appendChild(b);
   }
-  if(sheet&&!sheet.querySelector('.sem-track')){
-   const tr=document.createElement('div'); tr.className='sem-track'; tr.innerHTML='<i></i>'; sheet.appendChild(tr);
-   const ft=document.createElement('div'); ft.className='sem-foot'; ft.innerHTML='<span>Meadowlark Ranch</span><span class="sem-sp"></span><span id="semFootR"></span>'; sheet.appendChild(ft);
-   const paintTrack=()=>{const sw=tiles.scrollWidth,cw=tiles.clientWidth,i=tr.querySelector('i');if(!sw||sw<=cw+2){i.style.width='100%';i.style.marginLeft='0';return;}
-    i.style.width=(cw/sw*100).toFixed(1)+'%';i.style.marginLeft=(tiles.scrollLeft/sw*100).toFixed(1)+'%';};
-   tiles.addEventListener('scroll',paintTrack,{passive:true}); window.addEventListener('resize',paintTrack);
-   /* a mouse wheel scrolls the tiles sideways, the way they run */
-   tiles.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){tiles.scrollLeft+=e.deltaY;e.preventDefault();}},{passive:false});
-   menu._paintTrack=paintTrack;
-  }
-  /* the tiles: where to go (the HUD's own buttons, clicked for you), then anything else the dock held */
-  const clickId=idn=>()=>{const b=$(idn);if(b)setTimeout(()=>b.click(),30);};
-  const openTab=(btn,re)=>()=>{const b=$(btn);if(!b)return;setTimeout(()=>{b.click();setTimeout(()=>{const t=[...document.querySelectorAll('.tabbtn')].find(x=>x.offsetParent!==null&&re.test((x.dataset.seL||'')+' '+x.textContent));if(t)t.click();},80);},30);};
+  const input=document.createElement('input');input.className='sem-search';input.type='search';input.placeholder='Find a menu…';input.setAttribute('aria-label','Find a menu');input.autocomplete='off';
+  input.oninput=()=>{search=input.value.trim().toLowerCase();dressTiles();};
+  const brand=document.createElement('div');brand.className='sem-brand';brand.setAttribute('aria-hidden','true');brand.innerHTML=art('horses',{b:'#e7dab0',l:'#1e4135',d:'#b4c3a0'})+'<strong>MEADOWLARK</strong><small>RANCH</small>';
+  const searchLabel=document.createElement('label');searchLabel.className='sem-search-label';searchLabel.innerHTML='<span>Find your way</span>';searchLabel.appendChild(input);
+  const sideNote=document.createElement('div');sideNote.className='sem-side-note';sideNote.textContent='Your own little corner of the valley.';
+  controls.append(brand,categories,searchLabel,sideNote);sheet.insertBefore(controls,tiles);
+  const body=document.createElement('div');body.className='sem-body';sheet.insertBefore(body,tiles);
+  const hero=document.createElement('section');hero.className='sem-hero';hero.setAttribute('aria-label','Current adventure');
+  hero.innerHTML='<div class="sem-hero-art" aria-hidden="true"></div><div class="sem-hero-copy"><span class="sem-eyebrow">Your next adventure</span><h2 id="semGoal"></h2><p id="semChapter"></p><button type="button" class="sem-ride">Continue riding <span aria-hidden="true">→</span></button></div><span class="sem-ridden" id="semRidden"></span>';
+  hero.querySelector('.sem-ride').onclick=()=>G.seHud?.close();
+  const section=document.createElement('div');section.className='sem-section';section.innerHTML='<h2 id="semSectionTitle">Around the ranch</h2><span id="semSectionHint">Make the day your own</span>';
+  body.append(hero,section,tiles);
+  const empty=document.createElement('p');empty.className='sem-empty';empty.textContent='No matching menus. Try horses, quests or settings.';empty.setAttribute('role','status');empty.hidden=true;tiles.appendChild(empty);
+  const footer=document.createElement('div');footer.className='sem-foot';footer.innerHTML='<span id="semFootR"></span><span class="sem-sp"></span><button type="button" data-sem-util="muteBtn">Sound</button><button type="button" data-sem-util="settingsBtn">Settings</button>';
+  sheet.appendChild(footer);
+  const closeForAction=()=>{if(G.seHud)G.seHud.close(false);else menu.classList.remove('on');};
+  const clickId=id=>()=>{const b=$(id);if(b)setTimeout(()=>b.click(),0);};
+  tiles.addEventListener('click',e=>{const b=e.target.closest('button');if(b?.parentElement===tiles&&!b.dataset.semMain&&!b.classList.contains('sem-util-tile'))closeForAction();},true);
+  footer.addEventListener('click',e=>{const b=e.target.closest('[data-sem-util]');if(!b)return;closeForAction();clickId(b.dataset.semUtil)();});
   const MAIN=[
-   {k:'market',t:'Market',s:'Horses, pets and more',go:clickId('shopBtn'),feat:'Free gifts'},
-   {k:'account',t:G.commerce?.storeLabel||'Account & VIP',s:G.commerce?.isStaticStore?'Gem packs and VIP plans':'Gem store and cloud backups',need:()=>!!G.commerce,go:()=>G.ui.dispatch('store')},
-   {k:'journey',t:'Journey',s:'Quests and adventure',go:clickId('questBtn')},
-   {k:'horses',t:'My Horses',s:'Your stable of horses',go:clickId('stableBtn'),tag:()=>{const n=((G.save.fresh()||{}).horses||[]).length;return n?line('horses','#6a4a26',2.2)+n:'';}},
-   {k:'season',t:'Season Pass',s:'Rewards all season',go:openTab('questBtn',/season/i)},
-   {k:'events',t:'Events',s:'Test your riding skills',go:clickId('eventsBtn')},
-   {k:'treasure',t:'Treasures',s:'Hidden round the valley',go:()=>{try{G.run('seTreasures');}catch(e){}},need:()=>!!G.treasures,
-    tag:()=>{const s=G.save.fresh()||{};return G.treasures?Object.keys((s.treasure&&s.treasure.found)||{}).length+'/'+G.treasures.total:'';}},
-   {k:'foal',t:'Breeding',s:'Raise unique foals',go:clickId('breedBtn'),need:'breedBtn'},
-   {k:'care',t:'Horse Care',s:'Groom, feed and bond',go:clickId('careBtn')},
-   {k:'ranch',t:'Ranch',s:'Build your ranch',go:clickId('buildBtn'),need:'buildBtn'},
-   {k:'podium',t:'Leaderboards',s:'Rankings and rewards',go:clickId('lbBtn')},
-   {k:'club',t:'Riding Club',s:'Ride with friends',go:clickId('netBtn')},
-   {k:'race',t:'Race Club',s:'Race other riders',go:clickId('pvpBtn'),need:'pvpBtn'},
-   {k:'character',t:'Character',s:'Your rider\'s look',go:clickId('charBtn'),need:'charBtn'},
-   {k:'style',t:'Horse Style',s:'Dress up your horse',go:clickId('styleBtn'),need:'styleBtn'},
-   {k:'studio',t:'Breed Studio',s:'Design a horse',go:clickId('breedStudioBtn'),need:'breedStudioBtn'},
-   {k:'collection',t:'Collection',s:'Every breed and coat',go:clickId('catalogBtn'),need:'catalogBtn'},
-   {k:'inbox',t:'Inbox',s:'Letters and gifts',go:clickId('inboxBtn'),need:'inboxBtn',pipOf:'inboxBtn'},
-   {k:'chat',t:'Chat',s:'Talk to your club',go:clickId('chatBtn'),need:'chatBtn'},
-   {k:'emotes',t:'Emotes',s:'Wave, laugh and dance',go:clickId('emoteBtn'),need:'emoteBtn'},
-   {k:'whistle',t:'Whistle',s:'Call your horse',go:clickId('whistleBtn'),need:'whistleBtn'}
+   {k:'horses',t:'My horses',s:'Your stable and favourite rides',groups:['home','horses'],source:'stableBtn',go:clickId('stableBtn')},
+   {k:'journey',t:'Journey',s:'Story, quests and daily goals',groups:['home','explore'],source:'questBtn',go:clickId('questBtn')},
+   {k:'events',t:'Riding events',s:'Courses, races and challenges',groups:['home','explore'],source:'eventsBtn',go:clickId('eventsBtn')},
+   {k:'market',t:'Market',s:'Horses, tack and supplies',groups:['home','more'],source:'shopBtn',go:clickId('shopBtn')},
+   {k:'ranch',t:'Build your ranch',s:'Buildings, furniture and land',groups:['home','more'],source:'buildBtn',go:clickId('buildBtn')},
+   {k:'character',t:'Your rider',s:'Clothes, hair and accessories',groups:['home','more'],source:'charBtn',go:clickId('charBtn')},
+   {k:'care',t:'Horse care',s:'Feed, groom and build your bond',groups:['horses'],source:'careBtn',go:clickId('careBtn')},
+   {k:'foal',t:'Breeding',s:'Pair horses and raise foals',groups:['horses'],source:'breedBtn',go:clickId('breedBtn')},
+   {k:'style',t:'Horse style',s:'Coats, grooming and tack',groups:['horses'],source:'styleBtn',go:clickId('styleBtn')},
+   {k:'collection',t:'Breed collection',s:'Discover every breed and coat',groups:['horses'],source:'catalogBtn',go:clickId('catalogBtn')},
+   {k:'studio',t:'Breed studio',s:'Explore horse designs',groups:['horses'],source:'breedStudioBtn',go:clickId('breedStudioBtn')},
+   {k:'whistle',t:'Call your horse',s:'Bring your horse to you',groups:['horses'],source:'whistleBtn',go:clickId('whistleBtn')},
+   {k:'season',t:'Season pass',s:'Progress and seasonal rewards',groups:['explore'],go:()=>{G.hidePanels();G.ui.openLB();document.querySelector('#lbPanel [data-lbtab="pass"]')?.click();}},
+   {k:'treasure',t:'Treasures',s:'Hidden finds around the valley',groups:['explore'],need:()=>!!G.treasures,go:()=>G.run('seTreasures')},
+   {k:'map',t:'World map',s:'Find a trail or your next stop',groups:['explore'],source:'mini',go:clickId('mini')},
+   {k:'podium',t:'Leaderboards',s:'Rankings and earned rewards',groups:['explore'],source:'lbBtn',go:clickId('lbBtn')},
+   {k:'club',t:'Riding club',s:'Ride together with friends',groups:['more'],source:'netBtn',need:()=>!!G.net?.SOCIAL,go:clickId('netBtn')},
+   {k:'race',t:'Race club',s:'Challenge other riders',groups:['more'],source:'pvpBtn',go:clickId('pvpBtn')},
+   {k:'inbox',t:'Inbox',s:'Letters, news and gifts',groups:['more'],source:'inboxBtn',go:clickId('inboxBtn'),pipOf:'inboxBtn'},
+   {k:'chat',t:'Club chat',s:'Talk to your riding club',groups:['more'],source:'chatBtn',need:()=>!!G.net?.SOCIAL,go:clickId('chatBtn')},
+   {k:'emotes',t:'Emotes',s:'Wave, laugh and dance',groups:['more'],source:'emoteBtn',go:clickId('emoteBtn')},
+   {k:'account',t:G.commerce?.storeLabel||'Account & VIP',s:G.commerce?.isStaticStore?'Gem packs and VIP plans':'Gem store and cloud backups',groups:['more'],need:()=>!!G.commerce,go:()=>G.ui.dispatch('store')},
+   {k:'photo',t:'Photo mode',s:'Capture a moment on the trail',groups:['explore'],source:'poseBtn',go:clickId('poseBtn')},
+   {k:'graphics',t:'Graphics',s:'Adjust detail and performance',groups:['more'],source:'qualBtn',go:clickId('qualBtn')},
+   {k:'settings',t:'Settings',s:'Sound, controls and preferences',groups:['more'],source:'settingsBtn',go:clickId('settingsBtn')},
   ];
-  const HANDLED=new Set(MAIN.map(m=>typeof m.need==='string'?m.need:null).filter(Boolean).concat(['shopBtn','stableBtn','eventsBtn','questBtn','careBtn','lbBtn','netBtn','poseBtn','qualBtn','muteBtn','settingsBtn']));
-  const GUESS=[[/breed/i,'foal'],[/style|groom/i,'style'],[/race|pvp/i,'race'],[/chat/i,'chat'],[/mail|inbox|letter/i,'inbox'],[/emote/i,'emotes'],[/char|rider/i,'character'],[/build|ranch/i,'ranch'],[/cat|collect/i,'collection'],[/whistle/i,'whistle'],[/map/i,'map']];
+  const HANDLED=new Set(MAIN.map(m=>m.source).filter(Boolean).concat(['muteBtn']));
+  function content(b,k,title,sub){
+   const icon=document.createElement('span');icon.className='sem-icon';icon.setAttribute('aria-hidden','true');icon.innerHTML=art(k,{b:'#416951',l:'#fffdf8',d:'#244b3e'});
+   const label=document.createElement('span');label.className='sem-title';label.textContent=title;
+   const description=document.createElement('span');description.className='sem-description';description.textContent=sub;
+   const arrow=document.createElement('span');arrow.className='sem-arrow';arrow.setAttribute('aria-hidden','true');arrow.textContent='›';
+   const badges=[...b.querySelectorAll(':scope>.pip,:scope>.badge')];b.replaceChildren(icon,label,description,arrow,...badges);b.setAttribute('aria-label',title);
+  }
   function dressTiles(){
-   let prev=null;
+   let count=0;
    for(const m of MAIN){
-    const have=!m.need||(typeof m.need==='function'?m.need():!!$(m.need));
-    let t=tiles.querySelector(':scope>[data-sem-main="'+m.k+'"]');
-    if(!have){if(t)t.style.display='none';continue;}
-    if(!t){t=document.createElement('button');t.type='button';t.dataset.semMain=m.k;t.dataset.semT=m.t;t.dataset.semS=m.s;
-     t.style.setProperty('--sem-ic',artUri(m.k,m.feat?{b:'#f3d77c',l:'#6a421f',d:'#e2bb52'}:null));
-     if(m.feat){t.classList.add('sem-feat');t.innerHTML='<span class="sem-plate sem-keep"></span><span class="sem-ribbon sem-keep">'+esc(m.feat)+'</span>';}
-     t.addEventListener('click',()=>{try{m.go();}catch(e){}});}
-    t.style.display='';
-    if(m.tag){let g=t.querySelector('.sem-tag');const h=m.tag();if(h){if(!g){g=document.createElement('span');g.className='sem-tag sem-keep';t.appendChild(g);}if(g.dataset.h!==h){g.dataset.h=h;g.innerHTML=h;}}else if(g)g.remove();}
-    if(m.pipOf){const src=$(m.pipOf),sp=src&&src.querySelector('.pip,.badge');const txt=sp?sp.textContent.trim():'';let p=t.querySelector('.pip');
-     if(txt&&txt!=='0'){if(!p){p=document.createElement('span');p.className='pip';t.appendChild(p);}p.textContent=txt;}else if(p)p.remove();}
-    const want=prev?prev.nextSibling:tiles.firstChild; if(t!==want)tiles.insertBefore(t,want); prev=t;
+    const source=m.source?$(m.source):null;
+    const have=(!m.source||!!source)&&(!m.need||m.need())&&(!source||(!source.hidden&&source.style.display!=='none'));
+    let b=tiles.querySelector(':scope>[data-sem-main="'+m.k+'"]');
+    if(!b&&have){b=document.createElement('button');b.type='button';b.dataset.semMain=m.k;b.dataset.semT=m.t;b.dataset.semS=m.s;content(b,m.k,m.t,m.s);
+     b.onclick=()=>{closeForAction();m.go();};tiles.insertBefore(b,empty);}
+    if(!b)continue;
+    const show=have&&(search?(m.t+' '+m.s).toLowerCase().includes(search):m.groups.includes(category));b.hidden=!show;if(show)count++;
+    if(m.pipOf){const src=$(m.pipOf)?.querySelector('.pip,.badge');const txt=src?.textContent.trim()||'';let pip=b.querySelector('.pip');
+     if(txt&&txt!=='0'){if(!pip){pip=document.createElement('span');pip.className='pip';b.appendChild(pip);}if(pip.textContent!==txt)pip.textContent=txt;}else if(pip)pip.remove();}
    }
    for(const b of [...tiles.children]){
-    if(b.dataset.semMain)continue;
-    const idn=b.id||'';
-    if(HANDLED.has(idn)){b.classList.add('sem-util-tile');continue;}
-    if(b.dataset.semT)continue;
-    const title=(b.dataset.mkLabel||b.getAttribute('aria-label')||b.title||((b.querySelector('.mk-dk-lbl')||{}).textContent)||b.textContent||'').replace(/\p{Extended_Pictographic}|️/gu,'').trim().split(/[—(,·]/)[0].trim()||'More';
-    const k=(GUESS.find(g=>g[0].test(idn+' '+title))||[0,'collection'])[1];
-    b.dataset.semT=title.slice(0,22); b.dataset.semS=(b.title&&b.title!==title)?b.title.replace(/\p{Extended_Pictographic}|️/gu,'').trim().slice(0,40):''; b.style.setProperty('--sem-ic',artUri(k));
+    if(b.tagName!=='BUTTON'||b.dataset.semMain)continue;
+    if(HANDLED.has(b.id)){b.classList.add('sem-util-tile');b.setAttribute('aria-hidden','true');b.tabIndex=-1;continue;}
+    if(!b.dataset.semT){const title=(b.dataset.mkLabel||b.getAttribute('aria-label')||b.title||b.textContent||'More').replace(/\p{Extended_Pictographic}|️/gu,'').trim().split(/[—(,·]/)[0].trim();
+     b.dataset.semT=title;b.dataset.semS='More ranch options';content(b,'collection',title,'More ranch options');}
+    const show=search?(b.dataset.semT+' '+b.dataset.semS).toLowerCase().includes(search):category==='more';b.hidden=!show;if(show)count++;
    }
-   if(menu._paintTrack)setTimeout(menu._paintTrack,0);
+   for(const b of categories.children)b.setAttribute('aria-pressed',String(!search&&b.dataset.menuCategory===category));
+   empty.hidden=!!count;
+   menu.dataset.menuView=search?'search':category;
+   hero.hidden=!!search||category!=='home';
+   $('semSectionTitle').textContent=search?'Search results':({home:'Around the ranch',horses:'A life with horses',explore:'Out in the valley',more:'A little of everything'}[category]);
+   $('semSectionHint').textContent=search?count+' destinations':'Make the day your own';
+  }
+  function ranchScene(){
+   const horse=G.seEvents?.horseSvg?.('stand',405,218,1.27,{body:'#70533b',dark:'#473c2c',mane:'#302e23',noRider:true})||'';
+   return '<svg viewBox="0 0 600 330" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">'
+    +'<defs><linearGradient id="semSky" x2="0" y2="1"><stop stop-color="#e6d9b2"/><stop offset="1" stop-color="#eeead2"/></linearGradient></defs>'
+    +'<path fill="url(#semSky)" d="M0 0h600v330H0z"/><circle cx="400" cy="75" r="36" fill="#fcf4d4"/><circle cx="400" cy="75" r="48" fill="none" stroke="#faf0d1" opacity=".4"/>'
+    +'<path d="M0 189 112 89 188 149 282 59 397 152 478 107 600 180V330H0Z" fill="#b9c3a7"/><path d="m282 59-35 75 38-17 39 32z" fill="#d8dbc0"/>'
+    +'<path d="M0 210Q136 128 277 179T600 166V330H0Z" fill="#88a182"/><path d="M0 251Q152 181 325 211T600 180V330H0Z" fill="#6d8b65"/>'
+    +'<path d="M207 202q89-9 39 53t101 75h143q-200-60-190-90t-93-38" fill="#c7c59c"/><path d="M0 298Q155 227 293 278T600 251V330H0Z" fill="#516e4f"/>'
+    +'<g transform="translate(133 134)"><path d="M0 65h95V12L47-16 0 12Z" fill="#d6c7a3"/><path d="m-9 12 56-38 58 38h-16L47-12 7 12Z" fill="#385a49"/><path d="M32 65V29h32v36" fill="#587363"/><path d="m36 34 24 26m0-26L36 60" stroke="#c9c9a8" stroke-width="2"/><path d="M7 29h13v13H7zm68 0h13v13H75z" fill="#78907b"/></g>'
+    +'<g fill="#385d48"><path d="m511 70-34 89h68z"/><path d="m548 101-26 71h53z"/><path d="m491 122-20 56h41z"/></g><g stroke="#6c7650" stroke-width="5"><path d="M511 128v79m38-60v64m-57-44v44"/></g>'
+    +'<g stroke="#dad6ac" fill="none" stroke-width="4" opacity=".8"><path d="m310 231 280-27m-277 40 277-29"/><path d="m326 221 2 35m55-41 2 35m55-41 2 35m55-41 2 35m55-41 2 35"/></g>'
+    +'<ellipse cx="401" cy="269" rx="67" ry="9" fill="#355038" opacity=".3"/>'+horse
+    +'<g fill="#d6cf91" opacity=".8"><circle cx="319" cy="300" r="2"/><circle cx="340" cy="310" r="2"/><circle cx="544" cy="279" r="2"/><circle cx="555" cy="291" r="2"/><circle cx="183" cy="277" r="2"/></g>'
+    +'<g fill="none" stroke="#65795b" stroke-width="2"><path d="M300 50q7-6 14 0 7-6 14 0m131 60q5-5 11 0 5-5 10 0"/></g></svg>';
   }
   function paintHead(){
-   try{
-    const s=G.save.fresh()||{}, h=(G.horse&&G.horse.ridden&&G.horse.ridden())||{};
-    let L=1; try{L=G.ranchSys&&G.ranchSys.ranchLevel?G.ranchSys.ranchLevel(s):1;}catch(e){}
-    const lv=$('semLv'); if(lv)lv.textContent=String(L);
-    const nm=$('seMenuName'); if(nm)nm.textContent=String(s.name||s.playerName||'Your ranch');
-    const sub=$('seMenuSub'); if(sub)sub.textContent=h.name?('with '+h.name+' Lv. '+(h.level||1)):'';
-    const fr=$('semFootR'); if(fr)fr.textContent=(s.horses||[]).length+' horses · ranch level '+L;
-    const pr=G.run('sePromoInfo');
-    if(pr){$('semPromoTag').textContent=pr.tag||'NEW';$('semPromoT').textContent=pr.t||'';$('semPromoS').textContent=pr.s||'';}
-    else if(G.treasures){const n=Object.keys((s.treasure&&s.treasure.found)||{}).length;$('semPromoTag').textContent=n?(n+'/'+G.treasures.total):'NEW';
-     $('semPromoT').textContent='Golden horseshoes';$('semPromoS').textContent=n>=G.treasures.total?'You found every one!':'Hidden on rocks and in the water';}
-    else $('semPromo').style.display='none';
-   }catch(e){}
+   const s=G.save.fresh()||{},h=G.horse?.ridden?.()||{};
+   $('seMenuName').textContent=s.ranchName||s.name||s.playerName||'Meadowlark Ranch';
+   $('seMenuSub').textContent='A little room to roam.';
+   const n=(s.horses||[]).length;$('semFootR').textContent=n+' '+(n===1?'horse':'horses')+' at home';
+   footer.querySelector('[data-sem-util="muteBtn"]').textContent=G.audio?.muted?.()?'Sound off':'Sound on';
+   const goal=($('questTrack')?.textContent||'').replace(/\p{Extended_Pictographic}|️/gu,'').split('·').map(v=>v.trim()).filter(Boolean);
+   const quest=G.quest,mission=quest?.STORY?.[quest.storyIdx?.()];
+   $('semGoal').textContent=mission?.label||goal.at(-1)||'Take the long way home.';
+   $('semChapter').textContent=mission?.ch||(goal.length>2?goal.slice(1,-1).join(' · '):'There is always another trail to discover.');
+   $('semRidden').textContent=h.name?'In the saddle with '+h.name:'Welcome to the valley';
+   if(!hero.querySelector('.sem-hero-art>svg'))hero.querySelector('.sem-hero-art').innerHTML=ranchScene();
   }
-  new MutationObserver(()=>{if(menu.classList.contains('on')){dressTiles();paintHead();}}).observe(menu,{attributes:true,attributeFilter:['class']});
-  new MutationObserver(()=>dressTiles()).observe(tiles,{childList:true});
+  new MutationObserver(()=>{if(menu.classList.contains('on')){category='home';search='';input.value='';dressTiles();paintHead();body.scrollTop=0;}}).observe(menu,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(dressTiles).observe(tiles,{childList:true});
   dressTiles();
-  G.on('sePromo',()=>{try{G.run('seTreasures');}catch(e){}});
+  G.on('sePromo',()=>G.run('seTreasures'));
  }
 
  /* ---------------------------------------------------------------- snapshots ---------------

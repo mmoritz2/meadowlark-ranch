@@ -259,8 +259,99 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
  body.se-hud #chatBar input{flex:1 1 calc(100% - 96px)!important}   /* wide enough that only send and close share its row */
  body.se-hud #chatBar #chatSend{order:1}body.se-hud #chatBar #seChatX{order:2}body.se-hud #chatBar [data-emote]{order:3}
  body.se-hud #chatTabs{bottom:calc(384px + env(safe-area-inset-bottom))!important;width:calc(100vw - 96px)!important}
+}`;
+ /* Riding controls stay small until the player asks for more. */
+ css.textContent+=`
+body.se-hud{--se-glass:rgba(27,49,38,.9);--se-rim:rgba(233,240,221,.72)}
+body.se-hud #netBtn.se-hexbtn,body.se-hud #lbBtn.se-hexbtn,body.se-hud #careBtn.se-hexbtn,
+body.se-hud #shopBtn.se-market,body.se-hud #seMarketLbl,body.se-hud #seEmote,body.se-hud #seWhistle,
+body.se-hud #photoBtn.se-act{display:none!important}
+#seNavPlate{position:fixed;left:calc(14px + env(safe-area-inset-left));top:calc(14px + env(safe-area-inset-top));width:196px;height:112px;
+ border:1px solid rgba(242,240,221,.18);border-radius:18px;background:rgba(24,42,33,.55);box-shadow:0 5px 22px rgba(0,0,0,.12);pointer-events:none!important}
+body.se-hud #mkMiniPlate,body.se-hud #mini{left:calc(26px + env(safe-area-inset-left))!important;top:calc(38px + env(safe-area-inset-top))!important;width:60px!important;height:60px!important}
+body.se-hud #mkMiniPlate::after{display:none!important}
+body.se-hud #mini{border:2px solid rgba(241,245,228,.82)!important;box-shadow:none!important;cursor:pointer}
+body.se-hud #seNorth{left:calc(47px + env(safe-area-inset-left));top:calc(29px + env(safe-area-inset-top));background:#e9eedf;color:#294333;box-shadow:none;font-size:10px}
+body.se-hud #seMenuBtn,#seQuickToggle{position:fixed;left:calc(98px + env(safe-area-inset-left));width:100px;height:44px;min-height:44px;min-width:0;padding:0 8px;
+ border-radius:10px!important;border:1px solid rgba(233,240,221,.25);background:rgba(233,240,221,.1);color:#fff;box-shadow:none!important;cursor:pointer;
+ display:flex;align-items:center;justify-content:center;gap:6px;font:800 12px/1 Nunito,system-ui,sans-serif}
+body.se-hud #seMenuBtn{top:calc(22px + env(safe-area-inset-top));background:rgba(245,241,221,.94);color:#294333;border-color:transparent}
+body.se-hud #seMenuBtn i{width:13px;height:2px;background:#294333;box-shadow:0 -4px 0 #294333,0 4px 0 #294333}
+body.se-hud #seMenuBtn::after{content:none!important}
+body.se-hud #seMenuBtn .se-pip{position:static!important;display:flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 4px;border:0!important;border-radius:6px;
+ background:#d5b86e!important;color:#352c12!important;box-shadow:none;font:900 10px/1 Nunito,system-ui,sans-serif!important}
+#seQuickToggle{top:calc(74px + env(safe-area-inset-top));font-weight:700;color:#e6eadf;background:transparent}
+#seQuickToggle::after,#seGoalToggle::after{content:'⌄';font:700 17px/1 system-ui;margin-left:auto}
+#seQuickToggle[aria-expanded="true"]::after,#seGoalToggle[aria-expanded="true"]::after{content:'⌃'}
+#seQuickToggle:hover,#seQuickToggle[aria-expanded="true"]{background:rgba(233,240,221,.14)}
+#seQuickPanel{position:fixed;left:calc(14px + env(safe-area-inset-left));top:calc(134px + env(safe-area-inset-top));display:flex;gap:6px;padding:7px;width:292px;
+ border:1px solid rgba(233,240,221,.25);border-radius:12px;background:rgba(27,49,38,.95);box-shadow:0 5px 16px rgba(0,0,0,.15)}
+#seQuickPanel[hidden]{display:none!important}
+body.se-hud #seQuickPanel>.se-hexbtn{position:relative!important;inset:auto!important;flex:1;width:auto!important;height:44px!important;min-height:44px!important;
+ border:1px solid rgba(233,240,221,.2)!important;border-radius:8px!important;background-color:rgba(233,240,221,.08)!important;
+ background-size:26px 24px!important;background-position:4px center!important;filter:none!important;box-shadow:none!important}
+body.se-hud #seQuickPanel>.se-hexbtn::after{display:block!important;position:absolute;left:32px;right:3px;top:0;height:42px;color:#fff;font:800 11px/42px Nunito,system-ui,sans-serif!important;letter-spacing:0;text-transform:none}
+body.se-hud #stableBtn.se-hexbtn::after{content:'Horses'!important}
+body.se-hud #questBtn.se-hexbtn::after{content:'Journey'!important}
+body.se-hud #eventsBtn.se-hexbtn::after{content:'Events'!important}
+body.se-hud .se-hexbtn .mk-dk-lbl{display:none!important}
+body.se-hud .se-hexbtn .pip,body.se-hud .se-hexbtn .badge{top:-5px!important;right:-4px!important;min-width:16px;height:16px;padding:0 4px;font-size:10px!important;line-height:13px!important;box-shadow:none!important}
+#seGoal{position:fixed;left:calc(14px + env(safe-area-inset-left));top:calc(134px + env(safe-area-inset-top));width:min(286px,calc(100vw - 28px));pointer-events:none!important}
+#seGoal[hidden]{display:none!important}
+body.se-shortcuts-open #seGoal{top:calc(200px + env(safe-area-inset-top))}
+#seGoalToggle{display:flex;align-items:center;gap:10px;width:196px;min-height:44px;padding:0 13px;border:1px solid rgba(233,240,221,.22);border-radius:11px;
+ background:rgba(27,49,38,.78);color:#e9eedf;font:700 12px/1 Nunito,system-ui,sans-serif;box-shadow:none;cursor:pointer;pointer-events:auto}
+#seGoalToggle[aria-expanded="true"]{width:100%;border-radius:11px 11px 0 0;border-bottom-color:rgba(233,240,221,.12);color:#fff}
+body.se-hud #seGoal #questTrack{position:static!important;inset:auto!important;transform:none!important;max-width:none!important;width:100%;padding:11px 13px 13px!important;
+ margin:0!important;border:1px solid rgba(233,240,221,.22)!important;border-top:0!important;border-radius:0 0 11px 11px!important;
+ background:rgba(27,49,38,.9)!important;color:#f3f2e7;font:600 12px/1.55 Nunito,system-ui,sans-serif!important;text-align:left!important;text-shadow:none!important;
+ white-space:normal!important;overflow:visible!important;box-shadow:none!important;pointer-events:auto}
+body.se-hud #seGoal #questTrack::before{display:none!important}
+body.se-hud #seGoal #questTrack[hidden]{display:none!important}
+#seHudRoot :is(button,canvas):focus-visible,body.se-hud #mini:focus-visible{outline:3px solid #f4d990!important;outline-offset:3px}
+body.se-hud #hud{top:calc(20px + env(safe-area-inset-top));right:calc(16px + env(safe-area-inset-right))}
+body.se-hud #wallet{flex-direction:row!important;gap:7px!important;align-items:center!important}
+body.se-hud #wallet .w{height:32px;min-width:76px;margin-left:0;padding:0 10px!important;gap:6px;border-radius:9px!important;
+ background:rgba(27,49,38,.8)!important;border:1px solid rgba(233,240,221,.25)!important;box-shadow:none!important;font-size:13px!important;letter-spacing:0}
+body.se-hud #wallet .w>i{position:static;left:auto;top:auto;transform:none;width:18px;height:18px;flex:none;font-size:16px;background:none!important;border:0!important;box-shadow:none!important}
+body.se-hud:not(.touch) #stickZone,body.se-hud:not(.touch) #seJump{display:none!important}
+body.se-hud.touch #stickZone{left:calc(6px + env(safe-area-inset-left))!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;width:160px!important;height:160px!important}
+body.se-hud.touch #stickBase{left:80px;top:80px;width:132px!important;height:132px!important;margin:-66px 0 0 -66px!important;
+ border:2px solid rgba(233,240,221,.55)!important;background:rgba(29,53,39,.17)!important;opacity:.72!important}
+body.se-hud.touch #stickBase::before,body.se-hud.touch #stickBase::after{display:none}
+body.se-hud.touch #stickKnob{left:80px;top:80px;width:56px!important;height:56px!important;margin:-28px 0 0 -28px!important;
+ background:rgba(232,238,222,.9)!important;box-shadow:0 2px 6px rgba(0,0,0,.2)!important}
+body.se-hud.touch #seJump{width:80px;height:80px;right:calc(16px + env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));filter:none}
+body.se-hud #seMount{width:50px;height:50px;right:calc(16px + env(safe-area-inset-right));bottom:calc(20px + env(safe-area-inset-bottom))}
+body.se-hud #flyBtn.se-act,body.se-hud #breathBtn.se-act{width:46px!important;height:46px!important;bottom:calc(22px + env(safe-area-inset-bottom));filter:none}
+body.se-hud #flyBtn.se-act{right:calc(80px + env(safe-area-inset-right))}
+body.se-hud #breathBtn.se-act{right:calc(140px + env(safe-area-inset-right))}
+body.se-hud.touch #seMount{bottom:calc(168px + env(safe-area-inset-bottom))}
+body.se-hud.touch #flyBtn.se-act{right:calc(76px + env(safe-area-inset-right));bottom:calc(170px + env(safe-area-inset-bottom))}
+body.se-hud.touch #breathBtn.se-act{right:calc(132px + env(safe-area-inset-right));bottom:calc(170px + env(safe-area-inset-bottom))}
+body.se-hud.touch:not(.freecam):not(.summoning):not(.posing) #touch{flex-direction:row;gap:7px;right:calc(16px + env(safe-area-inset-right))!important;bottom:calc(112px + env(safe-area-inset-bottom))!important}
+body.se-hud #touch button{width:44px!important;height:44px!important;font-size:18px!important;border-width:1px!important;box-shadow:none!important}
+body.se-hud:not(.se-course) #toasts{top:calc(64px + env(safe-area-inset-top))!important;bottom:auto!important;left:auto!important;right:calc(16px + env(safe-area-inset-right))!important;
+ transform:none!important;width:min(340px,calc(100vw - 32px))!important;align-items:stretch!important}
+body.se-hud .toast{font-size:12px!important;line-height:1.45!important;padding:10px 12px!important;border-radius:12px!important;box-shadow:0 4px 18px rgba(0,0,0,.16)!important}
+body.se-hud .toast .mk-toast-ico{width:22px;height:22px;font-size:13px}
+body.se-hud .toast.se-passive-notice{display:none!important}
+body.se-hud #chatBar{bottom:calc(238px + env(safe-area-inset-bottom))!important}
+body.se-hud #chatTabs{bottom:calc(282px + env(safe-area-inset-bottom))!important}
+body.se-hud #seChatX{width:44px!important;height:44px!important}
+body.se-hud:is(.freecam,.summoning,.posing) #stickZone{display:none!important}
+body.se-course :is(#seNavPlate,#seQuickToggle,#seQuickPanel,#seGoal){display:none!important}
+@media(max-width:760px){
+ body.se-hud #wallet{flex-direction:column!important;align-items:flex-end!important;gap:6px!important}
+ body.se-hud #wallet .w{min-width:76px;height:30px;padding:0 8px!important;font-size:12px!important}
+ body.se-hud:not(.se-course) #toasts{top:auto!important;bottom:calc(234px + env(safe-area-inset-bottom))!important;left:14px!important;right:14px!important;width:auto!important;max-width:none}
 }
-/* Pace is a choice, independent of the thumbstick. Touch targets stay at least 44 px. */
+@media(max-height:500px) and (min-width:600px){
+ body.se-hud:not(.se-course) #toasts{top:auto!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:min(340px,40vw)!important}
+}
+body.se-hud:is(.se-screen-open,.se-market-open,.se-ov-open) #toasts{top:auto!important;bottom:calc(16px + env(safe-area-inset-bottom))!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:min(360px,calc(100vw - 32px))!important;max-width:none}
+`;
+ css.textContent+=`/* Pace is a choice, independent of the thumbstick. Touch targets stay at least 44 px. */
 #seRidePace{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:4px;border:1px solid rgba(246,236,210,.55);border-radius:16px;background:rgba(18,22,36,.8);color:var(--se-ink);font:800 12px/1.2 system-ui;touch-action:none}
 #seRidePace button{min-width:44px;height:44px;padding:0 10px;border:0;border-radius:10px;background:rgba(255,255,255,.08);color:var(--se-ink);font:800 17px/1 system-ui;cursor:pointer;touch-action:none}
 #seRidePace button:active,#seRidePace button[aria-pressed="true"]{background:#e6b544;color:#201b12}
@@ -273,38 +364,22 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
 body.se-hud #tGal{display:none!important}
 body.se-riding-flight #tGal,body.se-riding-foot #tGal{display:block!important}
 body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
-@media(max-width:760px){body.se-hud #questTrack{left:8px!important;max-width:calc(100vw - 24px)!important;max-height:72px;overflow:hidden;font-size:13px!important}body.se-hud #stickZone{width:min(190px,49vw)!important;height:190px!important;bottom:calc(78px + env(safe-area-inset-bottom))!important}body.se-hud #stickBase,body.se-hud #stickKnob{left:min(95px,24.5vw);top:95px}body.se-hud #seMount{right:calc(126px + env(safe-area-inset-right))!important;bottom:calc(128px + env(safe-area-inset-bottom))!important}#seRidePace{bottom:calc(8px + env(safe-area-inset-bottom))}body.se-hud #photoBtn.se-act{bottom:calc(72px + env(safe-area-inset-bottom))}#seWhistle{bottom:calc(64px + env(safe-area-inset-bottom))}#seEmote{bottom:calc(68px + env(safe-area-inset-bottom))}}
-/* Landscape phones need a short-screen layout, regardless of CSS width. */
+
+/* Leave room for the live pace/STOP strip beneath the riding controls. */
+@media(max-width:760px){
+ body.se-hud.touch #stickZone{bottom:calc(78px + env(safe-area-inset-bottom))!important}
+ body.se-hud.touch #seJump{bottom:calc(80px + env(safe-area-inset-bottom))}
+ body.se-hud.touch:not(.freecam):not(.summoning):not(.posing) #touch{bottom:calc(232px + env(safe-area-inset-bottom))!important}
+ #seRidePace{bottom:calc(8px + env(safe-area-inset-bottom))}
+}
 @media(max-height:520px) and (min-width:561px){
- body.se-hud.touch #mkMiniPlate,body.se-hud.touch #mini{left:calc(60px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important;width:76px!important;height:76px!important}
- body.se-hud.touch #seNorth{left:calc(89px + env(safe-area-inset-left));top:calc(3px + env(safe-area-inset-top))}
- body.se-hud.touch #seMenuBtn{width:44px;height:44px;left:calc(8px + env(safe-area-inset-left));top:calc(12px + env(safe-area-inset-top))}
- body.se-hud.touch .se-hexbtn{width:44px!important;height:44px!important}
- body.se-hud.touch #stableBtn{left:calc(148px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
- body.se-hud.touch #careBtn{left:calc(194px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
- body.se-hud.touch #eventsBtn{left:calc(240px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
- body.se-hud.touch #questBtn{left:calc(286px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
- body.se-hud.touch #netBtn{left:calc(332px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
- body.se-hud.touch #lbBtn{left:calc(378px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
- body.se-hud.touch #wallet{flex-direction:row!important;gap:8px!important}body.se-hud.touch #wallet .w{min-width:72px;height:25px;font-size:12px!important}body.se-hud.touch #wallet .w>i{width:30px;height:30px;font-size:17px}
- body.se-hud.touch #shopBtn{top:calc(55px + env(safe-area-inset-top))!important;right:calc(16px + env(safe-area-inset-right))!important}
- body.se-hud.touch #seMarketLbl{font-size:10px;width:64px}
- body.se-hud.touch #questTrack{left:calc(148px + env(safe-area-inset-left))!important;top:calc(65px + env(safe-area-inset-top))!important;max-width:min(360px,52vw)!important;font-size:12px!important;padding:7px 10px 7px 26px!important;max-height:61px;overflow:hidden}
- body.se-hud.touch #stickZone{left:calc(8px + env(safe-area-inset-left))!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;width:176px!important;height:176px!important}
- body.se-hud.touch #stickBase{left:88px;top:88px;width:136px!important;height:136px!important;margin:-68px 0 0 -68px!important}
- body.se-hud.touch #stickKnob{left:88px;top:88px;width:58px!important;height:58px!important;margin:-29px 0 0 -29px!important}
- body.se-hud.touch #stickBase::before{transform:translate(0,-58px);box-shadow:0 116px 0 rgba(246,236,210,.75)}body.se-hud.touch #stickBase::after{transform:translate(-58px,0);box-shadow:116px 0 0 rgba(246,236,210,.75)}
- body.se-hud.touch #seJump{width:82px;height:82px;right:calc(16px + env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom))}
+ body.se-hud.touch #stickZone{bottom:calc(8px + env(safe-area-inset-bottom))!important}
+ body.se-hud.touch #seJump{bottom:calc(18px + env(safe-area-inset-bottom))}
  body.se-hud.touch #seMount{width:48px!important;height:48px!important;right:calc(112px + env(safe-area-inset-right))!important;bottom:calc(24px + env(safe-area-inset-bottom))!important}
- body.se-hud.touch #seWhistle,body.se-hud.touch #seEmote,body.se-hud.touch #photoBtn.se-act{display:none!important}
- body.se-hud.touch #flyBtn.se-act,body.se-hud.touch #breathBtn.se-act{width:46px!important;height:46px!important;right:calc(16px + env(safe-area-inset-right))!important}
- body.se-hud.touch #flyBtn.se-act{bottom:calc(108px + env(safe-area-inset-bottom))!important}body.se-hud.touch #breathBtn.se-act{bottom:calc(162px + env(safe-area-inset-bottom))!important}
+ body.se-hud.touch #flyBtn.se-act{right:calc(18px + env(safe-area-inset-right));bottom:calc(110px + env(safe-area-inset-bottom))}
+ body.se-hud.touch #breathBtn.se-act{right:calc(72px + env(safe-area-inset-right));bottom:calc(110px + env(safe-area-inset-bottom))}
+ body.se-hud.touch #touch{bottom:calc(166px + env(safe-area-inset-bottom))!important}
  body.se-hud.touch #tSpr,body.se-hud.touch #tTrick{display:none!important}
- body.se-hud.touch #touch{right:calc(112px + env(safe-area-inset-right))!important;bottom:calc(86px + env(safe-area-inset-bottom))!important}
- body.se-hud.touch #touch button{width:44px!important;height:44px!important}
- body.se-hud.touch #seRidePace{bottom:calc(12px + env(safe-area-inset-bottom))}
- body.se-hud.touch #toasts{top:calc(114px + env(safe-area-inset-top))!important;max-width:360px!important;font-size:12px!important}
- body.se-hud.touch #chatBar{bottom:calc(74px + env(safe-area-inset-bottom))!important;left:50%!important;transform:translateX(-50%);width:min(390px,55vw)!important}body.se-hud.touch #chatTabs{bottom:calc(118px + env(safe-area-inset-bottom))!important}
 }
 `;
  document.head.appendChild(css);
@@ -316,16 +391,56 @@ body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
 
  /* ☰ and the sheet it opens */
  const menuBtn=document.createElement('button'); menuBtn.id='seMenuBtn'; menuBtn.title='Menu'; menuBtn.setAttribute('aria-label','Menu');
- menuBtn.innerHTML='<i></i>'; root.appendChild(menuBtn);
+ menuBtn.type='button';menuBtn.innerHTML='<i aria-hidden="true"></i><span>Menu</span>'; root.appendChild(menuBtn);
  const menu=document.createElement('div'); menu.id='seMenu'; menu.setAttribute('role','dialog'); menu.setAttribute('aria-label','Menu');
  menu.innerHTML='<div class="se-sheet"><div class="se-bar"><span><b id="seMenuName">Menu</b><br><small id="seMenuSub"></small></span><button class="se-x" aria-label="Close">✕</button></div><div class="se-tiles" id="seTiles"></div></div>';
  document.body.appendChild(menu);
  const tiles=menu.querySelector('#seTiles');
- const closeMenu=()=>menu.classList.remove('on');
- menuBtn.onclick=()=>{ paintMenuHead(); menu.classList.toggle('on'); };
- menu.querySelector('.se-x').onclick=closeMenu;
- menu.addEventListener('click',e=>{ if(e.target===menu)closeMenu(); else if(e.target.closest('.se-tiles>button'))setTimeout(closeMenu,0); });
- document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&menu.classList.contains('on'))closeMenu(); });
+ menu.tabIndex=-1;
+ menu.setAttribute('aria-modal','true');
+ menuBtn.setAttribute('aria-controls','seMenu');
+ menuBtn.setAttribute('aria-expanded','false');
+ let menuFocus=null;
+ const menuBackground=new Map();
+ function restoreBackground(){
+  for(const [el,wasInert] of menuBackground)el.inert=wasInert;
+  menuBackground.clear();
+ }
+ function closeMenu(restoreFocus=true){
+  if(!menu.classList.contains('on'))return;
+  menu.classList.remove('on');
+  document.body.classList.remove('se-menu-open');
+  menuBtn.setAttribute('aria-expanded','false');
+  restoreBackground();
+  if(restoreFocus){const target=menuFocus?.isConnected&&!menuFocus.closest('[inert]')&&menuFocus.checkVisibility()?menuFocus:menuBtn;target.focus({preventScroll:true});}
+ }
+ function openMenu(){
+  if(menu.classList.contains('on'))return;
+  menuFocus=document.activeElement;
+  setQuick(false);
+  G.hidePanels();G.input?.reset();paintMenuHead();
+  for(const el of document.body.children){
+   if(el!==menu&&!el.matches('script,style,link')&&el.checkVisibility()){menuBackground.set(el,el.inert);el.inert=true;}
+  }
+  menu.classList.add('on');document.body.classList.add('se-menu-open');
+  menuBtn.setAttribute('aria-expanded','true');
+  menu.focus({preventScroll:true});
+ }
+ menuBtn.onclick=()=>menu.classList.contains('on')?closeMenu():openMenu();
+ menu.querySelector('.se-x').onclick=()=>closeMenu();
+ menu.addEventListener('click',e=>{if(e.target===menu)closeMenu();});
+ menu.addEventListener('keydown',e=>{
+  if(!menu.classList.contains('on'))return;
+  e.stopPropagation();
+  if(e.key==='Escape'){e.preventDefault();closeMenu();return;}
+  if(e.key==='Tab'){
+   const focusable=[...menu.querySelectorAll('button,input,select,a[href],[tabindex]')].filter(el=>el.tabIndex>=0&&!el.disabled&&!el.closest('[inert]')&&el.checkVisibility());
+   const first=focusable[0],last=focusable.at(-1),active=document.activeElement;
+   if(!first){e.preventDefault();menu.focus();}
+   else if(e.shiftKey&&(active===first||active===menu)){e.preventDefault();last.focus();}
+   else if(!e.shiftKey&&(active===last||active===menu)){e.preventDefault();first.focus();}
+  }
+ });
  function paintMenuHead(){
   try{
    const s=G.save.fresh()||{}, h=(s.horses||[])[G.horse.rideIdx()]||{};
@@ -333,6 +448,60 @@ body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
    $('seMenuSub').textContent=h.name?('with '+h.name+' · Lv '+(h.level||1)):'';
   }catch(e){}
  }
+
+ /* A small home for navigation, with extra destinations one tap away. These are still the
+    game's original buttons, so their click handlers and notification counts stay live. */
+ const navPlate=document.createElement('div');navPlate.id='seNavPlate';navPlate.setAttribute('aria-hidden','true');root.prepend(navPlate);
+ const quickToggle=document.createElement('button');quickToggle.id='seQuickToggle';quickToggle.type='button';quickToggle.textContent='Shortcuts';
+ quickToggle.setAttribute('aria-controls','seQuickPanel');quickToggle.setAttribute('aria-expanded','false');root.appendChild(quickToggle);
+ const quickPanel=document.createElement('div');quickPanel.id='seQuickPanel';quickPanel.hidden=true;quickPanel.setAttribute('role','group');quickPanel.setAttribute('aria-label','Quick destinations');root.appendChild(quickPanel);
+ let quickOpen=false;
+ function setQuick(on,restoreFocus=false){
+  quickOpen=!!on;quickPanel.hidden=!quickOpen;quickToggle.setAttribute('aria-expanded',String(quickOpen));
+  document.body.classList.toggle('se-shortcuts-open',quickOpen);
+  if(restoreFocus)quickToggle.focus({preventScroll:true});
+ }
+ quickToggle.onclick=()=>setQuick(!quickOpen);
+ quickPanel.addEventListener('click',e=>{if(e.target.closest('button'))setQuick(false);},true);
+ for(const el of[quickToggle,quickPanel])el.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&quickOpen){e.preventDefault();e.stopPropagation();setQuick(false,true);}
+  else if(e.key==='Enter'||e.key===' ')e.stopPropagation();
+ });
+ G.on('escape',()=>{if(quickOpen){setQuick(false,true);return true;}});
+ const blockedClasses=['se-screen-open','se-market-open','se-ov-open','se-char-open','se-menu-open','se-course','freecam','posing','summoning'];
+ new MutationObserver(()=>{if(quickOpen&&blockedClasses.some(c=>document.body.classList.contains(c)))setQuick(false);}).observe(document.body,{attributes:true,attributeFilter:['class']});
+ const mini=$('mini');
+ if(mini){mini.tabIndex=0;mini.setAttribute('role','button');mini.setAttribute('aria-label','Open world map');mini.title='Open world map';
+  mini.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();mini.click();}});
+ }
+
+ /* Keep the live quest text intact; only its disclosure state belongs to this presentation. */
+ const goal=document.createElement('div');goal.id='seGoal';
+ const goalToggle=document.createElement('button');goalToggle.id='seGoalToggle';goalToggle.type='button';goalToggle.textContent='Current goal';goalToggle.setAttribute('aria-controls','questTrack');
+ const track=$('questTrack');goal.appendChild(goalToggle);if(track)goal.appendChild(track);root.appendChild(goal);
+ let goalExpanded=false;
+ try{goalExpanded=localStorage.getItem('mlrHudGoalExpanded')==='1';}catch(e){}
+ function setGoalExpanded(on,persist=false){
+  goalExpanded=!!on;goalToggle.setAttribute('aria-expanded',String(goalExpanded));goalToggle.title=goalExpanded?'Hide current goal':'Show current goal';
+  if(track)track.hidden=!goalExpanded;
+  if(persist)try{localStorage.setItem('mlrHudGoalExpanded',goalExpanded?'1':'0');}catch(e){}
+ }
+ goalToggle.onclick=()=>setGoalExpanded(!goalExpanded,true);
+ goalToggle.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')e.stopPropagation();});
+ setGoalExpanded(goalExpanded);
+
+ /* Only known background announcements are quieted. Purchases, rewards and every player
+    action keep their full message, including long errors; no generic length filter is used. */
+ function quietNotice(el){
+  const text=(el.querySelector('.mk-toast-txt')?.textContent||el.textContent||'').replace(/^[^\p{L}\p{N}]+/u,'').trim();
+  if(/^(Back in the Season Call this season:|New in the club: friends with requests,|Kestrel Basin has grown:)/.test(text)||/^Double-gem weekend is on — every gem you earn today counts twice!?$/.test(text)){
+   el.classList.add('se-passive-notice');el.setAttribute('aria-hidden','true');
+  }
+ }
+ const toastBox=$('toasts');
+ if(toastBox){toastBox.querySelectorAll('.toast').forEach(quietNotice);new MutationObserver(records=>{
+  for(const record of records)for(const node of record.addedNodes)if(node.nodeType===1&&node.matches('.toast'))quietNotice(node);
+ }).observe(toastBox,{childList:true});}
 
  /* the gold market label */
  const mLbl=document.createElement('div'); mLbl.id='seMarketLbl'; mLbl.textContent='MARKET'; document.body.appendChild(mLbl);
@@ -349,17 +518,19 @@ body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
   eventsBtn:{icon:'events', x:146,y:156}
  };
  const ACTS={flyBtn:'fly',breathBtn:'breathe',photoBtn:'photo'};
+ const QUICK={stableBtn:'Horses',questBtn:'Journey',eventsBtn:'Events'};
  const placed=new Set();
  function hexify(el,spec){
   el.classList.add('se-hexbtn');
   el.style.setProperty('background-image',hexSvg(spec.icon),'important');
   el.style.left='calc('+spec.x+'px + env(safe-area-inset-left))';
   el.style.top='calc('+spec.y+'px + env(safe-area-inset-top))';
-  root.appendChild(el);
+  (QUICK[el.id]?quickPanel:root).appendChild(el);
+  if(QUICK[el.id]){el.setAttribute('aria-label',QUICK[el.id]);el.title=QUICK[el.id];}
  }
  function place(){
   /* the hexes and the market: move the real buttons */
-  for(const idn in HEXES){ try{ const el=$(idn); if(el&&el.parentElement!==root){hexify(el,HEXES[idn]);placed.add(idn);} }catch(e){} }
+  for(const idn in HEXES){ try{ const el=$(idn); if(el&&el.parentElement!==(QUICK[idn]?quickPanel:root)){hexify(el,HEXES[idn]);placed.add(idn);} }catch(e){} }
   try{
    const sb=$('shopBtn');
    if(sb&&!sb.classList.contains('se-market')){
@@ -384,11 +555,22 @@ body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
     if(L)b.dataset.seLbl=L;
    }
   }catch(e){}
-  /* the ☰ carries a pip when anything inside it does */
+  /* Count meaningful badges on original controls once, never duplicate menu tiles or empty dots. */
   try{
-   const any=[...tiles.querySelectorAll('.pip,.badge')].some(p=>p.offsetParent!==null||p.textContent.trim());
+   let count=0;
+   for(const idn of placed){
+    const button=$(idn);if(!button||button.hidden||button.style.display==='none')continue;
+    let n=0;
+    for(const p of button.querySelectorAll('.pip,.badge')){
+     if(p.hidden||p.style.display==='none')continue;
+     const text=p.textContent.trim();n=Math.max(n,/^\d+\+?$/.test(text)?Number.parseInt(text,10):text==='!'?1:0);
+    }
+    count+=n;
+   }
    let mp=menuBtn.querySelector('.se-pip');
-   if(any&&!mp){mp=document.createElement('span');mp.className='se-pip';menuBtn.appendChild(mp);} else if(!any&&mp)mp.remove();
+   if(count){if(!mp){mp=document.createElement('span');mp.className='se-pip';mp.setAttribute('aria-hidden','true');menuBtn.appendChild(mp);}mp.textContent=count>99?'99+':String(count);}
+   else if(mp)mp.remove();
+   const label=count?'Menu, '+count+' update'+(count===1?'':'s'):'Menu';menuBtn.setAttribute('aria-label',label);menuBtn.title=label;
   }catch(e){}
  }
 
@@ -418,7 +600,7 @@ body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
  stop.addEventListener('keyup',e=>{if(['Space','Enter'].includes(e.code)){e.preventDefault();e.stopPropagation();G.riding?.brake(false);}});stop.addEventListener('blur',()=>G.riding?.brake(false));
  // Less frequent actions remain available in Menu on a short screen.
  for(const [target,label,glyph] of [['tSpr','Sprint','⚡'],['tTrick','Trick','↻'],['seWhistle','Whistle','♪'],['seEmote','Emotes','☺'],['photoBtn','Take photo','▣']]){
-  const b=document.createElement('button');b.dataset.seLbl=label;b.textContent=glyph;b.setAttribute('aria-label',label);b.onclick=()=>{if(target==='tSpr')G.riding?.selectGait('gallop');$(target)?.click();};tiles.appendChild(b);
+  const b=document.createElement('button');b.dataset.seLbl=label;b.textContent=glyph;b.setAttribute('aria-label',label);b.onclick=()=>{closeMenu(false);if(target==='tSpr')G.riding?.selectGait('gallop');$(target)?.click();};tiles.appendChild(b);
  }
  let paceKey='';
  function syncPace(){
@@ -460,6 +642,7 @@ body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
  /* ---------------------------------------------------------------- keeping it true ------- */
  function sync(){
   place();
+  goal.hidden=!track?.textContent.trim();
   try{document.body.classList.toggle('se-course',!!(G.course&&G.course.get&&G.course.get()));}catch(e){}
   /* the horse hexagon wears the ridden horse's level, and a red dot when she needs you */
   try{
@@ -536,7 +719,10 @@ body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
      /* the top-left is the map and its hexagons, the top-right the wallet and market */
      if(ny>0.45)nx=Math.max(-0.50,Math.min(0.55,nx));
     }
-    const sx=(nx*0.5+0.5)*W, sy=(-ny*0.5+0.5)*H;
+    const sx=(nx*0.5+0.5)*W;let sy=(-ny*0.5+0.5)*H;
+    // Keep the direction marker legible when a phone's quest card crosses its path.
+    const quest=$('questTrack')?.getBoundingClientRect();
+    if(quest?.height&&sx+24>quest.left&&sx-24<quest.right&&sy+24>quest.top&&sy-24<quest.bottom)sy=quest.bottom+28;
     way.style.transform='translate('+sx.toFixed(1)+'px,'+sy.toFixed(1)+'px) translate(-50%,-50%)';
     const ang=off?Math.atan2(nx,ny):0;          // up when they are ahead of you, round toward them when not
     wayArrow.style.transform='rotate('+ang.toFixed(3)+'rad)';
@@ -582,5 +768,5 @@ body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
  G.on('courseFinish',()=>setTimeout(sync,0));
 
  /* QA */
- G.seHud={root,menu,open:()=>{paintMenuHead();menu.classList.add('on');},close:closeMenu,HEXES,sync,way,wayTarget:()=>{const t=wayTarget();return t?{id:wayKey,x:t.position.x,z:t.position.z}:null;}};
+ G.seHud={root,menu,open:openMenu,close:closeMenu,HEXES,sync,way,wayTarget:()=>{const t=wayTarget();return t?{id:wayKey,x:t.position.x,z:t.position.z}:null;}};
 }

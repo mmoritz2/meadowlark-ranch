@@ -288,7 +288,7 @@ export function install(G){
  G.on('key',e=>{
   if(spectate&&['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','Escape'].includes(e.code)){setSpectate(false);return true;}
  });
- G.ui.hotkey('Digit9',()=>callFigure());
+ G.ui.hotkey('Digit9',()=>{if(!G.input?.blocked())callFigure();});
 
  /* ================================================================= the gauntlet ========= */
  /* The gauntlet rides as a race so course-engine grades it — but every other element on the

@@ -262,6 +262,7 @@ export function install(G){
  background:var(--c,#1d4a3b);box-shadow:0 10px 30px rgba(0,0,0,.5);cursor:pointer;will-change:transform}
 #seEv .sev-card.side{--s:.84;opacity:.8;filter:brightness(.72) saturate(.85)}
 #seEv .sev-card.far{--s:.7;opacity:0;pointer-events:none}
+#seEv :is(button,.sev-card):focus-visible{outline:3px solid #ffd970;outline-offset:4px}
 #seEv .sev-card .sev-tk{position:relative;padding:3.2%;background:rgba(0,0,0,.18);border-right:3px solid rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:5px 0 0 5px}
 #seEv .sev-card .sev-tk svg{height:100%;width:auto;max-width:100%;filter:drop-shadow(0 3px 5px rgba(0,0,0,.4))}
 #seEv .sev-info{position:relative;display:flex;flex-direction:column;min-width:0;border-radius:0 5px 5px 0;overflow:hidden}
@@ -296,8 +297,8 @@ export function install(G){
 #seEv .sev-arrow[hidden]{display:none!important}
 #seEv .sev-count{position:absolute;left:50%;bottom:0;transform:translateX(-50%);display:flex;gap:0;z-index:6}
 /* each dot is a button: a clear border round it makes a finger-sized target without making the dot any bigger */
-#seEv .sev-count i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);border:5px solid transparent;background-clip:padding-box;cursor:pointer}
-#seEv .sev-count i.on{background:#fff;background-clip:padding-box}
+#seEv .sev-count button{box-sizing:content-box;flex:none;width:8px;height:8px;min-width:0;min-height:0;padding:0;border-radius:50%;background:rgba(255,255,255,.35);border:5px solid transparent;background-clip:padding-box;box-shadow:none;cursor:pointer}
+#seEv .sev-count button.on{background:#fff;background-clip:padding-box}
 /* the week's card, and the special event's */
 /* above every card (their z-index runs up to 5): the card beside the centre one slid under the week's card and printed its
    lock and its ribbons over the trophy */
@@ -445,7 +446,7 @@ export function install(G){
  function closeAll(){st.page=null;root.classList.remove('page','sheet');G.hidePanels();}
  function back(){
   if(root.classList.contains('sheet')){root.classList.remove('sheet');return;}
-  if(st.page){st.page=null;root.classList.remove('page');paint();return;}
+  if(st.page){st.page=null;root.classList.remove('page');paint();focusSelectedCard();return;}
   const f=K.takeBack('eventsPanel');   // a screen that sent the player here (My Journey's discipline cards) gets them back
   closeAll(); if(f)setTimeout(()=>{try{f();}catch(e){}},0);
  }
@@ -459,6 +460,10 @@ export function install(G){
  /* ---- the towns and the carousel ---- */
  function paint(){
   if(!st.on)return;
+  /* Rebuilding the carousel must not send keyboard focus back to the game. */
+  const active=document.activeElement, focused=active&&root.contains(active)?active:null;
+  const focusTown=focused&&focused.dataset.town, focusAction=focused&&focused.dataset.sev;
+  const focusCard=focused&&focused.classList.contains('sev-card');
   TW=towns();
   let ti=TW.findIndex(t=>t.name===st.townName); if(ti<0)ti=Math.max(0,TW.findIndex(t=>!townLock(t.name))); st.town=ti; st.townName=TW[ti]&&TW[ti].name;
   const s=S();
@@ -476,12 +481,18 @@ export function install(G){
   stage.innerHTML=T0.evs.map((ev,i)=>card(ev,i,cur,T0,s,lk,feat)).join('')
    +'<button class="se-circ sev-arrow l" data-sev="prev" aria-label="Previous"'+(cur>0?'':' hidden')+'>'+K.line('chevl','#fff',2.6)+'</button>'
    +'<button class="se-circ sev-arrow r" data-sev="next" aria-label="Next"'+(cur<T0.evs.length-1?'':' hidden')+'>'+K.line('chev','#fff',2.6)+'</button>'
-   +'<span class="sev-count">'+T0.evs.map((e,i)=>'<i class="'+(i===cur?'on':'')+'" data-sev="dot:'+i+'" role="button" aria-label="'+esc(e.special?e.name:shortName(e))+'"></i>').join('')+'</span>';
+   +'<span class="sev-count" role="group" aria-label="Choose an event">'+T0.evs.map((e,i)=>'<button type="button" class="'+(i===cur?'on':'')+'" data-sev="dot:'+i+'" aria-pressed="'+(i===cur)+'" aria-label="'+esc(e.special?e.name:shortName(e))+'"></button>').join('')+'</span>';
   stage.style.setProperty('--dw',(T0.evs.length*9+14)+'px');   // the arrows stand clear of however many dots there are
   for(const ev of T0.evs.slice(Math.max(0,cur-1),cur+2))K.snap(venueView(ev));
   paintPromos(s,feat);
   paintResume();
   remember();
+  let nextFocus=null;
+  if(focusTown!=null)nextFocus=tabs.querySelector('[data-town="'+focusTown+'"]');
+  else if(focusAction&&focusAction.startsWith('dot:'))nextFocus=stage.querySelector('[data-sev="dot:'+cur+'"]');
+  else if(focusAction==='prev'||focusAction==='next')nextFocus=stage.querySelector('[data-sev="'+focusAction+'"]:not([hidden])');
+  if(!nextFocus&&(focusCard||focusAction==='prev'||focusAction==='next'))nextFocus=stage.querySelector('.sev-card[tabindex="0"]');
+  if(nextFocus)nextFocus.focus({preventScroll:true});
  }
  function card(ev,i,cur,T0,s,lk,feat){
   const o=i-cur, cls=o===0?'':Math.abs(o)===1?' side':' far', disc=discOf(ev), D=DISC[disc]||DISC.jump, g=gate(ev), rb=ev.special?null:ribbonsOf(ev,s);
@@ -496,7 +507,7 @@ export function install(G){
    :'<div class="sev-gold">'+K.RIBBON('#e6b53a','#b8831d')+rb.golds+'/'+DIFFS().length+' Gold Ribbons</div>';
   const lock=lk?'<div class="sev-lockv">'+K.line('lock','#fff',2)+'<b>'+esc(T0.name)+'</b><span>'+esc(lk)+'</span></div>'
    :!g.ok?'<div class="sev-lockv">'+K.line('lock','#fff',2)+'<b>Needs '+esc(needText(g.missing))+'</b><span>'+esc(ridden().name||'Your horse')+' is Lv '+(ridden().level||1)+'</span></div>':'';
-  return '<div class="sev-card'+cls+'" style="--o:'+o+';--a:'+Math.abs(o)+';--c:'+D.c+'" data-card="'+i+'" data-ev="'+esc(ev.id)+'">'
+  return '<div class="sev-card'+cls+'" role="button" tabindex="'+(o===0?'0':'-1')+'"'+(Math.abs(o)>1?' aria-hidden="true"':'')+' aria-label="'+esc((o===0?'Open ':'Select ')+(ev.special?ev.name:shortName(ev))+(lk?', '+lk:!g.ok?', needs '+needText(g.missing):''))+'" style="--o:'+o+';--a:'+Math.abs(o)+';--c:'+D.c+'" data-card="'+i+'" data-ev="'+esc(ev.id)+'">'
    +(fresh?'<span class="sev-new">New event!</span>':'')+(isF?'<span class="sev-feat">Featured · '+(((s.weekly&&s.weekly.rib)||{})[ev.id]||0)+'/4</span>':'')
    +'<div class="sev-tk">'+art+'</div>'
    +'<div class="sev-info"><div class="sev-head" style="background:'+D.c+'">'+EMBLEM+'<div><div class="sev-cup">'+esc(cupOf(T0.name))+'</div><div class="sev-name">'+esc(ev.special?ev.name:shortName(ev))+'</div></div></div>'
@@ -535,9 +546,11 @@ export function install(G){
   el.style.display='';el.innerHTML='<span>⏪ '+esc(txt.split('.')[0]||'An unfinished round')+'</span><button class="se-gold" data-sev="resume">Pick it up</button><button class="se-cream" data-sev="drop">Let it go</button>';
  }
  function move(d){const T0=TW[st.town];if(!T0)return;const c=clamp((st.cur[T0.name]||0)+d,0,T0.evs.length-1);if(c===st.cur[T0.name])return;st.cur[T0.name]=c;paint();}
+ function focusSelectedCard(){const card=root.querySelector('.sev-card[tabindex="0"]');if(card)card.focus({preventScroll:true});}
 
  /* ---- the event page ---- */
- function openPage(ev){st.page=ev.id;st.tab='event';const s=S();st.diff=ev.special?null:(s.evDiff==null?1:s.evDiff);root.classList.add('page');paintPage();}
+ function openPage(ev){const hadFocus=root.contains(document.activeElement);st.page=ev.id;st.tab='event';const s=S();st.diff=ev.special?null:(s.evDiff==null?1:s.evDiff);root.classList.add('page');paintPage();
+  if(hadFocus){const button=$('sevPage').querySelector('button:not([disabled])');if(button)button.focus({preventScroll:true});}}
  function evById(id){if(!id)return null;const sp=specials().find(e=>e.id===id);return sp||T.EVENTS3.find(e=>e.id===id)||null;}
  function paintPage(){
   const ev=evById(st.page); if(!ev){st.page=null;root.classList.remove('page');paint();return;}
@@ -633,6 +646,12 @@ export function install(G){
  }
 
  /* ---- input ---- */
+ root.addEventListener('keydown',e=>{
+  const card=e.target.closest('.sev-card[role="button"]');
+  if(!card||!root.contains(card)||(e.code!=='Enter'&&e.code!=='Space'))return;
+  e.preventDefault();e.stopPropagation();
+  if(!e.repeat)card.click();
+ });
  root.addEventListener('click',e=>{
   const b=e.target.closest('[data-sev],[data-town],[data-card]'); if(!b||!root.contains(b))return;
   if(b.dataset.town!=null){const t=TW[+b.dataset.town];if(t){st.townName=t.name;paint();const lk=townLock(t.name);if(lk)G.toast('🔒 '+lk);}return;}
@@ -681,17 +700,20 @@ export function install(G){
  {let x0=null,t0=0;const stage=$('sevStage');
   stage.addEventListener('pointerdown',e=>{x0=e.clientX;t0=performance.now();});
   stage.addEventListener('pointerup',e=>{if(x0==null)return;const dx=e.clientX-x0;x0=null;if(Math.abs(dx)>50&&performance.now()-t0<800){move(dx<0?1:-1);e.stopPropagation();}},true);}
- G.on('screenKey',G.on('key',e=>{
+ G.on('screenKey',e=>{
   if(!st.on)return false;
   const c=e.code;
+  /* Native controls own Enter/Space; opening the current event as well would steal their action. */
+  const active=document.activeElement;
+  if((c==='Enter'||c==='Space')&&active&&active.tagName==='BUTTON'&&root.contains(active))return true;
   if(root.classList.contains('sheet')||st.page){if(c==='ArrowLeft'||c==='ArrowRight')return true;return false;}
-  if(c==='ArrowLeft'||c==='KeyA'){move(-1);return true;}
-  if(c==='ArrowRight'||c==='KeyD'){move(1);return true;}
+  if(c==='ArrowLeft'||c==='KeyA'){e.preventDefault();move(-1);return true;}
+  if(c==='ArrowRight'||c==='KeyD'){e.preventDefault();move(1);return true;}
   if(c==='Enter'){const T0=TW[st.town];const ev=T0&&T0.evs[st.cur[T0.name]||0];if(ev)openPage(ev);return true;}
   if(c==='ArrowUp'||c==='ArrowDown'||c==='KeyW'||c==='KeyS'||c==='Space')return true;
   return false;
- }));
- G.on('escape',()=>{if(!st.on)return false;if(root.classList.contains('sheet')){root.classList.remove('sheet');return true;}if(st.page){st.page=null;root.classList.remove('page');paint();return true;}return false;});
+ });
+ G.on('escape',()=>{if(!st.on)return false;if(root.classList.contains('sheet')){root.classList.remove('sheet');return true;}if(st.page){st.page=null;root.classList.remove('page');paint();focusSelectedCard();return true;}return false;});
  G.on('wallet',()=>{if(st.on)strip.paint();});
  G.on('courseStart',()=>{if(st.on){st.page=null;root.classList.remove('page','sheet');const P=$('eventsPanel');if(P)P.style.display='none';}});   // only this screen closes: a card a discipline opens at the start (the judge's card) stays up
  G.on('state',o=>{o.seEvents={on:st.on,town:st.townName||null,card:st.on&&TW[st.town]?(TW[st.town].evs[st.cur[TW[st.town].name]||0]||{}).id:null,page:st.page,sheet:root.classList.contains('sheet'),

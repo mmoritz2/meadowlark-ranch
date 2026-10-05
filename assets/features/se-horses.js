@@ -865,7 +865,7 @@ html body.se-screen-open.shs-open.shs-drw #toasts{left:calc((100vw - clamp(260px
   if(st.pop){hidePop();return true;}
   if(st.drawer){closeDrawer();return true;}
   return false; });                                              // false: the game hides the panels, and so this screen
- G.on('screenKey',G.on('key',e=>{ if(!st.on)return false; const c=e.code;
+ G.on('screenKey',e=>{ if(!st.on)return false; const c=e.code;
   if(st.modal)return ['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','Enter'].includes(c);
   if(c==='ArrowLeft'||c==='KeyA'){step(-1);return true;}
   if(c==='ArrowRight'||c==='KeyD'){step(1);return true;}
@@ -874,7 +874,7 @@ html body.se-screen-open.shs-open.shs-drw #toasts{left:calc((100vw - clamp(260px
   if(c==='Enter'||c==='Space'){const f=document.activeElement;if(f&&f.tagName==='BUTTON'&&root.contains(f))return true;}   // a focused button answers Enter and Space itself
   if(c==='Enter'){if(st.drawer){const b=root.querySelector('#shsDr [data-shs="primary"]');if(b)b.click();}else step(1);return true;}
   if(c==='Space')return true;
-  return false; }));                                              // never N (the toggle) or the other panel hotkeys
+  return false; });                                              // never N (the toggle) or the other panel hotkeys
  G.on('wallet',()=>{if(st.on){strip.paint();fitTitle();}});
  G.on('courseStart',()=>{if(st.on){closeModal();const p=P();if(p)p.style.display='none';}});   // startCourse hides only the events panel
  for(const hk of ['grantHorse','foal','rebuild','coat','interval30'])G.on(hk,()=>{if(st.on)refresh();});

@@ -53,6 +53,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 300 s');try{if(bro
   out.open={on:document.getElementById('seChar').classList.contains('on'),rider:st.rider,canvas:!!q('canvas'),cards:document.querySelectorAll('#seChar .ch-card').length,
    imgs:document.querySelectorAll('#seChar .ch-card img').length,thumbs:st.thumbs,cats:document.querySelectorAll('#seChar .ch-cat').length,head:(q('.ch-head')||{}).textContent,
    want:W.HAIRSTYLES.filter(h=>!h.body||h.body.includes('f')).length,ubc:!!(st.rider&&G.horse.player.rider&&G.horse.player.rider.rig)};
+  out.categories={groups:[...document.querySelectorAll('#chGroups .ch-group')].map(b=>b.textContent),visible:[...document.querySelectorAll('#chStrip .ch-cat')].filter(b=>!b.hidden).map(b=>b.textContent.trim()),selected:q('.ch-cat.on')?.getAttribute('aria-pressed')};
   /* the canvas really has her on it: sample the middle of the stage for pixels that are not the backdrop */
   { const cv=q('canvas'),c=document.createElement('canvas');c.width=cv.width;c.height=cv.height;const x=c.getContext('2d');x.drawImage(cv,0,0);
     const d=x.getImageData(Math.floor(cv.width*0.35),Math.floor(cv.height*0.15),Math.floor(cv.width*0.3),Math.floor(cv.height*0.7)).data;let odd=0,n=0;
@@ -145,6 +146,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 300 s');try{if(bro
  await page.screenshot({path:path.join(outDir,'character-mobile.png')});
  const mobile=await page.evaluate(()=>{const a=document.getElementById('chSave').getBoundingClientRect(),b=document.getElementById('chGrid').getBoundingClientRect();return {save:a.bottom<=innerHeight&&a.right<=innerWidth,grid:b.width>100&&b.height>120,overflow:document.getElementById('seChar').scrollWidth>innerWidth};});
  check('the wardrobe stays usable on a narrow phone screen',mobile.save&&mobile.grid&&!mobile.overflow,mobile);
+ await page.locator('[data-ch="group:accessories"]').click();
  await page.locator('[data-ch="tab:neckwear"]').click();
  await page.waitForFunction(()=>document.querySelectorAll('#chGrid img').length===6);
  await page.screenshot({path:path.join(outDir,'accessories-mobile.png')});
@@ -160,6 +162,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 300 s');try{if(bro
  check('new hair and natural appearance choices survive a page reload',persisted.hairStyle==='waves'&&persisted.hair==='#68422d'&&persisted.skin==='#bd936d'&&persisted.eyes==='olive',{hair:persisted.hairStyle,colour:persisted.hair,skin:persisted.skin,eyes:persisted.eyes});
  check('the new outfit and colour survive a page reload',persisted.outfit==='flannel'&&persisted.shirt==='#a5b7a1',{outfit:persisted.outfit,shirt:persisted.shirt});
  check('the Character screen is installed',r.installed);
+ check('Character starts with labelled Appearance categories and three clear groups',JSON.stringify(r.categories.groups)===JSON.stringify(['Appearance','Clothes','Accessories'])&&r.categories.visible.length===4&&r.categories.visible.every(Boolean)&&r.categories.selected==='true',r.categories);
  check('it opens with her standing on her own stage and a rendered preview for every style',r.open.on&&r.open.rider&&r.open.canvas&&r.open.notBackdrop>0.03&&r.open.cards===r.open.want&&r.open.imgs===r.open.want&&r.open.want>=30&&r.open.thumbs>=r.open.want&&r.open.cats===12&&/hair style/i.test(r.open.head||''),r.open);
  check('the rider is the character (not the old sculpt)',r.open.ubc===true,{ubc:r.open.ubc});
  check('the Outfit and Eyes categories offer 48 outfits and ten eye colours',r.kitCards&&r.kitCards.outfits===48&&r.kitCards.eyes===10,r.kitCards);

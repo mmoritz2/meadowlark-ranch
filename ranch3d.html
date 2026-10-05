@@ -683,7 +683,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=chalk-
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=chalk-down-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=art-20261005';
-import {FEATURES} from './assets/features/index.js?v=travel-map-1';
+import {FEATURES} from './assets/features/index.js?v=menus-publish-20261005';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -8581,7 +8581,16 @@ function puffDust(x,y,z){
 }
 
 /* ================= input ================= */
+let PANEL_IDS=['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','moneyPanel','summonPanel','stablePanel','questPanel','profilePanel','buildPanel'];
 const keys={};
+const editingInput=()=>{const el=document.activeElement;return !!el&&(el.matches('input,select,textarea')||el.isContentEditable);};
+function gameInputBlocked(){
+ return document.body.classList.contains('se-screen-open')||
+  PANEL_IDS.some(id=>{const p=$(id);return p&&p.style.display&&p.style.display!=='none';})||
+  !!document.querySelector('#seMenu.on,#seOv.on,#seChar.on')||
+  ['bigmapWrap','dlg','chatBar'].some(id=>{const p=$(id);return p&&p.style.display&&p.style.display!=='none';});
+}
+
 const ridingInput=createRidingInput('canter');
 const dragonPaces=()=>!!RIG.profile?.nativeTravelSpeeds;
 function selectRidingGait(g){const ok=ridingInput.select(dragonPaces()&&g==='trot'?'canter':g);if(ok)touch.gal=false;return ok;}
@@ -8593,23 +8602,21 @@ addEventListener('keydown',e=>{
  if(e.code==='Escape'){
   if(G.run('escape')===true){e.preventDefault();return;}   // a package owned Escape (spectating, ranch tours)
   if(freeCam)toggleFreeCam();
-  if(build.type||build.remove)endBuild();
+  if(build.type||build.remove||build.move)endBuild();
   if($('bigmapWrap').style.display==='flex')toggleMap();
   if(document.body.classList.contains('posing'))setPosing(false);
   hidePanels();$('dlg').style.display='none';$('chatBar').style.display='none';
   document.activeElement?.blur();e.preventDefault();return;
  }
- if($('load')||G.dialogue?.active)return;
- if(G.screenInput?.active){
-  if(document.activeElement&&(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)||document.activeElement.isContentEditable))return;
-  if(G.run('screenKey',e))return;
+ if($('load')||G.dialogue?.active||editingInput())return;
+ if(G.run('screenKey',e))return;                            // active screens own their navigation keys
+ if(gameInputBlocked()){
   if(!e.repeat&&PANEL_HOTKEYS[e.code]){PANEL_HOTKEYS[e.code](e);e.preventDefault();}
   return;
  }
- if(e.code==='KeyC'&&!e.repeat&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){toggleFreeCam();}
- if(/^Digit[1-5]$/.test(e.code||'')&&!e.repeat&&!freeCam&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){horseEmote(['rear','bow','liedown','nuzzle','toss'][+e.code[5]-1]);}
- if(build.type||build.remove||build.move){ const rs=e.shiftKey?Math.PI/16:Math.PI/4; if(e.code==='Escape'){endBuild();return;} if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;} if(e.code==='KeyQ'){build.rot-=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;} }
- if(document.activeElement&&(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)||document.activeElement.isContentEditable))return;
+ if(e.code==='KeyC'&&!e.repeat)toggleFreeCam();
+ if(/^Digit[1-5]$/.test(e.code||'')&&!e.repeat&&!freeCam)horseEmote(['rear','bow','liedown','nuzzle','toss'][+e.code[5]-1]);
+ if(build.type||build.remove||build.move){const rs=e.shiftKey?Math.PI/16:Math.PI/4;if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;}if(e.code==='KeyQ'){build.rot-=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;}}
  if(!e.repeat&&!freeCam&&!player.onFoot&&['BracketLeft','BracketRight'].includes(e.code)){shiftRidingGait(e.code==='BracketRight'?1:-1);e.preventDefault();return;}
  if(G.run('key',e))return;                                  // a package swallowed the key
  // Mounted dragons own B; otherwise it remains the ranch builder shortcut.
@@ -8650,7 +8657,7 @@ let releaseRidingPointer=()=>{};
 function bindHold(id,key){
  const el=$(id);
  if(!el)return;
- el.addEventListener('pointerdown',e=>{e.preventDefault();try{el.setPointerCapture(e.pointerId);}catch(err){}touch[key]=true;});
+ el.addEventListener('pointerdown',e=>{if(gameInputBlocked())return;e.preventDefault();try{el.setPointerCapture(e.pointerId);}catch(err){}touch[key]=true;});
  el.addEventListener('pointerup',()=>{touch[key]=false;});
  el.addEventListener('pointercancel',()=>{touch[key]=false;});
  el.addEventListener('pointerleave',()=>{touch[key]=false;});
@@ -8688,7 +8695,7 @@ addEventListener('touchstart',enableTouchUI,{once:true,passive:true});
  releaseRidingPointer=release;
  if(zone){
   zone.addEventListener('pointerdown',e=>{
-   if(id!==null)return;
+   if(id!==null||gameInputBlocked())return;
    e.preventDefault();
    id=e.pointerId;
    try{zone.setPointerCapture(id);}catch(err){}   // capture is an optimisation, not a requirement
@@ -8718,7 +8725,7 @@ addEventListener('touchstart',enableTouchUI,{once:true,passive:true});
    touch.left=touch.turnA>0.06;
    touch.right=touch.turnA<-0.06;
   });
-  ['pointerup','pointercancel','pointerleave'].forEach(ev=>
+  ['pointerup','pointercancel','pointerleave','lostpointercapture'].forEach(ev=>
    zone.addEventListener(ev,e=>{ if(e.pointerId===id)release(); }));
  }
 }
@@ -8735,7 +8742,7 @@ const camDesired=new THREE.Vector3(),camSafe=new THREE.Vector3();
    finger moved. The stick lives in its own element and captures its own pointer,
    so it never reaches this handler at all. */
 renderer.domElement.addEventListener('pointerdown',e=>{
- if(camDrag)return;                       // already dragging with another finger
+ if(camDrag||gameInputBlocked())return;    // one pointer, and only while riding
  camDrag={id:e.pointerId,x:e.clientX,y:e.clientY};
 });
 addEventListener('pointermove',e=>{
@@ -8749,8 +8756,32 @@ const endDrag=e=>{ if(camDrag&&(!e||e.pointerId===camDrag.id))camDrag=null; };
 addEventListener('pointerup',endDrag);
 addEventListener('pointercancel',endDrag);
 function releaseAllRidingControls(){for(const k in keys){if(keys[k])window.dispatchEvent(new KeyboardEvent('keyup',{code:k,bubbles:true}));keys[k]=false;}for(const k of ['go','back','left','right','jump','brake','gal','spr','analog'])touch[k]=false;touch.goA=touch.backA=touch.turnA=0;ridingInput.reset();releaseRidingPointer();endDrag();}
-addEventListener('blur',releaseAllRidingControls);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)releaseAllRidingControls();});
+function resetGameInput(){
+ releaseAllRidingControls();player.breathHold=false;
+ for(const id of ['tGal','tSpr']){const control=$(id);if(control)control.style.opacity='0.6';}
+}
+addEventListener('blur',resetGameInput);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)resetGameInput();});
+document.addEventListener('focusin',()=>{if(editingInput())resetGameInput();});
+// Watch overlay roots only; scrolling or redrawing their contents does not reset controls.
+const inputPanels=new WeakSet();let inputWasBlocked=false;
+const checkInputPanels=()=>{
+ const blocked=!!gameInputBlocked();if(blocked===inputWasBlocked)return;
+ inputWasBlocked=blocked;if(blocked)resetGameInput();
+ document.dispatchEvent(new Event('game-input-change'));
+};
+const inputPanelObserver=new MutationObserver(checkInputPanels);
+function watchInputPanels(){
+ for(const p of document.body.children){
+  if(!inputPanels.has(p)&&(PANEL_IDS.includes(p.id)||p.matches('.fpanel,#seMenu,#seOv,#seChar,#bigmapWrap,#dlg,#chatBar'))){
+   inputPanels.add(p);inputPanelObserver.observe(p,{attributes:true,attributeFilter:['class','style']});
+  }
+ }
+ checkInputPanels();
+}
+new MutationObserver(watchInputPanels).observe(document.body,{childList:true});
+new MutationObserver(checkInputPanels).observe(document.body,{attributes:true,attributeFilter:['class']});
+watchInputPanels();
 
 /* iOS ignores user-scalable=no, so pinch and double-tap still zoom the whole page
    mid-ride unless the gestures are refused explicitly. */
@@ -8758,7 +8789,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)releaseAllR
  addEventListener(g,e=>e.preventDefault(),{passive:false}));
 addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
 document.addEventListener('touchmove',e=>{ if(e.touches.length>1)e.preventDefault(); },{passive:false});
-addEventListener('wheel',e=>{camDist=THREE.MathUtils.clamp(camDist+e.deltaY*0.01,3.5,13);},{passive:true});
+addEventListener('wheel',e=>{if(gameInputBlocked()||editingInput())return;camDist=THREE.MathUtils.clamp(camDist+e.deltaY*0.01,3.5,13);},{passive:true});
 
 /* ================= show jumping courses (Basin Championship in 3D) ================= */
 const EVENTS3=[
@@ -9348,8 +9379,7 @@ function tickDrill(dt,t){
 function openEvents(){
  const p=$('eventsPanel');
  if(p.style.display==='flex'){p.style.display='none';return;}
- $('carePanel').style.display='none';
- $('shopPanel').style.display='none';
+ hidePanels();
  let tr={};
  try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(s&&s.trophies)tr=s.trophies;}catch(e){}
  const lvl=(myHorses[rideIdx].level||1);
@@ -9435,11 +9465,10 @@ function reloadHorses(){
    an existing panel (shopTab/questTab/lbTab/buildTab), a section spliced into an existing
    renderer (careSection & co.), and named actions bound through data-fx="name:arg:arg".
    The contract is written out in assets/features/index.js. */
-let PANEL_IDS=['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','moneyPanel','summonPanel','stablePanel','questPanel','profilePanel','buildPanel'];
 const PANEL_DEFS={}, PANEL_HOTKEYS={}, UI_ACTIONS={}, UI_SECTIONS={};
 const EXTRA_SHOP_TABS=[], EXTRA_QUEST_TABS=[], EXTRA_LB_TABS=[], EXTRA_BUILD_TABS=[];
 let buildTab='pieces';
-function hidePanels(){for(const id of PANEL_IDS){const p=$(id);if(p)p.style.display='none';}}
+function hidePanels(){resetGameInput();for(const id of PANEL_IDS){const p=$(id);if(p)p.style.display='none';}}
 function uiSection(name,fn){(UI_SECTIONS[name]=UI_SECTIONS[name]||[]).push(fn);return fn;}
 function sect(name,...args){const a=UI_SECTIONS[name];if(!a||!a.length)return '';let o='';for(const f of a){try{o+=f(...args)||'';}catch(e){console.error('section '+name,e);}}return o;}
 function uiAction(name,fn){UI_ACTIONS[name]=fn;return fn;}
@@ -10518,8 +10547,8 @@ function toggleMap(force){
 }
 $('mini').addEventListener('click',()=>toggleMap());
 addEventListener('keydown',e=>{
- if(e.repeat||e.defaultPrevented||e.target.closest?.('input,textarea,[contenteditable="true"]'))return;
- if(e.code==='KeyM'){e.preventDefault();toggleMap();}
+ if(editingInput()||e.repeat||e.defaultPrevented||$('load')||G.dialogue?.active)return;
+ if(e.code==='KeyM'&&(!gameInputBlocked()||travelMap?.isOpen)){e.preventDefault();toggleMap();}
 });
 
 /* ================= online multiplayer: clubs, chat & friends =================
@@ -14187,6 +14216,7 @@ terrainSurface.setTrees(forestPoints);
 function installFeatures(){
  Object.assign(G,{
   THREE,scene,camera,renderer,composer,
+  input:{reset:resetGameInput,blocked:gameInputBlocked},
   riding:{releaseAll:releaseAllRidingControls,selectGait:selectRidingGait,shiftGait:shiftRidingGait,brake:on=>ridingInput.brake(on),lock:(reason,on)=>ridingInput.lock(reason,on),state(){const st=ridingInput.state(),mode=RIG.heroMotion?.mode?.replace(/(Left|Right)$/,'');return {...st,dragon:dragonPaces(),sprint:!!touch.spr,speed:player.speed,actual:player.flying?'fly':player.onFoot?'on foot':player.speed<-.05?'reverse':Math.abs(player.speed)<.1?'halt':mode&&mode!=='rest'&&mode!=='stand'?mode:st.requested};}},
   $,toast,hidePanels,openDlg,nameSprite,beep,sChime,sGem,sNeigh,sCoin,
   save:{KEY:SAVE_KEY,fresh:freshSave,sync:syncSave,ensure(fn){SAVE_ENSURES.push(fn);return fn;},ensureHorse(fn){HORSE_ENSURES.push(fn);return fn;},

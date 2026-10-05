@@ -208,7 +208,7 @@ export function install(G){
  };
  const CATS=[['style','Hair style','appearance'],['hair','Hair colour','appearance'],['eyes','Eyes','appearance'],['skin','Skin colour','appearance'],
   ['outfit','Outfit','outfit'],['helmet','Helmet','outfit'],['shirt','Top colour','outfit'],['pants','Trouser colour','outfit'],['boots','Boots','outfit'],
-  ['eyewear','Glasses','appearance'],['earrings','Earrings','appearance'],['neckwear','Necklaces & scarves','appearance']];
+  ['eyewear','Glasses','accessories'],['earrings','Earrings','accessories'],['neckwear','Neckwear','accessories']];
  if(!$('seCharCss')){
   const st=document.createElement('style'); st.id='seCharCss';
   st.textContent=`
@@ -260,30 +260,37 @@ export function install(G){
 #seChar .ch-btn{flex:1;min-height:clamp(42px,6.6vh,52px);border-radius:10px;font-weight:900;font-size:clamp(15px,2.3vh,19px);letter-spacing:.4px;text-transform:uppercase}
 #seChar .ch-undo{background:linear-gradient(180deg,#f1ead8,#d9ceb0);color:#3a2a12}
 #seChar .ch-save{background:linear-gradient(180deg,#f3de80,#d9b43d);color:#2a2340}
-#seChar .ch-strip{width:clamp(96px,9vw,112px);flex:none;min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;background:#221c49;overflow-y:auto;overscroll-behavior:contain}
-#seChar .ch-cat{aspect-ratio:1;min-width:0;width:100%;padding:22%;color:#f3e6c8;background:transparent;border-bottom:1px solid rgba(255,255,255,.06)!important}
-#seChar .ch-cat.outfit{background:rgba(255,255,255,.05)}
-#seChar .ch-cat.on{background:linear-gradient(180deg,#e6c27a,#b98c3e);color:#3a2a12}
-#seChar .ch-sep{grid-column:1/-1;height:6px;background:rgba(0,0,0,.25)}
+#seChar .ch-groups{display:flex;flex:none;gap:4px;padding:10px;background:#211d42}
+#seChar .ch-group{flex:1;min-width:0;min-height:42px;border-radius:7px;padding:8px 4px;background:transparent;color:#dfd9f3;font-size:12px;font-weight:800}
+#seChar .ch-group.on{background:#f0e5ce;color:#3a2a12}
+#seChar .ch-group:focus-visible{outline:3px solid #fff;outline-offset:1px}
+#seChar .ch-strip{flex:none;min-width:0;display:flex;gap:4px;padding:6px;background:#29234f;overflow-x:auto;overscroll-behavior:contain}
+#seChar .ch-cat{flex:1 0 56px;min-width:0;min-height:66px;padding:8px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:6px;color:#e9e1f6;background:transparent;font-size:11px;font-weight:800;line-height:1.2;text-align:center}
+#seChar .ch-cat svg{width:22px;height:22px;flex:none}
+#seChar .ch-cat[hidden]{display:none!important}
+#seChar .ch-cat.on{background:#e6c27a;color:#3a2a12;box-shadow:inset 0 -3px #fff3cf!important}
+#seChar .ch-head{font-size:14px;padding:10px 12px;text-align:left;letter-spacing:.3px;text-transform:none}
 @media (max-width:760px){#seChar .ch-stage{right:0;bottom:52%}#seChar .ch-panel{top:48%;width:100%}#seChar .ch-pill{display:none}
- #seChar .ch-strip{width:86px}#seChar .ch-grid{grid-template-columns:repeat(3,1fr);gap:8px;padding:8px}#seChar .ch-name{bottom:8px}#seChar .ch-name input{width:110px;font-size:16px}
+ #seChar .ch-grid{grid-template-columns:repeat(3,1fr);gap:8px;padding:8px}#seChar .ch-name{bottom:8px}#seChar .ch-name input{width:110px;font-size:16px}
  #seChar .ch-tools{right:10px;top:10px;gap:8px}}`;
   document.head.appendChild(st);
  }
  const chRoot=document.createElement('div'); chRoot.id='seChar';
- chRoot.innerHTML='<div class="ch-top"><button class="ch-circ" data-ch="close" title="Back">↩</button><div class="ch-title">🧑 Character</div><div class="ch-sp"></div>'
+ chRoot.innerHTML='<div class="ch-top"><button class="ch-circ" data-ch="back" title="Back">↩</button><div class="ch-title">🧑 Character</div><div class="ch-sp"></div>'
   +'<div class="ch-pill" title="Dust"><b>✨</b><span id="chDust">0</span></div><div class="ch-pill" title="Coins"><b>🪙</b><span id="chCoins">0</span></div>'
   +'<button class="ch-circ" data-ch="close" title="Close">✕</button></div>'
   +'<div class="ch-stage" id="chStage">'
   +'<div class="ch-tools"><button class="ch-tool" data-ch="zoom" title="Zoom">'+SVGI(ICO.zoom)+'</button><button class="ch-tool" data-ch="dice" title="Surprise me">'+SVGI(ICO.dice)+'</button>'
   +'<button class="ch-tool" data-ch="body" title="Switch body">'+SVGI(ICO.body)+'</button><button class="ch-tool" data-ch="turn" title="Turn">'+SVGI(ICO.turn)+'</button></div>'
   +'<div class="ch-name"><span>Name</span><input id="chName" maxlength="14" placeholder="Rider"><button data-ch="rname" title="Random name">'+SVGI(ICO.dice)+'</button></div></div>'
-  +'<div class="ch-panel"><div class="ch-main"><div class="ch-head" id="chHead"></div><div class="ch-filters" id="chFilters" hidden></div><div class="ch-grid" id="chGrid"></div>'
+  +'<div class="ch-panel"><div class="ch-main"><nav class="ch-groups" id="chGroups" aria-label="Customize your rider"></nav><nav class="ch-strip" id="chStrip" aria-label="Appearance categories"></nav><div class="ch-head" id="chHead"></div><div class="ch-filters" id="chFilters" hidden></div><div class="ch-grid" id="chGrid"></div>'
   +'<div class="ch-foot"><button class="ch-btn ch-undo" data-ch="undo">Undo</button><button class="ch-btn ch-save" data-ch="save" id="chSave">Save</button></div></div>'
-  +'<div class="ch-strip" id="chStrip"></div></div>';
+  +'</div>';
  document.body.appendChild(chRoot);
- /* the strip: appearance, then outfit */
- {let h='',grp='';for(const c of CATS){if(grp&&grp!==c[2])h+='<div class="ch-sep"></div>';grp=c[2];h+='<button class="ch-cat '+c[2]+'" data-ch="tab:'+c[0]+'" title="'+c[1]+'">'+SVGI(ICO[c[0]])+'</button>';}$('chStrip').innerHTML=h;}
+ /* Show one small, labelled set of categories at a time. The active category determines its group. */
+ const CH_GROUPS=[['appearance','Appearance'],['outfit','Clothes'],['accessories','Accessories']], lastCategory={appearance:'style',outfit:'outfit',accessories:'eyewear'};
+ $('chGroups').innerHTML=CH_GROUPS.map(([id,label])=>'<button type="button" class="ch-group" data-ch="group:'+id+'" aria-pressed="false">'+label+'</button>').join('');
+ $('chStrip').innerHTML=CATS.map(c=>'<button type="button" class="ch-cat '+c[2]+'" data-ch="tab:'+c[0]+'" data-ch-group="'+c[2]+'" aria-pressed="false">'+SVGI(ICO[c[0]])+'<span>'+c[1]+'</span></button>').join('');
 
  /* ---- her little stage --------------------------------------------------------------- */
  function gradientTex(){
@@ -455,7 +462,10 @@ export function install(G){
   if(!CH.open)return;
   const s=G.save.fresh(); if(!s)return;
   const d=CH.draft, cat=CATS.find(c=>c[0]===CH.tab)||CATS[0];
-  chRoot.querySelectorAll('.ch-cat').forEach(b=>b.classList.toggle('on',b.dataset.ch==='tab:'+CH.tab));
+  lastCategory[cat[2]]=cat[0];
+  chRoot.querySelectorAll('.ch-group').forEach(b=>{const on=b.dataset.ch==='group:'+cat[2];b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});
+  chRoot.querySelectorAll('.ch-cat').forEach(b=>{const on=b.dataset.ch==='tab:'+CH.tab;b.hidden=b.dataset.chGroup!==cat[2];b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});
+  $('chStrip').setAttribute('aria-label',(CH_GROUPS.find(g=>g[0]===cat[2])||CH_GROUPS[0])[1]+' categories');
   $('chHead').textContent=CH.tab==='outfit'?'Wardrobe · '+OUTFITS.length+' looks':cat[1];
   $('chFilters').hidden=CH.tab!=='outfit';
   $('chGrid').classList.toggle('ch-outfits',CH.tab==='outfit');
@@ -520,10 +530,10 @@ export function install(G){
  }
 
  /* ---- open, close, save ------------------------------------------------------------- */
- function openChar(tab){
+ function openChar(tab,options={}){
   const s=G.save.fresh(); if(!s)return;
   try{G.hidePanels();}catch(e){}
-  CH.draft=fitOf(s); if(tab)CH.tab=tab;
+  CH.draft=fitOf(s); if(tab)CH.tab=tab; CH.onBack=typeof options.onBack==='function'?options.onBack:null;
   CH.open=true; chRoot.classList.add('on'); document.body.classList.add('se-char-open');
   $('chName').value=String(s.playerName||'');
   if(!CH.renderer)buildStage(); else sizeStage();
@@ -535,7 +545,7 @@ export function install(G){
  }
  function closeChar(){
   if(!CH.open)return;
-  CH.open=false; CH.outfitJob=null; CH.accessoryJob=null; chRoot.classList.remove('on'); document.body.classList.remove('se-char-open');
+  CH.open=false; CH.onBack=null; CH.outfitJob=null; CH.accessoryJob=null; chRoot.classList.remove('on'); document.body.classList.remove('se-char-open');
   cancelAnimationFrame(CH.raf);
   if(CH.R){CH.holder.remove(CH.R.g);dropRider(CH.R);CH.R=null;}
   /* a second GL context is not free: give it back */
@@ -552,10 +562,12 @@ export function install(G){
  chRoot.addEventListener('click',e=>{
   const b=e.target.closest&&e.target.closest('[data-ch]'); if(!b)return;
   const [op,a1,a2]=b.dataset.ch.split(':');
-  if(op==='close')closeChar();
+  if(op==='back'){const back=CH.onBack;closeChar();if(back)setTimeout(back,0);}
+  else if(op==='close')closeChar();
   else if(op==='save')saveChar();
   else if(op==='undo'){const s=G.save.fresh();if(s)setDraft(fitOf(s));}
-  else if(op==='tab'){CH.tab=a1;renderChar();}
+  else if(op==='group'){if(lastCategory[a1]){CH.tab=lastCategory[a1];renderChar();$('chGrid').scrollTop=0;}}
+  else if(op==='tab'){CH.tab=a1;renderChar();$('chGrid').scrollTop=0;}
   else if(op==='style')setDraft({hairStyle:a1});
   else if(op==='outfit'){const o=OUTFITS.find(o=>o.id===a1);if(o)setDraft(outfitPalette(o));}
   else if(op==='filter'){CH.filter=a1;renderChar();}

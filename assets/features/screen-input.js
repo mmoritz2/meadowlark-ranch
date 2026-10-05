@@ -2,7 +2,7 @@
 export const id='screen-input';
 export function install(G){
  const held=new Set(),blocked=new Set();let wasOpen=false;
- const visible=()=>document.body.classList.contains('se-screen-open');
+ const visible=()=>document.body.classList.contains('se-screen-open')||!!G.input?.blocked();
  function sync(){
   const open=visible();if(open===wasOpen)return;
   wasOpen=open;
@@ -12,6 +12,7 @@ export function install(G){
   document.getElementById('seGaitLabel')?.setAttribute('aria-expanded','false');
  }
  new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['class']});
+ document.addEventListener('game-input-change',sync);
  document.addEventListener('keydown',e=>{
   held.add(e.code);
   if(!visible()&&blocked.has(e.code)){e.preventDefault();e.stopImmediatePropagation();}
