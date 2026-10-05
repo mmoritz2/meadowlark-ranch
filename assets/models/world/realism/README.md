@@ -35,11 +35,9 @@ the older library's painterly grade. No runtime geometry decoder is required.
 Oak/birch and conifer replacements include both the original scatter and the
 biome package's copses, retaining their collision positions and Amberwood's autumn
 tint. Three scanned fir variants replace the oversized procedural needle sprays.
-The mature pine replaces a deterministic portion of tall conifers and supplies the
-far-forest pine silhouette. Nearby placements use detailed trees, with at most
+The mature pine replaces a deterministic portion of tall conifers. Nearby placements use detailed trees, with at most
 12 / 1.8 million triangles on High and 6 / 750,000 triangles on Medium. Distant trees and Low/VR use eight-view albedo and object-normal impostors baked
-from the same models, with live lighting and alpha-tested silhouettes. The
-far forest shares these views, with its original near-rider distance fade. High
+from the same models, with live lighting and alpha-tested silhouettes. High
 quality also enables alpha-tested shadows for nearby distant-tree batches. The original
 geometry stays available if the model or atlas cannot load. Spatial batches
 support view and shadow culling. Saplings and fallen timber
@@ -108,3 +106,17 @@ Khronos validation reports zero errors and four missing-authored-tangents warnin
 for the mature pine. Three.js generates tangent space from derivatives. The model
 and every albedo/normal atlas hash are checked against the manifests. See
 `docs/landscape-models-2026-10-05.md` for visual and gameplay acceptance results.
+
+## Background tree removal
+
+The extra background forest (up to 4,160 instances) was removed after the player reported
+trees sinking into the ground. Its distance shader scaled entire trees toward
+their bases between 150 and 95 metres from the rider. Both the generated fallback
+and the scanned replacement used that effect. The extra layer, runtime texture
+bakes and distance-scaling shader path are now removed. The ordinary woodland
+retains its detailed trees and matching distant views at a fixed planted scale.
+
+Verification: `tools/qa-grounded-woodland.cjs` passed nine checks, including a
+keyboard-driven mounted ride, all graphics tiers, and an identical rendered tree
+silhouette at rider distances from 80 to 180 metres. The 14-check black-rectangle
+regression also passes, with no invalid source or postprocessed pixels.

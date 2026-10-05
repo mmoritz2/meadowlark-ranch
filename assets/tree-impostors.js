@@ -1,12 +1,11 @@
 // Matching albedo/normal views of each source scan. The normal is rotated with
 // the tree, so a distant crown keeps its volume as the sun and camera move.
-export function treeImpostor({THREE,albedo,normals,width,height,bottom,nearFade=null}) {
+export function treeImpostor({THREE,albedo,normals,width,height,bottom}) {
   const geo=new THREE.PlaneGeometry(width,height);geo.translate(0,bottom+height*.5,0);
   const mat=new THREE.MeshStandardMaterial({map:albedo,alphaTest:.22,side:THREE.DoubleSide,roughness:1,envMapIntensity:.48});
   mat.alphaToCoverage=true;
   const vertex=sh=>{
-    if(nearFade)sh.uniforms.treeViewer={value:nearFade};
-    sh.vertexShader='varying vec2 treeHeading;'+(nearFade?'uniform vec3 treeViewer;':'')+'\n'+sh.vertexShader;
+    sh.vertexShader='varying vec2 treeHeading;\n'+sh.vertexShader;
     sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       #ifdef USE_INSTANCING
         vec3 toEye=cameraPosition-instanceMatrix[3].xyz;
@@ -18,7 +17,6 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom,nearFade=
         transformed.z=-position.x*sin(localAngle);
         vMapUv=(uv+vec2(mod(frame,4.0),1.0-floor(frame/4.0)))/vec2(4.0,2.0);
         treeHeading=vec2(sin(treeAngle),cos(treeAngle));
-        ${nearFade?'transformed*=smoothstep(95.,150.,distance(instanceMatrix[3].xz,treeViewer.xz));':''}
       #endif`);
   };
   mat.onBeforeCompile=sh=>{
@@ -41,8 +39,8 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom,nearFade=
       #endif
       #include <opaque_fragment>`);
   };
-  mat.customProgramCacheKey=()=> 'scan-tree-normal-views-v2-'+!!nearFade;
+  mat.customProgramCacheKey=()=> 'scan-tree-normal-views-v3';
   const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:albedo,alphaTest:.22,side:THREE.DoubleSide});
-  depth.onBeforeCompile=vertex;depth.customProgramCacheKey=()=> 'scan-tree-normal-depth-v1-'+!!nearFade;mat.userData.scanDepth=depth;
+  depth.onBeforeCompile=vertex;depth.customProgramCacheKey=()=> 'scan-tree-normal-depth-v2';mat.userData.scanDepth=depth;
   return {geo,mat};
 }

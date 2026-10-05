@@ -655,7 +655,7 @@ import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js?v=clear-cumulus-2';
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=world-cinematic-1';
-import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs,createForestImpostor} from './assets/vegetation.js?v=ranch-life-1';
+import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-1';
 import {hasMeadowCover} from './assets/meadow-biomes.js';
 import {createGrassTuftGeometry} from './assets/meadow-cover.js?v=botanical-scale-1';
 import {createGeology} from './assets/geology.js?v=world-cinematic-1';
@@ -671,7 +671,7 @@ import {createWorldFinish} from './assets/world-rendering.js';
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=botanical-trails-3';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=mature-woodland-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=grounded-woodland-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=fit-20261005';
 import {FEATURES} from './assets/features/index.js?v=ranch-life-2';
@@ -3722,72 +3722,8 @@ function leatherMat(hex){
 installBackdrop({THREE,scene});
 loadFoliageAtlas({THREE,url:'assets/textures/realism/foliage_branch_rgba.png'});
 loadFoliageAtlas({THREE,url:'assets/textures/realism/foliage_needle_rgba.png',species:['pine','snowpine']});
-/* Far forest. The distant hills were bare green: the real trees thin out with distance and
-   the terrain colour is flat, so every ridge read as a smooth dome. This is a field of
-   tree-cluster billboards (two crossed quads each) sown on the far hills, wherever the ground
-   is meadow, tinted per instance, swaying a little, and scaled away within a hundred units of
-   the rider so they are never seen up close: near the rider the real trees do the work. */
-const farTreeTex=createForestImpostor({THREE,renderer,species:'oak'});
-const farPineTex=createForestImpostor({THREE,renderer,species:'pine'});
-let farForest=null;
-{
- const N=quality==='low'?1400:2600;
- const geo=(()=>{const g=new THREE.BufferGeometry(),P=[],U=[],Nn=[],I=[];
-  const add=rot=>{const c=Math.cos(rot),sn=Math.sin(rot),b=P.length/3;
-   [[-0.5,0],[0.5,0],[0.5,1],[-0.5,1]].forEach(([x,y])=>{P.push(x*c,y,x*sn);U.push(x+0.5,y);Nn.push(-sn,0,c);});
-   I.push(b,b+1,b+2,b,b+2,b+3);};
-  add(0);add(Math.PI/2);
-  g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));
-  g.setAttribute('normal',new THREE.Float32BufferAttribute(Nn,3));g.setIndex(I);return g;})();
- const U={uTime:{value:0},uPlayer:{value:new THREE.Vector3()}};
- const mkMat=tex=>{const mat=new THREE.MeshStandardMaterial({map:tex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
-  mat.envMapIntensity=0.5;
-  mat.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);
-   sh.vertexShader='uniform float uTime; uniform vec3 uPlayer;\n'+sh.vertexShader.replace('#include <begin_vertex>',
-`#include <begin_vertex>
-#ifdef USE_INSTANCING
- vec3 ip=vec3(instanceMatrix[3][0],instanceMatrix[3][1],instanceMatrix[3][2]);
- float near=smoothstep(95.0,150.0,distance(ip.xz,uPlayer.xz));
- transformed.y*=near; transformed.xz*=near;
- transformed.x+=sin(uTime*0.9+ip.x*0.3+ip.z*0.2)*transformed.y*0.02;
-#endif`);};
-  return mat;};
- const leafy=new THREE.InstancedMesh(geo,mkMat(farTreeTex),N), pines=new THREE.InstancedMesh(geo,mkMat(farPineTex),Math.ceil(N*0.6));
- for(const im of[leafy,pines]){im.frustumCulled=false;im.castShadow=false;im.receiveShadow=false;scene.add(im);}
- const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler(),v=new THREE.Vector3(),sc=new THREE.Vector3(),col=new THREE.Color();
- let kl=0,kp=0,guard=0;
- while((kl<leafy.count||kp<pines.count)&&guard<90000){
-  guard++;
-  const a=Math.random()*Math.PI*2, r=120+Math.pow(Math.random(),0.6)*350;
-  const x=Math.cos(a)*r, z=Math.sin(a)*r;
-  if(Math.abs(x)>480||Math.abs(z)>480)continue;
-  if(Math.abs(z-riverZ(x))<10)continue;
-  if(Math.hypot(x+220,z-130)<165)continue;                 // Coyote sand
-  if(Math.hypot(x+330,z-300)<128)continue;                 // Ochre Reach: bare rock, no wood
-  if(Math.hypot(x+300,z+320)<126)continue;                 // Frostpine: above the broadleaf line
-  const dSnow=Math.hypot(x+160,z+210);
-  if(dSnow<128)continue;                                   // the snowfield itself stays open
-  if(Math.hypot(x-220,z+110)<120)continue;                 // Barleyfold fields
-  const y=groundH(x,z);
-  const sl=Math.hypot(groundH(x+2,z)-groundH(x-2,z),groundH(x,z+2)-groundH(x,z-2))/4;
-  if(sl>0.55)continue;                                     // not on cliffs
-  const dens=vnoise(x*0.012+7,z*0.012+3);                  // forest comes in stands
-  if(dens<0.42&&Math.random()>0.18)continue;
-  const cold=dSnow<230||y>9;                                // pines ring the snow and take the high ground
-  const wantPine=cold?Math.random()<0.85:Math.random()<0.12;
-  const im=wantPine?pines:leafy; const k=wantPine?kp:kl;
-  if(k>=im.count)continue;
-  const sz=wantPine?8+Math.random()*10:5+Math.random()*9;   // tall pines, mixed leafy heights: no hedge line
-  e.set(0,Math.random()*Math.PI,0); q.setFromEuler(e); sc.set(sz*.9*(0.85+Math.random()*0.4),sz,sz*.9*(0.85+Math.random()*0.4));
-  v.set(x,y-0.3,z); m4.compose(v,q,sc); im.setMatrixAt(k,m4);
-  col.setHSL(.22+Math.random()*.03,.03+Math.random()*.07,.79+Math.random()*.14);
-  im.setColorAt(k,col);
-  if(wantPine)kp++; else kl++;
- }
- leafy.count=kl; pines.count=kp;
- for(const im of[leafy,pines])if(im.instanceColor)im.instanceColor.needsUpdate=true;
- farForest={leafy,pines,tick:(t,px,pz)=>{U.uTime.value=t;U.uPlayer.value.set(px,0,pz);}};
-}
+// The woodland below supplies the actual trees and their distant views.
+// Removed the extra backdrop layer that visibly shrank into the ground on approach.
 // trees: leafy (billboard canopies) + pines, with a dense pine treeline to the north
 const barkTex=canvasTex(128,256,(c,w,h)=>{
  c.fillStyle='#7a583a';c.fillRect(0,0,w,h);
@@ -13746,7 +13682,6 @@ function tick(stepSeconds){
  }
  if(windShader)windShader.uniforms.uTime.value=t;
  if(nearGrass)nearGrass.tick(t,player.pos.x,player.pos.z);
- if(farForest)farForest.tick(t,player.pos.x,player.pos.z);
  for(const tw of treeWinds)tw.uniforms.uTime.value=t;
  for(const r of ripples)r.m.rotation.z+=dt*0.13*r.dir;
  if(waterMat?.userData.waterTime)waterMat.userData.waterTime.value=t;
@@ -14354,7 +14289,7 @@ function installFeatures(){
 }
 installFeatures();
 installRanchWorldDetails(G,{shrubs:FOLIAGE.bush});
-installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,farTrees:farForest,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
+installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
 const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,
  levelAt(x,z){
   const planes=[{distance:Math.abs(z-riverZ(x)),level:riverLevel(x)},

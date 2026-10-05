@@ -1,10 +1,10 @@
-import {treeImpostor} from './tree-impostors.js?v=finite-foliage-1';
+import {treeImpostor} from './tree-impostors.js?v=grounded-woodland-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
 
 // Real, CC0 Poly Haven assets. The generated world stays available until each
 // replacement has loaded; detailed crowns are budgeted around the rider.
-export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],farTrees=null}={}) {
+export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={}) {
   const {THREE,scene,world:W,horse:H,renderer}=G;
   const state=G.photoscans={ready:null,errors:[],assets:[],trees:0,activeTrees:0,rocks:0,outcrops:0,saplings:0,logs:0,cliffs:0};
   const loader=new GLTFLoader(),wind={value:0},group=new THREE.Group();
@@ -154,16 +154,6 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
       atlas.colorSpace=THREE.SRGBColorSpace;atlas.anisotropy=8;normals.colorSpace=THREE.NoColorSpace;normals.anisotropy=4;
       source.impostor={THREE,albedo:atlas,normals,width:m.width,height:m.height,bottom:m.bottom};
       source.card=treeImpostor(source.impostor);
-    }
-    if(farTrees){
-      const oldGeometry=new Set();
-      for(const [mesh,source]of [[farTrees.leafy,variants[0]],[farTrees.pines,variants[4]]]){
-        const card=treeImpostor({...source.impostor,nearFade:H.player.pos}),scale=1/source.meta.sourceHeight;
-        card.geo.scale(scale,scale,scale);oldGeometry.add(mesh.geometry);mesh.material.dispose();
-        mesh.geometry=card.geo;mesh.material=card.mat;mesh.customDepthMaterial=card.mat.userData.scanDepth;
-        mesh.name='Scanned far forest | '+source.key;
-      }
-      oldGeometry.forEach(g=>g.dispose());state.farForestViews=farTrees.leafy.count+farTrees.pines.count;
     }
     for(const t of trees){
       const scale=t.height/t.source.meta.sourceHeight;

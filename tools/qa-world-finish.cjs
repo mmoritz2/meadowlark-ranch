@@ -119,7 +119,7 @@ const out=path.resolve(process.argv[2]||'output/world-finish');fs.mkdirSync(out,
    highTreeBudget:modes[2].scanTrees>0&&modes[2].scanTrees<=12,
    sameModelDistantTrees:state.scans.distantTrees>100,
    scannedConifers:state.scans.conifers>100,normalMappedTrees:state.scans.normalMappedViews===5,
-   distantForestLit:state.scans.farForestViews>3000,cloudQualityBudget:modes.map(m=>m.cloudSteps).join()==='5,8,12',
+   noSinkingBackdrop:!state.scans.farForestViews,cloudQualityBudget:modes.map(m=>m.cloudSteps).join()==='5,8,12',
    pastureGroundActive:state.groundSource.includes('pasture/grass_diff')};
   fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({checks,errors,ao,modes,frames,state},null,2));
   for(const [k,v]of Object.entries(checks))console.log((v?'PASS ':'FAIL ')+k);
