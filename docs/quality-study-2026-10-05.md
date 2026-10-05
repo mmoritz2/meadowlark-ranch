@@ -225,6 +225,23 @@ layout uses side-by-side reward and next-task blocks so its heading and action
 buttons remain visible without scrolling; the browser DOM regression checks
 both orientations with the real dialogue CSS.
 
+The normal touch session then continued from its separately saved, earned
+prologue state: collected the fifth meadow carrot, claimed it, landed the clean
+practice jump, claimed that reward, placed and paid for three fence sections,
+and placed the lantern and trough. The pair updated immediately from 0/2 to
+1/2 to 2/2 without talking or reloading. Its claim paid 200 coins, 20 builder
+points, 3 hay and 40 horse XP; the next ranch-level task correctly recognized
+an already-earned level 2. The session stopped at that checkpoint with zero
+page errors. The remaining builder missions and later training story have not
+completed the same normal-play acceptance; training recommendations and the
+Feeding action have targeted regression coverage.
+
+This run also corrected builder instructions to name clear ground outside the
+arena, made the required-piece action open its visible catalogue shelf, and
+replaced keyboard-only toolbar text on touch devices. Optional startup offers
+now wait until the rider has completed an event and do not appear over loading,
+menus, conversations or an active event; gifts and rewards remain available.
+
 The iOS development package includes the new helpers and passes file hashes,
 relative-import checks and all eight durable-save tests. It remains roughly
 559 MiB and retains the approved horse hashes. Device execution and release
@@ -232,7 +249,7 @@ readiness remain unverified; the release gate remains false.
 
 ## Next quality milestones
 
-1. Extend the touch acceptance run through the builder and food story chapters,
+1. Extend the touch acceptance run through the remaining builder and training story chapters,
    then complete a clean competition win and repeat across disciplines. Verify
    prompts, navigation, rewards and return paths with normal play.
 2. Profile low, medium and high quality on actual supported iPhones/iPads.

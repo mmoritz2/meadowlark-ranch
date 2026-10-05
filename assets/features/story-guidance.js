@@ -89,7 +89,7 @@ export function resolveTarget(m,done,world,position){
 export function nextAction(m,done,position,context={}){
  if(!m||done)return null;
  const item=missingBuildPieces(m,context.save)[0],catalog=context.catalog||{};
- if(item){const name=catalog[item]?.label||item;return {hint:'Choose '+name+' in Build, then tap clear ground to place it.',action:'build',label:'Choose '+name,item};}
+ if(item){const name=catalog[item]?.label||item;return {hint:'Choose '+name+' in Build. Place it on clear grass outside the fenced arena.',action:'build',label:'Choose '+name,item};}
  if(m.type==='cleanjump')return {hint:'Follow the marker to a practice fence. Canter, then Jump before the rails.',action:'practice',label:'Ride to a practice fence'};
  if(m.type==='train'&&context.training){
   const t=context.training,stat=context.statLabels?.[t.stat]||t.stat;
@@ -153,7 +153,7 @@ export function install(G){
   else if(step.action==='build'){
    G.hidePanels();G.ui.openBuild();
    const tab=G.$('buildPanel')?.querySelector('[data-buildtab="pieces"]');if(tab&&!tab.classList.contains('on'))tab.click();
-   G.ui.dispatch?.('ranch:cat:all');
+   G.ui.dispatch?.('ranch:cat:'+(G.tables.DECOR_CAT[step.item]?.cat||'all'));
    if(step.item)requestAnimationFrame(()=>{
     const row=G.$('buildPanel')?.querySelector('[data-fx="ranch:place:'+step.item+'"]')?.closest('.evrow');
     if(row){row.classList.add('sg-focus');row.scrollIntoView({block:'center'});}

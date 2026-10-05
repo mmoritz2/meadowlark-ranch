@@ -1147,6 +1147,7 @@ b.c3-sec,div.c3-sec{display:flex!important;align-items:center;gap:var(--sp-2,8px
  /* ================= 5. the placement HUD ================= */
  const session={n:0,pts:0,stack:[]};
  let hudTick=0;
+ const touchBuild=()=>document.body.classList.contains('touch');
 
  function hudState(){
   try{
@@ -1154,16 +1155,17 @@ b.c3-sec,div.c3-sec{display:flex!important;align-items:center;gap:var(--sp-2,8px
    const st=h.querySelector('.c3-hudState'); if(!st)return;
    const R=G.ranchSys||{}, b=R.build;
    if(!b){st.className='c3-hudState';st.innerHTML='<span>Pick a piece</span>';return;}
-   if(b.remove){st.className='c3-hudState bad';st.innerHTML='<span>🧹 Click a piece to take it back — half its price returns</span>';return;}
-   if(b.move&&!b.type){st.className='c3-hudState';st.innerHTML='<span>✋ Click a piece to pick it up</span>';return;}
-   if(!b.type||!b.lastPt){st.className='c3-hudState';st.innerHTML='<span>Move the pointer over the ground</span>';return;}
+   const press=touchBuild()?'Tap':'Click';
+   if(b.remove){st.className='c3-hudState bad';st.innerHTML='<span>🧹 '+press+' a piece to take it back — half its price returns</span>';return;}
+   if(b.move&&!b.type){st.className='c3-hudState';st.innerHTML='<span>✋ '+press+' a piece to pick it up</span>';return;}
+   if(!b.type||!b.lastPt){st.className='c3-hudState';st.innerHTML='<span>'+(touchBuild()?'Tap clear ground outside the fenced arena':'Move the pointer over clear ground outside the fenced arena')+'</span>';return;}
    let why=null;
    try{why=R.decorOk?R.decorOk(b.type,b.lastPt[0],b.lastPt[1],b.moving):null;}catch(e){why=null;}
    let snapped=false;
    try{ if(G.ranch&&G.ranch.snap){const q=G.ranch.snap(DC[b.type],b.lastPt[0],b.lastPt[1],b.rot,b.moving);snapped=!!q;} }catch(e){}
    if(why){st.className='c3-hudState bad';st.innerHTML='<span>🚫 '+esc(why)+'</span>';}
-   else if(snapped){st.className='c3-hudState snap';st.innerHTML='<span>🧲 Snaps into line — click to set it down</span>';}
-   else {st.className='c3-hudState';st.innerHTML='<span>✔️ Click the ground to place it</span>';}
+   else if(snapped){st.className='c3-hudState snap';st.innerHTML='<span>🧲 Snaps into line — '+press.toLowerCase()+' to set it down</span>';}
+   else {st.className='c3-hudState';st.innerHTML='<span>✔️ '+press+' the ground to place it</span>';}
   }catch(e){}
  }
 
@@ -1203,10 +1205,10 @@ b.c3-sec,div.c3-sec{display:flex!important;align-items:center;gap:var(--sp-2,8px
    const bw=el('div','c3-hudBtns');
    btns.forEach(bt=>{
     const k=bt.dataset.bh;
-    if(k==='rot'){bt.textContent='↻ Turn';bt.title='Turn 45° (R / Q)';}
-    else if(k==='rotf'){bt.textContent='↻° Fine';bt.title='Turn 22.5° (Shift + R / Q)';}
+    if(k==='rot'){bt.textContent='↻ Turn';bt.title=touchBuild()?'Turn 45°':'Turn 45° (R / Q)';}
+    else if(k==='rotf'){bt.textContent='↻° Fine';bt.title=touchBuild()?'Turn 11.25°':'Turn 11.25° (Shift + R / Q)';}
     else if(!bt.textContent.trim())bt.textContent='Done';
-    bt.title=bt.title||'Esc';
+    bt.title=bt.title||(touchBuild()?bt.textContent:'Esc');
     bw.appendChild(bt);
    });
    const undo=el('button','c3-undo','↩ Remove last'); undo.type='button'; undo.hidden=true;
@@ -1225,7 +1227,7 @@ b.c3-sec,div.c3-sec{display:flex!important;align-items:center;gap:var(--sp-2,8px
      hudBudget();
     }catch(e){}});
    row2.appendChild(st); row2.appendChild(bg);
-   row2.appendChild(el('span','c3-hudKeys','R / Q turn · Shift fine · Esc done'));
+   row2.appendChild(el('span','c3-hudKeys',touchBuild()?'Turn / Fine rotate · Done finishes':'R / Q turn · Shift fine · Esc done'));
 
    h.textContent='';
    h.classList.add('c3-on');

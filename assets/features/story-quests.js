@@ -650,7 +650,7 @@ export function install(G){
 
  /* ---------- the quest log: Story and Side tabs ---------- */
  const storyStyle=document.createElement('style');storyStyle.textContent=`
- #questPanel .sq-overview{display:flex;gap:8px 20px;align-items:baseline;flex-wrap:wrap;padding:4px 0;font:700 12px/1.3 Nunito,system-ui,sans-serif}
+ #questPanel .sq-overview{display:flex;gap:8px 20px;align-items:baseline;flex-wrap:wrap;padding:6px 10px;border-radius:8px;background:#fff9e9;color:#584934;font:700 12px/1.3 Nunito,system-ui,sans-serif}
  #questPanel .sq-overview b{font-size:14px}
  #questPanel .sq-focus{padding:16px;border:1px solid #b99b58;border-radius:12px;background:linear-gradient(135deg,#fff9e9,#efe6d0);color:#32281e;display:grid;gap:10px;margin:6px 0 12px}
  #questPanel .sq-kicker{font:800 11px/1.3 Nunito,system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#735e3e}

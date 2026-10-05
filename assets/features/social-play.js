@@ -1035,7 +1035,7 @@ export function install(G){
   drawTabs();
   if(s.pubWorld&&s.club!==COMMONS)S.sync(sv=>{if(sv.club!==COMMONS){sv.clubPriv=sv.club||'';sv.club=COMMONS;}});
   let first=false; S.sync(sv=>{if(sv.story?.era===2)first=S.flag(sv,'sp-welcome');});
-  if(first)setTimeout(()=>toast('🤝 New in the club: friends with requests, four chat rooms, six expeditions, ranch tours and synced emotes. Press 💬 for the room tabs, 🌐 for the rest.'),9000);
+  if(first)setTimeout(()=>{if(G.ui.canAnnounce())toast('🤝 New in the club: friends with requests, four chat rooms, six expeditions, ranch tours and synced emotes. Press 💬 for the room tabs, 🌐 for the rest.');},9000);
  });
 
  /* QA surface: the headless script drives these directly instead of the broker. */

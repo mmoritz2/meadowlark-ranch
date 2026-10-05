@@ -86,7 +86,7 @@ test('practice guidance uses visible real fences and lines up before targeting r
  assert.equal(resolveTarget({type:'cleanjump'},true,{practiceJumps:[j]},here),undefined);
 });
 
-test('current action opens the real Feeding tab and preserves save/progression',()=>{
+test('current actions open Feeding and the visible required builder shelf without changing progression',()=>{
  const mission={type:'train',label:'Train a stat',goal:1,reward:{c:20}},save={story:{},items:{lettuce:2}},calls=[];
  const horse={stats:{agility:3},sxp:{agility:30}},G={
   quest:{STORY:[mission],storyIdx:()=>0,storyProg:()=>0,NPC_DEFS:[{id:'wren',name:'Grandpa Wren'}]},
@@ -100,6 +100,10 @@ test('current action opens the real Feeding tab and preserves save/progression',
  G.storyGuidance.activateCurrent();assert.deepEqual(calls,['feeding']);
  assert.equal(JSON.stringify([save,horse]),before);
  const returned=G.storyGuidance.describe(mission,true);assert.equal(returned.label,'Return to Wren');assert.equal(returned.action,'return');
+ mission.type='build2';save.decor=[{t:'lantern'}];G.tables.DECOR_CAT={lantern:{label:'Lantern post',cat:'yard'},trough:{label:'Water trough',cat:'stable'}};
+ G.ui.openBuild=()=>calls.push('build');G.ui.dispatch=action=>calls.push(action);calls.length=0;
+ const buildBefore=JSON.stringify([save,horse]);G.storyGuidance.activateCurrent();
+ assert.deepEqual(calls,['world','build','ranch:cat:stable']);assert.equal(JSON.stringify([save,horse]),buildBefore);
  delete globalThis.requestAnimationFrame;
 });
 

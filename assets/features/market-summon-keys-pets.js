@@ -776,7 +776,7 @@ export function install(G){
  /* ---- 14. boot: tell the player what is waiting ----------------------------------------- */
  G.on('boot',s=>{
   if(!s)return;
-  try{ if(s.story?.era===2&&s.keyWeek!==G.time.isoWeekKey())setTimeout(()=>toast('🎁 Your free Silver Key is waiting — 🛍️ Shop → 🎁 Free.'),4200); }catch(e){}
+  try{ if(s.story?.era===2&&s.keyWeek!==G.time.isoWeekKey())setTimeout(()=>{if(U.canAnnounce())toast('🎁 Your free Silver Key is waiting — 🛍️ Shop → 🎁 Free.');},4200); }catch(e){}
   try{U.hud.badge('shopBtn',(s.keyWeek!==G.time.isoWeekKey())?true:0);}catch(e){}
  });
  G.on('state',o=>{

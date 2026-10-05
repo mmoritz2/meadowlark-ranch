@@ -290,7 +290,7 @@ export function install(G){
    if(info&&info.wkClosed){const w=info.wkClosed;inboxPush(s,{id:'week-'+w.week,from:'Grandpa Wren',title:'📅 Your week is in',body:(w.sp||0)+' Star Points over '+(w.days||0)+' day'+(w.days===1?'':'s')+'. The wages are in the 🏅 panel under Week.',open:'lbPanel'});}
    if(s.story?.era===2&&gemMul()>1&&s.flags['x2-'+ds]==null){s.flags['x2-'+ds]=1;msgs.unshift('✨ Double-gem weekend is on — every gem you earn today counts twice!');}
   });
-  msgs.forEach((m,i)=>setTimeout(()=>{try{toast(m);}catch(e){}},5200+i*2200));
+  msgs.forEach((m,i)=>setTimeout(()=>{try{if(U.canAnnounce())toast(m);}catch(e){}},5200+i*2200));
   const s=S.fresh(); PL=s?prestigeLevel(s):1; if(s){applyA11y(s.a11y);try{if(G.audio)G.audio.setVol(s.sfxVol==null?1:s.sfxVol);}catch(e){}}
   M.refreshWallet();
   /* phone → laptop hand-off: ?import=<blob> */
