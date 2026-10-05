@@ -9,8 +9,8 @@
    bone by bone.
 
    WHAT SHE WEARS
-     riding kit   the default, painted onto the body itself the way riding clothes actually fit: a shirt
-                  with a white stock collar, breeches with suede knee patches and a belt, tall boots with
+     riding kit   the default, with a fitted cloth shell for the shirt
+                  and folded collar, breeches with suede knee patches and a belt, tall boots with
                   a sole and a shine. Every colour is the wardrobe's (shirt, pants, boots), so every piece
                   the game already sells still means something.
      outfits      48 clothing recipes: fitted riding kit and tailored Peasant/Ranger garments, loaded when first worn;
@@ -36,19 +36,20 @@
 
    Pure module: THREE and friends are injected, nothing runs at import time. */
 
-import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailorGarment,tailoredTop,sewnDetails} from './rider-clothes.js?v=fit-20261005';
+import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailorGarment,tailoredTop,sewnDetails} from './rider-clothes.js?v=art-20261005';
 export {RIDER_OUTFITS};
-import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint} from './rider-hairstyles.js?v=fit-20261005';
-import {accessoryFit,buildAccessories} from './rider-accessories.js?v=fit-20261005';
+import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint} from './rider-hairstyles.js?v=art-20261005';
+import {refineRiderFace} from './rider-face.js?v=art-20261005';
+import {accessoryFit,buildAccessories} from './rider-accessories.js?v=art-20261005';
 
 /* ---- tables ------------------------------------------------------------------------------------ */
 /* mesh: the pack's own hairstyle. scalp: hair drawn back over her own scalp (buildScalp) with what is tied
    from it (tails: ponytail, bun, braid, pigtails). curls: ringlets over the long style's shape. */
 export const RIDER_HAIR=[
  {id:'long',label:'Long',body:['f','m'],mesh:'Hair_Long',shape:'long'},
- {id:'ponytail',label:'Ponytail',body:['f','m'],scalp:true,tail:'ponytail'},
- {id:'braid',label:'Braid',body:['f'],scalp:true,tail:'braid'},
- {id:'bun',label:'Bun',body:['f','m'],scalp:true,tail:'bun'},
+ {id:'ponytail',label:'Ponytail',body:['f','m'],scalp:true,detail:'ponytail'},
+ {id:'braid',label:'Braid',body:['f'],scalp:true,detail:'braidedpony'},
+ {id:'bun',label:'Bun',body:['f','m'],scalp:true,detail:'classicbun'},
  {id:'buns',label:'Space buns',body:['f'],mesh:'Hair_Buns'},
  {id:'pigtails',label:'Pigtails',body:['f'],scalp:true,tail:'pigtails'},
  {id:'curly',label:'Curls',body:['f','m'],mesh:'Hair_Long',curls:true},
@@ -121,7 +122,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const L={neck:J('neck_01'),pelvis:J('pelvis'),calf:J('calf_l'),hand:J('hand_l'),arm:J('upperarm_l'),elbow:J('lowerarm_l'),thigh:J('thigh_l'),head:J('Head')};
   const zones={neckY:L.neck.y-0.038,neckZ:L.neck.z+0.012,waistY:L.pelvis.y+0.068,bootY:L.calf.y-0.070,cuffX:L.hand.x-0.014,armY:L.arm.y,armZ:L.arm.z,headY:L.head.y-0.02};
   slim(skin.geometry,body,L);
-  if(brows)thinBrows(brows.geometry);
+  refineRiderFace(THREE,skin,brows,body);
   /* ---- the seat, from the sculpt's joint directions ---- */
   const grip=gAnim.animations.find(c=>c.name===CLIP.drive)||gAnim.animations.find(c=>c.name===CLIP.idle);
   const seat=buildSeat(scene,bones,grip,skin);
@@ -131,6 +132,15 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const herPelvis=seat.restLocal.get('pelvis').p;
   for(const c of gAnim.animations){
    const cl=c.clone();
+   if(c.name==='Idle_Loop')for(const track of cl.tracks){
+    if(track.name==='Head.quaternion'||track.name==='neck_01.quaternion'){const rest=seat.restLocal.get(track.name.split('.')[0]);
+     if(rest)for(let i=0;i<track.values.length;i+=4)_q.fromArray(track.values,i).slerp(rest.q,track.name.startsWith('Head')?.40:.15).toArray(track.values,i);
+    }
+   }
+   if(['Idle_Loop','Idle_Talking_Loop','Walk_Loop','Jog_Fwd_Loop'].includes(c.name))for(const track of cl.tracks){
+    const match=/^((?:index|middle|ring|pinky|thumb)_0[123]_[lr])\.quaternion$/.exec(track.name),rest=match&&seat.restLocal.get(match[1]);
+    if(rest)for(let i=0;i<track.values.length;i+=4){_q.fromArray(track.values,i).slerp(rest.q,.40).toArray(track.values,i);}
+   }
    for(const t of cl.tracks)if(t.name==='pelvis.position'&&ualPelvis){const v=t.values;for(let i=0;i<v.length;i+=3){v[i]+=herPelvis.x-ualPelvis.x;v[i+1]+=herPelvis.y-ualPelvis.y;v[i+2]+=herPelvis.z-ualPelvis.z;}}
    clips[c.name]=cl;
   }
@@ -179,14 +189,6 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   p.needsUpdate=true; geo.computeBoundingSphere();
  }
 
- /* The source brows are a superhero's, heavy and low: narrower and a little finer. */
- function thinBrows(geo){
-  if(geo.userData.thinned)return; geo.userData.thinned=true;
-  const p=geo.attributes.position; let y0=0,n=p.count;
-  for(let i=0;i<n;i++)y0+=p.getY(i); y0/=n;
-  for(let i=0;i<n;i++){p.setY(i,y0+0.004+(p.getY(i)-y0)*0.70);p.setX(i,p.getX(i)*0.97);}
-  p.needsUpdate=true; geo.computeBoundingSphere();
- }
  /* The skull, in the Head bone's space (which is the model's own axes at bind): the helmet is made to
     this, and the drawn-back hair is tied at points on it. */
  function headShape(skin,headBone){
@@ -297,7 +299,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const map=new Int32Array(n).fill(-1),P=[],N=[],UV=[],F=[],I=[];
   const vtx=i=>{if(map[i]>=0)return map[i];
    const x=loc[i*3],y=loc[i*3+1],z=loc[i*3+2]; _v2.fromBufferAttribute(nor,i).applyMatrix3(nm).normalize();
-   const off=0.0034;P.push(x+_v2.x*off,y+_v2.y*off,z+_v2.z*off);N.push(_v2.x,_v2.y,_v2.z);
+   const off=0.0034+0.003*Math.max(0,Math.min(1,fade[i]/5));P.push(x+_v2.x*off,y+_v2.y*off,z+_v2.z*off);N.push(_v2.x,_v2.y,_v2.z);
    const d=V(x-C.x,y-C.y,z-C.z).normalize(),pol=Math.acos(Math.max(-1,Math.min(1,d.dot(td)))),az=Math.atan2(d.dot(bx),d.dot(ax));
    UV.push(az/(Math.PI*2)*4,pol/Math.PI*1.7);F.push(fade[i]);map[i]=P.length/3-1;return map[i];};
   for(let t=0;t<idx.count;t+=3){const a=idx.getX(t),b=idx.getX(t+1),c=idx.getX(t+2);
@@ -333,30 +335,8 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
  /* what is tied from the cap: [hair geometries], [tie geometries] */
  function tailPieces(kit,tail,helm){
   const H=kit.head,hair=[],ties=[];
-  if(tail==='ponytail'){
-   const T=tiePoint(kit,helm?'nape':'back');
-   const off=helm?[[0,0.004,0.006],[0,-0.012,-0.026],[0,-0.070,-0.040],[0,-0.150,-0.040],[0,-0.215,-0.032]]:[[0,0.004,0.006],[0,-0.008,-0.030],[0,-0.060,-0.050],[0,-0.150,-0.052],[0,-0.235,-0.040],[0,-0.292,-0.030]];
-   const pts=off.map(o=>V(T.x+o[0],T.y+o[1],T.z+o[2]));
-   hair.push(tubeGeo(pts,helm?[0.015,0.024,0.027,0.018,0.004]:[0.016,0.026,0.031,0.027,0.017,0.004]));
-   ties.push(tieRing(pts[0].clone().lerp(pts[1],0.30),pts[1].clone().sub(pts[0]),0.0165));
-  }else if(tail==='bun'){
-   const T=tiePoint(kit,helm?'nape':'crown'),C0=V(H.cx,H.cy,H.cz),out=T.clone().sub(C0).normalize();
-   const r=helm?[0.042,0.034,0.031]:[0.057,0.046,0.052], c=T.clone().addScaledVector(out,helm?0.021:0.034);
-   const g=new THREE.SphereGeometry(1,22,16);const uv=g.attributes.uv;for(let k=0;k<uv.count;k++)uv.setXY(k,uv.getX(k)*3,uv.getY(k)*1.4);
-   g.scale(r[0],r[1],r[2]);_q.setFromUnitVectors(V(0,1,0),out);g.applyQuaternion(_q);g.translate(c.x,c.y,c.z);hair.push(g);
-   ties.push(tieRing(T.clone().addScaledVector(out,0.004),out,helm?0.024:0.028));
-  }else if(tail==='braid'){
-   const T=tiePoint(kit,helm?'nape':'back').add(V(0,helm?0:-0.018,-0.006)),lobes=[],L=helm?0.22:0.28,NL=helm?9:11;
-   for(let k=0;k<NL;k++){const t=k/(NL-1),sz=1-0.42*t,side=k%2?1:-1;
-    const c=V(T.x+side*0.0045*sz,T.y-0.018-t*L,T.z-0.030-0.022*Math.sin(t*Math.PI*0.9));
-    const g=new THREE.SphereGeometry(1,12,9);g.scale(0.021*sz,0.029*sz,0.017*sz);g.rotateZ(side*0.50);g.rotateX(-0.25);g.translate(c.x,c.y,c.z);lobes.push(g);}
-   const end=V(T.x,T.y-0.018-L-0.020,T.z-0.030);
-   const tuft=new THREE.ConeGeometry(0.013,0.050,12,1,true);tuft.rotateX(Math.PI);tuft.translate(end.x,end.y-0.026,end.z);lobes.push(tuft);
-   hair.push(mergeGeos(lobes));ties.push(tieRing(end,V(0,1,0),0.0115));
-   /* the gather at the top of the braid */
-   hair.push(tubeGeo([T.clone().add(V(0,0.006,0.008)),T.clone().add(V(0,-0.010,-0.018)),T.clone().add(V(0,-0.024,-0.030))],[0.016,0.022,0.020],8,12));
-  }else if(tail==='pigtails'){
-   for(const sd of [1,-1]){const T=V(sd*(H.rx+0.001),H.cy-0.040,H.cz-0.036);
+  if(tail==='pigtails'){
+   for(const sd of [1,-1]){const T=scalpPoint(THREE,kit,V(sd*(H.rx+0.001),H.cy-0.040,H.cz-0.036),.001);
     const pts=[[0,0,0],[sd*0.020,-0.030,-0.018],[sd*0.030,-0.100,-0.028],[sd*0.026,-0.178,-0.026],[sd*0.018,-0.232,-0.020]].map(o=>V(T.x+o[0],T.y+o[1],T.z+o[2]));
     hair.push(tubeGeo(pts,[0.015,0.022,0.022,0.016,0.004]));ties.push(tieRing(pts[0].clone().lerp(pts[1],0.35),pts[1].clone().sub(pts[0]),0.0155));}
   }
@@ -424,9 +404,10 @@ vec3 riderSkin(vec3 t){ if(uSkinW<0.5)return t;
  float L=dot(t,vec3(0.2126,0.7152,0.0722)), Lr=dot(uSkinRef,vec3(0.2126,0.7152,0.0722));
  vec3 ch=(t/max(L,1e-3))/(uSkinRef/Lr);
  /* the source paints hard shadow into the face (a superhero's hollows): take the edge off it */
- return uSkin*pow(L/Lr,0.72)*mix(vec3(1.0),ch,0.50); }`;
+ return uSkin*pow(max(L/Lr,0.02),0.43)*mix(vec3(1.0),ch,0.54); }`;
  const HEAD_GLSL=`uniform vec3 uSkin,uShirt,uPants,uBoot,uHair,uEye; uniform float uSkinW,uEyeW,uOutfit,uTopOnly,uFitted,uHelmet,uBootMesh,uBootRef; uniform vec3 uSkinRef; uniform vec4 uZ1,uZ2,uHelm,uHelmR;`;
  function patchBody(mat,u){
+  mat.normalScale.set(.32,.32);mat.roughness=.74;
   mat.onBeforeCompile=sh=>{
    Object.assign(sh.uniforms,u);
    sh.vertexShader=sh.vertexShader
@@ -454,6 +435,8 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    float neckY=uZ1.x+0.042*smoothstep(0.0,-0.09,vBind.z-uZ1.y);
    float arm=smoothstep(uZ2.y-0.20,uZ2.y-0.14,y)*smoothstep(0.17,0.20,ax);
    float headZ=max(step(uZ2.w,y)*(1.0-arm),step(neckY,y)*(1.0-smoothstep(0.070,0.080,rN))*(1.0-arm));
+   float fittedNeck=uZ1.x+.036*(1.0-smoothstep(-.09,0.0,vBind.z-uZ1.y))+.045*pow(min(ax/.085,1.0),2.0)+.075*smoothstep(.085,.15,ax);
+   headZ=mix(headZ,step(fittedNeck-.0015,y)*(1.0-arm),uFitted);
    float hand=arm*step(uZ2.x-0.017,ax);
    float bareArm=arm*step(uZ2.x-0.30,ax)*uClothes.y;
    float keep=max(headZ,max(hand,bareArm)*uFitted);
@@ -466,6 +449,8 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    float neckY=uZ1.x+0.042*smoothstep(0.0,-0.09,vBind.z-uZ1.y);
    float arm=smoothstep(uZ2.y-0.20,uZ2.y-0.14,y)*smoothstep(0.17,0.20,ax);
    float headZ=max(step(uZ2.w,y)*(1.0-arm),step(neckY,y)*(1.0-smoothstep(0.070,0.080,rN))*(1.0-arm));
+   float fittedNeck=uZ1.x+.036*(1.0-smoothstep(-.09,0.0,vBind.z-uZ1.y))+.045*pow(min(ax/.085,1.0),2.0)+.075*smoothstep(.085,.15,ax);
+   headZ=mix(headZ,step(fittedNeck-.0015,y)*(1.0-arm),uFitted);
    float hand=arm*step(uZ2.x-0.017,ax);
    float shortSleeve=arm*step(uZ2.x-0.31,ax)*uClothes.y;
    float skinZ=max(max(headZ,hand),shortSleeve);
@@ -534,20 +519,32 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
   m.customProgramCacheKey=()=>'rider-hair-depth';
   return m;
  }
+ function patchBrows(mat,u){
+  mat.map=null;mat.normalMap=null;mat.roughness=.85;mat.alphaTest=.25;
+  mat.onBeforeCompile=sh=>{Object.assign(sh.uniforms,u);
+   sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec2 vBrowUV;').replace('#include <begin_vertex>','#include <begin_vertex>\nvBrowUV=uv;');
+   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uHair;varying vec2 vBrowUV;').replace('#include <map_fragment>',`#include <map_fragment>
+    float grain=sin(vBrowUV.x*230.0-vBrowUV.y*7.0);
+    diffuseColor.rgb=(uHair*.72+vec3(.012))*(.88+.12*grain);
+    diffuseColor.a*=smoothstep(0.0,.13,vBrowUV.y)*(1.0-smoothstep(.87,1.0,vBrowUV.y))*smoothstep(0.0,.06,vBrowUV.x);`);
+  };mat.customProgramCacheKey=()=>'rider-brows-natural-1';
+ }
  function patchHair(mat,u,brows,noSquash){
+  mat.normalScale.set(brows?.22:.38,brows?.22:.38);mat.roughness=brows?.85:.52;
   mat.onBeforeCompile=sh=>{
    Object.assign(sh.uniforms,u);
    if(!noSquash)squashVerts(sh);
    sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uHair;')
     .replace('#include <map_fragment>',`#include <map_fragment>
- diffuseColor.rgb=uHair*${brows?'0.72':'1.0'}*(dot(diffuseColor.rgb,vec3(0.2126,0.7152,0.0722))/${HAIR_TEX_LUM.toFixed(3)});`);
+ float sourceShade=clamp(dot(diffuseColor.rgb,vec3(0.2126,0.7152,0.0722))/${HAIR_TEX_LUM.toFixed(3)},.48,1.45);
+ diffuseColor.rgb=${brows?'(uHair*.72+vec3(.012))':'uHair'}*mix(1.0,sourceShade,${brows?'.40':'.62'});`);
   };
   mat.customProgramCacheKey=()=>'rider-hair-'+(brows?1:0)+(noSquash?'n':'');
  }
  /* the cap of drawn-back hair: tinted like the rest, its edge carved into a hairline of loose strands, the
     roots there a shade darker where the scalp shows through */
  function patchScalp(mat,u){
-  mat.alphaTest=0.5; mat.side=THREE.FrontSide;mat.normalMap=null;mat.roughness=0.65;
+  mat.alphaTest=0.5; mat.side=THREE.FrontSide;mat.normalMap=null;mat.roughness=0.57;
   mat.onBeforeCompile=sh=>{
    Object.assign(sh.uniforms,u);
    squashVerts(sh);
@@ -555,12 +552,14 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
     .replace('#include <begin_vertex>','#include <begin_vertex>\n vFade=hairFade; vHP=position;vCombUV=uv;');
    sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uHair; varying float vFade; varying vec3 vHP; varying vec2 vCombUV;\nfloat sHash(vec3 p){p=fract(p*0.3183099+0.1);p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}')
     .replace('#include <map_fragment>',`#include <map_fragment>
- float strands=sin(vCombUV.x*100.0+sin(vCombUV.y*15.0)*1.2);
- float resolved=1.0-smoothstep(.7,2.5,fwidth(vCombUV.x*100.0));
- diffuseColor.rgb=uHair*(.76+.13*strands*resolved);
+ float comb=vCombUV.x*420.0+sin(vCombUV.y*9.0)*3.0;
+ float strands=sin(comb)*.045+sin(comb*2.71+1.8)*.025;
+ float resolved=1.0-smoothstep(.7,2.5,fwidth(comb));
+ float clumps=sin(vCombUV.x*47.0+sin(vCombUV.y*6.0)*1.4)*.045;
+ diffuseColor.rgb=uHair*(.88+clumps+strands*resolved);
  { float nz=sHash(floor(vHP*vec3(1100.0,420.0,1100.0)))*0.7+sHash(floor(vHP*300.0))*0.5;
    diffuseColor.a=clamp(vFade*0.85+0.5+(nz-0.6)*0.42,0.0,1.0);
-   diffuseColor.rgb*=mix(0.80,1.0,smoothstep(-0.5,2.5,vFade)); }`);
+   diffuseColor.rgb*=mix(0.88,1.0,smoothstep(-0.5,2.5,vFade)); }`);
   };
   mat.customProgramCacheKey=()=>'rider-scalp';
  }
@@ -599,8 +598,8 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
   mats.push(depthMat);
   const own=(m,patch,...a)=>{const c=m.clone();patch(c,u,...a);mats.push(c);return c;};
   body.material=own(kit.materials.body,patchBody);
-  if(eyes)eyes.material=own(kit.materials.eyes,patchEyes);
-  if(brows){brows.material=own(kit.materials.brows,patchHair,true);brows.castShadow=false;}
+  if(eyes){const m=new THREE.MeshPhysicalMaterial({map:kit.materials.eyes.map,color:0xffffff,roughness:.20,metalness:0,clearcoat:.7,clearcoatRoughness:.09,ior:1.4,side:THREE.DoubleSide});patchEyes(m,u);eyes.material=m;mats.push(m);}
+  if(brows){brows.material=own(kit.materials.brows,patchBrows);brows.castShadow=false;}
   const hb=bones.Head;
   /* helmet: built once per kit, dressed per rider */
   const hg=kit.helmetGeo;
@@ -633,7 +632,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
     let scalp=scalpGeometry(kit,'back');
     if(h.detail==='coils'){
      scalp=scalp.clone();const p=scalp.attributes.position,H=kit.head;
-     for(let i=0;i<p.count;i++)p.setXYZ(i,H.cx+(p.getX(i)-H.cx)*1.18,H.cy+(p.getY(i)-H.cy)*1.17,H.cz+(p.getZ(i)-H.cz)*1.15);
+     for(let i=0;i<p.count;i++)p.setXYZ(i,H.cx+(p.getX(i)-H.cx)*1.10,H.cy+(p.getY(i)-H.cy)*1.10,H.cz+(p.getZ(i)-H.cz)*1.10);
      scalp.computeVertexNormals();scalp.computeBoundingSphere();
     }
     put(scalp,cap,{ownGeo:h.detail==='coils'});

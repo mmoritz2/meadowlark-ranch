@@ -27,7 +27,7 @@ export const EXTRA_HAIR=[
 ].map(h=>({...h,body:['f','m']}));
 
 export function shapeHair(source,style,head){
- const geo=source.clone(),p=geo.attributes.position;
+ const geo=source.clone(),p=geo.attributes.position;geo.computeBoundingBox();const sourceEnd=geo.boundingBox.min.y;
  const end=style==='bob'?-0.012:style==='beachbob'?-.055:style==='mermaidwaves'?-.42:style==='lob'?-0.15:style==='long'?-0.29:-0.26;
  for(let i=0;i<p.count;i++){
   let x=p.getX(i),y=p.getY(i),z=p.getZ(i);
@@ -35,8 +35,8 @@ export function shapeHair(source,style,head){
    x*=1.06;z*=1.07;
    if(y>head.cy)y+=(y-head.cy)*0.10;
   }else if(y<0.085){
-   const t=Math.min(1,Math.max(0,(0.085-y)/0.136));
-   y=0.085+(end-0.085)*t;
+   const t=Math.min(1,Math.max(0,(0.085-y)/Math.max(.02,.085-sourceEnd)));
+   y=0.085+(end-0.085)*t+.009*Math.sin(x*85+z*37)*Math.max(0,(t-.72)/.28);
    const side=Math.sign(x)||1;
    x+=side*(style==='bob'?0.006*Math.sin(t*Math.PI):0.014*t);
    if(z<0.015)z-=Math.max(0,t-0.30)*0.075;
@@ -114,8 +114,8 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
   if(messy&&!helmet)for(const sd of [-1,1])pieces.push(curve([V(sd*H.rx,H.browTop+.015,H.cz+.025),V(sd*(H.rx+.009),H.browTop-.025,H.cz+.045),V(sd*(H.rx+.005),H.browTop-.065,H.cz+.035)],[.004,.003,.0008],16));
   hair.push(merge(pieces));ring(at,.021);
  };
- if(style==='lowpony'||style==='ribbonpony'||style==='halfup'){
-  const at=tiePoint(kit,style==='halfup'&&!helmet?'back':'nape');
+ if(style==='ponytail'||style==='lowpony'||style==='ribbonpony'||style==='halfup'){
+  const at=tiePoint(kit,(style==='halfup'||style==='ponytail')&&!helmet?'back':'nape');
   pony(at,style==='halfup'?.20:.29);
   if(style==='ribbonpony'){
    for(const sd of [-1,1]){
@@ -168,19 +168,28 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
    const pts=[];for(let i=0;i<=64;i++){const a=i/64*Math.PI*2;pts.push(scalpPoint(THREE,kit,V(Math.sin(a)*H.rx,H.cy+.046+.022*Math.cos(a),H.cz+Math.cos(a)*H.rz),.005));}
    braid(pts,.0065,18,false);
   }
- }else if(style==='lowbun'||style==='messybun')bun(style==='messybun');
+ }else if(style==='classicbun')bun(false,tiePoint(kit,helmet?'nape':'crown'));
+  else if(style==='lowbun'||style==='messybun')bun(style==='messybun');
  else if(style==='coils'||style==='croppedcoils'){
-  const pieces=[];
-  for(let row=0;row<9;row++)for(let j=0;j<27;j++){
-   const th=(j+row*.41)/27*Math.PI*2,phi=.10+row*.205;
-   const size=style==='croppedcoils'?.007:.021;
-   const front=Math.cos(th),center=V(Math.sin(th)*Math.sin(phi)*(H.rx+size),H.cy+Math.cos(phi)*(H.ry+size+.004),H.cz+Math.cos(th)*Math.sin(phi)*(H.rz+size));
-   if(front>.4&&center.y<H.browTop+.029)continue;
-   const out=center.clone().sub(V(H.cx,H.cy,H.cz)).normalize(),a=V(Math.cos(th),0,-Math.sin(th)),b=out.clone().cross(a),pts=[];
-   for(let k=0;k<=20;k++){const t=k/20,angle=t*Math.PI*3.3+j*1.71+row*1.31,r=.0055*(.7+.3*Math.sin(t*Math.PI));pts.push(center.clone().addScaledVector(a,Math.cos(angle)*r).addScaledVector(b,Math.sin(angle)*r).addScaledVector(out,(t-.5)*(.018+.009*Math.sin(j*11+row*5))));}
-   pieces.push(curve(pts,[.0031,.0037,.0037,.0030,.0012],20,6));
+  const pieces=[],cropped=style==='croppedcoils';
+  for(let j=0;j<420;j++){
+   const th=j*2.39996322973,phi=Math.acos(1-(j+.5)/420*1.38);
+   const target=V(Math.sin(th)*Math.sin(phi)*H.rx,H.cy+Math.cos(phi)*H.ry,H.cz+Math.cos(th)*Math.sin(phi)*H.rz);
+   if(Math.cos(th)>.35&&target.y<H.browTop+.026)continue;
+   const size=(cropped?.0085:.017)*(1+.18*Math.sin(j*7.3+Math.cos(j*2.8)));
+   const root=scalpPoint(THREE,kit,target,.001),normal=root.clone().sub(V(H.cx,H.cy,H.cz)).normalize(),center=root.clone().addScaledVector(normal,size*.42);
+   const tuft=new THREE.SphereGeometry(size,9,7);tuft.scale(1,1.12,.91);tuft.rotateY(j*1.7);tuft.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(V(0,1,0),normal));tuft.translate(center.x,center.y,center.z);pieces.push(tuft);
   }
   hair.push(merge(pieces));
+ }
+ if(!helmet&&!['coils','croppedcoils','twists','halfup','halfupbun'].includes(style)){
+  const wisps=[];
+  for(const side of [-1,1])for(let j=0;j<3;j++){
+   const points=[];
+   for(let k=0;k<5;k++){const t=k/4,at=V(side*(H.rx*.84+.008*t+j*.0015),H.browTop+.023-t*(.052+j*.012),H.cz+.053+.012*Math.sin(t*Math.PI)+j*.002);points.push(scalpPoint(THREE,kit,at,.003+t*.001));}
+   wisps.push(curve(points,[.0014,.0022,.0015,.0002],16,6));
+  }
+  hair.push(merge(wisps));
  }
  return {hair,ties,ribbon};
 }

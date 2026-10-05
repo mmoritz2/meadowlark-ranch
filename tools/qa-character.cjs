@@ -8,10 +8,12 @@
    saving; and closing gives the GL context back. Also that a bare head gets a cap and a fringe, and
    a helmet gets neither.
 
-   Usage:  QA_PORT=8431 NODE_PATH=$(npm root -g) node tools/qa-character.cjs */
+   Usage:  QA_PORT=8431 NODE_PATH=$(npm root -g) node tools/qa-character.cjs
+   Add QA_STATIC=1 to serve the local checkout under a GitHub Pages fixture origin. */
 const QA=require('./qa-platform.cjs');
 const {chromium}=QA;
-const url=QA.BASE+'/ranch3d.html?qa=character&fresh='+Date.now();
+const staticOrigin=process.env.QA_STATIC==='1'?'https://character-preview.github.io':null;
+const url=(staticOrigin||QA.BASE)+'/ranch3d.html?qa=character&fresh='+Date.now();
 const fs=require('node:fs'),path=require('node:path');
 const outDir=path.resolve(__dirname,'../output/wardrobe');fs.mkdirSync(outDir,{recursive:true});
 const checks=[];
@@ -20,7 +22,13 @@ let browser=null;
 setTimeout(async()=>{console.error('WATCHDOG: no result after 300 s');try{if(browser)await browser.close();}catch(e){}process.exit(3);},300000).unref();
 (async()=>{
  browser=await chromium.launch({headless:true,args:['--disable-background-timer-throttling',QA.ANGLE,'--enable-gpu-rasterization','--ignore-gpu-blocklist']});
- const page=await browser.newPage({viewport:{width:1280,height:800}});
+ const page=await browser.newPage({viewport:{width:1280,height:800},serviceWorkers:'block'});
+ // Exercise the actual static-host behavior while every game asset comes from this checkout.
+ if(staticOrigin)await page.route(staticOrigin+'/**',async route=>{
+  const target=new URL(route.request().url());
+  const response=await route.fetch({url:QA.BASE+target.pathname+target.search});
+  await route.fulfill({response});
+ });
  const errors=[];
  page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));
  page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});

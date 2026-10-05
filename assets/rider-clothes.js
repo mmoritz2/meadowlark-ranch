@@ -1,4 +1,4 @@
-import {trimGarment} from './rider-fit.js?v=fit-20261005';
+import {trimGarment} from './rider-fit.js?v=art-20261005';
 /* Clothing recipes reuse the rider's fitted, skinned meshes. All cuts keep the source
    skeleton and weights, so the wardrobe works on foot, in the saddle and on other riders. */
 const look=(id,label,category,icon,source,design,palette,desc,cut='shirt')=>
@@ -99,7 +99,7 @@ vec3 riderFabric(vec3 base,vec3 p){
  if(d>0.5&&d<1.5){
   float a=smoothstep(-0.12,0.12,clothWave(p.x,98.0)),b=smoothstep(-0.12,0.12,clothWave(y,98.0));
   base*=0.62+0.38*(1.0-a*0.48-b*0.42);
-  base=mix(base,cream,0.12*max(clothLine(p.x*31.2,0.014),clothLine(y*31.2,0.014)));
+  base=mix(base,cream,0.06*max(clothLine(p.x*31.2,0.014),clothLine(y*31.2,0.014)));
  }else if(d<2.5&&d>1.5){base=mix(base,ink,smoothstep(0.52,0.60,fract(y*25.0))*0.85);
  }else if(d<3.5&&d>2.5){
   float knit=clothWave(p.x+sin(y*260.0)*.004,340.0)*clothWave(y,310.0);
@@ -123,7 +123,7 @@ vec3 riderFabric(vec3 base,vec3 p){
  }else if(d<9.5&&d>8.5){
   float opening=step(ax,(y-uZ1.z)*0.16)*front;
   float lapel=step(abs(ax-(y-uZ1.z)*0.18),0.018)*front;
-  base=mix(base,cream,opening);base=mix(base,ink,lapel);
+  base=mix(base,cream,opening);base=mix(base,base*0.48,lapel);
  }else if(d<10.5&&d>9.5){
   float bib=step(ax,0.085)*step(y,uZ1.x-0.14);
   float straps=step(abs(ax-0.075),0.018);
@@ -180,6 +180,11 @@ vec3 riderFabric(vec3 base,vec3 p){
  if(uClothes.z>0.5){
   float hem=step(y,uZ1.z+0.065),cuff=step(uZ2.x-0.105,ax);
   base*=1.0-max(hem,cuff)*(0.12+0.035*clothWave(ax+y,620.0));
+ }
+ if(uFitted>.5){
+  float neckCut=uZ1.x+.036*(1.0-smoothstep(-.09,0.0,p.z-uZ1.y))+.045*pow(min(ax/.085,1.0),2.0)+.075*smoothstep(.085,.15,ax);
+  float binding=clothBand(y,neckCut-.005,.006)*(1.0-smoothstep(.075,.14,ax));
+  base*=1.0-binding*(.12+.025*clothWave(p.x+p.z,850.0));
  }
  // Stitching sits along the sewn edges, while fine weave fades with distance.
  float stitch=(clothBand(y,uZ1.z-0.017,.0012)+clothBand(ax,uZ2.x-.033,.0012))*0.30;
@@ -239,7 +244,7 @@ export function tailoredTop(THREE,kit,outfit){
   const front=Math.sqrt(Math.max(0,1-(x/.205)**2))*depth;
   const frontWeight=smooth(-.005,.035,z)*torso*(1-smooth(zones.neckY-.10,zones.neckY-.025,y));
   z+=(front-z)*frontWeight;
-  x*=1+(knit?.075:jacket?.055:.035)*torso*(1-smooth(zones.waistY+.10,zones.neckY-.14,y));
+  x*=1+(knit?.17:jacket?.13:.065)*torso*(1-smooth(zones.waistY+.10,zones.neckY-.14,y));
   // Low folds collect at elbows; keep the chest and hem quiet.
   const elbow=Math.exp(-1*((ax-.49)/.055)**2)*smooth(.25,.35,ax),fold=Math.sin(ax*95+y*12)*elbow*(knit?.0015:.0009);
   x+=n.getX(i)*fold;z+=n.getZ(i)*fold;
@@ -247,9 +252,9 @@ export function tailoredTop(THREE,kit,outfit){
  }
  smoothClothNormals(raw);
  const cuff=outfit.cut==='short'?zones.cuffX-.30:zones.cuffX-.016;
- const neck=(x,y,z)=>zones.neckY+.036*(1-smooth(-.09,0,z-zones.neckZ));
+ const neck=(x,y,z)=>zones.neckY+.036*(1-smooth(-.09,0,z-zones.neckZ))+.045*Math.min(Math.abs(x)/.085,1)**2+.075*smooth(.085,.15,Math.abs(x));
  const geo=trimGarment(THREE,raw,[(x,y)=>y-hem,(x)=>cuff-Math.abs(x),
-  (x,y,z)=>Math.max(neck(x,y,z)-y,Math.hypot(x,z-zones.neckZ)-.072),
+  (x,y,z)=>neck(x,y,z)-y,
   (x,y)=>Math.max(zones.headY-y,Math.abs(x)-.17)]);
  raw.dispose();smoothClothNormals(geo);geo.userData.garment=true;geo.userData.hem=hem;geo.userData.cuff=cuff;
  return {geometry:geo,material:src.material,name:'Tailored_Body',skeleton:src.skeleton,bindMatrix:src.bindMatrix};

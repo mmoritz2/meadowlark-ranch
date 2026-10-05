@@ -1,6 +1,7 @@
 /* Small, independently selectable pieces, fitted to the shared rider skeleton.
    Every mesh belongs to one rider; switching or removing a piece frees its resources. */
-import {surfaceSampler} from './rider-fit.js?v=fit-20261005';
+import {scalpPoint} from './rider-hairstyles.js?v=art-20261005';
+import {surfaceSampler} from './rider-fit.js?v=art-20261005';
 const item=(id,label,col)=>({id,label,col});
 export const RIDER_ACCESSORIES={
  eyewear:[item('none','No glasses','#b8b1a5'),item('round','Round gold','#c9aa65'),item('square','Black frames','#262b34'),item('cateye','Rose cat-eye','#ae596e'),item('tortoise','Tortoiseshell','#815438'),item('aviator','Aviator shades','#b9c4c7'),item('sport','Sport sunglasses','#355f69')],
@@ -42,7 +43,7 @@ export function buildAccessories(THREE,kit,bones,fit,garments=[],parent=null){
  if(fit.earrings!=='none'){
   const id=fit.earrings,g=attach('earrings','Head'),mat=material(RIDER_ACCESSORIES.earrings.find(x=>x.id===id).col,id!=='pearls'&&id!=='drops');
   for(const sd of [-1,1]){
-   const p=V(sd*(H.rx+.002),H.browTop-.072,H.cz-.002);
+   const p=scalpPoint(THREE,kit,V(sd*(H.rx+.002),H.browTop-.072,H.cz-.002),.0008);
    bead(g,p,id==='pearls'?.0055:.0036,mat);
    if(id==='hoops'||id==='silverhoops'){
     const geo=new THREE.TorusGeometry(.015,.0018,8,32);geo.rotateY(sd*.30);geo.translate(p.x,p.y-.013,p.z+.003);put(g,geo,mat);
