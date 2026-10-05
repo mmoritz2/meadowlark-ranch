@@ -56,7 +56,7 @@ const rj=game.match(/const RJ=(\{[\s\S]*?\n\});/)[1];
     }
     // A later selection must win, including a return to the fitted kit.
     rig.setOutfit('ranger');rig.setOutfit('flannel');rig.setOutfit('polo');await Promise.resolve();await Promise.resolve();
-    checks.push({body,id:'rapid-switch',loaded:rig.outfitId==='polo'&&!rig.outfit&&rig.u.uOutfit.value===0,meshes:rig.boots?.length||0,shader:true,finite:true});
+    checks.push({body,id:'rapid-switch',loaded:rig.outfitId==='polo'&&rig.outfit?.id==='polo'&&rig.u.uOutfit.value===1&&rig.u.uTopOnly.value===1,meshes:rig.boots?.length||0,shader:true,finite:true});
     for(const motion of ['walk','jog']){rig.action('idle').setEffectiveWeight(0);const a=rig.action(motion);a.setEffectiveWeight(1);rig.mixer.update(.25);renderer.render(sc,cam);a.setEffectiveWeight(0);}
     sc.remove(rig.root);rig.dispose();
    }

@@ -1,6 +1,6 @@
 /* Small, independently selectable pieces, fitted to the shared rider skeleton.
    Every mesh belongs to one rider; switching or removing a piece frees its resources. */
-import {riderOutfit} from './rider-clothes.js?v=appearance-3';
+import {surfaceSampler} from './rider-fit.js?v=fit-20261005';
 const item=(id,label,col)=>({id,label,col});
 export const RIDER_ACCESSORIES={
  eyewear:[item('none','No glasses','#b8b1a5'),item('round','Round gold','#c9aa65'),item('square','Black frames','#262b34'),item('cateye','Rose cat-eye','#ae596e'),item('tortoise','Tortoiseshell','#815438'),item('aviator','Aviator shades','#b9c4c7'),item('sport','Sport sunglasses','#355f69')],
@@ -10,10 +10,11 @@ export const RIDER_ACCESSORIES={
 export const accessoryId=(slot,id)=>RIDER_ACCESSORIES[slot]?.some(a=>a.id===id)?id:'none';
 export const accessoryFit=fit=>Object.fromEntries(Object.keys(RIDER_ACCESSORIES).map(slot=>[slot,accessoryId(slot,fit?.[slot])]));
 
-export function buildAccessories(THREE,kit,bones,fit){
+export function buildAccessories(THREE,kit,bones,fit,garments=[],parent=null){
+ let neckSurface=null;
  const roots=[],H=kit.head,V=(x,y,z)=>new THREE.Vector3(x,y,z);
  const material=(col,metal=false)=>new THREE.MeshStandardMaterial({color:col,roughness:metal?.27:.64,metalness:metal?.72:0,side:THREE.DoubleSide});
- const attach=(slot,bone)=>{const g=new THREE.Group();g.name='accessory-'+slot+'-'+fit[slot];bones[bone].add(g);roots.push(g);return g;};
+ const attach=(slot,bone)=>{const g=new THREE.Group();g.name='accessory-'+slot+'-'+fit[slot];(bone?bones[bone]:parent).add(g);if(!bone)g.userData.skinned=true;roots.push(g);return g;};
  const put=(group,geo,mat)=>{const m=new THREE.Mesh(geo,mat);m.castShadow=true;m.receiveShadow=true;group.add(m);return m;};
  const tube=(points,r=.0018,closed=false)=>new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points,closed),Math.max(24,points.length*3),r,6,closed);
  const bead=(group,p,r,mat)=>{const g=new THREE.SphereGeometry(r,12,8);g.translate(p.x,p.y,p.z);return put(group,g,mat);};
@@ -52,17 +53,21 @@ export function buildAccessories(THREE,kit,bones,fit){
   }
  }
  if(fit.neckwear!=='none'){
-  const id=fit.neckwear,g=attach('neckwear','spine_03'),ny=kit.zones.neckY,mat=material(RIDER_ACCESSORIES.neckwear.find(x=>x.id===id).col,id==='pendant'||id==='layered');
-  // Project onto the actual neck/chest instead of an ellipse floating in front of it.
-  const probeMat=new THREE.MeshBasicMaterial({side:THREE.DoubleSide}),probe=new THREE.Mesh(kit.skin.geometry,probeMat),ray=new THREE.Raycaster();probe.updateMatrixWorld(true);
-  const ease=riderOutfit(fit.outfit).cut==='sweater'?.038:.026;
+  const id=fit.neckwear,g=attach('neckwear',null),ny=kit.zones.neckY,mat=material(RIDER_ACCESSORIES.neckwear.find(x=>x.id===id).col,id==='pendant'||id==='layered');
+  // The chain rests on the outer garment, and the uncovered portion rests on
+  // the neck. Radial surface hits stay outside; mixing front/back hits does not.
+  const cloth=garments.filter(m=>!/Legs|Feet|Buttons/.test(m.name));
+  neckSurface=surfaceSampler(THREE,[...cloth,kit.skin]);
+  const cast=(a,y)=>{
+   const dir=V(Math.sin(a),0,Math.cos(a)),origin=V(dir.x*.6,y,-.03+dir.z*.6);
+   // Never pass through the neck to catch the garment on the opposite side.
+   const near=p=>(p.x*dir.x+(p.z+.03)*dir.z)>.005&&Math.hypot(p.x,p.z+.03)<(y>ny+.02?.13:.25);
+   const clothing=y<ny+.008&&cloth.length?neckSurface.cast(origin,dir.clone().negate(),(p,src)=>src!==kit.skin&&near(p)):null;
+   return clothing||neckSurface.cast(origin,dir.clone().negate(),near);
+  };
   const point=(a,drop=.105)=>{
-   const front=(Math.cos(a)+1)*.5,y=ny+.068-drop*Math.pow(front,2),x=Math.sin(a)*(.057+.030*front*drop/.105);
-   ray.set(V(x,y,.5),V(0,0,-1));const fore=ray.intersectObject(probe,false)[0];
-   ray.set(V(x,y,-.5),V(0,0,1));const back=ray.intersectObject(probe,false)[0];
-   const pad=y<ny+.008?ease:.006;
-   const z=fore&&back?(back.point.z-pad)*(1-front)+(fore.point.z+pad)*front:-.03+Math.cos(a)*(.066+pad);
-   return V(x,y,z);
+   const front=(Math.cos(a)+1)*.5,y=ny+.083-drop*Math.pow(front,3),hit=cast(a,y);
+   return hit?hit.point.clone().addScaledVector(hit.normal,.007):V(Math.sin(a)*.064,y,-.03+Math.cos(a)*.064);
   };
   const necklace=(drop,r=.0015)=>{const pts=[];for(let i=0;i<64;i++)pts.push(point(i/64*Math.PI*2,drop));const smooth=pts.map((p,i)=>p.clone().multiplyScalar(.5).addScaledVector(pts[(i+63)%64],.25).addScaledVector(pts[(i+1)%64],.25));put(g,tube(smooth,r,true),mat);return smooth;};
   if(id==='pendant'||id==='layered'){
@@ -98,9 +103,7 @@ export function buildAccessories(THREE,kit,bones,fit){
    // A fine ivory stitched edge helps the fabric read at wardrobe distance.
    const edge=[];for(let i=0;i<64;i++){const a=i/64*Math.PI*2,front=Math.pow((Math.cos(a)+1)*.5,5);const p=point(a,.024+(id==='bandana'?.09*front+.012:.022));p.z+=.005;edge.push(p);}put(g,tube(edge,.0012,true),material('#e5d5bc'));
   }
-  // The pieces were authored in bind-world metres; move them into the chest bone's frame.
-  const inv=kit.bones.spine_03.matrixWorld.clone().invert();g.traverse(m=>{if(m.isMesh)m.geometry.applyMatrix4(inv);});
-  probeMat.dispose();
+
  }
  // One draw call per material, including the many individual necklace pearls.
  for(const group of roots){
@@ -115,5 +118,21 @@ export function buildAccessories(THREE,kit,bones,fit){
    source.forEach((geo,i)=>{if(geo!==meshes[i].geometry)geo.dispose();meshes[i].geometry.dispose();group.remove(meshes[i]);});put(group,merged,mat);
   }
  }
- return {roots,dispose(){const geos=new Set(),mats=new Set();for(const g of roots){g.removeFromParent();g.traverse(m=>{if(m.isMesh){geos.add(m.geometry);mats.add(m.material);}});}geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());}};
+ const skinSamples=new Map();
+ for(const group of roots)if(group.userData.skinned){
+  for(const old of [...group.children]){
+   const geo=old.geometry,p=geo.attributes.position,joints=[],weights=[];
+   for(let i=0;i<p.count;i++){
+    const pos=V(p.getX(i),p.getY(i),p.getZ(i)),radial=V(pos.x,0,pos.z+.03).normalize(),origin=V(radial.x*.6,pos.y,-.03+radial.z*.6);
+    const key=[pos.x,pos.y,pos.z].map(v=>Math.round(v*1000)).join(',');
+    if(!skinSamples.has(key))skinSamples.set(key,neckSurface.cast(origin,radial.clone().negate(),point=>Math.hypot(point.x,point.z+.03)<.25&&point.x*radial.x+(point.z+.03)*radial.z>.005));
+    const hit=skinSamples.get(key);
+    if(hit){joints.push(...hit.joints.map(j=>kit.skin.skeleton.bones.findIndex(b=>b.name===hit.source.skeleton.bones[j].name)));weights.push(...hit.weights);}else{joints.push(kit.skin.skeleton.bones.findIndex(b=>b.name==='spine_03'),0,0,0);weights.push(1,0,0,0);}
+   }
+   geo.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(joints,4));geo.setAttribute('skinWeight',new THREE.Float32BufferAttribute(weights,4));
+   const mesh=new THREE.SkinnedMesh(geo,old.material);mesh.name='Fitted_neckwear';mesh.bind(new THREE.Skeleton(kit.skin.skeleton.bones.map(b=>bones[b.name]),kit.skin.skeleton.boneInverses),kit.skin.bindMatrix);mesh.castShadow=true;mesh.frustumCulled=false;group.remove(old);group.add(mesh);
+  }
+ }
+ if(neckSurface)neckSurface.dispose();
+ return {roots,dispose(){const geos=new Set(),mats=new Set();for(const g of roots){g.removeFromParent();g.traverse(m=>{if(m.isMesh){geos.add(m.geometry);mats.add(m.material);if(m.skeleton)m.skeleton.dispose();}});}geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());}};
 }

@@ -36,10 +36,10 @@
 
    Pure module: THREE and friends are injected, nothing runs at import time. */
 
-import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailorGarment,tailoredTop,sewnDetails} from './rider-clothes.js?v=appearance-3';
+import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailorGarment,tailoredTop,sewnDetails} from './rider-clothes.js?v=fit-20261005';
 export {RIDER_OUTFITS};
-import {EXTRA_HAIR,shapeHair,hairDetails} from './rider-hairstyles.js?v=appearance-3';
-import {accessoryFit,buildAccessories} from './rider-accessories.js?v=appearance-1';
+import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint} from './rider-hairstyles.js?v=fit-20261005';
+import {accessoryFit,buildAccessories} from './rider-accessories.js?v=fit-20261005';
 
 /* ---- tables ------------------------------------------------------------------------------------ */
 /* mesh: the pack's own hairstyle. scalp: hair drawn back over her own scalp (buildScalp) with what is tied
@@ -281,9 +281,8 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   return th=>{const a=Math.abs(th);for(let i=1;i<K.length;i++)if(a<=K[i][0]){const t=(a-K[i-1][0])/(K[i][0]-K[i-1][0]),e=t*t*(3-2*t);return K[i-1][1]+(K[i][1]-K[i-1][1])*e;}return K[K.length-1][1];};
  }
  function tiePoint(kit,tie){const H=kit.head;
-  if(tie==='crown')return V(H.cx,H.cy+H.ry*0.80,H.cz-H.rz*0.42);
-  if(tie==='nape')return V(H.cx,H.cy-0.072,H.cz-H.rz*0.84);
-  return V(H.cx,H.cy+0.028,H.cz-H.rz*0.97);
+  const target=tie==='crown'?V(H.cx,H.cy+H.ry*.83,H.cz-H.rz*.42):tie==='nape'?V(H.cx,H.cy-.060,H.cz-H.rz*.84):V(H.cx,H.cy+.028,H.cz-H.rz*.97);
+  return scalpPoint(THREE,kit,target,.001);
  }
  function scalpGeometry(kit,tie){
   kit.scalps=kit.scalps||{}; if(kit.scalps[tie])return kit.scalps[tie];
@@ -414,7 +413,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const z=kit.zones,ref=SKIN_REF[kit.body];
   return {uSkin:{value:new THREE.Color(DEF_SKIN)},uSkinW:{value:1},uBootMesh:{value:0},uBootRef:{value:0.1},uSkinRef:{value:new THREE.Vector3(...ref)},
    uShirt:{value:new THREE.Color('#3d4a6e')},uPants:{value:new THREE.Color('#cfc6ae')},uBoot:{value:new THREE.Color('#3b2a14')},
-   uClothes:{value:new THREE.Vector4(0,0,0,0)},uHair:{value:new THREE.Color('#4a2e1c')},uEye:{value:new THREE.Color('#6b3f1f')},uEyeW:{value:0},uOutfit:{value:0},
+   uClothes:{value:new THREE.Vector4(0,0,0,0)},uHair:{value:new THREE.Color('#4a2e1c')},uEye:{value:new THREE.Color('#6b3f1f')},uEyeW:{value:0},uOutfit:{value:0},uTopOnly:{value:0},uFitted:{value:0},
    uZ1:{value:new THREE.Vector4(z.neckY,z.neckZ,z.waistY,z.bootY)},uZ2:{value:new THREE.Vector4(z.cuffX,z.armY,z.armZ,z.headY)},
    uHelmet:{value:0},uHelm:{value:new THREE.Vector4(0,0,0,0)},uHelmR:{value:new THREE.Vector4(0,0,0,0)}};
  }
@@ -426,7 +425,7 @@ vec3 riderSkin(vec3 t){ if(uSkinW<0.5)return t;
  vec3 ch=(t/max(L,1e-3))/(uSkinRef/Lr);
  /* the source paints hard shadow into the face (a superhero's hollows): take the edge off it */
  return uSkin*pow(L/Lr,0.72)*mix(vec3(1.0),ch,0.50); }`;
- const HEAD_GLSL=`uniform vec3 uSkin,uShirt,uPants,uBoot,uHair,uEye; uniform float uSkinW,uEyeW,uOutfit,uHelmet,uBootMesh,uBootRef; uniform vec3 uSkinRef; uniform vec4 uZ1,uZ2,uHelm,uHelmR;`;
+ const HEAD_GLSL=`uniform vec3 uSkin,uShirt,uPants,uBoot,uHair,uEye; uniform float uSkinW,uEyeW,uOutfit,uTopOnly,uFitted,uHelmet,uBootMesh,uBootRef; uniform vec3 uSkinRef; uniform vec4 uZ1,uZ2,uHelm,uHelmR;`;
  function patchBody(mat,u){
   mat.onBeforeCompile=sh=>{
    Object.assign(sh.uniforms,u);
@@ -455,8 +454,10 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    float neckY=uZ1.x+0.042*smoothstep(0.0,-0.09,vBind.z-uZ1.y);
    float arm=smoothstep(uZ2.y-0.20,uZ2.y-0.14,y)*smoothstep(0.17,0.20,ax);
    float headZ=max(step(uZ2.w,y)*(1.0-arm),step(neckY,y)*(1.0-smoothstep(0.070,0.080,rN))*(1.0-arm));
-   float hand=arm*step(uZ2.x,ax);
-   if(uOutfit>0.5&&headZ<0.5)discard;
+   float hand=arm*step(uZ2.x-0.017,ax);
+   float bareArm=arm*step(uZ2.x-0.30,ax)*uClothes.y;
+   float keep=max(headZ,max(hand,bareArm)*uFitted);
+   if(uOutfit>0.5&&keep<0.5&&(uTopOnly<.5||y>uZ1.z-.026))discard;
    if(uBootMesh>0.5&&arm<0.5&&y<uZ1.w-0.085)discard;   // inside the boot shaft
  }`)
     .replace('#include <map_fragment>',`#include <map_fragment>
@@ -465,7 +466,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    float neckY=uZ1.x+0.042*smoothstep(0.0,-0.09,vBind.z-uZ1.y);
    float arm=smoothstep(uZ2.y-0.20,uZ2.y-0.14,y)*smoothstep(0.17,0.20,ax);
    float headZ=max(step(uZ2.w,y)*(1.0-arm),step(neckY,y)*(1.0-smoothstep(0.070,0.080,rN))*(1.0-arm));
-   float hand=arm*step(uZ2.x,ax);
+   float hand=arm*step(uZ2.x-0.017,ax);
    float shortSleeve=arm*step(uZ2.x-0.31,ax)*uClothes.y;
    float skinZ=max(max(headZ,hand),shortSleeve);
    float collar=(1.0-arm)*rBand(y,neckY,neckY+0.030)*(1.0-smoothstep(0.070,0.084,rN))*(1.0-step(uZ2.w,y));
@@ -505,15 +506,10 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    Object.assign(sh.uniforms,u,{uClothRef:{value:reference}});
    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vBind;').replace('#include <begin_vertex>','#include <begin_vertex>\n vBind=position;');
    sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\n'+HEAD_GLSL+'\nuniform float uClothRef; varying vec3 vBind; float rwClothSkin;\n'+SKIN_GLSL+CLOTH_GLSL)
-    .replace('#include <clipping_planes_fragment>',`#include <clipping_planes_fragment>
- ${tailored?`{float ax=abs(vBind.x),y=vBind.y;float arm=smoothstep(uZ2.y-0.20,uZ2.y-0.14,y)*smoothstep(0.17,0.20,ax);
- float rN=length(vec2(vBind.x,vBind.z-uZ1.y)),neckY=uZ1.x+0.042*smoothstep(0.0,-0.09,vBind.z-uZ1.y);
- float headZ=max(step(uZ2.w,y)*(1.0-arm),step(neckY,y)*(1.0-smoothstep(0.070,0.080,rN))*(1.0-arm));
- if(headZ>0.5||y<uZ1.z-${cut==='coat'?'0.13':'0.04'})discard;}`:''}`)
     .replace('#include <map_fragment>',`#include <map_fragment>
  { float sk=${allSkin?'1.0':'step(uZ2.x+0.004,abs(vBind.x))*step(uZ2.y-0.14,vBind.y)'};
    float shade=clamp(pow(dot(diffuseColor.rgb,vec3(0.2126,0.7152,0.0722))/uClothRef,0.60),0.40,1.6);
-   vec3 cloth=${part==='collar'?'riderFabric(uShirt*0.94+vec3(0.002),vBind)':part==='legs'?'uPants':part==='trim'?'uBoot':part==='arms'?'mix(riderFabric(uShirt,vBind),vec3(0.82,0.77,0.65),uClothes.w)':'riderFabric(uShirt,vBind)'};
+   vec3 cloth=${part==='collar'?'riderFabric(uShirt*0.86+vec3(0.003),vBind)':part==='legs'?'uPants':part==='trim'?'uBoot':part==='arms'?'mix(riderFabric(uShirt,vBind),vec3(0.82,0.77,0.65),uClothes.w)':'riderFabric(uShirt,vBind)'};
    ${part==='legs'?'cloth*=0.95+0.04*sin((vBind.x+vBind.y)*650.0);':''}
    rwClothSkin=sk;
    diffuseColor.rgb=mix(cloth*${tailored?'1.0':'shade'},riderSkin(diffuseColor.rgb),sk); }`)
@@ -681,11 +677,10 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    const outfit=riderOutfit(id);id=outfit.id;
    rig.outfitId=id;
    u.uClothes.value.set(outfit.design,outfit.cut==='short'?1:0,outfit.cut==='sweater'?1:0,outfit.cut==='gilet'?1:0);
-   const done=()=>{u.uOutfit.value=rig.outfit?1:0;rig.setBoots(outfit.source==='riding');if(cb)cb();};
+   const done=()=>{u.uOutfit.value=rig.outfit?1:0;u.uTopOnly.value=outfit.source==='riding'?1:0;u.uFitted.value=rig.outfit?.meshes.some(m=>m.name==='Tailored_Body')?1:0;rig.setBoots(outfit.source==='riding');if(rig.refreshAccessories)rig.refreshAccessories();if(cb)cb();};
    if(rig.outfit&&rig.outfit.id===id)return done();
    if(rig.outfit){dropMeshes(rig.outfit.meshes);rig.outfit=null;}
    u.uOutfit.value=0;
-   if(outfit.source==='riding')return done();
    outfitFor(kit,id).then(src=>{
     if(rig.disposed||rig.outfitId!==id||rig.outfit)return;
     const meshes=src.meshes.map(sm=>{
@@ -693,9 +688,16 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
      if(feet)patchBoot(mat,u);else if(sm.name!=='Sewn_Buttons')patchOutfit(mat,u,/Regular/.test(sm.material.name),part,src.refs.get(sm)||0.2,outfit.cut);
      mats.push(mat);return skinned(sm,mat);
     });
-    u.uBootRef.value=src.bootRef||0.1;
+    if(outfit.source!=='riding')u.uBootRef.value=src.bootRef||0.1;
     rig.outfit={id,meshes};done();
    }).catch(e=>{if(rig.disposed||rig.outfitId!==id)return;console.warn('rider outfit failed to load',id,e);rig.setOutfit('riding',cb);});
+  };
+  rig.refreshAccessories=()=>{
+   const f=rig.accessoryConfig;if(!f||rig.disposed)return;
+   const key=[f.eyewear,f.earrings,f.neckwear,f.neckwear!=='none'?f.outfit:''].join('|'),source=f.neckwear!=='none'?rig.outfit:null;
+   if(rig.accessoryKey===key&&rig.accessorySource===source)return;
+   if(rig.accessories)rig.accessories.dispose();
+   rig.accessories=buildAccessories(THREE,kit,bones,f,source?.meshes||[],body.parent);rig.accessoryKey=key;rig.accessorySource=source;
   };
   /* the whole look; a helmet or a new style rebuilds the hair, colours only move uniforms */
   rig.setLook=f=>{
@@ -709,12 +711,8 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    if(helm){helmMat.color.set(helm);if(helmet.parent!==hb)hb.add(helmet);}else if(helmet.parent)helmet.parent.remove(helmet);
    const key=style+'|'+(helm?1:0);   // the colour is a uniform: only the style and the helmet rebuild her hair
    if(rig.look!==key){rig.setHair(style,f.hair||'#4a2e1c',!!helm);rig.look=key;}
-   const accessories=accessoryFit(f),accessoryKey=Object.values(accessories).join('|')+(accessories.neckwear!=='none'?'|'+(f.outfit||'riding'):'');
-   if(rig.accessoryKey!==accessoryKey){
-    if(rig.accessories)rig.accessories.dispose();
-    rig.accessories=buildAccessories(THREE,kit,bones,{...accessories,outfit:f.outfit||'riding'});rig.accessoryKey=accessoryKey;
-   }
-   rig.setOutfit(f.outfit||'riding');
+   rig.accessoryConfig={...accessoryFit(f),outfit:f.outfit||'riding'};
+   rig.setOutfit(f.outfit||'riding');rig.refreshAccessories();
   };
   rig.dispose=()=>{
    rig.disposed=true;
@@ -744,7 +742,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
  }
  function outfitFor(kit,id){
   const outfit=riderOutfit(id),source=outfit.source;
-  if(source==='riding')return Promise.resolve({meshes:[],refs:new Map()});
+  if(source==='riding'){if(!kit.outfits[id]){const top=tailoredTop(THREE,kit,outfit);kit.outfits[id]=Promise.resolve({meshes:[top,...sewnDetails(THREE,top,outfit,kit)],refs:new Map()});}return kit.outfits[id];}
   if(!kit.outfits[id])kit.outfits[id]=file('outfit-'+source+'-'+kit.body+'.glb').then(g=>{
    const meshes=[],refs=new Map();
    g.scene.updateMatrixWorld(true);
@@ -756,7 +754,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
     const mesh=geometry===o.geometry?o:{geometry,material:o.material,name:o.name,skeleton:o.skeleton,bindMatrix:o.bindMatrix};
     meshes.push(mesh);refs.set(mesh,clothReference(o));
    });
-   if(outfit.source==='peasant'&&outfit.design>0){const top=tailoredTop(kit,outfit);meshes.push(top,...sewnDetails(THREE,top,outfit,kit));}
+   if(outfit.source==='peasant'&&outfit.design>0){const top=tailoredTop(THREE,kit,outfit);meshes.push(top,...sewnDetails(THREE,top,outfit,kit));}
    const feet=meshes.find(m=>/Feet/.test(m.name));
    return {meshes,refs,bootRef:feet?refs.get(feet):0.1};
   }).catch(e=>{delete kit.outfits[id];throw e;});

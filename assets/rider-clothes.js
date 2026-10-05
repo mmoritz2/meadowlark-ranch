@@ -1,3 +1,4 @@
+import {trimGarment} from './rider-fit.js?v=fit-20261005';
 /* Clothing recipes reuse the rider's fitted, skinned meshes. All cuts keep the source
    skeleton and weights, so the wardrobe works on foot, in the saddle and on other riders. */
 const look=(id,label,category,icon,source,design,palette,desc,cut='shirt')=>
@@ -76,7 +77,7 @@ float riderFabricHeight(vec3 p,float trousers){
   seams+=clothBand(ax,uZ2.x-0.035,0.004)*0.00025;
   if(d>2.5&&d<3.5){
    float cable=clothWave(p.x+0.012*sin(p.y*47.0),145.0);
-   weave+=cable*cable*0.00075+clothWave(p.x,370.0)*clothWave(p.y,290.0)*0.00020;
+   weave+=cable*cable*0.00025+clothWave(p.x,370.0)*clothWave(p.y,290.0)*0.00008;
   }
   if(d>5.5&&d<6.5){float q=(1.0-clothLine((p.x+p.y)*19.0,0.02))*(1.0-clothLine((p.x-p.y)*19.0,0.02));weave+=q*0.0019;}
   if(d>3.5&&d<5.5||d>8.5&&d<9.5||d>12.5&&d<13.5){
@@ -170,7 +171,7 @@ vec3 riderFabric(vec3 base,vec3 p){
   float buttons=step(ax,0.005)*step(abs(fract(y*20.0)-0.5),0.085)*front*step(uZ1.z+0.04,y)*step(y,uZ1.x-0.065);
   // Raised buttons are skinned geometry on these garments.
  }
- if(d>7.5&&d<8.5||d>5.5&&d<6.5){base=mix(base,ink,placket);}
+ if(d>7.5&&d<8.5||d>5.5&&d<6.5){base=mix(base,ink,placket*(uClothes.y>.5?step(uZ1.x-.15,y):1.0));}
  if(d>3.5&&d<4.5||d>12.5&&d<13.5){
   float pocket=step(abs(ax-0.082),0.041)*step(abs(y-(uZ1.x-0.22)),0.049)*front;
   float flap=step(abs(ax-0.082),0.044)*step(abs(y-(uZ1.x-0.18)),0.008)*front;
@@ -209,7 +210,7 @@ export function tailorGarment(THREE,mesh,outfit,zones){
 
 /* A continuous cloth shell for everyday tops, instead of recolouring the source
    fantasy tunic's corset. The body supplies the exact joint weights and hands.
-   A shader trims the neck and hem; a small envelope gives the cloth breathing room. */
+   Clipped edges form the neck, cuffs and hem; a small envelope gives cloth breathing room. */
 function smoothClothNormals(geo){
  geo.computeVertexNormals();const p=geo.attributes.position,n=geo.attributes.normal,groups=new Map();
  for(let i=0;i<p.count;i++){
@@ -220,38 +221,37 @@ function smoothClothNormals(geo){
  for(const g of groups.values()){const length=Math.hypot(g.x,g.y,g.z)||1;for(const i of g.indices)n.setXYZ(i,g.x/length,g.y/length,g.z/length);}
  n.needsUpdate=true;
 }
-export function tailoredTop(kit,outfit){
- const src=kit.skin,geo=src.geometry.clone();smoothClothNormals(geo);
- const p=geo.attributes.position,n=geo.attributes.normal,zones=kit.zones;
- const ease=outfit.cut==='sweater'?0.026:outfit.cut==='jacket'||outfit.cut==='coat'?0.018:0.012;
+export function tailoredTop(THREE,kit,outfit){
+ const src=kit.skin,raw=src.geometry.clone();smoothClothNormals(raw);
+ const p=raw.attributes.position,n=raw.attributes.normal,zones=kit.zones;
+ const knit=outfit.cut==='sweater',coat=outfit.cut==='coat',jacket=outfit.cut==='jacket'||coat;
+ const ease=knit?.013:jacket?.010:.006,hem=zones.waistY-(coat?.11:.027);
  const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t);};
  for(let i=0;i<p.count;i++){
   let x=p.getX(i),y=p.getY(i),z=p.getZ(i),ax=Math.abs(x);
-  const upper=smooth(zones.waistY-0.11,zones.waistY-0.03,y)*(1-smooth(zones.neckY-0.04,zones.neckY+0.01,y));
-  const hands=1-smooth(zones.cuffX-0.055,zones.cuffX,ax);
-  const amount=ease*upper*hands;
-  x+=n.getX(i)*amount;y+=n.getY(i)*amount;z+=n.getZ(i)*amount;
-  // Bridge the breast and waist contours with one relaxed front of cloth.
-  if(z>0.02&&ax<0.18&&y>zones.waistY&&y<zones.neckY-0.07){
-   const front=Math.sqrt(Math.max(0,1-(x/0.185)**2))*(kit.body==='f'?0.127:0.14);
-   const blend=smooth(zones.waistY,zones.waistY+0.08,y)*(1-smooth(zones.neckY-0.16,zones.neckY-0.07,y));
-   z+=Math.max(0,front+ease-z)*blend;
-  }
-  const torso=(1-smooth(.16,.22,ax))*upper;
-  const relaxed=outfit.cut==='sweater'?.18:outfit.cut==='jacket'||outfit.cut==='coat'?.13:.08;
-  x*=1+relaxed*torso*(1-smooth(zones.waistY+.08,zones.neckY-.15,y));
-  const elbow=Math.exp(-1*((ax-.49)/.07)**2)*smooth(.20,.28,ax);
-  const waist=Math.exp(-1*((y-zones.waistY-.04)/.065)**2)*torso;
-  const folds=(Math.sin(ax*116+y*31)*elbow*.0035+Math.sin(y*105+ax*24+Math.sin(ax*40))*waist*.0030)*(outfit.cut==='sweater'?1.5:1);
-  const cuff=Math.exp(-1*((ax-zones.cuffX+.035)/.008)**2)*.0034*upper;
-  const hem=zones.waistY-(outfit.cut==='coat'?.13:.04);
-  const hemRoll=Math.exp(-1*((y-hem-.012)/.007)**2)*.0028*torso;
-  const collar=Math.exp(-1*((y-zones.neckY+.025)/.009)**2)*.004*(1-smooth(.075,.12,ax));
-  const seam=(folds+cuff+hemRoll+collar)*hands;
-  x+=n.getX(i)*seam;y+=n.getY(i)*seam;z+=n.getZ(i)*seam;
+  const upper=smooth(hem-.02,hem+.02,y)*(1-smooth(zones.neckY-.016,zones.neckY+.016,y));
+  const torso=(1-smooth(.14,.23,ax))*upper;
+  x+=n.getX(i)*ease*upper;z+=n.getZ(i)*ease*upper;
+  // A continuous draped front, with a modest waist taper, rather than separate
+  // breast bulges or a flat board spanning the entire abdomen.
+  const height=(y-zones.waistY)/(zones.neckY-zones.waistY);
+  const depth=(kit.body==='f'?.108:.119)+.022*Math.sin(Math.min(1,Math.max(0,height))*Math.PI)+ease;
+  const front=Math.sqrt(Math.max(0,1-(x/.205)**2))*depth;
+  const frontWeight=smooth(-.005,.035,z)*torso*(1-smooth(zones.neckY-.10,zones.neckY-.025,y));
+  z+=(front-z)*frontWeight;
+  x*=1+(knit?.075:jacket?.055:.035)*torso*(1-smooth(zones.waistY+.10,zones.neckY-.14,y));
+  // Low folds collect at elbows; keep the chest and hem quiet.
+  const elbow=Math.exp(-1*((ax-.49)/.055)**2)*smooth(.25,.35,ax),fold=Math.sin(ax*95+y*12)*elbow*(knit?.0015:.0009);
+  x+=n.getX(i)*fold;z+=n.getZ(i)*fold;
   p.setXYZ(i,x,y,z);
  }
- smoothClothNormals(geo);geo.computeBoundingSphere();
+ smoothClothNormals(raw);
+ const cuff=outfit.cut==='short'?zones.cuffX-.30:zones.cuffX-.016;
+ const neck=(x,y,z)=>zones.neckY+.036*(1-smooth(-.09,0,z-zones.neckZ));
+ const geo=trimGarment(THREE,raw,[(x,y)=>y-hem,(x)=>cuff-Math.abs(x),
+  (x,y,z)=>Math.max(neck(x,y,z)-y,Math.hypot(x,z-zones.neckZ)-.072),
+  (x,y)=>Math.max(zones.headY-y,Math.abs(x)-.17)]);
+ raw.dispose();smoothClothNormals(geo);geo.userData.garment=true;geo.userData.hem=hem;geo.userData.cuff=cuff;
  return {geometry:geo,material:src.material,name:'Tailored_Body',skeleton:src.skeleton,bindMatrix:src.bindMatrix};
 }
 
@@ -259,7 +259,7 @@ export function tailoredTop(kit,outfit){
    pocket lips and buttons therefore bend with her chest, instead of floating on it. */
 export function sewnDetails(THREE,top,outfit,kit){
  const d=outfit.design,z=kit.zones;
- if(![1,4,5,9,12,13,14,16,19,20,21].includes(d))return [];
+ if(![0,1,4,5,8,9,12,13,14,16,19,20,21].includes(d))return [];
  const g=top.geometry,p=g.attributes.position,idx=g.index,si=g.attributes.skinIndex,sw=g.attributes.skinWeight;
  const get=(a,i,k)=>a[['getX','getY','getZ','getW'][k]](i);
  const sample=(x,y)=>{
@@ -290,10 +290,15 @@ export function sewnDetails(THREE,top,outfit,kit){
   return {geometry:geo,material,name,skeleton:top.skeleton,bindMatrix:top.bindMatrix};
  };
  const cloth=[],collars=[],buttons=[];
+ const placketStart=d===8&&outfit.cut==='short'?z.neckY-.15:z.waistY+.015;
+ if(d!==12)for(let y=placketStart;y<z.neckY-.018;y+=.015){
+  const a=[-.009,y,.0025],b=[.009,y,.0025],c=[-.009,y+.015,.0025],e=[.009,y+.015,.0025];cloth.push([a,b,c],[b,e,c]);
+ }
  for(const side of [-1,1]){
   if(d!==12){
-   const a=[side*.018,z.neckY-.008,.005],b=[side*.074,z.neckY-.035,.004],c=[side*.042,z.neckY-(d===9?.145:.066),.010];
-   collars.push(side>0?[a,c,b]:[a,b,c]);
+   const a=[side*.014,z.neckY-.002,.003],b=[side*.078,z.neckY-.019,.004],c=[side*.043,z.neckY-(d===9?.135:.078),.006];
+   const corners=side>0?[a,c,b]:[a,b,c],at=(i,j)=>corners[0].map((v,k)=>v+(corners[1][k]-v)*i/4+(corners[2][k]-v)*j/4);
+   for(let i=0;i<4;i++)for(let j=0;j<4-i;j++){collars.push([at(i,j),at(i+1,j),at(i,j+1)]);if(i+j<3)collars.push([at(i+1,j),at(i+1,j+1),at(i,j+1)]);}
   }
   if([4,13].includes(d)){
    const cx=side*.077,cy=z.neckY-.20,w=.061,h=.072;
@@ -303,7 +308,7 @@ export function sewnDetails(THREE,top,outfit,kit){
    }
   }
  }
- for(let y=z.waistY+.065;y<z.neckY-.075;y+=.049){
+ for(let y=Math.max(z.waistY+.065,placketStart+.025);y<z.neckY-.055;y+=.049){
   const x=d===12?.047:0,r=d===9?.0036:.0027;
   for(let k=0;k<12;k++){const a=k/12*Math.PI*2,b=(k+1)/12*Math.PI*2;buttons.push([[x,y,.0045],[x+Math.cos(a)*r,y+Math.sin(a)*r,.003],[x+Math.cos(b)*r,y+Math.sin(b)*r,.003]]);}
  }

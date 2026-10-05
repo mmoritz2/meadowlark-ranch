@@ -26,15 +26,25 @@ const rj=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8').match
      const neck=slot==='neckwear';rig.root.rotation.y=slot==='earrings'?.62:.12;
      cam.position.set(0,neck?1.48:1.67,neck?1.10:.82);cam.lookAt(0,neck?1.40:1.63,0);renderer.render(scene,cam);
      const current=rig.accessories,root=current.roots[0];let finite=true,meshes=0;
-     root.traverse(m=>{if(m.isMesh){meshes++;finite=finite&&Array.from(m.geometry.attributes.position.array).every(Number.isFinite);}});
+     root.traverse(m=>{if(m.isMesh){meshes++;finite=finite&&Array.from(m.geometry.attributes.position.array).every(Number.isFinite);
+      if(neck){const p=m.geometry.attributes.position,j=m.geometry.attributes.skinIndex,w=m.geometry.attributes.skinWeight;for(let i=0;i<p.count;i++){
+       if(Math.hypot(p.getX(i),p.getZ(i)+.03)<.025)throw Error('Neckwear crosses through the neck: '+item.id);
+       let total=0;for(const get of ['getX','getY','getZ','getW']){if(!m.skeleton.bones[j[get](i)]||w[get](i)<0)throw Error('Invalid jewelry joint');total+=w[get](i);}if(Math.abs(total-1)>.001)throw Error('Unnormalized jewelry weights');
+      }}
+     }});
      rig.setLook({...chosen,hair:'#c4b18c'});
-     checks.push({body,slot,id:item.id,helmet,meshes,finite,reuse:rig.accessories===current,parent:root.parent.name=== (neck?'spine_03':'Head')});
+     checks.push({body,slot,id:item.id,helmet,meshes,finite,reuse:rig.accessories===current,parent:neck?root.parent===rig.body.parent&&root.children.every(m=>m.isSkinnedMesh):root.parent.name==='Head'});
      if(body==='f'&&!helmet){
       const img=renderer.domElement.toDataURL('image/png');images.push({id:slot+'-'+item.id,img});
       const card=document.createElement('div');card.className='card';const image=new Image();image.src=img;card.append(image);const label=document.createElement('div');label.className='label';label.textContent=item.label;card.append(label);document.querySelector('.grid').append(card);
      }
      const geo=root.children[0].geometry,mat=root.children[0].material;let disposedGeo=false,disposedMat=false;geo.addEventListener('dispose',()=>disposedGeo=true);mat.addEventListener('dispose',()=>disposedMat=true);
      rig.setLook(fit);checks.at(-1).removed=root.parent===null&&rig.accessories.roots.length===0&&disposedGeo&&disposedMat;
+    }
+    const {RIDER_OUTFITS}=await import('/assets/rider-clothes.js');
+    for(const outfit of RIDER_OUTFITS){await lib.outfitFor(kit,outfit.id);const old=rig.accessories;rig.setLook({...fit,outfit:outfit.id,neckwear:'layered'});await Promise.resolve();await Promise.resolve();
+     if(rig.outfit?.id!==outfit.id||rig.accessorySource!==rig.outfit||rig.accessories===old)throw Error('Jewelry did not refit to '+outfit.id);
+     const root=rig.accessories.roots[0];for(const m of root.children){const p=m.geometry.attributes.position;for(let i=0;i<p.count;i++)if(Math.hypot(p.getX(i),p.getZ(i)+.03)<.025)throw Error('Necklace crosses through '+outfit.id);}
     }
     const combo={...fit,eyewear:'round',earrings:'hoops',neckwear:'pendant'};rig.setLook(combo);
     for(const motion of ['walk','jog','seat']){
