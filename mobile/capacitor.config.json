@@ -1,0 +1,12 @@
+{
+  "appId": "com.meadowlarkranch.development",
+  "appName": "Meadowlark Ranch",
+  "webDir": "www",
+  "loggingBehavior": "debug",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#87a9bd",
+    "preferredContentMode": "mobile"
+  },
+  "server": {"hostname": "localhost", "iosScheme": "capacitor"}
+}

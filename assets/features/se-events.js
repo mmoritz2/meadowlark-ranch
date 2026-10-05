@@ -357,9 +357,12 @@ export function install(G){
 #seEv .sev-pbar .pb-k{display:block;font:800 clamp(9.5px,1.5vh,11.5px)/1.1 Nunito,system-ui,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:#bdb6dc}
 #seEv .sev-pbar .pb-v{display:block;font:900 clamp(14px,2.4vh,19px)/1.15 Nunito,system-ui,sans-serif;color:#fff;font-variant-numeric:tabular-nums}
 #seEv .sev-pbar .pb-req{display:flex;flex-wrap:wrap;gap:5px;flex:1;min-width:0}
-#seEv .sev-pbar .pb-req span{padding:3px 8px;border-radius:10px;background:rgba(255,255,255,.12);font:800 11.5px/1.2 Nunito,system-ui,sans-serif}
-#seEv .sev-pbar .pb-req span.bad{background:rgba(228,80,70,.3);color:#ffd6d2}
-#seEv .sev-pbar .pb-req span.ok{background:rgba(90,190,110,.28);color:#d9ffe0}
+#seEv .sev-pbar .pb-req>span{padding:5px 8px;border-radius:8px;background:rgba(255,255,255,.12);font:800 11.5px/1.25 Nunito,system-ui,sans-serif}
+#seEv .sev-pbar .pb-req>span.bad{background:rgba(228,80,70,.3);color:#ffd6d2}
+#seEv .sev-pbar .pb-req>span.ok{background:rgba(90,190,110,.28);color:#d9ffe0}
+#seEv .sev-pbar .pb-req small{display:block;margin-top:3px;font-size:10.5px;font-weight:700}
+#seEv .sev-horse{width:min(960px,100%);margin:10px 0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;font:700 12px/1.4 Nunito,system-ui,sans-serif;color:#e8e2f6}
+#seEv .sev-horse b{font-size:14px;color:#fff}
 #seEv .sev-pbar .se-gold{min-width:clamp(140px,15vw,200px);padding:12px 22px!important}
 #seEv .sev-blurb{width:min(960px,100%);margin-top:10px;font:700 clamp(11.5px,1.9vh,14px)/1.45 Nunito,system-ui,sans-serif;color:#ece7fa;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 #seEv .sev-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;width:min(960px,100%);margin-top:14px}
@@ -564,9 +567,14 @@ export function install(G){
    main+='<div class="sev-ribs">'+[0,1,2,3].map(k=>'<span class="rs'+(k<rb.per[di]?'':' off')+'" title="'+(k<3?['Finish','Two stars','Three stars'][k]:'Gold: 95% accuracy, nothing down')+'">'+(k<3?K.RIBBON('#3fae5a','#2a7d40'):K.RIBBON('#e6b53a','#b8831d'))+'</span>').join('')+'</div>';
    let tA=0; try{tA=G.course.eventTimeAllowed?G.course.eventTimeAllowed(ev,di):0;}catch(e){}
    const best=(s.bestTimes||{})[ev.id], bestS=ev.dressage?((s.bestScore||{})[ev.id]||(s.showBest||{})[ev.id]):null;
-   const equipped=G.xp.effStats(h);
-   const req=[['level',ev.lvl]].concat(Object.entries(ev.req||{})).map(([k,need])=>{const have=k==='level'?lvl:(equipped[k]||0);return '<span class="'+(have>=need?'ok':'bad')+'" title="You have '+have+(k==='level'?'':' including equipped tack')+'">'+(k==='level'?'Lv':esc(statLbl(k).replace(/^\S+\s/,'')))+' '+need+'</span>';}).join('');
+   const stats=G.xp.statBreakdown?G.xp.statBreakdown(h):{total:G.xp.effStats(h),base:h.stats||{},tack:{}};
+   const req=[['level',ev.lvl+(d.lvlAdd||0)]].concat(Object.entries(ev.req||{})).map(([k,need])=>{
+    const have=k==='level'?lvl:(stats.total[k]||0),label=k==='level'?'Level':statLbl(k).replace(/^\S+\s/,'');
+    const detail=k==='level'?'':('<small>'+esc(stats.base[k]||0)+' trained'+((stats.tack[k]||0)>0?' + '+esc(stats.tack[k])+' tack':'')+'</small>');
+    return '<span class="'+(have>=need?'ok':'bad')+'">'+esc(label)+' <b>'+esc(have)+' / '+esc(need)+'</b>'+detail+'</span>';
+   }).join('');
    const why=lk?lk:!g.ok?('Needs '+needText(g.missing)):dLock?(d.label+' opens at Lv '+(ev.lvl+d.lvlAdd)):'';
+   main+='<div class="sev-horse"><b>'+esc(h.name||'Your horse')+'</b><span>Entry checks: current / required. Stats include equipped tack.</span></div>';
    main+='<div class="sev-pbar"><span><span class="pb-k">Time allowed</span><span class="pb-v">'+(tA?tSec(tA):'—')+(ev.laps>1?' ('+ev.laps+' laps)':'')+'</span></span>'
     +'<span><span class="pb-k">Personal best</span><span class="pb-v">'+(best?tBest(best):bestS?Math.round((bestS>1?bestS:bestS*100))+'%':'--:--')+'</span></span>'
     +'<span class="pb-req">'+req+'</span>'
@@ -642,7 +650,13 @@ export function install(G){
    const ev=evById(st.page); if(!ev)return;
    const again=()=>{const eb=$('eventsBtn');if(eb){eb.click();setTimeout(()=>openPage(ev),40);}};
    if(a==='board'){G.hidePanels();K.setBack('lbPanel',again);setTimeout(()=>{const lb=$('lbBtn');if(lb)lb.click();},30);}
-   else if(a==='card'){K.setBack('resultPanel',again);if(!via('[data-fx="lad:why:'+ev.id+'"]')){K.setBack('resultPanel',null);G.toast('ℹ️ '+(ev.blurb||ev.name));}}
+   else if(a==='card'){
+    K.setBack('ev2CardPanel',again);
+    if(!via('[data-fx="ev2:card:'+ev.id+'"]')){
+     K.setBack('ev2CardPanel',null);K.setBack('resultPanel',again);
+     if(!via('[data-fx="lad:why:'+ev.id+'"]')){K.setBack('resultPanel',null);G.toast('ℹ️ '+(ev.blurb||ev.name));}
+    }
+   }
   }
   else if(k==='diff'){st.diff=+a;G.save.sync(s=>{s.evDiff=+a;});paintPage();}
   else if(k==='ride'){const ev=evById(st.page);if(ev)ride(ev,st.diff==null?1:st.diff);}

@@ -676,7 +676,7 @@ export function install(G){
    let s2;
    if(m){const giver=npcShort(giverOf(m));const done=prog()>=m.goal;s2=storyPct()+'% · '+(m.ch?txt(m.ch)+' · ':'')+txt(m.label)+(done?' ✅ → tell '+giver+'!':(m.goal>1?' ('+Math.floor(prog())+'/'+m.goal+')':''));}
    else {const nb=nextBook();s2=storyPct()+'% · '+(nb?'📅 Next chapter, '+nb.title+', in '+daysUntil(nb.releaseAt)+' day'+(daysUntil(nb.releaseAt)===1?'':'s'):'Story complete! 🏆');}
-   pillTxt='📜 '+s2;
+   pillTxt=G.storyGuidance?.pill(m,fresh(),prog())||'📜 '+s2;
   }
   if(pend.gallop>0){pend.t+=dt;if(pend.gallop>=25||pend.t>2){sideEvt('gallop',pend.gallop);pend.gallop=0;pend.t=0;}}
   visitT+=dt; if(visitT>1){visitT=0;const s=fresh();const p=H.player;

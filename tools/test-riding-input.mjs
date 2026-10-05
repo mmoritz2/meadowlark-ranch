@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const source=fs.readFileSync(new URL('../assets/riding-input.js',import.meta.url),'utf8');
+const {createRidingInput}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const r=createRidingInput();
+for(const gait of ['walk','trot','canter','gallop']){assert(r.select(gait));assert.equal(r.resolve().requested,gait);assert.equal(r.resolve().forward,false);}
+r.select('trot');assert.equal(r.resolve({keys:{ShiftLeft:true}}).requested,'gallop');assert.equal(r.resolve().requested,'trot');
+assert.equal(r.resolve({keys:{ControlLeft:true}}).requested,'walk');r.shift(-1);r.shift(-1);assert.equal(r.state().selected,'walk');
+for(let i=0;i<8;i++)r.shift(1);assert.equal(r.state().selected,'gallop');
+let i=r.resolve({touch:{back:true},speed:12,dt:.25});assert(i.braking&&!i.reversing&&!i.forward);
+i=r.resolve({touch:{back:true},speed:0,dt:.1});assert(i.braking&&!i.reversing);
+i=r.resolve({touch:{back:true},speed:0,dt:.1});assert(i.reversing&&!i.braking);
+r.brake(true);i=r.resolve({keys:{KeyW:true,ShiftLeft:true},speed:14});assert(i.braking&&!i.forward&&!i.reversing);
+r.reset();assert(r.resolve({keys:{KeyW:true}}).forward);
+assert.equal(r.resolve({onFoot:true,keys:{KeyW:true}}).gallop,false);
+assert.equal(r.resolve({flying:true,keys:{KeyW:true}}).gallop,false);
+assert.equal(r.cameraReady(.8,true),false);assert.equal(r.cameraReady(1,false),false);assert.equal(r.cameraReady(.5,false),true);
+console.log('riding input: four gaits, temporary modifiers, brake-before-reverse, stop, foot/flight, camera grace passed');

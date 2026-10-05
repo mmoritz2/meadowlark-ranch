@@ -1,5 +1,10 @@
 # Star Equestrian: what it has, what Meadowlark has, what to build
 
+> Historical feature inventory. “Shipped” below records code presence, not a
+> verified match for Star Equestrian's quality. The October 2026
+> [playability study](quality-study-2026-10-05.md) supersedes parity claims and
+> records observed usability gaps and remaining release work.
+
 Research notes, 4 September 2026. Star Equestrian is Foxie Ventures' open-world horse
 MMO (iOS, Android, PC). Everything below is from public sources listed at the end. This
 is a *feature* study: Meadowlark Ranch is an independent from-scratch game and borrows

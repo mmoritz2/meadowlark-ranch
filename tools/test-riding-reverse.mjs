@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import * as THREE from '../assets/vendor/three/build/three.module.js';
+import {createNativeHorseMotion,tickNativeHorse,startNativeHorseJump} from '../assets/native-horse-motion.js';
+const root=new THREE.Group(),bone=new THREE.Bone();bone.name='TestHorse';root.add(bone);
+const make=name=>new THREE.AnimationClip(name,1,[new THREE.VectorKeyframeTrack('TestHorse.position',[0,.5,1],[0,0,0,0,.02,0,0,0,0])]);
+const clips=['Walk','Trot','Fly','Jump'].map(make),gait=n=>({clip:n,durationS:1,nominalSpeedMps:n==='Walk'?1:n==='Trot'?2:5});
+const profile={id:'reverse-test',nativeBreed:true,nativeKind:'horse',nativeHoofFlex:false,nativeMaxSpeedMps:3,nativeGaits:{walk:gait('Walk'),trot:gait('Trot'),fly:gait('Fly')},nativeCanFly:true,nativeJump:{clip:'Jump',durationS:1,flightStartS:.2,flightEndS:.8,actorLiftM:[[0,0],[.5,.6],[1,0]]}};
+const motion=createNativeHorseMotion({THREE,root,clips,profile}),rig={profile,heroMotion:motion,scene:root,nativeReverse:true,nativeRequestedGait:'trot'};
+tickNativeHorse(rig,1.3,.3);const p=motion.state.phase01;tickNativeHorse(rig,1.3,.1);assert.equal(motion.mode,'walk');assert((motion.state.phase01-p+1)%1>.8,'reverse walk phase decreases');
+rig.nativeReverse=false;const q=motion.state.phase01;tickNativeHorse(rig,1.3,.1);assert((motion.state.phase01-q+1)%1<.2,'forward walk phase resumes without reset');
+tickNativeHorse(rig,0,.3);assert.equal(motion.mode,'stand');
+rig.nativeReverse=true;assert(startNativeHorseJump(rig));tickNativeHorse(rig,1,.3);assert.equal(motion.time,.3,'jump still advances forward');tickNativeHorse(rig,1,.8);
+rig.nativeFlying=true;tickNativeHorse(rig,2,.3);assert.equal(motion.mode,'fly');const f=motion.state.phase01;tickNativeHorse(rig,2,.1);assert((motion.state.phase01-f+1)%1<.2,'flight clock remains forward');
+assert(root.matrixWorld.elements.every(Number.isFinite));motion.dispose();console.log('Reverse authored walk, forward/idle transition, unaffected jump and flight clocks passed.');

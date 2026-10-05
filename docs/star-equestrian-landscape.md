@@ -1,4 +1,9 @@
-# Star Equestrian's landscape, and how ours beats it
+# Star Equestrian landscape references — historical feature inventory
+
+> The feature list below does not establish that Meadowlark looks or plays
+> better. Absence from a reference screenshot is not evidence that a game lacks
+> a feature. See the October 2026 [playability study](quality-study-2026-10-05.md)
+> for observed comparisons and remaining quality work.
 
 Research pass, 2026-09-06. Sources at the bottom.
 

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "distribution": "development-only",
+  "gates": {
+    "runtimeAssetRightsCleared": false,
+    "ownedBundleIdentifierConfigured": false,
+    "nativeBrandingFinalized": false,
+    "privacyAndSupportPublished": false,
+    "ageRatingCompleted": false,
+    "nativeReleaseArchiveValidated": false,
+    "physicalDeviceAcceptancePassed": false,
+    "signingAndDeveloperAccountReady": false
+  },
+  "blockingAssets": [
+    {"source": "WildMesh 3D horse and native roster derivatives", "license": "CC BY-NC 4.0", "resolution": "Retain current models in development. Obtain suitable written distribution rights or an explicitly approved replacement before commercial release."},
+    {"source": "3DHaupt Black Dragon", "license": "CC BY-NC 4.0; NoAI", "resolution": "Retain source restrictions. Resolve distribution rights before release."}
+  ],
+  "note": "This file records outstanding evidence, not Apple approval. Do not set gates true without the corresponding release evidence. The development bundle ID is not asserted to be owned or registered."
+}

@@ -622,6 +622,9 @@ export function install(G){
   try{M.refreshWallet();}catch(e){}
   /* A horse you missed is back in the pool this season — say so once, and only once. */
   try{
+   // Let a new rider finish the prologue before advertising seasonal collection.
+   // Do not consume the notice flag: it can appear on a later visit.
+   if((S.fresh()||{}).story?.era!==2)return;
    const back=returningHorses(S.fresh()||{});
    if(!back.length)return;
    let tell=false;

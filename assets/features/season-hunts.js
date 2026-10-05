@@ -640,7 +640,7 @@ export function install(G){
   refresh(true); refreshBounties(true); refreshCoatMarks();
   setTimeout(()=>{try{resettle();}catch(e){}},1500);
   const s=S.fresh();
-  if(s&&S.flag(s,'seen-hunts')){
+  if(s&&s.story?.era===2&&S.flag(s,'seen-hunts')){
    S.sync(sv=>{sv.flags=sv.flags||{};sv.flags['seen-hunts']=1;});
    setTimeout(()=>{try{const h=HUNTS.find(x=>x.live);
     toast(h?h.def.glyph+' '+h.def.label+' is on — '+h.def.n+' hidden across the basin, and a bounty board by the ranch gate.'

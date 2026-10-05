@@ -632,6 +632,7 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
+import {createRidingInput} from './assets/riding-input.js?v=mobile-riding-1';
 import {tackPieceStats,tackStatTotals,tackRidingPerformance,formatTackStat} from './assets/tack-stats.js?v=tack-stats-1';
 import {configureDragonAppearance,dragonBreathElement,dragonBreathPose,DRAGON_ELEMENTS as ELEM_OF} from './assets/dragon-roster.js?v=dragon-roster-1';
 import {createBreedLibrary} from './assets/breed-models.js?v=dragon-acting-1';
@@ -641,7 +642,7 @@ import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=tack-stats-1';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=mobile-riding-1';
 import {createNativeRiderBridge} from './assets/native-rider.js?v=riding-stability-1';
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -663,7 +664,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js';
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=riding-stability-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-appearance-3';
-import {FEATURES} from './assets/features/index.js?v=clubhouse-2';
+import {FEATURES} from './assets/features/index.js?v=quiet-prologue-1';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -5366,7 +5367,7 @@ function rigPhaseStep(sp,grounded,dt,scale=1){
 function driveRig(sp,grounded,t,dt){
  if(!RIG.ready||RIG.attachedTo!==player.mesh)return;
  if(RIG.heroMotion){
-  if(RIG.profile?.nativeBreed||RIG.profile?.referenceMotion){RIG.nativeFlying=!!player.flying;RIG.nativeLanding=!!player.flying&&(!!player.landing||player.flyAlt<=.001);RIG.nativeAltitude=player.y||0;}
+  if(RIG.profile?.nativeBreed||RIG.profile?.referenceMotion){RIG.nativeReverse=player.speed<-.02&&!player.flying;RIG.nativeFlying=!!player.flying;RIG.nativeLanding=!!player.flying&&(!!player.landing||player.flyAlt<=.001);RIG.nativeAltitude=player.y||0;}
   const state=tickGameHero(RIG,sp,dt,player.turnSm||0);
   if(!player.flying){if(RIG.heroJumpAge!==null){player.y=Math.max(0,(RIG.profile?.nativeBreed||RIG.profile?.referenceMotion)?RIG.heroJumpExtra:state.bodyLiftM+RIG.heroJumpExtra);player.vy=0;}else{player.y=0;player.vy=0;}}
   if(RIG._hideFor!==player.mesh){hideProceduralBody();RIG._hideFor=player.mesh;}
@@ -6397,7 +6398,7 @@ let pkg=null;
   g.position.set(sp[0],groundH(sp[0],sp[1]),sp[1]);
   scene.add(g);
   pkg={g,x:sp[0],z:sp[1]};
-  setTimeout(()=>{try{toast('🎁 A mystery package was spotted somewhere in Kestrel Basin — go find it!');}catch(e){}},5000);
+  setTimeout(()=>{try{if(freshSave()?.story?.era!==2)return;toast('🎁 A mystery package was spotted somewhere in Kestrel Basin — go find it!');}catch(e){}},5000);
  }
 }
 const rippleTex=canvasTex(256,256,(c,w,h)=>{
@@ -8587,6 +8588,11 @@ function puffDust(x,y,z){
 
 /* ================= input ================= */
 const keys={};
+const ridingInput=createRidingInput('canter');
+const dragonPaces=()=>!!RIG.profile?.nativeTravelSpeeds;
+function selectRidingGait(g){const ok=ridingInput.select(dragonPaces()&&g==='trot'?'canter':g);if(ok)touch.gal=false;return ok;}
+function shiftRidingGait(n){let g=ridingInput.shift(n);if(dragonPaces()&&g==='trot')g=ridingInput.shift(n);touch.gal=false;return g;}
+
 window._k=keys;window._player=player;window._herd=()=>herd;
 window._mh=cfg=>{const p=makeHorse(cfg||{colors:{body:'#f2f5fb',mane:'#dfe7f4'},wings:true,seed:9});scene.add(p.group);return p;};
 addEventListener('keydown',e=>{
@@ -8602,7 +8608,8 @@ addEventListener('keydown',e=>{
  if(e.code==='KeyC'&&!e.repeat&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){toggleFreeCam();}
  if(/^Digit[1-5]$/.test(e.code||'')&&!e.repeat&&!freeCam&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){horseEmote(['rear','bow','liedown','nuzzle','toss'][+e.code[5]-1]);}
  if(build.type||build.remove||build.move){ const rs=e.shiftKey?Math.PI/16:Math.PI/4; if(e.code==='Escape'){endBuild();return;} if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;} if(e.code==='KeyQ'){build.rot-=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;} }
- if(document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='SELECT'))return;
+ if(document.activeElement&&(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)||document.activeElement.isContentEditable))return;
+ if(!e.repeat&&!freeCam&&!player.onFoot&&['BracketLeft','BracketRight'].includes(e.code)){shiftRidingGait(e.code==='BracketRight'?1:-1);e.preventDefault();return;}
  if(G.run('key',e))return;                                  // a package swallowed the key
  // Mounted dragons own B; otherwise it remains the ranch builder shortcut.
  if(e.code==='KeyB'&&!player.onFoot&&!freeCam&&!build.type&&!build.remove&&!build.move&&dragonElement(myHorses[rideIdx])){keys.KeyB=true;e.preventDefault();return;}
@@ -8636,8 +8643,9 @@ addEventListener('keydown',e=>{
 addEventListener('keyup',e=>{keys[e.code]=false;G.run('keyup',e);});
 // turnA/goA are the analog VR thumbstick (-1..1 steer, 0..1 throttle); the booleans are
 // what the keyboard and the on-screen buttons set, and what most of the game reads.
-const touch={left:false,right:false,go:false,gal:false,jump:false,turnA:0,goA:0,brake:false,analog:false};
+const touch={left:false,right:false,go:false,gal:false,jump:false,turnA:0,goA:0,back:false,backA:0,brake:false,analog:false};
 window._touch=touch;
+let releaseRidingPointer=()=>{};
 function bindHold(id,key){
  const el=$(id);
  if(!el)return;
@@ -8671,10 +8679,12 @@ addEventListener('touchstart',enableTouchUI,{once:true,passive:true});
  let id=null,cx=0,cy=0;
  const place=(el,x,y)=>{el.style.left=x+'px';el.style.top=y+'px';};
  const release=()=>{
-  id=null;zone.classList.remove('on');
-  touch.turnA=0;touch.goA=0;touch.analog=false;
+  const old=id;id=null;try{if(old!==null&&zone.hasPointerCapture(old))zone.releasePointerCapture(old);}catch(_){}zone.classList.remove('on');
+  for(const el of [base,knob]){el.style.left='';el.style.top='';}
+  touch.turnA=0;touch.goA=0;touch.backA=0;touch.back=false;touch.analog=false;
   touch.go=touch.left=touch.right=false;
  };
+ releaseRidingPointer=release;
  if(zone){
   zone.addEventListener('pointerdown',e=>{
    if(id!==null)return;
@@ -8701,7 +8711,8 @@ addEventListener('touchstart',enableTouchUI,{once:true,passive:true});
    else{ const k=((mag-DEAD)/(1-DEAD))/mag; nx*=k;ny*=k; }
    // squared curve on yaw: fine control near centre, full lock only at the rim
    touch.turnA=-Math.sign(nx)*nx*nx;
-   touch.goA=Math.max(0,-ny);            // push up to go; pulling back does not reverse
+   touch.goA=Math.max(0,-ny);
+   touch.backA=Math.max(0,ny);touch.back=touch.backA>.06; // pull back to stop, then rein back
    touch.go=touch.goA>0.06;
    touch.left=touch.turnA>0.06;
    touch.right=touch.turnA<-0.06;
@@ -8711,10 +8722,10 @@ addEventListener('touchstart',enableTouchUI,{once:true,passive:true});
  }
 }
 {const tt=$('tTrick');if(tt)tt.addEventListener('click',()=>{window._tkN=((window._tkN||0)+1)%3;startTrick(['roll','spin','flip'][window._tkN]);});}
-$('tGal').addEventListener('click',()=>{touch.gal=!touch.gal;$('tGal').style.opacity=touch.gal?'1':'0.6';});
+$('tGal').addEventListener('click',()=>{if(!player.flying&&!player.onFoot){ridingInput.select(ridingInput.state().selected==='gallop'?'canter':'gallop');touch.gal=false;}else touch.gal=!touch.gal;$('tGal').style.opacity=touch.gal?'1':'0.6';});
 $('tGal').style.opacity='0.6';
 // drag to orbit the camera, scroll to zoom — like a real third-person game
-let camYaw=0.24,camPitch=0.27,camDist=6.2,camDistSm=6.2,camDrag=null;
+let camYaw=0.24,camPitch=0.27,camDist=8.2,camDistSm=8.2,camDrag=null;
 const camLook=new THREE.Vector3(-7,1.35,10);
 const camDesired=new THREE.Vector3(),camSafe=new THREE.Vector3();
 /* Camera drag tracks ONE pointer id. Without that, a second finger arriving —
@@ -8736,6 +8747,9 @@ addEventListener('pointermove',e=>{
 const endDrag=e=>{ if(camDrag&&(!e||e.pointerId===camDrag.id))camDrag=null; };
 addEventListener('pointerup',endDrag);
 addEventListener('pointercancel',endDrag);
+function releaseAllRidingControls(){for(const k in keys){if(keys[k])window.dispatchEvent(new KeyboardEvent('keyup',{code:k,bubbles:true}));keys[k]=false;}for(const k of ['go','back','left','right','jump','brake','gal','spr','analog'])touch[k]=false;touch.goA=touch.backA=touch.turnA=0;ridingInput.reset();releaseRidingPointer();endDrag();}
+addEventListener('blur',releaseAllRidingControls);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)releaseAllRidingControls();});
 
 /* iOS ignores user-scalable=no, so pinch and double-tap still zoom the whole page
    mid-ride unless the gestures are refused explicitly. */
@@ -10868,7 +10882,7 @@ function remoteUpdate(m){
  }
  r.tx=m.x;r.tz=m.z;
  r.theading=m.h||0;
- r.sp=m.sp||0;
+ r.sp=m.sp||0;r.reverse=m.rev===1;
  r.lastSeen=0;
  if(m.c&&m.c.body)r.colors=m.c;
  if(m.hn)r.horseName=m.hn;
@@ -10888,7 +10902,7 @@ function netTick(dt,t){
   try{
    const payload={
     id:net.id,n:myName(),x:+player.pos.x.toFixed(1),z:+player.pos.z.toFixed(1),
-    h:+player.heading.toFixed(2),sp:+Math.abs(player.speed).toFixed(1),ld:player.flying&&(player.landing||player.flyAlt<=.001)?1:0,
+    h:+player.heading.toFixed(2),sp:+Math.abs(player.speed).toFixed(1),rev:player.speed<-.02&&!player.flying?1:0,ld:player.flying&&(player.landing||player.flyAlt<=.001)?1:0,
     c:h?h.colors:null,k:h?(h.tack||'#7a583a'):null,tailCol:h?.tailCol||null,mark:h?.mark??null,markCol:h?.markCol??null,
     s:(s.rider&&s.rider.shirt)||RIDER_DEF_SHIRT,p:(s.rider&&s.rider.pants)||RIDER_DEF_PANTS,hr:(s.rider&&s.rider.hair)||null,sk:(s.rider&&s.rider.skin)||null,hm:(s.rider&&s.rider.helmet)||null,
     hn:h?String(h.name).slice(0,14):null,b:h?(h.breed||null):null,hl:h?(h.level||1):1,wg:!!(h&&h.wings),hrn:h?.horn,dg:h?.dragon,ct:h?(h.coat||null):null,
@@ -10916,7 +10930,7 @@ function netTick(dt,t){
   }
   if(r.rig){
    // the good horse: same gait code the player's mount runs
-   if(r.rig.heroMotion){r.rig.nativeFlying=!!r.fly;r.rig.nativeLanding=!!r.landRequested;r.rig.nativeAltitude=r.y||0;tickGameHero(r.rig,r.sp,dt);if(r.rig.profile?.nativeBreed){const seat=gameHeroSeat(r.rig,r.parts.group);r.rider.g.position.set(seat.x,seat.y+.11,seat.z-.02);}else{if(r.rig.saddle)r.rig.saddle.position.copy(breedSeat(r.rig));fitArtistFeatures(r.rig,r.parts,true);}}
+   if(r.rig.heroMotion){r.rig.nativeReverse=!!r.reverse&&!r.fly;r.rig.nativeFlying=!!r.fly;r.rig.nativeLanding=!!r.landRequested;r.rig.nativeAltitude=r.y||0;tickGameHero(r.rig,r.sp,dt);if(r.rig.profile?.nativeBreed){const seat=gameHeroSeat(r.rig,r.parts.group);r.rider.g.position.set(seat.x,seat.y+.11,seat.z-.02);}else{if(r.rig.saddle)r.rig.saddle.position.copy(breedSeat(r.rig));fitArtistFeatures(r.rig,r.parts,true);}}
    else{r.rig.phase+=rigPhaseStep(r.sp,true,dt,r.parts.group.scale.x);poseRigBones(r.rig.bones,r.rig.phase,r.sp,true,0,t,dt,0,r.rig);r.rig.hair?.update?.(t,r.sp);}
    if(r.bridle)r.bridle.userData.follow(r.rig.headBone||r.rig.bones[6],r.rig.bones,r.rig.restQ,r.rig.scene,r.parts.group);
   }
@@ -12256,7 +12270,7 @@ $('questBtn').onclick=openQuests;
   const c=50+Math.min(7,s.streakN)*25;
   s.coins+=c;
   const sg=s.streakN%2===0?2:1; grantGems(s,sg);                 // a gem or two for coming back, every day
-  if(calAdvance(s))msg2='📅 Day '+s.cal.i+' of the month is open — collect it in 🏅 → Week.';
+  if(calAdvance(s)&&s.story?.era===2)msg2='📅 Day '+s.cal.i+' of the month is open — collect it in 🏅 → Week.';
   msg='🔥 Day '+s.streakN+' login streak! +'+c+'🪙 +'+sg+'💎';
  });
  if(msg){refreshWallet();setTimeout(()=>{try{toast(msg);}catch(e){}},2600);}
@@ -13043,11 +13057,12 @@ function tick(stepSeconds){
  const t=clock.elapsedTime;
  frameWatch(t);
  if(renderer.xr.isPresenting)pollVR();
- const fwd=keys.KeyW||keys.ArrowUp||touch.go;
- const back=keys.KeyS||keys.ArrowDown;
+ const ridingIntent=ridingInput.resolve({keys,touch,speed:player.speed,dt,onFoot:!!player.onFoot,flying:!!player.flying});
+ const fwd=ridingIntent.forward;
+ const back=ridingIntent.back;
  const left=keys.KeyA||keys.ArrowLeft||touch.left;
  const right=keys.KeyD||keys.ArrowRight||touch.right;
- const gallop=keys.ShiftLeft||keys.ShiftRight||touch.gal;
+ const gallop=ridingIntent.gallop;
  const abil=(myHorses[rideIdx]||{}).ability;
  const HS=effStats(myHorses[rideIdx]);                       // the five stats plus tack bonuses, felt in the hands
  const PM=persMul(myHorses[rideIdx]);
@@ -13061,13 +13076,14 @@ function tick(stepSeconds){
   else if(back)target=-3;
  }else{
   if(fwd)target=gallop?(abil==='swift'?15.5:12.5)*spMul:(abil==='swift'?5.6:4.8);
-  if(back)target=-1.6;
+  if(back)target=ridingIntent.reversing?-1.3:0;
  }
  if(RIG.profile?.referenceMotion||RIG.profile?.nativeRoster)RIG.nativeCanFly=!!myHorses[rideIdx]?.wings;
  RIG.nativeTravelStatFactor=Math.max(1,Math.min(2,spMul/.928));
  const nativeCap=RIG.attachedTo===player.mesh?getNativeHorseCapabilities(RIG):null;
- const walking=keys.ControlLeft||keys.ControlRight;
- const requestedMode=nativeCap?.dragonTravel?(walking?'walk':'run'):walking?'walk':keys.AltLeft||keys.AltRight?'trot':gallop?'gallopLeft':'canterLeft';
+ const walking=ridingIntent.requested==='walk';
+ const requestedMode=nativeCap?.dragonTravel?(walking?'walk':'run'):walking?'walk':ridingIntent.requested==='trot'?'trot':gallop?'gallopLeft':'canterLeft';
+ if(!nativeCap?.paced&&!nativeCap?.dragonTravel&&fwd&&!player.flying&&!player.onFoot&&['walk','trot'].includes(ridingIntent.requested))target=(walking?2:4.2)*spMul;
  RIG.nativeRequestedGait=nativeCap?.paced||nativeCap?.dragonTravel?requestedMode:null;
  if(nativeCap?.dragonTravel&&target>0){
   target=player.flying?nativeCap.flightMaxSpeedMps*(gallop?1:.75):nativeCap.gaitSpeeds[requestedMode]*(requestedMode==='run'&&!gallop ? .68 : 1)*Math.max(.75,spMul/.928);
@@ -13078,8 +13094,8 @@ function tick(stepSeconds){
  }
  const inVR=renderer.xr.isPresenting;
  if((inVR||touch.analog)&&target>0&&touch.goA>0)target*=0.34+0.66*touch.goA;   // stick or reins: ease out of a walk
- if(touch.brake){target=0;}                       // reins drawn back into your chest = whoa
- if((keys.ControlLeft||keys.ControlRight)&&target>0)target=Math.min(target,2.2);   // Ctrl: collect to a walk
+ if(ridingIntent.braking){target=0;}                       // reins drawn back into your chest = whoa
+ if(walking&&!nativeCap?.paced&&!nativeCap?.dragonTravel&&target>0)target=Math.min(target,2.2);   // Ctrl: collect to a walk
  /* The ride hook. Packages (sprint, dash, slide, exhaustion, spooks, swimming, perks) mutate
     this one object instead of editing the movement code; target/acMul/agMul/jpMul/drain/regen
     are read back below. noJump stops the jump triggers. */
@@ -13103,13 +13119,15 @@ function tick(stepSeconds){
   const ridingMode=nativeCap.paced&&player.blown&&requestedMode==='gallopLeft'?'canterLeft':requestedMode;
   const gaitCap=nativeCap.gaitMaxSpeeds[ridingMode]??nativeCap.maxSpeedMps;
   const max=player.flying&&nativeCap.canFly?nativeCap.flightMaxSpeedMps:gaitCap;
-  target=THREE.MathUtils.clamp(target,0,max);
+  target=THREE.MathUtils.clamp(target,player.flying?-3:-1.3,max);
   if(nativeCap.paced){RIG.nativeRequestedGait=ridingMode;if(target>0&&!player.flying)RIG.nativePaceFactor=target/nativeCap.gaitSpeeds[ridingMode];}
  }
  {const sw=$('stamWrap'); if(sw){const show=(course&&course.started)||player.stam<0.98||player.blown; sw.style.display=show?'block':'none'; if(show){$('stamFill').style.width=Math.round(player.stam*100)+'%'; sw.classList.toggle('blown',!!player.blown);}}}
- const accel=target>player.speed?1.7*acMul:(touch.brake?5.2:2.8);
+ // A held stop also wins over event boosts and movement modifiers.
+ if(ridingIntent.braking)target=0;
+ const accel=ridingIntent.braking?7:target>player.speed?1.7*acMul:2.8;
  player.speed+=(target-player.speed)*(1-Math.exp(-dt*accel));
- if(nativeCap?.native)player.speed=THREE.MathUtils.clamp(player.speed,0,player.flying&&nativeCap.canFly?nativeCap.flightMaxSpeedMps:nativeCap.maxSpeedMps);
+ if(nativeCap?.native)player.speed=THREE.MathUtils.clamp(player.speed,player.flying?-3:-1.3,player.flying&&nativeCap.canFly?nativeCap.flightMaxSpeedMps:nativeCap.maxSpeedMps);
  if(Math.abs(player.speed)<0.05&&!fwd&&!back)player.speed=0;
  /* Steering. In VR the thumbstick drives this as a continuous value; on the keyboard a key
     is still all-or-nothing. Either way the input is ramped rather than applied raw, because
@@ -13835,7 +13853,7 @@ function tick(stepSeconds){
  updateShoes(dt,t);
  updateTrail(dt);
  playerBreath(dt,t); tickBreath(dt);   // a dragon breathing its element
- if(fwd)camYaw+=(0-camYaw)*Math.min(1,dt*2);
+ if(ridingInput.cameraReady(dt,!!camDrag)&&fwd)camYaw+=(0-camYaw)*(1-Math.exp(-dt*1.5));
  camDistSm+=(camDist-camDistSm)*Math.min(1,dt*6);
  const k=1-Math.exp(-5*dt);
  const ang=player.heading+Math.PI+camYaw;
@@ -14204,7 +14222,8 @@ window.render_game_to_text=()=>{const sv=freshSave()||{};const hh=myHorses[rideI
   z:Number(player.pos.z.toFixed(2)),
   speed:Number(player.speed.toFixed(2)),
   heading:Number(player.heading.toFixed(2)),
-  flying:!!player.flying
+  flying:!!player.flying,
+  riding:G.riding?.state()
  },
  course:course?{
   name:course.ev.name,
@@ -14231,6 +14250,7 @@ terrainSurface.setTrees(forestPoints);
 function installFeatures(){
  Object.assign(G,{
   THREE,scene,camera,renderer,composer,
+  riding:{releaseAll:releaseAllRidingControls,selectGait:selectRidingGait,shiftGait:shiftRidingGait,brake:on=>ridingInput.brake(on),state(){const st=ridingInput.state(),mode=RIG.heroMotion?.mode?.replace(/(Left|Right)$/,'');return {...st,dragon:dragonPaces(),sprint:!!touch.spr,speed:player.speed,actual:player.flying?'fly':player.onFoot?'on foot':player.speed<-.05?'reverse':Math.abs(player.speed)<.1?'halt':mode&&mode!=='rest'&&mode!=='stand'?mode:st.requested};}},
   $,toast,hidePanels,openDlg,nameSprite,beep,sChime,sGem,sNeigh,sCoin,
   save:{KEY:SAVE_KEY,fresh:freshSave,sync:syncSave,ensure(fn){SAVE_ENSURES.push(fn);return fn;},ensureHorse(fn){HORSE_ENSURES.push(fn);return fn;},
    flag(s,name){s.flags=s.flags||{};if(s.flags[name])return false;s.flags[name]=1;return true;},build:BUILD,boot:BOOT_INFO},
@@ -14257,7 +14277,7 @@ function installFeatures(){
       base height), and mark the matching collider climb:true so it does not shove her off it */
    climbables:[],
    mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,
-   npcList,visitors,spawnCritter,CRITTER_DEFS,critters,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar,
+   npcList,visitors,spawnCritter,CRITTER_DEFS,critters,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,carrots,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar,
    /* Every tree in the basin as {x,z,s}. The follow camera needs it: followCamera.frame()
       sweeps its clearance volume against the registered ARCHITECTURE, which knows nothing
       about the wood, so a camera that orbits off the horse's spine can and does end up

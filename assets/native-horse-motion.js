@@ -92,10 +92,10 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
   transition={elapsed:0,duration:nextKey==='jump'?.12:fadeSeconds,start:new Map(active),target};
   if(active.size===1&&active.has(target)){target.setEffectiveWeight(1);active.set(target,1);transition=null;}
  }
- function update(dt,{rate=1}={}){
+ function update(dt,{rate=1,direction=1}={}){
   assertLive();if(!Number.isFinite(dt)||dt<0)throw new Error('Invalid native motion delta');
   if(!Number.isFinite(rate)||rate<0)throw new Error('Invalid native playback rate');
-  const target=actions[key];target.setEffectiveTimeScale(records[key]||key==='jump'?rate:1);
+  const target=actions[key];target.setEffectiveTimeScale(records[key]||key==='jump'?rate*(key==='walk'&&direction<0?-1:1):1);
   if(transition){
    transition.elapsed=Math.min(transition.duration,transition.elapsed+dt);if(transition.duration-transition.elapsed<1e-10)transition.elapsed=transition.duration;
    const t=transition.elapsed/transition.duration,s=t*t*t*(t*(t*6-15)+10);
@@ -157,9 +157,9 @@ function createCreatorMotion({THREE,root,clips,profile}={}){
   mode=value;key=nextKey;lead=nextLead;
   transition={elapsed:0,duration:previous==='fly'?(profile.nativeLandingBlendS||.65):nextKey==='fly'?.65:.28,start:new Map(active),target};
  }
- function update(dt,{rate=1}={}){
+ function update(dt,{rate=1,direction=1}={}){
   assertLive();if(!Number.isFinite(rate)||rate<0)throw new Error('Invalid native playback rate');if(!Number.isFinite(dt)||dt<0)throw new Error('Invalid native motion delta');
-  const target=actions[key];target.setEffectiveTimeScale(records[key]?rate:1);
+  const target=actions[key];target.setEffectiveTimeScale(records[key]?rate*(key==='walk'&&direction<0?-1:1):1);
   if(transition){
    transition.elapsed=Math.min(transition.duration,transition.elapsed+dt);
    const t=transition.elapsed/transition.duration,s=t*t*t*(t*(t*6-15)+10);
@@ -206,10 +206,12 @@ export function tickNativeHorse(rig,speed,dt,turn=0){
   if((cap.paced||cap.dragonTravel)&&requested&&chosen&&ground.indexOf(chosen)>ground.indexOf(requested)&&actual<=cap.gaitMaxSpeeds[requested[0]]+1e-7)chosen=requested;
   if(chosen){gait=chosen[0];record=chosen[1];}
  }
+ const reversing=!!rig.nativeReverse&&!rig.nativeFlying&&actual>.02&&!!gaits.walk;
+ if(reversing){gait='walk';record=gaits.walk;}
  const lead=turn<-.32?'right':turn>-.08?'left':rig.heroLead||'left';rig.heroLead=lead;if(gait.endsWith('Left'))gait=gait.slice(0,-4);
  if(record){const key=gait==='canter'||gait==='gallop'?gait+'Left':gait;rate=(cap.paced||cap.dragonTravel)&&gait!=='fly'?actual/cap.gaitSpeeds[key]*cap.gaitRates[key]:actual/(record.nominalSpeedMps*cap.worldScale);}
  if(gait==='fly')rate=cap.dragonTravel?(rig.profile.nativeFlightRate||1)*(1+.12*actual/Math.max(1,cap.flightMaxSpeedMps)):Math.max(.1,Math.min(1,rate||1));else rate=Math.min(cap.cadenceLimit,Math.max(0,rate));
- motion.set(gait,{lead,speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate});
+ motion.set(gait,{lead,speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate,direction:reversing?-1:1});
  // The original long wing fingers sweep below the feet during some blends.
  // Keep the measured clearance envelope above the actor's ground plane. This
  // normalization offset also carries the saddle and follows interrupted fades.

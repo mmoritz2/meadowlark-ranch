@@ -404,7 +404,8 @@ export function install(G){
   return {row,pity:((mk.pity||{})[row.id])||0,draws:((mk.draws||{})[row.id])||0};
  }
  function announceEncores(){
-  const s=fresh(); const list=encores(s).filter(e=>!e.have); if(!list.length)return;
+  const s=fresh(); if(s?.story?.era!==2)return;
+  const list=encores(s).filter(e=>!e.have); if(!list.length)return;
   /* If the spine package has already taken this job, stay quiet rather than toasting twice. */
   if(G.seasons&&(G.seasons.encores||G.seasons.announceEncores))return;
   const e=list[0]; let first=false;
@@ -513,7 +514,7 @@ export function install(G){
   s.house={id:null,key:next||SKEY,pts:0,seen:(s.pass&&s.pass.pts)||0,posts:{}};
   s.seasonQ={key:next||SKEY,idx:0,prog:0,claimed:{},unlocked:false,met:false};
   CUR.house=null; pend=0; syncCur(s);
-  setTimeout(()=>{ try{ const B=BOOKS[SDEF.id]||BOOKS.bloom; toast('🗓️ '+B.emoji+' '+B.title+' — Wick is at the ranch with a fresh page.'); }catch(e){} },3400);
+  if(s.story?.era===2)setTimeout(()=>{ try{ const B=BOOKS[SDEF.id]||BOOKS.bloom; toast('🗓️ '+B.emoji+' '+B.title+' — Wick is at the ranch with a fresh page.'); }catch(e){} },3400);
  });
  G.on('boot',()=>{
   refreshSeason();

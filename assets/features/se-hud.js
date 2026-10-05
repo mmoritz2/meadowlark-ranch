@@ -117,7 +117,8 @@ body.se-hud #toasts{top:calc(96px + env(safe-area-inset-top))!important;bottom:a
 #seMarketLbl{position:fixed;width:84px;text-align:center;font:900 12px/1 Nunito,system-ui,sans-serif;color:#f3cf6a;letter-spacing:.6px;background:rgba(20,20,30,.66);border-radius:8px;padding:3px 0;
  text-shadow:0 1px 0 #5a3708,0 0 3px rgba(0,0,0,.65);pointer-events:none;z-index:6}
 /* the objective on the left edge */
-body.se-hud #questTrack{position:fixed!important;left:0!important;right:auto!important;top:calc(236px + env(safe-area-inset-top))!important;transform:none!important;
+body.se-hud #questTrack:empty{display:none!important}
+body.se-hud #questTrack{display:block!important;position:fixed!important;left:0!important;right:auto!important;top:calc(236px + env(safe-area-inset-top))!important;transform:none!important;
  max-width:min(300px,42vw)!important;height:auto!important;min-height:0!important;padding:7px 14px 7px 30px!important;margin:0!important;
  border:0!important;border-radius:0 8px 8px 0!important;background:linear-gradient(90deg,rgba(15,18,30,.62),rgba(15,18,30,.34))!important;box-shadow:none!important;
  color:#fff!important;font:800 15px/1.2 Nunito,system-ui,sans-serif!important;white-space:normal!important;text-align:left!important;
@@ -258,7 +259,53 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
  body.se-hud #chatBar input{flex:1 1 calc(100% - 96px)!important}   /* wide enough that only send and close share its row */
  body.se-hud #chatBar #chatSend{order:1}body.se-hud #chatBar #seChatX{order:2}body.se-hud #chatBar [data-emote]{order:3}
  body.se-hud #chatTabs{bottom:calc(384px + env(safe-area-inset-bottom))!important;width:calc(100vw - 96px)!important}
-}`;
+}
+/* Pace is a choice, independent of the thumbstick. Touch targets stay at least 44 px. */
+#seRidePace{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:4px;border:1px solid rgba(246,236,210,.55);border-radius:16px;background:rgba(18,22,36,.8);color:var(--se-ink);font:800 12px/1.2 system-ui;touch-action:none}
+#seRidePace button{min-width:44px;height:44px;padding:0 10px;border:0;border-radius:10px;background:rgba(255,255,255,.08);color:var(--se-ink);font:800 17px/1 system-ui;cursor:pointer;touch-action:none}
+#seRidePace button:active,#seRidePace button[aria-pressed="true"]{background:#e6b544;color:#201b12}
+#seRidePace #seGaitLabel{width:98px;font-size:15px;display:flex;flex-direction:column;justify-content:center;gap:3px;text-transform:capitalize}
+#seGaitLabel small{font:600 10px/1 system-ui;opacity:.8;text-transform:none}
+#seRidePace #seStop{font-size:12px;margin-left:4px}
+#seGaitChoices{position:absolute;bottom:calc(100% + 8px);left:0;right:0;display:none;grid-template-columns:1fr 1fr;gap:4px;padding:5px;border-radius:12px;background:rgba(18,22,36,.94)}
+#seGaitChoices.on{display:grid}#seGaitChoices button{font-size:14px}
+body.se-hud #tGal{display:none!important}
+body.se-riding-flight #tGal,body.se-riding-foot #tGal{display:block!important}
+body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
+@media(max-width:760px){body.se-hud #questTrack{left:8px!important;max-width:calc(100vw - 24px)!important;max-height:72px;overflow:hidden;font-size:13px!important}body.se-hud #stickZone{width:min(190px,49vw)!important;height:190px!important;bottom:calc(78px + env(safe-area-inset-bottom))!important}body.se-hud #stickBase,body.se-hud #stickKnob{left:min(95px,24.5vw);top:95px}body.se-hud #seMount{right:calc(126px + env(safe-area-inset-right))!important;bottom:calc(128px + env(safe-area-inset-bottom))!important}#seRidePace{bottom:calc(8px + env(safe-area-inset-bottom))}body.se-hud #photoBtn.se-act{bottom:calc(72px + env(safe-area-inset-bottom))}#seWhistle{bottom:calc(64px + env(safe-area-inset-bottom))}#seEmote{bottom:calc(68px + env(safe-area-inset-bottom))}}
+/* Landscape phones need a short-screen layout, regardless of CSS width. */
+@media(max-height:520px) and (min-width:561px){
+ body.se-hud.touch #mkMiniPlate,body.se-hud.touch #mini{left:calc(60px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important;width:76px!important;height:76px!important}
+ body.se-hud.touch #seNorth{left:calc(89px + env(safe-area-inset-left));top:calc(3px + env(safe-area-inset-top))}
+ body.se-hud.touch #seMenuBtn{width:44px;height:44px;left:calc(8px + env(safe-area-inset-left));top:calc(12px + env(safe-area-inset-top))}
+ body.se-hud.touch .se-hexbtn{width:44px!important;height:44px!important}
+ body.se-hud.touch #stableBtn{left:calc(148px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
+ body.se-hud.touch #careBtn{left:calc(194px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
+ body.se-hud.touch #eventsBtn{left:calc(240px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
+ body.se-hud.touch #questBtn{left:calc(286px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
+ body.se-hud.touch #netBtn{left:calc(332px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
+ body.se-hud.touch #lbBtn{left:calc(378px + env(safe-area-inset-left))!important;top:calc(12px + env(safe-area-inset-top))!important}
+ body.se-hud.touch #wallet{flex-direction:row!important;gap:8px!important}body.se-hud.touch #wallet .w{min-width:72px;height:25px;font-size:12px!important}body.se-hud.touch #wallet .w>i{width:30px;height:30px;font-size:17px}
+ body.se-hud.touch #shopBtn{top:calc(55px + env(safe-area-inset-top))!important;right:calc(16px + env(safe-area-inset-right))!important}
+ body.se-hud.touch #seMarketLbl{font-size:10px;width:64px}
+ body.se-hud.touch #questTrack{left:calc(148px + env(safe-area-inset-left))!important;top:calc(65px + env(safe-area-inset-top))!important;max-width:min(360px,52vw)!important;font-size:12px!important;padding:7px 10px 7px 26px!important;max-height:61px;overflow:hidden}
+ body.se-hud.touch #stickZone{left:calc(8px + env(safe-area-inset-left))!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;width:176px!important;height:176px!important}
+ body.se-hud.touch #stickBase{left:88px;top:88px;width:136px!important;height:136px!important;margin:-68px 0 0 -68px!important}
+ body.se-hud.touch #stickKnob{left:88px;top:88px;width:58px!important;height:58px!important;margin:-29px 0 0 -29px!important}
+ body.se-hud.touch #stickBase::before{transform:translate(0,-58px);box-shadow:0 116px 0 rgba(246,236,210,.75)}body.se-hud.touch #stickBase::after{transform:translate(-58px,0);box-shadow:116px 0 0 rgba(246,236,210,.75)}
+ body.se-hud.touch #seJump{width:82px;height:82px;right:calc(16px + env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom))}
+ body.se-hud.touch #seMount{width:48px!important;height:48px!important;right:calc(112px + env(safe-area-inset-right))!important;bottom:calc(24px + env(safe-area-inset-bottom))!important}
+ body.se-hud.touch #seWhistle,body.se-hud.touch #seEmote,body.se-hud.touch #photoBtn.se-act{display:none!important}
+ body.se-hud.touch #flyBtn.se-act,body.se-hud.touch #breathBtn.se-act{width:46px!important;height:46px!important;right:calc(16px + env(safe-area-inset-right))!important}
+ body.se-hud.touch #flyBtn.se-act{bottom:calc(108px + env(safe-area-inset-bottom))!important}body.se-hud.touch #breathBtn.se-act{bottom:calc(162px + env(safe-area-inset-bottom))!important}
+ body.se-hud.touch #tSpr,body.se-hud.touch #tTrick{display:none!important}
+ body.se-hud.touch #touch{right:calc(112px + env(safe-area-inset-right))!important;bottom:calc(86px + env(safe-area-inset-bottom))!important}
+ body.se-hud.touch #touch button{width:44px!important;height:44px!important}
+ body.se-hud.touch #seRidePace{bottom:calc(12px + env(safe-area-inset-bottom))}
+ body.se-hud.touch #toasts{top:calc(114px + env(safe-area-inset-top))!important;max-width:360px!important;font-size:12px!important}
+ body.se-hud.touch #chatBar{bottom:calc(74px + env(safe-area-inset-bottom))!important;left:50%!important;transform:translateX(-50%);width:min(390px,55vw)!important}body.se-hud.touch #chatTabs{bottom:calc(118px + env(safe-area-inset-bottom))!important}
+}
+`;
  document.head.appendChild(css);
  document.body.classList.add('se-hud');
 
@@ -356,6 +403,34 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
  act('seWhistle','whistle',k=>roundSvg(k,1.25),'Whistle for your horse').onclick=()=>{ try{ G.ui.dispatch('bpe:whistle'); }catch(e){} };
  act('seEmote','emote',k=>roundSvg(k,1.2),'Emotes').onclick=()=>{ try{ G.ui.open('emotePanel'); }catch(e){} };
 
+ /* Explicit pace and a held brake use the same intent as the keyboard. */
+ const pace=document.createElement('div');pace.id='seRidePace';pace.setAttribute('role','group');pace.setAttribute('aria-label','Riding pace');
+ pace.innerHTML='<button id="seGaitDown" aria-label="Slower gait" title="Slower gait ([)">−</button><button id="seGaitLabel" aria-haspopup="true" aria-expanded="false"><b>Canter</b><small>Select gait</small></button><button id="seGaitUp" aria-label="Faster gait" title="Faster gait (])">+</button><button id="seStop" aria-label="Hold to stop">STOP</button><div id="seGaitChoices">'+['walk','trot','canter','gallop'].map(g=>'<button data-gait="'+g+'">'+g[0].toUpperCase()+g.slice(1)+'</button>').join('')+'</div>';
+ root.appendChild(pace);
+ const choices=$('seGaitChoices'),gaitLabel=$('seGaitLabel');
+ $('seGaitDown').onclick=()=>G.riding?.shiftGait(-1);$('seGaitUp').onclick=()=>G.riding?.shiftGait(1);
+ gaitLabel.onclick=()=>{const on=choices.classList.toggle('on');gaitLabel.setAttribute('aria-expanded',String(on));};
+ choices.onclick=e=>{const g=e.target.closest('[data-gait]')?.dataset.gait;if(g){G.riding?.selectGait(g);choices.classList.remove('on');gaitLabel.setAttribute('aria-expanded','false');}};
+ const stop=$('seStop');stop.addEventListener('pointerdown',e=>{e.preventDefault();try{stop.setPointerCapture(e.pointerId);}catch(_){}G.riding?.brake(true);});
+ for(const ev of ['pointerup','pointercancel','lostpointercapture'])stop.addEventListener(ev,()=>G.riding?.brake(false));
+ stop.addEventListener('keydown',e=>{if(['Space','Enter'].includes(e.code)){e.preventDefault();e.stopPropagation();G.riding?.brake(true);}});
+ stop.addEventListener('keyup',e=>{if(['Space','Enter'].includes(e.code)){e.preventDefault();e.stopPropagation();G.riding?.brake(false);}});stop.addEventListener('blur',()=>G.riding?.brake(false));
+ // Less frequent actions remain available in Menu on a short screen.
+ for(const [target,label,glyph] of [['tSpr','Sprint','⚡'],['tTrick','Trick','↻'],['seWhistle','Whistle','♪'],['seEmote','Emotes','☺'],['photoBtn','Take photo','▣']]){
+  const b=document.createElement('button');b.dataset.seLbl=label;b.textContent=glyph;b.setAttribute('aria-label',label);b.onclick=()=>{if(target==='tSpr')G.riding?.selectGait('gallop');$(target)?.click();};tiles.appendChild(b);
+ }
+ let paceKey='';
+ function syncPace(){
+  const st=G.riding?.state();if(!st)return;
+  const key=[st.selected,st.requested,st.actual,st.braking,st.dragon,st.sprint].join(':');if(key===paceKey)return;paceKey=key;
+  document.body.classList.toggle('se-riding-flight',st.actual==='fly');document.body.classList.toggle('se-riding-foot',st.actual==='on foot');
+  const label=g=>st.dragon?({trot:'Run',canter:'Run',gallop:'Fast run',walk:'Walk',run:'Run'}[g]||g):g;
+  gaitLabel.querySelector('b').textContent=label(st.requested);gaitLabel.querySelector('small').textContent=st.braking?'Stopping':st.actual==='reverse'?'Backing up':st.actual==='halt'?'Halted':st.sprint&&st.requested==='gallop'?'Sprint selected':label(st.actual)===label(st.requested)?'Select gait':label(st.actual)+' → '+label(st.requested);
+  for(const b of choices.children){b.hidden=st.dragon&&b.dataset.gait==='trot';b.textContent=label(b.dataset.gait);b.setAttribute('aria-pressed',String(b.dataset.gait===st.selected));}stop.setAttribute('aria-pressed',String(st.braking));
+  const t=$('tGal');if(t)t.title=st.actual==='fly'?'Descend':'Run';
+ }
+ G.on('tick',syncPace);syncPace();
+
  /* ---------------------------------------------------------------- the chat line --------- */
  /* ranch3d's chat input swallows every key (so typing never steers the horse), Escape included, and the bar had no close:
     once opened it stayed up until the ☰ Chat tile was found again. A capture listener on the input itself runs before
@@ -417,6 +492,7 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
   try{
    const Q=G.quest, m=Q&&Q.STORY&&Q.STORY[Q.storyIdx()]; if(!m)return null;
    const s=G.save.fresh()||{}, done=Q.storyProg()>=(m.goal||1);
+   const guided=G.storyGuidance?.target?.(m,s,done);if(guided!==undefined){wayKey=guided?.id||'';return guided;}
    /* a mission to open a door or to ride somewhere is about the place, not the person who set it: 'Open the old stall'
       pointed back at Grandpa Wren (and vanished beside him) while the stall stood out past the arena fence */
    if(!done&&m.type==='door'&&m.door){
@@ -442,7 +518,7 @@ body.posing #seMarketLbl,body.freecam #seMarketLbl,body.summoning #seMarketLbl{d
   let show=!!(tg&&cam&&p)&&!(G.course&&G.course.get&&G.course.get())&&!menu.classList.contains('on');
   if(show){
    const d=Math.hypot(tg.position.x-p.pos.x,tg.position.z-p.pos.z);
-   if(d<6)show=false;
+   if(d<(tg.arrivalDistance??6))show=false;
    else{
     _wv.set(tg.position.x,tg.position.y+3.1,tg.position.z).project(cam);
     const W=innerWidth,H=innerHeight, behind=_wv.z>1;

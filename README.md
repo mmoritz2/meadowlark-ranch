@@ -19,15 +19,24 @@ python -m http.server 8431
 
 Then open <http://127.0.0.1:8431/>. Your ranch auto-saves to `localStorage`.
 
-The local **Breed Studio** is at <http://127.0.0.1:8431/breeds.html>. It shows all
-45 game horses and the separately preserved, user-approved horse study. The game
-uses 25 distinct authored breed models, with 20 fantasy variants built on their
-respective breed foundations. Each model has an editable Blender source, its own
-coat and groom, and a named 40-joint rig. Original horse mesh and UVs by
-[b2przemo](https://blendswap.com/blend/13903), licensed CC BY 3.0; see the
-[asset provenance and rebuild instructions](assets/models/artist-breeds/SOURCE.md).
+The local **Breed Studio** is at <http://127.0.0.1:8431/breeds.html>.
+The current realistic roster uses the approved WildMesh horse's native skeleton,
+with breed shape, coat and grooming variants and authored walk, trot, canter,
+gallop and jump motion. The older 40-joint assets are retained in the repository;
+they are not the current realistic roster's foundation. See the
+[runtime roster record](assets/models/native-roster/manifest.json),
+[motion profiles](assets/native-breed-profiles.js), and
+[source credits and restrictions](assets/models/horse-imports/ATTRIBUTION.md).
+The collection also includes the original Black Dragon and European Dragon.
 
-The native model collection adds selectable White Western and Bay Western horses, the original Black Dragon, and the European Dragon. Their available gaits and source credits are listed in [the native asset record](assets/models/horse-imports/README.md). The White Western has rebuilt Walk, Trot and both Canter leads; Bay Western has a rebuilt Walk. Native horse Gallop/Jump and complete breed-roster rebuilding remain unfinished.
+The current WildMesh horse and Black Dragon have noncommercial license
+restrictions. Do not treat this repository as cleared for commercial release.
+The [iOS development project](mobile/README.md) packages the existing game for
+native testing; asset rights, device testing, signing and release gates remain
+open. It is not an App Store release.
+
+The [October playability study](docs/quality-study-2026-10-05.md) records the
+reference research, tested improvements and remaining quality/release gaps.
 
 For VR, serve over HTTPS (WebXR requires a secure origin) and press **Ride in VR**:
 
@@ -65,11 +74,16 @@ and appear on other riders in multiplayer.
 | `W` / `↑` | ride |
 | `A` / `D` | steer |
 | `Shift` | gallop |
+| `Ctrl` / `Alt` | temporary walk / trot |
+| `[` / `]` | choose a slower / faster gait |
+| `S` / `↓` | brake, then walk backward |
 | `Space` | jump |
 | `E` | mount a horse you are standing next to |
 | drag / scroll | orbit and zoom |
 
-On a phone, use the on-screen buttons.
+On a phone, steer with the thumbstick and choose a gait with the pace control.
+Hold **STOP** to brake, or pull the stick back to stop and then walk backward.
+Drag the open world view to look around while riding.
 
 **In VR you hold the reins**
 

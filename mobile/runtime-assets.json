@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "description": "Conservative local runtime asset root plus the exact approved horse files currently stored under review. Source art scripts and Blender projects are excluded. No asset substitution is permitted.",
+  "roots": ["assets"],
+  "excludedExtensions": [".blend", ".blend1", ".py", ".cjs"],
+  "rootFiles": ["manifest.webmanifest", "sw.js"],
+  "reviewFiles": [
+    {"path": "review/native-trot-reference-kit/white/model.glb", "sha256": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07"},
+    {"path": "review/native-trot-reference-kit/bay/model.glb", "sha256": "611b009fcdd348f8e5ccd58be7d9e3bc6829a54180bf94ef59abeba281272979"},
+    {"path": "review/native-trot-reference-kit/sporthorse/model.glb", "sha256": "feb8e040cfb385eafade0bcfa03e6dcde5b5a5b48589074960a8cba9329d707f"},
+    {"path": "review/native-rider-reins/anchors.json", "sha256": "f73a196e7381c95e25f4bf9769d89bd1ce6c183f2199c48fed72c4e94e0508d7"},
+    {"path": "review/native-bay-sporthorse-kit/anchors.json", "sha256": "ffd6cea4855771ab4bea2ba5a930e44e91593efe79ca025c42a293dbb94be811"},
+    {"path": "review/native-bay-sporthorse-kit/actual-coordinates.json", "sha256": "0c981e374d8851001577678993cd2f9666024199ce82411a2eda4fb01feec914"},
+    {"path": "review/native-bay-rollover/rider-prerequisites/actual-coordinates.json", "sha256": "abbe4ab5fa7bfdc0aef583ece99885634c198bd8b9be75d46ba6281332f2d8e7"}
+  ]
+}

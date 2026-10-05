@@ -278,16 +278,17 @@ export function install(G){
   const ds=day(); const msgs=[];
   S.sync(s=>{
    walletWatch(s);
-   if(welcomeAdvance(s))msgs.push('🎁 Welcome week: day '+s.welcome.day+' is open in 📜 Quests → 🎁 Welcome.');
-   if(s.seenBuild!==BUILD){s.seenBuild=BUILD;const n=NEWS[0];inboxPush(s,{id:'news-'+n.v,from:'The Meadowlark team',title:'📰 '+n.title,body:n.body,r:n.reward||null});msgs.push('📰 What\'s new in Meadowlark — a note'+(n.reward?' and a gift':'')+' in your 📬 inbox.');}
+   if(welcomeAdvance(s)&&s.story?.era===2)msgs.push('🎁 Welcome week: day '+s.welcome.day+' is open in 📜 Quests → 🎁 Welcome.');
+   // Deliver the gift now; retain the unseen-build notice until the prologue is complete.
+   if(s.seenBuild!==BUILD){const n=NEWS[0];inboxPush(s,{id:'news-'+n.v,from:'The Meadowlark team',title:'📰 '+n.title,body:n.body,r:n.reward||null});if(s.story?.era===2){s.seenBuild=BUILD;msgs.push('📰 What\'s new in Meadowlark — a note'+(n.reward?' and a gift':'')+' in your 📬 inbox.');}}
    if(s.ww.tkd!==ds){
     s.ww.tkd=ds; s.tickets=(s.tickets||0)+1;
     if(gemMul()>1){const extra=isVIP(s)?6:3;s.gems+=extra;msgs.push('✨ Double-gem weekend: the daily gift pays twice — +'+extra+'💎 more.');}
     if(hasPerk(s,'gem')&&!isVIP(s)){s.gems+=1;msgs.push('🎖️ Prestige: +1💎 on the daily gift.');}
-    msgs.push('🎫 A race ticket for today — double stakes on one event in 🏆 Events.');
+    if(s.story?.era===2)msgs.push('🎫 A race ticket for today — double stakes on one event in 🏆 Events.');
    }
    if(info&&info.wkClosed){const w=info.wkClosed;inboxPush(s,{id:'week-'+w.week,from:'Grandpa Wren',title:'📅 Your week is in',body:(w.sp||0)+' Star Points over '+(w.days||0)+' day'+(w.days===1?'':'s')+'. The wages are in the 🏅 panel under Week.',open:'lbPanel'});}
-   if(gemMul()>1&&s.flags['x2-'+ds]==null){s.flags['x2-'+ds]=1;msgs.unshift('✨ Double-gem weekend is on — every gem you earn today counts twice!');}
+   if(s.story?.era===2&&gemMul()>1&&s.flags['x2-'+ds]==null){s.flags['x2-'+ds]=1;msgs.unshift('✨ Double-gem weekend is on — every gem you earn today counts twice!');}
   });
   msgs.forEach((m,i)=>setTimeout(()=>{try{toast(m);}catch(e){}},5200+i*2200));
   const s=S.fresh(); PL=s?prestigeLevel(s):1; if(s){applyA11y(s.a11y);try{if(G.audio)G.audio.setVol(s.sfxVol==null?1:s.sfxVol);}catch(e){}}
