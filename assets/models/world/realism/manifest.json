@@ -623,5 +623,149 @@
       "textures": 6
     },
     "processing": "Preserve all needle ribbons as fitted textured quads; Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading."
+  },
+  {
+    "id": "pine_tree_01",
+    "page": "https://polyhaven.com/a/pine_tree_01",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-10-05",
+    "authors": {
+      "Rob Tuytel": "photography",
+      "Rico Cilliers": "modeling"
+    },
+    "sourceFiles": [
+      {
+        "file": "pine_tree_01.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/pine_tree_01/pine_tree_01_1k.gltf",
+        "bytes": 30596,
+        "sha256": "c81e8eebbda722313f07bed37b8b9156ce520f7fa95488d83a694d02fffdb469"
+      },
+      {
+        "file": "textures/pine_tree_01_bark_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_bark_nor_gl_1k.jpg",
+        "bytes": 1016849,
+        "sha256": "05c46455531781b6cf18cae0648cf627f60ee942adaa8bcbfd1592fc2506a9e0"
+      },
+      {
+        "file": "textures/pine_tree_01_bark_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_bark_diff_1k.jpg",
+        "bytes": 725265,
+        "sha256": "5c76836b01c3536fa0e24207b67bf4f3315b53ebe2b4ecc6f08dfcf3f8d74929"
+      },
+      {
+        "file": "textures/pine_tree_01_bark_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_bark_arm_1k.jpg",
+        "bytes": 801278,
+        "sha256": "336a4680cd571b6076b67afee2310b290b8900d9d126eb39ec1ae92e95be2ea9"
+      },
+      {
+        "file": "textures/pine_tree_01_trunk_a_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_trunk_a_nor_gl_1k.jpg",
+        "bytes": 997355,
+        "sha256": "9d46c05be22de0dcc4af7e3703fde4c7397644b9faeff4914c0469a6bde99caf"
+      },
+      {
+        "file": "textures/pine_tree_01_trunk_a_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_trunk_a_diff_1k.jpg",
+        "bytes": 789806,
+        "sha256": "cfb646cbc4b6cb2db410eb4342174ebe7812a4ae03520491e788722cf1867286"
+      },
+      {
+        "file": "textures/pine_tree_01_trunk_a_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_trunk_a_arm_1k.jpg",
+        "bytes": 788967,
+        "sha256": "7286e74c42b32c2df6cf04c3050b81b2ff636dff1d4389aecfff80bb8d5904da"
+      },
+      {
+        "file": "textures/pine_tree_01_twig_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_twig_nor_gl_1k.jpg",
+        "bytes": 797935,
+        "sha256": "2a02a482a18d20255c800845902d5e0061d2a2d14107d7c4ed0b789414153141"
+      },
+      {
+        "file": "textures/pine_tree_01_twig_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_twig_diff_1k.jpg",
+        "bytes": 510932,
+        "sha256": "e649f0f9bc74d1af5f1a45eaf2fe7a29adaaddfab251f746b983da301e4b80e1"
+      },
+      {
+        "file": "textures/pine_tree_01_twig_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_twig_arm_1k.jpg",
+        "bytes": 474787,
+        "sha256": "47facef9985e8c073184a64d15ea14bd2dc3b3debfb93f3671b6d5ad0dbc163d"
+      },
+      {
+        "file": "textures/pine_tree_01_trunk_b_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_trunk_b_nor_gl_1k.jpg",
+        "bytes": 915273,
+        "sha256": "5e498ee6fee29437196085620c978346ba6731edad8bfc2a2642868f8bf64efe"
+      },
+      {
+        "file": "textures/pine_tree_01_trunk_b_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_trunk_b_diff_1k.jpg",
+        "bytes": 687662,
+        "sha256": "9d39263a9243a4b6cd669de5e3a504eae32d52f5ab48e471cad5f7e52e052508"
+      },
+      {
+        "file": "textures/pine_tree_01_trunk_b_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_trunk_b_arm_1k.jpg",
+        "bytes": 732269,
+        "sha256": "8141cd57969269604351e366400354e47e7f25294881387e1ea307b48c37b033"
+      },
+      {
+        "file": "pine_tree_01.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/pine_tree_01/pine_tree_01.bin",
+        "bytes": 948849556,
+        "sha256": "9955ac7e2f8fe28dc6da8e4d478593ad830f8a23d44e39a2187ef7dffac2646b"
+      },
+      {
+        "file": "textures/pine_tree_01_twig_alpha_1k.png",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_tree_01/pine_tree_01_twig_alpha_1k.png",
+        "bytes": 351928,
+        "sha256": "6f91aa99f2c27108d6f817f874954aa7df8bfbb4dea2673e9322555a6ae79d99"
+      }
+    ],
+    "output": {
+      "file": "pine_tree_01.glb",
+      "bytes": 5611740,
+      "sha256": "3d0a4ef03966d85f283baf0b579b11d26993fcdaa83e3e5a6c7ed91b5fb4139f",
+      "trianglesBefore": 6951524,
+      "needles": [
+        {
+          "needles": 401342,
+          "canopyCells": 4795,
+          "sprayCards": 9590,
+          "trianglesBefore": 6838822,
+          "trianglesAfter": 1896316
+        }
+      ],
+      "triangles": 90650,
+      "primitives": [
+        {
+          "material": "pine_tree_01_bark",
+          "before": 23710,
+          "after": 3910
+        },
+        {
+          "material": "pine_tree_01_trunk_a",
+          "before": 84332,
+          "after": 4498
+        },
+        {
+          "material": "pine_tree_01_twig",
+          "before": 1896316,
+          "after": 77742
+        },
+        {
+          "material": "pine_tree_01_dead_branches",
+          "before": 4660,
+          "after": 4500
+        }
+      ],
+      "materials": 4,
+      "textures": 9
+    },
+    "processing": "First author specimen; constant white vertex colors removed; 8-bit normals and 12-bit UVs; source needle clusters replaced with the original photographed twig sprays; Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading."
   }
 ]

@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Metre scale, all submeshes and the original PBR channels are retained.
 export function installRanchWorldDetails(G,{shrubs=[]}={}) {
   const {THREE,scene,world:W,horse:H}=G;
-  const state=G.worldDetails={placed:[],skipped:[],errors:[],understory:0,flowers:0,flowerPositions:[],ready:null};
+  const state=G.worldDetails={placed:[],skipped:[],errors:[],understory:0,flowers:0,grassClumps:0,flowerPositions:[],ready:null};
   const group=new THREE.Group();group.name='Ranch working-yard details';scene.add(group);
   const loader=new GLTFLoader(), objects=[],patches=[],wind={value:0};
   const placements=[
@@ -142,6 +142,33 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
         mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();group.add(mesh);patches.push(mesh);state.flowers+=points.length;
       }
     }catch(e){state.errors.push('trail flowers: '+e.message);console.warn('Trail flowers unavailable',e);}
+    // Photographed tussocks break up the fine procedural sward at the garden
+    // edges. A few dozen clumps near any rider, never a full-field scan carpet.
+    try{
+      const asset=await loader.loadAsync('./assets/models/world/grass_medium_02.glb');asset.scene.updateMatrixWorld(true);
+      let source=null;asset.scene.traverse(o=>{if(o.isMesh&&!source)source=o;});
+      const geo=source.geometry.clone().applyMatrix4(source.matrixWorld);geo.computeBoundingBox();
+      const b=geo.boundingBox,h=b.max.y-b.min.y;geo.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);geo.scale(1/h,1/h,1/h);
+      const mat=source.material.clone();mat.name='Trail edge | scanned meadow grass';mat.alphaToCoverage=true;mat.side=THREE.DoubleSide;mat.roughness=1;mat.envMapIntensity=.45;
+      for(const key of ['map','normalMap','roughnessMap'])if(mat[key])mat[key].anisotropy=Math.min(8,G.renderer.capabilities.getMaxAnisotropy());
+      mat.onBeforeCompile=sh=>{sh.uniforms.yardWind=wind;sh.vertexShader='uniform float yardWind;\n'+sh.vertexShader;
+        sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+          #ifdef USE_INSTANCING
+            float phase=instanceMatrix[3].x*.21+instanceMatrix[3].z*.17;
+            transformed.x+=sin(yardWind*1.1+phase)*position.y*position.y*.08;
+            transformed.z+=cos(yardWind*.8+phase)*position.y*.025;
+          #endif`);};mat.customProgramCacheKey=()=> 'scanned-trail-grass-1';
+      const cells=new Map();
+      for(let i=0;i<state.flowerPositions.length;i+=3){const p=state.flowerPositions[i],x=p.x+.38,z=p.z-.32;if(!available(x,z,.35))continue;
+        const key=Math.floor(x/30)+','+Math.floor(z/30);if(!cells.has(key))cells.set(key,[]);cells.get(key).push({x,z,i});}
+      const matrix=new THREE.Matrix4(),v=new THREE.Vector3(),q=new THREE.Quaternion(),sc=new THREE.Vector3(),up=new THREE.Vector3(0,1,0);
+      for(const points of cells.values()){
+        const mesh=new THREE.InstancedMesh(geo,mat,points.length),cx=points.reduce((a,p)=>a+p.x,0)/points.length,cz=points.reduce((a,p)=>a+p.z,0)/points.length;
+        mesh.name='Trail edge | meadow tussocks';mesh.position.set(cx,0,cz);mesh.receiveShadow=true;mesh.castShadow=false;
+        points.forEach((p,i)=>{const size=.26+(p.i%7)*.017;v.set(p.x-cx,W.groundH(p.x,p.z)-.025,p.z-cz);sc.set(size,size,size);q.setFromAxisAngle(up,p.i*2.3999);matrix.compose(v,q,sc);mesh.setMatrixAt(i,matrix);});
+        mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();group.add(mesh);patches.push(mesh);state.grassClumps+=points.length;
+      }
+    }catch(e){state.errors.push('meadow tussocks: '+e.message);}
     return state.placed.length;
   })();
   let elapsed=0;

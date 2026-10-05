@@ -656,21 +656,22 @@ import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js?v=clear-cumulus-2';
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=world-cinematic-1';
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs,createForestImpostor} from './assets/vegetation.js?v=ranch-life-1';
-import {createGrassTuftGeometry} from './assets/meadow-cover.js?v=world-cinematic-1';
+import {hasMeadowCover} from './assets/meadow-biomes.js';
+import {createGrassTuftGeometry} from './assets/meadow-cover.js?v=botanical-scale-1';
 import {createGeology} from './assets/geology.js?v=world-cinematic-1';
 import {createSceneryArt} from './assets/scenery-art.js';
 import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=world-cinematic-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=thaw-margin-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
-import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=playability-2';
+import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=timber-entry-2';
 import {createWorldFinish} from './assets/world-rendering.js';
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
-import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=trail-gardens-2';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=finite-foliage-1';
+import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=botanical-trails-3';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=mature-woodland-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=fit-20261005';
 import {FEATURES} from './assets/features/index.js?v=ranch-life-2';
@@ -2950,8 +2951,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.abs(x)<25&&Math.abs(z)<20)continue; // keep the arena sandy
   if(Math.abs(z-riverZ(x))<6||pathDist(x,z)<PATH_W*.9)continue; // keep water and tracks clear
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)continue; // not on the bridge
-  if(Math.hypot(x+220,z-130)<150)continue;    // no grass on Coyote sand
-  if(Math.hypot(x+160,z+210)<140)continue;    // no grass on Hollowpeak snow
+  if(!hasMeadowCover(x,z))continue; // a broken, gradual grass margin around sand and snow
   e.set(0,Math.random()*Math.PI,(Math.random()-0.5)*0.15);
   q.setFromEuler(e);
   const s=0.7+Math.random()*0.8;
@@ -3088,8 +3088,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // the arena stays sandy
   if(Math.abs(z-riverZ(x))<6.5)return false;               // not in the river
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
-  if(Math.hypot(x+220,z-130)<150)return false;             // Coyote sand
-  if(Math.hypot(x+160,z+210)<140)return false;             // Hollowpeak snow
+  if(!hasMeadowCover(x,z))return false;                  // match the terrain's transition zones
   if(Math.hypot(x-20,z-16)<5.4)return false;               // Loon Lake
   if(pathDist(x,z)<PATH_W*0.62)return false;               // the road is worn bare
   if(window.__onCourse&&window.__onCourse(x,z,3.4))return false;   // nor the event courses (course-clear.js): a mown track to ride and to see down
@@ -6929,13 +6928,12 @@ const FLOODLIGHTS=[[-25.9,-20.9],[25.9,-20.9],[-25.9,20.9],[25.9,20.9]];   // on
   sp.position.set(x,1.15,z);
   scene.add(sp);
  });
- // entrance arch with the ranch sign
- followCamera.register(tube(0.09,0.11,3.4,whitePaintMat,-3,1.7,20,scene));
- followCamera.register(tube(0.09,0.11,3.4,whitePaintMat,3,1.7,20,scene));
- box(6.6,0.18,0.18,whitePaintMat,0,3.45,20,scene);
- const archSign=arrivalArt.buildSign({text:'MEADOWLARK ARENA',width:4.6,height:.52});
- archSign.position.set(0,3.82,20);
- scene.add(archSign);
+ // Measured timber gateway on the existing approach; both riding exits stay open.
+ const entry=new THREE.Group();entry.name='Arena | timber and stone entrance';entry.position.set(0,0,20);
+ entry.userData.ridingOpening={width:5.5,height:3.55};
+ entry.add(ranchBuilderArt.create('arena_entry'));
+ const archSign=arrivalArt.buildSign({text:'MEADOWLARK ARENA',width:4.6,height:.48});
+ archSign.position.set(0,4.04,.04);entry.add(archSign);scene.add(entry);followCamera.register(entry);
  // A covered, timber-framed pavilion on a clear stretch of the west rail.
  // The old stand overlapped the Summoning Stall at z=-4.5.
  {
@@ -7071,7 +7069,7 @@ colliders.push(
  {x:-30,z:3.2,r:2.6},{x:-30,z:7.5,r:2.6},{x:-30,z:11.8,r:2.6}, // pavilion, clear of stall and arena
  {x:27.6,z:-6,r:1.7},{x:29.4,z:-6,r:1.1},          // judge tower, outside the east rail
  ...FLOODLIGHTS.map(p=>({x:p[0],z:p[1],r:0.3})), // floodlights, outside the corners
- {x:-3,z:20,r:0.32},{x:3,z:20,r:0.32}, // arch posts
+ {x:-3,z:20,r:0.42},{x:3,z:20,r:0.42}, // arch posts
  {x:85,z:-40,r:2.1},{x:215,z:-108,r:2.1}, // windmills
  ...FOLIAGE.trough.map(p=>({x:p.x,z:p.z,r:1.1*p.s})),
  ...FOLIAGE.haybale.map(p=>({x:p.x,z:p.z,r:1.2*p.s})),
@@ -12904,7 +12902,8 @@ cottage(42,-50,0.4);cottage(48,-56,-0.3);cottage(54,-48,0.9);cottage(45,-43,2.6)
  tube(0.06,0.07,2.6,barkMat,0,1.3,0,sp2);
  const s1=arrivalArt.buildSign({text:'Cottonwood ↗',width:1.75,height:.34});s1.position.set(0,2.35,0);sp2.add(s1);
  const s2=arrivalArt.buildSign({text:'Loon Lake →',width:1.75,height:.34});s2.position.set(0,1.91,0);sp2.add(s2);
- sp2.position.set(2.5,0,23);
+ sp2.name='Arena approach | trail directions';
+ sp2.position.set(4.8,groundH(4.8,23),23);
  scene.add(sp2);
 }
 const REGIONS=[
@@ -14306,7 +14305,7 @@ function installFeatures(){
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,geology,box,tube,blob,
+  world:{nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},

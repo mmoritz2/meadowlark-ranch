@@ -1,0 +1,20 @@
+// A low-cost ground-cover LOD from the already licensed moss-rock scan.
+import {createRequire} from 'node:module';
+import {pathToFileURL} from 'node:url';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+const req=createRequire(process.env.GLTF_PIPELINE_MODULES?path.join(process.env.GLTF_PIPELINE_MODULES,'../package.json'):import.meta.url);
+const imp=async n=>import(pathToFileURL(req.resolve(n)));
+const {NodeIO}=await imp('@gltf-transform/core'),{ALL_EXTENSIONS}=await imp('@gltf-transform/extensions');
+const {simplifyPrimitive,weld}=await imp('@gltf-transform/functions'),{MeshoptSimplifier}=await imp('meshoptimizer');
+await MeshoptSimplifier.ready;
+const doc=await new NodeIO().registerExtensions(ALL_EXTENSIONS).read('assets/models/world/realism/rock_moss_set_01.glb');
+await doc.transform(weld());
+const node=doc.getRoot().listNodes().find(n=>n.getMesh()),primitive=node.getMesh().listPrimitives()[0];
+simplifyPrimitive(primitive,{simplifier:MeshoptSimplifier,ratio:240/(primitive.getIndices().getCount()/3),error:.12});
+const attributes={};
+for(const name of ['POSITION','NORMAL','TEXCOORD_0'])attributes[name]=Array.from(primitive.getAttribute(name).getArray(),v=>Number(v.toFixed(6)));
+const matrix=node.getWorldMatrix();matrix[12]=matrix[13]=matrix[14]=0;
+const result={source:'rock_moss_set_01.glb',sourcePage:'https://polyhaven.com/a/rock_moss_set_01',license:'CC0-1.0',matrix,attributes,index:Array.from(primitive.getIndices().getArray())};
+await fs.writeFile('assets/models/world/realism/ground-stone.json',JSON.stringify(result)+'\n');
+console.log('Ground stone:',result.index.length/3,'triangles');

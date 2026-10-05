@@ -16,7 +16,7 @@ window.bakeTree=async(id,variant=-1)=>{
  const bounds=new T.Box3().setFromObject(root),size=bounds.getSize(new T.Vector3());
  const width=Math.max(size.x,size.z)*1.10,height=size.y*1.06,bottom=bounds.min.y-size.y*.03;
  const camera=new T.OrthographicCamera(-width/2,width/2,bottom+height,bottom,.1,100);
- const meshes=[];root.traverse(o=>{if(o.isMesh)meshes.push([o,o.material]);});
+ const meshes=[];root.traverse(o=>{if(o.isMesh){if(id==='pine_tree_01'&&/twig/.test(o.material.name))o.material.color.setRGB(1.7,2.1,1.5);meshes.push([o,o.material]);}});
  const results={width,height,bottom,sourceHeight:size.y,viewCount:8};
  for(const normal of [false,true]){
   const tile=normal?512:variant<0?768:512;renderer.setSize(tile,tile);
@@ -42,7 +42,8 @@ window.bakeTree=async(id,variant=-1)=>{
   const page=await browser.newPage();page.on('pageerror',e=>console.error(e));
   await page.goto(QA.BASE+'/'+scratch+'/index.html');await page.waitForFunction(()=>window.bakeTree);
   const entries=[];
-  for(const [id,variant]of [['tree_small_02',-1],['fir_sapling_medium',0],['fir_sapling_medium',1],['fir_sapling_medium',2]]){
+  const requested=process.argv.slice(2),jobs=requested.length?requested.map(id=>[id,id==='tree_small_02'?-1:0]):[['tree_small_02',-1],['fir_sapling_medium',0],['fir_sapling_medium',1],['fir_sapling_medium',2]];
+  for(const [id,variant]of jobs){
    const {albedo,normal,...meta}=await page.evaluate(([id,v])=>bakeTree(id,v),[id,variant]);
    const prefix=id+(variant>=0?'_'+variant:'');const files={};
    for(const [channel,data]of [['views',albedo],['normals',normal]]){
@@ -52,6 +53,8 @@ window.bakeTree=async(id,variant=-1)=>{
    }
    entries.push({id,variant,...meta,...files,source:id+'.glb',sourcePage:'https://polyhaven.com/a/'+id,license:'CC0-1.0'});console.log(prefix,JSON.stringify(meta));
   }
-  fs.writeFileSync(dest+'/tree-impostors.json',JSON.stringify({processing:'Eight orthographic albedo and object-space normal views of the existing CC0 scans. Live lighting is applied by the game.',trees:entries},null,2)+'\n');
+  const prior=JSON.parse(fs.readFileSync(dest+'/tree-impostors.json','utf8'));
+  const merged=[...prior.trees.filter(t=>!entries.some(e=>e.id===t.id&&e.variant===t.variant)),...entries];
+  fs.writeFileSync(dest+'/tree-impostors.json',JSON.stringify({processing:'Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Live lighting is applied by the game.',trees:merged},null,2)+'\n');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

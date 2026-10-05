@@ -1,12 +1,13 @@
-// Varied ribbon blades: upright tips, low spreading leaves and an occasional
+// Fine meadow blades at botanical scale, keeping the existing triangle budget.
+// Upright tips, low spreading leaves and an occasional
 // straw blade share one inexpensive tuft. Every blade tapers to a curved point.
 export function createGrassTuftGeometry(THREE) {
   const P=[],N=[],C=[],U=[],I=[];
   for(let blade=0;blade<16;blade++) {
-    const a=blade*2.39996,spread=.07+(blade%6)*.055;
+    const a=blade*2.39996,spread=.035+(blade%6)*.045;
     const ox=Math.cos(a)*spread,oz=Math.sin(a)*spread;
-    const tall=blade%3===0,h=tall?.32+(blade%4)*.055:.13+(blade%5)*.028;
-    const bend=tall?.15+(blade%3)*.02:.22+(blade%3)*.035,width=.011+(blade%4)*.0035;
+    const tall=blade%3===0,h=tall?.27+(blade%4)*.045:.11+(blade%5)*.025;
+    const bend=tall?.09+(blade%3)*.018:.16+(blade%3)*.026,width=.0045+(blade%4)*.0016;
     const ca=Math.cos(a),sa=Math.sin(a),base=P.length/3;
     for(const t of [0,.55,1])for(const side of t===1?[0]:[-1,1]){
       const w=width*(1-t*.80)*side;

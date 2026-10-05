@@ -1,6 +1,6 @@
 # Poly Haven environment assets
 
-Downloaded directly from Poly Haven on **2026-09-30** and **2026-10-03**. The models are free under
+Downloaded directly from Poly Haven on **2026-09-30**, **2026-10-03** and **2026-10-05**. The models are free under
 [CC0 1.0](https://polyhaven.com/license), including commercial use and redistribution.
 These are Poly Haven's scanned/authored assets, not generated substitutes or
 assets extracted from another game.
@@ -9,6 +9,7 @@ assets extracted from another game.
 | --- | --- | ---: |
 | [Tree Small 02](https://polyhaven.com/a/tree_small_02) | Rico Cilliers | 123,891 triangles |
 | [Fir Sapling Medium](https://polyhaven.com/a/fir_sapling_medium) | Rico Cilliers, Rob Tuytel | 401,578 across three firs |
+| [Pine Tree 01](https://polyhaven.com/a/pine_tree_01) | Rob Tuytel, Rico Cilliers | 90,650; one mature specimen |
 | [Pine Sapling Small](https://polyhaven.com/a/pine_sapling_small) | Rob Tuytel, Rico Cilliers | 49,410 across three saplings |
 | [Rock Moss Set 01](https://polyhaven.com/a/rock_moss_set_01) | Kless Gyzen | 26,993 across six rocks |
 | [Rock Face 02](https://polyhaven.com/a/rock_face_02) | Dario Barresi, Rico Cilliers | 8,496 |
@@ -34,8 +35,9 @@ the older library's painterly grade. No runtime geometry decoder is required.
 Oak/birch and conifer replacements include both the original scatter and the
 biome package's copses, retaining their collision positions and Amberwood's autumn
 tint. Three scanned fir variants replace the oversized procedural needle sprays.
-Nearby placements use the detailed tree, with at most 12 on High and
-6 on Medium. Distant trees and Low/VR use eight-view albedo and object-normal impostors baked
+The mature pine replaces a deterministic portion of tall conifers and supplies the
+far-forest pine silhouette. Nearby placements use detailed trees, with at most
+12 / 1.8 million triangles on High and 6 / 750,000 triangles on Medium. Distant trees and Low/VR use eight-view albedo and object-normal impostors baked
 from the same models, with live lighting and alpha-tested silhouettes. The
 far forest shares these views, with its original near-rider distance fade. High
 quality also enables alpha-tested shadows for nearby distant-tree batches. The original
@@ -55,7 +57,7 @@ node tools/asset-gen/bake-world-tree.cjs
 
 The atlas bake requires the local preview server and Playwright. Camera framing,
 eight view counts and SHA-256 hashes are recorded in `tree-impostors.json`.
-The eight albedo/normal atlases total 8.1 MiB; the seven GLBs total 43.7 MiB.
+The ten albedo/normal atlases total 11.0 MiB; the eight GLBs total 49.0 MiB.
 These remain additional first-load downloads, then use the browser cache.
 The October 3 fir asset passes Khronos validation with zero errors and nine
 missing-authored-tangents warnings; Three.js generates its tangent space.
@@ -72,3 +74,37 @@ The October 3 rendering run passed all 28 checks. That generated world included
 At High, 900×650, frame time was 35.4 ms median / 41.8 ms p95 on the development
 machine, compared with 36.3 / 40.0 ms before this update. These short samples
 include random world scatter; they show comparable cost, not a 60 fps guarantee.
+
+## October 5 mature woodland and ground detail
+
+`pine_tree_01.glb` retains the first authored mature specimen from the source
+collection. The source's 401,342 individual needle meshes are converted to 9,590
+crossed twig cards fitted into 4,795 occupied canopy cells. Cards use the author's
+photographed twig and transparency mask. Branches, cones and trunk remain separate
+geometry. Constant white vertex colors are removed; normals use 8-bit quantization
+and UVs 12-bit. The file explicitly requires `KHR_mesh_quantization`; positions
+stay floating point so collection placement does not alter the tree's proportions.
+The runtime GLB is 5.35 MiB, compared with the 914 MiB complete source download.
+
+The detailed tree's twig material uses a linear RGB exposure multiplier of
+`[1.7, 2.1, 1.5]` to fit the daylight pasture. The same multiplier is applied before
+baking its distant views; bark retains its source color. This does not replace
+the original texture files or make foliage emit light. Detailed foliage uses
+softened canopy normals and reduced normal-map strength. The safe filtered-normal
+fallback from the black-rectangle fix remains in place for all distant trees.
+
+`ground-stone.json` is a 240-triangle LOD of the first Rock Moss Set 01 scan. It
+shares the existing rock texture channels and replaces the travelling ground-cover
+spheres. Source attribution and license are embedded in the JSON.
+
+```sh
+python3 tools/asset-gen/fetch-world-realism.py pine_tree_01
+node --max-old-space-size=8192 tools/asset-gen/build-world-realism.mjs pine_tree_01
+node tools/asset-gen/bake-world-tree.cjs pine_tree_01
+node tools/asset-gen/build-ground-stone.mjs
+```
+
+Khronos validation reports zero errors and four missing-authored-tangents warnings
+for the mature pine. Three.js generates tangent space from derivatives. The model
+and every albedo/normal atlas hash are checked against the manifests. See
+`docs/landscape-models-2026-10-05.md` for visual and gameplay acceptance results.

@@ -131,6 +131,34 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
  const arenaBlue=arenaPaint.clone();arenaBlue.name='Arena | painted blue rails';arenaBlue.color.set('#4d7285');
  // Arena structures use the same measured joinery and photographed surfaces as placed furniture.
  // Local +Z faces the arena; the centre aisle stays clear from the stairs to the rear row.
+ function arenaEntry(b){
+  b.root.userData.arenaArt={kind:'arena_entry',version:2,clearWidth:5.5,clearHeight:3.55};
+  for(const x of[-3,3]){
+   b.box(.54,.10,.54,stone,x,.015,0,null,.026);
+   for(let row=0;row<3;row++){
+    b.box(.46,.18,.46,stone,x,.15+row*.185,0,null,.025);
+   }
+   b.box(.56,.075,.56,stone,x,.66,0,null,.016);
+   b.box(.25,3.15,.25,oak,x,2.23,0,null,.015);
+   b.box(.28,.30,.28,iron,x,.81,0,null,.005);
+   for(const z of[-.132,.132])for(const y of[.75,.91,3.58,3.75])b.bolt(x,y,z,.018);
+   b.beam([x,2.95,0],[x-Math.sign(x)*.70,3.65,0],.13,.16,oak);
+   b.box(.36,.11,.36,oak,x,3.80,0,null,.016);
+   for(const z of[-.25,.25])b.beam([x,3.48,0],[x,4.27,z],.08,.08,aged);
+  }
+  b.box(6.85,.23,.25,aged,0,3.665,0,null,.018);
+  b.box(6.94,.055,.29,oak,0,3.805,0,null,.01);
+  for(const x of[-2.18,2.18])b.box(.045,.38,.045,iron,x,4.02,0);
+  // Cedar weather cap, fascia, and exposed rafter ends complete the silhouette.
+  const half=.59,rise=.25,slope=Math.hypot(half,rise),angle=Math.atan2(rise,half);
+  for(const side of[-1,1]){
+   b.box(7.18,.075,slope,roof,0,4.365,side*.295,[-side*angle,0,0]);
+   b.box(7.23,.12,.075,aged,0,4.225,side*.61);
+  }
+  b.box(7.24,.07,.12,iron,0,4.52,0,null,.014);
+  for(const x of[-3,-1.5,0,1.5,3])for(const side of[-1,1])
+   b.beam([x,4.42,0],[x,4.17,side*.67],.07,.09,oak);
+ }
  function grandstand(b){
   const front=.35,back=-3.15;
   b.root.userData.arenaArt={kind:'grandstand',version:1,seatRows:3};
@@ -310,6 +338,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
     b.box(.25,.025,.012,iron,0,.25,.268);b.box(.34,.02,.15,oak,0,.237,.32);
     b.box(.62,.055,.65,steel,0,.895,0,[.055,0,0]);
     break;
+   case 'arena_entry':arenaEntry(b);break;
    case 'grandstand':grandstand(b);break;
    case 'judges_pavilion':judgesPavilion(b);break;
    case 'mounting_block':mountingBlock(b);break;

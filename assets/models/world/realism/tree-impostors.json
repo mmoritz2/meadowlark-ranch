@@ -1,5 +1,5 @@
 {
-  "processing": "Eight orthographic albedo and object-space normal views of the existing CC0 scans. Live lighting is applied by the game.",
+  "processing": "Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Live lighting is applied by the game.",
   "trees": [
     {
       "id": "tree_small_02",
@@ -87,6 +87,28 @@
       },
       "source": "fir_sapling_medium.glb",
       "sourcePage": "https://polyhaven.com/a/fir_sapling_medium",
+      "license": "CC0-1.0"
+    },
+    {
+      "id": "pine_tree_01",
+      "variant": 0,
+      "width": 9.581309509277345,
+      "height": 21.774055141806603,
+      "bottom": -0.6957092228531837,
+      "sourceHeight": 20.54156145453453,
+      "viewCount": 8,
+      "views": {
+        "file": "pine_tree_01_0_views.webp",
+        "bytes": 1285968,
+        "sha256": "d687ee24e3366f04ceefdc620fa95d8b880442cce3973370df7a39675cc090d3"
+      },
+      "normals": {
+        "file": "pine_tree_01_0_normals.webp",
+        "bytes": 1707622,
+        "sha256": "7c070ca69aa7662987b7c5527b0be5d1043ddfb4b42dfa90d00911fa1f4929b2"
+      },
+      "source": "pine_tree_01.glb",
+      "sourcePage": "https://polyhaven.com/a/pine_tree_01",
       "license": "CC0-1.0"
     }
   ]

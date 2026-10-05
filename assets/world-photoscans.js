@@ -31,6 +31,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
     for(const key of ['map','normalMap','roughnessMap','metalnessMap','aoMap'])if(mat[key])mat[key].anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
     if(!foliage)return;
     mat.alphaToCoverage=true;mat.side=THREE.DoubleSide;mat.shadowSide=THREE.DoubleSide;
+    // Thin needle cards receive light across a canopy, not like solid bark.
+    mat.aoMapIntensity=.45;mat.normalScale.multiplyScalar(.55);
     const deform=sh=>{
       sh.uniforms.scanWind=wind;
       sh.vertexShader='uniform float scanWind;\n'+sh.vertexShader;
@@ -44,6 +46,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
     };
     mat.onBeforeCompile=sh=>{
       deform(sh);
+      sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+        vec3 canopyUp=normalize(mat3(viewMatrix)*vec3(0.0,1.0,0.0));
+        normal=normalize(mix(normal,canopyUp,.42));`);
       sh.fragmentShader=sh.fragmentShader.replace('#include <opaque_fragment>',`
         #if NUM_DIR_LIGHTS > 0
           float scanBack=pow(max(0.0,dot(-normal,directionalLights[0].direction)),2.0);
@@ -51,7 +56,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
         #endif
         #include <opaque_fragment>`);
     };
-    mat.customProgramCacheKey=()=> 'photoscan-foliage-v1';
+    mat.customProgramCacheKey=()=> 'photoscan-foliage-v2';
     const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:mat.map,alphaTest:mat.alphaTest,side:THREE.DoubleSide});
     depth.onBeforeCompile=deform;depth.customProgramCacheKey=()=> 'photoscan-foliage-depth-v1';
     mat.userData.scanDepth=depth;
@@ -61,7 +66,11 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
     const asset=await loader.loadAsync('./assets/models/world/realism/'+id+'.glb');
     asset.scene.updateMatrixWorld(true);
     const mats=new Set();asset.scene.traverse(o=>{if(o.isMesh)for(const mat of Array.isArray(o.material)?o.material:[o.material])mats.add(mat);});
-    for(const mat of mats)configureMaterial(mat,/leaves|twig/.test(mat.name));
+    for(const mat of mats){
+      // Match the mature crown to the daylight pasture exposure; bark stays raw.
+      if(id==='pine_tree_01'&&/twig/.test(mat.name))mat.color.setRGB(1.7,2.1,1.5);
+      configureMaterial(mat,/leaves|twig/.test(mat.name));
+    }
     loaded.set(id,asset.scene);state.assets.push(id);return asset.scene;
   }
   // Collection nodes have gallery translations. Bake rotation/scale, retaining
@@ -93,15 +102,23 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=world-cinematic-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
-    const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium');
-    const sources=[broad,...pine.children],species=['broadleaf','pine-0','pine-1','pine-2'];
-    const variants=sources.map((root,i)=>{
-      const parts=pieces(root,i>0),bounds=new THREE.Box3();parts.forEach(p=>bounds.union(p.bounds));
-      return {parts,bounds,key:species[i],meta:catalog.trees[i]};
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=mature-woodland-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01');
+    const specs=[['tree_small_02',-1,broad,'broadleaf'],
+      ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
+      ['pine_tree_01',0,mature.children[0],'mature-pine']];
+    const variants=specs.map(([id,variant,root,key])=>{
+      const parts=pieces(root,variant>=0),bounds=new THREE.Box3();parts.forEach(p=>bounds.union(p.bounds));
+      const meta=catalog.trees.find(t=>t.id===id&&t.variant===variant);
+      if(!meta)throw Error('Missing tree view metadata: '+id);
+      const triangles=parts.reduce((n,p)=>n+(p.geo.index?.count||p.geo.attributes.position.count)/3,0);
+      return {parts,bounds,key,meta,triangles};
     });
-    const sourceFor=(kind,x,z)=>kind==='pine'||kind==='snowpine'||kind==='cold'?variants[1+Math.floor(rnd(x,z,17)*3)]:variants[0];
-    const add=t=>{t.source=sourceFor(t.kind,t.x,t.z);trees.push(t);};
+    const sourceFor=t=>{
+      if(!['pine','snowpine','cold'].includes(t.kind))return variants[0];
+      return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
+    };
+    const add=t=>{t.source=sourceFor(t);trees.push(t);};
     // Keep every placement, size and collider; replace paired trunks and crowns.
     for(const stem of seedTrees.filter(o=>o.userData.treeLayer==='wood'&&['oak','birch','pine','snowpine'].includes(o.userData.treeSpecies))){
       const leaves=seedTrees.find(o=>o.userData.treeLayer==='leaves'&&o.userData.treePoints===stem.userData.treePoints);
@@ -140,7 +157,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
     }
     if(farTrees){
       const oldGeometry=new Set();
-      for(const [mesh,source]of [[farTrees.leafy,variants[0]],[farTrees.pines,variants[1]]]){
+      for(const [mesh,source]of [[farTrees.leafy,variants[0]],[farTrees.pines,variants[4]]]){
         const card=treeImpostor({...source.impostor,nearFade:H.player.pos}),scale=1/source.meta.sourceHeight;
         card.geo.scale(scale,scale,scale);oldGeometry.add(mesh.geometry);mesh.material.dispose();
         mesh.geometry=card.geo;mesh.material=card.mat;mesh.customDepthMaterial=card.mat.userData.scanDepth;
@@ -175,8 +192,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
     for(const mesh of retired){mesh.visible=false;mesh.userData.photoscanReplaced=true;}
     state.retiredBatches=retired.size;
     floraCanopies.forEach(m=>{m.visible=false;});
-    state.trees=trees.length;state.conifers=trees.filter(t=>t.source!==variants[0]).length;state.normalMappedViews=variants.length;
-    state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind}));
+    state.trees=trees.length;state.conifers=trees.filter(t=>t.source!==variants[0]).length;state.normalMappedViews=variants.length;state.matureTrees=trees.filter(t=>t.source.key==='mature-pine').length;
+    state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind,source:t.source.key}));
   }
   async function installRocks(){
     const parts=pieces(await load('rock_moss_set_01'),true);
@@ -190,6 +207,28 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
       geo.scale(scale,scale,scale);geo.translate(0,-.10,0);
       rock.geometry=geo;rock.material=piece.mat;rock.name='Scanned mossy boulder';old.dispose();state.rocks++;
     });
+    // The travelling ground-cover layer used an untextured low-poly sphere.
+    // This small scan LOD costs about the same but retains real weathered UVs.
+    if(W.nearGroundCover?.rock){
+      try{
+        const response=await fetch('./assets/models/world/realism/ground-stone.json');
+        if(!response.ok)throw Error('Ground stone LOD unavailable');
+        const data=await response.json(),geo=new THREE.BufferGeometry();
+        for(const [key,name,size]of [['POSITION','position',3],['NORMAL','normal',3],['TEXCOORD_0','uv',2]])
+          geo.setAttribute(name,new THREE.Float32BufferAttribute(data.attributes[key],size));
+        geo.setIndex(data.index);geo.applyMatrix4(new THREE.Matrix4().fromArray(data.matrix));geo.computeBoundingBox();
+        const b=geo.boundingBox,size=b.getSize(new THREE.Vector3()),scale=1/Math.max(size.x,size.z);
+        geo.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);geo.scale(scale,scale,scale);geo.translate(0,-.08,0);
+        geo.computeBoundingSphere();const layer=W.nearGroundCover.rock;layer.geometry.dispose();layer.geometry=geo;
+        const mat=parts[0].mat.clone();mat.name='Ground cover | scanned moss stone';
+        mat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',`
+          #if defined(USE_COLOR) || defined(USE_INSTANCING_COLOR)
+            diffuseColor.rgb*=clamp(vColor*1.5+.35,vec3(.75),vec3(1.1));
+          #endif`);};
+        mat.customProgramCacheKey=()=> 'ground-stone-scan-v1';layer.material.dispose();layer.material=mat;
+        layer.name='Scanned ground stones';state.groundStoneTriangles=data.index.length/3;
+      }catch(e){state.errors.push('ground stone: '+e.message);}
+    }
     // Replace each already-sited outcrop in place, preserving its collider and
     // climbable mesh reference. Six scans give natural asymmetry within the heap.
     for(const [i,at] of (G.worldOutcrops?.placed||[]).entries()){
@@ -263,8 +302,17 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[],fa
     // Keep an incumbent until a new tree is appreciably closer. Nearest-N
     // alone alternates equally distant trees at every scenery tick while riding.
     const distance=t=>(t.x-p.x)**2+(t.z-p.z)**2;
-    const selected=enabled?trees.filter(t=>distance(t)<(range+(previousSelection.has(t)?5:0))**2)
-      .sort((a,b)=>distance(a)*(previousSelection.has(a)?.72:1)-distance(b)*(previousSelection.has(b)?.72:1)).slice(0,budget):[];
+    const candidates=enabled?trees.filter(t=>distance(t)<(range+(previousSelection.has(t)?5:0))**2)
+      .sort((a,b)=>distance(a)*(previousSelection.has(a)?.72:1)-distance(b)*(previousSelection.has(b)?.72:1)):[];
+    // The fuller mature canopy shares a fixed geometry budget with the nearby
+    // saplings, so asset quality cannot silently multiply the phone workload.
+    const selected=[],triangleBudget=tier==='high'?1800000:750000;let triangles=0;
+    for(const t of candidates){
+      if(selected.length>=budget)break;
+      if(triangles+t.source.triangles>triangleBudget)continue;
+      selected.push(t);triangles+=t.source.triangles;
+    }
+    state.activeTreeTriangles=triangles;state.treeTriangleBudget=triangleBudget;
     const set=new Set(selected);
     const mode=tier+':'+renderer.xr.isPresenting,tierChanged=previousMode!==mode;
     if(!tierChanged&&set.size===previousSelection.size&&selected.every(t=>previousSelection.has(t)))return;
