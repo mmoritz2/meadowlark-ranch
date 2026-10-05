@@ -463,7 +463,10 @@ export function install(G){
   _eye.set(px-Math.sin(ang)*hd,lookH+dist*Math.sin(pitch),pz-Math.cos(ang)*hd);
   try{Wd.followCamera.resolve(_at,_eye,_eye);}catch(e){}
   if(!ST.cam||ST.snap){ST.cam=_eye.clone();ST.snap=false;}else ST.cam.lerp(_eye,1-Math.exp(-7*dt));
-  cam.position.copy(ST.cam); cam.lookAt(_at);
+  cam.position.copy(ST.cam);
+  // A clear destination can still be reached by smoothing through a wall.
+  Wd.followCamera.resolve(_at,cam.position,cam.position);
+  ST.cam.copy(cam.position);cam.lookAt(_at);
   if(Math.abs(cam.fov-55)>0.05){cam.fov+=(55-cam.fov)*Math.min(1,dt*4);cam.updateProjectionMatrix();}
   return true;
  });

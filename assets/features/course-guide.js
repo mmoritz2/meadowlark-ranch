@@ -478,9 +478,8 @@ export function install(G){
     already sweeps the clearance volume against the registered architecture and orbits round
     what it finds, and resolve() rechecks the interpolated position afterwards, which is what
     stops a corner from being cut through a barn wall. Both are called here, on the same
-    contract — with two differences that the longer arm forced and that are argued where they
-    happen: the sweep is anchored on the horse rather than on the aim point, and the recheck is
-    applied at a bounded speed instead of all at once.
+    contract: the sweep is anchored on the horse rather than the aim point, and the final
+    recheck is applied after smoothing to keep the lens on the rider's side of a wall.
 
     What it does NOT fix, and cannot from here: trees. followCamera only knows the architecture
     somebody registered with it, and the valley's tree canopies are registered with nothing at
@@ -531,7 +530,7 @@ export function install(G){
   LAG:3.1, LAG_GAIN:3.0, LAG_MAX:0.80,                   // heading filter: rate, self-limit, hard clamp
   BIAS:0.72, LOOK_INTO:0.45, LEAD_TIGHT:0.60,            // how a corner is shared out — see below
   EASE:5.0, LOOK_EASE:7.0, UP:2.4, DOWN:1.15,            // position, look point, and the speed number
-  OCC_IN:18, OCC_OUT:9, TUCK:0.14,                       // metres a second the obstruction pull may move the eye
+  TUCK:0.14,                                            // shorten the arm while turning
   ZOOM_MIN:0.62, ZOOM_MAX:1.75, SNAP:60,                 // wheel range, and the jump that warrants a cut
  };
  /* Why 'off' is an angle. The first go at this put the eye a fixed number of METRES off the
@@ -640,7 +639,6 @@ export function install(G){
  const F={u:0,head:null,yaw:0,pitch:0,zoom:1,occ:1,drag:null,placed:false,own:false,broke:0,frames:0,
   nudgeP:0,nudgeO:0,wantP:0,wantO:0,hidden:false,walk:1};
  const _eye=new THREE.Vector3(), _look=new THREE.Vector3(), _anchor=new THREE.Vector3();
- const _raw=new THREE.Vector3(), _tmp=new THREE.Vector3();
  const _seen=new THREE.Vector3(NaN,NaN,NaN);
 
  /* Copies of ranch3d.html's own orbit listeners, for the reason in the header. One pointer id
@@ -901,7 +899,17 @@ export function install(G){
    const hHalf=Math.atan(Math.tan(((G.camera&&G.camera.fov)||52)*Math.PI/360)*aspect);
    const wideRaw=Math.tan(hHalf)/Math.tan(Math.atan(Math.tan(52*Math.PI/360)*1.6));
    const wide=clamp(wideRaw,CAM.WIDE_MIN,1), narrow=clamp((1-wideRaw)/0.71,0,1);   // narrow: 0 on a monitor, 1 on a phone held upright
-   const R=(CAM.dist+CAM.distSp*F.u+CAM.NARROW_DIST*narrow)*F.zoom*(1-CAM.TUCK*tight);
+   // A dragon's folded wings and tail already fill a horse-sized orbit; a
+   // flight stroke can put a whole membrane across the lens. Keep its zoom
+   // and canopy walk-in outside that larger body, including scaled variants.
+   const profile=G.horse.RIG()?.profile, dragon=!!profile?.nativeDragon;
+   const dragonScale=(player.mesh.scale.x||1)*(profile?.fitScale||1);
+   const blackDragon=profile?.nativeKind==='black-dragon';
+   const frameScale=dragon?Math.max(1,(blackDragon?1.5:1.15)*dragonScale):1;
+   const minArm=dragon?(blackDragon?(player.flying?8.5:7):(player.flying?5:4))*dragonScale:0;
+   const minWalkIn=dragon?Math.max(2.2,minArm*.8):2.2;
+   const lookLift=dragon?(blackDragon ? .65 : .2)*dragonScale:0;
+   const R=Math.max(minArm,(CAM.dist+CAM.distSp*F.u+CAM.NARROW_DIST*narrow)*F.zoom*(1-CAM.TUCK*tight)*frameScale);
    const pitch0=CAM.pitch+CAM.pitchSp*F.u+CAM.NARROW_PITCH*narrow+F.pitch;
    /* The orbit angle is the lagged heading, plus the player's own drag, plus the three-quarter
       sweep — and the sweep carries most of the turn back, which is the BIAS above. */
@@ -974,11 +982,11 @@ export function install(G){
       her belly) that sees her clean, then the closest and lowest eye with only a branch across the
       view, and only then a lens in the leaves, the shallowest one. A low eye with a branch across
       it still shows her; a lens inside a crown shows nothing. */
-   const hx=player.pos.x, hy=foot+1.4, hz=player.pos.z;                 // her shoulders: what the shot must see
+   const hx=player.pos.x, hy=foot+1.4+lookLift, hz=player.pos.z;                 // her shoulders: what the shot must see
    F.walk=1;
    if(inCanopy(ex,ey,ez)>0||sightBlocked(ex,ey,ez,hx,hy,hz)){
     let r2=run, bb=1e9, bx=ex, by=ey, bz=ez, ok=false;
-    for(let k=0;k<7&&!ok&&r2*0.8>2.2;k++){
+    for(let k=0;k<7&&!ok&&r2*0.8>minWalkIn;k++){
      r2*=0.8;
      const nx=player.pos.x-fx*r2, nz=player.pos.z-fz*r2, gnd=W.groundH(nx,nz)+1.25;
      const hiY=Math.max(foot+rise,gnd), loY=Math.max(foot+rise*(r2/Math.max(0.001,run)),gnd), flY=Math.max(foot+0.5,gnd);
@@ -1001,7 +1009,7 @@ export function install(G){
       pointing off at where she would have been going. */
    const lead=(CAM.lead+CAM.leadSp*F.u)*(1-CAM.LEAD_TIGHT*tight)*(1-0.85*Math.min(1,Math.abs(F.yaw)/1.2))*got;
    const la=F.head+lag*CAM.LOOK_INTO;
-   const lookY=CAM.LOOK_MIN+(CAM.lookY+CAM.lookYSp*F.u-CAM.NUDGE_LOOK*nudgeRise-CAM.LOOK_MIN)*got;
+   const lookY=CAM.LOOK_MIN+(CAM.lookY+CAM.lookYSp*F.u-CAM.NUDGE_LOOK*nudgeRise-CAM.LOOK_MIN)*got+lookLift;
    _look.set(player.pos.x+Math.sin(la)*lead,foot+lookY,player.pos.z+Math.cos(la)*lead);
    c.camLook.lerp(_look,F.placed?1-Math.exp(-CAM.LOOK_EASE*dt):1);
 
@@ -1010,7 +1018,7 @@ export function install(G){
       here is metres out in front of her — so anchoring on it put the camera in front of the
       horse the first time she cornered under trees, and the shot lost her completely. The
       origin is the subject; where the lens happens to be pointing is a separate question. */
-   _anchor.set(player.pos.x,foot+1.45,player.pos.z);
+   _anchor.set(player.pos.x,foot+1.45+lookLift,player.pos.z);
    c.camDesired.copy(_eye);
    W.followCamera.frame(_anchor,c.camDesired,c.camSafe,dt);
    /* A cut, not a dolly, when the horse has plainly teleported — fast travel, a ferry landing,
@@ -1018,25 +1026,10 @@ export function install(G){
       other people's scenery. */
    if(!F.placed||cam.position.distanceTo(c.camSafe)>CAM.SNAP){cam.position.copy(c.camSafe);F.placed=true;}
    else cam.position.lerp(c.camSafe,1-Math.exp(-CAM.EASE*dt));
-   /* Recheck the interpolated point: both ends of a lerp can be clear of a barn and the path
-      between them still go through it. But applying that recheck AT FULL STRENGTH the frame it
-      fires is a snap, and on a nine-metre arm it is a big one — measured at 6.7 m in a single
-      frame, where the built-in rig's worst was 0.9, because a longer arm swung out to one side
-      crosses far more fence rail and jump standard than a short one straight astern. Nearly all
-      of those crossings last two or three frames: a rail whips through the line and is gone.
-      So the pull-in is eased, hard enough that riding into a barn closes the shot in about a
-      sixth of a second and gently enough that a rail flicking past costs a dip of a few
-      centimetres instead of yanking the eye onto the horse's shoulder and back. */
-   _raw.copy(cam.position);
-   const occWant=W.followCamera.resolve(_anchor,_raw,_tmp);
-   /* Rate-limited in METRES a second rather than as a filter constant, because the same filter
-      constant on a nine-metre arm moves the eye three times as far per frame as it does on a
-      three-metre one — which is precisely how the snap got to 6.7 m. Divide the allowance by
-      the arm and the worst frame is bounded no matter how far back the shot happens to be. */
-   const arm=Math.max(0.5,_raw.distanceTo(_anchor));
-   const cap=(occWant<F.occ?CAM.OCC_IN:CAM.OCC_OUT)*dt/arm;
-   F.occ=clamp(F.occ+clamp(occWant-F.occ,-cap,cap),0,1);
-   cam.position.copy(_anchor).lerp(_tmp.copy(_raw).setY(Math.max(_raw.y,W.groundH(_raw.x,_raw.z)+0.7)),F.occ);
+   // The predictive sweep above smooths the orbit and retraction. The final
+   // safety check must be exact: easing its collision fraction let the lens
+   // cross a wall for several frames, showing a solid dark panel on screen.
+   F.occ=W.followCamera.resolve(_anchor,cam.position,cam.position);
    tickPeople(cam.position);
    const shake=sp>7&&c.grounded?0.010:0;
    cam.lookAt(c.camLook.x+Math.sin(c.t*23)*shake,c.camLook.y+Math.sin(c.t*31)*shake,c.camLook.z+Math.cos(c.t*27)*shake);
