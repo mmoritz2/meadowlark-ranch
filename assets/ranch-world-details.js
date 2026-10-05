@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Metre scale, all submeshes and the original PBR channels are retained.
 export function installRanchWorldDetails(G,{shrubs=[]}={}) {
   const {THREE,scene,world:W,horse:H}=G;
-  const state=G.worldDetails={placed:[],skipped:[],errors:[],understory:0,ready:null};
+  const state=G.worldDetails={placed:[],skipped:[],errors:[],understory:0,flowers:0,flowerPositions:[],ready:null};
   const group=new THREE.Group();group.name='Ranch working-yard details';scene.add(group);
   const loader=new GLTFLoader(), objects=[],patches=[],wind={value:0};
   const placements=[
@@ -105,6 +105,43 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
         state.understory+=points.length;
       }catch(e){state.errors.push(name+': '+e.message);console.warn('Understory scan unavailable',name,e);}
     }
+    // Small authored drifts frame the ranch, pasture approach and river trail.
+    // Reuse the licensed scan already used by the builder. Keep every plant
+    // outside paths, courses, building slots and solid scenery.
+    try{
+      const flower=await loader.loadAsync('./assets/models/world/builder/flower_gazania.glb');
+      flower.scene.updateMatrixWorld(true);
+      const sources=[];flower.scene.traverse(o=>{if(o.isMesh)sources.push(o);});
+      sources.sort((a,b)=>a.geometry.attributes.position.count-b.geometry.attributes.position.count);
+      const variants=sources.slice(0,4).map(source=>{
+        const geo=source.geometry.clone().applyMatrix4(source.matrixWorld);geo.computeBoundingBox();
+        const b=geo.boundingBox,h=Math.max(.01,b.max.y-b.min.y);
+        geo.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);geo.scale(1/h,1/h,1/h);
+        const mat=source.material.clone();mat.roughness=1;mat.envMapIntensity=.55;mat.alphaToCoverage=true;
+        for(const key of ['map','normalMap','roughnessMap'])if(mat[key])mat[key].anisotropy=Math.min(8,G.renderer.capabilities.getMaxAnisotropy());
+        return {geo,mat};
+      });
+      let seed=71839;const rand=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+      const drifts=[[-35,25],[-46,7],[-49,-30],[-72,35],[-120,32],[8,78],[21,100],[42,128],[50,-60],[15,-34],[-33,-54]];
+      const beds=new Map();
+      for(const [cx,cz]of drifts)for(let i=0;i<38;i++){
+        const a=rand()*Math.PI*2,r=Math.sqrt(rand())*5;
+        const x=cx+Math.cos(a)*r,z=cz+Math.sin(a)*r*.65;
+        if(!available(x,z,.16)||Math.abs(z-W.riverZ(x))<10||z<163&&Math.abs(x-W.streamX(z))<7)continue;
+        const variant=i%variants.length,key=Math.floor(x/45)+','+Math.floor(z/45)+':'+variant;
+        if(!beds.has(key))beds.set(key,{variant,points:[]});
+        const point={x,z,y:W.groundH(x,z),height:.20+rand()*.22,yaw:rand()*Math.PI*2};
+        beds.get(key).points.push(point);state.flowerPositions.push({x,z});
+      }
+      const matrix=new THREE.Matrix4(),v=new THREE.Vector3(),q=new THREE.Quaternion(),sc=new THREE.Vector3(),up=new THREE.Vector3(0,1,0);
+      for(const {variant,points}of beds.values()){
+        const {geo,mat}=variants[variant],mesh=new THREE.InstancedMesh(geo,mat,points.length);
+        const cx=points.reduce((sum,p)=>sum+p.x,0)/points.length,cz=points.reduce((sum,p)=>sum+p.z,0)/points.length;
+        mesh.name='Trail garden | gazania';mesh.position.set(cx,0,cz);mesh.receiveShadow=true;mesh.castShadow=false;
+        points.forEach((p,i)=>{v.set(p.x-cx,p.y-.015,p.z-cz);sc.setScalar(p.height);q.setFromAxisAngle(up,p.yaw);matrix.compose(v,q,sc);mesh.setMatrixAt(i,matrix);});
+        mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();group.add(mesh);patches.push(mesh);state.flowers+=points.length;
+      }
+    }catch(e){state.errors.push('trail flowers: '+e.message);console.warn('Trail flowers unavailable',e);}
     return state.placed.length;
   })();
   let elapsed=0;

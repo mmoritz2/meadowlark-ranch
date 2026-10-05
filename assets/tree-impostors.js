@@ -25,7 +25,11 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom,nearFade=
     vertex(sh);sh.uniforms.treeNormals={value:normals};
     sh.fragmentShader='uniform sampler2D treeNormals;varying vec2 treeHeading;\n'+sh.fragmentShader;
     sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
-      vec3 treeN=normalize(texture2D(treeNormals,vMapUv).xyz*2.0-1.0);
+      vec3 treeN=texture2D(treeNormals,vMapUv).xyz*2.0-1.0;
+      // Filtered atlas normals can cancel to zero at leaf edges. Normalizing
+      // that vector produced NaNs which bloom spread into large black tiles.
+      float treeLength2=dot(treeN,treeN);
+      treeN=treeLength2>1e-6?treeN*inversesqrt(treeLength2):vec3(0.0,1.0,0.0);
       // A little canopy averaging softens the lighting of individual leaf cards.
       treeN=normalize(mix(treeN,vec3(treeN.x,.8,treeN.z),.30));
       treeN=vec3(treeN.x*treeHeading.y+treeN.z*treeHeading.x,treeN.y,-treeN.x*treeHeading.x+treeN.z*treeHeading.y);
@@ -37,7 +41,7 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom,nearFade=
       #endif
       #include <opaque_fragment>`);
   };
-  mat.customProgramCacheKey=()=> 'scan-tree-normal-views-v1-'+!!nearFade;
+  mat.customProgramCacheKey=()=> 'scan-tree-normal-views-v2-'+!!nearFade;
   const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:albedo,alphaTest:.22,side:THREE.DoubleSide});
   depth.onBeforeCompile=vertex;depth.customProgramCacheKey=()=> 'scan-tree-normal-depth-v1-'+!!nearFade;mat.userData.scanDepth=depth;
   return {geo,mat};

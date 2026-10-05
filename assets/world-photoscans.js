@@ -1,4 +1,4 @@
-import {treeImpostor} from './tree-impostors.js?v=world-cinematic-1';
+import {treeImpostor} from './tree-impostors.js?v=finite-foliage-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
 

@@ -17,7 +17,7 @@ export function createPastoralSky(THREE) {
       cloudField:{value:cloudNoiseTexture},cloudSteps:{value:12},
       sunPosition: {value: new THREE.Vector3(0.4, 0.7, 0.3)},
       day: {value: 1}, golden: {value: 0}, night: {value: 0}, rain: {value: 0}, time: {value: 0},
-      zenith: {value: color('#377ead')}, horizon: {value: color('#b4d0de')},
+      zenith: {value: color('#347fae')}, horizon: {value: color('#afd0e1')},
       dusk: {value: color('#edb18a')}, darkTop: {value: color('#09162e')},
       darkHorizon: {value: color('#253857')}
     },
@@ -42,7 +42,10 @@ export function createPastoralSky(THREE) {
         float profile=smoothstep(0.,.14,h)*(1.-smoothstep(.52,1.,h));
         vec3 q=vec3(p.x*.006,p.y*.014,p.z*.006)+vec3(time*.005,0.,time*.0015);
         float shape=volumeNoise(q)*.55+volumeNoise(q*2.03+11.)*.30+volumeNoise(q*4.07-7.)*.15;
-        return max(0.,shape-.48)*profile*3.6;
+        // Fair-weather cumulus leaves generous blue gaps. Rain gradually
+        // closes them into a lower, denser overcast instead of repainting it.
+        float coverage=mix(.555,.465,rain);
+        return max(0.,shape-coverage)*profile*4.6;
       }
       vec4 clouds(vec3 d,vec3 sd){
         if(d.y<.015)return vec4(0.);
