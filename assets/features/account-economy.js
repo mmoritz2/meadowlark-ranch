@@ -93,7 +93,7 @@ export function install(G){
  });
 
  /* =============================== 3. Helpers =============================== */
- function isVIP(s){return !!(s&&s.vip&&s.vip.until>Date.now());}
+ function isVIP(s){return G.money.isVIP(s);}
  function ranchPts(s){return (s.decor||[]).reduce((a,d)=>a+((T.DECOR_CAT[d.t]||{}).pts||0),0);}
  function prestigeParts(s){const m=s.mastery||{};let ms=0;for(const k in m)ms+=Math.min(10,m[k]||0);return {ranch:ranchPts(s),rib:3*(s.ribbonTotal||0),mast:10*ms,troph:25*Object.keys(s.trophies||{}).length,extra:(s.prestige&&s.prestige.pts)||0};}
  function prestigePts(s){const p=prestigeParts(s);return p.ranch+p.rib+p.mast+p.troph+p.extra;}
@@ -468,7 +468,7 @@ export function install(G){
   if(ok){M.refreshWallet();G.sGem();toast('💎 '+it.label+' — yours. '+M.rewardLabel(it.r));U.openShop('gems');}
  }
  U.shopTab({id:'gems',label:'💎 Exchange',render(s){
-  return '<span style="font-size:11.5px;color:#8c7a63">Gems are earned, never bought. Trade them here for the things a key, a token or a ticket does — every 10💎 spent is a Star Point for the club.</span>'
+  return '<span style="font-size:11.5px;color:#8c7a63">This exchange uses gems earned in play. Purchased gems have a separate balance in Gems &amp; VIP. Every 10 earned gems spent here is a Star Point for the club.</span>'
    +GEM_SHOP.map(it=>'<div class="evrow"><b>'+it.label+'</b><span>'+esc(it.sub)+'</span><button data-fx="acct:gem:'+it.id+'" '+((s.gems||0)<it.g?'disabled':'class="claimBtn"')+'>'+it.g+'💎</button></div>').join('')
    +'<span style="font-size:11px;color:#8c7a63">You have '+(s.gems||0)+'💎 · '+(s.keys||0)+'🗝️ · '+(s.btok||0)+'🧬 · '+(s.tickets||0)+'🎫 · '+(s.dust||0)+'✨</span>';
  }});

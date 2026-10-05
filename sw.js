@@ -10,7 +10,7 @@
    only when the network is actually unavailable. Result — the live version is
    always what you see, and the game still runs on a plane. */
 
-const CACHE = 'meadowlark-v3';
+const CACHE = 'meadowlark-commerce-preview-20261005';
 
 self.addEventListener('install', e => {
   self.skipWaiting();                       // a new build takes over immediately
@@ -29,6 +29,7 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;   // never touch anything cross-origin
+  if (url.pathname.includes('/api/')) return; // Account and payment responses must never be cached.
 
   e.respondWith((async () => {
     try {

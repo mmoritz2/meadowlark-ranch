@@ -70,3 +70,12 @@ assets/textures/realism/source/
 # GLB recompression tooling (gltf-transform + sharp) is a build-time dependency only;
 # nothing from it ships. See tools/asset-gen/ASSET_PIPELINE.md.
 tools/asset-gen/node_modules/
+
+# Private commerce credentials, account databases, and local test data
+server/data/
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

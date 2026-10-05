@@ -9,6 +9,15 @@ folder, and it runs.
 
 **▶️ [Play it in your browser](https://mmoritz2.github.io/meadowlark-ranch/)**
 
+[Preview the Gems & VIP store](https://mmoritz2.github.io/meadowlark-ranch/store.html).
+The GitHub Pages store shows sample prices and pass benefits. Purchases, accounts,
+and cloud backups are not available on GitHub Pages; they need the separate
+account server. No real-money payments are enabled.
+
+For local accounts and Stripe sandbox testing, use Node.js 22.13+ and run
+`node server/commerce.mjs`, then open <http://127.0.0.1:8432/store.html>.
+See [commerce setup and launch requirements](docs/commerce.md).
+
 ![Riding in the arena at Meadowlark Ranch](docs/screenshots/gameplay.png)
 
 ## Run it

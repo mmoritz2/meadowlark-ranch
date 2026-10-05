@@ -501,6 +501,7 @@ body.se-frame-open #seFrameTop{display:flex}
   const openTab=(btn,re)=>()=>{const b=$(btn);if(!b)return;setTimeout(()=>{b.click();setTimeout(()=>{const t=[...document.querySelectorAll('.tabbtn')].find(x=>x.offsetParent!==null&&re.test((x.dataset.seL||'')+' '+x.textContent));if(t)t.click();},80);},30);};
   const MAIN=[
    {k:'market',t:'Market',s:'Horses, pets and more',go:clickId('shopBtn'),feat:'Free gifts'},
+   {k:'account',t:G.commerce?.storeLabel||'Account & VIP',s:G.commerce?.isStaticStore?'Gem packs and VIP plans':'Gem store and cloud backups',need:()=>!!G.commerce,go:()=>G.ui.dispatch('store')},
    {k:'journey',t:'Journey',s:'Quests and adventure',go:clickId('questBtn')},
    {k:'horses',t:'My Horses',s:'Your stable of horses',go:clickId('stableBtn'),tag:()=>{const n=((G.save.fresh()||{}).horses||[]).length;return n?line('horses','#6a4a26',2.2)+n:'';}},
    {k:'season',t:'Season Pass',s:'Rewards all season',go:openTab('questBtn',/season/i)},

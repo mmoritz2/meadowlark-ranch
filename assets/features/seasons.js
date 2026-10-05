@@ -230,7 +230,7 @@ export function install(G){
     "eight gold tiers per completed week": the hook is handed the save and nothing else, no tier
     index, so the gate is all-or-nothing. Coarse and honest beats a half-drawn ladder. */
  const goldFree=s=>!!(s&&s.sn&&(s.sn.weeks||0)>0);
- const isVIP=s=>!!(s&&s.vip&&s.vip.until>Date.now());
+ const isVIP=s=>G.money.isVIP(s);
  const goldOpen=s=>isVIP(s)||goldFree(s);
  G.on('goldPass',s=>goldFree(s));
 

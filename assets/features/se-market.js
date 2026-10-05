@@ -33,12 +33,12 @@ export function install(G){
   ['catalog','Catalog',['catalog','tack','pets','food','style','recipes']],
   ['character','Rider',['@character','outfit','prestige']],
   ['ranches','Ranches',['ranches','furniture']],
-  ['currencies','Currencies',['gems']],
+  ['currencies','Currencies',['purchases','gems']],
  ];
  /* no item shares its group's name: a heading and an entry both reading HORSES read as a mistake */
  const LBL={wallet:'Free gifts',season:'Season store',race:'Race tickets',doors:'Loot doors',horses:'Breeds',summon:'Summon',
   market:'Horse market',breed:'Breeding',catalog:'Collection',tack:'Tack',pets:'Pets',food:'Food',style:'Horse style',recipes:'Recipes',
-  '@character':'Character',outfit:'Outfits',prestige:'Prestige',ranches:'Land',furniture:'Furniture',gems:'Exchange'};
+  '@character':'Character',outfit:'Outfits',prestige:'Prestige',ranches:'Land',furniture:'Furniture',purchases:G.commerce?.isStaticStore?'Store preview':'Gems & VIP',gems:'Exchange'};
  const TOP='clamp(50px,8.5vh,64px)', SIDE='clamp(150px,15vw,208px)';
 
  /* ---------------------------------------------------------------- look ------------------ */

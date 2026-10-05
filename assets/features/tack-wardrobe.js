@@ -88,7 +88,7 @@ export function install(G){
   r.hairStyle=riderHairId(r.hairStyle,r.body);   // 'loose' and 'quiff' were the old sculpt's names
   if(!r.outfit)r.outfit='riding'; if(!r.eyes)r.eyes='brown';
  });
- const isVIP=s=>!!(s&&s.vip&&s.vip.until>Date.now());
+ const isVIP=s=>G.money.isVIP(s);
  function prestigeOwned(s){return isVIP(s)||!!(s.achClaims&&(s.achClaims.saddler8||s.achClaims.legendset))||!!(s.wardrobe&&s.wardrobe.owned.prestige);}
  function allowed(s,it){return !it.cost||!!(s.wardrobe&&s.wardrobe.owned[it.id]);}
  function wearing(s,slot,val){const cur=s.rider[slot];return (cur==null&&val==null)||(String(cur||'').toLowerCase()===String(val||'').toLowerCase());}

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#193f36">
+  <title>Ranch Store · Meadowlark</title>
+  <link rel="stylesheet" href="assets/store.css">
+  <script type="module" src="assets/store.js"></script>
+</head>
+<body>
+  <header><a class="brand" href="ranch3d.html">MEADOWLARK <span>RANCH</span></a><a class="back" href="ranch3d.html">Back to the ranch <span aria-hidden="true">↗</span></a></header>
+  <main>
+    <div class="store-intro"><div><div class="eyebrow">THE RANCH STORE</div><h1>A little extra for the trail.</h1><p class="intro">Optional gems and VIP, all in one place.</p></div><span id="store-badge" class="test-badge">Test store</span></div>
+    <p id="store-notice" class="test-banner">Sample prices. No real payments. Use Stripe test cards only.</p>
+    <div class="status-row"><p id="message" role="status" aria-live="polite">Loading the store…</p><button id="retry" class="text-button" hidden>Try again</button></div>
+    <section id="guest" class="account-card guest-card" hidden aria-label="Ranch account">
+      <div><b>Make yourself at home.</b><p>Sign in to keep purchases and a cloud backup with your account.</p></div><div class="guest-actions"><button id="show-login" class="secondary">Sign in</button><button id="show-register" class="text-button">Create an account</button></div>
+    </section>
+    <section id="account" class="account-card" hidden aria-label="Your purchased gem wallet">
+      <div><div class="eyebrow">HELLO, <span id="username"></span></div><h2><span id="balance">0</span> <span class="unit">purchased gems</span></h2><p id="vip-status"></p><p id="hold-status" class="hold-status" hidden>Purchases and paid VIP are on hold after a refund or payment dispute.</p></div>
+      <div class="account-actions"><button id="refresh" class="secondary">Refresh balance</button><button id="show-account" class="text-button">Account &amp; saves</button></div>
+    </section>
+    <section id="recovery-result" class="recovery-card" tabindex="-1" hidden>
+      <h2>Save your recovery code.</h2><p>This is shown once. You’ll need it to reset a forgotten password; this test account does not use email recovery.</p>
+      <code id="recovery-code"></code><button id="recovery-done">I’ve saved my code</button>
+    </section>
+    <div class="store-tabs" role="tablist" aria-label="Store sections">
+      <button id="tab-gems" type="button" role="tab" aria-selected="true" aria-controls="panel-gems" data-tab="gems">Gems</button>
+      <button id="tab-vip" type="button" role="tab" aria-selected="false" aria-controls="panel-vip" data-tab="vip" tabindex="-1">VIP passes</button>
+      <button id="tab-account" type="button" role="tab" aria-selected="false" aria-controls="panel-account" data-tab="account" tabindex="-1">Your account</button>
+    </div>
+    <section id="panel-gems" role="tabpanel" aria-labelledby="tab-gems" tabindex="0">
+      <div class="section-heading"><div><h2>Choose a gem pack.</h2><p>Purchased gems can be exchanged for VIP passes.</p></div><span class="quiet-note">One-time purchases</span></div>
+      <div id="products" class="products"></div>
+      <p id="checkout-note" class="fine-print" hidden>Test checkout will be available once Stripe is connected.</p>
+      <details class="store-details"><summary>How purchased gems work</summary><p>Purchased gems stay with your account and are separate from gems earned in play. For now, purchased gems buy VIP passes only. They cannot be spent in the horse, breeding, or random-reward shops.</p><button class="text-button" id="show-vip">Explore VIP passes</button></details>
+    </section>
+    <section id="panel-vip" role="tabpanel" aria-labelledby="tab-vip" tabindex="0" hidden>
+      <div class="section-heading"><div><h2>A little more from every ride.</h2><p>One-time VIP passes. No automatic renewal.</p></div></div>
+      <div class="vip-overview"><div id="vip-products" class="products"></div><div class="vip-benefits"><div class="eyebrow">EVERY VIP PASS INCLUDES</div><ul><li><b>25% more coins</b> from your adventures</li><li><b>50% more pass points</b> as you play</li><li><b>Gold season track</b> rewards</li><li><b>Four extra pasture spaces</b> for your herd</li></ul><p id="vip-note">Sign in and stay online to use paid VIP. Paid passes stack with one another and run alongside VIP earned in play.</p></div></div>
+      <section id="redeem-section" hidden aria-labelledby="redeem-heading"><div class="section-heading"><div><h2 id="redeem-heading">Already have purchased gems?</h2><p>Choose a pass to activate with your balance.</p></div></div><div id="rewards" class="rewards"></div></section>
+    </section>
+    <section id="panel-account" role="tabpanel" aria-labelledby="tab-account" tabindex="0" hidden>
+      <section id="auth" class="account-card auth-card" hidden>
+        <div><div class="eyebrow">YOUR RANCH ACCOUNT</div><h2 id="auth-title">Welcome back, rider.</h2><p>One account for your purchases and cloud backup.</p></div>
+        <form id="auth-form">
+          <label>Username<input name="username" autocomplete="username" required minlength="3" maxlength="24" pattern="[A-Za-z0-9_]+"></label>
+          <label id="recovery-label" hidden>Recovery code<input name="recoveryCode" autocomplete="off" maxlength="80"></label>
+          <label id="password-label">Password <small>At least 12 characters</small><input name="password" type="password" autocomplete="current-password" required minlength="12" maxlength="128"></label>
+          <button type="submit" id="auth-submit">Sign in</button>
+          <div class="form-links"><button type="button" id="switch-auth" class="text-button">Create an account</button><button type="button" id="recover-auth" class="text-button">Forgot password?</button></div>
+        </form>
+      </section>
+      <div id="account-tools" hidden>
+        <div class="section-heading"><div><h2>Your ranch, wherever you ride.</h2><p>Manage your save and see past purchases.</p></div><button id="logout" class="text-button">Sign out</button></div>
+        <details id="cloud-section" class="store-details" hidden><summary>Cloud backup <span id="cloud-summary"></span></summary><div class="cloud-content"><div><p id="cloud-status"></p><p>Save and restore manually. Restoring replaces this browser’s ranch; we keep a local backup first. Purchases stay with your account.</p></div><div class="cloud-actions"><button id="cloud-upload">Back up this ranch</button><button id="cloud-download" class="secondary">Restore cloud ranch</button><button id="local-undo" class="text-button" hidden>Undo last restore</button></div></div></details>
+        <details id="history-section" class="store-details" hidden><summary>Purchase history</summary><ul id="history"></ul></details>
+      </div>
+    </section>
+    <footer>Meadowlark Ranch · Store preview<br>Final pricing, support details, and purchase terms will be added before real payments launch.</footer>
+  </main>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-text"><form method="dialog"><h2 id="confirm-title">Confirm</h2><p id="confirm-text"></p><div class="dialog-actions"><button value="cancel" class="secondary" autofocus>Cancel</button><button value="yes" id="confirm-yes">Continue</button></div></form></dialog>
+</body>
+</html>
