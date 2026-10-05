@@ -681,7 +681,7 @@ export function install(G){
  {let x0=null,t0=0;const stage=$('sevStage');
   stage.addEventListener('pointerdown',e=>{x0=e.clientX;t0=performance.now();});
   stage.addEventListener('pointerup',e=>{if(x0==null)return;const dx=e.clientX-x0;x0=null;if(Math.abs(dx)>50&&performance.now()-t0<800){move(dx<0?1:-1);e.stopPropagation();}},true);}
- G.on('key',e=>{
+ G.on('screenKey',G.on('key',e=>{
   if(!st.on)return false;
   const c=e.code;
   if(root.classList.contains('sheet')||st.page){if(c==='ArrowLeft'||c==='ArrowRight')return true;return false;}
@@ -690,7 +690,7 @@ export function install(G){
   if(c==='Enter'){const T0=TW[st.town];const ev=T0&&T0.evs[st.cur[T0.name]||0];if(ev)openPage(ev);return true;}
   if(c==='ArrowUp'||c==='ArrowDown'||c==='KeyW'||c==='KeyS'||c==='Space')return true;
   return false;
- });
+ }));
  G.on('escape',()=>{if(!st.on)return false;if(root.classList.contains('sheet')){root.classList.remove('sheet');return true;}if(st.page){st.page=null;root.classList.remove('page');paint();return true;}return false;});
  G.on('wallet',()=>{if(st.on)strip.paint();});
  G.on('courseStart',()=>{if(st.on){st.page=null;root.classList.remove('page','sheet');const P=$('eventsPanel');if(P)P.style.display='none';}});   // only this screen closes: a card a discipline opens at the start (the judge's card) stays up

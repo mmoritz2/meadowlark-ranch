@@ -345,7 +345,7 @@ export function install(G){
    const want=Math.atan2(dx,dz);f.heading+=wrap(want-f.heading)*Math.min(1,dt*4);
    const sp=0.9;f.x+=Math.sin(f.heading)*sp*dt;f.z+=Math.cos(f.heading)*sp*dt;
    const g=f.e.g;g.position.set(f.x,groundH(f.x,f.z),f.z);g.rotation.y=f.heading;
-   g.position.y+=Math.abs(Math.sin(performance.now()*0.008))*0.03;
+   if(!W.npcCharacters?.get(f.def.id))g.position.y+=Math.abs(Math.sin(performance.now()*0.008))*0.03;
   }
  }
 

@@ -50,7 +50,7 @@ export function install(G){
   const npc=m&&G.quest.NPC_DEFS.find(d=>d.id===(m.npc||'wren'));
   const chapter=m?(m.ch||m.book||'The Home Meadow'):(nb?'Next: '+nb.title:'Story complete');
   const ready=!!(m&&p>=m.goal);
-  return {pct:clampPct(G.storyQuests.storyPct()),x:Math.min(i,ST.length),y:ST.length,sub:nx(chapter),
+  return {pct:clampPct(G.storyQuests.storyPct()),x:Math.min(i,ST.length),y:ST.length,sub:nx(m?tx(m.label)+(m.goal>1?' ('+Math.floor(Math.min(p,m.goal))+'/'+m.goal+')':''):chapter),
    status:nx(m?tx(m.label)+(m.goal>1?' ('+Math.floor(Math.min(p,m.goal))+'/'+m.goal+')':''):(nb?nb.title+' arrives in '+Math.max(0,Math.ceil((nb.releaseAt-Date.now())/864e5))+' days':'Every chapter so far is done')),
    ready,readyN:ready?1:0,readyText:ready?'Done! Tell '+nx(npc?npc.name:'the giver'):'',
    isNew:!!(m&&i>0&&p===0&&ST[i-1]&&(ST[i-1].ch||ST[i-1].book)!==(m.ch||m.book)),sig:'ch:'+chapter};
@@ -795,7 +795,7 @@ html body.se-screen-open.sjy-open.sjy-lane #toasts{top:var(--sjy-tt,6px)!importa
  function focusCard(el){if(!el)return;el.focus({preventScroll:true});const r=el.getBoundingClientRect(),rr=rail.getBoundingClientRect();
   if(phone()){if(r.top<rr.top+8||r.bottom>rr.bottom-8)rail.scrollBy({top:r.top<rr.top+8?r.top-rr.top-16:r.bottom-rr.bottom+16,behavior:'smooth'});}
   else if(r.left<rr.left+8||r.right>rr.right-8)rail.scrollBy({left:r.left<rr.left+8?r.left-rr.left-18:r.right-rr.right+18,behavior:'smooth'});}
- G.on('key',e=>{
+ G.on('screenKey',G.on('key',e=>{
   if(!st.on)return false;
   const c=e.code, a=document.activeElement, onCard=a&&a.classList&&a.classList.contains('sjy-card')&&root.contains(a);
   const dir={ArrowLeft:'l',KeyA:'l',ArrowRight:'r',KeyD:'r',ArrowUp:'u',KeyW:'u',ArrowDown:'d',KeyS:'d'}[c];
@@ -803,7 +803,7 @@ html body.se-screen-open.sjy-open.sjy-lane #toasts{top:var(--sjy-tt,6px)!importa
   if(c==='Enter'||c==='Space'){const onBtn=a&&a.tagName==='BUTTON'&&root.contains(a);
    if(!onBtn){const f=rail.querySelector(':scope>.sjy-card');if(f)f.focus({preventScroll:true});e.preventDefault();}return true;}   // on a card, All quests or the strip's buttons, the button's own Enter/Space presses it
   return false;
- });
+ }));
  G.on('wallet',()=>{if(st.on)strip.paint();});
  G.on('interval30',()=>{if(st.on)paint();});
  G.on('courseStart',()=>{if(st.on){const p=P();if(p)p.style.display='none';}});

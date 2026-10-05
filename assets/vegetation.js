@@ -2,6 +2,7 @@
    Shared prototypes keep repeated plants inexpensive. Each plant is two meshes:
    bark and alpha-tested leaves. Shapes and texture artwork are original. */
 import { getFoliageTexture, tuneFoliage, onFoliageAtlasReady } from './world-art.js?v=world-cinematic-1';
+import {partitionStaticInstances} from './spatial-instances.js';
 
 const TAU = Math.PI * 2;
 const prototypes = new Map(), materials = new Map();
@@ -213,8 +214,8 @@ export function plantNaturalPines({THREE,scene,placements,groundH,species='pine'
   }return made;
 }
 
-// Four bounded clusters retain culling while sharing the scanned bark/needle
-// geometry. This is used for close saplings, never full-sized distant forests.
+// Seed clusters share scanned bark/needle geometry, then split into spatial
+// cells for camera/shadow culling. Every authored sapling remains at full detail.
 export function plantScannedSaplings({THREE,scene,template,placements,groundH}){
   const made=[],center=placements.reduce((a,p)=>({x:a.x+p.x/placements.length,z:a.z+p.z/placements.length}),{x:0,z:0});
   template.updateMatrixWorld(true);
@@ -224,7 +225,8 @@ export function plantScannedSaplings({THREE,scene,template,placements,groundH}){
       const rows=placements.filter(p=>(p.x>center.x?1:0)+(p.z>center.z?2:0)===c);if(!rows.length)continue;
       const mesh=new THREE.InstancedMesh(geo,part.material,rows.length),m=new THREE.Matrix4(),v=new THREE.Vector3(),q=new THREE.Quaternion(),scale=new THREE.Vector3();
       rows.forEach((p,i)=>{v.set(p.x,groundH(p.x,p.z)-.025,p.z);q.setFromAxisAngle(new THREE.Vector3(0,1,0),p.r);scale.setScalar(p.s*2);m.compose(v,q,scale);mesh.setMatrixAt(i,m);});
-      mesh.name='Frostpine | scanned saplings';mesh.castShadow=true;mesh.receiveShadow=true;mesh.computeBoundingSphere();mesh.instanceMatrix.needsUpdate=true;scene.add(mesh);made.push(mesh);
+      mesh.name='Frostpine | scanned saplings';mesh.castShadow=true;mesh.receiveShadow=true;
+      const cells=partitionStaticInstances(THREE,mesh);scene.add(...cells);made.push(...cells);mesh.dispose();
     }
   });return made;
 }

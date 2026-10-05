@@ -484,6 +484,7 @@ export function install(G){
     The whistle calls the horse she left standing rather than one from the pasture. */
  window.addEventListener('keydown',e=>{
   if(!ST.on)return;
+  if(G.screenInput?.active||G.dialogue?.active)return;
   const tag=document.activeElement&&document.activeElement.tagName;
   if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
   const wh=(G.key&&G.key('whistle'))||'KeyH';

@@ -637,7 +637,9 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as skeletonClone} from 'three/addons/utils/SkeletonUtils.js';
-import {createRidingInput} from './assets/riding-input.js?v=mobile-riding-1';
+import {createRidingInput} from './assets/riding-input.js?v=ranch-life-1';
+import {createNPCCharacters} from './assets/npc-characters.js?v=npc-characters-1';
+import {partitionStaticInstances} from './assets/spatial-instances.js';
 import {tackPieceStats,tackStatTotals,tackRidingPerformance,formatTackStat} from './assets/tack-stats.js?v=tack-stats-1';
 import {configureDragonAppearance,dragonBreathElement,dragonBreathPose,DRAGON_ELEMENTS as ELEM_OF} from './assets/dragon-roster.js?v=dragon-roster-1';
 import {createBreedLibrary} from './assets/breed-models.js?v=dragon-acting-1';
@@ -653,7 +655,7 @@ import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js?v=clear-cumulus-2';
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=world-cinematic-1';
-import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs,createForestImpostor} from './assets/vegetation.js?v=world-cinematic-1';
+import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs,createForestImpostor} from './assets/vegetation.js?v=ranch-life-1';
 import {createGrassTuftGeometry} from './assets/meadow-cover.js?v=world-cinematic-1';
 import {createGeology} from './assets/geology.js?v=world-cinematic-1';
 import {createSceneryArt} from './assets/scenery-art.js';
@@ -671,7 +673,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=trail-
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=finite-foliage-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=fit-20261005';
-import {FEATURES} from './assets/features/index.js?v=playability-2';
+import {FEATURES} from './assets/features/index.js?v=ranch-life-1';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 
 /* ================= save sync with the 2D game ================= */
@@ -4287,7 +4289,8 @@ function placeFoliage(name){
    if(name==='stump'&&window.__onCourse&&window.__onCourse(tp.x,tp.z,3.4))sc.set(0,0,0);   // a stump arriving after course-clear mowed the track stays off it, like the grass
    m.compose(p,q,sc); inst.setMatrixAt(i,m);
   });
-  inst.instanceMatrix.needsUpdate=true; if(name!=='bush'&&name!=='flowerbush'&&name!=='boulder')scene.add(inst);
+  inst.instanceMatrix.needsUpdate=true;
+  if(name!=='bush'&&name!=='flowerbush'&&name!=='boulder'){scene.add(...partitionStaticInstances(THREE,inst));inst.dispose();}
   console.log('placed',list.length,'generated',name);
   if(typeof rebuildDecor==='function')rebuildDecor();   // decor made of this prop can appear now
  },undefined,e=>console.warn(name+' load failed',e));
@@ -7110,6 +7113,9 @@ makeJump(-13,-10,0.8);
 
 /* ================= pickups ================= */
 const carrots=[];
+// A reliable first forage loop just beyond the south gate; these replace five
+// scattered pickups, keeping the same total and the existing collection rewards.
+const HOME_CARROTS=[[0,26],[-5,30],[-7,36],[1,39],[6,33]];
 function respawn(g,rMin,rMax){
  const a=Math.random()*Math.PI*2,rr=rMin+Math.random()*(rMax-rMin);
  const x=Math.cos(a)*rr,z=Math.sin(a)*rr;
@@ -7126,9 +7132,10 @@ for(let i=0;i<18;i++){
   leaf.rotation.z=(j-1)*0.4;
   g.add(leaf);
  }
- respawn(g,15,260);
+ const home=HOME_CARROTS[i];
+ if(home)g.position.set(home[0],groundH(home[0],home[1]),home[1]);else respawn(g,15,260);
  scene.add(g);
- carrots.push({g,t:0});
+ carrots.push({g,t:0,home});
 }
 /* Forage. Carrots were the only thing to pick; now the stat foods grow where they belong:
    lettuce in the home meadow, pumpkins round Barleyfold, oranges in the canyon, truffles
@@ -8078,6 +8085,7 @@ for(const s of [1,-1]){ const S=s>0?'R':'L';
    where the sculpt's was and her seat on the saddle: measured, the lowest point of the seat and the back
    of it land where the sculpt's did (15 cm under the origin, 19 cm behind), at 0.94 of her 1.77 m. */
 const RIDER_LIB=createRiderLibrary({THREE,GLTFLoader,clone:skeletonClone,RJ});
+const npcCharacters=createNPCCharacters({THREE,riderLibrary:RIDER_LIB});
 const RIDER_UBC={ok:null};   // null loading, true ready, false failed (the sculpt stands in)
 const UBC_FIT={f:{s:0.94,dy:-0.077,dz:-0.089},m:{s:0.94,dy:-0.082,dz:-0.091}};
 if(/[?&]oldrider\b/.test(location.search)){RIDER_UBC.ok=false;loadSculptRider();}
@@ -8622,6 +8630,12 @@ addEventListener('keydown',e=>{
   document.activeElement?.blur();e.preventDefault();return;
  }
  if($('load')||G.dialogue?.active)return;
+ if(G.screenInput?.active){
+  if(document.activeElement&&(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)||document.activeElement.isContentEditable))return;
+  if(G.run('screenKey',e))return;
+  if(!e.repeat&&PANEL_HOTKEYS[e.code]){PANEL_HOTKEYS[e.code](e);e.preventDefault();}
+  return;
+ }
  if(e.code==='KeyC'&&!e.repeat&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){toggleFreeCam();}
  if(/^Digit[1-5]$/.test(e.code||'')&&!e.repeat&&!freeCam&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){horseEmote(['rear','bow','liedown','nuzzle','toss'][+e.code[5]-1]);}
  if(build.type||build.remove||build.move){ const rs=e.shiftKey?Math.PI/16:Math.PI/4; if(e.code==='Escape'){endBuild();return;} if(e.code==='KeyR'||e.code==='KeyE'){build.rot+=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;} if(e.code==='KeyQ'){build.rot-=rs;if(build.ghost)build.ghost.rotation.y=build.rot;return;} }
@@ -12453,7 +12467,8 @@ function questEvt(type,val){
 }
 function npcShort(def){return def.name.replace('Grandpa ','').replace('Farmer ','').replace('Sheriff ','');}
 function openDlg(){
- const q=nearNPC||npcList[0], def=q.def, m=STORY[storyIdx], d=$('dlg');
+ const q=nearNPC||npcList[0], def=q.def, openedIdx=storyIdx, m=STORY[storyIdx], d=$('dlg');
+ G.dialogue?.setSpeaker(q);
  const head='<b>'+def.icon+' '+def.name+'</b>';
  const giver=m?(m.npc||'wren'):null, mine=m&&giver===def.id;
  /* The conversation is the mission. It is marked done here, before the dialogue is chosen, so the reward branch below
@@ -12490,15 +12505,21 @@ function openDlg(){
  bindFx(d);
  {const rb=$('dlgRole');if(rb)rb.onclick=()=>{d.style.display='none';openShop(def.role.open);};}
  $('dlgBtn').onclick=()=>{
-  if(m&&mine&&missionDone()){
-   {const rw=Object.assign({},m.reward); if(rw.c)rw.c=Math.round(rw.c*mulOf('coin'));   // one payout path for the whole bundle; VIP/ranch coin bonus still applies
-    syncSave(s=>payReward(s,rw)); refreshWallet(); refreshTack();
-    if(m.reward.gear)toast('🐎 '+(m.reward.gear===true?'A new':'A '+m.reward.gear)+' piece is in your tack locker!');
-    const extra=Object.assign({},rw,{c:0,g:0,k:0,gear:0}); if(Object.keys(extra).some(k=>extra[k])){const x=rewardLabel(extra);if(x)toast('🎁 '+x);reloadHorses();}}   // xp, feed bags and other package reward kinds
+  if(m&&storyIdx!==openedIdx)return; // a queued click from an old conversation never affects its successor
+  if(m&&mine&&storyIdx===openedIdx&&STORY[storyIdx]===m&&missionDone()){
+   const rw=Object.assign({},m.reward); if(rw.c)rw.c=Math.round(rw.c*mulOf('coin'));
+   const paid=Object.assign({},rw);
+   syncSave(s=>{
+    const before={c:s.coins||0,g:s.gems||0,k:s.keys||0};payReward(s,rw);
+    for(const [kind,key] of [['c','coins'],['g','gems'],['k','keys']])if(rw[kind])paid[kind]=(s[key]||0)-before[kind];
+   });
+   refreshWallet();refreshTack();
+   const extra=Object.assign({},rw,{c:0,g:0,k:0,gear:0});if(Object.keys(extra).some(k=>extra[k]))reloadHorses();
    sGem();
    const doneIdx=storyIdx; storyIdx++;storyProg=0;saveStory();
    G.run('missionClaim',m,doneIdx);
    const nm=STORY[storyIdx];
+   if(G.run('missionReceipt',{mission:m,reward:paid,next:nm,npc:def,storyIndex:storyIdx})===true)return;
    toast('📜 Mission complete! '+(nm?(nm.ch&&nm.ch!==m.ch?'New chapter: '+nm.ch:'New mission from '+npcShort(NPC_DEFS.find(x=>x.id===(nm.npc||'wren'))||NPC_DEFS[0])):'Story complete! 🏆'));
   }
   d.style.display='none';
@@ -13077,8 +13098,8 @@ function tick(stepSeconds){
  const ridingIntent=ridingInput.resolve({keys,touch,speed:player.speed,dt,onFoot:!!player.onFoot,flying:!!player.flying});
  const fwd=ridingIntent.forward;
  const back=ridingIntent.back;
- const left=keys.KeyA||keys.ArrowLeft||touch.left;
- const right=keys.KeyD||keys.ArrowRight||touch.right;
+ const left=!ridingIntent.locked&&(keys.KeyA||keys.ArrowLeft||touch.left);
+ const right=!ridingIntent.locked&&(keys.KeyD||keys.ArrowRight||touch.right);
  const gallop=ridingIntent.gallop;
  const abil=(myHorses[rideIdx]||{}).ability;
  const HS=effStats(myHorses[rideIdx]);                       // the five stats plus tack bonuses, felt in the hands
@@ -13116,8 +13137,9 @@ function tick(stepSeconds){
  /* The ride hook. Packages (sprint, dash, slide, exhaustion, spooks, swimming, perks) mutate
     this one object instead of editing the movement code; target/acMul/agMul/jpMul/drain/regen
     are read back below. noJump stops the jump triggers. */
- const RIDE={target,spMul,acMul,agMul,jpMul,drain:1,regen:1,jumpMul:1,noJump:false,fwd,back,gallop,HS,PM,jump:!!(keys.Space||touch.jump)};   // jump: the press itself, for a package with a jump of its own (on-foot)
+ const RIDE={target,spMul,acMul,agMul,jpMul,drain:1,regen:1,jumpMul:1,noJump:ridingIntent.locked,fwd,back,gallop,HS,PM,jump:!ridingIntent.locked&&!!(keys.Space||touch.jump)};   // jump: the press itself, for a package with a jump of its own (on-foot)
  G.run('ride',RIDE,dt);
+ if(ridingIntent.locked){RIDE.target=0;RIDE.noJump=true;}
  target=RIDE.target; acMul=RIDE.acMul; agMul=RIDE.agMul; jpMul=RIDE.jpMul*RIDE.jumpMul;
  /* Stamina. A gallop spends it, at a rate the stamina stat sets: a stamina-3 horse holds a
     full gallop about twenty seconds, a stamina-10 horse nearly forty. A walk brings it back,
@@ -13158,7 +13180,7 @@ function tick(stepSeconds){
   if(Math.abs(player.turnSm)<0.002)player.turnSm=0;
   turn=player.turnSm;
  }else player.turnSm=turn;   // stay in sync, so putting the headset on doesn't jerk the horse
- if(freeCam)turn=0;
+ if(freeCam||ridingIntent.locked){turn=0;player.turnSm=0;}
  const yawRate=(1.7+Math.min(1.5,Math.abs(player.speed)*0.1))*(inVR?0.45:1);
  // Fast galloping and slow rendering must not skip across narrow fences.
  const travelSteps=Math.max(1,Math.ceil(Math.abs(player.speed)*dt/.3)),travelDt=dt/travelSteps;
@@ -13227,7 +13249,7 @@ function tick(stepSeconds){
  if(!winged&&player.flying)player.flying=false;
  if(player.flying){
   /* Sustained flight with altitude hold and a bounded dragon descent. */
-  const climb=player.landing?-1:((keys.Space||touch.jump)?1:0)-((keys.ShiftLeft||keys.ShiftRight||touch.gal)?1:0);
+  const climb=player.landing?-1:ridingIntent.locked?0:((keys.Space||touch.jump)?1:0)-((keys.ShiftLeft||keys.ShiftRight||touch.gal)?1:0);
   player.climbInput=climb;
   const faPrev=(typeof player.flyAlt==='number')?player.flyAlt:6;
   player.flyAlt=player.landing?0:THREE.MathUtils.clamp(faPrev+climb*16*dt,0,42);
@@ -13629,13 +13651,13 @@ function tick(stepSeconds){
  for(const c of carrots){
   if(!c.g.visible){
    c.t-=dt;
-   if(c.t<=0)respawn(c.g,15,260);
+   if(c.t<=0){if(c.home){c.g.position.set(c.home[0],groundH(c.home[0],c.home[1]),c.home[1]);c.g.visible=true;}else respawn(c.g,15,260);}
    continue;
   }
   c.g.rotation.y+=dt*2;
   const d=Math.hypot(c.g.position.x-player.pos.x,c.g.position.z-player.pos.z);
   if(d<1.4&&player.y<1.2){
-   c.g.visible=false;c.t=15;
+   c.g.visible=false;c.t=c.home?60:15;
    addCoins(3);sCoin();statBump('carrots',1);passAdd(2);
    syncSave(s=>{s.items=s.items||{};s.items.carrot=(s.items.carrot||0)+1;});   // a picked carrot is a carrot in the basket
    questEvt('carrots',1);
@@ -13738,6 +13760,7 @@ function tick(stepSeconds){
  tickBarn(dt,t);
  tickDrill(dt,t);
  G.run('tick',dt,t);                     // THE per-frame hook for feature packages
+ npcCharacters.update(dt,{entries:npcList,player:player.pos,ready:RIG.ready&&RIG.attachedTo===player.mesh,talkingId:G.dialogue?.speaker?.def?.id||null});
  for(const cl of clouds){
   cl.position.x+=dt*0.7;
   if(cl.position.x>520)cl.position.x=-520;
@@ -14264,7 +14287,7 @@ terrainSurface.setTrees(forestPoints);
 function installFeatures(){
  Object.assign(G,{
   THREE,scene,camera,renderer,composer,
-  riding:{releaseAll:releaseAllRidingControls,selectGait:selectRidingGait,shiftGait:shiftRidingGait,brake:on=>ridingInput.brake(on),state(){const st=ridingInput.state(),mode=RIG.heroMotion?.mode?.replace(/(Left|Right)$/,'');return {...st,dragon:dragonPaces(),sprint:!!touch.spr,speed:player.speed,actual:player.flying?'fly':player.onFoot?'on foot':player.speed<-.05?'reverse':Math.abs(player.speed)<.1?'halt':mode&&mode!=='rest'&&mode!=='stand'?mode:st.requested};}},
+  riding:{releaseAll:releaseAllRidingControls,selectGait:selectRidingGait,shiftGait:shiftRidingGait,brake:on=>ridingInput.brake(on),lock:(reason,on)=>ridingInput.lock(reason,on),state(){const st=ridingInput.state(),mode=RIG.heroMotion?.mode?.replace(/(Left|Right)$/,'');return {...st,dragon:dragonPaces(),sprint:!!touch.spr,speed:player.speed,actual:player.flying?'fly':player.onFoot?'on foot':player.speed<-.05?'reverse':Math.abs(player.speed)<.1?'halt':mode&&mode!=='rest'&&mode!=='stand'?mode:st.requested};}},
   $,toast,hidePanels,openDlg,nameSprite,beep,sChime,sGem,sNeigh,sCoin,
   save:{KEY:SAVE_KEY,fresh:freshSave,sync:syncSave,ensure(fn){SAVE_ENSURES.push(fn);return fn;},ensureHorse(fn){HORSE_ENSURES.push(fn);return fn;},
    flag(s,name){s.flags=s.flags||{};if(s.flags[name])return false;s.flags[name]=1;return true;},build:BUILD,boot:BOOT_INFO},
@@ -14291,7 +14314,7 @@ function installFeatures(){
       base height), and mark the matching collider climb:true so it does not shove her off it */
    climbables:[],
    mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,
-   npcList,visitors,spawnCritter,CRITTER_DEFS,critters,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,carrots,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar,
+   npcList,npcCharacters,practiceJumps:jumps,visitors,spawnCritter,CRITTER_DEFS,critters,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,carrots,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar,
    /* Every tree in the basin as {x,z,s}. The follow camera needs it: followCamera.frame()
       sweeps its clearance volume against the registered ARCHITECTURE, which knows nothing
       about the wood, so a camera that orbits off the horse's spine can and does end up

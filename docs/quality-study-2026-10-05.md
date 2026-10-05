@@ -175,6 +175,61 @@ resynced and all 660 file hashes,
 relative imports and save/lifecycle seams verified; the approved horse hashes
 remain intact. Native device execution is still unverified.
 
+## Third playability pass
+
+The ranch's nearby named residents now use the existing CC0 character library,
+with distinct clothing and hair, native idle/talk/walk clips and corrected sole
+contact. They retain their existing interaction roots and name tags. Mounted
+visitors keep their mounted rigs. Loading begins after the player horse is ready,
+with one character build at a time, at most twelve detailed cached residents,
+lower update rates at distance and shadows limited to nearby characters. Six
+characters passed an isolated WebGL check across idle, talking and walking;
+seven helper tests cover loading, fallback, ownership, disposal and distance
+limits. This is not a new set of imported character assets.
+
+The Story tab leads with the current task, action, reward and progress; the
+chronological chapter journal can be expanded below. Builder guidance identifies
+missing pieces, and placing the lantern/trough updates that mission immediately.
+Training guidance considers owned food, current stat XP, multipliers and caps.
+Practice guidance points at an actual visible fence and its approach. Five of
+the existing eighteen carrots now grow in a fixed, collision-checked patch just
+south of the arena, using the existing pickup rewards and a sixty-second local
+respawn. Other scattered carrots retain their existing behavior.
+
+Claiming a story reward presents a paid receipt and the next objective. Coin,
+gem and key amounts come from the actual wallet delta; stale or duplicate claim
+callbacks cannot pay or close the successor dialogue. Automatic storm and
+starter-naming transitions retain ownership of their presentation. Full-screen
+menus and dialogues have independent riding locks; closing either cannot release
+the other's lock. Their keyboard navigation and settings remapping use a
+separate menu hook, while dismounting, emotes, camera shortcuts, whistling and
+flight controls remain with gameplay. A held key must be released before riding
+resumes. The event clock continues running.
+
+Static scenery instances retain the original full-detail geometry, materials
+and transforms, but use smaller spatial cells for ordinary camera and shadow
+culling. Six frozen, paired views measured 5.1–11.9% fewer submitted triangles.
+The ranch arrival reduced submissions by 5.1% at Medium and 8.2% at High; draw
+calls increased by 23/22 respectively (under one percent). Paired images had
+zero to eight pixels differing by more than two channel levels. Boundary tests
+cover perspective and shadow frusta. These figures isolate the scenery change;
+they do not establish a whole-game FPS gain or physical-phone performance.
+
+An integrated Chromium/Metal fixture loaded the real Wren rig with all 65 bones,
+claimed the existing earned old-stall mission (635→735 coins, 7→12 gems), showed
+the next carrot objective, and checked portrait/landscape dialogue and held-key
+recovery. Seven nearby resident rigs loaded without fallback failures. No page,
+feature or HTTP errors occurred. Direct dialogue/panel APIs were used only for
+this layout/input fixture; progression was not edited. A follow-up landscape
+layout uses side-by-side reward and next-task blocks so its heading and action
+buttons remain visible without scrolling; the browser DOM regression checks
+both orientations with the real dialogue CSS.
+
+The iOS development package includes the new helpers and passes file hashes,
+relative-import checks and all eight durable-save tests. It remains roughly
+559 MiB and retains the approved horse hashes. Device execution and release
+readiness remain unverified; the release gate remains false.
+
 ## Next quality milestones
 
 1. Extend the touch acceptance run through the builder and food story chapters,

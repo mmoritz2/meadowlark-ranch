@@ -232,12 +232,12 @@ export function install(G){
  G.on('remote',(m,r)=>{if(!m||!r)return;r.pb=m.pb?1:0;r.pt=m.pt?String(m.pt).slice(0,20):'';});
  G.on('dailyEvt',type=>{if(type==='carrots')S.sync(s=>forageWatch(s,true));});
  G.on('interval30',s=>{walletWatch(s);});
- G.on('key',e=>{
+ G.on('screenKey',G.on('key',e=>{
   if(!pendingRemap)return;
   const name=pendingRemap; pendingRemap=null;
   if(e.code!=='Escape'&&!/^(Shift|Control|Alt|Meta)(Left|Right)$/.test(e.code)||name==='sprint')remapKey(name,e.code); else toast('Remap cancelled.');
   U.rerender('settingsPanel'); e.preventDefault(); return true;
- });
+ }));
  G.on('courseFinish',({ev,pay})=>{
   const s=S.fresh(); if(!s)return;
   const em=eventMul(s); let extra=0; const why=[];

@@ -15,6 +15,21 @@ const SIDE_CAP=5;
 const NATIVE_STORY=new Set(['carrots','cleanjump','gallop','event','forage','train','photo','tame','kestrel','visit','talk','guess','build','ranchlvl']);   // questEvt already hears these inline
 const STORY_BRIDGE=new Set(['fish','shoe','ft','feed','groom','pet','water','wildphoto','trail','breed','side','talkn']);   // daily-reported moments the story can also count
 
+export function buildPairProgress(save){
+ return ['lantern','trough'].filter(t=>(save?.decor||[]).some(d=>d.t===t)).length;
+}
+
+export function storyFocusCard(step,chapter=''){
+ if(!step)return '';
+ const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+ const p=Math.min(step.goal,Math.max(0,step.progress)),pct=Math.round(100*p/Math.max(1,step.goal));
+ return '<section class="sq-focus" aria-label="Current story task"><div class="sq-kicker">'+esc(chapter)+(step.complete?' · Reward ready':' · Current task')+'</div>'
+  +'<h3>'+esc(step.title)+'</h3><p>'+esc(step.hint)+'</p>'
+  +(step.checklist?.length?'<div class="sq-checklist">'+step.checklist.map(c=>'<span class="'+(c.done?'done':'')+'">'+(c.done?'✓ ':'○ ')+esc(c.label)+'</span>').join('')+'</div>':'')
+  +(step.goal>1?'<div class="sq-progress"><span>'+Math.floor(p)+' / '+step.goal+'</span><div class="qbar" role="progressbar" aria-valuenow="'+Math.floor(p)+'" aria-valuemin="0" aria-valuemax="'+step.goal+'"><span class="qfill" style="width:'+pct+'%"></span></div></div>':'')
+  +'<div class="sq-focus-foot"><div><span>'+(step.complete?'Collect from the giver':'Reward on completion')+'</span><b>'+esc(step.reward)+'</b></div><button class="claimBtn" data-fx="story-guide">'+esc(step.label||'Follow the marker')+'</button></div></section>';
+}
+
 export function install(G){
  const {$,toast,THREE}=G; const S=G.save, Q=G.quest, T=G.tables, W=G.world, H=G.horse, M=G.money, U=G.ui;
  const STORY=Q.STORY, NPC_DEFS=Q.NPC_DEFS, DAILYQ=Q.DAILYQ, ACHS=Q.ACHS;
@@ -276,7 +291,8 @@ export function install(G){
  QT.door=(m,val,p)=>val===m.door?m.goal:p;
  QT.ribbons=m=>ribbonCount(fresh(),m.disc||'any');
  QT.build=(m,val,p)=>(!m.item||m.item===val)?p+1:p;
- QT.build2=(m,val,p)=>{const s=fresh();const need=['lantern','trough'];const have=need.filter(t=>(s.decor||[]).some(d=>d.t===t)).length;return Math.max(p,have);};
+ QT.build2=(m,val,p)=>Math.max(p,buildPairProgress(fresh()));
+ G.on('decorPlaced',()=>{if(cur()?.type==='build2')Q.questEvt('build2',0);});
  QT.ranchlvl=m=>ranchLevelOf(fresh());
  QT.clues=(m,val,p)=>p+(typeof val==='number'?val:1);
  QT.roundup=m=>{const s=fresh();return Math.max(0,((s.stats&&s.stats.rounded)||0)-((s.story&&s.story.rbase)||0));};
@@ -343,7 +359,7 @@ export function install(G){
    if(m.type!=='build')Q.questEvt(m.type,0);
    const pp=prog();
    d.innerHTML=dlgHead(def)+chLine(m)+'<p>'+txt(m.text)+'</p><span style="color:#8c7a63;font-size:13px">📜 '+esc(m.label)+(m.goal>1?' ('+Math.floor(pp)+'/'+m.goal+')':'')+'</span><br><br><button id="dlgBtn" class="claimBtn">🏗️ Open Build</button><button data-nm="x" style="margin-left:6px">Later</button>';
-   d.style.display='block'; $('dlgBtn').onclick=()=>{d.style.display='none';try{G.ui.openBuild();}catch(e){}}; d.querySelector('[data-nm="x"]').onclick=()=>{d.style.display='none';}; return true;
+   d.style.display='block'; $('dlgBtn').onclick=()=>{d.style.display='none';try{if(G.storyGuidance)G.storyGuidance.activateCurrent();else G.ui.openBuild();}catch(e){}}; d.querySelector('[data-nm="x"]').onclick=()=>{d.style.display='none';}; return true;
   }
   if(m.type==='door'){
    d.innerHTML=dlgHead(def)+chLine(m)+'<p>'+txt(m.text)+'</p><span style="color:#8c7a63;font-size:13px">🔐 The old stall is beside the barn — it is marked on the map. You have '+(s.keys||0)+' 🗝️.</span><br><br>'+closeBtn('On it!');
@@ -633,11 +649,30 @@ export function install(G){
  Q.addDaily({type:'side',icon:'📌',label:'Finish a side quest',goal:1,r:{c:150,g:4,p:20}});
 
  /* ---------- the quest log: Story and Side tabs ---------- */
+ const storyStyle=document.createElement('style');storyStyle.textContent=`
+ #questPanel .sq-overview{display:flex;gap:8px 20px;align-items:baseline;flex-wrap:wrap;padding:4px 0;font:700 12px/1.3 Nunito,system-ui,sans-serif}
+ #questPanel .sq-overview b{font-size:14px}
+ #questPanel .sq-focus{padding:16px;border:1px solid #b99b58;border-radius:12px;background:linear-gradient(135deg,#fff9e9,#efe6d0);color:#32281e;display:grid;gap:10px;margin:6px 0 12px}
+ #questPanel .sq-kicker{font:800 11px/1.3 Nunito,system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#735e3e}
+ #questPanel .sq-focus h3{font:800 20px/1.2 Georgia,serif;margin:0}
+ #questPanel .sq-focus p{font:700 14px/1.45 Nunito,system-ui,sans-serif;margin:0;color:#514637}
+ #questPanel .sq-progress{display:flex;align-items:center;gap:12px;font-weight:800}
+ #questPanel .sq-progress .qbar{flex:1;height:8px;margin:0}
+ #questPanel .sq-checklist{display:flex;gap:8px 16px;flex-wrap:wrap;font-size:13px;font-weight:800}
+ #questPanel .sq-checklist .done{color:#387245}
+ #questPanel .sq-focus-foot{display:flex;gap:12px;align-items:center;justify-content:space-between;border-top:1px solid #c5b48e;padding-top:10px}
+ #questPanel .sq-focus-foot>div{display:grid;gap:4px;font-size:13px}
+ #questPanel .sq-focus-foot>div>span{font-size:11px;color:#735e3e}
+ #questPanel .sq-focus-foot button{min-height:44px;margin:0}
+ #questPanel .sq-journal>summary{padding:10px 0;font-weight:800;cursor:pointer}
+ @media(max-width:520px){#questPanel .sq-focus{padding:12px}#questPanel .sq-focus-foot{align-items:stretch;flex-direction:column}#questPanel .sq-focus h3{font-size:18px}}
+ `;document.head.appendChild(storyStyle);
  const trackChip=t=>t==='search'?'<span style="font-size:10px;color:#5b7fbf">🔎</span>':'<span style="font-size:10px;color:#b8892f">🏆</span>';
  U.questTab({id:'story',label:'📖 Story',pos:0,render(s){
   const i=idx(), m=cur(), pct=storyPct(); const nb=nextBook();
-  let html='<div class="qrow" style="background:#fffaf0"><span class="qico">📖</span><span class="qmain"><b>Story '+pct+'%</b><span class="qbar"><span class="qfill" style="width:'+pct+'%"></span></span></span><span style="font-size:11px;color:#8c7a63">'+Math.min(i,STORY.length)+'/'+STORY.length+' missions · '+(s.story.era===2?'two summers later':'the spring flood')+'</span></div>';
-  html+='<span style="font-size:11.5px;color:#8c7a63">🔎 <b>Search</b> — the grey mare'+(s.story.name?', '+esc(s.story.name):'')+' · 🏆 <b>Qualify</b> — ribbons, the Championship, the ranch. Talk to the giver to start or finish a mission.</span>';
+  let html='<div class="sq-overview"><b>Story '+pct+'%</b><span>'+Math.min(i,STORY.length)+' / '+STORY.length+' missions · '+(s.story.era===2?'two summers later':'the spring flood')+'</span></div>';
+  if(m)html+=storyFocusCard(G.storyGuidance?.describe(m,prog()>=m.goal),chapterOf(m));
+  html+='<details class="sq-journal"><summary>Chapter journal · '+i+' completed</summary><span style="font-size:11.5px;color:#8c7a63">🔎 <b>Search</b> — the grey mare'+(s.story.name?', '+esc(s.story.name):'')+' · 🏆 <b>Qualify</b> — ribbons, the Championship, the ranch. Talk to the giver to start or finish a mission.</span>';
   let lastCh=null;
   STORY.forEach((q,k)=>{const ch=chapterOf(q); if(ch!==lastCh){lastCh=ch;const done=STORY.every((z,kk)=>chapterOf(z)!==ch||kk<i);html+='<div style="font-size:11px;color:#8c7a63;letter-spacing:.05em;margin-top:6px">📖 '+esc(ch).toUpperCase()+(done?' ✅':'')+'</div>';}
    const st=k<i?'done':k===i?'cur':'lock';
@@ -648,6 +683,7 @@ export function install(G){
     html+='<div class="qrow'+(ready?' done':'')+'" style="border-color:#e9bb52"><span class="qico">▶</span><span class="qmain"><b>'+lbl+'</b><span style="font-size:11px;color:#8c7a63;font-weight:600">'+(ready?'Done — tell '+esc(giver):(gate?'🎀 needs '+nr.n+' '+(DISC_LBL[nr.disc||'any']||'')+'ribbons ('+ribbonCount(s,nr.disc||'any')+')':'from '+esc(giver)+' · '+esc(REGION_OF[giverOf(q)]||'')))+(q.type==='ribbons'?' · 🎀 '+(DISC_LBL[q.disc||'any']||'')+'ribbons':'')+'</span>'+(q.goal>1?'<span class="qbar"><span class="qfill" style="width:'+Math.round(100*Math.min(1,p/q.goal))+'%"></span></span>':'')+'</span><span style="font-size:11px;color:#8c7a63">'+(q.goal>1?Math.floor(Math.min(p,q.goal))+'/'+q.goal+' · ':'')+M.rewardLabel(q.reward)+'</span>'+trackChip(q.track)+'</div>';}
    else html+='<div class="qrow" style="font-size:12px;opacity:.7"><span class="qico">🔒</span><span class="qmain">'+lbl+(q.type==='ribbons'?' <span style="font-size:10px;color:#8c7a63">🎀 '+q.goal+' '+(DISC_LBL[q.disc||'any']||'')+'ribbons</span>':'')+'</span><span style="font-size:11px;color:#b8a888">'+esc(giver)+'</span>'+trackChip(q.track)+'</div>';
   });
+  html+='</details>';
   if(!m)html+='<div class="qrow done"><span class="qico">🏆</span><span class="qmain"><b>Every chapter so far is done.</b></span></div>';
   if(nb)html+='<div class="qrow" style="background:#f4f7ff"><span class="qico">📅</span><span class="qmain"><b>Next chapter: '+esc(nb.title)+'</b><span style="font-size:11px;color:#8c7a63;font-weight:600">arrives with the new season in '+daysUntil(nb.releaseAt)+' day'+(daysUntil(nb.releaseAt)===1?'':'s')+' · '+nb.missions.length+' missions</span></span></div>';
   else html+='<div style="font-size:11px;color:#8c7a63">A new book of the story arrives with every season.</div>';

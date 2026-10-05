@@ -10,7 +10,7 @@ const baseCSS=fs.readFileSync(require('node:path').join(__dirname,'../ranch3d.ht
   await page.setContent('<style>'+baseCSS+'</style><button id="ctx" style="display:block">Talk</button><div id="seHudRoot"><button id="seGaitLabel" aria-expanded="true">Canter</button><div id="seGaitChoices" class="on"></div></div><div id="dlg" style="display:none"></div>');
   await page.evaluate(()=>{
    window.calls={release:0,brake:false,claimed:0,keys:0};window.hooks={};
-   window.G={riding:{releaseAll(){calls.release++;},brake(on){calls.brake=on;}},on(n,f){hooks[n]=f;}};
+   window.G={riding:{releaseAll(){calls.release++;},lock(reason,on){calls.brake=on;}},on(n,f){hooks[n]=f;}};
    window.addEventListener('keydown',e=>{if(e.key==='Escape'){dlg.style.display='none';return;}if(e.code==='KeyE'&&!G.dialogue?.active){openDialogue();return;}calls.keys++;});
    window.openDialogue=()=>{dlg.innerHTML='<b>Wren</b><p>Name your horse.</p><input id="nameIn" aria-label="Horse name" value="Kestrel"><button id="random">Random</button><button id="dlgBtn">Continue</button>';dlg.style.display='block';dlgBtn.onclick=()=>{calls.claimed++;dlg.style.display='none';};nameIn.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();e.stopPropagation();dlgBtn.click();}};};
    ctx.onclick=openDialogue;

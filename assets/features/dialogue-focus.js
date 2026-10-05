@@ -16,7 +16,7 @@ body.dialogue-open :is(#seHudRoot,#seNorth,#seMarketLbl,#hud,#mini,#mkMiniPlate,
 @media(max-width:600px){body.dialogue-open #dlg{bottom:calc(12px + env(safe-area-inset-bottom))!important;width:calc(100vw - 24px)!important;padding:16px 18px;max-height:76dvh!important}}
 @media(max-height:500px){body.dialogue-open #dlg{bottom:calc(12px + env(safe-area-inset-bottom))!important;max-height:76dvh!important;padding:12px 20px}body.dialogue-open #dlg p{font-size:14px;line-height:1.4;margin:6px 0 10px}body.dialogue-open #dlg>b{font-size:17px;margin-bottom:6px}}
 `;document.head.append(style);
- let active=false,previousFocus=null;
+ let active=false,previousFocus=null,speaker=null;
  const heldKeys=new Set(),blockedUntilRelease=new Set();
  const visible=()=>dlg.style.display!=='none'&&getComputedStyle(dlg).display!=='none';
  const controls=()=>[...dlg.querySelectorAll('button,input,select,textarea,a[href],[tabindex]')].filter(el=>!el.disabled&&el.tabIndex>=0&&el.getClientRects().length);
@@ -25,9 +25,10 @@ body.dialogue-open :is(#seHudRoot,#seNorth,#seMarketLbl,#hud,#mini,#mkMiniPlate,
   if(open!==active){
    active=open;document.body.classList.toggle('dialogue-open',open);shade.hidden=!open;
    if(open)previousFocus=document.activeElement;
-   G.riding?.releaseAll();G.riding?.brake(open);
+   G.riding?.releaseAll();G.riding?.lock('dialogue',open);
    if(open){document.getElementById('seGaitChoices')?.classList.remove('on');document.getElementById('seGaitLabel')?.setAttribute('aria-expanded','false');}
    else{
+    speaker=null;
     for(const code of heldKeys)blockedUntilRelease.add(code);
     if(previousFocus?.isConnected&&previousFocus.getClientRects().length)previousFocus.focus({preventScroll:true});
    }
@@ -46,14 +47,14 @@ body.dialogue-open :is(#seHudRoot,#seNorth,#seMarketLbl,#hud,#mini,#mkMiniPlate,
  }
  const observer=new MutationObserver(sync);observer.observe(dlg,{attributes:true,attributeFilter:['style'],childList:true});
  // Read visibility directly as well: opening and the next key event can share a task.
- G.dialogue={get active(){return visible();}};
- G.on('ride',ride=>{if(visible()){G.riding?.brake(true);ride.target=0;ride.noJump=true;}});
+ G.dialogue={get active(){return visible();},get speaker(){return visible()?speaker:null;},setSpeaker(q){speaker=q||null;}};
+ G.on('ride',ride=>{if(visible()){G.riding?.lock('dialogue',true);ride.target=0;ride.noJump=true;}});
  document.addEventListener('keydown',e=>{
   heldKeys.add(e.code);
   // A physical key held through a conversation must be released before riding resumes.
   if(!visible()&&blockedUntilRelease.has(e.code)){e.preventDefault();e.stopImmediatePropagation();}
  },true);
- document.addEventListener('keyup',e=>{heldKeys.delete(e.code);blockedUntilRelease.delete(e.code);},true);
+ document.addEventListener('keyup',e=>{if(e.isTrusted){heldKeys.delete(e.code);blockedUntilRelease.delete(e.code);}},true);
  window.addEventListener('blur',()=>{heldKeys.clear();blockedUntilRelease.clear();});
  document.addEventListener('keydown',e=>{
   if(!visible())return;
