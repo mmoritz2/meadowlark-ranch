@@ -36,10 +36,11 @@
 
    Pure module: THREE and friends are injected, nothing runs at import time. */
 
-import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=rider-pose-20261006';
+import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=runway-20261006';
 export {RIDER_OUTFITS};
-import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown} from './rider-hairstyles.js?v=hair-20261006';
-import {refineRiderFace} from './rider-face.js?v=art-20261005';
+import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=runway-20261006';
+import {refineRiderProportions} from './rider-proportions.js?v=runway-20261006';
+import {refineRiderFace,RIDER_FACE_GLSL} from './rider-face.js?v=runway-20261006';
 import {accessoryFit,buildAccessories} from './rider-accessories.js?v=hair-20261006';
 
 /* ---- tables ------------------------------------------------------------------------------------ */
@@ -117,6 +118,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const bones={}; skin.skeleton.bones.forEach(b=>{bones[b.name]=b;});
   for(const r of ROLES)if(!bones[ROLE_BONE[r]])throw new Error('rider bone missing: '+ROLE_BONE[r]);
   scene.updateMatrixWorld(true);
+  const proportionLift=refineRiderProportions(THREE,scene,skin,body);
   const J=n=>bones[n].getWorldPosition(new THREE.Vector3());
   /* bind-pose landmarks, for the clothes and the slimming (all T-pose, metres) */
   const L={neck:J('neck_01'),pelvis:J('pelvis'),calf:J('calf_l'),hand:J('hand_l'),arm:J('upperarm_l'),elbow:J('lowerarm_l'),thigh:J('thigh_l'),head:J('Head')};
@@ -141,10 +143,16 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
     const match=/^((?:index|middle|ring|pinky|thumb)_0[123]_[lr])\.quaternion$/.exec(track.name),relaxed=match&&seat.relax.get(match[1]);
     if(relaxed)for(let i=0;i<track.values.length;i+=4){_q.fromArray(track.values,i).slerp(relaxed,.92).toArray(track.values,i);}
    }
+   // Several source clips omit finger tracks. Explicit relaxed tracks prevent
+   // the last mounted grip from leaking into idle, walking or wardrobe previews.
+   if(['Idle_Loop','Idle_Talking_Loop','Walk_Loop','Jog_Fwd_Loop','Sprint_Loop'].includes(c.name)){
+    const tracked=new Set(cl.tracks.map(t=>t.name));
+    for(const [name,q]of seat.relax)if(!tracked.has(name+'.quaternion'))cl.tracks.push(new THREE.QuaternionKeyframeTrack(name+'.quaternion',[0,cl.duration],[...q.toArray(),...q.toArray()]));
+   }
    for(const t of cl.tracks)if(t.name==='pelvis.position'&&ualPelvis){const v=t.values;for(let i=0;i<v.length;i+=3){v[i]+=herPelvis.x-ualPelvis.x;v[i+1]+=herPelvis.y-ualPelvis.y;v[i+2]+=herPelvis.z-ualPelvis.z;}}
    clips[c.name]=cl;
   }
-  clips.Idle_Loop=relaxedIdle(scene,skin,bones,clips.Idle_Loop,seat.restLocal);
+  clips.Idle_Loop=relaxedIdle(scene,skin,bones,clips.Idle_Loop,seat.restLocal,body);
   /* ---- hair meshes, in Head space ---- */
   const hair={};
   gHair.scene.traverse(o=>{if(o.isMesh)hair[o.name]={geometry:o.geometry,material:o.material};});
@@ -155,15 +163,19 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   if(brows){const bp=brows.geometry.attributes.position,hi=brows.skeleton.bones.indexOf(brows.skeleton.bones.find(b=>b.name==='Head')),inv=brows.skeleton.boneInverses[hi];
    let t=-1e9;for(let i=0;i<bp.count;i++){_v.fromBufferAttribute(bp,i).applyMatrix4(inv);if(_v.y>t)t=_v.y;}if(t>-1e8)head.browTop=t;}
   const helmetGeo=buildHelmetGeometry(head);
-  return {body,scene,skin,eyes,brows,bones,seat,zones,clips,hair,head,helmetGeo,materials:{body:skin.material,eyes:eyes&&eyes.material,brows:brows&&brows.material},outfits:{}};
+  const prepared={body,proportionLift,scene,skin,eyes,brows,bones,seat,zones,clips,hair,head,helmetGeo,materials:{body:skin.material,eyes:eyes&&eyes.material,brows:brows&&brows.material},outfits:{}};
+  if(body==='f'&&hair.Hair_Long)hair.Hair_Long={...hair.Hair_Long,geometry:polishHairSurface(THREE,hair.Hair_Long.geometry,prepared)};
+  return prepared;
  }
 
  /* Bake a comfortable standing pose into the idle itself, so previews and the
     live controller use identical arms, wrists and foot spacing. Retain the source
     breathing and head motion; mounted poses and locomotion joints are separate. */
- function relaxedIdle(scene,skin,bones,clip,rest){
+ function relaxedIdle(scene,skin,bones,clip,rest,body){
   if(!clip)return clip;
-  const names=['upperarm','lowerarm','hand','thigh','calf','foot'].flatMap(n=>[n+'_l',n+'_r']);
+  const F=body==='f',names=['upperarm','lowerarm','hand','thigh','calf','foot'].flatMap(n=>[n+'_l',n+'_r']);
+  if(F)names.push('pelvis','spine_01','spine_03','neck_01','Head');
+  const headRest=bones.Head.getWorldQuaternion(new THREE.Quaternion()),neckRest=bones.neck_01.getWorldQuaternion(new THREE.Quaternion());
   const footRest=Object.fromEntries(['l','r'].map(sd=>[sd,bones['foot_'+sd].getWorldQuaternion(new THREE.Quaternion())]));
   const p=skin.geometry.attributes.position,sole=[];
   for(let i=0;i<p.count;i++)if(p.getY(i)<.018)sole.push(i);
@@ -175,10 +187,16 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const floor=()=>{scene.updateMatrixWorld(true);skin.skeleton.update();let low=Infinity;for(const i of sole)low=Math.min(low,skin.getVertexPosition(i,new THREE.Vector3()).y);return low;};
   for(let i=0;i<=count;i++){
    const time=clip.duration*i/count;mixer.setTime(time);scene.updateMatrixWorld(true);const oldFloor=floor();
+   if(F){
+    setWorld(bones.pelvis,new THREE.Quaternion().setFromAxisAngle(V(0,0,1),.026).multiply(bones.pelvis.getWorldQuaternion(new THREE.Quaternion())));
+    setWorld(bones.spine_01,new THREE.Quaternion().setFromAxisAngle(V(0,0,1),-.028).multiply(bones.spine_01.getWorldQuaternion(new THREE.Quaternion())));
+    setWorld(bones.neck_01,bones.neck_01.getWorldQuaternion(new THREE.Quaternion()).slerp(neckRest,.65));
+    setWorld(bones.Head,bones.Head.getWorldQuaternion(new THREE.Quaternion()).slerp(headRest,.82));
+   }
    for(const side of [1,-1]){
     const sd=side>0?'l':'r',upper='upperarm_'+sd,lower='lowerarm_'+sd,hand='hand_'+sd;
-    aim(upper,lower,V(.20*side,-1,-.015));
-    aim(lower,hand,V(.06*side,-1,.14));
+    aim(upper,lower,V((F?(side>0?.18:.23):.20)*side,-1,-.015));
+    aim(lower,hand,V((F?(side>0?.045:.075):.06)*side,-1,F?(side>0?.10:.15):.14));
     // Turn the forearm as a whole: thumb forward, palm toward the thigh.
     // This avoids twisting only the wrist against a fixed forearm.
     bones[hand].quaternion.copy(rest.get(hand).q);bones[hand].updateMatrixWorld(true);
@@ -187,9 +205,9 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
     const angle=Math.atan2(axis.dot(new THREE.Vector3().crossVectors(width,target)),width.dot(target));
     setWorld(bones[lower],new THREE.Quaternion().setFromAxisAngle(axis,angle).multiply(bones[lower].getWorldQuaternion(new THREE.Quaternion())));
     aim(hand,'middle_01_'+sd,V(.04*side,-1,.10));
-    aim('thigh_'+sd,'calf_'+sd,V(.055*side,-1,-.035));
-    aim('calf_'+sd,'foot_'+sd,V(.015*side,-1,.04));
-    setWorld(bones['foot_'+sd],new THREE.Quaternion().setFromAxisAngle(V(0,1,0),side*.05).multiply(footRest[sd]));
+    aim('thigh_'+sd,'calf_'+sd,V((F?(side>0?.04:.08):.055)*side,-1,F?(side>0?-.01:.13):-.035));
+    aim('calf_'+sd,'foot_'+sd,V(.015*side,-1,F?(side>0?.035:-.065):.04));
+    setWorld(bones['foot_'+sd],new THREE.Quaternion().setFromAxisAngle(V(0,1,0),side*(F?(side>0?.025:.08):.05)).multiply(footRest[sd]));
    }
    // Changing leg spread must not sink the soles through the ground.
    bones.pelvis.position.y+=oldFloor-floor();scene.updateMatrixWorld(true);
@@ -453,7 +471,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
  /* One set of uniforms per rider, shared by every material she wears. */
  function riderUniforms(kit){
   const z=kit.zones,ref=SKIN_REF[kit.body];
-  return {uSkin:{value:new THREE.Color(DEF_SKIN)},uSkinW:{value:1},uBootMesh:{value:0},uBootRef:{value:0.1},uSkinRef:{value:new THREE.Vector3(...ref)},
+  return {uRunway:{value:kit.body==='f'?1:0},uFaceBind:{value:kit.skin.skeleton.boneInverses[kit.skin.skeleton.bones.indexOf(kit.bones.Head)].clone()},uSkin:{value:new THREE.Color(DEF_SKIN)},uSkinW:{value:1},uBootMesh:{value:0},uBootRef:{value:0.1},uSkinRef:{value:new THREE.Vector3(...ref)},
    uShirt:{value:new THREE.Color('#3d4a6e')},uPants:{value:new THREE.Color('#cfc6ae')},uBoot:{value:new THREE.Color('#3b2a14')},
    uClothes:{value:new THREE.Vector4(0,0,0,0)},uTailor:{value:new THREE.Vector4(0,0,0,0)},uHair:{value:new THREE.Color('#4a2e1c')},uEye:{value:new THREE.Color('#6b3f1f')},uEyeW:{value:0},uOutfit:{value:0},uTopOnly:{value:0},uFitted:{value:0},
    uZ1:{value:new THREE.Vector4(z.neckY,z.neckZ,z.waistY,z.bootY)},uZ2:{value:new THREE.Vector4(z.cuffX,z.armY,z.armZ,z.headY)},
@@ -469,13 +487,13 @@ vec3 riderSkin(vec3 t){ if(uSkinW<0.5)return t;
  return uSkin*pow(max(L/Lr,0.02),0.43)*mix(vec3(1.0),ch,0.54); }`;
  const HEAD_GLSL=`uniform vec3 uSkin,uShirt,uPants,uBoot,uHair,uEye; uniform float uSkinW,uEyeW,uOutfit,uTopOnly,uFitted,uHelmet,uBootMesh,uBootRef; uniform vec3 uSkinRef; uniform vec4 uZ1,uZ2,uHelm,uHelmR;`;
  function patchBody(mat,u){
-  mat.normalScale.set(.32,.32);mat.roughness=.74;
+  const detail=u.uRunway.value?.22:.32;mat.normalScale.set(detail,detail);mat.roughness=u.uRunway.value?.68:.74;
   mat.onBeforeCompile=sh=>{
    Object.assign(sh.uniforms,u);
    sh.vertexShader=sh.vertexShader
-    .replace('#include <common>','#include <common>\n'+HEAD_GLSL+'\nvarying vec3 vBind; varying vec3 vBindN;')
+    .replace('#include <common>','#include <common>\n'+HEAD_GLSL+'\nuniform mat4 uFaceBind; varying vec3 vFace; varying vec3 vBind; varying vec3 vBindN;')
     .replace('#include <begin_vertex>',`#include <begin_vertex>
- vBind=position; vBindN=normal;
+ vBind=position; vBindN=normal; vFace=(uFaceBind*vec4(position,1.0)).xyz;
  { float ax=abs(position.x);
    float arm=smoothstep(uZ2.y-0.20,uZ2.y-0.14,position.y)*smoothstep(0.17,0.20,ax);
    float boot=(1.0-smoothstep(uZ1.w-0.004,uZ1.w+0.002,position.y))*(1.0-arm)*(1.0-uBootMesh);
@@ -484,7 +502,7 @@ vec3 riderSkin(vec3 t){ if(uSkinW<0.5)return t;
    float cloth=(1.0-step(uZ1.x,position.y))*(1.0-arm*smoothstep(uZ2.x-0.01,uZ2.x,ax));
    transformed+=normal*(boot*(0.0055+rim*0.0022)+(1.0-boot)*cloth*0.0016)*(1.0-uOutfit); }`);
    sh.fragmentShader=sh.fragmentShader
-    .replace('#include <common>','#include <common>\n'+HEAD_GLSL+'\nvarying vec3 vBind; varying vec3 vBindN;\n'+SKIN_GLSL+CLOTH_GLSL+`
+    .replace('#include <common>','#include <common>\n'+HEAD_GLSL+'\nvarying vec3 vBind; varying vec3 vBindN;\n'+SKIN_GLSL+RIDER_FACE_GLSL+CLOTH_GLSL+`
 float rBand(float x,float a,float b){return step(a,x)*step(x,b);}
 float rHash(vec3 p){p=fract(p*0.3183099+vec3(0.1,0.2,0.3));p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
 float rNoise(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
@@ -539,15 +557,15 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    cloth=mix(cloth,vec3(0.78,0.70,0.52),buckle);
    cloth=mix(cloth,vec3(0.93,0.92,0.88),collar);
    cloth*=0.95+0.06*grain*(1.0-boot);
-   diffuseColor.rgb=mix(cloth,riderSkin(diffuseColor.rgb),skinZ);
+   diffuseColor.rgb=mix(cloth,riderFaceFinish(riderSkin(diffuseColor.rgb),diffuseColor.rgb,vFace),skinZ);
    rwSkinZ=skinZ; rwBoot=boot; rwSole=sole; rwMetal=buckle;
    rwRough=mix(mix(mix(riderFabricRoughness(),0.34,boot),0.5,belt),0.85,sole);
  }`)
-    .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\n roughnessFactor=mix(rwRough,roughnessFactor,rwSkinZ);')
+    .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\n roughnessFactor=mix(rwRough,roughnessFactor,rwSkinZ); roughnessFactor=mix(roughnessFactor,.46,riderLip(vFace)*uRunway*.55*rwSkinZ);')
     .replace('#include <metalnessmap_fragment>','#include <metalnessmap_fragment>\n metalnessFactor=max(metalnessFactor,rwMetal*0.85);')
     .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\n normal=normalize(mix(riderFabricNormal(nonPerturbedNormal,vBind,0.0),normal,max(rwSkinZ,rwBoot)));');
   };
-  mat.customProgramCacheKey=()=>'rider-body-appearance-1';
+  mat.customProgramCacheKey=()=>'rider-body-runway-1';
  }
  /* skin parts of an outfit (the Ranger's bare forearms), and an outfit's hands */
  function patchOutfit(mat,u,allSkin,part,reference=0.2,cut='shirt'){

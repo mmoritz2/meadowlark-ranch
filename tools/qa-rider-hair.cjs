@@ -23,7 +23,7 @@ const game=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8'),rj=
     const kit=await lib.kit(body);await lib.outfitFor(kit,'flannel');
     const fit={body,helmet:'none',hair:'#765a46',shirt:'#659c99',outfit:'flannel'};
     const rig=lib.build(kit,fit);await Promise.resolve();await Promise.resolve();scene.add(rig.root);rig.root.rotation.y=.55;
-    rig.action('idle').setEffectiveWeight(1);rig.mixer.update(.05);
+    rig.action('idle').setEffectiveWeight(1);rig.mixer.update(.05);cam.position.set(0,1.64+kit.proportionLift,1.58);cam.lookAt(0,1.53+kit.proportionLift,0);
     // Reverse the second body's choices to catch stale buffers shared between styles.
     const styles=RIDER_HAIR.filter(h=>h.body.includes(body));if(body==='m')styles.reverse();
     for(const h of styles){
@@ -41,11 +41,11 @@ const game=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8'),rj=
        const label=document.createElement('div');label.className='label';label.textContent=h.label;card.append(label);document.getElementById(helmet?'helmet':'bare').append(card);
        if(!helmet&&['ponytail','braid','bun','lowpony','sidebraid','twintails','curly','coils','croppedcoils','twists'].includes(h.id)){
         for(const [angle,name]of [[0,'front'],[1.57,'side'],[Math.PI,'back']]){
-         rig.root.rotation.y=angle;cam.position.set(0,1.64,.98);cam.lookAt(0,1.56,0);renderer.render(scene,cam);
+         rig.root.rotation.y=angle;cam.position.set(0,1.64+kit.proportionLift,.98);cam.lookAt(0,1.56+kit.proportionLift,0);renderer.render(scene,cam);
          const close=renderer.domElement.toDataURL('image/png');images.push({id:h.id+'-'+name,img:close});
          const detail=document.createElement('div');detail.className='card';detail.innerHTML='<img src="'+close+'"><div class="label">'+h.label+' · '+name+'</div>';document.getElementById('details').append(detail);
         }
-        rig.root.rotation.y=.55;cam.position.set(0,1.64,1.58);cam.lookAt(0,1.53,0);
+        rig.root.rotation.y=.55;cam.position.set(0,1.64+kit.proportionLift,1.58);cam.lookAt(0,1.53+kit.proportionLift,0);
        }
 
       }
@@ -53,11 +53,11 @@ const game=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8'),rj=
     }
     if(body==='f'){
      for(const style of ['ponytail','curly'])for(const [name,color]of [['Soft black','#221b1a'],['Chestnut','#68422d'],['Golden blond','#c3a064'],['Silver','#c2beb4']]){
-      rig.setLook({...fit,hairStyle:style,helmet:'none',hair:color});rig.root.rotation.y=.65;cam.position.set(0,1.64,1.03);cam.lookAt(0,1.56,0);renderer.render(scene,cam);
+      rig.setLook({...fit,hairStyle:style,helmet:'none',hair:color});rig.root.rotation.y=.65;cam.position.set(0,1.64+kit.proportionLift,1.03);cam.lookAt(0,1.56+kit.proportionLift,0);renderer.render(scene,cam);
       const img=renderer.domElement.toDataURL('image/png');images.push({id:style+'-'+name.toLowerCase().replace(/ /g,'-'),img});
       const card=document.createElement('div');card.className='card';card.innerHTML='<img src="'+img+'"><div class="label">'+style+' · '+name+'</div>';document.getElementById('palette').append(card);
      }
-     cam.position.set(0,1.64,1.58);cam.lookAt(0,1.53,0);
+     cam.position.set(0,1.64+kit.proportionLift,1.58);cam.lookAt(0,1.53+kit.proportionLift,0);
     }
     scene.remove(rig.root);rig.dispose();
    }

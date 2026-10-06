@@ -12,8 +12,8 @@
    and strip, market stall, English/Western saddles and headstalls) is inline in ranch3d.html
    because the boot pass pays tack rewards before any package installs. */
 import {buildHair} from '../rider-hair.js';   // the old sculpt's hair, for the fallback rider only
-import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=rider-pose-20261006';
-import {outfitPalette} from '../rider-clothes.js?v=rider-pose-20261006';
+import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=runway-20261006';
+import {outfitPalette} from '../rider-clothes.js?v=runway-20261006';
 import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=hair-20261006';
 export const id='tack-wardrobe';
 export function install(G){
@@ -352,8 +352,9 @@ export function install(G){
   standUp(R,dt,tt,Math.sin(tt*0.45)*0.25);
   if(!CH.drag)CH.spin+=0;                          // she holds still unless turned
   CH.holder.rotation.y=CH.spin;
-  if(CH.zoom){CH.cam.position.set(0,1.40,1.35);CH.cam.lookAt(0,1.36,0);}
-  else{CH.cam.position.set(0,1.00,4.1);CH.cam.lookAt(0,0.80,0);}
+  const lift=(R.rig?.kit.proportionLift||0)*CH.holder.scale.y;
+  if(CH.zoom){CH.cam.position.set(0,1.40+lift,1.35);CH.cam.lookAt(0,1.36+lift,0);}
+  else{CH.cam.position.set(0,1.00+lift*.5,4.1);CH.cam.lookAt(0,0.80+lift*.5,0);}
   CH.renderer.render(CH.scene,CH.cam);
  }
  /* Hair-style thumbnails, rendered off her own head, in her own hair colour: the reference
@@ -441,7 +442,7 @@ export function install(G){
    const sc=new THREE.Scene();sc.background=new THREE.Color('#ddd8c8');sc.add(new THREE.HemisphereLight(0xfff7e9,0x626758,2));
    const light=new THREE.DirectionalLight(0xfff2e2,2.5);light.position.set(2,3,4);sc.add(light);
    const cam=new THREE.PerspectiveCamera(30,1,.05,20),neck=slot==='neckwear';
-   cam.position.set(0,neck?1.50:1.66,neck?1.0:.78);cam.lookAt(0,neck?1.43:1.65,0);
+   cam.position.set(0,(neck?1.50:1.66)+kit.proportionLift,neck?1.0:.78);cam.lookAt(0,(neck?1.43:1.65)+kit.proportionLift,0);
    const base={body,hairStyle:'lowbun',hair:'#68422d',skin:'#e3a37d',helmet:'none',outfit:'riding',shirt:'#3d4a6e',eyewear:'none',earrings:'none',neckwear:'none'};
    rig=lib.build(kit,base);sc.add(rig.root);rig.root.rotation.y=slot==='earrings'?.60:.16;
    const idle=rig.action('idle');if(idle)idle.setEffectiveWeight(1);rig.mixer.update(.05);

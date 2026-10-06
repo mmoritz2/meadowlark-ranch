@@ -39,11 +39,14 @@ const RJ=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8').match
     for(const m of rig.outfit.meshes){m.skeleton.update();for(let i=0;i<m.geometry.attributes.position.count;i+=71){const p=m.getVertexPosition(i,new THREE.Vector3());if(![p.x,p.y,p.z].every(Number.isFinite))throw Error('Invalid animated clothing');}}
    }
    for(const [name,p]of kit.seat.local){rig.bones[name].position.copy(p.p);rig.bones[name].quaternion.copy(p.q);}rig.root.rotation.y=1.3;rig.root.updateMatrixWorld(true);renderer.render(scene,cam);images.push({id:body+'-seated',img:renderer.domElement.toDataURL('image/png')});
-   checks.push({body,controllerDelta,loopDelta,loopBone,spacing,transitionStep,transitionFrame,phaseGap,phaseStep,hands});scene.remove(R.g);direct.dispose();rig.dispose();
+   let fingerDelta=0;R._sync();R.locomote(1/60,{speed:0});
+   for(const [name,q]of kit.seat.relax)fingerDelta=Math.max(fingerDelta,angle(rig.bones[name].quaternion,q));
+   if(kit.seat.relax.size!==30)throw Error('Missing finger relaxation targets');
+   checks.push({body,fingerDelta,controllerDelta,loopDelta,loopBone,spacing,transitionStep,transitionFrame,phaseGap,phaseStep,hands});scene.remove(R.g);direct.dispose();rig.dispose();
   }
   renderer.dispose();return {checks,images};
  });
  for(const {id,img}of result.images)fs.writeFileSync(path.join(out,id+'.png'),Buffer.from(img.split(',')[1],'base64'));delete result.images;result.errors=errors;fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(result,null,2));
- assert.deepEqual(errors,[]);for(const c of result.checks){assert(c.controllerDelta<1e-6,'Idle differs between preview and game');assert(c.loopDelta<.003,'Idle loop jumps');assert(c.spacing>.16&&c.spacing<.37,'Unnatural idle foot spacing');assert(c.phaseGap<1e-6&&c.phaseStep<.04,'Gait phase jumps during a speed change');assert(c.transitionStep<.08,'Walk transition moves a hand more than 8 cm in one frame');for(const h of c.hands){assert(h.elbowBend>155&&h.elbowBend<179,'Elbow is locked or excessively bent');assert(h.wristBend<12,'Bent wrist');assert(h.thumbForward>.8,'Palm turns away from thigh');assert(h.hipClearance>.07,'Hand overlaps hip');}}
+ assert.deepEqual(errors,[]);for(const c of result.checks){assert(c.fingerDelta<.15,'Riding grip persists after dismount');assert(c.controllerDelta<1e-6,'Idle differs between preview and game');assert(c.loopDelta<.003,'Idle loop jumps');assert(c.spacing>.16&&c.spacing<.37,'Unnatural idle foot spacing');assert(c.phaseGap<1e-6&&c.phaseStep<.04,'Gait phase jumps during a speed change');assert(c.transitionStep<.08,'Walk transition moves a hand more than 8 cm in one frame');for(const h of c.hands){assert(h.elbowBend>155&&h.elbowBend<179,'Elbow is locked or excessively bent');assert(h.wristBend<12,'Bent wrist');assert(h.thumbForward>.8,'Palm turns away from thigh');assert(h.hipClearance>.07,'Hand overlaps hip');}}
  console.log('PASS: shared idle pose, relaxed elbows/wrists, narrow stance, seamless loop, walk/jog transitions and finite clothing on both bodies. '+out);
  }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -262,3 +262,45 @@ function smoothHairNormals(geo){
  for(let i=0;i<p.count;i++){const key=[p.getX(i),p.getY(i),p.getZ(i)].map(v=>Math.round(v*100000)).join(',');if(!groups.has(key))groups.set(key,[]);groups.get(key).push(i);}
  for(const ids of groups.values()){let x=0,y=0,z=0;for(const i of ids){x+=n.getX(i);y+=n.getY(i);z+=n.getZ(i);}const length=Math.hypot(x,y,z)||1;for(const i of ids)n.setXYZ(i,x/length,y/length,z/length);}
 }
+
+/* Subdivide the source locks once, sharing positional adjacency across UV seams.
+   UVs stay on their own charts; scalp projection keeps the crown above the head. */
+export function polishHairSurface(THREE,source,kit){
+ const pos=source.attributes.position,uv=source.attributes.uv,weld=new Map(),vertices=[],ids=[];
+ for(let i=0;i<pos.count;i++){
+  const p=new THREE.Vector3().fromBufferAttribute(pos,i),key=[p.x,p.y,p.z].map(v=>Math.round(v*1e5)).join(',');
+  if(!weld.has(key)){weld.set(key,vertices.length);vertices.push({p,near:new Set(),boundary:new Set()});}ids.push(weld.get(key));
+ }
+ const indices=source.index?Array.from(source.index.array):Array.from({length:pos.count},(_,i)=>i),edges=new Map();
+ const edgeKey=(a,b)=>a<b?a+':'+b:b+':'+a;
+ for(let i=0;i<indices.length;i+=3){const tri=indices.slice(i,i+3).map(n=>ids[n]);for(let j=0;j<3;j++){
+  const a=tri[j],b=tri[(j+1)%3],opposite=tri[(j+2)%3];if(a===b)continue;
+  vertices[a].near.add(b);vertices[b].near.add(a);const key=edgeKey(a,b);
+  if(!edges.has(key))edges.set(key,{a,b,opposite:[]});edges.get(key).opposite.push(opposite);
+ }}
+ for(const e of edges.values())if(e.opposite.length===1){vertices[e.a].boundary.add(e.b);vertices[e.b].boundary.add(e.a);}
+ const constrain=p=>{
+  if(p.y>.09){const scalp=scalpPoint(THREE,kit,p,.0018),center=new THREE.Vector3(kit.head.cx,kit.head.cy,kit.head.cz);
+   if(p.distanceToSquared(center)<scalp.distanceToSquared(center))p.copy(scalp);}
+  return p;
+ };
+ const smooth=vertices.map(v=>{
+  const ns=[...v.near],bs=[...v.boundary],p=v.p.clone();
+  if(bs.length===2){p.multiplyScalar(.75);for(const n of bs)p.addScaledVector(vertices[n].p,.125);}
+  else if(bs.length===0&&ns.length>2){const beta=ns.length===3?3/16:3/(8*ns.length);p.multiplyScalar(1-ns.length*beta);for(const n of ns)p.addScaledVector(vertices[n].p,beta);}
+  return constrain(p);
+ });
+ for(const e of edges.values()){
+  e.p=vertices[e.a].p.clone().add(vertices[e.b].p).multiplyScalar(e.opposite.length===2?.375:.5);
+  if(e.opposite.length===2)for(const n of e.opposite)e.p.addScaledVector(vertices[n].p,.125);constrain(e.p);
+ }
+ const positions=[],uvs=[],faces=[],seams=new Map();
+ for(let i=0;i<indices.length;i+=3){
+  const original=indices.slice(i,i+3),v=original.map(n=>ids[n]);if(new Set(v).size<3)continue;
+  const points=v.map(n=>smooth[n]),tex=original.map(n=>new THREE.Vector2(uv.getX(n),uv.getY(n)));
+  for(let j=0;j<3;j++){points.push(edges.get(edgeKey(v[j],v[(j+1)%3])).p);tex.push(tex[j].clone().lerp(tex[(j+1)%3],.5));}
+  for(const tri of [[0,3,5],[3,1,4],[5,4,2],[3,4,5]])for(const n of tri){const values=[...points[n].toArray(),...tex[n].toArray()],key=values.map(v=>Math.round(v*1e6)).join(',');if(!seams.has(key)){seams.set(key,positions.length/3);positions.push(...values.slice(0,3));uvs.push(...values.slice(3));}faces.push(seams.get(key));}
+ }
+ const geo=new THREE.BufferGeometry();geo.setIndex(faces);geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
+ smoothHairNormals(geo);geo.computeBoundingSphere();return geo;
+}

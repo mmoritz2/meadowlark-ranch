@@ -24,7 +24,7 @@ const rj=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8').match
     for(const [slot,items] of Object.entries(RIDER_ACCESSORIES))for(const item of items.filter(i=>i.id!=='none'))for(const helmet of [false,true]){
      const chosen={...fit,[slot]:item.id,helmet:helmet?'#2e2e38':'none'};rig.setLook(chosen);
      const neck=slot==='neckwear';rig.root.rotation.y=slot==='earrings'?.62:.12;
-     cam.position.set(0,neck?1.48:1.67,neck?1.10:.82);cam.lookAt(0,neck?1.40:1.63,0);renderer.render(scene,cam);
+     cam.position.set(0,(neck?1.48:1.67)+kit.proportionLift,neck?1.10:.82);cam.lookAt(0,(neck?1.40:1.63)+kit.proportionLift,0);renderer.render(scene,cam);
      const current=rig.accessories,root=current.roots[0];let finite=true,meshes=0;
      root.traverse(m=>{if(m.isMesh){meshes++;finite=finite&&Array.from(m.geometry.attributes.position.array).every(Number.isFinite);
       if(neck){const p=m.geometry.attributes.position,j=m.geometry.attributes.skinIndex,w=m.geometry.attributes.skinWeight;for(let i=0;i<p.count;i++){

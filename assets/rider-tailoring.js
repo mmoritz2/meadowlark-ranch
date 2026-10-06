@@ -30,7 +30,7 @@ function clothSkin(THREE,kit){
  for(let i=0;i<pos.count;i++){const v=new THREE.Vector3().fromBufferAttribute(pos,i),key=v.toArray().map(v=>Math.round(v*100000)).join(',');let id=lookup.get(key);if(id===undefined){id=groups.length;lookup.set(key,id);groups.push({p:v,vertices:[],near:new Set()});}groups[id].vertices.push(i);ids.push(id);}
  for(let i=0;i<ids.length;i+=3)for(let j=0;j<3;j++){const a=ids[i+j],b=ids[i+(j+1)%3];groups[a].near.add(b);groups[b].near.add(a);}
  for(let pass=0;pass<10;pass++){
-  const next=groups.map(g=>{const {x,y,z}=g.p,weight=smooth(.76,.88,y)*(1-smooth(1.36,1.46,y))*(1-smooth(.20,.27,Math.abs(x)));if(!weight||!g.near.size)return g.p.clone();const mean=new THREE.Vector3();for(const i of g.near)mean.add(groups[i].p);mean.divideScalar(g.near.size);return g.p.clone().lerp(mean,.52*weight);});
+  const next=groups.map(g=>{const {x,z}=g.p,y=g.p.y-(kit.proportionLift||0),weight=smooth(.76,.88,y)*(1-smooth(1.36,1.46,y))*(1-smooth(.20,.27,Math.abs(x)));if(!weight||!g.near.size)return g.p.clone();const mean=new THREE.Vector3();for(const i of g.near)mean.add(groups[i].p);mean.divideScalar(g.near.size);return g.p.clone().lerp(mean,.52*weight);});
   groups.forEach((g,i)=>g.p.copy(next[i]));
  }
  for(const g of groups)for(const i of g.vertices)pos.setXYZ(i,g.p.x,g.p.y,g.p.z);
@@ -69,8 +69,8 @@ export function tailoredTop(THREE,kit,outfit,layer='outer'){
   const yy=hem-.006+(topY-hem+.006)*j/rows,a=edge[i%columns].a,dir=new THREE.Vector3(Math.sin(a),0,Math.cos(a)),origin=new THREE.Vector3(0,yy,-.025);
   const sampleY=Math.max(z.waistY-.10,yy),bodyHit=bodySampler.cast(new THREE.Vector3(0,sampleY,-.025),dir);
   if(!bodyHit)throw Error('Could not sample cloth joint weights');
-  const rx=(kit.body==='f'?.137:.159)+.040*(1-smooth(z.waistY+.005,z.waistY+.110,yy))+.038*(1-smooth(z.waistY-.10,z.waistY+.01,yy))+.022*smooth(z.waistY+.18,topY,yy)+ease;
-  const frontZ=(kit.body==='f'?.091:.108)+.032*smooth(z.waistY+.030,z.waistY+.14,yy)+ease,backZ=-.172+.063*smooth(z.waistY+.010,z.waistY+.19,yy)-ease,cos=Math.cos(a);
+  const rx=(kit.body==='f'?.128:.159)+(kit.body==='f'?.034:.040)*(1-smooth(z.waistY+.005,z.waistY+.110,yy))+(kit.body==='f'?.033:.038)*(1-smooth(z.waistY-.10,z.waistY+.01,yy))+(kit.body==='f'?.026:.022)*smooth(z.waistY+.18,topY,yy)+ease;
+  const frontZ=(kit.body==='f'?.088:.108)+.032*smooth(z.waistY+.030,z.waistY+.14,yy)+ease,backZ=(kit.body==='f'?-.164:-.172)+(kit.body==='f'?.058:.063)*smooth(z.waistY+.010,z.waistY+.19,yy)-ease,cos=Math.cos(a);
   const pt=new THREE.Vector3(Math.sin(a)*rx,yy,(frontZ+backZ)*.5+Math.sign(cos)*Math.abs(cos)**.66*(frontZ-backZ)*.5),join=smooth(topY-.070,topY,yy),hit=join&&sampler.cast(origin,dir);
   if(hit)pt.lerp(hit.point,join);if(j===rows)pt.copy(edge[i%columns].p);
   const fold=(Math.sin(a*9+yy*7)*.0008+Math.sin(a*15-yy*11)*.0005)*(1-join)*Math.exp(-1*((yy-hem-.035)/.065)**2);pt.addScaledVector(dir,fold);
