@@ -315,7 +315,7 @@ export function install(G){
   geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
   geo.setAttribute('color',new THREE.Float32BufferAttribute(col,4));
   geo.setIndex(idx); geo.computeVertexNormals(); geo.computeBoundingSphere();
-  const mat=new THREE.MeshStandardMaterial({map:roadTexture('albedo',true),color:0xc0b3a0,
+  const mat=new THREE.MeshStandardMaterial({map:roadTexture('albedo',true),color:0xb29878,
    normalMap:roadTexture('normal'),normalScale:new THREE.Vector2(.28,.28),roughnessMap:roadTexture('roughness'),
    vertexColors:true,transparent:true,roughness:1,
    metalness:0,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-6});

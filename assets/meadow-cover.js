@@ -1,26 +1,33 @@
-// Fine meadow blades at botanical scale, keeping the existing triangle budget.
-// Upright tips, low spreading leaves and an occasional
-// straw blade share one inexpensive tuft. Every blade tapers to a curved point.
-export function createGrassTuftGeometry(THREE,{bladeCount=16}={}) {
+// Broad, curved meadow leaves with dark roots and green tips. Twelve leaves
+// replace sixteen fine blades, increasing readable coverage with less geometry.
+export function createGrassTuftGeometry(THREE,{bladeCount=12}={}) {
   const P=[],N=[],C=[],U=[],I=[];
   for(let blade=0;blade<bladeCount;blade++) {
     const a=blade*2.39996,spread=.035+(blade%6)*.045;
     const ox=Math.cos(a)*spread,oz=Math.sin(a)*spread;
-    const tall=blade%3===0,h=tall?.48+(blade%4)*.055:.24+(blade%5)*.032;
-    const bend=tall?.12+(blade%3)*.024:.20+(blade%3)*.030,width=.014+(blade%4)*.003;
+    const tall=blade%3!==1,h=tall?.57+(blade%4)*.065:.25+(blade%5)*.038;
+    const bend=tall?.15+(blade%3)*.028:.23+(blade%3)*.035,width=.024+(blade%4)*.004;
     const ca=Math.cos(a),sa=Math.sin(a),base=P.length/3;
     for(const t of [0,.55,1])for(const side of t===1?[0]:[-1,1]){
       const w=width*(1-t*.80)*side;
       P.push(ox+ca*bend*t*t-sa*w,h*t*(1-.14*t),oz+sa*bend*t*t+ca*w);
       N.push(ca*.32,.895,sa*.32);
-      const shade=.48+t*.52,dry=blade%11===0;
-      C.push(shade*(dry?1.12:.88),shade*(dry?.99:1),shade*(dry?.58:.73));U.push((side+1)/2,t);
+      const shade=.25+t*.75,dry=blade%13===0;
+      C.push(shade*(dry?1.06:.83),shade*(dry?.94:1),shade*(dry?.48:.62));U.push((side+1)/2,t);
     }
     I.push(base,base+1,base+2,base+1,base+3,base+2,base+2,base+3,base+4);
   }
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
   g.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));
   g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);g.computeBoundingSphere();return g;
+}
+
+// One world-space palette keeps near tufts and the distant sward in the same
+// colour family. These values are linear, matching THREE.Color.setHSL.
+export function meadowBladeColor(color,x,z,variation=.5){
+  const patch=.5+.5*Math.sin(x*.047+Math.sin(z*.036)*1.8);
+  const warm=.5+.5*Math.sin(z*.021+x*.034);
+  return color.setHSL(.215+patch*.034,.60+variation*.10,.13+variation*.048+warm*.020);
 }
 
 // Fully modelled lupin: palmate foliage and a spiral of cupped pea flowers.
@@ -46,7 +53,7 @@ export function createLupinGeometry(THREE){
   }
   for(let ring=0;ring<9;ring++)for(let petal=0;petal<3;petal++){
     const t=ring/9,a=petal*Math.PI*2/3+ring*1.23,y=.33+t*.44;
-    const r=.062*(1-t*.72),c=Math.cos(a),s=Math.sin(a),bx=.028*y/.78;
+    const r=.105*(1-t*.72),c=Math.cos(a),s=Math.sin(a),bx=.028*y/.78;
     const base=[bx+c*.009,y-.012,s*.009],tip=[bx+c*r,y+.025,s*r];
     const left=[bx+c*r*.63-s*r*.52,y-.008,s*r*.63+c*r*.52];
     const right=[bx+c*r*.63+s*r*.52,y-.008,s*r*.63-c*r*.52];
@@ -97,7 +104,7 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         pos.set(px,0,pz);q.setFromAxisAngle(up,c*Math.PI);
         if(canGrow(px,pz)){const trim=1-.67*managedAt(px,pz);pos.y=heightAt(px,pz)-.03;scale.set(2.1+c*.6,trim*(.85+b*.3),2.1+c*.6);}
         else scale.setScalar(0);
-        matrix.compose(pos,q,scale);mesh.setMatrixAt(id,matrix);color.setHSL(.222+a*.028,.48+b*.13,.235+c*.070);mesh.setColorAt(id,color);
+        matrix.compose(pos,q,scale);mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);mesh.setColorAt(id,color);
       }
     }
     mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;

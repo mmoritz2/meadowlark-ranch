@@ -279,6 +279,15 @@ in `output/world-finish/`. These improvements do not establish AAA or commercial
 reference parity: several characters, landmarks and props still use stylized
 geometry, and reflections approximate one nearby horizontal water surface.
 
+The October 6 reference-matching pasture pass uses broader curved grass leaves,
+a shared green palette for near and distant grass, larger lupin flowers in denser
+banks, and warmer earth tracks. Near tufts use twelve blades rather than sixteen.
+Only planted flower instances are submitted to the GPU; revisiting a cell restores
+the same stems and colours. `qa-country-world.cjs` checks that compaction, path
+clearance, grounded placement and repeatable layouts. This is an incremental
+visual pass toward the official Star Equestrian countryside reference; matching
+the entire reference world remains ongoing work.
+
 The world uses a denser terrain mesh with matching riding collision, continuous
 downhill river and creek channels, an arched bridge at the actual crossing, and
 surface materials that blend with slope, tree cover, riverbanks and climate.

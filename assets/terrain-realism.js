@@ -72,7 +72,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v9-pastoral';
+  material.customProgramCacheKey = () => 'terrain-biomes-v10-pastoral';
   material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
@@ -147,7 +147,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
          mean and the result was a landscape that varied on paper and read as one colour from
          forty metres — this pushes the common middle out towards both ends. */
       float dryness = smoothstep(0.17,0.83, macro*0.55 + region*0.45);
-      vec3 tint = mix(vec3(.79,.92,.70), vec3(.97,.98,.79), dryness);
+      vec3 tint = mix(vec3(.72,.85,.50), vec3(.87,.93,.64), dryness);
       /* How heavy the sward is, which the eye reads as VALUE rather than hue: thin turf over
          hard ground is paler and greyer, a deep bite of grass is darker. This is the term that
          carries the middle distance — forty to two hundred metres, where the albedo has mipped

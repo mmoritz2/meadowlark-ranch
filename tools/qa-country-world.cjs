@@ -48,9 +48,11 @@ const state=await page.evaluate(async()=>{
   plantError=Math.max(plantError,Math.abs(pos.y+.03-q.groundH(pos.x,pos.z)));
   if(q.G.world.pathDist(pos.x,pos.z)<2.6||q.G.worldPaths.trackDist(pos.x,pos.z)<3.2)plantsOnRoad++;
  }
+ const flowerDraw=flower.count,flowerLayout=Array.from(flower.instanceMatrix.array.slice(0,flowerDraw*16)),flowerColors=Array.from(flower.instanceColor.array.slice(0,flowerDraw*3));
  const middleLayout=Array.from(mid.instanceMatrix.array);q.nearGrass.tick(2,190,30);q.nearGrass.tick(3,-52,44);
  const middleStable=middleLayout.every((v,i)=>v===mid.instanceMatrix.array[i]);
- const fields={samples,anchors:FIELD_ANCHORS.every(([x,z])=>pastureRise(x,z)===0),flowerCount,midCount,
+ const flowerStable=flower.count===flowerDraw&&flowerLayout.every((v,i)=>v===flower.instanceMatrix.array[i])&&flowerColors.every((v,i)=>v===flower.instanceColor.array[i]);
+ const fields={flowerDraw,flowerStable,nearTriangles:q.nearGrass.near.geometry.index.count/3*q.nearGrass.near.count,samples,anchors:FIELD_ANCHORS.every(([x,z])=>pastureRise(x,z)===0),flowerCount,midCount,
   flowerTriangles:flower.geometry.index.count/3,middleTriangles:mid.count*mid.geometry.index.count/3,
   plantError,plantsOnRoad,middleStable};
  const cottages=[];q.scene.traverse(o=>{if(o.userData.architecture?.kind==='cottage')cottages.push(o);});
@@ -68,7 +70,8 @@ const checks={
  protectedYards:state.fields.anchors,adaptiveGrassBudget:state.tiers[0].meadowTriangles<state.tiers[1].meadowTriangles&&state.tiers[1].meadowTriangles<state.tiers[2].meadowTriangles,modelledFlowerColonies:state.fields.flowerCount>90&&state.fields.flowerTriangles<=150,
  middleMeadow:state.fields.midCount>8000&&state.fields.middleTriangles<=1000000,
  groundedCover:state.fields.plantError<.001&&state.fields.plantsOnRoad===0,
- repeatableMeadow:state.fields.middleStable,
+ repeatableMeadow:state.fields.middleStable&&state.fields.flowerStable,
+ compactFlowerDraws:state.fields.flowerDraw===state.fields.flowerCount,
  leafyLowlands:state.canopies>150,allAuthoredLeaves:state.leafTriangles===88336,
  treeBudget:state.tiers.every(t=>t.triangles<=t.budget)&&state.tiers[0].trees===0,
  noSinkingLayout:state.stableLayout&&state.trunkAnchors,cottageGardens:state.gardens===state.cottages&&state.completeGardens&&state.gardens>=8,villageShopfronts:state.villageShops===2,
