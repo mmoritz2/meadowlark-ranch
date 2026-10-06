@@ -36,7 +36,7 @@
 
    Pure module: THREE and friends are injected, nothing runs at import time. */
 
-import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=couture-20261006';
+import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=rider-shape-20261006';
 export {RIDER_OUTFITS};
 import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown} from './rider-hairstyles.js?v=hair-20261006';
 import {refineRiderFace} from './rider-face.js?v=art-20261005';
@@ -157,35 +157,66 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   return {body,scene,skin,eyes,brows,bones,seat,zones,clips,hair,head,helmetGeo,materials:{body:skin.material,eyes:eyes&&eyes.material,brows:brows&&brows.material},outfits:{}};
  }
 
- /* She is a superhero body in the source, built for capes: broad in the arm, heavy in the thigh and
-    the bust. Riding clothes fit close, so take a little off, once, in the bind pose (the outfits cover
-    the body, so they never meet the difference). */
+ /* Reshape the source's exaggerated muscle volumes in the bind pose. Keep joint
+    centers and hand positions fixed so the same animation and rein grips still fit;
+    clothing is constructed from this edited surface. */
  function slim(geo,body,L){
   if(geo.userData.slimmed)return; geo.userData.slimmed=true;
   const p=geo.attributes.position, sm=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
-  const F=body==='f';
-  const armK=F?0.90:0.95, foreK=F?0.93:0.97, thighK=F?0.92:0.97, bustK=F?0.70:1;
+  const F=body==='f',thighK=F?.89:.97,bustK=F?.70:1;
   for(let i=0;i<p.count;i++){
    let x=p.getX(i),y=p.getY(i),z=p.getZ(i); const ax=Math.abs(x);
-   /* arms: in towards the bone, most in the upper arm, none at the hand */
-   if(ax>L.arm.x&&y>L.arm.y-0.16){
-    const inArm=sm(L.arm.x,L.arm.x+0.07,ax)*(1-sm(L.hand.x-0.03,L.hand.x+0.01,ax));
-    const k=1-(1-(ax<L.elbow.x?armK:foreK))*inArm;
+   if(F){
+    // Include the deltoid at the shoulder, not just the arm beyond it. Blend
+    // through the elbow and back to the original wrist without a sudden step.
+    const arm=sm(L.arm.x-.067,L.arm.x+.022,ax)
+     *(1-sm(L.hand.x-.095,L.hand.x-.006,ax))
+     *sm(L.arm.y-.18,L.arm.y-.095,y)*(1-sm(L.neck.y-.005,L.neck.y+.045,y));
+    const fore=sm(L.elbow.x-.065,L.elbow.x+.055,ax),a=ax<L.elbow.x?L.arm:L.elbow,b=ax<L.elbow.x?L.elbow:L.hand;
+    const t=Math.max(0,Math.min(1,(ax-a.x)/(b.x-a.x))),cy=a.y+(b.y-a.y)*t,cz=a.z+(b.z-a.z)*t;
+    y=cy+(y-cy)*(1-arm*(.31-.035*fore));
+    z=cz+(z-cz)*(1-arm*(.29-.03*fore));
+   }else if(ax>L.arm.x&&y>L.arm.y-.16){
+    const inArm=sm(L.arm.x,L.arm.x+.07,ax)*(1-sm(L.hand.x-.03,L.hand.x+.01,ax));
+    const k=1-(1-(ax<L.elbow.x?.95:.97))*inArm;
     y=L.arm.y+(y-L.arm.y)*k; z=L.arm.z+(z-L.arm.z)*k;
    }
-   /* thighs: towards the leg's axis, fading out at the knee and at the hip */
-   if(y<L.thigh.y&&y>L.calf.y&&ax>0.015){
-    const t=sm(L.calf.y+0.02,L.calf.y+0.16,y)*(1-sm(L.thigh.y-0.12,L.thigh.y-0.02,y));
-    const k=1-(1-thighK)*t, cx=Math.sign(x)*L.thigh.x, cz=-0.045;
+   // Ease the outer thigh into the unchanged hip and knee.
+   if(y<L.thigh.y&&y>L.calf.y&&ax>.015){
+    const t=sm(L.calf.y+.02,L.calf.y+.16,y)*(1-sm(L.thigh.y-.12,L.thigh.y-.02,y));
+    const k=1-(1-thighK)*t,cx=Math.sign(x)*L.thigh.x,cz=-.045;
     x=cx+(x-cx)*k; z=cz+(z-cz)*k;
    }
-   /* bust: the forward swell pulled back towards the chest wall */
-   if(bustK<1&&z>0.03&&ax<0.17&&y>L.neck.y-0.30&&y<L.neck.y-0.06){
-    const t=sm(L.neck.y-0.30,L.neck.y-0.22,y)*(1-sm(L.neck.y-0.13,L.neck.y-0.06,y))*(1-sm(0.12,0.17,ax));
-    z=0.03+(z-0.03)*(1-(1-bustK)*t);
+   if(bustK<1&&z>.03&&ax<.17&&y>L.neck.y-.30&&y<L.neck.y-.06){
+    const t=sm(L.neck.y-.30,L.neck.y-.22,y)*(1-sm(L.neck.y-.13,L.neck.y-.06,y))*(1-sm(.12,.17,ax));
+    z=.03+(z-.03)*(1-(1-bustK)*t);
    }
    p.setXYZ(i,x,y,z);
   }
+  if(F){
+   // Soften the sculpted biceps/forearm ridges across welded UV seams. Only
+   // cross-sections move: arm length, wrists, hands and every skin weight stay fixed.
+   const groups=[],lookup=new Map(),ids=[],index=geo.index;
+   for(let i=0;i<p.count;i++){
+    const point=V(p.getX(i),p.getY(i),p.getZ(i)),key=point.toArray().map(v=>Math.round(v*1e5)).join(',');
+    let id=lookup.get(key);if(id===undefined){id=groups.length;lookup.set(key,id);groups.push({point,vertices:[],near:new Set()});}
+    groups[id].vertices.push(i);ids.push(id);
+   }
+   for(let i=0;i<(index?index.count:p.count);i+=3)for(let j=0;j<3;j++){
+    const a=ids[index?index.getX(i+j):i+j],b=ids[index?index.getX(i+(j+1)%3):i+(j+1)%3];groups[a].near.add(b);groups[b].near.add(a);
+   }
+   for(let pass=0;pass<3;pass++){
+    const next=groups.map(g=>{
+     const {x,y}=g.point,ax=Math.abs(x),weight=sm(L.arm.x-.045,L.arm.x+.035,ax)*(1-sm(L.hand.x-.12,L.hand.x-.03,ax))*sm(L.arm.y-.13,L.arm.y-.075,y);
+     if(!weight||!g.near.size||y>L.neck.y)return g.point.clone();
+     const mean=V(0,0,0);for(const i of g.near)mean.add(groups[i].point);mean.divideScalar(g.near.size);
+     const point=g.point.clone().lerp(mean,.28*weight);point.x=x;return point;
+    });
+    groups.forEach((g,i)=>g.point.copy(next[i]));
+   }
+   for(const g of groups)for(const i of g.vertices)p.setXYZ(i,g.point.x,g.point.y,g.point.z);
+  }
+  // refineRiderFace recomputes seam-averaged normals after both sculpt passes.
   p.needsUpdate=true; geo.computeBoundingSphere();
  }
 
