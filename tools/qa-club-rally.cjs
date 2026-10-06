@@ -1,0 +1,105 @@
+/* Club Rally acceptance uses a disposable browser save and local broker seam.
+ * All WebSockets are blocked; no club, chat, friend, or ride packet reaches users.
+ * One Rush uses small player-only simulated steps through the real course engine;
+ * this verifies integration, not obstacle traversal or keyboard playability. */
+const QA=require('./qa-platform.cjs'),fs=require('node:fs'),assert=require('node:assert/strict');
+const out=process.env.QA_OUT||require('node:path').join(require('node:os').tmpdir(),'meadowlark-club-rally');
+const report={checks:[],errors:[],layouts:{}};let browser;
+const check=(ok,label,detail)=>{assert.ok(ok,label+(detail?' — '+JSON.stringify(detail):''));report.checks.push(label);console.log('PASS '+label);};
+async function boot(page){
+ await page.goto(QA.BASE+'/ranch3d.html?qa=club-rally&emoji=0',{timeout:120000});
+ try{await page.waitForFunction(()=>window.__features?.clubRally&&__features.clubHub&&__features.clubRides&&!document.getElementById('load'),null,{timeout:150000});}
+ catch(error){report.boot=await page.evaluate(()=>({features:!!window.__features,rally:!!window.__features?.clubRally,load:document.getElementById('load')?.textContent,errors:window.__features?.errors}));throw error;}
+ await page.evaluate(()=>{
+  const G=__features;advanceTime(0);G.save.sync(s=>{s.rider.made=true;s.nick='Rowan';});G.wardrobe.closeChar();G.hidePanels();G.seFrame?.settle();G.audio.setMuted(true);G.riding.releaseAll();document.activeElement?.blur();
+  window.__qaPackets=[];G.net.publish=(topic,payload,options)=>{__qaPackets.push({topic,payload,options});return true;};G.net.netConnect=()=>{};
+  window.__qaConnect=()=>{G.net.net.client={connected:true,publish(topic,payload){__qaPackets.push({topic,payload:JSON.parse(payload)});},subscribe(){},end(){}};G.net.net.club=G.clubs.identity().code;G.run('connect');};
+  window.__qaStep=ms=>{const render=G.renderer.render;G.renderer.render=function(scene,camera,...rest){if(camera!==G.camera)return render.call(this,scene,camera,...rest);};try{advanceTime(ms);}finally{G.renderer.render=render;}};
+  window.__qaIdle=ms=>{G.horse.player.speed=0;G.riding.releaseAll();__qaStep(ms);};
+  window.__qaState=()=>{const s=G.save.fresh();return {rally:G.clubRally.snapshot(),coins:s.coins,gems:s.gems,raw:s.clubRally};};
+  window.__qaPasture=()=>{const c=G.course.get(),p=G.horse.player;if(!c?.ev?.rush)throw Error('No Rush');let n=0;while(G.course.get()===c&&c.idx<c.jumps.length){if(++n>7000)throw Error('Traversal stalled at '+c.idx);const t=c.jumps[c.idx];if(t.kind!=='gate')throw Error('Pasture must contain only gates');const dx=t.x-p.pos.x,dz=t.z-p.pos.z,d=Math.hypot(dx,dz);p.heading=Math.atan2(dx,dz);p.speed=4;if(d){const step=Math.min(.06,d);p.pos.x+=dx/d*step;p.pos.z+=dz/d*step;}__qaStep(20);}G.riding.releaseAll();p.speed=0;return {completed:c.idx,total:c.jumps.length,result:G.ranchRush.lastResult,state:__qaState()};};
+  __qaIdle(1500);
+ });
+ await page.waitForFunction(()=>__features.horse.RIG().ready&&!__features.horse.RIG().loadingBreed,null,{timeout:90000});await page.evaluate(()=>__qaIdle(1500));
+}
+async function shot(page,name){await page.evaluate(()=>advanceTime(0));await page.screenshot({path:out+'/'+name+'.png'});}
+async function show(page,tab){await page.evaluate(tab=>__features.clubHub.open(tab),tab);}
+async function layout(page,tab,width,height){
+ await page.setViewportSize({width,height});await show(page,tab);
+ const data=await page.locator('#clubHubPanel').evaluate(p=>{const m=p.querySelector('.ch-main'),r=p.getBoundingClientRect(),b=m.getBoundingClientRect();return {width:m.clientWidth,scroll:m.scrollWidth,panel:{left:r.left,right:r.right,bottom:r.bottom},focus:p.contains(document.activeElement),buttons:[...m.querySelectorAll('button')].filter(e=>e.offsetParent).map(e=>{const r=e.getBoundingClientRect();return {text:e.innerText,left:r.left,right:r.right,height:r.height,visible:r.top>=b.top&&r.bottom<=b.bottom};})};});
+ report.layouts[width+'x'+height+'-'+tab]=data;check(data.scroll<=data.width+1&&data.panel.left>=-1&&data.panel.right<=width+1&&data.panel.bottom<=height+1,tab+' fits '+width+'×'+height,data);check(data.focus,tab+' owns dialog focus at '+width+'px');await shot(page,tab+'-'+width+'x'+height);return data;
+}
+async function waitingHud(page){
+ await page.setViewportSize({width:390,height:844});await page.evaluate(()=>{document.body.classList.add('touch');__features.clubHub.close();__qaIdle(1200);});
+ await page.evaluate(()=>advanceTime(0));await page.waitForTimeout(300);
+ const hud=await page.evaluate(()=>{const rect=id=>{const e=document.getElementById(id);return e&&getComputedStyle(e).display!=='none'&&getComputedStyle(e).visibility!=='hidden'?e.getBoundingClientRect().toJSON():null;};return {party:rect('clubRideStatus'),quick:rect('rushQuick'),stick:rect('stickZone'),jump:rect('seJump')};});report.hud=hud;
+  const overlaps=(a,b)=>a&&b&&a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
+  check(hud.party&&hud.party.left>=0&&hud.party.right<=390&&!overlaps(hud.party,hud.quick)&&!overlaps(hud.party,hud.stick)&&!overlaps(hud.party,hud.jump),'Waiting club status does not overlap adventure quick entry or riding controls',hud);await shot(page,'waiting-party-phone');
+}
+(async()=>{
+ fs.mkdirSync(out,{recursive:true});browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});const context=await browser.newContext({viewport:{width:1440,height:940},timezoneId:'UTC',serviceWorkers:'block'}),page=await context.newPage();await page.routeWebSocket('**',ws=>ws.close());page.on('pageerror',e=>report.errors.push(e.message));page.on('dialog',d=>d.accept());
+ try{
+  await boot(page);await page.evaluate(()=>__features.clubs.leaveClub());
+  const fresh=await page.evaluate(()=>({state:__qaState(),claim:__features.clubRally.claim('bronze'),start:__features.clubRally.start('rush','rush-pasture')}));
+  check(!fresh.state.rally.joined&&!fresh.claim.ok&&!fresh.start.ok,'No club cannot earn, claim, or start a club Rally');
+  await show(page,'home');check(await page.locator('.ch-welcome-card').count()===2,'New rider sees join or create choices');await shot(page,'unjoined');
+  await page.locator('[data-chub=tab][data-tab=manage]').click();await page.locator('#chIdentityForm [name=name]').fill('Meadowlight Riders');await page.locator('#chIdentityForm [name=motto]').fill('Every trail, together.');await page.locator('#chIdentityForm button[type=submit]').click();await page.evaluate(()=>__qaConnect());
+  const created=await page.evaluate(()=>__qaState());report.created=created;check(created.rally.joined&&created.rally.total===0&&created.rally.mine===0,'Creating a club opens a fresh shared Rally');
+  if(process.env.QA_CLUB_RALLY_HUD_ONLY){await page.evaluate(()=>{const r=__features.clubRides.host('basin');if(!r.ok)throw Error(r.reason);});await waitingHud(page);check(!report.errors.length,'Waiting HUD has no browser errors');report.pass=true;return;}
+  if(!process.env.QA_CLUB_RALLY_FOCUSED){
+  await show(page,'rally');check(await page.locator('#clubRallyView').count()===1,'Rally is available from the club hub');
+  const forged=await page.evaluate(()=>{const G=__features,b=__qaState();G.run('rushFinish',{id:'rush-pasture',runId:'fake-browser-finish',medal:'gold',score:9999,time:20});return {b,a:__qaState()};});
+  check(forged.a.rally.total===forged.b.rally.total,'An arbitrary finish hook cannot manufacture Rally credit');
+  await page.waitForTimeout(150);await page.evaluate(()=>{const G=__features;G.hidePanels();G.seFrame?.settle();__qaIdle(1500);});
+  if(!process.env.QA_CLUB_RALLY_UI_ONLY){
+   const started=await page.evaluate(()=>{const result=__features.clubRally.start('rush','rush-pasture');__qaIdle(3700);return result;});check(started.ok,'Club Rally quick action starts the actual Pasture Rush');
+   const run=await page.evaluate(()=>__qaPasture());report.run=run;
+   check(run.completed===run.total&&run.result?.id==='rush-pasture'&&run.state.rally.counts.rush===1&&run.state.rally.mine>=10,'Real course completion adds one personal and shared Rally contribution');
+   const repeat=await page.evaluate(()=>{const G=__features,b=__qaState();G.run('rushFinish',G.ranchRush.lastResult);G.run('rushFinish',{...G.ranchRush.lastResult});return {b,a:__qaState()};});
+   check(repeat.a.rally.total===repeat.b.rally.total,'Replayed genuine result and copied result cannot count twice');
+  }
+  // A retained peer fixture models a real roster member without any external connection.
+  const peer=await page.evaluate(()=>{const G=__features,C=G.clubs,c=C.identity().code,w=G.clubRally.snapshot().week;G.run('message','srf1/'+c+'/members/qa-ava',{id:'qa-ava',n:'Ava',sp:20,allTime:20,wk:C.CW(),last:Date.now()});const topic='srf1/'+c+'/clubrally/'+w+'/qa-ava',packet={id:'qa-ava',n:'Ava',week:w,counts:{rush:0,rescue:2,penned:0,trails:0,bronze:0,silver:0,gold:0}},b=G.clubRally.snapshot();G.run('message',topic,packet);const accepted=G.clubRally.snapshot();G.run('message',topic,packet);G.run('message',topic,{...packet,counts:{...packet.counts,rescue:1}});G.run('message',topic.replace('/'+c+'/','/another-club/'),{...packet,counts:{...packet.counts,rescue:50}});G.run('message',topic.replace('/qa-ava','/not-a-member'),{...packet,id:'not-a-member',counts:{...packet.counts,rescue:50}});return {b,accepted,after:G.clubRally.snapshot()};});report.peer=peer;
+  check(peer.accepted.total-peer.b.total===50&&peer.accepted.contributors.some(p=>p.name==='Ava'&&p.points===50),'A known clubmate contributes to shared progress');
+  check(peer.after.total===peer.accepted.total,'Duplicate, older, wrong-club and unknown-member packets add no points');
+  // Persisted progress fixture isolates reward/storage behavior from riding mechanics.
+  await page.evaluate(()=>{const G=__features,c=G.clubs.identity().code,w=G.clubRally.snapshot().week;G.save.sync(s=>{const root=s.clubRally,club=root.clubs[c]||(root.clubs[c]={weeks:{}}),row=club.weeks[w]||(club.weeks[w]={riders:{},seen:[],latestContribution:null});row.riders[G.net.net.id]={name:G.net.myName(),counts:{rush:0,rescue:0,penned:0,trails:0,bronze:0,silver:0,gold:0}};row.riders['qa-ava']={name:'Ava',counts:{rush:0,rescue:17,penned:0,trails:0,bronze:0,silver:0,gold:0}};});});
+  const observer=await page.evaluate(()=>({state:__qaState(),claim:__features.clubRally.claim('bronze')}));check(observer.state.rally.total===425&&!observer.claim.ok&&observer.state.rally.milestones.every(m=>!m.ready),'Shared completion still requires personal participation');
+  await page.evaluate(()=>{const G=__features,c=G.clubs.identity().code,w=G.clubRally.snapshot().week;G.save.sync(s=>{s.clubRally.clubs[c].weeks[w].riders[G.net.net.id].counts.rescue=1;});G.clubHub.open('rally');});
+  const ready=await page.evaluate(()=>__qaState());check(ready.rally.milestones.every(m=>m.ready)&&ready.rally.mine===25,'Participating rider can claim all earned trophy tiers');await shot(page,'rally-ready');
+  const storage=await page.evaluate(()=>{const G=__features,b=__qaState(),original=Storage.prototype.setItem;let result;Storage.prototype.setItem=function(key,value){if(key===G.save.KEY)throw new DOMException('QA quota fixture','QuotaExceededError');return original.call(this,key,value);};try{result=G.clubRally.claim('bronze');}finally{Storage.prototype.setItem=original;}return {result,b,a:__qaState()};});
+  check(!storage.result.ok&&storage.a.coins===storage.b.coins&&storage.a.gems===storage.b.gems&&storage.a.rally.milestones.every(m=>!m.claimed),'Failed save write neither pays nor reports a successful trophy claim');
+  const tiers=[['bronze',200,1],['silver',450,3],['gold',800,5]];
+  for(const [tier,coins,gems]of tiers){const before=await page.evaluate(()=>__qaState());await page.locator('[data-chub=rally-claim][data-tier='+tier+']').click();const result=await page.evaluate(tier=>({first:__qaState(),again:__features.clubRally.claim(tier),after:__qaState()}),tier);check(result.first.coins-before.coins===coins&&result.first.gems-before.gems===gems&&result.first.rally.milestones.find(m=>m.id===tier).claimed,tier+' trophy pays its exact promised reward');check(!result.again.ok&&result.after.coins===result.first.coins&&result.after.gems===result.first.gems,tier+' trophy cannot pay twice');}
+  await shot(page,'rally-trophies');check((await page.evaluate(()=>__qaState())).rally.trophies.length===3,'Three earned trophies appear in the personal cabinet');
+  const fullSaved=await page.evaluate(()=>__qaState());await boot(page);await page.evaluate(()=>__qaConnect());const persisted=await page.evaluate(()=>__qaState());check(persisted.coins===fullSaved.coins&&persisted.gems===fullSaved.gems&&persisted.rally.milestones.every(m=>m.claimed)&&persisted.rally.trophies.length===3,'Wallet and trophy receipts survive a full page reload');
+  await show(page,'chat');check(await page.locator('#clubHubPanel').isVisible()&&await page.locator('#onlinePanel').isHidden()&&await page.locator('#chChatForm').count()===1,'Club Chat stays inside the unified club screen');
+  await page.locator('#chChatForm input').fill('Draft remains while club updates arrive');await page.evaluate(()=>{__features.run('clubRallyChanged');__features.run('clubRideChanged');__features.clubHub.refresh();});check(await page.locator('#chChatForm input').inputValue()==='Draft remains while club updates arrive'&&await page.locator('#chChatForm input').evaluate(e=>document.activeElement===e),'Live club refresh preserves chat draft and focus');
+  for(const [width,height]of [[1440,940],[390,844],[320,568],[844,390],[667,375]])for(const tab of ['home','rally','activities','chat']){const data=await layout(page,tab,width,height);if(tab==='rally')check(data.buttons.every(b=>b.left>=-1&&b.right<=width+1&&b.height>=40),'Rally actions have usable visible widths and tap heights at '+width+'px',data.buttons);}
+  await page.setViewportSize({width:1440,height:940});
+  }else{await page.evaluate(()=>{const G=__features,c=G.clubs.identity().code,w=G.clubRally.snapshot().week;G.save.sync(s=>{s.clubRally.clubs[c]={weeks:{[w]:{riders:{[G.net.net.id]:{name:G.net.myName(),counts:{rush:0,rescue:17,penned:0,trails:0,bronze:0,silver:0,gold:0}}},seen:[],latestContribution:null}}};});for(const tier of ['bronze','silver','gold'])if(!G.clubRally.claim(tier).ok)throw Error('Focused fixture claim failed');});}
+  // Calendar route selection launches an actual waiting lobby, never an automatic ride.
+  await show(page,'activities');await page.locator('.ch-schedule summary').click();
+  await page.locator('#chRideForm [name=title]').fill('Sunset Club Circuit');await page.locator('#chRideForm [name=startsAt]').fill(new Date(Date.now()+3600000).toISOString().slice(0,16));await page.locator('#chRideForm [name=meetingPoint]').fill('Home Pasture gate');await page.locator('#chRideForm [name=routeId]').selectOption('basin');
+  await page.locator('#chRideForm [name=routeId]').focus();await page.evaluate(()=>{__features.run('clubRideChanged');__features.clubHub.refresh();});
+  const draft=await page.evaluate(()=>({title:document.querySelector('#chRideForm [name=title]').value,route:document.querySelector('#chRideForm [name=routeId]').value,focus:document.activeElement?.name}));
+  report.calendarDraft=draft;check(draft.title==='Sunset Club Circuit'&&draft.route==='basin'&&draft.focus==='routeId','Scheduled route selector and text draft preserve values and focus after refresh');
+  await page.keyboard.press('Tab');check(await page.evaluate(()=>document.getElementById('clubHubPanel').contains(document.activeElement)),'Tab from the route selector stays inside the club dialog');
+  await page.locator('#chRideForm button[type=submit]').click();const plan=await page.evaluate(()=>__features.clubActivities.snapshot().rides.find(r=>r.title==='Sunset Club Circuit'));check(plan?.routeId==='basin'&&!!plan.routeName,'Scheduled ride saves the chosen real trail route');
+  await page.locator('[data-chub=plan-launch][data-ride=\"'+plan.id+'\"]').click();const launch=await page.evaluate(id=>{const G=__features,c=G.clubRides.snapshot().current,first={ok:!!c,id:c?.id},second=G.clubRides.launchPlan(id);return {first,second,current:G.clubRides.snapshot().current,trail:!!G.trail.ride};},plan.id);report.plan=launch;check(launch.first.ok&&launch.second.ok&&launch.first.id===launch.second.id&&launch.current.planId===plan.id&&launch.current.status==='waiting'&&!launch.trail,'Calendar launch creates exactly one linked waiting lobby');
+  await waitingHud(page);
+  await page.evaluate(()=>{__features.clubRides.cancel();document.body.classList.remove('touch');});await page.setViewportSize({width:1440,height:940});
+  const guard=await page.evaluate(()=>{const G=__features;G.hidePanels();G.seFrame?.settle();__qaIdle(1600);let rescuePacket;const rescueHook=r=>{rescuePacket=r;};G.on('rescueStart',rescueHook);const rescue=G.rescueRide.start();G.off('rescueStart',rescueHook);const rescueState=G.rescueRide.snapshot().active;const p=G.horse.player.pos,b={x:p.x,z:p.z};G.net.onMessage('srf1/'+G.net.net.club+'/pos',JSON.stringify({id:'qa-ava',n:'Ava',x:-50,z:10,b:'bay',h:0,sp:0}));const host=G.clubRides.host('basin'),join=G.clubFriends.join('Ava');const active=!!G.rescueRide.snapshot().active,a={x:p.x,z:p.z};G.rescueRide.cancel();return {rescue,host,join,b,a,active,rescuePacket,rescueState};});report.guard=guard;
+  check(guard.rescue&&!guard.host.ok&&!guard.join.ok&&guard.active&&guard.a.x===guard.b.x&&guard.a.z===guard.b.z,'Active rescue refuses a club lobby or friend teleport without losing progress',guard);
+  check(guard.rescuePacket?.id==='clover'&&guard.rescueState?.id==='clover'&&guard.rescuePacket.clues===0&&guard.rescuePacket.elapsed===0,'Actual rescueStart payload matches Rally binding requirements');
+  const roundStart=await page.evaluate(()=>{const G=__features;G.hidePanels();G.seFrame?.settle();__qaIdle(1800);let packet;const hook=r=>{packet=r;};G.on('roundupStart',hook);const ok=G.roundup.start('beginner');G.off('roundupStart',hook);const state=G.roundup.state();G.roundup.cancel();return {ok,packet,state};});report.roundStart=roundStart;check(roundStart.ok&&roundStart.packet.mode==='beginner'&&roundStart.packet.elapsed===0&&roundStart.packet.countdown>0&&roundStart.state.active,'Actual roundupStart payload matches Rally binding requirements');
+  // Club switching preserves a rider-wide weekly receipt rather than reopening rewards.
+  const switched=await page.evaluate(()=>{const G=__features,old=G.clubs.identity().code;G.clubs.leaveClub();G.clubs.createClub({name:'Willow Trail Riders',motto:'A new trail.',crest:'leaf',color:'#497657',pub:true});__qaConnect();const c=G.clubs.identity().code,w=G.clubRally.snapshot().week;G.save.sync(s=>{s.clubRally.clubs[c]={weeks:{[w]:{riders:{[G.net.net.id]:{name:G.net.myName(),counts:{rush:0,rescue:17,penned:0,trails:0,bronze:0,silver:0,gold:0}}},seen:[],latestContribution:null}}};});const b=__qaState(),claims=['bronze','silver','gold'].map(id=>G.clubRally.claim(id));return {old,now:c,b,claims,a:__qaState()};});
+  check(switched.old!==switched.now&&switched.claims.every(r=>!r.ok)&&switched.a.coins===switched.b.coins&&switched.a.rally.milestones.every(m=>m.claimed),'Changing clubs cannot reclaim this week’s trophy rewards');
+  const member=await page.evaluate(()=>{const G=__features;G.clubs.joinClub('qa-member-club');G.run('message','srf1/qa-member-club/meta',{id:'qa-founder',n:'AvaOwner',f:'AvaOwner',fid:'qa-founder',nm:'Evening Riders',mo:'Ride together after chores.',pub:true,at:Date.now(),rev:1});__qaConnect();G.clubHub.open('home');return {identity:G.clubs.identity(),leader:G.clubs.isLeader(),manage:G.clubs.canManage()};});report.member=member;check(!member.leader&&!member.manage&&!member.identity.pendingJoin,'Accepted normal-member fixture has no club management role');check(await page.locator('.ch-main [data-tab=manage]').count()===0&&await page.locator('.ch-table-title [data-tab=members]').count()===0,'Ordinary members do not see Admin or Applications controls');
+  await page.evaluate(()=>{__features.net.net.client.connected=false;__features.clubHub.open('chat');});await page.locator('#chChatForm [data-chub=social-connect]').click();check(await page.locator('#clubHubPanel').isVisible()&&await page.locator('#onlinePanel').isHidden(),'Offline chat Connect stays in the unified club hub');
+  if(process.env.QA_CLUB_RALLY_FOCUSED)for(const [width,height]of [[390,844],[320,568],[667,375]])for(const tab of ['home','rally','activities','chat'])await layout(page,tab,width,height);
+  check(!report.errors.length&&await page.evaluate(()=>!__features.errors.length),'Club Rally has no browser or feature errors',report.errors);report.pass=true;
+ }catch(error){report.pass=false;report.error=error.stack;try{report.last=await page.evaluate(()=>({state:window.__features?.clubRally?.snapshot(),body:document.body.className,features:window.__features?.errors}));await shot(page,'failure');}catch{}throw error;}
+ finally{fs.writeFileSync(out+'/report.json',JSON.stringify(report,null,2));await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

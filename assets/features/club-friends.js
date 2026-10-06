@@ -45,11 +45,19 @@ function pointClear(G,x,z){
  if(W.solidWorld?.resolve){const probe={x,z};if(W.solidWorld.resolve(probe,{bottom:h+.2,top:h+(P.onFoot?1.8:2.7),radius:.8})>0||Math.hypot(probe.x-x,probe.z-z)>.001)return false;}
  return true;
 }
+export function socialActivityReason(G){
+ if(G.course?.get?.())return 'Finish your current event first.';
+ if(G.course?.drillActive?.())return 'Finish your drill first.';
+ if(G.rescueRide?.snapshot?.().active)return 'Finish or end your rescue first.';
+ if(G.roundup?.state?.().active)return 'Finish or end your roundup first.';
+ if(G.trail?.ride)return 'Finish or stop your trail ride first.';
+ return '';
+}
 export function friendJoinPlan(G,name,{landing=true}={}){
  const presence=friendInteractionCheck(G,name);if(!presence.ok)return presence;
  const P=G.horse.player,r=presence.remote;
  if(G.social?.spectate||G.social?.tour)return {ok:false,reason:'Leave spectating or the ranch tour first.'};
- if(G.course?.get?.())return {ok:false,reason:'Finish your current event before joining a rider.'};
+ const busy=socialActivityReason(G);if(busy)return {ok:false,reason:busy};
  if(G.worldPkg?.vehicle?.())return {ok:false,reason:'Finish your balloon or ferry ride first.'};
  if(P.flying||P.landing||(P.y||0)>.1)return {ok:false,reason:'Land before joining a rider.'};
  if(r.crs)return {ok:false,reason:'This rider is in an event. Join them after the round.'};
@@ -106,7 +114,7 @@ export function install(G){
  // Poll only a small presence signature, not geometry or DOM. Expiry/disconnects
  // also update an open friends view even when no incoming packet arrives.
  let elapsed=0,last='';
- function changed(){const s=S.fresh()||{},key=JSON.stringify([friendsConnected(G),N.net.club,names(s.friends),s.friendReq,s.blocked,names(s.tempMute).filter(n=>s.tempMute[n]>Date.now()),freshFriendRemotes(G).map(([id,r])=>[id,r.name,G.world.regionAt?.(r.x,r.z)?.id,r.crs?.[0],r.trail?.[0],!!r.fly,(r.y||0)>2]),!!G.social?.spectate,!!G.social?.tour,!!G.course?.get?.(),!!G.worldPkg?.vehicle?.(),!!G.horse.player.flying,(G.horse.player.y||0)>.1]);if(key!==last){last=key;G.run('clubFriendsChanged');}}
+ function changed(){const s=S.fresh()||{},key=JSON.stringify([friendsConnected(G),N.net.club,names(s.friends),s.friendReq,s.blocked,names(s.tempMute).filter(n=>s.tempMute[n]>Date.now()),freshFriendRemotes(G).map(([id,r])=>[id,r.name,G.world.regionAt?.(r.x,r.z)?.id,r.crs?.[0],r.trail?.[0],!!r.fly,(r.y||0)>2]),!!G.social?.spectate,!!G.social?.tour,socialActivityReason(G),!!G.worldPkg?.vehicle?.(),!!G.horse.player.flying,(G.horse.player.y||0)>.1]);if(key!==last){last=key;G.run('clubFriendsChanged');}}
  G.on('tick',dt=>{elapsed+=dt||0;if(elapsed<1)return;elapsed=0;changed();});
  for(const event of ['connect','clubChanged','clubRoom','boot'])G.on(event,changed);
  G.on('state',o=>{o.clubFriends=snapshot();});

@@ -20,6 +20,7 @@ export function install(G){
  const code=(s=S.fresh())=>{const c=G.clubs?.identity(s)?.code||'';return safeKey(c)?c:'';};
  const me=()=>safeKey(N.net.id)?N.net.id:'local-rider';
  const name=()=>clean(N.myName(),14)||'Rider';
+ const route=id=>(G.social?.EXPEDITIONS||[]).find(r=>r.id===id);
  function ensure(s){s.clubActivities=s.clubActivities||{clubs:{}};s.clubActivities.clubs=s.clubActivities.clubs||{};}
  S.ensure(ensure);
  function record(s,c,create=false){
@@ -58,7 +59,7 @@ export function install(G){
   const level=Math.min(50,1+Math.floor((Math.sqrt(1+8*xp/100)-1)/2)),nextXp=level>=50?null:100*level*(level+1)/2;
   const goals=ACTIVITY_GOALS.map(g=>{const claimed=!!r?.claims[wk+':'+g.id];return {...g,reward:{...g.reward},progress:total[g.id],mine:mine[g.id]||0,claimed,ready:!!c&&!claimed&&total[g.id]>=g.target&&mine[g.id]>0};});
   const rides=Object.values(r?.rides||{}).filter(x=>!x.deleted&&x.startsAt>=now()-3600000).sort((a,b)=>a.startsAt-b.startsAt).slice(0,10).map(x=>{
-   const votes=r.rsvps[x.id]||{};return{id:x.id,title:x.title,startsAt:x.startsAt,meetingPoint:x.meetingPoint,notes:x.notes,host:x.host,going:!!votes[me()]?.going,count:Object.values(votes).filter(v=>v.going).length,canEdit:x.creator===me()};});
+   const votes=r.rsvps[x.id]||{};return{id:x.id,title:x.title,startsAt:x.startsAt,meetingPoint:x.meetingPoint,notes:x.notes,host:x.host,creator:x.creator,routeId:x.routeId||null,routeName:route(x.routeId)?.name||'',going:!!votes[me()]?.going,count:Object.values(votes).filter(v=>v.going).length,canEdit:x.creator===me()};});
   return{code:c,week:wk,goals,level: c?level:0,xp,nextXp,xpScope:'Recorded club activity',contributors:Object.keys(r?.participants||{}).length,rides,canSchedule:!!c&&!!G.clubs?.canManage(s)};
  }
  function claim(goalId){
@@ -74,12 +75,14 @@ export function install(G){
   const r=record(s,c,true),old=input.id?r.rides[input.id]:null;
   if(input.id&&!old)return{ok:false,reason:'Ride not found.'};
   if(old?old.creator!==me():!G.clubs?.canManage(s))return{ok:false,reason:old?'Only the host can edit this ride.':'Club leaders and officers can schedule rides.'};
+  const routeId=Object.hasOwn(input,'routeId')?input.routeId:old?.routeId;
+  if(routeId!=null&&routeId!==''&&(!safeKey(routeId)||!route(routeId)))return{ok:false,reason:'Choose an available club trail.'};
   const title=clean(input.title,48),meetingPoint=clean(input.meetingPoint,64),notes=clean(input.notes,180),startsAt=Number(input.startsAt);
   if(!title||!meetingPoint||!Number.isFinite(startsAt)||startsAt<now()-60000||startsAt>now()+30*86400000)return{ok:false,reason:'Choose a title, meeting point, and a time within the next 30 days.'};
   if(!old&&Object.values(r.rides).filter(x=>!x.deleted&&x.startsAt>now()-3600000).length>=10)return{ok:false,reason:'The club already has 10 upcoming rides.'};
   const rid=old?.id||me()+'-'+now().toString(36)+'-'+Math.random().toString(36).slice(2,6);
   if(!safeKey(rid))return{ok:false,reason:'Could not create ride identifier.'};
-  const ride={id:rid,title,meetingPoint,notes,startsAt,host:old?.host||name(),creator:me(),revision:(old?.revision||0)+1,deleted:false};
+  const ride={id:rid,title,meetingPoint,notes,startsAt,routeId:routeId||null,host:old?.host||name(),creator:me(),revision:(old?.revision||0)+1,deleted:false};
   S.sync(v=>{if(code(v)!==c)return;const d=record(v,c,true);d.rides[rid]=ride;prune(d);});publishRide(ride);notify();return{ok:true,id:rid};
  }
  function cancel(rid){
@@ -96,8 +99,9 @@ export function install(G){
  function acceptRide(topic,m,queue=true){
   const t=topic.split('/'),c=code();
   if(t.length!==4||t[1]!==c||!safeKey(t[3])||m.id!==m.creator||!safeKey(m.creator)||m.creator===me()||!Number.isInteger(m.revision)||m.revision<1||!Number.isFinite(m.startsAt)||m.startsAt<now()-86400000||m.startsAt>now()+30*86400000)return false;
+  if(m.routeId!=null&&m.routeId!==''&&(!safeKey(m.routeId)||!route(m.routeId)))return false;
   const title=clean(m.title,48),meetingPoint=clean(m.meetingPoint,64);if(!title||!meetingPoint)return false;
-  const incoming={id:m.id,n:clean(m.n,14),creator:m.creator,revision:m.revision,title,meetingPoint,notes:clean(m.notes,180),startsAt:m.startsAt,host:clean(m.host||m.n,14),deleted:!!m.deleted};
+  const incoming={id:m.id,n:clean(m.n,14),creator:m.creator,revision:m.revision,title,meetingPoint,notes:clean(m.notes,180),startsAt:m.startsAt,routeId:m.routeId||null,host:clean(m.host||m.n,14),deleted:!!m.deleted};
   let accepted=false;S.sync(s=>{const r=record(s,c,true),old=r.rides[t[3]];
    if(old&&(old.creator!==m.creator||old.revision>=m.revision))return;
    if(!old&&!G.clubs?.canManageName(m.n,m.id,s)){const prior=pendingRides.get(topic);if(queue&&(prior||pendingRides.size<10)&&(!prior||(prior.m.creator===m.creator&&prior.m.revision<m.revision)))pendingRides.set(topic,{m:incoming,at:now()});return;}

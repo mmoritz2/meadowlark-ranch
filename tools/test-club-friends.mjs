@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {install,friendInteractionCheck,friendJoinPlan,validFriendName} from '../assets/features/club-friends.js';
+import {install,friendInteractionCheck,friendJoinPlan,validFriendName,socialActivityReason} from '../assets/features/club-friends.js';
 
 // Exercise the actual social handshake functions with a fake transport. No
 // browser, public broker, account, or real rider is contacted by this test.
@@ -14,7 +14,7 @@ function rider(name='Ada',id='ada'){
   world:{groundH:()=>0,regionAt:()=>({id:'meadow',name:'Home Meadow'}),colliders:[],walls:[],solidWorld:{updateDynamic(){},resolve:()=>state.solid?1:0}},
   worldPkg:{vehicle:()=>state.vehicle,lockedRegionsAt:()=>state.locked?[{id:'locked'}]:[],regionUnlocked:()=>!state.locked,lockText:()=> 'Unlock this region first.'},
   onFoot:{waterAt:()=>state.water?{depth:1}:null},horse:{player:{pos:{x:0,y:0,z:0,set(x,y,z){Object.assign(this,{x,y,z});}},speed:5,y:0,vy:0}},
-  course:{get:()=>state.course},riding:{releaseAll(){state.released++;}},followCam:{reset(){state.reset++;}},
+  course:{get:()=>state.course,drillActive:()=>state.drill},rescueRide:{snapshot:()=>({active:state.rescue})},roundup:{state:()=>({active:state.roundup})},trail:{ride:null},riding:{releaseAll(){state.released++;}},followCam:{reset(){state.reset++;}},
   clubs:{memberRows:()=>state.members},sChime(){},toast:t=>toasts.push(t),quest:{dailyEvt(){state.traveled++;}},
   on(key,fn){if(!events.has(key))events.set(key,[]);events.get(key).push(fn);return fn;},
   run(key,...args){if(key==='clubFriendsChanged')state.changed++;for(const fn of events.get(key)||[])fn(...args);},
@@ -127,4 +127,30 @@ test('invalid identities and self requests do not write or publish',()=>{
 test('request and presence changes emit UI refresh events without publishing automatically',()=>{
  const {a}=pair();a.G.run('tick',1);const before=a.state.changed;a.G.net.net.client.connected=false;a.G.run('tick',1);
  assert.ok(a.state.changed>before);assert.equal(a.outbox.length,0);
+});
+
+test('active adventures disable friend travel visibly and cannot be interrupted',()=>{
+ const {a}=pair();a.save.friends.Bea=true;
+ for(const activity of ['rescue','roundup','drill','trail']){
+  if(activity==='trail')a.G.trail.ride={clubRideId:'real-party'};else a.state[activity]=true;
+  const before=a.state.changed;a.G.run('tick',1);assert(a.state.changed>before);
+  const row=a.G.clubFriends.snapshot().friends[0];assert.equal(row.canJoin,false);assert.match(row.reason,new RegExp(activity));
+  assert.equal(a.G.clubFriends.join('Bea').ok,false);assert.equal(a.G.social.gotoFriend('Bea').ok,false);assert.equal(a.state.traveled,0);assert.equal(a.G.horse.player.pos.x,0);
+  if(activity==='trail')a.G.trail.ride=null;else a.state[activity]=false;
+ }
+ assert.equal(a.G.clubFriends.snapshot().friends[0].canJoin,true);
+});
+test('spectate and ranch tour guard actual entry functions before camera or position mutations',()=>{
+ const {a}=pair(),G=a.G;
+ const spec=source.slice(source.indexOf(' function startSpectate('),source.indexOf(' function stopSpectate('));
+ const tour=source.slice(source.indexOf(' function startTour('),source.indexOf(' function endTour('));
+ let touched=0;const player={get speed(){return 0;},set speed(v){touched++;},pos:{x:0,z:0}};
+ const W={buildDecorMesh(){touched++;throw Error('tour should have been blocked');}};
+ const startSpec=Function('G','H','toast','socialActivityReason','N','drawSpecHud','stat','Q','let spec;'+spec+';return startSpectate;')(G,{player},()=>{},socialActivityReason,{},()=>touched++,()=>touched++,{dailyEvt:()=>touched++});
+ const startTour=Function('G','H','W','ranchData','toast','socialActivityReason','endTour','TOUR',tour+';return startTour;')(G,{player},W,{Bea:{d:[[1]]}},()=>{},socialActivityReason,()=>touched++,[0,0]);
+ for(const activity of ['rescue','roundup','drill','trail']){
+  if(activity==='trail')G.trail.ride={clubRideId:'party'};else a.state[activity]=true;
+  startSpec('bea');startTour('Bea');assert.equal(touched,0);
+  if(activity==='trail')G.trail.ride=null;else a.state[activity]=false;
+ }
 });

@@ -687,7 +687,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=woodla
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=visible-shadows-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-pose-20261006';
-import {FEATURES} from './assets/features/index.js?v=equestrian-sward-1';
+import {FEATURES} from './assets/features/index.js?v=club-rally-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -9748,6 +9748,7 @@ function startTrail(pts,by,opts){
  if(G.run('activityGate','trail'))return false;
  if(!pts||pts.length<2)return false;
  trailRide=Object.assign({pts:pts.map(p=>p.slice()),idx:0,by:by||myName(),t:0,roster:{}},opts||{}); trailOffer=null;
+ G.run('trailStart',trailRide);
  toast('🥾 '+(trailRide.name?trailRide.name+': ':'Trail ride: ')+pts.map(p=>p[0]).join(' → ')+' — follow the golden arrow'); sChime(); return true;
 }
 function announceTrail(pts,extra){

@@ -9,7 +9,7 @@ const fail=reason=>({ok:false,reason});
 
 export function install(G){
  const N=G.net,S=G.save,now=()=>Date.now(),me=()=>N.net.id,name=()=>clean(N.myName(),14)||'Rider';
- const sessions=new Map(),members=new Map(),pending=new Map();
+ const sessions=new Map(),members=new Map(),pending=new Map(),pendingPlans=new Map();
  let currentId=null,scope='',elapsed=0,lastBeat=0,lastConnected=false,lastNotice='';
  S.ensure(s=>{s.clubRideResume=s.clubRideResume||null;s.clubRideHistory=s.clubRideHistory||{};});
  const code=()=>G.clubs?.identity(S.fresh())?.code||'';
@@ -17,6 +17,7 @@ export function install(G){
  const blocked=n=>{const s=S.fresh()||{};return !!s.blocked?.[n]||(s.tempMute?.[n]||0)>now();};
  const routes=()=>G.social?.EXPEDITIONS||[];
  const route=id=>routes().find(r=>r.id===id);
+ const plan=id=>G.clubActivities?.snapshot().rides.find(r=>r.id===id);
  const topic=(kind,sid,pid)=>'srf1/'+scope+'/clubride2/'+kind+'/'+sid+(pid?'/'+pid:'');
  const notify=()=>G.run('clubRideChanged');
  function connectionReason(){if(!safe(code()))return 'Join a club first.';if(N.net.club!==code())return 'Connect to your club room to ride together.';if(!N.net.client?.connected)return 'Connect to your club to host or join a live ride.';return '';}
@@ -31,6 +32,10 @@ export function install(G){
  }
  function playReason(sid){
   if(G.course?.get())return 'Finish your event before joining a club ride.';
+  if(G.course?.drillActive?.())return 'Finish your drill before joining a club ride.';
+  if(G.rescueRide?.snapshot?.().active)return 'Finish or end your rescue before joining a club ride.';
+  if(G.roundup?.state?.().active)return 'Finish or end your roundup before joining a club ride.';
+  if(G.horse?.player?.flying||G.horse?.player?.landing||(G.horse?.player?.y||0)>.1)return 'Land before joining a club ride.';
   if(G.worldPkg?.vehicle?.())return 'Leave the vehicle before joining a club ride.';
   if(G.horse?.player?.onFoot||G.onFoot?.on)return 'Mount your horse before joining a club ride.';
   if(G.social?.spectate||G.social?.tour)return 'Leave spectating or the ranch tour first.';
@@ -61,7 +66,7 @@ export function install(G){
  }
  function changeScope(){
   const next=code();if(next===scope)return;
-  stopTrail(currentId);sessions.clear();members.clear();pending.clear();currentId=null;scope=safe(next)?next:'';hydrate();notify();
+  stopTrail(currentId);sessions.clear();members.clear();pending.clear();pendingPlans.clear();currentId=null;scope=safe(next)?next:'';hydrate();notify();
  }
  function validSession(sid){
   const s=sessions.get(sid);return s&&s.status!=='cancelled'&&s.expiresAt>now()&&!blocked(s.host)?s:null;
@@ -73,13 +78,14 @@ export function install(G){
    sessions.delete(sid);members.delete(sid);changed=true;
   }
   for(const [key,p]of pending)if(now()-p.at>TTL)pending.delete(key);
+  for(const [key,p]of pendingPlans)if(now()-p.at>TTL)pendingPlans.delete(key);
   if(changed)notify();
  }
  function row(s){
   const r=route(s.routeId),p=roster(s.id).get(me()),total=r.stops.length;
   const people=[...roster(s.id)].filter(([,v])=>!v.left&&!blocked(v.name)).map(([pid,v])=>({id:pid,name:v.name,ready:!!v.ready,online:pid===me()?connected():now()-v.at<ONLINE,progress:v.progress,finished:!!v.finished}));
   const joined=currentId===s.id&&!!p&&!p.left;
-  return {id:s.id,title:s.title,routeId:s.routeId,routeName:r.name,host:s.host,status:s.status,roster:people,canHost:s.hostId===me(),canStart:s.hostId===me()&&s.status==='waiting'&&joined&&connected()&&people.filter(v=>v.online).every(v=>v.ready),joined,
+  return {id:s.id,title:s.title,planId:s.planId||null,routeId:s.routeId,routeName:r.name,host:s.host,status:s.status,roster:people,canHost:s.hostId===me(),canStart:s.hostId===me()&&s.status==='waiting'&&joined&&connected()&&people.filter(v=>v.online).every(v=>v.ready),joined,
    nextStop:r.stops[Math.min(p?.progress||0,total-1)][0],totalStops:total,progress:p?.progress||0,finished:!!p?.finished,riding:G.trail?.ride?.clubRideId===s.id};
  }
  function snapshot(){
@@ -96,14 +102,36 @@ export function install(G){
   G.trail.ride.idx=Math.min(p.progress,r.stops.length-1);setSelf(s.id,{ready:true,left:false});
   G.riding?.releaseAll?.();G.hidePanels?.();return {ok:true};
  }
- function host(routeId){
-  changeScope();expire();const reason=connectionReason()||routeReason(route(routeId))||playReason(null);if(reason)return fail(reason);
+ function forPlan(planId){
+  changeScope();expire();const p=plan(planId);if(!p?.routeId)return null;
+  const s=[...sessions.values()].filter(s=>validSession(s.id)&&s.planId===planId&&s.hostId===p.creator&&s.routeId===p.routeId).sort((a,b)=>b.createdAt-a.createdAt)[0];
+  return s?row(s):null;
+ }
+ function host(routeId,options={}){
+  changeScope();expire();
+  if(!options||typeof options!=='object')return fail('This ride setup is unavailable.');
+  const p=options.planId?plan(options.planId):null;
+  if(options.planId&&(!safe(options.planId)||!p||p.creator!==me()||p.routeId!==routeId))return fail('Only this scheduled ride’s host can launch its selected route.');
+  if(options.planId&&forPlan(options.planId))return fail('This scheduled ride already has a live lobby. Open it instead.');
+  const reason=connectionReason()||routeReason(route(routeId))||playReason(null);if(reason)return fail(reason);
   if(currentId)return fail('Leave your current club ride before hosting another.');
   if([...sessions.values()].some(s=>s.hostId===me()&&validSession(s.id)))return fail('You already have a live ride. Join it or cancel it first.');
   if(!safe(me()))return fail('Your rider identity is unavailable.');
   const id=me()+'-'+now().toString(36)+'-'+Math.random().toString(36).slice(2,6),r=route(routeId);
-  const s={id,hostId:me(),host:name(),routeId,title:r.name,status:'waiting',rev:1,createdAt:now(),at:now(),expiresAt:now()+TTL};
+  const s={id,hostId:me(),host:name(),routeId,planId:p?.id||null,title:p?.title||clean(options.title)||r.name,status:'waiting',rev:1,createdAt:now(),at:now(),expiresAt:now()+TTL};
   sessions.set(id,s);currentId=id;lastNotice='';publishSession(s);setSelf(id,{ready:true});return {ok:true,id};
+ }
+ function launchPlan(planId){
+  changeScope();expire();const p=plan(planId);
+  if(!safe(planId)||!p?.routeId)return fail('This scheduled ride does not have an available route.');
+  if(p.creator!==me())return fail('Only the scheduled ride’s host can launch it.');
+  const existing=forPlan(planId),reason=connectionReason()||routeReason(route(p.routeId))||playReason(existing?.id);if(reason)return fail(reason);
+  if(!existing)return host(p.routeId,{planId,title:p.title});
+  if(currentId&&currentId!==existing.id)return fail('Leave your current club ride before opening another.');
+  currentId=existing.id;const self=roster(existing.id).get(me());
+  if(!self?.finished)setSelf(existing.id,{left:false,ready:true});else storeResume();
+  if(existing.status==='riding'&&!self?.finished){const result=begin(sessions.get(existing.id));if(!result.ok)return result;}
+  notify();return {ok:true,id:existing.id,existing:true};
  }
  function join(sid){
   changeScope();expire();const s=validSession(sid);if(!s)return fail('This club ride is no longer available.');
@@ -142,6 +170,26 @@ export function install(G){
   const rows=roster(sid),old=rows.get(pid);if((old&&m.rev<=old.rev)||(!old&&rows.size>=24))return false;
   rows.set(pid,{name:clean(m.n,14)||'Rider',ready:m.ready,left:m.left,finished:!!old?.finished||m.finished,progress:Math.max(old?.progress||0,m.progress),rev:m.rev,at:m.at});return true;
  }
+ function acceptSession(sid,m,queue=true){
+  if(N.net.club!==scope||scope!==code()||m.expiresAt<=now()||m.at<now()-TTL||blocked(clean(m.n,14)))return;
+  if(m.planId!=null&&!safe(m.planId))return;
+  const old=sessions.get(sid);
+  if(old&&(old.hostId!==m.hostId||old.routeId!==m.routeId||(old.planId||null)!==(m.planId||null)||old.rev>=m.rev||(old.status==='cancelled'&&m.status!=='cancelled')||(old.status==='riding'&&m.status==='waiting')))return;
+  if(m.planId&&!old){
+   const p=plan(m.planId);
+   // Retained lobby and calendar packets may arrive in either order. Validate
+   // the calendar's creator and route before exposing a newly linked lobby.
+   if(!p){const queued=pendingPlans.get(sid);if(queue&&(queued||pendingPlans.size<24)&&(!queued||m.rev>queued.m.rev))pendingPlans.set(sid,{m:copy(m),at:now()});return;}
+   if(p.creator!==m.hostId||p.routeId!==m.routeId)return;
+  }
+  // An already validated lobby may still end after its calendar plan is deleted.
+  if(!old&&sessions.size>=24)return;
+  const s={id:sid,hostId:m.hostId,host:clean(m.n,14)||'Rider',routeId:m.routeId,planId:m.planId||null,title:clean(m.title)||route(m.routeId).name,status:m.status,rev:m.rev,createdAt:m.createdAt,at:m.at,expiresAt:m.expiresAt};sessions.set(sid,s);
+  for(const [key,v]of pending)if(v.sid===sid){acceptMember(sid,v.pid,v.m);pending.delete(key);}
+  if(s.status==='cancelled'&&currentId===sid){stopTrail(sid);currentId=null;lastNotice='The host ended this club ride.';storeResume();}
+  pendingPlans.delete(sid);notify();
+ }
+ G.on('clubActivityChanged',()=>{expire();for(const [sid,p]of pendingPlans)acceptSession(sid,p.m,false);});
  G.on('message',(t,m)=>{
   if(typeof t!=='string'||!m||typeof m!=='object')return;
   const p=t.split('/');if(p[0]!=='srf1'||p[2]!=='clubride2')return;
@@ -150,12 +198,7 @@ export function install(G){
   if(p[3]==='session'&&p.length===5){
    // Session identity is in the topic; envelope id always identifies its host.
    if(m.hostId!==m.id||!sid.startsWith(m.hostId+'-')||!route(m.routeId)||!['waiting','riding','cancelled'].includes(m.status)||!Number.isFinite(m.expiresAt)||m.expiresAt<=now()||m.expiresAt>m.at+TTL||!Number.isFinite(m.createdAt)||m.createdAt>m.at||now()-m.createdAt>LIFETIME)return true;
-   const old=sessions.get(sid);if(old&&(old.hostId!==m.hostId||old.routeId!==m.routeId||old.rev>=m.rev||(old.status==='cancelled'&&m.status!=='cancelled')||(old.status==='riding'&&m.status==='waiting')))return true;
-   if(!old&&sessions.size>=24)return true;
-   const s={id:sid,hostId:m.hostId,host:clean(m.n,14)||'Rider',routeId:m.routeId,title:clean(m.title)||route(m.routeId).name,status:m.status,rev:m.rev,createdAt:m.createdAt,at:m.at,expiresAt:m.expiresAt};sessions.set(sid,s);
-   for(const [key,v]of pending)if(v.sid===sid){acceptMember(sid,v.pid,v.m);pending.delete(key);}
-   if(s.status==='cancelled'&&currentId===sid){stopTrail(sid);currentId=null;lastNotice='The host ended this club ride.';storeResume();}
-   notify();return true;
+   acceptSession(sid,m);return true;
   }
   if(p[3]==='rider'&&p.length===6&&safe(p[5])&&m.id===p[5]){
    if(!sessions.has(sid)){const key=sid+'/'+p[5],old=pending.get(key);if((old||pending.size<128)&&(!old||m.rev>old.m.rev))pending.set(key,{sid,pid:p[5],m:copy(m),at:now()});}
@@ -196,5 +239,5 @@ export function install(G){
   if(now()-lastBeat>=HEARTBEAT){lastBeat=now();heartbeat();}
  });
  G.on('state',o=>{const s=snapshot();o.clubRide={connected:s.connected,code:s.code,lobbies:s.lobbies.length,current:s.current};});
- G.clubRides={snapshot,host,join,ready,start,leave,cancel,rejoin};subscribe();
+ G.clubRides={snapshot,host,join,ready,start,leave,cancel,rejoin,forPlan,launchPlan};subscribe();
 }

@@ -18,7 +18,7 @@
    G.trail). See assets/features/index.js for the contract. Nothing runs at import time. */
 import {createChatFilter} from '../chat-filter.js';
 
-import {validFriendName,friendInteractionCheck,friendJoinPlan} from './club-friends.js?v=club-together-1';
+import {validFriendName,friendInteractionCheck,friendJoinPlan,socialActivityReason} from './club-friends.js?v=club-rally-1';
 export const id='social-play';
 
 export function install(G){
@@ -599,7 +599,7 @@ export function install(G){
  /* ======================= 11. Spectating ======================= */
  let spec=null;
  function startSpectate(remoteId,seat){
-  if(G.course.get()){toast('Finish your round first.');return;}
+  const busy=socialActivityReason(G);if(busy){toast(busy);return;}
   /* events-pvp registered its own camera hook before this one, and G.run returns the first
      truthy result — so if its plain grandstand seat were still on it would hold the camera
      at the stand while this seat tried to follow a rider round the course. Stand up from it
@@ -770,7 +770,7 @@ export function install(G){
  function startTour(name){
   const rd=ranchData[name];
   if(!rd){toast('🏡 No ranch on show for '+name+' yet.');return;}
-  if(G.course.get()){toast('Finish the round first.');return;}
+  const busy=socialActivityReason(G);if(busy){toast(busy);return;}
   endTour(true);
   const meshes=[];
   for(const p of rd.d){
