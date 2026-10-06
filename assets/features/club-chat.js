@@ -35,7 +35,7 @@ export function install(G){
   const c=code(),s=S.fresh();
   if(!safe(c)||topic!=='srf1/'+c+'/chat'||!m||m.id===N.net.id||typeof m.t!=='string'||m.to)return;
   const n=String(m.n||'Rider').slice(0,14),t=clean(m.t);
-  if(!t||s.muteList?.[n]||s.blocked?.[n])return;
+  if(!t||s.muteList?.[n]||s.blocked?.[n]||s.tempMute?.[n]>Date.now())return;
   const at=Number.isFinite(m.at)?Math.min(Date.now()+30000,m.at):Date.now();
   if(at<Date.now()-86400000)return;
   const mid=typeof m.mid==='string'?m.mid.slice(0,128):String(m.id||n)+'|'+at+'|'+t;

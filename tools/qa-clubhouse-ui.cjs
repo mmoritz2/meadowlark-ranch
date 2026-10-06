@@ -12,7 +12,7 @@ const out=path.resolve(process.env.QA_OUT||path.join(__dirname,'../review/clubho
  try{
   fs.mkdirSync(out,{recursive:true});await page.goto(QA.BASE+'/ranch3d.html?qa=club-reference&emoji=0',{timeout:120000});await page.waitForFunction(ready,null,{timeout:120000});
   await page.evaluate(()=>{const G=__features;G.save.sync(s=>{s.rider.made=true;});G.wardrobe.closeChar();G.clubs.leaveClub();window.__qaPublished=[];G.net.publish=(topic,payload,opts)=>{__qaPublished.push({topic,payload,opts});return true;};G.net.netConnect=()=>{};document.getElementById('netBtn').click();});
-  assert.equal(await page.locator('#clubHubPanel').isVisible(),true);assert.equal(await page.locator('.ch-nav[data-tab]').count(),6);
+  assert.equal(await page.locator('#clubHubPanel').isVisible(),true);assert.equal(await page.locator('.ch-nav[data-tab]').count(),8);
   assert.equal(await page.locator('.ch-welcome-card').count(),2);await shot('unjoined-desktop');
   await page.locator('[data-chub=tab][data-tab=manage]').click();
   await page.locator('#chIdentityForm [name=name]').fill('Meadowlight Riders');await page.locator('#chIdentityForm [name=motto]').fill('Every trail, together.');

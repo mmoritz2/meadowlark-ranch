@@ -26,4 +26,18 @@ b.G.net.net.client.connected=false;assert.equal(b.G.clubChat.send('Offline').ok,
 b.G.save.sync(s=>{s.ridingClub='another-club';});assert.deepEqual(b.G.clubChat.rows(),[]);
 b.G.save.sync(s=>{s.ridingClub='a-club';});assert.equal(b.G.clubChat.rows().length,2);
 assert.equal(a.G.clubChat.rows()[0].mine,true);
-console.log('Club chat passed: Commons routing, non-retained transport, dedup, reload, isolation, mute/filter and offline state. No real messages sent.');
+// Match the regular social feed: report mutes survive reload and expire without
+// clearing a permanent block or muting messages from other riders.
+const muted=client('quiet',{tempMute:{Alice:Date.now()+60000},blocked:{Blocked:true}});
+const incoming={id:'alice',n:'Alice',mid:'temporary',t:'Hidden while muted'};
+muted.G.run('message',p.topic,incoming);assert.equal(muted.G.clubChat.rows().length,0);
+const restored=muted.reload();restored.G.run('message',p.topic,incoming);
+assert.equal(restored.G.clubChat.rows().length,0,'Temporary mute survives reload');
+restored.G.run('message',p.topic,{id:'other',n:'Other',mid:'allowed',t:'Still visible'});
+assert.equal(restored.G.clubChat.rows().length,1,'Other riders remain visible');
+restored.G.save.sync(s=>{s.tempMute.Alice=Date.now()-1;});
+restored.G.run('message',p.topic,{...incoming,mid:'expired',t:'Visible after expiry'});
+assert.equal(restored.G.clubChat.rows().at(-1).t,'Visible after expiry');
+restored.G.run('message',p.topic,{id:'blocked',n:'Blocked',mid:'blocked',t:'Still blocked'});
+assert.equal(restored.G.clubChat.rows().length,2,'Permanent block remains effective');
+console.log('Club chat passed: Commons routing, non-retained transport, dedup, reload, isolation, temporary-mute expiry, block/filter and offline state. No real messages sent.');

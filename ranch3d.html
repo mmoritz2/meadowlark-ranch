@@ -683,7 +683,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=chalk-
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=chalk-down-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=hair-20261005b';
-import {FEATURES} from './assets/features/index.js?v=hair-20261005b';
+import {FEATURES} from './assets/features/index.js?v=club-together-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -10967,9 +10967,10 @@ function openOnline(){
  p.querySelectorAll('[data-friend]').forEach(b=>{
   b.onclick=()=>{
    const nm=b.dataset.friend;
-   syncSave(sv=>{sv.friends=sv.friends||{};if(sv.friends[nm])delete sv.friends[nm];else sv.friends[nm]=true;});
-   toast(isFriend(nm)?'💚 '+nm+' added to friends!':'Removed '+nm);
-   openOnline();openOnline();
+   if(isFriend(nm)){G.clubHub?.open('friends');return;}
+   const result=G.clubFriends?.request(nm);
+   if(!result?.ok)toast(result?.reason||'Friends are not available yet.');
+   else G.clubHub?.open('friends');
   };
  });
  p.querySelectorAll('[data-prof]').forEach(b=>{
@@ -12255,6 +12256,7 @@ function openProfile(name){
  hidePanels();
  const r=Object.values(remotes).find(rr=>rr.name===name);
  const online=!!r;
+ const friendSave=freshSave()||{},friendPending=Object.hasOwn(friendSave.friendReq?.out||{},name),friendIncoming=Object.hasOwn(friendSave.friendReq?.in||{},name);
  const stats=Object.keys(MILES).map(k=>{
   const v=lbData[k]&&lbData[k][name];
   return (typeof v==='number')?{label:MILES[k].label,v}:null;
@@ -12264,7 +12266,7 @@ function openProfile(name){
  +'<div class="evrow">'+horseDot+'<b>'+(r&&r.horseName?r.horseName:'Their horse')+'</b><span>'+(r&&r.breed?breedLabel(r.breed):'')+(r&&r.horseLv?' · Lv '+r.horseLv:'')+(online?'':' — they need to be riding nearby to see more')+'</span></div>'
  +(stats.length?'<b style="font-size:13px">🏅 Club records</b>'+stats.map(s2=>'<div class="crow" style="justify-content:space-between"><span>'+s2.label+'</span><b>'+(s2.v>=1000?Math.round(s2.v/100)/10+'k':s2.v)+'</b></div>').join(''):'<span style="font-size:12px;color:#8c7a63">No club records yet — race them to make some!</span>')
  +'<div class="crow" style="gap:6px;flex-wrap:wrap">'
- +'<button data-pf="friend">'+(isFriend(name)?'💚 Friends ✓':'🤍 Add friend')+'</button>'
+ +'<button data-pf="friend" '+(friendPending?'disabled':'')+'>'+(isFriend(name)?'💚 Friends ✓':friendPending?'💌 Request sent':friendIncoming?'💌 Accept friend':'🤍 Add friend')+'</button>'
  +(online&&r.colors?'<button data-pf="breed" class="claimBtn">💞 Breed with '+(r.horseName||'their horse')+' (500 🪙)</button>':'')
  +'</div>'
  +sect('profile',name,r)
@@ -12275,8 +12277,9 @@ function openProfile(name){
   const act=b.dataset.pf;
   if(act==='close')p.style.display='none';
   else if(act==='friend'){
-   syncSave(sv=>{sv.friends=sv.friends||{};if(sv.friends[name])delete sv.friends[name];else sv.friends[name]=true;});
-   toast(isFriend(name)?'💚 '+name+' added to friends!':'Removed '+name);
+   if(isFriend(name)){G.clubHub?.open('friends');return;}
+   const result=friendIncoming?G.clubFriends?.accept(name):G.clubFriends?.request(name);
+   if(!result?.ok){toast(result?.reason||'Friends are not available yet.');return;}
    openProfile(name);
   }else if(act==='breed')breedWithRider(name);
  };});

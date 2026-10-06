@@ -18,6 +18,7 @@
    G.trail). See assets/features/index.js for the contract. Nothing runs at import time. */
 import {createChatFilter} from '../chat-filter.js';
 
+import {validFriendName,friendInteractionCheck,friendJoinPlan} from './club-friends.js?v=club-together-1';
 export const id='social-play';
 
 export function install(G){
@@ -326,43 +327,51 @@ export function install(G){
  /* ======================= 6. Friends ======================= */
  function sendFriend(name,kind){
   const s=S.fresh()||{};
-  if(!name||name===me())return;
-  if(kind==='req'&&friendsOf(s).length>=FRIEND_MAX){toast('💚 Your friends list is full ('+FRIEND_MAX+').');return;}
+  const fail=reason=>{toast(reason);return {ok:false,reason};};
+  if(!validFriendName(name)||name===me()||!['req','acc','rm'].includes(kind))return fail('Choose another rider.');
+  if(kind!=='rm'){
+   const check=friendInteractionCheck(G,name);if(!check.ok)return fail(check.reason);
+   if(friendsOf(s).length>=FRIEND_MAX&&!Object.hasOwn(s.friends,name))return fail('Your friends list is full ('+FRIEND_MAX+').');
+   if(kind==='req'&&(Object.hasOwn(s.friends,name)||Object.hasOwn(s.friendReq.out,name)))return fail('You are already friends or a request is waiting.');
+   if(kind==='acc'&&!Object.hasOwn(s.friendReq.in,name))return fail('This friend request is no longer available.');
+  }
   const sent=ping({fr:{k:kind,to:name}});
-  if(kind==='req'&&!sent){toast('🌐 Connect to a club first — a request has to reach them.');return;}
+  if(kind!=='rm'&&!sent)return fail('Connect to a club first — the request must reach this rider.');
   if(kind==='req'){S.sync(sv=>{sv.friendReq.out[name]=now();});toast('💌 Friend request sent to '+name+'.');}
-  if(kind==='acc'){S.sync(sv=>{sv.friends[name]=true;delete sv.friendReq.in[name];});toast('💚 '+name+' is a friend now!'+(sent?'':' (they will hear about it next time you are both online)'));G.sChime();}
+  if(kind==='acc'){S.sync(sv=>{sv.friends[name]=true;delete sv.friendReq.in[name];delete sv.friendReq.out[name];});toast('💚 '+name+' is a friend now!');G.sChime();}
   if(kind==='rm'){S.sync(sv=>{delete sv.friends[name];delete sv.friendReq.out[name];delete sv.friendReq.in[name];});toast('🤍 Removed '+name+'.');}
-  refreshOnline();
+  refreshOnline();G.run('clubFriendsChanged');return {ok:true};
  }
- function declineFriend(name){S.sync(sv=>{delete sv.friendReq.in[name];});toast('Declined '+name+'.');refreshOnline();}
+ function declineFriend(name){if(!validFriendName(name)||!Object.hasOwn((S.fresh()||{}).friendReq?.in||{},name))return {ok:false,reason:'This friend request is no longer available.'};S.sync(sv=>{delete sv.friendReq.in[name];});toast('Declined '+name+'.');refreshOnline();G.run('clubFriendsChanged');return {ok:true};}
  function onFriendMsg(m,from){
   const fr=m.fr||{};
-  if(nm14(fr.to)!==me())return;
+  if(!validFriendName(from)||nm14(fr.to)!==me())return;
+  const s=S.fresh()||{};if(isMuted(s,from))return;
   const k=String(fr.k||'').slice(0,4);
   if(k==='req'){
+   if(Object.hasOwn(s.friends,from)||Object.keys(s.friendReq.in).length>=FRIEND_MAX)return;
    S.sync(sv=>{sv.friendReq.in[from]=now();});
    toast('💌 '+from+' wants to be friends — open 🌐 Club to accept.'); G.sChime();
   }else if(k==='acc'){
+   if(!Object.hasOwn(s.friendReq.out,from)||friendsOf(s).length>=FRIEND_MAX)return;
    S.sync(sv=>{sv.friends[from]=true;delete sv.friendReq.out[from];});
    toast('💚 '+from+' accepted your friend request!'); G.sChime();
   }else if(k==='rm'){
    S.sync(sv=>{delete sv.friends[from];delete sv.friendReq.in[from];delete sv.friendReq.out[from];});
   }
-  refreshOnline();
+  refreshOnline();G.run('clubFriendsChanged');
  }
  function gotoFriend(name){
-  if(G.course.get()){toast('Finish the round first.');return;}
-  const r=remoteByName(name);
-  if(!r){toast('🧭 '+name+' is not riding right now.');return;}
-  H.player.pos.x=r.x+2.5; H.player.pos.z=r.z+2.5; H.player.speed=0;
-  toast('🧭 Rode over to '+name+' in '+regionName(r.x,r.z)+'.');
+  const plan=friendJoinPlan(G,name);if(!plan.ok){toast(plan.reason);return plan;}
+  G.riding?.releaseAll();H.player.pos.set(plan.x,0,plan.z);H.player.speed=0;H.player.y=0;H.player.vy=0;
+  G.followCam?.reset();toast('🧭 Rode over to '+name+' in '+regionName(plan.x,plan.z)+'.');
   Q.dailyEvt('ft',1);
+  return {ok:true};
  }
  function friendStatus(s,name){
-  if(remoteByName(name))return {k:'online',label:'🟢 riding nearby'};
+  if(friendInteractionCheck(G,name).ok)return {k:'online',label:'🟢 riding nearby'};
   if(N.lbData&&Object.values(N.lbData).some(bd=>bd&&bd[name]!==undefined))return {k:'boards',label:'📋 on the boards'};
-  return {k:'offline',label:'⚪ offline'};
+  return {k:'offline',label:'⚪ not riding nearby'};
  }
 
  /* ======================= 7. The Commons and richer remotes ======================= */
