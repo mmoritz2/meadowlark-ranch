@@ -826,7 +826,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
  /* ---- 6h. wildflower meadows ----------------------------------------------------------------
     Drifts, each mostly one colour, because a real meadow is one species winning a patch rather than
     a spilt paintbox. Seen from the ridge they are what turns a flat green plain into a field. */
- const DRIFT=['#ecebdd','#ddd5b5','#d6c8c4','#bdb8cc','#d6c5a2','#dce1c5','#cfc2b6'];
+ const DRIFT=['#eee6ff','#d4b0f4','#c5a4e5','#f0d5fa','#e7d29a','#e7ecbf','#d9b6ed'];
  for(let d=0,made=0;d<600&&made<13;d++){
   const a=rnd()*Math.PI*2, r=48+rnd()*340, cx=Math.cos(a)*r, cz=Math.sin(a)*r;
   const B=biomeAt(cx,cz);
@@ -838,7 +838,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   for(let i=0;i<n;i++){
    const a2=rnd()*Math.PI*2, r2=R*Math.pow(rnd(),0.62), x=cx+Math.cos(a2)*r2, z=cz+Math.sin(a2)*r2;
    if(!okSoft(x,z))continue;
-   put('petal',x,z,rr(0.28,0.55),rr(0.9,1.3),rnd()<0.72?c1:c2,0.1);
+   put('petal',x,z,rr(0.40,0.68),rr(0.9,1.3),rnd()<0.72?c1:c2,0.1);
   }
   for(let i=0;i<Math.round(n*0.3);i++){
    const a2=rnd()*Math.PI*2, r2=R*rr(0.2,1.15), x=cx+Math.cos(a2)*r2, z=cz+Math.sin(a2)*r2;
@@ -867,7 +867,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
     Thin decorative cover only after that layout is finished: fewer shrubs must not move trees,
     race obstacles, or the camera's forest points. No gameplay pickups live in these banks. */
  const coverKinds={scrub:[0.66,0.84],juni:[0.82,0.90],sage:[0.86,0.95],
-  brack:[0.56,0.72],reed:[0.78,0.90],tuft:[0.48,0.62],petal:[0.36,0.76]};
+  brack:[0.56,0.72],reed:[0.78,0.90],tuft:[0.82,0.85],petal:[0.80,1.10]};
  const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t);};
  const managedAt=(x,z)=>{
   // Grazed paddock, yard approaches and occupied town clearings blend into longer field margins.

@@ -44,7 +44,7 @@ export function createPastoralSky(THREE) {
         float shape=volumeNoise(q)*.55+volumeNoise(q*2.03+11.)*.30+volumeNoise(q*4.07-7.)*.15;
         // Fair-weather cumulus leaves generous blue gaps. Rain gradually
         // closes them into a lower, denser overcast instead of repainting it.
-        float coverage=mix(.586,.465,rain);
+        float coverage=mix(.64,.465,rain);
         return max(0.,shape-coverage)*profile*4.6;
       }
       vec4 clouds(vec3 d,vec3 sd){
@@ -82,7 +82,7 @@ export function createPastoralSky(THREE) {
         sky=sky*(1.-cloud)+volume.rgb;
         // High cirrus travels independently above the lower cloud bank.
         vec2 cirrusUV=d.xz/max(d.y+.12,.08)*vec2(1.3,6.0)+vec2(time*.003,9.0);
-        float cirrus=smoothstep(.62,.84,cloudNoise(cirrusUV))*smoothstep(.10,.48,d.y)*.14;
+        float cirrus=smoothstep(.48,.77,cloudNoise(cirrusUV))*smoothstep(.07,.35,d.y)*.30;
         sky=mix(sky,mix(vec3(.08,.10,.15),vec3(.79,.85,.88),daylight),cirrus*(1.0-cloud));
         float sunDot=max(dot(d,normalize(sunPosition)),0.0);
         sky+=vec3(0.18,0.14,0.09)*pow(sunDot,18.0)*day*(1.0-rain)*(1.-cloud);
