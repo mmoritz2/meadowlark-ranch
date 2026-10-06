@@ -10,3 +10,9 @@ The wardrobe now builds modern riding clothes as fitted, skinned garment layers.
 - All 48 outfit IDs, dye choices, collections, saved appearances and multiplayer fields are retained. The Stable hand recipe is now labelled Stable shirt.
 
 Validation: `tools/qa-rider-tailoring.cjs` captures matching close-up, rear, full-body and seated views, verifies all cloth weights and sampled animated vertices. `tools/qa-rider-wardrobe.cjs` checks all outfits on both bodies and rapid switching. Accessory and character-editor suites verify attachment fitting, appearance persistence and phone layouts.
+
+Further tailoring pass:
+- Rebuild the torso with continuous fabric rings, matching the original shoulder boundary and skin weights at the join. The shirt front no longer inherits the body's under-chest topology.
+- Folded collar leaves, an open polo neckline, an embroidered Meadowlark crest, notched jacket lapels, fitted panel seams and cuff buttons give the garment types distinct construction.
+- Belts now pass through five fitted, skinned breeches loops. Jacket backs have enough room over the hips to cover the trousers in motion.
+- Neck skin visibility follows the same polo opening as the clothing, without changing other necklines. Existing outfit IDs and saved dye colors remain compatible.

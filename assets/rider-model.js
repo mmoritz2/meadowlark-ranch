@@ -36,7 +36,7 @@
 
    Pure module: THREE and friends are injected, nothing runs at import time. */
 
-import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=wardrobe-20261006';
+import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=couture-20261006';
 export {RIDER_OUTFITS};
 import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown} from './rider-hairstyles.js?v=hair-20261006';
 import {refineRiderFace} from './rider-face.js?v=art-20261005';
@@ -418,6 +418,8 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    float headZ=max(step(uZ2.w,y)*(1.0-arm),step(neckY,y)*(1.0-smoothstep(0.070,0.080,rN))*(1.0-arm));
    float fittedNeck=uZ1.x+.036*(1.0-smoothstep(-.09,0.0,vBind.z-uZ1.y))+.045*pow(min(ax/.085,1.0),2.0)+.075*smoothstep(.085,.15,ax);
    headZ=mix(headZ,step(fittedNeck-.0015,y)*(1.0-arm),uFitted);
+   float poloNeck=uZ1.x+.042+.026*pow(min(ax/.080,1.0),2.0)-.064*(1.0-smoothstep(0.0,.050,ax))*smoothstep(uZ1.y+.010,uZ1.y+.040,vBind.z);
+   headZ=max(headZ,step(poloNeck-.0015,y)*(1.0-smoothstep(.048,.052,ax))*uTailor.w);
    float hand=arm*step(uZ2.x-0.017,ax);
    float bareArm=arm*step(uZ2.x-0.30,ax)*uClothes.y;
    float keep=max(headZ,max(hand,bareArm)*uFitted);
@@ -432,6 +434,8 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    float headZ=max(step(uZ2.w,y)*(1.0-arm),step(neckY,y)*(1.0-smoothstep(0.070,0.080,rN))*(1.0-arm));
    float fittedNeck=uZ1.x+.036*(1.0-smoothstep(-.09,0.0,vBind.z-uZ1.y))+.045*pow(min(ax/.085,1.0),2.0)+.075*smoothstep(.085,.15,ax);
    headZ=mix(headZ,step(fittedNeck-.0015,y)*(1.0-arm),uFitted);
+   float poloNeck=uZ1.x+.042+.026*pow(min(ax/.080,1.0),2.0)-.064*(1.0-smoothstep(0.0,.050,ax))*smoothstep(uZ1.y+.010,uZ1.y+.040,vBind.z);
+   headZ=max(headZ,step(poloNeck-.0015,y)*(1.0-smoothstep(.048,.052,ax))*uTailor.w);
    float hand=arm*step(uZ2.x-0.017,ax);
    float shortSleeve=arm*step(uZ2.x-0.31,ax)*uClothes.y;
    float skinZ=max(max(headZ,hand),shortSleeve);
@@ -475,15 +479,15 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
     .replace('#include <map_fragment>',`#include <map_fragment>
  { float sk=${allSkin?'1.0':'step(uZ2.x+0.004,abs(vBind.x))*step(uZ2.y-0.14,vBind.y)'};
    float shade=clamp(pow(dot(diffuseColor.rgb,vec3(0.2126,0.7152,0.0722))/uClothRef,0.60),0.40,1.6);
-   vec3 cloth=${part==='shirtcollar'?'vec3(.92,.90,.83)':part==='lining'?'vec3(.84,.82,.75)':part==='lapel'?'uShirt*.76':part==='rib'?'uShirt*(.78+.04*clothWave(vBind.x+vBind.y,1100.0))':part==='piping'?'mix(uShirt,vec3(.68,.61,.44),.28)':part==='placket'?'uShirt*.88':part==='pocket'?'uShirt*.91':part==='collar'?'uShirt*.82':part==='legs'?'riderBreeches(uPants,vBind)':part==='trim'||part==='leather'?'uBoot':part==='arms'?'mix(riderFabric(uShirt,vBind),vec3(0.82,0.77,0.65),uClothes.w)':'riderFabric(uShirt,vBind)'};
+   vec3 cloth=${part==='contrast'?'vec3(.84,.81,.73)':part==='stitch'?'mix(uShirt,vec3(.81,.75,.61),.40)':part==='seam'?'uShirt*.79':part==='crest'?'uPants*.72':part==='shirtcollar'?'vec3(.92,.90,.83)':part==='lining'?'vec3(.84,.82,.75)':part==='lapel'?'uShirt*.76':part==='rib'?'uShirt*(.78+.04*clothWave(vBind.x+vBind.y,1100.0))':part==='piping'?'mix(uShirt,vec3(.68,.61,.44),.28)':part==='placket'?'uShirt*.88':part==='pocket'?'uShirt*.91':part==='collar'?'uShirt*.82':part==='legs'?'riderBreeches(uPants,vBind)':part==='trim'||part==='leather'?'uBoot':part==='arms'?'mix(riderFabric(uShirt,vBind),vec3(0.82,0.77,0.65),uClothes.w)':'riderFabric(uShirt,vBind)'};
 
    rwClothSkin=sk;
    diffuseColor.rgb=mix(cloth*${tailored?'1.0':'shade'},riderSkin(diffuseColor.rgb),sk); }`)
     .replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>\n roughnessFactor=mix(${part==='leather'?'.46':'riderFabricRoughness()'},roughnessFactor,rwClothSkin);`)
     .replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
- normal=normalize(mix(${['lining','shirtcollar','collar','lapel','piping','placket','pocket','leather'].includes(part)?'normal':`riderFabricNormal(normal,vBind,${part==='legs'?'1.0':'0.0'})`},normal,rwClothSkin));`);
+ normal=normalize(mix(${['lining','shirtcollar','collar','lapel','piping','placket','pocket','leather','contrast','stitch','seam','crest'].includes(part)?'normal':`riderFabricNormal(normal,vBind,${part==='legs'?'1.0':'0.0'})`},normal,rwClothSkin));`);
   };
-  mat.customProgramCacheKey=()=>'rider-outfit-tailored-2-'+part+'-'+(allSkin?1:0)+'-'+cut;
+  mat.customProgramCacheKey=()=>'rider-outfit-tailored-3-'+part+'-'+(allSkin?1:0)+'-'+cut;
  }
  /* hair: the grey strand texture takes the chosen colour. Under a helmet everything above the brim is
     pressed in under the shell, so long hair still falls out below it and nothing pokes through. */
@@ -695,7 +699,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    const outfit=riderOutfit(id);id=outfit.id;
    rig.outfitId=id;
    u.uClothes.value.set(outfit.design,outfit.cut==='short'?1:0,outfit.cut==='sweater'?1:0,outfit.cut==='gilet'?1:0);
-   const cut=garmentCut(outfit);u.uTailor.value.set(cut.formal?1:0,cut.vest?1:0,outfit.category==='Ranch'?1:0,0);
+   const cut=garmentCut(outfit);u.uTailor.value.set(cut.formal?1:0,cut.vest?1:0,outfit.category==='Ranch'?1:0,cut.polo?1:0);
    const done=()=>{u.uOutfit.value=rig.outfit?1:0;u.uTopOnly.value=0;u.uFitted.value=rig.outfit?.meshes.some(m=>m.name==='Tailored_Body')?1:0;rig.setBoots(outfit.source==='riding');if(rig.refreshAccessories)rig.refreshAccessories();if(cb)cb();};
    if(rig.outfit&&rig.outfit.id===id)return done();
    if(rig.outfit){dropMeshes(rig.outfit.meshes);rig.outfit=null;}
