@@ -140,6 +140,8 @@ export function install(G){
   };}
  let lastRB=null, preFinish=null;
  G.on('ribbons',RB0=>{
+  // Ranch Rush presents its own score and medal recap, without a ladder card.
+  if(RB0?.ev?.rush){lastRB=null;preFinish=null;capture=null;wasGold=false;return;}
   try{
    lastRB={id:RB0.ev&&RB0.ev.id,gold:!!RB0.gold,rib:RB0.rib,stars:RB0.stars,acc:+RB0.acc||0,
     diff:RB0.diff||'open',faults:RB0.faults||0,refusals:RB0.refusals||0,lineOff:+RB0.lineOff||0,at:Date.now()};
@@ -324,6 +326,7 @@ export function install(G){
    if(pendingRematch&&c.ev&&pendingRematch.ev===c.ev.id&&Date.now()-pendingRematch.at<8000){c.ladRematch=true;c.tixSpent=true;pendingRematch=null;}
    else pendingRematch=null;
    clearField();
+   if(c.ev&&c.ev.rush){if(cardT)clearTimeout(cardT);cardT=null;return;}
    /* A gauntlet is a trial against a hard limit and a dressage test is judged alone; neither wants
       a field. A challenge or friendly race already has one, and it is made of real people. */
    if(!c.race||c.dressage||c.pvp||c.friendly||c.ev.friendly||c.ev.gauntlet)return;
@@ -389,7 +392,7 @@ export function install(G){
     a frame that a reload never gets to — the ticket as well. SE's own reviews are full of this. */
  let runWrite=0;
  G.on('courseTick',(c,dt,t)=>{
-  if(!c||!c.started||c.dressage||c.done)return;
+  if(!c||!c.started||c.dressage||c.done||c.ev?.rush)return;
   if(t-runWrite<2)return; runWrite=t;
   const S=c.ce||{};
   try{ G.save.sync(s=>{ s.runSaved={ev:c.ev.id,di:S.di==null?1:S.di,t:+(c.t||0).toFixed(1),idx:c.idx|0,
@@ -561,6 +564,7 @@ export function install(G){
  G.on('courseFinish',payload=>{
   const {c,ev,stars,RB,pay,dressage,pct}=payload||{};
   if(!c||!ev)return;
+  if(ev.rush){clearRun();return;}
   try{
    const gold=goldOf(ev,RB);
    const S=(c&&c.ce)||{}, d=diffOf(S.diff&&S.diff.k||(c.rb&&c.rb.diff)||'open');
@@ -801,6 +805,7 @@ export function install(G){
     gate — so the card offered a gold 'Enter · 338' that closed every menu, started nothing and
     left a toast. This is every lock the gate will apply, said in words, or null when she can ride. */
  function entryLock(ev,s,h){
+  if(ev&&ev.rush)return null;
   s=s||{};
   let gate={ok:true,missing:[]}; try{gate=G.course.eventOk(ev,h)||gate;}catch(e){}
   if(!gate.ok)return 'Needs '+gate.missing.map(m=>(m[0]==='level'?'Lv '+m[1]:(T.STAT_LBL[m[0]]||m[0])+' '+m[1])+' (have '+m[2]+')').join(' · ');

@@ -686,7 +686,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=villag
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=village-art-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=hair-20261006';
-import {FEATURES} from './assets/features/index.js?v=field-composition-1';
+import {FEATURES} from './assets/features/index.js?v=ranch-rush-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -9032,7 +9032,7 @@ function addSP(s,n,why){ensureWeek(s);
 }
 function weeklyFeatured(){
  const wk=weekKey(); let h=0; for(const ch of wk)h=(h*31+ch.charCodeAt(0))>>>0;
- const jumps=EVENTS3.filter(e=>!e.race&&!e.dressage), races=EVENTS3.filter(e=>e.race);
+ const jumps=EVENTS3.filter(e=>!e.rush&&!e.race&&!e.dressage), races=EVENTS3.filter(e=>!e.rush&&e.race);
  const pick=(arr,seed,k)=>{const out=[],a=arr.slice(); let x=seed; while(out.length<k&&a.length){x=(x*1103515245+12345)>>>0; out.push(a.splice(x%a.length,1)[0]);} return out;};
  return pick(jumps,h+1,2).concat(pick(races,h+7,2));
 }
@@ -9161,6 +9161,7 @@ function finishCourse(){
  const RB=awardRibbons(ev,c.t,c.faults||0,c.rb||null);
  const pay=Math.round((RB.featured?ev.reward*1.5:ev.reward)*(c.payMul||1));
  G.run('courseFinish',{c,ev,stars:stars.length,RB,pay,dressage:false});
+ const finishTime=ev.rush?(G.ranchRush?.lastResult?.time||c.t):c.t;
  addCoins(pay);
  addXp3D(Math.round(ev.reward/8));
  passAdd(50);
@@ -9170,15 +9171,15 @@ function finishCourse(){
  addGems(gem);
  if(first)syncSave(s=>{s.trophies=s.trophies||{};s.trophies[ev.id]=true;});
  sChime();sGem();
- toast('🏆 '+ev.name+' — '+stars+' in '+c.t.toFixed(1)+'s! +'+pay+'🪙 +'+gem+'💎'+' · '+RB.msg+(c.insp?' · ✨×'+c.insp:'')+(c.off?' · ↪️×'+c.off:''));
+ if(!ev.rush)toast('🏆 '+ev.name+' — '+stars+' in '+c.t.toFixed(1)+'s! +'+pay+'🪙 +'+gem+'💎'+' · '+RB.msg+(c.insp?' · ✨×'+c.insp:'')+(c.off?' · ↪️×'+c.off:''));
  if(c.insp)syncSave(s=>addSP(s,c.insp,'inspiring'));
- if(net.client&&net.client.connected)netSendChat('🏆 finished '+ev.name+' in '+c.t.toFixed(1)+'s '+stars);
+ if(!ev.rush&&net.client&&net.client.connected)netSendChat('🏆 finished '+ev.name+' in '+c.t.toFixed(1)+'s '+stars);
  let newBest=false;
  syncSave(s=>{
   s.bestTimes=s.bestTimes||{};
-  if(!s.bestTimes[ev.id]||c.t<s.bestTimes[ev.id]){s.bestTimes[ev.id]=+c.t.toFixed(1);newBest=true;}
+  if(!s.bestTimes[ev.id]||finishTime<s.bestTimes[ev.id]){s.bestTimes[ev.id]=+finishTime.toFixed(1);newBest=true;}
  });
- if(newBest){toast('⏱️ New personal best on '+ev.name+'!');publishMyBoards();}
+ if(newBest&&!ev.rush){toast('⏱️ New personal best on '+ev.name+'!');publishMyBoards();}
  questEvt('event',ev.id);
  dailyEvt('event',1);
  cancelCourse();

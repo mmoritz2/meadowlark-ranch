@@ -229,10 +229,10 @@ export function install(G){
  G.on('courseGate',(ev,di)=>{
   const h=ridden(); const ok=eventOk(ev,h);
   if(!ok.ok){toast('🔒 '+ev.name+' needs '+missingText(ok.missing)+(ok.missing.some(m=>m[0]!=='level')?' — train or equip tack for the missing stats':''));return true;}
-  let use=di; if(use==null){try{use=G.save.fresh().evDiff;}catch(e){} if(use==null)use=1;}
+  let use=ev.rush?0:di; if(use==null){try{use=G.save.fresh().evDiff;}catch(e){} if(use==null)use=1;}
   use=clamp(Math.round(use),0,DIFFS.length-1);
   if(DIFFS[use].lvlAdd&&(h.level||1)<ev.lvl+DIFFS[use].lvlAdd){toast('🔥 Elite '+ev.name+' opens at Lv '+(ev.lvl+DIFFS[use].lvlAdd));return true;}
-  pendingDi=use; G.save.sync(s=>{s.evDiff=use;});
+  pendingDi=use; if(!ev.rush)G.save.sync(s=>{s.evDiff=use;});
   return false;
  });
  G.on('eventGate',(ev,h)=>{ const r=eventOk(ev,h); const first=r.missing.find(m=>m[0]!=='level');
@@ -301,7 +301,7 @@ export function install(G){
    S.lineMesh=new THREE.InstancedMesh(disc,lineMat,24); S.lineMesh.count=0; G.scene.add(S.lineMesh); }
   c.payMul=diff.rewMul; c.rb={acc:1,lineOff:0,refusals:0,diff:diff.k,par:c.par};
   const total=c.jumps.length*S.laps;
-  toast((ev.xc?'🌲 ':ev.race?'🏁 ':'🏇 ')+diff.icon+' '+diff.label+' · '+fmtT(S.timeAllowed)+' allowed'+(S.laps>1?' · '+S.laps+' laps':'')+(ev.line?' · stay on the line':'')+' · '+total+' to go');
+  if(!ev.rush)toast((ev.xc?'🌲 ':ev.race?'🏁 ':'🏇 ')+diff.icon+' '+diff.label+' · '+fmtT(S.timeAllowed)+' allowed'+(S.laps>1?' · '+S.laps+' laps':'')+(ev.line?' · stay on the line':'')+' · '+total+' to go');
  });
 
  /* ---------------------------------------------------------------- course tick --------- */
@@ -368,7 +368,7 @@ export function install(G){
      const insp=g==='perfect', offline=!j.approached;
      if(g==='fault'){ c.faults=(c.faults||0)+1; G.beep(90,120,0.18,'square',0.09); flash('💥 Rails down'); }
      else{ G.sChime(); G.money.statBump('jumps',1); flash(GRADE[g].icon+' '+GRADE[g].text); }
-     if(insp){ S.insp++; c.t=Math.max(0,c.t-0.8); player.stam=Math.min(1,player.stam+0.18); R.inspFlash=0.4; G.xp.passAdd(2); toast('✨ Inspiring jump! −0.8 s · stamina back'); }
+     if(insp){ S.insp++; c.t=Math.max(0,c.t-0.8); player.stam=Math.min(1,player.stam+0.18); R.inspFlash=0.4; G.xp.passAdd(2); toast(c.ev.rush?'✨ Perfect jump! Chain bonus · stamina back':'✨ Inspiring jump! −0.8 s · stamina back'); }
      if(offline){ S.off++; c.t+=1.0; toast('↪️ Off the line — +1 s'); }
      j.approached=false;
      if(advance(c,S))return true;

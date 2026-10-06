@@ -88,6 +88,7 @@ export function resolveTarget(m,done,world,position){
 
 export function nextAction(m,done,position,context={}){
  if(!m||done)return null;
+ if(m.ridingAlternative&&['build','build2','ranchlvl'].includes(m.type))return {hint:'Finish a Ranch Rush or riding event, or choose Build instead. Either earns this mission\'s reward.',action:'builder-ride',label:'Ride instead',ridingAlternative:true};
  const item=missingBuildPieces(m,context.save)[0],catalog=context.catalog||{};
  if(item){const name=catalog[item]?.label||item;return {hint:'Choose '+name+' in Build. Place it on clear grass outside the fenced arena.',action:'build',label:'Choose '+name,item};}
  if(m.type==='cleanjump')return {hint:'Follow the marker to a practice fence. Canter, then Jump before the rails.',action:'practice',label:'Ride to a practice fence'};
@@ -111,7 +112,7 @@ export function install(G){
   if(!m)return null;
   const save=G.save.fresh()||{},horse=H.ridden(),giver=Q.NPC_DEFS.find(d=>d.id===(m.npc||'wren'));
   const name=giver?.name||'the giver',short=name.replace(/^(Grandpa|Auntie|Farmer|Sheriff) /,'');
-  const title=String(m.label||'Current task').replace(/\{name\}/g,save.story?.name||'the grey mare');
+  const title=String(m.label||'Current task').replace(/\{name\}/g,save.story?.name||'the grey mare')+(m.ridingAlternative?' — or finish one ride':'');
   const progress=m===current()?Q.storyProg():0,goal=m.goal||1;
   const reward=G.money.rewardLabel(m.reward)||'';
   let step;
@@ -121,7 +122,7 @@ export function install(G){
    step=nextAction(m,false,H.player.pos,{save,catalog:G.tables.DECOR_CAT,training,statLabels:G.tables.STAT_LBL});
    if(!step)step={hint:m.type==='visit'?'Follow the marker to '+title.replace(/^Visit |^Ride to /,'')+'.':'Follow the marker and talk to '+short+'.',action:'guide',label:m.type==='visit'?'Ride there':'Find '+short};
   }
-  const checklist=m.type==='build2'?['lantern','trough'].map(item=>({label:G.tables.DECOR_CAT[item]?.label||item,done:(save.decor||[]).some(d=>d.t===item)})):[];
+  const checklist=m.type==='build2'&&!m.ridingAlternative?['lantern','trough'].map(item=>({label:G.tables.DECOR_CAT[item]?.label||item,done:(save.decor||[]).some(d=>d.t===item)})):[];
   return {...step,label:step.label||'Follow the marker',title,progress,goal,reward,complete,checklist};
  }
  let cachedTarget, targetMission=null, targetTime=-Infinity;
@@ -139,10 +140,14 @@ export function install(G){
   const count=m.goal>1?' ('+Math.floor(Math.max(0,Math.min(progress,m.goal)))+'/'+m.goal+')':'';
   return step.title+count+'\n'+(step.complete?step.label+' · reward ready':step.hint);
  }
- function activateCurrent(){
-  const step=describe();
+ function activateCurrent(buildInstead=false){
+  const m=current(),step=buildInstead&&m?.ridingAlternative&&!done(m)?nextAction({...m,ridingAlternative:false},false,H.player.pos,{save:G.save.fresh()||{},catalog:G.tables.DECOR_CAT}):describe();
   if(!step)return;
-  if(step.action==='gallop'||step.action==='practice'){
+  if(step.action==='builder-ride'){
+   const rush=G.ranchRush,first=rush?.definitions?.[0];
+   if(rush?.start&&first?.id)rush.start(first.id);
+   else G.ui.openEvents();
+  }else if(step.action==='gallop'||step.action==='practice'){
    G.hidePanels();G.riding?.selectGait(step.action==='practice'?'canter':'gallop');
   }else if(step.action==='event'&&current().ev&&G.seEvents?.openPage){G.ui.openEvents();G.seEvents.openPage(current().ev);}
   else if(step.action==='events'||step.action==='event')G.ui.openEvents();
@@ -162,14 +167,15 @@ export function install(G){
   else if(step.action==='photo')G.$('photoBtn')?.click();
   else G.hidePanels();
  }
- G.storyGuidance={target,pill,describe,activate:activateCurrent,activateCurrent,next:()=>describe()};
+ G.storyGuidance={target,pill,describe,activate:()=>activateCurrent(),activateCurrent:()=>activateCurrent(),activateBuild:()=>activateCurrent(true),next:()=>describe()};
  G.ui.action('story-guide',()=>activateCurrent());
+ G.ui.action('story-build',()=>activateCurrent(true));
  const track=G.$('questTrack');
  if(track){
   const style=document.createElement('style');
   style.textContent='body.se-hud #questTrack[data-guided="true"]{white-space:pre-line!important}#questTrack[role="button"]{cursor:pointer}#questTrack[role="button"]:focus-visible{outline:2px solid #f3cf6a;outline-offset:3px}.sg-focus{outline:2px solid #e7be64;outline-offset:2px}';
   document.head.appendChild(style);
-  track.addEventListener('click',activateCurrent);
+  track.addEventListener('click',()=>activateCurrent());
   track.addEventListener('keydown',e=>{if((e.code==='Enter'||e.code==='Space')&&track.getAttribute('role')==='button'){e.preventDefault();e.stopPropagation();activateCurrent();}});
   let elapsed=1;
   G.on('tick',dt=>{

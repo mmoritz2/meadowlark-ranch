@@ -674,7 +674,7 @@ export function install(G){
  }
  function buildGhosts(c){
   GH.list=[]; GH.on=false;
-  if(!G.horse.makeHorse||c.pvp||c.friendly)return;
+  if(!G.horse.makeHorse||c.pvp||c.friendly||c.ev?.rush)return;
   try{ if(Object.keys(G.horse.remotes||{}).length)return; }catch(e){}   // a real field is already out there
   let pts=(T.RACE_ROUTES[c.ev.route]||[]).map(p=>p.slice()); if(pts.length<3)return;
   if(c.ev.rev)pts=pts.reverse();
@@ -972,7 +972,7 @@ export function install(G){
   /* wrapped because the hazards, the field and the countdown caption all come after it, and a
      start line nobody could build must not cost the rider the rest of her round */
   try{addFx(marshal(c));}catch(e){console.error('ev2 marshal',e);}
-  if(c.race)tidyHazards(c);                              // events-pvp laid its own set two hooks ago
+  if(c.race&&!c.ev.rush)tidyHazards(c);                  // Rush owns its signposted obstacles.
   if(S.kind==='race'&&!c.ev.gauntlet)buildGhosts(c);
   caption(c);
  });
@@ -1537,6 +1537,7 @@ export function install(G){
     G.events2.result()) and this panel is only kept up to date, never opened. On its own this
     package still shows its card, so the result is never lost. */
  function showResult(c,ev,stars,RB,pay,dressage,pct){
+  if(ev&&ev.rush)return; // Ranch Rush owns its recap; keep the normal in-course grading.
   try{
    buildResult(c,ev,stars,RB,pay,dressage,pct);
    if(G.ladder&&G.ladder.openCard){ try{G.ui.rerender('ev2ResultPanel');}catch(e){} return; }

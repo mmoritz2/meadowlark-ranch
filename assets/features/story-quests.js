@@ -19,6 +19,20 @@ export function buildPairProgress(save){
  return ['lantern','trough'].filter(t=>(save?.decor||[]).some(d=>d.t===t)).length;
 }
 
+// A completed ride can satisfy the current builder task, never a later one.
+// Keep the existing mission rows/cursor and let the normal giver own reward claims.
+export function createBuilderRideAlternative({current,progress,activeCourse,complete}){
+ const seen=new WeakSet();
+ return ({c,ev}={})=>{
+  if(!c||typeof c!=='object'||c!==activeCourse()||c.ev!==ev||c.started!==true||!Number.isFinite(c.t)||c.t<=0||seen.has(c))return false;
+  seen.add(c);
+  const m=current();
+  if(!m?.ridingAlternative||!['build','build2','ranchlvl'].includes(m.type)||progress()>=m.goal)return false;
+  complete(m);
+  return true;
+ };
+}
+
 export function storyFocusCard(step,chapter=''){
  if(!step)return '';
  const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
@@ -26,8 +40,8 @@ export function storyFocusCard(step,chapter=''){
  return '<section class="sq-focus" aria-label="Current story task"><div class="sq-kicker">'+esc(chapter)+(step.complete?' · Reward ready':' · Current task')+'</div>'
   +'<h3>'+esc(step.title)+'</h3><p>'+esc(step.hint)+'</p>'
   +(step.checklist?.length?'<div class="sq-checklist">'+step.checklist.map(c=>'<span class="'+(c.done?'done':'')+'">'+(c.done?'✓ ':'○ ')+esc(c.label)+'</span>').join('')+'</div>':'')
-  +(step.goal>1?'<div class="sq-progress"><span>'+Math.floor(p)+' / '+step.goal+'</span><div class="qbar" role="progressbar" aria-valuenow="'+Math.floor(p)+'" aria-valuemin="0" aria-valuemax="'+step.goal+'"><span class="qfill" style="width:'+pct+'%"></span></div></div>':'')
-  +'<div class="sq-focus-foot"><div><span>'+(step.complete?'Collect from the giver':'Reward on completion')+'</span><b>'+esc(step.reward)+'</b></div><button class="claimBtn" data-fx="story-guide">'+esc(step.label||'Follow the marker')+'</button></div></section>';
+  +(step.goal>1?'<div class="sq-progress"><span>'+(step.ridingAlternative?'Build option · ':'')+Math.floor(p)+' / '+step.goal+'</span><div class="qbar" role="progressbar" aria-valuenow="'+Math.floor(p)+'" aria-valuemin="0" aria-valuemax="'+step.goal+'"><span class="qfill" style="width:'+pct+'%"></span></div></div>':'')
+  +'<div class="sq-focus-foot"><div><span>'+(step.complete?'Collect from the giver':'Reward on completion')+'</span><b>'+esc(step.reward)+'</b></div><div class="sq-focus-actions"><button class="claimBtn" data-fx="story-guide">'+esc(step.label||'Follow the marker')+'</button>'+(step.ridingAlternative&&!step.complete?'<button data-fx="story-build">Build instead</button>':'')+'</div></div></section>';
 }
 
 export function install(G){
@@ -185,6 +199,9 @@ export function install(G){
   {ch:'Build It Back Up Again',track:'qualify',npc:'wren',label:'Reach ranch level 2',type:'ranchlvl',goal:2,reward:{c:250,g:1,pts:20},text:'Builder points add up to a ranch level, and the level does real things — slower hunger, faster XP. Keep placing pieces until Meadowlark reaches level 2.'},
   {ch:'Build It Back Up Again',track:'qualify',npc:'wren',label:'Brave Builder: place 10 pieces',type:'build',goal:10,reward:{c:400,g:2,pts:30,xp:60},text:'Your grandmother built this place with her own hands. Ten more pieces, any you like, and it will look like a ranch again. Brave builder!'},
  ];
+ // Preserve mission identity, saved progress and chapter order for existing riders.
+ // Building remains a choice; finishing a real ride is an equally valid contribution.
+ for(const m of BUILDER){m.ridingAlternative=true;m.text+=' Or help the ranch by riding: finish any Ranch Rush or riding event instead. Either way earns this mission\'s reward.';}
  Q.story.insertBefore(at(m=>m.label==='Gallop 500 m'&&!m.ch),BUILDER,'sq-builder');
  const SEARCH1=[
   {ch:'A Silver Hair on the Gate',track:'search',npc:'wren',label:'Ask Mia and Theo about the grey mare',type:'clues',goal:3,clues:[{npc:'mia',text:'A grey horse? At dawn last week, drinking at the arena trough — no halter, no shoes, gone before Comet even snorted.'},{npc:'theo',text:'Pepper went mad one night, pacing the rail. In the morning there were prints in the arena sand twice the size of hers.'}],options:['A runaway from Barleyfold','{name} — she is alive, and close','One of Sheriff Bea\'s patrol horses'],answer:1,wrong:'Think about what they said: no halter, no shoes, and prints bigger than a pony\'s. Whose would those be?',reward:{c:200,g:1,xp:40},text:'Kiddo — Mia and Theo both swear they have seen a grey horse around the arena at night. Ask them what they saw, then come and tell me what you make of it.'},
@@ -286,18 +303,20 @@ export function install(G){
 
  /* ---------- custom mission types (snapshot or counter, see questEvt) ---------- */
  const QT=Q.types;
+ const RIDING_ALTERNATIVE=Symbol('completed builder ride');
  QT.name=m=>m.goal;
  QT.cine=m=>m.goal;
  QT.door=(m,val,p)=>val===m.door?m.goal:p;
  QT.ribbons=m=>ribbonCount(fresh(),m.disc||'any');
- QT.build=(m,val,p)=>(!m.item||m.item===val)?p+1:p;
- QT.build2=(m,val,p)=>Math.max(p,buildPairProgress(fresh()));
+ QT.build=(m,val,p)=>val===RIDING_ALTERNATIVE&&m.ridingAlternative?m.goal:(!m.item||m.item===val)?p+1:p;
+ QT.build2=(m,val,p)=>val===RIDING_ALTERNATIVE&&m.ridingAlternative?m.goal:Math.max(p,buildPairProgress(fresh()));
  G.on('decorPlaced',()=>{if(cur()?.type==='build2')Q.questEvt('build2',0);});
- QT.ranchlvl=m=>ranchLevelOf(fresh());
+ QT.ranchlvl=(m,val)=>val===RIDING_ALTERNATIVE&&m.ridingAlternative?m.goal:ranchLevelOf(fresh());
  QT.clues=(m,val,p)=>p+(typeof val==='number'?val:1);
  QT.roundup=m=>{const s=fresh();return Math.max(0,((s.stats&&s.stats.rounded)||0)-((s.story&&s.story.rbase)||0));};
  QT.side=(m,val,p)=>p+(typeof val==='number'?val:1);
- G.on('courseFinish',({ev})=>{Q.questEvt('ribbons',0);sideEvt('event',1,ev&&ev.id);});
+ const completeBuilderRide=createBuilderRideAlternative({current:cur,progress:prog,activeCourse:()=>G.course.get(),complete:m=>Q.questEvt(m.type,RIDING_ALTERNATIVE)});
+ G.on('courseFinish',({c,ev})=>{completeBuilderRide({c,ev});Q.questEvt('ribbons',0);sideEvt('event',1,ev&&ev.id);});
  G.on('missionClaim',(m,i)=>{
   S.sync(s=>{ if(m.type==='clues'){s.stats=s.stats||{};s.stats.cases=(s.stats.cases||0)+1;s.story.clues=[];}
    if(m.label==='Brave Builder: place 10 pieces'){s.stats=s.stats||{};s.stats.builderQ=1;}
@@ -358,8 +377,10 @@ export function install(G){
   if(m.type==='build'||m.type==='build2'||m.type==='ranchlvl'){
    if(m.type!=='build')Q.questEvt(m.type,0);
    const pp=prog();
-   d.innerHTML=dlgHead(def)+chLine(m)+'<p>'+txt(m.text)+'</p><span style="color:#8c7a63;font-size:13px">📜 '+esc(m.label)+(m.goal>1?' ('+Math.floor(pp)+'/'+m.goal+')':'')+'</span><br><br><button id="dlgBtn" class="claimBtn">🏗️ Open Build</button><button data-nm="x" style="margin-left:6px">Later</button>';
-   d.style.display='block'; $('dlgBtn').onclick=()=>{d.style.display='none';try{if(G.storyGuidance)G.storyGuidance.activateCurrent();else G.ui.openBuild();}catch(e){}}; d.querySelector('[data-nm="x"]').onclick=()=>{d.style.display='none';}; return true;
+   d.innerHTML=dlgHead(def)+chLine(m)+'<p>'+txt(m.text)+'</p><span style="color:#8c7a63;font-size:13px">📜 '+esc(m.label)+(m.goal>1?' ('+Math.floor(pp)+'/'+m.goal+')':'')+(m.ridingAlternative?' · or finish one ride':'')+'</span><br><br><button id="dlgBtn" class="claimBtn">'+(m.ridingAlternative?'Ride instead':'🏗️ Open Build')+'</button>'+(m.ridingAlternative?'<button data-builder-choice style="margin-left:6px">Build instead</button>':'')+'<button data-nm="x" style="margin-left:6px">Later</button>';
+   d.style.display='block'; $('dlgBtn').onclick=()=>{d.style.display='none';try{if(G.storyGuidance)G.storyGuidance.activateCurrent();else if(m.ridingAlternative)G.ui.openEvents();else G.ui.openBuild();}catch(e){}};
+   const buildChoice=d.querySelector('[data-builder-choice]');if(buildChoice)buildChoice.onclick=()=>{d.style.display='none';if(G.storyGuidance)G.storyGuidance.activateBuild();else G.ui.openBuild();};
+   d.querySelector('[data-nm="x"]').onclick=()=>{d.style.display='none';}; return true;
   }
   if(m.type==='door'){
    d.innerHTML=dlgHead(def)+chLine(m)+'<p>'+txt(m.text)+'</p><span style="color:#8c7a63;font-size:13px">🔐 The old stall is beside the barn — it is marked on the map. You have '+(s.keys||0)+' 🗝️.</span><br><br>'+closeBtn('On it!');
@@ -664,6 +685,7 @@ export function install(G){
  #questPanel .sq-focus-foot>div{display:grid;gap:4px;font-size:13px}
  #questPanel .sq-focus-foot>div>span{font-size:11px;color:#735e3e}
  #questPanel .sq-focus-foot button{min-height:44px;margin:0}
+ #questPanel .sq-focus-foot .sq-focus-actions{display:flex;gap:8px;flex-wrap:wrap}
  #questPanel .sq-journal>summary{padding:10px 0;font-weight:800;cursor:pointer}
  @media(max-width:520px){#questPanel .sq-focus{padding:12px}#questPanel .sq-focus-foot{align-items:stretch;flex-direction:column}#questPanel .sq-focus h3{font-size:18px}}
  `;document.head.appendChild(storyStyle);
@@ -677,7 +699,7 @@ export function install(G){
   STORY.forEach((q,k)=>{const ch=chapterOf(q); if(ch!==lastCh){lastCh=ch;const done=STORY.every((z,kk)=>chapterOf(z)!==ch||kk<i);html+='<div style="font-size:11px;color:#8c7a63;letter-spacing:.05em;margin-top:6px">📖 '+esc(ch).toUpperCase()+(done?' ✅':'')+'</div>';}
    const st=k<i?'done':k===i?'cur':'lock';
    const giver=npcShort(giverOf(q));
-   const lbl=txt(q.label);
+   const lbl=txt(q.label)+(q.ridingAlternative&&k>=i?' · or finish one ride':'');
    if(st==='done')html+='<div class="qrow claimed" style="font-size:12px"><span class="qico">✅</span><span class="qmain">'+lbl+'</span>'+trackChip(q.track)+'</div>';
    else if(st==='cur'){const p=prog();const ready=p>=q.goal;const nr=q.needRib;const gate=nr&&ribbonCount(s,nr.disc||'any')<nr.n;
     html+='<div class="qrow'+(ready?' done':'')+'" style="border-color:#e9bb52"><span class="qico">▶</span><span class="qmain"><b>'+lbl+'</b><span style="font-size:11px;color:#8c7a63;font-weight:600">'+(ready?'Done — tell '+esc(giver):(gate?'🎀 needs '+nr.n+' '+(DISC_LBL[nr.disc||'any']||'')+'ribbons ('+ribbonCount(s,nr.disc||'any')+')':'from '+esc(giver)+' · '+esc(REGION_OF[giverOf(q)]||'')))+(q.type==='ribbons'?' · 🎀 '+(DISC_LBL[q.disc||'any']||'')+'ribbons':'')+'</span>'+(q.goal>1?'<span class="qbar"><span class="qfill" style="width:'+Math.round(100*Math.min(1,p/q.goal))+'%"></span></span>':'')+'</span><span style="font-size:11px;color:#8c7a63">'+(q.goal>1?Math.floor(Math.min(p,q.goal))+'/'+q.goal+' · ':'')+M.rewardLabel(q.reward)+'</span>'+trackChip(q.track)+'</div>';}

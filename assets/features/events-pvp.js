@@ -516,7 +516,7 @@ export function install(G){
   c.traitMul=raceTraitMul(c.ev,h); c.traitMatch=traitMatches(c.ev,h);
   if(c.ev.traits&&c.ev.traits.length)toast('🏇 Favours '+c.ev.traits.map(k=>T.STAT_LBL[k]).join(', ')+(c.traitMatch.length?' — '+c.traitMatch.length+' matched, +'+Math.round((c.traitMul-1)*100)+'% pace':''));
   /* hazards, and a PvP or friendly context if one was being set up */
-  buildHazards(c);
+  if(!c.ev.rush)buildHazards(c);
   player.shieldT=0; player.slipT=0;
   if(pvpStart&&(pvpStart.ev.id===c.ev.id)){
    c.pvp=!pvpStart.friendly; c.friendly=!!pvpStart.friendly; c.seed=pvpStart.seed;
