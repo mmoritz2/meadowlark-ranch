@@ -58,6 +58,66 @@ export function jumpCue(j,player){
  if(time>=TO_GOOD[0]&&time<=TO_GOOD[1])return 'good';
  return time<TO_GOOD[0]?'late':'early';
 }
+// This follow rig owns its orbit separately from the fallback camera. Keep its
+// input lifecycle in one place so menus, focus loss and other camera owners do
+// not leave a held pointer or change the rider's saved zoom behind a screen.
+export function createFollowCameraInput({state,blocked=()=>false,graceSeconds=1.4,zoomMin=.62,zoomMax=1.75}){
+ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+ let grace=0,unfocused=false,doc=null,wasBlocked=false;
+ const release=(e)=>{
+  if(e&&state.drag&&e.pointerId!==state.drag.id)return;
+  if(state.drag){state.drag=null;grace=graceSeconds;}
+ };
+ const suspend=()=>{release();grace=graceSeconds;};
+ const sync=()=>{
+  const paused=unfocused||!!doc?.hidden||!!blocked();
+  if(paused&&!wasBlocked)suspend();
+  wasBlocked=paused;
+  return paused;
+ };
+ const down=e=>{
+  if(sync()||state.drag||!Number.isFinite(e.clientX)||!Number.isFinite(e.clientY))return;
+  state.drag={id:e.pointerId,x:e.clientX,y:e.clientY};
+  grace=graceSeconds;
+ };
+ const move=e=>{
+  if(sync()||!state.drag||e.pointerId!==state.drag.id||!Number.isFinite(e.clientX)||!Number.isFinite(e.clientY))return;
+  state.yaw-=(e.clientX-state.drag.x)*.006;
+  state.pitch=clamp(state.pitch+(e.clientY-state.drag.y)*.004,-.30,.62);
+  state.drag.x=e.clientX;state.drag.y=e.clientY;
+ };
+ const wheel=e=>{
+  if(sync()||!Number.isFinite(e.deltaY))return;
+  state.zoom=clamp(state.zoom+e.deltaY*.0014,zoomMin,zoomMax);
+ };
+ return {
+  release,suspend,sync,
+  get grace(){return grace;},
+  update(dt,moving){
+   if(sync()||state.drag||!(dt>0)||!Number.isFinite(dt))return;
+   const wait=Math.min(dt,grace);grace=Math.max(0,grace-wait);
+   // Only the portion after the grace period may recenter, at the same rate
+   // across frame rates. A stationary rider keeps the chosen view.
+   if(moving&&dt>wait)state.yaw*=Math.exp(-1.2*(dt-wait));
+  },
+  attach(canvas,win,documentTarget){
+   doc=documentTarget;
+   const listeners=[];
+   const on=(target,type,fn,options)=>{
+    target.addEventListener(type,fn,options);listeners.push(()=>target.removeEventListener(type,fn,options));
+   };
+   on(canvas,'pointerdown',down);
+   on(canvas,'wheel',wheel,{passive:true});
+   on(win,'pointermove',move);on(win,'pointerup',release);on(win,'pointercancel',release);
+   on(win,'blur',()=>{unfocused=true;suspend();});
+   on(win,'focus',()=>{unfocused=false;grace=graceSeconds;sync();});
+   on(doc,'visibilitychange',()=>{if(doc.hidden)suspend();sync();});
+   on(doc,'game-input-change',sync);
+   on(doc,'focusin',sync);
+   return ()=>{for(const off of listeners)off();release();doc=null;};
+  }
+ };
+}
 export function install(G){
  const THREE=G.THREE, $=G.$, W=G.world, player=G.horse&&G.horse.player;
  if(!THREE||!G.scene||!W||!player)return;                 // nothing to draw on or nobody to draw for
@@ -652,35 +712,14 @@ export function install(G){
  const _eye=new THREE.Vector3(), _look=new THREE.Vector3(), _anchor=new THREE.Vector3();
  const _seen=new THREE.Vector3(NaN,NaN,NaN);
 
- /* Copies of ranch3d.html's own orbit listeners, for the reason in the header. One pointer id
-    only: on a phone the second thumb arriving is the normal case, and without the id test it
-    overwrites the drag origin and the view lurches every time either thumb moves.
-
-    And a drag only counts while this rig is the one driving. The built-in listener has the same
-    rule — it hands a drag straight to freeCam and returns — but this copy originally only
-    checked first person, so a pan in photo mode, a look round from the grandstand or a spin in
-    the balloon basket was quietly winding up F.yaw the whole time. Measured: entering the free
-    camera, panning 400 px and pressing C to come back left the follow rig at yaw -2.16 rad, so
-    the rider was suddenly being watched from 124 degrees round the wrong side of her own
-    horse — and at a halt nothing unwinds it, because the unwind only runs above 0.6 m/s. The
-    test goes in pointermove as well as pointerdown, since photo mode can be entered with the
-    button held. */
- const dragBlocked=()=>{try{return foreignCam()||(G.cam&&G.cam.isFree());}catch(e){return false;}};
- if(G.renderer&&G.renderer.domElement)G.renderer.domElement.addEventListener('pointerdown',e=>{
-  if(F.drag||dragBlocked())return;
-  F.drag={id:e.pointerId,x:e.clientX,y:e.clientY};
- });
- addEventListener('pointermove',e=>{
-  if(!F.drag||e.pointerId!==F.drag.id)return;
-  if(dragBlocked()){F.drag.x=e.clientX;F.drag.y=e.clientY;return;}   // follow the pointer, move nothing
-  F.yaw-=(e.clientX-F.drag.x)*0.006;
-  F.pitch=clamp(F.pitch+(e.clientY-F.drag.y)*0.004,-0.30,0.62);
-  F.drag.x=e.clientX;F.drag.y=e.clientY;
- });
- const camDragEnd=e=>{if(F.drag&&(!e||e.pointerId===F.drag.id))F.drag=null;};
- addEventListener('pointerup',camDragEnd);
- addEventListener('pointercancel',camDragEnd);
- addEventListener('wheel',e=>{F.zoom=clamp(F.zoom+e.deltaY*0.0014,CAM.ZOOM_MIN,CAM.ZOOM_MAX);},{passive:true});
+ /* Input remains dormant whenever a menu or another camera owns the screen.
+    The fallback camera has separate listeners; releasing its pointer alone
+    cannot release this rig's pointer. */
+ const dragBlocked=()=>foreignCam()||!!G.cam?.isFree?.()||!!G.renderer?.xr?.isPresenting||
+  document.body.classList.contains('summoning')||!!G.input?.blocked?.()||!!G.screenInput?.active||
+  !!document.activeElement&&(document.activeElement.matches('input,select,textarea')||document.activeElement.isContentEditable);
+ const followInput=createFollowCameraInput({state:F,blocked:dragBlocked,zoomMin:CAM.ZOOM_MIN,zoomMax:CAM.ZOOM_MAX});
+ if(G.renderer?.domElement)followInput.attach(G.renderer.domElement,window,document);
 
  /* events-pvp's grandstand is the one camera owner with no live getter. Wrap the entry point
     it publishes so the flag is honest, rather than guess from the outside. Read-only: the
@@ -800,7 +839,7 @@ export function install(G){
  /* How bad an eye is, for the walk-in's last resort: 0 in the clear, 1 with a crown across the view
     of her shoulders, and 1 plus the depth when the lens itself is in the leaves. */
  function eyeCost(x,y,z,hx,hy,hz){const b=inCanopy(x,y,z);return b>0?1+b:sightBlocked(x,y,z,hx,hy,hz)?1:0;}
- G.on('tick',()=>{if(!F.own&&LENS.hid.size)clearPeople();F.own=false;F.frames++;if(G.camera)_seen.copy(G.camera.position);});
+ G.on('tick',()=>{followInput.sync();if(!F.own&&LENS.hid.size)clearPeople();F.own=false;F.frames++;if(G.camera)_seen.copy(G.camera.position);});
  /* ---- people in the lens ------------------------------------------------------------------
     The villagers are not architecture: nobody registered them with followCamera, and rightly —
     a camera that backed off every passer-by would never settle in a town. But that leaves the
@@ -869,7 +908,7 @@ export function install(G){
  G.on('camera',c=>{
   if(F.broke>2||!player.mesh)return false;
   try{
-   if(foreignCam()||!G.camera.position.equals(_seen)){F.own=false;clearPeople();return false;}
+   if(foreignCam()||!G.camera.position.equals(_seen)){followInput.suspend();F.own=false;clearPeople();return false;}
    const cam=G.camera, dt=Math.min(c.dt,0.1), sp=Math.abs(player.speed)||0;
    const head=player.heading;
    if(F.head===null){F.head=head;}
@@ -889,9 +928,9 @@ export function install(G){
    const u=clamp(sp/CAM.GALLOP,0,1);
    F.u+=(u-F.u)*(1-Math.exp(-(u>F.u?CAM.UP:CAM.DOWN)*dt));
 
-   /* Drag yaw unwinds while she is going forward, the way the built-in rig's did — a look
-      around is a moment, not a mode — but more slowly, so a deliberate one survives a beat. */
-   if(!F.drag&&sp>0.6)F.yaw+=(0-F.yaw)*Math.min(1,dt*1.2);
+   /* A released drag keeps its view briefly before following the moving horse.
+      Menus and other camera owners pause this countdown. */
+   followInput.update(dt,sp>0.6);
 
    /* A corner tucks the shot in a little. Partly because that is what a camera operator does
       on a turn, and partly because the eye is on a nine-metre arm: at a hard gallop the horse
@@ -1059,7 +1098,7 @@ export function install(G){
 
  G.on('state',o=>{
   o.followCam={own:F.own,speedMix:+F.u.toFixed(2),lag:F.head===null?0:+angDiff(player.heading-F.head).toFixed(3),
-   yaw:+F.yaw.toFixed(3),pitch:+F.pitch.toFixed(3),zoom:+F.zoom.toFixed(2),
+   yaw:+F.yaw.toFixed(3),pitch:+F.pitch.toFixed(3),zoom:+F.zoom.toFixed(2),dragging:!!F.drag,orbitGrace:+followInput.grace.toFixed(2),
    dist:+Math.hypot(G.camera.position.x-player.pos.x,G.camera.position.z-player.pos.z).toFixed(2),
    rise:+(G.camera.position.y-(W.groundH(player.pos.x,player.pos.z)+(player.y||0))).toFixed(2),
    fov:+G.camera.fov.toFixed(1),occ:+F.occ.toFixed(2),yielded:foreignCam(),frames:F.frames,broke:F.broke,
@@ -1068,6 +1107,6 @@ export function install(G){
  /* Handles for QA and for anyone framing a shot: CAM is live, so a cinematic can widen the
     rig and put it back without this file knowing. reset() is what a teleport should call. */
  G.followCam={CAM,state:F,isOwner:()=>F.own,yielding:()=>foreignCam(),
-  reset(){F.placed=false;F.head=null;F.u=0;F.yaw=0;F.pitch=0;F.occ=1;F.nudgeP=F.nudgeO=F.wantP=F.wantO=0;F.hidden=false;},
+  reset(){followInput.release();F.placed=false;F.head=null;F.u=0;F.yaw=0;F.pitch=0;F.occ=1;F.nudgeP=F.nudgeO=F.wantP=F.wantO=0;F.hidden=false;},
   hidesBehindHer,nextSight:()=>nextSight()?[T.x,T.y,T.z]:null,herScale};
 }

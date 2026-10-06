@@ -66,23 +66,29 @@ assert.match(result([{...good,id:'last'},high]),/lad:events/);
 assert.match(result([good,{...good,id:'new',name:'New Loop'}],{evDiff:2,weekly:{gold:{good:true}}}),/lad:again:new/);
 
 const eventsSource=fs.readFileSync(root+'/assets/features/se-events.js','utf8');
-const preflightStart=eventsSource.indexOf('   const why=lk?lk:!g.ok?');
-const preflightEnd=eventsSource.indexOf("   main+='</div><div class=\"pb-controls\">",preflightStart);
+const preflightStart=eventsSource.indexOf("   main+='<section class=\"sev-preparation\"");
+const preflightEnd=eventsSource.indexOf('   me.fns.push(',preflightStart);
 assert(preflightStart>0&&preflightEnd>preflightStart);
-const preflight=new Function('lk','g','dLock','d','ev','disc','h','esc','needText',
+const renderPreflight=new Function('prep','why','disc','h','d','D','req','scoring','bestS','best','esc','fmt','tBest','document','G',
  'let main="";'+eventsSource.slice(preflightStart,preflightEnd)+'return main;');
-let intro=preflight('',{ok:true},true,{label:'Elite',lvlAdd:2},{lvl:1},'jump',{name:'Willow & Fern'},esc,()=> 'Jump 4');
+const preflight=(why,disc,touch=true)=>renderPreflight({ready:!why,prepareHint:'Review your horse.',purse:250,prepareTab:'horse'},why,disc,{name:'Willow & Fern'},{label:'Elite'},{t:'Show jumping'},'','1:30 allowed',null,null,esc,String,String,{body:{classList:{contains:name=>{assert.equal(name,'touch');return touch;}}}},{seCare:{open(){}}});
+let intro=preflight('Elite opens at Lv 3','jump');
 assert.match(intro,/Follow the trail to each fence\. Tap Jump when the ring turns green\./);
-assert.match(intro,/class="sev-pbar sev-preflight"><div class="pb-context"/);
+assert.match(intro,/class="sev-preparation" aria-label="Event preparation"/);
 assert.match(intro,/Willow &amp; Fern/);
 assert.match(intro,/Current \/ required, includes tack/);
 assert.match(intro,/role="status"><b>Before you ride:<\/b> Elite opens at Lv 3/);
-intro=preflight('',{ok:true},false,{label:'Open',lvlAdd:0},{lvl:1},'race',{name:'Willow'},esc,()=> 'Jump 4');
+assert.match(intro,/data-sev="prepare:horse"/);
+assert.match(intro,/data-sev="ride" disabled/);
+intro=preflight('','race');
 assert(!intro.includes('Before you ride:'));
 assert(!intro.includes('Tap Jump'));
-intro=preflight('Finish Wren\'s quest',{ok:true},false,{lvlAdd:0},{lvl:1},'xc',{name:'Willow'},esc,()=> 'Jump 4');
+assert.match(intro,/Entry requirements met/);
+assert.match(intro,/data-sev="ride">Enter event/);
+intro=preflight('Finish Wren\'s quest','xc');
 assert.match(intro,/through gates and over fences/);
 assert.match(intro,/Before you ride:<\/b> Finish Wren's quest/);
+assert.match(preflight('','jump',false),/Press Space when the ring turns green/);
 
 // A final crossing calls finish before the next discipline tick. Exercise the
 // production hooks in that order, including a repeated flush, so the final rail

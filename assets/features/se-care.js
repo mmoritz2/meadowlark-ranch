@@ -20,6 +20,8 @@
    opens that panel, which is what the rest of the game and every test that reads it expect.
 
    Nothing runs at import time. */
+import {bondingPlan,foodTrainingPlan,careReceipt} from './care-presentation.js?v=bonding-1';
+import {overviewHorseGroups,createOverviewVisibility} from './care-visibility.js?v=overview-1';
 export const id='se-care';
 export function install(G){
  const THREE=G.THREE, T=G.tables||{};
@@ -28,10 +30,19 @@ export function install(G){
  const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
  const clamp=(v,a,b)=>v<a?a:v>b?b:v;
  const TABS=[['horse','Horse','🐴'],['mastery','Mastery','🎖️'],['equipment','Equipment','🏇'],['style','Style','✂️'],
-  ['feeding','Feeding','🥕'],['bloodlines','Bloodlines','🧬'],['myhorses','My Horses','🏠']];
+  ['feeding','Bond & Feed','🥕'],['bloodlines','Bloodlines','🧬'],['myhorses','My Horses','🏠']];
  /* The reference's order, which puts the two that a rider reads first at the top. */
  const STATS=[['speed','Speed','⚡'],['agility','Agility','🌀'],['jump','Jump','🪜'],['accel','Accelerate','⏩'],['stamina','Stamina','💗']];
- const ST={open:false,tab:'horse',fov:null,rider:null,heading:null,snap:false};
+ const ST={open:false,tab:'horse',fov:null,rider:null,heading:null,snap:false,foodStat:'all',receipt:null,onBack:null,backLabel:'Back'};
+ const overviewVisibility=createOverviewVisibility();
+ function clearHorseView(){
+  const p=G.horse.player;if(!p)return;
+  const parked=G.onFoot?.on?G.onFoot.horse?.():null;
+  overviewVisibility.update(overviewHorseGroups(G),{
+   x:parked?.x??p.pos.x,z:parked?.z??p.pos.z,
+   protectedGroups:[p.mesh,parked?.group]
+  });
+ }
 
  /* ---------------------------------------------------------------- look ------------------ */
  if(!$('seCareCss')){
@@ -98,6 +109,36 @@ export function install(G){
 #seOv .sv-item big{font-size:32px;line-height:1.1}
 #seOv .sv-item small{font-size:12px;opacity:.85;font-weight:800}
 #seOv .sv-item.none{opacity:.5}
+#seOv .sv-bond-card{padding:12px;border:1px solid #f4d18c66;border-radius:10px;background:linear-gradient(135deg,#775b43,#514037);margin-bottom:12px}
+#seOv .sv-bond-card h3{margin:3px 0 8px;font-size:20px;line-height:1.15;color:#fff1cf;overflow-wrap:anywhere}
+#seOv .sv-kicker{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:#e8cb9a;font-weight:900}
+#seOv .sv-bond-line{display:flex;gap:8px;justify-content:space-between;align-items:center;font-size:12px;font-weight:800}
+#seOv .sv-bond-card .sv-bar i{background:linear-gradient(90deg,#daab65,#f6d290);transition:width .35s ease}
+#seOv .sv-bond-note{font-size:12px;line-height:1.5;margin:8px 0;color:#efe3cf}
+#seOv .sv-bond-next{font-size:12px;line-height:1.45;margin:8px 0 0;color:#ffe0a0}
+#seOv .sv-care-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:12px}
+#seOv .sv-care-action{min-height:55px;padding:8px 3px;border-radius:8px;background:#f0e0be;color:#4d3827;font-size:12px;font-weight:900}
+#seOv .sv-care-action small{display:block;margin-top:3px;font-size:10px;color:#725637}
+#seOv .sv-care-receipt{padding:10px 12px;margin-bottom:10px;background:#3f5944;border:1px solid #a6c69777;border-radius:9px;color:#eff8e8;font-size:12px;line-height:1.5}
+#seOv .sv-care-receipt strong{display:block;margin-bottom:4px;overflow-wrap:anywhere}
+#seOv .sv-care-gains{display:flex;gap:4px 8px;flex-wrap:wrap}
+#seOv .sv-care-gains span{white-space:nowrap;color:#d8ecc6}
+#seOv .sv-food-filters{display:flex;gap:5px;overflow-x:auto;padding-bottom:7px;margin-bottom:4px;scrollbar-width:thin}
+#seOv .sv-food-filters button{min-height:36px;flex:none;border-radius:16px;padding:7px 10px;font-size:11px;font-weight:800;color:#e9dcc2;background:#44372d}
+#seOv .sv-food-filters button.on{color:#403121;background:#e9d09b}
+#seOv .sv-food{display:grid;grid-template-columns:1fr auto;gap:7px 10px;align-items:center;padding:11px 10px;border-radius:9px;background:#624d37;margin-bottom:8px}
+#seOv .sv-food h4{font-size:14px;line-height:1.3;margin:0;color:#fff0d4}
+#seOv .sv-food h4 small{display:block;color:#dcccaf;font-weight:600;font-size:11px;margin-top:3px}
+#seOv .sv-food button{min-height:44px;min-width:56px;padding:8px;border-radius:8px;background:#e9d09b;color:#403121;font-size:12px;font-weight:900}
+#seOv .sv-food button:disabled{opacity:.45;cursor:default}
+#seOv .sv-food-plan{grid-column:1/-1;font-size:11px;line-height:1.45;color:#eee0c8}
+#seOv .sv-food-plan .sv-bar{height:4px;margin:5px 0}
+#seOv .sv-food-plan strong{color:#c8dfa3}
+#seOv .sv-care-empty{font-size:12px;line-height:1.5;padding:12px;color:#efdfc3}
+#seOv .sv-care-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+#seOv button:focus-visible{outline:3px solid #ffe0a0;outline-offset:2px}
+@media(max-width:480px){#seOv .sv-bond-card{padding:10px}#seOv .sv-bond-card h3{font-size:17px}#seOv .sv-scroll{padding:9px}#seOv .sv-food{padding:9px}#seOv .sv-care-actions{gap:4px}}
+@media(prefers-reduced-motion:reduce){#seOv .sv-bond-card .sv-bar i{transition:none}}
 #seOv .sv-need{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-bottom:10px}
 #seOv .sv-need .sv-bar i{background:var(--c)}
 #seOv .sv-horse{display:grid;grid-template-columns:64px 1fr;gap:4px 10px;align-items:center;padding:10px;border-radius:10px;background:rgba(96,76,54,.95);margin-bottom:8px}
@@ -151,6 +192,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
 /* A phone held upright: the horse in the top half, the card in the bottom half, and of the right-hand
    column only her name and the RIDE button, which is all there is room for. */
 @media (max-width:760px){#seOv .sv-pill{display:none}#seOv .sv-title{font-size:19px}
+ #seOv .sv-tab{font-size:11.5px;line-height:1.2;padding-left:3px;padding-right:3px;overflow-wrap:anywhere}
  #seOv .sv-card{top:50%;left:calc(clamp(72px,8.5vw,112px) + 8px);right:8px;width:auto}
  #seOv .sv-right{bottom:auto;right:10px;width:calc(100vw - clamp(72px,8.5vw,112px) - 24px)}
  #seOv .sv-mast,#seOv .sv-traits h4,#seOv .sv-cards,#seOv .sv-more{display:none}#seOv .sv-traits{margin-top:6px}
@@ -160,7 +202,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
 
  /* ---------------------------------------------------------------- the frame -------------- */
  const root=document.createElement('div'); root.id='seOv';
- root.innerHTML='<div class="sv-top"><button class="sv-circ" data-se="close" title="Back">↩</button>'
+ root.innerHTML='<div class="sv-top"><button class="sv-circ" data-se="close" data-care-back="true" title="Back" aria-label="Back">↩</button>'
   +'<div class="sv-title"><i>🐎</i>Horse Overview</div><div class="sv-sp"></div>'
   +'<div class="sv-pill" title="Coins"><b>🪙</b><span id="seOvCoins">0</span></div>'
   +'<div class="sv-pill" title="Gems"><b>💎</b><span id="seOvGems">0</span></div>'
@@ -170,7 +212,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   +'<div class="sv-right" id="seOvRight"></div>'
   +'<button class="sv-arrow" id="seOvPrev" data-se="cycle:-1" title="Previous horse"><svg viewBox="0 0 24 24" width="55%" height="55%" aria-hidden="true"><polyline points="15,5 8,12 15,19" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
   +'<button class="sv-arrow" id="seOvNext" data-se="cycle:1" title="Next horse"><svg viewBox="0 0 24 24" width="55%" height="55%" aria-hidden="true"><polyline points="9,5 16,12 9,19" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
-  +'<div class="sv-count" id="seOvCount"></div>';
+  +'<div class="sv-count" id="seOvCount"></div><div class="sv-care-only" id="seCareAnnounce" aria-live="polite" aria-atomic="true"></div>';
  document.body.appendChild(root);
 
  /* ---------------------------------------------------------------- data ------------------- */
@@ -205,22 +247,28 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
     +'<div><div class="v'+(bonus>0?' up':'')+'">'+e+'</div><div class="bn">effective</div></div>'
     +'<div class="tr"><i style="width:'+prog.toFixed(1)+'%"></i></div></div>';
   }
-  return {body:x,btns:'<button class="sv-b" data-se="open:stable">🏠 Stable</button><button class="sv-b" data-se="open:tack">🐎 Tack</button>'};
+  return {body:x,btns:'<button class="sv-b" data-se="tab:feeding">Bond &amp; feed</button><button class="sv-b" data-se="open:tack">🐎 Tack</button>'};
  }
  function feedingTab(s,h){
-  /* No needs meters: horses no longer get hungry, thirsty or dirty (the owner asked for no chores). Petting,
-     grooming and water are there for bond and for the quests that ask for them; food trains stats. */
-  let x='<div class="sv-head">Bonding</div>';
-  x+='<div class="sv-grid" style="margin-bottom:10px">'
-   +'<button class="sv-item" data-se="care:water"><big>💧</big>Water</button>'
-   +'<button class="sv-item" data-se="care:groom"><big>🧼</big>Groom</button>'
-   +'<button class="sv-item" data-se="care:pet"><big>💗</big>Pet</button></div>';
+  // Care is optional time together. It never creates needs or daily chores.
+  const P=G.horse.persOf?.(h)||{},B=bondingPlan(h,{personality:P,bondGain:G.horse.bondGain,names:G.horse.BOND_NAMES});
+  let x='<section class="sv-bond-card" aria-label="Bond with '+esc(h.name)+'"><div class="sv-kicker">'+esc(P.label||h.pers||'Your horse')+' · Time together</div><h3>Bond with '+esc(h.name)+'</h3>'
+   +'<div class="sv-bond-line"><span>'+esc(B.name)+'</span><span>'+B.bond+' / 100</span></div><div class="sv-bar" role="progressbar" aria-label="Bond" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+B.bond+'"><i style="width:'+B.bond+'%"></i></div>'
+   +'<p class="sv-bond-note">'+esc(B.preference)+'</p><p class="sv-bond-next">'+(B.next===null?esc(B.nextBenefit):'<b>'+B.remaining+' to '+esc(B.nextName)+'</b><br>'+esc(B.nextBenefit))+'</p>'
+   +'<div class="sv-care-actions">'+B.actions.map(a=>'<button class="sv-care-action" data-se="care:'+a.id+'">'+a.label+'<small>'+(a.gain?'+'+a.gain+' bond':'Time together')+'</small></button>').join('')+'</div></section>';
   const F=T.FOODS3||{}, items=s.items||{};
-  const keys=Object.keys(F).filter(k=>(items[k]|0)>0||['carrot','apple','hay'].includes(k));
-  x+='<div class="sv-head">Food</div><div class="sv-grid">'+keys.map(k=>{const f=F[k],n=items[k]|0;
-   const trains=f.stat?((T.STAT_LBL||{})[f.stat]||f.stat).replace(/^\S+\s/,''):'';
-   return '<button class="sv-item'+(n?'':' none')+'" data-se="care:'+esc(k)+'" title="'+esc(f.label||k)+'"><big>'+(f.emoji||'🥕')+'</big>'+esc(f.label||k)+'<small>×'+n+(trains?' · '+esc(trains):'')+'</small></button>';}).join('')+'</div>';
-  x+='<p class="sv-p" style="margin-top:10px">Feed as often as you like: each food trains one stat and builds bond. Forage grows all over the Basin, and the Market sells the rest.</p>';
+  const keys=Object.keys(F).filter(k=>((items[k]|0)>0||['carrot','apple','hay'].includes(k))&&(ST.foodStat==='all'||F[k].stat===ST.foodStat));
+  x+='<div class="sv-head">Training treats</div><div class="sv-food-filters" aria-label="Choose training stat">'+[['all','All'],...STATS.map(([k,l])=>[k,l])].map(([k,l])=>'<button data-se="foodstat:'+k+'" class="'+(ST.foodStat===k?'on':'')+'" aria-pressed="'+(ST.foodStat===k)+'">'+l+'</button>').join('')+'</div>';
+  x+=keys.map(k=>{const f=F[k],n=items[k]|0,label=STATS.find(([key])=>key===f.stat)?.[1]||f.stat;
+   const p=foodTrainingPlan(h,f,{...G.xp,bondGain:G.horse.bondGain,multiplier:(fed,stat)=>G.mul('sxp',s,fed,stat),have:n});
+   const bg=Math.min(100-B.bond,G.horse.bondGain(h,f.bond||0,'feed'));
+   const benefit=p?(p.capped?label+' is at its current cap ('+p.cap+').':label+' '+p.value+' → '+(p.value+1)+' · '+p.progress+' / '+p.need+' XP'):'';
+   const detail=p&&!p.capped?(p.gain?'<strong>+'+p.gain+' '+esc(label)+' XP</strong> per treat · about '+p.count+' more to raise it.':'No training XP from this treat.'):(bg?'+'+bg+' bond'+(p?.capped?' · Feed for bond and horse XP.':''):'A treat to share.');
+   return '<article class="sv-food"><h4>'+esc(f.label||k)+'<small>'+n+' in your bag'+(bg&&p&&!p.capped?' · +'+bg+' bond':'')+'</small></h4><button data-se="care:'+esc(k)+'" '+(n<=0?'disabled':'')+' aria-label="Feed '+esc(f.label||k)+' to '+esc(h.name)+'">Feed</button>'
+    +'<div class="sv-food-plan">'+esc(benefit)+(p&&!p.capped?'<div class="sv-bar"><i style="width:'+p.percent+'%"></i></div>':'')+'<div>'+detail+'</div></div></article>';
+  }).join('');
+  if(!keys.length)x+='<p class="sv-care-empty">No treats for this stat in your bag. Find food around the Basin or browse the Market.</p>';
+  x+='<p class="sv-bond-note">Care whenever you like. Treats train your horse; rides and events build your partnership too.</p>';
   return {body:x,btns:'<button class="sv-b" data-se="open:shop">🛍️ Market</button>'};
  }
  function myHorsesTab(s){
@@ -242,7 +290,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   let x='<div class="sv-head">'+esc(breedLabel(h.breed))+' mastery</div>'
    +'<div class="sv-meter" style="margin-bottom:12px"><div class="lb"><span>Level '+M+'</span><small>'+M+'/10</small></div><div class="sv-bar"><i style="width:'+(M*10)+'%"></i></div></div>';
   x+=Object.keys(U).map(Number).sort((a,b)=>a-b).map(k=>'<div class="sv-row'+(k>M?' lock':'')+'"><span>'+(k>M?'🔒':'✅')+' Level '+k+'</span><span style="text-align:right">'+esc(U[k])+'</span></div>').join('');
-  x+='<p class="sv-p" style="margin-top:10px">Mastery rises as you own and ride more '+esc(breedLabel(h.breed))+'s. Tricks, perks and the full ladder are on the care page.</p>';
+  x+='<p class="sv-p" style="margin-top:10px">Collecting more horses of this breed increases mastery. Riding builds this horse’s level and bond. The full mastery ladder is on the care page.</p>';
   return {body:x,btns:'<button class="sv-b" data-se="open:care">📋 Tricks &amp; perks</button>'};
  }
  function equipmentTab(s,h){
@@ -295,7 +343,8 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
   const body=$('seOvBody'),top=body.scrollTop;
   /* On an upright phone the RIDE button moves down into the card's own row, off the horse. */
   const btns=(innerWidth<=760?'<button class="sv-b go" data-se="ride">Ride</button>':'')+(out.btns||'');
-  body.innerHTML=out.body; $('seOvBtns').innerHTML=btns; $('seOvBtns').style.display=btns?'':'none';
+  const receipt=ST.receipt?.horseId===h.id?ST.receipt:null;
+  body.innerHTML=(receipt?'<section class="sv-care-receipt"><strong>'+esc(receipt.title)+'</strong><div class="sv-care-gains">'+receipt.gains.map(g=>'<span>'+esc(g)+'</span>').join('')+'</div></section>':'')+out.body; $('seOvBtns').innerHTML=btns; $('seOvBtns').style.display=btns?'':'none';
   body.scrollTop=top;
   $('seOvRight').innerHTML=rightColumn(s,h);
   $('seOvCoins').textContent=String(s.coins|0); $('seOvGems').textContent=String(s.gems|0);
@@ -303,30 +352,49 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
  }
 
  /* ---------------------------------------------------------------- open, close ------------ */
- function open(tab){
+ function open(tab,options={}){
   if(ST.tab!==tab&&tab)ST.tab=tab;
   try{G.hidePanels();}catch(e){}
+  ST.onBack=typeof options.onBack==='function'?options.onBack:null;ST.backLabel=options.label||'Back';
+  const back=root.querySelector('[data-care-back]');back.setAttribute('aria-label',ST.backLabel);
+  if(tab==='feeding')ST.foodStat='all';
   const p=G.horse.player;
   ST.open=true; ST.snap=true; ST.side=null; ST.heading=p?p.heading:null;
   ST.fov=G.camera?G.camera.fov:null;
   try{if(p&&p.rider&&p.rider.g){ST.rider=p.rider.g.visible;p.rider.g.visible=false;}}catch(e){}
   document.body.classList.add('se-ov-open'); root.classList.add('on');
+  clearHorseView();
   render(); measureGap(); placeArrows();
  }
  function close(){
   if(!ST.open)return;
-  ST.open=false; root.classList.remove('on'); document.body.classList.remove('se-ov-open');
+  ST.open=false;ST.onBack=null; root.classList.remove('on'); document.body.classList.remove('se-ov-open');
+  overviewVisibility.restore();
   try{const p=G.horse.player;if(p&&p.rider&&p.rider.g&&ST.rider!=null)p.rider.g.visible=ST.rider;}catch(e){}
   try{if(G.camera&&ST.fov){G.camera.fov=ST.fov;G.camera.updateProjectionMatrix();}}catch(e){}
  }
  const later=()=>{render();setTimeout(render,350);setTimeout(render,1200);};
+ let pendingCare=null;
+ G.on('careDone',(action,ok)=>{
+  const pending=pendingCare;if(!pending||pending.action!==action)return;
+  if(!ok){ST.receipt=null;return;}
+  const after=fresh()?.horses?.find(h=>h.id===pending.before.id);
+  ST.receipt=careReceipt(pending.before,after,{action,food:T.FOODS3?.[action],statLabels:T.STAT_LBL,maxLevel:G.xp.MAX_LEVEL});
+  if(ST.receipt)$('seCareAnnounce').textContent=ST.receipt.title+'. '+ST.receipt.gains.join(', ');
+ });
+ function performCare(action){
+  const h=fresh()?.horses?.[G.horse.rideIdx()],tracked=!!T.FOODS3?.[action]||['groom','pet','water'].includes(action);
+  pendingCare=tracked&&h?{action,before:JSON.parse(JSON.stringify(h))}:null;
+  try{G.ui.careAct(action);}finally{pendingCare=null;}
+ }
  function openOther(what){
   const i=G.horse.rideIdx(), h=(fresh()?.horses||[])[i], horseId=h&&h.id, tab=ST.tab, scroll=$('seOvBody').scrollTop;
+  const returnOptions={onBack:ST.onBack,label:ST.backLabel};
   const returnOverview=()=>{
    // Find the same horse by identity: breeding or stable actions can reorder the herd.
    const horses=fresh()?.horses||[], index=horses.findIndex(h=>h.id===horseId);
    if(index>=0&&index!==G.horse.rideIdx()&&!horses[index].foal){const sel=$('horseSel');if(sel&&sel.onchange){sel.value=String(index);sel.onchange();}}
-   open(tab); $('seOvBody').scrollTop=scroll;
+   open(tab,returnOptions); $('seOvBody').scrollTop=scroll;
   };
   close();
   const panel={care:'carePanel',stable:'stablePanel',style:'stylePanel',breed:'breedPanel'}[what];
@@ -351,12 +419,14 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
  root.addEventListener('click',e=>{
   const b=e.target.closest&&e.target.closest('[data-se]'); if(!b)return;
   const [op,arg]=b.dataset.se.split(':');
-  if(op==='close'){close();return;}
+  // Preserve the stable screen's established Back selector while supporting an explicit caller.
+  if(op==='close'){const back=b.dataset.careBack?ST.onBack:null;close();back?.();return;}
   if(op==='tab'){ST.tab=arg;render();return;}
+  if(op==='foodstat'){ST.foodStat=arg;render();return;}
   if(op==='ride'){if(arg!=null)rideHorse(+arg);else{try{if(G.onFoot&&G.onFoot.on)G.onFoot.mount();}catch(err){}close();}return;}
   if(op==='cycle'){cycle(+arg||1);return;}
   if(op==='open'){openOther(arg);return;}
-  if(op==='care'){try{G.ui.careAct(arg);}catch(err){console.error('se-care care '+arg,err);}later();return;}
+  if(op==='care'){try{performCare(arg);}catch(err){console.error('se-care care '+arg,err);}later();return;}
  });
  /* The care button on the HUD opens this screen. Caught on the way down, before the button's
     own handler, so the old panel does not flash open underneath. */
@@ -423,6 +493,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
  G.on('camera',c=>{
   if(!ST.open)return false;
   const p=G.horse.player, cam=G.camera; if(!p||!cam)return false;
+  clearHorseView();
   /* On foot (on-foot package) the horse on show is the one she left standing, not the hidden mount. */
   let sx=p.pos.x,sz=p.pos.z,h=p.heading,sy=p.y||0,sc=(p.mesh&&p.mesh.scale&&p.mesh.scale.x)||1;
   try{const e=G.onFoot&&G.onFoot.on&&G.onFoot.horse();if(e){sx=e.x;sz=e.z;h=e.heading;sy=0;sc=e.sc||sc;}}catch(err){}
@@ -463,6 +534,6 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
    try{ready=!!(G.horse.RIG().ready&&G.horse.player.mesh);}catch(e){}
    if(ready&&waited>1.5){done=true;open('horse');}});
  }
- G.seCare={open,close,render,state:()=>({open:ST.open,tab:ST.tab})};
- G.on('state',o=>{o.seCare={open:ST.open,tab:ST.tab};});
+ G.seCare={open,close,render,state:()=>({open:ST.open,tab:ST.tab,foodStat:ST.foodStat,receipt:ST.receipt})};
+ G.on('state',o=>{o.seCare=G.seCare.state();});
 }

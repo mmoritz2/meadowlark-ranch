@@ -674,6 +674,7 @@ import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism
 import {createRanchArchitecture} from './assets/ranch-architecture.js?v=solid-world-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-world-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
+import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=solid-world-1';
 import {createWorldFinish} from './assets/world-rendering.js';
@@ -683,7 +684,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=chalk-
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=chalk-down-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=hair-20261005b';
-import {FEATURES} from './assets/features/index.js?v=club-together-1';
+import {FEATURES} from './assets/features/index.js?v=riding-life-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -1369,7 +1370,10 @@ const sGem=()=>{[784,988,1319].forEach((f,i)=>beep(f,f,0.14,'triangle',0.1,i*0.0
 const sJump=()=>beep(300,650,0.18,'sine',0.1);
 const sChime=()=>{beep(659,659,0.1,'triangle',0.1);beep(988,988,0.16,'triangle',0.1,0.08);};
 const sThud=()=>beep(140,60,0.16,'square',0.12);
-const sHoof=alt=>beep(alt?95:75,alt?70:55,0.05,'triangle',0.05);
+const sHoof=(alt,surface='soil',strength=1,delay=0)=>{
+ if(muted||SFX_VOL<=0)return;
+ try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();playHoofImpact(AC,{surface,strength,volume:SFX_VOL,alternate:alt,delay});}catch(e){}
+};
 const sNeigh=()=>{beep(700,250,0.35,'sawtooth',0.05);beep(900,300,0.3,'sawtooth',0.035,0.05);};
 $('muteBtn').onclick=()=>{muted=!muted;$('muteBtn').textContent=muted?'🔇':'🔊';syncSave(s=>{s.muted=muted;});};
 G.audio={vol:()=>SFX_VOL,setVol(v){SFX_VOL=Math.max(0,Math.min(1,+v||0));},muted:()=>muted,setMuted(m){muted=!!m;$('muteBtn').textContent=muted?'🔇':'🔊';syncSave(s=>{s.muted=muted;});}};   // the settings screen (account-economy) drives sound through this
@@ -8571,11 +8575,14 @@ for(let i=0;i<26;i++){
  scene.add(sp);
  dustPool.push({sp,life:0});
 }
-let dustIdx=0,lastDust=0;
-function puffDust(x,y,z){
+let dustIdx=0;
+const nativeJumpInput=createJumpBuffer(.18),hoofContacts=createHoofContacts();
+const rideFeedback={contacts:0,dust:0,surface:'grass',bufferedJump:0};
+function puffDust(x,y,z,{size=1,opacity=.8}={}){
  const d=dustPool[dustIdx++%dustPool.length];
  d.sp.position.set(x+(Math.random()-0.5)*0.5,y+0.15,z+(Math.random()-0.5)*0.5);
- d.sp.scale.setScalar(0.5+Math.random()*0.4);
+ d.sp.scale.setScalar((0.5+Math.random()*0.4)*size);
+ d.opacity=opacity;
  d.life=0.65;
  d.sp.visible=true;
 }
@@ -8755,7 +8762,7 @@ addEventListener('pointermove',e=>{
 const endDrag=e=>{ if(camDrag&&(!e||e.pointerId===camDrag.id))camDrag=null; };
 addEventListener('pointerup',endDrag);
 addEventListener('pointercancel',endDrag);
-function releaseAllRidingControls(){for(const k in keys){if(keys[k])window.dispatchEvent(new KeyboardEvent('keyup',{code:k,bubbles:true}));keys[k]=false;}for(const k of ['go','back','left','right','jump','brake','gal','spr','analog'])touch[k]=false;touch.goA=touch.backA=touch.turnA=0;ridingInput.reset();releaseRidingPointer();endDrag();}
+function releaseAllRidingControls(){for(const k in keys){if(keys[k])window.dispatchEvent(new KeyboardEvent('keyup',{code:k,bubbles:true}));keys[k]=false;}for(const k of ['go','back','left','right','jump','brake','gal','spr','analog'])touch[k]=false;touch.goA=touch.backA=touch.turnA=0;ridingInput.reset();nativeJumpInput.reset();hoofContacts.reset();releaseRidingPointer();endDrag();}
 function resetGameInput(){
  releaseAllRidingControls();player.breathHold=false;
  for(const id of ['tGal','tSpr']){const control=$(id);if(control)control.style.opacity='0.6';}
@@ -13205,13 +13212,16 @@ function tick(stepSeconds){
  }else{
   if(player.parts)player.parts.wingFly=false;
   if(nativeCap?.native){
-   const pressed=!!(keys.Space||touch.jump)&&!RIDE.noJump;
-   if(pressed&&!RIG.heroJumpHeld){
-    if(nativeCap.canFly)setFlying(true);
-    else if(nativeCap.canJump){if(startGameHeroJump(RIG,{heightScale:Math.max(.8,Math.min(1.5,jpMul/.968))}))sJump();}
-    else toast('This mount has no jump animation yet.');
+   const rawPressed=!!(keys.Space||touch.jump),pressed=rawPressed&&!RIDE.noJump;
+   if(nativeCap.canFly){nativeJumpInput.reset();if(pressed&&!RIG.heroJumpHeld)setFlying(true);}
+   else if(nativeCap.canJump){
+    if(nativeJumpInput.update({pressed:rawPressed,blocked:RIDE.noJump,dt,mountKey:String(myHorses[rideIdx]?.id)+'|'+RIG.modelKey,canStart:RIG.heroMotion?.mode!=='jump'&&player.y<=.01})&&startGameHeroJump(RIG,{heightScale:Math.max(.8,Math.min(1.5,jpMul/.968))})){
+     if(!pressed)rideFeedback.bufferedJump++;nativeJumpInput.consume();sJump();
+    }
+   }else{
+    nativeJumpInput.reset();if(pressed&&!RIG.heroJumpHeld)toast('This mount has no jump animation yet.');
    }
-   RIG.heroJumpHeld=pressed;RIG.heroJumpWant=0;
+   RIG.heroJumpHeld=pressed;RIG.heroJumpWant=nativeJumpInput.remaining;
   }else if(RIG.heroMotion){
    /* A press is remembered for a third of a second, so asking a shade early — while the
       last jump is still landing — is honoured the moment the horse is free instead of
@@ -13264,7 +13274,6 @@ function tick(stepSeconds){
  driveRider(sp,t,dt);          // rest<->ride pose, posting, breathing, reins
  const dx=Math.sin(player.heading),dz=Math.cos(player.heading);
  const gy=groundH(player.pos.x,player.pos.z);
- if(grounded&&sp>8){lastDust+=dt;if(lastDust>0.12){lastDust=0;puffDust(player.pos.x-dx*1.05,gy+0.04,player.pos.z-dz*1.05);}}
  const bob=RIG.heroMotion?0:Math.pow(Math.sin(player.phase),2)*0.075*Math.min(1,sp/4);
  player.landT=Math.max(0,(player.landT||0)-dt);
  const landDip=!RIG.heroMotion&&player.landT>0?Math.sin((player.landT/0.22)*Math.PI)*0.07:0;
@@ -13304,19 +13313,31 @@ function tick(stepSeconds){
   player.parts.ears[0].rotation.x=Math.sin(player.earA*28)*0.35;
  }else{player.parts.ears[0].rotation.x*=0.9;}
  if(grounded&&sp>0.5&&!player.onFoot)distAcc+=sp*dt;   // walking is not riding
- if(sp>3&&grounded&&!player.onFoot){
-  const step=Math.floor(player.phase/Math.PI);
-  if(step!==player.lastStep){player.lastStep=step;player.alt=!player.alt;sHoof(player.alt);}
-  if(sp>7&&t-lastDust>0.055){
-   lastDust=t;
-   puffDust(player.pos.x-dx*0.9,gy,player.pos.z-dz*0.9);
+ // The visible native clip owns contact timing, including its diagonal pairs.
+ // Quiet turf, timber clops and small dry-soil puffs replace the old frame-rate
+ // dependent dust stream. Animation poses and gameplay speeds are unchanged.
+ {
+  const motion=RIG.heroMotion?.state,native=!!nativeCap?.native;
+  const phase=native?motion?.phase01:player.phase/(Math.PI*2),mode=native?motion?.gait:sp>7?'gallop':sp>2.8?'trot':'walk';
+  const active=!player.onFoot&&!player.flying&&!ridingIntent.locked;
+  const hits=hoofContacts.update({phase,gait:mode,lead:motion?.lead||'left',profile:native?RIG.profile:null,grounded:native?!!motion?.grounded:player.y<=0,active,speed:sp,reverse:player.speed<0,dt,mountKey:String(myHorses[rideIdx]?.id)+'|'+RIG.modelKey});
+  const water=G.onFoot?.waterAt?.(player.pos.x,player.pos.z);
+  const surface=ridingSurface({waterDepth:water?.depth||0,pathDistance:pathDist(player.pos.x,player.pos.z),arena:Math.abs(player.pos.x)<24&&player.pos.z>-22&&player.pos.z<22,bridge:Math.abs(player.pos.x)<2.3&&player.pos.z>BR_A&&player.pos.z<BR_B});
+  rideFeedback.surface=surface;
+  for(const hit of hits.contacts){
+   rideFeedback.contacts++;player.alt=!player.alt;sHoof(player.alt,surface,hit.feet.length>1?1.15:.82,hit.at*Math.min(dt,.04));
+   if(surface==='soil'&&sp>2){
+    const foot=hit.feet[0],side=foot.endsWith('L')?-.24:.24,fore=foot.startsWith('F')?.72:-.72;
+    puffDust(player.pos.x+Math.cos(player.heading)*side+dx*fore,gy+.025,player.pos.z-Math.sin(player.heading)*side+dz*fore,{size:Math.min(.85,.35+sp*.012),opacity:.45});rideFeedback.dust++;
+   }
   }
+  if(hits.landed){sHoof(false,surface,1.3);if(surface==='soil'){puffDust(player.pos.x,gy,player.pos.z,{size:.85,opacity:.55});rideFeedback.dust++;}}
  }
  $('gaitEl').textContent=player.flying?'🪽':player.y>0?'🌟':sp>7?'💨':sp>2?'🏇':sp>0.2?'🚶':'🧍';
  for(const d of dustPool){
   if(d.life<=0)continue;
   d.life-=dt;
-  d.sp.material.opacity=Math.max(0,d.life)*0.8;
+  d.sp.material.opacity=Math.max(0,d.life)*(d.opacity??.8);
   d.sp.position.y+=dt*0.5;
   d.sp.scale.multiplyScalar(1+dt*1.6);
   if(d.life<=0)d.sp.visible=false;
@@ -14206,6 +14227,7 @@ window.render_game_to_text=()=>{const sv=freshSave()||{};const hh=myHorses[rideI
  weather:weather.mode,
  graphics:{quality,bridleFitted:!!TACK.bridle?.userData.artistBridle,horseModel:RIG.modelKey,artistRig:!!RIG.profile?.artistBreed,joints:RIG.bones?.length||0,motion:RIG.heroMotion?.mode||null,horseBreed:RIG.requestedBreed,horseLoading:!!RIG.loadingBreed,horseReady:RIG.ready,horseAttached:RIG.attachedTo===player.mesh,day:Number(dayT.toFixed(3)),triangles:renderer.info.render.triangles,drawCalls:renderer.info.render.calls},
  camera:{x:Number(camera.position.x.toFixed(2)),y:Number(camera.position.y.toFixed(2)),z:Number(camera.position.z.toFixed(2)),fov:Number(camera.fov.toFixed(1)),free:!!freeCam},
+ rideFeedback:{...rideFeedback,jumpBuffer:nativeJumpInput.remaining},
  jumping:player.y>0&&!player.flying,
  stamina:Number((player.stam||0).toFixed(3))
 };G.run('state',o);return JSON.stringify(o);};

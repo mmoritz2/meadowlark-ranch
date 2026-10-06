@@ -21,6 +21,7 @@
    ribbon banner, stub); each arena photograph and course map is the game's own world, pictured
    from above the venue on the frame the screen opens (se-frame's snap). Nothing runs at import
    time. */
+import {eventPreparation} from './event-preparation.js?v=event-preparation-1';
 export const id='se-events';
 export function install(G){
  const K=G.seFrame, T=G.tables;
@@ -354,7 +355,7 @@ export function install(G){
 #seEv .sev-ribs .rs{width:clamp(40px,6.8vh,56px);height:clamp(48px,8.2vh,66px);display:flex;align-items:center;justify-content:center;border-radius:50% 50% 12px 12px;background:rgba(20,18,36,.5);border:2px solid rgba(255,255,255,.3)}
 #seEv .sev-ribs .rs svg{width:78%;height:78%}
 #seEv .sev-ribs .rs.off svg{opacity:.28;filter:grayscale(1)}
-#seEv .sev-pbar{position:sticky;bottom:0;margin-top:auto;width:calc(100% + 40px);display:flex;align-items:center;gap:18px;padding:clamp(8px,1.6vh,14px) 20px;background:linear-gradient(180deg,rgba(24,22,46,.7),rgba(24,22,46,.94));border-top:1px solid rgba(255,255,255,.15)}
+#seEv .sev-pbar{position:sticky;bottom:0;margin-top:auto;width:calc(100% + 40px);box-sizing:border-box;display:flex;align-items:center;gap:18px;padding:clamp(8px,1.6vh,14px) 20px;background:linear-gradient(180deg,rgba(24,22,46,.7),rgba(24,22,46,.94));border-top:1px solid rgba(255,255,255,.15)}
 #seEv .sev-pbar .pb-k{display:block;font:800 clamp(9.5px,1.5vh,11.5px)/1.1 Nunito,system-ui,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:#bdb6dc}
 #seEv .sev-pbar .pb-v{display:block;font:900 clamp(14px,2.4vh,19px)/1.15 Nunito,system-ui,sans-serif;color:#fff;font-variant-numeric:tabular-nums}
 #seEv .sev-pbar .pb-req{display:flex;flex-wrap:wrap;gap:5px;flex:1;min-width:0}
@@ -369,6 +370,23 @@ export function install(G){
 #seEv .pb-context .pb-lock{flex-basis:100%;color:#ffdfb4}
 #seEv .pb-controls{display:flex;align-items:center;gap:18px}
 #seEv .sev-pbar .se-gold{min-width:clamp(140px,15vw,200px);padding:12px 22px!important}
+#seEv .sev-preparation{flex:none;width:min(960px,100%);margin:14px 0 16px;padding:14px;border:1px solid rgba(235,221,177,.4);border-radius:10px;background:rgba(27,25,48,.91);box-sizing:border-box}
+#seEv .sev-preparation h3{margin:0 0 8px;font:900 16px/1.25 Nunito,system-ui,sans-serif}
+#seEv .sev-preparation .pb-context{margin-bottom:10px}
+#seEv .sev-preparation .pb-req{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+#seEv .sev-preparation .pb-req>span{padding:7px 10px;border-radius:7px;font:800 12px/1.3 Nunito,system-ui,sans-serif;background:rgba(90,190,110,.2);color:#e0ffe6}
+#seEv .sev-preparation .pb-req>span.bad{background:rgba(228,80,70,.26);color:#ffe0db}
+#seEv .sev-preparation .pb-req small{display:block;margin-top:3px;font-size:11px;font-weight:700}
+#seEv .sev-entry-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16)}
+#seEv .sev-entry-facts span{display:block;font:700 11px/1.3 Nunito,system-ui,sans-serif;color:#c9c2df}
+#seEv .sev-entry-facts b{display:block;margin-top:4px;font:900 14px/1.25 Nunito,system-ui,sans-serif;color:#fff;overflow-wrap:anywhere}
+#seEv .sev-prep-note{margin:10px 0 0;font:700 11.5px/1.45 Nunito,system-ui,sans-serif;color:#e3deee}
+#seEv .sev-preparation .pb-guide{margin:10px 0 0;font:700 12px/1.45 Nunito,system-ui,sans-serif;color:#eee5cd}
+#seEv .sev-ready{flex:1;min-width:0;font:900 13px/1.25 Nunito,system-ui,sans-serif;color:#deffe4}
+#seEv .sev-ready.locked{color:#ffdfb4}
+#seEv .sev-ready small{display:block;margin-top:3px;font:700 11px/1.25 Nunito,system-ui,sans-serif;color:#d9d2e8}
+#seEv .sev-entry-actions{flex:none;gap:10px;background:#211f3a;z-index:2}
+#seEv .sev-entry-actions>button{box-sizing:border-box;min-height:44px!important;padding:10px 14px!important;white-space:normal}
 #seEv .sev-blurb{width:min(960px,100%);margin-top:10px;font:700 clamp(11.5px,1.9vh,14px)/1.45 Nunito,system-ui,sans-serif;color:#ece7fa;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 #seEv .sev-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;width:min(960px,100%);margin-top:14px}
 #seEv .sev-stats button{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px!important;text-align:left}
@@ -419,11 +437,20 @@ export function install(G){
  #seEv .sev-count{bottom:auto;top:calc(50% + 29.4vw + 6px)}
  #seEv .sev-count i{border-width:8px}
  #seEv .sev-prow{flex-direction:column}
- #seEv .sev-diffs{max-width:none}
+ #seEv .sev-diffs{min-width:0;max-width:none}
+ #seEv .sev-diff{min-width:0;box-sizing:border-box}
  #seEv .sev-fe{grid-template-columns:repeat(2,1fr)}
  #seEv .sev-tiers{flex-wrap:wrap}
  #seEv .sev-pbar,#seEv .pb-controls{flex-wrap:wrap}
- #seEv .pb-context .pb-guide{margin-left:0}}`;
+ #seEv .pb-context .pb-guide{margin-left:0}
+ #seEv .sev-entry-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #seEv .sev-entry-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-left:12px;padding-right:12px}
+ #seEv .sev-entry-actions .sev-ready{grid-column:1/-1}
+ #seEv .sev-entry-actions>button{min-width:0;width:100%;padding:9px 6px!important;font:800 13px/1.25 Nunito,system-ui,sans-serif!important;text-transform:none;letter-spacing:0}
+ #seEv .sev-entry-actions .se-gold{min-width:0}}
+@media (max-height:500px) and (min-width:761px){
+ #seEv .sev-entry-actions .sev-ready small{display:none}
+ #seEv .sev-entry-actions{padding-top:7px;padding-bottom:7px}}`;
   document.head.appendChild(st);
  }
 
@@ -584,21 +611,28 @@ export function install(G){
       +'<span class="d-pay">'+K.COIN+fmt(pay)+'</span></button>';}).join('')+'</div></div>';
    main+='<div class="sev-ribs">'+[0,1,2,3].map(k=>'<span class="rs'+(k<rb.per[di]?'':' off')+'" title="'+(k<3?['Finish','Two stars','Three stars'][k]:'Gold: 95% accuracy, nothing down')+'">'+(k<3?K.RIBBON('#3fae5a','#2a7d40'):K.RIBBON('#e6b53a','#b8831d'))+'</span>').join('')+'</div>';
    let tA=0; try{tA=G.course.eventTimeAllowed?G.course.eventTimeAllowed(ev,di):0;}catch(e){}
-   const best=(s.bestTimes||{})[ev.id], bestS=ev.dressage?((s.bestScore||{})[ev.id]||(s.showBest||{})[ev.id]):null;
+   const best=(s.bestTimes||{})[ev.id], bestS=(ev.dressage||ev.kind==='show')?((s.bestScore||{})[ev.id]||(s.showBest||{})[ev.id]):null;
    const stats=G.xp.statBreakdown?G.xp.statBreakdown(h):{total:G.xp.effStats(h),base:h.stats||{},tack:{}};
-   const req=[['level',ev.lvl+(d.lvlAdd||0)]].concat(Object.entries(ev.req||{})).map(([k,need])=>{
-    const have=k==='level'?lvl:(stats.total[k]||0),label=k==='level'?'Level':statLbl(k).replace(/^\S+\s/,'');
-    const detail=k==='level'?'':('<small>'+esc(stats.base[k]||0)+' trained'+((stats.tack[k]||0)>0?' + '+esc(stats.tack[k])+' tack':'')+'</small>');
-    return '<span class="'+(have>=need?'ok':'bad')+'">'+esc(label)+' <b>'+esc(have)+' / '+esc(need)+'</b>'+detail+'</span>';
+   const entryLock=G.ladder?.entryLock?.(ev,{...s,evDiff:di},h)||(!g.ok?'Needs '+needText(g.missing):dLock?d.label+' opens at Lv '+(ev.lvl+d.lvlAdd):'');
+   const prep=eventPreparation({event:ev,horse:h,difficulty:d,stats,gate:g,venueLock:lk,entryLock,featured:featured().includes(ev.id)});
+   const req=prep.requirements.map(({key:k,have,need,base,tack,met})=>{
+    const label=k==='level'?'Level':statLbl(k).replace(/^\S+\s/,'');
+    const detail=k==='level'?'':('<small>'+esc(base)+' trained'+(tack>0?' + '+esc(tack)+' tack':'')+'</small>');
+    return '<span class="'+(met?'ok':'bad')+'">'+esc(label)+' <b>'+esc(have)+' / '+esc(need)+'</b>'+detail+'</span>';
    }).join('');
-   const why=lk?lk:!g.ok?('Needs '+needText(g.missing)):dLock?(d.label+' opens at Lv '+(ev.lvl+d.lvlAdd)):'';
-   main+='<div class="sev-pbar sev-preflight"><div class="pb-context"><span><b>'+esc(h.name||'Your horse')+'</b> · Current / required, includes tack.</span>';
-   if(disc==='jump'||disc==='xc')main+='<span class="pb-guide">Follow the trail '+(disc==='xc'?'through gates and over fences':'to each fence')+'. Tap Jump when the ring turns green.</span>';
-   if(why)main+='<span class="pb-lock" role="status"><b>Before you ride:</b> '+esc(why)+'</span>';
-   main+='</div><div class="pb-controls"><span><span class="pb-k">Time allowed</span><span class="pb-v">'+(tA?tSec(tA):'—')+(ev.laps>1?' ('+ev.laps+' laps)':'')+'</span></span>'
-    +'<span><span class="pb-k">Personal best</span><span class="pb-v">'+(best?tBest(best):bestS?Math.round((bestS>1?bestS:bestS*100))+'%':'--:--')+'</span></span>'
-    +'<span class="pb-req">'+req+'</span>'
-    +'<button class="se-gold" data-sev="ride"'+(why?' disabled title="'+esc(why)+'"':'')+'>'+(why?'Locked':'Ride')+'</button></div></div></div>';
+   const why=prep.reason;
+   const scoring=G.events2?.allowedLine?.(ev,di)||(prep.judged?'Judged on percentage':(tA?tSec(tA)+' allowed':'See full card'));
+   main+='<section class="sev-preparation" aria-label="Event preparation"><h3>'+esc(h.name||'Your horse')+' · '+esc(d.label)+'</h3><div class="pb-context"><span>Current / required, includes tack.</span>'
+    +'<span class="pb-lock" role="status"><b>'+(prep.ready?'Entry requirements met.':'Before you ride:')+'</b> '+esc(why)+'</span></div><div class="pb-req">'+req+'</div>'
+    +'<p class="sev-prep-note">'+esc(prep.prepareHint)+'</p>'
+    +'<div class="sev-entry-facts"><div><span>Entry</span><b>Free</b></div><div><span>Listed purse'+(prep.featured?' · Featured ×1.5':'')+'</span><b>'+fmt(prep.purse)+' coins</b></div>'
+    +'<div><span>'+(prep.judged?'Scoring':'Course format')+'</span><b>'+esc(scoring)+'</b></div>'
+    +'<div><span>Personal best</span><b>'+(prep.judged?(bestS?Math.round((bestS>1?bestS:bestS*100))+'%':'No score yet'):(best?tBest(best):'No time yet'))+'</b></div></div>'
+    +'<p class="sev-prep-note">The purse reflects this difficulty'+(prep.featured?' and the weekly bonus':'')+'. Final rewards depend on the result and active bonuses. Full card has the scoring rules.</p>';
+   if(disc==='jump'||disc==='xc')main+='<p class="pb-guide">Follow the trail '+(disc==='xc'?'through gates and over fences':'to each fence')+'. '+(document.body.classList.contains('touch')?'Tap Jump':'Press Space')+' when the ring turns green.</p>';
+   main+='</section><div class="sev-pbar sev-entry-actions"><span class="sev-ready'+(prep.ready?'':' locked')+'">'+(prep.ready?'Ready to enter':'Preparation needed')+'<small>'+esc(D.t)+' · '+esc(d.label)+'</small></span>'
+    +'<button class="se-cream" data-sev="prepare:'+prep.prepareTab+'"'+(G.seCare?.open?'':' disabled')+'>Prepare horse</button>'
+    +'<button class="se-gold" data-sev="ride"'+(!prep.ready?' disabled title="'+esc(why)+'"':'')+'>'+(prep.ready?'Enter event':'Locked')+'</button></div></div>';
    me.fns.push(()=>drawCourse(ev,mv));
    setTimeout(()=>drawCourse(ev,mv),0);
   }
@@ -685,10 +719,23 @@ export function install(G){
    }
   }
   else if(k==='diff'){st.diff=+a;G.save.sync(s=>{s.evDiff=+a;});paintPage();}
+  else if(k==='prepare')prepareHorse(a);
   else if(k==='ride'){const ev=evById(st.page);if(ev)ride(ev,st.diff==null?1:st.diff);}
   else if(k==='round'){if(!via('button[data-round="go"]'))G.toast('🐎 The roundup is not ready yet.');}
   else if(k==='drill'){if(!via('button[data-drill="'+a+'"]'))G.toast('🎯 That stat is already as high as it can go.');}
  });
+ function prepareHorse(tab){
+  const ev=evById(st.page);if(!ev||!G.seCare?.open)return;
+  const diff=st.diff,scroll=$('sevPage').querySelector('.sev-main')?.scrollTop||0;
+  G.seCare.open(tab,{label:'Back to '+ev.name,onBack:()=>{
+   const button=$('eventsBtn');if(!button)return;
+   if(!st.on)button.click();
+   setTimeout(()=>{if(!st.on)return;st.page=ev.id;st.diff=diff;root.classList.add('page');paintPage();
+    const main=$('sevPage').querySelector('.sev-main');if(main)main.scrollTop=scroll;
+    $('sevPage').querySelector('[data-sev^="prepare:"]')?.focus({preventScroll:true});
+   },40);
+  }});
+ }
  function ride(ev,di){
   const P=$('eventsPanel'), i=T.EVENTS3.indexOf(ev);
   const btn=P&&(P.querySelector('button[data-ev="'+i+':'+di+'"]')||P.querySelector('button[data-ev="'+i+'"]'));

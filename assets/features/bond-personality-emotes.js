@@ -169,11 +169,14 @@ export function install(G){
  function petAnimFor(h){const lv=bondLevel(h);return PET_ANIMS.filter(p=>p.lvl<=lv).pop();}
  function playPet(h){
   const RIG=G.horse.RIG(); const p=petAnimFor(h);
-  if(Math.abs(player.speed)<=0.6&&player.y<=0&&!player.flying&&!RIG.emote){
+  // Native horses keep their approved motion; care still earns its normal bond.
+  // Their source clips do not include these legacy tricks, so do not request one.
+  const native=!!RIG.profile?.nativeBreed;
+  if(!native&&Math.abs(player.speed)<=0.6&&player.y<=0&&!player.flying&&!RIG.emote){
    if(G.horse.horseEmote(p.em,{force:true})){RIG.emote.pet=true;}
   }
   const hp=headPos(); burst(hp.x,hp.y+0.2,hp.z,'heart');
-  if(!playPet._hint){playPet._hint=1;const nx=PET_ANIMS.find(q=>q.lvl>p.lvl);toast('💗 '+p.label+(nx?' · next petting animation at bond Lv '+nx.lvl:''));}
+  if(!native&&!playPet._hint){playPet._hint=1;const nx=PET_ANIMS.find(q=>q.lvl>p.lvl);toast('💗 '+p.label+(nx?' · next petting animation at bond Lv '+nx.lvl:''));}
  }
  G.on('careDone',(k,ok,h)=>{
   syncLiveBond();
