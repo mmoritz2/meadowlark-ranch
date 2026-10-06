@@ -36,7 +36,7 @@
 
    Pure module: THREE and friends are injected, nothing runs at import time. */
 
-import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=rider-shape-20261006';
+import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=rider-pose-20261006';
 export {RIDER_OUTFITS};
 import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown} from './rider-hairstyles.js?v=hair-20261006';
 import {refineRiderFace} from './rider-face.js?v=art-20261005';
@@ -137,13 +137,14 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
      if(rest)for(let i=0;i<track.values.length;i+=4)_q.fromArray(track.values,i).slerp(rest.q,track.name.startsWith('Head')?.40:.15).toArray(track.values,i);
     }
    }
-   if(['Idle_Loop','Idle_Talking_Loop','Walk_Loop','Jog_Fwd_Loop'].includes(c.name))for(const track of cl.tracks){
-    const match=/^((?:index|middle|ring|pinky|thumb)_0[123]_[lr])\.quaternion$/.exec(track.name),rest=match&&seat.restLocal.get(match[1]);
-    if(rest)for(let i=0;i<track.values.length;i+=4){_q.fromArray(track.values,i).slerp(rest.q,.40).toArray(track.values,i);}
+   if(['Idle_Loop','Idle_Talking_Loop','Walk_Loop','Jog_Fwd_Loop','Sprint_Loop'].includes(c.name))for(const track of cl.tracks){
+    const match=/^((?:index|middle|ring|pinky|thumb)_0[123]_[lr])\.quaternion$/.exec(track.name),relaxed=match&&seat.relax.get(match[1]);
+    if(relaxed)for(let i=0;i<track.values.length;i+=4){_q.fromArray(track.values,i).slerp(relaxed,.92).toArray(track.values,i);}
    }
    for(const t of cl.tracks)if(t.name==='pelvis.position'&&ualPelvis){const v=t.values;for(let i=0;i<v.length;i+=3){v[i]+=herPelvis.x-ualPelvis.x;v[i+1]+=herPelvis.y-ualPelvis.y;v[i+2]+=herPelvis.z-ualPelvis.z;}}
    clips[c.name]=cl;
   }
+  clips.Idle_Loop=relaxedIdle(scene,skin,bones,clips.Idle_Loop,seat.restLocal);
   /* ---- hair meshes, in Head space ---- */
   const hair={};
   gHair.scene.traverse(o=>{if(o.isMesh)hair[o.name]={geometry:o.geometry,material:o.material};});
@@ -155,6 +156,54 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
    let t=-1e9;for(let i=0;i<bp.count;i++){_v.fromBufferAttribute(bp,i).applyMatrix4(inv);if(_v.y>t)t=_v.y;}if(t>-1e8)head.browTop=t;}
   const helmetGeo=buildHelmetGeometry(head);
   return {body,scene,skin,eyes,brows,bones,seat,zones,clips,hair,head,helmetGeo,materials:{body:skin.material,eyes:eyes&&eyes.material,brows:brows&&brows.material},outfits:{}};
+ }
+
+ /* Bake a comfortable standing pose into the idle itself, so previews and the
+    live controller use identical arms, wrists and foot spacing. Retain the source
+    breathing and head motion; mounted poses and locomotion joints are separate. */
+ function relaxedIdle(scene,skin,bones,clip,rest){
+  if(!clip)return clip;
+  const names=['upperarm','lowerarm','hand','thigh','calf','foot'].flatMap(n=>[n+'_l',n+'_r']);
+  const footRest=Object.fromEntries(['l','r'].map(sd=>[sd,bones['foot_'+sd].getWorldQuaternion(new THREE.Quaternion())]));
+  const p=skin.geometry.attributes.position,sole=[];
+  for(let i=0;i<p.count;i++)if(p.getY(i)<.018)sole.push(i);
+  const mixer=new THREE.AnimationMixer(scene),action=mixer.clipAction(clip);action.play();
+  const count=Math.max(2,Math.ceil(clip.duration*30)),times=[],rotations=new Map(names.map(n=>[n,[]])),positions=[];
+  const point=n=>bones[n].getWorldPosition(new THREE.Vector3());
+  const setWorld=(bone,q)=>{const parent=bone.parent.getWorldQuaternion(new THREE.Quaternion());bone.quaternion.copy(parent.invert().multiply(q));bone.updateMatrixWorld(true);};
+  const aim=(name,child,dir)=>{const from=point(child).sub(point(name)).normalize(),turn=new THREE.Quaternion().setFromUnitVectors(from,dir.clone().normalize());setWorld(bones[name],turn.multiply(bones[name].getWorldQuaternion(new THREE.Quaternion())));};
+  const floor=()=>{scene.updateMatrixWorld(true);skin.skeleton.update();let low=Infinity;for(const i of sole)low=Math.min(low,skin.getVertexPosition(i,new THREE.Vector3()).y);return low;};
+  for(let i=0;i<=count;i++){
+   const time=clip.duration*i/count;mixer.setTime(time);scene.updateMatrixWorld(true);const oldFloor=floor();
+   for(const side of [1,-1]){
+    const sd=side>0?'l':'r',upper='upperarm_'+sd,lower='lowerarm_'+sd,hand='hand_'+sd;
+    aim(upper,lower,V(.20*side,-1,-.015));
+    aim(lower,hand,V(.06*side,-1,.14));
+    // Turn the forearm as a whole: thumb forward, palm toward the thigh.
+    // This avoids twisting only the wrist against a fixed forearm.
+    bones[hand].quaternion.copy(rest.get(hand).q);bones[hand].updateMatrixWorld(true);
+    const axis=point(hand).sub(point(lower)).normalize(),width=point('index_01_'+sd).sub(point('pinky_01_'+sd));
+    width.addScaledVector(axis,-width.dot(axis)).normalize();const target=V(0,0,1).addScaledVector(axis,-axis.z).normalize();
+    const angle=Math.atan2(axis.dot(new THREE.Vector3().crossVectors(width,target)),width.dot(target));
+    setWorld(bones[lower],new THREE.Quaternion().setFromAxisAngle(axis,angle).multiply(bones[lower].getWorldQuaternion(new THREE.Quaternion())));
+    aim(hand,'middle_01_'+sd,V(.04*side,-1,.10));
+    aim('thigh_'+sd,'calf_'+sd,V(.055*side,-1,-.035));
+    aim('calf_'+sd,'foot_'+sd,V(.015*side,-1,.04));
+    setWorld(bones['foot_'+sd],new THREE.Quaternion().setFromAxisAngle(V(0,1,0),side*.05).multiply(footRest[sd]));
+   }
+   // Changing leg spread must not sink the soles through the ground.
+   bones.pelvis.position.y+=oldFloor-floor();scene.updateMatrixWorld(true);
+   times.push(time);positions.push(...bones.pelvis.position.toArray());
+   for(const name of names){const q=bones[name].quaternion,values=rotations.get(name),n=values.length;
+    if(n&&q.x*values[n-4]+q.y*values[n-3]+q.z*values[n-2]+q.w*values[n-1]<0)values.push(-q.x,-q.y,-q.z,-q.w);else values.push(q.x,q.y,q.z,q.w);}
+  }
+  mixer.stopAllAction();mixer.uncacheRoot(scene);
+  for(const [name,r]of rest){bones[name].position.copy(r.p);bones[name].quaternion.copy(r.q);}scene.updateMatrixWorld(true);skin.skeleton.update();
+  // Close the retained breathing/head tracks too, including the source's tiny seam.
+  const replaced=new Set([...names.map(n=>n+'.quaternion'),'pelvis.position']),tracks=clip.tracks.filter(t=>!replaced.has(t.name)).map(t=>{const copy=t.clone(),size=copy.getValueSize();copy.values.set(copy.values.slice(0,size),copy.values.length-size);return copy;});
+  for(const [name,values]of rotations)tracks.push(new THREE.QuaternionKeyframeTrack(name+'.quaternion',times,values));
+  tracks.push(new THREE.VectorKeyframeTrack('pelvis.position',times,positions));
+  return new THREE.AnimationClip(clip.name,clip.duration,tracks);
  }
 
  /* Reshape the source's exaggerated muscle volumes in the bind pose. Keep joint
@@ -252,8 +301,9 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const relax=new Map();
   if(grip)for(const t of grip.tracks){const m=/^((?:index|middle|ring|pinky|thumb)_0[123]_[lr])\.quaternion$/.exec(t.name);
    if(m&&bones[m[1]]){const b=bones[m[1]],r0=b.quaternion.clone();b.quaternion.fromArray(t.values,0);
-    /* and a hand at rest on foot: half-way between the open T-pose hand and the grip */
-    relax.set(m[1],r0.clone().slerp(b.quaternion,0.45));}}
+    // A loose finger cascade on foot; the seated hand keeps the full rein grip.
+    const curl=m[1].startsWith('thumb')?.12:m[1].includes('_02_')?.28:m[1].includes('_03_')?.18:.20;
+    relax.set(m[1],r0.clone().slerp(b.quaternion,curl));}}
   scene.updateMatrixWorld(true);
   aim(bones.pelvis,P('spine_01').sub(P('pelvis')),d('hips','spine'));
   aim(bones.spine_01,P('spine_03').sub(P('spine_01')),d('spine','chest'));
@@ -843,7 +893,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
   const W=order.map(()=>new THREE.Quaternion()), D={};
   const rootParentQ=new THREE.Quaternion();   // the armature node above the root bone: identity in these files
   {let p=order[0].bone.parent;const q=new THREE.Quaternion();while(p&&p!==rig.root){q.premultiply(p.quaternion);p=p.parent;}rootParentQ.copy(q);}
-  let mode='seat';
+  let mode='seat',gaitPhase=0;
   /* the role rig's rotations from rest, down the chain */
   const roleWorld=()=>{for(const r of ROLES){const b=by[r],p=ROLE_PARENT[r];D[r]=D[r]||new THREE.Quaternion();if(p)D[r].multiplyQuaternions(D[p],b.quaternion);else D[r].copy(b.quaternion);}};
   R._sync=()=>{
@@ -869,8 +919,6 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
     if(p)rb.quaternion.copy(_q.copy(D[p]).invert().multiply(D[r]));else{rb.quaternion.copy(D[r]);rb.position.copy(_p);}}
    R.fitG.updateMatrixWorld(true);
   };
-  const turnW=(b,axisW,ang)=>{if(!b||Math.abs(ang)<1e-5)return;_q.setFromAxisAngle(axisW,ang);b.getWorldQuaternion(_wq);_wq.premultiply(_q);
-   b.parent.getWorldQuaternion(_pq);b.quaternion.copy(_pq.invert().multiply(_wq));b.updateMatrixWorld(true);};
   /* aim a bone so it points (towards its child) along a world direction, blended in by wt */
   const _aq=new THREE.Quaternion(),_aw=new THREE.Quaternion(),_ap=new THREE.Quaternion(),_a0=new THREE.Vector3(),_a1=new THREE.Vector3();
   const aimW=(b,child,dirW,wt)=>{if(!b||!child)return;b.updateMatrixWorld(true);b.getWorldPosition(_a0);child.getWorldPosition(_a1);_a1.sub(_a0);
@@ -898,26 +946,20 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
     Jump_Loop:wAir,Jump_Land:wLand,Roll:wRoll,Swim_Fwd_Loop:wSwim*sm2,Swim_Idle_Loop:wSwim*(1-sm2)};
    w[idleK]=w.idle;
    for(const k in rig.actions)rig.actions[k].setEffectiveWeight(w[k]||0);
-   walk.timeScale=(back?-1:1)*Math.max(0.55,sp/1.30);
-   jog.timeScale=Math.max(0.7,sp/3.0);
-   if(sprint)sprint.timeScale=Math.max(0.8,sp/5.6);
-   if(w.walk>0.01&&w.jog>0.01)jog.time=(walk.time/walk.getClip().duration)*jog.getClip().duration;
-   if(sprint&&w.jog>0.01&&w.sprint>0.01)sprint.time=(jog.time/jog.getClip().duration)*sprint.getClip().duration;
+   // Keep one phase even when a gait has zero weight. Snapping the dominant
+   // jog to an independently advancing walk caused a jerk when slowing down.
+   const step=Math.min(dt||.016,.1),walkRate=Math.max(.55,sp/1.30)/walk.getClip().duration,
+    jogRate=Math.max(.7,sp/3.0)/jog.getClip().duration,sprintRate=sprint?Math.max(.8,sp/5.6)/sprint.getClip().duration:jogRate;
+   const cadence=(walkRate*(1-run)+jogRate*run)*(1-fast)+sprintRate*fast;
+   gaitPhase=(gaitPhase+(back?-1:1)*step*cadence)%1;if(gaitPhase<0)gaitPhase+=1;
+   for(const action of [walk,jog,sprint])if(action){action.timeScale=0;action.time=gaitPhase*action.getClip().duration;}
    if(landing){landing.timeScale=0;landing.time=(o.land||0)*0.62;}   // the crouch and the rise, by hand
    if(roll){roll.timeScale=0;roll.time=(o.roll||0)*roll.getClip().duration;}
    if(swimF)swimF.timeScale=Math.max(0.6,Math.min(1.6,sp/1.3));
-   rig.mixer.update(Math.min(dt||0.016,0.1));
-   /* The library's idle stands like a fighter: feet wide, arms held off the body, fists. Standing about
-      by her horse she should look at ease, so ease it: arms in to her sides, feet a little closer (the
-      soles turned back flat), and hands at rest instead of fists, walking too. */
+   rig.mixer.update(step);
+   // The same relaxed idle clip is used by the game, creator and outfit cards.
+   // Avoid applying a second arm rotation or hand curl after the mixer.
    rig.root.updateMatrixWorld(true);
-   const ease=w.idle*(pose?0:1);   // (a jump takes its weight, so the easing fades with it)
-   if(ease>0.01){
-    rig.root.getWorldQuaternion(_wq); const fwd=V(0,0,1).applyQuaternion(_wq);
-    for(const [n,s,a] of [['upperarm_l',1,0.20],['upperarm_r',-1,0.20],['thigh_l',1,0.055],['thigh_r',-1,0.055],['foot_l',1,-0.055],['foot_r',-1,-0.055]])
-     turnW(rig.bones[n],fwd,-s*a*ease);
-   }
-   for(const [n,q] of kit.seat.relax){const b=rig.bones[n];if(b)b.quaternion.slerp(q,0.85);}
    /* Climbing: hands reaching up in turn, the opposite knee up to find a hold, body into the rock and the
       head tipped back to look for the next grip. Each limb is aimed in her own frame (x her left, y up,
       z into the rock) and blended over whatever the clips had by o.climb. */
