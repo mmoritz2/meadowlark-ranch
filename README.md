@@ -305,9 +305,21 @@ some props, and procedural water still have a stylized appearance.
 Retina and large windows use a scene pixel budget (1.65 million on High,
 1.1 million on Medium, 850,000 on Low), reapplied on resize and VR exit.
 High retains its detailed models, clouds, contact shading and reflections,
-with 2× postprocess MSAA and a 2048px shadow map. Replaced tree batches are
-hidden completely, and tree detail selection uses hysteresis; unchanged
+with 2× postprocess MSAA and a 4096px shadow map (capped by the device limit).
+Replaced tree batches are hidden completely, and tree detail selection uses hysteresis; unchanged
 instance buffers are no longer uploaded every scenery tick.
+
+Sun shadows remain enabled on High, Medium and Low, including the scanned
+woodland and the middle-distance grass that previously hid ground shadows.
+High covers 200 metres with a 4096px map; Medium uses 152 metres / 2048px and
+Low 104 metres / 1024px. Coverage widens near sunset. The light follows terrain
+height and snaps to its texel grid to keep shade stable while riding over hills.
+VR retains its existing shadow-free performance mode.
+
+Run `node tools/test-world-shadows.mjs` for moving terrain, texel stability and
+GPU limits, and `node tools/qa-visible-shadows.cjs` against the local server for
+rendered shadow comparisons at all three quality levels. `QA_PORT` and
+`PLAYWRIGHT_PATH` select the preview and installed browser runner.
 
 The follow camera keeps a consistent avoidance side and anticipates travel
 around corners. Rider pose blends remain bounded during slow frames, and

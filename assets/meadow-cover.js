@@ -81,7 +81,7 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
   };
   mat.customProgramCacheKey=()=> 'middle-meadow-v1';
   const mesh=new THREE.InstancedMesh(geo,mat,W*W*K);mesh.name='Middle distance pasture';
-  mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=false;scene.add(mesh);
+  mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=true;scene.add(mesh);
   const slots=new Array(W*W),matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),scale=new THREE.Vector3(),q=new THREE.Quaternion(),up=new THREE.Vector3(0,1,0),color=new THREE.Color();
   let cx=Infinity,cz=Infinity;
   return {mesh,tick(time,x,z){

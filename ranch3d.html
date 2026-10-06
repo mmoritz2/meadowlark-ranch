@@ -665,7 +665,7 @@ import {createPastoralSky} from './assets/pastoral-sky.js?v=field-composition-1'
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=country-world-1';
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-1';
 import {hasMeadowCover} from './assets/meadow-biomes.js';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance} from './assets/meadow-cover.js?v=field-composition-1';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance} from './assets/meadow-cover.js?v=visible-shadows-1';
 import {pastureRise,meadowBloomAt} from './assets/pastoral-fields.mjs?v=field-composition-1';
 import {createGeology} from './assets/geology.js?v=field-composition-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
@@ -680,13 +680,14 @@ import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionRefe
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=solid-world-1';
 import {createWorldFinish} from './assets/world-rendering.js';
+import {createWorldShadows} from './assets/world-shadows.js?v=visible-shadows-1';
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=woodland-trails-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=woodland-trails-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=visible-shadows-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=rider-shape-20261006';
-import {FEATURES} from './assets/features/index.js?v=rider-shape-20261006';
+import {FEATURES} from './assets/features/index.js?v=visible-shadows-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -2570,15 +2571,9 @@ scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xffedda,3.15);
 const sunOff=sunDir.clone().multiplyScalar(95);
 sun.position.copy(sunOff);
-sun.castShadow=true;
-sun.shadow.mapSize.set(4096,4096);
-sun.shadow.camera.left=-44;sun.shadow.camera.right=44;
-sun.shadow.camera.top=44;sun.shadow.camera.bottom=-44;
-/* the sun sits 95 units out, so most of the old 1..220 depth range held nothing and threw
-   away precision. Bias was also set twice, the second pair silently winning. */
-sun.shadow.camera.near=42;sun.shadow.camera.far=165;
-sun.shadow.bias=-0.00006;sun.shadow.normalBias=0.018;
 scene.add(sun);scene.add(sun.target);
+const worldShadows=createWorldShadows({THREE,renderer,light:sun,heightAt:groundH});
+G.worldShadows=worldShadows;
 
 const composer=new EffectComposer(renderer);
 // The postprocess targets need their own MSAA; canvas antialiasing cannot cover them.
@@ -2697,11 +2692,7 @@ function applyQuality(q){
  composer.setPixelRatio(pr);
  renderer.setSize(innerWidth,innerHeight);
  composer.setSize(innerWidth,innerHeight);
- const sh=q==='low'?1024:2048;
- if(sun.shadow.mapSize.x!==sh){
-  sun.shadow.mapSize.set(sh,sh);
-  if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null;}
- }
+ worldShadows.setQuality(q);
  useBloom=q!=='low';
  fireflies.count=q==='low'?44:FIREFLY_N;
  if(grassInst)grassInst.count=q==='low'?6200:9500;
@@ -2993,7 +2984,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   placed++;
  }
  if(blades.instanceColor)blades.instanceColor.needsUpdate=true;
- scene.add(blades);
+ blades.receiveShadow=true;scene.add(blades);
  grassInst=blades;
  if(quality==='low')blades.count=6200;
  /* ===== near grass: a dense meadow that travels with the rider =====
@@ -14057,8 +14048,7 @@ function tick(stepSeconds){
   }
   rain.instanceMatrix.needsUpdate=true;
  }
- sun.position.set(player.pos.x+sunOff.x,sunOff.y,player.pos.z+sunOff.z);
- sun.target.position.set(player.pos.x,0,player.pos.z);
+ worldShadows.update(player.pos,sunOff,lowSun);
  /* course progress */
  if(course){
   if(!course.started){

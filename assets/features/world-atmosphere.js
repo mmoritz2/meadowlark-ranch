@@ -565,8 +565,6 @@ export function install(G){
     of hundred lines AFTER G.run('tick'). scene.onBeforeRender is the one callback left: the
     renderer fires it on the scene object immediately before it draws, so whatever is written
     here is what actually reaches the frame. */
- const SHADOW_LOW=74,SHADOW_HIGH=44;
- let shadowSpan=SHADOW_HIGH;
  /* Every smoothed value is smoothed in a variable this package owns and then written to the
     light outright. Lerping the light itself would fight ranch3d's own lerp toward its own
     target, and the two together settle somewhere between the two palettes — most of this
@@ -593,17 +591,8 @@ export function install(G){
    SM.key+=(key-SM.key)*Math.min(1,dt*3.5);
    sun.intensity=SM.key*(0.74+0.26*(A.cloud||1));   // a cloud passing over dims the world, not only the turf
    sun.color.copy(_sun);
-   /* Long shadows need somewhere to land. The ortho box is 44 half-metres wide, which a fence
-      post overshoots before the sun is down to ten degrees, and the shadow was simply cut
-      off. Widen it as the sun drops and take the softer texel back — at that hour the
-      shadows are long and soft anyway. */
-   const span=lerp(SHADOW_HIGH,SHADOW_LOW,K.low);
-   if(Math.abs(span-shadowSpan)>3){
-    shadowSpan=span;
-    const c=sun.shadow.camera;
-    c.left=-span;c.right=span;c.top=span;c.bottom=-span;c.updateProjectionMatrix();
-    sun.shadow.normalBias=0.018*(span/SHADOW_HIGH);
-   }
+   // Shadow coverage is owned by the terrain-following quality controller.
+
   }
   /* -- fill. Warm at dusk, cold at dawn, and never the same grey it used to be. -- */
   if(hemi){
