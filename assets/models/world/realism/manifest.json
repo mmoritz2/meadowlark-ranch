@@ -886,5 +886,154 @@
       "textures": 9
     },
     "processing": "Every one of 44,168 source leaves fitted to an original-UV quad, preserving its centre and orientation; Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading."
+  },
+  {
+    "id": "jacaranda_tree",
+    "page": "https://polyhaven.com/a/jacaranda_tree",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-10-06",
+    "authors": {
+      "Rob Tuytel": "guidance",
+      "Rico Cilliers": "All"
+    },
+    "sourceFiles": [
+      {
+        "file": "jacaranda_tree.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/jacaranda_tree/jacaranda_tree_1k.gltf",
+        "bytes": 9526,
+        "sha256": "ba4aa8ab4c3e3741ce3699604d6ec1607cd6b126ae2d32abbcc0d98e8edb3be4"
+      },
+      {
+        "file": "textures/jacaranda_tree_branches_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/jacaranda_tree/jacaranda_tree_branches_nor_gl_1k.jpg",
+        "bytes": 819101,
+        "sha256": "2d67393ba76a0f49cf965fa0c99d8c16268e71e87b1203d35539bfdb971a514e"
+      },
+      {
+        "file": "textures/jacaranda_tree_branches_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/jacaranda_tree/jacaranda_tree_branches_diff_1k.jpg",
+        "bytes": 531544,
+        "sha256": "5a4fe735f0c346cec83b6b444a0169fc14d2b31bbb7b26e26b1b6c726b6e06f6"
+      },
+      {
+        "file": "textures/jacaranda_tree_branches_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/jacaranda_tree/jacaranda_tree_branches_arm_1k.jpg",
+        "bytes": 484806,
+        "sha256": "9e3f82263247ce4f619692cea4c4f6fe9936ff465a86623481849062642c7d05"
+      },
+      {
+        "file": "textures/jacaranda_tree_trunk_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/jacaranda_tree/jacaranda_tree_trunk_nor_gl_1k.jpg",
+        "bytes": 1096100,
+        "sha256": "b2ad4e5daf8ec3fb87ba6c5f38e6a6924c9a6adebec20389f503e42da5d04587"
+      },
+      {
+        "file": "textures/jacaranda_tree_trunk_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/jacaranda_tree/jacaranda_tree_trunk_diff_1k.jpg",
+        "bytes": 896938,
+        "sha256": "e5582fba664a9255252d1ee8088f75ad557f07360aa7f4513f2b2f1577e90be9"
+      },
+      {
+        "file": "textures/jacaranda_tree_trunk_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/jacaranda_tree/jacaranda_tree_trunk_arm_1k.jpg",
+        "bytes": 895975,
+        "sha256": "4a12e238cf3b8ba860626e99bf128e56ab41642fa4c2502a77df41a338689b78"
+      },
+      {
+        "file": "textures/jacaranda_tree_leaves_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/jacaranda_tree/jacaranda_tree_leaves_nor_gl_1k.jpg",
+        "bytes": 700843,
+        "sha256": "61520be2529ffe8e3d93d4361892134833bb4657117e121749089769067914c1"
+      },
+      {
+        "file": "textures/jacaranda_tree_leaves_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/jacaranda_tree/jacaranda_tree_leaves_diff_1k.jpg",
+        "bytes": 533896,
+        "sha256": "6fe80c1f514ef690cccefb90b7e559fbd1aa9c8935fdc02523cc8ab83c22f7c2"
+      },
+      {
+        "file": "textures/jacaranda_tree_leaves_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/jacaranda_tree/jacaranda_tree_leaves_arm_1k.jpg",
+        "bytes": 332762,
+        "sha256": "577eab0a07279fb4afd24522e85e0f188058c88db4b35eb0b330005b0d745b7a"
+      },
+      {
+        "file": "jacaranda_tree.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/jacaranda_tree/jacaranda_tree.bin",
+        "bytes": 208307808,
+        "sha256": "4310d1e25db8ac63d6d345afc8154a1df7e85b301dfad228be66d85d6c52bbfc"
+      },
+      {
+        "file": "textures/jacaranda_tree_leaves_alpha_1k.png",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/jacaranda_tree/jacaranda_tree_leaves_alpha_1k.png",
+        "bytes": 506043,
+        "sha256": "c708a7e928a2e4d26981b021a22deeefc0ebb0e467f60b53cfa636a7e24d68f7"
+      }
+    ],
+    "output": {
+      "file": "jacaranda_tree.glb",
+      "bytes": 17018796,
+      "sha256": "8732a74d6f90f768ce8321605bbcee946ff96666f751f0ddc90fb6358f66cf38",
+      "trianglesBefore": 3863832,
+      "leafCards": [
+        {
+          "ribbons": 29868,
+          "trianglesBefore": 2402434,
+          "trianglesAfter": 1924546
+        },
+        {
+          "ribbons": 25838,
+          "trianglesBefore": 1924546,
+          "trianglesAfter": 1304434
+        },
+        {
+          "ribbons": 25838,
+          "trianglesBefore": 1304434,
+          "trianglesAfter": 1097730
+        },
+        {
+          "ribbons": 17257,
+          "trianglesBefore": 1097730,
+          "trianglesAfter": 735333
+        },
+        {
+          "ribbons": 8284,
+          "trianglesBefore": 735333,
+          "trianglesAfter": 519949
+        },
+        {
+          "ribbons": 4672,
+          "trianglesBefore": 519949,
+          "trianglesAfter": 314381
+        },
+        {
+          "ribbons": 4327,
+          "trianglesBefore": 314381,
+          "trianglesAfter": 232168
+        }
+      ],
+      "triangles": 258718,
+      "primitives": [
+        {
+          "material": "jacaranda_tree_branches",
+          "before": 1231286,
+          "after": 13326
+        },
+        {
+          "material": "jacaranda_tree_trunk",
+          "before": 230112,
+          "after": 13224
+        },
+        {
+          "material": "jacaranda_tree_leaves",
+          "before": 232168,
+          "after": 232168
+        }
+      ],
+      "materials": 3,
+      "textures": 9
+    },
+    "processing": "All 116,084 authored leaves fitted to individual original-UV quads; 8-bit normals and 12-bit UVs; Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading."
   }
 ]

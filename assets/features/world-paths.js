@@ -47,6 +47,8 @@ export function install(G){
    pts:[[-160,-215],[-187,-236],[-214,-253],[-238,-268],[-256,-278]]},
   {id:'marsh',name:'Marsh Road',to:'WILLOWMERE',w:2.7,
    pts:[[83,184],[116,196],[150,211],[184,227],[216,243],[243,256],[258,264]]},
+  {id:'clover',name:'Clover Hill bridleway',to:'HOLLOWPEAK',w:2.35,
+   pts:[[74,-63.35],[81,-80],[82,-105],[82,-129],[70,-151],[48,-162],[24,-160],[0,-153],[-26,-144],[-55,-129],[-85,-116]]},
  ];
 
  /* ---- resample, then let the line find its own way across the country ----
@@ -114,7 +116,7 @@ export function install(G){
   }
  }
  /* Water is not an obstacle a road detours around by accident; it is crossed on purpose or kept
-    away from entirely. None of these six roads is meant to ford anything, so all six stay out of
+    away from entirely. None of these roads is meant to ford anything, so they stay out of
     the channel, and the one real crossing in the package is built by hand further down. */
  function dryLand(pts){
   for(const p of pts){
@@ -134,6 +136,14 @@ export function install(G){
      could not get the road clear of one. The last pass is allowed thirty metres and runs after the
      water and basin clamps, because those can shove a sample back into whatever it just escaped. */
   avoid(pts,home,3.2,DRIFT); smooth(pts,0.22); avoid(pts,home,3.0,26); dryLand(pts); avoid(pts,home,2.8,30);
+  if(rd.id==='clover'){
+   // The hill trail joins the already-relaxed Highfell road, and stays on the
+   // western bank of Sparrow Creek without introducing an accidental ford.
+   const highfell=TRACKS.find(t=>t.id==='highfell');
+   const end=highfell.pts.reduce((best,p)=>hyp(p[0],p[1],-85,-116)<hyp(best[0],best[1],-85,-116)?p:best);
+   pts[pts.length-1]=end.slice();pts[0]=rd.pts[0].slice();
+   for(const p of pts)p[0]=Math.min(p[0],streamX(p[1])-12);
+  }
   let len=0; const run=[0];
   for(let i=1;i<pts.length;i++){len+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);run.push(len);}
   TRACKS.push(Object.assign({},rd,{pts,run,len}));
@@ -159,7 +169,8 @@ export function install(G){
  P.preExistingTight=tight();
 
  /* A coarse bucket grid so anything else in the package — and any package that comes later — can
-    ask "am I standing on a road" without walking eleven hundred metres of samples to find out. */
+    ask "am I standing on a road" without walking every segment. Distances use the
+    actual ribbon segments, including gaps stretched by obstacle avoidance. */
  const CELL=24, GRID=new Map();
  const key=(i,j)=>i*10007+j;
  TRACKS.forEach((tr,ti)=>tr.pts.forEach((p,pi)=>{
@@ -172,10 +183,29 @@ export function install(G){
   const a=GRID.get(key(Math.floor(x/CELL),Math.floor(z/CELL)));
   if(!a)return 1e9;
   let best=1e9;
-  for(const [ti,pi] of a){const p=TRACKS[ti].pts[pi];const d=(p[0]-x)*(p[0]-x)+(p[1]-z)*(p[1]-z);if(d<best)best=d;}
+  for(const [ti,pi] of a){
+   const p=TRACKS[ti].pts[pi],b=TRACKS[ti].pts[Math.max(0,pi-1)],dx=p[0]-b[0],dz=p[1]-b[1];
+   const t=Math.max(0,Math.min(1,((x-b[0])*dx+(z-b[1])*dz)/(dx*dx+dz*dz||1)));
+   const d=(b[0]+dx*t-x)**2+(b[1]+dz*t-z)**2;if(d<best)best=d;
+  }
   return Math.sqrt(best);
  }
  P.trackDist=trackDist;
+ // The older planting pass runs before roads are surveyed. Remove its soft
+ // cover once the final paths exist; quality changes preserve these matrices.
+ P.clearedPlantInstances=0;
+ const plantMatrix=new THREE.Matrix4(),plantPoint=new THREE.Vector3(),hiddenPlant=new THREE.Matrix4().makeScale(0,0,0);
+ const softBanks=['scrub','juni','sage','brack','reed','tuft','petal'].map(k=>G.floraPkg?.bank?.[k]?.im).filter(Boolean);
+ if(W.seedGrass)softBanks.push(W.seedGrass);
+ for(const mesh of softBanks){
+  for(let i=0;i<mesh.instanceMatrix.count;i++){
+   mesh.getMatrixAt(i,plantMatrix);if(Math.abs(plantMatrix.determinant())<1e-8)continue;
+   plantPoint.setFromMatrixPosition(plantMatrix);
+   if(trackDist(plantPoint.x,plantPoint.z)<4.4){mesh.setMatrixAt(i,hiddenPlant);P.clearedPlantInstances++;}
+  }
+  mesh.instanceMatrix.needsUpdate=true;
+ }
+
  /* Off-road for this package means off MY roads and off the six the game already had, because a
     bench dropped in the middle of the Cottonwood track would be exactly as annoying either way. */
  const onAnyRoad=(x,z,m)=>trackDist(x,z)<m||W.pathDist(x,z)<m;
@@ -329,8 +359,10 @@ export function install(G){
     which reads at a gallop in a way a painted glyph does not. */
  const SIGNS=[
   {id:'ranchfork',  x:35,  z:-29,  arms:[['COTTONWOOD',44,-46],['THE RANCH',0,2],['RIVER BRIDGE',0,112]]},
-  {id:'cottonwood', x:57,  z:-62,  arms:[['BARLEYFOLD',215,-105],['COTTONWOOD',47,-50],['THE RANCH',0,0]]},
+  {id:'cottonwood', x:57,  z:-62,  arms:[['BARLEYFOLD',215,-105],['CLOVER HILL',82,-105],['THE RANCH',0,0]]},
   {id:'fordwest',   x:99,  z:-70,  arms:[['SPARROW FORD',118,-76],['COTTONWOOD',47,-50]]},
+  {id:'cloverfork', x:78,z:-70,arms:[['CLOVER HILL',82,-120],['COTTONWOOD',47,-50],['BARLEYFOLD',215,-105]]},
+  {id:'cloverwest', x:-81,z:-121,arms:[['CLOVER HILL',24,-160],['HOLLOWPEAK',-160,-210],['THE RANCH',0,0]]},
   {id:'barleygate', x:227, z:-155, arms:[['AMBERWOOD',300,-300],['BARLEYFOLD',215,-105]]},
   {id:'amberwood',  x:271, z:-251, arms:[['AMBERWOOD',300,-300],['BARLEYFOLD',215,-105]]},
   {id:'bridgefoot', x:6,   z:136,  arms:[['COYOTE CANYON',-220,130],['WILLOWMERE',310,300],['THE RANCH',0,0]]},
@@ -455,6 +487,8 @@ export function install(G){
   {tr:OLD.ranchcott,  kind:'rail',  side: 1, off:10.5, cross:{t:0.74,len:26}, gates:[0.55]},
   {tr:TRACKS[0],      kind:'stone', side:-1, off:11.0, cross:{t:0.14,len:26}, gates:[]},
   {tr:TRACKS[5],      kind:'rail',  side: 1, off:11.0, cross:{t:0.12,len:24}, gates:[]},
+  {tr:TRACKS.find(t=>t.id==='clover'),kind:'stone',side:-1,off:10.5,t0:.25,t1:.47,gates:[.36]},
+  {tr:TRACKS.find(t=>t.id==='clover'),kind:'hedge',side:1,off:12,t0:.68,t1:.87,gates:[.77]},
  ];
  const GATE_W=5.0, COURSE_W=6.4;
  let fenceM=0, gateN=0;
@@ -689,7 +723,7 @@ export function install(G){
    traceN++;
   }
  }
- for(const tr of TRACKS)scatter(tr,25);
+ for(const tr of TRACKS)if(tr.id!=='clover')scatter(tr,25);
  for(const k in OLD)scatter(Object.assign({id:k},OLD[k]),30);
  /* Hay in the fields either side of Barleyfold, which is the one thing a farm cannot do without.
     These build their own merged geometry, so a handful of them and no more. */
@@ -844,12 +878,14 @@ export function install(G){
  const hedgeTexture=new THREE.TextureLoader().load('./assets/textures/realism/foliage_branch_rgba.png');
  hedgeTexture.colorSpace=THREE.SRGBColorSpace;hedgeTexture.anisotropy=4;
  const hedgeMaterial=new THREE.MeshStandardMaterial({map:hedgeTexture,alphaTest:.40,side:THREE.DoubleSide,roughness:1,envMapIntensity:.6});
+
+ const pathTimber=W.ranchBuilderArt.materials.aged.clone();pathTimber.name='Bridleway | weathered timber';pathTimber.color.set(0xffffff);
  const GEOS={leaves:hedgeGeo,box:new THREE.BoxGeometry(1,1,1),stone:stoneGeo,cyl:new THREE.CylinderGeometry(0.5,0.5,1,8)};
  P.instances={};
  for(const kind in BAT){
   const rows=BAT[kind]; if(!rows.length)continue;
-  const im=new THREE.InstancedMesh(GEOS[kind],kind==='leaves'?hedgeMaterial:new THREE.MeshStandardMaterial({roughness:kind==='stone'?1:0.9,metalness:0}),rows.length);
-  rows.forEach((r,i)=>{im.setMatrixAt(i,r.m);im.setColorAt(i,kind==='leaves'?new THREE.Color('#bdc8a6'):r.c);});
+  const im=new THREE.InstancedMesh(GEOS[kind],kind==='leaves'?hedgeMaterial:kind==='stone'?new THREE.MeshStandardMaterial({roughness:1}):pathTimber,rows.length);
+  rows.forEach((r,i)=>{im.setMatrixAt(i,r.m);im.setColorAt(i,kind==='leaves'?new THREE.Color('#bdc8a6'):kind==='stone'?r.c:r.c.clone().lerp(new THREE.Color(0xffffff),.55));});
   im.instanceMatrix.needsUpdate=true; if(im.instanceColor)im.instanceColor.needsUpdate=true;
   im.castShadow=true; im.receiveShadow=true; im.name='worldPaths:'+kind;
   im.computeBoundingSphere();

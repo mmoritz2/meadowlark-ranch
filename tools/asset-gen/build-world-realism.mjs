@@ -43,6 +43,10 @@ for(const id of process.argv.slice(2)){
   const leafCards=[];
   if(id==='island_tree_01')for(const mesh of root.listMeshes())for(const p of mesh.listPrimitives())
     if(/leaves/.test(p.getMaterial()?.getName()||''))leafCards.push(simplifyNeedleRibbons(doc,p,{triangles:24,vertices:21}));
+  if(id==='jacaranda_tree')for(const mesh of root.listMeshes())for(const p of mesh.listPrimitives())
+    if(/leaves/.test(p.getMaterial()?.getName()||''))for(const [triangles,vertices]of[[18,20],[26,28],[10,12],[23,25],[28,30],[46,49],[21,23]])
+      leafCards.push(simplifyNeedleRibbons(doc,p,{triangles,vertices}));
+  if(id==='jacaranda_tree'&&leafCards.reduce((n,p)=>n+p.ribbons,0)!==116084)throw Error('Expected every authored jacaranda leaf to survive');
   if(id==='island_tree_01'&&leafCards.reduce((n,p)=>n+p.ribbons,0)!==44168)throw Error('Expected every authored leaf to survive');
   console.log(id,'foliage conversion',JSON.stringify({needles,leafCards}));
   // Normalize collection layouts at runtime; keep individual rocks and saplings.
@@ -67,7 +71,7 @@ for(const id of process.argv.slice(2)){
     // Leaves get a much higher budget than solid objects. Aggressive blanket
     // decimation deletes the crown of an archviz tree instead of simplifying it.
     const target=id==='pine_tree_01'?(/twig/.test(name)?85000:/bark/.test(name)?4000:4500):
-      id==='island_tree_01'?(/leaves/.test(name)?n:/branches/.test(name)?7000:9000):
+      ['island_tree_01','jacaranda_tree'].includes(id)?(/leaves/.test(name)?n:/branches/.test(name)?7000:9000):
       id==='tree_small_02'?(/leaves/.test(name)?110000:7000):
       id==='pine_sapling_small'?(/twig/.test(name)?16000:1000):
       id==='fir_sapling_medium'?(/twig/.test(name)?120000:3500):
@@ -87,7 +91,7 @@ for(const id of process.argv.slice(2)){
     const alpha=(await sharp(tex.getImage()).stats()).channels[3];
     if(alpha.min!==0||alpha.max!==255)throw Error('Foliage transparency was flattened: '+id);
   }
-  if(id==='pine_tree_01'){
+  if(['pine_tree_01','jacaranda_tree'].includes(id)){
     await doc.transform(quantize({pattern:/NORMAL|TEXCOORD/,quantizeNormal:8,quantizeTexcoord:12}),prune());
     // Pruning sees no extension properties when only normals/UVs are quantized.
     // The BYTE normals still require this document-level glTF declaration.
@@ -98,7 +102,7 @@ for(const id of process.argv.slice(2)){
   const record={...source,output:{file:id+'.glb',bytes:data.length,sha256:createHash('sha256').update(data).digest('hex'),
     trianglesBefore:before,...(leafCards.length?{leafCards}:{}),...(needles.length?{needles}:{}),triangles:metrics.reduce((n,p)=>n+p.after,0),primitives:metrics,
     materials:root.listMaterials().length,textures:root.listTextures().length},
-    processing:(id==='island_tree_01'?'Every one of 44,168 source leaves fitted to an original-UV quad, preserving its centre and orientation; ':'')+(id==='pine_tree_01'?'First author specimen; constant white vertex colors removed; 8-bit normals and 12-bit UVs; source needle clusters replaced with the original photographed twig sprays; ':'')+(needles.length&&id!=='pine_tree_01'?'Preserve all needle ribbons as fitted textured quads; ':'')+'Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading.'};
+    processing:(id==='jacaranda_tree'?'All 116,084 authored leaves fitted to individual original-UV quads; 8-bit normals and 12-bit UVs; ':'')+(id==='island_tree_01'?'Every one of 44,168 source leaves fitted to an original-UV quad, preserving its centre and orientation; ':'')+(id==='pine_tree_01'?'First author specimen; constant white vertex colors removed; 8-bit normals and 12-bit UVs; source needle clusters replaced with the original photographed twig sprays; ':'')+(needles.length&&id!=='pine_tree_01'?'Preserve all needle ribbons as fitted textured quads; ':'')+'Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading.'};
   records.push(record);console.log(id,JSON.stringify(record.output));
 }
 const manifest=path.join(out,'manifest.json');

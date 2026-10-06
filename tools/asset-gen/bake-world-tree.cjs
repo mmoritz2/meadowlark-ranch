@@ -42,7 +42,7 @@ window.bakeTree=async(id,variant=-1)=>{
   const page=await browser.newPage();page.on('pageerror',e=>console.error(e));
   await page.goto(QA.BASE+'/'+scratch+'/index.html');await page.waitForFunction(()=>window.bakeTree);
   const entries=[];
-  const requested=process.argv.slice(2),jobs=requested.length?requested.map(id=>[id,['tree_small_02','island_tree_01'].includes(id)?-1:0]):[['tree_small_02',-1],['fir_sapling_medium',0],['fir_sapling_medium',1],['fir_sapling_medium',2]];
+  const requested=process.argv.slice(2),jobs=requested.length?requested.map(id=>[id,['tree_small_02','island_tree_01','jacaranda_tree'].includes(id)?-1:0]):[['tree_small_02',-1],['fir_sapling_medium',0],['fir_sapling_medium',1],['fir_sapling_medium',2]];
   for(const [id,variant]of jobs){
    const {albedo,normal,...meta}=await page.evaluate(([id,v])=>bakeTree(id,v),[id,variant]);
    const prefix=id+(variant>=0?'_'+variant:'');const files={};

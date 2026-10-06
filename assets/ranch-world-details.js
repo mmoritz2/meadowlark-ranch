@@ -23,7 +23,7 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
   const routes=Object.values(G.tables.RACE_ROUTES).filter(Array.isArray);
   function available(x,z,r) {
     if((x/24.8)**2+(z/19.8)**2<1)return false;
-    if(W.pathDist(x,z)<r+1.7)return false;
+    if(W.pathDist(x,z)<r+1.7||(G.worldPaths?.trackDist(x,z)??Infinity)<r+1.7)return false;
     if(W.colliders.some(c=>Math.hypot(c.x-x,c.z-z)<c.r+r+.18))return false;
     if(Object.values(G.ranch?.SLOTS||{}).some(s=>Math.hypot(s.x-x,s.z-z)<7.5+r))return false;
     for(const route of routes)for(let i=1;i<route.length;i++)if(segmentDistance(x,z,route[i-1],route[i])<r+3.8)return false;
@@ -62,7 +62,7 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
     for(const [name,parity,height] of [['shrub_03',0,.8],['shrub_04',1,.65],['fern_02',2,.48]]){
       const points=shrubs.filter((p,i)=>parity===2?i%4===0:i%2===parity)
         .map(p=>({...p,x:p.x+(parity===2?1.05:0),z:p.z+(parity===2?.85:0)}))
-        .filter(p=>!window.__chalkCut?.(p.x,p.z)&&W.pathDist(p.x,p.z)>2.5&&!(window.__onCourse&&window.__onCourse(p.x,p.z,3.4)));
+        .filter(p=>!window.__chalkCut?.(p.x,p.z)&&W.pathDist(p.x,p.z)>2.5&&(G.worldPaths?.trackDist(p.x,p.z)??Infinity)>3.8&&!(window.__onCourse&&window.__onCourse(p.x,p.z,3.4)));
       try{
         const asset=await loader.loadAsync('./assets/models/world/'+name+'.glb');
         asset.scene.updateMatrixWorld(true);

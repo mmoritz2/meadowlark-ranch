@@ -132,6 +132,28 @@
       "source": "island_tree_01.glb",
       "sourcePage": "https://polyhaven.com/a/island_tree_01",
       "license": "CC0-1.0"
+    },
+    {
+      "id": "jacaranda_tree",
+      "variant": -1,
+      "width": 26.8907039642334,
+      "height": 20.66408940881491,
+      "bottom": -0.731447851806879,
+      "sourceHeight": 19.4944239705801,
+      "viewCount": 8,
+      "views": {
+        "file": "jacaranda_tree_views.webp",
+        "bytes": 2289254,
+        "sha256": "5e6c64fee8861225c68207a88ec5a2d58db55d7307077e8e8541749b13c5ba10"
+      },
+      "normals": {
+        "file": "jacaranda_tree_normals.webp",
+        "bytes": 1282060,
+        "sha256": "d00cb7ab589752591d2028dbc79c5ab904ece1c41f928e5f8b429128647af9eb"
+      },
+      "source": "jacaranda_tree.glb",
+      "sourcePage": "https://polyhaven.com/a/jacaranda_tree",
+      "license": "CC0-1.0"
     }
   ]
 }

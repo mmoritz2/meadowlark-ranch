@@ -7,6 +7,7 @@ assets extracted from another game.
 
 | Asset | Author(s) | Runtime geometry |
 | --- | --- | ---: |
+| [Jacaranda Tree](https://polyhaven.com/a/jacaranda_tree) | Rico Cilliers, Rob Tuytel | 258,718; all 116,084 leaves retained |
 | [Island Tree 01](https://polyhaven.com/a/island_tree_01) | Rob Tuytel, Rico Cilliers | 104,150; all 44,168 leaves retained |
 | [Tree Small 02](https://polyhaven.com/a/tree_small_02) | Rico Cilliers | 123,891 triangles |
 | [Fir Sapling Medium](https://polyhaven.com/a/fir_sapling_medium) | Rico Cilliers, Rob Tuytel | 401,578 across three firs |
@@ -145,3 +146,34 @@ python3 tools/asset-gen/fetch-world-realism.py island_tree_01
 node tools/asset-gen/build-world-realism.mjs island_tree_01
 node tools/asset-gen/bake-world-tree.cjs island_tree_01
 ```
+
+
+## October 6 woodland groves and Clover Hill
+
+`jacaranda_tree.glb` adds a taller, fuller green broadleaf crown to warm lowland
+groves. Seven authored leaf shapes are fitted individually to textured quads,
+retaining all 116,084 leaves and the source UVs, positions and orientations.
+The resulting tree has 258,718 triangles, three materials and nine textures.
+Normals use 8-bit quantization; in-range UVs use 12 bits. Source PBR textures and
+alpha masks are retained. The 16.23 MiB GLB and its 3.41 MiB eight-view albedo and
+normal atlases are hosted with the game. Khronos validation reports zero errors
+and three source missing-tangent warnings; Three.js derives tangent space.
+
+The new tree replaces selected lowland groves and frames the Clover Hill
+bridleway with additional small groups. Existing planted tree positions stay
+fixed. Heights stay fixed as the rider moves, and the High/Medium detailed-tree
+limits remain 1.8 million/750,000 triangles. Low uses matching distant views.
+New trunks are registered only after the complete tree assets load successfully.
+The small 240-triangle scanned ground stone also replaces the untextured
+icosahedra used for roadside stone courses and cairns.
+
+```sh
+python3 tools/asset-gen/fetch-world-realism.py jacaranda_tree
+node --max-old-space-size=8192 tools/asset-gen/build-world-realism.mjs jacaranda_tree
+node tools/asset-gen/bake-world-tree.cjs jacaranda_tree
+```
+
+See `tools/qa-woodland-trails.cjs` for mounted traversal in both directions,
+new-tree quality budgets, path grounding, cleared vegetation, and finite GPU
+pixels. The broader landscape and rendering checks cover all graphics tiers,
+weather, portrait view and the previous black-rectangle regressions.

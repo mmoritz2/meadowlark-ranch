@@ -19,7 +19,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function clear(x,z,r=1){
     if(G.vistas?.clearZones?.some(test=>test(x,z)))return false;
     if(W.sceneryArt.containsWaterfall(x,z,r))return false;
-    if(Math.hypot(x,z)<33||W.pathDist(x,z)<r+3)return false;
+    if(Math.hypot(x,z)<33||W.pathDist(x,z)<r+3||(G.worldPaths?.trackDist(x,z)??Infinity)<r+3)return false;
     if(Math.abs(z-W.riverZ(x))<r+10||z<163&&Math.abs(x-W.streamX(z))<r+8)return false;
     if(Math.hypot(x-20,z-16)<r+19)return false;
     if(protectedPoints.some(p=>Math.hypot(x-p.x,z-p.z)<r+(p.reach||3)+2))return false;
@@ -104,12 +104,13 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=country-world-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
-    const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01');
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=woodland-trails-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01'),woodland=await load('jacaranda_tree');
     const specs=[['tree_small_02',-1,broad,'broadleaf'],
       ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
       ['pine_tree_01',0,mature.children[0],'mature-pine'],
-      ['island_tree_01',-1,leafy,'canopy-broadleaf']];
+      ['island_tree_01',-1,leafy,'canopy-broadleaf'],
+      ['jacaranda_tree',-1,woodland,'woodland-broadleaf']];
     const variants=specs.map(([id,variant,root,key])=>{
       const parts=pieces(root,variant>=0),bounds=new THREE.Box3();parts.forEach(p=>bounds.union(p.bounds));
       const meta=catalog.trees.find(t=>t.id===id&&t.variant===variant);
@@ -120,19 +121,20 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     const sourceFor=t=>{
       // Related trees grow in groves. Slender trees around the village reveal the
       // buildings; broad spreading crowns define the meadow and woodland edges.
+      if(t.kind==='woodland')return variants[6];
       const lowland=t.kind!=='cold'&&t.kind!=='snowpine'&&Math.hypot(t.x+160,t.z+210)>160;
       if(!['pine','snowpine','cold'].includes(t.kind)||lowland&&rnd(t.x,t.z,49)>.28){
         const village=Math.hypot(t.x-47,t.z+50)<34;
         const grove=Math.sin(t.x*.034+t.z*.011)+Math.cos(t.z*.047-t.x*.009);
         const spreading=!village&&grove+rnd(t.x,t.z,53)*.65>-.32;
-        return spreading?variants[5]:variants[0];
+        return spreading?(grove>.55?variants[6]:variants[5]):variants[0];
       }
       return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
     };
     const add=t=>{
       const cleared=G.vistas?.clearZones?.some(test=>test(t.x,t.z));
       if(cleared){
-        if(t.root)t.root.visible=false;else{t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;}
+        if(t.root)t.root.visible=false;else if(t.stem){t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;}
         for(let i=W.colliders.length-1;i>=0;i--){const c=W.colliders[i];if((c.r<=1.1||c.height>3)&&Math.hypot(c.x-t.x,c.z-t.z)<.15)W.colliders.splice(i,1);}
         return;
       }
@@ -141,6 +143,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       t.source=sourceFor(t);
       // Broad crowns occupy the old tree sites; trunks and route clearances stay fixed.
       if(t.source.key==='canopy-broadleaf')t.height=Math.min(t.height,12.5);
+      if(t.source.key==='woodland-broadleaf'&&t.kind!=='woodland')t.height=Math.min(14,Math.max(8,t.height*1.35));
       trees.push(t);
     };
     // Respect cleared placements in both the original seed batches and new landmark zones.
@@ -174,6 +177,22 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     for(const original of natural){if(!original.visible)continue;const b=new THREE.Box3().setFromObject(original);if(b.isEmpty())continue;
       add({x:original.position.x,z:original.position.z,height:b.max.y-b.min.y,yaw:original.rotation.y,root:original,kind:original.name.includes('pine')?'pine':'oak'});
     }
+    // Irregular groves frame the new bridleway, with gaps between them for views
+    // across the hill. Every trunk respects paths, courses, water and buildings.
+    const trail=G.worldPaths?.tracks.find(t=>t.id==='clover');
+    state.trailTrees=[];
+    if(trail)for(let i=8;i<trail.pts.length-8;i+=9){
+      const [x,z]=trail.pts[i],a=trail.pts[i-1],b=trail.pts[i+1];
+      const length=Math.hypot(b[0]-a[0],b[1]-a[1])||1,nx=-(b[1]-a[1])/length,nz=(b[0]-a[0])/length;
+      const side=rnd(x,z,82)>.5?1:-1;
+      for(let j=0;j<4;j++){
+        const off=side*(9+j*2.6+rnd(x+j,z,83)*3.5),tx=x+nx*off+(rnd(x,z+j,84)-.5)*11,tz=z+nz*off+(rnd(x+j,z,85)-.5)*11;
+        if(!clear(tx,tz,2.6)||trees.some(t=>Math.hypot(tx-t.x,tz-t.z)<5.5))continue;
+        const height=9+rnd(tx,tz,86)*4;
+        add({x:tx,z:tz,height,yaw:rnd(tx,tz,87)*Math.PI*2,kind:'woodland'});
+        state.trailTrees.push({x:tx,z:tz,height});
+      }
+    }
     const textureLoader=new THREE.TextureLoader();
     // Load all views before hiding any original tree. Missing data leaves the
     // existing forest intact, instead of empty silhouettes during a slow load.
@@ -201,9 +220,11 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         mesh.count=0;treeMeshes.push({mesh,records});
       }
     }
-    for(const t of trees){if(t.root)t.root.visible=false;else{
+    for(const t of trees){if(t.root)t.root.visible=false;else if(t.stem){
       t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;
     }}
+    // Commit new trunk collisions only after all tree views have loaded.
+    for(const t of state.trailTrees)W.colliders.push({x:t.x,z:t.z,r:.62,height:t.height,trunk:true});
     // A zero-scale instance still runs every vertex and shadow vertex shader.
     // These seed batches are wholly replaced; stop submitting their old meshes.
     const retired=new Set();
@@ -212,6 +233,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     state.retiredBatches=retired.size;
     floraCanopies.forEach(m=>{m.visible=false;});
     state.trees=trees.length;state.conifers=trees.filter(t=>t.source.key.includes('pine')).length;state.normalMappedViews=variants.length;state.matureTrees=trees.filter(t=>t.source.key==='mature-pine').length;
+    state.woodlandCanopies=trees.filter(t=>t.source.key==='woodland-broadleaf').length;
     state.broadleafCanopies=trees.filter(t=>t.source.key==='canopy-broadleaf').length;
     state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind,source:t.source.key}));
   }
@@ -237,6 +259,21 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         for(const [key,name,size]of [['POSITION','position',3],['NORMAL','normal',3],['TEXCOORD_0','uv',2]])
           geo.setAttribute(name,new THREE.Float32BufferAttribute(data.attributes[key],size));
         geo.setIndex(data.index);geo.applyMatrix4(new THREE.Matrix4().fromArray(data.matrix));geo.computeBoundingBox();
+        // The same compact rock scan gives roadside dry-stone courses proper
+        // surfaces and rounded, asymmetric silhouettes without a full rock mesh.
+        const pathStone=scene.getObjectByName('worldPaths:stone');
+        if(pathStone){
+          const pathGeo=geo.clone(),box=geo.boundingBox,size=box.getSize(new THREE.Vector3()),centre=box.getCenter(new THREE.Vector3());
+          pathGeo.translate(-centre.x,-centre.y,-centre.z);pathGeo.scale(1/size.x,1/size.y,1/size.z);pathGeo.computeBoundingSphere();
+          pathStone.geometry.dispose();pathStone.geometry=pathGeo;pathStone.material.dispose();
+          const mat=parts[0].mat.clone();mat.name='Bridleway | scanned dry stone';
+          mat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+            float stoneLuma=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));
+            diffuseColor.rgb=mix(vec3(stoneLuma),diffuseColor.rgb,.18)*1.18;`);};
+          mat.customProgramCacheKey=()=> 'bridleway-stone-v1';pathStone.material=mat;
+          for(let i=0;i<pathStone.count;i++)pathStone.setColorAt(i,new THREE.Color().setScalar(.88+rnd(i,42)*.18));
+          pathStone.instanceColor.needsUpdate=true;pathStone.computeBoundingSphere();state.pathStoneTriangles=data.index.length/3;
+        }
         const b=geo.boundingBox,size=b.getSize(new THREE.Vector3()),scale=1/Math.max(size.x,size.z);
         geo.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);geo.scale(scale,scale,scale);geo.translate(0,-.08,0);
         geo.computeBoundingSphere();const layer=W.nearGroundCover.rock;layer.geometry.dispose();layer.geometry=geo;
