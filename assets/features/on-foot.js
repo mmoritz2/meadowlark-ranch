@@ -237,6 +237,7 @@ export function install(G){
  /* ---------------------------------------------------------------- off and on ------------ */
  function why(){
   if(ST.on)return 'already on foot';
+  if(G.roundup?.state().active)return 'Finish or end the roundup before dismounting';
   try{if(G.course&&G.course.get&&G.course.get())return 'Finish the course first';}catch(e){}
   if(player.flying||(player.y||0)>0.05)return 'Land first';
   try{if(G.worldPkg&&G.worldPkg.vehicle&&G.worldPkg.vehicle())return 'Not from up here';}catch(e){}

@@ -686,7 +686,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=woodla
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=woodland-trails-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=wardrobe-20261006';
-import {FEATURES} from './assets/features/index.js?v=woodland-trails-1';
+import {FEATURES} from './assets/features/index.js?v=adventures-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -8928,6 +8928,7 @@ arrow.visible=false;
 scene.add(arrow);
 function eventPar(ev){return ev.par||(ev.n?ev.n*9:0)||40;}
 function startCourse(ev,di){
+ if(G.run('activityGate','course'))return;
  if(G.run('courseGate',ev,di))return;                       // a package refused entry (stat prerequisites) or noted the difficulty
  cancelCourse();
  if(ev.kind&&COURSE_KINDS[ev.kind]){COURSE_KINDS[ev.kind](ev);return;}   // a package's own course kind (show, gauntlet, pvp …)
@@ -9082,6 +9083,7 @@ function gaitName(sp){
 }
 const GAIT_ICON={halt:'🧍',walk:'🚶',trot:'🏇',canter:'💨'};
 function startDressage(ev){
+ if(G.run('activityGate','course'))return;
  const letters=[];
  for(const L in ARENA_LETTERS){ const [x,z]=ARENA_LETTERS[L]; const g=new THREE.Group();
   box(0.16,1.0,0.16,'#f4f0e6',0,0.5,0,g); const sp=nameSprite(L); sp.position.y=1.35; sp.scale.set(0.9,0.36,1); g.add(sp);
@@ -9192,120 +9194,145 @@ function finishCourse(){
    straight at it just sends it further out.
 
    Five horses, two and a half minutes, and a pen at the east end. */
-const ROUND_N=5, ROUND_TIME=150, ROUND_COOL=1800000;      // half an hour between roundups
+const ROUND_MODES={beginner:{name:'Gentle Roundup',n:3,time:120},full:{name:'Full Herd',n:5,time:150}};
+const ROUND_N=3, ROUND_TIME=120;
 const ROUND_PEN={x:-44,z:-8,r:7.5};
-const ROUND={on:false,t:0,horses:[],penned:0,grp:null,ring:null};
-function roundupReady(s){ return !s||!s.roundAt||Date.now()-s.roundAt>ROUND_COOL; }
-function roundupWaitMin(s){ return Math.max(0,Math.ceil((ROUND_COOL-(Date.now()-(s.roundAt||0)))/60000)); }
+const ROUND={on:false,t:0,horses:[],penned:0,grp:null,ring:null,mode:'beginner',cd:0,elapsed:0,total:3,lastResult:null};
+function roundupReady(){return true;}
+function roundupWaitMin(){return 0;}
 function buildPen(){
  if(ROUND.grp)return ROUND.grp;
- const g=new THREE.Group();
- const R=ROUND_PEN.r;
- /* posts round three quarters of a circle, with the mouth facing back into the field */
+ const g=new THREE.Group(),R=ROUND_PEN.r;
+ // The opening faces west: the direction from which a rider brings the herd home.
  for(let k=0;k<16;k++){
-  const a=-Math.PI*0.62+ (k/15)*Math.PI*1.72;
-  const x=Math.cos(a)*R, z=Math.sin(a)*R;
-  box(0.18,1.25,0.18,'#c9b083',x,0.62,z,g);
-  if(k){const px=Math.cos(-Math.PI*0.62+((k-1)/15)*Math.PI*1.72)*R, pz=Math.sin(-Math.PI*0.62+((k-1)/15)*Math.PI*1.72)*R;
-   const mx=(x+px)/2, mz=(z+pz)/2, len=Math.hypot(x-px,z-pz);
-   const rail=box(len,0.10,0.07,'#e2d3ae',mx,0.95,mz,g); rail.rotation.y=Math.atan2(x-px,z-pz)+Math.PI/2;}
+  const a=-Math.PI*.75+(k/15)*Math.PI*1.5,x=Math.cos(a)*R,z=Math.sin(a)*R;
+  box(.18,1.25,.18,'#c9b083',x,.62,z,g);
+  if(k){const pa=-Math.PI*.75+((k-1)/15)*Math.PI*1.5,px=Math.cos(pa)*R,pz=Math.sin(pa)*R;
+   const rail=box(Math.hypot(x-px,z-pz),.10,.07,'#e2d3ae',(x+px)/2,.95,(z+pz)/2,g);rail.rotation.y=-Math.atan2(z-pz,x-px);}
  }
- const ring=new THREE.Mesh(new THREE.CircleGeometry(R,30),
-  new THREE.MeshBasicMaterial({color:0x8fd070,transparent:true,opacity:0.20,depthWrite:false}));
- ring.rotation.x=-Math.PI/2; ring.position.y=0.05; g.add(ring);
- const sp=nameSprite('🚩 The pen'); sp.position.y=2.4; g.add(sp);
- g.position.set(ROUND_PEN.x,groundH(ROUND_PEN.x,ROUND_PEN.z),ROUND_PEN.z);
- g.visible=false; scene.add(g);
- ROUND.grp=g; ROUND.ring=ring;
- return g;
+ const ring=new THREE.Mesh(new THREE.CircleGeometry(R,30),new THREE.MeshBasicMaterial({color:0x8fd070,transparent:true,opacity:.20,depthWrite:false}));
+ ring.rotation.x=-Math.PI/2;ring.position.y=.05;g.add(ring);
+ const sp=nameSprite('Home pen');sp.position.y=2.4;g.add(sp);
+ g.position.set(ROUND_PEN.x,groundH(ROUND_PEN.x,ROUND_PEN.z),ROUND_PEN.z);g.visible=false;scene.add(g);
+ ROUND.grp=g;ROUND.ring=ring;return g;
 }
-function startRoundup(){
- if(ROUND.on)return;
- const s=freshSave();
- if(!roundupReady(s)){toast('🐎 The next roundup is in about '+roundupWaitMin(s)+' minutes.');return;}
- buildPen(); ROUND.grp.visible=true;
- ROUND.horses=[];
- for(let i=0;i<ROUND_N;i++){
-  const wb=WILD_BREEDS[Math.floor(Math.random()*WILD_BREEDS.length)];
-  const parts=makeHorse({colors:{body:wb.body,mane:wb.mane},seed:Math.floor(Math.random()*9)});
-  const tag=nameSprite('🐴 runaway'); tag.position.y=2.7; parts.group.add(tag);
-  /* scattered across the west of the pasture, well away from the pen */
-  const x=PAST.x1+8+Math.random()*(ROUND_PEN.x-PAST.x1-22);
-  const z=PAST.z1+8+Math.random()*(PAST.z2-PAST.z1-16);
-  parts.group.position.set(x,groundH(x,z),z);
-  scene.add(parts.group);
-  ROUND.horses.push({parts,wb,pos:new THREE.Vector3(x,0,z),heading:Math.random()*6,phase:Math.random()*6,
-                     penned:false,rest:Math.random()*2});
+function roundupTarget(){
+ const remaining=ROUND.horses.filter(h=>!h.penned);
+ const target=remaining.find(h=>h.name===ROUND.targetName)||remaining.reduce((best,h)=>!best||h.pos.distanceTo(player.pos)<best.pos.distanceTo(player.pos)?h:best,null);
+ ROUND.targetName=target?.name||null;return target;
+}
+function roundupState(){
+ const h=roundupTarget();
+ let target=null;
+ if(h){const dx=ROUND_PEN.x-h.pos.x,dz=ROUND_PEN.z-h.pos.z,len=Math.hypot(dx,dz)||1;
+  let sx=h.pos.x-dx/len*9,sz=h.pos.z-dz/len*9;
+  sx=Math.max(PAST.x1+3,Math.min(PAST.x2-3,sx));sz=Math.max(PAST.z1+3,Math.min(PAST.z2-3,sz));
+  const at=G.worldPkg?.findClear(sx,sz,1.25,12,(x,z)=>x>PAST.x1+3&&x<PAST.x2-3&&z>PAST.z1+3&&z<PAST.z2-3)||[sx,sz];
+  const px=h.pos.x-player.pos.x,pz=h.pos.z-player.pos.z,d=Math.hypot(px,pz);
+  const aligned=d>0?(px*dx+pz*dz)/(d*len):0;
+  target={name:h.name,x:h.pos.x,z:h.pos.z,standX:at[0],standZ:at[1],distance:d,pressure:d<(ROUND.mode==='beginner'?12:14)&&aligned>.5?'guiding':d<7?'too close':'circle behind'};
  }
- ROUND.on=true; ROUND.t=ROUND_TIME; ROUND.penned=0;
- $('roundHud').style.display='block';
- sNeigh();
- toast('🐎 Five runaways in the pasture! Get BEHIND one and push it to the 🚩 pen.');
+ return {active:ROUND.on,mode:ROUND.mode,name:ROUND_MODES[ROUND.mode].name,countdown:ROUND.cd,timeLeft:Math.max(0,ROUND.t),elapsed:ROUND.elapsed,total:ROUND.total,penned:ROUND.penned,pen:{...ROUND_PEN},target,
+  horses:ROUND.horses.map(h=>({name:h.name,x:h.pos.x,z:h.pos.z,penned:h.penned})),records:freshSave()?.roundupBest||{},lastResult:ROUND.lastResult};
+}
+function clearRoundupHorse(h){
+ if(!h||h.disposed)return;h.disposed=true;
+ scene.remove(h.parts.group); // pending breed loads check parent before attaching a rig
+ undressRig(h);
+ for(const geometry of h.ownedGeometry||[])geometry.dispose();
+ for(const material of h.ownedMaterial||[])material.dispose();
+ const labelIndex=nameSprites.indexOf(h.tag);if(labelIndex>=0)nameSprites.splice(labelIndex,1);
+ h.tag?.removeFromParent(); // also releases the world-label scanner's reference on its next pass
+ h.tag?.material?.map?.dispose();h.tag?.material?.dispose();
+}
+function startRoundup(mode='beginner'){
+ if(ROUND.on)return false;
+ if(!ROUND_MODES[mode])mode='beginner';
+ if(course||DRILL.on||G.rescueRide?.snapshot()?.active||G.trail?.ride){toast('Finish or leave your current activity before starting a roundup.');return false;}
+ if(player.flying||player.y>.15||G.worldPkg?.vehicle?.()){toast('Land and finish your journey before starting a roundup.');return false;}
+ const actionTarget=player.onFoot?G.onFoot?.horseActionTarget?.():RIG;
+ const parked=G.onFoot?.state?.().horse;
+ if(!RIG.ready||RIG.loadingBreed||actionTarget?.heroMotion?.state?.action||actionTarget?.emote||parked?.pending||parked?.departure||parked&&actionTarget?.heroMotion?.state?.transitioning){toast('Let your horse finish getting ready first.');return false;}
+ if(G.onFoot?.on){G.onFoot.mount({here:true});if(G.onFoot.on)return false;}
+ hidePanels();G.riding?.releaseAll();G.riding?.selectGait('walk');
+ const at=G.worldPkg?.findClear(-102,16,2,12,(x,z)=>x>PAST.x1+3&&x<PAST.x2-3&&z>PAST.z1+3&&z<PAST.z2-3)||[-102,16];
+ player.pos.set(at[0],0,at[1]);player.speed=0;player.y=0;player.vy=0;player.stam=1;player.heading=Math.atan2(-83-at[0],8-at[1]);
+ player.mesh.position.set(at[0],groundH(at[0],at[1]),at[1]);player.mesh.rotation.y=player.heading;
+ buildPen();ROUND.grp.visible=true;ROUND.horses=[];ROUND.mode=mode;ROUND.total=ROUND_MODES[mode].n;
+ const starts=[[-83,8],[-79,-10],[-91,-23],[-71,13],[-66,-26]],names=['Juniper','Maple','Pepper','Willow','Comet'];
+ for(let i=0;i<ROUND.total;i++){
+  const pool=WILD_BREEDS.filter(w=>['bay','pinto','palomino','grey','black'].includes(w.breed));
+  const wb=pool[i%pool.length]||WILD_BREEDS[0];
+  const parts=makeHorse({colors:{body:wb.body,mane:wb.mane},seed:i,breed:wb.breed});
+  const tag=nameSprite(names[i]);tag.position.y=2.7;parts.group.add(tag);
+  const p=G.worldPkg?.findClear(starts[i][0],starts[i][1],1.5,12,(x,z)=>x<ROUND_PEN.x-15&&x>PAST.x1+6&&z>PAST.z1+6&&z<PAST.z2-6)||starts[i];
+  parts.group.position.set(p[0],groundH(p[0],p[1]),p[1]);scene.add(parts.group);
+  // Capture only procedural per-horse resources before attaching a native rig.
+  // Coats, mane materials, SPH and the shadow texture are shared by other horses.
+  const ownedGeometry=new Set(),ownedMaterial=new Set([parts.shadowM.material]);
+  parts.group.traverse(o=>{if(o.isMesh&&o.geometry!==SPH)ownedGeometry.add(o.geometry);});
+  for(const leg of parts.legs)for(const mesh of leg.knee.children)if(mesh.geometry?.type==='CylinderGeometry'&&mesh.geometry.parameters?.radialSegments===10)ownedMaterial.add(mesh.material);
+  const h={parts,tag,ownedGeometry,ownedMaterial,wb,name:names[i],pos:new THREE.Vector3(p[0],0,p[1]),heading:Math.PI/2,phase:i,penned:false,rest:2+i,anchor:{x:p[0],z:p[1]}};
+  ROUND.horses.push(h);dressWithRig(h,parts,{body:wb.body,mane:wb.mane},{breed:wb.breed});
+ }
+ ROUND.on=true;ROUND.t=ROUND_MODES[mode].time;ROUND.elapsed=0;ROUND.cd=3;ROUND.penned=0;ROUND.lastResult=null;ROUND.targetName=null;
+ ROUND.runId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
+ $('roundHud').style.display='block';sNeigh();G.run('roundupStart',roundupState());return true;
 }
 function endRoundup(quit){
- if(!ROUND.on)return;
- const got=ROUND.penned;
- for(const h of ROUND.horses){ try{scene.remove(h.parts.group);}catch(e){} }
- ROUND.horses=[]; ROUND.on=false;
- if(ROUND.grp)ROUND.grp.visible=false;
- $('roundHud').style.display='none';
- if(quit){toast('🐎 Roundup abandoned.');return;}
- const coins=got*130, bonus=(got===ROUND_N);
+ if(!ROUND.on)return false;
+ // Only the clock or actual pen crossings finish a round; external callers can only cancel.
+ if(!quit&&ROUND.t>0&&ROUND.penned<ROUND.total)return false;
+ const got=ROUND.penned,total=ROUND.total,time=ROUND.elapsed,mode=ROUND.mode;
+ ROUND.on=false;
+ for(const h of ROUND.horses)clearRoundupHorse(h);ROUND.horses=[];
+ if(ROUND.grp)ROUND.grp.visible=false;$('roundHud').style.display='none';G.riding?.releaseAll();
+ if(quit){G.run('roundupCancel');return true;}
+ const bonus=got===total,pay=got*130+(bonus?(mode==='full'?250:150):0),gems=bonus?(mode==='full'?2:1):0,keys=bonus&&mode==='full'?1:0;
+ const score=got*300+(bonus?Math.round(Math.max(0,ROUND.t)*5):0);
+ const medal=bonus?(ROUND.t>=ROUND_MODES[mode].time*.35?'gold':'silver'):got?'bronze':'none';
+ const result={runId:ROUND.runId,mode,name:ROUND_MODES[mode].name,total,penned:got,time:Math.round(time*100)/100,remaining:Math.max(0,ROUND.t),score,medal,pay,gems,keys,newBestScore:false,newBestTime:false};
+ let paid=false;
  syncSave(sv=>{
-  sv.roundAt=Date.now();
-  sv.coins+=coins+(bonus?250:0);
-  if(bonus){sv.gems=(sv.gems||0)+2; sv.keys=(sv.keys||0)+1;}
-  sv.stats=sv.stats||{}; sv.stats.rounded=(sv.stats.rounded||0)+got;
-  logEarn(sv,coins+(bonus?250:0));
-  addSP(sv,got*4,'roundup');
+  sv.roundupBest=sv.roundupBest||{};const old=sv.roundupBest[mode]||{};if(old.lastRunId===ROUND.runId)return;
+  result.newBestScore=score>(old.score||0);result.newBestTime=bonus&&(!old.time||time<old.time);
+  sv.roundupBest[mode]={plays:(old.plays||0)+1,score:Math.max(old.score||0,score),penned:Math.max(old.penned||0,got),time:result.newBestTime?result.time:old.time||null,medal:result.newBestScore?medal:old.medal||medal,lastRunId:ROUND.runId};
+  sv.roundAt=Date.now();sv.coins+=pay;sv.gems=(sv.gems||0)+gems;sv.keys=(sv.keys||0)+keys;
+  sv.stats=sv.stats||{};sv.stats.rounded=(sv.stats.rounded||0)+got;logEarn(sv,pay);addSP(sv,got*4,'roundup');paid=true;
  });
- refreshWallet(); passAdd(got*6); weekBump('events',1);
- if(got)sChime();
- toast(bonus?('🐎 ALL FIVE IN! +'+(coins+250)+'🪙 +2💎 +1🗝️')
-            :('🐎 '+got+' of '+ROUND_N+' penned · +'+coins+'🪙'));
+ if(!paid)return false;
+ refreshWallet();passAdd(got*6);weekBump('events',1);questEvt('roundup',0);if(got)sChime();
+ ROUND.lastResult=Object.freeze(result);G.run('roundupFinish',result);return true;
 }
 function tickRoundup(dt,t){
  if(!ROUND.on)return;
- ROUND.t-=dt;
- const px=player.pos.x, pz=player.pos.z;
+ if(G.input?.blocked())return;
+ if(ROUND.cd>0){ROUND.cd=Math.max(0,ROUND.cd-dt);return;}
+ ROUND.t-=dt;ROUND.elapsed+=dt;const px=player.pos.x,pz=player.pos.z,target=roundupTarget();
  for(const h of ROUND.horses){
   if(h.penned)continue;
-  const dx=h.pos.x-px, dz=h.pos.z-pz, d=Math.hypot(dx,dz);
-  if(d<15){
-   /* it runs from whoever is nearest — which is what makes position the game */
-   const away=Math.atan2(dx,dz);
-   let dh=away-h.heading;
-   while(dh>Math.PI)dh-=Math.PI*2; while(dh<-Math.PI)dh+=Math.PI*2;
-   h.heading+=dh*Math.min(1,dt*3.2);
-   const spd=d<7?7.2:5.4;
-   h.pos.x+=Math.sin(h.heading)*spd*dt;
-   h.pos.z+=Math.cos(h.heading)*spd*dt;
-   h.phase+=dt*8; h.rest=0.6;
+  const dx=h.pos.x-px,dz=h.pos.z-pz,d=Math.hypot(dx,dz);let spd=0;
+  const pressured=d<(ROUND.mode==='beginner'?12:14)&&(ROUND.mode==='full'||h===target);
+  if(pressured){
+   let away=Math.atan2(dx,dz);away=G.world.avoid?.(h,away,2.2)??away;
+   const dh=Math.atan2(Math.sin(away-h.heading),Math.cos(away-h.heading));h.heading+=dh*Math.min(1,dt*4.5);
+   spd=d<6?6:ROUND.mode==='beginner'?3.8:4.8;
+   h.pos.x+=Math.sin(h.heading)*spd*dt;h.pos.z+=Math.cos(h.heading)*spd*dt;h.phase+=dt*7;h.rest=1;
   }else{
-   h.rest-=dt;
-   if(h.rest<=0){ h.heading+=(Math.random()-0.5)*0.9; h.rest=1.5+Math.random()*2.5; }
-   h.pos.x+=Math.sin(h.heading)*1.0*dt;
-   h.pos.z+=Math.cos(h.heading)*1.0*dt;
-   h.phase+=dt*1.6;
+   // Quiet horses stay near their grazing patch instead of wandering into an unseen corner.
+   h.rest-=dt;if(h.rest<=0){const dx=h.anchor.x-h.pos.x,dz=h.anchor.z-h.pos.z;h.heading=Math.hypot(dx,dz)>5?Math.atan2(dx,dz):h.heading+.7;h.rest=3;}
+   spd=.35;h.pos.x+=Math.sin(h.heading)*spd*dt;h.pos.z+=Math.cos(h.heading)*spd*dt;h.phase+=dt*1.4;
   }
-  /* keep them in the field */
-  h.pos.x=Math.max(PAST.x1+2,Math.min(PAST.x2-2,h.pos.x));
-  h.pos.z=Math.max(PAST.z1+2,Math.min(PAST.z2-2,h.pos.z));
-  h.parts.group.position.set(h.pos.x,groundH(h.pos.x,h.pos.z),h.pos.z);
-  h.parts.group.rotation.y=h.heading;
-  animateHorse(h.parts,h.phase,d<15?0.9:0.25,d<15?GAITS.gallop:GAITS.walk,true,t,0);
-  dressWithRig(h,h.parts,{body:h.wb.body,mane:h.wb.mane},{breed:h.wb.breed});tickRig(h,d<15?7.5:1,dt,t,0);
-  if(Math.hypot(h.pos.x-ROUND_PEN.x,h.pos.z-ROUND_PEN.z)<ROUND_PEN.r){
-   h.penned=true; ROUND.penned++;
-   try{scene.remove(h.parts.group);}catch(e){}
-   sChime();
-   toast('🚩 In the pen — '+ROUND.penned+' of '+ROUND_N+'!');
-  }
+  G.world.pushOut?.(h,.7);
+  h.pos.x=Math.max(PAST.x1+2,Math.min(PAST.x2-2,h.pos.x));h.pos.z=Math.max(PAST.z1+2,Math.min(PAST.z2-2,h.pos.z));
+  h.parts.group.position.set(h.pos.x,groundH(h.pos.x,h.pos.z),h.pos.z);h.parts.group.rotation.y=h.heading;
+  animateHorse(h.parts,h.phase,pressured?.7:.1,pressured?GAITS.trot:GAITS.walk,true,t,0);
+  dressWithRig(h,h.parts,{body:h.wb.body,mane:h.wb.mane},{breed:h.wb.breed});tickRig(h,spd,dt,t,pressured?0:1);
+  if(Math.hypot(h.pos.x-ROUND_PEN.x,h.pos.z-ROUND_PEN.z)<ROUND_PEN.r){h.penned=true;ROUND.penned++;clearRoundupHorse(h);sChime();G.run('roundupPen',{penned:ROUND.penned,total:ROUND.total,name:h.name});}
  }
- const hud=$('roundHud');
- if(hud)hud.textContent='🐎 Roundup · '+ROUND.penned+'/'+ROUND_N+' penned · '+Math.max(0,Math.ceil(ROUND.t))+'s';
- if(ROUND.ring)ROUND.ring.material.opacity=0.16+0.10*Math.sin(t*3);
- if(ROUND.t<=0||ROUND.penned>=ROUND_N)endRoundup(false);
+ const hud=$('roundHud');if(hud)hud.textContent='Roundup · '+ROUND.penned+'/'+ROUND.total+' home · '+Math.max(0,Math.ceil(ROUND.t))+'s';
+ if(ROUND.ring)ROUND.ring.material.opacity=.16+.08*Math.sin(t*3);
+ if(ROUND.t<=0||ROUND.penned>=ROUND.total)endRoundup(false);
 }
 /* ===== Training drills ======================================================
    Supplements let you buy a stat. This lets you earn one: eight cones in a slalom across
@@ -9323,6 +9350,7 @@ function drillPoints(){
  return pts;
 }
 function startDrill(stat){
+ if(G.run('activityGate','drill'))return;
  if(DRILL.on||course)return;
  if(!STAT_LBL[stat])return;
  const h=myHorses[rideIdx];
@@ -9414,7 +9442,7 @@ function openEvents(){
     return cl?'<span style="font-size:11px;color:#8c7a63">✅ '+t[0]+'</span>':wkRib>=t[0]?'<button data-wk="'+i+'" style="font-size:11px;padding:3px 8px">Claim '+rw+' ('+t[0]+'🎀)</button>':'<span style="font-size:11px;color:#b8a98a">🔒 '+t[0]+'🎀 → '+rw+'</span>';}).join('')+'</span></div>';
  {const rr=roundupReady(sw);
   html+='<div class="evrow" style="flex-wrap:wrap"><b style="width:100%">🐎 The Runaway Roundup</b>'
-   +'<span style="width:100%;font-size:11px;color:#8c7a63">Five loose horses in the pasture and two and a half minutes to pen them. They run from whoever is closest — get on the far side and push. 130🪙 each, and a bonus for all five.</span>'
+   +'<span style="width:100%;font-size:11px;color:#8c7a63">Guide three loose horses home in two minutes. Get behind each horse and follow the pressure marker. Earn 130🪙 per horse, with a bonus for the full herd. Retry anytime, or choose the five-horse challenge in All activities.</span>'
    +(ROUND.on?'<span style="font-size:12px">running now…</span>'
      :rr?'<button data-round="go">Start the roundup</button>'
         :'<span style="font-size:12px;color:#8c7a63">Next one in about '+roundupWaitMin(sw)+' min</span>')
@@ -9715,6 +9743,7 @@ G.cam={toggleFree:toggleFreeCam,isFree:()=>!!freeCam};   // photo mode (clubs-bo
 const TRAIL_STOPS=[['🏠 Ranch',0,5],['🌊 Loon Lake',20,16],['🐴 Pasture',-70,-10],['🌲 Pines',-30,-58],['🏘️ Cottonwood',47,-50],['🌉 River bridge',0,118],['🌾 Barleyfold',220,-110],['🤠 Coyote Canyon',-220,130],['🏔️ Hollowpeak',-160,-210]];
 let trailRide=null, trailDraft=[], trailOffer=null;
 function startTrail(pts,by,opts){
+ if(G.run('activityGate','trail'))return false;
  if(!pts||pts.length<2)return false;
  trailRide=Object.assign({pts:pts.map(p=>p.slice()),idx:0,by:by||myName(),t:0,roster:{}},opts||{}); trailOffer=null;
  toast('🥾 '+(trailRide.name?trailRide.name+': ':'Trail ride: ')+pts.map(p=>p[0]).join(' → ')+' — follow the golden arrow'); sChime(); return true;
@@ -12254,6 +12283,7 @@ const FT=[['🏠 Ranch',0,5],['🐴 Pasture',-70,-10],['🏘️ Cottonwood',47,-
  ['🍂 Amberwood',300,-300],['🪻 Willowmere',310,300],['❄️ Frostpine',-300,-320],['🏜️ Ochre Reach',-330,300]];
 function fastTravelTo(index){
  const f=FT[index];if(!f||!Number.isFinite(f[1])||!Number.isFinite(f[2]))return false;
+ if(G.run('travelGate',index))return false;
  if(course||$('courseHud').style.display!=='none'){toast('Finish your current event before traveling.');return false;}
  if(G.worldPkg?.vehicle()){toast('Finish your balloon or ferry ride before traveling.');return false;}
  const region=G.worldPkg?.ftRegion(f);
@@ -12973,6 +13003,7 @@ function animateHorse(parts,phase,amp,gait,grounded,t,grazing,dt){
 /* ================= main loop ================= */
 const clock=new THREE.Clock();
 function setFlying(on){
+ if(on&&G.run('activityGate','flight'))return;
  const winged=myHorses[rideIdx]&&myHorses[rideIdx].wings;
  if(RIG.profile?.referenceMotion||RIG.profile?.nativeRoster)RIG.nativeCanFly=!!myHorses[rideIdx]?.wings;
  const nativeCap=RIG.attachedTo===player.mesh?getNativeHorseCapabilities(RIG):null;
@@ -14293,7 +14324,8 @@ function installFeatures(){
    forestPoints},
   net:{SOCIAL,net,remotes,lbData,myName,isFriend,publish:netPublish,subscribe:netSubscribe,sendChat:netSendChat,onMessage:netOnMessage,publishMyBoards,openProfile,chatMsg,showBubble,netConnect,topic:netTopic,subs:NET_SUBS},
   time:{seasonNow,weekKey,isoWeekKey,dateKey,marketDay,calMonth,dayT:()=>dayT},
-  course:{get:()=>course,riddenGait:()=>gaitName(Math.abs(player.speed)),arrow,startCourse,cancelCourse,finishCourse,finishDressage,awardRibbons,judgeJump,weeklyFeatured,startDressage,startDrill,startRoundup,ARENA_LETTERS,DRESSAGE_TESTS,eventPar,kinds:COURSE_KINDS,styleGates,ROUTE_REV,routeRev:routeRevOf,boardKey},
+  roundup:{start:startRoundup,cancel:()=>endRoundup(true),state:roundupState},
+  course:{get:()=>course,drillActive:()=>DRILL.on,riddenGait:()=>gaitName(Math.abs(player.speed)),arrow,startCourse,cancelCourse,finishCourse,finishDressage,awardRibbons,judgeJump,weeklyFeatured,startDressage,startDrill,startRoundup,ARENA_LETTERS,DRESSAGE_TESTS,eventPar,kinds:COURSE_KINDS,styleGates,ROUTE_REV,routeRev:routeRevOf,boardKey},
   ui:{canAnnounce(){const s=freshSave();return s?.story?.era===2&&s.totalRaces>0&&!$('load')&&!document.body.classList.contains('se-screen-open')&&!G.dialogue?.active&&!course;},panel:uiPanel,open:uiOpen,toggle:uiToggle,rerender:uiRender,panels:PANEL_IDS,defs:PANEL_DEFS,
    shopTab:d=>addTab(EXTRA_SHOP_TABS,d),questTab:d=>addTab(EXTRA_QUEST_TABS,d),lbTab:d=>addTab(EXTRA_LB_TABS,d),buildTab:d=>addTab(EXTRA_BUILD_TABS,d),
    careSection:f=>uiSection('care',f),careHeader:f=>uiSection('careHeader',f),stableRow:f=>uiSection('stableRow',f),stableHeader:f=>uiSection('stableHeader',f),
