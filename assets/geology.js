@@ -100,8 +100,10 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
         const d=angular(a,f.a+f.bend*.07*t+Math.sin(t*8+f.a)*.012);
         return sum+f.depth*Math.exp(-d*d/(f.width*f.width));
       },0);
+      // Broad tablelands with near-vertical upper cliffs; the old full-height
+      // taper and scalloped rim made every mesa resemble the same small volcano.
       const taper=hoodoo?(.75+.24*Math.exp(-Math.pow((t-.88)/.16,2))+.15*(1-t)*(1-t)):
-        1-.18*t-.22*smooth(.28,.88,t);
+        1-.11*smooth(0,.25,t)-.06*t;
       r=r*taper-notch*(.45+.55*smooth(.0,.16,t));
       if(!hoodoo){
         // Offset rock benches and a broad collapsed cleft break the uninterrupted
@@ -116,8 +118,8 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
       r+=.012*Math.sin(a*27+phase+t*4)+.009*Math.sin(a*41-t*9);
       return radius*r;
     };
-    const upper=a=>height*((hoodoo?.023:.11)*Math.sin(a*3+phase)+.024*Math.sin(a*7-phase)
-      -.15*Math.exp(-Math.pow(angular(a,phase+.5)/.38,2)));
+    const upper=a=>height*((hoodoo?.023:.025)*Math.sin(a*3+phase)+.024*Math.sin(a*7-phase)
+      -(hoodoo?.15:.04)*Math.exp(-Math.pow(angular(a,phase+.5)/.38,2)));
     const surface=(a,t,ledge=0)=>{
       const r=radial(a,t,ledge),shear=height*.025*t;
       return [Math.cos(a)*r+Math.cos(phase)*shear,

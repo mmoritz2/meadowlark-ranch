@@ -29,7 +29,7 @@ export function install(G){
  const {THREE,scene,toast}=G;
  const W=G.world,H=G.horse,S=G.save,UI=G.ui;
  const player=H.player,groundH=W.groundH;
- const P={sites:{},draws:0,mergedFrom:0,inst:0,instItems:0,buildings:0,npcs:0,things:0,colliders:0,anim:[],objs:[]};
+ const P={sites:{},draws:0,mergedFrom:0,inst:0,instItems:0,buildings:0,npcs:0,things:0,colliders:0,anim:[],objs:[],scanTrees:[]};
  G.quartersPkg=P;
  /* Every object this package puts in the scene, kept in one list. It is what lets a QA run
     measure what the four settlements cost by switching them off and on again inside one
@@ -478,12 +478,9 @@ export function install(G){
    fallen.push({x,y:groundH(x,z)+0.2,z,sx:rr(2.4,5.2),sy:0.33,sz:0.33,ry:rr(0,6.28),rz:rr(-0.05,0.05),c:i%3?'#6b5336':'#7d6340'});}
   scatter(G_LOG,WHITE,fallen,true,240);
 
-  /* The turned maples. ranch3d.html tints its instanced canopy toward amber inside this circle,
-     but the tint lands on the cheap backdrop foliage and the trees that actually stand in the
-     clearing still came out green — which left a quarter called Amberwood with no amber in it.
-     Fourteen big broadleaves of my own round the rim of the clearing settle the argument: a
-     leaning trunk, four limbs and seven lumps of canopy each, all of it baked flat into the
-     settlement's own meshes. */
+  /* Keep these placed maples as replaceable fallbacks. The photoscan installer
+     swaps their crowns after the local assets are ready, sharing the surrounding
+     woodland's seasonal palette and quality budget. */
   const AMBER=['#d2792a','#e0a63a','#b84e26','#c9922f','#a8571f','#e8c352'];
   {const mp=new THREE.Group();
    for(let i=0;i<26;i++){
@@ -503,8 +500,10 @@ export function install(G){
     for(let k=0;k<7;k++){const la=rr(0,6.28),ld=rr(0.4,3.2)*s;
      lp(tg2,k?tone:AMBER[(rnd()*AMBER.length)|0],Math.cos(la)*ld,(7.4+rr(-0.7,1.5))*s,Math.sin(la)*ld,rr(1.9,3.2)*s,rr(1.3,2.0)*s,rr(1.9,3.2)*s);}
     tg2.position.set(x,y0,z);tg2.rotation.y=rr(0,6.28);mp.add(tg2);
+    tg2.name='Amberwood maple fallback';P.scanTrees.push({x,z,height:10*s,yaw:tg2.rotation.y,root:tg2,kind:'oak'});
     collide(x,z,0.9);}
-   solid.add(mp);}
+   // Keep fallback crowns separately replaceable after the scanned trees load.
+   scene.add(own(mp));}
 
   /* Leaf litter. One instanced mesh, eleven hundred quads, six autumn colours off instanceColor,
      thickest under the wood and thinning out across the yard. */

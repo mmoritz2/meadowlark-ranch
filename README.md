@@ -288,6 +288,17 @@ clearance, grounded placement and repeatable layouts. This is an incremental
 visual pass toward the official Star Equestrian countryside reference; matching
 the entire reference world remains ongoing work.
 
+The next regional pass gives Amberwood gold, coral and burgundy scanned foliage
+with matching close-up and distant materials. It replaces the remaining ball
+crowns there and the large leaf cards at Willowmere, uses slimmer roadside trees,
+and clears tree trunks from the finished bridleways. Distant crowns still cast
+shadows but no longer receive the false triangular self-shadows of their cards.
+The canyon has broader tableland tops and an original feather-palm model with
+textured stems, individual leaflets, trunk collisions and a terrain-following
+shoreline. `qa-seasonal-world.cjs`, `qa-canyon-world.cjs`, `test-oasis-art.mjs`
+and `asset-gen/check-geology.mjs` cover those changes. These passes do not reproduce
+the reference game's proprietary world or establish visual parity.
+
 The world uses a denser terrain mesh with matching riding collision, continuous
 downhill river and creek channels, an arched bridge at the actual crossing, and
 surface materials that blend with slope, tree cover, riverbanks and climate.

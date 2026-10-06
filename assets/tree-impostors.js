@@ -22,6 +22,30 @@ export function patchFoliageCoverage(shader,renderer) {
     if(foliageMultisample)gl_FragColor.a=foliageCoverageAlpha;`);
 }
 
+// Tint the leaf pigment rather than multiplying orange into green albedo.
+// The atlas includes bark, so its green-leaf mask leaves woody pixels untouched.
+// The same palette is used on full geometry and distant views to avoid LOD colour pops.
+export function patchSeasonalFoliage(shader,atlas=false) {
+  shader.vertexShader='varying vec3 seasonalTint;\n'+shader.vertexShader;
+  shader.vertexShader=shader.vertexShader.replace('#include <color_vertex>',`#include <color_vertex>
+    seasonalTint=vec3(1.0);
+    #ifdef USE_INSTANCING_COLOR
+      seasonalTint=instanceColor;
+    #endif`);
+  shader.fragmentShader='varying vec3 seasonalTint;\n'+shader.fragmentShader;
+  shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`
+    vec3 originalLeaf=diffuseColor.rgb;
+    #include <color_fragment>
+    float season=clamp(1.0-min(seasonalTint.r,min(seasonalTint.g,seasonalTint.b)),0.0,1.0);
+    float pigmentLuma=max(dot(seasonalTint,vec3(.2126,.7152,.0722)),.08);
+    vec3 pigment=clamp(seasonalTint/pigmentLuma,vec3(0.0),vec3(3.2));
+    float leafLuma=dot(originalLeaf,vec3(.2126,.7152,.0722));
+    float leafMask=${atlas ? `smoothstep(.88,1.12,originalLeaf.g/max(originalLeaf.r,.0001))*
+      smoothstep(1.05,1.32,originalLeaf.g/max(originalLeaf.b,.0001))` : '1.0'};
+    vec3 baseLeaf=mix(diffuseColor.rgb,originalLeaf,season);
+    diffuseColor.rgb=mix(baseLeaf,leafLuma*pigment*1.25,season*leafMask);`);
+}
+
 // Matching albedo/normal views of each source scan. The normal is rotated with
 // the tree, so a distant crown keeps its volume as the sun and camera move.
 export function treeImpostor({THREE,albedo,normals,width,height,bottom}) {
@@ -44,7 +68,7 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom}) {
       #endif`);
   };
   mat.onBeforeCompile=(sh,renderer)=>{
-    vertex(sh);sh.uniforms.treeNormals={value:normals};
+    vertex(sh);patchSeasonalFoliage(sh,true);sh.uniforms.treeNormals={value:normals};
     sh.fragmentShader='uniform sampler2D treeNormals;varying vec2 treeHeading;\n'+sh.fragmentShader;
     sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
       vec4 treeNormalSample=texture2D(treeNormals,vMapUv);
@@ -70,7 +94,7 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom}) {
       #include <opaque_fragment>`);
     patchFoliageCoverage(sh,renderer);
   };
-  mat.customProgramCacheKey=()=> 'scan-tree-normal-views-v4';
+  mat.customProgramCacheKey=()=> 'scan-tree-seasonal-views-v5';
   const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:albedo,alphaTest:.22,side:THREE.DoubleSide});
   depth.onBeforeCompile=vertex;depth.customProgramCacheKey=()=> 'scan-tree-normal-depth-v2';mat.userData.scanDepth=depth;
   return {geo,mat};

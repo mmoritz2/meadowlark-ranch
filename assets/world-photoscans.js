@@ -1,4 +1,4 @@
-import {treeImpostor,patchFoliageCoverage} from './tree-impostors.js?v=foliage-coverage-1';
+import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage} from './tree-impostors.js?v=seasonal-woodland-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -46,7 +46,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         #endif`);
     };
     mat.onBeforeCompile=(sh,activeRenderer)=>{
-      deform(sh);
+      deform(sh);patchSeasonalFoliage(sh);
       sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
         vec3 canopyUp=normalize(mat3(viewMatrix)*vec3(0.0,1.0,0.0));
         normal=normalize(mix(normal,canopyUp,.42));`);
@@ -58,7 +58,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         #include <opaque_fragment>`);
       patchFoliageCoverage(sh,activeRenderer);
     };
-    mat.customProgramCacheKey=()=> 'photoscan-foliage-v3';
+    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v4';
     const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:mat.map,alphaTest:mat.alphaTest,side:THREE.DoubleSide});
     depth.onBeforeCompile=deform;depth.customProgramCacheKey=()=> 'photoscan-foliage-depth-v1';
     mat.userData.scanDepth=depth;
@@ -121,7 +121,10 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     const sourceFor=t=>{
       // Related trees grow in groves. Slender trees around the village reveal the
       // buildings; broad spreading crowns define the meadow and woodland edges.
+      const roadEdge=Math.min(W.pathDist(t.x,t.z),G.worldPaths?.trackDist(t.x,t.z)??Infinity);
+      if(roadEdge<8.5&&!['pine','snowpine','cold'].includes(t.kind))return variants[0];
       if(t.kind==='woodland')return variants[6];
+      if(t.kind==='willow')return variants[5];
       const lowland=t.kind!=='cold'&&t.kind!=='snowpine'&&Math.hypot(t.x+160,t.z+210)>160;
       if(!['pine','snowpine','cold'].includes(t.kind)||lowland&&rnd(t.x,t.z,49)>.28){
         const village=Math.hypot(t.x-47,t.z+50)<34;
@@ -131,16 +134,30 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       }
       return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
     };
+    const onRoad=(x,z)=>(G.worldPaths?.trackDist(x,z)??Infinity)<3.7||W.pathDist(x,z)<3.2;
+    const clearTrunk=(x,z)=>{
+      for(let i=W.colliders.length-1;i>=0;i--){const c=W.colliders[i];if(c.r<=1.2&&Math.hypot(c.x-x,c.z-z)<.15)W.colliders.splice(i,1);}
+      for(let i=(W.forestPoints?.length||0)-1;i>=0;i--)if(Math.hypot(W.forestPoints[i].x-x,W.forestPoints[i].z-z)<.15)W.forestPoints.splice(i,1);
+    };
+    state.roadClearedTrees=0;state.roadClearedSnags=0;
+    const autumnPalette=['#e6b448','#db8734','#ad3d42','#c85c65'].map(c=>new THREE.Color(c));
     const add=t=>{
-      const cleared=G.vistas?.clearZones?.some(test=>test(t.x,t.z));
+      const road=onRoad(t.x,t.z);
+      const cleared=road||G.vistas?.clearZones?.some(test=>test(t.x,t.z));
       if(cleared){
         if(t.root)t.root.visible=false;else if(t.stem){t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;}
-        for(let i=W.colliders.length-1;i>=0;i--){const c=W.colliders[i];if((c.r<=1.1||c.height>3)&&Math.hypot(c.x-t.x,c.z-t.z)<.15)W.colliders.splice(i,1);}
+        clearTrunk(t.x,t.z);if(road)state.roadClearedTrees++;
         return;
       }
       if(t.root&&!t.root.visible)return;
       if(t.stem){const matrix=new THREE.Matrix4();t.stem.getMatrixAt(t.stemIndex??t.index,matrix);const a=matrix.elements;if(Math.hypot(a[0],a[1],a[2])<.01)return;}
       t.source=sourceFor(t);
+      const autumn=1-THREE.MathUtils.smoothstep(Math.hypot(t.x-300,t.z+300),110,145);
+      if(autumn>0&&t.source.key.includes('broadleaf')){
+        // Neighbouring trees share seasonal patches; no random-sequence changes.
+        const patch=rnd(Math.floor(t.x/24),Math.floor(t.z/24),91);
+        t.tint=autumnPalette[Math.floor(patch*autumnPalette.length)].clone().lerp(WHITE,1-autumn);
+      }else t.tint=WHITE;
       // Broad crowns occupy the old tree sites; trunks and route clearances stay fixed.
       if(t.source.key==='canopy-broadleaf')t.height=Math.min(t.height,12.5);
       if(t.source.key==='woodland-broadleaf'&&t.kind!=='woodland')t.height=Math.min(14,Math.max(8,t.height*1.35));
@@ -162,16 +179,27 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     if(banks?.trunk){
       const matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),rot=new THREE.Quaternion(),scale=new THREE.Vector3(),key=p=>p.x.toFixed(3)+','+p.z.toFixed(3);
       for(let i=0;i<banks.trunk.n;i++){banks.trunk.im.getMatrixAt(i,matrix);pos.setFromMatrixPosition(matrix);stems.set(key(pos),i);}
-      for(const kind of ['oak','birch','pine','cold']){
+      for(const kind of ['oak','birch','pine','cold','willow']){
         const bank=banks[kind];if(!bank)continue;floraCanopies.push(bank.im);
         for(let i=0;i<bank.n;i++){
           bank.im.getMatrixAt(i,matrix);matrix.decompose(pos,rot,scale);
           const stemIndex=stems.get(key(pos));if(stemIndex===undefined)continue;
-          const amber=Math.hypot(pos.x-300,pos.z+300)<145&&kind!=='pine'&&kind!=='cold';
           add({x:pos.x,z:pos.z,height:scale.y,yaw:new THREE.Euler().setFromQuaternion(rot).y,kind,
-            stem:banks.trunk.im,stemIndex,leaves:bank.im,index:i,tint:amber?new THREE.Color('#d9a568'):WHITE});
+            stem:banks.trunk.im,stemIndex,leaves:bank.im,index:i});
         }
       }
+    }
+    for(const t of G.quartersPkg?.scanTrees||[])add({...t});
+    state.replacedQuarterTrees=(G.quartersPkg?.scanTrees||[]).length;
+    const snags=banks?.snag;
+    if(snags){
+      const matrix=new THREE.Matrix4(),pos=new THREE.Vector3();
+      for(let i=0;i<snags.n;i++){
+        snags.im.getMatrixAt(i,matrix);if(Math.abs(matrix.determinant())<1e-8)continue;
+        pos.setFromMatrixPosition(matrix);if(!onRoad(pos.x,pos.z))continue;
+        snags.im.setMatrixAt(i,zero);clearTrunk(pos.x,pos.z);state.roadClearedSnags++;
+      }
+      snags.im.instanceMatrix.needsUpdate=true;
     }
     const natural=[];scene.traverse(o=>{if(['Natural oak tree','Natural birch tree','Natural pine pine','Natural snowpine pine'].includes(o.name)&&o.parent===scene)natural.push(o);});
     for(const original of natural){if(!original.visible)continue;const b=new THREE.Box3().setFromObject(original);if(b.isEmpty())continue;
@@ -213,6 +241,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     for(const records of cells.values()){
       const source=records[0].source;
       const card=instances(source.card,records.map(t=>t.matrix),'Scanned distant tree views | '+source.key);
+      // Camera-facing atlases already contain canopy occlusion; receiving their
+      // own differently oriented shadow card creates false dark triangles.
+      card.receiveShadow=false;
       records.forEach((t,i)=>card.setColorAt(i,t.tint||WHITE));treeCards.push({mesh:card,records});
       for(const p of source.parts){
         const mesh=instances(p,records.map(()=>zero),'Photoscan '+source.key+' | '+p.name);
@@ -235,7 +266,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     state.trees=trees.length;state.conifers=trees.filter(t=>t.source.key.includes('pine')).length;state.normalMappedViews=variants.length;state.matureTrees=trees.filter(t=>t.source.key==='mature-pine').length;
     state.woodlandCanopies=trees.filter(t=>t.source.key==='woodland-broadleaf').length;
     state.broadleafCanopies=trees.filter(t=>t.source.key==='canopy-broadleaf').length;
-    state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind,source:t.source.key}));
+    state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind,source:t.source.key,tint:t.tint.getHexString()}));
   }
   async function installRocks(){
     const parts=pieces(await load('rock_moss_set_01'),true);

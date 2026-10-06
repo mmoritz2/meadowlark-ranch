@@ -6,6 +6,7 @@
    Owned by this package: this file plus five one-line hot spots in ranch3d.html (G.anim,
    G.wild + the stray-spawn guard, the companion foal guard, G.petComp, ev.at in startCourse).
    Nothing runs at import time. */
+import {createOasisPalms,createOasisBank} from '../oasis-art.js?v=landscape-forms-1';
 export const id='world';
 export function install(G){
  const {THREE,scene,$,toast}=G;
@@ -285,8 +286,10 @@ export function install(G){
   if(tn.oasis){   // a desert pond ringed with palms: the herd drinks here, and so can you
    const o=tn.oasis,g=new THREE.Group();
    const water=new THREE.Mesh(new THREE.CircleGeometry(o.r,28),new THREE.MeshStandardMaterial({color:0x3f9fc6,roughness:0.15,metalness:0.2,transparent:true,opacity:0.86}));water.rotation.x=-Math.PI/2;water.position.y=0.12;g.add(water);
-   const bank=new THREE.Mesh(new THREE.RingGeometry(o.r,o.r+2.2,28),new THREE.MeshStandardMaterial({color:0x7fb26a,roughness:1}));bank.rotation.x=-Math.PI/2;bank.position.y=0.08;g.add(bank);
-   for(let k=0;k<7;k++){const a=k/7*Math.PI*2,x=Math.cos(a)*(o.r+1.6),z=Math.sin(a)*(o.r+1.6);const tr=tube(0.12,0.2,4.2,'#8a6a45',x,2.1,z,g);tr.rotation.z=Math.cos(a)*0.18;tr.rotation.x=-Math.sin(a)*0.18;for(let f=0;f<6;f++){const fr=blob(0.28,0.12,1.6,'#4f9a4a',x,4.2,z,g);fr.rotation.y=f/6*Math.PI*2;fr.rotation.x=0.35;fr.position.x+=Math.sin(f/6*Math.PI*2)*0.9;fr.position.z+=Math.cos(f/6*Math.PI*2)*0.9;}}
+   const art={THREE,groundH,x:o.x,z:o.z,radius:o.r};
+   g.add(createOasisBank(art));
+   const palms=createOasisPalms(art);g.add(palms);
+   for(const p of palms.userData.oasisPalms.palms)W.colliders.push({...p,trunk:true});
    for(let k=0;k<12;k++){const a=Math.random()*Math.PI*2,r=o.r+0.3+Math.random()*1.2;tube(0.02,0.03,0.9,'#6a9a3a',Math.cos(a)*r,0.45,Math.sin(a)*r,g);}
    const y=groundH(o.x,o.z);g.position.set(o.x,y,o.z);scene.add(g);P.oasis={x:o.x,z:o.z,r:o.r,y:y+0.12};
    labelAt(g,'🌴 Dry Gulch Oasis',3.2);
