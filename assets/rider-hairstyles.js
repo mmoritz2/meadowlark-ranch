@@ -68,49 +68,66 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
  const anchor=p=>scalpPoint(THREE,kit,p,-.003);
  const ring=(p,r=0.016,dir=V(0,-1,0))=>{const g=new THREE.TorusGeometry(r,0.0022,7,24);g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(V(0,0,1),dir.clone().normalize()));g.translate(p.x,p.y,p.z);ties.push(g);};
  const curve=(points,radii,segs=30,rad=8)=>tube(points,radii,segs,rad);
+ // Broad, shallow cross sections overlap into a continuous mass of hair.
+ const lock=(points,radii,segs=36,width=1.25,depth=.72)=>{
+  const geo=curve(points,radii,segs,10),axis=new THREE.CatmullRomCurve3(points),p=geo.attributes.position;
+  for(let i=0;i<=segs;i++){const center=axis.getPointAt(i/segs),tangent=axis.getTangentAt(i/segs),n=Math.abs(tangent.x)<.9?V(1,0,0):V(0,0,1);n.addScaledVector(tangent,-n.dot(tangent)).normalize();const b=tangent.clone().cross(n);
+   for(let j=0;j<=10;j++){const k=i*11+j,offset=V(p.getX(k),p.getY(k),p.getZ(k)).sub(center),point=center.clone().addScaledVector(n,offset.dot(n)*width).addScaledVector(b,offset.dot(b)*depth);p.setXYZ(k,point.x,point.y,point.z);}
+  }
+  geo.computeVertexNormals();geo.computeBoundingSphere();return geo;
+ };
  const gather=(at,end,r=.015)=>{const start=anchor(at),mid=start.clone().lerp(end,.5);hair.push(curve([start,mid,end],[r*1.2,r,r*.9],12));};
  const pony=(at,length=0.28)=>{
-  at=anchor(at);
-  const pieces=[];
-  for(let j=0;j<9;j++){
-   const a=j/9*Math.PI*2,r=j?0.013:0,pts=[];
-   for(let k=0;k<7;k++){
-    const t=k/6,fan=Math.sin(t*Math.PI)*0.010;
-    const root=Math.min(1,t*5);
-    pts.push(V(at.x+Math.cos(a)*(r+fan)*root+0.006*Math.sin(t*5.5+j)*t,
-     at.y-t*length,at.z-0.016*root-0.018*Math.sin(t*Math.PI*.9)+Math.sin(a)*r*root));
+  at=anchor(at);const pieces=[],splay=Math.sign(at.x)*Math.min(1,Math.abs(at.x)/.06);
+  const axis=new THREE.CatmullRomCurve3([at,at.clone().add(V(0,-.012,-.027)),at.clone().add(V(.012+splay*.018,-length*.36,-.059)),at.clone().add(V(.020+splay*.020,-length*.72,-.063)),at.clone().add(V(.007+splay*.021,-length,-.043))]);
+  // Staggered broad locks form the body; only a few finer ends break its outline.
+  for(let j=0;j<12;j++){
+   const angle=j*2.399963,outer=j>2,spread=outer?.013:.004,tip=1-.10*(.5+.5*Math.sin(j*2.7)),pts=[];
+   for(let k=0;k<=10;k++){
+    const t=k/10,center=axis.getPoint(t*tip),fan=Math.sin(t*Math.PI)*.008,grow=Math.min(1,t*6),wave=.003*Math.sin(t*7+j*1.7)*Math.sin(t*Math.PI);
+    center.x+=(Math.cos(angle)*(spread+fan)+wave)*grow;center.z+=Math.sin(angle)*spread*.66*grow;pts.push(center);
    }
-   pieces.push(curve(pts,[0.007,0.010,0.010,0.008,0.005,0.001],32));
+   pieces.push(lock(pts,[.004,.009,.011,.009,.006,.0005],40,1.32,.70));
   }
-  hair.push(merge(pieces));ring(at.clone().add(V(0,-.008,-.004)),.012,V(0,-1,-.5));
+  hair.push(merge(pieces));
+  const band=axis.getPoint(.11),direction=axis.getTangent(.11);ring(band,.016,direction);ring(band.clone().addScaledVector(direction,.0035),.016,direction);
  };
  const braid=(points,radius=0.017,turns=7,rooted=true)=>{
   if(rooted)points[0]=anchor(points[0]);
-  const axis=new THREE.CatmullRomCurve3(points),pieces=[];
+  const axis=new THREE.CatmullRomCurve3(points),pieces=[],samples=Math.max(64,Math.ceil(turns*24));
   for(let strand=0;strand<3;strand++){
    const pts=[];
-   for(let k=0;k<=64;k++){
-    const t=k/64,center=axis.getPoint(t),tangent=axis.getTangent(t).normalize();
+   for(let k=0;k<=samples;k++){
+    const t=k/samples,along=rooted?t*.90:t,center=axis.getPoint(along),tangent=axis.getTangent(along).normalize();
     const side=Math.abs(tangent.x)>.85?V(0,0,1):V(1,0,0);side.addScaledVector(tangent,-side.dot(tangent)).normalize();const cross=tangent.clone().cross(side);
     const a=t*turns*Math.PI*2+strand*Math.PI*2/3,rr=radius*(1-0.48*t)*(rooted?Math.min(1,t*18):1);
     center.addScaledVector(side,Math.cos(a)*rr).addScaledVector(cross,Math.sin(a*2)*rr*0.5);pts.push(center);
    }
-   const scale=radius/.017;pieces.push(curve(pts,[0.009,0.009,0.007,0.005,0.003].map(v=>v*scale),72));
+   const scale=radius/.017;pieces.push(lock(pts,[0.009,0.009,0.007,0.005,0.003].map(v=>v*scale),Math.max(84,Math.ceil(turns*28)),1,1));
   }
-  hair.push(merge(pieces));if(rooted)ring(axis.getPoint(.96),radius*.55,axis.getTangent(.96));
+  if(rooted){
+   const end=axis.getPoint(.90),direction=axis.getTangent(.90);ring(end,radius*.57,direction);
+   for(let j=0;j<5;j++){const a=j/5*Math.PI*2,spread=V(Math.cos(a),0,Math.sin(a));spread.addScaledVector(direction,-spread.dot(direction)).normalize();
+    const start=end.clone().addScaledVector(spread,radius*.20),middle=axis.getPoint(.97).addScaledVector(spread,radius*.38),tip=axis.getPoint(1).addScaledVector(direction,.008+.003*Math.sin(j));
+    pieces.push(lock([start,middle,tip],[radius*.26,radius*.23,.0004],18,1.2,.7));
+   }
+  }
+  hair.push(merge(pieces));
  };
  const bun=(messy=false,anchor=null)=>{
   const root=anchor||tiePoint(kit,helmet||!messy?'nape':'crown'),at=root.clone();at.z-=0.014;
+  if(!helmet&&(style==='classicbun'||style==='messybun')){at.y+=.018;at.z-=.008;}
   gather(root,at,.019);
-  const core=new THREE.SphereGeometry(.027,24,16);core.scale(1.08,.76,.68);core.translate(at.x,at.y,at.z-.008);
+  const core=new THREE.SphereGeometry(.035,24,16);core.scale(1.08,.82,.69);core.translate(at.x,at.y,at.z-.006);
   const pieces=[core];
   for(let j=0;j<7;j++){
    const pts=[],a0=j*0.9;
    for(let k=0;k<=24;k++){
-    const t=k/24,a=t*Math.PI*2.7+a0,r=0.012+0.026*Math.sin(t*Math.PI);
-    pts.push(V(at.x+Math.cos(a)*r*(messy?1.18:1.1),at.y+Math.sin(a)*r*.72,at.z-0.018*Math.sin(t*Math.PI)-j*0.001));
+    const t=k/24,a=t*Math.PI*2.7+a0,r=0.034*Math.sin(t*Math.PI);
+    const x=Math.cos(a)*r*(messy?1.18:1.1),y=Math.sin(a)*r*.72,z=-.006-.029*Math.sqrt(Math.max(.04,1-(x/.043)**2-(y/.031)**2));
+    pts.push(V(at.x+x,at.y+y,at.z+z));
    }
-   pieces.push(curve(pts,[.008,.011,.010,.007,.002],32));
+   pieces.push(lock(pts,[.005,.010,.010,.008,.002],36,1.15,.85));
   }
   if(messy&&!helmet)for(const sd of [-1,1])pieces.push(curve([V(sd*H.rx,H.browTop+.015,H.cz+.025),V(sd*(H.rx+.009),H.browTop-.025,H.cz+.045),V(sd*(H.rx+.005),H.browTop-.065,H.cz+.035)],[.004,.003,.0008],16));
   hair.push(merge(pieces));ring(at,.021);
@@ -239,6 +256,8 @@ export function gatheredCrown(THREE,source,kit){
 }
 
 function smoothHairNormals(geo){
+ // Reshaping changes the lighting frame, even when the shared source already has tangents.
+ geo.deleteAttribute('tangent');
  geo.computeVertexNormals();const p=geo.attributes.position,n=geo.attributes.normal,groups=new Map();
  for(let i=0;i<p.count;i++){const key=[p.getX(i),p.getY(i),p.getZ(i)].map(v=>Math.round(v*100000)).join(',');if(!groups.has(key))groups.set(key,[]);groups.get(key).push(i);}
  for(const ids of groups.values()){let x=0,y=0,z=0;for(const i of ids){x+=n.getX(i);y+=n.getY(i);z+=n.getZ(i);}const length=Math.hypot(x,y,z)||1;for(const i of ids)n.setXYZ(i,x/length,y/length,z/length);}
