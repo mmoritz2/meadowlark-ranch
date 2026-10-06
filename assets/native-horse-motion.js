@@ -1,5 +1,6 @@
 import {createNativeGroomLayer} from './native-groom-layer.mjs?v=native-roster-1';
 import {prepareNativeHoofFlex} from './native-hoof-flex.mjs?v=native-roster-1';
+import {createNativeHorseActionClips} from './native-horse-actions.mjs?v=horse-actions-1';
 // The Ranch finishes these after all actor travel and terrain transforms.
 const pendingHorseGrooms=new Set();
 export function finishNativeHorseGrooms(){for(const finish of pendingHorseGrooms)finish();}
@@ -30,6 +31,8 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
  // Dragon actions blend on their original skeleton and preserve their skin weights.
  if(profile.nativeKind!=='horse')return createCreatorMotion({THREE,root,clips,profile});
  const rest=[];root.traverse(o=>rest.push([o,o.position.clone(),o.quaternion.clone(),o.scale.clone()]));
+ const actionBundle=createNativeHorseActionClips({THREE,root,profile}),actionRecords=Object.fromEntries(Object.entries(actionBundle.actions||{}).map(([type,record])=>[type,Object.freeze({...record})]));
+ clips=[...clips,...actionBundle.clips];
  const hoofBundle=prepareNativeHoofFlex({THREE,root,clips,profile});clips=hoofBundle.clips;const hoofFlex=hoofBundle.layer;
  const mixer=new THREE.AnimationMixer(root),records=profile.nativeGaits||{},actions={},sourceClips={};
  const add=(mode,name,duration)=>{if(!name)return;const clip=THREE.AnimationClip.findByName(clips,name);if(!clip||duration&&Math.abs(clip.duration-duration)>1e-5)throw new Error('Missing or mismatched native clip '+name);sourceClips[mode]=clip;actions[mode]=mixer.clipAction(clip);};
@@ -37,6 +40,11 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
  const jumpRecord=profile.nativeJump;add('jump',jumpRecord?.clip,jumpRecord?.durationS);
  if(actions.jump){actions.jump.setLoop(THREE.LoopOnce,1);actions.jump.clampWhenFinished=true;}
  for(const [key,record]of Object.entries(records)){if(!(record.nominalSpeedMps>0))throw new Error('Invalid native gait reference '+key);if(record.strokeM&&Math.abs(record.nominalSpeedMps-record.strokeM/(record.stanceFraction*record.durationS))>1e-7)throw new Error('Native gait speed/timing mismatch '+key);add(key,record.clip,record.durationS);}
+ for(const [type,record]of Object.entries(actionRecords)){
+  if(!record.clip||!Number.isFinite(record.durationS)||record.durationS<=0)throw new Error('Invalid native action '+type);
+  add('action:'+type,record.clip,record.durationS);
+ }
+ const supportedActions=Object.freeze(Object.keys(actionRecords));
  // Use the original default values through the same bindings as the source
  // clips. This is a static rest target, not a fabricated creator idle clip.
  const restTracks=[],bindings=new Set();
@@ -52,16 +60,17 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
  actions.rest=mixer.clipAction(restClip);if(!actions.stand)actions.stand=actions.rest;
  const gaits={stand:{speed:0},rest:{speed:0}};for(const [key,r]of Object.entries(records))gaits[key]={speed:r.nominalSpeedMps,clip:r.clip,duration:r.durationS};for(const family of ['canter','gallop'])if(records[family+'Left'])gaits[family]={speed:records[family+'Left'].nominalSpeedMps};
  const availableModes=['rest','stand',...(profile.nativeSitClip?['sit']:[]),...Object.keys(records).filter(k=>! /^(canter|gallop)/.test(k)),...['canter','gallop'].filter(k=>records[k+'Left']),...(actions.jump?['jump']:[])];
- const fadeSeconds=.20,active=new Map();
+ const fadeSeconds=.20,active=new Map(),transientActions=new Set();
  const groomInertia=createNativeGroomLayer({THREE,rig:{nativeRoot:root,profile}});
  let pendingGroomDt=null;
  function finishGroomPose(){if(pendingGroomDt===null)return;root.updateWorldMatrix(true,true);groomInertia?.afterPose(pendingGroomDt);pendingGroomDt=null;}
  if(groomInertia&&deferGroom)pendingHorseGrooms.add(finishGroomPose);
- let mode='rest',key='rest',lead='left',speedMps=0,turn=0,disposed=false,transition=null,jumpReturn='stand';
+ let mode='rest',key='rest',lead='left',speedMps=0,turn=0,disposed=false,transition=null,jumpReturn='stand',actionType=null;
  actions.rest.setEffectiveWeight(1).play();active.set(actions.rest,1);mixer.update(0);root.updateMatrixWorld(true);groomInertia?.beforePose();groomInertia?.afterPose(0);
  function assertLive(){if(disposed)throw new Error('Native motion disposed');}
- function restore(){pendingGroomDt=null;hoofFlex?.reset();groomInertia?.reset();mixer.stopAllAction();active.clear();transition=null;for(const[o,p,q,s]of rest){o.position.copy(p);o.quaternion.copy(q);o.scale.copy(s);}root.updateMatrixWorld(true);}
- function phaseOf(action){const duration=action?.getClip().duration;return action===actions.jump?Math.min(1,action.time/duration):duration?((action.time/duration)%1+1)%1:0;}
+ function stopAction(action){action.stop();active.delete(action);if(transientActions.delete(action))mixer.uncacheAction(action.getClip(),root);}
+ function restore(){pendingGroomDt=null;hoofFlex?.reset();groomInertia?.reset();mixer.stopAllAction();for(const action of transientActions)mixer.uncacheAction(action.getClip(),root);transientActions.clear();active.clear();transition=null;actionType=null;for(const[o,p,q,s]of rest){o.position.copy(p);o.quaternion.copy(q);o.scale.copy(s);}root.updateMatrixWorld(true);}
+ function phaseOf(action){const duration=action?.getClip().duration;return action?.loop===THREE.LoopOnce?Math.min(1,action.time/duration):duration?((action.time/duration)%1+1)%1:0;}
  function alignedPhase(previous,next){
   const phase=phaseOf(actions[previous]);
   if(!records[previous]||!records[next])return 0;
@@ -72,15 +81,16 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
   return profile.nativeKind==='horse'?((phase-flOffset(previous)+flOffset(next))%1+1)%1:phase;
  }
  function set(value,{lead:nextLead=lead,speedMps:nextSpeed}={}){
-  assertLive();const byClip=Object.keys(sourceClips).find(k=>sourceClips[k].name===value);if(byClip)value=byClip;
+  assertLive();const byClip=Object.keys(sourceClips).find(k=>!k.startsWith('action:')&&sourceClips[k].name===value);if(byClip)value=byClip;
   nextLead=nextLead==='right'?'right':'left';let nextKey=value;
   if(value==='canter'||value==='gallop')nextKey=value+(nextLead==='right'?'Right':'Left');
   if(/^(canter|gallop)(Left|Right)$/.test(value)){nextLead=value.endsWith('Right')?'right':'left';value=value.replace(/(Left|Right)$/,'');}
-  if(!actions[nextKey])throw new Error('Native '+profile.id+' has no '+value+' animation');
+  if(!actions[nextKey]||nextKey.startsWith('action:'))throw new Error('Native '+profile.id+' has no '+value+' animation');
   if(nextSpeed!==undefined){if(!Number.isFinite(nextSpeed)||nextSpeed<0)throw new Error('Invalid native speed');speedMps=nextSpeed;}else if(nextKey!=='jump')speedMps=records[nextKey]?.nominalSpeedMps||0;
   if(nextKey===key){lead=nextLead;return;}
+  actionType=null;
   const target=actions[nextKey],previous=key;
-  if(nextKey==='jump')jumpReturn=key==='jump'?'stand':key;
+  if(nextKey==='jump')jumpReturn=key==='jump'||key.startsWith('action:')?'stand':key;
   if(!active.has(target)||nextKey==='jump'){
    target.reset();target.time=alignedPhase(previous,nextKey)*target.getClip().duration;
    if(nextKey==='jump'){target.setLoop(THREE.LoopOnce,1);target.clampWhenFinished=true;}
@@ -92,6 +102,23 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
   transition={elapsed:0,duration:nextKey==='jump'?.12:fadeSeconds,start:new Map(active),target};
   if(active.size===1&&active.has(target)){target.setEffectiveWeight(1);active.set(target,1);transition=null;}
  }
+ function supportsAction(type){return Object.hasOwn(actionRecords,type);}
+ function actionDescriptor(type){return supportsAction(type)?{...actionRecords[type]}:null;}
+ function startAction(type,{elapsedS=0}={}){
+  assertLive();if(!supportsAction(type)||key==='jump'||actionType||!Number.isFinite(elapsedS))return false;
+  const record=actionRecords[type];elapsedS=Math.max(0,elapsedS);if(elapsedS>=record.durationS)return false;
+  const nextKey='action:'+type,clip=sourceClips[nextKey];let target=mixer.clipAction(clip);
+  // A just-finished action can still be fading out. Preserve its visible pose
+  // while a separate playback instance starts the next action from the beginning.
+  if(active.has(target)){target=mixer.clipAction(clip.clone());transientActions.add(target);}
+  target.reset();target.setLoop(THREE.LoopOnce,1);target.clampWhenFinished=true;
+  target.time=elapsedS;target.setEffectiveTimeScale(1).setEffectiveWeight(0).play();active.set(target,0);actions[nextKey]=target;
+  key=nextKey;mode='action';actionType=type;speedMps=0;turn=0;
+  transition={elapsed:0,duration:fadeSeconds,start:new Map(active),target};
+  return true;
+ }
+ function cancelAction(){assertLive();if(!actionType)return false;set('stand',{speedMps:0});return true;}
+ function actionSnapshot(){if(!actionType)return null;const record=actionRecords[actionType],timeS=Math.max(0,Math.min(record.durationS,actions[key].time));return{type:actionType,timeS,durationS:record.durationS,progress:timeS/record.durationS};}
  function update(dt,{rate=1,direction=1}={}){
   assertLive();if(!Number.isFinite(dt)||dt<0)throw new Error('Invalid native motion delta');
   if(!Number.isFinite(rate)||rate<0)throw new Error('Invalid native playback rate');
@@ -104,12 +131,13 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
   // Mixer time is wall time. Each gait's own time scale controls its playback.
   finishGroomPose();groomInertia?.beforePose();hoofFlex?.beforePose();mixer.update(dt);root.updateMatrixWorld(true);hoofFlex?.afterPose(active);
   if(groomInertia&&deferGroom&&dt<=.25)pendingGroomDt=dt;else groomInertia?.afterPose(dt);
-  if(transition&&transition.elapsed>=transition.duration){for(const action of active.keys())if(action!==target){action.stop();active.delete(action);}target.setEffectiveWeight(1);active.set(target,1);transition=null;}
+  if(transition&&transition.elapsed>=transition.duration){for(const action of active.keys())if(action!==target)stopAction(action);target.setEffectiveWeight(1);active.set(target,1);transition=null;}
   if(key==='jump'&&actions.jump.time>=jumpRecord.durationS-1e-6)set(jumpReturn,{lead,speedMps});
+  if(actionType&&actions[key].time>=actionRecords[actionType].durationS-1e-6)set('stand',{speedMps:0});
  }
- function snapshot(){const clip=sourceClips[key],jumpTime=key==='jump'?actions.jump.time:0,lift=key==='jump'?sampleNativeJumpLift(jumpRecord,jumpTime):0;return {gait:mode,lead,phase01:clip?phaseOf(actions[key]):0,bodyLiftM:lift,jumpTimeS:jumpTime,speedMps,grounded:mode!=='fly'&&(key!=='jump'||jumpTime<jumpRecord.flightStartS||jumpTime>=jumpRecord.flightEndS),intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:transition?.duration||fadeSeconds,activeActions:active.size,groomInertia:groomInertia?.snapshot()||null,hoofFlex:hoofFlex?.snapshot()||null,restFallback:!clip,transitionsReviewed:false};}
+ function snapshot(){const clip=sourceClips[key],jumpTime=key==='jump'?actions.jump.time:0,lift=key==='jump'?sampleNativeJumpLift(jumpRecord,jumpTime):0;return {gait:mode,action:actionSnapshot(),lead,phase01:clip?phaseOf(actions[key]):0,bodyLiftM:lift,jumpTimeS:jumpTime,speedMps,grounded:mode!=='fly'&&(key!=='jump'||jumpTime<jumpRecord.flightStartS||jumpTime>=jumpRecord.flightEndS),intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:transition?.duration||fadeSeconds,activeActions:active.size,groomInertia:groomInertia?.snapshot()||null,hoofFlex:hoofFlex?.snapshot()||null,restFallback:!clip,transitionsReviewed:false};}
  function reset(){assertLive();restore();mode='rest';key='rest';speedMps=0;actions.rest.reset().setEffectiveWeight(1).play();active.set(actions.rest,1);mixer.update(0);}
- return {set,update,reset,snapshot,gaits,availableModes,supportedModes:availableModes,mixer,groomInertia,hoofFlex,finishGroomPose,get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return sourceClips[key]?actions[key]?.time||0:0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;pendingHorseGrooms.delete(finishGroomPose);hoofFlex?.dispose();groomInertia?.dispose();restore();mixer.uncacheRoot(root);disposed=true;}};
+ return {set,update,reset,snapshot,gaits,availableModes,supportedModes:availableModes,supportedActions,supportsAction,actionDescriptor,startAction,cancelAction,mixer,groomInertia,hoofFlex,finishGroomPose,get action(){return actionSnapshot();},get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return sourceClips[key]?actions[key]?.time||0:0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;pendingHorseGrooms.delete(finishGroomPose);hoofFlex?.dispose();groomInertia?.dispose();restore();mixer.uncacheRoot(root);disposed=true;}};
 
 }
 
@@ -189,6 +217,10 @@ export function tickNativeHorse(rig,speed,dt,turn=0){
  if(!Number.isFinite(dt)||dt<0)throw new Error('Invalid native update delta');
  const actual=Math.max(0,Math.min(rig.nativeFlying&&cap.canFly?cap.flightMaxSpeedMps:cap.maxSpeedMps,Math.abs(Number(speed)||0))),gaits=rig.profile.nativeGaits||{};
  if(rig.heroJumpGrace>0)rig.heroJumpGrace=Math.max(0,rig.heroJumpGrace-dt);
+ if(motion.action){
+  if(actual>.25||rig.nativeFlying||rig.nativeReverse)motion.cancelAction();
+  else{motion.setTurn(0);motion.update(dt);const state=motion.state;rig.phase=state.phase01;rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroRate=1;return state;}
+ }
  if(motion.mode==='jump'){motion.set('jump',{speedMps:actual});motion.setTurn(turn);motion.update(dt,{rate:1});const state=motion.state;rig.phase=state.phase01;rig.heroJumpAge=state.gait==='jump'?state.jumpTimeS:null;rig.heroJumpExtra=state.bodyLiftM*cap.worldScale*(rig.nativeJumpHeightScale||1);rig.heroRate=1;if(state.gait!=='jump')rig.heroJumpGrace=.20;return state;}
  let gait='stand',rate=1,record=null;
  // Gather the Black Dragon's wings during the last part of a requested
@@ -232,7 +264,7 @@ export function sampleNativeJumpLift(record,time){
  return keys.at(-1)[1];
 }
 export function startNativeHorseJump(rig,{heightScale=1}={}){
- const motion=rig?.heroMotion;if(!rig?.profile?.nativeJump||!motion||motion.mode==='jump')return false;
+ const motion=rig?.heroMotion;if(!rig?.profile?.nativeJump||!motion||motion.mode==='jump'||motion.action)return false;
  rig.nativeJumpHeightScale=Number.isFinite(heightScale)?Math.max(.8,Math.min(1.5,heightScale)):1;
  rig.heroJumpAge=0;rig.heroJumpExtra=0;motion.set('jump');return true;
 }

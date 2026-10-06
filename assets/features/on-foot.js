@@ -33,6 +33,80 @@
 
    Nothing runs at import time. */
 export const id='on-foot';
+// The parked actor may acquire its native rig after dismounting. Bind requests
+// to that actor and horse identity, never whichever mount happens to load next.
+export function createParkedHorseActions({horse,currentId,ensureOnFoot,notify=()=>{},depart=()=>{}}){
+ let pending=null,departure=null,owner=null,knownRig=null,actionReturn=false;
+ const stateOf=rig=>rig?.heroMotion?.state?.action||null;
+ function clear(){pending=null;departure=null;owner=null;knownRig=null;actionReturn=false;}
+ function current(){
+  const e=horse();
+  if(!e||e.id!==currentId()){clear();return null;}
+  if(owner&&(e!==owner||(knownRig&&e.rig!==knownRig)))clear();
+  owner=e;if(e.rig)knownRig=e.rig;
+  return e;
+ }
+ function target(){const e=current();return e&&!e.rigStandIn&&typeof e.rig?.heroMotion?.supportsAction==='function'?e.rig:null;}
+ function attempt(){
+  const e=current();if(!pending||!e)return false;
+  const rig=target(),motion=rig?.heroMotion;
+  if(!motion){
+   if(e.rig&&!e.rigPending&&!e.rigStandIn){pending=null;notify('This horse cannot perform that action.');return false;}
+   return true;
+  }
+  if(!motion.supportsAction(pending.type)){pending=null;notify('This horse cannot perform that action.');return false;}
+  const request=pending;pending=null;
+  if(!motion.startAction(request.type)){notify('Let your horse finish its current action first.');return false;}
+  e.speed=0;e.graze=0;e.grazeT=4;
+  sync();
+  request.onStarted?.(rig,stateOf(rig));
+  return true;
+ }
+ function sync(){
+  const rig=target();if(!rig)return;
+  const action=stateOf(rig);
+  // Compatibility for the existing emote UI/network clock only. Native clips
+  // own the skeleton; no legacy lift, pitch or bone pose is applied here.
+  if(action){actionReturn=true;rig.emote={type:action.type,t:action.timeS,dur:action.durationS,native:true};}
+  else{if(!rig.heroMotion.state?.transitioning)actionReturn=false;if(rig.emote?.native)rig.emote=null;}
+ }
+ return {
+  target,clear,
+  courseGate(){
+   if(!current())return false;
+   const rig=target(),action=stateOf(rig);
+   // Only an action's return blend blocks entry, not ordinary gait transitions.
+   if(!pending&&!action&&!(actionReturn&&rig?.heroMotion?.state?.transitioning))return false;
+   notify(pending?'Your horse is preparing its action. Please wait before entering an event.':'Wait for your horse to finish its action and get back up before entering an event.');
+   return true;
+  },
+  request(type,{onStarted}={}){
+   if(typeof type!=='string'||!type||!ensureOnFoot())return false;
+   const e=current();if(!e||departure||e.hop)return false;
+   const motion=target()?.heroMotion;
+   if(motion&&(!motion.supportsAction(type)||stateOf(e.rig)||motion.mode==='jump'))return false;
+   pending={type,onStarted};e.speed=0;
+   return attempt();
+  },
+  deferDeparture(kind,options){
+   const e=current();pending=null;
+   const action=stateOf(e?.rig);
+   // Keep the full authored get-up. cancelAction() only fades to stand.
+   if(!e||(!action&&!departure&&!e.rig?.heroMotion?.state?.transitioning))return false;
+   if(!departure)notify(action?.type==='liedown'?'Your horse is finishing its rest and getting up.':'Your horse will come back to you after this action.');
+   departure={kind,options};return true;
+  },
+  beforeTick(dt){
+   current();if(pending){pending.wait=(pending.wait||0)+Math.max(0,dt||0);if(pending.wait>15){pending=null;notify('Your horse is still loading. Try the action again in a moment.');}else attempt();}
+   return !!pending||!!departure||!!stateOf(target());
+  },
+  afterTick(){
+   current();sync();
+   if(departure&&!stateOf(target())&&!target()?.heroMotion?.state?.transitioning){const done=departure;departure=null;depart(done.kind,done.options);}
+  },
+  snapshot(){current();return {action:stateOf(target()),pending:pending?.type||null,departure:departure?.kind||null};}
+ };
+}
 export function install(G){
  const THREE=G.THREE, H=G.horse, Wd=G.world, RS=G.ranchSys||{};
  if(!THREE||!H||!H.player||!G.scene||!Wd)return;
@@ -47,6 +121,17 @@ export function install(G){
  const TOE=[0.022,-0.125,0.280], KNUCKLE=[-0.032,0.008,0.092], SOLE=0.0925;
  const ST={on:false,W:null,R:null,mesh:null,horse:null,thing:null,cols:[],mini:null,
   ph:0,amp:0,run:0,look:0,cam:null,camYaw:null,snap:false,call:null,mountOnArrive:false,idx:-1};
+ const horseActions=createParkedHorseActions({horse:()=>ST.on?ST.horse:null,currentId:()=>H.myHorses[H.rideIdx()]?.id,
+  ensureOnFoot:()=>ST.on||dismount(),notify:message=>toast('🐴 '+message),
+  depart:(kind,options)=>kind==='mount'?mount(options):callHorse(options)});
+ function playHorseAction(type,options){
+  // Avoid stepping down for an unsupported request when the mounted rig is ready.
+  if(!ST.on&&H.RIG()?.heroMotion?.supportsAction?.(type)!==true)return false;
+  const accepted=horseActions.request(type,options);
+  if(accepted){ST.call=null;ST.mountOnArrive=false;}
+  return accepted;
+ }
+ G.on('courseGate',()=>horseActions.courseGate());
 
  /* ---------------------------------------------------------------- standing her up -------- */
  const _q=new THREE.Quaternion(),_wq=new THREE.Quaternion(),_pq=new THREE.Quaternion(),_gq=new THREE.Quaternion();
@@ -109,6 +194,7 @@ export function install(G){
   return e;
  }
  function dropHorse(){
+  horseActions.clear();
   const e=ST.horse; ST.horse=null; if(!e)return;
   try{if(RS.disposeHorseEnt)RS.disposeHorseEnt(e);else scene.remove(e.parts.group);}catch(err){try{scene.remove(e.parts.group);}catch(x){}}
  }
@@ -170,6 +256,10 @@ export function install(G){
   ST.R=player.rider; ST.mesh=player.mesh;
   ST.W=new THREE.Group(); ST.W.name='on-foot rider'; ST.W.scale.setScalar(ST.R.walkScale||RIDER_H); scene.add(ST.W);   // the character is her own size already
   ST.W.add(ST.R.g);
+  // The mounted actor is hidden after stepping down; leave no action running on
+  // that second skeleton while the parked actor performs the requested clip.
+  const rig=H.RIG();rig?.heroMotion?.cancelAction?.();if(rig){rig.emote=null;rig.heroJumpWant=0;}
+  G.riding?.releaseAll?.();
   player.mesh.visible=false;
   player.onFoot=true; ST.on=true; ST.snap=true; ST.cam=null; ST.camYaw=null; ST.ph=0; ST.amp=0; ST.run=0;
   resetBody();
@@ -184,6 +274,7 @@ export function install(G){
  }
  function mount(opt){
   if(!ST.on)return false;
+  if(horseActions.deferDeparture('mount',opt))return true;
   const e=ST.horse;
   dropHorseCols();
   if(opt&&opt.here){/* the course or the new horse has already put her where she should be */}
@@ -208,6 +299,7 @@ export function install(G){
     button whistles first and puts her up when the horse arrives. */
  function callHorse(andMount){
   const e=ST.horse; if(!ST.on||!e)return;
+  if(horseActions.deferDeparture('call',!!andMount))return;
   const d=Math.hypot(e.x-player.pos.x,e.z-player.pos.z);
   if(d<3.2){if(andMount)mount();else toast('🐴 '+name()+' is right here — press E to ride');return;}
   ST.call={t:40}; ST.mountOnArrive=!!andMount;
@@ -220,6 +312,7 @@ export function install(G){
     picked in the Horse Overview, E beside a pasture horse. A different horse means she is riding
     it now, so she goes straight up on it; the same horse just means a fresh rider to stand up. */
  function resync(){
+  horseActions.clear();
   const i=H.rideIdx(), h=H.myHorses[i];
   if(ST.horse&&(ST.idx!==i||(h&&ST.horse.id!==h.id))){
    if(ST.R&&ST.R.g&&ST.R.g.parent===ST.W)ST.W.remove(ST.R.g);
@@ -309,7 +402,7 @@ export function install(G){
   if(!ST.on)return;
   dt=Math.min(dt||0.016,0.1);
   /* an event or a course puts her back in the saddle where it wants her */
-  try{if(G.course&&G.course.get&&G.course.get()){mount({here:true});return;}}catch(e){}
+  try{if(G.course&&G.course.get&&G.course.get()){mount({here:true});if(ST.on)tickHorse(dt,t);return;}}catch(e){}
   if(player.rider!==ST.R||player.mesh!==ST.mesh){resync();if(!ST.on)return;}
   if(player.mesh)player.mesh.visible=false;
   const R=ST.R; if(!R||!R.sk)return;
@@ -394,8 +487,10 @@ export function install(G){
  /* ---------------------------------------------------------------- the parked horse ------ */
  function tickHorse(dt,t){
   const e=ST.horse; if(!e)return;
+  if(!e.rig)e.dress();
+  const acting=horseActions.beforeTick(dt);
   let sp=0;
-  if(ST.call){
+  if(ST.call&&!acting){
    let dx=player.pos.x-e.x,dz=player.pos.z-e.z,d=Math.hypot(dx,dz)||0.001;
    if(d>90){e.x=player.pos.x-dx/d*45;e.z=player.pos.z-dz/d*45;dx=player.pos.x-e.x;dz=player.pos.z-e.z;d=Math.hypot(dx,dz)||0.001;}
    if(d>2.4&&ST.call.t>0){
@@ -424,9 +519,10 @@ export function install(G){
    if(d2<r*r&&d2>1e-6){const d=Math.sqrt(d2);e.x=cx+ox/d*r;e.z=cz+oz/d*r;}
   }
   if(sp>0){const pos={x:e.x,z:e.z},foot=Wd.groundH(e.x,e.z)+hopY;Wd.solidWorld?.resolve(pos,{bottom:foot+(e.hop?1.45:.38),top:foot+2.65,radius:.55});e.x=pos.x;e.z=pos.z;}
-  e.speed+=(sp-e.speed)*Math.min(1,dt*4);
+  if(acting)e.speed=0;else e.speed+=(sp-e.speed)*Math.min(1,dt*4);
   /* standing about it grazes now and then */
-  if(e.speed<0.3){e.grazeT-=dt;if(e.grazeT<=0){e.graze=e.graze?0:1;e.grazeT=e.graze?5+Math.random()*7:3+Math.random()*6;}}else e.graze=0;
+  if(acting)e.graze=0;
+  else if(e.speed<0.3){e.grazeT-=dt;if(e.grazeT<=0){e.graze=e.graze?0:1;e.grazeT=e.graze?5+Math.random()*7:3+Math.random()*6;}}else e.graze=0;
   e.parts.group.position.set(e.x,Wd.groundH(e.x,e.z)+hopY,e.z); e.parts.group.rotation.y=e.heading;
   if(!e.rig)e.dress();
   try{
@@ -435,6 +531,7 @@ export function install(G){
    A.animateHorse(e.parts,e.phase,e.speed>0.3?gait.amp:0.05,gait,true,t,e.graze,dt);
    A.tickRig(e,e.speed,dt,t,e.graze);
   }catch(err){}
+  horseActions.afterTick();if(ST.horse!==e)return;
   placeHorseCols();
   if(ST.thing){ST.thing.x=e.x;ST.thing.z=e.z;}
   if(ST.mini){ST.mini.x=e.x;ST.mini.z=e.z;}
@@ -527,10 +624,10 @@ export function install(G){
   if(t.closest('#seWhistle')||t.closest('#whistleBtn')){e.stopPropagation();e.preventDefault();callHorse(false);}
  },true);
 
- G.onFoot={get height(){return ST.fy;},get on(){return ST.on;},dismount,mount,toggle,callHorse,pose:(R,ph,amp,run,t,look)=>R&&R.locomote?R.locomote(0.016,{speed:0,look}):pose(R,ph,amp,run,t,look),
-  horse:()=>ST.horse?{x:ST.horse.x,z:ST.horse.z,heading:ST.horse.heading,sc:ST.horse.sc,group:ST.horse.parts.group}:null,
+ G.onFoot={get height(){return ST.fy;},get on(){return ST.on;},dismount,mount,toggle,callHorse,horseActionTarget:horseActions.target,playHorseAction,pose:(R,ph,amp,run,t,look)=>R&&R.locomote?R.locomote(0.016,{speed:0,look}):pose(R,ph,amp,run,t,look),
+  horse:()=>ST.horse?{x:ST.horse.x,z:ST.horse.z,heading:ST.horse.heading,sc:ST.horse.sc,group:ST.horse.parts.group,...horseActions.snapshot()}:null,
   walker:()=>ST.W,footing:(x,z)=>footing(x,z),waterAt:(x,z)=>waterAt(x,z),standingOn:()=>ST.on&&ST.mode==='rock'?ST.rockOn:null,
-  state:()=>({on:ST.on,horse:ST.horse?{x:+ST.horse.x.toFixed(2),z:+ST.horse.z.toFixed(2),hop:!!ST.horse.hop}:null,calling:!!ST.call,
+  state:()=>({on:ST.on,horse:ST.horse?{x:+ST.horse.x.toFixed(2),z:+ST.horse.z.toFixed(2),hop:!!ST.horse.hop,...horseActions.snapshot()}:null,calling:!!ST.call,
    mode:ST.mode||null,feet:ST.fy!=null?+(ST.fy-Wd.groundH(player.pos.x,player.pos.z)).toFixed(2):null,climbing:!!ST.climbing,air:!!ST.air,rolling:!!ST.roll})};
  G.on('state',o=>{o.onFoot=G.onFoot.state();});
 }

@@ -657,7 +657,7 @@ import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=mobile-riding-1';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=horse-actions-1';
 import {createNativeRiderBridge} from './assets/native-rider.js?v=riding-stability-1';
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -675,6 +675,7 @@ import {createRanchArchitecture} from './assets/ranch-architecture.js?v=solid-wo
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-world-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
+import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionReference} from './assets/native-action-runtime.mjs?v=horse-actions-1';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=solid-world-1';
 import {createWorldFinish} from './assets/world-rendering.js';
@@ -684,7 +685,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=chalk-
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=chalk-down-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=hair-20261005b';
-import {FEATURES} from './assets/features/index.js?v=riding-life-1';
+import {FEATURES} from './assets/features/index.js?v=horse-actions-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -5261,11 +5262,31 @@ const EMOTES={
  liedown:{dur:5.5,fa:0.9,fk:1.45,ha:-0.85,hk:-1.25,neck:-0.12,pitch:0.02,lift:-0.78,lean:0.1,label:'😴 Lie down'},
  nuzzle:{dur:1.8,fa:0,fk:0,ha:0,hk:0,neck:-0.55,pitch:0.04,lift:-0.05,lean:0.15,label:'💕 Nuzzle'},
  toss:{dur:1.1,fa:0,fk:0,ha:0,hk:0,neck:0,osc:0.38,pitch:0,lift:0,lean:0,label:'🌀 Head toss'},
+ graze:{dur:6,fa:0,fk:0,ha:0,hk:0,neck:-.55,pitch:0,lift:0,lean:.06,label:'🌿 Graze'},
 };
+let nativeActionSequence=0;
 function emEnv(em){const p=Math.min(1,em.t/em.dur);const e=p<0.22?p/0.22:p>0.78?(1-p)/0.22:1;return e*e*(3-2*e);}
 function horseEmote(type,opts){
  const E=EMOTES[type]; if(!E)return false; opts=opts||{};
- if(RIG.profile?.nativeBreed){toast('This model has no '+type+' animation yet.');return false;}
+ if(RIG.profile?.nativeBreed){
+  const target=player.onFoot?G.onFoot?.horseActionTarget?.():RIG;
+  const descriptor=(target?.heroMotion||RIG.heroMotion)?.actionDescriptor?.(type);
+  if(!descriptor){toast('This mount does not have that action.');return false;}
+  if(!RIG.ready||RIG.attachedTo!==player.mesh)return false;
+  if(target?.heroMotion?.state?.action){toast('Let your horse finish this action first.');return false;}
+  if(!opts.force&&G.run('emoteGate',type,myHorses[rideIdx]))return false;
+  if(!player.onFoot&&(Math.abs(player.speed)>.25||player.y>.01||player.flying||RIG.heroMotion.mode==='jump')){toast('Come to a halt on the ground first.');return false;}
+  const started=rig=>{
+   const action=rig.heroMotion.state.action;if(!action)return;
+   rig.nativeActionSeq=nativeActionSequence=Math.max(Date.now(),nativeActionSequence+1);
+   rig.emote={type,native:true,t:action.timeS,dur:action.durationS,seq:rig.nativeActionSeq};rig.nativeActionSeatActive=true;
+   if(!opts.force)dailyEvt('emote',1);
+   if(type==='rear')sNeigh();
+  };
+  if(player.onFoot||descriptor.dismountedOnly)return !!G.onFoot?.playHorseAction?.(type,{onStarted:started});
+  if(!target.heroMotion.startAction(type))return false;
+  started(target);return true;
+ }
  if(RIG.emote||!RIG.ready||RIG.attachedTo!==player.mesh)return false;
  if(!opts.force&&G.run('emoteGate',type,myHorses[rideIdx]))return false;   // bond-personality-emotes: locked tricks toast their unlock
  if(!opts.force&&(Math.abs(player.speed)>0.6||player.y>0||player.flying)){toast('Come to a halt first.');return false;}
@@ -5357,6 +5378,7 @@ function driveRig(sp,grounded,t,dt){
  if(RIG.heroMotion){
   if(RIG.profile?.nativeBreed||RIG.profile?.referenceMotion){RIG.nativeReverse=player.speed<-.02&&!player.flying;RIG.nativeFlying=!!player.flying;RIG.nativeLanding=!!player.flying&&(!!player.landing||player.flyAlt<=.001);RIG.nativeAltitude=player.y||0;}
   const state=tickGameHero(RIG,sp,dt,player.turnSm||0);
+  if(RIG.profile?.nativeBreed)syncNativeActionEmote(RIG);
   if(!player.flying){if(RIG.heroJumpAge!==null){player.y=Math.max(0,(RIG.profile?.nativeBreed||RIG.profile?.referenceMotion)?RIG.heroJumpExtra:state.bodyLiftM+RIG.heroJumpExtra);player.vy=0;}else{player.y=0;player.vy=0;}}
   if(RIG._hideFor!==player.mesh){hideProceduralBody();RIG._hideFor=player.mesh;}
   if(RIG.emote&&!RIG.profile?.nativeBreed){RIG.emote.t+=dt;if(RIG.emote.t>=RIG.emote.dur)RIG.emote=null;else G.run('rigEmote',RIG,RIG.emote,dt,t);}   // bond-personality-emotes poses the artist bones additively
@@ -6217,6 +6239,7 @@ function cacheRiderHands(R){
   R._handHome=[new THREE.Vector3(),new THREE.Vector3()];
   B.handR.getWorldPosition(R._handHome[0]); player.mesh.worldToLocal(R._handHome[0]);
   B.handL.getWorldPosition(R._handHome[1]); player.mesh.worldToLocal(R._handHome[1]);
+  R._handFrame={position:R.g.position.clone(),inverseRotation:R.g.quaternion.clone().invert()};
   R._bitRest=new THREE.Vector3();
   if(TACK.bitL&&TACK.bitR)R._bitRest.copy(TACK.bitL.position).add(TACK.bitR.position).multiplyScalar(0.5);
   R._rest(); R._seat(R.pose.lean,R.pose.side,R.pose.head,R.pose.rise,0); R.fitG.updateMatrixWorld(true);
@@ -6230,10 +6253,16 @@ function riderHands(R,F,U,Rt,tm,pat){
  cacheRiderHands(R);
  const rel=R._air*0.32;                          // crest release: hands up the neck over a fence
  _rdA.set(0,0,0);
- if(TACK.bitL&&TACK.bitR&&R._bitRest)            // and a soft following of the head, through the rein
-  _rdA.copy(TACK.bitL.position).add(TACK.bitR.position).multiplyScalar(0.5).sub(R._bitRest).multiplyScalar(0.17);
+ if(TACK.bitL&&TACK.bitR&&R._bitRest){            // and a soft following of the head, through the rein
+  _rdA.copy(TACK.bitL.position).add(TACK.bitR.position).multiplyScalar(0.5);
+  if(RIG.nativeActionSeatActive)_rdA.sub(transformNativeActionReference(R,R._bitRest,_rdC));
+  else _rdA.sub(R._bitRest);
+  _rdA.multiplyScalar(0.17);
+ }
  for(const s of [1,-1]){ const S=s>0?'R':'L', i=s>0?0:1;
-  _rdB.copy(R._handHome[i]).add(_rdA);
+  if(RIG.nativeActionSeatActive)transformNativeActionReference(R,R._handHome[i],_rdB);
+  else _rdB.copy(R._handHome[i]);
+  _rdB.add(_rdA);
   _rdB.z+=rel; _rdB.y+=-rel*0.30+Math.sin((tm||0)*1.1+i)*0.004;
   _rdB.x+=-R._turn*0.024;                        // the inside hand opens a little in a turn
   if(pat>0.002&&s>0&&TACK.bitL&&TACK.bitR){      // a pat on the neck when she makes a fuss of him
@@ -6252,6 +6281,7 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
  if(!R||!R.g)return;
  if(player.onFoot){reinL.visible=false;reinR.visible=false;return;}   // on foot (on-foot package): she is walking, not seated, and the reins stay on the horse
  const seat=riderSeat(); R.g.position.set(seat.x||0,seat.y,seat.z); R.g.rotation.set(0,0,0);
+ if(RIG.profile?.nativeKind==='horse')nativeActionSeatRotation(THREE,RIG,player.mesh,R.g.quaternion);
  if(R.sk){
   const poseDt=Math.max(0,dt??1/60);
   const smooth=rate=>1-Math.exp(-rate*poseDt);
@@ -6274,7 +6304,7 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
   R._post=(R._post||0)+((trotting?1:0)-(R._post||0))*smooth(3.6);
   const beat=Math.max(0,Math.sin(ph));
   const breath=moving?Math.sin(ph)*0.018:Math.sin((tm||0)*1.4)*0.030;
-  const em=RIG.emote?EMOTES[RIG.emote.type].lean*emEnv(RIG.emote):0;
+  const em=RIG.emote&&!RIG.emote.native?EMOTES[RIG.emote.type].lean*emEnv(RIG.emote):0;
   /* Standing about, she reaches down and pats him — every twenty seconds or so, three
      quick pats on the crest. It costs nothing and it is the difference between a rider
      and a mannequin strapped to a horse. */
@@ -6297,6 +6327,7 @@ function driveRider(sp,tm,dt){   // live seat: fold, posting, hands, feet in the
   trackHead();                                     // the bit moves with the head; her hands follow it
   /* the horse's own axes, so "forward" means forward for the horse and not for the world */
   player.mesh.getWorldQuaternion(_rdQ);
+  if(RIG.nativeActionSeatActive)_rdQ.multiply(R.g.quaternion);
   _rdF.set(0,0,1).applyQuaternion(_rdQ); _rdU.set(0,1,0).applyQuaternion(_rdQ); _rdR.set(1,0,0).applyQuaternion(_rdQ);
   cacheRiderHands(R);
   riderLegs(R,_rdF,_rdU,_rdR);
@@ -10894,6 +10925,7 @@ function netTick(dt,t){
   r.parts.group.position.set(r.x,groundH(r.x,r.z),r.z);
   r.parts.group.rotation.y=r.heading;
   r.rider.g.rotation.x=0;
+  if(r.rig?.profile?.nativeKind==='horse')nativeActionSeatRotation(THREE,r.rig,r.parts.group,r.rider.g.quaternion);
   if(r.rider.u)r.rider.u.uLean.value=0.06+0.2*Math.min(1,r.sp/6)+Math.sin(r.phase)*0.03;
   G.run('remoteTick',r,dt,t);
  }
@@ -13277,7 +13309,7 @@ function tick(stepSeconds){
  const bob=RIG.heroMotion?0:Math.pow(Math.sin(player.phase),2)*0.075*Math.min(1,sp/4);
  player.landT=Math.max(0,(player.landT||0)-dt);
  const landDip=!RIG.heroMotion&&player.landT>0?Math.sin((player.landT/0.22)*Math.PI)*0.07:0;
- player.mesh.position.set(player.pos.x,gy+(RIG.heroMotion&&!player.flying?RIG.heroJumpExtra:player.y)+bob-landDip+(RIG.emote?EMOTES[RIG.emote.type].lift*emEnv(RIG.emote):0),player.pos.z);
+ player.mesh.position.set(player.pos.x,gy+(RIG.heroMotion&&!player.flying?RIG.heroJumpExtra:player.y)+bob-landDip+(RIG.emote&&!RIG.emote.native?EMOTES[RIG.emote.type].lift*emEnv(RIG.emote):0),player.pos.z);
  player.mesh.rotation.y=player.heading;
  if(player.parts&&player.parts.shadowM)player.parts.shadowM.material.opacity=Math.max(0.06,1-player.y/9);
  const ahead=groundH(player.pos.x+dx*1.4,player.pos.z+dz*1.4);
@@ -13288,7 +13320,7 @@ function tick(stepSeconds){
  const pPrev=Number.isFinite(player.pitchSm)?player.pitchSm:0;
  const pitchTgt=player.flying&&!RIG.nativeLandingPose?jumpPitch:(slope*0.7+jumpPitch);
  player.pitchSm=pPrev+(pitchTgt-pPrev)*Math.min(1,dt*6);
- player.mesh.rotation.x=player.pitchSm+rock+(RIG.emote?EMOTES[RIG.emote.type].pitch*emEnv(RIG.emote):0);
+ player.mesh.rotation.x=player.pitchSm+rock+(RIG.emote&&!RIG.emote.native?EMOTES[RIG.emote.type].pitch*emEnv(RIG.emote):0);
  const tPrev=Number.isFinite(player.turnSm)?player.turnSm:0;
  player.turnSm=tPrev+(turn-tPrev)*Math.min(1,dt*5);
  player.mesh.rotation.z=-player.turnSm*(player.flying&&!RIG.nativeLandingPose?0.4:Math.min(1,sp/8)*0.16);

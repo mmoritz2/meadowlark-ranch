@@ -256,6 +256,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
    +'<div class="sv-bond-line"><span>'+esc(B.name)+'</span><span>'+B.bond+' / 100</span></div><div class="sv-bar" role="progressbar" aria-label="Bond" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+B.bond+'"><i style="width:'+B.bond+'%"></i></div>'
    +'<p class="sv-bond-note">'+esc(B.preference)+'</p><p class="sv-bond-next">'+(B.next===null?esc(B.nextBenefit):'<b>'+B.remaining+' to '+esc(B.nextName)+'</b><br>'+esc(B.nextBenefit))+'</p>'
    +'<div class="sv-care-actions">'+B.actions.map(a=>'<button class="sv-care-action" data-se="care:'+a.id+'">'+a.label+'<small>'+(a.gain?'+'+a.gain+' bond':'Time together')+'</small></button>').join('')+'</div></section>';
+  if(G.horse.RIG()?.heroMotion?.supportedActions?.length)x+='<button class="sv-b" data-se="open:actions" style="width:100%;margin-bottom:12px;min-height:44px">Actions &amp; tricks</button>';
   const F=T.FOODS3||{}, items=s.items||{};
   const keys=Object.keys(F).filter(k=>((items[k]|0)>0||['carrot','apple','hay'].includes(k))&&(ST.foodStat==='all'||F[k].stat===ST.foodStat));
   x+='<div class="sv-head">Training treats</div><div class="sv-food-filters" aria-label="Choose training stat">'+[['all','All'],...STATS.map(([k,l])=>[k,l])].map(([k,l])=>'<button data-se="foodstat:'+k+'" class="'+(ST.foodStat===k?'on':'')+'" aria-pressed="'+(ST.foodStat===k)+'">'+l+'</button>').join('')+'</div>';
@@ -397,11 +398,12 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
    open(tab,returnOptions); $('seOvBody').scrollTop=scroll;
   };
   close();
-  const panel={care:'carePanel',stable:'stablePanel',style:'stylePanel',breed:'breedPanel'}[what];
+  const panel={care:'carePanel',stable:'stablePanel',style:'stylePanel',breed:'breedPanel',actions:'emotePanel'}[what];
   if(panel&&G.seFrame)G.seFrame.setBack(panel,returnOverview);
   if((what==='tack'||what==='shop')&&G.seMarket?.setBack)G.seMarket.setBack(returnOverview,'horse overview');
   try{
    if(what==='care')G.ui.openCare();
+   else if(what==='actions')G.ui.dispatch('open:emotePanel');
    else if(what==='stable')G.ui.openStable();
    else if(what==='style')G.ui.dispatch('style:open');
    else if(what==='breed')G.ui.dispatch('breed:open');

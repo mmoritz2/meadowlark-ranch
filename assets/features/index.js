@@ -154,7 +154,7 @@
    module instead of running a cached mix of old and new ones. Bump it (all of them at once) whenever a feature file changes. */
 import * as stats from './stats-progression.js?v=ranch-life-1';
 import * as roster from './horse-roster.js?v=commerce-preview-20261005';
-import * as bond from './bond-personality-emotes.js?v=riding-life-1';   // versioned: rider emotes reach the character's own bones
+import * as bond from './bond-personality-emotes.js?v=horse-actions-1';   // versioned: rider emotes reach the character's own bones
 import * as mastery from './mastery-style.js?v=dragon-rigging-1';
 import * as tack from './tack-wardrobe.js?v=hair-20261005b';   // versioned: the Character screen, then the character herself (outfits, eyes)
 import * as course from './course-engine.js?v=playability-2';
@@ -200,8 +200,8 @@ import * as ui2club from './ui2-club.js?v=ranch-life-2';
 import * as lookGrade from './look-grade.js?v=b20261001b';
 import * as ui2merge from './ui2-merge.js?v=b20261001b';
 import * as seHud from './se-hud.js?v=menus-publish-20261005';
-import * as seCare from './se-care.js?v=riding-life-1';   // versioned so a browser that cached an earlier cut fetches this one
-import * as onFoot from './on-foot.js?v=menus-publish-20261005';   // versioned: she walks, runs, jumps, climbs and swims on the animation library's clips, and the view turns round her
+import * as seCare from './se-care.js?v=horse-actions-1';   // versioned so a browser that cached an earlier cut fetches this one
+import * as onFoot from './on-foot.js?v=horse-actions-1';   // versioned: she walks, runs, jumps, climbs and swims on the animation library's clips, and the view turns round her
 import * as seMarket from './se-market.js?v=menus-publish-20261005';
 import * as treasures from './hidden-treasures.js?v=b20261001b';   // golden horseshoes on the rocks and in the water, for on-foot
 import * as courseClear from './course-clear.js?v=b20261001b';   // a mown, cleared track on every event course; routes bent round what cannot be cleared

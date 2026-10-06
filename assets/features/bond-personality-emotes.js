@@ -10,6 +10,7 @@
      G.horse.horseEmotes.apply(rig,emote,env,t)   G.horse.riderEmote(type)   G.horse.RIDER_EMOTES
      RIG.emote = {type,t,dur}  on the ridden rig; remote rigs mirror it through the /pos packet (em, rem).
    Nothing runs at import time. */
+import {syncNativeActionEmote,nativeActionPacket,receiveNativeAction} from '../native-action-runtime.mjs?v=horse-actions-1';
 export const id='bond-personality-emotes';
 
 /* ---- the personality behaviour template ------------------------------------------------ */
@@ -117,7 +118,7 @@ export function install(G){
   b.quaternion.premultiply(Q1);
  }
  function applyRigEmote(rig,em,ee,t){
-  const P=POSES[em.type]; if(!P||!rig||!rig.scene||!rig.bones)return;
+  const P=POSES[em.type]; if(!P||!rig||!rig.scene||!rig.bones||rig.profile?.nativeBreed)return;
   for(const k in P){ if(k==='yaw'||k==='osc')continue; rotBone(rig,k,P[k]*ee,false); }
   if(P.yaw)for(const k in P.yaw)rotBone(rig,k,P.yaw[k]*ee,true);
   if(P.osc){const w=Math.sin((t||0)*9.5+em.t*3)*ee;for(const k in P.osc)rotBone(rig,k,P.osc[k]*w,true);}
@@ -127,12 +128,14 @@ export function install(G){
  const horseEmotes={apply:(rig,em,env,t)=>applyRigEmote(rig,em,env==null?emEnv(em):env,t),POSES,emEnv};
  G.on('rigEmote',(rig,em,dt,t)=>{applyRigEmote(rig,em,emEnv(em),t);});
  G.on('remoteTick',(r,dt,t)=>{
-  if(r.rig&&r.rig.emote){const em=r.rig.emote;em.t+=dt;if(em.t>=em.dur)r.rig.emote=null;else if(r.rig.heroMotion)applyRigEmote(r.rig,em,emEnv(em),t);}
+  if(r.rig?.profile?.nativeBreed)syncNativeActionEmote(r.rig);
+  else if(r.rig&&r.rig.emote){const em=r.rig.emote;em.t+=dt;if(em.t>=em.dur)r.rig.emote=null;else if(r.rig.heroMotion)applyRigEmote(r.rig,em,emEnv(em),t);}
   if(r.riderEmote){const e=r.riderEmote;e.t+=dt;if(e.t>=e.dur){r.riderEmote=null;hideGuitar(r.rider);}else if(r.rider&&r.rider.sk){poseRiderEmote(r.rider,e,t,dt,r.parts&&r.parts.group);if(r.rider._sync)r.rider._sync();}}
  });
- G.on('netPos',(payload)=>{const RIG=G.horse.RIG();payload.em=RIG.emote?RIG.emote.type:null;payload.rem=player.riderEmote?player.riderEmote.type:null;});
+ G.on('netPos',(payload)=>{const RIG=G.horse.RIG();payload.em=RIG.emote?RIG.emote.type:null;payload.horseAction=nativeActionPacket(RIG);payload.rem=player.riderEmote?player.riderEmote.type:null;});
  G.on('remote',(m,r)=>{
-  if(m.em&&EMOTES[m.em]&&r.rig&&!(r.rig.emote&&r.rig.emote.type===m.em)&&r._lastEm!==m.em){r.rig.emote={type:m.em,t:0,dur:EMOTES[m.em].dur};}
+  if(r.rig?.profile?.nativeBreed)receiveNativeAction(r.rig,m.horseAction);
+  else if(m.em&&EMOTES[m.em]&&r.rig&&!(r.rig.emote&&r.rig.emote.type===m.em)&&r._lastEm!==m.em){r.rig.emote={type:m.em,t:0,dur:EMOTES[m.em].dur};}
   r._lastEm=m.em||null;
   if(m.rem&&RIDER_EMOTES[m.rem]&&!(r.riderEmote&&r.riderEmote.type===m.rem)&&r._lastRem!==m.rem){r.riderEmote={type:m.rem,t:0,dur:RIDER_EMOTES[m.rem].dur};}
   r._lastRem=m.rem||null;
@@ -169,11 +172,10 @@ export function install(G){
  function petAnimFor(h){const lv=bondLevel(h);return PET_ANIMS.filter(p=>p.lvl<=lv).pop();}
  function playPet(h){
   const RIG=G.horse.RIG(); const p=petAnimFor(h);
-  // Native horses keep their approved motion; care still earns its normal bond.
-  // Their source clips do not include these legacy tricks, so do not request one.
+  // Petting uses the new native nuzzle; it never makes a mounted horse lie down.
   const native=!!RIG.profile?.nativeBreed;
-  if(!native&&Math.abs(player.speed)<=0.6&&player.y<=0&&!player.flying&&!RIG.emote){
-   if(G.horse.horseEmote(p.em,{force:true})){RIG.emote.pet=true;}
+  if((!native||RIG.heroMotion?.supportsAction?.('nuzzle'))&&Math.abs(player.speed)<=0.25&&player.y<=0&&!player.flying&&!RIG.emote){
+   if(G.horse.horseEmote(native?'nuzzle':p.em,{force:true})&&RIG.emote){RIG.emote.pet=true;}
   }
   const hp=headPos(); burst(hp.x,hp.y+0.2,hp.z,'heart');
   if(!native&&!playPet._hint){playPet._hint=1;const nx=PET_ANIMS.find(q=>q.lvl>p.lvl);toast('💗 '+p.label+(nx?' · next petting animation at bond Lv '+nx.lvl:''));}
@@ -439,12 +441,16 @@ export function install(G){
   render(p,s){
    const h=s.horses[G.horse.rideIdx()]||{};
    const rider=Object.keys(RIDER_EMOTES).map(k=>{const E=RIDER_EMOTES[k];const own=emoteOwned(s,k);return '<button data-fx="bpe:rem:'+k+'" '+(own?'':'style="opacity:.55" title="'+E.hint+'"')+'>'+(own?'':'🔒 ')+E.label+'</button>';}).join('');
-   const horse=Object.keys(EMOTES).map(k=>{const E=EMOTES[k];const ok=emoteUnlocked(h,k);return '<button data-fx="bpe:hem:'+k+'" '+(ok?'':'style="opacity:.55" title="'+E.lockHint+'"')+'>'+(ok?'':'🔒 ')+E.label+'</button>';}).join('');
+   const rig=G.horse.RIG(),native=!!rig.profile?.nativeBreed;
+   const actionNames=native?rig.heroMotion?.supportedActions||[]:Object.keys(EMOTES).filter(k=>k!=='graze');
+   const horse=actionNames.map(k=>{const E=EMOTES[k];if(!E)return '';const ok=emoteUnlocked(h,k),record=rig.heroMotion?.actionDescriptor?.(k);
+    return '<button data-fx="bpe:hem:'+k+'" '+(ok?'':'disabled style="opacity:.55" title="'+E.lockHint+'"')+'>'+E.label+(record?.dismountedOnly?' · on foot':'')+(!ok?'<small style="display:block">'+E.lockHint+'</small>':'')+'</button>';}).join('');
    return '<div class="ph">🎭 Emotes <button data-fx="close" style="margin-left:auto">✖</button></div>'
    +'<div style="font-size:12px;color:#8c7a63">Rider emotes play from a halt. Free ones are yours; the rest are earned in play. Club mates see them.</div>'
    +'<div class="crow" style="gap:5px;flex-wrap:wrap">'+rider+'</div>'
    +'<div class="ph" style="font-size:14px;margin-top:6px">🐴 '+(h.name||'Horse')+"'s tricks <span style=\"color:#8c7a63;font-size:12px;font-weight:600\">bond Lv "+bondLevel(h)+' · keys 1–6</span></div>'
-   +'<div class="crow" style="gap:5px;flex-wrap:wrap">'+horse+'</div>'
+   +'<div class="crow" style="gap:5px;flex-wrap:wrap">'+(horse||'No horse actions are available for this mount.')+'</div>'
+   +(native&&actionNames.length?'<p style="font-size:12px;line-height:1.5;color:#6c5b47">Halt to try an action. Each animation finishes back on all four feet. Lie down steps your rider off first; mounting waits until your horse gets up.</p>':'')
    +'<div class="crow" style="gap:5px;flex-wrap:wrap;margin-top:4px"><button data-fx="bpe:whistle">🎵 Whistle</button><button data-fx="bpe:brush">🧽 Brush</button></div>';
   }});
 
