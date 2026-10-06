@@ -217,7 +217,7 @@ export function install(G){
  const SKY_BASE=-18;
  const rockMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,metalness:0,side:THREE.DoubleSide});
  rockMat.envMapIntensity=0.5;
- dressLandscape({THREE,material:rockMat,wooded:true,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy())});
+ dressLandscape({THREE,material:rockMat,wooded:true,fogScale:.70,fogCap:.94,bumpStrength:.16,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy())});
 
  /* A massif is a patch of heightfield laid along a bearing: u runs along the range, v across
     it, and the summits are named points on that ridgeline rather than wherever the noise
@@ -246,7 +246,7 @@ export function install(G){
     /* The crest wanders across the band instead of running parallel to it, so the range has a
        front and a back rather than a centre line drawn with a compass. */
     const lc=clamp(crest+Math.sin(u*0.0042+sd)*0.09+Math.sin(u*0.011-sd)*0.04,0.18,0.82);
-    const prof=t<=lc?Math.pow(t/lc,1.25):1-back*Math.pow((t-lc)/(1-lc),1.5);
+    const prof=t<=lc?(cfg.lowland?Math.pow(Math.sin(t/lc*Math.PI*.5),1.7):Math.pow(t/lc,1.25)):1-back*Math.pow((t-lc)/(1-lc),1.5);
     const g1=ridged((u+sd*137)*0.0105,(v+sd*91)*0.0105); // spurs and gullies down the flanks
     const g3=ridged((u+sd*211)*0.030,(v+sd*77)*0.030);   // and the teeth along the crest itself
     const g2=fbm((u+sd*57)*0.042,(v-sd*33)*0.042);       // the small break-up on top of both
@@ -259,7 +259,7 @@ export function install(G){
     const shelves=noise2(u*.075-sd,v*.064+warp);
     const flank=Math.sin(Math.PI*clamp(t/lc,0,1));
     let y=SKY_BASE+hr*Math.max(0,prof)*(.69+g1*.32+g3*.10)
-      +(g2-.5)*hr*.10+(gullies-.5)*hr*.20*flank+(shelves-.5)*hr*.055*Math.max(0,prof);
+      +(g2-.5)*hr*(cfg.lowland?.018:.07)+(gullies-.5)*hr*(cfg.lowland?.045:.16)*flank+(shelves-.5)*hr*(cfg.lowland?.012:.035)*Math.max(0,prof);
     if(t<0.055)y=SKY_BASE-8;                             // the inner hem, buried under the far ground
     pos.push(wx,y,wz);
     const up=clamp((y-SKY_BASE)/tall,0,1);
@@ -305,19 +305,19 @@ export function install(G){
   {id:'horn',label:'⛰️ The Kestrel Horn',bearing:2.98,dist:920,span:780,depth:440,seed:11,nu:150,nv:16,
    rock:'#66675f',high:'#98988a',foot:'#424c43',snow:'#e2e8e7',snowAt:185,snowBand:65,
    summits:[{u:0,h:268,w:218,k:1.45},{u:-255,h:194,w:190,k:1.4},{u:250,h:162,w:175,k:1.6}]},
-  {id:'sisters',label:'⛰️ The Sisters’ Wall',bearing:-1.52,dist:810,span:1020,depth:380,seed:29,nu:152,nv:16,
-   rock:'#62675d',high:'#919183',foot:'#3e4938',snow:'#e1e7e4',snowAt:180,snowBand:58,
-   summits:[{u:-335,h:218,w:190},{u:-40,h:245,w:210,k:1.4},{u:292,h:206,w:180}]},
-  {id:'ambersgate',label:'⛰️ Ambersgate',bearing:1.66,dist:850,span:820,depth:420,seed:47,nu:140,nv:16,
-   rock:'#6e4a37',high:'#95684c',foot:'#4a352b',backfall:0.35,
-   summits:[{u:-235,h:170,w:215,flat:0.55},{u:155,h:198,w:235,flat:0.50}]},
-  {id:'longgrey',label:'⛰️ The Long Grey',bearing:0.10,dist:1120,span:1120,depth:460,seed:71,nu:144,nv:16,
-   rock:'#666d70',high:'#939a98',foot:'#454e4f',snow:'#e2e8e8',snowAt:165,snowBand:45,
-   summits:[{u:-390,h:180,w:235},{u:0,h:216,w:255},{u:405,h:170,w:230}]},
+  {lowland:true,id:'sisters',label:'⛰️ The Sisters’ Wall',bearing:-1.52,dist:810,span:1020,depth:380,seed:29,nu:152,nv:16,
+   rock:'#526447',high:'#74805a',foot:'#354931',
+   summits:[{u:-335,h:118,w:240},{u:-40,h:142,w:270,k:1.0},{u:292,h:105,w:250}]},
+  {lowland:true,id:'ambersgate',label:'⛰️ Ambersgate',bearing:1.66,dist:850,span:820,depth:420,seed:47,nu:140,nv:16,
+   rock:'#687354',high:'#929071',foot:'#49533a',backfall:0.35,
+   summits:[{u:-235,h:106,w:270},{u:155,h:128,w:290}]},
+  {lowland:true,id:'longgrey',label:'⛰️ The Long Grey',bearing:0.10,dist:1120,span:1120,depth:460,seed:71,nu:144,nv:16,
+   rock:'#666d70',high:'#939a98',foot:'#454e4f',snow:'#e2e8e8',snowAt:210,snowBand:45,
+   summits:[{u:-390,h:104,w:270},{u:0,h:135,w:310},{u:405,h:98,w:270}]},
   {id:'wolftooth',label:'⛰️ The Wolf Tooth',bearing:2.30,dist:1180,span:380,depth:240,seed:97,nu:96,nv:16,
    rock:'#656762',high:'#91938b',foot:'#414c46',snow:'#e4eae7',snowAt:200,snowBand:65,
    summits:[{u:0,h:266,w:140,k:1.7},{u:-128,h:158,w:102}]},
-  {id:'barrowback',label:'⛰️ Barrowback Down',bearing:-0.89,dist:840,span:920,depth:300,seed:131,nu:132,nv:16,
+  {lowland:true,id:'barrowback',label:'⛰️ Barrowback Down',bearing:-0.89,dist:840,span:920,depth:300,seed:131,nu:132,nv:16,
    rock:'#3e5238',high:'#5b6c45',foot:'#2c3a2a',backfall:0.45,
    summits:[{u:-265,h:98,w:215},{u:125,h:126,w:245},{u:385,h:90,w:185}]},
  ].map(cfg=>{try{return massif(cfg);}catch(e){console.error('massif '+cfg.id,e);return null;}}).filter(Boolean);

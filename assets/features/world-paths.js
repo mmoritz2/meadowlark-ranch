@@ -312,11 +312,13 @@ export function install(G){
     Posts, rails, gate bars, logs, cart wheels, cobbles, cairn stones, bench legs — a few thousand
     small solid things, and if each were a Mesh this package alone would double the draw calls.
     They are collected here and become three InstancedMeshes at the end of install. */
- const BAT={box:[],stone:[],cyl:[]};
+ const BAT={box:[],stone:[],cyl:[],leaves:[]};
  const _v=new THREE.Vector3(),_q=new THREE.Quaternion(),_e=new THREE.Euler(),_s=new THREE.Vector3();
  function put(kind,x,y,z,sx,sy,sz,rx,ry,rz,col){
   _e.set(rx||0,ry||0,rz||0);_q.setFromEuler(_e);_v.set(x,y,z);_s.set(sx,sy,sz);
-  BAT[kind].push({m:new THREE.Matrix4().compose(_v,_q,_s),c:new THREE.Color(col)});
+  const color=new THREE.Color(col);
+  if(kind==='stone'&&color.g>color.r*1.12&&color.g>color.b*1.3)kind='leaves';
+  BAT[kind].push({m:new THREE.Matrix4().compose(_v,_q,_s),c:color});
  }
  const TIMBER='#8d7148', TIMBER2='#6f5a3c', PALE='#cdbb96', STONE='#9c968a', STONE2='#877f72',
        LEAF='#5c7a44', LEAF2='#4a6838', IRON='#4a4038', CANVAS='#c8bda2';
@@ -822,12 +824,32 @@ export function install(G){
   for(let i=0;i<p.count;i++)p.setXYZ(i,p.getX(i)*(0.78+hash01(i,1)*0.42),p.getY(i)*(0.80+hash01(i,2)*0.38),p.getZ(i)*(0.78+hash01(i,3)*0.42));
   g.computeVertexNormals(); return g;
  })();
- const GEOS={box:new THREE.BoxGeometry(1,1,1),stone:stoneGeo,cyl:new THREE.CylinderGeometry(0.5,0.5,1,8)};
+ // Leaf sprays give hedgerows a porous outline and real gaps between branches.
+ const hedgeGeo=(()=>{
+  const p=[],n=[],uv=[],idx=[];
+  for(let k=0;k<14;k++){
+   const a=k*2.39996,r=.12+hash01(k,21)*.20,x=Math.cos(a)*r,z=Math.sin(a)*r;
+   const y=-.44+hash01(k,45)*.42,w=.48+hash01(k,55)*.22,h=.42+hash01(k,65)*.24;
+   const base=p.length/3,ca=Math.cos(a),sa=Math.sin(a);
+   for(const [sx,t]of[[-1,0],[1,0],[-1,.5],[1,.5],[-1,1],[1,1]]){
+    p.push(x+ca*sx*w*.5+sa*t*t*.14,y+t*h,z+sa*sx*w*.5-ca*t*t*.14);
+    n.push(sa*.4,.82,-ca*.4);uv.push((sx+1)/2,t);
+   }
+   idx.push(base,base+1,base+2,base+1,base+3,base+2,base+2,base+3,base+4,base+3,base+5,base+4);
+  }
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
+  g.setAttribute('normal',new THREE.Float32BufferAttribute(n,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+  g.setIndex(idx);g.computeBoundingSphere();return g;
+ })();
+ const hedgeTexture=new THREE.TextureLoader().load('./assets/textures/realism/foliage_branch_rgba.png');
+ hedgeTexture.colorSpace=THREE.SRGBColorSpace;hedgeTexture.anisotropy=4;
+ const hedgeMaterial=new THREE.MeshStandardMaterial({map:hedgeTexture,alphaTest:.40,side:THREE.DoubleSide,roughness:1,envMapIntensity:.6});
+ const GEOS={leaves:hedgeGeo,box:new THREE.BoxGeometry(1,1,1),stone:stoneGeo,cyl:new THREE.CylinderGeometry(0.5,0.5,1,8)};
  P.instances={};
  for(const kind in BAT){
   const rows=BAT[kind]; if(!rows.length)continue;
-  const im=new THREE.InstancedMesh(GEOS[kind],new THREE.MeshStandardMaterial({roughness:kind==='stone'?1:0.9,metalness:0}),rows.length);
-  rows.forEach((r,i)=>{im.setMatrixAt(i,r.m);im.setColorAt(i,r.c);});
+  const im=new THREE.InstancedMesh(GEOS[kind],kind==='leaves'?hedgeMaterial:new THREE.MeshStandardMaterial({roughness:kind==='stone'?1:0.9,metalness:0}),rows.length);
+  rows.forEach((r,i)=>{im.setMatrixAt(i,r.m);im.setColorAt(i,kind==='leaves'?new THREE.Color('#bdc8a6'):r.c);});
   im.instanceMatrix.needsUpdate=true; if(im.instanceColor)im.instanceColor.needsUpdate=true;
   im.castShadow=true; im.receiveShadow=true; im.name='worldPaths:'+kind;
   im.computeBoundingSphere();

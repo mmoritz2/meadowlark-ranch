@@ -5,6 +5,7 @@ const out=path.resolve(process.argv[2]||'output/landscape-models');fs.mkdirSync(
  const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});
  try{
   const page=await browser.newPage({viewport:{width:1180,height:800},deviceScaleFactor:1}),errors=[];
+  await page.route('**/api/me',r=>r.fulfill({contentType:'application/json',body:'null'}));
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   await page.route('**/ranch3d.html*',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text()).replace('const MERGE_STATS=mergeStatics();',`window.__landQA={THREE,scene,camera,renderer,composer,G,player,groundH,nearGrass,TACK,
    step(dt){manualStepping=true;tick(dt);},day(){dayT=.34;weather.mode='clear';weather.timer=99999;}};const MERGE_STATS=mergeStatics();`)});});
@@ -78,7 +79,7 @@ const out=path.resolve(process.argv[2]||'output/landscape-models');fs.mkdirSync(
     details:{grass:details.grassClumps,errors:details.errors},featureErrors:q.G.errors};
   });
   const checks={
-   matureTreesPlaced:state.scans.matureTrees>100,newTreeAndViewsLoaded:state.scans.assets.includes('pine_tree_01')&&state.scans.views===5,
+   matureTreesPlaced:state.scans.matureTrees>100,newTreeAndViewsLoaded:state.scans.assets.includes('pine_tree_01')&&state.scans.views===6&&state.scans.assets.includes('island_tree_01'),
    boundedTreeGeometry:state.tiers.every(t=>t.triangles<=t.budget)&&state.tiers[0].trees===0,
    scannedGroundStone:state.scans.stoneTriangles>100&&state.scans.stoneTriangles<=300,
    scannedGrassClumps:state.details.grass>20,

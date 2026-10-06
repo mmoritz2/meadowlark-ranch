@@ -104,11 +104,12 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=mature-woodland-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
-    const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01');
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=country-world-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01');
     const specs=[['tree_small_02',-1,broad,'broadleaf'],
       ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
-      ['pine_tree_01',0,mature.children[0],'mature-pine']];
+      ['pine_tree_01',0,mature.children[0],'mature-pine'],
+      ['island_tree_01',-1,leafy,'canopy-broadleaf']];
     const variants=specs.map(([id,variant,root,key])=>{
       const parts=pieces(root,variant>=0),bounds=new THREE.Box3();parts.forEach(p=>bounds.union(p.bounds));
       const meta=catalog.trees.find(t=>t.id===id&&t.variant===variant);
@@ -117,7 +118,10 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       return {parts,bounds,key,meta,triangles};
     });
     const sourceFor=t=>{
-      if(!['pine','snowpine','cold'].includes(t.kind))return variants[0];
+      // Deciduous canopies define the lowland pasture. Keep the colder woods coniferous.
+      const lowland=t.kind!=='cold'&&t.kind!=='snowpine'&&Math.hypot(t.x+160,t.z+210)>160;
+      if(!['pine','snowpine','cold'].includes(t.kind)||lowland&&rnd(t.x,t.z,49)>.28)
+        return rnd(t.x,t.z,53)>.25?variants[5]:variants[0];
       return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
     };
     const add=t=>{
@@ -129,7 +133,10 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       }
       if(t.root&&!t.root.visible)return;
       if(t.stem){const matrix=new THREE.Matrix4();t.stem.getMatrixAt(t.stemIndex??t.index,matrix);const a=matrix.elements;if(Math.hypot(a[0],a[1],a[2])<.01)return;}
-      t.source=sourceFor(t);trees.push(t);
+      t.source=sourceFor(t);
+      // Broad crowns occupy the old tree sites; trunks and route clearances stay fixed.
+      if(t.source.key==='canopy-broadleaf')t.height=Math.min(t.height,12.5);
+      trees.push(t);
     };
     // Respect cleared placements in both the original seed batches and new landmark zones.
     const seedMatrix=new THREE.Matrix4();
@@ -199,7 +206,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     for(const mesh of retired){mesh.visible=false;mesh.userData.photoscanReplaced=true;}
     state.retiredBatches=retired.size;
     floraCanopies.forEach(m=>{m.visible=false;});
-    state.trees=trees.length;state.conifers=trees.filter(t=>t.source!==variants[0]).length;state.normalMappedViews=variants.length;state.matureTrees=trees.filter(t=>t.source.key==='mature-pine').length;
+    state.trees=trees.length;state.conifers=trees.filter(t=>t.source.key.includes('pine')).length;state.normalMappedViews=variants.length;state.matureTrees=trees.filter(t=>t.source.key==='mature-pine').length;
+    state.broadleafCanopies=trees.filter(t=>t.source.key==='canopy-broadleaf').length;
     state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind,source:t.source.key}));
   }
   async function installRocks(){

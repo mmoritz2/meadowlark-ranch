@@ -36,6 +36,12 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     normalMap: map('siding_normal.jpg'), normalScale: new THREE.Vector2(.48,.48),
     roughnessMap: map('siding_roughness.jpg'), roughness: 1, envMapIntensity: .55,
   }, 2.4);
+  const cottageWalls=['#c8bfa9','#b9c0ab','#c5b5a1'].map((color,i)=>material('Village | limewashed plaster '+i,{
+    color,roughness:1,normalMap:map('rock_normal.jpg'),normalScale:new THREE.Vector2(.065,.065),envMapIntensity:.6,
+  },2.8));
+  const shutters=['#4c6659','#526a77','#766650'].map((color,i)=>material('Village | painted shutters '+i,{
+    color,roughness:.9,normalMap:map('../builder/coated_pine_nor_gl.webp'),normalScale:new THREE.Vector2(.22,.22),
+  },1));
   const roof = material('Ranch | aged cedar shingles', {
     color: '#b9b4a6', map: map('roof_albedo.jpg', true),
     normalMap: map('roof_normal.jpg'), normalScale: new THREE.Vector2(.52,.52),
@@ -124,7 +130,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
   const face=(x,z,angle)=>new THREE.Matrix4().compose(new THREE.Vector3(x,0,z),
     new THREE.Quaternion().setFromAxisAngle(Y,angle),new THREE.Vector3(1,1,1));
 
-  function shellWall(b,width,height,frame,openings) {
+  function shellWall(b,width,height,frame,openings,wall=siding) {
     // Slice wall into rectangles around each opening. Frames/glass sit inside
     // a true recess, so oblique views show jamb depth rather than painted squares.
     const xs=[-width/2,width/2];
@@ -137,9 +143,9 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       let bottom=.16;
       const panel=(low,high)=> {
         if(high-low<.005)return;
-        b.box(right-left,high-low,.18,siding,mid,(low+high)/2,0,null,frame);
+        b.box(right-left,high-low,.18,wall,mid,(low+high)/2,0,null,frame);
         // Slim batten strips catch grazing light. Stay within this wall rectangle.
-        for(let u=Math.ceil(left/.30)*.30;u<right-.025;u+=.30)
+        for(let u=Math.ceil(left/.30)*.30;wall===siding&&u<right-.025;u+=.30)
           if(u>left+.025)b.box(.038,high-low,.029,siding,u,(low+high)/2,.102,null,frame);
       };
       for(const o of cuts){panel(bottom,o.y-o.h/2);bottom=o.y+o.h/2;}
@@ -206,14 +212,14 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       for(let z=-d/2+.24;z<d/2;z+=.48)b.box(.12,.18,.45,stone,s*(w/2+.055),.11,z);
     }
   }
-  function gable(b,d,eave,ridge,f) {
+  function gable(b,d,eave,ridge,f,wall=siding) {
     const p=[],u=[],idx=[];
     for(const z of[-.09,.09])for(const [x,y]of[[-d/2,eave],[d/2,eave],[0,ridge]]){
       p.push(x,y,z);u.push(x/2.4,y/2.4);
     }
     idx.push(0,2,1,3,4,5,0,1,4,0,4,3,1,2,5,1,5,4,2,0,3,2,3,5);
     const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
-    g.setAttribute('uv',new THREE.Float32BufferAttribute(u,2));g.setIndex(idx);g.computeVertexNormals();b.geometry(g,siding,f);
+    g.setAttribute('uv',new THREE.Float32BufferAttribute(u,2));g.setIndex(idx);g.computeVertexNormals();b.geometry(g,wall,f);
     const ventY=eave+(ridge-eave)*.38,ventW=Math.min(.82,d*.25),ventH=.32;
     b.box(ventW,ventH,.025,dark,0,ventY,.107,null,f);
     for(let i=0;i<5;i++)b.box(ventW,.031,.068,trim,0,ventY-ventH/2+i*.07,.132,new THREE.Euler(.26,0,0),f);
@@ -269,14 +275,27 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
   }
   function buildCottage({variant=0}={}) {
     const b=new Builder('Cottonwood cottage '+variant),w=3.4,d=2.8,h=2.4,ridge=3.42;
+    const index=Math.abs(variant)%3,wall=cottageWalls[index],shutter=shutters[index];
     foundation(b,w,d);
     shellWall(b,w,h,face(0,d/2,0),[
       {type:'door',x:0,y:1.15,w:.88,h:1.98},
-      ...[-1.05,1.05].map(x=>({x,y:1.46,w:.68,h:.79}))]);
-    shellWall(b,w,h,face(0,-d/2,Math.PI),[{x:0,y:1.42,w:.98,h:.90}]);
+      ...[-1.05,1.05].map(x=>({x,y:1.46,w:.68,h:.79}))],wall);
+    shellWall(b,w,h,face(0,-d/2,Math.PI),[{x:0,y:1.42,w:.98,h:.90}],wall);
     for(const s of[-1,1]) {
       const f=face(s*w/2,0,s*Math.PI/2);
-      shellWall(b,d,h,f,[{x:-.20,y:1.42,w:.80,h:.90}]);gable(b,d,h,ridge,f);
+      shellWall(b,d,h,f,[{x:-.20,y:1.42,w:.80,h:.90}],wall);gable(b,d,h,ridge,f,wall);
+      for(const x of[-.78,.38]){
+        b.box(.25,.89,.052,shutter,x,1.42,.15,null,f);
+        for(let j=0;j<6;j++)b.box(.24,.038,.021,shutter,x,1.08+j*.135,.18,null,f);
+      }
+    }
+    for(const x of[-1.05,1.05]){
+      for(const side of[-1,1]){
+        const sx=x+side*.48;b.box(.22,.82,.055,shutter,sx,1.46,d/2+.15);
+        for(let j=0;j<5;j++)b.box(.215,.03,.025,shutter,sx,1.17+j*.14,d/2+.19);
+      }
+      b.box(.80,.18,.24,wood,x,1.01,d/2+.21);
+      b.box(.68,.03,.18,mortar,x,1.105,d/2+.22);
     }
     cornerPosts(b,w,d,h);roofAssembly(b,w,d,h,ridge,true);
     // Chimney has distinct masonry courses, flashing, a cap and a recessed flue.

@@ -37,11 +37,11 @@ export function installBackdrop({ THREE, scene }) {
   const group = new THREE.Group();
   group.name = 'Pastoral mountain backdrop';
   const configs = [
-    { inner: 1300, crest: 1700, outer: 2280, height: 340, phase: 0.65,
+    { inner: 1300, crest: 1700, outer: 2280, height: 290, phase: 0.65,
       low: '#617684', high: '#8b979f', snow: true },
-    { inner: 920, crest: 1230, outer: 1670, height: 190, phase: 2.7,
+    { inner: 920, crest: 1230, outer: 1670, height: 132, phase: 2.7,
       low: '#4d625b', high: '#6b7870', snow: false },
-    { inner: 725, crest: 910, outer: 1210, height: 112, phase: 4.2,
+    { inner: 725, crest: 910, outer: 1210, height: 94, phase: 4.2,
       low: '#354936', high: '#64704d', snow: false },
   ];
   for (const cfg of configs) {
@@ -58,7 +58,7 @@ export function installBackdrop({ THREE, scene }) {
         const localCrest = crestT + Math.sin(a * 5 + cfg.phase) * 0.068
           + Math.sin(a * 13 - cfg.phase) * 0.024;
         const shoulder = t <= localCrest ? t / localCrest : (1 - t) / (1 - localCrest);
-        const profile = Math.pow(Math.max(0, shoulder), 1.14);
+        const profile = Math.pow(Math.sin(Math.max(0, shoulder)*Math.PI*.5), 1.4);
         const silhouette = ridgeProfile(a, cfg.phase);
         const radius = cfg.inner + t * (cfg.outer - cfg.inner)
           + Math.sin(a * 4 + cfg.phase) * 56 * Math.sin(Math.PI * t);
@@ -67,7 +67,7 @@ export function installBackdrop({ THREE, scene }) {
         const erosion = 1 - Math.abs(terrainNoise(x * 0.014 + warp, z * 0.014 - warp) * 2 - 1);
         const spurs = Math.pow(Math.abs(Math.sin(a * 34 + warp * 0.12 + t * 3)), 1.4);
         const broken = (erosion - 0.58) * cfg.height * 0.16 * Math.sin(Math.PI * t);
-        const folds = (spurs - 0.5) * cfg.height * 0.06 * profile;
+        const folds = (spurs - 0.5) * cfg.height * (cfg.snow?.04:.012) * profile;
         const y = -15 + profile * cfg.height * silhouette + broken + folds;
         vertices.push(x, y, z);
         const variation = terrainNoise(x * 0.04, z * 0.04);
@@ -110,7 +110,7 @@ export function installBackdrop({ THREE, scene }) {
       fog: true,
       side: THREE.DoubleSide,
     });
-    dressLandscape({THREE,material,wooded:!cfg.snow,fogScale:.27,fogCap:.90,mineralScale:24,bumpStrength:.7});
+    dressLandscape({THREE,material,wooded:!cfg.snow,fogScale:.58,fogCap:.94,mineralScale:24,bumpStrength:.12});
     const ridge = new THREE.Mesh(geometry, material);
     ridge.name = cfg.snow ? 'Distant northern massif' : 'Wooded rolling ridgeline';
     ridge.castShadow = false;

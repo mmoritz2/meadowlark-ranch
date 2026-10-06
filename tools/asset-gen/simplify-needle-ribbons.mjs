@@ -1,7 +1,7 @@
 // The source fir represents every needle with an eight-triangle bent ribbon.
 // Fit a textured quad to each ribbon instead of letting global decimation delete
 // whole needles. The original UV rectangle, position, and averaged normal remain.
-export function simplifyNeedleRibbons(doc,primitive){
+export function simplifyNeedleRibbons(doc,primitive,{triangles=8,vertices:expectedVertices=10}={}){
  const position=primitive.getAttribute('POSITION'),normal=primitive.getAttribute('NORMAL'),uv=primitive.getAttribute('TEXCOORD_0');
  const input=primitive.getIndices().getArray(),P=position.getArray(),N=normal.getArray(),U=uv.getArray();
  const parent=Int32Array.from({length:position.getCount()},(_,i)=>i);
@@ -14,9 +14,9 @@ export function simplifyNeedleRibbons(doc,primitive){
  function original(v){if(remap.has(v))return remap.get(v);const k=p.length/3;for(let j=0;j<3;j++){p.push(P[v*3+j]);n.push(N[v*3+j]);}u.push(U[v*2],U[v*2+1]);remap.set(v,k);return k;}
  for(const faces of components.values()){
   const vertices=[...new Set(faces)];
-  if(faces.length!==24||vertices.length!==10){for(const v of faces)indices.push(original(v));continue;}
+  if(faces.length!==triangles*3||vertices.length!==expectedVertices){for(const v of faces)indices.push(original(v));continue;}
   let um=0,vm=0,umin=Infinity,umax=-Infinity,vmin=Infinity,vmax=-Infinity;const pm=[0,0,0],nm=[0,0,0];
-  for(const v of vertices){const a=U[v*2],b=U[v*2+1];um+=a/10;vm+=b/10;umin=Math.min(umin,a);umax=Math.max(umax,a);vmin=Math.min(vmin,b);vmax=Math.max(vmax,b);for(let j=0;j<3;j++){pm[j]+=P[v*3+j]/10;nm[j]+=N[v*3+j];}}
+  for(const v of vertices){const a=U[v*2],b=U[v*2+1];um+=a/vertices.length;vm+=b/vertices.length;umin=Math.min(umin,a);umax=Math.max(umax,a);vmin=Math.min(vmin,b);vmax=Math.max(vmax,b);for(let j=0;j<3;j++){pm[j]+=P[v*3+j]/vertices.length;nm[j]+=N[v*3+j];}}
   let uu=0,vv=0,uvv=0;const up=[0,0,0],vp=[0,0,0];
   for(const v of vertices){const a=U[v*2]-um,b=U[v*2+1]-vm;uu+=a*a;vv+=b*b;uvv+=a*b;for(let j=0;j<3;j++){up[j]+=a*(P[v*3+j]-pm[j]);vp[j]+=b*(P[v*3+j]-pm[j]);}}
   const det=uu*vv-uvv*uvv;

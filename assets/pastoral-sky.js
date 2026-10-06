@@ -44,7 +44,7 @@ export function createPastoralSky(THREE) {
         float shape=volumeNoise(q)*.55+volumeNoise(q*2.03+11.)*.30+volumeNoise(q*4.07-7.)*.15;
         // Fair-weather cumulus leaves generous blue gaps. Rain gradually
         // closes them into a lower, denser overcast instead of repainting it.
-        float coverage=mix(.555,.465,rain);
+        float coverage=mix(.586,.465,rain);
         return max(0.,shape-coverage)*profile*4.6;
       }
       vec4 clouds(vec3 d,vec3 sd){

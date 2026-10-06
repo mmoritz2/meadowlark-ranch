@@ -661,17 +661,17 @@ import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGam
 import {createNativeRiderBridge} from './assets/native-rider.js?v=riding-stability-1';
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createPastoralSky} from './assets/pastoral-sky.js?v=clear-cumulus-2';
-import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=world-cinematic-1';
+import {createPastoralSky} from './assets/pastoral-sky.js?v=country-world-1';
+import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=country-world-1';
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-1';
 import {hasMeadowCover} from './assets/meadow-biomes.js';
-import {createGrassTuftGeometry} from './assets/meadow-cover.js?v=botanical-scale-1';
+import {createGrassTuftGeometry} from './assets/meadow-cover.js?v=country-world-1';
 import {createGeology} from './assets/geology.js?v=world-cinematic-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=clean-pastures-1';
-import {createRanchArchitecture} from './assets/ranch-architecture.js?v=solid-world-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=country-world-1';
+import {createRanchArchitecture} from './assets/ranch-architecture.js?v=country-world-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-world-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
@@ -681,11 +681,11 @@ import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=solid-world
 import {createWorldFinish} from './assets/world-rendering.js';
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
-import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=chalk-down-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=chalk-down-1';
+import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=country-world-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=country-world-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=hair-20261005b';
-import {FEATURES} from './assets/features/index.js?v=horse-actions-1';
+import {FEATURES} from './assets/features/index.js?v=country-world-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -4315,18 +4315,10 @@ for(let i=0;i<28;i++){
  const a=Math.random()*Math.PI*2,rr=34+Math.random()*270;
  const x=Math.cos(a)*rr,z=Math.sin(a)*rr;
  if(Math.abs(x)<30&&Math.abs(z)<26)continue;
- const geo=new THREE.IcosahedronGeometry(1,1);
- const p=geo.attributes.position;
- for(let j=0;j<p.count;j++){
-  const key=Math.round((p.getX(j)+2)*37)*131+Math.round((p.getY(j)+2)*37)*7+Math.round((p.getZ(j)+2)*37);
-  const f=0.75+ihash(key,i)*0.5;
-  p.setXYZ(j,p.getX(j)*f,p.getY(j)*f*0.62,p.getZ(j)*f);
- }
- geo.computeVertexNormals();
- const m=new THREE.Mesh(geo,rockMat);
+ const m=geology.makeBoulder(1,i+9201);
  const s=0.4+Math.random()*1.1;
  m.scale.setScalar(s);
- m.position.set(x,groundH(x,z)+s*0.1,z);
+ m.position.set(x,groundH(x,z)-.025,z);
  m.rotation.y=Math.random()*3;
  m.castShadow=true;m.receiveShadow=true;
  scene.add(m);
@@ -4660,23 +4652,9 @@ let waterMat=null;   // hoisted: the pond reuses it
   rg.setIndex(ri); rg.computeVertexNormals();
   const road=new THREE.Mesh(rg,roadMat);road.name='Grounded ranch bridleways'; road.receiveShadow=true; road.renderOrder=1; scene.add(road);
  }
- // golden wheat field by Cottonwood Village
- const wheat=new THREE.InstancedMesh(new THREE.ConeGeometry(0.05,0.9,5),new THREE.MeshStandardMaterial({color:0xd9b85c,roughness:1}),520);
- for(let i=0;i<520;i++){
-  const row=i%26,colm=Math.floor(i/26);
-  const x=27+row*0.66+(Math.random()-0.5)*0.3;
-  const z=-44+colm*0.55+(Math.random()-0.5)*0.3;
-  er.set((Math.random()-0.5)*0.12,0,(Math.random()-0.5)*0.12);
-  qr.setFromEuler(er);
-  const s=0.8+Math.random()*0.4;
-  sr.set(s,s,s);
-  vr.set(x,groundH(x,z)+0.42*s,z);
-  m4r.compose(vr,qr,sr);
-  wheat.setMatrixAt(i,m4r);
-  wheat.setColorAt(i,new THREE.Color(['#d9b85c','#c9a648','#e8cc78','#d2af52'][i%4]));
- }
- wheat.instanceColor.needsUpdate=true;
- scene.add(wheat);
+ // Cottonwood is a village clearing. The former cone crop intersected its
+ // cottages, NPCs and street; field planting belongs at Barleyfold.
+
 }
 /* ================= the four zones of Kestrel Basin ================= */
 /* The canyon's eight extra mesas were thrown down with Math.random, so from one load to the next a

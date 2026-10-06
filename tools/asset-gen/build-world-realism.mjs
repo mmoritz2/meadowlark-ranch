@@ -40,7 +40,11 @@ for(const id of process.argv.slice(2)){
   const needles=[];
   if(['fir_sapling_medium','pine_tree_01'].includes(id))for(const mesh of root.listMeshes())for(const primitive of mesh.listPrimitives())
     if(/twig/.test(primitive.getMaterial()?.getName()||''))needles.push(id==='pine_tree_01'?clusterPineNeedles(doc,primitive):simplifyNeedleRibbons(doc,primitive));
-  console.log(id,'needle conversion',JSON.stringify(needles));
+  const leafCards=[];
+  if(id==='island_tree_01')for(const mesh of root.listMeshes())for(const p of mesh.listPrimitives())
+    if(/leaves/.test(p.getMaterial()?.getName()||''))leafCards.push(simplifyNeedleRibbons(doc,p,{triangles:24,vertices:21}));
+  if(id==='island_tree_01'&&leafCards.reduce((n,p)=>n+p.ribbons,0)!==44168)throw Error('Expected every authored leaf to survive');
+  console.log(id,'foliage conversion',JSON.stringify({needles,leafCards}));
   // Normalize collection layouts at runtime; keep individual rocks and saplings.
   await doc.transform(weld(),dedup());
   for(const m of root.listMaterials()){
@@ -63,6 +67,7 @@ for(const id of process.argv.slice(2)){
     // Leaves get a much higher budget than solid objects. Aggressive blanket
     // decimation deletes the crown of an archviz tree instead of simplifying it.
     const target=id==='pine_tree_01'?(/twig/.test(name)?85000:/bark/.test(name)?4000:4500):
+      id==='island_tree_01'?(/leaves/.test(name)?n:/branches/.test(name)?7000:9000):
       id==='tree_small_02'?(/leaves/.test(name)?110000:7000):
       id==='pine_sapling_small'?(/twig/.test(name)?16000:1000):
       id==='fir_sapling_medium'?(/twig/.test(name)?120000:3500):
@@ -91,9 +96,9 @@ for(const id of process.argv.slice(2)){
   const file=path.join(out,id+'.glb');await io.write(file,doc);
   const data=await fs.readFile(file);
   const record={...source,output:{file:id+'.glb',bytes:data.length,sha256:createHash('sha256').update(data).digest('hex'),
-    trianglesBefore:before,...(needles.length?{needles}:{}),triangles:metrics.reduce((n,p)=>n+p.after,0),primitives:metrics,
+    trianglesBefore:before,...(leafCards.length?{leafCards}:{}),...(needles.length?{needles}:{}),triangles:metrics.reduce((n,p)=>n+p.after,0),primitives:metrics,
     materials:root.listMaterials().length,textures:root.listTextures().length},
-    processing:(id==='pine_tree_01'?'First author specimen; constant white vertex colors removed; 8-bit normals and 12-bit UVs; source needle clusters replaced with the original photographed twig sprays; ':'')+(needles.length&&id!=='pine_tree_01'?'Preserve all needle ribbons as fitted textured quads; ':'')+'Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading.'};
+    processing:(id==='island_tree_01'?'Every one of 44,168 source leaves fitted to an original-UV quad, preserving its centre and orientation; ':'')+(id==='pine_tree_01'?'First author specimen; constant white vertex colors removed; 8-bit normals and 12-bit UVs; source needle clusters replaced with the original photographed twig sprays; ':'')+(needles.length&&id!=='pine_tree_01'?'Preserve all needle ribbons as fitted textured quads; ':'')+'Per-material mesh simplification; original albedo/normal/roughness/AO; separate author leaf alpha; 1024px albedo and normals, 512px ARM; WebP. No painterly color grading.'};
   records.push(record);console.log(id,JSON.stringify(record.output));
 }
 const manifest=path.join(out,'manifest.json');

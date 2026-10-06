@@ -1,12 +1,13 @@
 # Poly Haven environment assets
 
-Downloaded directly from Poly Haven on **2026-09-30**, **2026-10-03** and **2026-10-05**. The models are free under
+Downloaded directly from Poly Haven on **2026-09-30**, **2026-10-03** **2026-10-05** and **2026-10-06**. The models are free under
 [CC0 1.0](https://polyhaven.com/license), including commercial use and redistribution.
 These are Poly Haven's scanned/authored assets, not generated substitutes or
 assets extracted from another game.
 
 | Asset | Author(s) | Runtime geometry |
 | --- | --- | ---: |
+| [Island Tree 01](https://polyhaven.com/a/island_tree_01) | Rob Tuytel, Rico Cilliers | 104,150; all 44,168 leaves retained |
 | [Tree Small 02](https://polyhaven.com/a/tree_small_02) | Rico Cilliers | 123,891 triangles |
 | [Fir Sapling Medium](https://polyhaven.com/a/fir_sapling_medium) | Rico Cilliers, Rob Tuytel | 401,578 across three firs |
 | [Pine Tree 01](https://polyhaven.com/a/pine_tree_01) | Rob Tuytel, Rico Cilliers | 90,650; one mature specimen |
@@ -120,3 +121,27 @@ Verification: `tools/qa-grounded-woodland.cjs` passed nine checks, including a
 keyboard-driven mounted ride, all graphics tiers, and an identical rendered tree
 silhouette at rider distances from 80 to 180 metres. The 14-check black-rectangle
 regression also passes, with no invalid source or postprocessed pixels.
+
+
+## October 6 lowland canopy
+
+`island_tree_01.glb` supplies an additional spreading broadleaf crown around the
+pastures and village. Every source leaf is a 24-triangle connected component.
+Each is fitted to a two-triangle card using its own UVs, averaged normal and
+position; all 44,168 leaves remain. Bark and branches are simplified separately.
+The model has 104,150 triangles, three materials and nine textures, and occupies
+9,036,864 bytes. Khronos validation reports zero errors and three source tangent
+warnings; Three.js derives tangent space at render time.
+
+The two additional view atlases are generated from this exact optimized tree.
+The existing High/Medium detailed-tree triangle limits remain 1.8M/750K, and Low
+continues to use fixed-position distant views. No shrinking or sinking transition
+is added. Colder woods retain firs and pines; the lowlands mix the new spreading
+crown with the earlier slimmer broadleaf. Source URLs and checksums are in the
+manifest alongside the earlier assets.
+
+```sh
+python3 tools/asset-gen/fetch-world-realism.py island_tree_01
+node tools/asset-gen/build-world-realism.mjs island_tree_01
+node tools/asset-gen/bake-world-tree.cjs island_tree_01
+```

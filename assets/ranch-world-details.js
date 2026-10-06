@@ -121,6 +121,18 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
         for(const key of ['map','normalMap','roughnessMap'])if(mat[key])mat[key].anisotropy=Math.min(8,G.renderer.capabilities.getMaxAnisotropy());
         return {geo,mat};
       });
+      state.cottageGardens=0;
+      for(const site of G.worldPkg?.LANDMARKS||[]){
+        if(site.kind!=='cottage'||!site.grp)continue;
+        const root=site.grp;root.updateMatrixWorld(true);
+        const garden=new THREE.Group();garden.name='Cottage | living window boxes';
+        for(const x of[-1.05,1.05])for(let i=0;i<5;i++){
+          const source=variants[i%variants.length],plant=new THREE.Mesh(source.geo,source.mat);
+          plant.position.set(x-.26+i*.13,1.10,1.61);plant.scale.setScalar(.17+(i%3)*.025);
+          plant.rotation.y=i*2.399;plant.receiveShadow=true;garden.add(plant);
+        }
+        root.add(garden);state.cottageGardens++;
+      }
       let seed=71839;const rand=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
       const drifts=[[-35,25],[-46,7],[-49,-30],[-72,35],[-120,32],[8,78],[21,100],[42,128],[50,-60],[15,-34],[-33,-54]];
       const beds=new Map();

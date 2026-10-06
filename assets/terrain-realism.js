@@ -29,7 +29,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
        overlapping paths do not darken each other into a bruise at the crossing. */
     ctx.globalCompositeOperation = 'lighten';
     for(const tree of treeList){
-      const x=(tree.x+500)*MPM, y=(tree.z+500)*MPM, r=(5.5+(tree.s||1)*2.2)*MPM;
+      const x=(tree.x+500)*MPM, y=(tree.z+500)*MPM, r=(2.0+(tree.s||1)*1.7)*MPM;
       const g=ctx.createRadialGradient(x,y,0,x,y,r);
       g.addColorStop(0,'rgba(255,0,0,.96)');g.addColorStop(.35,'rgba(255,0,0,.88)');g.addColorStop(1,'rgba(255,0,0,0)');
       ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2);
@@ -72,7 +72,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v8-clean-thaw';
+  material.customProgramCacheKey = () => 'terrain-biomes-v9-pastoral';
   material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
@@ -147,7 +147,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
          mean and the result was a landscape that varied on paper and read as one colour from
          forty metres — this pushes the common middle out towards both ends. */
       float dryness = smoothstep(0.17,0.83, macro*0.55 + region*0.45);
-      vec3 tint = mix(vec3(.74,.84,.69), vec3(.92,.92,.77), dryness);
+      vec3 tint = mix(vec3(.79,.92,.70), vec3(.97,.98,.79), dryness);
       /* How heavy the sward is, which the eye reads as VALUE rather than hue: thin turf over
          hard ground is paler and greyer, a deep bite of grass is darker. This is the term that
          carries the middle distance — forty to two hundred metres, where the albedo has mipped
@@ -245,7 +245,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
 
       /* Under the trees the ground is litter rather than grass, and it is in shade. */
       vec3 surface = turf;
-      if(canopy>0.003) surface = mix(turf, earth*(0.78+0.26*stand), canopy*0.92);
+      if(canopy>0.003) surface = mix(turf, earth*(0.78+0.26*stand), canopy*0.60);
       /* The margin in three parts rather than one painted stripe: wet silt at the waterline,
          pale shingle above it with a coarse speckle of stones, and a ragged line where the grass
          gives up. The jitter is already in riverDistance, so the line wanders. */

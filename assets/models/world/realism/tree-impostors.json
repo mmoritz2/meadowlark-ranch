@@ -110,6 +110,28 @@
       "source": "pine_tree_01.glb",
       "sourcePage": "https://polyhaven.com/a/pine_tree_01",
       "license": "CC0-1.0"
+    },
+    {
+      "id": "island_tree_01",
+      "variant": -1,
+      "width": 5.304972910881043,
+      "height": 5.328658712878823,
+      "bottom": -0.17113899525254964,
+      "sourceHeight": 5.0270365215837955,
+      "viewCount": 8,
+      "views": {
+        "file": "island_tree_01_views.webp",
+        "bytes": 3044762,
+        "sha256": "ec0ba27a97e42b6ae17130a030fe649bb0228a4249145f07a4ae84e1d0c479f3"
+      },
+      "normals": {
+        "file": "island_tree_01_normals.webp",
+        "bytes": 1895182,
+        "sha256": "271c07aea1471c9512fcd9422494a5926efad9e9fbdd024b6ff928ddd88445ad"
+      },
+      "source": "island_tree_01.glb",
+      "sourcePage": "https://polyhaven.com/a/island_tree_01",
+      "license": "CC0-1.0"
     }
   ]
 }
