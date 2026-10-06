@@ -672,7 +672,7 @@ import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
 import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=country-world-1';
-import {createRanchArchitecture} from './assets/ranch-architecture.js?v=country-world-1';
+import {createRanchArchitecture} from './assets/ranch-architecture.js?v=village-art-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-world-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
@@ -682,8 +682,8 @@ import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=solid-world
 import {createWorldFinish} from './assets/world-rendering.js';
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
-import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=country-world-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=country-world-1';
+import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=village-art-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=village-art-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=hair-20261006';
 import {FEATURES} from './assets/features/index.js?v=field-composition-1';
@@ -7918,7 +7918,7 @@ function nameSprite(text){
  tx.colorSpace=THREE.SRGBColorSpace;
  tx.minFilter=THREE.LinearFilter;tx.generateMipmaps=false;
  tx.anisotropy=renderer.capabilities.getMaxAnisotropy();
- const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,toneMapped:false}));
+ const sp=new THREE.Sprite(new THREE.SpriteMaterial({name:'World | floating label',map:tx,transparent:true,depthWrite:false,toneMapped:false}));
  sp.scale.set(2.4,0.6,1);
  nameSprites.push(sp);
  return sp;
@@ -10663,7 +10663,7 @@ function makeBubbleSprite(text){
  c.textAlign='center';c.fillStyle='#1b140e';
  c.fillText(String(text).slice(0,26),256,54);
  const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;   // as nameSprite: sRGB, and past the tone mapping, or the words go grey
- const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,toneMapped:false}));
+ const sp=new THREE.Sprite(new THREE.SpriteMaterial({name:'World | floating label',map:tx,transparent:true,depthWrite:false,toneMapped:false}));
  sp.scale.set(3.6,0.7,1);
  sp.position.y=3.75;
  return sp;

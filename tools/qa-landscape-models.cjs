@@ -23,6 +23,10 @@ const out=path.resolve(process.argv[2]||'output/landscape-models');fs.mkdirSync(
    {name:'mature-pine',eye:[tree.x+8,3,tree.z+10],look:[tree.x,tree.height*.55,tree.z],relative:true,at:[tree.x+3,tree.z+3]},
    {name:'thaw-margin',eye:[-90,5,-115],look:[-154,1,-202],relative:true},
   ];
+  const village=await page.evaluate(()=>{
+   const q=__landQA,root=q.G.worldPkg.LANDMARKS.find(s=>s.id==='cottonwood:clubhouse').grp;root.updateMatrixWorld(true);
+   return {name:'cottage-front',eye:root.localToWorld(new q.THREE.Vector3(4.6,2.6,7.2)).toArray(),look:root.localToWorld(new q.THREE.Vector3(0,2.4,0)).toArray()};
+  });shots.push(village);
   const rows=[];
   for(const c of shots){
    const row=await page.evaluate(c=>{
@@ -30,7 +34,7 @@ const out=path.resolve(process.argv[2]||'output/landscape-models');fs.mkdirSync(
     if(c.relative){eye[1]+=q.groundH(eye[0],eye[2]);look[1]+=q.groundH(look[0],look[2]);}
     q.player.pos.set(c.at?.[0]??eye[0],0,c.at?.[1]??eye[2]);q.player.speed=0;q.G.followCam.reset();q.day();
     const render=q.renderer.render;q.renderer.render=()=>{};try{for(let i=0;i<35;i++)q.step(.1);}finally{q.renderer.render=render;}
-    q.player.mesh.visible=false;for(const o of Object.values(q.TACK||{}))if(o?.isObject3D)o.visible=false;
+    q.player.mesh.visible=false;const reins=q.scene.getObjectByName('Native leather split reins');if(reins)reins.visible=false;for(const o of Object.values(q.TACK||{}))if(o?.isObject3D)o.visible=false;
     q.camera.position.set(...eye);q.camera.lookAt(...look);q.G.waterReflections.update(performance.now()+100);q.composer.render();
     const rt=q.composer.readBuffer,w=Math.floor(rt.width),h=Math.floor(rt.height),pixels=new Uint16Array(w*h*4);q.renderer.readRenderTargetPixels(rt,0,0,w,h,pixels);let invalid=0;
     for(let i=0;i<pixels.length;i++)if(i%4!==3&&(pixels[i]&0x7c00)===0x7c00)invalid++;
@@ -72,13 +76,15 @@ const out=path.resolve(process.argv[2]||'output/landscape-models');fs.mkdirSync(
     if(Math.hypot(v.x+95,v.z-36)<8)pastureTufts++;}
    q.nearGrass.tick(1,-160,-210);
    for(let i=0;i<q.nearGrass.near.count;i++){q.nearGrass.near.getMatrixAt(i,matrix);v.setFromMatrixPosition(matrix);if(matrix.elements[0]===0&&matrix.elements[5]===0)continue;if(Math.hypot(v.x+160,v.z+210)<20)coreTufts++;}
-   const scans=q.G.photoscans,details=q.G.worldDetails;
-   return {tiers,blocked,size,entryParts:entry.children[0].userData.builderArt?.parts,pastureTufts,coreTufts,
+   const scans=q.G.photoscans,details=q.G.worldDetails;let depthWritingLabels=0,gardens=0,gardenFlowers=0;
+   q.scene.traverse(o=>{if(o.isSprite&&o.material.depthWrite)depthWritingLabels++;if(o.name==='Cottage | living window boxes'){gardens++;for(const child of o.children)gardenFlowers+=child.count||1;}});
+   return {depthWritingLabels,gardens,gardenFlowers,tiers,blocked,size,entryParts:entry.children[0].userData.builderArt?.parts,pastureTufts,coreTufts,
     cover:{ranch:meadowCoverWeight(0,0),pasture:meadowCoverWeight(-95,36),winter:meadowCoverWeight(-160,-210),canyon:meadowCoverWeight(-220,130),stable:hasMeadowCover(-95,36)===hasMeadowCover(-95,36)},
     scans:{assets:scans.assets,errors:scans.errors,matureTrees:scans.matureTrees,stoneTriangles:scans.groundStoneTriangles,views:scans.normalMappedViews},
     details:{grass:details.grassClumps,errors:details.errors},featureErrors:q.G.errors};
   });
   const checks={
+   labelsCannotCutPaths:state.depthWritingLabels===0,instancedGardensComplete:state.gardens===10&&state.gardenFlowers===280,
    matureTreesPlaced:state.scans.matureTrees>100,newTreeAndViewsLoaded:state.scans.assets.includes('pine_tree_01')&&state.scans.views===6&&state.scans.assets.includes('island_tree_01'),
    boundedTreeGeometry:state.tiers.every(t=>t.triangles<=t.budget)&&state.tiers[0].trees===0,
    scannedGroundStone:state.scans.stoneTriangles>100&&state.scans.stoneTriangles<=300,

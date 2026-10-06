@@ -118,10 +118,15 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       return {parts,bounds,key,meta,triangles};
     });
     const sourceFor=t=>{
-      // Deciduous canopies define the lowland pasture. Keep the colder woods coniferous.
+      // Related trees grow in groves. Slender trees around the village reveal the
+      // buildings; broad spreading crowns define the meadow and woodland edges.
       const lowland=t.kind!=='cold'&&t.kind!=='snowpine'&&Math.hypot(t.x+160,t.z+210)>160;
-      if(!['pine','snowpine','cold'].includes(t.kind)||lowland&&rnd(t.x,t.z,49)>.28)
-        return rnd(t.x,t.z,53)>.25?variants[5]:variants[0];
+      if(!['pine','snowpine','cold'].includes(t.kind)||lowland&&rnd(t.x,t.z,49)>.28){
+        const village=Math.hypot(t.x-47,t.z+50)<34;
+        const grove=Math.sin(t.x*.034+t.z*.011)+Math.cos(t.z*.047-t.x*.009);
+        const spreading=!village&&grove+rnd(t.x,t.z,53)*.65>-.32;
+        return spreading?variants[5]:variants[0];
+      }
       return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
     };
     const add=t=>{

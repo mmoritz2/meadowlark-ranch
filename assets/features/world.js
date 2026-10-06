@@ -184,7 +184,7 @@ export function install(G){
   c.fillStyle='#1b140e';c.fillText(s,cv.width/2,68+fs*0.34);
   const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;tx.minFilter=THREE.LinearFilter;tx.generateMipmaps=false;
   try{tx.anisotropy=G.renderer.capabilities.getMaxAnisotropy();}catch(e){}
-  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,toneMapped:false}));
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({name:'World | floating label',map:tx,transparent:true,depthWrite:false,toneMapped:false}));
   sp.scale.set(0.6*cv.width/cv.height,0.6,1);   // the plate keeps the game's 0.6 m height and grows sideways
   sp.userData.plate=1;
   return sp;
@@ -210,7 +210,7 @@ export function install(G){
  const TOWNS=[
   {id:'cottonwood',region:'cottonwood',name:'Cottonwood Village',cx:47,cz:-50,
    buildings:[
-    {id:'store',kind:'outbuilding',x:34,z:-58,rot:0.9,label:'🛍️ Petal & Pail general store',r:2.8,open:()=>UI.openShop('food'),door:'🛍️ Enter the general store'},
+    {id:'store',kind:'outbuilding',x:34,z:-58,rot:0.9,opts:{exterior:'village',variant:0},label:'🛍️ Petal & Pail general store',r:2.8,open:()=>UI.openShop('food'),door:'🛍️ Enter the general store'},
     {id:'auction',kind:'barn',x:64,z:-58,rot:-0.5,label:'🏛️ Cottonwood Auction House',r:5.2,open:()=>UI.openShop('market'),door:'🏛️ Step into the auction house',glyph:'🏛️'},
     {id:'clubhouse',kind:'cottage',x:33,z:-45,rot:1.2,variant:2,label:'🏠 The Meadowlark Club House',r:2.6,open:()=>UI.openOnline(),door:'🏠 Go into the club house',glyph:'🏠'},
     {id:'inn',kind:'cottage',x:41,z:-63,rot:0.2,variant:3,label:'🏨 The Blossom Inn',r:2.6,open:()=>UI.openCare(),door:'🏨 Rest at the inn'},
@@ -247,7 +247,7 @@ export function install(G){
    ]},
   {id:'hollowpeak',region:'hollowpeak',name:'Hollowpeak hamlet',cx:-160,cz:-210,
    buildings:[
-    {id:'lodge',kind:'outbuilding',x:-168,z:-192,rot:0.5,label:'🎽 Summit Lodge outfitters',r:2.9,open:()=>UI.openShop('style'),door:'🎽 Step into the lodge',glyph:'🎽',opts:{width:5.0,depth:3.6,height:3.4,animatedDoorOpening:{width:1.1,height:1.9}}},
+    {id:'lodge',kind:'outbuilding',x:-168,z:-192,rot:0.5,label:'🎽 Summit Lodge outfitters',r:2.9,open:()=>UI.openShop('style'),door:'🎽 Step into the lodge',glyph:'🎽',opts:{width:5.0,depth:3.6,height:3.4,exterior:'village',variant:1,animatedDoorOpening:{width:1.1,height:1.9}}},
     {id:'cabin',kind:'cottage',x:-138,z:-204,rot:-0.8,variant:0,label:'🧣 Ilse\'s cabin',r:2.6},
    ],
    folk:[

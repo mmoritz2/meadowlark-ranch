@@ -36,7 +36,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     normalMap: map('siding_normal.jpg'), normalScale: new THREE.Vector2(.48,.48),
     roughnessMap: map('siding_roughness.jpg'), roughness: 1, envMapIntensity: .55,
   }, 2.4);
-  const cottageWalls=['#c8bfa9','#b9c0ab','#c5b5a1'].map((color,i)=>material('Village | limewashed plaster '+i,{
+  const cottageWalls=['#e0d6ba','#cbd5c3','#dbc8b6'].map((color,i)=>material('Village | limewashed plaster '+i,{
     color,roughness:1,normalMap:map('rock_normal.jpg'),normalScale:new THREE.Vector2(.065,.065),envMapIntensity:.6,
   },2.8));
   const shutters=['#4c6659','#526a77','#766650'].map((color,i)=>material('Village | painted shutters '+i,{
@@ -47,6 +47,11 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     normalMap: map('roof_normal.jpg'), normalScale: new THREE.Vector2(.52,.52),
     roughnessMap: map('roof_roughness.jpg'), roughness: 1, envMapIntensity: .45,
   }, 1.8);
+  const slate = material('Village | blue grey slate', {
+    color:'#a8bdc8',map:map('roof_albedo.jpg',true),normalMap:map('roof_normal.jpg'),
+    normalScale:new THREE.Vector2(.38,.38),roughnessMap:map('roof_roughness.jpg'),roughness:.94,envMapIntensity:.5,
+  },1.45);
+  const canvas = material('Village | woven awning', {color:'#e9dcc3',roughness:1});
   const trim = material('Ranch | warm painted joinery', {color:'#dcdad0',roughness:.87,
     normalMap:map('../builder/coated_pine_nor_gl.webp'),normalScale:new THREE.Vector2(.20,.20),
     roughnessMap:map('../builder/coated_pine_arm.webp')});
@@ -130,7 +135,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
   const face=(x,z,angle)=>new THREE.Matrix4().compose(new THREE.Vector3(x,0,z),
     new THREE.Quaternion().setFromAxisAngle(Y,angle),new THREE.Vector3(1,1,1));
 
-  function shellWall(b,width,height,frame,openings,wall=siding) {
+  function shellWall(b,width,height,frame,openings,wall=siding,base=.16) {
     // Slice wall into rectangles around each opening. Frames/glass sit inside
     // a true recess, so oblique views show jamb depth rather than painted squares.
     const xs=[-width/2,width/2];
@@ -140,7 +145,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       const left=xs[i],right=xs[i+1]; if(right-left<.001)continue;
       const mid=(left+right)/2;
       const cuts=openings.filter(o=>mid>o.x-o.w/2&&mid<o.x+o.w/2).sort((a,b)=>a.y-b.y);
-      let bottom=.16;
+      let bottom=base;
       const panel=(low,high)=> {
         if(high-low<.005)return;
         b.box(right-left,high-low,.18,wall,mid,(low+high)/2,0,null,frame);
@@ -176,6 +181,21 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
   }
   function door(b,o,f) {
     const {x,y,w,h}=o, leaves=o.double?2:1;
+    if(o.domestic){
+      const paint=o.paint||shutters[0];
+      b.box(w,h,.10,paint,x,y,.015,null,f);
+      for(const dx of[-w*.235,w*.235]){
+        b.box(w*.38,h*.34,.025,trim,x+dx,y-h*.23,.08,null,f);
+        b.box(w*.32,h*.29,.029,paint,x+dx,y-h*.23,.10,null,f);
+      }
+      const wy=y+h*.23;
+      b.box(w*.72,h*.33,.015,dark,x,wy,.08,null,f);
+      b.box(w*.61,h*.28,.012,lit,x,wy,.095,null,f);
+      b.box(.025,h*.30,.035,trim,x,wy,.12,null,f);
+      b.box(w*.64,.025,.035,trim,x,wy,.12,null,f);
+      b.box(.045,.10,.055,metal,x+w*.35,y,.14,null,f);
+      doorFrame(b,o,f);return;
+    }
     b.box(w,h,.025,dark,x,y,-.06,null,f);
     for(let k=0;k<leaves;k++) {
       const lw=w/leaves-.015,cx=x-w/2+(k+.5)*w/leaves;
@@ -212,23 +232,32 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       for(let z=-d/2+.24;z<d/2;z+=.48)b.box(.12,.18,.45,stone,s*(w/2+.055),.11,z);
     }
   }
-  function gable(b,d,eave,ridge,f,wall=siding) {
+  function gable(b,d,eave,ridge,f,wall=siding,vent=true,aperture=null) {
     const p=[],u=[],idx=[];
     for(const z of[-.09,.09])for(const [x,y]of[[-d/2,eave],[d/2,eave],[0,ridge]]){
       p.push(x,y,z);u.push(x/2.4,y/2.4);
     }
     idx.push(0,2,1,3,4,5,0,1,4,0,4,3,1,2,5,1,5,4,2,0,3,2,3,5);
-    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
-    g.setAttribute('uv',new THREE.Float32BufferAttribute(u,2));g.setIndex(idx);g.computeVertexNormals();b.geometry(g,wall,f);
+    let g;
+    if(aperture){
+      const shape=new THREE.Shape();shape.moveTo(-d/2,eave);shape.lineTo(d/2,eave);shape.lineTo(0,ridge);shape.closePath();
+      const opening=new THREE.Path();opening.absarc(aperture.x,aperture.y,aperture.r,0,Math.PI*2,true);shape.holes.push(opening);
+      g=new THREE.ExtrudeGeometry(shape,{depth:.18,bevelEnabled:false,curveSegments:24});g.translate(0,0,-.09);
+    }else{
+      g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
+      g.setAttribute('uv',new THREE.Float32BufferAttribute(u,2));g.setIndex(idx);g.computeVertexNormals();
+    }
+    b.geometry(g,wall,f);
+    if(!vent)return;
     const ventY=eave+(ridge-eave)*.38,ventW=Math.min(.82,d*.25),ventH=.32;
     b.box(ventW,ventH,.025,dark,0,ventY,.107,null,f);
     for(let i=0;i<5;i++)b.box(ventW,.031,.068,trim,0,ventY-ventH/2+i*.07,.132,new THREE.Euler(.26,0,0),f);
   }
-  function roofAssembly(b,w,d,eave,ridge,cottage=false) {
+  function roofAssembly(b,w,d,eave,ridge,cottage=false,cover=roof) {
     const over=cottage?.24:.38,half=d/2+over,pitch=Math.atan2(ridge-eave,d/2);
     const low=ridge-half*Math.tan(pitch),length=half/Math.cos(pitch);
     for(const s of[-1,1]) {
-      b.box(w+over*2,.12,length+.05,roof,0,(ridge+low)/2,s*half/2,new THREE.Euler(s*pitch,0,0));
+      b.box(w+over*2,.12,length+.05,cover,0,(ridge+low)/2,s*half/2,new THREE.Euler(s*pitch,0,0));
       b.box(w+over*2+.08,.19,.12,trim,0,low-.035,s*half);
       b.box(w+.12,.045,over+.14,trim,0,eave-.085,s*(d/2+over*.4));
       // Open U-shaped gutter: bottom and two lips, not a solid oversized tube.
@@ -273,41 +302,104 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     for(const x of[-1.4,1.4])lantern(b,x,2.60,d/2+.18);
     return b.finish({kind:'barn',width:w,depth:d,wallHeight:h,ridgeHeight:ridge,windows:9});
   }
+  function stoneSkirt(b,w,d,doorWidth=1.25) {
+    // Individually coursed plinth and corner quoins, leaving the doorway clear.
+    for(const side of[-1,1])for(let row=0;row<2;row++){
+      for(let x=-w/2+.23;x<w/2;x+=.46){
+        if(side===1&&Math.abs(x)<doorWidth/2+.24)continue;
+        b.box(.435,.185,.125,(row+Math.round(x*6))%3?stoneLight:stone,x,.24+row*.195,side*(d/2+.07));
+      }
+      for(let z=-d/2+.22;z<d/2;z+=.44)
+        b.box(.125,.185,.415,stoneLight,side*(w/2+.07),.24+row*.195,z);
+    }
+    for(const x of[-1,1])for(const z of[-1,1])for(let row=0;row<6;row++)
+      b.box(row%2?.16:.28,.19,row%2?.28:.16,stoneLight,x*(w/2+.01),.27+row*.215,z*(d/2+.01));
+  }
+  function dormer(b,x,width,eave,ridge,wall) {
+    const front=1.10,depth=1.36,base=eave+.20,top=ridge-.42,peak=ridge+.15;
+    const f=face(x,front,0),wh=top-base-.22;
+    // Window is cut into the front wall; side cheeks disappear into the main roof.
+    shellWall(b,width,top,f,[{x:0,y:(top+base)/2,w:width*.59,h:wh}],wall,base);
+    gable(b,width,top,peak,f,wall,false);
+    for(const side of[-1,1]){
+      b.box(.10,top-base,depth,wall,x+side*width/2,(top+base)/2,front-depth/2);
+      const half=width/2+.14,pitch=Math.atan2(peak-top,width/2),low=peak-half*Math.tan(pitch);
+      b.box(half/Math.cos(pitch),.095,depth+.20,slate,x+side*half/2,(peak+low)/2,front-depth/2,new THREE.Euler(0,0,-side*pitch));
+      b.beam([x,peak,front+.12],[x+side*half,low,front+.12],.085,.10,trim);
+      b.box(.085,top-base,.12,trim,x+side*(width/2+.015),(top+base)/2,front+.065);
+    }
+    b.box(.12,.08,depth+.20,metal,x,peak+.035,front-depth/2);
+  }
+  function doorHood(b,z) {
+    const half=.72,peak=2.72,low=2.39,pitch=Math.atan2(peak-low,half);
+    for(const side of[-1,1]){
+      b.box(half/Math.cos(pitch),.09,.92,slate,side*half/2,(peak+low)/2,z+.32,new THREE.Euler(0,0,-side*pitch));
+      b.beam([0,peak,z+.79],[side*half,low,z+.79],.085,.10,trim);
+      b.beam([side*.53,2.19,z+.1],[side*.53,2.42,z+.57],.065,.065,wood);
+    }
+  }
   function buildCottage({variant=0}={}) {
-    const b=new Builder('Cottonwood cottage '+variant),w=3.4,d=2.8,h=2.4,ridge=3.42;
+    const b=new Builder('Cottonwood cottage '+variant),w=3.4,d=2.8,h=2.82,ridge=4.55;
     const index=Math.abs(variant)%3,wall=cottageWalls[index],shutter=shutters[index];
+    const windowBoxes=[];
     foundation(b,w,d);
     shellWall(b,w,h,face(0,d/2,0),[
-      {type:'door',x:0,y:1.15,w:.88,h:1.98},
-      ...[-1.05,1.05].map(x=>({x,y:1.46,w:.68,h:.79}))],wall);
-    shellWall(b,w,h,face(0,-d/2,Math.PI),[{x:0,y:1.42,w:.98,h:.90}],wall);
-    for(const s of[-1,1]) {
-      const f=face(s*w/2,0,s*Math.PI/2);
-      shellWall(b,d,h,f,[{x:-.20,y:1.42,w:.80,h:.90}],wall);gable(b,d,h,ridge,f,wall);
+      {type:'door',domestic:true,paint:shutter,x:0,y:1.15,w:.88,h:1.98},
+      ...[-1.05,1.05].map(x=>({x,y:1.59,w:.68,h:1.04}))],wall);
+    shellWall(b,w,h,face(0,-d/2,Math.PI),[{x:0,y:1.62,w:.98,h:1.10}],wall);
+    for(const side of[-1,1]) {
+      const f=face(side*w/2,0,side*Math.PI/2);
+      // Ground-floor casements are recessed into the plaster shell.
+      shellWall(b,d,h,f,[{x:-.20,y:1.65,w:.80,h:1.12}],wall);
+      gable(b,d,h,ridge,f,wall,false,{x:0,y:3.52,r:.19});
       for(const x of[-.78,.38]){
-        b.box(.25,.89,.052,shutter,x,1.42,.15,null,f);
-        for(let j=0;j<6;j++)b.box(.24,.038,.021,shutter,x,1.08+j*.135,.18,null,f);
+        b.box(.25,1.14,.052,shutter,x,1.65,.15,null,f);
+        for(let j=0;j<8;j++)b.box(.24,.038,.021,shutter,x,1.18+j*.135,.18,null,f);
       }
+      // A round loft light is cut through the gable, with a stone surround.
+      for(const [r,z,m]of[[.188,-.11,dark],[.174,-.085,lit],[.17,-.052,glass]])
+        b.geometry(new THREE.CircleGeometry(r,24),m,new THREE.Matrix4().makeTranslation(0,3.52,z).premultiply(f));
+      b.geometry(new THREE.TorusGeometry(.203,.031,6,24),stoneLight,
+        new THREE.Matrix4().makeTranslation(0,3.52,.10).premultiply(f));
+      b.box(.022,.34,.07,trim,0,3.52,-.01,null,f);
+      b.box(.34,.022,.07,trim,0,3.52,-.01,null,f);
     }
     for(const x of[-1.05,1.05]){
       for(const side of[-1,1]){
-        const sx=x+side*.48;b.box(.22,.82,.055,shutter,sx,1.46,d/2+.15);
-        for(let j=0;j<5;j++)b.box(.215,.03,.025,shutter,sx,1.17+j*.14,d/2+.19);
+        const sx=x+side*.48;b.box(.22,1.06,.055,shutter,sx,1.59,d/2+.15);
+        for(let j=0;j<7;j++)b.box(.215,.03,.025,shutter,sx,1.17+j*.14,d/2+.19);
       }
       b.box(.80,.18,.24,wood,x,1.01,d/2+.21);
       b.box(.68,.03,.18,mortar,x,1.105,d/2+.22);
+      windowBoxes.push({x,y:1.12,z:d/2+.21,width:.65,height:.22});
     }
-    cornerPosts(b,w,d,h);roofAssembly(b,w,d,h,ridge,true);
-    // Chimney has distinct masonry courses, flashing, a cap and a recessed flue.
-    for(let i=0;i<6;i++)b.box(.44+(i%2)*.018,.122,.44,brick,1.10,3.13+i*.122,-.50);
-    b.box(.58,.055,.58,metal,1.10,3.15,-.50);
-    b.box(.60,.095,.60,stoneLight,1.10,3.87,-.50);
-    b.box(.34,.022,.34,dark,1.10,3.925,-.50);
-    lantern(b,.65,1.91,d/2+.18);
-    return b.finish({kind:'cottage',variant,width:w,depth:d,wallHeight:h,ridgeHeight:ridge,windows:5});
+    cornerPosts(b,w,d,h);stoneSkirt(b,w,d);roofAssembly(b,w,d,h,ridge,true,slate);
+    dormer(b,variant%2?.52:0,variant%2?1.05:1.30,h,ridge,wall);
+    doorHood(b,d/2);
+    // Short flagstone threshold and planted stone tubs frame, rather than occupy, the entry.
+    for(let row=0;row<3;row++)for(const x of[-.36,.36])
+      b.box(.69,.045,.33,stoneLight,x,.024,d/2+.30+row*.35);
+    for(const x of[-1.39,1.39]){
+      b.box(.51,.34,.55,stoneLight,x,.17,d/2+.67);
+      b.box(.54,.065,.58,stone,x,.33,d/2+.67);
+      b.box(.41,.015,.45,mortar,x,.369,d/2+.67);
+      windowBoxes.push({x,y:.38,z:d/2+.67,width:.38,height:.38});
+    }
+    // Masonry chimney, stone cap and twin terracotta pots.
+    const chimneyX=variant%2?-1.06:1.10,chimneyZ=-.48,chimneyBase=4.00;
+    for(let i=0;i<7;i++)b.box(.44+(i%2)*.018,.122,.44,brick,chimneyX,chimneyBase+i*.122,chimneyZ);
+    b.box(.58,.055,.58,metal,chimneyX,chimneyBase+.04,chimneyZ);
+    b.box(.60,.095,.60,stoneLight,chimneyX,4.84,chimneyZ);
+    for(const dx of[-.13,.13]){
+      b.pipe([chimneyX+dx,4.87,chimneyZ],[chimneyX+dx,5.12,chimneyZ],.085,brick);
+      b.box(.10,.018,.10,dark,chimneyX+dx,5.135,chimneyZ);
+    }
+    lantern(b,.63,2.06,d/2+.18);
+    return b.finish({kind:'cottage',variant,width:w,depth:d,wallHeight:h,ridgeHeight:ridge,
+      windows:8,dormers:1,windowBoxes,suggestedLabelY:5.45});
   }
   function buildOutbuilding({width=4.6,depth=3.2,height=3.4,
-    animatedDoorOpening={width:2.3,height:2.5},name='Meadowlark stable outbuilding'}={}) {
+    exterior='timber',variant=0,animatedDoorOpening={width:2.3,height:2.5},name='Meadowlark stable outbuilding'}={}) {
     const w=width,d=depth,h=height;
     if(![w,d,h].every(v=>Number.isFinite(v)&&v>1))
       throw new RangeError('Outbuilding dimensions must be finite and greater than one metre');
@@ -319,6 +411,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       dw+Math.abs(dx)*2>w-.42||dh>h-.27)
       throw new RangeError('The outbuilding doorway must fit inside its front wall');
     const b=new Builder(name),ridge=h+Math.min(1.15,d*.31);
+    const village=exterior==='village',wall=village?cottageWalls[Math.abs(variant)%3]:siding;
     const opening={type:'open-door',x:dx,y:dh/2,w:dw,h:dh};
     foundation(b,w,d);
 
@@ -339,22 +432,36 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
         y:Math.min(h-.60,dh*.69+.16),w:Math.min(.68,clear-.48),
         h:Math.min(.90,h*.34)});
     }
-    shellWall(b,w,h,face(0,d/2,0),[opening,...frontWindows]);
+    shellWall(b,w,h,face(0,d/2,0),[opening,...frontWindows],wall);
 
     // Rear faces are prominent from the arrival arena; give them the same
     // recessed casements, sills, cladding and rainwater detailing as the front.
     const backWindows=(w>4?[-w*.24,w*.24]:[0]).map(x=>({x,
       y:Math.min(h-.75,h*.58),w:Math.min(1.02,w*.25),h:Math.min(1.02,h*.36)}));
-    shellWall(b,w,h,face(0,-d/2,Math.PI),backWindows);
+    shellWall(b,w,h,face(0,-d/2,Math.PI),backWindows,wall);
     for(const s of[-1,1]) {
       const f=face(s*w/2,0,s*Math.PI/2);
       shellWall(b,d,h,f,[{x:0,y:Math.min(h-.75,h*.58),
-        w:Math.min(.90,d*.32),h:Math.min(1.0,h*.36)}]);
-      gable(b,d,h,ridge,f);
+        w:Math.min(.90,d*.32),h:Math.min(1.0,h*.36)}],wall);
+      gable(b,d,h,ridge,f,wall);
     }
-    cornerPosts(b,w,d,h);roofAssembly(b,w,d,h,ridge,true);
+    cornerPosts(b,w,d,h);roofAssembly(b,w,d,h,ridge,true,village?slate:roof);
+    if(village){
+      stoneSkirt(b,w,d,dw+.22);
+      const paint=shutters[Math.abs(variant)%3],awningY=Math.max(2.98,dh+.55),awningW=w-.30;
+      // A continuous shop fascia and a shallow striped canopy, entirely above the approach.
+      b.box(w-.22,.26,.11,paint,0,awningY+.34,d/2+.15);
+      for(let i=0;i<12;i++){
+        const x=-awningW/2+(i+.5)*awningW/12,m=i%2?canvas:paint;
+        b.box(awningW/12,.042,.82,m,x,awningY,d/2+.43,new THREE.Euler(.15,0,0));
+        b.box(awningW/12,.13,.04,m,x,awningY-.13,d/2+.83);
+      }
+      for(const side of[-1,1])b.beam([side*(w/2-.23),awningY-.45,d/2+.13],
+        [side*(w/2-.23),awningY-.04,d/2+.77],.045,.045,metal);
+      for(const win of frontWindows)b.box(win.w+.12,.51,.10,paint,win.x,.71,d/2+.13);
+    }
     lantern(b,dx,Math.min(h-.30,dh+.36),d/2+.18);
-    return b.finish({kind:'outbuilding',width:w,depth:d,wallHeight:h,
+    return b.finish({kind:'outbuilding',exterior,width:w,depth:d,wallHeight:h,
       ridgeHeight:ridge,windows:frontWindows.length+backWindows.length+2,
       animatedDoorOpening:{x:dx,width:dw,height:dh,bottomY:0,frontZ:d/2},
       suggestedLabelY:ridge+.28});

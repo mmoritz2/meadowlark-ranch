@@ -97,10 +97,27 @@ const out=path.resolve(process.argv[2]||'output/render-artifacts');fs.mkdirSync(
    const quad=new FullScreenQuad(material);renderer.setRenderTarget(rt);quad.render(renderer);const injected=q.read(renderer,rt);
    const bloom=new UnrealBloomPass(new T.Vector2(64,64),.05,.85,.72);protectBloomInput(bloom);bloom.render(renderer,null,rt,0,false);
    const blurred=[bloom.renderTargetBright,...bloom.renderTargetsHorizontal,...bloom.renderTargetsVertical].map(t=>q.read(renderer,t));
-   const combined=q.read(renderer,rt),glError=renderer.getContext().getError();
+   const combined=q.read(renderer,rt);
+   // Transparent label texels must not occlude the bridleway's later transparent pass.
+   // Reproduce the discovered green rectangle with the actual production label material.
+   let sourceLabel;q.scene.traverse(o=>{if(o.isSprite&&o.material.name==='World | floating label')sourceLabel=o.material;});
+   if(!sourceLabel)throw Error('No production label material');
+   const labelScene=new T.Scene();labelScene.background=new T.Color('#387832');
+   const labelCamera=new T.OrthographicCamera(-1,1,1,-1,.1,10);labelCamera.position.z=4;
+   const pathMaterial=new T.MeshBasicMaterial({color:'#ba985e',transparent:true});
+   const pathMesh=new T.Mesh(new T.PlaneGeometry(4,4),pathMaterial);pathMesh.renderOrder=1;labelScene.add(pathMesh);
+   const labelMaterial=sourceLabel.clone();labelMaterial.opacity=0;
+   const label=new T.Sprite(labelMaterial);label.position.z=1;label.scale.set(1.6,1.6,1);labelScene.add(label);
+   const labelTarget=new T.WebGLRenderTarget(64,64);
+   const frame=()=>{const pixels=new Uint8Array(64*64*4);renderer.setRenderTarget(labelTarget);renderer.render(labelScene,labelCamera);renderer.readRenderTargetPixels(labelTarget,0,0,64,64,pixels);return pixels;};
+   label.visible=false;const reference=frame();label.visible=true;const fixed=frame();labelMaterial.depthWrite=true;const broken=frame();
+   const changed=a=>{let n=0;for(let i=0;i<a.length;i+=4)if([0,1,2].some(c=>a[i+c]!==reference[i+c]))n++;return n;};
+   const labelDepth={fixedPixels:changed(fixed),reproducedPixels:changed(broken)};
+   labelMaterial.dispose();pathMaterial.dispose();pathMesh.geometry.dispose();labelTarget.dispose();
+   const glError=renderer.getContext().getError();
    bloom.materialHighPassFilter.dispose();bloom.dispose();quad.dispose();material.dispose();input.dispose();
    rt.dispose();geo.dispose();mat.userData.scanDepth.dispose();mat.dispose();normal.dispose();albedo.dispose();renderer.dispose();renderer.forceContextLoss();
-   return {neutralNormal,injected,blurred,combined,glError};
+   return {neutralNormal,injected,blurred,combined,labelDepth,glError};
   });
   const details=await page.evaluate(()=>{
    const q=__artifactQA,s=q.G.worldDetails,W=q.G.world;
@@ -109,6 +126,7 @@ const out=path.resolve(process.argv[2]||'output/render-artifacts');fs.mkdirSync(
     onArena:s.flowerPositions.filter(p=>(p.x/24.8)**2+(p.z/19.8)**2<1).length};
   });
   const checks={
+   invisibleLabelsLeavePathsIntact:fixtures.labelDepth.fixedPixels===0&&fixtures.labelDepth.reproducedPixels>1000,
    sourcePixelsFinite:rows.every(r=>r.source.invalid===0),postProcessedPixelsFinite:rows.every(r=>r.buffers.every(b=>b.invalid===0)),
    renderingHasVisiblePixels:rows.every(r=>r.source.lit>100),
    antialiasMatchesFramebuffer:rows.every(r=>r.resolution?.every((n,i)=>Math.abs(n-1/r.canvas[i])<1e-9)),
