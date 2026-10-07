@@ -41,7 +41,7 @@ import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut
 export {RIDER_OUTFITS};
 import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=couture-riders-20261007';
 import {refineRiderProportions} from './rider-proportions.js?v=couture-riders-20261007';
-import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=couture-riders-20261007';
+import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=visible-lashes-20261007';
 import {prepareRiderHead,patchStylizedHead,patchStylizedEyes} from './rider-heads.js?v=couture-riders-20261007';
 import {accessoryFit,buildAccessories} from './rider-accessories.js?v=couture-riders-20261007';
 
@@ -750,7 +750,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
   if(eyes){const m=new THREE.MeshPhysicalMaterial({map:kit.materials.eyes.map,color:0xffffff,roughness:.20,metalness:0,clearcoat:.7,clearcoatRoughness:.09,ior:1.4,side:THREE.DoubleSide});patchStylizedEyes(m,u,kit.headAsset,kit.body);eyes.material=m;mats.push(m);}
   if(brows){brows.material=own(kit.materials.brows,patchBrows);brows.castShadow=false;}
   const hb=bones.Head;
-  if(kit.lashGeo){const material=new THREE.MeshStandardMaterial({color:0x090605,roughness:.68});const lashes=new THREE.Mesh(kit.lashGeo,material);lashes.name='rider-eyelashes';lashes.frustumCulled=false;hb.add(lashes);mats.push(material);}
+  if(kit.lashGeo){const material=new THREE.MeshBasicMaterial({color:0x090605});const lashes=new THREE.Mesh(kit.lashGeo,material);lashes.name='rider-eyelashes';lashes.frustumCulled=false;hb.add(lashes);mats.push(material);}
   /* helmet: built once per kit, dressed per rider */
   const hg=kit.helmetGeo;
   u.uHelm.value.set(hg.cx,hg.cy,hg.cz,0); u.uHelmR.value.set(hg.rx-0.006,hg.ry-0.006,hg.rz-0.006,hg.rimY(Math.PI*0.5));
