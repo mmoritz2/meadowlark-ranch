@@ -1,0 +1,18 @@
+// Original, fixed-content cosmetic sets shared by the account service and fitting room.
+// Prices are draft USD test prices. No chance rewards or timed purchase pressure.
+const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
+export const PREMIUM_TACK_SETS=freeze([
+ {id:'rainbow',productId:'tack_rainbow',name:'Rainbow',cents:399,tagline:'Every color. Your kind of ride.',vibe:'Colorful',horse:'weekly_seaglass',description:'Six bright colors, midnight leather and little golden stars.',
+  design:{ornament:'star',leather:'#202944',cloth:'#fff5e5',metal:'#dfb95b',accent:'#f06bba',lining:'#f5e9d5',pattern:'quilt',trim:'double',profiles:{saddle:'show',pad:'scallop',bridle:'crown',shoes:'ribbon'},rainbow:true,palette:['#ef456c','#ff943e','#f5d84c','#41cfa0','#419be8','#aa6dec']}},
+ {id:'starlight',productId:'tack_starlight',name:'Starlight Royal',cents:399,tagline:'A little night-sky magic.',vibe:'Celestial',horse:'weekly_moonstone',description:'Midnight velvet, golden constellations and tiny moonstone settings. A celestial show look with a sweeping crescent bridle.',
+  design:{ornament:'compass',leather:'#202742',cloth:'#454b80',metal:'#e1bd68',accent:'#cadff6',lining:'#eeeadc',pattern:'lattice',trim:'double',profiles:{saddle:'show',pad:'shield',bridle:'crescent',shoes:'guards'},premiumTheme:'starlight'}},
+ {id:'dragonfire',productId:'tack_dragonfire',name:'Dragonfire',cents:399,tagline:'For your boldest entrance.',vibe:'Adventure',horse:'weekly_amber',description:'Ember-red panels, dark leather and sculpted copper flames. A high cantle, pointed pad and plated boots make a bold silhouette.',
+  design:{ornament:'flame',leather:'#292830',cloth:'#a53737',metal:'#d59b61',accent:'#f2b54c',lining:'#dfbe9e',pattern:'chevron',trim:'studded',profiles:{saddle:'roper',pad:'swallowtail',bridle:'crown',shoes:'plated'},premiumTheme:'dragonfire'}},
+ {id:'blossom',productId:'tack_blossom',name:'Cherry Blossom',cents:399,tagline:'Soft petals. Beautiful details.',vibe:'Floral',horse:'weekly_rosewater',description:'Ivory leather, cherry-pink quilted cloth and layered petal rosettes. Rose-gold fittings finish this soft spring look.',
+  design:{ornament:'rose',leather:'#dfcdbd',cloth:'#e7a6bd',metal:'#c58a78',accent:'#f6d4e0',lining:'#faf0dd',pattern:'quilt',trim:'scallop',profiles:{saddle:'barrel',pad:'scallop',bridle:'plaited',shoes:'ribbon'},premiumTheme:'blossom'}},
+ {id:'glacier',productId:'tack_glacier',name:'Glacier Crystal',cents:399,tagline:'Catch the light on every trail.',vibe:'Crystal',horse:'weekly_frostfern',description:'Icy blue cloth and silver borders with faceted crystal settings. A shaped shield pad and crown bridle complete the wintry look.',
+  design:{ornament:'crystal',leather:'#3c6277',cloth:'#a6d4e5',metal:'#dde9ef',accent:'#82e2e3',lining:'#f1f4eb',pattern:'lattice',trim:'double',profiles:{saddle:'endurance',pad:'shield',bridle:'crown',shoes:'boots'},premiumTheme:'glacier'}},
+ {id:'forestguardian',productId:'tack_forestguardian',name:'Forest Guardian',cents:399,tagline:'Made for the woodland wanderer.',vibe:'Nature',horse:'weekly_orchard',description:'Emerald cloth, warm chestnut leather and golden leaf borders. A braided bridle and softly rounded pad suit a woodland explorer.',
+  design:{ornament:'vine',leather:'#493f31',cloth:'#357567',metal:'#d1b671',accent:'#abd088',lining:'#e9dfc4',pattern:'herringbone',trim:'braid',profiles:{saddle:'trail',pad:'round',bridle:'plaited',shoes:'wraps'},premiumTheme:'forestguardian'}},
+]);
+export const premiumTackSet=id=>PREMIUM_TACK_SETS.find(set=>set.id===id||set.productId===id)||null;

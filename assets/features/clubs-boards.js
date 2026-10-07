@@ -15,6 +15,18 @@
    alone, and nothing about a save is ever published. */
 import {CLUB_COMMONS,CLUB_CRESTS,CLUB_COLORS,clubCode,cleanClubMeta,ensureClubState,activateClub,loadClub,stashClub,creditClubPoints,ownClubPoints,acceptClubMeta,clearCurrentClubContribution} from '../club-state.js?v=clubhouse-2';
 export const id='clubs-boards';
+const NEW_BREEDS=[
+ ['emberfriesian','Ember Friesian','Legendary',0,0,'#1a1412','#ff7a2a',
+  {exclusive:'club',club:true,coat:'fire',glow:true,size:1.08,mark:'sooty',markCol:'#ff9a3a',body:'black',src:'club'}],
+ ['larksong','Larksong Unicorn','Mythic',0,0,'#f4e9ff','#ffd6f0',
+  {exclusive:'photo',prize:true,horn:true,glow:true,coat:'aurora',mark:'dapple',markCol:'#ffe6f6',body:'unicorn',src:'photo'}],
+];
+// Preview the same reward-horse identities without installing club or network hooks.
+export function registerClubHorsePreviews(library){
+ for(const row of NEW_BREEDS)library?.alias?.(row[0],row[7].body,row);
+ return NEW_BREEDS.map(row=>[...row.slice(0,7),{...row[7]}]);
+}
+
 export function install(G){
  const {$,toast}=G, S=G.save, M=G.money, T=G.tables, U=G.ui, N=G.net;
  const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -103,12 +115,7 @@ export function install(G){
     so the shop, the market and the summoning stall all skip them on their own. Each maps
     onto an authored body through breedModels.alias so dressWithRig has a model to fit. */
  const CLUB_HORSE='emberfriesian', PHOTO_HORSE='larksong';
- const NEW_BREEDS=[
-  ['emberfriesian','Ember Friesian','Legendary',0,0,'#1a1412','#ff7a2a',
-   {exclusive:'club',club:true,coat:'fire',glow:true,size:1.08,mark:'sooty',markCol:'#ff9a3a',body:'black',src:'club'}],
-  ['larksong','Larksong Unicorn','Mythic',0,0,'#f4e9ff','#ffd6f0',
-   {exclusive:'photo',prize:true,horn:true,glow:true,coat:'aurora',mark:'dapple',markCol:'#ffe6f6',body:'unicorn',src:'photo'}],
- ];
+
  /* Their stat profiles are fixed, not rolled: a leaderboard horse is a known quantity. */
  const EXCLUSIVE_STATS={emberfriesian:{speed:9,stamina:8,jump:6,accel:9,agility:5},
                         larksong:{speed:7,stamina:9,jump:7,accel:8,agility:7}};

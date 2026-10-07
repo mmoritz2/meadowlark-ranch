@@ -100,6 +100,12 @@ const PET_DUP_DUST=15;
 const LUMEN=['lumen','Luminous Spirit','Mythic',0,0,'#dfe9f7','#9fe4ff',
  {coat:'moonlit',glow:true,ability:'glow',src:'summon',body:'lipiz',size:1.02,pairPet:'glimmerfox'}];
 
+// The fitting room registers its model only; no summon, currency, or pet hooks.
+export function registerMarketHorsePreviews(library){
+ library?.alias?.(LUMEN[0],LUMEN[7].body,LUMEN);
+ return [[...LUMEN.slice(0,7),{...LUMEN[7]}]];
+}
+
 /* Every loot a door can pay, and what each one is worth. */
 const LOOT={
  tack:     {lbl:'a Rare piece of tack',       icon:'🎁'},

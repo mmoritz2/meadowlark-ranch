@@ -1,3 +1,5 @@
+import * as tackCollection from './tack-collection.js?v=native-tack-optional-20261007';
+import * as paidTack from './paid-tack.js?v=native-tack-optional-20261007';
 /* ============================================================================================
    FEATURE MODULES — the registry, and the whole contract in one place.
    ============================================================================================
@@ -206,7 +208,7 @@ import * as ui2merge from './ui2-merge.js?v=b20261001b';
 import * as seHud from './se-hud.js?v=menus-publish-20261005';
 import * as seCare from './se-care.js?v=horse-actions-1';   // versioned so a browser that cached an earlier cut fetches this one
 import * as onFoot from './on-foot.js?v=adventures-1';   // versioned: she walks, runs, jumps, climbs and swims on the animation library's clips, and the view turns round her
-import * as seMarket from './se-market.js?v=menus-publish-20261005';
+import * as seMarket from './se-market.js?v=native-tack-optional-20261007';
 import * as treasures from './hidden-treasures.js?v=b20261001b';   // golden horseshoes on the rocks and in the water, for on-foot
 import * as courseClear from './course-clear.js?v=b20261001b';   // a mown, cleared track on every event course; routes bent round what cannot be cleared
 import * as seFrame from './se-frame.js?v=menus-publish-20261005';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use
@@ -224,4 +226,4 @@ import * as riderJourneyUI from './rider-journey-ui.js?v=rider-journey-1';
 import * as rideHub from './ride-hub.js?v=club-rally-1';
 import * as petFantasy from './pet-fantasy.js?v=b20261001b';   // fantasy pets: the Emberling dragon, the Mossglow fawn, the wyvern, the griffin cub and friends
 import * as noEmoji from './no-emoji.js?v=b20261001b';   // nothing on the page is an emoji: meaningful ones become drawn icons, the rest go (installed last, so it sees everything)
-export const FEATURES=[stats,roster,newBreeds,nativeHorses,bond,mastery,tack,course,events,story,account,commerce,petModels,petFantasy,market,breeding,ranch,world,clubs,social,clubActivities,clubMembership,clubChat,seasons,seasonHunts,seasonQuests,ranchRush,ev2disc,ev2ladder,courseGuide,wVistas,wFlora,wWater,wAtmos,wQuarters,wPaths,wOutcrops,uikit,ui2horse,ui2shop,ui2compete,ui2hud,ui2club,ui2merge,lookGrade,seHud,seCare,onFoot,seMarket,treasures,courseClear,seFrame,seEvents,seJourney,seHorses,clubRides,clubFriends,storyGuidance,dialogueFocus,screenInput,missionReceipt,rushGhost,ranchRushUI,rescueRides,roundupUpgrade,riderJourney,riderJourneyUI,rideHub,clubRally,clubhouseUI,noEmoji];
+export const FEATURES=[stats,roster,newBreeds,nativeHorses,bond,mastery,tack,course,events,story,account,petModels,petFantasy,market,breeding,ranch,tackCollection,paidTack,commerce,world,clubs,social,clubActivities,clubMembership,clubChat,seasons,seasonHunts,seasonQuests,ranchRush,ev2disc,ev2ladder,courseGuide,wVistas,wFlora,wWater,wAtmos,wQuarters,wPaths,wOutcrops,uikit,ui2horse,ui2shop,ui2compete,ui2hud,ui2club,ui2merge,lookGrade,seHud,seCare,onFoot,seMarket,treasures,courseClear,seFrame,seEvents,seJourney,seHorses,clubRides,clubFriends,storyGuidance,dialogueFocus,screenInput,missionReceipt,rushGhost,ranchRushUI,rescueRides,roundupUpgrade,riderJourney,riderJourneyUI,rideHub,clubRally,clubhouseUI,noEmoji];

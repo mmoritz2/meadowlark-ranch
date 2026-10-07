@@ -7,8 +7,8 @@ const QA=require('./qa-platform.cjs');
 const {chromium}=QA;
 const staticOrigin=process.env.QA_STATIC==='1'?'https://market-preview.github.io':null;
 const url=(staticOrigin||QA.BASE)+'/ranch3d.html?qa=se-market&fresh='+Date.now();
-const STANDARD_GROUPS={offers:['wallet','season','race','doors'],horses:['horses','summon','market','breed'],catalog:['catalog','tack','pets','food','style','recipes'],character:['outfit','prestige'],ranches:['ranches','furniture'],currencies:['purchases','gems']};
-const STANDARD_LABELS=['Offers','Horses','Catalog','Rider','Ranches','Currencies'];
+const STANDARD_GROUPS={offers:['wallet','season','race','doors'],horses:['horses','summon','market','breed'],tack:['tackcollection','tack'],catalog:['catalog','pets','food','style','recipes'],character:['outfit','prestige'],ranches:['ranches','furniture'],currencies:['purchases','gems']};
+const STANDARD_LABELS=['Offers','Horses','Tack','Catalog','Rider','Ranches','Store'];
 const checks=[];
 function check(name,ok,detail){checks.push({name,ok:!!ok,detail});console.log((ok?'PASS ':'FAIL ')+name+(detail!==undefined?' — '+JSON.stringify(detail):''));}
 let browser=null;
@@ -48,7 +48,7 @@ setTimeout(async()=>{console.error('WATCHDOG: no result after 300 s');try{if(bro
  const expectedGroups=[...STANDARD_LABELS,...(extra.length?['More']:[])];
  const groupedCorrectly=a.entries.every(e=>e.group===(Object.entries(STANDARD_GROUPS).find(([,ids])=>ids.includes(e.id))?.[0]||'more'));
  const pickerMatches=a.entries.every(e=>a.pickerValues.includes(e.id))&&new Set(a.pickerValues).size===a.entries.length+1&&a.pickerValues.includes('@character');
- check('six standard departments and any added tabs remain grouped and reachable',a.sideLeft===0&&a.groups.join('|')===expectedGroups.join('|')&&a.tabs>=19&&a.hidden>0&&a.expanded===1&&groupedCorrectly&&pickerMatches,{groups:a.groups,extras:extra,tabs:a.tabs,hidden:a.hidden,expanded:a.expanded,pickerTabs:a.pickerTabs,left:a.sideLeft});
+ check('seven standard departments and any added tabs remain grouped and reachable',a.sideLeft===0&&a.groups.join('|')===expectedGroups.join('|')&&a.tabs>=19&&a.hidden>0&&a.expanded===1&&groupedCorrectly&&pickerMatches,{groups:a.groups,extras:extra,tabs:a.tabs,hidden:a.hidden,expanded:a.expanded,pickerTabs:a.pickerTabs,left:a.sideLeft});
  for(const group of a.groupIds){
   const header=page.locator('#shopPanel [data-se-group-toggle="'+group+'"]');
   if(await header.getAttribute('aria-expanded')!=='true')await header.click();

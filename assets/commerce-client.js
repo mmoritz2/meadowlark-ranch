@@ -26,4 +26,4 @@ export function paidVipUntil() {
   // Require periodic online verification; never turn the response into a durable save flag.
   return account && Date.now() - verifiedAt < 120000 && !account.wallet.held ? account.wallet.vipUntil : 0;
 }
-export function currentAccount() {return account;}
+export function currentAccount() {return account && Date.now() - verifiedAt < 120000 ? account : null;}

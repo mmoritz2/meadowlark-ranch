@@ -9,8 +9,9 @@ folder, and it runs.
 
 **▶️ [Play it in your browser](https://mmoritz2.github.io/meadowlark-ranch/)**
 
-[Preview the Gems & VIP store](https://mmoritz2.github.io/meadowlark-ranch/store.html).
-The GitHub Pages store shows sample prices and pass benefits. Purchases, accounts,
+[Visit the ranch store](https://mmoritz2.github.io/meadowlark-ranch/store.html).
+Browse all 127 tack pieces with illustrated previews and links to the 3D fitting
+room. The GitHub Pages store also shows sample gem prices and VIP pass benefits. Purchases, accounts,
 and cloud backups are not available on GitHub Pages; they need the separate
 account server. No real-money payments are enabled.
 
@@ -51,6 +52,40 @@ For VR, serve over HTTPS (WebXR requires a secure origin) and press **Ride in VR
 
 ```bash
 python serve-vr.py
+```
+
+## Fitted tack collections
+
+Open **Menu → Tack boutique** or **Shop → Tack → Tack boutique** to choose a saved adult horse, buy
+pieces with earned coins, and equip or move owned pieces between horses. The
+boutique's **Try on in 3D** link keeps the selected horse. The standalone fitting
+room is `tack-studio.html?horse=white-western&collection=rainbow` and includes all
+70 equine roster identities; dragons keep their existing equipment path.
+
+The collection renderer fits the detailed Bay Sporthorse, White Western, Bay
+Western and their native breed variants from the actual body and skeleton.
+Horses with no equipped tack have no visible saddle, pad or bridle. The original
+equipment is available as the free, three-piece **Classic Western** set in the
+boutique. Equip its saddle, pad and bridle together or individually; removing
+the last piece leaves the horse clear. New collections replace the original
+look while preserving the hidden rig contacts used for rider movement. Bridles
+include matching resting reins in the fitting room and on parked horses;
+mounting hands the reins to the rider without drawing a second pair.
+
+The catalog contains 100 earned-coin pieces, 24 account-owned pieces and the
+three free Classic Western pieces. Paid ownership still requires the account service;
+GitHub Pages provides previews and does not enable checkout.
+
+Focused checks:
+
+```bash
+node tools/qa-tack-native.mjs --optional
+node tools/qa-tack-reins.mjs
+node tools/qa-tack-native.mjs --catalog
+node tools/qa-native-tack-integration.cjs
+node tools/qa-tack-studio-roster.cjs
+node tools/qa-tack-collection.cjs
+node tools/qa-paid-tack.cjs
 ```
 
 ## Rider wardrobe

@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#193f36">
   <title>Ranch Store · Meadowlark</title>
-  <link rel="stylesheet" href="assets/store.css">
-  <script type="module" src="assets/store.js"></script>
+  <link rel="stylesheet" href="assets/store.css?v=native-store-20261007">
+  <script type="module" src="assets/store.js?v=native-store-20261007"></script>
 </head>
 <body>
   <header><a class="brand" href="ranch3d.html">MEADOWLARK <span>RANCH</span></a><a class="back" href="ranch3d.html">Back to the ranch <span aria-hidden="true">↗</span></a></header>
   <main>
-    <div class="store-intro"><div><div class="eyebrow">THE RANCH STORE</div><h1>A little extra for the trail.</h1><p class="intro">Optional gems and VIP, all in one place.</p></div><span id="store-badge" class="test-badge">Test store</span></div>
+    <div class="store-intro"><div><div class="eyebrow">THE RANCH STORE</div><h1>Make the trail your own.</h1><p class="intro">Tack for every ride, plus optional gems and VIP.</p></div><span id="store-badge" class="test-badge">Test store</span></div>
     <p id="store-notice" class="test-banner">Sample prices. No real payments. Use Stripe test cards only.</p>
     <div class="status-row"><p id="message" role="status" aria-live="polite">Loading the store…</p><button id="retry" class="text-button" hidden>Try again</button></div>
     <section id="guest" class="account-card guest-card" hidden aria-label="Ranch account">
@@ -26,11 +26,29 @@
       <code id="recovery-code"></code><button id="recovery-done">I’ve saved my code</button>
     </section>
     <div class="store-tabs" role="tablist" aria-label="Store sections">
-      <button id="tab-gems" type="button" role="tab" aria-selected="true" aria-controls="panel-gems" data-tab="gems">Gems</button>
+      <button id="tab-discover" type="button" role="tab" aria-selected="true" aria-controls="panel-discover" data-tab="discover">Discover</button>
+      <button id="tab-tack" type="button" role="tab" aria-selected="false" aria-controls="panel-tack" data-tab="tack" tabindex="-1">Tack · 127 pieces</button>
+      <button id="tab-gems" type="button" role="tab" aria-selected="false" aria-controls="panel-gems" data-tab="gems" tabindex="-1">Gems</button>
       <button id="tab-vip" type="button" role="tab" aria-selected="false" aria-controls="panel-vip" data-tab="vip" tabindex="-1">VIP passes</button>
       <button id="tab-account" type="button" role="tab" aria-selected="false" aria-controls="panel-account" data-tab="account" tabindex="-1">Your account</button>
     </div>
-    <section id="panel-gems" role="tabpanel" aria-labelledby="tab-gems" tabindex="0">
+    <section id="panel-discover" role="tabpanel" aria-labelledby="tab-discover" tabindex="0">
+      <div id="discover-feature"></div>
+      <div class="section-heading"><div><div class="eyebrow">SIX COORDINATED LOOKS</div><h2>A set for every mood.</h2><p>See every included piece, then try the actual fit in 3D.</p></div><button class="text-button" data-store-section="tack">Browse all 127 pieces →</button></div>
+      <div id="store-sets" class="store-set-grid"></div>
+      <div id="discover-classic"></div>
+      <div class="store-crosslinks"><a href="ranch3d.html?shop=tackcollection"><b>The tack boutique ↗</b><span>Collect with earned coins, then choose a horse to equip.</span></a><a href="tack-studio.html"><b>The fitting room ↗</b><span>Try any piece or mix a set on 70 free horse previews.</span></a><button type="button" data-store-section="vip"><b>Explore VIP passes →</b><span>Planned one-time passes. No automatic renewal.</span></button></div>
+    </section>
+    <section id="panel-tack" role="tabpanel" aria-labelledby="tab-tack" tabindex="0" hidden>
+      <div id="tack-look-detail" hidden></div>
+      <div class="section-heading"><div><h2>The complete tack collection.</h2><p>100 pieces for earned coins, 3 free originals, and 24 pieces in premium sets.</p></div><a class="catalog-link" href="ranch3d.html?shop=tackcollection">Open the boutique ↗</a></div>
+      <div class="store-tack-filters"><label for="tack-search">Search pieces<input id="tack-search" type="search" placeholder="Name, color or collection…" autocomplete="off"></label><label for="tack-slot">Category<select id="tack-slot"><option value="all">All categories</option></select></label><label for="tack-collection-filter">Collection<select id="tack-collection-filter"><option value="all">All 32 collections</option></select></label><label for="tack-kind">Available with<select id="tack-kind"><option value="all">Everything</option><option value="free">Free originals</option><option value="coins">Earned coins</option><option value="premium">Premium sets</option></select></label></div>
+      <div class="catalog-results"><p id="tack-result-count" tabindex="-1" role="status" aria-live="polite"></p><button id="tack-clear-filters" class="text-button">Clear filters</button></div>
+      <div id="tack-item-grid" class="store-item-grid"></div><div id="tack-empty" class="catalog-empty" hidden><h3>No matching pieces.</h3><p>Try another name, category or collection.</p><button id="tack-reset-empty" class="secondary">Show all tack</button></div>
+      <nav id="tack-pagination" class="catalog-pagination" aria-label="Tack catalog pages"><button id="tack-previous" class="secondary">← Previous</button><span id="tack-page"></span><button id="tack-next" class="secondary">Next →</button></nav>
+      <p class="fine-print">Item pictures are illustrations. The fitting room shows the actual equipment on each horse. Trying a look never changes your ranch or purchases anything.</p>
+    </section>
+    <section id="panel-gems" role="tabpanel" aria-labelledby="tab-gems" tabindex="0" hidden>
       <div class="section-heading"><div><h2>Choose a gem pack.</h2><p>Purchased gems can be exchanged for VIP passes.</p></div><span class="quiet-note">One-time purchases</span></div>
       <div id="products" class="products"></div>
       <p id="checkout-note" class="fine-print" hidden>Test checkout will be available once Stripe is connected.</p>
@@ -58,7 +76,7 @@
         <details id="history-section" class="store-details" hidden><summary>Purchase history</summary><ul id="history"></ul></details>
       </div>
     </section>
-    <footer>Meadowlark Ranch · Store preview<br>Final pricing, support details, and purchase terms will be added before real payments launch.</footer>
+    <footer>Meadowlark Ranch · Store preview<br>Premium purchases are coming soon. Final prices, support and purchase terms will be confirmed before launch.<br>Original collection tack by Meadowlark Ranch. Classic Western tack and fitting-room horses by <a href="https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4" target="_blank" rel="noopener noreferrer">WildMesh 3D</a> · <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0</a>.</footer>
   </main>
   <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-text"><form method="dialog"><h2 id="confirm-title">Confirm</h2><p id="confirm-text"></p><div class="dialog-actions"><button value="cancel" class="secondary" autofocus>Cancel</button><button value="yes" id="confirm-yes">Continue</button></div></form></dialog>
 </body>

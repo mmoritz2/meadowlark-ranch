@@ -15,7 +15,11 @@ change the Stripe account's dashboard defaults.
 The game and storefront preview are published at
 <https://mmoritz2.github.io/meadowlark-ranch/store.html>. GitHub Pages serves
 static files; it cannot run this Node.js account server, its database, or Stripe
-webhooks. On `github.io`, the store displays the public sample catalog, disables
+webhooks. On `github.io`, the store displays all 127 tack pieces in 32 collections with
+illustrated previews, collection filters and exact-item 3D fitting-room links.
+The free Classic Western set and earned-coin tack can be equipped from the
+in-game boutique. The six premium sets, gems and VIP show a sample catalog.
+The store disables
 purchases, and hides sign-in and cloud-backup controls. It never sends account
 or payment API requests. The game continues to use its existing local saves.
 
@@ -35,7 +39,8 @@ node server/commerce.mjs
 
 Open <http://127.0.0.1:8432/store.html>. The same server serves the game at
 <http://127.0.0.1:8432/ranch3d.html>. In the game, use Menu → More → Account & VIP, or Market → Currencies →
-Gems & VIP. The store has separate Gems, VIP passes, and Your account tabs.
+Gems & VIP. The store includes a discovery page, tack catalog, Gems, VIP passes and Your
+account tabs. The account tab is available only on the account server.
 Cloud backup and purchase history are under Your account.
 
 Accounts, recovery, and cloud-backup controls work without Stripe. Checkout is

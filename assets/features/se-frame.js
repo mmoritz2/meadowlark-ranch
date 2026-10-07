@@ -517,6 +517,8 @@ body.se-frame-open #seFrameTop{display:flex}
    {k:'market',t:'Market',s:'Horses, tack and supplies',groups:['home','more'],source:'shopBtn',go:clickId('shopBtn')},
    {k:'ranch',t:'Build your ranch',s:'Buildings, furniture and land',groups:['home','more'],source:'buildBtn',go:clickId('buildBtn')},
    {k:'character',t:'Your rider',s:'Clothes, hair and accessories',groups:['home','more'],source:'charBtn',go:clickId('charBtn')},
+   {k:'tack',icon:'style',t:'Tack boutique',s:(G.tackCollection?.catalog.length||127)+' pieces to browse, preview and equip',groups:['horses','more'],need:()=>!!G.tackCollection,go:()=>G.tackCollection.open()},
+   {k:'fitting',icon:'studio',t:'Tack fitting room',s:'See saddles, pads, bridles and legwear in 3D',groups:['horses'],need:()=>!!G.tackCollection,go:()=>location.assign('tack-studio.html')},
    {k:'care',t:'Horse care',s:'Feed, groom and build your bond',groups:['horses'],source:'careBtn',go:clickId('careBtn')},
    {k:'foal',t:'Breeding',s:'Pair horses and raise foals',groups:['horses'],source:'breedBtn',go:clickId('breedBtn')},
    {k:'style',t:'Horse style',s:'Coats, grooming and tack',groups:['horses'],source:'styleBtn',go:clickId('styleBtn')},
@@ -532,7 +534,7 @@ body.se-frame-open #seFrameTop{display:flex}
    {k:'inbox',t:'Inbox',s:'Letters, news and gifts',groups:['more'],source:'inboxBtn',go:clickId('inboxBtn'),pipOf:'inboxBtn'},
    {k:'chat',t:'Club chat',s:'Talk to your riding club',groups:['more'],source:'chatBtn',need:()=>!!G.net?.SOCIAL,go:clickId('chatBtn')},
    {k:'emotes',t:'Emotes',s:'Wave, laugh and dance',groups:['more'],source:'emoteBtn',go:clickId('emoteBtn')},
-   {k:'account',t:G.commerce?.storeLabel||'Account & VIP',s:G.commerce?.isStaticStore?'Gem packs and VIP plans':'Gem store and cloud backups',groups:['more'],need:()=>!!G.commerce,go:()=>G.ui.dispatch('store')},
+   {k:'account',icon:'market',t:'Ranch store',s:G.commerce?.isStaticStore?'Tack pictures, gems and VIP · online preview':'Tack sets, gems, VIP and your account',groups:['more'],need:()=>!!G.commerce,go:()=>G.ui.dispatch('store')},
    {k:'photo',t:'Photo mode',s:'Capture a moment on the trail',groups:['explore'],source:'poseBtn',go:clickId('poseBtn')},
    {k:'graphics',t:'Graphics',s:'Adjust detail and performance',groups:['more'],source:'qualBtn',go:clickId('qualBtn')},
    {k:'settings',t:'Settings',s:'Sound, controls and preferences',groups:['more'],source:'settingsBtn',go:clickId('settingsBtn')},
@@ -551,7 +553,7 @@ body.se-frame-open #seFrameTop{display:flex}
     const source=m.source?$(m.source):null;
     const have=(!m.source||!!source)&&(!m.need||m.need())&&(!source||(!source.hidden&&source.style.display!=='none'));
     let b=tiles.querySelector(':scope>[data-sem-main="'+m.k+'"]');
-    if(!b&&have){b=document.createElement('button');b.type='button';b.dataset.semMain=m.k;b.dataset.semT=m.t;b.dataset.semS=m.s;content(b,m.k,m.t,m.s);
+    if(!b&&have){b=document.createElement('button');b.type='button';b.dataset.semMain=m.k;b.dataset.semT=m.t;b.dataset.semS=m.s;content(b,m.icon||m.k,m.t,m.s);
      b.onclick=()=>{closeForAction();m.go();};tiles.insertBefore(b,empty);}
     if(!b)continue;
     const show=have&&(search?(m.t+' '+m.s).toLowerCase().includes(search):m.groups.includes(category));b.hidden=!show;if(show)count++;

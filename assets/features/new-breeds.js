@@ -217,6 +217,14 @@ const PATH_W=2.9;           // ranch3d.html's road width
 /* ---------------------------------------------------------------------------------------
    INSTALL
    --------------------------------------------------------------------------------------- */
+// Shared model/appearance registration for read-only previews. It installs no
+// game events, economy rules, save changes, or UI. Return copies for default coats.
+export function registerNewBreedPreviews(library){
+ for(const row of ROWS)if(row[7].body)library?.alias?.(row[0],row[7].body,row);
+ for(const [key,theme] of Object.entries(THEMES))registerFantasyTheme(key,theme.cfg,theme.fx);
+ for(const row of ROWS){const flags=row[7];if(flags.coat)registerFantasyAppearance(row[0],{theme:flags.coat,mane:flags.maneCol||row[6],...(flags.horn?{horn:true}:{})});}
+ return ROWS.map(row=>[...row.slice(0,7),{...row[7]}]);
+}
 export function install(G){
  const {THREE,$,toast}=G, T=G.tables, H=G.horse, W=G.world, BREEDS3=T.BREEDS3, R=H.roster;
  const byKey=k=>BREEDS3.find(b=>b[0]===k);

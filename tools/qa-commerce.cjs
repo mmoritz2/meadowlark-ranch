@@ -66,7 +66,7 @@ const fs=require('node:fs');
       return {vip:G.money.isVIP(s),paid:G.commerce.paidVipUntil()>Date.now(),localPaid:s.paidVipUntil||s.premium||s.commerce||null,errors:G.errors};
     });
     assert.equal(state.vip,true);assert.equal(state.paid,true);assert.equal(state.localPaid,null);assert.deepEqual(state.errors,[]);
-    await page.getByRole('button',{name:'Open Gems & VIP',exact:true}).click();await page.waitForURL('**/store.html');
+    await page.getByRole('button',{name:'Browse the store',exact:true}).click();await page.waitForURL('**/store.html');
     await page.locator('#account').waitFor({state:'visible'});
     assert.equal(await page.locator('#balance').textContent(),'8');
     await page.getByRole('tab',{name:'Your account',exact:true}).click();

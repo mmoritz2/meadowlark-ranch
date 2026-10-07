@@ -350,7 +350,7 @@ export function createCommerceServer(service, root = ROOT) {
       if (!['GET', 'HEAD'].includes(req.method)) fail(405, 'Method not allowed.');
       const decoded = decodeURIComponent(path);
       const name = decoded === '/' ? 'index.html' : decoded.slice(1);
-      if (name.split('/').some(p => p.startsWith('.')) || (!name.startsWith('assets/') && !['index.html', 'ranch3d.html', 'store.html', 'sw.js', 'manifest.webmanifest'].includes(name) && !PUBLIC_RUNTIME_FILES.has(name))) fail(404, 'Not found.');
+      if (name.split('/').some(p => p.startsWith('.')) || (!name.startsWith('assets/') && !['index.html', 'ranch3d.html', 'store.html', 'tack-studio.html', 'sw.js', 'manifest.webmanifest'].includes(name) && !PUBLIC_RUNTIME_FILES.has(name))) fail(404, 'Not found.');
       if (!mime[extname(name)]) fail(404, 'Not found.');
       let file;
       try {file = realpathSync(resolve(root, name));} catch {fail(404, 'Not found.');}

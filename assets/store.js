@@ -1,8 +1,11 @@
 import {api, isStaticStore} from './commerce-client.js';
 import {PRODUCTS, REWARDS} from './store-catalog.mjs';
+import {createTackStore} from './store-tack.mjs?v=native-store-20261007';
 const $ = id => document.getElementById(id);
 const SAVE = 'starRanchFable_v1', BACKUP = 'meadowlark_before_cloud_restore';
-let catalog, account, authMode = 'login', working = false, cardsBuilt = false, afterAuthTab = 'gems', activeTab = 'gems';
+const params=new URLSearchParams(location.search),initialTab=['discover','tack','gems','vip','account'].includes(params.get('tab'))?params.get('tab'):'discover';
+let catalog, account, authMode = 'login', working = false, cardsBuilt = false, afterAuthTab = initialTab==='account'?'discover':initialTab, activeTab = initialTab;
+const allProducts=()=>[...(catalog?.products||[]),...(catalog?.premiumTack?.products||[])];
 const checkoutRequests = new Map(), redeemRequests = new Map();
 const money = cents => new Intl.NumberFormat('en-US', {style:'currency',currency:'USD'}).format(cents / 100);
 const date = t => new Date(t).toLocaleString();
@@ -36,8 +39,8 @@ async function loadAccount() {
   try {account = await api('me');} catch(e) {if (e.status === 401) clearAccount(); else throw e;}
 }
 function selectTab(name, focus = false) {
-  if (isStaticStore && !['gems','vip'].includes(name)) return;
-  activeTab = name;
+  if (isStaticStore && !['discover','tack','gems','vip'].includes(name)) name='discover';
+  activeTab = name;document.body.dataset.storeTab=name;
   if (!isStaticStore) $('guest').hidden = !catalog || !!account || name === 'account';
   for (const tab of document.querySelectorAll('[data-tab]')) {
     const selected = tab.dataset.tab === name;
@@ -46,11 +49,23 @@ function selectTab(name, focus = false) {
     if (selected && focus) tab.focus();
   }
 }
-function showAuth(mode, returnTab = 'gems') {
+function showAuth(mode, returnTab = activeTab==='account'?afterAuthTab:activeTab) {
   afterAuthTab = returnTab; setAuth(mode); selectTab('account'); render();
   $('auth-form').elements.username.focus({preventScroll:true});
   $('auth').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',block:'nearest'});
 }
+function buyProduct(id){
+  if(isStaticStore)return;
+  const p=allProducts().find(p=>p.id===id);if(!p)return;
+  if(!account){showAuth('login',p.tack?'tack':p.days?'vip':'gems');return;}
+  if(!catalog.checkoutEnabled||account.wallet.held||(p.tack&&account.tack?.some(t=>t.product===id)))return;
+  run(async()=>{
+    if(!checkoutRequests.has(id))checkoutRequests.set(id,crypto.randomUUID());
+    try{const result=await api('checkout',{product:id,requestId:checkoutRequests.get(id)});const url=new URL(result.url);if(url.origin!=='https://checkout.stripe.com')throw Error('Unexpected checkout address.');location.assign(url.href);}
+    catch(error){if(error.status===409)checkoutRequests.delete(id);throw error;}
+  });
+}
+const tackStore=createTackStore({document,isStatic:isStaticStore,getCatalog:()=>catalog,getAccount:()=>account,isWorking:()=>working,buyProduct,selectTab,params});
 function buildCards() {
   if (!catalog || cardsBuilt) return;
   cardsBuilt = true;
@@ -62,17 +77,7 @@ function buildCards() {
     const buy=isStaticStore?node('p','Available at launch','product-coming-soon'):node('button');
     if (!isStaticStore) {
     buy.dataset.product=p.id;
-    buy.addEventListener('click',()=>{
-      if(!account){showAuth('login',p.days?'vip':'gems');return;}
-      run(async()=>{
-        if(!checkoutRequests.has(p.id))checkoutRequests.set(p.id,crypto.randomUUID());
-        try {
-          const result=await api('checkout',{product:p.id,requestId:checkoutRequests.get(p.id)});
-          const url=new URL(result.url); if(url.origin!=='https://checkout.stripe.com')throw Error('Unexpected checkout address.');
-          location.assign(url.href);
-        } catch(e) {if(e.status===409)checkoutRequests.delete(p.id);throw e;}
-      });
-    });
+    buy.addEventListener('click',()=>buyProduct(p.id));
     }
     card.append(art,node('h3',p.name),amount,node('p',money(p.cents)+' USD · sample price','price'),buy);
     $(p.days?'vip-products':'products').append(card);
@@ -91,6 +96,7 @@ function buildCards() {
   });
 }
 function render() {
+  tackStore.render();
   $('auth').hidden = !catalog || !!account;
   $('guest').hidden = !catalog || !!account || activeTab === 'account';
   $('account').hidden = !account;
@@ -108,7 +114,7 @@ function render() {
     // Browser storage may be unavailable even though the account service works.
     try {$('local-undo').hidden = !localStorage.getItem(BACKUP);} catch {$('local-undo').hidden = true;}
     const entries = account.orders.filter(o => o.fulfilled).map(o => {
-      const li=node('li'); li.append(node('b', catalog.products.find(p=>p.id===o.product)?.name || o.product),node('span',money(o.cents)+' · '+date(o.fulfilled)+(o.refunded?' · refunded '+money(o.refunded):''))); return li;
+      const li=node('li'); li.append(node('b', allProducts().find(p=>p.id===o.product)?.name || o.product),node('span',money(o.cents)+' · '+date(o.fulfilled)+(o.refunded?' · refunded '+money(o.refunded):''))); return li;
     });
     $('history').replaceChildren(...(entries.length ? entries : [node('li','Your completed purchases will appear here.')]));
   }
@@ -139,7 +145,7 @@ function showStaticPreview() {
   document.body.classList.add('static-preview');
   document.title = 'Store preview · Meadowlark';
   $('store-badge').textContent = 'Store preview';
-  $('store-notice').replaceChildren(node('b','Purchases coming soon.'),node('span','Browse our draft gem packs and VIP passes. Prices and benefits may change before launch.'));
+  $('store-notice').replaceChildren(node('b','Purchases coming soon.'),node('span','Browse every tack piece and try on any look. Premium sets, gem packs and VIP display draft prices; purchases are not available here.'));
   $('store-notice').classList.add('preview-notice');
   for (const id of ['guest','account','recovery-result','tab-account','panel-account','redeem-section','confirm-dialog']) $(id).remove();
   document.querySelector('.status-row').remove();
@@ -151,7 +157,7 @@ function showStaticPreview() {
   document.querySelector('.vip-benefits .eyebrow').textContent = 'PLANNED VIP BENEFITS';
   $('vip-note').textContent = 'Paid VIP will become available when purchases launch. You can keep playing and earning rewards in the ranch today.';
   catalog = {checkoutEnabled:false, products:Object.entries(PRODUCTS).map(([id,p])=>({id,...p,currency:'usd'})), rewards:Object.entries(REWARDS).map(([id,r])=>({id,...r}))};
-  buildCards();
+  buildCards();tackStore.render();
 }
 if (isStaticStore) showStaticPreview();
 for (const tab of document.querySelectorAll('[data-tab]')) {
@@ -163,6 +169,8 @@ for (const tab of document.querySelectorAll('[data-tab]')) {
   };
 }
 $('show-vip').onclick=()=>selectTab('vip',true);
+for(const button of document.querySelectorAll('[data-store-section]'))button.onclick=()=>selectTab(button.dataset.storeSection,true);
+selectTab(initialTab);
 if (!isStaticStore) {
 $('show-login').onclick=()=>showAuth('login');
 $('show-register').onclick=()=>showAuth('register');
@@ -208,7 +216,7 @@ async function reconcileReturn() {
   const result=await api('reconcile',{sessionId:id});await loadAccount();
   if(result.fulfilled){
     const url=new URL(location.href);url.searchParams.delete('checkout');url.searchParams.delete('session_id');
-    history.replaceState(null,'',url.pathname+url.search+url.hash);message('Test purchase delivered to your account.');
+    history.replaceState(null,'',url.pathname+url.search+url.hash);if(params.get('tab')==='tack')selectTab('tack');message('Test purchase delivered to your account.');
   } else message('Payment has not been confirmed yet. Refresh your balance in a moment.');
   return true;
 }
@@ -216,7 +224,7 @@ async function loadStore() {
   $('retry').hidden=true;
   try {
     catalog=await api('catalog');await loadAccount();message('');
-    if(new URLSearchParams(location.search).get('checkout')==='cancelled')message('Checkout cancelled. No gems or VIP were added.');
+    if(new URLSearchParams(location.search).get('checkout')==='cancelled')message('Checkout cancelled. No purchases were added.');
     await reconcileReturn();
   } catch(e) {$('retry').hidden=!!account;throw e;}
 }

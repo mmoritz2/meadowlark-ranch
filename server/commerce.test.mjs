@@ -226,6 +226,7 @@ test('HTTP protects account data, enforces origin, blocks private files, and exp
   const cookie=login.headers.get('set-cookie');assert.match(cookie,/HttpOnly/);assert.match(cookie,/SameSite=Lax/);
   const headers={Cookie:cookie.split(';')[0]};const me=await request('/api/me',undefined,headers);assert.equal(me.status,200);assert.equal(me.headers.get('cache-control'),'no-store');
   for(const path of ['/server/data/commerce.sqlite','/.env','/.git/config','/server/commerce.mjs','/output/secret.json','/assets/../server/commerce.mjs']) assert.equal((await request(path)).status,404,path);
+  const fittingRoom=await request('/tack-studio.html');assert.equal(fittingRoom.status,200);assert.match(await fittingRoom.text(),/tack-studio\.js/);
   const store=await request('/store.html');assert.equal(store.status,200);assert.match(store.headers.get('content-security-policy'),/script-src 'self'/);
   assert.equal((await request('/api/logout',{},headers)).status,200);assert.equal((await request('/api/me',undefined,headers)).status,401);
 });

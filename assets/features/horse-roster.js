@@ -259,6 +259,14 @@ const SEASON_CALL_GEMS=30, SEASON_CALL_PITY=3;
 /* ---------------------------------------------------------------------------------------
    INSTALL
    --------------------------------------------------------------------------------------- */
+// Read-only fitting-room registration: no events, rewards, or save access.
+export function registerRosterPreviews(library){
+ const rows=NEW_BREEDS.filter(row=>!row[7]?.dragon);
+ for(const row of rows)if(row[7]?.body)library?.alias?.(row[0],row[7].body,row);
+ for(const [key,theme] of Object.entries(NEW_THEMES))registerFantasyTheme(key,theme.cfg,theme.fx);
+ for(const row of rows){const flags=row[7]||{};registerFantasyAppearance(row[0],{mane:row[6],...(flags.coat?{theme:flags.coat}:{body:row[5]}),...(flags.horn?{horn:true}:{}),...(flags.wings?{wings:true}:{})});}
+ return rows.map(row=>[...row.slice(0,7),{...row[7]}]);
+}
 export function install(G){
  const {THREE,$,toast}=G, T=G.tables, BREEDS3=T.BREEDS3, TIER_BASE=T.TIER_BASE, TIER_STARS=T.TIER_STARS, MARKS=T.MARKS, MARKS2=T.MARKS2||{none:0,blaze:1,snip:2,socks:3,stockings:4,star:5};
  const player=G.horse.player, DYE_COST=T.DYE_COST||120;

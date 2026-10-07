@@ -19,6 +19,7 @@ export function initGameHero(THREE,rig){
   rig.heroSeat=new THREE.Vector3();
 }
 export function disposeMountedRig(rig){
+  rig.collectionTack?.dispose?.();rig.collectionTack=null;
   if(rig.profile?.referenceMotion)rig.heroMotion?.dispose?.();
   if(rig.profile?.nativeBreed){rig.nativeRider?.dispose?.();rig.nativeMotion?.dispose?.();}
   (rig.groom||rig.hair)?.dispose?.();
