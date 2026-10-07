@@ -25,14 +25,19 @@ def fetch(url):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--cache', type=Path)
+    parser.add_argument('--assets', nargs='+', default=['painted_plaster_wall', 'roof_slates_03', 'clay_roof_tiles'])
     parser.add_argument('--output', type=Path, default=Path(__file__).resolve().parents[2] / 'assets/textures/village')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     def source(name, url):
         cached = args.cache / name if args.cache else None
         return cached.read_bytes() if cached and cached.exists() else fetch(url)
-    records = []
-    for asset in ('painted_plaster_wall', 'roof_slates_03'):
+    manifest = args.output / 'manifest.json'
+    previous = json.loads(manifest.read_text()) if manifest.exists() else []
+    records = [r for r in previous if r['id'] not in args.assets]
+    for asset in args.assets:
+        if not asset.replace('_', '').isalnum():
+            raise ValueError('Invalid asset id')
         info = json.loads(source(asset + '-info.json', 'https://api.polyhaven.com/info/' + asset))
         files = json.loads(source(asset + '-files.json', 'https://api.polyhaven.com/files/' + asset))
         record = {'id': asset, 'page': 'https://polyhaven.com/a/' + asset, 'authors': info['authors'],

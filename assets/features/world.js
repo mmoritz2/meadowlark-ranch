@@ -203,7 +203,7 @@ export function install(G){
   return sp;
  }
  function labelAt(g,text,y){const sp=plate(text);sp.position.y=y||3;g.add(sp);return sp;}
- function building(kind,opts){opts=opts||{};if(kind==='cottage')return W.ranchArchitecture.buildCottage({variant:opts.variant||0});if(kind==='barn')return W.ranchArchitecture.buildBarn();return W.ranchArchitecture.buildOutbuilding(Object.assign({width:4.6,depth:3.2,height:3.4,animatedDoorOpening:{width:1.0,height:1.9}},opts));}
+ function building(kind,opts){opts=opts||{};if(kind==='townhouse')return W.ranchArchitecture.buildTownhouse(opts);if(kind==='cottage')return W.ranchArchitecture.buildCottage({variant:opts.variant||0});if(kind==='barn')return W.ranchArchitecture.buildBarn();return W.ranchArchitecture.buildOutbuilding(Object.assign({width:4.6,depth:3.2,height:3.4,animatedDoorOpening:{width:1.0,height:1.9}},opts));}
  /* A door: stand near a building and press E to open the panel it houses. */
  function door(id,x,z,r,label,open){return W.addThing({kind:'door',id,x,z,g:null,reach:r,label:()=>label+' (E)',use:()=>{try{open();}catch(e){console.error('door '+id,e);}}});}
 
@@ -211,13 +211,13 @@ export function install(G){
  const TOWNS=[
   {id:'cottonwood',region:'cottonwood',name:'Cottonwood Village',cx:47,cz:-50,
    buildings:[
-    {id:'store',kind:'outbuilding',x:34,z:-58,rot:0.9,opts:{exterior:'village',variant:0},label:'🛍️ Petal & Pail general store',r:2.8,open:()=>UI.openShop('food'),door:'🛍️ Enter the general store'},
+    {id:'store',kind:'townhouse',x:34,z:-58,rot:0.9,opts:{width:5.4,depth:3.8,store:true,variant:1,name:'Cottonwood | Petal & Pail'},label:'🛍️ Petal & Pail general store',r:3.5,open:()=>UI.openShop('food'),door:'🛍️ Enter the general store'},
     {id:'auction',kind:'barn',x:64,z:-58,rot:-0.5,label:'🏛️ Cottonwood Auction House',r:5.2,open:()=>UI.openShop('market'),door:'🏛️ Step into the auction house',glyph:'🏛️'},
-    {id:'clubhouse',kind:'cottage',x:33,z:-45,rot:1.2,variant:2,label:'🏠 The Meadowlark Club House',r:2.6,open:()=>UI.openOnline(),door:'🏠 Go into the club house',glyph:'🏠'},
-    {id:'inn',kind:'cottage',x:41,z:-63,rot:0.2,variant:3,label:'🏨 The Blossom Inn',r:2.6,open:()=>UI.openCare(),door:'🏨 Rest at the inn'},
+    {id:'clubhouse',kind:'townhouse',x:33,z:-45,rot:1.2,opts:{width:5.0,depth:3.6,variant:2,name:'Cottonwood | Club House'},label:'🏠 The Meadowlark Club House',r:3.3,open:()=>UI.openOnline(),door:'🏠 Go into the club house',glyph:'🏠'},
+    {id:'inn',kind:'townhouse',x:41,z:-63,rot:0.2,opts:{width:5.8,depth:4.2,variant:0,name:'Cottonwood | Blossom Inn'},label:'🏨 The Blossom Inn',r:3.7,open:()=>UI.openCare(),door:'🏨 Rest at the inn'},
    ],
    folk:[
-    {id:'cw_pim',name:'Pim',icon:'🧑',hat:'#c9a86a',shirt:'#6a8fbf',idle:'Morning! The store had fresh apples in — go on, your horse will thank you.',path:[[40,-52],[36,-58],[44,-60],[50,-54]]},
+    {id:'cw_pim',name:'Pim',icon:'🧑',hat:'#c9a86a',shirt:'#6a8fbf',idle:'Morning! The store had fresh apples in — go on, your horse will thank you.',walkBy:'store',path:[[40,-52],[36,-58],[44,-60],[50,-54]]},
     {id:'cw_rosa',name:'Rosa',icon:'👩',hat:'#e07a7a',shirt:'#9bbf6a',idle:'The auction house is buzzing today. A grey went for six hundred, can you believe it?',path:[[58,-52],[62,-46],[52,-44],[50,-56]]},
     {id:'cw_ned',name:'Old Ned',icon:'👴',hat:'#8a7a5a',shirt:'#7a5a3a',idle:'Been here since before the bridge. Cottonwood was three cottages and a well.',path:[[36,-48],[38,-40],[46,-38],[44,-46]]},
    ]},
@@ -296,8 +296,15 @@ export function install(G){
    W.addThing({kind:'oasis',id:'oasis',x:o.x,z:o.z,g:null,reach:o.r+3,label:()=>'🌴 Let your horse drink (E)',use:()=>{let ok=false;S.sync(s=>{const h=s.horses[H.rideIdx()];if(!h)return;h.needs=h.needs||{};h.needs.thirst=Math.min(100,(h.needs.thirst||0)+40);ok=true;});if(ok){toast('🌴 '+H.ridden().name+' drinks deep at the oasis. +40 thirst');G.sChime();}}});
   }
   for(const f of tn.folk){   // townsfolk stroll their little rounds; quest-givers stay put so they can be found
-   const def={id:f.id,name:f.name,icon:f.icon,x:f.path[0][0],z:f.path[0][1],hat:f.hat,shirt:f.shirt,idle:f.idle,folk:true};
-   try{const e=W.addNPC(def);P.townsfolk.push({e,def,path:f.path,wi:1,x:def.x,z:def.z,heading:0,town:tn.id,pause:0});}catch(err){console.error('townsfolk '+f.id,err);}
+   // A shop stroll follows its actual placed forecourt, including findClear's
+   // relocation. The former fixed loop crossed the larger shop's front window.
+   const shop=f.walkBy&&P.LANDMARKS.find(l=>l.id===tn.id+':'+f.walkBy)?.grp;
+   let path=f.path;
+   if(shop){const front=shop.userData.architecture.depth/2;shop.updateMatrixWorld(true);
+    path=[[-1.45,front+1.10],[1.45,front+1.10],[1.45,front+2.30],[-1.45,front+2.30]].map(([x,z])=>{
+     const p=shop.localToWorld(new THREE.Vector3(x,0,z));return [p.x,p.z];});}
+   const def={id:f.id,name:f.name,icon:f.icon,x:path[0][0],z:path[0][1],hat:f.hat,shirt:f.shirt,idle:f.idle,folk:true};
+   try{const e=W.addNPC(def);P.townsfolk.push({e,def,path,wi:1,x:def.x,z:def.z,heading:0,town:tn.id,pause:0});}catch(err){console.error('townsfolk '+f.id,err);}
   }
  }
  for(const tn of TOWNS){try{buildTown(tn);}catch(e){console.error('town '+tn.id,e);}}

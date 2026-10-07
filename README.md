@@ -346,9 +346,23 @@ maps total about 1.25 MiB; checksums and credits are in `assets/textures/village
 Reproduce them with `python tools/asset-gen/fetch-village-materials.py` (Pillow required).
 The tallest distant peaks have broader, broken shoulders, with a lower outer horizon
 and 96,384 triangles across six static named massifs instead of 230,400. Compass
-bearings, building footprints and riding collision remain fixed. `qa-country-world.cjs`
+bearings and riding terrain remain fixed. `qa-country-world.cjs`
 checks loaded maps, static relief outside the riding basin and mesh budgets;
 `qa-render-artifacts.cjs` includes the village in daylight, rain and night.
+
+Cottonwood's general store, inn and clubhouse now have two full floors,
+recessed casements, iron balconies and shallow hipped roofs. The roofs use
+Amal Kumar's CC0 [Clay Roof Tiles](https://polyhaven.com/a/clay_roof_tiles) at its
+photographed 4 m scale; the three local WebP maps add 827,266 bytes. Individual
+ridge caps, shutters, cornices and lanterns remain batched per material, with
+9,874–10,442 triangles and 15–16 material draws per building. Stone forecourts
+follow the terrain and share clearance with grass, shrubs and imported plants.
+Field hedges and their collision lines stop short of these courts, and Pim's
+shop stroll follows the placed entrance. The old roadside cottage steps back
+one metre from the mounted village lane.
+`qa-village-townhouses.cjs` checks approaches, mounted travel, interaction IDs,
+planted facades, terrain contact and weather/quality views. The full village
+layout still differs from the reference and remains an ongoing art task.
 
 Harvest plants now have original folded leaves, stems, flowers and shaped fruit
 instead of stacked spheres. All 20 foods keep their placement, inventory rewards
@@ -361,7 +375,7 @@ regrowth, checks contact against the rendered terrain, and captures native-GPU v
 Cottage window boxes and entry planters use four CC0
 [Periwinkle Plant](https://polyhaven.com/a/periwinkle_plant) specimens by Amal Kumar,
 with the author's cutout opacity, diffuse, normal and roughness textures. There
-are 240 plants across ten cottages, batched into four meshes per cottage, with
+are 264 plants across eight cottages and three village townhouses, batched into four meshes per building, with
 leaf shadows and sizes fitted to the boxes. The 758,220-byte local GLB contains
 7,524 triangles across its four source specimens; provenance and SHA-256 hashes
 are in `assets/models/world/gardens/manifest.json`. Reproduce it with

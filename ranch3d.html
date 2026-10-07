@@ -665,14 +665,14 @@ import {createPastoralSky} from './assets/pastoral-sky.js?v=clear-pastoral-sky-1
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=layered-horizon-1';
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-1';
 import {hasMeadowCover} from './assets/meadow-biomes.js';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=meadow-botany-2';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=village-townhouses-1';
 import {pastureRise,meadowBloomAt} from './assets/pastoral-fields.mjs?v=meadow-ridges-1';
 import {createGeology} from './assets/geology.js?v=landscape-forms-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
 import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=meadow-botany-2';
-import {createRanchArchitecture} from './assets/ranch-architecture.js?v=village-surfaces-1';
+import {createRanchArchitecture} from './assets/ranch-architecture.js?v=village-townhouses-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-world-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
@@ -684,11 +684,12 @@ import {createWorldShadows} from './assets/world-shadows.js?v=visible-shadows-1'
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
 import {createForageArt} from './assets/forage-art.js?v=botanical-harvest-1';
-import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=botanical-harvest-1';
+import {installVillageForecourts} from './assets/village-forecourts.js?v=village-townhouses-1';
+import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=village-townhouses-1';
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=opaque-foliage-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=runway-20261006';
-import {FEATURES} from './assets/features/index.js?v=clear-pastoral-sky-1';
+import {FEATURES} from './assets/features/index.js?v=village-townhouses-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -1483,6 +1484,7 @@ const PATHS=[
  [[-30,-20],[-33,-38],[-31,-52],[-30,-58]],                          // pasture road -> Hollowpeak Pines
 ];
 const PATH_W=2.9;
+const villageGroundZones=[];
 // A maintained yard and clipped trail shoulders give way gradually to meadow.
 function managedGrass(x,z){
  return Math.max(1-THREE.MathUtils.smoothstep(Math.hypot(x*.94,z*1.12),38,82),
@@ -1506,7 +1508,15 @@ function pathDist(x,z){
   const px=s.ax+s.dx*t-x, pz=s.az+s.dz*t-z;
   const d=px*px+pz*pz; if(d<best)best=d;
  }
- return Math.sqrt(best);
+ let distance=Math.sqrt(best);
+ for(const q of villageGroundZones){
+  const dx=x-q.x,dz=z-q.z;
+  if(Math.abs(dx)>14||Math.abs(dz)>14)continue;
+  const lx=dx*q.cos-dz*q.sin,lz=dx*q.sin+dz*q.cos;
+  const edge=Math.hypot(Math.max(0,Math.abs(lx)-q.halfX),Math.max(0,q.minZ-lz,lz-q.maxZ));
+  distance=Math.min(distance,edge===0?0:edge+2.3);
+ }
+ return distance;
 }
 // Sample the collision surface from the same triangles used by the visible terrain.
 const TERRAIN_SEGMENTS=512, TERRAIN_STEP=1000/TERRAIN_SEGMENTS;
@@ -3236,7 +3246,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   lupin.count=liveFlowers;
   for(const im of[near,flow,fern,reed,rock,lupin]){im.instanceMatrix.needsUpdate=true; if(im.instanceColor)im.instanceColor.needsUpdate=true;}
  };
- nearGrass={near,flow,fern,reed,rock,lupin,meadowDistance,tick:(t,px,pz)=>{meadowDistance.tick(t,px,pz);nearU.uTime.value=t;nearU.uPlayer.value.set(px,0,pz);update(px,pz);},
+ nearGrass={near,flow,fern,reed,rock,lupin,meadowDistance,invalidate:()=>{cx0=cz0=1e9;meadowDistance.invalidate();},tick:(t,px,pz)=>{meadowDistance.tick(t,px,pz);nearU.uTime.value=t;nearU.uPlayer.value.set(px,0,pz);update(px,pz);},
   setVR:on=>{meadowDistance.mesh.visible=!on;near.count=on?Math.floor(NG_W*NG_W*NG_K*0.5):NG_W*NG_W*NG_K;}};
  update(0,0);
  const flowerGeo=new THREE.IcosahedronGeometry(0.025,1);
@@ -4285,7 +4295,7 @@ FOLIAGE.boulder.forEach((p,i)=>{
  rock.rotation.y=p.r;rock.userData.scanPlacement=p;scannedRockTargets.push(rock);scene.add(rock);
 });
 // Non-flowering understory is placed from the local photoscan library after the horse loads.
-plantNaturalShrubs({THREE,scene,placements:FOLIAGE.flowerbush,groundH,flowering:true});
+const naturalFlowerShrubs=plantNaturalShrubs({THREE,scene,placements:FOLIAGE.flowerbush,groundH,flowering:true});
 terrainSurface.setTrees([].concat(FOLIAGE.oak,FOLIAGE.birch,FOLIAGE.blossom,FOLIAGE.pine,FOLIAGE.snowpine));
 seedTreeInsts=placeSeedTrees();                                    // trees are Weber–Penn generated
 seedTreeInsts.forEach(m=>{m.userData.fullCount=m.count;if(quality==='low')m.count=Math.ceil(m.userData.fullCount*0.55);});
@@ -12858,14 +12868,14 @@ const visitors=[];
  });
 }
 /* Cottonwood village, signpost & named regions */
-function cottage(x,z,rot){
- const b=ranchArchitecture.buildCottage({variant:Math.abs(Math.round(x+z))%4});
+function cottage(x,z,rot,variant=Math.abs(Math.round(x+z))%4){
+ const b=ranchArchitecture.buildCottage({variant});
  b.position.set(x,groundH(x,z),z);
  b.rotation.y=rot;
  scene.add(b);
  followCamera.register(b);
 }
-cottage(42,-50,0.4);cottage(48,-56,-0.3);cottage(54,-48,0.9);cottage(45,-43,2.6);
+cottage(42,-50,0.4);cottage(48,-56,-0.3);cottage(54,-48,0.9);cottage(45,-42,2.6,2); // leave the mounted lane beside Bram clear
 {
  const sp2=new THREE.Group();
  tube(0.06,0.07,2.6,barkMat,0,1.3,0,sp2);
@@ -14346,6 +14356,7 @@ function installFeatures(){
  if(location.search.includes('qa'))window.__features=G;   // headless verification without touching the MERGE_STATS injection
 }
 installFeatures();
+installVillageForecourts(G,villageGroundZones,{shrubs:naturalFlowerShrubs});
 installRanchWorldDetails(G,{shrubs:FOLIAGE.bush});
 installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
 const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,

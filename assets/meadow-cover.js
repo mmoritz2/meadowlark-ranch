@@ -105,7 +105,7 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
   mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=true;scene.add(mesh);
   const slots=new Array(W*W),matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),scale=new THREE.Vector3(),q=new THREE.Quaternion(),up=new THREE.Vector3(0,1,0),color=new THREE.Color();
   let cx=Infinity,cz=Infinity;
-  return {mesh,tick(time,x,z){
+  return {mesh,invalidate(){cx=cz=Infinity;slots.fill(undefined);},tick(time,x,z){
     mesh.geometry=geometries[getQuality()]||geometries.high;
     uniforms.fieldTime.value=time;uniforms.fieldRider.value.set(x,z);
     const nx=Math.floor(x/CELL),nz=Math.floor(z/CELL);if(nx===cx&&nz===cz)return;cx=nx;cz=nz;

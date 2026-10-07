@@ -108,5 +108,60 @@
         }
       }
     ]
+  },
+  {
+    "id": "clay_roof_tiles",
+    "page": "https://polyhaven.com/a/clay_roof_tiles",
+    "authors": {
+      "Amal Kumar": "All"
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "scaleMetres": [
+      4.0,
+      4.0
+    ],
+    "retrieved": "2026-10-06",
+    "files": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_roof_tiles/clay_roof_tiles_diff_1k.jpg",
+        "sourceMD5": "d862ac9932b09b0918b5971ddb77099c",
+        "sourceSHA256": "aac0f4e742a2cce21afb5dfb523b47c720c6a8e2782a312b823608fe3f80eae6",
+        "sourceBytes": 878367,
+        "output": {
+          "file": "clay_roof_tiles_diff.webp",
+          "size": 1024,
+          "bytes": 285650,
+          "sha256": "3c381e2b1cafd63bc237bd341a3ebb4aaa60e1e8fed7f528740ec22b8ec0a472",
+          "colorSpace": "sRGB"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_roof_tiles/clay_roof_tiles_nor_gl_1k.jpg",
+        "sourceMD5": "d861a708c94c824befc8aac668052776",
+        "sourceSHA256": "e6b364661f6c3045bf5268f684047968fc6550e5fa9b22b4b1266df47b495faa",
+        "sourceBytes": 1101177,
+        "output": {
+          "file": "clay_roof_tiles_nor_gl.webp",
+          "size": 1024,
+          "bytes": 498040,
+          "sha256": "97e4c1fec3e011f5eaceaca8a7ce99a837f0b4e88cfa85f04f7147829eab5f64",
+          "colorSpace": "linear"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_roof_tiles/clay_roof_tiles_arm_1k.jpg",
+        "sourceMD5": "1c85df2500d6d9ae720cad193e3a4cec",
+        "sourceSHA256": "dc86408a71ded3d94b1ff1a7bf2253647118b07b83b611fea37a528dc41791cb",
+        "sourceBytes": 644850,
+        "output": {
+          "file": "clay_roof_tiles_arm.webp",
+          "size": 512,
+          "bytes": 43576,
+          "sha256": "bd85fccd405b29fd4e72bf7c7d3471b01fd8d6f5e2977b63ca992372261a583e",
+          "colorSpace": "linear"
+        }
+      }
+    ]
   }
 ]

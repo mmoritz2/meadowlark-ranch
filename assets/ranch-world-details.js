@@ -62,7 +62,7 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
     for(const [name,parity,height] of [['shrub_03',0,.8],['shrub_04',1,.65],['fern_02',2,.48]]){
       const points=shrubs.filter((p,i)=>parity===2?i%4===0:i%2===parity)
         .map(p=>({...p,x:p.x+(parity===2?1.05:0),z:p.z+(parity===2?.85:0)}))
-        .filter(p=>!window.__chalkCut?.(p.x,p.z)&&W.pathDist(p.x,p.z)>2.5&&(G.worldPaths?.trackDist(p.x,p.z)??Infinity)>3.8&&!(window.__onCourse&&window.__onCourse(p.x,p.z,3.4)));
+        .filter(p=>!G.villageCourts?.contains(p.x,p.z,1.8)&&!window.__chalkCut?.(p.x,p.z)&&W.pathDist(p.x,p.z)>2.5&&(G.worldPaths?.trackDist(p.x,p.z)??Infinity)>3.8&&!(window.__onCourse&&window.__onCourse(p.x,p.z,3.4)));
       try{
         const asset=await loader.loadAsync('./assets/models/world/'+name+'.glb');
         asset.scene.updateMatrixWorld(true);
@@ -129,8 +129,8 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
       const gardenFlower=await loader.loadAsync('./assets/models/world/gardens/periwinkle_plant.glb');
       const gardenVariants=plantVariants(gardenFlower.scene);
       state.gardenAsset='periwinkle_plant';
-      state.cottageGardens=0;
-      const cottages=[];scene.traverse(o=>{if(o.userData.architecture?.kind==='cottage')cottages.push(o);});
+      state.cottageGardens=0;state.townhouseGardens=0;
+      const cottages=[];scene.traverse(o=>{if(['cottage','townhouse'].includes(o.userData.architecture?.kind))cottages.push(o);});
       for(const root of cottages){
         const boxes=root.userData.architecture.windowBoxes||[];
         if(!boxes.length)continue;
@@ -154,7 +154,7 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
           matrices.forEach((matrix,j)=>mesh.setMatrixAt(j,matrix));mesh.instanceMatrix.needsUpdate=true;
           mesh.computeBoundingSphere();mesh.receiveShadow=true;mesh.castShadow=true;garden.add(mesh);
         }
-        root.add(garden);state.cottageGardens++;
+        root.add(garden);if(root.userData.architecture.kind==='townhouse')state.townhouseGardens++;else state.cottageGardens++;
       }
       let seed=71839;const rand=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
       const drifts=[[-35,25],[-46,7],[-49,-30],[-72,35],[-120,32],[8,78],[21,100],[42,128],[50,-60],[15,-34],[-33,-54]];

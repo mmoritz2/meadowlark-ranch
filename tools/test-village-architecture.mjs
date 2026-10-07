@@ -35,3 +35,29 @@ test('shop facade retains its open door and mounted clearance under the awning',
  // Decorative roofs still stop a flying mount descending onto them.
  const roof=world.limitVertical(0,0,8,2,2.3,.5);assert(roof>4&&roof<5);
 });
+
+test('two-storey village landmarks have open glazing, hipped roof coverage and batched detail',()=>{
+ for(const [variant,width,depth,store]of[[1,5.4,3.8,true],[2,5,3.6,false],[0,5.8,4.2,false]]){
+  const root=art.buildTownhouse({variant,width,depth,store});root.updateMatrixWorld(true);
+  for(const [x,y]of[[width*.3+.13,1.92],[width*.3+.13,4.84]]){
+   const hit=firstHit(root,x,y,depth/2+4);
+   assert.equal(hit?.object.material.name,'Ranch | window glass');
+   assert(hit.point.z<depth/2-.04,'windows are recessed into the plaster');
+  }
+  for(const x of[-width*.4,0,width*.4])for(const z of[-depth*.35,0,depth*.35]){
+   const hit=new THREE.Raycaster(new THREE.Vector3(x,15,z),new THREE.Vector3(0,-1,0)).intersectObject(root,true)[0];
+   assert(hit&&hit.point.y>=6.2,'roof covers the entire upper floor');
+  }
+  root.traverse(o=>{if(o.geometry)for(const a of Object.values(o.geometry.attributes))assert(Array.from(a.array).every(Number.isFinite));});
+  const a=root.userData.architecture;
+  assert(a.triangles<12000&&a.drawCalls<=16,'details stay within the village rendering budget');
+  assert.equal(a.storeys,2);assert.equal(a.windowBoxes.length,4);
+  const world=createSolidWorld({THREE});world.register(root);
+  const body={bottom:.38,top:2.65,radius:.55};
+  for(const x of[-width/2-.9,width/2+.9])for(let z=-depth/2-1;z<depth/2+2;z+=.25){
+   const p={x,z};assert.equal(world.resolve(p,body),0,'side streets remain rideable');
+  }
+  if(store){const position={x:0,z:depth/2+2};for(let i=0;i<24;i++){position.z-=.12;assert.equal(world.resolve(position,body),0,'shop door and canopy keep mounted clearance');}}
+  const wall={x:width*.3,z:depth/2+.2};assert(world.resolve(wall,body)>0,'facade is solid');
+ }
+});
