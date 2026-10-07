@@ -12,9 +12,9 @@
    and strip, market stall, English/Western saddles and headstalls) is inline in ranch3d.html
    because the boot pass pays tack rewards before any package installs. */
 import {buildHair} from '../rider-hair.js';   // the old sculpt's hair, for the fallback rider only
-import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=artist-riders-20261007';
-import {outfitPalette} from '../rider-clothes.js?v=artist-riders-20261007';
-import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=artist-riders-20261007';
+import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=visible-lashes-20261007';
+import {outfitPalette} from '../rider-clothes.js?v=couture-riders-20261007';
+import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=couture-riders-20261007';
 export const id='tack-wardrobe';
 export function install(G){
  const {$,toast,THREE}=G;

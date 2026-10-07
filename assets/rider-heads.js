@@ -1,3 +1,4 @@
+import {createTriangleSurface} from './rider-head-surface.js?v=couture-riders-20261007';
 /* Artist-authored CC0 heads from Blender Studio, fitted to the shared rider rig.
    Only the neck transition inherits body weights; face, eyes and brows follow Head. */
 const SOURCE={
@@ -63,11 +64,11 @@ function stitchNeck(THREE,headGeometry,weights,skin,inverse,cut,sampleNeck){
 export function prepareRiderHead(THREE,skin,oldEyes,oldBrows,source,body){
  const cfg=SOURCE[body],bones=skin.skeleton.bones,hi=bones.findIndex(b=>b.name==='Head'),inverse=skin.skeleton.boneInverses[hi],bind=inverse.clone().invert(),V=(x,y,z)=>new THREE.Vector3(x,y,z);
  source.updateMatrixWorld(true);let headSource;const eyeSources=[];source.traverse(m=>{if(!m.isMesh)return;const geo=m.geometry.clone().applyMatrix4(m.matrixWorld);if(/head/.test(m.name))headSource=geo;else if(/eye/.test(m.name))eyeSources.push(geo);});if(!headSource||eyeSources.length!==2)throw Error('Stylized rider head parts missing');
- const original=skin.geometry.clone().applyMatrix4(inverse),material=new THREE.MeshBasicMaterial({side:THREE.DoubleSide}),surface=new THREE.Mesh(original,material);surface.updateMatrixWorld(true);const ray=new THREE.Raycaster(),a=V(),b=V(),c=V(),bary=V();
+ const original=skin.geometry.clone().applyMatrix4(inverse),surface=createTriangleSurface(THREE,original),a=V(),b=V(),c=V(),bary=V();
  const oldSkinWeights=hit=>{const f=hit.face,p=original.attributes.position;a.fromBufferAttribute(p,f.a);b.fromBufferAttribute(p,f.b);c.fromBufferAttribute(p,f.c);THREE.Triangle.getBarycoord(hit.point,a,b,c,bary);const weights=new Map();for(const [i,t]of [[f.a,bary.x],[f.b,bary.y],[f.c,bary.z]])for(let k=0;k<4;k++){const j=comp(original.attributes.skinIndex,i,k);weights.set(j,(weights.get(j)||0)+comp(original.attributes.skinWeight,i,k)*t);}return weights;};
  const map=p=>V(p.x*cfg.scale[0],(p.y-cfg.eye[1])*cfg.scale[1]+cfg.target[1],(p.z-cfg.eye[2])*cfg.scale[2]+cfg.target[2]);
  const refineEyes=p=>{const dx=(Math.abs(p.x)-cfg.target[0])/.030,dy=(p.y-cfg.target[1])/.028,region=Math.exp(-Math.pow(dx,4)-Math.pow(dy,4))*smooth(.045,.070,p.z);p.y=cfg.target[1]+(p.y-cfg.target[1])*(1-region*(body==='f'?.18:.20));return p;};
- const sampleNeck=p=>{const center=V(0,p.y,-.03),dir=p.clone().sub(center);dir.y=0;dir.normalize();ray.set(center.clone().addScaledVector(dir,.4),dir.clone().negate());const hit=ray.intersectObject(surface,false)[0];if(hit)hit.weights=[...oldSkinWeights(hit)];return hit;};
+ const sampleNeck=p=>{const center=V(0,p.y,-.03),dir=p.clone().sub(center);dir.y=0;dir.normalize();const hit=surface.cast(center.clone().addScaledVector(dir,.4),dir.clone().negate());if(hit)hit.weights=[...oldSkinWeights(hit)];return hit;};
  const baseY=(headSource.boundingBox|| (headSource.computeBoundingBox(),headSource.boundingBox)).min.y,baseLocal=map(V(0,baseY,0)).y,weights=[],hp=headSource.attributes.position;
  for(let i=0;i<hp.count;i++){
   const src=V().fromBufferAttribute(hp,i),p=refineEyes(map(src));
@@ -77,7 +78,7 @@ export function prepareRiderHead(THREE,skin,oldEyes,oldBrows,source,body){
   const jawGuard=smooth(baseLocal+.002,baseLocal+.010,p.y)*smooth(.045,.075,p.z),neck=(1-smooth(baseLocal,.030,p.y))*(1-jawGuard);
   p.y+=(cfg.cut-baseLocal)*neck;
   let w=new Map([[hi,1]]);
-  if(neck>.001){const center=V(0,Math.min(p.y,-.035),-.03),dir=p.clone().sub(center);dir.y=0;dir.normalize();ray.set(center.clone().addScaledVector(dir,.4),dir.clone().negate());const hit=ray.intersectObject(surface,false)[0];
+  if(neck>.001){const center=V(0,Math.min(p.y,-.035),-.03),dir=p.clone().sub(center);dir.y=0;dir.normalize();const hit=surface.cast(center.clone().addScaledVector(dir,.4),dir.clone().negate());
    if(hit){const fit=1-smooth(cfg.cut,.027,p.y);p.x=p.x*(1-fit)+hit.point.x*fit;p.z=p.z*(1-fit)+hit.point.z*fit;const old=oldSkinWeights(hit);w=new Map([...old].map(([j,n])=>[j,n*fit]));w.set(hi,(w.get(hi)||0)+1-fit);}
   }
   weights.push([...w]);hp.setXYZ(i,p.x,p.y,p.z);
@@ -103,37 +104,49 @@ export function prepareRiderHead(THREE,skin,oldEyes,oldBrows,source,body){
  for(const geo of eyeSources){const p=geo.attributes.position;for(let i=0;i<p.count;i++){const v=refineEyes(map(V().fromBufferAttribute(p,i)));p.setXYZ(i,v.x,v.y,v.z);}}
  const eyes=weighted(THREE,merge(THREE,eyeSources),skin,hi,bind);eyes.name='Eyes_Stylized';skin.parent.add(eyes);
  oldEyes?.removeFromParent();oldBrows?.removeFromParent();
- const headProbe=new THREE.Mesh(headLocal,material);headProbe.updateMatrixWorld(true);const positions=[],uv=[],indices=[],columns=40,rows=5;
- const faceHit=(x,y)=>{ray.set(V(x,y,.35),V(0,0,-1));return ray.intersectObject(headProbe,false)[0];};
+ const headProbe=createTriangleSurface(THREE,headLocal);const positions=[],uv=[],indices=[],columns=40,rows=5;
+ const faceHit=(x,y)=>{return headProbe.cast(V(x,y,.35),V(0,0,-1));};
  let browTop=-Infinity;
  for(const side of [-1,1]){const offset=positions.length/3;for(let i=0;i<=columns;i++){
   const t=i/columns,x=side*(cfg.target[0]-.022+.048*t),y=cfg.target[1]+.026+(body==='f'?.007:.009)*Math.sin(t*Math.PI)-.004*t,width=(body==='f'?.0026:.00305)*Math.pow(Math.max(.012,1-t),.55)*(.5+.5*smooth(0,.09,t));
   for(let j=0;j<rows;j++){const across=j/(rows-1)*2-1,by=y+across*width,hit=faceHit(x,by);positions.push(x,by,(hit?.point.z||.09)+.00065+.00035*(1-across*across));uv.push(t,j/(rows-1));browTop=Math.max(browTop,by);if(i<columns&&j<rows-1){const k=offset+i*rows+j;side>0?indices.push(k,k+rows,k+1,k+1,k+rows,k+rows+1):indices.push(k,k+1,k+rows,k+1,k+rows+1,k+rows);}}
  }}
  const bg=new THREE.BufferGeometry();bg.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));bg.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));bg.setIndex(indices);const brows=weighted(THREE,bg,skin,hi,bind);brows.name='Eyebrows_Stylized';skin.parent.add(brows);
- original.dispose();material.dispose();eyeSources.forEach(g=>g.dispose());
+ original.dispose();surface.dispose();headProbe.dispose();eyeSources.forEach(g=>g.dispose());
  return {mesh:head,eyes,brows,garmentSkin,seamCount,local:headLocal,browTop,config:cfg,source:'Blender Studio CC0',inverse,bind};
 }
 export function patchStylizedHead(material,u,asset,body){
- material.map=null;material.normalMap=null;material.roughness=.55;material.ior=1.42;material.specularIntensity=.48;
+ material.map=null;material.normalMap=null;material.roughness=.62;material.ior=1.40;material.specularIntensity=.32;
  material.onBeforeCompile=sh=>{
   Object.assign(sh.uniforms,u);sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nuniform mat4 uFaceBind; varying vec3 vHead;').replace('#include <begin_vertex>','#include <begin_vertex>\nvHead=(uFaceBind*vec4(position,1.0)).xyz;');
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uSkin;varying vec3 vHead;');
   sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
    float front=smoothstep(.045,.077,vHead.z),face=smoothstep(.015,.040,vHead.y)*front;
    float cheeks=exp(-pow((abs(vHead.x)-.051)/.023,2.0)-pow((vHead.y-${body==='f'?'.063':'.065'})/.026,2.0));
-   vec3 skin=uSkin;skin=mix(skin,uSkin*vec3(1.025,.87,.87),cheeks*face*${body==='f'?'.42':'.24'});
-   float lip=exp(-pow(abs(vHead.x)/.026,4.0)-pow((vHead.y-${(asset.config.mouth+(body==='f'?.0025:.001)).toFixed(5)})/.009,4.0))*front;
-   vec3 lipColor=uSkin*vec3(.88,.47,.52)+vec3(.015,.001,.002);
-   diffuseColor.rgb=mix(skin,lipColor,lip*.76);
-   float pores=sin(vHead.x*2250.0)*sin(vHead.y*2010.0)*sin(vHead.z*2170.0);
-   diffuseColor.rgb*=1.0+pores*.003;`);
-  sh.fragmentShader=sh.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=mix(.55,.38,lip*.65);');
+   vec3 skin=mix(uSkin,uSkin*vec3(1.02,.88,.87),cheeks*face*${body==='f'?'.36':'.20'});
+   // Soft anatomical colour stays attached to the authored face in every pose.
+   // It supplies the small warm recesses that broad outdoor lighting washes out.
+   vec2 eye=vec2(abs(vHead.x)-${asset.config.target[0].toFixed(6)},vHead.y-${asset.config.target[1].toFixed(6)});
+   float eyeRecess=exp(-pow(eye.x/.028,4.0)-pow((eye.y-.007)/.014,2.0))*face;
+   float noseSides=exp(-pow((abs(vHead.x)-.018)/.0065,2.0)-pow((vHead.y-.059)/.019,4.0))*face;
+   float chinCrease=exp(-pow(vHead.x/.023,4.0)-pow((vHead.y-${(asset.config.mouth-.013).toFixed(5)})/.0045,2.0))*face;
+   skin*=1.0-.048*eyeRecess-.035*noseSides-.025*chinCrease;
+   skin=mix(skin,skin*vec3(1.025,.92,.89),eyeRecess*.16);
+   float lipY=vHead.y-${(asset.config.mouth+(body==='f'?.0025:.001)).toFixed(5)};
+   float lip=exp(-pow(abs(vHead.x)/${body==='f'?'.026':'.0304'},4.0)-pow(lipY/.0085,4.0))*front;
+   vec3 lipColor=uSkin*vec3(.87,.48,.53)+vec3(.015,.001,.002);
+   lipColor*=.94+.09*(1.0-smoothstep(-.005,.003,lipY));
+   diffuseColor.rgb=mix(skin,lipColor,lip*.74);
+   // Filtered microvariation avoids a sparkling pore pattern at gameplay scale.
+   float detail=1.0-smoothstep(.00045,.0015,length(fwidth(vHead)));
+   float pores=sin(vHead.x*1700.0)*sin(vHead.y*1530.0)*sin(vHead.z*1610.0);
+   diffuseColor.rgb*=1.0+pores*.002*detail;`);
+  sh.fragmentShader=sh.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=mix(.62,.43,lip*.65);');
  };
- material.customProgramCacheKey=()=>'rider-artist-head-'+body;
+ material.customProgramCacheKey=()=>'rider-artist-head-natural-2-'+body;
 }
 export function patchStylizedEyes(material,u,asset,body){
- material.map=null;material.normalMap=null;material.roughness=.18;material.clearcoat=.75;material.clearcoatRoughness=.06;
+ material.map=null;material.normalMap=null;material.roughness=.25;material.ior=1.40;material.specularIntensity=.44;material.clearcoat=.30;material.clearcoatRoughness=.15;
  material.onBeforeCompile=sh=>{
   Object.assign(sh.uniforms,u);sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nuniform mat4 uFaceBind;varying vec3 vEyeHead;').replace('#include <begin_vertex>','#include <begin_vertex>\nvEyeHead=(uFaceBind*vec4(position,1.0)).xyz;');
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uEye;varying vec3 vEyeHead;');
@@ -143,11 +156,13 @@ export function patchStylizedEyes(material,u,asset,body){
    iris*=smoothstep(${(asset.config.target[2]+.0056).toFixed(5)},${(asset.config.target[2]+.0064).toFixed(5)},vEyeHead.z);
    float pupil=1.0-smoothstep(.0036,.0042,r),limbus=smoothstep(radius-.0015,radius-.0004,r);
    float angle=atan(e.y,e.x),fibers=sin(angle*67.0+sin(r*1870.0))*sin(angle*43.0-r*2240.0);
-   vec3 irisColor=uEye*(.90+.15*sin(r/radius*3.1416)+.07*fibers);
-   irisColor=mix(irisColor,uEye*.46,limbus);irisColor=mix(irisColor,vec3(.003,.004,.006),pupil);
-   float glint=1.0-smoothstep(.0010,.0015,length(e-vec2(-.0036,.0038)));
+   float irisL=dot(uEye,vec3(.2126,.7152,.0722));
+   vec3 eyeColor=mix(vec3(irisL),uEye,.78);
+   vec3 irisColor=eyeColor*(.73+.16*sin(r/radius*3.1416)+.055*fibers);
+   irisColor=mix(irisColor,eyeColor*.35,limbus);irisColor=mix(irisColor,vec3(.003,.004,.006),pupil);
+   float glint=1.0-smoothstep(.0008,.0012,length(e-vec2(-.0036,.0038)));
    glint=max(glint,(1.0-smoothstep(.00045,.0008,length(e-vec2(.003,-.0025))))*.58);
-   irisColor=mix(irisColor,vec3(.94,.97,1.0),glint);
-   diffuseColor.rgb=mix(vec3(.78,.81,.79),irisColor,iris);`);
- };material.customProgramCacheKey=()=>'rider-artist-eyes-'+body;
+   irisColor=mix(irisColor,vec3(.86,.90,.94),glint*.87);
+   diffuseColor.rgb=mix(vec3(.73,.75,.71),irisColor,iris);`);
+ };material.customProgramCacheKey=()=>'rider-artist-eyes-natural-2-'+body;
 }

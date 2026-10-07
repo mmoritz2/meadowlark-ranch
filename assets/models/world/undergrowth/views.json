@@ -1,0 +1,189 @@
+{
+  "processing": "Eight unlit albedo and object-normal views of individual, rooted specimens and original three-shoot arrangements. Original source PBR maps and alpha masks retained on full models.",
+  "plants": [
+    {
+      "id": "fern-0",
+      "kind": "fern",
+      "width": 3.0125775387971103,
+      "height": 1.06,
+      "bottom": -0.03,
+      "triangles": 2384,
+      "sourceHeight": 0.4276947118341923,
+      "sourceBottom": -0.030510280281305313,
+      "views": 8,
+      "files": {
+        "albedo": {
+          "file": "fern-0-albedo.png",
+          "bytes": 320205,
+          "sha256": "2bf094d3a4ea19934ae927ee059d41195f442aa94804d370b8ac47c499121863"
+        },
+        "normals": {
+          "file": "fern-0-normals.png",
+          "bytes": 403414,
+          "sha256": "5830651d3c910997833fe44a2094f4f59b2b82d461488462940de87a90acd9a5"
+        }
+      }
+    },
+    {
+      "id": "fern-1",
+      "kind": "fern",
+      "width": 3.087772042532997,
+      "height": 1.06,
+      "bottom": -0.03,
+      "triangles": 2248,
+      "sourceHeight": 0.3490203693509102,
+      "sourceBottom": -0.028773672878742218,
+      "views": 8,
+      "files": {
+        "albedo": {
+          "file": "fern-1-albedo.png",
+          "bytes": 331363,
+          "sha256": "e4dfee263cf74297c09694368c98b67b6320d425b16d52fcc4827083ba556b3e"
+        },
+        "normals": {
+          "file": "fern-1-normals.png",
+          "bytes": 415063,
+          "sha256": "a70dc1bfddb577df8a9fa75311af161362e4b50109b11dc1beaa1de103de66d4"
+        }
+      }
+    },
+    {
+      "id": "fern-2",
+      "kind": "fern",
+      "width": 2.515230226024975,
+      "height": 1.06,
+      "bottom": -0.03,
+      "triangles": 784,
+      "sourceHeight": 0.2868035454303026,
+      "sourceBottom": -0.028773518279194832,
+      "views": 8,
+      "files": {
+        "albedo": {
+          "file": "fern-2-albedo.png",
+          "bytes": 273378,
+          "sha256": "277a1155e6af8610d76652f7440981745ded970f445cf9f144c22ee2c705199e"
+        },
+        "normals": {
+          "file": "fern-2-normals.png",
+          "bytes": 328933,
+          "sha256": "304241886e1e5f8b06180ba60c952660afc295d9b66ee813633fb0765483a698"
+        }
+      }
+    },
+    {
+      "id": "fern-3",
+      "kind": "fern",
+      "width": 3.911742498024245,
+      "height": 1.06,
+      "bottom": -0.03,
+      "triangles": 816,
+      "sourceHeight": 0.21308755222707987,
+      "sourceBottom": -0.013578944839537144,
+      "views": 8,
+      "files": {
+        "albedo": {
+          "file": "fern-3-albedo.png",
+          "bytes": 304731,
+          "sha256": "40514a7f02c9f48d68f557b55563516f22b66d5405d6accbee239a873d053d8e"
+        },
+        "normals": {
+          "file": "fern-3-normals.png",
+          "bytes": 374868,
+          "sha256": "333c45278dcc1fb7809825f2f46adba3fe28bcb7fde3126a7bc61cb5ceeb591e"
+        }
+      }
+    },
+    {
+      "id": "shrub-0",
+      "kind": "shrub",
+      "width": 0.7255070034079585,
+      "height": 1.06,
+      "bottom": -0.03,
+      "triangles": 6309,
+      "sourceHeight": 0.33028271433431655,
+      "sourceBottom": -0.0014970862539485097,
+      "views": 8,
+      "files": {
+        "albedo": {
+          "file": "shrub-0-albedo.png",
+          "bytes": 331439,
+          "sha256": "c51421ef00113366df789cfccc17c8e469bf7381be9d6a44b93180871610536d"
+        },
+        "normals": {
+          "file": "shrub-0-normals.png",
+          "bytes": 361925,
+          "sha256": "63b6b142c11b140c502cc0e7e72100feca1ec176a525beb929206b7f21c9233a"
+        }
+      }
+    },
+    {
+      "id": "shrub-1",
+      "kind": "shrub",
+      "width": 0.6857752116431622,
+      "height": 1.06,
+      "bottom": -0.03,
+      "triangles": 5902,
+      "sourceHeight": 0.28931302548153326,
+      "sourceBottom": -0.0009536516736261547,
+      "views": 8,
+      "files": {
+        "albedo": {
+          "file": "shrub-1-albedo.png",
+          "bytes": 336585,
+          "sha256": "3fd63e90995e24fe5a5b19ab1c53dbc75964e3829dff86f85e0fecad7dff9d09"
+        },
+        "normals": {
+          "file": "shrub-1-normals.png",
+          "bytes": 367786,
+          "sha256": "82b409a66e515d3972648fb381f68619f23c842e8cb31bbd342df0fa534a5033"
+        }
+      }
+    },
+    {
+      "id": "woody-0",
+      "kind": "woody",
+      "width": 1.2056653247548619,
+      "height": 1.06,
+      "bottom": -0.03,
+      "triangles": 5465,
+      "sourceHeight": 0.5412663070019335,
+      "sourceBottom": -0.002358302241191268,
+      "views": 8,
+      "files": {
+        "albedo": {
+          "file": "woody-0-albedo.png",
+          "bytes": 431416,
+          "sha256": "94fb1cb650e61c7501b299a750a9d97073b8aea5a766a1580ec8eff28152b47b"
+        },
+        "normals": {
+          "file": "woody-0-normals.png",
+          "bytes": 475041,
+          "sha256": "5df1a699c61a12d5bd00b779cbccaebfbd898cb3bd4b79785dbf018d376fbe52"
+        }
+      }
+    },
+    {
+      "id": "woody-1",
+      "kind": "woody",
+      "width": 1.2381434497224508,
+      "height": 1.06,
+      "bottom": -0.03,
+      "triangles": 3804,
+      "sourceHeight": 0.44835134875029325,
+      "sourceBottom": -0.0019698990508913994,
+      "views": 8,
+      "files": {
+        "albedo": {
+          "file": "woody-1-albedo.png",
+          "bytes": 413726,
+          "sha256": "0659db26589057382b2527a75f818e6d88e7f63fd570f663c50cb1292ca41f62"
+        },
+        "normals": {
+          "file": "woody-1-normals.png",
+          "bytes": 461821,
+          "sha256": "c769667fcae36e753cef98e5ecf9d819cfc0eecef8f006f766cbfd13873335ab"
+        }
+      }
+    }
+  ]
+}

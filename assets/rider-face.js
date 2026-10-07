@@ -1,3 +1,4 @@
+import {createTriangleSurface} from './rider-head-surface.js?v=couture-riders-20261007';
 /* Bind-pose facial refinements. Joint locations, weights and the scalp stay fixed,
    so the existing animations, helmet and saved appearances continue to fit. */
 export function refineRiderFace(THREE,skin,brows,body){
@@ -77,13 +78,13 @@ export function riderLashGeometry(THREE,skin,eyes,body,asset=null){
   if(Math.min(...xs)<=maxX&&Math.max(...xs)>=-maxX&&Math.min(...ys)<=maxY+.001&&Math.max(...ys)>=minY-.001&&tri.some(n=>p.getZ(n)>.04))region.push(...tri);
  }
  face.setIndex(region);
- const material=new THREE.MeshBasicMaterial({side:THREE.DoubleSide}),surface=new THREE.Mesh(face,material),ray=new THREE.Raycaster();surface.updateMatrixWorld(true);
+ const surface=createTriangleSurface(THREE,face);
  const eyeGeometry=eyes.geometry.clone(),eyeHead=eyes.skeleton.bones.findIndex(b=>b.name==='Head');eyeGeometry.applyMatrix4(eyes.skeleton.boneInverses[eyeHead]);
- const eyeSurface=new THREE.Mesh(eyeGeometry,material);eyeSurface.updateMatrixWorld(true);
+ const eyeSurface=createTriangleSurface(THREE,eyeGeometry);
  const positions=[],indices=[],roots=[],segments=7,sides=6,V=(x,y,z)=>new THREE.Vector3(x,y,z);
- const front=(mesh,x,y)=>{ray.set(V(x,y,.3),V(0,0,-1));return ray.intersectObject(mesh,false)[0];};
- for(const side of [-1,1])for(let i=0;i<20;i++){
-  const t=i/19,x=side*(asset?eyeX-.017+.037*t:.020+.030*t);let exposed=false,root=null;
+ const front=(mesh,x,y)=>{return mesh.cast(V(x,y,.3),V(0,0,-1));};
+ for(const side of [-1,1])for(let i=0;i<16;i++){
+  const t=[.02,.07,.13,.20,.245,.30,.42,.47,.52,.64,.68,.73,.83,.87,.93,1][i],x=side*(asset?eyeX-.017+.037*t:.020+.030*t);let exposed=false,root=null;
   // Find where the visible eye meets the upper lid instead of guessing an arc.
   for(let y=minY;y<=maxY;y+=.0001){const skinHit=front(surface,x,y),eyeHit=front(eyeSurface,x,y);if(!skinHit||!eyeHit)continue;
    if(skinHit.point.z<eyeHit.point.z){exposed=true;continue;}
@@ -91,11 +92,11 @@ export function riderLashGeometry(THREE,skin,eyes,body,asset=null){
   }
   if(!root)continue;
   // A graduated, softly staggered fan keeps the longer outer lashes readable.
-  const stagger=[.93,1.05,.97][i%3],length=(.0085+.0060*t)*stagger,fan=side*(.0010+.0048*t+[.0007,0,-.0007][i%3]),base=positions.length/3;
-  const curve=new THREE.QuadraticBezierCurve3(root,root.clone().add(V(fan*.38,length*.14,length*.57)),root.clone().add(V(fan,length*.78,length*.72)));
+  const stagger=[.89,1.04,.96,.92][i%4],length=(.0037+.0116*Math.pow(t,.8))*stagger,fan=side*(.0003+.0070*t+[.0002,-.0001,.0001,-.0002][i%4]),base=positions.length/3;
+  const curve=new THREE.QuadraticBezierCurve3(root,root.clone().add(V(fan*.30,length*.06,length*.62)),root.clone().add(V(fan,length*.74,length*.76)));
   roots.push(root.toArray());
   for(let j=0;j<=segments;j++){
-   const u=j/segments,p=curve.getPoint(u),tangent=curve.getTangent(u).normalize(),normal=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),binormal=tangent.clone().cross(normal),r=.00034*Math.pow(1-u,.75)+.000025;
+   const u=j/segments,p=curve.getPoint(u),tangent=curve.getTangent(u).normalize(),normal=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),binormal=tangent.clone().cross(normal),r=.00027*Math.pow(1-u,.9)+.000018;
    for(let k=0;k<sides;k++){const angle=k*Math.PI*2/sides,v=p.clone().addScaledVector(normal,Math.cos(angle)*r).addScaledVector(binormal,Math.sin(angle)*r);positions.push(...v.toArray());
     if(j<segments){const a=base+j*sides+k,b=base+j*sides+(k+1)%sides,c=a+sides,d=b+sides;indices.push(a,b,c,b,d,c);}
    }
@@ -112,6 +113,6 @@ export function riderLashGeometry(THREE,skin,eyes,body,asset=null){
   }
   for(const i of band.index.array)indices.push(offset+i);band.dispose();
  }
- face.dispose();eyeGeometry.dispose();material.dispose();
- const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();geo.computeBoundingSphere();geo.userData.lashRoots=roots;return geo;
+ surface.dispose();eyeSurface.dispose();face.dispose();eyeGeometry.dispose();
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();geo.computeBoundingSphere();geo.userData.lashRoots=roots;geo.userData.lashStyle={strands:roots.length,lengthM:[.0037,.0159],radiusM:.000288,fan:'graduated-outward'};return geo;
 }

@@ -1,23 +1,33 @@
+import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
 import {meadowGrazingAt} from './pastoral-fields.mjs?v=leafy-orchard-1';
 
-// Tapered meadow leaves with softer root shading and varied, bending tips.
-// Three triangles per leaf keep the travelling cover within its existing budget.
-export function createGrassTuftGeometry(THREE,{bladeCount=12}={}) {
+// Curved ribbon leaves: narrow roots, a fuller lower blade, and a curling tip.
+// The nearby tuft has eight leaves and forty triangles. Middle-distance tufts
+// retain two segments, where the extra curvature is smaller than a pixel.
+export function createGrassTuftGeometry(THREE,{bladeCount=8,segments=3}={}) {
   const P=[],N=[],C=[],U=[],I=[];
   for(let blade=0;blade<bladeCount;blade++) {
-    const a=blade*2.39996,spread=.035+(blade%6)*.045;
-    const ox=Math.cos(a)*spread,oz=Math.sin(a)*spread;
-    const tall=blade%3!==1,h=tall?.60+(blade%4)*.085:.24+(blade%5)*.034;
-    const bend=tall?.21+(blade%3)*.040:.26+(blade%3)*.035,width=.016+(blade%4)*.003;
-    const ca=Math.cos(a),sa=Math.sin(a),base=P.length/3;
-    for(const t of [0,.55,1])for(const side of t===1?[0]:[-1,1]){
-      const w=width*(1-t*.80)*side;
-      P.push(ox+ca*bend*t*t-sa*w,h*t*(1-.14*t),oz+sa*bend*t*t+ca*w);
-      N.push(ca*.32,.895,sa*.32);
-      const shade=.40+t*.60,dry=blade%13===0;
-      C.push(shade*(dry?1.06:.83),shade*(dry?.94:1),shade*(dry?.48:.62));U.push((side+1)/2,t);
+    const a=blade*2.39996,spread=.018+(blade%5)*.029;
+    const ca=Math.cos(a),sa=Math.sin(a),ox=ca*spread,oz=sa*spread;
+    const tall=blade%3!==1,h=tall?.56+(blade%4)*.080:.29+(blade%3)*.045;
+    const bend=tall?.14+(blade%3)*.055:.26+(blade%3)*.05,width=.011+(blade%4)*.0023;
+    const base=P.length/3,twist=(blade%2?1:-1)*(.25+(blade%3)*.12);
+    for(let j=0;j<=segments;j++) {
+      const t=j/segments,tip=j===segments,lean=bend*t*t,drop=(tall?.12:.28)*t*t*t;
+      const heading=a+twist*t,sideX=-Math.sin(heading),sideZ=Math.cos(heading);
+      const half=width*(.52+.78*Math.sin(Math.PI*t*.88))*Math.pow(1-t,.72);
+      const tangent=new THREE.Vector3(ca*2*bend*t,h*(1-3*(tall?.12:.28)*t*t),sa*2*bend*t).normalize();
+      const normal=new THREE.Vector3(sideX,0,sideZ).cross(tangent).normalize();
+      if(normal.y<0)normal.negate();normal.lerp(new THREE.Vector3(0,1,0),.68).normalize();
+      for(const side of tip?[0]:[-1,1]) {
+        P.push(ox+ca*lean+sideX*half*side,h*(t-drop),oz+sa*lean+sideZ*half*side);
+        N.push(normal.x,normal.y,normal.z);
+        const shade=.57+.43*Math.sin(t*Math.PI*.5),dry=blade%11===0;
+        C.push(shade*(dry?1.02:.90),shade*(dry?.96:1),shade*(dry?.57:.73));U.push((side+1)/2,t);
+      }
+      if(j<segments-1){const k=base+j*2;I.push(k,k+1,k+2,k+1,k+3,k+2);}
+      else if(j===segments-1){const k=base+j*2;I.push(k,k+1,k+2);}
     }
-    I.push(base,base+1,base+2,base+1,base+3,base+2,base+2,base+3,base+4);
   }
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
   g.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));
@@ -36,7 +46,7 @@ function fieldPatch(x,z){
 export function meadowGrowthAt(x,z){
   const stand=.65*fieldPatch(x/11+3.4,z/11-8.2)+.35*fieldPatch(x/29-5.1,z/29+2.7);
   const grazed=meadowGrazingAt(x,z);
-  return (.42+stand*.95)*(1-grazed)+(.23+stand*.33)*grazed;
+  return ((.42+stand*.95)*(1-grazed)+(.23+stand*.33)*grazed)*(1-coyoteCoverDryWeight(x,z)*.38);
 }
 
 // One palette for the near leaves, distant sward and old seed layer. Separate
@@ -44,7 +54,8 @@ export function meadowGrowthAt(x,z){
 export function meadowBladeColor(color,x,z,variation=.5){
   const patch=fieldPatch(x/18+8.7,z/18-3.1);
   const dry=Math.max(0,Math.min(1,(fieldPatch(x/24-7.4,z/24+6.8)-.42)*3.5))*(1-meadowGrazingAt(x,z)*.85);
-  return color.setHSL(.225+patch*.029-dry*.075,.55+variation*.08-dry*.08,.15+variation*.035+dry*.055);
+  const arid=coyoteCoverDryWeight(x,z);
+  return color.setHSL(.225+patch*.029-dry*.075-arid*.105,.55+variation*.08-dry*.08-arid*.11,.15+variation*.035+dry*.055+arid*.07);
 }
 
 // Fully modelled lupin: palmate foliage and a spiral of cupped pea flowers.
@@ -89,7 +100,7 @@ export function createLupinGeometry(THREE){
 export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low=false,getQuality=()=>low?'low':'high'}){
   const CELL=12,W=18,K=low?48:120;
   const hash=(x,z)=>{let h=Math.imul(x|0,374761393)^Math.imul(z|0,668265263);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;};
-  const geometries={low:createGrassTuftGeometry(THREE,{bladeCount:4}),medium:createGrassTuftGeometry(THREE,{bladeCount:6}),high:createGrassTuftGeometry(THREE,{bladeCount:8})};
+  const geometries={low:createGrassTuftGeometry(THREE,{bladeCount:4,segments:2}),medium:createGrassTuftGeometry(THREE,{bladeCount:6,segments:2}),high:createGrassTuftGeometry(THREE,{bladeCount:8,segments:2})};
   const geo=geometries[getQuality()]||geometries.high;
   const mat=new THREE.MeshStandardMaterial({name:'Middle distance meadow',vertexColors:true,side:THREE.DoubleSide,roughness:1,envMapIntensity:.7});
   const uniforms={fieldTime:{value:0},fieldRider:{value:new THREE.Vector2()}};

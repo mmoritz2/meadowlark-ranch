@@ -1,21 +1,11 @@
-/* Fit attachments to bind-space surfaces, retaining the same interpolated joint
-   weights as the surface underneath. Used by clothing edges and neck jewelry. */
+/* Fit attachments to immutable bind-space surfaces with exact triangle hits.
+   The BVH skips unrelated triangles; accepted hits keep their original joints. */
+import {createTriangleSurface} from './rider-head-surface.js?v=couture-riders-20261007';
 export function surfaceSampler(THREE,meshes){
- const material=new THREE.MeshBasicMaterial({side:THREE.DoubleSide}),bins=new Map(),probes=[],owned=[];
- // Horizontal necklace rays only need triangles in their height band. Sharing
- // attributes keeps this index lightweight and avoids rescanning the whole body.
- for(const source of meshes){
-  const geometry=source.geometry,p=geometry.attributes.position,idx=geometry.index,lists=new Map();
-  for(let i=0;i<(idx?idx.count:p.count);i+=3){const tri=[0,1,2].map(k=>idx?idx.getX(i+k):i+k),ys=tri.map(j=>p.getY(j));
-   for(let bin=Math.floor(Math.min(...ys)/.025);bin<=Math.floor(Math.max(...ys)/.025);bin++){if(!lists.has(bin))lists.set(bin,[]);lists.get(bin).push(...tri);}
-  }
-  for(const [bin,indices]of lists){const geo=new THREE.BufferGeometry();for(const [key,attribute]of Object.entries(geometry.attributes))geo.setAttribute(key,attribute);geo.setIndex(indices);
-   const probe=new THREE.Mesh(geo,material);probe.userData.source=source;probe.updateMatrixWorld(true);owned.push(geo);probes.push(probe);if(!bins.has(bin))bins.set(bin,[]);bins.get(bin).push(probe);
-  }
- }
- const ray=new THREE.Raycaster(),bary=new THREE.Vector3(),a=new THREE.Vector3(),b=new THREE.Vector3(),c=new THREE.Vector3();
- const sample=(hit)=>{
-  const source=hit.object.userData.source,g=source.geometry,face=hit.face,p=g.attributes.position;
+ const unique=new Map(),probes=meshes.map(source=>{let surface=unique.get(source.geometry);if(!surface){surface=createTriangleSurface(THREE,source.geometry);unique.set(source.geometry,surface);}return {source,surface};});
+ const bary=new THREE.Vector3(),a=new THREE.Vector3(),b=new THREE.Vector3(),c=new THREE.Vector3();let disposed=false;
+ const sample=(hit,source)=>{
+  const g=source.geometry,face=hit.face,p=g.attributes.position;
   a.fromBufferAttribute(p,face.a);b.fromBufferAttribute(p,face.b);c.fromBufferAttribute(p,face.c);THREE.Triangle.getBarycoord(hit.point,a,b,c,bary);
   const entries=new Map(),si=g.attributes.skinIndex,sw=g.attributes.skinWeight;
   if(si&&sw)for(const [i,t]of [[face.a,bary.x],[face.b,bary.y],[face.c,bary.z]])for(let k=0;k<4;k++){
@@ -23,11 +13,16 @@ export function surfaceSampler(THREE,meshes){
   }
   const ranked=[...entries].filter(([,w])=>w>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((s,v)=>s+v[1],0)||1;
   while(ranked.length<4)ranked.push([0,0]);
-  return {point:hit.point.clone(),normal:face.normal.clone(),joints:ranked.map(v=>v[0]),weights:ranked.map(v=>v[1]/sum),source};
+  return {point:hit.point,normal:face.normal,joints:ranked.map(v=>v[0]),weights:ranked.map(v=>v[1]/sum),source};
  };
  return {
-  cast(origin,direction,accept=()=>true){ray.set(origin,direction);for(const hit of ray.intersectObjects(Math.abs(direction.y)<1e-8?(bins.get(Math.floor(origin.y/.025))||[]):probes,false)){if(accept(hit.point,hit.object.userData.source))return sample(hit);}return null;},
-  dispose(){material.dispose();owned.forEach(g=>g.dispose());}
+  cast(origin,direction,accept=()=>true){
+   if(disposed)return null;let nearest=null,source=null;
+   for(const probe of probes){const hit=probe.surface.cast(origin,direction,h=>accept(h.point,probe.source),nearest?.distance??Infinity);if(hit&&(!nearest||hit.distance<nearest.distance)){nearest=hit;source=probe.source;}}
+   return nearest?sample(nearest,source):null;
+  },
+  get metrics(){return {surfaces:unique.size,triangles:[...unique.values()].reduce((s,v)=>s+v.metrics.triangleCount,0),buildMs:[...unique.values()].reduce((s,v)=>s+v.metrics.buildMs,0),queries:[...unique.values()].reduce((s,v)=>s+v.metrics.queries,0),trianglesTested:[...unique.values()].reduce((s,v)=>s+v.metrics.trianglesTested,0)};},
+  dispose(){disposed=true;for(const surface of unique.values())surface.dispose();unique.clear();}
  };
 }
 

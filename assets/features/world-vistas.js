@@ -1,5 +1,5 @@
 import {recordSolidPart} from '../solid-collisions.js?v=solid-world-1';
-import {createChalkDown} from '../chalk-down.js?v=chalk-ridge-1';
+import {createChalkDown} from '../chalk-down.js?v=dry-foothills-1';
 /* Feature package 'world-vistas' — distance, and the things that draw the eye.
 
    Kestrel Basin's horizon was trees and haze. assets/world-art.js already lays three soft
@@ -22,7 +22,8 @@ import {createChalkDown} from '../chalk-down.js?v=chalk-ridge-1';
    the codebase, which makes 0 south and PI north.
 
    Owned by this package: this file only. Nothing runs at import time. */
-import {dressLandscape} from '../landscape-surface.js?v=world-cinematic-1';
+import {dressLandscape} from '../landscape-surface.js?v=regional-relief-1';
+import {regionalProfileAt} from '../regional-landscape.mjs?v=regional-relief-1';
 export const id='world-vistas';
 export function install(G){
  /* ?novistas boots the world without any of this, so a before-and-after pair can be shot from
@@ -217,7 +218,7 @@ export function install(G){
  const SKY_BASE=-18;
  const rockMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,metalness:0,side:THREE.DoubleSide});
  rockMat.envMapIntensity=0.5;
- dressLandscape({THREE,material:rockMat,wooded:true,fogScale:.70,fogCap:.94,bumpStrength:.16,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy())});
+ dressLandscape({THREE,material:rockMat,wooded:true,regional:true,fogScale:.78,fogCap:.96,bumpStrength:.12,anisotropy:Math.min(8,G.renderer.capabilities.getMaxAnisotropy())});
 
  /* A massif is a patch of heightfield laid along a bearing: u runs along the range, v across
     it, and the summits are named points on that ridgeline rather than wherever the noise
@@ -229,6 +230,8 @@ export function install(G){
   const ox=Math.sin(b),oz=Math.cos(b);                    // outward, away from the basin
   const rock=new THREE.Color(cfg.rock),high=new THREE.Color(cfg.high||cfg.rock);
   const foot=new THREE.Color(cfg.foot||cfg.rock),snow=new THREE.Color(cfg.snow||'#e7eef2');
+  const dryFoot=new THREE.Color('#65553f'),dryRock=new THREE.Color('#958166'),dryHigh=new THREE.Color('#b1a084');
+  const northRock=new THREE.Color('#737f82');
   const crest=cfg.crest||0.5,back=cfg.backfall==null?0.55:cfg.backfall,sd=cfg.seed||1;
   const tall=cfg.summits.reduce((m,s)=>Math.max(m,s.h),1);
   /* The tallest summit that reaches this far along, so the saddles between them fall out of
@@ -241,7 +244,7 @@ export function install(G){
    // recognisable, but no peak is a single smooth Gaussian cone.
    const crags=.91+.11*noise2(u*.021+sd,sd*.7)+.045*noise2(u*.064-sd,sd*2.1);
    return h*crags;};
-  const pos=[],col=[],idx=[],snowAmt=[],c=new THREE.Color();
+  const pos=[],col=[],idx=[],snowAmt=[],c=new THREE.Color(),warm=new THREE.Color();
   for(let j=0;j<=nv;j++){
    const t=j/nv,v=(t-0.5)*depth;
    for(let i=0;i<=nu;i++){
@@ -261,6 +264,7 @@ export function install(G){
     const g2=fbm((u+sd*57)*0.042,(v-sd*33)*0.042);       // the small break-up on top of both
     const r=dist+v+(g1-0.5)*depth*0.26;                  // the range advances and retreats
     const wx=ox*r+ax*u,wz=oz*r+az*u;
+    const region=regionalProfileAt(wx,wz);
     // Branching gullies and broken shelves interrupt the former smooth,
     // uniformly draped slopes. The named summit locations remain fixed.
     const warp=noise2(u*.008+sd,v*.009)*11;
@@ -269,6 +273,7 @@ export function install(G){
     const flank=Math.sin(Math.PI*clamp(t/lc,0,1));
     let y=SKY_BASE+hr*Math.max(0,prof)*(.69+g1*.32+g3*.10)
       +(g2-.5)*hr*(cfg.lowland?.018:.07)+(gullies-.5)*hr*(cfg.lowland?.045:.16)*flank+(shelves-.5)*hr*(cfg.lowland?.012:.035)*Math.max(0,prof);
+    y=SKY_BASE+(y-SKY_BASE)*region.massifScale;
     if(t<0.055)y=SKY_BASE-8;                             // the inner hem, buried under the far ground
     pos.push(wx,y,wz);
     const up=clamp((y-SKY_BASE)/tall,0,1);
@@ -276,9 +281,11 @@ export function install(G){
        blue-grey and every peak came out the colour of the sky it was standing against — a
        distant mountain is dark, and it is the fog that lifts it, not the paint. */
     c.copy(foot).lerp(rock,smooth(0.04,0.38,up));c.lerp(high,smooth(0.34,1.0,up)*0.50);
+    warm.copy(dryFoot).lerp(dryRock,smooth(.04,.38,up)).lerp(dryHigh,smooth(.34,1,up)*.5);
+    c.lerp(warm,region.dry).lerp(northRock,region.north*.27);
     c.multiplyScalar(.73+g1*.17+g3*.10+gullies*.15);
     col.push(c.r,c.g,c.b);
-    snowAmt.push(cfg.snowAt==null?0:smooth(cfg.snowAt,cfg.snowAt+(cfg.snowBand||36),y));
+    snowAmt.push(cfg.snowAt==null?0:region.north*smooth(cfg.snowAt,cfg.snowAt+(cfg.snowBand||36),y));
    }
   }
   const row=nu+1;
@@ -303,7 +310,9 @@ export function install(G){
   me.name='vista:'+cfg.id;me.castShadow=false;me.receiveShadow=false;
   me.matrixAutoUpdate=false;me.updateMatrix();            // it will never move; stop three asking every frame
   scene.add(me);
-  return {id:cfg.id,label:cfg.label,bearing:b,dist,height:tall,mesh:me,tris:nu*nv*2};
+  // Guide heights describe the emitted relief after the regional envelope.
+  let reliefHeight=0;for(let i=1;i<pos.length;i+=3)reliefHeight=Math.max(reliefHeight,pos[i]-SKY_BASE);
+  return {id:cfg.id,label:cfg.label,bearing:b,dist,height:Math.round(reliefHeight),mesh:me,tris:nu*nv*2};
  }
 
  /* Six silhouettes you could pick out of a line-up, on six bearings, so wherever you stand in
@@ -516,14 +525,16 @@ export function install(G){
   // Interpolate its vertex colour from the same two triangles used by terrainH.
   const pasture=scene.getObjectByName('Pasture terrain'),color= pasture.geometry.attributes.color;
   const n=pasture.geometry.parameters.widthSegments,step=1000/n;
-  const groundColorAt=(x,z,out)=>{
+  const groundColorAt=(x,z,out,rise=0)=>{
    const gx=(x+500)/step,gz=(z+500)/step,ix=Math.max(0,Math.min(n-1,Math.floor(gx))),iz=Math.max(0,Math.min(n-1,Math.floor(gz)));
    const fx=gx-ix,fz=gz-iz,a=iz*(n+1)+ix,b=a+n+1,c=b+1,d=a+1;
    const ids=fx+fz<=1?[a,d,b]:[c,b,d],weights=fx+fz<=1?[1-fx-fz,fx,fz]:[fx+fz-1,1-fx,1-fz];
-   return out.setRGB(...[0,1,2].map(k=>ids.reduce((sum,id,j)=>sum+color.array[id*3+k]*weights[j],0)));
+   out.setRGB(...[0,1,2].map(k=>ids.reduce((sum,id,j)=>sum+color.array[id*3+k]*weights[j],0)));
+   const turf=THREE.MathUtils.smoothstep(rise,.12,1.7),lum=Math.max(out.r,out.g,out.b);
+   out.r+=(lum*.94-out.r)*turf;out.g+=(lum*.98-out.g)*turf;out.b+=(lum*.89-out.b)*turf;return out;
   };
   const down=createChalkDown({THREE,site:SCARP,baseHeight:W.terrainH,groundMaterial:pasture.material,groundColorAt});
-  scene.add(down.root);W.groundSurfaces.push(down.heightAt);P.chalkDown=down;window.__chalkCut=down.isChalk;
+  scene.add(down.root);W.groundSurfaces.push(down.heightAt);P.chalkDown=down;window.__chalkCut=down.isChalk;window.__chalkReliefAt=down.reliefAt;
   P.SCARP=SCARP;
   /* The viewing stone, sixty metres off the toe of the scarp. That distance is the whole point
      of it: from the foot she is a white smear, and from here she is a horse. Its patch was checked with the mound's

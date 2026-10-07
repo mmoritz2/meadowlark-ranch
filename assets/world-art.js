@@ -1,20 +1,10 @@
 /* Original pastoral environment art. All geometry and foliage are authored here;
    no imagery or models from the reference game are bundled. */
-import {dressLandscape} from './landscape-surface.js?v=world-cinematic-1';
+import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
+import {regionalProfile,regionalShoulder} from './regional-landscape.mjs?v=regional-relief-1';
 const TAU = Math.PI * 2;
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
-
-function ridgeProfile(a, phase) {
-  // Whole-number harmonics close the ring without a seam. Broad asymmetric
-  // shoulders replace a collection of recognisable, evenly spaced cones.
-  const peak = Math.max(0, Math.cos(a * 7 + phase * 0.4)) ** 7;
-  return 0.50 + 0.19 * Math.sin(a * 3 + phase)
-    + 0.12 * Math.sin(a * 5 - phase * 0.8)
-    + 0.075 * Math.sin(a * 9 + phase * 1.9)
-    + 0.040 * Math.sin(a * 19 - phase)
-    + 0.022 * Math.sin(a * 37 + phase * 0.3) + peak * 0.13;
-}
 
 function hash2(x, z) {
   let h = Math.imul(x | 0, 374761393) ^ Math.imul(z | 0, 668265263);
@@ -37,48 +27,55 @@ export function installBackdrop({ THREE, scene }) {
   const group = new THREE.Group();
   group.name = 'Pastoral mountain backdrop';
   const configs = [
-    { inner: 1300, crest: 1700, outer: 2280, height: 215, phase: 0.65,
-      low: '#617684', high: '#8b979f', snow: true },
-    { inner: 920, crest: 1230, outer: 1670, height: 132, phase: 2.7,
-      low: '#4d625b', high: '#6b7870', snow: false },
-    { inner: 725, crest: 910, outer: 1210, height: 94, phase: 4.2,
-      low: '#354936', high: '#64704d', snow: false },
+    { inner: 1300, crest: 1700, outer: 2280, height: 215, phase: 0.65, snow: true },
+    { inner: 920, crest: 1230, outer: 1670, height: 132, phase: 2.7, snow: false },
+    { inner: 725, crest: 910, outer: 1210, height: 94, phase: 4.2, snow: false },
   ];
-  for (const cfg of configs) {
+  for (const [layer,cfg] of configs.entries()) {
     const segments = 512, rings = 48;
     const vertices = [], colors = [], indices = [];
-    const low = new THREE.Color(cfg.low), high = new THREE.Color(cfg.high);
-    const rock = new THREE.Color('#77796f'), snow = new THREE.Color('#c5cfd1');
+    const palettes=[
+      ['#657983','#99a6aa','#80735f','#b1a28a','#627365','#889383'],
+      ['#566b73','#879599','#776650','#a7987c','#53684e','#7c8c70'],
+      ['#4f626a','#7e8a8c','#6c5c46','#a59476','#485e40','#788864'],
+    ][layer].map(v=>new THREE.Color(v));
+    const low = new THREE.Color(), high = new THREE.Color(),rock=new THREE.Color(), snow = new THREE.Color('#c0cbcd');
     const c = new THREE.Color();
     const crestT = (cfg.crest - cfg.inner) / (cfg.outer - cfg.inner);
     for (let j = 0; j <= rings; j++) {
       const t = j / rings;
       for (let i = 0; i <= segments; i++) {
-        const a = (i / segments) * TAU;
-        const localCrest = crestT + Math.sin(a * 5 + cfg.phase) * 0.068
-          + Math.sin(a * 13 - cfg.phase) * 0.024;
+        const a = i===segments?0:(i / segments) * TAU;
+        const region=regionalProfile(a,{phase:cfg.phase,layer});
+        const localCrest = clamp(crestT+region.crestShift,.18,.78);
         const shoulder = t <= localCrest ? t / localCrest : (1 - t) / (1 - localCrest);
-        const profile = Math.pow(Math.sin(Math.max(0, shoulder)*Math.PI*.5), 1.4);
-        const silhouette = ridgeProfile(a, cfg.phase);
+        const profile = regionalShoulder(shoulder,region);
+        const silhouette = region.heightScale;
         const radius = cfg.inner + t * (cfg.outer - cfg.inner)
-          + Math.sin(a * 4 + cfg.phase) * 56 * Math.sin(Math.PI * t);
+          + region.radialWarp * Math.sin(Math.PI * t);
         const x = Math.cos(a) * radius, z = Math.sin(a) * radius;
         const warp = terrainNoise(x * 0.004 + cfg.phase * 10, z * 0.004) * 26;
         const erosion = 1 - Math.abs(terrainNoise(x * 0.014 + warp, z * 0.014 - warp) * 2 - 1);
         const spurs = Math.pow(Math.abs(Math.sin(a * 34 + warp * 0.12 + t * 3)), 1.4);
-        const broken = (erosion - 0.58) * cfg.height * 0.16 * Math.sin(Math.PI * t);
-        const folds = (spurs - 0.5) * cfg.height * (cfg.snow?.04:.012) * profile;
+        const broken = (erosion - 0.58) * cfg.height * region.erosionScale * Math.sin(Math.PI * t);
+        const folds = (spurs - 0.5) * cfg.height * region.foldScale * profile;
         const y = -15 + profile * cfg.height * silhouette + broken + folds;
         vertices.push(x, y, z);
         const variation = terrainNoise(x * 0.04, z * 0.04);
+        // Authored regional hues and relief share one compass envelope.
+        for(const [target,k] of [[low,0],[high,1]])target.setRGB(
+          palettes[k].r*region.north+palettes[k+2].r*region.dry+palettes[k+4].r*region.pastoral,
+          palettes[k].g*region.north+palettes[k+2].g*region.dry+palettes[k+4].g*region.pastoral,
+          palettes[k].b*region.north+palettes[k+2].b*region.dry+palettes[k+4].b*region.pastoral);
+        rock.copy(high).lerp(low,.24);
         c.copy(low).lerp(high, clamp(profile * 0.56 + variation * 0.22));
         c.multiplyScalar(0.76 + erosion * 0.16 + spurs * 0.08);
         c.lerp(rock, smooth(0.42, 0.95, profile) * (0.16 + (1 - erosion) * 0.4));
         // The northern massif alone carries snow. Broken patches on the high
         // shoulders preserve a natural rock/snow boundary, without a second cap mesh.
         if (cfg.snow) {
-          const northern = smooth(-0.08, 0.6, -Math.sin(a));
-          const patch = smooth(0.54, 0.78, profile * silhouette + variation * 0.05);
+          const northern = region.north;
+          const patch = smooth(0.83, 1.08, profile * silhouette + variation * 0.035);
           c.lerp(rock, profile * 0.16);
           c.lerp(snow, northern * patch * 0.8);
         }
@@ -96,10 +93,19 @@ export function installBackdrop({ THREE, scene }) {
     geometry.setIndex(indices);
     geometry.computeVertexNormals();
     const normals = geometry.getAttribute('normal'), colorAttribute = geometry.getAttribute('color');
+    // Indexed strips duplicate the wrap vertex; share its normal as well as
+    // its position so grazing light cannot reveal a vertical seam.
+    const seamNormal=new THREE.Vector3();
+    for(let j=0;j<=rings;j++){const a=j*row,b=a+segments;
+      seamNormal.set(normals.getX(a)+normals.getX(b),normals.getY(a)+normals.getY(b),normals.getZ(a)+normals.getZ(b)).normalize();
+      normals.setXYZ(a,seamNormal.x,seamNormal.y,seamNormal.z);normals.setXYZ(b,seamNormal.x,seamNormal.y,seamNormal.z);
+    }
     // Exposed faces stay rocky; soil and vegetation gather on gentler shoulders.
     for (let i = 0; i < normals.count; i++) {
       const steep = 1 - Math.abs(normals.getY(i));
-      c.fromBufferAttribute(colorAttribute, i).lerp(rock, smooth(0.3, 0.7, steep) * 0.28);
+      c.fromBufferAttribute(colorAttribute, i);
+      // Keep local mineral colour on exposed faces; do not paint every region grey.
+      c.multiplyScalar(1-smooth(0.3,0.7,steep)*.14);
       colorAttribute.setXYZ(i, c.r, c.g, c.b);
     }
     geometry.computeBoundingSphere();
@@ -110,9 +116,10 @@ export function installBackdrop({ THREE, scene }) {
       fog: true,
       side: THREE.DoubleSide,
     });
-    dressLandscape({THREE,material,wooded:!cfg.snow,fogScale:.58,fogCap:.94,mineralScale:24,bumpStrength:.12});
+    dressLandscape({THREE,material,wooded:true,regional:true,fogScale:[.84,.74,.66][layer],fogCap:.97,mineralScale:24,bumpStrength:.10});
     const ridge = new THREE.Mesh(geometry, material);
     ridge.name = cfg.snow ? 'Distant northern massif' : 'Wooded rolling ridgeline';
+    ridge.userData.regionalLayer=layer;ridge.matrixAutoUpdate=false;ridge.updateMatrix();
     ridge.castShadow = false;
     ridge.receiveShadow = false;
     group.add(ridge);

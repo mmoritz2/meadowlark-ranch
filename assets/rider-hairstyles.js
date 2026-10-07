@@ -1,4 +1,4 @@
-import {createHeadSurface} from './rider-head-surface.js?v=artist-riders-20261007';
+import {createHeadSurface} from './rider-head-surface.js?v=couture-riders-20261007';
 /* New styles are fitted in the Head bone's space, using the same scalp, strand
    materials and helmet deformation as the original character. */
 const smooth=(a,b,value)=>{const t=Math.max(0,Math.min(1,(value-a)/(b-a)));return t*t*(3-2*t);};
@@ -61,21 +61,61 @@ function mergeHairGeometry(THREE,list){
  for(const g of list){const p=g.attributes.position,u=g.attributes.uv;for(let i=0;i<p.count;i++){P.push(p.getX(i),p.getY(i),p.getZ(i));UV.push(u?u.getX(i):0,u?u.getY(i):0);}if(g.index)for(const i of g.index.array)I.push(i+offset);else for(let i=0;i<p.count;i++)I.push(i+offset);offset+=p.count;g.dispose();}
  const g=new THREE.BufferGeometry();g.setIndex(I);g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(UV,2));smoothHairNormals(g);g.computeBoundingSphere();g.userData.proceduralHair=true;return g;
 }
-function hairFallPoint(THREE,kit,style,theta,t){
+function originalHairFallPoint(THREE,kit,style,theta,t){
  const H=kit.head,ends={long:-.435,waves:-.375,mermaidwaves:-.515,lob:-.205,bob:-.060,beachbob:-.095,curlyFall:-.255},end=ends[style]??-.375,curly=style==='curlyFall',waved=['waves','mermaidwaves','beachbob','curlyFall'].includes(style),sine=Math.sin(theta),cosine=Math.cos(theta),yStart=H.cy+.055,yEnd=end+.023*Math.abs(sine)+.010*Math.sin(theta*5.1+.7)+.013*(.5+.5*Math.cos(theta*19)),y=yStart+(yEnd-yStart)*t,hang=Math.max(0,(t-.21)/.79),ridge=.004*Math.sin(theta*19+t*4)*Math.sin(Math.PI*t),wave=waved?(curly?.024:.022)*Math.sin(hang*(curly?16.5:10.8)+theta*2.7)*Math.sin(hang*Math.PI*.92):.0025*Math.sin(hang*4+theta*2),rx=H.rx+.014+(curly?.010:.025)*Math.sin(hang*Math.PI*.8),sideSweep=.130*smooth(.015,.38,hang)*Math.pow(Math.abs(sine),.75),backDrop=.055*hang*Math.abs(cosine)+.092*smooth(.10,.72,hang)*Math.pow(Math.max(0,-cosine),2),p=new THREE.Vector3(H.cx+sine*(rx+wave+ridge),y,H.cz+cosine*.106-sideSweep-backDrop+wave*.32*cosine);
  if(t<.35){const fitted=scalpPoint(THREE,kit,new THREE.Vector3(H.cx+sine*H.rx,y,H.cz+cosine*H.rz),.006);p.lerp(fitted,1-smooth(.13,.35,t));}return p;
 }
+function hairFallPoint(THREE,kit,style,theta,t){
+ if(!['waves','mermaidwaves','beachbob'].includes(style))return originalHairFallPoint(THREE,kit,style,theta,t);
+ const H=kit.head,sine=Math.sin(theta),cosine=Math.cos(theta),hang=smooth(.17,.98,t),end=style==='beachbob'?-.105:style==='mermaidwaves'?-.505:-.340,
+  yEnd=end+.020*Math.abs(sine)+.010*Math.sin(theta*5.2+.7),y=H.cy+.055+(yEnd-H.cy-.055)*t,
+  phase=hang*(style==='beachbob'?7.7:10.1)-theta*1.35,wave=(style==='beachbob'?.014:.022)*Math.sin(phase)*smooth(0,.25,hang),
+  radius=(H.rx+.012+.010*Math.sin(Math.PI*hang))*(1-.19*hang*hang*hang),clearance=style==='mermaidwaves'?smooth(H.cy+.018,H.chin.y-.100,y):smooth(0,.52,hang),back=(style==='beachbob'?.033:.105)*clearance*Math.abs(cosine)+(style==='beachbob'?.019:.083)*clearance*Math.pow(Math.abs(sine),.65),
+  p=new THREE.Vector3(H.cx+sine*(radius+wave),y,H.cz+cosine*(H.rz+.007)-back+cosine*wave*.65);
+ // A mounted male torso projects farther behind the neck than the neutral pose.
+ // Clear only the lower center fall; the fitted crown and side roots stay fixed.
+ if(kit.body==='m'&&style!=='beachbob')p.z-=.018*smooth(H.chin.y-.065,H.chin.y-.195,y)*smooth(-.30,-.70,cosine);
+ if(t<.34){const fitted=scalpPoint(THREE,kit,new THREE.Vector3(H.cx+sine*H.rx,y,H.cz+cosine*H.rz),.006);p.lerp(fitted,1-smooth(.13,.34,t));}
+ return p;
+}
+
+/* A rounded ribbon, with width running across the lock and a shallow lenticular
+   section. Independent S-curves and staggered tips create layers rather than a sheet. */
+function waveLeaf(THREE,points,width,thickness,outward,kit){
+ const path=new THREE.CatmullRomCurve3(points),P=[],UV=[],I=[],segments=54,sides=10;
+ for(let i=0;i<=segments;i++){
+  const t=i/segments,center=path.getPointAt(t),tangent=path.getTangentAt(t).normalize(),out=outward.clone().addScaledVector(tangent,-outward.dot(tangent)).normalize(),side=out.clone().cross(tangent).normalize(),
+   root=smooth(0,.13,t),tip=1-smooth(.68,1,t),breadth=width*(.18+.82*root)*(.12+.88*tip)*(1+.08*Math.sin(t*9.0)),depth=thickness*(.30+.70*root)*(.14+.86*tip);
+  for(let j=0;j<=sides;j++){
+   const angle=j/sides*Math.PI*2,across=Math.cos(angle),bulge=Math.sin(angle),point=center.clone().addScaledVector(side,across*breadth).addScaledVector(out,bulge*depth*(1-.15*Math.abs(across)));
+   if(kit){const fitted=scalpPoint(THREE,kit,point,.0052+.0018*(1-Math.abs(across)));point.lerp(fitted,smooth(kit.head.chin.y+.013,kit.head.chin.y+.062,point.y));}
+   P.push(...point.toArray());UV.push(j/sides*1.8,t*3);
+   if(i<segments&&j<sides){const k=i*(sides+1)+j,n=sides+1;I.push(k,k+1,k+n,k+1,k+n+1,k+n);}
+  }
+ }
+ // Seal both tapered ends; these small rounded tips remain visible from behind.
+ for(const ring of [0,segments]){const c=path.getPointAt(ring/segments),id=P.length/3;P.push(...c.toArray());UV.push(.9,ring/segments*3+(ring ? .015 : -.015));for(let j=0;j<sides;j++){const k=ring*(sides+1)+j;ring?I.push(id,k,k+1):I.push(id,k+1,k);}}
+ const geo=new THREE.BufferGeometry();geo.setIndex(I);geo.setAttribute('position',new THREE.Float32BufferAttribute(P,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(UV,2));geo.computeVertexNormals();return geo;
+}
 function sculptedHairShape(THREE,kit,style){
- const H=kit.head,V=(x,y,z)=>new THREE.Vector3(x,y,z),pieces=[],P=[],U=[],I=[],N=96,M=26,short=style==='pixie',fallOnly=style==='curlyFall';
- const line=theta=>{const a=Math.abs(theta),part=.0035*Math.exp(-1*((theta+.13)/.11)**2);return a<.90?H.browTop+.032+.010*Math.sin(a/.90*Math.PI*.5)**2-part:a<1.55?H.browTop+.042-(a-.90)*.090:H.browTop-.0165-(a-1.55)*.045;};
+ const H=kit.head,V=(x,y,z)=>new THREE.Vector3(x,y,z),pieces=[],P=[],U=[],I=[],N=96,M=26,short=style==='pixie',fallOnly=style==='curlyFall',layered=['waves','mermaidwaves','beachbob'].includes(style);
+ const line=theta=>{const a=Math.abs(theta),part=.0035*Math.exp(-1*((theta+.13)/.11)**2);
+  if(layered){const front=H.browTop+.032+.010*Math.sin(Math.min(1,a/.90)*Math.PI*.5)**2-part,side=H.browTop+.042-.022*smooth(.90,1.85,a),back=H.browTop+.020-.088*smooth(1.85,Math.PI,a);return a<.90?front:a<1.85?side:back;}
+  return a<.90?H.browTop+.032+.010*Math.sin(a/.90*Math.PI*.5)**2-part:a<1.55?H.browTop+.042-(a-.90)*.090:H.browTop-.0165-(a-1.55)*.045;};
  // The fitted crown is a single smooth shell with shallow directional clumps.
  for(let j=0;j<=M;j++)for(let i=0;i<=N;i++){
-  const v=j/M,theta=(i/N-.5)*Math.PI*2,y=H.top-.003+(line(theta)-H.top+.003)*Math.pow(v,.72),section=Math.sqrt(Math.max(.00001,1-((y-H.cy)/Math.max(.01,H.ry))**2)),target=V(H.cx+Math.sin(theta)*H.rx*section,y,H.cz+Math.cos(theta)*H.rz*section),p=scalpPoint(THREE,kit,target,.0045),normal=p.clone().sub(V(H.cx,H.cy,H.cz)).normalize(),clump=.0017*Math.sin(theta*17+v*3)*Math.sin(v*Math.PI);
-  p.addScaledVector(normal,.003+clump);P.push(...p.toArray());U.push(i/N*5,v*1.3);
+  const v=j/M,theta=(i/N-.5)*Math.PI*2,y=H.top-.003+(line(theta)-H.top+.003)*Math.pow(v,.72),section=Math.sqrt(Math.max(.00001,1-((y-H.cy)/Math.max(.01,H.ry))**2)),target=V(H.cx+Math.sin(theta)*H.rx*section,y,H.cz+Math.cos(theta)*H.rz*section),p=scalpPoint(THREE,kit,target,layered?.0006+.0039*(1-smooth(.73,1,v)):.0045),normal=p.clone().sub(V(H.cx,H.cy,H.cz)).normalize(),clump=.0017*Math.sin(theta*17+v*3)*Math.sin(v*Math.PI);
+  const part=layered?Math.exp(-1*((p.x-H.cx-.007)/.0055)**2)*smooth(H.cy+.052,H.top-.006,p.y)*smooth(H.cz-.027,H.cz+.030,p.z):0;
+  const edge=layered?(1-smooth(.70,1,v)):1;
+  p.addScaledVector(normal,.003*edge+clump*edge-part*.0018*edge);P.push(...p.toArray());U.push(i/N*5,v*1.3);
   if(j<M&&i<N){const k=j*(N+1)+i;I.push(k,k+N+1,k+1,k+1,k+N+1,k+N+2);}
  }
  // Close the UV seam with the same lifted ray hit on both endpoints.
  for(let j=0;j<=M;j++){const first=j*(N+1)*3,last=(j*(N+1)+N)*3;for(let k=0;k<3;k++)P[last+k]=P[first+k];}
+ // The first crown row is a small ring, not a pole. Seal its opening with
+ // the same fitted scalp sample; the positional UV seam above remains closed.
+ const pole=scalpPoint(THREE,kit,V(H.cx,H.top+.015,H.cz),.007),poleIndex=P.length/3;P.push(...pole.toArray());U.push(2.5,-.045);
+ for(let i=0;i<N;i++)I.push(poleIndex,i,i+1);
  const cap=new THREE.BufferGeometry();cap.setIndex(I);cap.setAttribute('position',new THREE.Float32BufferAttribute(P,3));cap.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));cap.computeVertexNormals();pieces.push(cap);
  const lock=(pts,width,depth)=>{
   const path=new THREE.CatmullRomCurve3(pts),geo=new THREE.TubeGeometry(path,40,1,12,false),p=geo.attributes.position,u=geo.attributes.uv;
@@ -84,7 +124,7 @@ function sculptedHairShape(THREE,kit,style){
   }geo.computeVertexNormals();pieces.push(geo);
  };
  if(!short){
-  const ends={long:-.435,waves:-.375,mermaidwaves:-.515,lob:-.205,bob:-.060,beachbob:-.095,curlyFall:-.255},end=ends[style]??-.375,waved=['waves','mermaidwaves','beachbob','curlyFall'].includes(style),A=112,B=48,positions=[],uvs=[],indices=[],theta0=1.43,span=Math.PI*2-2*theta0;
+  const ends={long:-.435,waves:-.375,mermaidwaves:-.515,lob:-.205,bob:-.060,beachbob:-.095,curlyFall:-.255},end=ends[style]??-.375,waved=['waves','mermaidwaves','beachbob','curlyFall'].includes(style),A=112,B=48,positions=[],uvs=[],indices=[],theta0=layered?2.02:1.43,span=Math.PI*2-2*theta0;
   // A closed draped fall provides a continuous silhouette. Low ridges separate
   // the clumps; the tips form an irregular soft U instead of a blunt curtain.
   for(let side=0;side<2;side++)for(let j=0;j<=B;j++)for(let i=0;i<=A;i++){
@@ -95,8 +135,35 @@ function sculptedHairShape(THREE,kit,style){
   const total=(A+1)*(B+1);for(let j=0;j<B;j++)for(const i of [0,A]){const k=j*(A+1)+i,n=k+A+1;indices.push(k,n,k+total,n,n+total,k+total);}for(let i=0;i<A;i++){const k=B*(A+1)+i;indices.push(k,k+total,k+1,k+1,k+total,k+1+total);}
   const fall=new THREE.BufferGeometry();fall.setIndex(indices);fall.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));fall.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));fall.computeVertexNormals();pieces.push(fall);
  }
+ // Overlapping back layers begin inside the fitted crown and follow the same
+ // gravity-led fall. Their varied length and shallow S-bends break its outer contour.
+ if(layered){
+  const count=17,theta0=2.02,span=Math.PI*2-2*theta0;
+  for(let j=0;j<count;j++){
+   const theta=theta0+span*j/(count-1),normal=V(Math.sin(theta),0,Math.cos(theta)),length=.85+.15*(.5+.5*Math.sin(j*2.17+.6)),pts=[];
+   for(let k=0;k<=18;k++){
+    const t=k/18,start=.065+.025*(.5+.5*Math.sin(j*2.1)),along=start+(length-start)*t,p=hairFallPoint(THREE,kit,style,theta,along),hang=smooth(.10,.87,t),drift=.0045*Math.sin(t*8+j*.65)*Math.sin(Math.PI*t);
+    p.addScaledVector(normal,.0025+.0018*Math.sin(Math.PI*t));p.x+=drift;pts.push(p);
+   }
+   pieces.push(waveLeaf(THREE,pts,H.rx*(.17+.025*Math.sin(j*1.7)),.0030,normal));
+  }
+  // Fitted framing stays on the temple and cheek. The shallow wave begins below
+  // the jaw; two overlapping layers share a fall rather than forming an airy loop.
+  for(const sd of [-1,1])for(let j=0;j<(style==='beachbob'?1:2);j++){
+   const length=style==='beachbob'?.105:style==='mermaidwaves'?.265:.175,tipY=-length+j*(style==='beachbob'?.012:.037),
+    root=scalpPoint(THREE,kit,V(H.cx+.007+sd*(.009+j*.010),H.top-.014,H.cz+.024-j*.006),.006),
+    brow=scalpPoint(THREE,kit,V(sd*H.rx*.82,H.browTop+.036-j*.006,H.cz+.058-j*.003),.007),
+    temple=scalpPoint(THREE,kit,V(sd*H.rx*.98,H.cy+.002,H.cz+.047-j*.004),.008),
+    jaw=scalpPoint(THREE,kit,V(sd*H.rx*.98,H.chin.y+.035,H.cz+.050-j*.004),.009),
+    released=V(sd*(H.rx*.97+j*.004),H.chin.y-.026,H.cz+.093-j*.002),
+    bend=V(sd*(H.rx+(style==='beachbob'?.007:.017)+j*.003),-length*.46,H.cz+(style==='beachbob'?.105:.127)-j*.003),
+    inside=V(sd*(H.rx-(style==='beachbob'?0:.007)+j*.003),-length*.74,H.cz+(style==='beachbob'?.111:.138)-j*.004),
+    tip=V(sd*(H.rx+.002+j*.003),tipY,H.cz+(style==='beachbob'?.115:.145)-j*.004);
+   pieces.push(waveLeaf(THREE,[root,scalpPoint(THREE,kit,root.clone().lerp(brow,.52),.008),brow,temple,jaw,released,bend,inside,tip],H.rx*(.190-j*.043),.0026-j*.00035,V(sd*.25,0,1).normalize(),kit));
+  }
+ }
  // Swept framing leaves blend the part into the temple and break the outline.
- if(!fallOnly)for(const sd of [-1,1])for(let j=0;j<(short?5:2);j++){
+ if(!fallOnly&&!layered)for(const sd of [-1,1])for(let j=0;j<(short?5:2);j++){
   const root=scalpPoint(THREE,kit,V(sd*(.018+j*.012),H.top-.007,H.cz+.032),.005),temple=scalpPoint(THREE,kit,V(sd*H.rx*.91,H.browTop+.031-j*.010,H.cz+.083),.006),tipEnd=style==='bob'?-.050:style==='beachbob'?-.078:style==='lob'?-.118:style==='mermaidwaves'?-.185:style==='waves'?-.132:-.152,tip=short?scalpPoint(THREE,kit,V(sd*H.rx,H.browTop-.010-j*.009,H.cz+.038),.004):V(sd*(H.rx*1.10+j*.007),tipEnd+j*.027,H.cz+.126+j*.004),mid=short?temple.clone().lerp(tip,.52):V(sd*(H.rx*.97+.007*Math.sin(j*1.7)),(temple.y+tip.y)*.45,H.cz+.142+.007*Math.cos(j*1.6));
   lock([root,scalpPoint(THREE,kit,root.clone().lerp(temple,.54),.008),temple,mid,tip],short?.011-j*.0012:.019-j*.0035,.26);
  }

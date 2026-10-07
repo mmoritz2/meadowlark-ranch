@@ -7,7 +7,7 @@ const baseline=process.env.QA_CHALK_BASELINE;
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  await page.route('**/api/me',r=>r.fulfill({contentType:'application/json',body:'null'}));
  await page.addInitScript(()=>{let seed=712761;Math.random=()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);});
- if(baseline)for(const file of ['assets/chalk-down.js','assets/terrain-realism.js','assets/features/world-vistas.js','assets/features/index.js']){
+ if(baseline)for(const file of ['assets/chalk-down.js','assets/terrain-realism.js','assets/features/world-vistas.js','assets/features/index.js','assets/meadow-biomes.js','assets/meadow-cover.js','assets/undergrowth-layout.mjs','assets/undergrowth.js','assets/features/world-flora.js']){
   const body=execFileSync('git',['show',baseline+':'+file],{encoding:'utf8'});await page.route('**/'+file+'*',r=>r.fulfill({contentType:'text/javascript',body}));
  }
  await page.route('**/ranch3d.html*',async r=>{const response=await r.fetch(),body=baseline?execFileSync('git',['show',baseline+':ranch3d.html'],{encoding:'utf8'}):await response.text();

@@ -23,7 +23,7 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
   const u=(i/nx-.5)*len,t=j/nz,[wx,wz]=frame(u,t),rise=lift(u,t),y=baseHeight(wx,wz)+rise;
   heights[j*(nx+1)+i]=y;relief.push(rise);positions.push(wx,y,wz);uvs.push(groundMaterial?(wx+500)/1000:wx/1.6,groundMaterial?(500-wz)/1000:wz/1.6);
   const wear=(Math.sin(u*.14+t*5)+Math.sin(u*.047-t*9)+2)*.065;
-  if(groundColorAt)groundColorAt(wx,wz,c);
+  if(groundColorAt)groundColorAt(wx,wz,c,rise);
   else c.copy(turf).lerp(bleached,wear*lift(u,t)/h);
   colors.push(c.r,c.g,c.b);
  }
@@ -35,14 +35,15 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
  mat.shadowSide=T.DoubleSide;
  const root=new T.Group();root.name='Whitehorse Down';root.userData.walkable=true;
  const ground=new T.Mesh(geometry,mat);ground.name='vista:chalkscarp';ground.receiveShadow=true;ground.castShadow=true;root.add(ground);
- function sampleUV(u,t){
+ function sampleUV(u,t,field=heights){
   const fx=(u/len+.5)*nx,fz=t*nz;if(fx<0||fz<0||fx>nx||fz>nz)return -Infinity;
   const i=Math.min(nx-1,Math.floor(fx)),j=Math.min(nz-1,Math.floor(fz)),a=j*(nx+1)+i,dx=fx-i,dz=fz-j;
-  const A=heights[a],B=heights[a+1],C=heights[a+nx+1],D=heights[a+nx+2];
+  const A=field[a],B=field[a+1],C=field[a+nx+1],D=field[a+nx+2];
   return dx>=dz?A+(B-A)*dx+(D-B)*dz:A+(D-C)*dx+(C-A)*dz;
  }
  const coordinates=(wx,wz)=>{const dx=wx-x,dz=wz-z;return [dx*ax+dz*az,(dx*ox+dz*oz)/depth+.5];};
  const heightAt=(wx,wz)=>sampleUV(...coordinates(wx,wz));
+ const reliefAt=(wx,wz)=>{const v=sampleUV(...coordinates(wx,wz),relief);return Number.isFinite(v)?Math.max(0,v):0;};
  // A continuous, original galloping silhouette. Curved haunches, a tapering neck,
  // bent hocks and open space between the legs replace the old overlapping polygons.
  const s=new T.Shape();s.moveTo(-7,4.9);
@@ -97,5 +98,5 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
  const isChalk=(wx,wz)=>{const [u,t]=coordinates(wx,wz);if(t<0||t>crestAt(u)||Math.abs(u)>22)return false;
   const px=(u+1)/1.2,py=(lift(u,t)-5.7)/.77;let inside=false;
   for(let i=0,j=curve.length-1;i<curve.length;j=i++){const a=curve[i],b=curve[j];if((a.y>py)!==(b.y>py)&&px<(b.x-a.x)*(py-a.y)/(b.y-a.y)+a.x)inside=!inside;}return inside;};
- return {root,heightAt,isChalk,contains(wx,wz){const [u,t]=coordinates(wx,wz);return Math.abs(u)<len/2&&t>0&&t<1&&lift(u,t)>.12;},site,stats:{groundTriangles:indices.length/3,chalkTriangles:ps.length/9}};
+ return {root,heightAt,reliefAt,isChalk,contains(wx,wz){const [u,t]=coordinates(wx,wz);return Math.abs(u)<len/2&&t>0&&t<1&&lift(u,t)>.12;},site,stats:{groundTriangles:indices.length/3,chalkTriangles:ps.length/9}};
 }

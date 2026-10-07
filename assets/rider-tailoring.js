@@ -1,8 +1,20 @@
 /* Modern equestrian garment construction. Every added vertex keeps the body's
    interpolated joint weights, including folded collars and raised pocket edges. */
 import {mergeVertices,mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {trimGarment,surfaceSampler} from './rider-fit.js?v=art-20261005';
+import {trimGarment,surfaceSampler} from './rider-fit.js?v=couture-riders-20261007';
 const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t);};
+// The visible body uses this same opening, with a small overlap under cloth.
+export function garmentNeckY(x,zz,z,c,lining=false){
+ const ax=Math.abs(x),height=c.collared&&!c.cardigan?z.neckY+.018+.016*(1-smooth(z.neckZ-.045,z.neckZ+.020,zz))+.018*Math.min(ax/.075,1)**2+.068*smooth(.080,.15,ax)-(c.polo?.042*(1-smooth(0,.048,ax))*smooth(z.neckZ+.010,z.neckZ+.040,zz):0):z.neckY+.036*(1-smooth(-.09,0,zz-z.neckZ))+.045*Math.min(ax/.085,1)**2+.075*smooth(.085,.15,ax);
+ return height-(lining&&c.vest?.030*(1-smooth(.085,.145,ax)):0);
+}
+export const GARMENT_NECK_GLSL=`
+float garmentNeckY(vec3 p,vec2 neck,float collared,float polo){
+ float ax=abs(p.x);
+ float roundNeck=neck.x+.036*(1.0-smoothstep(-.09,0.0,p.z-neck.y))+.045*pow(min(ax/.085,1.0),2.0)+.075*smoothstep(.085,.15,ax);
+ float foldedNeck=neck.x+.018+.016*(1.0-smoothstep(neck.y-.045,neck.y+.020,p.z))+.018*pow(min(ax/.075,1.0),2.0)+.068*smoothstep(.080,.15,ax)-polo*.042*(1.0-smoothstep(0.0,.048,ax))*smoothstep(neck.y+.010,neck.y+.040,p.z);
+ return mix(roundNeck,foldedNeck,collared);
+}`;
 export function garmentCut(o){
  const formal=['show','hunter','dressage','pinstripe','tweed'].includes(o.id),vest=['quilted','explorer','ranger'].includes(o.id),cardigan=o.id==='cardigan';
  const polo=['polo','sportpolo','rugby'].includes(o.id),sport=['eventer','team','chevron','raincoat','sweatshirt','summit'].includes(o.id);
@@ -14,8 +26,8 @@ export function garmentCut(o){
   hem:formal?(o.cut==='coat'?-.115:-.072):cardigan?-.135:vest?-.045:jacket?-.060:knit?-.029:tee?-.018:.010,
   ease:vest?.014:formal?.008:knit?.012:jacket?.012:.005};
 }
-function normals(geo){
- geo.computeVertexNormals();const p=geo.attributes.position,n=geo.attributes.normal,groups=new Map();
+function normals(geo,preserve=false){
+ if(!preserve)geo.computeVertexNormals();const p=geo.attributes.position,n=geo.attributes.normal,groups=new Map();
  for(let i=0;i<p.count;i++){const key=[p.getX(i),p.getY(i),p.getZ(i)].map(v=>Math.round(v*100000)).join(',');let g=groups.get(key);if(!g){g={ids:[],x:0,y:0,z:0};groups.set(key,g);}g.ids.push(i);g.x+=n.getX(i);g.y+=n.getY(i);g.z+=n.getZ(i);}
  for(const g of groups.values()){const l=Math.hypot(g.x,g.y,g.z)||1;for(const i of g.ids)n.setXYZ(i,g.x/l,g.y/l,g.z/l);}
 }
@@ -38,6 +50,58 @@ function clothSkin(THREE,kit){
  for(const g of groups)for(const i of g.vertices)pos.setXYZ(i,g.p.x,g.p.y,g.p.z);
  normals(geo);kit.clothSkin=geo;return geo.clone();
 }
+function refineNeckOpening(THREE,source,z){
+ const attrs=source.attributes,idx=source.index,P=[],N=[],U=[],J=[],W=[],vertices=new Map(),geometricIds=new Map(),midpoints=new Map();
+ let nextId=0;
+ // Position IDs join coincident triangle corners without welding UV/normal seams.
+ const geometricId=p=>{const key=p.join(',');let id=geometricIds.get(key);if(id===undefined){id=nextId++;geometricIds.set(key,id);}return id;};
+ const read=i=>{
+  if(vertices.has(i))return vertices.get(i);
+  const p=[attrs.position.getX(i),attrs.position.getY(i),attrs.position.getZ(i)],weights=new Map();
+  for(const get of ['getX','getY','getZ','getW']){const j=attrs.skinIndex[get](i);weights.set(j,(weights.get(j)||0)+attrs.skinWeight[get](i));}
+  const v={id:geometricId(p),p,n:[attrs.normal.getX(i),attrs.normal.getY(i),attrs.normal.getZ(i)],uv:[attrs.uv.getX(i),attrs.uv.getY(i)],weights};vertices.set(i,v);return v;
+ };
+ const edge=(a,b)=>a.id<b.id?a.id+':'+b.id:b.id+':'+a.id;
+ const mid=(a,b)=>{
+  const key=edge(a,b);let shared=midpoints.get(key);
+  if(!shared){const p=a.p.map((v,k)=>(v+b.p[k])*.5);shared={id:geometricId(p),p};midpoints.set(key,shared);}
+  // Canonical joint order makes either orientation of a shared edge choose the
+  // same four influences if truncation encounters equal weights.
+  const joints=[...new Set([...a.weights.keys(),...b.weights.keys()])].sort((a,b)=>a-b),weights=new Map(joints.map(j=>[j,((a.weights.get(j)||0)+(b.weights.get(j)||0))*.5]));
+  return {id:shared.id,p:shared.p,n:a.n.map((v,k)=>(v+b.n[k])*.5),uv:a.uv.map((v,k)=>(v+b.uv[k])*.5),weights};
+ };
+ const push=v=>{P.push(...v.p);N.push(...v.n);U.push(...v.uv);const ranked=[...v.weights].filter(v=>v[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((n,v)=>n+v[1],0)||1;while(ranked.length<4)ranked.push([0,0]);J.push(...ranked.map(v=>v[0]));W.push(...ranked.map(v=>v[1]/sum));};
+ let faces=[];for(let i=0;i<(idx?idx.count:attrs.position.count);i+=3)faces.push([0,1,2].map(k=>read(idx?idx.getX(i+k):i+k)));
+ // Two global rounds retain the local refinement budget. Every incident face
+ // observes an edge mark, including faces outside the selected neck band.
+ for(let round=0;round<2;round++){
+  const split=new Set();
+  for(const face of faces){
+   const near=face.some(v=>Math.abs(v.p[0])<.145&&v.p[1]>z.neckY-.025&&v.p[1]<z.neckY+.105),longest=Math.max(...[[0,1],[1,2],[2,0]].map(([a,b])=>Math.hypot(...face[a].p.map((x,k)=>x-face[b].p[k]))));
+   if(near&&longest>.008)for(let k=0;k<3;k++)split.add(edge(face[k],face[(k+1)%3]));
+  }
+  if(!split.size)break;
+  const next=[];
+  for(const [a,b,c]of faces){
+   const ab=split.has(edge(a,b))?mid(a,b):null,bc=split.has(edge(b,c))?mid(b,c):null,ca=split.has(edge(c,a))?mid(c,a):null,count=Number(!!ab)+Number(!!bc)+Number(!!ca);
+   if(count===0)next.push([a,b,c]);
+   else if(count===3)next.push([a,ab,ca],[ab,b,bc],[ca,bc,c],[ab,bc,ca]);
+   else if(count===1){
+    if(ab)next.push([a,ab,c],[ab,b,c]);
+    else if(bc)next.push([b,bc,a],[bc,c,a]);
+    else next.push([c,ca,b],[ca,a,b]);
+   }else{
+    // Rotate the two-edge transition around their shared original corner.
+    if(ab&&bc)next.push([b,bc,ab],[a,ab,c],[ab,bc,c]);
+    else if(bc&&ca)next.push([c,ca,bc],[b,bc,a],[bc,ca,a]);
+    else next.push([a,ab,ca],[c,ca,b],[ca,ab,b]);
+   }
+  }
+  faces=next;
+ }
+ for(const face of faces)for(const v of face)push(v);
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(P,3));geo.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));geo.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(J,4));geo.setAttribute('skinWeight',new THREE.Float32BufferAttribute(W,4));geo.setIndex(Array.from({length:P.length/3},(_,i)=>i));return geo;
+}
 const mesh=(kit,geometry,name,clothPart='tailored')=>({geometry,material:kit.materials.body,name,clothPart,skeleton:kit.skin.skeleton,bindMatrix:kit.skin.bindMatrix});
 export function tailoredTop(THREE,kit,outfit,layer='outer'){
  const c=garmentCut(outfit),z=kit.zones,lining=layer==='lining',key=JSON.stringify([c,layer]);
@@ -45,7 +109,7 @@ export function tailoredTop(THREE,kit,outfit,layer='outer'){
  let raw=clothSkin(THREE,kit);const p=raw.attributes.position,n=raw.attributes.normal;
  const ease=lining?.004:c.ease,hem=z.waistY+(lining?.005:c.hem),cuff=c.short?z.cuffX-.29:z.cuffX-.021;
  const armPoints={};for(const sd of ['l','r'])armPoints[sd]=['upperarm','lowerarm','hand'].map(name=>kit.bones[name+'_'+sd].getWorldPosition(new THREE.Vector3()));
- const armJoints=new Set(kit.skin.skeleton.bones.map((b,i)=>/^(upperarm|lowerarm|hand)_/.test(b.name)?i:-1)),skinIndices=raw.attributes.skinIndex,skinWeights=raw.attributes.skinWeight;
+ const armIndices=Object.fromEntries(['l','r'].map(sd=>[sd,['upperarm','lowerarm','hand'].map(name=>kit.skin.skeleton.bones.indexOf(kit.bones[name+'_'+sd]))])),armJoints=new Set(kit.skin.skeleton.bones.map((b,i)=>/^(upperarm|lowerarm|hand)_/.test(b.name)?i:-1)),skinIndices=raw.attributes.skinIndex,skinWeights=raw.attributes.skinWeight;
  for(let i=0;i<p.count;i++){
   let x=p.getX(i),y=p.getY(i),zz=p.getZ(i),ax=Math.abs(x);
   const upper=smooth(hem-.03,hem+.015,y)*(1-smooth(z.neckY+.010,z.neckY+.047,y)),torso=(1-smooth(.205,.28,ax))*upper;
@@ -64,14 +128,22 @@ export function tailoredTop(THREE,kit,outfit,layer='outer'){
   // Sleeve sections are draped around the arm axis. Their elliptical profile
   // bridges biceps and elbows instead of reproducing the sculpt's muscles.
   let armOwnership=0;for(const getter of ['getX','getY','getZ','getW'])if(armJoints.has(skinIndices[getter](i)))armOwnership+=skinWeights[getter](i);
-  const sleeveFit=smooth(.135,.245,ax)*smooth(.12,.58,armOwnership);
-  if(sleeveFit){const [shoulder,elbow,hand]=armPoints[x>0?'l':'r'],sx=Math.abs(shoulder.x),ex=Math.abs(elbow.x),hx=Math.abs(hand.x),t=Math.max(0,Math.min(1,(ax-sx)/Math.max(.01,hx-sx))),center=shoulder.clone().lerp(hand,t),upperT=Math.max(0,Math.min(1,(ax-sx)/Math.max(.01,ex-sx))),foreT=Math.max(0,Math.min(1,(ax-ex)/Math.max(.01,hx-ex))),base=ax<ex?.034+.014*Math.pow(1-upperT,.85):.026+.008*(1-smooth(0,1,foreT)),radius=base*(kit.body==='m'?1.18:1)+ease*.40+(lining?0:c.drape[2]*.65),rootEase=1-smooth(.17,.32,ax),depthRatio=.88+1.02*rootEase,dy=y-center.y,dz=zz-center.z,r=Math.hypot(dy,dz/depthRatio);
+  const sleeveFit=smooth(.095,.195,ax)*smooth(.08,.43,armOwnership);
+  if(sleeveFit){const [shoulder,elbow,hand]=armPoints[x>0?'l':'r'],sx=Math.abs(shoulder.x),ex=Math.abs(elbow.x),hx=Math.abs(hand.x),t=Math.max(0,Math.min(1,(ax-sx)/Math.max(.01,hx-sx))),center=ax<ex?shoulder.clone().lerp(elbow,Math.max(0,Math.min(1,(ax-sx)/Math.max(.01,ex-sx)))):elbow.clone().lerp(hand,Math.max(0,Math.min(1,(ax-ex)/Math.max(.01,hx-ex)))),upperT=Math.max(0,Math.min(1,(ax-sx)/Math.max(.01,ex-sx))),foreT=Math.max(0,Math.min(1,(ax-ex)/Math.max(.01,hx-ex))),upperRadius=.031+.013*Math.pow(1-upperT,.85),foreRadius=.026+.008*(1-smooth(0,1,foreT)),base=upperRadius+(foreRadius-upperRadius)*smooth(ex-.035,ex+.035,ax),radius=base*(kit.body==='m'?1.18:1)+ease*.40+(lining?0:c.drape[2]*.65),rootEase=1-smooth(.17,.32,ax),depthRatio=.92+.27*rootEase,dy=y-center.y,dz=zz-center.z,r=Math.hypot(dy,dz/depthRatio);
    if(r>.0001){const crease=c.drape[3]*.50*Math.sin((ax-ex)*112)*Math.exp(-1*((ax-ex)/.045)**2);y+=(center.y+dy/r*(radius+crease)-y)*sleeveFit;zz+=(center.z+dz/r*(radius+crease)-zz)*sleeveFit;}
   }
   // The set-in sleeve joins the chest with a shallow cloth bridge. It must
   // not preserve the sculpt's concave biceps/armpit groove on the front panel.
-  const bridge=smooth(.090,.135,ax)*(1-smooth(.215,.265,ax))*smooth(z.armY-.180,z.armY-.125,y)*(1-smooth(z.armY-.025,z.armY+.035,y))*smooth(.05,.45,n.getZ(i));
-  if(bridge){const target=Math.sqrt(Math.max(0,1-(ax/.248)**2))*((kit.body==='f'?.107:.123)+ease);zz+=Math.max(0,target-zz)*bridge;}
+  const bridge=smooth(.090,.135,ax)*(1-smooth(.190,.245,ax))*smooth(z.armY-.180,z.armY-.125,y)*(1-smooth(z.armY-.025,z.armY+.035,y))*smooth(.05,.45,n.getZ(i));
+  if(bridge){const target=Math.sqrt(Math.max(0,1-(ax/.224)**2))*((kit.body==='f'?.095:.112)+ease);zz+=Math.max(0,target-zz)*bridge;}
+  // Fabric rolls through the bend instead of following individual muscle
+  // twist joints. Retain torso influence at the shoulder and taper to the hand.
+  if(ax>Math.abs(armPoints[x>0?'l':'r'][1].x)-.09&&armOwnership>.60){
+   const [shoulder,elbow,hand]=armPoints[x>0?'l':'r'],ex=Math.abs(elbow.x),hx=Math.abs(hand.x),fore=smooth(ex-.060,ex+.060,ax),wrist=smooth(hx-.080,hx-.020,ax),weights=new Map();
+   for(const getter of ['getX','getY','getZ','getW'])if(!armJoints.has(skinIndices[getter](i)))weights.set(skinIndices[getter](i),(weights.get(skinIndices[getter](i))||0)+skinWeights[getter](i));
+   const joints=armIndices[x>0?'l':'r'];for(const [joint,weight]of [[joints[0],1-fore],[joints[1],fore*(1-wrist)],[joints[2],fore*wrist]])weights.set(joint,(weights.get(joint)||0)+weight*armOwnership);
+   const ranked=[...weights].filter(q=>q[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((n,q)=>n+q[1],0)||1;while(ranked.length<4)ranked.push([0,0]);skinIndices.setXYZW(i,...ranked.map(q=>q[0]));skinWeights.setXYZW(i,...ranked.map(q=>q[1]/sum));
+  }
   p.setXYZ(i,x,y,zz);
  }
  // Build the hanging torso as evenly spaced fabric rings. The source body has
@@ -98,19 +170,17 @@ export function tailoredTop(THREE,kit,outfit,layer='outer'){
  const torsoGeo=weightedGeometry(THREE,vertices,indices);
  raw.dispose();sampler.dispose();bodySampler.dispose();raw=mergeGeometries([shoulders,torsoGeo]);shoulders.dispose();torsoGeo.dispose();
  normals(raw);
- const neckBase=(x,y,zz)=>c.collared&&!c.cardigan?z.neckY+.018+.016*(1-smooth(z.neckZ-.045,z.neckZ+.020,zz))+.018*Math.min(Math.abs(x)/.075,1)**2+.068*smooth(.080,.15,Math.abs(x))-(c.polo?.042*(1-smooth(0,.048,Math.abs(x)))*smooth(z.neckZ+.010,z.neckZ+.040,zz):0):
-  z.neckY+.036*(1-smooth(-.09,0,zz-z.neckZ))+.045*Math.min(Math.abs(x)/.085,1)**2+.075*smooth(.085,.15,Math.abs(x));
- const neck=(x,y,zz)=>neckBase(x,y,zz)-(lining&&c.vest?.030*(1-smooth(.085,.145,Math.abs(x))):0);
+ const neck=(x,y,zz)=>garmentNeckY(x,zz,z,c,lining);
  const fields=[(x,y)=>y-hem,(x)=>cuff-Math.abs(x),(x,y,zz)=>neck(x,y,zz)-y,(x,y)=>Math.max(z.headY-y,Math.abs(x)-.17)];
  if(lining&&c.vest)fields.push((x,y)=>y-(z.waistY+.130));
  if(lining&&c.formal){const bottom=z.waistY+.195;fields.push((x,y,zz)=>Math.min(Math.max(0,(y-bottom)/(z.neckY-bottom))*.049+.008-Math.abs(x),y-bottom+.008,zz-z.neckZ));}
  if(lining&&c.cardigan)fields.push((x,y,zz)=>Math.min(.055-Math.abs(x),zz-z.neckZ));
  if(!lining&&c.vest)fields.push((x,y)=>Math.max(.130+.036*(1-smooth(z.armY-.180,z.armY+.005,y))-Math.abs(x),z.armY-.202-y));
- const full=trimGarment(THREE,raw,fields);raw.dispose();normals(full);
+ const neckRefined=refineNeckOpening(THREE,raw,z);raw.dispose();const full=trimGarment(THREE,neckRefined,fields);neckRefined.dispose();normals(full,true);
  let geo=full;
  if(!lining&&(c.formal||c.cardigan)){
   const bottom=z.waistY+(c.formal?.195:-.16);
-  geo=trimGarment(THREE,full,[(x,y,zz)=>Math.max(Math.abs(x)-(c.cardigan?.047:Math.max(0,(y-bottom)/(z.neckY-bottom))*.049),bottom-y,z.neckZ-zz)]);normals(geo);
+  geo=trimGarment(THREE,full,[(x,y,zz)=>Math.max(Math.abs(x)-(c.cardigan?.047:Math.max(0,(y-bottom)/(z.neckY-bottom))*.049),bottom-y,z.neckZ-zz)]);normals(geo,true);
  }
  geo=mergeVertices(geo,1e-6);geo.userData={...geo.userData,garment:true,hem,cuff};geo.computeBoundingSphere();
  kit.clothTops.set(key,{geometry:geo,full});
@@ -128,7 +198,7 @@ export function tailoredLegs(THREE,kit,outfit){
 }
 export function sewnDetails(THREE,top,outfit,kit){
  const c=garmentCut(outfit),z=kit.zones,full={...top,geometry:top.detailSurface||top.geometry};
- const sampler=surfaceSampler(THREE,[full]),bodySampler=surfaceSampler(THREE,[kit.garmentSkin||kit.skin]),cache=new Map(),groups=new Map();
+ const sampler=surfaceSampler(THREE,[full]),bodySampler=surfaceSampler(THREE,[kit.garmentSkin||kit.skin]),neckSampler=surfaceSampler(THREE,[kit.skin,...(kit.headAsset?.mesh?[kit.headAsset.mesh]:[])]),cache=new Map(),groups=new Map();
  const front=(x,y,offset=.004)=>{
   const key=x.toFixed(5)+','+y.toFixed(5);let s=cache.get(key);
   if(s===undefined){s=sampler.cast(new THREE.Vector3(x,y,.6),new THREE.Vector3(0,0,-1))||bodySampler.cast(new THREE.Vector3(x,y,.6),new THREE.Vector3(0,0,-1));cache.set(key,s||null);}
@@ -192,21 +262,33 @@ export function sewnDetails(THREE,top,outfit,kit){
  // a curved annular strip, not isolated triangles pasted onto the chest.
  if(c.collared&&!c.cardigan){
   const role=c.formal?'shirtcollar':c.polo?'contrast':'collar',open=c.sport||c.vest?.055:.36,N=72,cz=z.neckZ;
-  const neckSample=(angle,t)=>{
-   const dir=new THREE.Vector3(Math.sin(angle),0,Math.cos(angle)),back=1-smooth(-.10,.65,Math.cos(angle)),baseY=z.neckY+.017+.014*back,topY=z.neckY+(c.sport||c.vest?.047:.033)+.012*back,y=baseY+(topY-baseY)*t;
-   const hit=bodySampler.cast(new THREE.Vector3(0,z.neckY+.045,cz),dir);if(!hit)return null;
-   const p=hit.point.clone().addScaledVector(dir,.0055+.0015*Math.sin(Math.PI*t));p.y=y;return point(p,hit);
+  // Follow the cut edge of the actual garment. A level nominal neck ring
+  // starts below the rising side/back opening and breaks through the fabric.
+  const edgeCache=new Map(),ringCache=new Map(),opening=(angle)=>{
+   const key=angle.toFixed(6);if(edgeCache.has(key))return edgeCache.get(key);
+   const dir=new THREE.Vector3(Math.sin(angle),0,Math.cos(angle)),accept=p=>Math.abs(p.x)<.17&&Math.hypot(p.x,p.z-cz)<.19,cast=y=>sampler.cast(new THREE.Vector3(0,y,cz),dir,accept);
+   let lower=null,lo=z.neckY-.040,hi=z.neckY+.13;
+   for(let y=lo;y<=z.neckY+.13;y+=.003){const hit=cast(y);if(hit){lower=hit;lo=y;}else if(lower){hi=y;break;}}
+   if(!lower)throw Error('Garment opening missing: '+kit.body+' angle '+angle.toFixed(3));
+   for(let k=0;k<12;k++){const y=(lo+hi)*.5,hit=cast(y);if(hit){lo=y;lower=hit;}else hi=y;}
+   const sample=point(lower.point.clone(),lower);edgeCache.set(key,sample);return sample;
+  },neckSample=(angle,t)=>{
+   const key=angle.toFixed(6)+','+t.toFixed(6);if(ringCache.has(key)){const s=ringCache.get(key);return {p:s.p.clone(),j:[...s.j],w:[...s.w]};}
+   const root=opening(angle),dir=new THREE.Vector3(Math.sin(angle),0,Math.cos(angle)),back=1-smooth(-.10,.65,Math.cos(angle)),height=(c.sport||c.vest?.030:c.formal?.008:c.polo?.007:.010)+.002*back,y=root.p.y-.001+height*t;
+   const hit=neckSampler.cast(new THREE.Vector3(dir.x*.35,y,cz+dir.z*.35),dir.clone().negate(),p=>Math.abs(p.x)<.17&&Math.hypot(p.x,p.z-cz)<.19);
+   if(!hit)throw Error('Visible collar fit missing: '+kit.body+' angle '+angle.toFixed(3)+' y '+y.toFixed(4));
+   const rootRadius=Math.hypot(root.p.x,root.p.z-cz)+.0015,neckRadius=Math.hypot(hit.point.x,hit.point.z-cz)+.0035,radius=rootRadius+(Math.max(neckRadius,rootRadius-.012)-rootRadius)*t+.0015*Math.sin(Math.PI*t),p=new THREE.Vector3(dir.x*radius,y,cz+dir.z*radius),weights=new Map();
+   for(let k=0;k<4;k++){weights.set(root.j[k],(weights.get(root.j[k])||0)+root.w[k]*(1-t));weights.set(hit.joints[k],(weights.get(hit.joints[k])||0)+hit.weights[k]*t);}
+   const ranked=[...weights].filter(q=>q[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((n,q)=>n+q[1],0)||1;while(ranked.length<4)ranked.push([0,0]);const sample={p,j:ranked.map(q=>q[0]),w:ranked.map(q=>q[1]/sum)};ringCache.set(key,sample);
+   return {p:sample.p.clone(),j:[...sample.j],w:[...sample.w]};
   };
-  // The neck opening is bridged to the shoulder yoke beneath the stand. This
-  // sewn seat closes the source mesh's coarse triangular neck corners.
-  const seat=(angle,t)=>{const root=neckSample(angle,0);if(!root)return null;const sine=Math.sin(angle),cosine=Math.cos(angle),dir=new THREE.Vector3(sine,0,cosine),outerY=z.neckY-.050+.020*Math.abs(sine),x=sine*.118,forward=cosine>=0,from=new THREE.Vector3(x,outerY,forward?.6:-.6),castDir=new THREE.Vector3(0,0,forward?-1:1),outer=sampler.cast(from,castDir)||bodySampler.cast(from,castDir);if(!outer)return root;const outerPoint=new THREE.Vector3(x,outerY,cz+(outer.point.z-cz)*Math.abs(cosine)),p=root.p.clone().lerp(outerPoint,t);p.addScaledVector(dir,.0014*Math.sin(Math.PI*t));const weights=new Map();for(let k=0;k<4;k++){weights.set(root.j[k],(weights.get(root.j[k])||0)+root.w[k]*(1-t));weights.set(outer.joints[k],(weights.get(outer.joints[k])||0)+outer.weights[k]*t);}const ranked=[...weights].filter(q=>q[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((n,q)=>n+q[1],0)||1;while(ranked.length<4)ranked.push([0,0]);return {p,j:ranked.map(q=>q[0]),w:ranked.map(q=>q[1]/sum)};};
-  for(let i=0;i<N;i++){const a=open+(Math.PI*2-open*2)*i/N,b=open+(Math.PI*2-open*2)*(i+1)/N;for(let j=0;j<8;j++)quad(c.formal?'lapel':'tailored',seat(a,j/8),seat(a,(j+1)/8),seat(b,j/8),seat(b,(j+1)/8));quad(role,neckSample(a,0),neckSample(b,0),neckSample(a,1),neckSample(b,1));}
+  for(let i=0;i<N;i++){const a=open+(Math.PI*2-open*2)*i/N,b=open+(Math.PI*2-open*2)*(i+1)/N;for(let j=0;j<6;j++)quad(role,neckSample(a,j/6),neckSample(b,j/6),neckSample(a,(j+1)/6),neckSample(b,(j+1)/6));}
   if(!c.sport&&!c.vest)for(const sd of [-1,1]){
    const A=30,B=10,leaf=(i,j,back=false)=>{
     const theta=open+(1.38-open)*i/A,t=j/B,root=neckSample(sd*theta,1);if(!root)return null;
-    const width=c.formal?.025:c.polo?.028:.030,drop=(c.formal?.049:c.polo?.050:.047)*(1-.46*(theta-open)/(1.38-open)),dir=new THREE.Vector3(sd*Math.sin(theta),0,Math.cos(theta));
-    const p=root.p.clone().addScaledVector(dir,width*t);p.x+=sd*.0105*(1-smooth(open,open+.52,theta))*t*t;p.y-=drop*t;p.z+=.0045*Math.sin(Math.PI*t);
-    const contact=front(p.x,p.y,.004);if(contact){p.z=Math.max(p.z,contact.p.z+.0020);const weights=new Map();for(let k=0;k<4;k++){weights.set(root.j[k],(weights.get(root.j[k])||0)+root.w[k]*(1-t));weights.set(contact.j[k],(weights.get(contact.j[k])||0)+contact.w[k]*t);}const ranked=[...weights].filter(q=>q[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((n,q)=>n+q[1],0)||1;while(ranked.length<4)ranked.push([0,0]);root.j=ranked.map(q=>q[0]);root.w=ranked.map(q=>q[1]/sum);}
+    const width=c.formal?.024:c.polo?.027:.030,drop=(c.formal?.023:c.polo?.022:.025)*(1-.46*(theta-open)/(1.38-open)),dir=new THREE.Vector3(sd*Math.sin(theta),0,Math.cos(theta));
+    const p=root.p.clone().addScaledVector(dir,width*t);p.x+=sd*.0045*(1-smooth(open,open+.52,theta))*t*t;p.y-=drop*smooth(.05,.95,t)-.0018*(Math.exp(-1*((theta-open)/.085)**2)+Math.exp(-1*((theta-1.38)/.085)**2))*t*t;p.z+=.0032*Math.sin(Math.PI*t);
+    const rayOrigin=new THREE.Vector3(p.x,p.y,.6),rayDir=new THREE.Vector3(0,0,-1),contactHit=sampler.cast(rayOrigin,rayDir)||neckSampler.cast(rayOrigin,rayDir,pt=>Math.abs(pt.x)<.115&&Math.hypot(pt.x,pt.z-cz)<.13),contact=contactHit?point(contactHit.point.clone().addScaledVector(rayDir,-.004),contactHit):null;if(contact){p.z=Math.max(p.z,contact.p.z+.0020);const weights=new Map();for(let k=0;k<4;k++){weights.set(root.j[k],(weights.get(root.j[k])||0)+root.w[k]*(1-t));weights.set(contact.j[k],(weights.get(contact.j[k])||0)+contact.w[k]*t);}const ranked=[...weights].filter(q=>q[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((n,q)=>n+q[1],0)||1;while(ranked.length<4)ranked.push([0,0]);root.j=ranked.map(q=>q[0]);root.w=ranked.map(q=>q[1]/sum);}
     if(back)p.addScaledVector(dir,-.0013);return {p,j:root.j,w:root.w};
    };
    for(let i=0;i<A;i++)for(let j=0;j<B;j++){quad(role,leaf(i,j),leaf(i+1,j),leaf(i,j+1),leaf(i+1,j+1));quad(role,leaf(i,j,true),leaf(i,j+1,true),leaf(i+1,j,true),leaf(i+1,j+1,true));}
@@ -275,7 +357,7 @@ export function sewnDetails(THREE,top,outfit,kit){
   const hand=bone.getWorldPosition(new THREE.Vector3()),low=elbow.getWorldPosition(new THREE.Vector3()),x=sd*(c.short?z.cuffX-.29:z.cuffX-.021),t=(x-low.x)/(hand.x-low.x),center=low.clone().lerp(hand,t);
   band('x',x-sd*(c.knit?.027:.020),sd*(c.knit?.023:.016),c.knit||c.polo||c.tee?'rib':'lapel',center,40);
  }
- sampler.dispose();bodySampler.dispose();
+ sampler.dispose();bodySampler.dispose();neckSampler.dispose();
  const parts=[];
  for(const [role,vertices]of groups){if(!vertices.length)continue;const P=[],UV=[],J=[],W=[];
   for(const v of vertices){P.push(v.p.x,v.p.y,v.p.z);UV.push(v.p.x*3,v.p.y*3);J.push(...v.j);W.push(...v.w);}

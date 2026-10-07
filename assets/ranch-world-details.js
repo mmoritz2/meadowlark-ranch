@@ -217,6 +217,6 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
     elapsed+=dt;if(elapsed<.4)return;elapsed=0;
     const max=G.gfx.get()==='low'?65:140, p=H.player.pos;
     for(const root of objects)root.visible=Math.hypot(root.position.x-p.x,root.position.z-p.z)<max;
-    for(const patch of patches)patch.visible=Math.hypot(patch.position.x-p.x,patch.position.z-p.z)<max+75;
+    for(const patch of patches)if(!patch.userData.replacedUndergrowth)patch.visible=Math.hypot(patch.position.x-p.x,patch.position.z-p.z)<max+75;
   });
 }

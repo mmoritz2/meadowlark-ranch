@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import * as T from '../assets/vendor/three/build/three.module.js';
-import {pastureRise,FIELD_RISES,FIELD_ANCHORS,meadowBloomAt,MEADOW_OPENINGS,meadowOpeningAt,inMeadowOpening} from '../assets/pastoral-fields.mjs';
+import {pastureRise,FIELD_RISES,FIELD_ANCHORS,meadowBloomAt,MEADOW_OPENINGS,meadowOpeningAt,inMeadowOpening,FLOWER_DRIFTS,meadowGrazingAt} from '../assets/pastoral-fields.mjs';
 import {createGrassTuftGeometry,createLupinGeometry,meadowGrowthAt,meadowBladeColor} from '../assets/meadow-cover.js';
+import {coyoteCoverDryWeight} from '../assets/biome-weights.mjs';
 
 test('field earthworks preserve all protected building and arena footprints',()=>{
  for(const [x,z,r] of FIELD_ANCHORS)for(let a=0;a<Math.PI*2;a+=.2)for(const f of[0,.25,.5,.99])
@@ -21,8 +22,19 @@ test('new rises have bounded continuous slopes and no raised edge seams',()=>{
   assert(Math.abs(pastureRise(x+.001,z)-pastureRise(x-.001,z))<.001);
  }
 });
-test('flower colonies are deterministic and continuous across grass-cell boundaries',()=>{
- assert(meadowBloomAt(-52,44)>.9);assert.equal(meadowBloomAt(0,0),0);
+test('flower colonies fill wild margins, retreat from managed pasture, and remain continuous',()=>{
+ // The old fixed point is now grazed pasture; use actual planted colony centers
+ // to exercise both flowering margins and maintained field interiors.
+ let wild=0,managed=0;
+ for(const [x,z]of FLOWER_DRIFTS){
+  const grazing=meadowGrazingAt(x,z),bloom=meadowBloomAt(x,z);
+  assert(bloom>0&&bloom<=1,'each authored colony retains some flowering');
+  if(grazing<.1){assert(bloom>.9,'wild colony centers retain dense flowers');wild++;}
+  if(grazing>.9){assert(bloom<.15,'grazed colony centers retain sparse flowers');managed++;}
+ }
+ assert(wild>=3&&managed>=3,'fixture exercises wild margins and managed colonies');
+ assert.equal(meadowGrazingAt(-52,44),1);assert(meadowBloomAt(-52,44)<.05);
+ assert.equal(meadowBloomAt(0,0),0);
  for(let x=-100;x<300;x+=6)for(let z=-220;z<300;z+=6){
   const value=meadowBloomAt(x,z);assert(value>=0&&value<=1);assert.equal(value,meadowBloomAt(x,z));
   assert(Math.abs(meadowBloomAt(x-.001,z)-meadowBloomAt(x+.001,z))<.002);
@@ -48,12 +60,17 @@ test('pasture openings have soft irregular boundaries and leave distant woodland
 
 
 test('grass patches are stable, bounded and continuous at travelling cell boundaries',()=>{
- const color=new T.Color(),values=[];
+ const color=new T.Color(),values=[];let managed=0,wild=0,dry=0;
  for(let x=-350;x<=350;x+=6)for(let z=-350;z<=350;z+=6){
-  const h=meadowGrowthAt(x,z);values.push(h);assert(h>=.42&&h<=1.37);assert.equal(h,meadowGrowthAt(x,z));
+  const h=meadowGrowthAt(x,z),grazed=meadowGrazingAt(x,z),arid=coyoteCoverDryWeight(x,z);
+  values.push(h);assert(Number.isFinite(h)&&h>=.23*.62&&h<=1.37);assert.equal(h,meadowGrowthAt(x,z));
+  if(grazed>.95){assert(h<.61,'maintained pasture stays low');managed++;}
+  if(grazed<.001&&arid===0){assert(h>=.42,'ungrazed green margins retain long growth');wild++;}
+  if(arid>.95){assert(h<=1.37*.64,'dry basin growth remains below lush pasture height');dry++;}
   assert(Math.abs(meadowGrowthAt(x+.001,z)-meadowGrowthAt(x-.001,z))<.001);
   assert(Math.abs(meadowGrowthAt(x,z+.001)-meadowGrowthAt(x,z-.001))<.001);
   meadowBladeColor(color,x,z,.5);assert(color.toArray().every(n=>Number.isFinite(n)&&n>=0&&n<=1));
  }
+ assert(managed>20&&wild>100&&dry>100,'fixture covers grazed pasture, wild margins and dry ground');
  assert(Math.max(...values)-Math.min(...values)>.6);
 });
