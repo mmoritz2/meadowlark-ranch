@@ -1,5 +1,6 @@
 // Original foothills connect the fixed riding terrain to the distant skyline.
 // The innermost ring copies every terrain edge vertex; nothing inside is altered.
+import {regionalProfileAt,REGIONAL_WEIGHTS_GLSL} from './regional-landscape.mjs?v=regional-relief-1';
 const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t);};
 const mix=(a,b,t)=>a+(b-a)*t;
 function hash(x,z){let h=Math.imul(x|0,374761393)^Math.imul(z|0,668265263);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967295;}
@@ -18,6 +19,25 @@ export function patchOuterFog(shader,blend='1.0'){
    gl_FragColor.rgb=mix(gl_FragColor.rgb,fogColor,min(mix(1.0,.94,outerFogBlend),outerFog));
   #endif`);
 }
+// Only this cloned outer material receives the directional climate. The riding
+// terrain keeps its own local biomes, and the shared seam still has zero extension.
+export function patchOuterRegions(shader){
+ const extension=/vec2 compass=normalize\(p\);[\s\S]*?canopy=max\(canopy,extend\*smoothstep\(\.50,\.72,tNoise\(p\*\.011\+81\.0\)\)\*\(1\.0-snow\)\*\(1\.0-arid\)\*\.68\);/;
+ if(!extension.test(shader.fragmentShader))return;
+ shader.fragmentShader=REGIONAL_WEIGHTS_GLSL+'\n'+shader.fragmentShader.replace(extension,`
+        vec4 outerRegion=regionalWeights(atan(p.y,p.x));
+        float cold=outerRegion.x,arid=outerRegion.y;
+        canyon=max(canyon,extend*arid*.94);
+        // Weathered mineral interrupts northern turf; snow is a broken accent.
+        scree=max(scree,extend*cold*(.45+.40*smoothstep(.30,.65,stand)));
+        stone=max(stone,extend*cold*smoothstep(.10,.45,grade+rough*.16)*.58);
+        rocky=max(scree,stone);
+        float outerDrift=smoothstep(.54,.77,stand*.56+macro*.44);
+        snow=max(snow,extend*cold*outerDrift*.18*(1.0-smoothstep(.18,.58,grade)));
+        bank*=1.0-extend;wet*=1.0-extend;
+        float outerWoodland=(.58*cold+.84*outerRegion.z+.09*arid)*(1.0-outerRegion.w*.60);
+        canopy=max(canopy,extend*smoothstep(.50,.72,tNoise(p*.011+81.0))*(1.0-snow)*outerWoodland);`);
+}
 export function outerDistance(x,z){return Math.hypot(Math.max(0,Math.abs(x)-500),Math.max(0,Math.abs(z)-500));}
 export function foothillHeight(x,z,heightAt){
  const d=outerDistance(x,z),edge=heightAt(Math.max(-500,Math.min(500,x)),Math.max(-500,Math.min(500,z)));
@@ -25,8 +45,9 @@ export function foothillHeight(x,z,heightAt){
  const warp=(noise(x*.0038+41,z*.0038-13)-.5)*75;
  const broad=noise((x+warp)*.0051-8,(z-warp)*.0051+19);
  const folds=1-Math.abs(noise(x*.009+7,z*.007-31)*2-1);
- const ridges=(7+24*broad+8*folds*folds)*smooth(0,145,d)*(1-smooth(370,950,d));
- const shoulders=(noise(x*.015+51,z*.013+16)-.5)*6*smooth(12,65,d)*(1-smooth(260,650,d));
+ const region=regionalProfileAt(x,z),regional=smooth(20,145,d);
+ const ridges=(7+24*broad+8*folds*folds)*smooth(0,145,d)*(1-smooth(370,950,d))*mix(1,region.foothillScale,regional);
+ const shoulders=(noise(x*.015+51,z*.013+16)-.5)*6*smooth(12,65,d)*(1-smooth(260,650,d))*mix(1,region.foothillRoughness,regional);
  return edge*(1-smooth(20,100,d))+ridges+shoulders-24*smooth(650,1150,d);
 }
 const BANDS=[[0,2048],[4,2048],[12,1024],[26,1024],[48,512],[78,512],[116,512],[164,512],[224,512],[304,512],[410,512],[550,512],[730,512],[950,512],[1200,512]];
@@ -41,7 +62,14 @@ export function createOuterLandscape({THREE:T,scene,heightAt,groundMesh}){
  };
  for(const [distance,n]of BANDS){const start=p.length/3;rows.push({start,n});for(let i=0;i<=n;i++){
   const [bx,bz]=edgePoint(i,n),scale=1+distance/500,x=bx*scale,z=bz*scale,y=foothillHeight(x,z,heightAt);p.push(x,y,z);uv.push((x+500)/1000,(500-z)/1000);
-  boundaryColor(bx,bz);const lum=.91+noise(x*.032,z*.032)*.09,t=smooth(0,90,distance);colors.push(mix(color.r,lum*.94,t),mix(color.g,lum*.98,t),mix(color.b,lum*.89,t));
+  boundaryColor(bx,bz);
+  const lum=.91+noise(x*.032,z*.032)*.09,t=smooth(0,90,distance),regional=smooth(20,145,distance),region=regionalProfileAt(x,z);
+  // These are restrained multipliers of the photographed terrain, not a second
+  // painted surface: warm dry shoulders, cool mineral north, muted green pasture.
+  const r=lum*.94*(1+regional*(.08*region.dry+.03*region.north-.03*region.pastoral));
+  const g=lum*.98*(1+regional*(-.14*region.dry+.03*region.north-.01*region.pastoral));
+  const b=lum*.89*(1+regional*(-.22*region.dry+.16*region.north-.03*region.pastoral));
+  colors.push(mix(color.r,r,t),mix(color.g,g,t),mix(color.b,b,t));
  }}
  for(let j=0;j<rows.length-1;j++){const a=rows[j],b=rows[j+1];for(let i=0;i<b.n;i++){
   const c=b.start+i,d=c+1,k=a.n/b.n,x=a.start+i*k;
@@ -52,7 +80,7 @@ export function createOuterLandscape({THREE:T,scene,heightAt,groundMesh}){
  // Match the original edge normals at the shared vertices, including stream cuts.
  const normals=geometry.attributes.normal,sourceNormal=source.attributes.normal;
  for(let i=0;i<=BANDS[0][1];i++){const [x,z]=edgePoint(i,BANDS[0][1]),ix=Math.round((x+500)/1000*segments),iz=Math.round((z+500)/1000*segments),id=iz*(segments+1)+ix;normals.setXYZ(i,sourceNormal.getX(id),sourceNormal.getY(id),sourceNormal.getZ(id));}
- const base=groundMesh.material,material=base.clone();material.name='Continuous countryside | ground';material.onBeforeCompile=(shader,renderer)=>{base.onBeforeCompile(shader,renderer);patchOuterFog(shader,'smoothstep(0.0,58.0,length(max(abs(terrainPosition.xz)-vec2(500.0),vec2(0.0))))');};material.customProgramCacheKey=()=>base.customProgramCacheKey()+'-outer-landscape';material.defaultAttributeValues={...base.defaultAttributeValues};material.defines={...base.defines,CHEAP_GROUND:1,OUTER_LANDSCAPE:1};material.bumpMap=null;material.bumpScale=0;
+ const base=groundMesh.material,material=base.clone();material.name='Continuous countryside | ground';material.onBeforeCompile=(shader,renderer)=>{base.onBeforeCompile(shader,renderer);patchOuterRegions(shader);patchOuterFog(shader,'smoothstep(0.0,58.0,length(max(abs(terrainPosition.xz)-vec2(500.0),vec2(0.0))))');};material.customProgramCacheKey=()=>base.customProgramCacheKey()+'-regional-outer-landscape-1';material.defaultAttributeValues={...base.defaultAttributeValues};material.defines={...base.defines,CHEAP_GROUND:1,OUTER_LANDSCAPE:1};material.bumpMap=null;material.bumpScale=0;
  const mesh=old||new T.Mesh();if(old){old.geometry.dispose();old.material.map?.dispose();old.material.dispose();}else scene.add(mesh);
  mesh.geometry=geometry;mesh.material=material;mesh.name='Continuous outer countryside';mesh.position.set(0,0,0);mesh.rotation.set(0,0,0);mesh.scale.set(1,1,1);mesh.castShadow=false;mesh.receiveShadow=true;mesh.matrixAutoUpdate=false;mesh.updateMatrix();
  // Sample the actual mesh triangles so every woodland root touches the new
@@ -68,9 +96,11 @@ export function createOuterLandscape({THREE:T,scene,heightAt,groundMesh}){
    const u=Math.sqrt(hash(i+17,j+153)),v=hash(i+41,j+371),weights=[1-u,u*(1-v),u*v];
    const [x,y,z]=[0,1,2].map(k=>a.reduce((sum,p,n)=>sum+p[k]*weights[n],0)),d=outerDistance(x,z);
    if(d<58||d>400||noise(x*.008+19,z*.008-27)<.5)continue;
-   const arid=x< -500&&z>80;if(arid&&hash(i,j+7)>.13)continue;
-   const cold=z< -500&&x<150,source=cold?'mature-pine':hash(i,j+3)>.48?'canopy-broadleaf':'woodland-broadleaf';
-   woodlandSites.push({x,y,z,height:7+hash(i,j+19)*7,yaw:hash(i,j+71)*Math.PI*2,source});
+   const region=regionalProfileAt(x,z);
+   if(hash(i,j+7)>region.woodlandDensity)continue;
+   const source=hash(i,j+11)<region.north?'mature-pine':hash(i,j+3)>.48?'canopy-broadleaf':'woodland-broadleaf';
+   const stature=1-region.dry*.30-region.valley*.22;
+   woodlandSites.push({x,y,z,height:(7+hash(i,j+19)*7)*stature,yaw:hash(i,j+71)*Math.PI*2,source});
   }
  }
  const stats={woodlandTrees:woodlandSites.length,triangles:indices.length/3,vertices:p.length/3,draws:1,bands:BANDS.length,innerHalfSize:500,outerHalfSize:1700};

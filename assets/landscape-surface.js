@@ -1,7 +1,8 @@
+import {REGIONAL_WEIGHTS_GLSL} from './regional-landscape.mjs?v=regional-relief-1';
 // World-space mineral detail for distant relief and the chalk down. Textures
 // are shared with the terrain; no extra geometry passes or per-frame updates.
 const textures=new Map();
-export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=.82,meadow=false,wooded=false,mineralScale=18,bumpStrength=1}) {
+export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=.82,meadow=false,wooded=false,regional=false,mineralScale=18,bumpStrength=1}) {
   const loader=new THREE.TextureLoader();
   const load=path=>{
     if(textures.has(path)){const t=textures.get(path);t.anisotropy=Math.max(t.anisotropy,anisotropy);return t;}
@@ -22,6 +23,7 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
       landNormal=normalize(mat3(modelMatrix)*landLocalNormal);`);
     sh.fragmentShader=`varying vec3 landPosition,landNormal;
       uniform sampler2D landStone;
+      ${regional?REGIONAL_WEIGHTS_GLSL:''}
       ${meadow||wooded?'uniform sampler2D landTurf;':''}
       float landHash(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
       float landNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
@@ -49,7 +51,9 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
         landHeight=living*(turfGrain*.07+fracture*.3);
       `:''}
       ${wooded?`
-        float green=smoothstep(.005,.035,vColor.g-vColor.b);
+        float green=${regional?'smoothstep(.003,.028,vColor.g-max(vColor.r,vColor.b))':'smoothstep(.005,.035,vColor.g-vColor.b)'};
+        ${regional?`vec4 climate=regionalWeights(atan(landPosition.z,landPosition.x));
+        green*=(1.0-climate.y)*(1.0-climate.x*.48)*(1.0-climate.w*.65);`:''}
         float groves=smoothstep(.36,.65,landNoise(landPosition.xz*.025)+fracture*.18);
         float exposure=smoothstep(.65,.96,abs(landNormal.y));
         vec3 grass=texture2D(landTurf,landPosition.xz/3.6).rgb;
@@ -79,6 +83,6 @@ export function dressLandscape({THREE,material,anisotropy=4,fogScale=.34,fogCap=
         gl_FragColor.rgb=mix(gl_FragColor.rgb,fogColor,min(${fogCap.toFixed(3)},landFog));
       #endif`);
   };
-  material.customProgramCacheKey=()=>`landscape-surface-v3-${wooded}-${meadow}-${fogScale}-${fogCap}-${mineralScale}-${bumpStrength}`;
+  material.customProgramCacheKey=()=>`landscape-surface-v4-${wooded}-${meadow}-${regional}-${fogScale}-${fogCap}-${mineralScale}-${bumpStrength}`;
   material.needsUpdate=true;
 }

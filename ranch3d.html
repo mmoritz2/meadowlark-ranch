@@ -663,7 +663,7 @@ import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rid
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js?v=clear-pastoral-sky-1';
-import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=layered-horizon-1';
+import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=regional-relief-1';
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-1';
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
@@ -672,7 +672,7 @@ import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
 import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=dry-foothills-1';
 import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=leafy-orchard-1';
 import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=carved-canyon-1';
-import {createGeology} from './assets/geology.js?v=carved-canyon-1';
+import {createGeology} from './assets/geology.js?v=regional-relief-1';
 import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
 import {HOLLOWPEAK,alpineSnowAt,fallsTerrainHeight,fallsExcludesDryPlants,createFallsLandscape} from './assets/falls-landscape.js?v=alpine-range-1';
 import {oasisTerrainHeight,oasisContainsWater} from './assets/oasis-art.js?v=living-oasis-1';
@@ -680,7 +680,7 @@ import {createDesertArt} from './assets/desert-art.js?v=botanical-desert-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js?v=living-cascades-1';
 import {installRiparian} from './assets/riparian.js';
-import {createOuterLandscape} from './assets/outer-landscape.js?v=continuous-countryside-1';
+import {createOuterLandscape} from './assets/outer-landscape.js?v=regional-relief-1';
 import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=dry-foothills-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js?v=willowmere-settlement-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-world-1';
@@ -703,7 +703,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=couture-riders-20261007';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-store-live-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-store-live-20261007';
-import {FEATURES} from './assets/features/index.js?v=swept-river-road-1';
+import {FEATURES} from './assets/features/index.js?v=regional-relief-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
