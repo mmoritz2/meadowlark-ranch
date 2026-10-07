@@ -658,8 +658,8 @@ import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=tack-store-live-20261007';
-import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rider.js?v=tack-store-live-20261007';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=tack-summon-20261007';
+import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rider.js?v=tack-summon-20261007';
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js?v=clear-pastoral-sky-1';
@@ -701,9 +701,9 @@ import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoad
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=individual-undergrowth-1';
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=cold-woodland-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
-import {createRiderLibrary} from './assets/rider-model.js?v=couture-riders-20261007';
-import {createTackCollection} from './assets/tack-collection-models.js?v=tack-store-live-20261007';
-import {getTackPiece} from './assets/tack-collection.mjs?v=tack-store-live-20261007';
+import {createRiderLibrary} from './assets/rider-model.js?v=visible-lashes-20261007';
+import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
+import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
 import {FEATURES} from './assets/features/index.js?v=cold-woodland-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
@@ -11796,6 +11796,7 @@ function openSummon(){
  const s=freshSave(); if(!s)return;
  let html='<div class="ph panelHeader"><b id="summonTitle">✨ The Summoning Stall</b><button class="panelClose" id="summonClose" aria-label="Close summoning stall">Close ×</button></div>'
   +'<div style="font-size:11.5px;color:#8c7a63;margin:2px 0 6px">Call a horse out of the stall. The light under the door tells you what is coming — if you can bear to watch it climb.</div>';
+ if(G.tackSummon)html+='<div class="evrow"><b>Tack Summoning Stall</b><span>200 earned coins for one unowned tack piece.</span><button type="button" id="summonTack">Summon tack →</button></div>';
  for(const t of SUMMON_TIERS){
   if(typeof t.when==='function'&&!t.when(s))continue;                               // a limited banner only runs in its window
   const full=!t.custom&&s.horses.length>=stableCap(s);
@@ -11811,6 +11812,7 @@ function openSummon(){
  html+='<div style="font-size:11px;color:#8c7a63">Gems come from riding — events, daily gifts, chests, the pass. Nothing here costs real money.</div>';
  p.innerHTML=html; p.style.display='flex';
  $('summonClose').onclick=()=>{p.style.display='none';};
+ if($('summonTack'))$('summonTack').onclick=()=>{p.style.display='none';G.ui.openShop('tacksummon');};
  p.querySelectorAll('[data-summon]').forEach(b=>{ b.onclick=()=>{
   const t=SUMMON_TIERS.find(x=>x.id===b.dataset.summon); if(!t)return;
   p.style.display='none'; startSummon(t);

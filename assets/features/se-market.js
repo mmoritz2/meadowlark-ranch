@@ -8,7 +8,7 @@ export function install(G){
  const GROUPS=[
   ['offers','Offers',['wallet','season','race','doors']],
   ['horses','Horses',['horses','summon','market','breed']],
-  ['tack','Tack',['tackcollection','tack']],
+  ['tack','Tack',['tackcollection','tacksummon','tack']],
   ['catalog','Catalog',['catalog','pets','food','style','recipes']],
   ['character','Rider',['@character','outfit','prestige']],
   ['ranches','Ranches',['ranches','furniture']],
@@ -16,10 +16,10 @@ export function install(G){
  ];
  /* no item shares its group's name: a heading and an entry both reading HORSES read as a mistake */
  const LBL={wallet:'Free gifts',season:'Season store',race:'Race tickets',doors:'Loot doors',horses:'Breeds',summon:'Summon',
-  market:'Horse market',breed:'Breeding',catalog:'Collection',tackcollection:'Tack boutique',tack:'Tack locker',pets:'Pets',food:'Food',style:'Horse style',recipes:'Recipes',
+  market:'Horse market',breed:'Breeding',catalog:'Collection',tackcollection:'Tack boutique',tacksummon:'Tack Summoning Stall',tack:'Tack locker',pets:'Pets',food:'Food',style:'Horse style',recipes:'Recipes',
   '@character':'Character',outfit:'Outfits',prestige:'Prestige',ranches:'Land',furniture:'Furniture',gems:'Exchange',purchases:'Ranch store'};
  const INTRO={horses:'Find the next horse for your herd.',market:'Meet the horses available today.',summon:'Choose a call and discover a new companion.',
-  tack:'Equip your horses for the trail ahead.',pets:'Find a little company for life at the ranch.',food:'Keep your horses fed and ready to ride.',
+  tacksummon:'Spend 200 earned coins to discover one tack piece you do not own.',tack:'Equip your horses for the trail ahead.',pets:'Find a little company for life at the ranch.',food:'Keep your horses fed and ready to ride.',
   style:'Give your horse a look of its own.',catalog:'Explore the breeds in your collection.',recipes:'Discover what you can create.',
   furniture:'Make your ranch feel like home.',ranches:'Find room for your growing herd.',outfit:'Dress for your next adventure.',
   purchases:G.commerce?.isStaticStore?'Browse tack pictures, gem packs and VIP plans. Online preview; checkout is not available here.':'Tack collections, gem packs and VIP passes for your ranch account.',wallet:'Your latest gifts and rewards.',breed:'Plan the next generation of your herd.'};
