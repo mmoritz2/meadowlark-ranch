@@ -8,6 +8,9 @@
    🏆 Qualify (ribbons, the Championship, the builder chapter) — with a book that arrives with each
    new season. Missions insert before an index once per save (s.mig tags), so an old save keeps
    its place. Nothing here runs at import time; everything happens inside install(G). */
+import {stepStoryFillyNavigation} from '../story-filly-navigation.mjs?v=filly-obstacles-1';
+import {fallsAllowsHorse} from '../falls-landscape.js?v=alpine-range-1';
+
 export const id='story-quests';
 
 const STARTER_COATS=[['bay','Bay','#765035','#221b16'],['grey','Dapple grey','#b9b9bd','#5a5a60'],['chestnut','Chestnut','#a0522d','#6b2f14']];
@@ -463,17 +466,35 @@ export function install(G){
   if(foal.sized!==foal.rig){const w=foal.rig.profile&&foal.rig.profile.withersM;if(w)foal.group.scale.setScalar(w/1.45*0.78);foal.sized=foal.rig;}
   G.anim.tickRig(foal,sp,dt,t,0);
  }
+ // Read the existing obstacle owners; the filly adds no collision registry or scene resources.
+ const fillyWorld={groundH:W.groundH,allowsPose:fallsAllowsHorse,
+  get colliders(){return W.colliders;},get walls(){return W.walls;},
+  resolveSolid:(position,shape)=>W.solidWorld?W.solidWorld.resolve(position,shape):0};
+ function navigateFoal(target,dt,options){
+  const move=stepStoryFillyNavigation(foal,target,dt,fillyWorld,foal.navigation,options);
+  foal.x=move.x;foal.z=move.z;foal.heading=move.heading;foal.navigation=move.nav;
+  return move.speed;
+ }
+ function placeFoal(bob=0){
+  foal.group.position.set(foal.x,W.groundH(foal.x,foal.z)+bob,foal.z);foal.group.rotation.y=foal.heading;
+ }
  function tickFoal(dt,t){
   if(!foal)return; const p=H.player; const i=idx(); foal.group.visible=true;
-  if(foal.bolt>0){foal.bolt-=dt;const sp=11;foal.x+=Math.sin(foal.heading)*sp*dt;foal.z+=Math.cos(foal.heading)*sp*dt;foal.phase+=dt*14;foal.group.position.set(foal.x,W.groundH(foal.x,foal.z)+(foal.rig?0:Math.abs(Math.sin(foal.phase))*0.12),foal.z);foal.group.rotation.y=foal.heading;rigFoal(dt,t,sp);if(foal&&foal.bolt<=0)removeFoal();return;}
-  /* An event is ridden alone. She used to follow the rider onto it: a new player's first race began
-     with the grey filly standing at her shoulder on the River Run start line, between the start box
-     and the pace-setters' lanes, and then galloping the course beside her. While a course is up she
-     waits out of it (off the screen), and when it is over she is back at the rider's shoulder, or,
-     past the beats where she follows, simply where she was. */
+  if(foal.bolt>0){
+   foal.bolt-=dt;
+   const sp=navigateFoal({x:foal.x,z:foal.z,heading:foal.heading},dt,{mode:'bolt'});
+   if(sp>0)foal.phase+=dt*14;
+   placeFoal(foal.rig||sp===0?0:Math.abs(Math.sin(foal.phase))*0.12);
+   rigFoal(dt,t,sp);if(foal&&foal.bolt<=0)removeFoal();return;
+  }
+  /* An event is ridden alone. She waits off screen while a course is up, then
+     returns to a clear spot at the rider's shoulder. */
   if(G.course&&G.course.get&&G.course.get()){foal.group.visible=false;foal.away=true;return;}
   const back=!!foal.away; foal.away=false;
-  if(i>PRO_N-4){rigFoal(dt,t,0);return;}   // she only follows in the first two beats
+  if(i>PRO_N-4){
+   navigateFoal({x:foal.x,z:foal.z,heading:foal.heading},dt,{mode:'idle'});
+   placeFoal();rigFoal(dt,t,0);return;
+  }   // she only follows in the first two beats
   /* She keeps alongside, at the horse's shoulder and nearly three metres out, on the side away from the camera. She used
      to trail 2.6 m behind, which is between the camera and the horse: she filled a fifth of the screen at a halt and over
      half of it in a turn, for the whole of the opening. At the shoulder, the camera (always behind the horse, and lagging
@@ -483,16 +504,16 @@ export function install(G){
   if(cam){const lx=Math.cos(p.heading),lz=-Math.sin(p.heading), cs=(cam.position.x-p.pos.x)*lx+(cam.position.z-p.pos.z)*lz;
    if(foal.side==null)foal.side=cs>0?-1:1;
    else if(cs*foal.side>2.5){foal.flipT=(foal.flipT||0)+dt;if(foal.flipT>1.5){foal.side=-foal.side;foal.flipT=0;}}else foal.flipT=0;}
-  const sd=(foal.side||1)*2.8, tx=p.pos.x+Math.sin(p.heading)*0.4+Math.cos(p.heading)*sd, tz=p.pos.z+Math.cos(p.heading)*0.4-Math.sin(p.heading)*sd;
-  if(back){foal.x=tx;foal.z=tz;foal.heading=p.heading;}
-  const dx=tx-foal.x,dz=tz-foal.z,d=Math.hypot(dx,dz); let mv=0;
-  if(d>90){foal.x=tx;foal.z=tz;}
-  else if(d>1.2){const want=Math.atan2(dx,dz);let dh=want-foal.heading;while(dh>Math.PI)dh-=Math.PI*2;while(dh<-Math.PI)dh+=Math.PI*2;foal.heading+=dh*Math.min(1,dt*4);const sp=Math.min(12,1.5+d*1.4);foal.x+=Math.sin(foal.heading)*sp*dt;foal.z+=Math.cos(foal.heading)*sp*dt;foal.phase+=dt*(sp>6?12:7);mv=sp;}
-  const bob=d>1.2&&!foal.rig?Math.abs(Math.sin(foal.phase))*0.09:0;
-  foal.group.position.set(foal.x,W.groundH(foal.x,foal.z)+bob,foal.z); foal.group.rotation.y=foal.heading;
+  const sd=(foal.side||1)*2.8;
+  const target={x:p.pos.x+Math.sin(p.heading)*0.4+Math.cos(p.heading)*sd,
+   z:p.pos.z+Math.cos(p.heading)*0.4-Math.sin(p.heading)*sd,heading:p.heading};
+  const mv=navigateFoal(target,dt,{reentry:back});
+  if(mv>0)foal.phase+=dt*(mv>6?12:7);
+  const bob=mv>0&&!foal.rig?Math.abs(Math.sin(foal.phase))*0.09:0;
+  placeFoal(bob);
   /* and if the view is swung right onto her anyway, she steps out of the picture rather than fill it */
   if(cam)foal.group.visible=Math.hypot(cam.position.x-foal.x,cam.position.z-foal.z)>2.6;
-  if(foal.parts.legs)foal.parts.legs.forEach((l,k)=>{if(l&&l.rotation)l.rotation.x=(d>1.2?Math.sin(foal.phase+k*Math.PI/2)*0.5:0);});
+  if(foal.parts.legs)foal.parts.legs.forEach((l,k)=>{if(l&&l.rotation)l.rotation.x=(mv>0?Math.sin(foal.phase+k*Math.PI/2)*0.5:0);});
   rigFoal(dt,t,mv);
  }
  /* The storm: an overlay the tick drives with dt, so a headless advanceTime plays it too. */

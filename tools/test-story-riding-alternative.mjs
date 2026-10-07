@@ -3,8 +3,9 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
 const load=async name=>{
- const source=await readFile(new URL('../assets/features/'+name,import.meta.url),'utf8');
- return {source,module:await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'))};
+ const url=new URL('../assets/features/'+name,import.meta.url);
+ const source=await readFile(url,'utf8');
+ return {source,module:await import(url.href)};
 };
 const quests=await load('story-quests.js'),guidance=await load('story-guidance.js');
 const {createBuilderRideAlternative,storyFocusCard}=quests.module;

@@ -51,7 +51,7 @@ test('opening gallop routes inside riders through the actual south gate only',()
 });
 
 const questSource=await readFile(new URL('../assets/features/story-quests.js',import.meta.url),'utf8');
-const {buildPairProgress,storyFocusCard}=await import('data:text/javascript;base64,'+Buffer.from(questSource).toString('base64'));
+const {buildPairProgress,storyFocusCard}=await import(new URL('../assets/features/story-quests.js',import.meta.url));
 
 test('builder checklist counts distinct required pieces and reacts to real placement events',()=>{
  const save={decor:[{t:'lantern'},{t:'lantern'},{t:'fence'}]},mission={type:'build2'};
