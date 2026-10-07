@@ -19,9 +19,10 @@
    geometries merged per material, the group dropped, a dozen meshes left behind — the same
    trick ranch3d.html plays on its trees at :3174, for the same reason. Anything that repeats is
    an InstancedMesh instead: logs, reeds, leaf litter, saplings, drifts, rubble, lamps. What is
-   left moving in the whole package is seven objects — four smoke columns, a mill wheel, a
-   windmill fan and a bell — and not one of them allocates so much as a vector during a frame.
-   The four sites sit six hundred metres apart, so the frustum only ever holds one of them. */
+   left moving is updated by small local handlers: smoke, mill wheel, windmill fan, bell, mist,
+   herons and weather vane. Smoke and wildlife use distance limits; vegetation follows the
+   world's quality budget. The four settlements are widely separated. */
+import {buildMarshDressing,installChimneySmoke} from '../marsh-dressing.js?v=marsh-dressing-1';
 import {buildWillowmereArt} from '../willowmere-art.js?v=willowmere-settlement-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {plantNaturalPines,plantScannedSaplings} from '../vegetation.js?v=ranch-life-1';
@@ -302,11 +303,12 @@ export function install(G){
   const n=10,im=new THREE.InstancedMesh(G_CROSS,mat,n);
   im.frustumCulled=false;im.castShadow=false;im.renderOrder=3;
   im.name='quarter_smoke';im.position.set(x,y,z);scene.add(own(im));
-  SMOKE.push({im,n,rise:opts.rise||3.2,h:opts.h||12,drift:opts.drift||1.1,x,z,t:rnd()*10});
-  P.draws++;P.anim.push('smoke');
+  const source={im,n,rise:opts.rise||3.2,h:opts.h||12,drift:opts.drift||1.1,x,z,t:rnd()*10};SMOKE.push(source);
+  P.draws++;P.anim.push('smoke');return source;
  }
  function tickSmoke(dt){
   for(const s of SMOKE){
+   if(s.replaced)continue;
    if(hyp(player.pos.x,player.pos.z,s.x,s.z)>320){s.im.visible=false;continue;}
    s.im.visible=true;s.t+=dt;
    for(let i=0;i<s.n;i++){
@@ -557,7 +559,7 @@ export function install(G){
    const p0=F.at(a,b),at=pad(p0[0],p0[1],r,0.6);
    POOLS.push({x:at[0],z:at[1],r,y:waterLevel(at[0],at[1],r)+.06});
   }
-  const MERE=POOLS[1];P.willowSettlement={houses:[],routes:[],pools:POOLS,boats:[],mist:[],npcs:[]};
+  const MERE=POOLS[1];P.willowSettlement={houses:[],routes:[],pools:POOLS,boats:[],mist:[],npcs:[],herons:[],smoke:[]};
 
   /* Reed beds. Two crossed blades per clump on an alpha-cut texture — two thousand of them on
      one draw call, thickest at every waterline and thinning out across the flats. They were
@@ -619,8 +621,8 @@ export function install(G){
   const deckA=stilthouse(cotA[0],cotA[1],F.yaw-0.5,3.6,3.0,2.7,5.0);collide(cotA[0],cotA[1],2.6);
   stilthouse(cotB[0],cotB[1],F.yaw+1.4,3.4,2.8,2.6,4.6);collide(cotB[0],cotB[1],2.5);
   stilthouse(hide[0],hide[1],F.yaw+2.3,2.4,2.2,2.0,3.4);collide(hide[0],hide[1],2.0);
-  smoke(eel[0],eelDeck+5.6,eel[1],{rise:2.6,h:10,drift:0.8});
-  smoke(cotA[0],deckA+4.3,cotA[1],{rise:2.4,h:8,drift:0.7});
+  P.willowSettlement.smoke.push(smoke(eel[0],eelDeck+5.6,eel[1],{rise:2.6,h:10,drift:0.8}));
+  P.willowSettlement.smoke.push(smoke(cotA[0],deckA+4.3,cotA[1],{rise:2.4,h:8,drift:0.7}));
   {const g=new THREE.Group();signboard(g,'THE EEL HOUSE',3.0);const s=world(eel[0],eel[1],F.yaw+0.2,0,5.2);place(solid,g,s[0],s[1],F.yaw+0.2+Math.PI);}
 
   /* The boathouse is the one building on dry land, because a slipway needs a bank to run up. */
@@ -642,11 +644,11 @@ export function install(G){
    lp(hg,'#e2e8ea',0,1.54,0.07,0.09,0.09,0.13);
    cn(hg,'#e0b050',0,1.52,0.26,0.045,0.34).rotation.x=Math.PI/2+0.2;
    lp(hg,'#7d8a90',0,0.92,-0.25,0.13,0.2,0.3);
-   hg.position.set(hx,Math.max(groundH(hx,hz),p.y)-0.07,hz);hg.rotation.y=rr(0,6.28);bg.add(hg);}
-  const nets=F.at(10,-4),ny=groundH(nets[0],nets[1]);
+   hg.position.set(hx,Math.max(groundH(hx,hz),p.y)-0.07,hz);hg.rotation.y=rr(0,6.28);hg.name='Willowmere | legacy heron';scene.add(own(hg));P.willowSettlement.herons.push(hg);}
+  const nets=F.at(10,-4),ny=groundH(nets[0],nets[1]);P.willowSettlement.nets={x:nets[0],y:ny,z:nets[1],legacy:bg};
   for(const s of [-1,1])cy(bg,T_MID,nets[0]+s*1.6,ny+1.1,nets[1],0.08,2.2);
   {const m=bx(bg,'#a8a482',nets[0],ny+1.5,nets[1],3.2,1.4,0.05);m.material=mt('#a8a482',{transparent:true,opacity:0.55,side:THREE.DoubleSide,roughness:1});m.castShadow=false;}
-  solid.add(bg);
+  bg.name='Willowmere | legacy net frame';scene.add(own(bg));
 
   /* The lamp mast: fifteen metres of pole on a cairn in the shallows with a lit head and a heron
      for a weather-vane. It is what you steer by coming in off the meadows at dusk. */
@@ -658,7 +660,7 @@ export function install(G){
   put(G_LUMP,LAMP,0.42,0.54,0.42,0,15.0,0,mg,{emissive:LAMP,emissiveIntensity:1.6,roughness:0.35});
   bx(mg,IRON,0,15.5,0,0.72,0.1,0.72);
   lp(mg,IRON,0,15.85,0,0.1,0.14,0.36);bx(mg,IRON,0,15.9,-0.45,0.03,0.26,0.5);tp(mg,IRON,0,16.1,0.16,0.05,0.3);
-  place(solid,mg,mast[0],mast[1],0.5);
+  place(scene,own(mg),mast[0],mast[1],0.5);mg.name='Willowmere | legacy lamp mast';P.willowSettlement.mast=mg;
   collide(mast[0],mast[1],1.7);
 
   const sgn=F.at(12,-19),sg=new THREE.Group();signboard(sg,'WILLOWMERE',3.0);place(solid,sg,sgn[0],sgn[1],F.yaw+Math.PI+0.3);
@@ -1053,13 +1055,14 @@ vQMistUV=uv;
   P.sites.ochre={post:[post[0]|0,post[1]|0],barn:[bn[0]|0,bn[1]|0],mill:[mill[0]|0,mill[1]|0],mesa:[M1[0]|0,M1[1]|0],arch:[arc[0]|0,arc[1]|0],corral:[corral[0]|0,corral[1]|0]};
  }
 
- /* ================= 12. build them, and the one per-frame pass ================= */
+ /* ================= 12. build settlements and install updates ================= */
  for(const [name,fn] of [['amberwood',buildAmberwood],['willowmere',buildWillowmere],['frostpine',buildFrostpine],['ochre',buildOchre]])
   try{fn();}catch(e){console.error('quarter '+name,e);}
  if(P.willowSettlement)try{P.willowmereArt=buildWillowmereArt(G,P.willowSettlement);}catch(e){G.errors.push('Willowmere art: '+e.message);console.error(e);}
- /* One tick for the package and it does one thing: the smoke. The mill wheel, the fan, the bell
-    and the mist hang their own one-line handlers off G.on('tick') beside their geometry, which
-    keeps each of them next to the thing it moves. */
+ if(P.willowmereArt)try{P.marshDressing=buildMarshDressing(G,P.willowSettlement,P.willowmereArt);own(P.marshDressing.root);P.draws+=P.marshDressing.stats.draws;P.anim.push('herons','weather vane');}catch(e){G.errors.push('Marsh dressing: '+e.message);console.error(e);}
+ try{P.chimneySmoke=installChimneySmoke(G,SMOKE);for(const r of P.chimneySmoke.records)own(r.mesh);}catch(e){G.errors.push('Chimney smoke: '+e.message);console.error(e);}
+ /* Keep fallback smoke and distance fades active. Replacement plumes, marsh wildlife and
+    other animated landmarks install their own handlers beside their geometry. */
  G.on('tick',dt=>{try{tickSmoke(dt);tickFade(dt);}catch(e){}});
 
  /* The first time you ride into one of the four, say what it is rather than leaving the region
