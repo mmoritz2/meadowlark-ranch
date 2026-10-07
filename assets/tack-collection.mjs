@@ -57,18 +57,35 @@ export function tackPieceWearer(save,catalogId){
 }
 // These functions have no DOM, clocks, randomness or game globals. G.save.sync
 // provides the current save, so repeated clicks recheck ownership before charging.
-export function buyTackPiece(save,catalogId,{inventoryId}={}){
- const def=getTackPiece(catalogId);if(!def)return {ok:false,code:'unknown-item'};
- if(def.premiumProduct)return {ok:false,code:'paid-purchase-required'};
- if(!save||typeof save!=='object'||(save.tack!=null&&!Array.isArray(save.tack)))return {ok:false,code:'invalid-save'};
- const owned=ownedTackPiece(save,catalogId);if(owned)return {ok:true,changed:false,code:'already-owned',item:owned};
- if(def.priceCoins>0&&(!Number.isFinite(save.coins)||save.coins<def.priceCoins))return {ok:false,code:'insufficient-coins',needed:def.priceCoins};
- const inventory=Array.isArray(save.tack)?save.tack:[],ids=new Set(inventory.map(item=>item.id));
+const validInventorySave=save=>!!save&&typeof save==='object'&&!Array.isArray(save)&&(save.tack==null||Array.isArray(save.tack));
+function createInventoryItem(inventory,def,inventoryId){
+ const ids=new Set(inventory.map(item=>item?.id));
  let itemId=inventoryId;if(itemId!==undefined&&(typeof itemId!=='string'||!itemId||itemId.length>100||!/^[a-zA-Z0-9_-]+$/.test(itemId)||ids.has(itemId)))return {ok:false,code:'invalid-inventory-id'};
  if(!itemId){itemId='boutique_'+def.id;let n=2;while(ids.has(itemId))itemId='boutique_'+def.id+'_'+n++;}
  const item={id:itemId,catalogId:def.id,collectionId:def.collectionId,slot:def.slot,name:def.name,rarity:def.rarity,bonus:{...def.bonus},primary:def.primary,secondary:null,lvl:1,merged:0,set:null,style:def.style};
- if(!def.free){save.coins-=def.priceCoins;save.stats=save.stats||{};save.stats.tackBought=(save.stats.tackBought||0)+1;}save.tack=inventory;inventory.push(item);
- return {ok:true,changed:true,code:def.free?'claimed':'bought',item,cost:def.priceCoins};
+ return {ok:true,item};
+}
+export function buyTackPiece(save,catalogId,{inventoryId}={}){
+ const def=getTackPiece(catalogId);if(!def)return {ok:false,code:'unknown-item'};
+ if(def.premiumProduct)return {ok:false,code:'paid-purchase-required'};
+ if(!validInventorySave(save))return {ok:false,code:'invalid-save'};
+ const owned=ownedTackPiece(save,catalogId);if(owned)return {ok:true,changed:false,code:'already-owned',item:owned};
+ if(def.priceCoins>0&&(!Number.isFinite(save.coins)||save.coins<def.priceCoins))return {ok:false,code:'insufficient-coins',needed:def.priceCoins};
+ const inventory=Array.isArray(save.tack)?save.tack:[],created=createInventoryItem(inventory,def,inventoryId);if(!created.ok)return created;
+ if(!def.free){save.coins-=def.priceCoins;save.stats=save.stats||{};save.stats.tackBought=(save.stats.tackBought||0)+1;}save.tack=inventory;inventory.push(created.item);
+ return {ok:true,changed:true,code:def.free?'claimed':'bought',item:created.item,cost:def.priceCoins};
+}
+// Gameplay rewards may grant ordinary catalog tack. Free originals are explicit
+// claims, and premium sets must always come from verified account entitlements.
+export function grantEarnedTackPiece(save,catalogId,{inventoryId}={}){
+ const def=getTackPiece(catalogId);if(!def)return {ok:false,code:'unknown-item'};
+ if(def.premiumProduct)return {ok:false,code:'paid-purchase-required'};
+ if(def.free||def.currency!=='coins'||!(def.priceCoins>0))return {ok:false,code:'earned-tack-only'};
+ if(!validInventorySave(save))return {ok:false,code:'invalid-save'};
+ const owned=ownedTackPiece(save,catalogId);if(owned)return {ok:true,changed:false,code:'already-owned',item:owned};
+ const inventory=Array.isArray(save.tack)?save.tack:[],created=createInventoryItem(inventory,def,inventoryId);if(!created.ok)return created;
+ save.tack=inventory;inventory.push(created.item);
+ return {ok:true,changed:true,code:'granted',item:created.item};
 }
 export function equipTackPiece(save,catalogId,horseId){
  const def=getTackPiece(catalogId);if(!def)return {ok:false,code:'unknown-item'};
