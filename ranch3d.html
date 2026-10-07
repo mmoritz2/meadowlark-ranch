@@ -674,6 +674,7 @@ import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-field
 import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=carved-canyon-1';
 import {createGeology} from './assets/geology.js?v=regional-relief-1';
 import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
+import {coldWoodlandWeights,coldPastureCover,coldCoverProfile} from './assets/cold-woodland.mjs?v=cold-woodland-1';
 import {HOLLOWPEAK,alpineSnowAt,fallsTerrainHeight,fallsExcludesDryPlants,createFallsLandscape} from './assets/falls-landscape.js?v=alpine-range-1';
 import {oasisTerrainHeight,oasisContainsWater} from './assets/oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from './assets/desert-art.js?v=botanical-desert-1';
@@ -681,7 +682,7 @@ import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js?v=living-cascades-1';
 import {installRiparian} from './assets/riparian.js';
 import {createOuterLandscape} from './assets/outer-landscape.js?v=regional-relief-1';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=dry-foothills-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=cold-snow-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js?v=willowmere-settlement-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-world-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
@@ -698,12 +699,12 @@ import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=individual-undergrowth-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=canopy-lighting-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=cold-woodland-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=couture-riders-20261007';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-store-live-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-store-live-20261007';
-import {FEATURES} from './assets/features/index.js?v=regional-relief-1';
+import {FEATURES} from './assets/features/index.js?v=cold-woodland-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -3005,7 +3006,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  };
  const blades=new THREE.InstancedMesh(bladeGeo,bladeMat,9500);
  const m4=new THREE.Matrix4(),e=new THREE.Euler(),q=new THREE.Quaternion(),v=new THREE.Vector3(),sc=new THREE.Vector3();
- const bcol=new THREE.Color();
+ const bcol=new THREE.Color(),winterGrassTint=new THREE.Color('#c1b99b');
  let placed=0,guard=0;
  while(placed<9500&&guard<90000){
   guard++;
@@ -3019,13 +3020,18 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   q.setFromEuler(e);
   const s=0.7+Math.random()*0.8,growth=meadowGrowthAt(x,z),spread=.55+.45*growth;
   sc.set(s*spread,s*(.78-.40*managedGrass(x,z))*growth,s*spread);
-  if(alpineSnowAt(x,z)>.35||!hasMeadowCover(x,z))sc.setScalar(0); // keep the placement random stream unchanged
+  const winterCover=coldPastureCover(x,z);
+  // Keep all seeded random draws; winter cover only changes this blade's matrix.
+  const winterSample=Math.sin(x*47.13+z*53.71)*43758.5453;
+  if(alpineSnowAt(x,z)>.35||!hasMeadowCover(x,z)||winterCover===0||(winterCover<1&&winterSample-Math.floor(winterSample)>winterCover))sc.setScalar(0);
+  else if(winterCover<1)sc.multiplyScalar(.55+.45*winterCover);
   v.set(x,groundH(x,z),z);
   m4.compose(v,q,sc);
   blades.setMatrixAt(placed,m4);
   // Share the near-field palette; preserve the three seeded random draws so
   // this colour change cannot move the world's later scenery placements.
   meadowBladeColor(bcol,x,z,(Math.random()+Math.random()+Math.random())/3);
+  if(winterCover<1)bcol.lerp(winterGrassTint,(1-winterCover)*.85);
   blades.setColorAt(placed,bcol);
   placed++;
  }
@@ -3160,6 +3166,8 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  rock.castShadow=quality==='high';
  const okGrass=(x,z)=>{
   if(alpineSnowAt(x,z)>.35)return false;
+  const winterCover=coldPastureCover(x,z);
+  if(winterCover===0||(winterCover<1&&gh(Math.floor(x*47),Math.floor(z*53))>winterCover))return false;
   if(Math.abs(x)>470||Math.abs(z)>470)return false;
   if(canyonCliffAt(x,z,terrainH)||fallsExcludesDryPlants(x,z,terrainH)||G.waterPkg?.excludesPlants(x,z))return false;
   if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // the arena stays sandy
@@ -3219,16 +3227,17 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const h1=gh(ci*73+k*7,cj*131+k*3), h2=gh(ci*17+k*11,cj*59+k*5), h3=gh(k*13+ci,cj*7+k), h4=gh(k*29+cj,ci*3+k*17);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    if(!okGrass(x,z))continue;
-   const sz=.90+h3*.35,trim=.98-.64*managedGrass(x,z),growth=meadowGrowthAt(x,z),spread=.55+.45*growth;
+   const sz=.90+h3*.35,trim=.98-.64*managedGrass(x,z),growth=meadowGrowthAt(x,z),spread=.55+.45*growth,winterCover=coldPastureCover(x,z);
    e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz*spread,(.9+h1*.2)*trim*growth,sz*spread);
+   if(winterCover<1)sc.multiplyScalar(.55+.45*winterCover);
    v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc);m4.toArray(grassCell.matrices,grassCell.count*16);
-   meadowBladeColor(bcol,x,z,h4);bcol.toArray(grassCell.colors,grassCell.count*3);grassCell.count++;
+   meadowBladeColor(bcol,x,z,h4);if(winterCover<1)bcol.lerp(winterGrassTint,(1-winterCover)*.85);bcol.toArray(grassCell.colors,grassCell.count*3);grassCell.count++;
   }
   for(let k=0;k<NG_F;k++){
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    const meadow=gh(ci*3,cj*5)>.62&&managedGrass(x,z)<.58&&meadowGrazingAt(x,z)<.75;
-   if(!meadow||h3>0.6*(1-coyoteCoverDryWeight(x,z)*.95)||!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);flow.setMatrixAt(id,m4);continue;}
+   if(!meadow||coldWoodlandWeights(x,z).weight>.08||h3>0.6*(1-coyoteCoverDryWeight(x,z)*.95)||!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);flow.setMatrixAt(id,m4);continue;}
    const sz=0.8+h3*0.6; e.set(0,h2*Math.PI,0); q.setFromEuler(e); sc.set(sz,sz,sz);
    v.set(x,groundH(x,z)-0.01,z); m4.compose(v,q,sc); flow.setMatrixAt(id,m4);
    flow.setColorAt(id,FLC[Math.floor(h1*FLC.length)%FLC.length]);
@@ -3242,7 +3251,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
     const h1=gh(ci*67+k*29,cj*43+k*13), h2=gh(ci*31+k*17,cj*83+k*41), h3=gh(k*59+ci*7,cj*19+k*23);
     const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
     const bloom=meadowBloomAt(x,z)*.82*(1-coyoteCoverDryWeight(x,z)*.95);
-    if(h3>bloom||biomeAt(x,z)!=='meadow'||!okClutter(x,z))continue;
+    if(h3>bloom||coldWoodlandWeights(x,z).weight>.08||biomeAt(x,z)!=='meadow'||!okClutter(x,z))continue;
     const sz=.95+h3*.55; e.set(0,h2*Math.PI,(h1-0.5)*0.08); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.35),sz);
     v.set(x,groundH(x,z)-0.03,z);m4.compose(v,q,sc);m4.toArray(cell.matrices,cell.count*16);
     bcol.setRGB(.87+h1*.13,.83+h2*.16,.93+h3*.07);bcol.toArray(cell.colors,cell.count*3);cell.count++;
@@ -3252,12 +3261,14 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const id=slot*NG_FR+k, h1=gh(ci*53+k*13,cj*89+k*17), h2=gh(ci*23+k*37,cj*71+k*19), h3=gh(k*47+ci*3,cj*29+k*11);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    const B=biomeAt(x,z), C=CLUT[B],dry=B==='meadow'||B==='desert'?coyoteCoverDryWeight(x,z):0,blend=B==='meadow'?dry:0;
-   const density=C.p+(CLUT.desert.p-C.p)*blend,size=C.sz+(CLUT.desert.sz-C.sz)*blend;
+   const winter=coldCoverProfile(x,z,'scrub');
+   const density=(C.p+(CLUT.desert.p-C.p)*blend)*(winter?.density??1),size=(C.sz+(CLUT.desert.sz-C.sz)*blend)*(winter?.size??1);
    if(!okClutter(x,z)||h3>density*(B==='meadow'?1-.95*meadowGrazingAt(x,z)*(1-blend):1)||(B==='water'&&h3>0.35)){hide(fern,id);continue;}
    const sz=size*(0.7+h3*0.8);
    e.set(0,h1*Math.PI*2,(h2-0.5)*0.13); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.4),sz);
    v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc); fern.setMatrixAt(id,m4);
-   bcol.set(C.fern).lerp(dryFernTint,blend).offsetHSL(0,(h1-0.5)*0.06,(h3-0.5)*0.10); fern.setColorAt(id,bcol);
+   bcol.set(C.fern).lerp(dryFernTint,blend).offsetHSL(0,(h1-0.5)*0.06,(h3-0.5)*0.10);
+   if(winter)bcol.lerp(winterGrassTint,winter.tintAmount);fern.setColorAt(id,bcol);
   }
   const reedCell=reedCells[slot];reedCell.count=0;
   for(let k=0;k<NG_RD;k++){                                  // bulrushes, only at the water's edge
@@ -3315,6 +3326,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const flowerGeo=new THREE.IcosahedronGeometry(0.025,1);
  const flowerMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1});
  const flowers=new THREE.InstancedMesh(flowerGeo,flowerMat,220);
+ flowers.name='Seeded pasture flower clumps';
  const palette=['#e2dcc6','#d7c883','#aaa0b0','#c9c3b5','#e2dcc6'];
  const fc=new THREE.Color();
  for(let i=0;i<12;i++){
@@ -3327,6 +3339,8 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   const z=cc[1]+(Math.random()+Math.random()-1)*5;
   m4.makeRotationY(0);
   m4.setPosition(x,groundH(x,z)+0.06,z);
+  // Winter filtering happens after every candidate draw so later scenery stays fixed.
+  if(coldWoodlandWeights(x,z).weight>.08){m4.makeScale(0,0,0);m4.setPosition(x,groundH(x,z)+0.06,z);}
   flowers.setMatrixAt(i,m4);
   flowers.setColorAt(i,fc.set(palette[i%palette.length]));
  }
@@ -4393,6 +4407,15 @@ FOLIAGE.boulder.forEach((p,i)=>{
 });
 // Non-flowering understory is placed from the local photoscan library after the horse loads.
 const naturalFlowerShrubs=plantNaturalShrubs({THREE,scene,placements:FOLIAGE.flowerbush,groundH,flowering:true});
+{
+ // Build every source as before; suppress only existing winter flowering sites.
+ const matrix=new THREE.Matrix4();
+ for(const mesh of naturalFlowerShrubs){for(let i=0;i<mesh.count;i++){
+  mesh.getMatrixAt(i,matrix);const x=matrix.elements[12],y=matrix.elements[13],z=matrix.elements[14];
+  if(coldWoodlandWeights(x,z).weight<=.08)continue;
+  matrix.makeScale(0,0,0);matrix.setPosition(x,y,z);mesh.setMatrixAt(i,matrix);
+ }mesh.instanceMatrix.needsUpdate=true;}
+}
 terrainSurface.setTrees([].concat(FOLIAGE.oak,FOLIAGE.birch,FOLIAGE.blossom,FOLIAGE.pine,FOLIAGE.snowpine));
 seedTreeInsts=placeSeedTrees();                                    // trees are Weber–Penn generated
 seedTreeInsts.forEach(m=>{m.userData.fullCount=m.count;if(quality==='low')m.count=Math.ceil(m.userData.fullCount*0.55);});

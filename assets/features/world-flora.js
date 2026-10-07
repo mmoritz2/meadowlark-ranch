@@ -30,6 +30,7 @@ import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=alpin
    there and a barn dropped into a thicket helps nobody. */
 import {canyonCliffAt} from '../canyon-landscape.js?v=carved-canyon-1';
 import {coyoteCoverDryWeight} from '../biome-weights.mjs?v=dry-foothills-1';
+import {coldCoverProfile} from '../cold-woodland.mjs?v=cold-woodland-1';
 import {oasisContainsWater} from '../oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from '../desert-art.js?v=botanical-desert-1';
 import {getFoliageTexture} from '../world-art.js?v=world-cinematic-1';
@@ -923,6 +924,33 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   b.n=kept;dryAfter[name]=kept;
  }
  F.dryMargin={before:dryBefore,after:dryAfter,tinted:dryTinted,shortened:dryShortened,removed:dryRemoved,inwardTinted};
+
+ /* ---- 6l. winter woodland floor ------------------------------------------------------------
+    The original tundra tussocks and meadow drift edges continued flowering through snow.
+    Filter existing decorative sites only after every tree, random draw and collider is fixed.
+    Sparse evergreen scrub and weathered reeds survive; summer turf and flowers do not. */
+ const winterBefore={},winterAfter={},winterTint=new THREE.Color();
+ let winterRemoved=0,winterShortened=0,winterTinted=0,winterKinds=0;
+ for(const name of ['tuft','petal','brack','reed','scrub','juni','sage']){
+  const b=BANK[name],n=b.n;let kept=0;winterBefore[name]=n;winterKinds++;
+  for(let i=0;i<n;i++){
+   b.im.getMatrixAt(i,_m);
+   const x=_m.elements[12],z=_m.elements[14],change=coldCoverProfile(x,z,name);
+   if(change){
+    if(change.density===0||hsh(Math.floor(x*47)+winterKinds*1877,Math.floor(z*53)-1291)>change.density){winterRemoved++;continue;}
+    _m.decompose(_v,_q,_sc);const y=groundH(x,z);
+    _v.y=y+(_v.y-y)*change.size;_sc.multiplyScalar(change.size);_m.compose(_v,_q,_sc);
+    winterShortened++;
+   }
+   // Untouched matrices/colours are copied directly; decomposition would round
+   // them again even at unit scale and invalidate the outside-planting invariant.
+   b.im.setMatrixAt(kept,_m);b.im.getColorAt(i,_col);
+   if(change){winterTint.set(change.tint);_col.lerp(winterTint,change.tintAmount);winterTinted++;}
+   b.im.setColorAt(kept,_col);kept++;
+  }
+  b.n=kept;winterAfter[name]=kept;
+ }
+ F.winterCover={before:winterBefore,after:winterAfter,removed:winterRemoved,shortened:winterShortened,tinted:winterTinted};
 
  /* ================= 7. hand the banks to the renderer ================= */
  let total=0;

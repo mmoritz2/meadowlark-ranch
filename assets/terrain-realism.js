@@ -1,4 +1,33 @@
 import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
+// Snow02 is photographed over two metres. Wind relief is independent of its
+// albedo tile, smooth across noise cells, and small enough to remain powder.
+export const COLD_SNOW_SURFACE=Object.freeze({textureMetres:2.25,albedoExposure:1.85,across:4.2,along:11.2,depth:.14,windX:.8574929257125441,windZ:.5144957554275265});
+const coldFract=v=>v-Math.floor(v);
+function coldHash(x,z){let a=coldFract(x*.1031),b=coldFract(z*.1031),c=a;const d=a*(b+33.33)+b*(c+33.33)+c*(a+33.33);a+=d;b+=d;c+=d;return coldFract((a+b)*c);}
+// Also available to static art QA: height and its analytic world derivatives.
+// This does not modify the terrain's visible silhouette or riding height.
+export function coldSnowDrift(x,z){
+ const q=COLD_SNOW_SURFACE,u=(x*q.windX+z*q.windZ)/q.across-17.3,v=(-x*q.windZ+z*q.windX)/q.along+41.9;
+ const ix=Math.floor(u),iz=Math.floor(v),fx=coldFract(u),fz=coldFract(v),sx=fx*fx*(3-2*fx),sz=fz*fz*(3-2*fz);
+ const a=coldHash(ix,iz),b=coldHash(ix+1,iz),c=coldHash(ix,iz+1),d=coldHash(ix+1,iz+1);
+ const value=(a+(b-a)*sx)*(1-sz)+(c+(d-c)*sx)*sz;
+ const du=((b-a)*(1-sz)+(d-c)*sz)*6*fx*(1-fx)/q.across;
+ const dv=((c-a)*(1-sx)+(d-b)*sx)*6*fz*(1-fz)/q.along;
+ return {height:(value-.5)*q.depth,dx:(q.windX*du-q.windZ*dv)*q.depth,dz:(q.windZ*du+q.windX*dv)*q.depth};
+}
+const COLD_SNOW_GLSL=`
+ vec3 snowNoiseGradient(vec2 p){
+  vec2 i=floor(p),f=fract(p),w=f*f*(3.0-2.0*f),dw=6.0*f*(1.0-f);
+  float a=tHash(i),b=tHash(i+vec2(1.0,0.0)),c=tHash(i+vec2(0.0,1.0)),d=tHash(i+vec2(1.0,1.0));
+  return vec3(mix(mix(a,b,w.x),mix(c,d,w.x),w.y),mix(b-a,d-c,w.y)*dw.x,mix(c-a,d-b,w.x)*dw.y);
+ }
+ vec3 coldSnowDrift(vec2 p){
+  vec2 flow=vec2(p.x*${COLD_SNOW_SURFACE.windX}+p.y*${COLD_SNOW_SURFACE.windZ},-p.x*${COLD_SNOW_SURFACE.windZ}+p.y*${COLD_SNOW_SURFACE.windX});
+  vec3 drift=snowNoiseGradient(flow/vec2(${COLD_SNOW_SURFACE.across},${COLD_SNOW_SURFACE.along})+vec2(-17.3,41.9));
+  vec2 g=drift.yz/vec2(${COLD_SNOW_SURFACE.across},${COLD_SNOW_SURFACE.along});
+  return vec3(drift.x-.5,${COLD_SNOW_SURFACE.windX}*g.x-${COLD_SNOW_SURFACE.windZ}*g.y,${COLD_SNOW_SURFACE.windZ}*g.x+${COLD_SNOW_SURFACE.windX}*g.y)*${COLD_SNOW_SURFACE.depth};
+ }
+`;
 /* Ground materials authored for Star Ranch. Distances and texture scales are metres. */
 export function createTerrainSurface({THREE, renderer, grass, bump}) {
   const loader = new THREE.TextureLoader();
@@ -68,12 +97,12 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
     meadowARM:detail('./assets/textures/pasture/grass_arm.webp'),
     stoneARM:detail('./assets/textures/scanned/rock_boulder_cracked_arm.webp'),
     litterARM:detail('./assets/textures/scanned/forest_ground_04_arm.webp'),wetWeather};
-  for(const [key,path] of [['terrainSoil','./assets/textures/ground_sand.jpg'],['terrainSnow','./assets/textures/ground_snow.jpg']]){
+  for(const [key,path] of [['terrainSoil','./assets/textures/ground_sand.jpg'],['terrainSnow','./assets/textures/cold/snow_02_diff_2k.webp']]){
     const t=loader.load(path);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;uniforms[key]={value:t};
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v15-dry-foothills';
+  material.customProgramCacheKey = () => 'terrain-biomes-v16-cold-snow';
   material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0]};
   material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
@@ -97,6 +126,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       vec2 tHash2(vec2 p){vec3 q=fract(vec3(p.xyx)*vec3(.1031,.1030,.0973));q+=dot(q,q.yzx+33.33);return fract((q.xx+q.yz)*q.zy);}
       float tNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(tHash(i),tHash(i+vec2(1,0)),f.x),mix(tHash(i+vec2(0,1)),tHash(i+vec2(1,1)),f.x),f.y);}
       ${COYOTE_DRY_GLSL}
+      ${COLD_SNOW_GLSL}
       ` + sh.fragmentShader;
     sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>',`
       vec2 p = terrainPosition.xz;
@@ -224,6 +254,14 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       winterCore=max(winterCore,alpineClimate);
       float drift=smoothstep(.32,.70,stand*.62+edgeHi*.38);
       float lie=mix(.28+.55*drift,1.0,winterCore);
+      float thawLitter=0.0;
+      #ifndef OUTER_LANDSCAPE
+        // Warm edges leave real gaps between sheltered snow deposits. The same
+        // region/core envelopes remain fixed; the full winter core stays white.
+        float sheltered=smoothstep(.35,.69,stand*.58+edgeHi*.42);
+        lie=mix(sheltered,1.0,winterCore);
+        thawLitter=snowRegion*(1.0-winterCore)*(1.0-smoothstep(.58,.90,grade));
+      #endif
       float snow=snowRegion*(1.0-smoothstep(.20,.58,grade))*lie;
       float amber  = 1.0-smoothstep(86.0,132.0, length(p-vec2( 300.0,-300.0))+ecoA);
       float marsh  = 1.0-smoothstep(76.0,124.0, length(p-vec2( 310.0, 300.0))+ecoB);
@@ -245,6 +283,13 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
         canopy=max(canopy,extend*smoothstep(.50,.72,tNoise(p*.011+81.0))*(1.0-snow)*(1.0-arid)*.68);
       #endif
       float quarters = amber+marsh+tundra+ochre;
+      float coldPowder=snow;
+      #ifndef OUTER_LANDSCAPE
+        // Frostpine's surface is the later snow/lichen/stone blend below. Its
+        // powder share replaces grass relief in proportion to that real mix;
+        // steep, scoured ground keeps the mineral portion instead of full snow.
+        coldPowder=snow*(1.0-tundra*.88)+tundra*.88*(.66-.46*smoothstep(.06,.36,grade+rough*.3));
+      #endif
 
       /* Fifteen texture fetches a pixel, everywhere, was this shader's real cost: forest floor,
          rock three ways, canyon sand, snow and all four quarters were sampled on every square
@@ -257,8 +302,13 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       vec2 rockUVy = p/3.2, rockUVx = terrainPosition.yz/3.2, rockUVz = terrainPosition.xy/3.2;
       vec2 soilUV  = mat2(.819,-.574,.574,.819)*p/3.7 + tHash2(floor(p/21.0))*.014;
       vec2 earthUV = p/3.2, snowUV = mat2(.91,-.414,.414,.91)*p/7.1, amberUV = p/2.9, marshUV = p/3.6, ochreUV = soilUV*1.24;
+      #ifndef OUTER_LANDSCAPE
+        // A continuous low-frequency warp breaks photographic alignment while
+        // keeping derivatives valid and the photographed grain near its scale.
+        snowUV=mat2(.91,-.414,.414,.91)*p/${COLD_SNOW_SURFACE.textureMetres}+vec2(edgeLo-.5,edgeHi-.5)*.34;
+      #endif
       vec3 earth=vec3(0.0), rock=vec3(0.0), sand=vec3(0.0), snowTex=vec3(0.0);
-      if(canopy>0.003||bank>0.003||wear>0.004) earth=texture2D(terrainForest,earthUV).rgb;
+      if(canopy>0.003||bank>0.003||wear>0.004||thawLitter>0.003) earth=texture2D(terrainForest,earthUV).rgb;
       if(rocky>0.003||canyon>0.003||tundra>0.003||ochre>0.003){
         #ifdef CHEAP_GROUND
           rock=texture2D(terrainRock,rockUVy).rgb;
@@ -275,22 +325,39 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
         rock*=(0.80+0.34*macro)*mix(vec3(1.08,1.00,0.90),vec3(0.90,0.95,1.05),stand);
       }
       if(bank>0.003||canyon>0.003) sand=texture2D(terrainSoil,soilUV).rgb;
-      // Offset blended snow tiles remove the repeated diamond grid in the source.
-      // Lower tiers keep two fetches, and do not add any texture memory.
+      // One shared photographed snow source, still four samples on high/medium
+      // and two on low. Independent sample orientations avoid a common tile axis.
       vec2 snowCell=floor(snowUV*.31),snowF=fract(snowUV*.31);
       snowF=snowF*snowF*(3.0-2.0*snowF);
       if(snow>0.003||tundra>0.003){
         #ifdef CHEAP_GROUND
-          snowTex=mix(texture2D(terrainSnow,snowUV).rgb,texture2D(terrainSnow,snowUV*.713+vec2(.37,.61)).rgb,.48);
+          #ifdef OUTER_LANDSCAPE
+            snowTex=mix(texture2D(terrainSnow,snowUV).rgb,texture2D(terrainSnow,snowUV*.713+vec2(.37,.61)).rgb,.48);
+          #else
+            snowTex=mix(texture2D(terrainSnow,snowUV).rgb,texture2D(terrainSnow,mat2(.626,-.780,.780,.626)*snowUV*.873+vec2(.37,.61)).rgb,.48);
+          #endif
         #else
           for(int y=0;y<=1;y++)for(int x=0;x<=1;x++){
             vec2 corner=vec2(float(x),float(y));
             float weight=(x==1?snowF.x:1.0-snowF.x)*(y==1?snowF.y:1.0-snowF.y);
-            snowTex+=texture2D(terrainSnow,snowUV+tHash2(snowCell+corner)*53.1).rgb*weight;
+            #ifdef OUTER_LANDSCAPE
+              snowTex+=texture2D(terrainSnow,snowUV+tHash2(snowCell+corner)*53.1).rgb*weight;
+            #else
+              vec2 seed=tHash2(snowCell+corner),basis=seed*2.0-1.0;
+              basis/=max(length(basis),.01);
+              snowTex+=texture2D(terrainSnow,mat2(basis.x,-basis.y,basis.y,basis.x)*snowUV+seed*53.1).rgb*weight;
+            #endif
           }
         #endif
-        float snowValue=dot(snowTex,vec3(.2126,.7152,.0722));
-        snowTex=mix(vec3(.78),vec3(snowValue),.52);
+        // Snow02's photographed exposure is darker than loose winter powder.
+        // Calibrate its shared albedo energy while retaining all photographed
+        // grain; the cap avoids super-white energy on the brightest source texels.
+        float snowValue=clamp(dot(snowTex,vec3(.2126,.7152,.0722))*${COLD_SNOW_SURFACE.albedoExposure},0.0,.98);
+        #ifdef OUTER_LANDSCAPE
+          snowTex=mix(vec3(.78),vec3(snowValue),.52);
+        #else
+          snowTex=mix(vec3(.78),vec3(snowValue),.68);
+        #endif
       }
 
       /* Under the trees the ground is litter rather than grass, and it is in shade. */
@@ -325,10 +392,27 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       /* Snow reads as paper unless it is cold. This albedo is very nearly neutral, and against a
          warm sky the eye needs the blue put back — it belongs in the shadowed hollows, which is
          what damp is already measuring. */
+      #ifndef OUTER_LANDSCAPE
+        if(thawLitter>0.003){
+          // Exposed edge islands are cold litter and occasional existing stone,
+          // not saturated pasture seen through a thin white blanket.
+          vec3 edgeGround=earth*vec3(.89,.92,.91)*(0.84+0.12*macro);
+          if(rocky>.003)edgeGround=mix(edgeGround,rock*vec3(.91,.94,1.0),rocky*.48);
+          surface=mix(surface,edgeGround,thawLitter*.68);
+        }
+      #endif
       if(snow>0.003){
         vec3 c=snowTex*vec3(.84,.90,.99)*(0.82+0.32*(stand*0.55+macro*0.45));
         c=mix(c,c*vec3(.84,.91,1.08),damp*0.7);
-        surface=mix(surface,c,snow*0.98);
+        #ifdef OUTER_LANDSCAPE
+          surface=mix(surface,c,snow*0.98);
+        #else
+          // Photographed powder carries the small detail; broad value changes
+          // stay restrained, and a fully covered core hides the turf completely.
+          c=snowTex*vec3(.90,.94,1.0)*(0.92+0.16*(stand*0.55+macro*0.45));
+          c=mix(c,c*vec3(.89,.94,1.04),damp*.45);
+          surface=mix(surface,c,snow);
+        #endif
       }
       /* The four quarters past the old fence. Each re-tints ground the shader already samples,
          so a new country still costs a smoothstep rather than another download — and the whole
@@ -376,7 +460,10 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
         roughnessFactor=mix(roughnessFactor,clamp(groundARM.g,.65,1.0),upClose*(1.0-snow));
         diffuseColor.rgb*=mix(1.0,groundARM.r,.22*upClose*(1.0-snow));
       #endif
-      roughnessFactor=mix(roughnessFactor,.43,clamp(wet*.42+rainWet,0.0,.85));`);
+      roughnessFactor=mix(roughnessFactor,.43,clamp(wet*.42+rainWet,0.0,.85));
+      #ifndef OUTER_LANDSCAPE
+        roughnessFactor=mix(roughnessFactor,.97,snow);
+      #endif`);
     sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
       #ifndef CHEAP_GROUND
         if(upClose>.005){
@@ -395,6 +482,15 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
           vec3 bitangent=normalize(cross(wn,tangent));
           vec3 relief=normalize(wn+(.34*detailN.x*tangent+.34*detailN.y*bitangent)*upClose*(1.0-snow*.82));
           normal=normalize(mat3(viewMatrix)*relief);
+        }
+      #endif
+      #ifndef OUTER_LANDSCAPE
+        if(coldPowder>.003){
+          // Replace grass/bump relief under powder on every tier. Analytic
+          // gradients are C1 across cells and fade before subpixel detail.
+          vec3 powderField=coldSnowDrift(p);
+          vec3 powderNormal=normalize(wn+vec3(-powderField.y,0.0,-powderField.z)*upClose);
+          normal=normalize(mix(normal,normalize(mat3(viewMatrix)*powderNormal),coldPowder));
         }
       #endif`);
   };

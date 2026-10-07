@@ -7,6 +7,7 @@ import {installVillageEvergreens} from './village-planting.js?v=village-gardens-
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
 import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=village-gardens-1';
 import {alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=alpine-range-1';
+import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
 import {inMeadowOpening} from './pastoral-fields.mjs?v=leafy-orchard-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=canopy-lighting-1';
@@ -165,6 +166,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     };
     state.roadClearedTrees=0;state.roadClearedSnags=0;state.meadowClearings=[];
     const autumnPalette=['#e6b448','#db8734','#ad3d42','#c85c65'].map(c=>new THREE.Color(c));
+    const coldStats=state.coldWoodland={trees:0,mature:0,regeneration:0,mixedMargin:0,sourceChanges:0,sourceCounts:{}};
     const add=t=>{
       const road=onRoad(t.x,t.z),meadow=inMeadowOpening(t.x,t.z);
       const cleared=!t.authoredOrchard&&((road&&!t.authoredVillage)||meadow||G.vistas?.clearZones?.some(test=>test(t.x,t.z)));
@@ -188,6 +190,20 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       // Broad crowns occupy the old tree sites; trunks and route clearances stay fixed.
       if(t.source.key==='canopy-broadleaf')t.height=Math.min(t.height,12.5);
       if(t.source.key==='woodland-broadleaf'&&t.kind!=='woodland')t.height=Math.min(14,Math.max(8,t.height*1.35));
+      // Keep the older source/crown rules exact outside the established cold
+      // climate. Evergreen age patches alter crowns, never their trunk sites.
+      if(!t.authoredOrchard&&!t.authoredVillage&&coldWoodlandWeights(t.x,t.z).weight>.08){
+        const elevation=W.groundH(t.x,t.z),grade=Math.hypot(W.groundH(t.x+1,t.z)-W.groundH(t.x-1,t.z),W.groundH(t.x,t.z+1)-W.groundH(t.x,t.z-1))*.5;
+        const profile=coldWoodlandProfile({x:t.x,z:t.z,height:t.height,source:t.source.key,elevation,grade});
+        const source=variants.find(v=>v.key===profile.source);
+        if(!source)throw Error('Missing cold woodland source: '+profile.source);
+        coldStats.sourceChanges+=source!==t.source;t.source=source;
+        t.height=profile.height;t.crownWidth=profile.crownWidth;
+        coldStats.trees++;coldStats.sourceCounts[source.key]=(coldStats.sourceCounts[source.key]||0)+1;
+        if(source.key==='mature-pine')coldStats.mature++;
+        else if(source.key.startsWith('pine-'))coldStats.regeneration++;
+        else coldStats.mixedMargin++;
+      }
       trees.push(t);
     };
     // Respect cleared placements in both the original seed batches and new landmark zones.
@@ -289,8 +305,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       outer.stats.woodlandDraws=meshes.length;outer.stats.woodlandTriangles=outer.woodlandSites.length*2;
     }
     for(const t of trees){
-      const scale=t.height/t.source.meta.sourceHeight;
-      q.setFromAxisAngle(UP,t.yaw);s.setScalar(scale);
+      const scale=t.height/t.source.meta.sourceHeight,crownWidth=t.crownWidth||1;
+      // Detailed geometry, distant views and shadow depth use this same matrix.
+      q.setFromAxisAngle(UP,t.yaw);s.set(scale*crownWidth,scale,scale*crownWidth);
       v.set(t.x,W.groundH(t.x,t.z)-t.source.bounds.min.y*scale-.07,t.z);
       t.matrix=new THREE.Matrix4().compose(v,q,s);
     }
