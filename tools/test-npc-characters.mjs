@@ -63,3 +63,14 @@ test('distant characters keep their body but stop casting shadows beyond 28m; or
  f.player.x=-1.01;f.update();assert.equal(body.castShadow,false);assert.equal(brows.castShadow,false);assert.equal(rig.root.visible,true);assert.equal(n.fallback.visible,false);
  f.player.x=-1;f.update();assert.equal(body.castShadow,true);assert.equal(brows.castShadow,false);f.system.dispose();
 });
+
+test('distance views retain residents through native rig handovers and cull beyond range',async()=>{
+ const cards=new Map(),adapter={create(entry){const root=new THREE.Group();entry.g.add(root);const card={root,range:150,ready:true,update(dt,{distance,show}){root.visible=show&&distance<150;},dispose(){root.removeFromParent();}};cards.set(entry.def.id,card);return card;},endFrame(){},stats(){return{};},dispose(){}};
+ const f=fixture({distantCharacters:adapter}),n=f.add('wren',100);f.update();await settle();const card=cards.get('wren');
+ assert.equal(f.calls.build,0);assert.equal(card.root.visible,true);assert.equal(n.fallback.visible,false);assert.equal(f.system.hasModel('wren'),true);
+ f.player.x=98;f.update();await settle();assert.ok(f.system.get('wren'));assert.equal(card.root.visible,false);assert.equal(n.fallback.visible,false);
+ f.player.x=0;f.update();assert.equal(f.system.get('wren').root.visible,false);assert.equal(card.root.visible,true);assert.equal(n.fallback.visible,false);
+ for(let i=0;i<40;i++)f.update();assert.equal(f.system.get('wren'),null);assert.equal(card.root.visible,true);
+ f.player.x=300;f.update();assert.equal(card.root.visible,false);assert.equal(n.fallback.visible,false);assert.equal(n.tag.parent,n.e.g);
+ f.system.dispose();assert.equal(card.root.parent,null);
+});

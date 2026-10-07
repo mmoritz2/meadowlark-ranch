@@ -1,0 +1,242 @@
+[
+  {
+    "id": "wren",
+    "name": "Grandpa Wren",
+    "shirt": "#8a6745",
+    "folk": false
+  },
+  {
+    "id": "ada",
+    "name": "Ada",
+    "shirt": "#5b7fbf",
+    "folk": false
+  },
+  {
+    "id": "otto",
+    "name": "Farmer Otto",
+    "shirt": "#8a9a5a",
+    "folk": false
+  },
+  {
+    "id": "bea",
+    "name": "Sheriff Bea",
+    "shirt": "#b06a3a",
+    "folk": false
+  },
+  {
+    "id": "ilse",
+    "name": "Ilse",
+    "shirt": "#6a5a8a",
+    "folk": false
+  },
+  {
+    "id": "posy",
+    "name": "Posy",
+    "shirt": "#e0c48a",
+    "folk": false
+  },
+  {
+    "id": "hollis",
+    "name": "Hollis",
+    "shirt": "#c9a24a",
+    "folk": false
+  },
+  {
+    "id": "rosa",
+    "name": "Rosa",
+    "shirt": "#e8a05a",
+    "folk": false
+  },
+  {
+    "id": "tomas",
+    "name": "Tomas",
+    "shirt": "#8aa0b8",
+    "folk": false
+  },
+  {
+    "id": "nell",
+    "name": "Nell",
+    "shirt": "#f0e6d2",
+    "folk": false
+  },
+  {
+    "id": "saddler",
+    "name": "Bo the Saddler",
+    "shirt": "#8a6a45",
+    "folk": false
+  },
+  {
+    "id": "june",
+    "name": "Auntie June",
+    "shirt": "#e8c76a",
+    "folk": false
+  },
+  {
+    "id": "bram",
+    "name": "Bram the Saddler",
+    "shirt": "#7a6a9a",
+    "folk": false
+  },
+  {
+    "id": "hesper",
+    "name": "Hesper",
+    "shirt": "#5a8a6a",
+    "folk": false
+  },
+  {
+    "id": "rook",
+    "name": "Old Rook",
+    "shirt": "#8a7a5a",
+    "folk": false
+  },
+  {
+    "id": "tamsin",
+    "name": "Tamsin",
+    "shirt": "#c96a3a",
+    "folk": false
+  },
+  {
+    "id": "stallkeep",
+    "name": "Wynn the Stall-keeper",
+    "shirt": "#6a5a8a",
+    "folk": false
+  },
+  {
+    "id": "marta",
+    "name": "Marta",
+    "shirt": "#c9a24a",
+    "folk": false
+  },
+  {
+    "id": "cw_pim",
+    "name": "Pim",
+    "shirt": "#6a8fbf",
+    "folk": true
+  },
+  {
+    "id": "cw_rosa",
+    "name": "Rosa",
+    "shirt": "#9bbf6a",
+    "folk": true
+  },
+  {
+    "id": "cw_ned",
+    "name": "Old Ned",
+    "shirt": "#7a5a3a",
+    "folk": true
+  },
+  {
+    "id": "bf_hanne",
+    "name": "Hanne",
+    "shirt": "#c46a3a",
+    "folk": true
+  },
+  {
+    "id": "bf_kip",
+    "name": "Kip",
+    "shirt": "#5a7a3a",
+    "folk": true
+  },
+  {
+    "id": "bf_lotte",
+    "name": "Lotte",
+    "shirt": "#8ab0e0",
+    "folk": true
+  },
+  {
+    "id": "cc_dusty",
+    "name": "Dusty",
+    "shirt": "#b07a4a",
+    "folk": true
+  },
+  {
+    "id": "cc_sol",
+    "name": "Sol",
+    "shirt": "#c85a3a",
+    "folk": true
+  },
+  {
+    "id": "hp_bjorn",
+    "name": "Bj\u00f8rn",
+    "shirt": "#4a6a8a",
+    "folk": true
+  },
+  {
+    "id": "almanac",
+    "name": "Wick the Almanac-Keeper",
+    "shirt": "#4a6a7a",
+    "folk": false
+  },
+  {
+    "id": "qa_mattis",
+    "name": "Mattis",
+    "shirt": "#6f5a3c",
+    "folk": true
+  },
+  {
+    "id": "qa_ruda",
+    "name": "Ruda",
+    "shirt": "#5a4a38",
+    "folk": true
+  },
+  {
+    "id": "qa_sten",
+    "name": "Sten",
+    "shirt": "#5a7a4a",
+    "folk": true
+  },
+  {
+    "id": "qw_teiko",
+    "name": "Teiko",
+    "shirt": "#4a6a5a",
+    "folk": true
+  },
+  {
+    "id": "qw_bram",
+    "name": "Bram",
+    "shirt": "#7a6a4a",
+    "folk": true
+  },
+  {
+    "id": "qw_nel",
+    "name": "Nel",
+    "shirt": "#7a8fbf",
+    "folk": true
+  },
+  {
+    "id": "qf_ivar",
+    "name": "Ivar",
+    "shirt": "#5a6f8a",
+    "folk": true
+  },
+  {
+    "id": "qf_sanna",
+    "name": "Sanna",
+    "shirt": "#8a5a7a",
+    "folk": true
+  },
+  {
+    "id": "qf_ebbe",
+    "name": "Ebbe",
+    "shirt": "#4a5a5a",
+    "folk": true
+  },
+  {
+    "id": "qo_hollis",
+    "name": "Hollis",
+    "shirt": "#a8683a",
+    "folk": true
+  },
+  {
+    "id": "qo_perrin",
+    "name": "Perrin",
+    "shirt": "#6a7a8a",
+    "folk": true
+  },
+  {
+    "id": "qo_juno",
+    "name": "Juno",
+    "shirt": "#c9a86a",
+    "folk": true
+  }
+]
