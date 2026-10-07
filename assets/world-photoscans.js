@@ -5,7 +5,7 @@ import {createOrchardFruit} from './orchard-art.js?v=leafy-orchard-1';
 import {installVillageEvergreens} from './village-planting.js?v=village-gardens-1';
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
 import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=village-gardens-1';
-import {fallsContainsWater} from './falls-landscape.js?v=mountain-falls-1';
+import {alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=alpine-range-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
 import {inMeadowOpening} from './pastoral-fields.mjs?v=leafy-orchard-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=opaque-foliage-1';
@@ -141,6 +141,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     variants.push(orchardSource);
     const sourceFor=t=>{
       if(t.authoredOrchard)return orchardSource;
+      if(alpineSnowAt(t.x,t.z)>.35)return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
       // Related trees grow in groves. Young roadside trees stay slender; mature
       // oak sites carry full crowns. Broad trees define meadow and woodland edges.
       const roadEdge=Math.min(W.pathDist(t.x,t.z),G.worldPaths?.trackDist(t.x,t.z)??Infinity);

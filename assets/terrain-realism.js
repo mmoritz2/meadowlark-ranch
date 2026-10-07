@@ -72,7 +72,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v12-chalk-down';
+  material.customProgramCacheKey = () => 'terrain-biomes-v13-alpine';
   material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0]};
   material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
@@ -210,11 +210,14 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       // The chalk down rises above the desert's edge. Keep its raised turf green,
       // blending back into the underlying biome at the foot of the same mesh.
       canyon *= 1.0-chalkTurf;
+      float alpineClimate=1.0-smoothstep(.65,1.10,length((p-vec2(-150.0,-333.0))/vec2(100.0,92.0)));
       float snowRegion = 1.0-smoothstep(88.0,158.0, length(p-vec2(-160.0,-210.0))+ecoA*0.8);
+      snowRegion=max(snowRegion,alpineClimate);
       // A broken thaw margin leads into the continuous northern snowfield.
       // Snow gathers in sheltered drifts; mineral/litter islands remain visible
       // at its warmer southern edge. The core region retains full winter cover.
       float winterCore=1.0-smoothstep(66.0,112.0,length(p-vec2(-160.0,-210.0)));
+      winterCore=max(winterCore,alpineClimate);
       float drift=smoothstep(.32,.70,stand*.62+edgeHi*.38);
       float lie=mix(.28+.55*drift,1.0,winterCore);
       float snow=snowRegion*(1.0-smoothstep(.20,.58,grade))*lie;
@@ -234,7 +237,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
          picks its mip level out of a hat. Ordinary pasture now costs five fetches, not fifteen. */
       vec2 rockUVy = p/3.2, rockUVx = terrainPosition.yz/3.2, rockUVz = terrainPosition.xy/3.2;
       vec2 soilUV  = mat2(.819,-.574,.574,.819)*p/3.7 + tHash2(floor(p/21.0))*.014;
-      vec2 earthUV = p/3.2, snowUV = p/7.1, amberUV = p/2.9, marshUV = p/3.6, ochreUV = soilUV*1.24;
+      vec2 earthUV = p/3.2, snowUV = mat2(.91,-.414,.414,.91)*p/7.1, amberUV = p/2.9, marshUV = p/3.6, ochreUV = soilUV*1.24;
       vec3 earth=vec3(0.0), rock=vec3(0.0), sand=vec3(0.0), snowTex=vec3(0.0);
       if(canopy>0.003||bank>0.003||wear>0.004) earth=texture2D(terrainForest,earthUV).rgb;
       if(rocky>0.003||canyon>0.003||tundra>0.003||ochre>0.003){
@@ -253,7 +256,23 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
         rock*=(0.80+0.34*macro)*mix(vec3(1.08,1.00,0.90),vec3(0.90,0.95,1.05),stand);
       }
       if(bank>0.003||canyon>0.003) sand=texture2D(terrainSoil,soilUV).rgb;
-      if(snow>0.003||tundra>0.003) snowTex=texture2D(terrainSnow,snowUV).rgb;
+      // Offset blended snow tiles remove the repeated diamond grid in the source.
+      // Lower tiers keep two fetches, and do not add any texture memory.
+      vec2 snowCell=floor(snowUV*.31),snowF=fract(snowUV*.31);
+      snowF=snowF*snowF*(3.0-2.0*snowF);
+      if(snow>0.003||tundra>0.003){
+        #ifdef CHEAP_GROUND
+          snowTex=mix(texture2D(terrainSnow,snowUV).rgb,texture2D(terrainSnow,snowUV*.713+vec2(.37,.61)).rgb,.48);
+        #else
+          for(int y=0;y<=1;y++)for(int x=0;x<=1;x++){
+            vec2 corner=vec2(float(x),float(y));
+            float weight=(x==1?snowF.x:1.0-snowF.x)*(y==1?snowF.y:1.0-snowF.y);
+            snowTex+=texture2D(terrainSnow,snowUV+tHash2(snowCell+corner)*53.1).rgb*weight;
+          }
+        #endif
+        float snowValue=dot(snowTex,vec3(.2126,.7152,.0722));
+        snowTex=mix(vec3(.78),vec3(snowValue),.52);
+      }
 
       /* Under the trees the ground is litter rather than grass, and it is in shade. */
       vec3 surface = turf;

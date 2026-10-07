@@ -670,13 +670,13 @@ import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-field
 import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=carved-canyon-1';
 import {createGeology} from './assets/geology.js?v=carved-canyon-1';
 import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
-import {HOLLOWPEAK,fallsTerrainHeight,fallsExcludesDryPlants,createFallsLandscape} from './assets/falls-landscape.js?v=mountain-falls-1';
+import {HOLLOWPEAK,alpineSnowAt,fallsTerrainHeight,fallsExcludesDryPlants,createFallsLandscape} from './assets/falls-landscape.js?v=alpine-range-1';
 import {oasisTerrainHeight,oasisContainsWater} from './assets/oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from './assets/desert-art.js?v=botanical-desert-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=chalk-ridge-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=alpine-range-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js?v=willowmere-settlement-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-world-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
@@ -692,10 +692,10 @@ import {createForageArt} from './assets/forage-art.js?v=leafy-orchard-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=village-gardens-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=split-oak-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=alpine-range-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=runway-20261006';
-import {FEATURES} from './assets/features/index.js?v=lighting-cycle-1';
+import {FEATURES} from './assets/features/index.js?v=alpine-range-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -2937,7 +2937,7 @@ const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:b
   /* The meadow albedo reads olive, and between broad blades it is what the eye sees as 'the
      ground'. A riding game's meadow has no soil showing: tint the pasture toward green here,
      and leave Coyote's sand and Hollowpeak's snow exactly as they were. */
-  const sand=Math.hypot(x+220,z-130)<150, snow=Math.hypot(x+160,z+210)<140;
+  const sand=Math.hypot(x+220,z-130)<150, snow=Math.hypot(x+160,z+210)<140||alpineSnowAt(x,z)>.2;
   if(sand||snow)col.setScalar(lum); else col.setRGB(lum*.94,lum*.98,lum*.89);
   colors.push(col.r,col.g,col.b);
  }
@@ -3009,6 +3009,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   q.setFromEuler(e);
   const s=0.7+Math.random()*0.8,growth=meadowGrowthAt(x,z),spread=.55+.45*growth;
   sc.set(s*spread,s*(.78-.40*managedGrass(x,z))*growth,s*spread);
+  if(alpineSnowAt(x,z)>.35)sc.setScalar(0); // keep the placement random stream unchanged
   v.set(x,groundH(x,z),z);
   m4.compose(v,q,sc);
   blades.setMatrixAt(placed,m4);
@@ -3142,6 +3143,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  for(const im of[near,flow,fern,reed,rock,lupin]){im.frustumCulled=false;im.receiveShadow=true;im.castShadow=false;scene.add(im);}
  rock.castShadow=quality==='high';
  const okGrass=(x,z)=>{
+  if(alpineSnowAt(x,z)>.35)return false;
   if(Math.abs(x)>470||Math.abs(z)>470)return false;
   if(canyonCliffAt(x,z,terrainH)||fallsExcludesDryPlants(x,z,terrainH))return false;
   if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // the arena stays sandy
@@ -3157,7 +3159,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  /* Which country you are standing in, and therefore what grows here. */
  const biomeAt=(x,z)=>{
   if(Math.hypot(x+220,z-130)<150)return 'desert';
-  if(Math.hypot(x+160,z+210)<140)return 'snow';
+  if(Math.hypot(x+160,z+210)<140||alpineSnowAt(x,z)>.35)return 'snow';
   /* The four new quarters of the basin, out past where the old fence stood. */
   if(Math.hypot(x-300,z+300)<130)return 'amber';    // Amberwood, the turning broadleaf
   if(Math.hypot(x-310,z-300)<120)return 'marsh';    // Willowmere, reed and standing water
@@ -3183,7 +3185,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const CLUT={
   meadow:{fern:'#8a9d71',rock:'#a39784',p:0.38,sz:0.70},
   desert:{fern:'#d8bb72',rock:'#a8794a',p:0.80,sz:1.35},   // dry scrub, and plenty of it
-  snow  :{fern:'#a4b0a2',rock:'#8e969d',p:0.62,sz:1.05},   // dead tufts showing through the crust
+  snow  :{fern:'#a4b0a2',rock:'#8e969d',p:0.20,sz:0.68},   // dead tufts showing through the crust
   water :{fern:'#86a862',rock:'#8f8a80',p:0.90,sz:1.0},
   amber :{fern:'#c8934a',rock:'#8a7a68',p:0.95,sz:1.05},   // fallen leaf and bracken gone over
   marsh :{fern:'#7f9463',rock:'#6f7a70',p:1.00,sz:1.25},   // rush and sedge, thick with it

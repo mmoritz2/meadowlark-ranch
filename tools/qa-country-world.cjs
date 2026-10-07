@@ -71,9 +71,11 @@ const state=await page.evaluate(async()=>{
  heights.sort((a,b)=>a-b);
  let originalTrunks=0;const trunks=q.G.floraPkg.bank.trunk;
  for(let i=0;i<trunks.n;i++){trunks.im.getMatrixAt(i,matrix);if(Math.abs(matrix.determinant())>.00001)originalTrunks++;}
+ const {alpineSnowAt}=await import('./assets/falls-landscape.js?v=alpine-range-1');
  const blossomTrees=P.treePositions.filter(t=>t.kind==='blossom');
  const blossom={replaced:blossomTrees.length,originalCanopyVisible:q.G.floraPkg.bank.blossom.im.visible,originalTrunks,
-  scanned:blossomTrees.every(t=>t.source.includes('broadleaf'))};
+  coldSites:blossomTrees.filter(t=>alpineSnowAt(t.x,t.z)>.35).length,
+  scanned:blossomTrees.every(t=>t.source.includes(alpineSnowAt(t.x,t.z)>.35?'pine':'broadleaf'))};
  const flowerDraw=flower.count,flowerLayout=Array.from(flower.instanceMatrix.array.slice(0,flowerDraw*16)),flowerColors=Array.from(flower.instanceColor.array.slice(0,flowerDraw*3));
  const middleLayout=Array.from(mid.instanceMatrix.array);q.nearGrass.tick(2,190,30);q.nearGrass.tick(3,-52,44);
  // Hidden slots may retain an unused previous colour; compare visible plants.

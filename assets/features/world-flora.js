@@ -1,4 +1,4 @@
-import {fallsExcludesDryPlants} from '../falls-landscape.js?v=mountain-falls-1';
+import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=alpine-range-1';
 /* Feature package 'world-flora' — the planting pass over Kestrel Basin.
    Owned by that package: edit only this file and the inline hot spots assigned to it. See
    index.js for the contract. Nothing runs at import time.
@@ -869,6 +869,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   for(let i=0;i<n;i++){
    b.im.getMatrixAt(i,_m);_m.decompose(_v,_q,_sc);
    const x=_v.x,z=_v.z,managed=managedAt(x,z);
+   if(alpineSnowAt(x,z)>.35&&(name==='tuft'||name==='petal'||name==='brack'))continue;
    const patch=0.74+0.32*vn(x*0.06+13,z*0.06+7);
    const keep=density*patch*(1-managed*0.87);
    if(hsh(Math.floor(x*23)+coverKind*971,Math.floor(z*29))>keep)continue;

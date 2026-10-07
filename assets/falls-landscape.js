@@ -5,7 +5,32 @@ export const HOLLOWPEAK=Object.freeze({x:-150,z:-242.2,top:14.2,level:-.1,run:7.
  channel:[[-147,-284,16.2],[-145.8,-277.5,16.2],[-145,-274,15.85],[-148,-261,15.2],[-150,-249,14.55],[-150,-242.2,14.2]]});
 const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t);};
 const mix=(a,b,t)=>a+(b-a)*t;
-const within=(x,z)=>x> -202&&x< -100&&z> -321&&z< -214;
+export const ALPINE_BOUNDS=Object.freeze({x0:-274,x1:-32,z0:-414,z1:-214});
+const within=(x,z)=>x>ALPINE_BOUNDS.x0&&x<ALPINE_BOUNDS.x1&&z>ALPINE_BOUNDS.z0&&z<ALPINE_BOUNDS.z1;
+const withinFalls=(x,z)=>x> -202&&x< -100&&z> -321&&z< -214;
+// Unequal, overlapping shoulders connect the waterfall to a northern divide.
+// Compact support keeps every height exactly unchanged beyond these landforms.
+const RIDGES=[[-164,-345,63,48,38,-.18],[-211,-358,49,36,29,.42],
+ [-108,-324,46,60,31,-.42],[-187,-308,29,43,16,.22],[-92,-281,39,44,12,.54]];
+export function alpineRelief(x,z){
+ if(!within(x,z)||z>=-253)return 0;
+ let h=0;
+ for(const [cx,cz,rx,rz,top,yaw] of RIDGES){
+  const co=Math.cos(yaw),si=Math.sin(yaw),dx=x-cx,dz=z-cz;
+  const u=(dx*co+dz*si)/rx,v=(dz*co-dx*si)/rz;
+  const r2=u*u+v*v;if(r2>=1)continue;
+  h+=top*(1-r2)**2;
+ }
+ const protectedTrail=smooth(12,24,nearest(x,z,trail).d);
+ const settlement=smooth(65,88,Math.hypot(x+300,z+320));
+ const catchment=smooth(12,24,nearest(x,z,HOLLOWPEAK.channel).d);
+ const foreground=1-smooth(-272,-253,z);
+ // Broad folds give the ridge a changing silhouette without noisy hoof contact.
+ const folds=.91+.055*Math.sin(x*.12+z*.035)+.035*Math.sin(z*.16-x*.06);
+ return h*protectedTrail*settlement*catchment*foreground*folds;
+}
+export function alpineSnowAt(x,z){return 1-smooth(.65,1.10,Math.hypot((x+150)/100,(z+333)/92));}
+
 const trail=[[-160,-215],[-173.0439,-225.4024],[-187.0279,-235.9788],[-200.6802,-244.8582],[-260,-280]];
 function nearest(x,z,points){let best={d:Infinity};for(let k=1;k<points.length;k++){
  const a=points[k-1],b=points[k],dx=b[0]-a[0],dz=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz)));
@@ -20,16 +45,17 @@ export function fallsContainsWater(x,z,padding=0){
  return nearest(x,z,HOLLOWPEAK.channel).d<2.6+padding||z>HOLLOWPEAK.z&&z< HOLLOWPEAK.z+HOLLOWPEAK.run+1&&Math.abs(x-HOLLOWPEAK.x)<3.6+padding;
 }
 export function fallsRelief(x,z){
- if(!within(x,z))return 0;
+ const alpine=alpineRelief(x,z);
+ if(!withinFalls(x,z))return alpine;
  const keep=smooth(7,13,nearest(x,z,trail).d);
- if(!keep)return 0;
+ if(!keep)return alpine;
  const dx=(x+146)/38,dz=(z+268)/45,r=Math.hypot(dx,dz);
  const edge=r+.042*Math.sin(x*.34+z*.16)+.027*Math.sin(z*.37-x*.18);
  const bulk=(1-smooth(.56,1.07,edge))*(20.7+1.6*Math.sin(x*.12+z*.07));
  const face=-241.5+Math.sin(x*.34)*1.8+Math.cos(x*.7)*.9;
  const front=1-.18*smooth(face-6,face-4,z)-.55*smooth(face-1,face+3,z)-.27*smooth(face+3,face+10,z);
  const shoulder=4.6*Math.exp(-(((x+168)/9)**2+((z+254)/15)**2))+6.5*Math.exp(-(((x+129)/12)**2+((z+260)/17)**2));
- return Math.max(0,(bulk+shoulder)*front*keep);
+ return alpine+Math.max(0,(bulk+shoulder)*front*keep);
 }
 export function fallsTerrainHeight(x,z,height){
  if(!within(x,z))return height;
@@ -75,8 +101,8 @@ export function createFallsLandscape({THREE:T,scene,heightAt,terrainStep,waterMa
   sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>','diffuseColor.a*=mountainCover;\n#include <alphatest_fragment>');
  };
  mat.customProgramCacheKey=()=> 'hollowpeak-triplanar-1';
- const step=terrainStep,x0=Math.floor((-202+500)/step)*step-500,z0=Math.floor((-321+500)/step)*step-500;
- const nx=Math.ceil((-100-x0)/step),nz=Math.ceil((-214-z0)/step),p=[],uv=[],colors=[],cover=[],idx=[];
+ const step=terrainStep,x0=Math.floor((ALPINE_BOUNDS.x0+500)/step)*step-500,z0=Math.floor((ALPINE_BOUNDS.z0+500)/step)*step-500;
+ const nx=Math.ceil((ALPINE_BOUNDS.x1-x0)/step),nz=Math.ceil((ALPINE_BOUNDS.z1-z0)/step),p=[],uv=[],colors=[],cover=[],idx=[];
  for(let iz=0;iz<=nz;iz++)for(let ix=0;ix<=nx;ix++){
   const x=x0+ix*step,z=z0+iz*step,y=heightAt(x,z),slope=Math.hypot(heightAt(x+1,z)-heightAt(x-1,z),heightAt(x,z+1)-heightAt(x,z-1))/2;
   const relief=fallsRelief(x,z),wet=fallsContainsWater(x,z,2),rock=smooth(.16,.44,slope);
@@ -111,7 +137,7 @@ export function createFallsLandscape({THREE:T,scene,heightAt,terrainStep,waterMa
  }
  const stream=water(cp,cu,cc,ci,'source channel',true);stream.material.side=T.FrontSide;
  const barriers=[],seen=new Set(),cell=2.2,level=3;
- for(let z=-320;z< -222;z+=cell)for(let x=-202;x< -100;x+=cell){const corners=[[x,z],[x+cell,z],[x+cell,z+cell],[x,z+cell]],h=corners.map(p=>fallsRelief(...p));
+ for(let z=ALPINE_BOUNDS.z0;z< -222;z+=cell)for(let x=ALPINE_BOUNDS.x0;x<ALPINE_BOUNDS.x1;x+=cell){const corners=[[x,z],[x+cell,z],[x+cell,z+cell],[x,z+cell]],h=corners.map(p=>fallsRelief(...p));
   for(let i=0;i<4;i++){const j=(i+1)%4;if((h[i]>level)===(h[j]>level))continue;const t=(level-h[i])/(h[j]-h[i]),cx=mix(corners[i][0],corners[j][0],t),cz=mix(corners[i][1],corners[j][1],t),key=Math.round(cx*2)+','+Math.round(cz*2);if(seen.has(key)||fallsContainsWater(cx,cz,3))continue;seen.add(key);
    let top=heightAt(cx,cz);for(let a=0;a<8;a++)for(const d of[5,10,18])top=Math.max(top,heightAt(cx+Math.cos(a*Math.PI/4)*d,cz+Math.sin(a*Math.PI/4)*d));
    const c={x:cx,z:cz,r:1.05,height:40,topY:top+.3,landform:true,terrainCliff:true};barriers.push(c);colliders.push(c);
@@ -119,5 +145,5 @@ export function createFallsLandscape({THREE:T,scene,heightAt,terrainStep,waterMa
  }
  // The rear of the plunge basin is a rock face, including behind the water.
  for(let x=HOLLOWPEAK.x-4.8;x<=HOLLOWPEAK.x+4.8;x+=1.6){const c={x,z:HOLLOWPEAK.z+3.4,r:1,height:40,topY:HOLLOWPEAK.top+10,landform:true,terrainCliff:true};barriers.push(c);colliders.push(c);}
- scene.add(group);return {group,rock,shadow,waters,pool:pools[0],tarn:pools[1],stream,barriers,triangles:idx.length/3};
+ scene.add(group);return {group,rock,shadow,bounds:ALPINE_BOUNDS,waters,pool:pools[0],tarn:pools[1],stream,barriers,triangles:idx.length/3};
 }

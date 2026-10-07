@@ -1,0 +1,22 @@
+// Native-GPU review of new ridge collision and snowy vegetation.
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),QA=require('./qa-platform.cjs');
+const out=path.resolve(process.argv[2]||'output/alpine-safety');fs.mkdirSync(out,{recursive:true});
+(async()=>{const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});try{
+ const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error(e.message)});page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+ await page.route('**/api/me',r=>r.fulfill({contentType:'application/json',body:'null'}));
+ await page.route('**/ranch3d.html*',async r=>{const res=await r.fetch();await r.fulfill({response:res,body:(await res.text()).replace('const MERGE_STATS=mergeStatics();',`window.__fallsQA={THREE,scene,camera,renderer,composer,G,player,groundH,terrainH,keys,TACK,FALLS,step(dt){manualStepping=true;tick(dt)},day(t=.34,rain=false){dayT=t;weather.mode=rain?'rain':'clear';weather.timer=99999}};const MERGE_STATS=mergeStatics();`)});});
+ await page.addInitScript(()=>{let seed=928471;Math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};});
+ await page.goto(QA.BASE+'/ranch3d.html?qa=mountain-falls',{timeout:120000});await page.waitForFunction(()=>window.__fallsQA?.G.horse.RIG().ready&&!document.getElementById('load'),null,{timeout:120000});
+ await page.evaluate(async()=>{const q=__fallsQA;q.G.save.sync(s=>{s.qualityLocked=true;s.unlocked=s.unlocked||{};for(const r of q.G.tables.REGIONS)if(r.unlock)s.unlocked[r.id]=true;});q.G.wardrobe?.closeChar();q.G.hidePanels();await q.G.photoscans.ready;await q.G.worldDetails.ready;await q.G.worldPkg.oasisReady;advanceTime(0);q.day();q.G.gfx.apply('high');q.fallsModule=await import('./assets/falls-landscape.js?v=alpine-range-1');q.wildHabitatErrors=[];q.reviewVisibility=[q.player.mesh,...Object.values(q.TACK||{}),q.scene.getObjectByName('Native leather split reins')].filter(o=>o?.isObject3D).map(o=>[o,o.visible]);
+  q.read=rt=>{const w=Math.floor(rt.width),h=Math.floor(rt.height),p=new Uint16Array(w*h*4);q.renderer.readRenderTargetPixels(rt,0,0,w,h,p);let invalid=0,minAlpha=1;for(let i=0;i<p.length;i+=4){minAlpha=Math.min(minAlpha,q.THREE.DataUtils.fromHalfFloat(p[i+3]));if([0,1,2].some(c=>(p[i+c]&0x7c00)===0x7c00))invalid++;}return{invalid,minAlpha};};
+ });console.log('Falls ready');
+ const state=await page.evaluate(()=>{const q=__fallsQA,T=q.THREE,L=q.G.world.fallsLandscape;const render=q.renderer.render;q.renderer.render=()=>{};
+ let ridgeStop;try{q.player.pos.set(-80,0,-252);q.player.speed=q.player.y=q.player.vy=0;q.player.flying=false;q.player.heading=Math.PI;q.keys.KeyW=true;for(let i=0;i<300;i++){q.day();q.step(1/30);}ridgeStop={position:q.player.pos.toArray(),relief:q.fallsModule.fallsRelief(q.player.pos.x,q.player.pos.z),barrierDistance:Math.min(...L.barriers.map(c=>Math.hypot(c.x-q.player.pos.x,c.z-q.player.pos.z)))};
+ q.keys.KeyW=false;q.player.pos.set(-170,0,-340);q.player.speed=0;for(let i=0;i<30;i++){q.day();q.step(1/30);}
+ }finally{q.keys.KeyW=false;q.renderer.render=render;}
+ const alpineTrees=q.G.photoscans.treePositions.filter(p=>q.fallsModule.alpineSnowAt(p.x,p.z)>.35),grass=[];const matrix=new T.Matrix4(),position=new T.Vector3();
+ q.scene.traverse(o=>{if(!o.isInstancedMesh||!['flora_tuft','flora_petal','flora_brack','Living pasture grass'].includes(o.name))return;for(let i=0;i<o.count;i++){o.getMatrixAt(i,matrix);if(Math.abs(matrix.determinant())<1e-8)continue;position.setFromMatrixPosition(matrix);if(q.fallsModule.alpineSnowAt(position.x,position.z)>.35)grass.push({name:o.name,x:position.x,z:position.z});}});
+ return {ridgeStop,alpineTrees,grass,featureErrors:q.G.errors,assetErrors:[...q.G.photoscans.errors,...q.G.worldDetails.errors]};});
+ const checks={ridgeStopsHorse:state.ridgeStop.relief<3.2&&state.ridgeStop.barrierDistance<1.8,coniferRidges:state.alpineTrees.length>12&&state.alpineTrees.every(t=>t.source.includes('pine')),clearSnow:state.grass.length===0,noErrors:!errors.length&&!state.featureErrors.length&&!state.assetErrors.length};
+ fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({checks,state,errors},null,2));console.log(JSON.stringify({checks,state}));assert(Object.values(checks).every(Boolean),'Alpine safety failed');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
