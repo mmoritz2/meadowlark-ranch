@@ -2,7 +2,7 @@
    Named clubs you create and join by code, a club roster built from retained presence cards, a
    pinned notice board, a scrollable chat log with a mute list, the weekly club ladder on Star
    Points (Monday 00:00 UTC), club chests with published odds, Champions chests for the top
-   50 clubs with a 100-SP personal minimum, the club-only Ember Friesian, the weekly event leaderboard with rank-band rewards, the
+   50 clubs with a 100-SP personal minimum, four club-only prize horses, the weekly event leaderboard with rank-band rewards, the
    monthly photo contest series with real club entries and a past-winners archive, and photo mode
    proper: six film looks, a world freeze and the free camera.
 
@@ -14,7 +14,7 @@
    honour-system. Every remote string is truncated here, the own-echo guard upstream is left
    alone, and nothing about a save is ever published. */
 import {CLUB_COMMONS,CLUB_CRESTS,CLUB_COLORS,clubCode,cleanClubMeta,ensureClubState,activateClub,loadClub,stashClub,creditClubPoints,ownClubPoints,acceptClubMeta,clearCurrentClubContribution} from '../club-state.js?v=clubhouse-2';
-import {EMBER_FRIESIAN_BREED} from '../club-horses.js?v=ember-friesian-1';
+import {CLUB_HORSE_BREEDS,CLUB_HORSE_REWARDS} from '../club-horses.js?v=club-horses-1';
 export const id='clubs-boards';
 export function install(G){
  const {$,toast}=G, S=G.save, M=G.money, T=G.tables, U=G.ui, N=G.net;
@@ -100,17 +100,18 @@ export function install(G){
   {id:'dream',  label:'🌸 Meadow',    sat:1.10, tint:[1.03,0.99,1.06], con:0.92, vig:0.05},
   {id:'frost',  label:'❄️ Hollowpeak',sat:0.88, tint:[0.92,0.99,1.12], con:1.10, vig:0.16},
  ];
- /* Two horses that exist only as rewards. Neither is for sale: breedSrc reads `exclusive`,
+ /* Horses that exist only as rewards. None are for sale: breedSrc reads `exclusive`,
     so the shop, the market and the summoning stall all skip them on their own. Each maps
     onto an authored body through breedModels.alias so dressWithRig has a model to fit. */
  const CLUB_HORSE='emberfriesian', PHOTO_HORSE='larksong';
+ const clubHorseKeys=new Set(CLUB_HORSE_REWARDS.map(h=>h.id));
  const NEW_BREEDS=[
-  EMBER_FRIESIAN_BREED,
+  ...CLUB_HORSE_BREEDS,
   ['larksong','Larksong Unicorn','Mythic',0,0,'#f4e9ff','#ffd6f0',
    {exclusive:'photo',prize:true,horn:true,glow:true,coat:'aurora',mark:'dapple',markCol:'#ffe6f6',body:'unicorn',src:'photo'}],
  ];
  /* Their stat profiles are fixed, not rolled: a leaderboard horse is a known quantity. */
- const EXCLUSIVE_STATS={emberfriesian:{speed:9,stamina:8,jump:6,accel:9,agility:5},
+ const EXCLUSIVE_STATS={...Object.fromEntries(CLUB_HORSE_REWARDS.map(h=>[h.id,h.stats])),
                         larksong:{speed:7,stamina:9,jump:7,accel:8,agility:7}};
 
  /* =============================== 2. Save =============================== */
@@ -138,8 +139,8 @@ export function install(G){
   for(const row of NEW_BREEDS)if(!T.BREEDS3.some(b=>b[0]===row[0]))T.BREEDS3.push(row);
   try{for(const row of NEW_BREEDS){const o=row[7]||{};if(o.body&&G.horse.breedModels&&G.horse.breedModels.alias)G.horse.breedModels.alias(row[0],o.body,row);}}catch(e){}
  })();
- /* Belt and braces on top of breedSrc: never offer these two from any source. */
- G.horse.sourceRule((ctx,b)=>{if(b&&b[0]&&(b[0]===CLUB_HORSE||b[0]===PHOTO_HORSE))return false;});
+ /* Belt and braces on top of breedSrc: never offer prizes from normal acquisition pools. */
+ G.horse.sourceRule((ctx,b)=>{if(b&&b[0]&&(clubHorseKeys.has(b[0])||b[0]===PHOTO_HORSE))return false;});
  function grantExclusive(s,key,why){
   const h=G.horse.grantHorse(s,key,{stats:Object.assign({},EXCLUSIVE_STATS[key]),bond:25,src:why||'club'});
   return h;
@@ -435,23 +436,39 @@ export function install(G){
   M.refreshWallet(); try{G.horse.refreshTack();}catch(e){}
   try{G.sGem();}catch(e){}
   for(const l of lines)toast(l);
-  if(horses)toast('🐴 A club horse token — claim the Ember Friesian in 🏅 → Club.');
+  if(horses)toast('🐴 A club horse token — choose one of four exclusive horses in Clubs → Rewards.');
   U.rerender('lbPanel'); try{G.ui.renderLB();}catch(e){}
   return true;
  }
- function claimClubHorse(){
+ let claimingHorse=false;
+ function claimClubHorse(key=CLUB_HORSE){
+  const prize=CLUB_HORSE_REWARDS.find(h=>h.id===key);
+  if(!prize){toast('Choose a horse from the club rewards collection.');return false;}
+  if(claimingHorse)return false;
   const s=S.fresh(); if(!s||(s.clubHorseVoucher||0)<1){toast('You need a club horse token — earn a Champions chest with at least 100 personal SP in a top-50 club.');return false;}
-  let name='';
-  syncClub(sv=>{
-   if((sv.clubHorseVoucher||0)<1)return;
-   sv.clubHorseVoucher--;
-   const h=grantExclusive(sv,CLUB_HORSE,'club'); name=h.name;
-  });
-  if(!name)return false;
+  let receipt=null;claimingHorse=true;
+  try{
+   syncClub(sv=>{
+    if(!Number.isSafeInteger(sv.clubHorseVoucher)||sv.clubHorseVoucher<1)return;
+    // Grant into a draft so a failed grant cannot persist a partial horse or
+    // consume a token. syncSave writes the horse and payment in one operation.
+    const draft=JSON.parse(JSON.stringify(sv)),before=draft.clubHorseVoucher;
+    const h=grantExclusive(draft,key,'club');
+    if(!h||h.breed!==key||h.id==null||!(draft.horses||[]).includes(h)||sv.horses?.some(old=>old.id===h.id))return;
+    draft.clubHorseVoucher=before-1;
+    Object.assign(sv,draft);receipt={id:h.id,name:h.name,tokens:before-1};
+   });
+   const saved=S.fresh();
+   if(!receipt||saved?.clubHorseVoucher!==receipt.tokens||!(saved.horses||[]).some(h=>h.id===receipt.id&&h.breed===key)){
+    toast('Your club horse could not be saved. Please try again.');return false;
+   }
+  }catch(e){toast('Your club horse could not be saved. Please try again.');return false;}
+  finally{claimingHorse=false;}
   try{G.horse.reloadHorses();}catch(e){}
   try{G.sNeigh();}catch(e){}
-  toast('🔥 '+name+' the Ember Friesian walks into your barn — club champions only.');
+  toast('🐴 '+receipt.name+' the '+prize.name+' walks into your barn — your club prize is yours to keep.');
   try{G.ui.renderLB();}catch(e){}
+  G.run('clubHorseClaimed',{id:receipt.id,breed:key});
   return true;
  }
 
@@ -823,7 +840,7 @@ export function install(G){
   if(a[0]==='mute'){toggleMute(a[1]);try{G.ui.openOnline();G.ui.openOnline();}catch(e){}return;}
   if(a[0]==='prof'){try{N.openProfile(a[1]);}catch(e){}return;}
   if(a[0]==='claim'){claimClubChest();return;}
-  if(a[0]==='horse'){claimClubHorse();return;}
+  if(a[0]==='horse'){claimClubHorse(a[1]||CLUB_HORSE);return;}
   if(a[0]==='photo'){enterPhoto(a[1]);return;}
   if(a[0]==='pprize'){claimPhotoPrize(a[1]);return;}
   if(a[0]==='wrank'){claimWeekRank(a[1]);return;}
@@ -869,14 +886,15 @@ export function install(G){
   /* (Design note: the tiers are the reference game's 20k/50k/100k rescaled to this ranch's economy.) */
   h+='<div class="bGroup">This week\'s chest — tier '+tier+'</div>'+oddsHtml(tier)
    +'<div class="sub" style="margin-top:3px">Tiers at '+CLUB_CHEST_TIERS.map(x=>x.sp+'⭐→T'+x.t).join(' · ')+'. A champion week on your own is about 550⭐, so every rider who joins moves the chest up.</div>';
-  /* the club horse */
-  const owns=(s.horses||[]).some(x=>x.breed===CLUB_HORSE), vouchers=s.clubHorseVoucher||0;
-  h+='<div class="bGroup">🔥 The Ember Friesian</div>'
-   +'<div class="passCard" style="background:linear-gradient(180deg,#2a1c18,#4a2a14);color:#ffd9a8">'
-   +'<div class="ph"><b style="color:#ffb45a">'+(owns?'🔥 Ember Friesian — in your barn':vouchers?'🔥 Ember Friesian — a token is waiting':'🔒 Ember Friesian')+'</b><span style="font-size:11px;color:#e0a96a">Legendary · 9 speed / 8 stamina / 6 jump / 9 accel / 5 agility</span></div>'
-   +'<div class="sub" style="color:#e8c79a">An obsidian Friesian with copper ember tracery, a glowing forehead crest, golden fire in its mane and tail, and drifting cinders. Earn a horse token from a Champions chest with at least 100 personal SP in a top-50 club. <a href="breeds.html?horse=emberfriesian&v=ember-friesian-1" target="_blank" rel="noopener" style="color:#ffdc95">Meet the Ember Friesian in 3D</a>.</div>'
-   +(vouchers?'<button data-fx="clubs:horse" class="claimBtn" style="margin-top:6px">Claim your Ember Friesian ('+vouchers+' token'+(vouchers>1?'s':'')+')</button>':'')
-   +'</div>';
+  const vouchers=s.clubHorseVoucher||0;
+  h+='<div class="bGroup">Club horse collection</div><div class="sub">One token, your choice of four Legendary horses. Earn at least 100 personal SP in a top-50 club to receive a Champions chest; each chest has a 5% chance of a horse token. '+vouchers+' token'+(vouchers===1?'':'s')+' available.</div>';
+  for(const prize of CLUB_HORSE_REWARDS){
+   const owns=(s.horses||[]).some(x=>x.breed===prize.id),st=prize.stats;
+   h+='<div class="passCard" style="background:linear-gradient(180deg,#211d32,#3c304c);color:#f3e8ff">'
+    +'<div class="ph"><b>'+esc(prize.name)+(owns?' — in your barn':'')+'</b><span style="font-size:11px">Legendary · '+st.speed+' speed / '+st.stamina+' stamina / '+st.jump+' jump / '+st.accel+' accel / '+st.agility+' agility</span></div>'
+    +'<div class="sub" style="color:#e9d7ee">'+esc(prize.description)+' <a href="breeds.html?horse='+prize.id+'&v=club-horses-1" target="_blank" rel="noopener" style="color:#ffdc95">Meet '+esc(prize.name)+' in 3D</a>.</div>'
+    +(vouchers?'<button data-fx="clubs:horse:'+prize.id+'" class="claimBtn" style="margin-top:6px">Choose '+esc(prize.name)+' · 1 token</button>':'')+'</div>';
+  }
   return h;
  }});
 
@@ -985,5 +1003,5 @@ export function install(G){
   scoreShot,standings,enterPhoto,contestNow,claimPhotoPrize,loadPhotos,savePhotos,evRows,weeklyRanks,bandFor,claimWeekRank,
   applyFilter,setPause,filters:PHOTO_FILTERS,filter:()=>photoFilter,paused:()=>photoPause,
   CLUB_CHEST_TIERS,CLUB_CHEST_LOOT,CHAMPION_LOOT,CHAMPION_CHESTS,RIVAL_CLUBS,PHOTO_CONTESTS,PHOTO_PRIZES,WEEK_RANK_REWARDS,
-  CLUB_HORSE,PHOTO_HORSE};
+  CLUB_HORSE,CLUB_HORSE_BREEDS,CLUB_HORSE_REWARDS,PHOTO_HORSE};
 }

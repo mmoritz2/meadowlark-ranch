@@ -4,7 +4,7 @@
 import {fillOutTail,fillOutMane} from './horse-hair-volume.js';
 import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=dragon-acting-1';
 import {nativeRosterProfiles,applyNativeRosterShape} from './native-roster.js?v=native-roster-1';
-import {createNativeHorseFantasy} from './native-horse-fantasy.js?v=ember-friesian-1';
+import {createNativeHorseFantasy} from './native-horse-fantasy.js?v=club-horses-1';
 import {dragonProfiles,dragonProfile,configureDragonAppearance,attachDragonBreath} from './dragon-roster.js?v=dragon-roster-1';
 export function createBreedLibrary({THREE, GLTFLoader, clone}) {
   const base=new URL('./models/artist-breeds/',import.meta.url),pending=new Map(),ready=new Map(),files=new Map();
