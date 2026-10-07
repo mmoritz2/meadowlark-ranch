@@ -11,11 +11,14 @@
    Barleyfold road has been crossing Sparrow Creek all this time with nothing to show for it, and
    the small evidence of other people — a woodpile, a trough, a cart nobody came back for.
 
-   Everything that repeats is instanced. The whole road surface
+   Repeated roadside parts share material batches. The whole road surface
    is one BufferGeometry and one draw call; every post, rail, stone, log, wheel and cobble in the
-   package shares three InstancedMeshes between them. Nothing here allocates after install.
+   package shares instanced batches. Detailed benches and sign hardware finish after
+   seeded model loading, sharing the builder's existing photographed materials.
 
    Owned by this package: this file only. Nothing runs at import time. */
+import {createRoadsideBenchGeometry,fitRoadsideBenchGeometry} from '../roadside-prop-geometry.mjs?v=roadside-props-1';
+import {createFingerpostBoardData} from '../fingerpost-geometry.mjs?v=roadside-props-1';
 import {buildRoadRibbon} from '../road-ribbon.mjs?v=bounded-bevel-1';
 import {repairRouteClearance} from '../route-clearance.mjs?v=swept-river-road-1';
 import {villageCourtZones,inVillageCourt} from '../village-forecourts.js?v=coaching-inn-1';
@@ -26,7 +29,7 @@ export function install(G){
  const W=G.world, T=G.tables, S=G.save, H=G.horse, toast=G.toast;
  const gh=W.groundH, riverZ=W.riverZ, streamX=W.streamX;
  const villageCourts=[...COTTONWOOD_PUBLIC,...villageCourtZones(G.worldPkg?.LANDMARKS||[])];
- const P={clearance:{}}; G.worldPaths=P;                                  // this package's live state, for QA
+ const P={clearance:{},benches:[],signBoardData:[]}; G.worldPaths=P;                                  // this package's live state, for QA
  const hyp=(ax,az,bx,bz)=>Math.hypot(ax-bx,az-bz);
  const sstep=(x,a,b)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
  /* One deterministic hash for every scatter decision in the file, so two boots of the same world
@@ -461,51 +464,56 @@ export function install(G){
  ];
  const BW=2.45, BH=0.40;                                       // board, metres
  function buildSign(sp){
-  const n=sp.arms.length, CW=512, CH=112;
-  const c=document.createElement('canvas'); c.width=CW; c.height=CH*n;
+  const n=sp.arms.length,CW=512,CH=112;
+  const c=document.createElement('canvas');c.width=CW;c.height=CH*n*2;
   const ctx=c.getContext('2d');
-  ctx.clearRect(0,0,CW,CH*n);
-  for(let i=0;i<n;i++){
-   const y0=i*CH, tip=CW-6, tail=6, notch=CH*0.5;
-   ctx.beginPath();                                            // a board with one pointed end
-   ctx.moveTo(tail,y0+8); ctx.lineTo(tip-notch,y0+8); ctx.lineTo(tip,y0+CH/2);
-   ctx.lineTo(tip-notch,y0+CH-8); ctx.lineTo(tail,y0+CH-8); ctx.closePath();
-   ctx.fillStyle='#3a4a40'; ctx.fill();
-   ctx.strokeStyle='#b6a97d'; ctx.lineWidth=3.5; ctx.stroke();
-   ctx.fillStyle='#f0e8d4'; ctx.textAlign='center'; ctx.textBaseline='middle';
-   ctx.font='600 '+Math.round(CH*0.46)+'px Georgia';
-   ctx.fillText(sp.arms[i][0],(tail+tip-notch)/2+6,y0+CH/2+2,CW-notch-40);
-  }
-  const tex=new THREE.CanvasTexture(c); tex.colorSpace=THREE.SRGBColorSpace;
-  try{tex.anisotropy=Math.min(8,G.renderer.capabilities.getMaxAnisotropy());}catch(e){}
-  const pos=[],uv=[],idx=[]; let v=0;
-  for(let i=0;i<n;i++){
-   const [,tx,tz]=sp.arms[i];
-   const yaw=Math.atan2(tx-sp.x,tz-sp.z);                      // the point aims at the place named
-   const dx=Math.sin(yaw),dz=Math.cos(yaw);
-   const y=2.62-i*0.50, cxp=dx*(BW/2+0.09), czp=dz*(BW/2+0.09);
-   const u0=0,u1=1,v0=1-(i+1)/n,v1=1-i/n;
-   for(const side of [1,-1]){                                  // both faces painted, both read forwards
-    const ox=-dz*0.035*side, oz=dx*0.035*side;
-    const ax=dx*BW/2, az=dz*BW/2;
-    const c0=[cxp-ax+ox,y-BH/2,czp-az+oz], c1=[cxp+ax+ox,y-BH/2,czp+az+oz];
-    const c2=[cxp+ax+ox,y+BH/2,czp+az+oz], c3=[cxp-ax+ox,y+BH/2,czp-az+oz];
-    pos.push(...c0,...c1,...c2,...c3);
-    if(side===1)uv.push(u0,v0, u1,v0, u1,v1, u0,v1); else uv.push(u1,v0, u0,v0, u0,v1, u1,v1);
-    if(side===1)idx.push(v,v+1,v+2, v,v+2,v+3); else idx.push(v,v+2,v+1, v,v+3,v+2);
-    v+=4;
+  function paintBoards(grain=null){
+   for(let row=0;row<n*2;row++){
+    const i=row%n,back=row>=n,y0=row*CH,tip=CW-6,tail=6,notch=CH*.5;
+    ctx.fillStyle='#3a4a40';ctx.fillRect(0,y0,CW,CH);
+    if(grain?.width){ctx.save();ctx.globalCompositeOperation='multiply';ctx.globalAlpha=.28;
+     const sy=(i*241+(back?97:0))%Math.max(1,grain.height-96);
+     ctx.drawImage(grain,0,sy,grain.width,Math.min(96,grain.height-sy),0,y0,CW,CH);ctx.restore();}
+    ctx.save();if(back){ctx.translate(CW,0);ctx.scale(-1,1);}
+    ctx.beginPath();ctx.moveTo(tail,y0+8);ctx.lineTo(tip-notch,y0+8);ctx.lineTo(tip,y0+CH/2);
+    ctx.lineTo(tip-notch,y0+CH-8);ctx.lineTo(tail,y0+CH-8);ctx.closePath();
+    ctx.strokeStyle='#b6a97d';ctx.lineWidth=3.5;ctx.stroke();ctx.restore();
+    ctx.fillStyle='#f0e8d4';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='600 '+Math.round(CH*.46)+'px Georgia';
+    const center=(tail+tip-notch)/2+6;ctx.fillText(sp.arms[i][0],back?CW-center:center,y0+CH/2+2,CW-notch-40);
    }
   }
-  const geo=new THREE.BufferGeometry();
-  geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-  geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
-  geo.setIndex(idx); geo.computeVertexNormals();
-  const m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:tex,transparent:true,alphaTest:0.45,roughness:0.92,side:THREE.FrontSide}));
-  m.castShadow=false; m.receiveShadow=false; m.name='sign:'+sp.id;
-  const y=gh(sp.x,sp.z); m.position.set(sp.x,y,sp.z); scene.add(m);
-  put('cyl',sp.x,y+1.55,sp.z,0.13,3.10,0.13,0,0,0,TIMBER2);    // the post the boards hang off
-  put('box',sp.x,y+3.14,sp.z,0.30,0.14,0.30,0,Math.PI*0.25,0,PALE);
-  W.colliders.push({x:sp.x,z:sp.z,r:0.42});
+  paintBoards();
+  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
+  try{tex.anisotropy=Math.min(8,G.renderer.capabilities.getMaxAnisotropy());}catch(e){}
+  const data=createFingerpostBoardData({arms:sp.arms,x:sp.x,z:sp.z,width:BW,height:BH});
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(data.position,3));
+  geo.setAttribute('normal',new THREE.BufferAttribute(data.normal,3));geo.setAttribute('uv',new THREE.BufferAttribute(data.uv,2));
+  geo.setAttribute('roadsideGrainUv',new THREE.BufferAttribute(data.grainUv,2));geo.setIndex(new THREE.BufferAttribute(data.index,1));
+  const material=new THREE.MeshStandardMaterial({map:tex,roughness:.96,side:THREE.FrontSide});
+  material.onBeforeCompile=sh=>{
+   sh.vertexShader='attribute vec2 roadsideGrainUv;\n'+sh.vertexShader;
+   sh.vertexShader=sh.vertexShader.replace('#include <uv_vertex>',`#include <uv_vertex>
+    #ifdef USE_NORMALMAP
+     vNormalMapUv=(normalMapTransform*vec3(roadsideGrainUv,1.0)).xy;
+    #endif
+    #ifdef USE_ROUGHNESSMAP
+     vRoughnessMapUv=(roughnessMapTransform*vec3(roadsideGrainUv,1.0)).xy;
+    #endif
+    #ifdef USE_AOMAP
+     vAoMapUv=(aoMapTransform*vec3(roadsideGrainUv,1.0)).xy;
+    #endif`);
+  };
+  material.customProgramCacheKey=()=> 'roadside-painted-physical-board-v1';
+  const m=new THREE.Mesh(geo,material);m.castShadow=true;m.receiveShadow=true;m.name='sign:'+sp.id;
+  const y=gh(sp.x,sp.z);m.position.set(sp.x,y,sp.z);scene.add(m);
+  P.signBoardData.push({id:sp.id,data,mesh:m,finish(){
+   const aged=W.ranchBuilderArt.materials.aged;paintBoards(aged.map?.image);tex.needsUpdate=true;
+   material.normalMap=aged.normalMap;material.normalScale.set(.22,.22);material.roughnessMap=aged.roughnessMap;
+   material.aoMap=aged.aoMap;material.aoMapIntensity=.28;material.needsUpdate=true;
+  }});
+  put('cyl',sp.x,y+1.55,sp.z,.13,3.10,.13,0,0,0,TIMBER2);
+  put('box',sp.x,y+3.14,sp.z,.30,.14,.30,0,Math.PI*.25,0,PALE);
+  W.colliders.push({x:sp.x,z:sp.z,r:.42});
   return m;
  }
  /* A signpost planted in the middle of its own junction is a bollard. Each one is walked out of
@@ -746,9 +754,15 @@ export function install(G){
    return 1.30;
   },
   bench(x,z,y,yaw){
+   const first=BAT.box.length;
    put('box',x,y+0.46,z,1.70,0.09,0.42,0,yaw,0,TIMBER);
    put('box',x-Math.sin(yaw+Math.PI/2)*0.20,y+0.78,z-Math.cos(yaw+Math.PI/2)*0.20,1.70,0.30,0.06,0,yaw,0.14,TIMBER);
    for(const s2 of [-0.70,0.70])put('box',x+Math.sin(yaw)*s2,y+0.23,z+Math.cos(yaw)*s2,0.10,0.46,0.34,0,yaw,0,TIMBER2);
+   // Keep these legacy rows through the shared course cleanup. The detailed
+   // replacement uses its final visibility and leaves the raw survey untouched.
+   const c=Math.cos(yaw),s=Math.sin(yaw);
+   P.benches.push({x,y,z,yaw,matrix:[c,0,-s,0,0,1,0,0,s,0,c,0,x,y,z,1],
+    legacyRowIndices:[first,first+1,first+2,first+3],visible:true});
    return 0.85;
   },
   leanpost(x,z,y,yaw){
@@ -965,6 +979,7 @@ export function install(G){
  const hedgeMaterial=new THREE.MeshStandardMaterial({map:hedgeTexture,alphaTest:.40,side:THREE.DoubleSide,roughness:1,envMapIntensity:.6});
 
  const pathTimber=W.ranchBuilderArt.materials.aged.clone();pathTimber.name='Bridleway | weathered timber';pathTimber.color.set(0xffffff);
+ const renderedBatches={};
  const GEOS={leaves:hedgeGeo,box:new THREE.BoxGeometry(1,1,1),stone:stoneGeo,cyl:new THREE.CylinderGeometry(0.5,0.5,1,8)};
  P.instances={};
  for(const kind in BAT){
@@ -974,9 +989,65 @@ export function install(G){
   im.instanceMatrix.needsUpdate=true; if(im.instanceColor)im.instanceColor.needsUpdate=true;
   im.castShadow=true; im.receiveShadow=true; im.name='worldPaths:'+kind;
   im.computeBoundingSphere();
-  scene.add(im); P.instances[kind]=rows.length;
+  scene.add(im); renderedBatches[kind]=im; P.instances[kind]=rows.length;
  }
  P.traces=traceN;
+
+ // All extra GPU resources are deferred until the seeded world/model installs
+ // finish. Three's resource UUIDs consume Math.random even for authored geometry.
+ // Reuse the same photographed materials without registering new solid proxies.
+ // course-clear runs a second boot sweep at 400ms. Its legacy geometry must
+ // remain present for that sweep even when all local models load from cache.
+ const courseCleanupReady=new Promise(resolve=>G.on('boot',()=>setTimeout(resolve,450)));
+ P.roadsideReady=Promise.resolve().then(async()=>{
+  await Promise.all([G.photoscans?.ready,G.worldDetails?.ready,G.undergrowth?.ready,
+   W.ranchBuilderArt.ready,G.quartersPkg?.saplingsReady,G.worldPkg?.oasisReady,courseCleanupReady]);
+  const box=renderedBatches.box,probe=new THREE.Matrix4();
+  for(const b of P.benches){box.getMatrixAt(b.legacyRowIndices[0],probe);
+   b.visible=box.visible&&Math.abs(probe.determinant())>1e-8;}
+  const fitted=fitRoadsideBenchGeometry(createRoadsideBenchGeometry(),P.benches,gh);
+  const materials=W.ranchBuilderArt.materials,names={wood:'Wood',aged:'Aged',iron:'Iron'};
+  P.benchBatches=fitted;
+  for(const [key,data] of Object.entries(fitted.groups)){
+   if(!data.indices.length)continue;
+   const geometry=new THREE.BufferGeometry();
+   geometry.setAttribute('position',new THREE.BufferAttribute(data.positions,3));
+   geometry.setAttribute('normal',new THREE.BufferAttribute(data.normals,3));
+   geometry.setAttribute('uv',new THREE.BufferAttribute(data.uvs,2));
+   geometry.setIndex(new THREE.BufferAttribute(data.indices,1));geometry.computeBoundingSphere();
+   const mesh=new THREE.Mesh(geometry,key==='wood'?materials.oak:materials[key]);
+   mesh.name='worldPaths:bench'+names[key];mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
+  }
+  probe.makeScale(0,0,0);
+  for(const b of P.benches)for(const row of b.legacyRowIndices)box.setMatrixAt(row,probe);
+  box.instanceMatrix.needsUpdate=true;
+
+  const supports=[],fasteners=[];
+  for(const sign of P.signBoardData){
+   sign.finish();if(!sign.mesh.visible)continue;
+   for(const support of sign.data.supports)supports.push({sign,support});
+   for(const fastener of sign.data.fasteners)fasteners.push({sign,fastener});
+  }
+  if(supports.length){
+   const mesh=new THREE.InstancedMesh(GEOS.box,materials.iron,supports.length);
+   supports.forEach(({sign,support},i)=>{probe.fromArray(support.matrix);
+    probe.elements[12]+=sign.mesh.position.x;probe.elements[13]+=sign.mesh.position.y;
+    probe.elements[14]+=sign.mesh.position.z;mesh.setMatrixAt(i,probe);});
+   mesh.instanceMatrix.needsUpdate=true;mesh.name='worldPaths:signStraps';
+   mesh.castShadow=true;mesh.receiveShadow=true;mesh.computeBoundingSphere();scene.add(mesh);
+  }
+  if(fasteners.length){
+   const geometry=new THREE.CylinderGeometry(.5,.5,1,6),mesh=new THREE.InstancedMesh(geometry,materials.iron,fasteners.length);
+   const up=new THREE.Vector3(0,1,0),normal=new THREE.Vector3(),position=new THREE.Vector3();
+   const quaternion=new THREE.Quaternion(),scale=new THREE.Vector3(.032,.015,.032);
+   fasteners.forEach(({sign,fastener},i)=>{position.fromArray(fastener.position).add(sign.mesh.position);
+    normal.fromArray(fastener.normal);quaternion.setFromUnitVectors(up,normal);
+    probe.compose(position,quaternion,scale);mesh.setMatrixAt(i,probe);});
+   mesh.instanceMatrix.needsUpdate=true;mesh.name='worldPaths:signFasteners';
+   mesh.castShadow=true;mesh.receiveShadow=true;mesh.computeBoundingSphere();scene.add(mesh);
+  }
+ }).catch(error=>{G.errors.push({id:'world-paths:roadside',error:String(error)});console.error('Roadside prop finish',error);});
+
 
  /* ================= 12. the check that matters =================
     A road a horse cannot follow is worse than no road, so before this package calls itself done it
