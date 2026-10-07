@@ -665,8 +665,8 @@ import {createPastoralSky} from './assets/pastoral-sky.js?v=clear-pastoral-sky-1
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=layered-horizon-1';
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-1';
 import {hasMeadowCover} from './assets/meadow-biomes.js';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=village-townhouses-1';
-import {pastureRise,meadowBloomAt} from './assets/pastoral-fields.mjs?v=meadow-ridges-1';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=grazed-meadows-1';
+import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=grazed-meadows-1';
 import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=carved-canyon-1';
 import {createGeology} from './assets/geology.js?v=carved-canyon-1';
 import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
@@ -692,7 +692,7 @@ import {createForageArt} from './assets/forage-art.js?v=botanical-harvest-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-square-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-square-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=village-square-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=village-square-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=grazed-meadows-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=runway-20261006';
 import {FEATURES} from './assets/features/index.js?v=village-square-1';
@@ -2991,8 +2991,8 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(!hasMeadowCover(x,z))continue; // a broken, gradual grass margin around sand and snow
   e.set(0,Math.random()*Math.PI,(Math.random()-0.5)*0.15);
   q.setFromEuler(e);
-  const s=0.7+Math.random()*0.8;
-  sc.set(s,s*(.78-.40*managedGrass(x,z))*meadowGrowthAt(x,z),s);
+  const s=0.7+Math.random()*0.8,growth=meadowGrowthAt(x,z),spread=.55+.45*growth;
+  sc.set(s*spread,s*(.78-.40*managedGrass(x,z))*growth,s*spread);
   v.set(x,groundH(x,z),z);
   m4.compose(v,q,sc);
   blades.setMatrixAt(placed,m4);
@@ -3013,7 +3013,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
     positions, so a cell looks the same every time you ride back through it, recomputed only
     for the cells that enter the window as you move (a toroidal slot mapping means the cells
     leaving are exactly the ones whose slots the arrivals take). A distance fade in the shader
-    lays the outer blades flat before the window edge could show. Flowers share the cells. */
+    shrinks the outer tufts before the window edge could show. Flowers share the cells. */
  /* 14 cells across (a 42 m radius) at 240 a cell, from 18 at 150: the same 47k tufts, drawn where
     they are seen. The outer ring of the old window was 40-50 m out, where a tuft is a speck the far
     layer and the green ground already carry; spending those instances round the horse instead
@@ -3037,7 +3037,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  vec3 ip=vec3(instanceMatrix[3][0],instanceMatrix[3][1],instanceMatrix[3][2]);
  float wph=ip.x*.19+ip.z*.13;
  float fade=1.0-smoothstep(${(NG_R*0.60).toFixed(1)},${(NG_R*0.94).toFixed(1)},distance(ip.xz,uPlayer.xz));
- transformed.y*=fade;
+ transformed*=fade;
  transformed.x+=(sin(uTime*1.7+wph)*${sway}+sin(uTime*3.1+wph*2.3)*0.07)*transformed.y;
  transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.16;
  vec2 away=ip.xz-uPlayer.xz;
@@ -3180,29 +3180,29 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const id=slot*NG_K+k, h1=gh(ci*73+k*7,cj*131+k*3), h2=gh(ci*17+k*11,cj*59+k*5), h3=gh(k*13+ci,cj*7+k), h4=gh(k*29+cj,ci*3+k*17);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    if(!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);near.setMatrixAt(id,m4);continue;}
-   const sz=.90+h3*.35,trim=.98-.64*managedGrass(x,z);
-   e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz,(.9+h1*.2)*trim*meadowGrowthAt(x,z),sz);
+   const sz=.90+h3*.35,trim=.98-.64*managedGrass(x,z),growth=meadowGrowthAt(x,z),spread=.55+.45*growth;
+   e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz*spread,(.9+h1*.2)*trim*growth,sz*spread);
    v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc); near.setMatrixAt(id,m4);
    meadowBladeColor(bcol,x,z,h4);near.setColorAt(id,bcol);
   }
   for(let k=0;k<NG_F;k++){
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
-   const meadow=gh(ci*3,cj*5)>.62&&managedGrass(x,z)<.58;
+   const meadow=gh(ci*3,cj*5)>.62&&managedGrass(x,z)<.58&&meadowGrazingAt(x,z)<.75;
    if(!meadow||h3>0.6||!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);flow.setMatrixAt(id,m4);continue;}
    const sz=0.8+h3*0.6; e.set(0,h2*Math.PI,0); q.setFromEuler(e); sc.set(sz,sz,sz);
    v.set(x,groundH(x,z)-0.01,z); m4.compose(v,q,sc); flow.setMatrixAt(id,m4);
    flow.setColorAt(id,FLC[Math.floor(h1*FLC.length)%FLC.length]);
   }
   const hide=(im,id)=>{sc.set(0,0,0);m4.compose(v.set(0,-40,0),q.identity(),sc);im.setMatrixAt(id,m4);};
-  /* Lupins grow in drifts. A cell is in a drift when a coarse, 4-cell-wide hash field is high,
-     and inside one the clumps pack toward the drift's heart; everywhere else there are none. */
-  { const drift=(gh(Math.floor(ci/4)*7+3,Math.floor(cj/4)*11+5)*0.6+gh(ci*5+1,cj*3+2)*0.4);
+  // Authored flower colonies stay at field margins. World-space masks avoid
+  // the old square-cell scatter and keep the grazing interiors open.
+  {
    const cell=lupinCells[slot];cell.count=0;
    for(let k=0;k<NG_LU;k++){
     const h1=gh(ci*67+k*29,cj*43+k*13), h2=gh(ci*31+k*17,cj*83+k*41), h3=gh(k*59+ci*7,cj*19+k*23);
     const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
-    const bloom=Math.max(meadowBloomAt(x,z)*.90,Math.max(0,drift-.66)*1.15);
+    const bloom=meadowBloomAt(x,z)*.82;
     if(h3>bloom||biomeAt(x,z)!=='meadow'||!okClutter(x,z))continue;
     const sz=.95+h3*.55; e.set(0,h2*Math.PI,(h1-0.5)*0.08); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.35),sz);
     v.set(x,groundH(x,z)-0.03,z);m4.compose(v,q,sc);m4.toArray(cell.matrices,cell.count*16);
@@ -3213,7 +3213,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const id=slot*NG_FR+k, h1=gh(ci*53+k*13,cj*89+k*17), h2=gh(ci*23+k*37,cj*71+k*19), h3=gh(k*47+ci*3,cj*29+k*11);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    const B=biomeAt(x,z), C=CLUT[B];
-   if(!okClutter(x,z)||h3>C.p||(B==='water'&&h3>0.35)){hide(fern,id);continue;}
+   if(!okClutter(x,z)||h3>C.p*(B==='meadow'?1-.95*meadowGrazingAt(x,z):1)||(B==='water'&&h3>0.35)){hide(fern,id);continue;}
    const sz=C.sz*(0.7+h3*0.8);
    e.set(0,h1*Math.PI*2,(h2-0.5)*0.13); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.4),sz);
    v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc); fern.setMatrixAt(id,m4);

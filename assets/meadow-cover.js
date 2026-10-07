@@ -1,3 +1,5 @@
+import {meadowGrazingAt} from './pastoral-fields.mjs?v=grazed-meadows-1';
+
 // Tapered meadow leaves with softer root shading and varied, bending tips.
 // Three triangles per leaf keep the travelling cover within its existing budget.
 export function createGrassTuftGeometry(THREE,{bladeCount=12}={}) {
@@ -33,14 +35,15 @@ function fieldPatch(x,z){
 }
 export function meadowGrowthAt(x,z){
   const stand=.65*fieldPatch(x/11+3.4,z/11-8.2)+.35*fieldPatch(x/29-5.1,z/29+2.7);
-  return .42+stand*.95;
+  const grazed=meadowGrazingAt(x,z);
+  return (.42+stand*.95)*(1-grazed)+(.23+stand*.33)*grazed;
 }
 
 // One palette for the near leaves, distant sward and old seed layer. Separate
 // green and golden stands give fields variation without random colour speckles.
 export function meadowBladeColor(color,x,z,variation=.5){
   const patch=fieldPatch(x/18+8.7,z/18-3.1);
-  const dry=Math.max(0,Math.min(1,(fieldPatch(x/24-7.4,z/24+6.8)-.48)*2.7));
+  const dry=Math.max(0,Math.min(1,(fieldPatch(x/24-7.4,z/24+6.8)-.42)*3.5))*(1-meadowGrazingAt(x,z)*.85);
   return color.setHSL(.225+patch*.029-dry*.075,.55+variation*.08-dry*.08,.15+variation*.035+dry*.055);
 }
 
@@ -96,11 +99,11 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
       #ifdef USE_INSTANCING
         vec2 ip=instanceMatrix[3].xz;float distanceToRider=distance(ip,fieldRider);
         float grow=smoothstep(15.0,29.0,distanceToRider)*(1.0-smoothstep(78.0,102.0,distanceToRider));
-        transformed.y*=grow;
+        transformed*=grow;
         transformed.x+=sin(fieldTime*1.2+ip.x*.3+ip.y*.16)*transformed.y*.15;
       #endif`);
   };
-  mat.customProgramCacheKey=()=> 'middle-meadow-v1';
+  mat.customProgramCacheKey=()=> 'middle-meadow-v2';
   const mesh=new THREE.InstancedMesh(geo,mat,W*W*K);mesh.name='Middle distance pasture';
   mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=true;scene.add(mesh);
   const slots=new Array(W*W),matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),scale=new THREE.Vector3(),q=new THREE.Quaternion(),up=new THREE.Vector3(0,1,0),color=new THREE.Color();
@@ -116,7 +119,7 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         const a=hash(ix*137+k*11,iz*73+k*31),b=hash(ix*59+k*23,iz*151+k*7),c=hash(ix+k*19,iz-k*17);
         const px=(ix+a)*CELL,pz=(iz+b)*CELL,id=slot*K+k;
         pos.set(px,0,pz);q.setFromAxisAngle(up,c*Math.PI);
-        if(canGrow(px,pz)){const trim=1-.67*managedAt(px,pz);pos.y=heightAt(px,pz)-.03;scale.set(2.1+c*.6,trim*meadowGrowthAt(px,pz)*(.9+b*.2),2.1+c*.6);}
+        if(canGrow(px,pz)){const trim=1-.67*managedAt(px,pz),growth=meadowGrowthAt(px,pz),spread=(2.1+c*.6)*(.55+.45*growth);pos.y=heightAt(px,pz)-.03;scale.set(spread,trim*growth*(.9+b*.2),spread);}
         else scale.setScalar(0);
         matrix.compose(pos,q,scale);mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);mesh.setColorAt(id,color);
       }

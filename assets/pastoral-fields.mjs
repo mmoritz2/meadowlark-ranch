@@ -30,8 +30,9 @@ export function pastureRise(x,z) {
 }
 // Elliptical flower colonies have irregular edges but no cell-grid boundaries.
 export const FLOWER_DRIFTS=[
-  [-52,44,17,9],[-76,51,19,12],[57,-123,16,23],[83,-161,20,11],
-  [165,36,24,15],[42,213,27,13],[209,113,18,12],[147,-121,10,25],
+  [-73,54,11,6],[-41,61,8,5],[44,-115,9,16],[88,-167,13,7],
+  [140,38,9,20],[204,59,14,8],[33,208,16,6],[80,253,13,6],
+  [215,115,12,6],[262,141,8,12],[147,-121,7,17],
 ];
 export function meadowBloomAt(x,z){
   let mask=0;
@@ -40,7 +41,7 @@ export function meadowBloomAt(x,z){
     const edge=d+Math.sin(x*.32+Math.sin(z*.17))*.12+Math.sin(z*.41)*.06;
     mask=Math.max(mask,1-smooth(.50,1.12,edge));
   }
-  return mask;
+  return mask*(1-.96*meadowGrazingAt(x,z));
 }
 
 // Open pasture between tree groups makes the foreground slopes and village
@@ -63,3 +64,11 @@ export function meadowOpeningAt(x,z){
   return opening;
 }
 export const inMeadowOpening=(x,z)=>meadowOpeningAt(x,z)>.5;
+
+// Grazed interiors are low enough to read the ground from the saddle. The west
+// meadow keeps its existing trees; this mask changes plants, never collision.
+// A soft boundary is shared by every grass LOD and the flower colonies.
+export function meadowGrazingAt(x,z){
+  const west=Math.hypot((x+54)/22,(z-43)/16)+Math.sin(x*.18+z*.11)*.06;
+  return Math.max(meadowOpeningAt(x,z),1-smooth(.55,1.12,west));
+}

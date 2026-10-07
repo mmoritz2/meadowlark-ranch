@@ -35,7 +35,8 @@ const villageViews=await page.evaluate(()=>{
  }
  return result;
 });shots.push(...villageViews);
-for(const c of shots){const shot=await page.evaluate(async c=>{const q=__qa,p=q.player;const eye=c.eye.slice(),look=c.look.slice();eye[1]+=q.groundH(eye[0],eye[2]);look[1]+=q.groundH(look[0],look[2]);p.pos.set(c.horse?.[0]??eye[0],0,c.horse?.[1]??eye[2]);if(c.horse)p.heading=c.horse[2];p.speed=0;q.day();const render=q.renderer.render;q.renderer.render=()=>{};try{for(let i=0;i<30;i++)q.step(.1);
+for(const tier of ['medium','low'])shots.push({name:'riding-meadow-'+tier,eye:[-60,2,56],look:[-53,1.5,39],horse:[-55,46,-.4],riding:true,tier});
+for(const c of shots){const shot=await page.evaluate(async c=>{const q=__qa,p=q.player;q.G.gfx.apply(c.tier||'high');const eye=c.eye.slice(),look=c.look.slice();eye[1]+=q.groundH(eye[0],eye[2]);look[1]+=q.groundH(look[0],look[2]);p.pos.set(c.horse?.[0]??eye[0],0,c.horse?.[1]??eye[2]);if(c.horse)p.heading=c.horse[2];p.speed=0;q.day();const render=q.renderer.render;q.renderer.render=()=>{};try{for(let i=0;i<30;i++)q.step(.1);
  // Relocation starts asynchronous NPC clothing loads. Let the existing nearby
  // character system settle before taking the reference image.
  let settled=0;for(let i=0;i<180;i++){q.step(.016);settled=q.npcCharacters.stats().pending?0:settled+1;if(settled>=2)break;await new Promise(r=>setTimeout(r,40));}
@@ -49,7 +50,7 @@ const state=await page.evaluate(async()=>{
   tiers.push({tier,meadowTriangles:q.nearGrass.meadowDistance.mesh.geometry.index.count/3*q.nearGrass.meadowDistance.mesh.count,trees:P.activeTrees,triangles:P.activeTreeTriangles,budget:P.treeTriangleBudget});
  }}finally{q.renderer.render=original}
  let leafTriangles=0;q.scene.traverse(o=>{if(o.name.startsWith('Photoscan canopy-broadleaf')&&o.material.name.includes('leaves'))leafTriangles=Math.max(leafTriangles,o.geometry.index.count/3)});
- const {FIELD_RISES,FIELD_ANCHORS,pastureRise}=await import('./assets/pastoral-fields.mjs?v=meadow-ridges-1');
+ const {FIELD_RISES,FIELD_ANCHORS,pastureRise,MEADOW_OPENINGS,meadowGrazingAt}=await import('./assets/pastoral-fields.mjs?v=grazed-meadows-1');
  const terrain=q.scene.getObjectByName('Pasture terrain');terrain.updateMatrixWorld(true);
  const samples=[];
  for(const c of FIELD_RISES)for(const [dx,dz] of[[0,0],[12,0],[-12,0],[0,12],[0,-12]]){
@@ -79,7 +80,23 @@ const state=await page.evaluate(async()=>{
  const nearStable=nearLayout.every((v,i)=>v===near.instanceMatrix.array[i])&&nearColors.every((v,i)=>{const base=Math.floor(i/3)*16;return Math.hypot(nearLayout[base],nearLayout[base+1],nearLayout[base+2])===0||v===near.instanceColor.array[i];});
  const middleStable=middleLayout.every((v,i)=>v===mid.instanceMatrix.array[i]);
  const flowerStable=flower.count===flowerDraw&&flowerLayout.every((v,i)=>v===flower.instanceMatrix.array[i])&&flowerColors.every((v,i)=>v===flower.instanceColor.array[i]);
- const fields={nearStable,grassHeightRange:[heights[0],heights[Math.floor(heights.length*.1)],heights[Math.floor(heights.length*.9)],heights.at(-1)],flowerDraw,flowerStable,nearTriangles:q.nearGrass.near.geometry.index.count/3*q.nearGrass.near.count,samples,anchors:FIELD_ANCHORS.every(([x,z])=>pastureRise(x,z)===0),flowerCount,midCount,
+ // Measure actual authored instance heights across all open fields, not only
+ // a single favourable camera. Taller margins must survive around low interiors.
+ const meadowHeights={interior:[],margin:[]};let interiorFlowers=0,totalFlowers=0;
+ const tuftHeight=near.geometry.boundingBox.max.y;
+ for(const field of MEADOW_OPENINGS){
+  q.nearGrass.tick(4,field.x,field.z);
+  for(let i=0;i<near.count;i++){
+   near.getMatrixAt(i,matrix);if(matrix.determinant()===0)continue;pos.setFromMatrixPosition(matrix);
+   const mask=meadowGrazingAt(pos.x,pos.z),height=Math.hypot(...matrix.elements.slice(4,7))*tuftHeight;
+   if(mask>.95)meadowHeights.interior.push(height);else if(mask<.05)meadowHeights.margin.push(height);
+  }
+  for(let i=0;i<flower.count;i++){flower.getMatrixAt(i,matrix);pos.setFromMatrixPosition(matrix);totalFlowers++;if(meadowGrazingAt(pos.x,pos.z)>.95)interiorFlowers++;}
+ }
+ const quantile=(a,p)=>{a.sort((a,b)=>a-b);return a[Math.floor((a.length-1)*p)];};
+ const grazing={interiorSamples:meadowHeights.interior.length,marginSamples:meadowHeights.margin.length,
+  interiorP90:quantile(meadowHeights.interior,.9),marginMedian:quantile(meadowHeights.margin,.5),interiorFlowers,totalFlowers};
+ const fields={grazing,nearStable,grassHeightRange:[heights[0],heights[Math.floor(heights.length*.1)],heights[Math.floor(heights.length*.9)],heights.at(-1)],flowerDraw,flowerStable,nearTriangles:q.nearGrass.near.geometry.index.count/3*q.nearGrass.near.count,samples,anchors:FIELD_ANCHORS.every(([x,z])=>pastureRise(x,z)===0),flowerCount,midCount,
   flowerTriangles:flower.geometry.index.count/3,middleTriangles:mid.count*mid.geometry.index.count/3,
   plantError,plantsOnRoad,middleStable};
  const cottages=[];q.scene.traverse(o=>{if(o.userData.architecture?.kind==='cottage')cottages.push(o);});
@@ -109,6 +126,9 @@ const checks={
  middleMeadow:state.fields.midCount>8000&&state.fields.middleTriangles<=1000000,
  groundedCover:state.fields.plantError<.001&&state.fields.plantsOnRoad===0,
  repeatableMeadow:state.fields.middleStable&&state.fields.flowerStable&&state.fields.nearStable,
+ openGrazingInteriors:state.fields.grazing.interiorSamples>1000&&state.fields.grazing.interiorP90<.35,
+ tallerFieldMargins:state.fields.grazing.marginSamples>1000&&state.fields.grazing.marginMedian>state.fields.grazing.interiorP90*1.5,
+ flowersConcentratedAtMargins:state.fields.grazing.totalFlowers>100&&state.fields.grazing.interiorFlowers/state.fields.grazing.totalFlowers<.05,
  variedGrassHeight:state.fields.grassHeightRange[2]/state.fields.grassHeightRange[1]>1.3,
  oldForkedTreesReplaced:state.blossom.replaced>100&&!state.blossom.originalCanopyVisible&&state.blossom.originalTrunks===0&&state.blossom.scanned,
  compactFlowerDraws:state.fields.flowerDraw===state.fields.flowerCount,
