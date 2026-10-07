@@ -299,7 +299,7 @@ export function install(G){
  const blob=W.blob, tube=W.tube;
  const mk=W.forageArt.makers(['sweetpea','berries','cress','watermelon','strawberry','apple','honey','pricklypear','corn','snowmoss','grapes','daikon','chestnut','zucchini','royaljelly']);
  /* orchard trees at Cottonwood, hives by the lake, corn rows and a walled garden at Barleyfold */
- const orchardTrees=[[62,-48],[66,-54],[71,-46],[75,-53],[64,-60],[70,-61],[78,-59],[60,-40],[68,-38],[76,-42],[82,-50],[58,-66]];
+ const orchardTrees=[[62,-48],[66,-54],[71,-46],[75,-53],[64,-56.3],[70,-61],[78,-59],[60,-40],[68,-38],[76,-42],[82,-50],[58,-66]];
  const hives=[[38,32],[42,28],[36,38]];
  const cornRows=[[198,-92],[201,-92],[204,-92],[207,-92],[198,-88],[201,-88],[204,-88],[207,-88]];
  const smat=c=>new THREE.MeshStandardMaterial({color:c,roughness:0.85});

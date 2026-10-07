@@ -156,6 +156,21 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
         }
         root.add(garden);if(root.userData.architecture.kind==='townhouse')state.townhouseGardens++;else state.cottageGardens++;
       }
+      // Intentional planted edges around the public square use the same local
+      // CC0 flowering model as the window boxes, in four shared draw batches.
+      const squareBatches=gardenVariants.map(()=>[]),plant=new THREE.Object3D();
+      state.squareGardenPlants=0;
+      for(const b of G.villageCourts?.gardens||[])for(let z=-b.depth/2+.24;z<b.depth/2-.15;z+=.32)
+       for(let x=-b.width/2+.24;x<b.width/2-.15;x+=.32){
+        const i=state.squareGardenPlants++,variant=i%gardenVariants.length;
+        plant.position.set(b.x+x,W.groundH(b.x,b.z)+.245,b.z+z);plant.rotation.y=i*2.399;
+        plant.scale.setScalar(Math.min(.45+(i%3)*.035,.57/gardenVariants[variant].width));plant.updateMatrix();squareBatches[variant].push(plant.matrix.clone());
+       }
+      for(const [i,matrices]of squareBatches.entries())if(matrices.length){
+       const m=new THREE.InstancedMesh(gardenVariants[i].geo,gardenVariants[i].mat,matrices.length);
+       m.name='Cottonwood | living square flowers';matrices.forEach((matrix,j)=>m.setMatrixAt(j,matrix));m.instanceMatrix.needsUpdate=true;
+       m.computeBoundingSphere();m.castShadow=m.receiveShadow=true;group.add(m);
+      }
       let seed=71839;const rand=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
       const drifts=[[-35,25],[-46,7],[-49,-30],[-72,35],[-120,32],[8,78],[21,100],[42,128],[50,-60],[15,-34],[-33,-54]];
       const beds=new Map();

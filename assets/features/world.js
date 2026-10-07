@@ -1,3 +1,4 @@
+import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-square-1';
 /* Feature package 'world' — the place-making pass over Kestrel Basin.
    Regions with metadata and gating, living towns, named landmarks and per-town arenas, four
    collectible families (horseshoes, bottles, sheriff badges, the toy unicorn), the world map
@@ -221,7 +222,7 @@ export function install(G){
    folk:[
     {id:'cw_pim',name:'Pim',icon:'🧑',hat:'#c9a86a',shirt:'#6a8fbf',idle:'Morning! The store had fresh apples in — go on, your horse will thank you.',walkBy:'store',path:[[40,-52],[36,-58],[44,-60],[50,-54]]},
     {id:'cw_rosa',name:'Rosa',icon:'👩',hat:'#e07a7a',shirt:'#9bbf6a',idle:'The auction house is buzzing today. A grey went for six hundred, can you believe it?',path:[[58,-52],[62,-46],[52,-44],[50,-56]]},
-    {id:'cw_ned',name:'Old Ned',icon:'👴',hat:'#8a7a5a',shirt:'#7a5a3a',idle:'Been here since before the bridge. Cottonwood was three cottages and a well.',path:[[36,-48],[38,-40],[46,-38],[44,-46]]},
+    {id:'cw_ned',walkBy:'clubhouse',name:'Old Ned',icon:'👴',hat:'#8a7a5a',shirt:'#7a5a3a',idle:'Been here since before the bridge. Cottonwood was three cottages and a well.',path:[[36,-48],[38,-40],[46,-38],[44,-46]]},
    ]},
   {id:'barleyfold',region:'barleyfold',name:'Barleyfold Farms',cx:215,cz:-105,
    buildings:[
@@ -261,7 +262,9 @@ export function install(G){
  function buildTown(tn){
   const rg=regionById(tn.region);
   for(const b of tn.buildings){
-   const need=b.r+1.5; const at=findClear(b.x,b.z,need,40,(x,z)=>offCourse(x,z,need+5)); b.x=at[0]; b.z=at[1]; PLACED.push({id:tn.id+':'+b.id,x:b.x,z:b.z,need:need+5});
+   const plot=tn.id==='cottonwood'&&COTTONWOOD_PLOTS[b.id];
+   if(plot){b.x=plot.x;b.z=plot.z;b.rot=plot.rot;b.opts=Object.assign({},b.opts,{width:plot.width,depth:plot.depth});b.r=Math.hypot(plot.width,plot.depth)/2;}
+   const need=b.r+1.5; const at=plot?[plot.x,plot.z]:findClear(b.x,b.z,need,40,(x,z)=>offCourse(x,z,need+5)); b.x=at[0]; b.z=at[1]; PLACED.push({id:tn.id+':'+b.id,x:b.x,z:b.z,need:need+5});
    let grp=null;
    /* No label passed to addBuilding: its plate would arrive pre-truncated — "🛍️ Petal & Pail
       general store" came out as "🛍️ Petal & Pail gener". We hang our own at the height the

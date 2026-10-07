@@ -1,3 +1,4 @@
+import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=village-square-1';
 import {fallsContainsWater} from './falls-landscape.js?v=mountain-falls-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
 import {inMeadowOpening} from './pastoral-fields.mjs?v=meadow-ridges-1';
@@ -123,6 +124,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       return {parts,bounds,key,meta,triangles};
     });
     const sourceFor=t=>{
+      if(t.authoredVillage)return variants[0];
       // Related trees grow in groves. Slender trees around the village reveal the
       // buildings; broad spreading crowns define the meadow and woodland edges.
       const roadEdge=Math.min(W.pathDist(t.x,t.z),G.worldPaths?.trackDist(t.x,t.z)??Infinity);
@@ -147,7 +149,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     const autumnPalette=['#e6b448','#db8734','#ad3d42','#c85c65'].map(c=>new THREE.Color(c));
     const add=t=>{
       const road=onRoad(t.x,t.z),meadow=inMeadowOpening(t.x,t.z);
-      const cleared=road||meadow||G.vistas?.clearZones?.some(test=>test(t.x,t.z));
+      const cleared=(road&&!t.authoredVillage)||meadow||G.vistas?.clearZones?.some(test=>test(t.x,t.z));
       if(cleared){
         if(t.root)t.root.visible=false;else if(t.stem){t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;}
         clearTrunk(t.x,t.z);if(road)state.roadClearedTrees++;
@@ -229,6 +231,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         state.trailTrees.push({x:tx,z:tz,height});
       }
     }
+    for(const t of COTTONWOOD_TREES)add({...t,kind:'village',authoredVillage:true});
+    state.villageTrees=COTTONWOOD_TREES;
     const textureLoader=new THREE.TextureLoader();
     // Load all views before hiding any original tree. Missing data leaves the
     // existing forest intact, instead of empty silhouettes during a slow load.
@@ -263,6 +267,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;
     }}
     // Commit new trunk collisions only after all tree views have loaded.
+    for(const t of COTTONWOOD_TREES)W.colliders.push({x:t.x,z:t.z,r:.34,height:t.height,trunk:true});
     for(const t of state.trailTrees)W.colliders.push({x:t.x,z:t.z,r:.62,height:t.height,trunk:true});
     // A zero-scale instance still runs every vertex and shadow vertex shader.
     // These seed batches are wholly replaced; stop submitting their old meshes.

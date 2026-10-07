@@ -1,0 +1,57 @@
+[
+  {
+    "id": "patterned_cobblestone",
+    "page": "https://polyhaven.com/a/patterned_cobblestone",
+    "authors": {
+      "Rob Tuytel": "All"
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "scaleMetres": [
+      2.499999523162842,
+      2.499999523162842
+    ],
+    "retrieved": "2026-10-07",
+    "files": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/patterned_cobblestone/patterned_cobblestone_diff_1k.jpg",
+        "sourceMD5": "fc5d962a414e82447b6d3f6e24f2ae1e",
+        "sourceSHA256": "755dd4224a6a901da31fe144c57a426f9aa92516fe72e2aa1617ca802fb25063",
+        "sourceBytes": 794976,
+        "output": {
+          "file": "patterned_cobblestone_diff.webp",
+          "size": 1024,
+          "bytes": 276718,
+          "sha256": "12bed210066dc71e2f2275da2dcab0fd553d0132b0af1f0626cc49442e9f6a4d",
+          "colorSpace": "sRGB"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/patterned_cobblestone/patterned_cobblestone_nor_gl_1k.jpg",
+        "sourceMD5": "4f75688a936ef944578cf43c86e29291",
+        "sourceSHA256": "9cc463ce9dcdcd9f1955fa1a97fc08f296eb0b6ae6b4826f47694460cfff637f",
+        "sourceBytes": 1184304,
+        "output": {
+          "file": "patterned_cobblestone_nor_gl.webp",
+          "size": 1024,
+          "bytes": 556706,
+          "sha256": "5edcf5323de025ca1223b4418ed6a3846938e134b465c8af12835ee984586c33",
+          "colorSpace": "linear"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/patterned_cobblestone/patterned_cobblestone_arm_1k.jpg",
+        "sourceMD5": "9a3785fbb0d26bc63e2eb150ba99b38c",
+        "sourceSHA256": "b576dc2f8fb18f43668427389bed611fba540126f915d39a7bf06adae2c842ce",
+        "sourceBytes": 876830,
+        "output": {
+          "file": "patterned_cobblestone_arm.webp",
+          "size": 512,
+          "bytes": 70194,
+          "sha256": "48399d2dc35363025c08e73d7d3a900bceb1816b824c163575156f1865527aa3",
+          "colorSpace": "linear"
+        }
+      }
+    ]
+  }
+]

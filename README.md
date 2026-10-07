@@ -437,19 +437,33 @@ bearings and riding terrain remain fixed. `qa-country-world.cjs`
 checks loaded maps, static relief outside the riding basin and mesh budgets;
 `qa-render-artifacts.cjs` includes the village in daylight, rain and night.
 
-Cottonwood's general store, inn and clubhouse now have two full floors,
-recessed casements, iron balconies and shallow hipped roofs. The roofs use
-Amal Kumar's CC0 [Clay Roof Tiles](https://polyhaven.com/a/clay_roof_tiles) at its
-photographed 4 m scale; the three local WebP maps add 827,266 bytes. Individual
-ridge caps, shutters, cornices and lanterns remain batched per material, with
-9,874–10,442 triangles and 15–16 material draws per building. Stone forecourts
-follow the terrain and share clearance with grass, shrubs and imported plants.
-Field hedges and their collision lines stop short of these courts, and Pim's
-shop stroll follows the placed entrance. The old roadside cottage steps back
-one metre from the mounted village lane.
-`qa-village-townhouses.cjs` checks approaches, mounted travel, interaction IDs,
-planted facades, terrain contact and weather/quality views. The full village
-layout still differs from the reference and remains an ongoing art task.
+Cottonwood's general store, inn and clubhouse have two full floors, recessed
+casements, iron balconies and shallow hipped roofs. The fixed 7–9 m façades
+face a connected village square; cottages sit on quieter side plots. Roofs use
+Amal Kumar's CC0 [Clay Roof Tiles](https://polyhaven.com/a/clay_roof_tiles) at
+its photographed 4 m scale. The larger houses stay below 12,000 triangles and
+16 material draws each. Shop interactions and the fast-travel/quest positions
+are retained; Pim and Ned walk their corresponding entrance courts.
+
+The square and its approaches share one terrain-draped paving mesh (10,459
+triangles). Rob Tuytel's CC0 [Patterned Cobblestone](https://polyhaven.com/a/patterned_cobblestone)
+is applied at its photographed 2.5 m scale; local diffuse, OpenGL normal and
+packed maps add 903,618 bytes. Source checksums, conversion details and authors
+are recorded in `assets/textures/village-paving/manifest.json`. Dirt ribbons
+clip out under the pavement. Building plots, roads and planting use the same
+layout reservations, and hedges/collision lines stop at the town edges.
+
+An original open-basin stone fountain, four beds with 117 periwinkle plants,
+three benches, five lanterns and three budgeted CC0 scan trees furnish the
+square. One orchard tree moves off the existing through-road; its harvesting
+source follows the tree. `qa-village-square.cjs` checks the complete mounted
+routes, all townsfolk walks, shop approaches, garden/fountain collisions,
+loaded shade trees, terrain contact, opaque/finite pixels and daylight, rain,
+night and all graphics tiers. `qa-village-townhouses.cjs` remains a compatible
+entry point for the same checks. `QA_SEED` plus `--layout-only` permits another
+seeded layout/physics check. This is an original settlement inspired by the
+reference's scale, paving and planted approaches; the broader world still
+has visible differences and the overall art goal remains in progress.
 
 Harvest plants now have original folded leaves, stems, flowers and shaped fruit
 instead of stacked spheres. All 20 foods keep their placement, inventory rewards

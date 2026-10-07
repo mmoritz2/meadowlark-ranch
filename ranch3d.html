@@ -689,12 +689,13 @@ import {createWorldShadows} from './assets/world-shadows.js?v=visible-shadows-1'
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
 import {createForageArt} from './assets/forage-art.js?v=botanical-harvest-1';
-import {installVillageForecourts} from './assets/village-forecourts.js?v=village-townhouses-1';
-import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=village-townhouses-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=mountain-falls-1';
+import {installVillageForecourts} from './assets/village-forecourts.js?v=village-square-1';
+import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-square-1';
+import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=village-square-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=village-square-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=runway-20261006';
-import {FEATURES} from './assets/features/index.js?v=mountain-falls-1';
+import {FEATURES} from './assets/features/index.js?v=village-square-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -1490,7 +1491,7 @@ const PATHS=[
  [[-30,-20],[-33,-38],[-31,-52],[-30,-58]],                          // pasture road -> Hollowpeak Pines
 ];
 const PATH_W=2.9;
-const villageGroundZones=[];
+const villageGroundZones=COTTONWOOD_PUBLIC.map(q=>({...q}));
 // A maintained yard and clipped trail shoulders give way gradually to meadow.
 function managedGrass(x,z){
  return Math.max(1-THREE.MathUtils.smoothstep(Math.hypot(x*.94,z*1.12),38,82),
@@ -1517,7 +1518,7 @@ function pathDist(x,z){
  let distance=Math.sqrt(best);
  for(const q of villageGroundZones){
   const dx=x-q.x,dz=z-q.z;
-  if(Math.abs(dx)>14||Math.abs(dz)>14)continue;
+  if(Math.abs(dx)>q.halfX+Math.max(Math.abs(q.minZ),Math.abs(q.maxZ))+8||Math.abs(dz)>q.halfX+Math.max(Math.abs(q.minZ),Math.abs(q.maxZ))+8)continue;
   const lx=dx*q.cos-dz*q.sin,lz=dx*q.sin+dz*q.cos;
   const edge=Math.hypot(Math.max(0,Math.abs(lx)-q.halfX),Math.max(0,q.minZ-lz,lz-q.maxZ));
   distance=Math.min(distance,edge===0?0:edge+2.3);
@@ -4236,7 +4237,7 @@ for(const name of ['cactus','cactus2'])for(let i=FOLIAGE[name].length-1;i>=0;i--
  const ci=colliders.indexOf(p.col);if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
 }
 for(const name of ['oak','birch','blossom','pine','snowpine'])for(let i=FOLIAGE[name].length-1;i>=0;i--){
- const p=FOLIAGE[name][i];if(!fallsExcludesDryPlants(p.x,p.z,terrainH))continue;
+ const p=FOLIAGE[name][i];if(!fallsExcludesDryPlants(p.x,p.z,terrainH)&&!cottonwoodReserved(p.x,p.z,3))continue;
  const ci=colliders.findIndex(c=>c.x===p.x&&c.z===p.z);if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
 }
 const FOLIAGE_H={snowpine:7.2,oak:6.2,birch:6.6,blossom:6.2,pine:7.4,bush:1.9,flowerbush:1.8,cactus:3.8,cactus2:0.8,
@@ -4327,6 +4328,10 @@ function placeFoliage(name){
  const pollRig=setInterval(()=>{ if(RIG.ready&&RIG.attachedTo===player.mesh){clearInterval(pollRig);startFoliage();} },200);
  setTimeout(()=>{clearInterval(pollRig);startFoliage();},20000);
 }
+for(const name of ['bush','flowerbush','boulder','stump'])for(let i=FOLIAGE[name].length-1;i>=0;i--){
+ const p=FOLIAGE[name][i];if(!cottonwoodReserved(p.x,p.z,2))continue;
+ const ci=colliders.findIndex(c=>c.x===p.x&&c.z===p.z);if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
+}
 const scannedRockTargets=[];
 FOLIAGE.boulder.forEach((p,i)=>{
  const rock=geology.makeBoulder(p.s*.9,i+2501);rock.position.set(p.x,terrainH(p.x,p.z)-.06,p.z);
@@ -4343,6 +4348,7 @@ for(let i=0;i<26;i++){
  const z=-44-Math.random()*26;
  const t=makePine(1.1+Math.random()*0.9);
  t.position.set(x,groundH(x,z),z);
+ if(cottonwoodReserved(x,z,3))continue;
  scene.add(t);
  colliders.push({x,z,r:0.75,height:new THREE.Box3().setFromObject(t).max.y-groundH(x,z)});
 }
@@ -4375,6 +4381,7 @@ for(let i=0;i<28;i++){
  m.position.set(x,groundH(x,z)-.025,z);
  m.rotation.y=Math.random()*3;
  m.castShadow=true;m.receiveShadow=true;
+ if(cottonwoodReserved(x,z,2))continue;
  scene.add(m);
  if(s>0.6)colliders.push({x,z,r:s*1.05});
 }
@@ -4649,6 +4656,7 @@ let waterMat=null;   // hoisted: the pond reuses it
   roadMat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',
    '#include <map_fragment>\n diffuseColor.a *= smoothstep(0.0,0.26,vMapUv.y)*(1.0-smoothstep(0.74,1.0,vMapUv.y));');};
   roadMat.customProgramCacheKey=()=> 'soft-grounded-bridleway-1';
+  clipVillageRoads(roadMat);
   const rp=[],ru=[],rc=[],ri=[];
   const cr=(p0,p1,p2,p3,t)=>{                              // catmull-rom, so corners round off
    const t2=t*t,t3=t2*t;
@@ -4748,6 +4756,7 @@ for(const [x,z,ry]of[[81,-37,.15],[80,-35.5,-.3],[210,-103,.3],[212.5,-101,-.4]]
 /* hidden golden horseshoes — now a daily hunt; see the 'golden horseshoe hunt' section */
 /* lush dressing: distant forest ring, tree groves & meadow bushes */
 function cheapTree(x,z,s){
+ if(cottonwoodReserved(x,z,3))return;
  const t=makeNaturalTree({THREE,scale:s*.7,seed:Math.abs((x*19+z*31)|0)});
  t.position.set(x,groundH(x,z),z);
  scene.add(t); STATIC_MERGE.push(t);
@@ -7084,7 +7093,7 @@ const PAST={x1:-110,x2:-33,z1:-45,z2:25};
 /* static building & prop colliders + jumpable fence walls */
 colliders.push(
  {x:-16,z:-14,r:4.4,precise:true},          // barn
- {x:42,z:-50,r:2.7,precise:true},{x:48,z:-56,r:2.7,precise:true},{x:54,z:-48,r:2.7,precise:true},{x:45,z:-43,r:2.7,precise:true}, // cottages
+ ...COTTONWOOD_COTTAGES.map(p=>({x:p.x,z:p.z,r:2.7,precise:true})), // authored village plots
  {x:-59,z:-19,r:3.4,precise:true},          // run-in shelter
  {x:-30,z:3.2,r:2.6,precise:true},{x:-30,z:7.5,r:2.6,precise:true},{x:-30,z:11.8,r:2.6,precise:true}, // pavilion, clear of stall and arena
  {x:27.6,z:-6,r:1.7,precise:true},{x:29.4,z:-6,r:1.1,precise:true},          // judge tower, outside the east rail
@@ -12895,7 +12904,7 @@ function cottage(x,z,rot,variant=Math.abs(Math.round(x+z))%4){
  scene.add(b);
  followCamera.register(b);
 }
-cottage(42,-50,0.4);cottage(48,-56,-0.3);cottage(54,-48,0.9);cottage(45,-42,2.6,2); // leave the mounted lane beside Bram clear
+for(const p of COTTONWOOD_COTTAGES)cottage(p.x,p.z,p.rot,p.variant);
 {
  const sp2=new THREE.Group();
  tube(0.06,0.07,2.6,barkMat,0,1.3,0,sp2);

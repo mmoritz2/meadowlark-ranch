@@ -16,13 +16,14 @@
    package shares three InstancedMeshes between them. Nothing here allocates after install.
 
    Owned by this package: this file only. Nothing runs at import time. */
-import {villageCourtZones,inVillageCourt} from '../village-forecourts.js?v=village-townhouses-1';
+import {villageCourtZones,inVillageCourt} from '../village-forecourts.js?v=village-square-1';
+import {COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from '../cottonwood-layout.js?v=village-square-1';
 export const id='world-paths';
 export function install(G){
  const {THREE,scene}=G;
  const W=G.world, T=G.tables, S=G.save, H=G.horse, toast=G.toast;
  const gh=W.groundH, riverZ=W.riverZ, streamX=W.streamX;
- const villageCourts=villageCourtZones(G.worldPkg?.LANDMARKS||[]);
+ const villageCourts=[...COTTONWOOD_PUBLIC,...villageCourtZones(G.worldPkg?.LANDMARKS||[])];
  const P={}; G.worldPaths=P;                                  // this package's live state, for QA
  const hyp=(ax,az,bx,bz)=>Math.hypot(ax-bx,az-bz);
  const sstep=(x,a,b)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
@@ -331,6 +332,7 @@ export function install(G){
     diffuseColor.a*=trackWear.a;`);
   };
   mat.customProgramCacheKey=()=> 'world-paths-mineral-v1';
+  clipVillageRoads(mat);
   const mesh=new THREE.Mesh(geo,mat);
   /* Ahead of the river and the creek in the transparent pass: both of those also draw with
      depthWrite off, and whichever goes last wins. The road goes first and the water covers it. */
@@ -567,7 +569,7 @@ export function install(G){
    /* Ground world-vistas keeps clear (the Chalk Mare's viewing stone, sited on fixed ground since it stopped shuffling round
       the random trees): the boundary simply stops short of it and takes up again on the far side, rather than running a rail
       through the stone a metre from its middle. No gateposts: this is a break in a field wall, not a way through it. */
-   if(inVista(x,z)||inVillageCourt(villageCourts,x,z,1.7)){closeRun();lastX=null;lastZ=null;lastOpen=false;continue;}
+   if(inVista(x,z)||inVillageCourt(villageCourts,x,z,1.7)||cottonwoodReserved(x,z,1.7)){closeRun();lastX=null;lastZ=null;lastOpen=false;continue;}
    const inGate=gaps.some(g=>Math.abs(dist-g)<GATE_W/2)||cgaps.some(g=>Math.abs(dist-g)<COURSE_W/2);
    if(inGate){
     /* The gateposts stand at the mouth, the gate itself swung back out of the way. */

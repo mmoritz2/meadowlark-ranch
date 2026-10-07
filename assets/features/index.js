@@ -152,7 +152,7 @@
    ============================================================================================ */
 /* BUILD STAMP: every import below carries the same ?v= build id, so a normal reload after an update fetches every changed
    module instead of running a cached mix of old and new ones. Bump it (all of them at once) whenever a feature file changes. */
-import * as stats from './stats-progression.js?v=botanical-harvest-1';
+import * as stats from './stats-progression.js?v=village-square-1';
 import * as roster from './horse-roster.js?v=commerce-preview-20261005';
 import * as bond from './bond-personality-emotes.js?v=horse-actions-1';   // versioned: rider emotes reach the character's own bones
 import * as mastery from './mastery-style.js?v=dragon-rigging-1';
@@ -173,7 +173,7 @@ import * as petModels from './pet-models.js?v=b20261001b';   // each pet its own
 import * as market from './market-summon-keys-pets.js?v=ranch-life-2';
 import * as breeding from './breeding.js?v=b20261001b';
 import * as ranch from './ranch.js?v=ranch-life-2';
-import * as world from './world.js?v=mountain-falls-1';
+import * as world from './world.js?v=village-square-1';
 import * as clubs from './clubs-boards.js?v=clubhouse-2';
 import * as social from './social-play.js?v=club-rally-1';
 import * as clubActivities from './club-activities.js?v=club-rally-1';
@@ -192,7 +192,7 @@ import * as wFlora from './world-flora.js?v=mountain-falls-1';
 import * as wWater from './world-water.js?v=b20261001b';
 import * as wAtmos from './world-atmosphere.js?v=carved-canyon-1';
 import * as wQuarters from './world-quarters.js?v=jointed-canyon-1';
-import * as wPaths from './world-paths.js?v=village-townhouses-1';
+import * as wPaths from './world-paths.js?v=village-square-1';
 import * as wOutcrops from './world-outcrops.js?v=b20261001b';
 import * as uikit from './ui-kit.js?v=native-roster-1';
 import * as ui2horse from './ui2-horse.js?v=b20261001b';
