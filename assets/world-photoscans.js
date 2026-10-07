@@ -9,7 +9,7 @@ import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=village-gardens-1';
 import {alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=alpine-range-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
 import {inMeadowOpening} from './pastoral-fields.mjs?v=leafy-orchard-1';
-import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=opaque-foliage-1';
+import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=canopy-lighting-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
 
