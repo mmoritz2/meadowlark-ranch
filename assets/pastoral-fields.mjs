@@ -34,6 +34,14 @@ export const FLOWER_DRIFTS=[
   [140,38,9,20],[204,59,14,8],[33,208,16,6],[80,253,13,6],
   [215,115,12,6],[262,141,8,12],[147,-121,7,17],
 ];
+// Recover a fuller west sward without changing the shared grazing mask that
+// suppresses old flower cards and ferns. The compact field has C2-soft margins.
+export const WEST_MEADOW_SWARD_RECOVERY=.76;
+export const WEST_MEADOW_FLOWER_DRIFT=Object.freeze([-69,36,8,18]);
+export function westMeadowSwardAt(x,z){
+  const west=Math.hypot((x+54)/22,(z-43)/16)+Math.sin(x*.18+z*.11)*.06;
+  return 1-smooth(.55,1.12,west);
+}
 export function meadowBloomAt(x,z){
   let mask=0;
   for(const [cx,cz,rx,rz] of FLOWER_DRIFTS){
@@ -41,7 +49,16 @@ export function meadowBloomAt(x,z){
     const edge=d+Math.sin(x*.32+Math.sin(z*.17))*.12+Math.sin(z*.41)*.06;
     mask=Math.max(mask,1-smooth(.50,1.12,edge));
   }
-  return mask*(1-.96*meadowGrazingAt(x,z));
+  const grazing=meadowGrazingAt(x,z),legacy=mask*(1-.96*grazing);
+  // One modelled lupin margin joins the old west colony. Legacy colonies keep
+  // their original grazing response; only this new contribution recovers.
+  const [cx,cz,rx,rz]=WEST_MEADOW_FLOWER_DRIFT;
+  const d=Math.hypot((x-cx)/rx,(z-cz)/rz);
+  const edge=d+Math.sin(x*.32+Math.sin(z*.17))*.12+Math.sin(z*.41)*.06;
+  const colony=1-smooth(.50,1.12,edge);
+  if(colony===0)return legacy;
+  const recovered=grazing*(1-WEST_MEADOW_SWARD_RECOVERY*westMeadowSwardAt(x,z));
+  return Math.max(legacy,colony*(1-.96*recovered));
 }
 
 // Open pasture between tree groups makes the foreground slopes and village

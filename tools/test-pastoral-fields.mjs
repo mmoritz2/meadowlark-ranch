@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import * as T from '../assets/vendor/three/build/three.module.js';
-import {pastureRise,FIELD_RISES,FIELD_ANCHORS,meadowBloomAt,MEADOW_OPENINGS,meadowOpeningAt,inMeadowOpening,FLOWER_DRIFTS,meadowGrazingAt} from '../assets/pastoral-fields.mjs';
+import {pastureRise,FIELD_RISES,FIELD_ANCHORS,meadowBloomAt,MEADOW_OPENINGS,meadowOpeningAt,inMeadowOpening,FLOWER_DRIFTS,meadowGrazingAt,westMeadowSwardAt} from '../assets/pastoral-fields.mjs';
 import {createGrassTuftGeometry,createLupinGeometry,meadowGrowthAt,meadowBladeColor} from '../assets/meadow-cover.js';
 import {coyoteCoverDryWeight} from '../assets/biome-weights.mjs';
 
@@ -64,7 +64,7 @@ test('grass patches are stable, bounded and continuous at travelling cell bounda
  for(let x=-350;x<=350;x+=6)for(let z=-350;z<=350;z+=6){
   const h=meadowGrowthAt(x,z),grazed=meadowGrazingAt(x,z),arid=coyoteCoverDryWeight(x,z);
   values.push(h);assert(Number.isFinite(h)&&h>=.23*.62&&h<=1.37);assert.equal(h,meadowGrowthAt(x,z));
-  if(grazed>.95){assert(h<.61,'maintained pasture stays low');managed++;}
+  if(grazed>.95&&westMeadowSwardAt(x,z)===0){assert(h<.61,'maintained pasture outside the recovered west sward stays low');managed++;}
   if(grazed<.001&&arid===0){assert(h>=.42,'ungrazed green margins retain long growth');wild++;}
   if(arid>.95){assert(h<=1.37*.64,'dry basin growth remains below lush pasture height');dry++;}
   assert(Math.abs(meadowGrowthAt(x+.001,z)-meadowGrowthAt(x-.001,z))<.001);
