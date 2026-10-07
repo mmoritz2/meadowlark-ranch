@@ -674,7 +674,7 @@ import {HOLLOWPEAK,alpineSnowAt,fallsTerrainHeight,fallsExcludesDryPlants,create
 import {oasisTerrainHeight,oasisContainsWater} from './assets/oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from './assets/desert-art.js?v=botanical-desert-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
-import {createWaterfallArt} from './assets/waterfall-art.js';
+import {createWaterfallArt} from './assets/waterfall-art.js?v=living-cascades-1';
 import {installRiparian} from './assets/riparian.js';
 import {createOuterLandscape} from './assets/outer-landscape.js?v=continuous-countryside-1';
 import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=continuous-countryside-1';
@@ -696,7 +696,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=villag
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=continuous-countryside-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=lashes-visible-20261007';
-import {FEATURES} from './assets/features/index.js?v=club-horses-1';
+import {FEATURES} from './assets/features/index.js?v=living-cascades-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -3147,7 +3147,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const okGrass=(x,z)=>{
   if(alpineSnowAt(x,z)>.35)return false;
   if(Math.abs(x)>470||Math.abs(z)>470)return false;
-  if(canyonCliffAt(x,z,terrainH)||fallsExcludesDryPlants(x,z,terrainH))return false;
+  if(canyonCliffAt(x,z,terrainH)||fallsExcludesDryPlants(x,z,terrainH)||G.waterPkg?.excludesPlants(x,z))return false;
   if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // the arena stays sandy
   if(Math.abs(z-riverZ(x))<6.5)return false;               // not in the river
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
@@ -3172,7 +3172,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  };
  const okClutter=(x,z)=>{
   if(Math.abs(x)>470||Math.abs(z)>470)return false;
-  if(canyonCliffAt(x,z,terrainH)||fallsExcludesDryPlants(x,z,terrainH))return false;
+  if(canyonCliffAt(x,z,terrainH)||fallsExcludesDryPlants(x,z,terrainH)||G.waterPkg?.excludesPlants(x,z))return false;
   if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // never in the arena
   if(Math.abs(z-riverZ(x))<5.2)return false;               // not standing in the river
   if(Math.hypot(x-20,z-16)<5.6||oasisContainsWater(x,z,.7))return false; // no dry clutter in water
@@ -4503,41 +4503,18 @@ let waterMat=null;   // hoisted: the pond reuses it
   FALLS.landscape=createFallsLandscape({THREE,scene,heightAt:terrainH,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,colliders});
   {const FW=HOLLOWPEAK.width;
    const fall=waterfallArt.fall({x:FX,z:FZ,top:lip,bottom:foot+.04,width:FW,run:HOLLOWPEAK.run,name:'Hollowpeak Falls'});scene.add(fall);FALLS.surface=fall;
-   /* Falling water throws water. These are the strands that break off the sheet: thin
-      cards that fall, fade and start again, so the drop reads as moving volume rather
-      than a scrolling texture on a plane. */
-   const DN=90;
-   const dropTex=canvasTex(32,64,(c,w,h)=>{ c.clearRect(0,0,w,h);
-    const g3=c.createLinearGradient(0,0,0,h);
-    g3.addColorStop(0,'rgba(255,255,255,0)'); g3.addColorStop(0.35,'rgba(233,248,255,0.85)');
-    g3.addColorStop(0.75,'rgba(210,240,255,0.55)'); g3.addColorStop(1,'rgba(255,255,255,0)');
-    c.fillStyle=g3; c.fillRect(w*0.30,0,w*0.40,h); });
-   const drops=new THREE.InstancedMesh(new THREE.PlaneGeometry(0.16,1.5),
-    new THREE.MeshBasicMaterial({map:dropTex,transparent:true,opacity:0.62,depthWrite:false,
-     side:THREE.DoubleSide,blending:THREE.AdditiveBlending}),DN);
-   drops.frustumCulled=false; drops.renderOrder=3; scene.add(drops);
-   FALLS.drops=drops; FALLS.dn=DN; FALLS.dst=new Float32Array(DN*3);   // x offset, life, speed
-   for(let i=0;i<DN;i++){ FALLS.dst[i*3]=(Math.random()*2-1)*FW*1.15;
-    FALLS.dst[i*3+1]=Math.random(); FALLS.dst[i*3+2]=0.55+Math.random()*0.75; }
-   FALLS.fw=FW;
+   FALLS.effects=waterfallArt.effects({x:FX,z:FZ,top:lip,bottom:foot+.07,width:FW,run:HOLLOWPEAK.run,name:'Hollowpeak'});scene.add(FALLS.effects.group);
+   // Preserve the retired droplet layout's seeded placement draws.
+   for(let i=0;i<270;i++)Math.random();
   }
   {FALLS.pool=FALLS.landscape.pool;
    FALLS.foam=waterfallArt.impact({x:FX,y:foot+.045,z:FZ+HOLLOWPEAK.run,radius:3.8});scene.add(FALLS.foam);
    // Consume the retired boulder ring's explicit placement draws.
    for(let i=0;i<64;i++)Math.random();
   }
-  /* mist, drifting up the face */
-  {const MN=44, mistTex=canvasTex(64,64,(c,w,h)=>{
-    const g2=c.createRadialGradient(32,32,0,32,32,32);
-    g2.addColorStop(0,'rgba(255,255,255,0.85)'); g2.addColorStop(0.5,'rgba(255,255,255,0.28)');
-    g2.addColorStop(1,'rgba(255,255,255,0)'); c.fillStyle=g2; c.fillRect(0,0,w,h);});
-   const mist=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),
-    new THREE.MeshBasicMaterial({map:mistTex,transparent:true,opacity:0.28,depthWrite:false,side:THREE.DoubleSide}),MN);
-   mist.frustumCulled=false; mist.renderOrder=4; scene.add(mist);
-   FALLS.mist=mist; FALLS.n=MN; FALLS.x=FX; FALLS.z=FZ; FALLS.foot=foot; FALLS.lip=lip;
-   FALLS.st=new Float32Array(MN*4);                                // x, y, z, life
-   for(let i=0;i<MN;i++)FALLS.st[i*4+3]=Math.random();
-  }
+  // Preserve the retired mist layout's initial phase draws.
+  for(let i=0;i<44;i++)Math.random();
+  FALLS.x=FX;FALLS.z=FZ;FALLS.foot=foot;FALLS.lip=lip;
  }
  /* Sedimentary mesas and weathered spires with grounded talus skirts. */
  {
@@ -7632,9 +7609,6 @@ function breathe(origin,dir,elem,dt){
   _bEl[i]=elem;
  }
 }
-/* The falls' mist: billboards born at the foot of the water, drifting up the face and
-   fading. Only stepped when the rider is near enough to see it. */
-const _fm=new THREE.Matrix4(),_fv=new THREE.Vector3(),_fs=new THREE.Vector3(),_fq=new THREE.Quaternion();
 /* Mist gathers where the ground is low, and only at the ends of the day; motes drift near
    the rider and brighten when the sun is behind what you are looking at. */
 const _am=new THREE.Matrix4(),_av=new THREE.Vector3(),_as=new THREE.Vector3(),_aq=new THREE.Quaternion();
@@ -7692,51 +7666,6 @@ function tickAir(dt,t,golden,dayF,night){
   }
   AIRFX.mote.instanceMatrix.needsUpdate=true;
  }
-}
-function tickFalls(dt,t){
- /* the strands breaking off the sheet */
- if(FALLS.drops&&FALLS.dst){
-  const m=new THREE.Matrix4(), q=new THREE.Quaternion(), sc=new THREE.Vector3(1,1,1), pv=new THREE.Vector3();
-  const top=FALLS.lip-.1, bot=FALLS.foot+.15, drop=Math.max(1,top-bot);
-  for(let i=0;i<FALLS.dn;i++){
-   let life=FALLS.dst[i*3+1]+dt*FALLS.dst[i*3+2]*0.55;
-   if(life>1)life-=1;
-   FALLS.dst[i*3+1]=life;
-   const ox=FALLS.dst[i*3];
-   const v=life*life, y=top-drop*Math.pow(v,1.055);                       // accelerating
-   pv.set(FALLS.x+ox*(1+v*0.42), y, FALLS.z+v*v*HOLLOWPEAK.run+.15);
-   sc.set(1,0.7+v*1.5,1);                                   // stretches as it speeds up
-   m.compose(pv,q,sc);
-   FALLS.drops.setMatrixAt(i,m);
-  }
-  FALLS.drops.instanceMatrix.needsUpdate=true;
- }
- if(!FALLS.mist)return;
- const near=Math.hypot(player.pos.x-FALLS.x,player.pos.z-FALLS.z)<110;
- FALLS.mist.visible=near;
- if(FALLS.foam)FALLS.foam.material.opacity=0.42+0.16*Math.sin(t*2.1);
- if(!near)return;
- const st=FALLS.st;
- _fq.copy(camera.quaternion);
- for(let i=0;i<FALLS.n;i++){
-  const o=i*4;
-  st[o+3]-=dt*0.28;
-  if(st[o+3]<=0){                                        // reborn at the plunge point
-   st[o+3]=1;
-   st[o]  =FALLS.x+(Math.random()-0.5)*7.5;
-   st[o+1]=FALLS.foot+0.1+Math.random()*0.6;
-   st[o+2]=FALLS.z+HOLLOWPEAK.run-1+Math.random()*3.2;
-  }
-  st[o+1]+=dt*(1.15+i%3*0.3);
-  st[o+2]+=dt*0.55;
-  st[o]  +=Math.sin(t*0.7+i)*dt*0.5;
-  const age=1-st[o+3], sz=0.9+age*2.4;
-  _fs.set(sz,sz,sz);
-  _fm.compose(_fv.set(st[o],st[o+1],st[o+2]),_fq,_fs);
-  FALLS.mist.setMatrixAt(i,_fm);
- }
- FALLS.mist.instanceMatrix.needsUpdate=true;
- FALLS.mist.material.opacity=0.13*Math.max(0,Math.min(1,(110-Math.hypot(player.pos.x-FALLS.x,player.pos.z-FALLS.z))/40));
 }
 function tickBreath(dt){
  let live=0;
@@ -13806,7 +13735,6 @@ function tick(stepSeconds){
  if(groundMat?.userData.wetWeather){const w=groundMat.userData.wetWeather;w.value+=((weather.mode==='rain'?1:0)-w.value)*Math.min(1,dt*.18);}
  waterfallArt.update(t);
  for(const wa of waterAnims){wa.tex.offset.x+=dt*wa.sx;wa.tex.offset.y+=dt*(wa.sy<-0.5?wa.sy:wa.sy*Math.sin(t*0.5));}
- tickFalls(dt,t);
  tickSummon(dt);
  tickRoundup(dt,t);
  tickBarn(dt,t);
@@ -14410,6 +14338,7 @@ function installFeatures(){
  if(location.search.includes('qa'))window.__features=G;   // headless verification without touching the MERGE_STATS injection
 }
 installFeatures();
+for(const material of waterfallArt.mistMaterials)G.atmos?.registerMist(material);
 installVillageForecourts(G,villageGroundZones,{shrubs:naturalFlowerShrubs});
 installRanchWorldDetails(G,{shrubs:FOLIAGE.bush});
 installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
