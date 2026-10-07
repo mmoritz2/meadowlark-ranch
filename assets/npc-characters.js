@@ -4,6 +4,9 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export const npcAngle=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
 const NAMED={
+ cw_ned:{body:'m',outfit:'canvas',hairStyle:'beard',hair:'#b5afa2',skin:'#b98c6b',eyes:'grey',shirt:'#7a5a3a',pants:'#4d525b',scale:.98},
+ hp_bjorn:{body:'m',outfit:'alpine',hairStyle:'beard',hair:'#735441',skin:'#c99b78',eyes:'grey',shirt:'#4a6a8a',pants:'#465366',scale:1.04},
+ bf_lotte:{body:'f',outfit:'cardigan',hairStyle:'braid',hair:'#9d744e',skin:'#d7a88b',eyes:'green',shirt:'#8ab0e0',pants:'#536272',scale:.97},
  wren:{body:'m',outfit:'canvas',hairStyle:'beard',hair:'#bdb7ad',skin:'#c99774',eyes:'grey',shirt:'#8a6745',pants:'#46515f',scale:1.01},
  june:{body:'f',outfit:'cardigan',hairStyle:'bun',hair:'#6c5348',skin:'#c48e6d',eyes:'hazel',shirt:'#b0685c',pants:'#534e55',scale:.97},
  ada:{body:'f',outfit:'gingham',hairStyle:'braid',hair:'#392923',skin:'#aa7151',eyes:'brown',shirt:'#6887a3',pants:'#485e6c',scale:1},
@@ -29,7 +32,7 @@ export function npcAppearance(def={}){
 }
 export function npcUpdateInterval(distance,talking=false){return talking?1/30:distance<18?1/30:distance<38?1/15:1/6;}
 
-export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,keepRadius=85,onError=console.warn}){
+export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,keepRadius=85,distantCharacters=null,onError=console.warn}){
  const records=new Map();let pending=null,disposed=false,clock=0;
  const axis=new THREE.Vector3(),q=new THREE.Quaternion(),worldQ=new THREE.Quaternion(),parentQ=new THREE.Quaternion();
  const sole=new THREE.Vector3(),parentInverse=new THREE.Matrix4();
@@ -56,9 +59,10 @@ export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,
  };
  function register(entry){
   if(!entry?.g||entry.def?.rider||records.has(entry))return;
-  records.set(entry,{entry,fit:npcAppearance(entry.def),fallback:entry.g.children.filter(c=>!c.isSprite),rig:null,
+  const r={entry,fit:npcAppearance(entry.def),fallback:entry.g.children.filter(c=>!c.isSprite),rig:null,
    failed:false,phase:(hash(entry.def.id)%1000)/1000,elapsed:0,talk:0,turn:0,distance:Infinity,
-   lastX:entry.g.position.x,lastZ:entry.g.position.z,speed:0,lastSeen:clock});
+   lastX:entry.g.position.x,lastZ:entry.g.position.z,speed:0,lastSeen:clock};
+  r.distant=distantCharacters?.create(entry,r.fit)||null;records.set(entry,r);
  }
  function updateShadows(r){
   const near=r.distance<=28;if(r.shadowed===near)return;r.shadowed=near;
@@ -68,7 +72,8 @@ export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,
   if(!r.rig)return;
   const skeletons=new Set();r.rig.root.traverse(o=>{if(o.isSkinnedMesh&&o.skeleton)skeletons.add(o.skeleton);});
   r.rig.root.removeFromParent();r.rig.dispose();for(const s of skeletons)s.dispose();r.rig=null;r.soles=null;r.shadowMeshes=null;r.shadowed=undefined;
-  for(const child of r.fallback)child.visible=true;
+  for(const child of r.fallback)child.visible=!r.distant?.ready;
+  if(r.distant?.ready)r.distant.root.visible=r.distance<r.distant.range;
  }
  function pose(r,dt,talking,player){
   const rig=r.rig;if(!rig)return;
@@ -109,6 +114,7 @@ export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,
    r.soles=soleSamples(rig);groundSoles(r);
    r.shadowMeshes=[];rig.root.traverse(mesh=>{if(mesh.isMesh)r.shadowMeshes.push({mesh,castShadow:mesh.castShadow});});updateShadows(r);
    for(const child of r.fallback)child.visible=false;
+   if(r.distant)r.distant.root.visible=false;
   }catch(error){release(r);r.failed=true;onError('NPC character unavailable; keeping original '+r.entry.def.id,error);}
   finally{pending=null;}
  }
@@ -123,8 +129,8 @@ export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,
    // A warp or an external root reset is not a sprint animation.
    const speed=dt>0&&moved<2?moved/dt:0;r.speed+=(speed-r.speed)*(1-Math.exp(-dt*10));
    if(r.distance<keepRadius)r.lastSeen=clock;
+   if(r.rig&&r.distance>keepRadius&&clock-r.lastSeen>3)release(r);
    if(r.rig){
-    if(r.distance>keepRadius&&clock-r.lastSeen>3){release(r);continue;}
     updateShadows(r);active++;if(!furthest||r.distance>furthest.distance)furthest=r;
     r.rig.root.visible=r.entry.g.visible&&r.distance<keepRadius;
     r.elapsed+=dt;const talking=talkingId===r.entry.def.id;
@@ -132,14 +138,18 @@ export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,
      pose(r,Math.min(r.elapsed,.25),talking,player);r.elapsed=0;
     }
    }else if(ready&&!r.failed&&r!==pending&&r.distance<buildRadius&&(!best||r.distance<best.distance))best=r;
+   const nativeVisible=!!r.rig&&r.rig.root.visible;
+   r.distant?.update(dt,{distance:ready?r.distance:Infinity,show:!nativeVisible,speed:r.speed});
+   for(const child of r.fallback)child.visible=!nativeVisible&&!r.distant?.ready&&(!r.distant||r.distance<r.distant.range);
   }
+  distantCharacters?.endFrame();
   if(ready&&!pending&&best){
    if(active>=limit&&furthest&&furthest.distance>best.distance+12){release(furthest);active--;}
    if(active<limit)void build(best);
   }
  }
- return {update,get:id=>[...records.values()].find(r=>r.entry.def.id===id)?.rig||null,
+ return {update,hasModel:id=>{const r=[...records.values()].find(r=>r.entry.def.id===id);return !!(r?.rig||r?.distant?.ready);},get:id=>[...records.values()].find(r=>r.entry.def.id===id)?.rig||null,
   stats:()=>({registered:records.size,active:[...records.values()].filter(r=>r.rig).length,pending:pending?.entry.def.id||null,
-   failed:[...records.values()].filter(r=>r.failed).map(r=>r.entry.def.id)}),
-  dispose(){disposed=true;for(const r of records.values())release(r);records.clear();}};
+   failed:[...records.values()].filter(r=>r.failed).map(r=>r.entry.def.id),distance:distantCharacters?.stats()||null}),
+  dispose(){disposed=true;for(const r of records.values()){release(r);r.distant?.dispose();}records.clear();distantCharacters?.dispose();}};
 }

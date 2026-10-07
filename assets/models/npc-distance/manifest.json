@@ -1,0 +1,1696 @@
+{
+  "version": 1,
+  "source": "Existing CC0 Quaternius bodies, outfits and animations, CC0 Blender Studio Human Base Meshes heads, and original Meadowlark tailoring, hair, face treatments and NPC appearances.",
+  "sources": [
+    {
+      "file": "ranch3d.html",
+      "sha256": "c4b9ecea053b6f00f4926d68269a79bbec8c9575ccfe038debea6b010664aade"
+    },
+    {
+      "file": "assets/npc-characters.js",
+      "sha256": "696fecd6ff20d1d73f494ed02363dc3278ace8371ce846b11e75ead1bfc3c9ee"
+    },
+    {
+      "file": "assets/rider-model.js",
+      "sha256": "50aa543427f9828f2cd2c16c3f4606db8173b1fd02c75bf85b454a65c92bc76b"
+    },
+    {
+      "file": "assets/rider-face.js",
+      "sha256": "990e2ce6c96c96b52ca2f520177b6beb7f2b344ddb13a0bcb14e838877a2ef46"
+    },
+    {
+      "file": "assets/rider-tailoring.js",
+      "sha256": "a6d34a9957d8ee08318fad58690c6b3bb28a2e5e02ba9a03d0ff8672dfa9435d"
+    },
+    {
+      "file": "assets/rider-clothes.js",
+      "sha256": "c259f1f8a7315ca72352221a02b794a80a63ce062a7aa974354a41e037c77011"
+    },
+    {
+      "file": "assets/rider-proportions.js",
+      "sha256": "c68847d3430499a2351e549c8adec6b0c8601b1c0d95086c9e028b265a4848fa"
+    },
+    {
+      "file": "assets/rider-hairstyles.js",
+      "sha256": "a3912ac84d3c34a257406030b4912e7ff941a03a104e07a0882c198a7b3c348a"
+    },
+    {
+      "file": "assets/rider-heads.js",
+      "sha256": "6800fbf6a4a5d8a74db2808288c82e1da40069a68a862c3bb91d4475b07383b6"
+    },
+    {
+      "file": "assets/rider-head-surface.js",
+      "sha256": "c72b7b59eae8b213d29f7f11fb9689a78270ca4b479f54042b995fa5b261005b"
+    },
+    {
+      "file": "assets/models/rider/stylized-f-head.glb",
+      "sha256": "d317e6e869880e42341bf9ce8ab5c4c2cbb2e19a827c08c7372902d02c6f8347"
+    },
+    {
+      "file": "assets/models/rider/stylized-m-head.glb",
+      "sha256": "e7c98ff14766d502a6050bae2df0442fafeeba3f48d6b8f8c19f667ff8918b4a"
+    }
+  ],
+  "entries": [
+    {
+      "id": "wren",
+      "appearance": {
+        "body": "m",
+        "outfit": "canvas",
+        "hairStyle": "beard",
+        "hair": "#bdb7ad",
+        "skin": "#c99774",
+        "eyes": "grey",
+        "shirt": "#8a6745",
+        "pants": "#46515f",
+        "scale": 1.01,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "wren-albedo.png",
+          "bytes": 22241,
+          "sha256": "84e7f00c8c07af1ed15893a4011d6f1b9ba7698137ff50787217663f532c72c1"
+        },
+        "normals": {
+          "file": "wren-normals.png",
+          "bytes": 47807,
+          "sha256": "b4c89f82b8eb961e1c153aeecbc6c1e59164aba2216baf3a04177fe2d1d998e9"
+        }
+      }
+    },
+    {
+      "id": "ada",
+      "appearance": {
+        "body": "f",
+        "outfit": "gingham",
+        "hairStyle": "braid",
+        "hair": "#392923",
+        "skin": "#aa7151",
+        "eyes": "brown",
+        "shirt": "#6887a3",
+        "pants": "#485e6c",
+        "scale": 1,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "ada-albedo.png",
+          "bytes": 26533,
+          "sha256": "1a2c7544a36b2ab092c9c7c499fd4479079c5fb3bf7b0cdb04aaf6ea6f847838"
+        },
+        "normals": {
+          "file": "ada-normals.png",
+          "bytes": 42069,
+          "sha256": "461d2d6388b602d48a653d4f9cfeef62f24d3c5081a2a36aa1c6a2c3b8a1dc02"
+        }
+      }
+    },
+    {
+      "id": "otto",
+      "appearance": {
+        "body": "m",
+        "outfit": "overalls",
+        "hairStyle": "crop",
+        "hair": "#684a35",
+        "skin": "#cd9a72",
+        "eyes": "green",
+        "shirt": "#d0b88a",
+        "pants": "#506b7e",
+        "scale": 1.04,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "otto-albedo.png",
+          "bytes": 24125,
+          "sha256": "8ebff9e64da4f1f739efd9452bac0e09decd2ee57f60798be56a6d7117c93a52"
+        },
+        "normals": {
+          "file": "otto-normals.png",
+          "bytes": 49641,
+          "sha256": "c12d6c4963aadae0dd7e03208d55065f0b47ae1f16a2b9a8af99d9d0eeadbcec"
+        }
+      }
+    },
+    {
+      "id": "bea",
+      "appearance": {
+        "body": "f",
+        "outfit": "western",
+        "hairStyle": "ponytail",
+        "hair": "#352b24",
+        "skin": "#a57155",
+        "eyes": "amber",
+        "shirt": "#b06a3a",
+        "pants": "#3f4145",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "bea-albedo.png",
+          "bytes": 22232,
+          "sha256": "53b2ad5e984766916a62734178a5b7e1c4125e983a8de927fa4aef0a251ade83"
+        },
+        "normals": {
+          "file": "bea-normals.png",
+          "bytes": 43190,
+          "sha256": "f5f6d877de140fec6059140ac763d2b98f54d3542aad63a63fd0cd43e575315c"
+        }
+      }
+    },
+    {
+      "id": "ilse",
+      "appearance": {
+        "body": "f",
+        "outfit": "alpine",
+        "hairStyle": "long",
+        "hair": "#d5c4a0",
+        "skin": "#e5b695",
+        "eyes": "blue",
+        "shirt": "#746489",
+        "pants": "#50566c",
+        "scale": 1,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "ilse-albedo.png",
+          "bytes": 28817,
+          "sha256": "9a8e082cc326797c49924056d435d648539b20c8c12eec612006eda715f5d0f6"
+        },
+        "normals": {
+          "file": "ilse-normals.png",
+          "bytes": 43855,
+          "sha256": "81e792d0362c69c8574d30a8bb0404dfc51260849715d7e88149cd745c9474ea"
+        }
+      }
+    },
+    {
+      "id": "posy",
+      "appearance": {
+        "body": "m",
+        "outfit": "flannel",
+        "hairStyle": "short",
+        "hair": "#b49c72",
+        "skin": "#956347",
+        "eyes": "brown",
+        "shirt": "#e0c48a",
+        "pants": "#4b5b6b",
+        "scale": 0.98,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "posy-albedo.png",
+          "bytes": 30983,
+          "sha256": "5fa0b6e311d59ed9b1179d3769ce011068bf068ab17de89e370b282a30b6e625"
+        },
+        "normals": {
+          "file": "posy-normals.png",
+          "bytes": 45426,
+          "sha256": "7469295fcd8323e65d24748cabdd961d2892837b40f0e4d3f40cc5eea2cb27eb"
+        }
+      }
+    },
+    {
+      "id": "hollis",
+      "appearance": {
+        "body": "m",
+        "outfit": "western",
+        "hairStyle": "crop",
+        "hair": "#71513a",
+        "skin": "#ae7958",
+        "eyes": "brown",
+        "shirt": "#c9a24a",
+        "pants": "#625548",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "hollis-albedo.png",
+          "bytes": 23073,
+          "sha256": "acc31f052e98ac5e33da18b6bcd490e8f3dfe2a1df5098b3966037a2425a3a7b"
+        },
+        "normals": {
+          "file": "hollis-normals.png",
+          "bytes": 48226,
+          "sha256": "28cbffde900e55552cd6ca794d1c51e4e155b4e20662bac2b872b2d6532c5b15"
+        }
+      }
+    },
+    {
+      "id": "rosa",
+      "appearance": {
+        "body": "m",
+        "outfit": "flannel",
+        "hairStyle": "short",
+        "hair": "#8a4b30",
+        "skin": "#e1b496",
+        "eyes": "green",
+        "shirt": "#e8a05a",
+        "pants": "#4b5b6b",
+        "scale": 0.98,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "rosa-albedo.png",
+          "bytes": 31913,
+          "sha256": "046aa1200339deca170a053cf19fe9a7dce3ef0fa80f7ea676319bacfbf6f035"
+        },
+        "normals": {
+          "file": "rosa-normals.png",
+          "bytes": 45390,
+          "sha256": "59a3f6aa56fbb9fb703114ad4a38105f70a587cc2460845663a23d1101d2521b"
+        }
+      }
+    },
+    {
+      "id": "tomas",
+      "appearance": {
+        "body": "f",
+        "outfit": "gingham",
+        "hairStyle": "long",
+        "hair": "#b49c72",
+        "skin": "#956347",
+        "eyes": "grey",
+        "shirt": "#8aa0b8",
+        "pants": "#49484e",
+        "scale": 1.03,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "tomas-albedo.png",
+          "bytes": 29706,
+          "sha256": "a5af68d01ced63bb13510401c07b301f2120f63e37d48c4ebd5b681fd9e97c30"
+        },
+        "normals": {
+          "file": "tomas-normals.png",
+          "bytes": 45773,
+          "sha256": "3ccd08fa6d810d0cc5eea204eed48d10e3717e487a08d4a3ee5db8aa40e66aee"
+        }
+      }
+    },
+    {
+      "id": "nell",
+      "appearance": {
+        "body": "m",
+        "outfit": "western",
+        "hairStyle": "crop",
+        "hair": "#b49c72",
+        "skin": "#956347",
+        "eyes": "brown",
+        "shirt": "#f0e6d2",
+        "pants": "#625548",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "nell-albedo.png",
+          "bytes": 23334,
+          "sha256": "02051ebd3d5752de06da3588b9fdb1024d39a72c0feb3caf669b0e2ddff5c8ae"
+        },
+        "normals": {
+          "file": "nell-normals.png",
+          "bytes": 48131,
+          "sha256": "83ad2fd79c9f927427d54545813da85bbcd4fc9ce0ac109075157942e945bfbc"
+        }
+      }
+    },
+    {
+      "id": "saddler",
+      "appearance": {
+        "body": "m",
+        "outfit": "canvas",
+        "hairStyle": "beard",
+        "hair": "#614331",
+        "skin": "#c28c64",
+        "eyes": "hazel",
+        "shirt": "#927451",
+        "pants": "#514a3f",
+        "scale": 1.01,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "saddler-albedo.png",
+          "bytes": 21997,
+          "sha256": "6437110210f4986954b88ac9c723fd888f4de4be44f220d2aeb999811def96de"
+        },
+        "normals": {
+          "file": "saddler-normals.png",
+          "bytes": 48069,
+          "sha256": "537bc6d8dca432f8678b33ff0d7fa50a1da31c17ba14a25d9876ad971d1d6132"
+        }
+      }
+    },
+    {
+      "id": "june",
+      "appearance": {
+        "body": "f",
+        "outfit": "cardigan",
+        "hairStyle": "bun",
+        "hair": "#6c5348",
+        "skin": "#c48e6d",
+        "eyes": "hazel",
+        "shirt": "#b0685c",
+        "pants": "#534e55",
+        "scale": 0.97,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "june-albedo.png",
+          "bytes": 19829,
+          "sha256": "424624cbefc519a85781c88113cfd2cfe836edf153d7c18e512484a7f6f74ac8"
+        },
+        "normals": {
+          "file": "june-normals.png",
+          "bytes": 40153,
+          "sha256": "0a600c52af3407a7b196d74e0c565a21d890817dfbfec7f595eef6f33deb2b4c"
+        }
+      }
+    },
+    {
+      "id": "bram",
+      "appearance": {
+        "body": "m",
+        "outfit": "denim",
+        "hairStyle": "short",
+        "hair": "#342721",
+        "skin": "#9b6549",
+        "eyes": "darkbrown",
+        "shirt": "#5c688a",
+        "pants": "#615246",
+        "scale": 1.03,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "bram-albedo.png",
+          "bytes": 21635,
+          "sha256": "bc20009f8c4134d2b8319597cbd3bff2e28c9a1849cb5b2b5c49ae4d819a142b"
+        },
+        "normals": {
+          "file": "bram-normals.png",
+          "bytes": 49400,
+          "sha256": "a05212ad885082ef8408ff14f6abf270c669a133fc3da2198d4f37318e180195"
+        }
+      }
+    },
+    {
+      "id": "hesper",
+      "appearance": {
+        "body": "f",
+        "outfit": "flannel",
+        "hairStyle": "ponytail",
+        "hair": "#7d472a",
+        "skin": "#deb18d",
+        "eyes": "green",
+        "shirt": "#628269",
+        "pants": "#4b5564",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "hesper-albedo.png",
+          "bytes": 30397,
+          "sha256": "dffa25c802be8df16ba6615268fab7631d7ed94cf77f900a14467c36b6b9116e"
+        },
+        "normals": {
+          "file": "hesper-normals.png",
+          "bytes": 42982,
+          "sha256": "cf56710b0f5ea3dcbb0be396354d7e0048aa86bd989bf55f4f0a2cbef7fab6c5"
+        }
+      }
+    },
+    {
+      "id": "rook",
+      "appearance": {
+        "body": "m",
+        "outfit": "cable",
+        "hairStyle": "beard",
+        "hair": "#a9a6a0",
+        "skin": "#b78260",
+        "eyes": "grey",
+        "shirt": "#80735e",
+        "pants": "#4c5260",
+        "scale": 0.99,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "rook-albedo.png",
+          "bytes": 28572,
+          "sha256": "00b60d9f40f0a4010b7aaee944ef63c2b5c6986a6ec1441a3e69233fbfcce53f"
+        },
+        "normals": {
+          "file": "rook-normals.png",
+          "bytes": 46601,
+          "sha256": "efc6be78bed637fcc15cc6f0df3f1b48d4a4a5c7259ad764f77210cf9debf415"
+        }
+      }
+    },
+    {
+      "id": "tamsin",
+      "appearance": {
+        "body": "f",
+        "outfit": "safari",
+        "hairStyle": "bun",
+        "hair": "#31251f",
+        "skin": "#976446",
+        "eyes": "brown",
+        "shirt": "#bd7047",
+        "pants": "#536148",
+        "scale": 1.01,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "tamsin-albedo.png",
+          "bytes": 20953,
+          "sha256": "f159245b9f957f7661c3d10d7c0c5d28e7de7491676725db97f1d642bea78ac3"
+        },
+        "normals": {
+          "file": "tamsin-normals.png",
+          "bytes": 42285,
+          "sha256": "89498c4878817ea6f0a51eac0d507c0c889b3297b3748a61c97cdd508b0caa3a"
+        }
+      }
+    },
+    {
+      "id": "stallkeep",
+      "appearance": {
+        "body": "m",
+        "outfit": "tweed",
+        "hairStyle": "short",
+        "hair": "#453628",
+        "skin": "#c39272",
+        "eyes": "olive",
+        "shirt": "#746785",
+        "pants": "#4d4559",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "stallkeep-albedo.png",
+          "bytes": 34435,
+          "sha256": "70c6cf6d010297af9783f4aeefd4c5970245c68012418f18605404f06cd75913"
+        },
+        "normals": {
+          "file": "stallkeep-normals.png",
+          "bytes": 48168,
+          "sha256": "14056b9ab2bbdd7fdb8b7ebc2d06428e7105f69c0d0995ba0355de17bbf3d2ed"
+        }
+      }
+    },
+    {
+      "id": "marta",
+      "appearance": {
+        "body": "f",
+        "outfit": "canvas",
+        "hairStyle": "bun",
+        "hair": "#69574c",
+        "skin": "#ce9a78",
+        "eyes": "hazel",
+        "shirt": "#b49b60",
+        "pants": "#5e6957",
+        "scale": 0.99,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "marta-albedo.png",
+          "bytes": 21264,
+          "sha256": "f1f0834ef927a0a7ebc3403dce4735aa588398cd3d2782ce2f7d6d905efc5420"
+        },
+        "normals": {
+          "file": "marta-normals.png",
+          "bytes": 41415,
+          "sha256": "e52c4604d800cde05436fcaeefb86f30323035b4815866e92b02b7f2b3337098"
+        }
+      }
+    },
+    {
+      "id": "cw_pim",
+      "appearance": {
+        "body": "m",
+        "outfit": "western",
+        "hairStyle": "crop",
+        "hair": "#b49c72",
+        "skin": "#956347",
+        "eyes": "green",
+        "shirt": "#6a8fbf",
+        "pants": "#625548",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "cw_pim-albedo.png",
+          "bytes": 74743,
+          "sha256": "da04ae209336c2c05883b028588dc3988cca97daeaadf2c81e4061fb72846138"
+        },
+        "normals": {
+          "file": "cw_pim-normals.png",
+          "bytes": 151343,
+          "sha256": "4a8d13946ffcf0a09de4859e50f0ad80b01ac2cfccfec5093ba315141a78869f"
+        }
+      }
+    },
+    {
+      "id": "cw_rosa",
+      "appearance": {
+        "body": "f",
+        "outfit": "gingham",
+        "hairStyle": "long",
+        "hair": "#382a22",
+        "skin": "#d9a780",
+        "eyes": "grey",
+        "shirt": "#9bbf6a",
+        "pants": "#49484e",
+        "scale": 1.03,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "cw_rosa-albedo.png",
+          "bytes": 93957,
+          "sha256": "c59ab5d206bec246ccfc59c05e47cb373e85c68273e993f6c8bd38b533efaf16"
+        },
+        "normals": {
+          "file": "cw_rosa-normals.png",
+          "bytes": 147602,
+          "sha256": "9ef90f64d8c176a175905f3c8eb62e52659f3df4903cb4aed0894b1f7fcba848"
+        }
+      }
+    },
+    {
+      "id": "cw_ned",
+      "appearance": {
+        "body": "m",
+        "outfit": "canvas",
+        "hairStyle": "beard",
+        "hair": "#b5afa2",
+        "skin": "#b98c6b",
+        "eyes": "grey",
+        "shirt": "#7a5a3a",
+        "pants": "#4d525b",
+        "scale": 0.98,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "cw_ned-albedo.png",
+          "bytes": 69975,
+          "sha256": "ba9589679b1f94ccde516ecd08af05cead207bd63c000a48a6947645157baa2e"
+        },
+        "normals": {
+          "file": "cw_ned-normals.png",
+          "bytes": 143982,
+          "sha256": "cac7822cd1ddcd58b13f33fc27baa4a2869e4fee1e563bc353991c4811287e96"
+        }
+      }
+    },
+    {
+      "id": "bf_hanne",
+      "appearance": {
+        "body": "m",
+        "outfit": "western",
+        "hairStyle": "crop",
+        "hair": "#71513a",
+        "skin": "#ae7958",
+        "eyes": "brown",
+        "shirt": "#c46a3a",
+        "pants": "#625548",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "bf_hanne-albedo.png",
+          "bytes": 74861,
+          "sha256": "252abf7d77bddc402c48dea35e75cf32485e53278f1ce42ced92afe0ebed28c7"
+        },
+        "normals": {
+          "file": "bf_hanne-normals.png",
+          "bytes": 151137,
+          "sha256": "2041770dc029eda48c94d078e7e1f148119adebd729b5c04d5ebee55aae86253"
+        }
+      }
+    },
+    {
+      "id": "bf_kip",
+      "appearance": {
+        "body": "m",
+        "outfit": "flannel",
+        "hairStyle": "short",
+        "hair": "#8a4b30",
+        "skin": "#e1b496",
+        "eyes": "green",
+        "shirt": "#5a7a3a",
+        "pants": "#4b5b6b",
+        "scale": 0.98,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "bf_kip-albedo.png",
+          "bytes": 101759,
+          "sha256": "480e86406e10e2706cffe5317f4b51b634fb04393edf5e6d8995d1c3ee8161bb"
+        },
+        "normals": {
+          "file": "bf_kip-normals.png",
+          "bytes": 142551,
+          "sha256": "7ab94c0fca844eeb1d69a0a8dce0d5dab6cea5259518a2a94f7b29764c2793c4"
+        }
+      }
+    },
+    {
+      "id": "bf_lotte",
+      "appearance": {
+        "body": "f",
+        "outfit": "cardigan",
+        "hairStyle": "braid",
+        "hair": "#9d744e",
+        "skin": "#d7a88b",
+        "eyes": "green",
+        "shirt": "#8ab0e0",
+        "pants": "#536272",
+        "scale": 0.97,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "bf_lotte-albedo.png",
+          "bytes": 67793,
+          "sha256": "d099377c145f55681aa21fe305cee43a4c9d023aeb199e9db4c405286c5735e5"
+        },
+        "normals": {
+          "file": "bf_lotte-normals.png",
+          "bytes": 129796,
+          "sha256": "2815ada6dfd0f25484d1c8584659bec1962b08ea4ceb3cfe7ff35e92b8530b87"
+        }
+      }
+    },
+    {
+      "id": "cc_dusty",
+      "appearance": {
+        "body": "f",
+        "outfit": "gingham",
+        "hairStyle": "long",
+        "hair": "#382a22",
+        "skin": "#d9a780",
+        "eyes": "grey",
+        "shirt": "#b07a4a",
+        "pants": "#49484e",
+        "scale": 1.03,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "cc_dusty-albedo.png",
+          "bytes": 94216,
+          "sha256": "04e533a267c3cb1fe1ed2086dc0a127d0f68e2ed1cb8f45fdc0a4f251af2f556"
+        },
+        "normals": {
+          "file": "cc_dusty-normals.png",
+          "bytes": 147768,
+          "sha256": "269fe78b74cd9999266c3ed5cb7b5269d24e058b7473535991b995f5d4eb2a78"
+        }
+      }
+    },
+    {
+      "id": "cc_sol",
+      "appearance": {
+        "body": "m",
+        "outfit": "western",
+        "hairStyle": "crop",
+        "hair": "#aaa398",
+        "skin": "#bd8966",
+        "eyes": "green",
+        "shirt": "#c85a3a",
+        "pants": "#625548",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "cc_sol-albedo.png",
+          "bytes": 75178,
+          "sha256": "4e4dedfaf64d77ecf4e61f9056afefa752c20df3081bc701c33cdb722617691b"
+        },
+        "normals": {
+          "file": "cc_sol-normals.png",
+          "bytes": 151194,
+          "sha256": "ad711b73ce21419c30086105fd1e828bc589892f01d2b8ea6a24cd101cf58b68"
+        }
+      }
+    },
+    {
+      "id": "hp_bjorn",
+      "appearance": {
+        "body": "m",
+        "outfit": "alpine",
+        "hairStyle": "beard",
+        "hair": "#735441",
+        "skin": "#c99b78",
+        "eyes": "grey",
+        "shirt": "#4a6a8a",
+        "pants": "#465366",
+        "scale": 1.04,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "hp_bjorn-albedo.png",
+          "bytes": 97616,
+          "sha256": "a93e7431b5e2852e4bd3b5cbff431735bfb9f3d0bb4e820d88f5fca628ebfab6"
+        },
+        "normals": {
+          "file": "hp_bjorn-normals.png",
+          "bytes": 158184,
+          "sha256": "fe27eb95366d9f085bf5b719f707c0f66a2311369d2c4ec18b97a9f7ea9b4b0d"
+        }
+      }
+    },
+    {
+      "id": "almanac",
+      "appearance": {
+        "body": "m",
+        "outfit": "flannel",
+        "hairStyle": "short",
+        "hair": "#8a4b30",
+        "skin": "#e1b496",
+        "eyes": "brown",
+        "shirt": "#4a6a7a",
+        "pants": "#4b5b6b",
+        "scale": 0.98,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 1,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "almanac-albedo.png",
+          "bytes": 32066,
+          "sha256": "41be2bac9935f0d6a7102535fc139c05da6514de2e5f760e62dba2d33c3523ce"
+        },
+        "normals": {
+          "file": "almanac-normals.png",
+          "bytes": 45435,
+          "sha256": "47b83bb565b9334f8bd861bfb95c20c00ef620dad69af9330badcf335b2c3d85"
+        }
+      }
+    },
+    {
+      "id": "qa_mattis",
+      "appearance": {
+        "body": "m",
+        "outfit": "western",
+        "hairStyle": "crop",
+        "hair": "#71513a",
+        "skin": "#ae7958",
+        "eyes": "green",
+        "shirt": "#6f5a3c",
+        "pants": "#625548",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qa_mattis-albedo.png",
+          "bytes": 74744,
+          "sha256": "609064283dcafe3b5ae6cbaeb53e482008f0ac0a780d0291f198705fe391976e"
+        },
+        "normals": {
+          "file": "qa_mattis-normals.png",
+          "bytes": 151280,
+          "sha256": "30e4b807d097ca016fd94d166087598cb760a756824d4d8573dc34804c12ef42"
+        }
+      }
+    },
+    {
+      "id": "qa_ruda",
+      "appearance": {
+        "body": "m",
+        "outfit": "denim",
+        "hairStyle": "beard",
+        "hair": "#71513a",
+        "skin": "#ae7958",
+        "eyes": "green",
+        "shirt": "#5a4a38",
+        "pants": "#49484e",
+        "scale": 1,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qa_ruda-albedo.png",
+          "bytes": 70069,
+          "sha256": "73e260914750c3e4d5575fc6d3e275bef57fac794e03a4e7d4515bff5a2aa64f"
+        },
+        "normals": {
+          "file": "qa_ruda-normals.png",
+          "bytes": 148532,
+          "sha256": "cf50b1527743d999f2650b4b6064962beec5803fb8312434aa014b6134fe6d88"
+        }
+      }
+    },
+    {
+      "id": "qa_sten",
+      "appearance": {
+        "body": "m",
+        "outfit": "flannel",
+        "hairStyle": "short",
+        "hair": "#aaa398",
+        "skin": "#bd8966",
+        "eyes": "brown",
+        "shirt": "#5a7a4a",
+        "pants": "#4b5b6b",
+        "scale": 0.98,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qa_sten-albedo.png",
+          "bytes": 99721,
+          "sha256": "656a020d86638908bc8ac894d8b747330b77de69fd9587d84ba60c877c363b12"
+        },
+        "normals": {
+          "file": "qa_sten-normals.png",
+          "bytes": 142240,
+          "sha256": "c7f5aade964979be6c9bb76e6441be2f60ac55f7d6790e912ee0726c23fccbbe"
+        }
+      }
+    },
+    {
+      "id": "qw_teiko",
+      "appearance": {
+        "body": "m",
+        "outfit": "western",
+        "hairStyle": "crop",
+        "hair": "#aaa398",
+        "skin": "#bd8966",
+        "eyes": "green",
+        "shirt": "#4a6a5a",
+        "pants": "#625548",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qw_teiko-albedo.png",
+          "bytes": 75379,
+          "sha256": "d08fbac5a460d559232d0aa8c528159a12a1674a97724cc7cafc5427ceb44318"
+        },
+        "normals": {
+          "file": "qw_teiko-normals.png",
+          "bytes": 151282,
+          "sha256": "2cf967437ef6d4691bb355952685d502cab4572b041595763444c987d7891dc7"
+        }
+      }
+    },
+    {
+      "id": "qw_bram",
+      "appearance": {
+        "body": "m",
+        "outfit": "denim",
+        "hairStyle": "beard",
+        "hair": "#71513a",
+        "skin": "#ae7958",
+        "eyes": "brown",
+        "shirt": "#7a6a4a",
+        "pants": "#49484e",
+        "scale": 1,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qw_bram-albedo.png",
+          "bytes": 70093,
+          "sha256": "e205091e8053d1a2c6430b1841ed16581219e6ad208437988a6d0b176caf344c"
+        },
+        "normals": {
+          "file": "qw_bram-normals.png",
+          "bytes": 148204,
+          "sha256": "42ee99e86f3551e3be8376432e7a11b810f8eea9b31347202458471ecd12e64f"
+        }
+      }
+    },
+    {
+      "id": "qw_nel",
+      "appearance": {
+        "body": "f",
+        "outfit": "canvas",
+        "hairStyle": "bun",
+        "hair": "#8a4b30",
+        "skin": "#e1b496",
+        "eyes": "hazel",
+        "shirt": "#7a8fbf",
+        "pants": "#625548",
+        "scale": 0.99,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qw_nel-albedo.png",
+          "bytes": 69633,
+          "sha256": "6adad4c3317374260a2e00b6b38a956186adeaf32aa38832b76d4353ffcaf86d"
+        },
+        "normals": {
+          "file": "qw_nel-normals.png",
+          "bytes": 133060,
+          "sha256": "40c1d4146b903becffdf34fa9a4e72d81884b7d6d4062d55fe083c16fbb5cf5d"
+        }
+      }
+    },
+    {
+      "id": "qf_ivar",
+      "appearance": {
+        "body": "f",
+        "outfit": "cable",
+        "hairStyle": "long",
+        "hair": "#382a22",
+        "skin": "#d9a780",
+        "eyes": "grey",
+        "shirt": "#5a6f8a",
+        "pants": "#4b5b6b",
+        "scale": 1.01,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qf_ivar-albedo.png",
+          "bytes": 91912,
+          "sha256": "d76ffe54522a68d1996e50fc3fa09c9b0215b10a0d176432cd7ce8e12d52e613"
+        },
+        "normals": {
+          "file": "qf_ivar-normals.png",
+          "bytes": 143956,
+          "sha256": "cf6ad28fe1113b60f72f14ceef9c20839957aeb8b64c6849f48351146b71d50a"
+        }
+      }
+    },
+    {
+      "id": "qf_sanna",
+      "appearance": {
+        "body": "m",
+        "outfit": "western",
+        "hairStyle": "crop",
+        "hair": "#8a4b30",
+        "skin": "#e1b496",
+        "eyes": "green",
+        "shirt": "#8a5a7a",
+        "pants": "#625548",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qf_sanna-albedo.png",
+          "bytes": 75756,
+          "sha256": "a1df92a4565fb76f324431a7eec0304bdc5f2079fd59f62a23632cbe7cfc7dbe"
+        },
+        "normals": {
+          "file": "qf_sanna-normals.png",
+          "bytes": 151278,
+          "sha256": "1b4bd79afb068aaa5600a03a8dbeb5539501161c127ce4460919804ba6ab12d6"
+        }
+      }
+    },
+    {
+      "id": "qf_ebbe",
+      "appearance": {
+        "body": "f",
+        "outfit": "canvas",
+        "hairStyle": "bun",
+        "hair": "#b49c72",
+        "skin": "#956347",
+        "eyes": "hazel",
+        "shirt": "#4a5a5a",
+        "pants": "#625548",
+        "scale": 0.99,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qf_ebbe-albedo.png",
+          "bytes": 68108,
+          "sha256": "d55a509433a526ffe8c780a5ae994d3e7a0d1350816866e768e3757d5ed0e1e6"
+        },
+        "normals": {
+          "file": "qf_ebbe-normals.png",
+          "bytes": 132925,
+          "sha256": "75a43e97dc5251d2e3a52f0d67c0314ce8cc4f10b31f574f331a3f73db4c0318"
+        }
+      }
+    },
+    {
+      "id": "qo_hollis",
+      "appearance": {
+        "body": "f",
+        "outfit": "gingham",
+        "hairStyle": "long",
+        "hair": "#382a22",
+        "skin": "#d9a780",
+        "eyes": "grey",
+        "shirt": "#a8683a",
+        "pants": "#49484e",
+        "scale": 1.03,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qo_hollis-albedo.png",
+          "bytes": 94035,
+          "sha256": "c3d0a30e3ed93157d934666f5e413c5b2c1048b8d20cc44989232b5bfad75f66"
+        },
+        "normals": {
+          "file": "qo_hollis-normals.png",
+          "bytes": 147697,
+          "sha256": "d05f17e77765bcf15edf3af0478063ed95802540fb615cfd71ac7bdb4dcc8a2c"
+        }
+      }
+    },
+    {
+      "id": "qo_perrin",
+      "appearance": {
+        "body": "m",
+        "outfit": "denim",
+        "hairStyle": "beard",
+        "hair": "#71513a",
+        "skin": "#ae7958",
+        "eyes": "green",
+        "shirt": "#6a7a8a",
+        "pants": "#49484e",
+        "scale": 1,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qo_perrin-albedo.png",
+          "bytes": 70291,
+          "sha256": "d5dc8a69b14767d366d0789e19c88d7feb5a9afcae115a10ad3979f54e61e054"
+        },
+        "normals": {
+          "file": "qo_perrin-normals.png",
+          "bytes": 148744,
+          "sha256": "920ee84c4636abd906f5bfaf7e4cc8cb30b3260b883bf3086846810895ac64ba"
+        }
+      }
+    },
+    {
+      "id": "qo_juno",
+      "appearance": {
+        "body": "m",
+        "outfit": "western",
+        "hairStyle": "crop",
+        "hair": "#aaa398",
+        "skin": "#bd8966",
+        "eyes": "brown",
+        "shirt": "#c9a86a",
+        "pants": "#625548",
+        "scale": 1.02,
+        "helmet": "none",
+        "boots": "#49382b",
+        "eyewear": "none",
+        "earrings": "none",
+        "neckwear": "none"
+      },
+      "width": 1.35,
+      "height": 2.2,
+      "bottom": -0.055,
+      "poses": 3,
+      "views": 8,
+      "tile": [
+        64,
+        128
+      ],
+      "maxEdgeAlpha": 0,
+      "files": {
+        "albedo": {
+          "file": "qo_juno-albedo.png",
+          "bytes": 75002,
+          "sha256": "8539e0cf9c01a101b0ad5cfbc69ea0e8931038fb029d481f439d36c843229c0c"
+        },
+        "normals": {
+          "file": "qo_juno-normals.png",
+          "bytes": 151342,
+          "sha256": "1d950c6bc20b8814832616a79366827e27387595be18facf60bdca81f3de8a00"
+        }
+      }
+    }
+  ]
+}
