@@ -64,6 +64,7 @@
    ---- 3. Hooks: G.on(name, fn).  G.run returns the FIRST truthy result, so a hook can
            swallow input or a message by returning true. ----------------------------------
      'tick'        (dt,t)                 every frame, after the built-in tick cluster
+     'lighting'    (dt,t)                 after the base day cycle, before shadows/reflections/render
      'ride'        (RIDE,dt)              mutate RIDE={target,spMul,acMul,agMul,jpMul,drain,regen,
                                           jumpMul,noJump,fwd,back,gallop,HS,PM} before the stamina
                                           and acceleration integrate
@@ -190,8 +191,8 @@ import * as courseGuide from './course-guide.js?v=riding-life-1';
 import * as wVistas from './world-vistas.js?v=split-oak-1';
 import * as wFlora from './world-flora.js?v=mountain-falls-1';
 import * as wWater from './world-water.js?v=b20261001b';
-import * as wAtmos from './world-atmosphere.js?v=carved-canyon-1';
-import * as wQuarters from './world-quarters.js?v=marsh-dressing-1';
+import * as wAtmos from './world-atmosphere.js?v=lighting-cycle-1';
+import * as wQuarters from './world-quarters.js?v=lighting-cycle-1';
 import * as wPaths from './world-paths.js?v=village-gardens-1';
 import * as wOutcrops from './world-outcrops.js?v=b20261001b';
 import * as uikit from './ui-kit.js?v=native-roster-1';

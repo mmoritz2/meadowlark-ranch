@@ -675,7 +675,7 @@ export function install(G){
    x.fillStyle=g2;x.fillRect(0,0,128,64);}
   /* A third of an opacity, not a half: at a half the banks stopped being mist over the water and
      started being a white wash over the village. */
-  const mistMat=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(mc),transparent:true,depthWrite:false,side:THREE.DoubleSide,opacity:0.14});
+  const mistMat=new THREE.MeshBasicMaterial({name:'Willowmere | water mist',map:new THREE.CanvasTexture(mc),transparent:true,depthWrite:false,side:THREE.DoubleSide,opacity:0.14});
   /* Crossed quads are right for a reed clump and wrong for a mist bank, and this is the one place
      the rule does not carry. A reed is a thing with a silhouette from every angle; a bank of mist
      is not, and two upright sheets twenty metres across, crossed, seen from the saddle, read as
@@ -709,6 +709,7 @@ vQMistUV=uv;
   for(let i=0;i<6;i++){const p=POOLS[i%POOLS.length];mistItems.push({x:p.x+rr(-6,6),y:p.y+0.55,z:p.z+rr(-6,6),sx:rr(15,24),sy:1,sz:rr(15,24),ry:rr(0,6.28)});}
   const mist=scatter(G_MIST,mistMat,mistItems,false);
   if(mist){
+   G.atmos?.registerMist?.(mist.material);
    mist.renderOrder=2;mist.frustumCulled=false;P.anim.push('mist');
    const base=mistItems.map(m=>({x:m.x,y:m.y,z:m.z,sx:m.sx,sy:m.sy,sz:m.sz,ry:m.ry,ph:rnd()*6.28}));P.willowSettlement.mist=base;
    G.on('tick',(dt,t)=>{

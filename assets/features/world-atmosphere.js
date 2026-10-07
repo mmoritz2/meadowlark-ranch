@@ -162,7 +162,9 @@ export function install(G){
   const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;return tx;
  })();
  const mistGeo=new THREE.PlaneGeometry(1,1);mistGeo.rotateX(-Math.PI/2);
- const mistMat=new THREE.MeshBasicMaterial({map:softBlob,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,fog:true});
+ const mistMat=new THREE.MeshBasicMaterial({name:'Atmosphere | ground mist',map:softBlob,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,fog:true});
+ const mistMaterials=new Set([mistMat]);
+ A.registerMist=material=>mistMaterials.add(material);
  /* A sheet with no thickness seen edge-on collapses its whole gradient into one row of pixels
     and draws a hard bright line across the middle distance — the first pass put two of them
     across Willowmere. Fading the sheet out as the eye approaches its own plane is the fix, and
@@ -496,22 +498,25 @@ export function install(G){
  });
 
  /* ================= 11. the grade ================= */
- /* This has to run after ranch3d's own day-cycle block, which writes the sun colour, the hemi
-    colours, the sky uniforms and the fog outright every frame — and that block runs a couple
-    of hundred lines AFTER G.run('tick'). scene.onBeforeRender is the one callback left: the
-    renderer fires it on the scene object immediately before it draws, so whatever is written
-    here is what actually reaches the frame. */
+ /* The lighting phase follows the base day cycle and precedes every render,
+    including the reflection camera. Advancing simulation without drawing still
+    updates the atmosphere; additional camera renders do not advance it again. */
  /* Every smoothed value is smoothed in a variable this package owns and then written to the
     light outright. Lerping the light itself would fight ranch3d's own lerp toward its own
     target, and the two together settle somewhere between the two palettes — most of this
     grade would simply never arrive. */
  const SM={key:2.6,fill:1.1,fogD:0.00125,vale:1};
  const _fogSm=C('#b8d8e9');
- const prevOBR=scene.onBeforeRender;
- scene.onBeforeRender=function(){
-  if(prevOBR)prevOBR.apply(this,arguments);
+ let previousDay=null;
+ G.on('lighting',elapsed=>{
   readClock();
-  const e=K.elev,rain=A.rain||0,dt=Math.min(0.05,A.dt||0.016);
+  const day=G.time.dayT(),delta=previousDay===null?1:Math.abs(day-previousDay);
+  // Photo-time jumps and first load must not leave yesterday's bright haze
+  // against a night sky. Ordinary clock progress and weather remain smooth.
+  const reset=previousDay===null||Math.min(delta,1-delta)>.02;
+  previousDay=day;
+  const blend=rate=>reset?1:1-Math.exp(-Math.max(0,Math.min(.1,elapsed))*rate);
+  const e=K.elev,rain=A.rain||0;
   const pm=1-K.morning;
   ramp(_sun ,R_SUN_DAWN,e);ramp(_sun2,R_SUN_DUSK,e);_sun.lerp(_sun2,pm);
   ramp(_hor ,R_HOR_DAWN,e);ramp(_tmp ,R_HOR_DUSK,e);_hor.lerp(_tmp,pm);
@@ -524,7 +529,7 @@ export function install(G){
   if(sun){
    const keyDay=lerp(2.90,3.35,sstep(e,10,40));
    const key=(rain?1.25:lerp(keyDay,3.85,K.horizon))*(1-K.night*0.72)+0.80*K.night;
-   SM.key+=(key-SM.key)*Math.min(1,dt*3.5);
+   SM.key+=(key-SM.key)*blend(3.5);
    sun.intensity=SM.key*(0.74+0.26*(A.cloud||1));   // a cloud passing over dims the world, not only the turf
    sun.color.copy(_sun);
    // Shadow coverage is owned by the terrain-following quality controller.
@@ -540,7 +545,7 @@ export function install(G){
    /* The floor matters more than it looks: below about 0.7 the near grass at dawn goes to a
       murky olive and the whole quarter reads as underexposed rather than as early. */
    const fill=rain?1.05:lerp(.94,0.66,K.horizon)*K.day+0.78*(1-K.day);
-   SM.fill+=(fill-SM.fill)*Math.min(1,dt*3.5);
+   SM.fill+=(fill-SM.fill)*blend(3.5);
    hemi.intensity=SM.fill;
   }
   /* The valley mist ranch3d already had is the loudest thing in the golden-hour frame: flat
@@ -549,8 +554,12 @@ export function install(G){
      taken back. Cut it hard and let the hour tint it, so it warms with everything else. */
   if(valeMist){
    valeMist.material.opacity*=0.38;
-   valeMist.material.color.copy(_hor).lerp(_glow,K.horizon*0.55).lerp(WHITE,0.28);
+   valeMist.material.color.copy(_hor).lerp(_glow,K.horizon*0.55).lerp(WHITE,0.28*K.day).multiplyScalar(.35+.65*K.day);
   }
+  // Unlit ground sheets need the same sky tint as the surrounding haze.
+  // White basic materials otherwise glow over dark water and moonlit grass.
+  mistMat.color.copy(_hor).lerp(_zen,.18).multiplyScalar(.35+.65*K.day);
+  for(const material of mistMaterials)if(material!==mistMat)material.color.copy(mistMat.color);
   /* -- sky. The shader mixes its dusk colour in by the golden uniform and only near the
      horizon, so both the colour and the amount are ours to set; the built-in value is a
      narrow triangle that barely opens. -- */
@@ -573,15 +582,15 @@ export function install(G){
    _fog.multiplyScalar(lum*(rain?0.80:1));
    A.desertHaze=REG.badland*sstep(e,22,44)*(1-rain);
    _fog.lerp(_tmp.setHex(0xd6ba93).multiplyScalar(lum),A.desertHaze*.16);
-   if(REG.snow>0.02)_fog.lerp(_tmp.setHex(0xdfe8f0).multiplyScalar(lum),REG.snow*0.45);
-   _fogSm.lerp(_fog,Math.min(1,dt*2.2));      // so a shower arriving is a change in weather, not a cut
+   if(REG.snow>0.02)_fog.lerp(_tmp.setHex(0xdfe8f0).lerp(C_NIGHT_HOR,1-K.day).multiplyScalar(lum),REG.snow*0.45);
+   _fogSm.lerp(_fog,blend(2.2));      // so a shower arriving is a change in weather, not a cut
    scene.fog.color.copy(_fogSm);
    /* Trimmed from the first pass: at 0.00105 of extra haze the golden-hour ridges dissolved
       into the glow behind them and the basin lost its depth at exactly the hour it should
       have the most. Enough haze to separate the ridges, not enough to eat them. */
    let d=rain?0.0052:0.00092+0.00062*K.horizon+0.00060*K.dawn+0.00045*K.night;
    d+=REG.marsh*0.00110*(1-K.day*0.4)+REG.snow*0.00075+REG.amber*0.00030-REG.badland*0.00022+A.desertHaze*0.00050;
-   SM.fogD+=(Math.max(0.0006,d)-SM.fogD)*Math.min(1,dt*1.1);
+   SM.fogD+=(Math.max(0.0006,d)-SM.fogD)*blend(1.1);
    /* Not in VR. ranch3d pulls the fog right in to 0.0075 on entering VR (ranch3d.html:2359) so
       that far less world is drawn for two eyes on a headset, and restores whatever it found on
       the way out. Writing our density here every frame would quietly undo that clamp on the one
@@ -590,7 +599,7 @@ export function install(G){
       to the game. */
    if(!(renderer.xr&&renderer.xr.isPresenting))scene.fog.density=SM.fogD;
   }
- };
+ });
 
  /* QA and anything else that wants to know what the weather is doing. */
  G.on('state',o=>{o.atmos={elev:+K.elev.toFixed(1),day:+K.day.toFixed(2),night:+K.night.toFixed(2),

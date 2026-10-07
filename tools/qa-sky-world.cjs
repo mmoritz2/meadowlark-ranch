@@ -35,7 +35,7 @@ const out=path.resolve(process.argv[2]||'output/sky-world'),baseline=process.env
    for(let y=1;y<399;y++)for(let x=1;x<639;x++){const d=Math.abs(l(x,y)-(l(x-1,y)+l(x+1,y)+l(x,y-1)+l(x,y+1))/4);grain+=d;if(d>8)spikes++;const c=l(x,y),ns=[l(x-1,y),l(x+1,y),l(x,y-1),l(x,y+1)];if(c>Math.max(...ns)+4||c<Math.min(...ns)-4)isolatedSpikes++;}
    result.push({steps,grain:grain/(638*398),spikes,isolatedSpikes});renderer.setRenderTarget(null);renderer.render(scene,camera);result.at(-1).image=renderer.domElement.toDataURL('image/webp',.96).split(',')[1];
   }
-  q.day(0);q.scene.onBeforeRender();const midnight={};q.G.run('state',midnight);q.day(1e-7);q.scene.onBeforeRender();const after={};q.G.run('state',after);
+  const draw=q.renderer.render;q.renderer.render=()=>{};let midnight={},after={};try{q.day(0);q.step(0);q.scene.onBeforeRender();q.G.run('state',midnight);q.day(1e-7);q.step(0);q.scene.onBeforeRender();q.G.run('state',after);}finally{q.renderer.render=draw;}
   rt.dispose();mat.dispose();renderer.dispose();renderer.forceContextLoss();return {rows:result,midnight:midnight.atmos,after:after.atmos};
  });for(const row of isolated.rows){fs.writeFileSync(path.join(out,'sky-only-'+row.steps+'.webp'),Buffer.from(row.image,'base64'));delete row.image;}
  const checks={finiteRenderedPixels:rows.every(r=>r.invalid===0),validWebGL:rows.every(r=>r.gl===0),noErrors:!errors.length,midnightUsesNight:isolated.midnight.night===1&&isolated.midnight.day===0,clockContinuousAtMidnight:Math.abs(isolated.midnight.elev-isolated.after.elev)<.01,stableCloudSampling:isolated.rows.every(r=>r.isolatedSpikes===0),nightFogDim:rows.find(r=>r.name==='night').fog.every(c=>c<.035),visibleMoonlitWorld:rows.find(r=>r.name==='night').fill>.5};

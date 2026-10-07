@@ -695,7 +695,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=villag
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=split-oak-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=runway-20261006';
-import {FEATURES} from './assets/features/index.js?v=marsh-dressing-1';
+import {FEATURES} from './assets/features/index.js?v=lighting-cycle-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -14106,6 +14106,8 @@ function tick(stepSeconds){
   }
   rain.instanceMatrix.needsUpdate=true;
  }
+ // One final lighting state is shared by the main and water reflection cameras.
+ G.run('lighting',dt,t);
  worldShadows.update(player.pos,sunOff,lowSun);
  /* course progress */
  if(course){
