@@ -1,0 +1,21 @@
+{
+  "asset": "Snow 02",
+  "provider": "Poly Haven",
+  "author": "Rob Tuytel",
+  "license": "CC0-1.0",
+  "asset_url": "https://polyhaven.com/a/snow_02",
+  "license_url": "https://polyhaven.com/license",
+  "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/snow_02/snow_02_diff_2k.jpg",
+  "source_md5": "5541e5601951b071691238ddc70632c0",
+  "source_sha256": "d185c2853c7e674161789db4eed1c5708d85e4f6e3dcb5698209568adf02aa98",
+  "source_bytes": 1314409,
+  "physical_extent_metres": 2,
+  "file": "snow_02_diff_2k.webp",
+  "dimensions": [
+    2048,
+    2048
+  ],
+  "bytes": 911428,
+  "sha256": "4c1b5f76d77325221548088bef77a1b6a782fe958e2ab7b13373572701430f24",
+  "conversion": "Original RGB albedo converted to WebP quality 93, method 6; no palette or detail edits. Replaces the existing terrainSnow texture slot."
+}
