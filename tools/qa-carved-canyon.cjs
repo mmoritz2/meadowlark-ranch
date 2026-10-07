@@ -1,39 +1,60 @@
-// Native-GPU desert vegetation review with canyon rendering and mounted-travel regression.
+// Connected canyon composition, protected terrain, mounted travel and rendering regression.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),QA=require('./qa-platform.cjs');
-const out=path.resolve(process.argv[2]||'output/oasis-world');fs.mkdirSync(out,{recursive:true});
+const opacityOnly=process.argv.includes('--opacity-only');
+const out=path.resolve(process.argv[2]||'output/carved-canyon');fs.mkdirSync(out,{recursive:true});
 (async()=>{const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});try{
- const page=await browser.newPage({viewport:{width:1280,height:800}}),errors=[],oldCactusRequests=[];page.on('request',r=>{if(/cactus2?_textured/.test(r.url()))oldCactusRequests.push(r.url());});
+ const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],oldCactusRequests=[];page.on('request',r=>{if(/cactus2?_textured/.test(r.url()))oldCactusRequests.push(r.url());});
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
  await page.route('**/api/me',r=>r.fulfill({contentType:'application/json',body:'null'}));
  await page.route('**/ranch3d.html*',async r=>{const res=await r.fetch();await r.fulfill({response:res,body:(await res.text()).replace('const MERGE_STATS=mergeStatics();',`window.__desertQA={THREE,scene,camera,renderer,composer,G,player,groundH,TACK,keys,step(dt){manualStepping=true;tick(dt)},day(t=.34,rain=false){dayT=t;weather.mode=rain?'rain':'clear';weather.timer=99999}};const MERGE_STATS=mergeStatics();`)});});
  await page.addInitScript(()=>{let seed=928471;Math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};});
  await page.goto(QA.BASE+'/ranch3d.html?qa=desert-plants',{timeout:120000});await page.waitForFunction(()=>window.__desertQA?.G.horse.RIG().ready&&!document.getElementById('load'),null,{timeout:120000});
  await page.evaluate(async()=>{const q=__desertQA;q.G.save.sync(s=>{s.qualityLocked=true;s.unlocked=s.unlocked||{};for(const rg of q.G.tables.REGIONS)if(rg.unlock)s.unlocked[rg.id]=true;});q.G.wardrobe?.closeChar();q.G.hidePanels();await q.G.photoscans.ready;await q.G.worldDetails.ready;await q.G.worldPkg.oasisReady;advanceTime(0);
-  q.read=rt=>{const w=Math.floor(rt.width),h=Math.floor(rt.height),p=new Uint16Array(w*h*4);q.renderer.readRenderTargetPixels(rt,0,0,w,h,p);let invalid=0,lit=0;
-   for(let i=0;i<p.length;i+=4){if([0,1,2].some(c=>(p[i+c]&0x7c00)===0x7c00))invalid++;else if(p[i]||p[i+1]||p[i+2])lit++;}return {invalid,lit};};
+  q.read=rt=>{const w=Math.floor(rt.width),h=Math.floor(rt.height),p=new Uint16Array(w*h*4);q.renderer.readRenderTargetPixels(rt,0,0,w,h,p);let invalid=0,lit=0,minAlpha=1;
+   for(let i=0;i<p.length;i+=4){minAlpha=Math.min(minAlpha,q.THREE.DataUtils.fromHalfFloat(p[i+3]));if([0,1,2].some(c=>(p[i+c]&0x7c00)===0x7c00))invalid++;else if(p[i]||p[i+1]||p[i+2])lit++;}return {invalid,lit,minAlpha};};
  });
  console.log('Canyon ready');const rows=[];
  const canyon={eye:[-202,2.2,151],look:[-253,6,179]},ochre={eye:[-286,15,260],look:[-343,15,286]};
- for(const c of [{name:'oasis-overview',eye:[-189,8,144],look:[-202,2,159]},{name:'water-close',eye:[-200,1.8,166],look:[-200,1.3,154]},{name:'palm-close',eye:[-190,2.5,165],look:[-192,4,158]},{name:'canyon',...canyon},{name:'ochre',...ochre},{name:'cliff-close',eye:[-224,2.5,153],look:[-242,6,147]},
+ for(const c of [{name:'aerial',eye:[-240,220,230],look:[-230,0,120],absolute:true,player:[-245,167]},{name:'riding-canyon',eye:[-237,2.5,154],look:[-269,5,196]},{name:'cliff-face',eye:[-286,3,82],look:[-274,21,55]},{name:'canyon-medium-close',eye:[-237,2.5,154],look:[-269,5,196],tier:'medium'},{name:'canyon-low-close',eye:[-237,2.5,154],look:[-269,5,196],tier:'low'},{name:'oasis-overview',eye:[-189,8,144],look:[-202,2,159]},{name:'water-close',eye:[-200,1.8,166],look:[-200,1.3,154]},{name:'palm-close',eye:[-190,2.5,165],look:[-192,4,158]},{name:'canyon',...canyon},{name:'ochre',...ochre},{name:'cliff-close',eye:[-224,2.5,153],look:[-242,6,147]},
   {name:'arch',arch:true,eye:[4,3,18],look:[0,5,0]},
   {name:'canyon-medium',...canyon,tier:'medium'},{name:'canyon-low',...canyon,tier:'low'},
-  {name:'canyon-rain',...canyon,rain:true},{name:'ochre-night',...ochre,time:0},{name:'arch-golden',arch:true,eye:[4,3,18],look:[0,5,0],time:.22}]){
+  {name:'canyon-rain',...canyon,rain:true},{name:'ochre-night',...ochre,time:0},{name:'arch-golden',arch:true,eye:[4,3,18],look:[0,5,0],time:.22}].filter(c=>!opacityOnly||['riding-canyon','canyon-medium-close','canyon-low-close'].includes(c.name))){
   const row=await page.evaluate(c=>{const q=__desertQA,T=q.THREE;q.G.gfx.apply(c.tier||'high');let eye=new T.Vector3(...(c.eye||[0,0,0])),look=new T.Vector3(...(c.look||[0,0,0]));
    if(c.plant){
     const candidates=[],m=new T.Matrix4(),p=new T.Vector3(),scale=new T.Vector3(),rot=new T.Quaternion();
     q.scene.traverse(o=>{if(c.plant==='rush'&&o.name==='Oasis | bank rushes'){o.getWorldPosition(p);const b=o.children[0].geometry.boundingBox;candidates.push({p:p.clone(),h:(b.max.y-b.min.y)*o.scale.y});return;}if(!o.isInstancedMesh||o.geometry.userData.desertArt?.kind!==c.plant)return;for(let i=0;i<o.count;i++){o.getMatrixAt(i,m);if(Math.abs(m.determinant())<1e-8)continue;m.decompose(p,rot,scale);candidates.push({p:p.clone(),h:(o.geometry.boundingBox.max.y-o.geometry.boundingBox.min.y)*scale.y});}});
     candidates.sort((a,b)=>Math.hypot(a.p.x+230,a.p.z-153)-Math.hypot(b.p.x+230,b.p.z-153));if(!candidates.length)throw Error('Missing plant '+c.plant);const p0=candidates[0],h=p0.h,floor=c.plant==='rush'?p0.p.y:q.groundH(p0.p.x,p0.p.z);eye.set(p0.p.x+h*.8,floor+h*.65,p0.p.z+h*2.4);look.set(p0.p.x,floor+h*.45,p0.p.z);
-   }else if(c.arch){const a=q.scene.getObjectByName('Geology | Ochre sandstone arch');a.updateMatrixWorld(true);eye=a.localToWorld(eye);look=a.localToWorld(look);}else{eye.y+=q.groundH(eye.x,eye.z);look.y+=q.groundH(look.x,look.z);}
-   q.player.pos.set(eye.x,0,eye.z);q.player.speed=0;const render=q.renderer.render;q.renderer.render=()=>{};
+   }else if(c.arch){const a=q.scene.getObjectByName('Geology | Ochre sandstone arch');a.updateMatrixWorld(true);eye=a.localToWorld(eye);look=a.localToWorld(look);}else if(!c.absolute){eye.y+=q.groundH(eye.x,eye.z);look.y+=q.groundH(look.x,look.z);}
+   q.player.pos.set(c.player?.[0]??eye.x,0,c.player?.[1]??eye.z);q.player.speed=0;const render=q.renderer.render;q.renderer.render=()=>{};
    try{for(let i=0;i<210;i++){q.day(c.time??.34,c.rain);q.step(1/30);q.scene.onBeforeRender();}}finally{q.renderer.render=render;}
    q.player.mesh.visible=false;for(const o of Object.values(q.TACK||{}))if(o?.isObject3D)o.visible=false;const reins=q.scene.getObjectByName('Native leather split reins');if(reins)reins.visible=false;
    q.camera.position.copy(eye);q.camera.lookAt(look);q.G.waterReflections.update(performance.now()+100);
    let source;const pass=q.composer.passes[0],original=pass.render;
    pass.render=function(renderer,write,read,...rest){original.call(this,renderer,write,read,...rest);source=q.read(read);};
    try{q.composer.render();}finally{pass.render=original;}
-   const scan=q.G.photoscans;return {name:c.name,reflection:{...q.G.waterReflections.state,level:q.G.world.waterMaterial.userData.reflection.level.value},source,buffers:[q.composer.renderTarget1,q.composer.renderTarget2].map(q.read),gl:q.renderer.getContext().getError(),treeTriangles:scan.activeTreeTriangles,treeBudget:scan.treeTriangleBudget,image:q.renderer.domElement.toDataURL('image/webp',.96).split(',')[1]};
+   const cv=document.createElement('canvas');cv.width=q.renderer.domElement.width;cv.height=q.renderer.domElement.height;const ctx=cv.getContext('2d');ctx.drawImage(q.renderer.domElement,0,0);const pixels=ctx.getImageData(0,0,cv.width,cv.height).data;let partial=0;for(let i=3;i<pixels.length;i+=4)if(pixels[i]!==255)partial++;
+   const scan=q.G.photoscans;return {partial,name:c.name,reflection:{...q.G.waterReflections.state,level:q.G.world.waterMaterial.userData.reflection.level.value},source,buffers:[q.composer.renderTarget1,q.composer.renderTarget2].map(q.read),gl:q.renderer.getContext().getError(),treeTriangles:scan.activeTreeTriangles,treeBudget:scan.treeTriangleBudget,image:q.renderer.domElement.toDataURL('image/webp',.96).split(',')[1]};
   },c);fs.writeFileSync(path.join(out,c.name+'.webp'),Buffer.from(row.image,'base64'));delete row.image;rows.push(row);console.log(c.name);
  }
+
+ const opacityChecks={opaqueSource:rows.every(r=>r.source.minAlpha>=1-1/2048),opaqueScreen:rows.every(r=>r.partial===0),finitePixels:rows.every(r=>r.source.invalid===0&&r.buffers.every(b=>b.invalid===0)),validWebGL:rows.every(r=>r.gl===0),noErrors:errors.length===0};
+ fs.writeFileSync(path.join(out,'opacity-report.json'),JSON.stringify({checks:opacityChecks,rows,errors},null,2));assert(Object.values(opacityChecks).every(Boolean),'Canyon rendering opacity failed');
+ if(opacityOnly){console.log(JSON.stringify({checks:opacityChecks,views:rows.length}));return;}
+
+ const protectedGround=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/canyon-protected-ground.json'),'utf8'));
+ const terrainState=await page.evaluate(async baseline=>{const q=__desertQA,T=q.THREE,W=q.G.world,L=W.canyonLandscape,{canyonRelief}=await import('./assets/canyon-landscape.js?v=carved-canyon-1');
+  const preserved=baseline.samples.map(([x,z,y])=>({x,z,error:Math.abs(W.terrainH(x,z)-y)}));
+  const skin=[];for(const {mesh} of L.fields){const p=mesh.geometry.attributes.position,idx=mesh.geometry.index;for(let i=0;i<idx.count;i+=Math.max(3,Math.floor(idx.count/25/3)*3)){const ids=[idx.getX(i),idx.getX(i+1),idx.getX(i+2)],x=ids.reduce((n,j)=>n+p.getX(j),0)/3,z=ids.reduce((n,j)=>n+p.getZ(j),0)/3;const hit=new T.Raycaster(new T.Vector3(x,150,z),new T.Vector3(0,-1,0)).intersectObject(mesh)[0];skin.push(hit?Math.abs(hit.point.y-W.terrainH(x,z)-.012):Infinity);}}
+  const track=q.G.worldPaths.tracks.find(t=>t.id==='ochre');q.G.gfx.apply('high');q.player.pos.set(track.pts[0][0],0,track.pts[0][1]);q.player.speed=0;q.player.y=q.player.vy=0;q.player.flying=false;q.keys.KeyW=true;const render=q.renderer.render;q.renderer.render=()=>{};let wi=1,steps=0,maxOffset=0;const trace=[];
+  try{for(;steps<1700&&wi<track.pts.length;steps++){const p=track.pts[wi],d=Math.hypot(p[0]-q.player.pos.x,p[1]-q.player.pos.z);if(d<1.7){wi++;continue;}q.player.heading=Math.atan2(p[0]-q.player.pos.x,p[1]-q.player.pos.z);q.day();q.step(1/30);maxOffset=Math.max(maxOffset,Math.abs(q.player.mesh.position.y-q.groundH(q.player.pos.x,q.player.pos.z)));if(steps%90===0)trace.push(q.player.pos.toArray());}}finally{q.keys.KeyW=false;q.renderer.render=render;}
+  const ride={waypoints:wi,total:track.pts.length,steps,maxOffset,end:q.player.pos.toArray(),trace,metres:track.len};
+  q.player.pos.set(-253,0,164);q.player.heading=-Math.PI/2;q.player.speed=0;q.player.y=q.player.vy=0;q.player.flying=false;q.keys.KeyW=true;q.renderer.render=()=>{};try{for(let i=0;i<180;i++){q.day();q.step(1/30);}}finally{q.keys.KeyW=false;q.renderer.render=render;}
+  const stop={end:q.player.pos.toArray(),relief:canyonRelief(q.player.pos.x,q.player.pos.z),nearestBarrier:Math.min(...L.barriers.map(c=>Math.hypot(c.x-q.player.pos.x,c.z-q.player.pos.z)))};
+  const hazeCards=[];q.scene.traverse(o=>{if(o.isInstancedMesh&&o.geometry?.type==='PlaneGeometry'&&o.count===18&&o.renderOrder===6)hazeCards.push(o);});
+  const checks={noIntersectingHazeCards:hazeCards.length===0,connectedBanks:L.fields.length===4&&L.triangles>5000&&L.triangles<16000,protectedGround:preserved.every(p=>p.error<.001),exactTerrainSkin:skin.length>95&&skin.every(e=>e<.001),boundedCollision:L.barriers.length>200&&L.barriers.length<600,mountedCanyonTrail:ride.waypoints===ride.total&&ride.maxOffset<.3,cliffStopsHorse:stop.nearestBarrier<1.7&&stop.relief<2.4&&stop.end[0]<-254,derbyRoutePreserved:JSON.stringify(q.G.tables.RACE_ROUTES.bd)===JSON.stringify(baseline.derby)};
+  return {checks,preserved,skin,ride,stop,triangles:L.triangles,barriers:L.barriers.length,tracks:q.G.worldPaths.tracks.filter(t=>['ochre','riverwest'].includes(t.id)).map(t=>({id:t.id,pts:t.pts})),featureErrors:q.G.errors};
+ },protectedGround);
+ fs.writeFileSync(path.join(out,'terrain-report.json'),JSON.stringify(terrainState,null,2));console.log('Terrain diagnostics',JSON.stringify({checks:terrainState.checks,ride:terrainState.ride,stop:terrainState.stop,triangles:terrainState.triangles,barriers:terrainState.barriers}));assert(Object.values(terrainState.checks).every(Boolean),'Connected canyon terrain or riding failed');
  const state=await page.evaluate(()=>{const q=__desertQA,T=q.THREE,W=q.G.world,forms=[];
   const plants=[],m4=new T.Matrix4(),pos=new T.Vector3();
   q.scene.traverse(o=>{if(!o.isInstancedMesh||!o.userData.desertSpecies)return;for(let i=0;i<o.count;i++){

@@ -12,13 +12,26 @@ await page.waitForFunction(()=>window.__qa?.G.horse.RIG().ready&&!document.getEl
 await page.evaluate(async()=>{const q=__qa;q.G.save.sync(s=>{s.qualityLocked=true;s.unlocked=s.unlocked||{};for(const rg of q.G.tables.REGIONS)if(rg.unlock)s.unlocked[rg.id]=true;});q.G.wardrobe?.closeChar();q.G.hidePanels();await q.G.photoscans.ready;await q.G.worldDetails.ready;await q.G.world.ranchBuilderArt.ready;advanceTime(0);q.day();q.G.gfx.apply('high');});
 const shots=[{name:'north-tree-closeup',eye:[2,2.6,199],look:[64,3,239]},{name:'north-meadow',eye:[25,2.6,214],look:[70,3,260]},{name:'eastern-fields',eye:[149,3,17],look:[209,3,52]},{name:'riding-meadow',eye:[-60,2,56],look:[-53,1.5,39],horse:[-55,46,-.4],riding:true},{name:'wildflower-trail',eye:[-60,1.8,56],look:[-53,1.5,39]},{name:'village-rise',eye:[78,1.7,-151],look:[46,2.0,-58]},{name:'ranch',eye:[-5,3.6,15],look:[-40,4,-36]},{name:'pasture',eye:[-83,2.6,-19],look:[-110,2,-60]},{name:'village',eye:[29,3,-32],look:[65,4,-70]},{name:'river',eye:[-20,3,102],look:[12,3,127]},{name:'countryside',eye:[85,4,-150],look:[20,5,-35]},{name:'riding-home',eye:[-83,2.2,-19],look:[-65,2,-38],horse:[-70,-28,-.8]}];
 const villageViews=await page.evaluate(()=>{
- const q=__qa,result=[];
+ const q=__qa,result=[],buildings=[];q.scene.updateMatrixWorld(true);
+ q.scene.traverse(o=>{if(o.userData.architecture)buildings.push(o);});
  for(const [id,name]of[['cottonwood:clubhouse','cottage-front'],['cottonwood:store','village-store']]){
   const root=q.G.worldPkg.LANDMARKS.find(s=>s.id===id)?.grp;if(!root)throw Error('Missing village building '+id);
   root.updateMatrixWorld(true);
-  const eye=root.localToWorld(new q.THREE.Vector3(4.6,2.6,7.2)),look=root.localToWorld(new q.THREE.Vector3(0,2.4,0));
+  const look=root.localToWorld(new q.THREE.Vector3(0,2.4,0)),others=[];let eye=null;
+  for(const building of buildings)if(building!==root)building.traverse(o=>{if(o.isMesh)others.push(o);});
+  // Town placement can change with nearby scenery. A fixed offset may land
+  // inside the neighbouring cottage and produce a misleading clipped image.
+  for(const offset of [[4.6,2.6,7.2],[-4.6,2.6,7.2],[0,2.6,6],[3.8,2.6,5.6],[-3.8,2.6,5.6],[6,3,10],[-6,3,10]]){
+   const candidate=root.localToWorld(new q.THREE.Vector3(...offset));
+   const ray=new q.THREE.Raycaster(look,candidate.clone().sub(look).normalize(),.01,look.distanceTo(candidate)+.35);
+   // Cast from the building toward the lens: this also catches a camera inside
+   // another closed model, whose back faces could evade the opposite ray.
+   const blocked=ray.intersectObjects(others,false).some(h=>{if(!h.object.isMesh)return false;let o=h.object;while(o){if(!o.visible)return false;o=o.parent;}return [].concat(h.object.material).some(m=>!m.transparent||m.opacity>.7);});
+   if(!blocked){eye=candidate;break;}
+  }
+  if(!eye)throw Error('No clear architectural review camera for '+id);
   eye.y-=q.groundH(eye.x,eye.z);look.y-=q.groundH(look.x,look.z);
-  result.push({name,eye:eye.toArray(),look:look.toArray()});
+  result.push({name,clear:true,eye:eye.toArray(),look:look.toArray()});
  }
  return result;
 });shots.push(...villageViews);
@@ -86,6 +99,7 @@ const state=await page.evaluate(async()=>{
   errors:[...q.G.errors,...P.errors,...q.G.worldDetails.errors],assets:P.assets,gl:q.renderer.getContext().getError()};
 });
 const checks={
+ architecturalViewsUnobstructed:villageViews.every(v=>v.clear),
  villageSurfaces:state.surfaces.length===4&&state.surfaces.every(m=>m.maps.every(t=>t.url.includes('/textures/village/')&&t.size>0&&(t.key==='map'?t.colorSpace==='srgb':t.colorSpace===''))),
  staticReliefOutsideRidingBasin:state.relief.length===6&&state.relief.every(m=>m.finite&&m.static&&m.nearest>550),
  reliefGeometryBudget:state.relief.reduce((n,m)=>n+m.tris,0)<110000,

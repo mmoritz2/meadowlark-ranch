@@ -370,10 +370,27 @@ checksums are in `assets/textures/canyon/manifest.json`. The photographed 1.83 m
 patch is presented at two larger, warped scales to avoid obvious repeated rings
 on the tall cliffs. All three PBR maps use the same coordinates. Reproduce with
 `python3 tools/asset-gen/fetch-village-materials.py --assets cliff_side --output assets/textures/canyon`.
-`qa-canyon-landforms.cjs` covers 44 formations, their collision footprints,
+`qa-canyon-landforms.cjs` covers the 20 retained isolated formations, their collision footprints,
 terrain contact, mounted passage and nine weather/quality views, including
 finite HDR pixels before and after post-processing. `asset-gen/check-geology.mjs`
 also ray-tests the arch exterior from both sides and checks its open passage.
+
+The canyon also has four original, connected escarpments: a northern rim,
+paired walls along Ochre Trail, and the butte beside the oasis. Their height field
+is sampled into the main terrain grid, so the sandstone skin and riding ground
+use identical triangles. Clefts, broken crowns and tapered talus give the banks
+shape beyond the texture. The surfaces share the existing photographed sandstone
+maps with world-space triplanar projection. Twenty-four former towers are retired
+where they conflict with the connected banks or the valley route.
+
+Cliff-foot collision contours stop grounded riders; their absolute top heights
+allow flight above the banks. Protected zones preserve the settlement, oasis,
+arena, river margins and Derby line. Steep faces reject dry planting. Broad
+additive heat-haze cards have been replaced by a subtle warm distance-fog grade,
+removing the bright ribbons they drew across cliffs from aerial views.
+`node --test tools/test-canyon-landscape.mjs` checks geometry, terrain contact and
+protected areas; `qa-carved-canyon.cjs` rides Ochre Trail, presses into a cliff,
+compares saved protected-ground samples and checks rendering across graphics tiers.
 
 Desert planting uses original ribbed saguaro and barrel cactus models with
 rounded, closed crowns, areoles and fine spines. Both the old textured cactus

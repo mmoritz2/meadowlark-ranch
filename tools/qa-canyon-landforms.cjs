@@ -49,7 +49,7 @@ const out=path.resolve(process.argv[2]||'output/canyon-landforms');fs.mkdirSync(
   const archMaterial=arch.children[0].material;
   return {forms,passage,ride,archSandstone:archMaterial===q.scene.getObjectByName('Geology | layered mesa').children[0].material,featureErrors:q.G.errors,assetErrors:[...q.G.worldDetails.errors,...q.G.photoscans.errors]};
  });
- const checks={allFormationsPresent:state.forms.length===44,geometryFinite:state.forms.every(f=>f.finite),boundedGeometry:state.forms.every(f=>f.triangles<17000),
+ const checks={allFormationsPresent:state.forms.length===20,geometryFinite:state.forms.every(f=>f.finite),boundedGeometry:state.forms.every(f=>f.triangles<17000),
   groundedBases:state.forms.every(f=>f.baseGap<=.001),shadowFlags:state.forms.every(f=>f.casts&&f.receives),photoscannedSurfaces:state.forms.every(f=>f.material==='Canyon | scanned stratified sandstone'&&f.maps.every(m=>m.width>=512)),
   solidFormations:state.forms.every(f=>f.collision),archSharesSandstone:state.archSandstone,archPassageOpen:state.passage,mountedArchPassage:state.ride.localEnd[2]<=-9&&Math.abs(state.ride.localEnd[0])<2&&state.ride.distance>17.9&&state.ride.finite,
   sourcePixelsFinite:rows.every(r=>r.source.invalid===0&&r.source.lit>100),postPixelsFinite:rows.every(r=>r.buffers.every(b=>b.invalid===0)),treeBudgets:rows.every(r=>r.treeTriangles<=r.treeBudget),validWebGL:rows.every(r=>r.gl===0),

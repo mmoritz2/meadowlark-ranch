@@ -371,5 +371,5 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
   const placeHoodoo=(x,z,radius,height,seed=1)=>{
     const g=groundAt(makeHoodoo(radius,height,seed),x,z);if(scene)scene.add(g);return g;
   };
-  return {makeMesa,makeHoodoo,makeArch,makeBoulder,makeWaterfallCliff,groundAt,placeMesa,placeHoodoo,material};
+  return {makeMesa,makeHoodoo,makeArch,makeBoulder,makeWaterfallCliff,groundAt,placeMesa,placeHoodoo,material,canyonMaterial};
 }

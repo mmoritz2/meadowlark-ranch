@@ -4,7 +4,7 @@
    golden hour the sun sat at seven degrees and the picture still read grey. This package takes
    the grade — key colour, fill colour, sky gradient, fog tint and fog density — and hangs the
    weather that belongs to each quarter off the same clock: cloud shadows drifting over the
-   turf, ground mist lying in the hollows and thick over Willowmere at dawn, heat haze shaking
+   turf, ground mist lying in the hollows and thick over Willowmere at dawn, warm distance haze
    over Ochre Reach at noon, snow in Frostpine and on Hollowpeak, a skein of birds crossing
    high up, and a night sky with a Milky Way in it.
    Owned by this package: this file. No inline hot spots — everything here reaches the world
@@ -202,42 +202,9 @@ export function install(G){
   }
  }
 
- /* ================= 6. heat haze over Ochre Reach ================= */
- /* Not refraction — a screen-space distortion would want its own full-screen pass and this is
-    a browser game on one thread. Overlapping bands of warm air standing on the red rock,
-    shivering out of phase with each other, buy most of the read for one draw call. */
- const HAZE_N=18;
- /* A clean linear gradient gave every band a straight top and a straight bottom, and eighteen
-    of them stacked up read as ruled lines across the badland rather than as air. Blobs with
-    no straight edge anywhere in them is the whole trick. */
- const hazeTex=(()=>{
-  const cv=document.createElement('canvas');cv.width=256;cv.height=64;
-  const c=cv.getContext('2d');
-  for(let i=0;i<26;i++){
-   const cx=Math.random()*256, cy=44+Math.random()*26, rr=12+Math.random()*26;
-   const g=c.createRadialGradient(cx,cy,0,cx,cy,rr);
-   g.addColorStop(0,'rgba(255,224,182,0.42)');g.addColorStop(0.5,'rgba(255,232,198,0.16)');
-   g.addColorStop(1,'rgba(255,240,214,0)');
-   c.fillStyle=g;c.beginPath();c.arc(cx,cy,rr,0,7);c.fill();
-  }
-  c.globalCompositeOperation='destination-out';       // feather every edge so the quad never shows
-  const e=c.createLinearGradient(0,0,256,0);
-  e.addColorStop(0,'rgba(0,0,0,1)');e.addColorStop(0.20,'rgba(0,0,0,0)');
-  e.addColorStop(0.80,'rgba(0,0,0,0)');e.addColorStop(1,'rgba(0,0,0,1)');
-  c.fillStyle=e;c.fillRect(0,0,256,64);
-  const v=c.createLinearGradient(0,0,0,64);
-  v.addColorStop(0,'rgba(0,0,0,1)');v.addColorStop(0.30,'rgba(0,0,0,0)');
-  v.addColorStop(0.92,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,0.85)');
-  c.fillStyle=v;c.fillRect(0,0,256,64);
-  const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;return tx;
- })();
- const hazeMat=new THREE.MeshBasicMaterial({map:hazeTex,transparent:true,opacity:0,depthWrite:false,
-  blending:THREE.AdditiveBlending,side:THREE.DoubleSide,fog:false});
- const hazeM=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),hazeMat,HAZE_N);
- hazeM.frustumCulled=false;hazeM.renderOrder=6;hazeM.visible=false;scene.add(hazeM);
- const hazeP=new Float32Array(HAZE_N*4);   // fan offset, distance, phase, height scale
- for(let i=0;i<HAZE_N;i++){hazeP[i*4]=(i/HAZE_N-0.5)*1.15+(Math.random()-0.5)*0.12;hazeP[i*4+1]=26+Math.random()*104;
-  hazeP[i*4+2]=Math.random()*6.28;hazeP[i*4+3]=0.9+Math.random()*2.4;}
+ /* Desert distance haze is part of the continuous fog grade below. The former
+    additive cards were 16–80 m wide and cut bright ribbons through cliffs when
+    viewed from above; atmosphere must not introduce intersecting geometry. */
 
  /* ================= 7. snow ================= */
  /* Points, not quads: a flake needs no orientation and a Points cloud of five hundred is one
@@ -435,33 +402,6 @@ export function install(G){
    }
    mistM.instanceMatrix.needsUpdate=true;
   }
-  /* -- heat haze -- */
-  const hazeAmt=REG.badland*sstep(K.elev,22,44)*(1-rain);
-  hazeM.visible=hazeAmt>0.02;
-  hazeMat.opacity=hazeAmt*0.58;
-  if(hazeM.visible){
-   const cp=camera.position;
-   /* Spread across the view rather than round a full ring. A ring of eighteen puts two or
-      three in a 52-degree frame and the badland got one lonely smudge; a fan in front puts
-      all of them where they can overlap, which is what makes the air look like it is moving. */
-   camera.getWorldDirection(_v);
-   const fwd=Math.atan2(_v.x,_v.z);
-   for(let i=0;i<HAZE_N;i++){
-    const o=i*4,a=fwd+hazeP[o]+Math.sin(t*0.05+hazeP[o+2])*0.04,
-          d=hazeP[o+1],ph=hazeP[o+2],sc=hazeP[o+3];
-    const x=cp.x+Math.sin(a)*d,z=cp.z+Math.cos(a)*d;
-    const gy=groundH(x,z);
-    /* Each band shivers on its own clock, and the vertical stretch is what sells it: the air
-       column above hot rock is taller one instant and shorter the next. */
-    const wob=Math.sin(t*(2.4+sc)+ph),wob2=Math.sin(t*(3.7+sc*0.6)+ph*2.1);
-    _s.set(d*0.62*(1+wob2*0.07),sc*(1.5+wob*0.46),1);
-    _q.setFromAxisAngle(_up,a+Math.PI);      // turn the band's face back down the fan at the camera
-    _v.set(x,gy+_s.y*0.42+wob*0.14,z);
-    _m.compose(_v,_q,_s);hazeM.setMatrixAt(i,_m);
-   }
-   hazeM.instanceMatrix.needsUpdate=true;
-  }
-
   /* -- snow -- */
   const snowAmt=REG.snow*(1-rain*0.6);
   snowM.visible=snowAmt>0.03;
@@ -631,6 +571,8 @@ export function install(G){
    if(K.horizon>0.02)_fog.lerp(_glow,K.horizon*0.34);
    const lum=lerp(0.13,1.0,sstep(e,-6,8));
    _fog.multiplyScalar(lum*(rain?0.80:1));
+   A.desertHaze=REG.badland*sstep(e,22,44)*(1-rain);
+   _fog.lerp(_tmp.setHex(0xd6ba93).multiplyScalar(lum),A.desertHaze*.16);
    if(REG.snow>0.02)_fog.lerp(_tmp.setHex(0xdfe8f0).multiplyScalar(lum),REG.snow*0.45);
    _fogSm.lerp(_fog,Math.min(1,dt*2.2));      // so a shower arriving is a change in weather, not a cut
    scene.fog.color.copy(_fogSm);
@@ -638,7 +580,7 @@ export function install(G){
       into the glow behind them and the basin lost its depth at exactly the hour it should
       have the most. Enough haze to separate the ridges, not enough to eat them. */
    let d=rain?0.0052:0.00092+0.00062*K.horizon+0.00060*K.dawn+0.00045*K.night;
-   d+=REG.marsh*0.00110*(1-K.day*0.4)+REG.snow*0.00075+REG.amber*0.00030-REG.badland*0.00022;
+   d+=REG.marsh*0.00110*(1-K.day*0.4)+REG.snow*0.00075+REG.amber*0.00030-REG.badland*0.00022+A.desertHaze*0.00050;
    SM.fogD+=(Math.max(0.0006,d)-SM.fogD)*Math.min(1,dt*1.1);
    /* Not in VR. ranch3d pulls the fog right in to 0.0075 on entering VR (ranch3d.html:2359) so
       that far less world is drawn for two eyes on a headset, and restores whatever it found on
@@ -653,5 +595,5 @@ export function install(G){
  /* QA and anything else that wants to know what the weather is doing. */
  G.on('state',o=>{o.atmos={elev:+K.elev.toFixed(1),day:+K.day.toFixed(2),night:+K.night.toFixed(2),
   horizon:+K.horizon.toFixed(2),cloud:+(A.cloud||1).toFixed(2),fogD:scene.fog?+scene.fog.density.toFixed(5):0,
-  mist:+mistMat.opacity.toFixed(3),snow:snowM.visible,haze:hazeM.visible,birds:birdM.visible,stars:starM.visible};});
+  mist:+mistMat.opacity.toFixed(3),snow:snowM.visible,haze:A.desertHaze>0.02,birds:birdM.visible,stars:starM.visible};});
 }
