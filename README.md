@@ -320,6 +320,13 @@ checks the midnight boundary and captures settled day, dawn, sunset, night and
 rain views. Its raw edge-variation metric is diagnostic: real cloud edges also
 contribute to it, so the outlier count is the grain acceptance check.
 
+Scanned tree edges preserve the world's opaque alpha while retaining MSAA
+coverage. This removes the bright white fringe that appeared on distant crowns
+in fog and rain; detailed leaves use the same treatment. Fog, colour, shadow
+casting and leaf silhouettes remain part of the normal lighting pipeline.
+`node tools/qa-foliage-opacity.cjs` checks scene opacity across weather/quality
+settings and reproduces the previous fault with a controlled cutout fixture.
+
 The next regional pass gives Amberwood gold, coral and burgundy scanned foliage
 with matching close-up and distant materials. It replaces the remaining ball
 crowns there and the large leaf cards at Willowmere, uses slimmer roadside trees,

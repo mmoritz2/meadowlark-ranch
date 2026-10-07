@@ -1,5 +1,5 @@
 import {inMeadowOpening} from './pastoral-fields.mjs?v=meadow-ridges-1';
-import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage} from './tree-impostors.js?v=seasonal-woodland-1';
+import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=opaque-foliage-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -33,7 +33,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     mat.envMapIntensity=foliage?.48:.68;
     for(const key of ['map','normalMap','roughnessMap','metalnessMap','aoMap'])if(mat[key])mat[key].anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
     if(!foliage)return;
-    mat.alphaToCoverage=true;mat.side=THREE.DoubleSide;mat.shadowSide=THREE.DoubleSide;
+    enableOpaqueFoliageCoverage(THREE,mat);mat.side=THREE.DoubleSide;mat.shadowSide=THREE.DoubleSide;
     // Thin needle cards receive light across a canopy, not like solid bark.
     mat.aoMapIntensity=.45;mat.normalScale.multiplyScalar(.55);
     const deform=sh=>{

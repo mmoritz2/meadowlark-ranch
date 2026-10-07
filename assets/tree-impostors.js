@@ -1,3 +1,19 @@
+// Alpha-to-coverage consumes fragment alpha to select MSAA samples. It must
+// not also lower the resolved opacity of this opaque world: the browser treats
+// the final canvas as premultiplied, making unpremultiplied leaf edges glow white.
+// Replace covered samples' RGB normally while preserving the background alpha.
+// Use with opaque cutout foliage over the world/sky, including reflection targets.
+export function enableOpaqueFoliageCoverage(THREE,material) {
+  material.alphaToCoverage=true;
+  material.blending=THREE.CustomBlending;
+  material.blendEquation=THREE.AddEquation;
+  material.blendSrc=THREE.OneFactor;
+  material.blendDst=THREE.ZeroFactor;
+  material.blendEquationAlpha=THREE.AddEquation;
+  material.blendSrcAlpha=THREE.ZeroFactor;
+  material.blendDstAlpha=THREE.OneFactor;
+}
+
 // Three r164's opaque fragment resets alpha to one, even when the material
 // enables alpha-to-coverage. Preserve coverage only on a multisampled target;
 // single-sample targets keep the original hard cutout and opaque alpha.
@@ -19,7 +35,7 @@ export function patchFoliageCoverage(shader,renderer) {
   shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>',`
     float foliageCoverageAlpha=diffuseColor.a;
     #include <opaque_fragment>
-    if(foliageMultisample)gl_FragColor.a=foliageCoverageAlpha;`);
+    gl_FragColor.a=foliageMultisample?foliageCoverageAlpha:1.0;`);
 }
 
 // Tint the leaf pigment rather than multiplying orange into green albedo.
@@ -51,7 +67,7 @@ export function patchSeasonalFoliage(shader,atlas=false) {
 export function treeImpostor({THREE,albedo,normals,width,height,bottom}) {
   const geo=new THREE.PlaneGeometry(width,height);geo.translate(0,bottom+height*.5,0);
   const mat=new THREE.MeshStandardMaterial({map:albedo,alphaTest:.22,side:THREE.DoubleSide,roughness:1,envMapIntensity:.48});
-  mat.alphaToCoverage=true;
+  enableOpaqueFoliageCoverage(THREE,mat);
   const vertex=sh=>{
     sh.vertexShader='varying vec2 treeHeading;\n'+sh.vertexShader;
     sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
