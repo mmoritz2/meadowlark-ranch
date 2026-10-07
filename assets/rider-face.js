@@ -79,24 +79,37 @@ export function riderLashGeometry(THREE,skin,eyes,body){
  const material=new THREE.MeshBasicMaterial({side:THREE.DoubleSide}),surface=new THREE.Mesh(face,material),ray=new THREE.Raycaster();surface.updateMatrixWorld(true);
  const eyeGeometry=eyes.geometry.clone(),eyeHead=eyes.skeleton.bones.findIndex(b=>b.name==='Head');eyeGeometry.applyMatrix4(eyes.skeleton.boneInverses[eyeHead]);
  const eyeSurface=new THREE.Mesh(eyeGeometry,material);eyeSurface.updateMatrixWorld(true);
- const positions=[],indices=[],roots=[],segments=6,sides=4,V=(x,y,z)=>new THREE.Vector3(x,y,z);
+ const positions=[],indices=[],roots=[],segments=7,sides=6,V=(x,y,z)=>new THREE.Vector3(x,y,z);
  const front=(mesh,x,y)=>{ray.set(V(x,y,.3),V(0,0,-1));return ray.intersectObject(mesh,false)[0];};
- for(const side of [-1,1])for(let i=0;i<18;i++){
-  const t=i/17,x=side*(.020+.030*t);let exposed=false,root=null;
+ for(const side of [-1,1])for(let i=0;i<20;i++){
+  const t=i/19,x=side*(.020+.030*t);let exposed=false,root=null;
   // Find where the visible eye meets the upper lid instead of guessing an arc.
   for(let y=.099;y<=.120;y+=.0001){const skinHit=front(surface,x,y),eyeHit=front(eyeSurface,x,y);if(!skinHit||!eyeHit)continue;
    if(skinHit.point.z<eyeHit.point.z){exposed=true;continue;}
    if(exposed){root=V(x,y,skinHit.point.z+.0002);break;}
   }
-  if(!root)continue;const length=.0070+.0040*t,fan=side*(.0007+.0029*t),base=positions.length/3;
-  const curve=new THREE.QuadraticBezierCurve3(root,root.clone().add(V(fan*.45,length*.12,length*.58)),root.clone().add(V(fan,length*.82,length*.75)));
+  if(!root)continue;
+  // A graduated, softly staggered fan keeps the longer outer lashes readable.
+  const stagger=[.93,1.05,.97][i%3],length=(.0085+.0060*t)*stagger,fan=side*(.0010+.0048*t+[.0007,0,-.0007][i%3]),base=positions.length/3;
+  const curve=new THREE.QuadraticBezierCurve3(root,root.clone().add(V(fan*.38,length*.14,length*.57)),root.clone().add(V(fan,length*.78,length*.72)));
   roots.push(root.toArray());
   for(let j=0;j<=segments;j++){
-   const u=j/segments,p=curve.getPoint(u),tangent=curve.getTangent(u).normalize(),normal=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),binormal=tangent.clone().cross(normal),r=.00023*Math.pow(1-u,.75)+.000018;
+   const u=j/segments,p=curve.getPoint(u),tangent=curve.getTangent(u).normalize(),normal=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),binormal=tangent.clone().cross(normal),r=.00034*Math.pow(1-u,.75)+.000025;
    for(let k=0;k<sides;k++){const angle=k*Math.PI*2/sides,v=p.clone().addScaledVector(normal,Math.cos(angle)*r).addScaledVector(binormal,Math.sin(angle)*r);positions.push(...v.toArray());
     if(j<segments){const a=base+j*sides+k,b=base+j*sides+(k+1)%sides,c=a+sides,d=b+sides;indices.push(a,b,c,b,d,c);}
    }
   }
+ }
+ // Join the strands with a fine fitted upper-lid line for a readable dark base.
+ for(const side of [-1,1]){
+  const lid=roots.filter(p=>Math.sign(p[0])===side).map(p=>V(...p));
+  if(lid.length<2)continue;
+  const line=new THREE.CatmullRomCurve3(lid),band=new THREE.TubeGeometry(line,32,.00035,6,false),offset=positions.length/3,points=band.attributes.position;
+  for(let i=0;i<points.count;i++){
+   const t=Math.floor(i/7)/32,center=line.getPointAt(t),taper=.08+.92*Math.min(1,t/.12,(1-t)/.12);
+   const point=new THREE.Vector3().fromBufferAttribute(points,i).sub(center).multiplyScalar(taper).add(center);positions.push(...point.toArray());
+  }
+  for(const i of band.index.array)indices.push(offset+i);band.dispose();
  }
  face.dispose();eyeGeometry.dispose();material.dispose();
  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();geo.computeBoundingSphere();geo.userData.lashRoots=roots;return geo;
