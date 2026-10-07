@@ -1,3 +1,4 @@
+import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
 /* Ground materials authored for Star Ranch. Distances and texture scales are metres. */
 export function createTerrainSurface({THREE, renderer, grass, bump}) {
   const loader = new THREE.TextureLoader();
@@ -72,7 +73,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v14-countryside';
+  material.customProgramCacheKey = () => 'terrain-biomes-v15-dry-foothills';
   material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0]};
   material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
@@ -95,6 +96,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       float tHash(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
       vec2 tHash2(vec2 p){vec3 q=fract(vec3(p.xyx)*vec3(.1031,.1030,.0973));q+=dot(q,q.yzx+33.33);return fract((q.xx+q.yz)*q.zy);}
       float tNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(tHash(i),tHash(i+vec2(1,0)),f.x),mix(tHash(i+vec2(0,1)),tHash(i+vec2(1,1)),f.x),f.y);}
+      ${COYOTE_DRY_GLSL}
       ` + sh.fragmentShader;
     sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>',`
       vec2 p = terrainPosition.xz;
@@ -174,6 +176,8 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       float dry  = smoothstep(3.4,8.6,hgt)*(0.5+0.5*smoothstep(0.03,0.19,grade));
       tint = mix(tint, tint*vec3(.67,.85,.70), damp*0.55);
       tint = mix(tint, tint*vec3(1.18,1.11,0.90), dry*0.45);
+      float foothillDry=coyoteDryWeight(p,terrainChalkRelief);
+      tint=mix(tint,tint*vec3(1.22,1.07,.74),foothillDry*.70);
       turf *= tint;
       turf=mix(vec3(dot(turf,vec3(.2126,.7152,.0722))),turf,.93);
 
@@ -206,10 +210,10 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       stone *= mix(1.0,.25,chalkTurf);
       float rocky = max(scree,stone);
 
-      float canyon = 1.0-smoothstep(96.0,172.0, length(p-vec2(-220.0,130.0))+ecoB*0.9);
+      float canyon = foothillDry;
       // The chalk down rises above the desert's edge. Keep its raised turf green,
       // blending back into the underlying biome at the foot of the same mesh.
-      canyon *= 1.0-chalkTurf;
+
       float alpineClimate=1.0-smoothstep(.65,1.10,length((p-vec2(-150.0,-333.0))/vec2(100.0,92.0)));
       float snowRegion = 1.0-smoothstep(88.0,158.0, length(p-vec2(-160.0,-210.0))+ecoA*0.8);
       snowRegion=max(snowRegion,alpineClimate);
@@ -313,7 +317,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       }
       if(canyon>0.003){
         vec3 dust = sand*vec3(.74,.79,.79)*(0.86+0.30*macro);
-        surface = mix(surface, mix(dust, rock*vec3(1.07,.94,.82), max(stone,scree*0.55)), canyon*0.96);
+        surface = mix(surface, mix(dust, rock*vec3(1.07,.94,.82), max(stone,scree*0.55)), smoothstep(.08,.96,canyon)*0.96);
       }
       /* Lying snow is drifted, not poured: deeper in the lee and scoured thin on the crowns.
          Without a value swing at these scales the snow texture's own tiling grid is the only

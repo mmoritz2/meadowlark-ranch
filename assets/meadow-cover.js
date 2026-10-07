@@ -1,3 +1,4 @@
+import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
 import {meadowGrazingAt} from './pastoral-fields.mjs?v=leafy-orchard-1';
 
 // Curved ribbon leaves: narrow roots, a fuller lower blade, and a curling tip.
@@ -45,7 +46,7 @@ function fieldPatch(x,z){
 export function meadowGrowthAt(x,z){
   const stand=.65*fieldPatch(x/11+3.4,z/11-8.2)+.35*fieldPatch(x/29-5.1,z/29+2.7);
   const grazed=meadowGrazingAt(x,z);
-  return (.42+stand*.95)*(1-grazed)+(.23+stand*.33)*grazed;
+  return ((.42+stand*.95)*(1-grazed)+(.23+stand*.33)*grazed)*(1-coyoteCoverDryWeight(x,z)*.38);
 }
 
 // One palette for the near leaves, distant sward and old seed layer. Separate
@@ -53,7 +54,8 @@ export function meadowGrowthAt(x,z){
 export function meadowBladeColor(color,x,z,variation=.5){
   const patch=fieldPatch(x/18+8.7,z/18-3.1);
   const dry=Math.max(0,Math.min(1,(fieldPatch(x/24-7.4,z/24+6.8)-.42)*3.5))*(1-meadowGrazingAt(x,z)*.85);
-  return color.setHSL(.225+patch*.029-dry*.075,.55+variation*.08-dry*.08,.15+variation*.035+dry*.055);
+  const arid=coyoteCoverDryWeight(x,z);
+  return color.setHSL(.225+patch*.029-dry*.075-arid*.105,.55+variation*.08-dry*.08-arid*.11,.15+variation*.035+dry*.055+arid*.07);
 }
 
 // Fully modelled lupin: palmate foliage and a spiral of cupped pea flowers.

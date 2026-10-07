@@ -1,0 +1,18 @@
+// Compare the terrain GLSL with the planting sampler on the native GPU.
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),QA=require('./qa-platform.cjs');
+(async()=>{const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});try{
+ const page=await browser.newPage();await page.route('**/qa-biome-empty',r=>r.fulfill({contentType:'text/html',body:'<canvas id="test"></canvas>'}));await page.goto(QA.BASE+'/qa-biome-empty');
+ const report=await page.evaluate(async()=>{
+  const {coyoteDryWeight,COYOTE_DRY_GLSL}=await import('./assets/biome-weights.mjs?v=dry-foothills-1'),gl=document.getElementById('test').getContext('webgl2');if(!gl||!gl.getExtension('EXT_color_buffer_float'))throw Error('Native float rendering unavailable');
+  const points=[];for(let z=-70;z<=330;z+=8)for(let x=-420;x<=-20;x+=8)points.push([x,z,0]);
+  for(let x=-350;x<=-80;x+=5){const river=120+Math.sin(x*.012)*45;for(const offset of[0,8.99,9.01,14.5,19.99,20.01,35])for(const relief of[0,.119,.121,.9,1.699,1.701,5])points.push([x,river+offset,relief]);}
+  const w=128,h=Math.ceil(points.length/w),data=new Float32Array(w*h*4);points.forEach((p,i)=>data.set([...p,0],i*4));
+  const compile=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;};
+  const program=gl.createProgram();gl.attachShader(program,compile(gl.VERTEX_SHADER,'#version 300 es\nvoid main(){vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);gl_Position=vec4(p*2.-1.,0.,1.);}'));gl.attachShader(program,compile(gl.FRAGMENT_SHADER,'#version 300 es\nprecision highp float;uniform highp sampler2D samples;out vec4 result;'+COYOTE_DRY_GLSL+'\nvoid main(){vec3 p=texelFetch(samples,ivec2(gl_FragCoord.xy),0).xyz;result=vec4(coyoteDryWeight(p.xy,p.z),0.,0.,1.);}'));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));
+  const texture=(pixels)=>{const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,w,h,0,gl.RGBA,gl.FLOAT,pixels);return t;};
+  const input=texture(data),output=texture(null),fb=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,fb);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,output,0);if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw Error('Incomplete float target');
+  gl.useProgram(program);gl.bindTexture(gl.TEXTURE_2D,input);gl.uniform1i(gl.getUniformLocation(program,'samples'),0);gl.viewport(0,0,w,h);gl.drawArrays(gl.TRIANGLES,0,3);const pixels=new Float32Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.FLOAT,pixels);
+  let maxError=0,invalid=0;points.forEach((p,i)=>{const x=data[i*4],z=data[i*4+1],relief=data[i*4+2],gpu=pixels[i*4];maxError=Math.max(maxError,Math.abs(gpu-coyoteDryWeight(x,z,relief)));if(!Number.isFinite(gpu)||gpu<0||gpu>1)invalid++;});
+  const ext=gl.getExtension('WEBGL_debug_renderer_info');return{samples:points.length,maxError,invalid,error:gl.getError(),renderer:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'unavailable'};
+ });assert(report.samples>5000&&report.maxError<.00003&&!report.invalid&&!report.error,'Terrain and cover biome weights disagree');if(process.argv[2]){const out=path.resolve(process.argv[2]);fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,JSON.stringify(report,null,2));}console.log(JSON.stringify(report));
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1});

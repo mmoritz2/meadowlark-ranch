@@ -1,5 +1,6 @@
+import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
 import {loadUndergrowthModels} from './undergrowth-models.js?v=individual-undergrowth-1';
-import {coverBiome,coverHash,coverShape,selectCover,UNDERGROWTH_TIERS} from './undergrowth-layout.mjs';
+import {coverBiome,coverHash,coverShape,selectCover,UNDERGROWTH_TIERS} from './undergrowth-layout.mjs?v=dry-foothills-1';
 import {treeImpostor,enableOpaqueFoliageCoverage,patchFoliageCoverage,patchSeasonalFoliage} from './tree-impostors.js?v=canopy-lighting-1';
 import {alpineSnowAt} from './falls-landscape.js?v=alpine-range-1';
 
@@ -12,10 +13,11 @@ export function installUndergrowth(G,{flowerShrubs=[],staticShrubs=[]}={}){
  const m=new T.Matrix4(),p=new T.Vector3(),q=new T.Quaternion(),s=new T.Vector3(),up=new T.Vector3(0,1,0),white=new T.Color();let order=0;
  function record(matrix,color,kind,meta){
   const x=matrix.elements[12],z=matrix.elements[14],biome=coverBiome(x,z,alpineSnowAt(x,z));if(biome==='cold'||biome==='dry')return null;
-  matrix.decompose(p,q,s);const variation=coverHash(x,z),shape=coverShape(kind,s.y,variation,meta),height=shape.height,y=W.groundH(x,z)-.025,yaw=Math.atan2(matrix.elements[8],matrix.elements[10]);
+  matrix.decompose(p,q,s);const variation=coverHash(x,z),dry=biome==='autumn'?0:coyoteCoverDryWeight(x,z),shape=coverShape(kind,s.y,variation,meta,dry),height=shape.height,y=W.groundH(x,z)-.025,yaw=Math.atan2(matrix.elements[8],matrix.elements[10]);
   q.setFromAxisAngle(up,yaw);const root=new T.Matrix4().compose(new T.Vector3(x,y,z),q,new T.Vector3(height,height,height));
   const tint=biome==='autumn'?color.clone():new T.Color().setRGB(.94+variation*.06,1,.88+variation*.10);
-  return{x,y,z,kind,biome,index:shape.index,height,matrix:root,color:tint,order:order++};
+  if(dry>0)tint.lerp(new T.Color().setRGB(1,.91,.68),dry*.76);
+  return{x,y,z,kind,biome,dry,index:shape.index,height,matrix:root,color:tint,order:order++};
  }
  function patch(material,native,id){
   const old=material.onBeforeCompile,cache=material.customProgramCacheKey.bind(material);

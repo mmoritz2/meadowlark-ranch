@@ -29,6 +29,7 @@ import {alpineSnowAt,fallsExcludesDryPlants} from '../falls-landscape.js?v=alpin
    and at the exact centre of each of the four quarters, because six other packages are building
    there and a barn dropped into a thicket helps nobody. */
 import {canyonCliffAt} from '../canyon-landscape.js?v=carved-canyon-1';
+import {coyoteCoverDryWeight} from '../biome-weights.mjs?v=dry-foothills-1';
 import {oasisContainsWater} from '../oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from '../desert-art.js?v=botanical-desert-1';
 import {getFoliageTexture} from '../world-art.js?v=world-cinematic-1';
@@ -886,6 +887,42 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   b.n=kept;coverAfter[name]=kept;
  }
  F.coverCleanup={before:coverBefore,after:coverAfter};
+
+ /* ---- 6k. the dry foothill margin ---------------------------------------------------------
+    The canyon's original plants, trees, snags and succulents own the dry core. The soft
+    meadow cover and existing leafy plants in the canyon margin change here. The same irregular weight that colours the terrain
+    lets green grass give way to short olive tussocks and scattered straw, with fewer blooms
+    and fern fronds as the soil dries. This runs after every seeded planting and collider call;
+    coordinate hashes thin existing sites without consuming or reseeding the random stream. */
+ const dryCover={tuft:{density:0.56,size:0.75,tint:'#d6c793',amount:0.78},
+  petal:{density:0.18,size:0.64,tint:'#ddd0b1',amount:0.55},
+  scrub:{density:0.66,size:0.76,tint:'#b9bf91',amount:0.66},
+  brack:{density:0.40,size:0.64,tint:'#c4bc88',amount:0.72}};
+ const dryBefore={},dryAfter={};let dryTinted=0,dryRemoved=0,dryShortened=0,inwardTinted=0;
+ for(const [name,change] of Object.entries(dryCover)){
+  const b=BANK[name],n=b.n,target=new THREE.Color(change.tint);let kept=0;
+  dryBefore[name]=n;
+  for(let i=0;i<n;i++){
+   b.im.getMatrixAt(i,_m);_m.decompose(_v,_q,_sc);
+   const x=_v.x,z=_v.z;
+   // Preserve the established core while its old circular fringe joins the irregular margin.
+   // Fade back to the original desert plants before .96 rather than creating another seam.
+   const biome=biomeAt(x,z),weight=(biome==='meadow'||biome==='desert')&&alpineSnowAt(x,z)<0.05?coyoteCoverDryWeight(x,z):0;
+   const dry=biome==='desert'?weight*(1-smooth(.84,.96,weight)):weight;
+   if(dry>0){
+    const keep=1-dry*(1-change.density);
+    if(hsh(Math.floor(x*41)+name.length*1499,Math.floor(z*43)-733)>keep){dryRemoved++;continue;}
+    const scale=1-dry*(1-change.size),y=groundH(x,z);
+    _v.y=y+(_v.y-y)*scale;_sc.multiplyScalar(scale);_m.compose(_v,_q,_sc);
+    dryShortened++;
+   }
+   b.im.setMatrixAt(kept,_m);b.im.getColorAt(i,_col);
+   if(dry>0){_col.lerp(target,dry*change.amount);dryTinted++;if(biome==='desert')inwardTinted++;}
+   b.im.setColorAt(kept,_col);kept++;
+  }
+  b.n=kept;dryAfter[name]=kept;
+ }
+ F.dryMargin={before:dryBefore,after:dryAfter,tinted:dryTinted,shortened:dryShortened,removed:dryRemoved,inwardTinted};
 
  /* ================= 7. hand the banks to the renderer ================= */
  let total=0;

@@ -665,10 +665,11 @@ import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js?v=clear-pastoral-sky-1';
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=layered-horizon-1';
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-1';
-import {hasMeadowCover} from './assets/meadow-biomes.js';
-import {installUndergrowth} from './assets/undergrowth.js?v=individual-undergrowth-1';
+import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
+import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
+import {installUndergrowth} from './assets/undergrowth.js?v=dry-foothills-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=pasture-ribbons-1';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=dry-foothills-1';
 import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=leafy-orchard-1';
 import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=carved-canyon-1';
 import {createGeology} from './assets/geology.js?v=carved-canyon-1';
@@ -680,7 +681,7 @@ import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js?v=living-cascades-1';
 import {installRiparian} from './assets/riparian.js';
 import {createOuterLandscape} from './assets/outer-landscape.js?v=continuous-countryside-1';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=continuous-countryside-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=dry-foothills-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js?v=willowmere-settlement-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-world-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
@@ -702,7 +703,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=couture-riders-20261007';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-store-live-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-store-live-20261007';
-import {FEATURES} from './assets/features/index.js?v=couture-riders-20261007';
+import {FEATURES} from './assets/features/index.js?v=dry-foothills-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -2942,11 +2943,11 @@ const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:b
   const x=pos.getX(i),z=pos.getZ(i);
   pos.setY(i,terrainH(x,z));
   const lum=.91+vnoise(x*.032,z*.032)*.09;
-  /* The meadow albedo reads olive, and between broad blades it is what the eye sees as 'the
-     ground'. A riding game's meadow has no soil showing: tint the pasture toward green here,
-     and leave Coyote's sand and Hollowpeak's snow exactly as they were. */
-  const sand=Math.hypot(x+220,z-130)<150, snow=Math.hypot(x+160,z+210)<140||alpineSnowAt(x,z)>.2;
-  if(sand||snow)col.setScalar(lum); else col.setRGB(lum*.94,lum*.98,lum*.89);
+  /* Keep the visible soil and planted cover on the same dry-foothill transition.
+     The terrain shader supplies sand and wet-bank detail; vertex tint gives the
+     pasture a green base and retains the separate snow palette. */
+  const sand=coyoteDryWeight(x,z), snow=Math.hypot(x+160,z+210)<140||alpineSnowAt(x,z)>.2;
+  if(snow)col.setScalar(lum); else col.setRGB(lum*(.94+.06*sand),lum*(.98+.02*sand),lum*(.89+.11*sand));
   colors.push(col.r,col.g,col.b);
  }
  geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
@@ -3013,12 +3014,12 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.abs(x)<25&&Math.abs(z)<20)continue; // keep the arena sandy
   if(Math.abs(z-riverZ(x))<6||pathDist(x,z)<PATH_W*.9)continue; // keep water and tracks clear
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)continue; // not on the bridge
-  if(!hasMeadowCover(x,z))continue; // a broken, gradual grass margin around sand and snow
+  if(!hasSeedMeadowCover(x,z))continue; // retain the seed stream that places the later world
   e.set(0,Math.random()*Math.PI,(Math.random()-0.5)*0.15);
   q.setFromEuler(e);
   const s=0.7+Math.random()*0.8,growth=meadowGrowthAt(x,z),spread=.55+.45*growth;
   sc.set(s*spread,s*(.78-.40*managedGrass(x,z))*growth,s*spread);
-  if(alpineSnowAt(x,z)>.35)sc.setScalar(0); // keep the placement random stream unchanged
+  if(alpineSnowAt(x,z)>.35||!hasMeadowCover(x,z))sc.setScalar(0); // keep the placement random stream unchanged
   v.set(x,groundH(x,z),z);
   m4.compose(v,q,sc);
   blades.setMatrixAt(placed,m4);
@@ -3174,7 +3175,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   return true;};
  /* Which country you are standing in, and therefore what grows here. */
  const biomeAt=(x,z)=>{
-  if(Math.hypot(x+220,z-130)<150)return 'desert';
+  if(coyoteCoverDryWeight(x,z)>.96)return 'desert';
   if(Math.hypot(x+160,z+210)<140||alpineSnowAt(x,z)>.35)return 'snow';
   /* The four new quarters of the basin, out past where the old fence stood. */
   if(Math.hypot(x-300,z+300)<130)return 'amber';    // Amberwood, the turning broadleaf
@@ -3209,6 +3210,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   tundra:{fern:'#9aa894',rock:'#8a8f96',p:0.70,sz:0.85},   // lichen and low scrub on thin soil
   badland:{fern:'#c98f5c',rock:'#9c5a3c',p:0.72,sz:1.30},  // ochre dust and broken rock
  };
+ const dryFernTint=new THREE.Color(CLUT.desert.fern),dryRockTint=new THREE.Color(CLUT.desert.rock);
  const FLC=[new THREE.Color('#ffffff'),new THREE.Color('#fff1a8'),new THREE.Color('#f7b7d2'),new THREE.Color('#cdb8f2'),new THREE.Color('#ffffff')];
  let cx0=1e9,cz0=1e9;
  const fillCell=(ci,cj,slot)=>{
@@ -3226,7 +3228,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    const meadow=gh(ci*3,cj*5)>.62&&managedGrass(x,z)<.58&&meadowGrazingAt(x,z)<.75;
-   if(!meadow||h3>0.6||!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);flow.setMatrixAt(id,m4);continue;}
+   if(!meadow||h3>0.6*(1-coyoteCoverDryWeight(x,z)*.95)||!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);flow.setMatrixAt(id,m4);continue;}
    const sz=0.8+h3*0.6; e.set(0,h2*Math.PI,0); q.setFromEuler(e); sc.set(sz,sz,sz);
    v.set(x,groundH(x,z)-0.01,z); m4.compose(v,q,sc); flow.setMatrixAt(id,m4);
    flow.setColorAt(id,FLC[Math.floor(h1*FLC.length)%FLC.length]);
@@ -3239,7 +3241,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    for(let k=0;k<NG_LU;k++){
     const h1=gh(ci*67+k*29,cj*43+k*13), h2=gh(ci*31+k*17,cj*83+k*41), h3=gh(k*59+ci*7,cj*19+k*23);
     const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
-    const bloom=meadowBloomAt(x,z)*.82;
+    const bloom=meadowBloomAt(x,z)*.82*(1-coyoteCoverDryWeight(x,z)*.95);
     if(h3>bloom||biomeAt(x,z)!=='meadow'||!okClutter(x,z))continue;
     const sz=.95+h3*.55; e.set(0,h2*Math.PI,(h1-0.5)*0.08); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.35),sz);
     v.set(x,groundH(x,z)-0.03,z);m4.compose(v,q,sc);m4.toArray(cell.matrices,cell.count*16);
@@ -3249,12 +3251,13 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   for(let k=0;k<NG_FR;k++){                                  // ferns, scrub, dry brush, snow tufts
    const id=slot*NG_FR+k, h1=gh(ci*53+k*13,cj*89+k*17), h2=gh(ci*23+k*37,cj*71+k*19), h3=gh(k*47+ci*3,cj*29+k*11);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
-   const B=biomeAt(x,z), C=CLUT[B];
-   if(!okClutter(x,z)||h3>C.p*(B==='meadow'?1-.95*meadowGrazingAt(x,z):1)||(B==='water'&&h3>0.35)){hide(fern,id);continue;}
-   const sz=C.sz*(0.7+h3*0.8);
+   const B=biomeAt(x,z), C=CLUT[B],dry=B==='meadow'||B==='desert'?coyoteCoverDryWeight(x,z):0,blend=B==='meadow'?dry:0;
+   const density=C.p+(CLUT.desert.p-C.p)*blend,size=C.sz+(CLUT.desert.sz-C.sz)*blend;
+   if(!okClutter(x,z)||h3>density*(B==='meadow'?1-.95*meadowGrazingAt(x,z)*(1-blend):1)||(B==='water'&&h3>0.35)){hide(fern,id);continue;}
+   const sz=size*(0.7+h3*0.8);
    e.set(0,h1*Math.PI*2,(h2-0.5)*0.13); q.setFromEuler(e); sc.set(sz,sz*(0.85+h2*0.4),sz);
    v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc); fern.setMatrixAt(id,m4);
-   bcol.set(C.fern).offsetHSL(0,(h1-0.5)*0.06,(h3-0.5)*0.10); fern.setColorAt(id,bcol);
+   bcol.set(C.fern).lerp(dryFernTint,blend).offsetHSL(0,(h1-0.5)*0.06,(h3-0.5)*0.10); fern.setColorAt(id,bcol);
   }
   const reedCell=reedCells[slot];reedCell.count=0;
   for(let k=0;k<NG_RD;k++){                                  // bulrushes, only at the water's edge
@@ -3269,12 +3272,12 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   for(let k=0;k<NG_RK;k++){                                  // stones, everywhere, in the local rock colour
    const id=slot*NG_RK+k, h1=gh(ci*67+k*31,cj*17+k*43), h2=gh(ci*13+k*53,cj*83+k*7), h3=gh(k*23+ci*19,cj*3+k*61);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
-   const B=biomeAt(x,z);
-   if(!okClutter(x,z)||h3>(B==='desert'?0.78:B==='snow'?0.5:0.34)){hide(rock,id);continue;}
-   const sz=(0.18+h3*0.46)*(B==='desert'?2.1:B==='snow'?1.4:1);
+   const B=biomeAt(x,z),dry=B==='meadow'?coyoteCoverDryWeight(x,z):0;
+   if(!okClutter(x,z)||h3>(B==='desert'?0.78:B==='snow'?0.5:0.34+.44*dry)){hide(rock,id);continue;}
+   const sz=(0.18+h3*0.46)*(B==='desert'?2.1:B==='snow'?1.4:1+1.1*dry);
    e.set(0,h2*Math.PI*2,0); q.setFromEuler(e); sc.set(sz,sz*(0.6+h1*0.5),sz*(0.8+h2*0.4));
    v.set(x,groundH(x,z)-(rock.geometry.boundingBox?.min.y??-.16)*sc.y-.025,z); m4.compose(v,q,sc); rock.setMatrixAt(id,m4);
-   bcol.set(CLUT[B].rock).offsetHSL(0,(h2-0.5)*0.05,(h1-0.5)*0.16); rock.setColorAt(id,bcol);
+   bcol.set(CLUT[B].rock).lerp(dryRockTint,dry).offsetHSL(0,(h2-0.5)*0.05,(h1-0.5)*0.16); rock.setColorAt(id,bcol);
   }
  };
  const update=(px,pz)=>{

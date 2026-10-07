@@ -1,17 +1,18 @@
+import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
 // Pure layout/budget rules shared by runtime and acceptance checks.
 export const UNDERGROWTH_TIERS={low:{budget:100000,near:10,far:85},medium:{budget:240000,near:15,far:110},high:{budget:480000,near:21,far:135}};
 export function coverHash(x,z){let h=Math.imul(Math.round(x*97),374761393)^Math.imul(Math.round(z*89),668265263);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;}
 export function coverBiome(x,z,snow=0){
  if(snow>.35||Math.hypot(x+160,z+210)<140)return 'cold';
- if(Math.hypot(x+220,z-130)<150||Math.hypot(x+330,z-300)<125)return 'dry';
+ if(coyoteCoverDryWeight(x,z)>.96||Math.hypot(x+330,z-300)<125)return 'dry';
  if(Math.hypot(x+300,z+320)<125)return 'cold';
  return Math.hypot(x-300,z+300)<130?'autumn':'green';
 }
-export function coverShape(kind,height,variation,templates){
- const woody=kind==='woody',fern=kind==='brack'||kind==='fern'||kind==='yard-fern'||(kind==='local'&&variation<.70),index=woody?6+Math.floor(variation*2)%2:fern?Math.min(3,Math.floor(variation*4)):4+Math.floor(variation*2)%2;
+export function coverShape(kind,height,variation,templates,dry=0){
+ const woody=kind==='woody'||dry>0&&variation<dry*.86,fern=kind==='brack'||kind==='fern'||kind==='yard-fern'||(kind==='local'&&variation<.70),index=woody?6+Math.floor(variation*2)%2:fern?Math.min(3,Math.floor(variation*4)):4+Math.floor(variation*2)%2;
  let h=woody?Math.max(.35,Math.min(1.30,height*1.05)):fern?Math.max(.18,Math.min(.60,height*(kind==='local'?.52:kind==='yard-fern'?.40:.46))):Math.max(.40,Math.min(1.25,height*(kind==='local'?.68:kind==='yard-shrub'?.36:.76)));
  // Actual radial bounds keep wide fronds within the old clear planting margins.
- h=Math.min(h,(fern?1.30:1.15)/templates[index].width);
+ h=Math.min(h,(fern&&!woody?1.30:1.15)/templates[index].width)*(1-dry*.22);
  return{index,height:h};
 }
 export function selectCover(records,x,z,tier,templates){
