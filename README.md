@@ -288,6 +288,16 @@ clearance, grounded placement and repeatable layouts. This is an incremental
 visual pass toward the official Star Equestrian countryside reference; matching
 the entire reference world remains ongoing work.
 
+The pasture relief now has wider rotated footprints and three lower connecting
+shoulders. Five irregular meadow openings separate tree groups and reveal the
+village from Clover Hill. Tree removal updates original trunks, blossom canopies,
+scanned replacements, collision and camera obstacles, and the terrain leaf-litter
+mask together. Regional woods remain outside these authored clearings. The hills
+still share the rendered terrain sampler; the protected yard/arena footprints
+and river/creek grading remain in place. `qa-meadow-ridges.cjs` checks terrain
+contact across the basin, cleared-tree collisions, water depth, and actual mounted
+travel up and down the hill trail and across the bridge.
+
 The next regional pass gives Amberwood gold, coral and burgundy scanned foliage
 with matching close-up and distant materials. It replaces the remaining ball
 crowns there and the large leaf cards at Willowmere, uses slimmer roadside trees,

@@ -36,7 +36,7 @@ const state=await page.evaluate(async()=>{
   tiers.push({tier,meadowTriangles:q.nearGrass.meadowDistance.mesh.geometry.index.count/3*q.nearGrass.meadowDistance.mesh.count,trees:P.activeTrees,triangles:P.activeTreeTriangles,budget:P.treeTriangleBudget});
  }}finally{q.renderer.render=original}
  let leafTriangles=0;q.scene.traverse(o=>{if(o.name.startsWith('Photoscan canopy-broadleaf')&&o.material.name.includes('leaves'))leafTriangles=Math.max(leafTriangles,o.geometry.index.count/3)});
- const {FIELD_RISES,FIELD_ANCHORS,pastureRise}=await import('./assets/pastoral-fields.mjs?v=field-composition-1');
+ const {FIELD_RISES,FIELD_ANCHORS,pastureRise}=await import('./assets/pastoral-fields.mjs?v=meadow-ridges-1');
  const terrain=q.scene.getObjectByName('Pasture terrain');terrain.updateMatrixWorld(true);
  const samples=[];
  for(const c of FIELD_RISES)for(const [dx,dz] of[[0,0],[12,0],[-12,0],[0,12],[0,-12]]){

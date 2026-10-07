@@ -1,3 +1,4 @@
+import {inMeadowOpening} from './pastoral-fields.mjs?v=meadow-ridges-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage} from './tree-impostors.js?v=seasonal-woodland-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -17,6 +18,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   const routes=Object.values(G.tables.RACE_ROUTES).filter(Array.isArray);
   function segmentDistance(x,z,a,b){const dx=b[0]-a[0],dz=b[1]-a[1],t=THREE.MathUtils.clamp(((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz||1),0,1);return Math.hypot(x-a[0]-t*dx,z-a[1]-t*dz);}
   function clear(x,z,r=1){
+    if(inMeadowOpening(x,z))return false;
     if(G.vistas?.clearZones?.some(test=>test(x,z)))return false;
     if(W.sceneryArt.containsWaterfall(x,z,r))return false;
     if(Math.hypot(x,z)<33||W.pathDist(x,z)<r+3||(G.worldPaths?.trackDist(x,z)??Infinity)<r+3)return false;
@@ -139,16 +141,19 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       for(let i=W.colliders.length-1;i>=0;i--){const c=W.colliders[i];if(c.r<=1.2&&Math.hypot(c.x-x,c.z-z)<.15)W.colliders.splice(i,1);}
       for(let i=(W.forestPoints?.length||0)-1;i>=0;i--)if(Math.hypot(W.forestPoints[i].x-x,W.forestPoints[i].z-z)<.15)W.forestPoints.splice(i,1);
     };
-    state.roadClearedTrees=0;state.roadClearedSnags=0;
+    state.roadClearedTrees=0;state.roadClearedSnags=0;state.meadowClearings=[];
     const autumnPalette=['#e6b448','#db8734','#ad3d42','#c85c65'].map(c=>new THREE.Color(c));
     const add=t=>{
-      const road=onRoad(t.x,t.z);
-      const cleared=road||G.vistas?.clearZones?.some(test=>test(t.x,t.z));
+      const road=onRoad(t.x,t.z),meadow=inMeadowOpening(t.x,t.z);
+      const cleared=road||meadow||G.vistas?.clearZones?.some(test=>test(t.x,t.z));
       if(cleared){
         if(t.root)t.root.visible=false;else if(t.stem){t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;}
         clearTrunk(t.x,t.z);if(road)state.roadClearedTrees++;
+        if(meadow)state.meadowClearings.push({x:t.x,z:t.z,kind:t.kind});
         return;
       }
+      // Unchanged blossom trees still use their original flower geometry.
+      if(t.kind==='blossom')return;
       if(t.root&&!t.root.visible)return;
       if(t.stem){const matrix=new THREE.Matrix4();t.stem.getMatrixAt(t.stemIndex??t.index,matrix);const a=matrix.elements;if(Math.hypot(a[0],a[1],a[2])<.01)return;}
       t.source=sourceFor(t);
@@ -165,7 +170,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     };
     // Respect cleared placements in both the original seed batches and new landmark zones.
     const seedMatrix=new THREE.Matrix4();
-    for(const stem of seedTrees.filter(o=>o.userData.treeLayer==='wood'&&['oak','birch','pine','snowpine'].includes(o.userData.treeSpecies))){
+    for(const stem of seedTrees.filter(o=>o.userData.treeLayer==='wood'&&['oak','birch','blossom','pine','snowpine'].includes(o.userData.treeSpecies))){
       const leaves=seedTrees.find(o=>o.userData.treeLayer==='leaves'&&o.userData.treePoints===stem.userData.treePoints);
       if(!leaves)continue;
       const kind=stem.userData.treeSpecies,height=kind==='pine'?7.4:kind==='snowpine'?7.2:6.2;
@@ -179,8 +184,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     if(banks?.trunk){
       const matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),rot=new THREE.Quaternion(),scale=new THREE.Vector3(),key=p=>p.x.toFixed(3)+','+p.z.toFixed(3);
       for(let i=0;i<banks.trunk.n;i++){banks.trunk.im.getMatrixAt(i,matrix);pos.setFromMatrixPosition(matrix);stems.set(key(pos),i);}
-      for(const kind of ['oak','birch','pine','cold','willow']){
-        const bank=banks[kind];if(!bank)continue;floraCanopies.push(bank.im);
+      for(const kind of ['oak','birch','blossom','pine','cold','willow']){
+        const bank=banks[kind];if(!bank)continue;if(kind!=='blossom')floraCanopies.push(bank.im);
         for(let i=0;i<bank.n;i++){
           bank.im.getMatrixAt(i,matrix);matrix.decompose(pos,rot,scale);
           const stemIndex=stems.get(key(pos));if(stemIndex===undefined)continue;
@@ -196,8 +201,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       const matrix=new THREE.Matrix4(),pos=new THREE.Vector3();
       for(let i=0;i<snags.n;i++){
         snags.im.getMatrixAt(i,matrix);if(Math.abs(matrix.determinant())<1e-8)continue;
-        pos.setFromMatrixPosition(matrix);if(!onRoad(pos.x,pos.z))continue;
-        snags.im.setMatrixAt(i,zero);clearTrunk(pos.x,pos.z);state.roadClearedSnags++;
+        pos.setFromMatrixPosition(matrix);const road=onRoad(pos.x,pos.z),meadow=inMeadowOpening(pos.x,pos.z);if(!road&&!meadow)continue;
+        snags.im.setMatrixAt(i,zero);clearTrunk(pos.x,pos.z);if(road)state.roadClearedSnags++;
+        if(meadow)state.meadowClearings.push({x:pos.x,z:pos.z,kind:'snag'});
       }
       snags.im.instanceMatrix.needsUpdate=true;
     }
@@ -267,6 +273,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     state.woodlandCanopies=trees.filter(t=>t.source.key==='woodland-broadleaf').length;
     state.broadleafCanopies=trees.filter(t=>t.source.key==='canopy-broadleaf').length;
     state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind,source:t.source.key,tint:t.tint.getHexString()}));
+    // Regenerate leaf litter from surviving trunks; cleared meadows must not
+    // keep the old brown forest-floor circles or camera obstacles.
+    scene.getObjectByName('Pasture terrain')?.material.userData.setTrees?.(W.forestPoints);
   }
   async function installRocks(){
     const parts=pieces(await load('rock_moss_set_01'),true);
