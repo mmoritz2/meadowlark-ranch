@@ -72,15 +72,17 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v11-grassy-slopes';
+  material.customProgramCacheKey = () => 'terrain-biomes-v12-chalk-down';
+  material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0]};
   material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
-    sh.vertexShader = 'varying vec3 terrainPosition; varying vec3 terrainNormal;\n' + sh.vertexShader;
+    sh.vertexShader = 'attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n' + sh.vertexShader;
     sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+      terrainChalkRelief = chalkRelief;
       terrainPosition = (modelMatrix * vec4(position,1.0)).xyz;
       terrainNormal = normalize(mat3(modelMatrix) * normal);`);
-    sh.fragmentShader = `varying vec3 terrainPosition; varying vec3 terrainNormal;
+    sh.fragmentShader = `varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;
       uniform sampler2D terrainRock; uniform sampler2D terrainForest; uniform sampler2D forestMask;
       uniform sampler2D terrainSoil; uniform sampler2D terrainSnow;
       uniform sampler2D meadowDetail, stoneDetail, litterDetail;
@@ -197,9 +199,17 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       // threshold put gravel under healthy grass on most of the new hills.
       float scree = smoothstep(0.50,0.88, grade+rough*0.24);
       float stone = smoothstep(0.80,1.35, grade+rough*0.30);
+      // This chalk down keeps a close turf over its rounded slopes; loose stone
+      // remains a small accent. Other landforms retain their existing exposure.
+      float chalkTurf=smoothstep(.12,1.7,terrainChalkRelief);
+      scree *= mix(1.0,.20,chalkTurf);
+      stone *= mix(1.0,.25,chalkTurf);
       float rocky = max(scree,stone);
 
       float canyon = 1.0-smoothstep(96.0,172.0, length(p-vec2(-220.0,130.0))+ecoB*0.9);
+      // The chalk down rises above the desert's edge. Keep its raised turf green,
+      // blending back into the underlying biome at the foot of the same mesh.
+      canyon *= 1.0-chalkTurf;
       float snowRegion = 1.0-smoothstep(88.0,158.0, length(p-vec2(-160.0,-210.0))+ecoA*0.8);
       // A broken thaw margin leads into the continuous northern snowfield.
       // Snow gathers in sheltered drifts; mineral/litter islands remain visible

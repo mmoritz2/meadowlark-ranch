@@ -1,5 +1,5 @@
 import {recordSolidPart} from '../solid-collisions.js?v=solid-world-1';
-import {createChalkDown} from '../chalk-down.js?v=chalk-down-1';
+import {createChalkDown} from '../chalk-down.js?v=chalk-ridge-1';
 /* Feature package 'world-vistas' — distance, and the things that draw the eye.
 
    Kestrel Basin's horizon was trees and haze. assets/world-art.js already lays three soft
@@ -512,7 +512,17 @@ export function install(G){
   const face=Math.atan2(SCARP.x,SCARP.z);                 // outward: away from the middle of the basin
   const ax=Math.cos(face),az=-Math.sin(face),ox=Math.sin(face),oz=Math.cos(face);
   const y0=groundH(SCARP.x,SCARP.z);
-  const down=createChalkDown({THREE,site:SCARP,baseHeight:W.terrainH});
+  // Share the live pasture material, including rain, worn tracks and quality settings.
+  // Interpolate its vertex colour from the same two triangles used by terrainH.
+  const pasture=scene.getObjectByName('Pasture terrain'),color= pasture.geometry.attributes.color;
+  const n=pasture.geometry.parameters.widthSegments,step=1000/n;
+  const groundColorAt=(x,z,out)=>{
+   const gx=(x+500)/step,gz=(z+500)/step,ix=Math.max(0,Math.min(n-1,Math.floor(gx))),iz=Math.max(0,Math.min(n-1,Math.floor(gz)));
+   const fx=gx-ix,fz=gz-iz,a=iz*(n+1)+ix,b=a+n+1,c=b+1,d=a+1;
+   const ids=fx+fz<=1?[a,d,b]:[c,b,d],weights=fx+fz<=1?[1-fx-fz,fx,fz]:[fx+fz-1,1-fx,1-fz];
+   return out.setRGB(...[0,1,2].map(k=>ids.reduce((sum,id,j)=>sum+color.array[id*3+k]*weights[j],0)));
+  };
+  const down=createChalkDown({THREE,site:SCARP,baseHeight:W.terrainH,groundMaterial:pasture.material,groundColorAt});
   scene.add(down.root);W.groundSurfaces.push(down.heightAt);P.chalkDown=down;window.__chalkCut=down.isChalk;
   P.SCARP=SCARP;
   /* The viewing stone, sixty metres off the toe of the scarp. That distance is the whole point
