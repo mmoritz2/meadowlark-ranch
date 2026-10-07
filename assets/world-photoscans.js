@@ -1,3 +1,4 @@
+import {installDeadwoodArt} from './deadwood-art.js?v=weathered-deadwood-1';
 import {createOrchardFruit} from './orchard-art.js?v=leafy-orchard-1';
 import {installVillageEvergreens} from './village-planting.js?v=village-gardens-1';
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
@@ -373,6 +374,12 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       if(merged){mesh.geometry.dispose();mesh.geometry=merged;mesh.material=parts[0].mat;mesh.name='Outcrop | scanned mossy stone';state.outcrops++;}
     }
   }
+  async function installDeadwood(){
+    const bank=G.floraPkg?.bank.snag;if(!bank)return;
+    const catalog=await fetch('./assets/models/world/realism/deadwood-lods.json?v=weathered-deadwood-1').then(r=>{if(!r.ok)throw Error('Deadwood mesh catalog unavailable');return r.json();});
+    const sources=[];for(const variant of catalog.variants)sources.push(await load(variant.id));
+    state.deadwood=installDeadwoodArt(G,{bank,catalog,sources});
+  }
   async function installForestFloor(){
     const root=await load('pine_sapling_small');
     // Each collection child is a complete sapling, with both bark and needles.
@@ -467,7 +474,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   }
   state.ready=(async()=>{
     for(let i=0;i<120&&!H.RIG()?.ready;i++)await new Promise(ok=>setTimeout(ok,250));
-    for(const install of [installRocks,installTrees,installForestFloor,installRockFaces]){
+    for(const install of [installRocks,installTrees,installDeadwood,installForestFloor,installRockFaces]){
       try{await install();}catch(e){state.errors.push(e.message);console.warn('World scan unavailable:',e);}
     }
     updateTrees();return state.assets;
@@ -475,7 +482,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   let timer=0;
   G.on('tick',(dt,t)=>{
     wind.value=t;timer+=dt;if(timer<.35)return;timer=0;
-    updateTrees();const p=H.player.pos,tier=G.gfx.get();
+    updateTrees();state.deadwood?.update();const p=H.player.pos,tier=G.gfx.get();
     for(const d of detailPatches){d.mesh.visible=Math.hypot(d.x-p.x,d.z-p.z)<d.range*(tier==='low'?.6:1);d.mesh.castShadow=tier==='high'&&!d.mesh.userData.groundPlant;}
   });
   state.update=updateTrees;
