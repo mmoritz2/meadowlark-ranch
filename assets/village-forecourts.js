@@ -1,4 +1,4 @@
-import {COTTONWOOD_GARDENS,villageRectDistance} from './cottonwood-layout.js?v=coaching-inn-1';
+import {COTTONWOOD_GARDENS,villageRectDistance} from './cottonwood-layout.js?v=village-gardens-1';
 // Shared before roads are dressed and again when paving is built. Field hedges
 // and their collision segments must stop at the same edge as the planting.
 export function villageCourtZones(landmarks) {

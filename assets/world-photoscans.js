@@ -1,5 +1,6 @@
+import {installVillageEvergreens} from './village-planting.js?v=village-gardens-1';
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
-import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=coaching-inn-1';
+import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=village-gardens-1';
 import {fallsContainsWater} from './falls-landscape.js?v=mountain-falls-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
 import {inMeadowOpening} from './pastoral-fields.mjs?v=grazed-meadows-1';
@@ -128,7 +129,6 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       return {parts,bounds,key,meta,triangles};
     });
     const sourceFor=t=>{
-      if(t.authoredVillage)return variants[0];
       // Related trees grow in groves. Young roadside trees stay slender; mature
       // oak sites carry full crowns. Broad trees define meadow and woodland edges.
       const roadEdge=Math.min(W.pathDist(t.x,t.z),G.worldPaths?.trackDist(t.x,t.z)??Infinity);
@@ -235,7 +235,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         state.trailTrees.push({x:tx,z:tz,height});
       }
     }
-    for(const t of COTTONWOOD_TREES)add({...t,kind:'village',authoredVillage:true});
+    state.villageEvergreens=await installVillageEvergreens(G,COTTONWOOD_TREES,wind);
     state.villageTrees=COTTONWOOD_TREES;
     const textureLoader=new THREE.TextureLoader();
     // Load all views before hiding any original tree. Missing data leaves the
@@ -280,10 +280,11 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     for(const mesh of retired){mesh.visible=false;mesh.userData.photoscanReplaced=true;}
     state.retiredBatches=retired.size;
     floraCanopies.forEach(m=>{m.visible=false;});
-    state.trees=trees.length;state.conifers=trees.filter(t=>t.source.key.includes('pine')).length;state.normalMappedViews=variants.length;state.matureTrees=trees.filter(t=>t.source.key==='mature-pine').length;
+    state.trees=trees.length+COTTONWOOD_TREES.length;state.conifers=trees.filter(t=>t.source.key.includes('pine')).length+COTTONWOOD_TREES.length;state.normalMappedViews=variants.length;state.matureTrees=trees.filter(t=>t.source.key==='mature-pine').length;
     state.woodlandCanopies=trees.filter(t=>t.source.key==='woodland-broadleaf').length;
     state.broadleafCanopies=trees.filter(t=>t.source.key==='canopy-broadleaf').length;
     state.treePositions=trees.map(t=>({x:t.x,z:t.z,height:t.height,kind:t.kind,source:t.source.key,tint:t.tint.getHexString()}));
+    state.treePositions.push(...COTTONWOOD_TREES.map(t=>({...t,kind:'village',source:'columnar-evergreen',tint:'ffffff'})));
     // Regenerate leaf litter from surviving trunks; cleared meadows must not
     // keep the old brown forest-floor circles or camera obstacles.
     scene.getObjectByName('Pasture terrain')?.material.userData.setTrees?.(W.forestPoints);
@@ -414,7 +415,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       .sort((a,b)=>distance(a)*(previousSelection.has(a)?.72:1)-distance(b)*(previousSelection.has(b)?.72:1)):[];
     // The fuller mature canopy shares a fixed geometry budget with the nearby
     // saplings, so asset quality cannot silently multiply the phone workload.
-    const selected=[],triangleBudget=tier==='high'?1800000:750000;let triangles=0;
+    const selected=[],triangleBudget=tier==='high'?1800000:750000;
+    // The three compact village crowns stay full geometry in every tier.
+    let triangles=state.villageEvergreens?.triangles||0;
     for(const t of candidates){
       if(selected.length>=budget)break;
       if(triangles+t.source.triangles>triangleBudget)continue;

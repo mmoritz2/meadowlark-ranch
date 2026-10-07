@@ -17,7 +17,7 @@
 
    Owned by this package: this file only. Nothing runs at import time. */
 import {villageCourtZones,inVillageCourt} from '../village-forecourts.js?v=coaching-inn-1';
-import {COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from '../cottonwood-layout.js?v=coaching-inn-1';
+import {COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from '../cottonwood-layout.js?v=village-gardens-1';
 export const id='world-paths';
 export function install(G){
  const {THREE,scene}=G;

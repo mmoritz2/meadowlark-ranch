@@ -1,4 +1,4 @@
-import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=coaching-inn-1';
+import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-gardens-1';
 /* Feature package 'world' — the place-making pass over Kestrel Basin.
    Regions with metadata and gating, living towns, named landmarks and per-town arenas, four
    collectible families (horseshoes, bottles, sheriff badges, the toy unicorn), the world map

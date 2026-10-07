@@ -64,4 +64,4 @@ export function clipVillageRoads(material){
  material.customProgramCacheKey=()=>cache.call(material)+'-village-square-1';
 }
 
-export const COTTONWOOD_TREES=[{x:39.4,z:-61.9,height:5.8,yaw:.3},{x:58.6,z:-42.5,height:6.8,yaw:2.1},{x:43.5,z:-37.4,height:6.3,yaw:1.2}];
+export const COTTONWOOD_TREES=[{x:39.4,z:-61.9,height:10.2,yaw:.3},{x:58.6,z:-42.5,height:9.4,yaw:2.1},{x:43.5,z:-37.4,height:8.7,yaw:1.2}];

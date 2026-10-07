@@ -1,6 +1,6 @@
 // Focused native-GPU and mounted-clearance checks for Cottonwood's larger landmarks.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),QA=require('./qa-platform.cjs');
-const layoutOnly=process.argv.includes('--layout-only'),innReview=process.argv.includes('--inn-review');
+const layoutOnly=process.argv.includes('--layout-only'),innReview=process.argv.includes('--inn-review'),gardenReview=process.argv.includes('--garden-review');
 const out=path.resolve(process.argv[2]||'output/village-square');fs.mkdirSync(out,{recursive:true});
 (async()=>{const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});try{
  const page=await browser.newPage({viewport:{width:1280,height:800}}),errors=[];
@@ -11,7 +11,21 @@ const out=path.resolve(process.argv[2]||'output/village-square');fs.mkdirSync(ou
  await page.goto(QA.BASE+'/ranch3d.html?qa=village-square',{timeout:120000});await page.waitForFunction(()=>window.__villageQA?.G.horse.RIG().ready&&!document.getElementById('load'),null,{timeout:120000});
  await page.evaluate(async()=>{const q=__villageQA;q.G.save.sync(s=>s.qualityLocked=true);q.G.wardrobe?.closeChar();q.G.hidePanels();await q.G.photoscans.ready;await q.G.worldDetails.ready;advanceTime(0);});
  console.log('Village ready');const rows=[];
- for(const c of layoutOnly?[]:innReview?[
+ for(const c of layoutOnly?[]:gardenReview?[
+  {name:'border-close',eye:[55.3,1.8,-58.7],look:[55.3,.65,-61.9]},
+  {name:'border-side',eye:[56.9,1.2,-60.3],look:[54.5,.65,-61.9]},
+  {name:'border-medium',eye:[55.3,1.8,-58.7],look:[55.3,.65,-61.9],tier:'medium'},
+  {name:'border-low',eye:[55.3,1.8,-58.7],look:[55.3,.65,-61.9],tier:'low'},
+  {name:'border-rain',eye:[55.3,1.8,-58.7],look:[55.3,.65,-61.9],rain:true},
+  {name:'border-night',eye:[55.3,1.8,-58.7],look:[55.3,.65,-61.9],time:0},
+  {name:'evergreen-close',eye:[42.3,4,-57],look:[39.4,4,-61.9]},
+  {name:'evergreen-backlit',eye:[36.7,4,-66.3],look:[39.4,4,-61.9],time:.75},
+  {name:'square',eye:[45,2.7,-41],look:[51,3,-65]},
+  {name:'square-medium',eye:[45,2.7,-41],look:[51,3,-65],tier:'medium'},
+  {name:'square-low',eye:[45,2.7,-41],look:[51,3,-65],tier:'low'},
+  {name:'inn-oblique',id:'inn',eye:[11,6.2,16],look:[0,4.8,0]},
+  {name:'aerial',eye:[67,65,-10],look:[47,0,-54]},
+ ]:innReview?[
   {name:'inn-front',id:'inn',eye:[0,3.2,19],look:[0,4.7,0]},
   {name:'inn-oblique',id:'inn',eye:[11,6.2,16],look:[0,4.8,0]},
   {name:'inn-arcade',id:'inn',eye:[0,1.7,4.6],look:[0,2.1,1.4]},
@@ -112,10 +126,30 @@ const out=path.resolve(process.argv[2]||'output/village-square');fs.mkdirSync(ou
    const end=inn.worldToLocal(new T.Vector3(q.player.pos.x,inn.position.y,q.player.pos.z));
    arcadeRides.push({x,steps,finished:steps<500,minCameraHeight,maxGroundError,end:end.toArray()});
   }
-  return {arcadeRides,villageTrees:q.G.photoscans.treePositions.filter(t=>t.kind==='village'),mounted,squareRouteHits,unpaved,fountainHit,gardenHits,plots,squareGardenPlants:q.G.worldDetails.squareGardenPlants,buildings,groundError,routeHits,ride,hedgesInCourts,walkHits,courtTriangles:courts.mesh.geometry.index.count/3,courts:courts.zones.length,clearedPlants:courts.cleared,
+  const planting={borders:q.G.worldDetails.squareBorders,evergreens:q.G.photoscans.villageEvergreens,invalidAttributes:0,maxOverhang:0,unlitVertexColors:false,missingShadows:[],missingTrunks:[]};
+  const leafMesh=q.scene.getObjectByName('Cottonwood | living square flowers'),trees=q.scene.getObjectByName('Cottonwood | columnar evergreens');
+  for(const mesh of[leafMesh,...(trees?.children||[])]){
+   if(!mesh.castShadow||!mesh.receiveShadow)planting.missingShadows.push(mesh.name);
+   for(const attr of Object.values(mesh.geometry.attributes))for(const n of attr.array)if(!Number.isFinite(n))planting.invalidAttributes++;
+   if(mesh.material.vertexColors&&!mesh.geometry.attributes.color)planting.unlitVertexColors=true;
+  }
+  const box=leafMesh.geometry.boundingBox;
+  for(let i=0;i<leafMesh.count;i++){
+   leafMesh.getMatrixAt(i,m);const p=planting.borders.placements[i],bed=courts.gardens[p.bed],world=box.clone().applyMatrix4(m);
+   planting.maxOverhang=Math.max(planting.maxOverhang,bed.x-bed.width/2-world.min.x,world.max.x-bed.x-bed.width/2,bed.z-bed.depth/2-world.min.z,world.max.z-bed.z-bed.depth/2);
+  }
+  for(const t of q.G.photoscans.villageTrees)if(!W.colliders.some(c=>c.trunk&&Math.hypot(c.x-t.x,c.z-t.z)<.01&&c.height>=t.height))planting.missingTrunks.push(t);
+  return {planting,arcadeRides,villageTrees:q.G.photoscans.treePositions.filter(t=>t.kind==='village'),mounted,squareRouteHits,unpaved,fountainHit,gardenHits,plots,squareGardenPlants:q.G.worldDetails.squareGardenPlants,buildings,groundError,routeHits,ride,hedgesInCourts,walkHits,courtTriangles:courts.mesh.geometry.index.count/3,courts:courts.zones.length,clearedPlants:courts.cleared,
    gardens:q.G.worldDetails.townhouseGardens,featureErrors:q.G.errors,assetErrors:[...q.G.worldDetails.errors,...q.G.photoscans.errors]};
  });
- const checks={mountedArcades:state.arcadeRides.length===3&&state.arcadeRides.every(r=>r.finished&&r.maxGroundError<.1&&r.minCameraHeight>.1&&r.end[2]<3),opaqueScene:rows.every(r=>r.minAlphaBits>=15358),shadeTrees:state.villageTrees.length===3,mountedAllStreets:state.mounted.every(r=>r.waypoints===r.total&&r.maxGroundError<.1&&r.minCameraHeight>.1),squareRoutesClear:state.squareRouteHits.length===0,continuousPaving:state.unpaved.length===0,fountainCollision:state.fountainHit,gardenCollisions:state.gardenHits.every(Boolean),plantedSquare:state.squareGardenPlants>90,fixedPlots:JSON.stringify(state.plots.map(p=>[p.x,p.z]))===JSON.stringify([[34,-57],[76,-74],[33,-43],[47,-66]]),threeLandmarks:state.buildings.length===3,twoStoreyGeometry:state.buildings.every(b=>b.architecture.storeys===2&&(b.architecture.style==='coaching-inn'?b.architecture.roofStyle==='pavilion-clay':b.architecture.roofStyle==='hipped-clay')),
+ const checks={
+  substantialBorders:state.planting.borders.placements.every(p=>p.height>.85&&p.height<1.2),
+  bedsContainFoliage:state.planting.maxOverhang<.15,
+  plantingBudget:state.planting.borders.triangles+state.planting.evergreens.triangles<120000&&state.planting.borders.drawCalls+state.planting.evergreens.drawCalls===3,
+  plantingGeometry:state.planting.invalidAttributes===0&&!state.planting.unlitVertexColors,
+  plantingShadows:state.planting.missingShadows.length===0,
+  solidTreeTrunks:state.planting.missingTrunks.length===0,
+  mountedArcades:state.arcadeRides.length===3&&state.arcadeRides.every(r=>r.finished&&r.maxGroundError<.1&&r.minCameraHeight>.1&&r.end[2]<3),opaqueScene:rows.every(r=>r.minAlphaBits>=15358),shadeTrees:state.villageTrees.length===3,mountedAllStreets:state.mounted.every(r=>r.waypoints===r.total&&r.maxGroundError<.1&&r.minCameraHeight>.1),squareRoutesClear:state.squareRouteHits.length===0,continuousPaving:state.unpaved.length===0,fountainCollision:state.fountainHit,gardenCollisions:state.gardenHits.every(Boolean),plantedSquare:state.squareGardenPlants>=60&&state.planting.borders.flowers>=2000,fixedPlots:JSON.stringify(state.plots.map(p=>[p.x,p.z]))===JSON.stringify([[34,-57],[76,-74],[33,-43],[47,-66]]),threeLandmarks:state.buildings.length===3,twoStoreyGeometry:state.buildings.every(b=>b.architecture.storeys===2&&(b.architecture.style==='coaching-inn'?b.architecture.roofStyle==='pavilion-clay':b.architecture.roofStyle==='hipped-clay')),
   geometryBudget:state.buildings.every(b=>b.architecture.triangles<(b.architecture.style==='coaching-inn'?40000:12000)&&b.architecture.drawCalls<=16),
   clearDoorApproaches:state.buildings.every(b=>b.collisions.length===0),clearVillageRoute:state.routeHits.length===0,mountedVillageTravel:state.ride.distance>19.5&&state.ride.finite,
   plantedFacades:state.gardens===3&&state.buildings.every(b=>b.gardenPlants===24),interactionsPreserved:state.buildings.every(b=>b.interaction),
