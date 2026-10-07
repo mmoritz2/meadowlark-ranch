@@ -29,7 +29,7 @@ export function install(G){
  const {THREE,scene,toast}=G;
  const W=G.world,H=G.horse,S=G.save,UI=G.ui;
  const player=H.player,groundH=W.groundH;
- const P={sites:{},draws:0,mergedFrom:0,inst:0,instItems:0,buildings:0,npcs:0,things:0,colliders:0,anim:[],objs:[],scanTrees:[]};
+ const P={sites:{},draws:0,mergedFrom:0,inst:0,instItems:0,buildings:0,npcs:0,things:0,colliders:0,anim:[],objs:[],scanTrees:[],willowTrees:[]};
  G.quartersPkg=P;
  /* Every object this package puts in the scene, kept in one list. It is what lets a QA run
     measure what the four settlements cost by switching them off and on again inside one
@@ -594,7 +594,9 @@ export function install(G){
   }
   for(const [a,b] of [[10,-24],[-8,-21],[-20,9],[2,25],[-16,24],[15,10]]){
    const p0=F.at(a,b),at=pad(p0[0],p0[1],3.2,1.6);
-   place(solid,willow(),at[0],at[1],rr(0,6.28));collide(at[0],at[1],1.0);
+   // Keep the fallback generation/RNG intact so later regional sites do not move.
+   const tree=willow();tree.name='Willowmere | legacy willow';tree.userData.willowTree=P.willowTrees.length;
+   place(scene,own(tree),at[0],at[1],rr(0,6.28));P.willowTrees.push(tree);collide(at[0],at[1],1.0);
   }
 
   /* The boardwalk. It follows the ground rather than fighting it — each span sits six hundred

@@ -1,3 +1,4 @@
+import {installWillowArt} from './willow-art.js?v=weeping-willows-1';
 import {installDeadwoodArt} from './deadwood-art.js?v=weathered-deadwood-1';
 import {createOrchardFruit} from './orchard-art.js?v=leafy-orchard-1';
 import {installVillageEvergreens} from './village-planting.js?v=village-gardens-1';
@@ -374,6 +375,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       if(merged){mesh.geometry.dispose();mesh.geometry=merged;mesh.material=parts[0].mat;mesh.name='Outcrop | scanned mossy stone';state.outcrops++;}
     }
   }
+  async function installWillows(){
+    const roots=G.quartersPkg?.willowTrees||[];if(roots.length)state.willows=await installWillowArt(G,roots,wind);
+  }
   async function installDeadwood(){
     const bank=G.floraPkg?.bank.snag;if(!bank)return;
     const catalog=await fetch('./assets/models/world/realism/deadwood-lods.json?v=weathered-deadwood-1').then(r=>{if(!r.ok)throw Error('Deadwood mesh catalog unavailable');return r.json();});
@@ -440,8 +444,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     // The fuller mature canopy shares a fixed geometry budget with the nearby
     // saplings, so asset quality cannot silently multiply the phone workload.
     const selected=[],triangleBudget=tier==='high'?1800000:750000;
-    // The three compact village crowns stay full geometry in every tier.
-    let triangles=state.villageEvergreens?.triangles||0;
+    // Reserve the authored village and willow crowns inside the same tree budget.
+    let triangles=(state.villageEvergreens?.triangles||0)+(state.willows?.triangles||0);
     for(const t of candidates){
       if(selected.length>=budget)break;
       if(triangles+t.source.triangles>triangleBudget)continue;
@@ -474,16 +478,16 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   }
   state.ready=(async()=>{
     for(let i=0;i<120&&!H.RIG()?.ready;i++)await new Promise(ok=>setTimeout(ok,250));
-    for(const install of [installRocks,installTrees,installDeadwood,installForestFloor,installRockFaces]){
+    for(const install of [installRocks,installTrees,installWillows,installDeadwood,installForestFloor,installRockFaces]){
       try{await install();}catch(e){state.errors.push(e.message);console.warn('World scan unavailable:',e);}
     }
-    updateTrees();return state.assets;
+    state.willows?.update();updateTrees();return state.assets;
   })();
   let timer=0;
   G.on('tick',(dt,t)=>{
     wind.value=t;timer+=dt;if(timer<.35)return;timer=0;
-    updateTrees();state.deadwood?.update();const p=H.player.pos,tier=G.gfx.get();
+    state.willows?.update();updateTrees();state.deadwood?.update();const p=H.player.pos,tier=G.gfx.get();
     for(const d of detailPatches){d.mesh.visible=Math.hypot(d.x-p.x,d.z-p.z)<d.range*(tier==='low'?.6:1);d.mesh.castShadow=tier==='high'&&!d.mesh.userData.groundPlant;}
   });
-  state.update=updateTrees;
+  state.update=()=>{state.willows?.update();updateTrees();state.deadwood?.update();};
 }
