@@ -309,6 +309,17 @@ plants and their colours. Moderate slopes keep their turf, with gravel and bare
 rock beginning on steeper grades. `qa-country-world.cjs` includes the former
 forked-tree close-up, grass-height distribution and stable near-cover checks.
 
+The clear-weather sky uses two world-anchored cloud layers with filtered noise:
+smaller low cloud banks and broken high wisps over a cyan daytime gradient. This
+replaces randomly jittered ray steps that produced visible speckles on low
+settings. Higher settings add fine detail to the same broad cloud field. Water
+reflections sample the same layers; rain increases cover, and dawn/dusk/night
+retain their own palettes. Exact midnight is accepted as time zero rather than
+falling back to daytime. `qa-sky-world.cjs` measures isolated cloud-pixel outliers,
+checks the midnight boundary and captures settled day, dawn, sunset, night and
+rain views. Its raw edge-variation metric is diagnostic: real cloud edges also
+contribute to it, so the outlier count is the grain acceptance check.
+
 The next regional pass gives Amberwood gold, coral and burgundy scanned foliage
 with matching close-up and distant materials. It replaces the remaining ball
 crowns there and the large leaf cards at Willowmere, uses slimmer roadside trees,
