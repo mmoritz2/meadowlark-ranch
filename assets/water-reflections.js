@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 // One nearby water plane, refreshed at most 15 Hz on High. Clipping rejects the
 // underwater half of the world. Lower tiers and XR keep the PBR sky reflection.
-export function createWaterReflections({scene,renderer,camera,material,levelAt,quality}) {
+export function createWaterReflections({scene,renderer,camera,material,levelAt,quality,omitFromReflection=()=>false}) {
   const reflection=material.userData.reflection;
   const target=new THREE.WebGLRenderTarget(640,360,{type:THREE.HalfFloatType,depthBuffer:true});
   target.texture.name='Nearby water reflection';
@@ -20,7 +20,7 @@ export function createWaterReflections({scene,renderer,camera,material,levelAt,q
       const active=quality()==='high'&&!renderer.xr.isPresenting&&water.distance<48&&camera.position.y>water.level+.08;
       state.active=active;reflection.amount.value=active?1:0;
       if(!active)return;
-      if(now-last<66&&Math.abs(lastLevel-water.level)<.04)return;
+      if(now-last<(water.refreshIntervalMs||66)&&Math.abs(lastLevel-water.level)<.04)return;
       last=now;lastLevel=water.level;
       reflection.level.value=water.level;
       camera.updateMatrixWorld();camera.getWorldDirection(direction);
@@ -40,12 +40,12 @@ export function createWaterReflections({scene,renderer,camera,material,levelAt,q
       clip.multiplyScalar(2/clip.dot(corner));
       projection[2]=clip.x;projection[6]=clip.y;projection[10]=clip.z+1-.001;projection[14]=clip.w;
       mirror.projectionMatrixInverse.copy(mirror.projectionMatrix).invert();
-      // Avoid reading the attachment being written, including cloned water skins.
+      // Hide water skins to avoid attachment feedback, and omit floating UI labels.
       hidden.length=0;
       scene.traverse(o=>{
-        if(!o.visible||!o.isMesh)return;
+        if(!o.visible||(!o.isMesh&&!o.isSprite))return;
         const mats=Array.isArray(o.material)?o.material:[o.material];
-        if(mats.some(m=>m.userData.waterTime||m.userData.reflection)) {hidden.push(o);o.visible=false;}
+        if(omitFromReflection(o)||mats.some(m=>m.userData.waterTime||m.userData.reflection||m.name==='World | floating label')) {hidden.push(o);o.visible=false;}
       });
       const previousTarget=renderer.getRenderTarget(),shadowUpdate=renderer.shadowMap.autoUpdate;
       const callback=scene.onBeforeRender,xr=renderer.xr.enabled;

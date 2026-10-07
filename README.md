@@ -332,11 +332,34 @@ with matching close-up and distant materials. It replaces the remaining ball
 crowns there and the large leaf cards at Willowmere, uses slimmer roadside trees,
 and clears tree trunks from the finished bridleways. Distant crowns still cast
 shadows but no longer receive the false triangular self-shadows of their cards.
-The canyon has broader tableland tops and an original feather-palm model with
-textured stems, individual leaflets, trunk collisions and a terrain-following
-shoreline. `qa-seasonal-world.cjs`, `qa-canyon-world.cjs`, `test-oasis-art.mjs`
+The canyon has broader tableland tops, detailed palm models, trunk collisions
+and a terrain-following shoreline. `qa-seasonal-world.cjs`, `qa-canyon-world.cjs`, `test-oasis-art.mjs`
 and `asset-gen/check-geology.mjs` cover those changes. These passes do not reproduce
 the reference game's proprietary world or establish visual parity.
+
+Dry Gulch Oasis uses [Realistic Palm Tree Free](https://sketchfab.com/3d-models/realistic-palm-tree-free-39052ea764c945858449e699318efa53)
+by [Next Spring](https://sketchfab.com/NextSpring), licensed under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The original 1k GLB is
+included unchanged (5,097,836 bytes). Runtime normalization, placement, tint and
+roughness adapt it to the world; seven palms share three instanced mesh parts
+(190,064 triangles total). Existing collision sites stay grounded, with radii
+sized to the new trunks. The original procedural palms remain a load-failure
+fallback. In-game Settings links to [Art credits](credits.html); provenance and
+the source checksum are in `assets/models/oasis/manifest.json`.
+
+The oasis now has a shallow, irregular basin shared by visible terrain and riding
+collision. Its wet shoreline uses the terrain's grid and triangle diagonals to
+avoid crossing seams. Rippled water fades at the shore and reflects nearby scenery
+on High using the existing shared reflection target, refreshed at most 10 times
+a second at the oasis. Tiny grass and flower meshes are omitted from the
+reflection pass; floating name labels are also excluded. Dry ground cover and
+scattered props respect the pond outline, and Sol walks along its outer bank.
+Palms, buildings, terrain and riders remain. Medium and Low retain sky
+lighting and animated ripples. `node --test tools/test-oasis-art.mjs` checks geometry
+and the basin boundary; `qa-oasis-world.cjs` covers rendering, shadows, grounding,
+collision and the arch ride. `qa-oasis-riding.cjs` checks the basin crossing,
+shoreline contact, opaque foliage edges and accessible attribution, and records
+per-tier desktop render timings as diagnostics rather than a mobile benchmark.
 
 Coyote Canyon and Ochre Reach now share jointed sandstone faces with angular
 outlines, uneven setbacks and sloping broken crowns. Their bases still conform

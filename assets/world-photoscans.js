@@ -1,3 +1,4 @@
+import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
 import {inMeadowOpening} from './pastoral-fields.mjs?v=meadow-ridges-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=opaque-foliage-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -23,7 +24,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     if(W.sceneryArt.containsWaterfall(x,z,r))return false;
     if(Math.hypot(x,z)<33||W.pathDist(x,z)<r+3||(G.worldPaths?.trackDist(x,z)??Infinity)<r+3)return false;
     if(Math.abs(z-W.riverZ(x))<r+10||z<163&&Math.abs(x-W.streamX(z))<r+8)return false;
-    if(Math.hypot(x-20,z-16)<r+19)return false;
+    if(Math.hypot(x-20,z-16)<r+19||oasisContainsWater(x,z,r+.7))return false;
     if(protectedPoints.some(p=>Math.hypot(x-p.x,z-p.z)<r+(p.reach||3)+2))return false;
     if(W.colliders.some(p=>Math.hypot(x-p.x,z-p.z)<r+(p.r||0)+.3))return false;
     for(const route of routes)for(let i=0;i<route.length;i++)if(segmentDistance(x,z,route[i],route[(i+1)%route.length])<r+5)return false;

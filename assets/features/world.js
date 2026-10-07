@@ -6,7 +6,7 @@
    Owned by this package: this file plus five one-line hot spots in ranch3d.html (G.anim,
    G.wild + the stray-spawn guard, the companion foal guard, G.petComp, ev.at in startCourse).
    Nothing runs at import time. */
-import {createOasisPalms,createOasisBank} from '../oasis-art.js?v=landscape-forms-1';
+import {OASIS,createOasisPalms,createOasisBank,createOasisWater} from '../oasis-art.js?v=living-oasis-1';
 export const id='world';
 export function install(G){
  const {THREE,scene,$,toast}=G;
@@ -241,10 +241,10 @@ export function install(G){
     {id:'trading',kind:'outbuilding',x:-236,z:140,rot:0.2,label:'🏜️ Dry Gulch trading post',r:2.8,open:()=>UI.openShop('food'),door:'🏜️ Trade at the post'},
    ],
    rail:{x:-218,z:120},
-   oasis:{x:-200,z:158,r:7},
+   oasis:OASIS,
    folk:[
     {id:'cc_dusty',name:'Dusty',icon:'🤠',hat:'#5a4a3a',shirt:'#b07a4a',idle:'Ain\'t seen the Sheriff\'s badge since the dust storm. Reckon it is out on the mesas somewhere.',path:[[-222,124],[-228,130],[-218,136],[-212,126]]},
-    {id:'cc_sol',name:'Sol',icon:'🧑',hat:'#e8c070',shirt:'#c85a3a',idle:'There is water at the oasis east of here. The wild herd comes down to drink at dusk.',path:[[-208,146],[-198,152],[-194,164],[-206,160]]},
+    {id:'cc_sol',name:'Sol',icon:'🧑',hat:'#e8c070',shirt:'#c85a3a',idle:'There is water at the oasis east of here. The wild herd comes down to drink at dusk.',path:[[-212,146],[-211,153],[-212,166],[-216,157]]},
    ]},
   {id:'hollowpeak',region:'hollowpeak',name:'Hollowpeak hamlet',cx:-160,cz:-210,
    buildings:[
@@ -285,10 +285,10 @@ export function install(G){
   if(tn.rail){const g=new THREE.Group();post(-1.4,0,g,1.1,'#6b4a2a');post(1.4,0,g,1.1,'#6b4a2a');box(3.2,0.09,0.09,'#8a6a4a',0,1.05,0,g);g.position.set(tn.rail.x,groundH(tn.rail.x,tn.rail.z),tn.rail.z);scene.add(g);}
   if(tn.oasis){   // a desert pond ringed with palms: the herd drinks here, and so can you
    const o=tn.oasis,g=new THREE.Group();
-   const water=new THREE.Mesh(new THREE.CircleGeometry(o.r,28),new THREE.MeshStandardMaterial({color:0x3f9fc6,roughness:0.15,metalness:0.2,transparent:true,opacity:0.86}));water.rotation.x=-Math.PI/2;water.position.y=0.12;g.add(water);
-   const art={THREE,groundH,x:o.x,z:o.z,radius:o.r};
+   const art={THREE,groundH,x:o.x,z:o.z,radius:o.r,terrainStep:W.terrainStep};
+   g.add(createOasisWater({...art,waterMaterial:W.waterMaterial}));
    g.add(createOasisBank(art));
-   const palms=createOasisPalms(art);g.add(palms);
+   const palms=createOasisPalms(art);g.add(palms);P.oasisReady=palms.ready;
    for(const p of palms.userData.oasisPalms.palms)W.colliders.push({...p,trunk:true});
    for(let k=0;k<12;k++){
     const a=Math.random()*Math.PI*2,r=o.r+2.4+Math.random()*1.2,dx=Math.cos(a)*r,dz=Math.sin(a)*r;
@@ -297,7 +297,7 @@ export function install(G){
     const shore=groundH(o.x+dx,o.z+dz)-groundH(o.x,o.z);
     rush.position.set(dx,shore-rush.children[0].geometry.boundingBox.min.y*s-.005,dz);g.add(rush);
    }
-   const y=groundH(o.x,o.z);g.position.set(o.x,y,o.z);scene.add(g);P.oasis={x:o.x,z:o.z,r:o.r,y:y+0.12};
+   const y=groundH(o.x,o.z);g.position.set(o.x,y,o.z);scene.add(g);P.oasis={x:o.x,z:o.z,r:o.r,y:OASIS.level};
    labelAt(g,'🌴 Dry Gulch Oasis',3.2);
    W.addThing({kind:'oasis',id:'oasis',x:o.x,z:o.z,g:null,reach:o.r+3,label:()=>'🌴 Let your horse drink (E)',use:()=>{let ok=false;S.sync(s=>{const h=s.horses[H.rideIdx()];if(!h)return;h.needs=h.needs||{};h.needs.thirst=Math.min(100,(h.needs.thirst||0)+40);ok=true;});if(ok){toast('🌴 '+H.ridden().name+' drinks deep at the oasis. +40 thirst');G.sChime();}}});
   }

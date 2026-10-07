@@ -1,0 +1,17 @@
+{
+  "title": "Realistic Palm Tree Free",
+  "author": "Next Spring",
+  "authorUrl": "https://sketchfab.com/NextSpring",
+  "source": "https://sketchfab.com/3d-models/realistic-palm-tree-free-39052ea764c945858449e699318efa53",
+  "license": "CC-BY-4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "attributionRequired": true,
+  "file": "next_spring_palm.glb",
+  "sha256": "4bcaa3d80c4fdde168e8af439e1324ef3e7a50862652c5704e27b4ee4e658cd3",
+  "bytes": 5097836,
+  "triangles": 27152,
+  "textureResolution": 1024,
+  "sourceFileModified": false,
+  "runtimeAdaptation": "Unit-height normalization, varied scale and yaw, instancing, albedo tint, roughness and opaque alpha-coverage material settings. Seven local instances, three shared materials and geometry parts.",
+  "credit": "credits.html, linked from in-game Settings; original author/source/license also remain embedded in the GLB."
+}

@@ -27,6 +27,7 @@
    includes every town building world.js placed — and it leaves a clear circle at each town centre
    and at the exact centre of each of the four quarters, because six other packages are building
    there and a barn dropped into a thicket helps nobody. */
+import {oasisContainsWater} from '../oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from '../desert-art.js?v=botanical-desert-1';
 import {getFoliageTexture} from '../world-art.js?v=world-cinematic-1';
 export const id='world-flora';
@@ -120,7 +121,7 @@ export function install(G){
  /* Water, roads and the arena. Two tiers: dry ground wants to be well clear of the channel, and
     grass and reed are allowed right down the bank. */
  const inBasin=(x,z)=>x*x+z*z<448*448;
- const onWater=(x,z,m)=>Math.abs(z-riverZ(x))<m||(z<166&&Math.abs(x-streamX(z))<m*0.8)||hyp(x,z,20,16)<m+2;
+ const onWater=(x,z,m)=>Math.abs(z-riverZ(x))<m||(z<166&&Math.abs(x-streamX(z))<m*0.8)||hyp(x,z,20,16)<m+2||oasisContainsWater(x,z,.7);
  const okGround=(x,z)=>{
   if(!inBasin(x,z))return false;
   if(Math.abs(x)<32&&Math.abs(z)<28)return false;          // the arena and its run-off stay sand

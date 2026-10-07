@@ -386,6 +386,7 @@ export function install(G){
      +'<div class="crow" style="gap:6px"><button data-fx="acct:export" id="saveExport">⬆️ Export save</button><button data-fx="acct:exportLink">🔗 Copy hand-off link</button></div><textarea id="saveBlob" readonly placeholder="Your save code appears here"></textarea></div>'
      +'<div class="passCard"><div class="ph"><b>⬇️ Load a ranch from a code</b></div><textarea id="saveImport" placeholder="Paste a save code"></textarea><div class="crow" style="gap:6px"><button data-fx="acct:import" id="saveImportGo" class="claimBtn">⬇️ Import save</button><button data-fx="acct:reset" style="margin-left:auto">🗑️ Start over</button></div></div>';
    }
+   h+='<a href="credits.html" target="_blank" rel="noopener" style="font-size:12px;color:#586b48;margin-top:10px">Art credits</a>';
    return h;
   },
   vr:{tab:'settings',label:'Settings',build(rows,sv){return 'Settings live on the flat screen: sound, graphics, controls, accessibility, gift codes and your Player ID '+(sv.pid||'')+'.';}}});

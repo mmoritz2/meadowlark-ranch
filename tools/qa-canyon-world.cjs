@@ -8,7 +8,7 @@ const out=path.resolve(process.argv[2]||'output/canyon-world');fs.mkdirSync(out,
  await page.route('**/ranch3d.html*',async r=>{const res=await r.fetch();await r.fulfill({response:res,body:(await res.text()).replace('const MERGE_STATS=mergeStatics();',`window.__qa={THREE,scene,camera,renderer,composer,G,player,groundH,TACK,step(dt){manualStepping=true;tick(dt)},day(){dayT=.34;weather.mode='clear';weather.timer=99999}};const MERGE_STATS=mergeStatics();`)});});
  await page.addInitScript(()=>{let seed=928471;Math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};});
  await page.goto(QA.BASE+'/ranch3d.html?qa=regions',{timeout:120000});await page.waitForFunction(()=>window.__qa?.G.horse.RIG().ready&&!document.getElementById('load'),null,{timeout:120000});
- await page.evaluate(async()=>{const q=__qa;q.G.save.sync(s=>s.qualityLocked=true);q.G.wardrobe?.closeChar();q.G.hidePanels();await q.G.photoscans.ready;await q.G.worldDetails.ready;await q.G.world.ranchBuilderArt.ready;advanceTime(0);});
+ await page.evaluate(async()=>{const q=__qa;q.G.save.sync(s=>{s.qualityLocked=true;s.unlocked=s.unlocked||{};for(const rg of q.G.tables.REGIONS)if(rg.unlock)s.unlocked[rg.id]=true;});q.G.wardrobe?.closeChar();q.G.hidePanels();await q.G.photoscans.ready;await q.G.worldDetails.ready;await q.G.worldPkg.oasisReady;await q.G.world.ranchBuilderArt.ready;advanceTime(0);});
  const view={name:'canyon',eye:[-202,2.2,151],look:[-253,6,179]};
  const cases=['high','medium','low'].map(tier=>({...view,name:tier==='high'?'canyon':'canyon-'+tier,tier}));
 
@@ -24,7 +24,7 @@ const out=path.resolve(process.argv[2]||'output/canyon-world');fs.mkdirSync(out,
  const checks=await page.evaluate(()=>{
   const q=__qa,root=q.scene.getObjectByName('Oasis | feather palms'),p=root.userData.oasisPalms;
   const bank=q.scene.getObjectByName('Oasis | grounded shoreline');
-  return {detailedPalms:p.palms.length===7&&p.triangles<12000,castsShadows:root.children.every(m=>m.castShadow),
+  return {detailedPalms:p.palms.length===7&&p.source==='Next Spring / CC BY 4.0'&&p.triangles<=200000&&!p.error,castsShadows:root.children.every(m=>m.castShadow),
    palmCollisions:p.palms.every(t=>q.G.world.colliders.some(c=>Math.hypot(c.x-t.x,c.z-t.z)<.01&&c.trunk)),
    terrainShoreline:!!bank&&bank.receiveShadow};
  });
