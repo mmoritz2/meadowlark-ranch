@@ -617,7 +617,7 @@ export function install(G){
   }});
 
  /* ---- 2d. the Thunder Oak ---- */
- landmark({
+ const THUNDER=landmark({
   id:'thunderoak',name:'The Thunder Oak',glyph:'⚡',mapLabel:'⚡ The Thunder Oak',labelDz:15,
   x:4,z:-188,clear:7,seed:6607,label:'⚡ The Thunder Oak',labelY:6.6,tall:17,reach:15,mini:'#9a7a5a',
   colliders:[[0,0,2.5],[3.4,2.2,1.0]],
@@ -661,6 +661,9 @@ export function install(G){
    for(let k=0;k<5;k++){const a=A.rr(0,6.3),r2=A.rr(4,9),sx=Math.cos(a)*r2,sz=Math.sin(a)*r2;
     rock(A,sx,groundH(at.x+sx,at.z+sz)-at.y+0.16,sz,A.rr(0.5,1.1),A.rr(0.3,0.5),A.rr(0.5,1.0),STONE_D);}
   }});
+
+ // Preserve the landmark's view into its split; late forest passes respect this gap.
+ P.clearZones.push((x,z)=>Math.hypot(x-THUNDER.x,z-THUNDER.z)<6.8);
 
  /* ---- 2e. the Whistling Windmill ---- */
  const MILL=landmark({

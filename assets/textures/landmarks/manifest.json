@@ -1,0 +1,57 @@
+[
+  {
+    "id": "bark_brown_02",
+    "page": "https://polyhaven.com/a/bark_brown_02",
+    "authors": {
+      "Rob Tuytel": "All"
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "scaleMetres": 1,
+    "retrieved": "2026-10-07",
+    "files": [
+      {
+        "role": "diff",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/bark_brown_02/bark_brown_02_diff_1k.jpg",
+        "sourceMD5": "6669cca520594bdca19f94084984ab72",
+        "sourceSHA256": "920fa0bed0c9d78c1d530e99795113afd532d7db746de440f4a85d7c83ed0f1a",
+        "sourceBytes": 659592,
+        "output": {
+          "file": "bark_brown_02_diff.webp",
+          "width": 1024,
+          "height": 1024,
+          "bytes": 473880,
+          "sha256": "2213ae1da8970e2e0aa839f14afca5b633f83d77ca8b947f3c0a6a7468af3430"
+        }
+      },
+      {
+        "role": "nor_gl",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/bark_brown_02/bark_brown_02_nor_gl_1k.jpg",
+        "sourceMD5": "1cad3fe0349a44df2d4d1c2859c79920",
+        "sourceSHA256": "0d5e691e8ad8bcd093a3587887fda2a6b4a948b5708a4f256f7919584c6eb857",
+        "sourceBytes": 1015623,
+        "output": {
+          "file": "bark_brown_02_nor_gl.webp",
+          "width": 1024,
+          "height": 1024,
+          "bytes": 484314,
+          "sha256": "adb37eb9e67b3eb7db41d473131f973fc829e5dae013fbfe8225957a2ca2303e"
+        }
+      },
+      {
+        "role": "rough",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/bark_brown_02/bark_brown_02_rough_1k.jpg",
+        "sourceMD5": "bbcde696e5b9418cdcb2abe638965417",
+        "sourceSHA256": "68125592de36e15bae7aa6db85c4d135aeb7e5653199ba226483a70f6d69837d",
+        "sourceBytes": 337946,
+        "output": {
+          "file": "bark_brown_02_rough.webp",
+          "width": 1024,
+          "height": 1024,
+          "bytes": 229620,
+          "sha256": "ec6c30f7ff298fff0e21d4370a91e7dfb720b5ea6afa629d39967e144041017e"
+        }
+      }
+    ]
+  }
+]
