@@ -690,6 +690,7 @@ import {createWorldShadows} from './assets/world-shadows.js?v=visible-shadows-1'
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
 import {createForageArt} from './assets/forage-art.js?v=leafy-orchard-1';
+import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=village-gardens-1';
@@ -1095,16 +1096,17 @@ const BREED_FAMILY={aether:'black',sunspear:'sunset',meadowlight:'bay',tempest:'
 function masteryBreed(b){return BREED_FAMILY[b]||b;}
 function masteryOf(s,breed){s.mastery=s.mastery||{};const fam=BREED_FAMILY[breed]?null:breed;const cnt=s.horses.filter(h=>h.breed===breed||(fam&&BREED_FAMILY[h.breed]===fam)).length;s.mastery[breed]=Math.max(s.mastery[breed]||0,cnt);return Math.min(G.masteryMax?G.masteryMax(breed):10,s.mastery[breed]);}
 /* Treasure tables live up here with the other data: achievements read them at start-up. */
+// Keep these IDs stable for existing saves. Sites are clear of rails, steep ground and river water.
 const CHESTS=[
- {id:'barn',x:-21,z:-9,tier:1},{id:'lake',x:27,z:22,tier:1},{id:'bridge',x:6,z:118,tier:1},{id:'pasture',x:-100,z:20,tier:1},
+ {id:'barn',x:-21,z:-9,tier:1},{id:'lake',x:27,z:20,tier:1},{id:'bridge',x:6,z:116,tier:1},{id:'pasture',x:-100,z:20,tier:1},
  {id:'cottonwood',x:58,z:-60,tier:2},{id:'pines',x:-38,z:-70,tier:2},{id:'wheat',x:240,z:-90,tier:2},{id:'canyon',x:-250,z:160,tier:2},
- {id:'mesa',x:-215,z:95,tier:3},{id:'snowpeak',x:-175,z:-240,tier:3},{id:'farbank',x:150,z:150,tier:2},{id:'creek',x:-60,z:150,tier:2},
+ {id:'mesa',x:-215,z:89,tier:3},{id:'snowpeak',x:-177,z:-238,tier:3},{id:'farbank',x:150,z:146,tier:2},{id:'creek',x:-60,z:150,tier:2},
 ];
 const CHEST_REOPEN=72*3600*1000;
 const COLL_SETS={
  shells:{label:'🐚 Loon Lake shells',col:'#f2c9d6',pts:[[14,10],[26,11],[27,23],[15,24],[20,26]],reward:{g:5,k:1}},
  feathers:{label:'🪶 Kestrel feathers',col:'#eef2f7',pts:[[-140,-190],[-170,-215],[-150,-235],[-185,-195],[-125,-220]],reward:{g:5,k:1}},
- crystals:{label:'💎 Canyon crystals',col:'#8fe0ff',pts:[[-200,110],[-235,145],[-260,120],[-215,175],[-185,150]],reward:{g:5,k:1}},
+ crystals:{label:'💎 Canyon crystals',col:'#8fe0ff',pts:[[-200,110],[-235,145],[-260,126],[-215,175],[-185,150]],reward:{g:5,k:1}},
  jars:{label:'🫙 Barleyfold seed jars',col:'#e8b04a',pts:[[195,-90],[230,-120],[250,-95],[215,-135],[240,-70]],reward:{g:5,k:1}},
 };
 const TACK_ROOM={x:-24,z:-26};
@@ -12555,6 +12557,7 @@ const NPC_DEFS=[
    collectibles, one set to a region, each set worth gems and a key when complete. A locked
    tack room by the barn that a Silver Key opens once a week for a piece that is rare at
    least. And Loon Lake to fish, with a bite to catch and, now and then, a bottle. */
+const discoveryArt=createDiscoveryArt({THREE,materials:ranchBuilderArt.materials});
 const things=[];   // {kind,id,g,x,z,...}
 /* A package's interactable: push {kind,id,g,x,z,reach?,label(t)->string,use(t),tick(dt,t,dist)?}.
    Generic label/use branches call t.label / t.use when present. */
@@ -12569,20 +12572,13 @@ function addBuilding(o){
  return b;
 }
 function mkChest(c){
- const g=new THREE.Group();
- box(0.9,0.5,0.6,'#6b4423',0,0.25,0,g); const lid=box(0.92,0.22,0.62,'#7d5230',0,0.6,-0.0,g); lid.position.z=-0.0;
- box(0.12,0.16,0.05,'#d8b24a',0,0.42,0.31,g); box(0.94,0.05,0.64,'#4a2f18',0,0.02,0,g);
+ const {root:g,lid}=discoveryArt.chest(c.tier);
  g.position.set(c.x,groundH(c.x,c.z),c.z); g.rotation.y=Math.atan2(-c.x,-c.z);
- g.traverse(o=>{if(o.isMesh){o.castShadow=true;}}); scene.add(g); return {kind:'chest',id:c.id,g,lid,x:c.x,z:c.z,tier:c.tier};
+ scene.add(g); return {kind:'chest',id:c.id,g,lid,x:c.x,z:c.z,tier:c.tier};
 }
 function mkCollectible(set,i,pt){
- const g=new THREE.Group(); const col=COLL_SETS[set].col;
- const mat=new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:0.35,roughness:0.4});
- let m; if(set==='shells')m=new THREE.Mesh(new THREE.SphereGeometry(0.22,10,8),mat),m.scale.set(1,0.5,1);
- else if(set==='feathers')m=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.5,0.02),mat),m.rotation.z=0.5;
- else if(set==='crystals')m=new THREE.Mesh(new THREE.OctahedronGeometry(0.24,0),mat);
- else m=new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.16,0.3,10),mat);
- m.position.y=0.5; m.castShadow=true; g.add(m);
+ const g=new THREE.Group(),m=discoveryArt.collectible(set);
+ m.position.y=0.5; g.add(m);
  g.position.set(pt[0],groundH(pt[0],pt[1]),pt[1]); scene.add(g); return {kind:'coll',set,i,id:set+'_'+i,g,m,x:pt[0],z:pt[1]};
 }
 /* ===== The Summoning Stall =====================================================
@@ -14330,7 +14326,7 @@ function installFeatures(){
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,geology,box,tube,blob,
+  world:{patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},
