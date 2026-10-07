@@ -1,0 +1,192 @@
+{
+  "license": "CC0-1.0",
+  "processing": "Original individual meshes and metre-scale geometry retained. Gallery node translations removed. Official alpha mask packed into base colour; normal and ARM maps kept. WebP textures require EXT_texture_webp. No geometry decimation.",
+  "assets": [
+    {
+      "id": "fern_02",
+      "file": "fern_02.glb",
+      "bytes": 726976,
+      "sha256": "8195d00b436056346033132a602c4bb2afacd90e6e253ee11b8af3626e4340ff",
+      "sourcePage": "https://polyhaven.com/a/fern_02",
+      "license": "CC0-1.0",
+      "authors": [
+        "Rob Tuytel (scanning)",
+        "Rico Cilliers (modeling)"
+      ],
+      "specimens": [
+        {
+          "name": "fern_02_b",
+          "triangles": 2384
+        },
+        {
+          "name": "fern_02_c",
+          "triangles": 2248
+        },
+        {
+          "name": "fern_02_a",
+          "triangles": 784
+        },
+        {
+          "name": "fern_02_d",
+          "triangles": 816
+        }
+      ],
+      "sources": [
+        {
+          "file": "fern_02.bin",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/fern_02/fern_02.bin",
+          "bytes": 176176,
+          "sha256": "fe1abb762bcbbc7ad9e86925c8080437a62add257d9280e9142fdc85c226e64c"
+        },
+        {
+          "file": "textures/fern_02_nor_gl_1k.jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fern_02/fern_02_nor_gl_1k.jpg",
+          "bytes": 367222,
+          "sha256": "45bce132c6e96a0864bc89ab5da51361ab3f4afa83a6669ae499ab5ca811f621"
+        },
+        {
+          "file": "textures/fern_02_diff_1k.jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fern_02/fern_02_diff_1k.jpg",
+          "bytes": 315705,
+          "sha256": "a828a6e7b4c01c826911e2eac4b3afc7457dab7b3b392a31c681ed88b7d50029"
+        },
+        {
+          "file": "textures/fern_02_arm_1k.jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fern_02/fern_02_arm_1k.jpg",
+          "bytes": 280359,
+          "sha256": "ebfb5d76ce9cbdaec20bcd22dce9b755f0b1b8650ef29ca13555e3e6961025d7"
+        },
+        {
+          "file": "fern_02_1k.gltf",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/fern_02/fern_02_1k.gltf",
+          "bytes": 6899,
+          "sha256": "33974295ee19670af4877705fc7d91f33f42d6302f0d44a625e072271223031f"
+        },
+        {
+          "file": "textures/fern_02_alpha_1k.png",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/fern_02/fern_02_alpha_1k.png",
+          "bytes": 114589,
+          "sha256": "ea3c64284c7ebdeedf484d2d816eae92825ec526140c3bb83859ddc7a64001f9"
+        }
+      ]
+    },
+    {
+      "id": "shrub_03",
+      "file": "shrub_03.glb",
+      "bytes": 1062580,
+      "sha256": "0d7862d6c96635e91d71b5a2e710f1b9c316033875885457d2c11ca6c704eb17",
+      "sourcePage": "https://polyhaven.com/a/shrub_03",
+      "license": "CC0-1.0",
+      "authors": [
+        "Rico Cilliers"
+      ],
+      "specimens": [
+        {
+          "name": "shrub_03_a",
+          "triangles": 2385
+        },
+        {
+          "name": "shrub_03_b",
+          "triangles": 2134
+        },
+        {
+          "name": "shrub_03_c",
+          "triangles": 1790
+        },
+        {
+          "name": "shrub_03_d",
+          "triangles": 1978
+        }
+      ],
+      "sources": [
+        {
+          "file": "shrub_03.bin",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/shrub_03/shrub_03.bin",
+          "bytes": 238684,
+          "sha256": "bf4df21e6d2a2bc5f00b4c9142f776171fe7da00cf960001825748067af542b6"
+        },
+        {
+          "file": "textures/shrub_03_nor_gl_1k.jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/shrub_03/shrub_03_nor_gl_1k.jpg",
+          "bytes": 504734,
+          "sha256": "ff856bacfce859b8a7555dd9a3b92fbd36b2e775d486be71df485afb4235d6c9"
+        },
+        {
+          "file": "textures/shrub_03_diff_1k.jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/shrub_03/shrub_03_diff_1k.jpg",
+          "bytes": 481841,
+          "sha256": "3cadc7aba46d3aabbd7d6d2b1d04aa32e2a7da0bc87c2d38ef3cb1ee42cb03ec"
+        },
+        {
+          "file": "textures/shrub_03_arm_1k.jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/shrub_03/shrub_03_arm_1k.jpg",
+          "bytes": 396238,
+          "sha256": "3e2b16812a623037138eedace958210c5f3443a827bbe69663045bba5612f815"
+        },
+        {
+          "file": "shrub_03_1k.gltf",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/shrub_03/shrub_03_1k.gltf",
+          "bytes": 7296,
+          "sha256": "b76d7c14bc027e834e82d3f984c32b5d060e62908aa90ff9420a637ca253a8ea"
+        },
+        {
+          "file": "textures/shrub_03_alpha_1k.png",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/shrub_03/shrub_03_alpha_1k.png",
+          "bytes": 79069,
+          "sha256": "daef00278879a024fd05216aaa1376067a5f25f1b911d08d9bbdc50fda4a0d66"
+        }
+      ]
+    },
+    {
+      "id": "wild_rooibos_bush",
+      "file": "../builder/wild_rooibos_bush.glb",
+      "bytes": 1559720,
+      "sha256": "2eb7176c13737e47db3a244634c5577b3d790970a5b99b1a08a924dd100e9000",
+      "license": "CC0-1.0",
+      "sourcePage": "https://polyhaven.com/a/wild_rooibos_bush",
+      "authors": {
+        "James Ray Cock": "modeling",
+        "Jenelle van Heerden": "photography"
+      },
+      "sources": [
+        {
+          "file": "wild_rooibos_bush.gltf",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/wild_rooibos_bush/wild_rooibos_bush_1k.gltf",
+          "bytes": 23122,
+          "sha256": "7f3fb17e4606e33d0bc4239c4901c9610b4bd17fe26b6780ba11ab4493f25d29"
+        },
+        {
+          "file": "textures/wild_rooibos_bush_nor_gl_1k.jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wild_rooibos_bush/wild_rooibos_bush_nor_gl_1k.jpg",
+          "bytes": 463170,
+          "sha256": "ffd557b4cb732d24988d41741398df150567f3ac9d1433f11b88d60158c953d4"
+        },
+        {
+          "file": "textures/wild_rooibos_bush_diff_1k.jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wild_rooibos_bush/wild_rooibos_bush_diff_1k.jpg",
+          "bytes": 374003,
+          "sha256": "d963cdaf769bc39bb57295d518b37cd9456168cf5e3b82fd59f58c98d3faf596"
+        },
+        {
+          "file": "textures/wild_rooibos_bush_arm_1k.jpg",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/wild_rooibos_bush/wild_rooibos_bush_arm_1k.jpg",
+          "bytes": 367273,
+          "sha256": "e0e512f263b8f1fe1c485e61912ba1ce5d42b397cf9a4e2b1786677e732bb84b"
+        },
+        {
+          "file": "wild_rooibos_bush.bin",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/wild_rooibos_bush/wild_rooibos_bush.bin",
+          "bytes": 1236928,
+          "sha256": "7a3471b4d110fe9927f4a200191eae86fa3c0a08f8e8e797d22e94a1703322e1"
+        },
+        {
+          "file": "textures/wild_rooibos_bush_alpha_1k.png",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/wild_rooibos_bush/wild_rooibos_bush_alpha_1k.png",
+          "bytes": 90888,
+          "sha256": "6a9fcd7a62aab1366b0ae50273c4a638591e932049a647ccadce6687ce657b72"
+        }
+      ],
+      "note": "Reuses the existing processed CC0 builder asset. Only individual B and C specimens are used; gallery translations are removed at runtime and during view baking."
+    }
+  ]
+}

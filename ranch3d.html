@@ -666,6 +666,7 @@ import {createPastoralSky} from './assets/pastoral-sky.js?v=clear-pastoral-sky-1
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=layered-horizon-1';
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-1';
 import {hasMeadowCover} from './assets/meadow-biomes.js';
+import {installUndergrowth} from './assets/undergrowth.js?v=individual-undergrowth-1';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
 import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=pasture-ribbons-1';
 import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=leafy-orchard-1';
@@ -695,7 +696,7 @@ import {createForageArt} from './assets/forage-art.js?v=leafy-orchard-1';
 import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
-import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=village-gardens-1';
+import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=individual-undergrowth-1';
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=canopy-lighting-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=couture-riders-20261007';
@@ -3413,6 +3414,7 @@ const STATIC_MERGE=[];
 function mergeStatics(){
  const byMat=new Map(); let meshes=0;
  for(const g of STATIC_MERGE){
+  if(g.userData.undergrowthReplaceable)continue;
   g.userData.collisionBatched=true;
   solidWorld.register(g,{primitives:true});
   g.updateMatrixWorld(true);
@@ -3430,7 +3432,7 @@ function mergeStatics(){
   const merged=mergeGeometries(e.list,false); e.list.forEach(c=>c.dispose()); if(!merged)continue;
   const m=new THREE.Mesh(merged,mat); m.name='static_merged'; m.castShadow=e.cast; m.receiveShadow=e.recv; scene.add(m); draws++;
  }
- for(const g of STATIC_MERGE)if(g.parent)g.parent.remove(g);
+ for(const g of STATIC_MERGE)if(g.parent&&!g.userData.undergrowthReplaceable)g.parent.remove(g);
  STATIC_MERGE.length=0;
  return {meshes,draws};
 }
@@ -14504,10 +14506,11 @@ for(const material of waterfallArt.mistMaterials)G.atmos?.registerMist(material)
 installVillageForecourts(G,villageGroundZones,{shrubs:naturalFlowerShrubs});
 installRanchWorldDetails(G,{shrubs:FOLIAGE.bush});
 installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
+installUndergrowth(G,{flowerShrubs:naturalFlowerShrubs,staticShrubs:STATIC_MERGE.filter(g=>/ shrub$/.test(g.name))});
 G.world.outerLandscape=createOuterLandscape({THREE,scene,heightAt:terrainH,groundMesh:scene.getObjectByName('Pasture terrain')});
 const reflectionFineCover=new Set(['Living pasture grass','Modelled meadow lupins','Middle distance pasture','flora_tuft','flora_petal','flora_brack']);
 const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,
- omitFromReflection:o=>o===grassInst||reflectionFineCover.has(o.name),
+ omitFromReflection:o=>o===grassInst||o.userData.fineGroundCover||reflectionFineCover.has(o.name),
  levelAt(x,z){
   const planes=[...['pool','tarn'].map(k=>({distance:Math.max(0,Math.hypot(x-HOLLOWPEAK[k].x,z-HOLLOWPEAK[k].z)-HOLLOWPEAK[k].r),level:HOLLOWPEAK[k].level,refreshIntervalMs:100})),{distance:Math.abs(z-riverZ(x)),level:riverLevel(x)},
    {distance:Math.hypot(x-20,z-16),level:.04}];
