@@ -70,4 +70,15 @@ fitting normals. `tools/test-fingerpost-geometry.mjs` checks watertight arrows,
 forward face atlases, grain charts and physical support contact.
 `tools/qa-roadside-props.cjs` captures a revision-pinned main baseline and the
 new native GPU views, compares every tree/collision/route state, measures draw
-cost, and rides the Frostpine route in both directions across all graphics tiers.
+cost, captures all graphics tiers, and rides the Frostpine route in both directions.
+
+
+The October 7 merged release was compared with native main revision `8cb3416`:
+14 geometry tests and 50 native acceptance checks pass over 21 views. All three
+bench sites, 15 sign destinations, tree poses, terrain, route geometry and
+collision arrays match the baseline. Frozen matched GPU views add 0.3–4.7 ms
+in measured median wall time depending on the view; the golden-hour view is
+slightly faster within timing noise. Geometry grows by 494,000 bytes, while
+texture slots stay fixed. The two-sided lettering atlases add approximately
+11.08 MiB of estimated RGBA8 mip storage. These desktop measurements do not
+establish mobile frame rate or memory limits.

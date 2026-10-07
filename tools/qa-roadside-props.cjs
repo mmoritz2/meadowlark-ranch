@@ -68,6 +68,59 @@ function captureRoadside(){
  const gl=q.renderer.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info'),gpu=ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER);
  return{bat,batches,colliders,walls,signs,benches,benchVisual,benchBatchStats:clone(P.benchBatches?.stats||null),roadsideReady:!!P.roadsideReady,worldResources:{sceneGeometries:geometries.size,geometryBytes,sceneTextures:textures.size,rendererMemory:clone(q.renderer.info.memory)},gpu,routeClearance:{mine:P.mine,blocked:clone(P.blocked),preExisting:clone(P.preExistingTight),clearance:clone(P.clearance)}};
 }
+function stableRouteClearance(value){
+ const copy=JSON.parse(JSON.stringify(value));
+ for(const route of Object.values(copy.clearance||{}))if(route?.stats)delete route.stats.elapsedMs;
+ return copy;
+}
+// Reconstruct exactly the read-only source injections used in the native run.
+// Runtime file hashes and browser-executed hashes must both remain identical.
+function auditedSource(body,file){
+ const add=(marker,prefix)=>{assert.equal(body.split(marker).length-1,1,'Native audit marker changed: '+file);body=body.replace(marker,prefix+marker);};
+ if(file==='assets/world-photoscans.js')add('state.treePositions=trees.map','state.__coldAudit={trees,treeMeshes,treeCards};');
+ if(file==='assets/terrain-realism.js')add('Object.assign(sh.uniforms, uniforms);','material.userData.__coldShaders=material.userData.__coldShaders||[];material.userData.__coldShaders.push(sh);');
+ if(file==='assets/features/world-paths.js'){
+  add('const TRACKS=[];',`window.__coldSolids={colliders:JSON.parse(JSON.stringify(W.colliders)),walls:JSON.parse(JSON.stringify(W.walls))};`);
+  add('const pathTimber=',`P.__propsAudit={BAT,SIGNS};`);
+ }
+ if(file==='ranch3d.html')add('const MERGE_STATS=mergeStatics();',`window.__coldQA={THREE,scene,camera,renderer,composer,G,player,groundH,terrainH,TACK,keys,step(dt){manualStepping=true;tick(dt)},day(t=.34,rain=false){dayT=t;weather.mode=rain?'rain':'clear';weather.timer=99999}};`);
+ return body;
+}
+async function recheckNativeCapture(){
+ assert.equal(baseline,false,'An offline after recheck cannot be run in baseline mode');
+ const input=path.resolve(process.env.QA_ROADSIDE_RECHECK),bytes=fs.readFileSync(input),report=JSON.parse(bytes);
+ assert.equal(report.baseline,false,'Recheck requires an actual native after capture');
+ assert.equal(report.reference,reference,'Native capture revision differs from requested preservation reference');
+ assert.equal(report.checks.sourcesMatchWorkingTree,true,'Native run did not attest its executed source');
+ assert(report.sourceReceipt?.files?.length,'Native source receipt is missing');
+ const audit=[];
+ for(const receipt of report.sourceReceipt.files){
+  assert(receipt.file&&!path.isAbsolute(receipt.file)&&!receipt.file.split('/').includes('..'),'Unsafe receipt path');
+  const raw=fs.readFileSync(path.join(ROOT,receipt.file),'utf8'),current=sha(raw),executed=sha(auditedSource(raw,receipt.file));
+  assert.equal(current,receipt.rawSha256,'Captured runtime changed: '+receipt.file);
+  assert.equal(executed,receipt.executedSha256,'Audit injection differs from native execution: '+receipt.file);
+  assert(receipt.browserSha256.length&&receipt.browserSha256.every(h=>h===executed),'Native browser hashes differ: '+receipt.file);
+  audit.push({file:receipt.file,rawSha256:current,executedSha256:executed});
+ }
+ for(const file of moduleFiles)assert(audit.some(r=>r.file===file),'Required native runtime receipt missing: '+file);
+ const referencePath=path.resolve(process.env.QA_ROADSIDE_REFERENCE||path.join(out,'../roadside-before/report.json'));
+ const referenceBytes=fs.readFileSync(referencePath),before=JSON.parse(referenceBytes);
+ assert.equal(before.baseline,true,'Preservation reference must be an actual native baseline');assert.equal(before.reference,reference);
+ const result=await acceptCapture({state:report.state,rows:report.rows,errors:report.errors,sourceMatches:true});
+ fs.mkdirSync(out,{recursive:true});const images=[];
+ for(const row of report.rows){
+  assert(/^[a-z0-9-]+$/.test(row.name),'Unsafe image row name');
+  const source=path.join(path.dirname(input),row.name+'.webp'),target=path.join(out,row.name+'.webp'),data=fs.readFileSync(source),hash=sha(data);
+  if(path.resolve(source)!==path.resolve(target))fs.copyFileSync(source,target);
+  assert.equal(sha(fs.readFileSync(target)),hash,'Native image changed during recheck: '+row.name);
+  images.push({name:row.name+'.webp',sha256:hash});
+ }
+ const final={...report,...result,originalAcceptance:{checks:report.checks,metrics:report.metrics},recheckedFrom:input,
+  recheck:{method:'CPU-only acceptance recomputation; no browser/rendering',excludedTimingFields:['state.routeClearance.clearance.*.stats.elapsedMs'],nativeReportSha256:sha(bytes),nativeCapturedGitHead:report.gitHead,validationGitHead:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}).trim(),referenceReport:referencePath,referenceReportSha256:sha(referenceBytes),runtimeAudit:audit,images}};
+ fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(final,null,2));
+ console.log(JSON.stringify({checks:result.checks,metrics:result.metrics,recheckedFrom:input,sourceFiles:audit.length,images:images.length}));
+ assert(Object.values(result.checks).every(Boolean),'Roadside native capture recheck failed');
+}
 function roadsideAcceptance(state,before,rows){
  const old=before.state,checks={},metrics={};
  checks.nativeGPU=!/swiftshader|llvmpipe|software rasterizer/i.test(state.gpu);
@@ -76,7 +129,7 @@ function roadsideAcceptance(state,before,rows){
  checks.nonBenchRawBatchesPreserved=equal(state.nonBenchBat,old.nonBenchBat);
  checks.nonBenchRenderRowsPreserved=Object.keys(old.nonBenchBatches).every(k=>equal(state.nonBenchBatches[k].rows,old.nonBenchBatches[k].rows));
  checks.allTreesPreserved=equal(state.treeAudit,old.treeAudit);
- checks.routeClearancePreserved=equal(state.routeClearance,old.routeClearance);
+ checks.routeClearancePreserved=equal(stableRouteClearance(state.routeClearance),stableRouteClearance(old.routeClearance));
  checks.allBenchSitesPreserved=state.benches.length===old.benches.length&&state.benches.every((b,i)=>{const a=old.benches[i];return b.x===a.x&&b.z===a.z&&Math.abs(b.y-a.y)<1e-10&&angular(b.yaw,a.yaw)<1e-10&&near(b.matrix,a.matrix)&&b.visible===a.visible&&equal(b.legacyRowIndices,a.legacyRowIndices)&&equal(b.collider,a.collider);});
  const immutableSign=s=>({id:s.id,name:s.name,x:s.x,y:s.y,z:s.z,matrix:s.matrix,arms:s.arms,collider:s.collider});
  checks.allSignsPreserved=state.signs.length===15&&equal(state.signs.map(immutableSign),old.signs.map(immutableSign));
@@ -114,6 +167,8 @@ function runSelfTest(){
  const fixture={bat:{box:rows,cyl:[]},batches:{box:{rows:rendered},cyl:{rows:[]}},colliders:[{x:9,z:3,r:2,id:'existing'},{x,z,r:.85}]};
  const got=extractLegacyBenches(fixture);assert.equal(got.benches.length,1);assert.deepEqual(got.benches[0].legacyRowIndices,[1,2,3,4]);assert.equal(got.benches[0].collider.index,1);assert.equal(got.benches[0].collider.object,fixture.colliders[1]);assert.deepEqual(got.nonBenchBat.box,[rows[0],rows[5]]);assert.deepEqual(got.nonBenchBatches.box.rows,[rendered[0],rendered[5]]);assert.equal(got.benches[0].x,x);assert.equal(got.benches[0].z,z);assert(angular(got.benches[0].yaw,yaw)<1e-12);
  const clearedRows=rendered.map((r,i)=>i===1?{...r,matrix:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]}:r);const cleared=extractLegacyBenches({...fixture,colliders:[],batches:{...fixture.batches,box:{rows:clearedRows}}});assert.equal(cleared.benches[0].collider,null);assert.equal(cleared.benches[0].visible,false);assert.throws(()=>extractLegacyBenches({...fixture,colliders:[...fixture.colliders,fixture.colliders[1]]}));assert.throws(()=>extractLegacyBenches({...fixture,bat:{...fixture.bat,box:rows.filter((_,i)=>i!==2)}}));
+ const route={mine:0,blocked:[{x:1,z:2}],clearance:{riverwest:{stats:{elapsedMs:3,removed:2},points:[[1,2],[3,4]]}}},timing=JSON.parse(JSON.stringify(route));timing.clearance.riverwest.stats.elapsedMs=900;
+ assert(equal(stableRouteClearance(route),stableRouteClearance(timing)));assert.equal(route.clearance.riverwest.stats.elapsedMs,3);timing.clearance.riverwest.stats.removed=4;assert(!equal(stableRouteClearance(route),stableRouteClearance(timing)));
  console.log('Roadside QA CPU fixture passed: rotated 4-row extraction, exact old collider index/object, preserved raw/Float32 non-bench rows, nullable removed circles, hidden-seat state, duplicate-circle and missing-piece rejection. No browser launched.');
 }
 async function acceptCapture({state,rows,errors,sourceMatches}){
@@ -139,6 +194,7 @@ async function acceptCapture({state,rows,errors,sourceMatches}){
 }
 (async()=>{
  if(process.env.QA_ROADSIDE_SELFTEST==='1'){runSelfTest();return;}
+ if(process.env.QA_ROADSIDE_RECHECK){await recheckNativeCapture();return;}
  fs.mkdirSync(out,{recursive:true});const QA=require('./qa-platform.cjs');
  const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});try{
  const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
