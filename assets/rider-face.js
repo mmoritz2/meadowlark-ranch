@@ -66,14 +66,15 @@ vec3 riderFaceFinish(vec3 skin,vec3 source,vec3 p){
 }`;
 
 /* Tapered upper lashes, fitted to the face in the Head bone's space. */
-export function riderLashGeometry(THREE,skin,eyes,body){
+export function riderLashGeometry(THREE,skin,eyes,body,asset=null){
  if(body!=='f'||!eyes)return null;
  const head=skin.skeleton.bones.findIndex(b=>b.name==='Head'),inverse=skin.skeleton.boneInverses[head];
  const face=skin.geometry.clone();face.applyMatrix4(inverse);
  // Restrict fitting rays to the eye region; the full body is unnecessary here.
+ const eyeY=asset?.config.target[1]??.109,eyeX=asset?.config.target[0]??.035,minY=asset?eyeY-.01:.099,maxY=asset?eyeY+.033:.120,maxX=asset?eyeX+.03:.051;
  const p=face.attributes.position,source=face.index?Array.from(face.index.array):Array.from({length:p.count},(_,i)=>i),region=[];
  for(let i=0;i<source.length;i+=3){const tri=source.slice(i,i+3),xs=tri.map(n=>p.getX(n)),ys=tri.map(n=>p.getY(n));
-  if(Math.min(...xs)<=.051&&Math.max(...xs)>=-.051&&Math.min(...ys)<=.121&&Math.max(...ys)>=.098&&tri.some(n=>p.getZ(n)>.04))region.push(...tri);
+  if(Math.min(...xs)<=maxX&&Math.max(...xs)>=-maxX&&Math.min(...ys)<=maxY+.001&&Math.max(...ys)>=minY-.001&&tri.some(n=>p.getZ(n)>.04))region.push(...tri);
  }
  face.setIndex(region);
  const material=new THREE.MeshBasicMaterial({side:THREE.DoubleSide}),surface=new THREE.Mesh(face,material),ray=new THREE.Raycaster();surface.updateMatrixWorld(true);
@@ -82,9 +83,9 @@ export function riderLashGeometry(THREE,skin,eyes,body){
  const positions=[],indices=[],roots=[],segments=7,sides=6,V=(x,y,z)=>new THREE.Vector3(x,y,z);
  const front=(mesh,x,y)=>{ray.set(V(x,y,.3),V(0,0,-1));return ray.intersectObject(mesh,false)[0];};
  for(const side of [-1,1])for(let i=0;i<20;i++){
-  const t=i/19,x=side*(.020+.030*t);let exposed=false,root=null;
+  const t=i/19,x=side*(asset?eyeX-.017+.037*t:.020+.030*t);let exposed=false,root=null;
   // Find where the visible eye meets the upper lid instead of guessing an arc.
-  for(let y=.099;y<=.120;y+=.0001){const skinHit=front(surface,x,y),eyeHit=front(eyeSurface,x,y);if(!skinHit||!eyeHit)continue;
+  for(let y=minY;y<=maxY;y+=.0001){const skinHit=front(surface,x,y),eyeHit=front(eyeSurface,x,y);if(!skinHit||!eyeHit)continue;
    if(skinHit.point.z<eyeHit.point.z){exposed=true;continue;}
    if(exposed){root=V(x,y,skinHit.point.z+.0002);break;}
   }

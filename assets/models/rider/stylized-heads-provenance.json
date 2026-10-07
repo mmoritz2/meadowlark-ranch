@@ -1,0 +1,21 @@
+{
+  "source": "Blender Studio Human Base Meshes v1.4.1",
+  "officialPage": "https://www.blender.org/download/demo-files/#assets",
+  "officialDownload": "https://mirror.blender.org/demo/asset-bundles/human-base-meshes/human-base-meshes-bundle-v1.4.1.zip",
+  "downloadBytes": 50643039,
+  "sha256": "811f43accbb31a88266d932f8f5563b2d13586fca0ba2693aad1f5fe582b3515",
+  "license": "CC0 1.0 Universal",
+  "licenseEvidence": "https://www.blender.org/download/demo-files/",
+  "creditedCreator": "Julien Kaspar / Blender Studio and community contributions",
+  "derivatives": "Head and upper-neck cropped from adult stylized female and male body meshes. Source eyes retained as separate meshes. Static geometry with UVMap; no source scripts, animations or rig exported. No textures/materials included.",
+  "exports": [
+    {
+      "file": "stylized-f-head.glb",
+      "sha256": "d317e6e869880e42341bf9ce8ab5c4c2cbb2e19a827c08c7372902d02c6f8347"
+    },
+    {
+      "file": "stylized-m-head.glb",
+      "sha256": "e7c98ff14766d502a6050bae2df0442fafeeba3f48d6b8f8c19f667ff8918b4a"
+    }
+  ]
+}

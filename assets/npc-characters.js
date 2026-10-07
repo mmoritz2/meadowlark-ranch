@@ -83,12 +83,8 @@ export function createNPCCharacters({THREE,riderLibrary,limit=12,buildRadius=55,
   const want=talking&&!r.entry.def.folk?desired:0;
   r.turn+=clamp(npcAngle(want-r.turn),-dt*1.25,dt*1.25);rig.root.rotation.y=r.turn;
   rig.root.updateMatrixWorld(true);
-  const idleWeight=(1-movement)*(1-r.talk);
-  if(idleWeight>.001){
-   rig.root.getWorldQuaternion(worldQ);axis.set(0,0,1).applyQuaternion(worldQ);
-   for(const [name,side,a] of [['upperarm_l',1,.20],['upperarm_r',-1,.20],['thigh_l',1,.055],['thigh_r',-1,.055],['foot_l',1,-.055],['foot_r',-1,-.055]])turnWorld(rig.bones[name],-side*a*idleWeight);
-  }
-  for(const [name,rest] of rig.kit.seat.relax){const b=rig.bones[name];if(b)b.quaternion.slerp(rest,.85);}
+  // The shared clips already contain the standing pose and relaxed fingers.
+  // Keep NPCs aligned with the player's and wardrobe's authored motion.
   if(r.distance<7&&player){
    const look=clamp(npcAngle(desired-r.turn),-.7,.7);
    axis.set(0,1,0);turnWorld(rig.bones.neck_01,look*.25);turnWorld(rig.bones.Head,look*.5);
