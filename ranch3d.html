@@ -666,7 +666,8 @@ import {createPastoralSky} from './assets/pastoral-sky.js?v=clear-pastoral-sky-1
 import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=layered-horizon-1';
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-1';
 import {hasMeadowCover} from './assets/meadow-biomes.js';
-import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=leafy-orchard-1';
+import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
+import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=pasture-ribbons-1';
 import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=leafy-orchard-1';
 import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=carved-canyon-1';
 import {createGeology} from './assets/geology.js?v=carved-canyon-1';
@@ -700,7 +701,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=artist-riders-20261007';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-store-live-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-store-live-20261007';
-import {FEATURES} from './assets/features/index.js?v=tack-store-live-20261007';
+import {FEATURES} from './assets/features/index.js?v=pasture-ribbons-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -3130,14 +3131,20 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  flMat.envMapIntensity=0.6; windy(flMat,0.18);
  const fernMat=new THREE.MeshStandardMaterial({map:texLoad('assets/textures/realism/foliage_branch_rgba.png',1),alphaTest:0.42,side:THREE.DoubleSide,roughness:0.94});
  fernMat.envMapIntensity=0.55; windy(fernMat,0.13);
- const reedMat=new THREE.MeshStandardMaterial({map:reedTex,alphaTest:0.42,side:THREE.DoubleSide,roughness:0.92});
+ // Preserve the legacy canvas's random draws so other world placements stay stable.
+ reedTex.dispose();
+ const reedMat=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:1});
  reedMat.envMapIntensity=0.5; windy(reedMat,0.26);
  const rockMat=new THREE.MeshStandardMaterial({roughness:0.95,metalness:0});
  const NG_FR=quality==='low'?2:4, NG_RK=quality==='low'?2:3, NG_RD=2, NG_LU=quality==='low'?16:44;
  const near=new THREE.InstancedMesh(createGrassTuftGeometry(THREE),nearMat,NG_W*NG_W*NG_K);
+ const grassCells=Array.from({length:NG_W*NG_W},()=>({count:0,matrices:new Float32Array(NG_K*16),colors:new Float32Array(NG_K*3)}));
+ let grassDrawCount=0,grassVR=false;near.setColorAt(0,new THREE.Color());
  const flow=new THREE.InstancedMesh(crossGeo(0.24,0.40),flMat,NG_W*NG_W*NG_F);
  const fern=new THREE.InstancedMesh(crossGeo(0.46,0.62),fernMat,NG_W*NG_W*NG_FR);
- const reed=new THREE.InstancedMesh(crossGeo(0.30,1.15),reedMat,NG_W*NG_W*NG_RD);
+ const reed=new THREE.InstancedMesh(createReedGeometry(THREE),reedMat,NG_W*NG_W*NG_RD);
+ reed.name='Living shoreline bulrushes';reed.setColorAt(0,new THREE.Color());
+ const reedCells=Array.from({length:NG_W*NG_W},()=>({count:0,matrices:new Float32Array(NG_RD*16),colors:new Float32Array(NG_RD*3)}));
  const rock=new THREE.InstancedMesh(rockGeo,rockMat,NG_W*NG_W*NG_RK);
  const luMat=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:.86});
  luMat.envMapIntensity=0.6; windy(luMat,0.14);
@@ -3159,6 +3166,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(!hasMeadowCover(x,z))return false;                  // match the terrain's transition zones
   if(Math.hypot(x-20,z-16)<5.4||oasisContainsWater(x,z,.7))return false; // lake and oasis
   if(pathDist(x,z)<PATH_W*.92||G.worldPaths?.trackDist(x,z)<3.4)return false;               // clear ground through the feathered shoulder
+  if(G.quartersPkg?.pondContains(x,z))return false;
   if(G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return false;
   if(window.__chalkCut?.(x,z))return false;
   if(window.__onCourse&&window.__onCourse(x,z,3.4))return false;   // nor the event courses (course-clear.js): a mown track to ride and to see down
@@ -3184,6 +3192,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
   if(pathDist(x,z)<PATH_W*1.16||G.worldPaths?.trackDist(x,z)<3.8)return false;               // leave room around the trail
   if(managedGrass(x,z)>.58)return false;                  // maintained yard, not woodland undergrowth
+  if(G.quartersPkg?.pondContains(x,z))return false;
   if(G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return false;
   if(window.__chalkCut?.(x,z))return false;
   if(window.__onCourse&&window.__onCourse(x,z,3.8))return false;   // nor on a course
@@ -3202,15 +3211,15 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const FLC=[new THREE.Color('#ffffff'),new THREE.Color('#fff1a8'),new THREE.Color('#f7b7d2'),new THREE.Color('#cdb8f2'),new THREE.Color('#ffffff')];
  let cx0=1e9,cz0=1e9;
  const fillCell=(ci,cj,slot)=>{
-  const bx=ci*NG_CELL,bz=cj*NG_CELL;
+  const bx=ci*NG_CELL,bz=cj*NG_CELL,grassCell=grassCells[slot];grassCell.count=0;
   for(let k=0;k<NG_K;k++){
-   const id=slot*NG_K+k, h1=gh(ci*73+k*7,cj*131+k*3), h2=gh(ci*17+k*11,cj*59+k*5), h3=gh(k*13+ci,cj*7+k), h4=gh(k*29+cj,ci*3+k*17);
+   const h1=gh(ci*73+k*7,cj*131+k*3), h2=gh(ci*17+k*11,cj*59+k*5), h3=gh(k*13+ci,cj*7+k), h4=gh(k*29+cj,ci*3+k*17);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
-   if(!okGrass(x,z)){sc.set(0,0,0);m4.compose(v.set(x,-10,z),q.identity(),sc);near.setMatrixAt(id,m4);continue;}
+   if(!okGrass(x,z))continue;
    const sz=.90+h3*.35,trim=.98-.64*managedGrass(x,z),growth=meadowGrowthAt(x,z),spread=.55+.45*growth;
    e.set(0,h4*Math.PI,(h3-0.5)*0.10); q.setFromEuler(e); sc.set(sz*spread,(.9+h1*.2)*trim*growth,sz*spread);
-   v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc); near.setMatrixAt(id,m4);
-   meadowBladeColor(bcol,x,z,h4);near.setColorAt(id,bcol);
+   v.set(x,groundH(x,z)-0.02,z); m4.compose(v,q,sc);m4.toArray(grassCell.matrices,grassCell.count*16);
+   meadowBladeColor(bcol,x,z,h4);bcol.toArray(grassCell.colors,grassCell.count*3);grassCell.count++;
   }
   for(let k=0;k<NG_F;k++){
    const id=slot*NG_F+k, h1=gh(ci*41+k*19,cj*97+k*23), h2=gh(ci*61+k*29,cj*37+k*31), h3=gh(k*43+ci*5,cj*11+k*7);
@@ -3246,14 +3255,15 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    v.set(x,groundH(x,z)-0.03,z); m4.compose(v,q,sc); fern.setMatrixAt(id,m4);
    bcol.set(C.fern).offsetHSL(0,(h1-0.5)*0.06,(h3-0.5)*0.10); fern.setColorAt(id,bcol);
   }
+  const reedCell=reedCells[slot];reedCell.count=0;
   for(let k=0;k<NG_RD;k++){                                  // bulrushes, only at the water's edge
-   const id=slot*NG_RD+k, h1=gh(ci*97+k*7,cj*43+k*23), h2=gh(ci*31+k*41,cj*13+k*29), h3=gh(k*19+cj*7,ci*11+k*3);
+   const h1=gh(ci*97+k*7,cj*43+k*23), h2=gh(ci*31+k*41,cj*13+k*29), h3=gh(k*19+cj*7,ci*11+k*3);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
    const d=Math.min(Math.abs(z-riverZ(x)),Math.hypot(x-20,z-16));
-   if(!okClutter(x,z)||d<5.3||d>8.6||h3>0.62){hide(reed,id);continue;}
+   if(!okClutter(x,z)||d<5.3||d>8.6||h3>0.62)continue;
    const sz=0.8+h3*0.7; e.set(0,h2*Math.PI*2,(h1-0.5)*0.10); q.setFromEuler(e); sc.set(sz,sz*(0.8+h1*0.6),sz);
-   v.set(x,groundH(x,z)-0.05,z); m4.compose(v,q,sc); reed.setMatrixAt(id,m4);
-   bcol.set('#7fae55').offsetHSL(0,(h2-0.5)*0.08,(h3-0.5)*0.12); reed.setColorAt(id,bcol);
+   v.set(x,groundH(x,z)-0.05,z);m4.compose(v,q,sc);m4.toArray(reedCell.matrices,reedCell.count*16);
+   bcol.setRGB(.85+h2*.15,.88+h3*.12,.81+h1*.16);bcol.toArray(reedCell.colors,reedCell.count*3);reedCell.count++;
   }
   for(let k=0;k<NG_RK;k++){                                  // stones, everywhere, in the local rock colour
    const id=slot*NG_RK+k, h1=gh(ci*67+k*31,cj*17+k*43), h2=gh(ci*13+k*53,cj*83+k*7), h3=gh(k*23+ci*19,cj*3+k*61);
@@ -3275,16 +3285,28 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    fillCell(ci,cj,((ci%NG_W)+NG_W)%NG_W+NG_W*(((cj%NG_W)+NG_W)%NG_W));
   }
   cx0=ci0;cz0=cj0;
+  grassDrawCount=0;near.instanceMatrix.array.fill(0);near.instanceColor.array.fill(0);
+  for(const cell of grassCells){
+   near.instanceMatrix.array.set(cell.matrices.subarray(0,cell.count*16),grassDrawCount*16);
+   near.instanceColor.array.set(cell.colors.subarray(0,cell.count*3),grassDrawCount*3);grassDrawCount+=cell.count;
+  }
+  near.count=grassVR?Math.floor(grassDrawCount*.5):grassDrawCount;
   let liveFlowers=0;
   for(const cell of lupinCells){
    lupin.instanceMatrix.array.set(cell.matrices.subarray(0,cell.count*16),liveFlowers*16);
    lupin.instanceColor.array.set(cell.colors.subarray(0,cell.count*3),liveFlowers*3);liveFlowers+=cell.count;
   }
   lupin.count=liveFlowers;
+  let liveReeds=0;reed.instanceMatrix.array.fill(0);reed.instanceColor.array.fill(0);
+  for(const cell of reedCells){
+   reed.instanceMatrix.array.set(cell.matrices.subarray(0,cell.count*16),liveReeds*16);
+   reed.instanceColor.array.set(cell.colors.subarray(0,cell.count*3),liveReeds*3);liveReeds+=cell.count;
+  }
+  reed.count=liveReeds;
   for(const im of[near,flow,fern,reed,rock,lupin]){im.instanceMatrix.needsUpdate=true; if(im.instanceColor)im.instanceColor.needsUpdate=true;}
  };
  nearGrass={near,flow,fern,reed,rock,lupin,meadowDistance,invalidate:()=>{cx0=cz0=1e9;meadowDistance.invalidate();},tick:(t,px,pz)=>{meadowDistance.tick(t,px,pz);nearU.uTime.value=t;nearU.uPlayer.value.set(px,0,pz);update(px,pz);},
-  setVR:on=>{meadowDistance.mesh.visible=!on;near.count=on?Math.floor(NG_W*NG_W*NG_K*0.5):NG_W*NG_W*NG_K;}};
+  setVR:on=>{grassVR=on;meadowDistance.mesh.visible=!on;near.count=on?Math.floor(grassDrawCount*.5):grassDrawCount;}};
  update(0,0);
  const flowerGeo=new THREE.IcosahedronGeometry(0.025,1);
  const flowerMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1});

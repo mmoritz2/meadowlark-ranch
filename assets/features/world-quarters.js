@@ -22,6 +22,7 @@
    left moving is updated by small local handlers: smoke, mill wheel, windmill fan, bell, mist,
    herons and weather vane. Smoke and wildlife use distance limits; vegetation follows the
    world's quality budget. The four settlements are widely separated. */
+import {createReedBeds} from '../reed-beds.js?v=pasture-ribbons-1';
 import {buildMarshDressing,installChimneySmoke} from '../marsh-dressing.js?v=marsh-dressing-1';
 import {buildWillowmereArt} from '../willowmere-art.js?v=willowmere-settlement-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -31,8 +32,9 @@ export function install(G){
  const {THREE,scene,toast}=G;
  const W=G.world,H=G.horse,S=G.save,UI=G.ui;
  const player=H.player,groundH=W.groundH;
- const P={sites:{},draws:0,mergedFrom:0,inst:0,instItems:0,buildings:0,npcs:0,things:0,colliders:0,anim:[],objs:[],scanTrees:[],willowTrees:[]};
+ const P={sites:{},draws:0,mergedFrom:0,inst:0,instItems:0,buildings:0,npcs:0,things:0,colliders:0,anim:[],objs:[],scanTrees:[],willowTrees:[],reedSources:[],ponds:[]};
  G.quartersPkg=P;
+ P.pondContains=(x,z)=>P.ponds.some(p=>(x-p.x)**2+(z-p.z)**2<(p.r+.12)**2);
  /* Every object this package puts in the scene, kept in one list. It is what lets a QA run
     measure what the four settlements cost by switching them off and on again inside one
     browser session — the only way to get a draw-call delta that is not swamped by the
@@ -189,7 +191,7 @@ export function install(G){
  function tickFade(dt){
   fadeT+=dt;if(fadeT<0.4)return;fadeT=0;
   const px=player.pos.x,pz=player.pos.z;
-  for(const f of FADE){const dx=px-f.x,dz=pz-f.z;f.o.visible=dx*dx+dz*dz<f.r2;}
+  for(const f of FADE){if(f.o.userData.replacedGroundReeds)continue;const dx=px-f.x,dz=pz-f.z;f.o.visible=dx*dx+dz*dz<f.r2;}
  }
 
  /* ================= 3. siting: flat ground, clear of what is already out there ============= */
@@ -245,7 +247,7 @@ export function install(G){
   w.rotation.x=-Math.PI/2;w.castShadow=false;
   const drop=Math.max(0.4,y-groundH(x+r*1.15,z)+0.3);
   const sk=put(G_SKIRT,bank,r,drop,r,x,y-drop/2,z,g);sk.castShadow=false;
-  return {x,z,r,y};
+  const site={x,z,r,y};P.ponds.push(site);return site;
  }
 
  /* ================= 5. things to do when you get there ================= */
@@ -373,7 +375,7 @@ export function install(G){
   const sedge=[];
   for(let i=0;i<220;i++){const a=rr(0,6.28),d=POND.r*rr(0.9,1.4),x=POND.x+Math.cos(a)*d,z=POND.z+Math.sin(a)*d;
    sedge.push({x,y:Math.min(groundH(x,z),POND.y)-0.08,z,sx:rr(0.34,0.58),sy:rr(0.7,1.4),sz:rr(0.34,0.58),ry:rr(0,6.28),c:rnd()<0.4?'#b5a25e':'#ffffff'});}
-  scatter(G_TUFT,reedTexture(),sedge,false,170);
+  P.reedSources.push(scatter(G_TUFT,reedTexture(),sedge,false,170));
 
   /* The sawmill: stone footings out of the bank, a plank shed, a loading apron, and a launder
      carrying pond water across to the wheel. The wheel is the one thing in Amberwood that
@@ -573,7 +575,7 @@ export function install(G){
   for(let i=0;i<520;i++){const a=rr(0,6.28),d=rr(14,64),x=F.cx+Math.cos(a)*d,z=F.cz+Math.sin(a)*d;
    if(Math.hypot(x,z)>452)continue;
    reeds.push({x,y:groundH(x,z)-0.05,z,sx:rr(0.26,0.44),sy:rr(0.6,1.2),sz:rr(0.26,0.44),ry:rr(0,6.28),c:rnd()<0.35?'#c2ae72':'#ffffff'});}
-  P.willowSettlement.reeds=scatter(G_TUFT,reedTexture(),reeds,false,180);
+  P.willowSettlement.reeds=scatter(G_TUFT,reedTexture(),reeds,false,180);P.reedSources.push(P.willowSettlement.reeds);
 
   /* Willows. Six of them, and their silhouette is half the reason you can tell Willowmere from
      four hundred metres: a short thick bole, limbs that reach out rather than up, a heavy mass
@@ -1061,6 +1063,17 @@ vQMistUV=uv;
   try{fn();}catch(e){console.error('quarter '+name,e);}
  if(P.willowSettlement)try{P.willowmereArt=buildWillowmereArt(G,P.willowSettlement);}catch(e){G.errors.push('Willowmere art: '+e.message);console.error(e);}
  if(P.willowmereArt)try{P.marshDressing=buildMarshDressing(G,P.willowSettlement,P.willowmereArt);own(P.marshDressing.root);P.draws+=P.marshDressing.stats.draws;P.anim.push('herons','weather vane');}catch(e){G.errors.push('Marsh dressing: '+e.message);console.error(e);}
+ // Ordinary pasture plants cannot grow through the mill pond. Keep its
+ // dedicated sedge sites, while clearing pre-existing dry cover once.
+ P.pondCoverCleared=0;
+ for(const mesh of [W.seedGrass,...['scrub','brack','reed','tuft','petal'].map(k=>G.floraPkg?.bank[k]?.im)].filter(Boolean)){
+  let changed=false;const m=new THREE.Matrix4(),zero=new THREE.Matrix4().makeScale(0,0,0);
+  for(let i=0;i<mesh.instanceMatrix.count;i++){mesh.getMatrixAt(i,m);if(Math.abs(m.determinant())>1e-8&&P.pondContains(m.elements[12],m.elements[14])){mesh.setMatrixAt(i,zero);changed=true;P.pondCoverCleared++;}}
+  if(changed)mesh.instanceMatrix.needsUpdate=true;
+ }
+ W.nearGroundCover?.invalidate();
+ // Read the final shoreline placements after the boardwalk/deep-water exclusions.
+ try{P.reedBeds=createReedBeds({THREE,scene,sources:P.reedSources,player,getQuality:()=>G.gfx.get()});own(P.reedBeds.detail);own(P.reedBeds.far);P.draws+=2;G.on('tick',(dt,t)=>P.reedBeds.update(dt,t));}catch(e){G.errors.push('Reed beds: '+e.message);console.error(e);}
  try{P.chimneySmoke=installChimneySmoke(G,SMOKE);for(const r of P.chimneySmoke.records)own(r.mesh);}catch(e){G.errors.push('Chimney smoke: '+e.message);console.error(e);}
  /* Keep fallback smoke and distance fades active. Replacement plumes, marsh wildlife and
     other animated landmarks install their own handlers beside their geometry. */
