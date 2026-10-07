@@ -44,6 +44,15 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
   const shutters=['#4c6659','#526a77','#766650'].map((color,i)=>material('Village | painted shutters '+i,{
     color,roughness:.9,normalMap:map('../builder/coated_pine_nor_gl.webp'),normalScale:new THREE.Vector2(.22,.22),
   },1));
+  const marshWalls=[];
+  function marshWall(i){
+    if(marshWalls[i])return marshWalls[i];
+    const color=['#dbd7c1','#b5c3b4','#c4cbd0','#d4c5ab'][i];
+    const m=material('Willowmere | painted clapboard '+i,{color,map:map('siding_albedo.jpg',true),
+      normalMap:map('siding_normal.jpg'),normalScale:new THREE.Vector2(.40,.40),
+      roughnessMap:map('siding_roughness.jpg'),roughness:1,envMapIntensity:.6},2.4);
+    m.userData.clapboard=true;marshWalls[i]=m;return m;
+  }
   const roof = material('Ranch | aged cedar shingles', {
     color: '#b9b4a6', map: map('roof_albedo.jpg', true),
     normalMap: map('roof_normal.jpg'), normalScale: new THREE.Vector2(.52,.52),
@@ -109,6 +118,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
         uv.setXY(i,((ny>.5&&turnUV)||nx>.5?p.getZ(i)+z:p.getX(i)+x)/patch,
           (ny>.5?(turnUV?p.getX(i)+x:p.getZ(i)+z):p.getY(i)+y)/patch);
       }
+      if(m.userData.clapboard)for(let i=0;i<uv.count;i++){const a=uv.getX(i),b=uv.getY(i);uv.setXY(i,-b,a);}
       const q=rotation instanceof THREE.Quaternion?rotation:new THREE.Quaternion().setFromEuler(rotation||new THREE.Euler());
       const transform=new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),q,new THREE.Vector3(1,1,1));
       if(frame)transform.premultiply(frame);
@@ -160,6 +170,8 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       const panel=(low,high)=> {
         if(high-low<.005)return;
         b.box(right-left,high-low,.18,wall,mid,(low+high)/2,0,null,frame);
+        if(wall.userData.clapboard)for(let y=Math.ceil(low/.18)*.18;y<high-.018;y+=.18)
+          if(y>low+.018)b.box(right-left,.028,.025,wall,mid,y,.103,null,frame);
         // Slim batten strips catch grazing light. Stay within this wall rectangle.
         for(let u=Math.ceil(left/.30)*.30;wall===siding&&u<right-.025;u+=.30)
           if(u>left+.025)b.box(.038,high-low,.029,siding,u,(low+high)/2,.102,null,frame);
@@ -718,6 +730,45 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       animatedDoorOpening:{x:dx,width:dw,height:dh,bottomY:0,frontZ:d/2},
       suggestedLabelY:ridge+.28});
   }
+  function buildMarshHouse({width=5.6,depth=4.4,height=3.4,variant=0,chimneyTop=null}={}) {
+    const w=width,d=depth,h=height,b=new Builder('Willowmere | raised waterside house'),wall=marshWall(variant%4),paint=shutters[variant%3];
+    const ridge=h+Math.min(1.3,d*.34),dw=Math.min(1.18,w*.38),dh=Math.min(2.24,h-.24);
+    const front=[{type:'door',domestic:true,paint,x:0,y:dh/2,w:dw,h:dh}];
+    if(w>3)for(const side of[-1,1])front.push({x:side*w*.32,y:h*.57,w:Math.min(.85,w*.21),h:Math.min(1.13,h*.40)});
+    shellWall(b,w,h,face(0,d/2,0),front,wall,.02);
+    shellWall(b,w,h,face(0,-d/2,Math.PI),(w>4?[-w*.24,w*.24]:[0]).map(x=>({x,y:h*.57,w:Math.min(1.03,w*.28),h:Math.min(1.13,h*.4)})),wall,.02);
+    for(const side of[-1,1]){
+      const f=face(side*w/2,0,side*Math.PI/2),win={x:0,y:h*.57,w:Math.min(1.03,d*.35),h:Math.min(1.13,h*.40)};
+      shellWall(b,d,h,f,[win],wall,.02);gable(b,d,h,ridge,f,wall);
+      for(const sign of[-1,1]){
+        const sx=sign*(win.w/2+.26),sw=.34;
+        b.box(sw,win.h+.12,.045,paint,sx,win.y,.17,null,f);
+        for(let j=0;j<8;j++)b.box(sw-.04,.028,.043,trim,sx,win.y-win.h/2+j*win.h/7,.204,new THREE.Euler(.24,0,0),f);
+        for(const yy of[win.y-win.h*.32,win.y+win.h*.32])b.box(.15,.034,.025,metal,sx-sign*.08,yy,.232,null,f);
+      }
+    }
+    cornerPosts(b,w,d,h);roofAssembly(b,w,d,h,ridge,true,slate);
+    b.box(w-.18,.05,d-.18,wood,0,.015,0);
+    if(w>5){
+      // A covered veranda is high enough for a mounted horse below its eaves.
+      const rear=d/2+.06,frontZ=d/2+1.90,backY=3.34,frontY=3.02;
+      b.box(w+.8,.095,Math.hypot(frontZ-rear,frontY-backY),slate,0,(frontY+backY)/2,(rear+frontZ)/2,new THREE.Euler(Math.atan2(backY-frontY,frontZ-rear),0,0));
+      b.box(w+.85,.18,.12,trim,0,frontY-.045,frontZ);
+      for(const side of[-1,1]){
+        const x=side*(w/2+.24);b.box(.13,frontY,.13,trim,x,frontY/2,frontZ-.07);
+        b.beam([x,.9,frontZ-.07],[x,frontY-.15,frontZ-.66],.075,.075,wood);
+      }
+    }
+    if(chimneyTop){
+      const low=ridge-.42,top=chimneyTop;
+      b.box(.64,top-low,.57,stone,0,(top+low)/2,0);
+      for(let y=low+.16;y<top;y+=.23)b.box(.67,.025,.60,mortar,0,y,0);
+      b.box(.78,.11,.70,stoneLight,0,top-.015,0);b.box(.42,.015,.34,dark,0,top+.045,0);
+    }
+    lantern(b,dw*.76,Math.min(h-.16,dh-.05),d/2+.16);
+    return b.finish({kind:'marsh-house',variant,width:w,depth:d,wallHeight:h,ridgeHeight:ridge,windows:front.length-1+(w>4?2:1)+2,chimneyTop});
+  }
+
   function buildOpenStall() {
     // The barn row faces -X. Its clear horse entrance, 1.9 x 3.2 footprint
     // and sloping roof match the original placement and turnout animation.
@@ -783,6 +834,6 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     const g=b.finish({kind:'run-in-details',width,depth});group.add(g);
     group.userData.ranchDetails=g;return g;
   }
-  return {buildBarn,buildCottage,buildTownhouse,buildCoachingInn,buildOutbuilding,buildOpenStall,detailRunIn,materials,maps,
+  return {buildBarn,buildCottage,buildTownhouse,buildCoachingInn,buildOutbuilding,buildMarshHouse,buildOpenStall,detailRunIn,materials,maps,
     sidingMaterial:siding,roofMaterial:roof};
 }

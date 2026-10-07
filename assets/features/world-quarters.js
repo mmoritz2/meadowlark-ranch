@@ -22,6 +22,7 @@
    left moving in the whole package is seven objects — four smoke columns, a mill wheel, a
    windmill fan and a bell — and not one of them allocates so much as a vector during a frame.
    The four sites sit six hundred metres apart, so the frustum only ever holds one of them. */
+import {buildWillowmereArt} from '../willowmere-art.js?v=willowmere-settlement-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {plantNaturalPines,plantScannedSaplings} from '../vegetation.js?v=ranch-life-1';
 export const id='world-quarters';
@@ -259,7 +260,7 @@ export function install(G){
    if(ok){toast(line.replace('%',H.ridden().name)+' +40 thirst');G.sChime();}
   }});
  }
- function npc(def){try{const at=clearSpot(def.x,def.z);def.x=at[0];def.z=at[1];W.addNPC(def);P.npcs++;}catch(err){console.error('quarters npc '+def.id,err);}}
+ function npc(def){try{const at=clearSpot(def.x,def.z);def.x=at[0];def.z=at[1];const entry=W.addNPC(def);if(def.id.startsWith('qw_'))P.willowSettlement.npcs.push(entry);P.npcs++;}catch(err){console.error('quarters npc '+def.id,err);}}
  /* A building goes through pad() first, so the coordinates it ends up on are the ones every
     label, marker and chimney afterwards has to use — hence the returned pair. */
  function building(o){
@@ -554,9 +555,9 @@ export function install(G){
   const POOLS=[];
   for(const [a,b,r] of [[6,-18,7.5],[-4,-4,8.5],[-12,14,6.5],[4,16,5.5],[-14,-14,5],[9,5,4.5],[-18,1,5.5]]){
    const p0=F.at(a,b),at=pad(p0[0],p0[1],r,0.6);
-   POOLS.push(pool(solid,at[0],at[1],r,'#46685e','#5a5a42'));
+   POOLS.push({x:at[0],z:at[1],r,y:waterLevel(at[0],at[1],r)+.06});
   }
-  const MERE=POOLS[1];
+  const MERE=POOLS[1];P.willowSettlement={houses:[],routes:[],pools:POOLS,boats:[],mist:[],npcs:[]};
 
   /* Reed beds. Two crossed blades per clump on an alpha-cut texture — two thousand of them on
      one draw call, thickest at every waterline and thinning out across the flats. They were
@@ -570,7 +571,7 @@ export function install(G){
   for(let i=0;i<520;i++){const a=rr(0,6.28),d=rr(14,64),x=F.cx+Math.cos(a)*d,z=F.cz+Math.sin(a)*d;
    if(Math.hypot(x,z)>452)continue;
    reeds.push({x,y:groundH(x,z)-0.05,z,sx:rr(0.26,0.44),sy:rr(0.6,1.2),sz:rr(0.26,0.44),ry:rr(0,6.28),c:rnd()<0.35?'#c2ae72':'#ffffff'});}
-  scatter(G_TUFT,reedTexture(),reeds,false,180);
+  P.willowSettlement.reeds=scatter(G_TUFT,reedTexture(),reeds,false,180);
 
   /* Willows. Six of them, and their silhouette is half the reason you can tell Willowmere from
      four hundred metres: a short thick bole, limbs that reach out rather than up, a heavy mass
@@ -604,43 +605,13 @@ export function install(G){
      the entire reason a marsh village has a boardwalk and not a street. */
   const WALK=[[12,-24],[6,-16],[2,-6],[-2,2],[-6,10],[-11,18],[-15,25]].map(p=>F.at(p[0],p[1]));
   const SPUR=[[[-3,1],[-10,4]],[[3,-8],[9,-12]],[[-5,7],[2,14]]].map(s=>s.map(p=>F.at(p[0],p[1])));
-  const lamps=[];
-  function boardwalk(pts,w){
-   for(let i=1;i<pts.length;i++){
-    const [x0,z0]=pts[i-1],[x1,z1]=pts[i],span=Math.hypot(x1-x0,z1-z0),n=Math.max(2,Math.round(span/1.6)),yaw=Math.atan2(x1-x0,z1-z0);
-    for(let k=0;k<n;k++){
-     const f=(k+0.5)/n,x=x0+(x1-x0)*f,z=z0+(z1-z0)*f,y=groundH(x,z)+0.62;
-     bx(solid,'#8a7550',x,y,z,w,0.1,span/n+0.1).rotation.y=yaw;
-     if(k%2===0)for(const s of [-1,1]){
-      const px=x+Math.cos(yaw)*s*(w/2-0.14),pz=z-Math.sin(yaw)*s*(w/2-0.14),gy=groundH(px,pz);
-      cy(solid,T_DARK,px,(gy+y)/2-0.1,pz,0.09,y-gy+0.3);}
-     if(k%7===3){
-      const px=x+Math.cos(yaw)*(w/2+0.18),pz=z-Math.sin(yaw)*(w/2+0.18);
-      cy(solid,T_MID,px,y+1.2,pz,0.07,2.5);
-      bx(solid,IRON,px,y+2.5,pz,0.3,0.06,0.3);
-      lamps.push({x:px,y:y+2.34,z:pz,s:0.2});}
-    }
-   }
-  }
-  boardwalk(WALK,2.2);for(const s of SPUR)boardwalk(s,1.6);
-  scatter(G_LUMP,mt(LAMP,{emissive:LAMP,emissiveIntensity:1.0,roughness:0.4}),lamps,false,240);
+  P.willowSettlement.routes=[{pts:WALK,width:2.2},...SPUR.map(pts=>({pts,width:1.6}))];
 
-  /* A house on posts: a deck at a metre above whatever the water gets to, six legs down to
-     whatever is underneath, a narrow steep-roofed cabin and a ladder. Nothing touches the
-     ground, which is the whole idea. */
+  // Record the original sites before any landscape or deck surface changes.
   function stilthouse(x,z,yaw,w,d,h,deckW){
-   const g=new THREE.Group(),y0=groundH(x,z);
-   const deck=Math.max(0,waterLevel(x,z,Math.max(w,d)/2+1.4)-y0)+1.05;
-   for(let ix=-1;ix<=1;ix++)for(const iz of [-1,1]){
-    const px=ix*(deckW/2-0.34),pz=iz*(d/2+0.55),wp=world(x,z,yaw,px,pz),gy=groundH(wp[0],wp[1])-y0;
-    cy(g,T_DARK,px,(gy+deck)/2-0.2,pz,0.13,deck-gy+0.7);}
-   bx(g,'#8a7550',0,deck,0,deckW,0.14,d+1.7);
-   shack(g,T_PALE,w,d,h,1.0,2.0,deck+0.07);
-   roof(g,'#5c4b33',w,d,h*0.6,deck+0.07+h,0.34);
-   for(let k=0;k<5;k++)bx(g,T_MID,deckW/2+0.24,deck-0.16-k*0.24,d/2+0.3,0.72,0.06,0.1);
-   for(const s of [-1,1])bx(g,T_MID,s*(deckW/2-0.07),deck+0.55,d/2+0.62,0.08,0.9,0.08);
-   bx(g,T_MID,0,deck+0.96,d/2+0.62,deckW-0.12,0.07,0.07);
-   place(solid,g,x,z,yaw);
+   const y0=groundH(x,z),deck=Math.max(0,waterLevel(x,z,Math.max(w,d)/2+1.4)-y0)+1.05;
+   const collisionRadius=[3.7,2.6,2.5,2.0][P.willowSettlement.houses.length];
+   P.willowSettlement.houses.push({x,z,yaw,width:w,depth:d,height:h,deckWidth:deckW,deckY:y0+deck+.07,collisionRadius});
    return y0+deck;
   }
   const eel=F.at(-8,6),cotA=F.at(-6,-16),cotB=F.at(3,18),hide=F.at(-15,25);
@@ -656,13 +627,14 @@ export function install(G){
   const bh=building({id:'willow:boathouse',x:F.at(8,-11)[0],z:F.at(8,-11)[1],rot:F.yaw+0.7,r:3.0,flat:0.5,
    label:'🛶 Willowmere boathouse',build:outbuilding({width:5.4,depth:3.6,height:3.4,animatedDoorOpening:{width:1.9,height:2.3}}),
    open:()=>UI.openShop('food'),door:'🧺 Buy feed at the boathouse'});
+  P.willowSettlement.boathouse=bh;P.willowSettlement.boathouseYaw=F.yaw+0.7;
   door('willow:eelhouse',eel[0],eel[1],5.9,'🏠 Go up into the eel house',()=>UI.openOnline());
 
   /* Punts tied up, nets drying on a frame, and four herons that have no opinion about any of it. */
   const bg=new THREE.Group();
   for(let i=0;i<3;i++){
    const p=POOLS[i*2%POOLS.length],a=rr(0,6.28),px=p.x+Math.cos(a)*p.r*.55,pz=p.z+Math.sin(a)*p.r*.55,pg=W.sceneryArt.boat();
-   pg.position.set(px,p.y,pz);pg.rotation.y=rr(0,6.28);scene.add(own(pg));}
+   pg.position.set(px,p.y,pz);pg.rotation.y=rr(0,6.28);scene.add(own(pg));P.willowSettlement.boats.push(pg);}
   for(let i=0;i<4;i++){
    const p=POOLS[(i*2+1)%POOLS.length],a=rr(0,6.28),hx=p.x+Math.cos(a)*p.r*0.78,hz=p.z+Math.sin(a)*p.r*0.78,hg=new THREE.Group();
    for(const s of [-1,1])cy(hg,'#c6ba9a',s*0.06,0.34,0,0.028,0.72);
@@ -701,7 +673,7 @@ export function install(G){
    x.fillStyle=g2;x.fillRect(0,0,128,64);}
   /* A third of an opacity, not a half: at a half the banks stopped being mist over the water and
      started being a white wash over the village. */
-  const mistMat=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(mc),transparent:true,depthWrite:false,side:THREE.DoubleSide,opacity:0.3});
+  const mistMat=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(mc),transparent:true,depthWrite:false,side:THREE.DoubleSide,opacity:0.14});
   /* Crossed quads are right for a reed clump and wrong for a mist bank, and this is the one place
      the rule does not carry. A reed is a thing with a silhouette from every angle; a bank of mist
      is not, and two upright sheets twenty metres across, crossed, seen from the saddle, read as
@@ -714,27 +686,29 @@ export function install(G){
      collapse its whole gradient into one bright row of pixels, and out with distance, because a
      sheet far off can never read correctly and the fog should carry the distance instead. */
   mistMat.onBeforeCompile=sh=>{
-   sh.vertexShader='varying vec3 vQMistW;\n'+sh.vertexShader.replace('#include <project_vertex>',
+   sh.vertexShader='varying vec3 vQMistW;varying vec2 vQMistUV;\n'+sh.vertexShader.replace('#include <project_vertex>',
 `#include <project_vertex>
+vQMistUV=uv;
 #ifdef USE_INSTANCING
  vQMistW=(modelMatrix*instanceMatrix*vec4(transformed,1.0)).xyz;
 #else
  vQMistW=(modelMatrix*vec4(transformed,1.0)).xyz;
 #endif`);
-   sh.fragmentShader='varying vec3 vQMistW;\n'+sh.fragmentShader.replace('#include <opaque_fragment>',
+   sh.fragmentShader='varying vec3 vQMistW;varying vec2 vQMistUV;\n'+sh.fragmentShader.replace('#include <opaque_fragment>',
 `#include <opaque_fragment>
+ gl_FragColor.a*=smoothstep(0.0,.20,vQMistUV.x)*smoothstep(0.0,.20,vQMistUV.y)*smoothstep(0.0,.20,1.0-vQMistUV.x)*smoothstep(0.0,.20,1.0-vQMistUV.y);
  vec3 qmV=vQMistW-cameraPosition;
  gl_FragColor.a*=smoothstep(0.04,0.40,abs(normalize(qmV).y));
  gl_FragColor.a*=1.0-smoothstep(46.0,96.0,length(qmV));`);
   };
-  mistMat.customProgramCacheKey=()=>'quarters-meremist-v2';
+  mistMat.customProgramCacheKey=()=>'quarters-meremist-v3';
   const G_MIST=G_PLANE.clone(); G_MIST.rotateX(-Math.PI/2);   // lying on the water, not standing in it
   const mistItems=[];
   for(let i=0;i<6;i++){const p=POOLS[i%POOLS.length];mistItems.push({x:p.x+rr(-6,6),y:p.y+0.55,z:p.z+rr(-6,6),sx:rr(15,24),sy:1,sz:rr(15,24),ry:rr(0,6.28)});}
   const mist=scatter(G_MIST,mistMat,mistItems,false);
   if(mist){
    mist.renderOrder=2;mist.frustumCulled=false;P.anim.push('mist');
-   const base=mistItems.map(m=>({x:m.x,y:m.y,z:m.z,sx:m.sx,sy:m.sy,sz:m.sz,ry:m.ry,ph:rnd()*6.28}));
+   const base=mistItems.map(m=>({x:m.x,y:m.y,z:m.z,sx:m.sx,sy:m.sy,sz:m.sz,ry:m.ry,ph:rnd()*6.28}));P.willowSettlement.mist=base;
    G.on('tick',(dt,t)=>{
     if(hyp(player.pos.x,player.pos.z,F.cx,F.cz)>240){mist.visible=false;return;}
     mist.visible=true;
@@ -1082,6 +1056,7 @@ export function install(G){
  /* ================= 12. build them, and the one per-frame pass ================= */
  for(const [name,fn] of [['amberwood',buildAmberwood],['willowmere',buildWillowmere],['frostpine',buildFrostpine],['ochre',buildOchre]])
   try{fn();}catch(e){console.error('quarter '+name,e);}
+ if(P.willowSettlement)try{P.willowmereArt=buildWillowmereArt(G,P.willowSettlement);}catch(e){G.errors.push('Willowmere art: '+e.message);console.error(e);}
  /* One tick for the package and it does one thing: the smoke. The mill wheel, the fan, the bell
     and the mist hang their own one-line handlers off G.on('tick') beside their geometry, which
     keeps each of them next to the thing it moves. */

@@ -677,7 +677,7 @@ import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
 import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=chalk-ridge-1';
-import {createRanchArchitecture} from './assets/ranch-architecture.js?v=coaching-inn-1';
+import {createRanchArchitecture} from './assets/ranch-architecture.js?v=willowmere-settlement-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-world-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
@@ -692,10 +692,10 @@ import {createForageArt} from './assets/forage-art.js?v=leafy-orchard-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=village-gardens-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=weeping-willows-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=willowmere-settlement-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=runway-20261006';
-import {FEATURES} from './assets/features/index.js?v=weeping-willows-1';
+import {FEATURES} from './assets/features/index.js?v=willowmere-settlement-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -1571,6 +1571,22 @@ const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,5000);
    riding line facing -z, with the camera behind at +z). Starting elsewhere makes the first second of the
    game a swoop through the horse before the smoothing catches up. */
 camera.position.set(-5.5,2.4,16.0);
+
+// Local landscape edits retain the exact triangle surface used by mounted movement.
+function patchTerrain(bounds,sample){
+ const terrain=scene.getObjectByName('Pasture terrain'),geo=terrain.geometry,pos=geo.attributes.position;
+ const loX=Math.max(0,Math.floor((bounds.minX+500)/TERRAIN_STEP)),hiX=Math.min(TERRAIN_SEGMENTS,Math.ceil((bounds.maxX+500)/TERRAIN_STEP));
+ const loZ=Math.max(0,Math.floor((bounds.minZ+500)/TERRAIN_STEP)),hiZ=Math.min(TERRAIN_SEGMENTS,Math.ceil((bounds.maxZ+500)/TERRAIN_STEP));
+ let changed=0,maxChange=0;
+ for(let iz=loZ;iz<=hiZ;iz++)for(let ix=loX;ix<=hiX;ix++){
+  const i=iz*(TERRAIN_SEGMENTS+1)+ix,x=ix*TERRAIN_STEP-500,z=iz*TERRAIN_STEP-500,old=TERRAIN_HEIGHTS[i],height=sample(x,z,old);
+  if(!Number.isFinite(height))throw Error('Landscape produced a non-finite height');
+  if(Math.abs(height-old)<.00001)continue;
+  TERRAIN_HEIGHTS[i]=height;pos.setY(i,TERRAIN_HEIGHTS[i]);maxChange=Math.max(maxChange,Math.abs(height-old));changed++;
+ }
+ pos.needsUpdate=true;geo.computeVertexNormals();geo.computeBoundingBox();geo.computeBoundingSphere();
+ return {changed,maxChange,bounds};
+}
 
 /* ================= VR (WebXR) =================
    The flat game keeps its chase camera. In VR the camera is re-parented to a rig
@@ -3134,6 +3150,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(!hasMeadowCover(x,z))return false;                  // match the terrain's transition zones
   if(Math.hypot(x-20,z-16)<5.4||oasisContainsWater(x,z,.7))return false; // lake and oasis
   if(pathDist(x,z)<PATH_W*.92||G.worldPaths?.trackDist(x,z)<3.4)return false;               // clear ground through the feathered shoulder
+  if(G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return false;
   if(window.__chalkCut?.(x,z))return false;
   if(window.__onCourse&&window.__onCourse(x,z,3.4))return false;   // nor the event courses (course-clear.js): a mown track to ride and to see down
   return true;};
@@ -3158,6 +3175,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
   if(pathDist(x,z)<PATH_W*1.16||G.worldPaths?.trackDist(x,z)<3.8)return false;               // leave room around the trail
   if(managedGrass(x,z)>.58)return false;                  // maintained yard, not woodland undergrowth
+  if(G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return false;
   if(window.__chalkCut?.(x,z))return false;
   if(window.__onCourse&&window.__onCourse(x,z,3.8))return false;   // nor on a course
   return true;};
@@ -14337,7 +14355,7 @@ function installFeatures(){
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,geology,box,tube,blob,
+  world:{patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},
@@ -14395,6 +14413,7 @@ const waterReflections=createWaterReflections({scene,renderer,camera,material:wa
  levelAt(x,z){
   const planes=[...['pool','tarn'].map(k=>({distance:Math.max(0,Math.hypot(x-HOLLOWPEAK[k].x,z-HOLLOWPEAK[k].z)-HOLLOWPEAK[k].r),level:HOLLOWPEAK[k].level,refreshIntervalMs:100})),{distance:Math.abs(z-riverZ(x)),level:riverLevel(x)},
    {distance:Math.hypot(x-20,z-16),level:.04}];
+  const marsh=G.quartersPkg?.willowmereArt?.landscape;if(marsh)planes.push({distance:Math.max(0,marsh.shore(x,z)),level:marsh.level,refreshIntervalMs:100});
   const oasis=G.worldPkg?.oasis;if(oasis)planes.push({distance:Math.max(0,Math.hypot(x-oasis.x,z-oasis.z)-oasis.r),level:oasis.y,refreshIntervalMs:100});
   if(z<STREAM_JOIN)planes.push({distance:Math.abs(x-streamX(z)),level:streamLevel(z)});
   return planes.sort((a,b)=>a.distance-b.distance)[0];

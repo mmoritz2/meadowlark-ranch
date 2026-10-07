@@ -28,6 +28,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function clear(x,z,r=1){
     if(inMeadowOpening(x,z)||fallsContainsWater(x,z,r+1.5))return false;
     if(G.vistas?.clearZones?.some(test=>test(x,z)))return false;
+    if(G.quartersPkg?.willowmereArt?.excludesPlants(x,z))return false;
     if(W.sceneryArt.containsWaterfall(x,z,r))return false;
     if(Math.hypot(x,z)<33||W.pathDist(x,z)<r+3||(G.worldPaths?.trackDist(x,z)??Infinity)<r+3)return false;
     if(Math.abs(z-W.riverZ(x))<r+10||z<163&&Math.abs(x-W.streamX(z))<r+8)return false;
