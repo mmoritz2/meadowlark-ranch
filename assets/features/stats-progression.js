@@ -306,14 +306,14 @@ export function install(G){
  const decor=new THREE.Group(); decor.name='Forage decor';
  const fruitMat=smat('#a64932'),fruitGeo=new THREE.SphereGeometry(.075,12,8);
  for(const [i,p]of orchardTrees.entries()){
-  const t=new THREE.Group();t.name='Orchard | apple tree';
+  const t=new THREE.Group();t.name='Orchard | apple tree';t.userData.orchard={index:i,height:3.8+(i%3)*.14,yaw:i*2.39996};
   const tree=makeNaturalTree({THREE,scale:.72+(i%3)*.035,seed:i+713});tree.rotation.y=i*2.39996;t.add(tree);
   for(let j=0;j<7;j++){
    const a=j*2.39996,r=.65+(j%3)*.12,apple=new THREE.Mesh(fruitGeo,fruitMat);
    apple.position.set(Math.cos(a)*r,2.05+(j%3)*.23,Math.sin(a)*r);apple.scale.y=.92;apple.castShadow=true;t.add(apple);
    tube(.009,.008,.065,'#62513b',apple.position.x,apple.position.y+.092,apple.position.z,t);
   }
-  t.position.set(p[0],W.groundH(p[0],p[1]),p[1]);decor.add(t);W.colliders.push({x:p[0],z:p[1],r:.5});
+  t.position.set(p[0],W.groundH(p[0],p[1]),p[1]);decor.add(t);W.colliders.push({x:p[0],z:p[1],r:.5,height:t.userData.orchard.height,trunk:true});
  }
  for(const p of hives){const hive=W.ranchBuilderArt.create('beehive');hive.name='Orchard | beehive';hive.position.set(p[0],W.groundH(p[0],p[1]),p[1]);decor.add(hive);}
  G.scene.add(decor);

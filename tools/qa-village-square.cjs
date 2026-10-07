@@ -1,6 +1,6 @@
 // Focused native-GPU and mounted-clearance checks for Cottonwood's larger landmarks.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),QA=require('./qa-platform.cjs');
-const layoutOnly=process.argv.includes('--layout-only'),innReview=process.argv.includes('--inn-review'),gardenReview=process.argv.includes('--garden-review');
+const layoutOnly=process.argv.includes('--layout-only'),innReview=process.argv.includes('--inn-review'),gardenReview=process.argv.includes('--garden-review'),orchardReview=process.argv.includes('--orchard-review');
 const out=path.resolve(process.argv[2]||'output/village-square');fs.mkdirSync(out,{recursive:true});
 (async()=>{const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});try{
  const page=await browser.newPage({viewport:{width:1280,height:800}}),errors=[];
@@ -11,7 +11,19 @@ const out=path.resolve(process.argv[2]||'output/village-square');fs.mkdirSync(ou
  await page.goto(QA.BASE+'/ranch3d.html?qa=village-square',{timeout:120000});await page.waitForFunction(()=>window.__villageQA?.G.horse.RIG().ready&&!document.getElementById('load'),null,{timeout:120000});
  await page.evaluate(async()=>{const q=__villageQA;q.G.save.sync(s=>s.qualityLocked=true);q.G.wardrobe?.closeChar();q.G.hidePanels();await q.G.photoscans.ready;await q.G.worldDetails.ready;advanceTime(0);});
  console.log('Village ready');const rows=[];
- for(const c of layoutOnly?[]:gardenReview?[
+ for(const c of layoutOnly?[]:orchardReview?[
+  {name:'inn-orchard',eye:[57,2,-59.5],look:[58,2,-66]},
+  {name:'orchard',eye:[59,2.7,-51],look:[71,2.8,-50]},
+  {name:'orchard-close',eye:[64,1.6,-50.2],look:[62,2.4,-48]},
+  {name:'orchard-medium',eye:[59,2.7,-51],look:[71,2.8,-50],tier:'medium'},
+  {name:'orchard-low',eye:[59,2.7,-51],look:[71,2.8,-50],tier:'low'},
+  {name:'orchard-rain',eye:[59,2.7,-51],look:[71,2.8,-50],rain:true},
+  {name:'orchard-night',eye:[59,2.7,-51],look:[71,2.8,-50],time:0},
+  {name:'orchard-backlit',eye:[78,2.5,-44],look:[64,2.5,-51],time:.75},
+  {name:'orchard-far',eye:[105,7,-29],look:[69,2,-50]},
+  {name:'square',eye:[45,2.7,-41],look:[51,3,-65]},
+  {name:'aerial',eye:[90,34,-28],look:[65,0,-51]},
+ ]:gardenReview?[
   {name:'border-close',eye:[55.3,1.8,-58.7],look:[55.3,.65,-61.9]},
   {name:'border-side',eye:[56.9,1.2,-60.3],look:[54.5,.65,-61.9]},
   {name:'border-medium',eye:[55.3,1.8,-58.7],look:[55.3,.65,-61.9],tier:'medium'},
@@ -139,10 +151,45 @@ const out=path.resolve(process.argv[2]||'output/village-square');fs.mkdirSync(ou
    planting.maxOverhang=Math.max(planting.maxOverhang,bed.x-bed.width/2-world.min.x,world.max.x-bed.x-bed.width/2,bed.z-bed.depth/2-world.min.z,world.max.z-bed.z-bed.depth/2);
   }
   for(const t of q.G.photoscans.villageTrees)if(!W.colliders.some(c=>c.trunk&&Math.hypot(c.x-t.x,c.z-t.z)<.01&&c.height>=t.height))planting.missingTrunks.push(t);
-  return {planting,arcadeRides,villageTrees:q.G.photoscans.treePositions.filter(t=>t.kind==='village'),mounted,squareRouteHits,unpaved,fountainHit,gardenHits,plots,squareGardenPlants:q.G.worldDetails.squareGardenPlants,buildings,groundError,routeHits,ride,hedgesInCourts,walkHits,courtTriangles:courts.mesh.geometry.index.count/3,courts:courts.zones.length,clearedPlants:courts.cleared,
+  const orchard={trees:q.G.photoscans.orchardTrees,fruit:q.G.photoscans.orchardFruit,legacyVisible:0,missingColliders:[],tiers:[],grassHeights:[],harvest:null};
+  q.scene.traverse(o=>{if(o.userData.orchard&&o.visible)orchard.legacyVisible++;});
+  for(const t of orchard.trees)if(!W.colliders.some(c=>c.trunk&&Math.hypot(c.x-t.x,c.z-t.z)<.01&&c.r>=.45&&c.height>=t.height))orchard.missingColliders.push(t);
+  const before=JSON.stringify(orchard.trees);q.player.pos.set(70,0,-50);q.renderer.render=()=>{};
+  try{for(const tier of['low','medium','high']){
+   q.G.gfx.apply(tier);q.step(.4);const modes=orchard.trees.map(()=>new Set());
+   q.scene.traverse(o=>{if(!o.isInstancedMesh||!o.visible||!o.count)return;const mode=o.name.startsWith('Photoscan orchard-broadleaf')?'detail':o.name==='Scanned distant tree views | orchard-broadleaf'?'card':null;if(!mode)return;
+    for(let i=0;i<o.count;i++){o.getMatrixAt(i,m);v.setFromMatrixPosition(m);const ix=orchard.trees.findIndex(t=>Math.hypot(t.x-v.x,t.z-v.z)<.01);if(ix>=0)modes[ix].add(mode);}
+   });orchard.tiers.push({tier,modes:modes.map(s=>[...s]),triangles:q.G.photoscans.activeTreeTriangles,budget:q.G.photoscans.treeTriangleBudget});
+  }}finally{q.renderer.render=oldRender;}
+  orchard.stableLayout=before===JSON.stringify(q.G.photoscans.orchardTrees);
+  q.nearGrass.tick(33,70,-50);
+  const tufts=q.nearGrass.near;tufts.geometry.computeBoundingBox();
+  for(let i=0;i<tufts.count;i++){tufts.getMatrixAt(i,m);v.setFromMatrixPosition(m);if(Math.abs(m.determinant())<1e-8||Math.hypot((v.x-70)/12,(v.z+50)/12)>1||courts.contains(v.x,v.z))continue;
+   orchard.grassHeights.push(Math.hypot(...m.elements.slice(4,7))*tufts.geometry.boundingBox.max.y);
+  }
+  orchard.grassHeights.sort((a,b)=>a-b);orchard.grass={samples:orchard.grassHeights.length,p90:orchard.grassHeights[Math.floor(orchard.grassHeights.length*.9)]};delete orchard.grassHeights;
+  const fruit=W.forage.filter(f=>f.item==='apple');orchard.pickups=fruit.length;orchard.anchors=W.FORAGE_SPOTS.apple.at;
+  for(const f of fruit){
+   let target=null;for(let i=0;i<16;i++){const a=i*Math.PI/8,x=f.g.position.x+Math.cos(a)*1.14,z=f.g.position.z+Math.sin(a)*1.14,g=q.groundH(x,z),pos={x,z};
+    if(!W.solidWorld.resolve(pos,{bottom:g+.38,top:g+2.65,radius:.55})&&!W.colliders.some(c=>!c.precise&&Math.hypot(x-c.x,z-c.z)<c.r+.55)&&!W.walls.some(w=>wallDistance(x,z,w)<.65)){target={x,z};break;}}
+   if(!target)continue;
+   f.g.visible=true;f.t=0;const apples=q.G.save.fresh().items.apple||0;q.player.pos.set(target.x,0,target.z);q.player.y=q.player.vy=q.player.speed=0;q.G.followCam.reset();q.renderer.render=()=>{};
+   try{q.day();q.step(1/30);}finally{q.renderer.render=oldRender;}
+   orchard.harvest={hidden:!f.g.visible,gained:(q.G.save.fresh().items.apple||0)-apples,hoofError:Math.abs(q.player.mesh.position.y-q.groundH(q.player.pos.x,q.player.pos.z))};
+   q.player.pos.set(20,0,-20);f.t=.01;q.renderer.render=()=>{};try{q.step(1/30);}finally{q.renderer.render=oldRender;}
+   orchard.harvest.respawned=f.g.visible&&Math.abs(f.g.position.y-q.groundH(f.g.position.x,f.g.position.z))<.001;break;
+  }
+  return {orchard,planting,arcadeRides,villageTrees:q.G.photoscans.treePositions.filter(t=>t.kind==='village'),mounted,squareRouteHits,unpaved,fountainHit,gardenHits,plots,squareGardenPlants:q.G.worldDetails.squareGardenPlants,buildings,groundError,routeHits,ride,hedgesInCourts,walkHits,courtTriangles:courts.mesh.geometry.index.count/3,courts:courts.zones.length,clearedPlants:courts.cleared,
    gardens:q.G.worldDetails.townhouseGardens,featureErrors:q.G.errors,assetErrors:[...q.G.worldDetails.errors,...q.G.photoscans.errors]};
  });
  const checks={
+  orchardModels:state.orchard.trees.length===12&&state.orchard.trees.every(t=>t.source==='orchard-broadleaf')&&state.orchard.legacyVisible===0,
+  orchardSites:JSON.stringify(state.orchard.trees.map(t=>[t.x,t.z]))===JSON.stringify(state.orchard.anchors)&&state.orchard.pickups===14,
+  orchardTrunks:state.orchard.missingColliders.length===0,
+  orchardFruit:state.orchard.fruit.integratedLOD&&state.orchard.fruit.clusters>=120&&state.orchard.fruit.drawCalls<=3&&state.orchard.fruit.triangles<220000,
+  orchardTreeLODs:state.orchard.tiers.every(t=>t.triangles<=t.budget&&t.modes.every(m=>m.length===1))&&state.orchard.tiers[0].modes.every(m=>m[0]==='card')&&state.orchard.tiers[2].modes.filter(m=>m[0]==='detail').length>=6&&state.orchard.stableLayout,
+  mownOrchard:state.orchard.grass.samples>50&&state.orchard.grass.p90<.45,
+  applePickingWorks:!!state.orchard.harvest&&state.orchard.harvest.hidden&&state.orchard.harvest.gained>=1&&state.orchard.harvest.respawned&&state.orchard.harvest.hoofError<.01,
   substantialBorders:state.planting.borders.placements.every(p=>p.height>.85&&p.height<1.2),
   bedsContainFoliage:state.planting.maxOverhang<.15,
   plantingBudget:state.planting.borders.triangles+state.planting.evergreens.triangles<120000&&state.planting.borders.drawCalls+state.planting.evergreens.drawCalls===3,

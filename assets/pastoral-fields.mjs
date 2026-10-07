@@ -70,5 +70,8 @@ export const inMeadowOpening=(x,z)=>meadowOpeningAt(x,z)>.5;
 // A soft boundary is shared by every grass LOD and the flower colonies.
 export function meadowGrazingAt(x,z){
   const west=Math.hypot((x+54)/22,(z-43)/16)+Math.sin(x*.18+z*.11)*.06;
-  return Math.max(meadowOpeningAt(x,z),1-smooth(.55,1.12,west));
+  // The cultivated orchard is mown beneath its fruit trees. This only changes
+  // cover height; trunks, picking sites, terrain and taller field margins stay put.
+  const orchard=Math.hypot((x-70)/18,(z+50)/18)+Math.sin(x*.24+z*.19)*.035;
+  return Math.max(meadowOpeningAt(x,z),1-smooth(.55,1.12,west),1-smooth(.72,1.13,orchard),1-smooth(2.8,5.8,Math.hypot(x-58,z+66)));
 }

@@ -1,9 +1,10 @@
+import {createOrchardFruit} from './orchard-art.js?v=leafy-orchard-1';
 import {installVillageEvergreens} from './village-planting.js?v=village-gardens-1';
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
 import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=village-gardens-1';
 import {fallsContainsWater} from './falls-landscape.js?v=mountain-falls-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
-import {inMeadowOpening} from './pastoral-fields.mjs?v=grazed-meadows-1';
+import {inMeadowOpening} from './pastoral-fields.mjs?v=leafy-orchard-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=opaque-foliage-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -114,7 +115,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=canopy-depth-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=leafy-orchard-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
     const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01'),woodland=await load('jacaranda_tree');
     const specs=[['tree_small_02',-1,broad,'broadleaf'],
       ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
@@ -128,7 +129,14 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       const triangles=parts.reduce((n,p)=>n+(p.geo.index?.count||p.geo.attributes.position.count)/3,0);
       return {parts,bounds,key,meta,triangles};
     });
+    const island=variants.find(v=>v.key==='canopy-broadleaf');
+    const fruit=createOrchardFruit({THREE,branchGeometry:island.parts.find(p=>p.mat.name.endsWith('_branches')).geo,sourceHeight:island.meta.sourceHeight,forageArt:W.forageArt});
+    const orchardParts=[...island.parts,...pieces(fruit.root)],orchardBounds=new THREE.Box3();orchardParts.forEach(p=>orchardBounds.union(p.bounds));
+    const orchardMeta=catalog.trees.find(t=>t.id==='orchard_apple');if(!orchardMeta)throw Error('Missing orchard view metadata');
+    const orchardSource={parts:orchardParts,bounds:orchardBounds,key:'orchard-broadleaf',meta:orchardMeta,triangles:island.triangles+fruit.stats.triangles};
+    variants.push(orchardSource);
     const sourceFor=t=>{
+      if(t.authoredOrchard)return orchardSource;
       // Related trees grow in groves. Young roadside trees stay slender; mature
       // oak sites carry full crowns. Broad trees define meadow and woodland edges.
       const roadEdge=Math.min(W.pathDist(t.x,t.z),G.worldPaths?.trackDist(t.x,t.z)??Infinity);
@@ -153,7 +161,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     const autumnPalette=['#e6b448','#db8734','#ad3d42','#c85c65'].map(c=>new THREE.Color(c));
     const add=t=>{
       const road=onRoad(t.x,t.z),meadow=inMeadowOpening(t.x,t.z);
-      const cleared=(road&&!t.authoredVillage)||meadow||G.vistas?.clearZones?.some(test=>test(t.x,t.z));
+      const cleared=!t.authoredOrchard&&((road&&!t.authoredVillage)||meadow||G.vistas?.clearZones?.some(test=>test(t.x,t.z)));
       if(cleared){
         if(t.root)t.root.visible=false;else if(t.stem){t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;}
         clearTrunk(t.x,t.z);if(road)state.roadClearedTrees++;
@@ -219,6 +227,12 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     for(const original of natural){if(!original.visible)continue;const b=new THREE.Box3().setFromObject(original);if(b.isEmpty())continue;
       add({x:original.position.x,z:original.position.z,height:b.max.y-b.min.y,yaw:original.rotation.y,root:original,kind:original.name.includes('pine')?'pine':'oak'});
     }
+    // These authored food trees are nested under Forage decor, so the legacy
+    // scene-root tree scan above cannot discover them. Keep their picking sites.
+    const orchard=[];scene.traverse(o=>{if(o.userData.orchard)orchard.push(o);});
+    for(const original of orchard){const p=original.getWorldPosition(new THREE.Vector3()),a=original.userData.orchard;
+      add({x:p.x,z:p.z,height:a.height,yaw:a.yaw,root:original,kind:'orchard',authoredOrchard:true});
+    }
     // Irregular groves frame the new bridleway, with gaps between them for views
     // across the hill. Every trunk respects paths, courses, water and buildings.
     const trail=G.worldPaths?.tracks.find(t=>t.id==='clover');
@@ -270,6 +284,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     for(const t of trees){if(t.root)t.root.visible=false;else if(t.stem){
       t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;
     }}
+    const orchardRecords=trees.filter(t=>t.authoredOrchard);
+    state.orchardFruit={...fruit.stats,trees:orchardRecords.length,clusters:fruit.stats.clusters*orchardRecords.length,apples:fruit.stats.apples*orchardRecords.length,triangles:fruit.stats.triangles*orchardRecords.length,integratedLOD:true};
+    state.orchardTrees=orchardRecords.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,source:t.source.key}));
     // Commit new trunk collisions only after all tree views have loaded.
     for(const t of COTTONWOOD_TREES)W.colliders.push({x:t.x,z:t.z,r:.34,height:t.height,trunk:true});
     for(const t of state.trailTrees)W.colliders.push({x:t.x,z:t.z,r:.62,height:t.height,trunk:true});

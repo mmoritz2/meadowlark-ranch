@@ -1,4 +1,4 @@
-import {meadowGrazingAt} from './pastoral-fields.mjs?v=grazed-meadows-1';
+import {meadowGrazingAt} from './pastoral-fields.mjs?v=leafy-orchard-1';
 
 // Tapered meadow leaves with softer root shading and varied, bending tips.
 // Three triangles per leaf keep the travelling cover within its existing budget.

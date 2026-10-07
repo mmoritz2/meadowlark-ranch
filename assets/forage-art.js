@@ -17,7 +17,7 @@ export function createForageArt({THREE}) {
       for(let i=0;i<p.count;i++){
         batch.p.push(p.getX(i),p.getY(i),p.getZ(i));batch.n.push(n.getX(i),n.getY(i),n.getZ(i));
         batch.u.push(uv?uv.getX(i):0,uv?uv.getY(i):0);
-        const shade=col?col.getX(i):1;batch.c.push(color.r*shade,color.g*shade,color.b*shade);
+        batch.c.push(color.r*(col?col.getX(i):1),color.g*(col?col.getY(i):1),color.b*(col?col.getZ(i):1));
       }
       if(geo.index)for(const i of geo.index.array)batch.i.push(offset+i);else for(let i=0;i<p.count;i++)batch.i.push(offset+i);
       geo.dispose();
@@ -42,14 +42,16 @@ export function createForageArt({THREE}) {
       const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(p,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(u,2));
       geo.setAttribute('color',new THREE.Float32BufferAttribute(c,3));geo.setIndex(idx);geo.computeVertexNormals();this.add(geo,'leaf',hex);this.leaves++;
     }
-    fruitAt(at,size,hex,{rib=0,pear=0,segments=14,rings=10,stripes=false}={}){
+    fruitAt(at,size,hex,{rib=0,pear=0,segments=14,rings=10,stripes=false,apple=false}={}){
       const geo=new THREE.SphereGeometry(1,segments,rings),p=geo.attributes.position,restNormals=geo.attributes.normal.array.slice(),shades=[];
       for(let i=0;i<p.count;i++){
         const y=p.getY(i),a=Math.atan2(p.getZ(i),p.getX(i));
-        const lobe=1+rib*Math.cos(a*10),taper=1+pear*y;
-        p.setXYZ(i,at[0]+p.getX(i)*size[0]*lobe*taper,at[1]+y*size[1]-(rib?Math.pow(Math.abs(y),8)*size[1]*.12*Math.sign(y):0),at[2]+p.getZ(i)*size[2]*lobe*taper);
+        const lobe=1+rib*Math.cos(a*10),taper=(1+pear*y)*(apple?1+.10*y-.035*y*y:1);
+        const fruitY=apple?y*.94-Math.sign(y)*Math.pow(Math.abs(y),12)*.17:y;
+        p.setXYZ(i,at[0]+p.getX(i)*size[0]*lobe*taper,at[1]+fruitY*size[1]-(rib?Math.pow(Math.abs(y),8)*size[1]*.12*Math.sign(y):0),at[2]+p.getZ(i)*size[2]*lobe*taper);
         const shade=stripes?.58+.42*Math.pow(.5+.5*Math.sin(a*10+y*1.7),.45):.83+hash(i,3)*.14+(y+1)*.04;
-        shades.push(shade,shade,shade);
+        const green=apple?Math.max(0,Math.min(1,.32+Math.sin(a+.4)*.48+Math.cos(y*4)*.10)):0;
+        shades.push(shade*(1-green*.18),shade*(1+green*1.9),shade*(1-green*.06));
       }
       geo.setAttribute('color',new THREE.Float32BufferAttribute(shades,3));geo.computeVertexNormals();
       // Sphere seams include unused pole vertices. Preserve their analytic
@@ -152,7 +154,7 @@ export function createForageArt({THREE}) {
         for(let i=0;i<5;i++)b.leaf([.018,.28+i*.11,0],i*2.399,.15,.15,.065,.055,'#637d42',.17);
         for(let i=0;i<24;i++){const a=i*2.399,t=i/24,r=.065*(1-t*.8);b.fruitAt([Math.sin(a)*r,.52-t*.22,.085+Math.cos(a)*r],[.029,.032,.029],'#504563',{segments:8,rings:6});}break;
       case 'apple':
-        for(let i=0;i<2;i++){const x=i*.15,y=.078-i*.012,z=i*.05;b.fruitAt([x,y,z],[.071,.070,.065],i?'#9d4930':'#b34d32',{rib:.025});b.stem([x,y+.058,z],[x+.008,y+.093,z],.0045,'#61543a');b.leaf([x,y+.09,z],i*2+.6,.055,.026,.012,.012,'#63773b');}break;
+        for(let i=0;i<2;i++){const x=i*.15,y=.078-i*.012,z=i*.05;b.fruitAt([x,y,z],[.071,.070,.065],i?'#9d4930':'#b34d32',{rib:.025,apple:true});b.stem([x,y+.058,z],[x+.008,y+.093,z],.0045,'#61543a');b.leaf([x,y+.09,z],i*2+.6,.055,.026,.012,.012,'#63773b');}break;
       case 'truffle':
         for(let i=0;i<3;i++)b.fruitAt([i*.095-.10,.048+i*.013,(i%2)*.05],[.076,.061,.071],i?'#65533b':'#4f4635',{rib:.10,segments:12,rings:10});
         for(let i=0;i<4;i++)b.leaf([0,.009,0],i*2.399,.16,.056,.012,.012,'#776a43',.16);break;
