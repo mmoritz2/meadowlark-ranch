@@ -3,8 +3,8 @@
 // resource, registry, RNG or actor mutation is performed here.
 export const STORY_FILLY_FOOTPRINT=Object.freeze({
  probes:Object.freeze([-.6,-.1,.4,.9].map(z=>Object.freeze({x:0,z}))),
- radius:.39,bottom:.08,top:1.78,
- basis:'Four .39m probes cover 16,159 native grey skinned bind vertices at scene scale .8786846541304494 and story scale .8606896551724138; maximum nearest-probe bind radius .3428444m. Native bench-front body bounds also measured on 4fdc662.'
+ radius:.46,bottom:.08,top:1.78,
+ basis:'Four .46m probes cover 16,159 native grey skinned bind vertices at scene scale .8786846541304494 and story scale .8606896551724138; maximum nearest-probe bind radius .3428444m. Native e4bd9ce1 capture measured 1,590 animated poses: maximum nearest-probe radius .421061m, inside-slab radius .420816m and body height 1.731m.'
 });
 const TAU=Math.PI*2,wrap=a=>{if(Math.abs(a)>TAU*8)a=((a+Math.PI)%TAU+TAU)%TAU-Math.PI;while(a>Math.PI)a-=TAU;while(a<-Math.PI)a+=TAU;return a;};
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
@@ -71,10 +71,22 @@ function swept(a,b,q){
  */
 export function stepStoryFillyNavigation(actor,target,dt,world,navState={},options={}){
  if(!finitePose(actor)||!finitePose(target)||!Number.isFinite(dt)||dt<0)throw new TypeError('Filly step requires finite poses and nonnegative dt');
- const shape=options.footprint||STORY_FILLY_FOOTPRINT,q=context(world,[actor,target],shape,{...options,movementReach:dt*12}),mode=options.mode||'follow';
+ const previousSafe=finitePose(navState.lastSafe)?navState.lastSafe:null;
+ const remoteSafe=previousSafe&&(previousSafe.x!==actor.x||previousSafe.z!==actor.z)?[previousSafe]:[];
+ const shape=options.footprint||STORY_FILLY_FOOTPRINT,q=context(world,[actor,target,...remoteSafe],shape,{...options,movementReach:dt*12}),mode=options.mode||'follow';
  const original={x:actor.x,z:actor.z,heading:actor.heading},startClear=clear(original,q);
  let pose=startClear?original:nearbyClear(original,q),nav={...navState},selected=null;
- const finish=(p=pose||original,speed=0,extra={})=>({...p,speed,target:selected,nav,blocked:speed===0,safe:!!pose,relocated:!!pose&&distance(original,pose)>1e-8,stats:q.stats,...extra});
+ // Revalidate retained safety against today's obstacles; a moved obstacle can
+ // invalidate yesterday's pose. Deep overlap may exceed the 2.8m local search.
+ if(!pose&&!q.stats.budgetExhausted){
+  if(previousSafe&&clear(previousSafe,q))pose={x:previousSafe.x,z:previousSafe.z,heading:previousSafe.heading};
+  else pose=nearbyClear(target,q);
+ }
+ const finish=(p=pose||original,speed=0,extra={})=>{
+  const safe=extra.safe??!!pose;
+  if(safe)nav={...nav,lastSafe:{x:p.x,z:p.z,heading:p.heading}};
+  return {...p,speed,target:selected,nav,blocked:speed===0,safe,relocated:!!pose&&distance(original,pose)>1e-8,stats:q.stats,...extra};
+ };
  if(!pose)return finish(original,0,{safe:false,blocked:true});
  if(mode==='idle'||dt===0)return finish();
  if(mode==='bolt')selected={x:pose.x+Math.sin(actor.heading)*44,z:pose.z+Math.cos(actor.heading)*44,heading:actor.heading};

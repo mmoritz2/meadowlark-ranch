@@ -169,6 +169,33 @@ async function captureFillyCases(bench){
   player();seed(bench.x,bench.z);await run('idle-initial-centre-overlap',90);
   player();seed(sx+2.8,sz+.4);G.course.get=()=>({ev:{id:'qa-only-filly-event'}});time+=dt;window.__qaFillyTick(dt,time);const eventHidden=!G.storyQuests.foal().group.visible&&!!G.storyQuests.foal().away;G.course.get=getCourse;const reentry=await run('event-return',90);reentry.eventHidden=eventHidden;
   player();seed(sx+140,sz,0);const far=await run('far-catchup',90);far.initialDistance=Math.hypot(sx+140-sx,sz-sz);far.restoredNearPlayer=far.end.present&&Math.hypot(far.end.x-sx,far.end.z-sz)<15;
+  // Seed only the actor inside an existing large circle. No nearby circle of
+  // this size exists at the pictured bench, so position the controlled rider at
+  // a clear shoulder beside the nearest usable real circle; keep the requested
+  // target within 90m to isolate deep initial repair from far catch-up.
+  const candidates=world.colliders.map((object,index)=>({object,index,benchDistance:Math.hypot(object.x-bench.x,object.z-bench.z)})).filter(c=>!c.object.precise&&!c.object.onFoot&&Number.isFinite(c.object.r)&&c.object.r>=4).sort((a,b)=>a.benchDistance-b.benchDistance);
+  let chosen=null;
+  for(const candidate of candidates){
+   const c=candidate.object,initial={x:c.x,z:c.z,heading:0},groundY=q.groundH(c.x,c.z),top=c.topY??(Number.isFinite(c.height)?groundY+c.height:Infinity);
+   if(!Number.isFinite(groundY)||groundY+footprint.bottom>=top||module.fillyPoseClear(initial,world,footprint))continue;
+   for(let a=0;a<8;a++){
+    const angle=a*Math.PI/4,target={x:c.x+Math.sin(angle)*(c.r+4),z:c.z+Math.cos(angle)*(c.r+4),heading:0};
+    if(Math.hypot(target.x-c.x,target.z-c.z)>=90||!module.fillyPoseClear(target,world,footprint)||q.fallsModule.fallsAllowsHorse(target.x-2.8,target.z-.4)===false)continue;
+    chosen={...candidate,initial,groundY,top:Number.isFinite(top)?top:null,target};break;
+   }
+   if(chosen)break;
+  }
+  if(!chosen)throw Error('No real nonprecise r>=4 circle with a clear nearby shoulder for deep recovery');
+  player(chosen.target.x-2.8,chosen.target.z-.4);seed(chosen.initial.x,chosen.initial.z,chosen.initial.heading);
+  const deepActor=G.storyQuests.foal();deepActor.navigation={};delete deepActor.navigationSafe;
+  const deep=await run('deep-existing-circle-recovery',30,null,{bodyEvery:10});
+  deep.obstacle={index:chosen.index,object:JSON.parse(JSON.stringify(chosen.object)),benchDistance:chosen.benchDistance};
+  deep.initialGroundY=chosen.groundY;deep.obstacleTop=chosen.top;deep.requestedTarget=chosen.target;deep.initialRequestedDistance=Math.hypot(chosen.target.x-chosen.initial.x,chosen.target.z-chosen.initial.z);deep.navigationReset=true;
+  const recovered=G.storyQuests.foal(),skin=recovered?.rig?.skin,point=new T.Vector3();let minimumCircleClearance=Infinity,penetratingVertices=0,testedVertices=0;
+  if(skin){recovered.group.updateWorldMatrix(true,true);skin.skeleton.update();for(let i=0;i<skin.geometry.attributes.position.count;i++){skin.getVertexPosition(i,point);point.applyMatrix4(skin.matrixWorld);if(chosen.top!==null&&point.y>=chosen.top)continue;const clearance=Math.hypot(point.x-chosen.object.x,point.z-chosen.object.z)-chosen.object.r;minimumCircleClearance=Math.min(minimumCircleClearance,clearance);testedVertices++;if(clearance<-.00005)penetratingVertices++;}}
+  deep.actualSkinCircle={method:'All actual posed body vertices against the existing circular volume below its recorded top; no proxy obstacle or registry mutation.',testedVertices,minimumCircleClearance,penetratingVertices};
+  deep.recoveredClear=deep.start.present&&!deep.start.clear&&deep.end.present&&deep.end.visible&&deep.end.clear&&deep.initialRequestedDistance<90&&testedVertices>0&&penetratingVertices===0&&minimumCircleClearance>=-.00005;
+  deep.obstacleUnchanged=JSON.stringify(world.colliders[chosen.index])===JSON.stringify(deep.obstacle.object);
   // Last fixture intentionally exercises the controller's existing final despawn.
   player();seed(bench.x-3,bench.z,Math.PI/2);const bolt=G.storyQuests.foal();bolt.bolt=4;const storm=await run('storm-bolt-through-bench',150,null,{bodyEvery:5,allowDespawn:true});storm.removedOnTime=storm.end.present===false&&storm.despawnFrame>=118&&storm.despawnFrame<=121;
  }finally{
@@ -179,7 +206,7 @@ async function captureFillyCases(bench){
  const measured=cases.flatMap(c=>c.trajectory.filter(s=>s.present).map(s=>({case:c.name,frame:s.frame,heading:s.heading,phase:s.phase,...s.footprintCoverage}))),worst=measured.reduce((a,b)=>!a||b.maximumNearestProbeRadius>a.maximumNearestProbeRadius?b:a,null);
  const timingSamples=cases.flatMap(c=>c.trajectory.map(s=>s.controllerMs)).sort((a,b)=>a-b),controllerTiming={method:'Native wall time around actual tickFoal only, including its existing rig animation; excludes all pose-clear assertions, getVertexPosition/skin coverage, contact analysis and rendering. After-only cost evidence, no baseline comparison or hard timing gate.',samples:timingSamples.length,medianMs:timingSamples[Math.floor(timingSamples.length*.5)],p95Ms:timingSamples[Math.min(timingSamples.length-1,Math.floor(timingSamples.length*.95))],maximumMs:timingSamples.at(-1)};
  const coverage={poses:measured.length,verticesPerPose:measured[0]?.vertices,worst,maximumNearestProbeRadius:worst?.maximumNearestProbeRadius,radius:footprint.radius,maximumAboveTop:Math.max(...measured.map(p=>p.maxY-footprint.top)),maximumInsideSlabNearestRadius:Math.max(...measured.map(p=>p.maximumInsideSlabNearestRadius))};
- const checks={controlledObstaclesPreserved:Object.values(unchanged).every(Boolean),allCasesRecorded:cases.length===6,actorsRemainUntilExpectedBolt:cases.every(c=>c.presence),finiteActors:cases.every(c=>c.finite),rootedActors:cases.every(c=>c.grounded),existingObstaclesClear:cases.every(c=>c.clear),actualSkinBenchClear:cases.every(c=>c.bodyClear),animatedFootprintCoverage:measured.length>1400&&measured.every(p=>p.finite&&p.maximumNearestProbeRadius<=footprint.radius+.00005&&p.maxY<=footprint.top+.00005),stableTwentySecondIdle:get('blocked-shoulder-settle-20s')?.finalThreeSecondJitter<.03,eventHiddenAndReturns:!!get('event-return')?.eventHidden&&get('event-return')?.end?.present,farCatchupReturns:!!get('far-catchup')?.restoredNearPlayer,stormBoltDespawnPreserved:!!get('storm-bolt-through-bench')?.removedOnTime};
+ const checks={controlledObstaclesPreserved:Object.values(unchanged).every(Boolean),allCasesRecorded:cases.length===7,actorsRemainUntilExpectedBolt:cases.every(c=>c.presence),finiteActors:cases.every(c=>c.finite),rootedActors:cases.every(c=>c.grounded),existingObstaclesClear:cases.every(c=>c.clear),actualSkinBenchClear:cases.every(c=>c.bodyClear),animatedFootprintCoverage:measured.length>1400&&measured.every(p=>p.finite&&p.maximumNearestProbeRadius<=footprint.radius+.00005&&p.maxY<=footprint.top+.00005),stableTwentySecondIdle:get('blocked-shoulder-settle-20s')?.finalThreeSecondJitter<.03,eventHiddenAndReturns:!!get('event-return')?.eventHidden&&get('event-return')?.end?.present,farCatchupReturns:!!get('far-catchup')?.restoredNearPlayer,deepInitialRecovery:!!get('deep-existing-circle-recovery')?.recoveredClear&&get('deep-existing-circle-recovery')?.obstacleUnchanged&&get('deep-existing-circle-recovery')?.navigationReset,stormBoltDespawnPreserved:!!get('storm-bolt-through-bench')?.removedOnTime};
  return{method:'Controlled actual tickFoal and rig animation, after the 21 matched images. Module pose-clear check and actual posed skin/probe coverage every frame, plus independent surface contact samples. First-frame corrections from deliberately invalid starts allowed.',footprint,unchanged,checks,coverage,controllerTiming,cases};
 }
 function measureFillyFootprint(footprint){

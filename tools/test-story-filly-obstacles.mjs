@@ -38,7 +38,11 @@ function greyRestPoints(){
 test('body probes cover every actual grey skinned bind vertex at unchanged yearling scale',()=>{
  const {points,variant,scale}=greyRestPoints();assert.equal(points.length,16159);assert.equal(variant.withersM,1.6);assert.ok(Math.abs(scale-.7562747919688282)<1e-14);
  const radial=points.map(p=>Math.min(...F.probes.map(q=>Math.hypot(p[0]-q.x,p[2]-q.z))));const maximum=Math.max(...radial);
- assert.ok(maximum>.34&&maximum<.343);assert.ok(F.radius-maximum>.047,'retain a measurable motion margin');
+ assert.ok(maximum>.34&&maximum<.343);assert.equal(F.radius,.46);assert.ok(F.radius-maximum>.117,'retain the measured bind margin');
+ const animatedMaximum=.421061,insideSlabMaximum=.420816;
+ assert.ok(F.radius-animatedMaximum>.0389,'retain measured animated-hoof margin');assert.ok(F.radius>insideSlabMaximum);
+ const stormHoof=[.18984,.07983,-.975837];
+ assert.ok(Math.min(...F.probes.map(q=>Math.hypot(stormHoof[0]-q.x,stormHoof[2]-q.z)))<F.radius);
  for(const p of points)assert.ok(p[1]>=-1e-8&&p[1]<F.top);
 });
 test('pinned real old tick crosses a blocked root fixture without calling collision APIs',()=>{
@@ -88,6 +92,37 @@ test('idle overlap, course reentry and 90m catchup repair safely without changin
  const late=controller(currentSource,{x:0,z:5.4,idx:3,world:W});late.tick();assert.equal(fillyPoseClear(late.actor,late.W),true);assert.equal(late.calls.speeds.at(-1),0);
  for(const options of[{x:0,z:-100},{x:0,z:-4,away:true}]){const f=controller(currentSource,{...options,world:W});f.tick();assert.equal(fillyPoseClear(f.actor,f.W),true);assert.ok(Math.hypot(f.actor.x,f.actor.z-5.4)>.8);}
  const parkedOld=controller(oldSource,{x:5,z:4,idx:3}),parkedNew=controller(currentSource,{x:5,z:4,idx:3});parkedOld.tick();parkedNew.tick();assert.deepEqual(parkedNew.snapshot(),parkedOld.snapshot());
+});
+test('real controller recovers deep initial overlap to the validated rider shoulder',()=>{
+ const W=circleWorld(0,0,4),f=controller(currentSource,{x:0,z:0,heading:0,world:W});
+ f.H.player.pos={x:7.2,z:-.4};f.tick();
+ assert.equal(fillyPoseClear(f.actor,f.W),true);assert.deepEqual([f.actor.x,f.actor.z],[10,0]);
+ assert.deepEqual(f.actor.navigation.lastSafe,{x:10,z:0,heading:0});
+ assert.deepEqual([f.actor.group.position.x,f.actor.group.position.z],[10,0]);assert.equal(f.calls.speeds.at(-1),0);
+});
+test('idle revalidates last-safe recovery and changed remote obstacles before committing fallback',()=>{
+ const W=circleWorld(0,0,4),f=controller(currentSource,{x:100,z:0,heading:.3,idx:3,world:W});f.tick();
+ const previous=structuredClone(f.actor.navigation.lastSafe);assert.deepEqual(previous,{x:100,z:0,heading:.3});
+ f.actor.x=0;f.actor.z=0;f.tick();assert.deepEqual([f.actor.x,f.actor.z,f.actor.heading],[100,0,.3]);assert.equal(fillyPoseClear(f.actor,f.W),true);
+ W.colliders.push({x:100,z:0,r:4});
+ const a={x:0,z:0,heading:0},nav={lastSafe:previous,target:{x:100,z:0,heading:.3}},target={x:10,z:0,heading:0};
+ const before=JSON.stringify({a,nav,target,W});const r=step(a,target,.016,W,nav,{mode:'idle'});
+ assert.equal(r.safe,true);assert.equal(r.relocated,true);assert.deepEqual([r.x,r.z,r.heading],[10,0,0]);
+ assert.equal(r.stats.circleScans,2);assert.equal(r.stats.circles,2,'remote fallback obstacles must enter broadphase');
+ assert.equal(fillyPoseClear(r,W),true);assert.deepEqual(r.nav.lastSafe,{x:10,z:0,heading:0});assert.notEqual(r.nav.lastSafe,nav.lastSafe);
+ assert.equal(JSON.stringify({a,nav,target,W}),before);
+ const denied=step(a,target,.016,W,nav,{maxProbeTests:10});assert.equal(denied.safe,false);assert.equal(denied.stats.budgetExhausted,true);
+ assert.deepEqual([denied.x,denied.z],[0,0]);assert.deepEqual(denied.nav.lastSafe,previous,'uncertified candidates never replace lastSafe');
+ const blocked={...W,colliders:[...W.colliders,{x:10,z:0,r:4}]};
+ const noLanding=step(a,target,.016,blocked,nav,{mode:'idle'});assert.equal(noLanding.safe,false);assert.deepEqual([noLanding.x,noLanding.z],[0,0]);assert.deepEqual(noLanding.nav.lastSafe,previous);
+});
+test('an uncertifiable enclosed start waits out of sight and retries without moving to an unsafe candidate',()=>{
+ const f=controller(currentSource,{x:0,z:0,world:circleWorld(0,0,400)});
+ f.tick();assert.equal(f.actor.navigationSafe,false);assert.equal(f.actor.group.visible,false);
+ assert.deepEqual([f.actor.x,f.actor.z],[0,0]);assert.equal(f.actor.navigation.lastSafe,undefined);
+ assert.equal(f.calls.speeds.at(-1),0);
+ f.W.colliders.length=0;f.tick();assert.equal(f.actor.navigationSafe,true);assert.equal(f.actor.group.visible,true);
+ assert.equal(fillyPoseClear(f.actor,f.W),true);assert.ok(f.actor.navigation.lastSafe);
 });
 test('bolt clock, straight open-field phase and removal are exact while blocked bolt remains safe',()=>{
  const a=controller(oldSource,{bolt:4}),b=controller(currentSource,{bolt:4});for(let i=0;i<45;i++){a.tick(.1,i*.1);b.tick(.1,i*.1);assert.deepEqual(b.snapshot(),a.snapshot());}assert.equal(a.calls.removed,1);assert.equal(b.calls.removed,1);

@@ -472,11 +472,13 @@ export function install(G){
   resolveSolid:(position,shape)=>W.solidWorld?W.solidWorld.resolve(position,shape):0};
  function navigateFoal(target,dt,options){
   const move=stepStoryFillyNavigation(foal,target,dt,fillyWorld,foal.navigation,options);
-  foal.x=move.x;foal.z=move.z;foal.heading=move.heading;foal.navigation=move.nav;
+  foal.x=move.x;foal.z=move.z;foal.heading=move.heading;foal.navigation=move.nav;foal.navigationSafe=move.safe;
   return move.speed;
  }
  function placeFoal(bob=0){
   foal.group.position.set(foal.x,W.groundH(foal.x,foal.z)+bob,foal.z);foal.group.rotation.y=foal.heading;
+  // Only an uncertifiable, fully blocked recovery waits out of sight; the next tick retries.
+  foal.group.visible=foal.navigationSafe!==false;
  }
  function tickFoal(dt,t){
   if(!foal)return; const p=H.player; const i=idx(); foal.group.visible=true;
@@ -512,7 +514,7 @@ export function install(G){
   const bob=mv>0&&!foal.rig?Math.abs(Math.sin(foal.phase))*0.09:0;
   placeFoal(bob);
   /* and if the view is swung right onto her anyway, she steps out of the picture rather than fill it */
-  if(cam)foal.group.visible=Math.hypot(cam.position.x-foal.x,cam.position.z-foal.z)>2.6;
+  if(cam)foal.group.visible=foal.group.visible&&Math.hypot(cam.position.x-foal.x,cam.position.z-foal.z)>2.6;
   if(foal.parts.legs)foal.parts.legs.forEach((l,k)=>{if(l&&l.rotation)l.rotation.x=(mv>0?Math.sin(foal.phase+k*Math.PI/2)*0.5:0);});
   rigFoal(dt,t,mv);
  }
