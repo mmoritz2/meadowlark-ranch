@@ -1,11 +1,50 @@
-// Matched 512a71a cold-region material, woodland morphology and mounted-travel review.
+// Matched revision cold-region material, woodland morphology and mounted-travel review.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),assert=require('node:assert/strict'),crypto=require('node:crypto'),QA=require('./qa-platform.cjs');
 const ROOT=path.resolve(__dirname,'..'),out=path.resolve(process.argv[2]||'output/cold-woodland'),baseline=process.env.QA_COLD_BASELINE==='1';fs.mkdirSync(out,{recursive:true});
+const reference=process.env.QA_COLD_BASE_REV||'512a71a';
 const files=['ranch3d.html','assets/terrain-realism.js','assets/world-photoscans.js','assets/features/index.js','assets/features/world-flora.js'];
 const moduleFiles=[...files,'assets/cold-woodland.mjs'];
-const bodies=baseline?Object.fromEntries(files.map(f=>[f,cp.execFileSync('git',['show','512a71a:'+f],{cwd:ROOT,encoding:'utf8',maxBuffer:5e6})])):{};
+const bodies=baseline?Object.fromEntries(files.map(f=>[f,cp.execFileSync('git',['show',reference+':'+f],{cwd:ROOT,encoding:'utf8',maxBuffer:5e6})])):{};
 const expectedBodies=new Map();
-(async()=>{const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});try{
+async function acceptCapture({state,rows,errors,sourceMatches}){
+ const checks={sourcesMatchWorkingTree:sourceMatches,finitePixels:rows.every(r=>[r.source,...r.buffers].every(b=>!b.invalid)),opaqueWorld:rows.every(r=>r.source.minAlpha>=1-1/2048),validWebGL:rows.every(r=>!r.gl),noErrors:!errors.length&&!state.errors.length,mountedBothDirections:state.rides.every(r=>r.complete&&r.finite&&!r.stalled&&r.maxGroundError<.1&&r.minCameraHeight>.1&&r.maxDeviation<1.5),ridgeStopsHorse:state.ridgeStop.relief<3.2&&state.ridgeStop.barrierDistance<1.8,clearAlpineSnow:rows.every(r=>r.grass.length===0),clearWinterCore:baseline||rows.every(r=>r.coldGrass.length===0),noWinterFlowers:baseline||rows.every(r=>r.winterFlowers.length===0),snowSourceResolution:rows.every(r=>{const s=r.resources.find(r=>r.key==='terrainSnow');return s?.width===(baseline?512:2048)&&s?.height===(baseline?512:2048)}),lodMatricesMatch:rows.every(r=>r.lodCount>2000&&!r.lodMismatch),treeBudget:rows.every(r=>r.treeTriangles<=r.treeBudget&&r.activeTrees<=12),rootedTrees:state.treeAudit.every(t=>Math.abs(t.bottomY-t.groundY+.07)<1e-8),validHeights:state.treeAudit.every(t=>Object.values(t).filter(v=>typeof v==='number').every(Number.isFinite)&&t.height>0),threeQualityTiers:rows.filter(r=>/snow-(medium|low)/.test(r.name)).length===2};
+ const metrics={};if(!baseline){
+  const before=JSON.parse(fs.readFileSync(process.env.QA_COLD_REFERENCE||path.join(out,'../cold-before-final/report.json')));
+  assert.equal(before.baseline,true,'Preservation reference must be a native baseline');assert.equal(before.reference,reference,'Preservation reference revision mismatch');
+  for(const key of['ground','terrainAttrs','landmark','formations','preRoad','tracks','registry','outerGeometry','outerSites'])checks[key+'Preserved']=JSON.stringify(state[key])===JSON.stringify(before.state[key]);
+  const {coldWoodlandWeights}=await import(path.join(ROOT,'assets/cold-woodland.mjs'));
+  const old=before.state.treeAudit,now=state.treeAudit;
+  checks.allTreeSitesYawPreserved=JSON.stringify(now.map(t=>[t.x,t.z,t.yaw]))===JSON.stringify(old.map(t=>[t.x,t.z,t.yaw]));
+  checks.outsideColdTreeModelsPreserved=now.every((t,i)=>coldWoodlandWeights(t.x,t.z).weight>.08||JSON.stringify(t)===JSON.stringify(old[i]));
+  const core=now.filter(t=>coldWoodlandWeights(t.x,t.z).weight>.35);
+  checks.evergreenColdCores=core.length>300&&core.every(t=>/^(mature-pine|pine-[012])$/.test(t.source));
+  const textureKeys=rows[0].resources.map(r=>r.key).sort();metrics.coldGrass={beforeNamedCoverObservations:before.rows.reduce((n,r)=>n+r.coldGrass.length,0),afterIncludingSeedGrassAndNearFlowers:rows.reduce((n,r)=>n+r.coldGrass.length,0)};checks.sameTextureSlots=JSON.stringify(textureKeys)===JSON.stringify(before.rows[0].resources.map(r=>r.key).sort());
+  const concordance=trees=>{let agree=0,total=0;for(let i=0;i<trees.length;i++)for(let j=i+1;j<trees.length;j++){const a=trees[i],b=trees[j];if(Math.hypot(a.x-b.x,a.z-b.z)<14){total++;agree+=(a.source==='mature-pine')===(b.source==='mature-pine');}}return{agree,total,ratio:agree/total};};
+  const cold=trees=>trees.filter(t=>coldWoodlandWeights(t.x,t.z).weight>.35);metrics.agePatches={before:concordance(cold(old)),after:concordance(core)};
+  const mean=a=>a.reduce((s,t)=>s+t.height,0)/a.length;metrics.height={adults:mean(core.filter(t=>t.source==='mature-pine')),regeneration:mean(core.filter(t=>t.source.startsWith('pine-')))};
+  checks.coherentAgePatches=metrics.agePatches.after.ratio>metrics.agePatches.before.ratio+.15;checks.shorterRegeneration=metrics.height.adults>metrics.height.regeneration*1.2;
+ }
+
+ return {checks,metrics};
+}
+(async()=>{
+ if(process.env.QA_COLD_RECHECK){
+  // A reference update does not require rendering unchanged source twice. The
+  // original native buffers/images are accepted only with an exact source audit.
+  const input=path.resolve(process.env.QA_COLD_RECHECK),report=JSON.parse(fs.readFileSync(input));
+  const auditPath=path.resolve(process.env.QA_COLD_SOURCE_AUDIT||path.join(out,'../native-cold-release-sources.json'));
+  const audit=JSON.parse(fs.readFileSync(auditPath));
+  assert.equal(input,path.resolve(path.dirname(auditPath),audit.nativeReport),'Source audit belongs to a different native capture');
+  assert.equal(report.gitHead,audit.capturedHead);assert.equal(report.baseline,false);assert.equal(report.checks.sourcesMatchWorkingTree,true);
+  const required=[...moduleFiles,'assets/textures/cold/snow_02_diff_2k.webp'];assert.deepEqual(audit.files.map(r=>r.file).sort(),required.sort());
+  for(const row of audit.files)assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,row.file))).digest('hex'),row.sha256,'Captured runtime changed: '+row.file);
+  const result=await acceptCapture({state:report.state,rows:report.rows,errors:report.errors,sourceMatches:true});
+  const final={...report,...result,reference,originalComparison:{reference:report.reference,checks:report.checks},recheckedFrom:input,sourceAudit:auditPath};
+  for(const row of report.rows)fs.copyFileSync(path.join(path.dirname(input),row.name+'.webp'),path.join(out,row.name+'.webp'));
+  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(final,null,2));console.log(JSON.stringify({checks:result.checks,metrics:result.metrics,errors:report.errors}));
+  assert(Object.values(result.checks).every(Boolean),'Cold woodland acceptance failed');return;
+ }
+ const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});try{
  const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
  const sourceTasks=[];page.on('response',r=>{const file=new URL(r.url()).pathname.replace(/^\/+/, '');if(moduleFiles.includes(file))sourceTasks.push(r.body().then(body=>({file,sha256:crypto.createHash('sha256').update(body).digest('hex')})));});
  await page.route('**/api/me',r=>r.fulfill({contentType:'application/json',body:'null'}));
@@ -63,22 +102,6 @@ const expectedBodies=new Map();
  },c);fs.writeFileSync(path.join(out,row.name+'.webp'),Buffer.from(row.image,'base64'));delete row.image;rows.push(row);console.log(row.name);}
  const browserSources=await Promise.all(sourceTasks);const required=baseline?moduleFiles.filter(f=>f in bodies):moduleFiles;
  const sourceMatches=required.every(file=>{const expected=crypto.createHash('sha256').update(expectedBodies.get(file)||fs.readFileSync(path.join(ROOT,file))).digest('hex'),actual=browserSources.filter(s=>s.file===file);return actual.length>0&&actual.every(s=>s.sha256===expected);});
- const checks={sourcesMatchWorkingTree:sourceMatches,finitePixels:rows.every(r=>[r.source,...r.buffers].every(b=>!b.invalid)),opaqueWorld:rows.every(r=>r.source.minAlpha>=1-1/2048),validWebGL:rows.every(r=>!r.gl),noErrors:!errors.length&&!state.errors.length,mountedBothDirections:state.rides.every(r=>r.complete&&r.finite&&!r.stalled&&r.maxGroundError<.1&&r.minCameraHeight>.1&&r.maxDeviation<1.5),ridgeStopsHorse:state.ridgeStop.relief<3.2&&state.ridgeStop.barrierDistance<1.8,clearAlpineSnow:rows.every(r=>r.grass.length===0),clearWinterCore:baseline||rows.every(r=>r.coldGrass.length===0),noWinterFlowers:baseline||rows.every(r=>r.winterFlowers.length===0),snowSourceResolution:rows.every(r=>{const s=r.resources.find(r=>r.key==='terrainSnow');return s?.width===(baseline?512:2048)&&s?.height===(baseline?512:2048)}),lodMatricesMatch:rows.every(r=>r.lodCount>2000&&!r.lodMismatch),treeBudget:rows.every(r=>r.treeTriangles<=r.treeBudget&&r.activeTrees<=12),rootedTrees:state.treeAudit.every(t=>Math.abs(t.bottomY-t.groundY+.07)<1e-8),validHeights:state.treeAudit.every(t=>Object.values(t).filter(v=>typeof v==='number').every(Number.isFinite)&&t.height>0),threeQualityTiers:rows.filter(r=>/snow-(medium|low)/.test(r.name)).length===2};
- const metrics={};if(!baseline){
-  const before=JSON.parse(fs.readFileSync(process.env.QA_COLD_REFERENCE||path.join(out,'../cold-before-final/report.json')));
-  for(const key of['ground','terrainAttrs','landmark','formations','preRoad','tracks','registry','outerGeometry','outerSites'])checks[key+'Preserved']=JSON.stringify(state[key])===JSON.stringify(before.state[key]);
-  const {coldWoodlandWeights}=await import(path.join(ROOT,'assets/cold-woodland.mjs'));
-  const old=before.state.treeAudit,now=state.treeAudit;
-  checks.allTreeSitesYawPreserved=JSON.stringify(now.map(t=>[t.x,t.z,t.yaw]))===JSON.stringify(old.map(t=>[t.x,t.z,t.yaw]));
-  checks.outsideColdTreeModelsPreserved=now.every((t,i)=>coldWoodlandWeights(t.x,t.z).weight>.08||JSON.stringify(t)===JSON.stringify(old[i]));
-  const core=now.filter(t=>coldWoodlandWeights(t.x,t.z).weight>.35);
-  checks.evergreenColdCores=core.length>300&&core.every(t=>/^(mature-pine|pine-[012])$/.test(t.source));
-  const textureKeys=rows[0].resources.map(r=>r.key).sort();metrics.coldGrass={beforeNamedCoverObservations:before.rows.reduce((n,r)=>n+r.coldGrass.length,0),afterIncludingSeedGrassAndNearFlowers:rows.reduce((n,r)=>n+r.coldGrass.length,0)};checks.sameTextureSlots=JSON.stringify(textureKeys)===JSON.stringify(before.rows[0].resources.map(r=>r.key).sort());
-  const concordance=trees=>{let agree=0,total=0;for(let i=0;i<trees.length;i++)for(let j=i+1;j<trees.length;j++){const a=trees[i],b=trees[j];if(Math.hypot(a.x-b.x,a.z-b.z)<14){total++;agree+=(a.source==='mature-pine')===(b.source==='mature-pine');}}return{agree,total,ratio:agree/total};};
-  const cold=trees=>trees.filter(t=>coldWoodlandWeights(t.x,t.z).weight>.35);metrics.agePatches={before:concordance(cold(old)),after:concordance(core)};
-  const mean=a=>a.reduce((s,t)=>s+t.height,0)/a.length;metrics.height={adults:mean(core.filter(t=>t.source==='mature-pine')),regeneration:mean(core.filter(t=>t.source.startsWith('pine-')))};
-  checks.coherentAgePatches=metrics.agePatches.after.ratio>metrics.agePatches.before.ratio+.15;checks.shorterRegeneration=metrics.height.adults>metrics.height.regeneration*1.2;
- }
-
- const report={baseline,reference:'512a71a',gitHead:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}).trim(),checks,metrics,state,rows,browserSources,errors};fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({checks,metrics,errors}));assert(Object.values(checks).every(Boolean),'Cold woodland acceptance failed');
+ const {checks,metrics}=await acceptCapture({state,rows,errors,sourceMatches});
+ const report={baseline,reference,gitHead:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}).trim(),checks,metrics,state,rows,browserSources,errors};fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({checks,metrics,errors}));assert(Object.values(checks).every(Boolean),'Cold woodland acceptance failed');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

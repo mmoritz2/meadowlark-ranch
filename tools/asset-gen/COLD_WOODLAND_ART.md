@@ -20,7 +20,11 @@ The texture remains one slot, but its resolution increases from 512 to 2048 pixe
 
 ## Validation
 
-Focused CPU tests verify compact deterministic profiles, age hierarchy, matching licensed atlases, actual winter-bank outside matrices/colors, snow gradient bounds and continuity, independent finite differences, shader/resource/vertex invariants, and the outer landscape. `qa-cold-woodland.cjs` compares exact 512a71a source with the changed source on the native GPU. Its matched views cover snow/forest/thaw, mounted Frostpine travel, meadow/dry controls, graphics tiers, rain, golden light, and night. It checks terrain, geology, landmarks, routes, solids, tree sites/roots/LOD matrices, winter cover, resources, finite opaque HDR buffers, and WebGL errors. Inspect the images alongside the assertions before release.
+All 26 focused CPU tests pass. They verify compact deterministic profiles, age hierarchy, matching licensed atlases, actual winter-bank outside matrices/colors, snow gradient bounds and continuity, independent finite differences, shader/resource/vertex invariants, and the outer landscape.
+
+`qa-cold-woodland.cjs` captured 13 matched native GPU views covering snow/forest/thaw, mounted Frostpine travel, meadow/dry controls, graphics tiers, rain, golden light, and night. The initial baseline was 512a71a. After merging the current main revision ec12fc6, a fresh baseline of that revision retained the newer rider lashes and tack stall, including its collider. The exact merged native capture was rechecked against this baseline only after auditing SHA-256 hashes of all seven changed runtime files; the recheck copies the original images unchanged and does not substitute a new render. All 31 acceptance checks pass, and the images were inspected.
+
+Terrain, geology, landmarks, routes, solid registrations, tree sites/yaw/roots, LOD matrices, and non-cold models remain exact against current main. Both Frostpine route directions complete with zero horse-ground error, camera clearance above 1.28m, and route deviation below 0.66m. Winter cover, texture slots, finite opaque HDR buffers, and WebGL errors also pass. Baseline winter-cover assertions are intentionally bypassed to measure the pre-existing summer plants; acceptance of the changed world requires their absence from winter cores.
 
 ## Remaining differences
 
