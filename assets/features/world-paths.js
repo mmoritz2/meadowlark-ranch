@@ -11,11 +11,13 @@
    Barleyfold road has been crossing Sparrow Creek all this time with nothing to show for it, and
    the small evidence of other people — a woodpile, a trough, a cart nobody came back for.
 
-   Everything that repeats is instanced. The whole road surface, all eleven hundred metres of it,
+   Everything that repeats is instanced. The whole road surface
    is one BufferGeometry and one draw call; every post, rail, stone, log, wheel and cobble in the
    package shares three InstancedMeshes between them. Nothing here allocates after install.
 
    Owned by this package: this file only. Nothing runs at import time. */
+import {buildRoadRibbon} from '../road-ribbon.mjs?v=bounded-bevel-1';
+import {repairRouteClearance} from '../route-clearance.mjs?v=swept-river-road-1';
 import {villageCourtZones,inVillageCourt} from '../village-forecourts.js?v=coaching-inn-1';
 import {COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from '../cottonwood-layout.js?v=village-gardens-1';
 export const id='world-paths';
@@ -24,7 +26,7 @@ export function install(G){
  const W=G.world, T=G.tables, S=G.save, H=G.horse, toast=G.toast;
  const gh=W.groundH, riverZ=W.riverZ, streamX=W.streamX;
  const villageCourts=[...COTTONWOOD_PUBLIC,...villageCourtZones(G.worldPkg?.LANDMARKS||[])];
- const P={}; G.worldPaths=P;                                  // this package's live state, for QA
+ const P={clearance:{}}; G.worldPaths=P;                                  // this package's live state, for QA
  const hyp=(ax,az,bx,bz)=>Math.hypot(ax-bx,az-bz);
  const sstep=(x,a,b)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
  /* One deterministic hash for every scatter decision in the file, so two boots of the same world
@@ -40,7 +42,7 @@ export function install(G){
  const ROADS=[
   {id:'barley',name:'Barley Road',to:'AMBERWOOD',w:2.85,
    pts:[[223,-150],[231,-170],[238,-192],[247,-214],[257,-234],[268,-248]]},
-  {id:'riverwest',name:'River Road West',to:'COYOTE CANYON',w:2.85,
+  {id:'riverwest',name:'River Road West',to:'COYOTE CANYON',w:2.0,
    pts:[[0,132],[-28,135],[-60,131],[-95,125],[-130,120],[-165,120],[-197,126],[-219,133]]},
   {id:'ochre',name:'Ochre Trail',to:'OCHRE REACH',w:2.35,
    pts:[[-222,140],[-243,162],[-257,190],[-267,218],[-274,244],[-280,262]]},
@@ -129,9 +131,13 @@ export function install(G){
    const rr=Math.hypot(p[0],p[1]); if(rr>440){p[0]*=440/rr;p[1]*=440/rr;}
   }
  }
+ // Authored parts already in the scene must participate in the route survey.
+ // registerParts is idempotent; the later ready/refresh pass still owns replacement models.
+ W.solidWorld?.registerParts(scene);
+ P.planningSolids=W.solidWorld?.stats();
  const TRACKS=[];
  for(const rd of ROADS){
-  const pts=resample(rd.pts,STEP);
+  let pts=resample(rd.pts,STEP);
   const home=pts.map(p=>p.slice());
   for(let k=0;k<3;k++){contour(pts,home);smooth(pts,0.36);}
   /* Three rounds, each allowed to wander further than the last. A mesa in Coyote Canyon can carry
@@ -147,24 +153,43 @@ export function install(G){
    pts[pts.length-1]=end.slice();pts[0]=rd.pts[0].slice();
    for(const p of pts)p[0]=Math.min(p[0],streamX(p[1])-12);
   }
+  if(rd.id==='riverwest'){
+   // Waypoint relaxation can leave a long segment through overlapping mesas.
+   // Survey the whole connecting corridor without changing the formations.
+   const probe=new THREE.Vector3();
+   const isAllowed=(x,z)=>{
+    if(z-riverZ(x)<11)return false;
+    const y=gh(x,z),grade=Math.hypot(gh(x+.5,z)-gh(x-.5,z),gh(x,z+.5)-gh(x,z-.5));
+    if(!Number.isFinite(y)||grade>.55)return false;
+    probe.set(x,0,z);
+    return !W.solidWorld?.resolve(probe,{bottom:y+.05,top:y+2.65,radius:2.4});
+   };
+   const repair=repairRouteClearance(pts,{colliders:W.colliders,clearance:3.2,isAllowed,gridStep:1,sampleStep:.25,maxDetour:32,maxExpanded:30000,maxSegmentLength:STEP});
+   const {points,...diagnostic}=repair;P.clearance[rd.id]=diagnostic;
+   if(points)pts=points;
+   else console.warn('world-paths: River Road West has no verified detour',repair.failures);
+  }
   let len=0; const run=[0];
   for(let i=1;i<pts.length;i++){len+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);run.push(len);}
   TRACKS.push(Object.assign({},rd,{pts,run,len}));
  }
  P.tracks=TRACKS; P.metres=Math.round(TRACKS.reduce((a,t)=>a+t.len,0));
- /* Anything solid close enough to crowd a rider on the centre line. The game itself pushes at
+ /* Coarse solid circles close enough to crowd a rider along any centre-line segment.
+    Precise model parts are checked separately by the corridor and mounted QA. The game pushes at
     c.r + 0.55, so this asks for six tenths of a metre more than it has to and reports "tight"
     rather than "impassable" — which is the number worth watching, because tight is where a rider
-    at a gallop clips something they never saw. Measured twice: once here, where every hit is an
+    at a gallop clips something they never saw. Check stretched gaps as well as short segments.
+    Measured twice: once here, where every hit is an
     obstacle that was in the basin before this package existed and that the relaxation could not
     get clear of, and once at the end of install, where a new hit is this package's own fault. */
  const tight=()=>{
   const out=[];
-  for(const tr of TRACKS)for(let i=0;i<tr.pts.length;i+=2){
-   const p=tr.pts[i];
+  for(const tr of TRACKS)for(let i=1;i<tr.pts.length;i++){
+   const a=tr.pts[i-1],b=tr.pts[i],dx=b[0]-a[0],dz=b[1]-a[1],length2=dx*dx+dz*dz;
    for(const c of W.colliders){
-    if(c.decor||c.r<0.3)continue;
-    if(hyp(p[0],p[1],c.x,c.z)<c.r+1.15)out.push({road:tr.id,x:Math.round(p[0]),z:Math.round(p[1]),r:Math.round(c.r*10)/10});
+    if(c.decor||c.precise||c.r<0.3)continue;
+    const t=length2?Math.max(0,Math.min(1,((c.x-a[0])*dx+(c.z-a[1])*dz)/length2)):0;
+    if((a[0]+dx*t-c.x)**2+(a[1]+dz*t-c.z)**2<(c.r+1.15)**2)out.push({road:tr.id,segment:i-1,x:Math.round((a[0]+b[0])*.5),z:Math.round((a[1]+b[1])*.5),r:Math.round(c.r*10)/10});
    }
   }
   return out;
@@ -182,11 +207,12 @@ export function install(G){
    const k=key(i+di,j+dj); let a=GRID.get(k); if(!a)GRID.set(k,a=[]); a.push([ti,pi]);
   }
  }));
- function trackDist(x,z){
+ function trackDist(x,z,roadId){
   const a=GRID.get(key(Math.floor(x/CELL),Math.floor(z/CELL)));
   if(!a)return 1e9;
   let best=1e9;
   for(const [ti,pi] of a){
+   if(roadId&&TRACKS[ti].id!==roadId)continue;
    const p=TRACKS[ti].pts[pi],b=TRACKS[ti].pts[Math.max(0,pi-1)],dx=p[0]-b[0],dz=p[1]-b[1];
    const t=Math.max(0,Math.min(1,((x-b[0])*dx+(z-b[1])*dz)/(dx*dx+dz*dz||1)));
    const d=(b[0]+dx*t-x)**2+(b[1]+dz*t-z)**2;if(d<best)best=d;
@@ -205,6 +231,32 @@ export function install(G){
    mesh.getMatrixAt(i,plantMatrix);if(Math.abs(plantMatrix.determinant())<1e-8)continue;
    plantPoint.setFromMatrixPosition(plantMatrix);
    if(trackDist(plantPoint.x,plantPoint.z)<4.4){mesh.setMatrixAt(i,hiddenPlant);P.clearedPlantInstances++;}
+  }
+  mesh.instanceMatrix.needsUpdate=true;
+ }
+
+ // Desert rosettes and canes are decorative, but their leaves must not occupy
+ // the repaired trail. Include the full transformed bounds, including high-detail
+ // geometry used after a quality change; no scatter/RNG or solid footprint changes.
+ P.clearedDryPlants={succ:0,oco:0};
+ const dryCorner=new THREE.Vector3(),dryMatrix=new THREE.Matrix4();
+ for(const kind of ['succ','oco']){
+  const mesh=G.floraPkg?.bank?.[kind]?.im;if(!mesh)continue;
+  const geometry=W.desertArt.geometry(kind==='succ'?'agave':'ocotillo',0,true);
+  geometry.computeBoundingBox();const bounds=geometry.boundingBox.clone();
+  const coarse=W.desertArt.geometry(kind==='succ'?'agave':'ocotillo',0,false);
+  coarse.computeBoundingBox();bounds.union(coarse.boundingBox);
+  for(let i=0;i<mesh.instanceMatrix.count;i++){
+   mesh.getMatrixAt(i,plantMatrix);if(Math.abs(plantMatrix.determinant())<1e-8)continue;
+   dryMatrix.multiplyMatrices(mesh.matrixWorld,plantMatrix);
+   plantPoint.setFromMatrixPosition(dryMatrix);let radius=0;
+   for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z]){
+    dryCorner.set(x,y,z).applyMatrix4(dryMatrix);
+    radius=Math.max(radius,Math.hypot(dryCorner.x-plantPoint.x,dryCorner.z-plantPoint.z));
+   }
+   if(trackDist(plantPoint.x,plantPoint.z,'riverwest')<2.4+radius){
+    mesh.setMatrixAt(i,hiddenPlant);P.clearedDryPlants[kind]++;
+   }
   }
   mesh.instanceMatrix.needsUpdate=true;
  }
@@ -289,9 +341,35 @@ export function install(G){
     over it — sample the ground at every vertex and the track lies on the hillside instead of
     hovering off one edge of it. */
  {
-  const COLS=9, REPEAT=3.0, pos=[],uv=[],col=[],idx=[];
-  let base=0;
+  const COLS=9, REPEAT=3.0, pos=[],uv=[],col=[],idx=[],strokeMask=[];
+  let base=0;P.surfaceRanges={};P.ribbonDiagnostics={};
   for(const tr of TRACKS){
+   const indexStart=idx.length,vertexStart=base;
+   if(tr.id==='riverwest'){
+    // Bounded bevels form a single non-overlapping stroke of the surveyed line.
+    // The canyon bridleway is four metres wide, with draped soil at every cut/join.
+    const ribbon=buildRoadRibbon({points:tr.pts,run:tr.run,halfWidth:s=>tr.w*(1+.04*Math.sin(s*.12)+.02*Math.sin(s*.047)),columns:COLS,uvRepeat:REPEAT,maxSegmentLength:STEP,minHalfWidth:1});
+    for(let i=0;i<ribbon.positions.length/2;i++){
+     const x=ribbon.positions[i*2],z=ribbon.positions[i*2+1],u=ribbon.uv[i*2],v=ribbon.uv[i*2+1],c=tintAt(x,z);
+     // An inherited strip edge can lie inside the joined stroke. Coverage must
+     // follow the nearest segment of the whole trail, not that strip's old UV.
+     let nearest=Infinity,distance=0;
+     for(let k=1;k<tr.pts.length;k++){
+      const a=tr.pts[k-1],b=tr.pts[k],dx=b[0]-a[0],dz=b[1]-a[1],length2=dx*dx+dz*dz;
+      const t=length2?Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/length2)):0;
+      const d2=(x-a[0]-dx*t)**2+(z-a[1]-dz*t)**2;
+      if(d2<nearest){nearest=d2;distance=tr.run[k-1]+(tr.run[k]-tr.run[k-1])*t;}
+     }
+     const halfWidth=tr.w*(1+.04*Math.sin(distance*.12)+.02*Math.sin(distance*.047));
+     const verge=1-sstep(Math.sqrt(nearest)/halfWidth,.56,.99);
+     const ends=Math.min(sstep(distance,0,2.2),1-sstep(distance,tr.len-3.5,tr.len));
+     const alpha=verge*ends*(1-.80*Math.max(creekNear(x,z),riverNear(x,z)));
+     pos.push(x,gh(x,z)+.055,z);uv.push(u,v);col.push(c[0],c[1],c[2],alpha);strokeMask.push(1);
+    }
+    for(const i of ribbon.indices)idx.push(base+i);
+    base=pos.length/3;P.surfaceRanges[tr.id]={vertexStart,vertexCount:base-vertexStart,indexStart,indexCount:idx.length-indexStart};
+    P.ribbonDiagnostics[tr.id]=ribbon.diagnostics;continue;
+   }
    const N=tr.pts.length;
    for(let i=0;i<N;i++){
     const p=tr.pts[i], a=tr.pts[Math.max(0,i-1)], b=tr.pts[Math.min(N-1,i+1)];
@@ -304,19 +382,20 @@ export function install(G){
     for(let j=0;j<COLS;j++){
      const f=j/(COLS-1)*2-1, x=p[0]+nx*w*f, z=p[1]+nz*w*f;
      const a4=ends*(1-0.80*Math.max(creekNear(x,z),riverNear(x,z)));
-     pos.push(x,gh(x,z)+0.055,z); uv.push(tr.run[i]/REPEAT,j/(COLS-1)); col.push(c[0],c[1],c[2],a4);
+     pos.push(x,gh(x,z)+0.055,z); uv.push(tr.run[i]/REPEAT,j/(COLS-1)); col.push(c[0],c[1],c[2],a4);strokeMask.push(0);
     }
    }
    for(let i=0;i<N-1;i++)for(let j=0;j<COLS-1;j++){
     const a=base+i*COLS+j,b2=a+1,c2=a+COLS,d2=c2+1;
     idx.push(a,b2,c2, b2,d2,c2);                               // wound so the face looks up
    }
-   base+=N*COLS;
+   base+=N*COLS;P.surfaceRanges[tr.id]={vertexStart,vertexCount:base-vertexStart,indexStart,indexCount:idx.length-indexStart};
   }
   const geo=new THREE.BufferGeometry();
   geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
   geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
   geo.setAttribute('color',new THREE.Float32BufferAttribute(col,4));
+  geo.setAttribute('roadStrokeMask',new THREE.Float32BufferAttribute(strokeMask,1));
   geo.setIndex(idx); geo.computeVertexNormals(); geo.computeBoundingSphere();
   const mat=new THREE.MeshStandardMaterial({map:roadTexture('albedo',true),color:0xb29878,
    normalMap:roadTexture('normal'),normalScale:new THREE.Vector2(.28,.28),roughnessMap:roadTexture('roughness'),
@@ -324,14 +403,16 @@ export function install(G){
    metalness:0,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-6});
   mat.onBeforeCompile=sh=>{
    sh.uniforms.roadWear={value:roadWear};
-   sh.fragmentShader='uniform sampler2D roadWear;\n'+sh.fragmentShader;
+   sh.vertexShader='attribute float roadStrokeMask; varying float vRoadStrokeMask;\n'+sh.vertexShader;
+   sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n vRoadStrokeMask=roadStrokeMask;');
+   sh.fragmentShader='uniform sampler2D roadWear; varying float vRoadStrokeMask;\n'+sh.fragmentShader;
    sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
     vec4 trackWear=texture2D(roadWear,vec2(vMapUv.x/3.0,vMapUv.y));
     diffuseColor.rgb*=1.0-trackWear.r*.14;
     diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(.82,.96,.76),trackWear.g*.22);
-    diffuseColor.a*=trackWear.a;`);
+    diffuseColor.a*=mix(trackWear.a,1.0,vRoadStrokeMask);`);
   };
-  mat.customProgramCacheKey=()=> 'world-paths-mineral-v1';
+  mat.customProgramCacheKey=()=> 'world-paths-mineral-bounded-v2';
   clipVillageRoads(mat);
   const mesh=new THREE.Mesh(geo,mat);
   /* Ahead of the river and the creek in the transparent pass: both of those also draw with
@@ -903,14 +984,13 @@ export function install(G){
     a rider. This should always be zero; if it is not, something placed above needs moving, and QA
     reads it out of render_game_to_text rather than waiting for somebody to notice on a hack. */
  P.blocked=tight();
- /* Only the hits this package added are its problem; the rest were a mesa or a pine the road had
-    to squeeze past and could not fully escape, and the horse still gets through those — the ride
-    check in tools walks every road and finds nothing pushing it off. */
+ /* Compare segment crowding before and after road dressing. Full mounted-route
+    tests remain the authority for actual passage; a count alone cannot prove it. */
  P.mine=P.blocked.length-P.preExistingTight.length;
  if(P.mine>0)console.warn('world-paths: '+P.mine+' road sample(s) crowded by something this package placed',P.blocked.slice(0,6));
 
  G.on('state',o=>{o.paths={metres:P.metres,roads:TRACKS.length,signs:P.signs.length,gates:P.gates,
   fenceMetres:P.fenceMetres,traces:P.traces,milestones:P.milestones,ford:P.ford,
   tight:P.blocked.length,tightPreExisting:P.preExistingTight.length,tightMine:P.mine,
-  instances:P.instances,tris:P.tris};});
+  instances:P.instances,tris:P.tris,clearance:P.clearance};});
 }
