@@ -3,6 +3,7 @@
    bark and alpha-tested leaves. Shapes and texture artwork are original. */
 import { getFoliageTexture, tuneFoliage } from './world-art.js?v=world-cinematic-1';
 import {partitionStaticInstances} from './spatial-instances.js';
+import {applySaplingSnowShader} from './sapling-snow.mjs?v=nursery-snow-1';
 
 const TAU = Math.PI * 2;
 const prototypes = new Map(), materials = new Map();
@@ -44,7 +45,9 @@ function leafMaterial(THREE, species) {
     roughness:1,vertexColors:true,alphaTest:.34,alphaToCoverage:true});
   m.userData.depthMat=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,
     map:m.map,alphaTest:.34,side:THREE.DoubleSide});
-  tuneFoliage({THREE,material:m,species});m.name=key;materials.set(key,m);return m;
+  tuneFoliage({THREE,material:m,species});
+  if(species==='snowpine')applySaplingSnowShader(m);
+  m.name=key;materials.set(key,m);return m;
 }
 
 function geometryWriter(THREE) {

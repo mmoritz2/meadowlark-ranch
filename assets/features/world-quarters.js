@@ -26,7 +26,7 @@ import {createReedBeds} from '../reed-beds.js?v=pasture-ribbons-1';
 import {buildMarshDressing,installChimneySmoke} from '../marsh-dressing.js?v=marsh-dressing-1';
 import {buildWillowmereArt} from '../willowmere-art.js?v=willowmere-settlement-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {plantNaturalPines,plantScannedSaplings} from '../vegetation.js?v=ranch-life-1';
+import {plantNaturalPines,plantScannedSaplings} from '../vegetation.js?v=ranch-life-snow-1';
 export const id='world-quarters';
 export function install(G){
  const {THREE,scene,toast}=G;

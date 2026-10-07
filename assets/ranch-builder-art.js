@@ -5,6 +5,7 @@ import {recordSolidPart} from './solid-collisions.js?v=solid-world-1';
  */
 import {mergeGeometries} from './vendor/three/examples/jsm/utils/BufferGeometryUtils.js';
 import {createDeferredLoad} from './deferred-load.js';
+import {applySaplingSnowShader} from './sapling-snow.mjs?v=nursery-snow-1';
 
 export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=8,getRanchName=()=> 'Meadowlark Ranch',deferModels=false}) {
  const T=THREE,loader=new T.TextureLoader(),textures=new Map(),templates=new Map(),scans=new Map(),ghosts=new Map();
@@ -112,11 +113,14 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
    const plant=b.root.children[b.root.children.length-1];
    if(frost||blossom)plant.traverse(o=>{if(!o.isMesh||!/leaves|twig/i.test(o.material.name))return;
     o.material=o.material.clone();o.material.name='Builder | '+(frost?'snow-dusted needles':'spring blossom canopy');
+    if(frost){o.material.customProgramCacheKey=()=> 'builder-frost-2';applySaplingSnowShader(o.material);}
+    else{
     o.material.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
      #ifdef USE_MAP
       float canopyPatch=smoothstep(.25,.70,fract(sin(dot(floor(vMapUv*18.0),vec2(12.9898,78.233)))*43758.5453));
       diffuseColor.rgb=mix(diffuseColor.rgb,${frost?'vec3(.72,.79,.78)':'vec3(.64,.34,.40)'},canopyPatch*${frost?'.62':'.87'});
      #endif`);};o.material.customProgramCacheKey=()=>frost?'builder-frost-1':'builder-blossom-1';
+    }
    });
    if(!frost){
     const lod=new T.LOD();b.root.remove(plant);lod.addLevel(plant,0);
@@ -128,6 +132,7 @@ export function createRanchBuilderArt({THREE,GLTFLoader,architecture,anisotropy=
    return;
   }
   b.cylinder(.045,.095,1.6,aged,0,.8,0);const branchMap=tex('assets/textures/realism/foliage_branch_rgba.png',true);const lm=new T.MeshStandardMaterial({name:'Builder | leaf sprays',map:branchMap,alphaTest:.38,side:T.DoubleSide,roughness:.94,color:blossom?'#b4a792':'#c7cfb6'});
+  if(frost)applySaplingSnowShader(lm);
   for(let i=0;i<30;i++){const a=i*2.399,r=.2+.4*Math.sin(i*1.13)**2,y=1.4+.8*(i%7)/7;const x=Math.sin(a)*r,z=Math.cos(a)*r;b.beam([0,y-.35,0],[x,y,z],.015,.015,aged);b.mesh(new T.PlaneGeometry(.58,.58),lm,x,y,z,[.1,a,.25]);}
  }
  const arenaPaint=paint.clone();arenaPaint.name='Arena | painted timber';arenaPaint.map=null;arenaPaint.color.set('#d9d7c9');
