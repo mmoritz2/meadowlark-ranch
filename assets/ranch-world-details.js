@@ -111,34 +111,48 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
     try{
       const flower=await loader.loadAsync('./assets/models/world/builder/flower_gazania.glb');
       flower.scene.updateMatrixWorld(true);
-      const sources=[];flower.scene.traverse(o=>{if(o.isMesh)sources.push(o);});
-      sources.sort((a,b)=>a.geometry.attributes.position.count-b.geometry.attributes.position.count);
-      const variants=sources.slice(0,4).map(source=>{
-        const geo=source.geometry.clone().applyMatrix4(source.matrixWorld);geo.computeBoundingBox();
-        const b=geo.boundingBox,h=Math.max(.01,b.max.y-b.min.y);
-        geo.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);geo.scale(1/h,1/h,1/h);
-        const mat=source.material.clone();mat.roughness=1;mat.envMapIntensity=.55;mat.alphaToCoverage=true;
-        for(const key of ['map','normalMap','roughnessMap'])if(mat[key])mat[key].anisotropy=Math.min(8,G.renderer.capabilities.getMaxAnisotropy());
-        return {geo,mat};
-      });
+      function plantVariants(root){
+        root.updateMatrixWorld(true);
+        const sources=[];root.traverse(o=>{if(o.isMesh)sources.push(o);});
+        sources.sort((a,b)=>a.geometry.attributes.position.count-b.geometry.attributes.position.count);
+        return sources.slice(0,4).map(source=>{
+          const geo=source.geometry.clone().applyMatrix4(source.matrixWorld);geo.computeBoundingBox();
+          const b=geo.boundingBox,h=Math.max(.01,b.max.y-b.min.y);
+          const width=Math.max(b.max.x-b.min.x,b.max.z-b.min.z)/h;
+          geo.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);geo.scale(1/h,1/h,1/h);
+          const mat=source.material.clone();mat.roughness=1;mat.envMapIntensity=.55;mat.alphaToCoverage=true;
+          for(const key of ['map','normalMap','roughnessMap'])if(mat[key])mat[key].anisotropy=Math.min(8,G.renderer.capabilities.getMaxAnisotropy());
+          return {geo,mat,width};
+        });
+      }
+      const variants=plantVariants(flower.scene);
+      const gardenFlower=await loader.loadAsync('./assets/models/world/gardens/periwinkle_plant.glb');
+      const gardenVariants=plantVariants(gardenFlower.scene);
+      state.gardenAsset='periwinkle_plant';
       state.cottageGardens=0;
       const cottages=[];scene.traverse(o=>{if(o.userData.architecture?.kind==='cottage')cottages.push(o);});
       for(const root of cottages){
         const boxes=root.userData.architecture.windowBoxes||[];
         if(!boxes.length)continue;
         const garden=new THREE.Group();garden.name='Cottage | living window boxes';
-        const batches=variants.map(()=>[]),plant=new THREE.Object3D();
-        for(const [index,box]of boxes.entries())for(let i=0;i<7;i++){
-          plant.position.set(box.x-box.width*.40+i*box.width*.80/6,box.y,box.z+Math.sin(i*2.399)*.055);
-          plant.scale.setScalar(box.height*(.78+(i%3)*.16));plant.rotation.y=i*2.399+index;plant.updateMatrix();
-          batches[(i+index)%variants.length].push(plant.matrix.clone());
+        const batches=gardenVariants.map(()=>[]),plant=new THREE.Object3D();
+        for(const [index,box]of boxes.entries()){
+          const floorPot=box.height>.3,count=floorPot?5:7;
+          for(let i=0;i<count;i++){
+            plant.position.set(box.x-box.width*.40+i*box.width*.80/(count-1),box.y,box.z+Math.sin(i*2.399)*.055);
+            const variant=(i+index)%gardenVariants.length,maxWidth=floorPot?.36:.34;
+            const height=(floorPot?.42:.32)+(i%3)*.035;
+            const scale=Math.min(height,maxWidth/gardenVariants[variant].width);
+            plant.scale.setScalar(scale);plant.rotation.y=i*2.399+index;plant.updateMatrix();
+            batches[variant].push(plant.matrix.clone());
+          }
         }
         // Four material batches per house, regardless of its number of flowers.
         for(const [i,matrices]of batches.entries()){
           if(!matrices.length)continue;
-          const mesh=new THREE.InstancedMesh(variants[i].geo,variants[i].mat,matrices.length);
+          const mesh=new THREE.InstancedMesh(gardenVariants[i].geo,gardenVariants[i].mat,matrices.length);
           matrices.forEach((matrix,j)=>mesh.setMatrixAt(j,matrix));mesh.instanceMatrix.needsUpdate=true;
-          mesh.computeBoundingSphere();mesh.receiveShadow=true;garden.add(mesh);
+          mesh.computeBoundingSphere();mesh.receiveShadow=true;mesh.castShadow=true;garden.add(mesh);
         }
         root.add(garden);state.cottageGardens++;
       }

@@ -683,11 +683,12 @@ import {createWorldFinish} from './assets/world-rendering.js';
 import {createWorldShadows} from './assets/world-shadows.js?v=visible-shadows-1';
 import {protectBloomInput} from './assets/render-safety.js';
 import {createScreenAntialias} from './assets/screen-antialias.js';
-import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=woodland-trails-1';
+import {createForageArt} from './assets/forage-art.js?v=botanical-harvest-1';
+import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=botanical-harvest-1';
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=seasonal-woodland-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=runway-20261006';
-import {FEATURES} from './assets/features/index.js?v=layered-horizon-1';
+import {FEATURES} from './assets/features/index.js?v=botanical-harvest-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -7101,6 +7102,7 @@ makeJump(15,5,1.1);
 makeJump(-13,-10,0.8);
 
 /* ================= pickups ================= */
+const forageArt=createForageArt({THREE});
 const carrots=[];
 // A reliable first forage loop just beyond the south gate; these replace five
 // scattered pickups, keeping the same total and the existing collection rewards.
@@ -7112,15 +7114,7 @@ function respawn(g,rMin,rMax){
  g.visible=true;
 }
 for(let i=0;i<18;i++){
- const g=new THREE.Group();
- const root=new THREE.Mesh(new THREE.ConeGeometry(0.15,0.55,8),smat('#e8762a'));
- root.rotation.x=Math.PI;root.position.y=0.5;root.castShadow=true;g.add(root);
- for(let j=0;j<3;j++){
-  const leaf=new THREE.Mesh(new THREE.ConeGeometry(0.06,0.3,5),smat('#4d8b44'));
-  leaf.position.set((j-1)*0.07,0.95,0);
-  leaf.rotation.z=(j-1)*0.4;
-  g.add(leaf);
- }
+ const g=forageArt.make('carrot');
  const home=HOME_CARROTS[i];
  if(home)g.position.set(home[0],groundH(home[0],home[1]),home[1]);else respawn(g,15,260);
  scene.add(g);
@@ -7131,12 +7125,7 @@ for(let i=0;i<18;i++){
    under the pines. Picking one puts it in the basket rather than paying coins, so the way to
    train a stat is to ride to where its food grows. Each patch respawns a while after. */
 const forage=[];
-const FORAGE_MK={
- lettuce:()=>{const g=new THREE.Group();blob(0.24,0.17,0.24,'#7cc26a',0,0.15,0,g);blob(0.16,0.14,0.16,'#a9dc8a',0,0.22,0,g);return g;},
- pumpkin:()=>{const g=new THREE.Group();blob(0.3,0.21,0.3,'#e8862a',0,0.2,0,g);blob(0.3,0.21,0.3,'#d4741f',0.02,0.19,0.02,g).scale.set(0.98,1,0.98);tube(0.03,0.04,0.12,'#5a7a3a',0,0.44,0,g);return g;},
- orange:()=>{const g=new THREE.Group();blob(0.34,0.3,0.34,'#3f7d3a',0,0.3,0,g);[[0.16,0.42,0.1],[-0.14,0.36,0.14],[0.02,0.5,-0.14]].forEach(q=>blob(0.09,0.09,0.09,'#f5931e',q[0],q[1],q[2],g));return g;},
- truffle:()=>{const g=new THREE.Group();blob(0.17,0.12,0.16,'#4a3320',0,0.1,0,g);blob(0.12,0.09,0.13,'#5e4630',0.06,0.13,0.03,g);return g;},
-};
+const FORAGE_MK=forageArt.makers(['lettuce','pumpkin','orange','truffle']);
 const FORAGE_SPOTS={lettuce:[0,0,25,150,10],pumpkin:[215,-105,6,70,8],orange:[-220,130,12,90,7],truffle:[-30,-58,4,26,6]};   // [cx,cz,rMin,rMax,count]
 function spawnForage(item){
  const box=FORAGE_SPOTS[item], mk=FORAGE_MK[item]; if(!box||!mk)return;
@@ -13657,7 +13646,7 @@ function tick(stepSeconds){
    if(c.t<=0){if(c.home){c.g.position.set(c.home[0],groundH(c.home[0],c.home[1]),c.home[1]);c.g.visible=true;}else respawn(c.g,15,260);}
    continue;
   }
-  c.g.rotation.y+=dt*2;
+  // Carrots grow from the ground; their foliage stays planted while ripe.
   const d=Math.hypot(c.g.position.x-player.pos.x,c.g.position.z-player.pos.z);
   if(d<1.4&&player.y<1.2){
    c.g.visible=false;c.t=c.home?60:15;
@@ -14317,7 +14306,7 @@ function installFeatures(){
       base height), and mark the matching collider climb:true so it does not shove her off it */
    climbables:[],
    mats:{plankBrownMat,whitePaintMat,paintMat},makeGate,buildPen,buildDecorMesh,addThing,addNPC,addFT,addRegion,addBuilding,addForageSpot,addBoard,
-   npcList,npcCharacters,practiceJumps:jumps,visitors,spawnCritter,CRITTER_DEFS,critters,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,carrots,forage,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar,
+   npcList,npcCharacters,practiceJumps:jumps,visitors,spawnCritter,CRITTER_DEFS,critters,updateShoes,regionAt,mapMarkers:MAP_MARKERS,miniMarkers:MINI_MARKERS,carrots,forage,forageArt,FORAGE_SPOTS,FORAGE_MK,nearThing:()=>nearThing,buildFtBar,
    /* Every tree in the basin as {x,z,s}. The follow camera needs it: followCamera.frame()
       sweeps its clearance volume against the registered ARCHITECTURE, which knows nothing
       about the wood, so a camera that orbits off the horse's spine can and does end up

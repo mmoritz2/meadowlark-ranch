@@ -1,0 +1,59 @@
+[
+  {
+    "id": "periwinkle_plant",
+    "page": "https://polyhaven.com/a/periwinkle_plant",
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "retrieved": "2026-10-06",
+    "authors": {
+      "Amal Kumar": "All"
+    },
+    "sourceFiles": [
+      {
+        "file": "periwinkle_plant.gltf",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/periwinkle_plant/periwinkle_plant_1k.gltf",
+        "bytes": 15189,
+        "sha256": "df781eea76123fc6eee97e6e8d466743e3a5fb08e1a2c3f5025a57e090d2cc55"
+      },
+      {
+        "file": "textures/periwinkle_plant_nor_gl_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/periwinkle_plant/periwinkle_plant_nor_gl_1k.jpg",
+        "bytes": 418428,
+        "sha256": "36d2464e7500f741500228b955c1fb0f26d954e869bd26f93dd25c0fafc5087d"
+      },
+      {
+        "file": "textures/periwinkle_plant_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/periwinkle_plant/periwinkle_plant_diff_1k.jpg",
+        "bytes": 349879,
+        "sha256": "32d61084e6c07fa3ca8e03b35b347a12717f971efc90e8fe1185931ee2298c56"
+      },
+      {
+        "file": "textures/periwinkle_plant_arm_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/periwinkle_plant/periwinkle_plant_arm_1k.jpg",
+        "bytes": 281673,
+        "sha256": "d964e2e1118c2ca88c137b45590f48d83d3471fef48e913cbd57bf7122bbe4a3"
+      },
+      {
+        "file": "periwinkle_plant.bin",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/periwinkle_plant/periwinkle_plant.bin",
+        "bytes": 1859752,
+        "sha256": "f039855d84d59f764838285c2b041a5cf255d103afc856e219a62482826d9655"
+      },
+      {
+        "file": "textures/periwinkle_plant_opacity_1k.png",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/periwinkle_plant/periwinkle_plant_opacity_1k.png",
+        "bytes": 86094,
+        "sha256": "e1dc2746b641606ae2772667c719e2b593b548759a51d86ce093322c22e903de"
+      }
+    ],
+    "output": {
+      "file": "periwinkle_plant.glb",
+      "bytes": 758220,
+      "sha256": "945042562c675f72a56a5edaab5b668acb86cf72e9b3344607f73e911d0fe601",
+      "specimens": 4,
+      "trianglesBefore": 14002,
+      "triangles": 7524
+    },
+    "processing": "Four smallest complete author specimens, gallery translations removed. Border-preserving simplification; original 1K diffuse with author opacity, 1K OpenGL normal and 512px ARM. WebP in GLB, no runtime decoder."
+  }
+]

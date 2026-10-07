@@ -297,23 +297,7 @@ export function install(G){
 
  /* ================= 5. foraging in the world ================= */
  const blob=W.blob, tube=W.tube;
- const mk={
-  sweetpea:()=>{const g=new THREE.Group();tube(0.02,0.02,0.5,'#5f9a4a',0,0.25,0,g);[[0.05,0.28],[-0.06,0.38],[0.04,0.46]].forEach(q=>blob(0.05,0.12,0.04,'#8ccf6a',q[0],q[1],0,g).rotation.z=0.5);return g;},
-  berries:()=>{const g=new THREE.Group();blob(0.28,0.22,0.28,'#3f6f3a',0,0.2,0,g);[[0.1,0.3,0.1],[-0.12,0.28,0.06],[0.02,0.36,-0.12],[-0.04,0.24,0.16]].forEach(q=>blob(0.05,0.05,0.05,'#4a3f9a',q[0],q[1],q[2],g));return g;},
-  cress:()=>{const g=new THREE.Group();blob(0.22,0.1,0.22,'#4f9a5a',0,0.08,0,g);blob(0.14,0.1,0.14,'#7ccf7a',0.06,0.16,0.04,g);return g;},
-  watermelon:()=>{const g=new THREE.Group();const m=blob(0.3,0.22,0.24,'#3f7d3a',0,0.2,0,g);blob(0.3,0.22,0.24,'#5a9a4a',0,0.2,0,g).scale.set(0.97,1.01,0.97);return g;},
-  strawberry:()=>{const g=new THREE.Group();blob(0.2,0.12,0.2,'#5aa04a',0,0.1,0,g);[[0.06,0.16,0.04],[-0.07,0.15,-0.03]].forEach(q=>blob(0.06,0.07,0.06,'#d63a3a',q[0],q[1],q[2],g));return g;},
-  apple:()=>{const g=new THREE.Group();blob(0.09,0.09,0.09,'#d6403a',0,0.1,0,g);blob(0.07,0.07,0.07,'#c8342f',0.16,0.08,0.06,g);return g;},
-  honey:()=>{const g=new THREE.Group();blob(0.1,0.12,0.1,'#e8b04a',0,0.12,0,g);tube(0.02,0.02,0.1,'#6a4a2a',0,0.26,0,g);return g;},
-  pricklypear:()=>{const g=new THREE.Group();blob(0.16,0.28,0.06,'#4f8a4a',0,0.28,0,g);blob(0.12,0.2,0.05,'#5a9a52',0.14,0.5,0,g);blob(0.06,0.07,0.06,'#c94f6a',0.14,0.7,0,g);blob(0.05,0.06,0.05,'#c94f6a',-0.1,0.56,0,g);return g;},
-  corn:()=>{const g=new THREE.Group();tube(0.03,0.04,1.4,'#7aa04a',0,0.7,0,g);blob(0.06,0.18,0.06,'#e8c84a',0.07,0.8,0,g);blob(0.04,0.3,0.03,'#8cbf5a',-0.08,1.1,0.02,g).rotation.z=-0.5;return g;},
-  snowmoss:()=>{const g=new THREE.Group();blob(0.26,0.08,0.24,'#a9d8c0',0,0.06,0,g);blob(0.14,0.06,0.14,'#dff3ea',0.08,0.12,0.05,g);return g;},
-  grapes:()=>{const g=new THREE.Group();tube(0.02,0.03,0.9,'#6a4a2a',0,0.45,0,g);blob(0.14,0.2,0.1,'#6a3f8a',0,0.5,0.08,g);blob(0.1,0.14,0.08,'#7a4f9a',0.06,0.36,0.1,g);blob(0.12,0.05,0.12,'#5f9a4a',0,0.9,0,g);return g;},
-  daikon:()=>{const g=new THREE.Group();blob(0.07,0.22,0.07,'#f2efe4',0,0.12,0,g);blob(0.1,0.12,0.1,'#6aa04a',0,0.36,0,g);return g;},
-  chestnut:()=>{const g=new THREE.Group();blob(0.12,0.12,0.12,'#7aa04a',0,0.12,0,g);blob(0.08,0.07,0.08,'#6a3f22',0.12,0.07,0.06,g);return g;},
-  zucchini:()=>{const g=new THREE.Group();blob(0.3,0.1,0.3,'#4f8a4a',0,0.08,0,g);const z=blob(0.06,0.06,0.2,'#2f6a3a',0.1,0.1,0.08,g);z.rotation.y=0.6;return g;},
-  royaljelly:()=>{const g=new THREE.Group();blob(0.12,0.16,0.12,'#f0c84a',0,0.16,0,g);blob(0.05,0.05,0.05,'#3a2a1a',0.05,0.28,0.05,g);return g;},
- };
+ const mk=W.forageArt.makers(['sweetpea','berries','cress','watermelon','strawberry','apple','honey','pricklypear','corn','snowmoss','grapes','daikon','chestnut','zucchini','royaljelly']);
  /* orchard trees at Cottonwood, hives by the lake, corn rows and a walled garden at Barleyfold */
  const orchardTrees=[[62,-48],[66,-54],[71,-46],[75,-53],[64,-60],[70,-61],[78,-59],[60,-40],[68,-38],[76,-42],[82,-50],[58,-66]];
  const hives=[[38,32],[42,28],[36,38]];

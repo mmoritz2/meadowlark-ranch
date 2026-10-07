@@ -33,7 +33,7 @@ for asset in sys.argv[1:]:
     # The glTF export uses JPEG diffuse maps. Preserve the separate leaf alpha
     # masks supplied with the author's Blender asset when making game foliage.
     for relative, entry in files.get('blend', {}).get('1k', {}).get('blend', {}).get('include', {}).items():
-        if '_alpha_' in relative:
+        if '_alpha_' in relative or '_opacity_' in relative:
             downloads.append((relative, entry))
     for relative, entry in downloads:
         dest = (folder / relative).resolve()

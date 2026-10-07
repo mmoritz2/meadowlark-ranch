@@ -152,7 +152,7 @@
    ============================================================================================ */
 /* BUILD STAMP: every import below carries the same ?v= build id, so a normal reload after an update fetches every changed
    module instead of running a cached mix of old and new ones. Bump it (all of them at once) whenever a feature file changes. */
-import * as stats from './stats-progression.js?v=ranch-life-1';
+import * as stats from './stats-progression.js?v=botanical-harvest-1';
 import * as roster from './horse-roster.js?v=commerce-preview-20261005';
 import * as bond from './bond-personality-emotes.js?v=horse-actions-1';   // versioned: rider emotes reach the character's own bones
 import * as mastery from './mastery-style.js?v=dragon-rigging-1';

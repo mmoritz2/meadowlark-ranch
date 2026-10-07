@@ -311,6 +311,25 @@ bearings, building footprints and riding collision remain fixed. `qa-country-wor
 checks loaded maps, static relief outside the riding basin and mesh budgets;
 `qa-render-artifacts.cjs` includes the village in daylight, rain and night.
 
+Harvest plants now have original folded leaves, stems, flowers and shaped fruit
+instead of stacked spheres. All 20 foods keep their placement, inventory rewards
+and respawn logic; carrots are rooted and no longer spin. Cached geometry is
+shared between pickups, with at most three meshes per plant and 53,084 triangles
+across all unique templates. `tools/test-forage-art.mjs` checks geometry validity
+and sharing; `tools/qa-botanical-harvest.cjs` exercises every food's collection and
+regrowth, checks contact against the rendered terrain, and captures native-GPU views.
+
+Cottage window boxes and entry planters use four CC0
+[Periwinkle Plant](https://polyhaven.com/a/periwinkle_plant) specimens by Amal Kumar,
+with the author's cutout opacity, diffuse, normal and roughness textures. There
+are 240 plants across ten cottages, batched into four meshes per cottage, with
+leaf shadows and sizes fitted to the boxes. The 758,220-byte local GLB contains
+7,524 triangles across its four source specimens; provenance and SHA-256 hashes
+are in `assets/models/world/gardens/manifest.json`. Reproduce it with
+`python3 tools/asset-gen/fetch-world-realism.py periwinkle_plant` followed by
+`node tools/asset-gen/build-garden-flowers.mjs` (dependencies in
+`tools/asset-gen/package.json`). Trail gardens keep their existing gazania scans.
+
 The world uses a denser terrain mesh with matching riding collision, continuous
 downhill river and creek channels, an arched bridge at the actual crossing, and
 surface materials that blend with slope, tree cover, riverbanks and climate.

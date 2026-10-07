@@ -60,7 +60,7 @@ const state=await page.evaluate(async()=>{
   flowerTriangles:flower.geometry.index.count/3,middleTriangles:mid.count*mid.geometry.index.count/3,
   plantError,plantsOnRoad,middleStable};
  const cottages=[];q.scene.traverse(o=>{if(o.userData.architecture?.kind==='cottage')cottages.push(o);});
- const completeGardens=cottages.every(o=>o.getObjectByName('Cottage | living window boxes')?.children.reduce((n,m)=>n+(m.isInstancedMesh?m.count:1),0)===o.userData.architecture.windowBoxes.length*7);
+ const completeGardens=cottages.every(o=>o.getObjectByName('Cottage | living window boxes')?.children.reduce((n,m)=>n+(m.isInstancedMesh?m.count:1),0)===o.userData.architecture.windowBoxes.reduce((n,b)=>n+(b.height>.3?5:7),0));
  const villageShops=q.G.worldPkg.LANDMARKS.filter(s=>s.grp?.userData.architecture?.exterior==='village').length;
  const canopies=P.treePositions.filter(t=>t.source==='canopy-broadleaf');
  const hedges=q.scene.getObjectByName('worldPaths:leaves');

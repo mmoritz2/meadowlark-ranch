@@ -84,7 +84,7 @@ const out=path.resolve(process.argv[2]||'output/landscape-models');fs.mkdirSync(
     details:{grass:details.grassClumps,errors:details.errors},featureErrors:q.G.errors};
   });
   const checks={
-   labelsCannotCutPaths:state.depthWritingLabels===0,instancedGardensComplete:state.gardens===10&&state.gardenFlowers===280,
+   labelsCannotCutPaths:state.depthWritingLabels===0,instancedGardensComplete:state.gardens===10&&state.gardenFlowers===240,
    matureTreesPlaced:state.scans.matureTrees>100,newTreeAndViewsLoaded:state.scans.assets.includes('pine_tree_01')&&state.scans.views===7&&state.scans.assets.includes('island_tree_01')&&state.scans.assets.includes('jacaranda_tree'),
    boundedTreeGeometry:state.tiers.every(t=>t.triangles<=t.budget)&&state.tiers[0].trees===0,
    scannedGroundStone:state.scans.stoneTriangles>100&&state.scans.stoneTriangles<=300,
