@@ -65,7 +65,7 @@ vec3 riderFaceFinish(vec3 skin,vec3 source,vec3 p){
  return skin;
 }`;
 
-/* Sparse tapered upper lashes, fitted to the face in the Head bone's space. */
+/* Tapered upper lashes, fitted to the face in the Head bone's space. */
 export function riderLashGeometry(THREE,skin,eyes,body){
  if(body!=='f'||!eyes)return null;
  const head=skin.skeleton.bones.findIndex(b=>b.name==='Head'),inverse=skin.skeleton.boneInverses[head];
@@ -81,18 +81,18 @@ export function riderLashGeometry(THREE,skin,eyes,body){
  const eyeSurface=new THREE.Mesh(eyeGeometry,material);eyeSurface.updateMatrixWorld(true);
  const positions=[],indices=[],roots=[],segments=6,sides=4,V=(x,y,z)=>new THREE.Vector3(x,y,z);
  const front=(mesh,x,y)=>{ray.set(V(x,y,.3),V(0,0,-1));return ray.intersectObject(mesh,false)[0];};
- for(const side of [-1,1])for(let i=0;i<13;i++){
-  const t=i/12,x=side*(.020+.030*t);let exposed=false,root=null;
+ for(const side of [-1,1])for(let i=0;i<18;i++){
+  const t=i/17,x=side*(.020+.030*t);let exposed=false,root=null;
   // Find where the visible eye meets the upper lid instead of guessing an arc.
   for(let y=.099;y<=.120;y+=.0001){const skinHit=front(surface,x,y),eyeHit=front(eyeSurface,x,y);if(!skinHit||!eyeHit)continue;
    if(skinHit.point.z<eyeHit.point.z){exposed=true;continue;}
    if(exposed){root=V(x,y,skinHit.point.z+.0002);break;}
   }
-  if(!root)continue;const length=.0045+.0025*t,fan=side*(.0005+.0020*t),base=positions.length/3;
-  const curve=new THREE.QuadraticBezierCurve3(root,root.clone().add(V(fan*.45,length*.12,length*.58)),root.clone().add(V(fan,length*.65,length*.75)));
+  if(!root)continue;const length=.0070+.0040*t,fan=side*(.0007+.0029*t),base=positions.length/3;
+  const curve=new THREE.QuadraticBezierCurve3(root,root.clone().add(V(fan*.45,length*.12,length*.58)),root.clone().add(V(fan,length*.82,length*.75)));
   roots.push(root.toArray());
   for(let j=0;j<=segments;j++){
-   const u=j/segments,p=curve.getPoint(u),tangent=curve.getTangent(u).normalize(),normal=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),binormal=tangent.clone().cross(normal),r=.00014*Math.pow(1-u,.75)+.000012;
+   const u=j/segments,p=curve.getPoint(u),tangent=curve.getTangent(u).normalize(),normal=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),binormal=tangent.clone().cross(normal),r=.00023*Math.pow(1-u,.75)+.000018;
    for(let k=0;k<sides;k++){const angle=k*Math.PI*2/sides,v=p.clone().addScaledVector(normal,Math.cos(angle)*r).addScaledVector(binormal,Math.sin(angle)*r);positions.push(...v.toArray());
     if(j<segments){const a=base+j*sides+k,b=base+j*sides+(k+1)%sides,c=a+sides,d=b+sides;indices.push(a,b,c,b,d,c);}
    }
