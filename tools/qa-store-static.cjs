@@ -87,7 +87,7 @@ const files=new Set(['store.html','assets/store.js','assets/store.css','assets/c
       assert.equal(game.intervals,0);assert.equal(game.focusListeners,0);assert.equal(game.walletRefreshes,0);
       assert.equal(game.isStatic,true);assert.equal(game.label,'Ranch store');assert.equal(game.tabLabel,'Ranch store');
       assert.equal(game.paid,0);assert.equal(game.account,null);assert.equal(game.blocked,503);
-      assert.match(game.tab,/Ranch store/);assert.match(game.tab,/Purchases are coming soon/);assert.doesNotMatch(game.tab+game.section,/Sign in|cloud|test cards/i);
+      assert.match(game.tab,/Ranch store/);assert.match(game.tab,/Online preview/);assert.match(game.tab,/checkout and accounts are not available/);assert.doesNotMatch(game.tab+game.section,/Sign in|cloud|test cards/i);
       assert.equal(game.ranch.gems,77);
       await page.evaluate(()=>window.__storeAction());await page.waitForURL(base+'store.html');
       await page.locator('body.static-preview').waitFor();

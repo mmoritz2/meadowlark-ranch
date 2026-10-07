@@ -1,4 +1,5 @@
-/* The rider, built from Quaternius' CC0 Universal Base Characters (assets/models/rider, cut down by
+/* The shared rider uses artist-authored Blender Studio CC0 heads (rider-heads.js)
+   and Quaternius' CC0 Universal Base Characters (assets/models/rider, cut down by
    tools/asset-gen/build-rider.mjs; licence in that folder).
 
    The old rider was one generated sculpt, modelled seated in a riding helmet, with bones guessed onto
@@ -36,12 +37,13 @@
 
    Pure module: THREE and friends are injected, nothing runs at import time. */
 
-import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=runway-20261006';
+import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=artist-riders-20261007';
 export {RIDER_OUTFITS};
-import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=runway-20261006';
-import {refineRiderProportions} from './rider-proportions.js?v=runway-20261006';
-import {refineRiderFace,RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=lashes-20261007';
-import {accessoryFit,buildAccessories} from './rider-accessories.js?v=hair-20261006';
+import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=artist-riders-20261007';
+import {refineRiderProportions} from './rider-proportions.js?v=artist-riders-20261007';
+import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=artist-riders-20261007';
+import {prepareRiderHead,patchStylizedHead,patchStylizedEyes} from './rider-heads.js?v=artist-riders-20261007';
+import {accessoryFit,buildAccessories} from './rider-accessories.js?v=artist-riders-20261007';
 
 /* ---- tables ------------------------------------------------------------------------------------ */
 /* mesh: a source hairstyle. scalp: a fitted crown and optional sculpted front locks.
@@ -107,11 +109,11 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
  /* ------------------------------------------------------------------ the kit, once per body -- */
  function kit(body){
   body=body==='m'?'m':'f';
-  if(!kits[body])kits[body]=Promise.all([file('rider-'+body+'.glb'),file('rider-hair.glb'),file('rider-anims.glb')])
-   .then(([g,h,a])=>{const k=prepareKit(body,g,h,a);kitReady[body]=k;return k;});
+  if(!kits[body])kits[body]=Promise.all([file('rider-'+body+'.glb'),file('rider-hair.glb'),file('rider-anims.glb'),file('stylized-'+body+'-head.glb')])
+   .then(([g,h,a,n])=>{const k=prepareKit(body,g,h,a,n);kitReady[body]=k;return k;});
   return kits[body];
  }
- function prepareKit(body,gBody,gHair,gAnim){
+ function prepareKit(body,gBody,gHair,gAnim,gHead){
   const scene=gBody.scene; let skin=null,eyes=null,brows=null;
   scene.traverse(o=>{if(!o.isSkinnedMesh)return; if(/superhero/i.test(o.name))skin=o; else if(/^Eyes/.test(o.name))eyes=o; else if(/^Eyebrows/.test(o.name))brows=o;});
   if(!skin)throw new Error('rider body mesh missing');
@@ -124,7 +126,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const L={neck:J('neck_01'),pelvis:J('pelvis'),calf:J('calf_l'),hand:J('hand_l'),arm:J('upperarm_l'),elbow:J('lowerarm_l'),thigh:J('thigh_l'),head:J('Head')};
   const zones={neckY:L.neck.y-0.038,neckZ:L.neck.z+0.012,waistY:L.pelvis.y+0.068,bootY:L.calf.y-0.070,cuffX:L.hand.x-0.014,armY:L.arm.y,armZ:L.arm.z,headY:L.head.y-0.02};
   slim(skin.geometry,body,L);
-  refineRiderFace(THREE,skin,brows,body);
+  const headAsset=prepareRiderHead(THREE,skin,eyes,brows,gHead.scene,body);eyes=headAsset.eyes;brows=headAsset.brows;
   /* ---- the seat, from the sculpt's joint directions ---- */
   const grip=gAnim.animations.find(c=>c.name===CLIP.drive)||gAnim.animations.find(c=>c.name===CLIP.idle);
   const seat=buildSeat(scene,bones,grip,skin);
@@ -157,15 +159,16 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const hair={};
   gHair.scene.traverse(o=>{if(o.isMesh)hair[o.name]={geometry:o.geometry,material:o.material};});
   /* ---- head: the skull for the helmet ---- */
-  const head=headShape(skin,bones.Head);
+  const head=headShape(headAsset.mesh,bones.Head);
   /* the top of the brows, in Head space: the hairline is measured from it */
   head.browTop=0.139;
   if(brows){const bp=brows.geometry.attributes.position,hi=brows.skeleton.bones.indexOf(brows.skeleton.bones.find(b=>b.name==='Head')),inv=brows.skeleton.boneInverses[hi];
    let t=-1e9;for(let i=0;i<bp.count;i++){_v.fromBufferAttribute(bp,i).applyMatrix4(inv);if(_v.y>t)t=_v.y;}if(t>-1e8)head.browTop=t;}
-  const lashGeo=riderLashGeometry(THREE,skin,eyes,body);
+  head.browTop=headAsset.browTop;head.eyeX=headAsset.config.target[0];head.eyeY=headAsset.config.target[1];head.eyeZ=headAsset.config.target[2];
+  const lashGeo=riderLashGeometry(THREE,headAsset.mesh,eyes,body,headAsset);
   const helmetGeo=buildHelmetGeometry(head);
-  const prepared={body,proportionLift,scene,skin,eyes,brows,bones,seat,zones,clips,hair,head,helmetGeo,lashGeo,materials:{body:skin.material,eyes:eyes&&eyes.material,brows:brows&&brows.material},outfits:{}};
-  if(body==='f'&&hair.Hair_Long)hair.Hair_Long={...hair.Hair_Long,geometry:polishHairSurface(THREE,hair.Hair_Long.geometry,prepared)};
+  const prepared={body,proportionLift,scene,skin,eyes,brows,bones,seat,zones,clips,hair,head,headAsset,garmentSkin:headAsset.garmentSkin,helmetGeo,lashGeo,materials:{body:skin.material,eyes:eyes&&eyes.material,brows:brows&&brows.material},outfits:{}};
+  for(const [name,source]of Object.entries(hair))hair[name]={...source,geometry:polishHairSurface(THREE,source.geometry,prepared,name)};
   return prepared;
  }
 
@@ -388,7 +391,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
  }
  function scalpGeometry(kit,tie){
   kit.scalps=kit.scalps||{}; if(kit.scalps[tie])return kit.scalps[tie];
-  const skin=kit.skin,g=skin.geometry,pos=g.attributes.position,nor=g.attributes.normal,si=g.attributes.skinIndex,sw=g.attributes.skinWeight,idx=g.index;
+  const skin=kit.headAsset?.mesh||kit.skin,g=skin.geometry,pos=g.attributes.position,nor=g.attributes.normal,si=g.attributes.skinIndex,sw=g.attributes.skinWeight,idx=g.index;
   const hi=skin.skeleton.bones.indexOf(kit.bones.Head),inv=skin.skeleton.boneInverses[hi],nm=new THREE.Matrix3().getNormalMatrix(inv);
   const H=kit.head,hl=hairline(kit,tie==='gathered'),C=V(H.cx,H.cy,H.cz),td=tiePoint(kit,tie).sub(C).normalize();
   const up=Math.abs(td.y)<0.9?V(0,1,0):V(0,0,-1),ax=up.clone().sub(td.clone().multiplyScalar(up.dot(td))).normalize(),bx=td.clone().cross(ax);
@@ -558,11 +561,12 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    cloth=mix(cloth,vec3(0.78,0.70,0.52),buckle);
    cloth=mix(cloth,vec3(0.93,0.92,0.88),collar);
    cloth*=0.95+0.06*grain*(1.0-boot);
-   diffuseColor.rgb=mix(cloth,riderFaceFinish(riderSkin(diffuseColor.rgb),diffuseColor.rgb,vFace),skinZ);
+   vec3 skin=riderSkin(diffuseColor.rgb);skin=mix(skin,uSkin,smoothstep(-.12,-.076,vFace.y)*(1.0-arm));
+   diffuseColor.rgb=mix(cloth,skin,skinZ);
    rwSkinZ=skinZ; rwBoot=boot; rwSole=sole; rwMetal=buckle;
    rwRough=mix(mix(mix(riderFabricRoughness(),0.34,boot),0.5,belt),0.85,sole);
  }`)
-    .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\n roughnessFactor=mix(rwRough,roughnessFactor,rwSkinZ); roughnessFactor=mix(roughnessFactor,.46,riderLip(vFace)*uRunway*.55*rwSkinZ);')
+    .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\n roughnessFactor=mix(rwRough,roughnessFactor,rwSkinZ); roughnessFactor=mix(roughnessFactor,.55,smoothstep(-.12,-.076,vFace.y)*rwSkinZ); roughnessFactor=mix(roughnessFactor,.46,riderLip(vFace)*uRunway*.55*rwSkinZ);')
     .replace('#include <metalnessmap_fragment>','#include <metalnessmap_fragment>\n metalnessFactor=max(metalnessFactor,rwMetal*0.85);')
     .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\n normal=normalize(mix(riderFabricNormal(nonPerturbedNormal,vBind,0.0),normal,max(rwSkinZ,rwBoot)));');
   };
@@ -653,7 +657,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform vec3 uHair;')
     .replace('#include <map_fragment>',`#include <map_fragment>
  float sourceShade=clamp(dot(diffuseColor.rgb,vec3(0.2126,0.7152,0.0722))/${HAIR_TEX_LUM.toFixed(3)},.48,1.45);
- diffuseColor.rgb=${brows?'(uHair*.72+vec3(.012))':'uHair'}*mix(1.0,sourceShade,${brows?'.40':'.44'});`);
+ diffuseColor.rgb=${brows?'(uHair*.72+vec3(.012))':'uHair'}*mix(1.0,sourceShade,${brows?'.40':'.16'});`);
   };
   if(strands){
    const original=mat.onBeforeCompile;
@@ -722,18 +726,19 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
  /* ------------------------------------------------------------------ one rider ------------------ */
  function build(kit,fit){
   const root=clone(kit.scene); root.name='rider-model';
-  const bones={}; let body=null,eyes=null,brows=null;
-  root.traverse(o=>{if(o.isBone)bones[o.name]=o;if(o.isSkinnedMesh){if(/superhero/i.test(o.name))body=o;else if(/^Eyes/.test(o.name))eyes=o;else if(/^Eyebrows/.test(o.name))brows=o;}
+  const bones={}; let body=null,eyes=null,brows=null,face=null;
+  root.traverse(o=>{if(o.isBone)bones[o.name]=o;if(o.isSkinnedMesh){if(/superhero/i.test(o.name))body=o;else if(/^Eyes/.test(o.name))eyes=o;else if(/^Eyebrows/.test(o.name))brows=o;else if(o.name==='Rider_Head')face=o;}
    if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=false;}});
   const u=riderUniforms(kit);
   const mats=[], depthMat=hairDepth(u);
   mats.push(depthMat);
   const own=(m,patch,...a)=>{const c=m.clone();patch(c,u,...a);mats.push(c);return c;};
   body.material=own(kit.materials.body,patchBody);
-  if(eyes){const m=new THREE.MeshPhysicalMaterial({map:kit.materials.eyes.map,color:0xffffff,roughness:.20,metalness:0,clearcoat:.7,clearcoatRoughness:.09,ior:1.4,side:THREE.DoubleSide});patchEyes(m,u);eyes.material=m;mats.push(m);}
+  if(face)face.material=own(kit.headAsset.mesh.material,patchStylizedHead,kit.headAsset,kit.body);
+  if(eyes){const m=new THREE.MeshPhysicalMaterial({map:kit.materials.eyes.map,color:0xffffff,roughness:.20,metalness:0,clearcoat:.7,clearcoatRoughness:.09,ior:1.4,side:THREE.DoubleSide});patchStylizedEyes(m,u,kit.headAsset,kit.body);eyes.material=m;mats.push(m);}
   if(brows){brows.material=own(kit.materials.brows,patchBrows);brows.castShadow=false;}
   const hb=bones.Head;
-  if(kit.lashGeo){const material=new THREE.MeshStandardMaterial({color:0x241914,roughness:.78});const lashes=new THREE.Mesh(kit.lashGeo,material);lashes.name='rider-eyelashes';lashes.frustumCulled=false;hb.add(lashes);mats.push(material);}
+  if(kit.lashGeo){const material=new THREE.MeshStandardMaterial({color:0x090605,roughness:.68});const lashes=new THREE.Mesh(kit.lashGeo,material);lashes.name='rider-eyelashes';lashes.frustumCulled=false;hb.add(lashes);mats.push(material);}
   /* helmet: built once per kit, dressed per rider */
   const hg=kit.helmetGeo;
   u.uHelm.value.set(hg.cx,hg.cy,hg.cz,0); u.uHelmR.value.set(hg.rx-0.006,hg.ry-0.006,hg.rz-0.006,hg.rimY(Math.PI*0.5));
@@ -746,21 +751,21 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
   const mixer=new THREE.AnimationMixer(root), actions={};
   const action=name=>{const c=kit.clips[CLIP[name]||name];if(!c)return null;if(!actions[name]){const a=mixer.clipAction(c);a.enabled=true;a.setEffectiveWeight(0);a.play();actions[name]=a;}return actions[name];};
   const dropHair=g=>g.traverse(o=>{if(!o.isMesh)return;if(o.userData.ownMat)o.material.dispose();if(o.userData.ownGeo)o.geometry.dispose();if(o.isInstancedMesh)o.dispose();});
-  const rig={kit,root,bones,body,eyes,brows,u,helmet,mixer,action,actions,mats,hair:null,outfit:null,outfitId:'riding',look:null,disposed:false};
+  const rig={kit,root,bones,body,eyes,brows,face,u,helmet,mixer,action,actions,mats,hair:null,outfit:null,outfitId:'riding',look:null,disposed:false};
 
   rig.setHair=(style,color,helmetOn)=>{
    if(rig.hair){hb.remove(rig.hair);dropHair(rig.hair);}
    rig.hair=null;
    let h=RIDER_HAIR.find(x=>x.id===style)||RIDER_HAIR[0];
-   const g=new THREE.Group();g.name='hair-'+h.id;
+   const g=new THREE.Group();g.name='hair-'+h.id;let nativeCap=false;
    /* space buns cannot go under a helmet: she wears them as one low bun until it comes off */
    if(helmetOn&&h.id==='buns')h=RIDER_HAIR.find(x=>x.id==='bun');
    const base=(kit.hair.Hair_Long||kit.hair[Object.keys(kit.hair)[0]]).material;   // the pack's strand texture
    const put=(geo,mat,o)=>{if(mat?.isMeshPhysicalMaterial)hairTangents(geo);const m=o&&o.inst?geo:new THREE.Mesh(geo,mat);m.userData.ownMat=true;m.userData.ownGeo=!!(o&&o.ownGeo);
     if(!(o&&o.noDepth))m.customDepthMaterial=depthMat;m.castShadow=true;m.receiveShadow=true;m.frustumCulled=false;g.add(m);return m;};
-   const addMesh=(name,dim)=>{const src=kit.hair[name];if(!src)return;const mat=hairMaterial(src.material);if(dim)mat.color.setScalar(dim);patchHair(mat,u,false);const geo=h.shape&&name===h.mesh?shapeHair(src.geometry,h.shape,kit.head):src.geometry;put(geo,mat,{ownGeo:geo!==src.geometry});};
+   const addMesh=(name,dim)=>{const src=kit.hair[name];if(!src)return;const mat=hairMaterial(src.material);if(dim)mat.color.setScalar(dim);patchHair(mat,u,false);const geo=h.shape&&name===h.mesh?shapeHair(src.geometry,h.shape,kit.head,THREE,kit):src.geometry;if(geo.userData.proceduralHair){nativeCap=true;patchHair(mat,u,false,false,true);}put(geo,mat,{ownGeo:geo!==src.geometry});};
    if(h.mesh)addMesh(h.mesh); if(h.extra)addMesh(h.extra);
-   if(h.scalp){
+   if(h.scalp&&!nativeCap&&h.detail!=='ringlets'){
     if(!h.mesh&&!['coils','croppedcoils','twists'].includes(h.detail)){const crownMat=hairMaterial(base);patchHair(crownMat,u,false);put(kit.gatheredCrown||(kit.gatheredCrown=gatheredCrown(THREE,kit.hair.Hair_Long.geometry,kit)),crownMat);}
     const cap=hairMaterial(base);patchScalp(cap,u);
     let scalp=scalpGeometry(kit,!h.mesh&&!['coils','croppedcoils','twists'].includes(h.detail)?'gathered':'back');
@@ -951,6 +956,22 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
      o.swimMove how much of that is a stroke rather than treading water, and o.climb (0..1) with
      o.climbPh, a climbing motion laid over the rest (the library has no climb). The clip weights
      always sum to one, or the mixer lets the T-pose show through the gap. */
+  const soleSamples=new WeakMap(),floorInverse=new THREE.Matrix4(),floorMesh=new THREE.Matrix4(),floorPoint=new THREE.Vector3();
+  const lowestSole=()=>{
+   const feet=[];rig.root.traverseVisible(m=>{if(m.isSkinnedMesh&&/Feet/.test(m.name))feet.push(m);});
+   if(!feet.length)feet.push(rig.body);
+   rig.root.updateWorldMatrix(true,true);floorInverse.copy(rig.root.matrixWorld).invert();let lowest=Infinity;
+   for(const mesh of feet){
+    const geo=mesh.geometry,p=geo.attributes.position;let ids=soleSamples.get(geo);
+    if(!ids){const used=geo.index?new Set(geo.index.array):new Set(Array.from({length:p.count},(_,i)=>i)),unique=new Set();let bottom=Infinity;for(const i of used)bottom=Math.min(bottom,p.getY(i));ids=[];
+     for(const i of used)if(p.getY(i)<=bottom+.025){const key=[p.getX(i),p.getY(i),p.getZ(i)].map(v=>Math.round(v*100000)).join(',');if(!unique.has(key)){unique.add(key);ids.push(i);}}
+     soleSamples.set(geo,ids);
+    }
+    mesh.skeleton.update();floorMesh.multiplyMatrices(floorInverse,mesh.matrixWorld);
+    for(const i of ids){mesh.getVertexPosition(i,floorPoint).applyMatrix4(floorMesh);lowest=Math.min(lowest,floorPoint.y);}
+   }
+   return Number.isFinite(lowest)?lowest:0;
+  };
   R.locomote=(dt,o)=>{
    o=o||{}; const sp=Math.abs(o.speed||0), back=(o.speed||0)<-0.05;
    if(mode!=='clip'){mode='clip';rig.mixer.stopAllAction();for(const k in rig.actions){rig.actions[k].play();rig.actions[k].setEffectiveWeight(0);}}
@@ -999,7 +1020,8 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    rig.root.updateMatrixWorld(true);
    syncBack();
    /* stand her on the ground: the group's origin at her feet */
-   R.g.position.set(-R.fitG.position.x,-R.fitG.position.y,-R.fitG.position.z);
+   const soleLift=ground>.999&&!(o.climb>.01)?-lowestSole()*R.fitG.scale.y:0;
+   R.g.position.set(-R.fitG.position.x,-R.fitG.position.y+soleLift,-R.fitG.position.z);
   };
   R.play=(name,opt2)=>{const a=rig.action(name);return a;};
   R.setLook=f=>rig.setLook(f);

@@ -80,5 +80,13 @@ export function install(G){
  }
  G.ui.shopTab({id:'tackcollection',label:'Tack boutique',render:s=>`<section class="tc-root" aria-label="Tack boutique">${renderBody(s)}</section>`,bind});
  G.tackCollection={equipSet:(collectionId,horseId)=>transactSet('equip',collectionId,horseId),removeSet:(collectionId,horseId)=>transactSet('remove',collectionId,horseId),open:()=>G.ui.openShop('tackcollection'),catalog:TACK_PIECES,buy:catalogId=>transact('buy',catalogId),equip:(catalogId,horseId)=>transact('equip',catalogId,horseId),unequip:(catalogId,horseId)=>transact('unequip',catalogId,horseId)};
- G.on('boot',()=>{if(new URLSearchParams(location.search).get('shop')==='tackcollection')G.ui.openShop('tackcollection');});
+ // First-time rider creation opens after boot. Keep this route pending until
+ // that save succeeds, so the creator cannot replace the requested collection.
+ let pendingBoutique=new URLSearchParams(location.search).get('shop')==='tackcollection';
+ const openPendingBoutique=()=>{
+  if(!pendingBoutique||!G.save.fresh()?.rider?.made)return;
+  pendingBoutique=false;G.ui.openShop('tackcollection');
+ };
+ G.on('boot',openPendingBoutique);
+ G.on('riderCreated',openPendingBoutique);
 }

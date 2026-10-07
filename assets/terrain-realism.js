@@ -72,7 +72,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v13-alpine';
+  material.customProgramCacheKey = () => 'terrain-biomes-v14-countryside';
   material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0]};
   material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
@@ -225,6 +225,21 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       float marsh  = 1.0-smoothstep(76.0,124.0, length(p-vec2( 310.0, 300.0))+ecoB);
       float tundra = 1.0-smoothstep(80.0,128.0, length(p-vec2(-300.0,-320.0))+ecoB*0.85+ecoA*0.40);
       float ochre  = 1.0-smoothstep(80.0,128.0, length(p-vec2(-330.0, 300.0))+ecoA*0.90+ecoB*0.35);
+      #ifdef OUTER_LANDSCAPE
+        // Continue each region into the foothills, blending away from the exact
+        // inner edge. This material is used only outside the riding terrain.
+        float outside=length(max(abs(p)-vec2(500.0),vec2(0.0)));
+        float extend=smoothstep(15.0,145.0,outside);
+        vec2 compass=normalize(p);
+        float cold=smoothstep(.25,.65,-compass.y)*(1.0-smoothstep(-.18,.22,compass.x));
+        float arid=smoothstep(.25,.75,-compass.x)*smoothstep(-.08,.38,compass.y);
+        canyon=max(canyon,extend*arid*.94);
+        snow=max(snow,extend*cold*(.38*smoothstep(.36,.72,stand*.55+macro*.45)+.35*smoothstep(18.0,42.0,hgt))*(1.0-smoothstep(.24,.75,grade)));
+        // The small in-basin river texture must not draw a stripe over every
+        // distant hillside. The real channel is continuous at the shared edge.
+        bank*=1.0-extend;wet*=1.0-extend;
+        canopy=max(canopy,extend*smoothstep(.50,.72,tNoise(p*.011+81.0))*(1.0-snow)*(1.0-arid)*.68);
+      #endif
       float quarters = amber+marsh+tundra+ochre;
 
       /* Fifteen texture fetches a pixel, everywhere, was this shader's real cost: forest floor,

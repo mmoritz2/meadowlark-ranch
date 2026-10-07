@@ -60,7 +60,7 @@ Open **Menu → Tack boutique** or **Shop → Tack → Tack boutique** to choose
 pieces with earned coins, and equip or move owned pieces between horses. The
 boutique's **Try on in 3D** link keeps the selected horse. The standalone fitting
 room is `tack-studio.html?horse=white-western&collection=rainbow` and includes all
-70 equine roster identities; dragons keep their existing equipment path.
+73 equine roster identities; dragons keep their existing equipment path.
 
 The collection renderer fits the detailed Bay Sporthorse, White Western, Bay
 Western and their native breed variants from the actual body and skeleton.

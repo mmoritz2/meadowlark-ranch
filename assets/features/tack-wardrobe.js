@@ -12,9 +12,9 @@
    and strip, market stall, English/Western saddles and headstalls) is inline in ranch3d.html
    because the boot pass pays tack rewards before any package installs. */
 import {buildHair} from '../rider-hair.js';   // the old sculpt's hair, for the fallback rider only
-import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=lashes-20261007';
-import {outfitPalette} from '../rider-clothes.js?v=runway-20261006';
-import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=hair-20261006';
+import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=artist-riders-20261007';
+import {outfitPalette} from '../rider-clothes.js?v=artist-riders-20261007';
+import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=artist-riders-20261007';
 export const id='tack-wardrobe';
 export function install(G){
  const {$,toast,THREE}=G;
@@ -172,8 +172,11 @@ export function install(G){
  function finishCreator(v){let first=false;
   G.save.sync(s=>{s.playerName=v||s.playerName||RIDER_NAMES[Math.floor(Math.random()*RIDER_NAMES.length)];if(!s.rider.made)first=true;s.rider.made=true;
    if(!s.tw.starter){s.tw.starter=1;s.tack=s.tack||[];const g=G.horse.genGear('Common','saddle',{style:'english'});g.name='Grandma\'s Old Saddle';s.tack.push(g);const h=s.horses[G.horse.rideIdx()];if(h){h.gear=h.gear||{};if(!h.gear.saddle)h.gear.saddle=g.id;}}});
+  const saved=G.save.fresh();
+  if(!saved?.rider?.made){toast('Your rider could not be saved. Please try again.');return;}
   G.horse.refreshTack();G.horse.attachTack();G.horse.dressSaddle();applyLocal();G.hidePanels();G.sChime();
   toast(first?'🐴 Welcome, '+(G.net.myName())+'! Grandma\'s old saddle is on your horse — the Tack tab will show you more.':'Saved. 🧢');
+  if(first)G.run('riderCreated',{name:saved.playerName});
  }
  /* ---- the Character screen ---------------------------------------------------------------
     The riding game this one is modelled on dresses its rider on one full screen: the rider

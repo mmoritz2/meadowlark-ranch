@@ -28,7 +28,7 @@ const check=(value,message)=>{assert(value,message);checks++;};
  }finally{global.fetch=originalFetch;}
  check(fetches.length===2,'reads shared artist identity and native variant manifests');
  const rows=[registerRosterPreviews,registerNewBreedPreviews,registerClubHorsePreviews,registerMarketHorsePreviews].flatMap(register=>register(library)),options=S.studioHorseOptions(library.manifest),keys=new Set(options.map(x=>x.key));
- check(options.length===70,'all 43 manifest equines and 27 live feature aliases available');
+ check(options.length===73,'all 43 manifest equines and 30 live feature aliases available');
  check(options[0].key==='bay-sporthorse-native','detailed Bay Sporthorse is first/default');
  check(keys.has('white-western')&&keys.has('bay-western'),'both Western originals are explicit options');
  check(options.slice(0,3).every(x=>x.group==='Original horses'),'originals are grouped together');
@@ -54,6 +54,21 @@ const check=(value,message)=>{assert(value,message);checks++;};
  const newRows=registerNewBreedPreviews(library);newRows[0][7].body='tampered';check(registerNewBreedPreviews(library)[0][7].body==='palomino','preview row copies cannot alter game catalog');
  check(['tidewalker','alicorn','lumen','emberfriesian','larksong','snowlark'].every(key=>keys.has(key)),'reward, season, club and summon horse identities included');
  check(library.profile('alicorn').nativeRosterAppearance.wings&&library.profile('larksong').nativeRosterAppearance.horn&&library.profile('lumen').nativeRosterAppearance.coat==='moonlit','remaining provider fantasy traits preserved');
+ const clubRows=registerClubHorsePreviews(library);
+ check(clubRows.map(row=>row[0]).join(',')==='emberfriesian,moonveil,stormglass,rosebloom,larksong','preview shares all four current club rewards and photo prize');
+ for(const [id,name,base,body,mane,markCol,size] of [
+  ['moonveil','Moonveil Andalusian','grey','#d9dbeb','#4d497a','#dae7ff',1.02],
+  ['stormglass','Stormglass Arabian','sunset','#182932','#93b5c6','#69dbc9',1],
+  ['rosebloom','Rosebloom Gypsy Vanner','vanner','#ead5d0','#75445f','#abc58e',1.06],
+ ]){
+  const row=clubRows.find(row=>row[0]===id),profile=library.profile(id),appearance=profile.nativeRosterAppearance;
+  check(keys.has(id)&&options.find(option=>option.key===id).group==='Fantasy horses'&&row[1]===name&&row[7].body===base,'new club identity and authored foundation retained: '+id);
+  check(profile.nativeRosterColors.body===body&&profile.nativeRosterColors.mane===mane&&appearance.coat===id&&appearance.mark==='none'&&appearance.markCol===markCol,'new club coat, mane and marking colors retained: '+id);
+  check(appearance.size===size&&appearance.glow&&appearance.club&&appearance.exclusive==='club'&&appearance.src==='club'&&appearance.family==='fantasy','new club fantasy and reward-only traits retained: '+id);
+ }
+ check(clubRows[0][7].description.includes('glowing forehead crest')&&clubRows[0][7].family==='fantasy','updated Ember Friesian appearance metadata retained');
+ clubRows[1][7].coat='tampered';check(registerClubHorsePreviews(library)[1][7].coat==='moonveil','preview row copies cannot mutate shared club rewards');
+
  const {nativeHorseSpeedLimits}=await import(asset('native-horse-motion.js'));
  for(const key of ['bay-sporthorse-native','white-western','bay-western','fjord','opaline']){
   const p=library.profile(key),cap={...nativeHorseSpeedLimits(p,p.fitScale),supportedModes:Object.keys(p.nativeGaits),canGallop:!!p.nativeGaits.gallopLeft,canJump:!!p.nativeJump};

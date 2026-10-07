@@ -1,4 +1,4 @@
-import {DISPLAY_REIN_COMPONENTS} from './native-rider.js?v=native-tack-reins-20261007';
+import {DISPLAY_REIN_COMPONENTS} from './native-rider.js?v=tack-store-live-20261007';
 /* Fitted collection tack. Every design is geometry, cloth and hardware; the
  * horse's hidden native rig keeps its seat/IK contacts. Equipped pieces
  * share the existing skin, weights and animations without altering any bones.

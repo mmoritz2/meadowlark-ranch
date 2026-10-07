@@ -1,6 +1,6 @@
 /* Small, independently selectable pieces, fitted to the shared rider skeleton.
    Every mesh belongs to one rider; switching or removing a piece frees its resources. */
-import {scalpPoint} from './rider-hairstyles.js?v=hair-20261006';
+import {scalpPoint} from './rider-hairstyles.js?v=artist-riders-20261007';
 import {surfaceSampler} from './rider-fit.js?v=art-20261005';
 const item=(id,label,col)=>({id,label,col});
 export const RIDER_ACCESSORIES={
@@ -22,7 +22,7 @@ export function buildAccessories(THREE,kit,bones,fit,garments=[],parent=null){
  const star=(size)=>{const s=new THREE.Shape();for(let i=0;i<10;i++){const a=i*Math.PI/5+Math.PI/2,r=i%2?size*.44:size,x=Math.cos(a)*r,y=Math.sin(a)*r;i?s.lineTo(x,y):s.moveTo(x,y);}s.closePath();return new THREE.ExtrudeGeometry(s,{depth:.002,bevelEnabled:false});};
  if(fit.eyewear!=='none'){
   const id=fit.eyewear,g=attach('eyewear','Head'),record=RIDER_ACCESSORIES.eyewear.find(x=>x.id===id),metal=id==='round'||id==='aviator',mat=material(record.col,metal);
-  const y=H.browTop-.022,z=H.cz+H.rz*.84+.010,cx=H.rx*.48;
+  const y=H.eyeY??H.browTop-.022,z=H.cz+H.rz*.84+.010,cx=H.rx*.48;
   const shaded=id==='aviator'||id==='sport',lens=new THREE.MeshStandardMaterial({color:shaded?'#293b42':'#b7d4d3',roughness:.17,metalness:shaded?.12:0,transparent:true,opacity:shaded?.86:.10,depthWrite:false,side:THREE.DoubleSide});
   for(const side of [-1,1]){
    const pts=[],rx=H.rx*.39,ry=id==='sport'?.018:id==='square'||id==='tortoise'?.020:.023;
@@ -43,7 +43,7 @@ export function buildAccessories(THREE,kit,bones,fit,garments=[],parent=null){
  if(fit.earrings!=='none'){
   const id=fit.earrings,g=attach('earrings','Head'),mat=material(RIDER_ACCESSORIES.earrings.find(x=>x.id===id).col,id!=='pearls'&&id!=='drops');
   for(const sd of [-1,1]){
-   const p=scalpPoint(THREE,kit,V(sd*(H.rx+.002),H.browTop-.072,H.cz-.002),.0008);
+   const p=scalpPoint(THREE,kit,V(sd*(H.rx+.002),(H.eyeY??H.browTop-.030)-.044,H.cz-.002),.0008);
    bead(g,p,id==='pearls'?.0055:.0036,mat);
    if(id==='hoops'||id==='silverhoops'){
     const geo=new THREE.TorusGeometry(.015,.0018,8,32);geo.rotateY(sd*.30);geo.translate(p.x,p.y-.013,p.z+.003);put(g,geo,mat);
@@ -58,12 +58,12 @@ export function buildAccessories(THREE,kit,bones,fit,garments=[],parent=null){
   // The chain rests on the outer garment, and the uncovered portion rests on
   // the neck. Radial surface hits stay outside; mixing front/back hits does not.
   const cloth=garments.filter(m=>!/Legs|Feet|Buttons/.test(m.name));
-  neckSurface=surfaceSampler(THREE,[...cloth,kit.skin]);
+  neckSurface=surfaceSampler(THREE,[...cloth,kit.skin,...(kit.headAsset?[kit.headAsset.mesh]:[])]);
   const cast=(a,y)=>{
    const dir=V(Math.sin(a),0,Math.cos(a)),origin=V(dir.x*.6,y,-.03+dir.z*.6);
    // Never pass through the neck to catch the garment on the opposite side.
    const near=p=>(p.x*dir.x+(p.z+.03)*dir.z)>.005&&Math.hypot(p.x,p.z+.03)<(y>ny+.02?.13:.25);
-   const clothing=y<ny+.008&&cloth.length?neckSurface.cast(origin,dir.clone().negate(),(p,src)=>src!==kit.skin&&near(p)):null;
+   const clothing=y<ny+.008&&cloth.length?neckSurface.cast(origin,dir.clone().negate(),(p,src)=>src!==kit.skin&&src!==kit.headAsset?.mesh&&near(p)):null;
    return clothing||neckSurface.cast(origin,dir.clone().negate(),near);
   };
   const point=(a,drop=.105)=>{

@@ -1,5 +1,15 @@
-The models, textures and animations in this folder are by Quaternius (https://quaternius.com),
+The original rider-f/rider-m, rider-hair, rider-anims, outfit-peasant and outfit-ranger
+models, textures and animations are by Quaternius (https://quaternius.com),
 released under CC0 1.0 Universal (public domain): https://creativecommons.org/publicdomain/zero/1.0/
 
 From the free [Standard] versions of: Universal Base Characters, Universal Animation Library,
 Modular Character Outfits - Fantasy. Cut down for the web by tools/asset-gen/build-rider.mjs.
+
+Stylized-f-head.glb and stylized-m-head.glb are cropped head/eye derivatives of the
+Blender Studio Human Base Meshes v1.4.1 stylized adult female and male meshes.
+Author: Julien Kaspar / Blender Studio and community contributors.
+License: CC0 1.0 Universal.
+Official source: https://www.blender.org/download/demo-files/#assets
+Source bundle: https://mirror.blender.org/demo/asset-bundles/human-base-meshes/human-base-meshes-bundle-v1.4.1.zip
+Runtime fitting, neck skinning, eyebrows, lashes, skin and eye materials are authored
+for Meadowlark Ranch; no Blender scripts or source rig are included.

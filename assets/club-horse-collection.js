@@ -1,0 +1,14 @@
+import {CLUB_HORSE_REWARDS} from './club-horses.js?v=club-horses-1';
+
+export function createClubHorseCollection(G,{esc,button,fmt}){
+ const colors={emberfriesian:'#e6ac65',moonveil:'#c7c9f5',stormglass:'#8fd9df',rosebloom:'#e4a5bb'};
+ const stats=[['speed','Speed'],['stamina','Stamina'],['jump','Jump'],['accel','Accel.'],['agility','Agility']];
+ const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='assets/club-horse-collection.css?v=club-horses-1';document.head.append(sheet);
+ return function collection(s){
+  const owned=new Set((s.horses||[]).map(h=>h.breed)),count=CLUB_HORSE_REWARDS.filter(h=>owned.has(h.id)).length,tokens=Math.max(0,Math.floor(Number(s.clubHorseVoucher)||0));
+  return '<section class="ch-horse-collection" aria-label="Club horse collection"><header class="ch-collection-intro"><div><span class="ch-eyebrow">CHAMPIONS COLLECTION · LEGENDARY</span><h2>Four legends. Your choice.</h2><p>One club horse token welcomes the horse you choose into your stable.</p></div><div class="ch-collection-totals"><span><b>'+count+' / 4</b> in your stable</span><span><b>'+fmt(tokens)+'</b> horse token'+(tokens===1?'':'s')+'</span></div></header><div class="ch-prize-grid">'+CLUB_HORSE_REWARDS.map(h=>{
+   const has=owned.has(h.id),extra='data-breed="'+esc(h.id)+'" '+(has||tokens<1?'disabled':'');
+   return '<article class="ch-prize-card" data-prize="'+esc(h.id)+'" style="--prize-color:'+colors[h.id]+'"><div class="ch-prize-image"><img src="assets/breed-thumbnails/'+esc(h.id)+'.webp?v=club-horses-1" alt="'+esc(h.description)+'" loading="lazy"><span class="ch-prize-badge '+(has?'owned':'')+'">'+(has?'In your stable':'Club exclusive')+'</span></div><div class="ch-prize-copy"><span class="ch-eyebrow">'+esc(h.strength)+'</span><h3>'+esc(h.name)+'</h3><p>'+esc(h.tagline||h.description)+'</p><dl aria-label="Base riding stats out of 10">'+stats.map(([key,label])=>'<div><dt>'+label+'</dt><dd>'+h.stats[key]+'<small>/10</small></dd></div>').join('')+'</dl><div class="ch-prize-actions"><a class="ch-btn" href="breeds.html?horse='+esc(h.id)+'&v=club-horses-1" target="_blank" rel="noopener" aria-label="Preview '+esc(h.name)+' in 3D">Preview in 3D</a>'+button('claim-horse',has?'In your stable':tokens>0?'Choose '+esc(h.name)+' · 1 token':'Requires 1 club horse token',extra,'gold')+'</div></div></article>';
+  }).join('')+'</div><footer class="ch-collection-how"><h3>Earn your choice with your club</h3><p>Finish in the top 50 real clubs and earn at least '+fmt(G.clubs.CHAMPION_MIN_SP||100)+' personal Star Points that week to qualify for a Champions chest. Each Champions chest has a 5% chance of a club horse token. Your saved tokens work for any of these four horses.</p>'+button('reward-tab','View weekly chests','data-reward-tab="weekly"')+'</footer></section>';
+ };
+}

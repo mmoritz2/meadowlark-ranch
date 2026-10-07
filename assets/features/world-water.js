@@ -178,13 +178,6 @@ export function install(G){
   t.wrapS=t.wrapT=THREE.RepeatWrapping;
   return t;
  })();
- const dropTex=canvasTex(32,64,(c,w,h)=>{
-  c.clearRect(0,0,w,h);
-  const g=c.createLinearGradient(0,0,0,h);
-  g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(0.3,'rgba(232,248,255,0.9)');
-  g.addColorStop(0.72,'rgba(206,238,255,0.6)');g.addColorStop(1,'rgba(255,255,255,0)');
-  c.fillStyle=g;c.fillRect(w*0.28,0,w*0.44,h);
- });
  const mistTex=canvasTex(64,64,(c,w,h)=>{
   const g=c.createRadialGradient(32,32,0,32,32,32);
   g.addColorStop(0,'rgba(255,255,255,0.86)');g.addColorStop(0.45,'rgba(255,255,255,0.3)');
@@ -743,55 +736,23 @@ export function install(G){
     boulder(bx,groundH(bx,z)-0.08,z,rr(0.35,0.95),rr(0.6,1.05));
    }
   }
-  /* Where it lands. The first version put a four-metre disc of darker water on the river here and
-     the disc showed its own outline from every angle — a perfect circle stamped on a ribbon reads
-     as a sticker, not a plunge pool. This is a span of the channel instead: churn strongest against
-     the near bank where the water actually arrives, fading to nothing upstream, downstream and out
-     across the middle, so it has no edge anywhere. */
+  // Churn at both landings uses the same lit foam and sky-tinted spray as
+  // Hollowpeak. No additive streaks remain lit after the surrounding world dims.
   {
-   const rows=[];
-   for(let i=0;i<=16;i++){
-    const t=i/16, x=FALL_X-6+t*12;
-    const a=Math.sin(Math.PI*t), z0=riverZ(x), l=riverLevel(x)+0.045;
-    rows.push({u:i*0.55,p:[[x,l,z0-5.0],[x,l,z0-2.4],[x,l,z0+1.2]],
-               c:[[a,a,a],[a*0.62,a*0.62,a*0.62],[0,0,0]]});
-   }
-   const pm=new THREE.MeshBasicMaterial({map:scroll(whiteTex.clone(),0.05,0.18),transparent:true,
-    opacity:0.6,depthWrite:false,side:THREE.DoubleSide,vertexColors:true,blending:THREE.AdditiveBlending});
-   pm.map.repeat.set(4,2);
-   P.plunge=band(rows,3,pm,'Water | falls plunge');
-   P.plunge.renderOrder=3;
-   const foam=W.waterfallArt.impact({x:FALL_X,y:lvl+.09,z:TOE_Z-.6,radius:2.4});scene.add(foam);
+   const foam=W.waterfallArt.impact({x:FALL_X,y:lvl+.09,z:TOE_Z-.6,radius:2.4});scene.add(foam);P.plunge=foam;
+   const shelf=groundH(FALL_X,SHELF_Z)+.09;
+   const upperFoam=W.waterfallArt.impact({x:FALL_X,y:shelf+.025,z:SHELF_Z,radius:1.7});scene.add(upperFoam);
+   P.fallEffects=W.waterfallArt.effects({x:FALL_X,z:LIP_Z+.55,top:lipY-.30,bottom:shelf,width:1.35,run:SHELF_Z-LIP_Z-.55,name:'Ribbon upper',counts:{falling:40,spray:64,mist:18}});scene.add(P.fallEffects.group);
+   P.toeEffects=W.waterfallArt.effects({x:FALL_X,z:TOE_Z-.6,top:lvl+.5,bottom:lvl+.09,width:1.7,run:0,name:'Ribbon toe',counts:{falling:0,spray:64,mist:18}});scene.add(P.toeEffects.group);
+   // Retain the old package-local layout sequence (drops, mist sites, phases).
+   for(let i=0;i<373;i++)rnd();
   }
-  /* falling strands that break off the sheet, and mist where it lands. The mist was three times
-     this strong to begin with and whited out half the frame — spray you cannot see the rock
-     through is fog, and the point of it is that you can see the rock through it. */
-  {
-   const DN=40, a=new Float32Array(DN*3), rows=[];
-   for(let i=0;i<DN;i++){
-    a[i*3]=rnd();a[i*3+1]=rr(0.34,0.66);a[i*3+2]=(lipY-shelfY)+rr(-0.3,0.4);
-    rows.push({x:FALL_X+rr(-1.7,1.7),y:lipY-0.4,z:LIP_Z+rr(0.4,1.9),sx:1,sy:1,sz:1,ry:rr(-0.25,0.25)});
-   }
-   const inject=sh=>{
-    sh.vertexShader='attribute vec3 aDrop; uniform float uT; varying float vD;\n'+
-     sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
-       float pp=fract(uT*aDrop.y+aDrop.x);
-       transformed.y-=pp*aDrop.z;
-       vD=sin(pp*3.14159)*0.9;`);
-    sh.fragmentShader='varying float vD;\n'+sh.fragmentShader
-     .replace('#include <dithering_fragment>','#include <dithering_fragment>\n gl_FragColor.a*=vD;');
-   };
-   inject.key='water-drop-v1';
-   const im=instance(new THREE.PlaneGeometry(0.15,1.3),
-    motionMat({map:dropTex,transparent:true,opacity:0.6,depthWrite:false,side:THREE.DoubleSide,
-     blending:THREE.AdditiveBlending},inject),rows,'Water | falls drops',false);
-   if(im){im.geometry.setAttribute('aDrop',new THREE.InstancedBufferAttribute(a,3));
-    im.renderOrder=3;im.frustumCulled=false;P.fallDrops=im;}
-   const mist=[];
-   for(let i=0;i<12;i++)mist.push({x:FALL_X+rr(-2.2,2.2),y:shelfY-rr(0,0.8),z:SHELF_Z+rr(-0.8,1.0),s:rr(0.8,1.5)});
-   for(let i=0;i<7;i++)mist.push({x:FALL_X+rr(-2.4,2.4),y:lvl+rr(0,0.5),z:TOE_Z+rr(-1.4,1.2),s:rr(0.9,1.6)});
-   P.fallMist=puffs(mist,1.7,1.2,'Water | falls mist',0.17);
-  }
+  P.excludesPlants=(x,z)=>z>64.5&&z<78&&Math.abs(x-FALL_X)<1.9+Math.max(0,(z-SHELF_Z)/(TOE_Z-SHELF_Z))*2.5;
+  const clearMatrix=new THREE.Matrix4(),hiddenMatrix=new THREE.Matrix4().makeScale(0,0,0);P.clearedCover=0;
+  scene.traverse(o=>{if(!o.isInstancedMesh||!['flora_tuft','flora_petal','flora_brack'].includes(o.name))return;let changed=false;
+   for(let i=0;i<o.count;i++){o.getMatrixAt(i,clearMatrix);if(P.excludesPlants(clearMatrix.elements[12],clearMatrix.elements[14])){o.setMatrixAt(i,hiddenMatrix);P.clearedCover++;changed=true;}}
+   if(changed)o.instanceMatrix.needsUpdate=true;
+  });
   /* A waterfall nobody can get to is scenery. This one goes on the map and on the fast-travel bar,
      and the arrival point is on the flat bank below it rather than halfway up the wall. */
   const ftAt=[FALL_X-7,zc-9.5];

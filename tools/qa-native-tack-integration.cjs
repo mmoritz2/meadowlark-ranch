@@ -190,6 +190,7 @@ function check(value,message){assert(value,message);assertions++;}
  original.attributes={position:{count:13895}};
  const lifecycle=[],rider={sk:null},fakeTHREE={Vector3:class{}};
  const bridgeContext=vm.createContext({THREE:fakeTHREE,CONTACTS:{},console,
+  createNativeTackModes:()=>({mode:'saddled',setMode(value){this.mode=value;return true;},inspect(){return {mode:this.mode};},barebackSeatLocal(){return null;},dispose(){nativeTack.visible=true;nativeOther.visible=false;}}),
   createNativeRiderReins:()=>{lifecycle.push('prepare');nativeTack.geometry=display;return {group:{visible:false},inspect(){return {};},setColor(color){lifecycle.push(['color',color]);},update(){lifecycle.push('update');},dispose(){lifecycle.push('dispose');nativeTack.geometry=original;}};}
  });
  vm.runInContext(bridgeBody,bridgeContext);

@@ -1,4 +1,6 @@
 import {createEquineFantasyCoat,createEquineWingLibrary,EQUINE_FANTASY_APPEARANCE,fantasyThemes} from './equine-fantasy.js?v=artist-breeds-1';
+import {createEmberFriesian} from './ember-friesian.js?v=ember-friesian-1';
+import {createClubPrizeHorse,CLUB_PRIZE_APPEARANCES} from './club-prize-horses.js?v=club-prize-horses-1';
 
 // Fantasy adornments fit the cloned native horse, leaving its skin bindings,
 // gait tracks, groom bones and Western tack intact. Creator dragons do not use
@@ -8,11 +10,19 @@ function appearanceFor(profile,key,overrides={}){
  const flags=profile.nativeRosterAppearance||{},registered=NATIVE_HORSE_FANTASY[key];
  const theme=flags.theme||(fantasyThemes().includes(flags.coat)?flags.coat:undefined);
  const config={...registered,...flags,...(theme?{theme}:{}),mane:flags.maneCol||flags.mane||registered?.mane,...overrides};
+ // Existing club prizes were saved with coat:"fire". Their breed identity now
+ // supplies the signature artwork; an explicitly selected different coat still
+ // wins, as do the normal saved body/mane/tail dyes applied after this layer.
+ config.ember=key==='emberfriesian'&&(config.theme==='fire'||(!Object.prototype.hasOwnProperty.call(overrides,'theme')&&!config.theme));
+ // Each club champion has a unique theme token. Explicitly selecting another
+ // coat (including a plain coat) disables its signature; saved dyes apply last.
+ const clubPrize=CLUB_PRIZE_APPEARANCES[key];
+ config.clubPrize=clubPrize&&(config.theme===key||(!Object.prototype.hasOwnProperty.call(overrides,'theme')&&!config.theme))?key:null;
  // A naturally marked horse that inherits wings keeps its authored coat.
  if(!registered&&!flags.horn&&!flags.wings&&!flags.dragon&&!theme){delete config.body;delete config.mane;}
  return config;
 }
-const appearanceSignature=(key,c)=>JSON.stringify([key,c.theme||null,!!c.horn,!!c.wings,!!c.dragon,c.body||null,c.mane||null]);
+const appearanceSignature=(key,c)=>JSON.stringify([key,c.theme||null,!!c.horn,!!c.wings,!!c.dragon,c.body||null,c.mane||null,!!c.ember,c.clubPrize||null]);
 const sharedWingLibraries=new WeakMap();
 function defaultWings(THREE){
  let library=sharedWingLibraries.get(THREE);
@@ -28,7 +38,7 @@ function defaultWings(THREE){
 export function createNativeHorseFantasy({THREE,inst,key=inst?.key,wingLibrary,appearanceOverride}={}){
  if(!THREE||!inst?.profile?.nativeRoster||inst.profile.nativeKind!=='horse')return null;
  const config=appearanceFor(inst.profile,key,appearanceOverride);
- if(!config.body&&!config.theme&&!config.horn&&!config.wings&&!config.dragon)return null;
+ if(!config.body&&!config.theme&&!config.horn&&!config.wings&&!config.dragon&&!config.ember&&!config.clubPrize)return null;
  if(inst.nativeFantasy)return inst.nativeFantasy;
  const scene=inst.scene,skin=inst.skin,bones=inst.bones||skin.skeleton.bones;
  const bone=name=>bones.find(b=>b.name===name),head=bone(inst.profile.nativeHeadBone||'head_019');
@@ -39,8 +49,12 @@ export function createNativeHorseFantasy({THREE,inst,key=inst?.key,wingLibrary,a
  // later scales the entire native rig, including tack and these attachments.
  const withers=Math.max(.65,(Number(inst.profile.withersM)||1.65)/Math.abs(scene.scale.y||1));
  const original=skin.material,materials=[],geometry=[],extras=[];
- let material=original;
- if(config.theme){
+ let material=original,ember=null,clubPrize=null;
+ if(config.ember){
+  ember=createEmberFriesian({THREE,inst});material=ember.material;
+ }else if(config.clubPrize){
+  clubPrize=createClubPrizeHorse({THREE,inst,id:config.clubPrize});material=clubPrize.material;
+ }else if(config.theme){
   material=createEquineFantasyCoat(THREE,original,config.theme,!!config.dragon);
   if(config.dragon){
    // This horse's UV islands cover less of the atlas than the older body did.
@@ -58,6 +72,7 @@ export function createNativeHorseFantasy({THREE,inst,key=inst?.key,wingLibrary,a
  }
  const tintedHair=new Set(),hairRest=[];
  scene.traverse(mesh=>{
+  if(ember||clubPrize)return;
   if(!mesh.isSkinnedMesh||mesh===skin||mesh.geometry.attributes.position.count!==inst.profile.hairVertexCount)return;
   for(const m of Array.isArray(mesh.material)?mesh.material:[mesh.material]){
    if(tintedHair.has(m))continue;tintedHair.add(m);
@@ -65,7 +80,7 @@ export function createNativeHorseFantasy({THREE,inst,key=inst?.key,wingLibrary,a
    if(config.mane)m.color.set(config.mane);m.roughness=Math.max(.38,m.roughness||.5);m.needsUpdate=true;
   }
  });
- const appearance={...config,material,update(time){material.userData.update?.(time);}};
+ const appearance={...config,material,ember,clubPrize,update(time,dt,state){material.userData.update?.(time);ember?.update(dt,state);clubPrize?.update(dt,state);}};
  let pair=null,wingMount=null,horn=null;
  if(config.wings&&spine){
   wingLibrary=wingLibrary||defaultWings(THREE);pair=config.dragon?wingLibrary.buildDragonWings():wingLibrary.buildPegasusWings();
@@ -126,9 +141,10 @@ export function createNativeHorseFantasy({THREE,inst,key=inst?.key,wingLibrary,a
  const controller={pair,horn,wingMount,extras,appearance,signature:appearanceSignature(key,config),
   get open(){return open;},get openness(){return openness;},get beat(){return beat;},
   toggle(){open=!open;this.update(0);},setOpen(value){open=!!value;this.update(0);},
-  update(dt,{flying=false,power=.65,grounded=true,intensity=0}={}){
+  update(dt,state={}){
    if(disposed)return;
-   dt=Math.max(0,Number(dt)||0);time+=dt;appearance.update(time);
+   const {flying=false,power=.65,grounded=true,intensity=0}=state;
+   dt=Math.max(0,Number(dt)||0);time+=dt;appearance.update(time,dt,state);
    if(!pair)return;
    const target=open?.85:flying?1:!grounded?.65:(config.dragon?.02:.04)+Math.max(0,Math.min(1,intensity))*(config.dragon?.08:.22);
    const mix=dt>0?1-Math.exp(-dt*4):1;openness+=(target-openness)*mix;
@@ -137,7 +153,8 @@ export function createNativeHorseFantasy({THREE,inst,key=inst?.key,wingLibrary,a
   },
   dispose(){if(disposed)return;disposed=true;wingLibrary?.disposePair(pair);wingMount?.removeFromParent();horn?.removeFromParent();for(const o of extras)o.removeFromParent();for(const g of geometry)g.dispose();for(const m of materials)m.dispose();
    for(const entry of hairRest){entry.material.color.copy(entry.color);entry.material.roughness=entry.roughness;}
-   if(material!==original){if(skin.material===material)skin.material=original;material.dispose();const i=inst.materials?.indexOf(material);if(i>=0)inst.materials.splice(i,1);}
+   ember?.dispose();clubPrize?.dispose();
+   if(!ember&&!clubPrize&&material!==original){if(skin.material===material)skin.material=original;material.dispose();const i=inst.materials?.indexOf(material);if(i>=0)inst.materials.splice(i,1);}
   },
  };
  controller.update(0);inst.nativeFantasy=controller;inst.fantasyAppearance=appearance;

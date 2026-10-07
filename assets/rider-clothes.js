@@ -67,6 +67,18 @@ float riderFabricRoughness(){
  float d=uClothes.x;
  return d>2.5&&d<3.5||d>11.5&&d<12.5?0.96:d>3.5&&d<4.5||d>9.5&&d<10.5?0.82:d>7.5&&d<8.5?0.66:0.90;
 }
+vec3 riderCableKnit(vec3 p){
+ // Paired yarn ropes cross in each repeat, with alternating raised strands.
+ // On the sleeves the repeat follows the arm rather than the torso's vertical.
+ float arm=smoothstep(.16,.23,abs(p.x));vec2 uv=mix(p.xy,vec2(p.y,abs(p.x)),arm);
+ float lane=mod(uv.x+.014,.028)-.014,phase=uv.y*146.1206;
+ float a=exp(-pow((lane-.006*cos(phase))/.0032,2.0));
+ float b=exp(-pow((lane+.006*cos(phase))/.0032,2.0));
+ float cable=max(a*(.72+.28*sin(phase)),b*(.72-.28*sin(phase)));
+ float rib=pow(.5+.5*cos(uv.x*224.3995),8.0);
+ float yarn=clothWave(uv.x+sin(uv.y*520.0)*.0011,1550.0)*clothWave(uv.y,1450.0);
+ return vec3(cable,rib,yarn);
+}
 float riderFabricHeight(vec3 p,float trousers){
  float d=uClothes.x,ax=abs(p.x),front=smoothstep(0.025,0.055,p.z);
  float weave=clothWave(p.x+p.z*.55,6000.0)*clothWave(p.y,5700.0)*0.00006;
@@ -75,13 +87,12 @@ float riderFabricHeight(vec3 p,float trousers){
   seams+=clothBand(p.y,uZ1.z-0.025,0.004)*0.00025;
   seams+=clothBand(ax,uZ2.x-0.035,0.004)*0.00025;
   if(d>2.5&&d<3.5){
-   float cable=clothWave(p.x+0.012*sin(p.y*47.0),145.0);
-   weave+=cable*cable*0.00025+clothWave(p.x,370.0)*clothWave(p.y,290.0)*0.00008;
+   vec3 knit=riderCableKnit(p);
+   weave+=knit.x*.00085+knit.y*.00010+knit.z*.000035;
   }
   if(d>5.5&&d<6.5){float q=(.5+.5*clothWave(p.x+p.y+.0125,125.6637))*(.5+.5*clothWave(p.x-p.y+.0125,125.6637));weave+=q*.00065;}
   if(d>3.5&&d<5.5||d>8.5&&d<9.5||d>12.5&&d<13.5){
    seams+=clothBand(ax,0.006,0.002)*front*0.0012;
-   if(d>3.5&&d<4.5||d>12.5&&d<13.5)seams+=clothBox(vec2(ax,p.y),vec2(.079,uZ1.x-.205),vec2(.034,.044))*front*.0015;
   }
  }else{weave+=clothWave(p.x+p.y,1900.0)*.00013;seams+=clothBand(p.z,-.012,.003)*.0008;}
  return weave+seams;
@@ -101,9 +112,8 @@ vec3 riderFabric(vec3 base,vec3 p){
   base=mix(base,cream,0.06*max(clothLine(p.x*31.2,0.014),clothLine(y*31.2,0.014)));
  }else if(d<2.5&&d>1.5){base=mix(base,ink,smoothstep(0.52,0.60,fract(y*25.0))*0.85);
  }else if(d<3.5&&d>2.5){
-  float knit=clothWave(p.x+sin(y*260.0)*.004,340.0)*clothWave(y,310.0);
-  float cable=pow(0.5+0.5*cos(p.x*130.0+sin(y*58.0)*1.8),6.0);
-  base*=0.93+0.035*knit+0.065*cable;
+  vec3 knit=riderCableKnit(p);
+  base*=.92+.085*knit.x+.012*knit.y+.012*knit.z;
  }else if(d<4.5&&d>3.5){
   base*=0.97+0.025*clothWave(p.x+y*.95,3400.0);
 
@@ -192,4 +202,4 @@ vec3 riderBreeches(vec3 base,vec3 p){
  return base;
 }`;
 
-export {tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-tailoring.js?v=runway-20261006';
+export {tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-tailoring.js?v=artist-riders-20261007';

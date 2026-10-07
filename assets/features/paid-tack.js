@@ -23,8 +23,11 @@ export function install(G){
   if(!token(item.paidAccountId)||!orderId(item.paidEntitlementId)||!getTackPiece(item.catalogId)?.premiumProduct)return;
   const key=[item.paidAccountId,String(item.paidEntitlementId),item.catalogId].join('|'),list=Array.isArray(s.paidTackArchive)?s.paidTackArchive:[];
   const old=list.find(a=>a?.key===key),live=s.horses||[],archived=(Array.isArray(s.paidHorseArchive)?s.paidHorseArchive:[]).filter(a=>a?.accountId===item.paidAccountId&&a.horse&&!live.some(h=>h.id===a.horse.id)).map(a=>a.horse);
-  const wearers=[...live,...archived].filter(h=>h.gear?.[item.slot]===item.id).map(h=>h.id);
-  const entry={key,accountId:item.paidAccountId,entitlementId:String(item.paidEntitlementId),catalogId:item.catalogId,inventoryId:item.id,wearers:wearers.length?wearers:old?.wearers||[]};
+  const horses=[...live,...archived],wearers=horses.filter(h=>h.gear?.[item.slot]===item.id).map(h=>h.id);
+  // An existing horse's empty slot is an intentional removal. Only remember
+  // absent horses whose current equipment cannot be inspected yet.
+  const absentWearers=(Array.isArray(old?.wearers)?old.wearers:[]).filter(id=>!horses.some(h=>h.id===id));
+  const entry={key,accountId:item.paidAccountId,entitlementId:String(item.paidEntitlementId),catalogId:item.catalogId,inventoryId:item.id,wearers:wearers.length?wearers:absentWearers};
   s.paidTackArchive=[...list.filter(a=>a?.key!==key),entry];
  }
  function repair(s){

@@ -3,7 +3,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import {createBreedLibrary} from './breed-models.js?v=native-tack-fit-1';
 import {initGameHero,tickGameHero,startGameHeroJump,disposeMountedRig,getNativeHorseCapabilities,finishNativeHorseGrooms} from './game-hero-horse.js?v=native-tack-optional-20261007';
-import {createTackCollection} from './tack-collection-models.js?v=native-tack-reins-20261007';
+import {createTackCollection} from './tack-collection-models.js?v=tack-store-live-20261007';
 import {TACK_COLLECTIONS,TACK_PIECES,TACK_SLOTS,getTackPiece} from './tack-collection.mjs?v=native-tack-optional-20261007';
 import {premiumTackSet} from './premium-tack.mjs';
 import {registerRosterPreviews} from './features/horse-roster.js?v=native-tack-fit-1';

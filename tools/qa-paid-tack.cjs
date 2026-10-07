@@ -4,7 +4,7 @@ const clone=x=>JSON.parse(JSON.stringify(x)),root=path.resolve(__dirname,'..');
 const source=fs.readFileSync(path.join(root,'assets/features/paid-tack.js'),'utf8').replace(/^import .*;\n/gm,'').replace(/^export /gm,'');
 (async()=>{
  const catalog=await import('../assets/tack-collection.mjs'),access=await import('../assets/paid-tack-access.mjs'),{PREMIUM_TACK_SETS}=await import('../assets/premium-tack.mjs');
- const {TACK_PIECES,TACK_SLOTS,getTackPiece,RAINBOW_TACK_PRODUCT,ownedTackPiece,buyTackPiece,equipTackPiece}=catalog;
+ const {TACK_PIECES,TACK_SLOTS,getTackPiece,RAINBOW_TACK_PRODUCT,ownedTackPiece,buyTackPiece,equipTackPiece,unequipTackPiece}=catalog;
  const pieces=TACK_PIECES.filter(p=>p.premiumProduct===RAINBOW_TACK_PRODUCT);assert.equal(pieces.length,4);
  const horse=id=>({id,name:id===1?'Clover':'Maple',breed:'bay',gear:{},bareback:true});
  const ordinary=(id='ordinary-saddle',slot='saddle')=>({id,slot,name:'Ordinary '+slot,rarity:'Common',primary:'speed',bonus:{speed:1},lvl:1,merged:0});
@@ -35,6 +35,19 @@ const source=fs.readFileSync(path.join(root,'assets/features/paid-tack.js'),'utf
  f.advance(119999,false);assert(owned(f).every(t=>f.G.paidTack.authorized(t)));f.advance(1,false);assert(owned(f).every(t=>!f.G.paidTack.authorized(t)),'TTL closes exactly at 120 seconds');f.focus();assertRevoked(f,'TTL focus');f.receive(account());f.equipAll();f.advance(120001);assertRevoked(f,'TTL timer');
  f.receive(account());f.equipAll();f.receive(account('alice',[]));assertRevoked(f,'refund');f.receive(account());f.equipAll();f.receive({...account(),wallet:{held:true}});assertRevoked(f,'held wallet');f.receive(account());f.equipAll();f.setCurrent(null);f.tick();assertRevoked(f,'session identity lost');f.receive(account());f.equipAll();f.setCurrent(account('bob'));f.focus();assertRevoked(f,'commerce account changed before event');
  console.log('PASS account isolation, 120-second active TTL, delayed timer/focus/tick expiry, refund, held wallet and current-account identity checks');
+
+ const removedByPlayer=fixture();removedByPlayer.receive(account());removedByPlayer.equipAll();removedByPlayer.receive(null);removedByPlayer.receive(account());
+ assert.equal(Object.keys(removedByPlayer.disk.horses[0].gear).length,4,'first reconnection restores the previously worn set');
+ removedByPlayer.G.save.sync(s=>{for(const piece of pieces)assert(unequipTackPiece(s,piece.id,1).ok);});
+ assert.equal(Object.keys(removedByPlayer.disk.horses[0].gear).length,0,'the player removes every paid piece');
+ for(let i=0;i<2;i++){removedByPlayer.receive(null);removedByPlayer.receive(account());assert.equal(Object.keys(removedByPlayer.disk.horses[0].gear).length,0,'reconnection must respect explicit unequip after earlier restoration');}
+ assert.equal(owned(removedByPlayer).length,4,'unequipped paid pieces remain owned in the locker');
+ const absentHorse=fixture();absentHorse.receive(account());absentHorse.equipAll();absentHorse.receive(null);
+ absentHorse.edit(s=>{s.horses=s.horses.filter(h=>h.id!==1);});absentHorse.receive(account());absentHorse.receive(null);
+ assert.equal(absentHorse.disk.paidTackArchive.filter(a=>a.wearers.includes(1)).length,4,'a temporarily absent horse keeps its remembered outfit');
+ absentHorse.edit(s=>{s.horses.push(horse(1));});absentHorse.receive(account());
+ assert.equal(Object.keys(absentHorse.disk.horses.find(h=>h.id===1).gear).length,4,'a returning horse still restores its earlier outfit');
+ console.log('PASS explicit unequip stays removed across repeated reconnects; absent-horse outfit restoration remains intact');
 
  const forged={id:'forged-paid',catalogId:pieces[0].id,slot:pieces[0].slot,paidProduct:RAINBOW_TACK_PRODUCT,paidAccountId:'alice',paidEntitlementId:'order-a',bonus:{speed:900}};
  const saved=initial();saved.tack.push(forged);saved.horses[0].gear.saddle=forged.id;saved.paidTackArchive=[{key:'alice|fake|'+pieces[1].id,accountId:'alice',entitlementId:'fake',catalogId:pieces[1].id,inventoryId:'archive-forged',wearers:[1]}];

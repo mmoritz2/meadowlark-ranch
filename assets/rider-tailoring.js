@@ -8,7 +8,9 @@ export function garmentCut(o){
  const polo=['polo','sportpolo','rugby'].includes(o.id),sport=['eventer','team','chevron','raincoat','sweatshirt','summit'].includes(o.id);
  const knit=o.cut==='sweater',jacket=o.cut==='jacket'||o.cut==='coat',short=o.cut==='short',tee=['breton','daisytee'].includes(o.id);
  const collared=formal||vest||polo||sport||jacket||(!knit&&!tee);
- return {formal,vest,cardigan,polo,sport,knit,jacket,short,tee,collared,
+ const family=formal?'competition':vest?'vest':cardigan?'cardigan':polo?'polo':sport?'technical':knit?'knit':jacket?'overshirt':tee?'tee':'blouse';
+ const drape={competition:[.002,.003,.003,.0008],vest:[.008,.010,.008,.0012],cardigan:[.009,.014,.011,.0019],polo:[.002,.003,.001,.0011],technical:[.002,.005,.003,.0010],knit:[.007,.012,.010,.0020],overshirt:[.007,.011,.009,.0016],tee:[.003,.006,.003,.0013],blouse:[.005,.011,.007,.0018]}[family];
+ return {formal,vest,cardigan,polo,sport,knit,jacket,short,tee,collared,family,drape,
   hem:formal?(o.cut==='coat'?-.115:-.072):cardigan?-.135:vest?-.045:jacket?-.060:knit?-.029:tee?-.018:.010,
   ease:vest?.014:formal?.008:knit?.012:jacket?.012:.005};
 }
@@ -21,7 +23,7 @@ function normals(geo){
 // coarse body's planar triangles. The shared refined skin is never mutated.
 function clothSkin(THREE,kit){
  if(kit.clothSkin)return kit.clothSkin.clone();
- const g=kit.skin.geometry,idx=g.index,attrs=g.attributes,P=[],N=[],U=[],J=[],W=[];
+ const g=(kit.garmentSkin||kit.skin).geometry,idx=g.index,attrs=g.attributes,P=[],N=[],U=[],J=[],W=[];
  const read=i=>({p:[attrs.position.getX(i),attrs.position.getY(i),attrs.position.getZ(i)],n:[attrs.normal.getX(i),attrs.normal.getY(i),attrs.normal.getZ(i)],uv:[attrs.uv.getX(i),attrs.uv.getY(i)],weights:(()=>{const w=new Map();for(const get of ['getX','getY','getZ','getW']){const j=attrs.skinIndex[get](i);w.set(j,(w.get(j)||0)+attrs.skinWeight[get](i));}return w;})()});
  const mid=(a,b)=>{const w=new Map();for(const [j,v]of a.weights)w.set(j,v*.5);for(const [j,v]of b.weights)w.set(j,(w.get(j)||0)+v*.5);return {p:a.p.map((v,k)=>(v+b.p[k])*.5),n:a.n.map((v,k)=>(v+b.n[k])*.5),uv:a.uv.map((v,k)=>(v+b.uv[k])*.5),weights:w};};
  const push=v=>{P.push(...v.p);N.push(...v.n);U.push(...v.uv);const a=[...v.weights].filter(v=>v[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=a.reduce((s,v)=>s+v[1],0)||1;while(a.length<4)a.push([0,0]);J.push(...a.map(v=>v[0]));W.push(...a.map(v=>v[1]/sum));};
@@ -29,8 +31,8 @@ function clothSkin(THREE,kit){
  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(P,3));geo.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));geo.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(J,4));geo.setAttribute('skinWeight',new THREE.Float32BufferAttribute(W,4));geo.setIndex(Array.from({length:P.length/3},(_,i)=>i));const pos=geo.attributes.position,groups=[],lookup=new Map(),ids=[];
  for(let i=0;i<pos.count;i++){const v=new THREE.Vector3().fromBufferAttribute(pos,i),key=v.toArray().map(v=>Math.round(v*100000)).join(',');let id=lookup.get(key);if(id===undefined){id=groups.length;lookup.set(key,id);groups.push({p:v,vertices:[],near:new Set()});}groups[id].vertices.push(i);ids.push(id);}
  for(let i=0;i<ids.length;i+=3)for(let j=0;j<3;j++){const a=ids[i+j],b=ids[i+(j+1)%3];groups[a].near.add(b);groups[b].near.add(a);}
- for(let pass=0;pass<10;pass++){
-  const next=groups.map(g=>{const {x,z}=g.p,y=g.p.y-(kit.proportionLift||0),weight=smooth(.76,.88,y)*(1-smooth(1.36,1.46,y))*(1-smooth(.20,.27,Math.abs(x)));if(!weight||!g.near.size)return g.p.clone();const mean=new THREE.Vector3();for(const i of g.near)mean.add(groups[i].p);mean.divideScalar(g.near.size);return g.p.clone().lerp(mean,.52*weight);});
+ for(let pass=0;pass<12;pass++){
+  const next=groups.map(g=>{const {x,z}=g.p,y=g.p.y-(kit.proportionLift||0),weight=smooth(.76,.88,y)*(1-smooth(1.40,1.49,y))*(1-smooth(.215,.31,Math.abs(x)));if(!weight||!g.near.size)return g.p.clone();const mean=new THREE.Vector3();for(const i of g.near)mean.add(groups[i].p);mean.divideScalar(g.near.size);return g.p.clone().lerp(mean,.36*weight);});
   groups.forEach((g,i)=>g.p.copy(next[i]));
  }
  for(const g of groups)for(const i of g.vertices)pos.setXYZ(i,g.p.x,g.p.y,g.p.z);
@@ -42,38 +44,53 @@ export function tailoredTop(THREE,kit,outfit,layer='outer'){
  kit.clothTops ||= new Map();const cached=kit.clothTops.get(key);if(cached)return {...mesh(kit,cached.geometry,lining?'Tailored_Undershirt':'Tailored_Body',lining?'lining':'tailored'),detailSurface:cached.full};
  let raw=clothSkin(THREE,kit);const p=raw.attributes.position,n=raw.attributes.normal;
  const ease=lining?.004:c.ease,hem=z.waistY+(lining?.005:c.hem),cuff=c.short?z.cuffX-.29:z.cuffX-.021;
+ const armPoints={};for(const sd of ['l','r'])armPoints[sd]=['upperarm','lowerarm','hand'].map(name=>kit.bones[name+'_'+sd].getWorldPosition(new THREE.Vector3()));
+ const armJoints=new Set(kit.skin.skeleton.bones.map((b,i)=>/^(upperarm|lowerarm|hand)_/.test(b.name)?i:-1)),skinIndices=raw.attributes.skinIndex,skinWeights=raw.attributes.skinWeight;
  for(let i=0;i<p.count;i++){
   let x=p.getX(i),y=p.getY(i),zz=p.getZ(i),ax=Math.abs(x);
   const upper=smooth(hem-.03,hem+.015,y)*(1-smooth(z.neckY+.010,z.neckY+.047,y)),torso=(1-smooth(.205,.28,ax))*upper;
-  x+=n.getX(i)*ease*upper;y+=n.getY(i)*ease*upper;zz+=n.getZ(i)*ease*upper;
-  const h=Math.max(0,Math.min(1,(y-z.waistY)/(z.neckY-z.waistY))),depth=(kit.body==='f'?.095:.113)+.033*Math.sin(h*Math.PI)+ease;
-  const front=Math.sqrt(Math.max(0,1-(x/.225)**2))*depth,frontWeight=smooth(-.050,-.005,zz)*torso*(1-smooth(z.neckY-.105,z.neckY-.015,y));
+  const sleeve=smooth(.20,.30,ax)*smooth(z.armY-.17,z.armY-.075,y),sleeveEase=lining?0:c.drape[2]*sleeve;
+  x+=n.getX(i)*(ease*upper+sleeveEase);y+=n.getY(i)*(ease*upper+sleeveEase);zz+=n.getZ(i)*(ease*upper+sleeveEase);
+  const h=Math.max(0,Math.min(1,(y-z.waistY)/(z.neckY-z.waistY))),depth=(kit.body==='f'?.095:.113)+.025*Math.sin(h*Math.PI)+ease;
+  const front=Math.sqrt(Math.max(0,1-(x/.225)**2))*depth,frontWeight=smooth(-.050,-.005,zz)*torso*(1-smooth(z.neckY-.040,z.neckY+.035,y));
   zz+=(front-zz)*frontWeight;
   const waist=1-smooth(z.waistY+.10,z.neckY-.16,y);x*=1+(c.knit?.10:c.formal?.025:.045)*torso*waist;
-  const elbow=Math.exp(-1*((ax-(z.cuffX-.16))/.055)**2)*smooth(.25,.35,ax),wrinkle=Math.sin(ax*100+y*19)*elbow*(c.knit?.0021:.0012);
+  const elbow=Math.exp(-1*((ax-(z.cuffX-.16))/.055)**2)*smooth(.25,.35,ax),wrinkle=Math.sin(ax*100+y*19)*elbow*(c.drape[3]);
   x+=n.getX(i)*wrinkle;zz+=n.getZ(i)*wrinkle;
   // The hem hangs as cloth, with only shallow folds near the waist and elbows.
-  const fold=(Math.sin(x*78+zz*16)*.0014+Math.sin(x*139)*.0006)*Math.exp(-1*((y-hem-.035)/.055)**2)*torso;
+  const fold=(Math.sin(x*62+zz*17)*c.drape[3]+Math.sin(x*107+1.3)*c.drape[3]*.37)*Math.exp(-1*((y-hem-.025)/.063)**2)*torso;
   zz+=n.getZ(i)*fold;x+=n.getX(i)*fold;
   x+=n.getX(i)*(lining?-.002:.002);y+=n.getY(i)*(lining?-.002:.002);zz+=n.getZ(i)*(lining?-.002:.002);
+  // Sleeve sections are draped around the arm axis. Their elliptical profile
+  // bridges biceps and elbows instead of reproducing the sculpt's muscles.
+  let armOwnership=0;for(const getter of ['getX','getY','getZ','getW'])if(armJoints.has(skinIndices[getter](i)))armOwnership+=skinWeights[getter](i);
+  const sleeveFit=smooth(.135,.245,ax)*smooth(.12,.58,armOwnership);
+  if(sleeveFit){const [shoulder,elbow,hand]=armPoints[x>0?'l':'r'],sx=Math.abs(shoulder.x),ex=Math.abs(elbow.x),hx=Math.abs(hand.x),t=Math.max(0,Math.min(1,(ax-sx)/Math.max(.01,hx-sx))),center=shoulder.clone().lerp(hand,t),upperT=Math.max(0,Math.min(1,(ax-sx)/Math.max(.01,ex-sx))),foreT=Math.max(0,Math.min(1,(ax-ex)/Math.max(.01,hx-ex))),base=ax<ex?.034+.014*Math.pow(1-upperT,.85):.026+.008*(1-smooth(0,1,foreT)),radius=base*(kit.body==='m'?1.18:1)+ease*.40+(lining?0:c.drape[2]*.65),rootEase=1-smooth(.17,.32,ax),depthRatio=.88+1.02*rootEase,dy=y-center.y,dz=zz-center.z,r=Math.hypot(dy,dz/depthRatio);
+   if(r>.0001){const crease=c.drape[3]*.50*Math.sin((ax-ex)*112)*Math.exp(-1*((ax-ex)/.045)**2);y+=(center.y+dy/r*(radius+crease)-y)*sleeveFit;zz+=(center.z+dz/r*(radius+crease)-zz)*sleeveFit;}
+  }
+  // The set-in sleeve joins the chest with a shallow cloth bridge. It must
+  // not preserve the sculpt's concave biceps/armpit groove on the front panel.
+  const bridge=smooth(.090,.135,ax)*(1-smooth(.215,.265,ax))*smooth(z.armY-.180,z.armY-.125,y)*(1-smooth(z.armY-.025,z.armY+.035,y))*smooth(.05,.45,n.getZ(i));
+  if(bridge){const target=Math.sqrt(Math.max(0,1-(ax/.248)**2))*((kit.body==='f'?.107:.123)+ease);zz+=Math.max(0,target-zz)*bridge;}
   p.setXYZ(i,x,y,zz);
  }
  // Build the hanging torso as evenly spaced fabric rings. The source body has
  // folds beneath the chest that cannot be turned into cloth by moving vertices.
- const topY=z.neckY-.103,shoulders=trimGarment(THREE,raw,[(x,y)=>Math.max(y-topY,Math.abs(x)-.24)]),boundary=new Map();
+ const topY=Math.min(z.neckY-.115,z.armY-.140),shoulders=trimGarment(THREE,raw,[(x,y)=>Math.max(y-topY,Math.abs(x)-.24)]),boundary=new Map();
  const sp=shoulders.attributes.position,sj=shoulders.attributes.skinIndex,sw=shoulders.attributes.skinWeight;
  for(let i=0;i<sp.count;i++)if(Math.abs(sp.getY(i)-topY)<1e-6&&Math.abs(sp.getX(i))<.239){const p=new THREE.Vector3().fromBufferAttribute(sp,i),a=(Math.atan2(p.x,p.z+.025)+Math.PI*2)%(Math.PI*2),key=Math.round(a*1e5);if(!boundary.has(key))boundary.set(key,{a,p,joints:['getX','getY','getZ','getW'].map(f=>sj[f](i)),weights:['getX','getY','getZ','getW'].map(f=>sw[f](i))});}
  if(boundary.size<12)throw Error('Garment shoulder boundary is incomplete');
- const edge=[...boundary.values()].sort((a,b)=>a.a-b.a),columns=edge.length,rows=40,sampler=surfaceSampler(THREE,[{geometry:raw}]),bodySampler=surfaceSampler(THREE,[kit.skin]),vertices=[],indices=[];
+ const edge=[...boundary.values()].sort((a,b)=>a.a-b.a),columns=edge.length,rows=46,sampler=surfaceSampler(THREE,[{geometry:raw}]),bodySampler=surfaceSampler(THREE,[kit.garmentSkin||kit.skin]),vertices=[],indices=[];
  for(let j=0;j<=rows;j++)for(let i=0;i<=columns;i++){
   const yy=hem-.006+(topY-hem+.006)*j/rows,a=edge[i%columns].a,dir=new THREE.Vector3(Math.sin(a),0,Math.cos(a)),origin=new THREE.Vector3(0,yy,-.025);
   const sampleY=Math.max(z.waistY-.10,yy),bodyHit=bodySampler.cast(new THREE.Vector3(0,sampleY,-.025),dir);
   if(!bodyHit)throw Error('Could not sample cloth joint weights');
-  const rx=(kit.body==='f'?.128:.159)+(kit.body==='f'?.034:.040)*(1-smooth(z.waistY+.005,z.waistY+.110,yy))+(kit.body==='f'?.033:.038)*(1-smooth(z.waistY-.10,z.waistY+.01,yy))+(kit.body==='f'?.026:.022)*smooth(z.waistY+.18,topY,yy)+ease;
-  const frontZ=(kit.body==='f'?.088:.108)+.032*smooth(z.waistY+.030,z.waistY+.14,yy)+ease,backZ=(kit.body==='f'?-.164:-.172)+(kit.body==='f'?.058:.063)*smooth(z.waistY+.010,z.waistY+.19,yy)-ease,cos=Math.cos(a);
+  const rx=(kit.body==='f'?.128:.159)+(kit.body==='f'?.034:.040)*(1-smooth(z.waistY+.005,z.waistY+.110,yy))+(kit.body==='f'?.033:.038)*(1-smooth(z.waistY-.10,z.waistY+.01,yy))+(kit.body==='f'?.026:.022)*smooth(z.waistY+.18,topY,yy)+ease+c.drape[0]+c.drape[1]*(1-smooth(hem+.025,hem+.115,yy));
+  const frontZ=(kit.body==='f'?.088:.108)+.030*smooth(z.waistY+.040,z.waistY+.16,yy)+ease+c.drape[0]*.6,backZ=(kit.body==='f'?-.164:-.172)+(kit.body==='f'?.058:.063)*smooth(z.waistY+.010,z.waistY+.19,yy)-ease-c.drape[0]*.7,cos=Math.cos(a);
   const pt=new THREE.Vector3(Math.sin(a)*rx,yy,(frontZ+backZ)*.5+Math.sign(cos)*Math.abs(cos)**.66*(frontZ-backZ)*.5),join=smooth(topY-.070,topY,yy),hit=join&&sampler.cast(origin,dir);
   if(hit)pt.lerp(hit.point,join);if(j===rows)pt.copy(edge[i%columns].p);
-  const fold=(Math.sin(a*9+yy*7)*.0008+Math.sin(a*15-yy*11)*.0005)*(1-join)*Math.exp(-1*((yy-hem-.035)/.065)**2);pt.addScaledVector(dir,fold);
+  const hemFold=(Math.sin(a*8+yy*9)*c.drape[3]+Math.sin(a*13-yy*12)*c.drape[3]*.45)*Math.exp(-1*((yy-hem-.027)/.073)**2);
+  const waistFold=c.family==='competition'?0:Math.sin(a*7+yy*8)*c.drape[3]*.34*Math.exp(-1*((yy-z.waistY-.055)/.080)**2);pt.addScaledVector(dir,(hemFold+waistFold)*(1-join));
   const weights=new Map(),blend=hit?join:0;for(let k=0;k<4;k++){weights.set(bodyHit.joints[k],(weights.get(bodyHit.joints[k])||0)+bodyHit.weights[k]*(1-blend));if(hit)weights.set(hit.joints[k],(weights.get(hit.joints[k])||0)+hit.weights[k]*join);}const ranked=[...weights].sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((v,a)=>v+a[1],0);while(ranked.length<4)ranked.push([0,0]);
   vertices.push({p:pt,joints:j===rows?edge[i%columns].joints:ranked.map(a=>a[0]),weights:j===rows?edge[i%columns].weights:ranked.map(a=>a[1]/sum)});
   if(j<rows&&i<columns){const k=j*(columns+1)+i;indices.push(k,k+1,k+columns+1,k+1,k+columns+2,k+columns+1);}
@@ -81,13 +98,14 @@ export function tailoredTop(THREE,kit,outfit,layer='outer'){
  const torsoGeo=weightedGeometry(THREE,vertices,indices);
  raw.dispose();sampler.dispose();bodySampler.dispose();raw=mergeGeometries([shoulders,torsoGeo]);shoulders.dispose();torsoGeo.dispose();
  normals(raw);
- const neck=(x,y,zz)=>c.collared&&!c.cardigan?z.neckY+.042+.026*Math.min(Math.abs(x)/.080,1)**2+.07*smooth(.08,.15,Math.abs(x))-(c.polo?.064*(1-smooth(0,.050,Math.abs(x)))*smooth(z.neckZ+.010,z.neckZ+.040,zz):0):
+ const neckBase=(x,y,zz)=>c.collared&&!c.cardigan?z.neckY+.018+.016*(1-smooth(z.neckZ-.045,z.neckZ+.020,zz))+.018*Math.min(Math.abs(x)/.075,1)**2+.068*smooth(.080,.15,Math.abs(x))-(c.polo?.042*(1-smooth(0,.048,Math.abs(x)))*smooth(z.neckZ+.010,z.neckZ+.040,zz):0):
   z.neckY+.036*(1-smooth(-.09,0,zz-z.neckZ))+.045*Math.min(Math.abs(x)/.085,1)**2+.075*smooth(.085,.15,Math.abs(x));
+ const neck=(x,y,zz)=>neckBase(x,y,zz)-(lining&&c.vest?.030*(1-smooth(.085,.145,Math.abs(x))):0);
  const fields=[(x,y)=>y-hem,(x)=>cuff-Math.abs(x),(x,y,zz)=>neck(x,y,zz)-y,(x,y)=>Math.max(z.headY-y,Math.abs(x)-.17)];
+ if(lining&&c.vest)fields.push((x,y)=>y-(z.waistY+.130));
  if(lining&&c.formal){const bottom=z.waistY+.195;fields.push((x,y,zz)=>Math.min(Math.max(0,(y-bottom)/(z.neckY-bottom))*.049+.008-Math.abs(x),y-bottom+.008,zz-z.neckZ));}
  if(lining&&c.cardigan)fields.push((x,y,zz)=>Math.min(.055-Math.abs(x),zz-z.neckZ));
- if(lining&&c.vest)fields.push((x,y)=>Math.max(Math.abs(x)-(.158+.024*smooth(z.armY-.12,z.armY+.01,y)),y-z.neckY-.030));
- if(!lining&&c.vest)fields.push((x,y)=>Math.max(.161+.024*smooth(z.armY-.12,z.armY+.01,y)-Math.abs(x),z.armY-.18-y));
+ if(!lining&&c.vest)fields.push((x,y)=>Math.max(.130+.036*(1-smooth(z.armY-.180,z.armY+.005,y))-Math.abs(x),z.armY-.202-y));
  const full=trimGarment(THREE,raw,fields);raw.dispose();normals(full);
  let geo=full;
  if(!lining&&(c.formal||c.cardigan)){
@@ -110,7 +128,7 @@ export function tailoredLegs(THREE,kit,outfit){
 }
 export function sewnDetails(THREE,top,outfit,kit){
  const c=garmentCut(outfit),z=kit.zones,full={...top,geometry:top.detailSurface||top.geometry};
- const sampler=surfaceSampler(THREE,[full]),bodySampler=surfaceSampler(THREE,[kit.skin]),cache=new Map(),groups=new Map();
+ const sampler=surfaceSampler(THREE,[full]),bodySampler=surfaceSampler(THREE,[kit.garmentSkin||kit.skin]),cache=new Map(),groups=new Map();
  const front=(x,y,offset=.004)=>{
   const key=x.toFixed(5)+','+y.toFixed(5);let s=cache.get(key);
   if(s===undefined){s=sampler.cast(new THREE.Vector3(x,y,.6),new THREE.Vector3(0,0,-1))||bodySampler.cast(new THREE.Vector3(x,y,.6),new THREE.Vector3(0,0,-1));cache.set(key,s||null);}
@@ -123,39 +141,94 @@ export function sewnDetails(THREE,top,outfit,kit){
   const at=(u,v)=>{const q=corners[0].map((a,k)=>(1-u)*(1-v)*a+u*(1-v)*corners[1][k]+(1-u)*v*corners[2][k]+u*v*corners[3][k]);return front(...q);};
   for(let i=0;i<across;i++)for(let j=0;j<steps;j++)quad(role,at(i/across,j/steps),at((i+1)/across,j/steps),at(i/across,(j+1)/steps),at((i+1)/across,(j+1)/steps));
  };
+ // Folded leaves follow a curved surface, with a rolled tip and a thin sewn
+ // underside. Their skin weights come from the garment beneath the fold.
  const foldedPanel=(role,corners)=>{
-  const faces=THREE.ShapeUtils.triangulateShape(corners.map(p=>new THREE.Vector2(p[0],p[1])),[]),N=8;
-  for(const ids of faces){const [a,b,c]=ids.map(i=>corners[i]),anchors=[a,b,c].map(p=>front(...p)),fold=['contrast','shirtcollar','collar'].includes(role),at=(u,v)=>{
-   if(!fold)return front(...a.map((x,k)=>x*(1-u-v)+b[k]*u+c[k]*v));if(anchors.some(a=>!a))return null;
-   const p=new THREE.Vector3(),weights=new Map();for(let i=0;i<3;i++){const t=[1-u-v,u,v][i],q=anchors[i];p.addScaledVector(q.p,t);for(let k=0;k<4;k++)weights.set(q.j[k],(weights.get(q.j[k])||0)+q.w[k]*t);}const ranked=[...weights].sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((n,a)=>n+a[1],0);while(ranked.length<4)ranked.push([0,0]);p.z+=.010;return {p,j:ranked.map(a=>a[0]),w:ranked.map(a=>a[1]/sum)};
-  };
-   for(let i=0;i<N;i++)for(let j=0;j<N-i;j++){tri(role,at(i/N,j/N),at((i+1)/N,j/N),at(i/N,(j+1)/N));if(i+j<N-1)tri(role,at((i+1)/N,j/N),at((i+1)/N,(j+1)/N),at(i/N,(j+1)/N));}
+  const folded=['contrast','shirtcollar','collar','lapel'].includes(role),round=folded?.0045:.0015,outline=[];
+  for(let i=0;i<corners.length;i++){
+   const prev=corners[(i+corners.length-1)%corners.length],cur=corners[i],next=corners[(i+1)%corners.length],before=Math.hypot(prev[0]-cur[0],prev[1]-cur[1]),after=Math.hypot(next[0]-cur[0],next[1]-cur[1]),r=Math.min(round,before*.22,after*.22),a=cur.map((v,k)=>v+(prev[k]-v)*r/Math.max(before,1e-6)),b=cur.map((v,k)=>v+(next[k]-v)*r/Math.max(after,1e-6));
+   for(let j=0;j<=3;j++){const t=j/3,q=1-t;outline.push(a.map((v,k)=>v*q*q+2*cur[k]*q*t+b[k]*t*t));}
   }
-  if(!['contrast','shirtcollar','collar'].includes(role))for(let i=0;i<corners.length;i++){const a=corners[i],b=corners[(i+1)%corners.length],N=Math.max(2,Math.ceil(Math.hypot(a[0]-b[0],a[1]-b[1])/.008)),at=(t,edge)=>{const q=a.map((v,k)=>v+(b[k]-v)*t);return front(q[0],q[1],edge?.002:q[2]);};for(let j=0;j<N;j++)quad(role,at(j/N,false),at((j+1)/N,false),at(j/N,true),at((j+1)/N,true));}
+  const anchors=corners.map(p=>front(...p)),anchorFaces=THREE.ShapeUtils.triangulateShape(corners.map(p=>new THREE.Vector2(p[0],p[1])),[]);
+  const ys=corners.map(p=>p[1]),xs=corners.map(p=>Math.abs(p[0])),low=Math.min(...ys),high=Math.max(...ys),xmin=Math.min(...xs),xmax=Math.max(...xs),thickness=folded?.0016:.0010;
+  const onSurface=(x,y,offset,back=false)=>{
+   let sample=null;
+   for(const face of anchorFaces){const [a,b,d]=face.map(i=>corners[i]),den=(b[1]-d[1])*(a[0]-d[0])+(d[0]-b[0])*(a[1]-d[1]);if(Math.abs(den)<1e-10)continue;const u=((b[1]-d[1])*(x-d[0])+(d[0]-b[0])*(y-d[1]))/den,v=((d[1]-a[1])*(x-d[0])+(a[0]-d[0])*(y-d[1]))/den,w=1-u-v;if(Math.min(u,v,w)<-.0001)continue;
+    const pp=new THREE.Vector3(),weights=new Map();let valid=true;for(let i=0;i<3;i++){const anchor=anchors[face[i]],t=[u,v,w][i];if(!anchor){valid=false;break;}pp.addScaledVector(anchor.p,t);for(let k=0;k<4;k++)weights.set(anchor.j[k],(weights.get(anchor.j[k])||0)+anchor.w[k]*t);}if(!valid)continue;const ranked=[...weights].filter(a=>a[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((n,a)=>n+a[1],0)||1;while(ranked.length<4)ranked.push([0,0]);sample={p:pp,j:ranked.map(a=>a[0]),w:ranked.map(a=>a[1]/sum)};break;
+   }
+   const beneath=front(x,y,offset);if(role==='lapel')sample=beneath||sample;
+   if(!sample)return null;if(beneath&&folded)sample.p.z=Math.max(sample.p.z,beneath.p.z+.0020);
+   if(folded){const t=Math.max(0,Math.min(1,(high-y)/Math.max(.01,high-low))),u=Math.max(0,Math.min(1,(Math.abs(x)-xmin)/Math.max(.01,xmax-xmin)));
+    const roll=role==='lapel'?.002+.007*Math.sin(Math.PI*u)*(.45+.55*Math.sin(Math.PI*t)):.002+.006*Math.sin(Math.PI*t)-.0015*t*t;
+    sample.p.z+=roll;sample.p.y+=.0018*Math.sin(Math.PI*u)*Math.sin(Math.PI*t);
+   }
+   if(back)sample.p.z-=thickness;return sample;
+  };
+  const faces=THREE.ShapeUtils.triangulateShape(outline.map(p=>new THREE.Vector2(p[0],p[1])),[]),N=5;
+  for(const ids of faces){const [a,b,c]=ids.map(i=>outline[i]),at=(u,v,back=false)=>{const p=a.map((x,k)=>x*(1-u-v)+b[k]*u+c[k]*v);return onSurface(...p,back);};
+   for(let i=0;i<N;i++)for(let j=0;j<N-i;j++){
+    const a=at(i/N,j/N),b=at((i+1)/N,j/N),c=at(i/N,(j+1)/N);tri(role,a,b,c);
+    if(folded)tri(role,at(i/N,j/N,true),at(i/N,(j+1)/N,true),at((i+1)/N,j/N,true));
+    if(i+j<N-1){tri(role,b,at((i+1)/N,(j+1)/N),c);if(folded)tri(role,at((i+1)/N,j/N,true),at(i/N,(j+1)/N,true),at((i+1)/N,(j+1)/N,true));}
+   }
+  }
+  if(folded)for(let i=0;i<outline.length;i++){
+   const a=outline[i],b=outline[(i+1)%outline.length],N=Math.max(1,Math.ceil(Math.hypot(a[0]-b[0],a[1]-b[1])/.006));
+   const at=(t,back)=>onSurface(...a.map((v,k)=>v+(b[k]-v)*t),back);
+   for(let j=0;j<N;j++)quad(role,at(j/N,false),at((j+1)/N,false),at(j/N,true),at((j+1)/N,true));
+  }
  };
  const strip=(role,a,b,width=.002,offset=.004)=>{
   const dx=b[0]-a[0],dy=b[1]-a[1],length=Math.hypot(dx,dy)||1,nx=-dy/length*width,ny=dx/length*width;
   panel(role,[[a[0]-nx,a[1]-ny,offset],[a[0]+nx,a[1]+ny,offset],[b[0]-nx,b[1]-ny,offset],[b[0]+nx,b[1]+ny,offset]],Math.max(2,Math.ceil(length/.012)),1);
  };
+ const pocket=(role,corners,steps=10)=>{
+  const at=(u,v,edge=false)=>{const p=corners[0].map((x,k)=>x*(1-u)*(1-v)+corners[1][k]*u*(1-v)+corners[2][k]*(1-u)*v+corners[3][k]*u*v),sample=front(p[0],p[1],edge?.0007:.0017+.0006*Math.sin(Math.PI*u)*Math.sin(Math.PI*v));return sample;};
+  for(let i=0;i<steps;i++)for(let j=0;j<steps;j++)quad(role,at(i/steps,j/steps),at((i+1)/steps,j/steps),at(i/steps,(j+1)/steps),at((i+1)/steps,(j+1)/steps));
+  for(let i=0;i<steps;i++){const a=i/steps,b=(i+1)/steps;quad(role,at(a,0),at(b,0),at(a,0,true),at(b,0,true));for(const u of [0,1])quad(role,at(u,a),at(u,b),at(u,a,true),at(u,b,true));}
+ };
  const button=(x,y,r=.0036,role='metal')=>{for(let i=0;i<16;i++){const a=i/16*Math.PI*2,b=(i+1)/16*Math.PI*2;tri(role,front(x,y,.008),front(x+Math.cos(a)*r,y+Math.sin(a)*r,.005),front(x+Math.cos(b)*r,y+Math.sin(b)*r,.005));}};
- // The collar stand follows the neck, while the leaves fold over the shirt.
+ // A collar grows continuously from its stand around the neck. The turn is
+ // a curved annular strip, not isolated triangles pasted onto the chest.
  if(c.collared&&!c.cardigan){
-  const role=c.formal?'shirtcollar':c.polo?'contrast':'collar',N=64,baseY=z.neckY+.026,topY=z.neckY+(c.sport||c.vest?.066:.044),cz=z.neckZ;
-  const ring=(i,t)=>{const a=i/N*Math.PI*2,dir=new THREE.Vector3(Math.sin(a),0,Math.cos(a)),y=baseY+(topY-baseY)*t,s=bodySampler.cast(new THREE.Vector3(0,Math.max(y,z.neckY+.045),cz),dir);if(!s)return null;const p=s.point.clone().addScaledVector(dir,.004+(1-t)*.003);p.y=y;return point(p,s);};
-  for(let i=0;i<N;i++){if(!c.sport&&!c.vest)continue;if(i<4||i>N-5)continue;quad(role,ring(i,0),ring(i+1,0),ring(i,1),ring(i+1,1));}
+  const role=c.formal?'shirtcollar':c.polo?'contrast':'collar',open=c.sport||c.vest?.055:.36,N=72,cz=z.neckZ;
+  const neckSample=(angle,t)=>{
+   const dir=new THREE.Vector3(Math.sin(angle),0,Math.cos(angle)),back=1-smooth(-.10,.65,Math.cos(angle)),baseY=z.neckY+.017+.014*back,topY=z.neckY+(c.sport||c.vest?.047:.033)+.012*back,y=baseY+(topY-baseY)*t;
+   const hit=bodySampler.cast(new THREE.Vector3(0,z.neckY+.045,cz),dir);if(!hit)return null;
+   const p=hit.point.clone().addScaledVector(dir,.0055+.0015*Math.sin(Math.PI*t));p.y=y;return point(p,hit);
+  };
+  // The neck opening is bridged to the shoulder yoke beneath the stand. This
+  // sewn seat closes the source mesh's coarse triangular neck corners.
+  const seat=(angle,t)=>{const root=neckSample(angle,0);if(!root)return null;const sine=Math.sin(angle),cosine=Math.cos(angle),dir=new THREE.Vector3(sine,0,cosine),outerY=z.neckY-.050+.020*Math.abs(sine),x=sine*.118,forward=cosine>=0,from=new THREE.Vector3(x,outerY,forward?.6:-.6),castDir=new THREE.Vector3(0,0,forward?-1:1),outer=sampler.cast(from,castDir)||bodySampler.cast(from,castDir);if(!outer)return root;const outerPoint=new THREE.Vector3(x,outerY,cz+(outer.point.z-cz)*Math.abs(cosine)),p=root.p.clone().lerp(outerPoint,t);p.addScaledVector(dir,.0014*Math.sin(Math.PI*t));const weights=new Map();for(let k=0;k<4;k++){weights.set(root.j[k],(weights.get(root.j[k])||0)+root.w[k]*(1-t));weights.set(outer.joints[k],(weights.get(outer.joints[k])||0)+outer.weights[k]*t);}const ranked=[...weights].filter(q=>q[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((n,q)=>n+q[1],0)||1;while(ranked.length<4)ranked.push([0,0]);return {p,j:ranked.map(q=>q[0]),w:ranked.map(q=>q[1]/sum)};};
+  for(let i=0;i<N;i++){const a=open+(Math.PI*2-open*2)*i/N,b=open+(Math.PI*2-open*2)*(i+1)/N;for(let j=0;j<8;j++)quad(c.formal?'lapel':'tailored',seat(a,j/8),seat(a,(j+1)/8),seat(b,j/8),seat(b,(j+1)/8));quad(role,neckSample(a,0),neckSample(b,0),neckSample(a,1),neckSample(b,1));}
   if(!c.sport&&!c.vest)for(const sd of [-1,1]){
-   foldedPanel(role,c.formal?[[sd*.006,z.neckY+.027,.010],[sd*.032,z.neckY+.026,.014],[sd*.048,z.neckY-.036,.016],[sd*.025,z.neckY-.021,.021]]:[[sd*.022,z.neckY+.004,.009],[sd*.056,z.neckY+.037,.008],[sd*.079,z.neckY-.012,.015],[sd*.039,z.neckY-.034,.020]]);
+   const A=30,B=10,leaf=(i,j,back=false)=>{
+    const theta=open+(1.38-open)*i/A,t=j/B,root=neckSample(sd*theta,1);if(!root)return null;
+    const width=c.formal?.025:c.polo?.028:.030,drop=(c.formal?.049:c.polo?.050:.047)*(1-.46*(theta-open)/(1.38-open)),dir=new THREE.Vector3(sd*Math.sin(theta),0,Math.cos(theta));
+    const p=root.p.clone().addScaledVector(dir,width*t);p.x+=sd*.0105*(1-smooth(open,open+.52,theta))*t*t;p.y-=drop*t;p.z+=.0045*Math.sin(Math.PI*t);
+    const contact=front(p.x,p.y,.004);if(contact){p.z=Math.max(p.z,contact.p.z+.0020);const weights=new Map();for(let k=0;k<4;k++){weights.set(root.j[k],(weights.get(root.j[k])||0)+root.w[k]*(1-t));weights.set(contact.j[k],(weights.get(contact.j[k])||0)+contact.w[k]*t);}const ranked=[...weights].filter(q=>q[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4),sum=ranked.reduce((n,q)=>n+q[1],0)||1;while(ranked.length<4)ranked.push([0,0]);root.j=ranked.map(q=>q[0]);root.w=ranked.map(q=>q[1]/sum);}
+    if(back)p.addScaledVector(dir,-.0013);return {p,j:root.j,w:root.w};
+   };
+   for(let i=0;i<A;i++)for(let j=0;j<B;j++){quad(role,leaf(i,j),leaf(i+1,j),leaf(i,j+1),leaf(i+1,j+1));quad(role,leaf(i,j,true),leaf(i,j+1,true),leaf(i+1,j,true),leaf(i+1,j+1,true));}
+   for(let i=0;i<A;i++)quad(role,leaf(i,B),leaf(i+1,B),leaf(i,B,true),leaf(i+1,B,true));
+   for(const i of [0,A])for(let j=0;j<B;j++)quad(role,leaf(i,j),leaf(i,j+1),leaf(i,j,true),leaf(i,j+1,true));
   }
  }
+
  if(c.formal){
   for(const sd of [-1,1]){
-   // The lapel rolls away from a separate ivory shirt and closes above the waist.
-   foldedPanel('lapel',[[sd*.048,z.neckY+.006,.012],[sd*.091,z.neckY-.027,.015],[sd*.068,z.neckY-.059,.018],[sd*.106,z.neckY-.081,.015],[sd*.041,z.waistY+.260,.020],[sd*.008,z.waistY+.196,.010]]);
-   strip('stitch',[sd*.103,z.neckY-.084],[sd*.041,z.waistY+.261],.00055,.021);
+   // The jacket's turned edge is one continuous roll from the neck to the
+   // top button; the outside edge blends into the main front panel.
+   const A=42,B=8,lapel=(i,j,back=false)=>{
+    const t=i/A,u=j/B,y=(z.neckY+.017)*(1-t)+(z.waistY+.195)*t,inner=.049*(1-t)+.008*t,width=.026*(1-t)+.011*t+.007*Math.sin(Math.PI*t),x=sd*(inner+width*u),sample=front(x,y,.002);
+    if(!sample)return null;sample.p.z+=.002+.0065*Math.sin(Math.PI*u)+.0025*(1-u);if(back)sample.p.z-=.0014;return sample;
+   };
+   for(let i=0;i<A;i++)for(let j=0;j<B;j++){quad('lapel',lapel(i,j),lapel(i+1,j),lapel(i,j+1),lapel(i+1,j+1));quad('lapel',lapel(i,j,true),lapel(i,j+1,true),lapel(i+1,j,true),lapel(i+1,j+1,true));}
+   for(const j of [0,B])for(let i=0;i<A;i++)quad('lapel',lapel(i,j),lapel(i+1,j),lapel(i,j,true),lapel(i+1,j,true));
    const curve=t=>{const q=1-t;return [sd*(q*q*.147+2*q*t*.081+t*t*.123),q*q*(z.neckY-.122)+2*q*t*(z.waistY+.17)+t*t*(z.waistY+c.hem+.018)];};
    for(let i=0;i<22;i++)strip('seam',curve(i/22),curve((i+1)/22),.00065,.0035);
-   const yy=z.waistY+.071;panel('lapel',[[sd*.052,yy-.001,.006],[sd*.126,yy+.008,.006],[sd*.052,yy-.019,.010],[sd*.126,yy-.010,.010]],5);
-   strip('piping',[sd*.052,yy-.019],[sd*.126,yy-.010],.00065,.011);
+   const yy=z.waistY+.071;pocket('pocket',[[sd*.052,yy-.001,.006],[sd*.126,yy+.008,.006],[sd*.052,yy-.019,.010],[sd*.126,yy-.010,.010]],5);
+   strip('seam',[sd*.052,yy-.017],[sd*.126,yy-.008],.0005,.0027);
   }
   for(let y=z.waistY+.155;y>z.waistY+.022;y-=.054)button(.011,y,.0042);
   // A small horseshoe embroidered on the left chest.
@@ -169,7 +242,7 @@ export function sewnDetails(THREE,top,outfit,kit){
   }else for(let y=z.waistY+.035;y<z.neckY-.055;y+=.053)button(0,y,.0030);
   for(const sd of [-1,1]){
    if(c.vest||c.sport){strip('lapel',[sd*.079,z.waistY+.041],[sd*.112,z.waistY+.112],.004,.005);strip('metal',[sd*.080,z.waistY+.050],[sd*.105,z.waistY+.099],.0007,.006);}
-   else{const x=sd*.082,y=z.neckY-.188;panel('pocket',[[x-.031,y-.037,.003],[x+.031,y-.037,.003],[x-.031,y+.036,.007],[x+.031,y+.036,.007]],6);strip('piping',[x-.030,y-.036],[x-.030,y+.033],.00065,.008);strip('piping',[x+.030,y-.036],[x+.030,y+.033],.00065,.008);strip('piping',[x-.030,y+.024],[x+.030,y+.024],.001,.008);button(x,y+.016,.0026);}
+   else{const x=sd*.082,y=z.neckY-.188;pocket('pocket',[[x-.031,y-.037,.003],[x+.031,y-.037,.003],[x-.031,y+.036,.007],[x+.031,y+.036,.007]],6);strip('seam',[x-.028,y-.033],[x-.028,y+.032],.0005,.0024);strip('seam',[x+.028,y-.033],[x+.028,y+.032],.0005,.0024);strip('seam',[x-.028,y+.024],[x+.028,y+.024],.0007,.0025);button(x,y+.016,.0026);}
   }
  }else if(c.cardigan){for(const sd of [-1,1])strip('rib',[sd*.050,z.waistY-.130],[sd*.050,z.neckY-.002],.010,.005);}
  else if(c.collared){
@@ -179,6 +252,15 @@ export function sewnDetails(THREE,top,outfit,kit){
  if(c.polo){
   foldedPanel('crest',[[.080,z.neckY-.122,.004],[.106,z.neckY-.122,.004],[.106,z.neckY-.147,.004],[.093,z.neckY-.157,.004],[.080,z.neckY-.147,.004]]);
   for(const [a,b]of [[[.086,z.neckY-.145],[.086,z.neckY-.130]],[[.086,z.neckY-.130],[.093,z.neckY-.141]],[[.093,z.neckY-.141],[.100,z.neckY-.130]],[[.100,z.neckY-.130],[.100,z.neckY-.145]]])strip('contrast',a,b,.0008,.006);
+ }
+ // A narrow bound edge finishes each vest armhole and rounds the exposed
+ // cut. It uses the exact garment boundary and its weights, including the back.
+ if(c.vest){
+  const g=top.geometry,p=g.attributes.position,n=g.attributes.normal,j=g.attributes.skinIndex,w=g.attributes.skinWeight,idx=g.index,edges=new Map(),key=i=>[p.getX(i),p.getY(i),p.getZ(i)].map(v=>Math.round(v*1e5)).join(',');
+  for(let k=0;k<(idx?idx.count:p.count);k+=3)for(let q=0;q<3;q++){const a=idx?idx.getX(k+q):k+q,b=idx?idx.getX(k+(q+1)%3):k+(q+1)%3,ka=key(a),kb=key(b),code=ka<kb?ka+'|'+kb:kb+'|'+ka;if(!edges.has(code))edges.set(code,{a,b,count:0});edges.get(code).count++;}
+  const onHole=i=>{const x=Math.abs(p.getX(i)),y=p.getY(i),edge=.130+.036*(1-smooth(z.armY-.180,z.armY+.005,y));return y>z.armY-.205&&x>.105&&Math.abs(x-edge)<.0025;};
+  const vertex=(i,inside=false)=>{const normal=new THREE.Vector3().fromBufferAttribute(n,i).normalize(),pt=new THREE.Vector3().fromBufferAttribute(p,i);if(inside){const sd=Math.sign(pt.x);pt.x-=sd*.0055;const origin=new THREE.Vector3(0,pt.y,-.025),dir=pt.clone().sub(origin).normalize(),hit=sampler.cast(origin,dir);if(hit)pt.copy(hit.point);}pt.addScaledVector(normal,.0012);return {p:pt,j:['getX','getY','getZ','getW'].map(k=>j[k](i)),w:['getX','getY','getZ','getW'].map(k=>w[k](i))};};
+  for(const e of edges.values())if(e.count===1&&onHole(e.a)&&onHole(e.b))quad('collar',vertex(e.a),vertex(e.b),vertex(e.a,true),vertex(e.b,true));
  }
  // Waistband and sleeve cuffs have their own thickness and continuous surface.
  const band=(axis,at,width,role,origin,N=64)=>{
@@ -213,7 +295,7 @@ function weightedGeometry(THREE,vertices,indices){
 export function ridingBoots(THREE,kit,source){
  if(kit.tailoredBoots)return kit.tailoredBoots;
  const foot=trimGarment(THREE,source.geometry,[(x,y)=>.125-y]);
- const sampler=surfaceSampler(THREE,[kit.skin]),fp=foot.attributes.position;
+ const sampler=surfaceSampler(THREE,[kit.garmentSkin||kit.skin]),fp=foot.attributes.position;
  for(let i=0;i<fp.count;i++){
   const y=fp.getY(i),t=smooth(.075,.124,y);if(!t)continue;
   const ankle=kit.bones['foot_'+(fp.getX(i)>0?'l':'r')].getWorldPosition(new THREE.Vector3()),origin=new THREE.Vector3(ankle.x,y,ankle.z),v=new THREE.Vector3().fromBufferAttribute(fp,i),dir=v.clone().sub(origin).normalize(),s=sampler.cast(origin,dir);

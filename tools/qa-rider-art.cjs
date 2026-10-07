@@ -12,17 +12,21 @@ const RJ=fs.readFileSync(path.resolve(__dirname,'../ranch3d.html'),'utf8').match
   const camera=new THREE.PerspectiveCamera(28,420/520,.02,20),images=[],checks=[];
   for(const body of ['f','m']){
    const kit=await lib.kit(body);
-   const {refineRiderFace}=await import('/assets/rider-face.js');
-   const raw=await new GLTFLoader().loadAsync('/assets/models/rider/rider-'+body+'.glb');let skin,brows;raw.scene.traverse(m=>{if(m.isSkinnedMesh&&/superhero/i.test(m.name))skin=m;if(m.isSkinnedMesh&&/^Eyebrows/.test(m.name))brows=m;});raw.scene.updateMatrixWorld(true);
-   const before=skin.geometry.attributes.position.clone(),weight=skin.geometry.attributes.skinWeight,index=skin.geometry.attributes.skinIndex;
-   refineRiderFace(THREE,skin,brows,body);
-   if(skin.geometry.attributes.skinWeight!==weight||skin.geometry.attributes.skinIndex!==index)throw Error('Face refinement changed body weights');
-   const head=skin.skeleton.bones.findIndex(b=>b.name==='Head'),inverse=skin.skeleton.boneInverses[head],p=skin.geometry.attributes.position;
-   for(let i=0;i<p.count;i++){const a=new THREE.Vector3().fromBufferAttribute(before,i),b=new THREE.Vector3().fromBufferAttribute(p,i),local=a.clone().applyMatrix4(inverse);if((local.y<-.015||local.y>.13||local.z<.038)&&a.distanceTo(b)>1e-6)throw Error('Face refinement moved the body or scalp');if(a.distanceTo(b)>.004)throw Error('Facial change exceeds fitting envelope');}
-   const probe=new THREE.Mesh(skin.geometry,new THREE.MeshBasicMaterial({side:THREE.DoubleSide})),ray=new THREE.Raycaster();probe.updateMatrixWorld(true);const bp=brows.geometry.attributes.position;
-   for(let i=0;i<bp.count;i++){ray.set(new THREE.Vector3(bp.getX(i),bp.getY(i),.6),new THREE.Vector3(0,0,-1));const hit=ray.intersectObject(probe,false)[0],gap=hit?bp.getZ(i)-hit.point.z:Infinity;if(gap<0||gap>.003)throw Error('Eyebrow is detached from the face');}probe.material.dispose();
+   const asset=kit.headAsset;
+   if(!asset?.mesh.userData.artistHead||!kit.skin.geometry.userData.headReplaced)throw Error('Artist-authored head replacement missing');
+   for(const mesh of [kit.skin,asset.mesh,asset.eyes,asset.brows]){
+    const g=mesh.geometry,si=g.attributes.skinIndex,sw=g.attributes.skinWeight;
+    for(let i=0;i<si.count;i++){
+     let sum=0;for(const get of ['getX','getY','getZ','getW']){const joint=si[get](i),weight=sw[get](i);if(joint>=mesh.skeleton.bones.length||weight<0||!Number.isFinite(weight))throw Error('Invalid head/body binding');sum+=weight;}
+     if(Math.abs(sum-1)>.0001)throw Error('Unnormalized head/body weights');
+    }
+   }
+   const head=asset.mesh.skeleton.bones.findIndex(b=>b.name==='Head'),inverse=asset.inverse,p=asset.mesh.geometry.attributes.position,si=asset.mesh.geometry.attributes.skinIndex,sw=asset.mesh.geometry.attributes.skinWeight;
+   for(let i=0;i<p.count;i++){const local=new THREE.Vector3().fromBufferAttribute(p,i).applyMatrix4(inverse);if(local.y>.035){let headWeight=0;for(const get of ['getX','getY','getZ','getW'])if(si[get](i)===head)headWeight+=sw[get](i);if(headWeight<.9999)throw Error('Face deforms with unrelated body joints');}}
+   const probe=new THREE.Mesh(asset.local,new THREE.MeshBasicMaterial({side:THREE.DoubleSide})),ray=new THREE.Raycaster();probe.updateMatrixWorld(true);const bp=asset.brows.geometry.attributes.position;
+   for(let i=0;i<bp.count;i++){const v=new THREE.Vector3().fromBufferAttribute(bp,i).applyMatrix4(inverse);ray.set(new THREE.Vector3(v.x,v.y,.35),new THREE.Vector3(0,0,-1));const hit=ray.intersectObject(probe,false)[0],gap=hit?v.z-hit.point.z:Infinity;if(gap<-.00001||gap>.003)throw Error('Eyebrow is detached from the new face');}probe.material.dispose();
    const base={body,outfit:'polo',hairStyle:'ponytail',helmet:'none',hair:'#68422d',skin:'#e2ae88',shirt:'#659c99',pants:'#e8d9b8',eyes:'hazel',earrings:'none',neckwear:'none'};await lib.outfitFor(kit,base.outfit);const rig=lib.build(kit,base);await Promise.resolve();await Promise.resolve();sc.add(rig.root);rig.action('idle').setEffectiveWeight(1);rig.mixer.update(.1);
-   const lashes=rig.root.getObjectByName('rider-eyelashes');if(body==='f'){if(!lashes||lashes.parent!==rig.bones.Head||lashes.geometry.userData.lashRoots.length!==26)throw Error('Upper lashes missing or detached');if(!Array.from(lashes.geometry.attributes.position.array).every(Number.isFinite))throw Error('Invalid eyelash geometry');}else if(lashes)throw Error('Female lashes added to the male body');
+   const lashes=rig.root.getObjectByName('rider-eyelashes');if(body==='f'){if(!lashes||lashes.parent!==rig.bones.Head||lashes.geometry.userData.lashRoots.length<28)throw Error('Upper lashes missing or detached');if(!Array.from(lashes.geometry.attributes.position.array).every(Number.isFinite))throw Error('Invalid eyelash geometry');}else if(lashes)throw Error('Female lashes added to the male body');
    const shot=(id,label,fit,angle,y,d)=>{rig.root.rotation.y=angle;camera.position.set(0,y+.015,d);camera.lookAt(0,y,.012);rig.root.updateMatrixWorld(true);let valid=true;rig.root.traverse(m=>{if(m.isSkinnedMesh){m.skeleton.update();const a=m.geometry.attributes.position;for(let i=0;i<a.count;i+=17){const p=m.getVertexPosition(i,new THREE.Vector3());if(![p.x,p.y,p.z].every(Number.isFinite))valid=false;}}});if(!valid)throw Error('Invalid pose: '+id);renderer.render(sc,camera);const img=renderer.domElement.toDataURL('image/png');images.push({id:body+'-'+id,img});checks.push({body,id,valid});const c=document.createElement('div');c.className='card';c.innerHTML='<img src="'+img+'">'+body+' · '+label;document.querySelector('.grid').append(c);};
    for(const [id,skin,angle]of [['portrait','#e2ae88',.08],['three-quarter','#e2ae88',.68],['profile','#e2ae88',1.42],['deep-skin','#744c3a',.25]]){rig.setLook({...base,skin});shot(id,id,base,angle,rig.bones.Head.getWorldPosition(new THREE.Vector3()).y+.055,.90);}
    for(const [id,style,outfit,col,helmet]of [['braid','braid','flannel','#b34a4a','none'],['bun','bun','show','#28394b','none'],['waves','waves','cable','#e8d9b8','none'],['riding','ponytail','riding','#3d4a6e','#2e2e38']]){

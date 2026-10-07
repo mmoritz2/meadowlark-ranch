@@ -10,7 +10,7 @@
    only when the network is actually unavailable. Result — the live version is
    always what you see, and the game still runs on a plane. */
 
-const CACHE = 'meadowlark-native-tack-reins-20261007';
+const CACHE = 'meadowlark-tack-store-live-20261007';
 
 self.addEventListener('install', e => {
   self.skipWaiting();                       // a new build takes over immediately

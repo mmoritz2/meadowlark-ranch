@@ -263,9 +263,9 @@ export function install(G){
  }
  function applyPlayerLook(force){ const rig=RIG(), h=ridden(); if(!rig||!rig.ready||!rig.skin||!player.mesh||!h)return null; const L=applyLook(rig,player.mesh,h,force);
   try{ const horn=rig.nativeFantasy?.horn||(player.parts&&player.parts.horn); if(horn)HS.horn(horn,!!(h.fx&&h.fx.horn)); }catch(e){} return L; }
- G.on('attachTack',()=>{applyPlayerLook();applyWild();});
+ G.on('attachTack',()=>{applyPlayerLook();revalidateRidingMode();applyWild();});
  G.on('coat',()=>{applyPlayerLook();});
- G.on('rebuild',()=>{applyPlayerLook();});
+ G.on('rebuild',()=>{applyPlayerLook();revalidateRidingMode();applyWild();});
  let herdT=0, lookT=0;
  G.on('tick',(dt,t)=>{
   HS.tick(t);
@@ -275,33 +275,98 @@ export function install(G){
   /* perks with per-frame state */
   if(PK){ if(player.blown&&player.stam>PK.blownAt)player.blown=false;
    if(PK.boostMul>1&&player.boostT>prevBoost+0.5)player.boostT*=PK.boostMul; prevBoost=player.boostT||0; }
+  const resting=!!restModeReason();if(resting!==restModeBlocked){restModeBlocked=resting;modeChanged();}
   if(wild)enforceWild();
  });
 
  /* ===== 5. Wild Mode and bareback ==================================================== */
- let wild=false, reins=null;
+ let wild=false, reins=null, changingMode=false, modeHorseId=null, restRig=null, restModeBlocked=false;
  function findReins(){ if(reins)return reins; reins=[]; for(const o of G.scene.children){ if(o.isMesh&&o.geometry&&o.geometry.boundingSphere&&o.geometry.boundingSphere.radius===1e4)reins.push(o); } return reins; }
+ const currentMode=()=>wild?'wild':ridden()?.bareback?'bareback':'saddled';
  function applyWild(){ const R=player.rider; if(R&&R.g)R.g.visible=!wild; const TK=TACK(); const h=ridden()||{};
   if(TK.saddle)TK.saddle.visible=!wild&&!h.bareback&&(!TK.saddle.userData.nativeAnchorCarrier||RIG()?.profile?.nativeKind==='horse'); if(TK.bridle)TK.bridle.visible=!wild; for(const r of findReins())if(wild)r.visible=false;
+  G.horse.setNativeRidingMode?.(currentMode());
   try{document.body.classList.toggle('wildmode',wild);}catch(e){} }
- function enforceWild(){ const R=player.rider; if(R&&R.g&&R.g.visible)R.g.visible=false; const TK=TACK(); if(TK.saddle&&TK.saddle.visible)TK.saddle.visible=false; if(TK.bridle&&TK.bridle.visible)TK.bridle.visible=false; for(const r of findReins())if(r.visible)r.visible=false; }
- function toggleWild(){
-  if(G.renderer.xr.isPresenting){toast('🐎 Wild Mode is for the flat game.');return false;}
-  if(G.course.get()){toast('🏁 Finish the course first!');return false;}
-  const s=fresh(), h=s&&s.horses[rideIdx()];
-  if(!wild&&!canWild(s,h)){ toast('🐎 Wild Mode needs '+(h&&isFantasy(h.breed)?breedLabel(h.breed)+' mastery 5':'an Epic breed at mastery 9')+'.'); return false; }
-  wild=!wild; sync(x=>{x.wildMode=wild;}); applyWild();
-  if(wild){G.quest.dailyEvt('wild',1);toast('🐎 Wild Mode — you are the horse. '+keyLabel(G.key('wild'))+' to saddle up.');}
-  else toast('🏇 Saddled up.');
+ function enforceWild(){ const R=player.rider; if(R&&R.g&&R.g.visible)R.g.visible=false; const TK=TACK(); if(TK.saddle&&TK.saddle.visible)TK.saddle.visible=false; if(TK.bridle&&TK.bridle.visible)TK.bridle.visible=false; for(const r of findReins())if(r.visible)r.visible=false;G.horse.setNativeRidingMode?.('wild'); }
+ function restModeReason(){
+  const rig=RIG(),motion=rig?.heroMotion,state=motion?.state,action=state?.action;
+  if(restRig&&restRig!==rig)restRig=null;
+  if(action&&motion.actionDescriptor?.(action.type)?.dismountedOnly)restRig=rig;
+  if(restRig&&!action&&!state?.transitioning)restRig=null;
+  return restRig?'Wait for your horse to finish resting and get back up first.':'';
+ }
+ function modeRequirement(id,h){
+  if(id==='bareback')return h?breedLabel(h.breed)+' mastery '+NEED.bare(h.breed):'Choose a horse';
+  if(id==='wild')return h&&isFantasy(h.breed)?breedLabel(h.breed)+' mastery 5':'An Epic breed at mastery 9';
+  return 'Available for every horse';
+ }
+ function modeReason(id,s,h){
+  if(!h)return 'Choose a horse first.';
+  if(id!=='wild'&&wild&&restModeReason())return restModeReason();
+  if(id==='bareback'&&masteryOf(s,h.breed)<NEED.bare(h.breed))return 'Bareback riding needs '+modeRequirement(id,h)+'.';
+  if(id==='wild'&&!wild){
+   if(player.onFoot||G.onFoot?.on)return 'Mount your horse before entering Wild Mode.';
+   if(G.renderer?.xr?.isPresenting)return 'Wild Mode is available outside VR.';
+   if(G.course.get())return 'Finish or leave the course before entering Wild Mode.';
+   if(!canWild(s,h))return 'Wild Mode needs '+modeRequirement(id,h)+'.';
+  }
+  return '';
+ }
+ function ridingModeStatus(){
+  const s=fresh(),h=s?.horses?.[rideIdx()],mode=currentMode();
+  return {mode,mastery:h?masteryOf(s,h.breed):0,max:h?maxOf(h.breed):10,options:[['saddled','Saddled'],['bareback','Bareback'],['wild','Wild Mode']].map(([id,label])=>{
+   const reason=modeReason(id,s,h);return {id,label,available:!reason,reason,requirement:modeRequirement(id,h),selected:id===mode};
+  })};
+ }
+ function modeChanged(){G.run('ridingModeChanged',ridingModeStatus());}
+ function selectRidingMode(id){
+  if(!['saddled','bareback','wild'].includes(id)||changingMode)return false;
+  const s=fresh(),h=s?.horses?.[rideIdx()],reason=modeReason(id,s,h);
+  if(reason){toast(reason);return false;}
+  const nextWild=id==='wild',nextBare=nextWild?!!h.bareback:id==='bareback',wasWild=wild;
+  if(wild===nextWild&&!!h.bareback===nextBare&&!!s.wildMode===nextWild){applyWild();return true;}
+  changingMode=true;let committed=false;
+  try{
+   sync(v=>{const target=v.horses?.[rideIdx()];if(!target||target.id!==h.id||modeReason(id,v,target))return;
+    target.bareback=nextBare;v.wildMode=nextWild;committed=true;
+   });
+   const saved=fresh(),savedHorse=saved?.horses?.[rideIdx()];
+   if(!committed||savedHorse?.id!==h.id||!!savedHorse.bareback!==nextBare||!!saved.wildMode!==nextWild){toast('Your riding mode could not be saved. Please try again.');return false;}
+   wild=nextWild;modeHorseId=h.id;if(ridden()?.id===h.id)ridden().bareback=nextBare;
+  }catch(e){toast('Your riding mode could not be saved. Please try again.');return false;}
+  finally{changingMode=false;}
+  applyWild();modeChanged();
+  if(nextWild&&!wasWild){G.quest.dailyEvt('wild',1);toast('Wild Mode — you are the horse. '+keyLabel(G.key('wild'))+' returns to riding.');}
+  else toast(nextBare?'Riding bareback — saddle off, bridle and reins on.':'Saddled up.');
   return true;
+ }
+ function setBareback(on){return selectRidingMode(on?'bareback':'saddled');}
+ function toggleWild(){
+  const s=fresh(),h=s?.horses?.[rideIdx()],bare=!!h?.bareback&&masteryOf(s,h.breed)>=NEED.bare(h.breed);
+  return selectRidingMode(wild?(bare?'bareback':'saddled'):'wild');
+ }
+ function revalidateRidingMode({boot=false}={}){
+  if(changingMode)return;const s=fresh(),h=s?.horses?.[rideIdx()];if(!h)return;
+  const before=currentMode(),switched=modeHorseId!==h.id;
+  if(switched){restRig=null;restModeBlocked=false;}
+  let nextWild=boot||modeHorseId===null?!!s.wildMode:wild,nextBare=!!h.bareback;
+  if(!canWild(s,h)||player.onFoot||G.onFoot?.on||G.course.get()||G.renderer?.xr?.isPresenting)nextWild=false;
+  if(masteryOf(s,h.breed)<NEED.bare(h.breed))nextBare=false;
+  if(!!s.wildMode!==nextWild||!!h.bareback!==nextBare){
+   sync(v=>{const target=v.horses?.[rideIdx()];if(target?.id!==h.id)return;v.wildMode=nextWild;target.bareback=nextBare;});
+   const saved=fresh();if(!!saved?.wildMode!==nextWild||!!saved?.horses?.[rideIdx()]?.bareback!==nextBare)toast('This horse is back in its available riding mode. The change could not be saved yet.');
+  }
+  wild=nextWild;modeHorseId=h.id;if(ridden()?.id===h.id)ridden().bareback=nextBare;
+  if(switched||before!==currentMode())modeChanged();
  }
  const keyLabel=c=>String(c||'').replace(/^Key|^Digit/,'');
  G.on('key',e=>{ if(e.code===G.key('wild')&&!e.repeat){toggleWild();return true;} });
- G.on('courseStart',()=>{ if(wild){wild=false;sync(x=>{x.wildMode=false;});applyWild();toast('🏇 Saddled up for the course.');} });
+ G.on('courseGate',()=>{if(!wild||!restModeReason())return false;toast(restModeReason());return true;});
+ G.on('courseStart',()=>{if(wild){const bare=!!ridden()?.bareback;if(selectRidingMode(bare?'bareback':'saddled'))toast(bare?'Riding bareback for the course.':'Saddled up for the course.');else G.course.cancelCourse?.();}});
  G.on('boot',s=>{ sync(x=>{for(const h of x.horses)masteryOf(x,h.breed);});   // the ladder on disk, for the boards and the state dump
-  s=fresh(); wild=!!(s&&s.wildMode); if(wild){const h=s.horses[rideIdx()]; if(!canWild(s,h)){wild=false;sync(x=>{x.wildMode=false;});}} applyWild(); refreshPerks(s); applyPlayerLook(); });
+  revalidateRidingMode({boot:true});s=fresh();applyWild(); refreshPerks(s); applyPlayerLook(); });
  G.on('remote',(m,r)=>{
-  if(!r)return; const key=JSON.stringify([m.hs,m.fx,m.ac,m.bb,m.wm]); if(r._styleKey===key)return; r._styleKey=key;
+  if(!r)return;G.horse.applyNativeRemoteMode?.(r,{bareback:!!m.bb,wild:!!m.wm});const key=JSON.stringify([m.hs,m.fx,m.ac,m.bb,m.wm]); if(r._styleKey===key)return; r._styleKey=key;
   if(r.rig&&r.rig.saddle)r.rig.saddle.visible=!m.bb&&!m.wm; if(r.rider&&r.rider.g)r.rider.g.visible=!m.wm; if(r.bridle)r.bridle.visible=!m.wm;
   if(r.rig&&r.rig.skin)try{applyLook(r.rig,r.parts.group,{id:m.id,breed:r.breed,hair:m.hs||null,fx:m.fx||null,acc:m.ac||null},true);}catch(e){}
  });
@@ -448,5 +513,5 @@ export function install(G){
   o.mastery=Object.assign({},sv.mastery||{}); o.ridingMastery=h.breed?masteryOf(sv,h.breed):0; o.masteryMax=h.breed?maxOf(h.breed):10;
   o.perks=PK?PK.ids.slice():[]; o.hair=h.hair||null; o.acc=h.acc||null; o.fx=h.fx||null; o.bareback=!!h.bareback; o.wild=wild;
   o.style={hairMeshes:L&&L.hair?L.hair.meshes.length:0,decor:L?L.decor.length:0,acc:L?L.acc.reduce((n,a)=>n+a.handles.length,0):0}; });
- G.mastery={isFantasy,maxOf,ladderOf,perkRows,PERKS,BREED_PERKS,computePerks,refreshPerks,perks:()=>PK,canWild,toggleWild,isWild:()=>wild,setHair,setDye,setRibbon,buyAcc,wearAcc,setFx,applyPlayerLook,applyLook,LOOKS,ACC,FANTASY_ACC,fantasyAcc,MANE,TAIL,DYE_NATURAL,DYE_BOLD,NEED,HS,masteryBump,accAvailable,lastToast:()=>lastToast,renderStyle:()=>G.ui.rerender('stylePanel')};
+ G.mastery={isFantasy,maxOf,ladderOf,perkRows,PERKS,BREED_PERKS,computePerks,refreshPerks,perks:()=>PK,canWild,toggleWild,isWild:()=>wild,ridingModeStatus,selectRidingMode,setBareback,applyRidingMode:applyWild,setHair,setDye,setRibbon,buyAcc,wearAcc,setFx,applyPlayerLook,applyLook,LOOKS,ACC,FANTASY_ACC,fantasyAcc,MANE,TAIL,DYE_NATURAL,DYE_BOLD,NEED,HS,masteryBump,accAvailable,lastToast:()=>lastToast,renderStyle:()=>G.ui.rerender('stylePanel')};
 }

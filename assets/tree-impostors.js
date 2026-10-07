@@ -101,7 +101,17 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom}) {
       float canopyLength2=dot(treeN,treeN);
       treeN=canopyLength2>1e-6?treeN*inversesqrt(canopyLength2):vec3(0.0,1.0,0.0);
       treeN=vec3(treeN.x*treeHeading.y+treeN.z*treeHeading.x,treeN.y,-treeN.x*treeHeading.x+treeN.z*treeHeading.y);
-      normal=normalize(mat3(viewMatrix)*treeN);`);
+      normal=normalize(mat3(viewMatrix)*treeN);
+      // Baked upward leaf directions can face behind the eye. Bring their view
+      // component into the visible hemisphere continuously; flipping the entire
+      // normal would abruptly swap sky/ground lighting as the camera passed it.
+      vec3 treeViewDir=normalize(vViewPosition);
+      normal=normalize(normal+treeViewDir*max(.08-dot(normal,treeViewDir),0.0));`);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <lights_physical_fragment>',`#include <lights_physical_fragment>
+      // A whole distant crown averages small waxy leaf glints. A solid surface's
+      // full grazing reflection washed out every shaded leaf in the atlas.
+      material.specularColor=vec3(.012);
+      material.specularF90=.12;`);
     sh.fragmentShader=sh.fragmentShader.replace('#include <opaque_fragment>',`
       #if NUM_DIR_LIGHTS > 0
         float backlit=pow(max(dot(normalize(vViewPosition),-directionalLights[0].direction),0.0),4.0);
@@ -110,7 +120,7 @@ export function treeImpostor({THREE,albedo,normals,width,height,bottom}) {
       #include <opaque_fragment>`);
     patchFoliageCoverage(sh,renderer);
   };
-  mat.customProgramCacheKey=()=> 'scan-tree-seasonal-views-v5';
+  mat.customProgramCacheKey=()=> 'scan-tree-canopy-lighting-v6';
   const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:albedo,alphaTest:.22,side:THREE.DoubleSide});
   depth.onBeforeCompile=vertex;depth.customProgramCacheKey=()=> 'scan-tree-normal-depth-v2';mat.userData.scanDepth=depth;
   return {geo,mat};

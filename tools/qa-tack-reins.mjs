@@ -33,7 +33,7 @@ await library.manifestReady;
 const set=id=>Object.fromEntries(TACK_PIECES.filter(p=>p.collectionId===id).map(p=>[p.slot,p]));
 
 
-const {createNativeRiderReins}=await import('../assets/native-rider.js');
+const {createNativeRiderReins,createNativeRiderBridge}=await import('../assets/native-rider.js');
 function originalMeshes(rig){const out=[];rig.scene.traverse(mesh=>{if(mesh.isSkinnedMesh&&/^M_Saddle[12]$/.test(mesh.material.name))out.push(mesh);});return out;}
 const findReins=kit=>kit.group.getObjectByName('Resting leather reins');
 function sourceIndices(mesh){return Array.from(mesh.geometry.index.array,i=>mesh.userData.sourceVertexIds[i]);}
@@ -47,6 +47,40 @@ try{
   assertMode(raw,'ridden',false);assertMode(raw,'none',false);assertMode(raw,'resting',true);assertMode(raw,'resting',false,{wild:true});assertMode(raw,'resting',true,{bareback:true});
   raw.apply({bridle:set('classicwestern').bridle});disposed();assert(findReins(raw));assert.equal(findReins(raw).material.color.getHexString(),originalMaterial.color.getHexString(),'classic reins preserve original leather');assert.equal(sourceMesh.material[4].visible,false);assert.equal(sourceMesh.material[1].visible,true,'classic headstall remains visible');assert.deepEqual(sourceIndices(findReins(raw)),rawIndices);
   raw.apply({bridle:set('rosequartz').bridle});assert.equal(raw.group.children.length,1,'bridle-only resting look needs no saddle');assertMode(raw,'resting',true);raw.apply({});assert(!findReins(raw));assert.equal(raw.group.children.length,0);assert.equal(sourceMesh.visible,false);raw.dispose();assert.equal(sourceMesh.geometry,originalGeometry);assert.equal(sourceMesh.material,originalMaterial);assert(!sourceMesh.userData.nativeRestingReinIndices,'raw renderer does not mutate source metadata');
+  // The new riding-mode controller must not own the renderer's partitions.
+  // Exercise the full bridge, native skin, bareback seat and handoff together.
+  const fitG=new THREE.Group(),handL=new THREE.Object3D(),handR=new THREE.Object3D();
+  mount.add(fitG);fitG.add(handL,handR);handL.position.set(-.17,1.8,.28);handR.position.set(.17,1.8,.28);
+  const saddleProxy=new THREE.Group();mount.add(saddleProxy);saddleProxy.userData.stir={L:new THREE.Object3D(),R:new THREE.Object3D()};saddleProxy.add(...Object.values(saddleProxy.userData.stir));
+  const beforeVisibility=sourceMaterials.map(([mesh])=>mesh.visible);
+  const fullBridge=createNativeRiderBridge({THREE,scene:mount,mount,rig,rider:{sk:true,fitG,handL,handR},saddleProxy,collectionOwned:true});
+  assert.equal(sourceMesh.geometry,originalGeometry,'collection-owned mode construction never clones source');
+  assert.deepEqual(sourceMaterials.map(([mesh])=>mesh.visible),beforeVisibility);
+  assert(fullBridge.prepareReins());assert.equal(sourceMesh.geometry,originalGeometry,'preparing mounted reins leaves collection source intact');
+  assert.deepEqual([...sourceMesh.userData.nativeRestingReinIndices],rawIndices);
+  fullBridge.setReinColor('#743b63');fullBridge.updateContacts();
+  const combined=createTackCollection({THREE,rig,mount,equippedDesigns:{bridle:set('rosequartz').bridle}});
+  assert.equal(combined.stats.nativeFoundation.hiddenSourceReinTriangles,1640);
+  const snapshot=()=>sourceMaterials.map(([mesh])=>({geometry:mesh.geometry,index:mesh.geometry.index,hash:digest(mesh.geometry.index.array),groups:JSON.stringify(mesh.geometry.groups),material:mesh.material,visible:mesh.visible,materials:Array.isArray(mesh.material)?mesh.material.map(m=>m.visible):[mesh.material.visible]}));
+  function assertDrawState(before){const after=snapshot();for(let i=0;i<after.length;i++){assert.equal(after[i].geometry,before[i].geometry);assert.equal(after[i].index,before[i].index);assert.equal(after[i].hash,before[i].hash);assert.equal(after[i].groups,before[i].groups);assert.equal(after[i].material,before[i].material);assert.equal(after[i].visible,before[i].visible);assert.deepEqual(after[i].materials,before[i].materials);}}
+  for(const pieces of [{},{bridle:set('classicwestern').bridle},set('classicwestern'),set('rosequartz')]){
+   combined.apply(pieces);
+   for(const mode of ['saddled','bareback','wild']){
+    const mounted=!!pieces.bridle&&mode!=='wild';
+    combined.update(0,{bareback:mode==='bareback',wild:mode==='wild',reinsMode:mounted?'ridden':'none'});
+    const state=snapshot();
+    for(let i=0;i<3;i++){fullBridge.setMode(mode);fullBridge.setTackVisible(false);assert.equal(fullBridge.mode,mode,'visibility does not change riding mode');fullBridge.setTackVisible(true);assert.equal(fullBridge.mode,mode);fullBridge.showReins(mounted);fullBridge.updateReins();}
+    assertDrawState(state);
+    const info=fullBridge.inspect();assert.equal(info.collectionOwned,true);assert.equal(info.mode,mode);assert.equal(info.reinsVisible,mounted);assert.equal(info.sourceReinsVisible,false);
+    assert.equal(info.reinColor,'#743b63');
+    const bare=fullBridge.barebackSeatLocal(),seat=fullBridge.seatLocal();assert(bare.toArray().every(Number.isFinite));assert(bare.y<seat.y,'bareback seat follows the coat below the raised saddle');assert(seat.y-bare.y<.4,'bareback seat remains near measured saddle contact');assert(info.barebackSeatVertices.length>0,'uses real body vertices rather than fallback');
+    if(mounted){assert.equal(findReins(combined).visible,false,'mounted and resting pairs never overlap');for(const side of ['left','right']){const r=info.reins.sides[side];assert(new THREE.Vector3(...r.bit).distanceTo(new THREE.Vector3(...r.mainStart))<1e-6);assert(new THREE.Vector3(...r.hand).distanceTo(new THREE.Vector3(...r.mainEnd))<1e-6);}}
+    if(!pieces.bridle&&!pieces.saddle&&!pieces.pad)assert(sourceMaterials.every(([mesh])=>!mesh.visible),'empty horse remains bare through all riding modes');
+    if(pieces.bridle&&mode!=='wild'){fullBridge.showReins(false);combined.update(0,{bareback:mode==='bareback',reinsMode:'resting'});assert.equal(findReins(combined).visible,true);assert.equal(fullBridge.inspect().reinsVisible,false);}
+   }
+  }
+  combined.dispose();assert.equal(sourceMesh.geometry,originalGeometry);const restoredVisibility=sourceMaterials.map(([mesh])=>mesh.visible);fullBridge.dispose();fullBridge.dispose();assert.equal(sourceMesh.geometry,originalGeometry);assert.deepEqual(sourceMaterials.map(([mesh])=>mesh.visible),restoredVisibility,'mode disposal cannot resurrect removed source equipment');assert(!sourceMesh.userData.nativeRestingReinIndices);fitG.removeFromParent();saddleProxy.removeFromParent();
+  console.log('PASS',horse,'collection-owned full rider bridge: empty/Classic/new, modes preserve geometry/groups/visibility, measured bareback seat, exact rein handoff and teardown');
   // Player bridge provides the exact same original indices before replacing
   // its display geometry. Controller disposal must precede bridge disposal.
   const bridge=createNativeRiderReins({THREE,scene:mount,tack:sourceMesh,anchors:{},rider:{},contactPoint(){},seatFollower:rig.nativeSeatFollower});assert.deepEqual([...sourceMesh.userData.nativeRestingReinIndices],rawIndices,'bridge metadata matches independently extracted raw triangles');assert.equal(sourceMesh.geometry.index.count,15554*3);const preparedGeometry=sourceMesh.geometry;

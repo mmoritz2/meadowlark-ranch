@@ -1,5 +1,7 @@
+import {createHeadSurface} from './rider-head-surface.js?v=artist-riders-20261007';
 /* New styles are fitted in the Head bone's space, using the same scalp, strand
    materials and helmet deformation as the original character. */
+const smooth=(a,b,value)=>{const t=Math.max(0,Math.min(1,(value-a)/(b-a)));return t*t*(3-2*t);};
 export const EXTRA_HAIR=[
  {id:'bob',label:'Chin-length bob',mesh:'Hair_Long',shape:'bob'},
  {id:'lob',label:'Shoulder-length',mesh:'Hair_Long',shape:'lob'},
@@ -26,41 +28,92 @@ export const EXTRA_HAIR=[
  {id:'braidedbun',label:'Braided chignon',scalp:true,detail:'braidedbun'},
 ].map(h=>({...h,body:['f','m']}));
 
-export function shapeHair(source,style,head){
+export function shapeHair(source,style,head,THREE,kit){
+ if(THREE&&kit)return sculptedHairShape(THREE,kit,style);
  const geo=source.clone(),p=geo.attributes.position;geo.computeBoundingBox();const sourceEnd=geo.boundingBox.min.y;
- const end=style==='bob'?-0.012:style==='beachbob'?-.055:style==='mermaidwaves'?-.42:style==='lob'?-0.15:style==='long'?-0.29:-0.26;
+ const end=style==='bob'?-.027:style==='beachbob'?-.073:style==='mermaidwaves'?-.46:style==='lob'?-.165:style==='long'?-.315:-.305;
+ // A soft U-shaped perimeter and staggered lengths keep the ends from reading
+ // as a single cut sheet. The upper locks retain their fitted scalp roots.
  for(let i=0;i<p.count;i++){
   let x=p.getX(i),y=p.getY(i),z=p.getZ(i);
   if(style==='pixie'){
-   x*=1.06;z*=1.07;
-   if(y>head.cy)y+=(y-head.cy)*0.10;
-  }else if(y<0.085){
-   const t=Math.min(1,Math.max(0,(0.085-y)/Math.max(.02,.085-sourceEnd)));
-   y=0.085+(end-0.085)*t+.009*Math.sin(x*85+z*37)*Math.max(0,(t-.72)/.28);
-   const side=Math.sign(x)||1;
-   x+=side*(style==='bob'?0.006*Math.sin(t*Math.PI):0.014*t);
-   if(z<0.015)z-=Math.max(0,t-0.30)*0.075;
-   if(['waves','beachbob','mermaidwaves'].includes(style)){
-    x+=side*0.011*Math.sin(t*10.5+z*18)*t;
-    z+=0.009*Math.sin(t*12.0+x*20)*t;
-   }
-   if(style==='bob')x*=1-0.07*t*t;
+   x*=1.025;z*=1.03;if(y>head.cy)y+=(y-head.cy)*.075;
+  }else if(y<.095){
+   const t=Math.min(1,Math.max(0,(.095-y)/Math.max(.02,.095-sourceEnd))),side=Math.sign(x)||1,angle=Math.atan2(x,z-head.cz);
+   const layered=.020*Math.abs(Math.sin(angle))+.008*Math.sin(angle*5.0+1.4)+.004*Math.sin(angle*11.0-.8);
+   y=.095+(end-.095)*t+layered*t*t*t;
+   const volume=Math.sin(t*Math.PI)*(.010+(style==='bob'?.001:.005)),neck=Math.min(1,t*4);
+   x+=side*volume;z-=Math.max(0,t-.22)*.069;
+   const waved=['waves','beachbob','mermaidwaves'].includes(style),amplitude=waved?(style==='beachbob'?.010:.014):.0025,phase=angle*1.7;
+   x+=side*amplitude*Math.sin(t*8.8+phase)*Math.sin(t*Math.PI*.92)*neck;
+   z+=amplitude*.65*Math.sin(t*9.6+phase+.7)*Math.sin(t*Math.PI)*neck;
+   if(style==='bob'||style==='beachbob')x*=1-.075*t*t;
+   // Fine end variation is deliberately confined to the last few centimetres.
+   y+=.004*Math.sin(x*73+z*49)*Math.max(0,(t-.78)/.22);
   }
   p.setXYZ(i,x,y,z);
  }
  smoothHairNormals(geo);geo.computeBoundingSphere();return geo;
 }
 
+function mergeHairGeometry(THREE,list){
+ const P=[],UV=[],I=[];let offset=0;
+ for(const g of list){const p=g.attributes.position,u=g.attributes.uv;for(let i=0;i<p.count;i++){P.push(p.getX(i),p.getY(i),p.getZ(i));UV.push(u?u.getX(i):0,u?u.getY(i):0);}if(g.index)for(const i of g.index.array)I.push(i+offset);else for(let i=0;i<p.count;i++)I.push(i+offset);offset+=p.count;g.dispose();}
+ const g=new THREE.BufferGeometry();g.setIndex(I);g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(UV,2));smoothHairNormals(g);g.computeBoundingSphere();g.userData.proceduralHair=true;return g;
+}
+function hairFallPoint(THREE,kit,style,theta,t){
+ const H=kit.head,ends={long:-.435,waves:-.375,mermaidwaves:-.515,lob:-.205,bob:-.060,beachbob:-.095,curlyFall:-.255},end=ends[style]??-.375,curly=style==='curlyFall',waved=['waves','mermaidwaves','beachbob','curlyFall'].includes(style),sine=Math.sin(theta),cosine=Math.cos(theta),yStart=H.cy+.055,yEnd=end+.023*Math.abs(sine)+.010*Math.sin(theta*5.1+.7)+.013*(.5+.5*Math.cos(theta*19)),y=yStart+(yEnd-yStart)*t,hang=Math.max(0,(t-.21)/.79),ridge=.004*Math.sin(theta*19+t*4)*Math.sin(Math.PI*t),wave=waved?(curly?.024:.022)*Math.sin(hang*(curly?16.5:10.8)+theta*2.7)*Math.sin(hang*Math.PI*.92):.0025*Math.sin(hang*4+theta*2),rx=H.rx+.014+(curly?.010:.025)*Math.sin(hang*Math.PI*.8),sideSweep=.130*smooth(.015,.38,hang)*Math.pow(Math.abs(sine),.75),backDrop=.055*hang*Math.abs(cosine)+.092*smooth(.10,.72,hang)*Math.pow(Math.max(0,-cosine),2),p=new THREE.Vector3(H.cx+sine*(rx+wave+ridge),y,H.cz+cosine*.106-sideSweep-backDrop+wave*.32*cosine);
+ if(t<.35){const fitted=scalpPoint(THREE,kit,new THREE.Vector3(H.cx+sine*H.rx,y,H.cz+cosine*H.rz),.006);p.lerp(fitted,1-smooth(.13,.35,t));}return p;
+}
+function sculptedHairShape(THREE,kit,style){
+ const H=kit.head,V=(x,y,z)=>new THREE.Vector3(x,y,z),pieces=[],P=[],U=[],I=[],N=96,M=26,short=style==='pixie',fallOnly=style==='curlyFall';
+ const line=theta=>{const a=Math.abs(theta),part=.0035*Math.exp(-1*((theta+.13)/.11)**2);return a<.90?H.browTop+.032+.010*Math.sin(a/.90*Math.PI*.5)**2-part:a<1.55?H.browTop+.042-(a-.90)*.090:H.browTop-.0165-(a-1.55)*.045;};
+ // The fitted crown is a single smooth shell with shallow directional clumps.
+ for(let j=0;j<=M;j++)for(let i=0;i<=N;i++){
+  const v=j/M,theta=(i/N-.5)*Math.PI*2,y=H.top-.003+(line(theta)-H.top+.003)*Math.pow(v,.72),section=Math.sqrt(Math.max(.00001,1-((y-H.cy)/Math.max(.01,H.ry))**2)),target=V(H.cx+Math.sin(theta)*H.rx*section,y,H.cz+Math.cos(theta)*H.rz*section),p=scalpPoint(THREE,kit,target,.0045),normal=p.clone().sub(V(H.cx,H.cy,H.cz)).normalize(),clump=.0017*Math.sin(theta*17+v*3)*Math.sin(v*Math.PI);
+  p.addScaledVector(normal,.003+clump);P.push(...p.toArray());U.push(i/N*5,v*1.3);
+  if(j<M&&i<N){const k=j*(N+1)+i;I.push(k,k+N+1,k+1,k+1,k+N+1,k+N+2);}
+ }
+ // Close the UV seam with the same lifted ray hit on both endpoints.
+ for(let j=0;j<=M;j++){const first=j*(N+1)*3,last=(j*(N+1)+N)*3;for(let k=0;k<3;k++)P[last+k]=P[first+k];}
+ const cap=new THREE.BufferGeometry();cap.setIndex(I);cap.setAttribute('position',new THREE.Float32BufferAttribute(P,3));cap.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));cap.computeVertexNormals();pieces.push(cap);
+ const lock=(pts,width,depth)=>{
+  const path=new THREE.CatmullRomCurve3(pts),geo=new THREE.TubeGeometry(path,40,1,12,false),p=geo.attributes.position,u=geo.attributes.uv;
+  for(let i=0;i<=40;i++){const t=i/40,center=path.getPointAt(t),tangent=path.getTangentAt(t),side=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),out=tangent.clone().cross(side).normalize(),r=width*(.35+.65*Math.sin(Math.PI*Math.min(.999,t*.96+.04)))*Math.max(.025,1-t*t*t);
+   for(let j=0;j<=12;j++){const k=i*13+j,a=j/12*Math.PI*2,point=center.clone().addScaledVector(side,Math.cos(a)*r).addScaledVector(out,Math.sin(a)*r*depth);p.setXYZ(k,point.x,point.y,point.z);u.setXY(k,j/12*2,t*3);}
+  }geo.computeVertexNormals();pieces.push(geo);
+ };
+ if(!short){
+  const ends={long:-.435,waves:-.375,mermaidwaves:-.515,lob:-.205,bob:-.060,beachbob:-.095,curlyFall:-.255},end=ends[style]??-.375,waved=['waves','mermaidwaves','beachbob','curlyFall'].includes(style),A=112,B=48,positions=[],uvs=[],indices=[],theta0=1.43,span=Math.PI*2-2*theta0;
+  // A closed draped fall provides a continuous silhouette. Low ridges separate
+  // the clumps; the tips form an irregular soft U instead of a blunt curtain.
+  for(let side=0;side<2;side++)for(let j=0;j<=B;j++)for(let i=0;i<=A;i++){
+   const u=i/A,t=j/B,theta=theta0+span*u,sine=Math.sin(theta),cosine=Math.cos(theta),point=hairFallPoint(THREE,kit,style,theta,t);
+   const normal=V(sine,0,cosine).normalize();point.addScaledVector(normal,side?-.005:.003);positions.push(...point.toArray());uvs.push(u*8,t*3);
+   if(j<B&&i<A){const k=side*(A+1)*(B+1)+j*(A+1)+i,n=A+1;if(side)indices.push(k,k+1,k+n,k+1,k+n+1,k+n);else indices.push(k,k+n,k+1,k+1,k+n,k+n+1);}
+  }
+  const total=(A+1)*(B+1);for(let j=0;j<B;j++)for(const i of [0,A]){const k=j*(A+1)+i,n=k+A+1;indices.push(k,n,k+total,n,n+total,k+total);}for(let i=0;i<A;i++){const k=B*(A+1)+i;indices.push(k,k+total,k+1,k+1,k+total,k+1+total);}
+  const fall=new THREE.BufferGeometry();fall.setIndex(indices);fall.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));fall.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));fall.computeVertexNormals();pieces.push(fall);
+ }
+ // Swept framing leaves blend the part into the temple and break the outline.
+ if(!fallOnly)for(const sd of [-1,1])for(let j=0;j<(short?5:2);j++){
+  const root=scalpPoint(THREE,kit,V(sd*(.018+j*.012),H.top-.007,H.cz+.032),.005),temple=scalpPoint(THREE,kit,V(sd*H.rx*.91,H.browTop+.031-j*.010,H.cz+.083),.006),tipEnd=style==='bob'?-.050:style==='beachbob'?-.078:style==='lob'?-.118:style==='mermaidwaves'?-.185:style==='waves'?-.132:-.152,tip=short?scalpPoint(THREE,kit,V(sd*H.rx,H.browTop-.010-j*.009,H.cz+.038),.004):V(sd*(H.rx*1.10+j*.007),tipEnd+j*.027,H.cz+.126+j*.004),mid=short?temple.clone().lerp(tip,.52):V(sd*(H.rx*.97+.007*Math.sin(j*1.7)),(temple.y+tip.y)*.45,H.cz+.142+.007*Math.cos(j*1.6));
+  lock([root,scalpPoint(THREE,kit,root.clone().lerp(temple,.54),.008),temple,mid,tip],short?.011-j*.0012:.019-j*.0035,.26);
+ }
+ return mergeHairGeometry(THREE,pieces);
+}
+
 /* The measured skull narrows sharply at the nape. A bounding-box radius leaves
    tails hanging in space there, so every root is projected onto the real head. */
 export function scalpPoint(THREE,kit,target,lift=.002){
  if(!kit.hairSurface){
-  const hi=kit.skin.skeleton.bones.findIndex(b=>b.name==='Head'),geo=kit.skin.geometry.clone();geo.applyMatrix4(kit.skin.skeleton.boneInverses[hi]);
-  const mesh=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));mesh.updateMatrixWorld(true);kit.hairSurface={mesh,ray:new THREE.Raycaster()};
+  const H=kit.head;
+  let geometry=kit.headAsset?.local;
+  if(!geometry){const source=kit.skin,hi=source.skeleton.bones.findIndex(b=>b.name==='Head');geometry=source.geometry.clone().applyMatrix4(source.skeleton.boneInverses[hi]);}
+  kit.hairSurface=createHeadSurface(THREE,geometry,new THREE.Vector3(H.cx,H.cy,H.cz));
+  if(!kit.headAsset)geometry.dispose();
  }
- const H=kit.head,center=new THREE.Vector3(H.cx,H.cy,H.cz),direction=target.clone().sub(center).normalize(),{mesh,ray}=kit.hairSurface;
- ray.set(center,direction);const hit=ray.intersectObject(mesh,false)[0];
- return hit?hit.point.clone().addScaledVector(hit.face.normal,lift):target.clone();
+ return kit.hairSurface.sample(target,lift);
 }
 
 export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
@@ -70,40 +123,41 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
  const curve=(points,radii,segs=30,rad=8)=>tube(points,radii,segs,rad);
  // Broad, shallow cross sections overlap into a continuous mass of hair.
  const lock=(points,radii,segs=36,width=1.25,depth=.72)=>{
-  const geo=curve(points,radii,segs,10),axis=new THREE.CatmullRomCurve3(points),p=geo.attributes.position;
+  const geo=curve(points,radii,segs,12),axis=new THREE.CatmullRomCurve3(points),p=geo.attributes.position;
   for(let i=0;i<=segs;i++){const center=axis.getPointAt(i/segs),tangent=axis.getTangentAt(i/segs),n=Math.abs(tangent.x)<.9?V(1,0,0):V(0,0,1);n.addScaledVector(tangent,-n.dot(tangent)).normalize();const b=tangent.clone().cross(n);
-   for(let j=0;j<=10;j++){const k=i*11+j,offset=V(p.getX(k),p.getY(k),p.getZ(k)).sub(center),point=center.clone().addScaledVector(n,offset.dot(n)*width).addScaledVector(b,offset.dot(b)*depth);p.setXYZ(k,point.x,point.y,point.z);}
+   for(let j=0;j<=12;j++){const k=i*13+j,t=i/segs,ripple=1+.035*Math.sin(t*18.0+j*.91)*Math.sin(t*Math.PI),offset=V(p.getX(k),p.getY(k),p.getZ(k)).sub(center),point=center.clone().addScaledVector(n,offset.dot(n)*width*ripple).addScaledVector(b,offset.dot(b)*depth*ripple);p.setXYZ(k,point.x,point.y,point.z);}
   }
   geo.computeVertexNormals();geo.computeBoundingSphere();return geo;
  };
  const gather=(at,end,r=.015)=>{const start=anchor(at),mid=start.clone().lerp(end,.5);hair.push(curve([start,mid,end],[r*1.2,r,r*.9],12));};
- const pony=(at,length=0.28)=>{
+ const pony=(at,length=.30)=>{
   at=anchor(at);const pieces=[],splay=Math.sign(at.x)*Math.min(1,Math.abs(at.x)/.06);
-  const axis=new THREE.CatmullRomCurve3([at,at.clone().add(V(0,-.012,-.027)),at.clone().add(V(.012+splay*.018,-length*.36,-.059)),at.clone().add(V(.020+splay*.020,-length*.72,-.063)),at.clone().add(V(.007+splay*.021,-length,-.043))]);
-  // Staggered broad locks form the body; only a few finer ends break its outline.
-  for(let j=0;j<12;j++){
-   const angle=j*2.399963,outer=j>2,spread=outer?.013:.004,tip=1-.10*(.5+.5*Math.sin(j*2.7)),pts=[];
-   for(let k=0;k<=10;k++){
-    const t=k/10,center=axis.getPoint(t*tip),fan=Math.sin(t*Math.PI)*.008,grow=Math.min(1,t*6),wave=.003*Math.sin(t*7+j*1.7)*Math.sin(t*Math.PI);
-    center.x+=(Math.cos(angle)*(spread+fan)+wave)*grow;center.z+=Math.sin(angle)*spread*.66*grow;pts.push(center);
+  const axis=new THREE.CatmullRomCurve3([at,at.clone().add(V(0,-.014,-.024)),at.clone().add(V(.006+splay*.017,-length*.32,-.054)),at.clone().add(V(.012+splay*.023,-length*.68,-.061)),at.clone().add(V(.007+splay*.020,-length,-.047))]);
+  // Overlapping inner leaves form a continuous tail, while the outer leaves
+  // separate into different lengths with a soft bend and tapered ends.
+  for(let j=0;j<18;j++){
+   const angle=j*2.399963,outer=j>=4,spread=outer?.010+.004*Math.sin(j*1.9):.003,tip=outer?.83+.17*(.5+.5*Math.sin(j*2.7)):1,pts=[];
+   for(let k=0;k<=12;k++){
+    const t=k/12,along=t*tip,center=axis.getPoint(along),fan=Math.sin(t*Math.PI)*.006,grow=Math.min(1,t*7),wave=.0035*Math.sin(t*8+j*1.7)*Math.sin(t*Math.PI);
+    center.x+=(Math.cos(angle)*(spread+fan)+wave)*grow;center.z+=Math.sin(angle)*spread*.62*grow;pts.push(center);
    }
-   pieces.push(lock(pts,[.004,.009,.011,.009,.006,.0005],40,1.32,.70));
+   pieces.push(lock(pts,outer?[.003,.008,.009,.007,.004,.00035]:[.005,.010,.011,.009,.005,.0005],44,1.45,.66));
   }
   hair.push(merge(pieces));
-  const band=axis.getPoint(.11),direction=axis.getTangent(.11);ring(band,.016,direction);ring(band.clone().addScaledVector(direction,.0035),.016,direction);
+  const band=axis.getPoint(.085),direction=axis.getTangent(.085);ring(band,.016,direction);ring(band.clone().addScaledVector(direction,.0032),.016,direction);
  };
  const braid=(points,radius=0.017,turns=7,rooted=true)=>{
   if(rooted)points[0]=anchor(points[0]);
-  const axis=new THREE.CatmullRomCurve3(points),pieces=[],samples=Math.max(64,Math.ceil(turns*24));
+  turns*=.62;radius*=.91;const axis=new THREE.CatmullRomCurve3(points),pieces=[],samples=Math.max(64,Math.ceil(turns*28));
   for(let strand=0;strand<3;strand++){
    const pts=[];
    for(let k=0;k<=samples;k++){
     const t=k/samples,along=rooted?t*.90:t,center=axis.getPoint(along),tangent=axis.getTangent(along).normalize();
     const side=Math.abs(tangent.x)>.85?V(0,0,1):V(1,0,0);side.addScaledVector(tangent,-side.dot(tangent)).normalize();const cross=tangent.clone().cross(side);
     const a=t*turns*Math.PI*2+strand*Math.PI*2/3,rr=radius*(1-0.48*t)*(rooted?Math.min(1,t*18):1);
-    center.addScaledVector(side,Math.cos(a)*rr).addScaledVector(cross,Math.sin(a*2)*rr*0.5);pts.push(center);
+    center.addScaledVector(side,Math.cos(a)*rr).addScaledVector(cross,Math.sin(a)*rr*.66);pts.push(center);
    }
-   const scale=radius/.017;pieces.push(lock(pts,[0.009,0.009,0.007,0.005,0.003].map(v=>v*scale),Math.max(84,Math.ceil(turns*28)),1,1));
+   const scale=radius/.017;pieces.push(lock(pts,[0.0065,0.0074,0.0065,0.0045,0.0025].map(v=>v*scale),Math.max(96,Math.ceil(turns*32)),1.10,.83));
   }
   if(rooted){
    const end=axis.getPoint(.90),direction=axis.getTangent(.90);ring(end,radius*.57,direction);
@@ -120,10 +174,10 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
   gather(root,at,.019);
   const core=new THREE.SphereGeometry(.035,24,16);core.scale(1.08,.82,.69);core.translate(at.x,at.y,at.z-.006);
   const pieces=[core];
-  for(let j=0;j<7;j++){
-   const pts=[],a0=j*0.9;
+  for(let j=0;j<10;j++){
+   const pts=[],a0=j*.6283185;
    for(let k=0;k<=24;k++){
-    const t=k/24,a=t*Math.PI*2.7+a0,r=0.034*Math.sin(t*Math.PI);
+    const t=k/24,a=t*Math.PI*2.7+a0,r=(.032+.0025*Math.sin(j*2.3))*Math.sin(t*Math.PI);
     const x=Math.cos(a)*r*(messy?1.18:1.1),y=Math.sin(a)*r*.72,z=-.006-.029*Math.sqrt(Math.max(.04,1-(x/.043)**2-(y/.031)**2));
     pts.push(V(at.x+x,at.y+y,at.z+z));
    }
@@ -142,17 +196,17 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
    }
   }
  }else if(style==='ringlets'){
+  hair.push(sculptedHairShape(THREE,kit,'curlyFall'));
   const locks=[];
-  for(let j=0;j<38;j++){
-   const angle=1.05+j/37*(Math.PI*2-2.10),front=Math.cos(angle),side=Math.sin(angle);
-   const start=scalpPoint(THREE,kit,V(side*H.rx,H.cy+.068,H.cz+front*H.rz),.018),fall=scalpPoint(THREE,kit,V(side*H.rx,H.cy+.006,H.cz+front*H.rz),.018);
-   const length=.26+.025*Math.sin(j*2.3),pts=[];
-   for(let k=0;k<=40;k++){
-    const t=k/40,turn=t*Math.PI*(7.5+.6*Math.sin(j))+j*2.399963,hang=Math.max(0,(t-.26)/.74),wave=.013*Math.min(1,t*5)+.003*hang;
-    const center=t<.26?scalpPoint(THREE,kit,start.clone().lerp(fall,t/.26),.018):V(fall.x+side*.012*hang,fall.y-length*hang,fall.z-.025*hang);
-    pts.push(center.add(V(Math.cos(turn)*wave,0,Math.sin(turn)*wave)));
+  // A closed softly waved fall carries the silhouette. A smaller set of varied
+  // ribbon curls follows it; no repeated tube grid or shoulder-sized rope mass.
+  for(let j=0;j<19;j++){
+   const theta=1.45+j/18*(Math.PI*2-2.90),phase=j*2.399963,first=.16+.065*(.5+.5*Math.sin(j*2.17)),last=.92+.07*(.5+.5*Math.sin(j*2.31)),pts=[];
+   for(let k=0;k<=52;k++){
+    const t=k/52,along=first+(last-first)*t,center=hairFallPoint(THREE,kit,'curlyFall',theta,along),hang=Math.max(0,(t-.12)/.88),turn=hang*(18+2.7*Math.sin(j*1.71))+phase,wave=.009*smooth(0,.20,t)*Math.sin(Math.PI*t);
+    center.x+=Math.sin(turn)*wave;center.z+=Math.cos(turn+.4)*wave*.66;center.addScaledVector(V(Math.sin(theta),0,Math.cos(theta)).normalize(),.0025);pts.push(center);
    }
-   locks.push(curve(pts,[.006,.010,.010,.008,.006,.0007],44,8));
+   locks.push(lock(pts,[.0002,.0033,.0045,.0038,.0021,.0002],56,1.28,.53));
   }
   hair.push(merge(locks));
  }else if(style==='highpony'){
@@ -170,7 +224,7 @@ export function hairDetails({THREE,kit,style,helmet,tube,merge,tiePoint}){
   }
   hair.push(merge(pieces));ring(at);
  }else if(style==='braidedpony'){
-  const at=tiePoint(kit,helmet?'nape':'back');braid([at,V(at.x,at.y-.10,at.z-.055),V(at.x+.025,at.y-.24,at.z-.06),V(at.x+.04,at.y-.38,at.z-.04)],.021,11);
+  const at=tiePoint(kit,helmet?'nape':'back');braid([at,V(at.x,at.y-.10,at.z-.055),V(at.x+.025,at.y-.24,at.z-.06),V(at.x+.04,at.y-.38,at.z-.04)],.0165,8.5);
  }else if(style==='twintails'||style==='pigtails'){
   for(const sd of [-1,1])pony(V(sd*H.rx*(style==='pigtails'?.98:.86),H.cy-(style==='pigtails'?.004:.055),H.cz-.072),style==='pigtails'?.27:.24);
  }else if(style==='halfupbun'){
@@ -265,7 +319,7 @@ function smoothHairNormals(geo){
 
 /* Subdivide the source locks once, sharing positional adjacency across UV seams.
    UVs stay on their own charts; scalp projection keeps the crown above the head. */
-export function polishHairSurface(THREE,source,kit){
+export function polishHairSurface(THREE,source,kit,name='Hair_Long'){
  const pos=source.attributes.position,uv=source.attributes.uv,weld=new Map(),vertices=[],ids=[];
  for(let i=0;i<pos.count;i++){
   const p=new THREE.Vector3().fromBufferAttribute(pos,i),key=[p.x,p.y,p.z].map(v=>Math.round(v*1e5)).join(',');
@@ -280,8 +334,9 @@ export function polishHairSurface(THREE,source,kit){
  }}
  for(const e of edges.values())if(e.opposite.length===1){vertices[e.a].boundary.add(e.b);vertices[e.b].boundary.add(e.a);}
  const constrain=p=>{
-  if(p.y>.09){const scalp=scalpPoint(THREE,kit,p,.0018),center=new THREE.Vector3(kit.head.cx,kit.head.cy,kit.head.cz);
-   if(p.distanceToSquared(center)<scalp.distanceToSquared(center))p.copy(scalp);}
+  if(p.y>.09){const scalp=scalpPoint(THREE,kit,p,.0025),center=new THREE.Vector3(kit.head.cx,kit.head.cy,kit.head.cz),distance=p.distanceTo(center),skinDistance=scalp.distanceTo(center);
+   if(distance<skinDistance)p.copy(scalp);
+   else if(['Hair_Long','Hair_SimpleParted','Hair_Ponytail','Hair_Bun'].includes(name)&&p.y>kit.head.cy+.048){const crown=Math.min(1,(p.y-kit.head.cy-.048)/.055),excess=Math.max(0,distance-skinDistance-.009);if(excess)p.addScaledVector(p.clone().sub(center).normalize(),-excess*crown*.68);}}
   return p;
  };
  const smooth=vertices.map(v=>{
