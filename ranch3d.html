@@ -669,6 +669,8 @@ import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowB
 import {pastureRise,meadowBloomAt} from './assets/pastoral-fields.mjs?v=meadow-ridges-1';
 import {canyonRelief,canyonReplacesFormation,canyonCliffAt,createCanyonLandscape} from './assets/canyon-landscape.js?v=carved-canyon-1';
 import {createGeology} from './assets/geology.js?v=carved-canyon-1';
+import {guardFloatingLabel} from './assets/label-visibility.js?v=camera-safe-label-1';
+import {HOLLOWPEAK,fallsTerrainHeight,fallsExcludesDryPlants,createFallsLandscape} from './assets/falls-landscape.js?v=mountain-falls-1';
 import {oasisTerrainHeight,oasisContainsWater} from './assets/oasis-art.js?v=living-oasis-1';
 import {createDesertArt} from './assets/desert-art.js?v=botanical-desert-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
@@ -689,10 +691,10 @@ import {createScreenAntialias} from './assets/screen-antialias.js';
 import {createForageArt} from './assets/forage-art.js?v=botanical-harvest-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-townhouses-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=village-townhouses-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=living-oasis-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=mountain-falls-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=runway-20261006';
-import {FEATURES} from './assets/features/index.js?v=carved-canyon-1';
+import {FEATURES} from './assets/features/index.js?v=mountain-falls-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -1471,7 +1473,7 @@ function rawH(x,z){
   h=THREE.MathUtils.lerp(h,creekBed,creekInfluence);
  }
 
- return oasisTerrainHeight(x,z,h);
+ return fallsTerrainHeight(x,z,oasisTerrainHeight(x,z,h));
 }
 /* ===== Roads =====
    A valley with towns in it and no roads between them reads as scenery rather than a place
@@ -3124,7 +3126,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  rock.castShadow=quality==='high';
  const okGrass=(x,z)=>{
   if(Math.abs(x)>470||Math.abs(z)>470)return false;
-  if(canyonCliffAt(x,z,terrainH))return false;
+  if(canyonCliffAt(x,z,terrainH)||fallsExcludesDryPlants(x,z,terrainH))return false;
   if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // the arena stays sandy
   if(Math.abs(z-riverZ(x))<6.5)return false;               // not in the river
   if(Math.abs(x)<3.2&&z>BR_A-2&&z<BR_B+2)return false;     // not on the bridge
@@ -3148,7 +3150,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  };
  const okClutter=(x,z)=>{
   if(Math.abs(x)>470||Math.abs(z)>470)return false;
-  if(canyonCliffAt(x,z,terrainH))return false;
+  if(canyonCliffAt(x,z,terrainH)||fallsExcludesDryPlants(x,z,terrainH))return false;
   if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // never in the arena
   if(Math.abs(z-riverZ(x))<5.2)return false;               // not standing in the river
   if(Math.hypot(x-20,z-16)<5.6||oasisContainsWater(x,z,.7))return false; // no dry clutter in water
@@ -4233,6 +4235,10 @@ for(const name of ['cactus','cactus2'])for(let i=FOLIAGE[name].length-1;i>=0;i--
  const p=FOLIAGE[name][i];if(pathDist(p.x,p.z)>=3.6&&Math.hypot(p.x-CANYON.x,p.z-CANYON.z)>=32&&!canyonCliffAt(p.x,p.z,terrainH))continue;
  const ci=colliders.indexOf(p.col);if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
 }
+for(const name of ['oak','birch','blossom','pine','snowpine'])for(let i=FOLIAGE[name].length-1;i>=0;i--){
+ const p=FOLIAGE[name][i];if(!fallsExcludesDryPlants(p.x,p.z,terrainH))continue;
+ const ci=colliders.findIndex(c=>c.x===p.x&&c.z===p.z);if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
+}
 const FOLIAGE_H={snowpine:7.2,oak:6.2,birch:6.6,blossom:6.2,pine:7.4,bush:1.9,flowerbush:1.8,cactus:3.8,cactus2:0.8,
  haybale:1.5,trough:0.8,barrel:1.0,boulder:1.6,stump:0.7};   // ~units tall (bigger)
 /* Ranch props use the detailed builder templates and scanned barrels. Hay stays
@@ -4462,21 +4468,12 @@ let waterMat=null;   // hoisted: the pond reuses it
   brookReeds.setMatrixAt(i,m4r);
  }
  scene.add(brookReeds);
- /* ===== Hollowpeak Falls =====
-    Every landscape needs one thing you ride out to see. A curved rock amphitheatre stands
-    in the snowfield with a notch cut in its lip; water pours through the notch, falls
-    eleven metres into a plunge pool, and throws mist that drifts up the face and catches
-    the sun. The cliff is built rather than carved out of terrain, so nothing about the
-    ground the horses walk on had to change. */
+ /* Hollowpeak: a continuous mountain, upper stream and carved plunge basin. */
  {
-  const FX=-150, FZ=-240, WID=17, HGT=15, SEG=26, ROWS=8;
-  const lip=groundH(FX,FZ)+HGT, foot=groundH(FX,FZ+11);
-  const cliff=geology.makeWaterfallCliff({width:WID*2,lip,foot,seed:9031});
-  cliff.position.set(FX,foot,FZ);scene.add(cliff);
-  for(let j=0;j<=SEG;j+=2){ const u=j/SEG*2-1;                    // solid to ride into; landform, so course-clear never takes the rock face for a clearable post
-   colliders.push({x:FX+u*WID,z:FZ+Math.pow(Math.abs(u),2.1)*6.4,r:1.6,height:HGT,landform:true}); }
-  {const FW=2.9;
-   const fall=waterfallArt.fall({x:FX,z:FZ+.40,top:lip-.55,bottom:foot+.08,width:FW,run:2.6,name:'Hollowpeak Falls'});scene.add(fall);FALLS.surface=fall;
+  const FX=HOLLOWPEAK.x,FZ=HOLLOWPEAK.z,lip=HOLLOWPEAK.top,foot=HOLLOWPEAK.level;
+  FALLS.landscape=createFallsLandscape({THREE,scene,heightAt:terrainH,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,colliders});
+  {const FW=HOLLOWPEAK.width;
+   const fall=waterfallArt.fall({x:FX,z:FZ,top:lip,bottom:foot+.04,width:FW,run:HOLLOWPEAK.run,name:'Hollowpeak Falls'});scene.add(fall);FALLS.surface=fall;
    /* Falling water throws water. These are the strands that break off the sheet: thin
       cards that fall, fade and start again, so the drop reads as moving volume rather
       than a scrolling texture on a plane. */
@@ -4495,17 +4492,11 @@ let waterMat=null;   // hoisted: the pond reuses it
     FALLS.dst[i*3+1]=Math.random(); FALLS.dst[i*3+2]=0.55+Math.random()*0.75; }
    FALLS.fw=FW;
   }
-  /* the plunge pool, and a ring of foam where the water lands */
-  {const pool=waterfallArt.pool({x:FX,z:FZ+7.6,y:foot+.16,radius:7.4});scene.add(pool);FALLS.pool=pool;
-   const foam=waterfallArt.impact({x:FX,y:foot+.2,z:FZ+3.4,radius:4.4});scene.add(foam);
-   FALLS.foam=foam;
-   for(let i=0;i<16;i++){                                          // boulders round the pool
-    const a=Math.random()*Math.PI*2, rr=6.4+Math.random()*3.2;
-    const bx=FX+Math.cos(a)*rr, bz=FZ+7.6+Math.sin(a)*rr*0.8, sz=0.5+Math.random()*1.5;
-    const b=geology.makeBoulder(sz,i+9431);
-    b.position.set(bx,groundH(bx,bz)-.06,bz); b.rotation.y=Math.random()*Math.PI*2;
-    b.castShadow=true; scene.add(b); if(sz>1)colliders.push({x:bx,z:bz,r:sz*0.8});
-   }}
+  {FALLS.pool=FALLS.landscape.pool;
+   FALLS.foam=waterfallArt.impact({x:FX,y:foot+.045,z:FZ+HOLLOWPEAK.run,radius:3.8});scene.add(FALLS.foam);
+   // Consume the retired boulder ring's explicit placement draws.
+   for(let i=0;i<64;i++)Math.random();
+  }
   /* mist, drifting up the face */
   {const MN=44, mistTex=canvasTex(64,64,(c,w,h)=>{
     const g2=c.createRadialGradient(32,32,0,32,32,32);
@@ -7675,14 +7666,14 @@ function tickFalls(dt,t){
  /* the strands breaking off the sheet */
  if(FALLS.drops&&FALLS.dst){
   const m=new THREE.Matrix4(), q=new THREE.Quaternion(), sc=new THREE.Vector3(1,1,1), pv=new THREE.Vector3();
-  const top=FALLS.lip-0.6, bot=FALLS.foot+0.25, drop=Math.max(1,top-bot);
+  const top=FALLS.lip-.1, bot=FALLS.foot+.15, drop=Math.max(1,top-bot);
   for(let i=0;i<FALLS.dn;i++){
    let life=FALLS.dst[i*3+1]+dt*FALLS.dst[i*3+2]*0.55;
    if(life>1)life-=1;
    FALLS.dst[i*3+1]=life;
    const ox=FALLS.dst[i*3];
-   const v=life, y=top-drop*v*v*0.92;                       // accelerating
-   pv.set(FALLS.x+ox*(1+v*0.42), y, FALLS.z+0.42+v*v*2.6+0.10);
+   const v=life*life, y=top-drop*Math.pow(v,1.055);                       // accelerating
+   pv.set(FALLS.x+ox*(1+v*0.42), y, FALLS.z+v*v*HOLLOWPEAK.run+.15);
    sc.set(1,0.7+v*1.5,1);                                   // stretches as it speeds up
    m.compose(pv,q,sc);
    FALLS.drops.setMatrixAt(i,m);
@@ -7703,18 +7694,18 @@ function tickFalls(dt,t){
    st[o+3]=1;
    st[o]  =FALLS.x+(Math.random()-0.5)*7.5;
    st[o+1]=FALLS.foot+0.1+Math.random()*0.6;
-   st[o+2]=FALLS.z+2.6+Math.random()*3.2;
+   st[o+2]=FALLS.z+HOLLOWPEAK.run-1+Math.random()*3.2;
   }
   st[o+1]+=dt*(1.15+i%3*0.3);
   st[o+2]+=dt*0.55;
   st[o]  +=Math.sin(t*0.7+i)*dt*0.5;
-  const age=1-st[o+3], sz=0.9+age*3.0;
+  const age=1-st[o+3], sz=0.9+age*2.4;
   _fs.set(sz,sz,sz);
   _fm.compose(_fv.set(st[o],st[o+1],st[o+2]),_fq,_fs);
   FALLS.mist.setMatrixAt(i,_fm);
  }
  FALLS.mist.instanceMatrix.needsUpdate=true;
- FALLS.mist.material.opacity=0.26*Math.max(0,Math.min(1,(110-Math.hypot(player.pos.x-FALLS.x,player.pos.z-FALLS.z))/40));
+ FALLS.mist.material.opacity=0.13*Math.max(0,Math.min(1,(110-Math.hypot(player.pos.x-FALLS.x,player.pos.z-FALLS.z))/40));
 }
 function tickBreath(dt){
  let live=0;
@@ -7948,6 +7939,7 @@ function nameSprite(text){
  tx.anisotropy=renderer.capabilities.getMaxAnisotropy();
  const sp=new THREE.Sprite(new THREE.SpriteMaterial({name:'World | floating label',map:tx,transparent:true,depthWrite:false,toneMapped:false}));
  sp.scale.set(2.4,0.6,1);
+ guardFloatingLabel(sp);
  nameSprites.push(sp);
  return sp;
 }
@@ -10725,7 +10717,7 @@ function makeBubbleSprite(text){
  const sp=new THREE.Sprite(new THREE.SpriteMaterial({name:'World | floating label',map:tx,transparent:true,depthWrite:false,toneMapped:false}));
  sp.scale.set(3.6,0.7,1);
  sp.position.y=3.75;
- return sp;
+ return guardFloatingLabel(sp);
 }
 function showBubble(holder,text){
  const parent=holder.parts?holder.parts.group:null;
@@ -14336,7 +14328,7 @@ function installFeatures(){
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{terrainStep:TERRAIN_STEP,waterMaterial:waterMat,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,geology,box,tube,blob,
+  world:{terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},
@@ -14392,7 +14384,7 @@ const reflectionFineCover=new Set(['Living pasture grass','Modelled meadow lupin
 const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,
  omitFromReflection:o=>o===grassInst||reflectionFineCover.has(o.name),
  levelAt(x,z){
-  const planes=[{distance:Math.abs(z-riverZ(x)),level:riverLevel(x)},
+  const planes=[...['pool','tarn'].map(k=>({distance:Math.max(0,Math.hypot(x-HOLLOWPEAK[k].x,z-HOLLOWPEAK[k].z)-HOLLOWPEAK[k].r),level:HOLLOWPEAK[k].level,refreshIntervalMs:100})),{distance:Math.abs(z-riverZ(x)),level:riverLevel(x)},
    {distance:Math.hypot(x-20,z-16),level:.04}];
   const oasis=G.worldPkg?.oasis;if(oasis)planes.push({distance:Math.max(0,Math.hypot(x-oasis.x,z-oasis.z)-oasis.r),level:oasis.y,refreshIntervalMs:100});
   if(z<STREAM_JOIN)planes.push({distance:Math.abs(x-streamX(z)),level:streamLevel(z)});

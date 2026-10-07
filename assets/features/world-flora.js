@@ -1,3 +1,4 @@
+import {fallsExcludesDryPlants} from '../falls-landscape.js?v=mountain-falls-1';
 /* Feature package 'world-flora' — the planting pass over Kestrel Basin.
    Owned by that package: edit only this file and the inline hot spots assigned to it. See
    index.js for the contract. Nothing runs at import time.
@@ -124,7 +125,7 @@ export function install(G){
  const inBasin=(x,z)=>x*x+z*z<448*448;
  const onWater=(x,z,m)=>Math.abs(z-riverZ(x))<m||(z<166&&Math.abs(x-streamX(z))<m*0.8)||hyp(x,z,20,16)<m+2||oasisContainsWater(x,z,.7);
  const okGround=(x,z)=>{
-  if(!inBasin(x,z)||canyonCliffAt(x,z,groundH))return false;
+  if(!inBasin(x,z)||canyonCliffAt(x,z,groundH)||fallsExcludesDryPlants(x,z,groundH))return false;
   if(Math.abs(x)<32&&Math.abs(z)<28)return false;          // the arena and its run-off stay sand
   if(Math.abs(x)<5&&z>BRA-3&&z<BRB+3)return false;         // never on the bridge deck
   return pathDist(x,z)>3.4;                                // the roads are worn, and stay worn

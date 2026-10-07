@@ -6,6 +6,8 @@
    Owned by this package: this file plus five one-line hot spots in ranch3d.html (G.anim,
    G.wild + the stray-spawn guard, the companion foal guard, G.petComp, ev.at in startCourse).
    Nothing runs at import time. */
+import {guardFloatingLabel} from '../label-visibility.js?v=camera-safe-label-1';
+import {fallsAllowsHorse} from '../falls-landscape.js?v=mountain-falls-1';
 import {OASIS,createOasisPalms,createOasisBank,createOasisWater} from '../oasis-art.js?v=living-oasis-1';
 export const id='world';
 export function install(G){
@@ -188,7 +190,7 @@ export function install(G){
   const sp=new THREE.Sprite(new THREE.SpriteMaterial({name:'World | floating label',map:tx,transparent:true,depthWrite:false,toneMapped:false}));
   sp.scale.set(0.6*cv.width/cv.height,0.6,1);   // the plate keeps the game's 0.6 m height and grows sideways
   sp.userData.plate=1;
-  return sp;
+  return guardFloatingLabel(sp);
  }
  /* Repaint a plate somebody else already hung, for the cases where we know the full text and
     the game only kept the first 22 characters of it. */
@@ -643,7 +645,7 @@ export function install(G){
     it finds, integrate, then push out of anything it is inside. The foal, the pet and a wild
     horse that has decided to follow all go through it. */
  function segDist(px,pz,w){const dx=w.x2-w.x1,dz=w.z2-w.z1,l2=dx*dx+dz*dz;let t=l2>0?((px-w.x1)*dx+(pz-w.z1)*dz)/l2:0;t=Math.max(0,Math.min(1,t));return Math.hypot(px-(w.x1+dx*t),pz-(w.z1+dz*t));}
- function blocked(x,z,pad){for(const c of W.colliders){if(hyp(x,z,c.x,c.z)<c.r+pad)return c;}for(const w of W.walls){if(segDist(x,z,w)<pad)return w;}return null;}
+ function blocked(x,z,pad){if(!fallsAllowsHorse(x,z))return {x,z,r:pad+.5};for(const c of W.colliders){if(hyp(x,z,c.x,c.z)<c.r+pad)return c;}for(const w of W.walls){if(segDist(x,z,w)<pad)return w;}return null;}
  function pushOut(a,pad){
   for(const c of W.colliders){const ox=a.pos.x-c.x,oz=a.pos.z-c.z,d=Math.hypot(ox,oz),rad=c.r+pad;if(d<rad){if(d<0.02){a.pos.x=c.x+rad;}else{a.pos.x=c.x+ox/d*rad;a.pos.z=c.z+oz/d*rad;}}}
   for(const w of W.walls){const dx=w.x2-w.x1,dz=w.z2-w.z1,l2=dx*dx+dz*dz;let t=l2>0?((a.pos.x-w.x1)*dx+(a.pos.z-w.z1)*dz)/l2:0;t=Math.max(0,Math.min(1,t));const qx=w.x1+dx*t,qz=w.z1+dz*t;const d=Math.hypot(a.pos.x-qx,a.pos.z-qz);if(d<pad&&d>0.001){a.pos.x=qx+(a.pos.x-qx)/d*pad;a.pos.z=qz+(a.pos.z-qz)/d*pad;}}
@@ -717,7 +719,7 @@ export function install(G){
  function pickWb(herd){const pool=T.WILD_BREEDS.filter(w=>!w.region||w.region===herd.region);const ex=pool.filter(w=>w.region===herd.region);const src=(herd.exclusive&&ex.length&&Math.random()<0.6)?ex:pool;return src[Math.floor(Math.random()*src.length)];}
  function spawnMember(herd,i){
   const wb=pickWb(herd);const a=Math.random()*Math.PI*2,r=Math.random()*herd.r*0.7;
-  let x=herd.x+Math.cos(a)*r,z=herd.z+Math.sin(a)*r;const at=findClear(x,z,1.5,herd.r);x=at[0];z=at[1];
+  let x=herd.x+Math.cos(a)*r,z=herd.z+Math.sin(a)*r;const at=findClear(x,z,1.5,herd.r,fallsAllowsHorse);x=at[0];z=at[1];
   const parts=H.makeHorse({colors:{body:wb.body,mane:wb.mane},seed:Math.floor(Math.random()*9),breed:wb.breed});
   const tag=plate('✨ wild'+(wb.variant?' · '+wb.variant:''));tag.position.y=2.7;parts.group.add(tag);   // "✨ wild · Snowline Fjord" is 24 characters and the built-in plate ate the last two
   parts.group.position.set(x,groundH(x,z),z);scene.add(parts.group);
@@ -788,6 +790,7 @@ export function install(G){
    if(far>260){for(const m of hd.members)m.parts.group.visible=false;continue;}
    if(!hd.seen&&far<hd.def.r+40){hd.seen=true;S.sync(s=>{s.wildSeen=s.wildSeen||{};s.wildSeen[hd.def.id]=s.wildSeen[hd.def.id]||0;});toast('✨ Wild horses — the '+hd.def.label+'. Walk up slowly, no galloping.');}
    for(const m of hd.members){
+    const previousX=m.pos.x,previousZ=m.pos.z;
     m.parts.group.visible=true;
     const wd=hyp(player.pos.x,player.pos.z,m.pos.x,m.pos.z);
     if(m.fedT>0)m.fedT-=dt;
@@ -812,7 +815,7 @@ export function install(G){
      m.phase+=dt*(m.rest>0?1.2:4);
      if(m.rest>0)m.rest-=dt;
      else{const dd=hyp(m.tx,m.tz,m.pos.x,m.pos.z);
-      if(dd<0.6){m.rest=2+Math.random()*4;const a2=Math.random()*Math.PI*2,rr=Math.random()*m.herd.r;m.tx=m.herd.x+Math.cos(a2)*rr;m.tz=m.herd.z+Math.sin(a2)*rr;}
+      if(dd<0.6){m.rest=2+Math.random()*4;const a2=Math.random()*Math.PI*2,rr=Math.random()*m.herd.r;m.tx=m.herd.x+Math.cos(a2)*rr;m.tz=m.herd.z+Math.sin(a2)*rr;if(!fallsAllowsHorse(m.tx,m.tz)){const target=findClear(m.tx,m.tz,1.2,m.herd.r,fallsAllowsHorse);m.tx=target[0];m.tz=target[1];}}
       else mv=steer(m,m.tx,m.tz,dt,1.1,{stop:0.6,base:1.1,gain:0,turn:2});}
      amp=m.rest>0?0.05:0.4;
      if(wd<5.5&&sp<2){m.trust=Math.min(100,m.trust+dt*9*(m.fedT>0?2:1));m.rest=Math.max(m.rest,0.6);   // she stands for you while you are calm beside her
@@ -820,6 +823,9 @@ export function install(G){
       if(m.trust>=50&&m.coop&&!m.follow&&effTrust(m)>=50){m.follow=true;toast('🐎 '+m.name+' trusts you enough to follow — walk her home, slowly.');}
       checkTame(m);}
     }
+    // Steering whiskers anticipate the mountain; this final movement guard
+    // also catches flightless horses fleeing or following across its waterline.
+    if(!fallsAllowsHorse(m.pos.x,m.pos.z)){m.pos.x=previousX;m.pos.z=previousZ;m.tx=m.herd.x;m.tz=m.herd.z;m.heading+=.6;mv=0;}
     if(m.coop&&wd<8&&m.trust>0&&t-m.lastPub>1&&N.SOCIAL){m.lastPub=t;N.sendChat('',{wild:{h:m.herd.id,i:m.i,tr:Math.round(m.trust),x:+m.pos.x.toFixed(0),z:+m.pos.z.toFixed(0)}});}
     /* draw */
     const A=G.anim;
@@ -918,7 +924,7 @@ export function install(G){
  }
  function scanLabels(){
   let n=0;
-  scene.traverse(o=>{if(o.userData.wlbl||!isPlate(o))return;o.userData.wlbl=1;
+  scene.traverse(o=>{if(o.userData.wlbl||!isPlate(o))return;o.userData.wlbl=1;guardFloatingLabel(o);
    const k=o.scale.x>PLATE_MAX?PLATE_MAX/o.scale.x:1;
    LABELS.push({sp:o,bx:o.scale.x*k,by:o.scale.y*k,op:o.material.opacity});n++;});
   for(let i=LABELS.length-1;i>=0;i--)if(!LABELS[i].sp.parent)LABELS.splice(i,1);   // a rebuilt barn throws its old plates away

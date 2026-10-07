@@ -392,6 +392,25 @@ removing the bright ribbons they drew across cliffs from aerial views.
 protected areas; `qa-carved-canyon.cjs` rides Ochre Trail, presses into a cliff,
 compares saved protected-ground samples and checks rendering across graphics tiers.
 
+Hollowpeak Falls now descends through a connected mountain watercourse: an upper
+tarn feeds a recessed stream, then the cascade falls into a carved plunge basin.
+The original height field is shared by terrain, rock coverage, planting and hoof
+contact. The mountain casts a complete terrain silhouette; steep slopes reveal
+world-space rock maps while the gentler crowns retain snow. Cliff-foot collision
+contours preserve the Frostpine trail, town approaches and Snow Trail race.
+
+The photographed rock is [Marble Cliff 02](https://polyhaven.com/a/marble_cliff_02)
+by Amal Kumar / Poly Haven, CC0. Local diffuse, normal and roughness maps use
+6.8-metre world-space projection; provenance, checksums and reproduction instructions
+are in `assets/textures/falls/`. Both pools share the existing High reflection
+pass at a maximum 10 Hz; Medium and Low retain ripples and sky lighting. Dry
+planting respects the watercourse. `node --test tools/test-falls-landscape.mjs`
+checks the terrain triangles and water clearance; `qa-mountain-falls.cjs` checks
+protected ground, mounted travel, cliff collision and weather/quality rendering.
+Floating names and speech bubbles also use the current camera transform to clip
+inside camera clearance; a lagging CPU fade cannot leave a giant label across
+the riding view. The GPU check verifies three near distances and a readable far label.
+
 Desert planting uses original ribbed saguaro and barrel cactus models with
 rounded, closed crowns, areoles and fine spines. Both the old textured cactus
 scatter and the plain tube cacti use these shared templates. Coyote's town centre
@@ -460,8 +479,8 @@ meshes replace the earlier sphere/cone scenery.
 
 Original ComfyUI materials still supply weathered timber and cedar shingles;
 the main ground now uses photographed scans. Detailed barns and cottages have recessed windows,
-door joinery, foundations and gutters. Canyon formations and the waterfall cliff
-have eroded silhouettes, physical depth and rubble at their bases; riverbanks
+door joinery, foundations and gutters. Canyon formations have eroded silhouettes
+and rubble at their bases; the falls are carved into continuous terrain. Riverbanks
 have clustered sedges, reeds, gravel and driftwood. The sources and reproduction
 records are in `assets/textures/realism/README.md`.
 

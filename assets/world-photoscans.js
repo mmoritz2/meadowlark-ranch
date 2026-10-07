@@ -1,3 +1,4 @@
+import {fallsContainsWater} from './falls-landscape.js?v=mountain-falls-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
 import {inMeadowOpening} from './pastoral-fields.mjs?v=meadow-ridges-1';
 import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFoliageCoverage} from './tree-impostors.js?v=opaque-foliage-1';
@@ -19,7 +20,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   const routes=Object.values(G.tables.RACE_ROUTES).filter(Array.isArray);
   function segmentDistance(x,z,a,b){const dx=b[0]-a[0],dz=b[1]-a[1],t=THREE.MathUtils.clamp(((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz||1),0,1);return Math.hypot(x-a[0]-t*dx,z-a[1]-t*dz);}
   function clear(x,z,r=1){
-    if(inMeadowOpening(x,z))return false;
+    if(inMeadowOpening(x,z)||fallsContainsWater(x,z,r+1.5))return false;
     if(G.vistas?.clearZones?.some(test=>test(x,z)))return false;
     if(W.sceneryArt.containsWaterfall(x,z,r))return false;
     if(Math.hypot(x,z)<33||W.pathDist(x,z)<r+3||(G.worldPaths?.trackDist(x,z)??Infinity)<r+3)return false;

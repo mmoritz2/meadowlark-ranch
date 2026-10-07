@@ -1,0 +1,57 @@
+[
+  {
+    "id": "marble_cliff_02",
+    "page": "https://polyhaven.com/a/marble_cliff_02",
+    "authors": {
+      "Amal Kumar": "All"
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "scaleMetres": [
+      6.8013715744018555,
+      6.8013715744018555
+    ],
+    "retrieved": "2026-10-06",
+    "files": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_cliff_02/marble_cliff_02_diff_1k.jpg",
+        "sourceMD5": "af75fd7552eceb0a53fb46bcf919cdbf",
+        "sourceSHA256": "a1ca15e1b5cd7d0d03cb7abb93d44a18feb4bf6757ec3458805518f51f3ae1f1",
+        "sourceBytes": 1180448,
+        "output": {
+          "file": "marble_cliff_02_diff.webp",
+          "size": 1024,
+          "bytes": 484248,
+          "sha256": "eb4dadcf323d41fbda4518affa86e72c2f04fa2cfc545cf64b33720d1557ce20",
+          "colorSpace": "sRGB"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_cliff_02/marble_cliff_02_nor_gl_1k.jpg",
+        "sourceMD5": "84c9dd722bddf04a067f1b825b97b288",
+        "sourceSHA256": "046d22b521c769de9f52fe38cf99a34ad842687da53ce782fd6f3d48475f70a6",
+        "sourceBytes": 1313569,
+        "output": {
+          "file": "marble_cliff_02_nor_gl.webp",
+          "size": 1024,
+          "bytes": 627738,
+          "sha256": "c5a81051f7fe8a1b6082e86596b21986853e5a011ed22d39da2a0d9fec14a93f",
+          "colorSpace": "linear"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_cliff_02/marble_cliff_02_arm_1k.jpg",
+        "sourceMD5": "0be99197074e3b14827f2ef1b1741480",
+        "sourceSHA256": "b17982444225ccf81e4238662d097a554f9e4c20dae73a24d58c24718499c302",
+        "sourceBytes": 907517,
+        "output": {
+          "file": "marble_cliff_02_arm.webp",
+          "size": 512,
+          "bytes": 76690,
+          "sha256": "1579a348b9adbd50a241c0f6e07b263d4bf92ecedc13c508e199356669555545",
+          "colorSpace": "linear"
+        }
+      }
+    ]
+  }
+]
