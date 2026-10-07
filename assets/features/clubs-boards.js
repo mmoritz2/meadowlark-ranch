@@ -14,6 +14,7 @@
    honour-system. Every remote string is truncated here, the own-echo guard upstream is left
    alone, and nothing about a save is ever published. */
 import {CLUB_COMMONS,CLUB_CRESTS,CLUB_COLORS,clubCode,cleanClubMeta,ensureClubState,activateClub,loadClub,stashClub,creditClubPoints,ownClubPoints,acceptClubMeta,clearCurrentClubContribution} from '../club-state.js?v=clubhouse-2';
+import {EMBER_FRIESIAN_BREED} from '../club-horses.js?v=ember-friesian-1';
 export const id='clubs-boards';
 export function install(G){
  const {$,toast}=G, S=G.save, M=G.money, T=G.tables, U=G.ui, N=G.net;
@@ -104,8 +105,7 @@ export function install(G){
     onto an authored body through breedModels.alias so dressWithRig has a model to fit. */
  const CLUB_HORSE='emberfriesian', PHOTO_HORSE='larksong';
  const NEW_BREEDS=[
-  ['emberfriesian','Ember Friesian','Legendary',0,0,'#1a1412','#ff7a2a',
-   {exclusive:'club',club:true,coat:'fire',glow:true,size:1.08,mark:'sooty',markCol:'#ff9a3a',body:'black',src:'club'}],
+  EMBER_FRIESIAN_BREED,
   ['larksong','Larksong Unicorn','Mythic',0,0,'#f4e9ff','#ffd6f0',
    {exclusive:'photo',prize:true,horn:true,glow:true,coat:'aurora',mark:'dapple',markCol:'#ffe6f6',body:'unicorn',src:'photo'}],
  ];
@@ -874,7 +874,7 @@ export function install(G){
   h+='<div class="bGroup">🔥 The Ember Friesian</div>'
    +'<div class="passCard" style="background:linear-gradient(180deg,#2a1c18,#4a2a14);color:#ffd9a8">'
    +'<div class="ph"><b style="color:#ffb45a">'+(owns?'🔥 Ember Friesian — in your barn':vouchers?'🔥 Ember Friesian — a token is waiting':'🔒 Ember Friesian')+'</b><span style="font-size:11px;color:#e0a96a">Legendary · 9 speed / 8 stamina / 6 jump / 9 accel / 5 agility</span></div>'
-   +'<div class="sub" style="color:#e8c79a">A black Friesian with fire in its coat. It is not in the shop, not in the market, not in the summoning stall and it never will be — the only way to one is a Champions chest, awarded to members with at least 100 personal SP in a top-50 club.</div>'
+   +'<div class="sub" style="color:#e8c79a">An obsidian Friesian with copper ember tracery, a glowing forehead crest, golden fire in its mane and tail, and drifting cinders. Earn a horse token from a Champions chest with at least 100 personal SP in a top-50 club. <a href="breeds.html?horse=emberfriesian&v=ember-friesian-1" target="_blank" rel="noopener" style="color:#ffdc95">Meet the Ember Friesian in 3D</a>.</div>'
    +(vouchers?'<button data-fx="clubs:horse" class="claimBtn" style="margin-top:6px">Claim your Ember Friesian ('+vouchers+' token'+(vouchers>1?'s':'')+')</button>':'')
    +'</div>';
   return h;

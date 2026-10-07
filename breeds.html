@@ -15,7 +15,8 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
-import {createBreedLibrary} from './assets/breed-models.js?v=dragon-acting-1';
+import {createBreedLibrary} from './assets/breed-models.js?v=ember-friesian-1';
+import {EMBER_FRIESIAN_BREED} from './assets/club-horses.js?v=ember-friesian-1';
 import {createNativeHorseMotion} from './assets/native-horse-motion.js?v=horse-actions-1';
 import {nativeGroomFacade} from './assets/game-hero-horse.js?v=horse-actions-1';
 import {NATIVE_MODEL_CHOICES} from './assets/features/native-horses.js?v=dragon-acting-1';
@@ -54,6 +55,7 @@ const fill=new THREE.DirectionalLight(0xe8f0ff,1.15);fill.position.set(4,3,-2);s
 const floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardMaterial({color:0xb4b8aa,roughness:1}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
 const ring=new THREE.Mesh(new THREE.RingGeometry(1.74,1.755,100),new THREE.MeshBasicMaterial({color:0xbcb992,side:THREE.DoubleSide,transparent:true,opacity:.45}));ring.rotation.x=-Math.PI/2;ring.position.y=.002;scene.add(ring);
 const lib=createBreedLibrary({THREE,GLTFLoader,clone});
+lib.alias(EMBER_FRIESIAN_BREED[0],EMBER_FRIESIAN_BREED[7].body,EMBER_FRIESIAN_BREED);
 const wingLibrary=createEquineWingLibrary(THREE,{camera,sun});
 const fantasyTypes={aether:'galaxy',sunspear:'fire',meadowlight:'aurora',tempest:'shadow',eclipse:'eclipse',glacier:'ice',celestial:'galaxy',ember:'fire',frost:'ice',aurora:'aurora',phoenix:'fire',shadowmare:'shadow',frostdrake:'ice',emberdrake:'fire',amethyst:'galaxy',stormdrake:'shadow',verdant:'aurora'};
 const dragonKeys=new Set(['frostdrake','emberdrake','amethyst','stormdrake','verdant']);
@@ -165,7 +167,7 @@ $('motion').onchange=()=>{motion?.cancelAction?.();$('action').value='';motion?.
 $('action').onchange=()=>{const type=$('action').value;if(!type||loading||!motion?.supportsAction?.(type))return;motion.cancelAction();motion.set('stand');$('motion').value=standingMovement();if(motion.startAction(type)){setPaused(false);$('lead').disabled=true;if(!headView)fitBodyCamera(camera.position.clone().sub(controls.target));}else $('action').value='';};
 $('lead').onchange=()=>{if(!motion?.action)motion?.set(motion.mode,{lead:$('lead').value});};$('pause').onclick=()=>setPaused(!paused);
 new ResizeObserver(()=>{const w=stage.clientWidth,h=stage.clientHeight;if(!w||!h)return;camera.aspect=w/h;framing=Math.max(1,1.18/camera.aspect);controls.maxDistance=14*framing;controls.minDistance=headView?.4:1.4*framing;camera.updateProjectionMatrix();renderer.setSize(w,h);if(headView)focusHead();else if(horse)fitBodyCamera(camera.position.clone().sub(controls.target));else controls.update();}).observe(stage);
-function simulate(dt){const rate=Number($('playback').value),scaledDt=dt*rate;controls.update(scaledDt);if(assetInfo?.nativeBreed||assetInfo?.referenceMotion){motion?.update(motion?.action?scaledDt:dt,{rate});if(horse)horse.position.y=(motion?.state.bodyLiftM||0)*(instance?.scene.getWorldScale(new THREE.Vector3()).y||1);}else motion?.update(scaledDt);accessories?.update(scaledDt);if(motion){groom?.update(scaledDt,motion.state);const action=motion.action;$('action').value=action?.type||'';const movement=action?standingMovement():motion.mode;$('motion').value=[...$('motion').options].some(option=>option.value===movement)?movement:standingMovement();$('lead').value=motion.state.lead;$('lead').disabled=!['canter','gallop'].includes(motion.mode);}}
+function simulate(dt){const rate=Number($('playback').value),scaledDt=dt*rate;controls.update(scaledDt);if(assetInfo?.nativeBreed||assetInfo?.referenceMotion){motion?.update(motion?.action?scaledDt:dt,{rate});if(horse)horse.position.y=(motion?.state.bodyLiftM||0)*(instance?.scene.getWorldScale(new THREE.Vector3()).y||1);}else motion?.update(scaledDt);accessories?.update(scaledDt,motion?.state||{});if(motion){groom?.update(scaledDt,motion.state);const action=motion.action;$('action').value=action?.type||'';const movement=action?standingMovement():motion.mode;$('motion').value=[...$('motion').options].some(option=>option.value===movement)?movement:standingMovement();$('lead').value=motion.state.lead;$('lead').disabled=!['canter','gallop'].includes(motion.mode);}}
 const savedCamera=new THREE.Vector3(),jumpOffset=new THREE.Vector3();
 function draw(){const lift=Math.max(0,motion?.state.bodyLiftM||0),offset=lift*(headView?1:.65);savedCamera.copy(camera.position);jumpOffset.copy(camera.position).sub(controls.target).normalize().multiplyScalar(headView?0:lift*1.3);camera.position.add(jumpOffset);camera.position.y+=offset;controls.target.y+=offset;camera.lookAt(controls.target);renderer.render(scene,camera);camera.position.copy(savedCamera);controls.target.y-=offset;}
 let last=performance.now();renderer.setAnimationLoop(now=>{const dt=Math.min(.1,(now-last)/1000);last=now;if(!paused)simulate(dt);draw();});

@@ -4,7 +4,7 @@
 import {fillOutTail,fillOutMane} from './horse-hair-volume.js';
 import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=dragon-acting-1';
 import {nativeRosterProfiles,applyNativeRosterShape} from './native-roster.js?v=native-roster-1';
-import {createNativeHorseFantasy} from './native-horse-fantasy.js?v=native-roster-1';
+import {createNativeHorseFantasy} from './native-horse-fantasy.js?v=ember-friesian-1';
 import {dragonProfiles,dragonProfile,configureDragonAppearance,attachDragonBreath} from './dragon-roster.js?v=dragon-roster-1';
 export function createBreedLibrary({THREE, GLTFLoader, clone}) {
   const base=new URL('./models/artist-breeds/',import.meta.url),pending=new Map(),ready=new Map(),files=new Map();
@@ -24,6 +24,7 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
     const dragon=dragonProfile(NATIVE_BREED_PROFILES,key,row);if(dragon){manifest.breeds[key]=dragon;return;}
     const existed=!!manifest.breeds[key],original=manifest.breeds[key]||manifest.breeds[to];if(!original?.nativeRoster)return;
     const flags=row?.[7]||{};manifest.breeds[key]={...original,id:key,name:row?.[1]||original.name,label:row?.[1]||original.label,
+      family:flags.family||original.family,coat:flags.coatLabel||original.coat,description:flags.description||original.description,
       nativeRosterAlias:original.nativeRosterAlias||!existed,nativeRosterAppearance:{...original.nativeRosterAppearance,...flags,body:row?.[5],mane:row?.[6]},
       nativeRosterColors:row?{body:row[5],mane:row[6]}:original.nativeRosterColors};
   }
