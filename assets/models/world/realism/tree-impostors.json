@@ -1,28 +1,6 @@
 {
-  "processing": "Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Live lighting is applied by the game.",
+  "processing": "Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Broadleaf albedo includes original leaf-area-based sky occlusion, also evaluated once for detailed runtime meshes. Broadleaf summer pigments use the shared linear RGB multiplier [0.82,1,0.66]. Live directional lighting is applied by the game.",
   "trees": [
-    {
-      "id": "tree_small_02",
-      "variant": -1,
-      "width": 4.654437732696533,
-      "height": 4.823275546617806,
-      "bottom": -0.16053979707881808,
-      "sourceHeight": 4.55025994963944,
-      "viewCount": 8,
-      "views": {
-        "file": "tree_small_02_views.webp",
-        "bytes": 1859186,
-        "sha256": "41a45c303572333452998ff56a5f5c19fa3c2386827e52239d2c6afb8522d338"
-      },
-      "normals": {
-        "file": "tree_small_02_normals.webp",
-        "bytes": 1192582,
-        "sha256": "aaee6aaef5d93b44a9952da6beec9f8ebc10a5b23960f2df25e91cd1cdfbe9ad"
-      },
-      "source": "tree_small_02.glb",
-      "sourcePage": "https://polyhaven.com/a/tree_small_02",
-      "license": "CC0-1.0"
-    },
     {
       "id": "fir_sapling_medium",
       "variant": 0,
@@ -112,6 +90,36 @@
       "license": "CC0-1.0"
     },
     {
+      "id": "tree_small_02",
+      "variant": -1,
+      "width": 4.654437732696533,
+      "height": 4.823275546617806,
+      "bottom": -0.16053979707881808,
+      "sourceHeight": 4.55025994963944,
+      "viewCount": 8,
+      "canopyShading": {
+        "triangles": 110000,
+        "area": 13.47856586399261,
+        "cell": 0.0961660688573664,
+        "occupied": 9620,
+        "min": 0.5026921033859253,
+        "max": 1
+      },
+      "views": {
+        "file": "tree_small_02_views.webp",
+        "bytes": 1837206,
+        "sha256": "873030d883c430fbfcb638768a739eea7ba6f4adbdcfe4bfb320eca87dc6709b"
+      },
+      "normals": {
+        "file": "tree_small_02_normals.webp",
+        "bytes": 1192582,
+        "sha256": "aaee6aaef5d93b44a9952da6beec9f8ebc10a5b23960f2df25e91cd1cdfbe9ad"
+      },
+      "source": "tree_small_02.glb",
+      "sourcePage": "https://polyhaven.com/a/tree_small_02",
+      "license": "CC0-1.0"
+    },
+    {
       "id": "island_tree_01",
       "variant": -1,
       "width": 5.304972910881043,
@@ -119,10 +127,18 @@
       "bottom": -0.17113899525254964,
       "sourceHeight": 5.0270365215837955,
       "viewCount": 8,
+      "canopyShading": {
+        "triangles": 88336,
+        "area": 49.52911602365722,
+        "cell": 0.10960687832398848,
+        "occupied": 15949,
+        "min": 0.4015902578830719,
+        "max": 1
+      },
       "views": {
         "file": "island_tree_01_views.webp",
-        "bytes": 3044762,
-        "sha256": "ec0ba27a97e42b6ae17130a030fe649bb0228a4249145f07a4ae84e1d0c479f3"
+        "bytes": 3019146,
+        "sha256": "e864d35658f25365751c9c378078a289ec0ae4cddddefc973dc50d14762ca69f"
       },
       "normals": {
         "file": "island_tree_01_normals.webp",
@@ -141,10 +157,18 @@
       "bottom": -0.731447851806879,
       "sourceHeight": 19.4944239705801,
       "viewCount": 8,
+      "canopyShading": {
+        "triangles": 232168,
+        "area": 4529.578003505379,
+        "cell": 0.5555930571122603,
+        "occupied": 11725,
+        "min": 0.36057987809181213,
+        "max": 1
+      },
       "views": {
         "file": "jacaranda_tree_views.webp",
-        "bytes": 2289254,
-        "sha256": "5e6c64fee8861225c68207a88ec5a2d58db55d7307077e8e8541749b13c5ba10"
+        "bytes": 2179244,
+        "sha256": "d17ead9efbf071f9db9c26407f7af4649ef4c8e66131fc256957a4899e683309"
       },
       "normals": {
         "file": "jacaranda_tree_normals.webp",

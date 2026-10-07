@@ -9,15 +9,27 @@ const out=path.resolve(process.argv[2]||'output/woodland-trails');fs.mkdirSync(o
  await page.goto(QA.BASE+'/ranch3d.html?qa=woodland',{timeout:120000});
  await page.waitForFunction(()=>window.__qa?.G.horse.RIG().ready&&!document.getElementById('load'),null,{timeout:120000});
  await page.evaluate(async()=>{const q=__qa;q.G.save.sync(s=>s.qualityLocked=true);q.G.wardrobe?.closeChar();q.G.hidePanels();await q.G.photoscans.ready;await q.G.worldDetails.ready;advanceTime(0);q.day();q.G.gfx.apply('high');});
- const state=await page.evaluate(()=>{
+ const state=await page.evaluate(async()=>{
   const q=__qa,P=q.G.worldPaths,W=q.G.world,scan=q.G.photoscans,tr=P.tracks.find(t=>t.id==='clover'),pos=P.surface.geometry.attributes.position;
   let surfaceError=0;for(let i=0;i<pos.count;i++)surfaceError=Math.max(surfaceError,Math.abs(pos.getY(i)-W.groundH(pos.getX(i),pos.getZ(i))-.055));
+  const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=canopy-depth-1').then(r=>r.json());
+  const canopyBakeMatches=Object.entries(scan.canopyShading||{}).every(([id,stats])=>{
+   const baked=catalog.trees.find(t=>t.id===id)?.canopyShading;
+   return baked&&['triangles','area','cell','occupied','min','max'].every(key=>Math.abs(baked[key]-stats[key])<1e-7);
+  });
+  const shadedMaterials=new Set(),shadedGeometry=new Set(),canopyGeometry=[];
+  q.scene.traverse(o=>{if(!o.isMesh||!o.name.startsWith('Photoscan ')||!o.geometry.attributes.canopyShade)return;
+   shadedMaterials.add(o.material);if(shadedGeometry.has(o.geometry))return;shadedGeometry.add(o.geometry);
+   const values=o.geometry.attributes.canopyShade.array;let min=1,max=0,finite=true;
+   for(const v of values){min=Math.min(min,v);max=Math.max(max,v);finite&&=Number.isFinite(v);}
+   canopyGeometry.push({name:o.name,vertices:values.length,min,max,finite,castsShadow:o.castShadow});
+  });
   const start=tr.pts[0],end=tr.pts.at(-1),highfell=P.tracks.find(t=>t.id==='highfell');
   let minClearance=Infinity;for(const p of tr.pts)for(const c of W.colliders)if(!c.decor&&c.r>=.3)minClearance=Math.min(minClearance,Math.hypot(p[0]-c.x,p[1]-c.z)-c.r);
   let oldPlantsOnRoad=0;const matrix=new q.THREE.Matrix4(),point=new q.THREE.Vector3();
   for(const mesh of[...['scrub','juni','sage','brack','reed','tuft','petal'].map(k=>q.G.floraPkg.bank[k]?.im),W.seedGrass].filter(Boolean))for(let i=0;i<mesh.instanceMatrix.count;i++){mesh.getMatrixAt(i,matrix);if(Math.abs(matrix.determinant())<1e-8)continue;point.setFromMatrixPosition(matrix);if(P.trackDist(point.x,point.z)<4.4)oldPlantsOnRoad++;}
   let woodlandLeafTriangles=0;q.scene.traverse(o=>{if(o.name.startsWith('Photoscan woodland-broadleaf')&&/leaves/.test(o.material.name))woodlandLeafTriangles=o.geometry.index.count/3});
-  return {length:tr.len,points:tr.pts.length,startGap:W.pathDist(...start),endGap:Math.min(...highfell.pts.map(p=>Math.hypot(p[0]-end[0],p[1]-end[1]))),minCreekGap:Math.min(...tr.pts.map(p=>Math.abs(p[0]-W.streamX(p[1])))),surfaceError,minClearance,
+  return {canopyBakeMatches,canopyShading:scan.canopyShading,canopyGeometry,shadedMaterials:[...shadedMaterials].map(m=>({name:m.name,enabled:m.userData.hasCanopyShade})),length:tr.len,points:tr.pts.length,startGap:W.pathDist(...start),endGap:Math.min(...highfell.pts.map(p=>Math.hypot(p[0]-end[0],p[1]-end[1]))),minCreekGap:Math.min(...tr.pts.map(p=>Math.abs(p[0]-W.streamX(p[1])))),surfaceError,minClearance,
    oldPlantsOnRoad,clearedPlants:P.clearedPlantInstances,pathStoneTriangles:scan.pathStoneTriangles,trees:scan.woodlandCanopies,leafTriangles:woodlandLeafTriangles,groveTrees:scan.trailTrees.length,
    treeClearances:scan.trailTrees.map(t=>({road:P.trackDist(t.x,t.z),water:Math.abs(t.x-W.streamX(t.z)),trunk:W.colliders.some(c=>c.trunk&&c.x===t.x&&c.z===t.z)})),
    signs:P.signs.filter(s=>s.name==='sign:cloverfork'||s.name==='sign:cloverwest').length,
@@ -54,7 +66,12 @@ const out=path.resolve(process.argv[2]||'output/woodland-trails');fs.mkdirSync(o
   const rt=q.composer.readBuffer,pixels=new Uint16Array(rt.width*rt.height*4);q.renderer.readRenderTargetPixels(rt,0,0,rt.width,rt.height,pixels);let invalid=0;for(let i=0;i<pixels.length;i++)if(i%4!==3&&(pixels[i]&0x7c00)===0x7c00)invalid++;
   return {invalid,gl:q.renderer.getContext().getError(),image:q.renderer.domElement.toDataURL('image/webp',.94).split(',')[1]};
  },view);fs.writeFileSync(path.join(out,view.name+'.webp'),Buffer.from(shot.image,'base64'));delete shot.image;pixels.push(shot);}
- const checks={connectedBridleway:state.length>200&&state.startGap<.5&&state.endGap<.001,groundedRibbon:state.surfaceError<.001,dryTrail:state.minCreekGap>=12-1e-6,
+ const checks={
+  threeCanopySpecies:Object.keys(state.canopyShading||{}).length===3,
+  nearAndFarShadingMatch:state.canopyBakeMatches,
+  boundedCanopyShade:state.canopyGeometry.length>=3&&state.canopyGeometry.every(g=>g.finite&&g.min>=.35&&g.min<.85&&g.max<=1.00001&&g.castsShadow),
+  fullMeshesUseShade:state.shadedMaterials.length===3&&state.shadedMaterials.every(m=>m.enabled),
+  connectedBridleway:state.length>200&&state.startGap<.5&&state.endGap<.001,groundedRibbon:state.surfaceError<.001,dryTrail:state.minCreekGap>=12-1e-6,
   populatedWoodland:state.trees>250&&state.leafTriangles===232168,trailGroves:state.groveTrees>5&&state.treeClearances.every(p=>p.road>5.5&&p.water>10&&p.trunk),wayfinding:state.signs===2,
   clearTrailSurface:state.oldPlantsOnRoad===0&&state.clearedPlants>0,scannedBoundaries:state.pathStoneTriangles===240,newTreeBudgets:tiers.every(t=>t.triangles<=t.budget)&&tiers[0].detailedWoodland===0&&tiers[2].detailedWoodland>0,rideBothDirections:riding.every(p=>p.finished&&p.mounted&&p.maxDeviation<3.5&&p.finiteCamera),validRendering:pixels.every(p=>p.invalid===0&&p.gl===0),noErrors:!state.errors.length&&!errors.length};
  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({checks,state,riding,tiers,pixels,errors},null,2));console.log(JSON.stringify({checks,state,riding:riding.map(({rows,...p})=>p),pixels,errors}));assert(Object.values(checks).every(Boolean),'Woodland trail acceptance failed');

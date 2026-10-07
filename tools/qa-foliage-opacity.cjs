@@ -23,8 +23,11 @@ const out=path.resolve(process.argv[2]||'output/foliage-opacity');fs.mkdirSync(o
   {name:'dawn',tier:'high',time:.15},{name:'night',tier:'high',time:0},
   {name:'near-canopy',tier:'high',near:true},{name:'direct-rain',tier:'high',rain:true,direct:true},
  ];
+ if(process.argv.includes('--closeups'))cases.splice(0,cases.length,cases[0],{name:'canopy-close-high',tier:'high',near:true},{name:'canopy-close-low',tier:'low',near:true});
  for(const c of cases){const row=await page.evaluate(c=>{const q=__foliageQA;q.G.gfx.apply(c.tier);
-   const eye=c.near?[2,q.groundH(2,199)+2.6,199]:[85,q.groundH(85,-150)+4,-150],look=c.near?[64,q.groundH(64,239)+3,239]:[20,q.groundH(20,-35)+5,-35];
+   const tree=c.near?q.G.photoscans.treePositions.filter(t=>t.source==='canopy-broadleaf'&&t.height>8).sort((a,b)=>Math.hypot(a.x+70,a.z-70)-Math.hypot(b.x+70,b.z-70))[0]:null;
+   let eye=[85,q.groundH(85,-150)+4,-150],look=[20,q.groundH(20,-35)+5,-35];
+   if(tree){const h=tree.height,g=q.groundH(tree.x,tree.z);eye=[tree.x+h*.9,g+h*.35,tree.z+h*1.1];eye[1]=Math.max(eye[1],q.groundH(eye[0],eye[2])+1.5);look=[tree.x,g+h*.55,tree.z];}
    q.player.pos.set(eye[0],0,eye[2]);q.player.speed=0;
    const render=q.renderer.render;q.renderer.render=()=>{};try{for(let i=0;i<210;i++){q.day(c.time??.34,c.rain);q.step(1/30);q.scene.onBeforeRender();}}finally{q.renderer.render=render;}
    q.player.mesh.visible=false;for(const o of Object.values(q.TACK||{}))if(o?.isObject3D)o.visible=false;const reins=q.scene.getObjectByName('Native leather split reins');if(reins)reins.visible=false;
@@ -32,7 +35,9 @@ const out=path.resolve(process.argv[2]||'output/foliage-opacity');fs.mkdirSync(o
    let source=null;const pass=q.composer.passes[0],original=pass.render;
    pass.render=function(renderer,write,read,...rest){original.call(this,renderer,write,read,...rest);source=q.readTarget(read);};
    try{if(c.direct){q.renderer.setRenderTarget(null);q.renderer.render(q.scene,q.camera);}else q.composer.render();}finally{pass.render=original;}
-   const result={name:c.name,source,canvas:q.readCanvas(),gl:q.renderer.getContext().getError(),image:q.renderer.domElement.toDataURL('image/webp',.96).split(',')[1]};
+   let detailedTarget=false;
+   if(tree){const matrix=new q.THREE.Matrix4(),position=new q.THREE.Vector3();q.scene.traverse(o=>{if(!o.isInstancedMesh||!o.geometry.attributes.canopyShade)return;for(let i=0;i<o.count;i++){o.getMatrixAt(i,matrix);if(matrix.determinant()===0)continue;position.setFromMatrixPosition(matrix);if(Math.hypot(position.x-tree.x,position.z-tree.z)<.01)detailedTarget=true;}});}
+   const result={name:c.name,tier:c.tier,...(tree?{tree,detailedTarget}:{}),source,canvas:q.readCanvas(),gl:q.renderer.getContext().getError(),image:q.renderer.domElement.toDataURL('image/webp',.96).split(',')[1]};
    if(c.reproduce){const mats=new Set();q.scene.traverse(o=>{if(!o.isMesh)return;for(const m of Array.isArray(o.material)?o.material:[o.material])if(m.alphaToCoverage&&m.blending===q.THREE.CustomBlending)mats.add(m);});
     for(const m of mats){m.blending=q.THREE.NormalBlending;m.needsUpdate=true;}
     q.composer.render();result.reproduced={materials:mats.size,...q.readCanvas(),image:q.renderer.domElement.toDataURL('image/webp',.96).split(',')[1]};
@@ -67,6 +72,8 @@ const out=path.resolve(process.argv[2]||'output/foliage-opacity');fs.mkdirSync(o
  // Allow one half-float rounding step in HDR blending; the displayed canvas
  // must still have exactly 255 alpha at every pixel. Keep the raw count in reports.
  const checks={
+  visibleDetailedCanopy:rows.filter(r=>r.tree&&r.tier==='high').length>0&&rows.filter(r=>r.tree&&r.tier==='high').every(r=>r.detailedTarget),
+  lowUsesDistantCanopy:rows.filter(r=>r.tree&&r.tier==='low').every(r=>!r.detailedTarget),
   worldCanvasOpaque:rows.every(r=>r.canvas.partial===0),worldSourceOpaque:rows.every(r=>!r.source||r.source.minAlpha>=1-1/2048),
   noInvalidPixels:rows.every(r=>!r.source||r.source.invalid===0)&&fixtures.rows.every(r=>r.fixed.invalid===0),
   worldFaultReproduced:rows[0].reproduced.partial>1000,nearAndFarMaterialsChecked:rows[0].reproduced.materials>7,

@@ -177,3 +177,26 @@ See `tools/qa-woodland-trails.cjs` for mounted traversal in both directions,
 new-tree quality budgets, path grounding, cleared vegetation, and finite GPU
 pixels. The broader landscape and rendering checks cover all graphics tiers,
 weather, portrait view and the previous black-rectangle regressions.
+
+
+### Broadleaf canopy depth (October 2026)
+
+The three broadleaf models retain their original geometry and licensed textures.
+`assets/canopy-shading.js` estimates sky occlusion from their actual leaf area in
+an approximately 44-cell-wide voxel field with twelve upper-hemisphere samples.
+This runs once when each scan loads. The resulting per-vertex shade is used by
+both the full-detail material and `bake-world-tree.cjs` when it creates the eight
+distant albedo views. There is no added runtime shadow pass or leaf geometry.
+The original alpha silhouettes and normal atlases are unchanged. A shared linear
+RGB leaf multiplier `[0.82, 1, 0.66]` gives the summer pasture a greener pigment;
+the existing autumn pigment system still runs independently.
+
+Regenerate all three matching views with:
+
+```sh
+node tools/asset-gen/bake-world-tree.cjs tree_small_02 island_tree_01 jacaranda_tree
+```
+
+`tree-impostors.json` records the updated hashes and canopy-field measurements.
+`qa-woodland-trails.cjs` compares those measurements with the runtime, checks the
+actual shade attributes, and rides the woodland route in both directions.

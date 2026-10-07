@@ -6,6 +6,7 @@ const dest='assets/models/world/realism',scratch='output/tree-bake';fs.mkdirSync
 fs.writeFileSync(scratch+'/index.html',`<!doctype html><script type="importmap">{"imports":{"three":"/assets/vendor/three/build/three.module.js","three/addons/":"/assets/vendor/three/examples/jsm/"}}</script><script type="module">
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {prepareCanopyShade,patchCanopyShade} from '/assets/canopy-shading.js?v=canopy-depth-1';
 const renderer=new T.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
 renderer.setClearColor(0,0);renderer.outputColorSpace=T.SRGBColorSpace;
 const loader=new GLTFLoader();
@@ -16,13 +17,14 @@ window.bakeTree=async(id,variant=-1)=>{
  const bounds=new T.Box3().setFromObject(root),size=bounds.getSize(new T.Vector3());
  const width=Math.max(size.x,size.z)*1.10,height=size.y*1.06,bottom=bounds.min.y-size.y*.03;
  const camera=new T.OrthographicCamera(-width/2,width/2,bottom+height,bottom,.1,100);
+ const canopyShading=prepareCanopyShade(T,root);
  const meshes=[];root.traverse(o=>{if(o.isMesh){if(id==='pine_tree_01'&&/twig/.test(o.material.name))o.material.color.setRGB(1.7,2.1,1.5);meshes.push([o,o.material]);}});
- const results={width,height,bottom,sourceHeight:size.y,viewCount:8};
+ const results={width,height,bottom,sourceHeight:size.y,viewCount:8,...(canopyShading?{canopyShading}:{})};
  for(const normal of [false,true]){
   const tile=normal?512:variant<0?768:512;renderer.setSize(tile,tile);
   const atlas=document.createElement('canvas');atlas.width=tile*4;atlas.height=tile*2;const ctx=atlas.getContext('2d');
   for(const [o,old]of meshes){
-   if(!normal)o.material=new T.MeshBasicMaterial({map:old.map,color:old.color,alphaTest:old.alphaTest,side:T.DoubleSide});
+   if(!normal){o.material=new T.MeshBasicMaterial({map:old.map,color:old.color,alphaTest:old.alphaTest,side:T.DoubleSide});if(o.geometry.attributes.canopyShade){o.material.onBeforeCompile=patchCanopyShade;o.material.customProgramCacheKey=()=> 'canopy-shade-bake-v1';}}
    else o.material=new T.ShaderMaterial({uniforms:{albedo:{value:old.map},cutoff:{value:old.alphaTest||0},hasMap:{value:!!old.map}},side:T.DoubleSide,
     vertexShader:'varying vec2 vUv;varying vec3 vN;void main(){vUv=uv;vN=normalize(mat3(modelMatrix)*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
     fragmentShader:'uniform sampler2D albedo;uniform float cutoff;uniform bool hasMap;varying vec2 vUv;varying vec3 vN;void main(){float a=hasMap?texture2D(albedo,vUv).a:1.;if(a<cutoff)discard;vec3 n=normalize(vN);if(n.y<0.)n=-n;gl_FragColor=vec4(n*.5+.5,a);}'
@@ -55,6 +57,6 @@ window.bakeTree=async(id,variant=-1)=>{
   }
   const prior=JSON.parse(fs.readFileSync(dest+'/tree-impostors.json','utf8'));
   const merged=[...prior.trees.filter(t=>!entries.some(e=>e.id===t.id&&e.variant===t.variant)),...entries];
-  fs.writeFileSync(dest+'/tree-impostors.json',JSON.stringify({processing:'Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Live lighting is applied by the game.',trees:merged},null,2)+'\n');
+  fs.writeFileSync(dest+'/tree-impostors.json',JSON.stringify({processing:'Eight orthographic albedo and object-space normal views of the existing CC0 scans. Mature pine twig exposure matches the runtime material multiplier [1.7,2.1,1.5]; bark retains source color. Broadleaf albedo includes original leaf-area-based sky occlusion, also evaluated once for detailed runtime meshes. Broadleaf summer pigments use the shared linear RGB multiplier [0.82,1,0.66]. Live directional lighting is applied by the game.',trees:merged},null,2)+'\n');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

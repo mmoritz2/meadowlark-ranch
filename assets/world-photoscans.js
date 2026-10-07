@@ -1,3 +1,4 @@
+import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
 import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=village-square-1';
 import {fallsContainsWater} from './falls-landscape.js?v=mountain-falls-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
@@ -51,7 +52,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         #endif`);
     };
     mat.onBeforeCompile=(sh,activeRenderer)=>{
-      deform(sh);patchSeasonalFoliage(sh);
+      deform(sh);patchSeasonalFoliage(sh);if(mat.userData.hasCanopyShade)patchCanopyShade(sh);
       sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
         vec3 canopyUp=normalize(mat3(viewMatrix)*vec3(0.0,1.0,0.0));
         normal=normalize(mix(normal,canopyUp,.42));`);
@@ -63,7 +64,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         #include <opaque_fragment>`);
       patchFoliageCoverage(sh,activeRenderer);
     };
-    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v4';
+    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v5-'+!!mat.userData.hasCanopyShade;
     const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:mat.map,alphaTest:mat.alphaTest,side:THREE.DoubleSide});
     depth.onBeforeCompile=deform;depth.customProgramCacheKey=()=> 'photoscan-foliage-depth-v1';
     mat.userData.scanDepth=depth;
@@ -72,10 +73,13 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     if(loaded.has(id))return loaded.get(id);
     const asset=await loader.loadAsync('./assets/models/world/realism/'+id+'.glb');
     asset.scene.updateMatrixWorld(true);
+    const canopyStarted=performance.now(),canopyShade=prepareCanopyShade(THREE,asset.scene);
+    if(canopyShade)(state.canopyShading??={})[id]={...canopyShade,prepareMs:performance.now()-canopyStarted};
     const mats=new Set();asset.scene.traverse(o=>{if(o.isMesh)for(const mat of Array.isArray(o.material)?o.material:[o.material])mats.add(mat);});
     for(const mat of mats){
       // Match the mature crown to the daylight pasture exposure; bark stays raw.
       if(id==='pine_tree_01'&&/twig/.test(mat.name))mat.color.setRGB(1.7,2.1,1.5);
+      mat.userData.hasCanopyShade=!!canopyShade&&/leaves/.test(mat.name);
       configureMaterial(mat,/leaves|twig/.test(mat.name));
     }
     loaded.set(id,asset.scene);state.assets.push(id);return asset.scene;
@@ -109,7 +113,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=woodland-trails-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=canopy-depth-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
     const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01'),woodland=await load('jacaranda_tree');
     const specs=[['tree_small_02',-1,broad,'broadleaf'],
       ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
@@ -125,10 +129,10 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     });
     const sourceFor=t=>{
       if(t.authoredVillage)return variants[0];
-      // Related trees grow in groves. Slender trees around the village reveal the
-      // buildings; broad spreading crowns define the meadow and woodland edges.
+      // Related trees grow in groves. Young roadside trees stay slender; mature
+      // oak sites carry full crowns. Broad trees define meadow and woodland edges.
       const roadEdge=Math.min(W.pathDist(t.x,t.z),G.worldPaths?.trackDist(t.x,t.z)??Infinity);
-      if(roadEdge<8.5&&!['pine','snowpine','cold'].includes(t.kind))return variants[0];
+      if(roadEdge<8.5&&!['pine','snowpine','cold'].includes(t.kind))return ['oak','blossom'].includes(t.kind)&&t.height>=7.2?variants[5]:variants[0];
       if(t.kind==='woodland')return variants[6];
       if(t.kind==='willow')return variants[5];
       const lowland=t.kind!=='cold'&&t.kind!=='snowpine'&&Math.hypot(t.x+160,t.z+210)>160;
@@ -223,8 +227,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       const [x,z]=trail.pts[i],a=trail.pts[i-1],b=trail.pts[i+1];
       const length=Math.hypot(b[0]-a[0],b[1]-a[1])||1,nx=-(b[1]-a[1])/length,nz=(b[0]-a[0])/length;
       const side=rnd(x,z,82)>.5?1:-1;
-      for(let j=0;j<4;j++){
-        const off=side*(9+j*2.6+rnd(x+j,z,83)*3.5),tx=x+nx*off+(rnd(x,z+j,84)-.5)*11,tz=z+nz*off+(rnd(x+j,z,85)-.5)*11;
+      for(const edgeSide of [side,-side])for(let j=0;j<4;j++){
+        const off=edgeSide*(9+j*2.6+rnd(x+j,z,83)*3.5),tx=x+nx*off+(rnd(x,z+j,84)-.5)*11,tz=z+nz*off+(rnd(x+j,z,85)-.5)*11;
         if(!clear(tx,tz,2.6)||trees.some(t=>Math.hypot(tx-t.x,tz-t.z)<5.5))continue;
         const height=9+rnd(tx,tz,86)*4;
         add({x:tx,z:tz,height,yaw:rnd(tx,tz,87)*Math.PI*2,kind:'woodland'});
@@ -238,7 +242,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     // existing forest intact, instead of empty silhouettes during a slow load.
     for(const source of variants){
       const m=source.meta;
-      const [atlas,normals]=await Promise.all([textureLoader.loadAsync('./assets/models/world/realism/'+m.views.file+'?v=world-cinematic-1'),textureLoader.loadAsync('./assets/models/world/realism/'+m.normals.file)]);
+      const [atlas,normals]=await Promise.all([textureLoader.loadAsync('./assets/models/world/realism/'+m.views.file+'?v=canopy-depth-1'),textureLoader.loadAsync('./assets/models/world/realism/'+m.normals.file)]);
       atlas.colorSpace=THREE.SRGBColorSpace;atlas.anisotropy=8;normals.colorSpace=THREE.NoColorSpace;normals.anisotropy=4;
       source.impostor={THREE,albedo:atlas,normals,width:m.width,height:m.height,bottom:m.bottom};
       source.card=treeImpostor(source.impostor);
@@ -253,7 +257,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     for(const records of cells.values()){
       const source=records[0].source;
       const card=instances(source.card,records.map(t=>t.matrix),'Scanned distant tree views | '+source.key);
-      // Camera-facing atlases already contain canopy occlusion; receiving their
+      // Camera-facing atlases contain the same baked canopy shading; receiving their
       // own differently oriented shadow card creates false dark triangles.
       card.receiveShadow=false;
       records.forEach((t,i)=>card.setColorAt(i,t.tint||WHITE));treeCards.push({mesh:card,records});
