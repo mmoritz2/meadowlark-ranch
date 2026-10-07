@@ -1,3 +1,4 @@
+import {dressCanyonSurface} from './canyon-surface.js?v=jointed-canyon-1';
 import {dressLandscape} from './landscape-surface.js?v=world-cinematic-1';
 /* Deterministic original sedimentary geology. Shapes are local to a ground-level
    origin; callers retain their existing world placement and collision policy. */
@@ -13,6 +14,12 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
   const material=new THREE.MeshStandardMaterial({name:'Weathered sedimentary limestone',
     map:tex('rock_boulder_cracked_diff.webp',true),normalMap:tex('rock_boulder_cracked_nor_gl.webp'),roughnessMap:tex('rock_boulder_cracked_arm.webp'),normalScale:new THREE.Vector2(.65,.65),roughness:1,metalness:0,vertexColors:true,color:'#d4cec0',envMapIntensity:.50});
   if(loadTextures)dressLandscape({THREE,material,anisotropy,fogScale:1,fogCap:1,mineralScale:8.0,bumpStrength:.04});
+  const canyonMaterial=new THREE.MeshStandardMaterial({name:'Canyon | scanned stratified sandstone',
+    map:tex('../canyon/cliff_side_diff.webp',true),normalMap:tex('../canyon/cliff_side_nor_gl.webp'),
+    roughnessMap:tex('../canyon/cliff_side_arm.webp'),normalScale:new THREE.Vector2(.65,.65),
+    roughness:1,metalness:0,vertexColors:true,color:'#fff6e5',envMapIntensity:.45});
+  canyonMaterial.userData.patchMetres=1.83;canyonMaterial.userData.geologicalScale=3;
+  dressCanyonSurface(THREE,canyonMaterial);
   const TAU=Math.PI*2,PATCH=3.2;
   const rng=seed=>{let s=seed|0;return()=>{s+=0x6D2B79F5;let t=s;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};};
   const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};
@@ -38,9 +45,9 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
     g.setAttribute('normal',new THREE.Float32BufferAttribute(n,3));
     g.computeBoundingBox();g.computeBoundingSphere();return g;
   }
-  function finish(g,kind,seed){
+  function finish(g,kind,seed,surface=material){
     g.computeBoundingBox();g.computeBoundingSphere();
-    const m=new THREE.Mesh(g,material);m.name='Geology | '+kind;m.castShadow=true;m.receiveShadow=true;
+    const m=new THREE.Mesh(g,surface);m.name='Geology | '+kind;m.castShadow=true;m.receiveShadow=true;
     m.userData.geology={kind,seed,triangles:g.index?g.index.count/3:g.attributes.position.count/3,
       min:g.boundingBox.min.toArray(),max:g.boundingBox.max.toArray()};return m;
   }
@@ -92,38 +99,43 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
       levelLedges.push(0,tiers[j]>.72?1:.12,0);
     }
     levels.push(1);levelLedges.push(0);
-    const outline=a=>.84+.09*Math.sin(a*3+phase)+.055*Math.sin(a*5-phase*1.7)
-      +.035*Math.sin(a*9+phase*.3)+.018*Math.cos(a*17-phase);
+    // Jointed polygon faces replace the old circular extrusion. Each face has
+    // its own setback and crown loss, so ledges do not form uniform drum rings.
+    const sides=hoodoo?5:7+Math.abs(seed)%3,step=TAU/sides;
+    const corners=Array.from({length:sides},(_,i)=>.82+.12*random());
+    const outline=a=>{
+      const turn=((a-phase)%TAU+TAU)%TAU,k=Math.floor(turn/step),f=turn/step-k;
+      const r0=corners[k],r1=corners[(k+1)%sides],ang=f*step;
+      const radiusOnFace=r0*r1*Math.sin(step)/(r1*Math.sin(step-ang)+r0*Math.sin(ang));
+      return radiusOnFace*(1+.018*Math.sin(a*13+phase));
+    };
     const radial=(a,t,ledge=0)=>{
-      let r=outline(a);
+      const lobe=.5+.5*Math.sin(a*3+phase),shelf=.23+.12*Math.sin(a*2-phase);
       const notch=fractures.reduce((sum,f)=>{
-        const d=angular(a,f.a+f.bend*.07*t+Math.sin(t*8+f.a)*.012);
-        return sum+f.depth*Math.exp(-d*d/(f.width*f.width));
+        const d=angular(a,f.a+f.bend*.045*t);
+        return sum+f.depth*Math.exp(-d*d/(f.width*f.width*2.3));
       },0);
-      // Broad tablelands with near-vertical upper cliffs; the old full-height
-      // taper and scalloped rim made every mesa resemble the same small volcano.
-      const taper=hoodoo?(.75+.24*Math.exp(-Math.pow((t-.88)/.16,2))+.15*(1-t)*(1-t)):
-        1-.11*smooth(0,.25,t)-.06*t;
-      r=r*taper-notch*(.45+.55*smooth(.0,.16,t));
+      const taper=hoodoo?(.76+.18*Math.exp(-Math.pow((t-.86)/.20,2))+.10*(1-t)*(1-t)):
+        1-.055*smooth(0,.16,t)-(.06+.14*lobe)*smooth(shelf,shelf+.09,t)
+          -(.07+.10*lobe)*smooth(.63+.08*Math.sin(a*4),.73+.08*Math.sin(a*4),t);
+      let r=outline(a)*taper-notch*(.35+.65*smooth(0,.17,t));
       if(!hoodoo){
-        // Offset rock benches and a broad collapsed cleft break the uninterrupted
-        // drum silhouette. They remain a coherent mass rather than stacked lids.
-        const bench=.36+.045*Math.sin(a*3+phase);
-        r-=.07*smooth(bench,bench+.032,t);
-        r-=.045*smooth(.76,.81,t)*(.65+.35*Math.sin(a*2-phase));
-        r-=.095*Math.exp(-Math.pow(angular(a,phase+.7)/.35,2))*smooth(.15,.35,t);
+        r-=.10*Math.exp(-Math.pow(angular(a,phase+.7)/.38,2))*smooth(.08,.28,t);
+        r-=.06*Math.exp(-Math.pow(angular(a,phase+3.4)/.28,2))*smooth(.45,.62,t);
       }
       const bed=Math.min(beds-1,Math.floor(Math.max(0,t)*beds));
-      r+=ledge*(.004+tiers[bed]*.007);
-      r+=.012*Math.sin(a*27+phase+t*4)+.009*Math.sin(a*41-t*9);
+      r+=ledge*(.004+tiers[bed]*.009)*(.3+.7*lobe);
+      r+=.008*Math.sin(a*27+phase+t*4)+.005*Math.sin(a*41-t*9);
       return radius*r;
     };
-    const upper=a=>height*((hoodoo?.023:.025)*Math.sin(a*3+phase)+.024*Math.sin(a*7-phase)
-      -(hoodoo?.15:.04)*Math.exp(-Math.pow(angular(a,phase+.5)/.38,2)));
+    const upper=a=>height*(-.075+.014*Math.sin(a*3+phase)+.009*Math.sin(a*7-phase)
+      +(hoodoo?0:.070)*Math.cos(a-phase-1.1)
+      -(hoodoo?.12:.060)*Math.exp(-Math.pow(angular(a,phase+.5)/.46,2))
+      -(hoodoo?0:.035)*Math.exp(-Math.pow(angular(a,phase+3.4)/.38,2)));
     const surface=(a,t,ledge=0)=>{
-      const r=radial(a,t,ledge),shear=height*.025*t;
+      const r=radial(a,t,ledge),shear=height*.014*t;
       return [Math.cos(a)*r+Math.cos(phase)*shear,
-        height*t+upper(a)*Math.pow(Math.max(t,0),5)+Math.sin(a*6+phase)*height*.003*t,
+        height*t+upper(a)*Math.pow(Math.max(t,0),3)+Math.sin(a*6+phase)*height*.003*t,
         Math.sin(a)*r*ellipse+Math.sin(phase)*shear];
     };
     const p=[],u=[],c=[],idx=[];
@@ -131,7 +143,7 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
       // Narrow tonal range: mineral pigment and weathering, not orange stripes.
       const v=.88+.05*Math.sin(t*height*2.1+phase)+.055*Math.sin(a*7+phase+t*2)
         +.025*ledge-.07*(1-smooth(-.02,.12,t));
-      tint.setRGB(v,v*.95,v*.86);c.push(tint.r,tint.g,tint.b);
+      tint.setRGB(v,v*.99,v*.96);c.push(tint.r,tint.g,tint.b);
     };
     for(let j=0;j<levels.length;j++){
       const t=levels[j],ledge=levelLedges[j];
@@ -153,11 +165,12 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
     }
     const topP=[],topU=[],topC=[],topI=[],topRings=[1,.82,.5,.22,0];
     for(const f of topRings)for(let i=0;i<=segments;i++){
-      const a=i/segments*TAU,edge=surface(a,1),cx=Math.cos(phase)*height*.025,cz=Math.sin(phase)*height*.025;
+      const a=i/segments*TAU,edge=surface(a,1),cx=Math.cos(phase)*height*.014,cz=Math.sin(phase)*height*.014;
       const x=cx+(edge[0]-cx)*f,z=cz+(edge[2]-cz)*f;
-      const y=height+(edge[1]-height)*f+height*.017*(1-f)+Math.sin(a*5+phase)*height*.005*f*(1-f);
+      const crown=height*.925;
+      const y=crown+(edge[1]-crown)*f+Math.sin(a*5+phase)*height*.005*f*(1-f);
       topP.push(x,y,z);topU.push(x/PATCH,z/PATCH);
-      const v=.98+.035*Math.sin(a*8+phase)*f;topC.push(v,v*.955,v*.88);
+      const v=.98+.035*Math.sin(a*8+phase)*f;topC.push(v,v*.99,v*.96);
     }
     for(let j=0;j<topRings.length-1;j++)for(let i=0;i<segments;i++){
       const a=j*(segments+1)+i,b=a+segments+1;topI.push(a,b,a+1);
@@ -187,9 +200,10 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
       frag.applyMatrix4(matrix);pieces.push(frag);
     }
     const combined=merge(pieces);combined.userData.unwrapSeam={segments,levels:levels.length};
-    const mesh=finish(combined,hoodoo?'weathered spire':'layered mesa',seed);
+    const uv=combined.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*PATCH/1.83,uv.getY(i)*PATCH/1.83);
+    const mesh=finish(combined,hoodoo?'weathered spire':'layered mesa',seed,canyonMaterial);
     mesh.userData.geology.radius=radius;mesh.userData.geology.height=height;
-    mesh.userData.geology.texturePatchMetres=PATCH;
+    mesh.userData.geology.texturePatchMetres=1.83;mesh.userData.geology.geologicalScale=3;mesh.userData.geology.jointedFaces=sides;
     const group=new THREE.Group();group.name=mesh.name;group.add(mesh);group.userData.geology=mesh.userData.geology;
     return group;
   }
@@ -312,14 +326,16 @@ export function createGeology({THREE,scene=null,groundH=()=>0,loadTextures=true,
       const rough=.15*Math.sin(a*31+z*2.4)+.095*Math.cos(a*51-z*4);
       const x=Math.cos(a)*(8+radial+rough),y=Math.sin(a)*(8+radial+rough)*1.23-.25;
       p.push(x,y,z+.12*Math.sin(y*3.1+x*.7));u.push(x/PATCH,y/PATCH);
-      const v=.88+.065*Math.sin(y*3.2+x*.22)+.04*Math.cos(x*2+z);c.push(v*1.12,v*.70,v*.46);
+      const v=.88+.065*Math.sin(y*3.2+x*.22)+.04*Math.cos(x*2+z);c.push(v,v*.99,v*.96);
     }
-    for(let i=0;i<N;i++)for(let j=0;j<R;j++){const a=i*(R+1)+j,b=a+R+1;idx.push(a,a+1,b,a+1,b+1,b);}
-    const mesh=finish(geometry(p,u,c,idx),'eroded sandstone arch',seed),g=new THREE.Group();g.add(mesh);
+    // Outer faces must point out of the stone; reversed winding exposed the rear shell.
+    for(let i=0;i<N;i++)for(let j=0;j<R;j++){const a=i*(R+1)+j,b=a+R+1;idx.push(a,b,a+1,a+1,b,b+1);}
+    const archGeo=geometry(p,u,c,idx),au=archGeo.attributes.uv;for(let i=0;i<au.count;i++)au.setXY(i,au.getX(i)*PATCH/1.83,au.getY(i)*PATCH/1.83);
+    const mesh=finish(archGeo,'eroded sandstone arch',seed,canyonMaterial),g=new THREE.Group();g.add(mesh);
     for(const side of[-1,1])for(let i=0;i<7;i++){
       const a=i*2.399+seed,rock=makeBoulder(i<2?2.5:1.1+(i%3)*.35,seed+i+side*71);
       rock.position.set(side*8.6+Math.cos(a)*(i<2?.8:3.4),-.4,Math.sin(a)*(i<2?.7:2.8));
-      const col=rock.geometry.attributes.color;for(let k=0;k<col.count;k++)col.setXYZ(k,col.getX(k)*1.12,col.getY(k)*.70,col.getZ(k)*.46);g.add(rock);
+      rock.material=canyonMaterial;const uv=rock.geometry.attributes.uv;for(let k=0;k<uv.count;k++)uv.setXY(k,uv.getX(k)*PATCH/1.83,uv.getY(k)*PATCH/1.83);g.add(rock);
     }
     g.name='Geology | Ochre sandstone arch';g.userData.geology={kind:'eroded sandstone arch',height:13,seed};return g;
   }

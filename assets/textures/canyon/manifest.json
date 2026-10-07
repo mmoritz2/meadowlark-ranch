@@ -1,0 +1,59 @@
+[
+  {
+    "id": "cliff_side",
+    "page": "https://polyhaven.com/a/cliff_side",
+    "authors": {
+      "James Ray Cock": "Photography",
+      "Jenelle van Heerden": "Processing",
+      "Dario Barresi": "Photography"
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "scaleMetres": [
+      1.8300000429153442,
+      1.8300000429153442
+    ],
+    "retrieved": "2026-10-06",
+    "files": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cliff_side/cliff_side_diff_1k.jpg",
+        "sourceMD5": "a64986e5f858e4f8df30f0394ededd78",
+        "sourceSHA256": "5c6858541108fc34e5726ecf4d8d942d6301155c489e7341619260f2909570c5",
+        "sourceBytes": 859756,
+        "output": {
+          "file": "cliff_side_diff.webp",
+          "size": 1024,
+          "bytes": 293286,
+          "sha256": "34b8e87f4197e824719e87e42f7e9d10599b3513b201197336749f8d6a3669b0",
+          "colorSpace": "sRGB"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cliff_side/cliff_side_nor_gl_1k.jpg",
+        "sourceMD5": "604fd4101fe5ad92181c22b96ed795c5",
+        "sourceSHA256": "28583860810a7d6d8ffddeaaff463408fc580338fd5a92c67b058207e75375a3",
+        "sourceBytes": 1007837,
+        "output": {
+          "file": "cliff_side_nor_gl.webp",
+          "size": 1024,
+          "bytes": 432644,
+          "sha256": "61616c0dadce2b93227d74b57affe7210a57e244ec24d8c2e2ded129b3320757",
+          "colorSpace": "linear"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cliff_side/cliff_side_arm_1k.jpg",
+        "sourceMD5": "acfd75dad2fcf906652d6209cd6c4af1",
+        "sourceSHA256": "6ec77eadb99d00a0a0e68ae40b09e4cc4931941ada1114e5a4d9dd94e8a046dd",
+        "sourceBytes": 551350,
+        "output": {
+          "file": "cliff_side_arm.webp",
+          "size": 512,
+          "bytes": 27590,
+          "sha256": "f97b97950f52bc11658f08ec7ddb1035e8297f95f1db00d007f9b90ed9a7a185",
+          "colorSpace": "linear"
+        }
+      }
+    ]
+  }
+]

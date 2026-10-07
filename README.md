@@ -338,6 +338,20 @@ shoreline. `qa-seasonal-world.cjs`, `qa-canyon-world.cjs`, `test-oasis-art.mjs`
 and `asset-gen/check-geology.mjs` cover those changes. These passes do not reproduce
 the reference game's proprietary world or establish visual parity.
 
+Coyote Canyon and Ochre Reach now share jointed sandstone faces with angular
+outlines, uneven setbacks and sloping broken crowns. Their bases still conform
+to the riding terrain. Poly Haven's CC0 [Cliff Side](https://polyhaven.com/a/cliff_side)
+was photographed by Dario Barresi and James Ray Cock and processed by Jenelle
+van Heerden. Three locally served WebP maps add 753,520 bytes; source and output
+checksums are in `assets/textures/canyon/manifest.json`. The photographed 1.83 m
+patch is presented at two larger, warped scales to avoid obvious repeated rings
+on the tall cliffs. All three PBR maps use the same coordinates. Reproduce with
+`python3 tools/asset-gen/fetch-village-materials.py --assets cliff_side --output assets/textures/canyon`.
+`qa-canyon-landforms.cjs` covers 44 formations, their collision footprints,
+terrain contact, mounted passage and nine weather/quality views, including
+finite HDR pixels before and after post-processing. `asset-gen/check-geology.mjs`
+also ray-tests the arch exterior from both sides and checks its open passage.
+
 Village cottages and shopfronts now use Poly Haven's CC0 [Painted Plaster Wall](https://polyhaven.com/a/painted_plaster_wall)
 by Amal Kumar and [Roof Slates 03](https://polyhaven.com/a/roof_slates_03) by Rob Tuytel.
 Colour, OpenGL normal and roughness maps use the photographed 2 m plaster / 3 m slate

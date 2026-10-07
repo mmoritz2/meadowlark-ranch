@@ -941,8 +941,6 @@ export function install(G){
      them out of the settlement bake, which intentionally drops vertex colours. */
   function mesa(x,z,r,h,seed){
    const mg=W.geology.groundAt(W.geology.makeMesa(r,h,seed+6401),x,z);
-   mg.traverse(o=>{if(!o.isMesh)return;const c=o.geometry.attributes.color;
-    for(let i=0;i<c.count;i++)c.setXYZ(i,c.getX(i)*1.12,c.getY(i)*.70,c.getZ(i)*.46);});
    scene.add(own(mg));collide(x,z,r*.95);
   }
   const M1=F.at(-24,-18),M2=F.at(-10,34),M3=F.at(40,-46);
