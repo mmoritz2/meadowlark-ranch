@@ -202,4 +202,4 @@ vec3 riderBreeches(vec3 base,vec3 p){
  return base;
 }`;
 
-export {tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-tailoring.js?v=artist-riders-20261007';
+export {tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband,GARMENT_NECK_GLSL,garmentNeckY} from './rider-tailoring.js?v=couture-riders-20261007';

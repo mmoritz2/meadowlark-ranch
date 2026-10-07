@@ -37,13 +37,13 @@
 
    Pure module: THREE and friends are injected, nothing runs at import time. */
 
-import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=artist-riders-20261007';
+import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut,GARMENT_NECK_GLSL,sewnDetails,ridingBoots,waistband} from './rider-clothes.js?v=couture-riders-20261007';
 export {RIDER_OUTFITS};
-import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=artist-riders-20261007';
-import {refineRiderProportions} from './rider-proportions.js?v=artist-riders-20261007';
-import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=artist-riders-20261007';
-import {prepareRiderHead,patchStylizedHead,patchStylizedEyes} from './rider-heads.js?v=artist-riders-20261007';
-import {accessoryFit,buildAccessories} from './rider-accessories.js?v=artist-riders-20261007';
+import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=couture-riders-20261007';
+import {refineRiderProportions} from './rider-proportions.js?v=couture-riders-20261007';
+import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=couture-riders-20261007';
+import {prepareRiderHead,patchStylizedHead,patchStylizedEyes} from './rider-heads.js?v=couture-riders-20261007';
+import {accessoryFit,buildAccessories} from './rider-accessories.js?v=couture-riders-20261007';
 
 /* ---- tables ------------------------------------------------------------------------------------ */
 /* mesh: a source hairstyle. scalp: a fitted crown and optional sculpted front locks.
@@ -477,7 +477,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   const z=kit.zones,ref=SKIN_REF[kit.body];
   return {uRunway:{value:kit.body==='f'?1:0},uFaceBind:{value:kit.skin.skeleton.boneInverses[kit.skin.skeleton.bones.indexOf(kit.bones.Head)].clone()},uSkin:{value:new THREE.Color(DEF_SKIN)},uSkinW:{value:1},uBootMesh:{value:0},uBootRef:{value:0.1},uSkinRef:{value:new THREE.Vector3(...ref)},
    uShirt:{value:new THREE.Color('#3d4a6e')},uPants:{value:new THREE.Color('#cfc6ae')},uBoot:{value:new THREE.Color('#3b2a14')},
-   uClothes:{value:new THREE.Vector4(0,0,0,0)},uTailor:{value:new THREE.Vector4(0,0,0,0)},uHair:{value:new THREE.Color('#4a2e1c')},uEye:{value:new THREE.Color('#6b3f1f')},uEyeW:{value:0},uOutfit:{value:0},uTopOnly:{value:0},uFitted:{value:0},
+   uClothes:{value:new THREE.Vector4(0,0,0,0)},uTailor:{value:new THREE.Vector4(0,0,0,0)},uHair:{value:new THREE.Color('#4a2e1c')},uEye:{value:new THREE.Color('#6b3f1f')},uEyeW:{value:0},uOutfit:{value:0},uTopOnly:{value:0},uFitted:{value:0},uCollared:{value:0},
    uZ1:{value:new THREE.Vector4(z.neckY,z.neckZ,z.waistY,z.bootY)},uZ2:{value:new THREE.Vector4(z.cuffX,z.armY,z.armZ,z.headY)},
    uHelmet:{value:0},uHelm:{value:new THREE.Vector4(0,0,0,0)},uHelmR:{value:new THREE.Vector4(0,0,0,0)}};
  }
@@ -489,7 +489,7 @@ vec3 riderSkin(vec3 t){ if(uSkinW<0.5)return t;
  vec3 ch=(t/max(L,1e-3))/(uSkinRef/Lr);
  /* the source paints hard shadow into the face (a superhero's hollows): take the edge off it */
  return uSkin*pow(max(L/Lr,0.02),0.43)*mix(vec3(1.0),ch,0.54); }`;
- const HEAD_GLSL=`uniform vec3 uSkin,uShirt,uPants,uBoot,uHair,uEye; uniform float uSkinW,uEyeW,uOutfit,uTopOnly,uFitted,uHelmet,uBootMesh,uBootRef; uniform vec3 uSkinRef; uniform vec4 uZ1,uZ2,uHelm,uHelmR;`;
+ const HEAD_GLSL=`uniform vec3 uSkin,uShirt,uPants,uBoot,uHair,uEye; uniform float uSkinW,uEyeW,uOutfit,uTopOnly,uFitted,uCollared,uHelmet,uBootMesh,uBootRef; uniform vec3 uSkinRef; uniform vec4 uZ1,uZ2,uHelm,uHelmR;`;
  function patchBody(mat,u){
   const detail=u.uRunway.value?.22:.32;mat.normalScale.set(detail,detail);mat.roughness=u.uRunway.value?.68:.74;
   mat.onBeforeCompile=sh=>{
@@ -506,7 +506,7 @@ vec3 riderSkin(vec3 t){ if(uSkinW<0.5)return t;
    float cloth=(1.0-step(uZ1.x,position.y))*(1.0-arm*smoothstep(uZ2.x-0.01,uZ2.x,ax));
    transformed+=normal*(boot*(0.0055+rim*0.0022)+(1.0-boot)*cloth*0.0016)*(1.0-uOutfit); }`);
    sh.fragmentShader=sh.fragmentShader
-    .replace('#include <common>','#include <common>\n'+HEAD_GLSL+'\nvarying vec3 vBind; varying vec3 vBindN;\n'+SKIN_GLSL+RIDER_FACE_GLSL+CLOTH_GLSL+`
+    .replace('#include <common>','#include <common>\n'+HEAD_GLSL+'\nvarying vec3 vBind; varying vec3 vBindN;\n'+SKIN_GLSL+RIDER_FACE_GLSL+CLOTH_GLSL+GARMENT_NECK_GLSL+`
 float rBand(float x,float a,float b){return step(a,x)*step(x,b);}
 float rHash(vec3 p){p=fract(p*0.3183099+vec3(0.1,0.2,0.3));p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
 float rNoise(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
@@ -519,10 +519,16 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    float neckY=uZ1.x+0.042*smoothstep(0.0,-0.09,vBind.z-uZ1.y);
    float arm=smoothstep(uZ2.y-0.20,uZ2.y-0.14,y)*smoothstep(0.17,0.20,ax);
    float headZ=max(step(uZ2.w,y)*(1.0-arm),step(neckY,y)*(1.0-smoothstep(0.070,0.080,rN))*(1.0-arm));
-   float fittedNeck=uZ1.x+.036*(1.0-smoothstep(-.09,0.0,vBind.z-uZ1.y))+.045*pow(min(ax/.085,1.0),2.0)+.075*smoothstep(.085,.15,ax);
-   headZ=mix(headZ,step(fittedNeck-.0015,y)*(1.0-arm),uFitted);
-   float poloNeck=uZ1.x+.042+.026*pow(min(ax/.080,1.0),2.0)-.064*(1.0-smoothstep(0.0,.050,ax))*smoothstep(uZ1.y+.010,uZ1.y+.040,vBind.z);
-   headZ=max(headZ,step(poloNeck-.0015,y)*(1.0-smoothstep(.048,.052,ax))*uTailor.w);
+   // Skin overlaps the sewn opening by 4 mm. The polo's draped front has
+   // different projected x/depth than the chest, so keep skin to the deepest
+   // V point in its narrow center strip. Retain 60 mm beneath it for the
+   // different chest/garment joint blends in bent poses; cloth covers this reserve.
+   float fittedNeck=garmentNeckY(vBind,uZ1.xy,uCollared,uTailor.w);
+   if(uTailor.w>.5&&ax<.060&&vBind.z>uZ1.y+.010){
+    float poloFront=garmentNeckY(vec3(0.0,y,uZ1.y+.040),uZ1.xy,uCollared,uTailor.w);
+    fittedNeck=min(fittedNeck,poloFront-.060);
+   }
+   headZ=mix(headZ,step(fittedNeck-.004,y)*(1.0-arm),uFitted);
    float hand=arm*step(uZ2.x-0.017,ax);
    float bareArm=arm*step(uZ2.x-0.30,ax)*uClothes.y;
    float keep=max(headZ,max(hand,bareArm)*uFitted);
@@ -535,10 +541,16 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    float neckY=uZ1.x+0.042*smoothstep(0.0,-0.09,vBind.z-uZ1.y);
    float arm=smoothstep(uZ2.y-0.20,uZ2.y-0.14,y)*smoothstep(0.17,0.20,ax);
    float headZ=max(step(uZ2.w,y)*(1.0-arm),step(neckY,y)*(1.0-smoothstep(0.070,0.080,rN))*(1.0-arm));
-   float fittedNeck=uZ1.x+.036*(1.0-smoothstep(-.09,0.0,vBind.z-uZ1.y))+.045*pow(min(ax/.085,1.0),2.0)+.075*smoothstep(.085,.15,ax);
-   headZ=mix(headZ,step(fittedNeck-.0015,y)*(1.0-arm),uFitted);
-   float poloNeck=uZ1.x+.042+.026*pow(min(ax/.080,1.0),2.0)-.064*(1.0-smoothstep(0.0,.050,ax))*smoothstep(uZ1.y+.010,uZ1.y+.040,vBind.z);
-   headZ=max(headZ,step(poloNeck-.0015,y)*(1.0-smoothstep(.048,.052,ax))*uTailor.w);
+   // Skin overlaps the sewn opening by 4 mm. The polo's draped front has
+   // different projected x/depth than the chest, so keep skin to the deepest
+   // V point in its narrow center strip. Retain 60 mm beneath it for the
+   // different chest/garment joint blends in bent poses; cloth covers this reserve.
+   float fittedNeck=garmentNeckY(vBind,uZ1.xy,uCollared,uTailor.w);
+   if(uTailor.w>.5&&ax<.060&&vBind.z>uZ1.y+.010){
+    float poloFront=garmentNeckY(vec3(0.0,y,uZ1.y+.040),uZ1.xy,uCollared,uTailor.w);
+    fittedNeck=min(fittedNeck,poloFront-.060);
+   }
+   headZ=mix(headZ,step(fittedNeck-.004,y)*(1.0-arm),uFitted);
    float hand=arm*step(uZ2.x-0.017,ax);
    float shortSleeve=arm*step(uZ2.x-0.31,ax)*uClothes.y;
    float skinZ=max(max(headZ,hand),shortSleeve);
@@ -566,11 +578,11 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    rwSkinZ=skinZ; rwBoot=boot; rwSole=sole; rwMetal=buckle;
    rwRough=mix(mix(mix(riderFabricRoughness(),0.34,boot),0.5,belt),0.85,sole);
  }`)
-    .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\n roughnessFactor=mix(rwRough,roughnessFactor,rwSkinZ); roughnessFactor=mix(roughnessFactor,.55,smoothstep(-.12,-.076,vFace.y)*rwSkinZ); roughnessFactor=mix(roughnessFactor,.46,riderLip(vFace)*uRunway*.55*rwSkinZ);')
+    .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\n roughnessFactor=mix(rwRough,roughnessFactor,rwSkinZ); roughnessFactor=mix(roughnessFactor,.62,smoothstep(-.12,-.076,vFace.y)*rwSkinZ); roughnessFactor=mix(roughnessFactor,.46,riderLip(vFace)*uRunway*.55*rwSkinZ);')
     .replace('#include <metalnessmap_fragment>','#include <metalnessmap_fragment>\n metalnessFactor=max(metalnessFactor,rwMetal*0.85);')
     .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\n normal=normalize(mix(riderFabricNormal(nonPerturbedNormal,vBind,0.0),normal,max(rwSkinZ,rwBoot)));');
   };
-  mat.customProgramCacheKey=()=>'rider-body-runway-1';
+  mat.customProgramCacheKey=()=>'rider-body-sewn-neck-5';
  }
  /* skin parts of an outfit (the Ranger's bare forearms), and an outfit's hands */
  function patchOutfit(mat,u,allSkin,part,reference=0.2,cut='shirt'){
@@ -805,7 +817,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
    const outfit=riderOutfit(id);id=outfit.id;
    rig.outfitId=id;
    u.uClothes.value.set(outfit.design,outfit.cut==='short'?1:0,outfit.cut==='sweater'?1:0,outfit.cut==='gilet'?1:0);
-   const cut=garmentCut(outfit);u.uTailor.value.set(cut.formal?1:0,cut.vest?1:0,outfit.category==='Ranch'?1:0,cut.polo?1:0);
+   const cut=garmentCut(outfit);u.uTailor.value.set(cut.formal?1:0,cut.vest?1:0,outfit.category==='Ranch'?1:0,cut.polo?1:0);u.uCollared.value=cut.collared&&!cut.cardigan?1:0;
    const done=()=>{u.uOutfit.value=rig.outfit?1:0;u.uTopOnly.value=0;u.uFitted.value=rig.outfit?.meshes.some(m=>m.name==='Tailored_Body')?1:0;rig.setBoots(outfit.source==='riding');if(rig.refreshAccessories)rig.refreshAccessories();if(cb)cb();};
    if(rig.outfit&&rig.outfit.id===id)return done();
    if(rig.outfit){dropMeshes(rig.outfit.meshes);rig.outfit=null;}
