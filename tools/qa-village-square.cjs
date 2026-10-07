@@ -1,6 +1,6 @@
 // Focused native-GPU and mounted-clearance checks for Cottonwood's larger landmarks.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),QA=require('./qa-platform.cjs');
-const layoutOnly=process.argv.includes('--layout-only');
+const layoutOnly=process.argv.includes('--layout-only'),innReview=process.argv.includes('--inn-review');
 const out=path.resolve(process.argv[2]||'output/village-square');fs.mkdirSync(out,{recursive:true});
 (async()=>{const browser=await QA.chromium.launch({headless:true,args:QA.gpuArgs()});try{
  const page=await browser.newPage({viewport:{width:1280,height:800}}),errors=[];
@@ -11,7 +11,18 @@ const out=path.resolve(process.argv[2]||'output/village-square');fs.mkdirSync(ou
  await page.goto(QA.BASE+'/ranch3d.html?qa=village-square',{timeout:120000});await page.waitForFunction(()=>window.__villageQA?.G.horse.RIG().ready&&!document.getElementById('load'),null,{timeout:120000});
  await page.evaluate(async()=>{const q=__villageQA;q.G.save.sync(s=>s.qualityLocked=true);q.G.wardrobe?.closeChar();q.G.hidePanels();await q.G.photoscans.ready;await q.G.worldDetails.ready;advanceTime(0);});
  console.log('Village ready');const rows=[];
- for(const c of layoutOnly?[]:[{name:'store',id:'store',eye:[4,4.7,8.5]},{name:'clubhouse',id:'clubhouse',eye:[6,5.3,11]},{name:'inn',id:'inn',eye:[4,4.7,10]},
+ for(const c of layoutOnly?[]:innReview?[
+  {name:'inn-front',id:'inn',eye:[0,3.2,19],look:[0,4.7,0]},
+  {name:'inn-oblique',id:'inn',eye:[11,6.2,16],look:[0,4.8,0]},
+  {name:'inn-arcade',id:'inn',eye:[0,1.7,4.6],look:[0,2.1,1.4]},
+  {name:'inn-gallery',id:'inn',eye:[0,5.6,4.9],look:[0,6.8,1.8]},
+  {name:'inn-medium',id:'inn',eye:[0,3.2,19],look:[0,4.7,0],tier:'medium'},
+  {name:'inn-low',id:'inn',eye:[0,3.2,19],look:[0,4.7,0],tier:'low'},
+  {name:'inn-rain',id:'inn',eye:[0,3.2,19],look:[0,4.7,0],rain:true},
+  {name:'inn-night',id:'inn',eye:[0,3.2,19],look:[0,4.7,0],time:0},
+  {name:'square',eye:[45,2.7,-41],look:[51,3,-65]},
+  {name:'aerial',eye:[67,65,-10],look:[47,0,-54]},
+ ]:[{name:'store',id:'store',eye:[4,4.7,8.5]},{name:'clubhouse',id:'clubhouse',eye:[6,5.3,11]},{name:'inn',id:'inn',eye:[4,4.7,10]},
   {name:'village-street',eye:[32,3,-33],look:[48,4,-64]},{name:'square',eye:[45,2.7,-41],look:[51,3,-65]},{name:'aerial',eye:[67,65,-10],look:[47,0,-54]},{name:'village-skyline',eye:[85,4,-150],look:[20,5,-35]},
   {name:'store-rain',id:'store',eye:[4,4.7,8.5],rain:true},{name:'store-night',id:'store',eye:[4,4.7,8.5],time:0},
   {name:'store-medium',id:'store',eye:[4,4.7,8.5],tier:'medium'},{name:'store-low',id:'store',eye:[4,4.7,8.5],tier:'low'}]){
@@ -86,11 +97,26 @@ const out=path.resolve(process.argv[2]||'output/village-square');fs.mkdirSync(ou
    }}finally{q.renderer.render=oldRender;q.keys.KeyW=false;}
    mounted.push({waypoints:wi,total:route.length,steps,maxGroundError,minCameraHeight,end:q.player.pos.toArray()});
   }
-  return {villageTrees:q.G.photoscans.treePositions.filter(t=>t.kind==='village'),mounted,squareRouteHits,unpaved,fountainHit,gardenHits,plots,squareGardenPlants:q.G.worldDetails.squareGardenPlants,buildings,groundError,routeHits,ride,hedgesInCourts,walkHits,courtTriangles:courts.mesh.geometry.index.count/3,courts:courts.zones.length,clearedPlants:courts.cleared,
+  // Ride into each arched bay in the real world, including its camera solver.
+  const inn=q.G.worldPkg.LANDMARKS.find(l=>l.id==='cottonwood:inn').grp,ia=inn.userData.architecture,arcadeRides=[];
+  if(ia.style==='coaching-inn')for(const x of[-(ia.width-5.8)/3,0,(ia.width-5.8)/3]){
+   const start=inn.localToWorld(new T.Vector3(x,0,ia.depth/2+2.5)),target=inn.localToWorld(new T.Vector3(x,0,ia.doorZ+.90));
+   q.player.pos.set(start.x,0,start.z);q.player.y=q.player.vy=q.player.speed=0;q.player.flying=false;q.G.followCam.reset();q.keys.KeyW=true;
+   let steps=0,minCameraHeight=Infinity,maxGroundError=0;q.renderer.render=()=>{};
+   try{for(;steps<500;steps++){
+    if(Math.hypot(target.x-q.player.pos.x,target.z-q.player.pos.z)<.28)break;
+    q.player.heading=Math.atan2(target.x-q.player.pos.x,target.z-q.player.pos.z);q.day();q.step(1/30);
+    minCameraHeight=Math.min(minCameraHeight,q.camera.position.y-q.groundH(q.camera.position.x,q.camera.position.z));
+    maxGroundError=Math.max(maxGroundError,Math.abs(q.player.mesh.position.y-q.groundH(q.player.pos.x,q.player.pos.z)));
+   }}finally{q.keys.KeyW=false;q.renderer.render=oldRender;}
+   const end=inn.worldToLocal(new T.Vector3(q.player.pos.x,inn.position.y,q.player.pos.z));
+   arcadeRides.push({x,steps,finished:steps<500,minCameraHeight,maxGroundError,end:end.toArray()});
+  }
+  return {arcadeRides,villageTrees:q.G.photoscans.treePositions.filter(t=>t.kind==='village'),mounted,squareRouteHits,unpaved,fountainHit,gardenHits,plots,squareGardenPlants:q.G.worldDetails.squareGardenPlants,buildings,groundError,routeHits,ride,hedgesInCourts,walkHits,courtTriangles:courts.mesh.geometry.index.count/3,courts:courts.zones.length,clearedPlants:courts.cleared,
    gardens:q.G.worldDetails.townhouseGardens,featureErrors:q.G.errors,assetErrors:[...q.G.worldDetails.errors,...q.G.photoscans.errors]};
  });
- const checks={opaqueScene:rows.every(r=>r.minAlphaBits>=15358),shadeTrees:state.villageTrees.length===3,mountedAllStreets:state.mounted.every(r=>r.waypoints===r.total&&r.maxGroundError<.1&&r.minCameraHeight>.1),squareRoutesClear:state.squareRouteHits.length===0,continuousPaving:state.unpaved.length===0,fountainCollision:state.fountainHit,gardenCollisions:state.gardenHits.every(Boolean),plantedSquare:state.squareGardenPlants>90,fixedPlots:JSON.stringify(state.plots.map(p=>[p.x,p.z]))===JSON.stringify([[34,-57],[76,-74],[33,-43],[47,-66]]),threeLandmarks:state.buildings.length===3,twoStoreyGeometry:state.buildings.every(b=>b.architecture.storeys===2&&b.architecture.roofStyle==='hipped-clay'),
-  geometryBudget:state.buildings.every(b=>b.architecture.triangles<12000&&b.architecture.drawCalls<=16),
+ const checks={mountedArcades:state.arcadeRides.length===3&&state.arcadeRides.every(r=>r.finished&&r.maxGroundError<.1&&r.minCameraHeight>.1&&r.end[2]<3),opaqueScene:rows.every(r=>r.minAlphaBits>=15358),shadeTrees:state.villageTrees.length===3,mountedAllStreets:state.mounted.every(r=>r.waypoints===r.total&&r.maxGroundError<.1&&r.minCameraHeight>.1),squareRoutesClear:state.squareRouteHits.length===0,continuousPaving:state.unpaved.length===0,fountainCollision:state.fountainHit,gardenCollisions:state.gardenHits.every(Boolean),plantedSquare:state.squareGardenPlants>90,fixedPlots:JSON.stringify(state.plots.map(p=>[p.x,p.z]))===JSON.stringify([[34,-57],[76,-74],[33,-43],[47,-66]]),threeLandmarks:state.buildings.length===3,twoStoreyGeometry:state.buildings.every(b=>b.architecture.storeys===2&&(b.architecture.style==='coaching-inn'?b.architecture.roofStyle==='pavilion-clay':b.architecture.roofStyle==='hipped-clay')),
+  geometryBudget:state.buildings.every(b=>b.architecture.triangles<(b.architecture.style==='coaching-inn'?40000:12000)&&b.architecture.drawCalls<=16),
   clearDoorApproaches:state.buildings.every(b=>b.collisions.length===0),clearVillageRoute:state.routeHits.length===0,mountedVillageTravel:state.ride.distance>19.5&&state.ride.finite,
   plantedFacades:state.gardens===3&&state.buildings.every(b=>b.gardenPlants===24),interactionsPreserved:state.buildings.every(b=>b.interaction),
   allTownWalksClear:state.walkHits.length===0,hedgesRespectEntrances:state.hedgesInCourts===0,connectedSquare:state.courts===12&&state.courtTriangles>300&&state.courtTriangles<25000,groundedPaving:state.groundError<.001,

@@ -87,8 +87,8 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
   // This avoids hundreds of draw calls for battens, mullions and hinges.
   class Builder {
     constructor(name) { this.group=new THREE.Group(); this.group.name=name; this.batches=new Map(); this.parts=0; }
-    geometry(g,m,matrix = new THREE.Matrix4()) {
-      recordSolidPart(THREE,this.group,g,m,matrix);
+    geometry(g,m,matrix = new THREE.Matrix4(),solid = true) {
+      if(solid)recordSolidPart(THREE,this.group,g,m,matrix);
       g.applyMatrix4(matrix);
       let b=this.batches.get(m); if(!b){b={p:[],n:[],u:[],i:[]};this.batches.set(m,b);}
       const offset=b.p.length/3;
@@ -170,6 +170,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     for(const o of openings) {
       if(o.type==='door')door(b,o,frame);
       else if(o.type==='open-door')doorFrame(b,o,frame);
+      else if(o.type==='arch-window')archedWindow(b,o,frame,o.wall,o.edge);
       else window(b,o,frame);
     }
   }
@@ -443,7 +444,8 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       b.pipe([s*(x-.10),eave-.15,z+.035],[s*(w/2+.12),.18,d/2+.11],.036,metal);
     }
   }
-  function buildTownhouse({variant=0,width=5.8,depth=4.2,store=false,name='Cottonwood village house'}={}) {
+  function buildTownhouse({style,variant=0,width=5.8,depth=4.2,store=false,name='Cottonwood village house'}={}) {
+    if(style==='coaching-inn')return buildCoachingInn({width,depth,name});
     const w=width,d=depth,h=6.25,split=3.25,ridge=h+1.18;
     if(![w,d].every(Number.isFinite)||w<5||d<3.5)throw new RangeError('Village houses need a full three-bay facade');
     const b=new Builder(name),index=Math.abs(variant)%3,wall=cottageWalls[index],paint=shutters[index];
@@ -504,6 +506,150 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       store,storeys:2,roofStyle:'hipped-clay',windows:19,balconies:1,windowBoxes,suggestedLabelY:ridge+1.05,
       animatedDoorOpening:store?{x:0,width:dw,height:dh,bottomY:.08,frontZ:d/2}:null});
   }
+  // Arches are open geometry with deep reveals, not dark panels on a flat wall.
+  function archShape(x,bottom,r,spring){
+    const s=new THREE.Shape();s.moveTo(x-r,bottom);s.lineTo(x+r,bottom);s.lineTo(x+r,spring);
+    s.absarc(x,spring,r,0,Math.PI,false);s.closePath();return s;
+  }
+  function masonryUV(g,m){
+    const p=g.attributes.position,n=g.attributes.normal,uv=g.attributes.uv,scale=m.userData.patchMetres||1;
+    // Project reveals along their own faces as well as the front. XY-only UVs
+    // collapse across an arch's depth and stretch the photograph into stripes.
+    for(let i=0;i<p.count;i++){
+      const nx=Math.abs(n.getX(i)),ny=Math.abs(n.getY(i)),nz=Math.abs(n.getZ(i));
+      uv.setXY(i,(nx>ny&&nx>nz?p.getZ(i):p.getX(i))/scale,(ny>nx&&ny>nz?p.getZ(i):p.getY(i))/scale);
+    }
+    return g;
+  }
+  function archMasonry(b,x,r,spring,top,z,depth,wall,frame=null){
+    const s=new THREE.Shape();s.moveTo(x-r,spring);s.lineTo(x-r,top);s.lineTo(x+r,top);s.lineTo(x+r,spring);
+    s.absarc(x,spring,r,0,Math.PI,false);s.closePath();
+    const g=new THREE.ExtrudeGeometry(s,{depth,bevelEnabled:false,curveSegments:18});g.translate(0,0,z-depth/2);
+    // A single bounding box spans the empty arch. Narrow proxies follow its
+    // curve, preserving mounted headroom when the cobbled ground rises slightly.
+    const f=frame||new THREE.Matrix4(),slices=24;
+    for(let i=0;i<slices;i++){
+      const left=-r+2*r*i/slices,right=-r+2*r*(i+1)/slices;
+      const bottom=spring+Math.sqrt(Math.max(0,r*r-Math.max(left*left,right*right)));
+      if(top-bottom<.02)continue;
+      const proxy=new THREE.BoxGeometry(right-left,top-bottom,depth);
+      const transform=new THREE.Matrix4().makeTranslation(x+(left+right)/2,(top+bottom)/2,z).premultiply(f);
+      recordSolidPart(THREE,b.group,proxy,wall,transform);proxy.dispose();
+    }
+    b.geometry(masonryUV(g,wall),wall,f,false);
+  }
+  function archTrim(b,x,r,spring,z,depth,mat,frame=null){
+    // Individual wedge stones leave small mortar seams and true keystone edges.
+    const count=13,outer=r+.16;
+    for(let i=0;i<count;i++){
+      const a=i*Math.PI/count+.009,c=(i+1)*Math.PI/count-.009,s=new THREE.Shape();
+      s.moveTo(x+Math.cos(a)*r,spring+Math.sin(a)*r);
+      s.absarc(x,spring,r,a,c,false);s.lineTo(x+Math.cos(c)*outer,spring+Math.sin(c)*outer);
+      s.absarc(x,spring,outer,c,a,true);s.closePath();
+      const g=new THREE.ExtrudeGeometry(s,{depth,bevelEnabled:false,curveSegments:3});g.translate(0,0,z);
+      b.geometry(masonryUV(g,mat),mat,frame||new THREE.Matrix4());
+    }
+  }
+  function archedWindow(b,o,f,wall=cottageWalls[0],edge=stoneLight){
+    const {x,y,w,h}=o,bottom=y-h/2,r=w/2,spring=y+h/2-r;
+    archMasonry(b,x,r,spring,y+h/2,0,.18,wall,f);
+    for(const [inset,z,m]of[[0,-.105,dark],[.035,-.084,lit],[.05,-.05,glass]]){
+      const g=new THREE.ShapeGeometry(archShape(x,bottom+inset,r-inset,spring),18);
+      b.geometry(g,m,new THREE.Matrix4().makeTranslation(0,0,z).premultiply(f));
+    }
+    archTrim(b,x,r,spring,.10,.12,edge,f);
+    for(const side of[-1,1])b.box(.13,spring-bottom,.23,edge,x+side*(r+.065),(spring+bottom)/2,.13,null,f);
+    b.box(w+.33,.12,.36,edge,x,bottom-.035,.15,null,f);
+    b.box(.036,h-.10,.08,trim,x,y,-.005,null,f);b.box(w-.07,.036,.08,trim,x,spring-.25,-.005,null,f);
+  }
+  function buildCoachingInn({width=12,depth=7.6,name='Cottonwood | Blossom coaching inn'}={}){
+    const w=width,d=depth,wing=2.9,centre=w-wing*2,wingHeight=8.85,hallHeight=7.35;
+    if(w<11.5||w>14||d<7||d>9)throw new RangeError('The coaching inn needs a full courtyard frontage');
+    const b=new Builder(name),wall=cottageWalls[0],paint=shutters[0],windowBoxes=[];
+    const limestone=material('Village | carved cream limestone',{
+      color:new THREE.Color('#e4d9c3').multiplyScalar(1.85),map:map('../village/painted_plaster_wall_diff.webp',true),roughness:1,
+      normalMap:map('../village/painted_plaster_wall_nor_gl.webp'),normalScale:new THREE.Vector2(.14,.14),envMapIntensity:.5,
+    },2.4);
+    // A local frame lets each pavilion's long roof run front-to-back.
+    const framed=(x,z,angle=0)=>{
+      const f=face(x,z,angle),point=a=>new THREE.Vector3(...a).applyMatrix4(f).toArray();
+      return {geometry:(g,m,matrix=new THREE.Matrix4())=>b.geometry(g,m,matrix.clone().premultiply(f)),
+        box:(w,h,d,m,x=0,y=0,z=0,rotation=null,frame=null,turnUV=false)=>b.box(w,h,d,m,x,y,z,rotation,frame?frame.clone().premultiply(f):f,turnUV),
+        pipe:(a,c,r,m)=>b.pipe(point(a),point(c),r,m)};
+    };
+    const wingCentres=[-(w-wing)/2,(w-wing)/2];
+    for(const [index,cx]of wingCentres.entries()){
+      const front=face(cx,d/2,0),back=face(cx,-d/2,Math.PI);
+      b.box(wing+.16,.28,d+.16,mortar,cx,.07,0);
+      const upper=[-.63,.63].map(x=>({type:'arch-window',x,y:6.12,w:.82,h:2.12,wall,edge:limestone}));
+      shellWall(b,wing,wingHeight,front,[{x:0,y:1.9,w:1.07,h:1.74},...upper],wall);
+      shellWall(b,wing,wingHeight,back,[{x:0,y:1.9,w:1.07,h:1.74},...upper],wall);
+      const side=index===0?-1:1,f=face(side*w/2,0,side*Math.PI/2);
+      shellWall(b,d,wingHeight,f,[-d*.28,0,d*.28].flatMap(x=>[{x,y:1.9,w:.95,h:1.74},{type:'arch-window',x,y:6.12,w:.95,h:2.12,wall,edge:limestone}]),wall);
+      // Exposed inner faces rise above the lower gallery roof.
+      b.box(.20,wingHeight-hallHeight, d,wall,cx-side*wing/2,(wingHeight+hallHeight)/2,0);
+      for(const y of[.33,3.93,8.40,8.73]){
+        b.box(wing+.24,y<.5?.30:.14,.23,limestone,cx,y,d/2+.055);
+        b.box(wing+.24,y<.5?.30:.14,.23,limestone,cx,y,-d/2-.055);
+        b.box(.23,y<.5?.30:.14,d+.24,limestone,side*(w/2+.055),y,0);
+      }
+      for(const z of[-d/2,d/2])for(const dx of[-wing/2,wing/2]){
+        b.box(.27,8.35,.27,limestone,cx+dx,4.47,z);
+        b.box(.39,.18,.38,limestone,cx+dx,8.57,z);
+      }
+      b.box(wing+.55,.12,d+.55,limestone,cx,wingHeight-.055,0);
+      hippedRoof(framed(cx,0,Math.PI/2),d,wing,wingHeight,.85);
+      // Deep timber corbels make the eaves legible from the square.
+      for(const dx of[-1.05,-.52,0,.52,1.05])b.box(.12,.26,.54,wood,cx+dx,8.66,d/2+.13);
+      b.box(1.18,.22,.34,limestone,cx,.78,d/2+.22);b.box(1.03,.025,.25,mortar,cx,.902,d/2+.23);
+      windowBoxes.push({x:cx,y:.92,z:d/2+.23,width:.99,height:.24});
+    }
+    const back=face(0,-d/2,Math.PI),recess=d/2-2.0;
+    const rearWindows=[-centre*.33,0,centre*.33].flatMap(x=>[{x,y:1.9,w:.9,h:1.7},{type:'arch-window',x,y:5.15,w:.92,h:1.95,wall,edge:limestone}]);
+    shellWall(b,centre,hallHeight,back,rearWindows,wall);
+    shellWall(b,centre,hallHeight,face(0,recess,0),[
+      {type:'door',domestic:true,paint,x:0,y:1.50,w:1.65,h:2.84},
+      ...[-centre*.34,centre*.34].map(x=>({x,y:1.83,w:.94,h:1.68})),
+      ...[-centre*.33,0,centre*.33].map(x=>({type:'arch-window',x,y:5.26,w:.95,h:1.94,wall,edge:limestone})),
+    ],wall);
+    // Open front arcade over the existing ground-draped cobbles. No raised
+    // decorative floor is inserted under the horse's hooves.
+    const pier=.34,bay=centre/3,frontZ=d/2+.01,spring=2.78;
+    for(let i=0;i<4;i++){
+      const x=-centre/2+i*bay;
+      b.box(pier,spring-.14,.47,limestone,x,(spring+.14)/2,frontZ);
+      b.box(.47,.17,.59,limestone,x,.19,frontZ);
+      b.box(.49,.16,.59,limestone,x,spring-.015,frontZ);
+      // Upper gallery posts and iron balustrade sit over the lower stone piers.
+      b.box(pier,1.70,.43,limestone,x,5.30,frontZ);
+      b.box(.48,.14,.56,limestone,x,6.10,frontZ);
+    }
+    for(let i=0;i<3;i++){
+      const x=-centre/2+(i+.5)*bay,r=(bay-pier)/2;
+      archMasonry(b,x,r,spring,3.92,frontZ,.47,wall);archTrim(b,x,r,spring,frontZ+.245,.12,limestone);
+      archMasonry(b,x,r,6.15,hallHeight,frontZ,.43,wall);archTrim(b,x,r,6.15,frontZ+.225,.12,limestone);
+      for(const y of[4.38,5.20])b.box(bay-pier,.055,.055,metal,x,y,frontZ);
+      for(let j=0;j<9;j++)b.box(.026,.77,.028,metal,x-r+.09+j*(r*2-.18)/8,4.78,frontZ);
+    }
+    b.box(centre+.08,.22,2.15,limestone,0,4.08,(frontZ+recess)/2);
+    for(const y of[3.93,4.28,hallHeight-.11])b.box(centre+.26,.13,.22,limestone,0,y,frontZ+.075);
+    b.box(centre+.55,.12,d+.55,limestone,0,hallHeight-.055,0);
+    hippedRoof(b,centre,d,hallHeight,.83);
+    // The pavilion side walls close the two ends of the gallery, leaving the
+    // entire three-bay frontage open and sheltered.
+    for(const side of[-1,1]){
+      b.box(.20,hallHeight,2.05,wall,side*centre/2,hallHeight/2,(frontZ+recess)/2);
+      lantern(b,side*1.22,2.32,recess+.18);
+      const px=side*(centre/2+.28);
+      b.box(.54,.42,.54,limestone,px,.22,d/2+.54);b.box(.42,.025,.42,mortar,px,.445,d/2+.54);
+      windowBoxes.push({x:px,y:.47,z:d/2+.54,width:.40,height:.42});
+    }
+    const ridge=wingHeight+.85;
+    return b.finish({kind:'townhouse',style:'coaching-inn',exterior:'village',variant:0,width:w,depth:d,wallHeight:wingHeight,ridgeHeight:ridge,
+      store:false,storeys:2,roofStyle:'pavilion-clay',windows:35,arcadeBays:3,arcadeClearWidth:bay-pier,arcadeSpring:spring,
+      galleryDepth:frontZ-recess,frontZ,doorZ:recess,windowBoxes,suggestedLabelY:ridge+.8});
+  }
+
   function buildOutbuilding({width=4.6,depth=3.2,height=3.4,
     exterior='timber',variant=0,animatedDoorOpening={width:2.3,height:2.5},name='Meadowlark stable outbuilding'}={}) {
     const w=width,d=depth,h=height;
@@ -637,6 +783,6 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     const g=b.finish({kind:'run-in-details',width,depth});group.add(g);
     group.userData.ranchDetails=g;return g;
   }
-  return {buildBarn,buildCottage,buildTownhouse,buildOutbuilding,buildOpenStall,detailRunIn,materials,maps,
+  return {buildBarn,buildCottage,buildTownhouse,buildCoachingInn,buildOutbuilding,buildOpenStall,detailRunIn,materials,maps,
     sidingMaterial:siding,roofMaterial:roof};
 }

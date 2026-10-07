@@ -3,7 +3,7 @@
 export const COTTONWOOD_PLOTS={
  store:{x:34,z:-57,rot:Math.PI/2,width:7,depth:5},
  clubhouse:{x:33,z:-43,rot:Math.PI/2,width:7,depth:5},
- inn:{x:47,z:-66,rot:0,width:9,depth:6},
+ inn:{x:47,z:-66,rot:0,width:12,depth:7.6},
  auction:{x:76,z:-74,rot:0,width:7,depth:5.5},
 };
 export const COTTONWOOD_COTTAGES=[
@@ -40,7 +40,7 @@ export function cottonwoodReserved(x,z,margin=0){
  return reserved.some(q=>villageRectDistance(q,x,z)<margin);
 }
 export const COTTONWOOD_GARDENS=[
- {x:40,z:-61.9,width:3.4,depth:1.15},{x:55.3,z:-61.9,width:3.4,depth:1.15},
+ {x:39,z:-61.9,width:3.4,depth:1.15},{x:55.3,z:-61.9,width:3.4,depth:1.15},
  {x:46.5,z:-39.7,width:3.2,depth:1.15},{x:58.6,z:-43,width:1.15,depth:3.4},
 ];
 

@@ -1,4 +1,4 @@
-import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=village-square-1';
+import {COTTONWOOD_PLOTS} from '../cottonwood-layout.js?v=coaching-inn-1';
 /* Feature package 'world' — the place-making pass over Kestrel Basin.
    Regions with metadata and gating, living towns, named landmarks and per-town arenas, four
    collectible families (horseshoes, bottles, sheriff badges, the toy unicorn), the world map
@@ -217,7 +217,7 @@ export function install(G){
     {id:'store',kind:'townhouse',x:34,z:-58,rot:0.9,opts:{width:5.4,depth:3.8,store:true,variant:1,name:'Cottonwood | Petal & Pail'},label:'🛍️ Petal & Pail general store',r:3.5,open:()=>UI.openShop('food'),door:'🛍️ Enter the general store'},
     {id:'auction',kind:'barn',x:64,z:-58,rot:-0.5,label:'🏛️ Cottonwood Auction House',r:5.2,open:()=>UI.openShop('market'),door:'🏛️ Step into the auction house',glyph:'🏛️'},
     {id:'clubhouse',kind:'townhouse',x:33,z:-45,rot:1.2,opts:{width:5.0,depth:3.6,variant:2,name:'Cottonwood | Club House'},label:'🏠 The Meadowlark Club House',r:3.3,open:()=>UI.openOnline(),door:'🏠 Go into the club house',glyph:'🏠'},
-    {id:'inn',kind:'townhouse',x:41,z:-63,rot:0.2,opts:{width:5.8,depth:4.2,variant:0,name:'Cottonwood | Blossom Inn'},label:'🏨 The Blossom Inn',r:3.7,open:()=>UI.openCare(),door:'🏨 Rest at the inn'},
+    {id:'inn',kind:'townhouse',x:41,z:-63,rot:0.2,opts:{style:'coaching-inn',width:12,depth:7.6,variant:0,name:'Cottonwood | Blossom Inn'},label:'🏨 The Blossom Inn',r:3.7,open:()=>UI.openCare(),door:'🏨 Rest at the inn'},
    ],
    folk:[
     {id:'cw_pim',name:'Pim',icon:'🧑',hat:'#c9a86a',shirt:'#6a8fbf',idle:'Morning! The store had fresh apples in — go on, your horse will thank you.',walkBy:'store',path:[[40,-52],[36,-58],[44,-60],[50,-54]]},

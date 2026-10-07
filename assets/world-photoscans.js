@@ -1,5 +1,5 @@
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
-import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=village-square-1';
+import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=coaching-inn-1';
 import {fallsContainsWater} from './falls-landscape.js?v=mountain-falls-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
 import {inMeadowOpening} from './pastoral-fields.mjs?v=grazed-meadows-1';

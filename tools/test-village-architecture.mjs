@@ -61,3 +61,28 @@ test('two-storey village landmarks have open glazing, hipped roof coverage and b
   const wall={x:width*.3,z:depth/2+.2};assert(world.resolve(wall,body)>0,'facade is solid');
  }
 });
+
+test('coaching inn has open mounted arcades, recessed arched glazing and pavilion roofs',()=>{
+ const root=art.buildCoachingInn();root.updateMatrixWorld(true);const a=root.userData.architecture;
+ assert.equal(a.arcadeBays,3);assert(a.arcadeClearWidth>1.7&&a.arcadeSpring>2.7);
+ const world=createSolidWorld({THREE});world.register(root);const rider={bottom:.38,top:2.65,radius:.55};
+ for(const rise of[0,.30])for(const x of[-2.0666666667,0,2.0666666667]){
+  const p={x,z:5.8};for(let i=0;i<30;i++){p.z-=.1;assert.equal(world.resolve(p,{...rider,bottom:rider.bottom+rise,top:rider.top+rise}),0,`arcade blocked at ${x},${p.z}`);}
+  assert(p.z<2.85,'horse can stand inside the 2 m deep arcade');
+ }
+ const pier={x:1.0333,z:3.9};assert(world.resolve(pier,rider)>0,'stone piers remain solid');
+ const door={x:0,z:1.98};assert(world.resolve(door,rider)>0,'inn door remains a solid interaction entrance');
+ for(const x of[-5.18,-3.92,3.92,5.18]){
+  const hit=firstHit(root,x+.13,6.35,10);assert.equal(hit?.object.material.name,'Ranch | window glass');assert(hit.point.z<3.76,'arched glazing has real reveal depth');
+ }
+ // Look through both storeys of the central arcade and hit the recessed wall.
+ for(const y of[1.7,5.6]){const hit=firstHit(root,.2,y,10);assert(hit.point.z<2.01,'gallery is open, not a flat painted facade');}
+ for(const x of[-5.5,-4,0,4,5.5])for(const z of[-2.7,0,2.7]){
+  const hit=new THREE.Raycaster(new THREE.Vector3(x,15,z),new THREE.Vector3(0,-1,0)).intersectObject(root,true)[0];
+  assert(hit&&hit.point.y>7,'both pavilions and the central hall are roofed');
+ }
+ root.traverse(o=>{if(o.geometry)for(const attr of Object.values(o.geometry.attributes))assert(Array.from(attr.array).every(Number.isFinite));});
+ const ceiling=new THREE.Raycaster(new THREE.Vector3(0,5.7,3.2),new THREE.Vector3(0,1,0)).intersectObject(root,true)[0];
+ assert(ceiling&&ceiling.point.y>7&&ceiling.point.y<7.4,'gallery has an opaque soffit below the roof');
+ assert(a.triangles<40000&&a.drawCalls<=16,'one landmark stays within its explicit rendering budget');
+});
