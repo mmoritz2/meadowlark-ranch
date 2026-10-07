@@ -10,7 +10,7 @@ await page.addInitScript(()=>{let seed=928471;Math.random=()=>{seed=(Math.imul(s
 await page.goto(QA.BASE+'/ranch3d.html?qa=world',{timeout:120000});
 await page.waitForFunction(()=>window.__qa?.G.horse.RIG().ready&&!document.getElementById('load'),null,{timeout:120000});
 await page.evaluate(async()=>{const q=__qa;q.G.save.sync(s=>s.qualityLocked=true);q.G.wardrobe?.closeChar();q.G.hidePanels();await q.G.photoscans.ready;await q.G.worldDetails.ready;await q.G.world.ranchBuilderArt.ready;advanceTime(0);q.day();q.G.gfx.apply('high');});
-const shots=[{name:'riding-meadow',eye:[-60,2,56],look:[-53,1.5,39],horse:[-55,46,-.4],riding:true},{name:'wildflower-trail',eye:[-60,1.8,56],look:[-53,1.5,39]},{name:'village-rise',eye:[78,1.7,-151],look:[46,2.0,-58]},{name:'ranch',eye:[-5,3.6,15],look:[-40,4,-36]},{name:'pasture',eye:[-83,2.6,-19],look:[-110,2,-60]},{name:'village',eye:[29,3,-32],look:[65,4,-70]},{name:'river',eye:[-20,3,102],look:[12,3,127]},{name:'countryside',eye:[85,4,-150],look:[20,5,-35]},{name:'riding-home',eye:[-83,2.2,-19],look:[-65,2,-38],horse:[-70,-28,-.8]}];
+const shots=[{name:'north-tree-closeup',eye:[2,2.6,199],look:[64,3,239]},{name:'north-meadow',eye:[25,2.6,214],look:[70,3,260]},{name:'eastern-fields',eye:[149,3,17],look:[209,3,52]},{name:'riding-meadow',eye:[-60,2,56],look:[-53,1.5,39],horse:[-55,46,-.4],riding:true},{name:'wildflower-trail',eye:[-60,1.8,56],look:[-53,1.5,39]},{name:'village-rise',eye:[78,1.7,-151],look:[46,2.0,-58]},{name:'ranch',eye:[-5,3.6,15],look:[-40,4,-36]},{name:'pasture',eye:[-83,2.6,-19],look:[-110,2,-60]},{name:'village',eye:[29,3,-32],look:[65,4,-70]},{name:'river',eye:[-20,3,102],look:[12,3,127]},{name:'countryside',eye:[85,4,-150],look:[20,5,-35]},{name:'riding-home',eye:[-83,2.2,-19],look:[-65,2,-38],horse:[-70,-28,-.8]}];
 const villageViews=await page.evaluate(()=>{
  const q=__qa,result=[];
  for(const [id,name]of[['cottonwood:clubhouse','cottage-front'],['cottonwood:store','village-store']]){
@@ -52,11 +52,21 @@ const state=await page.evaluate(async()=>{
   plantError=Math.max(plantError,Math.abs(pos.y+.03-q.groundH(pos.x,pos.z)));
   if(q.G.world.pathDist(pos.x,pos.z)<2.6||q.G.worldPaths.trackDist(pos.x,pos.z)<3.2)plantsOnRoad++;
  }
+ const near=q.nearGrass.near,nearLayout=Array.from(near.instanceMatrix.array),nearColors=Array.from(near.instanceColor.array);
+ const heights=[];for(let i=0;i<near.count;i++){near.getMatrixAt(i,matrix);if(matrix.determinant()!==0)heights.push(Math.hypot(...matrix.elements.slice(4,7)));}
+ heights.sort((a,b)=>a-b);
+ let originalTrunks=0;const trunks=q.G.floraPkg.bank.trunk;
+ for(let i=0;i<trunks.n;i++){trunks.im.getMatrixAt(i,matrix);if(Math.abs(matrix.determinant())>.00001)originalTrunks++;}
+ const blossomTrees=P.treePositions.filter(t=>t.kind==='blossom');
+ const blossom={replaced:blossomTrees.length,originalCanopyVisible:q.G.floraPkg.bank.blossom.im.visible,originalTrunks,
+  scanned:blossomTrees.every(t=>t.source.includes('broadleaf'))};
  const flowerDraw=flower.count,flowerLayout=Array.from(flower.instanceMatrix.array.slice(0,flowerDraw*16)),flowerColors=Array.from(flower.instanceColor.array.slice(0,flowerDraw*3));
  const middleLayout=Array.from(mid.instanceMatrix.array);q.nearGrass.tick(2,190,30);q.nearGrass.tick(3,-52,44);
+ // Hidden slots may retain an unused previous colour; compare visible plants.
+ const nearStable=nearLayout.every((v,i)=>v===near.instanceMatrix.array[i])&&nearColors.every((v,i)=>{const base=Math.floor(i/3)*16;return Math.hypot(nearLayout[base],nearLayout[base+1],nearLayout[base+2])===0||v===near.instanceColor.array[i];});
  const middleStable=middleLayout.every((v,i)=>v===mid.instanceMatrix.array[i]);
  const flowerStable=flower.count===flowerDraw&&flowerLayout.every((v,i)=>v===flower.instanceMatrix.array[i])&&flowerColors.every((v,i)=>v===flower.instanceColor.array[i]);
- const fields={flowerDraw,flowerStable,nearTriangles:q.nearGrass.near.geometry.index.count/3*q.nearGrass.near.count,samples,anchors:FIELD_ANCHORS.every(([x,z])=>pastureRise(x,z)===0),flowerCount,midCount,
+ const fields={nearStable,grassHeightRange:[heights[0],heights[Math.floor(heights.length*.1)],heights[Math.floor(heights.length*.9)],heights.at(-1)],flowerDraw,flowerStable,nearTriangles:q.nearGrass.near.geometry.index.count/3*q.nearGrass.near.count,samples,anchors:FIELD_ANCHORS.every(([x,z])=>pastureRise(x,z)===0),flowerCount,midCount,
   flowerTriangles:flower.geometry.index.count/3,middleTriangles:mid.count*mid.geometry.index.count/3,
   plantError,plantsOnRoad,middleStable};
  const cottages=[];q.scene.traverse(o=>{if(o.userData.architecture?.kind==='cottage')cottages.push(o);});
@@ -70,7 +80,7 @@ const state=await page.evaluate(async()=>{
  const relief=q.G.vistas.MASSIFS.map(m=>{const g=m.mesh.geometry,p=g.attributes.position;let nearest=Infinity,highest=-Infinity;
   for(let i=0;i<p.count;i++){nearest=Math.min(nearest,Math.hypot(p.getX(i),p.getZ(i)));highest=Math.max(highest,p.getY(i));}
   return {id:m.id,tris:m.tris,nearest,highest,static:!m.mesh.matrixAutoUpdate,finite:Object.values(g.attributes).every(a=>Array.from(a.array).every(Number.isFinite))};});
- return {surfaces,relief,npcCharacters:q.npcCharacters.stats(),fields,canopies:canopies.length,leafTriangles,tiers,stableLayout:layout===JSON.stringify(P.treePositions),
+ return {blossom,surfaces,relief,npcCharacters:q.npcCharacters.stats(),fields,canopies:canopies.length,leafTriangles,tiers,stableLayout:layout===JSON.stringify(P.treePositions),
   trunkAnchors:canopies.every(t=>Number.isFinite(q.groundH(t.x,t.z))),
   completeGardens,villageShops,cottages:cottages.length,gardens:q.G.worldDetails.cottageGardens,hedges:hedges?.count||0,leafHedges:!!hedges?.material.map&&hedges.material.alphaTest>0,
   errors:[...q.G.errors,...P.errors,...q.G.worldDetails.errors],assets:P.assets,gl:q.renderer.getContext().getError()};
@@ -84,7 +94,9 @@ const checks={
  protectedYards:state.fields.anchors,adaptiveGrassBudget:state.tiers[0].meadowTriangles<state.tiers[1].meadowTriangles&&state.tiers[1].meadowTriangles<state.tiers[2].meadowTriangles,modelledFlowerColonies:state.fields.flowerCount>90&&state.fields.flowerTriangles<=150,
  middleMeadow:state.fields.midCount>8000&&state.fields.middleTriangles<=1000000,
  groundedCover:state.fields.plantError<.001&&state.fields.plantsOnRoad===0,
- repeatableMeadow:state.fields.middleStable&&state.fields.flowerStable,
+ repeatableMeadow:state.fields.middleStable&&state.fields.flowerStable&&state.fields.nearStable,
+ variedGrassHeight:state.fields.grassHeightRange[2]/state.fields.grassHeightRange[1]>1.3,
+ oldForkedTreesReplaced:state.blossom.replaced>100&&!state.blossom.originalCanopyVisible&&state.blossom.originalTrunks===0&&state.blossom.scanned,
  compactFlowerDraws:state.fields.flowerDraw===state.fields.flowerCount,
  leafyLowlands:state.canopies>150,allAuthoredLeaves:state.leafTriangles===88336,
  treeBudget:state.tiers.every(t=>t.triangles<=t.budget)&&state.tiers[0].trees===0,

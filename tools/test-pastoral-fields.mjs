@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import * as T from '../assets/vendor/three/build/three.module.js';
 import {pastureRise,FIELD_RISES,FIELD_ANCHORS,meadowBloomAt,MEADOW_OPENINGS,meadowOpeningAt,inMeadowOpening} from '../assets/pastoral-fields.mjs';
-import {createGrassTuftGeometry,createLupinGeometry} from '../assets/meadow-cover.js';
+import {createGrassTuftGeometry,createLupinGeometry,meadowGrowthAt,meadowBladeColor} from '../assets/meadow-cover.js';
 
 test('field earthworks preserve all protected building and arena footprints',()=>{
  for(const [x,z,r] of FIELD_ANCHORS)for(let a=0;a<Math.PI*2;a+=.2)for(const f of[0,.25,.5,.99])
@@ -44,4 +44,16 @@ test('pasture openings have soft irregular boundaries and leave distant woodland
   const m=meadowOpeningAt(x,z);assert(m>=0&&m<=1);
   assert(Math.abs(meadowOpeningAt(x+.001,z)-meadowOpeningAt(x-.001,z))<.001);
  }
+});
+
+
+test('grass patches are stable, bounded and continuous at travelling cell boundaries',()=>{
+ const color=new T.Color(),values=[];
+ for(let x=-350;x<=350;x+=6)for(let z=-350;z<=350;z+=6){
+  const h=meadowGrowthAt(x,z);values.push(h);assert(h>=.42&&h<=1.37);assert.equal(h,meadowGrowthAt(x,z));
+  assert(Math.abs(meadowGrowthAt(x+.001,z)-meadowGrowthAt(x-.001,z))<.001);
+  assert(Math.abs(meadowGrowthAt(x,z+.001)-meadowGrowthAt(x,z-.001))<.001);
+  meadowBladeColor(color,x,z,.5);assert(color.toArray().every(n=>Number.isFinite(n)&&n>=0&&n<=1));
+ }
+ assert(Math.max(...values)-Math.min(...values)>.6);
 });

@@ -72,7 +72,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v10-pastoral';
+  material.customProgramCacheKey = () => 'terrain-biomes-v11-grassy-slopes';
   material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
@@ -193,8 +193,10 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       /* Rock is a slope story. rough makes the stone/grass line ragged instead of a contour, and
          scree is the band of loose gravel that always sits below bare rock on a real hillside. */
       float rough = (macro-0.5)*0.30+(stand-0.5)*0.36;
-      float scree = smoothstep(0.22,0.58, grade+rough*0.24);
-      float stone = smoothstep(0.42,1.00, grade+rough*0.30);
+      // Rideable meadow slopes keep their continuous turf. The old 22% grade
+      // threshold put gravel under healthy grass on most of the new hills.
+      float scree = smoothstep(0.50,0.88, grade+rough*0.24);
+      float stone = smoothstep(0.80,1.35, grade+rough*0.30);
       float rocky = max(scree,stone);
 
       float canyon = 1.0-smoothstep(96.0,172.0, length(p-vec2(-220.0,130.0))+ecoB*0.9);

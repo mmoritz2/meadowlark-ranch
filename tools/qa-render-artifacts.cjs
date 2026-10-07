@@ -45,6 +45,8 @@ const out=path.resolve(process.argv[2]||'output/render-artifacts');fs.mkdirSync(
    {name:'medium',tier:'medium'},{name:'low',tier:'low'},
    {name:'golden-hour',tier:'high',day:.22},
    {name:'night',tier:'high',day:0},{name:'rain',tier:'high',rain:true},
+   {name:'replaced-blossom-closeup',tier:'high',meadow:'tree'},
+   {name:'grassy-meadow-slope',tier:'high',meadow:'hill'},
    {name:'trail-garden',tier:'high',garden:true},
    {name:'village-plaster',tier:'high',village:true},
    {name:'village-night',tier:'high',village:true,day:0},
@@ -55,6 +57,7 @@ const out=path.resolve(process.argv[2]||'output/render-artifacts');fs.mkdirSync(
    if(c.viewport)await page.setViewportSize(c.viewport);
    const row=await page.evaluate(c=>{
     const q=__artifactQA;let eye=[-28,5,-52],look=c.look||[-90,25,-260];
+    if(c.meadow){const v=c.meadow==='tree'?{eye:[2,2.6,199],look:[64,3,239]}:{eye:[25,2.6,214],look:[70,3,260]};eye=v.eye;look=v.look;eye[1]+=q.groundH(eye[0],eye[2]);look[1]+=q.groundH(look[0],look[2]);}
     if(c.village){eye=[29,q.groundH(29,-32)+3,-32];look=[45,q.groundH(45,-55)+4,-55];}
     if(c.garden){
      const p=q.G.worldDetails.flowerPositions.slice().sort((a,b)=>Math.hypot(a.x+35,a.z-25)-Math.hypot(b.x+35,b.z-25))[0];

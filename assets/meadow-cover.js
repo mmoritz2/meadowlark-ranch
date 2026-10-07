@@ -1,33 +1,47 @@
-// Broad, curved meadow leaves with dark roots and green tips. Twelve leaves
-// replace sixteen fine blades, increasing readable coverage with less geometry.
+// Tapered meadow leaves with softer root shading and varied, bending tips.
+// Three triangles per leaf keep the travelling cover within its existing budget.
 export function createGrassTuftGeometry(THREE,{bladeCount=12}={}) {
   const P=[],N=[],C=[],U=[],I=[];
   for(let blade=0;blade<bladeCount;blade++) {
     const a=blade*2.39996,spread=.035+(blade%6)*.045;
     const ox=Math.cos(a)*spread,oz=Math.sin(a)*spread;
-    const tall=blade%3!==1,h=tall?.57+(blade%4)*.065:.25+(blade%5)*.038;
-    const bend=tall?.15+(blade%3)*.028:.23+(blade%3)*.035,width=.024+(blade%4)*.004;
+    const tall=blade%3!==1,h=tall?.60+(blade%4)*.085:.24+(blade%5)*.034;
+    const bend=tall?.21+(blade%3)*.040:.26+(blade%3)*.035,width=.016+(blade%4)*.003;
     const ca=Math.cos(a),sa=Math.sin(a),base=P.length/3;
     for(const t of [0,.55,1])for(const side of t===1?[0]:[-1,1]){
       const w=width*(1-t*.80)*side;
       P.push(ox+ca*bend*t*t-sa*w,h*t*(1-.14*t),oz+sa*bend*t*t+ca*w);
       N.push(ca*.32,.895,sa*.32);
-      const shade=.25+t*.75,dry=blade%13===0;
+      const shade=.40+t*.60,dry=blade%13===0;
       C.push(shade*(dry?1.06:.83),shade*(dry?.94:1),shade*(dry?.48:.62));U.push((side+1)/2,t);
     }
     I.push(base,base+1,base+2,base+1,base+3,base+2,base+2,base+3,base+4);
   }
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
   g.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));
-  g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);g.computeBoundingSphere();return g;
+  g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);g.computeBoundingBox();g.computeBoundingSphere();return g;
 }
 
-// One world-space palette keeps near tufts and the distant sward in the same
-// colour family. These values are linear, matching THREE.Color.setHSL.
+// Smooth world-space patches cross cell and LOD boundaries without stripes or
+// resampling when the rider returns. Height and ripeness use separate fields.
+function fieldPatch(x,z){
+  const ix=Math.floor(x),iz=Math.floor(z),fx=x-ix,fz=z-iz;
+  const hash=(a,b)=>{let h=Math.imul(a,374761393)^Math.imul(b,668265263);h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;};
+  const u=fx*fx*(3-2*fx),v=fz*fz*(3-2*fz);
+  const a=hash(ix,iz),b=hash(ix+1,iz),c=hash(ix,iz+1),d=hash(ix+1,iz+1);
+  return (a+(b-a)*u)*(1-v)+(c+(d-c)*u)*v;
+}
+export function meadowGrowthAt(x,z){
+  const stand=.65*fieldPatch(x/11+3.4,z/11-8.2)+.35*fieldPatch(x/29-5.1,z/29+2.7);
+  return .42+stand*.95;
+}
+
+// One palette for the near leaves, distant sward and old seed layer. Separate
+// green and golden stands give fields variation without random colour speckles.
 export function meadowBladeColor(color,x,z,variation=.5){
-  const patch=.5+.5*Math.sin(x*.047+Math.sin(z*.036)*1.8);
-  const warm=.5+.5*Math.sin(z*.021+x*.034);
-  return color.setHSL(.215+patch*.034,.60+variation*.10,.13+variation*.048+warm*.020);
+  const patch=fieldPatch(x/18+8.7,z/18-3.1);
+  const dry=Math.max(0,Math.min(1,(fieldPatch(x/24-7.4,z/24+6.8)-.48)*2.7));
+  return color.setHSL(.225+patch*.029-dry*.075,.55+variation*.08-dry*.08,.15+variation*.035+dry*.055);
 }
 
 // Fully modelled lupin: palmate foliage and a spiral of cupped pea flowers.
@@ -102,7 +116,7 @@ export function createMeadowDistance({THREE,scene,canGrow,heightAt,managedAt,low
         const a=hash(ix*137+k*11,iz*73+k*31),b=hash(ix*59+k*23,iz*151+k*7),c=hash(ix+k*19,iz-k*17);
         const px=(ix+a)*CELL,pz=(iz+b)*CELL,id=slot*K+k;
         pos.set(px,0,pz);q.setFromAxisAngle(up,c*Math.PI);
-        if(canGrow(px,pz)){const trim=1-.67*managedAt(px,pz);pos.y=heightAt(px,pz)-.03;scale.set(2.1+c*.6,trim*(.85+b*.3),2.1+c*.6);}
+        if(canGrow(px,pz)){const trim=1-.67*managedAt(px,pz);pos.y=heightAt(px,pz)-.03;scale.set(2.1+c*.6,trim*meadowGrowthAt(px,pz)*(.9+b*.2),2.1+c*.6);}
         else scale.setScalar(0);
         matrix.compose(pos,q,scale);mesh.setMatrixAt(id,matrix);meadowBladeColor(color,px,pz,c);mesh.setColorAt(id,color);
       }

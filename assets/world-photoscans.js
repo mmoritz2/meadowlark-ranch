@@ -152,8 +152,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         if(meadow)state.meadowClearings.push({x:t.x,z:t.z,kind:t.kind});
         return;
       }
-      // Unchanged blossom trees still use their original flower geometry.
-      if(t.kind==='blossom')return;
+      // Blossom placements share the scanned broadleaf canopy pipeline too;
+      // keeping their old cards left disconnected leaves and bare forked poles.
       if(t.root&&!t.root.visible)return;
       if(t.stem){const matrix=new THREE.Matrix4();t.stem.getMatrixAt(t.stemIndex??t.index,matrix);const a=matrix.elements;if(Math.hypot(a[0],a[1],a[2])<.01)return;}
       t.source=sourceFor(t);
@@ -185,7 +185,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       const matrix=new THREE.Matrix4(),pos=new THREE.Vector3(),rot=new THREE.Quaternion(),scale=new THREE.Vector3(),key=p=>p.x.toFixed(3)+','+p.z.toFixed(3);
       for(let i=0;i<banks.trunk.n;i++){banks.trunk.im.getMatrixAt(i,matrix);pos.setFromMatrixPosition(matrix);stems.set(key(pos),i);}
       for(const kind of ['oak','birch','blossom','pine','cold','willow']){
-        const bank=banks[kind];if(!bank)continue;if(kind!=='blossom')floraCanopies.push(bank.im);
+        const bank=banks[kind];if(!bank)continue;floraCanopies.push(bank.im);
         for(let i=0;i<bank.n;i++){
           bank.im.getMatrixAt(i,matrix);matrix.decompose(pos,rot,scale);
           const stemIndex=stems.get(key(pos));if(stemIndex===undefined)continue;

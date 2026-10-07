@@ -298,6 +298,17 @@ and river/creek grading remain in place. `qa-meadow-ridges.cjs` checks terrain
 contact across the basin, cleared-tree collisions, water depth, and actual mounted
 travel up and down the hill trail and across the bridge.
 
+The remaining blossom-tree placements now also use the scanned broadleaf tree
+pipeline, retiring the old forked trunks and detached leaf cards. This preserves
+their positions and trunk collisions, with the same detailed-tree triangle cap
+and shadow-casting distant views. Meadow blades taper more finely and bend more,
+with a smooth world-space field controlling short and tall stands across all
+three grass layers. A separate green-to-gold field varies their colour. Grass
+geometry and instance budgets are unchanged; cell revisits reproduce the visible
+plants and their colours. Moderate slopes keep their turf, with gravel and bare
+rock beginning on steeper grades. `qa-country-world.cjs` includes the former
+forked-tree close-up, grass-height distribution and stable near-cover checks.
+
 The next regional pass gives Amberwood gold, coral and burgundy scanned foliage
 with matching close-up and distant materials. It replaces the remaining ball
 crowns there and the large leaf cards at Willowmere, uses slimmer roadside trees,
