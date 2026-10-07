@@ -1,3 +1,4 @@
+import {patchOuterFog} from './outer-landscape.js?v=continuous-countryside-1';
 import {installThunderOak} from './thunder-oak-art.js?v=split-oak-1';
 import {installWillowArt} from './willow-art.js?v=weeping-willows-1';
 import {installDeadwoodArt} from './deadwood-art.js?v=weathered-deadwood-1';
@@ -265,6 +266,27 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       atlas.colorSpace=THREE.SRGBColorSpace;atlas.anisotropy=8;normals.colorSpace=THREE.NoColorSpace;normals.anisotropy=4;
       source.impostor={THREE,albedo:atlas,normals,width:m.width,height:m.height,bottom:m.bottom};
       source.card=treeImpostor(source.impostor);
+    }
+    // The same lit, eight-angle source atlases continue woodland beyond the
+    // riding terrain. These static groves never consume the nearby model budget.
+    const outer=W.outerLandscape;
+    if(outer){const groves=new Map(),cards=new Map();
+      for(const site of outer.woodlandSites){const source=variants.find(v=>v.key===site.source),scale=site.height/source.meta.sourceHeight;
+        q.setFromAxisAngle(UP,site.yaw);s.setScalar(scale);v.set(site.x,site.y-source.bounds.min.y*scale-.035,site.z);
+        const key=source.key+':'+(site.x<0?0:1)+':'+(site.z<0?0:1);
+        if(!groves.has(key))groves.set(key,{source,matrices:[]});groves.get(key).matrices.push(new THREE.Matrix4().compose(v,q,s));
+      }
+      const meshes=[];for(const {source,matrices} of groves.values()){
+        if(!cards.has(source.key)){
+          const base=source.card.mat,mat=base.clone();mat.userData={...base.userData};
+          mat.onBeforeCompile=(shader,renderer)=>{base.onBeforeCompile(shader,renderer);patchOuterFog(shader);};
+          mat.customProgramCacheKey=()=>base.customProgramCacheKey()+'-outer-haze';
+          cards.set(source.key,{...source.card,mat});
+        }
+        const mesh=instances(cards.get(source.key),matrices,'Outer woodland | '+source.key);mesh.receiveShadow=false;meshes.push(mesh);
+      }
+      state.outerWoodland={trees:outer.woodlandSites.length,draws:meshes.length,triangles:outer.woodlandSites.length*2,meshes};
+      outer.stats.woodlandDraws=meshes.length;outer.stats.woodlandTriangles=outer.woodlandSites.length*2;
     }
     for(const t of trees){
       const scale=t.height/t.source.meta.sourceHeight;

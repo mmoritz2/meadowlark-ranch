@@ -676,7 +676,8 @@ import {createDesertArt} from './assets/desert-art.js?v=botanical-desert-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
-import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=alpine-range-1';
+import {createOuterLandscape} from './assets/outer-landscape.js?v=continuous-countryside-1';
+import {createTerrainSurface,createRiverMaterial} from './assets/terrain-realism.js?v=continuous-countryside-1';
 import {createRanchArchitecture} from './assets/ranch-architecture.js?v=willowmere-settlement-1';
 import {createSolidWorld} from './assets/solid-collisions.js?v=solid-world-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
@@ -692,7 +693,7 @@ import {createForageArt} from './assets/forage-art.js?v=leafy-orchard-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=village-gardens-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=alpine-range-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=continuous-countryside-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=lashes-visible-20261007';
 import {FEATURES} from './assets/features/index.js?v=ember-friesian-1';
@@ -2954,6 +2955,7 @@ const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:b
  hdMat.map.needsUpdate=true;
  hdMat.envMapIntensity=0.46;
  const horizonDisc=new THREE.Mesh(new THREE.CircleGeometry(1400,48),hdMat);
+ horizonDisc.name='Horizon ground disc';
  horizonDisc.rotation.x=-Math.PI/2;
  horizonDisc.position.y=-8;
  scene.add(horizonDisc);
@@ -14411,6 +14413,7 @@ installFeatures();
 installVillageForecourts(G,villageGroundZones,{shrubs:naturalFlowerShrubs});
 installRanchWorldDetails(G,{shrubs:FOLIAGE.bush});
 installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
+G.world.outerLandscape=createOuterLandscape({THREE,scene,heightAt:terrainH,groundMesh:scene.getObjectByName('Pasture terrain')});
 const reflectionFineCover=new Set(['Living pasture grass','Modelled meadow lupins','Middle distance pasture','flora_tuft','flora_petal','flora_brack']);
 const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,
  omitFromReflection:o=>o===grassInst||reflectionFineCover.has(o.name),
