@@ -64,3 +64,40 @@ vec3 riderFaceFinish(vec3 skin,vec3 source,vec3 p){
  skin=mix(skin,vec3(.040,.022,.019),face*liner*.46);
  return skin;
 }`;
+
+/* Sparse tapered upper lashes, fitted to the face in the Head bone's space. */
+export function riderLashGeometry(THREE,skin,eyes,body){
+ if(body!=='f'||!eyes)return null;
+ const head=skin.skeleton.bones.findIndex(b=>b.name==='Head'),inverse=skin.skeleton.boneInverses[head];
+ const face=skin.geometry.clone();face.applyMatrix4(inverse);
+ // Restrict fitting rays to the eye region; the full body is unnecessary here.
+ const p=face.attributes.position,source=face.index?Array.from(face.index.array):Array.from({length:p.count},(_,i)=>i),region=[];
+ for(let i=0;i<source.length;i+=3){const tri=source.slice(i,i+3),xs=tri.map(n=>p.getX(n)),ys=tri.map(n=>p.getY(n));
+  if(Math.min(...xs)<=.051&&Math.max(...xs)>=-.051&&Math.min(...ys)<=.121&&Math.max(...ys)>=.098&&tri.some(n=>p.getZ(n)>.04))region.push(...tri);
+ }
+ face.setIndex(region);
+ const material=new THREE.MeshBasicMaterial({side:THREE.DoubleSide}),surface=new THREE.Mesh(face,material),ray=new THREE.Raycaster();surface.updateMatrixWorld(true);
+ const eyeGeometry=eyes.geometry.clone(),eyeHead=eyes.skeleton.bones.findIndex(b=>b.name==='Head');eyeGeometry.applyMatrix4(eyes.skeleton.boneInverses[eyeHead]);
+ const eyeSurface=new THREE.Mesh(eyeGeometry,material);eyeSurface.updateMatrixWorld(true);
+ const positions=[],indices=[],roots=[],segments=6,sides=4,V=(x,y,z)=>new THREE.Vector3(x,y,z);
+ const front=(mesh,x,y)=>{ray.set(V(x,y,.3),V(0,0,-1));return ray.intersectObject(mesh,false)[0];};
+ for(const side of [-1,1])for(let i=0;i<13;i++){
+  const t=i/12,x=side*(.020+.030*t);let exposed=false,root=null;
+  // Find where the visible eye meets the upper lid instead of guessing an arc.
+  for(let y=.099;y<=.120;y+=.0001){const skinHit=front(surface,x,y),eyeHit=front(eyeSurface,x,y);if(!skinHit||!eyeHit)continue;
+   if(skinHit.point.z<eyeHit.point.z){exposed=true;continue;}
+   if(exposed){root=V(x,y,skinHit.point.z+.0002);break;}
+  }
+  if(!root)continue;const length=.0045+.0025*t,fan=side*(.0005+.0020*t),base=positions.length/3;
+  const curve=new THREE.QuadraticBezierCurve3(root,root.clone().add(V(fan*.45,length*.12,length*.58)),root.clone().add(V(fan,length*.65,length*.75)));
+  roots.push(root.toArray());
+  for(let j=0;j<=segments;j++){
+   const u=j/segments,p=curve.getPoint(u),tangent=curve.getTangent(u).normalize(),normal=V(1,0,0).addScaledVector(tangent,-tangent.x).normalize(),binormal=tangent.clone().cross(normal),r=.00014*Math.pow(1-u,.75)+.000012;
+   for(let k=0;k<sides;k++){const angle=k*Math.PI*2/sides,v=p.clone().addScaledVector(normal,Math.cos(angle)*r).addScaledVector(binormal,Math.sin(angle)*r);positions.push(...v.toArray());
+    if(j<segments){const a=base+j*sides+k,b=base+j*sides+(k+1)%sides,c=a+sides,d=b+sides;indices.push(a,b,c,b,d,c);}
+   }
+  }
+ }
+ face.dispose();eyeGeometry.dispose();material.dispose();
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();geo.computeBoundingSphere();geo.userData.lashRoots=roots;return geo;
+}

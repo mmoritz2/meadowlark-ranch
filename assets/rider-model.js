@@ -40,7 +40,7 @@ import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut
 export {RIDER_OUTFITS};
 import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=runway-20261006';
 import {refineRiderProportions} from './rider-proportions.js?v=runway-20261006';
-import {refineRiderFace,RIDER_FACE_GLSL} from './rider-face.js?v=runway-20261006';
+import {refineRiderFace,RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=lashes-20261007';
 import {accessoryFit,buildAccessories} from './rider-accessories.js?v=hair-20261006';
 
 /* ---- tables ------------------------------------------------------------------------------------ */
@@ -162,8 +162,9 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
   head.browTop=0.139;
   if(brows){const bp=brows.geometry.attributes.position,hi=brows.skeleton.bones.indexOf(brows.skeleton.bones.find(b=>b.name==='Head')),inv=brows.skeleton.boneInverses[hi];
    let t=-1e9;for(let i=0;i<bp.count;i++){_v.fromBufferAttribute(bp,i).applyMatrix4(inv);if(_v.y>t)t=_v.y;}if(t>-1e8)head.browTop=t;}
+  const lashGeo=riderLashGeometry(THREE,skin,eyes,body);
   const helmetGeo=buildHelmetGeometry(head);
-  const prepared={body,proportionLift,scene,skin,eyes,brows,bones,seat,zones,clips,hair,head,helmetGeo,materials:{body:skin.material,eyes:eyes&&eyes.material,brows:brows&&brows.material},outfits:{}};
+  const prepared={body,proportionLift,scene,skin,eyes,brows,bones,seat,zones,clips,hair,head,helmetGeo,lashGeo,materials:{body:skin.material,eyes:eyes&&eyes.material,brows:brows&&brows.material},outfits:{}};
   if(body==='f'&&hair.Hair_Long)hair.Hair_Long={...hair.Hair_Long,geometry:polishHairSurface(THREE,hair.Hair_Long.geometry,prepared)};
   return prepared;
  }
@@ -732,6 +733,7 @@ float rwSkinZ,rwBoot,rwSole,rwMetal,rwRough;`)
   if(eyes){const m=new THREE.MeshPhysicalMaterial({map:kit.materials.eyes.map,color:0xffffff,roughness:.20,metalness:0,clearcoat:.7,clearcoatRoughness:.09,ior:1.4,side:THREE.DoubleSide});patchEyes(m,u);eyes.material=m;mats.push(m);}
   if(brows){brows.material=own(kit.materials.brows,patchBrows);brows.castShadow=false;}
   const hb=bones.Head;
+  if(kit.lashGeo){const material=new THREE.MeshStandardMaterial({color:0x241914,roughness:.78});const lashes=new THREE.Mesh(kit.lashGeo,material);lashes.name='rider-eyelashes';lashes.frustumCulled=false;hb.add(lashes);mats.push(material);}
   /* helmet: built once per kit, dressed per rider */
   const hg=kit.helmetGeo;
   u.uHelm.value.set(hg.cx,hg.cy,hg.cz,0); u.uHelmR.value.set(hg.rx-0.006,hg.ry-0.006,hg.rz-0.006,hg.rimY(Math.PI*0.5));
