@@ -998,7 +998,7 @@ export function install(G){
  // Reuse the same photographed materials without registering new solid proxies.
  // course-clear runs a second boot sweep at 400ms. Its legacy geometry must
  // remain present for that sweep even when all local models load from cache.
- const courseCleanupReady=new Promise(resolve=>G.on('boot',()=>setTimeout(resolve,450)));
+ const courseCleanupReady=new Promise(resolve=>G.on('boot',()=>setTimeout(()=>setTimeout(resolve,0),450)));
  P.roadsideReady=Promise.resolve().then(async()=>{
   await Promise.all([G.photoscans?.ready,G.worldDetails?.ready,G.undergrowth?.ready,
    W.ranchBuilderArt.ready,G.quartersPkg?.saplingsReady,G.worldPkg?.oasisReady,courseCleanupReady]);

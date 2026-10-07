@@ -8770,7 +8770,7 @@ let PANEL_IDS=['eventsPanel','carePanel','shopPanel','onlinePanel','lbPanel','mo
 const keys={};
 const editingInput=()=>{const el=document.activeElement;return !!el&&(el.matches('input,select,textarea')||el.isContentEditable);};
 function gameInputBlocked(){
- return document.body.classList.contains('se-screen-open')||
+ return !!G.tackSummon?.ceremony?.active||document.body.classList.contains('se-screen-open')||
   PANEL_IDS.some(id=>{const p=$(id);return p&&p.style.display&&p.style.display!=='none';})||
   !!document.querySelector('#seMenu.on,#seOv.on,#seChar.on')||
   ['bigmapWrap','dlg','chatBar'].some(id=>{const p=$(id);return p&&p.style.display&&p.style.display!=='none';});
@@ -11812,7 +11812,7 @@ function openSummon(){
  html+='<div style="font-size:11px;color:#8c7a63">Gems come from riding — events, daily gifts, chests, the pass. Nothing here costs real money.</div>';
  p.innerHTML=html; p.style.display='flex';
  $('summonClose').onclick=()=>{p.style.display='none';};
- if($('summonTack'))$('summonTack').onclick=()=>{p.style.display='none';G.ui.openShop('tacksummon');};
+ if($('summonTack'))$('summonTack').onclick=()=>{p.style.display='none';G.tackSummon.openWorld();};
  p.querySelectorAll('[data-summon]').forEach(b=>{ b.onclick=()=>{
   const t=SUMMON_TIERS.find(x=>x.id===b.dataset.summon); if(!t)return;
   p.style.display='none'; startSummon(t);
@@ -11820,7 +11820,7 @@ function openSummon(){
 }
 /* The ceremony. Everything below is timed against SUMMON.t in seconds. */
 function startSummon(tier){
- if(SUMMON.on)return;
+ if(SUMMON.on||G.tackSummon?.ceremony?.active)return;
  const s=freshSave(); if(!s)return;
  if((s.gems||0)<tier.gems){toast('Not enough gems yet.');return;}
  if(tier.custom){G.run('summonCustom',tier,s);return;}                              // the pet call and anything else a package stages itself
@@ -12808,7 +12808,7 @@ function mkSummonStall(){
  const sp=nameSprite('✨ The Summoning Stall'); sp.position.y=shell.userData.architecture.suggestedLabelY; g.add(sp);
  SUMMON.light=light; SUMMON.glow=glow; SUMMON.doorL=doorL; SUMMON.doorR=doorR; SUMMON.grp=g;
  followCamera.register(g);
- return {kind:'summon',id:'summon',g,x,z};
+ return {kind:'summon',id:'summon',g,x,z,reach:4.5}; // reachable outside the stall collider while mounted
 }
 function mkTackRoom(){
  const g=new THREE.Group(); const x=TACK_ROOM.x,z=TACK_ROOM.z;
@@ -12863,7 +12863,7 @@ function thingLabel(t){
  if(typeof t.label==='function'){try{return t.label(t)||'';}catch(e){return '';}}
  if(t.kind==='chest'){const sv=freshSave(); const at=sv&&sv.chests&&sv.chests[t.id]; const open=at&&Date.now()-at<CHEST_REOPEN; return open?'🎁 Chest (refills in '+Math.ceil((CHEST_REOPEN-(Date.now()-at))/3600000)+'h)':'🎁 Open the chest (E)';}
  if(t.kind==='room'){const sv=freshSave(); const used=sv&&sv.doors&&sv.doors.tackroom===weekKey(); return used?'🔐 Tack room (opens again next week)':'🔐 Unlock with a Silver Key (E)';}
- if(t.kind==='summon')return SUMMON.on?'✨ …something is coming':'✨ Call a horse (E)';
+ if(t.kind==='summon')return SUMMON.on?'✨ …something is coming':G.tackSummon?'✨ Summon horses or tack (E)':'✨ Call a horse (E)';
  if(t.kind==='fish')return fishing?(fishing.bit?'❗ BITE — reel in (E)!':'🎣 Waiting for a bite…'):'🎣 Fish (E)';
  return '';
 }
@@ -14117,6 +14117,8 @@ function tick(stepSeconds){
   vrVignette.material.uniforms.uAmt.value=THREE.MathUtils.clamp(vAmt,0,0.84);
   updateVRMenu(dt);
   tickVRToast(dt);
+ }else if(G.tackSummon?.ceremony?.active){
+  G.tackSummon.ceremony.camera(dt,t,camLook);
  }else if(SUMMON.cam){
   /* A held shot straight down the doors, drifting slowly in — the one time this game
      takes the camera off the rider's shoulder on purpose. */
@@ -14481,7 +14483,7 @@ function installFeatures(){
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
+  world:{travelTo:fastTravelTo,patchTerrain,terrainStep:TERRAIN_STEP,waterMaterial:waterMat,fallsLandscape:FALLS.landscape,canyonLandscape,desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,discoveryArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},

@@ -1,5 +1,5 @@
-import * as tackSummon from './tack-summon.js?v=tack-summon-20261007';
-import * as tackCollection from './tack-collection.js?v=tack-summon-20261007';
+import * as tackSummon from './tack-summon.js?v=tack-ceremony-20261007';
+import * as tackCollection from './tack-collection.js?v=tack-ceremony-20261007';
 import * as paidTack from './paid-tack.js?v=tack-summon-20261007';
 /* ============================================================================================
    FEATURE MODULES — the registry, and the whole contract in one place.
@@ -174,7 +174,7 @@ import * as dialogueFocus from './dialogue-focus.js?v=ranch-life-1';
 import * as account from './account-economy.js?v=living-oasis-1';
 import * as commerce from './commerce.js?v=tack-summon-20261007';
 import * as petModels from './pet-models.js?v=b20261001b';   // each pet its own animal, walked where the camera sees it, the winged ones flying with you; portraits for the menus
-import * as market from './market-summon-keys-pets.js?v=tack-summon-20261007';
+import * as market from './market-summon-keys-pets.js?v=tack-ceremony-20261007';
 import * as breeding from './breeding.js?v=b20261001b';
 import * as ranch from './ranch.js?v=ranch-life-2';
 import * as world from './world.js?v=resident-distance-1';
@@ -213,7 +213,7 @@ import * as onFoot from './on-foot.js?v=riding-modes-1';   // versioned: she wal
 import * as seMarket from './se-market.js?v=tack-summon-20261007';
 import * as treasures from './hidden-treasures.js?v=b20261001b';   // golden horseshoes on the rocks and in the water, for on-foot
 import * as courseClear from './course-clear.js?v=b20261001b';   // a mown, cleared track on every event course; routes bent round what cannot be cleared
-import * as seFrame from './se-frame.js?v=tack-summon-20261007';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use
+import * as seFrame from './se-frame.js?v=tack-ceremony-20261007';   // every menu in one full-screen frame, the ☰ menu as a screen of parchment tiles, and the kit the rebuilt screens use
 import * as seEvents from './se-events.js?v=riding-life-1';
 import * as seJourney from './se-journey.js?v=menus-publish-20261005';   // My Journey as a hub of story and discipline cards, each with its picture and how far along you are
 import * as seHorses from './se-horses.js?v=menus-publish-20261005';   // My Horses as portrait cards: favourites, then each breed with its mastery track
