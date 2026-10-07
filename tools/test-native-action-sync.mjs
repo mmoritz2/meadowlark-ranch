@@ -25,6 +25,15 @@ test('unknown actions, expired clips, invalid clocks and parked-only actions are
   const {rig,calls}=fixture();assert.equal(receiveNativeAction(rig,{seq:2,type:'rear',elapsedS:0,...patch}),false);assert.equal(calls.length,0);
  }
 });
+test('riderless actions require an explicitly wild peer and retain clock, order and flight guards',()=>{
+ for(const options of [undefined,{wild:false},{wild:1},{wild:'true'}]){
+  const {rig}=fixture();assert.equal(receiveNativeAction(rig,{seq:2,type:'liedown',elapsedS:0,wild:true},options),false);
+ }
+ const {rig,state,calls}=fixture();assert.equal(receiveNativeAction(rig,{seq:4,type:'liedown',elapsedS:1.5},{wild:true}),true);assert.equal(state.action.type,'liedown');assert.equal(calls.length,1);
+ assert.equal(receiveNativeAction(rig,{seq:4,type:'liedown',elapsedS:2},{wild:true}),false);assert.equal(calls.length,1);
+ assert.equal(receiveNativeAction(rig,{seq:5,type:'liedown',elapsedS:8},{wild:true}),false);
+ rig.nativeFlying=true;assert.equal(receiveNativeAction(rig,{seq:5,type:'liedown',elapsedS:0},{wild:true}),false);
+});
 test('UI follows the controller once and publishes an explicit completion sequence',()=>{
  const {rig,state}=fixture();rig.nativeActionSeq=20;state.action={type:'rear',timeS:2,durationS:4};rig.emote={type:'rear',native:true,t:0};
  assert.equal(syncNativeActionEmote(rig).timeS,2);assert.equal(rig.emote.t,2);assert.deepEqual(nativeActionPacket(rig),{seq:20,type:'rear',elapsedS:2});

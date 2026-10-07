@@ -189,10 +189,15 @@ export function install(G){
   let sc=1; try{sc=RS.horseScale?RS.horseScale(h):(player.mesh?player.mesh.scale.x:1);}catch(e){}
   g.scale.setScalar(sc); g.position.set(x,Wd.groundH(x,z),z); g.rotation.y=heading; scene.add(g);
   const e={parts,x,z,heading,sc,idx:i,id:h.id,phase:Math.random()*6,speed:0,graze:0,grazeT:3+Math.random()*5};
-  e.dress=()=>{try{H.dressWithRig(e,parts,h.colors,{breed:h.breed,mine:true,foal:h.foal,coat:h.coat,dragon:h.dragon,tailCol:h.tailCol,mark:h.mark,markCol:h.markCol,mark2:h.mark2,seed:h.id,saddle:true});}catch(err){}};
+  e.dress=()=>{try{H.dressWithRig(e,parts,h.colors,{breed:h.breed,mine:true,foal:h.foal,bareback:!!h.bareback,coat:h.coat,dragon:h.dragon,tailCol:h.tailCol,mark:h.mark,markCol:h.markCol,mark2:h.mark2,seed:h.id,saddle:true});}catch(err){}};
   e.dress();
   return e;
  }
+ G.on('ridingModeChanged',()=>{
+  const e=ST.horse;if(!ST.on||!e)return;const h=H.myHorses[H.rideIdx()];if(h?.id!==e.id)return;
+  if(e.rig?.saddle)e.rig.saddle.visible=!h.bareback;
+  H.applyNativeRemoteMode?.(e,{bareback:!!h.bareback,wild:false});
+ });
  function dropHorse(){
   horseActions.clear();
   const e=ST.horse; ST.horse=null; if(!e)return;
@@ -237,6 +242,7 @@ export function install(G){
  /* ---------------------------------------------------------------- off and on ------------ */
  function why(){
   if(ST.on)return 'already on foot';
+  if(G.mastery?.isWild())return 'Leave Wild Mode before getting off to walk';
   if(G.roundup?.state().active)return 'Finish or end the roundup before dismounting';
   try{if(G.course&&G.course.get&&G.course.get())return 'Finish the course first';}catch(e){}
   if(player.flying||(player.y||0)>0.05)return 'Land first';
@@ -613,12 +619,13 @@ export function install(G){
  const btn=document.createElement('button'); btn.id='seMount'; btn.type='button';
  (($('seHudRoot'))||document.body).appendChild(btn);
  function syncButton(){
-  const t=ST.on?'Ride '+name()+' (F)':'Get off and walk (F)';
+  const wild=!!G.mastery?.isWild(),t=wild?'Return to riding':ST.on?'Ride '+name()+' (F)':'Get off and walk (F)';
   btn.title=t; btn.setAttribute('aria-label',t);
-  btn.style.backgroundImage=svg(ST.on?saddle:walker);
+  btn.style.backgroundImage=svg(wild||ST.on?saddle:walker);
  }
  syncButton();
- btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggle();});
+ G.on('ridingModeChanged',syncButton);
+ btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(G.mastery?.isWild())G.mastery.toggleWild();else toggle();});
  /* the HUD whistle calls the parked horse while she is on foot */
  document.addEventListener('click',e=>{
   if(!ST.on)return; const t=e.target; if(!t||!t.closest)return;

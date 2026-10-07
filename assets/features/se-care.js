@@ -247,7 +247,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
     +'<div><div class="v'+(bonus>0?' up':'')+'">'+e+'</div><div class="bn">effective</div></div>'
     +'<div class="tr"><i style="width:'+prog.toFixed(1)+'%"></i></div></div>';
   }
-  return {body:x,btns:'<button class="sv-b" data-se="tab:feeding">Bond &amp; feed</button><button class="sv-b" data-se="open:tack">🐎 Tack</button>'};
+  return {body:x,btns:'<button class="sv-b" data-se="tab:feeding">Bond &amp; feed</button><button class="sv-b" data-se="open:modes">Riding modes</button>'};
  }
  function feedingTab(s,h){
   // Care is optional time together. It never creates needs or daily chores.
@@ -296,7 +296,7 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
  }
  function equipmentTab(s,h){
   const stats=statBreakdown(s,h);
-  let x='<div class="sv-head">Tack bonuses</div><table class="sv-stat-table"><thead><tr><th scope="col">Stat</th><th scope="col">Base</th><th scope="col">+ Tack</th><th scope="col">Effective</th></tr></thead><tbody>';
+  let x='<button class="sv-b" data-se="open:modes" style="width:100%;margin-bottom:14px;min-height:44px">Saddled · Bareback · Wild</button><div class="sv-head">Tack bonuses</div><table class="sv-stat-table"><thead><tr><th scope="col">Stat</th><th scope="col">Base</th><th scope="col">+ Tack</th><th scope="col">Effective</th></tr></thead><tbody>';
   x+=STATS.map(([k,label,ic])=>'<tr data-stat="'+k+'"><th scope="row">'+ic+' '+label+'</th><td>'+statNumber(stats.base[k])+'</td><td>+'+statNumber(stats.tack[k])+'</td><td>'+statNumber(stats.total[k])+'</td></tr>').join('');
   x+='</tbody></table>';
   const sets=STATS.filter(([k])=>stats.sets[k]>0).map(([k,label])=>'+'+statNumber(stats.sets[k])+' '+label).join(', ');
@@ -398,11 +398,12 @@ body.se-ov-open #tameHud,body.se-ov-open #roundHud,body.se-ov-open #drillHud,bod
    open(tab,returnOptions); $('seOvBody').scrollTop=scroll;
   };
   close();
-  const panel={care:'carePanel',stable:'stablePanel',style:'stylePanel',breed:'breedPanel',actions:'emotePanel'}[what];
-  if(panel&&G.seFrame)G.seFrame.setBack(panel,returnOverview);
+  const panel={care:'carePanel',stable:'stablePanel',style:'stylePanel',breed:'breedPanel',actions:'emotePanel',modes:'rideModePanel'}[what];
+  if(panel&&G.seFrame&&what!=='modes')G.seFrame.setBack(panel,returnOverview);
   if((what==='tack'||what==='shop')&&G.seMarket?.setBack)G.seMarket.setBack(returnOverview,'horse overview');
   try{
    if(what==='care')G.ui.openCare();
+   else if(what==='modes')G.ridingModes?.open({onBack:returnOverview});
    else if(what==='actions')G.ui.dispatch('open:emotePanel');
    else if(what==='stable')G.ui.openStable();
    else if(what==='style')G.ui.dispatch('style:open');

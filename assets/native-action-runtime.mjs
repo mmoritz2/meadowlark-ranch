@@ -10,14 +10,14 @@ export function nativeActionPacket(rig){
  const action=rig.heroMotion.state.action;
  return {seq:rig.nativeActionSeq||0,type:action?.type||null,elapsedS:action?.timeS||0};
 }
-export function receiveNativeAction(rig,packet){
+export function receiveNativeAction(rig,packet,{wild=false}={}){
  const motion=rig?.heroMotion;
  if(!motion?.startAction||!packet||!Number.isSafeInteger(packet.seq)||packet.seq<=0||packet.seq<(rig.receivedNativeActionSeq||0))return false;
  if(packet.type===null){
   rig.receivedNativeActionSeq=packet.seq;motion.cancelAction();rig.emote=null;return true;
  }
  const record=motion.actionDescriptor(packet.type);
- if(!record||record.dismountedOnly||!Number.isFinite(packet.elapsedS)||packet.elapsedS<0||packet.elapsedS>=record.durationS||rig.nativeFlying)return false;
+ if(!record||record.dismountedOnly&&wild!==true||!Number.isFinite(packet.elapsedS)||packet.elapsedS<0||packet.elapsedS>=record.durationS||rig.nativeFlying)return false;
  if(packet.seq===rig.receivedNativeActionSeq)return false;
  if(motion.state.action)motion.cancelAction();
  if(!motion.startAction(packet.type,{elapsedS:packet.elapsedS}))return false;

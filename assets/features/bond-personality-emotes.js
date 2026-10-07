@@ -10,7 +10,7 @@
      G.horse.horseEmotes.apply(rig,emote,env,t)   G.horse.riderEmote(type)   G.horse.RIDER_EMOTES
      RIG.emote = {type,t,dur}  on the ridden rig; remote rigs mirror it through the /pos packet (em, rem).
    Nothing runs at import time. */
-import {syncNativeActionEmote,nativeActionPacket,receiveNativeAction} from '../native-action-runtime.mjs?v=horse-actions-1';
+import {syncNativeActionEmote,nativeActionPacket,receiveNativeAction} from '../native-action-runtime.mjs?v=riding-modes-1';
 export const id='bond-personality-emotes';
 
 /* ---- the personality behaviour template ------------------------------------------------ */
@@ -134,7 +134,7 @@ export function install(G){
  });
  G.on('netPos',(payload)=>{const RIG=G.horse.RIG();payload.em=RIG.emote?RIG.emote.type:null;payload.horseAction=nativeActionPacket(RIG);payload.rem=player.riderEmote?player.riderEmote.type:null;});
  G.on('remote',(m,r)=>{
-  if(r.rig?.profile?.nativeBreed)receiveNativeAction(r.rig,m.horseAction);
+  if(r.rig?.profile?.nativeBreed)receiveNativeAction(r.rig,m.horseAction,{wild:m.wm===1});
   else if(m.em&&EMOTES[m.em]&&r.rig&&!(r.rig.emote&&r.rig.emote.type===m.em)&&r._lastEm!==m.em){r.rig.emote={type:m.em,t:0,dur:EMOTES[m.em].dur};}
   r._lastEm=m.em||null;
   if(m.rem&&RIDER_EMOTES[m.rem]&&!(r.riderEmote&&r.riderEmote.type===m.rem)&&r._lastRem!==m.rem){r.riderEmote={type:m.rem,t:0,dur:RIDER_EMOTES[m.rem].dur};}
@@ -441,17 +441,17 @@ export function install(G){
   render(p,s){
    const h=s.horses[G.horse.rideIdx()]||{};
    const rider=Object.keys(RIDER_EMOTES).map(k=>{const E=RIDER_EMOTES[k];const own=emoteOwned(s,k);return '<button data-fx="bpe:rem:'+k+'" '+(own?'':'style="opacity:.55" title="'+E.hint+'"')+'>'+(own?'':'🔒 ')+E.label+'</button>';}).join('');
-   const rig=G.horse.RIG(),native=!!rig.profile?.nativeBreed;
+   const rig=G.horse.RIG(),native=!!rig.profile?.nativeBreed,wild=!!G.mastery?.isWild();
    const actionNames=native?rig.heroMotion?.supportedActions||[]:Object.keys(EMOTES).filter(k=>k!=='graze');
    const horse=actionNames.map(k=>{const E=EMOTES[k];if(!E)return '';const ok=emoteUnlocked(h,k),record=rig.heroMotion?.actionDescriptor?.(k);
-    return '<button data-fx="bpe:hem:'+k+'" '+(ok?'':'disabled style="opacity:.55" title="'+E.lockHint+'"')+'>'+E.label+(record?.dismountedOnly?' · on foot':'')+(!ok?'<small style="display:block">'+E.lockHint+'</small>':'')+'</button>';}).join('');
+    return '<button data-fx="bpe:hem:'+k+'" '+(ok?'':'disabled style="opacity:.55" title="'+E.lockHint+'"')+'>'+E.label+(record?.dismountedOnly&&!wild?' · on foot':'')+(!ok?'<small style="display:block">'+E.lockHint+'</small>':'')+'</button>';}).join('');
    return '<div class="ph">🎭 Emotes <button data-fx="close" style="margin-left:auto">✖</button></div>'
-   +'<div style="font-size:12px;color:#8c7a63">Rider emotes play from a halt. Free ones are yours; the rest are earned in play. Club mates see them.</div>'
-   +'<div class="crow" style="gap:5px;flex-wrap:wrap">'+rider+'</div>'
+   +'<div style="font-size:12px;color:#8c7a63">'+(wild?'Wild Mode · no rider or tack.':'Rider emotes play from a halt. Free ones are yours; the rest are earned in play. Club mates see them.')+'</div>'
+   +'<div class="crow" style="gap:5px;flex-wrap:wrap">'+(wild?'You are the horse. Choose one of your horse’s actions below.':rider)+'</div>'
    +'<div class="ph" style="font-size:14px;margin-top:6px">🐴 '+(h.name||'Horse')+"'s tricks <span style=\"color:#8c7a63;font-size:12px;font-weight:600\">bond Lv "+bondLevel(h)+' · keys 1–6</span></div>'
    +'<div class="crow" style="gap:5px;flex-wrap:wrap">'+(horse||'No horse actions are available for this mount.')+'</div>'
-   +(native&&actionNames.length?'<p style="font-size:12px;line-height:1.5;color:#6c5b47">Halt to try an action. Each animation finishes back on all four feet. Lie down steps your rider off first; mounting waits until your horse gets up.</p>':'')
-   +'<div class="crow" style="gap:5px;flex-wrap:wrap;margin-top:4px"><button data-fx="bpe:whistle">🎵 Whistle</button><button data-fx="bpe:brush">🧽 Brush</button></div>';
+   +(native&&actionNames.length?'<p style="font-size:12px;line-height:1.5;color:#6c5b47">Halt to try an action. Each animation finishes back on all four feet. '+(wild?'Finish resting and getting up before returning to riding.':'Lie down steps your rider off first; mounting waits until your horse gets up.')+'</p>':'')
+   +(wild?'':'<div class="crow" style="gap:5px;flex-wrap:wrap;margin-top:4px"><button data-fx="bpe:whistle">🎵 Whistle</button><button data-fx="bpe:brush">🧽 Brush</button></div>');
   }});
 
  /* ---- Care / Stable surfaces ---------------------------------------------------------------- */

@@ -1,12 +1,15 @@
-/* Display-only Western split reins for the native 677-joint horse.
- * Original GLB vertex positions, skin weights, bones, bind matrices, and all
- * non-rein tack remain untouched. This replaces selected triangles on a clone
- * of the original tack BufferGeometry and updates two 19 mm leather ribbons.
+/* Display-only equipment modes and Western reins for the native 677-joint horse.
+ * Original GLB vertex positions, skin weights, bones and bind matrices remain
+ * untouched. A private geometry clone selects visible equipment triangles;
+ * two 19 mm leather ribbons connect the rider's hands to the original bit.
  */
 export const DISPLAY_REIN_COMPONENTS = [57,58,59,60,61,62,72,73,74,75,103,104,141,142,143,153,163,164,244,245,254,255,278,283];
 const PROTECTED_COMPONENTS = [89,91,205,209];
 const EXPECTED_TRIANGLES = 17194;
 const EXPECTED_REMOVED = 1640;
+// Measured connected components of the source's headstall, bit, buckles and
+// stitching. The remaining non-rein parts belong to the saddle/breastplate.
+const BRIDLE_COMPONENTS=[11,12,13,15,16,17,55,56,69,70,71,76,77,93,94,95,98,101,102,105,106,144,159,161,162,165,166,168,169,170,175,182,188,189,191,197,198,199,200,201,202,203,204,205,209,237,242,243,246,247,252,253,256,257,265,268,269,270,271,272,273,277,279,282,284,286,287,288,289,290,291];
 
 function separateComponents(geometry) {
   const index=geometry.index?.array, count=geometry.attributes.position.count;
@@ -19,6 +22,58 @@ function separateComponents(geometry) {
   for(let i=0;i<count;i++){const r=root(i);if(!groupByRoot.has(r)){groupByRoot.set(r,vertices.length);vertices.push([]);}const c=groupByRoot.get(r);byVertex[i]=c;vertices[c].push(i);}
   if(vertices.length!==300)throw Error('Original Western tack component count changed');
   return {index,byVertex,vertices};
+}
+
+/** A private geometry clone preserves the source attributes; mode switches only
+ * select its index buffer. Bareback keeps the headstall; wild hides all tack. */
+export function createNativeTackModes({THREE,rig,mount=rig.scene.parent}={}){
+ if(rig?.profile?.nativeKind!=='horse')return null;
+ const meshes=[];rig.scene.traverse(o=>{if(o.isSkinnedMesh&&[13895,5092].includes(o.geometry?.attributes.position.count))meshes.push(o);});
+ const tack=meshes.find(o=>o.geometry.attributes.position.count===13895),saddle=meshes.find(o=>o.geometry.attributes.position.count===5092);
+ if(!tack||!saddle||meshes.length!==2)throw Error('Native Western tack meshes changed');
+ const sourceGeometry=tack.geometry,{index,byVertex}=separateComponents(sourceGeometry),head=new Set(BRIDLE_COMPONENTS),rein=new Set(DISPLAY_REIN_COMPONENTS);
+ const visibleBefore=meshes.map(m=>m.visible),geometry=sourceGeometry.clone(),indices={all:[],live:[],bare:[],bareLive:[]};
+ for(let i=0;i<index.length;i+=3){const id=byVertex[index[i]],triangle=[index[i],index[i+1],index[i+2]];
+  if(byVertex[index[i+1]]!==id||byVertex[index[i+2]]!==id)throw Error('Cross-component tack triangle');
+  indices.all.push(...triangle);if(!rein.has(id))indices.live.push(...triangle);
+  if(head.has(id)||rein.has(id))indices.bare.push(...triangle);if(head.has(id))indices.bareLive.push(...triangle);
+ }
+ if(indices.bareLive.length!==5090*3||indices.all.length-indices.live.length!==EXPECTED_REMOVED*3)throw Error('Native bridle isolation mismatch');
+ const buffers=Object.fromEntries(Object.entries(indices).map(([key,values])=>[key,new THREE.BufferAttribute(new Uint16Array(values),1)]));
+ tack.geometry=geometry;geometry.clearGroups();
+ let mode='saddled',liveReins=false,applied='',disposed=false;
+ function apply(){
+  if(disposed)return;const key=mode==='bareback'?(liveReins?'bareLive':'bare'):(liveReins?'live':'all');
+  if(key!==applied){geometry.setIndex(buffers[key]);geometry.clearGroups();geometry.addGroup(0,buffers[key].count,0);applied=key;}
+  tack.visible=mode!=='wild';saddle.visible=mode==='saddled';
+ }
+ // Reuse a handful of measured coat vertices rather than assuming every breed
+ // has the same saddle thickness. These vertices continue to follow skinning.
+ const skin=rig.skin,seatFollower=rig.nativeSeatFollower||rig.nativeContacts?.seatFollower,point=new THREE.Vector3(),seat=new THREE.Vector3(),bareIds=[];
+ if(skin&&seatFollower&&mount){
+  rig.scene.updateWorldMatrix(true,true);seatFollower.getWorldPosition(seat);mount.worldToLocal(seat);
+  const scale=Math.max(.01,mount.getWorldScale(new THREE.Vector3()).y),candidates=[];
+  for(let i=0;i<skin.geometry.attributes.position.count;i++){
+   skin.getVertexPosition(i,point);point.applyMatrix4(skin.matrixWorld);mount.worldToLocal(point);
+   if(Math.abs(point.x-seat.x)<.075/scale&&Math.abs(point.z-seat.z)<.10/scale&&point.y>seat.y-.30/scale&&point.y<seat.y+.08/scale)candidates.push({id:i,y:point.y});
+  }
+  candidates.sort((a,b)=>b.y-a.y);for(const entry of candidates.slice(0,8))bareIds.push(entry.id);
+ }
+ function barebackSeatLocal(){
+  if(!mount||!seatFollower)return null;
+  rig.scene.updateWorldMatrix(true,true);seat.set(0,0,0);
+  if(bareIds.length){for(const id of bareIds){skin.getVertexPosition(id,point);point.applyMatrix4(skin.matrixWorld);seat.add(mount.worldToLocal(point));}seat.multiplyScalar(1/bareIds.length);}
+  else{seatFollower.getWorldPosition(seat);mount.worldToLocal(seat);seat.y-=.08/Math.max(.01,mount.getWorldScale(point).y);}
+  return seat.clone();
+ }
+ const api={sourceGeometry,tack,barebackSeatLocal,
+  setMode(value){if(disposed)return false;if(!['saddled','bareback','wild'].includes(value))return false;mode=value;apply();return true;},
+  setLiveReins(value){liveReins=!!value;apply();},
+  get mode(){return mode;},
+  inspect(){return {mode,saddleVisible:saddle.visible&&mode==='saddled',bridleVisible:tack.visible&&mode!=='wild',reinsVisible:tack.visible&&!liveReins,sourceReinsVisible:tack.visible&&!liveReins,triangles:geometry.index.count/3,bridleTriangles:5090,sourceTriangles:index.length/3,sourceGeometryPreserved:tack.geometry!==sourceGeometry,barebackSeat:barebackSeatLocal()?.toArray()||null,barebackSeatVertices:bareIds.slice()};},
+  dispose(){if(disposed)return;disposed=true;if(tack.geometry===geometry)tack.geometry=sourceGeometry;geometry.dispose();meshes.forEach((mesh,i)=>mesh.visible=visibleBefore[i]);},
+ };
+ apply();return api;
 }
 
 function ribbon(THREE, group, material, name, width, count=42){
@@ -48,8 +103,8 @@ function ribbon(THREE, group, material, name, width, count=42){
   return {mesh,widthM:width,update,get centerline(){return centerline;}};
 }
 
-export function createNativeRiderReins({THREE,scene,tack,anchors,rider,contactPoint,seatFollower}) {
-  const originalGeometry=tack.geometry;
+export function createNativeRiderReins({THREE,scene,tack,anchors,rider,contactPoint,seatFollower,tackModes}) {
+  const originalGeometry=tackModes?.sourceGeometry||tack.geometry;
   const {index,byVertex,vertices}=separateComponents(originalGeometry);
   const hidden=new Set(DISPLAY_REIN_COMPONENTS);
   for(const id of PROTECTED_COMPONENTS)if(hidden.has(id))throw Error('Protected native tack component selected for removal');
@@ -61,8 +116,8 @@ export function createNativeRiderReins({THREE,scene,tack,anchors,rider,contactPo
     throw Error(`Rein isolation mismatch: ${removed} triangles removed`);
   // BufferGeometry clone leaves source mesh bytes untouched. The same skeleton,
   // bind matrix, material, UVs and all 276 other original parts stay in place.
-  tack.geometry=originalGeometry.clone();tack.geometry.setIndex(kept);
-  tack.geometry.clearGroups();tack.geometry.addGroup(0,kept.length,0);
+  if(tackModes)tackModes.setLiveReins(true);
+  else{tack.geometry=originalGeometry.clone();tack.geometry.setIndex(kept);tack.geometry.clearGroups();tack.geometry.addGroup(0,kept.length,0);}
   const group=new THREE.Group();group.name='Native leather split reins';scene.add(group);
   const leather=new THREE.MeshStandardMaterial({color:0x512810,roughness:1,metalness:0,side:THREE.DoubleSide});
   const reins={};
@@ -99,7 +154,8 @@ export function createNativeRiderReins({THREE,scene,tack,anchors,rider,contactPo
     const sides={};for(const side of ['left','right']){const r=reins[side];sides[side]={bit:position(r.bit),hand:position(r.hand),mainStart:position(r.main.centerline[0]),mainEnd:position(r.main.centerline.at(-1)),looseStart:position(r.loose.centerline[0]),looseEnd:position(r.loose.centerline.at(-1)),mainWidthM:r.main.widthM,looseWidthM:r.loose.widthM,mainCenterline:r.main.centerline.map(position),looseCenterline:r.loose.centerline.map(position)};}
     return {triangles:{original:EXPECTED_TRIANGLES,removed,retained:kept.length/3},hiddenComponents:[...hidden],protectedComponents:PROTECTED_COMPONENTS,nonReinComponentsIntact:retainedPerComponent.every((n,id)=>hidden.has(id)?n===0:n>0),sides};
   }
-  return {group,update,inspect,dispose(){group.removeFromParent();for(const side of ['left','right']){reins[side].main.mesh.geometry.dispose();reins[side].loose.mesh.geometry.dispose();}leather.dispose();tack.geometry.dispose();tack.geometry=originalGeometry;}};
+  let disposed=false;
+  return {group,update,inspect,dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const side of ['left','right']){reins[side].main.mesh.geometry.dispose();reins[side].loose.mesh.geometry.dispose();}leather.dispose();if(tackModes)tackModes.setLiveReins(false);else{tack.geometry.dispose();tack.geometry=originalGeometry;}}};
 }
 
 // These vertex sets were measured on the original skinned Western equipment.
@@ -124,9 +180,7 @@ export function createNativeRiderBridge({THREE,scene,mount,rig,rider,saddleProxy
   if(!tack)rig.scene.traverse(o=>{if(o.isSkinnedMesh&&o.geometry?.attributes.position.count===13895)tack=o;});
   if(!seatFollower||!tack||tack.geometry.attributes.position.count!==13895)
     throw Error('Native saddle seat or original Western tack missing');
-  const tackMeshes=[];
-  rig.scene.traverse(o=>{if(o.isSkinnedMesh&&[13895,5092].includes(o.geometry?.attributes.position.count))tackMeshes.push([o,o.visible]);});
-  if(tackMeshes.length!==2)throw Error('Native Western tack meshes changed');
+  const tackModes=createNativeTackModes({THREE,rig,mount});
   const anchors={contacts:CONTACTS};
   const v=new THREE.Vector3(),min=new THREE.Vector3(),max=new THREE.Vector3(),mean=new THREE.Vector3();
   let reins=null,enabled=true,reinsWanted=true,disposed=false,lastContact=null;
@@ -160,16 +214,13 @@ export function createNativeRiderBridge({THREE,scene,mount,rig,rider,saddleProxy
   function updateReins(){
     assertLive();
     if(!enabled||!reinsWanted||!rider?.sk){if(reins)reins.group.visible=false;return null;}
-    if(!reins)reins=createNativeRiderReins({THREE,scene,tack,anchors,rider:{R:rider},contactPoint,seatFollower});
+    if(!reins)reins=createNativeRiderReins({THREE,scene,tack,anchors,rider:{R:rider},contactPoint,seatFollower,tackModes});
     reins.group.visible=true;reins.update();return true;
   }
-  function setTackVisible(value){
-    assertLive();enabled=!!value;
-    for(const [mesh] of tackMeshes)mesh.visible=enabled;
-    if(reins)reins.group.visible=enabled;
-  }
+  function setMode(value){assertLive();if(!tackModes.setMode(value))return false;enabled=value!=='wild';if(reins)reins.group.visible=enabled&&reinsWanted;return true;}
+  function setTackVisible(value){return setMode(value?'saddled':'wild');}
   function showReins(value){assertLive();reinsWanted=!!value;if(reins)reins.group.visible=enabled&&reinsWanted;}
-  function inspect(){return {kind:'nativeWesternHorse',enabled,contact:lastContact,reins:reins?.inspect()||null,seatFollower:seatFollower.name||'saddle_0333 seat'};}
-  function dispose(){if(disposed)return;reins?.dispose();for(const [mesh,visible] of tackMeshes)mesh.visible=visible;disposed=true;}
-  return {seatLocal,updateContacts,updateReins,setTackVisible,showReins,inspect,dispose,get readyForReins(){return !!rider?.sk;}};
+  function inspect(){return {kind:'nativeWesternHorse',enabled,...tackModes.inspect(),reinsVisible:!!reins?.group.visible,contact:lastContact,reins:reins?.inspect()||null,seatFollower:seatFollower.name||'saddle_0333 seat'};}
+  function dispose(){if(disposed)return;reins?.dispose();tackModes.dispose();disposed=true;}
+  return {seatLocal,barebackSeatLocal:tackModes.barebackSeatLocal,updateContacts,updateReins,setMode,setTackVisible,showReins,inspect,dispose,get readyForReins(){return !!rider?.sk;},get mode(){return tackModes.mode;}};
 }
