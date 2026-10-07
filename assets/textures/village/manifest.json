@@ -1,0 +1,112 @@
+[
+  {
+    "id": "painted_plaster_wall",
+    "page": "https://polyhaven.com/a/painted_plaster_wall",
+    "authors": {
+      "Amal Kumar": "All"
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "scaleMetres": [
+      2.0,
+      2.0
+    ],
+    "retrieved": "2026-10-06",
+    "files": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/painted_plaster_wall/painted_plaster_wall_diff_1k.jpg",
+        "sourceMD5": "15ba8c1f63a5ab412b1eabe31728540a",
+        "sourceSHA256": "440310f05af089f2c93353167573403cbc3f805948203237b5d26431eeb9e19c",
+        "sourceBytes": 686726,
+        "output": {
+          "file": "painted_plaster_wall_diff.webp",
+          "size": 1024,
+          "bytes": 248774,
+          "sha256": "927d057dbe1a80d94d2b4a09a85582e1bd9876edb21e5561290a57dfa4b0b2f5",
+          "colorSpace": "sRGB"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/painted_plaster_wall/painted_plaster_wall_nor_gl_1k.jpg",
+        "sourceMD5": "43fff290583dbdfc9bfa088a2750e840",
+        "sourceSHA256": "8eb01647d126eb5341e2c325821ad48c8ca11349dbef53447c95422c5d91cc9d",
+        "sourceBytes": 900461,
+        "output": {
+          "file": "painted_plaster_wall_nor_gl.webp",
+          "size": 1024,
+          "bytes": 474714,
+          "sha256": "b454704dc4807b05869e9c725e9187a17866d14e1909b993e117c82fd69fe6a7",
+          "colorSpace": "linear"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/painted_plaster_wall/painted_plaster_wall_arm_1k.jpg",
+        "sourceMD5": "a4c1ff7470669daec9e274d915471246",
+        "sourceSHA256": "2f13ed444e3e8f13087bca0890969d30795ed074bcfb11737d1ad6f5f0b53992",
+        "sourceBytes": 511105,
+        "output": {
+          "file": "painted_plaster_wall_arm.webp",
+          "size": 512,
+          "bytes": 6412,
+          "sha256": "eb33b4f4946ad621782200ef499ad072689b7d41a5bc6b95edf5d5a351895488",
+          "colorSpace": "linear"
+        }
+      }
+    ]
+  },
+  {
+    "id": "roof_slates_03",
+    "page": "https://polyhaven.com/a/roof_slates_03",
+    "authors": {
+      "Rob Tuytel": "All"
+    },
+    "license": "CC0-1.0",
+    "licenseURL": "https://polyhaven.com/license",
+    "scaleMetres": [
+      3.0,
+      3.0
+    ],
+    "retrieved": "2026-10-06",
+    "files": [
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/roof_slates_03/roof_slates_03_diff_1k.jpg",
+        "sourceMD5": "b416c53d9720ff8b057631ccc6331bf3",
+        "sourceSHA256": "ad7caff0fae22a67c2429021129840d3d9247ec4370bafadc2c031e1693fe8a9",
+        "sourceBytes": 654296,
+        "output": {
+          "file": "roof_slates_03_diff.webp",
+          "size": 1024,
+          "bytes": 189664,
+          "sha256": "edc08f18e614991d84c3f75172cd3799838d23d33b7181615de5af80d69bcbb5",
+          "colorSpace": "sRGB"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/roof_slates_03/roof_slates_03_nor_gl_1k.jpg",
+        "sourceMD5": "bc28f302d4f9345ba462e19436aed93a",
+        "sourceSHA256": "0eb010215ea6e2de800adf6cf86fd5fb9e9a24b0d12d1297bb4b8d56b205c87d",
+        "sourceBytes": 788841,
+        "output": {
+          "file": "roof_slates_03_nor_gl.webp",
+          "size": 1024,
+          "bytes": 325368,
+          "sha256": "dfc84c0c49ffc35b9b637ec46ffb88dfed7356a969d8d7d887e7d7cd6e8d0dd7",
+          "colorSpace": "linear"
+        }
+      },
+      {
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/roof_slates_03/roof_slates_03_arm_1k.jpg",
+        "sourceMD5": "3a24a4e9ac51277bcd7423f46c5bb689",
+        "sourceSHA256": "9d9caa14a56f8861fb4ee97f3bcbccf1df7b819fdbe76fa2c2eeae8ff1e1dcd5",
+        "sourceBytes": 827970,
+        "output": {
+          "file": "roof_slates_03_arm.webp",
+          "size": 512,
+          "bytes": 60346,
+          "sha256": "62f34ef1df2df9ef84daeaeedab9543141fc44795ccba30b613e9f9a11db3f92",
+          "colorSpace": "linear"
+        }
+      }
+    ]
+  }
+]

@@ -224,7 +224,7 @@ export function install(G){
     happened to pile up. Placing the peaks by hand is the entire point — a skyline you can
     steer by needs the sharp one to be in the same place as the word "north". */
  function massif(cfg){
-  const nu=240,nv=80,b=cfg.bearing,dist=cfg.dist,span=cfg.span,depth=cfg.depth;
+  const nu=cfg.nu||160,nv=cfg.nv||48,b=cfg.bearing,dist=cfg.dist,span=cfg.span,depth=cfg.depth;
   const ax=Math.cos(b),az=-Math.sin(b);                   // along the range
   const ox=Math.sin(b),oz=Math.cos(b);                    // outward, away from the basin
   const rock=new THREE.Color(cfg.rock),high=new THREE.Color(cfg.high||cfg.rock);
@@ -235,9 +235,12 @@ export function install(G){
      the arithmetic instead of being placed by hand. A summit with a flat set is clipped short
      of its own apex, which is what makes a mesa a mesa rather than a cone. */
   const ridge=u=>{let h=cfg.swell||0;
-   for(const s of cfg.summits){const d=(u-s.u)/s.w,g=Math.exp(-d*d*(s.k||1.2));
+   for(const s of cfg.summits){const d=(u-s.u)/s.w,g=Math.exp(-Math.pow(Math.abs(d),s.shape||2.3)*(s.k||1.2));
     h=Math.max(h,s.h*clamp(s.flat?g/s.flat:g,0,1));}
-   return h;};
+   // Break the skyline at several scales; the broad summit positions remain
+   // recognisable, but no peak is a single smooth Gaussian cone.
+   const crags=.91+.11*noise2(u*.021+sd,sd*.7)+.045*noise2(u*.064-sd,sd*2.1);
+   return h*crags;};
   const pos=[],col=[],idx=[],snowAmt=[],c=new THREE.Color();
   for(let j=0;j<=nv;j++){
    const t=j/nv,v=(t-0.5)*depth;
@@ -246,7 +249,13 @@ export function install(G){
     /* The crest wanders across the band instead of running parallel to it, so the range has a
        front and a back rather than a centre line drawn with a compass. */
     const lc=clamp(crest+Math.sin(u*0.0042+sd)*0.09+Math.sin(u*0.011-sd)*0.04,0.18,0.82);
-    const prof=t<=lc?(cfg.lowland?Math.pow(Math.sin(t/lc*Math.PI*.5),1.7):Math.pow(t/lc,1.25)):1-back*Math.pow((t-lc)/(1-lc),1.5);
+    const front=clamp(t/lc,0,1);
+    // A footslope, an exposed shoulder, then a broken upper ridge. Variation
+    // along u staggers the cliff so it does not become one horizontal wall.
+    const ledge=.46+noise2(u*.012+sd,sd)*.15;
+    const rise=cfg.lowland?Math.pow(Math.sin(front*Math.PI*.5),1.7)
+      :.26*Math.pow(front,.85)+.59*smooth(ledge-.16,ledge+.20,front)+.15*smooth(.74,1,front);
+    const prof=t<=lc?rise:1-back*Math.pow((t-lc)/(1-lc),1.5);
     const g1=ridged((u+sd*137)*0.0105,(v+sd*91)*0.0105); // spurs and gullies down the flanks
     const g3=ridged((u+sd*211)*0.030,(v+sd*77)*0.030);   // and the teeth along the crest itself
     const g2=fbm((u+sd*57)*0.042,(v-sd*33)*0.042);       // the small break-up on top of both
@@ -302,22 +311,22 @@ export function install(G){
     the direction a rider most needs a fixed point in, and it is the only one that carries
     snow all the way down the year. */
  const MASSIFS=[
-  {id:'horn',label:'⛰️ The Kestrel Horn',bearing:2.98,dist:920,span:780,depth:440,seed:11,nu:150,nv:16,
-   rock:'#66675f',high:'#98988a',foot:'#424c43',snow:'#e2e8e7',snowAt:185,snowBand:65,
-   summits:[{u:0,h:268,w:218,k:1.45},{u:-255,h:194,w:190,k:1.4},{u:250,h:162,w:175,k:1.6}]},
-  {lowland:true,id:'sisters',label:'⛰️ The Sisters’ Wall',bearing:-1.52,dist:810,span:1020,depth:380,seed:29,nu:152,nv:16,
+  {id:'horn',label:'⛰️ The Kestrel Horn',bearing:2.98,dist:920,span:940,depth:510,seed:11,nu:168,nv:56,
+   rock:'#66675f',high:'#98988a',foot:'#424c43',snow:'#e2e8e7',snowAt:153,snowBand:50,
+   summits:[{u:0,h:184,w:248,k:1.35},{u:-265,h:134,w:240,k:1.2},{u:288,h:144,w:215,k:1.3}]},
+  {lowland:true,id:'sisters',label:'⛰️ The Sisters’ Wall',bearing:-1.52,dist:810,span:1020,depth:380,seed:29,nu:176,nv:48,
    rock:'#526447',high:'#74805a',foot:'#354931',
    summits:[{u:-335,h:118,w:240},{u:-40,h:142,w:270,k:1.0},{u:292,h:105,w:250}]},
-  {lowland:true,id:'ambersgate',label:'⛰️ Ambersgate',bearing:1.66,dist:850,span:820,depth:420,seed:47,nu:140,nv:16,
+  {lowland:true,id:'ambersgate',label:'⛰️ Ambersgate',bearing:1.66,dist:850,span:820,depth:420,seed:47,nu:160,nv:48,
    rock:'#687354',high:'#929071',foot:'#49533a',backfall:0.35,
    summits:[{u:-235,h:106,w:270},{u:155,h:128,w:290}]},
-  {lowland:true,id:'longgrey',label:'⛰️ The Long Grey',bearing:0.10,dist:1120,span:1120,depth:460,seed:71,nu:144,nv:16,
+  {lowland:true,id:'longgrey',label:'⛰️ The Long Grey',bearing:0.10,dist:1120,span:1120,depth:460,seed:71,nu:176,nv:48,
    rock:'#666d70',high:'#939a98',foot:'#454e4f',snow:'#e2e8e8',snowAt:210,snowBand:45,
    summits:[{u:-390,h:104,w:270},{u:0,h:135,w:310},{u:405,h:98,w:270}]},
-  {id:'wolftooth',label:'⛰️ The Wolf Tooth',bearing:2.30,dist:1180,span:380,depth:240,seed:97,nu:96,nv:16,
+  {id:'wolftooth',label:'⛰️ The Wolf Tooth',bearing:2.30,dist:1180,span:670,depth:360,seed:97,nu:128,nv:48,
    rock:'#656762',high:'#91938b',foot:'#414c46',snow:'#e4eae7',snowAt:200,snowBand:65,
-   summits:[{u:0,h:266,w:140,k:1.7},{u:-128,h:158,w:102}]},
-  {lowland:true,id:'barrowback',label:'⛰️ Barrowback Down',bearing:-0.89,dist:840,span:920,depth:300,seed:131,nu:132,nv:16,
+   summits:[{u:0,h:166,w:164,k:1.4},{u:-184,h:123,w:173},{u:187,h:108,w:154}]},
+  {lowland:true,id:'barrowback',label:'⛰️ Barrowback Down',bearing:-0.89,dist:840,span:920,depth:300,seed:131,nu:168,nv:48,
    rock:'#3e5238',high:'#5b6c45',foot:'#2c3a2a',backfall:0.45,
    summits:[{u:-265,h:98,w:215},{u:125,h:126,w:245},{u:385,h:90,w:185}]},
  ].map(cfg=>{try{return massif(cfg);}catch(e){console.error('massif '+cfg.id,e);return null;}}).filter(Boolean);

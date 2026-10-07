@@ -5,7 +5,7 @@ const out=path.resolve(process.argv[2]||'output/country-world');fs.mkdirSync(out
 const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});const errors=[];
 page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
 await page.route('**/api/me',r=>r.fulfill({contentType:'application/json',body:'null'}));
-await page.route('**/ranch3d.html*',async r=>{const res=await r.fetch();await r.fulfill({response:res,body:(await res.text()).replace('const MERGE_STATS=mergeStatics();',`window.__qa={THREE,scene,camera,renderer,composer,G,player,groundH,TACK,keys,nearGrass,step(dt){manualStepping=true;tick(dt)},day(){dayT=.34;weather.mode='clear';weather.timer=99999}};const MERGE_STATS=mergeStatics();`)});});
+await page.route('**/ranch3d.html*',async r=>{const res=await r.fetch();await r.fulfill({response:res,body:(await res.text()).replace('const MERGE_STATS=mergeStatics();',`window.__qa={THREE,scene,camera,renderer,composer,G,player,groundH,TACK,keys,nearGrass,npcCharacters,step(dt){manualStepping=true;tick(dt)},day(){dayT=.34;weather.mode='clear';weather.timer=99999}};const MERGE_STATS=mergeStatics();`)});});
 await page.addInitScript(()=>{let seed=928471;Math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};});
 await page.goto(QA.BASE+'/ranch3d.html?qa=world',{timeout:120000});
 await page.waitForFunction(()=>window.__qa?.G.horse.RIG().ready&&!document.getElementById('load'),null,{timeout:120000});
@@ -22,7 +22,11 @@ const villageViews=await page.evaluate(()=>{
  }
  return result;
 });shots.push(...villageViews);
-for(const c of shots){const shot=await page.evaluate(c=>{const q=__qa,p=q.player;const eye=c.eye.slice(),look=c.look.slice();eye[1]+=q.groundH(eye[0],eye[2]);look[1]+=q.groundH(look[0],look[2]);p.pos.set(c.horse?.[0]??eye[0],0,c.horse?.[1]??eye[2]);if(c.horse)p.heading=c.horse[2];p.speed=0;q.day();const render=q.renderer.render;q.renderer.render=()=>{};try{for(let i=0;i<30;i++)q.step(.1)}finally{q.renderer.render=render}p.mesh.visible=false;const nativeReins=q.scene.getObjectByName('Native leather split reins');if(nativeReins)nativeReins.visible=!!c.horse;for(const o of Object.values(q.TACK||{}))if(o?.isObject3D)o.visible=false;if(c.horse){p.mesh.visible=true;for(const o of Object.values(q.TACK||{}))if(o?.isObject3D)o.visible=true;}if(!c.riding){q.camera.position.set(...eye);q.camera.lookAt(...look);}else if(p.rider?.g)p.rider.g.visible=true;q.G.waterReflections.update(performance.now()+100);q.composer.render();return q.renderer.domElement.toDataURL('image/webp',.93).split(',')[1]},c);fs.writeFileSync(path.join(out,c.name+'.webp'),Buffer.from(shot,'base64'));console.log(c.name)}
+for(const c of shots){const shot=await page.evaluate(async c=>{const q=__qa,p=q.player;const eye=c.eye.slice(),look=c.look.slice();eye[1]+=q.groundH(eye[0],eye[2]);look[1]+=q.groundH(look[0],look[2]);p.pos.set(c.horse?.[0]??eye[0],0,c.horse?.[1]??eye[2]);if(c.horse)p.heading=c.horse[2];p.speed=0;q.day();const render=q.renderer.render;q.renderer.render=()=>{};try{for(let i=0;i<30;i++)q.step(.1);
+ // Relocation starts asynchronous NPC clothing loads. Let the existing nearby
+ // character system settle before taking the reference image.
+ let settled=0;for(let i=0;i<180;i++){q.step(.016);settled=q.npcCharacters.stats().pending?0:settled+1;if(settled>=2)break;await new Promise(r=>setTimeout(r,40));}
+ }finally{q.renderer.render=render}p.mesh.visible=false;const nativeReins=q.scene.getObjectByName('Native leather split reins');if(nativeReins)nativeReins.visible=!!c.horse;for(const o of Object.values(q.TACK||{}))if(o?.isObject3D)o.visible=false;if(c.horse){p.mesh.visible=true;for(const o of Object.values(q.TACK||{}))if(o?.isObject3D)o.visible=true;}if(!c.riding){q.camera.position.set(...eye);q.camera.lookAt(...look);}else if(p.rider?.g)p.rider.g.visible=true;q.G.waterReflections.update(performance.now()+100);q.composer.render();return q.renderer.domElement.toDataURL('image/webp',.93).split(',')[1]},c);fs.writeFileSync(path.join(out,c.name+'.webp'),Buffer.from(shot,'base64'));console.log(c.name)}
 
 const state=await page.evaluate(async()=>{
  const q=__qa,T=q.THREE,P=q.G.photoscans,tiers=[];const layout=JSON.stringify(P.treePositions);
@@ -60,12 +64,22 @@ const state=await page.evaluate(async()=>{
  const villageShops=q.G.worldPkg.LANDMARKS.filter(s=>s.grp?.userData.architecture?.exterior==='village').length;
  const canopies=P.treePositions.filter(t=>t.source==='canopy-broadleaf');
  const hedges=q.scene.getObjectByName('worldPaths:leaves');
- return {fields,canopies:canopies.length,leafTriangles,tiers,stableLayout:layout===JSON.stringify(P.treePositions),
+ const villageMaterials=new Map();q.scene.traverse(o=>{for(const m of [].concat(o.material||[]))if(m.name?.startsWith('Village | limewashed plaster')||m.name==='Village | blue grey slate')villageMaterials.set(m.name,m);});
+ const surfaces=[...villageMaterials.values()].map(m=>({name:m.name,metres:m.userData.patchMetres,
+  maps:['map','normalMap','roughnessMap'].map(key=>({key,url:m[key]?.image?.src||'',size:m[key]?.image?.width||0,colorSpace:m[key]?.colorSpace}))}));
+ const relief=q.G.vistas.MASSIFS.map(m=>{const g=m.mesh.geometry,p=g.attributes.position;let nearest=Infinity,highest=-Infinity;
+  for(let i=0;i<p.count;i++){nearest=Math.min(nearest,Math.hypot(p.getX(i),p.getZ(i)));highest=Math.max(highest,p.getY(i));}
+  return {id:m.id,tris:m.tris,nearest,highest,static:!m.mesh.matrixAutoUpdate,finite:Object.values(g.attributes).every(a=>Array.from(a.array).every(Number.isFinite))};});
+ return {surfaces,relief,npcCharacters:q.npcCharacters.stats(),fields,canopies:canopies.length,leafTriangles,tiers,stableLayout:layout===JSON.stringify(P.treePositions),
   trunkAnchors:canopies.every(t=>Number.isFinite(q.groundH(t.x,t.z))),
   completeGardens,villageShops,cottages:cottages.length,gardens:q.G.worldDetails.cottageGardens,hedges:hedges?.count||0,leafHedges:!!hedges?.material.map&&hedges.material.alphaTest>0,
   errors:[...q.G.errors,...P.errors,...q.G.worldDetails.errors],assets:P.assets,gl:q.renderer.getContext().getError()};
 });
 const checks={
+ villageSurfaces:state.surfaces.length===4&&state.surfaces.every(m=>m.maps.every(t=>t.url.includes('/textures/village/')&&t.size>0&&(t.key==='map'?t.colorSpace==='srgb':t.colorSpace===''))),
+ staticReliefOutsideRidingBasin:state.relief.length===6&&state.relief.every(m=>m.finite&&m.static&&m.nearest>550),
+ reliefGeometryBudget:state.relief.reduce((n,m)=>n+m.tris,0)<110000,
+ npcCharactersLoad:state.npcCharacters.failed.length===0&&state.npcCharacters.active>0,
  terrainAndRidingSurfaceMatch:state.fields.samples.every(p=>p.error<.0001),
  protectedYards:state.fields.anchors,adaptiveGrassBudget:state.tiers[0].meadowTriangles<state.tiers[1].meadowTriangles&&state.tiers[1].meadowTriangles<state.tiers[2].meadowTriangles,modelledFlowerColonies:state.fields.flowerCount>90&&state.fields.flowerTriangles<=150,
  middleMeadow:state.fields.midCount>8000&&state.fields.middleTriangles<=1000000,

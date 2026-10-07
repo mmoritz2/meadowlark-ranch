@@ -36,9 +36,11 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     normalMap: map('siding_normal.jpg'), normalScale: new THREE.Vector2(.48,.48),
     roughnessMap: map('siding_roughness.jpg'), roughness: 1, envMapIntensity: .55,
   }, 2.4);
-  const cottageWalls=['#e0d6ba','#cbd5c3','#dbc8b6'].map((color,i)=>material('Village | limewashed plaster '+i,{
-    color,roughness:1,normalMap:map('rock_normal.jpg'),normalScale:new THREE.Vector2(.065,.065),envMapIntensity:.6,
-  },2.8));
+  const cottageWalls=['#f7e9cc','#e5ead7','#f0d7c3'].map((color,i)=>material('Village | limewashed plaster '+i,{
+    color:new THREE.Color(color).multiplyScalar(1.7),map:map('../village/painted_plaster_wall_diff.webp',true),roughness:1,
+    normalMap:map('../village/painted_plaster_wall_nor_gl.webp'),normalScale:new THREE.Vector2(.32,.32),
+    roughnessMap:map('../village/painted_plaster_wall_arm.webp'),envMapIntensity:.6,
+  },2));
   const shutters=['#4c6659','#526a77','#766650'].map((color,i)=>material('Village | painted shutters '+i,{
     color,roughness:.9,normalMap:map('../builder/coated_pine_nor_gl.webp'),normalScale:new THREE.Vector2(.22,.22),
   },1));
@@ -48,9 +50,10 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     roughnessMap: map('roof_roughness.jpg'), roughness: 1, envMapIntensity: .45,
   }, 1.8);
   const slate = material('Village | blue grey slate', {
-    color:'#a8bdc8',map:map('roof_albedo.jpg',true),normalMap:map('roof_normal.jpg'),
-    normalScale:new THREE.Vector2(.38,.38),roughnessMap:map('roof_roughness.jpg'),roughness:.94,envMapIntensity:.5,
-  },1.45);
+    color:'#d0dce2',map:map('../village/roof_slates_03_diff.webp',true),
+    normalMap:map('../village/roof_slates_03_nor_gl.webp'),normalScale:new THREE.Vector2(.68,.68),
+    roughnessMap:map('../village/roof_slates_03_arm.webp'),roughness:1,envMapIntensity:.5,
+  },3);
   const canvas = material('Village | woven awning', {color:'#e9dcc3',roughness:1});
   const trim = material('Ranch | warm painted joinery', {color:'#dcdad0',roughness:.87,
     normalMap:map('../builder/coated_pine_nor_gl.webp'),normalScale:new THREE.Vector2(.20,.20),
@@ -89,14 +92,16 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       else for(let i=0;i<g.attributes.position.count;i++)b.i.push(i+offset);
       this.parts++;g.dispose();
     }
-    box(w,h,d,m,x=0,y=0,z=0,rotation=null,frame=null) {
+    box(w,h,d,m,x=0,y=0,z=0,rotation=null,frame=null,turnUV=false) {
       if(w<=0||h<=0||d<=0)return;
       const g=new THREE.BoxGeometry(w,h,d),p=g.attributes.position,n=g.attributes.normal,uv=g.attributes.uv;
       const patch=m.userData.patchMetres||1;
       for(let i=0;i<p.count;i++) {
         const nx=Math.abs(n.getX(i)),ny=Math.abs(n.getY(i));
-        uv.setXY(i,(nx>.5?p.getZ(i)+z:p.getX(i)+x)/patch,
-          (ny>.5?p.getZ(i)+z:p.getY(i)+y)/patch);
+        // Dormer and porch ridges run perpendicular to the main roof. Keep
+        // slate courses across each slope, with the photographed 3 m scale.
+        uv.setXY(i,((ny>.5&&turnUV)||nx>.5?p.getZ(i)+z:p.getX(i)+x)/patch,
+          (ny>.5?(turnUV?p.getX(i)+x:p.getZ(i)+z):p.getY(i)+y)/patch);
       }
       const q=rotation instanceof THREE.Quaternion?rotation:new THREE.Quaternion().setFromEuler(rotation||new THREE.Euler());
       const transform=new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),q,new THREE.Vector3(1,1,1));
@@ -233,9 +238,9 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     }
   }
   function gable(b,d,eave,ridge,f,wall=siding,vent=true,aperture=null) {
-    const p=[],u=[],idx=[];
+    const p=[],u=[],idx=[],patch=wall.userData.patchMetres||1;
     for(const z of[-.09,.09])for(const [x,y]of[[-d/2,eave],[d/2,eave],[0,ridge]]){
-      p.push(x,y,z);u.push(x/2.4,y/2.4);
+      p.push(x,y,z);u.push(x/patch,y/patch);
     }
     idx.push(0,2,1,3,4,5,0,1,4,0,4,3,1,2,5,1,5,4,2,0,3,2,3,5);
     let g;
@@ -243,6 +248,12 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
       const shape=new THREE.Shape();shape.moveTo(-d/2,eave);shape.lineTo(d/2,eave);shape.lineTo(0,ridge);shape.closePath();
       const opening=new THREE.Path();opening.absarc(aperture.x,aperture.y,aperture.r,0,Math.PI*2,true);shape.holes.push(opening);
       g=new THREE.ExtrudeGeometry(shape,{depth:.18,bevelEnabled:false,curveSegments:24});g.translate(0,0,-.09);
+      const pos=g.attributes.position,normal=g.attributes.normal,uv=g.attributes.uv;
+      for(let i=0;i<pos.count;i++){
+        const nx=Math.abs(normal.getX(i)),ny=Math.abs(normal.getY(i)),nz=Math.abs(normal.getZ(i));
+        uv.setXY(i,(nx>nz&&nx>ny?pos.getZ(i):pos.getX(i))/patch,
+          (ny>nz&&ny>nx?pos.getZ(i):pos.getY(i))/patch);
+      }
     }else{
       g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
       g.setAttribute('uv',new THREE.Float32BufferAttribute(u,2));g.setIndex(idx);g.computeVertexNormals();
@@ -324,7 +335,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     for(const side of[-1,1]){
       b.box(.10,top-base,depth,wall,x+side*width/2,(top+base)/2,front-depth/2);
       const half=width/2+.14,pitch=Math.atan2(peak-top,width/2),low=peak-half*Math.tan(pitch);
-      b.box(half/Math.cos(pitch),.095,depth+.20,slate,x+side*half/2,(peak+low)/2,front-depth/2,new THREE.Euler(0,0,-side*pitch));
+      b.box(half/Math.cos(pitch),.095,depth+.20,slate,x+side*half/2,(peak+low)/2,front-depth/2,new THREE.Euler(0,0,-side*pitch),null,true);
       b.beam([x,peak,front+.12],[x+side*half,low,front+.12],.085,.10,trim);
       b.box(.085,top-base,.12,trim,x+side*(width/2+.015),(top+base)/2,front+.065);
     }
@@ -333,7 +344,7 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
   function doorHood(b,z) {
     const half=.72,peak=2.72,low=2.39,pitch=Math.atan2(peak-low,half);
     for(const side of[-1,1]){
-      b.box(half/Math.cos(pitch),.09,.92,slate,side*half/2,(peak+low)/2,z+.32,new THREE.Euler(0,0,-side*pitch));
+      b.box(half/Math.cos(pitch),.09,.92,slate,side*half/2,(peak+low)/2,z+.32,new THREE.Euler(0,0,-side*pitch),null,true);
       b.beam([0,peak,z+.79],[side*half,low,z+.79],.085,.10,trim);
       b.beam([side*.53,2.19,z+.1],[side*.53,2.42,z+.57],.065,.065,wood);
     }

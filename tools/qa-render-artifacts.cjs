@@ -46,12 +46,16 @@ const out=path.resolve(process.argv[2]||'output/render-artifacts');fs.mkdirSync(
    {name:'golden-hour',tier:'high',day:.22},
    {name:'night',tier:'high',day:0},{name:'rain',tier:'high',rain:true},
    {name:'trail-garden',tier:'high',garden:true},
+   {name:'village-plaster',tier:'high',village:true},
+   {name:'village-night',tier:'high',village:true,day:0},
+   {name:'village-rain',tier:'high',village:true,rain:true},
    {name:'portrait',tier:'high',viewport:{width:430,height:932}},
   ],rows=[];
   for(const c of cases){
    if(c.viewport)await page.setViewportSize(c.viewport);
    const row=await page.evaluate(c=>{
     const q=__artifactQA;let eye=[-28,5,-52],look=c.look||[-90,25,-260];
+    if(c.village){eye=[29,q.groundH(29,-32)+3,-32];look=[45,q.groundH(45,-55)+4,-55];}
     if(c.garden){
      const p=q.G.worldDetails.flowerPositions.slice().sort((a,b)=>Math.hypot(a.x+35,a.z-25)-Math.hypot(b.x+35,b.z-25))[0];
      eye=[p.x+2,q.groundH(p.x+2,p.z+4)+1.3,p.z+4];look=[p.x,q.groundH(p.x,p.z)+.2,p.z];

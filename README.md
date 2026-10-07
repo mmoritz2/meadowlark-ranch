@@ -299,6 +299,18 @@ shoreline. `qa-seasonal-world.cjs`, `qa-canyon-world.cjs`, `test-oasis-art.mjs`
 and `asset-gen/check-geology.mjs` cover those changes. These passes do not reproduce
 the reference game's proprietary world or establish visual parity.
 
+Village cottages and shopfronts now use Poly Haven's CC0 [Painted Plaster Wall](https://polyhaven.com/a/painted_plaster_wall)
+by Amal Kumar and [Roof Slates 03](https://polyhaven.com/a/roof_slates_03) by Rob Tuytel.
+Colour, OpenGL normal and roughness maps use the photographed 2 m plaster / 3 m slate
+scale, including gables and perpendicular dormer roofs. The six locally served WebP
+maps total about 1.25 MiB; checksums and credits are in `assets/textures/village/manifest.json`.
+Reproduce them with `python tools/asset-gen/fetch-village-materials.py` (Pillow required).
+The tallest distant peaks have broader, broken shoulders, with a lower outer horizon
+and 96,384 triangles across six static named massifs instead of 230,400. Compass
+bearings, building footprints and riding collision remain fixed. `qa-country-world.cjs`
+checks loaded maps, static relief outside the riding basin and mesh budgets;
+`qa-render-artifacts.cjs` includes the village in daylight, rain and night.
+
 The world uses a denser terrain mesh with matching riding collision, continuous
 downhill river and creek channels, an arched bridge at the actual crossing, and
 surface materials that blend with slope, tree cover, riverbanks and climate.

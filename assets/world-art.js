@@ -37,7 +37,7 @@ export function installBackdrop({ THREE, scene }) {
   const group = new THREE.Group();
   group.name = 'Pastoral mountain backdrop';
   const configs = [
-    { inner: 1300, crest: 1700, outer: 2280, height: 290, phase: 0.65,
+    { inner: 1300, crest: 1700, outer: 2280, height: 215, phase: 0.65,
       low: '#617684', high: '#8b979f', snow: true },
     { inner: 920, crest: 1230, outer: 1670, height: 132, phase: 2.7,
       low: '#4d625b', high: '#6b7870', snow: false },
