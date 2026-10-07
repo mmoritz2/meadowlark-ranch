@@ -381,9 +381,10 @@ export function install(G){
   }
   return html;
  }
+ U.action('tackstall',()=>G.tackSummon?.visit());
  U.shopTab({id:'summon',label:'✨ Summon',pos:2,render(s){
   return '<span style="font-size:11.5px;color:#8c7a63">Every stable prints its odds and its pity counter. Gems are earned by riding — nothing here costs real money, and the Summoning Stall itself stands west of the barn if you would rather walk.</span>'
-   +(G.tackSummon?'<div class="evrow"><b>Tack Summoning Stall</b><span>200 earned coins for one unowned tack piece.</span><button type="button" data-fx="shop:tacksummon">Summon tack →</button></div>':'')
+   +(G.tackSummon?'<div class="evrow"><b>Tack Summoning Stall</b><span>Discover fitted tack with a stall reveal. Each summon costs 200 earned coins.</span><button type="button" data-fx="tackstall:visit">Visit Summoning Stall →</button></div>':'')
    +bannerCards(s,'mk:call')
    +'<span style="font-size:11px;color:#8c7a63">You have '+(s.gems||0)+'💎. A call takes you to the stall for the reveal and puts you back where you were standing.</span>';
  }});

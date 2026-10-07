@@ -518,7 +518,7 @@ body.se-frame-open #seFrameTop{display:flex}
    {k:'ranch',t:'Build your ranch',s:'Buildings, furniture and land',groups:['home','more'],source:'buildBtn',go:clickId('buildBtn')},
    {k:'character',t:'Your rider',s:'Clothes, hair and accessories',groups:['home','more'],source:'charBtn',go:clickId('charBtn')},
    {k:'tack',icon:'style',t:'Tack boutique',s:(G.tackCollection?.catalog.length||127)+' pieces to browse, preview and equip',groups:['horses','more'],need:()=>!!G.tackCollection,go:()=>G.tackCollection.open()},
-   {k:'tacksummon',icon:'season',t:'Tack Summoning Stall',s:'200 earned coins · one guaranteed new piece',groups:['horses','more'],need:()=>!!G.tackSummon,go:()=>G.ui.openShop('tacksummon')},
+   {k:'tacksummon',icon:'season',t:'Visit Summoning Stall',s:'Visit the Summoning Stall · discover fitted tack',groups:['horses','more'],need:()=>!!G.tackSummon?.visit,go:()=>G.tackSummon.visit()},
    {k:'fitting',icon:'studio',t:'Tack fitting room',s:'See saddles, pads, bridles and legwear in 3D',groups:['horses'],need:()=>!!G.tackCollection,go:()=>location.assign('tack-studio.html')},
    {k:'care',t:'Horse care',s:'Feed, groom and build your bond',groups:['horses'],source:'careBtn',go:clickId('careBtn')},
    {k:'foal',t:'Breeding',s:'Pair horses and raise foals',groups:['horses'],source:'breedBtn',go:clickId('breedBtn')},
