@@ -16,14 +16,10 @@
    in Amberwood, willow and reed and sedge at Willowmere, snow-laden conifer at Frostpine, agave
    and sage and silvered snags on the Ochre.
 
-   Everything is instanced, one draw call per kind, built once at install: about forty-two thousand
-   plants in sixteen instanced meshes, measured at nineteen extra draw calls and 0.48 M triangles
-   (+4%) against a 2,570-call, 12 M-triangle frame, and at no median or p95 frame time this machine
-   can measure — six alternating A/B samples in one page came back 100 ms / 150 ms both with the
-   planting and without it. Every plant is made of the same two primitives — a tapered tube and a
-   flat card — merged into one geometry per kind, which is what keeps that possible. Nothing here
-   allocates after install; the tick hook writes two values into shared uniforms and reads the
-   quality tier.
+   Shared instanced banks keep the planting's draw calls bounded. Most ground cover uses
+   tapered tubes and flat cards; desert plants use folded leaves or woody canes. Graphics
+   settings reduce instance density and use lighter succulent geometry. Geometry is cached;
+   the tick hook updates the shared wind/camera uniforms and applies quality changes.
 
    Placement is seeded, so the wood is in the same place on every load and a screenshot taken today
    can be compared with one taken tomorrow. It keeps out of the arena, the river and the creek, the
@@ -31,6 +27,7 @@
    includes every town building world.js placed — and it leaves a clear circle at each town centre
    and at the exact centre of each of the four quarters, because six other packages are building
    there and a barn dropped into a thicket helps nobody. */
+import {createDesertArt} from '../desert-art.js?v=botanical-desert-1';
 import {getFoliageTexture} from '../world-art.js?v=world-cinematic-1';
 export const id='world-flora';
 export function install(G){
@@ -213,18 +210,6 @@ export function install(G){
     c.fillStyle=['#a6b76a','#8fa456','#c0c983'][k%3];
     c.beginPath();c.ellipse(px+(k%2?4:-4),py,2.2,7.4,(k%2?0.5:-0.5),0,7);c.fill();}}
  },'#a2b268');
- /* One tapering blade, tip up, for the agave rosettes and the ocotillo whips. Without it the
-    succulent material has no map at all and every blade renders as the rectangle the card actually
-    is, which from the saddle read as pale paper cut-outs stuck in the sand. */
- const bladeTex=cvt(64,128,(c,w,h)=>{c.clearRect(0,0,w,h);
-  const g=c.createLinearGradient(0,h,0,0);g.addColorStop(0,'#6f8a68');g.addColorStop(0.45,'#9ab894');g.addColorStop(1,'#cdd9b4');
-  c.fillStyle=g;c.beginPath();c.moveTo(w*0.5-13,h);c.quadraticCurveTo(w*0.5-11,h*0.36,w*0.5,2);
-  c.quadraticCurveTo(w*0.5+11,h*0.36,w*0.5+13,h);c.closePath();c.fill();
-  c.strokeStyle='rgba(255,255,255,0.32)';c.lineWidth=1.6;c.beginPath();c.moveTo(w*0.5,h);c.lineTo(w*0.5,6);c.stroke();
-  c.strokeStyle='rgba(120,96,62,0.55)';c.lineWidth=1.2;                 // the dry spine down each edge
-  c.beginPath();c.moveTo(w*0.5-12.4,h);c.quadraticCurveTo(w*0.5-10,h*0.36,w*0.5,4);c.stroke();
-  c.beginPath();c.moveTo(w*0.5+12.4,h);c.quadraticCurveTo(w*0.5+10,h*0.36,w*0.5,4);c.stroke();
- },'#9ab894');
  /* Bark, for the trunks and the dead timber. One texture, tinted per instance: a birch is the same
     stripes lightened, a silvered desert snag the same stripes drained. Drawn pale on purpose. The first pass used a dark bark and a near-white tint and every trunk
     in Amberwood came out charcoal against a gold canopy, which read as a burnt wood rather than an
@@ -309,7 +294,6 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   reed  :coverMat(reedTex,'reed',0.085,0.30),
   tuft  :coverMat(tuftTex,'tuft',0.070,0.34),
   petal :coverMat(petalTex,'petal',0.045,0.40),
-  succ  :coverMat(bladeTex,'succ',0.014,0.42,1),
  };
  F.mats=M;
 
@@ -415,14 +399,10 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   for(let i=0;i<n;i++){const a=i/n*Math.PI+0.3;w.card(0,0,0,a,lean*(hsh(i,17)-0.4),wid,1,0.70+i*0.09);}
   return w.finish();};
  const reedGeo=crossGeo(3,0.46,0.16), tuftGeo=crossGeo(3,1.15,0.24), petalGeo=crossGeo(2,0.52,0.10);
- /* An agave rosette. Scaled tall and thin by its instance it becomes an ocotillo, which is the only
-    other silhouette a red-rock badland really needs. */
- /* Agave blades stand up and splay; the first pass leaned them to sixty degrees and from a rise the
-    whole colony read as green starfish lying on the sand. */
- const succGeo=(()=>{const w=W3();
-  for(let i=0;i<13;i++){const a=i*2.39996, lean=0.18+hsh(i,23)*0.52;
-   w.card(0,0.02,0,a,lean,0.24,0.96-hsh(i,29)*0.26,0.66+hsh(i,31)*0.32);}
-  return w.finish();})();
+ const desertArt=W.desertArt||createDesertArt({THREE});
+ const succGeo=desertArt.geometry('agave'),ocoGeo=desertArt.geometry('ocotillo');
+ M.succ=desertArt.material;M.oco=desertArt.material;
+ F.desertArt=desertArt;
 
  /* ================= 5. the instanced banks ================= */
  const LOW=G.gfx&&G.gfx.get&&G.gfx.get()==='low';
@@ -460,7 +440,8 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
  bank('reed',reedGeo,M.reed,N(4800),false);
  bank('tuft',tuftGeo,M.tuft,N(12500),false);
  bank('petal',petalGeo,M.petal,N(9000),false);
- bank('succ',succGeo,M.succ,N(1500),false);
+ bank('succ',succGeo,M.succ,N(1500),true);
+ bank('oco',ocoGeo,M.oco,N(650),true);
  for(const k of ['oak','blossom','birch','pine','cold','willow'])BANK[k].im.customDepthMaterial=depthOf(BANK[k].im.material);
  /* The ground cover is flat colour under a sky light; the physical BRDF, the environment term and
     the specular lobe are all invisible on a tussock and are paid for on every one of the many
@@ -639,7 +620,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
    for(let i=0;i<n;i++){
     const a2=rnd()*Math.PI*2, r2=R*Math.pow(rnd(),0.62), x=cx+Math.cos(a2)*r2, z=cz+Math.sin(a2)*r2;
     if(!dryOK(x,z))continue;
-    if(rnd()<0.16){ if(!taken(x,z,0.9))put('succ',x,z,rr(0.5,1.1),rr(1.2,1.7),pick(['#cfe2d0','#e2efdc','#bcd6c6','#dfe8cc']),0.05,0.02); }
+    if(rnd()<0.16){ if(!taken(x,z,0.9))put('succ',x,z,rr(0.5,1.1),rr(1.2,1.7),pick(['#f0eedc','#ececde','#d7e2d8','#e3e5d2']),0.05,0.02); }
     else if(!taken(x,z,0.35))put('sage',x,z,rr(0.6,2.0),rr(1.1,1.7),sageCol,0.24);
    }
    if(rnd()<0.5&&!taken(cx,cz,2.0))snag(cx+rr(-R,R),cz+rr(-R,R),rr(2.4,5.2),'#f2ecdc');
@@ -647,7 +628,7 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
   for(let i=0,made=0;i<agN*40&&made<agN;i++){             // and the odd plant out on the open pan
    const a=rnd()*Math.PI*2, r=Math.pow(rnd(),0.5)*(C.r*0.94), x=C.x+Math.cos(a)*r, z=C.z+Math.sin(a)*r;
    if(!dryOK(x,z)||taken(x,z,1.0))continue; made++;
-   put('succ',x,z,rr(0.5,1.1),rr(1.2,1.7),pick(['#cfe2d0','#e2efdc','#bcd6c6','#dfe8cc']),0.05,0.02);
+   put('succ',x,z,rr(0.5,1.1),rr(1.2,1.7),pick(['#f0eedc','#ececde','#d7e2d8','#e3e5d2']),0.05,0.02);
   }
   for(let i=0,made=0;i<sageN*30&&made<sageN;i++){
    const a=rnd()*Math.PI*2, r=Math.pow(rnd(),0.5)*C.r, x=C.x+Math.cos(a)*r, z=C.z+Math.sin(a)*r;
@@ -655,10 +636,10 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
    if(rnd()>0.3+vn(x*0.028+61,z*0.028+13)*0.7)continue; made++;
    put('sage',x,z,rr(0.6,1.9),rr(1.1,1.7),sageCol,0.24);
   }
-  for(let i=0,made=0;i<ocoN*40&&made<ocoN;i++){           // the same rosette stretched into a whip
+  for(let i=0,made=0;i<ocoN*40&&made<ocoN;i++){           // branching woody ocotillo canes
    const a=rnd()*Math.PI*2, r=Math.pow(rnd(),0.55)*(C.r*0.9), x=C.x+Math.cos(a)*r, z=C.z+Math.sin(a)*r;
    if(!dryOK(x,z)||taken(x,z,1.4))continue; made++;
-   put('succ',x,z,rr(3.2,5.6),rr(0.42,0.62),pick(['#b6c48e','#c8d29c','#a3b47c']),0.03,0.01);
+   put('oco',x,z,rr(3.2,5.6),rr(0.42,0.62),pick(['#e9e5cf','#ece7d2','#dee3cb']),0.03,0.01);
   }
   for(let i=0,made=0;i<snagN*30&&made<snagN;i++){
    const a=rnd()*Math.PI*2, r=Math.pow(rnd(),0.6)*(C.r*0.92), x=C.x+Math.cos(a)*r, z=C.z+Math.sin(a)*r;
@@ -920,7 +901,9 @@ vFloraD=distance((modelMatrix*_fp).xyz,uCam);
     for a machine that is struggling. */
  let qual=G.gfx&&G.gfx.get?G.gfx.get():'high';
  const applyTier=q=>{const k=q==='low'?0.42:q==='medium'?0.82:1;
-  for(const name in BANK){const b=BANK[name];b.im.count=Math.round(b.n*k);}};
+  for(const name in BANK){const b=BANK[name];b.im.count=Math.round(b.n*k);}
+  BANK.succ.im.geometry=desertArt.geometry('agave',0,q==='high');
+  BANK.oco.im.geometry=desertArt.geometry('ocotillo',0,q==='high');};
  applyTier(qual);
  G.on('tick',(dt,t)=>{
   uT.value=t; uCam.value.copy(G.camera.position);

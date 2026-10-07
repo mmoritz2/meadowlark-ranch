@@ -668,6 +668,7 @@ import {hasMeadowCover} from './assets/meadow-biomes.js';
 import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=village-townhouses-1';
 import {pastureRise,meadowBloomAt} from './assets/pastoral-fields.mjs?v=meadow-ridges-1';
 import {createGeology} from './assets/geology.js?v=jointed-canyon-1';
+import {createDesertArt} from './assets/desert-art.js?v=botanical-desert-1';
 import {createSceneryArt} from './assets/scenery-art.js?v=solid-world-1';
 import {createWaterfallArt} from './assets/waterfall-art.js';
 import {installRiparian} from './assets/riparian.js';
@@ -689,7 +690,7 @@ import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=villag
 import {installWorldPhotoscans} from './assets/world-photoscans.js?v=opaque-foliage-1';
 import {createWaterReflections} from './assets/water-reflections.js';
 import {createRiderLibrary} from './assets/rider-model.js?v=runway-20261006';
-import {FEATURES} from './assets/features/index.js?v=jointed-canyon-1';
+import {FEATURES} from './assets/features/index.js?v=botanical-desert-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -4220,7 +4221,13 @@ for(let i=0;i<90;i++){                                       // cacti across Coy
  const col={x,z,r:0.6,plant:true};colliders.push(col);   // plant: course-clear may take it off a course before the model has even loaded
  (Math.random()<0.6?FOLIAGE.cactus:FOLIAGE.cactus2).push({x,z,s:0.9+Math.random()*1.0,r:Math.random()*Math.PI*2,col});
 }
-const FOLIAGE_H={snowpine:7.2,oak:6.2,birch:6.6,blossom:6.2,pine:7.4,bush:1.9,flowerbush:1.8,cactus:4.4,cactus2:2.4,
+// Keep the settlement and its riding approaches open. Cull after generating
+// placements so changing the planting does not consume a different random stream.
+for(const name of ['cactus','cactus2'])for(let i=FOLIAGE[name].length-1;i>=0;i--){
+ const p=FOLIAGE[name][i];if(pathDist(p.x,p.z)>=3.6&&Math.hypot(p.x-CANYON.x,p.z-CANYON.z)>=32)continue;
+ const ci=colliders.indexOf(p.col);if(ci>=0)colliders.splice(ci,1);FOLIAGE[name].splice(i,1);
+}
+const FOLIAGE_H={snowpine:7.2,oak:6.2,birch:6.6,blossom:6.2,pine:7.4,bush:1.9,flowerbush:1.8,cactus:3.8,cactus2:0.8,
  haybale:1.5,trough:0.8,barrel:1.0,boulder:1.6,stump:0.7};   // ~units tall (bigger)
 /* Ranch props use the detailed builder templates and scanned barrels. Hay stays
    inside the pasture, clear of the spectator pavilion; water troughs stand in the
@@ -4245,8 +4252,27 @@ for(let i=0;i<44;i++){                                       // stumps: where tr
  FOLIAGE.stump.push({x,z,s:0.8+Math.random()*0.6,r:Math.random()*Math.PI*2});
 }
 const PROP_SRC={};
+const desertArt=createDesertArt({THREE});
+function placeDesertCacti(name,list){
+ const kind=name==='cactus'?'saguaro':'barrel';
+ for(let variant=0;variant<3;variant++){
+  const sites=list.filter((_,i)=>i%3===variant);if(!sites.length)continue;
+  const geo=desertArt.geometry(kind,variant),minY=geo.boundingBox.min.y,h=geo.boundingBox.max.y-minY;
+  if(variant===0)PROP_SRC[name]={geo,mat:desertArt.material,minY,h};
+  const inst=new THREE.InstancedMesh(geo,desertArt.material,sites.length),m=new THREE.Matrix4(),q=new THREE.Quaternion(),p=new THREE.Vector3(),sc=new THREE.Vector3();
+  inst.name='foliage_'+name;inst.userData.desertSpecies=kind;inst.castShadow=true;inst.receiveShadow=true;
+  sites.forEach((tp,i)=>{
+   const s=tp.s*FOLIAGE_H[name]/h;if(tp.col){tp.col.r=Math.max(tp.col.r,s*(kind==='barrel'?.32:.10));tp.col.height=tp.s*FOLIAGE_H[name];}q.setFromAxisAngle(new THREE.Vector3(0,1,0),tp.r);
+   p.set(tp.x,groundH(tp.x,tp.z)-minY*s-.035,tp.z);sc.setScalar(s);
+   if(tp.col&&colliders.indexOf(tp.col)<0)sc.setScalar(0);
+   m.compose(p,q,sc);inst.setMatrixAt(i,m);
+  });
+  inst.instanceMatrix.needsUpdate=true;scene.add(...partitionStaticInstances(THREE,inst));inst.dispose();
+ }
+}
 function placeFoliage(name){
  const list=FOLIAGE[name]; if(!list.length)return;
+ if(name==='cactus'||name==='cactus2'){placeDesertCacti(name,list);return;}
  if(name==='haybale'||name==='trough'){
   for(const tp of list)placeRanchProp(name,tp.x,tp.z,tp.r,tp.s*(name==='trough'?1.25:1.15));
   return;
@@ -4689,15 +4715,9 @@ for(let i=0;i<8;i++){
 }}
 for(let i=0;i<14;i++){
  const x=-150-Math.random()*130,z=70+Math.random()*120;
- if(Math.abs(z-riverZ(x))<9)continue;
- const cact=new THREE.Group();
- tube(0.16,0.2,1.6,'#5a8a4a',0,0.8,0,cact);
- const arm=tube(0.1,0.12,0.7,'#5a8a4a',0.34,1.0,0,cact);
- arm.rotation.z=-0.5;
- const arm2=tube(0.1,0.12,0.6,'#5a8a4a',-0.32,0.8,0,cact);
- arm2.rotation.z=0.55;
- cact.position.set(x,groundH(x,z),z);
- scene.add(cact);
+ if(Math.abs(z-riverZ(x))<9||pathDist(x,z)<3.6||Math.hypot(x-CANYON.x,z-CANYON.z)<32)continue;
+ const cact=desertArt.create('saguaro',i%3);cact.name='Desert | young cactus';cact.scale.setScalar(1.9);
+ cact.position.set(x,groundH(x,z)-.01,z);scene.add(cact);
  colliders.push({x,z,r:0.5});
 }
 for(let i=0;i<18;i++){
@@ -14307,7 +14327,7 @@ function installFeatures(){
    breathInspect(){const origin=new THREE.Vector3(),direction=new THREE.Vector3(),anchored=dragonBreathPose(RIG,origin,direction);return {element:dragonElement(myHorses[rideIdx]),active:!!player.breathing,particles:_bLive,anchored,origin:anchored?origin.toArray():null,direction:anchored?direction.toArray():null};},
    grantHorse,makeFoal,breedSrc,breedAvailable,makeRider,riderLib:RIDER_LIB,sourceRule(fn){SOURCE_RULES.push(fn);return fn;},breedModels:BREED_MODELS,
    reloadHorses,rebuildAll,attachTack,dressWithRig,makeHorse,applyCoat,hairColour,horseEmote,bondGain,persMul,gearBonus,genGear,gearSet,setBonus,refreshTack,dressSaddle,breedLabel,horseValue},
-  world:{solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,geology,box,tube,blob,
+  world:{desertArt,solidWorld,groundSurfaces,seedGrass:grassInst,nearGroundCover:nearGrass,things,colliders,walls,groundH,terrainH,riverZ,riverLevel,streamX,pathDist,followCamera,puffDust,ranchArchitecture,ranchBuilderArt,arrivalArt,sceneryArt,waterfallArt,geology,box,tube,blob,
    /* the player's own orbit of the riding camera (drag to turn it, the wheel to zoom), for a package camera
       that should answer the same hands: on-foot's */
    camOrbit:{get yaw(){return camYaw;},set yaw(v){camYaw=v;},get pitch(){return camPitch;},get dist(){return camDistSm;},get dragging(){return !!camDrag;}},

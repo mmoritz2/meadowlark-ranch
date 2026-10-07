@@ -352,6 +352,20 @@ terrain contact, mounted passage and nine weather/quality views, including
 finite HDR pixels before and after post-processing. `asset-gen/check-geology.mjs`
 also ray-tests the arch exterior from both sides and checks its open passage.
 
+Desert planting uses original ribbed saguaro and barrel cactus models with
+rounded, closed crowns, areoles and fine spines. Both the old textured cactus
+scatter and the plain tube cacti use these shared templates. Coyote's town centre
+and main riding approaches stay clear, and removing a plant also removes its
+collision footprint. Small barrel cacti now sit at ground-cover scale.
+Agave rosettes use folded, curved leaves; ocotillo has its own woody canes and
+leaf clusters instead of a stretched agave card. These plants cast and receive
+shadows. Curved rush clumps replace the bright, bare poles around the oasis.
+Medium/Low use simpler agave and ocotillo geometry; cactus instances
+retain spatial culling. `test-desert-art.mjs` checks closed surfaces, normals,
+determinism and model budgets. `qa-desert-plants.cjs` checks placement, collision
+coverage, route clearance, model replacement, quality/weather rendering and the
+mounted passage through Ochre's stone arch.
+
 Village cottages and shopfronts now use Poly Haven's CC0 [Painted Plaster Wall](https://polyhaven.com/a/painted_plaster_wall)
 by Amal Kumar and [Roof Slates 03](https://polyhaven.com/a/roof_slates_03) by Rob Tuytel.
 Colour, OpenGL normal and roughness maps use the photographed 2 m plaster / 3 m slate

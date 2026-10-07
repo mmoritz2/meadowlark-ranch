@@ -290,7 +290,13 @@ export function install(G){
    g.add(createOasisBank(art));
    const palms=createOasisPalms(art);g.add(palms);
    for(const p of palms.userData.oasisPalms.palms)W.colliders.push({...p,trunk:true});
-   for(let k=0;k<12;k++){const a=Math.random()*Math.PI*2,r=o.r+0.3+Math.random()*1.2;tube(0.02,0.03,0.9,'#6a9a3a',Math.cos(a)*r,0.45,Math.sin(a)*r,g);}
+   for(let k=0;k<12;k++){
+    const a=Math.random()*Math.PI*2,r=o.r+2.4+Math.random()*1.2,dx=Math.cos(a)*r,dz=Math.sin(a)*r;
+    const rush=W.desertArt.create('rush',k%3),s=.55+(k%4)*.055; rush.name='Oasis | bank rushes';rush.scale.setScalar(s);
+    // The waterline bank blends over the terrain. Plant on firm ground beyond its outer edge.
+    const shore=groundH(o.x+dx,o.z+dz)-groundH(o.x,o.z);
+    rush.position.set(dx,shore-rush.children[0].geometry.boundingBox.min.y*s-.005,dz);g.add(rush);
+   }
    const y=groundH(o.x,o.z);g.position.set(o.x,y,o.z);scene.add(g);P.oasis={x:o.x,z:o.z,r:o.r,y:y+0.12};
    labelAt(g,'🌴 Dry Gulch Oasis',3.2);
    W.addThing({kind:'oasis',id:'oasis',x:o.x,z:o.z,g:null,reach:o.r+3,label:()=>'🌴 Let your horse drink (E)',use:()=>{let ok=false;S.sync(s=>{const h=s.horses[H.rideIdx()];if(!h)return;h.needs=h.needs||{};h.needs.thirst=Math.min(100,(h.needs.thirst||0)+40);ok=true;});if(ok){toast('🌴 '+H.ridden().name+' drinks deep at the oasis. +40 thirst');G.sChime();}}});
