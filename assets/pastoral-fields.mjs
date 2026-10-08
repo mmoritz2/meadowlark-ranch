@@ -16,6 +16,38 @@ export const FIELD_ANCHORS = [
   [-76,172,78],[310,300,53],[300,-300,53],
 ];
 const smooth=(a,b,v)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*t*(t*(t*6-15)+10);};
+// A low connected field ridge brings the Clover foot toward Cottonwood.
+// Town foundations and the Grand Loop retain a full terrain-cell footing halo.
+const CLOVER_APPROACH_BOUNDS={minX:38,maxX:104,minZ:-137,maxZ:-83};
+const CLOVER_RACE=[[98,-30],[90,-110],[-20,-150]];
+function cloverRaceDistance(x,z){
+  let distance=Infinity;
+  for(let k=1;k<CLOVER_RACE.length;k++){
+    const a=CLOVER_RACE[k-1],b=CLOVER_RACE[k],dx=b[0]-a[0],dz=b[1]-a[1];
+    const t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz)));
+    distance=Math.min(distance,Math.hypot(x-a[0]-dx*t,z-a[1]-dz*t));
+  }
+  return distance;
+}
+export function cloverApproachRelief(x,z){
+  const b=CLOVER_APPROACH_BOUNDS;
+  if(x<=b.minX||x>=b.maxX||z<=b.minZ||z>=b.maxZ)return 0;
+  const bump=(cx,cz,rx,rz,yaw)=>{
+    const dx=x-cx,dz=z-cz,co=Math.cos(yaw),si=Math.sin(yaw);
+    const r2=((dx*co+dz*si)/rx)**2+((dz*co-dx*si)/rz)**2;
+    return r2<1?(1-r2)**3:0;
+  };
+  const west=bump(57,-105,28,23,.35),east=bump(76,-98,24,20,-.32);
+  const ridge=3.3*(1-(1-west)*(1-east*.70));
+  const swale=.72*bump(73,-109,24,9,.45);
+  let keep=smooth(b.minX,b.minX+7,x)*(1-smooth(b.maxX-7,b.maxX,x));
+  keep*=smooth(b.minZ,b.minZ+8,z)*(1-smooth(b.maxZ-8,b.maxZ,z));
+  // Authored village roads/plots fit within this real reserved rectangle.
+  const townDistance=Math.hypot(Math.max(22-x,0,x-86),Math.max(-80-z,0,z+25));
+  keep*=smooth(4.5,12,townDistance);
+  keep*=smooth(6.8,18,cloverRaceDistance(x,z));
+  return (ridge-swale)*keep;
+}
 export function pastureRise(x,z) {
   let height=0;
   for(const c of FIELD_RISES){
@@ -23,10 +55,10 @@ export function pastureRise(x,z) {
     const r2=((dx*co+dz*si)/c.rx)**2+((dz*co-dx*si)/c.rz)**2;
     if(r2<1)height+=c.h*(1-r2)**3;
   }
-  if(!height)return 0;
+  if(!height)return cloverApproachRelief(x,z);
   let keep=1;
   for(const [ax,az,r] of FIELD_ANCHORS)keep=Math.min(keep,smooth(r,r+64,Math.hypot(x-ax,z-az)));
-  return height*keep;
+  return height*keep+cloverApproachRelief(x,z);
 }
 // Elliptical flower colonies have irregular edges but no cell-grid boundaries.
 export const FLOWER_DRIFTS=[

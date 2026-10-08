@@ -1,15 +1,59 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import * as T from '../assets/vendor/three/build/three.module.js';
-import {pastureRise,FIELD_RISES,FIELD_ANCHORS,meadowBloomAt,MEADOW_OPENINGS,meadowOpeningAt,inMeadowOpening,FLOWER_DRIFTS,meadowGrazingAt,westMeadowSwardAt} from '../assets/pastoral-fields.mjs';
+import {pastureRise,FIELD_RISES,FIELD_ANCHORS,meadowBloomAt,MEADOW_OPENINGS,meadowOpeningAt,inMeadowOpening,FLOWER_DRIFTS,meadowGrazingAt,westMeadowSwardAt,cloverApproachRelief} from '../assets/pastoral-fields.mjs';
 import {createGrassTuftGeometry,createLupinGeometry,meadowGrowthAt,meadowBladeColor} from '../assets/meadow-cover.js';
 import {coyoteCoverDryWeight} from '../assets/biome-weights.mjs';
+import {cottonwoodReserved} from '../assets/cottonwood-layout.js';
+import {readFileSync} from 'node:fs';
+import {LEGACY_FIELDS_SOURCE} from './fixtures/west-meadow-baseline.mjs';
+const legacy=await import('data:text/javascript;base64,'+Buffer.from(LEGACY_FIELDS_SOURCE).toString('base64'));
+
 
 test('field earthworks preserve all protected building and arena footprints',()=>{
- for(const [x,z,r] of FIELD_ANCHORS)for(let a=0;a<Math.PI*2;a+=.2)for(const f of[0,.25,.5,.99])
+ // The old village circle protected unused field south of actual foundations.
+ // Clover now shapes that field; every other authored anchor still stays flat.
+ for(const [x,z,r] of FIELD_ANCHORS.filter(([x,z])=>x!==47||z!==-50))for(let a=0;a<Math.PI*2;a+=.2)for(const f of[0,.25,.5,.99])
   assert.equal(pastureRise(x+Math.cos(a)*r*f,z+Math.sin(a)*r*f),0);
  for(const [x,z] of[[-490,0],[0,-490],[490,490],[-220,130],[-160,-210]])assert.equal(pastureRise(x,z),0);
+ for(let x=18;x<=90;x+=.5)for(let z=-84;z<=-21;z+=.5)if(cottonwoodReserved(x,z,4))assert.equal(pastureRise(x,z),0,'actual town footing '+[x,z]);
  assert(FIELD_RISES.slice(0,4).every(c=>pastureRise(c.x,c.z)>9));
+});
+test('Clover relief is compact, finite and joins continuously to unchanged far fields',()=>{
+ let positive=0;
+ for(let x=-480;x<=480;x+=2.5)for(let z=-480;z<=480;z+=2.5){
+  const h=cloverApproachRelief(x,z);assert(Number.isFinite(h)&&h>=0&&h<=3.3);
+  if(x<=38||x>=104||z<=-137||z>=-83){assert.equal(h,0);assert.equal(pastureRise(x,z),legacy.pastureRise(x,z));}
+  if(h>.1)positive++;
+ }
+ assert(positive>60,'broad connected field support');
+ assert(cloverApproachRelief(57,-105)>3);assert(cloverApproachRelief(76,-98)>2);
+ const h=.02;
+ for(const [axis,edge,lo,hi]of [['x',38,-137,-83],['x',104,-137,-83],['z',-137,38,104],['z',-83,38,104]])for(let t=lo;t<=hi;t+=1){
+  const at=n=>axis==='x'?cloverApproachRelief(n,t):cloverApproachRelief(t,n);
+  assert.equal(at(edge),0);assert(Math.abs((at(edge+h)-at(edge-h))/(2*h))<1e-5);
+  assert(Math.abs((at(edge+h)-2*at(edge)+at(edge-h))/(h*h))<.001);
+ }
+});
+test('Clover preserves the actual Grand Loop hoof corridor including terrain-cell interpolation',()=>{
+ const html=readFileSync(new URL('../ranch3d.html',import.meta.url),'utf8');
+ const match=html.match(/const RACE_ROUTES=(\{[\s\S]*?\n\});/);assert(match,'actual route definition');
+ const route=new Function('return ('+match[1]+').r1;')();assert(route.length>5);
+ const step=1000/512,halo=Math.SQRT2*step;
+ const deltaAt=(x,z)=>{
+  const u=(x+500)/step,v=(z+500)/step,ix=Math.floor(u),iz=Math.floor(v),fx=u-ix,fz=v-iz;
+  const sample=(dx,dz)=>Math.fround(cloverApproachRelief(-500+(ix+dx)*step,-500+(iz+dz)*step));
+  return fx+fz<=1?sample(0,0)*(1-fx-fz)+sample(1,0)*fx+sample(0,1)*fz:sample(1,1)*(fx+fz-1)+sample(1,0)*(1-fz)+sample(0,1)*(1-fx);
+ };
+ let probes=0;
+ for(let i=0;i<route.length;i++){
+  const a=route[i],b=route[(i+1)%route.length],dx=b[0]-a[0],dz=b[1]-a[1],length=Math.hypot(dx,dz),nx=-dz/length,nz=dx/length;
+  for(let d=0;d<=length;d+=1.5)for(const off of [-4,0,4]){
+   const x=a[0]+dx*d/length+nx*off,z=a[1]+dz*d/length+nz*off;
+   assert.equal(deltaAt(x,z),0,'canonical hoof corridor '+[x,z]);probes++;
+  }
+ }
+ assert(probes>1000);assert(6.8>=4+halo,'protection includes a whole diagonal terrain cell');
 });
 test('new rises have bounded continuous slopes and no raised edge seams',()=>{
  for(let x=-100;x<340;x+=3)for(let z=-220;z<310;z+=3){

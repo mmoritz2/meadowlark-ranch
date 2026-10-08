@@ -1,5 +1,5 @@
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
-import {meadowGrazingAt,westMeadowSwardAt,WEST_MEADOW_SWARD_RECOVERY} from './pastoral-fields.mjs?v=west-meadow-sward-1';
+import {meadowGrazingAt,westMeadowSwardAt,WEST_MEADOW_SWARD_RECOVERY} from './pastoral-fields.mjs?v=clover-approach-1';
 
 // Curved ribbon leaves: narrow roots, a fuller lower blade, and a curling tip.
 // The nearby tuft has eight leaves and forty triangles. Middle-distance tufts

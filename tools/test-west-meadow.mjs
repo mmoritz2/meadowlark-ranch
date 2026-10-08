@@ -1,83 +1,40 @@
-// CPU preservation review against the pinned 1122de3 baseline, restored in memory.
-// No renderer, network, random sampling or production writes.
+// Behavioral west-meadow regression against isolated legacy expressions.
+// Current terrain, accepted models and unrelated HTML/import queries may evolve.
 // Run: node --test tools/test-west-meadow.mjs
-// Optional captured native fixture: QA_WEST_BASELINE=/absolute/report.json
+// Optional historical candidate receipt: QA_WEST_BASELINE=/absolute/report.json
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {pathToFileURL,fileURLToPath} from 'node:url';
 import path from 'node:path';
-import {restoreLupinModelSource} from './fixtures/lupin-model-source.mjs';
-
+import {PROTOTYPE as REVIEWED_LUPIN} from './fixtures/lupin-model-source.mjs';
+import {LEGACY_FIELDS_SOURCE,LEGACY_COVER_SOURCE,LEGACY_SOURCE_PROVENANCE} from './fixtures/west-meadow-baseline.mjs';
 const HERE=path.dirname(fileURLToPath(import.meta.url));
 const ROOT=process.env.QA_WEST_ROOT||path.dirname(HERE);
-// Immutable diff receipt permits actual before/after module execution without a
-// second checkout or committed baseline asset fixture. Cache URLs are normalized
-// for this code-preservation receipt only; runtime modules retain current URLs.
-const patch="diff --git a/assets/pastoral-fields.mjs b/assets/pastoral-fields.mjs\n--- a/assets/pastoral-fields.mjs\n+++ b/assets/pastoral-fields.mjs\n@@ -34,6 +34,14 @@\n   [140,38,9,20],[204,59,14,8],[33,208,16,6],[80,253,13,6],\n   [215,115,12,6],[262,141,8,12],[147,-121,7,17],\n ];\n+// Recover a fuller west sward without changing the shared grazing mask that\n+// suppresses old flower cards and ferns. The compact field has C2-soft margins.\n+export const WEST_MEADOW_SWARD_RECOVERY=.76;\n+export const WEST_MEADOW_FLOWER_DRIFT=Object.freeze([-69,36,8,18]);\n+export function westMeadowSwardAt(x,z){\n+  const west=Math.hypot((x+54)/22,(z-43)/16)+Math.sin(x*.18+z*.11)*.06;\n+  return 1-smooth(.55,1.12,west);\n+}\n export function meadowBloomAt(x,z){\n   let mask=0;\n   for(const [cx,cz,rx,rz] of FLOWER_DRIFTS){\n@@ -41,7 +49,16 @@\n     const edge=d+Math.sin(x*.32+Math.sin(z*.17))*.12+Math.sin(z*.41)*.06;\n     mask=Math.max(mask,1-smooth(.50,1.12,edge));\n   }\n-  return mask*(1-.96*meadowGrazingAt(x,z));\n+  const grazing=meadowGrazingAt(x,z),legacy=mask*(1-.96*grazing);\n+  // One modelled lupin margin joins the old west colony. Legacy colonies keep\n+  // their original grazing response; only this new contribution recovers.\n+  const [cx,cz,rx,rz]=WEST_MEADOW_FLOWER_DRIFT;\n+  const d=Math.hypot((x-cx)/rx,(z-cz)/rz);\n+  const edge=d+Math.sin(x*.32+Math.sin(z*.17))*.12+Math.sin(z*.41)*.06;\n+  const colony=1-smooth(.50,1.12,edge);\n+  if(colony===0)return legacy;\n+  const recovered=grazing*(1-WEST_MEADOW_SWARD_RECOVERY*westMeadowSwardAt(x,z));\n+  return Math.max(legacy,colony*(1-.96*recovered));\n }\n \n // Open pasture between tree groups makes the foreground slopes and village\ndiff --git a/assets/meadow-cover.js b/assets/meadow-cover.js\n--- a/assets/meadow-cover.js\n+++ b/assets/meadow-cover.js\n@@ -1,5 +1,5 @@\n import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';\n-import {meadowGrazingAt} from './pastoral-fields.mjs?v=leafy-orchard-1';\n+import {meadowGrazingAt,westMeadowSwardAt,WEST_MEADOW_SWARD_RECOVERY} from './pastoral-fields.mjs?v=leafy-orchard-1';\n \n // Curved ribbon leaves: narrow roots, a fuller lower blade, and a curling tip.\n // The nearby tuft has eight leaves and forty triangles. Middle-distance tufts\n@@ -45,7 +45,8 @@\n }\n export function meadowGrowthAt(x,z){\n   const stand=.65*fieldPatch(x/11+3.4,z/11-8.2)+.35*fieldPatch(x/29-5.1,z/29+2.7);\n-  const grazed=meadowGrazingAt(x,z);\n+  const grazing=meadowGrazingAt(x,z),sward=westMeadowSwardAt(x,z);\n+  const grazed=sward===0?grazing:grazing*(1-WEST_MEADOW_SWARD_RECOVERY*sward);\n   return ((.42+stand*.95)*(1-grazed)+(.23+stand*.33)*grazed)*(1-coyoteCoverDryWeight(x,z)*.38);\n }\n \n";
-const hashes={
- 'assets/pastoral-fields.mjs':'96c5e5efcfb3f230984abc5ecf6cb1fc33cc68be6e99654d11f2b671264f81bc',
- 'assets/meadow-cover.js':'8dd3ea1c44b2f7795258029d938380f860e63ace4b3362475c46c02166e2a887',
-};
 const hash=s=>createHash('sha256').update(s).digest('hex');
-// This historical field-only receipt restores the separately reviewed exact
-// model constructor before comparing its original geometry. Current model
-// topology is tested independently; unknown constructors are never normalized.
-const proposed=Object.fromEntries(Object.keys(hashes).map(p=>{
- let body=readFileSync(path.join(ROOT,p),'utf8');
- if(p==='assets/meadow-cover.js')body=restoreLupinModelSource(body);
- return [p,body.replace('./pastoral-fields.mjs?v=west-meadow-sward-1','./pastoral-fields.mjs?v=leafy-orchard-1')];
-}));
-
-// Apply strict unified-diff hunks in memory. Source context must match exactly;
-// no git command, staging, tracked mutation or fallback fuzzy patch application.
-function applyPatch(sources,diff){
- const lines=diff.split('\n'),result={...sources};let i=0,files=0;
- while(i<lines.length){
-  if(!lines[i].startsWith('--- a/')){i++;continue;}
-  const file=lines[i++].slice(6);assert.equal(lines[i++],'+++ b/'+file);assert(file in sources);files++;
-  const input=sources[file].split('\n');assert.equal(input.pop(),'');const output=[];let cursor=0;
-  while(i<lines.length&&!lines[i].startsWith('diff --git ')){
-   const m=/^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/.exec(lines[i]);
-   if(!m){assert.equal(lines[i],'');i++;continue;}
-   i++;const start=+m[1]-1,oldCount=m[2]===undefined?1:+m[2],newCount=m[4]===undefined?1:+m[4];
-   assert(start>=cursor);output.push(...input.slice(cursor,start));cursor=start;
-   assert.equal(output.length,+m[3]-1);let removed=0,added=0;
-   while(i<lines.length&&!lines[i].startsWith('@@ ')&&!lines[i].startsWith('diff --git ')&&lines[i]!==''){
-    const line=lines[i++],mark=line[0],body=line.slice(1);assert([' ','+','-'].includes(mark));
-    if(mark!=='+' ){assert.equal(input[cursor++],body,file+' hunk context');removed++;}
-    if(mark!=='-'){output.push(body);added++;}
-   }
-   assert.equal(removed,oldCount);assert.equal(added,newCount);
-  }
-  output.push(...input.slice(cursor));result[file]=output.join('\n')+'\n';
- }
- assert.equal(files,2);return result;
-}
-function reversePatch(diff){return diff.split('\n').map(line=>{
- if(line.startsWith('@@ '))return line.replace(/^@@ -(\d+(?:,\d+)?) \+(\d+(?:,\d+)?) @@/,'@@ -$2 +$1 @@');
- if(line.startsWith('+++')||line.startsWith('---'))return line;
- return line.startsWith('+')?'-'+line.slice(1):line.startsWith('-')?'+'+line.slice(1):line;
-}).join('\n');}
-const original=applyPatch(proposed,reversePatch(patch));
-for(const [p,source]of Object.entries(original))assert.equal(hash(source),hashes[p],p+' must retain pinned baseline code outside the reviewed hunks');
 const dataURL=s=>'data:text/javascript;base64,'+Buffer.from(s).toString('base64');
-const beforeFields=await import(dataURL(original['assets/pastoral-fields.mjs']));
-const afterFields=await import(dataURL(proposed['assets/pastoral-fields.mjs']));
+const proposed=Object.fromEntries(['assets/pastoral-fields.mjs','assets/meadow-cover.js'].map(p=>[p,readFileSync(path.join(ROOT,p),'utf8')]));
+const beforeFields=await import(dataURL(LEGACY_FIELDS_SOURCE));
+const afterFields=await import(pathToFileURL(path.join(ROOT,'assets/pastoral-fields.mjs')).href);
 const biomeURL=pathToFileURL(path.join(ROOT,'assets/biome-weights.mjs')).href;
 function coverURL(source,fieldsURL){
  return dataURL(source.replace(/'\.\/biome-weights\.mjs\?[^']*'/,JSON.stringify(biomeURL)).replace(/'\.\/pastoral-fields\.mjs\?[^']*'/,JSON.stringify(fieldsURL)));
 }
-const beforeCover=await import(coverURL(original['assets/meadow-cover.js'],dataURL(original['assets/pastoral-fields.mjs'])));
-const afterCover=await import(coverURL(proposed['assets/meadow-cover.js'],dataURL(proposed['assets/pastoral-fields.mjs'])));
+// Execute the current controller with only its growth/palette/legacy geometry
+// dependencies supplied by the isolated reference. This compares actual poses
+// and eligibility across quality tiers without pinning the full current module.
+const controllerMarker='export function createMeadowDistance(';
+assert.equal(proposed['assets/meadow-cover.js'].split(controllerMarker).length,2);
+const currentController=proposed['assets/meadow-cover.js'].slice(proposed['assets/meadow-cover.js'].indexOf(controllerMarker));
+const beforeCover=await import(coverURL(LEGACY_COVER_SOURCE+'\n'+REVIEWED_LUPIN+'\n'+currentController,dataURL(LEGACY_FIELDS_SOURCE)));
+const afterCover=await import(pathToFileURL(path.join(ROOT,'assets/meadow-cover.js')).href);
 const T=await import(pathToFileURL(path.join(ROOT,'assets/vendor/three/build/three.module.js')).href);
 const {coyoteCoverDryWeight}=await import(biomeURL);
 const {westMeadowSwardAt,meadowBloomAt,WEST_MEADOW_FLOWER_DRIFT,WEST_MEADOW_SWARD_RECOVERY}=afterFields;
 const growthBounds={minX:-79.96,maxX:-28.04,minZ:24.12,maxZ:61.88};
 const flowerBounds={minX:-79.4,maxX:-58.6,minZ:12.6,maxZ:59.4};
 const outside=(x,z,b)=>x<b.minX||x>b.maxX||z<b.minZ||z>b.maxZ;
-const functionExact=(a,b)=>assert.equal(a.toString(),b.toString());
 
 // Isolate the real new-colony expression from the proposed function body, so
 // its C2 taper is exercised without max(legacy,colony) or grazing products.
@@ -109,15 +66,17 @@ function checkContinuousBoundary(weight,cx,cz,rx,rz,level,noiseBound){
  }
 }
 
-test('patch scope preserves legacy grazing, openings, earthworks, descriptors and palette exactly',()=>{
+test('legacy grazing, openings, colony descriptors and palette remain independent of west recovery',()=>{
+ assert.equal(LEGACY_SOURCE_PROVENANCE.revision,'1122de3072890fdf94adccabf0ea70a7d9fd898d');
+ assert.equal(hash(LEGACY_FIELDS_SOURCE),LEGACY_SOURCE_PROVENANCE.fieldsSha256);
  assert.equal(WEST_MEADOW_SWARD_RECOVERY,.76);assert.deepEqual(WEST_MEADOW_FLOWER_DRIFT,[-69,36,8,18]);assert(Object.isFrozen(WEST_MEADOW_FLOWER_DRIFT));
  assert.deepEqual(afterFields.FLOWER_DRIFTS,beforeFields.FLOWER_DRIFTS);assert.equal(afterFields.FLOWER_DRIFTS.length,11);
- for(const key of ['FIELD_RISES','FIELD_ANCHORS','MEADOW_OPENINGS'])assert.deepEqual(afterFields[key],beforeFields[key]);
- for(const key of ['pastureRise','meadowOpeningAt','inMeadowOpening','meadowGrazingAt'])functionExact(afterFields[key],beforeFields[key]);
- functionExact(afterCover.meadowBladeColor,beforeCover.meadowBladeColor);
- const changed=patch.split('\n').filter(l=>l.startsWith('+')&&!l.startsWith('+++')).map(l=>l.slice(1)).join('\n').replace(/\/\/[^\n]*/g,'');
- assert(!/Math\.random|\bnew\s+|fetch\s*\(|Texture|Material|Geometry|renderer|sampler|collider|wall|dispose\s*\(/.test(changed));
- assert.equal((changed.match(/WEST_MEADOW_FLOWER_DRIFT=Object\.freeze/g)||[]).length,1);
+ assert.deepEqual(afterFields.MEADOW_OPENINGS,beforeFields.MEADOW_OPENINGS);
+ for(let x=-480;x<=480;x+=13)for(let z=-480;z<=480;z+=11){
+  assert.equal(afterFields.meadowOpeningAt(x,z),beforeFields.meadowOpeningAt(x,z));
+  assert.equal(afterFields.inMeadowOpening(x,z),beforeFields.inMeadowOpening(x,z));
+  assert.equal(afterFields.meadowGrazingAt(x,z),beforeFields.meadowGrazingAt(x,z));
+ }
 });
 
 test('bounded deterministic fields are bit-exact outside compact support and never reduce existing growth/bloom',()=>{
@@ -160,12 +119,13 @@ test('one elongated colony connects to the retained west margin without blanket 
  for(const [x,z]of beforeFields.FLOWER_DRIFTS)if(outside(x,z,flowerBounds))assert.equal(meadowBloomAt(x,z),beforeFields.meadowBloomAt(x,z));
 });
 
-test('all existing source grass LODs and modelled lupins have identical geometry, normals, UVs and budgets',()=>{
- functionExact(afterCover.createGrassTuftGeometry,beforeCover.createGrassTuftGeometry);functionExact(afterCover.createLupinGeometry,beforeCover.createLupinGeometry);functionExact(afterCover.createMeadowDistance,beforeCover.createMeadowDistance);
+test('legacy grass LOD geometry and reviewed cup lupins retain finite attributes and bounded budgets',()=>{
  for(const options of [{},{bladeCount:4,segments:2},{bladeCount:6,segments:2},{bladeCount:8,segments:2}]){
   const a=beforeCover.createGrassTuftGeometry(T,options),b=afterCover.createGrassTuftGeometry(T,options);assert.deepEqual(geometryReceipt(a),geometryReceipt(b));assert(a.index.count/3<=40);a.dispose();b.dispose();
  }
- const a=beforeCover.createLupinGeometry(T),b=afterCover.createLupinGeometry(T);assert.deepEqual(geometryReceipt(a),geometryReceipt(b));assert.equal(a.index.count/3,146);a.dispose();b.dispose();
+ const a=beforeCover.createLupinGeometry(T),b=afterCover.createLupinGeometry(T);assert.deepEqual(geometryReceipt(a),geometryReceipt(b));assert.equal(a.index.count/3,200);assert.equal(b.attributes.position.count,265);a.dispose();b.dispose();
+ const near=afterCover.createGrassTuftGeometry(T,{profile:'near-folded-v1'});assert.equal(near.index.count/3,40);assert.equal(near.attributes.position.count,56);
+ for(const a of Object.values(near.attributes))assert([...a.array].every(Number.isFinite));near.dispose();
 });
 
 function releaseMiddle(field){const materials=Array.isArray(field.mesh.material)?field.mesh.material:[field.mesh.material];for(const m of materials)m.dispose();field.mesh.geometry.dispose();field.mesh.removeFromParent();}
@@ -196,19 +156,27 @@ function compareMiddle(low){
 
 test('actual middle-distance controller retains roots, yaw, membership, palette and repeat-travel poses in every quality tier',()=>{compareMiddle(false);compareMiddle(true);});
 
-test('main-world placement, exclusion, seeded RNG and existing flower/fern suppression source is untouched',()=>{
- // Normalize only approved later cache URLs, then use the unchanged historical
- // restoration/hash below. Unknown URLs and all other HTML edits still fail.
- const html=readFileSync(path.join(ROOT,'ranch3d.html'),'utf8')
-  .replace('./assets/terrain-realism.js?v=dry-turf-1','./assets/terrain-realism.js?v=cold-snow-1')
-  .replace('./assets/meadow-cover.js?v=lupin-cups-2','./assets/meadow-cover.js?v=west-meadow-sward-1')
-  .replace('./assets/meadow-cover.js?v=west-meadow-sward-1','./assets/meadow-cover.js?v=dry-foothills-1')
-  .replace('./assets/pastoral-fields.mjs?v=west-meadow-sward-1','./assets/pastoral-fields.mjs?v=leafy-orchard-1');
- assert.equal(hash(html),'25c4f93012dd81c62ad1704b3f8276c0c021e65a93b2f887bb041f92a4cc793e');
- assert(!patch.includes('a/ranch3d.html'));assert(!patch.includes('a/assets/vegetation.js'));assert(!patch.includes('a/assets/terrain-realism.js'));
- // These unchanged production consumers demonstrate why grazing stays exact.
- assert(html.includes('meadowGrazingAt(x,z)<.75'));assert(html.includes('meadowGrazingAt(x,z)*(1-blend)'));
- assert(html.includes('if(h3>bloom||coldWoodlandWeights(x,z).weight>.08||biomeAt(x,z)!==\'meadow\'||!okClutter(x,z))continue;'));
+test('actual flower and fern placement gates retain grazing, cold, biome and clutter exclusions',()=>{
+ const html=readFileSync(path.join(ROOT,'ranch3d.html'),'utf8');
+ const single=re=>{const matches=[...html.matchAll(re)];assert.equal(matches.length,1,'one production placement expression');return matches[0][1];};
+ const flower=single(/const meadow=(gh\(ci\*3,cj\*5\)[^;]+);/g);
+ const cards=new Function('x','z','ci','cj','gh','managedGrass','meadowGrazingAt','return '+flower+';');
+ assert.equal(cards(-54,43,0,0,()=>.9,()=>0,afterFields.meadowGrazingAt),false,'recovery does not revive old cards in grazed west');
+ for(let x=-80;x<=-25;x+=5)for(let z=15;z<=65;z+=5)for(const h of [.61,.62,.63,.9])
+  assert.equal(cards(x,z,0,0,()=>h,()=>0,afterFields.meadowGrazingAt),cards(x,z,0,0,()=>h,()=>0,beforeFields.meadowGrazingAt),'legacy card response remains independent of recovery');
+ assert.equal(cards(200,200,0,0,()=>.1,()=>0,()=>0),false,'same seeded cell threshold');
+ assert.equal(cards(200,200,0,0,()=>.9,()=>.8,()=>0),false,'managed yard excluded');
+ assert.equal(cards(200,200,0,0,()=>.9,()=>0,()=>0),true);
+ const gate=single(/if\((h3>bloom[^\n]+)\)continue;/g);
+ const reject=new Function('x','z','h3','bloom','coldWoodlandWeights','biomeAt','okClutter','return '+gate+';');
+ const sample=(h,b,c=.01,biome='meadow',clutter=true)=>reject(-69,36,h,b,()=>({weight:c}),()=>biome,()=>clutter);
+ assert.equal(sample(.1,.5),false);assert.equal(sample(.6,.5),true);assert.equal(sample(.1,.5,.09),true);
+ assert.equal(sample(.1,.5,.01,'snow'),true);assert.equal(sample(.1,.5,.01,'meadow',false),true);
+ const fern=single(/if\((!okClutter\(x,z\)\|\|h3>density[^\n]+)\)\{hide\(fern,id\);continue;\}/g);
+ const rejectFern=new Function('x','z','h3','density','B','blend','okClutter','meadowGrazingAt','return '+fern+';');
+ assert.equal(rejectFern(-54,43,.1,1,'meadow',0,()=>true,afterFields.meadowGrazingAt),true,'grazed interior suppresses legacy fern');
+ assert.equal(rejectFern(200,200,.1,1,'meadow',0,()=>true,()=>0),false);
+ assert.equal(rejectFern(200,200,.1,1,'meadow',0,()=>false,()=>0),true);
 });
 
 const receiptPath=process.env.QA_WEST_BASELINE;
