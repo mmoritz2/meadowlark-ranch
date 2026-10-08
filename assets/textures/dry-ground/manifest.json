@@ -1,0 +1,123 @@
+{
+  "asset": "sandy_gravel_02",
+  "title": "Sandy Gravel 02",
+  "author": "Dario Barresi",
+  "provider": "Poly Haven",
+  "asset_url": "https://polyhaven.com/a/sandy_gravel_02",
+  "license": {
+    "identifier": "CC0-1.0",
+    "provider_url": "https://polyhaven.com/license",
+    "legal_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "verified_date": "2026-10-08",
+    "scope": "Official downloadable texture maps; excludes website example renders."
+  },
+  "physical_tile_metres": [
+    2.53,
+    2.53
+  ],
+  "physical_scale_provenance": {
+    "info_url": "https://api.polyhaven.com/info/sandy_gravel_02",
+    "dimensions_mm": [
+      2529.9999713897705,
+      2529.9999713897705
+    ],
+    "displayed_width_metres": 2.5,
+    "units_schema_url": "https://raw.githubusercontent.com/Poly-Haven/Public-API/master/swagger.yml",
+    "units_schema_path": "components.schemas.texture.properties.dimensions"
+  },
+  "source_files": [
+    {
+      "role": "diffuse",
+      "file": "sandy_gravel_02_diff_1k.jpg",
+      "bytes": 947222,
+      "sha256": "c9d143db07db9a6be2eba285fae961d868520422ee5fa4d38d55da24f9968d51",
+      "official_md5": "e8f0496f1e0e923514470171de033bf9",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sandy_gravel_02/sandy_gravel_02_diff_1k.jpg",
+      "resolution": [
+        1024,
+        1024
+      ],
+      "included_at_runtime": true
+    },
+    {
+      "role": "normal_opengl",
+      "file": "sandy_gravel_02_nor_gl_1k.jpg",
+      "bytes": 1185078,
+      "sha256": "36db1d118fb74885991ada4a3028f4fe346c65a8e3c75edea123c08856068e41",
+      "official_md5": "a0174cc069d02b825b546d8547b4a49a",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sandy_gravel_02/sandy_gravel_02_nor_gl_1k.jpg",
+      "resolution": [
+        1024,
+        1024
+      ],
+      "included_at_runtime": false
+    },
+    {
+      "role": "arm",
+      "file": "sandy_gravel_02_arm_1k.jpg",
+      "bytes": 820610,
+      "sha256": "c10a20b5736bf1785f12f1c6744d80450b98bf0ea8cb7128acb78df39688838f",
+      "official_md5": "1fef9778c9be98b81bb30a69437ec1da",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sandy_gravel_02/sandy_gravel_02_arm_1k.jpg",
+      "resolution": [
+        1024,
+        1024
+      ],
+      "included_at_runtime": false
+    }
+  ],
+  "files_metadata_url": "https://api.polyhaven.com/files/sandy_gravel_02",
+  "runtime_files": [
+    {
+      "file": "sandy_gravel_02_diff_1k.jpg",
+      "role": "albedo",
+      "format": "JPEG",
+      "resolution": [
+        1024,
+        1024
+      ],
+      "bytes": 947222,
+      "sha256": "c9d143db07db9a6be2eba285fae961d868520422ee5fa4d38d55da24f9968d51",
+      "color_space": "sRGB",
+      "modifications": "None; exact official download bytes."
+    },
+    {
+      "file": "sandy_gravel_02_surface.png",
+      "role": "surface_properties",
+      "format": "PNG RGBA8",
+      "resolution": [
+        1024,
+        1024
+      ],
+      "bytes": 2805291,
+      "sha256": "cac5bb2661e77895ff2b8f6c8f4c40022c62ca8606b61d786d48b1b8f5b38105",
+      "color_space": "linear data / THREE.NoColorSpace",
+      "channels": {
+        "R": "OpenGL normal X encoded in [0,1]; source normal R unchanged",
+        "G": "OpenGL normal Y encoded in [0,1]; source normal G unchanged",
+        "B": "Roughness in [0,1]; source ARM G unchanged",
+        "A": "Ambient occlusion in [0,1]; source ARM R unchanged"
+      },
+      "modifications": "Lossless channel packing of decoded JPEG bytes; no resize, colour adjustment, rotation or inversion."
+    }
+  ],
+  "runtime_texture_bytes": 3752513,
+  "runtime_notes": [
+    "Diffuse plus the packed PNG are the only runtime textures. Source normal/ARM JPGs are build inputs, not shipped duplicates.",
+    "Alpha is occlusion data, not transparency; keep premultiplyAlpha=false.",
+    "Metalness is fixed at zero; source ARM blue is not packed.",
+    "Normal Z is omitted because this terrain shader consumes only XY relief. A full tangent-space normal consumer must reconstruct Z.",
+    "Use identical world UVs and the same normal orientation transform for albedo and packed data.",
+    "Shader exposure/tint and terrain blending are runtime art parameters; the stored albedo is unchanged."
+  ],
+  "build": {
+    "tool": "pack-dry-ground.py",
+    "pillow": "11.3.0",
+    "png_options": {
+      "optimize": true,
+      "compress_level": 9
+    },
+    "source_hash_checks": "SHA256, official MD5 and exact byte size for all three inputs",
+    "packed_validation": "Reference SHA256 and byte-exact decoded RGBA channel round trip"
+  }
+}

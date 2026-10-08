@@ -102,23 +102,36 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
     t.colorSpace=THREE.NoColorSpace;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
     return {value:t};
   }
-  const wetWeather={value:0};
+  const wetWeather={value:0},soilReady={value:0};
+  const soilSurface={asset:'sandy_gravel_02',textureMetres:2.53,loaded:0,errors:[]};
   const uniforms = {terrainRock:{value:load('rock')}, terrainForest:{value:load('forest_floor')}, forestMask:{value:forest},
     meadowDetail:detail('./assets/textures/pasture/grass_nor_gl.webp'),
     stoneDetail:detail('./assets/textures/scanned/rock_boulder_cracked_nor_gl.webp'),
     litterDetail:detail('./assets/textures/scanned/forest_ground_04_nor_gl.webp'),
     meadowARM:detail('./assets/textures/pasture/grass_arm.webp'),
     stoneARM:detail('./assets/textures/scanned/rock_boulder_cracked_arm.webp'),
-    litterARM:detail('./assets/textures/scanned/forest_ground_04_arm.webp'),wetWeather};
-  for(const [key,path] of [['terrainSoil','./assets/textures/ground_sand.jpg'],['terrainSnow','./assets/textures/cold/snow_02_diff_2k.webp']]){
+    litterARM:detail('./assets/textures/scanned/forest_ground_04_arm.webp'),
+    soilDetail:{value:null},soilReady,wetWeather};
+  // Texture UUID allocation follows the synchronous seeded world construction.
+  // Albedo still loads in the original slot; optional detail stays inactive until
+  // the matching detail map is ready, retaining a valid fallback during loading.
+  queueMicrotask(()=>{
+    const t=loader.load('./assets/textures/dry-ground/sandy_gravel_02_surface.png',()=>{
+      soilSurface.loaded=1;soilReady.value=1;
+    },undefined,error=>soilSurface.errors.push(String(error?.message||'Failed soil surface texture')));
+    t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.NoColorSpace;
+    t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());uniforms.soilDetail.value=t;
+  });
+  for(const [key,path] of [['terrainSoil','./assets/textures/dry-ground/sandy_gravel_02_diff_1k.jpg'],['terrainSnow','./assets/textures/cold/snow_02_diff_2k.webp']]){
     const t=loader.load(path);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;uniforms[key]={value:t};
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v19-coherent-fields';
+  material.customProgramCacheKey = () => 'terrain-biomes-v20-granular-soil';
   material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0]};
   material.userData.wetWeather=wetWeather;
   material.userData.fieldSurface=fieldSurface;
+  material.userData.soilSurface=soilSurface;
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
     sh.vertexShader = 'attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n' + sh.vertexShader;
@@ -131,7 +144,8 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
       uniform sampler2D terrainSoil; uniform sampler2D terrainSnow;
       uniform sampler2D meadowDetail, stoneDetail, litterDetail;
       uniform sampler2D meadowARM, stoneARM, litterARM;
-      uniform float wetWeather;
+      uniform sampler2D soilDetail;
+      uniform float wetWeather,soilReady;
       /* A multiply-and-fract hash rather than fract(sin(dot(...))). It is a handful of cheap
          arithmetic ops instead of a transcendental, which matters once the ground asks for eight
          noise lookups a pixel and the ground is most of the screen; it is also better behaved
@@ -330,8 +344,8 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
          was only computed on the lanes that took the branch has no well-defined derivative, and
          picks its mip level out of a hat. Ordinary pasture now costs five fetches, not fifteen. */
       vec2 rockUVy = p/3.2, rockUVx = terrainPosition.yz/3.2, rockUVz = terrainPosition.xy/3.2;
-      vec2 soilUV  = mat2(.819,-.574,.574,.819)*p/3.7 + tHash2(floor(p/21.0))*.014;
-      vec2 earthUV = p/3.2, snowUV = mat2(.91,-.414,.414,.91)*p/7.1, amberUV = p/2.9, marshUV = p/3.6, ochreUV = soilUV*1.24;
+      vec2 soilUV  = mat2(.819,-.574,.574,.819)*p/2.53;
+      vec2 earthUV = p/3.2, snowUV = mat2(.91,-.414,.414,.91)*p/7.1, amberUV = p/2.9, marshUV = p/3.6, ochreUV = soilUV;
       #ifndef OUTER_LANDSCAPE
         // A continuous low-frequency warp breaks photographic alignment while
         // keeping derivatives valid and the photographed grain near its scale.
@@ -354,7 +368,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
            rather than light and dark, which is what makes stratified rock look like rock. */
         rock*=(0.80+0.34*macro)*mix(vec3(1.08,1.00,0.90),vec3(0.90,0.95,1.05),stand);
       }
-      if(bank>0.003||canyon>0.003) sand=texture2D(terrainSoil,soilUV).rgb;
+      if(bank>0.003||canyon>0.003) sand=texture2D(terrainSoil,soilUV).rgb*1.45;
       // One shared photographed snow source, still four samples on high/medium
       // and two on low. Independent sample orientations avoid a common tile axis.
       vec2 snowCell=floor(snowUV*.31),snowF=fract(snowUV*.31);
@@ -392,6 +406,9 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
 
       /* Under the trees the ground is litter rather than grass, and it is in shade. */
       vec3 surface = turf;
+      // Carry the sandy fraction through the same ordered blends as albedo.
+      // Rock, snow and litter must suppress its microdetail as well as its color.
+      float soilWeight=0.0;
       if(canopy>0.003) surface = mix(turf, earth*(0.78+0.26*stand), canopy*0.60);
       /* The margin in three parts rather than one painted stripe: wet silt at the waterline,
          pale shingle above it with a coarse speckle of stones, and a ragged line where the grass
@@ -400,21 +417,27 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
         vec3 shingle = sand*vec3(.99,.96,.90)*(0.90+0.46*smoothstep(0.54,0.74,stand));
         vec3 silt    = earth*vec3(.60,.65,.60);
         surface = mix(surface, mix(shingle,silt,wet), bank*0.95);
+        soilWeight=bank*.95*(1.0-wet);
       }
       /* Where hooves go, grass does not. The bridleway is already a ribbon mesh laid on top of
          the ground, and without this the grass runs up to its edge untouched and the whole thing
          reads as a decal on a lawn. This is the shoulder: thinned grass over trodden soil. */
-      if(wear>0.004) surface = mix(surface, earth*vec3(0.90,0.86,0.78), wear*0.78);
+      if(wear>0.004){
+        surface = mix(surface, earth*vec3(0.90,0.86,0.78), wear*0.78);
+        soilWeight*=1.0-wear*.78;
+      }
       /* Gravel first, then bare rock standing out of it. Scree is only half stone by weight:
          the other half is whatever was growing there, which is what stops a hillside going from
          meadow to quarry in the space of one smoothstep. */
       if(rocky>0.003){
         surface = mix(surface, mix(surface,rock,0.50)*vec3(1.02,1.01,0.96), scree*0.72);
         surface = mix(surface, rock, stone*0.94);
+        soilWeight*=(1.0-scree*.36)*(1.0-stone*.94);
       }
       if(canyon>0.003){
         vec3 dust = sand*vec3(.74,.79,.79)*(0.86+0.30*macro);
         surface = mix(surface, mix(dust, rock*vec3(1.07,.94,.82), max(stone,scree*0.55)), smoothstep(.08,.96,canyon)*0.96);
+        soilWeight=mix(soilWeight,1.0-max(stone,scree*.55),smoothstep(.08,.96,canyon)*.96);
       }
       /* Lying snow is drifted, not poured: deeper in the lee and scoured thin on the crowns.
          Without a value swing at these scales the snow texture's own tiling grid is the only
@@ -429,6 +452,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
           vec3 edgeGround=earth*vec3(.89,.92,.91)*(0.84+0.12*macro);
           if(rocky>.003)edgeGround=mix(edgeGround,rock*vec3(.91,.94,1.0),rocky*.48);
           surface=mix(surface,edgeGround,thawLitter*.68);
+          soilWeight*=1.0-thawLitter*.68;
         }
       #endif
       if(snow>0.003){
@@ -436,12 +460,14 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
         c=mix(c,c*vec3(.84,.91,1.08),damp*0.7);
         #ifdef OUTER_LANDSCAPE
           surface=mix(surface,c,snow*0.98);
+          soilWeight*=1.0-snow*.98;
         #else
           // Photographed powder carries the small detail; broad value changes
           // stay restrained, and a fully covered core hides the turf completely.
           c=snowTex*vec3(.90,.94,1.0)*(0.92+0.16*(stand*0.55+macro*0.45));
           c=mix(c,c*vec3(.89,.94,1.04),damp*.45);
           surface=mix(surface,c,snow);
+          soilWeight*=1.0-snow;
         #endif
       }
       /* The four quarters past the old fence. Each re-tints ground the shader already samples,
@@ -453,6 +479,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
           vec3 c=texture2D(terrainForest,amberUV).rgb*vec3(1.34,.94,.55)*(0.90+macro*0.18);
           c=mix(c,c*vec3(.84,.80,.72),damp*0.55);
           surface=mix(surface,c,amber*0.90);
+          soilWeight*=1.0-amber*.90;
         }
         if(marsh>0.003){
           /* Standing water in the hollows is what makes a marsh a marsh, so the damp field does
@@ -460,6 +487,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
           vec3 c=texture2D(terrainForest,marshUV).rgb*vec3(.72,.86,.66)*(0.76+macro*0.14);
           c=mix(c,c*vec3(.52,.66,.60),damp*0.85);
           surface=mix(surface,c,marsh*0.92*(1.0-smoothstep(0.28,0.60,grade)));
+          soilWeight*=1.0-marsh*.92*(1.0-smoothstep(.28,.60,grade));
         }
         if(tundra>0.003){
           /* Snow where it can lie, scoured rock where the wind gets at it. */
@@ -467,15 +495,25 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
           c*=0.78+0.36*(stand*0.6+macro*0.4);
           c=mix(c,c*vec3(.83,.90,1.08),damp*0.75);
           surface=mix(surface,c,tundra*0.88);
+          soilWeight*=1.0-tundra*.88;
         }
         if(ochre>0.003){
           /* A badland cuts itself into bands, and the bands only show where there is a face to
              show them on — hence the slope term on an otherwise purely height-driven stripe. */
-          vec3 c=texture2D(terrainSoil,ochreUV).rgb*vec3(1.22,.72,.52)*(0.90+macro*0.16);
+          vec3 c=texture2D(terrainSoil,ochreUV).rgb*1.45*vec3(1.22,.72,.52)*(0.90+macro*0.16);
           c*=1.0+sin(hgt*2.3+region*6.2)*0.11*smoothstep(0.05,0.30,grade);
           surface=mix(surface,mix(c,rock*vec3(1.18,.80,.62),stone),ochre*0.94);
+          soilWeight=mix(soilWeight,1.0-stone,ochre*.94);
         }
       }
+      soilWeight*=soilReady;
+      vec2 granularUV=soilUV;
+      // One lossless RGBA texture packs normal XY, roughness, and occlusion.
+      // Together with the existing sun shadow, the terrain stays at 16 samplers.
+      vec4 soilProperties=vec4(.5,.5,.85,1.0);
+      #ifndef CHEAP_GROUND
+        if(soilWeight>.003&&upClose>.005)soilProperties=texture2D(soilDetail,granularUV);
+      #endif
       // Moist ground darkens before it becomes glossy. Hollows retain rain
       // while exposed slopes drain; snow keeps its powder response.
       float rainWet=wetWeather*(1.0-snow)*mix(.30,.72,damp);
@@ -487,6 +525,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
         vec3 groundARM=texture2D(meadowARM,uv).rgb;
         if(canopy>.1)groundARM=mix(groundARM,texture2D(litterARM,earthUV).rgb,canopy);
         if(rocky>.1)groundARM=mix(groundARM,texture2D(stoneARM,rockUVy).rgb,rocky);
+        if(soilWeight>.003)groundARM=mix(groundARM,vec3(soilProperties.a,soilProperties.b,0.0),soilWeight);
         #ifndef OUTER_LANDSCAPE
           float groundRoughness=clamp(groundARM.g,.65,1.0);
           // Dry grass keeps the base material's broad, matte response. Fade
@@ -531,6 +570,12 @@ export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()
           }
           if(canopy>.1)detailN=mix(detailN,texture2D(litterDetail,earthUV).xyz*2.0-1.0,canopy);
           if(rocky>.1)detailN=mix(detailN,texture2D(stoneDetail,rockUVy).xyz*2.0-1.0,rocky);
+          if(soilWeight>.003){
+            vec3 granularN=vec3(soilProperties.rg*2.0-1.0,1.0);
+            // The retained ground basis is -X/+Z: D*R^T*D equals this UV rotation.
+            granularN.xy=mat2(.819,-.574,.574,.819)*granularN.xy;
+            detailN=mix(detailN,granularN,soilWeight);
+          }
           // Orthogonal world-space tangents follow the terrain slope, including
           // bank faces. Relief fades before its texels become subpixel noise.
           vec3 tangent=normalize(cross(vec3(0.0,0.0,1.0),wn));

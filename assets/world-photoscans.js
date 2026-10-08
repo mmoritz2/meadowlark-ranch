@@ -1,6 +1,7 @@
 import {UPRIGHT_HYBRID_WOOD_SOURCE_SHA,UPRIGHT_HYBRID_WOOD_BOXES} from './upright-broadleaf-wood-proxies.mjs?v=upright-broadleaf-1';
 import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood-proxies.mjs?v=clover-woodland-edge-1';
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
+import {dressCragMineral} from './crag-mineral-surface.mjs?v=crag-mineral-1';
 import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';
 import {patchOuterFog} from './outer-landscape.js?v=continuous-countryside-1';
 import {installThunderOak} from './thunder-oak-art.js?v=split-oak-1';
@@ -501,15 +502,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       {seed:3537,primary:3,yaw:.56}
     ];
     const material=parts[3].mat.clone();material.name='Countryside | scanned weathered crags';
-    dressLandscape({THREE,material,anisotropy:8,fogScale:1,fogCap:1,mineralScale:2.4,bumpStrength:.07});
-    const mineralDetail=material.onBeforeCompile;
-    material.onBeforeCompile=shader=>{
-      mineralDetail(shader);
-      shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
-        float cragGrey=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));
-        diffuseColor.rgb=mix(vec3(cragGrey),diffuseColor.rgb,.23)*vec3(1.35,1.32,1.26);`);
-    };
-    material.customProgramCacheKey=()=> 'countryside-scanned-crag-2';
+    dressCragMineral({material,source:W.geology.canyonMaterial});
     const records=state.villageCrags=[],surfaces=[];
     // All source triangles stay inside their original route circle. Most
     // ground samples can therefore skip the detailed stone index completely.
