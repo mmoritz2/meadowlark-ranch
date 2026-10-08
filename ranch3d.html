@@ -2820,8 +2820,8 @@ function meadowBladeTexture(size,count){return canvasTex(size,size,(c,w,h)=>{
   const lean=(x/w-0.5)*w*0.9+(Math.random()-0.5)*w*0.18,bw=w*(0.045+Math.random()*0.025);
   const tipX=x+lean,tipY=h-tall;
   const g=c.createLinearGradient(0,h,0,tipY);
-  g.addColorStop(0,'#315b28');g.addColorStop(0.50,'#699342');
-  g.addColorStop(1,i%4===0?'#bdc980':'#9ab962');
+  g.addColorStop(0,'#c8c8c8');g.addColorStop(0.50,'#e3e3e3');
+  g.addColorStop(1,i%4===0?'#f5f5f5':'#ededed');
   c.fillStyle=g;c.beginPath();c.moveTo(x-bw,h);
   c.bezierCurveTo(x-bw*0.6,h-tall*0.35,tipX-lean*0.3,tipY+tall*0.22,tipX,tipY);
   c.bezierCurveTo(tipX-lean*0.13,tipY+tall*0.30,x+bw,h-tall*0.32,x+bw,h);
