@@ -704,7 +704,7 @@ import {createWaterReflections} from './assets/water-reflections.js?v=oasis-refl
 import {createRiderLibrary} from './assets/rider-model.js?v=visible-lashes-20261007';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
 import {getTackPiece} from './assets/tack-collection.mjs?v=tack-summon-20261007';
-import {FEATURES} from './assets/features/index.js?v=skein-anatomy-1';
+import {FEATURES} from './assets/features/index.js?v=horses-expansion-1';
 import {paidVipUntil,refreshAccount} from './assets/commerce-client.js';
 window.__gameModuleRan=true;   // the imports all resolved: the engine is here (the load watchdog below reads this)
 await refreshAccount(); // Verify account VIP before daily rewards; static and offline play still work.
@@ -10626,14 +10626,20 @@ function buyHorse3(i){
  const b=BREEDS3[i];
  if(!b||(!b[7].hero&&!breedAvailable(b,'shop'))){toast('That horse is not sold here.');return;}   // summon, wild and earned horses are not for sale (the VR shop lists every row)
  if(b[0]==='bay-sporthorse'){adoptBaySporthorse();return;}
- let msg='',ok=false;
+ let msg='',ok=false,receipt=null;
  syncSave(s=>{
   if(s.coins<b[3]||s.gems<b[4]){msg='Not enough — ride events to earn more!';return;}
   s.coins-=b[3];s.gems-=b[4];
-  grantHorse(s,b[0],{src:'shop'});
-  msg='Welcome to the ranch, '+s.horses[s.horses.length-1].name+' the '+b[1]+'! 🎉';
-  ok=true;
+  const h=grantHorse(s,b[0],{src:'shop'});
+  receipt={id:h.id,coins:s.coins,gems:s.gems};
+  msg='Welcome to the ranch, '+h.name+' the '+b[1]+'! 🎉';
  });
+ if(receipt){
+  const persisted=freshSave();
+  ok=!!persisted&&persisted.coins===receipt.coins&&persisted.gems===receipt.gems&&persisted.horses?.some(h=>h.id===receipt.id&&h.breed===b[0]);
+  if(!ok)msg='Your horse could not be saved. Please try again.';
+ }
+ if(!msg)msg='Your horse could not be saved. Please try again.';
  toast(msg);
  if(ok){sGem();refreshWallet();reloadHorses();openShop('horses');}
 }

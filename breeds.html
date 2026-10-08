@@ -17,6 +17,9 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import {createBreedLibrary} from './assets/breed-models.js?v=club-horses-1';
 import {CLUB_HORSE_BREEDS} from './assets/club-horses.js?v=club-horses-1';
+import {EXPANSION_HORSE_BREEDS} from './assets/expansion-horses.js?v=horses-expansion-1';
+import {registerExpansionHorseCoats} from './assets/expansion-horse-coats.js?v=horses-expansion-1';
+import {configureNativeCustomization} from './assets/native-horse-customization.js?v=horses-expansion-1';
 import {createNativeHorseMotion} from './assets/native-horse-motion.js?v=horse-actions-1';
 import {nativeGroomFacade} from './assets/game-hero-horse.js?v=horse-actions-1';
 import {NATIVE_MODEL_CHOICES} from './assets/features/native-horses.js?v=dragon-acting-1';
@@ -56,6 +59,8 @@ const floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStanda
 const ring=new THREE.Mesh(new THREE.RingGeometry(1.74,1.755,100),new THREE.MeshBasicMaterial({color:0xbcb992,side:THREE.DoubleSide,transparent:true,opacity:.45}));ring.rotation.x=-Math.PI/2;ring.position.y=.002;scene.add(ring);
 const lib=createBreedLibrary({THREE,GLTFLoader,clone});
 for(const row of CLUB_HORSE_BREEDS)lib.alias(row[0],row[7].body,row);
+registerExpansionHorseCoats();
+for(const row of EXPANSION_HORSE_BREEDS)lib.alias(row[0],row[7].body,row);
 const wingLibrary=createEquineWingLibrary(THREE,{camera,sun});
 const fantasyTypes={aether:'galaxy',sunspear:'fire',meadowlight:'aurora',tempest:'shadow',eclipse:'eclipse',glacier:'ice',celestial:'galaxy',ember:'fire',frost:'ice',aurora:'aurora',phoenix:'fire',shadowmare:'shadow',frostdrake:'ice',emberdrake:'fire',amethyst:'galaxy',stormdrake:'shadow',verdant:'aurora'};
 const dragonKeys=new Set(['frostdrake','emberdrake','amethyst','stormdrake','verdant']);
@@ -102,7 +107,7 @@ function fitBodyCamera(direction){
 function frameBody(side=false){headView=false;controls.resetMotion();controls.autoRotate=false;$('turn').setAttribute('aria-pressed','false');controls.minDistance=1.4*framing;fitBodyCamera(new THREE.Vector3(side?-1:-.72,.13,side?0:.69));}
 function disposeSkeletons(root){const skeletons=new Set();root.traverse(o=>{if(o.isSkinnedMesh)skeletons.add(o.skeleton);});for(const skeleton of skeletons)skeleton.dispose();}
 function disposeOwned(root){disposeSkeletons(root);const geometries=new Set(),materials=new Set(),textures=new Set();root.traverse(o=>{if(o.isMesh){geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material])if(m)materials.add(m);}});for(const m of materials){for(const value of Object.values(m))if(value?.isTexture)textures.add(value);m.dispose();}for(const t of textures)t.dispose();for(const g of geometries)g.dispose();}
-function release(){for(const [mesh,material]of originals)mesh.material=material;motion?.dispose?.();groom?.dispose();accessories?.dispose();if(horse){scene.remove(horse);if(horse.userData.owned||horse.userData.hero)disposeOwned(horse);else disposeSkeletons(horse);}for(const m of ownedMaterials)m.dispose();originals.clear();ownedMaterials=[];horse=null;body=null;instance=null;motion=null;groom=null;accessories=null;}
+function release(){for(const [mesh,material]of originals)mesh.material=material;motion?.dispose?.();groom?.dispose();instance?.nativeCustomization?.dispose();accessories?.dispose();if(horse){scene.remove(horse);if(horse.userData.owned||horse.userData.hero)disposeOwned(horse);else disposeSkeletons(horse);}for(const m of ownedMaterials)m.dispose();originals.clear();ownedMaterials=[];horse=null;body=null;instance=null;motion=null;groom=null;accessories=null;}
 async function select(key){const request=++ticket;loading=true;$('status').textContent='Bringing your horse…';let next=null,nextGroom=null,nextMotion=null,nextAccessories=null;try{
  let nextBody,nextInstance=null,nextMaterials=[],info,spec;
  if(key==='artist-study'){
@@ -116,6 +121,8 @@ async function select(key){const request=++ticket;loading=true;$('status').textC
   if(!spec.artistBreed&&!spec.nativeBreed)throw new Error('The selected horse is not from the breed collection: '+key);
   next=new THREE.Group();next.add(inst.scene);if(!spec.nativeBreed)next.scale.setScalar(spec.withersM/1.45);next.updateMatrixWorld(true);nextBody=inst.skin;
   if(spec.nativeBreed){
+   const expansionRow=EXPANSION_HORSE_BREEDS.find(row=>row[0]===key);
+   if(expansionRow&&!expansionRow[7].coat)configureNativeCustomization({THREE,rig:inst,defaults:expansionRow,horse:{id:key,breed:key,colors:{body:expansionRow[5],mane:expansionRow[6]},mark:expansionRow[7].mark,markCol:expansionRow[7].markCol}});
    nextMotion=createNativeHorseMotion({THREE,root:inst.nativeRoot,clips:inst.animations,profile:spec});nextMotion.set(spec.nativeDragon?'stand':'rest');nextAccessories=inst.nativeFantasy;
    nextGroom=nativeGroomFacade({THREE,scene:inst.scene,skin:inst.skin,mount:inst.scene,profile:spec});
   }else{
@@ -123,12 +130,12 @@ async function select(key){const request=++ticket;loading=true;$('status').textC
    const hairMeshes=new Set();inst.scene.traverse(o=>{if(/groom|mane|forelock|tailhair|feather/i.test(o.name))o.traverse(child=>{if(child.isMesh)hairMeshes.add(child);});});
    const meshes=[...hairMeshes];nextGroom={meshes,stats:{meshes:meshes.length},update(){},dispose(){}};
   }
-  const clonedMaterials=new Set();inst.scene.traverse(o=>{if(o.isMesh)for(const material of Array.isArray(o.material)?o.material:[o.material])if(material)clonedMaterials.add(material);});nextMaterials=[...clonedMaterials];
+  const clonedMaterials=new Set(inst.materials);inst.scene.traverse(o=>{if(o.isMesh)for(const material of Array.isArray(o.material)?o.material:[o.material])if(material)clonedMaterials.add(material);});nextMaterials=[...clonedMaterials];
   const positions=nextBody.geometry.attributes.position.array,bytes=new Uint8Array(positions.buffer,positions.byteOffset,positions.byteLength);let geometryHash=2166136261;for(const byte of bytes)geometryHash=Math.imul(geometryHash^byte,16777619);
   info={file:spec.file,sha256:spec.sha256,artist:spec.nativeBreed?spec.artist:'b2przemo',license:spec.nativeBreed?spec.license:'CC BY 3.0',current:true,artistBreed:!!spec.artistBreed,nativeBreed:!!spec.nativeBreed,referenceMotion:!!spec.referenceMotion,geometryHash:(geometryHash>>>0).toString(16),conformation:spec.conformation,coat:spec.coat,bones:inst.bones.length,bodyMesh:nextBody.name,availableClips:(spec.nativeBreed||spec.referenceMotion)?Object.values(spec.nativeGaits).map(g=>g.clip).concat([spec.nativeIdleClip,spec.nativeSitClip,spec.nativeJump?.clip].filter(Boolean)):null,supportedModes:(spec.nativeBreed||spec.referenceMotion)?nextMotion.availableModes.filter(mode=>mode!=='stand'||spec.nativeIdleClip):null};
 
  }
- if(request!==ticket){nextMotion?.dispose?.();nextGroom?.dispose();nextAccessories?.dispose();if(next.userData.owned||next.userData.hero)disposeOwned(next);else disposeSkeletons(next);for(const m of nextMaterials)m.dispose();return;}
+ if(request!==ticket){nextMotion?.dispose?.();nextGroom?.dispose();nextInstance?.nativeCustomization?.dispose();nextAccessories?.dispose();if(next.userData.owned||next.userData.hero)disposeOwned(next);else disposeSkeletons(next);for(const m of nextMaterials)m.dispose();return;}
  release();horse=next;groom=nextGroom;body=nextBody;motion=nextMotion;instance=nextInstance;ownedMaterials=nextMaterials;assetInfo=info;accessories=nextAccessories;scene.add(horse);horse.updateMatrixWorld(true);horse.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=false;originals.set(o,o.material);}});
  const bounds=new THREE.Box3().setFromObject(horse);horseHeight=bounds.max.y;heroHead.set(0,horseHeight*.86,bounds.max.z-(bounds.max.z-bounds.min.z)*.13);if(spec.headCenter)heroHead.fromArray(spec.headCenter);selectedKey=key;withers=spec.withersM||1.52;
  $('name').textContent=spec.name;$('edition').textContent=key==='artist-study'?'Approved original study':categoryFor(key,spec);
@@ -145,7 +152,7 @@ async function select(key){const request=++ticket;loading=true;$('status').textC
  const url=new URL(location.href),requestedGait=url.searchParams.get('gait');if(requestedGait&&[...$('motion').options].some(o=>o.value===requestedGait)){motion.set(requestedGait,{lead:$('lead').value});$('motion').value=requestedGait;}url.searchParams.set('horse',key);history.replaceState(null,'',url);
  }catch(e){if(request!==ticket)return;loading=false;$('status').textContent='This horse could not load. Select it again to retry.';console.error(e);if(next&&next!==horse){nextMotion?.dispose?.();nextGroom?.dispose();nextAccessories?.dispose();if(next.userData.owned||next.userData.hero)disposeOwned(next);else disposeSkeletons(next);}}}
 function setCredit(spec){const credit=$('credit');credit.replaceChildren();const native=spec.nativeBreed,artist=native?spec.artist:'b2przemo',url=native?spec.sourceUrl:'https://blendswap.com/blend/13903',license=native?spec.license:'CC BY 3.0',licenseUrl=native?spec.licenseUrl:'https://creativecommons.org/licenses/by/3.0/';credit.append(document.createTextNode('Model by '));for(const [label,href]of [[artist,url],[license,licenseUrl]]){const a=document.createElement('a');a.textContent=label;a.href=href;a.target='_blank';a.rel='noopener';credit.append(a,document.createTextNode(label===artist?', ':'.'));}if(spec.referenceMotion){credit.append(document.createTextNode(' Motion adapted from '));const a=document.createElement('a');a.textContent='WildMesh 3D · CC BY-NC 4.0';a.href='https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4';a.target='_blank';a.rel='noopener';credit.append(a);}credit.hidden=false;}
-function categoryFor(key,spec){if(spec.dragonVariant)return 'Dragons';if(spec.nativeBreed&&!spec.nativeRoster)return 'New horses and dragons';if(key==='bay-sporthorse')return 'Ranch sporthorse';if(/^(frostdrake|emberdrake|amethyst|stormdrake|verdant)$/.test(key))return 'Dragon horses';if(spec.family==='fantasy'||spec.fantasy||(!spec.nativeRoster&&(spec.foundation||spec.foundationKey))||['aether','sunspear','meadowlight','tempest','eclipse','glacier','unicorn','pegasus','celestial','ember','frost','aurora','phoenix','shadowmare','kestrel'].includes(key))return 'Mythical horses';return 'Horses and ponies';}
+function categoryFor(key,spec){if(EXPANSION_HORSE_BREEDS.some(row=>row[0]===key))return 'New arrivals';if(spec.dragonVariant)return 'Dragons';if(spec.nativeBreed&&!spec.nativeRoster)return 'New horses and dragons';if(key==='bay-sporthorse')return 'Ranch sporthorse';if(/^(frostdrake|emberdrake|amethyst|stormdrake|verdant)$/.test(key))return 'Dragon horses';if(spec.family==='fantasy'||spec.fantasy||(!spec.nativeRoster&&(spec.foundation||spec.foundationKey))||['aether','sunspear','meadowlight','tempest','eclipse','glacier','unicorn','pegasus','celestial','ember','frost','aurora','phoenix','shadowmare','kestrel'].includes(key))return 'Mythical horses';return 'Horses and ponies';}
 function nativeMovementSummary(spec){const modes=[...new Set(Object.keys(spec.nativeGaits||{}).map(key=>/^(canter|gallop)/.test(key)?key.replace(/(Left|Right)$/,''):key)),...(spec.nativeJump?['jump']:[])];return modes.map((mode,i)=>i?mode:mode[0].toUpperCase()+mode.slice(1)).join(', ')||(spec.nativeIdleClip?'Idle only':'Standing pose');}
 function addEntry(key,name,spec={}){const b=document.createElement('button');b.className='breed-entry';b.dataset.key=key;b.dataset.category=categoryFor(key,spec);b.dataset.search=(name+' '+(spec.family||'')+' '+(spec.coat?.label||'')).toLowerCase();b.setAttribute('aria-pressed','false');
  const thumbnail=document.createElement('img');thumbnail.className='breed-thumb';thumbnail.alt='';thumbnail.loading='lazy';thumbnail.dataset.key=key;setThumbnail(thumbnail);thumbnail.onerror=()=>{thumbnail.hidden=true;};
@@ -155,7 +162,7 @@ function label(text){const e=document.createElement('div');e.className='catalog-
 
 const requested=new URLSearchParams(location.search).get('horse'),initial=requested==='hero'?'bay-sporthorse':requested==='artist-study'?'white-western':requested||'white-western';
 const catalog=lib.manifestReady.then(m=>{
- const entries=Object.entries(m.breeds);for(const category of ['New horses and dragons','Ranch sporthorse','Horses and ponies','Mythical horses','Dragon horses','Dragons']){const grouped=entries.filter(([key,spec])=>categoryFor(key,spec)===category);if(!grouped.length)continue;label(category);for(const [key,spec]of grouped)addEntry(key,spec.name,spec);}
+ const entries=Object.entries(m.breeds);for(const category of ['New arrivals','New horses and dragons','Ranch sporthorse','Horses and ponies','Mythical horses','Dragon horses','Dragons']){const grouped=entries.filter(([key,spec])=>categoryFor(key,spec)===category);if(!grouped.length)continue;label(category);for(const [key,spec]of grouped)addEntry(key,spec.name,spec);}
  $('count').textContent=entries.length+' game models';return m;
 }).catch(e=>{$('count').textContent='The breed collection could not load. Reload to retry.';console.error(e);});
 catalog.then(m=>{if(ticket===0)select(m?.breeds[initial]?initial:'white-western');});
