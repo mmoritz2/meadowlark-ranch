@@ -181,7 +181,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         const spreading=!village&&grove+rnd(t.x,t.z,53)*.65>-.32;
         if(spreading)return grove>.55?variants[6]:variants[5];
         // Keep earlier grove choices, young trees, village and cold margins exact.
-        const matureFallback=!village&&!t.authoredVillage&&['oak','blossom'].includes(t.kind)
+        const matureFallback=!village&&!t.authoredVillage&&['oak','birch','blossom'].includes(t.kind)
           &&t.height>=7.2&&t.height<=12.5&&coldWoodlandWeights(t.x,t.z).weight<=.08;
         return matureFallback?matureLeafSource:variants[0];
       }
