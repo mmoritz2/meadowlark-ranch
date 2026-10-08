@@ -1,6 +1,6 @@
 /* Focus ownership for full-screen game menus. Rendering and Back/Escape actions stay
    with each screen; no game/save state is changed here. */
-const CONTROLS='button,input,select,textarea,a[href],[tabindex]';
+const CONTROLS='button,input,select,textarea,summary,a[href],[tabindex]';
 const CUSTOM=['seHs','seEv','seJy','seOv','seChar'];
 export function installMenuDialogFocus(G){
  if(G.menuDialogFocus)return G.menuDialogFocus;
@@ -94,7 +94,7 @@ export function installMenuDialogFocus(G){
   if(!current||external()||!inside(e.target)||e.key==='Escape')return;
   // Native text/select editing and button activation belong to the menu. Arrow
   // navigation on cards still reaches the screenKey hooks in the game shell.
-  if(e.target.matches('input,select,textarea')||e.target.isContentEditable||(['Enter',' ','Spacebar'].includes(e.key)&&e.target.closest('button,a[href],[role="button"]')))e.stopPropagation();
+  if(e.target.matches('input,select,textarea')||e.target.isContentEditable||(['Enter',' ','Spacebar'].includes(e.key)&&e.target.closest('button,summary,a[href],[role="button"]')))e.stopPropagation();
  };
  doc.addEventListener('focusin',onFocus,true);doc.addEventListener('keydown',onKey,true);doc.addEventListener('keydown',onBubble);
  const api={sync,suspend:()=>release(),get active(){return current?.root.id||null;},dispose(){disposed=true;release();visibility.disconnect();contents.disconnect();structure.disconnect();doc.removeEventListener('focusin',onFocus,true);doc.removeEventListener('keydown',onKey,true);doc.removeEventListener('keydown',onBubble);delete G.menuDialogFocus;}};

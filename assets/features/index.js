@@ -1,4 +1,4 @@
-import * as menuPolish from './menu-polish.js?v=menus-polish-20261008';
+import * as menuPolish from './menu-polish.js?v=menus-polish-20261008b';
 import * as tackSummon from './tack-summon.js?v=menus-polish-20261008';
 import * as tackCollection from './tack-collection.js?v=menus-polish-20261008';
 import * as paidTack from './paid-tack.js?v=tack-summon-20261007';

@@ -12,14 +12,14 @@ class Element{
  get id(){return this.getAttribute('id')||'';}set id(v){this.setAttribute('id',v);}
  get hidden(){return this.hasAttribute('hidden');}set hidden(v){v?this.setAttribute('hidden',''):this.removeAttribute('hidden');}
  get inert(){return this.hasAttribute('inert');}set inert(v){v?this.setAttribute('inert',''):this.removeAttribute('inert');}
- get tabIndex(){return this.hasAttribute('tabindex')?Number(this.getAttribute('tabindex')):/BUTTON|INPUT|SELECT|TEXTAREA/.test(this.tagName)||this.tagName==='A'&&this.hasAttribute('href')?0:-1;}
+ get tabIndex(){return this.hasAttribute('tabindex')?Number(this.getAttribute('tabindex')):/BUTTON|INPUT|SELECT|TEXTAREA|SUMMARY/.test(this.tagName)||this.tagName==='A'&&this.hasAttribute('href')?0:-1;}
  get dataset(){return Object.fromEntries([...this.attrs].filter(([k])=>k.startsWith('data-')).map(([k,v])=>[k.slice(5).replace(/-([a-z])/g,(_,c)=>c.toUpperCase()),v]));}
  get isConnected(){return this===document?.body||!!this.parentElement?.isConnected;}
  setAttribute(k,v){if(this.attrs.get(k)===String(v))return;this.attrs.set(k,String(v));mutation(this,'attributes',k);}getAttribute(k){return this.attrs.has(k)?this.attrs.get(k):null;}hasAttribute(k){return this.attrs.has(k);}removeAttribute(k){if(this.attrs.delete(k))mutation(this,'attributes',k);}
  append(...els){for(const el of els){el.remove();this.children.push(el);el.parentElement=this;mutation(this,'childList');}}appendChild(el){this.append(el);return el;}
  remove(){if(this.parentElement){const p=this.parentElement;p.children=p.children.filter(x=>x!==this);this.parentElement=null;mutation(p,'childList');}}
  contains(el){return el===this||this.children.some(c=>c.contains(el));}
- getClientRects(){for(let p=this;p;p=p.parentElement){if(p.hidden||p.style.display==='none'||p.style.visibility==='hidden')return [];if(!p.ignoreMenuCSS&&['seHs','seEv','seJy','seOv','seChar','seMenu'].includes(p.id)&&!p.classList.contains('on'))return [];if(p.id==='shsModal'&&!p.parentElement?.classList.contains('m'))return [];}return this.isConnected?[{}]:[];}
+ getClientRects(){for(let p=this;p;p=p.parentElement){if(p.hidden||p.style.display==='none'||p.style.visibility==='hidden')return [];if(p.parentElement?.tagName==='DETAILS'&&!p.parentElement.hasAttribute('open')&&p.tagName!=='SUMMARY')return [];if(!p.ignoreMenuCSS&&['seHs','seEv','seJy','seOv','seChar','seMenu'].includes(p.id)&&!p.classList.contains('on'))return [];if(p.id==='shsModal'&&!p.parentElement?.classList.contains('m'))return [];}return this.isConnected?[{}]:[];}
  matches(sel){return sel.split(',').some(part=>{let s=part.trim();for(const m of [...s.matchAll(/:not\(([^)]+)\)/g)])if(this.matches(m[1]))return false;s=s.replace(/:not\([^)]+\)/g,'');if(s.includes(':disabled')){if(!this.disabled)return false;s=s.replace(':disabled','');}const tag=s.match(/^[a-z]+/i)?.[0];if(tag&&this.tagName!==tag.toUpperCase())return false;for(const m of s.matchAll(/#([\w-]+)/g))if(this.id!==m[1])return false;for(const m of s.matchAll(/\.([\w-]+)/g))if(!this.classList.contains(m[1]))return false;for(const m of s.matchAll(/\[([\w-]+)(?:="?([^"\]]+)"?)?\]/g))if(!this.hasAttribute(m[1])||(m[2]!==undefined&&this.getAttribute(m[1])!==m[2]))return false;return true;});}
  querySelectorAll(sel){const out=[];for(const c of this.children){if(c.matches(sel))out.push(c);out.push(...c.querySelectorAll(sel));}return out;}querySelector(sel){return this.querySelectorAll(sel)[0]||null;}
  closest(sel){for(let el=this;el;el=el.parentElement)if(el.matches(sel))return el;return null;}
@@ -36,7 +36,7 @@ const flush=async()=>{for(let i=0;i<5;i++)await Promise.resolve();};
  setup();const {installMenuDialogFocus}=await import('../assets/menu-dialog-focus.js');
  const hud=node('div','seHudRoot'),menuBtn=node('button','seMenuBtn',hud),canvas=node('canvas','world'),preInert=node('div','locked');preInert.inert=true;preInert.setAttribute('aria-hidden','false');
  const top=node('div','seFrameTop');top.style.display='none';const back=node('button','back',top),close=node('button','close',top);
- const panel=node('div','settingsPanel');panel.classList.add('fpanel');panel.style.display='none';panel.setAttribute('role','region');panel.setAttribute('aria-label','Original label');const search=node('input','search',panel),save=node('button','save',panel);
+ const panel=node('div','settingsPanel');panel.classList.add('fpanel');panel.style.display='none';panel.setAttribute('role','region');panel.setAttribute('aria-label','Original label');const search=node('input','search',panel),details=node('details','advanced',panel),summary=node('summary','advanced-summary',details),detailAction=node('button','advanced-action',details),save=node('button','save',panel);
  const marketTop=node('div','seMkTop');marketTop.style.display='none';const marketBack=node('button','market-back',marketTop),wallet=node('div','market-wallet',marketTop);
  const shop=node('div','shopPanel');shop.classList.add('fpanel','se-mk');shop.style.display='none';const category=node('h1','market-category',shop),shopAction=node('button','shop-action',shop);category.textContent='Breeds';
  const source=node('div','stablePanel');source.classList.add('fpanel','se-covered');source.inert=true;source.setAttribute('aria-hidden','true');
@@ -54,6 +54,19 @@ const flush=async()=>{for(let i=0;i<5;i++)await Promise.resolve();};
  let e=emit(panel,'keydown',{key:'Tab',code:'Tab'});check(e.defaultPrevented&&document.activeElement===back,'first Tab reaches shared Back');
  emit(back,'keydown',{key:'Tab',code:'Tab',shiftKey:true});check(document.activeElement===save,'Shift Tab wraps from shared Back to last menu control');
  emit(save,'keydown',{key:'Tab',code:'Tab'});check(document.activeElement===back,'forward Tab wraps without reaching browser chrome');
+ search.focus();emit(search,'keydown',{key:'Tab',code:'Tab'});
+ check(document.activeElement===summary&&!summary.hasAttribute('tabindex'),'native summary is reachable by Tab without an authored tabindex');
+ emit(summary,'keydown',{key:'Tab',code:'Tab'});check(document.activeElement===save,'collapsed disclosure children remain outside the Tab order');
+ emit(save,'keydown',{key:'Tab',code:'Tab',shiftKey:true});check(document.activeElement===summary,'Shift Tab returns to native disclosure control');
+ e=emit(summary,'keydown',{key:'Enter',code:'Enter'});check(!e.defaultPrevented&&e.stopped,'summary Enter preserves native disclosure activation and cannot reach game hotkeys');
+ // Model the browser's native, uncanceled disclosure toggle; subsequent Tab
+ // traversal must discover newly visible controls without rebuilding the menu.
+ if(!e.defaultPrevented)details.setAttribute('open','');
+ emit(summary,'keydown',{key:'Tab',code:'Tab'});check(document.activeElement===detailAction,'expanded disclosure content joins the menu focus order immediately');
+ emit(detailAction,'keydown',{key:'Tab',code:'Tab',shiftKey:true});
+ e=emit(summary,'keydown',{key:' ',code:'Space'});check(!e.defaultPrevented&&e.stopped,'summary Space keeps native activation without triggering riding or jump');
+ if(!e.defaultPrevented)details.removeAttribute('open');
+ emit(summary,'keydown',{key:'Tab',code:'Tab'});check(document.activeElement===save,'closing disclosure removes its contents from the focus order again');
  search.focus();e=emit(search,'keydown',{key:'w',code:'KeyW'});check(!e.defaultPrevented&&e.stopped,'typing stays native and does not reach riding shortcuts');
  save.focus();e=emit(save,'keydown',{key:' ',code:'Space'});check(!e.defaultPrevented&&e.stopped,'button Space retains default activation without jumping');
  e=emit(save,'keydown',{key:'Escape',code:'Escape'});check(!e.defaultPrevented&&!e.stopped,'Escape remains owned by existing close/back logic');

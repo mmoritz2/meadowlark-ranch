@@ -1,4 +1,4 @@
-import {installMenuDialogFocus} from '../menu-dialog-focus.js?v=menus-polish-20261008';
+import {installMenuDialogFocus} from '../menu-dialog-focus.js?v=menus-polish-20261008b';
 export const id='menu-polish';
 export function install(G){
  for(const [id,file] of [['menuSystemCSS','menu-system.css'],['menuDestinationsCSS','menu-destinations.css']]){
