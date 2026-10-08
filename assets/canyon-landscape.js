@@ -108,6 +108,27 @@ function oasisPrincipalSeat(x,z,relief){
  const edge=crestSmooth(-155,-153,x)*(1-crestSmooth(-123,-121,x))*crestSmooth(137,139,z)*(1-crestSmooth(151,153,z));
  return Math.min(Math.max(0,relief-2.2),cut*edge*crestSmooth(2.2,4.5,relief));
 }
+// A lower connected crown has broad unequal shoulders around one wide saddle.
+// Controls are [x,z,halfWidth,relief rise]; the profile only removes terrain.
+// Actual scan-foot terrain is exact through canonical Z row150.390625; adjacent backing may change.
+const oasisUpperRidgeline=[[-179,158,18,14],[-170,160,21,20],[-159,160,23,14.5],[-145,159,23,19],[-132,157,23,14.5],[-123,157,20,14]];
+function oasisUpperCrown(x,z,relief){
+ if(x<=-184||x>=-119||z<=150.4||z>=194||relief<=8)return relief;
+ let keep=crestSmooth(-184,-178,x)*(1-crestSmooth(-127,-119,x));
+ keep*=crestSmooth(150.4,153,z)*(1-crestSmooth(186,194,z))*crestSmooth(8,16,relief);
+ keep*=crestSmooth(30,35,Math.hypot(x+200,z-158));
+ keep*=crestSmooth(23,29,lineDistance(x,z,oasisFrontRoadSegments));
+ keep*=crestSmooth(21,28,lineDistance(x,z,derbySegments));
+ keep*=crestSmooth(11,17,lineDistance(x,z,cutSegments));
+ if(keep===0)return relief;
+ let a=oasisUpperRidgeline[0],b=a;
+ for(let i=1;i<oasisUpperRidgeline.length;i++){b=oasisUpperRidgeline[i];if(x<=b[0])break;a=b;}
+ const t=a===b?0:crestSmooth(0,1,(x-a[0])/(b[0]-a[0]));
+ const centre=a[1]+(b[1]-a[1])*t,width=a[2]+(b[2]-a[2])*t,rise=a[3]+(b[3]-a[3])*t;
+ const transverse=Math.abs(z-centre)/width;
+ const authored=rise*(1-.28*crestSmooth(0,1,transverse));
+ return relief-Math.max(0,relief-authored)*keep;
+}
 export function canyonRelief(x,z){
  let height=0,oasisUpperDelta=0;
  for(const r of prepared){
@@ -131,7 +152,8 @@ export function canyonRelief(x,z){
  const retained=relief-oasisCrestDepression(x,z,relief);
  const face=retained+oasisUpperDelta*keepLandmarks(x,z)*oasisFrontMask(x,z,retained);
  const front=face-oasisFrontDepression(x,z,retained);
- return front-oasisPrincipalSeat(x,z,front);
+ const seated=front-oasisPrincipalSeat(x,z,front);
+ return oasisUpperCrown(x,z,seated);
 }
 // Retire isolated towers swallowed by the connected banks and the open canyon
 // route. Callers still consume their seeded placements, keeping other regions fixed.
