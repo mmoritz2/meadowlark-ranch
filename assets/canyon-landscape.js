@@ -129,14 +129,40 @@ function oasisUpperCrown(x,z,relief){
  const authored=rise*(1-.28*crestSmooth(0,1,transverse));
  return relief-Math.max(0,relief-authored)*keep;
 }
+// Broad eroded countryside shoulders. Unequal retained crests flank diagonal
+// gullies in the same canonical height field; the original route masks remain.
+const countrysideBanks={
+ 'north-rim':{front:-1,spine:[[-18,12,.10],[0,22,.12],[22,18,.20],[46,24,.02],[73,17.5,.18],[99,23,.10],[122,18.5,0],[147,14,.16],[168,6,.12]],cuts:[[18,7,5],[54,8,5.8],[88,7,6.5],[122,9,4.6]]},
+ 'western-wall':{front:-1,spine:[[-13,8,.02],[0,18,.13],[17,15,.18],[30,18.5,.06],[47,12.5,.18],[64,5,.10]],cuts:[[8,6.5,5],[28,6,4.5],[44,6,3.8]]},
+ 'eastern-wall':{front:1,spine:[[-10,9,.05],[0,17,.12],[13,18,.02],[25,12,.14],[39,5,.02]],cuts:[[-6,5.5,4.5],[10,4.5,5.8],[24,6,3.8]]}
+};
+function countrysideBankHeight(r,best,side,along,edge,legacyHeight){
+ const bank=countrysideBanks[r.id];let a=bank.spine[0],b=a;
+ for(let i=1;i<bank.spine.length;i++){b=bank.spine[i];if(along<=b[0])break;a=b;}
+ const t=a===b?0:crestSmooth(0,1,(along-a[0])/(b[0]-a[0]));
+ const rise=a[1]+(b[1]-a[1])*t,offset=a[2]+(b[2]-a[2])*t;
+ const radial=Math.sqrt(Math.max(0,best*best-side*side)+(side-bank.front*offset)**2);
+ const rear=1-crestSmooth(0,1.08,radial);
+ const face=1-.26*crestSmooth(0,.36,radial)-.48*crestSmooth(.40,.63,radial)-.26*crestSmooth(.62,1.08,radial);
+ const facing=side*bank.front,blend=crestSmooth(-.10,.25,facing);
+ const shoulder=(rear+(face-rear)*blend)*(1-crestSmooth(.91,1.08,edge));
+ let gully=0;for(const [centre,width,depth] of bank.cuts){
+  const u=(along-centre-facing*6-Math.sin(facing*2+centre*.09)*1.5)/width;
+  if(Math.abs(u)<1)gully+=depth*(1-u*u)**3;
+ }
+ gully*=crestSmooth(-.18,.12,facing)*(1-crestSmooth(.90,1.08,best));
+ return Math.min(legacyHeight,Math.max(0,rise*shoulder-gully));
+}
 export function canyonRelief(x,z){
  let height=0,oasisUpperDelta=0;
  for(const r of prepared){
   if(x<r.minX||x>r.maxX||z<r.minZ||z>r.maxZ)continue;
-  let best=Infinity,crest=0,along=0;
+  let best=Infinity,crest=0,along=0,side=0,bankAlong=0;
   for(const s of r.segments){const t=closest(x,z,s),w=s.a[2]+(s.b[2]-s.a[2])*t;
    const d=Math.hypot(x-s.a[0]-t*s.dx,z-s.a[1]-t*s.dz)/w;
-   if(d<best){best=d;crest=s.a[3]+(s.b[3]-s.a[3])*t;along=s.run+s.len*t;}
+   if(d<best){best=d;crest=s.a[3]+(s.b[3]-s.a[3])*t;along=s.run+s.len*t;
+    side=((x-s.a[0]-t*s.dx)*(-s.dz)+(z-s.a[1]-t*s.dz)*s.dx)/(s.len*w);
+    bankAlong=s.run+((x-s.a[0])*s.dx+(z-s.a[1])*s.dz)/s.len;}
   }
   // Irregular buttresses and recessed beds keep the banks from being capsules.
   const cleft=r.clefts.reduce((n,c)=>n+.22*Math.exp(-Math.pow((along-c)/4.5,2)),0);
@@ -144,7 +170,8 @@ export function canyonRelief(x,z){
   if(edge>=1.08)continue;
   const cap=1-.20*smooth(.34,.52,edge)-.62*smooth(.57,.82,edge)-.18*smooth(.81,1.08,edge);
   const crown=.94+.04*Math.sin(along*.18)+.025*Math.sin(x*.24+z*.19)-cleft*.28;
-  const ridgeHeight=Math.max(0,crest*cap*crown);
+  let ridgeHeight=Math.max(0,crest*cap*crown);
+  if(r.id!=='oasis-butte')ridgeHeight=countrysideBankHeight(r,best,side,bankAlong,edge,ridgeHeight);
   if(r.id==='oasis-butte')oasisUpperDelta=Math.max(0,crest*(1-crestSmooth(.18,1.08,edge))*crown)-ridgeHeight;
   height=Math.max(height,ridgeHeight);
  }
@@ -186,8 +213,26 @@ export function createCanyonLandscape({THREE,scene,heightAt,terrainStep,material
    vec4 cliffTriplanar(sampler2D tex){vec3 w=pow(abs(normalize(canyonNormal)),vec3(6.0));w/=max(dot(w,vec3(1.0)),.001);
     return cliffSample(tex,canyonPosition.zy)*w.x+cliffSample(tex,canyonPosition.xz)*w.y+cliffSample(tex,canyonPosition.xy)*w.z;}
   `+sh.fragmentShader;
-  sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',"vec4 canyonRock=cliffTriplanar(map); float canyonGrey=dot(canyonRock.rgb,vec3(.2126,.7152,.0722)); canyonRock.rgb=mix(canyonRock.rgb,mix(canyonRock.rgb,vec3(canyonGrey),.64)*vec3(.90,.88,.84),canyonTone); diffuseColor*=canyonRock;");
-  sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>','diffuseColor.a*=canyonCover;\n#include <alphatest_fragment>');
+  sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',`
+   vec4 canyonRock=cliffTriplanar(map);float canyonGrey=dot(canyonRock.rgb,vec3(.2126,.7152,.0722));
+   // The three temperate banks expose quieter grey-brown mineral, retaining
+   // the photographed layers. Oasis keeps its scan-matched brown stone.
+   vec3 temperateRock=mix(canyonRock.rgb,vec3(canyonGrey),.88)*vec3(.91,.90,.87);
+   vec3 oasisRock=mix(canyonRock.rgb,vec3(canyonGrey),.64)*vec3(.90,.88,.84);
+   canyonRock.rgb=mix(temperateRock,oasisRock,canyonTone);diffuseColor*=canyonRock;`);
+  sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>',`
+   // Turf and litter remain the existing underlying surface on gentle bank
+   // shoulders. True geometric grade gives a broad rooted stone transition.
+   vec3 bankNormal=normalize(canyonNormal);
+   float bankGrade=length(bankNormal.xz)/max(abs(bankNormal.y),.001);
+   // Existing photographed mineral beds break the soil/rock boundary without
+   // another texture fetch. Thin patches persist across gentle shoulders.
+   float bankBed=smoothstep(.12,.38,canyonGrey);
+   float bankExposure=smoothstep(.22,.85,bankGrade+(bankBed-.5)*.28);
+   float bankShoulder=.20*bankBed*(1.0-smoothstep(.08,.30,bankGrade));
+   float bankRoot=smoothstep(.12,.82,canyonCover);
+   diffuseColor.a*=mix(max(bankExposure,bankShoulder)*bankRoot,canyonCover,canyonTone);
+   #include <alphatest_fragment>`);
   sh.fragmentShader=sh.fragmentShader.replace('#include <roughnessmap_fragment>','float roughnessFactor=roughness*cliffTriplanar(roughnessMap).g;');
   sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`
    vec3 cn=normalize(canyonNormal),cw=pow(abs(cn),vec3(6.0));cw/=max(dot(cw,vec3(1.0)),.001);
@@ -196,7 +241,7 @@ export function createCanyonLandscape({THREE,scene,heightAt,terrainStep,material
    vec3 cliffNormal=normalize(vec3(cx.z*sign(cn.x),cx.y,cx.x)*cw.x+vec3(cy.x,cy.z*sign(cn.y),cy.y)*cw.y+vec3(cz.x,cz.y,cz.z*sign(cn.z))*cw.z);
    normal=normalize(mat3(viewMatrix)*normalize(mix(cn,cliffNormal,.62)));`);
  };
- surface.customProgramCacheKey=()=> 'canyon-terrain-triplanar-oasis-2';
+ surface.customProgramCacheKey=()=> 'canyon-terrain-triplanar-countryside-4';
  const fields=[],barriers=[],seen=new Set(),step=terrainStep;
  for(const r of prepared){
   const x0=Math.floor((r.minX+500)/step)*step-500,z0=Math.floor((r.minZ+500)/step)*step-500;

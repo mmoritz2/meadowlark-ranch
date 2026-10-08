@@ -595,10 +595,9 @@ export function install(G){
    if(REG.snow>0.02)_fog.lerp(_tmp.setHex(0xdfe8f0).lerp(C_NIGHT_HOR,1-K.day).multiplyScalar(lum),REG.snow*0.45);
    _fogSm.lerp(_fog,blend(2.2));      // so a shower arriving is a change in weather, not a cut
    scene.fog.color.copy(_fogSm);
-   /* Trimmed from the first pass: at 0.00105 of extra haze the golden-hour ridges dissolved
-      into the glow behind them and the basin lost its depth at exactly the hour it should
-      have the most. Enough haze to separate the ridges, not enough to eat them. */
-   let d=rain?0.0052:0.00092+0.00062*K.horizon+0.00060*K.dawn+0.00045*K.night;
+   /* Clear air keeps nearby subjects crisp and softens the distant ridges.
+      Smaller dusk/dawn additions retain the horizon through warm light. */
+   let d=rain?0.0052:0.00145+0.00035*K.horizon+0.00040*K.dawn+0.00018*K.night;
    d+=REG.marsh*0.00110*(1-K.day*0.4)+REG.snow*0.00075+REG.amber*0.00030-REG.badland*0.00022+A.desertHaze*0.00050;
    SM.fogD+=(Math.max(0.0006,d)-SM.fogD)*blend(1.1);
    /* Not in VR. ranch3d pulls the fog right in to 0.0075 on entering VR (ranch3d.html:2359) so

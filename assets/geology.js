@@ -1,4 +1,4 @@
-import {dressCanyonSurface} from './canyon-surface.js?v=jointed-canyon-1';
+import {dressCanyonSurface} from './canyon-surface.js?v=countryside-banks-1';
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 /* Deterministic original sedimentary geology. Shapes are local to a ground-level
    origin; callers retain their existing world placement and collision policy. */

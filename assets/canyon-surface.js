@@ -14,8 +14,14 @@ export function dressCanyonSurface(THREE,material) {
     `+shader.fragmentShader;
     for(const [chunk,sampler,uv]of[['map_fragment','map','vMapUv'],['normal_fragment_maps','normalMap','vNormalMapUv'],['roughnessmap_fragment','roughnessMap','vRoughnessMapUv']]){
       const body=THREE.ShaderChunk[chunk].replace(new RegExp('texture2D\\( '+sampler+', '+uv+' \\)','g'),'canyonSample( '+sampler+', '+uv+' )');
-      shader.fragmentShader=shader.fragmentShader.replace('#include <'+chunk+'>',body);
+      // The resident standalone mesas/spires/arch share this photographed
+      // sandstone. Neutral weathering retains bedding/value and opacity.
+      const weathered=chunk==='map_fragment'?body.replace('diffuseColor *= sampledDiffuseColor;',`
+       float weatheredGrey=dot(sampledDiffuseColor.rgb,vec3(.2126,.7152,.0722));
+       sampledDiffuseColor.rgb=mix(sampledDiffuseColor.rgb,vec3(weatheredGrey),.88)*vec3(.91,.90,.87);
+       diffuseColor *= sampledDiffuseColor;`):body;
+      shader.fragmentShader=shader.fragmentShader.replace('#include <'+chunk+'>',weathered);
     }
   };
-  material.customProgramCacheKey=()=> 'canyon-stratified-surface-v1';
+  material.customProgramCacheKey=()=> 'canyon-stratified-surface-v2-neutral';
 }

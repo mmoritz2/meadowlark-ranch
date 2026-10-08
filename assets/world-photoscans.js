@@ -1,4 +1,4 @@
-import {OASIS_FACE} from './canyon-landscape.js?v=oasis-ridge-2';
+import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';
 import {patchOuterFog} from './outer-landscape.js?v=continuous-countryside-1';
 import {installThunderOak} from './thunder-oak-art.js?v=split-oak-1';
 import {installWillowArt} from './willow-art.js?v=weeping-willows-1';
