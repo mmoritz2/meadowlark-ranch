@@ -4,14 +4,44 @@ import {meadowGrazingAt,westMeadowSwardAt,WEST_MEADOW_SWARD_RECOVERY} from './pa
 // Curved ribbon leaves: narrow roots, a fuller lower blade, and a curling tip.
 // The nearby tuft has eight leaves and forty triangles. Middle-distance tufts
 // retain two segments, where the extra curvature is smaller than a pixel.
-export function createGrassTuftGeometry(THREE,{bladeCount=8,segments=3}={}) {
+export function createGrassTuftGeometry(THREE,{bladeCount=8,segments=3,profile='legacy'}={}) {
   const P=[],N=[],C=[],U=[],I=[];
+  const foldedNear=profile==='near-folded-v1'&&bladeCount===8&&segments===3;
   for(let blade=0;blade<bladeCount;blade++) {
     const a=blade*2.39996,spread=.018+(blade%5)*.029;
     const ca=Math.cos(a),sa=Math.sin(a),ox=ca*spread,oz=sa*spread;
     const tall=blade%3!==1,h=tall?.56+(blade%4)*.080:.29+(blade%3)*.045;
     const bend=tall?.14+(blade%3)*.055:.26+(blade%3)*.05,width=.011+(blade%4)*.0023;
     const base=P.length/3,twist=(blade%2?1:-1)*(.25+(blade%3)*.12);
+    if(foldedNear) {
+      // Reuse seven vertices for a tapered outline and one physical crease.
+      // The two coincident crease vertices carry independent facet normals.
+      const t=.57,lean=bend*t*t,drop=(tall?.12:.28)*t*t*t;
+      const heading=a+twist*t,sideX=-Math.sin(heading),sideZ=Math.cos(heading);
+      const half=width*(.52+.78*Math.sin(Math.PI*t*.88))*Math.pow(1-t,.72);
+      const tangent=new THREE.Vector3(ca*2*bend*t,h*(1-3*(tall?.12:.28)*t*t),sa*2*bend*t).normalize();
+      const ridge=new THREE.Vector3(sideX,0,sideZ).cross(tangent).normalize().multiplyScalar(half*.34);
+      const cx=ox+ca*lean,cy=h*(t-drop),cz=oz+sa*lean,rootHalf=width*.52;
+      const leftHalf=half*(.90+(blade%3)*.035),rightHalf=half*(.99-(blade%3)*.035);
+      const points=[
+        [ox+Math.sin(a)*rootHalf,0,oz-Math.cos(a)*rootHalf],
+        [ox-Math.sin(a)*rootHalf,0,oz+Math.cos(a)*rootHalf],
+        [cx+ridge.x,cy+ridge.y,cz+ridge.z],
+        [cx+ridge.x,cy+ridge.y,cz+ridge.z],
+        [cx-sideX*leftHalf,cy,cz-sideZ*leftHalf],
+        [cx+sideX*rightHalf,cy,cz+sideZ*rightHalf],
+        [ox+ca*bend,h*(1-(tall?.12:.28)),oz+sa*bend]
+      ];
+      for(let j=0;j<7;j++) {
+        P.push(...points[j]);N.push(0,0,0);
+        // Preserve the original seven-vertex palette and unused mapless UVs.
+        const t=j===6?1:Math.floor(j/2)/3,side=j===6?0:j%2?1:-1;
+        const shade=.57+.43*Math.sin(t*Math.PI*.5),dry=blade%11===0;
+        C.push(shade*(dry?1.02:.90),shade*(dry?.96:1),shade*(dry?.57:.73));U.push((side+1)/2,t);
+      }
+      for(const k of [0,1,2,0,2,4,1,5,3,4,2,6,3,5,6])I.push(base+k);
+      continue;
+    }
     for(let j=0;j<=segments;j++) {
       const t=j/segments,tip=j===segments,lean=bend*t*t,drop=(tall?.12:.28)*t*t*t;
       const heading=a+twist*t,sideX=-Math.sin(heading),sideZ=Math.cos(heading);
@@ -27,6 +57,20 @@ export function createGrassTuftGeometry(THREE,{bladeCount=8,segments=3}={}) {
       }
       if(j<segments-1){const k=base+j*2;I.push(k,k+1,k+2,k+1,k+3,k+2);}
       else if(j===segments-1){const k=base+j*2;I.push(k,k+1,k+2);}
+    }
+  }
+  if(foldedNear) {
+    // Area-weighted normals derive from the actual Float32 mesh triangles.
+    // Do not substitute an upward lighting normal for the modeled fold.
+    for(let i=0;i<I.length;i+=3) {
+      const a=I[i]*3,b=I[i+1]*3,c=I[i+2]*3;
+      const ux=Math.fround(P[b])-Math.fround(P[a]),uy=Math.fround(P[b+1])-Math.fround(P[a+1]),uz=Math.fround(P[b+2])-Math.fround(P[a+2]);
+      const vx=Math.fround(P[c])-Math.fround(P[a]),vy=Math.fround(P[c+1])-Math.fround(P[a+1]),vz=Math.fround(P[c+2])-Math.fround(P[a+2]);
+      const nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;
+      for(const k of [a,b,c]){N[k]+=nx;N[k+1]+=ny;N[k+2]+=nz;}
+    }
+    for(let i=0;i<N.length;i+=3) {
+      const length=Math.hypot(N[i],N[i+1],N[i+2]);N[i]/=length;N[i+1]/=length;N[i+2]/=length;
     }
   }
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
