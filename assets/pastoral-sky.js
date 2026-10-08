@@ -31,10 +31,11 @@ export function createPastoralSky(THREE) {
       uniform float day,golden,night,rain,time;uniform sampler2D cloudField;uniform int cloudSteps;
       // The cloud field is world-anchored, so the main and reflected camera see
       // the same sky. Smooth deterministic samples replace per-pixel ray jitter.
-      float fieldNoise(vec2 p){
+      vec2 fieldNoiseChannels(vec2 p){
         vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
-        return texture2D(cloudField,(i+f+.5)/256.).r;
+        return texture2D(cloudField,(i+f+.5)/256.).rg;
       }
+      float fieldNoise(vec2 p){return fieldNoiseChannels(p).r;}
       float cloudNoise(vec2 p){
         float coarse=fieldNoise(p)*.57+fieldNoise(p*2.03+11.)*.29+fieldNoise(p*4.07-7.)*.14;
         // Fine detail fades with pixel footprint instead of producing grain at
@@ -54,10 +55,13 @@ export function createPastoralSky(THREE) {
         if(highLayer){
           p=mat2(.94,-.34,.34,.94)*p;
           vec2 warp=vec2(fieldNoise(p*.63+21.),fieldNoise(p*.71-17.))-.5;
-          // Broken wisps, not continuous stripes across the entire dome.
-          shape=cloudNoise(p*vec2(.85,3.8)+warp*1.5);
-          float breaks=smoothstep(.30,.70,fieldNoise(p*.48+9.));
-          alpha=smoothstep(.48,.76,shape)*breaks*.57*(1.-rain*.55);
+          // Existing seeded channels vary the length and thickness of wisps.
+          // One RG sample replaces the former red-only break sample.
+          vec2 shapeField=fieldNoiseChannels(p*.48+9.);
+          vec2 strandScale=vec2(mix(.78,1.14,shapeField.g),mix(2.65,4.20,shapeField.r));
+          shape=cloudNoise(p*strandScale+warp*1.1+vec2(warp.y,-warp.x)*.45);
+          float breaks=smoothstep(.30,.70,shapeField.r)*mix(.42,1.,smoothstep(.18,.72,shapeField.g));
+          alpha=smoothstep(.48,.76,shape)*breaks*.48*(1.-rain*.55);
         }else{
           vec2 warp=vec2(fieldNoise(p*.42+23.),fieldNoise(p*.42-9.))-.5;
           shape=cloudNoise(p+warp*1.6);
@@ -68,7 +72,7 @@ export function createPastoralSky(THREE) {
         float daylight=smoothstep(0.,.55,day);
         float body=smoothstep(.53,.80,shape);
         vec3 lit=mix(vec3(.59,.67,.72),vec3(.90,.92,.94),highLayer? .92:1.-body*.48);
-        lit+=vec3(.07,.06,.04)*pow(max(dot(d,sd),0.),12.);
+        lit+=mix(vec3(.07,.06,.04),vec3(.086,.042,.055),highLayer?.42:0.)*pow(max(dot(d,sd),0.),12.);
         lit=mix(lit,lit*vec3(1.14,.83,.66),golden*.70);
         lit=mix(vec3(.008,.014,.027),lit,daylight);
         lit*=1.-rain*.28;
