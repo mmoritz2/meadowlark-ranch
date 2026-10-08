@@ -302,6 +302,8 @@ export function install(G){
   const def=gauntletDef(k);
   T.RACE_ROUTES[def.route]=def.pts.map(p=>p.slice());
   Object.assign(ev,{route:def.route,limit:def.limit,time:def.limit,par:+(routeLen(def.route)/7.2).toFixed(1)});
+  // The event keeps id gt, but its former outer loop must stop clearing scenery.
+  if(def.route!=='gt'&&!T.EVENTS3.some(e=>e.route==='gt'))delete T.RACE_ROUTES.gt;
   /* events-pvp holds the season's name object by reference and prints it in its own toasts and
      its Events card; writing the new season into that same object keeps them in step without
      reaching into its file. */
