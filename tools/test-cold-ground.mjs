@@ -75,7 +75,7 @@ test('one snow replacement keeps existing material texture slots and static vert
  assert.deepEqual(Object.keys(shader.uniforms).sort(),['terrainRock','terrainForest','forestMask','meadowDetail','stoneDetail','litterDetail','meadowARM','stoneARM','litterARM','wetWeather','terrainSoil','terrainSnow'].sort());
  assert.equal(m.map,grass);assert.equal(m.bumpMap,bump);assert.equal(m.transparent,false);assert.equal(m.depthWrite,true);
  assert.deepEqual(Object.keys(m.userData).sort(),['setPaths','setTrees','wetWeather']);
- assert.equal(m.customProgramCacheKey(),'terrain-biomes-v16-cold-snow');
+ assert.equal(m.customProgramCacheKey(),'terrain-biomes-v17-dry-turf');
  assert.deepEqual(m.defaultAttributeValues.chalkRelief,[0]);
  assert.equal(shader.vertexShader,'attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n#include <begin_vertex>\n      terrainChalkRelief = chalkRelief;\n      terrainPosition = (modelMatrix * vec4(position,1.0)).xyz;\n      terrainNormal = normalize(mat3(modelMatrix) * normal);');
 });

@@ -102,7 +102,7 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v16-cold-snow';
+  material.customProgramCacheKey = () => 'terrain-biomes-v17-dry-turf';
   material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0]};
   material.userData.wetWeather=wetWeather;
   material.onBeforeCompile = sh => {
@@ -457,7 +457,26 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
         vec3 groundARM=texture2D(meadowARM,uv).rgb;
         if(canopy>.1)groundARM=mix(groundARM,texture2D(litterARM,earthUV).rgb,canopy);
         if(rocky>.1)groundARM=mix(groundARM,texture2D(stoneARM,rockUVy).rgb,rocky);
-        roughnessFactor=mix(roughnessFactor,clamp(groundARM.g,.65,1.0),upClose*(1.0-snow));
+        #ifndef OUTER_LANDSCAPE
+          float groundRoughness=clamp(groundARM.g,.65,1.0);
+          // Dry grass keeps the base material's broad, matte response. Fade
+          // back to the sampled substrate at woodland, soil, mineral and
+          // winter edges, before the existing water/rain response below.
+          float dryTurf=(1.0-smoothstep(0.0,1.0,canopy))
+                       *(1.0-smoothstep(0.0,1.0,wear))
+                       *(1.0-smoothstep(0.0,1.0,bank))
+                       *(1.0-smoothstep(0.0,1.0,rocky))
+                       *(1.0-smoothstep(0.0,1.0,canyon))
+                       *(1.0-smoothstep(0.0,1.0,quarters))
+                       *(1.0-smoothstep(0.0,1.0,snow))
+                       *(1.0-smoothstep(0.0,1.0,thawLitter))
+                       *(1.0-smoothstep(0.0,.30,wet*.42))
+                       *(1.0-smoothstep(0.0,.30,rainWet));
+          groundRoughness=mix(groundRoughness,roughnessFactor,dryTurf);
+          roughnessFactor=mix(roughnessFactor,groundRoughness,upClose*(1.0-snow));
+        #else
+          roughnessFactor=mix(roughnessFactor,clamp(groundARM.g,.65,1.0),upClose*(1.0-snow));
+        #endif
         diffuseColor.rgb*=mix(1.0,groundARM.r,.22*upClose*(1.0-snow));
       #endif
       roughnessFactor=mix(roughnessFactor,.43,clamp(wet*.42+rainWet,0.0,.85));
