@@ -668,6 +668,7 @@ import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} fro
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
 import {installUndergrowth} from './assets/undergrowth.js?v=dry-foothills-1';
+import {installMixedSward} from './assets/mixed-sward.mjs?v=mixed-sward-3';
 import {createReedGeometry} from './assets/reed-beds.js?v=pasture-ribbons-1';
 import {createGrassTuftGeometry,createLupinGeometry,createMeadowDistance,meadowBladeColor,meadowGrowthAt} from './assets/meadow-cover.js?v=clover-approach-1';
 import {pastureRise,meadowBloomAt,meadowGrazingAt} from './assets/pastoral-fields.mjs?v=clover-approach-1';
@@ -3198,7 +3199,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const NG_FR=quality==='low'?2:4, NG_RK=quality==='low'?2:3, NG_RD=2, NG_LU=quality==='low'?16:44;
  const near=new THREE.InstancedMesh(createGrassTuftGeometry(THREE,{profile:'near-folded-v1'}),nearMat,NG_W*NG_W*NG_K);
  const grassCells=Array.from({length:NG_W*NG_W},()=>({count:0,matrices:new Float32Array(NG_K*16),colors:new Float32Array(NG_K*3)}));
- let grassDrawCount=0,grassVR=false;near.setColorAt(0,new THREE.Color());
+ let grassDrawCount=0,grassVR=false,grassSourceVersion=0;near.setColorAt(0,new THREE.Color());
  const flow=new THREE.InstancedMesh(crossGeo(0.24,0.40),flMat,NG_W*NG_W*NG_F);
  const fern=new THREE.InstancedMesh(crossGeo(0.46,0.62),fernMat,NG_W*NG_W*NG_FR);
  const reed=new THREE.InstancedMesh(createReedGeometry(THREE),reedMat,NG_W*NG_W*NG_RD);
@@ -3275,7 +3276,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  const FLC=[new THREE.Color('#ffffff'),new THREE.Color('#fff1a8'),new THREE.Color('#f7b7d2'),new THREE.Color('#cdb8f2'),new THREE.Color('#ffffff')];
  let cx0=1e9,cz0=1e9;
  const fillCell=(ci,cj,slot)=>{
-  const bx=ci*NG_CELL,bz=cj*NG_CELL,grassCell=grassCells[slot];grassCell.count=0;
+  const bx=ci*NG_CELL,bz=cj*NG_CELL,grassCell=grassCells[slot];grassCell.count=0;grassCell.version=(grassCell.version||0)+1;
   for(let k=0;k<NG_K;k++){
    const h1=gh(ci*73+k*7,cj*131+k*3), h2=gh(ci*17+k*11,cj*59+k*5), h3=gh(k*13+ci,cj*7+k), h4=gh(k*29+cj,ci*3+k*17);
    const x=bx+h1*NG_CELL, z=bz+h2*NG_CELL;
@@ -3371,9 +3372,20 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
    reed.instanceColor.array.set(cell.colors.subarray(0,cell.count*3),liveReeds*3);liveReeds+=cell.count;
   }
   reed.count=liveReeds;
+  grassSourceVersion++;
   for(const im of[near,flow,fern,reed,rock,lupin]){im.instanceMatrix.needsUpdate=true; if(im.instanceColor)im.instanceColor.needsUpdate=true;}
  };
- nearGrass={near,flow,fern,reed,rock,lupin,meadowDistance,invalidate:()=>{cx0=cz0=1e9;meadowDistance.invalidate();},tick:(t,px,pz)=>{meadowDistance.tick(t,px,pz);nearU.uTime.value=t;nearU.uPlayer.value.set(px,0,pz);update(px,pz);},
+ let swardAccentColliders=null;
+ const swardSource={cells:grassCells,key:()=>grassSourceVersion,vr:()=>grassVR,
+  canBasal:(x,z)=>biomeAt(x,z)==='meadow'&&coldWoodlandWeights(x,z).weight<=.08&&coyoteCoverDryWeight(x,z)<.35&&managedGrass(x,z)<.58,
+  beginAccentQuery:(x,z,r)=>{swardAccentColliders=G.world.colliders.filter(c=>Math.abs(c.x-x)<=r+c.r+.77&&Math.abs(c.z-z)<=r+c.r+.77);},
+  canAccent:(x,z,r)=>{
+   if(!okClutter(x,z)||pathDist(x,z)<PATH_W*1.16+r||(G.worldPaths?.trackDist(x,z)??Infinity)<3.8+r||(window.__onCourse&&window.__onCourse(x,z,3.8+r)))return false;
+   if((swardAccentColliders||G.world.colliders).some(c=>Math.hypot(c.x-x,c.z-z)<c.r+r+.12))return false;
+   if(G.world.walls.some(w=>{const dx=w.x2-w.x1,dz=w.z2-w.z1,t=THREE.MathUtils.clamp(((x-w.x1)*dx+(z-w.z1)*dz)/(dx*dx+dz*dz||1),0,1);return Math.hypot(x-w.x1-t*dx,z-w.z1-t*dz)<r+.20;}))return false;
+   const y=groundH(x,z);return [[r,0],[-r,0],[0,r],[0,-r]].every(([dx,dz])=>Math.abs(groundH(x+dx,z+dz)-y)<.08);
+  }};
+ nearGrass={near,flow,fern,reed,rock,lupin,meadowDistance,swardSource,invalidate:()=>{cx0=cz0=1e9;meadowDistance.invalidate();},tick:(t,px,pz)=>{meadowDistance.tick(t,px,pz);nearU.uTime.value=t;nearU.uPlayer.value.set(px,0,pz);update(px,pz);},
   setVR:on=>{grassVR=on;meadowDistance.mesh.visible=!on;near.count=on?Math.floor(grassDrawCount*.5):grassDrawCount;}};
  update(0,0);
  const flowerGeo=new THREE.IcosahedronGeometry(0.025,1);
@@ -14663,6 +14675,7 @@ installVillageForecourts(G,villageGroundZones,{shrubs:naturalFlowerShrubs});
 installRanchWorldDetails(G,{shrubs:FOLIAGE.bush});
 installWorldPhotoscans(G,{seedTrees:seedTreeInsts,rocks:scannedRockTargets,pinePoints:[...FOLIAGE.pine,...FOLIAGE.snowpine]});
 installUndergrowth(G,{flowerShrubs:naturalFlowerShrubs,staticShrubs:STATIC_MERGE.filter(g=>/ shrub$/.test(g.name))});
+G.world.mixedSward=installMixedSward(G);
 G.world.outerLandscape=createOuterLandscape({THREE,scene,heightAt:terrainH,groundMesh:scene.getObjectByName('Pasture terrain')});
 const reflectionFineCover=new Set(['Living pasture grass','Modelled meadow lupins','Middle distance pasture','flora_tuft','flora_petal','flora_brack']);
 const waterReflections=createWaterReflections({scene,renderer,camera,material:waterMat,quality:()=>quality,

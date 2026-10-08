@@ -1,0 +1,35 @@
+{
+  "file": "grass_medium_02_specimens.glb",
+  "name": "Grass Medium 02 \u2014 individual pasture specimens",
+  "author": "Rico Cilliers",
+  "source": "Poly Haven",
+  "assetPage": "https://polyhaven.com/a/grass_medium_02",
+  "license": "CC0 1.0 Universal",
+  "licenseUrl": "https://polyhaven.com/license",
+  "derivedFrom": {
+    "file": "grass_medium_02.glb",
+    "sha256": "ca765549c5971d41801a7d746ed3c47b91c0e027400d0961104383d42ff3505b",
+    "sourceManifest": "manifest.json#assets.grass_medium_02"
+  },
+  "sha256": "357008b2584a93e6db0709faadac7b41745843dbffc38b09b230b4f3bb514902",
+  "bytes": 142692,
+  "meshes": 5,
+  "triangles": [
+    450,
+    649,
+    595,
+    633,
+    626
+  ],
+  "retainedConnectedLeafPatches": 191,
+  "derivation": "Split the existing five-plant gallery into individual specimens, simplify each leaf component with meshoptimizer1.1.1 at0.03 error with source extrema locked, and recenter each specimen at its own ground root. Retained position/normal/UV source values except translation; embedded images and material unchanged.",
+  "runtime": "assets/mixed-sward.mjs reads geometry only and reuses the existing scanned-grass material and its textures. The five meshes form a variant library; do not place the whole library as one clump. Use each node sourceHeight for uniform scale.",
+  "runtimeLimits": {
+    "highSpecimens": 96,
+    "mediumSpecimens": 48,
+    "lowSpecimens": 0,
+    "vrSpecimens": 0,
+    "maxNearGrassTriangleRatio": 1.2
+  },
+  "textures": "The inherited albedo is RGB. True leaf geometry supplies the contour; it is not a transparent billboard atlas."
+}

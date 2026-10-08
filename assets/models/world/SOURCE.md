@@ -270,3 +270,21 @@ placed in the scene next to the procedural barn and screenshotted:
 | `wooden_barrels_01` | 7× the size of `wine_barrel_01` for the same job, and darker |
 | `wicker_basket_01` | fine weave does not survive decimation or prop distance |
 | `vintage_oil_lamp` | too small to read in play; not verified at close range |
+
+
+## Individual pasture grass specimens
+
+`grass_medium_02_specimens.glb` is a 142,692-byte derivative of the existing
+CC0 Grass Medium 02 by Rico Cilliers / Poly Haven. It separates the source gallery
+into five recentered plants with 450–649 triangles each, retaining all 191
+connected leaf patches. The embedded material and image bytes are unchanged.
+See `grass_medium_02_specimens.source.json` for the source and output hashes,
+provenance, and geometry derivation.
+
+The mixed-pasture controller reads only geometry and reuses the resident grass
+material and textures. It places individual variants at existing grass roots,
+with at most 96 scanned specimens on High and 48 on Medium. Low and VR retain
+the original grass draw. The fuller curved grass family and scanned accents
+allow up to 20% more triangles in the near-grass layer; this is not a whole-frame
+budget or a mobile performance guarantee. No additional texture allocation is
+required by this layer.
