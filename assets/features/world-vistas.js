@@ -240,15 +240,29 @@ export function install(G){
   const ridge=u=>{let h=cfg.swell||0;
    for(const s of cfg.summits){const d=(u-s.u)/s.w,g=Math.exp(-Math.pow(Math.abs(d),s.shape||2.3)*(s.k||1.2));
     h=Math.max(h,s.h*clamp(s.flat?g/s.flat:g,0,1));}
+   // Lower, tighter Horn shoulders share the core's crag field. Other
+   // named ranges retain their original single envelope.
+   let shoulder=cfg.swell||0;
+   if(cfg.shoulders)for(const s of cfg.shoulders){const d=(u-s.u)/s.w,g=Math.exp(-Math.pow(Math.abs(d),s.shape||2.3)*(s.k||1.2));
+    shoulder=Math.max(shoulder,s.h*clamp(s.flat?g/s.flat:g,0,1));}
    // Break the skyline at several scales; the broad summit positions remain
    // recognisable, but no peak is a single smooth Gaussian cone.
    const crags=.91+.11*noise2(u*.021+sd,sd*.7)+.045*noise2(u*.064-sd,sd*2.1);
-   return h*crags;};
+   return cfg.shoulders?[h*crags,shoulder*crags]:h*crags;};
+  const quintic=t=>{t=clamp(t,0,1);return t*t*t*(t*(t*6-15)+10);};
   const pos=[],col=[],idx=[],snowAmt=[],c=new THREE.Color(),warm=new THREE.Color();
   for(let j=0;j<=nv;j++){
    const t=j/nv,v=(t-0.5)*depth;
    for(let i=0;i<=nu;i++){
-    const u=(i/nu-0.5)*span,hr=ridge(u);
+    const u=(i/nu-0.5)*span,envelope=ridge(u);
+    let hr=envelope;
+    if(cfg.shoulders){
+     // Leave the named summit core and two edge strips exact. Smooth
+     // shoulders expose lower saddles without opening the buried joins.
+     const m=quintic((span*.5-Math.abs(u)-2*span/nu)/64)*quintic((t-2/nv)/.15)
+       *quintic(((1-t)-2/nv)/.15)*quintic((Math.abs(u)-56)/48);
+     hr=envelope[0]+m*(envelope[1]-envelope[0]);
+    }
     /* The crest wanders across the band instead of running parallel to it, so the range has a
        front and a back rather than a centre line drawn with a compass. */
     const lc=clamp(crest+Math.sin(u*0.0042+sd)*0.09+Math.sin(u*0.011-sd)*0.04,0.18,0.82);
@@ -322,7 +336,8 @@ export function install(G){
  const MASSIFS=[
   {id:'horn',label:'⛰️ The Kestrel Horn',bearing:2.98,dist:920,span:940,depth:510,seed:11,nu:168,nv:56,
    rock:'#66675f',high:'#98988a',foot:'#424c43',snow:'#e2e8e7',snowAt:153,snowBand:50,
-   summits:[{u:0,h:184,w:248,k:1.35},{u:-265,h:134,w:240,k:1.2},{u:288,h:144,w:215,k:1.3}]},
+   summits:[{u:0,h:184,w:248,k:1.35},{u:-265,h:134,w:240,k:1.2},{u:288,h:144,w:215,k:1.3}],
+   shoulders:[{u:0,h:184,w:190,k:1.35},{u:-265,h:105,w:180,k:1.2},{u:288,h:112,w:175,k:1.3}]},
   {lowland:true,id:'sisters',label:'⛰️ The Sisters’ Wall',bearing:-1.52,dist:810,span:1020,depth:380,seed:29,nu:176,nv:48,
    rock:'#526447',high:'#74805a',foot:'#354931',
    summits:[{u:-335,h:118,w:240},{u:-40,h:142,w:270,k:1.0},{u:292,h:105,w:250}]},
