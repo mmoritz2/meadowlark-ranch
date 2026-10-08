@@ -6699,14 +6699,61 @@ const ripples=[];
 const clouds=[];
 cloudList=clouds;
 if(quality==='low')clouds.forEach((c,i)=>{c.visible=i%2===0;});
+// Original small meadow-bird silhouette; two shoulder meshes share one geometry.
+function ambientBirdGeometry(){
+ const P=[],N=[],U=[],I=[],A=[],components=[];
+ const vertex=(p,n,part)=>{const length=Math.hypot(...n),id=P.length/3;P.push(...p);N.push(...n.map(v=>v/length));U.push(p[0]+.5,p[2]+.5);A.push(part);return id;};
+ const section=(name,part,build)=>{const first=I.length,firstVertex=P.length/3;build();components.push({name,part,firstIndex:first,indexCount:I.length-first,firstVertex,vertexCount:P.length/3-firstVertex});};
+ const face=(a,b,c,part,inside)=>{let n=[(b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1]),(b[2]-a[2])*(c[0]-a[0])-(b[0]-a[0])*(c[2]-a[2]),(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0])];if(inside&&n.reduce((v,k,i)=>v+k*((a[i]+b[i]+c[i])/3-inside[i]),0)<0){[b,c]=[c,b];n=n.map(v=>-v);}I.push(vertex(a,n,part),vertex(b,n,part),vertex(c,n,part));};
+ const ellipsoid=(center,radius,sides,rings)=>{
+  const point=(theta,phi)=>[center[0]+radius[0]*Math.sin(theta)*Math.cos(phi),center[1]+radius[1]*Math.sin(theta)*Math.sin(phi),center[2]+radius[2]*Math.cos(theta)];
+  const normal=p=>p.map((v,i)=>(v-center[i])/(radius[i]*radius[i]));
+  const front=vertex(point(0,0),[0,0,1],0),rows=[];
+  for(let r=1;r<=rings;r++){const row=[];for(let j=0;j<sides;j++){const p=point(Math.PI*r/(rings+1),j*Math.PI*2/sides);row.push(vertex(p,normal(p),0));}rows.push(row);}
+  const rear=vertex(point(Math.PI,0),[0,0,-1],0);
+  for(let j=0;j<sides;j++){const next=(j+1)%sides;I.push(front,rows[0][j],rows[0][next]);for(let r=0;r<rings-1;r++)I.push(rows[r][j],rows[r+1][j],rows[r+1][next],rows[r][j],rows[r+1][next],rows[r][next]);I.push(rows[rings-1][j],rear,rows[rings-1][next]);}
+ };
+ const cross=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+ const outline=(polygon,halfDepth,part,surface)=>{
+  let area=0;for(let i=0;i<polygon.length;i++){const a=polygon[i],b=polygon[(i+1)%polygon.length];area+=a[0]*b[1]-a[1]*b[0];}if(area<0)polygon=polygon.slice().reverse();
+  const ids=polygon.map((_,i)=>i),tri=[];while(ids.length>3){let found=false;for(let k=0;k<ids.length;k++){const a=ids[(k+ids.length-1)%ids.length],b=ids[k],c=ids[(k+1)%ids.length];if(cross(polygon[a],polygon[b],polygon[c])<=1e-9)continue;const contains=ids.some(j=>j!==a&&j!==b&&j!==c&&cross(polygon[a],polygon[b],polygon[j])>=-1e-9&&cross(polygon[b],polygon[c],polygon[j])>=-1e-9&&cross(polygon[c],polygon[a],polygon[j])>=-1e-9);if(contains)continue;tri.push([a,b,c]);ids.splice(k,1);found=true;break;}if(!found)throw Error('Bird outline has no finite ear');}tri.push(ids);
+  const top=[],bottom=[];for(const [x,z]of polygon){const [y,dx,dz]=surface(x,z);top.push(vertex([x,y+halfDepth,z],[-dx,1,-dz],part));bottom.push(vertex([x,y-halfDepth,z],[dx,-1,dz],part));}
+  for(const [a,b,c]of tri)I.push(top[c],top[b],top[a],bottom[a],bottom[b],bottom[c]);
+  for(let i=0;i<polygon.length;i++){const j=(i+1)%polygon.length,[x,z]=polygon[i],[xx,zz]=polygon[j],[y]=surface(x,z),[yy]=surface(xx,zz),n=[zz-z,0,x-xx],a=vertex([x,y+halfDepth,z],n,part),b=vertex([xx,yy+halfDepth,zz],n,part),c=vertex([xx,yy-halfDepth,zz],n,part),d=vertex([x,y-halfDepth,z],n,part);I.push(a,b,c,a,c,d);}
+ };
+ section('body',0,()=>ellipsoid([0,-.002,0],[.068,.055,.183],8,3));
+ section('head',0,()=>ellipsoid([0,.027,.180],[.043,.042,.061],6,2));
+ section('beak',0,()=>{const base=[[-.015,.006,.231],[.015,.006,.231],[.015,.030,.231],[-.015,.030,.231]],tip=[0,.016,.293],inside=[0,.018,.25];for(let i=0;i<4;i++)face(base[i],base[(i+1)%4],tip,0,inside);face(base[0],base[2],base[1],0,inside);face(base[0],base[3],base[2],0,inside);});
+ section('tail',0,()=>outline([[-.025,-.145],[-.067,-.300],[0,-.270],[.067,-.300],[.025,-.145]],.006,0,()=>[.001,0,0]));
+ section('wing',1,()=>outline([[.035,.070],[.200,.085],[.350,.045],[.500,-.005],[.555,-.065],[.560,-.100],[.515,-.075],[.530,-.150],[.485,-.095],[.485,-.180],[.440,-.115],[.425,-.205],[.390,-.130],[.340,-.190],[.180,-.130],[.040,-.080]],.004,1,(x,z)=>{const t=(x-.035)/.53;return[.014*Math.sin(Math.PI*t)+.008*(z/.22)*(1-t),.014*Math.PI/.53*Math.cos(Math.PI*t)-.008*z/(.22*.53),.008*(1-t)/.22];}));
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));g.setAttribute('ambientBirdPart',new THREE.Float32BufferAttribute(A,1));g.setIndex(I);
+ // The shader rotates about the shoulder; a root-centred sphere covers every pose.
+ let radius=0;for(let i=0;i<P.length;i+=3)radius=Math.max(radius,Math.hypot(P[i],P[i+1],P[i+2]));radius+=.002;g.boundingSphere=new THREE.Sphere(new THREE.Vector3(),radius);g.boundingBox=new THREE.Box3(new THREE.Vector3(-radius,-radius,-radius),new THREE.Vector3(radius,radius,radius));g.userData.ambientBirdComponents=components;return g;
+}
+const AMBIENT_BIRD_VERTEX_HEADER=`attribute float ambientBirdPart;
+uniform mat4 uAmbientBirdBody;
+`;
+const AMBIENT_BIRD_VERTEX_BEGIN=`#include <begin_vertex>
+if(ambientBirdPart<.5){
+ float ambientMirror=dot(cross(modelMatrix[0].xyz,modelMatrix[1].xyz),modelMatrix[2].xyz);
+ if(ambientMirror<0.0)transformed=vec3(0.0);
+ else{
+  vec3 ambientOffset=(uAmbientBirdBody*vec4(transformed,1.0)).xyz-modelMatrix[3].xyz;
+  transformed=vec3(dot(modelMatrix[0].xyz,ambientOffset),dot(modelMatrix[1].xyz,ambientOffset),dot(modelMatrix[2].xyz,ambientOffset));
+ }
+}`;
 const birds=[];
 for(let i=0;i<5;i++){
  const b=new THREE.Group();
- const wingGeo=new THREE.PlaneGeometry(0.55,0.16);
- wingGeo.translate(0.27,0,0);
+ const wingGeo=ambientBirdGeometry();
  const wmat=new THREE.MeshBasicMaterial({color:0x44403a,side:THREE.DoubleSide});
+ // The common parent matrix is identical for both consecutive Basic draws.
+ const birdUniforms={uAmbientBirdBody:{value:b.matrixWorld}};
+ wmat.onBeforeCompile=sh=>{Object.assign(sh.uniforms,birdUniforms);sh.vertexShader=AMBIENT_BIRD_VERTEX_HEADER+sh.vertexShader.replace('#include <begin_vertex>',AMBIENT_BIRD_VERTEX_BEGIN);};
+ wmat.customProgramCacheKey=()=> 'ambient-meadow-bird-2';
  const wl=new THREE.Mesh(wingGeo,wmat),wr=new THREE.Mesh(wingGeo,wmat);
- wr.rotation.y=Math.PI;
+ // Mirrored geometry retains the original opposing shoulder-angle controls.
+ wr.scale.x=-1;
  b.add(wl);b.add(wr);
  scene.add(b);
  birds.push({g:b,wl,wr,a:Math.random()*6,r:35+Math.random()*55,h:17+Math.random()*9,sp:0.1+Math.random()*0.12,fl:Math.random()*6});
