@@ -123,9 +123,9 @@ const out=path.resolve(process.argv[2]||'output/village-square');fs.mkdirSync(ou
    }}finally{q.renderer.render=oldRender;q.keys.KeyW=false;}
    mounted.push({waypoints:wi,total:route.length,steps,maxGroundError,minCameraHeight,end:q.player.pos.toArray()});
   }
-  // Ride into each arched bay in the real world, including its camera solver.
+  // Ride into each sheltered bay in the real world, including its camera solver.
   const inn=q.G.worldPkg.LANDMARKS.find(l=>l.id==='cottonwood:inn').grp,ia=inn.userData.architecture,arcadeRides=[];
-  if(ia.style==='coaching-inn')for(const x of[-(ia.width-5.8)/3,0,(ia.width-5.8)/3]){
+  if(ia.style==='coaching-inn')for(const x of[-1.6666666667,.4,2.4666666667]){
    const start=inn.localToWorld(new T.Vector3(x,0,ia.depth/2+2.5)),target=inn.localToWorld(new T.Vector3(x,0,ia.doorZ+.90));
    q.player.pos.set(start.x,0,start.z);q.player.y=q.player.vy=q.player.speed=0;q.player.flying=false;q.G.followCam.reset();q.keys.KeyW=true;
    let steps=0,minCameraHeight=Infinity,maxGroundError=0;q.renderer.render=()=>{};
@@ -196,10 +196,10 @@ const out=path.resolve(process.argv[2]||'output/village-square');fs.mkdirSync(ou
   plantingGeometry:state.planting.invalidAttributes===0&&!state.planting.unlitVertexColors,
   plantingShadows:state.planting.missingShadows.length===0,
   solidTreeTrunks:state.planting.missingTrunks.length===0,
-  mountedArcades:state.arcadeRides.length===3&&state.arcadeRides.every(r=>r.finished&&r.maxGroundError<.1&&r.minCameraHeight>.1&&r.end[2]<3),opaqueScene:rows.every(r=>r.minAlphaBits>=15358),shadeTrees:state.villageTrees.length===3,mountedAllStreets:state.mounted.every(r=>r.waypoints===r.total&&r.maxGroundError<.1&&r.minCameraHeight>.1),squareRoutesClear:state.squareRouteHits.length===0,continuousPaving:state.unpaved.length===0,fountainCollision:state.fountainHit,gardenCollisions:state.gardenHits.every(Boolean),plantedSquare:state.squareGardenPlants>=60&&state.planting.borders.flowers>=2000,fixedPlots:JSON.stringify(state.plots.map(p=>[p.x,p.z]))===JSON.stringify([[34,-57],[76,-74],[33,-43],[47,-66]]),threeLandmarks:state.buildings.length===3,twoStoreyGeometry:state.buildings.every(b=>b.architecture.storeys===2&&(b.architecture.style==='coaching-inn'?b.architecture.roofStyle==='pavilion-clay':b.architecture.roofStyle==='hipped-clay')),
-  geometryBudget:state.buildings.every(b=>b.architecture.triangles<(b.architecture.style==='coaching-inn'?40000:12000)&&b.architecture.drawCalls<=16),
+  mountedArcades:state.arcadeRides.length===3&&state.arcadeRides.every(r=>r.finished&&r.maxGroundError<.1&&r.minCameraHeight>.1&&r.end[2]<3),opaqueScene:rows.every(r=>r.minAlphaBits>=15358),shadeTrees:state.villageTrees.length===3,mountedAllStreets:state.mounted.every(r=>r.waypoints===r.total&&r.maxGroundError<.1&&r.minCameraHeight>.1),squareRoutesClear:state.squareRouteHits.length===0,continuousPaving:state.unpaved.length===0,fountainCollision:state.fountainHit,gardenCollisions:state.gardenHits.every(Boolean),plantedSquare:state.squareGardenPlants>=60&&state.planting.borders.flowers>=2000,fixedPlots:JSON.stringify(state.plots.map(p=>[p.x,p.z]))===JSON.stringify([[34,-57],[76,-74],[33,-43],[47,-66]]),threeLandmarks:state.buildings.length===3,twoStoreyGeometry:state.buildings.every(b=>b.architecture.storeys===2&&(b.architecture.style==='coaching-inn'?b.architecture.roofStyle==='unequal-gabled-clay':b.architecture.roofStyle==='hipped-clay')),
+  geometryBudget:state.buildings.every(b=>b.architecture.triangles<12000&&b.architecture.drawCalls<=16),
   clearDoorApproaches:state.buildings.every(b=>b.collisions.length===0),clearVillageRoute:state.routeHits.length===0,mountedVillageTravel:state.ride.distance>19.5&&state.ride.finite,
-  plantedFacades:state.gardens===3&&state.buildings.every(b=>b.gardenPlants===24),interactionsPreserved:state.buildings.every(b=>b.interaction),
+  plantedFacades:state.gardens===3&&state.buildings.every(b=>b.gardenPlants===(b.architecture.style==='coaching-inn'?14:24)),interactionsPreserved:state.buildings.every(b=>b.interaction),
   allTownWalksClear:state.walkHits.length===0,hedgesRespectEntrances:state.hedgesInCourts===0,connectedSquare:state.courts===12&&state.courtTriangles>300&&state.courtTriangles<25000,groundedPaving:state.groundError<.001,
   noGrassThroughPaving:state.buildings.every(b=>b.soilGrass===0),finitePixels:rows.every(r=>r.invalid===0),validWebGL:rows.every(r=>r.gl===0),
   noErrors:errors.length===0&&state.featureErrors.length===0&&state.assetErrors.length===0};

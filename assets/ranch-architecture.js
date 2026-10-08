@@ -575,93 +575,95 @@ export function createRanchArchitecture({THREE, glowPanes = [], loadTextures = t
     b.box(.036,h-.10,.08,trim,x,y,-.005,null,f);b.box(w-.07,.036,.08,trim,x,spring-.25,-.005,null,f);
   }
   function buildCoachingInn({width=12,depth=7.6,name='Cottonwood | Blossom coaching inn'}={}){
-    const w=width,d=depth,wing=2.9,centre=w-wing*2,wingHeight=8.85,hallHeight=7.35;
-    if(w<11.5||w>14||d<7||d>9)throw new RangeError('The coaching inn needs a full courtyard frontage');
-    const b=new Builder(name),wall=cottageWalls[0],paint=shutters[0],windowBoxes=[];
-    const limestone=material('Village | carved cream limestone',{
-      color:new THREE.Color('#e4d9c3').multiplyScalar(1.85),map:map('../village/painted_plaster_wall_diff.webp',true),roughness:1,
-      normalMap:map('../village/painted_plaster_wall_nor_gl.webp'),normalScale:new THREE.Vector2(.14,.14),envMapIntensity:.5,
+    const w=width,d=depth,left=w*.275,right=w*(2.5/12),centre=w-left-right;
+    const leftX=-(w-left)/2,rightX=(w-right)/2,cx=(left-right)/2;
+    const hallHeight=5.05,leftHeight=5.45,rightHeight=4.60;
+    const leftRidge=7.55,rightRidge=6.35,hallRidge=6.80;
+    if(![w,d].every(Number.isFinite)||w<11.5||w>14||d<7||d>9)throw new RangeError('The coaching inn needs a full courtyard frontage');
+    const b=new Builder(name),paint=shutters[0],windowBoxes=[];
+    const wall=material('Village | carved cream limestone',{
+      color:new THREE.Color('#e2d6be').multiplyScalar(1.10),map:map('../village/painted_plaster_wall_diff.webp',true),roughness:1,
+      normalMap:map('../village/painted_plaster_wall_nor_gl.webp'),normalScale:new THREE.Vector2(.24,.24),envMapIntensity:.5,
     },2.4);
-    // A local frame lets each pavilion's long roof run front-to-back.
     const framed=(x,z,angle=0)=>{
       const f=face(x,z,angle),point=a=>new THREE.Vector3(...a).applyMatrix4(f).toArray();
-      return {geometry:(g,m,matrix=new THREE.Matrix4())=>b.geometry(g,m,matrix.clone().premultiply(f)),
+      return {geometry:(g,m,matrix=new THREE.Matrix4(),solid=true)=>b.geometry(g,m,matrix.clone().premultiply(f),solid),
         box:(w,h,d,m,x=0,y=0,z=0,rotation=null,frame=null,turnUV=false)=>b.box(w,h,d,m,x,y,z,rotation,frame?frame.clone().premultiply(f):f,turnUV),
-        pipe:(a,c,r,m)=>b.pipe(point(a),point(c),r,m)};
+        beam:(a,c,w,d,m)=>b.beam(point(a),point(c),w,d,m),pipe:(a,c,r,m)=>b.pipe(point(a),point(c),r,m)};
     };
-    const wingCentres=[-(w-wing)/2,(w-wing)/2];
-    for(const [index,cx]of wingCentres.entries()){
-      const front=face(cx,d/2,0),back=face(cx,-d/2,Math.PI);
-      b.box(wing+.16,.28,d+.16,mortar,cx,.07,0);
-      const upper=[-.63,.63].map(x=>({type:'arch-window',x,y:6.12,w:.82,h:2.12,wall,edge:limestone}));
-      shellWall(b,wing,wingHeight,front,[{x:0,y:1.9,w:1.07,h:1.74},...upper],wall);
-      shellWall(b,wing,wingHeight,back,[{x:0,y:1.9,w:1.07,h:1.74},...upper],wall);
-      const side=index===0?-1:1,f=face(side*w/2,0,side*Math.PI/2);
-      shellWall(b,d,wingHeight,f,[-d*.28,0,d*.28].flatMap(x=>[{x,y:1.9,w:.95,h:1.74},{type:'arch-window',x,y:6.12,w:.95,h:2.12,wall,edge:limestone}]),wall);
-      // Exposed inner faces rise above the lower gallery roof.
-      b.box(.20,wingHeight-hallHeight, d,wall,cx-side*wing/2,(wingHeight+hallHeight)/2,0);
-      for(const y of[.33,3.93,8.40,8.73]){
-        b.box(wing+.24,y<.5?.30:.14,.23,limestone,cx,y,d/2+.055);
-        b.box(wing+.24,y<.5?.30:.14,.23,limestone,cx,y,-d/2-.055);
-        b.box(.23,y<.5?.30:.14,d+.24,limestone,side*(w/2+.055),y,0);
+    // Unequal front-to-back gables break the old tall, flat pavilion frontage.
+    // The upper rear is modelled too: the Clover approach looks at this side.
+    let windowCount=0;
+    const windows=(xs,y,h=1.42,width=.84)=>xs.map(x=>({x,y,w:width,h}));
+    const openingWall=(width,height,f,openings)=>{windowCount+=openings.filter(o=>o.type!=='door').length;shellWall(b,width,height,f,openings,wall);};
+    for(const v of[{x:leftX,width:left,h:leftHeight,ridge:leftRidge,side:-1},{x:rightX,width:right,h:rightHeight,ridge:rightRidge,side:1}]){
+      const f=framed(v.x,0);foundation(f,v.width,d);
+      const xs=v.side<0?[-v.width*.24,v.width*.24]:[0];
+      for(const s of[-1,1]){
+        const front=face(v.x,s*d/2,s>0?0:Math.PI);
+        const panes=[...windows(xs,1.65,1.40),...windows(xs,3.90,1.42)];
+        openingWall(v.width,v.h,front,panes);
+        gable(b,v.width,v.h,v.ridge,front,siding,true);
+        b.box(v.width+.14,.18,.22,wood,0,v.h-.05,.10,null,front);
+        for(const x of[-v.width/2+.10,v.width/2-.10])b.box(.16,v.h-.30,.18,wood,x,(v.h+.30)/2,.105,null,front);
+        b.beam([-v.width/2+.05,v.h+.10,.12],[0,v.ridge-.12,.12],.12,.10,wood,front);
+        b.beam([v.width/2-.05,v.h+.10,.12],[0,v.ridge-.12,.12],.12,.10,wood,front);
+        for(const win of windows(xs,3.90,1.42))for(const sx of[-1,1]){
+          b.box(.23,1.49,.05,paint,win.x+sx*.55,win.y,.13,null,front);
+          for(let k=0;k<6;k++)b.box(.21,.04,.026,wood,win.x+sx*.55,win.y-.60+k*.24,.16,null,front);
+        }
       }
-      for(const z of[-d/2,d/2])for(const dx of[-wing/2,wing/2]){
-        b.box(.27,8.35,.27,limestone,cx+dx,4.47,z);
-        b.box(.39,.18,.38,limestone,cx+dx,8.57,z);
-      }
-      b.box(wing+.55,.12,d+.55,limestone,cx,wingHeight-.055,0);
-      hippedRoof(framed(cx,0,Math.PI/2),d,wing,wingHeight,.85);
-      // Deep timber corbels make the eaves legible from the square.
-      for(const dx of[-1.05,-.52,0,.52,1.05])b.box(.12,.26,.54,wood,cx+dx,8.66,d/2+.13);
-      b.box(1.18,.22,.34,limestone,cx,.78,d/2+.22);b.box(1.03,.025,.25,mortar,cx,.902,d/2+.23);
-      windowBoxes.push({x:cx,y:.92,z:d/2+.23,width:.99,height:.24});
+      const outer=face(v.side*w/2,0,v.side*Math.PI/2);
+      openingWall(d,v.h,outer,[...windows([-d*.27,0,d*.27],1.65,1.40),...windows([-d*.27,d*.27],3.90,1.42)]);
+      for(const y of[.40,2.88,v.h-.08])b.box(d+.12,.14,.19,y<1?stone:wood,0,y,.10,null,outer);
+      // The low stone course has no slab across the open central gallery.
+      for(const s of[-1,1])for(let x=-v.width/2+.24;x<v.width/2;x+=.48)
+        b.box(Math.min(.45,v.width/2-x+.24),.34,.14,stone,x,.36,.11,null,face(v.x,s*d/2,s>0?0:Math.PI));
+      roofAssembly(framed(v.x,0,Math.PI/2),d,v.width,v.h,v.ridge,false,clay);
     }
-    const back=face(0,-d/2,Math.PI),recess=d/2-2.0;
-    const rearWindows=[-centre*.33,0,centre*.33].flatMap(x=>[{x,y:1.9,w:.9,h:1.7},{type:'arch-window',x,y:5.15,w:.92,h:1.95,wall,edge:limestone}]);
-    shellWall(b,centre,hallHeight,back,rearWindows,wall);
-    shellWall(b,centre,hallHeight,face(0,recess,0),[
-      {type:'door',domestic:true,paint,x:0,y:1.50,w:1.65,h:2.84},
-      ...[-centre*.34,centre*.34].map(x=>({x,y:1.83,w:.94,h:1.68})),
-      ...[-centre*.33,0,centre*.33].map(x=>({type:'arch-window',x,y:5.26,w:.95,h:1.94,wall,edge:limestone})),
-    ],wall);
-    // Open front arcade over the existing ground-draped cobbles. No raised
-    // decorative floor is inserted under the horse's hooves.
-    const pier=.34,bay=centre/3,frontZ=d/2+.01,spring=2.78;
+    // A lower hall links the gables. Its rear windows and timber bands remain
+    // visible above the meadow; the front retains a two-metre sheltered entry.
+    const frontZ=d/2+.01,recess=d/2-2.0,doorX=-cx;
+    openingWall(centre,hallHeight,face(cx,-d/2,Math.PI),[
+      ...windows([-centre*.31,0,centre*.31],1.65,1.40),...windows([-centre*.31,0,centre*.31],3.80,1.36),
+    ]);
+    openingWall(centre,hallHeight,face(cx,recess,0),[
+      {type:'door',domestic:true,paint,x:doorX,y:1.50,w:1.65,h:2.84},
+      ...windows([-centre*.32,centre*.32],1.65,1.40),...windows([-centre*.31,0,centre*.31],3.80,1.36),
+    ]);
+    for(const y of[.40,2.86,hallHeight-.08])b.box(centre+.10,.15,.20,y<1?stone:wood,cx,y,-d/2-.03);
+    for(const x of[-centre/2,centre/2]){
+      b.box(.18,hallHeight-.30,.18,wood,cx+x,(hallHeight+.30)/2,-d/2-.035);
+      b.box(.18,hallHeight,2.0,wall,cx+x,hallHeight/2,(frontZ+recess)/2);
+    }
+    roofAssembly(framed(cx,0),centre,d,hallHeight,hallRidge,false,clay);
+    const pier=.20,bay=centre/3,beamY=3.13;
     for(let i=0;i<4;i++){
-      const x=-centre/2+i*bay;
-      b.box(pier,spring-.14,.47,limestone,x,(spring+.14)/2,frontZ);
-      b.box(.47,.17,.59,limestone,x,.19,frontZ);
-      b.box(.49,.16,.59,limestone,x,spring-.015,frontZ);
-      // Upper gallery posts and iron balustrade sit over the lower stone piers.
-      b.box(pier,1.70,.43,limestone,x,5.30,frontZ);
-      b.box(.48,.14,.56,limestone,x,6.10,frontZ);
+      const x=cx-centre/2+i*bay;
+      b.box(.37,.32,.37,stone,x,.17,frontZ);
+      b.box(pier,beamY-.35,pier,wood,x,(beamY+.35)/2,frontZ);
+      // Small knee braces begin above mounted head height.
+      for(const s of[-1,1])if(i+s>=0&&i+s<=3)
+        b.beam([x,2.99,frontZ],[x+s*.34,beamY+.16,frontZ],.085,.10,wood);
     }
-    for(let i=0;i<3;i++){
-      const x=-centre/2+(i+.5)*bay,r=(bay-pier)/2;
-      archMasonry(b,x,r,spring,3.92,frontZ,.47,wall);archTrim(b,x,r,spring,frontZ+.245,.12,limestone);
-      archMasonry(b,x,r,6.15,hallHeight,frontZ,.43,wall);archTrim(b,x,r,6.15,frontZ+.225,.12,limestone);
-      for(const y of[4.38,5.20])b.box(bay-pier,.055,.055,metal,x,y,frontZ);
-      for(let j=0;j<9;j++)b.box(.026,.77,.028,metal,x-r+.09+j*(r*2-.18)/8,4.78,frontZ);
+    b.box(centre+.26,.22,.25,wood,cx,beamY+.11,frontZ);
+    for(let i=0;i<3;i++)b.box(.09,.16,2.10,wood,cx-centre/2+(i+.5)*bay,beamY+.10,(frontZ+recess)/2);
+    for(const side of[-1,1])lantern(b,side*1.17,2.28,recess+.17);
+    // Flower boxes sit at the flank windows, leaving all three entry bays open.
+    for(const x of[leftX,rightX]){
+      b.box(.95,.19,.30,wood,x,.86,d/2+.20);b.box(.82,.024,.24,mortar,x,.969,d/2+.20);
+      windowBoxes.push({x,y:.99,z:d/2+.20,width:.80,height:.18});
     }
-    b.box(centre+.08,.22,2.15,limestone,0,4.08,(frontZ+recess)/2);
-    for(const y of[3.93,4.28,hallHeight-.11])b.box(centre+.26,.13,.22,limestone,0,y,frontZ+.075);
-    b.box(centre+.55,.12,d+.55,limestone,0,hallHeight-.055,0);
-    hippedRoof(b,centre,d,hallHeight,.83);
-    // The pavilion side walls close the two ends of the gallery, leaving the
-    // entire three-bay frontage open and sheltered.
-    for(const side of[-1,1]){
-      b.box(.20,hallHeight,2.05,wall,side*centre/2,hallHeight/2,(frontZ+recess)/2);
-      lantern(b,side*1.22,2.32,recess+.18);
-      const px=side*(centre/2+.28);
-      b.box(.54,.42,.54,limestone,px,.22,d/2+.54);b.box(.42,.025,.42,mortar,px,.445,d/2+.54);
-      windowBoxes.push({x:px,y:.47,z:d/2+.54,width:.40,height:.42});
-    }
-    const ridge=wingHeight+.85;
-    return b.finish({kind:'townhouse',style:'coaching-inn',exterior:'village',variant:0,width:w,depth:d,wallHeight:wingHeight,ridgeHeight:ridge,
-      store:false,storeys:2,roofStyle:'pavilion-clay',windows:35,arcadeBays:3,arcadeClearWidth:bay-pier,arcadeSpring:spring,
-      galleryDepth:frontZ-recess,frontZ,doorZ:recess,windowBoxes,suggestedLabelY:ridge+.8});
+    // One squat chimney belongs to the larger roof, rather than a central tower.
+    const chimneyX=leftX-.25,chimneyZ=-d*.19;
+    b.box(.45,1.13,.52,brick,chimneyX,leftRidge-.15,chimneyZ);
+    b.box(.62,.11,.68,stoneLight,chimneyX,leftRidge+.47,chimneyZ);
+    for(const dx of[-.12,.12])b.pipe([chimneyX+dx,leftRidge+.525,chimneyZ],[chimneyX+dx,leftRidge+.76,chimneyZ],.073,clayEdge);
+    return b.finish({kind:'townhouse',style:'coaching-inn',exterior:'village',variant:0,width:w,depth:d,
+      wallHeight:leftHeight,ridgeHeight:leftRidge,store:false,storeys:2,roofStyle:'unequal-gabled-clay',windows:windowCount,
+      arcadeBays:3,arcadeClearWidth:bay-pier,arcadeSpring:beamY, galleryDepth:frontZ-recess,frontZ,doorZ:recess,doorX:0,
+      windowBoxes,suggestedLabelY:leftRidge+1.0,roofHeights:[leftRidge,hallRidge,rightRidge]});
   }
-
   function buildOutbuilding({width=4.6,depth=3.2,height=3.4,
     exterior='timber',variant=0,animatedDoorOpening={width:2.3,height:2.5},name='Meadowlark stable outbuilding'}={}) {
     const w=width,d=depth,h=height;
