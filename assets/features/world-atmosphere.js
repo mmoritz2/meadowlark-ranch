@@ -235,20 +235,30 @@ export function install(G){
  snowM.frustumCulled=false;snowM.visible=false;scene.add(snowM);
 
  /* ================= 8. the skein ================= */
- /* One InstancedMesh and no bones. The flap is a scale on the instance's Y: the wingtips sit
-    above the body in the geometry, so squashing the bird vertically drops them and stretching
-    it raises them, which at sixty metres up is exactly what a wingbeat looks like. */
+ /* Original small flock silhouette: closed body/head/beak/tail and tapered wings.
+    Existing instance Y-scale encodes the unchanged beat; the vertex hook fixes body height
+    and rotates wing spans around their shoulders. Local +X follows the existing yaw. */
+ function buildSkeinBirdArrays(){
+ const P=[],W=[],components=[];
+ const triangle=(a,b,c,wing=0,inside=null)=>{if(inside){const ab=b.map((v,i)=>v-a[i]),ac=c.map((v,i)=>v-a[i]),n=[ab[1]*ac[2]-ab[2]*ac[1],ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0]];if(n.reduce((s,v,i)=>s+v*((a[i]+b[i]+c[i])/3-inside[i]),0)<0)[b,c]=[c,b];}P.push(...a,...b,...c);W.push(wing,wing,wing);};
+ const section=(name,fn)=>{const firstVertex=P.length/3;fn();components.push({name,firstVertex,vertices:P.length/3-firstVertex,triangles:(P.length/3-firstVertex)/3});};
+ const tetra=v=>{const center=[0,1,2].map(i=>v.reduce((s,p)=>s+p[i],0)/4);for(const ids of[[0,1,2],[0,3,1],[0,2,3],[1,3,2]])triangle(...ids.map(i=>v[i]),0,center);};
+ section('body',()=>{const fore=[.28,.055,0],rear=[-.30,.055,0],ring=[[-.025,.145,0],[-.025,.055,.115],[-.025,-.035,0],[-.025,.055,-.115]],center=[-.025,.055,0];for(let i=0;i<4;i++){const j=(i+1)%4;triangle(fore,ring[i],ring[j],0,center);triangle(rear,ring[j],ring[i],0,center);}});
+ section('head',()=>tetra([[.21,.07,0],[.36,.165,.046],[.36,.165,-.046],[.465,.105,0]]));
+ section('beak',()=>tetra([[.43,.104,.023],[.43,.104,-.023],[.43,.135,0],[.60,.108,0]]));
+ section('tail',()=>tetra([[-.26,.065,0],[-.56,.025,.15],[-.56,.025,-.15],[-.44,.008,0]]));
+ for(const side of[-1,1])section(side<0?'left-wing':'right-wing',()=>{const root=[-.025,.055,side*.115],edge=[[.14,.13],[.05,.57],[-.13,1.02],[-.30,.88],[-.30,.44],[-.16,.125]].map(([x,z])=>[x,.055,side*z]);for(let i=0;i<edge.length-1;i++)triangle(root,edge[i],edge[i+1],side);});
+ const positions=new Float32Array(P),wingSide=new Float32Array(W);return{positions,wingSide,components,stats:{vertices:P.length/3,triangles:P.length/9,geometryBytes:positions.byteLength+wingSide.byteLength,sourceTrianglesAt22:P.length/9*22}};
+}
+ function createSkeinBirdGeometry(THREE){const data=buildSkeinBirdArrays(),g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(data.positions,3));g.setAttribute('skeinWingSide',new THREE.Float32BufferAttribute(data.wingSide,1));g.userData.skeinBirdComponents=data.components;return g;}
+ const SKEIN_VERTEX_HEADER="attribute float skeinWingSide;\n";
+ const SKEIN_VERTEX_BEGIN="#include <begin_vertex>\n#ifdef USE_INSTANCING\n float skeinFlap=length(instanceMatrix[1].xyz)/max(length(instanceMatrix[0].xyz),0.0001);\n float skeinBeat=clamp((skeinFlap-0.85)/0.43,-1.0,1.0);\n if(abs(skeinWingSide)>0.5){\n  float skeinAngle=skeinBeat*0.30;\n  float skeinSpan=max(abs(position.z)-0.115,0.0);\n  transformed.y=0.055+skeinSpan*sin(skeinAngle);\n  transformed.z=skeinWingSide*(0.115+skeinSpan*cos(skeinAngle));\n }\n transformed.y/=max(skeinFlap,0.0001);\n#endif";
+ function configureSkeinBirdMaterial(material){const previous=material.onBeforeCompile;material.onBeforeCompile=function(shader,renderer){previous.call(this,shader,renderer);shader.vertexShader=SKEIN_VERTEX_HEADER+shader.vertexShader.replace('#include <begin_vertex>',SKEIN_VERTEX_BEGIN);};material.customProgramCacheKey=()=> 'ambient-skein-anatomy-1';}
  const BIRD_N=22;
- const birdGeo=(()=>{
-  const v=[],g=new THREE.BufferGeometry();
-  const wing=s=>{ const a=[0,0,0.30],b=[0,0,-0.22],c=[s*1.02,0.27,-0.36],d=[s*0.92,0.25,0.04];
-   v.push(...a,...b,...c, ...a,...c,...d); };
-  wing(-1);wing(1);
-  g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));
-  return g;
- })();
+ const birdGeo=createSkeinBirdGeometry(THREE);
  const birdM=new THREE.InstancedMesh(birdGeo,new THREE.MeshBasicMaterial({color:0x33332f,side:THREE.DoubleSide,
   transparent:true,opacity:0.85,fog:true}),BIRD_N);
+ configureSkeinBirdMaterial(birdM.material);
  birdM.frustumCulled=false;birdM.castShadow=false;birdM.receiveShadow=false;scene.add(birdM);
  const flock={x:0,z:0,th:0,r:150,alt:66,drift:0,lx:0,ly:0,lz:0};
  A.flock=flock;                                          // so a screenshot script can aim at the skein
