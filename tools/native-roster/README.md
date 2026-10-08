@@ -141,8 +141,8 @@ report identify the components, lift and actual decoded tread height change.
 
 At runtime, `assets/native-draft-feathers.js` adds four private, bone-attached
 silky hair meshes to Shire, Clydesdale and Vanner instances, including aliases
-such as Tempest. Vanner uses a fuller72-strand lower-leg treatment per leg,
-while Shire uses56 and Clydesdale62; all follow sampled skin and native joints. Their
+such as Tempest and Rosebloom. Vanner uses a fuller 72-strand treatment per leg,
+while Shire uses 56 and Clydesdale 62; all follow sampled skin and native joints. Their
 strand roots follow the measured widened lower-leg surface. Percheron, Belgian
 and Suffolk keep clean legs. The groom facade owns their Hair visibility and
 idempotent disposal; these strands do not alter the source skin or animation.
@@ -183,10 +183,10 @@ bridge and throatlatch each have their own compact region.
 
 | Family | Profiles | Maximum additional displayed head displacement |
 | --- | --- | --- |
-| Refined | Arabian (`sunset`), Akhal-Teke |10.83mm /8.97mm |
-| Stock | Quarter (`bay`), Paint, Appaloosa |5.04–5.13mm |
-| Pony | Icelandic, Fjord |9.86mm /6.93mm |
-| Draft | Percheron, Shire, Clydesdale |3.62–4.38mm |
+| Refined | Arabian (`sunset`), Akhal-Teke | 10.83 mm / 8.97 mm |
+| Stock | Quarter (`bay`), Paint, Appaloosa | 5.04–5.13 mm |
+| Pony | Icelandic, Fjord | 9.86 mm / 6.93 mm |
+| Draft | Percheron, Shire, Clydesdale | 3.62–4.38 mm |
 
 The Arabian has a modest dish and more refined muzzle; the Akhal keeps a
 straight narrow face. Stock heads gain a little forehead/jaw substance. Pony
@@ -195,29 +195,36 @@ shape with restrained cheek and bridge refinements. The source identity is
 preserved; these are not independently authored heads or new skeletons.
 
 Run `python3 tools/native-roster/qa-head-shapes.py` for the decoded field and
-contact checks. It samples84 actual native walk/trot/left-canter/right-canter
+contact checks. It samples 84 actual native walk/trot/left-canter/right-canter
 poses per revised foundation, checks shared eye/bridle deformation, seat and
 stirrup preservation, protected limbs, finite normals through the full decoder,
 and bounded head displacement. `head-validation.json` records the result.
-Quantized nonfacial positions differ from the pre-head target by at most20µm.
+Quantized nonfacial positions differ from the pre-head target by at most 20 µm.
 Front/side/quarter closeups and mounted runtime review still decide appearance;
 these numerical tests do not certify visual gait or perfect leather contact.
 
 ## Native Fjord groom and runtime feathers
 
-`groom.py:shape_fjord_groom` reshapes212 original mane cards and66 forelock cards
+`groom.py:shape_fjord_groom` reshapes 212 original mane cards and 66 forelock cards
 around their attached source endpoints into a rounded upright crest. Its mane
-rise is about8–16 source centimetres. The194 tail cards keep the previous1.06
-length treatment;76 eyelash islands remain untrimmed. Every card retains source
+rise is about 8–16 source centimetres. The 194 tail cards keep the previous 1.06
+length treatment; 76 eyelash islands remain untrimmed. Every card retains source
 UVs, topology, skin weights and inertial hair bones, and its transformed normals
 use the affine inverse transpose. No replacement rig or extra mane mesh is used.
 
-`groom.uprightCrest.colorCards` records278 contiguous mane/forelock islands for
+`groom.uprightCrest.colorCards` records 278 contiguous mane/forelock islands for
 `assets/native-fjord-groom.js`. That private runtime material adds a cream outer
 edge and dark center while retaining the original strand texture/alpha; tail
 and eyelashes are excluded, and saved player mane dyes can override the style.
 The metadata adds no draw calls. `python3 tools/native-roster/qa-groom.py` checks
 the original-source geometry, attachment, card roles and two-tone mask.
+
+`node tools/test-native-fjord-groom-motion.mjs` advances 1,377 frames and checks
+183 full-skin poses across rest, idle, gaits, jumping and settling. Groom inertia
+leaves the body, eyes, feet and tack identical to the no-inertia comparator.
+Hair stays at least 127 mm above the local ground; maximum additional crest
+excursion is 40.2 mm during return to rest. This bounds motion and contact
+effects; the visible crest shape still requires browser review.
 
 Shire, Clydesdale and Vanner feathers remain runtime additions in
 `assets/native-draft-feathers.js`, fitted to sampled lower-leg skin and attached
