@@ -184,7 +184,7 @@ function check(value,message){assert(value,message);assertions++;}
  // Exercise the actual native bridge's preparation API without rendering or a
  // real player save. Its original display geometry must be prepared exactly once.
  const nativeSource=fs.readFileSync(path.join(ROOT,'assets/native-rider.js'),'utf8');
- const bridgeBody=nativeSource.slice(nativeSource.indexOf('export function createNativeRiderBridge(')).replace('export ','');
+ const bridgeBody=nativeSource.slice(nativeSource.indexOf('function createDraftBarebackBarrel(')).replace('export ','');
  const original={id:'original'},display={id:'display-reins'},partition={id:'collection-groups'};
  const nativeTack={isSkinnedMesh:true,visible:true,geometry:original},nativeOther={isSkinnedMesh:true,visible:false,geometry:{attributes:{position:{count:5092}}}};
  original.attributes={position:{count:13895}};

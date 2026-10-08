@@ -7,7 +7,7 @@
         {
           "meshIndex": 0,
           "vertices": 16159,
-          "minCageJacobianDeterminant": 0.7513966989023315,
+          "minCageJacobianDeterminant": 0.7491630776986273,
           "maxPositionQuantizationErrorM": 1.230223295316835e-06,
           "maxAppearanceDeltaM": 0.050984216438517645,
           "fixedLowerVertices": 3054
@@ -15,23 +15,23 @@
         {
           "meshIndex": 1,
           "vertices": 2028,
-          "minCageJacobianDeterminant": 0.9694097230900931,
-          "maxPositionQuantizationErrorM": 4.108334144814645e-07,
-          "maxAppearanceDeltaM": 0.017650087207249962,
+          "minCageJacobianDeterminant": 0.9210638552514853,
+          "maxPositionQuantizationErrorM": 4.2112314661297353e-07,
+          "maxAppearanceDeltaM": 0.01854378079375039,
           "fixedLowerVertices": 0
         },
         {
           "meshIndex": 2,
           "vertices": 23514,
-          "minCageJacobianDeterminant": 0.7514005026443477,
-          "maxPositionQuantizationErrorM": 5.584168091212516e-07,
+          "minCageJacobianDeterminant": 0.7507809256089149,
+          "maxPositionQuantizationErrorM": 5.661374127613172e-07,
           "maxAppearanceDeltaM": 0.028926784824552347,
           "fixedLowerVertices": 0
         },
         {
           "meshIndex": 3,
           "vertices": 13895,
-          "minCageJacobianDeterminant": 0.7514649648885765,
+          "minCageJacobianDeterminant": 0.7514521093906628,
           "maxPositionQuantizationErrorM": 1.7047750285651408e-06,
           "maxAppearanceDeltaM": 0.041902220686776806,
           "fixedLowerVertices": 0
@@ -45,7 +45,13 @@
           "fixedLowerVertices": 0
         }
       ],
-      "sha256": "ca1dcf544abb19e478ac0813f5ae59290beccc09cccda9680343089dcdb600e7",
+      "headShape": {
+        "family": "stock",
+        "affectedBodyVertices": 7718,
+        "maxAdditionalDisplayedDeltaM": 0.005039801729905008,
+        "sourceSeatUnchangedByHeadPass": true
+      },
+      "sha256": "c39a83254c5a543bdad7e4c99e4972923e4fdc4fe3e70f1a3b19d0cfe0d2e72a",
       "byteLength": 728256,
       "actorScale": 0.8476899263786155,
       "withersM": 1.52,
@@ -319,23 +325,23 @@
         {
           "meshIndex": 0,
           "vertices": 16159,
-          "minCageJacobianDeterminant": 0.9195369561253974,
-          "maxPositionQuantizationErrorM": 7.554781636602253e-07,
+          "minCageJacobianDeterminant": 0.9164383836998149,
+          "maxPositionQuantizationErrorM": 7.75498326749965e-07,
           "maxAppearanceDeltaM": 0.03173386929432781,
           "fixedLowerVertices": 3054
         },
         {
           "meshIndex": 1,
           "vertices": 2028,
-          "minCageJacobianDeterminant": 1.0239418799712734,
-          "maxPositionQuantizationErrorM": 1.740460198674235e-07,
-          "maxAppearanceDeltaM": 0.007088760999387549,
+          "minCageJacobianDeterminant": 0.9708581625098727,
+          "maxPositionQuantizationErrorM": 2.256972747228362e-07,
+          "maxAppearanceDeltaM": 0.009249567226541024,
           "fixedLowerVertices": 0
         },
         {
           "meshIndex": 2,
           "vertices": 23514,
-          "minCageJacobianDeterminant": 0.9195370403732145,
+          "minCageJacobianDeterminant": 0.9185660625825685,
           "maxPositionQuantizationErrorM": 1.2766831613165828e-06,
           "maxAppearanceDeltaM": 0.049539084810002645,
           "fixedLowerVertices": 0
@@ -343,7 +349,7 @@
         {
           "meshIndex": 3,
           "vertices": 13895,
-          "minCageJacobianDeterminant": 0.9195369361141398,
+          "minCageJacobianDeterminant": 0.9195205810239183,
           "maxPositionQuantizationErrorM": 1.16953710427536e-06,
           "maxAppearanceDeltaM": 0.027898683748247253,
           "fixedLowerVertices": 0
@@ -357,7 +363,13 @@
           "fixedLowerVertices": 0
         }
       ],
-      "sha256": "0cb283c8e25784e34cfa704df736e5ad200a3c3e1d628711112ae1b1dea4fe44",
+      "headShape": {
+        "family": "stock",
+        "affectedBodyVertices": 7718,
+        "maxAdditionalDisplayedDeltaM": 0.005132734852453665,
+        "sourceSeatUnchangedByHeadPass": true
+      },
+      "sha256": "ca09d4969996ef20e9adb57376a334529caccf2f576e8caeea25330e00d9055e",
       "byteLength": 728256,
       "actorScale": 0.863321190470604,
       "withersM": 1.55,
@@ -372,16 +384,16 @@
           "meshIndex": 0,
           "vertices": 16159,
           "minCageJacobianDeterminant": 0.9329882024557112,
-          "maxPositionQuantizationErrorM": 5.839659587965316e-07,
+          "maxPositionQuantizationErrorM": 5.829466571335652e-07,
           "maxAppearanceDeltaM": 0.029287935224975196,
           "fixedLowerVertices": 3054
         },
         {
           "meshIndex": 1,
           "vertices": 2028,
-          "minCageJacobianDeterminant": 1.0090199999787337,
-          "maxPositionQuantizationErrorM": 6.175977147396346e-08,
-          "maxAppearanceDeltaM": 0.0026388916079988626,
+          "minCageJacobianDeterminant": 0.9545700899094035,
+          "maxPositionQuantizationErrorM": 9.990870653215077e-08,
+          "maxAppearanceDeltaM": 0.004687109216010911,
           "fixedLowerVertices": 0
         },
         {
@@ -395,8 +407,8 @@
         {
           "meshIndex": 3,
           "vertices": 13895,
-          "minCageJacobianDeterminant": 0.9574488534376461,
-          "maxPositionQuantizationErrorM": 7.416840453934096e-07,
+          "minCageJacobianDeterminant": 0.9411908894424751,
+          "maxPositionQuantizationErrorM": 7.311949893327697e-07,
           "maxAppearanceDeltaM": 0.024925682594986096,
           "fixedLowerVertices": 0
         },
@@ -409,7 +421,13 @@
           "fixedLowerVertices": 0
         }
       ],
-      "sha256": "1f0e7c0b0bacae87ad5d3d5dc8574865e626e582a3612e4a0fe449812ae1a0d5",
+      "headShape": {
+        "family": "stock",
+        "affectedBodyVertices": 7718,
+        "maxAdditionalDisplayedDeltaM": 0.005111832422278215,
+        "sourceSeatUnchangedByHeadPass": true
+      },
+      "sha256": "1ad3fdf25bb5cd935e03a1e68c2aad5c3fa635d87f7a95a7461608ffeffd802c",
       "byteLength": 728256,
       "actorScale": 0.8598054213101979,
       "withersM": 1.54,
@@ -423,17 +441,17 @@
         {
           "meshIndex": 0,
           "vertices": 16159,
-          "minCageJacobianDeterminant": 0.6130156025386179,
-          "maxPositionQuantizationErrorM": 9.260950209245125e-07,
+          "minCageJacobianDeterminant": 0.6118967528499144,
+          "maxPositionQuantizationErrorM": 9.153729863270666e-07,
           "maxAppearanceDeltaM": 0.03903847941910584,
           "fixedLowerVertices": 3054
         },
         {
           "meshIndex": 1,
           "vertices": 2028,
-          "minCageJacobianDeterminant": 0.9529947424196016,
-          "maxPositionQuantizationErrorM": 1.6934474813637847e-07,
-          "maxAppearanceDeltaM": 0.0075848333402573995,
+          "minCageJacobianDeterminant": 0.9257749066148607,
+          "maxPositionQuantizationErrorM": 1.9075300846403378e-07,
+          "maxAppearanceDeltaM": 0.00891792273121428,
           "fixedLowerVertices": 0
         },
         {
@@ -447,8 +465,8 @@
         {
           "meshIndex": 3,
           "vertices": 13895,
-          "minCageJacobianDeterminant": 0.6135103035382203,
-          "maxPositionQuantizationErrorM": 8.550607526916511e-07,
+          "minCageJacobianDeterminant": 0.6135023073379725,
+          "maxPositionQuantizationErrorM": 8.483930640896135e-07,
           "maxAppearanceDeltaM": 0.036768165755595945,
           "fixedLowerVertices": 0
         },
@@ -461,7 +479,13 @@
           "fixedLowerVertices": 0
         }
       ],
-      "sha256": "ed74a03ac807c43b56849994eb8b5421040d87fee1ed2d36cd12d7953fe86c08",
+      "headShape": {
+        "family": "refined",
+        "affectedBodyVertices": 7718,
+        "maxAdditionalDisplayedDeltaM": 0.010825922566631724,
+        "sourceSeatUnchangedByHeadPass": true
+      },
+      "sha256": "8669c0c2fa6ffe6b5bbefc8e4c13c4daab220d72a621547818950b0f073ed575",
       "byteLength": 728256,
       "actorScale": 0.838013152601677,
       "withersM": 1.5,
@@ -475,23 +499,23 @@
         {
           "meshIndex": 0,
           "vertices": 16159,
-          "minCageJacobianDeterminant": 0.8969965432017714,
-          "maxPositionQuantizationErrorM": 6.653987102159286e-07,
+          "minCageJacobianDeterminant": 0.8937393702673303,
+          "maxPositionQuantizationErrorM": 6.619888269526604e-07,
           "maxAppearanceDeltaM": 0.02792294309848562,
           "fixedLowerVertices": 3054
         },
         {
           "meshIndex": 1,
           "vertices": 2028,
-          "minCageJacobianDeterminant": 1.0195795499689606,
-          "maxPositionQuantizationErrorM": 3.262839224985797e-07,
-          "maxAppearanceDeltaM": 0.015968981149285473,
+          "minCageJacobianDeterminant": 0.9619821210890237,
+          "maxPositionQuantizationErrorM": 3.399932169564579e-07,
+          "maxAppearanceDeltaM": 0.017306314016991467,
           "fixedLowerVertices": 0
         },
         {
           "meshIndex": 2,
           "vertices": 23514,
-          "minCageJacobianDeterminant": 0.8969966421121323,
+          "minCageJacobianDeterminant": 0.8959730219623973,
           "maxPositionQuantizationErrorM": 4.678871684359181e-06,
           "maxAppearanceDeltaM": 0.17908585973352886,
           "fixedLowerVertices": 0
@@ -499,7 +523,7 @@
         {
           "meshIndex": 3,
           "vertices": 13895,
-          "minCageJacobianDeterminant": 0.896996519711262,
+          "minCageJacobianDeterminant": 0.8969796460750381,
           "maxPositionQuantizationErrorM": 1.5743614489174722e-06,
           "maxAppearanceDeltaM": 0.037736530313253504,
           "fixedLowerVertices": 0
@@ -513,7 +537,13 @@
           "fixedLowerVertices": 0
         }
       ],
-      "sha256": "8fe26cbbbfe235fd81831deae40ee9127a6d9c83e05d94e8db3cf857d93ed8bd",
+      "headShape": {
+        "family": "pony",
+        "affectedBodyVertices": 7718,
+        "maxAdditionalDisplayedDeltaM": 0.009856989058745302,
+        "sourceSeatUnchangedByHeadPass": true
+      },
+      "sha256": "c20886d2644d601bde6f28af7a6c2fed52f411d19a28e3eb855edcd016934400",
       "byteLength": 728256,
       "actorScale": 0.7651438734840629,
       "withersM": 1.38,
@@ -632,30 +662,30 @@
           "meshIndex": 0,
           "vertices": 16159,
           "minCageJacobianDeterminant": 0.8474878259533678,
-          "maxPositionQuantizationErrorM": 1.3929413793535087e-06,
+          "maxPositionQuantizationErrorM": 1.391848104916752e-06,
           "maxAppearanceDeltaM": 0.06240811036113941,
           "fixedLowerVertices": 3054
         },
         {
           "meshIndex": 1,
           "vertices": 2028,
-          "minCageJacobianDeterminant": 1.0113067999711616,
-          "maxPositionQuantizationErrorM": 5.698383456755411e-07,
-          "maxAppearanceDeltaM": 0.027435860518865023,
+          "minCageJacobianDeterminant": 0.9570693892400509,
+          "maxPositionQuantizationErrorM": 5.876778727721957e-07,
+          "maxAppearanceDeltaM": 0.02868459147899666,
           "fixedLowerVertices": 0
         },
         {
           "meshIndex": 2,
           "vertices": 23514,
           "minCageJacobianDeterminant": 0.8473998478559758,
-          "maxPositionQuantizationErrorM": 8.544206546755637e-06,
-          "maxAppearanceDeltaM": 0.3315686533062765,
+          "maxPositionQuantizationErrorM": 1.8276004932073954e-05,
+          "maxAppearanceDeltaM": 0.7287082837893014,
           "fixedLowerVertices": 0
         },
         {
           "meshIndex": 3,
           "vertices": 13895,
-          "minCageJacobianDeterminant": 0.9040871063137339,
+          "minCageJacobianDeterminant": 0.9040728692590114,
           "maxPositionQuantizationErrorM": 3.2465822746054852e-06,
           "maxAppearanceDeltaM": 0.08463987236047661,
           "fixedLowerVertices": 0
@@ -669,7 +699,4762 @@
           "fixedLowerVertices": 0
         }
       ],
-      "sha256": "259adf614e29cb9cbd9b5bb38b172af6d3cbb8d6ddfae1258f813d3920a03f3a",
+      "groom": {
+        "version": 1,
+        "style": "Short rounded upright native-card crest and forelock",
+        "sourceTopologyPreserved": true,
+        "sourceSkinWeightsPreserved": true,
+        "sourceInertialHairBonesPreserved": true,
+        "components": {
+          "mane": 212,
+          "forelock": 66,
+          "tail": 194,
+          "eyelashes": 76
+        },
+        "rootAnchorMaxDriftM": 0.0,
+        "minimumCardTransformDeterminant": 0.1275005774415845,
+        "maximumManeRiseM": 0.15602227381077238,
+        "minimumManeRiseM": 0.07972016240144031,
+        "minimumHairHeightM": 0.24933159614863998,
+        "colorTreatment": "Original native alpha/detail atlas with pale outer cards and a dark central stripe",
+        "colorCards": [
+          {
+            "start": 11530,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 11550,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 11570,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 11590,
+            "count": 28,
+            "outer": 1.0
+          },
+          {
+            "start": 11618,
+            "count": 28,
+            "outer": 1.0
+          },
+          {
+            "start": 11646,
+            "count": 28,
+            "outer": 1.0
+          },
+          {
+            "start": 11674,
+            "count": 28,
+            "outer": 0.0
+          },
+          {
+            "start": 11702,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 11722,
+            "count": 28,
+            "outer": 0.953517
+          },
+          {
+            "start": 11750,
+            "count": 28,
+            "outer": 0.85289
+          },
+          {
+            "start": 11778,
+            "count": 28,
+            "outer": 0.0
+          },
+          {
+            "start": 11806,
+            "count": 28,
+            "outer": 0.001926
+          },
+          {
+            "start": 11834,
+            "count": 20,
+            "outer": 0.868532
+          },
+          {
+            "start": 11854,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 11874,
+            "count": 28,
+            "outer": 0.948749
+          },
+          {
+            "start": 11902,
+            "count": 28,
+            "outer": 1.0
+          },
+          {
+            "start": 11930,
+            "count": 36,
+            "outer": 0.0
+          },
+          {
+            "start": 11966,
+            "count": 50,
+            "outer": 0.001708
+          },
+          {
+            "start": 12016,
+            "count": 50,
+            "outer": 0.650377
+          },
+          {
+            "start": 12066,
+            "count": 36,
+            "outer": 0.99094
+          },
+          {
+            "start": 12102,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12122,
+            "count": 20,
+            "outer": 1.6e-05
+          },
+          {
+            "start": 12142,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 12162,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 12182,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 12202,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 12222,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 12242,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12262,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12282,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12302,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 12322,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12342,
+            "count": 20,
+            "outer": 0.208493
+          },
+          {
+            "start": 12362,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12382,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12402,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12422,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12442,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12462,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12482,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12502,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12522,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12542,
+            "count": 20,
+            "outer": 0.420495
+          },
+          {
+            "start": 12562,
+            "count": 20,
+            "outer": 0.782938
+          },
+          {
+            "start": 12582,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 12602,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 12622,
+            "count": 20,
+            "outer": 0.924763
+          },
+          {
+            "start": 12642,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 12662,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12682,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12702,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12722,
+            "count": 20,
+            "outer": 0.312965
+          },
+          {
+            "start": 12742,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12762,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12782,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12802,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12822,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12842,
+            "count": 20,
+            "outer": 0.805493
+          },
+          {
+            "start": 12862,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12882,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12902,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12922,
+            "count": 20,
+            "outer": 0.031571
+          },
+          {
+            "start": 12942,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 12962,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 12982,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 13002,
+            "count": 28,
+            "outer": 0.190721
+          },
+          {
+            "start": 13030,
+            "count": 28,
+            "outer": 1.0
+          },
+          {
+            "start": 13058,
+            "count": 28,
+            "outer": 1.0
+          },
+          {
+            "start": 13086,
+            "count": 28,
+            "outer": 1.0
+          },
+          {
+            "start": 13114,
+            "count": 28,
+            "outer": 0.0
+          },
+          {
+            "start": 13142,
+            "count": 28,
+            "outer": 0.607016
+          },
+          {
+            "start": 13170,
+            "count": 28,
+            "outer": 1.0
+          },
+          {
+            "start": 13198,
+            "count": 28,
+            "outer": 0.514762
+          },
+          {
+            "start": 13226,
+            "count": 28,
+            "outer": 0.192868
+          },
+          {
+            "start": 13254,
+            "count": 28,
+            "outer": 1.0
+          },
+          {
+            "start": 13282,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 13302,
+            "count": 28,
+            "outer": 1.0
+          },
+          {
+            "start": 13330,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 13350,
+            "count": 20,
+            "outer": 1.0
+          },
+          {
+            "start": 13370,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 13390,
+            "count": 20,
+            "outer": 0.0
+          },
+          {
+            "start": 13410,
+            "count": 28,
+            "outer": 0.8099
+          },
+          {
+            "start": 13438,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 13488,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 13538,
+            "count": 50,
+            "outer": 0.012026
+          },
+          {
+            "start": 13588,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 13638,
+            "count": 36,
+            "outer": 0.0
+          },
+          {
+            "start": 13674,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 13724,
+            "count": 50,
+            "outer": 0.616237
+          },
+          {
+            "start": 13774,
+            "count": 50,
+            "outer": 1.0
+          },
+          {
+            "start": 13824,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 13874,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 13924,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 13974,
+            "count": 36,
+            "outer": 0.027875
+          },
+          {
+            "start": 14010,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 14060,
+            "count": 36,
+            "outer": 0.012473
+          },
+          {
+            "start": 14096,
+            "count": 36,
+            "outer": 0.0
+          },
+          {
+            "start": 14132,
+            "count": 36,
+            "outer": 0.0
+          },
+          {
+            "start": 14168,
+            "count": 50,
+            "outer": 0.95431
+          },
+          {
+            "start": 14218,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 14268,
+            "count": 50,
+            "outer": 0.265001
+          },
+          {
+            "start": 14318,
+            "count": 50,
+            "outer": 0.532821
+          },
+          {
+            "start": 14368,
+            "count": 50,
+            "outer": 1.0
+          },
+          {
+            "start": 14418,
+            "count": 50,
+            "outer": 1.0
+          },
+          {
+            "start": 14468,
+            "count": 36,
+            "outer": 0.281661
+          },
+          {
+            "start": 14504,
+            "count": 50,
+            "outer": 1.0
+          },
+          {
+            "start": 14554,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 14604,
+            "count": 36,
+            "outer": 0.895572
+          },
+          {
+            "start": 14640,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 14690,
+            "count": 50,
+            "outer": 1.0
+          },
+          {
+            "start": 14740,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 14790,
+            "count": 50,
+            "outer": 1.0
+          },
+          {
+            "start": 14840,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 14890,
+            "count": 50,
+            "outer": 1.0
+          },
+          {
+            "start": 14940,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 14990,
+            "count": 50,
+            "outer": 0.062014
+          },
+          {
+            "start": 15040,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 15090,
+            "count": 36,
+            "outer": 0.719652
+          },
+          {
+            "start": 15126,
+            "count": 50,
+            "outer": 0.235997
+          },
+          {
+            "start": 15176,
+            "count": 50,
+            "outer": 1.0
+          },
+          {
+            "start": 15226,
+            "count": 50,
+            "outer": 0.835609
+          },
+          {
+            "start": 15276,
+            "count": 36,
+            "outer": 0.0
+          },
+          {
+            "start": 15312,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 15362,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 15412,
+            "count": 36,
+            "outer": 1.0
+          },
+          {
+            "start": 15448,
+            "count": 36,
+            "outer": 0.0
+          },
+          {
+            "start": 15484,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 15534,
+            "count": 36,
+            "outer": 1.0
+          },
+          {
+            "start": 15570,
+            "count": 50,
+            "outer": 0.262301
+          },
+          {
+            "start": 15620,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 15670,
+            "count": 36,
+            "outer": 0.0
+          },
+          {
+            "start": 15706,
+            "count": 36,
+            "outer": 0.0
+          },
+          {
+            "start": 15742,
+            "count": 36,
+            "outer": 0.0
+          },
+          {
+            "start": 15778,
+            "count": 36,
+            "outer": 0.0
+          },
+          {
+            "start": 15814,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 15864,
+            "count": 50,
+            "outer": 0.017865
+          },
+          {
+            "start": 15914,
+            "count": 36,
+            "outer": 0.41008
+          },
+          {
+            "start": 15950,
+            "count": 50,
+            "outer": 1.0
+          },
+          {
+            "start": 16000,
+            "count": 50,
+            "outer": 0.0
+          },
+          {
+            "start": 16302,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 16332,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16362,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16392,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16422,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16452,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16482,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 16512,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16542,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 16572,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 16602,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16632,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 16662,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 16692,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16722,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16752,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 16782,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 16812,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 16842,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 16872,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16902,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16932,
+            "count": 30,
+            "outer": 0.313465
+          },
+          {
+            "start": 16962,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 16992,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 17022,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 17052,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 17082,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17112,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17142,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17172,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17202,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 17232,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17262,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17292,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17322,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17352,
+            "count": 30,
+            "outer": 0.728101
+          },
+          {
+            "start": 17382,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17412,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17442,
+            "count": 30,
+            "outer": 0.29441
+          },
+          {
+            "start": 17472,
+            "count": 30,
+            "outer": 0.991004
+          },
+          {
+            "start": 17502,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17532,
+            "count": 42,
+            "outer": 0.960816
+          },
+          {
+            "start": 17574,
+            "count": 42,
+            "outer": 1.0
+          },
+          {
+            "start": 17616,
+            "count": 42,
+            "outer": 1.0
+          },
+          {
+            "start": 17658,
+            "count": 42,
+            "outer": 1.0
+          },
+          {
+            "start": 17700,
+            "count": 42,
+            "outer": 0.0
+          },
+          {
+            "start": 17742,
+            "count": 42,
+            "outer": 0.650877
+          },
+          {
+            "start": 17784,
+            "count": 42,
+            "outer": 0.0
+          },
+          {
+            "start": 17826,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 17856,
+            "count": 42,
+            "outer": 0.844308
+          },
+          {
+            "start": 17898,
+            "count": 42,
+            "outer": 0.814567
+          },
+          {
+            "start": 17940,
+            "count": 42,
+            "outer": 0.565064
+          },
+          {
+            "start": 17982,
+            "count": 42,
+            "outer": 0.0
+          },
+          {
+            "start": 18024,
+            "count": 42,
+            "outer": 0.221211
+          },
+          {
+            "start": 18066,
+            "count": 30,
+            "outer": 0.951778
+          },
+          {
+            "start": 18096,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 18126,
+            "count": 42,
+            "outer": 0.854078
+          },
+          {
+            "start": 18168,
+            "count": 42,
+            "outer": 0.0
+          },
+          {
+            "start": 18210,
+            "count": 42,
+            "outer": 1.0
+          },
+          {
+            "start": 18252,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 18282,
+            "count": 42,
+            "outer": 1.0
+          },
+          {
+            "start": 18324,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 18354,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 18384,
+            "count": 42,
+            "outer": 0.856743
+          },
+          {
+            "start": 18426,
+            "count": 54,
+            "outer": 0.0
+          },
+          {
+            "start": 18480,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 18555,
+            "count": 75,
+            "outer": 0.094232
+          },
+          {
+            "start": 18630,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 18705,
+            "count": 75,
+            "outer": 0.323311
+          },
+          {
+            "start": 18780,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 18855,
+            "count": 54,
+            "outer": 0.0
+          },
+          {
+            "start": 18909,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 18984,
+            "count": 75,
+            "outer": 0.900582
+          },
+          {
+            "start": 19059,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 19134,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 19209,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 19284,
+            "count": 54,
+            "outer": 0.190973
+          },
+          {
+            "start": 19338,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 19413,
+            "count": 54,
+            "outer": 0.351845
+          },
+          {
+            "start": 19467,
+            "count": 54,
+            "outer": 0.0
+          },
+          {
+            "start": 19521,
+            "count": 54,
+            "outer": 0.0
+          },
+          {
+            "start": 19575,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 19650,
+            "count": 75,
+            "outer": 0.336441
+          },
+          {
+            "start": 19725,
+            "count": 75,
+            "outer": 0.42126
+          },
+          {
+            "start": 19800,
+            "count": 75,
+            "outer": 0.982654
+          },
+          {
+            "start": 19875,
+            "count": 75,
+            "outer": 1.0
+          },
+          {
+            "start": 19950,
+            "count": 75,
+            "outer": 1.0
+          },
+          {
+            "start": 20025,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 20100,
+            "count": 54,
+            "outer": 1.0
+          },
+          {
+            "start": 20154,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 20229,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 20304,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 20379,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 20454,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 20529,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 20604,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 20679,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 20754,
+            "count": 54,
+            "outer": 0.205977
+          },
+          {
+            "start": 20808,
+            "count": 75,
+            "outer": 0.021064
+          },
+          {
+            "start": 20883,
+            "count": 75,
+            "outer": 0.834782
+          },
+          {
+            "start": 20958,
+            "count": 54,
+            "outer": 0.0
+          },
+          {
+            "start": 21012,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 21087,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 21162,
+            "count": 54,
+            "outer": 1.0
+          },
+          {
+            "start": 21216,
+            "count": 75,
+            "outer": 0.157256
+          },
+          {
+            "start": 21291,
+            "count": 54,
+            "outer": 1.0
+          },
+          {
+            "start": 21345,
+            "count": 54,
+            "outer": 1.0
+          },
+          {
+            "start": 21399,
+            "count": 54,
+            "outer": 1.0
+          },
+          {
+            "start": 21453,
+            "count": 75,
+            "outer": 0.0
+          },
+          {
+            "start": 21528,
+            "count": 75,
+            "outer": 0.001737
+          },
+          {
+            "start": 21603,
+            "count": 54,
+            "outer": 1.0
+          },
+          {
+            "start": 21657,
+            "count": 54,
+            "outer": 0.0
+          },
+          {
+            "start": 21711,
+            "count": 54,
+            "outer": 1.0
+          },
+          {
+            "start": 21765,
+            "count": 54,
+            "outer": 0.19967
+          },
+          {
+            "start": 21819,
+            "count": 75,
+            "outer": 1.0
+          },
+          {
+            "start": 21894,
+            "count": 75,
+            "outer": 0.174703
+          },
+          {
+            "start": 21969,
+            "count": 54,
+            "outer": 0.177961
+          },
+          {
+            "start": 22023,
+            "count": 75,
+            "outer": 0.269699
+          },
+          {
+            "start": 22458,
+            "count": 30,
+            "outer": 0.019098
+          },
+          {
+            "start": 22488,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 22518,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 22548,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 22578,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 22608,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 22638,
+            "count": 42,
+            "outer": 0.028518
+          },
+          {
+            "start": 22680,
+            "count": 42,
+            "outer": 1.0
+          },
+          {
+            "start": 22722,
+            "count": 42,
+            "outer": 1.0
+          },
+          {
+            "start": 22764,
+            "count": 42,
+            "outer": 0.0
+          },
+          {
+            "start": 22806,
+            "count": 42,
+            "outer": 1.0
+          },
+          {
+            "start": 22848,
+            "count": 75,
+            "outer": 0.775041
+          },
+          {
+            "start": 22923,
+            "count": 54,
+            "outer": 0.727108
+          },
+          {
+            "start": 22977,
+            "count": 75,
+            "outer": 1.0
+          },
+          {
+            "start": 23052,
+            "count": 75,
+            "outer": 1.0
+          },
+          {
+            "start": 23127,
+            "count": 75,
+            "outer": 0.819671
+          },
+          {
+            "start": 23274,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 23304,
+            "count": 30,
+            "outer": 1.0
+          },
+          {
+            "start": 23334,
+            "count": 30,
+            "outer": 0.0
+          },
+          {
+            "start": 23364,
+            "count": 75,
+            "outer": 1.0
+          },
+          {
+            "start": 23439,
+            "count": 75,
+            "outer": 0.0
+          }
+        ],
+        "cards": [
+          {
+            "component": 194,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.06299032926018819,
+              2.1408125130723032,
+              1.0231563502008303
+            ],
+            "topRiseM": 0.10688377040332231,
+            "oldDropM": 0.046594896101561645
+          },
+          {
+            "component": 195,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.05094137039780905,
+              2.0590968712126956,
+              0.6974111160724732
+            ],
+            "topRiseM": 0.14371222142268625,
+            "oldDropM": 0.11597767699183414
+          },
+          {
+            "component": 196,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.022047319807232443,
+              1.9636904588366741,
+              0.5788485166310968
+            ],
+            "topRiseM": 0.12887177086814683,
+            "oldDropM": 0.18455958027744668
+          },
+          {
+            "component": 197,
+            "role": "mane",
+            "vertices": 28,
+            "rootM": [
+              -0.0678080968119926,
+              2.1535746890252963,
+              1.0951443325530763
+            ],
+            "topRiseM": 0.0810012069870707,
+            "oldDropM": 0.029174888417206724
+          },
+          {
+            "component": 198,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.04766768083695847,
+              2.1284263400800287,
+              1.1265678757001125
+            ],
+            "topRiseM": 0.08347530931275937,
+            "oldDropM": 0.08196792449838641
+          },
+          {
+            "component": 199,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.06090670783403725,
+              2.1250594897969113,
+              1.128423342924354
+            ],
+            "topRiseM": 0.08449078906970975,
+            "oldDropM": 0.1055724399022342
+          },
+          {
+            "component": 200,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.043243325144288795,
+              2.1420524727834875,
+              1.1436512299402073
+            ],
+            "topRiseM": 0.08747640701831472,
+            "oldDropM": 0.11795585668068487
+          },
+          {
+            "component": 201,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              -0.03460771149435875,
+              2.1294221341604724,
+              1.1365003952352961
+            ],
+            "topRiseM": 0.0861667911334556,
+            "oldDropM": 0.13028652225539084
+          },
+          {
+            "component": 202,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.015597480560098726,
+              2.1288575498034774,
+              1.1247596829996678
+            ],
+            "topRiseM": 0.08444205186420817,
+            "oldDropM": 0.1352530244829897
+          },
+          {
+            "component": 203,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.051269087416672236,
+              2.111416927317147,
+              1.1523427977912193
+            ],
+            "topRiseM": 0.09055131466224342,
+            "oldDropM": 0.1746837479854506
+          },
+          {
+            "component": 204,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.0315027434035111,
+              2.1109378266184398,
+              1.158101871482683
+            ],
+            "topRiseM": 0.09017874376569157,
+            "oldDropM": 0.15247090786498863
+          },
+          {
+            "component": 205,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.047268136030151536,
+              2.121346908419366,
+              1.1418782717458702
+            ],
+            "topRiseM": 0.08811499322514749,
+            "oldDropM": 0.1658468465413605
+          },
+          {
+            "component": 206,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              -0.020778949829287612,
+              2.1225908239349387,
+              1.1470642837872471
+            ],
+            "topRiseM": 0.08834223973548072,
+            "oldDropM": 0.14906765106378828
+          },
+          {
+            "component": 207,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              -0.0031210916802343813,
+              2.1074899315953437,
+              1.1589981038756463
+            ],
+            "topRiseM": 0.08965725232743527,
+            "oldDropM": 0.1680207028751428
+          },
+          {
+            "component": 208,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.014260130442479663,
+              2.0983550144951923,
+              1.173995088143659
+            ],
+            "topRiseM": 0.09312248175177729,
+            "oldDropM": 0.17165676042529632
+          },
+          {
+            "component": 209,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.017681615662069054,
+              2.1006200228802743,
+              1.1763391995217565
+            ],
+            "topRiseM": 0.09505482354698236,
+            "oldDropM": 0.12470805556505327
+          },
+          {
+            "component": 210,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.02832673152602591,
+              1.8414399162274262,
+              0.4255106941890651
+            ],
+            "topRiseM": 0.08396981855941221,
+            "oldDropM": 0.20610768281401426
+          },
+          {
+            "component": 211,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.03629998721447703,
+              1.8435878305171851,
+              0.43222249408000685
+            ],
+            "topRiseM": 0.08775525897637282,
+            "oldDropM": 0.25829164538365057
+          },
+          {
+            "component": 212,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.02436423413189132,
+              2.112289204662697,
+              0.909150308691898
+            ],
+            "topRiseM": 0.1390196018053298,
+            "oldDropM": 0.30631018726554626
+          },
+          {
+            "component": 213,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.02948455208332908,
+              2.120129890778994,
+              0.9649005047822209
+            ],
+            "topRiseM": 0.12563339379703065,
+            "oldDropM": 0.24360961780976287
+          },
+          {
+            "component": 214,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              -0.032086174024139345,
+              2.1393808019523113,
+              1.0889702573266768
+            ],
+            "topRiseM": 0.07636264982900043,
+            "oldDropM": 0.054219139478000944
+          },
+          {
+            "component": 215,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03914938790703059,
+              2.1474314823752065,
+              1.069776061580311
+            ],
+            "topRiseM": 0.09482049889682198,
+            "oldDropM": 0.09500673450664054
+          },
+          {
+            "component": 216,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.09413874617874288,
+              2.142438685775074,
+              1.0157102656631618
+            ],
+            "topRiseM": 0.10691545042504247,
+            "oldDropM": 0.07369925158128154
+          },
+          {
+            "component": 217,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.07853498381940048,
+              2.1416058683030688,
+              1.0396210247892643
+            ],
+            "topRiseM": 0.10205886990791768,
+            "oldDropM": 0.07834448485468615
+          },
+          {
+            "component": 218,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.07303806791734646,
+              2.1380211037151264,
+              1.0103044840389395
+            ],
+            "topRiseM": 0.11108043247339827,
+            "oldDropM": 0.07394721640216595
+          },
+          {
+            "component": 219,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.062439979595900905,
+              2.1320280773731177,
+              0.9759505012295753
+            ],
+            "topRiseM": 0.1202339016226075,
+            "oldDropM": 0.07084052600636426
+          },
+          {
+            "component": 220,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.0551606847430843,
+              2.136729936784775,
+              0.9249606525325769
+            ],
+            "topRiseM": 0.1307838026093311,
+            "oldDropM": 0.06844110270517278
+          },
+          {
+            "component": 221,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03740114691798052,
+              2.1236142346818556,
+              0.9615547593757824
+            ],
+            "topRiseM": 0.12402410373290129,
+            "oldDropM": 0.0859517069639888
+          },
+          {
+            "component": 222,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03580361252361101,
+              2.122669220355934,
+              0.929960916424799
+            ],
+            "topRiseM": 0.1304347016385039,
+            "oldDropM": 0.06355476440782493
+          },
+          {
+            "component": 223,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.028317298495804125,
+              2.119332418531126,
+              0.909736689064556
+            ],
+            "topRiseM": 0.13327865637655023,
+            "oldDropM": 0.09314485119926852
+          },
+          {
+            "component": 224,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.056394703762586686,
+              2.114440678917269,
+              0.87327739429449
+            ],
+            "topRiseM": 0.1387641772174617,
+            "oldDropM": 0.08451880516364518
+          },
+          {
+            "component": 225,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03646201106579373,
+              2.1091797400436594,
+              0.8812407580558641
+            ],
+            "topRiseM": 0.13800801532812024,
+            "oldDropM": 0.08875364048183343
+          },
+          {
+            "component": 226,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.045474945163163985,
+              2.103600668132018,
+              0.8527978288199809
+            ],
+            "topRiseM": 0.14151490568245562,
+            "oldDropM": 0.0638510532473644
+          },
+          {
+            "component": 227,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03719825814563674,
+              2.101107872572445,
+              0.8558571444968402
+            ],
+            "topRiseM": 0.14155599411341013,
+            "oldDropM": 0.1043769358404325
+          },
+          {
+            "component": 228,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03897869607576572,
+              2.099128289005367,
+              0.8375657286621071
+            ],
+            "topRiseM": 0.14285166833110718,
+            "oldDropM": 0.10035271294885795
+          },
+          {
+            "component": 229,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.0437681021682339,
+              2.0937144541886776,
+              0.8266062319518289
+            ],
+            "topRiseM": 0.14466640034523204,
+            "oldDropM": 0.07727613537647215
+          },
+          {
+            "component": 230,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.043976554387703946,
+              2.086978405072534,
+              0.7963360537064726
+            ],
+            "topRiseM": 0.14751439891230422,
+            "oldDropM": 0.15233665326099244
+          },
+          {
+            "component": 231,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.0347637912188561,
+              2.0939244478530274,
+              0.8035159309910165
+            ],
+            "topRiseM": 0.1490625257367446,
+            "oldDropM": 0.16980175016897725
+          },
+          {
+            "component": 232,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.0340847171651079,
+              2.092244092673801,
+              0.7782580775779014
+            ],
+            "topRiseM": 0.15192133625912518,
+            "oldDropM": 0.1969234686113961
+          },
+          {
+            "component": 233,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.04198542035113532,
+              2.0841817128828954,
+              0.7656181714000598
+            ],
+            "topRiseM": 0.14821924998196945,
+            "oldDropM": 0.1960095777715669
+          },
+          {
+            "component": 234,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03816502080931301,
+              2.065917381391169,
+              0.7669601021077738
+            ],
+            "topRiseM": 0.14767095103602657,
+            "oldDropM": 0.10532494028973605
+          },
+          {
+            "component": 235,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.033768996703795726,
+              2.0712093962093543,
+              0.745113283352225
+            ],
+            "topRiseM": 0.14603049594953754,
+            "oldDropM": 0.1004025171587335
+          },
+          {
+            "component": 236,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.047221114535986305,
+              2.062240187238744,
+              0.719392430087549
+            ],
+            "topRiseM": 0.1454906029746228,
+            "oldDropM": 0.12702777020593192
+          },
+          {
+            "component": 237,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.04300943181580288,
+              2.052645505827263,
+              0.6916753108326419
+            ],
+            "topRiseM": 0.1448284665487316,
+            "oldDropM": 0.11921755040612991
+          },
+          {
+            "component": 238,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.053021096725382244,
+              2.036480801560616,
+              0.6612479112358627
+            ],
+            "topRiseM": 0.1406908203685715,
+            "oldDropM": 0.10267708621850802
+          },
+          {
+            "component": 239,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.04708391840835897,
+              2.0169879219854177,
+              0.655879208500501
+            ],
+            "topRiseM": 0.14145002656102879,
+            "oldDropM": 0.10828853701347163
+          },
+          {
+            "component": 240,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03749929244904793,
+              2.012853020269824,
+              0.6436970644814634
+            ],
+            "topRiseM": 0.13924380275279313,
+            "oldDropM": 0.11866295253943515
+          },
+          {
+            "component": 241,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.043793233240321035,
+              2.0030236331262445,
+              0.6259396057449291
+            ],
+            "topRiseM": 0.1379524064213422,
+            "oldDropM": 0.11278407013075942
+          },
+          {
+            "component": 242,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.02123682746757155,
+              1.9918437762737662,
+              0.622563058036682
+            ],
+            "topRiseM": 0.1362297195947504,
+            "oldDropM": 0.09809048933081321
+          },
+          {
+            "component": 243,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03030118370922924,
+              1.976109387479259,
+              0.5989533026782722
+            ],
+            "topRiseM": 0.13366403925923587,
+            "oldDropM": 0.13924935291006868
+          },
+          {
+            "component": 244,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.034846337634620535,
+              1.9592537522041138,
+              0.5737327099550271
+            ],
+            "topRiseM": 0.12890332450895037,
+            "oldDropM": 0.14846323675360096
+          },
+          {
+            "component": 245,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03768470813425721,
+              1.934069847318989,
+              0.554844413994854
+            ],
+            "topRiseM": 0.12434290256703773,
+            "oldDropM": 0.11249184202188056
+          },
+          {
+            "component": 246,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.02084994969724874,
+              1.9468470820734003,
+              0.5578799029258343
+            ],
+            "topRiseM": 0.1239106551021989,
+            "oldDropM": 0.10230130298590723
+          },
+          {
+            "component": 247,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03158952057499607,
+              1.925725966795457,
+              0.522206437688439
+            ],
+            "topRiseM": 0.11465991098275774,
+            "oldDropM": 0.11894111766797599
+          },
+          {
+            "component": 248,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.027115753402440913,
+              1.9224270511044508,
+              0.5268000826193431
+            ],
+            "topRiseM": 0.11720700106958315,
+            "oldDropM": 0.13334323695991057
+          },
+          {
+            "component": 249,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03246296267151188,
+              1.9092062928401294,
+              0.5043294302134224
+            ],
+            "topRiseM": 0.11095206615803987,
+            "oldDropM": 0.15290903654046772
+          },
+          {
+            "component": 250,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.019034339002457913,
+              1.9074310306822049,
+              0.5010767890901995
+            ],
+            "topRiseM": 0.10902006288195287,
+            "oldDropM": 0.13266524535536472
+          },
+          {
+            "component": 251,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.020929632547116602,
+              1.8977095805988473,
+              0.4856883711232558
+            ],
+            "topRiseM": 0.10454361425228131,
+            "oldDropM": 0.22666607633555458
+          },
+          {
+            "component": 252,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.03254041895245452,
+              1.8731158139814004,
+              0.46556769304265166
+            ],
+            "topRiseM": 0.09859413834220909,
+            "oldDropM": 0.18172113664155232
+          },
+          {
+            "component": 253,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.030501275778737492,
+              1.8584969589848128,
+              0.4485683257012202
+            ],
+            "topRiseM": 0.0922860647372632,
+            "oldDropM": 0.15367823240978096
+          },
+          {
+            "component": 254,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.030938002575414066,
+              1.8374828155759193,
+              0.4347364732053007
+            ],
+            "topRiseM": 0.08726531955385552,
+            "oldDropM": 0.16529705706128173
+          },
+          {
+            "component": 255,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              -0.04907403009622829,
+              2.1421235166095456,
+              1.121898486296954
+            ],
+            "topRiseM": 0.0831516645036765,
+            "oldDropM": 0.07397678987609835
+          },
+          {
+            "component": 256,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              -0.07856130719345057,
+              2.1527962584391283,
+              1.1133883113435354
+            ],
+            "topRiseM": 0.08647350117702457,
+            "oldDropM": 0.03445083661655568
+          },
+          {
+            "component": 257,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              -0.03072368692070033,
+              2.149338771420143,
+              1.0984241504998915
+            ],
+            "topRiseM": 0.07796525155485234,
+            "oldDropM": 0.08342641228277925
+          },
+          {
+            "component": 258,
+            "role": "mane",
+            "vertices": 20,
+            "rootM": [
+              -0.05551721609118476,
+              2.1446433779555045,
+              1.0901732758587275
+            ],
+            "topRiseM": 0.0801726162327272,
+            "oldDropM": 0.03847446164333013
+          },
+          {
+            "component": 259,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.028971334104201753,
+              2.1331106686750836,
+              1.111683563727494
+            ],
+            "topRiseM": 0.08189605956414692,
+            "oldDropM": 0.03991665932826827
+          },
+          {
+            "component": 260,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.0786567056087598,
+              2.1186037164490457,
+              1.1303095019997553
+            ],
+            "topRiseM": 0.08430960784236063,
+            "oldDropM": 0.062010492532064365
+          },
+          {
+            "component": 261,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.0683450201781838,
+              2.1201901274444883,
+              1.1403844619696575
+            ],
+            "topRiseM": 0.08666705060460789,
+            "oldDropM": 0.12116944218246073
+          },
+          {
+            "component": 262,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.07893679947892734,
+              2.137893391483934,
+              1.131195859763202
+            ],
+            "topRiseM": 0.08566157053578394,
+            "oldDropM": 0.03795621672783023
+          },
+          {
+            "component": 263,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.03470315059436254,
+              2.1352069154829705,
+              1.1494735341728264
+            ],
+            "topRiseM": 0.08859468504445678,
+            "oldDropM": 0.08483843529810065
+          },
+          {
+            "component": 264,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.05632170812478455,
+              2.137540409043107,
+              1.1370058433815933
+            ],
+            "topRiseM": 0.08640953049022038,
+            "oldDropM": 0.0715538708377883
+          },
+          {
+            "component": 265,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.06987190777180105,
+              2.148563424395637,
+              1.1128486966658193
+            ],
+            "topRiseM": 0.08012163855551746,
+            "oldDropM": 0.03209622300764581
+          },
+          {
+            "component": 266,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.05039972252834584,
+              2.1331746206117552,
+              1.127775129803117
+            ],
+            "topRiseM": 0.08453195856712448,
+            "oldDropM": 0.13823626432725633
+          },
+          {
+            "component": 267,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.052270363833743894,
+              2.0980188087432174,
+              1.1719531718056184
+            ],
+            "topRiseM": 0.09159408673262215,
+            "oldDropM": 0.21027096858734962
+          },
+          {
+            "component": 268,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.0691945822736698,
+              2.088436917092287,
+              1.1817510554447792
+            ],
+            "topRiseM": 0.09430954865419316,
+            "oldDropM": 0.16967970120209075
+          },
+          {
+            "component": 269,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              -0.07373757466851678,
+              2.1085619879882387,
+              1.1590067434063318
+            ],
+            "topRiseM": 0.0905133932566331,
+            "oldDropM": 0.1522716961914068
+          },
+          {
+            "component": 270,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              0.0025343371713285306,
+              2.0885963768284204,
+              1.1857093903130262
+            ],
+            "topRiseM": 0.09411038847669362,
+            "oldDropM": 0.17350517304969748
+          },
+          {
+            "component": 271,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              0.0072168632388282476,
+              2.1169950095337833,
+              1.1355592043184726
+            ],
+            "topRiseM": 0.08748544634643807,
+            "oldDropM": 0.12366519816330657
+          },
+          {
+            "component": 272,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              -0.0856835500898766,
+              2.093878813164338,
+              1.1758035176655977
+            ],
+            "topRiseM": 0.09337575825016486,
+            "oldDropM": 0.13081607605652223
+          },
+          {
+            "component": 273,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              -0.041629926010924516,
+              2.139065574261219,
+              1.116900944879167
+            ],
+            "topRiseM": 0.08307272021330059,
+            "oldDropM": 0.11623968716972488
+          },
+          {
+            "component": 274,
+            "role": "forelock",
+            "vertices": 20,
+            "rootM": [
+              -0.03191782967901506,
+              2.1353338354071076,
+              1.1025068421452282
+            ],
+            "topRiseM": 0.07993258797301417,
+            "oldDropM": 0.09584003623033199
+          },
+          {
+            "component": 275,
+            "role": "forelock",
+            "vertices": 28,
+            "rootM": [
+              -0.01931323156729431,
+              2.135726203355298,
+              1.1213118522387029
+            ],
+            "topRiseM": 0.08362980364399641,
+            "oldDropM": 0.13798384618049964
+          },
+          {
+            "component": 276,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.02317643765219528,
+              1.8534836523080065,
+              0.43852313788451175
+            ],
+            "topRiseM": 0.08691416387599804,
+            "oldDropM": 0.21774236069696373
+          },
+          {
+            "component": 277,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.03372763726174912,
+              1.8600269808861243,
+              0.4479755079183379
+            ],
+            "topRiseM": 0.09100638690714247,
+            "oldDropM": 0.22482780519357637
+          },
+          {
+            "component": 278,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.023032052926406484,
+              1.8718493666828815,
+              0.4621590772682629
+            ],
+            "topRiseM": 0.09749728888961018,
+            "oldDropM": 0.27275484710298925
+          },
+          {
+            "component": 279,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.032814125025193895,
+              1.8794531084309938,
+              0.4757765305982818
+            ],
+            "topRiseM": 0.10386143186309837,
+            "oldDropM": 0.30647498689368824
+          },
+          {
+            "component": 280,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.029796675283848457,
+              1.895905305030511,
+              0.48766974060688745
+            ],
+            "topRiseM": 0.11022519351803428,
+            "oldDropM": 0.3609821662205497
+          },
+          {
+            "component": 281,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.035898561009468026,
+              1.8972620504159399,
+              0.5060360840605046
+            ],
+            "topRiseM": 0.11398785419148849,
+            "oldDropM": 0.3829622639142154
+          },
+          {
+            "component": 282,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.025951234312634373,
+              1.9128013844765122,
+              0.5125496065397585
+            ],
+            "topRiseM": 0.11486848175431574,
+            "oldDropM": 0.3682148419883746
+          },
+          {
+            "component": 283,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.05165964391101799,
+              1.916531816544966,
+              0.5146940955916568
+            ],
+            "topRiseM": 0.11315483832270323,
+            "oldDropM": 0.26567152938860183
+          },
+          {
+            "component": 284,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.028791304801545185,
+              1.9232734129901248,
+              0.5286053550481867
+            ],
+            "topRiseM": 0.11784449279714648,
+            "oldDropM": 0.325269096336676
+          },
+          {
+            "component": 285,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.02382118776487715,
+              1.9302745017809124,
+              0.5274388460219084
+            ],
+            "topRiseM": 0.11730361921476384,
+            "oldDropM": 0.37338805431185795
+          },
+          {
+            "component": 286,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.033026967818926084,
+              1.9395077564736205,
+              0.5562413724749055
+            ],
+            "topRiseM": 0.12461471934371948,
+            "oldDropM": 0.30693149343624704
+          },
+          {
+            "component": 287,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.025669477886603946,
+              1.9536349712182874,
+              0.5653649900537433
+            ],
+            "topRiseM": 0.1279614178905979,
+            "oldDropM": 0.36960297090358796
+          },
+          {
+            "component": 288,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.02225978567235543,
+              1.9578340008839443,
+              0.5679337459239681
+            ],
+            "topRiseM": 0.12764949824312422,
+            "oldDropM": 0.3389195475288562
+          },
+          {
+            "component": 289,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.022900223756732414,
+              1.9696828627883354,
+              0.5900817913484048
+            ],
+            "topRiseM": 0.13242299384524325,
+            "oldDropM": 0.3597511860252729
+          },
+          {
+            "component": 290,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.025094935640774564,
+              1.9699333126602352,
+              0.5867096113034893
+            ],
+            "topRiseM": 0.13315391166796386,
+            "oldDropM": 0.46434387542752953
+          },
+          {
+            "component": 291,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.025718368152351026,
+              1.9772870845305854,
+              0.6078965643722904
+            ],
+            "topRiseM": 0.1370916789586596,
+            "oldDropM": 0.35726937299326145
+          },
+          {
+            "component": 292,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.01618381894827192,
+              1.9821510876920436,
+              0.6106959209794723
+            ],
+            "topRiseM": 0.13796570967695598,
+            "oldDropM": 0.5031580081942648
+          },
+          {
+            "component": 293,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.022398600920644603,
+              1.9898084241659808,
+              0.6217158773018225
+            ],
+            "topRiseM": 0.14202779163399293,
+            "oldDropM": 0.5044217584397963
+          },
+          {
+            "component": 294,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.01972926612902108,
+              1.999698652323561,
+              0.6408397844645479
+            ],
+            "topRiseM": 0.13981259838898197,
+            "oldDropM": 0.4094691466196092
+          },
+          {
+            "component": 295,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.013631166400779937,
+              2.002189752761364,
+              0.6412980520851811
+            ],
+            "topRiseM": 0.14340548483542825,
+            "oldDropM": 0.3870493377488817
+          },
+          {
+            "component": 296,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.027720865117647837,
+              2.010917128559527,
+              0.6658794597433428
+            ],
+            "topRiseM": 0.1462703551349951,
+            "oldDropM": 0.43823013283772205
+          },
+          {
+            "component": 297,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.021022065320651213,
+              2.0153228418043603,
+              0.6797902648639831
+            ],
+            "topRiseM": 0.14677307779512416,
+            "oldDropM": 0.3772888346938501
+          },
+          {
+            "component": 298,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.017275366921929897,
+              2.022554478263279,
+              0.6721462780077795
+            ],
+            "topRiseM": 0.14757559547238497,
+            "oldDropM": 0.5531574815358133
+          },
+          {
+            "component": 299,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.026292649469913724,
+              2.029168766790782,
+              0.6992602838111097
+            ],
+            "topRiseM": 0.1490335227447699,
+            "oldDropM": 0.5093974709798439
+          },
+          {
+            "component": 300,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.02677537016147955,
+              2.0343804938010615,
+              0.6940676309652439
+            ],
+            "topRiseM": 0.15078468651667132,
+            "oldDropM": 0.5424851427804045
+          },
+          {
+            "component": 301,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.026037125030402227,
+              2.042781878763302,
+              0.7142938692236486
+            ],
+            "topRiseM": 0.14806502847903458,
+            "oldDropM": 0.5605892610484284
+          },
+          {
+            "component": 302,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.02148570808201697,
+              2.046542721717248,
+              0.7164623411637536
+            ],
+            "topRiseM": 0.15155902849959935,
+            "oldDropM": 0.5560728220813782
+          },
+          {
+            "component": 303,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.010775960127846932,
+              2.0535491061476323,
+              0.7272280101190469
+            ],
+            "topRiseM": 0.1500853051247426,
+            "oldDropM": 0.5235162037055592
+          },
+          {
+            "component": 304,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.026699716603355485,
+              2.0635088351266604,
+              0.752288327941548
+            ],
+            "topRiseM": 0.14982893226934246,
+            "oldDropM": 0.5790423322751341
+          },
+          {
+            "component": 305,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.029536783929206965,
+              2.065530856119976,
+              0.7479376460327737
+            ],
+            "topRiseM": 0.15552965814508068,
+            "oldDropM": 0.5244935639333588
+          },
+          {
+            "component": 306,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.03098247488428032,
+              2.0663534110275226,
+              0.7718184432435293
+            ],
+            "topRiseM": 0.1515493522176583,
+            "oldDropM": 0.5342687327614282
+          },
+          {
+            "component": 307,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.014057507764241193,
+              2.0748797434160924,
+              0.7718350542730346
+            ],
+            "topRiseM": 0.1527518658044844,
+            "oldDropM": 0.3780514560709496
+          },
+          {
+            "component": 308,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.02035658531186447,
+              2.0812033547038444,
+              0.7828522267385879
+            ],
+            "topRiseM": 0.15086935458267892,
+            "oldDropM": 0.4873457910809582
+          },
+          {
+            "component": 309,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.02682169688976395,
+              2.081850102676739,
+              0.8109245615226706
+            ],
+            "topRiseM": 0.14531518797655973,
+            "oldDropM": 0.45843124103662025
+          },
+          {
+            "component": 310,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.03143881681429184,
+              2.0859708339262526,
+              0.8253945576180832
+            ],
+            "topRiseM": 0.14619456138889309,
+            "oldDropM": 0.5224449647357159
+          },
+          {
+            "component": 311,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.047297987468560704,
+              2.0978941831208395,
+              0.8177291976907392
+            ],
+            "topRiseM": 0.1460275017671906,
+            "oldDropM": 0.4875234109834654
+          },
+          {
+            "component": 312,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.026191971583832917,
+              2.093218738878184,
+              0.8316878849376578
+            ],
+            "topRiseM": 0.14971021927640304,
+            "oldDropM": 0.4546629974909797
+          },
+          {
+            "component": 313,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.017901815162163305,
+              2.0980322419599857,
+              0.8447134699779634
+            ],
+            "topRiseM": 0.1482098949839843,
+            "oldDropM": 0.4060070441264241
+          },
+          {
+            "component": 314,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.01705687145375133,
+              2.1012109469625115,
+              0.8582388587758285
+            ],
+            "topRiseM": 0.1469307353433802,
+            "oldDropM": 0.4861812426805012
+          },
+          {
+            "component": 315,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.024917377531807894,
+              2.101566485710326,
+              0.8704173232981949
+            ],
+            "topRiseM": 0.1450672455672497,
+            "oldDropM": 0.4615105060056659
+          },
+          {
+            "component": 316,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.0270545018843024,
+              2.1044809860105054,
+              0.8959557063220094
+            ],
+            "topRiseM": 0.13804017581761974,
+            "oldDropM": 0.48183370000501924
+          },
+          {
+            "component": 317,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.03479181426047094,
+              2.101955567072392,
+              0.910264514614536
+            ],
+            "topRiseM": 0.13857012016744763,
+            "oldDropM": 0.3764988709832455
+          },
+          {
+            "component": 318,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.019673102292679906,
+              2.1112752398846655,
+              0.9157329852102413
+            ],
+            "topRiseM": 0.13404526542515738,
+            "oldDropM": 0.32218937873328324
+          },
+          {
+            "component": 319,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.045583961473787925,
+              2.1172688611319916,
+              0.9228345330633796
+            ],
+            "topRiseM": 0.13314710730264956,
+            "oldDropM": 0.3265551258685562
+          },
+          {
+            "component": 320,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.030398794286926673,
+              2.11813051177936,
+              0.9288643294404698
+            ],
+            "topRiseM": 0.13474768816694738,
+            "oldDropM": 0.22522745796103094
+          },
+          {
+            "component": 321,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.031814824098711565,
+              2.1155518546945578,
+              0.9662372013790178
+            ],
+            "topRiseM": 0.12462873112692963,
+            "oldDropM": 0.2673345300918477
+          },
+          {
+            "component": 322,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.04686947377039403,
+              2.1294664718900704,
+              0.9462919601763999
+            ],
+            "topRiseM": 0.1279838008989942,
+            "oldDropM": 0.280521647521645
+          },
+          {
+            "component": 323,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.04181844486998736,
+              2.125312723166602,
+              0.9714784097647807
+            ],
+            "topRiseM": 0.1233723226935175,
+            "oldDropM": 0.3158840809014507
+          },
+          {
+            "component": 324,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.05475059444522637,
+              2.1271648814578326,
+              1.0138644283877536
+            ],
+            "topRiseM": 0.11115452908269141,
+            "oldDropM": 0.26062597801927967
+          },
+          {
+            "component": 325,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.03707076472868839,
+              2.130012331849017,
+              1.0339733708800343
+            ],
+            "topRiseM": 0.10457541125350067,
+            "oldDropM": 0.3136521561227066
+          },
+          {
+            "component": 326,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.0451601728456814,
+              2.1324567727038515,
+              1.031024551244601
+            ],
+            "topRiseM": 0.10405992913327777,
+            "oldDropM": 0.3229570931664991
+          },
+          {
+            "component": 327,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.04383308453917798,
+              2.1296513560409043,
+              1.049792512005897
+            ],
+            "topRiseM": 0.09967742550578373,
+            "oldDropM": 0.20416072532504836
+          },
+          {
+            "component": 328,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.0574384149935991,
+              2.134381671678119,
+              1.0511993665420458
+            ],
+            "topRiseM": 0.10055879159159797,
+            "oldDropM": 0.20878346183801644
+          },
+          {
+            "component": 329,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.04253415291067804,
+              2.135588087778017,
+              1.0748770249567527
+            ],
+            "topRiseM": 0.09016293661993924,
+            "oldDropM": 0.2363156217119029
+          },
+          {
+            "component": 330,
+            "role": "mane",
+            "vertices": 36,
+            "rootM": [
+              -0.034451999774555556,
+              2.139425788495562,
+              1.0851833096482684
+            ],
+            "topRiseM": 0.08352021061485448,
+            "oldDropM": 0.29843645946858643
+          },
+          {
+            "component": 331,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.01578538598240331,
+              2.1331179302483654,
+              1.08846458753511
+            ],
+            "topRiseM": 0.08277037471405846,
+            "oldDropM": 0.2709178530430416
+          },
+          {
+            "component": 332,
+            "role": "mane",
+            "vertices": 50,
+            "rootM": [
+              -0.04260411330567089,
+              2.1375297605450814,
+              1.0644350457866762
+            ],
+            "topRiseM": 0.0923450899758338,
+            "oldDropM": 0.08786588836665121
+          },
+          {
+            "component": 361,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              -0.03228191588904216,
+              2.1392219237080536,
+              1.0887628956932147
+            ],
+            "topRiseM": 0.07691079657073896,
+            "oldDropM": 0.06001922140680449
+          },
+          {
+            "component": 362,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.08237026176258146,
+              2.140938887574465,
+              1.0398410129057125
+            ],
+            "topRiseM": 0.10169346936170731,
+            "oldDropM": 0.06726314391124033
+          },
+          {
+            "component": 363,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.07900203864595569,
+              2.14420408497088,
+              1.0405086070560032
+            ],
+            "topRiseM": 0.10464758949179487,
+            "oldDropM": 0.08084706184009649
+          },
+          {
+            "component": 364,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.08530275512735803,
+              2.144283574088942,
+              1.0167838609584579
+            ],
+            "topRiseM": 0.10818221668644368,
+            "oldDropM": 0.0478779229049624
+          },
+          {
+            "component": 365,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.08999945875886066,
+              2.1426108754555098,
+              0.9982753677713179
+            ],
+            "topRiseM": 0.11702679447537179,
+            "oldDropM": 0.0771970140973326
+          },
+          {
+            "component": 366,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.07863600577323922,
+              2.1374893281546075,
+              0.9636350018537994
+            ],
+            "topRiseM": 0.12465919491913402,
+            "oldDropM": 0.0716964691382822
+          },
+          {
+            "component": 367,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.037759736991839765,
+              2.123641900766025,
+              0.9621755331163033
+            ],
+            "topRiseM": 0.12755896573455816,
+            "oldDropM": 0.08528842386305469
+          },
+          {
+            "component": 368,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.05389234651346578,
+              2.126915859763646,
+              0.9155776770326347
+            ],
+            "topRiseM": 0.1353703338798664,
+            "oldDropM": 0.06525241278314242
+          },
+          {
+            "component": 369,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.03730630116116838,
+              2.10943967880952,
+              0.8860083281469424
+            ],
+            "topRiseM": 0.13930114424996676,
+            "oldDropM": 0.07719950251326058
+          },
+          {
+            "component": 370,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.03669684749971493,
+              2.109290143867658,
+              0.881776232232696
+            ],
+            "topRiseM": 0.1422069529083987,
+            "oldDropM": 0.09000358716480017
+          },
+          {
+            "component": 371,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.06717661691108473,
+              2.111316872467877,
+              0.8403462258579073
+            ],
+            "topRiseM": 0.14509405922654484,
+            "oldDropM": 0.06927329014161021
+          },
+          {
+            "component": 372,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.037457527544705174,
+              2.1011800197693953,
+              0.8562170533430484
+            ],
+            "topRiseM": 0.14508871087215658,
+            "oldDropM": 0.10823042208466549
+          },
+          {
+            "component": 373,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.039534949894860914,
+              2.0992953254222817,
+              0.8382628797665833
+            ],
+            "topRiseM": 0.1473127006567836,
+            "oldDropM": 0.10501474725720117
+          },
+          {
+            "component": 374,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.06503041801385681,
+              2.100233412238591,
+              0.8148068191294042
+            ],
+            "topRiseM": 0.1470106246632641,
+            "oldDropM": 0.08063984921181389
+          },
+          {
+            "component": 375,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.07164533797901763,
+              2.0905676691703694,
+              0.7839295401530003
+            ],
+            "topRiseM": 0.14962987475627232,
+            "oldDropM": 0.15796523095538473
+          },
+          {
+            "component": 376,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.03497912974015335,
+              2.0941304416321516,
+              0.8039086217861511
+            ],
+            "topRiseM": 0.15095418134404293,
+            "oldDropM": 0.17263201019614383
+          },
+          {
+            "component": 377,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.03429561446117402,
+              2.0926448100993422,
+              0.778555066253552
+            ],
+            "topRiseM": 0.1528775398339195,
+            "oldDropM": 0.20129755866875665
+          },
+          {
+            "component": 378,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.04138005213283166,
+              2.0852366815790555,
+              0.76339786260469
+            ],
+            "topRiseM": 0.15276157085181863,
+            "oldDropM": 0.1996187872819506
+          },
+          {
+            "component": 379,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.03851346013744469,
+              2.065819734242621,
+              0.7674040275000619
+            ],
+            "topRiseM": 0.1493367098728875,
+            "oldDropM": 0.102706556431158
+          },
+          {
+            "component": 380,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.05844285544563348,
+              2.076289240593021,
+              0.7348875618723663
+            ],
+            "topRiseM": 0.14965580958312108,
+            "oldDropM": 0.10829033838306468
+          },
+          {
+            "component": 381,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.04997762910791322,
+              2.06022486746338,
+              0.6950288604120425
+            ],
+            "topRiseM": 0.1465571484798085,
+            "oldDropM": 0.12105298456012137
+          },
+          {
+            "component": 382,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.0442787729560464,
+              2.05326928460372,
+              0.6935183600224867
+            ],
+            "topRiseM": 0.14912374281250873,
+            "oldDropM": 0.1263821515836352
+          },
+          {
+            "component": 383,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.05062314973735222,
+              2.0373600951502966,
+              0.6578912552263045
+            ],
+            "topRiseM": 0.14460881615772792,
+            "oldDropM": 0.1035978755210114
+          },
+          {
+            "component": 384,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.04623457471961427,
+              2.017425580895092,
+              0.6539290902936418
+            ],
+            "topRiseM": 0.14438825648117382,
+            "oldDropM": 0.11428478409445209
+          },
+          {
+            "component": 385,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.061721131803258035,
+              2.0145216635054553,
+              0.6278338118644936
+            ],
+            "topRiseM": 0.1398384509373054,
+            "oldDropM": 0.1212456686852248
+          },
+          {
+            "component": 386,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.042624455542447884,
+              2.0036756848090564,
+              0.6240173453542099
+            ],
+            "topRiseM": 0.14042727613155437,
+            "oldDropM": 0.11905264086218748
+          },
+          {
+            "component": 387,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.021527144788438896,
+              1.9919748378623814,
+              0.6230210642073628
+            ],
+            "topRiseM": 0.13942563807019126,
+            "oldDropM": 0.10124811297247027
+          },
+          {
+            "component": 388,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.02986798061034898,
+              1.9760975472582394,
+              0.5984345077638556
+            ],
+            "topRiseM": 0.13720787643264298,
+            "oldDropM": 0.14544522973786744
+          },
+          {
+            "component": 389,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.021690740453849538,
+              1.9636659676944903,
+              0.5782421035849604
+            ],
+            "topRiseM": 0.13272095523831084,
+            "oldDropM": 0.18891327215234677
+          },
+          {
+            "component": 390,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.03538280263182777,
+              1.9591992197142738,
+              0.5742391191479674
+            ],
+            "topRiseM": 0.13146182776511717,
+            "oldDropM": 0.15112800521851044
+          },
+          {
+            "component": 391,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.06157771640861773,
+              1.9382428347611422,
+              0.5277378576584234
+            ],
+            "topRiseM": 0.11771154548796536,
+            "oldDropM": 0.11273445438374408
+          },
+          {
+            "component": 392,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.02130923042676708,
+              1.9468711809685986,
+              0.5583413097903925
+            ],
+            "topRiseM": 0.12689850103623002,
+            "oldDropM": 0.10542629706943996
+          },
+          {
+            "component": 393,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.02860455123156194,
+              1.919958916716249,
+              0.5244948062728911
+            ],
+            "topRiseM": 0.1169840789850296,
+            "oldDropM": 0.1166966987097211
+          },
+          {
+            "component": 394,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.032875237629562896,
+              1.9093067073708399,
+              0.5049839800680691
+            ],
+            "topRiseM": 0.11227861257801508,
+            "oldDropM": 0.15435220862630805
+          },
+          {
+            "component": 395,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.01957135801921405,
+              1.9069310665372232,
+              0.5009003959197486
+            ],
+            "topRiseM": 0.1112720373403453,
+            "oldDropM": 0.12947822584107804
+          },
+          {
+            "component": 396,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.021348109040580383,
+              1.8979465556991149,
+              0.48627521478504926
+            ],
+            "topRiseM": 0.10794367971305041,
+            "oldDropM": 0.22236664148231178
+          },
+          {
+            "component": 397,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.0330937150462659,
+              1.8725490178158664,
+              0.4657705696750729
+            ],
+            "topRiseM": 0.0994490332296627,
+            "oldDropM": 0.1862129384502127
+          },
+          {
+            "component": 398,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.030762441967420777,
+              1.858558846002031,
+              0.4490624999672912
+            ],
+            "topRiseM": 0.09160207277741184,
+            "oldDropM": 0.1606472645938355
+          },
+          {
+            "component": 399,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              -0.051176689409410316,
+              2.1409284958564916,
+              1.1208161908488024
+            ],
+            "topRiseM": 0.0814646569390427,
+            "oldDropM": 0.07502923619121704
+          },
+          {
+            "component": 400,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              -0.05239740266230836,
+              2.14456634067605,
+              1.1250430985127067
+            ],
+            "topRiseM": 0.08621754183234032,
+            "oldDropM": 0.021091750279206067
+          },
+          {
+            "component": 401,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.05489842882502584,
+              2.145377704516537,
+              1.0866209800232545
+            ],
+            "topRiseM": 0.08693063340640084,
+            "oldDropM": 0.04329777325696771
+          },
+          {
+            "component": 402,
+            "role": "mane",
+            "vertices": 42,
+            "rootM": [
+              -0.059147427824490645,
+              2.1430164848616675,
+              1.0929113605437963
+            ],
+            "topRiseM": 0.08315123952760173,
+            "oldDropM": 0.016334771517706237
+          },
+          {
+            "component": 403,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.04738018482947743,
+              2.12838384875031,
+              1.1266863493936976
+            ],
+            "topRiseM": 0.0824063137722848,
+            "oldDropM": 0.09042099734001718
+          },
+          {
+            "component": 404,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.06062610791228266,
+              2.1250169402873333,
+              1.128553029201159
+            ],
+            "topRiseM": 0.08358872404565787,
+            "oldDropM": 0.1102883386677398
+          },
+          {
+            "component": 405,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.06866988831311037,
+              2.1202427478528114,
+              1.1402655560114483
+            ],
+            "topRiseM": 0.08521813445816973,
+            "oldDropM": 0.12557219321704172
+          },
+          {
+            "component": 406,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.029388479901164614,
+              2.1338576564960006,
+              1.1053927248721036
+            ],
+            "topRiseM": 0.07906845804832496,
+            "oldDropM": 0.08251911446295157
+          },
+          {
+            "component": 407,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.0566371469869437,
+              2.1358208386151287,
+              1.137133621873978
+            ],
+            "topRiseM": 0.08492074974380692,
+            "oldDropM": 0.06726340086195126
+          },
+          {
+            "component": 408,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.042116772076083844,
+              2.138958306182671,
+              1.1440691614141838
+            ],
+            "topRiseM": 0.08643528434335357,
+            "oldDropM": 0.11366730260229962
+          },
+          {
+            "component": 409,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              -0.034200799321389426,
+              2.129484682844459,
+              1.136441834497283
+            ],
+            "topRiseM": 0.08721848999755899,
+            "oldDropM": 0.13191072048139807
+          },
+          {
+            "component": 410,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.015242066054275142,
+              2.1287789791016323,
+              1.124591565940707
+            ],
+            "topRiseM": 0.08451439015556428,
+            "oldDropM": 0.12801331398910154
+          },
+          {
+            "component": 411,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.0499891132328602,
+              2.1332427170600585,
+              1.1277920137275745
+            ],
+            "topRiseM": 0.08470101145276221,
+            "oldDropM": 0.14924867877125947
+          },
+          {
+            "component": 412,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.0508841534280707,
+              2.111316700183465,
+              1.1522355546494496
+            ],
+            "topRiseM": 0.08802535384293719,
+            "oldDropM": 0.16758260083397913
+          },
+          {
+            "component": 413,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.03109747697589289,
+              2.1109372560776154,
+              1.1579937415538892
+            ],
+            "topRiseM": 0.09048108491457629,
+            "oldDropM": 0.15549861220373495
+          },
+          {
+            "component": 414,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.04685416601983891,
+              2.1213130430173615,
+              1.1418141921380336
+            ],
+            "topRiseM": 0.08675646203166609,
+            "oldDropM": 0.1636920343454542
+          },
+          {
+            "component": 415,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              -0.020377770479780833,
+              2.122633155352057,
+              1.1469663426144
+            ],
+            "topRiseM": 0.0891353708757725,
+            "oldDropM": 0.14972740254766204
+          },
+          {
+            "component": 416,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              -0.002787712425456706,
+              2.1074018642806247,
+              1.158797322827265
+            ],
+            "topRiseM": 0.08720684410993051,
+            "oldDropM": 0.175771715277812
+          },
+          {
+            "component": 417,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.013874073125211387,
+              2.0983431468553957,
+              1.1738430497562848
+            ],
+            "topRiseM": 0.08950657836709297,
+            "oldDropM": 0.18219235286516233
+          },
+          {
+            "component": 418,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.05187360310742404,
+              2.0979758305034415,
+              1.1718262044356182
+            ],
+            "topRiseM": 0.09141817688973397,
+            "oldDropM": 0.20730547851514758
+          },
+          {
+            "component": 419,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.06876944852355575,
+              2.0884268076949275,
+              1.1817022635031358
+            ],
+            "topRiseM": 0.09502770683091244,
+            "oldDropM": 0.16240758005585687
+          },
+          {
+            "component": 420,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              -0.07331572866958168,
+              2.108547689200107,
+              1.1590482403041604
+            ],
+            "topRiseM": 0.08840442228347234,
+            "oldDropM": 0.16124096241633046
+          },
+          {
+            "component": 421,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.017858066849253163,
+              2.1008158042453786,
+              1.1765940905570944
+            ],
+            "topRiseM": 0.09287559331029716,
+            "oldDropM": 0.11524495542115054
+          },
+          {
+            "component": 422,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              -0.08526373230288545,
+              2.09389334587007,
+              1.1758685080515887
+            ],
+            "topRiseM": 0.08991915516401106,
+            "oldDropM": 0.13934812299295496
+          },
+          {
+            "component": 423,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              -0.04121396568372074,
+              2.139107628610676,
+              1.1168937637814749
+            ],
+            "topRiseM": 0.08253847542750936,
+            "oldDropM": 0.11832126893374051
+          },
+          {
+            "component": 424,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.019382433410238657,
+              2.1354328784198007,
+              1.1210992465224747
+            ],
+            "topRiseM": 0.08129921693831621,
+            "oldDropM": 0.14430449875596452
+          },
+          {
+            "component": 425,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.02841495788377667,
+              1.841469523019018,
+              0.425776641973158
+            ],
+            "topRiseM": 0.08798396882961113,
+            "oldDropM": 0.2046490117399622
+          },
+          {
+            "component": 426,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.036402625620113906,
+              1.8435994509883875,
+              0.4325772734760901
+            ],
+            "topRiseM": 0.09283082220645444,
+            "oldDropM": 0.26408707970437195
+          },
+          {
+            "component": 427,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.02326392854075677,
+              1.853480208966433,
+              0.43875684260799214
+            ],
+            "topRiseM": 0.09565604373750691,
+            "oldDropM": 0.23119508065496097
+          },
+          {
+            "component": 428,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.03370926291252976,
+              1.8599808012257841,
+              0.4480491589115232
+            ],
+            "topRiseM": 0.09711123580265779,
+            "oldDropM": 0.23267846004203818
+          },
+          {
+            "component": 429,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.023190903466642442,
+              1.8717931509636512,
+              0.46245182124025674
+            ],
+            "topRiseM": 0.10394986647515525,
+            "oldDropM": 0.2778315093696322
+          },
+          {
+            "component": 430,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.03295801326010609,
+              1.8793643068468178,
+              0.4760752158662634
+            ],
+            "topRiseM": 0.10884618026657988,
+            "oldDropM": 0.30800388852668936
+          },
+          {
+            "component": 431,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.029987014006373314,
+              1.8959989337967278,
+              0.4880630616642389
+            ],
+            "topRiseM": 0.11328794102543704,
+            "oldDropM": 0.3595202923175307
+          },
+          {
+            "component": 432,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.03599140281486504,
+              1.897095883751396,
+              0.5063227603021885
+            ],
+            "topRiseM": 0.1179905002442323,
+            "oldDropM": 0.37122574781848483
+          },
+          {
+            "component": 433,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.02618904082563954,
+              1.9127501813427206,
+              0.5127887214283289
+            ],
+            "topRiseM": 0.11672172780843115,
+            "oldDropM": 0.3714632417349655
+          },
+          {
+            "component": 434,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.028660567342501407,
+              1.923783645749743,
+              0.5294024441010357
+            ],
+            "topRiseM": 0.12025215818961876,
+            "oldDropM": 0.3310920373650723
+          },
+          {
+            "component": 435,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.023827432700340167,
+              1.9299466508099048,
+              0.5276976669408233
+            ],
+            "topRiseM": 0.1221488900875416,
+            "oldDropM": 0.3641742417711684
+          },
+          {
+            "component": 436,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.033258114113572386,
+              1.9393410332914742,
+              0.5564933878761478
+            ],
+            "topRiseM": 0.12586323453619963,
+            "oldDropM": 0.3175236770143206
+          },
+          {
+            "component": 437,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.025908976775300168,
+              1.953555896662597,
+              0.5655492038276971
+            ],
+            "topRiseM": 0.13003908222421345,
+            "oldDropM": 0.37787402802965064
+          },
+          {
+            "component": 438,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.02228495900906227,
+              1.95755255366191,
+              0.5681689234714711
+            ],
+            "topRiseM": 0.13003874021853723,
+            "oldDropM": 0.3264344495977787
+          },
+          {
+            "component": 439,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.023108442163111722,
+              1.9696389026244927,
+              0.5902818018930751
+            ],
+            "topRiseM": 0.13635169965425664,
+            "oldDropM": 0.3657058652392404
+          },
+          {
+            "component": 440,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.02513188995757039,
+              1.9695774413941132,
+              0.5869146987425493
+            ],
+            "topRiseM": 0.13524885654918584,
+            "oldDropM": 0.4463448812423738
+          },
+          {
+            "component": 441,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.02596867241083077,
+              1.9771579413705964,
+              0.608102131686086
+            ],
+            "topRiseM": 0.13914811289205375,
+            "oldDropM": 0.35109177500419797
+          },
+          {
+            "component": 442,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.022438881554635626,
+              1.9894865285004573,
+              0.6220034735071989
+            ],
+            "topRiseM": 0.14080881546921709,
+            "oldDropM": 0.4944059744568896
+          },
+          {
+            "component": 443,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.019992513715477757,
+              1.999711836159891,
+              0.6410169593708915
+            ],
+            "topRiseM": 0.14480822297865825,
+            "oldDropM": 0.41497178072725527
+          },
+          {
+            "component": 444,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.013831047625467345,
+              2.001907685499664,
+              0.6415358258357354
+            ],
+            "topRiseM": 0.14330335811861428,
+            "oldDropM": 0.386445590358381
+          },
+          {
+            "component": 445,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.027997753702211418,
+              2.010741818703965,
+              0.6661020124156054
+            ],
+            "topRiseM": 0.14698820029320903,
+            "oldDropM": 0.439277472758149
+          },
+          {
+            "component": 446,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.021212273400183092,
+              2.015020638587403,
+              0.6800115360482236
+            ],
+            "topRiseM": 0.1467958338938451,
+            "oldDropM": 0.3898196743504363
+          },
+          {
+            "component": 447,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.02657903940876549,
+              2.0290071464016974,
+              0.6994567725491474
+            ],
+            "topRiseM": 0.1514457238802409,
+            "oldDropM": 0.5078428250367715
+          },
+          {
+            "component": 448,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.02670258528227251,
+              2.0340423795322464,
+              0.6942975721660452
+            ],
+            "topRiseM": 0.14944894736626724,
+            "oldDropM": 0.5350686529033646
+          },
+          {
+            "component": 449,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.026328602558757474,
+              2.0427190860283666,
+              0.7145130517871505
+            ],
+            "topRiseM": 0.15303296801828647,
+            "oldDropM": 0.5543663926237012
+          },
+          {
+            "component": 450,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.021520874009406086,
+              2.046252155571613,
+              0.7166643722722649
+            ],
+            "topRiseM": 0.148896060890658,
+            "oldDropM": 0.5534014984599527
+          },
+          {
+            "component": 451,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.03455996786288305,
+              2.0541399366031348,
+              0.7222325118572108
+            ],
+            "topRiseM": 0.14901833922732655,
+            "oldDropM": 0.5177049925630308
+          },
+          {
+            "component": 452,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.026942661501364557,
+              2.063457960609377,
+              0.7524925324492316
+            ],
+            "topRiseM": 0.15602227381077238,
+            "oldDropM": 0.5634320560279162
+          },
+          {
+            "component": 453,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.01693674484273603,
+              2.0684040464260147,
+              0.7590581100555118
+            ],
+            "topRiseM": 0.15144170922069788,
+            "oldDropM": 0.5318671738866156
+          },
+          {
+            "component": 454,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.03422129008218708,
+              2.075303574907628,
+              0.7688169333726937
+            ],
+            "topRiseM": 0.15046418765512248,
+            "oldDropM": 0.3742431595587268
+          },
+          {
+            "component": 455,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.020819762517850626,
+              2.0813500028068095,
+              0.7832559087375225
+            ],
+            "topRiseM": 0.1469819725865178,
+            "oldDropM": 0.48626706075490644
+          },
+          {
+            "component": 456,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.027115356391791526,
+              2.081770757507571,
+              0.811200580177329
+            ],
+            "topRiseM": 0.15080818417917907,
+            "oldDropM": 0.4504097164037564
+          },
+          {
+            "component": 457,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.03158272509542187,
+              2.0857476360098106,
+              0.8255888591313613
+            ],
+            "topRiseM": 0.1494432100890064,
+            "oldDropM": 0.5154572971013569
+          },
+          {
+            "component": 458,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.023935306393567904,
+              2.0915179686014516,
+              0.8363908594648223
+            ],
+            "topRiseM": 0.14958807022397247,
+            "oldDropM": 0.46962350860304003
+          },
+          {
+            "component": 459,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.026265165175704847,
+              2.092847577412298,
+              0.8319217824346913
+            ],
+            "topRiseM": 0.1437544370494983,
+            "oldDropM": 0.4558023690891897
+          },
+          {
+            "component": 460,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.017198535957324235,
+              2.1009144753994757,
+              0.8583583222263362
+            ],
+            "topRiseM": 0.1421422072384595,
+            "oldDropM": 0.48597298836613234
+          },
+          {
+            "component": 461,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.025004865896077238,
+              2.1012656110278805,
+              0.8706162178907209
+            ],
+            "topRiseM": 0.14071909806395366,
+            "oldDropM": 0.4618415242951852
+          },
+          {
+            "component": 462,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.027263711086922972,
+              2.1043970962134506,
+              0.8961617955461344
+            ],
+            "topRiseM": 0.138677748696316,
+            "oldDropM": 0.48190372626962397
+          },
+          {
+            "component": 463,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.034913655773985246,
+              2.101720803132343,
+              0.9104937050603885
+            ],
+            "topRiseM": 0.13491920153537995,
+            "oldDropM": 0.3750459502021075
+          },
+          {
+            "component": 464,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.019897856348709653,
+              2.1113033385988023,
+              0.9159524922062381
+            ],
+            "topRiseM": 0.13932281520371426,
+            "oldDropM": 0.3222321760045208
+          },
+          {
+            "component": 465,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.024435193974199538,
+              2.1118984860655514,
+              0.9093736806089942
+            ],
+            "topRiseM": 0.13621631601930773,
+            "oldDropM": 0.3091690033571721
+          },
+          {
+            "component": 466,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.024026828040349325,
+              2.112916042263515,
+              0.9354122454192965
+            ],
+            "topRiseM": 0.13517034679388873,
+            "oldDropM": 0.3205706824706904
+          },
+          {
+            "component": 467,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.03200386880323487,
+              2.1153907863122927,
+              0.9664749581500081
+            ],
+            "topRiseM": 0.12666372563237527,
+            "oldDropM": 0.269377128049725
+          },
+          {
+            "component": 468,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.02954338985544514,
+              2.1198272332847483,
+              0.9650219706528775
+            ],
+            "topRiseM": 0.12388466434012368,
+            "oldDropM": 0.2423843961394867
+          },
+          {
+            "component": 469,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.04870326945412685,
+              2.124958205712653,
+              0.9683012129211034
+            ],
+            "topRiseM": 0.12251949235078508,
+            "oldDropM": 0.27126223670719285
+          },
+          {
+            "component": 470,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.05286736960589822,
+              2.1267789805953607,
+              0.9845651062893326
+            ],
+            "topRiseM": 0.1176109167010373,
+            "oldDropM": 0.3157425179449922
+          },
+          {
+            "component": 471,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.06351391136499596,
+              2.1307180689363903,
+              0.9929482486095906
+            ],
+            "topRiseM": 0.11730478959750013,
+            "oldDropM": 0.2706698993848877
+          },
+          {
+            "component": 472,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.037240585653266316,
+              2.1299691302493966,
+              1.0341883097705447
+            ],
+            "topRiseM": 0.10430038323614976,
+            "oldDropM": 0.31457059129296727
+          },
+          {
+            "component": 473,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.06622444596542366,
+              2.132728760270503,
+              1.0202244423559161
+            ],
+            "topRiseM": 0.11386567632112676,
+            "oldDropM": 0.3118264324973674
+          },
+          {
+            "component": 474,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.04400986788863097,
+              2.1295585743060474,
+              1.0500252190639932
+            ],
+            "topRiseM": 0.10043912338630845,
+            "oldDropM": 0.20348610845106907
+          },
+          {
+            "component": 475,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.08386395913620949,
+              2.1357093066871236,
+              1.0414876154563504
+            ],
+            "topRiseM": 0.10732838414195234,
+            "oldDropM": 0.20620097479953392
+          },
+          {
+            "component": 476,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.04274494982610485,
+              2.1355632655560752,
+              1.0751329715383975
+            ],
+            "topRiseM": 0.09090491615409846,
+            "oldDropM": 0.2305021359064261
+          },
+          {
+            "component": 477,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.03469758612984863,
+              2.1394914026777605,
+              1.0854199693558164
+            ],
+            "topRiseM": 0.08777035534974553,
+            "oldDropM": 0.2916043478789059
+          },
+          {
+            "component": 478,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.033843278266108334,
+              2.1329783136283615,
+              1.0887379294460773
+            ],
+            "topRiseM": 0.07972016240144031,
+            "oldDropM": 0.2763473960887044
+          },
+          {
+            "component": 519,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.03929633878022494,
+              2.1478364493734157,
+              1.0699448399867033
+            ],
+            "topRiseM": 0.09407325424200685,
+            "oldDropM": 0.09605464841222489
+          },
+          {
+            "component": 520,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.028549268058673104,
+              2.1194193400045824,
+              0.9101779845139585
+            ],
+            "topRiseM": 0.1373976783209132,
+            "oldDropM": 0.09540571509801676
+          },
+          {
+            "component": 521,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.07051035559382404,
+              2.06529969564767,
+              0.7035017509121765
+            ],
+            "topRiseM": 0.1478967198094563,
+            "oldDropM": 0.13382971678565103
+          },
+          {
+            "component": 522,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.03072904317120236,
+              1.9271621646924548,
+              0.5204605726853615
+            ],
+            "topRiseM": 0.11582333402193834,
+            "oldDropM": 0.12586384530282957
+          },
+          {
+            "component": 523,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.031101467207004182,
+              1.837276266101798,
+              0.4351070497315744
+            ],
+            "topRiseM": 0.08610088860866183,
+            "oldDropM": 0.16676544894110346
+          },
+          {
+            "component": 524,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              -0.03114319852185787,
+              2.148858221843254,
+              1.0980297876191734
+            ],
+            "topRiseM": 0.07989839821350264,
+            "oldDropM": 0.09185288628541688
+          },
+          {
+            "component": 525,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.02921645692924435,
+              2.1332482850766703,
+              1.1117767878364204
+            ],
+            "topRiseM": 0.08039320985335685,
+            "oldDropM": 0.028567039236009784
+          },
+          {
+            "component": 526,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.07886037041191252,
+              2.1187489692331662,
+              1.1301694520405834
+            ],
+            "topRiseM": 0.08489963896579189,
+            "oldDropM": 0.06144699726033265
+          },
+          {
+            "component": 527,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.060210708498287725,
+              2.1349435621569883,
+              1.1165481416279748
+            ],
+            "topRiseM": 0.0816803916855453,
+            "oldDropM": 0.027599143584283947
+          },
+          {
+            "component": 528,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              -0.04002513427731753,
+              2.146786415463457,
+              1.1149030371510318
+            ],
+            "topRiseM": 0.0812945675223542,
+            "oldDropM": 0.03315695839569743
+          },
+          {
+            "component": 529,
+            "role": "forelock",
+            "vertices": 42,
+            "rootM": [
+              0.0029254607819051374,
+              2.0886174899007277,
+              1.185571550181458
+            ],
+            "topRiseM": 0.09083945311276276,
+            "oldDropM": 0.17793874374438268
+          },
+          {
+            "component": 530,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.016327307252068102,
+              1.9819154464914959,
+              0.6108993171142545
+            ],
+            "topRiseM": 0.14170642789707455,
+            "oldDropM": 0.49980128001627255
+          },
+          {
+            "component": 531,
+            "role": "mane",
+            "vertices": 54,
+            "rootM": [
+              -0.017428843148893945,
+              2.0222429526188876,
+              0.6724417650178133
+            ],
+            "topRiseM": 0.1475335218763143,
+            "oldDropM": 0.5397476921323339
+          },
+          {
+            "component": 532,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.029436475659352007,
+              2.0651315008107205,
+              0.7481006639335833
+            ],
+            "topRiseM": 0.14851619010257933,
+            "oldDropM": 0.5345289123421428
+          },
+          {
+            "component": 533,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.018098872542627875,
+              2.097680146421989,
+              0.8448734033165065
+            ],
+            "topRiseM": 0.14547543272257668,
+            "oldDropM": 0.40012035334520757
+          },
+          {
+            "component": 534,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.021063872257989693,
+              2.115590888208208,
+              0.9363762521819059
+            ],
+            "topRiseM": 0.1311972587363499,
+            "oldDropM": 0.21792292478662767
+          },
+          {
+            "component": 543,
+            "role": "mane",
+            "vertices": 30,
+            "rootM": [
+              -0.049814562048512236,
+              2.130737091200542,
+              0.9495864267739055
+            ],
+            "topRiseM": 0.12649172828103605,
+            "oldDropM": 0.05735924296091044
+          },
+          {
+            "component": 544,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              0.007500963583934044,
+              2.1168814313481414,
+              1.1353279361465336
+            ],
+            "topRiseM": 0.08474542608438096,
+            "oldDropM": 0.12071121241204308
+          },
+          {
+            "component": 545,
+            "role": "forelock",
+            "vertices": 30,
+            "rootM": [
+              -0.03236529972689697,
+              2.135422472389503,
+              1.1025524499534092
+            ],
+            "topRiseM": 0.07991423868990788,
+            "oldDropM": 0.09707070634217763
+          },
+          {
+            "component": 546,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.07316081598939912,
+              1.9207072722006315,
+              0.5082782932414874
+            ],
+            "topRiseM": 0.11667462182313049,
+            "oldDropM": 0.25053749965857786
+          },
+          {
+            "component": 547,
+            "role": "mane",
+            "vertices": 75,
+            "rootM": [
+              -0.04663382325491629,
+              2.137271940429332,
+              1.092316343871037
+            ],
+            "topRiseM": 0.08424829907308862,
+            "oldDropM": 0.07603674231998925
+          }
+        ]
+      },
+      "headShape": {
+        "family": "pony",
+        "affectedBodyVertices": 7718,
+        "maxAdditionalDisplayedDeltaM": 0.0069251917863384525,
+        "sourceSeatUnchangedByHeadPass": true
+      },
+      "sha256": "fd5478e688f1593443e6cf0db9f6fc5da80eb5d1e420723f9cde7d3ee2bc67fe",
       "byteLength": 728256,
       "actorScale": 0.7761249771443578,
       "withersM": 1.42,
@@ -1047,17 +5832,17 @@
         {
           "meshIndex": 0,
           "vertices": 16159,
-          "minCageJacobianDeterminant": 0.5984910522449414,
-          "maxPositionQuantizationErrorM": 1.4658992228118512e-06,
-          "maxAppearanceDeltaM": 0.0586774320403665,
+          "minCageJacobianDeterminant": 0.5777499491470672,
+          "maxPositionQuantizationErrorM": 1.4353236990201375e-06,
+          "maxAppearanceDeltaM": 0.05879484359678306,
           "fixedLowerVertices": 3054
         },
         {
           "meshIndex": 1,
           "vertices": 2028,
-          "minCageJacobianDeterminant": 1.045742879958374,
-          "maxPositionQuantizationErrorM": 9.194205612719512e-07,
-          "maxAppearanceDeltaM": 0.03819338847695471,
+          "minCageJacobianDeterminant": 1.0033488392109264,
+          "maxPositionQuantizationErrorM": 9.190196978336111e-07,
+          "maxAppearanceDeltaM": 0.03768453603451701,
           "fixedLowerVertices": 0
         },
         {
@@ -1085,7 +5870,13 @@
           "fixedLowerVertices": 0
         }
       ],
-      "sha256": "0c536c220d31fba3ba80d96471a7940dbf68f0051f4efc7f9ba1f4ddb11addc4",
+      "headShape": {
+        "family": "refined",
+        "affectedBodyVertices": 7670,
+        "maxAdditionalDisplayedDeltaM": 0.008966017192492341,
+        "sourceSeatUnchangedByHeadPass": true
+      },
+      "sha256": "2001f2b1826da2fa166d0c1ff8f899c468f78a4ca3fe705188c2f19f263b9899",
       "byteLength": 728256,
       "actorScale": 0.9022540456679599,
       "withersM": 1.59,
@@ -1100,16 +5891,16 @@
           "meshIndex": 0,
           "vertices": 16159,
           "minCageJacobianDeterminant": 0.6852198115381184,
-          "maxPositionQuantizationErrorM": 4.332251255821313e-06,
+          "maxPositionQuantizationErrorM": 4.388335959540922e-06,
           "maxAppearanceDeltaM": 0.18145051175423668,
           "fixedLowerVertices": 1
         },
         {
           "meshIndex": 1,
           "vertices": 2028,
-          "minCageJacobianDeterminant": 1.3442385868943736,
-          "maxPositionQuantizationErrorM": 1.1570178771952373e-06,
-          "maxAppearanceDeltaM": 0.04553532934446673,
+          "minCageJacobianDeterminant": 1.3047992039543348,
+          "maxPositionQuantizationErrorM": 1.1429337906879132e-06,
+          "maxAppearanceDeltaM": 0.046636458205625536,
           "fixedLowerVertices": 0
         },
         {
@@ -1124,7 +5915,7 @@
           "meshIndex": 3,
           "vertices": 13895,
           "minCageJacobianDeterminant": 0.7821752862756999,
-          "maxPositionQuantizationErrorM": 9.709439986174367e-06,
+          "maxPositionQuantizationErrorM": 9.646076091184618e-06,
           "maxAppearanceDeltaM": 0.23014254109951274,
           "fixedLowerVertices": 0
         },
@@ -1211,6 +6002,12 @@
         },
         "unselectedIdealTargetExactlyPreserved": true
       },
+      "headShape": {
+        "family": "draft",
+        "affectedBodyVertices": 7717,
+        "maxAdditionalDisplayedDeltaM": 0.0036247947192951753,
+        "sourceSeatUnchangedByHeadPass": true
+      },
       "draftWidths": {
         "barrel": {
           "sourceM": 0.6444136780588463,
@@ -1250,12 +6047,12 @@
         },
         "head": {
           "sourceM": 0.25141452600577285,
-          "previousM": 0.27404183334629245,
-          "newM": 0.3192938076088291,
-          "gainOverPreviousPercent": 16.512797958607315,
-          "previousDisplayedM": 0.259523759082548,
-          "newDisplayedM": 0.2911676972893547,
-          "displayedGainPercent": 12.193079477066915
+          "previousM": 0.2762779555155378,
+          "newM": 0.3214764909775538,
+          "gainOverPreviousPercent": 16.359805246739654,
+          "previousDisplayedM": 0.26164141690158993,
+          "newDisplayedM": 0.29315811136954867,
+          "displayedGainPercent": 12.045758978523269
         }
       },
       "draftRearProfile": {
@@ -1381,7 +6178,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.9273381827177314e-06,
-      "sha256": "e3e42b4d55219a5a0636ae1f5f4b377960a8608cb1ff6e4611a72bd0a419934e",
+      "sha256": "cd4479e0fff78a384586437830381b7e94fb9396684671aae250ebec5f172381",
       "byteLength": 728256,
       "actorScale": 0.911911507053303,
       "withersM": 1.73,
@@ -1396,16 +6193,16 @@
           "meshIndex": 0,
           "vertices": 16159,
           "minCageJacobianDeterminant": 0.609238253359303,
-          "maxPositionQuantizationErrorM": 4.824228849611099e-06,
+          "maxPositionQuantizationErrorM": 4.820721914416102e-06,
           "maxAppearanceDeltaM": 0.1901314402029513,
           "fixedLowerVertices": 1
         },
         {
           "meshIndex": 1,
           "vertices": 2028,
-          "minCageJacobianDeterminant": 1.5085523457756003,
-          "maxPositionQuantizationErrorM": 9.978389424287736e-07,
-          "maxAppearanceDeltaM": 0.05036898541236374,
+          "minCageJacobianDeterminant": 1.4685093100175237,
+          "maxPositionQuantizationErrorM": 1.0176044341803162e-06,
+          "maxAppearanceDeltaM": 0.05106805154277311,
           "fixedLowerVertices": 0
         },
         {
@@ -1420,7 +6217,7 @@
           "meshIndex": 3,
           "vertices": 13895,
           "minCageJacobianDeterminant": 0.750505882622452,
-          "maxPositionQuantizationErrorM": 1.0514964877077568e-05,
+          "maxPositionQuantizationErrorM": 1.0571615205098357e-05,
           "maxAppearanceDeltaM": 0.2303011800207892,
           "fixedLowerVertices": 0
         },
@@ -1507,6 +6304,12 @@
         },
         "unselectedIdealTargetExactlyPreserved": true
       },
+      "headShape": {
+        "family": "draft",
+        "affectedBodyVertices": 7717,
+        "maxAdditionalDisplayedDeltaM": 0.0043843526618127645,
+        "sourceSeatUnchangedByHeadPass": true
+      },
       "draftWidths": {
         "barrel": {
           "sourceM": 0.6444136780588463,
@@ -1546,12 +6349,12 @@
         },
         "head": {
           "sourceM": 0.25141452600577285,
-          "previousM": 0.27152768808623473,
-          "newM": 0.314269613286731,
-          "gainOverPreviousPercent": 15.741276884780087,
-          "previousDisplayedM": 0.2691244545130483,
-          "newDisplayedM": 0.3001255512039804,
-          "displayedGainPercent": 11.519241812129355
+          "previousM": 0.2737668925811103,
+          "newM": 0.31645541039505715,
+          "gainOverPreviousPercent": 15.593016895313339,
+          "previousDisplayedM": 0.27134384028719877,
+          "newDisplayedM": 0.3022129740225458,
+          "displayedGainPercent": 11.376390082293453
         }
       },
       "draftRearProfile": {
@@ -1677,7 +6480,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 3.203417125452468e-06,
-      "sha256": "163200808c0cbc76890cd69f86c877beb175348e3a133c589fa02ba79bdfeaaf",
+      "sha256": "27c846eeaad159672b9c97621b5fc6f2b19006e0ba2b54618536fd81d23a6205",
       "byteLength": 728256,
       "actorScale": 0.9549938604154964,
       "withersM": 1.82,
@@ -1692,16 +6495,16 @@
           "meshIndex": 0,
           "vertices": 16159,
           "minCageJacobianDeterminant": 0.7219331623677688,
-          "maxPositionQuantizationErrorM": 4.036538925450632e-06,
+          "maxPositionQuantizationErrorM": 4.086945823564735e-06,
           "maxAppearanceDeltaM": 0.15821302508974106,
           "fixedLowerVertices": 1
         },
         {
           "meshIndex": 1,
           "vertices": 2028,
-          "minCageJacobianDeterminant": 1.469318639959755,
-          "maxPositionQuantizationErrorM": 9.27689870909431e-07,
-          "maxAppearanceDeltaM": 0.04743633136680754,
+          "minCageJacobianDeterminant": 1.4227791782007007,
+          "maxPositionQuantizationErrorM": 9.719235778572006e-07,
+          "maxAppearanceDeltaM": 0.048178054379466984,
           "fixedLowerVertices": 0
         },
         {
@@ -1803,6 +6606,12 @@
         },
         "unselectedIdealTargetExactlyPreserved": true
       },
+      "headShape": {
+        "family": "draft",
+        "affectedBodyVertices": 7717,
+        "maxAdditionalDisplayedDeltaM": 0.0037463924882015893,
+        "sourceSeatUnchangedByHeadPass": true
+      },
       "draftWidths": {
         "barrel": {
           "sourceM": 0.6444136780588463,
@@ -1842,12 +6651,12 @@
         },
         "head": {
           "sourceM": 0.25141452600577285,
-          "previousM": 0.27152768808623473,
-          "newM": 0.30924174112417957,
-          "gainOverPreviousPercent": 13.889579108399142,
-          "previousDisplayedM": 0.2649873527108665,
-          "newDisplayedM": 0.2914611426958636,
-          "displayedGainPercent": 9.990586235216758
+          "previousM": 0.2737668925811103,
+          "newM": 0.31143403608018266,
+          "gainOverPreviousPercent": 13.758838091758129,
+          "previousDisplayedM": 0.26717262109162515,
+          "newDisplayedM": 0.2935273863752589,
+          "displayedGainPercent": 9.864321117917063
         }
       },
       "draftRearProfile": {
@@ -1973,7 +6782,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.7440898695552107e-06,
-      "sha256": "b633de4f47bb79be8d91fa4aa945147ee152d710be81e22832ee8b731c7095f0",
+      "sha256": "105f7c47d11a2efef4f758747620e9bcab4049fd3a4f2fbb8dd26ec652fdba3d",
       "byteLength": 728256,
       "actorScale": 0.9425025924259818,
       "withersM": 1.78,

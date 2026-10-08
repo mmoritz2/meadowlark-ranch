@@ -1,4 +1,4 @@
-/* Private, bone-attached hair for the two feathered native draft foundations.
+/* Private, bone-attached hair for the feathered native draft foundations.
  * The approved skinned meshes, weights, inverse binds and clips stay untouched. */
 const owned=new WeakMap();
 const LEGS=[
@@ -28,7 +28,7 @@ function strandTexture(THREE){
 
 export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
  const foundation=profile?.nativeVariant?.id;
- if(!THREE||!scene||!skin||!profile?.nativeRoster||!['shire','clyde'].includes(foundation))return null;
+ if(!THREE||!scene||!skin||!profile?.nativeRoster||!['shire','clyde','vanner'].includes(foundation))return null;
  const existing=owned.get(skin);if(existing&&!existing.disposed)return existing;
  scene.updateWorldMatrix(true,true);
  const at=bone=>scene.worldToLocal(bone.getWorldPosition(new THREE.Vector3()));
@@ -47,27 +47,30 @@ export function createNativeDraftFeathers({THREE,scene,skin,profile}={}){
    a.minX=Math.min(a.minX,point.x);a.maxX=Math.max(a.maxX,point.x);a.minZ=Math.min(a.minZ,point.z);a.maxZ=Math.max(a.maxZ,point.z);a.samples++;
   }
  }
- const texture=strandTexture(THREE),fantasy=profile.family==='fantasy';
- const color=new THREE.Color('#e6e0d4');
+ const texture=strandTexture(THREE),fantasy=profile.family==='fantasy',vanner=foundation==='vanner';
+ const color=new THREE.Color(vanner?'#f1ede4':'#e6e0d4');
  if(fantasy){const mane=profile.nativeRosterAppearance?.mane||profile.nativeRosterColors?.mane;if(mane)color.set(mane).lerp(new THREE.Color('#e6e0d4'),.42);}
  const material=once(new THREE.MeshStandardMaterial({name:'Native draft silky feather',map:texture,color,
   side:THREE.DoubleSide,alphaTest:.36,roughness:.86,metalness:0,depthWrite:true}));
- const meshes=[],segments=6,strandsPerLeg=foundation==='clyde'?62:56;
+ const meshes=[],segments=6,strandsPerLeg=vanner?72:foundation==='clyde'?62:56;
  for(let leg=0;leg<anchors.length;leg++){
-  const a=anchors[leg],rnd=random(1987+leg*811+(foundation==='clyde'?412:0));
+  const a=anchors[leg],rnd=random(1987+leg*811+(vanner?831:foundation==='clyde'?412:0));
   const rx=a.samples?clamp((a.maxX-a.minX)*.5,.032,.085):.047;
   const rz=a.samples?clamp((a.maxZ-a.minZ)*.5,.031,.077):.043;
   const cx=a.samples?(a.minX+a.maxX)*.5:a.pivot.x,cz=a.samples?(a.minZ+a.maxZ)*.5:a.pivot.z;
   const axis=a.top.clone().sub(a.pivot).normalize(),positions=[],uvs=[],colors=[],indices=[];
   const local=new THREE.Vector3(),center=new THREE.Vector3();
   for(let strand=0;strand<strandsPerLeg;strand++){
-   const front=strand>=strandsPerLeg-10;
+   const front=strand>=strandsPerLeg-(vanner?14:10);
    // Most hair grows behind and beside the cannon. The front has only short,
    // scattered wisps so the joints and hoof breakover remain visible.
    const angle=front?Math.PI+(rnd()-.5)*1.15:(rnd()-.5)*Math.PI*1.58;
-   const radialX=Math.sin(angle),radialZ=-Math.cos(angle),rootUp=front?.01+rnd()*.06:.025+rnd()*.105;
-   const length=front?.045+rnd()*.035:.10+rnd()*.07,width=front?.003+rnd()*.003:.004+rnd()*.009;
-   const flare=front?.006+rnd()*.009:.020+rnd()*.033,bend=(rnd()-.5)*.025;
+   // Vanners have a fuller, longer fringe below the lower cannon, still
+   // clear of the soles and the front of each hoof. Draft shapes stay intact.
+   const radialX=Math.sin(angle),radialZ=-Math.cos(angle),rootUp=front?.01+rnd()*.06:vanner?.03+rnd()*.12:.025+rnd()*.105;
+   const length=front?(vanner?.06+rnd()*.04:.045+rnd()*.035):(vanner?.14+rnd()*.075:.10+rnd()*.07);
+   const width=front?.003+rnd()*.003:.004+rnd()*(vanner?.011:.009);
+   const flare=front?.006+rnd()*.009:vanner?.022+rnd()*.04:.020+rnd()*.033,bend=(rnd()-.5)*.025;
    const rootY=a.pivot.y+rootUp,drop=Math.min(length,Math.max(.03,rootY-(a.toe.y-.035)));
    const shade=.82+rnd()*.18,base=positions.length/3;
    for(let step=0;step<=segments;step++){

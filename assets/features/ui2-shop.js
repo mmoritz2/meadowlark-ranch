@@ -363,6 +363,7 @@ body.summoning #s2Vig.on{opacity:.42}
   const sell=row.querySelector('[data-mktsell]');
   const mbuy=row.querySelector('[data-mktbuy]');
   if(buy){const b=BREEDS()[+buy.dataset.buyh]; if(b){key=b[0];rar=b[2];}}
+  else if(row.dataset.nativeChoice){const b=BREEDS().find(x=>x[0]===row.dataset.nativeChoice);if(b){key=b[0];rar=b[2];}}
   else if(sell){
    const h=(s.horses||[])[+sell.dataset.mktsell];
    if(h){key=h.breed; const b=BREEDS().find(x=>x[0]===h.breed); if(b)rar=b[2];}

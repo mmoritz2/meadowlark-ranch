@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'assets/models/native-roster'
 sys.path.insert(0, str(ROOT / 'tools/asset-gen'))
 import rig_hero_horse as glb
+from groom import shape_fjord_groom
 
 SOURCE = ROOT / 'review/native-trot-reference-kit/white/model.glb'
 SOURCE_SHA = 'b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07'
@@ -36,7 +37,7 @@ PALETTES = {n.targets[0].id: ast.literal_eval(n.value) for n in palette_ast.body
             and n.targets[0].id in ['COATS', 'HAIR_COLOR']}
 COATS, HAIR = PALETTES['COATS'], PALETTES['HAIR_COLOR']
 for key, description in [('vanner','Piebald with white stockings'),
-                         ('fjord','Brown dun with a shortened dark mane'),
+                         ('fjord','Brown dun with a rounded upright mane'),
                          ('akhal','Golden buckskin')]:
     COATS[key] = (*COATS[key][:2], description)
 
@@ -83,6 +84,69 @@ DRAFT_REAR_CONTOUR = {
     'purpose':'Round the rear quarter into the thigh instead of extending the broad barrel cage down the haunch.',
 }
 
+
+# Head-only refinements measured in the slightly turned source head's frame.
+# Values are conservative art deltas on top of the existing breed cage, not a
+# replacement head or a change to articulated joint positions. All five source
+# surfaces (including eyes and bridle) evaluate exactly this same smooth field.
+HEAD_ORIGIN = np.array([-.040, 2.085, 1.155])
+HEAD_AXIS = np.array([-.017, -.445, .260]); HEAD_AXIS /= np.linalg.norm(HEAD_AXIS)
+HEAD_SIDE = np.array([.20074, .00105, .01891])
+HEAD_SIDE -= HEAD_AXIS*np.dot(HEAD_AXIS, HEAD_SIDE); HEAD_SIDE /= np.linalg.norm(HEAD_SIDE)
+HEAD_FACE = np.cross(HEAD_AXIS, HEAD_SIDE)
+HEAD_FAMILIES = {
+    'refined': dict(forehead_width=.060, cheek_width=-.060, muzzle_width=-.090,
+                    muzzle_length_m=-.003, nasal_bridge_m=-.011, throat_clearance_m=.013),
+    'stock': dict(forehead_width=.090, cheek_width=.110, muzzle_width=.040,
+                  muzzle_length_m=-.006, nasal_bridge_m=-.001, throat_clearance_m=.004),
+    'pony': dict(forehead_width=.100, cheek_width=.065, muzzle_width=.100,
+                 muzzle_length_m=-.013, nasal_bridge_m=.001, throat_clearance_m=.003),
+    'draft': dict(forehead_width=.065, cheek_width=.080, muzzle_width=.055,
+                  muzzle_length_m=.003, nasal_bridge_m=.005, throat_clearance_m=-.004),
+}
+HEAD_PROFILE_FAMILIES = {'sunset':'refined', 'akhal':'refined', 'bay':'stock',
+    'pinto':'stock', 'appaloosa':'stock', 'iceland':'pony', 'fjord':'pony',
+    'percheron':'draft', 'shire':'draft', 'clyde':'draft'}
+HEAD_OVERRIDES = {
+    # The Akhal keeps a straight, narrow face rather than an Arabian dish.
+    'akhal': dict(nasal_bridge_m=0., muzzle_width=-.065, cheek_width=-.080,
+                  throat_clearance_m=.010, muzzle_length_m=0.),
+    'fjord': dict(muzzle_length_m=-.009, muzzle_width=.110, cheek_width=.080),
+    'percheron': dict(nasal_bridge_m=.001, muzzle_length_m=0., cheek_width=.065),
+    'clyde': dict(nasal_bridge_m=.003, cheek_width=.060),
+}
+
+
+def head_shape(key):
+    family=HEAD_PROFILE_FAMILIES.get(key)
+    return {**HEAD_FAMILIES[family], **HEAD_OVERRIDES.get(key,{})} if family else None
+
+
+def head_refinement(p, key):
+    """Compact, C2-continuous shape field in source standing metres.
+
+    Compact support leaves the barrel, draft quarters, limbs, saddle, ears and
+    poll outside these small facial regions. Width changes are centered on the
+    measured source head plane, not world X=0 (the source is slightly turned).
+    """
+    shape=head_shape(key)
+    if shape is None:return np.zeros_like(p)
+    u,t,d=((np.asarray(p)-HEAD_ORIGIN)@np.array([HEAD_SIDE,HEAD_AXIS,HEAD_FACE]).T).T
+    def region(tc,tr,dc,dr,ur):
+        radius=(u/ur)**2+((t-tc)/tr)**2+((d-dc)/dr)**2
+        return np.maximum(0.,1-radius)**3
+    forehead=region(.075,.175,-.015,.145,.190)
+    cheek=region(.225,.180,-.090,.160,.200)
+    muzzle=region(.490,.150,-.025,.140,.140)
+    bridge=region(.290,.190,.040,.100,.150)
+    throat=region(.110,.230,-.205,.140,.180)
+    lateral=u*(shape['forehead_width']*forehead+shape['cheek_width']*cheek+
+               shape['muzzle_width']*muzzle)
+    forward=shape['muzzle_length_m']*muzzle
+    dorsal=shape['nasal_bridge_m']*bridge+shape['throat_clearance_m']*throat
+    return lateral[:,None]*HEAD_SIDE+forward[:,None]*HEAD_AXIS+dorsal[:,None]*HEAD_FACE
+
+
 def draft_limb_centers(body):
     """Measure four separate rest-pose centers; the source stance is asymmetric.
 
@@ -128,7 +192,7 @@ def draft_limbs(p,s,limbs):
         q[np.ix_(ids,[0,2])]+=(p[np.ix_(ids,[0,2])]-center)*((factor[ids]-1)*fade[ids]*region[ids])[:,None]
     return q
 
-def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0., rear_contour=True):
+def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0., rear_contour=True, refine_head=True):
     """Common body/tack cage; draft-only lower-body edits use limb centers."""
     p = np.asarray(p, float)
     x,y,z = (p/BASE_WITHERS).T
@@ -180,6 +244,8 @@ def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0., rear_contour=True)
         # The cage's torso support never changes the accepted lower-leg height.
         target[p[:,1]<=.65,1]=p[p[:,1]<=.65,1]
         target[p[:,1]<=.00005]=p[p[:,1]<=.00005]
+    if refine_head:
+        target+=head_refinement(p,key)
     if tack_mask is not None:
         # Shorten the Western fenders, carrying each complete iron rigidly.
         # This is source-world Y only; the upper strap joins remain fixed.
@@ -331,7 +397,7 @@ def main():
     pending=[]
     for key in keys:
         spec=specs[key];s={**spec['sculpt_targets'],**DRAFT_SHAPES.get(key,{})};packed=bytearray();records=[];report={'id':key,'meshes':[]}
-        bodytarget=None
+        bodytarget=None;groom_report=None
         body=meshes[0]['actual'];wm=(abs(body[:,0])<.07)&(body[:,2]>.285)&(body[:,2]<.426)
         target_withers=float(cage(body,s,key,limbs if key in DRAFT_SHAPES else None)[wm,1].max())
         draft_actor=spec['height']['target_m']/target_withers
@@ -342,7 +408,11 @@ def main():
             q=cage(p,s,key,limb_cage,tack_cage,stirrup_lift);eps=1e-5
             jac=np.stack([(cage(p+np.eye(3)[axis]*eps,s,key,limb_cage,tack_cage,stirrup_lift)-cage(p-np.eye(3)[axis]*eps,s,key,limb_cage,tack_cage,stirrup_lift))/(2*eps) for axis in range(3)],axis=2)
             det=np.linalg.det(jac);assert np.isfinite(det).all() and det.min()>.3,(key,m['index'],'cage inversion')
-            if m['index']==2:
+            worldnormal=np.einsum('nij,nj->ni',m['linear'],m['normal'])
+            targetnormal=np.linalg.solve(jac.transpose(0,2,1),worldnormal[...,None])[...,0]
+            if m['index']==2 and key=='fjord':
+                q,targetnormal,groom_report=shape_fjord_groom(p,q,hairgroups,targetnormal)
+            elif m['index']==2:
                 mane,tail=GROOM[key]
                 for ids in hairgroups:
                     # Extend complete source cards from their attached high endpoint.
@@ -353,8 +423,6 @@ def main():
             if m['index']==0: bodytarget=q.copy()
             # Convert world-space differential into unchanged source mesh space.
             delta=np.linalg.solve(m['linear'],(q-p)[...,None])[...,0]
-            worldnormal=np.einsum('nij,nj->ni',m['linear'],m['normal'])
-            targetnormal=np.linalg.solve(jac.transpose(0,2,1),worldnormal[...,None])[...,0]
             rawnormal=np.linalg.solve(m['linear'],targetnormal[...,None])[...,0]
             rawnormal/=np.maximum(np.linalg.norm(rawnormal,axis=1)[:,None],1e-12)
             ndelta=rawnormal-m['normal']
@@ -404,6 +472,21 @@ def main():
                      'colorSrgb':srgb(COATS[key][0]).tolist(),'hairColorSrgb':hair_srgb,'hairColorLinear':list(HAIR[COATS[key][1]]),
                      'neutralFile':'./models/native-roster/neutralcoat.png','originalUVsPreserved':True},
              'limitations':'Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.'}
+        if groom_report:
+            row['groom'].pop('maneLengthFactor',None)
+            row['groom']['uprightCrest']={k:v for k,v in groom_report.items() if k!='cards'}
+            report['groom']=groom_report
+        if head_shape(key):
+            row['headShape']={'version':1, 'family':HEAD_PROFILE_FAMILIES[key],
+                'parameters':head_shape(key), 'sourceOriginM':HEAD_ORIGIN.tolist(),
+                'sourceAxes':{'lateral':HEAD_SIDE.tolist(),'longitudinal':HEAD_AXIS.tolist(),'dorsal':HEAD_FACE.tolist()},
+                'sameFieldOnBodyEyesAndBridle':True, 'unchangedRigAndArticulatedLimbProportions':True,
+                'scope':'Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained.'}
+            delta=head_refinement(meshes[0]['actual'],key)
+            report['headShape']={'family':HEAD_PROFILE_FAMILIES[key],
+                'affectedBodyVertices':int((np.linalg.norm(delta,axis=1)>1e-10).sum()),
+                'maxAdditionalDisplayedDeltaM':float(np.linalg.norm(delta,axis=1).max()*actor),
+                'sourceSeatUnchangedByHeadPass':bool(np.array_equal(head_refinement((SOURCE_SEAT+TRANSLATION)[None,:],key),np.zeros((1,3))))}
         if key in DRAFT_SHAPES:
             row['draftShape']={'version':2,'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
                 'limbFadeRangeM':[.82,1.10],'sourceYBelow065mPreserved':True,

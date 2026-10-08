@@ -2,6 +2,8 @@
  * Prepared geometry/textures are cached; each actor owns its skeleton and
  * materials. Actor axes: +Z forward, +Y up. */
 import {fillOutTail,fillOutMane} from './horse-hair-volume.js';
+import {applyNativeHorseMaterials} from './native-horse-materials.js?v=native-surface-1';
+import {applyNativeFjordGroom} from './native-fjord-groom.js?v=fjord-native-card-color-1';
 import {NATIVE_BREED_PROFILES,nativeBreedProfile} from './native-breed-profiles.js?v=dragon-acting-1';
 import {nativeRosterProfiles,applyNativeRosterShape} from './native-roster.js?v=native-roster-1';
 import {createNativeHorseFantasy} from './native-horse-fantasy.js?v=club-horses-1';
@@ -79,13 +81,14 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
       if(spec.motionFile){const mu=new URL(spec.motionFile,import.meta.url);mu.searchParams.set('build',spec.motionSha256);if(!files.has(mu.href))files.set(mu.href,loader.loadAsync(mu.href).catch(e=>{files.delete(mu.href);throw e;}));const extra=await files.get(mu.href),replaced=new Set(extra.animations.map(c=>c.name));g={...g,animations:[...g.animations.filter(c=>!replaced.has(c.name)),...extra.animations]};}return spec.nativeBreed?prepareNative(g,key,spec):prepare(g,key,spec)}).catch(e=>{pending.delete(key);throw e;}));}
     return pending.get(key);
   }
-  function instantiate(asset){
+  function instantiate(asset,{materialPolish=true}={}){
     const scene=clone(asset.scene),materials=[],copies=new Map();
     const copy=m=>{if(!copies.has(m)){const next=m.clone();copies.set(m,next);materials.push(next);}return copies.get(m);};
     scene.traverse(o=>{if(o.isMesh)o.material=Array.isArray(o.material)?o.material.map(copy):copy(o.material);});
     const skin=bodyIn(scene,asset.profile);scene.scale.setScalar(asset.fitScale);scene.position.set(0,asset.fitY,0);scene.rotation.set(0,0,0);
     const boneMap=Object.fromEntries(skin.skeleton.bones.map(b=>[b.name.replace(/[.\s]/g,''),b]));
     const inst={...asset,scene,skin,bones:skin.skeleton.bones,boneMap,materials,baseMat:skin.material};
+    applyNativeHorseMaterials({THREE,rig:inst,enabled:materialPolish});
     if(asset.profile.nativeBreed){
       inst.nativeRoot=scene.children[0].children[0];scene.updateMatrixWorld(true);
       const seatBone=nativeBone(inst.nativeRoot,asset.profile.nativeSeatBone);if(!seatBone)throw new Error('Native seat bone missing: '+asset.key);
@@ -96,6 +99,7 @@ export function createBreedLibrary({THREE, GLTFLoader, clone}) {
     inst.nativeBreath=attachDragonBreath(THREE,inst);
     configureDragonAppearance(THREE,inst);
     if(asset.profile.nativeRoster){inst.nativeFantasy=createNativeHorseFantasy({THREE,inst,key:inst.key});inst.fantasyAppearance=inst.nativeFantasy?.appearance;}
+    inst.nativeFjordGroom=applyNativeFjordGroom({THREE,rig:inst});
     return inst;
   }
   function mountPoint(asset,point){if(!Array.isArray(point))return null;if(Array.isArray(point[0]))point=point[0];if(point.length!==3||!point.every(Number.isFinite))return null;return new THREE.Vector3(point[0]*asset.fitScale,point[1]*asset.fitScale+asset.fitY,point[2]*asset.fitScale);}

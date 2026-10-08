@@ -1,0 +1,348 @@
+{
+  "pass": true,
+  "sourceRigHashUnchanged": "b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07",
+  "jointCount": 677,
+  "reviewRequired": "Bare head/front/side/quarter and fitted bridle animation. Numerical checks do not certify anatomical appearance.",
+  "rows": [
+    {
+      "id": "bay",
+      "family": "stock",
+      "maxDisplayedHeadDeltaM": 0.005039801729905008,
+      "maxOutsideHeadQuantizationM": 1.7245089798146647e-06,
+      "maxAnimatedAdditionalHeadDeltaM": 0.005039161665418155,
+      "nativeGaitFrames": 84,
+      "displayedBitDeltaM": [
+        0.0021227509511058673,
+        0.0024783233861486783
+      ],
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "maxSharedFieldErrorM": 1.23989053333079e-06,
+          "maxOutsideHeadErrorM": 1.23989053333079e-06
+        },
+        {
+          "meshIndex": 1,
+          "maxSharedFieldErrorM": 4.424605447202221e-07,
+          "maxOutsideHeadErrorM": 0.0
+        },
+        {
+          "meshIndex": 3,
+          "maxSharedFieldErrorM": 1.7245089798146647e-06,
+          "maxOutsideHeadErrorM": 1.7245089798146647e-06
+        },
+        {
+          "meshIndex": 4,
+          "maxSharedFieldErrorM": 8.096114044481346e-07,
+          "maxOutsideHeadErrorM": 8.096114044481346e-07
+        }
+      ]
+    },
+    {
+      "id": "pinto",
+      "family": "stock",
+      "maxDisplayedHeadDeltaM": 0.005132734852453665,
+      "maxOutsideHeadQuantizationM": 1.1842947746969653e-06,
+      "maxAnimatedAdditionalHeadDeltaM": 0.005132485467174995,
+      "nativeGaitFrames": 84,
+      "displayedBitDeltaM": [
+        0.002161894132693512,
+        0.0025240232654898634
+      ],
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "maxSharedFieldErrorM": 8.018864207621961e-07,
+          "maxOutsideHeadErrorM": 7.827769986918544e-07
+        },
+        {
+          "meshIndex": 1,
+          "maxSharedFieldErrorM": 2.657610592102849e-07,
+          "maxOutsideHeadErrorM": 0.0
+        },
+        {
+          "meshIndex": 3,
+          "maxSharedFieldErrorM": 1.1977669268331214e-06,
+          "maxOutsideHeadErrorM": 1.1842947746969653e-06
+        },
+        {
+          "meshIndex": 4,
+          "maxSharedFieldErrorM": 5.456733725804776e-07,
+          "maxOutsideHeadErrorM": 5.456733725804776e-07
+        }
+      ]
+    },
+    {
+      "id": "appaloosa",
+      "family": "stock",
+      "maxDisplayedHeadDeltaM": 0.005111832422278215,
+      "maxOutsideHeadQuantizationM": 7.405012917661919e-07,
+      "maxAnimatedAdditionalHeadDeltaM": 0.005112101730353906,
+      "nativeGaitFrames": 84,
+      "displayedBitDeltaM": [
+        0.002153090085250123,
+        0.002513744491778634
+      ],
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "maxSharedFieldErrorM": 6.32132581335891e-07,
+          "maxOutsideHeadErrorM": 6.32132581335891e-07
+        },
+        {
+          "meshIndex": 1,
+          "maxSharedFieldErrorM": 1.6234480952867533e-07,
+          "maxOutsideHeadErrorM": 0.0
+        },
+        {
+          "meshIndex": 3,
+          "maxSharedFieldErrorM": 7.405012917661919e-07,
+          "maxOutsideHeadErrorM": 7.405012917661919e-07
+        },
+        {
+          "meshIndex": 4,
+          "maxSharedFieldErrorM": 3.843869045060828e-07,
+          "maxOutsideHeadErrorM": 3.843869045060828e-07
+        }
+      ]
+    },
+    {
+      "id": "sunset",
+      "family": "refined",
+      "maxDisplayedHeadDeltaM": 0.010825922566631724,
+      "maxOutsideHeadQuantizationM": 9.275757164052436e-07,
+      "maxAnimatedAdditionalHeadDeltaM": 0.01082630253947078,
+      "nativeGaitFrames": 84,
+      "displayedBitDeltaM": [
+        0.00220228291662306,
+        0.0024392356533235286
+      ],
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "maxSharedFieldErrorM": 9.607113327073695e-07,
+          "maxOutsideHeadErrorM": 9.275757164052436e-07
+        },
+        {
+          "meshIndex": 1,
+          "maxSharedFieldErrorM": 2.431778956570459e-07,
+          "maxOutsideHeadErrorM": 0.0
+        },
+        {
+          "meshIndex": 3,
+          "maxSharedFieldErrorM": 8.850934402078429e-07,
+          "maxOutsideHeadErrorM": 8.593079592577829e-07
+        },
+        {
+          "meshIndex": 4,
+          "maxSharedFieldErrorM": 5.303798517311435e-07,
+          "maxOutsideHeadErrorM": 5.303798517311435e-07
+        }
+      ]
+    },
+    {
+      "id": "iceland",
+      "family": "pony",
+      "maxDisplayedHeadDeltaM": 0.009856989058745302,
+      "maxOutsideHeadQuantizationM": 1.5828262418715873e-06,
+      "maxAnimatedAdditionalHeadDeltaM": 0.009857341938959742,
+      "nativeGaitFrames": 84,
+      "displayedBitDeltaM": [
+        0.004269794039460561,
+        0.004966462049640218
+      ],
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "maxSharedFieldErrorM": 7.03594290298972e-07,
+          "maxOutsideHeadErrorM": 6.659698566397232e-07
+        },
+        {
+          "meshIndex": 1,
+          "maxSharedFieldErrorM": 3.4870873256017916e-07,
+          "maxOutsideHeadErrorM": 0.0
+        },
+        {
+          "meshIndex": 3,
+          "maxSharedFieldErrorM": 1.5828262418715873e-06,
+          "maxOutsideHeadErrorM": 1.5828262418715873e-06
+        },
+        {
+          "meshIndex": 4,
+          "maxSharedFieldErrorM": 7.139421741663716e-07,
+          "maxOutsideHeadErrorM": 7.139421741663716e-07
+        }
+      ]
+    },
+    {
+      "id": "fjord",
+      "family": "pony",
+      "maxDisplayedHeadDeltaM": 0.0069251917863384525,
+      "maxOutsideHeadQuantizationM": 3.209898045317251e-06,
+      "maxAnimatedAdditionalHeadDeltaM": 0.006925709072962626,
+      "nativeGaitFrames": 84,
+      "displayedBitDeltaM": [
+        0.003464352242343735,
+        0.003970914426999018
+      ],
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "maxSharedFieldErrorM": 1.4268121441605914e-06,
+          "maxOutsideHeadErrorM": 1.3916880364434954e-06
+        },
+        {
+          "meshIndex": 1,
+          "maxSharedFieldErrorM": 5.932801783545516e-07,
+          "maxOutsideHeadErrorM": 0.0
+        },
+        {
+          "meshIndex": 3,
+          "maxSharedFieldErrorM": 3.209898045317251e-06,
+          "maxOutsideHeadErrorM": 3.209898045317251e-06
+        },
+        {
+          "meshIndex": 4,
+          "maxSharedFieldErrorM": 1.4627432699062517e-06,
+          "maxOutsideHeadErrorM": 1.4627432699062517e-06
+        }
+      ]
+    },
+    {
+      "id": "akhal",
+      "family": "refined",
+      "maxDisplayedHeadDeltaM": 0.008966017192492341,
+      "maxOutsideHeadQuantizationM": 2.490489156825885e-06,
+      "maxAnimatedAdditionalHeadDeltaM": 0.008965891520216887,
+      "nativeGaitFrames": 84,
+      "displayedBitDeltaM": [
+        0.0015461231806035887,
+        0.0016830586455975228
+      ],
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "maxSharedFieldErrorM": 1.4635563596798873e-06,
+          "maxOutsideHeadErrorM": 1.4484501945375808e-06
+        },
+        {
+          "meshIndex": 1,
+          "maxSharedFieldErrorM": 9.209679641136031e-07,
+          "maxOutsideHeadErrorM": 0.0
+        },
+        {
+          "meshIndex": 3,
+          "maxSharedFieldErrorM": 2.490489156825885e-06,
+          "maxOutsideHeadErrorM": 2.490489156825885e-06
+        },
+        {
+          "meshIndex": 4,
+          "maxSharedFieldErrorM": 1.1326476877511798e-06,
+          "maxOutsideHeadErrorM": 1.1326476877511798e-06
+        }
+      ]
+    },
+    {
+      "id": "percheron",
+      "family": "draft",
+      "maxDisplayedHeadDeltaM": 0.0036247947192951753,
+      "maxOutsideHeadQuantizationM": 9.652215959583956e-06,
+      "maxAnimatedAdditionalHeadDeltaM": 0.0036237861959961012,
+      "nativeGaitFrames": 84,
+      "displayedBitDeltaM": [
+        0.001322261284759505,
+        0.0014393699770962529
+      ],
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "maxSharedFieldErrorM": 4.375763641302523e-06,
+          "maxOutsideHeadErrorM": 4.366343173285569e-06
+        },
+        {
+          "meshIndex": 1,
+          "maxSharedFieldErrorM": 1.1701435894885983e-06,
+          "maxOutsideHeadErrorM": 0.0
+        },
+        {
+          "meshIndex": 3,
+          "maxSharedFieldErrorM": 9.652215959583956e-06,
+          "maxOutsideHeadErrorM": 9.652215959583956e-06
+        },
+        {
+          "meshIndex": 4,
+          "maxSharedFieldErrorM": 4.319500517091684e-06,
+          "maxOutsideHeadErrorM": 4.319500517091684e-06
+        }
+      ]
+    },
+    {
+      "id": "shire",
+      "family": "draft",
+      "maxDisplayedHeadDeltaM": 0.0043843526618127645,
+      "maxOutsideHeadQuantizationM": 1.0521839844626205e-05,
+      "maxAnimatedAdditionalHeadDeltaM": 0.004385130713242496,
+      "nativeGaitFrames": 84,
+      "displayedBitDeltaM": [
+        0.0017554768296710994,
+        0.0019786218386665766
+      ],
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "maxSharedFieldErrorM": 4.80342908639407e-06,
+          "maxOutsideHeadErrorM": 4.80342908639407e-06
+        },
+        {
+          "meshIndex": 1,
+          "maxSharedFieldErrorM": 1.0566362465725214e-06,
+          "maxOutsideHeadErrorM": 0.0
+        },
+        {
+          "meshIndex": 3,
+          "maxSharedFieldErrorM": 1.0578230727533283e-05,
+          "maxOutsideHeadErrorM": 1.0521839844626205e-05
+        },
+        {
+          "meshIndex": 4,
+          "maxSharedFieldErrorM": 4.465522662956081e-06,
+          "maxOutsideHeadErrorM": 4.465522662956081e-06
+        }
+      ]
+    },
+    {
+      "id": "clyde",
+      "family": "draft",
+      "maxDisplayedHeadDeltaM": 0.0037463924882015893,
+      "maxOutsideHeadQuantizationM": 8.383244878039591e-06,
+      "maxAnimatedAdditionalHeadDeltaM": 0.0037460426164023825,
+      "nativeGaitFrames": 84,
+      "displayedBitDeltaM": [
+        0.001732515287783003,
+        0.0019527415721422063
+      ],
+      "meshes": [
+        {
+          "meshIndex": 0,
+          "maxSharedFieldErrorM": 4.109562367048119e-06,
+          "maxOutsideHeadErrorM": 4.036416596983839e-06
+        },
+        {
+          "meshIndex": 1,
+          "maxSharedFieldErrorM": 9.551775239121114e-07,
+          "maxOutsideHeadErrorM": 0.0
+        },
+        {
+          "meshIndex": 3,
+          "maxSharedFieldErrorM": 8.412033820800613e-06,
+          "maxOutsideHeadErrorM": 8.383244878039591e-06
+        },
+        {
+          "meshIndex": 4,
+          "maxSharedFieldErrorM": 3.6993679146588773e-06,
+          "maxOutsideHeadErrorM": 3.6993679146588773e-06
+        }
+      ]
+    }
+  ]
+}

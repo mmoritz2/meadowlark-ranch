@@ -5,17 +5,26 @@
   "sharedOriginalNativeSkeletonSize": 677,
   "unchangedSkinWeightsBindsAndAnimations": true,
   "unchangedIndicesAndUVs": true,
-  "nonDraftBuffersBitExact": 22,
+  "nonDraftBuffersBitExact": 15,
   "draftLowerLegThicknessUpdated": [
     "clyde",
     "percheron",
     "shire"
   ],
-  "reviewedDraftBodyPositionsBitExact": [
+  "reviewedDraftBodyPositionsBitExact": [],
+  "approvedHeadRevisionProfiles": [
+    "akhal",
+    "appaloosa",
+    "bay",
     "clyde",
+    "fjord",
+    "iceland",
     "percheron",
-    "shire"
+    "pinto",
+    "shire",
+    "sunset"
   ],
+  "headShapeValidation": "Run qa-head-shapes.py for compact facial field, matching eyes/bridle, preserved seat/stirrups and 84 native head motion samples.",
   "limitsM": {
     "standingFloor": 1e-08,
     "lowerLegYAndHoofCenterDrift": 2e-05,
@@ -26,11 +35,11 @@
   "rows": [
     {
       "id": "bay",
-      "bufferSha256": "ca1dcf544abb19e478ac0813f5ae59290beccc09cccda9680343089dcdb600e7",
+      "bufferSha256": "c39a83254c5a543bdad7e4c99e4972923e4fdc4fe3e70f1a3b19d0cfe0d2e72a",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "4b86ffb66e049ccf68ea0218dfee32386675e3d2b236d038704f397486ad0e25",
+      "bodyGeometrySha256": "f8d270d48b4082b26030c785f7579712106a4e52565ff054021232a68a187acd",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": true,
       "standingBodyFloorM": 0.0,
@@ -41,7 +50,9 @@
         1024,
         1024
       ],
-      "releasedBufferBitExact": true
+      "releasedBufferBitExact": false,
+      "approvedHeadRevisionPinned": true,
+      "headFamily": "stock"
     },
     {
       "id": "chestnut",
@@ -140,49 +151,53 @@
     },
     {
       "id": "pinto",
-      "bufferSha256": "0cb283c8e25784e34cfa704df736e5ad200a3c3e1d628711112ae1b1dea4fe44",
+      "bufferSha256": "ca09d4969996ef20e9adb57376a334529caccf2f576e8caeea25330e00d9055e",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "850bf965aa4d9096a80802f5cad5b4fba6c77ba579ef3a7fecc773e3b867f398",
+      "bodyGeometrySha256": "4f2f87f11b60d8999b3b6325bc443be2115090ba174f173e8f34138b3d35ad07",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": true,
       "standingBodyFloorM": 0.0,
-      "maxNormalLengthError": 2.5033950805664062e-06,
+      "maxNormalLengthError": 2.4437904357910156e-06,
       "actorScale": 0.863321190470604,
       "withersM": 1.55,
       "textureSize": [
         1024,
         1024
       ],
-      "releasedBufferBitExact": true
+      "releasedBufferBitExact": false,
+      "approvedHeadRevisionPinned": true,
+      "headFamily": "stock"
     },
     {
       "id": "appaloosa",
-      "bufferSha256": "1f0e7c0b0bacae87ad5d3d5dc8574865e626e582a3612e4a0fe449812ae1a0d5",
+      "bufferSha256": "1ad3fdf25bb5cd935e03a1e68c2aad5c3fa635d87f7a95a7461608ffeffd802c",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "d4d8a31f04de54863cb89ee3d9e931ba4818f9cadf5cc001e47d896d38135588",
+      "bodyGeometrySha256": "a14cd0162ba04a925fe24ef31288a7d7b88d7c53078ae3894094ca6a048db078",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": true,
       "standingBodyFloorM": 0.0,
-      "maxNormalLengthError": 2.086162567138672e-06,
+      "maxNormalLengthError": 2.2649765014648438e-06,
       "actorScale": 0.8598054213101979,
       "withersM": 1.54,
       "textureSize": [
         1024,
         1024
       ],
-      "releasedBufferBitExact": true
+      "releasedBufferBitExact": false,
+      "approvedHeadRevisionPinned": true,
+      "headFamily": "stock"
     },
     {
       "id": "sunset",
-      "bufferSha256": "ed74a03ac807c43b56849994eb8b5421040d87fee1ed2d36cd12d7953fe86c08",
+      "bufferSha256": "8669c0c2fa6ffe6b5bbefc8e4c13c4daab220d72a621547818950b0f073ed575",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "f6cdcccc4d6e516650e40840ce55b76041102cfd3e305c26524c85a05c24ef24",
+      "bodyGeometrySha256": "69db729374c345f636e070ed46c8468daf72b082f8be6516ea8a773030e188d3",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": true,
       "standingBodyFloorM": 0.0,
@@ -193,26 +208,30 @@
         1024,
         1024
       ],
-      "releasedBufferBitExact": true
+      "releasedBufferBitExact": false,
+      "approvedHeadRevisionPinned": true,
+      "headFamily": "refined"
     },
     {
       "id": "iceland",
-      "bufferSha256": "8fe26cbbbfe235fd81831deae40ee9127a6d9c83e05d94e8db3cf857d93ed8bd",
+      "bufferSha256": "c20886d2644d601bde6f28af7a6c2fed52f411d19a28e3eb855edcd016934400",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "8c4f14e26baba35799af43c422a231ca899a0494a0467c214fbd7968b7005147",
+      "bodyGeometrySha256": "5ebd504b0dc1821f3906a68b70cdf2dca7b403438401526ea1cb7a59dc56c000",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": true,
       "standingBodyFloorM": 0.0,
-      "maxNormalLengthError": 2.9802322387695312e-06,
+      "maxNormalLengthError": 3.516674041748047e-06,
       "actorScale": 0.7651438734840629,
       "withersM": 1.38,
       "textureSize": [
         1024,
         1024
       ],
-      "releasedBufferBitExact": true
+      "releasedBufferBitExact": false,
+      "approvedHeadRevisionPinned": true,
+      "headFamily": "pony"
     },
     {
       "id": "welsh",
@@ -254,22 +273,24 @@
     },
     {
       "id": "fjord",
-      "bufferSha256": "259adf614e29cb9cbd9b5bb38b172af6d3cbb8d6ddfae1258f813d3920a03f3a",
+      "bufferSha256": "fd5478e688f1593443e6cf0db9f6fc5da80eb5d1e420723f9cde7d3ee2bc67fe",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "b912fdc366c44ea676dfebd9dbe5b850e68c71157332eb9793bb0f21dd4381d8",
+      "bodyGeometrySha256": "85fd18c2dbd3e6d7e4b1a062e1a0990c90f79116a38ece3903f189c46b739d65",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": true,
       "standingBodyFloorM": 0.0,
-      "maxNormalLengthError": 8.225440979003906e-06,
+      "maxNormalLengthError": 4.5299530029296875e-05,
       "actorScale": 0.7761249771443578,
       "withersM": 1.42,
       "textureSize": [
         1024,
         1024
       ],
-      "releasedBufferBitExact": true
+      "releasedBufferBitExact": false,
+      "approvedHeadRevisionPinned": true,
+      "headFamily": "pony"
     },
     {
       "id": "morgan",
@@ -406,11 +427,11 @@
     },
     {
       "id": "akhal",
-      "bufferSha256": "0c536c220d31fba3ba80d96471a7940dbf68f0051f4efc7f9ba1f4ddb11addc4",
+      "bufferSha256": "2001f2b1826da2fa166d0c1ff8f899c468f78a4ca3fe705188c2f19f263b9899",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "8991e7edd41ba7653c2fc4d1d9f986c93bea5ed3b33ca7700f6968fdcaf6270c",
+      "bodyGeometrySha256": "353898d5fa590925c05edf24b23950508797f7d2ff54463896cd5b80cc247a35",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": true,
       "standingBodyFloorM": 0.0,
@@ -421,15 +442,17 @@
         1024,
         1024
       ],
-      "releasedBufferBitExact": true
+      "releasedBufferBitExact": false,
+      "approvedHeadRevisionPinned": true,
+      "headFamily": "refined"
     },
     {
       "id": "percheron",
-      "bufferSha256": "e3e42b4d55219a5a0636ae1f5f4b377960a8608cb1ff6e4611a72bd0a419934e",
+      "bufferSha256": "cd4479e0fff78a384586437830381b7e94fb9396684671aae250ebec5f172381",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "eaf2a344fed5bc8350634976120d63cd0560551223227d3017bd16cbd859cfeb",
+      "bodyGeometrySha256": "da9ac848f30a991a657569de150f2b464ca083dac9401d65c47b0edd3ff129b4",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
@@ -492,15 +515,17 @@
         "sampledLowerLegPositionsFinite": true,
         "maxAnimatedHoofCenterDriftM": 0.0005215703423360366,
         "maxAnimatedLowerLegSurfaceOffsetM": 0.0455899380109751
-      }
+      },
+      "approvedHeadRevisionPinned": true,
+      "headFamily": "draft"
     },
     {
       "id": "shire",
-      "bufferSha256": "163200808c0cbc76890cd69f86c877beb175348e3a133c589fa02ba79bdfeaaf",
+      "bufferSha256": "27c846eeaad159672b9c97621b5fc6f2b19006e0ba2b54618536fd81d23a6205",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "8e6f282851ea7ac26f4596d9f5fcf020a3330f23a9fa42311da422de77882f3c",
+      "bodyGeometrySha256": "55e27913c95c3ccf829ccf01c2412c841567a6d78c97bc87f6488f68419971d7",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
@@ -563,15 +588,17 @@
         "sampledLowerLegPositionsFinite": true,
         "maxAnimatedHoofCenterDriftM": 0.0006207020598651598,
         "maxAnimatedLowerLegSurfaceOffsetM": 0.05427112726650658
-      }
+      },
+      "approvedHeadRevisionPinned": true,
+      "headFamily": "draft"
     },
     {
       "id": "clyde",
-      "bufferSha256": "b633de4f47bb79be8d91fa4aa945147ee152d710be81e22832ee8b731c7095f0",
+      "bufferSha256": "105f7c47d11a2efef4f758747620e9bcab4049fd3a4f2fbb8dd26ec652fdba3d",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "d4f7bf6057b25b2034c308caa5e857bbfea2d71fc42de8b1e3dd1fce41d7f74f",
+      "bodyGeometrySha256": "6f5eecd4e9ff933e188ccfe23275ee55af7fcd075a2a02a0fb3c10cf8cb81f4b",
       "protectedLowerBodyVertices": 3054,
       "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
@@ -634,7 +661,9 @@
         "sampledLowerLegPositionsFinite": true,
         "maxAnimatedHoofCenterDriftM": 0.0005711708105215708,
         "maxAnimatedLowerLegSurfaceOffsetM": 0.0499294003860306
-      }
+      },
+      "approvedHeadRevisionPinned": true,
+      "headFamily": "draft"
     },
     {
       "id": "bay-sporthorse",

@@ -54,6 +54,13 @@ NON_DRAFT_SHA = {
 }
 
 
+# Approved head revision pins; the focused head gate separately proves the
+# pre-head saddle, limbs and rounded draft quarters are preserved within 20um.
+HEAD_BUFFER_SHA = {'bay': 'c39a83254c5a543bdad7e4c99e4972923e4fdc4fe3e70f1a3b19d0cfe0d2e72a', 'pinto': 'ca09d4969996ef20e9adb57376a334529caccf2f576e8caeea25330e00d9055e', 'appaloosa': '1ad3fdf25bb5cd935e03a1e68c2aad5c3fa635d87f7a95a7461608ffeffd802c', 'sunset': '8669c0c2fa6ffe6b5bbefc8e4c13c4daab220d72a621547818950b0f073ed575', 'iceland': 'c20886d2644d601bde6f28af7a6c2fed52f411d19a28e3eb855edcd016934400', 'fjord': 'fd5478e688f1593443e6cf0db9f6fc5da80eb5d1e420723f9cde7d3ee2bc67fe', 'akhal': '2001f2b1826da2fa166d0c1ff8f899c468f78a4ca3fe705188c2f19f263b9899', 'percheron': 'cd4479e0fff78a384586437830381b7e94fb9396684671aae250ebec5f172381', 'shire': '27c846eeaad159672b9c97621b5fc6f2b19006e0ba2b54618536fd81d23a6205', 'clyde': '105f7c47d11a2efef4f758747620e9bcab4049fd3a4f2fbb8dd26ec652fdba3d'}
+HEAD_DRAFT_BODY_SHA = {'percheron': 'da9ac848f30a991a657569de150f2b464ca083dac9401d65c47b0edd3ff129b4', 'shire': '55e27913c95c3ccf829ccf01c2412c841567a6d78c97bc87f6488f68419971d7', 'clyde': '6f5eecd4e9ff933e188ccfe23275ee55af7fcd075a2a02a0fb3c10cf8cb81f4b'}
+# End head revision pins.
+
+
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -206,7 +213,9 @@ def main():
         assert np.array_equal(row['sourceTranslation'], SOURCE_TRANSLATION), (key, 'alignment changed')
         path = (ROOT/'assets'/row['file']).resolve()
         assert sha(path) == row['sha256'], (key, 'buffer checksum')
-        if key not in DRAFTS:
+        if row.get('headShape'):
+            assert row['headShape']['version'] == 1 and sha(path) == HEAD_BUFFER_SHA[key], (key, 'approved head revision changed')
+        elif key not in DRAFTS:
             assert sha(path) == NON_DRAFT_SHA[key], (key, 'non-draft buffer changed')
         packed = path.read_bytes()
         assert len(packed) == row['byteLength'] and len(row['meshes']) == 5
@@ -238,7 +247,8 @@ def main():
                     assert np.array_equal(outn[protected], n[protected]), (key, 'protected normals changed')
                 bodyhash = hashlib.sha256(outp.tobytes()).hexdigest()
                 if key in DRAFTS:
-                    assert bodyhash == DRAFT_BODY_SHA[key], (key, 'reviewed rounded draft body changed')
+                    expected = HEAD_DRAFT_BODY_SHA[key] if row.get('headShape') else DRAFT_BODY_SHA[key]
+                    assert bodyhash == expected, (key, 'reviewed draft body/head revision changed')
                 floor = float(outworld[:, 1].min())
         assert used == len(packed) and normal_error < .002
         coat = (ROOT/'assets'/row['coat']['file']).resolve()
@@ -253,22 +263,27 @@ def main():
         if draft:
             report['draftLowerLegValidation'] = draft
         else:
-            report['releasedBufferBitExact'] = True
+            report['releasedBufferBitExact'] = not bool(row.get('headShape'))
+        if row.get('headShape'):
+            report['approvedHeadRevisionPinned'] = True
+            report['headFamily'] = row['headShape']['family']
         rows.append(report)
     assert set(manifest['breeds']) == set(NON_DRAFT_SHA) | DRAFTS
     assert len(rows) == 25 and len({r['bodyGeometrySha256'] for r in rows}) == 25
     assert sha(source) == SOURCE_SHA
     report = {'sourceSha256': SOURCE_SHA, 'all25NativeFoundations': True, 'distinctBodyGeometryCount': 25,
               'sharedOriginalNativeSkeletonSize': 677, 'unchangedSkinWeightsBindsAndAnimations': True,
-              'unchangedIndicesAndUVs': True, 'nonDraftBuffersBitExact': len(NON_DRAFT_SHA),
+              'unchangedIndicesAndUVs': True, 'nonDraftBuffersBitExact': len(NON_DRAFT_SHA)-len(set(HEAD_BUFFER_SHA)-DRAFTS),
               'draftLowerLegThicknessUpdated': sorted(DRAFTS),
-              'reviewedDraftBodyPositionsBitExact': sorted(DRAFTS),
+              'reviewedDraftBodyPositionsBitExact': sorted(DRAFTS-set(HEAD_DRAFT_BODY_SHA)),
+              'approvedHeadRevisionProfiles': sorted(HEAD_BUFFER_SHA),
+              'headShapeValidation': 'Run qa-head-shapes.py for compact facial field, matching eyes/bridle, preserved seat/stirrups and 84 native head motion samples.',
               'limitsM': {'standingFloor': 1e-8, 'lowerLegYAndHoofCenterDrift': QUANTIZATION_TOLERANCE_M,
                           'animatedHoofCenterDrift': .002, 'animatedLowerLegSurfaceOffset': .10},
               'motionValidationScope': '84 sampled native walk/trot/left-canter/right-canter poses; finite skinned lower legs and bounded hoof-center drift. Visual gait quality requires runtime review.',
               'rows': rows}
     (OUT/'validation.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
-    print(json.dumps({'pass': True, 'variants': 25, 'nonDraftBuffersBitExact': len(NON_DRAFT_SHA),
+    print(json.dumps({'pass': True, 'variants': 25, 'nonDraftBuffersBitExact': len(NON_DRAFT_SHA)-len(set(HEAD_BUFFER_SHA)-DRAFTS),
                       'drafts': sorted(DRAFTS), 'gaitSamplesPerDraft': len(frames),
                       'maxNormalLengthError': max(r['maxNormalLengthError'] for r in rows)}))
 

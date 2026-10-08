@@ -1,3 +1,4 @@
+import {createNativeHorseIdle} from './native-horse-idle.mjs?v=horse-polish-20261008';
 import {createNativeGroomLayer} from './native-groom-layer.mjs?v=native-roster-1';
 import {prepareNativeHoofFlex} from './native-hoof-flex.mjs?v=native-roster-1';
 import {createNativeHorseActionClips} from './native-horse-actions.mjs?v=horse-actions-1';
@@ -32,11 +33,12 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
  if(profile.nativeKind!=='horse')return createCreatorMotion({THREE,root,clips,profile});
  const rest=[];root.traverse(o=>rest.push([o,o.position.clone(),o.quaternion.clone(),o.scale.clone()]));
  const actionBundle=createNativeHorseActionClips({THREE,root,profile}),actionRecords=Object.fromEntries(Object.entries(actionBundle.actions||{}).map(([type,record])=>[type,Object.freeze({...record})]));
- clips=[...clips,...actionBundle.clips];
+ const ambientIdle=createNativeHorseIdle({THREE,root,profile});
+ clips=[...clips,...actionBundle.clips,...(ambientIdle?[ambientIdle.clip]:[])];
  const hoofBundle=prepareNativeHoofFlex({THREE,root,clips,profile});clips=hoofBundle.clips;const hoofFlex=hoofBundle.layer;
  const mixer=new THREE.AnimationMixer(root),records=profile.nativeGaits||{},actions={},sourceClips={};
  const add=(mode,name,duration)=>{if(!name)return;const clip=THREE.AnimationClip.findByName(clips,name);if(!clip||duration&&Math.abs(clip.duration-duration)>1e-5)throw new Error('Missing or mismatched native clip '+name);sourceClips[mode]=clip;actions[mode]=mixer.clipAction(clip);};
- add('stand',profile.nativeIdleClip);add('sit',profile.nativeSitClip);
+ add('stand',profile.nativeIdleClip||ambientIdle?.clip.name);add('sit',profile.nativeSitClip);
  const jumpRecord=profile.nativeJump;add('jump',jumpRecord?.clip,jumpRecord?.durationS);
  if(actions.jump){actions.jump.setLoop(THREE.LoopOnce,1);actions.jump.clampWhenFinished=true;}
  for(const [key,record]of Object.entries(records)){if(!(record.nominalSpeedMps>0))throw new Error('Invalid native gait reference '+key);if(record.strokeM&&Math.abs(record.nominalSpeedMps-record.strokeM/(record.stanceFraction*record.durationS))>1e-7)throw new Error('Native gait speed/timing mismatch '+key);add(key,record.clip,record.durationS);}
@@ -135,9 +137,9 @@ export function createNativeHorseMotion({THREE,root,clips,profile,deferGroom=fal
   if(key==='jump'&&actions.jump.time>=jumpRecord.durationS-1e-6)set(jumpReturn,{lead,speedMps});
   if(actionType&&actions[key].time>=actionRecords[actionType].durationS-1e-6)set('stand',{speedMps:0});
  }
- function snapshot(){const clip=sourceClips[key],jumpTime=key==='jump'?actions.jump.time:0,lift=key==='jump'?sampleNativeJumpLift(jumpRecord,jumpTime):0;return {gait:mode,action:actionSnapshot(),lead,phase01:clip?phaseOf(actions[key]):0,bodyLiftM:lift,jumpTimeS:jumpTime,speedMps,grounded:mode!=='fly'&&(key!=='jump'||jumpTime<jumpRecord.flightStartS||jumpTime>=jumpRecord.flightEndS),intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:transition?.duration||fadeSeconds,activeActions:active.size,groomInertia:groomInertia?.snapshot()||null,hoofFlex:hoofFlex?.snapshot()||null,restFallback:!clip,transitionsReviewed:false};}
+ function snapshot(){const clip=sourceClips[key],jumpTime=key==='jump'?actions.jump.time:0,lift=key==='jump'?sampleNativeJumpLift(jumpRecord,jumpTime):0;return {gait:mode,hasAmbientIdle:!!ambientIdle,action:actionSnapshot(),lead,phase01:clip?phaseOf(actions[key]):0,bodyLiftM:lift,jumpTimeS:jumpTime,speedMps,grounded:mode!=='fly'&&(key!=='jump'||jumpTime<jumpRecord.flightStartS||jumpTime>=jumpRecord.flightEndS),intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:transition?.duration||fadeSeconds,activeActions:active.size,groomInertia:groomInertia?.snapshot()||null,hoofFlex:hoofFlex?.snapshot()||null,restFallback:!clip,transitionsReviewed:false};}
  function reset(){assertLive();restore();mode='rest';key='rest';speedMps=0;actions.rest.reset().setEffectiveWeight(1).play();active.set(actions.rest,1);mixer.update(0);}
- return {set,update,reset,snapshot,gaits,availableModes,supportedModes:availableModes,supportedActions,supportsAction,actionDescriptor,startAction,cancelAction,mixer,groomInertia,hoofFlex,finishGroomPose,get action(){return actionSnapshot();},get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return sourceClips[key]?actions[key]?.time||0:0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;pendingHorseGrooms.delete(finishGroomPose);hoofFlex?.dispose();groomInertia?.dispose();restore();mixer.uncacheRoot(root);disposed=true;}};
+ return {set,update,reset,snapshot,hasAmbientIdle:!!ambientIdle,gaits,availableModes,supportedModes:availableModes,supportedActions,supportsAction,actionDescriptor,startAction,cancelAction,mixer,groomInertia,hoofFlex,finishGroomPose,get action(){return actionSnapshot();},get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return sourceClips[key]?actions[key]?.time||0:0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;pendingHorseGrooms.delete(finishGroomPose);hoofFlex?.dispose();groomInertia?.dispose();restore();mixer.uncacheRoot(root);disposed=true;}};
 
 }
 
@@ -198,7 +200,7 @@ function createCreatorMotion({THREE,root,clips,profile}={}){
  }
  function snapshot(){const clip=sourceClips[key];return {gait:mode,lead,phase01:clip?actions[key].time/clip.duration:0,bodyLiftM:0,flightWeight:active.get(actions.fly)||0,speedMps,grounded:mode!=='fly',intensity:profile.nativeMaxSpeedMps?Math.min(1,speedMps/profile.nativeMaxSpeedMps):0,turn,transitioning:!!transition,transitionElapsedS:transition?.elapsed||0,transitionDurationS:transition?.duration||.28,activeActions:active.size,restFallback:!clip,transitionsReviewed:false};}
  function reset(){assertLive();restore();mode='rest';key='rest';speedMps=0;actions.rest.reset().setEffectiveWeight(1).play();active.set(actions.rest,1);mixer.update(0);}
- return {set,update,reset,snapshot,gaits,availableModes,supportedModes:availableModes,mixer,get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return actions[key]?.time||0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;restore();mixer.uncacheRoot(root);disposed=true;}};
+ return {set,update,reset,snapshot,hasAmbientIdle:false,gaits,availableModes,supportedModes:availableModes,mixer,get mode(){return mode;},get state(){return snapshot();},get clip(){return sourceClips[key]?.name||null;},get time(){return actions[key]?.time||0;},setTurn(v){turn=Math.max(-1,Math.min(1,Number(v)||0));},dispose(){if(disposed)return;restore();mixer.uncacheRoot(root);disposed=true;}};
 }
 
 export function getNativeHorseCapabilities(rig){
