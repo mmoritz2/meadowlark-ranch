@@ -55,7 +55,15 @@ const bodies=baseline?Object.fromEntries(baselineFiles.map(f=>[f,cp.execFileSync
     }
    }
    const mask=g.attributes.roadStrokeMask,color=g.attributes.color;let maskIsolated=mask?.count===p.count,interiorCount=0,minInteriorAlpha=Infinity,oldVergeInteriors=0,minOldVergeAlpha=Infinity,duplicateAlphaError=0;const alphaAt=new Map();
-   for(const [id,r]of Object.entries(P.surfaceRanges))for(let v=r.vertexStart;v<r.vertexStart+r.vertexCount;v++)maskIsolated&&=mask.getX(v)===(id==='riverwest'?1:0);
+   const expectedRoads=['barley','riverwest','ochre','highfell','frostpine','marsh','clover'];
+   maskIsolated&&=expectedRoads.every(id=>P.surfaceRanges[id]&&P.ribbonDiagnostics[id])&&Object.keys(P.surfaceRanges).length===expectedRoads.length;
+   let nextVertex=0,nextIndex=0;
+   for(const [id,r]of Object.entries(P.surfaceRanges)){
+    maskIsolated&&=r.vertexStart===nextVertex&&r.indexStart===nextIndex;
+    for(let v=r.vertexStart;v<r.vertexStart+r.vertexCount;v++)maskIsolated&&=mask.getX(v)===1;
+    nextVertex+=r.vertexCount;nextIndex+=r.indexCount;
+   }
+   maskIsolated&&=nextVertex===p.count&&nextIndex===g.index.count;
    for(const v of tested){
     const x=p.getX(v),z=p.getZ(v),alpha=color.getW(v),key=x+','+z;if(alphaAt.has(key))duplicateAlphaError=Math.max(duplicateAlphaError,Math.abs(alphaAt.get(key)-alpha));else alphaAt.set(key,alpha);let closest=Infinity,run=0;
     for(let k=1;k<track.pts.length;k++){

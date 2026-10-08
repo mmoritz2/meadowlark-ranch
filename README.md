@@ -488,6 +488,15 @@ are recorded in `assets/textures/village-paving/manifest.json`. Dirt ribbons
 clip out under the pavement. Building plots, roads and planting use the same
 layout reservations, and hedges/collision lines stop at the town edges.
 
+The seven country trails use bounded road strokes and terrain-cell subdivision,
+so their paint follows the same triangles as hoof contact instead of cutting
+through hills. Final vertices resample route coverage to keep compacted centres
+solid and verges feathered through bends. Route coordinates and collision data
+are retained. `tools/test-road-terrain-drape.mjs` checks terrain clearance,
+footprint, attributes and thin-triangle stability; `tools/qa-riverwest.cjs` checks
+coverage and mounted travel. The combined road mesh contains 75,904 triangles
+and about 2.94 MiB of geometry, with one material and no new texture downloads.
+
 An original open-basin stone fountain, four beds with 117 periwinkle plants,
 three benches, five lanterns and three budgeted CC0 scan trees furnish the
 square. One orchard tree moves off the existing through-road; its harvesting
