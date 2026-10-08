@@ -3431,7 +3431,7 @@
       "coat": {
         "file": "./models/native-roster/fjord-coat.webp",
         "sha256": "83be8e7a8118c39ba0f04ff8f698d828b96a13737a5a97d1cb243ef69fdc78aa",
-        "description": "Brown dun with a rounded upright mane",
+        "description": "Brown dun with a short upright two-tone mane",
         "colorSrgb": [
           0.820979848329444,
           0.7287318438688483,

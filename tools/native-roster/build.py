@@ -37,7 +37,7 @@ PALETTES = {n.targets[0].id: ast.literal_eval(n.value) for n in palette_ast.body
             and n.targets[0].id in ['COATS', 'HAIR_COLOR']}
 COATS, HAIR = PALETTES['COATS'], PALETTES['HAIR_COLOR']
 for key, description in [('vanner','Piebald with white stockings'),
-                         ('fjord','Brown dun with a rounded upright mane'),
+                         ('fjord','Brown dun with a short upright two-tone mane'),
                          ('akhal','Golden buckskin')]:
     COATS[key] = (*COATS[key][:2], description)
 
