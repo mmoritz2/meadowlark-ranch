@@ -67,6 +67,23 @@ The chest/barrel/quarters, neck and head all grow by regional amounts. Saddle,
 girth, stirrup and bridle surfaces share that same smooth cage, and the transformed
 seat is recorded in the manifest so mounted contacts follow the new tack.
 
+Rear contour version 2 is an explicit **body-only** exception to the shared
+cage. The initial wide cage carried almost full hip width down through the
+lower haunch while also lowering that surface, producing boxy rear walls and
+an abrupt corner above the hind legs. `DRAFT_REAR_CONTOUR` eases the added width
+and depth back toward the original thigh while keeping the upper hip broad.
+Its rear mask blends from zero at source Z=-0.36 m to full at -0.67 m. The
+added width keeps 26% of its original gain below Y=0.88 m, easing to 100% by
+1.48 m. The vertical depth offset keeps 12% below Y=1.00 m, easing to 100% by
+1.50 m. These factors affect the cage's added deformation, not the source
+horse's actual width or height. They preserve the full upper-quarter mass and
+leave the chest, neck, source leg centers and lower-leg geometry intact.
+The rear correction does not run on the mane/tail, eyes, either tack mesh or
+seat point, preserving their reviewed fit. Normals use the corrected body's
+Jacobian. `draftShape.rearContour` records the parameters, and
+`draftRearProfile` reports displayed widths and mean heights at repeatable
+source-height sections against the first broad draft cage.
+
 The source standing pose is asymmetric, so each of its four limbs has a separate
 measured X/Z centerline rather than a mirrored arbitrary center. Hooves gain
 42% (Percheron), 50% (Shire), or 46% (Clydesdale) in horizontal width and depth.

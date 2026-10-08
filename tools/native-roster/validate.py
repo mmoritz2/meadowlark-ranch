@@ -20,11 +20,11 @@ import rig_hero_horse as glb
 SOURCE_SHA = 'b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07'
 SOURCE_TRANSLATION = np.array([-6.225790382362317e-9, .0047147771075021355, -1.6744842715166992])
 DRAFTS = {'percheron', 'shire', 'clyde'}
-# The reviewed heavier bodies stay exact when fitting their separate tack mesh.
+# Pin the reviewed rounded draft bodies; later tack changes must not reshape them.
 DRAFT_BODY_SHA = {
-    'percheron': '3e8515dc0f417fa837368e425261dfcbf42d4adff21b4d7513f82a0e46974918',
-    'shire': '60ffdfeb16104aead7db654714c106aed64a560f03448b42df1fabade3a4bca7',
-    'clyde': '7cd4f35947849d201bb3fbc08dcc04e263c2b2953676f7f82586ee19373527d9',
+    'percheron': 'eaf2a344fed5bc8350634976120d63cd0560551223227d3017bd16cbd859cfeb',
+    'shire': '8e6f282851ea7ac26f4596d9f5fcf020a3330f23a9fa42311da422de77882f3c',
+    'clyde': 'd4f7bf6057b25b2034c308caa5e857bbfea2d71fc42de8b1e3dd1fce41d7f74f',
 }
 QUANTIZATION_TOLERANCE_M = 2e-5
 # Pin released non-draft buffers, rather than trusting updated manifest hashes.
@@ -238,7 +238,7 @@ def main():
                     assert np.array_equal(outn[protected], n[protected]), (key, 'protected normals changed')
                 bodyhash = hashlib.sha256(outp.tobytes()).hexdigest()
                 if key in DRAFTS:
-                    assert bodyhash == DRAFT_BODY_SHA[key], (key, 'reviewed draft body changed during tack fitting')
+                    assert bodyhash == DRAFT_BODY_SHA[key], (key, 'reviewed rounded draft body changed')
                 floor = float(outworld[:, 1].min())
         assert used == len(packed) and normal_error < .002
         coat = (ROOT/'assets'/row['coat']['file']).resolve()

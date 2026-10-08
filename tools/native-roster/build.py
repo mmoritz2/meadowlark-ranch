@@ -74,6 +74,14 @@ DRAFT_SHAPES = {
         hoof_width=1.46, shaft_width=1.34, joint_width=1.41, upper_limb_width=1.56),
 }
 DRAFT_STIRRUP_LIFT_M = {'percheron':.04,'shire':.12,'clyde':.05}
+DRAFT_REAR_CONTOUR = {
+    'version':2,'meshIndex':0,
+    'sourceZBlendM':[-.36,-.67],
+    'widthGainSourceYBlendM':[.88,1.48],'minimumWidthGainFactor':.26,
+    'depthOffsetSourceYBlendM':[1.00,1.50],'minimumDepthOffsetFactor':.12,
+    'preserved':'Full upper-hip mass; front body, neck, lower legs, hoof centers, seat and all non-body meshes unchanged.',
+    'purpose':'Round the rear quarter into the thigh instead of extending the broad barrel cage down the haunch.',
+}
 
 def draft_limb_centers(body):
     """Measure four separate rest-pose centers; the source stance is asymmetric.
@@ -120,7 +128,7 @@ def draft_limbs(p,s,limbs):
         q[np.ix_(ids,[0,2])]+=(p[np.ix_(ids,[0,2])]-center)*((factor[ids]-1)*fade[ids]*region[ids])[:,None]
     return q
 
-def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0.):
+def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0., rear_contour=True):
     """Common body/tack cage; draft-only lower-body edits use limb centers."""
     p = np.asarray(p, float)
     x,y,z = (p/BASE_WITHERS).T
@@ -157,6 +165,17 @@ def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0.):
     if key == 'black': q[:,0] -= np.sign(x)*.005*smooth(1.20,1.245,y)
     target=p+(q*BASE_WITHERS-p)*upper[:,None]
     if key in DRAFT_SHAPES and limbs is not None:
+        # Only the body mesh receives limb centers, so the corrected haunch
+        # cannot change the approved tail, eyes, saddle, fenders or seat fit.
+        # Reduce the *added* width/depth below the hip, retaining the original
+        # surface and the full draft gain at the upper quarters.
+        if rear_contour:
+            art=DRAFT_REAR_CONTOUR
+            rear=smooth(*art['sourceZBlendM'],p[:,2])
+            width_keep=art['minimumWidthGainFactor']+(1-art['minimumWidthGainFactor'])*smooth(*art['widthGainSourceYBlendM'],p[:,1])
+            depth_keep=art['minimumDepthOffsetFactor']+(1-art['minimumDepthOffsetFactor'])*smooth(*art['depthOffsetSourceYBlendM'],p[:,1])
+            target[:,0]-=p[:,0]*width*upper*rear*(1-width_keep)
+            target[:,1]-=(y-.86)*depth*torso*BASE_WITHERS*upper*rear*(1-depth_keep)
         target+=draft_limbs(p,s,limbs)-p
         # The cage's torso support never changes the accepted lower-leg height.
         target[p[:,1]<=.65,1]=p[p[:,1]<=.65,1]
@@ -386,10 +405,12 @@ def main():
                      'neutralFile':'./models/native-roster/neutralcoat.png','originalUVsPreserved':True},
              'limitations':'Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.'}
         if key in DRAFT_SHAPES:
-            row['draftShape']={'version':1,'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
+            row['draftShape']={'version':2,'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
                 'limbFadeRangeM':[.82,1.10],'sourceYBelow065mPreserved':True,
                 'hoofCenterMethod':'XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned',
-                'unchangedSkeletonAndLimbLengths':True,'sharedBodyAndTackCage':True}
+                'unchangedSkeletonAndLimbLengths':True,'sharedBodyAndTackCage':True,
+                'sharedBodyAndTackCageDescription':'The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; shortened Western fenders are tack-only.',
+                'rearContour':copy.deepcopy(DRAFT_REAR_CONTOUR)}
             row['draftShape']['stirrupTailoring']={'displayedLiftM':DRAFT_STIRRUP_LIFT_M[key],
                 'sourceLiftM':stirrup_lift,'meshIndex':3,'vertexCount':13895,
                 'componentIds':stirrup_components,'shorteningSourceYRangeM':[1.20,1.60],
@@ -413,6 +434,18 @@ def main():
                 'previousDisplayedM':float(np.ptp(baseline[mask,0])*baseline_actor),
                 'newDisplayedM':float(np.ptp(bodydecoded[mask,0])*actor),
                 'displayedGainPercent':float((np.ptp(bodydecoded[mask,0])*actor/(np.ptp(baseline[mask,0])*baseline_actor)-1)*100)} for name,mask in regions.items()}
+            # Source-height sections make the rear silhouette comparison
+            # repeatable even as the body-only contour raises the lower thigh.
+            prior_rear=cage(body,s,key,limbs,rear_contour=False)
+            report['draftRearProfile']={'comparison':'Version1 broad draft cage, with the same body/limb art parameters and actor scale',
+                'sectionSourceZMaxM':-.50,'sectionSourceYHalfHeightM':.065,'sections':[]}
+            for section in [.65,.80,.95,1.10,1.25,1.40,1.55]:
+                mask=(body[:,2]<-.50)&(abs(body[:,1]-section)<.065)
+                report['draftRearProfile']['sections'].append({'sourceYCenterM':section,'vertices':int(mask.sum()),
+                    'previousDisplayedWidthM':float(np.ptp(prior_rear[mask,0])*actor),
+                    'newDisplayedWidthM':float(np.ptp(bodydecoded[mask,0])*actor),
+                    'previousDisplayedMeanYM':float(prior_rear[mask,1].mean()*actor),
+                    'newDisplayedMeanYM':float(bodydecoded[mask,1].mean()*actor)})
             report['draftFeet']=[]
             for limb in limbs:
                 foot=(body[:,0]*limb['side']>0)&((body[:,2]>.10) if limb['front'] else (body[:,2]<-.40))&(body[:,1]<=.14)

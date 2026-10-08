@@ -23,7 +23,7 @@
 export const id='uikit';
 export function install(G){
  const S=G.save, T=G.tables||{};
- const DIR='assets/breed-thumbnails/', VER='?v=draft-bodies-1';
+ const DIR='assets/breed-thumbnails/', VER='?v=draft-rear-2';
  const EMOJI_FALLBACK='🐴';
 
  /* ================= 0. baseline css =================

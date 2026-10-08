@@ -1100,8 +1100,8 @@
           "meshIndex": 0,
           "vertices": 16159,
           "minCageJacobianDeterminant": 0.6852198115381184,
-          "maxPositionQuantizationErrorM": 4.344703846962404e-06,
-          "maxAppearanceDeltaM": 0.20721897661355354,
+          "maxPositionQuantizationErrorM": 4.332251255821313e-06,
+          "maxAppearanceDeltaM": 0.18145051175423668,
           "fixedLowerVertices": 1
         },
         {
@@ -1215,11 +1215,11 @@
         "barrel": {
           "sourceM": 0.6444136780588463,
           "previousM": 0.7797405504512039,
-          "newM": 0.9675186408699487,
-          "gainOverPreviousPercent": 24.08212453617875,
+          "newM": 0.9675185040061768,
+          "gainOverPreviousPercent": 24.0821069837029,
           "previousDisplayedM": 0.738431779889891,
-          "newDisplayedM": 0.8822913818978784,
-          "displayedGainPercent": 19.481772849678624
+          "newDisplayedM": 0.8822912570902299,
+          "displayedGainPercent": 19.481755947961798
         },
         "chest": {
           "sourceM": 0.520620693945136,
@@ -1233,11 +1233,11 @@
         "quarters": {
           "sourceM": 0.6624500560549793,
           "previousM": 0.7964672420134489,
-          "newM": 1.0180686813880073,
-          "gainOverPreviousPercent": 27.823045027483584,
+          "newM": 0.940298902051257,
+          "gainOverPreviousPercent": 18.058703792287222,
           "previousDisplayedM": 0.7542723317437485,
-          "newDisplayedM": 0.9283885455283067,
-          "displayedGainPercent": 23.083998505159453
+          "newDisplayedM": 0.8574693888501279,
+          "displayedGainPercent": 13.68167076575717
         },
         "neck": {
           "sourceM": 0.4076406539898484,
@@ -1257,6 +1257,69 @@
           "newDisplayedM": 0.2911676972893547,
           "displayedGainPercent": 12.193079477066915
         }
+      },
+      "draftRearProfile": {
+        "comparison": "Version1 broad draft cage, with the same body/limb art parameters and actor scale",
+        "sectionSourceZMaxM": -0.5,
+        "sectionSourceYHalfHeightM": 0.065,
+        "sections": [
+          {
+            "sourceYCenterM": 0.65,
+            "vertices": 351,
+            "previousDisplayedWidthM": 0.4833600299413811,
+            "newDisplayedWidthM": 0.48336316798011975,
+            "previousDisplayedMeanYM": 0.5981460465610844,
+            "newDisplayedMeanYM": 0.5981955442083786
+          },
+          {
+            "sourceYCenterM": 0.8,
+            "vertices": 246,
+            "previousDisplayedWidthM": 0.6665533654881738,
+            "newDisplayedWidthM": 0.604430302773062,
+            "previousDisplayedMeanYM": 0.7022854268415548,
+            "newDisplayedMeanYM": 0.7237941539725814
+          },
+          {
+            "sourceYCenterM": 0.95,
+            "vertices": 313,
+            "previousDisplayedWidthM": 0.8443120482496687,
+            "newDisplayedWidthM": 0.6821461314771763,
+            "previousDisplayedMeanYM": 0.7892523843955858,
+            "newDisplayedMeanYM": 0.8607839451635317
+          },
+          {
+            "sourceYCenterM": 1.1,
+            "vertices": 370,
+            "previousDisplayedWidthM": 0.9283911914245316,
+            "newDisplayedWidthM": 0.824222293086117,
+            "previousDisplayedMeanYM": 0.8940411614658792,
+            "newDisplayedMeanYM": 0.9609604238074827
+          },
+          {
+            "sourceYCenterM": 1.25,
+            "vertices": 126,
+            "previousDisplayedWidthM": 0.9110987311907537,
+            "newDisplayedWidthM": 0.8336507901105396,
+            "previousDisplayedMeanYM": 1.0630723520124514,
+            "newDisplayedMeanYM": 1.0934530032198977
+          },
+          {
+            "sourceYCenterM": 1.4,
+            "vertices": 190,
+            "previousDisplayedWidthM": 0.8606905991339496,
+            "newDisplayedWidthM": 0.8574693888501279,
+            "previousDisplayedMeanYM": 1.259435582091274,
+            "newDisplayedMeanYM": 1.2619273898020507
+          },
+          {
+            "sourceYCenterM": 1.55,
+            "vertices": 213,
+            "previousDisplayedWidthM": 0.8502232176937613,
+            "newDisplayedWidthM": 0.8502265794735763,
+            "previousDisplayedMeanYM": 1.4037636735752779,
+            "newDisplayedMeanYM": 1.4037650160318838
+          }
+        ]
       },
       "draftFeet": [
         {
@@ -1318,7 +1381,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.9273381827177314e-06,
-      "sha256": "26b2f91ea872886faf2975ab00455e6861a224a629f6a4cb2d956fc830b6acfd",
+      "sha256": "e3e42b4d55219a5a0636ae1f5f4b377960a8608cb1ff6e4611a72bd0a419934e",
       "byteLength": 728256,
       "actorScale": 0.911911507053303,
       "withersM": 1.73,
@@ -1334,7 +1397,7 @@
           "vertices": 16159,
           "minCageJacobianDeterminant": 0.609238253359303,
           "maxPositionQuantizationErrorM": 4.824228849611099e-06,
-          "maxAppearanceDeltaM": 0.20665791023703473,
+          "maxAppearanceDeltaM": 0.1901314402029513,
           "fixedLowerVertices": 1
         },
         {
@@ -1466,11 +1529,11 @@
         "quarters": {
           "sourceM": 0.6624500560549793,
           "previousM": 0.814651807680818,
-          "newM": 1.0065577126572096,
-          "gainOverPreviousPercent": 23.556800975218685,
+          "newM": 0.935395569016399,
+          "gainOverPreviousPercent": 14.821517634548552,
           "previousDisplayedM": 0.807441498527912,
-          "newDisplayedM": 0.9612564357415005,
-          "displayedGainPercent": 19.049669541882164
+          "newDisplayedM": 0.8932970254705207,
+          "displayedGainPercent": 10.633033736702458
         },
         "neck": {
           "sourceM": 0.4076406539898484,
@@ -1490,6 +1553,69 @@
           "newDisplayedM": 0.3001255512039804,
           "displayedGainPercent": 11.519241812129355
         }
+      },
+      "draftRearProfile": {
+        "comparison": "Version1 broad draft cage, with the same body/limb art parameters and actor scale",
+        "sectionSourceZMaxM": -0.5,
+        "sectionSourceYHalfHeightM": 0.065,
+        "sections": [
+          {
+            "sourceYCenterM": 0.65,
+            "vertices": 351,
+            "previousDisplayedWidthM": 0.513371010984744,
+            "newDisplayedWidthM": 0.5133712730425768,
+            "previousDisplayedMeanYM": 0.6264001431603545,
+            "newDisplayedMeanYM": 0.6264562399599629
+          },
+          {
+            "sourceYCenterM": 0.8,
+            "vertices": 246,
+            "previousDisplayedWidthM": 0.7045642299622021,
+            "newDisplayedWidthM": 0.6424093444247005,
+            "previousDisplayedMeanYM": 0.7334055342927307,
+            "newDisplayedMeanYM": 0.7577323314511062
+          },
+          {
+            "sourceYCenterM": 0.95,
+            "vertices": 313,
+            "previousDisplayedWidthM": 0.8792360063758609,
+            "newDisplayedWidthM": 0.7160209929632675,
+            "previousDisplayedMeanYM": 0.8193280493988809,
+            "newDisplayedMeanYM": 0.90023170011531
+          },
+          {
+            "sourceYCenterM": 1.1,
+            "vertices": 370,
+            "previousDisplayedWidthM": 0.9612570578449429,
+            "newDisplayedWidthM": 0.8603458301790767,
+            "previousDisplayedMeanYM": 0.9280452554520096,
+            "newDisplayedMeanYM": 1.0037326021929898
+          },
+          {
+            "sourceYCenterM": 1.25,
+            "vertices": 126,
+            "previousDisplayedWidthM": 0.946655787325756,
+            "newDisplayedWidthM": 0.8699642800278475,
+            "previousDisplayedMeanYM": 1.1076270339022452,
+            "newDisplayedMeanYM": 1.1419880031077994
+          },
+          {
+            "sourceYCenterM": 1.4,
+            "vertices": 190,
+            "previousDisplayedWidthM": 0.8949111481752978,
+            "newDisplayedWidthM": 0.8932970254705207,
+            "previousDisplayedMeanYM": 1.3165574931948054,
+            "newDisplayedMeanYM": 1.319375529805252
+          },
+          {
+            "sourceYCenterM": 1.55,
+            "vertices": 213,
+            "previousDisplayedWidthM": 0.8859815916835874,
+            "newDisplayedWidthM": 0.8859786191834215,
+            "previousDisplayedMeanYM": 1.4701225696628746,
+            "newDisplayedMeanYM": 1.4701240985744528
+          }
+        ]
       },
       "draftFeet": [
         {
@@ -1551,7 +1677,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 3.203417125452468e-06,
-      "sha256": "729f0b935b5b3c038fdc34ded7224ca06261114ed3f417dd9473a8eef732541a",
+      "sha256": "163200808c0cbc76890cd69f86c877beb175348e3a133c589fa02ba79bdfeaaf",
       "byteLength": 728256,
       "actorScale": 0.9549938604154964,
       "withersM": 1.82,
@@ -1566,8 +1692,8 @@
           "meshIndex": 0,
           "vertices": 16159,
           "minCageJacobianDeterminant": 0.7219331623677688,
-          "maxPositionQuantizationErrorM": 4.029297006201361e-06,
-          "maxAppearanceDeltaM": 0.17732591165722553,
+          "maxPositionQuantizationErrorM": 4.036538925450632e-06,
+          "maxAppearanceDeltaM": 0.15821302508974106,
           "fixedLowerVertices": 1
         },
         {
@@ -1699,11 +1825,11 @@
         "quarters": {
           "sourceM": 0.6624500560549793,
           "previousM": 0.7617120679848741,
-          "newM": 0.956896294204023,
-          "gainOverPreviousPercent": 25.624410380619665,
+          "newM": 0.8870119427651671,
+          "gainOverPreviousPercent": 16.44976888862699,
           "previousDisplayedM": 0.7433645748831608,
-          "newDisplayedM": 0.9018772379701067,
-          "displayedGainPercent": 21.3236772968177
+          "newDisplayedM": 0.8360110555689766,
+          "displayedGainPercent": 12.463128297494897
         },
         "neck": {
           "sourceM": 0.4076406539898484,
@@ -1723,6 +1849,69 @@
           "newDisplayedM": 0.2914611426958636,
           "displayedGainPercent": 9.990586235216758
         }
+      },
+      "draftRearProfile": {
+        "comparison": "Version1 broad draft cage, with the same body/limb art parameters and actor scale",
+        "sectionSourceZMaxM": -0.5,
+        "sectionSourceYHalfHeightM": 0.065,
+        "sections": [
+          {
+            "sourceYCenterM": 0.65,
+            "vertices": 351,
+            "previousDisplayedWidthM": 0.5035876179101453,
+            "newDisplayedWidthM": 0.5035847484111816,
+            "previousDisplayedMeanYM": 0.6182161782285277,
+            "newDisplayedMeanYM": 0.6182634010038426
+          },
+          {
+            "sourceYCenterM": 0.8,
+            "vertices": 246,
+            "previousDisplayedWidthM": 0.6786774530442243,
+            "newDisplayedWidthM": 0.6258581176670116,
+            "previousDisplayedMeanYM": 0.7278761149682477,
+            "newDisplayedMeanYM": 0.7483277991788367
+          },
+          {
+            "sourceYCenterM": 0.95,
+            "vertices": 313,
+            "previousDisplayedWidthM": 0.83031034940503,
+            "newDisplayedWidthM": 0.692021765944183,
+            "previousDisplayedMeanYM": 0.8228461833788304,
+            "newDisplayedMeanYM": 0.8908626923783246
+          },
+          {
+            "sourceYCenterM": 1.1,
+            "vertices": 370,
+            "previousDisplayedWidthM": 0.9018811250425226,
+            "newDisplayedWidthM": 0.8125055226756953,
+            "previousDisplayedMeanYM": 0.9321590586985636,
+            "newDisplayedMeanYM": 0.9957899713422845
+          },
+          {
+            "sourceYCenterM": 1.25,
+            "vertices": 126,
+            "previousDisplayedWidthM": 0.886827567892048,
+            "newDisplayedWidthM": 0.8203389801928433,
+            "previousDisplayedMeanYM": 1.1043292597143017,
+            "newDisplayedMeanYM": 1.1332169102698948
+          },
+          {
+            "sourceYCenterM": 1.4,
+            "vertices": 190,
+            "previousDisplayedWidthM": 0.8381021977043998,
+            "newDisplayedWidthM": 0.8360110555689766,
+            "previousDisplayedMeanYM": 1.3040325054167192,
+            "newDisplayedMeanYM": 1.3064017225683624
+          },
+          {
+            "sourceYCenterM": 1.55,
+            "vertices": 213,
+            "previousDisplayedWidthM": 0.8289625592462565,
+            "newDisplayedWidthM": 0.8289624476326277,
+            "previousDisplayedMeanYM": 1.4508155273899317,
+            "newDisplayedMeanYM": 1.4508167300786383
+          }
+        ]
       },
       "draftFeet": [
         {
@@ -1784,7 +1973,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.7440898695552107e-06,
-      "sha256": "2b43256523ce4f431092cf41c6b1f6fd90b5f8bbc3f4ad319871bcb913516d7c",
+      "sha256": "b633de4f47bb79be8d91fa4aa945147ee152d710be81e22832ee8b731c7095f0",
       "byteLength": 728256,
       "actorScale": 0.9425025924259818,
       "withersM": 1.78,

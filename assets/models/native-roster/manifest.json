@@ -2989,7 +2989,7 @@
       "id": "percheron",
       "label": "Percheron",
       "file": "./models/native-roster/percheron.bin",
-      "sha256": "26b2f91ea872886faf2975ab00455e6861a224a629f6a4cb2d956fc830b6acfd",
+      "sha256": "e3e42b4d55219a5a0636ae1f5f4b377960a8608cb1ff6e4611a72bd0a419934e",
       "byteLength": 728256,
       "meshes": [
         {
@@ -3004,7 +3004,7 @@
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 2.3002469925856594e-05
+            "scale": 2.0130216549160065e-05
           }
         },
         {
@@ -3129,7 +3129,7 @@
       },
       "limitations": "Approved joint centers, limb lengths and gaits retained. Draft body, neck, head and limb crosssections are enlarged surface derivatives, not a new skeleton. Native groom remains source alpha cards.",
       "draftShape": {
-        "version": 1,
+        "version": 2,
         "limbCenters": [
           {
             "id": "foreRight",
@@ -3358,6 +3358,27 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
+        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; shortened Western fenders are tack-only.",
+        "rearContour": {
+          "version": 2,
+          "meshIndex": 0,
+          "sourceZBlendM": [
+            -0.36,
+            -0.67
+          ],
+          "widthGainSourceYBlendM": [
+            0.88,
+            1.48
+          ],
+          "minimumWidthGainFactor": 0.26,
+          "depthOffsetSourceYBlendM": [
+            1.0,
+            1.5
+          ],
+          "minimumDepthOffsetFactor": 0.12,
+          "preserved": "Full upper-hip mass; front body, neck, lower legs, hoof centers, seat and all non-body meshes unchanged.",
+          "purpose": "Round the rear quarter into the thigh instead of extending the broad barrel cage down the haunch."
+        },
         "stirrupTailoring": {
           "displayedLiftM": 0.04,
           "sourceLiftM": 0.043863905313854014,
@@ -3445,7 +3466,7 @@
       "id": "shire",
       "label": "Shire",
       "file": "./models/native-roster/shire.bin",
-      "sha256": "729f0b935b5b3c038fdc34ded7224ca06261114ed3f417dd9473a8eef732541a",
+      "sha256": "163200808c0cbc76890cd69f86c877beb175348e3a133c589fa02ba79bdfeaaf",
       "byteLength": 728256,
       "meshes": [
         {
@@ -3460,7 +3481,7 @@
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 2.417015147331002e-05
+            "scale": 2.1907145966682584e-05
           }
         },
         {
@@ -3585,7 +3606,7 @@
       },
       "limitations": "Approved joint centers, limb lengths and gaits retained. Draft body, neck, head and limb crosssections are enlarged surface derivatives, not a new skeleton. Native groom remains source alpha cards.",
       "draftShape": {
-        "version": 1,
+        "version": 2,
         "limbCenters": [
           {
             "id": "foreRight",
@@ -3814,6 +3835,27 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
+        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; shortened Western fenders are tack-only.",
+        "rearContour": {
+          "version": 2,
+          "meshIndex": 0,
+          "sourceZBlendM": [
+            -0.36,
+            -0.67
+          ],
+          "widthGainSourceYBlendM": [
+            0.88,
+            1.48
+          ],
+          "minimumWidthGainFactor": 0.26,
+          "depthOffsetSourceYBlendM": [
+            1.0,
+            1.5
+          ],
+          "minimumDepthOffsetFactor": 0.12,
+          "preserved": "Full upper-hip mass; front body, neck, lower legs, hoof centers, seat and all non-body meshes unchanged.",
+          "purpose": "Round the rear quarter into the thigh instead of extending the broad barrel cage down the haunch."
+        },
         "stirrupTailoring": {
           "displayedLiftM": 0.12,
           "sourceLiftM": 0.12565525808489564,
@@ -3901,7 +3943,7 @@
       "id": "clyde",
       "label": "Clydesdale",
       "file": "./models/native-roster/clyde.bin",
-      "sha256": "2b43256523ce4f431092cf41c6b1f6fd90b5f8bbc3f4ad319871bcb913516d7c",
+      "sha256": "b633de4f47bb79be8d91fa4aa945147ee152d710be81e22832ee8b731c7095f0",
       "byteLength": 728256,
       "meshes": [
         {
@@ -3916,7 +3958,7 @@
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 2.1888883875786504e-05
+            "scale": 1.985795439696946e-05
           }
         },
         {
@@ -4041,7 +4083,7 @@
       },
       "limitations": "Approved joint centers, limb lengths and gaits retained. Draft body, neck, head and limb crosssections are enlarged surface derivatives, not a new skeleton. Native groom remains source alpha cards.",
       "draftShape": {
-        "version": 1,
+        "version": 2,
         "limbCenters": [
           {
             "id": "foreRight",
@@ -4270,6 +4312,27 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
+        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; shortened Western fenders are tack-only.",
+        "rearContour": {
+          "version": 2,
+          "meshIndex": 0,
+          "sourceZBlendM": [
+            -0.36,
+            -0.67
+          ],
+          "widthGainSourceYBlendM": [
+            0.88,
+            1.48
+          ],
+          "minimumWidthGainFactor": 0.26,
+          "depthOffsetSourceYBlendM": [
+            1.0,
+            1.5
+          ],
+          "minimumDepthOffsetFactor": 0.12,
+          "preserved": "Full upper-hip mass; front body, neck, lower legs, hoof centers, seat and all non-body meshes unchanged.",
+          "purpose": "Round the rear quarter into the thigh instead of extending the broad barrel cage down the haunch."
+        },
         "stirrupTailoring": {
           "displayedLiftM": 0.05,
           "sourceLiftM": 0.05305025195877823,
