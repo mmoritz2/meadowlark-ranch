@@ -1,34 +1,6 @@
-/* Feature package 'se-horses' — My Horses, laid out the way the riding game this one is modelled on
-   lays out its own.
-
-   Its My Horses is one tall screen over the dimmed world. Favourites come first, under a heart and a
-   ruled line; then every breed you own, its name in serif capitals with its mastery beside it in pale
-   gold, a track of ten round nodes (five for a fantasy breed) with a shield on the level you have
-   reached, and a row of portrait cards. Each card is that horse's own head, rendered from the game's
-   own model in its own coat, markings, horn or dragon crest, on a ground coloured by its stars (green,
-   blue, purple, gold, rose); its level in a crest at the top right, its stars along the bottom, its
-   name on an indigo plate. The last card of every breed is Get Horse. A magnifier at the top right
-   finds a horse by name, breed or coat.
-   Tap a card and a panel slides in from the right (a sheet from the bottom on a phone) with that horse:
-   its stars, a big picture, breed and mastery, level and XP, bond hearts, where it is, whether it needs
-   care, a tile for everything the old list could do to it (favourite, pasture, take along, tack,
-   whistle, sheet, family tree, hitch, and anything a package adds later), and two buttons at the foot:
-   Ride and Details for a grown horse, Follow me for a foal, Warm egg for an egg. Along the bottom of
-   the screen: how many are out in the pasture and in the barn, Pets, the Full list, Breed Studio, and
-   the gold "Ride Bay sporthorse" the old list always had.
-   Ours was a long list of rows in a narrow card.
-
-   Everything is read from the save as it stands, and every action goes through the game's own
-   buttons: the stable panel is still rendered underneath (se-frame's cover()), so Pasture clicks the
-   row's own Pasture button, Ride its Ride, Rename its pen, and so on; nothing about riding, turnout,
-   hitching or breeding changes. The one thing this screen adds to the save is a favourite flag on the
-   horse (h.fav). The full old list is still one tap away, framed like every other menu.
-
-   The pictures: each head is the game's own rigged horse, built in a private scene and rendered inside
-   a tick onto the game's canvas, then copied off before the frame's own render (se-frame's snap trick),
-   one horse at a time and only for the cards in view; a drawn bust in the horse's colours stands in
-   until it arrives and whenever the graphics are on Low. Every other drawing here is this package's
-   own. Nothing runs at import time. */
+/* Horse gallery over the live ranch. Breed mastery and secondary actions unfold on
+   demand; horse cards retain their stable-row action targets and custom portrait cache.
+   Native breed photographs stand in while the individual horse portrait is prepared. */
 export const id='se-horses';
 export function install(G){
  const K=G.seFrame, T=G.tables;
@@ -63,8 +35,8 @@ export function install(G){
  const STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z" fill="#f6bd3b" stroke="#9c6410" stroke-width="1.3" stroke-linejoin="round"/><path d="M12 5.4l1.9 3.9" stroke="#fff3c4" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg>';
  const HEARTP='M12 20.5s-8-4.9-8-11.2A4.5 4.5 0 0 1 12 6.5a4.5 4.5 0 0 1 8 2.8c0 6.3-8 11.2-8 11.2z';
  const HEART_F=c=>'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+HEARTP+'" fill="'+c+'"/></svg>';
- const HEART_O='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+HEARTP+'" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.8"/></svg>';
- const LV=n=>'<svg viewBox="0 0 40 46" aria-hidden="true"><path d="M20 2.5 36.5 8.5V24c0 10-7.4 16.6-16.5 19.8C10.9 40.6 3.5 34 3.5 24V8.5z" fill="#454585" stroke="#fdeabc" stroke-width="2.6" stroke-linejoin="round"/>'
+ const HEART_O='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+HEARTP+'" fill="none" stroke="#849584" stroke-width="1.8"/></svg>';
+ const LV=n=>'<svg viewBox="0 0 40 46" aria-hidden="true"><path d="M20 2.5 36.5 8.5V24c0 10-7.4 16.6-16.5 19.8C10.9 40.6 3.5 34 3.5 24V8.5z" fill="#213f36" stroke="#fdeabc" stroke-width="2.6" stroke-linejoin="round"/>'
   +'<text x="20" y="30" text-anchor="middle" font-family="Nunito,system-ui,sans-serif" font-weight="900" font-size="'+(n>9?16:19)+'" fill="#fff">'+n+'</text></svg>';
  const SHIELD=n=>{const id='shg'+(++uid);return '<svg viewBox="0 0 44 50" aria-hidden="true"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b4521"/><stop offset="1" stop-color="#2e1d0c"/></linearGradient></defs>'
   +'<path d="M22 2.5 40.5 9V26c0 11.5-8.3 18.8-18.5 22C11.8 44.8 3.5 37.5 3.5 26V9z" fill="url(#'+id+')" stroke="#f6dfab" stroke-width="3" stroke-linejoin="round"/>'
@@ -124,231 +96,7 @@ export function install(G){
  const rampOf=n=>RAMP[n]||(n<2?RAMP[2]:RAMP[6]);
 
  /* ---------------------------------------------------------------- the look -------------- */
- if(!$('seHsCss')){const css=document.createElement('style');css.id='seHsCss';css.textContent=`
-#seHs{position:fixed;inset:0;z-index:10;display:none;font-family:Nunito,system-ui,sans-serif;color:#fff;overflow:clip;user-select:none;-webkit-user-select:none;
- --shs-dw:clamp(260px,24vw,330px);--shs-foot:clamp(46px,7vh,58px);--shs-ch:clamp(118px,16.4vh,164px);--shs-rad:clamp(5px,.75vh,8px)}
-#seHs.on{display:block}
-#seHs .shs-dim{position:absolute;inset:0;background:rgba(14,14,24,.48);backdrop-filter:blur(3px) saturate(.55) brightness(.74);-webkit-backdrop-filter:blur(3px) saturate(.55) brightness(.74)}
-#seHs .se-strip{position:absolute}
-#seHs button{font-family:inherit}
-#seHs :focus-visible{outline:3px solid #ffd970;outline-offset:2px}
-/* the list */
-#seHs .shs-main{position:absolute;left:0;right:0;top:var(--sef-top);bottom:var(--shs-foot);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
- scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent;padding:clamp(10px,2.2vh,20px) 0 calc(clamp(18px,3vh,28px) + 56px);box-sizing:border-box;transition:right .22s}   /* room to scroll the last row clear of a toast */
-#seHs .shs-main::-webkit-scrollbar{width:8px}
-#seHs .shs-main::-webkit-scrollbar-thumb{background:rgba(255,255,255,.35);border-radius:4px}
-#seHs.dr .shs-main,#seHs.dr .shs-foot{right:var(--shs-dw)}
-#seHs .shs-col{position:relative;width:min(1380px,72vw,calc(100% - 48px));margin:0 auto}
-@media (max-width:1099px){#seHs .shs-col{width:calc(100% - 64px)}}
-/* the pinned bar: the magnifier on a desktop; the counts and the magnifier on a phone */
-#seHs .shs-bar2{position:absolute;top:calc(var(--sef-top) + clamp(8px,1.8vh,16px));right:clamp(12px,1.6vw,22px);z-index:3;display:flex;align-items:center;gap:8px;transition:right .22s}
-#seHs.dr .shs-bar2{right:calc(var(--shs-dw) + 14px)}
-#seHs .shs-bar2 .sp{flex:1}
-#seHs .shs-cnt{display:none}
-#seHs .shs-sbtn{background:radial-gradient(circle at 38% 30%,#7d6ac8,#4b3b8e)!important;border-color:rgba(255,255,255,.45)!important}
-#seHs .shs-q{display:none;width:min(300px,34vw);height:clamp(32px,4.6vh,38px);box-sizing:border-box;padding:0 14px;border-radius:19px;border:2px solid #d6c298;background:#fbf5e6;color:#3b2a17;
- font:700 clamp(13px,1.9vh,15px)/1 Nunito,system-ui,sans-serif;user-select:text;-webkit-user-select:text}
-#seHs .shs-q::placeholder{color:#6b5a40}
-#seHs .shs-q::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}   /* the magnifier clears it */
-#seHs.q .shs-q{display:block}
-/* banners at the top of the list */
-#seHs .shs-coat{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;margin:0 0 clamp(12px,2.4vh,20px);padding:10px 14px;border-radius:10px;background:linear-gradient(180deg,#f7f0de,#ece0c3);
- border:1.5px solid #d6c298;box-shadow:0 3px 8px rgba(0,0,0,.28);color:#3b2a17}
-#seHs .shs-coat b{font:800 clamp(14px,2.1vh,17px)/1.2 var(--sef-serif)}
-#seHs .shs-coat span{font:700 13px/1.3 Nunito,system-ui,sans-serif;color:#5a4630}
-#seHs .shs-coat .sp{flex:1}
-#seHs .shs-coat button{display:flex;align-items:center;gap:6px;padding:7px 12px!important;font-size:13px!important}
-#seHs .shs-coat i{width:14px;height:14px;border-radius:50%;border:2px solid;display:inline-block;box-sizing:border-box}
-#seHs .shs-note{display:flex;align-items:center;gap:8px;margin:0 auto clamp(12px,2.4vh,20px);max-width:640px;padding:8px 12px;border-radius:8px;background:rgba(22,20,44,.86);color:#f1ecff;
- font:700 clamp(12.5px,1.9vh,14.5px)/1.35 Nunito,system-ui,sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.3)}
-#seHs .shs-note svg{width:18px;height:18px;flex:none}
-#seHs .shs-hint{margin:0 auto;max-width:520px;text-align:center;background:rgba(22,20,44,.8);border-radius:8px;padding:7px 12px;font:700 clamp(12px,1.8vh,14px)/1.3 Nunito,system-ui,sans-serif;color:#f1ecff}
-/* sections and headings */
-#seHs .shs-sec{margin-top:clamp(16px,3.4vh,32px)}
-#seHs .shs-sec:first-of-type{margin-top:0}
-#seHs .shs-col>:first-child{margin-top:var(--shs-sqt,0px)}   /* below the pinned magnifier when the column runs under it, so every heading stays centred */
-#seHs .shs-h{display:flex;align-items:center;justify-content:center;gap:.4em;font:800 clamp(15px,2.7vh,22px)/1.1 var(--sef-serif);letter-spacing:.06em;text-transform:uppercase;color:#fff;
- text-shadow:0 1px 2px rgba(0,0,0,.65),0 0 12px rgba(0,0,0,.35)}
-#seHs .shs-h svg{width:1em;height:1em;flex:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))}
-#seHs .shs-rule{position:relative;height:2px;margin:clamp(6px,1.2vh,10px) 5px clamp(10px,2vh,16px);background:rgba(232,233,230,.85);box-shadow:0 1px 2px rgba(0,0,0,.35)}
-#seHs .shs-rule::before,#seHs .shs-rule::after{content:'';position:absolute;top:50%;width:7px;height:7px;background:rgba(240,241,238,.95);transform:translate(-50%,-50%) rotate(45deg)}
-#seHs .shs-rule::before{left:0}
-#seHs .shs-rule::after{left:100%}
-#seHs .shs-bh{text-align:center;font:800 clamp(18px,3.4vh,28px)/1.15 var(--sef-serif);letter-spacing:.03em;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7),0 0 14px rgba(0,0,0,.35)}
-#seHs .shs-bh small{font:800 clamp(13px,2.3vh,19px)/1 Nunito,system-ui,sans-serif;text-transform:none;letter-spacing:0;color:#f8e2ab;margin-left:.55em;vertical-align:.08em}
-/* the mastery track */
-#seHs .shs-track{position:relative;height:clamp(34px,5.4vh,46px);margin:clamp(6px,1.4vh,12px) 0 clamp(10px,2.2vh,18px);--r:clamp(15px,2.5vh,21px)}
-#seHs .shs-bar{position:absolute;left:var(--r);right:var(--r);top:50%;height:clamp(6px,.9vh,8px);transform:translateY(-50%);border-radius:99px;background:#514741;box-shadow:inset 0 0 0 1px rgba(170,165,158,.95),0 1px 3px rgba(0,0,0,.4)}
-#seHs .shs-fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(180deg,#f6dc85,#c99a33);box-shadow:inset 0 0 0 1px rgba(255,243,201,.8)}
-#seHs .shs-node{position:absolute;top:50%;width:clamp(12px,2vh,18px);height:clamp(12px,2vh,18px);transform:translate(-50%,-50%);border-radius:50%;padding:0;margin:0;cursor:pointer;
- background:#514741;border:2px solid #a39f99;box-shadow:0 1px 3px rgba(0,0,0,.45)}
-#seHs .shs-node::before{content:'';position:absolute;inset:-10px}
-#seHs .shs-node.got{background:#f3d27c;border-color:#fff3c9}
-#seHs .shs-shield{position:absolute;top:50%;width:calc(var(--r) * 2);transform:translate(-50%,-50%);filter:drop-shadow(0 2px 3px rgba(0,0,0,.5));cursor:pointer;padding:0;border:0;background:none}
-#seHs .shs-shield svg{display:block;width:100%;height:auto}
-#seHs .shs-pop{position:absolute;z-index:5;width:max-content;max-width:min(240px,calc(100% - 16px));box-sizing:border-box;padding:7px 10px;border-radius:8px;background:rgba(22,20,44,.95);border:1px solid rgba(255,255,255,.22);box-shadow:0 4px 12px rgba(0,0,0,.45);
- font:700 12.5px/1.35 Nunito,system-ui,sans-serif;color:#f1ecff;pointer-events:none;transform:translateX(-50%)}
-#seHs .shs-pop b{color:#f8e2ab}
-/* cards */
-#seHs .shs-grid{display:flex;flex-wrap:wrap;gap:clamp(10px,1.2vw,18px)}
-#seHs .shs-card{position:relative;flex:none;width:calc(var(--shs-ch) * .773);height:var(--shs-ch);padding:0;margin:0;border:0;cursor:pointer;display:flex;flex-direction:column;
- border-radius:var(--shs-rad);background:var(--rim);box-shadow:0 0 0 1px rgba(0,0,0,.45),0 3px 8px rgba(0,0,0,.35);color:#fff;transition:transform .12s,filter .12s,box-shadow .12s}
-@media (hover:hover){#seHs .shs-card:hover{transform:translateY(-2px);filter:brightness(1.06)}}
-#seHs .shs-card:active{transform:scale(.97)}
-#seHs .shs-card.sel{box-shadow:0 0 0 3px #fff,0 0 16px 5px rgba(255,255,255,.55)}
-#seHs .shs-ph{position:relative;flex:1 1 auto;margin:3px 3px 0;border-radius:calc(var(--shs-rad) - 2px) calc(var(--shs-rad) - 2px) 0 0;overflow:hidden;background:linear-gradient(180deg,var(--top),var(--bot))}
-#seHs .shs-ph>svg.shs-fb,#seHs .shs-ph>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-#seHs .shs-ph>img{object-position:50% 18%}   /* the card is wider than the picture: crop it from the neck, so a horn stays in */
-#seHs .shs-img{opacity:0;transition:opacity .3s}
-#seHs .shs-img.got{opacity:1}
-#seHs .shs-lv{position:absolute;top:5%;right:6%;width:24%}
-#seHs .shs-lv svg,#seHs .shs-stars svg{display:block;width:100%;height:auto}
-#seHs .shs-stars{position:absolute;left:0;right:0;bottom:4%;display:flex;justify-content:center;gap:1px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))}
-#seHs .shs-stars i{display:block;width:15%}
-#seHs .shs-stars.s6 i{width:13%}
-#seHs .shs-ic{position:absolute;top:6%;left:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
-#seHs .shs-tag{padding:2px 6px 2px 5px;border-radius:0 4px 4px 0;font:900 clamp(10px,1.3vh,11px)/1 Nunito,system-ui,sans-serif;letter-spacing:.05em;box-shadow:0 1px 2px rgba(0,0,0,.35)}
-#seHs .shs-tag.ride{background:linear-gradient(180deg,#ffe38a,#e9b52c);color:#3a2a10}
-#seHs .shs-tag.foal{background:linear-gradient(180deg,#d4f0bf,#8fca70);color:#17340d}
-#seHs .shs-tag.egg{background:linear-gradient(180deg,#fdf5df,#e8d6aa);color:#4a3512}
-#seHs .shs-loc{margin-left:5px;width:clamp(16px,2.4vh,20px);height:clamp(16px,2.4vh,20px);border-radius:50%;background:rgba(20,18,36,.74);border:1px solid rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:2px}
-#seHs .shs-loc svg{width:100%;height:100%}
-#seHs .shs-pip{position:absolute;top:-4px;left:-4px;width:12px;height:12px;border-radius:50%;background:#e43a33;box-shadow:0 0 0 2px #fff;z-index:2}
-#seHs .shs-warm{position:absolute;left:10%;right:10%;bottom:21%;height:5px;border-radius:3px;background:rgba(0,0,0,.35);overflow:hidden}
-#seHs .shs-warm i{display:block;height:100%;background:linear-gradient(90deg,#ffd27a,#f08a3c)}
-#seHs .shs-nm{flex:0 0 19%;display:flex;align-items:center;justify-content:center;min-width:0;padding:0 6px;border-radius:0 0 calc(var(--shs-rad) - 1px) calc(var(--shs-rad) - 1px);
- background:linear-gradient(180deg,#524f8e,#423e77);font:800 clamp(12px,1.65vh,14px)/1 Nunito,system-ui,sans-serif}
-#seHs .shs-nm span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#seHs .shs-nm.fit{font-size:clamp(10.5px,1.45vh,12.5px);letter-spacing:-.02em;padding:0 3px}   /* a long name a size down (fitNames), the ellipsis only as a last resort */
-#seHs .shs-nm.fit2{font-size:clamp(9.5px,1.3vh,11px);letter-spacing:-.03em;padding:0 2px}
-#seHs .shs-card.get{--rim:#77726f;--top:#6d6866;--bot:#3e3937}
-#seHs .shs-card.get .shs-ph svg{position:absolute;left:18%;top:14%;width:64%;height:auto}
-/* the drawer (a column on the right on a desktop; a sheet from the bottom on a phone) */
-#seHs .shs-dr{position:absolute;top:var(--sef-top);right:0;bottom:0;width:var(--shs-dw);display:flex;flex-direction:column;box-sizing:border-box;z-index:4;
- background:linear-gradient(180deg,rgba(78,72,106,.97),rgba(50,45,74,.97));border-left:2px solid rgba(255,255,255,.18);box-shadow:-6px 0 18px rgba(0,0,0,.4);
- transform:translateX(100%);visibility:hidden;transition:transform .22s,visibility 0s .22s}
-#seHs.dr .shs-dr{transform:none;visibility:visible;transition:transform .22s}
-#seHs .shs-sheetdim{display:none}
-#seHs .shs-dr-body{flex:1 1 auto;overflow-y:auto;scrollbar-width:thin;padding:12px 14px 8px}
-#seHs .shs-dr-h{display:flex;align-items:center;gap:8px}
-#seHs .shs-dr-h b{flex:1;min-width:0;font:800 clamp(15px,2.4vh,19px)/1.1 var(--sef-serif);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#seHs .shs-dr-h b.fit{font-size:clamp(13.5px,2.1vh,16.5px);letter-spacing:.01em}   /* a long name a size down, then on two lines (fitDrawerName) */
-#seHs .shs-dr-h b.wrap{white-space:normal;overflow-wrap:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.12}
-#seHs .shs-mini{position:relative;width:30px!important;height:30px!important;padding:6px!important;border-width:2px!important}
-#seHs .shs-mini::after{content:'';position:absolute;inset:-7px}
-#seHs .shs-dr-stars{display:flex;gap:2px;margin:4px 0 8px}
-#seHs .shs-dr-stars i{width:17px;display:block}
-#seHs .shs-dr-stars svg{display:block;width:100%}
-#seHs .shs-dr-pic{position:relative;display:block;width:clamp(120px,calc((100vh - 520px) * .8),100%);aspect-ratio:4/5;margin:0 auto 8px;border-radius:8px;overflow:hidden;border:3px solid var(--rim);background:linear-gradient(180deg,var(--top),var(--bot));
- box-shadow:0 3px 8px rgba(0,0,0,.35);cursor:pointer;box-sizing:border-box;padding:0}
-#seHs .shs-dr-pic>img,#seHs .shs-dr-pic>svg.shs-fb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-#seHs .shs-dr-pic .shs-lv{width:18%}
-#seHs .shs-line{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:5px 0;font:700 clamp(12px,1.8vh,14px)/1.3 Nunito,system-ui,sans-serif;color:#eeeaff}
-#seHs .shs-line svg{width:16px;height:16px;flex:none}
-#seHs .shs-line>.t{flex:1 1 0;min-width:0}   /* the words wrap beside their icon, not under it */
-#seHs .shs-line .g{color:#f8e2ab}
-#seHs .shs-line.warn{color:#ffc4b8}
-#seHs .shs-line button{padding:4px 10px!important;font-size:12px!important}
-#seHs .shs-xp{flex:1;min-width:60px;height:8px;border-radius:4px;background:rgba(0,0,0,.35);overflow:hidden}
-#seHs .shs-xp i{display:block;height:100%;background:linear-gradient(90deg,#7ee07e,#3fae5a);border-radius:4px}
-#seHs .shs-hearts{display:flex;gap:2px}
-#seHs .shs-hearts svg{width:15px;height:15px}
-#seHs .shs-acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
-#seHs .shs-chip{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:clamp(52px,7.5vh,62px);padding:5px 2px;border-radius:8px;cursor:pointer;box-sizing:border-box;
- background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.24);color:#fff;font:800 clamp(10.5px,1.45vh,11.5px)/1.1 Nunito,system-ui,sans-serif;text-align:center;min-width:0;overflow-wrap:anywhere}
-#seHs .shs-chip svg{width:22px;height:22px;flex:none}
-#seHs .shs-chip.on{background:linear-gradient(180deg,var(--sef-cream),var(--sef-cream2));color:#3b2a17;border-color:#d6c298}
-#seHs .shs-chip:disabled{opacity:.45;cursor:default}
-#seHs .shs-dr-foot{flex:none;display:flex;gap:8px;padding:10px 14px 14px;border-top:1px solid rgba(255,255,255,.12)}
-#seHs .shs-dr-foot button{flex:1;padding:10px 8px!important;font-size:clamp(12px,1.9vh,15px)!important;white-space:nowrap}
-/* the foot */
-#seHs .shs-foot{position:absolute;left:0;right:0;bottom:0;height:var(--shs-foot);display:flex;align-items:center;gap:10px;padding:0 clamp(12px,2vw,24px);box-sizing:border-box;
- background:linear-gradient(0deg,rgba(20,18,36,.9),rgba(20,18,36,.6));border-top:1px solid rgba(255,255,255,.12);transition:right .22s}
-#seHs .shs-sum{display:block;flex:1 1 auto;min-width:0;font:700 clamp(11.5px,1.8vh,14px)/1.2 Nunito,system-ui,sans-serif;color:#e9e4ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#seHs .shs-sum svg{width:16px;height:16px;vertical-align:-3px;margin-right:4px}
-#seHs .shs-sum>.s,#seHs.sums .shs-sum>.l{display:none}
-#seHs.sums .shs-sum>.s{display:inline}   /* the short form when the long one would be cut (fitTight) */
-#seHs .shs-foot button{flex:none;display:flex;align-items:center;gap:6px;padding:8px 13px!important;font-size:clamp(11.5px,1.8vh,14px)!important;white-space:nowrap}
-#seHs .shs-foot button svg{width:16px;height:16px;flex:none}
-#seHs .shs-foot .more{display:none}
-#seHs .shs-foot .shs-hero{min-width:0}
-#seHs .shs-foot .shs-hero span{overflow:hidden;text-overflow:ellipsis}
-#seHs.tight .shs-foot .opt,#seHs.tight .shs-sum{display:none}
-#seHs.tight .shs-foot .more{display:flex}
-#seHs.tight .shs-foot .shs-hero{flex:0 1 auto;min-width:0;justify-content:center;margin-left:auto}
-/* modals (Pets, More, how to get a breed) */
-#seHs .shs-mdim{position:absolute;inset:0;z-index:6;background:rgba(8,8,16,.5);display:none}
-#seHs .shs-modal{position:absolute;left:50%;top:50%;z-index:7;transform:translate(-50%,-50%);width:min(400px,92vw);max-height:80vh;overflow-y:auto;display:none;box-sizing:border-box;padding:14px 16px 16px;border-radius:12px;
- background:linear-gradient(180deg,rgba(78,72,106,.98),rgba(50,45,74,.98));border:2px solid rgba(255,255,255,.2);box-shadow:0 10px 30px rgba(0,0,0,.5)}
-#seHs.m .shs-mdim,#seHs.m .shs-modal{display:block}
-#seHs .shs-modal h3{margin:0 40px 10px 0;font:800 clamp(15px,2.4vh,19px)/1.15 var(--sef-serif);letter-spacing:.04em;text-transform:uppercase}
-#seHs .shs-modal .x{position:absolute;top:10px;right:10px}
-#seHs .shs-modal p{margin:0 0 12px;font:700 14px/1.4 Nunito,system-ui,sans-serif;color:#eeeaff}
-#seHs .shs-mrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(255,255,255,.12);font:700 14px/1.3 Nunito,system-ui,sans-serif;color:#eeeaff}
-#seHs .shs-mrow svg{width:20px;height:20px;flex:none}
-#seHs .shs-mrow .sp{flex:1}
-#seHs .shs-mrow small{display:block;font:700 12.5px/1.3 Nunito,system-ui,sans-serif;color:#d8d2ee}
-#seHs .shs-mrow button{padding:7px 12px!important;font-size:13px!important}
-#seHs .shs-pet{width:30px;height:30px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.1);overflow:hidden}
-#seHs .shs-pet svg{width:100%;height:100%}
-#seHs .shs-mact{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
-/* toasts sit above the foot while this screen is up, and at the top while a phone's sheet is open */
-html body.se-screen-open.shs-open #toasts{top:auto!important;bottom:calc(clamp(46px,7vh,58px) + 12px + env(safe-area-inset-bottom))!important}
-html body.se-screen-open.shs-open.shs-sheet #toasts,html body.se-screen-open.shs-open.shs-msheet #toasts{top:calc(var(--sef-top) + 8px)!important;bottom:auto!important}
-@media (min-width:761px){html body.se-screen-open.shs-open.shs-msheet #toasts{top:calc(4px + env(safe-area-inset-top))!important}}   /* a short landscape screen: a modal fills the middle, so a toast covers the strip for a moment instead of a button */
-html body.se-screen-open.shs-open.shs-drw #toasts{left:calc((100vw - clamp(260px,24vw,330px)) / 2)!important;right:auto!important;transform:translateX(-50%)!important}   /* over the list, not the drawer */
-@media (prefers-reduced-motion:reduce){#seHs,#seHs *{transition:none!important}}
-/* ---------------- landscape phone: a wider panel, the picture beside the facts and the stars left to the
-   selected card, so the first row of tiles is in view without scrolling ---------------- */
-@media (min-width:761px) and (max-height:520px){
- #seHs{--shs-dw:clamp(260px,38vw,340px)}
- #seHs .shs-dr-body{padding-top:8px}
- #seHs .shs-dr-stars{display:none}
- #seHs .shs-dr-top{display:grid;grid-template-columns:30% 1fr;gap:10px;align-items:start;margin-top:6px}
- #seHs .shs-dr-pic{width:100%;margin:0}
- #seHs .shs-line{margin:3px 0}
- #seHs .shs-acts{margin-top:8px}
- #seHs .shs-chip{min-height:48px}
- html body.se-screen-open.shs-open.shs-drw #toasts{left:calc((100vw - clamp(260px,38vw,340px)) / 2)!important}
-}
-/* ---------------- phone ---------------- */
-@media (max-width:760px){
- #seHs .se-strip .se-ttl>svg{display:none}
- #seHs .se-strip .se-ttl b{font-size:19px}
- #seHs.tt .se-strip .se-ttl b{font-size:16px}
- #seHs.tt2 .se-strip .se-ttl b{font-size:14px}
- #seHs.tt3 .se-strip .se-ttl>span{display:none}
- #seHs.tt3 .se-strip .se-ttl>svg{display:block}   /* a very big purse: the barn alone, never "My …" */
- #seHs .shs-bar2{top:var(--sef-top);left:0;right:0;height:54px;padding:0 12px;box-sizing:border-box;background:linear-gradient(180deg,rgba(20,18,36,.55),rgba(20,18,36,0))}
- #seHs.dr .shs-bar2{right:0}
- #seHs .shs-cnt{display:flex;align-items:center;gap:6px;background:rgba(22,20,44,.82);border-radius:14px;padding:6px 12px;font:800 13px/1 Nunito,system-ui,sans-serif;color:#f1ecff;white-space:nowrap}
- #seHs .shs-cnt svg{width:15px;height:15px}
- #seHs.q .shs-cnt{display:none}
- #seHs.q .shs-q{flex:1;width:auto}
- #seHs.q .shs-bar2 .sp{display:none}
- #seHs .shs-bar2 .se-circ{width:40px!important;height:40px!important}
- #seHs .shs-main{top:calc(var(--sef-top) + 54px);bottom:calc(var(--shs-foot) + env(safe-area-inset-bottom))}
- #seHs .shs-col{width:calc(100% - 24px)}
- #seHs .shs-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
- #seHs .shs-card{width:auto;height:auto;aspect-ratio:.773}
- #seHs .shs-nm{font-size:13px}
- #seHs .shs-track{--r:17px}
- #seHs .shs-bh{font-size:20px}
- #seHs .shs-bh small{display:block;margin:4px 0 0;font-size:14px}
- #seHs.dr .shs-main,#seHs.dr .shs-foot{right:0}
- #seHs .shs-dr{top:auto;left:0;width:auto;max-height:84vh;border-left:0;border-top:2px solid rgba(255,255,255,.22);border-radius:14px 14px 0 0;transform:translateY(100%);box-shadow:0 -6px 18px rgba(0,0,0,.45);z-index:5}
- #seHs.dr .shs-dr{transform:none}
- #seHs .shs-dr-foot{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
- #seHs .shs-dr-foot button,#seHs .shs-foot button{min-height:44px!important}
- #seHs .shs-sheetdim{position:absolute;inset:0;background:rgba(8,8,16,.45);z-index:4;display:none}
- #seHs.dr .shs-sheetdim{display:block}
- #seHs .shs-dr-top{display:grid;grid-template-columns:38% 1fr;gap:12px;align-items:start}
- #seHs .shs-dr-pic{width:100%;margin:0}
- #seHs .shs-chip{min-height:56px}
- #seHs .shs-foot{height:calc(var(--shs-foot) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom)}
- #seHs.tight .shs-foot .shs-hero{flex:1 1 auto;margin-left:0}
- #seHs .shs-modal{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;border-radius:14px 14px 0 0;max-height:84vh;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
-}`;document.head.appendChild(css);}
+ /* Destination layout lives in assets/menu-destinations.css. */
 
  /* ---------------------------------------------------------------- the screen ------------ */
  const root=document.createElement('div'); root.id='seHs'; root.setAttribute('role','dialog'); root.setAttribute('aria-label','My Horses');
@@ -503,17 +251,20 @@ html body.se-screen-open.shs-open.shs-drw #toasts{left:calc((100vw - clamp(260px
   if(h.out)return ['leaf','Out in the pasture'];
   return ['horses','In the barn'];
  }
+ function breedPicture(h){
+  try{return G.ui.k?.thumb?'<span class="shs-breed-photo" aria-hidden="true">'+G.ui.k.thumb(h.breed,{size:160,alt:''})+'</span>':'';}catch(e){return '';}
+ }
  function card(h,i,s,ri){
   const n=starsOf(h), r=rampOf(n), egg=isEgg(h), foal=isFoal(h), ride=i===ri, low=!egg&&lowNeeds(h), lv=h.level||1, nm=nx(h.name).trim()||'Horse';
   const k=lookKey(h), url=egg?null:PORT.cache.get(k), loc=locOf(h,i,s,ri);
   const tag=ride?'<span class="shs-tag ride">RIDING</span>':egg?'<span class="shs-tag egg">EGG</span>':foal?'<span class="shs-tag foal">FOAL</span>':'';
   return '<button class="shs-card'+(h.id===st.sel?' sel':'')+'" data-hid="'+esc(h.id)+'" style="--rim:'+r[2]+';--top:'+r[0]+';--bot:'+r[1]+'" aria-label="'+esc(nm+', level '+lv+', '+n+' stars'+(ride?', riding':'')+(egg?', egg':foal?', foal':'')+(low?', needs care':''))+'">'
    +(low?'<i class="shs-pip" title="Needs care"></i>':'')
-   +'<span class="shs-ph">'+(egg?EGG(h):BUST(h)+'<img class="shs-img'+(url?' got':'')+'" data-key="'+esc(k)+'" alt=""'+(url?' src="'+url+'"':'')+'><span class="shs-lv">'+LV(lv)+'</span>')
+   +'<span class="shs-ph">'+(egg?EGG(h):BUST(h)+breedPicture(h)+'<img class="shs-img'+(url?' got':'')+'" data-key="'+esc(k)+'" alt=""'+(url?' src="'+url+'"':'')+'><span class="shs-lv">'+LV(lv)+'</span>')
    +'<span class="shs-ic">'+tag+(loc?'<span class="shs-loc" title="'+loc[1]+'">'+ic(loc[0],'#fff',2.2)+'</span>':'')+'</span>'
    +(egg?'<span class="shs-warm"><i style="width:'+Math.round(100*clamp((h.eggWarm||0)/EGGW(),0,1))+'%"></i></span>':'')
    +'<span class="shs-stars'+(n>5?' s6':'')+'">'+('<i>'+STAR+'</i>').repeat(n)+'</span></span>'
-   +'<span class="shs-nm"><span>'+esc(nm)+'</span></span></button>';
+   +'<span class="shs-nm"><span>'+esc(nm)+'</span><small>'+esc(label(h.breed))+'</small></span></button>';
  }
  function track(b,M,N,L){
   const pos=k=>'calc(var(--r) + (100% - var(--r) * 2) * '+(N>1?(k-1)/(N-1):0).toFixed(4)+')';
@@ -530,18 +281,20 @@ html body.se-screen-open.shs-open.shs-drw #toasts{left:calc((100vw - clamp(260px
    +coat.btns.map(c=>'<button class="se-cream" data-shs="coat:'+esc(c.id)+'"><i style="background:'+esc(c.bg||'#8a5a2b')+';border-color:'+esc(c.bd||'#fff')+'"></i>'+esc(c.label)+'</button>').join('')+'</div>';
   if(note)o+='<div class="shs-note" aria-live="polite">'+K.line('info','#f1ecff',2.2)+'<span>'+esc(note)+'</span></div>';
   if(!q){const fav=H.map((h,i)=>[h,i]).filter(x=>x[0].fav);
-   o+='<section class="shs-sec fav"><div class="shs-h">'+HEART_F('#fff')+'<span>Favourites</span></div><div class="shs-rule"></div>'
-    +(fav.length?'<div class="shs-grid">'+fav.map(x=>card(x[0],x[1],s,ri)).join('')+'</div>':'<p class="shs-hint">Tap a horse, then the heart, to keep it up here.</p>')+'</section>';}
+   if(fav.length)o+='<section class="shs-sec fav"><h2 class="shs-h">Favourites</h2><div class="shs-grid">'+fav.map(x=>card(x[0],x[1],s,ri)).join('')+'</div></section>';}
   const order=[]; for(const h of H)if(!order.includes(h.breed))order.push(h.breed);
-  let any=false;
+  const matched=H.filter(hit);
+  o+='<section class="shs-herd-section"><div class="shs-section-heading"><h2 class="shs-h">'+(q?'Search results':'Your herd')+'</h2><span>'+matched.length+(matched.length===1?' horse':' horses')+'</span></div><div class="shs-herd">';
   for(const b of order){
-   const L=H.map((h,i)=>[h,i]).filter(x=>x[0].breed===b&&hit(x[0])); if(q&&!L.length)continue; any=any||L.length>0;
-   const N=maxOf(b), M=masteryM(s,b);
-   o+='<section class="shs-sec" data-breed="'+esc(b)+'"><div class="shs-bh">'+esc(label(b))+'<small>(Mastery '+M+')</small></div>'+track(b,M,N,ladder(b))
-    +'<div class="shs-grid">'+L.map(x=>card(x[0],x[1],s,ri)).join('')
-    +(q?'':'<button class="shs-card get" data-shs="get:'+esc(b)+'" aria-label="'+esc('Get another '+label(b))+'"><span class="shs-ph">'+GET_ICON+'</span><span class="shs-nm"><span>Get Horse</span></span></button>')+'</div></section>';
+   const L=H.map((h,i)=>[h,i]).filter(x=>x[0].breed===b&&hit(x[0]));if(!L.length)continue;
+   o+='<section class="shs-sec shs-breed" data-breed="'+esc(b)+'" aria-label="'+esc(label(b))+'"><div class="shs-grid">'+L.map(x=>card(x[0],x[1],s,ri)).join('')+'</div></section>';
   }
-  if(q&&!any)o+='<p class="shs-hint">No horse matches “'+esc(st.q.trim())+'”.</p>';
+  o+='</div></section>';
+  if(q&&!matched.length)o+='<p class="shs-hint">No horse matches “'+esc(st.q.trim())+'”.</p>';
+  if(!q&&order.length)o+='<details class="shs-mastery" data-shs-details="mastery"><summary><span>Breed mastery</span><small>'+order.length+' breeds · progress and rewards</small></summary><div class="shs-mastery-list">'+order.map(b=>{
+   const N=maxOf(b),M=masteryM(s,b);
+   return '<section class="shs-mastery-breed"><div class="shs-bh"><span>'+esc(label(b))+'<small>Mastery '+M+' of '+N+'</small></span><button class="se-cream" data-shs="get:'+esc(b)+'">Get Horse</button></div>'+track(b,M,N,ladder(b))+'</section>';
+  }).join('')+'</div></details>';
   return o;
  }
 
@@ -561,7 +314,7 @@ html body.se-screen-open.shs-open.shs-drw #toasts{left:calc((100vw - clamp(260px
   const coat=coatInfo();
   const sig=JSON.stringify([phone,st.q,ri,s.companion||null,s.whistleHorse||null,coat,noteText(),H.map(h=>[h.id,h.name,h.breed,h.level||1,h.xp||0,!!h.fav,!!h.out,h.hitch||null,!!h.foal,!!h.egg,h.eggWarm||0,h.bond||0,lookKey(h),lowNeeds(h),starsOf(h)]),
    [...new Set(H.map(h=>h.breed))].map(b=>masteryM(s,b))]);
-  if(sig!==st.sig){ st.sig=sig; const top=main.scrollTop; hidePop(); col.innerHTML=listHtml(s,ri); fitNames(); main.scrollTop=top; observeCards(); }
+  if(sig!==st.sig){ st.sig=sig; const top=main.scrollTop; hidePop(); const masteryOpen=col.querySelector('.shs-mastery')?.open; col.innerHTML=listHtml(s,ri); if(masteryOpen&&col.querySelector('.shs-mastery'))col.querySelector('.shs-mastery').open=true; fitNames(); main.scrollTop=top; observeCards(); }
   paintFoot(s,pas);
   if(st.drawer)paintDrawer();
   markSel(); fitTight(); pump();
@@ -654,19 +407,28 @@ html body.se-screen-open.shs-open.shs-drw #toasts{left:calc((100vw - clamp(260px
    if(foal)lines+='<div class="shs-line">'+K.line('clock','#cfe9b3',2.2)+'<span class="t">Grows up in '+hrs(86400000-(Date.now()-(h.born||Date.now())))+'h, or at level 3</span></div>';
    if(lowNeeds(h))lines+='<div class="shs-line warn">'+K.line('care','#ffc4b8',2.2)+'<span class="t">Needs care</span>'+(foal?'':' <button class="se-cream" data-shs="care">Care</button>')+'</div>';
   }
-  const acts=chips.map(c=>'<button class="shs-chip'+(c.on?' on':'')+'" data-shs="act:'+c.k+'" aria-pressed="'+(c.on?'true':'false')+'" title="'+esc(c.t)+'">'
-   +(c.svg?c.svg(c.on):ic(c.i,c.on?'#4a3519':'#fff',2.1))+'<span>'+esc(c.l)+'</span></button>').join('');
+  const chipHtml=c=>'<button class="shs-chip'+(c.on?' on':'')+'" data-shs="act:'+c.k+'" aria-pressed="'+(c.on?'true':'false')+'" title="'+esc(c.t)+'">'
+   +(c.svg?c.svg(c.on):ic(c.i,c.on?'#4a3519':'#fff',2.1))+'<span>'+esc(c.l)+'</span></button>';
+  const primary=chips.filter(c=>['tack','out','fav'].includes(c.k)),secondary=chips.filter(c=>!['tack','out','fav'].includes(c.k));
+  const acts=primary.map(chipHtml).join('');
   const [sec,pri]=state==='ridden'?['Care','Details']:state==='adult'?['Details','Ride']:state==='foal'?['Details',s.companion===h.id?'Following':'Follow me']:['Details','Warm egg'];
   const html='<div class="shs-dr-body">'
    +'<div class="shs-dr-h"><b>'+esc(nm)+'</b><button class="se-circ shs-mini" data-shs="rename" title="Rename" aria-label="Rename">'+ic('pen','#fff',2.3)+'</button>'
    +'<button class="se-circ shs-mini" data-shs="drclose" title="Close" aria-label="Close">'+K.line('close','#fff',2.8)+'</button></div>'
    +'<div class="shs-dr-stars">'+('<i>'+STAR+'</i>').repeat(n)+'</div>'
    +'<div class="shs-dr-top"><button class="shs-dr-pic" data-shs="secondary" aria-label="Details">'
-   +(egg?EGG(h):BUST(h)+'<img class="shs-img'+(url?' got':'')+'" data-key="'+esc(k)+'" alt=""'+(url?' src="'+url+'"':'')+'><span class="shs-lv">'+LV(lv)+'</span>')
+   +(egg?EGG(h):BUST(h)+breedPicture(h)+'<img class="shs-img'+(url?' got':'')+'" data-key="'+esc(k)+'" alt=""'+(url?' src="'+url+'"':'')+'><span class="shs-lv">'+LV(lv)+'</span>')
    +(tag?'<span class="shs-ic">'+tag+'</span>':'')+'</button><div>'+lines+'</div></div>'
-   +'<div class="shs-acts">'+acts+'</div></div>'
+   +'<div class="shs-acts">'+acts+'</div>'+(secondary.length?'<details class="shs-secondary"><summary>More horse actions</summary><div class="shs-acts">'+secondary.map(chipHtml).join('')+'</div></details>':'')+'</div>'
    +'<div class="shs-dr-foot"><button class="se-cream" data-shs="secondary">'+sec+'</button><button class="se-gold" data-shs="primary">'+pri+'</button></div>';
-  if(html!==st.drHtml){st.drHtml=html;dr.innerHTML=html;}
+  if(html!==st.drHtml){
+   const moreOpen=dr.querySelector('.shs-secondary')?.open,scroll=dr.querySelector('.shs-dr-body')?.scrollTop||0;
+   const focus=dr.contains(document.activeElement)?document.activeElement.closest('[data-shs]')?.dataset.shs:null;
+   st.drHtml=html;dr.innerHTML=html;
+   if(moreOpen&&dr.querySelector('.shs-secondary'))dr.querySelector('.shs-secondary').open=true;
+   dr.querySelector('.shs-dr-body').scrollTop=scroll;
+   if(focus)[...dr.querySelectorAll('[data-shs]')].find(b=>b.dataset.shs===focus)?.focus({preventScroll:true});
+  }
   fitDrawerName();
   dr.style.setProperty('--rim',r[2]); dr.style.setProperty('--top',r[0]); dr.style.setProperty('--bot',r[1]);
  }
@@ -793,13 +555,13 @@ html body.se-screen-open.shs-open.shs-drw #toasts{left:calc((100vw - clamp(260px
   else if(k==='pet'){if(!via('[data-pet="'+a+'"]')){try{G.pets.setActive(a);G.ui.renderStable();}catch(err){}}petsModal();}
   else if(k==='petmarket'){st.away={to:'market',id:null};closeModal();G.ui.openShop('pets');}
   else if(k==='journey'){closeAll();setTimeout(()=>{const q=$('questBtn');if(q)q.click();},30);}   // the ☰ menu's own way to My Journey
-  else if(k==='season'){closeAll();setTimeout(()=>{const q=$('questBtn');if(q)q.click();setTimeout(()=>{const tb=document.querySelector('#questPanel [data-q="tab:season"]');if(tb)tb.click();},80);},30);}   // the ☰ menu's own way to the Season Pass
+  else if(k==='season'){closeAll();setTimeout(()=>{G.ui.openLB();document.querySelector('#lbPanel [data-lbtab="pass"]')?.click();},30);}   // the ☰ menu's own way to the Season Pass
  });
 
  /* ---------------------------------------------------------------- standing in for the panel */
  function closeAll(){ closeModal(); G.hidePanels(); }            // hiding the panel -> se-frame's sync -> hide()
  function back(){
-  if(st.modal){closeModal();return;} if(st.drawer){closeDrawer();return;} if(root.classList.contains('q')){closeSearch();return;}
+  if(st.modal){closeModal();return;} if(st.drawer){closeDrawer();return;} if(root.classList.contains('q')||st.q){closeSearch();return;}
   const f=K.takeBack('stablePanel'); closeAll(); if(f)setTimeout(f,0);   // a caller that registered a way back gets it
  }
  function outlinedRow(p){ return p&&p.querySelector('.evrow[style*="outline"]'); }

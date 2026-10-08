@@ -1,4 +1,4 @@
-import {installTackSummonCeremony} from './tack-summon-ceremony.js?v=tack-ceremony-20261007';
+import {installTackSummonCeremony} from './tack-summon-ceremony.js?v=menus-polish-20261008';
 import {TACK_SUMMON_COST,TACK_SUMMON_POOL,getTackSummonPool,summonTackPiece} from '../tack-summon.mjs?v=tack-ceremony-20261007';
 import {TACK_SLOTS,TACK_SLOT_LABELS,getTackPiece,ownedTackPiece} from '../tack-collection.mjs?v=tack-ceremony-20261007';
 import {tackPieceSVG} from '../tack-collection-art.mjs?v=lookbook-1';
@@ -10,7 +10,7 @@ const PAGE_SIZE=8;
 const eligibleIDs=new Set(TACK_SUMMON_POOL.map(p=>p.id));
 const STALL_ART=`<svg viewBox="0 0 400 280" role="img" aria-label="A glowing tack summoning stall"><defs><linearGradient id="ts-sky" x2="0" y2="1"><stop stop-color="#193f47"/><stop offset="1" stop-color="#517879"/></linearGradient><linearGradient id="ts-door" x2="0" y2="1"><stop stop-color="#ead5ac"/><stop offset="1" stop-color="#b99567"/></linearGradient></defs><rect width="400" height="280" rx="24" fill="url(#ts-sky)"/><g fill="#e6e4c6"><path d="m68 40 3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/><path d="m332 59 2 7 7 2-7 2-2 7-2-7-7-2 7-2z"/><circle cx="96" cy="93" r="2"/><circle cx="302" cy="32" r="2"/><circle cx="317" cy="105" r="2"/></g><ellipse cx="200" cy="247" rx="139" ry="17" fill="#153c40" opacity=".45"/><path d="M88 237V107q112-142 224 0v130" fill="#c4cabc" stroke="#7e9690" stroke-width="5"/><path d="M112 231V114q88-112 176 0v117" fill="#244851"/><path d="M194 122h12v108h-12z" fill="#c9f3e8"/><g fill="url(#ts-door)" stroke="#a8885f" stroke-width="3"><path d="M114 132h77v99h-77z"/><path d="M209 132h77v99h-77z"/></g><g stroke="#8c704d" stroke-width="3"><path d="m121 146 62 74m-62 0 62-74m33 0 62 74m-62 0 62-74"/></g><g fill="#ead7b4" stroke="#b49a72" stroke-width="2"><path d="M159 114q-13-37 10-43l24 10 30-5q24 4 17 38l-20-13-30 7z"/><path d="M184 82v-17h9v17z"/></g><path d="m179 40 21-15 21 15-21 17z" fill="#e3c583"/><circle cx="200" cy="183" r="8" fill="#fbf3d9"/><path d="m161 247 39-7 39 7-39 6z" fill="#94ccbe" opacity=".6"/></svg>`;
 export function install(G){
- if(!document.getElementById('tackSummonCSS')){const link=document.createElement('link');link.id='tackSummonCSS';link.rel='stylesheet';link.href=new URL('../tack-summon.css?v=tack-ceremony-20261007',import.meta.url).href;document.head.appendChild(link);}
+ if(!document.getElementById('tackSummonCSS')){const link=document.createElement('link');link.id='tackSummonCSS';link.rel='stylesheet';link.href=new URL('../tack-summon.css?v=menus-polish-20261008',import.meta.url).href;document.head.appendChild(link);}
  const state={slot:'all',page:0,expanded:false,horseId:null,message:'',busy:false,animate:false};
  let repaint=null;
  const canFit=h=>{if(!h||h.foal||h.egg)return false;const p=G.horse?.breedModels?.profile?.(h.breed);return !p||p.nativeKind==='horse'&&!p.nativeDragon;};

@@ -86,8 +86,10 @@ export function installTackSummonCeremony(G,{summon,equip,horseOf,rewardOf,onRet
   if(t>4.5&&!state.shown)reveal();
  }
  function camera(dt,_t,camLook){
-  if(!state.active)return false;hideActors();const progress=state.phase==='choosing'?0:Math.min(1,state.t/4.5),goal=new T.Vector3(2.3-progress*.35,2.9,8.6-progress*2.1),look=new T.Vector3(0,2.0,2.6);stall.grp.localToWorld(goal);stall.grp.localToWorld(look);
-  const k=state.reduced?1:1-Math.exp(-4*Math.min(.1,Math.max(.001,dt||0)));G.camera.position.lerp(goal,k);camLook?.lerp(look,k);G.camera.lookAt(look);G.camera.fov=44;G.camera.updateProjectionMatrix();return true;
+  if(!state.active)return false;hideActors();const progress=state.phase==='choosing'?0:Math.min(1,state.t/4.5),portrait=G.camera.aspect<.85;
+  // A portrait screen needs room for the barn and the control card below it.
+  const goal=new T.Vector3(portrait?.5:2.3-progress*.35,portrait?3.3:2.9,portrait?14-progress*2.7:8.6-progress*2.1),look=new T.Vector3(0,portrait?1:2,2.6);stall.grp.localToWorld(goal);stall.grp.localToWorld(look);
+  const k=state.reduced?1:1-Math.exp(-4*Math.min(.1,Math.max(.001,dt||0)));G.camera.position.lerp(goal,k);camLook?.lerp(look,k);G.camera.lookAt(look);G.camera.fov=portrait?52:44;G.camera.updateProjectionMatrix();return true;
  }
  dialog.addEventListener('change',e=>{if('twSlot'in e.target.dataset){setSlot(e.target.value);paint();dialog.querySelector('[data-tw-slot]')?.focus({preventScroll:true});}else if('twHorse'in e.target.dataset){setHorseId(e.target.value);paint();}});
  dialog.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;if('twSummon'in d)start();else if('twSkip'in d)skip();else if('twClose'in d)close();else if('twEquip'in d){const r=equip();state.error=r.ok?'Tack equipped. Your horse will be wearing it when you return.':'Your tack could not be equipped. Please try again.';paint();}});

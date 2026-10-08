@@ -31,11 +31,11 @@ function fakeDOM(){
  require('node:module').register('data:text/javascript,'+encodeURIComponent(`export async function resolve(s,c,n){if(s==='three')return {url:${JSON.stringify(threeURL)},shortCircuit:true};return n(s,c);}`),require('node:url').pathToFileURL(__filename).href);
  const [THREE,C,R,showcaseModule]=await Promise.all([import(threeURL),import('../assets/tack-collection.mjs'),import('../assets/tack-summon.mjs'),import('../assets/tack-summon-showcase.js')]);
  const source=fs.readFileSync(path.join(__dirname,'../assets/features/tack-summon-ceremony.js'),'utf8').replace(/^import .*;$/gm,'').replace(/export const /g,'const ').replace(/export function /g,'function ');
- function fixture({onFoot=false,reduced=false,distant=false,persist=true,modelFailure=false}={}){
+ function fixture({onFoot=false,reduced=false,distant=false,persist=true,modelFailure=false,aspect=1.5}={}){
   const dom=fakeDOM(),hooks={},locks=new Set(['other-system']),calls={summon:0,equip:0,travel:0,reset:0,release:0,return:0,model:0,dispose:0},messages=[];
   let save={coins:1000,tack:[],horses:[{id:'a',name:'Clover',breed:'bay',gear:{pad:'legacy'}},{id:'b',name:'Fern',breed:'bay',gear:{}}],rider:{made:true}},slot='all',horseId='b',travelAllowed=true;
   const player={pos:new THREE.Vector3(distant?33:-27.5,0,distant?21:-8.2),heading:.37,y:0,vy:0,speed:0,onFoot,mesh:new THREE.Group()};player.mesh.visible=!onFoot;const walker=onFoot?new THREE.Group():null;
-  const camera=new THREE.PerspectiveCamera(57,1.5,.1,2000);camera.position.set(3,7,12);camera.rotation.set(.1,.4,0);
+  const camera=new THREE.PerspectiveCamera(57,aspect,.1,2000);camera.position.set(3,7,12);camera.rotation.set(.1,.4,0);
   const stall={on:false,cam:false,grp:new THREE.Group(),doorL:new THREE.Group(),doorR:new THREE.Group(),glow:new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({color:'#ab3495',opacity:.17,transparent:true})),light:new THREE.PointLight('#7398ab',.63)};stall.grp.position.set(-27.5,2,-4.5);stall.grp.rotation.y=Math.PI;stall.doorL.rotation.y=.12;stall.doorR.rotation.y=-.07;stall.grp.add(stall.doorL,stall.doorR,stall.glow,stall.light);stall.grp.updateMatrixWorld(true);
   const footState={on:onFoot,air:false,climbing:false,rolling:false};
   const G={THREE,camera,horse:{player},summon:{state:stall,STALL:{x:-27.5,z:-4.5}},world:{addFT:e=>G.tables.FT.push(e),travelTo(index){calls.travel++;if(!travelAllowed)return false;const f=G.tables.FT[index];if(!f)return false;player.pos.set(f[1],0,f[2]);player.heading=f[3];player.speed=0;return true;}},tables:{FT:[]},renderer:{xr:{isPresenting:false}},course:{get:()=>null,drillActive:()=>false},roundup:{state:()=>({on:false})},worldPkg:{vehicle:()=>null},cam:{isFree:()=>false},onFoot:{state:()=>footState,walker:()=>walker},input:{reset:()=>calls.reset++},riding:{releaseAll:()=>calls.release++,lock:(reason,on)=>on?locks.add(reason):locks.delete(reason)},save:{fresh:()=>clone(save)},hidePanels(){},seHud:{close(){}},followCam:{reset(){}},toast:message=>messages.push(message),sGem(){},on:(name,fn)=>(hooks[name]??=[]).push(fn)};
@@ -60,6 +60,28 @@ function fakeDOM(){
   f.click('twClose');restored(f,initial);assert.equal(f.calls.dispose,1);assert.equal(f.calls.return,1);assert.equal(f.read().coins,800);assert.equal(f.ceremony.close(),false,'repeat close is inert');
  }
  console.log('PASS mounted/on-foot snapshot restoration, save-before-animation, one charge, real door/camera state, Escape reveal and complete cleanup');
+ // Project real world points through a portrait THREE camera. These are scene
+ // and screen-space requirements, not assertions about a chosen camera pose/FOV.
+ const portrait=fixture({aspect:390/844}),portraitInitial=portrait.snapshot(),portraitProjection=portrait.camera.projectionMatrix.clone();
+ const settlePortrait=()=>{for(let i=0;i<120;i++)portrait.ceremony.camera(1/60,i/60,new THREE.Vector3());portrait.camera.updateMatrixWorld(true);portrait.stall.grp.updateMatrixWorld(true);};
+ const projectWorld=point=>point.clone().project(portrait.camera);
+ const framed=p=>Number.isFinite(p.x)&&Number.isFinite(p.y)&&Number.isFinite(p.z)&&Math.abs(p.x)<1&&p.z>-1&&p.z<1;
+ // Original Summoning Stall front corners: 4.6 m wide, 3.2 m deep.
+ const barnSides=[-2.3,2.3].map(x=>portrait.stall.grp.localToWorld(new THREE.Vector3(x,1.7,1.6)));
+ portrait.ceremony.open();settlePortrait();
+ check(barnSides.map(projectWorld).every(framed),'portrait chooser keeps both barn sides horizontally within the camera frustum');
+ portrait.ceremony.start();for(let i=0;i<55;i++)portrait.ceremony.tick(.1);settlePortrait();
+ const rewardRoot=portrait.stall.grp.getObjectByName('Summoned '+portrait.ceremony.state.result.piece.name);
+ check(portrait.ceremony.state.phase==='revealed'&&rewardRoot?.visible,'portrait camera regression uses the fully revealed actual reward sculpture');
+ const rewardPoints=[];rewardRoot.traverse(mesh=>{if(!mesh.isMesh)return;const a=mesh.geometry.getAttribute('position');for(let i=0;i<a.count;i++)rewardPoints.push(new THREE.Vector3().fromBufferAttribute(a,i).applyMatrix4(mesh.matrixWorld));});
+ const rewardScreen=rewardPoints.map(projectWorld);
+ check(rewardScreen.length>0&&rewardScreen.every(framed),'portrait reveal keeps the entire actual reward geometry horizontally in frame');
+ // Reserve the bottom 40% for the wrapped phone card (equip selector, buttons,
+ // status and bottom safe space), so the sculpture cannot hide beneath it.
+ check(rewardScreen.every(p=>p.y<1&&(1-p.y)/2<.6),'portrait revealed tack stays fully above the bottom control-card region');
+ portrait.ceremony.close();restored(portrait,portraitInitial);
+ check(portrait.camera.projectionMatrix.equals(portraitProjection),'closing portrait reveal restores the original camera projection as well as pose and FOV');
+ console.log('PASS 390×844 portrait barn/reward projection, control-card clearance and original-camera restoration');
  const failed=fixture({persist:false});failed.ceremony.open();const failedBefore=failed.snapshot(),failedSave=failed.read();const failure=failed.ceremony.start();assert.equal(failure.code,'save-unavailable');assert.deepEqual(failed.read(),failedSave);assert.equal(failed.calls.model,0);assert.equal(failed.ceremony.state.phase,'choosing');assert.deepEqual(failed.snapshot(),failedBefore);check(failed.ceremony.dialog.innerHTML.includes('could not be saved'),'failed storage remains in chooser with error');failed.ceremony.close();
  const unreadable=fixture(),unreadablePose=unreadable.snapshot();unreadable.G.save.fresh=()=>null;check(!unreadable.ceremony.open().ok,'unreadable save rejects before hiding actors');assert.deepEqual(unreadable.snapshot(),unreadablePose);check(!unreadable.ceremony.active&&!unreadable.locks.has('tack-ceremony'),'read failure cannot leave an invisible locked rider');
  const lostRead=fixture();lostRead.ceremony.open();lostRead.G.save.fresh=()=>null;check(!lostRead.ceremony.start().ok&&lostRead.calls.summon===0,'save becoming unreadable blocks confirmation before charge');check(lostRead.ceremony.dialog.innerHTML.includes('tw-close'),'unreadable chooser retains an exit');lostRead.ceremony.close();

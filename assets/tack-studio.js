@@ -36,15 +36,32 @@ export function studioGaitSpeed(name,cap){
  return name==='walk'?cap?.gaitSpeeds?.walk||0:name==='gallop'?cap?.gaitSpeeds?.gallopLeft||0:0;
 }
 
+export function studioZoom(value, delta=0){
+ const current=Number.isFinite(value)?value:1,change=Number.isFinite(delta)?delta:0;
+ return Math.round(Math.max(.75,Math.min(1.8,current+change))*1000)/1000;
+}
+
 const $=id=>document.getElementById(id),query=new URLSearchParams(location.search),capture=query.has('capture'),qa=query.has('qa');
 const staticStore=studioIsStaticHost(location.hostname);
 if(capture)document.body.classList.add('capture');
-const library=createBreedLibrary({THREE,GLTFLoader,clone}),stage=$('stage');
+let retryPreview=()=>location.reload();
+function setStudioStatus(text,{retry=null,loading=false}={}){
+ $('status-text').textContent=text;
+ $('status').hidden=!text;
+ $('status').classList.toggle('is-loading',loading);
+ $('stage').setAttribute('aria-busy',String(loading));
+ $('studio-retry').hidden=!retry;
+ retryPreview=retry;
+}
+$('studio-retry').onclick=()=>{if(retryPreview)retryPreview();};
+async function initializeStudio(){
+const stage=$('stage');
 const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:capture||qa});
+const library=createBreedLibrary({THREE,GLTFLoader,clone});
 renderer.setPixelRatio(capture?1:Math.min(devicePixelRatio,1.75));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.03;
 renderer.domElement.setAttribute('aria-label','Your horse wearing the selected tack');stage.prepend(renderer.domElement);
-const scene=new THREE.Scene();scene.background=new THREE.Color('#e5e8df');scene.fog=new THREE.Fog('#e5e8df',18,35);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#e7e6db');scene.fog=new THREE.Fog('#e7e6db',18,35);
 // Large softboxes give polished metal and leather readable, soft reflections.
 const reflectionRoom=new THREE.Scene();reflectionRoom.background=new THREE.Color('#979f98').multiplyScalar(.55);
 const reflectionObjects=[];
@@ -103,8 +120,8 @@ function health(){
  $('preview-health').textContent=JSON.stringify({ready:state.ready,error:state.error,horse:state.horse,pieces:TACK_SLOTS.map(slot=>state.equipped[slot]?.id).filter(Boolean),gait:state.gait,animation:rig?.heroMotion?.mode,focus:state.focus,finite,stats:kit?.stats||null});
 }
 function applyLook(){
- paintInfo();if(!state.kit)return;
- try{state.kit.apply(state.equipped);state.kit.update(0);state.error=null;updateDetailBounds();health();render();}catch(error){state.error=error.message;$('status').textContent='This look could not load. Try another collection.';health();}
+ paintInfo();if(!state.ready||!state.kit)return;
+ try{state.kit.apply(state.equipped);state.kit.update(0);state.error=null;setStudioStatus('');updateDetailBounds();health();render();}catch(error){state.error=error.message;setStudioStatus('This look could not load. Try it again or choose another collection.',{retry:applyLook});health();}
 }
 function selectCollection(id){const c=TACK_COLLECTIONS.find(c=>c.id===id);if(!c)return;state.equipped=Object.fromEntries(TACK_PIECES.filter(p=>p.collectionId===id).map(p=>[p.slot,p]));applyLook();}
 function updateDetailBounds(){
@@ -130,7 +147,7 @@ function updateDetailBounds(){
 }
 function focusView(name){
  if(name!=='horse'&&state.ready){gait('idle');mount.position.y=0;}
- state.focus=name;zoom=1;theta=name==='bridle'?.74:name==='shoes'?1.33:1.03;
+ state.focus=name;setZoom(1);theta=name==='bridle'?.74:name==='shoes'?1.33:1.03;
  for(const b of document.querySelectorAll('[data-focus]'))b.setAttribute('aria-pressed',String(b.dataset.focus===name));
  $('side').setAttribute('aria-pressed','false');updateDetailBounds();health();render();
 }
@@ -153,22 +170,31 @@ function gait(name){
 }
 async function chooseHorse(key){
  if(!horseOptions.some(p=>p.key===key)||library.resolve(key)!==key){$('horse-notice').hidden=false;$('horse-notice').textContent='This horse is not available in the fitting room. Choose a horse from the list.';return;}
- const request=++serial;state.ready=false;state.error=null;$('status').textContent='Fitting your tack…';
+ const request=++serial;state.ready=false;state.error=null;setStudioStatus('Fitting your tack…',{loading:true});
  for(const button of document.querySelectorAll('[data-gait]'))button.disabled=true;
  try{
   const asset=await library.load(key);if(request!==serial)return;
-  state.kit?.dispose();if(state.rig){mount.remove(state.rig.scene);disposeMountedRig(state.rig);}
+  state.kit?.dispose();state.kit=null;if(state.rig){mount.remove(state.rig.scene);disposeMountedRig(state.rig);state.rig=null;}
   state.rig=library.instantiate(asset);state.rig.modelKey=asset.key;
   const row=previewRows.get(key);if(row){const flags=row[7];configureNativeCustomization({THREE,rig:state.rig,horse:{id:'studio:'+key,breed:key,colors:{body:row[5],mane:flags.maneCol||row[6]},mark:flags.mark||'none',markCol:flags.markCol,coat:flags.coat},defaults:row});}
  state.horse=key;mount.position.y=0;mount.add(state.rig.scene);initGameHero(THREE,state.rig);
   tickGameHero(state.rig,0,0);finishNativeHorseGrooms();state.rig.scene.updateMatrixWorld(true);baseBounds.setFromObject(state.rig.scene,true);
   state.kit=createTackCollection({THREE,rig:state.rig,mount,equippedDesigns:state.equipped});
-  state.kit.update(0);state.ready=true;$('horse').value=key;$('status').textContent='';
+  state.kit.update(0);state.ready=true;$('horse').value=key;setStudioStatus('');
   for(const button of document.querySelectorAll('[data-gait]'))button.disabled=!studioSupportsGait(button.dataset.gait,getNativeHorseCapabilities(state.rig));
   paintHorseCredit(asset.profile);
   gait('idle');updateDetailBounds();paintInfo();health();render();
- }catch(error){if(request!==serial)return;state.error=String(error.message||error);$('status').textContent='The fitting room could not load. Refresh to try again.';health();}
+ }catch(error){if(request!==serial)return;state.error=String(error.message||error);setStudioStatus('This horse could not load. Your chosen tack is still here.',{retry:()=>chooseHorse(key)});health();}
 }
+function setZoom(value){
+ zoom=studioZoom(value);$('zoom-level').textContent=Math.round(zoom*100)+'%';
+ $('zoom-out').disabled=zoom<=.75;$('zoom-in').disabled=zoom>=1.8;
+}
+$('zoom-out').onclick=()=>{setZoom(studioZoom(zoom,-.15));render();};
+$('zoom-in').onclick=()=>{setZoom(studioZoom(zoom,.15));render();};
+$('view-options').onclick=()=>{const expanded=$('view-options').getAttribute('aria-expanded')!=='true';$('view-options').setAttribute('aria-expanded',String(expanded));$('view-options').textContent=expanded?'Fewer views':'More views';$('preview-controls').hidden=!expanded;};
+renderer.domElement.addEventListener('webglcontextlost',event=>{event.preventDefault();state.ready=false;state.error='Graphics connection lost';setStudioStatus('The 3D view was interrupted. Reload the fitting room to restore it.',{retry:()=>location.reload()});health();});
+window.__tackStudio={state,renderer,selectCollection,chooseHorse,applyLook,focusView,gait,setZoom};
 $('collection').onchange=()=>selectCollection($('collection').value);
 for(const slot of TACK_SLOTS)$('piece-'+slot).onchange=()=>{const p=getTackPiece($('piece-'+slot).value);if(p)state.equipped[slot]=p;else delete state.equipped[slot];applyLook();};
 $('clear').onclick=()=>{state.equipped={};applyLook();};
@@ -177,13 +203,13 @@ for(const button of document.querySelectorAll('[data-gait]'))button.onclick=()=>
 $('side').onclick=()=>{const side=$('side').getAttribute('aria-pressed')!=='true';theta=side?Math.PI/2:1.03;$('side').setAttribute('aria-pressed',String(side));render();};
 $('reset').onclick=()=>{focusView('horse');gait('idle');};
 for(const button of document.querySelectorAll('[data-focus]'))button.onclick=()=>focusView(button.dataset.focus);
-renderer.domElement.addEventListener('pointerdown',e=>{drag=e.clientX;renderer.domElement.setPointerCapture(e.pointerId);});
+renderer.domElement.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag=e.clientX;renderer.domElement.setPointerCapture(e.pointerId);});
 renderer.domElement.addEventListener('pointermove',e=>{if(drag===null)return;theta-=(e.clientX-drag)*.007;drag=e.clientX;$('side').setAttribute('aria-pressed','false');render();});
 for(const type of ['pointerup','pointercancel','lostpointercapture'])renderer.domElement.addEventListener(type,()=>drag=null);
-renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();zoom=THREE.MathUtils.clamp(zoom-e.deltaY*.0007,.75,1.6);render();},{passive:false});
+renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();setZoom(studioZoom(zoom,-e.deltaY*.0007));render();},{passive:false});
 new ResizeObserver(()=>{renderer.setSize(stage.clientWidth,stage.clientHeight,false);render();}).observe(stage);
 document.addEventListener('visibilitychange',()=>clock.getDelta());
-renderer.setAnimationLoop(()=>{const dt=Math.min(.04,clock.getDelta());if(!state.ready)return;
+renderer.setAnimationLoop(()=>{const dt=Math.min(.04,clock.getDelta());if(!state.ready||state.error)return;
  if(!capture&&!auditing){tickGameHero(state.rig,studioGaitSpeed(state.gait,getNativeHorseCapabilities(state.rig)),dt);mount.position.y=state.rig.heroJumpExtra||0;finishNativeHorseGrooms();state.kit.update(dt);}
  if(state.gait==='jump'&&state.rig.heroJumpAge===null)gait('idle');
  healthAge+=dt;if(healthAge>.7){healthAge=0;health();}render();
@@ -203,7 +229,7 @@ try{
  const initial=studioInitialHorse(query.get('horse'),initialItem?.collectionId||initialCollection?.id,horseOptions);
  if(initial.unavailable){$('horse-notice').hidden=false;$('horse-notice').textContent='That horse is not available in this fitting room. Showing Bay Sporthorse; choose another horse above.';}
  await chooseHorse(initial.key);
-}catch(error){state.error=String(error.message||error);$('status').textContent='The horse catalog could not load. Refresh to try again.';health();}
+}catch(error){state.error=String(error.message||error);setStudioStatus('The horse catalog could not load. Check your connection and try again.',{retry:()=>location.reload()});health();}
 
 // Developer-only fitting check. It uses the same visible renderer, changes no
 // account/save, and reports a fixed-pose pixel comparison for every collection piece.
@@ -228,3 +254,10 @@ if(qa){
   finally{state.equipped=saved;applyLook();focusView(savedFocus);auditing=false;button.disabled=false;clock.getDelta();}
  };
 }
+
+}
+setStudioStatus('Preparing the fitting room…',{loading:true});
+initializeStudio().catch(error=>{
+ if(window.__tackStudio){window.__tackStudio.state.ready=false;window.__tackStudio.state.error=String(error.message||error);}
+ setStudioStatus('The 3D view could not start. Try again, or open the boutique to browse all the pieces.',{retry:()=>location.reload()});
+});

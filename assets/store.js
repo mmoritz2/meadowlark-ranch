@@ -10,6 +10,14 @@ const checkoutRequests = new Map(), redeemRequests = new Map();
 const money = cents => new Intl.NumberFormat('en-US', {style:'currency',currency:'USD'}).format(cents / 100);
 const date = t => new Date(t).toLocaleString();
 const message = (text, error = false) => { $('message').textContent = text; $('message').classList.toggle('error', error); };
+// Reconnecting refreshes data only. An interrupted checkout keeps its request ID
+// until the player explicitly chooses to try that purchase again.
+function connectionMessage(error) {
+  if (error?.status) return null;
+  if (error?.name === 'AbortError' || error?.name === 'TimeoutError') return 'The store took too long to respond. Reconnect to check your account, then choose checkout again when you are ready.';
+  if (error?.name === 'TypeError' && /fetch|network|load failed|internet|offline/i.test(error.message || '')) return 'The store connection was lost. Check your connection, then reconnect to check your account. Checkout will not restart automatically.';
+  return null;
+}
 function node(tag, text, cls) {const e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (cls) e.className = cls; return e;}
 function clearAccount() {
   account = null; checkoutRequests.clear(); redeemRequests.clear();
@@ -24,7 +32,9 @@ async function run(fn) {
     if (e.status === 401 && account) {clearAccount(); showAuth('login');}
     // Another tab can change the wallet or cloud revision. Update before the next explicit attempt.
     if (e.status === 409 && account) {try {await loadAccount();} catch {}}
-    message(e.message, true);
+    const connection = connectionMessage(e);
+    if (connection) $('retry').hidden = false;
+    message(connection || e.message, true);
   } finally {
     working = false; render();
     if ((document.activeElement === document.body || !document.activeElement?.getClientRects().length) && trigger?.isConnected && !trigger.disabled && trigger.getClientRects().length) trigger.focus({preventScroll:true});
@@ -41,7 +51,7 @@ async function loadAccount() {
 function selectTab(name, focus = false) {
   if (isStaticStore && !['discover','tack','gems','vip'].includes(name)) name='discover';
   activeTab = name;document.body.dataset.storeTab=name;
-  if (!isStaticStore) $('guest').hidden = !catalog || !!account || name === 'account';
+  if (!isStaticStore) $('guest').hidden = !catalog || !!account || ['account','discover','tack'].includes(name);
   for (const tab of document.querySelectorAll('[data-tab]')) {
     const selected = tab.dataset.tab === name;
     tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1;
@@ -98,7 +108,7 @@ function buildCards() {
 function render() {
   tackStore.render();
   $('auth').hidden = !catalog || !!account;
-  $('guest').hidden = !catalog || !!account || activeTab === 'account';
+  $('guest').hidden = !catalog || !!account || ['account','discover','tack'].includes(activeTab);
   $('account').hidden = !account;
   for (const id of ['account-tools','redeem-section','cloud-section','history-section']) $(id).hidden = !account;
   for (const id of ['auth-submit','switch-auth','recover-auth','show-login','show-register','refresh','logout','cloud-upload','cloud-download','local-undo','retry']) $(id).disabled = working;
@@ -145,7 +155,8 @@ function showStaticPreview() {
   document.body.classList.add('static-preview');
   document.title = 'Store preview · Meadowlark';
   $('store-badge').textContent = 'Store preview';
-  $('store-notice').replaceChildren(node('b','Purchases coming soon.'),node('span','Browse every tack piece and try on any look. Premium sets, gem packs and VIP display draft prices; purchases are not available here.'));
+  $('store-footer-mode').textContent = 'Store preview · Purchases coming soon. Final prices and purchase terms will be confirmed before launch.';
+  $('store-notice').replaceChildren(node('b','Purchases coming soon.'),node('span','Try every look for free. Premium sets, gems and VIP show draft prices; no purchases are available here.'));
   $('store-notice').classList.add('preview-notice');
   for (const id of ['guest','account','recovery-result','tab-account','panel-account','redeem-section','confirm-dialog']) $(id).remove();
   document.querySelector('.status-row').remove();
@@ -159,6 +170,8 @@ function showStaticPreview() {
   catalog = {checkoutEnabled:false, products:Object.entries(PRODUCTS).map(([id,p])=>({id,...p,currency:'usd'})), rewards:Object.entries(REWARDS).map(([id,r])=>({id,...r}))};
   buildCards();tackStore.render();
 }
+const filterOptions=$('tack-filter-options');
+filterOptions.addEventListener('keydown',event=>{if(event.key==='Escape'&&filterOptions.open){filterOptions.open=false;filterOptions.querySelector('summary').focus();event.preventDefault();}});
 if (isStaticStore) showStaticPreview();
 for (const tab of document.querySelectorAll('[data-tab]')) {
   tab.onclick=()=>selectTab(tab.dataset.tab);
@@ -216,19 +229,21 @@ async function reconcileReturn() {
   const result=await api('reconcile',{sessionId:id});await loadAccount();
   if(result.fulfilled){
     const url=new URL(location.href);url.searchParams.delete('checkout');url.searchParams.delete('session_id');
-    history.replaceState(null,'',url.pathname+url.search+url.hash);if(params.get('tab')==='tack')selectTab('tack');message('Test purchase delivered to your account.');
+    history.replaceState(null,'',url.pathname+url.search+url.hash);if(params.get('tab')==='tack')selectTab('tack');message(params.get('tab')==='tack'?'Test tack set delivered. Open the boutique to choose a horse and equip your pieces.':'Test purchase delivered to your account. Return to the ranch to use it.');
   } else message('Payment has not been confirmed yet. Refresh your balance in a moment.');
   return true;
 }
-async function loadStore() {
+async function loadStore(reconnecting = false) {
   $('retry').hidden=true;
+  if (reconnecting) message('Reconnecting to the store…');
   try {
     catalog=await api('catalog');await loadAccount();message('');
     if(new URLSearchParams(location.search).get('checkout')==='cancelled')message('Checkout cancelled. No purchases were added.');
-    await reconcileReturn();
-  } catch(e) {$('retry').hidden=!!account;throw e;}
+    const reconciled = await reconcileReturn();
+    if (reconnecting && !reconciled) message('Connected. Your account is up to date. Choose checkout when you are ready; no purchase was retried.');
+  } catch(e) {$('retry').hidden=false;throw e;}
 }
-$('retry').onclick=()=>run(loadStore);
+$('retry').onclick=()=>run(()=>loadStore(true));
 setAuth('login');
 await run(loadStore);
 }

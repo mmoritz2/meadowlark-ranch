@@ -234,225 +234,7 @@ export function install(G){
  const snapImg=(v,cls)=>{const e=K.snap(v);return '<img class="'+cls+(e.url?' se-snapped':'')+'" data-snap="'+esc(v.key)+'" alt=""'+(e.url?' src="'+e.url+'"':'')+'>';};
 
  /* ---------------------------------------------------------------- the look -------------- */
- const TOP='clamp(50px,8.5vh,64px)';
- if(!$('seEvCss')){
-  const st=document.createElement('style'); st.id='seEvCss';
-  st.textContent=`
-#seEv{position:fixed;inset:0;z-index:10;display:none;font-family:Nunito,system-ui,sans-serif;color:#fff;overflow:clip;user-select:none;-webkit-user-select:none}
-#seEv.on{display:block}
-#seEv .sev-dim{position:absolute;inset:0;background:rgba(18,18,26,.34);backdrop-filter:blur(2.5px) saturate(.55) brightness(.8);-webkit-backdrop-filter:blur(2.5px) saturate(.55) brightness(.8)}
-#seEv .se-strip{position:absolute}
-/* the towns */
-#seEv .sev-towns{position:absolute;left:0;right:0;top:calc(${TOP} + clamp(12px,2.6vh,24px));height:clamp(30px,4.6vh,38px);display:flex;justify-content:center;align-items:center}
-#seEv .sev-towns::before{content:'';position:absolute;left:0;right:0;top:50%;height:2px;background:rgba(215,215,225,.55)}
-#seEv .sev-tabs{position:relative;display:flex;max-width:calc(100% - 60px);overflow-x:auto;scrollbar-width:none;border:2px solid rgba(240,240,248,.8);border-radius:3px;background:#262562;box-shadow:0 2px 8px rgba(0,0,0,.4)}
-#seEv .sev-tabs::-webkit-scrollbar{display:none}
-#seEv .sev-tab{position:relative;flex:none;display:flex;align-items:center;justify-content:center;gap:6px;min-width:clamp(96px,9.4vw,132px);height:clamp(28px,4.2vh,34px);padding:0 14px;border:0;
- border-right:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;font:800 clamp(11.5px,1.9vh,14.5px)/1 Georgia,'Times New Roman',serif;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;white-space:nowrap;min-height:0;box-shadow:none;border-radius:0}
-#seEv .sev-tab:last-child{border-right:0}
-#seEv .sev-tab svg{width:14px;height:14px;flex:none}
-#seEv .sev-tab.on{background:linear-gradient(180deg,#d6b27a,#b48a52);color:#34240f}
-#seEv .sev-tab.lock{color:#c9c6e6}
-#seEv .sev-tab i{position:absolute;top:3px;right:4px;width:8px;height:8px;border-radius:50%;background:#e43a33;box-shadow:0 0 0 1.5px #fff}
-#seEv .sev-point{position:absolute;top:calc(50% + clamp(15px,2.3vh,19px));width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid #b48a52;transform:translateX(-50%);transition:left .25s}
-#seEv .sev-dots{position:absolute;top:50%;width:9px;height:9px;border-radius:50%;border:2px solid rgba(215,215,225,.7);background:#2a2940;transform:translate(-50%,-50%)}
-/* the carousel */
-#seEv .sev-stage{position:absolute;left:0;right:0;top:calc(${TOP} + clamp(56px,9vh,76px));bottom:clamp(40px,6.5vh,56px);touch-action:pan-y}
-#seEv .sev-card{position:absolute;left:50%;top:50%;width:min(700px,60vw,calc((100vh - 200px) * 1.62));aspect-ratio:1.6;transform:translate(-50%,-50%) translateX(calc(var(--o,0) * 97%)) scale(var(--s,1));z-index:calc(5 - var(--a,0));
- transition:transform .38s cubic-bezier(.2,.8,.2,1),opacity .3s,filter .3s;display:grid;grid-template-columns:37% 63%;border:3px solid #f4f1ea;border-radius:8px;
- background:var(--c,#1d4a3b);box-shadow:0 10px 30px rgba(0,0,0,.5);cursor:pointer;will-change:transform}
-#seEv .sev-card.side{--s:.84;opacity:.8;filter:brightness(.72) saturate(.85)}
-#seEv .sev-card.far{--s:.7;opacity:0;pointer-events:none}
-#seEv :is(button,.sev-card):focus-visible{outline:3px solid #ffd970;outline-offset:4px}
-#seEv .sev-card .sev-tk{position:relative;padding:3.2%;background:rgba(0,0,0,.18);border-right:3px solid rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:5px 0 0 5px}
-#seEv .sev-card .sev-tk svg{height:100%;width:auto;max-width:100%;filter:drop-shadow(0 3px 5px rgba(0,0,0,.4))}
-#seEv .sev-info{position:relative;display:flex;flex-direction:column;min-width:0;border-radius:0 5px 5px 0;overflow:hidden}
-#seEv .sev-head{flex:none;display:flex;align-items:center;gap:10px;padding:2.2% 3.5%;min-height:18%}
-#seEv .sev-head>svg{width:clamp(28px,5vh,40px);height:clamp(28px,5vh,40px);flex:none}
-#seEv .sev-cup{font:800 clamp(9.5px,1.5vh,12px)/1.1 Georgia,serif;letter-spacing:1px;text-transform:uppercase;color:rgba(242,236,220,.8)}
-#seEv .sev-name{font:800 clamp(15px,2.7vh,22px)/1.05 Georgia,serif;text-transform:uppercase;letter-spacing:.4px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
-#seEv .sev-photo{position:relative;flex:1;min-height:0;background:#6d5a40;overflow:hidden}
-#seEv .sev-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:sepia(.9) saturate(.85) contrast(1.02) brightness(1.02);opacity:0;transition:opacity .4s}
-#seEv .sev-photo img.se-snapped{opacity:1}
-#seEv .sev-photo::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(40,25,10,.4));pointer-events:none}
-#seEv .sev-ring{position:absolute;left:50%;top:43%;width:clamp(96px,18vh,142px);height:clamp(96px,18vh,142px);transform:translate(-50%,-50%);z-index:1}
-#seEv .sev-ring svg{width:100%;height:100%;display:block;overflow:visible}
-#seEv .sev-pct{position:absolute;left:50%;transform:translateX(-50%);top:calc(43% + clamp(50px,9.4vh,74px));text-align:center;font:900 clamp(15px,2.6vh,20px)/1 Nunito,system-ui,sans-serif;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7);z-index:1;background:rgba(24,18,10,.62);border-radius:10px;padding:2px 10px}
-#seEv .sev-gold{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;height:clamp(22px,3.5vh,28px);padding:0 18px;z-index:1;white-space:nowrap;
- background:rgba(38,34,30,.88);color:#f4eedd;font:800 clamp(10.5px,1.7vh,13px)/1 Nunito,system-ui,sans-serif;clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,10px 100%,0 50%)}
-#seEv .sev-gold svg{width:clamp(16px,2.6vh,20px);height:clamp(16px,2.6vh,20px)}
-#seEv .sev-foot{flex:none;display:flex;align-items:center;gap:8px;padding:0 3.5%;min-height:11%;font:800 clamp(12px,2vh,15.5px)/1.1 Nunito,system-ui,sans-serif;color:#fff}
-#seEv .sev-foot .sev-sp{flex:1}
-#seEv .sev-foot svg{width:clamp(18px,3vh,24px);height:clamp(18px,3vh,24px);flex:none}
-#seEv .sev-foot .sev-lv{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:rgba(255,255,255,.18);font-size:12px}
-#seEv .sev-new{position:absolute;right:-6px;top:-14px;z-index:3;padding:4px 9px;background:linear-gradient(180deg,#ffd34d,#f2b01e);color:#3b2600;font:900 clamp(10px,1.7vh,13px)/1 Georgia,serif;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 4px rgba(0,0,0,.35)}
-#seEv .sev-feat{position:absolute;left:37%;top:-14px;z-index:3;padding:4px 9px;background:linear-gradient(180deg,#b5dcff,#72aee8);color:#10233f;font:900 clamp(10px,1.7vh,13px)/1 Georgia,serif;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 4px rgba(0,0,0,.35)}
-#seEv .sev-photo:has(.sev-lockv) :is(.sev-ring,.sev-pct,.sev-gold){display:none}
-#seEv .sev-lockv{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(20,18,30,.5);text-align:center;padding:10%}
-#seEv .sev-lockv svg{width:34px;height:34px}
-#seEv .sev-lockv b{font:800 clamp(13px,2.2vh,17px)/1.2 Georgia,serif;text-transform:uppercase;letter-spacing:.4px}
-#seEv .sev-lockv span{font:700 clamp(11px,1.8vh,14px)/1.3 Nunito,system-ui,sans-serif;color:#e6e0f6}
-#seEv .sev-arrow{position:absolute;bottom:-6px;z-index:6;width:30px!important;height:30px!important;padding:5px!important}
-#seEv .sev-arrow.l{right:calc(50% + var(--dw,48px))}
-#seEv .sev-arrow.r{left:calc(50% + var(--dw,48px))}
-#seEv .sev-arrow[hidden]{display:none!important}
-#seEv .sev-count{position:absolute;left:50%;bottom:0;transform:translateX(-50%);display:flex;gap:0;z-index:6}
-/* each dot is a button: a clear border round it makes a finger-sized target without making the dot any bigger */
-#seEv .sev-count button{box-sizing:content-box;flex:none;width:8px;height:8px;min-width:0;min-height:0;padding:0;border-radius:50%;background:rgba(255,255,255,.35);border:5px solid transparent;background-clip:padding-box;box-shadow:none;cursor:pointer}
-#seEv .sev-count button.on{background:#fff;background-clip:padding-box}
-/* the week's card, and the special event's */
-/* above every card (their z-index runs up to 5): the card beside the centre one slid under the week's card and printed its
-   lock and its ribbons over the trophy */
-#seEv .sev-promo{position:absolute;top:calc(${TOP} + clamp(70px,11vh,92px));bottom:clamp(40px,6.5vh,56px);width:clamp(150px,14.5vw,196px);display:flex;flex-direction:column;
- border-radius:6px;overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,.5);border:2px solid #d9b45e;background:linear-gradient(180deg,#472a6f,#2a1a4c);z-index:6;max-height:470px;margin:auto 0}
-#seEv .sev-promo.wk{left:-4px;border-left:0;border-radius:0 6px 6px 0}
-#seEv .sev-promo.sp{right:-4px;border-right:0;border-radius:6px 0 0 6px;background:linear-gradient(180deg,#6d3d18,#3b1f0d)}
-#seEv .sev-promo .pr-h{flex:none;padding:6px 4px 7px;text-align:center;background:linear-gradient(180deg,#c3382e,#8e1f19);font:900 clamp(11px,1.8vh,14px)/1 Georgia,serif;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 3px rgba(0,0,0,.35)}
-#seEv .sev-promo .pr-art{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:6px}
-#seEv .sev-promo .pr-art svg{width:100%;height:100%;max-height:190px}
-#seEv .sev-promo .pr-b{flex:none;padding:0 10px;text-align:center}
-#seEv .sev-promo .pr-b b{display:block;font:900 clamp(13px,2.1vh,16px)/1.15 Nunito,system-ui,sans-serif}
-#seEv .sev-promo .pr-b span{display:block;margin-top:4px;font:700 clamp(10px,1.6vh,12px)/1.3 Nunito,system-ui,sans-serif;color:#e8e2f6}
-#seEv .sev-promo .se-gold{margin:10px;padding:9px 10px!important}
-/* bottom row */
-#seEv .sev-links{position:absolute;right:14px;bottom:10px;display:flex;gap:8px;z-index:4}
-#seEv .sev-links button{padding:7px 14px!important;font-size:clamp(11px,1.8vh,13.5px)!important}
-#seEv .sev-links .sev-wkbtn{display:none}
-#seEv .sev-resume{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:rgba(28,24,50,.92);border:1.5px solid #e8c56a;font:800 13px/1.2 Nunito,system-ui,sans-serif;white-space:nowrap}
-#seEv .sev-resume button{padding:6px 12px!important;font-size:12px!important}
-/* the event page */
-#seEv .sev-page{position:absolute;inset:0;display:none;z-index:6}
-#seEv.page .sev-page{display:block}
-#seEv.page .sev-towns,#seEv.page .sev-stage,#seEv.page .sev-promo,#seEv.page .sev-links,#seEv.page .sev-resume{display:none}
-#seEv .sev-side{position:absolute;left:0;top:${TOP};bottom:0;width:clamp(78px,7.4vw,98px);background:linear-gradient(180deg,#2a2760,#1d1b47);box-shadow:3px 0 10px rgba(0,0,0,.35);z-index:2}
-#seEv .sev-side button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;height:clamp(58px,9vh,72px);border:0;border-bottom:1px solid rgba(255,255,255,.07);border-radius:0;
- background:transparent;color:#e9e4ff;font:800 11.5px/1.1 Nunito,system-ui,sans-serif;cursor:pointer;box-shadow:none;min-height:0;padding:0}
-#seEv .sev-side button svg{width:24px;height:24px}
-#seEv .sev-side button.on{background:linear-gradient(180deg,#f1e8d3,#e3d5b3);color:#3b2a17}
-#seEv .sev-main{position:absolute;left:clamp(78px,7.4vw,98px);right:0;top:${TOP};bottom:0;display:flex;flex-direction:column;align-items:center;padding:clamp(8px,2vh,18px) 20px 0;overflow-y:auto;overflow-x:hidden}
-#seEv .sev-ptitle{display:flex;align-items:center;gap:14px;width:min(900px,100%);font:800 clamp(17px,3vh,24px)/1.1 Georgia,serif;text-transform:uppercase;letter-spacing:.8px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
-#seEv .sev-ptitle::before,#seEv .sev-ptitle::after{content:'';flex:1;height:2px;background:rgba(230,230,240,.55)}
-#seEv .sev-plaque{margin-top:8px;padding:5px 26px;background:linear-gradient(180deg,#f7efdb,#e3d4ae);color:#3b2a17;font:800 clamp(11.5px,1.9vh,14px)/1 Georgia,serif;text-transform:uppercase;letter-spacing:.7px;
- clip-path:polygon(0 0,100% 0,calc(100% - 10px) 50%,100% 100%,0 100%,10px 50%)}
-#seEv .sev-prow{display:flex;gap:clamp(12px,2vw,22px);width:min(960px,100%);margin-top:clamp(8px,1.8vh,16px);align-items:stretch}
-#seEv .sev-map{position:relative;flex:1.35;min-width:0;aspect-ratio:1.6;max-height:calc(100vh - ${TOP} - 250px);border:3px solid #f4f1ea;border-radius:8px;overflow:hidden;background:#3d4a36;box-shadow:0 8px 22px rgba(0,0,0,.45)}
-#seEv .sev-map img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.95) brightness(.92);opacity:0;transition:opacity .4s}
-#seEv .sev-map img.se-snapped{opacity:1}
-#seEv .sev-map svg.sev-course{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-#seEv .sev-diffs{flex:1;display:flex;flex-direction:column;gap:clamp(6px,1.2vh,10px);min-width:200px;max-width:330px}
-#seEv .sev-diff{position:relative;display:flex;align-items:center;gap:10px;padding:clamp(7px,1.3vh,11px) 12px;border-radius:8px;cursor:pointer;text-align:left;border:2px solid rgba(255,255,255,.25)!important;
- background:rgba(30,28,62,.86)!important;color:#fff!important;box-shadow:0 3px 8px rgba(0,0,0,.35)!important;min-height:0!important;font-family:Nunito,system-ui,sans-serif!important}
-#seEv .sev-diff.on{border-color:#f1d27a!important;background:linear-gradient(180deg,rgba(80,62,140,.95),rgba(48,38,96,.95))!important;box-shadow:0 0 0 2px rgba(241,210,122,.35),0 3px 8px rgba(0,0,0,.35)!important}
-#seEv .sev-diff.lock{opacity:.6}
-#seEv .sev-diff .d-ic{font-size:22px;line-height:1;flex:none}
-#seEv .sev-diff .d-t{display:block;font:800 clamp(13px,2.1vh,16px)/1.1 Georgia,serif;text-transform:uppercase;letter-spacing:.4px}
-#seEv .sev-diff .d-s{display:block;margin-top:2px;font:700 clamp(10px,1.6vh,12px)/1.25 Nunito,system-ui,sans-serif;color:#d8d2ee}
-#seEv .sev-diff .d-pay{margin-left:auto;flex:none;display:flex;align-items:center;gap:4px;font:900 clamp(12px,2vh,15px)/1 Nunito,system-ui,sans-serif}
-#seEv .sev-diff .d-pay svg{width:18px;height:18px}
-#seEv .sev-diff .d-rib{display:flex;gap:2px;margin-top:4px}
-#seEv .sev-diff .d-rib svg{width:12px;height:15px}
-#seEv .sev-ribs{display:flex;gap:clamp(10px,2vw,18px);margin-top:clamp(8px,1.6vh,14px)}
-#seEv .sev-ribs .rs{width:clamp(40px,6.8vh,56px);height:clamp(48px,8.2vh,66px);display:flex;align-items:center;justify-content:center;border-radius:50% 50% 12px 12px;background:rgba(20,18,36,.5);border:2px solid rgba(255,255,255,.3)}
-#seEv .sev-ribs .rs svg{width:78%;height:78%}
-#seEv .sev-ribs .rs.off svg{opacity:.28;filter:grayscale(1)}
-#seEv .sev-pbar{position:sticky;bottom:0;margin-top:auto;width:calc(100% + 40px);box-sizing:border-box;display:flex;align-items:center;gap:18px;padding:clamp(8px,1.6vh,14px) 20px;background:linear-gradient(180deg,rgba(24,22,46,.7),rgba(24,22,46,.94));border-top:1px solid rgba(255,255,255,.15)}
-#seEv .sev-pbar .pb-k{display:block;font:800 clamp(9.5px,1.5vh,11.5px)/1.1 Nunito,system-ui,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:#bdb6dc}
-#seEv .sev-pbar .pb-v{display:block;font:900 clamp(14px,2.4vh,19px)/1.15 Nunito,system-ui,sans-serif;color:#fff;font-variant-numeric:tabular-nums}
-#seEv .sev-pbar .pb-req{display:flex;flex-wrap:wrap;gap:5px;flex:1;min-width:0}
-#seEv .sev-pbar .pb-req>span{padding:5px 8px;border-radius:8px;background:rgba(255,255,255,.12);font:800 11.5px/1.25 Nunito,system-ui,sans-serif}
-#seEv .sev-pbar .pb-req>span.bad{background:rgba(228,80,70,.3);color:#ffd6d2}
-#seEv .sev-pbar .pb-req>span.ok{background:rgba(90,190,110,.28);color:#d9ffe0}
-#seEv .sev-pbar .pb-req small{display:block;margin-top:3px;font-size:10.5px;font-weight:700}
-#seEv .sev-pbar.sev-preflight{flex:none;flex-direction:column;align-items:stretch;gap:6px}
-#seEv .pb-context{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 12px;font:700 11.5px/1.35 Nunito,system-ui,sans-serif;color:#e8e2f6}
-#seEv .pb-context b{color:#fff}
-#seEv .pb-context .pb-guide{margin-left:auto}
-#seEv .pb-context .pb-lock{flex-basis:100%;color:#ffdfb4}
-#seEv .pb-controls{display:flex;align-items:center;gap:18px}
-#seEv .sev-pbar .se-gold{min-width:clamp(140px,15vw,200px);padding:12px 22px!important}
-#seEv .sev-preparation{flex:none;width:min(960px,100%);margin:14px 0 16px;padding:14px;border:1px solid rgba(235,221,177,.4);border-radius:10px;background:rgba(27,25,48,.91);box-sizing:border-box}
-#seEv .sev-preparation h3{margin:0 0 8px;font:900 16px/1.25 Nunito,system-ui,sans-serif}
-#seEv .sev-preparation .pb-context{margin-bottom:10px}
-#seEv .sev-preparation .pb-req{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
-#seEv .sev-preparation .pb-req>span{padding:7px 10px;border-radius:7px;font:800 12px/1.3 Nunito,system-ui,sans-serif;background:rgba(90,190,110,.2);color:#e0ffe6}
-#seEv .sev-preparation .pb-req>span.bad{background:rgba(228,80,70,.26);color:#ffe0db}
-#seEv .sev-preparation .pb-req small{display:block;margin-top:3px;font-size:11px;font-weight:700}
-#seEv .sev-entry-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16)}
-#seEv .sev-entry-facts span{display:block;font:700 11px/1.3 Nunito,system-ui,sans-serif;color:#c9c2df}
-#seEv .sev-entry-facts b{display:block;margin-top:4px;font:900 14px/1.25 Nunito,system-ui,sans-serif;color:#fff;overflow-wrap:anywhere}
-#seEv .sev-prep-note{margin:10px 0 0;font:700 11.5px/1.45 Nunito,system-ui,sans-serif;color:#e3deee}
-#seEv .sev-preparation .pb-guide{margin:10px 0 0;font:700 12px/1.45 Nunito,system-ui,sans-serif;color:#eee5cd}
-#seEv .sev-ready{flex:1;min-width:0;font:900 13px/1.25 Nunito,system-ui,sans-serif;color:#deffe4}
-#seEv .sev-ready.locked{color:#ffdfb4}
-#seEv .sev-ready small{display:block;margin-top:3px;font:700 11px/1.25 Nunito,system-ui,sans-serif;color:#d9d2e8}
-#seEv .sev-entry-actions{flex:none;gap:10px;background:#211f3a;z-index:2}
-#seEv .sev-entry-actions>button{box-sizing:border-box;min-height:44px!important;padding:10px 14px!important;white-space:normal}
-#seEv .sev-blurb{width:min(960px,100%);margin-top:10px;font:700 clamp(11.5px,1.9vh,14px)/1.45 Nunito,system-ui,sans-serif;color:#ece7fa;text-shadow:0 1px 2px rgba(0,0,0,.5)}
-#seEv .sev-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;width:min(960px,100%);margin-top:14px}
-#seEv .sev-stats button{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px!important;text-align:left}
-/* the week's sheet */
-#seEv .sev-sheet{position:absolute;inset:0;z-index:8;display:none;align-items:center;justify-content:center;background:rgba(10,8,22,.55)}
-#seEv.sheet .sev-sheet{display:flex}
-#seEv .sev-sbox{position:relative;width:min(900px,94vw);max-height:calc(100vh - ${TOP} - 30px);overflow-y:auto;margin-top:${TOP};border-radius:10px;border:2px solid #d9b45e;background:linear-gradient(180deg,#352466,#231848);box-shadow:0 14px 40px rgba(0,0,0,.6);padding:0 0 16px}
-#seEv .sev-sh{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(180deg,#c3382e,#8e1f19)}
-#seEv .sev-sh b{font:900 clamp(16px,2.8vh,22px)/1 Georgia,serif;text-transform:uppercase;letter-spacing:.6px}
-#seEv .sev-sh span{margin-left:auto;display:flex;align-items:center;gap:6px;font:800 13px/1 Nunito,system-ui,sans-serif}
-#seEv .sev-sh span svg{width:16px;height:16px}
-#seEv .sev-sh .se-circ{margin-left:6px}
-#seEv .sev-fe{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:14px 16px 4px}
-#seEv .sev-fe>div{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:8px;border-radius:8px;background:rgba(0,0,0,.2)}
-#seEv .sev-fe svg{width:100%;max-width:120px;height:auto}
-#seEv .sev-fe b{font:800 13px/1.15 Georgia,serif;text-transform:uppercase}
-#seEv .sev-fe span{font:800 12px/1.2 Nunito,system-ui,sans-serif;color:#e8e2f6}
-#seEv .sev-fe button{padding:7px 14px!important;font-size:12.5px!important}
-#seEv .sev-tiers{display:flex;align-items:stretch;gap:10px;padding:12px 16px 0}
-#seEv .sev-tier{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:8px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);text-align:center;font:800 12.5px/1.25 Nunito,system-ui,sans-serif}
-#seEv .sev-tier.done{border-color:#7dd87d;background:rgba(80,190,100,.18)}
-#seEv .sev-tier.ready{border-color:#f1d27a;background:rgba(241,210,122,.14)}
-#seEv .sev-tier .t-n{font:900 18px/1 Georgia,serif}
-#seEv .sev-tier button{padding:6px 10px!important;font-size:12px!important}
-#seEv .sev-wbar{height:10px;margin:14px 16px 0;border-radius:5px;background:rgba(0,0,0,.35);overflow:hidden}
-#seEv .sev-wbar i{display:block;height:100%;background:linear-gradient(90deg,#7ee07e,#3fae5a);border-radius:5px}
-@media (max-width:760px){
- #seEv .sev-card{width:94vw;grid-template-columns:40% 60%}
- #seEv .sev-promo,#seEv .sev-arrow{display:none!important}
- /* the week's card has no room on a phone, so it is a button beside Ladder and All events: without it the weekly prizes
-    could not be seen or claimed from here at all */
- #seEv .sev-links{left:10px;right:10px;justify-content:center;flex-wrap:wrap}
- #seEv .sev-links .sev-wkbtn{display:inline-flex}
- #seEv .sev-links button{padding:7px 11px!important}
- #seEv .sev-name{font-size:14px}
- /* the badges took the head's whole width and ran into each other and the cup's name: New goes to the ticket's corner,
-    Featured to the far one, and the cup's name (the same for every card in the town) makes room */
- #seEv .sev-cup{display:none}
- #seEv .sev-new{left:-6px;right:auto}
- #seEv .sev-feat{left:auto;right:-6px}
- /* ring, percentage and gold ribbons stacked down the photo, sized to it, instead of the pill lying across the ring */
- #seEv .sev-ring{top:1.6vw;transform:translateX(-50%);width:20vw;height:20vw}
- #seEv .sev-pct{top:22.6vw;font-size:clamp(13px,3.6vw,20px)}
- #seEv .sev-gold{bottom:auto;top:29.4vw;height:clamp(20px,6vw,28px);padding:0 12px;font-size:clamp(10px,2.7vw,13px)}
- #seEv .sev-foot{font-size:11.5px;white-space:nowrap;overflow:hidden}
- /* the dots sit just under the card (the card is centred in the stage), clear of the buttons along the bottom, which
-    wrap to two rows when a special event is on */
- #seEv .sev-count{bottom:auto;top:calc(50% + 29.4vw + 6px)}
- #seEv .sev-count i{border-width:8px}
- #seEv .sev-prow{flex-direction:column}
- #seEv .sev-diffs{min-width:0;max-width:none}
- #seEv .sev-diff{min-width:0;box-sizing:border-box}
- #seEv .sev-fe{grid-template-columns:repeat(2,1fr)}
- #seEv .sev-tiers{flex-wrap:wrap}
- #seEv .sev-pbar,#seEv .pb-controls{flex-wrap:wrap}
- #seEv .pb-context .pb-guide{margin-left:0}
- #seEv .sev-entry-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
- #seEv .sev-entry-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-left:12px;padding-right:12px}
- #seEv .sev-entry-actions .sev-ready{grid-column:1/-1}
- #seEv .sev-entry-actions>button{min-width:0;width:100%;padding:9px 6px!important;font:800 13px/1.25 Nunito,system-ui,sans-serif!important;text-transform:none;letter-spacing:0}
- #seEv .sev-entry-actions .se-gold{min-width:0}}
-@media (max-height:500px) and (min-width:761px){
- #seEv .sev-entry-actions .sev-ready small{display:none}
- #seEv .sev-entry-actions{padding-top:7px;padding-bottom:7px}}`;
-  document.head.appendChild(st);
- }
+ /* Destination layout lives in assets/menu-destinations.css. */
 
  /* ---------------------------------------------------------------- the screen ------------ */
  const root=document.createElement('div'); root.id='seEv'; root.setAttribute('role','dialog'); root.setAttribute('aria-label','Riding Events');
@@ -528,18 +310,16 @@ export function install(G){
   const foot=ev.special?(ev.special==='roundup'?(roundupReady()?'Ready to start':'Next roundup soon'):'Train a stat for free')
    :next?('Unlock next event: <span class="sev-lv">Lv '+next.lvl+'</span>'):(rb.golds>=DIFFS().length?'Every gold ribbon won':'All events open');
   const art=ticketSvg(ev,{town:T0.name,ribbons:rb?Math.min(3,rb.best):0,lock:!g.ok||!!lk,label:ev.special?D.t:null});
-  const ring=ev.special?'<div class="sev-ring">'+ringSvg(1,disc==='roundup'?'#d9a33c':'#6fa3e8',true)+'</div>'
-   :'<div class="sev-ring">'+ringSvg(pct/100,'#63d26b')+'</div><div class="sev-pct">'+pct+'%</div>';
-  const gold=ev.special?'<div class="sev-gold">'+esc(ev.special==='roundup'?'Pays 130 coins a horse':'Eight cones, one stat')+'</div>'
-   :'<div class="sev-gold">'+K.RIBBON('#e6b53a','#b8831d')+rb.golds+'/'+DIFFS().length+' Gold Ribbons</div>';
+  const progress=ev.special?'<div class="sev-progress"><span>'+esc(ev.special==='roundup'?'130 coins per horse':'Free stat training')+'</span></div>'
+   :'<div class="sev-progress"><span>'+rb.golds+' of '+DIFFS().length+' gold ribbons</span><b>'+pct+'%</b><i><em style="width:'+pct+'%"></em></i></div>';
   const lock=lk?'<div class="sev-lockv">'+K.line('lock','#fff',2)+'<b>'+esc(T0.name)+'</b><span>'+esc(lk)+'</span></div>'
    :!g.ok?'<div class="sev-lockv">'+K.line('lock','#fff',2)+'<b>Needs '+esc(needText(g.missing))+'</b><span>'+esc(ridden().name||'Your horse')+' is Lv '+(ridden().level||1)+'</span></div>':'';
   return '<div class="sev-card'+cls+'" role="button" tabindex="'+(o===0?'0':'-1')+'"'+(Math.abs(o)>1?' aria-hidden="true"':'')+' aria-label="'+esc((o===0?'Open ':'Select ')+(ev.special?ev.name:shortName(ev))+(lk?', '+lk:!g.ok?', needs '+needText(g.missing):''))+'" style="--o:'+o+';--a:'+Math.abs(o)+';--c:'+D.c+'" data-card="'+i+'" data-ev="'+esc(ev.id)+'">'
    +(fresh?'<span class="sev-new">New event!</span>':'')+(isF?'<span class="sev-feat">Featured · '+(((s.weekly&&s.weekly.rib)||{})[ev.id]||0)+'/4</span>':'')
    +'<div class="sev-tk">'+art+'</div>'
-   +'<div class="sev-info"><div class="sev-head" style="background:'+D.c+'">'+EMBLEM+'<div><div class="sev-cup">'+esc(cupOf(T0.name))+'</div><div class="sev-name">'+esc(ev.special?ev.name:shortName(ev))+'</div></div></div>'
-   +'<div class="sev-photo">'+snapImg(venueView(ev),'')+ring+gold+lock+'</div>'
-   +'<div class="sev-foot" style="background:'+D.c+'">'+foot+'<span class="sev-sp"></span>'+K.line('chev','#fff',2.6)+'</div></div></div>';
+   +'<div class="sev-info"><div class="sev-head" style="--event-color:'+D.c+'">'+EMBLEM+'<div><div class="sev-cup">'+esc(cupOf(T0.name))+'</div><div class="sev-name">'+esc(ev.special?ev.name:shortName(ev))+'</div></div></div>'
+   +'<div class="sev-photo">'+snapImg(venueView(ev),'')+lock+'</div>'
+   +progress+'<div class="sev-foot" style="--event-color:'+D.c+'">'+foot+'<span class="sev-sp"></span>'+K.line('chev','#fff',2.6)+'</div></div></div>';
  }
  function ringSvg(p,col,full){
   const R=40,C=2*Math.PI*R,d=Math.max(0,Math.min(1,p))*C;
@@ -583,7 +363,10 @@ export function install(G){
   const ev=evById(st.page); if(!ev){st.page=null;root.classList.remove('page');paint();return;}
   const s=S(), disc=discOf(ev), D=DISC[disc]||DISC.jump, g=gate(ev), lk=townLock(ev.town), h=ridden(), lvl=h.level||1;
   strip.setTitle(ev.name,(ev.town||'')+' · '+D.t,'events');
-  const page=$('sevPage');
+  const page=$('sevPage'),view=ev.id+':'+st.diff,sameView=page.dataset.view===view;
+  const expanded=sameView?[...page.querySelectorAll('details')].map(d=>[d.className,d.open]):[];
+  const pageScroll=sameView?page.querySelector('.sev-main')?.scrollTop||0:0;
+  const focus=page.contains(document.activeElement)?document.activeElement.closest('[data-sev]')?.dataset.sev:null;
   let side='<div class="sev-side"><button class="on" data-sev="tab:event">'+K.line('events','currentColor',2)+'Event</button>'
    +(ev.special?'':'<button data-sev="tab:board">'+K.line('podium','currentColor',2)+'Board</button><button data-sev="tab:card">'+K.line('info','currentColor',2)+'Full card</button>')+'</div>';
   let main='<div class="sev-main"><div class="sev-ptitle">'+esc(D.t)+'</div>';
@@ -609,7 +392,7 @@ export function install(G){
      return '<button class="sev-diff'+(i===di?' on':'')+(l?' lock':'')+'" data-sev="diff:'+i+'"><span class="d-ic">'+esc(x.icon||'')+'</span><span><span class="d-t">'+esc(x.label)+'</span>'
       +'<span class="d-s">'+esc(l?('Opens at Lv '+(ev.lvl+x.lvlAdd)):(x.desc||''))+'</span><span class="d-rib">'+[0,1,2,3].map(k=>ribbonMini(k<rb.per[i],k===3)).join('')+'</span></span>'
       +'<span class="d-pay">'+K.COIN+fmt(pay)+'</span></button>';}).join('')+'</div></div>';
-   main+='<div class="sev-ribs">'+[0,1,2,3].map(k=>'<span class="rs'+(k<rb.per[di]?'':' off')+'" title="'+(k<3?['Finish','Two stars','Three stars'][k]:'Gold: 95% accuracy, nothing down')+'">'+(k<3?K.RIBBON('#3fae5a','#2a7d40'):K.RIBBON('#e6b53a','#b8831d'))+'</span>').join('')+'</div>';
+   main+='<div class="sev-ribs"><span>'+rb.per[di]+' of 4 ribbons earned</span>'+[0,1,2,3].map(k=>'<span class="rs'+(k<rb.per[di]?'':' off')+'" title="'+(k<3?['Finish','Two stars','Three stars'][k]:'Gold: 95% accuracy, nothing down')+'">'+(k<3?K.RIBBON('#3fae5a','#2a7d40'):K.RIBBON('#e6b53a','#b8831d'))+'</span>').join('')+'</div>';
    let tA=0; try{tA=G.course.eventTimeAllowed?G.course.eventTimeAllowed(ev,di):0;}catch(e){}
    const best=(s.bestTimes||{})[ev.id], bestS=(ev.dressage||ev.kind==='show')?((s.bestScore||{})[ev.id]||(s.showBest||{})[ev.id]):null;
    const stats=G.xp.statBreakdown?G.xp.statBreakdown(h):{total:G.xp.effStats(h),base:h.stats||{},tack:{}};
@@ -622,21 +405,25 @@ export function install(G){
    }).join('');
    const why=prep.reason;
    const scoring=G.events2?.allowedLine?.(ev,di)||(prep.judged?'Judged on percentage':(tA?tSec(tA)+' allowed':'See full card'));
-   main+='<section class="sev-preparation" aria-label="Event preparation"><h3>'+esc(h.name||'Your horse')+' · '+esc(d.label)+'</h3><div class="pb-context"><span>Current / required, includes tack.</span>'
-    +'<span class="pb-lock" role="status"><b>'+(prep.ready?'Entry requirements met.':'Before you ride:')+'</b> '+esc(why)+'</span></div><div class="pb-req">'+req+'</div>'
-    +'<p class="sev-prep-note">'+esc(prep.prepareHint)+'</p>'
+   const met=prep.requirements.filter(r=>r.met).length;
+   main+='<section class="sev-preparation" aria-label="Event preparation"><h3>'+esc(h.name||'Your horse')+' · '+esc(d.label)+'</h3>'
+    +'<p class="pb-lock" role="status">'+esc(why||'Your horse is ready for this event.')+'</p>'
+    +'<details class="sev-requirements"'+(prep.ready?'':' open')+'><summary>Horse readiness <span>'+met+' / '+prep.requirements.length+' requirements met</span></summary><div class="pb-req">'+req+'</div><p class="sev-prep-note">Current / required, including tack. '+esc(prep.prepareHint)+'</p></details>'
     +'<div class="sev-entry-facts"><div><span>Entry</span><b>Free</b></div><div><span>Listed purse'+(prep.featured?' · Featured ×1.5':'')+'</span><b>'+fmt(prep.purse)+' coins</b></div>'
     +'<div><span>'+(prep.judged?'Scoring':'Course format')+'</span><b>'+esc(scoring)+'</b></div>'
     +'<div><span>Personal best</span><b>'+(prep.judged?(bestS?Math.round((bestS>1?bestS:bestS*100))+'%':'No score yet'):(best?tBest(best):'No time yet'))+'</b></div></div>'
-    +'<p class="sev-prep-note">The purse reflects this difficulty'+(prep.featured?' and the weekly bonus':'')+'. Final rewards depend on the result and active bonuses. Full card has the scoring rules.</p>';
+    +'<details class="sev-scoring"><summary>Rewards & riding tips</summary><p class="sev-prep-note">The purse reflects this difficulty'+(prep.featured?' and the weekly bonus':'')+'. Final rewards depend on the result and active bonuses. Full card has the scoring rules.</p>';
    if(disc==='jump'||disc==='xc')main+='<p class="pb-guide">Follow the trail '+(disc==='xc'?'through gates and over fences':'to each fence')+'. '+(document.body.classList.contains('touch')?'Tap Jump':'Press Space')+' when the ring turns green.</p>';
-   main+='</section><div class="sev-pbar sev-entry-actions"><span class="sev-ready'+(prep.ready?'':' locked')+'">'+(prep.ready?'Ready to enter':'Preparation needed')+'<small>'+esc(D.t)+' · '+esc(d.label)+'</small></span>'
+   main+='</details></section><div class="sev-pbar sev-entry-actions"><span class="sev-ready'+(prep.ready?'':' locked')+'">'+(prep.ready?'Ready to enter':'Preparation needed')+'<small>'+esc(D.t)+' · '+esc(d.label)+'</small></span>'
     +'<button class="se-cream" data-sev="prepare:'+prep.prepareTab+'"'+(G.seCare?.open?'':' disabled')+'>Prepare horse</button>'
     +'<button class="se-gold" data-sev="ride"'+(!prep.ready?' disabled title="'+esc(why)+'"':'')+'>'+(prep.ready?'Enter event':'Locked')+'</button></div></div>';
    me.fns.push(()=>drawCourse(ev,mv));
    setTimeout(()=>drawCourse(ev,mv),0);
   }
-  page.innerHTML=side+main;
+  page.innerHTML=side+main;page.dataset.view=view;
+  for(const [className,open] of expanded){const d=[...page.querySelectorAll('details')].find(d=>d.className===className);if(d)d.open=open;}
+  if(page.querySelector('.sev-main'))page.querySelector('.sev-main').scrollTop=pageScroll;
+  if(focus)[...page.querySelectorAll('[data-sev]')].find(b=>b.dataset.sev===focus)?.focus({preventScroll:true});
  }
  function ribbonMini(on,gold){return '<svg viewBox="0 0 40 48" style="opacity:'+(on?1:.3)+'">'+K.RIBBON(gold?'#e6b53a':'#3fae5a',gold?'#b8831d':'#2a7d40').replace(/^<svg[^>]*>|<\/svg>$/g,'')+'</svg>';}
  function drawCourse(ev,mv){

@@ -1,0 +1,4 @@
+/* Shared language for the ranch journal and its destinations. */
+:root{--menu-forest:#213f36;--menu-cream:#f5f0e4;--menu-paper:#fffaf0;--menu-ink:#263d36;--menu-muted:#62766b;--menu-gold:#dfc27f;--menu-line:#d6ddcf}
+:is(#seMenu,#seHs,#seEv,#seJy,#seOv,#seChar,.se-fr) *{box-sizing:border-box}
+@media(prefers-reduced-motion:reduce){:is(#seMenu,#seHs,#seEv,#seJy,#seOv,#seChar,.se-fr) *{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}

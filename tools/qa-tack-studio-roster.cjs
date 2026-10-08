@@ -108,7 +108,7 @@ const check=(value,message)=>{assert(value,message);checks++;};
  listeners.click({target:{closest:()=>({dataset:{tcBack:''}})}});
  listeners.change({target:{dataset:{tcFilter:'theme'},value:'rainbow'}});
  check(dom.innerHTML.includes('Preview set in 3D')&&dom.innerHTML.includes('collection=rainbow')&&dom.innerHTML.includes('horse=bay-western'),'static premium cards preview the whole set on selected horse');
- check(!dom.innerHTML.includes('store.html?tab=tack')&&dom.innerHTML.includes('purchases unavailable'),'no broken static premium checkout link');
+ check(!dom.innerHTML.includes('store.html?tab=tack&product=')&&dom.innerHTML.includes('purchases unavailable'),'no broken static premium checkout link');
  global.location.hostname='localhost';
  check(tab.render(save).includes('store.html?tab=tack&product=tack_rainbow'),'local paid checkout route retained');
  const {premiumTackSet}=await import(asset('premium-tack.mjs'));

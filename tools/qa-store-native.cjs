@@ -48,6 +48,8 @@ function fixtureDOM(){
   check(!document.getElementById('tab-account')&&!document.getElementById('auth-form')&&!document.getElementById('confirm-dialog'),'account forms and transaction dialog removed from static DOM');
   check(document.querySelectorAll('[data-tab]').length===4&&ids.get('tab-discover').getAttribute('aria-selected')==='true','Discover is default with four public tabs');
   check(ids.get('store-notice').textContent.includes('Purchases coming soon'),'availability clearly stated');
+  const filters=ids.get('tack-filter-options');filters.open=true;filters.listeners.keydown({key:'Escape',preventDefault(){}});
+  check(filters.open===false&&document.activeElement===filters.querySelector('summary'),'Escape closes the filter panel and returns focus to its control');
   check(document.querySelectorAll('[data-product],[data-reward],[data-tack-checkout]').length===0,'no static payment or redemption controls');
   check(ids.get('store-sets').children.length===6,'six set picture cards visible');
   check(ids.get('tack-item-grid').children.every(c=>c.querySelector('.catalog-art')?.innerHTML.includes('<svg')),'every catalog card has a real SVG picture');
@@ -69,6 +71,38 @@ function fixtureDOM(){
  account={wallet:{held:false},tack:[]};tack.render();buy=document.querySelector('[data-tack-checkout]');check(buy.textContent==='$3.99 · Test checkout','test price and purchase mode explicit');buy.listeners.click();check(buys[0]==='tack_rainbow','checkout delegates exact server product ID');
  working=true;tack.render();check(document.querySelector('[data-tack-checkout]').disabled,'busy checkout disabled');working=false;account.wallet.held=true;tack.render();check(document.querySelector('[data-tack-checkout]').disabled,'held wallet cannot buy');
  account.wallet.held=false;account.tack=[{product:'tack_rainbow'}];tack.render();check(!document.querySelector('[data-tack-checkout]')&&document.querySelector('[data-tack-action]').textContent.includes('Choose a horse & equip'),'owned set goes to equip and cannot be bought twice');
+
+ // Run the actual local controller: a reconnect must never repeat a transaction.
+ async function localStore(fault){
+  const {document,ids}=fixtureDOM(),calls=[],navigations=[];
+  const player={user:{id:'test-player',username:'Rider'},wallet:{gems:40,vipUntil:0,held:false},cloud:{revision:0,updated:0},orders:[],tack:[]};
+  const catalog={products:Object.entries(P.PRODUCTS).map(([id,p])=>({id,...p})),rewards:Object.entries(P.REWARDS).map(([id,p])=>({id,...p})),premiumTack:{products:T.publicTackProducts()},checkoutEnabled:true};
+  let fail=fault;
+  const api=async(path,body)=>{calls.push({path,body});if(path==='catalog')return catalog;if(path==='me')return player;if(path==='checkout'){if(fail)throw fail;return {url:'https://checkout.stripe.com/c/pay/cs_test_fixture'};}throw Error('Unexpected API request '+path);};
+  const ctx=vm.createContext({document,location:{hostname:'localhost',href:'http://localhost/store.html',search:'',assign:u=>navigations.push(u)},isStaticStore:false,createTackStore:T.createTackStore,PRODUCTS:P.PRODUCTS,REWARDS:P.REWARDS,URL,URLSearchParams,Intl,console,crypto:{randomUUID},api,matchMedia:()=>({matches:true}),localStorage:{getItem:()=>null}});
+  const ctrl=await vm.runInContext('(async()=>{'+source.replace(/^import .*;\n/gm,'')+';return {buyProduct,checkoutRequests,run};})()',ctx);
+  return {ctrl,ids,calls,navigations,player,setFailure:value=>{fail=value;},settle:()=>new Promise(resolve=>setImmediate(resolve))};
+ }
+ for(const fault of [new TypeError('Failed to fetch'),Object.assign(new Error('aborted'),{name:'AbortError'}),Object.assign(new Error('expired'),{name:'TimeoutError'})]){
+  const f=await localStore(fault),before=JSON.stringify(f.player);
+  f.ctrl.buyProduct('tack_starlight');f.ctrl.buyProduct('tack_starlight');await f.settle();
+  let purchases=f.calls.filter(c=>c.path==='checkout');
+  check(purchases.length===1,'double click while buying creates only one checkout request');
+  check(!f.ids.get('retry').hidden&&/reconnect/i.test(f.ids.get('message').textContent),'purchase-time offline and timeout errors expose reconnect guidance');
+  check(f.ids.get('message').textContent!==fault.message,'network errors use player-facing guidance');
+  const requestId=purchases[0].body.requestId;
+  check(f.ctrl.checkoutRequests.get('tack_starlight')===requestId,'uncertain checkout retains its idempotency key');
+  f.setFailure(null);await f.ids.get('retry').onclick();
+  check(f.calls.filter(c=>c.path==='checkout').length===1&&f.navigations.length===0,'Reconnect reads catalog/account without replaying checkout or navigating');
+  check(f.ids.get('retry').hidden&&f.ids.get('message').textContent.includes('no purchase was retried'),'successful reconnect removes recovery control and reports that no purchase was retried');
+  check(JSON.stringify(f.player)===before,'recovery preserves the account, wallet and save state');
+  f.ctrl.buyProduct('tack_starlight');await f.settle();purchases=f.calls.filter(c=>c.path==='checkout');
+  check(purchases.length===2&&purchases[1].body.requestId===requestId,'a later explicit purchase retries the same request, preventing duplicate order creation');
+  check(f.navigations.length===1&&new URL(f.navigations[0]).origin==='https://checkout.stripe.com','only an explicit successful checkout navigates to Stripe');
+ }
+ const rejected=await localStore(Object.assign(new Error('This account is on hold.'),{status:403}));
+ rejected.ctrl.buyProduct('tack_starlight');await rejected.settle();
+ check(rejected.ids.get('message').textContent==='This account is on hold.'&&rejected.ids.get('retry').hidden,'ordinary server errors remain intact instead of suggesting reconnection');
  check(!fs.readFileSync(require.resolve('../assets/store-tack.mjs'),'utf8').includes('weekly-horses'),'no retired weekly horse runtime dependency');
  console.log(`Native storefront QA passed: ${checks} checks; 127 illustrated items, 6 sets, static zero-API controls and backend-gated local checkout.`);
 })().catch(error=>{console.error(error);process.exitCode=1;});

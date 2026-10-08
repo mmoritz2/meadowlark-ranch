@@ -360,6 +360,9 @@ body.se-hud:is(.se-screen-open,.se-market-open,.se-ov-open) #toasts{top:auto!imp
 #seRidePace #seStop{font-size:12px;margin-left:4px}
 #seGaitChoices{position:absolute;bottom:calc(100% + 8px);left:0;right:0;display:none;grid-template-columns:1fr 1fr;gap:4px;padding:5px;border-radius:12px;background:rgba(18,22,36,.94)}
 #seGaitChoices.on{display:grid}#seGaitChoices button{font-size:14px}
+#seGaitChoices{border:1px solid #b8c8ad;background:#213d33;box-shadow:0 8px 24px #12251b40}
+#seGaitChoices button[aria-pressed="true"]{background:#e7d7a6;color:#263f32}
+#seRidePace button:focus-visible{outline:3px solid #f4d990;outline-offset:2px}
 #seHudRoot:has(#seGaitChoices.on){z-index:9}
 body.se-hud #tGal{display:none!important}
 body.se-riding-flight #tGal,body.se-riding-foot #tGal{display:block!important}
@@ -417,6 +420,7 @@ body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
  function openMenu(){
   if(menu.classList.contains('on'))return;
   menuFocus=document.activeElement;
+  G.menuDialogFocus?.suspend(); // release shared menu leases before this modal snapshots inert state
   setQuick(false);
   G.hidePanels();G.input?.reset();paintMenuHead();
   for(const el of document.body.children){
@@ -588,12 +592,29 @@ body.se-riding-flight #seRidePace,body.se-riding-foot #seRidePace{display:none}
 
  /* Explicit pace and a held brake use the same intent as the keyboard. */
  const pace=document.createElement('div');pace.id='seRidePace';pace.setAttribute('role','group');pace.setAttribute('aria-label','Riding pace');
- pace.innerHTML='<button id="seGaitDown" aria-label="Slower gait" title="Slower gait ([)">−</button><button id="seGaitLabel" aria-haspopup="true" aria-expanded="false"><b>Canter</b><small>Select gait</small></button><button id="seGaitUp" aria-label="Faster gait" title="Faster gait (])">+</button><button id="seStop" aria-label="Hold to stop">STOP</button><div id="seGaitChoices">'+['walk','trot','canter','gallop'].map(g=>'<button data-gait="'+g+'">'+g[0].toUpperCase()+g.slice(1)+'</button>').join('')+'</div>';
+ pace.innerHTML='<button id="seGaitDown" aria-label="Slower gait" title="Slower gait ([)">−</button><button id="seGaitLabel" aria-haspopup="true" aria-controls="seGaitChoices" aria-expanded="false"><b>Canter</b><small>Select gait</small></button><button id="seGaitUp" aria-label="Faster gait" title="Faster gait (])">+</button><button id="seStop" aria-label="Hold to stop">STOP</button><div id="seGaitChoices" role="group" aria-label="Choose riding gait">'+['walk','trot','canter','gallop'].map(g=>'<button data-gait="'+g+'">'+g[0].toUpperCase()+g.slice(1)+'</button>').join('')+'</div>';
  root.appendChild(pace);
  const choices=$('seGaitChoices'),gaitLabel=$('seGaitLabel');
  $('seGaitDown').onclick=()=>G.riding?.shiftGait(-1);$('seGaitUp').onclick=()=>G.riding?.shiftGait(1);
- gaitLabel.onclick=()=>{const on=choices.classList.toggle('on');gaitLabel.setAttribute('aria-expanded',String(on));};
- choices.onclick=e=>{const g=e.target.closest('[data-gait]')?.dataset.gait;if(g){G.riding?.selectGait(g);choices.classList.remove('on');gaitLabel.setAttribute('aria-expanded','false');}};
+ function closeGaits(restore=false){choices.classList.remove('on');gaitLabel.setAttribute('aria-expanded','false');if(restore)gaitLabel.focus({preventScroll:true});}
+ function openGaits(){choices.classList.add('on');gaitLabel.setAttribute('aria-expanded','true');const selected=choices.querySelector('[aria-pressed="true"]:not([hidden])')||[...choices.children].find(b=>!b.hidden);selected?.focus({preventScroll:true});}
+ gaitLabel.onclick=()=>choices.classList.contains('on')?closeGaits(true):openGaits();
+ choices.onclick=e=>{const g=e.target.closest('[data-gait]')?.dataset.gait;if(g){G.riding?.selectGait(g);closeGaits(true);}};
+ pace.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!choices.classList.contains('on'))return;
+  if(e.key==='Escape'&&choices.classList.contains('on')){e.preventDefault();closeGaits(true);}
+  else if(choices.classList.contains('on')&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key)){
+   const list=[...choices.children].filter(b=>!b.hidden&&!b.disabled),index=list.indexOf(document.activeElement);let next;
+   if(e.key==='Home')next=list[0];else if(e.key==='End')next=list.at(-1);else{const step=['ArrowLeft','ArrowUp'].includes(e.key)?-1:1;next=list[(Math.max(0,index)+step+list.length)%list.length];}
+   e.preventDefault();next?.focus({preventScroll:true});
+  }
+  // Keep native Enter/Space button clicks, but never send them to riding/jump.
+  e.stopPropagation();
+ });
+ pace.addEventListener('keyup',e=>e.stopPropagation());
+ pace.addEventListener('focusout',()=>queueMicrotask(()=>{if(!pace.contains(document.activeElement))closeGaits();}));
+ document.addEventListener('pointerdown',e=>{if(!pace.contains(e.target))closeGaits();},true);
+ G.on('escape',()=>{if(choices.classList.contains('on')){closeGaits(true);return true;}return false;});
  const stop=$('seStop');stop.addEventListener('pointerdown',e=>{e.preventDefault();try{stop.setPointerCapture(e.pointerId);}catch(_){}G.riding?.brake(true);});
  for(const ev of ['pointerup','pointercancel','lostpointercapture'])stop.addEventListener(ev,()=>G.riding?.brake(false));
  stop.addEventListener('keydown',e=>{if(['Space','Enter'].includes(e.code)){e.preventDefault();e.stopPropagation();G.riding?.brake(true);}});

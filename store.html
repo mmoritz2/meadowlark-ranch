@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#193f36">
+  <meta name="theme-color" content="#213f36">
   <title>Ranch Store · Meadowlark</title>
-  <link rel="stylesheet" href="assets/store.css?v=native-store-20261007">
-  <script type="module" src="assets/store.js?v=native-store-20261007"></script>
+  <link rel="stylesheet" href="assets/store.css?v=equestrian-polish-20261008">
+  <script type="module" src="assets/store.js?v=equestrian-polish-20261008"></script>
 </head>
 <body>
-  <header><a class="brand" href="ranch3d.html">MEADOWLARK <span>RANCH</span></a><a class="back" href="ranch3d.html">Back to the ranch <span aria-hidden="true">↗</span></a></header>
-  <main>
-    <div class="store-intro"><div><div class="eyebrow">THE RANCH STORE</div><h1>Make the trail your own.</h1><p class="intro">Tack for every ride, plus optional gems and VIP.</p></div><span id="store-badge" class="test-badge">Test store</span></div>
+  <a class="skip-link" href="#store-main">Skip to the store</a><header class="ranch-header"><a class="brand" href="ranch3d.html" aria-label="Meadowlark Ranch · back to the game">MEADOWLARK <span>RANCH</span></a><nav class="ranch-nav" aria-label="Ranch destinations"><a href="store.html" aria-current="page">Store</a><a href="tack-studio.html">Fitting room</a><a href="ranch3d.html?shop=tackcollection">Boutique</a></nav></header>
+  <main id="store-main">
+    <div class="store-intro"><div><h1>Ranch store</h1><p class="intro">Find a look you love. Try it on before you choose.</p></div><span id="store-badge" class="test-badge">Test store</span></div>
     <p id="store-notice" class="test-banner">Sample prices. No real payments. Use Stripe test cards only.</p>
-    <div class="status-row"><p id="message" role="status" aria-live="polite">Loading the store…</p><button id="retry" class="text-button" hidden>Try again</button></div>
+    <div class="status-row"><p id="message" role="status" aria-live="polite">Loading the store…</p><button id="retry" class="text-button" hidden>Reconnect</button></div>
     <section id="guest" class="account-card guest-card" hidden aria-label="Ranch account">
       <div><b>Make yourself at home.</b><p>Sign in to keep purchases and a cloud backup with your account.</p></div><div class="guest-actions"><button id="show-login" class="secondary">Sign in</button><button id="show-register" class="text-button">Create an account</button></div>
     </section>
@@ -41,8 +41,8 @@
     </section>
     <section id="panel-tack" role="tabpanel" aria-labelledby="tab-tack" tabindex="0" hidden>
       <div id="tack-look-detail" hidden></div>
-      <div class="section-heading"><div><h2>The complete tack collection.</h2><p>100 pieces for earned coins, 3 free originals, and 24 pieces in premium sets.</p></div><a class="catalog-link" href="ranch3d.html?shop=tackcollection">Open the boutique ↗</a></div>
-      <div class="store-tack-filters"><label for="tack-search">Search pieces<input id="tack-search" type="search" placeholder="Name, color or collection…" autocomplete="off"></label><label for="tack-slot">Category<select id="tack-slot"><option value="all">All categories</option></select></label><label for="tack-collection-filter">Collection<select id="tack-collection-filter"><option value="all">All 32 collections</option></select></label><label for="tack-kind">Available with<select id="tack-kind"><option value="all">Everything</option><option value="free">Free originals</option><option value="coins">Earned coins</option><option value="premium">Premium sets</option></select></label></div>
+      <div class="catalog-intro"><h2 class="sr-only">The complete tack collection</h2><p>Free, earned-coin &amp; premium tack.</p></div>
+      <div class="store-tack-filters"><label for="tack-search"><span class="sr-only">Search pieces</span><input id="tack-search" type="search" placeholder="Search tack by name or collection…" autocomplete="off"></label><details class="catalog-options" id="tack-filter-options"><summary>Filter pieces</summary><div class="filter-options"><label for="tack-slot">Category<select id="tack-slot"><option value="all">All categories</option></select></label><label for="tack-collection-filter">Collection<select id="tack-collection-filter"><option value="all">All 32 collections</option></select></label><label for="tack-kind">Available with<select id="tack-kind"><option value="all">Everything</option><option value="free">Free originals</option><option value="coins">Earned coins</option><option value="premium">Premium sets</option></select></label></div></details></div>
       <div class="catalog-results"><p id="tack-result-count" tabindex="-1" role="status" aria-live="polite"></p><button id="tack-clear-filters" class="text-button">Clear filters</button></div>
       <div id="tack-item-grid" class="store-item-grid"></div><div id="tack-empty" class="catalog-empty" hidden><h3>No matching pieces.</h3><p>Try another name, category or collection.</p><button id="tack-reset-empty" class="secondary">Show all tack</button></div>
       <nav id="tack-pagination" class="catalog-pagination" aria-label="Tack catalog pages"><button id="tack-previous" class="secondary">← Previous</button><span id="tack-page"></span><button id="tack-next" class="secondary">Next →</button></nav>
@@ -76,7 +76,7 @@
         <details id="history-section" class="store-details" hidden><summary>Purchase history</summary><ul id="history"></ul></details>
       </div>
     </section>
-    <footer>Meadowlark Ranch · Store preview<br>Premium purchases are coming soon. Final prices, support and purchase terms will be confirmed before launch.<br>Original collection tack by Meadowlark Ranch. Classic Western tack and fitting-room horses by <a href="https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4" target="_blank" rel="noopener noreferrer">WildMesh 3D</a> · <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0</a>.</footer>
+    <footer><p id="store-footer-mode">Test store · Sample prices, no real payments.</p><p>Original collection tack by Meadowlark Ranch. Classic Western tack and fitting-room horses by <a href="https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4" target="_blank" rel="noopener noreferrer">WildMesh 3D</a> · <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0</a>.</p></footer>
   </main>
   <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-text"><form method="dialog"><h2 id="confirm-title">Confirm</h2><p id="confirm-text"></p><div class="dialog-actions"><button value="cancel" class="secondary" autofocus>Cancel</button><button value="yes" id="confirm-yes">Continue</button></div></form></dialog>
 </body>

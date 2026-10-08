@@ -2,25 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Tack studio · Meadowlark Ranch</title>
-  <link rel="stylesheet" href="assets/tack-studio.css?v=native-tack-fit-1">
+  <meta name="theme-color" content="#213f36"><title>Fitting room · Meadowlark Ranch</title>
+  <link rel="stylesheet" href="assets/tack-studio.css?v=equestrian-polish-20261008">
   <script type="importmap">{"imports":{"three":"./assets/vendor/three/build/three.module.js","three/addons/":"./assets/vendor/three/examples/jsm/"}}</script>
 </head>
 <body>
-  <header class="studio-header"><a class="wordmark" href="ranch3d.html">MEADOWLARK <span>RANCH</span></a><a class="back-link" href="ranch3d.html?shop=tackcollection">Visit the tack boutique <span aria-hidden="true">↗</span></a></header>
-  <main>
-    <section class="intro"><div><span class="eyebrow">The saddlery collection</span><h1>Made for your kind of ride.</h1><p>Explore 127 pieces. Find a matching set, or make a look of your own.</p></div><span class="collection-count">32 sets <span>·</span> 127 pieces</span></section>
+  <a class="skip-link" href="#studio-main">Skip to the fitting room</a>
+  <header class="ranch-header"><a class="wordmark" href="ranch3d.html" aria-label="Meadowlark Ranch · back to the game">MEADOWLARK <span>RANCH</span></a><nav class="ranch-nav" aria-label="Ranch destinations"><a href="store.html">Store</a><a href="tack-studio.html" aria-current="page">Fitting room</a><a href="ranch3d.html?shop=tackcollection">Boutique</a></nav></header>
+  <main id="studio-main">
+    <section class="intro"><div><h1>Fitting room</h1><p>Your horse. Your eye for detail. Try every piece for free.</p></div><span class="collection-count">32 collections <span>·</span> 127 pieces</span></section>
     <div class="studio-layout">
       <section class="showroom" aria-label="3D tack fitting room">
-        <div class="scene-top"><label for="horse">Preview horse<select id="horse"></select></label><span class="preview-badge">All horses free to preview</span></div>
-        <div id="stage"><div id="status" role="status" aria-live="polite">Preparing the fitting room…</div><div class="scene-hint">Drag to turn · Scroll to zoom</div></div>
-        <div class="detail-views" aria-label="Inspect tack"><span>Look closer</span><button data-focus="horse" aria-pressed="true">Full horse</button><button data-focus="saddle" aria-pressed="false">Saddle & pad</button><button data-focus="bridle" aria-pressed="false">Bridle</button><button data-focus="shoes" aria-pressed="false">Legwear</button></div>
-        <div class="scene-bottom"><div class="movement" aria-label="Preview movement"><button data-gait="idle" aria-pressed="true">Stand</button><button data-gait="walk" aria-pressed="false">Walk</button><button data-gait="gallop" aria-pressed="false">Gallop</button><button data-gait="jump" aria-pressed="false">Jump</button></div><div class="view-tools"><button id="side" aria-pressed="false">Side view</button><button id="reset">Reset view</button></div></div>
+        <div class="scene-top"><label for="horse">Preview horse<select id="horse" disabled aria-describedby="preview-note"></select></label><span class="preview-badge">Free to try on</span></div>
+        <div id="stage" aria-busy="true"><div id="status" role="status" aria-live="polite"><span class="loading-mark" aria-hidden="true"></span><p id="status-text">Preparing the fitting room…</p><button id="studio-retry" hidden>Try again</button></div><div class="scene-hint">Drag to turn · Use + and − to zoom</div></div>
+        <div class="view-bar"><div class="zoom-tools" role="group" aria-label="Zoom"><button id="zoom-out" aria-label="Zoom out">−</button><output id="zoom-level" aria-live="polite">100%</output><button id="zoom-in" aria-label="Zoom in">+</button></div><div class="view-tools"><button id="side" aria-pressed="false">Side view</button><button id="reset">Reset view</button></div><button id="view-options" aria-expanded="false" aria-controls="preview-controls">More views</button></div>
+        <div id="preview-controls" hidden>
+          <div class="detail-views" role="group" aria-label="Inspect tack"><span>Look closer</span><button data-focus="horse" aria-pressed="true">Full horse</button><button data-focus="saddle" aria-pressed="false">Saddle &amp; pad</button><button data-focus="bridle" aria-pressed="false">Bridle</button><button data-focus="shoes" aria-pressed="false">Legwear</button></div>
+          <div class="movement" role="group" aria-label="Preview movement"><span>Movement</span><button data-gait="idle" aria-pressed="true" disabled>Stand</button><button data-gait="walk" aria-pressed="false" disabled>Walk</button><button data-gait="gallop" aria-pressed="false" disabled>Gallop</button><button data-gait="jump" aria-pressed="false" disabled>Jump</button></div>
+        </div>
         <p id="horse-notice" class="horse-notice" role="status" hidden></p>
-        <p class="preview-note">This fitting room previews the same equipment used in the ranch. Trying pieces on does not purchase or save them.</p>
+        <p id="preview-note" class="preview-note">The actual ranch equipment. Trying it on never purchases or saves a look.</p>
       </section>
       <aside class="wardrobe" aria-label="Choose tack">
-        <div class="wardrobe-heading"><span class="eyebrow">Build your look</span><h2 id="look-name">The collection</h2><p id="look-description"></p></div>
+        <div class="wardrobe-heading"><span class="eyebrow">Your look</span><h2 id="look-name">The collection</h2><p id="look-description"></p></div>
         <label class="field" for="collection">Matching collection<select id="collection"></select></label>
         <div class="mix-heading"><span>Mix & match</span><button id="clear">Remove all tack</button></div>
         <div id="piece-pickers"></div>
@@ -32,6 +36,6 @@
   </main>
   <footer>Collection tack designs by Meadowlark Ranch. Horse and Classic Western tack by <a id="horse-artist" href="https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4" target="_blank" rel="noopener noreferrer">WildMesh 3D</a> · <a id="horse-license" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0</a><span id="horse-source-note">Game movement and collection fitting by Meadowlark Ranch.</span></footer>
   <output id="preview-health" hidden></output>
-  <script type="module" src="assets/tack-studio.js?v=tack-store-live-20261007"></script>
+  <script type="module" src="assets/tack-studio.js?v=equestrian-polish-20261008"></script>
 </body>
 </html>

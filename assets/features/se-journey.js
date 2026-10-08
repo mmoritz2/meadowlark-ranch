@@ -472,109 +472,7 @@ export function install(G){
  }
 
  /* ================================================================ the look ==============*/
- if(!$('seJyCss')){
-  const st=document.createElement('style'); st.id='seJyCss';
-  st.textContent=`
-#seJy{--sjy-vh:100vh;--sjy-top:clamp(50px,8.5vh,64px);--sjy-pt:clamp(12px,2.6vh,26px);--sjy-pb:clamp(34px,5.6vh,50px);--sjy-gap:clamp(10px,2.2vh,20px);
- --sjy-r:calc((var(--sjy-vh) - var(--sjy-top) - var(--sjy-pt) - var(--sjy-pb) - var(--sjy-gap)) / 2);
- --sjy-w:min(calc(var(--sjy-r) * .8),calc((100vw - 36px - 3 * var(--sjy-gap)) / 4.55));--sjy-mw:calc(var(--sjy-w) * 1.55);--sjy-plate:clamp(38px,9vh,76px);
- position:fixed;inset:0;z-index:10;display:none;font-family:Nunito,system-ui,sans-serif;color:#fff;overflow:clip;user-select:none;-webkit-user-select:none}
-@supports (height:100dvh){#seJy{--sjy-vh:100dvh}}
-#seJy.on{display:block}
-#seJy .sjy-dim{position:absolute;inset:0;background:rgba(18,18,26,.34);backdrop-filter:blur(2.5px) saturate(.55) brightness(.8);-webkit-backdrop-filter:blur(2.5px) saturate(.55) brightness(.8)}
-#seJy .se-strip{position:absolute}
-#seJy .sjy-rail{position:absolute;left:0;right:0;top:var(--sjy-top);bottom:var(--sjy-pb);display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,var(--sjy-r));
- grid-template-columns:var(--sjy-mw);grid-auto-columns:var(--sjy-w);gap:var(--sjy-gap);align-content:start;
- padding:var(--sjy-pt) max(18px,env(safe-area-inset-right)) 0 max(18px,env(safe-area-inset-left));overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain}
-#seJy .sjy-rail::-webkit-scrollbar{display:none}
-#seJy .sjy-card{position:relative;display:flex;flex-direction:column;min-width:0;min-height:0;height:100%;box-sizing:border-box;margin:0;padding:0;border:3px solid #d9d6e4;border-radius:9px;
- background:#2c2356;box-shadow:0 6px 16px rgba(0,0,0,.45);cursor:pointer;text-align:center;color:#fff;font:inherit;transition:transform .15s,filter .15s}
-#seJy .sjy-card.big{grid-row:1 / span 2}
-@media (hover:hover){#seJy .sjy-card:hover{transform:translateY(-2px);filter:brightness(1.06)}}
-#seJy .sjy-card:active{transform:translateY(1px)}
-#seJy .sjy-card:focus-visible{outline:3px solid #ffd970;outline-offset:3px}
-#seJy .sjy-pic{position:relative;display:block;flex:1 1 auto;min-height:0;overflow:hidden;border-radius:6px 6px 0 0;background:#6b5a86}
-#seJy .sjy-pic>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
-#seJy .sjy-ov{position:absolute;inset:0;display:block;pointer-events:none}
-#seJy .sjy-bar{position:absolute;left:0;right:0;bottom:0;z-index:1;display:block;height:clamp(18px,3.4vh,30px);background:rgba(24,20,44,.55);border-top:1px solid rgba(255,255,255,.35)}
-#seJy .sjy-bar>i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(180deg,#ffd955,#eaa81c);box-shadow:inset 0 -2px 0 rgba(140,80,0,.35)}
-#seJy .sjy-bar>b{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:1px 9px;border-radius:9px;background:rgba(20,16,36,.8);font:900 clamp(11px,2vh,16px)/1.15 Nunito,system-ui,sans-serif;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
-#seJy .sjy-plate{flex:none;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;height:var(--sjy-plate);box-sizing:border-box;padding:0 8px;min-width:0;border-radius:0 0 6px 6px;
- background:linear-gradient(180deg,#46397f,#2c2356);box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
-#seJy .sjy-t{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-width:100%;font:800 clamp(12.5px,2.4vh,22px)/1.06 var(--sef-serif);letter-spacing:.3px;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);overflow:hidden;text-wrap:balance}
-#seJy .sjy-t.long{font-size:clamp(11px,2vh,17px)}
-#seJy .sjy-s{display:block;max-width:100%;font:800 clamp(10.5px,1.7vh,15px)/1.25 Nunito,system-ui,sans-serif;color:#eadfbf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#seJy .sjy-s.two{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;white-space:normal;line-height:1.2;text-overflow:clip;text-wrap:balance}   /* a line too long for one, where the plate has room for two (fit() decides) */
-#seJy .sjy-pip{position:absolute;top:-9px;right:-9px;z-index:4;min-width:24px;height:24px;box-sizing:border-box;padding:0 6px;border-radius:12px;background:#c9302a;border:2px solid #fff;color:#fff;font:900 12.5px/20px Nunito,system-ui,sans-serif;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.4)}
-#seJy .sjy-new{position:absolute;top:clamp(20px,3.6vh,30px);right:-6px;z-index:3;padding:5px 10px 5px 15px;background:linear-gradient(180deg,#ffd34d,#f2b01e);color:#3b2600;font:900 clamp(11px,1.9vh,15px)/1 var(--sef-serif);letter-spacing:.5px;text-transform:uppercase;
- clip-path:polygon(9px 0,100% 0,100% 100%,9px 100%,0 50%);filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
-#seJy .sjy-ban{position:absolute;left:-7px;right:-7px;top:-13px;z-index:3;display:block;padding:5px 6px 6px;text-align:center;background:linear-gradient(180deg,#be3a30,#8f2019);font:800 clamp(10.5px,1.8vh,14px)/1 var(--sef-serif);
- color:#fff;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 3px rgba(0,0,0,.4);text-shadow:0 1px 0 rgba(0,0,0,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#seJy .sjy-card.lock .sjy-pic>svg{filter:grayscale(.6) brightness(.8)}
-#seJy .sjy-lockv{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10%;background:rgba(20,18,30,.62);font:800 clamp(11px,1.8vh,14px)/1.3 Nunito,system-ui,sans-serif;color:#f1ecff;text-wrap:balance}
-#seJy .sjy-lockv svg{width:clamp(24px,4.4vh,36px);height:clamp(24px,4.4vh,36px)}
-#seJy .sjy-card.big .sjy-plate{height:calc(var(--sjy-plate) * 1.35)}
-#seJy .sjy-card.big .sjy-t{font-size:clamp(17px,3.6vh,32px)}
-#seJy .sjy-card.big .sjy-s{font:700 clamp(12px,2.2vh,19px)/1.2 var(--sef-serif)}
-#seJy .sjy-big{position:absolute;left:0;right:0;bottom:0;z-index:1;display:flex;flex-direction:column;align-items:flex-end;padding:22% 8% 6%;text-align:right;pointer-events:none;background:radial-gradient(90% 80% at 100% 100%,rgba(14,10,26,.84),rgba(14,10,26,.74) 45%,rgba(14,10,26,0) 80%)}
-#seJy .sjy-big>b{font:900 clamp(34px,8vh,72px)/1 var(--sef-serif);color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.55)}
-#seJy .sjy-big>small{font:700 clamp(14px,3vh,28px)/1.15 var(--sef-serif);color:#f4ecd6;text-shadow:0 1px 3px rgba(0,0,0,.6)}
-#seJy .sjy-big>em{margin-top:4px;font:800 normal clamp(11px,1.8vh,14px)/1.2 Nunito,system-ui,sans-serif;color:#ece6fa}
-#seJy .sjy-orn{position:absolute;inset:4.5%;z-index:1;border:1.5px solid rgba(255,248,225,.6);border-radius:3px;pointer-events:none}
-#seJy .sjy-orn>i{position:absolute;width:14px;height:14px;border:1.5px solid rgba(255,248,225,.75);transform:rotate(45deg);background:rgba(255,248,225,.25)}
-#seJy .sjy-orn>i:nth-child(1){left:-8px;top:-8px}#seJy .sjy-orn>i:nth-child(2){right:-8px;top:-8px}#seJy .sjy-orn>i:nth-child(3){left:-8px;bottom:-8px}#seJy .sjy-orn>i:nth-child(4){right:-8px;bottom:-8px}
-#seJy .sjy-ready{position:absolute;left:8%;top:6%;z-index:3;display:flex;align-items:center;gap:6px;max-width:80%;padding:6px 12px;border-radius:8px;background:linear-gradient(180deg,var(--sef-gold1),var(--sef-gold2));color:#3a2a10;
- font:900 clamp(11px,1.8vh,14px)/1.15 Nunito,system-ui,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 5px rgba(0,0,0,.35);text-align:left}
-#seJy .sjy-ready svg{width:18px;height:18px;flex:none}
-#seJy .sjy-foot{position:absolute;left:max(18px,env(safe-area-inset-left));right:max(18px,env(safe-area-inset-right));bottom:0;height:var(--sjy-pb);display:flex;align-items:center;gap:16px}
-#seJy .sjy-track{position:relative;flex:1;height:clamp(8px,1.3vh,12px);border-radius:6px;background:rgba(18,14,40,.62);box-shadow:inset 0 1px 2px rgba(0,0,0,.5);cursor:pointer;touch-action:none}
-#seJy .sjy-track>i{position:absolute;top:0;bottom:0;left:0;border-radius:6px;background:linear-gradient(180deg,#7a64d0,#4a3a94);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
-#seJy .sjy-track.none{visibility:hidden}
-#seJy .sjy-all{flex:none;display:inline-flex!important;align-items:center;gap:8px;padding:7px 14px!important;font-size:clamp(11px,1.8vh,13.5px)!important}
-#seJy .sjy-all svg{width:18px;height:18px}
-/* while the row runs on past the right edge, the column cut by the edge fades out into it (its width is measured in paintTrack) */
-#seJy .sjy-rail.more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - var(--sjy-fade,0px)),rgba(0,0,0,.1) 100%);mask-image:linear-gradient(90deg,#000 calc(100% - var(--sjy-fade,0px)),rgba(0,0,0,.1) 100%)}
-/* a message while the hub is up: in the strip between the title and the wallet (toastLane measures the room), else on the foot row; never on a name plate */
-html body.se-screen-open.sjy-open #toasts{top:auto!important;bottom:calc(3px + env(safe-area-inset-bottom))!important}
-html body.se-screen-open.sjy-open.sjy-lane #toasts{top:var(--sjy-tt,6px)!important;bottom:auto!important;left:var(--sjy-tl,50%)!important;right:auto!important;width:var(--sjy-tw,420px)!important;transform:none!important;align-items:center!important}
-@media (max-height:500px) and (min-width:761px){
- #seJy .sjy-card:not(.big) .sjy-s{display:none}
- #seJy .sjy-card:not(.big) .sjy-t{font-size:clamp(11px,calc(var(--sjy-w) * .095),12px);letter-spacing:-.3px}
- #seJy .sjy-card.big .sjy-s{font-size:10.5px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;white-space:normal;line-height:1.15;text-overflow:clip;text-wrap:balance}
- #seJy .sjy-plate{padding:0 3px}
- #seJy .sjy-big>em{display:none}
- #seJy .sjy-new{padding:3px 7px 3px 12px}
- #seJy .sjy-ban-l{display:none}
- #seJy .sjy-ban{left:-2px;right:-2px;letter-spacing:0}
- #seJy .sjy-pip{right:-6px;top:-7px}}
-@media (max-width:760px){
- #seJy{--sjy-pw:calc((100vw - 44px) / 2);--sjy-ph:calc(var(--sjy-pw) * .92);--sjy-bh:calc((100vw - 32px) * .5625)}
- #seJy .sjy-rail{bottom:calc(58px + env(safe-area-inset-bottom));grid-auto-flow:row;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:calc(var(--sjy-bh) + 70px);grid-auto-rows:calc(var(--sjy-ph) + 72px);grid-auto-columns:auto;gap:18px 12px;
-  padding:18px 16px 18px;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain}
- #seJy .sjy-card{height:100%}
- #seJy .sjy-card.big{grid-column:1 / -1;grid-row:auto}
- #seJy .sjy-pic{flex:1 1 auto}
- #seJy .sjy-plate{height:66px;padding:4px 8px}
- #seJy .sjy-card.big .sjy-plate{height:64px}
- #seJy .sjy-t{font-size:14px}#seJy .sjy-t.long{font-size:12.5px}
- #seJy .sjy-s{font-size:11.5px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;white-space:normal;line-height:1.2;text-overflow:clip;text-wrap:balance}
- #seJy .sjy-card.big .sjy-t{font-size:21px}
- #seJy .sjy-card.big .sjy-s{font-size:14px}
- #seJy .sjy-big{padding:16% 5% 4%;background:radial-gradient(75% 100% at 100% 100%,rgba(14,10,26,.8),rgba(14,10,26,.6) 45%,rgba(14,10,26,0) 85%)}   /* soft on every side: no edge across the picture */
- #seJy .sjy-big>b{font-size:42px}#seJy .sjy-big>small{font-size:17px}#seJy .sjy-big>em{font-size:12px}
- #seJy .sjy-bar{height:22px}#seJy .sjy-bar>b{font-size:12.5px}
- #seJy .sjy-foot{left:0;right:0;height:calc(58px + env(safe-area-inset-bottom));padding:0 16px env(safe-area-inset-bottom);box-sizing:border-box;background:rgba(24,20,44,.86);border-top:1px solid rgba(255,255,255,.14)}
- #seJy .sjy-track{display:none}
- #seJy .sjy-foot .sjy-all{flex:1;justify-content:center;padding:11px 14px!important;font-size:14px!important}
- #seJy .sjy-new{top:26px}
- #seJy .sjy-ban-l{display:none}
- #seJy .sjy-ban{left:-2px;right:-2px;letter-spacing:0}
- #seJy .sjy-pip{right:-6px;top:-7px}
- html body.se-screen-open.sjy-open #toasts{top:auto!important;bottom:calc(66px + env(safe-area-inset-bottom))!important}   /* just over the All quests bar, not over the story card */
- #seJy .se-strip .se-ttl>svg{display:none}
- #seJy .se-strip .se-ttl b{font-size:19px}}`;
-  document.head.appendChild(st);
- }
+ /* Destination layout lives in assets/menu-destinations.css. */
 
  /* ================================================================ the screen ============*/
  const root=document.createElement('div'); root.id='seJy'; root.setAttribute('role','dialog'); root.setAttribute('aria-label','My Journey');
@@ -652,13 +550,16 @@ html body.se-screen-open.sjy-open.sjy-lane #toasts{top:var(--sjy-tt,6px)!importa
   const s=S(), fg=figures(s), o=order(s,fg);
   st.figs=fg; st.order=o.list; st.feat=o.feat;
   strip.setTitle('My Journey',s.streakN>1?'Day '+s.streakN+' streak':'','journey'); strip.paint();
-  let prev=null, total=0;
+  const groups=[['continue','Continue your journey',id=>id==='story'||id===o.feat],['ride','Ride & compete',id=>/^(jump|xc|race|dressage|show)$/.test(id)],['discover','Around the valley',()=>true]];
+  for(const [key,title] of groups){if(!rail.querySelector('[data-group="'+key+'"]')){const section=document.createElement('section');section.className='sjy-section';section.dataset.group=key;section.innerHTML='<h2>'+title+'</h2><div class="sjy-grid"></div>';rail.appendChild(section);}}
+  const previous=new Map(); let total=0;
+
   for(const id of o.list){
    const f=fg[id]||{}, def=CARD[id]||{t:id};
-   let el=rail.querySelector(':scope>[data-card="'+id+'"]');
+   let el=rail.querySelector('[data-card="'+id+'"]');
    if(!el){el=document.createElement('button');el.type='button';el.className='sjy-card'+(def.big?' big':'');el.dataset.card=id;
     el.innerHTML='<span class="sjy-pic"></span><span class="sjy-plate"><b class="sjy-t"></b><small class="sjy-s"></small></span>';}
-   const title=id==='special'?(f.title||'This season'):def.t;
+   const title=id==='story'?'Continue the story':id==='special'?(f.title||'This season'):def.t;
    const a=artFor(id,f,s);
    const pic=el.querySelector('.sjy-pic');
    if(el.dataset.art!==a.k){el.dataset.art=a.k;const vb=id==='story'?storyVB():'0 0 240 240';
@@ -668,7 +569,7 @@ html body.se-screen-open.sjy-open.sjy-lane #toasts{top:var(--sjy-tt,6px)!importa
    let extra='';
    const locked=f.locked||null;
    if(def.big){
-    extra+='<span class="sjy-orn"><i></i><i></i><i></i><i></i></span><span class="sjy-big"><b>'+(f.pct||0)+'%</b><small>Story Progress</small><em>'+esc((f.x||0)+' of '+(f.y||0)+' missions')+'</em></span>';
+    extra+='<span class="sjy-big"><b>'+(f.pct||0)+'%</b><small>Story complete</small><em>'+esc((f.x||0)+' of '+(f.y||0)+' missions')+'</em></span>';
     if(f.ready)extra+='<span class="sjy-ready">'+K.line('star','#3a2a10',2.2)+esc(f.readyText)+'</span>';
    }else if(!locked&&f.pct!=null){extra+='<span class="sjy-bar"><i style="width:'+f.pct+'%"></i><b>'+f.pct+'%</b></span>';}
    if(locked)extra+='<span class="sjy-lockv">'+K.line('lock','#fff',2)+'<span>'+esc(locked)+'</span></span>';
@@ -689,27 +590,21 @@ html body.se-screen-open.sjy-open.sjy-lane #toasts{top:var(--sjy-tt,6px)!importa
    let bn=el.querySelector(':scope>.sjy-ban'); if(ban){if(!bn){bn=document.createElement('span');bn.className='sjy-ban';el.appendChild(bn);}if(bn.dataset.h!==ban){bn.dataset.h=ban;bn.innerHTML=ban;}}else if(bn)bn.remove();
    el.setAttribute('aria-label',title+'. '+(ban?'Limited, '+dl+'. ':'')+(f.pct!=null&&!locked?f.pct+' percent. ':'')+(f.status||f.sub||'')+(n?'. '+n+' ready to claim':'')+(isNew?'. New':''));
    el.title=f.status||'';
-   const want=prev?prev.nextSibling:rail.firstChild; if(el!==want)rail.insertBefore(el,want); prev=el;
+   const group=groups.find(x=>x[2](id))[0],grid=rail.querySelector('[data-group="'+group+'"] .sjy-grid'),prev=previous.get(group);
+   const want=prev?prev.nextSibling:grid.firstChild;if(el!==want)grid.insertBefore(el,want);previous.set(group,el);
   }
-  for(const el of [...rail.children]){if(el.dataset.card&&!o.list.includes(el.dataset.card))el.remove();}
+  for(const el of rail.querySelectorAll('[data-card]')){if(!o.list.includes(el.dataset.card))el.remove();}
   st.pips=total;
   layout();
  }
  const phone=()=>innerWidth<=760;
- const storyVB=()=>phone()?'0 128 480 270':'45 0 300 480';
+ const storyVB=()=> '0 100 480 320';
  function layout(){
   const svg=rail.querySelector('[data-card="story"] .sjy-pic>svg'); if(svg){const vb=storyVB();if(svg.getAttribute('viewBox')!==vb)svg.setAttribute('viewBox',vb);}
   fit(); toastLane(); paintTrack();
  }
- /* a subtitle too long for its line takes a second one where the plate has room for it (a one-line title), instead of
-    being cut off mid-word; on a phone every subtitle may take two (the CSS), and on a short screen they are not shown */
- function fit(){
-  const subs=[...rail.querySelectorAll(':scope>.sjy-card:not(.big) .sjy-s')];
-  subs.forEach(x=>x.classList.remove('two'));
-  if(phone()||innerHeight<=500)return;
-  const want=subs.map(x=>{if(x.style.display==='none'||x.scrollWidth<=x.clientWidth+1)return false;const pl=x.parentElement,t=pl.firstElementChild;return pl.clientHeight-t.offsetHeight-3>=2*x.offsetHeight;});
-  subs.forEach((x,i)=>{if(want[i])x.classList.add('two');});
- }
+ /* Card descriptions wrap naturally; no font shrinking or viewport-height truncation. */
+ function fit(){}
  /* the room in the strip between the title and the wallet, where a message goes while the hub is up */
  function toastLane(){
   const tb=$('toasts'), a=strip.querySelector('.se-ttl'), b=strip.querySelector('.se-pill')||strip.querySelector('[data-se="close"]');
@@ -720,33 +615,8 @@ html body.se-screen-open.sjy-open.sjy-lane #toasts{top:var(--sjy-tt,6px)!importa
   tb.style.setProperty('--sjy-tl',Math.round(l+(r-l-w)/2)+'px'); tb.style.setProperty('--sjy-tw',Math.round(w)+'px'); tb.style.setProperty('--sjy-tt',Math.round(sr.top+Math.max(2,(sr.height-46)/2))+'px');
   document.body.classList.add('sjy-lane');
  }
- function paintTrack(){
-  const sw=rail.scrollWidth, cw=rail.clientWidth, i=track.firstChild;
-  if(phone()||!sw||sw<=cw+2){track.classList.add('none');rail.classList.remove('more');return;}
-  track.classList.remove('none');
-  const tw=track.clientWidth; i.style.width=Math.max(24,tw*cw/sw)+'px'; i.style.left=(tw-Math.max(24,tw*cw/sw))*(rail.scrollLeft/(sw-cw))+'px';
-  /* the column the right edge cuts through fades out over what shows of it; a sliver is left as it is */
-  const edge=rail.scrollLeft+cw; let vis=0;
-  for(const el of rail.children){const l=el.offsetLeft;if(l<edge-1&&l+el.offsetWidth>edge+1)vis=Math.max(vis,edge-l);}
-  const more=rail.scrollLeft<sw-cw-2&&vis>=16;
-  rail.classList.toggle('more',more); if(more)rail.style.setProperty('--sjy-fade',Math.round(Math.min(vis+6,220))+'px');
- }
- rail.addEventListener('scroll',paintTrack,{passive:true});
- {let rz=0; addEventListener('resize',()=>{if(!st.on||rz)return;rz=requestAnimationFrame(()=>{rz=0;if(st.on)paint();});});}   // across 760 px the story's picture is redrawn for the other shape
- rail.addEventListener('wheel',e=>{if(phone())return;if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){rail.scrollLeft+=e.deltaY;e.preventDefault();}},{passive:false});
- /* drag the thumb, or click the track to jump there */
- {let drag=null;
-  track.addEventListener('pointerdown',e=>{const sw=rail.scrollWidth,cw=rail.clientWidth,tw=track.clientWidth,r=track.getBoundingClientRect(),th=track.firstChild.getBoundingClientRect();
-   if(e.clientX<th.left||e.clientX>th.right){rail.scrollTo({left:((e.clientX-r.left)/tw)*sw-cw/2,behavior:'smooth'});return;}
-   drag={x:e.clientX,l:rail.scrollLeft,k:sw/tw};track.setPointerCapture(e.pointerId);e.preventDefault();});
-  track.addEventListener('pointermove',e=>{if(drag)rail.scrollLeft=drag.l+(e.clientX-drag.x)*drag.k;});
-  track.addEventListener('pointerup',()=>{drag=null;});track.addEventListener('pointercancel',()=>{drag=null;});}
- /* a mouse can drag the row itself, as a finger does */
- {let d=null,moved=false;
-  rail.addEventListener('pointerdown',e=>{moved=false;if(e.pointerType!=='mouse'||e.button!==0||phone())return;d={x:e.clientX,l:rail.scrollLeft};});   // every press starts clean, so a finger's tap after a mouse drag is never taken for the end of the drag
-  rail.addEventListener('pointermove',e=>{if(!d)return;const dx=e.clientX-d.x;if(Math.abs(dx)>6)moved=true;if(moved)rail.scrollLeft=d.l-dx;});
-  addEventListener('pointerup',()=>{d=null;});
-  rail.addEventListener('click',e=>{if(moved&&e.detail){e.stopPropagation();e.preventDefault();moved=false;}},true);}   // only a pointer's click ends a drag; Enter or Space on a card (detail 0) always opens it
+ function paintTrack(){track.classList.add('none');rail.classList.remove('more');}
+ {let rz=0;addEventListener('resize',()=>{if(!st.on||rz)return;rz=requestAnimationFrame(()=>{rz=0;if(st.on)paint();});});}
 
  /* ---- where each card goes ---- */
  function markSeen(id){const f=st.figs[id];if(f&&f.sig&&f.isNew){mem.seen[id]=f.sig;remember();}}
@@ -787,21 +657,20 @@ html body.se-screen-open.sjy-open.sjy-lane #toasts{top:var(--sjy-tt,6px)!importa
  /* ---- keys: arrows move between cards (by where they sit), the horse stays still behind the screen ---- */
  function nearest(from,dir){
   const r0=from.getBoundingClientRect(), cx=r0.left+r0.width/2, cy=r0.top+r0.height/2; let best=null,bd=1e9;
-  for(const el of rail.querySelectorAll(':scope>.sjy-card')){if(el===from)continue;const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,dx=x-cx,dy=y-cy;
+  for(const el of rail.querySelectorAll('.sjy-card')){if(el===from)continue;const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,dx=x-cx,dy=y-cy;
    const ok=dir==='l'?dx<-4:dir==='r'?dx>4:dir==='u'?dy<-4:dy>4; if(!ok)continue;
    const d=(dir==='l'||dir==='r')?Math.abs(dx)+Math.abs(dy)*2.5:Math.abs(dy)+Math.abs(dx)*2.5; if(d<bd){bd=d;best=el;}}
   return best;
  }
  function focusCard(el){if(!el)return;el.focus({preventScroll:true});const r=el.getBoundingClientRect(),rr=rail.getBoundingClientRect();
-  if(phone()){if(r.top<rr.top+8||r.bottom>rr.bottom-8)rail.scrollBy({top:r.top<rr.top+8?r.top-rr.top-16:r.bottom-rr.bottom+16,behavior:'smooth'});}
-  else if(r.left<rr.left+8||r.right>rr.right-8)rail.scrollBy({left:r.left<rr.left+8?r.left-rr.left-18:r.right-rr.right+18,behavior:'smooth'});}
+  if(r.top<rr.top+8||r.bottom>rr.bottom-8)rail.scrollBy({top:r.top<rr.top+8?r.top-rr.top-16:r.bottom-rr.bottom+16,behavior:'smooth'});}
  G.on('screenKey',e=>{
   if(!st.on)return false;
   const c=e.code, a=document.activeElement, onCard=a&&a.classList&&a.classList.contains('sjy-card')&&root.contains(a);
   const dir={ArrowLeft:'l',KeyA:'l',ArrowRight:'r',KeyD:'r',ArrowUp:'u',KeyW:'u',ArrowDown:'d',KeyS:'d'}[c];
-  if(dir){e.preventDefault();focusCard(onCard?nearest(a,dir):rail.querySelector(':scope>.sjy-card'));return true;}   // the focused row would otherwise scroll itself as well
+  if(dir){e.preventDefault();focusCard(onCard?nearest(a,dir):rail.querySelector('.sjy-card'));return true;}   // the focused row would otherwise scroll itself as well
   if(c==='Enter'||c==='Space'){const onBtn=a&&a.tagName==='BUTTON'&&root.contains(a);
-   if(!onBtn){const f=rail.querySelector(':scope>.sjy-card');if(f)f.focus({preventScroll:true});e.preventDefault();}return true;}   // on a card, All quests or the strip's buttons, the button's own Enter/Space presses it
+   if(!onBtn){const f=rail.querySelector('.sjy-card');if(f)f.focus({preventScroll:true});e.preventDefault();}return true;}   // on a card, All quests or the strip's buttons, the button's own Enter/Space presses it
   return false;
  });
  G.on('wallet',()=>{if(st.on)strip.paint();});
