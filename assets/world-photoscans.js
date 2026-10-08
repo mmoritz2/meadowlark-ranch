@@ -1,3 +1,4 @@
+import {OASIS_FACE} from './canyon-landscape.js?v=organic-oasis-face-1';
 import {patchOuterFog} from './outer-landscape.js?v=continuous-countryside-1';
 import {installThunderOak} from './thunder-oak-art.js?v=split-oak-1';
 import {installWillowArt} from './willow-art.js?v=weeping-willows-1';
@@ -487,6 +488,34 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     }
     state.logs=placed;
   }
+  // The surveyed scan and terrain seat share a fixed transform. Its detailed
+  // contact surface stays active independently of visibility and graphics quality.
+  function installPrincipalOasisFace(piece){
+    const {x,z,yaw}=OASIS_FACE,size=piece.bounds.getSize(new THREE.Vector3());
+    const scale=OASIS_FACE.width/size.x,co=Math.cos(yaw),sn=Math.sin(yaw);
+    const cx=(piece.bounds.min.x+piece.bounds.max.x)/2,cz=(piece.bounds.min.z+piece.bounds.max.z)/2;
+    // Fixed survey elevation: cutting the backing must not sink the scan.
+    const position=piece.geo.attributes.position,ty=OASIS_FACE.baseY;let footVertices=0,footGapMin=Infinity,footGapMax=-Infinity;
+    for(let i=0;i<position.count;i++){
+      const sy=position.getY(i);if(sy>piece.bounds.min.y+.45)continue;
+      const sx=position.getX(i)-cx,sz=position.getZ(i)-cz;
+      const wx=x+scale*(co*sx+sn*sz),wz=z+scale*(-sn*sx+co*sz);
+      const ground=W.terrainH(wx,wz);if(!Number.isFinite(ground))throw Error('Principal cliff footing is outside canonical terrain');
+      const gap=ty+scale*sy-ground;footGapMin=Math.min(footGapMin,gap);footGapMax=Math.max(footGapMax,gap);footVertices++;
+    }
+    if(!footVertices)throw Error('Principal cliff source has no finite low footing');
+    const matrix=new THREE.Matrix4().set(scale*co,0,scale*sn,x-scale*(co*cx+sn*cz),
+      0,scale,0,ty,-scale*sn,0,scale*co,z-scale*(-sn*cx+co*cz),0,0,0,1);
+    const mesh=new THREE.Mesh(piece.geo,piece.mat);mesh.name='Photoscan principal organic Oasis cliff face';
+    mesh.matrixAutoUpdate=false;mesh.matrix.copy(matrix);mesh.castShadow=true;mesh.receiveShadow=true;
+    group.add(mesh);mesh.updateWorldMatrix(true,false);
+    const contactTriangles=W.solidWorld.registerSurface(mesh);
+    W.groundSurfaces.push((wx,wz)=>W.solidWorld.surfaceHeight(wx,wz,mesh));
+    state.cliffs++;
+    state.principalCliff={name:mesh.name,x,z,yaw,scale,width:size.x*scale,height:size.y*scale,depth:size.z*scale,
+      matrix:matrix.toArray(),footVertices,lowBand:.45,originalBurial:.18,source:'namaqualand_cliff_02',
+      sourceGeometry:piece.geo.uuid,sourceMaterial:piece.mat.uuid,footGapMin,footGapMax,contactTriangles};
+  }
   async function installRockFaces(){
     for(const [id,stride] of [['rock_face_02',3],['namaqualand_cliff_02',4]]){
       const piece=pieces(await load(id))[0],size=piece.bounds.getSize(new THREE.Vector3());
@@ -500,6 +529,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         const mesh=instances(piece,[matrix],'Photoscan weathered rock face');patch(mesh,at.x,at.z,240);state.cliffs++;
         W.climbables.push({mesh,x:at.x,z:at.z,r:at.r*1.95,y:W.groundH(at.x,at.z),kind:'outcrop'});
       }
+      if(id==='namaqualand_cliff_02')installPrincipalOasisFace(piece);
     }
   }
   let previousSelection=new Set(),previousMode=null;

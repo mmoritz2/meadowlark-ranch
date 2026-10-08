@@ -74,6 +74,40 @@ function oasisFrontDepression(x,z,relief){
  const erosion=7.0*(1-(1-gully)*(1-west*2.7/7.0)*(1-east*2.1/7.0));
  return erosion*keep;
 }
+// Original scan-derived backing seat for the principal Oasis face. Values are
+// metre cuts authored from the fixed scanned lower surface and final terrain.
+// The road and crown remain outside this compact C2 footprint; fixed scan Y is
+// retained separately. This is terrain backing, not scan-surface collision.
+export const OASIS_FACE=Object.freeze({x:-139,z:145,yaw:-.2,width:30,baseY:9.160923485526174});
+const oasisPrincipalCuts=[
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.00678,0.01356,0.00678,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0.00318,0.01936,0.02917,0.01409,0.08895,0.31224,0.56699,0.78177,0.93949,0.96644,0.89374,0.81178,0.68576,0.54572,0.40746,0.22757,0.06424,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0.08833,0.16035,0.36879,0.58233,0.78378,1.00817,1.19754,1.53031,2.19012,2.97824,3.5771,3.76557,3.46752,3.20757,3.19046,2.91034,2.39446,1.89129,1.33155,0.79753,0.49615,0.28984,0.07991,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0.02208,0.04416,0.25447,0.73759,1.15511,1.90455,3.15897,4.11496,4.73966,5.53876,6.46274,6.52591,5.99025,6.11281,6.43703,6.4732,6.02995,5.1022,4.26697,3.53678,2.50238,1.34857,0.57969,0.15982,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0.11619,0.36879,0.57596,1.53518,3.41011,4.69364,5.24419,5.75612,6.2587,5.44758,4.40785,5.62106,6.7924,6.62215,6.07194,5.20392,4.48989,3.98919,2.86914,1.20868,0.28984,0.07991,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0.39506,1.23014,1.76214,1.94589,2.09524,2.20722,1.71701,1.25046,2.02288,2.67599,2.52763,2.26657,1.95045,1.70675,1.55639,1.10004,0.35626,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+];
+function oasisPrincipalSeat(x,z,relief){
+ if(x<=-155||x>=-121||z<=137||z>=153||relief<=2.2)return 0;
+ const gx=x+156,gz=z-136,ix=Math.floor(gx),iz=Math.floor(gz),sx=crestSmooth(0,1,gx-ix),sz=crestSmooth(0,1,gz-iz),i=iz*37+ix;
+ const a=oasisPrincipalCuts[i],b=oasisPrincipalCuts[i+1],c=oasisPrincipalCuts[i+37],d=oasisPrincipalCuts[i+38];
+ const cut=(a+(b-a)*sx)*(1-sz)+(c+(d-c)*sx)*sz;
+ const edge=crestSmooth(-155,-153,x)*(1-crestSmooth(-123,-121,x))*crestSmooth(137,139,z)*(1-crestSmooth(151,153,z));
+ return Math.min(Math.max(0,relief-2.2),cut*edge*crestSmooth(2.2,4.5,relief));
+}
 export function canyonRelief(x,z){
  let height=0,oasisUpperDelta=0;
  for(const r of prepared){
@@ -96,7 +130,8 @@ export function canyonRelief(x,z){
  const relief=height>0?height*keepLandmarks(x,z):0;
  const retained=relief-oasisCrestDepression(x,z,relief);
  const face=retained+oasisUpperDelta*keepLandmarks(x,z)*oasisFrontMask(x,z,retained);
- return face-oasisFrontDepression(x,z,retained);
+ const front=face-oasisFrontDepression(x,z,retained);
+ return front-oasisPrincipalSeat(x,z,front);
 }
 // Retire isolated towers swallowed by the connected banks and the open canyon
 // route. Callers still consume their seeded placements, keeping other regions fixed.
@@ -120,16 +155,16 @@ export function createCanyonLandscape({THREE,scene,heightAt,terrainStep,material
  const surface=material.clone();surface.name='Canyon | terrain sandstone';surface.vertexColors=false;
  surface.transparent=true;surface.depthWrite=false;surface.polygonOffset=true;surface.polygonOffsetFactor=-1;surface.polygonOffsetUnits=-1;
  surface.onBeforeCompile=sh=>{
-  sh.vertexShader='attribute float cliffCover; varying float canyonCover; varying vec3 canyonPosition; varying vec3 canyonNormal;\n'+sh.vertexShader;
+  sh.vertexShader='attribute float cliffCover; attribute float oasisTone; varying float canyonCover; varying float canyonTone; varying vec3 canyonPosition; varying vec3 canyonNormal;\n'+sh.vertexShader;
   sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
-   canyonCover=cliffCover;canyonPosition=(modelMatrix*vec4(position,1.0)).xyz;canyonNormal=normalize(mat3(modelMatrix)*normal);`);
-  sh.fragmentShader=`varying float canyonCover; varying vec3 canyonPosition; varying vec3 canyonNormal;
+   canyonCover=cliffCover;canyonTone=oasisTone;canyonPosition=(modelMatrix*vec4(position,1.0)).xyz;canyonNormal=normalize(mat3(modelMatrix)*normal);`);
+  sh.fragmentShader=`varying float canyonCover; varying float canyonTone; varying vec3 canyonPosition; varying vec3 canyonNormal;
    vec2 cliffWarp(vec2 p){return p/5.49+vec2(sin(p.x*.06+p.y*.07),sin(p.x*.04-p.y*.09))*.24;}
    vec4 cliffSample(sampler2D tex,vec2 p){vec2 uv=cliffWarp(p);return mix(texture2D(tex,uv),texture2D(tex,uv*.713+vec2(.43,.72)),.44);}
    vec4 cliffTriplanar(sampler2D tex){vec3 w=pow(abs(normalize(canyonNormal)),vec3(6.0));w/=max(dot(w,vec3(1.0)),.001);
     return cliffSample(tex,canyonPosition.zy)*w.x+cliffSample(tex,canyonPosition.xz)*w.y+cliffSample(tex,canyonPosition.xy)*w.z;}
   `+sh.fragmentShader;
-  sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','diffuseColor*=cliffTriplanar(map);');
+  sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>',"vec4 canyonRock=cliffTriplanar(map); float canyonGrey=dot(canyonRock.rgb,vec3(.2126,.7152,.0722)); canyonRock.rgb=mix(canyonRock.rgb,mix(canyonRock.rgb,vec3(canyonGrey),.64)*vec3(.90,.88,.84),canyonTone); diffuseColor*=canyonRock;");
   sh.fragmentShader=sh.fragmentShader.replace('#include <alphatest_fragment>','diffuseColor.a*=canyonCover;\n#include <alphatest_fragment>');
   sh.fragmentShader=sh.fragmentShader.replace('#include <roughnessmap_fragment>','float roughnessFactor=roughness*cliffTriplanar(roughnessMap).g;');
   sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`
@@ -139,7 +174,7 @@ export function createCanyonLandscape({THREE,scene,heightAt,terrainStep,material
    vec3 cliffNormal=normalize(vec3(cx.z*sign(cn.x),cx.y,cx.x)*cw.x+vec3(cy.x,cy.z*sign(cn.y),cy.y)*cw.y+vec3(cz.x,cz.y,cz.z*sign(cn.z))*cw.z);
    normal=normalize(mat3(viewMatrix)*normalize(mix(cn,cliffNormal,.62)));`);
  };
- surface.customProgramCacheKey=()=> 'canyon-terrain-triplanar-1';
+ surface.customProgramCacheKey=()=> 'canyon-terrain-triplanar-oasis-2';
  const fields=[],barriers=[],seen=new Set(),step=terrainStep;
  for(const r of prepared){
   const x0=Math.floor((r.minX+500)/step)*step-500,z0=Math.floor((r.minZ+500)/step)*step-500;
@@ -152,7 +187,7 @@ export function createCanyonLandscape({THREE,scene,heightAt,terrainStep,material
    if(Math.max(cover[a],cover[b],cover[c],cover[d])<.001)continue;
    indices.push(a,b,d,d,b,c);
   }
-  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(p,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setAttribute('cliffCover',new THREE.Float32BufferAttribute(cover,1));geo.setIndex(indices);geo.computeVertexNormals();geo.computeBoundingBox();geo.computeBoundingSphere();
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(p,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setAttribute('cliffCover',new THREE.Float32BufferAttribute(cover,1));geo.setAttribute('oasisTone',new THREE.Float32BufferAttribute(new Float32Array(cover.length).fill(r.id==='oasis-butte'?1:0),1));geo.setIndex(indices);geo.computeVertexNormals();geo.computeBoundingBox();geo.computeBoundingSphere();
   const mesh=new THREE.Mesh(geo,surface);mesh.name='Canyon | '+r.id;mesh.castShadow=true;mesh.receiveShadow=true;mesh.renderOrder=1;group.add(mesh);
   fields.push({id:r.id,triangles:indices.length/3,mesh});
   // A two-metre contour follows the foot of each cliff, leaving the floor and
