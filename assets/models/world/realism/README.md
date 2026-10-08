@@ -200,3 +200,20 @@ node tools/asset-gen/bake-world-tree.cjs tree_small_02 island_tree_01 jacaranda_
 `tree-impostors.json` records the updated hashes and canopy-field measurements.
 `qa-woodland-trails.cjs` compares those measurements with the runtime, checks the
 actual shade attributes, and rides the woodland route in both directions.
+
+
+## October 8 village and riverside crags
+
+The village skyline and adjoining river outcrop use ten complete boulder pieces
+from the existing Rock Moss Set 01, replacing three generated mesas and five
+thin pillars. Uniform transforms preserve the photographed forms; the low
+vertices sit at least 0.16 metres below the sampled terrain. A shared material
+adds neutral weathering and the existing world-space mineral detail texture.
+The original source GLB and its PBR maps are unchanged; no new model download
+is required.
+
+The actual transformed triangles provide body collision and supporting height.
+The original circles remain for road layout; they stop acting as coarse player
+barriers only after the scanned surfaces register successfully. A single ground
+sampler skips the detailed index outside those circles. Ground cover avoids
+exposed rock surfaces instead of planting shrubs and loose stones on their faces.

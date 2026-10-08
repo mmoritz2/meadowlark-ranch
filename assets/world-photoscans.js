@@ -1,3 +1,4 @@
+import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';
 import {patchOuterFog} from './outer-landscape.js?v=continuous-countryside-1';
 import {installThunderOak} from './thunder-oak-art.js?v=split-oak-1';
@@ -379,6 +380,98 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     // keep the old brown forest-floor circles or camera obstacles.
     scene.getObjectByName('Pasture terrain')?.material.userData.setTrees?.(W.forestPoints);
   }
+  // Complete scanned stones form the village skyline and adjoining river crags.
+  // The original circles still reserve space when roads are laid out; gameplay
+  // uses the registered stone surfaces after the replacement is ready.
+  function installVillageCrags(parts){
+    const specs=[
+      {seed:1116,primary:3,yaw:2.30,shoulder:4,angle:.42},
+      {seed:1122,primary:3,yaw:.68,shoulder:5,angle:2.13},
+      // This overlapping older mesa and its spires belong to the same outcrop.
+      {seed:1113,primary:2,yaw:1.12},
+      {seed:3528,primary:3,yaw:1.72},{seed:3529,primary:2,yaw:.32},
+      {seed:3531,primary:4,yaw:2.10},{seed:3534,primary:5,yaw:1.23},
+      {seed:3537,primary:3,yaw:.56}
+    ];
+    const material=parts[3].mat.clone();material.name='Countryside | scanned weathered crags';
+    dressLandscape({THREE,material,anisotropy:8,fogScale:1,fogCap:1,mineralScale:2.4,bumpStrength:.07});
+    const mineralDetail=material.onBeforeCompile;
+    material.onBeforeCompile=shader=>{
+      mineralDetail(shader);
+      shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+        float cragGrey=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));
+        diffuseColor.rgb=mix(vec3(cragGrey),diffuseColor.rgb,.23)*vec3(1.35,1.32,1.26);`);
+    };
+    material.customProgramCacheKey=()=> 'countryside-scanned-crag-2';
+    const records=state.villageCrags=[],surfaces=[];
+    // All source triangles stay inside their original route circle. Most
+    // ground samples can therefore skip the detailed stone index completely.
+    const cragHeight=(x,z)=>{
+      let height=-Infinity;
+      for(const {mesh,cx,cz,r} of surfaces){
+        if((x-cx)**2+(z-cz)**2>r*r)continue;
+        height=Math.max(height,W.solidWorld.surfaceHeight(x,z,mesh));
+      }
+      return height;
+    };
+    W.groundSurfaces.push(cragHeight);
+    state.excludesGroundCover=(x,z)=>{
+      const height=cragHeight(x,z);
+      return height>-Infinity&&height>W.terrainH(x,z)+.15;
+    };
+    for(const spec of specs){
+      let original;
+      scene.traverse(o=>{if(o.isGroup&&o.userData.geology?.seed===spec.seed)original=o;});
+      if(!original)continue;
+      const {x,z}=original.position;
+      const collider=W.colliders.find(c=>Math.hypot(c.x-x,c.z-z)<.001&&Math.abs(c.r-original.userData.geology.radius*.95)<.001);
+      if(!collider)continue;
+      const meshes=[],details=[];
+      try{
+        const composition=[[spec.primary,0,collider.r*.94,spec.yaw]];
+        if(spec.shoulder!==undefined)composition.push([spec.shoulder,collider.r*.51,collider.r*.42,spec.yaw+1.57]);
+        for(const [partIndex,offset,reach,yaw] of composition){
+          const piece=parts[partIndex],p=piece.geo.attributes.position,b=piece.bounds;
+          const cx=(b.min.x+b.max.x)/2,cz=(b.min.z+b.max.z)/2;
+          let sourceRadius=0;
+          for(let i=0;i<p.count;i++)sourceRadius=Math.max(sourceRadius,Math.hypot(p.getX(i)-cx,p.getZ(i)-cz));
+          const scale=reach/sourceRadius,co=Math.cos(yaw),sn=Math.sin(yaw);
+          const px=x+Math.sin(spec.angle||0)*offset,pz=z+Math.cos(spec.angle||0)*offset;
+          let ty=Infinity,footVertices=0;const lowBand=(b.max.y-b.min.y)*.075;
+          // Plant every low source vertex below the canonical terrain. This
+          // retains the photographed shape instead of stretching it to a skirt.
+          for(let i=0;i<p.count;i++){
+            const sy=p.getY(i);if(sy>b.min.y+lowBand)continue;
+            const sx=p.getX(i)-cx,sz=p.getZ(i)-cz;
+            const wx=px+scale*(co*sx+sn*sz),wz=pz+scale*(-sn*sx+co*sz);
+            ty=Math.min(ty,W.terrainH(wx,wz)-scale*sy-.16);footVertices++;
+          }
+          if(!footVertices||!Number.isFinite(ty))throw Error('No finite scanned crag footing');
+          const mesh=new THREE.Mesh(piece.geo,material);
+          mesh.name='Countryside scanned crag '+spec.seed+' | '+partIndex;
+          mesh.matrixAutoUpdate=false;
+          mesh.matrix.set(scale*co,0,scale*sn,px-scale*(co*cx+sn*cz),0,scale,0,ty,
+            -scale*sn,0,scale*co,pz-scale*(-sn*cx+co*cz),0,0,0,1);
+          mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);meshes.push(mesh);
+          const contactTriangles=W.solidWorld.registerSurface(mesh);
+          if(!contactTriangles)throw Error('Empty scanned crag surface');
+          details.push({name:mesh.name,source:'rock_moss_set_01',part:partIndex,matrix:mesh.matrix.toArray(),scale,footVertices,contactTriangles});
+        }
+      }catch(error){
+        for(const mesh of meshes){W.solidWorld.unregisterSurface(mesh);mesh.removeFromParent();}
+        if(!records.length)material.dispose();
+        throw error;
+      }
+      for(const mesh of meshes){
+        surfaces.push({mesh,cx:x,cz:z,r:collider.r});
+      }
+      collider.precise=true;
+      original.removeFromParent();original.traverse(o=>o.geometry?.dispose());
+      records.push({seed:spec.seed,x,z,routeRadius:collider.r,meshes:details});
+    }
+    if(!records.length)material.dispose();
+    W.nearGroundCover?.invalidate();
+  }
   async function installRocks(){
     const parts=pieces(await load('rock_moss_set_01'),true);
     rocks.forEach((rock,i)=>{
@@ -445,6 +538,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       const merged=mergeGeometries(geos,false);geos.forEach(g=>g.dispose());
       if(merged){mesh.geometry.dispose();mesh.geometry=merged;mesh.material=parts[0].mat;mesh.name='Outcrop | scanned mossy stone';state.outcrops++;}
     }
+    installVillageCrags(parts);
   }
   async function installWillows(){
     const roots=G.quartersPkg?.willowTrees||[];if(roots.length)state.willows=await installWillowArt(G,roots,wind);

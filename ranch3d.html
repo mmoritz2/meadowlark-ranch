@@ -699,7 +699,7 @@ import {createDiscoveryArt} from './assets/discovery-art.js?v=discovery-art-1';
 import {installVillageForecourts} from './assets/village-forecourts.js?v=village-gardens-1';
 import {COTTONWOOD_COTTAGES,COTTONWOOD_PUBLIC,cottonwoodReserved,clipVillageRoads} from './assets/cottonwood-layout.js?v=village-gardens-1';
 import {installRanchWorldDetails} from './assets/ranch-world-details.js?v=individual-undergrowth-1';
-import {installWorldPhotoscans} from './assets/world-photoscans.js?v=countryside-banks-1';
+import {installWorldPhotoscans} from './assets/world-photoscans.js?v=village-crags-1';
 import {createWaterReflections} from './assets/water-reflections.js?v=oasis-reflections-1';
 import {createRiderLibrary} from './assets/rider-model.js?v=noticeable-lashes-20261008';
 import {createTackCollection} from './assets/tack-collection-models.js?v=tack-summon-20261007';
@@ -3216,6 +3216,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
  for(const im of[near,flow,fern,reed,rock,lupin]){im.frustumCulled=false;im.receiveShadow=true;im.castShadow=false;scene.add(im);}
  rock.castShadow=quality==='high';
  const okGrass=(x,z)=>{
+  if(G.photoscans?.excludesGroundCover?.(x,z))return false;
   if(alpineSnowAt(x,z)>.35)return false;
   const winterCover=coldPastureCover(x,z);
   if(winterCover===0||(winterCover<1&&gh(Math.floor(x*47),Math.floor(z*53))>winterCover))return false;
@@ -3245,6 +3246,7 @@ transformed.z+=cos(uTime*1.2+wph)*transformed.y*0.2;
   return 'meadow';
  };
  const okClutter=(x,z)=>{
+  if(G.photoscans?.excludesGroundCover?.(x,z))return false;
   if(Math.abs(x)>470||Math.abs(z)>470)return false;
   if(canyonCliffAt(x,z,terrainH)||fallsExcludesDryPlants(x,z,terrainH)||G.waterPkg?.excludesPlants(x,z))return false;
   if(Math.abs(x)<25&&Math.abs(z)<20)return false;          // never in the arena
