@@ -4,19 +4,25 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
  const {x,z,len,depth,h,crest}=site,face=Math.atan2(x,z),ax=Math.cos(face),az=-Math.sin(face),ox=Math.sin(face),oz=Math.cos(face);
  const nx=160,nz=112,heights=new Float32Array((nx+1)*(nz+1)),positions=[],colors=[],uvs=[],indices=[],relief=[];
  const smooth=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
- // Unequal shoulders and a wandering crest make a down rather than a single dome.
- // Every term tapers to zero at the existing footprint, keeping roads and plots clear.
+ // A lower, broad down has one larger western shoulder and a shallow saddle
+ // through its crown. All terms meet the original surveyed footprint at zero rise.
  const bell=(u,width)=>Math.exp(-((u/width)**2));
- const crestAt=u=>crest+.055*Math.sin(u*.055+.4)+.025*Math.sin(u*.14-1);
+ const crestAt=u=>crest+.025*Math.sin(u*.035+.5)+.018*Math.sin(u*.08-.6);
  function column(u){
-  const shoulder=len*(u<0?.19:.08),taper=1-smooth((Math.abs(u)-shoulder)/(len*.5-shoulder));
-  return {crest:crestAt(u),peak:h*taper*(.84+.23*bell(u+18,17)+.31*bell(u-16,13)-.05*bell(u-2,9)),gully:.08*bell(u+32,5)+.06*bell(u-31,6)};
+  const shoulder=len*(u<0?.24:.20),taper=1-smooth((Math.abs(u)-shoulder)/(len*.5-shoulder));
+  return {crest:crestAt(u),peak:h*taper*(.79+.26*bell(u+19,22)+.18*bell(u-26,18)-.17*bell(u-5,17)),gully:.035*bell(u+34,11)+.025*bell(u-29,12)};
  }
  function columnLift(c,t){
   const p=t<c.crest?Math.pow(smooth(t/c.crest),.91):Math.pow(smooth((1-t)/(1-c.crest)),1.10);
   return c.peak*p*(1-c.gully*4*p*(1-p));
  }
  const lift=(u,t)=>columnLift(column(u),t);
+ // Keep the original galloping outline affine in across-slope distance and rise.
+ // One shared mapping seats the complete figure below the lower crown; its
+ // forward and inverse expressions are used by the cutting and plant exclusion.
+ const glyphMap={xScale:.95,xOffset:-1,base:.25,scale:.060,referencePeak:column(-1).peak};
+ const glyphWant=fy=>glyphMap.referencePeak*(glyphMap.base+fy*glyphMap.scale);
+ const glyphFy=rise=>(rise/glyphMap.referencePeak-glyphMap.base)/glyphMap.scale;
  const frame=(u,t)=>[x+ax*u+ox*(t-.5)*depth,z+az*u+oz*(t-.5)*depth];
  const turf=new T.Color('#a9b397'),bleached=new T.Color('#d1c3a0'),c=new T.Color();
  for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++){
@@ -62,7 +68,7 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
  const triangles=T.ShapeUtils.triangulateShape(outline,[]),ps=[],ns=[],cs=[],uv=[];
  const chalk=new T.Color('#a5a38f'),chalkLight=new T.Color('#d4cfbb');
  const peg=(fx,fy)=>{
-  const u=fx*1.2-1,want=5.7+fy*.77,col=column(u);let lo=0,hi=col.crest;
+  const u=fx*glyphMap.xScale+glyphMap.xOffset,want=glyphWant(fy),col=column(u);let lo=0,hi=col.crest;
   for(let k=0;k<20;k++){const t=(lo+hi)/2;if(columnLift(col,t)<want)lo=t;else hi=t;}
   const t=(lo+hi)/2,[wx,wz]=frame(u,t),y=sampleUV(u,t)+.023;
   const e=.05,n=new T.Vector3(heightAt(wx-e,wz)-heightAt(wx+e,wz),2*e,heightAt(wx,wz-e)-heightAt(wx,wz+e)).normalize();
@@ -96,7 +102,7 @@ export function createChalkDown({THREE:T,site,baseHeight,groundMaterial,groundCo
  const rim=new T.Mesh(rimGeo,new T.MeshStandardMaterial({color:'#716957',roughness:1,side:T.DoubleSide}));rim.receiveShadow=true;rim.name='Chalk Mare | worn turf edge';root.add(rim);
  const mare=new T.Mesh(cut,chalkMat);mare.name='Chalk Mare | ground cutting';mare.receiveShadow=true;root.add(mare);
  const isChalk=(wx,wz)=>{const [u,t]=coordinates(wx,wz);if(t<0||t>crestAt(u)||Math.abs(u)>22)return false;
-  const px=(u+1)/1.2,py=(lift(u,t)-5.7)/.77;let inside=false;
+  const px=(u-glyphMap.xOffset)/glyphMap.xScale,py=glyphFy(lift(u,t));let inside=false;
   for(let i=0,j=curve.length-1;i<curve.length;j=i++){const a=curve[i],b=curve[j];if((a.y>py)!==(b.y>py)&&px<(b.x-a.x)*(py-a.y)/(b.y-a.y)+a.x)inside=!inside;}return inside;};
  return {root,heightAt,reliefAt,isChalk,contains(wx,wz){const [u,t]=coordinates(wx,wz);return Math.abs(u)<len/2&&t>0&&t<1&&lift(u,t)>.12;},site,stats:{groundTriangles:indices.length/3,chalkTriangles:ps.length/9}};
 }

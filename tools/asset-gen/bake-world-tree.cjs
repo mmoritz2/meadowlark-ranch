@@ -13,6 +13,21 @@ import {MATURE_LEAF_ALIAS,createMatureLeafGeometry} from '/assets/mature-leaf-pa
 const renderer=new T.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
 renderer.setClearColor(0,0);renderer.outputColorSpace=T.SRGBColorSpace;
 const loader=new GLTFLoader();
+// Symmetric framing about the retained source origin, including all eight bake views.
+function treeViewHalfWidth(root){
+ const point=new T.Vector3();let half=0;
+ root.traverse(o=>{if(!o.isMesh)return;const positions=o.geometry.attributes.position;
+  for(let i=0;i<positions.count;i++){
+   point.fromBufferAttribute(positions,i).applyMatrix4(o.matrixWorld);
+   if(!Number.isFinite(point.x)||!Number.isFinite(point.y)||!Number.isFinite(point.z))throw Error('Nonfinite tree view vertex');
+   for(let frame=0;frame<8;frame++){const angle=frame*Math.PI/4;
+    half=Math.max(half,Math.abs(point.x*Math.cos(angle)-point.z*Math.sin(angle)));
+   }
+  }
+ });
+ if(!(half>0&&Number.isFinite(half)))throw Error('Empty horizontal tree view extent');
+ return half;
+}
 window.bakeTree=async(id,variant=-1)=>{
  const source=id==='orchard_apple'?'island_tree_01':id===MATURE_LEAF_ALIAS?'tree_small_02':id;
  const asset=await loader.loadAsync('/assets/models/world/realism/'+source+'.glb');
@@ -29,7 +44,7 @@ window.bakeTree=async(id,variant=-1)=>{
  }
  root.updateMatrixWorld(true);
  const bounds=new T.Box3().setFromObject(root),size=bounds.getSize(new T.Vector3());
- const width=Math.max(size.x,size.z)*1.10,height=size.y*1.06,bottom=bounds.min.y-size.y*.03;
+ const width=treeViewHalfWidth(root)*2*1.10,height=size.y*1.06,bottom=bounds.min.y-size.y*.03;
  const camera=new T.OrthographicCamera(-width/2,width/2,bottom+height,bottom,.1,100);
  const meshes=[];root.traverse(o=>{if(o.isMesh){if(id==='pine_tree_01'&&/twig/.test(o.material.name))o.material.color.setRGB(1.7,2.1,1.5);meshes.push([o,o.material]);}});
  const results={width,height,bottom,sourceHeight:size.y,viewCount:8,...(orchardFruit?{orchardFruit}:{}),...(canopyShading?{canopyShading}:{})};

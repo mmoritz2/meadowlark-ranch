@@ -90,36 +90,6 @@
       "license": "CC0-1.0"
     },
     {
-      "id": "tree_small_02",
-      "variant": -1,
-      "width": 4.654437732696533,
-      "height": 4.823275546617806,
-      "bottom": -0.16053979707881808,
-      "sourceHeight": 4.55025994963944,
-      "viewCount": 8,
-      "canopyShading": {
-        "triangles": 110000,
-        "area": 13.47856586399261,
-        "cell": 0.0961660688573664,
-        "occupied": 9620,
-        "min": 0.5026921033859253,
-        "max": 1
-      },
-      "views": {
-        "file": "tree_small_02_views.webp",
-        "bytes": 1837206,
-        "sha256": "873030d883c430fbfcb638768a739eea7ba6f4adbdcfe4bfb320eca87dc6709b"
-      },
-      "normals": {
-        "file": "tree_small_02_normals.webp",
-        "bytes": 1192582,
-        "sha256": "aaee6aaef5d93b44a9952da6beec9f8ebc10a5b23960f2df25e91cd1cdfbe9ad"
-      },
-      "source": "tree_small_02.glb",
-      "sourcePage": "https://polyhaven.com/a/tree_small_02",
-      "license": "CC0-1.0"
-    },
-    {
       "id": "island_tree_01",
       "variant": -1,
       "width": 5.304972910881043,
@@ -279,9 +249,39 @@
       "originalAddition": "Branch-attached apple geometry authored in orchard-art.js and forage-art.js; shared by runtime and view bake."
     },
     {
+      "id": "tree_small_02",
+      "variant": -1,
+      "width": 6.309424352645874,
+      "height": 4.823275546617806,
+      "bottom": -0.16053979707881808,
+      "sourceHeight": 4.55025994963944,
+      "viewCount": 8,
+      "canopyShading": {
+        "triangles": 110000,
+        "area": 13.47856586399261,
+        "cell": 0.0961660688573664,
+        "occupied": 9620,
+        "min": 0.5026921033859253,
+        "max": 1
+      },
+      "views": {
+        "file": "tree_small_02_views.webp",
+        "bytes": 1392076,
+        "sha256": "6ad9cc4503cae7595f8671f8887142169380c139552251dab4ba80fce81b9b56"
+      },
+      "normals": {
+        "file": "tree_small_02_normals.webp",
+        "bytes": 894002,
+        "sha256": "460fbdd768334ba52bd92d79027940d5b75d5a91087f1c48370444316f22420f"
+      },
+      "source": "tree_small_02.glb",
+      "sourcePage": "https://polyhaven.com/a/tree_small_02",
+      "license": "CC0-1.0"
+    },
+    {
       "id": "tree_small_02_mature_leaves",
       "variant": -1,
-      "width": 4.765147173404694,
+      "width": 6.383538627624512,
       "height": 4.823275546617806,
       "bottom": -0.16053979707881808,
       "sourceHeight": 4.55025994963944,
@@ -296,13 +296,13 @@
       },
       "views": {
         "file": "tree_small_02_mature_leaves_views.webp",
-        "bytes": 2142210,
-        "sha256": "63f57df09359d584a89617b3b0c5eae77bee40578b50518307d28be80c2e49f7"
+        "bytes": 1642390,
+        "sha256": "f9ce62f3b1eb6e1260174b3661efda244036f17de43a557bf63a0ed51477b549"
       },
       "normals": {
         "file": "tree_small_02_mature_leaves_normals.webp",
-        "bytes": 1339672,
-        "sha256": "09a818f966bead3b2dc61f1d465b2e0ef9800ecda0947cff5263664248f11131"
+        "bytes": 1023118,
+        "sha256": "49fd352873b27c38fdce87d312cb3a1869c0016b846b337f010f93dcb56ef413"
       },
       "source": "tree_small_02.glb",
       "sourcePage": "https://polyhaven.com/a/tree_small_02",

@@ -122,7 +122,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=mature-leaf-patches-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=tree-atlas-framing-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
     const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01'),woodland=await load('jacaranda_tree');
     const specs=[['tree_small_02',-1,broad,'broadleaf'],
       ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
@@ -306,7 +306,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     // existing forest intact, instead of empty silhouettes during a slow load.
     for(const source of variants){
       const m=source.meta;
-      const [atlas,normals]=await Promise.all([textureLoader.loadAsync('./assets/models/world/realism/'+m.views.file+'?v=canopy-depth-1'),textureLoader.loadAsync('./assets/models/world/realism/'+m.normals.file)]);
+      const [atlas,normals]=await Promise.all([textureLoader.loadAsync('./assets/models/world/realism/'+m.views.file+'?v='+m.views.sha256),textureLoader.loadAsync('./assets/models/world/realism/'+m.normals.file+'?v='+m.normals.sha256)]);
       atlas.colorSpace=THREE.SRGBColorSpace;atlas.anisotropy=8;normals.colorSpace=THREE.NoColorSpace;normals.anisotropy=4;
       source.impostor={THREE,albedo:atlas,normals,width:m.width,height:m.height,bottom:m.bottom};
       source.card=treeImpostor(source.impostor);

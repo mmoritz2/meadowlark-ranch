@@ -1,5 +1,5 @@
 import {recordSolidPart} from '../solid-collisions.js?v=solid-world-1';
-import {createChalkDown} from '../chalk-down.js?v=dry-foothills-1';
+import {createChalkDown} from '../chalk-down.js?v=chalk-down-2';
 /* Feature package 'world-vistas' — distance, and the things that draw the eye.
 
    Kestrel Basin's horizon was trees and haze. assets/world-art.js already lays three soft
@@ -491,7 +491,7 @@ export function install(G){
   }});
 
  /* ---- 2b. the Chalk Mare, on a bluff that had to be built to hold her ---- */
- const SCARP={x:-76,z:172,len:112,depth:76,h:18,crest:0.40};
+ const SCARP={x:-76,z:172,len:112,depth:76,h:14,crest:0.50};
  /* Keep the down and viewing stone on deterministic ground clear of roads, race routes,
     arenas and build plots. The hill's heightfield becomes ridable ground. Planting and
     streamed replacements respect its clearance zones instead of moving the landmark. */
@@ -565,7 +565,7 @@ export function install(G){
    id:'chalkmare',name:'The Chalk Mare',glyph:'🐎',mapLabel:'🐎 The Chalk Mare',labelDz:16,
    x:vx,z:vz,fixed:!!SCARP.sited,clear:5,maxR:18,seed:812,label:'🐎 The Chalk Mare',labelY:3.6,labelW:4.4,tall:19,reach:17,mini:'#f4f0e0',
    colliders:[[0,0,1.2]],
-   blurb:'Thirty-five metres of galloping mare scoured into the chalk of Whitehorse Scarp, and nobody at the ranch will tell you who cut her. Grandpa Wren says the grass has to be pared back every spring or she closes over in a season; that somebody always does it; and that in seventy years he has never once seen who.',
+   blurb:'Twenty-seven metres of galloping mare scoured into the chalk of Whitehorse Scarp, and nobody at the ranch will tell you who cut her. Grandpa Wren says the grass has to be pared back every spring or she closes over in a season; that somebody always does it; and that in seventy years he has never once seen who.',
    arrive:'Follow the down to see the chalk cutting up close, or look back from the viewing stone.',
    build(A,a2){
     A.patch(0,0,7,DIRT,DIRT_RIM,0.07,16,2);
