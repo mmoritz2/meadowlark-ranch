@@ -2813,12 +2813,13 @@ const sandTex=texLoad('assets/textures/pastoral/arena_albedo.jpg',10);   // gene
    meadow reads as clumps: short, broad, leaf-shaped blades fanning out of one root. So: wider
    (4.5-7%), shorter (30-68%), rooted near the middle and leaning outward from it, so each card
    is a tuft rather than a scatter. The blade drawing and its colour ramp are unchanged. */
-function meadowBladeTexture(size,count){return canvasTex(size,size,(c,w,h)=>{
+function meadowBladeTexture(size,count){const seedBladeShapes=[];const texture=canvasTex(size,size,(c,w,h)=>{
  c.clearRect(0,0,w,h);
  for(let i=0;i<count;i++){
   const x=w*(0.30+Math.random()*0.40),tall=h*(0.30+Math.random()*0.38);
   const lean=(x/w-0.5)*w*0.9+(Math.random()-0.5)*w*0.18,bw=w*(0.045+Math.random()*0.025);
   const tipX=x+lean,tipY=h-tall;
+  seedBladeShapes.push({x,tall,lean,bw,tipX,tipY,width:w,height:h});
   const g=c.createLinearGradient(0,h,0,tipY);
   g.addColorStop(0,'#c8c8c8');g.addColorStop(0.50,'#e3e3e3');
   g.addColorStop(1,i%4===0?'#f5f5f5':'#ededed');
@@ -2827,7 +2828,7 @@ function meadowBladeTexture(size,count){return canvasTex(size,size,(c,w,h)=>{
   c.bezierCurveTo(tipX-lean*0.13,tipY+tall*0.30,x+bw,h-tall*0.32,x+bw,h);
   c.closePath();c.fill();
  }
-});}
+});texture.userData.seedBladeShapes=seedBladeShapes;return texture;}
 const grassBladeTex=meadowBladeTexture(256,11);
 const grassBladeTex2=meadowBladeTexture(256,12);
 /* A drift of lupins: three spikes on one root, each a tapering column of small pea flowers over
@@ -2986,11 +2987,61 @@ const terrainSurface=createTerrainSurface({THREE,renderer,grass:groundTex,bump:b
 }
 
 /* ================= grass & flowers ================= */
+// Conditional original seed-grass prototype. No runtime integration or art acceptance.
+function seedGrassBladeModelData(shapes) {
+  if (!Array.isArray(shapes) || shapes.length !== 11) throw new Error('Expected the actual 11 seed canvas leaves');
+  for (const s of shapes) {
+    if (!['x','tall','lean','bw','tipX','tipY','width','height'].every(k=>Number.isFinite(s[k])) || s.width!==256 || s.height!==256 || s.tall<=0 || s.bw<=0) throw new Error('Invalid captured seed leaf');
+  }
+  const ordered=shapes.map((s,index)=>({...s,index})).sort((a,b)=>a.x-b.x),selected=[];
+  // Tallest leaf in each original root interval; deterministic fallback for an empty bin.
+  for(let bin=0;bin<3;bin++){
+    const lo=.30+bin*.40/3,hi=.30+(bin+1)*.40/3;
+    const inside=ordered.filter(s=>!selected.some(t=>t.index===s.index)&&s.x/s.width>=lo&&(s.x/s.width<hi||bin===2&&s.x/s.width<=hi));
+    const options=inside.length?inside:ordered.filter(s=>!selected.some(t=>t.index===s.index));
+    const choice=options.slice().sort((a,b)=>b.tall-a.tall||a.index-b.index).find(s=>!selected.some(t=>t.index===s.index));
+    if(!choice)throw new Error('No unique seed leaf');selected.push(choice);
+  }
+  selected.sort((a,b)=>a.x-b.x);
+  const positions=[],uvs=[],indices=[],leaves=[],yaws=[-.55,0,.55];
+  const cubic=(p0,p1,p2,p3,t)=>{const a=1-t;return [0,1].map(k=>a*a*a*p0[k]+3*a*a*t*p1[k]+3*a*t*t*p2[k]+t*t*t*p3[k]);};
+  for(let leaf=0;leaf<selected.length;leaf++){
+    const s=selected[leaf],left=[s.x-s.bw,s.height],right=[s.x+s.bw,s.height],tip=[s.tipX,s.tipY];
+    const ml=cubic(left,[s.x-s.bw*.6,s.height-s.tall*.35],[s.tipX-s.lean*.3,s.tipY+s.tall*.22],tip,.5);
+    const mr=cubic(right,[s.x+s.bw,s.height-s.tall*.32],[s.tipX-s.lean*.13,s.tipY+s.tall*.30],tip,.5);
+    const center=[s.x,s.height],mc=[(ml[0]+mr[0])*.5,(ml[1]+mr[1])*.5],rootX=(s.x/s.width-.5)*.55;
+    const yaw=yaws[leaf],co=Math.cos(yaw),si=Math.sin(yaw),foldWidth=s.bw*.55/s.width,base=positions.length/3;
+    const uvMl=cubic(left,[s.x-s.bw*.6,s.height-s.tall*.35],[s.tipX-s.lean*.3,s.tipY+s.tall*.22],tip,.30),uvMr=cubic(right,[s.x+s.bw,s.height-s.tall*.32],[s.tipX-s.lean*.13,s.tipY+s.tall*.30],tip,.30),uvMc=[(uvMl[0]+uvMr[0])*.5,(uvMl[1]+uvMr[1])*.5];
+    const tipLeft=cubic(left,[s.x-s.bw*.6,s.height-s.tall*.35],[s.tipX-s.lean*.3,s.tipY+s.tall*.22],tip,.66),tipRight=cubic(right,[s.x+s.bw,s.height-s.tall*.32],[s.tipX-s.lean*.13,s.tipY+s.tall*.30],tip,.66),tipUv=[(tipLeft[0]+tipRight[0])*.5,(tipLeft[1]+tipRight[1])*.5];
+    const inset=(edge,c)=>[edge[0]*.35+c[0]*.65,edge[1]*.35+c[1]*.65];
+    const emit=(point,depth,uvPoint)=>{
+      const x=(point[0]-s.x)*.55/s.width,y=(s.height-point[1])*.5/s.height;
+      positions.push(rootX+x*co-depth*si,y,x*si+depth*co);
+      uvs.push(uvPoint[0]/s.width,1-uvPoint[1]/s.height);
+    };
+    // Separate center vertices preserve the physical crease in computed normals.
+    const verts=[[left,0,inset(left,center)],[center,foldWidth*.10,center],[ml,0,inset(uvMl,uvMc)],[mc,foldWidth*.22,uvMc],[tip,0,tipUv],
+      [center,foldWidth*.10,center],[right,0,inset(right,center)],[mc,foldWidth*.22,uvMc],[mr,0,inset(uvMr,uvMc)],[tip,0,tipUv]];
+    for(const [p,z,uv] of verts)emit(p,z,uv);
+    const local=[0,1,2,1,3,2,2,3,4,5,6,7,6,8,7,7,8,9];indices.push(...local.map(i=>base+i));
+    leaves.push({sourceIndex:s.index,uvInset:.65,uvMidParameter:.30,uvTipParameter:.66,yaw,rootX,height:s.tall*.5/s.height,halfRootWidth:foldWidth,vertexStart:base,vertexCount:10,indexStart:indices.length-18,indexCount:18,shape:{...s},creasePairs:[[base+1,base+5],[base+3,base+7],[base+4,base+9]]});
+  }
+  return {positions,uvs,indices,leaves,stats:{blades:3,vertices:30,triangles:18,geometryBytes:1068,oldVertices:4,oldTriangles:2,oldGeometryBytes:140,high:{instances:9500,triangles:171000,addedTriangles:152000},low:{instances:6200,triangles:111600,addedTriangles:99200},samplersAdded:0,texturesAdded:0,materialsAdded:0,meshesAdded:0,drawsAdded:0}};
+}
+
+function createSeedGrassBladeGeometry(THREE,shapes) {
+  const d=seedGrassBladeModelData(shapes),g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(d.positions,3));
+  g.setAttribute('uv',new THREE.Float32BufferAttribute(d.uvs,2));
+  g.setIndex(d.indices);g.computeVertexNormals();g.computeBoundingBox();g.computeBoundingSphere();
+  g.userData.seedBladeModel={version:'conditional-three-folded-leaves-1',leaves:d.leaves,stats:d.stats};
+  return g;
+}
+
 let windShader=null,nearGrass=null;
 let flowerClumps=[];
 {
- const bladeGeo=new THREE.PlaneGeometry(0.55,0.5);
- bladeGeo.translate(0,0.25,0);
+ const bladeGeo=createSeedGrassBladeGeometry(THREE,grassBladeTex.userData.seedBladeShapes);
  const bladeMat=new THREE.MeshStandardMaterial({map:grassBladeTex,alphaTest:0.5,side:THREE.DoubleSide,roughness:1});
  bladeMat.envMapIntensity=0.7;bladeMat.alphaToCoverage=true;
  bladeMat.onBeforeCompile=sh=>{
