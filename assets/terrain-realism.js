@@ -1,3 +1,5 @@
+import {createMeadowGrazingPixels,extendWoodlandMask} from './meadow-landcover.mjs?v=coherent-fields-1';
+import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
 import {COYOTE_DRY_GLSL} from './biome-weights.mjs?v=dry-foothills-1';
 // Snow02 is photographed over two metres. Wind relief is independent of its
 // albedo tile, smooth across noise cells, and small enough to remain powder.
@@ -29,7 +31,7 @@ const COLD_SNOW_GLSL=`
  }
 `;
 /* Ground materials authored for Star Ranch. Distances and texture scales are metres. */
-export function createTerrainSurface({THREE, renderer, grass, bump}) {
+export function createTerrainSurface({THREE, renderer, grass, bump, managedAt=()=>0}) {
   const loader = new THREE.TextureLoader();
   function load(name) {
     const source={rock:'rock_boulder_cracked',forest_floor:'forest_ground_04'}[name];
@@ -39,8 +41,8 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
     t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
     return t;
   }
-  /* One mask texture carries two independent fields in two channels: red is tree cover, green is
-     ground that gets walked on. Packing wear into the spare channel of a texture the shader
+  /* One mask texture carries tree cover in red, walked ground in green, and the same authored
+     grazing field used by every grass distance layer in blue. Packing wear into the spare channel of a texture the shader
      already fetches is the whole reason a worn bridleway costs nothing here — the alternative
      was a second sampler and a second fetch on every square metre of the basin to serve a
      feature that touches maybe two per cent of it. Canvas has no way to clear one channel and
@@ -50,11 +52,15 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   const canvas = document.createElement('canvas'); canvas.width = canvas.height = MASK;
   const ctx = canvas.getContext('2d');
   let treeList = [], pathList = [];
+  // Cache blue once at native mask resolution; later tree/path updates retain it.
+  const grazingStarted=performance.now(),grazingPixels=ctx.createImageData(MASK,MASK);
+  grazingPixels.data.set(createMeadowGrazingPixels(MASK));
+  const fieldSurface={maskSize:MASK,grazingBuildMs:performance.now()-grazingStarted,sharedGrazing:true,skirtTexels:0};
   const forest = new THREE.CanvasTexture(canvas);
   forest.colorSpace = THREE.NoColorSpace;
   function redrawMask() {
     ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = '#000'; ctx.fillRect(0,0,MASK,MASK);
+    ctx.putImageData(grazingPixels,0,0);
     /* 'lighten' is a per-channel max, so a red-only blob never touches the green field and two
        overlapping paths do not darken each other into a bruise at the crossing. */
     ctx.globalCompositeOperation = 'lighten';
@@ -64,6 +70,13 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       g.addColorStop(0,'rgba(255,0,0,.96)');g.addColorStop(.35,'rgba(255,0,0,.88)');g.addColorStop(1,'rgba(255,0,0,0)');
       ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2);
     }
+    // Keep every original trunk-core texel. Only the added skirt is suppressed
+    // in grazed interiors, maintained yards/roads and reserved village plots.
+    const woodedPixels=ctx.getImageData(0,0,MASK,MASK);
+    const extended=extendWoodlandMask(woodedPixels.data,MASK,treeList,(x,z)=>
+      cottonwoodReserved(x,z,0)?1:managedAt(x,z));
+    fieldSurface.skirtTexels=extended.texelsRaised;
+    ctx.putImageData(woodedPixels,0,0);
     ctx.lineCap='round'; ctx.lineJoin='round';
     for(const {pts,width,strength} of pathList){
       /* Two strokes: a broad faint shoulder where the grass is merely thinned, and a narrower
@@ -102,9 +115,10 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
   }
   const material = new THREE.MeshStandardMaterial({map:grass,vertexColors:true,roughness:.96,bumpMap:bump,bumpScale:.045});
   material.envMapIntensity = .45;
-  material.customProgramCacheKey = () => 'terrain-biomes-v17-dry-turf';
+  material.customProgramCacheKey = () => 'terrain-biomes-v19-coherent-fields';
   material.defaultAttributeValues = {...material.defaultAttributeValues,chalkRelief:[0]};
   material.userData.wetWeather=wetWeather;
+  material.userData.fieldSurface=fieldSurface;
   material.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, uniforms);
     sh.vertexShader = 'attribute float chalkRelief; varying float terrainChalkRelief; varying vec3 terrainPosition; varying vec3 terrainNormal;\n' + sh.vertexShader;
@@ -125,11 +139,23 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       float tHash(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
       vec2 tHash2(vec2 p){vec3 q=fract(vec3(p.xyx)*vec3(.1031,.1030,.0973));q+=dot(q,q.yzx+33.33);return fract((q.xx+q.yz)*q.zy);}
       float tNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(tHash(i),tHash(i+vec2(1,0)),f.x),mix(tHash(i+vec2(0,1)),tHash(i+vec2(1,1)),f.x),f.y);}
+      // Right-angle UV rotations keep footprint area and use no additional samples.
+      vec2 turfQuarterTurn(vec2 v,float turn){
+        if(turn<0.5)return vec2(v.x,v.y);
+        if(turn<1.5)return vec2(-v.y,v.x);
+        if(turn<2.5)return vec2(-v.x,-v.y);
+        return vec2(v.y,-v.x);
+      }
       ${COYOTE_DRY_GLSL}
       ${COLD_SNOW_GLSL}
       ` + sh.fragmentShader;
     sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>',`
       vec2 p = terrainPosition.xz;
+      vec3 fieldMask=texture2D(forestMask,vec2((p.x+500.0)/1000.0,(500.0-p.y)/1000.0)).rgb;
+      float fieldGrazing=0.0;
+      #ifndef OUTER_LANDSCAPE
+        fieldGrazing=fieldMask.b;
+      #endif
       vec2 uv = p / 1.4;
       vec3 turf;
       #ifdef CHEAP_GROUND
@@ -140,7 +166,9 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
         for(int y=0;y<=1;y++)for(int x=0;x<=1;x++){
           vec2 corner=vec2(float(x),float(y));
           float w=(x==1?f.x:1.0-f.x)*(y==1?f.y:1.0-f.y);
-          turf += texture2D(map,uv+tHash2(cell+corner)*61.7).rgb*w;
+          vec2 turfSeed=tHash2(cell+corner);
+          float turfTurn=floor(turfSeed.x*4.0);
+          turf += texture2D(map,turfQuarterTurn(uv,turfTurn)+turfSeed*61.7).rgb*w;
         }
       #endif
 
@@ -197,6 +225,9 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
          for the region boundaries below. */
       float clump = smoothstep(0.54,0.66,edgeHi)*(1.0-dryness*0.45);
       tint = mix(tint, tint*vec3(.84,.97,.88)*1.04, clump*0.35);
+      // Fine grazed interiors follow the planted sward's greener character;
+      // rougher margins retain their warmer stand variation and photo detail.
+      tint*=mix(vec3(1.0),vec3(.88,.99,1.02),fieldGrazing);
       tint *= 1.0+(grain-0.5)*0.14*upClose;
       /* Water runs downhill and stands in the flats. The low ground of this basin is within a
          couple of metres of the river's own level and should read damp: darker, greener, not
@@ -213,9 +244,8 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
 
       /* One fetch, two fields — see the mask canvas above. The canopy edge is pushed around by
          stand so the treeline on the ground is ragged rather than a set of soft circles. */
-      vec2 mask = texture2D(forestMask, vec2((p.x+500.0)/1000.0,(500.0-p.y)/1000.0)).rg;
-      float canopy = smoothstep(.10,.80, mask.r + (stand-0.5)*0.30);
-      float wear = mask.g;
+      float canopy = smoothstep(.10,.80, fieldMask.r + (stand-0.5)*0.30);
+      float wear = fieldMask.g;
 
       /* The jitter is deliberately most of a metre either way at the water and several metres at
          the top of the bank, so the shingle line wanders in and out of the grass the way a real
@@ -487,11 +517,17 @@ export function createTerrainSurface({THREE, renderer, grass, bump}) {
       #ifndef CHEAP_GROUND
         if(upClose>.005){
           vec3 detailN=vec3(0.0);
-          // Match the albedo's offset blend so photographed relief lines up.
+          // Match the albedo's sample coordinates and inverse normal orientation.
           for(int y=0;y<=1;y++)for(int x=0;x<=1;x++){
             vec2 corner=vec2(float(x),float(y));
             float w=(x==1?f.x:1.0-f.x)*(y==1?f.y:1.0-f.y);
-            detailN+=(texture2D(meadowDetail,uv+tHash2(cell+corner)*61.7).xyz*2.0-1.0)*w;
+            vec2 turfSeed=tHash2(cell+corner);
+            float turfTurn=floor(turfSeed.x*4.0);
+            vec3 sampledN=texture2D(meadowDetail,turfQuarterTurn(uv,turfTurn)+turfSeed*61.7).xyz*2.0-1.0;
+            // On flat ground the retained frame is tangent=-X, bitangent=+Z.
+            // Its sign matrix D=diag(-1,1) makes inverse UV rotation D*R^T*D=R.
+            sampledN.xy=turfQuarterTurn(sampledN.xy,turfTurn);
+            detailN+=sampledN*w;
           }
           if(canopy>.1)detailN=mix(detailN,texture2D(litterDetail,earthUV).xyz*2.0-1.0,canopy);
           if(rocky>.1)detailN=mix(detailN,texture2D(stoneDetail,rockUVy).xyz*2.0-1.0,rocky);
