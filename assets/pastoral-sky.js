@@ -56,21 +56,22 @@ export function createPastoralSky(THREE) {
         vec2 cloudUv;
         if(highLayer){
           p=mat2(.94,-.34,.34,.94)*p;
-          // Smaller broken filaments, with gentle curls rather than broad waves.
+          // Fixed stretch and bounded curl keep the high veil soft and broken.
           vec2 warp=fieldNoiseChannels(p*.67+21.)-.5;
           vec2 shapeField=fieldNoiseChannels(p*.72+9.);
-          vec2 strandScale=vec2(mix(1.28,1.95,shapeField.g),mix(5.40,7.20,shapeField.r));
-          cloudUv=p*strandScale+vec2(warp.y,-warp.x)*.32;
+          cloudUv=p*vec2(1.10,2.75)+vec2(warp.y,-warp.x)*.20;
           shape=cloudNoise(cloudUv,density);
-          float breaks=smoothstep(.32,.68,shapeField.r)*smoothstep(.18,.58,shapeField.g);
-          alpha=smoothstep(.50,.71,shape)*breaks*.31*(1.-rain*.55);
+          float breaks=smoothstep(.28,.64,shapeField.r)*smoothstep(.24,.60,shapeField.g);
+          alpha=smoothstep(.48,.73,shape)*breaks*.18*(1.-rain*.55);
         }else{
           vec2 warp=fieldNoiseChannels(p*.42+23.)-.5;
-          cloudUv=p*vec2(1.45,2.35)+vec2(warp.y,-warp.x)*.38;
+          cloudUv=p*vec2(.88,1.24)+vec2(warp.y,-warp.x)*.22;
           shape=cloudNoise(cloudUv,density);
-          float fragments=mix(.58,1.,smoothstep(.26,.72,warp.x+.5));
-          float coverage=mix(.59,.37,rain);
-          alpha=smoothstep(coverage,coverage+.20,shape)*fragments*mix(.46,.90,rain);
+          // Broad banks have blue openings; wet weather joins the same groups.
+          float groups=smoothstep(.30,.65,warp.x+.5);
+          groups=mix(groups,1.,rain*.80);
+          float coverage=mix(.50,.35,rain);
+          alpha=smoothstep(coverage,coverage+.22,shape)*groups*mix(.58,.90,rain);
         }
         alpha*=smoothstep(.025,.16,d.y);
         float daylight=smoothstep(0.,.55,day);
