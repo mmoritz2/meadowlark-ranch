@@ -1,11 +1,11 @@
 {
-  "render": "Actual production Breed Studio, native 677-joint rig, rounded draft rear quarters and silky Shire/Clydesdale feathers, fitted source Western tack, rest pose",
+  "render": "Actual production Breed Studio, native 677-joint rig, reviewed rounded front/rear draft contours and silky Shire/Clydesdale feathers, refitted original Western breastcollar and irons, rest pose",
   "errors": [],
   "records": [
     {
       "key": "percheron",
-      "sha256": "a7055283183a87d94fe094abbd947f5c3609bdfa08fa876bfce375bbf720ac13",
-      "bytes": 53908,
+      "sha256": "8304c93c4ab00fb1fe041f3276cdb3744858db6e8f86f9e42141733d62a8a2dd",
+      "bytes": 53648,
       "bones": 677,
       "vertices": 60688,
       "projectedBounds": {
@@ -28,7 +28,7 @@
         "artistBreed": false,
         "nativeBreed": true,
         "referenceMotion": false,
-        "geometryHash": "5afa6169",
+        "geometryHash": "b46160c7",
         "conformation": "Deep powerful draft frame and broad muscular quarters",
         "coat": "Steel dapple grey",
         "bones": 677,
@@ -56,15 +56,15 @@
     },
     {
       "key": "shire",
-      "sha256": "d985fad348a9823b56fcbfbc7c98372626b80c4582136457559ad435071e0f0f",
-      "bytes": 49474,
+      "sha256": "869867e4bc6656bc1e0a3d6329942cace423ba3f7a380ac57dd210388b93d169",
+      "bytes": 49382,
       "bones": 677,
       "vertices": 63824,
       "projectedBounds": {
         "left": -0.5185178331730149,
-        "top": 0.8151791091484956,
-        "right": 0.6637835805383364,
-        "bottom": -0.8105233201194886
+        "top": 0.8151791091484953,
+        "right": 0.6637835805383357,
+        "bottom": -0.8105233201194876
       },
       "groom": {
         "native": true,
@@ -99,7 +99,7 @@
         "artistBreed": false,
         "nativeBreed": true,
         "referenceMotion": false,
-        "geometryHash": "164510c7",
+        "geometryHash": "c019ef6f",
         "conformation": "Largest substantial draft exemplar, deep ribs and long quarters",
         "coat": "Black with white stockings and blaze",
         "bones": 677,
@@ -127,12 +127,12 @@
     },
     {
       "key": "clyde",
-      "sha256": "d6d90492b6d36842dd9b9ccaaad6c4b9e3d8a96c49eec82238b189c91b1cb5c0",
-      "bytes": 60568,
+      "sha256": "50221544b11676d4aae0ca3e5e19909b9954b5c3497e8b36836db4f0f79f91c2",
+      "bytes": 60380,
       "bones": 677,
       "vertices": 64160,
       "projectedBounds": {
-        "left": -0.5160605651725351,
+        "left": -0.5160605651725354,
         "top": 0.8151705058467259,
         "right": 0.6630422574316289,
         "bottom": -0.8095929107992629
@@ -170,7 +170,7 @@
         "artistBreed": false,
         "nativeBreed": true,
         "referenceMotion": false,
-        "geometryHash": "6f59722e",
+        "geometryHash": "3dc1a6ab",
         "conformation": "Tall energetic draft with less squat silhouette",
         "coat": "Bright bay with wide blaze and stockings",
         "bones": 677,
@@ -198,8 +198,8 @@
     },
     {
       "key": "belgian",
-      "sha256": "8d8958ee6bb81e6168639448860482b0c57cef279081009e87a225b62af91ac0",
-      "bytes": 63480,
+      "sha256": "c9c35912a919ba50c408b9ffa7f81635cb158b574a46e4d24215a79dfbbb9977",
+      "bytes": 63256,
       "bones": 677,
       "vertices": 60688,
       "projectedBounds": {
@@ -222,7 +222,7 @@
         "artistBreed": false,
         "nativeBreed": true,
         "referenceMotion": false,
-        "geometryHash": "5afa6169",
+        "geometryHash": "b46160c7",
         "conformation": "Deep powerful draft frame and broad muscular quarters",
         "coat": "Golden chestnut with flaxen hair",
         "bones": 677,
@@ -250,14 +250,14 @@
     },
     {
       "key": "suffolk",
-      "sha256": "e48230407531e6db56a1c539fabe536876de4ea91391623002a41c51307d0df1",
-      "bytes": 58984,
+      "sha256": "8174497e8c5bc0d309d38bc4bab72a2ef15e9b31b650a84f217b04063d424db4",
+      "bytes": 58768,
       "bones": 677,
       "vertices": 60688,
       "projectedBounds": {
-        "left": -0.5195620399693139,
-        "top": 0.8151021265714553,
-        "right": 0.663276071344686,
+        "left": -0.5195620399693138,
+        "top": 0.8151021265714554,
+        "right": 0.6632760713446862,
         "bottom": -0.8118445141181757
       },
       "groom": {
@@ -274,7 +274,7 @@
         "artistBreed": false,
         "nativeBreed": true,
         "referenceMotion": false,
-        "geometryHash": "5afa6169",
+        "geometryHash": "b46160c7",
         "conformation": "Deep powerful draft frame and broad muscular quarters",
         "coat": "Steel dapple grey",
         "bones": 677,
@@ -302,15 +302,15 @@
     },
     {
       "key": "glacier",
-      "sha256": "512c5e5696c90a2279f3a259613992d3b615fbaafdddac2d3e93792f872a73d5",
-      "bytes": 68188,
+      "sha256": "0db8637e49a6d32e6315f0d1497e0b5bd28c0f7d276f897b67f70c7cd0fe0192",
+      "bytes": 68184,
       "bones": 677,
       "vertices": 60688,
       "projectedBounds": {
-        "left": -0.5195620399693139,
-        "top": 0.8151021265714553,
-        "right": 0.663276071344686,
-        "bottom": -0.8118445141181757
+        "left": -0.5195620399693135,
+        "top": 0.815102126571455,
+        "right": 0.6632760713446867,
+        "bottom": -0.8118445141181759
       },
       "groom": {
         "native": true,
@@ -326,7 +326,7 @@
         "artistBreed": false,
         "nativeBreed": true,
         "referenceMotion": false,
-        "geometryHash": "5afa6169",
+        "geometryHash": "b46160c7",
         "conformation": "Deep powerful draft frame and broad muscular quarters",
         "coat": "Fantasy coat applied by the ranch renderer",
         "bones": 677,
@@ -354,15 +354,15 @@
     },
     {
       "key": "rimewalker",
-      "sha256": "512c5e5696c90a2279f3a259613992d3b615fbaafdddac2d3e93792f872a73d5",
-      "bytes": 68188,
+      "sha256": "ab51bc1d7b411c5337b289c93277bd3da4099bb99ed2c5309d335c379d619621",
+      "bytes": 68204,
       "bones": 677,
       "vertices": 60688,
       "projectedBounds": {
-        "left": -0.5195620399693139,
+        "left": -0.5195620399693136,
         "top": 0.8151021265714553,
-        "right": 0.663276071344686,
-        "bottom": -0.8118445141181757
+        "right": 0.6632760713446859,
+        "bottom": -0.8118445141181756
       },
       "groom": {
         "native": true,
@@ -378,7 +378,7 @@
         "artistBreed": false,
         "nativeBreed": true,
         "referenceMotion": false,
-        "geometryHash": "5afa6169",
+        "geometryHash": "b46160c7",
         "conformation": "Deep powerful draft frame and broad muscular quarters",
         "coat": "Steel dapple grey",
         "bones": 677,
@@ -406,8 +406,8 @@
     },
     {
       "key": "tempest",
-      "sha256": "836f539aab942ab3d6dc74a23e81332ff92ebc1a4b37282af3962928fd3c608b",
-      "bytes": 69502,
+      "sha256": "a202b42911da5ad6eec141c1d2f079547766b91f6c2527acf06254b0c51a672f",
+      "bytes": 69344,
       "bones": 677,
       "vertices": 64160,
       "projectedBounds": {
@@ -449,7 +449,7 @@
         "artistBreed": false,
         "nativeBreed": true,
         "referenceMotion": false,
-        "geometryHash": "6f59722e",
+        "geometryHash": "3dc1a6ab",
         "conformation": "Tall energetic draft with less squat silhouette",
         "coat": "Fantasy coat applied by the ranch renderer",
         "bones": 677,

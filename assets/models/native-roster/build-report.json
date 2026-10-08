@@ -5914,7 +5914,7 @@
         {
           "meshIndex": 3,
           "vertices": 13895,
-          "minCageJacobianDeterminant": 0.7821752862756999,
+          "minCageJacobianDeterminant": 0.8913202331636272,
           "maxPositionQuantizationErrorM": 9.646076091184618e-06,
           "maxAppearanceDeltaM": 0.23014254109951274,
           "fixedLowerVertices": 0
@@ -6000,7 +6000,94 @@
           "left": 0.04000042705799066,
           "right": 0.04000075550750478
         },
-        "unselectedIdealTargetExactlyPreserved": true
+        "unselectedIdealTargetExactlyPreserved": true,
+        "unselectedException": "The separately documented breastcollar follows the front body contour."
+      },
+      "draftBreastcollar": {
+        "componentIds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          19,
+          20,
+          21,
+          31,
+          32,
+          33,
+          34,
+          35,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          109,
+          110,
+          111,
+          112,
+          117,
+          118,
+          119,
+          120,
+          121,
+          122,
+          123,
+          124,
+          125,
+          135,
+          136,
+          137,
+          138,
+          139,
+          171,
+          176,
+          177,
+          178,
+          179,
+          183,
+          184,
+          185,
+          186,
+          207,
+          211,
+          224,
+          227,
+          229,
+          230,
+          232,
+          233,
+          234,
+          235,
+          236,
+          262,
+          264,
+          274,
+          275
+        ],
+        "selectedVertices": 2404,
+        "boundary": {
+          "sourceTouchToleranceM": 0.003,
+          "touchingSelectedVertices": 68,
+          "coincidentSelectedVertices": 26,
+          "minimumTouchingSourceYM": 1.3884544438037003,
+          "frontCorrectionZeroAtAllTouchingVertices": true
+        },
+        "maxDisplayedCorrectionM": 0.05417399654287189,
+        "unselectedIdealTargetExactlyPreserved": true,
+        "contactNote": "Same bounded field as the chest. No zero-gap or no-penetration claim; compare real skinned collar contact against the native baseline in browser QA.",
+        "previousUnselectedQuantizedCoefficientsExact": null
       },
       "headShape": {
         "family": "draft",
@@ -6021,11 +6108,11 @@
         "chest": {
           "sourceM": 0.520620693945136,
           "previousM": 0.6294390496534226,
-          "newM": 0.780278523647095,
-          "gainOverPreviousPercent": 23.9641112315365,
+          "newM": 0.7590474801111209,
+          "gainOverPreviousPercent": 20.59110100160808,
           "previousDisplayedM": 0.5960928894858921,
-          "newDisplayedM": 0.7115449644203488,
-          "displayedGainPercent": 19.36813489488689
+          "newDisplayedM": 0.6921841315131443,
+          "displayedGainPercent": 16.12017920732578
         },
         "quarters": {
           "sourceM": 0.6624500560549793,
@@ -6118,6 +6205,72 @@
           }
         ]
       },
+      "draftFrontProfile": {
+        "comparison": "Version2 rounded-rear draft, with unchanged body/limb art and actor scale",
+        "sectionSourceZRangeM": [
+          0.22,
+          0.7
+        ],
+        "sectionSourceYHalfHeightM": 0.065,
+        "sections": [
+          {
+            "sourceYCenterM": 0.65,
+            "vertices": 150,
+            "previousDisplayedWidthM": 0.3659715448006661,
+            "newDisplayedWidthM": 0.3659674263033073,
+            "previousDisplayedMeanYM": 0.5929664566066823,
+            "newDisplayedMeanYM": 0.592994300961634
+          },
+          {
+            "sourceYCenterM": 0.8,
+            "vertices": 171,
+            "previousDisplayedWidthM": 0.5169139443619379,
+            "newDisplayedWidthM": 0.48884360239039754,
+            "previousDisplayedMeanYM": 0.7050999236904285,
+            "newDisplayedMeanYM": 0.7209436847476535
+          },
+          {
+            "sourceYCenterM": 0.95,
+            "vertices": 465,
+            "previousDisplayedWidthM": 0.63428704468349,
+            "newDisplayedWidthM": 0.5622638835056036,
+            "previousDisplayedMeanYM": 0.7832393312308104,
+            "newDisplayedMeanYM": 0.8304324306439589
+          },
+          {
+            "sourceYCenterM": 1.1,
+            "vertices": 216,
+            "previousDisplayedWidthM": 0.7085168695302453,
+            "newDisplayedWidthM": 0.6496147285746264,
+            "previousDisplayedMeanYM": 0.8929293420639581,
+            "newDisplayedMeanYM": 0.9318208738823707
+          },
+          {
+            "sourceYCenterM": 1.25,
+            "vertices": 62,
+            "previousDisplayedWidthM": 0.7070006157108297,
+            "newDisplayedWidthM": 0.6906499293450635,
+            "previousDisplayedMeanYM": 1.0710421427790964,
+            "newDisplayedMeanYM": 1.0791267477052255
+          },
+          {
+            "sourceYCenterM": 1.4,
+            "vertices": 67,
+            "previousDisplayedWidthM": 0.688647990010437,
+            "newDisplayedWidthM": 0.6879478099089109,
+            "previousDisplayedMeanYM": 1.2144739967101703,
+            "newDisplayedMeanYM": 1.2145302162889902
+          },
+          {
+            "sourceYCenterM": 1.55,
+            "vertices": 89,
+            "previousDisplayedWidthM": 0.6347230671256021,
+            "newDisplayedWidthM": 0.6347249971294381,
+            "previousDisplayedMeanYM": 1.3732205321867756,
+            "newDisplayedMeanYM": 1.3732204567386546
+          }
+        ]
+      },
       "draftFeet": [
         {
           "id": "foreRight",
@@ -6178,7 +6331,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.9273381827177314e-06,
-      "sha256": "cd4479e0fff78a384586437830381b7e94fb9396684671aae250ebec5f172381",
+      "sha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d",
       "byteLength": 728256,
       "actorScale": 0.911911507053303,
       "withersM": 1.73,
@@ -6216,7 +6369,7 @@
         {
           "meshIndex": 3,
           "vertices": 13895,
-          "minCageJacobianDeterminant": 0.750505882622452,
+          "minCageJacobianDeterminant": 0.8303485434583643,
           "maxPositionQuantizationErrorM": 1.0571615205098357e-05,
           "maxAppearanceDeltaM": 0.2303011800207892,
           "fixedLowerVertices": 0
@@ -6302,7 +6455,94 @@
           "left": 0.12000011046523051,
           "right": 0.12000009514320226
         },
-        "unselectedIdealTargetExactlyPreserved": true
+        "unselectedIdealTargetExactlyPreserved": true,
+        "unselectedException": "The separately documented breastcollar follows the front body contour."
+      },
+      "draftBreastcollar": {
+        "componentIds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          19,
+          20,
+          21,
+          31,
+          32,
+          33,
+          34,
+          35,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          109,
+          110,
+          111,
+          112,
+          117,
+          118,
+          119,
+          120,
+          121,
+          122,
+          123,
+          124,
+          125,
+          135,
+          136,
+          137,
+          138,
+          139,
+          171,
+          176,
+          177,
+          178,
+          179,
+          183,
+          184,
+          185,
+          186,
+          207,
+          211,
+          224,
+          227,
+          229,
+          230,
+          232,
+          233,
+          234,
+          235,
+          236,
+          262,
+          264,
+          274,
+          275
+        ],
+        "selectedVertices": 2404,
+        "boundary": {
+          "sourceTouchToleranceM": 0.003,
+          "touchingSelectedVertices": 68,
+          "coincidentSelectedVertices": 26,
+          "minimumTouchingSourceYM": 1.3884544438037003,
+          "frontCorrectionZeroAtAllTouchingVertices": true
+        },
+        "maxDisplayedCorrectionM": 0.06122029925062179,
+        "unselectedIdealTargetExactlyPreserved": true,
+        "contactNote": "Same bounded field as the chest. No zero-gap or no-penetration claim; compare real skinned collar contact against the native baseline in browser QA.",
+        "previousUnselectedQuantizedCoefficientsExact": null
       },
       "headShape": {
         "family": "draft",
@@ -6323,11 +6563,11 @@
         "chest": {
           "sourceM": 0.520620693945136,
           "previousM": 0.6398415042133067,
-          "newM": 0.7906779444377685,
-          "gainOverPreviousPercent": 23.574031886211767,
+          "newM": 0.7700184018991572,
+          "gainOverPreviousPercent": 20.34517874014825,
           "previousDisplayedM": 0.6341784037196465,
-          "newDisplayedM": 0.7550925825040139,
-          "displayedGainPercent": 19.066271900015753
+          "newDisplayedM": 0.7353628462206473,
+          "displayedGainPercent": 15.955201550151132
         },
         "quarters": {
           "sourceM": 0.6624500560549793,
@@ -6420,6 +6660,72 @@
           }
         ]
       },
+      "draftFrontProfile": {
+        "comparison": "Version2 rounded-rear draft, with unchanged body/limb art and actor scale",
+        "sectionSourceZRangeM": [
+          0.22,
+          0.7
+        ],
+        "sectionSourceYHalfHeightM": 0.065,
+        "sections": [
+          {
+            "sourceYCenterM": 0.65,
+            "vertices": 150,
+            "previousDisplayedWidthM": 0.38958629471997736,
+            "newDisplayedWidthM": 0.38958923857233885,
+            "previousDisplayedMeanYM": 0.6209765773027558,
+            "newDisplayedMeanYM": 0.6210081751168498
+          },
+          {
+            "sourceYCenterM": 0.8,
+            "vertices": 171,
+            "previousDisplayedWidthM": 0.5544489675715722,
+            "newDisplayedWidthM": 0.5238726105458313,
+            "previousDisplayedMeanYM": 0.7361830520801182,
+            "newDisplayedMeanYM": 0.7541027367258006
+          },
+          {
+            "sourceYCenterM": 0.95,
+            "vertices": 465,
+            "previousDisplayedWidthM": 0.6781100904080041,
+            "newDisplayedWidthM": 0.5999632482597995,
+            "previousDisplayedMeanYM": 0.8132416641083081,
+            "newDisplayedMeanYM": 0.8666180596998854
+          },
+          {
+            "sourceYCenterM": 1.1,
+            "vertices": 216,
+            "previousDisplayedWidthM": 0.7518820928948498,
+            "newDisplayedWidthM": 0.6877364166141839,
+            "previousDisplayedMeanYM": 0.92688633145981,
+            "newDisplayedMeanYM": 0.9708735845915353
+          },
+          {
+            "sourceYCenterM": 1.25,
+            "vertices": 62,
+            "previousDisplayedWidthM": 0.7502741863138669,
+            "newDisplayedWidthM": 0.7329503778179348,
+            "previousDisplayedMeanYM": 1.1159301374687962,
+            "newDisplayedMeanYM": 1.1250738037699337
+          },
+          {
+            "sourceYCenterM": 1.4,
+            "vertices": 67,
+            "previousDisplayedWidthM": 0.7313142683685842,
+            "newDisplayedWidthM": 0.73057350921779,
+            "previousDisplayedMeanYM": 1.2645303030157147,
+            "newDisplayedMeanYM": 1.2645938689934892
+          },
+          {
+            "sourceYCenterM": 1.55,
+            "vertices": 89,
+            "previousDisplayedWidthM": 0.6761698234060431,
+            "newDisplayedWidthM": 0.6761698026651043,
+            "previousDisplayedMeanYM": 1.4311571893339665,
+            "newDisplayedMeanYM": 1.431157230675829
+          }
+        ]
+      },
       "draftFeet": [
         {
           "id": "foreRight",
@@ -6480,7 +6786,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 3.203417125452468e-06,
-      "sha256": "27c846eeaad159672b9c97621b5fc6f2b19006e0ba2b54618536fd81d23a6205",
+      "sha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575",
       "byteLength": 728256,
       "actorScale": 0.9549938604154964,
       "withersM": 1.82,
@@ -6518,7 +6824,7 @@
         {
           "meshIndex": 3,
           "vertices": 13895,
-          "minCageJacobianDeterminant": 0.8020317810268748,
+          "minCageJacobianDeterminant": 0.893090042115323,
           "maxPositionQuantizationErrorM": 8.412890420651828e-06,
           "maxAppearanceDeltaM": 0.19569122917194223,
           "fixedLowerVertices": 0
@@ -6604,7 +6910,94 @@
           "left": 0.050000189798494375,
           "right": 0.049999535773854076
         },
-        "unselectedIdealTargetExactlyPreserved": true
+        "unselectedIdealTargetExactlyPreserved": true,
+        "unselectedException": "The separately documented breastcollar follows the front body contour."
+      },
+      "draftBreastcollar": {
+        "componentIds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          19,
+          20,
+          21,
+          31,
+          32,
+          33,
+          34,
+          35,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          109,
+          110,
+          111,
+          112,
+          117,
+          118,
+          119,
+          120,
+          121,
+          122,
+          123,
+          124,
+          125,
+          135,
+          136,
+          137,
+          138,
+          139,
+          171,
+          176,
+          177,
+          178,
+          179,
+          183,
+          184,
+          185,
+          186,
+          207,
+          211,
+          224,
+          227,
+          229,
+          230,
+          232,
+          233,
+          234,
+          235,
+          236,
+          262,
+          264,
+          274,
+          275
+        ],
+        "selectedVertices": 2404,
+        "boundary": {
+          "sourceTouchToleranceM": 0.003,
+          "touchingSelectedVertices": 68,
+          "coincidentSelectedVertices": 26,
+          "minimumTouchingSourceYM": 1.3884544438037003,
+          "frontCorrectionZeroAtAllTouchingVertices": true
+        },
+        "maxDisplayedCorrectionM": 0.05143646176838123,
+        "unselectedIdealTargetExactlyPreserved": true,
+        "contactNote": "Same bounded field as the chest. No zero-gap or no-penetration claim; compare real skinned collar contact against the native baseline in browser QA.",
+        "previousUnselectedQuantizedCoefficientsExact": null
       },
       "headShape": {
         "family": "draft",
@@ -6625,11 +7018,11 @@
         "chest": {
           "sourceM": 0.520620693945136,
           "previousM": 0.5982316859737704,
-          "newM": 0.7438684004838795,
-          "gainOverPreviousPercent": 24.34453371908063,
+          "newM": 0.7240976877045966,
+          "gainOverPreviousPercent": 21.039674875453663,
           "previousDisplayedM": 0.5838219737045826,
-          "newDisplayedM": 0.7010978958798249,
-          "displayedGainPercent": 20.087617023230543
+          "newDisplayedM": 0.6824639478312412,
+          "displayedGainPercent": 16.895899532649672
         },
         "quarters": {
           "sourceM": 0.6624500560549793,
@@ -6722,6 +7115,72 @@
           }
         ]
       },
+      "draftFrontProfile": {
+        "comparison": "Version2 rounded-rear draft, with unchanged body/limb art and actor scale",
+        "sectionSourceZRangeM": [
+          0.22,
+          0.7
+        ],
+        "sectionSourceYHalfHeightM": 0.065,
+        "sections": [
+          {
+            "sourceYCenterM": 0.65,
+            "vertices": 150,
+            "previousDisplayedWidthM": 0.3818004635719935,
+            "newDisplayedWidthM": 0.38179851636250706,
+            "previousDisplayedMeanYM": 0.612862114022106,
+            "newDisplayedMeanYM": 0.6128886805390094
+          },
+          {
+            "sourceYCenterM": 0.8,
+            "vertices": 171,
+            "previousDisplayedWidthM": 0.5314479319831854,
+            "newDisplayedWidthM": 0.5064943477662623,
+            "previousDisplayedMeanYM": 0.7309527515128266,
+            "newDisplayedMeanYM": 0.7460179127669556
+          },
+          {
+            "sourceYCenterM": 0.95,
+            "vertices": 465,
+            "previousDisplayedWidthM": 0.6370194759169084,
+            "newDisplayedWidthM": 0.5738345779390855,
+            "previousDisplayedMeanYM": 0.8164234236422567,
+            "newDisplayedMeanYM": 0.8612975172348183
+          },
+          {
+            "sourceYCenterM": 1.1,
+            "vertices": 216,
+            "previousDisplayedWidthM": 0.6981155450362531,
+            "newDisplayedWidthM": 0.6457624686631013,
+            "previousDisplayedMeanYM": 0.931004590787919,
+            "newDisplayedMeanYM": 0.9679852285737733
+          },
+          {
+            "sourceYCenterM": 1.25,
+            "vertices": 62,
+            "previousDisplayedWidthM": 0.696617576333051,
+            "newDisplayedWidthM": 0.681063331843145,
+            "previousDisplayedMeanYM": 1.1124618775508892,
+            "newDisplayedMeanYM": 1.120149006676354
+          },
+          {
+            "sourceYCenterM": 1.4,
+            "vertices": 67,
+            "previousDisplayedWidthM": 0.6786087468851437,
+            "newDisplayedWidthM": 0.6779677129945397,
+            "previousDisplayedMeanYM": 1.2587174544331832,
+            "newDisplayedMeanYM": 1.258771009674981
+          },
+          {
+            "sourceYCenterM": 1.55,
+            "vertices": 89,
+            "previousDisplayedWidthM": 0.6257752880066245,
+            "newDisplayedWidthM": 0.6257737253160875,
+            "previousDisplayedMeanYM": 1.4186119220917268,
+            "newDisplayedMeanYM": 1.4186120555071429
+          }
+        ]
+      },
       "draftFeet": [
         {
           "id": "foreRight",
@@ -6782,7 +7241,7 @@
       ],
       "standingBodyFloorM": 0.0,
       "maxLowerLimbYChangeM": 2.7440898695552107e-06,
-      "sha256": "105f7c47d11a2efef4f758747620e9bcab4049fd3a4f2fbb8dd26ec652fdba3d",
+      "sha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d",
       "byteLength": 728256,
       "actorScale": 0.9425025924259818,
       "withersM": 1.78,

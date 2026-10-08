@@ -6,11 +6,12 @@ also widen limb crosssections without moving their centers or ground contacts;
 other breeds retain exact source positions and normals below 0.65 m.
 """
 from pathlib import Path
-import argparse, ast, copy, hashlib, io, json, sys
+import argparse, ast, copy, hashlib, io, json, re, sys
 import numpy as np
 from PIL import Image
 from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
+from scipy.spatial import cKDTree
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'assets/models/native-roster'
@@ -83,6 +84,15 @@ DRAFT_REAR_CONTOUR = {
     'preserved':'Full upper-hip mass; front body, neck, lower legs, hoof centers, seat and all non-body meshes unchanged.',
     'purpose':'Round the rear quarter into the thigh instead of extending the broad barrel cage down the haunch.',
 }
+DRAFT_FRONT_CONTOUR = {
+    'version':3,'bodyMeshIndex':0,'collarMeshIndex':3,
+    'sourceZBlendM':[.12,.35],
+    'widthGainSourceYBlendM':[.90,1.38],'minimumWidthGainFactor':.50,
+    'depthOffsetSourceYBlendM':[.92,1.38],'minimumDepthOffsetFactor':.40,
+    'preserved':'Broad upper shoulders and neck; rounded rear, lower limbs, seat, irons, fenders, saddle and bridle unchanged.',
+    'purpose':'Round the lower chest into the forearms, with the original breastcollar following the same field.',
+    'contactNote':'Preserves the fitted source relationship; zero collar-to-skin gap or penetration is not claimed.',
+}
 
 
 # Head-only refinements measured in the slightly turned source head's frame.
@@ -125,8 +135,8 @@ def head_shape(key):
 def head_refinement(p, key):
     """Compact, C2-continuous shape field in source standing metres.
 
-    Compact support leaves the barrel, draft quarters, limbs, saddle, ears and
-    poll outside these small facial regions. Width changes are centered on the
+    Compact support leaves the barrel, draft quarters, limbs and saddle
+    outside these small facial regions. Width changes are centered on the
     measured source head plane, not world X=0 (the source is slightly turned).
     """
     shape=head_shape(key)
@@ -192,7 +202,7 @@ def draft_limbs(p,s,limbs):
         q[np.ix_(ids,[0,2])]+=(p[np.ix_(ids,[0,2])]-center)*((factor[ids]-1)*fade[ids]*region[ids])[:,None]
     return q
 
-def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0., rear_contour=True, refine_head=True):
+def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0., rear_contour=True, collar_mask=None, front_contour=True, refine_head=True):
     """Common body/tack cage; draft-only lower-body edits use limb centers."""
     p = np.asarray(p, float)
     x,y,z = (p/BASE_WITHERS).T
@@ -250,6 +260,14 @@ def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0., rear_contour=True,
         # Shorten the Western fenders, carrying each complete iron rigidly.
         # This is source-world Y only; the upper strap joins remain fixed.
         target[tack_mask,1]+=tack_lift*(1-smooth(1.20,1.60,p[tack_mask,1]))
+    if key in DRAFT_SHAPES and front_contour and (limbs is not None or collar_mask is not None):
+        art=DRAFT_FRONT_CONTOUR
+        front=smooth(*art['sourceZBlendM'],p[:,2])
+        if collar_mask is not None:front=front*collar_mask
+        width_keep=art['minimumWidthGainFactor']+(1-art['minimumWidthGainFactor'])*smooth(*art['widthGainSourceYBlendM'],p[:,1])
+        depth_keep=art['minimumDepthOffsetFactor']+(1-art['minimumDepthOffsetFactor'])*smooth(*art['depthOffsetSourceYBlendM'],p[:,1])
+        target[:,0]-=p[:,0]*width*upper*front*(1-width_keep)
+        target[:,1]-=(y-.86)*depth*torso*BASE_WITHERS*upper*front*(1-depth_keep)
     return target
 
 def groups(indices, count):
@@ -274,6 +292,37 @@ def draft_stirrup_components(mesh):
     assert mask[2792:2846].all() and mask[2716:2770].all(), 'Whole treads must follow fender tailoring'
     assert not mask[7894:8125].any() and not mask[6954:7185].any(), 'Bridle bit points must remain unchanged'
     return mask,selected
+
+def draft_breastcollar_components(mesh,stirrup_mask):
+    """Complete breastcollar and center tie-down islands, excluding other tack.
+
+    The four explicit tie-down islands cross behind Z=.30 and duplicate each
+    other's seams. Front saddle-edge islands 262/264 touch unselected saddle
+    parts above Y=1.388, where the front correction is already exactly zero.
+    """
+    p=mesh['actual'];mask=np.zeros(len(p),bool);selected=[]
+    for component,ids in enumerate(groups(mesh['indices'],len(p))):
+        lo=p[ids].min(0);hi=p[ids].max(0)
+        if (lo[2]>.30 and hi[2]<.80 and lo[1]>.90 and hi[1]<1.65) or component in [20,21,111,112]:
+            mask[ids]=True;selected.append(component)
+    assert len(selected)==70 and mask.sum()==2404, 'Pinned source breastcollar islands changed'
+    assert not np.any(mask&stirrup_mask), 'Breastcollar correction must not change fenders or irons'
+    rider=(ROOT/'assets/native-rider.js').read_text()
+    protected=set()
+    for name in ['DISPLAY_REIN_COMPONENTS','BRIDLE_COMPONENTS']:
+        match=re.search(r'\b'+name+r'\s*=\s*(\[[^\]]*\])',rider)
+        assert match, 'Native protected head/rein component contract missing'
+        protected.update(json.loads(match.group(1)))
+    assert not protected.intersection(selected), 'Breastcollar correction must not change bridle or reins'
+    chosen=np.where(mask)[0];other=np.where(~mask)[0]
+    distance,_=cKDTree(p[other]).query(p[chosen])
+    touching=chosen[distance<.003]
+    fixed_y=max(DRAFT_FRONT_CONTOUR['widthGainSourceYBlendM'][1],DRAFT_FRONT_CONTOUR['depthOffsetSourceYBlendM'][1])
+    assert len(touching) and np.all(p[touching,1]>=fixed_y), 'Correction must vanish at shared/touching saddle endpoints'
+    boundary={'sourceTouchToleranceM':.003,'touchingSelectedVertices':len(touching),
+        'coincidentSelectedVertices':int(np.count_nonzero(distance<.00002)),
+        'minimumTouchingSourceYM':float(p[touching,1].min()),'frontCorrectionZeroAtAllTouchingVertices':True}
+    return mask,selected,boundary
 
 def uv_atlas(p, uv, indices, size):
     atlas=np.zeros((size,size,3),np.float32); covered=np.zeros((size,size),bool)
@@ -379,6 +428,7 @@ def main():
     hairgroups=groups(meshes[2]['indices'],len(meshes[2]['raw']))
     limbs=draft_limb_centers(meshes[0]['actual'])
     stirrup_mask,stirrup_components=draft_stirrup_components(meshes[3])
+    collar_mask,collar_components,collar_boundary=draft_breastcollar_components(meshes[3],stirrup_mask)
     config=json.loads((ROOT/'tools/asset-gen/breed-conformation.json').read_text())
     specs=config['conformations']; extra=copy.deepcopy(specs['sport'])
     extra['sculpt_targets']={k:1 for k in extra['sculpt_targets']}
@@ -405,8 +455,9 @@ def main():
         for m in meshes:
             p=m['actual'];limb_cage=limbs if key in DRAFT_SHAPES and m['index']==0 else None
             tack_cage=stirrup_mask if key in DRAFT_SHAPES and m['index']==3 else None
-            q=cage(p,s,key,limb_cage,tack_cage,stirrup_lift);eps=1e-5
-            jac=np.stack([(cage(p+np.eye(3)[axis]*eps,s,key,limb_cage,tack_cage,stirrup_lift)-cage(p-np.eye(3)[axis]*eps,s,key,limb_cage,tack_cage,stirrup_lift))/(2*eps) for axis in range(3)],axis=2)
+            collar_cage=collar_mask if tack_cage is not None else None
+            q=cage(p,s,key,limb_cage,tack_cage,stirrup_lift,collar_mask=collar_cage);eps=1e-5
+            jac=np.stack([(cage(p+np.eye(3)[axis]*eps,s,key,limb_cage,tack_cage,stirrup_lift,collar_mask=collar_cage)-cage(p-np.eye(3)[axis]*eps,s,key,limb_cage,tack_cage,stirrup_lift,collar_mask=collar_cage))/(2*eps) for axis in range(3)],axis=2)
             det=np.linalg.det(jac);assert np.isfinite(det).all() and det.min()>.3,(key,m['index'],'cage inversion')
             worldnormal=np.einsum('nij,nj->ni',m['linear'],m['normal'])
             targetnormal=np.linalg.solve(jac.transpose(0,2,1),worldnormal[...,None])[...,0]
@@ -451,8 +502,31 @@ def main():
                     'shorteningSourceYRangeM':[1.20,1.60],
                     'treadActualDisplayedLiftM':{side:float((tackdecoded[a:b+1,1]-original_tack[a:b+1,1]).mean()*draft_actor)
                         for side,a,b in [('left',2792,2845),('right',2716,2769)]},
-                    'unselectedIdealTargetExactlyPreserved':bool(np.array_equal(q[~stirrup_mask],original_tack[~stirrup_mask]))}
+                    'unselectedIdealTargetExactlyPreserved':bool(np.array_equal(q[~(stirrup_mask|collar_mask)],original_tack[~(stirrup_mask|collar_mask)])),
+                    'unselectedException':'The separately documented breastcollar follows the front body contour.'}
                 assert report['draftStirrups']['unselectedIdealTargetExactlyPreserved']
+                prior_tack=cage(p,s,key,tack_mask=stirrup_mask,tack_lift=stirrup_lift)
+                report['draftBreastcollar']={'componentIds':collar_components,'selectedVertices':int(collar_mask.sum()),
+                    'boundary':collar_boundary,'maxDisplayedCorrectionM':float(np.linalg.norm(q-prior_tack,axis=1).max()*draft_actor),
+                    'unselectedIdealTargetExactlyPreserved':bool(np.array_equal(q[~collar_mask],prior_tack[~collar_mask])),
+                    'contactNote':'Same bounded field as the chest. No zero-gap or no-penetration claim; compare real skinned collar contact against the native baseline in browser QA.',
+                    'previousUnselectedQuantizedCoefficientsExact':None}
+                assert report['draftBreastcollar']['unselectedIdealTargetExactlyPreserved']
+                prior_row=previous.get('breeds',{}).get(key) if previous else None
+                # When only this new contour differs (including the same head
+                # revision), preserve the entire rest
+                # of the packed tack, including its scales—not merely an ideal
+                # floating-point target. A full rebuild without prior output
+                # still derives the same canonical scales from the data peaks.
+                if prior_row and prior_row.get('sculptTargets')==s and prior_row.get('headShape',{}).get('parameters')==head_shape(key) and prior_row.get('draftShape',{}).get('stirrupTailoring',{}).get('sourceLiftM')==stirrup_lift:
+                    prior_bytes=(OUT/(key+'.bin')).read_bytes()
+                    for field,desc in [('positionDelta',pd),('normalDelta',nd)]:
+                        olddesc=prior_row['meshes'][3][field]
+                        assert desc['scale']==olddesc['scale'], (key,field,'non-collar tack scale changed')
+                        oldq=np.frombuffer(prior_bytes,dtype='<i2',count=olddesc['count'],offset=olddesc['byteOffset']).reshape(-1,3)
+                        newq=np.frombuffer(packed,dtype='<i2',count=desc['count'],offset=desc['byteOffset']).reshape(-1,3).copy()
+                        assert np.array_equal(oldq[~collar_mask],newq[~collar_mask]), (key,field,'non-collar tack coefficients changed')
+                    report['draftBreastcollar']['previousUnselectedQuantizedCoefficientsExact']=True
             records.append({'meshIndex':m['index'],'name':m['name'],'vertexCount':len(p),'positionDelta':pd,'normalDelta':nd})
             report['meshes'].append({'meshIndex':m['index'],'vertices':len(p),'minCageJacobianDeterminant':float(det.min()),
                                      'maxPositionQuantizationErrorM':float(actual_error.max()),'maxAppearanceDeltaM':float(np.linalg.norm(q-p,axis=1).max()),
@@ -488,12 +562,14 @@ def main():
                 'maxAdditionalDisplayedDeltaM':float(np.linalg.norm(delta,axis=1).max()*actor),
                 'sourceSeatUnchangedByHeadPass':bool(np.array_equal(head_refinement((SOURCE_SEAT+TRANSLATION)[None,:],key),np.zeros((1,3))))}
         if key in DRAFT_SHAPES:
-            row['draftShape']={'version':2,'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
+            row['draftShape']={'version':3,'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
                 'limbFadeRangeM':[.82,1.10],'sourceYBelow065mPreserved':True,
                 'hoofCenterMethod':'XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned',
                 'unchangedSkeletonAndLimbLengths':True,'sharedBodyAndTackCage':True,
-                'sharedBodyAndTackCageDescription':'The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; shortened Western fenders are tack-only.',
-                'rearContour':copy.deepcopy(DRAFT_REAR_CONTOUR)}
+                'sharedBodyAndTackCageDescription':'The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.',
+                'rearContour':copy.deepcopy(DRAFT_REAR_CONTOUR),
+                'frontContour':{**copy.deepcopy(DRAFT_FRONT_CONTOUR),'collarComponentIds':collar_components,
+                    'collarVertexCount':int(collar_mask.sum()),'boundary':collar_boundary}}
             row['draftShape']['stirrupTailoring']={'displayedLiftM':DRAFT_STIRRUP_LIFT_M[key],
                 'sourceLiftM':stirrup_lift,'meshIndex':3,'vertexCount':13895,
                 'componentIds':stirrup_components,'shorteningSourceYRangeM':[1.20,1.60],
@@ -528,6 +604,16 @@ def main():
                     'previousDisplayedWidthM':float(np.ptp(prior_rear[mask,0])*actor),
                     'newDisplayedWidthM':float(np.ptp(bodydecoded[mask,0])*actor),
                     'previousDisplayedMeanYM':float(prior_rear[mask,1].mean()*actor),
+                    'newDisplayedMeanYM':float(bodydecoded[mask,1].mean()*actor)})
+            prior_front=cage(body,s,key,limbs,front_contour=False)
+            report['draftFrontProfile']={'comparison':'Version2 rounded-rear draft, with unchanged body/limb art and actor scale',
+                'sectionSourceZRangeM':[.22,.70],'sectionSourceYHalfHeightM':.065,'sections':[]}
+            for section in [.65,.80,.95,1.10,1.25,1.40,1.55]:
+                mask=(body[:,2]>.22)&(body[:,2]<.70)&(abs(body[:,1]-section)<.065)
+                report['draftFrontProfile']['sections'].append({'sourceYCenterM':section,'vertices':int(mask.sum()),
+                    'previousDisplayedWidthM':float(np.ptp(prior_front[mask,0])*actor),
+                    'newDisplayedWidthM':float(np.ptp(bodydecoded[mask,0])*actor),
+                    'previousDisplayedMeanYM':float(prior_front[mask,1].mean()*actor),
                     'newDisplayedMeanYM':float(bodydecoded[mask,1].mean()*actor)})
             report['draftFeet']=[]
             for limb in limbs:

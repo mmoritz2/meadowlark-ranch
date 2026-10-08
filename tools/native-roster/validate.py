@@ -20,11 +20,11 @@ import rig_hero_horse as glb
 SOURCE_SHA = 'b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07'
 SOURCE_TRANSLATION = np.array([-6.225790382362317e-9, .0047147771075021355, -1.6744842715166992])
 DRAFTS = {'percheron', 'shire', 'clyde'}
-# Pin the reviewed rounded draft bodies; later tack changes must not reshape them.
+# Pin the reviewed front/rear draft contours; later tack changes must not reshape them.
 DRAFT_BODY_SHA = {
-    'percheron': 'eaf2a344fed5bc8350634976120d63cd0560551223227d3017bd16cbd859cfeb',
-    'shire': '8e6f282851ea7ac26f4596d9f5fcf020a3330f23a9fa42311da422de77882f3c',
-    'clyde': 'd4f7bf6057b25b2034c308caa5e857bbfea2d71fc42de8b1e3dd1fce41d7f74f',
+    'percheron': '8c24aaae1c446d93a8dea7c3816c997da0004e7cb033e563ccabcdef8fee4f3c',
+    'shire': '5a802fb18a70e1460181e88a733cb724be8c0754acd2c5061da6aff19a6bc733',
+    'clyde': 'eb1db02381d8c475a6c0642550b740e210a949140ff8b09ebfa927d4ab63c52e',
 }
 QUANTIZATION_TOLERANCE_M = 2e-5
 # Pin released non-draft buffers, rather than trusting updated manifest hashes.
@@ -54,10 +54,10 @@ NON_DRAFT_SHA = {
 }
 
 
-# Approved head revision pins; the focused head gate separately proves the
-# pre-head saddle, limbs and rounded draft quarters are preserved within 20um.
-HEAD_BUFFER_SHA = {'bay': 'c39a83254c5a543bdad7e4c99e4972923e4fdc4fe3e70f1a3b19d0cfe0d2e72a', 'pinto': 'ca09d4969996ef20e9adb57376a334529caccf2f576e8caeea25330e00d9055e', 'appaloosa': '1ad3fdf25bb5cd935e03a1e68c2aad5c3fa635d87f7a95a7461608ffeffd802c', 'sunset': '8669c0c2fa6ffe6b5bbefc8e4c13c4daab220d72a621547818950b0f073ed575', 'iceland': 'c20886d2644d601bde6f28af7a6c2fed52f411d19a28e3eb855edcd016934400', 'fjord': 'fd5478e688f1593443e6cf0db9f6fc5da80eb5d1e420723f9cde7d3ee2bc67fe', 'akhal': '2001f2b1826da2fa166d0c1ff8f899c468f78a4ca3fe705188c2f19f263b9899', 'percheron': 'cd4479e0fff78a384586437830381b7e94fb9396684671aae250ebec5f172381', 'shire': '27c846eeaad159672b9c97621b5fc6f2b19006e0ba2b54618536fd81d23a6205', 'clyde': '105f7c47d11a2efef4f758747620e9bcab4049fd3a4f2fbb8dd26ec652fdba3d'}
-HEAD_DRAFT_BODY_SHA = {'percheron': 'da9ac848f30a991a657569de150f2b464ca083dac9401d65c47b0edd3ff129b4', 'shire': '55e27913c95c3ccf829ccf01c2412c841567a6d78c97bc87f6488f68419971d7', 'clyde': '6f5eecd4e9ff933e188ccfe23275ee55af7fcd075a2a02a0fb3c10cf8cb81f4b'}
+# Approved combined head/front-contour revision pins; the focused head gate
+# proves upstream nonfacial shape and contacts are preserved within20um.
+HEAD_BUFFER_SHA = {'bay': 'c39a83254c5a543bdad7e4c99e4972923e4fdc4fe3e70f1a3b19d0cfe0d2e72a', 'pinto': 'ca09d4969996ef20e9adb57376a334529caccf2f576e8caeea25330e00d9055e', 'appaloosa': '1ad3fdf25bb5cd935e03a1e68c2aad5c3fa635d87f7a95a7461608ffeffd802c', 'sunset': '8669c0c2fa6ffe6b5bbefc8e4c13c4daab220d72a621547818950b0f073ed575', 'iceland': 'c20886d2644d601bde6f28af7a6c2fed52f411d19a28e3eb855edcd016934400', 'fjord': 'fd5478e688f1593443e6cf0db9f6fc5da80eb5d1e420723f9cde7d3ee2bc67fe', 'akhal': '2001f2b1826da2fa166d0c1ff8f899c468f78a4ca3fe705188c2f19f263b9899', 'percheron': 'cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d', 'shire': '43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575', 'clyde': '1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d'}
+HEAD_DRAFT_BODY_SHA = {'percheron': '98cd1cc826f6940f36f53dce781a00eca0335447c0e718d9b0e8329d9e1ab3ac', 'shire': '87585e7f68d91e80884d626a902ac510960eb8f66e05e6bcd34208753ee25b2d', 'clyde': '6ce61579e46ade8e1a52a8b2bea02d6776e7d6a8364f2ae647acbf6a05194a12'}
 # End head revision pins.
 
 

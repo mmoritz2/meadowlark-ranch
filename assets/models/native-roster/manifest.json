@@ -4658,7 +4658,7 @@
       "id": "percheron",
       "label": "Percheron",
       "file": "./models/native-roster/percheron.bin",
-      "sha256": "cd4479e0fff78a384586437830381b7e94fb9396684671aae250ebec5f172381",
+      "sha256": "cb81418afb0b65d08b9d9cbcfea546ee0a20e48c25aa97938c64896d676a9e3d",
       "byteLength": 728256,
       "meshes": [
         {
@@ -4673,7 +4673,7 @@
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 2.0130216549160065e-05
+            "scale": 1.931503167525907e-05
           }
         },
         {
@@ -4835,7 +4835,7 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 2,
+        "version": 3,
         "limbCenters": [
           {
             "id": "foreRight",
@@ -5064,7 +5064,7 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
-        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; shortened Western fenders are tack-only.",
+        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.",
         "rearContour": {
           "version": 2,
           "meshIndex": 0,
@@ -5084,6 +5084,108 @@
           "minimumDepthOffsetFactor": 0.12,
           "preserved": "Full upper-hip mass; front body, neck, lower legs, hoof centers, seat and all non-body meshes unchanged.",
           "purpose": "Round the rear quarter into the thigh instead of extending the broad barrel cage down the haunch."
+        },
+        "frontContour": {
+          "version": 3,
+          "bodyMeshIndex": 0,
+          "collarMeshIndex": 3,
+          "sourceZBlendM": [
+            0.12,
+            0.35
+          ],
+          "widthGainSourceYBlendM": [
+            0.9,
+            1.38
+          ],
+          "minimumWidthGainFactor": 0.5,
+          "depthOffsetSourceYBlendM": [
+            0.92,
+            1.38
+          ],
+          "minimumDepthOffsetFactor": 0.4,
+          "preserved": "Broad upper shoulders and neck; rounded rear, lower limbs, seat, irons, fenders, saddle and bridle unchanged.",
+          "purpose": "Round the lower chest into the forearms, with the original breastcollar following the same field.",
+          "contactNote": "Preserves the fitted source relationship; zero collar-to-skin gap or penetration is not claimed.",
+          "collarComponentIds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            19,
+            20,
+            21,
+            31,
+            32,
+            33,
+            34,
+            35,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            109,
+            110,
+            111,
+            112,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            135,
+            136,
+            137,
+            138,
+            139,
+            171,
+            176,
+            177,
+            178,
+            179,
+            183,
+            184,
+            185,
+            186,
+            207,
+            211,
+            224,
+            227,
+            229,
+            230,
+            232,
+            233,
+            234,
+            235,
+            236,
+            262,
+            264,
+            274,
+            275
+          ],
+          "collarVertexCount": 2404,
+          "boundary": {
+            "sourceTouchToleranceM": 0.003,
+            "touchingSelectedVertices": 68,
+            "coincidentSelectedVertices": 26,
+            "minimumTouchingSourceYM": 1.3884544438037003,
+            "frontCorrectionZeroAtAllTouchingVertices": true
+          }
         },
         "stirrupTailoring": {
           "displayedLiftM": 0.04,
@@ -5172,7 +5274,7 @@
       "id": "shire",
       "label": "Shire",
       "file": "./models/native-roster/shire.bin",
-      "sha256": "27c846eeaad159672b9c97621b5fc6f2b19006e0ba2b54618536fd81d23a6205",
+      "sha256": "43f19dd76574fb57fdf9f33e789c3958d667fb0de594bf007e7c8bd1321bd575",
       "byteLength": 728256,
       "meshes": [
         {
@@ -5187,7 +5289,7 @@
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 2.1907145966682584e-05
+            "scale": 2.083181094273871e-05
           }
         },
         {
@@ -5349,7 +5451,7 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 2,
+        "version": 3,
         "limbCenters": [
           {
             "id": "foreRight",
@@ -5578,7 +5680,7 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
-        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; shortened Western fenders are tack-only.",
+        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.",
         "rearContour": {
           "version": 2,
           "meshIndex": 0,
@@ -5598,6 +5700,108 @@
           "minimumDepthOffsetFactor": 0.12,
           "preserved": "Full upper-hip mass; front body, neck, lower legs, hoof centers, seat and all non-body meshes unchanged.",
           "purpose": "Round the rear quarter into the thigh instead of extending the broad barrel cage down the haunch."
+        },
+        "frontContour": {
+          "version": 3,
+          "bodyMeshIndex": 0,
+          "collarMeshIndex": 3,
+          "sourceZBlendM": [
+            0.12,
+            0.35
+          ],
+          "widthGainSourceYBlendM": [
+            0.9,
+            1.38
+          ],
+          "minimumWidthGainFactor": 0.5,
+          "depthOffsetSourceYBlendM": [
+            0.92,
+            1.38
+          ],
+          "minimumDepthOffsetFactor": 0.4,
+          "preserved": "Broad upper shoulders and neck; rounded rear, lower limbs, seat, irons, fenders, saddle and bridle unchanged.",
+          "purpose": "Round the lower chest into the forearms, with the original breastcollar following the same field.",
+          "contactNote": "Preserves the fitted source relationship; zero collar-to-skin gap or penetration is not claimed.",
+          "collarComponentIds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            19,
+            20,
+            21,
+            31,
+            32,
+            33,
+            34,
+            35,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            109,
+            110,
+            111,
+            112,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            135,
+            136,
+            137,
+            138,
+            139,
+            171,
+            176,
+            177,
+            178,
+            179,
+            183,
+            184,
+            185,
+            186,
+            207,
+            211,
+            224,
+            227,
+            229,
+            230,
+            232,
+            233,
+            234,
+            235,
+            236,
+            262,
+            264,
+            274,
+            275
+          ],
+          "collarVertexCount": 2404,
+          "boundary": {
+            "sourceTouchToleranceM": 0.003,
+            "touchingSelectedVertices": 68,
+            "coincidentSelectedVertices": 26,
+            "minimumTouchingSourceYM": 1.3884544438037003,
+            "frontCorrectionZeroAtAllTouchingVertices": true
+          }
         },
         "stirrupTailoring": {
           "displayedLiftM": 0.12,
@@ -5686,7 +5890,7 @@
       "id": "clyde",
       "label": "Clydesdale",
       "file": "./models/native-roster/clyde.bin",
-      "sha256": "105f7c47d11a2efef4f758747620e9bcab4049fd3a4f2fbb8dd26ec652fdba3d",
+      "sha256": "1f1db05f21ad3f853da85dcd6a74dddbef7bb9edb4dfa963de6906fad68e679d",
       "byteLength": 728256,
       "meshes": [
         {
@@ -5701,7 +5905,7 @@
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 1.985795439696946e-05
+            "scale": 1.8190587537247804e-05
           }
         },
         {
@@ -5863,7 +6067,7 @@
         "scope": "Compact forehead, cheek/jaw, muzzle, nasal bridge and throatlatch surface refinements; source head identity retained."
       },
       "draftShape": {
-        "version": 2,
+        "version": 3,
         "limbCenters": [
           {
             "id": "foreRight",
@@ -6092,7 +6296,7 @@
         "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
         "unchangedSkeletonAndLimbLengths": true,
         "sharedBodyAndTackCage": true,
-        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; shortened Western fenders are tack-only.",
+        "sharedBodyAndTackCageDescription": "The broad upper-body/neck cage is shared. Rear-quarter contour and radial limb widening are body-only exceptions; the lower-front contour is shared only with breastcollar islands, and shortened Western fenders are tack-only.",
         "rearContour": {
           "version": 2,
           "meshIndex": 0,
@@ -6112,6 +6316,108 @@
           "minimumDepthOffsetFactor": 0.12,
           "preserved": "Full upper-hip mass; front body, neck, lower legs, hoof centers, seat and all non-body meshes unchanged.",
           "purpose": "Round the rear quarter into the thigh instead of extending the broad barrel cage down the haunch."
+        },
+        "frontContour": {
+          "version": 3,
+          "bodyMeshIndex": 0,
+          "collarMeshIndex": 3,
+          "sourceZBlendM": [
+            0.12,
+            0.35
+          ],
+          "widthGainSourceYBlendM": [
+            0.9,
+            1.38
+          ],
+          "minimumWidthGainFactor": 0.5,
+          "depthOffsetSourceYBlendM": [
+            0.92,
+            1.38
+          ],
+          "minimumDepthOffsetFactor": 0.4,
+          "preserved": "Broad upper shoulders and neck; rounded rear, lower limbs, seat, irons, fenders, saddle and bridle unchanged.",
+          "purpose": "Round the lower chest into the forearms, with the original breastcollar following the same field.",
+          "contactNote": "Preserves the fitted source relationship; zero collar-to-skin gap or penetration is not claimed.",
+          "collarComponentIds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            19,
+            20,
+            21,
+            31,
+            32,
+            33,
+            34,
+            35,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            109,
+            110,
+            111,
+            112,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            135,
+            136,
+            137,
+            138,
+            139,
+            171,
+            176,
+            177,
+            178,
+            179,
+            183,
+            184,
+            185,
+            186,
+            207,
+            211,
+            224,
+            227,
+            229,
+            230,
+            232,
+            233,
+            234,
+            235,
+            236,
+            262,
+            264,
+            274,
+            275
+          ],
+          "collarVertexCount": 2404,
+          "boundary": {
+            "sourceTouchToleranceM": 0.003,
+            "touchingSelectedVertices": 68,
+            "coincidentSelectedVertices": 26,
+            "minimumTouchingSourceYM": 1.3884544438037003,
+            "frontCorrectionZeroAtAllTouchingVertices": true
+          }
         },
         "stirrupTailoring": {
           "displayedLiftM": 0.05,

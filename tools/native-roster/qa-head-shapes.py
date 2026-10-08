@@ -37,6 +37,7 @@ def main():
     body=meshes[0]['world'];limbs=build.draft_limb_centers(body)
     tack_source={'actual':meshes[3]['world'], 'indices':build.glb.accessor(doc,binary,doc['meshes'][3]['primitives'][0]['indices']).astype(int)}
     tack_mask,_=build.draft_stirrup_components(tack_source)
+    collar_mask,_,_=build.draft_breastcollar_components(tack_source,tack_mask)
     keys=[key for key,row in manifest['breeds'].items() if row.get('headShape')]
     assert keys, 'No built head refinements'
     # The field and frame must be shared, centered on the turned source head,
@@ -71,7 +72,7 @@ def main():
             limb=limbs if key in build.DRAFT_SHAPES and index==0 else None
             mask=tack_mask if key in build.DRAFT_SHAPES and index==3 else None
             lift=build.DRAFT_STIRRUP_LIFT_M.get(key,0)/row['actorScale']
-            old=build.cage(p,s,key,limb,mask,lift,refine_head=False)
+            old=build.cage(p,s,key,limb,mask,lift,collar_mask=collar_mask if mask is not None else None,refine_head=False)
             expected=build.head_refinement(p,key)
             error=np.linalg.norm(actual-old-expected,axis=1)
             assert np.isfinite(actual).all() and error.max()<TOLERANCE,(key,index,'decoded shared cage',error.max())

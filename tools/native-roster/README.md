@@ -43,8 +43,9 @@ aligned. The seat point is transformed by that cage and is recorded per variant.
 The saddle, bits, stirrups and reins still require a mounted runtime check.
 Source hair cards keep all their original topology and skin influences, with
 whole-card mane/tail length changes. This preserves moving grooming controls.
-This buffer builder supplies no new fetlock feather geometry; the Fjord has a shortened existing
-card mane rather than a newly sculpted upright mane. Distinct upper-body shape,
+This buffer builder supplies no new fetlock feather geometry. The Fjord now
+uses its original skinned cards reshaped into a short rounded upright crest
+and forelock; see the grooming section below. Distinct upper-body shape,
 height, coat pattern and grooming do not imply independently authored leg rigs,
 breed-specific gaits, or anatomically unique skeletons.
 
@@ -84,6 +85,30 @@ Jacobian. `draftShape.rearContour` records the parameters, and
 `draftRearProfile` reports displayed widths and mean heights at repeatable
 source-height sections against the first broad draft cage.
 
+Front contour version 3 rounds the lower chest into the forearms while keeping
+the broad upper shoulders and the reviewed rear contour. `DRAFT_FRONT_CONTOUR`
+blends from zero at source Z=0.12 m to full at 0.35 m. The added width keeps 50%
+of its original gain below Y=0.90 m, easing to 100% by 1.38 m; the added vertical
+depth offset keeps 40% below Y=0.92 m, also reaching 100% by 1.38 m. These are
+reductions of the cage's added deformation, not reductions of the original
+horse's dimensions. The correction is zero below the protected leg region,
+above 1.38 m and behind the chest.
+
+The same front field follows 70 complete breastcollar and center tie-down
+islands (2,404 vertices) in the original Western tack mesh. It excludes the
+irons, fenders, girth, bridle, reins and separate saddle. The builder checks
+disjointness from the rider's protected head/rein component IDs and the iron
+selection. Selected saddle-edge islands touch other saddle parts only above
+Y=1.388 m: the correction has already vanished there. A 3 mm source-boundary
+check guards those joins. Normals use the field's Jacobian, and unchanged tack
+coefficients and scales are compared with the previous compatible buffer.
+The original native collar already has some gaps and animated overlap; this
+transform does not claim perfect skin contact. Browser checks compare the
+actual skinned leather against that baseline. `draftShape.frontContour` records
+the parameters and selection, `draftBreastcollar` reports the boundary and tack
+preservation checks, and `draftFrontProfile` compares displayed chest sections
+with the reviewed version 2 shape.
+
 The source standing pose is asymmetric, so each of its four limbs has a separate
 measured X/Z centerline rather than a mirrored arbitrary center. Hooves gain
 42% (Percheron), 50% (Shire), or 46% (Clydesdale) in horizontal width and depth.
@@ -115,7 +140,9 @@ their true skinned positions. `draftShape.stirrupTailoring` and the numerical
 report identify the components, lift and actual decoded tread height change.
 
 At runtime, `assets/native-draft-feathers.js` adds four private, bone-attached
-silky hair meshes to Shire and Clydesdale instances, including Tempest. Their
+silky hair meshes to Shire, Clydesdale and Vanner instances, including aliases
+such as Tempest. Vanner uses a fuller72-strand lower-leg treatment per leg,
+while Shire uses56 and Clydesdale62; all follow sampled skin and native joints. Their
 strand roots follow the measured widened lower-leg surface. Percheron, Belgian
 and Suffolk keep clean legs. The groom facade owns their Hair visibility and
 idempotent disposal; these strands do not alter the source skin or animation.
@@ -137,6 +164,77 @@ against the local project server to refresh the real catalog thumbnails. The
 renderer uses the production Studio loader and reads the feature package's
 actual extra-breed rows/themes, so feature aliases receive their own game coat
 and fantasy appearance. It asserts finite full native rigs and uncropped bounds.
+
+
+## Regional head refinements
+
+The merged builder retains the version3 front/breastcollar contour and version2
+rear contour described above. The head field is additive and independent: it
+uses the same compact smooth deformation on body, eyes, hair and bridle, in a
+local frame measured from the slightly turned source head. It does not move
+joints, alter weights/binds/topology, change limb lengths, or touch the saddle
+seat and tread regions. Normals follow the combined field's Jacobian.
+
+`HEAD_FAMILIES`, `HEAD_PROFILE_FAMILIES` and `HEAD_OVERRIDES` document every
+coefficient in `build.py`; each selected manifest row also records them under
+`headShape`. Width coefficients are local mask strengths, not a percentage
+change to the whole head. Forehead/cheek/muzzle widths, muzzle length, nasal
+bridge and throatlatch each have their own compact region.
+
+| Family | Profiles | Maximum additional displayed head displacement |
+| --- | --- | --- |
+| Refined | Arabian (`sunset`), Akhal-Teke |10.83mm /8.97mm |
+| Stock | Quarter (`bay`), Paint, Appaloosa |5.04–5.13mm |
+| Pony | Icelandic, Fjord |9.86mm /6.93mm |
+| Draft | Percheron, Shire, Clydesdale |3.62–4.38mm |
+
+The Arabian has a modest dish and more refined muzzle; the Akhal keeps a
+straight narrow face. Stock heads gain a little forehead/jaw substance. Pony
+muzzles are shorter and broader. Draft heads retain their substantial existing
+shape with restrained cheek and bridge refinements. The source identity is
+preserved; these are not independently authored heads or new skeletons.
+
+Run `python3 tools/native-roster/qa-head-shapes.py` for the decoded field and
+contact checks. It samples84 actual native walk/trot/left-canter/right-canter
+poses per revised foundation, checks shared eye/bridle deformation, seat and
+stirrup preservation, protected limbs, finite normals through the full decoder,
+and bounded head displacement. `head-validation.json` records the result.
+Quantized nonfacial positions differ from the pre-head target by at most20µm.
+Front/side/quarter closeups and mounted runtime review still decide appearance;
+these numerical tests do not certify visual gait or perfect leather contact.
+
+## Native Fjord groom and runtime feathers
+
+`groom.py:shape_fjord_groom` reshapes212 original mane cards and66 forelock cards
+around their attached source endpoints into a rounded upright crest. Its mane
+rise is about8–16 source centimetres. The194 tail cards keep the previous1.06
+length treatment;76 eyelash islands remain untrimmed. Every card retains source
+UVs, topology, skin weights and inertial hair bones, and its transformed normals
+use the affine inverse transpose. No replacement rig or extra mane mesh is used.
+
+`groom.uprightCrest.colorCards` records278 contiguous mane/forelock islands for
+`assets/native-fjord-groom.js`. That private runtime material adds a cream outer
+edge and dark center while retaining the original strand texture/alpha; tail
+and eyelashes are excluded, and saved player mane dyes can override the style.
+The metadata adds no draw calls. `python3 tools/native-roster/qa-groom.py` checks
+the original-source geometry, attachment, card roles and two-tone mask.
+
+Shire, Clydesdale and Vanner feathers remain runtime additions in
+`assets/native-draft-feathers.js`, fitted to sampled lower-leg skin and attached
+to the native pastern bones. They are disposed with the groom facade. Vanner's
+fuller lower-leg fringe does not claim new knee-length skinned feathering.
+
+## Browser portrait capture
+
+Open `review/horse-quality/capture.html` in the app browser and press Start.
+The visible page uses the production native library, current materials, groom,
+registered fantasy/alias appearances, source Western tack and a consistent
+standing pose. It fits all visible geometry inside a640×480 frame, checks the
+677-joint skin and finite bounds, and offers a ZIP with WebPs, merged thumbnail
+index and provenance. Dragons and the artist study are excluded and their old
+files/index entries are retained. A stopped/failed batch is explicitly marked
+partial. The ZIP contains only safe relative asset paths and never edits a game
+save. This path needs no injected browser evaluator or shell browser launcher.
 
 Credit: WildMesh 3D, *Horse — Realistic 3D Model DEMO FREE*,
 https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4,

@@ -19,13 +19,13 @@ import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import {createBreedLibrary} from './assets/breed-models.js?v=horse-art-2';
 import {CLUB_HORSE_BREEDS} from './assets/club-horses.js?v=club-horses-1';
 import {EXPANSION_HORSE_BREEDS} from './assets/expansion-horses.js?v=horses-expansion-1';
-import {ROWS as NEW_HORSE_BREEDS} from './assets/features/new-breeds.js?v=draft-rear-2';
-import {NEW_BREEDS as ROSTER_BREEDS} from './assets/features/horse-roster.js?v=draft-rear-2';
+import {ROWS as NEW_HORSE_BREEDS} from './assets/features/new-breeds.js?v=draft-front-3';
+import {NEW_BREEDS as ROSTER_BREEDS} from './assets/features/horse-roster.js?v=draft-front-3';
 import {registerExpansionHorseCoats} from './assets/expansion-horse-coats.js?v=horses-expansion-1';
 import {configureNativeCustomization} from './assets/native-horse-customization.js?v=horses-expansion-1';
 import {createNativeHorseMotion} from './assets/native-horse-motion.js?v=horse-art-2';
 import {nativeGroomFacade} from './assets/game-hero-horse.js?v=horse-art-2';
-import {NATIVE_MODEL_CHOICES} from './assets/features/native-horses.js?v=dragon-acting-1';
+import {NATIVE_MODEL_CHOICES} from './assets/features/native-horses.js?v=horse-art-2';
 import {createArtistMotion} from './assets/artist-horse-motion.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {applyEquineFantasyAppearance,createEquineWingLibrary} from './assets/equine-fantasy.js?v=artist-breeds-1';
@@ -179,7 +179,7 @@ async function select(key){const request=++ticket;loading=true;$('status').textC
  const movements=(spec.nativeBreed||spec.referenceMotion)?info.supportedModes.map(mode=>[mode,motionLabels[mode]||mode]):key==='artist-study'?[['stand','Standing pose'],['idle','Idle'],['walk','Slow walk']]:[['rest','Standing pose'],['stand','Idle'],['walk','Walk'],['trot','Trot'],['canter','Canter'],['gallop','Gallop'],['jump','Jump']];$('motion').replaceChildren(...movements.map(([value,text])=>new Option(text,value)));
  const supportedActions=motion?.supportedActions||[];$('action').replaceChildren(new Option('Actions…',''),...supportedActions.map(type=>new Option(motion.actionDescriptor(type)?.label||type,type)));$('action').hidden=!supportedActions.length;$('action').value='';
  for(const id of ['motion','playback','pause'])$(id).hidden=!motion;$('lead').hidden=(spec.nativeBreed||spec.referenceMotion)?!info.supportedModes.includes('canter'):key==='artist-study';$('ride').hidden=key==='artist-study';$('ride').href='ranch3d.html?inspect-breed='+encodeURIComponent(key)+'&v=native-gaits-1';$('motion').value=key==='artist-study'||spec.nativeIdleClip||motion?.hasAmbientIdle?'stand':'rest';$('wings').hidden=!accessories?.pair;$('wings').textContent='Open wings';$('wings').setAttribute('aria-pressed','false');$('lead').value='left';$('lead').disabled=true;paused=false;$('pause').textContent='Pause';$('pause').setAttribute('aria-pressed','false');
- document.querySelectorAll('#list button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.key===key)));surface();if(headView)focusHead();else frameBody();if(request===1&&new URLSearchParams(location.search).get('view')==='rear')frameEnd(true);
+ document.querySelectorAll('#list button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.key===key)));surface();if(headView)focusHead();else frameBody();if(request===1){const view=new URLSearchParams(location.search).get('view');if(view==='front'||view==='rear')frameEnd(view==='rear');}
  const url=new URL(location.href),requestedGait=url.searchParams.get('gait');if(requestedGait&&[...$('motion').options].some(o=>o.value===requestedGait)){motion.set(requestedGait,{lead:$('lead').value});$('motion').value=requestedGait;}url.searchParams.set('horse',key);history.replaceState(null,'',url);
  }catch(e){if(request!==ticket)return;loading=false;$('status').textContent='This horse could not load. Select it again to retry.';console.error(e);if(next&&next!==horse){nextMotion?.dispose?.();nextGroom?.dispose();nextAccessories?.dispose();if(next.userData.owned||next.userData.hero)disposeOwned(next);else disposeSkeletons(next);}}}
 function setCredit(spec){const credit=$('credit');credit.replaceChildren();const native=spec.nativeBreed,artist=native?spec.artist:'b2przemo',url=native?spec.sourceUrl:'https://blendswap.com/blend/13903',license=native?spec.license:'CC BY 3.0',licenseUrl=native?spec.licenseUrl:'https://creativecommons.org/licenses/by/3.0/';credit.append(document.createTextNode('Model by '));for(const [label,href]of [[artist,url],[license,licenseUrl]]){const a=document.createElement('a');a.textContent=label;a.href=href;a.target='_blank';a.rel='noopener';credit.append(a,document.createTextNode(label===artist?', ':'.'));}if(spec.referenceMotion){credit.append(document.createTextNode(' Motion adapted from '));const a=document.createElement('a');a.textContent='WildMesh 3D · CC BY-NC 4.0';a.href='https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4';a.target='_blank';a.rel='noopener';credit.append(a);}credit.hidden=false;}
