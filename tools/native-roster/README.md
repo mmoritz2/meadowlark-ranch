@@ -8,7 +8,19 @@ previous private working directory is a build dependency.
 The output is `assets/models/native-roster/manifest.json`, 25 compact appearance
 buffers, 25 original-UV coat textures, the original white neutral coat, and a
 numerical build report. The output is deterministic in a fixed Pillow/WebP
-environment. `--only bay,shire` creates a partial manifest for isolated review.
+environment. `--only bay,shire` merges only the selected entries into the full
+manifest and numerical report; it never publishes an incomplete roster. It
+requires an existing complete manifest/report pinned to the same source. For a
+shape-only update, run:
+
+```
+python3 tools/native-roster/build.py --only percheron,shire,clyde --geometry-only
+```
+
+This leaves every coat/neutral texture and every unselected buffer byte-identical.
+The builder checks those hashes before finishing. The three draft foundations
+also serve their existing aliases, including Belgian, Suffolk, Glacier and
+Tempest; aliases keep their own colors and fantasy appearance.
 
 The 677 original joints, skin weights, inverse binds, mesh topology, material
 slots, source UVs and approved animations remain unchanged. Every variant uses
@@ -19,8 +31,9 @@ The builder evaluates each skinned source surface in normalized standing world
 space. A smooth regional cage changes the barrel, quarters, neck, head and ears.
 The inverse of each unchanged weighted rest skin operator converts these small
 surface edits back into the original mesh coordinate system. The full body
-below 0.65 source metres retains exact original positions and normals, preserving
-the accepted lower-leg/hoof shapes and animation. The rig and articulated limb
+below 0.65 source metres retains exact original positions and normals for all
+non-draft foundations. Percheron, Shire and Clydesdale additionally receive
+surface-only limb crosssection changes described below. The rig and articulated limb
 proportions are intentionally shared. Uniform outer actor scale provides each
 breed's selected height, from a 1.02 m Shetland to a 1.82 m Shire. These are game
 art choices, not measurements of every individual or breed standards.
@@ -30,7 +43,7 @@ aligned. The seat point is transformed by that cage and is recorded per variant.
 The saddle, bits, stirrups and reins still require a mounted runtime check.
 Source hair cards keep all their original topology and skin influences, with
 whole-card mane/tail length changes. This preserves moving grooming controls.
-No new fetlock feather geometry is supplied; the Fjord has a shortened existing
+This buffer builder supplies no new fetlock feather geometry; the Fjord has a shortened existing
 card mane rather than a newly sculpted upright mane. Distinct upper-body shape,
 height, coat pattern and grooming do not imply independently authored leg rigs,
 breed-specific gaits, or anatomically unique skeletons.
@@ -42,7 +55,53 @@ The source geometry must remain shared and immutable. Vertex counts uniquely
 identify the five original meshes. Indices, skin weights and UVs are untouched.
 Normals may be normalized after decoding. The builder reports actual world
 quantization error and asserts it remains below 0.02 mm. All deltas on protected
-lower-body vertices are exactly zero, including after quantization.
+vertices are exactly zero, including after quantization.
+
+## Draft surface shapes
+
+`DRAFT_SHAPES` in `build.py` contains the native art overrides, independently of
+the older conformation settings used by other build tools. Percheron has the
+broadest quarters and a compact muscular neck; Shire keeps its taller actor,
+long arch and longer head; Clydesdale has a longer, somewhat lighter frame.
+The chest/barrel/quarters, neck and head all grow by regional amounts. Saddle,
+girth, stirrup and bridle surfaces share that same smooth cage, and the transformed
+seat is recorded in the manifest so mounted contacts follow the new tack.
+
+The source standing pose is asymmetric, so each of its four limbs has a separate
+measured X/Z centerline rather than a mirrored arbitrary center. Hooves gain
+42% (Percheron), 50% (Shire), or 46% (Clydesdale) in horizontal width and depth.
+The cannon remains slimmer than the knee/hock and muscular upper limb; the
+radial offset fades into the body from 0.82–1.10 source metres. No lower-limb Y
+coordinate or bone center is moved by the ideal cage, and no limb is lengthened.
+
+The single lowest source sole-contact vertex is pinned exactly. All other sole
+vertices start at least 0.137 mm higher and are widened with their hoof wall,
+avoiding a narrow sole beneath an enlarged hoof. A weighted hoof center makes
+the sum of X/Z offsets zero for each hoof's source vertices below 0.14 m. Int16
+encoding introduces only micrometre-scale center/Y error, checked independently;
+the pinned contact keeps the decoded standing floor exactly zero. The manifest
+records centerlines, factors, fade range and protected contact threshold. The
+build report records width gains against the earlier native draft directions,
+each hoof's center error, lower-leg Y error, Jacobian bounds and floor.
+
+Draft Western tack also has shorter fenders to keep the existing human rider's
+legs within reach of the wider saddle. Only the 13,895-vertex tack mesh is
+tailored: complete iron components rise 4 cm on Percheron, 12 cm on Shire, and
+5 cm on Clydesdale in displayed actor metres, equally on both sides. The source
+lift divides by the variant's actor scale. Fender shortening fades from full
+lift at source Y=1.20 m to zero at 1.60 m, preserving the upper saddle joins.
+Selected connected components occupy the measured fender region; the girth,
+bridle, separate saddle mesh and seat point are excluded. Normals follow the
+same transform's Jacobian. Tread contact IDs 2792–2845 and 2716–2769 remain
+unchanged and move with the complete irons, so the runtime bridge still reads
+their true skinned positions. `draftShape.stirrupTailoring` and the numerical
+report identify the components, lift and actual decoded tread height change.
+
+At runtime, `assets/native-draft-feathers.js` adds four private, bone-attached
+silky hair meshes to Shire and Clydesdale instances, including Tempest. Their
+strand roots follow the measured widened lower-leg surface. Percheron, Belgian
+and Suffolk keep clean legs. The groom facade owns their Hair visibility and
+idempotent disposal; these strands do not alter the source skin or animation.
 
 Coat masks are rasterized through the native body's unchanged UVs, using actual
 standing surface coordinates. They retain the original artist's white coat
@@ -53,7 +112,8 @@ RGB; `hairColorSrgb` is available for interfaces. `neutralcoat.png` is byte-exac
 source image 0, allowing custom colors without recoloring the default pattern.
 
 Run `python3 tools/native-roster/validate.py` for an independent decode check of
-all 25 buffers, exact protected lower-body positions/normals, source identity,
+all 25 buffers, exact protected lower-body positions/normals (with the explicit
+draft radial exception), source identity,
 distinct body shapes, standing floor and texture dimensions. Run
 `NODE_PATH=/path/to/node_modules QA_PORT=8584 node tools/native-roster/render-thumbnails.cjs`
 against the local project server to refresh the real catalog thumbnails. The

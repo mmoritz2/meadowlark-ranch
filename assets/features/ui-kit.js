@@ -23,7 +23,7 @@
 export const id='uikit';
 export function install(G){
  const S=G.save, T=G.tables||{};
- const DIR='assets/breed-thumbnails/', VER='?v=native-roster-1';
+ const DIR='assets/breed-thumbnails/', VER='?v=draft-bodies-1';
  const EMOJI_FALLBACK='🐴';
 
  /* ================= 0. baseline css =================
@@ -121,7 +121,7 @@ export function install(G){
 
  /* index.json once, then repaint whatever is already on screen. */
  try{
-  fetch(DIR+'index.json',{cache:'force-cache'}).then(r=>r.json()).then(list=>{
+  fetch(DIR+'index.json'+VER,{cache:'no-cache'}).then(r=>r.json()).then(list=>{
    if(Array.isArray(list)){KEYS=new Set(list.map(slug));CACHE.clear();sweepSoon();}
   }).catch(()=>{});
  }catch(e){}

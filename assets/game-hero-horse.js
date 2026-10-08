@@ -5,11 +5,12 @@ import {createHeroMotion,HERO_GAITS} from './hero-horse-motion.js?v=hero-motion-
 import {createNativeHorseMotion,tickNativeHorse,getNativeHorseCapabilities,startNativeHorseJump} from './native-horse-motion.js?v=horse-actions-1';
 export {getNativeHorseCapabilities,finishNativeHorseGrooms} from './native-horse-motion.js?v=horse-actions-1';
 import {captureNativeActionSeat} from './native-action-runtime.mjs?v=horse-actions-1';
+import {createNativeDraftFeathers} from './native-draft-feathers.js?v=draft-feathers-1';
 
 // Adapts the approved raw-space hero to the ranch's +Z-forward mount space.
 // Existing horse models continue using their own renderer and animation path.
 export function initGameHero(THREE,rig){
-  if(rig.profile?.nativeBreed){captureNativeActionSeat(THREE,rig);rig.heroMotion=createNativeHorseMotion({THREE,root:rig.nativeRoot,clips:rig.animations,profile:rig.profile,deferGroom:true});rig.nativeMotion=rig.heroMotion;rig.heroMotion.set('stand');rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroSeat=new THREE.Vector3();return;}
+  if(rig.profile?.nativeBreed){captureNativeActionSeat(THREE,rig);rig.heroMotion=createNativeHorseMotion({THREE,root:rig.nativeRoot,clips:rig.animations,profile:rig.profile,deferGroom:true});rig.nativeMotion=rig.heroMotion;rig.heroMotion.set('stand');rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroSeat=new THREE.Vector3();rig.groom?.dispose?.();rig.groom=nativeGroomFacade({THREE,scene:rig.scene,skin:rig.skin,mount:rig.scene,profile:rig.profile});rig.hairMane=rig.groom.mane;rig.hairTail=rig.groom.tail;rig.hairBuilt=true;return;}
   if(rig.profile?.referenceMotion){rig.heroMotion=createNativeHorseMotion({THREE,root:rig.scene,clips:rig.animations,profile:{...rig.profile,nativeBreed:true,nativeKind:'horse',nativeHoofFlex:false}});rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroSeat=new THREE.Vector3();rig.artistClock=0;return;}
   if(rig.profile?.artistBreed){rig.heroMotion=createArtistMotion({THREE,root:rig.scene,skin:rig.skin,heightM:rig.profile.heightM});rig.heroJumpAge=null;rig.heroJumpExtra=0;rig.heroSeat=new THREE.Vector3();rig.artistClock=0;rig.artistWorldScale=new THREE.Vector3();return;}
   if(!rig.profile?.hero)return;
@@ -119,11 +120,12 @@ export function gameHeroSeat(rig,mount){
 }
 
 // The native groom is already skinned and animated in the preserved source.
-export function nativeGroomFacade({scene,skin,mount,profile}={}){
+export function nativeGroomFacade({THREE,scene,skin,mount,profile}={}){
   let root=scene||skin;if(!scene)while(root?.parent&&root.parent!==mount)root=root.parent;
   const meshes=[];root?.traverse(o=>{if(o.isSkinnedMesh&&profile?.hairVertexCount&&o.geometry.attributes.position.count===profile.hairVertexCount)meshes.push(o);});
+  const feathers=createNativeDraftFeathers({THREE,scene:root,skin,profile});if(feathers)meshes.push(...feathers.meshes);
   const group={get visible(){return meshes.some(m=>m.visible);},set visible(v){for(const mesh of meshes)mesh.visible=v;}};
-  return {mane:group,tail:group,meshes,setColors(){},update(){},reset(){},dispose(){},stats:{native:true,meshes:meshes.length}};
+  return {mane:group,tail:group,meshes,feathers,setColors(options){feathers?.setColors(options);},update(){},reset(){},dispose(){feathers?.dispose();},stats:{native:true,meshes:meshes.length,feathers:feathers?.inspect()||null}};
 }
 
 // The approved groom is already skinned into each GLB; never overlay the old

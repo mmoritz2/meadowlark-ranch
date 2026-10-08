@@ -49,7 +49,7 @@ window.nativeRosterThumbnail=async key=>{
  const page=await browser.newPage({viewport:{width:640,height:480},deviceScaleFactor:1}),errors=[],records=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
  try{
-  await page.route('**/assets/features/new-breeds.js?native-roster-thumbnails=1',route=>route.fulfill({contentType:'text/javascript',body:fs.readFileSync(path.join(root,'assets/features/new-breeds.js'),'utf8')+'\nexport {ROWS,THEMES};\n'}));
+  await page.route('**/assets/features/new-breeds.js?native-roster-thumbnails=1',route=>route.fulfill({contentType:'text/javascript',body:fs.readFileSync(path.join(root,'assets/features/new-breeds.js'),'utf8')+'\nexport {THEMES};\n'}));
   await page.route('**/breeds.html*',route=>{
    let html=fs.readFileSync(path.join(root,'breeds.html'),'utf8');
    html=html.replace('</head>','<style>main{display:block}aside,.caption,.controls,.hint,#status{display:none!important}#stage{width:640px;height:480px}</style></head>');

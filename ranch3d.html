@@ -658,8 +658,8 @@ import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=tack-summon-20261007';
-import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rider.js?v=tack-summon-20261007';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=draft-bodies-1';
+import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rider.js?v=draft-bodies-1';
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js?v=sky-feathered-1';
@@ -6415,13 +6415,28 @@ function riderLegs(R,F,U,Rt,reachPass=0){
   // The measured source treads give each breed its own barrel width. Clamp the
   // ankle to the rider's actual reach rather than stretching either leg.
   const anchors=RIG.profile?.nativeKind==='horse'&&myHorses[rideIdx]?.bareback&&TACK.saddle?.userData.stir;
+  const barrel=anchors?nativeRiderBridge?.barebackBarrel:null;barrel?.update();
   if(anchors)for(const s of [1,-1]){
    const S=s>0?'R':'L',anchor=anchors[S],thigh=B['thigh'+S],shin=B['shin'+S],foot=B['foot'+S];if(!anchor||!thigh||!shin||!foot)continue;
    thigh.getWorldPosition(_rdC);shin.getWorldPosition(_rdD);foot.getWorldPosition(_rdB);
-   const reach=(_rdC.distanceTo(_rdD)+_rdD.distanceTo(_rdB))*.965;
-   anchor.getWorldPosition(_rdA);_rdB.copy(_rdA).addScaledVector(U,-.16).addScaledVector(F,-.26);
-   _rdE.copy(_rdB).sub(_rdC);if(_rdE.length()>reach)_rdB.copy(_rdC).add(_rdE.setLength(reach));
-   _rdD.copy(_rdC).addScaledVector(F,.16).addScaledVector(U,-.32).addScaledVector(Rt,s*.30);
+   const upper=_rdC.distanceTo(_rdD),lower=_rdD.distanceTo(_rdB),reach=(upper+lower)*.965;
+   if(barrel){
+    // Open the thigh around the measured coat, then hang the shin from that
+    // knee. Both segments retain their original lengths; the seat stays put.
+    const forward=.10,outward=.14,back=.06,hang=Math.sqrt(Math.max(.01,lower*lower-outward*outward-back*back));
+    for(let drop=.32;drop>=.079;drop-=.01){
+     const spread=Math.sqrt(Math.max(.001,upper*upper-drop*drop-forward*forward));
+     _rdD.copy(_rdC).addScaledVector(U,-drop).addScaledVector(F,forward).addScaledVector(Rt,s*spread);
+     _rdB.copy(_rdD).addScaledVector(U,-hang).addScaledVector(F,-back).addScaledVector(Rt,s*outward);
+     let clear=barrel.clearance(_rdD,s)>=.065;
+     for(let j=1;j<=3&&clear;j++){_rdE.lerpVectors(_rdD,_rdB,j/4);clear=barrel.clearance(_rdE,s)>=.055;}
+     if(clear)break;
+    }
+   }else{
+    anchor.getWorldPosition(_rdA);_rdB.copy(_rdA).addScaledVector(U,-.16).addScaledVector(F,-.26);
+    _rdE.copy(_rdB).sub(_rdC);if(_rdE.length()>reach)_rdB.copy(_rdC).add(_rdE.setLength(reach));
+    _rdD.copy(_rdC).addScaledVector(F,.16).addScaledVector(U,-.32).addScaledVector(Rt,s*.30);
+   }
    ikChain(thigh,shin,foot,RIDER_HINGE['knee'+S],_rdB,_rdD);
    const sole=foot.userData.soleContact||R.rig?.kit?.seat?.footContacts?.[S];
    if(sole){_rdE.copy(sole.forward).transformDirection(foot.matrixWorld);_rdT.copy(F).addScaledVector(U,-.07).addScaledVector(Rt,s*.09);boneAim(foot,_rdE,_rdT);}

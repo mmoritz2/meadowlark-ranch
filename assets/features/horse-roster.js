@@ -229,7 +229,7 @@ NEW_THEMES.petal.fx=`float pet;{vec2 g=vMapUv*18.0;vec2 c=floor(g),f=fract(g)-0.
 
 /* New rows. [key,label,tier,coins,gems,body,mane,{flags}] — flags carry src, season, limited,
    exclusive, bredOnly, egg, traits (fixed), body (foundation model) and the usual look. */
-const NEW_BREEDS=[
+export const NEW_BREEDS=[
  ['tidewalker','Tidewalker Arabian','Mythic',0,0,'#1c4f63','#7fe0d8',{coat:'tide',glow:true,ability:'swim',size:0.98,src:'summon',body:'sunset'}],
  ['glimmerdrake','Glimmerflight Dragon','Dragon',0,0,'#3a2a08','#ffe08a',{wings:true,dragon:true,coat:'glimmer',glow:true,ability:'fly',src:'breed',body:'akhal'}],
  ['thorndrake','Thornflight Dragon','Dragon',0,0,'#143008','#d8ff7a',{wings:true,dragon:true,coat:'thorn',glow:true,ability:'fly',src:'breed',body:'stock'}],

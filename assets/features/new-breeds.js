@@ -47,7 +47,7 @@ const ODDS={starfall:0.005};                     // the Chameleon Mustang's chan
    exactly that colour shows the model's hair, which is that colour anyway. A horse arrives wearing
    maneCol (see the grantHorse and foal hooks), so it is dyed on in every picture of the horse: the
    world, My Horses, a friend's screen. */
-const ROWS=[
+export const ROWS=[
  ['chameleon','Chameleon Mustang','Mythic',0,CAMO_GEMS,'#6b853e','#f4e6c5',{coat:'camo',maneCol:'#3a3a26',src:'shop',body:'palomino',camo:true}],
  ['connemara','Connemara Pony','Common',85,0,'#565a63','#d8c49a',{maneCol:'#1e1d22',mark:'roan',markCol:'#dfe3ea',body:'iceland'}],
  ['suffolk','Suffolk Punch','Draft',60,0,'#a8561f','#6a6f78',{maneCol:'#c47a42',mark:'none',body:'percheron'}],

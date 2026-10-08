@@ -22,7 +22,7 @@
   "license": "CC BY-NC 4.0",
   "artist": "WildMesh 3D",
   "sourceUrl": "https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4",
-  "method": "Original native677 skeleton and all approved clips unchanged; upper body/groom geometry, original-UV coat and uniform actor height derivatives.",
+  "method": "Original native677 skeleton and approved clips unchanged; breed body/groom geometry and original-UV coats. Drafts also widen limb crosssections around unchanged centers; limb lengths and floor contacts remain fixed.",
   "breeds": {
     "bay": {
       "id": "bay",
@@ -2989,7 +2989,7 @@
       "id": "percheron",
       "label": "Percheron",
       "file": "./models/native-roster/percheron.bin",
-      "sha256": "eba2c995e5ccd6bfba6118c696f0f449e067d3925bd933ab92fa2a45714236c5",
+      "sha256": "26b2f91ea872886faf2975ab00455e6861a224a629f6a4cb2d956fc830b6acfd",
       "byteLength": 728256,
       "meshes": [
         {
@@ -2999,12 +2999,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.0002069909795630833
+            "scale": 0.0005155946854695227
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 8.445089059950828e-06
+            "scale": 2.3002469925856594e-05
           }
         },
         {
@@ -3014,12 +3014,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 4.6607294653221896e-05
+            "scale": 0.00013669223859865968
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.1650339456793402e-06
+            "scale": 2.6327690336847023e-06
           }
         },
         {
@@ -3029,12 +3029,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.0003870011154163039
+            "scale": 0.0007085879972933951
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 8.494840808353985e-06
+            "scale": 2.180918944536344e-05
           }
         },
         {
@@ -3044,12 +3044,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.00046940008074050247
+            "scale": 0.001156433826567681
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 5.834599165412487e-06
+            "scale": 1.4948471991623484e-05
           }
         },
         {
@@ -3059,21 +3059,21 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.00021542005439860744
+            "scale": 0.000514151409118277
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 3.422030964087214e-06
+            "scale": 8.745834068351376e-06
           }
         }
       ],
       "withersM": 1.73,
-      "sourceWithersM": 1.8267783010120824,
-      "actorScale": 0.9470224159338522,
+      "sourceWithersM": 1.897113904824186,
+      "actorScale": 0.911911507053303,
       "sourceSeat": [
         6.225790382362317e-09,
-        1.766923962101741,
+        1.7895857298604125,
         1.6744842715166992
       ],
       "sourceTranslation": [
@@ -3082,19 +3082,22 @@
         -1.6744842715166992
       ],
       "sculptTargets": {
-        "body_length": 1.03,
-        "barrel_width": 1.21,
-        "body_depth": 1.14,
-        "neck_length": 0.98,
-        "neck_thickness": 1.16,
-        "head_length": 1,
-        "head_width": 1.09,
+        "body_length": 1.055,
+        "barrel_width": 1.5,
+        "body_depth": 1.25,
+        "neck_length": 1.0,
+        "neck_thickness": 1.53,
+        "head_length": 1.055,
+        "head_width": 1.27,
         "ear_length": 0.98,
         "limb_length": 1.03,
-        "hoof_width": 1.2,
-        "hindquarter_width": 1.2,
+        "hoof_width": 1.42,
+        "hindquarter_width": 1.55,
         "face_profile_depth_per_withers": 0.003,
-        "neck_arch_rise_per_withers": 0.04
+        "neck_arch_rise_per_withers": 0.065,
+        "shaft_width": 1.32,
+        "joint_width": 1.37,
+        "upper_limb_width": 1.52
       },
       "conformation": "Deep powerful draft frame and broad muscular quarters",
       "groom": {
@@ -3124,13 +3127,325 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Approved joint centers, limb lengths and gaits retained. Draft body, neck, head and limb crosssections are enlarged surface derivatives, not a new skeleton. Native groom remains source alpha cards.",
+      "draftShape": {
+        "version": 1,
+        "limbCenters": [
+          {
+            "id": "foreRight",
+            "front": true,
+            "side": -1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                -0.16466923212756698,
+                0.3743306875964772
+              ],
+              [
+                -0.16466923212756698,
+                0.3743306875964772
+              ],
+              [
+                -0.14826825194989396,
+                0.3138976295157594
+              ],
+              [
+                -0.1437637951543299,
+                0.34761157618439675
+              ],
+              [
+                -0.1498175917280994,
+                0.36950192530357184
+              ],
+              [
+                -0.16263399575254242,
+                0.3941997357498399
+              ],
+              [
+                -0.12743747356630467,
+                0.3759214631778488
+              ],
+              [
+                -0.13486118120265808,
+                0.414376495778605
+              ]
+            ],
+            "hoofVertexCount": 352,
+            "hoofSourceCentroid": [
+              -0.16466923212756698,
+              0.3743306875964772
+            ]
+          },
+          {
+            "id": "foreLeft",
+            "front": true,
+            "side": 1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                0.11170414232125526,
+                0.534017566646487
+              ],
+              [
+                0.11170414232125526,
+                0.534017566646487
+              ],
+              [
+                0.10538984651668576,
+                0.4553301895655848
+              ],
+              [
+                0.1137588584665708,
+                0.4657863997590277
+              ],
+              [
+                0.12275012248377062,
+                0.4654658778594787
+              ],
+              [
+                0.14086561800095593,
+                0.46861837413954
+              ],
+              [
+                0.11452530229016897,
+                0.3786756414314395
+              ],
+              [
+                0.13043798002931778,
+                0.4180459731807108
+              ]
+            ],
+            "hoofVertexCount": 353,
+            "hoofSourceCentroid": [
+              0.11170414232125526,
+              0.534017566646487
+            ]
+          },
+          {
+            "id": "hindRight",
+            "front": false,
+            "side": -1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                -0.25737607530289436,
+                -0.6657771889139998
+              ],
+              [
+                -0.25737607530289436,
+                -0.6657771889139998
+              ],
+              [
+                -0.23544012489529337,
+                -0.7373907656487196
+              ],
+              [
+                -0.20819533600981888,
+                -0.7739754394370428
+              ],
+              [
+                -0.19760695238989587,
+                -0.7787401804534266
+              ],
+              [
+                -0.2306163626708964,
+                -0.7214274601233446
+              ],
+              [
+                -0.19058071899091092,
+                -0.6673626690287943
+              ],
+              [
+                -0.16735090128739166,
+                -0.6551003371540047
+              ]
+            ],
+            "hoofVertexCount": 319,
+            "hoofSourceCentroid": [
+              -0.25737607530289436,
+              -0.6657771889139998
+            ]
+          },
+          {
+            "id": "hindLeft",
+            "front": false,
+            "side": 1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                0.22454261361053612,
+                -0.8735373721198771
+              ],
+              [
+                0.22454261361053612,
+                -0.8735373721198771
+              ],
+              [
+                0.21275493961099606,
+                -0.9132215380257187
+              ],
+              [
+                0.183554043060824,
+                -0.9015581830080357
+              ],
+              [
+                0.17507685545620846,
+                -0.8674208382303545
+              ],
+              [
+                0.21795734606549344,
+                -0.7886181850370491
+              ],
+              [
+                0.1771524570116795,
+                -0.6890065869976114
+              ],
+              [
+                0.1677366684489105,
+                -0.6598990186681992
+              ]
+            ],
+            "hoofVertexCount": 295,
+            "hoofSourceCentroid": [
+              0.22462079883687278,
+              -0.8736354249937811
+            ]
+          }
+        ],
+        "hoofHeightM": 0.14,
+        "floorPinnedBelowM": 5e-05,
+        "limbFadeRangeM": [
+          0.82,
+          1.1
+        ],
+        "sourceYBelow065mPreserved": true,
+        "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
+        "unchangedSkeletonAndLimbLengths": true,
+        "sharedBodyAndTackCage": true,
+        "stirrupTailoring": {
+          "displayedLiftM": 0.04,
+          "sourceLiftM": 0.043863905313854014,
+          "meshIndex": 3,
+          "vertexCount": 13895,
+          "componentIds": [
+            14,
+            30,
+            40,
+            41,
+            63,
+            64,
+            65,
+            67,
+            68,
+            78,
+            79,
+            80,
+            81,
+            82,
+            84,
+            85,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            97,
+            107,
+            108,
+            114,
+            115,
+            130,
+            134,
+            145,
+            146,
+            147,
+            148,
+            150,
+            152,
+            154,
+            156,
+            157,
+            158,
+            167,
+            190,
+            192,
+            193,
+            194,
+            226,
+            228,
+            238,
+            239,
+            248,
+            249,
+            258,
+            259,
+            266,
+            267,
+            280,
+            285,
+            294,
+            298
+          ],
+          "shorteningSourceYRangeM": [
+            1.2,
+            1.6
+          ],
+          "treadVertexRanges": {
+            "left": [
+              2792,
+              2845
+            ],
+            "right": [
+              2716,
+              2769
+            ]
+          },
+          "reason": "Shorter Western fenders keep the existing human rider feet within reach on the broad draft body."
+        }
+      }
     },
     "shire": {
       "id": "shire",
       "label": "Shire",
       "file": "./models/native-roster/shire.bin",
-      "sha256": "3552dd40a09b6fa973e4971993ed393db09a775d3063d26b45fef83049e0161f",
+      "sha256": "729f0b935b5b3c038fdc34ded7224ca06261114ed3f417dd9473a8eef732541a",
       "byteLength": 728256,
       "meshes": [
         {
@@ -3140,12 +3455,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.00023255602429573667
+            "scale": 0.0005687527805570516
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 9.774750305039148e-06
+            "scale": 2.417015147331002e-05
           }
         },
         {
@@ -3155,12 +3470,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 8.284300658583297e-05
+            "scale": 0.00011996865566212172
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.4257033494949016e-06
+            "scale": 1.8210344057866058e-06
           }
         },
         {
@@ -3170,12 +3485,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.0008373814481532952
+            "scale": 0.0013009303213106483
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 1.0812760661974298e-05
+            "scale": 2.3017355055885307e-05
           }
         },
         {
@@ -3185,12 +3500,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.0005153125064579436
+            "scale": 0.0012511159056320508
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 5.586235554821398e-06
+            "scale": 1.6241890486585504e-05
           }
         },
         {
@@ -3200,21 +3515,21 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.0002364040910187245
+            "scale": 0.0005341409500731259
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 4.2900579667118e-06
+            "scale": 9.312862291147309e-06
           }
         }
       ],
       "withersM": 1.82,
-      "sourceWithersM": 1.836252276706379,
-      "actorScale": 0.9911492135843502,
+      "sourceWithersM": 1.905771414287584,
+      "actorScale": 0.9549938604154964,
       "sourceSeat": [
         6.225790382362317e-09,
-        1.7710442835124085,
+        1.7937060512710805,
         1.6744842715166992
       ],
       "sourceTranslation": [
@@ -3223,19 +3538,22 @@
         -1.6744842715166992
       ],
       "sculptTargets": {
-        "body_length": 1.05,
-        "barrel_width": 1.23,
-        "body_depth": 1.16,
-        "neck_length": 1.07,
-        "neck_thickness": 1.18,
-        "head_length": 1.1,
-        "head_width": 1.08,
+        "body_length": 1.07,
+        "barrel_width": 1.52,
+        "body_depth": 1.27,
+        "neck_length": 1.085,
+        "neck_thickness": 1.56,
+        "head_length": 1.14,
+        "head_width": 1.25,
         "ear_length": 1.15,
         "limb_length": 1.07,
-        "hoof_width": 1.25,
-        "hindquarter_width": 1.23,
+        "hoof_width": 1.5,
+        "hindquarter_width": 1.52,
         "face_profile_depth_per_withers": 0.012,
-        "neck_arch_rise_per_withers": 0.055
+        "neck_arch_rise_per_withers": 0.075,
+        "shaft_width": 1.36,
+        "joint_width": 1.44,
+        "upper_limb_width": 1.6
       },
       "conformation": "Largest substantial draft exemplar, deep ribs and long quarters",
       "groom": {
@@ -3265,13 +3583,325 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Approved joint centers, limb lengths and gaits retained. Draft body, neck, head and limb crosssections are enlarged surface derivatives, not a new skeleton. Native groom remains source alpha cards.",
+      "draftShape": {
+        "version": 1,
+        "limbCenters": [
+          {
+            "id": "foreRight",
+            "front": true,
+            "side": -1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                -0.16466923212756698,
+                0.3743306875964772
+              ],
+              [
+                -0.16466923212756698,
+                0.3743306875964772
+              ],
+              [
+                -0.14826825194989396,
+                0.3138976295157594
+              ],
+              [
+                -0.1437637951543299,
+                0.34761157618439675
+              ],
+              [
+                -0.1498175917280994,
+                0.36950192530357184
+              ],
+              [
+                -0.16263399575254242,
+                0.3941997357498399
+              ],
+              [
+                -0.12743747356630467,
+                0.3759214631778488
+              ],
+              [
+                -0.13486118120265808,
+                0.414376495778605
+              ]
+            ],
+            "hoofVertexCount": 352,
+            "hoofSourceCentroid": [
+              -0.16466923212756698,
+              0.3743306875964772
+            ]
+          },
+          {
+            "id": "foreLeft",
+            "front": true,
+            "side": 1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                0.11170414232125526,
+                0.534017566646487
+              ],
+              [
+                0.11170414232125526,
+                0.534017566646487
+              ],
+              [
+                0.10538984651668576,
+                0.4553301895655848
+              ],
+              [
+                0.1137588584665708,
+                0.4657863997590277
+              ],
+              [
+                0.12275012248377062,
+                0.4654658778594787
+              ],
+              [
+                0.14086561800095593,
+                0.46861837413954
+              ],
+              [
+                0.11452530229016897,
+                0.3786756414314395
+              ],
+              [
+                0.13043798002931778,
+                0.4180459731807108
+              ]
+            ],
+            "hoofVertexCount": 353,
+            "hoofSourceCentroid": [
+              0.11170414232125526,
+              0.534017566646487
+            ]
+          },
+          {
+            "id": "hindRight",
+            "front": false,
+            "side": -1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                -0.25737607530289436,
+                -0.6657771889139998
+              ],
+              [
+                -0.25737607530289436,
+                -0.6657771889139998
+              ],
+              [
+                -0.23544012489529337,
+                -0.7373907656487196
+              ],
+              [
+                -0.20819533600981888,
+                -0.7739754394370428
+              ],
+              [
+                -0.19760695238989587,
+                -0.7787401804534266
+              ],
+              [
+                -0.2306163626708964,
+                -0.7214274601233446
+              ],
+              [
+                -0.19058071899091092,
+                -0.6673626690287943
+              ],
+              [
+                -0.16735090128739166,
+                -0.6551003371540047
+              ]
+            ],
+            "hoofVertexCount": 319,
+            "hoofSourceCentroid": [
+              -0.25737607530289436,
+              -0.6657771889139998
+            ]
+          },
+          {
+            "id": "hindLeft",
+            "front": false,
+            "side": 1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                0.22454261361053612,
+                -0.8735373721198771
+              ],
+              [
+                0.22454261361053612,
+                -0.8735373721198771
+              ],
+              [
+                0.21275493961099606,
+                -0.9132215380257187
+              ],
+              [
+                0.183554043060824,
+                -0.9015581830080357
+              ],
+              [
+                0.17507685545620846,
+                -0.8674208382303545
+              ],
+              [
+                0.21795734606549344,
+                -0.7886181850370491
+              ],
+              [
+                0.1771524570116795,
+                -0.6890065869976114
+              ],
+              [
+                0.1677366684489105,
+                -0.6598990186681992
+              ]
+            ],
+            "hoofVertexCount": 295,
+            "hoofSourceCentroid": [
+              0.22462079883687278,
+              -0.8736354249937811
+            ]
+          }
+        ],
+        "hoofHeightM": 0.14,
+        "floorPinnedBelowM": 5e-05,
+        "limbFadeRangeM": [
+          0.82,
+          1.1
+        ],
+        "sourceYBelow065mPreserved": true,
+        "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
+        "unchangedSkeletonAndLimbLengths": true,
+        "sharedBodyAndTackCage": true,
+        "stirrupTailoring": {
+          "displayedLiftM": 0.12,
+          "sourceLiftM": 0.12565525808489564,
+          "meshIndex": 3,
+          "vertexCount": 13895,
+          "componentIds": [
+            14,
+            30,
+            40,
+            41,
+            63,
+            64,
+            65,
+            67,
+            68,
+            78,
+            79,
+            80,
+            81,
+            82,
+            84,
+            85,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            97,
+            107,
+            108,
+            114,
+            115,
+            130,
+            134,
+            145,
+            146,
+            147,
+            148,
+            150,
+            152,
+            154,
+            156,
+            157,
+            158,
+            167,
+            190,
+            192,
+            193,
+            194,
+            226,
+            228,
+            238,
+            239,
+            248,
+            249,
+            258,
+            259,
+            266,
+            267,
+            280,
+            285,
+            294,
+            298
+          ],
+          "shorteningSourceYRangeM": [
+            1.2,
+            1.6
+          ],
+          "treadVertexRanges": {
+            "left": [
+              2792,
+              2845
+            ],
+            "right": [
+              2716,
+              2769
+            ]
+          },
+          "reason": "Shorter Western fenders keep the existing human rider feet within reach on the broad draft body."
+        }
+      }
     },
     "clyde": {
       "id": "clyde",
       "label": "Clydesdale",
       "file": "./models/native-roster/clyde.bin",
-      "sha256": "d59e832c89e6b6b76f80abf644e6d9470e75c0ae2e706d2faa40ac2bb0a0f1ac",
+      "sha256": "2b43256523ce4f431092cf41c6b1f6fd90b5f8bbc3f4ad319871bcb913516d7c",
       "byteLength": 728256,
       "meshes": [
         {
@@ -3281,12 +3911,12 @@
           "positionDelta": {
             "byteOffset": 0,
             "count": 48477,
-            "scale": 0.0001708548300379278
+            "scale": 0.00047971323284621154
           },
           "normalDelta": {
             "byteOffset": 96954,
             "count": 48477,
-            "scale": 6.253467022799299e-06
+            "scale": 2.1888883875786504e-05
           }
         },
         {
@@ -3296,12 +3926,12 @@
           "positionDelta": {
             "byteOffset": 193908,
             "count": 6084,
-            "scale": 8.244967810336756e-05
+            "scale": 0.00010965801775175002
           },
           "normalDelta": {
             "byteOffset": 206076,
             "count": 6084,
-            "scale": 1.6841588523648183e-07
+            "scale": 1.496150672296407e-06
           }
         },
         {
@@ -3311,12 +3941,12 @@
           "positionDelta": {
             "byteOffset": 218244,
             "count": 70542,
-            "scale": 0.0006153227704722901
+            "scale": 0.0009744345805443366
           },
           "normalDelta": {
             "byteOffset": 359328,
             "count": 70542,
-            "scale": 8.866266434734704e-06
+            "scale": 2.087321043331614e-05
           }
         },
         {
@@ -3326,12 +3956,12 @@
           "positionDelta": {
             "byteOffset": 500412,
             "count": 41685,
-            "scale": 0.000339207717565606
+            "scale": 0.001005056511508628
           },
           "normalDelta": {
             "byteOffset": 583782,
             "count": 41685,
-            "scale": 5.559078733868514e-06
+            "scale": 1.4259472059478428e-05
           }
         },
         {
@@ -3341,21 +3971,21 @@
           "positionDelta": {
             "byteOffset": 667152,
             "count": 15276,
-            "scale": 0.00015386568243409937
+            "scale": 0.0004413068108450544
           },
           "normalDelta": {
             "byteOffset": 697704,
             "count": 15276,
-            "scale": 3.3361627471232547e-06
+            "scale": 7.864014242799053e-06
           }
         }
       ],
       "withersM": 1.78,
-      "sourceWithersM": 1.8239334060628098,
-      "actorScale": 0.9759128233976231,
+      "sourceWithersM": 1.8885889697325051,
+      "actorScale": 0.9425025924259818,
       "sourceSeat": [
         6.225790382362317e-09,
-        1.7586833192804059,
+        1.785465408449745,
         1.6744842715166992
       ],
       "sourceTranslation": [
@@ -3364,19 +3994,22 @@
         -1.6744842715166992
       ],
       "sculptTargets": {
-        "body_length": 1.05,
-        "barrel_width": 1.15,
-        "body_depth": 1.1,
-        "neck_length": 1.11,
-        "neck_thickness": 1.13,
-        "head_length": 1.09,
-        "head_width": 1.08,
+        "body_length": 1.075,
+        "barrel_width": 1.43,
+        "body_depth": 1.23,
+        "neck_length": 1.12,
+        "neck_thickness": 1.46,
+        "head_length": 1.12,
+        "head_width": 1.23,
         "ear_length": 1.16,
         "limb_length": 1.11,
-        "hoof_width": 1.23,
-        "hindquarter_width": 1.15,
+        "hoof_width": 1.46,
+        "hindquarter_width": 1.45,
         "face_profile_depth_per_withers": 0,
-        "neck_arch_rise_per_withers": 0.053
+        "neck_arch_rise_per_withers": 0.075,
+        "shaft_width": 1.34,
+        "joint_width": 1.41,
+        "upper_limb_width": 1.56
       },
       "conformation": "Tall energetic draft with less squat silhouette",
       "groom": {
@@ -3406,7 +4039,319 @@
         "neutralFile": "./models/native-roster/neutralcoat.png",
         "originalUVsPreserved": true
       },
-      "limitations": "Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed."
+      "limitations": "Approved joint centers, limb lengths and gaits retained. Draft body, neck, head and limb crosssections are enlarged surface derivatives, not a new skeleton. Native groom remains source alpha cards.",
+      "draftShape": {
+        "version": 1,
+        "limbCenters": [
+          {
+            "id": "foreRight",
+            "front": true,
+            "side": -1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                -0.16466923212756698,
+                0.3743306875964772
+              ],
+              [
+                -0.16466923212756698,
+                0.3743306875964772
+              ],
+              [
+                -0.14826825194989396,
+                0.3138976295157594
+              ],
+              [
+                -0.1437637951543299,
+                0.34761157618439675
+              ],
+              [
+                -0.1498175917280994,
+                0.36950192530357184
+              ],
+              [
+                -0.16263399575254242,
+                0.3941997357498399
+              ],
+              [
+                -0.12743747356630467,
+                0.3759214631778488
+              ],
+              [
+                -0.13486118120265808,
+                0.414376495778605
+              ]
+            ],
+            "hoofVertexCount": 352,
+            "hoofSourceCentroid": [
+              -0.16466923212756698,
+              0.3743306875964772
+            ]
+          },
+          {
+            "id": "foreLeft",
+            "front": true,
+            "side": 1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                0.11170414232125526,
+                0.534017566646487
+              ],
+              [
+                0.11170414232125526,
+                0.534017566646487
+              ],
+              [
+                0.10538984651668576,
+                0.4553301895655848
+              ],
+              [
+                0.1137588584665708,
+                0.4657863997590277
+              ],
+              [
+                0.12275012248377062,
+                0.4654658778594787
+              ],
+              [
+                0.14086561800095593,
+                0.46861837413954
+              ],
+              [
+                0.11452530229016897,
+                0.3786756414314395
+              ],
+              [
+                0.13043798002931778,
+                0.4180459731807108
+              ]
+            ],
+            "hoofVertexCount": 353,
+            "hoofSourceCentroid": [
+              0.11170414232125526,
+              0.534017566646487
+            ]
+          },
+          {
+            "id": "hindRight",
+            "front": false,
+            "side": -1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                -0.25737607530289436,
+                -0.6657771889139998
+              ],
+              [
+                -0.25737607530289436,
+                -0.6657771889139998
+              ],
+              [
+                -0.23544012489529337,
+                -0.7373907656487196
+              ],
+              [
+                -0.20819533600981888,
+                -0.7739754394370428
+              ],
+              [
+                -0.19760695238989587,
+                -0.7787401804534266
+              ],
+              [
+                -0.2306163626708964,
+                -0.7214274601233446
+              ],
+              [
+                -0.19058071899091092,
+                -0.6673626690287943
+              ],
+              [
+                -0.16735090128739166,
+                -0.6551003371540047
+              ]
+            ],
+            "hoofVertexCount": 319,
+            "hoofSourceCentroid": [
+              -0.25737607530289436,
+              -0.6657771889139998
+            ]
+          },
+          {
+            "id": "hindLeft",
+            "front": false,
+            "side": 1,
+            "heights": [
+              0.0,
+              0.14,
+              0.28,
+              0.46,
+              0.65,
+              0.81,
+              0.96,
+              1.1
+            ],
+            "centers": [
+              [
+                0.22454261361053612,
+                -0.8735373721198771
+              ],
+              [
+                0.22454261361053612,
+                -0.8735373721198771
+              ],
+              [
+                0.21275493961099606,
+                -0.9132215380257187
+              ],
+              [
+                0.183554043060824,
+                -0.9015581830080357
+              ],
+              [
+                0.17507685545620846,
+                -0.8674208382303545
+              ],
+              [
+                0.21795734606549344,
+                -0.7886181850370491
+              ],
+              [
+                0.1771524570116795,
+                -0.6890065869976114
+              ],
+              [
+                0.1677366684489105,
+                -0.6598990186681992
+              ]
+            ],
+            "hoofVertexCount": 295,
+            "hoofSourceCentroid": [
+              0.22462079883687278,
+              -0.8736354249937811
+            ]
+          }
+        ],
+        "hoofHeightM": 0.14,
+        "floorPinnedBelowM": 5e-05,
+        "limbFadeRangeM": [
+          0.82,
+          1.1
+        ],
+        "sourceYBelow065mPreserved": true,
+        "hoofCenterMethod": "XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned",
+        "unchangedSkeletonAndLimbLengths": true,
+        "sharedBodyAndTackCage": true,
+        "stirrupTailoring": {
+          "displayedLiftM": 0.05,
+          "sourceLiftM": 0.05305025195877823,
+          "meshIndex": 3,
+          "vertexCount": 13895,
+          "componentIds": [
+            14,
+            30,
+            40,
+            41,
+            63,
+            64,
+            65,
+            67,
+            68,
+            78,
+            79,
+            80,
+            81,
+            82,
+            84,
+            85,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            97,
+            107,
+            108,
+            114,
+            115,
+            130,
+            134,
+            145,
+            146,
+            147,
+            148,
+            150,
+            152,
+            154,
+            156,
+            157,
+            158,
+            167,
+            190,
+            192,
+            193,
+            194,
+            226,
+            228,
+            238,
+            239,
+            248,
+            249,
+            258,
+            259,
+            266,
+            267,
+            280,
+            285,
+            294,
+            298
+          ],
+          "shorteningSourceYRangeM": [
+            1.2,
+            1.6
+          ],
+          "treadVertexRanges": {
+            "left": [
+              2792,
+              2845
+            ],
+            "right": [
+              2716,
+              2769
+            ]
+          },
+          "reason": "Shorter Western fenders keep the existing human rider feet within reach on the broad draft body."
+        }
+      }
     },
     "bay-sporthorse": {
       "id": "bay-sporthorse",

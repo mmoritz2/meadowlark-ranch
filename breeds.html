@@ -19,10 +19,12 @@ import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import {createBreedLibrary} from './assets/breed-models.js?v=club-horses-1';
 import {CLUB_HORSE_BREEDS} from './assets/club-horses.js?v=club-horses-1';
 import {EXPANSION_HORSE_BREEDS} from './assets/expansion-horses.js?v=horses-expansion-1';
+import {ROWS as NEW_HORSE_BREEDS} from './assets/features/new-breeds.js?v=draft-bodies-1';
+import {NEW_BREEDS as ROSTER_BREEDS} from './assets/features/horse-roster.js?v=draft-bodies-1';
 import {registerExpansionHorseCoats} from './assets/expansion-horse-coats.js?v=horses-expansion-1';
 import {configureNativeCustomization} from './assets/native-horse-customization.js?v=horses-expansion-1';
 import {createNativeHorseMotion} from './assets/native-horse-motion.js?v=horse-actions-1';
-import {nativeGroomFacade} from './assets/game-hero-horse.js?v=horse-actions-1';
+import {nativeGroomFacade} from './assets/game-hero-horse.js?v=draft-bodies-1';
 import {NATIVE_MODEL_CHOICES} from './assets/features/native-horses.js?v=dragon-acting-1';
 import {createArtistMotion} from './assets/artist-horse-motion.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
@@ -62,6 +64,8 @@ const lib=createBreedLibrary({THREE,GLTFLoader,clone});
 for(const row of CLUB_HORSE_BREEDS)lib.alias(row[0],row[7].body,row);
 registerExpansionHorseCoats();
 for(const row of EXPANSION_HORSE_BREEDS)lib.alias(row[0],row[7].body,row);
+const draftPreviewRows=[...NEW_HORSE_BREEDS.filter(row=>row[0]==='suffolk'),...ROSTER_BREEDS.filter(row=>row[0]==='rimewalker')];
+for(const row of draftPreviewRows)lib.alias(row[0],row[7].body,[...row.slice(0,7),{...row[7],...(row[7].coat?{family:'fantasy'}:{})}]);
 const wingLibrary=createEquineWingLibrary(THREE,{camera,sun});
 const fantasyTypes={aether:'galaxy',sunspear:'fire',meadowlight:'aurora',tempest:'shadow',eclipse:'eclipse',glacier:'ice',celestial:'galaxy',ember:'fire',frost:'ice',aurora:'aurora',phoenix:'fire',shadowmare:'shadow',frostdrake:'ice',emberdrake:'fire',amethyst:'galaxy',stormdrake:'shadow',verdant:'aurora'};
 const dragonKeys=new Set(['frostdrake','emberdrake','amethyst','stormdrake','verdant']);
@@ -82,7 +86,7 @@ function createAccessories(inst,key){
 }
 const thumbnailKeys=new Set();
 fetch('./assets/breed-thumbnails/index.json',{cache:'no-store'}).then(r=>r.json()).then(keys=>{for(const key of keys)thumbnailKeys.add(key);for(const img of document.querySelectorAll('.breed-thumb'))setThumbnail(img);}).catch(()=>{});
-function setThumbnail(img){const exists=thumbnailKeys.has(img.dataset.key);img.hidden=!exists;if(exists)img.src='./assets/breed-thumbnails/'+img.dataset.key+'.webp?v=dragon-roster-1';}
+function setThumbnail(img){const exists=thumbnailKeys.has(img.dataset.key);img.hidden=!exists;if(exists)img.src='./assets/breed-thumbnails/'+img.dataset.key+'.webp?v=draft-bodies-1';}
 let horse=null,groom=null,body=null,ticket=0,selectedKey=null,withers=1.68,instance=null,framing=1,headView=false,motion=null,paused=false,loading=false,assetInfo=null,accessories=null;
 let originals=new Map(),ownedMaterials=[],heroHead=new THREE.Vector3(),horseHeight=2.3;
 const clayMaterial=new THREE.MeshStandardMaterial({color:0xb9ae93,roughness:.65}),wireMaterial=new THREE.MeshStandardMaterial({color:0xd8c9a9,roughness:.85,wireframe:true});
@@ -122,8 +126,8 @@ async function select(key){const request=++ticket;loading=true;$('status').textC
   if(!spec.artistBreed&&!spec.nativeBreed)throw new Error('The selected horse is not from the breed collection: '+key);
   next=new THREE.Group();next.add(inst.scene);if(!spec.nativeBreed)next.scale.setScalar(spec.withersM/1.45);next.updateMatrixWorld(true);nextBody=inst.skin;
   if(spec.nativeBreed){
-   const expansionRow=EXPANSION_HORSE_BREEDS.find(row=>row[0]===key);
-   if(expansionRow&&!expansionRow[7].coat)configureNativeCustomization({THREE,rig:inst,defaults:expansionRow,horse:{id:key,breed:key,colors:{body:expansionRow[5],mane:expansionRow[6]},mark:expansionRow[7].mark,markCol:expansionRow[7].markCol}});
+   const appearanceRow=[...EXPANSION_HORSE_BREEDS,...draftPreviewRows].find(row=>row[0]===key);
+   if(appearanceRow&&!appearanceRow[7].coat)configureNativeCustomization({THREE,rig:inst,defaults:appearanceRow,horse:{id:key,breed:key,colors:{body:appearanceRow[5],mane:appearanceRow[7].maneCol||appearanceRow[6]},mark:appearanceRow[7].mark,markCol:appearanceRow[7].markCol}});
    nextMotion=createNativeHorseMotion({THREE,root:inst.nativeRoot,clips:inst.animations,profile:spec});nextMotion.set(spec.nativeDragon?'stand':'rest');nextAccessories=inst.nativeFantasy;
    nextGroom=nativeGroomFacade({THREE,scene:inst.scene,skin:inst.skin,mount:inst.scene,profile:spec});
   }else{

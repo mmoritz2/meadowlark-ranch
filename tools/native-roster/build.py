@@ -1,8 +1,9 @@
 """Build compact breed appearance derivatives on the approved native 677 rig.
 
 No skeleton, skin weight, bind, index, UV or animation data is changed. Regional
-upper-body/groom appearance changes are encoded as quantized geometry deltas;
-all body vertices below 0.65 m retain their exact source positions and normals.
+body/groom appearance changes are encoded as quantized geometry deltas. Drafts
+also widen limb crosssections without moving their centers or ground contacts;
+other breeds retain exact source positions and normals below 0.65 m.
 """
 from pathlib import Path
 import argparse, ast, copy, hashlib, io, json, sys
@@ -56,8 +57,71 @@ GROOM = {
     'bay-sporthorse':(1.00,1.00),
 }
 
-def cage(p, s, key):
-    """Smooth appearance cage, with the entire lower limb fixed in source units."""
+# Original art directions for the native draft foundations. These surface-only
+# multipliers deliberately keep the approved skeleton and limb lengths intact.
+DRAFT_SHAPES = {
+    'percheron': dict(barrel_width=1.50, hindquarter_width=1.55, body_depth=1.25,
+        body_length=1.055, neck_thickness=1.53, neck_length=1.00,
+        neck_arch_rise_per_withers=.065, head_width=1.27, head_length=1.055,
+        hoof_width=1.42, shaft_width=1.32, joint_width=1.37, upper_limb_width=1.52),
+    'shire': dict(barrel_width=1.52, hindquarter_width=1.52, body_depth=1.27,
+        body_length=1.07, neck_thickness=1.56, neck_length=1.085,
+        neck_arch_rise_per_withers=.075, head_width=1.25, head_length=1.14,
+        hoof_width=1.50, shaft_width=1.36, joint_width=1.44, upper_limb_width=1.60),
+    'clyde': dict(barrel_width=1.43, hindquarter_width=1.45, body_depth=1.23,
+        body_length=1.075, neck_thickness=1.46, neck_length=1.12,
+        neck_arch_rise_per_withers=.075, head_width=1.23, head_length=1.12,
+        hoof_width=1.46, shaft_width=1.34, joint_width=1.41, upper_limb_width=1.56),
+}
+DRAFT_STIRRUP_LIFT_M = {'percheron':.04,'shire':.12,'clyde':.05}
+
+def draft_limb_centers(body):
+    """Measure four separate rest-pose centers; the source stance is asymmetric.
+
+    A weighted hoof centroid makes the sum of X/Z offsets exactly zero even
+    though the single floor contact is pinned. All other source sole vertices
+    are at least 0.137 mm higher and receive the full horizontal enlargement.
+    Above the hoof, measured crosssection centers follow each existing limb.
+    """
+    result=[]
+    for front in (True,False):
+        for side in (-1,1):
+            select=(body[:,0]*side>0)&((body[:,2]>.10) if front else (body[:,2]<-.40))
+            hoof=select&(body[:,1]<=.14)
+            weight=smooth(.00005,.00012,body[hoof,1])
+            center=np.average(body[hoof][:,[0,2]],axis=0,weights=weight)
+            heights=[0.,.14,.28,.46,.65,.81,.96,1.10]
+            centers=[center,center]
+            for h in heights[2:]:
+                band=select&(abs(body[:,1]-h)<(.045 if h<.85 else .065))
+                points=body[band][:,[0,2]]
+                assert len(points)>10, (front,side,h,'missing limb crosssection')
+                centers.append((points.min(0)+points.max(0))*.5)
+            result.append(dict(id=('fore' if front else 'hind')+('Left' if side>0 else 'Right'),
+                front=front,side=side,heights=heights,centers=np.asarray(centers).tolist(),
+                hoofVertexCount=int(hoof.sum()),hoofSourceCentroid=body[hoof][:,[0,2]].mean(0).tolist()))
+    return result
+
+def draft_limbs(p,s,limbs):
+    """Pure X/Z radial expansion, with fixed source Y and no limb translation."""
+    q=p.copy();y=p[:,1]
+    # A muscled forearm/gaskin, defined knee/hock, and a slimmer clean cannon.
+    factor=s['hoof_width']+(s['shaft_width']-s['hoof_width'])*smooth(.14,.28,y)
+    factor+=(s['joint_width']-s['shaft_width'])*np.exp(-((y-.57)/.13)**2)*smooth(.20,.30,y)
+    factor+=(s['upper_limb_width']-s['shaft_width'])*smooth(.66,.82,y)
+    fade=smooth(.00005,.00012,y)*(1-smooth(.82,1.10,y))
+    for limb in limbs:
+        select=(p[:,0]*limb['side']>0)&((p[:,2]>.10) if limb['front'] else (p[:,2]<-.40))
+        region=smooth(.10,.30,p[:,2]) if limb['front'] else smooth(-.40,-.58,p[:,2])
+        region=1+(region-1)*smooth(.14,.30,y)
+        ids=np.where(select&(fade>0))[0]
+        c=np.asarray(limb['centers'])
+        center=np.column_stack([np.interp(y[ids],limb['heights'],c[:,axis]) for axis in range(2)])
+        q[np.ix_(ids,[0,2])]+=(p[np.ix_(ids,[0,2])]-center)*((factor[ids]-1)*fade[ids]*region[ids])[:,None]
+    return q
+
+def cage(p, s, key, limbs=None, tack_mask=None, tack_lift=0.):
+    """Common body/tack cage; draft-only lower-body edits use limb centers."""
     p = np.asarray(p, float)
     x,y,z = (p/BASE_WITHERS).T
     q = p/BASE_WITHERS
@@ -70,7 +134,7 @@ def cage(p, s, key):
     width = torso*(s['barrel_width']-1)+rump*(s['hindquarter_width']-s['barrel_width'])
     q[:,0] += x*width
     # Keep the saddle/back crest close to the original articulated spine.
-    depth = np.clip(s['body_depth']-1,-.06,.16)
+    depth = np.clip(s['body_depth']-1,-.06,.28 if key in DRAFT_SHAPES else .16)
     q[:,1] += (y-.86)*depth*torso
     q[:,2] += z*(s['body_length']-1)*torso*.45
     q[:,0] += x*(s['neck_thickness']-1)*neck*(1-head)
@@ -91,7 +155,17 @@ def cage(p, s, key):
         curl = smooth(1.205,1.245,y)
         q[:,0] -= .018*curl*x/(abs(x)+.05)
     if key == 'black': q[:,0] -= np.sign(x)*.005*smooth(1.20,1.245,y)
-    return p+(q*BASE_WITHERS-p)*upper[:,None]
+    target=p+(q*BASE_WITHERS-p)*upper[:,None]
+    if key in DRAFT_SHAPES and limbs is not None:
+        target+=draft_limbs(p,s,limbs)-p
+        # The cage's torso support never changes the accepted lower-leg height.
+        target[p[:,1]<=.65,1]=p[p[:,1]<=.65,1]
+        target[p[:,1]<=.00005]=p[p[:,1]<=.00005]
+    if tack_mask is not None:
+        # Shorten the Western fenders, carrying each complete iron rigidly.
+        # This is source-world Y only; the upper strap joins remain fixed.
+        target[tack_mask,1]+=tack_lift*(1-smooth(1.20,1.60,p[tack_mask,1]))
+    return target
 
 def groups(indices, count):
     t=indices.reshape(-1,3)
@@ -99,6 +173,22 @@ def groups(indices, count):
     graph=coo_matrix((np.ones(len(edges),dtype=np.uint8),(edges[:,0],edges[:,1])),shape=(count,count)).tocsr()
     n,labels=connected_components(graph,directed=False)
     return [np.where(labels==i)[0] for i in range(n)]
+
+def draft_stirrup_components(mesh):
+    """Whole native fender/iron islands; no girth, saddle body or headstall.
+
+    Native UV seams split an iron into several islands, so include every island
+    within this measured region, not only the two tread-contact vertex ranges.
+    The source girth is behind this region at Z=-.1, and headstall is Z>.3.
+    """
+    mask=np.zeros(len(mesh['actual']),bool);selected=[]
+    for component,ids in enumerate(groups(mesh['indices'],len(mask))):
+        p=mesh['actual'][ids];lo=p.min(0);hi=p.max(0)
+        if np.min(abs(p[:,0]))>.145 and np.all(np.sign(p[:,0])==np.sign(p[0,0])) and lo[2]>.14 and hi[2]<.28 and lo[1]>1.025 and hi[1]<1.65:
+            mask[ids]=True;selected.append(component)
+    assert mask[2792:2846].all() and mask[2716:2770].all(), 'Whole treads must follow fender tailoring'
+    assert not mask[7894:8125].any() and not mask[6954:7185].any(), 'Bridle bit points must remain unchanged'
+    return mask,selected
 
 def uv_atlas(p, uv, indices, size):
     atlas=np.zeros((size,size,3),np.float32); covered=np.zeros((size,size),bool)
@@ -165,7 +255,19 @@ def paint_coat(key, atlas, covered, original):
     Image.fromarray((rgb*255+.5).astype(np.uint8)).save(OUT/(key+'-coat.webp'),quality=95,method=6)
 
 def main():
-    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--only');args=ap.parse_args()
+    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--only')
+    ap.add_argument('--geometry-only',action='store_true',help='Keep existing coat/neutral texture bytes unchanged')
+    args=ap.parse_args()
+    keys=args.only.split(',') if args.only else list(COATS)
+    assert len(set(keys))==len(keys) and all(key in COATS for key in keys), 'Unknown or repeated breed key'
+    previous=json.loads((OUT/'manifest.json').read_text()) if (OUT/'manifest.json').exists() else None
+    previous_report=json.loads((OUT/'build-report.json').read_text()) if (OUT/'build-report.json').exists() else None
+    if args.only or args.geometry_only:
+        assert previous and previous['sourceSha256']==SOURCE_SHA, 'Partial builds require the matching full manifest'
+        assert len(previous['breeds'])==len(COATS), 'Refusing to merge into an incomplete manifest'
+        assert previous_report and len(previous_report['rows'])==len(COATS), 'Partial builds require the full numerical report'
+    untouched={path.name:sha(path.read_bytes()) for path in (OUT.iterdir() if OUT.exists() else [])
+               if path.suffix in ['.bin','.webp','.png'] and (path.stem not in keys or path.suffix!='.bin')}
     assert sha(SOURCE.read_bytes())==SOURCE_SHA, 'Pinned native foundation changed'
     doc,binary=glb.read_glb(SOURCE);worlds,_=glb.node_worlds(doc)
     skin=doc['skins'][0];assert len(skin['joints'])==677 and len(doc['meshes'])==5
@@ -182,10 +284,16 @@ def main():
                            indices=glb.accessor(doc,binary,prim['indices']).astype(int),uv=glb.accessor(doc,binary,a['TEXCOORD_0'])))
     OUT.mkdir(parents=True,exist_ok=True)
     view=doc['bufferViews'][doc['images'][0]['bufferView']];offset=view.get('byteOffset',0)
-    neutral=bytes(binary[offset:offset+view['byteLength']]);(OUT/'neutralcoat.png').write_bytes(neutral)
-    original=Image.open(io.BytesIO(neutral)).convert('RGB').resize((1024,1024),Image.Resampling.LANCZOS)
-    atlas,covered=uv_atlas(meshes[0]['actual'],meshes[0]['uv'],meshes[0]['indices'],1024)
+    neutral=bytes(binary[offset:offset+view['byteLength']])
+    if not args.geometry_only:
+        (OUT/'neutralcoat.png').write_bytes(neutral)
+        original=Image.open(io.BytesIO(neutral)).convert('RGB').resize((1024,1024),Image.Resampling.LANCZOS)
+        atlas,covered=uv_atlas(meshes[0]['actual'],meshes[0]['uv'],meshes[0]['indices'],1024)
+    else:
+        assert sha((OUT/'neutralcoat.png').read_bytes())==sha(neutral)
     hairgroups=groups(meshes[2]['indices'],len(meshes[2]['raw']))
+    limbs=draft_limb_centers(meshes[0]['actual'])
+    stirrup_mask,stirrup_components=draft_stirrup_components(meshes[3])
     config=json.loads((ROOT/'tools/asset-gen/breed-conformation.json').read_text())
     specs=config['conformations']; extra=copy.deepcopy(specs['sport'])
     extra['sculpt_targets']={k:1 for k in extra['sculpt_targets']}
@@ -197,14 +305,23 @@ def main():
                   neutralCoatFile='./models/native-roster/neutralcoat.png',neutralCoatSha256=sha(neutral),
                   license='CC BY-NC 4.0',artist='WildMesh 3D',
                   sourceUrl='https://sketchfab.com/3d-models/horse-realistic-3d-model-demo-free-65d6a70a6721495f938c93e80a5998e4',
-                  method='Original native677 skeleton and all approved clips unchanged; upper body/groom geometry, original-UV coat and uniform actor height derivatives.',breeds={})
+                  method='Original native677 skeleton and approved clips unchanged; breed body/groom geometry and original-UV coats. Drafts also widen limb crosssections around unchanged centers; limb lengths and floor contacts remain fixed.',breeds={})
+    if args.only:
+        manifest={**previous,'method':manifest['method'],'breeds':copy.deepcopy(previous['breeds'])}
     reports=[]
-    for key in (args.only.split(',') if args.only else COATS):
-        spec=specs[key];s=spec['sculpt_targets'];packed=bytearray();records=[];report={'id':key,'meshes':[]}
+    pending=[]
+    for key in keys:
+        spec=specs[key];s={**spec['sculpt_targets'],**DRAFT_SHAPES.get(key,{})};packed=bytearray();records=[];report={'id':key,'meshes':[]}
         bodytarget=None
+        body=meshes[0]['actual'];wm=(abs(body[:,0])<.07)&(body[:,2]>.285)&(body[:,2]<.426)
+        target_withers=float(cage(body,s,key,limbs if key in DRAFT_SHAPES else None)[wm,1].max())
+        draft_actor=spec['height']['target_m']/target_withers
+        stirrup_lift=DRAFT_STIRRUP_LIFT_M.get(key,0.)/draft_actor
         for m in meshes:
-            p=m['actual'];q=cage(p,s,key);eps=1e-5
-            jac=np.stack([(cage(p+np.eye(3)[axis]*eps,s,key)-cage(p-np.eye(3)[axis]*eps,s,key))/(2*eps) for axis in range(3)],axis=2)
+            p=m['actual'];limb_cage=limbs if key in DRAFT_SHAPES and m['index']==0 else None
+            tack_cage=stirrup_mask if key in DRAFT_SHAPES and m['index']==3 else None
+            q=cage(p,s,key,limb_cage,tack_cage,stirrup_lift);eps=1e-5
+            jac=np.stack([(cage(p+np.eye(3)[axis]*eps,s,key,limb_cage,tack_cage,stirrup_lift)-cage(p-np.eye(3)[axis]*eps,s,key,limb_cage,tack_cage,stirrup_lift))/(2*eps) for axis in range(3)],axis=2)
             det=np.linalg.det(jac);assert np.isfinite(det).all() and det.min()>.3,(key,m['index'],'cage inversion')
             if m['index']==2:
                 mane,tail=GROOM[key]
@@ -222,7 +339,7 @@ def main():
             rawnormal=np.linalg.solve(m['linear'],targetnormal[...,None])[...,0]
             rawnormal/=np.maximum(np.linalg.norm(rawnormal,axis=1)[:,None],1e-12)
             ndelta=rawnormal-m['normal']
-            fixed=p[:,1]<=.65
+            fixed=p[:,1]<=(.00005 if limb_cage is not None else .65)
             if m['index']!=2:
                 delta[fixed]=0;ndelta[fixed]=0
             def pack(a):
@@ -232,13 +349,30 @@ def main():
             pd,recovered=pack(delta);nd,nrecovered=pack(ndelta)
             actual_error=np.linalg.norm(np.einsum('nij,nj->ni',m['linear'],recovered-delta),axis=1)
             assert np.isfinite(recovered).all() and actual_error.max()<2e-5
-            if m['index']==0: assert np.count_nonzero(recovered[fixed])==0 and np.count_nonzero(nrecovered[fixed])==0
+            if m['index']==0:
+                assert np.count_nonzero(recovered[fixed])==0 and np.count_nonzero(nrecovered[fixed])==0
+                decoded=m['raw']+recovered
+                decoded=decoded.astype('<f4').astype(float)
+                bodydecoded=p+np.einsum('nij,nj->ni',m['linear'],decoded-m['raw'])
+                assert abs(bodydecoded[:,1].min())<1e-8, (key,'standing floor changed')
+            if tack_cage is not None:
+                decoded=(m['raw']+recovered).astype('<f4').astype(float)
+                tackdecoded=p+np.einsum('nij,nj->ni',m['linear'],decoded-m['raw'])
+                original_tack=cage(p,s,key)
+                report['draftStirrups']={'displayedLiftM':DRAFT_STIRRUP_LIFT_M[key],
+                    'sourceLiftM':stirrup_lift,'componentIds':stirrup_components,'tailoredVertices':int(stirrup_mask.sum()),
+                    'shorteningSourceYRangeM':[1.20,1.60],
+                    'treadActualDisplayedLiftM':{side:float((tackdecoded[a:b+1,1]-original_tack[a:b+1,1]).mean()*draft_actor)
+                        for side,a,b in [('left',2792,2845),('right',2716,2769)]},
+                    'unselectedIdealTargetExactlyPreserved':bool(np.array_equal(q[~stirrup_mask],original_tack[~stirrup_mask]))}
+                assert report['draftStirrups']['unselectedIdealTargetExactlyPreserved']
             records.append({'meshIndex':m['index'],'name':m['name'],'vertexCount':len(p),'positionDelta':pd,'normalDelta':nd})
             report['meshes'].append({'meshIndex':m['index'],'vertices':len(p),'minCageJacobianDeterminant':float(det.min()),
                                      'maxPositionQuantizationErrorM':float(actual_error.max()),'maxAppearanceDeltaM':float(np.linalg.norm(q-p,axis=1).max()),
                                      'fixedLowerVertices':int(fixed.sum()) if m['index']!=2 else 0})
-        file=OUT/(key+'.bin');file.write_bytes(packed)
-        paint_coat(key,atlas,covered,original);coatfile=OUT/(key+'-coat.webp')
+        file=OUT/(key+'.bin');pending.append((file,packed))
+        if not args.geometry_only: paint_coat(key,atlas,covered,original)
+        coatfile=OUT/(key+'-coat.webp')
         body=meshes[0]['actual'];wm=(abs(body[:,0])<.07)&(body[:,2]>.285)&(body[:,2]<.426)
         withers=float(bodytarget[wm,1].max());height=spec['height']['target_m'];actor=height/withers
         seat=cage((SOURCE_SEAT+TRANSLATION)[None,:],s,key)[0]-TRANSLATION
@@ -251,14 +385,57 @@ def main():
                      'colorSrgb':srgb(COATS[key][0]).tolist(),'hairColorSrgb':hair_srgb,'hairColorLinear':list(HAIR[COATS[key][1]]),
                      'neutralFile':'./models/native-roster/neutralcoat.png','originalUVsPreserved':True},
              'limitations':'Shares the approved articulated limb proportions and motion; upper-body shape and overall height vary. Native grooming remains alpha cards. Breed-specific gaits and added fetlock feather geometry are not claimed.'}
+        if key in DRAFT_SHAPES:
+            row['draftShape']={'version':1,'limbCenters':limbs,'hoofHeightM':.14,'floorPinnedBelowM':.00005,
+                'limbFadeRangeM':[.82,1.10],'sourceYBelow065mPreserved':True,
+                'hoofCenterMethod':'XZ centroid, weighted by smoothstep(.00005,.00012,sourceY); a single lowest sole contact is pinned',
+                'unchangedSkeletonAndLimbLengths':True,'sharedBodyAndTackCage':True}
+            row['draftShape']['stirrupTailoring']={'displayedLiftM':DRAFT_STIRRUP_LIFT_M[key],
+                'sourceLiftM':stirrup_lift,'meshIndex':3,'vertexCount':13895,
+                'componentIds':stirrup_components,'shorteningSourceYRangeM':[1.20,1.60],
+                'treadVertexRanges':{'left':[2792,2845],'right':[2716,2769]},
+                'reason':'Shorter Western fenders keep the existing human rider feet within reach on the broad draft body.'}
+            row['limitations']='Approved joint centers, limb lengths and gaits retained. Draft body, neck, head and limb crosssections are enlarged surface derivatives, not a new skeleton. Native groom remains source alpha cards.'
+            regions={
+                'barrel':(body[:,1]>.95)&(body[:,1]<1.60)&(body[:,2]>-.55)&(body[:,2]<.25),
+                'chest':(body[:,1]>.90)&(body[:,1]<1.55)&(body[:,2]>.25)&(body[:,2]<.65),
+                'quarters':(body[:,1]>1.05)&(body[:,1]<1.65)&(body[:,2]>-.95)&(body[:,2]<-.50),
+                'neck':(body[:,1]>1.45)&(body[:,1]<2.05)&(body[:,2]>.55)&(body[:,2]<1.02),
+                'head':(body[:,1]>1.65)&(body[:,1]<2.18)&(body[:,2]>1.10)}
+            # Compare against the unchanged earlier native art directions, not
+            # whatever buffer happens to be on disk; repeated builds are stable.
+            baseline=cage(body,spec['sculpt_targets'],key)
+            baseline[body[:,1]<=.65]=body[body[:,1]<=.65]
+            baseline_actor=height/float(baseline[wm,1].max())
+            report['draftWidths']={name:{'sourceM':float(np.ptp(body[mask,0])),
+                'previousM':float(np.ptp(baseline[mask,0])),'newM':float(np.ptp(bodydecoded[mask,0])),
+                'gainOverPreviousPercent':float((np.ptp(bodydecoded[mask,0])/np.ptp(baseline[mask,0])-1)*100),
+                'previousDisplayedM':float(np.ptp(baseline[mask,0])*baseline_actor),
+                'newDisplayedM':float(np.ptp(bodydecoded[mask,0])*actor),
+                'displayedGainPercent':float((np.ptp(bodydecoded[mask,0])*actor/(np.ptp(baseline[mask,0])*baseline_actor)-1)*100)} for name,mask in regions.items()}
+            report['draftFeet']=[]
+            for limb in limbs:
+                foot=(body[:,0]*limb['side']>0)&((body[:,2]>.10) if limb['front'] else (body[:,2]<-.40))&(body[:,1]<=.14)
+                old=body[foot];new=bodydecoded[foot]
+                report['draftFeet'].append({'id':limb['id'],'vertices':int(foot.sum()),
+                    'sourceWidthXZ':np.ptp(old[:,[0,2]],axis=0).tolist(),'newWidthXZ':np.ptp(new[:,[0,2]],axis=0).tolist(),
+                    'centerShiftM':float(np.linalg.norm(new[:,[0,2]].mean(0)-old[:,[0,2]].mean(0))),
+                    'maxYChangeM':float(abs(new[:,1]-old[:,1]).max())})
+            report['standingBodyFloorM']=float(bodydecoded[:,1].min())
+            report['maxLowerLimbYChangeM']=float(abs(bodydecoded[body[:,1]<=.65,1]-body[body[:,1]<=.65,1]).max())
+            assert max(foot['centerShiftM'] for foot in report['draftFeet'])<2e-5
+            assert report['maxLowerLimbYChangeM']<2e-5
         manifest['breeds'][key]=row;report.update(sha256=row['sha256'],byteLength=len(packed),actorScale=actor,withersM=height,
-                                                 sourceWithersM=withers,unchangedRigJoints=677,bodyBelow065mExactlyPreserved=True)
+                                                 sourceWithersM=withers,unchangedRigJoints=677,bodyBelow065mExactlyPreserved=key not in DRAFT_SHAPES)
         reports.append(report);print(json.dumps({'id':key,'bytes':len(packed),'actorScale':round(actor,4),'sha256':row['sha256']}),flush=True)
     if args.only:
-        write_json(OUT/'partial-manifest.json',manifest);write_json(OUT/'partial-build-report.json',reports)
-    else:
-        write_json(OUT/'manifest.json',manifest);write_json(OUT/'build-report.json',{'sourceSha256':SOURCE_SHA,'rows':reports,
-           'distinctBodyDeltaHashes':len(set(r['sha256'] for r in reports)),'allApprovedMotionAndRigDataUnchanged':True})
+        by_id={r['id']:r for r in previous_report['rows']}
+        by_id.update({r['id']:r for r in reports});reports=[by_id[key] for key in manifest['breeds']]
+    for file,packed in pending:file.write_bytes(packed)
+    write_json(OUT/'manifest.json',manifest);write_json(OUT/'build-report.json',{'sourceSha256':SOURCE_SHA,'rows':reports,
+       'distinctBodyDeltaHashes':len(set(r['sha256'] for r in reports)),'allApprovedMotionAndRigDataUnchanged':True})
+    if args.geometry_only:
+        assert all(sha((OUT/name).read_bytes())==digest for name,digest in untouched.items()), 'Unselected buffer or texture changed'
     assert sha(SOURCE.read_bytes())==SOURCE_SHA
 
 if __name__=='__main__': main()

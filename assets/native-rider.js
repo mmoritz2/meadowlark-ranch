@@ -186,6 +186,40 @@ const CONTACTS=Object.freeze({
   rightBitRing:{vertexIds:range(6954,7184)},
 });
 
+// A broad draft needs a more open bareback thigh angle. Cache a sparse outer
+// coat profile once; its few vertices then follow the native skin every frame.
+function createDraftBarebackBarrel(THREE,rig,mount,seatLocal){
+  if(!rig.profile?.nativeVariant?.draftShape||!rig.skin)return null;
+  const skin=rig.skin,point=new THREE.Vector3(),scale=mount.getWorldScale(new THREE.Vector3()).x;
+  const seat=seatLocal(),rows={L:[],R:[]};
+  for(let i=0;i<11;i++)for(const S of ['L','R'])rows[S].push({height:seat.y-(.04+i*.075)/scale,id:-1,width:-Infinity,point:new THREE.Vector3()});
+  skin.updateWorldMatrix(true,true);
+  for(let id=0;id<skin.geometry.attributes.position.count;id++){
+    skin.getVertexPosition(id,point);point.applyMatrix4(skin.matrixWorld);mount.worldToLocal(point);
+    if(point.z<seat.z-.32/scale||point.z>seat.z+.18/scale)continue;
+    const S=point.x<seat.x?'L':'R',width=Math.abs(point.x-seat.x);
+    for(const row of rows[S])if(Math.abs(point.y-row.height)<.045/scale&&width>row.width){row.id=id;row.width=width;}
+  }
+  for(const S of ['L','R'])rows[S]=rows[S].filter(row=>row.id>=0);
+  if(rows.L.length<5||rows.R.length<5)return null;
+  const samples=rows.L.concat(rows.R);
+  function update(){
+    skin.updateWorldMatrix(true,true);
+    for(const row of samples){skin.getVertexPosition(row.id,row.point);row.point.applyMatrix4(skin.matrixWorld);mount.worldToLocal(row.point);}
+  }
+  function clearance(world,side){
+    point.copy(world);mount.worldToLocal(point);const list=rows[side<0?'L':'R'];let width=side*list[0].point.x;
+    if(point.y<list.at(-1).point.y)width=side*list.at(-1).point.x;
+    else for(let i=1;i<list.length;i++){
+      const a=list[i-1].point,b=list[i].point;
+      if(point.y<=a.y&&point.y>=b.y){const t=(a.y-point.y)/Math.max(.0001,a.y-b.y);width=side*(a.x+(b.x-a.x)*t);break;}
+    }
+    return (side*point.x-width)*scale;
+  }
+  update();
+  return {update,clearance,inspect:()=>({sampleCount:rows.L.length+rows.R.length,sides:Object.fromEntries(Object.entries(rows).map(([S,list])=>[S,list.map(row=>({id:row.id,point:row.point.toArray()}))]))})};
+}
+
 /** Connect the game's existing articulated rider to the source saddle and tack.
  * The horse scene stays inside the game's externally driven player mount. This
  * bridge changes only a clone of the display-rein index buffer and two ribbons;
@@ -199,6 +233,7 @@ export function createNativeRiderBridge({THREE,scene,mount,rig,rider,saddleProxy
   if(!seatFollower||!tack||tack.geometry.attributes.position.count!==13895)
     throw Error('Native saddle seat or original Western tack missing');
   const tackModes=createNativeTackModes({THREE,rig,mount,collectionOwned});
+  const barebackBarrel=createDraftBarebackBarrel(THREE,rig,mount,()=>tackModes.barebackSeatLocal());
   const anchors={contacts:CONTACTS};
   const v=new THREE.Vector3(),min=new THREE.Vector3(),max=new THREE.Vector3(),mean=new THREE.Vector3();
   let reins=null,enabled=false,reinsWanted=false,reinColor=null,disposed=false,lastContact=null;
@@ -253,5 +288,5 @@ export function createNativeRiderBridge({THREE,scene,mount,rig,rider,saddleProxy
   function setReinColor(value){assertLive();const next=typeof value==='string'&&/^#[0-9a-f]{6}$/i.test(value)?value:null;if(next===reinColor)return;reinColor=next;reins?.setColor(reinColor);}
   function inspect(){return {kind:'nativeWesternHorse',enabled,...tackModes.inspect(),reinsWanted,reinsVisible:!!reins?.group.visible,reinColor,contact:lastContact,reins:reins?.inspect()||null,seatFollower:seatFollower.name||'saddle_0333 seat'};}
   function dispose(){if(disposed)return;reins?.dispose();tackModes.dispose();disposed=true;}
-  return {seatLocal,barebackSeatLocal:tackModes.barebackSeatLocal,updateContacts,prepareReins,updateReins,setMode,setTackVisible,showReins,setReinColor,inspect,dispose,get readyForReins(){return !!rider?.sk;},get mode(){return tackModes.mode;}};
+  return {seatLocal,barebackSeatLocal:tackModes.barebackSeatLocal,barebackBarrel,updateContacts,prepareReins,updateReins,setMode,setTackVisible,showReins,setReinColor,inspect,dispose,get readyForReins(){return !!rider?.sk;},get mode(){return tackModes.mode;}};
 }

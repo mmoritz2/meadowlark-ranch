@@ -4,9 +4,29 @@
   "distinctBodyGeometryCount": 25,
   "sharedOriginalNativeSkeletonSize": 677,
   "unchangedSkinWeightsBindsAndAnimations": true,
+  "unchangedIndicesAndUVs": true,
+  "nonDraftBuffersBitExact": 22,
+  "draftLowerLegThicknessUpdated": [
+    "clyde",
+    "percheron",
+    "shire"
+  ],
+  "reviewedDraftBodyPositionsBitExact": [
+    "clyde",
+    "percheron",
+    "shire"
+  ],
+  "limitsM": {
+    "standingFloor": 1e-08,
+    "lowerLegYAndHoofCenterDrift": 2e-05,
+    "animatedHoofCenterDrift": 0.002,
+    "animatedLowerLegSurfaceOffset": 0.1
+  },
+  "motionValidationScope": "84 sampled native walk/trot/left-canter/right-canter poses; finite skinned lower legs and bounded hoof-center drift. Visual gait quality requires runtime review.",
   "rows": [
     {
       "id": "bay",
+      "bufferSha256": "ca1dcf544abb19e478ac0813f5ae59290beccc09cccda9680343089dcdb600e7",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -20,10 +40,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "chestnut",
+      "bufferSha256": "01d8f25146d2be5b4fae8d5e53fc1db3651a7d37f306ef824c8358c53ebc2962",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -37,10 +59,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "palomino",
+      "bufferSha256": "f6ee5303eb51f6b62100f1601fd86bd16ee85f584b5540f00d2d99227f9117b6",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -54,10 +78,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "haflinger",
+      "bufferSha256": "d9daaf78d28991d7be44ba9e45e98ea9a015887f611009074b966f2ff1de071b",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -71,10 +97,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "grey",
+      "bufferSha256": "e65c13551cddb5304974ae4846816a1d838b3bf56465858a20fd8cd85432b066",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -88,10 +116,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "black",
+      "bufferSha256": "b0cb1d641edb47cb5339485642969671bee287168c663f62a0d61b31575b2dad",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -105,10 +135,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "pinto",
+      "bufferSha256": "0cb283c8e25784e34cfa704df736e5ad200a3c3e1d628711112ae1b1dea4fe44",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -122,10 +154,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "appaloosa",
+      "bufferSha256": "1f0e7c0b0bacae87ad5d3d5dc8574865e626e582a3612e4a0fe449812ae1a0d5",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -139,10 +173,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "sunset",
+      "bufferSha256": "ed74a03ac807c43b56849994eb8b5421040d87fee1ed2d36cd12d7953fe86c08",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -156,10 +192,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "iceland",
+      "bufferSha256": "8fe26cbbbfe235fd81831deae40ee9127a6d9c83e05d94e8db3cf857d93ed8bd",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -173,10 +211,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "welsh",
+      "bufferSha256": "0af77ee90e0d8190acc35e050443333ae10665f9039b6029254b3bb1ca44b2e1",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -190,10 +230,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "stock",
+      "bufferSha256": "9d906ff04732bcd11592bce1437cb1f8dade3e062afb0245e770be9429403c64",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -207,10 +249,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "fjord",
+      "bufferSha256": "259adf614e29cb9cbd9b5bb38b172af6d3cbb8d6ddfae1258f813d3920a03f3a",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -224,10 +268,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "morgan",
+      "bufferSha256": "176dd003fe6029ef4dae2eb3f754f17fb617247c6defd1419a34eedea824262b",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -241,10 +287,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "thoro",
+      "bufferSha256": "d6261a3164afa6fca69e8d79fbe3b856d75dbcb471a4387c4509d5b699cecc3f",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -258,10 +306,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "knab",
+      "bufferSha256": "815ae0c534b24b88e27cb6408cd4308fedc83185b7562f6cd2def363b609a20e",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -275,10 +325,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "vanner",
+      "bufferSha256": "ffd006da8a808c287410fb147688bde72e3b9c20e05c8a9bf8496d6a858250ac",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -292,10 +344,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "marwari",
+      "bufferSha256": "0391e61b8ad20098673c8931fe152a902e77d1fec09323b9891b0f8693e78d91",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -309,10 +363,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "lipiz",
+      "bufferSha256": "97997fc863a5b0d28853ba19451ca6f75dca80efe75d56dbcc34edbb02419c39",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -326,10 +382,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "sport",
+      "bufferSha256": "df35826e54a9297ca4fe077b07229f283b7618dc3d0ba225674b12a8cb8bb246",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -343,10 +401,12 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "akhal",
+      "bufferSha256": "0c536c220d31fba3ba80d96471a7940dbf68f0051f4efc7f9ba1f4ddb11addc4",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -360,61 +420,225 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     },
     {
       "id": "percheron",
+      "bufferSha256": "26b2f91ea872886faf2975ab00455e6861a224a629f6a4cb2d956fc830b6acfd",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "4c2fd014cfae3df170c9bb98cffa0d9c9273120333def4b8d5b7c4f21641c2f3",
+      "bodyGeometrySha256": "3e8515dc0f417fa837368e425261dfcbf42d4adff21b4d7513f82a0e46974918",
       "protectedLowerBodyVertices": 3054,
-      "protectedBodyPositionsAndNormalsBitExact": true,
+      "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
-      "maxNormalLengthError": 6.9141387939453125e-06,
-      "actorScale": 0.9470224159338522,
+      "maxNormalLengthError": 1.8835067749023438e-05,
+      "actorScale": 0.911911507053303,
       "withersM": 1.73,
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "draftLowerLegValidation": {
+        "soleAnchorVertices": 1,
+        "soleAnchorsBitExact": true,
+        "maxLowerLegYDriftM": 2.927338182745487e-06,
+        "hooves": [
+          {
+            "leg": "hind-left",
+            "vertices": 319,
+            "centerDriftM": 1.8324217017763898e-07,
+            "widthGainXZ": [
+              1.4199895448277382,
+              1.419997313977808
+            ]
+          },
+          {
+            "leg": "front-left",
+            "vertices": 352,
+            "centerDriftM": 1.6286969518419637e-07,
+            "widthGainXZ": [
+              1.4199989873920946,
+              1.4199845731214213
+            ]
+          },
+          {
+            "leg": "hind-right",
+            "vertices": 295,
+            "centerDriftM": 1.9032634553074165e-07,
+            "widthGainXZ": [
+              1.4200187162943687,
+              1.4199747710250583
+            ]
+          },
+          {
+            "leg": "front-right",
+            "vertices": 353,
+            "centerDriftM": 1.668039991515894e-07,
+            "widthGainXZ": [
+              1.419963934283708,
+              1.4200146641393177
+            ]
+          }
+        ],
+        "nativeGaitSamples": 84,
+        "nativeGaitClips": [
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Trot",
+          "Target Native Walk Rollover"
+        ],
+        "sampledLowerLegPositionsFinite": true,
+        "maxAnimatedHoofCenterDriftM": 0.0005215703423360366,
+        "maxAnimatedLowerLegSurfaceOffsetM": 0.0455899380109751
+      }
     },
     {
       "id": "shire",
+      "bufferSha256": "729f0b935b5b3c038fdc34ded7224ca06261114ed3f417dd9473a8eef732541a",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "f18d5e8c9b96d4f07e08d5fdafad1e3981807eb81a1df735bbd1a0f8ab7d7702",
+      "bodyGeometrySha256": "60ffdfeb16104aead7db654714c106aed64a560f03448b42df1fabade3a4bca7",
       "protectedLowerBodyVertices": 3054,
-      "protectedBodyPositionsAndNormalsBitExact": true,
+      "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
-      "maxNormalLengthError": 8.344650268554688e-06,
-      "actorScale": 0.9911492135843502,
+      "maxNormalLengthError": 1.9311904907226562e-05,
+      "actorScale": 0.9549938604154964,
       "withersM": 1.82,
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "draftLowerLegValidation": {
+        "soleAnchorVertices": 1,
+        "soleAnchorsBitExact": true,
+        "maxLowerLegYDriftM": 3.2034171255634902e-06,
+        "hooves": [
+          {
+            "leg": "hind-left",
+            "vertices": 319,
+            "centerDriftM": 1.6312590954697353e-07,
+            "widthGainXZ": [
+              1.5000279948753261,
+              1.4999919807798692
+            ]
+          },
+          {
+            "leg": "front-left",
+            "vertices": 352,
+            "centerDriftM": 1.567465669302123e-08,
+            "widthGainXZ": [
+              1.4999730803704125,
+              1.5000190202801642
+            ]
+          },
+          {
+            "leg": "hind-right",
+            "vertices": 295,
+            "centerDriftM": 1.644173357871407e-07,
+            "widthGainXZ": [
+              1.5000198901266935,
+              1.4999739739944944
+            ]
+          },
+          {
+            "leg": "front-right",
+            "vertices": 353,
+            "centerDriftM": 2.6090455103301476e-07,
+            "widthGainXZ": [
+              1.500006102189563,
+              1.500019624228687
+            ]
+          }
+        ],
+        "nativeGaitSamples": 84,
+        "nativeGaitClips": [
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Trot",
+          "Target Native Walk Rollover"
+        ],
+        "sampledLowerLegPositionsFinite": true,
+        "maxAnimatedHoofCenterDriftM": 0.0006207020598651598,
+        "maxAnimatedLowerLegSurfaceOffsetM": 0.05427112726650658
+      }
     },
     {
       "id": "clyde",
+      "bufferSha256": "2b43256523ce4f431092cf41c6b1f6fd90b5f8bbc3f4ad319871bcb913516d7c",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
-      "bodyGeometrySha256": "18120ec25a18225986412bcb9b5ce95b132c591140edbb3f2c4c47dffc8423bb",
+      "bodyGeometrySha256": "7cd4f35947849d201bb3fbc08dcc04e263c2b2953676f7f82586ee19373527d9",
       "protectedLowerBodyVertices": 3054,
-      "protectedBodyPositionsAndNormalsBitExact": true,
+      "protectedBodyPositionsAndNormalsBitExact": false,
       "standingBodyFloorM": 0.0,
-      "maxNormalLengthError": 6.794929504394531e-06,
-      "actorScale": 0.9759128233976231,
+      "maxNormalLengthError": 1.6868114471435547e-05,
+      "actorScale": 0.9425025924259818,
       "withersM": 1.78,
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "draftLowerLegValidation": {
+        "soleAnchorVertices": 1,
+        "soleAnchorsBitExact": true,
+        "maxLowerLegYDriftM": 2.7440898695552107e-06,
+        "hooves": [
+          {
+            "leg": "hind-left",
+            "vertices": 319,
+            "centerDriftM": 1.62046400514045e-07,
+            "widthGainXZ": [
+              1.4600219675973796,
+              1.4600042971137068
+            ]
+          },
+          {
+            "leg": "front-left",
+            "vertices": 352,
+            "centerDriftM": 1.237349870864761e-07,
+            "widthGainXZ": [
+              1.4599877169896536,
+              1.4599971584174893
+            ]
+          },
+          {
+            "leg": "hind-right",
+            "vertices": 295,
+            "centerDriftM": 1.4105668816409746e-07,
+            "widthGainXZ": [
+              1.4600208634030654,
+              1.4599995592516493
+            ]
+          },
+          {
+            "leg": "front-right",
+            "vertices": 353,
+            "centerDriftM": 9.507252599698579e-08,
+            "widthGainXZ": [
+              1.4599874554313457,
+              1.4600092851767223
+            ]
+          }
+        ],
+        "nativeGaitSamples": 84,
+        "nativeGaitClips": [
+          "Target Native Canter Left",
+          "Target Native Canter Right",
+          "Target Native Trot",
+          "Target Native Walk Rollover"
+        ],
+        "sampledLowerLegPositionsFinite": true,
+        "maxAnimatedHoofCenterDriftM": 0.0005711708105215708,
+        "maxAnimatedLowerLegSurfaceOffsetM": 0.0499294003860306
+      }
     },
     {
       "id": "bay-sporthorse",
+      "bufferSha256": "1ba3bdabbb7dd6641cfd71fc01409b38883e7aa8c3ac68d0925709b1d8b67b12",
       "jointCount": 677,
       "meshes": 5,
       "bodyVertices": 16159,
@@ -428,7 +652,8 @@
       "textureSize": [
         1024,
         1024
-      ]
+      ],
+      "releasedBufferBitExact": true
     }
   ]
 }
