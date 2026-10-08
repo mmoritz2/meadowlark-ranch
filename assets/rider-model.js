@@ -41,7 +41,7 @@ import {RIDER_OUTFITS,riderOutfit,CLOTH_GLSL,tailoredTop,tailoredLegs,garmentCut
 export {RIDER_OUTFITS};
 import {EXTRA_HAIR,shapeHair,hairDetails,scalpPoint,gatheredCrown,polishHairSurface} from './rider-hairstyles.js?v=couture-riders-20261007';
 import {refineRiderProportions} from './rider-proportions.js?v=couture-riders-20261007';
-import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=visible-lashes-20261007';
+import {RIDER_FACE_GLSL,riderLashGeometry} from './rider-face.js?v=noticeable-lashes-20261008';
 import {prepareRiderHead,patchStylizedHead,patchStylizedEyes} from './rider-heads.js?v=couture-riders-20261007';
 import {accessoryFit,buildAccessories} from './rider-accessories.js?v=couture-riders-20261007';
 
