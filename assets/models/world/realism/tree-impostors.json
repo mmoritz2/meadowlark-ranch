@@ -308,6 +308,42 @@
       "sourcePage": "https://polyhaven.com/a/tree_small_02",
       "license": "CC0-1.0",
       "originalAddition": "Mature-only factor-2 XZ leaf surface patches around retained nearest-wood anchors, authored in mature-leaf-patches.mjs; wood, Y, UV and topology preserved. Shared by runtime and view bake."
+    },
+    {
+      "id": "upright_broadleaf_01",
+      "variant": -1,
+      "width": 4.319080226198001,
+      "height": 9.990701275467874,
+      "bottom": -0.5255277094244957,
+      "sourceHeight": 9.425189882516861,
+      "viewCount": 8,
+      "canopyShading": {
+        "triangles": 96609,
+        "area": 65.96605712979058,
+        "cell": 0.14584104581312698,
+        "occupied": 9883,
+        "min": 0.37617725133895874,
+        "max": 1
+      },
+      "views": {
+        "file": "upright_broadleaf_01_views.webp",
+        "bytes": 2563426,
+        "sha256": "085a703857deae089fc2621725ee74778103de92a9571b1633233a33bfdf069d"
+      },
+      "normals": {
+        "file": "upright_broadleaf_01_normals.webp",
+        "bytes": 1594424,
+        "sha256": "436d9ee72e428afa3500e6914e6c6039e3976d534edaf0105774cf18b485362b"
+      },
+      "source": "upright_broadleaf_01.glb",
+      "sourcePage": "https://quaternius.com/packs/stylizednaturemegakit.html",
+      "license": "CC0-1.0",
+      "sourcePages": [
+        "https://quaternius.com/packs/stylizednaturemegakit.html",
+        "https://polyhaven.com/a/tree_small_02",
+        "https://polyhaven.com/a/bark_brown_02"
+      ],
+      "originalAddition": "Deterministic upright tree with Quaternius CommonTree_3 wood, whole Tree Small 02 photographed leaf surfaces and tileable Bark Brown 02. Runtime and view bake share the generated GLB."
     }
   ]
 }

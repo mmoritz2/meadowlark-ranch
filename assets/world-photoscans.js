@@ -1,3 +1,4 @@
+import {UPRIGHT_HYBRID_WOOD_SOURCE_SHA,UPRIGHT_HYBRID_WOOD_BOXES} from './upright-broadleaf-wood-proxies.mjs?v=upright-broadleaf-1';
 import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood-proxies.mjs?v=clover-woodland-edge-1';
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';
@@ -20,10 +21,10 @@ import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeo
 
 // One authored mixed-age edge frames the Clover approach. Existing scatter stays intact.
 const WOODLAND_EDGE_TREES=[
-  {x:16,z:-98,height:8.0,yaw:.42}, {x:23,z:-104,height:10.2,yaw:1.18},
+  {x:16,z:-98,height:8.0,yaw:.42}, {x:23,z:-104,height:10.2,yaw:1.18,upright:true},
   {x:29,z:-111,height:11.2,yaw:2.10}, {x:36,z:-111,height:8.2,yaw:-1.95},
-  {x:36,z:-102,height:10.4,yaw:-.24}, {x:20,z:-89,height:8.1,yaw:-.71},
-  {x:29,z:-91,height:9.7,yaw:2.82}, {x:38,z:-88,height:8.3,yaw:1.61},
+  {x:36,z:-102,height:10.4,yaw:-.24,upright:true}, {x:20,z:-89,height:8.1,yaw:-.71},
+  {x:29,z:-91,height:9.7,yaw:2.82,upright:true}, {x:38,z:-88,height:8.3,yaw:1.61},
 ];
 const WOODLAND_EDGE_PLANTS=[
   ['shrub_03',17,-111,1.04,.3],['shrub_04',20,-110,.92,1.4],['fern_02',17,-105,.68,.2],
@@ -40,7 +41,7 @@ const WOODLAND_EDGE_PLANTS=[
   ['fern_02',31,-106,.70,.1],['shrub_03',16,-101,1.03,2.6],['fern_02',17,-97,.71,.8],
 ];
 
-// Real, CC0 Poly Haven assets. The generated world stays available until each
+// Licensed CC0 assets and original derivatives. The world stays available until each
 // replacement has loaded; detailed crowns are budgeted around the rider.
 export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={}) {
   const {THREE,scene,world:W,horse:H,renderer}=G;
@@ -151,7 +152,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=tree-atlas-framing-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=upright-broadleaf-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
     const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01'),woodland=await load('jacaranda_tree');
     const specs=[['tree_small_02',-1,broad,'broadleaf'],
       ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
@@ -194,9 +195,18 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     if(!matureLeafMeta)throw Error('Missing mature leaf view metadata');
     const matureLeafSource={parts:matureLeafParts,bounds:matureLeafBounds,key:'mature-leaf-broadleaf',meta:matureLeafMeta,triangles:variants[0].triangles};
     variants.push(matureLeafSource);
+    // A second growth form gives the Clover edge upright crowns. Whole photo
+    // leaf surfaces retain their UVs; all detail tiers use the same baked model.
+    const uprightRoot=await load('upright_broadleaf_01'),uprightParts=pieces(uprightRoot),uprightBounds=new THREE.Box3();
+    uprightParts.forEach(p=>uprightBounds.union(p.bounds));
+    const uprightMeta=catalog.trees.find(t=>t.id==='upright_broadleaf_01'&&t.variant===-1);
+    if(!uprightMeta)throw Error('Missing upright broadleaf view metadata');
+    const uprightSource={parts:uprightParts,bounds:uprightBounds,key:'upright-broadleaf',meta:uprightMeta,
+      triangles:uprightParts.reduce((n,p)=>n+(p.geo.index?.count||p.geo.attributes.position.count)/3,0)};
+    variants.push(uprightSource);
     const sourceFor=t=>{
       if(t.authoredOrchard)return orchardSource;
-      if(t.authoredWoodlandEdge)return t.height>=9?matureLeafSource:variants[0];
+      if(t.authoredWoodlandEdge)return t.upright?uprightSource:t.height>=9?matureLeafSource:variants[0];
       if(alpineSnowAt(t.x,t.z)>.35)return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
       // Related trees grow in groves. Young roadside trees stay slender; mature
       // oak sites carry full crowns. Broad trees define meadow and woodland edges.
@@ -329,8 +339,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         state.trailTrees.push({x:tx,z:tz,height});
       }
     }
-    // Reuse prepared source geometry, lighting, depth and all eight view atlases.
-    // Young trees keep the original leaf model; larger trees use its mature alias.
+    // Mix upright crowns with the resident young/mature trees, sharing the
+    // existing detailed-tree budget and matching eight-view lighting/depth.
     function edgeWoodRadius(source,height){
       const scale=height/source.meta.sourceHeight;let radius=0;
       for(const part of source.parts)if(!/leaves|twig/.test(part.mat.name)){
@@ -350,7 +360,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       return Math.hypot(probe.x-x,probe.z-z)<.001;
     }
     for(const site of WOODLAND_EDGE_TREES){
-      const source=site.height>=9?matureLeafSource:variants[0],woodRadius=edgeWoodRadius(source,site.height);
+      const source=site.upright?uprightSource:site.height>=9?matureLeafSource:variants[0],woodRadius=edgeWoodRadius(source,site.height);
       if(!edgeFootClear(site.x,site.z,woodRadius)||trees.some(t=>Math.hypot(t.x-site.x,t.z-site.z)<6.4)){
         edge.skipped.push({...site,reason:'current world, town, route, solid or neighbouring trunk clearance'});continue;
       }
@@ -419,11 +429,16 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     const edgeOwner=new THREE.Group();edgeOwner.name='Clover woodland edge wood';
     edgeOwner.userData.woodlandEdge=true;group.add(edgeOwner);edgeOwner.updateWorldMatrix(true,false);
     if(!edgeOwner.matrixWorld.equals(identity))throw Error('Unexpected woodland wood owner frame');
-    edgeOwner.userData.solidParts=[];let maxScale=0;
+    edgeOwner.userData.solidParts=[];let maxSourceBoxSide=0,maxWorldEdgeLength=0;
+    const sourceHashes=new Set();
     for(const t of edge.trees){
-      const matrix=t.matrix.toArray(),scale=t.height/t.source.meta.sourceHeight;maxScale=Math.max(maxScale,scale);
+      const matrix=t.matrix.toArray(),scale=t.height/t.source.meta.sourceHeight;
+      const upright=t.source===uprightSource,boxes=upright?UPRIGHT_HYBRID_WOOD_BOXES:WOODLAND_WOOD_BOXES;
+      sourceHashes.add(upright?UPRIGHT_HYBRID_WOOD_SOURCE_SHA:WOODLAND_WOOD_SOURCE_SHA);
+      const side=Math.max(...boxes.flatMap(b=>b.max.map((v,i)=>v-b.min[i])));
+      maxSourceBoxSide=Math.max(maxSourceBoxSide,side);maxWorldEdgeLength=Math.max(maxWorldEdgeLength,side*scale);
       let lowRadius=0;
-      for(const box of WOODLAND_WOOD_BOXES){
+      for(const box of boxes){
         edgeOwner.userData.solidParts.push({min:box.min,max:box.max,matrix});
         const lo=(box.min[1]-t.source.bounds.min.y)*scale-.07,hi=(box.max[1]-t.source.bounds.min.y)*scale-.07;
         if(hi>=0&&lo<=2.65)for(const x of[box.min[0],box.max[0]])for(const z of[box.min[2],box.max[2]])lowRadius=Math.max(lowRadius,Math.hypot(x,z)*scale);
@@ -436,9 +451,8 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       W.colliders.push({x:t.x,z:t.z,r:t.lowWoodRadius,height:t.height,trunk:true,precise:true,authoredWoodlandEdge:true});
       W.forestPoints.push({x:t.x,z:t.z,s:t.height/8,authoredWoodlandEdge:true});
     }
-    const maxSourceBoxSide=Math.max(...WOODLAND_WOOD_BOXES.flatMap(b=>b.max.map((v,i)=>v-b.min[i])));
     edge.collision={rootNames:[edgeOwner.name],owners:1,parts,registeredParts:registered,sourceHash:WOODLAND_WOOD_SOURCE_SHA,
-      maxSourceBoxSide,maxWorldEdgeLength:maxSourceBoxSide*maxScale,maxHorizontalAirFillBound:Math.SQRT2*maxSourceBoxSide*maxScale,
+      sourceHashes:[...sourceHashes],maxSourceBoxSide,maxWorldEdgeLength,maxHorizontalAirFillBound:Math.SQRT2*maxWorldEdgeLength,
       leavesExcluded:true,allWoodHeights:true,renderChildren:0};
     G.followCam.invalidateTrees();edge.cameraInvalidated=true;
     }
