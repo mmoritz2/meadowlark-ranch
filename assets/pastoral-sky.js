@@ -36,8 +36,9 @@ export function createPastoralSky(THREE) {
         return texture2D(cloudField,(i+f+.5)/256.).rg;
       }
       float fieldNoise(vec2 p){return fieldNoiseChannels(p).r;}
-      float cloudNoise(vec2 p){
-        float coarse=fieldNoise(p)*.57+fieldNoise(p*2.03+11.)*.29+fieldNoise(p*4.07-7.)*.14;
+      float cloudNoise(vec2 p,out float density){
+        density=fieldNoise(p);
+        float coarse=density*.57+fieldNoise(p*2.03+11.)*.29+fieldNoise(p*4.07-7.)*.14;
         // Fine detail fades with pixel footprint instead of producing grain at
         // low resolution. All settings retain the same broad cloud placement.
         float detail=1.-smoothstep(.12,.45,max(length(dFdx(p)),length(dFdy(p))));
@@ -51,27 +52,35 @@ export function createPastoralSky(THREE) {
         vec2 world=cameraPosition.xz+d.xz*distanceToLayer;
         vec2 wind=vec2(time*.0035,time*.0012);
         vec2 p=world*(highLayer?.0011:.0042)+wind;
-        float shape,alpha;
+        float shape,alpha,density;
+        vec2 cloudUv;
         if(highLayer){
           p=mat2(.94,-.34,.34,.94)*p;
-          vec2 warp=vec2(fieldNoise(p*.63+21.),fieldNoise(p*.71-17.))-.5;
-          // Existing seeded channels vary the length and thickness of wisps.
-          // One RG sample replaces the former red-only break sample.
-          vec2 shapeField=fieldNoiseChannels(p*.48+9.);
-          vec2 strandScale=vec2(mix(.78,1.14,shapeField.g),mix(2.65,4.20,shapeField.r));
-          shape=cloudNoise(p*strandScale+warp*1.1+vec2(warp.y,-warp.x)*.45);
-          float breaks=smoothstep(.30,.70,shapeField.r)*mix(.42,1.,smoothstep(.18,.72,shapeField.g));
-          alpha=smoothstep(.48,.76,shape)*breaks*.48*(1.-rain*.55);
+          // Smaller broken filaments, with gentle curls rather than broad waves.
+          vec2 warp=fieldNoiseChannels(p*.67+21.)-.5;
+          vec2 shapeField=fieldNoiseChannels(p*.72+9.);
+          vec2 strandScale=vec2(mix(1.28,1.95,shapeField.g),mix(5.40,7.20,shapeField.r));
+          cloudUv=p*strandScale+vec2(warp.y,-warp.x)*.32;
+          shape=cloudNoise(cloudUv,density);
+          float breaks=smoothstep(.32,.68,shapeField.r)*smoothstep(.18,.58,shapeField.g);
+          alpha=smoothstep(.50,.71,shape)*breaks*.31*(1.-rain*.55);
         }else{
-          vec2 warp=vec2(fieldNoise(p*.42+23.),fieldNoise(p*.42-9.))-.5;
-          shape=cloudNoise(p+warp*1.6);
-          float coverage=mix(.54,.36,rain);
-          alpha=smoothstep(coverage,coverage+.22,shape)*mix(.78,.94,rain);
+          vec2 warp=fieldNoiseChannels(p*.42+23.)-.5;
+          cloudUv=p*vec2(1.45,2.35)+vec2(warp.y,-warp.x)*.38;
+          shape=cloudNoise(cloudUv,density);
+          float fragments=mix(.58,1.,smoothstep(.26,.72,warp.x+.5));
+          float coverage=mix(.59,.37,rain);
+          alpha=smoothstep(coverage,coverage+.20,shape)*fragments*mix(.46,.90,rain);
         }
         alpha*=smoothstep(.025,.16,d.y);
         float daylight=smoothstep(0.,.55,day);
         float body=smoothstep(.53,.80,shape);
-        vec3 lit=mix(vec3(.59,.67,.72),vec3(.90,.92,.94),highLayer? .92:1.-body*.48);
+        // Reuse the coarse density and one neighboring sample for subtle depth.
+        // RG warp saved that sample; the existing tier texture budget is unchanged.
+        vec2 lightDir=sd.xz/max(length(sd.xz),.1);
+        float sideLight=clamp((fieldNoise(cloudUv+lightDir*.36)-density)*2.2,-.10,.10);
+        vec3 lit=highLayer?vec3(.82,.88,.93):mix(vec3(.55,.63,.70),vec3(.89,.93,.96),1.-body*.52);
+        lit+=vec3(sideLight);
         lit+=mix(vec3(.07,.06,.04),vec3(.086,.042,.055),highLayer?.42:0.)*pow(max(dot(d,sd),0.),12.);
         lit=mix(lit,lit*vec3(1.14,.83,.66),golden*.70);
         lit=mix(vec3(.008,.014,.027),lit,daylight);
