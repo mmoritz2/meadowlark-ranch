@@ -9,14 +9,16 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {createForageArt} from '/assets/forage-art.js?v=leafy-orchard-1';
 import {createOrchardFruit} from '/assets/orchard-art.js?v=leafy-orchard-1';
 import {prepareCanopyShade,patchCanopyShade} from '/assets/canopy-shading.js?v=canopy-depth-1';
+import {MATURE_LEAF_ALIAS,createMatureLeafGeometry} from '/assets/mature-leaf-patches.mjs?v=mature-leaf-patches-1';
 const renderer=new T.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
 renderer.setClearColor(0,0);renderer.outputColorSpace=T.SRGBColorSpace;
 const loader=new GLTFLoader();
 window.bakeTree=async(id,variant=-1)=>{
- const source=id==='orchard_apple'?'island_tree_01':id;
+ const source=id==='orchard_apple'?'island_tree_01':id===MATURE_LEAF_ALIAS?'tree_small_02':id;
  const asset=await loader.loadAsync('/assets/models/world/realism/'+source+'.glb');
  let root=asset.scene;if(variant>=0){root=asset.scene.children[variant];root.removeFromParent();root.position.set(0,0,0);}
  const scene=new T.Scene();scene.add(root);root.updateMatrixWorld(true);
+ if(id===MATURE_LEAF_ALIAS)root.traverse(o=>{if(o.isMesh&&o.material.name==='tree_small_02_leaves')o.geometry=createMatureLeafGeometry(T,o.geometry);});
  // Shade the shared scan before adding original fruit, exactly as runtime does.
  const canopyShading=prepareCanopyShade(T,root);
  let orchardFruit=null;
@@ -55,7 +57,7 @@ window.bakeTree=async(id,variant=-1)=>{
   const page=await browser.newPage();page.on('pageerror',e=>console.error(e));
   await page.goto(QA.BASE+'/'+scratch+'/index.html');await page.waitForFunction(()=>window.bakeTree);
   const entries=[];
-  const requested=process.argv.slice(2),jobs=requested.length?requested.map(id=>[id,['tree_small_02','island_tree_01','jacaranda_tree','orchard_apple'].includes(id)?-1:0]):[['tree_small_02',-1],['fir_sapling_medium',0],['fir_sapling_medium',1],['fir_sapling_medium',2]];
+  const requested=process.argv.slice(2),jobs=requested.length?requested.map(id=>[id,['tree_small_02','island_tree_01','jacaranda_tree','orchard_apple','tree_small_02_mature_leaves'].includes(id)?-1:0]):[['tree_small_02',-1],['fir_sapling_medium',0],['fir_sapling_medium',1],['fir_sapling_medium',2]];
   for(const [id,variant]of jobs){
    const {albedo,normal,...meta}=await page.evaluate(([id,v])=>bakeTree(id,v),[id,variant]);
    const prefix=id+(variant>=0?'_'+variant:'');const files={};
@@ -64,7 +66,7 @@ window.bakeTree=async(id,variant=-1)=>{
     execFileSync('python3',['-c','from PIL import Image;import sys;Image.open(sys.argv[1]).save(sys.argv[2],"WEBP",lossless=True,method=6)',png,dest+'/'+file]);
     const bytes=fs.readFileSync(dest+'/'+file);files[channel]={file,bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')};
    }
-   entries.push({id,variant,...meta,...files,source:(id==='orchard_apple'?'island_tree_01':id)+'.glb',sourcePage:'https://polyhaven.com/a/'+(id==='orchard_apple'?'island_tree_01':id),license:'CC0-1.0',...(id==='orchard_apple'?{originalAddition:'Branch-attached apple geometry authored in orchard-art.js and forage-art.js; shared by runtime and view bake.'}:{})});console.log(prefix,JSON.stringify(meta));
+   entries.push({id,variant,...meta,...files,source:(id==='orchard_apple'?'island_tree_01':id==='tree_small_02_mature_leaves'?'tree_small_02':id)+'.glb',sourcePage:'https://polyhaven.com/a/'+(id==='orchard_apple'?'island_tree_01':id==='tree_small_02_mature_leaves'?'tree_small_02':id),license:'CC0-1.0',...(id==='tree_small_02_mature_leaves'?{originalAddition:'Mature-only factor-2 XZ leaf surface patches around retained nearest-wood anchors, authored in mature-leaf-patches.mjs; wood, Y, UV and topology preserved. Shared by runtime and view bake.'}:{}),...(id==='orchard_apple'?{originalAddition:'Branch-attached apple geometry authored in orchard-art.js and forage-art.js; shared by runtime and view bake.'}:{})});console.log(prefix,JSON.stringify(meta));
   }
   const prior=JSON.parse(fs.readFileSync(dest+'/tree-impostors.json','utf8'));
   const merged=[...prior.trees.filter(t=>!entries.some(e=>e.id===t.id&&e.variant===t.variant)),...entries];

@@ -5,6 +5,7 @@ import {installDeadwoodArt} from './deadwood-art.js?v=weathered-deadwood-1';
 import {createOrchardFruit} from './orchard-art.js?v=leafy-orchard-1';
 import {installVillageEvergreens} from './village-planting.js?v=village-gardens-1';
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
+import {MATURE_LEAF_ALIAS,createMatureLeafGeometry} from './mature-leaf-patches.mjs?v=mature-leaf-patches-1';
 import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=village-gardens-1';
 import {alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=alpine-range-1';
 import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
@@ -121,7 +122,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=leafy-orchard-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=mature-leaf-patches-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
     const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01'),woodland=await load('jacaranda_tree');
     const specs=[['tree_small_02',-1,broad,'broadleaf'],
       ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
@@ -141,6 +142,29 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     const orchardMeta=catalog.trees.find(t=>t.id==='orchard_apple');if(!orchardMeta)throw Error('Missing orchard view metadata');
     const orchardSource={parts:orchardParts,bounds:orchardBounds,key:'orchard-broadleaf',meta:orchardMeta,triangles:island.triangles+fruit.stats.triangles};
     variants.push(orchardSource);
+    // Mature fallbacks retain the original wood and its collision envelope.
+    // Only the leaf surface patches grow; the material/depth preparation stays shared.
+    let matureLeafPart;const matureStarted=performance.now(),identity=new THREE.Matrix4();
+    broad.traverse(o=>{
+      if(!o.isMesh||o.material.name!=='tree_small_02_leaves')return;
+      if(matureLeafPart||!o.matrixWorld.equals(identity))throw Error('Unexpected mature leaf source frame');
+      const originalLeafPart=variants[0].parts.find(p=>p.mat.name===o.material.name);
+      const geo=createMatureLeafGeometry(THREE,o.geometry,originalLeafPart.geo);
+      // Shade density depends on geometry, not pigment. The throwaway facade
+      // absorbs prepareCanopyShade's pigment multiply without retinting the real material.
+      const leaf={isMesh:true,geometry:geo,matrixWorld:identity,material:{name:o.material.name,color:o.material.color.clone()}};
+      const facade={updateMatrixWorld(){},traverse(fn){fn(leaf);}};
+      const shade=prepareCanopyShade(THREE,facade);
+      (state.canopyShading??={})[MATURE_LEAF_ALIAS]={...shade,prepareMs:performance.now()-matureStarted};
+      matureLeafPart={geo,mat:o.material,name:o.name,bounds:geo.boundingBox.clone()};
+    });
+    if(!matureLeafPart)throw Error('Missing original mature leaf primitive');
+    const matureLeafParts=variants[0].parts.map(p=>p.mat.name==='tree_small_02_leaves'?matureLeafPart:p),matureLeafBounds=new THREE.Box3();
+    matureLeafParts.forEach(p=>matureLeafBounds.union(p.bounds));
+    const matureLeafMeta=catalog.trees.find(t=>t.id===MATURE_LEAF_ALIAS&&t.variant===-1);
+    if(!matureLeafMeta)throw Error('Missing mature leaf view metadata');
+    const matureLeafSource={parts:matureLeafParts,bounds:matureLeafBounds,key:'mature-leaf-broadleaf',meta:matureLeafMeta,triangles:variants[0].triangles};
+    variants.push(matureLeafSource);
     const sourceFor=t=>{
       if(t.authoredOrchard)return orchardSource;
       if(alpineSnowAt(t.x,t.z)>.35)return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
@@ -155,7 +179,11 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         const village=Math.hypot(t.x-47,t.z+50)<34;
         const grove=Math.sin(t.x*.034+t.z*.011)+Math.cos(t.z*.047-t.x*.009);
         const spreading=!village&&grove+rnd(t.x,t.z,53)*.65>-.32;
-        return spreading?(grove>.55?variants[6]:variants[5]):variants[0];
+        if(spreading)return grove>.55?variants[6]:variants[5];
+        // Keep earlier grove choices, young trees, village and cold margins exact.
+        const matureFallback=!village&&!t.authoredVillage&&['oak','blossom'].includes(t.kind)
+          &&t.height>=7.2&&t.height<=12.5&&coldWoodlandWeights(t.x,t.z).weight<=.08;
+        return matureFallback?matureLeafSource:variants[0];
       }
       return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
     };

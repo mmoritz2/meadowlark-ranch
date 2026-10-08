@@ -277,6 +277,37 @@
       "sourcePage": "https://polyhaven.com/a/island_tree_01",
       "license": "CC0-1.0",
       "originalAddition": "Branch-attached apple geometry authored in orchard-art.js and forage-art.js; shared by runtime and view bake."
+    },
+    {
+      "id": "tree_small_02_mature_leaves",
+      "variant": -1,
+      "width": 4.765147173404694,
+      "height": 4.823275546617806,
+      "bottom": -0.16053979707881808,
+      "sourceHeight": 4.55025994963944,
+      "viewCount": 8,
+      "canopyShading": {
+        "triangles": 110000,
+        "area": 40.698067617987135,
+        "cell": 0.09845345399596474,
+        "occupied": 11103,
+        "min": 0.3741728365421295,
+        "max": 1
+      },
+      "views": {
+        "file": "tree_small_02_mature_leaves_views.webp",
+        "bytes": 2142210,
+        "sha256": "63f57df09359d584a89617b3b0c5eae77bee40578b50518307d28be80c2e49f7"
+      },
+      "normals": {
+        "file": "tree_small_02_mature_leaves_normals.webp",
+        "bytes": 1339672,
+        "sha256": "09a818f966bead3b2dc61f1d465b2e0ef9800ecda0947cff5263664248f11131"
+      },
+      "source": "tree_small_02.glb",
+      "sourcePage": "https://polyhaven.com/a/tree_small_02",
+      "license": "CC0-1.0",
+      "originalAddition": "Mature-only factor-2 XZ leaf surface patches around retained nearest-wood anchors, authored in mature-leaf-patches.mjs; wood, Y, UV and topology preserved. Shared by runtime and view bake."
     }
   ]
 }
