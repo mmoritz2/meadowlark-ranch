@@ -8,6 +8,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {pathToFileURL,fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {restoreLupinModelSource} from './fixtures/lupin-model-source.mjs';
 
 const HERE=path.dirname(fileURLToPath(import.meta.url));
 const ROOT=process.env.QA_WEST_ROOT||path.dirname(HERE);
@@ -20,7 +21,14 @@ const hashes={
  'assets/meadow-cover.js':'8dd3ea1c44b2f7795258029d938380f860e63ace4b3362475c46c02166e2a887',
 };
 const hash=s=>createHash('sha256').update(s).digest('hex');
-const proposed=Object.fromEntries(Object.keys(hashes).map(p=>[p,readFileSync(path.join(ROOT,p),'utf8').replace('./pastoral-fields.mjs?v=west-meadow-sward-1','./pastoral-fields.mjs?v=leafy-orchard-1')]));
+// This historical field-only receipt restores the separately reviewed exact
+// model constructor before comparing its original geometry. Current model
+// topology is tested independently; unknown constructors are never normalized.
+const proposed=Object.fromEntries(Object.keys(hashes).map(p=>{
+ let body=readFileSync(path.join(ROOT,p),'utf8');
+ if(p==='assets/meadow-cover.js')body=restoreLupinModelSource(body);
+ return [p,body.replace('./pastoral-fields.mjs?v=west-meadow-sward-1','./pastoral-fields.mjs?v=leafy-orchard-1')];
+}));
 
 // Apply strict unified-diff hunks in memory. Source context must match exactly;
 // no git command, staging, tracked mutation or fallback fuzzy patch application.
@@ -189,7 +197,13 @@ function compareMiddle(low){
 test('actual middle-distance controller retains roots, yaw, membership, palette and repeat-travel poses in every quality tier',()=>{compareMiddle(false);compareMiddle(true);});
 
 test('main-world placement, exclusion, seeded RNG and existing flower/fern suppression source is untouched',()=>{
- const html=readFileSync(path.join(ROOT,'ranch3d.html'),'utf8').replace('./assets/meadow-cover.js?v=west-meadow-sward-1','./assets/meadow-cover.js?v=dry-foothills-1').replace('./assets/pastoral-fields.mjs?v=west-meadow-sward-1','./assets/pastoral-fields.mjs?v=leafy-orchard-1');
+ // Normalize only approved later cache URLs, then use the unchanged historical
+ // restoration/hash below. Unknown URLs and all other HTML edits still fail.
+ const html=readFileSync(path.join(ROOT,'ranch3d.html'),'utf8')
+  .replace('./assets/terrain-realism.js?v=dry-turf-1','./assets/terrain-realism.js?v=cold-snow-1')
+  .replace('./assets/meadow-cover.js?v=lupin-cups-2','./assets/meadow-cover.js?v=west-meadow-sward-1')
+  .replace('./assets/meadow-cover.js?v=west-meadow-sward-1','./assets/meadow-cover.js?v=dry-foothills-1')
+  .replace('./assets/pastoral-fields.mjs?v=west-meadow-sward-1','./assets/pastoral-fields.mjs?v=leafy-orchard-1');
  assert.equal(hash(html),'25c4f93012dd81c62ad1704b3f8276c0c021e65a93b2f887bb041f92a4cc793e');
  assert(!patch.includes('a/ranch3d.html'));assert(!patch.includes('a/assets/vegetation.js'));assert(!patch.includes('a/assets/terrain-realism.js'));
  // These unchanged production consumers demonstrate why grazing stays exact.

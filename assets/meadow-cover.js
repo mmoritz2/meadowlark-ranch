@@ -80,18 +80,39 @@ export function createLupinGeometry(THREE){
     face([[0,y,0],[c*len*.60-s*w,y+.03,s*len*.60+c*w],[c*len,y+.10,s*len],
       [c*len*.60+s*w,y+.05,s*len*.60-c*w]],leaf%2?'#648e3e':'#83a852');
   }
-  for(let ring=0;ring<9;ring++)for(let petal=0;petal<3;petal++){
-    const t=ring/9,a=petal*Math.PI*2/3+ring*1.23,y=.33+t*.44;
-    const r=.105*(1-t*.72),c=Math.cos(a),s=Math.sin(a),bx=.028*y/.78;
-    const base=[bx+c*.009,y-.012,s*.009],tip=[bx+c*r,y+.025,s*r];
-    const left=[bx+c*r*.63-s*r*.52,y-.008,s*r*.63+c*r*.52];
-    const right=[bx+c*r*.63+s*r*.52,y-.008,s*r*.63-c*r*.52];
-    const ridge=[bx+c*r*.57,y+.017,s*r*.57];
-    face([base,left,ridge],ring%2?'#9252c3':'#a967d1');
-    face([left,tip,ridge],'#d6a3ec');face([tip,right,ridge],'#e1b8f1');face([right,base,ridge],'#b875d8');
+  const flowerStart=P.length/3,cupNormals=[],pitch=.28,cp=Math.cos(pitch),sp=Math.sin(pitch);
+  const rim=[[0,-1],[Math.sqrt(3)/2,-.5],[Math.sqrt(3)/2,.5],[0,1],[-Math.sqrt(3)/2,.5],[-Math.sqrt(3)/2,-.5]];
+  const purple=['#a967d1','#9252c3','#d6a3ec','#e1b8f1'].map(hex=>{color.set(hex);return [color.r,color.g,color.b];});
+  for(let ring=0;ring<9;ring++)for(let flower=0;flower<3;flower++){
+    const t=ring/9,a=flower*Math.PI*2/3+ring*1.23,y=.33+t*.44,scale=1-t*.72;
+    const c=Math.cos(a),s=Math.sin(a),width=.053*scale,height=.042*scale,depth=.008*scale,radial=.045*scale;
+    // The rear lip touches the actual tapered pentagonal stalk. A linear
+    // reach term tilts the shallow bowl without another pedicel triangle.
+    const sector=Math.PI*2/5,delta=((a%sector)+sector)%sector-sector/2;
+    const stemShape=Math.cos(Math.PI/5)/Math.cos(delta),taper=.008/.78;
+    const reach=(radial-height*sp+depth*cp-.012*stemShape
+      +stemShape*taper*(y+height*cp+depth*sp))/(cp+stemShape*taper*sp);
+    const attachY=y+height*cp+(depth-reach)*sp,bx=.028*attachY/.78;
+    const side=[s,0,-c],vertical=[-c*sp,cp,-s*sp],outward=[c*cp,sp,s*cp];
+    const base=P.length/3,baseColor=purple[ring%2];
+    for(const [ru,rv] of [[0,0],...rim]){
+      const u=ru*width,v=rv*height;
+      const d=depth*(ru*ru+rv*rv)-reach*rv;
+      P.push(bx+c*radial+side[0]*u+vertical[0]*v+outward[0]*d,
+        y+vertical[1]*v+outward[1]*d,
+        s*radial+side[2]*u+vertical[2]*v+outward[2]*d);
+      // Derivatives of the same bowl/reach surface give smooth normals.
+      const du=2*depth*u/(width*width),dv=2*depth*v/(height*height)-reach/height;
+      const nx=outward[0]-side[0]*du-vertical[0]*dv,ny=outward[1]-vertical[1]*dv,nz=outward[2]-side[2]*du-vertical[2]*dv;
+      const inv=1/Math.hypot(nx,ny,nz);cupNormals.push(nx*inv,ny*inv,nz*inv);
+      const lip=(1-rv)*.38,highlight=purple[ru<0?2:3];
+      C.push(...baseColor.map((v,k)=>v+(highlight[k]-v)*lip));
+    }
+    for(let k=0;k<6;k++)I.push(base,base+1+k,base+1+(k+1)%6);
   }
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));
   g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);g.computeVertexNormals();
+  g.attributes.normal.array.set(cupNormals,flowerStart*3);
   g.computeBoundingBox();g.computeBoundingSphere();return g;
 }
 

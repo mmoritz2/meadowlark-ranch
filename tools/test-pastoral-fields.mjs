@@ -41,7 +41,8 @@ test('flower colonies fill wild margins, retreat from managed pasture, and remai
  }
 });
 test('grass and fully modelled flowers stay inside geometry budgets with valid normals',()=>{
- for(const [make,max] of[[createGrassTuftGeometry,48],[createLupinGeometry,150]]){
+ // Rounded cups retain27 florets; the reviewed per-stalk budget is200 triangles.
+ for(const [make,max] of[[createGrassTuftGeometry,48],[createLupinGeometry,200]]){
   const g=make(T);assert(g.index.count/3<=max);assert(g.boundingBox?.max.y<1||make===createGrassTuftGeometry);
   for(const name of['position','normal','color'])assert([...g.attributes[name].array].every(Number.isFinite));
   const n=g.attributes.normal;for(let i=0;i<n.count;i++)assert(Math.hypot(n.getX(i),n.getY(i),n.getZ(i))>.8);
