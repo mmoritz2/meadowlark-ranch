@@ -1107,6 +1107,7 @@ export function install(G){
  /* Handles for QA and for anyone framing a shot: CAM is live, so a cinematic can widen the
     rig and put it back without this file knowing. reset() is what a teleport should call. */
  G.followCam={CAM,state:F,isOwner:()=>F.own,yielding:()=>foreignCam(),
+  invalidateTrees(){TG.map=null;},
   reset(){followInput.release();F.placed=false;F.head=null;F.u=0;F.yaw=0;F.pitch=0;F.occ=1;F.nudgeP=F.nudgeO=F.wantP=F.wantO=0;F.hidden=false;},
   hidesBehindHer,nextSight:()=>nextSight()?[T.x,T.y,T.z]:null,herScale};
 }

@@ -10,10 +10,11 @@ export function installUndergrowth(G,{flowerShrubs=[],staticShrubs=[]}={}){
  const T=G.THREE,W=G.world,player=G.horse.player,group=new T.Group();group.name='Individual woodland plants';G.scene.add(group);
  const state=G.undergrowth={ready:null,errors:[],sources:[],records:[],localRecords:[],templates:[],group,originalGroups:staticShrubs,stats:{ready:false}};
  const uniforms={coverTime:{value:0},coverEye:{value:new T.Vector2()},coverLimit:{value:21},coverRange:{value:135},coverRider:{value:new T.Vector2()}};
+ const authoredEdgeSites=new Map(),siteKey=(x,z)=>Math.round(x*1000)+','+Math.round(z*1000);
  const m=new T.Matrix4(),p=new T.Vector3(),q=new T.Quaternion(),s=new T.Vector3(),up=new T.Vector3(0,1,0),white=new T.Color();let order=0;
  function record(matrix,color,kind,meta){
   const x=matrix.elements[12],z=matrix.elements[14],biome=coverBiome(x,z,alpineSnowAt(x,z));if(biome==='cold'||biome==='dry')return null;
-  matrix.decompose(p,q,s);const variation=coverHash(x,z),dry=biome==='autumn'?0:coyoteCoverDryWeight(x,z),shape=coverShape(kind,s.y,variation,meta,dry),height=shape.height,y=W.groundH(x,z)-.025,yaw=Math.atan2(matrix.elements[8],matrix.elements[10]);
+  matrix.decompose(p,q,s);const variation=coverHash(x,z),dry=biome==='autumn'?0:coyoteCoverDryWeight(x,z),authored=(kind==='yard-shrub'||kind==='yard-fern')?authoredEdgeSites.get(siteKey(x,z)):null,inputHeight=authored?authored.height/(kind==='yard-fern'?.40:.36):s.y,shape=coverShape(kind,inputHeight,variation,meta,dry),height=shape.height,y=W.groundH(x,z)-.025,yaw=Math.atan2(matrix.elements[8],matrix.elements[10]);
   q.setFromAxisAngle(up,yaw);const root=new T.Matrix4().compose(new T.Vector3(x,y,z),q,new T.Vector3(height,height,height));
   const tint=biome==='autumn'?color.clone():new T.Color().setRGB(.94+variation*.06,1,.88+variation*.10);
   if(dry>0)tint.lerp(new T.Color().setRGB(1,.91,.68),dry*.76);
@@ -52,6 +53,8 @@ export function installUndergrowth(G,{flowerShrubs=[],staticShrubs=[]}={}){
    // Later settlement passes remove plants from water and boardwalks. Capture
    // those final placements, including the existing yard scan clusters.
    await G.worldDetails.ready;
+   // Authored edge plants specify their final height, independent of scan-gallery scale.
+   for(const site of G.worldDetails.woodlandEdge?.plants||[])authoredEdgeSites.set(siteKey(site.x,site.z),site);
    const sources=[['scrub',G.floraPkg.bank.scrub.im,G.floraPkg.bank.scrub.n],['brack',G.floraPkg.bank.brack.im,G.floraPkg.bank.brack.n]];
    G.scene.traverse(o=>{if(o.isInstancedMesh&&o.name.startsWith('foliage_scan_'))sources.push([o.name.includes('fern_02')?'yard-fern':'yard-shrub',o,o.count]);});
    for(const source of flowerShrubs)sources.push(['woody',source,source.count,source.material.alphaTest===0]);

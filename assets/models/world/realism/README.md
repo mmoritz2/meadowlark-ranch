@@ -217,3 +217,9 @@ The original circles remain for road layout; they stop acting as coarse player
 barriers only after the scanned surfaces register successfully. A single ground
 sampler skips the detailed index outside those circles. Ground cover avoids
 exposed rock surfaces instead of planting shrubs and loose stones on their faces.
+
+## Clover woodland edge contacts
+
+The authored eight-tree edge reuses Tree Small 02's resident young/mature foliage, materials and view atlases. Its compact contact table in `assets/woodland-edge-wood-proxies.mjs` is an original derivative of the same CC0 asset by Rico Cilliers. It includes opaque trunk and branch geometry at every height; leaves remain soft. `node tools/build-woodland-wood-proxies.mjs` regenerates 929 source-local boxes from the pinned source GLB. The generator clips triangles to 0.15-unit cells, pads bounds by 0.007, and rounds outward. These conservative contacts can extend slightly beyond individual twigs; they do not enclose a whole crown in one obstacle.
+
+The added trees share the existing visual detail budget. The connected lower edge uses the existing shrub/fern sources and undergrowth detail budgets, with authored heights preserved through the one-time capture. No additional texture or model download is needed.

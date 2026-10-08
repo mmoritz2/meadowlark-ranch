@@ -1,3 +1,4 @@
+import {WOODLAND_WOOD_SOURCE_SHA,WOODLAND_WOOD_BOXES} from './woodland-edge-wood-proxies.mjs?v=clover-woodland-edge-1';
 import {dressLandscape} from './landscape-surface.js?v=regional-relief-1';
 import {OASIS_FACE} from './canyon-landscape.js?v=countryside-banks-1';
 import {patchOuterFog} from './outer-landscape.js?v=continuous-countryside-1';
@@ -8,7 +9,7 @@ import {createOrchardFruit} from './orchard-art.js?v=leafy-orchard-1';
 import {installVillageEvergreens} from './village-planting.js?v=village-gardens-1';
 import {prepareCanopyShade,patchCanopyShade} from './canopy-shading.js?v=canopy-depth-1';
 import {MATURE_LEAF_ALIAS,createMatureLeafGeometry} from './mature-leaf-patches.mjs?v=mature-leaf-patches-1';
-import {COTTONWOOD_TREES} from './cottonwood-layout.js?v=village-gardens-1';
+import {COTTONWOOD_TREES,cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
 import {alpineSnowAt,fallsContainsWater} from './falls-landscape.js?v=alpine-range-1';
 import {coldWoodlandWeights,coldWoodlandProfile} from './cold-woodland.mjs?v=cold-woodland-1';
 import {oasisContainsWater} from './oasis-art.js?v=living-oasis-1';
@@ -17,11 +18,37 @@ import {treeImpostor,patchFoliageCoverage,patchSeasonalFoliage,enableOpaqueFolia
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {mergeGeometries,deinterleaveGeometry} from 'three/addons/utils/BufferGeometryUtils.js';
 
+// One authored mixed-age edge frames the Clover approach. Existing scatter stays intact.
+const WOODLAND_EDGE_TREES=[
+  {x:16,z:-98,height:8.0,yaw:.42}, {x:23,z:-104,height:10.2,yaw:1.18},
+  {x:29,z:-111,height:11.2,yaw:2.10}, {x:36,z:-111,height:8.2,yaw:-1.95},
+  {x:36,z:-102,height:10.4,yaw:-.24}, {x:20,z:-89,height:8.1,yaw:-.71},
+  {x:29,z:-91,height:9.7,yaw:2.82}, {x:38,z:-88,height:8.3,yaw:1.61},
+];
+const WOODLAND_EDGE_PLANTS=[
+  ['shrub_03',17,-111,1.04,.3],['shrub_04',20,-110,.92,1.4],['fern_02',17,-105,.68,.2],
+  ['shrub_03',21,-107,1.12,2.1],['fern_02',24,-108,.72,1.2],['shrub_04',26,-110,.96,-.5],
+  ['fern_02',27,-107,.64,2.8],['shrub_03',31,-110,1.18,.9],['shrub_04',33,-112,.98,1.8],
+  ['fern_02',34,-108,.71,2.4],['shrub_03',37,-108,1.03,-.4],['shrub_04',38,-104,.86,.7],
+  ['fern_02',33,-103,.78,1.6],['shrub_03',35,-99,1.19,2.3],['shrub_04',38,-98,1.02,1.1],
+  ['fern_02',31,-99,.69,-.8],['shrub_03',30,-96,1.13,.6],['shrub_04',34,-94,.94,2.7],
+  ['fern_02',37,-92,.75,1.5],['shrub_03',38,-90,1.02,-1.2],['shrub_04',35,-87,.98,2.0],
+  ['fern_02',32,-89,.72,-.3],['shrub_03',27,-90,1.12,1.7],['shrub_04',26,-94,.90,.4],
+  ['fern_02',24,-92,.73,2.3],['shrub_03',21,-92,1.04,.8],['shrub_04',18,-92,1.01,-.8],
+  ['fern_02',18,-87,.71,1.2],['shrub_03',21,-86,.97,2.8],['shrub_04',23,-88,.87,.5],
+  ['fern_02',23,-100,.70,-1.3],['shrub_03',26,-101,1.03,1.4],['shrub_04',29,-104,.92,2.2],
+  ['fern_02',31,-106,.70,.1],['shrub_03',16,-101,1.03,2.6],['fern_02',17,-97,.71,.8],
+];
+
 // Real, CC0 Poly Haven assets. The generated world stays available until each
 // replacement has loaded; detailed crowns are budgeted around the rider.
 export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={}) {
   const {THREE,scene,world:W,horse:H,renderer}=G;
   const state=G.photoscans={ready:null,errors:[],assets:[],trees:0,activeTrees:0,rocks:0,outcrops:0,saplings:0,logs:0,cliffs:0};
+  // Assigned synchronously: details starts first, but yields before consuming this.
+  // The narrow promise never rejects and photoscans never awaits worldDetails.
+  const edge=state.woodlandEdge={trees:[],plants:[],skipped:[],physicsReady:false,artOnly:true,ready:null};
+  let finishEdge;edge.ready=new Promise(resolve=>{finishEdge=data=>{if(edge.settled)return;edge.settled=true;Object.assign(edge,data);resolve(data);};});
   const loader=new GLTFLoader(),wind={value:0},group=new THREE.Group();
   group.name='Poly Haven environment';scene.add(group);
   const loaded=new Map(),trees=[],detailPatches=[];
@@ -169,6 +196,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     variants.push(matureLeafSource);
     const sourceFor=t=>{
       if(t.authoredOrchard)return orchardSource;
+      if(t.authoredWoodlandEdge)return t.height>=9?matureLeafSource:variants[0];
       if(alpineSnowAt(t.x,t.z)>.35)return t.height>=6.2&&rnd(t.x,t.z,31)>.42?variants[4]:variants[1+Math.floor(rnd(t.x,t.z,17)*3)];
       // Related trees grow in groves. Young roadside trees stay slender; mature
       // oak sites carry full crowns. Broad trees define meadow and woodland edges.
@@ -301,6 +329,34 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         state.trailTrees.push({x:tx,z:tz,height});
       }
     }
+    // Reuse prepared source geometry, lighting, depth and all eight view atlases.
+    // Young trees keep the original leaf model; larger trees use its mature alias.
+    function edgeWoodRadius(source,height){
+      const scale=height/source.meta.sourceHeight;let radius=0;
+      for(const part of source.parts)if(!/leaves|twig/.test(part.mat.name)){
+        const p=part.geo.attributes.position;
+        for(let i=0;i<p.count;i++)radius=Math.max(radius,Math.hypot(p.getX(i),p.getZ(i))*scale);
+      }
+      return radius;
+    }
+    function edgeFootClear(x,z,r){
+      if(!clear(x,z,2.6)||cottonwoodReserved(x,z,r+1)||coldWoodlandWeights(x,z).weight>.08)return false;
+      if(window.__onCourse?.(x,z,r+2))return false;
+      for(const route of routes)for(let i=0;i<route.length;i++)if(segmentDistance(x,z,route[i],route[(i+1)%route.length])<r+5)return false;
+      if(W.pathDist(x,z)<r+3||(G.worldPaths?.trackDist(x,z)??Infinity)<r+3)return false;
+      for(const wall of W.walls||[])if(segmentDistance(x,z,[wall.x1,wall.z1],[wall.x2,wall.z2])<r+.8)return false;
+      const h=W.groundH(x,z),probe=new THREE.Vector3(x,0,z);
+      W.solidWorld?.resolve(probe,{bottom:h+.38,top:h+2.65,radius:2.6});
+      return Math.hypot(probe.x-x,probe.z-z)<.001;
+    }
+    for(const site of WOODLAND_EDGE_TREES){
+      const source=site.height>=9?matureLeafSource:variants[0],woodRadius=edgeWoodRadius(source,site.height);
+      if(!edgeFootClear(site.x,site.z,woodRadius)||trees.some(t=>Math.hypot(t.x-site.x,t.z-site.z)<6.4)){
+        edge.skipped.push({...site,reason:'current world, town, route, solid or neighbouring trunk clearance'});continue;
+      }
+      const t={...site,kind:'oak',authoredWoodlandEdge:true,woodRadius};add(t);
+      if(trees.includes(t))edge.trees.push(t);
+    }
     state.villageEvergreens=await installVillageEvergreens(G,COTTONWOOD_TREES,wind);
     state.villageTrees=COTTONWOOD_TREES;
     const textureLoader=new THREE.TextureLoader();
@@ -341,6 +397,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
       v.set(t.x,W.groundH(t.x,t.z)-t.source.bounds.min.y*scale-.07,t.z);
       t.matrix=new THREE.Matrix4().compose(v,q,s);
     }
+    if(edge.trees.length&&typeof G.followCam?.invalidateTrees!=='function')throw Error('Woodland tree camera invalidation unavailable');
     const cells=new Map();for(const t of trees){const key=t.source.key+':'+Math.floor(t.x/65)+','+Math.floor(t.z/65);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(t);}
     for(const records of cells.values()){
       const source=records[0].source;
@@ -355,6 +412,37 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         mesh.count=0;treeMeshes.push({mesh,records});
       }
     }
+    edge.collision={rootNames:[],owners:0,parts:0,registeredParts:0,sourceHash:WOODLAND_WOOD_SOURCE_SHA,leavesExcluded:true,allWoodHeights:true,renderChildren:0};
+    if(edge.trees.length){
+    // One persistent, visible, non-rendering owner keeps wood contact active at
+    // every tree LOD. Small source-local boxes cover original wood, never leaves.
+    const edgeOwner=new THREE.Group();edgeOwner.name='Clover woodland edge wood';
+    edgeOwner.userData.woodlandEdge=true;group.add(edgeOwner);edgeOwner.updateWorldMatrix(true,false);
+    if(!edgeOwner.matrixWorld.equals(identity))throw Error('Unexpected woodland wood owner frame');
+    edgeOwner.userData.solidParts=[];let maxScale=0;
+    for(const t of edge.trees){
+      const matrix=t.matrix.toArray(),scale=t.height/t.source.meta.sourceHeight;maxScale=Math.max(maxScale,scale);
+      let lowRadius=0;
+      for(const box of WOODLAND_WOOD_BOXES){
+        edgeOwner.userData.solidParts.push({min:box.min,max:box.max,matrix});
+        const lo=(box.min[1]-t.source.bounds.min.y)*scale-.07,hi=(box.max[1]-t.source.bounds.min.y)*scale-.07;
+        if(hi>=0&&lo<=2.65)for(const x of[box.min[0],box.max[0]])for(const z of[box.min[2],box.max[2]])lowRadius=Math.max(lowRadius,Math.hypot(x,z)*scale);
+      }
+      t.lowWoodRadius=lowRadius;
+    }
+    const parts=edgeOwner.userData.solidParts.length,registered=W.solidWorld.register(edgeOwner);
+    if(registered!==parts){W.solidWorld.unregister(edgeOwner);edgeOwner.removeFromParent();throw Error('Incomplete woodland wood contacts');}
+    for(const t of edge.trees){
+      W.colliders.push({x:t.x,z:t.z,r:t.lowWoodRadius,height:t.height,trunk:true,precise:true,authoredWoodlandEdge:true});
+      W.forestPoints.push({x:t.x,z:t.z,s:t.height/8,authoredWoodlandEdge:true});
+    }
+    const maxSourceBoxSide=Math.max(...WOODLAND_WOOD_BOXES.flatMap(b=>b.max.map((v,i)=>v-b.min[i])));
+    edge.collision={rootNames:[edgeOwner.name],owners:1,parts,registeredParts:registered,sourceHash:WOODLAND_WOOD_SOURCE_SHA,
+      maxSourceBoxSide,maxWorldEdgeLength:maxSourceBoxSide*maxScale,maxHorizontalAirFillBound:Math.SQRT2*maxSourceBoxSide*maxScale,
+      leavesExcluded:true,allWoodHeights:true,renderChildren:0};
+    G.followCam.invalidateTrees();edge.cameraInvalidated=true;
+    }
+    edge.physicsReady=true;edge.artOnly=false;
     for(const t of trees){if(t.root)t.root.visible=false;else if(t.stem){
       t.stem.setMatrixAt(t.stemIndex??t.index,zero);t.leaves.setMatrixAt(t.index,zero);t.stem.instanceMatrix.needsUpdate=t.leaves.instanceMatrix.needsUpdate=true;
     }}
@@ -378,6 +466,11 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     state.treePositions.push(...COTTONWOOD_TREES.map(t=>({...t,kind:'village',source:'columnar-evergreen',tint:'ffffff'})));
     // Regenerate leaf litter from surviving trunks; cleared meadows must not
     // keep the old brown forest-floor circles or camera obstacles.
+    // Existing plant capture consumes these points after wood contacts are ready.
+    const plants=WOODLAND_EDGE_PLANTS.map(([asset,x,z,height,yaw])=>({asset,x,z,height,r:yaw}))
+      .filter(p=>edge.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<8.5)&&clear(p.x,p.z,.45)
+        &&!cottonwoodReserved(p.x,p.z,1)&&!edge.trees.some(t=>Math.hypot(p.x-t.x,p.z-t.z)<1.25));
+    finishEdge({trees:edge.trees.map(t=>({x:t.x,z:t.z,height:t.height,yaw:t.yaw,source:t.source.key,woodRadius:t.woodRadius,lowWoodRadius:t.lowWoodRadius,matrix:t.matrix.toArray()})),plants,collision:edge.collision,cameraInvalidated:edge.cameraInvalidated,physicsReady:edge.physicsReady,artOnly:false});
     scene.getObjectByName('Pasture terrain')?.material.userData.setTrees?.(W.forestPoints);
   }
   // Complete scanned stones form the village skyline and adjoining river crags.
@@ -675,6 +768,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     for(let i=0;i<120&&!H.RIG()?.ready;i++)await new Promise(ok=>setTimeout(ok,250));
     for(const install of [installRocks,installTrees,installWillows,installOak,installDeadwood,installForestFloor,installRockFaces]){
       try{await install();}catch(e){state.errors.push(e.message);console.warn('World scan unavailable:',e);}
+      finally{if(install===installTrees&&!edge.settled)finishEdge({trees:[],plants:[],failed:true,error:state.errors.at(-1)||'tree setup incomplete',physicsReady:false,artOnly:true});}
     }
     state.willows?.update();state.thunderOak?.update();updateTrees();return state.assets;
   })();

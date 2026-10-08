@@ -1,4 +1,5 @@
 import {installFloweringBorders} from './village-planting.js?v=village-gardens-1';
+import {cottonwoodReserved} from './cottonwood-layout.js?v=village-gardens-1';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
 // Authored yard clusters using the already licensed CC0 Poly Haven scans.
@@ -60,6 +61,11 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
         }
       } catch(e) {state.errors.push(name+': '+e.message);console.warn('Yard detail unavailable',name,e);}
     }
+    // One-time undergrowth capture owns these authored plants too. Failure resolves
+    // to an empty addition, leaving every original shrub/fern record available.
+    await Promise.resolve(); // Let the next synchronous installer assign its narrow ready promise.
+    const woodlandEdge=await (G.photoscans?.woodlandEdge?.ready||Promise.resolve({plants:[]}));
+    state.woodlandEdge={plants:[],failed:!!woodlandEdge.failed};
     for(const [name,parity,height] of [['shrub_03',0,.8],['shrub_04',1,.65],['fern_02',2,.48]]){
       const points=shrubs.filter((p,i)=>parity===2?i%4===0:i%2===parity)
         .map(p=>({...p,x:p.x+(parity===2?1.05:0),z:p.z+(parity===2?.85:0)}))
@@ -71,6 +77,27 @@ export function installRanchWorldDetails(G,{shrubs=[]}={}) {
         if(!source)throw Error('Scan contains no mesh');
         const geo=source.geometry.clone().applyMatrix4(source.matrixWorld);geo.computeBoundingBox();
         const minY=geo.boundingBox.min.y,h=geo.boundingBox.max.y-minY||1;
+        // Protect both the original scan footprint and the replacement frond
+        // envelope; the normal one-time undergrowth capture owns these rows.
+        let sourceRadius=0;const positions=geo.attributes.position;
+        for(let i=0;i<positions.count;i++)sourceRadius=Math.max(sourceRadius,Math.hypot(positions.getX(i),positions.getZ(i)));
+        const authored=(woodlandEdge.plants||[]).filter(p=>p.asset===name).map(p=>{
+          const footprintRadius=Math.max(1.30,sourceRadius*p.height/h);
+          return {...p,s:p.height/height,footprintRadius,authoredWoodlandEdge:true};
+        }).filter(p=>{
+          const r=p.footprintRadius,h=W.groundH(p.x,p.z);
+          if(cottonwoodReserved(p.x,p.z,r+1)||G.villageCourts?.contains(p.x,p.z,r)||window.__chalkCut?.(p.x,p.z))return false;
+          if(W.pathDist(p.x,p.z)<r+2.5||(G.worldPaths?.trackDist(p.x,p.z)??Infinity)<r+3.8||window.__onCourse?.(p.x,p.z,r+3.4))return false;
+          // Fronds may overlap neighbouring trunks; their stems stay clear.
+          // Yard props require level ground, while living plants follow a slope.
+          if(W.colliders.some(c=>Math.hypot(c.x-p.x,c.z-p.z)<(c.r||0)+(c.trunk?.35:r)+.18))return false;
+          if((W.walls||[]).some(w=>segmentDistance(p.x,p.z,[w.x1,w.z1],[w.x2,w.z2])<r+.5))return false;
+          if(![[r,0],[-r,0],[0,r],[0,-r]].every(([dx,dz])=>Math.abs(W.groundH(p.x+dx,p.z+dz)-h)<r*.25))return false;
+          const stem={x:p.x,z:p.z};W.solidWorld.resolve(stem,{bottom:h+.03,top:h+p.height,radius:.2});
+          return Math.hypot(stem.x-p.x,stem.z-p.z)<.001;
+        });
+        points.push(...authored);state.woodlandEdge.plants.push(...authored);
+
         const mat=source.material;mat.alphaToCoverage=true;mat.envMapIntensity=.55;
         mat.roughness=.92;mat.side=THREE.DoubleSide;
         const deform=sh=>{
