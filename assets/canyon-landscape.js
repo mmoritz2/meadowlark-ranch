@@ -26,6 +26,28 @@ function keepLandmarks(x,z){
  if(z>165)keep=Math.min(keep,smooth(10,18,lineDistance(x,z,derbySegments)));
  return keep;
 }
+// Two original eroded saddles affect only the upper oasis crown. The compact
+// cubic bumps and quintic masks have zero first/second derivatives at their ends.
+const crestSmooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*t*(t*(t*6-15)+10);};
+function oasisCrestDepression(x,z,relief){
+ if(relief<=8)return 0;
+ const bump=(cx,cz,yaw,along,across)=>{const dx=x-cx,dz=z-cz,co=Math.cos(yaw),si=Math.sin(yaw);
+  const r2=((dx*co+dz*si)/along)**2+((dz*co-dx*si)/across)**2;return r2<1?(1-r2)**3:0;};
+ const west=bump(-163.8,163.6,.7266,14,17),east=bump(-138.8,168,-.5248,13,16);
+ if(west===0&&east===0)return 0;
+ // The authored east/front knot is z158. Retain its front face plus a
+ // canonical terrain-cell halo through z160, then fade over six metres.
+ // Both saddle centres sit rearward on the upper crown.
+ // Retain the named central crown and all existing graded landmark protections.
+ let keep=crestSmooth(9,13,Math.hypot(x+151,z-169));
+ keep*=crestSmooth(32,38,Math.hypot(x+200,z-158));
+ keep*=crestSmooth(1.6,1.8,Math.hypot((x+225)/29,(z-122)/20));
+ keep*=crestSmooth(1.4,1.6,Math.hypot((x+238)/36,(z-220)/34));
+ keep*=crestSmooth(30,37,Math.abs(z-(120+Math.sin(x*.012)*45)));
+ keep*=crestSmooth(21,28,lineDistance(x,z,derbySegments));
+ keep*=crestSmooth(11,17,lineDistance(x,z,cutSegments));
+ return 4.4*(1-(1-west)*(1-east*3.5/4.4))*crestSmooth(8,16,relief)*keep*crestSmooth(160,166,z);
+}
 export function canyonRelief(x,z){
  let height=0;
  for(const r of prepared){
@@ -43,7 +65,8 @@ export function canyonRelief(x,z){
   const crown=.94+.04*Math.sin(along*.18)+.025*Math.sin(x*.24+z*.19)-cleft*.28;
   height=Math.max(height,Math.max(0,crest*cap*crown));
  }
- return height>0?height*keepLandmarks(x,z):0;
+ const relief=height>0?height*keepLandmarks(x,z):0;
+ return relief-oasisCrestDepression(x,z,relief);
 }
 // Retire isolated towers swallowed by the connected banks and the open canyon
 // route. Callers still consume their seeded placements, keeping other regions fixed.
