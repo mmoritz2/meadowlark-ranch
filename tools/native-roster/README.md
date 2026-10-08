@@ -84,6 +84,30 @@ Jacobian. `draftShape.rearContour` records the parameters, and
 `draftRearProfile` reports displayed widths and mean heights at repeatable
 source-height sections against the first broad draft cage.
 
+Front contour version 3 rounds the lower chest into the forearms while keeping
+the broad upper shoulders and the reviewed rear contour. `DRAFT_FRONT_CONTOUR`
+blends from zero at source Z=0.12 m to full at 0.35 m. The added width keeps 50%
+of its original gain below Y=0.90 m, easing to 100% by 1.38 m; the added vertical
+depth offset keeps 40% below Y=0.92 m, also reaching 100% by 1.38 m. These are
+reductions of the cage's added deformation, not reductions of the original
+horse's dimensions. The correction is zero below the protected leg region,
+above 1.38 m and behind the chest.
+
+The same front field follows 70 complete breastcollar and center tie-down
+islands (2,404 vertices) in the original Western tack mesh. It excludes the
+irons, fenders, girth, bridle, reins and separate saddle. The builder checks
+disjointness from the rider's protected head/rein component IDs and the iron
+selection. Selected saddle-edge islands touch other saddle parts only above
+Y=1.388 m: the correction has already vanished there. A 3 mm source-boundary
+check guards those joins. Normals use the field's Jacobian, and unchanged tack
+coefficients and scales are compared with the previous compatible buffer.
+The original native collar already has some gaps and animated overlap; this
+transform does not claim perfect skin contact. Browser checks compare the
+actual skinned leather against that baseline. `draftShape.frontContour` records
+the parameters and selection, `draftBreastcollar` reports the boundary and tack
+preservation checks, and `draftFrontProfile` compares displayed chest sections
+with the reviewed version 2 shape.
+
 The source standing pose is asymmetric, so each of its four limbs has a separate
 measured X/Z centerline rather than a mirrored arbitrary center. Hooves gain
 42% (Percheron), 50% (Shire), or 46% (Clydesdale) in horizontal width and depth.

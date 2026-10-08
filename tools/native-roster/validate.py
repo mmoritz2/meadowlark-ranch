@@ -20,11 +20,11 @@ import rig_hero_horse as glb
 SOURCE_SHA = 'b188f5ea0c985c673c678daebf5e36daa1147a18693cec15ecc1bca439740a07'
 SOURCE_TRANSLATION = np.array([-6.225790382362317e-9, .0047147771075021355, -1.6744842715166992])
 DRAFTS = {'percheron', 'shire', 'clyde'}
-# Pin the reviewed rounded draft bodies; later tack changes must not reshape them.
+# Pin the reviewed front/rear draft contours; later tack changes must not reshape them.
 DRAFT_BODY_SHA = {
-    'percheron': 'eaf2a344fed5bc8350634976120d63cd0560551223227d3017bd16cbd859cfeb',
-    'shire': '8e6f282851ea7ac26f4596d9f5fcf020a3330f23a9fa42311da422de77882f3c',
-    'clyde': 'd4f7bf6057b25b2034c308caa5e857bbfea2d71fc42de8b1e3dd1fce41d7f74f',
+    'percheron': '8c24aaae1c446d93a8dea7c3816c997da0004e7cb033e563ccabcdef8fee4f3c',
+    'shire': '5a802fb18a70e1460181e88a733cb724be8c0754acd2c5061da6aff19a6bc733',
+    'clyde': 'eb1db02381d8c475a6c0642550b740e210a949140ff8b09ebfa927d4ab63c52e',
 }
 QUANTIZATION_TOLERANCE_M = 2e-5
 # Pin released non-draft buffers, rather than trusting updated manifest hashes.
