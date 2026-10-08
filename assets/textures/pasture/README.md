@@ -19,7 +19,7 @@ to `/tmp/meadowlark-pasture-source`.
 
 ## Shared field surface
 
-The terrain reuses the photographed grass maps with deterministic quarter-turn
+The terrain reuses the authored grass maps with deterministic quarter-turn
 sampling. Albedo and normal coordinates match; decoded normal directions account
 for the existing negative-X ground tangent. Detailed terrain still uses four
 samples per map, and the cheaper outer-ground path remains one sample.
@@ -36,3 +36,19 @@ textures are added. The new blue-driven tint is excluded from outer terrain.
 Run `node --test tools/test-meadow-landcover.mjs` for grazing orientation and mask
 channel/core preservation checks. Native visual comparisons cover fields, wooded
 margins, rain and winter, with High/Medium/Low rendering and mounted route checks.
+
+## Planted pasture
+
+Static meadow tussocks now share the grazing profile used by travelling grass.
+A final pass in `features/world-flora.js` measures actual transformed plant
+height and scales eligible tussocks toward 0.26–0.34 metres in grazed interiors.
+The west meadow retains its taller sward response. Water margins and dry/cold
+vegetation retain their existing treatment. Counts, roots, colours, and the
+seeded planting stream stay unchanged.
+
+The fuller near grass mixes low bowed leaves with taller curved blades using
+the existing 70-triangle geometry budget. It retains the original source roots,
+materials, textures, wind and quality transitions.
+
+Run `node --test tools/test-meadow-tufts.mjs tools/test-mixed-sward-production.mjs`
+for grazing continuity, meadow margins, plant geometry and source/budget checks.

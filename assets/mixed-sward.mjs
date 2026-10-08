@@ -41,9 +41,11 @@ export function planMixedSward(cells,{x,z,quality='high',vr=false,canBasal=()=>t
 
 export function createBasalSwardGeometry(T) {
   const positions = [], colors = [], uvs = [], indices = [];
-  const roots = [[-.103, -.072], [.048, -.116], [.128, .052], [-.058, .112], [.013, .015]];
-  const heights = [.38, .62, .74, .46, .56, .70, .42, .66, .53, .77];
-  const bends = [.255, .19, .225, .29, .215, .245, .28, .185, .26, .205];
+  const roots = [[-.072, -.051], [.056, -.089], [.091, .047], [-.044, .089], [.007, .013]];
+  // Lower bowed leaves sit between three retained graceful taller leaves.
+  const heights = [.28, .62, .46, .34, .56, .70, .38, .53, .31, .77];
+  const bends = [.22, .23, .26, .245, .24, .28, .225, .255, .23, .285];
+  const headings = [.22, 1.08, .56, 2.02, 2.48, 3.30, 3.57, 4.62, 5.17, 5.63];
   const curls = [.041, -.028, .052, -.063, -.035, .047, -.054, .031, .058, -.043];
   const turns = [.12, -.17, .07, -.09, .20, -.04, -.18, .11, -.08, .16];
   // More samples around the arch keep the final segment from making a knee.
@@ -55,7 +57,7 @@ export function createBasalSwardGeometry(T) {
     // Each pair shares a small root neighbourhood without a radial rosette.
     const rootX = root[0] + (leaf < 5 ? -.004 : .006);
     const rootZ = root[1] + (leaf % 3 - 1) * .004;
-    const heading = leaf * 2.39996 + turns[leaf];
+    const heading = headings[leaf] + turns[leaf] * .65;
     const dx = Math.cos(heading), dz = Math.sin(heading);
     const sx = -dz, sz = dx;
     const height = heights[leaf], bend = bends[leaf], curl = curls[leaf];
