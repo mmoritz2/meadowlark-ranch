@@ -48,8 +48,34 @@ function oasisCrestDepression(x,z,relief){
  keep*=crestSmooth(11,17,lineDistance(x,z,cutSegments));
  return 4.4*(1-(1-west)*(1-east*3.5/4.4))*crestSmooth(8,16,relief)*keep*crestSmooth(160,166,z);
 }
+// Original front/crown erosion: unequal retained buttresses and a diagonal
+// recess. It changes the shared terrain, never just the sandstone overlay.
+// Survey clearance covers the original River Road's15m relaxation drift,
+// four-metre walking tube and a canonical terrain-cell interpolation halo.
+const oasisFrontRoad=[[-28,135],[-60,131],[-95,125],[-130,120],[-165,120],[-197,126],[-219,133]];
+const oasisFrontRoadSegments=oasisFrontRoad.slice(1).map((p,i)=>segment(oasisFrontRoad[i],p));
+function oasisFrontMask(x,z,relief){
+ if(relief<=8||x<=-183||x>=-114||z<=137||z>=183)return 0;
+ let keep=crestSmooth(8,18,relief);
+ keep*=crestSmooth(-183,-177,x)*(1-crestSmooth(-120,-114,x));
+ keep*=crestSmooth(137,143,z)*(1-crestSmooth(177,183,z));
+ keep*=crestSmooth(30,35,Math.hypot(x+200,z-158));
+ keep*=crestSmooth(23,29,lineDistance(x,z,oasisFrontRoadSegments));
+ keep*=crestSmooth(21,28,lineDistance(x,z,derbySegments));
+ keep*=crestSmooth(11,17,lineDistance(x,z,cutSegments));
+ return keep;
+}
+function oasisFrontDepression(x,z,relief){
+ const keep=oasisFrontMask(x,z,relief);if(keep===0)return 0;
+ const bump=(cx,cz,yaw,along,across)=>{const dx=x-cx,dz=z-cz,co=Math.cos(yaw),si=Math.sin(yaw);
+  const r2=((dx*co+dz*si)/along)**2+((dz*co-dx*si)/across)**2;return r2<1?(1-r2)**3:0;};
+ const gully=bump(-150.5,160.5,1.0,23,6.6),west=bump(-165,151,.22,14,12),east=bump(-128,157,-.3,12,13);
+ if(gully===0&&west===0&&east===0)return 0;
+ const erosion=7.0*(1-(1-gully)*(1-west*2.7/7.0)*(1-east*2.1/7.0));
+ return erosion*keep;
+}
 export function canyonRelief(x,z){
- let height=0;
+ let height=0,oasisUpperDelta=0;
  for(const r of prepared){
   if(x<r.minX||x>r.maxX||z<r.minZ||z>r.maxZ)continue;
   let best=Infinity,crest=0,along=0;
@@ -63,10 +89,14 @@ export function canyonRelief(x,z){
   if(edge>=1.08)continue;
   const cap=1-.20*smooth(.34,.52,edge)-.62*smooth(.57,.82,edge)-.18*smooth(.81,1.08,edge);
   const crown=.94+.04*Math.sin(along*.18)+.025*Math.sin(x*.24+z*.19)-cleft*.28;
-  height=Math.max(height,Math.max(0,crest*cap*crown));
+  const ridgeHeight=Math.max(0,crest*cap*crown);
+  if(r.id==='oasis-butte')oasisUpperDelta=Math.max(0,crest*(1-crestSmooth(.18,1.08,edge))*crown)-ridgeHeight;
+  height=Math.max(height,ridgeHeight);
  }
  const relief=height>0?height*keepLandmarks(x,z):0;
- return relief-oasisCrestDepression(x,z,relief);
+ const retained=relief-oasisCrestDepression(x,z,relief);
+ const face=retained+oasisUpperDelta*keepLandmarks(x,z)*oasisFrontMask(x,z,retained);
+ return face-oasisFrontDepression(x,z,retained);
 }
 // Retire isolated towers swallowed by the connected banks and the open canyon
 // route. Callers still consume their seeded placements, keeping other regions fixed.
