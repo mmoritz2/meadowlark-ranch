@@ -14524,10 +14524,14 @@ function tick(stepSeconds){
  renderer.info.reset();
  // Sample groom inertia once after every horse has its final actor transforms.
  finishNativeHorseGrooms();
- waterReflections.update();
- if(renderer.xr.isPresenting)renderer.render(scene,camera);
- else if(useBloom)composer.render();
- else renderer.render(scene,camera);
+ // The opaque Character screen owns its own renderer; the ranch still ticks.
+ const characterCovered=!renderer.xr.isPresenting&&document.body.classList.contains('se-char-open');
+ if(!characterCovered){
+  waterReflections.update();
+  if(renderer.xr.isPresenting)renderer.render(scene,camera);
+  else if(useBloom)composer.render();
+  else renderer.render(scene,camera);
+ }
  hintT+=dt;
  if(!hintStarted&&hintT>1.2){hintStarted=true;startHints();}   // after the touch class is settled
  if(hintSeq&&hintT>hintNext){
