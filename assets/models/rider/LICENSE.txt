@@ -13,3 +13,9 @@ Official source: https://www.blender.org/download/demo-files/#assets
 Source bundle: https://mirror.blender.org/demo/asset-bundles/human-base-meshes/human-base-meshes-bundle-v1.4.1.zip
 Runtime fitting, neck skinning, eyebrows, lashes, skin and eye materials are authored
 for Meadowlark Ranch; no Blender scripts or source rig are included.
+
+Connected body-f/body-m and neck-guide/contact-neck meshes are derivatives of the same
+Blender Studio Human Base Meshes v1.4.1 adult body source, under CC0 1.0 Universal.
+The connected clothing source surfaces derive from those meshes. Custom fitting,
+skin weights, garment details and shared animation integration are project work.
+Source bundle SHA256: 811f43accbb31a88266d932f8f5563b2d13586fca0ba2693aad1f5fe582b3515

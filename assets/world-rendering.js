@@ -1,19 +1,28 @@
+import {riderMaterialLifecycle15} from './rider-material-lifecycle.js?v=character-polish-20261009';
 import * as THREE from 'three';
+import {createRiderAOReception} from './rider-ao-reception.js?v=character-polish-20261009';
 import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
 
 // Read the existing scene depth immediately after RenderPass. There is no second
 // geometry render: alpha-tested foliage, animated horses and buildings all share
 // the same depth and silhouette as the visible frame.
+let activeOwner=null;
 export function createWorldFinish({composer, camera}) {
+  // A single main-world pipeline owns the receiver; replay its live rig set once.
+  activeOwner?.dispose();
+  const depthOwners=[];
   for (const target of [composer.renderTarget1, composer.renderTarget2]) {
-    target.depthTexture = new THREE.DepthTexture(target.width, target.height, THREE.UnsignedIntType);
-    target.depthTexture.name = 'World contact depth';
-    target.depthTexture.minFilter = target.depthTexture.magFilter = THREE.NearestFilter;
+    if (!target.depthTexture) {
+      const texture=new THREE.DepthTexture(target.width,target.height,THREE.UnsignedIntType);
+      texture.name='World contact depth';
+      texture.minFilter=texture.magFilter=THREE.NearestFilter;
+      depthOwners.push({target,texture,previous:null});target.depthTexture=texture;
+    }
   }
   const pass = new ShaderPass({
     name: 'World contact shading',
     uniforms: {
-      tDiffuse: {value: null}, tDepth: {value: null},
+      tDiffuse: {value: null}, tDepth: {value: null}, riderAOReceptionEnabled:{value:1}, riderAOReceptionDebug:{value:0},
       resolution: {value: new THREE.Vector2()},
       inverseProjection: {value: new THREE.Matrix4()},
       projection: {value: new THREE.Matrix4()},
@@ -24,6 +33,7 @@ export function createWorldFinish({composer, camera}) {
     fragmentShader: `precision highp float;
       varying vec2 vUv;
       uniform sampler2D tDiffuse, tDepth;
+      uniform float riderAOReceptionEnabled,riderAOReceptionDebug;
       uniform vec2 resolution;
       uniform mat4 inverseProjection, projection;
       uniform float radius, strength;
@@ -36,7 +46,11 @@ export function createWorldFinish({composer, camera}) {
       void main(){
         vec4 source=texture2D(tDiffuse,vUv);
         float depth=texture2D(tDepth,vUv).x;
-        if(depth>=.999999){gl_FragColor=source;return;}
+        float receiverCoverage=riderAOReceptionEnabled>.5?(source.a<0.0?clamp((source.a+32.0)/33.0,0.0,1.0):1.0):1.0;
+        float outputAlpha=riderAOReceptionEnabled>.5?(source.a<0.0?1.0:source.a):source.a;
+        if(riderAOReceptionDebug>.5){gl_FragColor=vec4(mix(vec3(0),vec3(0,1,0),1.0-receiverCoverage),1.0);return;}
+        if(receiverCoverage<=0.0){gl_FragColor=vec4(source.rgb,outputAlpha);return;}
+        if(depth>=.999999){gl_FragColor=vec4(source.rgb,outputAlpha);return;}
         vec3 p=viewPoint(vUv,depth);
         vec2 texel=1.0/resolution;
         // Choose the nearest neighbour on each axis: derivatives across a horse's
@@ -72,7 +86,8 @@ export function createWorldFinish({composer, camera}) {
         // Slightly warm bounce in contact shade, leaving emissive windows intact.
         float emissive=1.0-smoothstep(1.8,4.0,max(source.r,max(source.g,source.b)));
         vec3 shade=mix(vec3(1.0),vec3(ao,ao*.992+.008,ao*.975+.025),emissive);
-        gl_FragColor=vec4(source.rgb*shade,source.a);
+        if(receiverCoverage<1.0)shade=mix(vec3(1.0),shade,receiverCoverage);
+        gl_FragColor=vec4(source.rgb*shade,outputAlpha);
       }`,
   });
   pass.material.depthTest = false;
@@ -85,13 +100,39 @@ export function createWorldFinish({composer, camera}) {
     pass.uniforms.projection.value.copy(camera.projectionMatrix);
     render(renderer, write, read, ...args);
   };
-  composer.addPass(pass);
-  return {
+  const renderPass=composer.passes.find(p=>p.scene&&p.camera===camera);
+  if(!renderPass)throw Error('Main world RenderPass required');
+  composer.insertPass(pass,composer.passes.indexOf(renderPass)+1);
+  const lifecycle=composer.__riderMaterialLifecycle || riderMaterialLifecycle15;
+  let receiver;
+  // Dispose the old receiver BEFORE the next factory wraps a reused RenderPass.
+  const subscription=lifecycle.replaceReceiver(()=>receiver=createRiderAOReception({THREE,renderPass,contactPass:pass}));
+  composer.__riderAOReception=receiver;
+  composer.__riderMaterialLifecycle=lifecycle;
+  let disposed=false,quality='high';
+  const originalComposerDispose=composer.dispose;
+  const owner={
+    registerRider:rig=>lifecycle.trackRig(rig),
+    unregisterRider:rig=>lifecycle.dropRig(rig),
+    dispose(){
+      if(disposed)return false;disposed=true;
+      subscription.dispose();composer.removePass(pass);pass.dispose();
+      for(const{target,texture,previous}of depthOwners){if(target.depthTexture===texture)target.depthTexture=previous;texture.dispose();}
+      if(composer.dispose===composerDispose)composer.dispose=originalComposerDispose;
+      if(composer.__worldFinish18===owner)delete composer.__worldFinish18;
+      if(composer.__riderAOReception===receiver)delete composer.__riderAOReception;
+      if(activeOwner===owner)activeOwner=null;
+      return true;
+    },
+    inspect:()=>({disposed,quality,receiver:receiver.inspect(),lifecycle:lifecycle.inspect(),ownedPassCount:composer.passes.filter(p=>p===pass).length}),
     pass,
     setQuality(tier) {
-      pass.enabled = tier !== 'low';
+      quality=tier;pass.enabled = tier !== 'low';
       pass.uniforms.sampleCount.value = tier === 'high' ? 12 : 6;
       pass.uniforms.strength.value = tier === 'high' ? .72 : .60;
     },
   };
+  const composerDispose=function(...args){owner.dispose();return originalComposerDispose.apply(this,args);};
+  composer.dispose=composerDispose;composer.__worldFinish18=owner;activeOwner=owner;
+  return owner;
 }

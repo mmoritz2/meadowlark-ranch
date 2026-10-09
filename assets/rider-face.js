@@ -1,4 +1,4 @@
-import {createTriangleSurface} from './rider-head-surface.js?v=couture-riders-20261007';
+import {createTriangleSurface} from './rider-head-surface.js?v=character-polish-20261009';
 /* Bind-pose facial refinements. Joint locations, weights and the scalp stay fixed,
    so the existing animations, helmet and saved appearances continue to fit. */
 export function refineRiderFace(THREE,skin,brows,body){
