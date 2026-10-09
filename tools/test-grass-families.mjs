@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import * as THREE from '../assets/vendor/three/build/three.module.js';
 import {createGrassFamilyGeometry,GRASS_FAMILIES} from '../assets/grass-families.mjs';
+import {createGrassTuftGeometry} from '../assets/meadow-cover.js';
 const evidence=[];
 const faces=(g,cb)=>{const p=g.attributes.position;for(let i=0;i<g.index.count;i+=3){const ids=Array.from(g.index.array.subarray(i,i+3));cb(ids,ids.map(j=>new THREE.Vector3().fromBufferAttribute(p,j)));}};
 for(let family=0;family<3;family++)test(`${GRASS_FAMILIES[family].name}: finite rooted geometry, valid normal/UV contract and budget`,()=>{
@@ -36,4 +37,24 @@ test('every leaf grows from paired grounded roots to a narrower falling point',(
 });
 test('original geometry adds no texture/material allocation or import-time resources',()=>{
  const source=fs.readFileSync(new URL('../assets/grass-families.mjs',import.meta.url),'utf8');assert(!source.includes('Math.random'));assert(!source.includes('new T.Texture'));assert(!source.includes('Material('));assert(!source.includes('fetch('));
+});
+
+test('leafy sward keeps its mass low and roots darker than the blade shoulders',()=>{
+ for(let family=0;family<3;family++){const g=createGrassFamilyGeometry(THREE,family),p=g.attributes.position,c=g.attributes.color;
+  for(let leaf=0;leaf<GRASS_FAMILIES[family].leaves;leaf++){const k=leaf*9;assert(c.getY(k)<.30);assert(c.getY(k+4)>c.getY(k)*2);const width=new THREE.Vector3().fromBufferAttribute(p,k+2).distanceTo(new THREE.Vector3().fromBufferAttribute(p,k+3));assert(width>.018&&width<.08);}
+  g.dispose();
+ }
+});
+
+test('near and middle leaves retain their budgets and a mix of bowed and emerging forms',()=>{
+ for(const [profile,bladeCount,segments] of [['near-folded-v1',8,3],['middle-natural-v1',4,2],['middle-natural-v1',6,2],['middle-natural-v1',8,2]]){
+  const g=createGrassTuftGeometry(THREE,{profile,bladeCount,segments}),p=g.attributes.position;
+  assert.equal(g.index.count/3,bladeCount*(segments===3?5:3));let bowed=0,emerging=0;
+  const stride=segments===3?7:5,shoulder=2,tip=stride-1;
+  for(let leaf=0;leaf<bladeCount;leaf++){const i=leaf*stride;assert.equal(p.getY(i),0);assert.equal(p.getY(i+1),0);if(p.getY(i+tip)<p.getY(i+shoulder))bowed++;else emerging++;}
+  assert(bowed>=bladeCount/2,'Low leaves fall after the modeled shoulder');assert(emerging>0,'Some unequal narrow leaves still emerge above the low clump');
+  for(const a of Object.values(g.attributes))assert(Array.from(a.array).every(Number.isFinite));
+  faces(g,(_,points)=>{const[a,b,c]=points;assert(new THREE.Vector3().crossVectors(b.sub(a),c.sub(a)).length()>1e-8);});
+  g.dispose();
+ }
 });

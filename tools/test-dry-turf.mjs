@@ -3,30 +3,23 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {createHash} from 'node:crypto';
 import {pathToFileURL,fileURLToPath} from 'node:url';
 import {join,dirname} from 'node:path';
 const ROOT=process.env.QA_DRY_TURF_ROOT||join(dirname(fileURLToPath(import.meta.url)),'..');
-const PIN='9c7c390e3e037e2d27e3d18ab199c67bbe739f6e2ad37190c42386b9679d439e';
-const OLD_KEY='terrain-biomes-v16-cold-snow',NEW_KEY='terrain-biomes-v17-dry-turf';
 const OLD_LINE='        roughnessFactor=mix(roughnessFactor,clamp(groundARM.g,.65,1.0),upClose*(1.0-snow));';
 const EXPECTED_BLOCK="        #ifndef OUTER_LANDSCAPE\n          float groundRoughness=clamp(groundARM.g,.65,1.0);\n          // Dry grass keeps the base material's broad, matte response. Fade\n          // back to the sampled substrate at woodland, soil, mineral and\n          // winter edges, before the existing water/rain response below.\n          float dryTurf=(1.0-smoothstep(0.0,1.0,canopy))\n                       *(1.0-smoothstep(0.0,1.0,wear))\n                       *(1.0-smoothstep(0.0,1.0,bank))\n                       *(1.0-smoothstep(0.0,1.0,rocky))\n                       *(1.0-smoothstep(0.0,1.0,canyon))\n                       *(1.0-smoothstep(0.0,1.0,quarters))\n                       *(1.0-smoothstep(0.0,1.0,snow))\n                       *(1.0-smoothstep(0.0,1.0,thawLitter))\n                       *(1.0-smoothstep(0.0,.30,wet*.42))\n                       *(1.0-smoothstep(0.0,.30,rainWet));\n          groundRoughness=mix(groundRoughness,roughnessFactor,dryTurf);\n          roughnessFactor=mix(roughnessFactor,groundRoughness,upClose*(1.0-snow));\n        #else\n          roughnessFactor=mix(roughnessFactor,clamp(groundARM.g,.65,1.0),upClose*(1.0-snow));\n        #endif";
 
-const hash=s=>createHash('sha256').update(s).digest('hex');
 const compact=s=>s.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/[^\n]*/g,'').replace(/\s+/g,'');
 const filename=join(ROOT,'assets/terrain-realism.js'),current=readFileSync(filename,'utf8');
-let baseline,active;
-if(current.includes(NEW_KEY)){
- const begin=current.indexOf('        #ifndef OUTER_LANDSCAPE\n          float groundRoughness=');
- const finish=current.indexOf('        diffuseColor.rgb*=mix(1.0,groundARM.r,.22*upClose*(1.0-snow));',begin);
- assert(begin>=0&&finish>begin,'Scoped roughness block required');
- const found=current.slice(begin,finish).trimEnd();assert.equal(compact(found),compact(EXPECTED_BLOCK),'Only reviewed branch accepted');
- baseline=current.replace(found,OLD_LINE).replace(NEW_KEY,OLD_KEY);active=current;
-}else{
- baseline=current;assert.equal(current.split(OLD_LINE).length,2);
- active=current.replace(OLD_LINE,EXPECTED_BLOCK).replace(OLD_KEY,NEW_KEY);
-}
-assert.equal(hash(baseline),PIN,'In-memory restoration must equal the exact released terrain source');
+// Counterfactual removes only this feature from CURRENT source. A whole-file
+// historical pin would reject every later independent terrain improvement.
+const begin=current.indexOf('        #ifndef OUTER_LANDSCAPE\n          float groundRoughness=');
+const finish=current.indexOf('        diffuseColor.rgb*=mix(1.0,groundARM.r,.22*upClose*(1.0-snow));',begin);
+assert(begin>=0&&finish>begin,'Current production dry-roughness branch required');
+const found=current.slice(begin,finish).trimEnd();
+assert.equal(compact(found),compact(EXPECTED_BLOCK),'All reviewed dry-turf substrate gates remain present');
+const baseline=current.replace(found,OLD_LINE),active=current;
+assert.equal(baseline.replace(OLD_LINE,found),current,'Counterfactual changes only the scoped branch');
 const T=await import(pathToFileURL(join(ROOT,'assets/vendor/three/build/three.module.js')).href);
 const loadSource=async source=>{
  const resolved=source.replace(/from (['"])(\.\/[^'"]+)\1/g,(_m,_q,p)=>'from '+JSON.stringify(new URL(p,pathToFileURL(filename)).href));
@@ -35,12 +28,13 @@ const loadSource=async source=>{
 const before=await loadSource(baseline),after=await loadSource(active);
 function fixture(module,kind='minimal'){
  const oldDoc=globalThis.document,oldRandom=Math.random,paths=[];let draws=0;
- globalThis.document={createElement:()=>({getContext:()=>({fillRect(){}})})};
+ let pixels;const context={createImageData:(width,height)=>({width,height,data:new Uint8ClampedArray(width*height*4)}),putImageData:p=>{pixels=p;},getImageData:()=>pixels,fillRect(){},createRadialGradient:()=>({addColorStop(){}}),beginPath(){},lineTo(){},moveTo(){},stroke(){}};
+ globalThis.document={createElement:()=>({getContext:()=>context})};
  Math.random=()=>{draws++;return .125;};
  try{
   const cpu={...T,TextureLoader:class{load(path){paths.push(path);const t=new T.Texture();t.name=path;return t;}}};
   const grass=new T.Texture(),bump=new T.Texture(),surface=module.createTerrainSurface({THREE:cpu,renderer:{capabilities:{getMaxAnisotropy:()=>8}},grass,bump});
-  const shader=kind==='minimal'?{vertexShader:'#include <begin_vertex>',fragmentShader:'#include <map_fragment>\n#include <roughnessmap_fragment>\n#include <normal_fragment_maps>',uniforms:{}}:
+  const shader=kind==='minimal'?{vertexShader:'#include <begin_vertex>',fragmentShader:'#include <map_fragment>\n#include <roughnessmap_fragment>\n#include <normal_fragment_maps>\n#include <aomap_fragment>',uniforms:{}}:
    {vertexShader:T.ShaderLib[kind].vertexShader,fragmentShader:T.ShaderLib[kind].fragmentShader,uniforms:{...T.ShaderLib[kind].uniforms}};
   const createdDraws=draws;Math.random=()=>{throw Error('Shader hook must not draw RNG');};surface.material.onBeforeCompile(shader);
   return {surface,shader,paths,draws:createdDraws,grass,bump};
@@ -73,7 +67,12 @@ const dryExpression=expression(src.match(/float dryTurf=([\s\S]*?);/)[1]);
 const defaultState={canopy:0,wear:0,bank:0,rocky:0,canyon:0,quarters:0,snow:0,thawLitter:0,wet:0,rainWet:0,upClose:1,armG:.263398,roughnessFactor:.96};
 const weight=m=>evalExpr(dryExpression,{...defaultState,...m});
 function controller(shader,tier){
- const code=preprocess(roughBlock(shader),tier),ops=[];
+ const all=preprocess(roughBlock(shader),tier),ops=[];
+ // Scope the original dry-roughness response and its wet/snow composition.
+ // Later pasture micro-roughness has its own independent contract suite.
+ const rain='roughnessFactor=mix(roughnessFactor,.43,clamp(wet*.42+rainWet,0.0,.85));',snow='roughnessFactor=mix(roughnessFactor,.97,snow);';
+ const end=all.indexOf(rain);assert(end>=0);
+ const code=all.slice(0,end)+rain+(all.includes(snow)?snow:'');
  for(const m of code.matchAll(/(?:\bfloat\s+)?\b(dryTurf|groundRoughness|roughnessFactor)\s*=\s*([^;]+);/g))ops.push([m[1],expression(m[2])]);
  assert(ops.length>=1);
  return input=>{const v={...defaultState,...input};for(const [name,fn]of ops)v[name]=evalExpr(fn,v);return v.roughnessFactor;};
@@ -95,13 +94,13 @@ test('actual standard/physical hooks preserve vertex, map/normal/AO, samplers, r
   for(const k of ['roughness','envMapIntensity','bumpScale','metalness','vertexColors','side','transparent','alphaTest','depthWrite','depthTest','premultipliedAlpha'])assert.equal(am[k],bm[k]);
   assert.equal(bm.map,b.grass);assert.equal(bm.bumpMap,b.bump);assert.deepEqual(am.defines,bm.defines);
   assert.deepEqual(Object.keys(am.userData),Object.keys(bm.userData));assert.deepEqual(am.defaultAttributeValues,bm.defaultAttributeValues);
-  assert.equal(bm.customProgramCacheKey(),NEW_KEY);
+  assert.equal(bm.customProgramCacheKey(),am.customProgramCacheKey());
   const ao='diffuseColor.rgb*=mix(1.0,groundARM.r,.22*upClose*(1.0-snow));';
   assert.equal(b.shader.fragmentShader.split(ao).length,2);
  }
 });
 
-test('CHEAP inner/outer and hypothetical high OUTER preprocess to exact released shader tokens',()=>{
+test('dry correction leaves CHEAP and hypothetical high OUTER shader tokens unchanged',()=>{
  for(const tier of [{cheap:true,outer:false},{cheap:true,outer:true},{cheap:false,outer:true}]){
   assert.equal(compact(preprocess(src,tier)),compact(preprocess(original.shader.fragmentShader,tier)));
   const a=controller(src,tier),b=controller(original.shader.fragmentShader,tier);
@@ -110,7 +109,7 @@ test('CHEAP inner/outer and hypothetical high OUTER preprocess to exact released
  assert.notEqual(compact(preprocess(src,{})),compact(preprocess(original.shader.fragmentShader,{})));
 });
 
-test('pure dry pasture respects the existing base roughness uniform at all detail distances',()=>{
+test('dry-roughness branch respects the base material uniform at all detail distances',()=>{
  for(const base of [.70,.82,.91,.96,1])for(const upClose of [0,.05,.5,1])for(const armG of [0,.26,.65,.82,1]){
   near(newR({roughnessFactor:base,upClose,armG}),base);
  }
@@ -119,7 +118,7 @@ test('pure dry pasture respects the existing base roughness uniform at all detai
  near(newR({roughnessFactor:.82}),.82);
 });
 
-test('each full substrate and fully wet/rainy field preserves actual released roughness',()=>{
+test('each full substrate and fully wet/rainy field preserves the current uncorrected roughness branch',()=>{
  for(const name of substrate)for(const armG of [.1,.65,.81,1])for(const upClose of [.1,.5,1]){
   const state={[name]:1,armG,upClose};assert.equal(weight(state),0);near(newR(state),oldR(state));
  }
