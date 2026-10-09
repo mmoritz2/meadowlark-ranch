@@ -4,15 +4,17 @@
    riding loop. No player-position, mission-progress or reward edits are made.
    The second route takes the optional woodland log with a real Space jump,
    then isolates a final-save failure and retry.
+   QA_CIRCUIT=woodland runs only the full woodland ride and failed-save recovery.
    QA_PORT defaults to 8597; QA_URL, QA_OUT and QA_HEADLESS remain configurable. */
 if(!process.env.QA_PORT&&!process.env.QA_URL)process.env.QA_PORT='8597';
 const QA=require('./qa-platform.cjs'),fs=require('node:fs'),assert=require('node:assert/strict');
-const out=process.env.QA_OUT||'/private/tmp/meadowlark-cottonwood-post';
+const circuit=process.env.QA_CIRCUIT||'all';assert.ok(['all','woodland'].includes(circuit),'QA_CIRCUIT must be all or woodland');
+const out=process.env.QA_OUT||('/private/tmp/meadowlark-cottonwood-post'+(circuit==='woodland'?'-woodland':''));
 // These are navigation intentions, not player-state mutations. A blocked leg
 // fails with its sampled path; this script never teleports out of a collision.
 let ROUTE;
 const WOODLAND_LOG={center:[-7,-53],approach:[-16,-53],exit:[-2,-53],height:.5,halfWidth:1.7};
-const report={evidence:'One synthetic initial placement, then two complete routes ridden with real Playwright keyboard controls. The first uses the road; the second uses the woodland and a physical Space jump over its log. Pickup/return use E; the first Ada exchange uses the mobile contextual touch control. No teleport or synthetic-progress completion claims.',route:null,checks:[],errors:[],console:[],featureErrors:[],routeFocus:[],path:[],runs:[]};
+const report={circuit,evidence:circuit==='woodland'?'One synthetic initial placement, then one complete woodland circuit through legacy Trips entry, ridden with real Playwright keyboard controls and a physical Space jump over the log. E performs handovers; mobile taps retry the failed final save. No road-circuit, Activities-card or mobile Ada-exchange claim.':'One synthetic initial placement, then two complete routes ridden with real Playwright keyboard controls. The first uses the road; the second uses the woodland and a physical Space jump over its log. Pickup/return use E; the first Ada exchange uses the mobile contextual touch control. No teleport or synthetic-progress completion claims.',route:null,checks:[],errors:[],console:[],featureErrors:[],routeFocus:[],path:[],runs:[]};
 const check=(ok,label,detail)=>{assert.ok(ok,label+(detail?' '+JSON.stringify(detail):''));report.checks.push(label);console.log('PASS '+label);};
 const same=(actual,expected,label)=>{assert.deepEqual(actual,expected,label);report.checks.push(label);console.log('PASS '+label);};
 let browser,page,sim=0,phase='boot';const held=new Set();
@@ -110,6 +112,7 @@ async function start(entry){
  }else{
   // Framing the classic list selects its view; the actual handler owns entry.
   await page.evaluate(()=>{const G=__features;G.ui.openOnline();G.seFrame?.classic('onlinePanel');G.seFrame?.settle();});
+  await page.locator('#onlinePanel [data-c3tab="exped"]').click();
   await page.locator('[data-fx="sp:exped:cottonwood"]').click();
  }
  await step(30);await focusRiding();
@@ -184,16 +187,19 @@ function assertPaid(before,after,label){
  fs.mkdirSync(out,{recursive:true});browser=await QA.chromium.launch({headless:process.env.QA_HEADLESS!=='0',args:QA.gpuArgs()});
  const context=await browser.newContext({viewport:{width:1280,height:850},hasTouch:true,serviceWorkers:'block'});await context.routeWebSocket('**',ws=>ws.close());
  page=await context.newPage();page.on('pageerror',e=>report.errors.push(e.message));page.on('dialog',d=>d.dismiss());
- page.on('console',message=>{if(['warning','error'].includes(message.type()))report.console.push({phase,type:message.type(),text:message.text(),location:message.location()});});
+ page.on('console',message=>{if(['warning','error'].includes(message.type())){const text=message.text(),location=message.location();report.console.push({phase,type:message.type(),text,location,knownBaseline:location.url===QA.BASE+'/api/me'&&/server responded with a status of 404/.test(text),injectedFailure:phase==='save-failure'&&text.includes('QA courier write failure')});}});
  try{
   await page.goto(QA.BASE+'/ranch3d.html?qa=cottonwood-post',{waitUntil:'domcontentloaded',timeout:120000});await ready();
+  if(circuit==='all'){
   phase='road';await start('adventures');const before=await rideCircuit(true);await page.keyboard.press('e');const after=await read();assertPaid(before,after,'Normal delivery');report.runs.push({kind:'normal-road',before,after});
   await screenshot('05-confirmed-reward');
   const duplicate=await page.evaluate(()=>{const before=__postRead(),accepted=__features.cottonwoodPost.retrySave(),after=__postRead();return {before,after,accepted};});
   check(duplicate.accepted===false,'Retrying a confirmed delivery is a no-op');same(duplicate.after.reward,duplicate.before.reward,'A duplicate retry never pays again');same(duplicate.after.events,duplicate.before.events,'A duplicate retry never emits another finish');
+  }
 
-  // Separate failure fixture: start exactly where normal riding left the horse.
-  // Only the storage boundary is fault-injected, after another complete ride.
+  // In full mode this starts exactly where the road ride left the horse. Focused
+  // mode uses the one initial fixture; both modes ride the entire woodland loop.
+  // Only the storage boundary is fault-injected, after the complete ride.
   phase='woodland';await start('legacy');const failureBefore=await rideCircuit(false);phase='save-failure';
   await page.evaluate(()=>{const key=__features.save.KEY,write=Storage.prototype.setItem;window.__postFailWrite=true;window.__postFailedWrites=0;Storage.prototype.setItem=function(k,v){if(k===key&&window.__postFailWrite){window.__postFailedWrites++;throw new DOMException('QA courier write failure','QuotaExceededError');}return write.call(this,k,v);};});
   await page.keyboard.press('e');const pending=await read();report.runs.push({kind:'save-failure',before:failureBefore,pending});
@@ -203,6 +209,7 @@ function assertPaid(before,after,label){
   check(await page.locator('#postCancel').isDisabled(),'Pending save visibly disables ending the ride');
   const pendingBeforeClub=await read();
   await page.evaluate(()=>{const G=__features;G.ui.openOnline();G.seFrame?.classic('onlinePanel');G.seFrame?.settle();});
+  await page.locator('#onlinePanel [data-c3tab="rides"]').click();
   const stopButton=page.locator('#onlinePanel [data-tr="stop"]');await stopButton.scrollIntoViewIfNeeded();
   const club=await page.evaluate(()=>({visible:document.getElementById('onlinePanel').getClientRects().length>0,text:document.getElementById('onlinePanel').textContent,state:__postRead()}));report.pendingClub=club;
   check(club.visible&&/Route complete\s*·\s*save pending/i.test(club.text),'Legacy Club panel renders a completed route with a pending save');
@@ -217,7 +224,9 @@ function assertPaid(before,after,label){
   phase='save-recovery';await page.evaluate(()=>{window.__postFailWrite=false;});await page.locator('#postAction').tap();const saved=await read();assertPaid(failureBefore,saved,'Recovered delivery');report.runs.at(-1).saved=saved;await screenshot('07-recovered-reward-mobile');
   const repeated=await page.evaluate(()=>{const accepted=__features.cottonwoodPost.retrySave();return {accepted,state:__postRead()};});
   check(repeated.accepted===false,'A repeated recovered-save retry is a no-op');same(repeated.state.reward,saved.reward,'Recovered delivery reward cannot be duplicated');same(repeated.state.events,saved.events,'Recovered delivery finish cannot be duplicated');
-  check(!report.errors.length&&!saved.featureErrors.length,'Both physical routes, touch exchange and save retry have no browser or feature errors');
+  const unexpectedConsole=report.console.filter(e=>e.type==='error'&&!e.knownBaseline&&!e.injectedFailure);
+  check(!unexpectedConsole.length,'No unexpected console errors beyond the local /api/me 404 baseline and intentional storage fault',unexpectedConsole);
+  check(!report.errors.length&&!saved.featureErrors.length,circuit==='woodland'?'The complete woodland ride, log jump and save retry have no browser or feature errors':'Both physical routes, touch exchange and save retry have no browser or feature errors');
  }catch(error){report.failure=error.message;try{await keys();report.state=await read();await screenshot('failure');}catch(captureError){report.captureError=String(captureError);}throw error;}
  finally{clearTimeout(watchdog);try{report.featureErrors=await page.evaluate(()=>window.__features?.errors||[]);}catch(error){report.featureErrorCapture=String(error);}fs.writeFileSync(out+'/report.json',JSON.stringify(report,null,2));await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});

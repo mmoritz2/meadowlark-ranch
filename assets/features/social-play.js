@@ -882,7 +882,7 @@ export function install(G){
   if(offer&&!ride)h+='<div class="evrow">🥾 <b>'+esc(offer.by)+'</b><span>'+esc(offer.name||'a ride')+' · '+offer.pts.map(p=>esc(p[0])).join(' → ')+'</span><button class="claimBtn" data-fx="sp:joinoffer">Join</button></div>';
   if(ride){
    const ro=ride.roster||{}, names=Object.keys(ro);
-   h+='<div class="evrow">🥾 <b>'+esc(ride.name||'Trail ride')+'</b><span>stop '+(ride.idx+1)+'/'+ride.pts.length+' · next '+esc(ride.pts[Math.min(ride.idx,ride.pts.length-1)][0])+'</span></div>';
+   h+='<div class="evrow">🥾 <b>'+esc(ride.name||'Trail ride')+'</b><span>'+(ride.idx>=ride.pts.length?'Route complete · save pending':'stop '+(ride.idx+1)+'/'+ride.pts.length+' · next '+esc(ride.pts[ride.idx]?.[0]||'route marker'))+'</span></div>';
    h+=note('Riding with you: '+(names.length?names.map(n=>esc(n)+' ('+(ro[n]+1)+'/'+ride.pts.length+')').join(', '):'just you so far'));
   }
   h+=H3('🗺️ Expeditions');
