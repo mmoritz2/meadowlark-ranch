@@ -1,0 +1,150 @@
+{
+  "status": "PASSED — saved round, records, rewards and story verified.",
+  "runId": "mv1a7mft-j6myc7",
+  "receipt": {
+    "passPoints": 18,
+    "starPoints": 12,
+    "progress": {
+      "rounded": 3,
+      "dailyDone": [],
+      "story": {
+        "idx": 49,
+        "label": "Pen 5 runaways in a Roundup",
+        "before": 0,
+        "after": 3,
+        "goal": 5,
+        "npc": "wren"
+      },
+      "modules": {
+        "side-quests": {
+          "updates": []
+        },
+        "season-challenges": {
+          "updates": [],
+          "completed": [],
+          "banked": false
+        },
+        "season-almanac": {
+          "updates": []
+        }
+      }
+    },
+    "runId": "mv1a7mft-j6myc7",
+    "mode": "beginner",
+    "name": "Gentle Roundup",
+    "total": 3,
+    "penned": 3,
+    "time": 80.75,
+    "remaining": 39.25000000000459,
+    "at": 1791569551043,
+    "score": 1096,
+    "medal": "silver",
+    "pay": 540,
+    "gems": 1,
+    "keys": 0,
+    "previousBestScore": 600,
+    "previousBestTime": null,
+    "previousBestMedal": "bronze",
+    "newBestScore": true,
+    "newBestTime": true,
+    "newBestMedal": true,
+    "saved": true
+  },
+  "checks": [
+    {
+      "label": "A production roundup story objective exists",
+      "ok": true
+    },
+    {
+      "label": "Reload establishes the actual roundup story cursor",
+      "ok": true
+    },
+    {
+      "label": "Test rider is anonymous and offline",
+      "ok": true
+    },
+    {
+      "label": "Roundup started through the game’s activity card",
+      "ok": true
+    },
+    {
+      "label": "The physical roundup has a run identity",
+      "ok": true
+    },
+    {
+      "label": "Round finishes only through actual pen crossings or the real timer",
+      "ok": true
+    },
+    {
+      "label": "Finished ride stays available as a frozen pending result",
+      "ok": true
+    },
+    {
+      "label": "Only the deliberately blocked completion write was attempted",
+      "ok": true
+    },
+    {
+      "label": "Failed completion changes no rewards, record, pass, weekly or story progress",
+      "ok": true
+    },
+    {
+      "label": "No confirmed win is published before saving",
+      "ok": true
+    },
+    {
+      "label": "Pending result offers Retry save",
+      "ok": true
+    },
+    {
+      "label": "Durable receipt confirms this exact physical round",
+      "ok": true
+    },
+    {
+      "label": "One successful completion write",
+      "ok": true
+    },
+    {
+      "label": "Confirmed result releases the event",
+      "ok": true
+    },
+    {
+      "label": "Saved wallet matches displayed rewards",
+      "ok": true
+    },
+    {
+      "label": "The ride enters the record exactly once",
+      "ok": true
+    },
+    {
+      "label": "Every penned horse counts once",
+      "ok": true
+    },
+    {
+      "label": "Saved and live story progress agree",
+      "ok": true
+    },
+    {
+      "label": "No feature/runtime hook errors",
+      "ok": true
+    }
+  ],
+  "errors": [],
+  "responsiveResult": {
+    "source": "Release browser inspection",
+    "viewports": [
+      {
+        "width": 390,
+        "height": 844,
+        "scrollWidth": 390,
+        "horizontalOverflow": false,
+        "mainButtonHeight": 46,
+        "journeyButtonHeight": 44
+      },
+      {
+        "width": 667,
+        "height": 375,
+        "lowerButtonsReachedByScrolling": true
+      }
+    ]
+  }
+}
