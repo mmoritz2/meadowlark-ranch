@@ -11,10 +11,10 @@
    exclusive). The tack economy itself (rarity patterns, names, 26 sets, upgrades, toolkits, merge
    and strip, market stall, English/Western saddles and headstalls) is inline in ranch3d.html
    because the boot pass pays tack rewards before any package installs. */
-import {buildHair} from '../rider-hair.js';   // the old sculpt's hair, for the fallback rider only
-import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=defined-lashes-20261009';
-import {outfitPalette} from '../rider-clothes.js?v=couture-riders-20261007';
-import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=couture-riders-20261007';
+import {buildHair} from '../rider-hair.js?v=character-polish-20261009';   // the old sculpt's hair, for the fallback rider only
+import {RIDER_HAIR,RIDER_OUTFITS,RIDER_EYES,riderHairId} from '../rider-model.js?v=character-polish-20261009';
+import {outfitPalette} from '../rider-clothes.js?v=character-polish-20261009';
+import {RIDER_ACCESSORIES,accessoryFit,accessoryId} from '../rider-accessories.js?v=character-polish-20261009';
 export const id='tack-wardrobe';
 export function install(G){
  const {$,toast,THREE}=G;
@@ -188,7 +188,7 @@ export function install(G){
     her own little scene with its own renderer, turning under your finger, and every pick shows
     on her at once. Nothing is kept until SAVE; close it and she is as she was.
     The old creator panel is still there under it (G.ui.open('riderPanel')). */
- const CH={filter:'All',outfitThumbs:{},outfitJob:null,accessoryThumbs:{},accessoryJob:null,open:false,draft:null,tab:'style',renderer:null,scene:null,cam:null,stage:null,R:null,spin:0.45,zoom:false,raf:0,drag:null,thumbs:{},thumbKey:'',t0:0};
+ const CH={filter:'All',outfitThumbs:{},outfitJob:null,accessoryThumbs:{},accessoryJob:null,open:false,draft:null,tab:'style',renderer:null,scene:null,cam:null,stage:null,R:null,spin:0.45,zoom:false,raf:0,drag:null,thumbs:{},hairThumbs:{},hairJob:null,thumbJob:null,thumbTimer:0,thumbFailed:new Set(),thumbSerial:0,thumbKey:'',t0:0};
  const SVGI=p=>'<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';
  const ICO={
   eyewear:'<circle cx="6.8" cy="12" r="4.4"/><circle cx="17.2" cy="12" r="4.4"/><path d="M11.2 11.5h1.6M2.4 10L1 7M21.6 10L23 7"/>',
@@ -248,12 +248,14 @@ export function install(G){
   const up=()=>{CH.drag=null;}; canvas.addEventListener('pointerup',up); canvas.addEventListener('pointercancel',up);
   const r=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});
   r.setPixelRatio(Math.min(2,window.devicePixelRatio||1)); r.outputColorSpace=THREE.SRGBColorSpace;
-  r.toneMapping=THREE.ACESFilmicToneMapping; r.toneMappingExposure=1.05; r.shadowMap.enabled=true;
+  r.toneMapping=THREE.ACESFilmicToneMapping; r.toneMappingExposure=1.05; r.shadowMap.enabled=true;r.shadowMap.type=THREE.VSMShadowMap;
   const sc=new THREE.Scene(); sc.background=gradientTex();
   sc.add(new THREE.HemisphereLight(0xe4ebff,0x4a3e7a,1.35));
   const key=new THREE.DirectionalLight(0xfff2e2,2.3);key.position.set(1.6,3.2,3.0);key.castShadow=true;key.shadow.mapSize.set(1024,1024);
-  Object.assign(key.shadow.camera,{left:-1.2,right:1.2,top:2.2,bottom:-0.2,near:0.5,far:9});key.shadow.bias=-0.0006;key.shadow.normalBias=0.012;sc.add(key);   // no acne on her clothes
+  Object.assign(key.shadow.camera,{left:-1.2,right:1.2,top:2.2,bottom:-0.2,near:0.5,far:9});key.shadow.bias=-0.00015;key.shadow.normalBias=0.002;key.shadow.radius=4;key.shadow.blurSamples=8;sc.add(key);   // no acne on her clothes
   const rim=new THREE.DirectionalLight(0xa9b8ff,1.3);rim.position.set(-2,2.6,-2.6);sc.add(rim);
+  // A soft frontal fill keeps eyes readable beneath helmets in the character editor.
+  const portraitFill=new THREE.DirectionalLight(0xfff6ea,1.4);portraitFill.position.set(.8,1.8,2.2);sc.add(portraitFill);
   /* a pool of light on the floor, and her shadow in it */
   const fc=document.createElement('canvas');fc.width=fc.height=128;const f=fc.getContext('2d');const rg=f.createRadialGradient(64,64,4,64,64,64);
   rg.addColorStop(0,'rgba(120,140,255,0.55)');rg.addColorStop(0.7,'rgba(70,80,200,0.18)');rg.addColorStop(1,'rgba(40,50,160,0)');f.fillStyle=rg;f.fillRect(0,0,128,128);
@@ -286,118 +288,174 @@ export function install(G){
  function frame(t){
   if(!CH.open||!CH.renderer)return;
   CH.raf=requestAnimationFrame(frame);
-  const R=CH.R; if(!R||!R.sk){if(CH.R&&!CH.R._looked&&CH.R.mesh){applyRiderLook(CH.R,CH.draft);CH.R._looked=true;}CH.renderer.render(CH.scene,CH.cam);return;}
+  const R=CH.R; if(!R||!R.sk){if(CH.R&&!CH.R._looked&&CH.R.mesh){applyRiderLook(CH.R,CH.draft);CH.R._looked=true;}R?.rig?.updateHairMass?.();CH.renderer.render(CH.scene,CH.cam);return;}
   const tt=(t||0)/1000, dt=CH.lastT?Math.min(0.1,tt-CH.lastT):0.016; CH.lastT=tt;
   /* she can arrive after the screen opened (her files still loading on a first launch): the busts want her */
-  if(CH.tab==='style'&&!CH.thumbKey){renderChar();}
-  if(CH.tab==='outfit'&&!CH.outfitJob&&!CH.outfitThumbs[CH.draft.body||'f'])makeOutfitThumbs();
+  // Thumbnail scheduling belongs to renderChar; a frame never starts another category's work.
   standUp(R,dt,tt,Math.sin(tt*0.45)*0.25);
   if(!CH.drag)CH.spin+=0;                          // she holds still unless turned
   CH.holder.rotation.y=CH.spin;
   const lift=(R.rig?.kit.proportionLift||0)*CH.holder.scale.y;
   if(CH.zoom){CH.cam.position.set(0,1.40+lift,1.35);CH.cam.lookAt(0,1.36+lift,0);}
   else{CH.cam.position.set(0,1.00+lift*.5,4.1);CH.cam.lookAt(0,0.80+lift*.5,0);}
-  CH.renderer.render(CH.scene,CH.cam);
+  R?.rig?.updateHairMass?.();CH.renderer.render(CH.scene,CH.cam);
  }
- /* Hair-style thumbnails, rendered off her own head, in her own hair colour: the reference
-    shows each style as a little bust and a word is a poor substitute. */
- function makeThumbs(){
-  const R=CH.R; if(!R||!R.sk||!CH.renderer)return;
-  const key=String(CH.draft.body||'f');                                    // neutral styling: only the body changes the previews
-  if(CH.thumbKey===key&&Object.keys(CH.thumbs).length)return;
-  CH.thumbKey=key; CH.thumbs={};
-  const S=192, rt=new THREE.WebGLRenderTarget(S,S), buf=new Uint8Array(S*S*4);
-  const LUT=new Uint8Array(256); for(let i=0;i<256;i++){const c=Math.min(1,i/255*1.15);LUT[i]=Math.round(255*(c<=0.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-0.055));}
-  const cv=document.createElement('canvas');cv.width=cv.height=S;const c2=cv.getContext('2d'),img=c2.createImageData(S,S);
-  const cam=new THREE.PerspectiveCamera(30,1,0.05,20), spin0=CH.holder.rotation.y, style0=CH.draft.hairStyle, bg0=CH.scene.background;
-  /* from behind her shoulder, three-quarters, on light card: what tells one style from another is the back of the head */
-  CH.holder.rotation.y=1.8; CH.scene.background=new THREE.Color('#e9dcbc');
-  const fill=new THREE.DirectionalLight(0xfff6ea,2.4); fill.position.set(0.8,1.8,2.2); CH.scene.add(fill);   // lit from the camera's side, not silhouetted
-  const body=CH.draft.body||'f';
-  for(const hs of HAIRSTYLES.filter(x=>!x.body||x.body.includes(body))){
-   /* Neutral clothes and chestnut hair keep the strand shapes visible in every preview. */
-   applyRiderLook(R,Object.assign({},CH.draft,{hairStyle:hs.id,helmet:'none',hair:'#765a46',skin:'#e3a37d',shirt:'#a19c95',pants:'#cfcac2',boots:'#8d8781',outfit:'riding',eyes:'brown',eyewear:'none',earrings:'none',neckwear:'none'}));
-   standUp(R,0,0,0);
-   if(R.rig){ /* the character's head, wherever her height puts it */
-    CH.holder.updateMatrixWorld(true); const hp=R.rig.bones.Head.getWorldPosition(new THREE.Vector3()); hp.y+=0.04;
-    cam.position.set(hp.x+0.07,hp.y+0.12,hp.z+1.00); cam.lookAt(hp.x,hp.y-0.035,hp.z);
-   }else{cam.position.set(0.10,1.50,1.02); cam.lookAt(0,1.33,0);}
-   CH.renderer.setRenderTarget(rt); CH.renderer.render(CH.scene,cam); CH.renderer.readRenderTargetPixels(rt,0,0,S,S,buf); CH.renderer.setRenderTarget(null);
-   /* GL rows run bottom up; and a render target gets neither the tone map nor the sRGB encode the
-      screen does, so the linear values are encoded here or every bust comes out half as bright */
-   for(let y=0;y<S;y++){const src=(S-1-y)*S*4,dst=y*S*4;for(let x=0;x<S*4;x+=4){img.data[dst+x]=LUT[buf[src+x]];img.data[dst+x+1]=LUT[buf[src+x+1]];img.data[dst+x+2]=LUT[buf[src+x+2]];img.data[dst+x+3]=255;}}
-   c2.putImageData(img,0,0); CH.thumbs[hs.id]=cv.toDataURL('image/jpeg',0.86);
+ /* Thumbnail jobs share the stage renderer sequentially. Only the visible body/category
+    owns a job; a cancelled job finishes its awaited load/compile before its successor starts. */
+ const thumbRenderers=new WeakMap();
+ function thumbRendererState(renderer){
+  let state=thumbRenderers.get(renderer);
+  if(!state){state={renderer,compiles:0,closing:false,disposed:false,disposables:[]};thumbRenderers.set(renderer,state);}
+  return state;
+ }
+ function disposeRetiredThumbRenderer(state){
+  if(!state.closing||state.compiles||state.disposed)return;
+  state.disposed=true;
+  for(const d of state.disposables)try{d.dispose();}catch(e){}
+  state.disposables=[];
+  try{state.renderer.dispose();}catch(e){}
+  try{state.renderer.forceContextLoss();}catch(e){}
+ }
+ function retireThumbRenderer(renderer,disposables){
+  if(!renderer)return;
+  const state=thumbRendererState(renderer);if(state.closing)return;state.closing=true;state.disposables.push(...disposables);
+  disposeRetiredThumbRenderer(state);
+ }
+ function thumbCache(body,tab){
+  if(tab==='style')return CH.hairThumbs[body]||(CH.hairThumbs[body]={});
+  if(tab==='outfit')return CH.outfitThumbs[body]||(CH.outfitThumbs[body]={});
+  const key=body+':'+tab;return CH.accessoryThumbs[key]||(CH.accessoryThumbs[key]={});
+ }
+ function thumbItems(body,tab,filter){
+  if(tab==='style')return HAIRSTYLES.filter(h=>!h.body||h.body.includes(body));
+  if(tab==='outfit')return OUTFITS.filter(o=>filter==='All'||o.category===filter);
+  return (RIDER_ACCESSORIES[tab]||[]).filter(a=>a.id!=='none');
+ }
+ function thumbRequest(){
+  if(!CH.open||!CH.renderer||!G.horse.riderLib||!CH.draft)return null;
+  const tab=CH.tab,body=CH.draft.body||'f',filter=tab==='outfit'?CH.filter:'';
+  if(tab!=='style'&&tab!=='outfit'&&!RIDER_ACCESSORIES[tab])return null;
+  const key=[body,tab,filter].join('|'),cache=thumbCache(body,tab);
+  if(CH.thumbFailed.has(key)||thumbItems(body,tab,filter).every(i=>cache[i.id]))return null;
+  return {body,tab,filter,key,renderer:CH.renderer};
+ }
+ function thumbCurrent(job){
+  return CH.open&&CH.thumbJob===job&&!job.cancelled&&CH.renderer===job.renderer&&
+   !job.rendererState.closing&&(CH.draft.body||'f')===job.body&&CH.tab===job.tab&&
+   (job.tab!=='outfit'||CH.filter===job.filter);
+ }
+ function cancelThumbJob(){
+  if(CH.thumbTimer){clearTimeout(CH.thumbTimer);CH.thumbTimer=0;}
+  if(CH.thumbJob)CH.thumbJob.cancelled=true;
+ }
+ function syncThumbJob(){
+  const request=thumbRequest(),job=CH.thumbJob;
+  if(job){
+   if(!request||job.key!==request.key||job.renderer!==request.renderer)cancelThumbJob();
+   // Do not race shader polling or material disposal by starting another mannequin here.
+   return;
   }
-  rt.dispose(); CH.holder.rotation.y=spin0; CH.scene.background=bg0; CH.scene.remove(fill); fill.dispose();
-  applyRiderLook(R,Object.assign({},CH.draft,{hairStyle:style0}));
+  if(!request){if(CH.thumbTimer){clearTimeout(CH.thumbTimer);CH.thumbTimer=0;}return;}
+  if(CH.thumbTimer)return;
+  // Let the completed grid and input event paint before the first expensive construction.
+  CH.thumbTimer=setTimeout(()=>{CH.thumbTimer=0;const next=thumbRequest();if(next)runThumbJob(next);},32);
  }
-
- /* A separate mannequin makes the outfit cards: never dress the live preview while
-    asynchronous clothes are loading. Cached per body, with each look's own palette. */
- async function makeOutfitThumbs(){
-  const lib=G.horse.riderLib,body=CH.draft.body||'f';
-  if(!lib||CH.outfitThumbs[body]||CH.outfitJob)return;
-  const token={};CH.outfitJob=token;
-  let rt=null,rig=null;
+ async function thumbTurn(job){
+  await new Promise(resolve=>setTimeout(resolve,16));
+  return thumbCurrent(job);
+ }
+ async function compileThumb(job,scene,camera,rt){
+  if(!thumbCurrent(job))return false;
+  if(typeof job.renderer.compileAsync==='function'){
+   job.rendererState.compiles++;
+   try{
+    const renderer=job.renderer,target=renderer.getRenderTarget();let compiling;
+    // Program output color space/tone mapping depend on the current target.
+    // Bind only for the synchronous compile call, never while its promise is polling.
+    try{renderer.setRenderTarget(rt);compiling=renderer.compileAsync(scene,camera);}
+    finally{renderer.setRenderTarget(target);}
+    await compiling;
+   }finally{job.rendererState.compiles--;disposeRetiredThumbRenderer(job.rendererState);}
+   if(!thumbCurrent(job))return false;
+  }
+  return thumbCurrent(job);
+ }
+ function paintThumb(job,id,url){
+  if(!thumbCurrent(job))return;
+  thumbCache(job.body,job.tab)[id]=url;
+  const action=job.tab==='style'?'style:'+id:job.tab==='outfit'?'outfit:'+id:'accessory:'+job.tab+':'+id;
+  const card=$('chGrid').querySelector('[data-ch="'+action+'"]');
+  if(card){let img=card.querySelector('img');if(img)img.src=url;else{img=document.createElement('img');img.alt='';img.src=url;const icon=card.querySelector('.ic');if(icon)icon.replaceWith(img);else card.prepend(img);}}
+ }
+ function readThumb(job,scene,camera,rt,buf){
+  const renderer=job.renderer,target=renderer.getRenderTarget();
+  try{renderer.setRenderTarget(rt);renderer.render(scene,camera);renderer.readRenderTargetPixels(rt,0,0,rt.width,rt.height,buf);}
+  finally{renderer.setRenderTarget(target);}
+ }
+ function thumbPixels(width,height,exposure=1){
+  const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+  const ctx=canvas.getContext('2d'),pixels=ctx.createImageData(width,height),buf=new Uint8Array(width*height*4),lut=new Uint8Array(256);
+  for(let i=0;i<256;i++){const v=Math.min(1,i/255*exposure);lut[i]=Math.round(255*(v<=.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-.055));}
+  return {canvas,buf,url(quality){for(let y=0;y<height;y++)for(let x=0;x<width;x++){const a=((height-1-y)*width+x)*4,b=(y*width+x)*4;pixels.data[b]=lut[buf[a]];pixels.data[b+1]=lut[buf[a+1]];pixels.data[b+2]=lut[buf[a+2]];pixels.data[b+3]=255;}ctx.putImageData(pixels,0,0);return canvas.toDataURL('image/jpeg',quality);}};
+ }
+ async function runThumbJob(request){
+  const job={...request,id:++CH.thumbSerial,cancelled:false,rendererState:thumbRendererState(request.renderer)};
+  CH.thumbJob=job;
+  const slot=job.tab==='style'?'hairJob':job.tab==='outfit'?'outfitJob':'accessoryJob';CH[slot]=job;
+  let rig=null,rt=null;
   try{
-   const kit=await lib.kit(body);await lib.outfitFor(kit,'peasant');
-   if(!CH.open||CH.outfitJob!==token)return;
-   const W=144,H=192,buf=new Uint8Array(W*H*4),cv=document.createElement('canvas');cv.width=W;cv.height=H;
-   const ctx=cv.getContext('2d'),pixels=ctx.createImageData(W,H),lut=new Uint8Array(256);
-   for(let i=0;i<256;i++){const v=i/255;lut[i]=Math.round(255*(v<=0.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-0.055));}
+   if(!await thumbTurn(job))return;
+   const lib=G.horse.riderLib,kit=await lib.kit(job.body);
+   if(!thumbCurrent(job))return;
+   const cache=thumbCache(job.body,job.tab),items=thumbItems(job.body,job.tab,job.filter).filter(i=>!cache[i.id]);
+   if(!items.length)return;
+   const hair=job.tab==='style',outfit=job.tab==='outfit',neck=job.tab==='neckwear';
+   const W=outfit?144:192,H=192,pixels=thumbPixels(W,H,hair?1.15:1);
    rt=new THREE.WebGLRenderTarget(W,H);
-   const sc=new THREE.Scene();sc.background=new THREE.Color('#ddd8c8');
-   sc.add(new THREE.HemisphereLight(0xfff7e9,0x626758,2.0));
-   const light=new THREE.DirectionalLight(0xfff2e2,2.5);light.position.set(2,3,4);sc.add(light);
-   const cam=new THREE.PerspectiveCamera(30,W/H,0.05,20);cam.position.set(0,0.97,3.9);cam.lookAt(0,0.91,0);
-   const thumbs={};
-   for(const outfit of OUTFITS){
-    await lib.outfitFor(kit,outfit.id);
-    if(!CH.open||CH.outfitJob!==token)return;
-    rig=lib.build(kit,Object.assign({body,hairStyle:body==='f'?'ponytail':'short',hair:'#4a2e1c',skin:'#e3a37d',helmet:'none'},outfitPalette(outfit)));
-    await Promise.resolve();await Promise.resolve();
-    const idle=rig.action('idle');if(idle)idle.setEffectiveWeight(1);rig.mixer.update(0.05);
-    rig.root.rotation.y=0.22;sc.add(rig.root);
-    CH.renderer.setRenderTarget(rt);CH.renderer.render(sc,cam);CH.renderer.readRenderTargetPixels(rt,0,0,W,H,buf);CH.renderer.setRenderTarget(null);
-    for(let y=0;y<H;y++)for(let x=0;x<W;x++){const a=((H-1-y)*W+x)*4,b=(y*W+x)*4;pixels.data[b]=lut[buf[a]];pixels.data[b+1]=lut[buf[a+1]];pixels.data[b+2]=lut[buf[a+2]];pixels.data[b+3]=255;}
-    ctx.putImageData(pixels,0,0);thumbs[outfit.id]=cv.toDataURL('image/jpeg',0.86);
-    sc.remove(rig.root);rig.dispose();rig=null;
-    await new Promise(resolve=>setTimeout(resolve,0));
+   const sc=new THREE.Scene();sc.background=new THREE.Color(hair?'#e9dcbc':'#ddd8c8');
+   sc.add(new THREE.HemisphereLight(hair?0xe4ebff:0xfff7e9,hair?0x4a3e7a:0x626758,hair?1.35:2));
+   const light=new THREE.DirectionalLight(0xfff2e2,hair?2.3:2.5);light.position.set(...(hair?[1.6,3.2,3]:[2,3,4]));sc.add(light);
+   if(hair){const rim=new THREE.DirectionalLight(0xa9b8ff,1.3);rim.position.set(-2,2.6,-2.6);sc.add(rim);const fill=new THREE.DirectionalLight(0xfff6ea,2.4);fill.position.set(.8,1.8,2.2);sc.add(fill);}
+   const cam=new THREE.PerspectiveCamera(30,W/H,.05,20),head=new THREE.Vector3();
+   const neutral=hair?{body:job.body,helmet:'none',hair:'#765a46',skin:'#e3a37d',shirt:'#a19c95',pants:'#cfcac2',boots:'#8d8781',outfit:'riding',eyes:'brown',eyewear:'none',earrings:'none',neckwear:'none'}:
+    outfit?{body:job.body,hairStyle:job.body==='f'?'ponytail':'short',hair:'#4a2e1c',skin:'#e3a37d',helmet:'none'}:
+    {body:job.body,hairStyle:'lowbun',hair:'#68422d',skin:'#e3a37d',helmet:'none',outfit:'riding',shirt:'#3d4a6e',eyewear:'none',earrings:'none',neckwear:'none'};
+   const look=item=>hair?{...neutral,hairStyle:item.id}:outfit?{...neutral,...outfitPalette(item)}:{...neutral,[job.tab]:item.id};
+   // Connected outfits are already local factories. Keep native imported outfits supported.
+   if(outfit&&!kit.connectedWardrobe&&typeof lib.outfitFor==='function'){
+    await lib.outfitFor(kit,items[0].id);if(!thumbCurrent(job))return;
    }
-   if(CH.open&&CH.outfitJob===token){CH.outfitThumbs[body]=thumbs;if(CH.tab==='outfit'&&CH.draft.body===body)renderChar();}
-  }catch(e){if(CH.outfitJob===token)CH.outfitThumbs[body]={};console.warn('Wardrobe previews unavailable',e);}
-  finally{if(rig)rig.dispose();if(rt)rt.dispose();if(CH.outfitJob===token)CH.outfitJob=null;}
- }
-
- /* Accessories get their own close-up mannequin, so every card shows the actual piece. */
- async function makeAccessoryThumbs(slot){
-  const lib=G.horse.riderLib,body=CH.draft.body||'f',key=body+':'+slot;
-  if(!lib||CH.accessoryThumbs[key]||CH.accessoryJob)return;
-  const token={};CH.accessoryJob=token;let rig=null,rt=null;
-  try{
-   const kit=await lib.kit(body);
-   if(!CH.open||CH.accessoryJob!==token)return;
-   const S=192,buf=new Uint8Array(S*S*4),cv=document.createElement('canvas');cv.width=cv.height=S;
-   const ctx=cv.getContext('2d'),pixels=ctx.createImageData(S,S),lut=new Uint8Array(256);
-   for(let i=0;i<256;i++){const v=i/255;lut[i]=Math.round(255*(v<=.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-.055));}
-   rt=new THREE.WebGLRenderTarget(S,S);
-   const sc=new THREE.Scene();sc.background=new THREE.Color('#ddd8c8');sc.add(new THREE.HemisphereLight(0xfff7e9,0x626758,2));
-   const light=new THREE.DirectionalLight(0xfff2e2,2.5);light.position.set(2,3,4);sc.add(light);
-   const cam=new THREE.PerspectiveCamera(30,1,.05,20),neck=slot==='neckwear';
-   cam.position.set(0,(neck?1.50:1.66)+kit.proportionLift,neck?1.0:.78);cam.lookAt(0,(neck?1.43:1.65)+kit.proportionLift,0);
-   const base={body,hairStyle:'lowbun',hair:'#68422d',skin:'#e3a37d',helmet:'none',outfit:'riding',shirt:'#3d4a6e',eyewear:'none',earrings:'none',neckwear:'none'};
-   rig=lib.build(kit,base);sc.add(rig.root);rig.root.rotation.y=slot==='earrings'?.60:.16;
+   if(!await thumbTurn(job))return;
+   rig=lib.build(kit,look(items[0]));sc.add(rig.root);rig.root.rotation.y=hair?1.8:outfit?.22:job.tab==='earrings'?.60:.16;
    const idle=rig.action('idle');if(idle)idle.setEffectiveWeight(1);rig.mixer.update(.05);
-   const thumbs={};
-   for(const a of RIDER_ACCESSORIES[slot].filter(a=>a.id!=='none')){
-    rig.setLook({...base,[slot]:a.id});
-    CH.renderer.setRenderTarget(rt);CH.renderer.render(sc,cam);CH.renderer.readRenderTargetPixels(rt,0,0,S,S,buf);CH.renderer.setRenderTarget(null);
-    for(let y=0;y<S;y++)for(let x=0;x<S;x++){const i=((S-1-y)*S+x)*4,j=(y*S+x)*4;pixels.data[j]=lut[buf[i]];pixels.data[j+1]=lut[buf[i+1]];pixels.data[j+2]=lut[buf[i+2]];pixels.data[j+3]=255;}
-    ctx.putImageData(pixels,0,0);thumbs[a.id]=cv.toDataURL('image/jpeg',.9);
+   if(outfit){cam.position.set(0,.97,3.9);cam.lookAt(0,.91,0);}
+   else if(!hair){cam.position.set(0,(neck?1.50:1.66)+kit.proportionLift,neck?1:.78);cam.lookAt(0,(neck?1.43:1.65)+kit.proportionLift,0);}
+   for(const item of items){
+    if(!await thumbTurn(job))return;
+    if(outfit&&!kit.connectedWardrobe&&typeof lib.outfitFor==='function'){
+     await lib.outfitFor(kit,item.id);if(!thumbCurrent(job))return;
+    }
+    rig.setLook(look(item));
+    // Native imported outfit attachment can finish in a microtask, connected factories are synchronous.
+    await Promise.resolve();if(!thumbCurrent(job))return;
+    await Promise.resolve();if(!thumbCurrent(job))return;
+    rig.root.updateWorldMatrix(true,true);rig.updateHairMass?.();
+    if(hair){rig.bones.Head.getWorldPosition(head);head.y+=.04;cam.position.set(head.x+.07,head.y+.12,head.z+1);cam.lookAt(head.x,head.y-.035,head.z);}
+    if(!await compileThumb(job,sc,cam,rt))return;
+    // An input event queued during compilation gets a turn before the synchronous readback.
+    if(!await thumbTurn(job))return;
+    readThumb(job,sc,cam,rt,pixels.buf);
+    paintThumb(job,item.id,pixels.url((hair||outfit)?.86:.9));
    }
-   CH.accessoryThumbs[key]=thumbs;
-  }catch(e){console.warn('Accessory previews unavailable',e);CH.accessoryThumbs[key]={};}
-  finally{if(rig)rig.dispose();if(rt)rt.dispose();if(CH.accessoryJob===token){CH.accessoryJob=null;if(CH.open&&RIDER_ACCESSORIES[CH.tab])renderChar();}}
+  }catch(error){if(thumbCurrent(job)){CH.thumbFailed.add(job.key);console.warn('Character previews unavailable',error);}}
+  finally{
+   // No material is disposed or replaced while its compileAsync promise is polling it.
+   try{if(rig)rig.dispose();}catch(error){console.warn('Character preview cleanup failed',error);}
+   try{if(rt)rt.dispose();}catch(error){console.warn('Character preview target cleanup failed',error);}
+   if(CH[slot]===job)CH[slot]=null;
+   if(CH.thumbJob===job)CH.thumbJob=null;
+   syncThumbJob();
+  }
  }
 
  /* ---- the grid ---------------------------------------------------------------------- */
@@ -405,6 +463,8 @@ export function install(G){
   if(!CH.open)return;
   const s=G.save.fresh(); if(!s)return;
   const d=CH.draft, cat=CATS.find(c=>c[0]===CH.tab)||CATS[0];
+  CH.thumbs=thumbCache(d.body||'f','style');CH.thumbKey=d.body||'f';
+  syncThumbJob();
   lastCategory[cat[2]]=cat[0];
   chRoot.querySelectorAll('.ch-group').forEach(b=>{const on=b.dataset.ch==='group:'+cat[2];b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});
   chRoot.querySelectorAll('.ch-cat').forEach(b=>{const on=b.dataset.ch==='tab:'+CH.tab;b.hidden=b.dataset.chGroup!==cat[2];b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});
@@ -415,14 +475,12 @@ export function install(G){
   if(CH.tab==='outfit')$('chFilters').innerHTML=['All','Riding','Ranch','Everyday','Adventure'].map(c=>'<button class="ch-filter'+(CH.filter===c?' on':'')+'" data-ch="filter:'+c+'" aria-pressed="'+(CH.filter===c)+'">'+c+'</button>').join('');
   let h='';
   if(CH.tab==='style'){
-   if(CH.R&&CH.R.sk)makeThumbs();
    const cur=riderHairId(d.hairStyle,d.body);
    for(const hs of HAIRSTYLES.filter(x=>!x.body||x.body.includes(d.body||'f'))){
     const th=CH.thumbs[hs.id];
     h+='<button class="ch-card'+(cur===hs.id?' sel':'')+'" data-ch="style:'+hs.id+'">'+(th?'<img alt="" src="'+th+'">':'<span class="ic">'+SVGI(ICO.style)+'</span>')+'<span class="lb">'+esc(hs.label)+'</span></button>';
    }
   }else if(CH.tab==='outfit'){
-   makeOutfitThumbs();
    const selected=OUTFITS.find(o=>o.id===d.outfit)||OUTFITS[0],thumbs=CH.outfitThumbs[d.body||'f']||{};
    h+='<div class="ch-look-note"><strong>'+esc(selected.label)+'</strong>'+esc(selected.desc)+'<br>All '+OUTFITS.length+' looks are yours. Choose a look, then make it your own with colours.</div>';
    for(const o of OUTFITS.filter(o=>CH.filter==='All'||o.category===CH.filter)){
@@ -430,7 +488,6 @@ export function install(G){
     h+='<button class="ch-card'+(on?' sel':'')+'" data-ch="outfit:'+o.id+'" aria-pressed="'+on+'" title="'+esc(o.desc)+'">'+(thumbs[o.id]?'<img alt="" src="'+thumbs[o.id]+'">':'<span class="ic" style="font-size:34px;justify-content:center">'+o.icon+'</span>')+'<span class="lb">'+esc(o.label)+'</span></button>';
    }
   }else if(RIDER_ACCESSORIES[CH.tab]){
-   makeAccessoryThumbs(CH.tab);
    const thumbs=CH.accessoryThumbs[(d.body||'f')+':'+CH.tab]||{};
    h+='<div class="ch-look-note">Add the finishing touches. Each piece is free to mix with any outfit.</div>';
    for(const a of RIDER_ACCESSORIES[CH.tab]){
@@ -456,6 +513,9 @@ export function install(G){
  }
  const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
  function setDraft(patch){
+  // An identical card selection keeps the current preview and progressive grid intact.
+  // A same-outfit palette reset still applies whenever any requested colour differs.
+  if(Object.keys(patch).every(k=>Object.prototype.hasOwnProperty.call(CH.draft,k)&&CH.draft[k]===patch[k]))return;
   Object.assign(CH.draft,patch);
   CH.draft.hairStyle=riderHairId(CH.draft.hairStyle,CH.draft.body);
   /* a character of the other body is another character: build her; otherwise just dress this one */
@@ -481,20 +541,22 @@ export function install(G){
   $('chName').value=String(s.playerName||'');
   if(!CH.renderer)buildStage(); else sizeStage();
   stageRider();
-  CH.thumbKey=''; renderChar();
+  CH.thumbFailed.clear();renderChar();
   cancelAnimationFrame(CH.raf); CH.raf=requestAnimationFrame(frame);
   /* the thumbnails want her skeleton; draw the grid again once it is in */
   setTimeout(()=>{if(CH.open&&CH.tab==='style')renderChar();},250);
  }
  function closeChar(){
   if(!CH.open)return;
-  CH.open=false; CH.onBack=null; CH.outfitJob=null; CH.accessoryJob=null; chRoot.classList.remove('on'); document.body.classList.remove('se-char-open');
+  CH.open=false; CH.onBack=null; cancelThumbJob();
+  chRoot.classList.remove('on'); document.body.classList.remove('se-char-open');
   cancelAnimationFrame(CH.raf);
   if(CH.R){CH.holder.remove(CH.R.g);dropRider(CH.R);CH.R=null;}
-  /* a second GL context is not free: give it back */
-  try{for(const d of CH.disp||[])d.dispose();CH.renderer.dispose();CH.renderer.forceContextLoss();}catch(e){}
+  // compileAsync retains material-program references until its polling finishes.
+  // Hide the old stage immediately, but return its context only after that promise settles.
+  retireThumbRenderer(CH.renderer,CH.disp||[]);
   try{const cv=$('chCanvas');if(cv)cv.remove();}catch(e){}
-  CH.renderer=null; CH.scene=null; CH.thumbs={}; CH.thumbKey='';
+  CH.renderer=null; CH.scene=null; CH.disp=[];
  }
  function saveChar(){
   const d=CH.draft, name=String($('chName').value||'').trim().slice(0,14);
@@ -637,5 +699,5 @@ export function install(G){
  G.on('rebuild',()=>{refreshLocal();});
  G.on('boot',s=>{refreshLocal(s);});
  /* handles for QA */
- G.wardrobe={WARDROBE,OUTFITS,HAIRSTYLES,ACCESSORIES:RIDER_ACCESSORIES,SEASON_OUTFITS,PRESTIGE_SET,RIDER_NAMES,applyRiderLook,prestigeOwned,fitOf,missions:[M1,M2],openChar,closeChar,charState:()=>({open:CH.open,tab:CH.tab,draft:CH.draft&&Object.assign({},CH.draft),rider:!!CH.R,thumbs:Object.keys(CH.thumbs).length,outfitThumbs:Object.keys(CH.outfitThumbs[CH.draft&&CH.draft.body||'f']||{}).length})};
+ G.wardrobe={WARDROBE,OUTFITS,HAIRSTYLES,ACCESSORIES:RIDER_ACCESSORIES,SEASON_OUTFITS,PRESTIGE_SET,RIDER_NAMES,applyRiderLook,prestigeOwned,fitOf,missions:[M1,M2],openChar,closeChar,charState:()=>({open:CH.open,tab:CH.tab,draft:CH.draft&&Object.assign({},CH.draft),rider:!!CH.R,thumbs:Object.keys(CH.thumbs).length,outfitThumbs:Object.keys(CH.outfitThumbs[CH.draft&&CH.draft.body||'f']||{}).length,thumbnailJob:CH.thumbJob&&{id:CH.thumbJob.id,body:CH.thumbJob.body,tab:CH.thumbJob.tab,filter:CH.thumbJob.filter,cancelled:CH.thumbJob.cancelled},thumbnailScheduled:!!CH.thumbTimer,pendingShaderCompiles:CH.renderer?thumbRendererState(CH.renderer).compiles:0})};
 }
