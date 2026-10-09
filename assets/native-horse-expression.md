@@ -1,0 +1,11 @@
+# Native horse expressions
+
+The expression layer uses verified controls from the existing 677-bone native horse rig. It restores its temporary transforms before the next mixer pose, then adds restrained independent ear attention and chest breathing. Original animation clips, geometry, weights, inverse binds, actor position and leg controls remain unchanged.
+
+Blinking is enabled only on the three original models: White Western, Bay Western and Bay Sporthorse. Each eye's optical axis and central weighted eyelid surfaces determine its closing arcs. Sculpted `nativeVariant` conformations retain ears and breathing but deliberately disable blinking: their head shapes can move eyelid skin away from the unchanged skeletal pivots. `motion.state.expression.blinkSupported` reports this distinction. This does not claim new blinking on every breed.
+
+The creator's White idle retains its authored ears; the existing Bay idle retains its ears and breathing. Actions can receive the separate expressions, while lie-down receives no chest movement. Normal gaits receive facial blinking only, and authored animation with meaningful eyelid tracks takes precedence. Explicit diagnostic Rest receives no expressions. Each actor has a stable independent timing offset.
+
+Validation: `node tools/test-native-horse-expression.mjs` checks full skinned surfaces of the three originals plus Shire and Welsh conformations, lid closure, exact hoof/stirrup/eyeball positions, bounded tack movement, source immutability, actual source animation and cubic interpolation, Paw and lie-down ownership, native groom coexistence, deterministic varied frame rates, rest comparison, interruption, reset and disposal. The sampled original lid radius deviation is below 0.21 mm; tack displacement is below 1.22 mm and all sampled hoof/stirrup/eyeball-only displacement is zero. Central closed lid gaps are below 0.3 degrees. These are geometry checks, not a replacement for visual review.
+
+Creation scans the body only once for eyelid calibration (about 6–11 ms for each original on the development machine; about 0.4 ms for tested variants). Runtime uses ten existing controls, performs no geometry scan and skips skeleton updates when the sampled expressions have no visible offset.

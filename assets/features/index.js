@@ -161,7 +161,7 @@ import * as paidTack from './paid-tack.js?v=tack-summon-20261007';
    module instead of running a cached mix of old and new ones. Bump it (all of them at once) whenever a feature file changes. */
 import * as stats from './stats-progression.js?v=leafy-orchard-1';
 import * as roster from './horse-roster.js?v=wild-bond-1';
-import * as bond from './bond-personality-emotes.js?v=horse-actions-20261009';   // horse action readiness and rider gestures
+import * as bond from './bond-personality-emotes.js?v=horse-life-20261009';   // horse action readiness and rider gestures
 import * as mastery from './mastery-style.js?v=wild-bond-1';
 import * as tack from './tack-wardrobe.js?v=character-polish-20261009';   // versioned: the Character screen, then the character herself (outfits, eyes)
 import * as course from './course-engine.js?v=ranch-rush-1';

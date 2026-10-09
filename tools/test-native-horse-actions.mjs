@@ -43,6 +43,32 @@ function checkActionContactAndHolds(bundle,label=''){
 function animateBounds(root,bundle,phases,label=''){const mixer=new THREE.AnimationMixer(root),meshes=meshesIn(root),floor=skinMinimum(meshes);let worst=0;
  for(const clip of bundle.clips){const a=mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);a.clampWhenFinished=true;a.play();for(const phase of phases){mixer.setTime(phase*clip.duration);root.updateMatrixWorld(true);const delta=skinMinimum(meshes)-floor;worst=Math.min(worst,delta);assert(delta>-.006,label+' '+clip.name+' full skin floor error '+delta);}a.stop();}mixer.uncacheRoot(root);return worst;
 }
+function checkPawAndLook(root,bundle,label=''){
+ const body=meshesIn(root).find(m=>m.geometry.attributes.position.count===16159),point=name=>root.getObjectByName(name).getWorldPosition(new THREE.Vector3()),floor=skinMinimum([body]),size=(point('pelvis_08').y-floor)/1.60,samples={};
+ const boneNames={FL:'fingers_02_l_0208',FR:'fingers_02_r_0274',HL:'toes_02_l_0409',HR:'toes_02_r_0478'};
+ for(const [foot,name]of Object.entries(boneNames)){const toe=point(name),list=[];for(let i=0;i<body.geometry.attributes.position.count;i++){vec.fromBufferAttribute(body.geometry.attributes.position,i);body.applyBoneTransform(i,vec);vec.applyMatrix4(body.matrixWorld);if(vec.y<floor+.21*size&&Math.abs(vec.x-toe.x)<.13*size&&Math.abs(vec.z-toe.z)<.24*size)list.push({i,y:vec.y});}const bottom=Math.min(...list.map(x=>x.y));samples[foot]=list.filter(x=>x.y<bottom+.008*size).map(x=>x.i);assert(samples[foot].length>3,'Actual skin sole samples');}
+ function soles(){return Object.fromEntries(Object.entries(samples).map(([foot,indices])=>{const center=new THREE.Vector3();let minY=Infinity;for(const i of indices){vec.fromBufferAttribute(body.geometry.attributes.position,i);body.applyBoneTransform(i,vec);vec.applyMatrix4(body.matrixWorld);center.add(vec);minY=Math.min(minY,vec.y);}return [foot,{center:center.divideScalar(indices.length),minY}];}));}
+ const standing=soles(),head=root.getObjectByName('head_019'),restHead=head.getWorldQuaternion(new THREE.Quaternion()),mixer=new THREE.AnimationMixer(root);
+ function action(type){const clip=bundle.clips.find(c=>c.name===bundle.actions[type].clip),a=mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);a.clampWhenFinished=true;a.play();return {clip,a,at(p){mixer.setTime(p*clip.duration);root.updateMatrixWorld(true);return soles();}};}
+ const paw=action('paw');
+ for(const p of [.10,.20,.22,.29,.34,.39,.46,.59,.61,.68,.73,.78,.87,.96]){
+  const current=paw.at(p);for(const foot of ['FR','HL','HR']){assert(Math.abs(current[foot].minY-standing[foot].minY)<.002*size,label+' paw three supporting soles remain grounded at '+p);assert(Math.hypot(current[foot].center.x-standing[foot].center.x,current[foot].center.z-standing[foot].center.z)<.003*size,label+' paw support sole '+foot+' at '+p+' does not slide: '+current[foot].center.distanceTo(standing[foot].center));}
+ }
+ for(const [lift,contact,scrape]of [[.22,.29,.39],[.61,.68,.78]]){
+  const up=paw.at(lift).FL,reach=paw.at(contact).FL,back=paw.at(scrape).FL;
+  assert(up.minY-standing.FL.minY>.10*size,label+' each paw cycle lifts before reaching');
+  assert(reach.minY-standing.FL.minY>=-.001*size&&reach.minY-standing.FL.minY<.022*size,label+' paw lowers to its floor for each scrape');
+  assert(back.minY-standing.FL.minY>=-.001*size&&back.minY-standing.FL.minY<.022*size,label+' scrape remains close to the floor');
+  assert(reach.center.z-standing.FL.center.z>.20*size,label+' paw reaches forward');
+  assert(reach.center.z-back.center.z>.25*size,label+' each scrape travels backward');
+ }
+ paw.a.stop();root.updateMatrixWorld(true);
+ const look=action('look');
+ function headYaw(p){const current=look.at(p);for(const foot of Object.keys(samples))assert(current[foot].center.distanceTo(standing[foot].center)<.002*size,label+' look keeps all four feet planted');const delta=head.getWorldQuaternion(new THREE.Quaternion()).multiply(restHead.clone().invert()),forward=new THREE.Vector3(0,0,1).applyQuaternion(delta);return Math.atan2(forward.x,forward.z)*180/Math.PI;}
+ assert(headYaw(.30)>24,label+' look makes a clear first-side glance');assert(headYaw(.68)<-20,label+' look makes a distinct opposite-side glance');assert(Math.abs(headYaw(1))<.001,label+' look returns exactly to forward rest');
+ look.a.stop();mixer.uncacheRoot(root);root.updateMatrixWorld(true);
+ for(const descriptor of Object.values(bundle.actions))assert(typeof descriptor.description==='string'&&descriptor.description.length>20,'Accurate player-facing description available');
+}
 function checkLieRecovery(root,bundle){
  const clip=bundle.clips.find(c=>c.name===bundle.actions.liedown.clip),point=name=>root.getObjectByName(name).getWorldPosition(new THREE.Vector3());
  const lengths=()=>({front:point('upperarm_l_0204').distanceTo(point('fingers_02_l_0208')),hind:point('upperleg_l_0405').distanceTo(point('toes_02_l_0409')),chest:point('clavicle_l_0203').y-point('pelvis_08').y,hips:point('pelvis_08').y});
@@ -64,13 +90,13 @@ if(process.argv[1]?.endsWith('test-native-horse-actions.mjs')){
   const {root,body}=loadNativeHorseFixture(file),before=[];root.traverse(o=>before.push([o,...o.position.toArray(),...o.quaternion.toArray(),...o.scale.toArray()]));
   const geometry=Buffer.from(body.geometry.attributes.position.array.buffer).toString('base64'),binds=body.skeleton.boneInverses.map(m=>m.elements.slice());
   const start=performance.now(),profile={id,nativeBreed:true,nativeKind:'horse'},result=createNativeHorseActionClips({THREE,root,profile}),generationMs=performance.now()-start;
-  assert.equal(result.clips.length,7);assert.deepEqual(Object.keys(result.actions),['nuzzle','toss','graze','rear','bow','kick','liedown']);assert(result.actions.liedown.dismountedOnly);
+  assert.equal(result.clips.length,9);assert.deepEqual(Object.keys(result.actions),['nuzzle','toss','graze','rear','bow','kick','liedown','paw','look']);assert(result.actions.liedown.dismountedOnly);
   assert.equal(createNativeHorseActionClips({THREE,root,profile}),result,'Reuse a cached immutable prepared geometry');
   assert.deepEqual(createNativeHorseActionClips({THREE,root,profile:{...profile,nativeKind:'black-dragon'}}),{clips:[],actions:{}});
   for(const row of before)assert.deepEqual([...row[0].position.toArray(),...row[0].quaternion.toArray(),...row[0].scale.toArray()],row.slice(1),'Authoring preserves live rest transforms');
   assert.equal(Buffer.from(body.geometry.attributes.position.array.buffer).toString('base64'),geometry);assert.deepEqual(body.skeleton.boneInverses.map(m=>m.elements.slice()),binds);
   for(const stats of Object.values(result.diagnostics.clips))if(stats.maxContactErrorM!==null)assert(stats.maxContactErrorM<.002,'Supporting hoof fit');
-  checkActionContactAndHolds(result,id);
+  checkActionContactAndHolds(result,id);checkPawAndLook(root,result,id);
   const biggestStepDeg=checkTracks(result),getUpFloorErrorM=checkLieRecovery(root,result),floorErrorM=animateBounds(root,result,Array.from({length:33},(_,i)=>i/32));summaries.push({id,generationMs:Math.round(generationMs),biggestStepDeg,floorErrorM,getUpFloorErrorM});
  }
  const variants=JSON.parse(fs.readFileSync('assets/models/native-roster/manifest.json')).breeds;let worstVariantFloor=0,prior=null;
@@ -78,10 +104,10 @@ if(process.argv[1]?.endsWith('test-native-horse-actions.mjs')){
   const {root}=loadNativeHorseFixture('review/native-trot-reference-kit/white/model.glb'),meshes=meshesIn(root),binary=fs.readFileSync('assets/'+variant.file);
   for(const record of variant.meshes){const mesh=meshes.find(m=>m.geometry.attributes.position.count===record.vertexCount),p=mesh.geometry.attributes.position,delta=record.positionDelta;for(let i=0;i<delta.count;i++)p.array[i]+=binary.readInt16LE(delta.byteOffset+i*2)*delta.scale;}
   const result=createNativeHorseActionClips({THREE,root,profile:{id,nativeBreed:true,nativeKind:'horse',nativeRoster:true,nativeVariant:variant}});assert.notEqual(result,prior,'Different prepared conformation cannot reuse another mesh contact fit');prior=result;
-  checkTracks(result);checkActionContactAndHolds(result,id);
+  checkTracks(result);checkActionContactAndHolds(result,id);checkPawAndLook(root,result,id);
   if(id==='shire')assert(result.diagnostics.clips.graze.maxGrazeNeckReductionDeg>.1,'Shire longer muzzle receives its measured grazing correction');
-  worstVariantFloor=Math.min(worstVariantFloor,animateBounds(root,result,[0,.125,.25,.45,.60,.75,.875,1],id));
+  worstVariantFloor=Math.min(worstVariantFloor,animateBounds(root,result,[0,.125,.20,.25,.29,.34,.39,.45,.60,.68,.73,.75,.78,.875,1],id));
  }
  console.log(JSON.stringify({nativeProfiles:summaries,conformations:Object.keys(variants).length,worstVariantFloor},null,2));
- console.log('Native horse actions: original binds/meshes, rest endpoints, bounded pose steps, full body/hair/tack clearance, conformation cache isolation and 25 breed appearances passed.');
+ console.log('Native horse actions: original binds/meshes, rest endpoints, bounded pose steps, full body/hair/tack clearance, conformation cache isolation, two actual hoof scrapes, opposing glances, and 25 breed appearances passed.');
 }
