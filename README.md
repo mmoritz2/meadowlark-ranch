@@ -506,6 +506,16 @@ unchanged. This uses the existing flower geometry and instance capacity; only
 live flower counts increase. `test-pastoral-fields`, `test-meadow-tufts` and
 `test-west-meadow` cover the shared growth response and preserved field centres.
 
+Close pasture grass uses three original modeled forms: arched fescue, low bowed
+leaves and taller seed-bearing tufts. Stable patches mix them at existing grass
+roots while retaining wind, shadows, path clearance and the current triangle
+budget. High and Medium use two extra instance draws; Low and VR draw the
+original cover. The three forms reserve roughly 6.8 MiB more instance buffers
+than the previous single form at every graphics tier. Only active family rows upload during repacking. No textures or
+materials are added. `tools/test-grass-families.mjs` and
+`tools/test-mixed-sward-production.mjs` cover geometry, source preservation,
+quality changes, upload ownership and disposal. Mobile frame rate is unverified.
+
 An original open-basin stone fountain, four beds with 117 periwinkle plants,
 three benches, five lanterns and three budgeted CC0 scan trees furnish the
 square. One orchard tree moves off the existing through-road; its harvesting
