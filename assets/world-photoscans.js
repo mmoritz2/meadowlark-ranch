@@ -1,3 +1,5 @@
+import {applyIslandLeafSurfaces} from './island-leaf-surfaces.mjs?v=island-leaf-surfaces-1';
+import {patchSummerLeafPigment,isSummerLeafMaterial} from './summer-leaf-pigment.mjs?v=summer-leaf-pigment-1';
 import {SETTLEMENT_WOODLAND_BELTS,SETTLEMENT_WOODLAND_MAX,terrainAwareWoodEnvelope,settlementWoodlandCandidates,settlementWoodlandPlants} from './settlement-woodland.mjs?v=settlement-woodland-1';
 import {coyoteCoverDryWeight} from './biome-weights.mjs?v=dry-foothills-1';
 import {selectPastoralWoodland,isOrdinaryTrunkCircle} from './pastoral-woodland.mjs?v=pastoral-woodland-1';
@@ -80,6 +82,10 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     mat.envMapIntensity=foliage?.48:.68;
     for(const key of ['map','normalMap','roughnessMap','metalnessMap','aoMap'])if(mat[key])mat[key].anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
     if(!foliage)return;
+    // Detailed scan textures lose small leaves under mip filtering. The lower
+    // coverage threshold retains those sprays; wood and source-bake masks stay exact.
+    // The custom depth material below inherits this same runtime threshold.
+    if(isSummerLeafMaterial(mat.name))mat.alphaTest=.22;
     enableOpaqueFoliageCoverage(THREE,mat);mat.side=THREE.DoubleSide;mat.shadowSide=THREE.DoubleSide;
     // Thin needle cards receive light across a canopy, not like solid bark.
     mat.aoMapIntensity=.45;mat.normalScale.multiplyScalar(.55);
@@ -95,7 +101,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         #endif`);
     };
     mat.onBeforeCompile=(sh,activeRenderer)=>{
-      deform(sh);patchSeasonalFoliage(sh);if(mat.userData.hasCanopyShade)patchCanopyShade(sh);
+      deform(sh);patchSummerLeafPigment(sh,mat.name);patchSeasonalFoliage(sh);if(mat.userData.hasCanopyShade)patchCanopyShade(sh);
       sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
         vec3 canopyUp=normalize(mat3(viewMatrix)*vec3(0.0,1.0,0.0));
         normal=normalize(mix(normal,canopyUp,.42));`);
@@ -107,7 +113,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
         #include <opaque_fragment>`);
       patchFoliageCoverage(sh,activeRenderer);
     };
-    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v5-'+!!mat.userData.hasCanopyShade;
+    mat.customProgramCacheKey=()=> 'photoscan-seasonal-foliage-v6-'+!!mat.userData.hasCanopyShade+'-summer-leaf-pigment-1-'+isSummerLeafMaterial(mat.name);
     const depth=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:mat.map,alphaTest:mat.alphaTest,side:THREE.DoubleSide});
     depth.onBeforeCompile=deform;depth.customProgramCacheKey=()=> 'photoscan-foliage-depth-v1';
     mat.userData.scanDepth=depth;
@@ -116,6 +122,9 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
     if(loaded.has(id))return loaded.get(id);
     const asset=await loader.loadAsync('./assets/models/world/realism/'+id+'.glb'+(id==='upright_broadleaf_01'?'?v=full-crown-2':''));
     asset.scene.updateMatrixWorld(true);
+    if(id==='island_tree_01')asset.scene.traverse(o=>{if(o.isMesh&&o.material.name==='island_tree_01_leaves'){
+      (state.leafSurfaces??={})[id]=applyIslandLeafSurfaces(THREE,o.geometry);
+    }});
     const canopyStarted=performance.now(),canopyShade=prepareCanopyShade(THREE,asset.scene);
     if(canopyShade)(state.canopyShading??={})[id]={...canopyShade,prepareMs:performance.now()-canopyStarted};
     const mats=new Set();asset.scene.traverse(o=>{if(o.isMesh)for(const mat of Array.isArray(o.material)?o.material:[o.material])mats.add(mat);});
@@ -156,7 +165,7 @@ export function installWorldPhotoscans(G,{seedTrees=[],rocks=[],pinePoints=[]}={
   function patch(mesh,x,z,range=150){detailPatches.push({mesh,x,z,range});}
   let treeMeshes=[],treeCards=[];
   async function installTrees(){
-    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=full-crown-2').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
+    const catalog=await fetch('./assets/models/world/realism/tree-impostors.json?v=summer-canopy-surfaces-1').then(r=>{if(!r.ok)throw Error('Tree view catalog unavailable');return r.json();});
     const broad=await load('tree_small_02'),pine=await load('fir_sapling_medium'),mature=await load('pine_tree_01'),leafy=await load('island_tree_01'),woodland=await load('jacaranda_tree');
     const specs=[['tree_small_02',-1,broad,'broadleaf'],
       ...pine.children.map((root,i)=>['fir_sapling_medium',i,root,'pine-'+i]),
