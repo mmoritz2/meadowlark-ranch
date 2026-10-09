@@ -28,6 +28,18 @@ function checkTracks(bundle){
  }
  assert(biggestStep<18,'No IK branch flips: '+biggestStep);return biggestStep;
 }
+function checkActionContactAndHolds(bundle,label=''){
+ const graze=bundle.clips.find(c=>c.name===bundle.actions.graze.clip),pelvis=graze.tracks.find(t=>t.name==='pelvis_08.position');
+ for(let i=0;i<pelvis.values.length;i++)assert(Math.abs(pelvis.values[i]-pelvis.values[i%3])<1e-8,label+' grazing never lifts or translates the horse to hide a muzzle collision');
+ const g=bundle.diagnostics.clips.graze;assert(Number.isFinite(g.minMuzzleY)&&g.minMuzzleY>=bundle.diagnostics.floorY-.0001,label+' posed muzzle stays above its actual sole floor');
+ assert(g.maxGrazeNeckReductionDeg>=0&&g.maxGrazeNeckReductionDeg<10,label+' grazing keeps the original pose with only a bounded neck adjustment');
+ for(const [type,stats]of Object.entries(bundle.diagnostics.clips))if(stats.maxContactErrorM!==null)assert(stats.maxContactErrorM<.002,label+' '+type+' supporting hooves remain planted');
+ for(const type of ['rear','bow','liedown']){
+  const clip=bundle.clips.find(c=>c.name===bundle.actions[type].clip),head=clip.tracks.find(t=>t.name==='head_019.quaternion'),p=type==='liedown'?[.46,.64]:[.34,.58];
+  const a=new THREE.Quaternion().fromArray(head.createInterpolant().evaluate(p[0]*clip.duration)),b=new THREE.Quaternion().fromArray(head.createInterpolant().evaluate(p[1]*clip.duration)),degrees=a.angleTo(b)*180/Math.PI;
+  assert(degrees>.05&&degrees<2,label+' '+type+' held pose has restrained living movement, not a frozen hold or broad sway: '+degrees);
+ }
+}
 function animateBounds(root,bundle,phases,label=''){const mixer=new THREE.AnimationMixer(root),meshes=meshesIn(root),floor=skinMinimum(meshes);let worst=0;
  for(const clip of bundle.clips){const a=mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);a.clampWhenFinished=true;a.play();for(const phase of phases){mixer.setTime(phase*clip.duration);root.updateMatrixWorld(true);const delta=skinMinimum(meshes)-floor;worst=Math.min(worst,delta);assert(delta>-.006,label+' '+clip.name+' full skin floor error '+delta);}a.stop();}mixer.uncacheRoot(root);return worst;
 }
@@ -58,6 +70,7 @@ if(process.argv[1]?.endsWith('test-native-horse-actions.mjs')){
   for(const row of before)assert.deepEqual([...row[0].position.toArray(),...row[0].quaternion.toArray(),...row[0].scale.toArray()],row.slice(1),'Authoring preserves live rest transforms');
   assert.equal(Buffer.from(body.geometry.attributes.position.array.buffer).toString('base64'),geometry);assert.deepEqual(body.skeleton.boneInverses.map(m=>m.elements.slice()),binds);
   for(const stats of Object.values(result.diagnostics.clips))if(stats.maxContactErrorM!==null)assert(stats.maxContactErrorM<.002,'Supporting hoof fit');
+  checkActionContactAndHolds(result,id);
   const biggestStepDeg=checkTracks(result),getUpFloorErrorM=checkLieRecovery(root,result),floorErrorM=animateBounds(root,result,Array.from({length:33},(_,i)=>i/32));summaries.push({id,generationMs:Math.round(generationMs),biggestStepDeg,floorErrorM,getUpFloorErrorM});
  }
  const variants=JSON.parse(fs.readFileSync('assets/models/native-roster/manifest.json')).breeds;let worstVariantFloor=0,prior=null;
@@ -65,7 +78,9 @@ if(process.argv[1]?.endsWith('test-native-horse-actions.mjs')){
   const {root}=loadNativeHorseFixture('review/native-trot-reference-kit/white/model.glb'),meshes=meshesIn(root),binary=fs.readFileSync('assets/'+variant.file);
   for(const record of variant.meshes){const mesh=meshes.find(m=>m.geometry.attributes.position.count===record.vertexCount),p=mesh.geometry.attributes.position,delta=record.positionDelta;for(let i=0;i<delta.count;i++)p.array[i]+=binary.readInt16LE(delta.byteOffset+i*2)*delta.scale;}
   const result=createNativeHorseActionClips({THREE,root,profile:{id,nativeBreed:true,nativeKind:'horse',nativeRoster:true,nativeVariant:variant}});assert.notEqual(result,prior,'Different prepared conformation cannot reuse another mesh contact fit');prior=result;
-  checkTracks(result);worstVariantFloor=Math.min(worstVariantFloor,animateBounds(root,result,[0,.125,.25,.45,.75,.875,1],id));
+  checkTracks(result);checkActionContactAndHolds(result,id);
+  if(id==='shire')assert(result.diagnostics.clips.graze.maxGrazeNeckReductionDeg>.1,'Shire longer muzzle receives its measured grazing correction');
+  worstVariantFloor=Math.min(worstVariantFloor,animateBounds(root,result,[0,.125,.25,.45,.60,.75,.875,1],id));
  }
  console.log(JSON.stringify({nativeProfiles:summaries,conformations:Object.keys(variants).length,worstVariantFloor},null,2));
  console.log('Native horse actions: original binds/meshes, rest endpoints, bounded pose steps, full body/hair/tack clearance, conformation cache isolation and 25 breed appearances passed.');

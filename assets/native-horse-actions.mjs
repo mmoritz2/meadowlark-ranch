@@ -43,6 +43,10 @@ export function createNativeHorseActionClips({THREE,root,profile}={}){
  function landmark(index,mesh=body){const attrs=mesh.geometry.attributes,p=V().fromBufferAttribute(attrs.position,index),influences=[];for(let c=0;c<4;c++){const weight=attrs.skinWeight.getComponent(index,c);if(weight>0){const j=attrs.skinIndex.getComponent(index,c);influences.push({i:byObject.get(mesh.skeleton.bones[j]),weight,p:p.clone().applyMatrix4(mesh.skeleton.boneInverses[j])});}}return {index,influences};}
  function skin(v,out=V()){out.set(0,0,0);for(const s of v.influences)out.addScaledVector(scratchV.copy(s.p).applyMatrix4(world(s.i)),s.weight);return out;}
  const all=Array.from({length:pos.count},(_,i)=>landmark(i)),standing=all.map(l=>skin(l)),floor=Math.min(...standing.map(p=>p.y));
+ const headIndex=byName.get('head_019'),muzzleBones=new Set();
+ for(let i=0;i<objects.length;i++){let parent=i;while(parent>=0&&parent!==headIndex){if(/lip|jaw|nostril|mouth/i.test(objects[parent].name)){muzzleBones.add(i);break;}parent=parents[parent];}}
+ const muzzle=all.filter(l=>l.influences.some(s=>s.weight>.25&&muzzleBones.has(s.i)));
+ const muzzleFloor=()=>{let min=Infinity;for(const l of muzzle)min=Math.min(min,skin(l).y);return min;};
  const pelvisRest=new THREE.Vector3().setFromMatrixPosition(restWorld[pelvis]),size=(pelvisRest.y-floor)/1.60;
  const clearance=all.slice();for(const mesh of objects.filter(o=>o.isSkinnedMesh&&[13895,5092,23514].includes(o.geometry.attributes.position.count)))for(let i=0;i<mesh.geometry.attributes.position.count;i++){const l=landmark(i,mesh);if(skin(l).y<floor+1.35*size)clearance.push(l);}
  const feet={};
@@ -75,16 +79,20 @@ export function createNativeHorseActionClips({THREE,root,profile}={}){
  }
  function pose(type,p){
   reset();const e=envelope(p,.24,.68),eFast=envelope(p,.22,.65),goals=Object.fromEntries(Object.entries(feet).map(([k,f])=>[k,{y:f.bottom,z:f.center.z,pitch:0,bias:Array(f.solve.length).fill(0),support:true}]));
-  let pitch=0,drop=0,shift=0,neck=0,head=0,yaw=0,tail=0,foldFront=0,foldHind=0;
+  let pitch=0,drop=0,shift=0,neck=0,head=0,yaw=0,tail=0,foldFront=0,foldHind=0,bodyBreath=0;
+  // Small, eased living motion during held poses; feet are solved afterward.
+  // The windows leave the approach, recovery and exact rest endpoints intact.
+  const held=smooth((p-.24)/.08)*(1-smooth((p-.60)/.08));
+  const breath=held*Math.sin((p-.24)*Math.PI*2/.70);
   if(type==='nuzzle'){neck=20*D*e;head=26*D*e;yaw=11*D*e*Math.sin(Math.PI*clamp((p-.10)/.80));}
   if(type==='toss'){const wave=Math.sin(2*Math.PI*clamp((p-.16)/.63));neck=-8*D*eFast*wave;head=-16*D*eFast*wave;yaw=7*D*eFast*Math.sin(3*Math.PI*p);}
   if(type==='graze'){neck=106*D*e;head=40*D*e;}
   if(type==='rear'){
-   pitch=-37*D*e;drop=-.055*size*e;shift=-.13*size*e;neck=pitch-10*D*e;head=pitch+3*D*e;tail=-18*D*e;
+   pitch=-37*D*e+.35*D*breath;drop=-.055*size*e+.003*size*breath;shift=-.13*size*e+.002*size*breath;neck=pitch-10*D*e+.5*D*breath;head=pitch+3*D*e+.8*D*breath;tail=-18*D*e;
    for(const k of ['FL','FR']){const g=goals[k];g.y+=.88*size*e;g.z-=.24*size*e;g.pitch=78*D*e;g.bias=[-.10,-.38,-.58,1.75].map(v=>v*e);g.support=false;}
   }
   if(type==='bow'){
-   pitch=4*D*e;drop=-.08*size*e;shift=-.04*size*e;neck=58*D*e;head=50*D*e;
+   pitch=4*D*e+.20*D*breath;drop=-.08*size*e+.002*size*breath;shift=-.04*size*e;neck=58*D*e+.45*D*breath;head=50*D*e+.65*D*breath;
    goals.FL.y+=.35*size*e;goals.FL.z-=.30*size*e;goals.FL.pitch=80*D*e;goals.FL.bias=[-.1,-.4,-.5,1.85].map(v=>v*e);goals.FL.support=false;
    goals.FR.z+=.10*size*e;goals.FR.pitch=-5*D*e;goals.FR.bias=[0,-.1,.1,0].map(v=>v*e);
   }
@@ -104,14 +112,28 @@ export function createNativeHorseActionClips({THREE,root,profile}={}){
     pitch=(2*foldHind-28*(1-foldFront)*foldHind)*D;drop=-.96*size*foldHind;shift=-.04*size*foldHind;
     neck=(8*foldHind-8*(1-foldFront)*foldHind)*D;head=(9*foldHind-6*(1-foldFront)*foldHind)*D;tail=64*D*foldHind-pitch;
    }
-
+   const resting=smooth((p-.38)/.07)*(1-smooth((p-.60)/.06));
+   const slowBreath=resting*Math.sin((p-.38)*Math.PI*2/.60);
+   bodyBreath=.28*D*slowBreath;neck+=.45*D*slowBreath;head+=.65*D*slowBreath;
   }
   movePelvis(new THREE.Vector3(0,drop,shift));absolute(pelvis,pitch);
+  if(bodyBreath){absolute(byName.get('spine_03_011'),pitch+bodyBreath*.5);absolute(byName.get('spine_04_012'),pitch+bodyBreath);}
   // Neck rotations are absolute source-frame angles, distributed gradually
   // over the existing chain instead of compounding one large local bend.
-  NECK.forEach((name,i)=>absolute(byName.get(name),pitch+(neck-pitch)*(type==='graze'?(i===0?.68:i===1?.92:1):(i+1)/NECK.length),yaw*(i+1)/NECK.length));
-  absolute(byName.get('head_019'),head,yaw);if(tail)relative(byName.get('tail_01_0367'),tail);if(type==='liedown'){relative(byName.get('tail_02_0368'),-5*D*foldHind);relative(byName.get('tail_03_0369'),-3*D*foldHind);}
-  if(type==='graze'&&e>.01){const jaw=byName.get('jaw_020');relative(jaw,2*D*e*(.5+.5*Math.sin(p*48)));}
+  function poseNeck(factor=1){
+   NECK.forEach((name,i)=>absolute(byName.get(name),pitch+(neck-pitch)*factor*(type==='graze'?(i===0?.68:i===1?.92:1):(i+1)/NECK.length),yaw*(i+1)/NECK.length));
+   absolute(headIndex,head,yaw);
+  }
+  poseNeck();if(tail)relative(byName.get('tail_01_0367'),tail);if(type==='liedown'){relative(byName.get('tail_02_0368'),-5*D*foldHind);relative(byName.get('tail_03_0369'),-3*D*foldHind);}
+  let grazeNeckReductionDeg=0,minMuzzleY=null;
+  if(type==='graze'&&e>.01){
+   const jaw=byName.get('jaw_020');relative(jaw,2*D*e*(.5+.5*Math.sin(p*48)));
+   const target=floor+.003*size;
+   // Broader/longer muzzles need slightly less bend. Fit the existing neck
+   // rotations to the actual posed lip/jaw skin; never lift the actor or feet.
+   minMuzzleY=muzzleFloor();
+   if(minMuzzleY<target){let lo=0,hi=1;for(let i=0;i<12;i++){const mid=(lo+hi)*.5;poseNeck(mid);if(muzzleFloor()<target)hi=mid;else lo=mid;}poseNeck(lo);grazeNeckReductionDeg=Math.abs(neck-pitch)*(1-lo)/D;minMuzzleY=muzzleFloor();}
+  }
   let maxError=0,minSole=Infinity;const footReport={};for(const [name,foot]of Object.entries(feet)){
    if(type==='liedown'){
     const weight=foot.front?foldFront:foldHind;
@@ -126,17 +148,17 @@ export function createNativeHorseActionClips({THREE,root,profile}={}){
   // The folded rest keeps the actual body skin clear of the ground; this
   // correction belongs to the pose's pelvis track, never the gameplay actor.
   let groundCorrection=0;if(type==='liedown'&&p>0&&p<1){let minimum=Infinity;for(const l of clearance)minimum=Math.min(minimum,skin(l).y);groundCorrection=Math.max(0,floor+.001*size*e-minimum);if(groundCorrection){movePelvis(new THREE.Vector3(0,drop+groundCorrection,shift));minSole+=groundCorrection;for(const [name,rr]of Object.entries(footReport)){rr.minY+=groundCorrection;if(rr.support)maxError=Math.max(maxError,rr.error+groundCorrection);}}}
-  return {maxError,minSole,footReport,groundCorrection};
+  return {maxError,minSole,footReport,groundCorrection,grazeNeckReductionDeg,minMuzzleY};
  }
  const clips=[],actions={},diagnostics={source:'Original WildMesh677 one-shot authoring',floorY:floor,clips:{}};
  for(const [type,durationS]of Object.entries(DURATIONS)){
-  poseSeeds={};useSeed=type==='bow';const frames=Math.ceil(durationS*20),times=Array.from({length:frames+1},(_,i)=>i/frames*durationS),quaternions=new Map(changed.map(i=>[i,[]])),positions=[];let maxContactErrorM=0,minSoleY=Infinity,maxGroundCorrectionM=0;const feetReport={};
+  poseSeeds={};useSeed=type==='bow';const frames=Math.ceil(durationS*20),times=Array.from({length:frames+1},(_,i)=>i/frames*durationS),quaternions=new Map(changed.map(i=>[i,[]])),positions=[];let maxContactErrorM=0,minSoleY=Infinity,maxGroundCorrectionM=0,maxGrazeNeckReductionDeg=0,minMuzzleY=Infinity;const feetReport={};
   for(let k=0;k<=frames;k++){
-   if(k===0||k===frames)reset();else {const r=pose(type,k/frames);maxContactErrorM=Math.max(maxContactErrorM,r.maxError);minSoleY=Math.min(minSoleY,r.minSole);maxGroundCorrectionM=Math.max(maxGroundCorrectionM,r.groundCorrection);for(const [name,rr]of Object.entries(r.footReport)){if(!feetReport[name]||rr.error>feetReport[name].error)feetReport[name]={...rr,phase:k/frames};}}
+   if(k===0||k===frames)reset();else {const r=pose(type,k/frames);maxContactErrorM=Math.max(maxContactErrorM,r.maxError);minSoleY=Math.min(minSoleY,r.minSole);maxGroundCorrectionM=Math.max(maxGroundCorrectionM,r.groundCorrection);maxGrazeNeckReductionDeg=Math.max(maxGrazeNeckReductionDeg,r.grazeNeckReductionDeg);if(r.minMuzzleY!==null)minMuzzleY=Math.min(minMuzzleY,r.minMuzzleY);for(const [name,rr]of Object.entries(r.footReport)){if(!feetReport[name]||rr.error>feetReport[name].error)feetReport[name]={...rr,phase:k/frames};}}
    for(const i of changed){const values=quaternions.get(i),q=localQ[i].clone();if(values.length&&q.dot(new THREE.Quaternion().fromArray(values,values.length-4))<0)q.set(-q.x,-q.y,-q.z,-q.w);values.push(...q.toArray());}positions.push(...localP[pelvis].toArray());
   }
   const name='Native Horse Action | '+LABELS[type],tracks=changed.map(i=>new THREE.QuaternionKeyframeTrack(objects[i].name+'.quaternion',times,quaternions.get(i)));
-  tracks.push(new THREE.VectorKeyframeTrack('pelvis_08.position',times,positions));clips.push(new THREE.AnimationClip(name,durationS,tracks));actions[type]={clip:name,durationS,label:LABELS[type],...(type==='liedown'?{dismountedOnly:true}:{})};diagnostics.clips[type]={maxContactErrorM:type==='liedown'?null:maxContactErrorM,contactBasis:type==='liedown'?'Body and low tack clearance; folded hooves are not support contacts':'Skinned sole support targets',minSoleY,frames:frames+1,maxGroundCorrectionM,feet:feetReport};
+  tracks.push(new THREE.VectorKeyframeTrack('pelvis_08.position',times,positions));clips.push(new THREE.AnimationClip(name,durationS,tracks));actions[type]={clip:name,durationS,label:LABELS[type],...(type==='liedown'?{dismountedOnly:true}:{})};diagnostics.clips[type]={maxContactErrorM:type==='liedown'?null:maxContactErrorM,contactBasis:type==='liedown'?'Body and low tack clearance; folded hooves are not support contacts':'Skinned sole support targets',minSoleY,frames:frames+1,maxGroundCorrectionM,...(type==='graze'?{maxGrazeNeckReductionDeg,minMuzzleY}:{}),feet:feetReport};
  }
  reset();const result={clips,actions,diagnostics};if(!cached){cached=new Map();cache.set(body.geometry,cached);}cached.set(key,result);return result;
 }

@@ -14,11 +14,17 @@ export function receiveNativeAction(rig,packet,{wild=false}={}){
  const motion=rig?.heroMotion;
  if(!motion?.startAction||!packet||!Number.isSafeInteger(packet.seq)||packet.seq<=0||packet.seq<(rig.receivedNativeActionSeq||0))return false;
  if(packet.type===null){
-  rig.receivedNativeActionSeq=packet.seq;motion.cancelAction();rig.emote=null;return true;
+  rig.receivedNativeActionSeq=packet.seq;
+  // A peer may finish slightly ahead of our local playback. Keep its required
+  // get-up instead of replacing folded legs with a short standing blend.
+  if(!motion.blocksTravel){motion.cancelAction();rig.emote=null;}
+  return true;
  }
  const record=motion.actionDescriptor(packet.type);
  if(!record||record.dismountedOnly&&wild!==true||!Number.isFinite(packet.elapsedS)||packet.elapsedS<0||packet.elapsedS>=record.durationS||rig.nativeFlying)return false;
- if(packet.seq===rig.receivedNativeActionSeq)return false;
+ // Leave the old action intact; a following position packet can start the
+ // newer action at its elapsed time once this horse has fully recovered.
+ if(packet.seq===rig.receivedNativeActionSeq||motion.blocksTravel)return false;
  if(motion.state.action)motion.cancelAction();
  if(!motion.startAction(packet.type,{elapsedS:packet.elapsedS}))return false;
  rig.receivedNativeActionSeq=packet.seq;rig.nativeActionSeatActive=true;

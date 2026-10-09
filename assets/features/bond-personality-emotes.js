@@ -10,8 +10,30 @@
      G.horse.horseEmotes.apply(rig,emote,env,t)   G.horse.riderEmote(type)   G.horse.RIDER_EMOTES
      RIG.emote = {type,t,dur}  on the ridden rig; remote rigs mirror it through the /pos packet (em, rem).
    Nothing runs at import time. */
-import {syncNativeActionEmote,nativeActionPacket,receiveNativeAction} from '../native-action-runtime.mjs?v=riding-modes-1';
+import {syncNativeActionEmote,nativeActionPacket,receiveNativeAction} from '../native-action-runtime.mjs?v=horse-actions-20261009';
 export const id='bond-personality-emotes';
+
+// Read the actual action actor: a parked horse can still be loading after dismount.
+export function horseActionReadiness(G){
+ const H=G.horse||{},player=H.player||{},mounted=H.RIG?.(),onFoot=!!(player.onFoot||G.onFoot?.on),parked=onFoot?G.onFoot?.state?.().horse:null;
+ const target=onFoot?G.onFoot?.horseActionTarget?.():mounted,native=!!(target?.profile?.nativeBreed||mounted?.profile?.nativeBreed),motion=target?.heroMotion;
+ const supported=native?[...(motion?.supportedActions||(onFoot&&!target?mounted?.heroMotion?.supportedActions:[])||[])]:Object.keys(G.tables?.EMOTES||{}).filter(k=>k!=='graze');
+ const action=motion?.state?.action||motion?.action||target?.emote||null;
+ const label=type=>motion?.actionDescriptor?.(type)?.label||G.tables?.EMOTES?.[type]?.label||type;
+ let status='Choose an action. Your horse returns to idle when it finishes.',blocked=false;
+ if(parked?.pending||!target||mounted?.ready===false||mounted?.loadingBreed){status='Preparing your horse…';blocked=true;}
+ else if(action){status=label(action.type)+(action.type==='liedown'?' · resting and getting up':' · in progress');blocked=true;}
+ else if(parked?.departure||motion?.blocksTravel||motion?.state?.blocksTravel||onFoot&&motion?.state?.transitioning){status='Your horse is getting ready. Please wait a moment.';blocked=true;}
+ else if(!onFoot&&(Math.abs(player.speed||0)>(native ? .25 : .6)||(player.y||0)>(native ? .01 : 0)||player.flying||motion?.mode==='jump')){status='Come to a halt on the ground to try an action.';blocked=true;}
+ else if(!supported.length){status='This horse has no actions available.';blocked=true;}
+ return{target,native,supported,action,status,blocked};
+}
+export function performHorsePanelAction(G,type){
+ const accepted=!!G.horse?.horseEmote?.(type);
+ if(accepted)G.hidePanels();
+ return accepted;
+}
+
 
 /* ---- the personality behaviour template ------------------------------------------------ */
 const PERS_DEFAULT={feed:1,water:1,groom:1,pet:1,ride:1,ribbon:1,whistleLv:1,exhaust:'slow',exhaustEmote:'toss',fearless:false,spookMul:1,spookShort:false,recover:1};
@@ -431,28 +453,41 @@ export function install(G){
  G.ui.action('bpe',(args)=>{
   const [what,a1]=args;
   if(what==='rem'){G.hidePanels();riderEmote(a1);}
-  else if(what==='hem'){G.hidePanels();G.horse.horseEmote(a1);}
+  else if(what==='hem'){if(!performHorsePanelAction(G,a1))refreshHorseActionPanel();}
   else if(what==='whistleHorse'){G.save.sync(s=>{s.whistleHorse=s.whistleHorse===+a1?null:+a1;});G.ui.renderStable();}
   else if(what==='pet'){const b=document.querySelector('#carePanel [data-care="pet"]');if(b)b.click();}
   else if(what==='brush'){G.hidePanels();riderEmote('brush');}
   else if(what==='whistle'){G.hidePanels();doWhistle();}
  });
- G.ui.panel({id:'emotePanel',title:'🎭 Emotes',dock:{label:'🎭',after:'chatBtn',title:'Emotes & tricks ('+String(G.key('emoteBar')||'').replace('Key','')+')'},hotkey:G.key('emoteBar'),
+ const actionCss=document.createElement('style');actionCss.id='horse-action-styles';actionCss.textContent=`
+ #emotePanel .horse-action-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:4px 0 10px;color:#263d36}#emotePanel .horse-action-heading h3{font:24px/1.2 Georgia,serif;margin:0}#emotePanel .horse-action-heading small{font-size:13px;color:#62766b;white-space:nowrap}#emotePanel .horse-action-status{font-size:14px;line-height:1.5;color:#52675b;background:#f5f0e4;padding:12px;border-radius:10px;margin-bottom:12px}#emotePanel .horse-action-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#emotePanel .horse-action-grid button{min-width:0;min-height:48px;white-space:normal;text-align:left;padding:11px 13px;font-size:14px;line-height:1.4}#emotePanel .horse-action-grid button small{display:block;font-size:12px;margin-top:3px;color:#62766b}#emotePanel .horse-action-grid button:disabled{opacity:.6}#emotePanel .horse-action-note{font-size:13px;line-height:1.5;color:#62766b;margin:12px 0}#emotePanel .rider-actions{margin-top:14px;border-top:1px solid #d9ded3;padding-top:8px}#emotePanel .rider-actions summary{cursor:pointer;min-height:44px;display:list-item;padding:11px 0;font-size:14px;color:#263d36}#emotePanel .rider-actions p{font-size:13px;color:#62766b;line-height:1.5}#emotePanel [data-horse-action-progress]{display:block;width:100%;height:5px;accent-color:#b2944d;margin:10px 0 0}#emotePanel [data-horse-action-progress][hidden]{display:none}
+ `;document.head.appendChild(actionCss);
+ const actionEscape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function refreshHorseActionPanel(){
+  const p=$('emotePanel');if(!p||p.style.display==='none')return;
+  const status=p.querySelector('[data-horse-action-status]');if(!status)return;
+  const state=horseActionReadiness(G),key=state.supported.join('|');
+  if(p.dataset.horseActionOptions!==key){G.ui.rerender('emotePanel');return;}
+  if(status.textContent!==state.status)status.textContent=state.status;
+  const progress=p.querySelector('[data-horse-action-progress]');if(progress){progress.hidden=!state.action;progress.value=state.action?.progress??Math.min(1,(state.action?.t||0)/(state.action?.dur||1));}
+  for(const button of p.querySelectorAll('[data-horse-action]'))button.disabled=state.blocked||button.dataset.locked==='true';
+ }
+ G.ui.panel({id:'emotePanel',title:'Horse actions',dock:{label:'🎭',after:'chatBtn',title:'Horse actions ('+String(G.key('emoteBar')||'').replace('Key','')+')'},hotkey:G.key('emoteBar'),
   render(p,s){
-   const h=s.horses[G.horse.rideIdx()]||{};
-   const rider=Object.keys(RIDER_EMOTES).map(k=>{const E=RIDER_EMOTES[k];const own=emoteOwned(s,k);return '<button data-fx="bpe:rem:'+k+'" '+(own?'':'style="opacity:.55" title="'+E.hint+'"')+'>'+(own?'':'🔒 ')+E.label+'</button>';}).join('');
-   const rig=G.horse.RIG(),native=!!rig.profile?.nativeBreed,wild=!!G.mastery?.isWild();
-   const actionNames=native?rig.heroMotion?.supportedActions||[]:Object.keys(EMOTES).filter(k=>k!=='graze');
-   const horse=actionNames.map(k=>{const E=EMOTES[k];if(!E)return '';const ok=emoteUnlocked(h,k),record=rig.heroMotion?.actionDescriptor?.(k);
-    return '<button data-fx="bpe:hem:'+k+'" '+(ok?'':'disabled style="opacity:.55" title="'+E.lockHint+'"')+'>'+E.label+(record?.dismountedOnly&&!wild?' · on foot':'')+(!ok?'<small style="display:block">'+E.lockHint+'</small>':'')+'</button>';}).join('');
-   return '<div class="ph">🎭 Emotes <button data-fx="close" style="margin-left:auto">✖</button></div>'
-   +'<div style="font-size:12px;color:#8c7a63">'+(wild?'Wild Mode · no rider or tack.':'Rider emotes play from a halt. Free ones are yours; the rest are earned in play. Club mates see them.')+'</div>'
-   +'<div class="crow" style="gap:5px;flex-wrap:wrap">'+(wild?'You are the horse. Choose one of your horse’s actions below.':rider)+'</div>'
-   +'<div class="ph" style="font-size:14px;margin-top:6px">🐴 '+(h.name||'Horse')+"'s tricks <span style=\"color:#8c7a63;font-size:12px;font-weight:600\">bond Lv "+bondLevel(h)+' · keys 1–6</span></div>'
-   +'<div class="crow" style="gap:5px;flex-wrap:wrap">'+(horse||'No horse actions are available for this mount.')+'</div>'
-   +(native&&actionNames.length?'<p style="font-size:12px;line-height:1.5;color:#6c5b47">Halt to try an action. Each animation finishes back on all four feet. '+(wild?'Finish resting and getting up before returning to riding.':'Lie down steps your rider off first; mounting waits until your horse gets up.')+'</p>':'')
-   +(wild?'':'<div class="crow" style="gap:5px;flex-wrap:wrap;margin-top:4px"><button data-fx="bpe:whistle">🎵 Whistle</button><button data-fx="bpe:brush">🧽 Brush</button></div>');
+   const h=s.horses[G.horse.rideIdx()]||{},state=horseActionReadiness(G),{target:rig,native,supported:actionNames}=state,wild=!!G.mastery?.isWild();
+   p.dataset.horseActionOptions=actionNames.join('|');
+   const rider=Object.keys(RIDER_EMOTES).map(k=>{const E=RIDER_EMOTES[k],own=emoteOwned(s,k);return '<button data-fx="bpe:rem:'+k+'" '+(own?'':'title="'+actionEscape(E.hint)+'"')+'>'+(own?'':'🔒 ')+actionEscape(E.label)+(!own?'<small>'+actionEscape(E.hint)+'</small>':'')+'</button>';}).join('');
+   const horse=actionNames.map(k=>{const E=EMOTES[k];if(!E)return '';const ok=emoteUnlocked(h,k),record=rig?.heroMotion?.actionDescriptor?.(k);
+    return '<button data-fx="bpe:hem:'+k+'" data-horse-action="'+k+'" data-locked="'+(!ok)+'" '+(ok&&!state.blocked?'':'disabled')+'>'+actionEscape(E.label)+(record?.dismountedOnly&&!wild&&!(G.horse.player.onFoot||G.onFoot?.on)?'<small>Steps the rider off first</small>':'')+(!ok?'<small>'+actionEscape(E.lockHint)+'</small>':'')+'</button>';}).join('');
+   return '<div class="ph">Horse actions <button data-fx="close" style="margin-left:auto" aria-label="Close horse actions">✖</button></div>'
+   +'<div class="horse-action-heading"><h3>'+actionEscape(h.name||'Your horse')+'</h3><small>Bond Lv '+bondLevel(h)+'</small></div>'
+   +'<div class="horse-action-status"><span data-horse-action-status role="status" aria-live="polite">'+actionEscape(state.status)+'</span><progress data-horse-action-progress aria-label="Horse action progress" max="1" value="'+(state.action?.progress||0)+'"'+(state.action?'':' hidden')+'></progress></div>'
+   +'<div class="horse-action-grid">'+horse+'</div>'
+   +(native&&actionNames.length?'<p class="horse-action-note">'+(wild?'Let your horse finish resting and getting up before returning to riding.':'Lie down includes resting and getting up. Mounting waits until your horse is ready.')+'</p>':'')
+   +(wild?'':'<details class="rider-actions"><summary>Rider emotes &amp; more</summary><p>Rider emotes play from a halt. Club mates can see them.</p><div class="horse-action-grid">'+rider+'<button data-fx="bpe:whistle">🎵 Whistle</button><button data-fx="bpe:brush">🧽 Brush</button></div></details>');
   }});
+ let actionPanelClock=0;
+ G.on('tick',dt=>{actionPanelClock+=dt;if(actionPanelClock<.2)return;actionPanelClock=0;refreshHorseActionPanel();});
 
  /* ---- Care / Stable surfaces ---------------------------------------------------------------- */
  G.ui.careHeader((s,h)=>{
@@ -463,7 +498,7 @@ export function install(G){
  G.ui.careSection((s,h)=>{
   const lv=bondLevel(h); const pa=petAnimFor(h);
   return '<div class="crow" style="gap:5px;flex-wrap:wrap;margin-top:4px"><span class="lbl" style="font-size:11px">Bond</span>'
-  +'<button data-fx="bpe:pet" title="'+pa.label+'">💗 '+pa.label+'</button><button data-fx="bpe:brush" title="Brush '+h.name+' ('+String(G.key('brush')||'').replace('Digit','key ')+')">🧽 Brush</button><button data-fx="bpe:whistle">🎵 Whistle</button><button data-fx="open:emotePanel">🎭 Emotes</button></div>'
+  +'<button data-fx="bpe:pet" title="'+pa.label+'">💗 '+pa.label+'</button><button data-fx="bpe:brush" title="Brush '+h.name+' ('+String(G.key('brush')||'').replace('Digit','key ')+')">🧽 Brush</button><button data-fx="bpe:whistle">🎵 Whistle</button><button data-fx="open:emotePanel">Horse actions</button></div>'
   +'<div style="font-size:11px;color:#8c7a63">'+[1,2,3,4,5].map(l=>(lv>=l?'✅':'🔒')+' Lv '+l+' '+BOND_NAMES[l]+': '+BOND_UNLOCKS[l]).join('<br>')+'</div>';
  });
  G.ui.stableRow((h,i)=>{const s=G.save.fresh()||{};const fav=s.whistleHorse===h.id;return (i===G.horse.rideIdx()?'':'<button data-fx="bpe:whistleHorse:'+h.id+'"'+(fav?' class="claimBtn"':'')+' title="The horse your whistle calls">'+(fav?'🎵 Whistle ✓':'🎵')+'</button>')+'<span style="font-size:11px;color:#8c7a63" title="'+persTraits(h).replace(/"/g,'&quot;')+'">bond Lv '+bondLevel(h)+' · '+BOND_NAMES[bondLevel(h)]+'</span>';});

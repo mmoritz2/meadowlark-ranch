@@ -659,12 +659,12 @@ import {createBreedGroom} from './assets/horse-groom.js';
 import {createEquineFantasyCoat,applyEquineFantasyAppearance} from './assets/equine-fantasy.js?v=artist-breeds-1';
 import {buildArtistDragonBody} from './assets/artist-horse-features.js?v=artist-breeds-1';
 import {createArtistBridle} from './assets/artist-horse-bridle.js?v=bridle-fit-1';
-import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=horse-art-20261009b';
+import {initGameHero,artistGroomFacade,heroGroomFacade,startGameHeroJump,tickGameHero,gameHeroSeat,disposeMountedRig,getNativeHorseCapabilities,nativeGroomFacade,finishNativeHorseGrooms} from './assets/game-hero-horse.js?v=horse-actions-20261009';
 import {createNativeRiderBridge,createNativeTackModes} from './assets/native-rider.js?v=mount-frame-reins-20261008';
 import {renderPixelRatio} from './assets/render-budget.js?v=riding-stability-1';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createPastoralSky} from './assets/pastoral-sky.js?v=grouped-clouds-1';
-import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=regional-relief-1';
+import {installBackdrop,tuneFoliage,loadFoliageAtlas} from './assets/world-art.js?v=northern-skyline-1';
 import {makeNaturalPine,makeNaturalTree,makeNaturalShrub,plantNaturalShrubs} from './assets/vegetation.js?v=grounded-woodland-snow-1';
 import {hasMeadowCover,hasSeedMeadowCover} from './assets/meadow-biomes.js?v=dry-foothills-1';
 import {coyoteDryWeight,coyoteCoverDryWeight} from './assets/biome-weights.mjs?v=dry-foothills-1';
@@ -691,7 +691,7 @@ import {createSolidWorld} from './assets/solid-collisions.js?v=solid-scan-surfac
 import {resolveGroundedContact} from './assets/grounded-contact.mjs?v=grounded-slope-1';
 import {createFollowCamera} from './assets/follow-camera.js?v=riding-stability-1';
 import {createJumpBuffer,createHoofContacts,ridingSurface,playHoofImpact} from './assets/riding-feedback.js?v=riding-life-1';
-import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionReference} from './assets/native-action-runtime.mjs?v=riding-modes-1';
+import {syncNativeActionEmote,nativeActionSeatRotation,transformNativeActionReference} from './assets/native-action-runtime.mjs?v=horse-actions-20261009';
 import {createArrivalArt} from './assets/ranch-arrival-art.js';
 import {createRanchBuilderArt} from './assets/ranch-builder-art.js?v=nursery-snow-1';
 import {createWorldFinish} from './assets/world-rendering.js';
@@ -8923,6 +8923,12 @@ function gameInputBlocked(){
 }
 
 const ridingInput=createRidingInput('canter');
+function syncHorseActionInput(){
+ const blocked=!player.onFoot&&!!RIG.heroMotion?.blocksTravel;
+ ridingInput.lock('horse-action',blocked);
+ if(blocked){player.speed=0;player.turnSm=0;}
+ return blocked;
+}
 const dragonPaces=()=>!!RIG.profile?.nativeTravelSpeeds;
 function selectRidingGait(g){const ok=ridingInput.select(dragonPaces()&&g==='trot'?'canter':g);if(ok)touch.gal=false;return ok;}
 function shiftRidingGait(n){let g=ridingInput.shift(n);if(dragonPaces()&&g==='trot')g=ridingInput.shift(n);touch.gal=false;return g;}
@@ -13420,6 +13426,7 @@ function animateHorse(parts,phase,amp,gait,grounded,t,grazing,dt){
 /* ================= main loop ================= */
 const clock=new THREE.Clock();
 function setFlying(on){
+ if(on&&!player.onFoot&&RIG.heroMotion?.blocksTravel){toast('Wait for your horse to finish resting and get back up first.');return;}
  if(on&&G.run('activityGate','flight'))return;
  const winged=myHorses[rideIdx]&&myHorses[rideIdx].wings;
  if(RIG.profile?.referenceMotion||RIG.profile?.nativeRoster)RIG.nativeCanFly=!!myHorses[rideIdx]?.wings;
@@ -13490,6 +13497,7 @@ function tick(stepSeconds){
  const t=clock.elapsedTime;
  frameWatch(t);
  if(renderer.xr.isPresenting)pollVR();
+ syncHorseActionInput();
  const ridingIntent=ridingInput.resolve({keys,touch,speed:player.speed,dt,onFoot:!!player.onFoot,flying:!!player.flying});
  const fwd=ridingIntent.forward;
  const back=ridingIntent.back;
