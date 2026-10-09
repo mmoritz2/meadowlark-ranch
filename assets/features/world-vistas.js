@@ -24,6 +24,7 @@ import {createChalkDown} from '../chalk-down.js?v=chalk-down-2';
    Owned by this package: this file only. Nothing runs at import time. */
 import {dressLandscape} from '../landscape-surface.js?v=regional-relief-1';
 import {regionalProfileAt} from '../regional-landscape.mjs?v=regional-relief-1';
+import {hornRelief} from '../horn-relief.mjs?v=horn-broken-ridges-2';
 export const id='world-vistas';
 export function install(G){
  /* ?novistas boots the world without any of this, so a before-and-after pair can be shot from
@@ -233,7 +234,7 @@ export function install(G){
   const dryFoot=new THREE.Color('#65553f'),dryRock=new THREE.Color('#958166'),dryHigh=new THREE.Color('#b1a084');
   const northRock=new THREE.Color('#737f82');
   const crest=cfg.crest||0.5,back=cfg.backfall==null?0.55:cfg.backfall,sd=cfg.seed||1;
-  const tall=cfg.summits.reduce((m,s)=>Math.max(m,s.h),1);
+  const tall=cfg.id==='horn'?132:cfg.summits.reduce((m,s)=>Math.max(m,s.h),1);
   /* The tallest summit that reaches this far along, so the saddles between them fall out of
      the arithmetic instead of being placed by hand. A summit with a flat set is clipped short
      of its own apex, which is what makes a mesa a mesa rather than a cone. */
@@ -287,6 +288,11 @@ export function install(G){
     const flank=Math.sin(Math.PI*clamp(t/lc,0,1));
     let y=SKY_BASE+hr*Math.max(0,prof)*(.69+g1*.32+g3*.10)
       +(g2-.5)*hr*(cfg.lowland?.018:.07)+(gullies-.5)*hr*(cfg.lowland?.045:.16)*flank+(shelves-.5)*hr*(cfg.lowland?.012:.035)*Math.max(0,prof);
+    if(cfg.id==='horn') {
+     // Original unequal crest chains replace the full former Horn silhouette.
+     // Reuse the existing crag field only for restrained surface articulation.
+     y=SKY_BASE+hornRelief(u,t)*(.955+g1*.035+g3*.01);
+    }
     y=SKY_BASE+(y-SKY_BASE)*region.massifScale;
     if(t<0.055)y=SKY_BASE-8;                             // the inner hem, buried under the far ground
     pos.push(wx,y,wz);
@@ -329,10 +335,9 @@ export function install(G){
   return {id:cfg.id,label:cfg.label,bearing:b,dist,height:Math.round(reliefHeight),mesh:me,tris:nu*nv*2};
  }
 
- /* Six silhouettes you could pick out of a line-up, on six bearings, so wherever you stand in
-    the basin at least two of them are in front of you. The Horn is due north because that is
-    the direction a rider most needs a fixed point in, and it is the only one that carries
-    snow all the way down the year. */
+ /* Six named silhouettes retain their navigation bearings. The lower Horn
+    opens the northern meadow view with an uneven crest and two offset spurs;
+    its exposed tip stays below the permanent snowline. */
  const MASSIFS=[
   {id:'horn',label:'⛰️ The Kestrel Horn',bearing:2.98,dist:920,span:940,depth:510,seed:11,nu:168,nv:56,
    rock:'#66675f',high:'#98988a',foot:'#424c43',snow:'#e2e8e7',snowAt:153,snowBand:50,
