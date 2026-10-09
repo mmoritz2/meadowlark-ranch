@@ -102,7 +102,7 @@ test('the first three bands retain their legacy heights and colors exactly',()=>
 
 test('the exact annulus budget covers the whole area without gaps or inverted triangles',()=>{
  const g=art.mesh.geometry,p=g.attributes.position,idx=g.index;let area=0;
- assert.equal(p.count,11791);assert.equal(idx.count/3,20992);assert.equal(art.stats.vertices,11791);assert.equal(art.stats.triangles,20992);assert.equal(art.edgeCount,2049);assert.equal(art.stats.draws,1);
+ assert.equal(p.count,17434);assert.equal(idx.count/3,32256);assert.equal(art.stats.vertices,17434);assert.equal(art.stats.triangles,32256);assert.equal(art.edgeCount,2049);assert.equal(art.stats.draws,1);
  for(let i=0;i<idx.count;i+=3){const a=idx.getX(i),b=idx.getX(i+1),c=idx.getX(i+2),cross=(p.getZ(b)-p.getZ(a))*(p.getX(c)-p.getX(a))-(p.getX(b)-p.getX(a))*(p.getZ(c)-p.getZ(a));assert(cross>0);area+=cross*.5;}
  assert(Math.abs(area-4*(1700**2-500**2))<.1);
  for(let a=.037;a<Math.PI*2;a+=.29)for(const d of[2,9,35,95,180,390,740,1150]){

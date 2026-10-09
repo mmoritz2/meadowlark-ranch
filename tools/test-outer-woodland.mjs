@@ -1,9 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as T from '../assets/vendor/three/build/three.module.js';
-import {createOuterLandscape,outerDistance} from '../assets/outer-landscape.js';
-import {regionalProfileAt} from '../assets/regional-landscape.mjs';
-import {selectOuterWoodland,outerGroveWeight,OUTER_WOODLAND_LIMIT} from '../assets/outer-woodland.mjs';
+import path from 'node:path';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+const HERE=path.dirname(fileURLToPath(import.meta.url)),ROOT=path.resolve(process.argv[2]||path.join(HERE,'..'));
+const T=await import(pathToFileURL(path.join(ROOT,'assets/vendor/three/build/three.module.js')));
+const {createOuterLandscape,outerDistance}=await import(pathToFileURL(path.join(ROOT,'assets/outer-landscape.js')));
+const {regionalProfileAt}=await import(pathToFileURL(path.join(ROOT,'assets/regional-landscape.mjs')));
+import {selectOuterWoodland,outerGroveWeight,OUTER_WOODLAND_LIMIT,OUTER_GROVES_GLSL} from '../assets/outer-woodland.mjs';
 
 // Exercise the production outer mesh, with a sloping, uneven inner boundary.
 const heightAt=(x,z)=>.002*x-.004*z+Math.sin(z*.012)*.3;
@@ -13,7 +16,7 @@ for(let i=0;i<position.count;i++){position.setY(i,heightAt(position.getX(i),posi
 geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));geometry.computeVertexNormals();
 const ground=new T.Mesh(geometry,new T.MeshStandardMaterial({vertexColors:true}));
 const art=createOuterLandscape({THREE:T,scene:new T.Scene(),heightAt,groundMesh:ground});
-const mesh=art.mesh.geometry,sites=art.woodlandSites;
+const mesh=art.mesh.geometry,sites=selectOuterWoodland({positions:mesh.attributes.position.array,index:mesh.index.array,regionalProfileAt});
 
 // Independent XZ interpolation of the actual emitted face, without trusting
 // the placement helper's saved barycentric weights or analytic terrain height.
@@ -83,4 +86,37 @@ test('broad glades and the southwest valley remain open, with lower dry woodland
   assert(outerGroveWeight(root.x,root.z)>=.065,'a tree stands outside the shared ground mask');
   if(region.dry>.7)assert(root.height<=9.8);
  }
+});
+
+// Independently decode the numeric GLSL instructions, so a changed projection,
+// axis order, radius, bound or island strength cannot diverge from CPU roots.
+const shadeBodies=[...OUTER_GROVES_GLSL.matchAll(/if\(p\.x>=([-\d.]+)&&p\.x<=([-\d.]+)&&p\.y>=([-\d.]+)&&p\.y<=([-\d.]+)\)\{([\s\S]*?)\}/g)].map(m=>({bounds:m.slice(1,5).map(Number),segments:[...m[5].matchAll(/outerWoodSegment\(p,vec3\(([-\d.,]+)\),vec3\(([-\d.,]+)\)\)/g)].map(v=>[v[1].split(',').map(Number),v[2].split(',').map(Number)])}));
+const shadeIslands=[...OUTER_GROVES_GLSL.matchAll(/length\(p-vec2\(([-\d.]+),([-\d.]+)\)\)\/([-\d.]+)\)\)\*([-\d.]+)/g)].map(m=>m.slice(1).map(Number));
+const smooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);};
+function shaderMask(x,z){
+ const d=outerDistance(x,z),reach=smooth(58,82,d)*(1-smooth(335,400,d));let w=0;
+ for(const {bounds:[loX,hiX,loZ,hiZ],segments}of shadeBodies){
+  if(x<loX||x>hiX||z<loZ||z>hiZ)continue;let radius=10000;
+  for(const [a,b]of segments){const direction=[b[0]-a[0],b[1]-a[1]],relative=[x-a[0],z-a[1]];
+   const t=Math.max(0,Math.min(1,(relative[0]*direction[0]+relative[1]*direction[1])/(direction[0]**2+direction[1]**2)));
+   const width=a[2]*(1-t)+b[2]*t,r=Math.sqrt((relative[0]-direction[0]*t)**2+(relative[1]-direction[1]*t)**2)/width;
+   radius=Math.min(radius,r);
+  }w=Math.max(w,1-smooth(.28,1.18,radius));
+ }
+ for(const [ix,iz,r,strength]of shadeIslands)w=Math.max(w,(1-smooth(.15,1,Math.sqrt((x-ix)**2+(z-iz)**2)/r))*strength);
+ return w*reach;
+}
+test('JS and emitted GLSL masks agree across groves, fringes, islands and the riding seam',()=>{
+ assert.equal(shadeBodies.length,25);assert.equal(shadeIslands.length,9);
+ for(let z=-920;z<=920;z+=7)for(let x=-920;x<=920;x+=7){
+  const cpu=outerGroveWeight(x,z),gpu=shaderMask(x,z);assert.ok(Math.abs(cpu-gpu)<1e-12);
+  assert(cpu>=0&&cpu<=1);if(outerDistance(x,z)<=58)assert.equal(cpu,0);
+ }
+});
+test('fringe hierarchy uses smaller crowns while retaining substantial mature core overlap',()=>{
+ const north=sites.filter(s=>s.z<-550),fringe=north.filter(s=>s.grove<.35),core=north.filter(s=>s.grove>.8);
+ assert(fringe.length>70,'graduated northern fringe must be visibly represented');assert(core.length>500);
+ const mean=a=>a.reduce((sum,s)=>sum+s.height,0)/a.length;
+ assert(mean(core)-mean(fringe)>5,'core and fringe must have a useful crown-height difference');
+ const fingers=sites.filter(s=>outerDistance(s.x,s.z)<120);assert(fingers.length>100,'wooded fingers must reach beyond the former rear bodies');
 });
