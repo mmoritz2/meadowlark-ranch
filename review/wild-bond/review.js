@@ -5,7 +5,7 @@ const copy=o=>JSON.parse(JSON.stringify(o)),pause=()=>new Promise(r=>setTimeout(
 function show(text){if(text)report.status=text;$('status').textContent=report.status;$('report').textContent=JSON.stringify(report,null,2);}
 function check(ok,label,data){report.checks.push({ok:!!ok,label,...(data===undefined?{}:{data})});show();if(!ok)throw Error(label);}
 function fail(error){report.errors.push(String(error.stack||error));show('FAILED');}
-function local(){if(!['localhost','127.0.0.1'].includes(location.hostname)||location.port!=='8599')throw Error('Use a fresh dedicated localhost:8599 origin.');}
+function local(){if(!['localhost','127.0.0.1'].includes(location.hostname)||!['8599','18793'].includes(location.port))throw Error('Use a fresh dedicated localhost:18793 origin.');}
 async function wait(test,label){for(let n=0;n<2400;n++){if(test())return;await new Promise(r=>setTimeout(r,100));}throw Error('Timed out: '+label);}
 async function load(){const old=frame.contentWindow.document;frame.src='/ranch3d.html?qa=wild-bond&v='+Date.now();await wait(()=>{w=frame.contentWindow;G=w.__features;return w.document!==old&&G?.worldPkg?.herds&&G.horse.RIG().ready&&!w.document.getElementById('load');},'game');w.advanceTime(0);G.hidePanels();w.document.getElementById('dlg').style.display='none';G.audio.setMuted(true);G.riding.releaseAll();G.net?.net?.client?.end?.(true);if(G.net?.net)G.net.net.client=null;await pause();}
 function step(ms){const render=G.renderer.render;G.renderer.render=(scene,camera,...rest)=>{if(camera!==G.camera)return render.call(G.renderer,scene,camera,...rest);};try{w.advanceTime(ms);}finally{G.renderer.render=render;}}
@@ -19,7 +19,8 @@ async function start(){
  G.save.sync(s=>{s.story={...s.story,idx:index,prog:0};s.dq={date:new Date().toDateString(),roll:['tame'],prog:{},claimed:{}};s.qaWildBond=true;});await load();
  check(G.quest.storyIdx()===index,'Normal reload synchronizes the selected story objective');
  check(!G.net?.net?.client?.connected,'Anonymous fixture is offline');
- member=G.worldPkg.herds.find(h=>h.def.id==='meadow').members[0];
+ const herd=G.worldPkg.herds.find(h=>h.def.id==='meadow');
+ report.herdStarts=herd.members.map(m=>({runId:m.runId,name:m.name,trust:m.trust}));member=herd.members[0];
  const p=G.horse.player;p.pos.set(member.pos.x+4,0,member.pos.z);p.speed=0;p.heading=-Math.PI/2;p.y=0;p.vy=0;
  G.riding.selectGait('walk');w.advanceTime(0);
  before=copy(G.save.fresh());report.encounter={runId:member.runId,name:member.name,breed:member.wb.breed,colors:{body:member.wb.body,mane:member.wb.mane},startTrust:member.trust};
@@ -43,6 +44,10 @@ async function walk(){
  w.resumeGame();$('block').disabled=false;show('READY — use Befriend in the game. Try Keep walking together, reopen, then block the next save before choosing home.');
 }
 function block(){
+ const chosenId=w.document.getElementById('dlg').dataset.wildTaming;
+ const chosen=G.worldPkg.herds.flatMap(h=>h.members).find(m=>m.runId===chosenId);
+ check(chosen?.taming&&report.herdStarts.some(m=>m.runId===chosenId&&m.trust<1),'The clicked choice belongs to a horse that earned trust naturally');
+ if(chosen!==member){report.approachedEncounter=report.encounter;member=chosen;report.encounter={runId:member.runId,name:member.name,breed:member.wb.breed,colors:{body:member.wb.body,mane:member.wb.mane},startTrust:0};}
  const proto=w.Storage.prototype,original=proto.setItem;allow=false;
  proto.setItem=function(k,v){if(this===w.localStorage&&k===SAVE){let next;try{next=JSON.parse(v);}catch{}const fresh=JSON.parse(w.localStorage.getItem(SAVE));if(next?.wildTaming?.receipts?.[member.runId]&&!fresh?.wildTaming?.receipts?.[member.runId]){if(!allow){blocked++;throw Error('QA reward save blocked');}writes++;}}return original.call(this,k,v);};
  report.beforeChoice=projection(G.save.fresh());$('block').disabled=true;$('pending').disabled=false;show('Save failure armed. Choose Welcome to my ranch in the actual dialog.');
