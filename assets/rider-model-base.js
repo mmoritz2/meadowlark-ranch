@@ -252,7 +252,7 @@ export function createRiderLibrary({THREE,GLTFLoader,clone,RJ}){
    }
    for(const side of [1,-1]){
     const sd=side>0?'l':'r',upper='upperarm_'+sd,lower='lowerarm_'+sd,hand='hand_'+sd;
-    aim(upper,lower,V((F?(side>0?.18:.23):.20)*side,-1,-.015));
+    aim(upper,lower,V((F?(side>0?.18:.23):.32)*side,-1,-.015));
     aim(lower,hand,V((F?(side>0?.045:.075):.06)*side,-1,F?(side>0?.10:.15):.14));
     // Turn the forearm as a whole: thumb forward, palm toward the thigh.
     // This avoids twisting only the wrist against a fixed forearm.
