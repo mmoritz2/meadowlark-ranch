@@ -24,7 +24,7 @@ import {createChalkDown} from '../chalk-down.js?v=chalk-down-2';
    Owned by this package: this file only. Nothing runs at import time. */
 import {dressLandscape} from '../landscape-surface.js?v=regional-relief-1';
 import {regionalProfileAt} from '../regional-landscape.mjs?v=regional-relief-1';
-import {hornRelief} from '../horn-relief.mjs?v=horn-broken-ridges-2';
+import {hornRelief} from '../horn-relief.mjs?v=northern-skyline-1';
 export const id='world-vistas';
 export function install(G){
  /* ?novistas boots the world without any of this, so a before-and-after pair can be shot from
