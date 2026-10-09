@@ -21,10 +21,42 @@ export function recordRescueFinish(value,run){
   time,pay:{...RESCUE_DEFINITION.reward},newBest,firstCompletion,canAdopt:!save.adopted}};
 }
 export function canAdoptClover(value){const s=sanitizeRescueSave(value);return s.completions>0&&!s.adopted;}
+export const RESCUE_APPROACH=Object.freeze({reach:5.5,stopSpeed:1.2,spookDistance:9,spookSpeed:5,settleSeconds:.65,retreatRadius:14,retreatSpeed:4.6});
+export function rescueInteraction({distance,speed,retreating=false,settling=0,blocked=false}={}){
+ const cooldown=Number.isFinite(settling)?Math.max(0,settling):RESCUE_APPROACH.settleSeconds;
+ const inReach=Number.isFinite(distance)&&distance<RESCUE_APPROACH.reach;
+ let status='ready',reason='Clover has settled. Reassure her, then lead her home.';
+ if(blocked){status='paused';reason='Return to riding to reassure Clover.';}
+ else if(retreating){status='retreating';reason='Clover is stepping away. Give her room to settle.';}
+ else if(!inReach){status='far';reason='Walk toward Clover, then stop beside her.';}
+ else if(!Number.isFinite(speed)||Math.abs(speed)>RESCUE_APPROACH.spookSpeed){status='too-fast';reason='Too fast — slow down and give Clover room.';}
+ else if(Math.abs(speed)>=RESCUE_APPROACH.stopSpeed){status='moving';reason='Come to a gentle stop before reassuring Clover.';}
+ else if(cooldown>0){status='settling';reason='Stay still for a moment while Clover settles.';}
+ return {eligible:status==='ready',inReach,status,reason,label:'Reassure Clover',cooldown};
+}
+export function insideRescueRetreat(point,anchor){
+ return !!point&&!!anchor&&[point.x,point.z,anchor.x,anchor.z].every(Number.isFinite)&&
+  point.x>=-108&&point.x<=-35&&point.z>=-43&&point.z<=23&&Math.hypot(point.x-anchor.x,point.z-anchor.z)<=RESCUE_APPROACH.retreatRadius;
+}
+// Ranked escape choices stay in the home pasture. The live controller also checks
+// every segment against its actual fences/props before and after steering.
+export function rescueRetreatCandidates(horse,rider,anchor){
+ if(!horse||!rider||![horse.x,horse.z,rider.x,rider.z].every(Number.isFinite))return [];
+ const distance=Math.hypot(horse.x-rider.x,horse.z-rider.z),away=distance>.01?Math.atan2(horse.x-rider.x,horse.z-rider.z):0;
+ const candidates=[];
+ for(const radius of [8,5,3])for(const turn of [0,Math.PI/6,-Math.PI/6,Math.PI/3,-Math.PI/3,Math.PI/2,-Math.PI/2]){
+  const p={x:horse.x+Math.sin(away+turn)*radius,z:horse.z+Math.cos(away+turn)*radius};
+  const separation=Math.hypot(p.x-rider.x,p.z-rider.z);
+  if(insideRescueRetreat(p,anchor)&&separation>distance+.5)candidates.push({...p,separation});
+ }
+ return candidates.sort((a,b)=>b.separation-a.separation).map(({x,z})=>({x,z}));
+}
 export function calmAfter(calm,{distance,speed,dt}){
  if(!Number.isFinite(dt)||dt<=0||dt>.25)return Math.max(0,Math.min(100,calm||0));
- const delta=distance<9&&speed>5?-35*dt:distance<5.5&&speed<1.6?25*dt:-3*dt;
- return Math.max(0,Math.min(100,(calm||0)+delta));
+ const delta=distance<RESCUE_APPROACH.spookDistance&&speed>RESCUE_APPROACH.spookSpeed?-35*dt:distance<RESCUE_APPROACH.reach&&speed<RESCUE_APPROACH.stopSpeed?40*dt:-3*dt;
+ // Patient positioning visibly calms her, but trust needs the rider's explicit
+ // reassurance. Waiting alone can never move the mission into its escort stage.
+ return Math.max(0,Math.min(60,(calm||0)+delta));
 }
 export function isTravelJump(distance,dt,speed=0){
  return !Number.isFinite(distance)||distance>Math.max(8,(Math.abs(speed)+12)*Math.min(.25,Math.max(0,dt))*2);

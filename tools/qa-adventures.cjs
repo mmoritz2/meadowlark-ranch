@@ -43,15 +43,16 @@ async function boot(page){
 async function screenshot(page,name){await page.evaluate(()=>advanceTime(0));await page.screenshot({path:out+'/'+name+'.png'});}
 const overlap=(a,b)=>a&&b&&a.left<b.right-1&&a.right>b.left+1&&a.top<b.bottom-1&&a.bottom>b.top+1;
 async function mobile(page,active=false){
- for(const width of [390,320]){
-  await page.setViewportSize({width,height:844});await page.evaluate(()=>{__qaStep(200);advanceTime(0);});
+ const reassuring=active&&await page.evaluate(()=>__features.rescueRide.snapshot().active?.stage==='calm');
+ for(const [width,height] of reassuring?[[390,844],[320,844],[844,390],[667,375]]:[[390,844],[320,844]]){
+  await page.setViewportSize({width,height});await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));await page.evaluate(()=>{__qaStep(200);advanceTime(0);});
   const boxes=await page.evaluate(()=>{
    const rect=id=>{const e=document.getElementById(id);if(!e)return null;const s=getComputedStyle(e),r=e.getBoundingClientRect();return s.display==='none'||s.visibility==='hidden'||+s.opacity===0||!r.width||!r.height?null:{left:r.left,right:r.right,top:r.top,bottom:r.bottom};};
    return Object.fromEntries(['rushQuick','rescueHud','roundupGuide','seJump','seGaitDock','seRidePace','stickZone','sgFocus'].map(id=>[id,rect(id)]));
   });
   const h=boxes[active?'rescueHud':'rushQuick'];
-  check(h&&h.left>=0&&h.right<=width+1&&!['seJump','seGaitDock','seRidePace','stickZone'].some(id=>overlap(h,boxes[id])),(active?'Rescue guidance':'Free riding activity entry')+' clears mobile controls at '+width+'px',boxes);
-  await screenshot(page,(active?'rescue':'free')+'-'+width);
+  check(h&&h.left>=0&&h.right<=width+1&&h.top>=0&&h.bottom<=height+1&&!['seJump','seGaitDock','seRidePace','stickZone'].some(id=>overlap(h,boxes[id])),(active?'Rescue guidance':'Free riding activity entry')+' clears mobile controls at '+width+'px',boxes);
+  await screenshot(page,(reassuring?'reassure':active?'rescue':'free')+'-'+width+'x'+height);
  }
  await page.setViewportSize({width:1280,height:850});
 }
@@ -116,13 +117,24 @@ async function focusedGuardsAndLandscape(page){
    return visited;
   });
   check(clueRun[0]?.clues===1&&clueRun[1]?.clues===2&&clueRun[1]?.stage==='calm','Both clues advance only after physical proximity',clueRun);
+  const reaction=await page.evaluate(()=>{
+   const G=__features,before=G.rescueRide.snapshot().active.horse,at=G.rescueRide.snapshot().active.target;
+   __qaMove(at.x-7,at.z,{speed:8});__qaStep(700);
+   const after=G.rescueRide.snapshot().active;__qaIdle(5000);return {before,after};
+  });
+  check(Math.hypot(reaction.after.horse.x-reaction.before.x,reaction.after.horse.z-reaction.before.z)>.3&&reaction.after.stage==='calm','Rushing Clover causes a real retreat without skipping the trust stage',reaction);
   await page.evaluate(()=>{const a=__features.rescueRide.snapshot().active;__qaMove(a.target.x-3,a.target.z,{speed:1});__qaIdle(300);});
   const calmPause=await page.evaluate(()=>{
-   const G=__features,before=G.rescueRide.snapshot().active.horse.calm;G.ui.open('questPanel');G.seFrame?.settle();__qaIdle(2200);const after=G.rescueRide.snapshot().active.horse.calm;G.hidePanels();G.seFrame?.settle();return {before,after};
+   const G=__features,before=G.rescueRide.snapshot().active.horse.calm;G.ui.open('questPanel');G.seFrame?.settle();__qaIdle(2200);const after=G.rescueRide.snapshot().active.horse.calm,reassured=G.rescueRide.reassure();G.hidePanels();G.seFrame?.settle();return {before,after,reassured};
   });
-  check(calmPause.before===calmPause.after,'Opening a menu pauses trust progress',calmPause);
+  check(calmPause.before===calmPause.after&&!calmPause.reassured,'Opening a menu pauses trust and rejects reassurance',calmPause);
   await page.evaluate(()=>__qaIdle(5000));
-  check(await page.evaluate(()=>__features.rescueRide.snapshot().active?.stage==='escort'),'Stopping gently beside Clover earns her trust');
+  check(await page.evaluate(()=>{const a=__features.rescueRide.snapshot().active;return a?.stage==='calm'&&a.interaction?.eligible;}),'A patient approach opens reassurance without passively completing trust');
+  check(await page.evaluate(()=>{const button=document.getElementById('rescueReassure');button.focus();__qaStep(350);return document.activeElement===button&&document.getElementById('rescueReassure')===button&&!button.disabled;}),'Reassurance button keeps keyboard focus while the HUD updates');
+  await screenshot(page,'ready-to-reassure');
+  await mobile(page,true);
+  await page.locator('#rescueReassure').click();
+  check(await page.evaluate(()=>__features.rescueRide.snapshot().active?.stage==='escort'&&!__features.rescueRide.reassure()),'Reassure button earns trust exactly once and starts the real escort');
   await screenshot(page,'escort-start');
   const escort=await page.evaluate(()=>{
    const G=__features,p=G.horse.player,steps=[];let last=-1;

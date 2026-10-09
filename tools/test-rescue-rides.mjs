@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {RESCUE_DEFINITION,sanitizeRescueSave,recordRescueFinish,canAdoptClover,calmAfter,isTravelJump} from '../assets/features/rescue-rules.mjs';
+import {RESCUE_DEFINITION,RESCUE_APPROACH,sanitizeRescueSave,recordRescueFinish,canAdoptClover,calmAfter,isTravelJump,rescueInteraction,rescueRetreatCandidates,insideRescueRetreat} from '../assets/features/rescue-rules.mjs';
 
 const finish=(overrides={})=>({runId:'actual-ride',stage:'escort',clues:2,returnStep:3,elapsed:140,...overrides});
 test('a physical completed escort unlocks one adoption and records a best time',()=>{
@@ -17,12 +17,42 @@ test('duplicate callbacks, cancellations and skipped route steps do not earn rew
  for(const change of [{stage:'find'},{stage:'calm'},{clues:1},{returnStep:2},{returnStep:4},{elapsed:0},{elapsed:NaN},{runId:''}])assert.equal(recordRescueFinish(null,finish(change)).recorded,false);
  assert.equal(canAdoptClover(null),false);
 });
-test('calming requires proximity and a gentle stop, not time in a menu or a gallop',()=>{
- let calm=0;for(let i=0;i<40;i++)calm=calmAfter(calm,{distance:4,speed:0,dt:.1});assert.equal(calm,100);
+test('patient proximity can calm Clover but never passively completes trust',()=>{
+ let calm=0;for(let i=0;i<6000;i++)calm=calmAfter(calm,{distance:4,speed:0,dt:.1});assert.equal(calm,60);
  assert(calmAfter(50,{distance:4,speed:8,dt:.1})<50);
  assert(calmAfter(50,{distance:12,speed:0,dt:.1})<50);
  assert(calmAfter(50,{distance:4,speed:2,dt:.1})<50);
  assert.equal(calmAfter(50,{distance:4,speed:0,dt:10}),50);
+});
+test('one explicit reassurance requires actual settled proximity and a stopped rider',()=>{
+ const ready={distance:4,speed:0,settling:0};
+ assert.equal(rescueInteraction(ready).eligible,true);
+ assert.equal(rescueInteraction(ready).inReach,true);
+ for(const distance of [RESCUE_APPROACH.reach,9,Infinity,NaN])assert.equal(rescueInteraction({...ready,distance}).inReach,false);
+ assert.equal(rescueInteraction({...ready,blocked:true}).inReach,true,'reach is independent of whether interaction is paused');
+ for(const [patch,status] of [[{distance:RESCUE_APPROACH.reach},'far'],[{distance:Infinity},'far'],[{speed:6},'too-fast'],[{speed:NaN},'too-fast'],[{speed:RESCUE_APPROACH.stopSpeed},'moving'],[{speed:-2},'moving'],[{retreating:true},'retreating'],[{settling:.01},'settling'],[{blocked:true},'paused']]){
+  const i=rescueInteraction({...ready,...patch});assert.equal(i.eligible,false,status);assert.equal(i.status,status);assert(i.reason.length>10);
+ }
+ assert.equal(rescueInteraction({...ready,retreating:true,distance:8}).status,'retreating','do not tell the rider to chase while Clover is retreating');
+ assert.equal(rescueInteraction({...ready,settling:.4}).cooldown,.4);
+ assert.equal(rescueInteraction({...ready,blocked:true,retreating:true}).status,'paused');
+});
+test('retreat choices move away from pressure and stay in the nearby fenced pasture',()=>{
+ const anchor={x:-70,z:-41};
+ for(const horse of [anchor,{x:-70,z:-33},{x:-80,z:-36},{x:-57,z:-40}])for(const [dx,dz] of [[-3,0],[3,0],[0,-3],[0,3],[0,0]]){
+  const rider={x:horse.x+dx,z:horse.z+dz},candidates=rescueRetreatCandidates(horse,rider,anchor),before=Math.hypot(dx,dz);
+  for(const target of candidates){
+   assert(insideRescueRetreat(target,anchor));assert(Math.hypot(target.x-rider.x,target.z-rider.z)>before+.5);
+   for(let i=0;i<=40;i++){
+    const t=i/40,x=horse.x+(target.x-horse.x)*t,z=horse.z+(target.z-horse.z)*t;
+    assert(Math.hypot(x-rider.x,z-rider.z)>=before-1e-9,'every escape segment stays at least as far from the rider as its starting point');
+   }
+  }
+ }
+ assert(rescueRetreatCandidates(anchor,{x:-70,z:-38},anchor).length>0,'south-side fence still leaves a bounded sideways escape');
+ assert.equal(insideRescueRetreat({x:-70,z:-44},anchor),false,'never choose the pasture boundary fence');
+ assert.equal(insideRescueRetreat({x:-70,z:-20},anchor),false,'do not send the mission horse across the whole pasture');
+ assert.deepEqual(rescueRetreatCandidates({x:NaN,z:0},{x:0,z:0},anchor),[]);
 });
 test('fast travel is rejected while continuous galloping and dismount steps are allowed',()=>{
  assert.equal(isTravelJump(50,.016,0),true);
