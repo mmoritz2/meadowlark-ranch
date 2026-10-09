@@ -183,7 +183,7 @@ export function install(G){
   try{M.refreshWallet();}catch(e){}
   notifyChallengeProgress(summary);rerender();
  });
- G.trainingProgress?.register('season-challenges',(save,events)=>applyChallengeEvents(save,(events||[]).filter(e=>e&&['cleanjump','sxp','drill','tame'].includes(e.type)),payTrainingChallenge),notifyChallengeProgress);
+ G.trainingProgress?.register('season-challenges',(save,events)=>applyChallengeEvents(save,(events||[]).filter(e=>e&&['cleanjump','sxp','drill','tame','roundup'].includes(e.type)),payTrainingChallenge),notifyChallengeProgress);
  G.on('weekRoll',s=>{ if(s&&s.sn)rollWeek(s.sn); });
  G.on('seasonRoll',s=>{ if(s&&s.sn)rollState(s.sn); applyPassLayer(); });
 

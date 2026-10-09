@@ -1,0 +1,6 @@
+<!doctype html><meta charset="utf-8"><title>Disposable roundup save inspection</title><h1>Disposable roundup save inspection</h1><pre id="report"></pre><script>
+if(location.hostname==='127.0.0.1'&&location.port==='18795'&&localStorage.getItem('roundup-qa-owned')==='anonymous disposable roundup QA'){
+ const s=JSON.parse(localStorage.getItem('starRanchFable_v1')||'null');
+ if(s?.qaRoundup)document.getElementById('report').textContent=JSON.stringify({coins:s.coins,gems:s.gems,keys:s.keys,pass:s.pass,stats:s.stats?.rounded||0,records:s.roundupBest||{},receipts:s.roundupRewards||{},story:s.story,week:s.wk,starPoints:s.sp},null,2);
+}
+</script>
